@@ -9,7 +9,7 @@ const DAILY_ECOLOGY_SHIFT_INTERVAL_SEC = 24 * 60 * 60;
 
 /**
  * 행성 성운 자동 생성 서브코어
- * - 성계 활성화(해금) 시 해당 성계 행성의 셰이더 성운 프로필을 자동 생성.
+ * - 성계 활성화(해금) 시 해당 성계 행성의 성운 프로필(베이크 재생성 시드)을 자동 생성.
  * - `planets.csv`에서 성운 레이어가 꺼진 행성은 제외한다.
  */
 export class ArcPlanetNebulaSubCore extends BaseArcSubCore {

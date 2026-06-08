@@ -11,6 +11,13 @@ import { NEARBY_PRESENCE_DISPLAY_SEP, type NearbyOrbitPresenceRow } from './near
 
 const ARC_HUB_INFO_SLOT_BASE = 1000;
 
+function captainLabelFromDisplayLine(displayLine: string): string {
+  const sep = NEARBY_PRESENCE_DISPLAY_SEP;
+  const head = (displayLine.split(sep)[0] ?? displayLine).trim();
+  const dot = head.indexOf(' · ');
+  return dot >= 0 ? head.slice(0, dot).trim() : head;
+}
+
 /** 행성 주변 전시용 — 반지름을 줄인 결정론 궤도(플레이스홀더) */
 function arcTrafficPlaceholderOrbit(
   planetId: string,
@@ -29,7 +36,7 @@ function arcTrafficPlaceholderOrbit(
 
 /**
  * `nearbyPresence`(테이블 정적 슬롯) 뒤에, **현재 이 행성에 있는** 아크 수송선 행을 붙인다.
- * 동일 `linkedCapitalShipId` 가 이미 있으면 생략(중복 방지).
+ * 동일 전함 id·함장 id·표시명이 이미 있으면 생략(중복 방지).
  */
 export function mergeArcShipsIntoNearbyHubPresence(
   baseRows: NearbyOrbitPresenceRow[],
@@ -42,6 +49,17 @@ export function mergeArcShipsIntoNearbyHubPresence(
   const seenShip = new Set(
     baseRows.map((r) => r.linkedCapitalShipId).filter((id): id is string => Boolean(id)),
   );
+  const seenCaptainId = new Set<string>();
+  const seenCaptainLabel = new Set<string>();
+  for (const row of baseRows) {
+    const shipId = row.linkedCapitalShipId;
+    if (shipId) seenShip.add(shipId);
+    const label = captainLabelFromDisplayLine(row.displayLine);
+    if (label) seenCaptainLabel.add(label);
+  }
+  for (const c of captains) {
+    if (seenCaptainLabel.has(c.name.trim())) seenCaptainId.add(c.id);
+  }
   const sep = NEARBY_PRESENCE_DISPLAY_SEP;
   const extra: NearbyOrbitPresenceRow[] = [];
   let salt = 0;
@@ -49,8 +67,10 @@ export function mergeArcShipsIntoNearbyHubPresence(
   for (let i = 0; i < arcShipsStable.length; i++) {
     const ship = arcShipsStable[i]!;
     if (seenShip.has(ship.id)) continue;
+    if (seenCaptainId.has(ship.captainId)) continue;
     const hull = getNpcCapitalShip(ship.id);
     const captainName = nameById.get(ship.captainId) ?? ship.captainId;
+    if (seenCaptainLabel.has(captainName.trim())) continue;
     const shipName = hull?.name ?? ship.id;
     const infoRight = (hull?.infoLineSuffix && hull.infoLineSuffix.trim()) || '';
     const mk = 'MK.I';
@@ -63,6 +83,8 @@ export function mergeArcShipsIntoNearbyHubPresence(
       linkedCapitalShipId: ship.id,
     });
     seenShip.add(ship.id);
+    seenCaptainId.add(ship.captainId);
+    seenCaptainLabel.add(captainName.trim());
   }
   return [...baseRows, ...extra];
 }

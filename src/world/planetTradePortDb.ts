@@ -2,35 +2,28 @@ import type { Planet } from '../types';
 import { STAR_SYSTEMS } from '../data/systems';
 import { getItemDef } from '../data/goods';
 import { listItemDefs } from '../data/itemRegistry';
-import { NPC_CAPITAL_SHIPS_FROM_CSV } from '../data/generated';
 
 type PlanetTradePortMutableState = {
+  catalogItemIds: Set<string>;
   addedItemIds: Set<string>;
   removedItemIds: Set<string>;
 };
 
 /**
- * 행성별 무역소 아이템 참조 DB
- * - defaultItemIds: planets.csv에서 온 기본 진열 상품
- * - added/removed: 추후 이벤트·중개소로 실시간 증감될 오버레이
+ * 행성별 무역소 진열 DB — 정본은 아크코어 `syncTradePortCatalogFromBalance`만.
+ * - catalogItemIds: `set_catalog`로 교체된 행성별 전체 진열
+ * - added/removed: 이벤트·중개소 등 런타임 증감(선택)
  */
-const PLANET_TRADE_PORT_DEFAULT_ITEM_IDS: Record<string, readonly string[]> = buildPlanetDefaultItemIds();
 const PLANET_TRADE_PORT_MUTABLE_STATE: Record<string, PlanetTradePortMutableState> = {};
-
-function buildPlanetDefaultItemIds(): Record<string, readonly string[]> {
-  const out: Record<string, readonly string[]> = {};
-  for (const system of Object.values(STAR_SYSTEMS)) {
-    for (const planet of system.planets) {
-      out[planet.id] = planet.tradeGoods.filter(isTradeableItemId);
-    }
-  }
-  return out;
-}
 
 function getOrCreateMutableState(planetId: string): PlanetTradePortMutableState {
   const existing = PLANET_TRADE_PORT_MUTABLE_STATE[planetId];
   if (existing) return existing;
-  const created: PlanetTradePortMutableState = { addedItemIds: new Set<string>(), removedItemIds: new Set<string>() };
+  const created: PlanetTradePortMutableState = {
+    catalogItemIds: new Set<string>(),
+    addedItemIds: new Set<string>(),
+    removedItemIds: new Set<string>(),
+  };
   PLANET_TRADE_PORT_MUTABLE_STATE[planetId] = created;
   return created;
 }
@@ -63,43 +56,46 @@ export function listPlanetIdsWithTradePort(): string[] {
   return out;
 }
 
-/** `npc_ai_ships.tradePortListed` + `item_defs` 병합 `capital_ship_*` id */
-function tradePortListedCapitalShipItemIds(): string[] {
-  return NPC_CAPITAL_SHIPS_FROM_CSV.filter(s => s.tradePortListed).map(s => `capital_ship_${s.id}`);
-}
-
-/** 무기 테이블 기반으로 생성된 weapon_module 아이템은 기본 무역소에서 공통 취급한다. */
-function tradePortListedWeaponModuleItemIds(): string[] {
-  return listItemDefs()
-    .filter((d) => d.type === 'weapon_module' && d.tradeable)
-    .map((d) => d.id);
-}
-
-function mergeDefaultTradePortItemIds(planetId: string, defaults: readonly string[]): string[] {
-  const planet = findPlanet(planetId);
-  const base = [...defaults];
-  if (planet?.hasTradePort) {
-    for (const itemId of tradePortListedWeaponModuleItemIds()) {
-      if (isTradeableItemId(itemId)) base.push(itemId);
-    }
-    for (const itemId of tradePortListedCapitalShipItemIds()) {
-      if (isTradeableItemId(itemId)) base.push(itemId);
-    }
+function weaponModuleRequiredLevelFromDef(def: ReturnType<typeof getItemDef>): number {
+  if (!def || def.type !== 'weapon_module') return Number.POSITIVE_INFINITY;
+  const raw = def.attrs.weaponRequiredLevel;
+  if (typeof raw === 'number' && Number.isFinite(raw)) return Math.max(1, Math.floor(raw));
+  if (typeof raw === 'string') {
+    const parsed = Number.parseInt(raw, 10);
+    if (Number.isFinite(parsed)) return Math.max(1, parsed);
   }
-  return [...new Set(base)];
+  return 1;
 }
 
-export function getPlanetTradePortDefaultItemIds(planetId: string): readonly string[] {
-  return PLANET_TRADE_PORT_DEFAULT_ITEM_IDS[planetId] ?? [];
+/** `weapon_list.csv` 요구레벨 — UI·정책 연동용 */
+export function getTradePortWeaponModuleRequiredLevel(itemId: string): number | null {
+  const def = getItemDef(itemId);
+  if (!def || def.type !== 'weapon_module') return null;
+  return weaponModuleRequiredLevelFromDef(def);
 }
 
-/** 실제 무역소 노출 목록(기본 + 추가 - 제거) */
+/** 아크코어 `set_catalog` — 행성 무역소 진열 전체 교체 */
+export function replaceTradePortCatalog(planetId: string, itemIds: readonly string[]): void {
+  const mutable = getOrCreateMutableState(planetId);
+  mutable.catalogItemIds.clear();
+  for (const itemId of itemIds) {
+    if (isTradeableItemId(itemId)) mutable.catalogItemIds.add(itemId);
+  }
+  mutable.addedItemIds.clear();
+  mutable.removedItemIds.clear();
+}
+
+/** @deprecated planets.csv pipe 미사용 — 항상 빈 배열 */
+export function getPlanetTradePortDefaultItemIds(_planetId: string): readonly string[] {
+  return [];
+}
+
+/** 실제 무역소 노출 목록(아크코어 카탈로그 + 이벤트 증감) */
 export function getPlanetTradePortItemIds(planetId: string): string[] {
-  const defaults = mergeDefaultTradePortItemIds(planetId, getPlanetTradePortDefaultItemIds(planetId));
   const mutable = PLANET_TRADE_PORT_MUTABLE_STATE[planetId];
-  if (!mutable) return [...defaults];
+  if (!mutable || mutable.catalogItemIds.size === 0) return [];
 
-  const merged = new Set(defaults);
+  const merged = new Set(mutable.catalogItemIds);
   for (const itemId of mutable.addedItemIds) {
     if (isTradeableItemId(itemId)) merged.add(itemId);
   }
@@ -117,7 +113,6 @@ export function addTradePortItem(planetId: string, itemId: string): void {
   mutable.addedItemIds.add(itemId);
 }
 
-/** 기본 목록 포함 아이템도 임시/영구 제외 가능 */
 export function removeTradePortItem(planetId: string, itemId: string): void {
   const mutable = getOrCreateMutableState(planetId);
   mutable.addedItemIds.delete(itemId);

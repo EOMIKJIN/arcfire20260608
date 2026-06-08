@@ -8,7 +8,7 @@ import {
   ScrollView, useWindowDimensions, Image, Platform,
   AppState,
 } from 'react-native';
-import type { LayoutChangeEvent, NativeSyntheticEvent, TextLayoutEventData } from 'react-native';
+import type { LayoutChangeEvent } from 'react-native';
 import Animated, {
   type SharedValue,
   useAnimatedStyle,
@@ -40,6 +40,8 @@ import {
 import { usePlanetNebulaStore } from '../../src/store/planetNebulaStore';
 import { useBattleStanceStore, BATTLE_STANCE_META } from '../../src/store/battleStanceStore';
 import { registerPlanetOrbitClockMs } from '../../src/arcCore/orbitClockMsBridge';
+import { resolveMainStageCombatEnabled } from '../../src/arcCore/planetBalance/planetZoneIndexRegistry';
+import { resolvePlanetTargetEngageSec } from '../../src/arcCore/balance/balanceTableRegistry';
 import { releasePlanetMainStageSession } from '../../src/game/planetMainStageSession';
 import { registerPlanetSessionResource } from '../../src/game/planetSessionRegistry';
 import { usePlanetStageSession } from '../../src/game/usePlanetStageSession';
@@ -53,8 +55,9 @@ import {
 import { PlanetCorePortraitWithTempAdminOverride } from '../../src/components/planet/PlanetCorePortraitWithTempAdminOverride';
 import { PlanetHubOrbitSkiaLayer } from '../../src/components/planet/PlanetHubOrbitSkiaLayer';
 import { SkiaPlanetNebulaShaderBackdrop } from '../../src/components/planet/SkiaPlanetNebulaShaderBackdrop';
+import { resolveMainStageSkiaBackdrop } from '../../src/game/mainStageSkiaBackdrop';
+import { resolvePlanetNebulaBakedSource } from '../../src/game/planetNebulaBakedAssets';
 import {
-  computeArcNpcShipScreenPacked,
   computeTableNpcOrbitXY,
   jsArcNpcDistanceFromCenter,
   jsTableNpcDistanceFromCenter,
@@ -109,12 +112,11 @@ import {
   type MiningSessionState,
 } from '../../src/systems/mining';
 import { STORY_SCENES_FROM_CSV } from '../../src/data/generated/csvStoryScenes';
-import { resolveMainStageSkiaBackdrop } from '../../src/game/mainStageSkiaBackdrop';
 import { NPC_CAPTAINS_FROM_CSV } from '../../src/data/generated/csvNpcCaptains';
 import { captainMatchesPlanetOrbitTable } from '../../src/npc/captainOrbitTableMatch';
 import { resolveTempClanColor } from '../../src/clanWar/tempClanColors';
-import { markFreshStartAfterReset } from '../../src/firebase/auth';
-import { purgeAccountDataByUid } from '../../src/account/accountLifecycle';
+import { getCurrentUser } from '../../src/firebase/auth';
+import { requestLocalAccountResetFromPlanetHub } from '../../src/account/localAccountReset';
 import { resolveNpcCaptainPortraitSource } from '../../src/game/npcCaptainPortraitAssets';
 import { countGoodInInventory } from '../../src/game/playerInventory';
 import { buildPlanetHubFeatureMenuItems } from '../../src/systems/planetHub/planetHubFeatureSystems';
@@ -172,7 +174,13 @@ const PLANET_MAIN_STANCE_ROW_HEIGHT_EST_PX = 28;
 /** 태세 표시: 슬롯 보유 여부가 아니라 실제 교전 중 시뮬 상태만 본다 — 간격 폴링 */
 const PLANET_MAIN_STANCE_ENGAGEMENT_POLL_MS = 250;
 const PLANET_MAIN_STANCE_UI_DELAY_MS = 3000;
-const PLANET_MAIN_BATTLE_READY_DURATION_MS = 3000;
+const PLANET_MAIN_BATTLE_READY_DURATION_FALLBACK_MS = 3000;
+
+function resolvePlanetBattleReadyDurationMs(planetId: string | null | undefined): number {
+  if (!planetId) return PLANET_MAIN_BATTLE_READY_DURATION_FALLBACK_MS;
+  const sec = resolvePlanetTargetEngageSec(planetId);
+  return Math.min(10_000, Math.max(1500, sec * 100));
+}
 const PLANET_MAIN_BATTLE_READY_TICK_MS = 100;
 const PLANET_MAIN_BATTLE_READY_BLINK_MS = 180;
 const PLANET_MAIN_COMBAT_LAYER_WIDTH_SCALE_X = 1.1;
@@ -231,15 +239,6 @@ function splitStoryTextByMaxLines(text: string, maxLines: number): string[] {
   }
   return chunks.length > 0 ? chunks : [''];
 }
-function chunkMeasuredLines(lines: string[], maxLines: number): string[] {
-  const safeMax = Math.max(1, maxLines | 0);
-  const chunks: string[] = [];
-  for (let i = 0; i < lines.length; i += safeMax) {
-    chunks.push(lines.slice(i, i + safeMax).join('\n'));
-  }
-  return chunks.length > 0 ? chunks : [''];
-}
-
 /**
  * 메인스테이지 출발 시 활성 sim 의 스냅샷을 캡처하기 위한 바인더 내부 ↔ 화면 ref 브리지.
  * 바인더의 Provider 안에서만 `useCapitalRealtimeCombatSimContext()`가 활성 sim 을 반환하므로,
@@ -265,12 +264,8 @@ export default function PlanetScreen() {
   const playerHydrated = usePlayerStore(s => s.hydrated);
   const getSystem = useWorldStore(s => s.getSystem);
   const { width: windowWidth, height: windowHeight, fontScale } = useWindowDimensions();
-  const resetLocalPlayer = usePlayerStore(s => s.resetLocalPlayer);
   const setPlayer = usePlayerStore(s => s.setPlayer);
   const addInventoryItem = usePlayerStore(s => s.addInventoryItem);
-  const resetLocalMissions = useMissionStore(s => s.resetLocalMissions);
-  const purgePlayerAccountWorldState = useClanWarFoundationStore(s => s.purgePlayerAccountWorldState);
-  const purgeAllNonAiClanWorldState = useClanWarFoundationStore(s => s.purgeAllNonAiClanWorldState);
   const persist = usePlayerStore(s => s.persist);
   const setMenuBadge = useMenuNotificationStore(s => s.setBadge);
   const clearMenuBadge = useMenuNotificationStore(s => s.clearBadge);
@@ -303,8 +298,6 @@ export default function PlanetScreen() {
   const [miningSession, setMiningSession] = useState<MiningSessionState>(() => createInitialMiningSessionState());
   const miningSessionRef = useRef<MiningSessionState>(createInitialMiningSessionState());
   const [miningUiNowMs, setMiningUiNowMs] = useState(() => Date.now());
-  /** 게이지 스로틀(2s)·tick 분배는 `useMiningDriver` 안에서 관리 — Phase 3. */
-  const resetTipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /** Phase 2: 메인스테이지 라이프사이클(Active/Suspending/Frozen/Resuming) 단일 진입점. */
   const stageSession = usePlanetStageSession();
@@ -344,9 +337,6 @@ export default function PlanetScreen() {
     }, []),
   );
 
-  useEffect(() => () => {
-    if (resetTipTimerRef.current) clearTimeout(resetTipTimerRef.current);
-  }, []);
   useEffect(() => {
     miningSessionRef.current = miningSession;
   }, [miningSession]);
@@ -455,12 +445,17 @@ export default function PlanetScreen() {
     return arcNpcShipsAtPlanet.map((s) => orbitLabelHead3(m.get(s.captainId) ?? s.captainId));
   }, [arcNpcShipsAtPlanet, arcNpcCaptainsSnap]);
 
-  /** 모든 행성 공통: 적팀(red/orange) 진입 감지 시 자동 전투 활성 */
+  /** 적팀(red/orange) 진입 + balance CSV `mainStageCombatEnabled` 게이트 */
   const enemyFleetEntered = Boolean(
     player
     && planet
     && system
-    && hasEnemyFleetEnteredPlanetOrbit(planet.id, system.id),
+    && hasEnemyFleetEnteredPlanetOrbit(planet.id, system.id)
+    && resolveMainStageCombatEnabled(planet.id),
+  );
+  const battleReadyDurationMs = useMemo(
+    () => resolvePlanetBattleReadyDurationMs(planet?.id),
+    [planet?.id],
   );
   const [battleReadyMsLeft, setBattleReadyMsLeft] = useState(0);
   const [battleReadyBlinkOn, setBattleReadyBlinkOn] = useState(true);
@@ -472,11 +467,11 @@ export default function PlanetScreen() {
       return;
     }
     if (!prevEnemyFleetEnteredRef.current) {
-      setBattleReadyMsLeft(PLANET_MAIN_BATTLE_READY_DURATION_MS);
+      setBattleReadyMsLeft(battleReadyDurationMs);
       setBattleReadyBlinkOn(true);
     }
     prevEnemyFleetEnteredRef.current = true;
-  }, [enemyFleetEntered]);
+  }, [enemyFleetEntered, battleReadyDurationMs]);
   useEffect(() => {
     if (battleReadyMsLeft <= 0 || !isPlanetRouteFocused || !appStateActive) return;
     const id = setInterval(() => {
@@ -583,7 +578,6 @@ export default function PlanetScreen() {
   const [ingameDialogPage, setIngameDialogPage] = useState(0);
   const [ingameDialogSegment, setIngameDialogSegment] = useState(0);
   const [ingameDialogPageComplete, setIngameDialogPageComplete] = useState(false);
-  const [measuredDialogChunks, setMeasuredDialogChunks] = useState<string[] | null>(null);
   /**
    * 인게임 대화 트리거 전용: `player.currentPlanetId`(메인 행성 허브 착륙) 기준으로만 소비.
    * 무역소·조선소 등 세부 화면 라우트 포커스와 무관.
@@ -597,9 +591,6 @@ export default function PlanetScreen() {
   useEffect(() => {
     const p = usePlayerStore.getState().player;
     const landedPlanetId = p?.currentPlanetId ?? null;
-    const forceArcadiaPendingDialog =
-      Boolean(p?.flags.pendingArcadiaDialog01)
-      && landedPlanetId === 'arcadia_prime';
 
     if (!landedPlanetId) {
       ingameDialogLastLandedPlanetIdRef.current = null;
@@ -607,16 +598,14 @@ export default function PlanetScreen() {
     }
 
     // 단일 조건: 메인스테이지(행성 허브) = currentPlanetId 가 비어 있지 않은 값으로 막 바뀐 착륙 1회
-    if (!forceArcadiaPendingDialog && ingameDialogLastLandedPlanetIdRef.current === landedPlanetId) {
+    if (ingameDialogLastLandedPlanetIdRef.current === landedPlanetId) {
       return;
     }
     ingameDialogLastLandedPlanetIdRef.current = landedPlanetId;
 
     if (activeIngameDialogSceneId) return;
 
-    const candidate = (forceArcadiaPendingDialog
-      ? STORY_SCENES_FROM_CSV.ingame_dialog_01
-      : null) ?? Object.values(STORY_SCENES_FROM_CSV).find((sceneDef) => {
+    const candidate = Object.values(STORY_SCENES_FROM_CSV).find((sceneDef) => {
       if (sceneDef.triggerKey !== 'planet_landed') return false;
       if (sceneDef.triggerTargetId !== landedPlanetId) return false;
       if (!sceneDef.pages.some((page) => page.viewMode === 'ingame_dialog')) return false;
@@ -652,47 +641,30 @@ export default function PlanetScreen() {
     .replace(/\r\n/g, '\n')
     .replace(/\r/g, '\n')
     .replace(/\n{3,}/g, '\n\n');
-  const activeIngameDialogTextChunks =
-    measuredDialogChunks
-    ?? splitStoryTextByMaxLines(activeIngameDialogTextRaw, activeIngameDialogScene?.maxLinesPerPage ?? 5);
+  const activeIngameDialogTextChunks = splitStoryTextByMaxLines(
+    activeIngameDialogTextRaw,
+    activeIngameDialogScene?.maxLinesPerPage ?? 4,
+  );
   const activeIngameDialogText = activeIngameDialogTextChunks[ingameDialogSegment] ?? '';
   const activeIngameDialogIsLastSegment =
     ingameDialogSegment >= Math.max(0, activeIngameDialogTextChunks.length - 1);
   const activeIngameDialogIsLast = ingameDialogPage >= Math.max(0, activeIngameDialogPages.length - 1);
   const isFinalIngameDialogStep =
     activeIngameDialogIsLast && activeIngameDialogIsLastSegment;
-  const consumePendingArcadiaDialogFlag = useCallback(() => {
+  const markIngameDialogSceneSeen = useCallback((sceneId: string) => {
     const snapshot = usePlayerStore.getState().player;
-    if (!snapshot || !snapshot.flags.pendingArcadiaDialog01) return;
+    if (!snapshot) return;
+    const prevSeen = snapshot.flags.seenStorySceneIds ?? [];
+    if (prevSeen.includes(sceneId)) return;
     setPlayer({
       ...snapshot,
       flags: {
         ...snapshot.flags,
-        pendingArcadiaDialog01: false,
-        ingameDialog01Seen: true,
+        seenStorySceneIds: [...prevSeen, sceneId],
       },
     });
     void persist();
   }, [setPlayer, persist]);
-
-  useEffect(() => {
-    setMeasuredDialogChunks(null);
-  }, [activeIngameDialogSceneId, ingameDialogPage, activeIngameDialogTextRaw, activeIngameDialogScene?.maxLinesPerPage]);
-
-  const handleIngameDialogTextLayout = useCallback((e: NativeSyntheticEvent<TextLayoutEventData>) => {
-    if (measuredDialogChunks != null) return;
-    const lines = e.nativeEvent.lines.map((line) =>
-      String(line.text ?? '').replace(/\r\n/g, '').replace(/[\r\n]/g, ''),
-    );
-    if (lines.length === 0) {
-      setMeasuredDialogChunks([activeIngameDialogTextRaw]);
-      return;
-    }
-    const chunks = chunkMeasuredLines(lines, activeIngameDialogScene?.maxLinesPerPage ?? 4);
-    setMeasuredDialogChunks(chunks);
-    setIngameDialogSegment(0);
-    setIngameDialogPageComplete(false);
-  }, [measuredDialogChunks, activeIngameDialogTextRaw, activeIngameDialogScene?.maxLinesPerPage]);
 
   const handleNextIngameDialog = useCallback(() => {
     if (!activeIngameDialogScene || activeIngameDialogPages.length === 0) {
@@ -700,22 +672,8 @@ export default function PlanetScreen() {
       return;
     }
     if (isFinalIngameDialogStep && ingameDialogPageComplete) {
-      if (activeIngameDialogScene.id === 'ingame_dialog_01') {
-        consumePendingArcadiaDialogFlag();
-      }
-      if (activeIngameDialogScene.triggerRepeat === 'once' && player) {
-        const prevSeen = player.flags.seenStorySceneIds ?? [];
-        if (!prevSeen.includes(activeIngameDialogScene.id)) {
-          const updated = {
-            ...player,
-            flags: {
-              ...player.flags,
-              seenStorySceneIds: [...prevSeen, activeIngameDialogScene.id],
-            },
-          };
-          setPlayer(updated);
-          void persist();
-        }
+      if (activeIngameDialogScene.triggerRepeat === 'once') {
+        markIngameDialogSceneSeen(activeIngameDialogScene.id);
       }
       setActiveIngameDialogSceneId(null);
       setIngameDialogPage(0);
@@ -732,22 +690,8 @@ export default function PlanetScreen() {
       return;
     }
     if (activeIngameDialogIsLast) {
-      if (activeIngameDialogScene.id === 'ingame_dialog_01') {
-        consumePendingArcadiaDialogFlag();
-      }
-      if (activeIngameDialogScene.triggerRepeat === 'once' && player) {
-        const prevSeen = player.flags.seenStorySceneIds ?? [];
-        if (!prevSeen.includes(activeIngameDialogScene.id)) {
-          const updated = {
-            ...player,
-            flags: {
-              ...player.flags,
-              seenStorySceneIds: [...prevSeen, activeIngameDialogScene.id],
-            },
-          };
-          setPlayer(updated);
-          void persist();
-        }
+      if (activeIngameDialogScene.triggerRepeat === 'once') {
+        markIngameDialogSceneSeen(activeIngameDialogScene.id);
       }
       setActiveIngameDialogSceneId(null);
       setIngameDialogPage(0);
@@ -765,11 +709,7 @@ export default function PlanetScreen() {
     activeIngameDialogIsLastSegment,
     isFinalIngameDialogStep,
     ingameDialogPageComplete,
-    activeIngameDialogTextChunks,
-    player,
-    setPlayer,
-    persist,
-    consumePendingArcadiaDialogFlag,
+    markIngameDialogSceneSeen,
   ]);
 
   const [nearbyPresence, setNearbyPresence] = useState<ReturnType<typeof resolvePlanetNearbyPresence>>([]);
@@ -980,56 +920,21 @@ export default function PlanetScreen() {
         {
           text: '초기화',
           style: 'destructive',
-          onPress: async () => {
+          onPress: () => {
             const playerSnapshot = usePlayerStore.getState().player;
-            const uidToPurge = playerSnapshot?.uid;
-            if (uidToPurge) {
-              await purgePlayerAccountWorldState({
-                uid: uidToPurge,
+            requestLocalAccountResetFromPlanetHub(
+              beginPlanetHubSuspendingNavigation,
+              () => router.replace('/?forceTitle=1'),
+              {
+                uid: playerSnapshot?.uid ?? getCurrentUser().uid ?? null,
                 currentClanId: playerSnapshot?.political.clanId ?? null,
-              });
-              await purgeAccountDataByUid(uidToPurge);
-            }
-            // 안전망: 로컬 계정 초기화 시 플레이어 유래 클랜 흔적 전체 제거
-            await purgeAllNonAiClanWorldState();
-            await resetLocalPlayer();
-            await resetLocalMissions();
-            await markFreshStartAfterReset();
-            // dismissAll → popToTop() 은 단일 화면 스택에서 'POP_TO_TOP' 미처리 예외가 나는 경우가 있어 사용하지 않음
-            try {
-              beginPlanetHubSuspendingNavigation(() => router.replace('/?forceTitle=1'));
-            } catch {
-              requestAnimationFrame(() => {
-                try {
-                  beginPlanetHubSuspendingNavigation(() => router.replace('/?forceTitle=1'));
-                } catch {
-                  /* ignore */
-                }
-              });
-            }
-            if (resetTipTimerRef.current) clearTimeout(resetTipTimerRef.current);
-            resetTipTimerRef.current = setTimeout(() => {
-              try {
-                showArcAlert(
-                  '초기화 완료',
-                  '최종 시작 화면에서 [ 게임 시작 ]을 눌러 닉네임 등록 → 인트로 → 플레이 순서로 다시 진행할 수 있습니다.',
-                );
-              } catch {
-                /* 모달 표시 실패 시 무시 */
-              }
-              resetTipTimerRef.current = null;
-            }, 220);
+              },
+            );
           },
         },
       ],
     );
-  }, [
-    beginPlanetHubSuspendingNavigation,
-    resetLocalMissions,
-    resetLocalPlayer,
-    purgeAllNonAiClanWorldState,
-    purgePlayerAccountWorldState,
-  ]);
+  }, [beginPlanetHubSuspendingNavigation]);
 
   /** 클랜 점유: 솔라 스테이션과 동일 플로우(플레이트만, 성계별 보정 없음) */
   const safeAiClanTerritoryPlate = useClanWarFoundationStore(
@@ -1269,8 +1174,6 @@ export default function PlanetScreen() {
           typewriterSpeedMs={activeIngameDialogScene?.typewriterSpeedMs ?? 28}
           onTextComplete={() => setIngameDialogPageComplete(true)}
           imageSource={activeIngameDialogImageSource}
-          measureTextRaw={activeIngameDialogTextRaw}
-          onMeasureTextLayout={handleIngameDialogTextLayout}
           onPressNext={handleNextIngameDialog}
           nextDisabled={!ingameDialogPageComplete}
           buttonText={isFinalIngameDialogStep ? '[ 확인 ]' : '[ 다음 ]'}
@@ -1668,8 +1571,9 @@ const PlanetStageBackground = memo(function PlanetStageBackground({
     () => resolveMainStageSkiaBackdrop(templatePlanet ?? null),
     [templatePlanet],
   );
-  const nebulaProfile = usePlanetNebulaStore(
-    useCallback((s) => s.profilesByPlanetId[planetId] ?? null, [planetId]),
+  const nebulaBakedImageSource = useMemo(
+    () => resolvePlanetNebulaBakedSource(planetId),
+    [planetId],
   );
   const ensureNebulaProfileForPlanet = usePlanetNebulaStore((s) => s.ensureProfileForPlanet);
 
@@ -1713,9 +1617,9 @@ const PlanetStageBackground = memo(function PlanetStageBackground({
       >
         <SkiaPlanetNebulaShaderBackdrop
           size={nebulaBackdropSize}
-          /** 성운 성운만: 포커스 + lifecycle active 일 때만 rAF 시작(출발 순간 즉시 OFF). */
+          /** 성운 베이크 PNG: 포커스 + lifecycle active 일 때만 명중 FX 루프. */
           active={skiaLoopsActive}
-          profile={nebulaProfile}
+          nebulaBakedImageSource={nebulaBakedImageSource}
           renderNebulaShader={mainStageBackdrop.nebulaShaderEnabled}
           backgroundImageSource={mainStageBackdrop.backdropImageSource}
           dodgeHitFxRef={edenSim?.missileHitFxRef ?? null}
@@ -1879,7 +1783,6 @@ const PlanetStageBackground = memo(function PlanetStageBackground({
                     orbitClockMs={orbitClockMs}
                     arcShips={arcNpcShipsAtPlanet}
                     arcCaptionHeads={arcSkiaCaptionHeads}
-                    paused={!skiaLoopsActive}
                   />
                 </View>
               ) : null}
@@ -2130,117 +2033,6 @@ const PlanetTableOrbitMarks = memo(function PlanetTableOrbitMarks({
         />
       ))}
     </>
-  );
-});
-
-const PlanetArcStaticMarks = memo(function PlanetArcStaticMarks({
-  orbitClockMs,
-  arcShips,
-  arcCount,
-  arcCaptionHeads,
-}: {
-  orbitClockMs: SharedValue<number>;
-  arcShips: ArcNpcTrafficShip[];
-  arcCount: number;
-  arcCaptionHeads: string[];
-}) {
-  const flatSv = useSharedValue<number[]>([]);
-  const syncMsSv = useSharedValue(0);
-  const shipCountSv = useSharedValue(0);
-  const arcPackSigRef = useRef('');
-  const arcPackSig = useMemo(
-    () =>
-      arcShips
-        .map(s =>
-          [
-            s.id,
-            s.phase,
-            s.phaseDurationSec.toFixed(3),
-            s.orbitRadiusPx.toFixed(2),
-            s.edgeAngleRad.toFixed(4),
-            s.arcTrafficDwellRadPerSec.toFixed(4),
-          ].join(':'),
-        )
-        .join('|'),
-    [arcShips],
-  );
-  useLayoutEffect(() => {
-    if (arcPackSigRef.current === arcPackSig) return;
-    arcPackSigRef.current = arcPackSig;
-    shipCountSv.value = arcShips.length;
-    flatSv.value = packArcNpcShipsToFloat32(arcShips);
-    syncMsSv.value = orbitClockMs.value;
-  }, [arcPackSig, arcShips, orbitClockMs, flatSv, shipCountSv, syncMsSv]);
-
-  const count = Math.min(arcCount, 12);
-  if (count <= 0) return null;
-  return (
-    <>
-      {Array.from({ length: count }, (_, i) => {
-        const caption = arcCaptionHeads[i] ?? '';
-        return (
-          <PlanetArcStaticOrbitMark
-            key={`arc-static-${i}`}
-            index={i}
-            caption={caption}
-            orbitClockMs={orbitClockMs}
-            syncMsSv={syncMsSv}
-            flatSv={flatSv}
-            shipCountSv={shipCountSv}
-          />
-        );
-      })}
-    </>
-  );
-});
-
-const PlanetArcStaticOrbitMark = memo(function PlanetArcStaticOrbitMark({
-  index,
-  caption,
-  orbitClockMs,
-  syncMsSv,
-  flatSv,
-  shipCountSv,
-}: {
-  index: number;
-  caption: string;
-  orbitClockMs: SharedValue<number>;
-  syncMsSv: SharedValue<number>;
-  flatSv: SharedValue<number[]>;
-  shipCountSv: SharedValue<number>;
-}) {
-  const animated = useAnimatedStyle(() => {
-    'worklet';
-    const p = computeArcNpcShipScreenPacked(
-      index,
-      orbitClockMs.value,
-      syncMsSv.value,
-      flatSv.value,
-      shipCountSv.value,
-      ORBIT_CENTER,
-    );
-    if (!p) {
-      return {
-        opacity: 0,
-        transform: [{ translateX: -9999 }, { translateY: -9999 }],
-      };
-    }
-    return {
-      opacity: p.opacity,
-      transform: [{ translateX: p.x - 7 }, { translateY: p.y - 7 }],
-    };
-  }, [index]);
-  return (
-    <Animated.View style={[bgStyles.orbitMarkWrap, animated]}>
-            <View style={bgStyles.orbitMarkLabelCol}>
-              <Text style={bgStyles.orbitMarkArcStatic}>◇</Text>
-              {caption ? (
-                <Text style={bgStyles.orbitShipCaptionArcStatic} numberOfLines={1} ellipsizeMode="tail">
-                  {caption}
-                </Text>
-              ) : null}
-            </View>
-    </Animated.View>
   );
 });
 
@@ -3093,13 +2885,6 @@ const bgStyles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 0.5 },
     textShadowRadius: 1.5,
   },
-  orbitMarkArcStatic: {
-    fontFamily: FONTS.mono,
-    fontSize: 9,
-    color: 'rgba(220,200,255,0.92)',
-    lineHeight: 11,
-    textAlign: 'center',
-  },
   orbitMarkPlayerBlue: {
     fontFamily: FONTS.mono,
     fontSize: 10,
@@ -3119,18 +2904,6 @@ const bgStyles = StyleSheet.create({
     marginBottom: 1,
     maxWidth: 70,
     textShadowColor: 'rgba(6,10,20,0.75)',
-    textShadowOffset: { width: 0, height: 0.5 },
-    textShadowRadius: 1.5,
-  },
-  orbitShipCaptionArcStatic: {
-    fontFamily: FONTS.mono,
-    fontSize: 6,
-    lineHeight: 8,
-    color: 'rgba(220,200,255,0.9)',
-    textAlign: 'center',
-    marginTop: 1,
-    maxWidth: 70,
-    textShadowColor: 'rgba(20,10,32,0.65)',
     textShadowOffset: { width: 0, height: 0.5 },
     textShadowRadius: 1.5,
   },

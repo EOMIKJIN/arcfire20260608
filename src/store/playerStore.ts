@@ -8,10 +8,15 @@ import {
   PlayerShip,
   ShipyardEquipSlotId,
   ShipWeaponItemAssignment,
+  LevelUpSummary,
 } from '../types';
 import { SHIP_TEMPLATES } from '../data/ships';
 import { EXP_TABLE } from '../data/d20tables';
-import { NPC_CAPITAL_SHIPS_FROM_CSV } from '../data/generated';
+import {
+  createPlayerCombatProficiency,
+  normalizePlayerCombatProficiency,
+} from '../combat/playerCombatProficiency';
+import { NPC_CAPITAL_SHIPS_FROM_CSV, NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV } from '../data/generated';
 import { gainExp, processLevelUp, learnSkill as engineLearnSkill } from '../engine/SkillEngine';
 import { applyAabsCreditMultiplier, applyAabsExpMultiplier } from '../arcCore/aabs/aabsPolicyStore';
 import { SKILLS } from '../data/skills';
@@ -68,6 +73,31 @@ function sanitizeShipEquipSlots(raw: PlayerShip['equipSlots'] | unknown): Player
     const name = o.name.trim();
     if (!itemDefId || !name) continue;
     out[k as ShipyardEquipSlotId] = { itemDefId, name };
+  }
+  return out;
+}
+
+/** equipSlots 미장착 시 NPC 전함 테이블 기본 무장으로 전투 슬롯 시드 */
+function seedCombatEquipSlotsFromNpcDefaults(ship: PlayerShip): NonNullable<PlayerShip['equipSlots']> {
+  const existing = sanitizeShipEquipSlots(ship.equipSlots ?? {}) as NonNullable<PlayerShip['equipSlots']>;
+  const hasWeapon1 = Boolean(existing.WEAPON_1?.itemDefId?.trim());
+  const hasWeapon2 = Boolean(existing.WEAPON_2?.itemDefId?.trim());
+  if (hasWeapon1 && hasWeapon2) return existing;
+
+  const npcId = ship.portraitNpcCapitalShipId?.trim();
+  const runtime = npcId ? NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV[npcId] : undefined;
+  if (!runtime) return existing;
+
+  const out = { ...existing };
+  if (!hasWeapon1 && runtime.laserWeaponId?.trim()) {
+    const itemDefId = `weapon_item_${runtime.laserWeaponId.trim()}`;
+    const def = ITEM_DEFS_FROM_CSV[itemDefId];
+    out.WEAPON_1 = { itemDefId, name: def?.name ?? runtime.laserWeaponId.trim() };
+  }
+  if (!hasWeapon2 && runtime.missileWeaponId?.trim()) {
+    const itemDefId = `weapon_item_${runtime.missileWeaponId.trim()}`;
+    const def = ITEM_DEFS_FROM_CSV[itemDefId];
+    out.WEAPON_2 = { itemDefId, name: def?.name ?? runtime.missileWeaponId.trim() };
   }
   return out;
 }
@@ -179,7 +209,10 @@ function normalizeLoadedPlayerShip(ship: PlayerShip | undefined, templateIdFallb
         : typeof legacyCargoCapacity === 'number' && Number.isFinite(legacyCargoCapacity)
         ? Math.max(0, Math.floor(legacyCargoCapacity))
         : fallbackEquipCapacity,
-    equipSlots: sanitizeShipEquipSlots(ship.equipSlots),
+    equipSlots: seedCombatEquipSlotsFromNpcDefaults({
+      ...ship,
+      equipSlots: sanitizeShipEquipSlots(ship.equipSlots),
+    }),
     weaponItems: buildShipWeaponItems(ship),
     equipmentItems: buildShipEquipmentItems(ship),
   };
@@ -321,9 +354,13 @@ function shipFromTemplate(templateId: string): PlayerShip {
     equipment: [],
     equipSlots: {},
   };
-  return {
+  const withEquip = {
     ...seed,
-    equipmentItems: buildShipEquipmentItems(seed),
+    equipSlots: seedCombatEquipSlotsFromNpcDefaults(seed),
+  };
+  return {
+    ...withEquip,
+    equipmentItems: buildShipEquipmentItems(withEquip),
   };
 }
 
@@ -350,12 +387,14 @@ function ensurePlayerHasDefaultShip(player: Player): Player {
     ship: normalizedShip,
     shipHangar: normalizedHangar,
     inventorySlots: normalizedInventory,
+    combatProficiency: normalizePlayerCombatProficiency(player.combatProficiency, player.level),
   };
 }
 
 interface PlayerState {
   player: Player | null;
   levelUpPending: boolean;
+  levelUpSummary: LevelUpSummary | null;
   hydrated: boolean;
   setPlayer: (p: Player | null) => void;
   createPlayer: (uid: string, nickname: string) => void;
@@ -383,6 +422,7 @@ interface PlayerState {
 export const usePlayerStore = create<PlayerState>((set, get) => ({
   player: null,
   levelUpPending: false,
+  levelUpSummary: null,
   hydrated: false,
 
   setPlayer: (p) => set({ player: p ? ensurePlayerHasDefaultShip(p) : null }),
@@ -430,6 +470,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       homePlanetId: null,
       orbitalMiningOre1DeliveredByPlanet: {},
       inventorySlots: buildInitialInventoryWithDefaultCapitalShip(),
+      combatProficiency: createPlayerCombatProficiency(1, now),
       createdAt: now,
     };
     set({ player });
@@ -449,7 +490,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
   resetLocalPlayer: async () => {
     await AsyncStorage.removeItem(STORAGE_KEY);
-    set({ player: null, levelUpPending: false, hydrated: true });
+    set({ player: null, levelUpPending: false, levelUpSummary: null, hydrated: true });
   },
 
   persist: async () => {
@@ -568,16 +609,46 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   addExp: (amount) => {
     const { player, levelUpPending } = get();
     if (!player) return;
+    const startLevel = player.level;
+    const proficiencyBefore = normalizePlayerCombatProficiency(
+      player.combatProficiency,
+      startLevel,
+    );
     let p = gainExp(player, applyAabsExpMultiplier(amount));
     let pending = levelUpPending;
+    let levelsGained = 0;
+    const skillPointsBefore = p.skillPoints;
     for (;;) {
       const { player: np, leveledUp } = processLevelUp(p);
       p = np;
       if (!leveledUp) break;
       pending = true;
+      levelsGained += 1;
     }
-    const expToNext = EXP_TABLE[p.level + 1] ?? 999999;
-    set({ player: { ...p, expToNext }, levelUpPending: pending });
+    const skillPointsGained = p.skillPoints - skillPointsBefore;
+    const proficiencyAfter = createPlayerCombatProficiency(p.level);
+    p = { ...p, combatProficiency: proficiencyAfter };
+    const nextThreshold = EXP_TABLE[p.level + 1] ?? 999999;
+    const expToNext = nextThreshold;
+    const levelUpSummary: LevelUpSummary | null = levelsGained > 0
+      ? {
+          previousLevel: startLevel,
+          newLevel: p.level,
+          skillPointsGained,
+          expRemainingForNextLevel: Math.max(0, nextThreshold - p.exp),
+          nextLevelThresholdExp: nextThreshold,
+          proficiencyBefore,
+          proficiencyAfter,
+        }
+      : get().levelUpSummary;
+    set({
+      player: { ...p, expToNext },
+      levelUpPending: pending,
+      levelUpSummary,
+    });
+    if (levelsGained > 0) {
+      void get().persist();
+    }
   },
 
   learnSkill: (skillId) => {
@@ -599,5 +670,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     void skillDb.persistSkillDb();
   },
 
-  clearLevelUp: () => set({ levelUpPending: false }),
+  clearLevelUp: () => set({ levelUpPending: false, levelUpSummary: null }),
 }));
+
+export { createPlayerCombatProficiency, normalizePlayerCombatProficiency };

@@ -1,21 +1,21 @@
 zoneIndex,recommendedPilotLevel,proficiencyMultiplier,operatingEfficiencyPct,combatsInZone,combatMinutesTotal,targetCreditsEarned,requiredFleetMinDps,enemyAffinityKind,recommendedHullTierKey,recommendedWeaponTierKey,mineralUpgradeCapAtZone,sectorBand,notesKo
-1,1,1.01,101,3,3,30000,150,light,frigate_default,t1_laser,5,early,행성1 — 프리깃 기본·T1 레이저·광물0강
-2,3,1.03,103,5,5,60000,250,light,frigate_default,t1_laser,5,early,행성2 — T1 레이저 광물1강
-3,5,1.05,105,7,7,105000,400,light,frigate_default,t1_missile,5,early,행성3 — T1 미사일 광물2강
-4,7,1.07,107,8,8,160000,650,light,frigate_upgraded,t1_railgun,5,early,행성4 — 프리깃 개량형(25만Cr) 광물3강
-5,9,1.09,109,10,10,250000,900,light,frigate_upgraded,t1_plasma,5,early,행성5 — 1구간 Cap5 정체·T1 플라즈마
-6,12,1.12,112,12,12,360000,1200,shielded,frigate_upgraded,t2_laser,5,mid_early,행성6 — Shielded 전환·T2 레이저
-7,15,1.15,115,13,13,520000,1600,shielded,destroyer,t2_laser,8,mid_early,행성7 — 2구간 Cap8·구축함(120만Cr)
-8,18,1.18,118,15,15,750000,2100,shielded,destroyer,t2_missile,8,mid_early,행성8 — T2 미사일 광물7강
-9,21,1.21,121,16,16,960000,2700,shielded,destroyer,t2_railgun,8,mid,행성9 — T2 레일건 광물8강
-10,25,1.25,125,18,18,1440000,3400,shielded,destroyer_upgraded,t2_plasma,8,mid,행성10 — 구축함 개량(180만Cr)
-11,28,1.28,128,20,20,2000000,4200,heavy,destroyer_upgraded,t3_missile,8,mid,행성11 — Heavy 전환·T3 미사일
-12,31,1.31,131,22,22,2640000,5100,heavy,cruiser,t3_missile,12,mid,행성12 — 3구간 Cap12·순양함(500만Cr)
-13,34,1.34,134,25,25,3750000,6200,heavy,cruiser,t3_railgun,12,mid,행성13 — T3 레일건 광물10강
-14,37,1.37,137,28,28,4760000,7500,heavy,cruiser,t3_plasma,12,mid,행성14 — T3 플라즈마 광물11강
-15,40,1.40,140,30,30,6000000,9000,heavy,cruiser_upgraded,t3_laser,12,late,행성15 — 순양함 개량(750만Cr)·Cap12
-16,44,1.44,144,35,35,8750000,11000,heavy,cruiser_upgraded,t4_plasma,12,late,행성16 — T4 플라즈마
-17,48,1.48,148,40,40,12000000,13500,heavy,cruiser_upgraded,t4_plasma,12,late,행성17 — T4 플라즈마 유지
-18,52,1.52,152,45,45,15750000,16500,heavy,battlecruiser,t4_railgun,15,late,행성18 — 최종 Cap15·순양전함(1500만Cr)
-19,56,1.56,156,50,50,20000000,20000,heavy,battlecruiser,t4_endgame,15,late,행성19 — T4 엔드게임 광물14강
-20,60,1.60,160,60,60,30000000,25000,boss_heavy,battlecruiser_max,t4_endgame,15,late,행성20 — 만렙·레비아탄급·광물15강 Max
+1,1,1.01,101,3,6,30000,150,light,frigate_default,t1_laser,0,early,01_레벨업구조 행성1 아르카디아
+2,3,1.03,103,5,10,60000,250,light,frigate_default,t1_laser,1,early,행성2 베가 전초기지
+3,5,1.05,105,7,14,105000,400,light,frigate_default,t1_missile,2,early,행성3 솔라 항구
+4,7,1.07,107,8,16,160000,650,light,frigate_upgraded,t1_railgun,3,early,행성4 미네르바
+5,9,1.12,112,12,24,360000,900,shielded,frigate_upgraded,t2_laser,4,mid_early,행성5 드라코 성운·Shielded 전환
+6,12,1.09,109,10,20,250000,1200,light,frigate_upgraded,t1_plasma,5,mid_early,행성6 뉴 에덴·튜토리얼 종료
+7,15,1.15,115,13,26,520000,1600,shielded,destroyer,t2_laser,6,mid_early,행성7 아이언 크로스·구축함
+8,18,1.18,118,15,30,750000,2100,shielded,destroyer,t2_missile,7,mid_early,행성8 시리우스
+9,21,1.21,121,16,32,960000,2700,shielded,destroyer,t2_railgun,8,mid,행성9 페르세우스
+10,25,1.25,125,18,36,1440000,3400,shielded,destroyer_upgraded,t2_plasma,8,mid,행성10 크림슨 구역
+11,28,1.28,128,20,40,2000000,4200,heavy,destroyer_upgraded,t3_missile,8,mid,행성11 블러드 필드·Heavy 전환
+12,31,1.31,131,22,44,2640000,5100,heavy,cruiser,t3_missile,9,mid,행성12 헬리오스·순양함
+13,34,1.34,134,25,50,3750000,6200,heavy,cruiser,t3_railgun,10,mid,행성13 타이탄 게이트
+14,37,1.37,137,28,56,4760000,7500,heavy,cruiser,t3_plasma,11,mid,행성14 오메가 스테이션
+15,40,1.40,140,30,60,6000000,9000,heavy,cruiser_upgraded,t3_laser,12,late,행성15 나이트폴
+16,44,1.44,144,35,70,8750000,11000,heavy,cruiser_upgraded,t4_plasma,12,late,행성16 섀도우 넥서스
+17,48,1.48,148,40,80,12000000,13500,heavy,cruiser_upgraded,t4_plasma,12,late,행성17 다크 리프트
+18,52,1.52,152,45,90,15750000,16500,heavy,battlecruiser,t4_railgun,13,late,행성18 어비스
+19,56,1.56,156,50,100,20000000,20000,heavy,battlecruiser,t4_endgame,14,late,행성19 아크파이어 코어
+20,60,1.60,160,60,120,30000000,25000,boss_heavy,battlecruiser_max,t4_endgame,15,late,행성20 이터니티·만렙

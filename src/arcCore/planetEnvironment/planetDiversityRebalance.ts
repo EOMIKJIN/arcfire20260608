@@ -9,6 +9,7 @@ import type { Planet, StarSystem, ZoneType } from '../../types';
 import type { PlanetCoreGaugeView, PlanetCoreRuntime } from '../../store/planetCoreRuntimeStore';
 import { planetCsvBaselineToRuntime, planetCoreRuntimeToGaugeView } from '../../store/planetCoreRuntimeStore';
 import type { PlanetInteractionSignals } from './planetInteractionSignals';
+import { getPlanetTradePortItemIds } from '../../world/planetTradePortDb';
 
 function clamp100(n: number): number {
   return Math.max(0, Math.min(100, Math.round(Number.isFinite(n) ? n : 0)));
@@ -55,7 +56,7 @@ export function computePlanetDiversityIndex(
 
   const fac =
     [planet.hasTradePort, planet.hasShipyard, planet.hasTavern].filter(Boolean).length / 3;
-  const tr = Math.min(1, planet.tradeGoods.length / 14);
+  const tr = Math.min(1, getPlanetTradePortItemIds(planet.id).length / 14);
 
   const structural = clamp100((0.34 * crossN + 0.24 * selfN + 0.2 * fac + 0.1 * tr) * 100) / 100;
 

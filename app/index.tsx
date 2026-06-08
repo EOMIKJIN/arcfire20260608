@@ -20,7 +20,7 @@ import { StarField } from '../src/renderer/StarField';
 import { usePlayerStore } from '../src/store/playerStore';
 import { useMissionStore } from '../src/store/missionStore';
 import { useAccountProfileStore } from '../src/store/accountProfileStore';
-import { getCurrentUser, wasFreshStartThisBoot } from '../src/firebase/auth';
+import { getCurrentUser, wasFreshStartThisBoot, consumeFreshStartForTitle } from '../src/firebase/auth';
 import { tryRestorePlayerFromCloud } from '../src/firebase/firestore';
 import {
   bootstrapPlayerAfterCloudRestore,
@@ -61,6 +61,9 @@ const TITLE_SLOT_HERO_HEIGHT_PX = 112;
 const TITLE_SLOT_PRIMARY_BUTTON_TOP_PX = 558;
 /** 푸터를 화면 하단에 더 붙임 */
 const TITLE_SLOT_FOOTER_BOTTOM_PX = SPACING.xs;
+
+/** 신규 계정: [ 게임 시작 ] 탭 후 인트로(스토리) → 닉네임 — 타이틀에서 자동 이동하지 않음 */
+const NEW_ACCOUNT_INTRO_ROUTE = '/(game)/intro?sceneId=intro01&flow=preNickname' as const;
 
 function resolveTitleAppVersion(): string {
   const nativeVersion = Application.nativeApplicationVersion;
@@ -105,22 +108,29 @@ export default function TitleScreen() {
       setCloudRestorePending(false);
       return;
     }
-    if (cloudCheckStartedRef.current) return;
-    cloudCheckStartedRef.current = true;
-
-    if (wasFreshStartThisBoot()) {
-      router.replace('/(game)/nickname');
-      return;
-    }
 
     let cancelled = false;
-    const uid = getCurrentUser().uid;
-    const hadLocalAccountMeta = Boolean(
-      useAccountProfileStore.getState().profilesByUid[uid]?.nicknameSnapshot,
-    );
 
-    if (!hadLocalAccountMeta) {
-      void (async () => {
+    void (async () => {
+      const skipCloudRestore =
+        wasFreshStartThisBoot() || (await consumeFreshStartForTitle());
+      if (cancelled) return;
+
+      if (skipCloudRestore) {
+        cloudCheckStartedRef.current = true;
+        setCloudRestorePending(false);
+        return;
+      }
+
+      if (cloudCheckStartedRef.current) return;
+      cloudCheckStartedRef.current = true;
+
+      const uid = getCurrentUser().uid;
+      const hadLocalAccountMeta = Boolean(
+        useAccountProfileStore.getState().profilesByUid[uid]?.nicknameSnapshot,
+      );
+
+      if (!hadLocalAccountMeta) {
         const result = await tryRestorePlayerFromCloud(uid, { hadLocalAccountMeta: false });
         if (cancelled) return;
         if (result.kind === 'restored') {
@@ -129,17 +139,11 @@ export default function TitleScreen() {
           await usePlayerStore.getState().persist();
           await persistAccountDataBundle();
           void syncUserDataWithServer();
-          return;
         }
-        router.replace('/(game)/nickname');
-      })();
-      return () => {
-        cancelled = true;
-      };
-    }
+        return;
+      }
 
-    setCloudRestorePending(true);
-    void (async () => {
+      setCloudRestorePending(true);
       const result = await tryRestorePlayerFromCloud(uid, { hadLocalAccountMeta: true });
       if (cancelled) return;
       setCloudRestorePending(false);
@@ -150,10 +154,7 @@ export default function TitleScreen() {
         await usePlayerStore.getState().persist();
         await persistAccountDataBundle();
         void syncUserDataWithServer();
-        return;
       }
-
-      router.replace('/(game)/nickname');
     })();
 
     return () => {
@@ -189,19 +190,8 @@ export default function TitleScreen() {
       return;
     }
     else if (p) router.replace('/(game)/intro?sceneId=intro01');
-    else router.replace('/(game)/nickname');
+    else router.replace(NEW_ACCOUNT_INTRO_ROUTE);
   };
-
-  if (!hydrated) {
-    return (
-      <StageShell routeName="title" background="none" safeAreaBackgroundColor={TITLE_SCREEN_BG}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator color={COLORS.ink_dark} size="large" />
-          <Text style={[styles.version, { marginTop: SPACING.md }]}>불러오는 중...</Text>
-        </View>
-      </StageShell>
-    );
-  }
 
   if (continueFlowActive) {
     return (
@@ -273,9 +263,9 @@ export default function TitleScreen() {
                 style={[styles.btnStart, player ? styles.btnStartWithSave : null]}
                 onPress={handleStart}
                 activeOpacity={0.82}
-                disabled={cloudRestorePending}
+                disabled={!hydrated || cloudRestorePending}
               >
-                {cloudRestorePending ? (
+                {!hydrated || cloudRestorePending ? (
                   <ActivityIndicator color={COLORS.ink_dark} />
                 ) : (
                   <Text style={[styles.btnText, player ? styles.btnTextContinue : null]}>

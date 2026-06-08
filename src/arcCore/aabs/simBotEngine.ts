@@ -7,6 +7,7 @@ import {
   LevelBandTargets_FROM_BALANCE_CSV,
   AiVirtualPlayerDensity_FROM_BALANCE_CSV,
 } from '../../data/balance/generated';
+import { resolveVirtualPlayerDensityPlanetType } from '../balance/balanceTableRegistry';
 import {
   AABS_CRITICAL_DRIFT_RATIO,
   AABS_SIM_BOT_COUNT,
@@ -53,11 +54,18 @@ function expToReachLevel(level: number): number {
   return row ? Number(row.currentExp) : 0;
 }
 
+function densityRowForBot(botId: number) {
+  const planetTypes = ['safe', 'neutral', 'pvp', 'endgame'] as const;
+  const planetType = planetTypes[botId % planetTypes.length]!;
+  const key = resolveVirtualPlayerDensityPlanetType(planetType);
+  return (
+    AiVirtualPlayerDensity_FROM_BALANCE_CSV.find((d) => d.planetType === key)
+    ?? AiVirtualPlayerDensity_FROM_BALANCE_CSV.find((d) => d.planetType === 'default')
+    ?? AiVirtualPlayerDensity_FROM_BALANCE_CSV[0]
+  );
+}
+
 export function runSimBot200Engine(expMul = 1, creditMul = 1): SimBotAggregate {
-  const density = AiVirtualPlayerDensity_FROM_BALANCE_CSV.find((d) => d.planetType === 'default')
-    ?? AiVirtualPlayerDensity_FROM_BALANCE_CSV[0];
-  const combatShare = Number(density?.combatShare ?? 0.45);
-  const tradeShare = Number(density?.tradeShare ?? 0.35);
 
   const bots: SimBotResult[] = [];
   let totalMinutes = 0;
@@ -65,6 +73,9 @@ export function runSimBot200Engine(expMul = 1, creditMul = 1): SimBotAggregate {
   let totalCredits = 0;
 
   for (let i = 0; i < AABS_SIM_BOT_COUNT; i += 1) {
+    const density = densityRowForBot(i);
+    const combatShare = Number(density?.combatShare ?? 0.45);
+    const tradeShare = Number(density?.tradeShare ?? 0.35);
     let archetype = pickArchetype(i * 17 + 3);
     const r = (i * 13) % 100;
     if (r < combatShare * 100) archetype = 'combat';

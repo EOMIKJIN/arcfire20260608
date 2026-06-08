@@ -1,10 +1,22 @@
-import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import { Player } from '../types';
+import {
+  addDoc,
+  battlesCollectionRef,
+  deleteDoc,
+  getDocFromCache,
+  getDocFromServer,
+  getDocs,
+  limit,
+  query,
+  setDoc,
+  userDocRef,
+  usersCollectionRef,
+  where,
+} from './firestoreRefs';
 
-const USERS_COLLECTION = 'users';
 /** 재설치 등 — 로컬·캐시 힌트 있을 때 서버 복구 상한(ms) */
 const CLOUD_PLAYER_RESTORE_MS = 2_000;
-const BATTLES_COLLECTION = 'battles';
 const ADMIN_UID_ALLOWLIST = new Set(
   (process.env.EXPO_PUBLIC_ADMIN_DEVICE_IDS ?? '')
     .split(',')
@@ -35,7 +47,8 @@ export async function upsertUserProfileToFirestore(payload: FirestoreUserProfile
   if (!payload.uid) return;
   const safeNickname = payload.nickname.trim() || 'Unknown';
   try {
-    await firestore().collection(USERS_COLLECTION).doc(payload.uid).set(
+    await setDoc(
+      userDocRef(payload.uid),
       {
         uid: payload.uid,
         nickname: safeNickname,
@@ -55,7 +68,7 @@ export async function upsertUserProfileToFirestore(payload: FirestoreUserProfile
 export async function createBattleResultLogToFirestore(input: FirestoreBattleResultInput): Promise<void> {
   if (!input.uid) return;
   try {
-    await firestore().collection(BATTLES_COLLECTION).add({
+    await addDoc(battlesCollectionRef(), {
       uid: input.uid,
       nickname: input.nickname.trim() || 'Unknown',
       win: input.win,
@@ -70,13 +83,17 @@ export async function createBattleResultLogToFirestore(input: FirestoreBattleRes
   }
 }
 
-function snapExists(snap: FirebaseFirestoreTypes.DocumentSnapshot): boolean {
+function snapExists(snap: { exists: boolean | (() => boolean) }): boolean {
   return typeof snap.exists === 'function' ? snap.exists() : !!snap.exists;
 }
 
-function parsePlayerFromSnap(snap: FirebaseFirestoreTypes.DocumentSnapshot): Player | null {
-  if (!snapExists(snap)) return null;
-  const data = snap.data() as Record<string, unknown> | undefined;
+function parsePlayerFromSnap(snap: unknown): Player | null {
+  const docSnap = snap as {
+    exists: boolean | (() => boolean);
+    data?: () => Record<string, unknown> | undefined;
+  };
+  if (!snapExists(docSnap)) return null;
+  const data = docSnap.data?.();
   if (!data) return null;
   const nested = data.player;
   if (nested && typeof nested === 'object') return nested as unknown as Player;
@@ -84,11 +101,11 @@ function parsePlayerFromSnap(snap: FirebaseFirestoreTypes.DocumentSnapshot): Pla
 }
 
 async function getServerSnapWithTimeout(
-  ref: FirebaseFirestoreTypes.DocumentReference,
+  ref: ReturnType<typeof userDocRef>,
   ms: number,
-): Promise<FirebaseFirestoreTypes.DocumentSnapshot | null> {
+): Promise<Awaited<ReturnType<typeof getDocFromServer>> | null> {
   return Promise.race([
-    ref.get({ source: 'server' }),
+    getDocFromServer(ref),
     new Promise<null>((resolve) => {
       setTimeout(() => resolve(null), ms);
     }),
@@ -115,12 +132,12 @@ export async function tryRestorePlayerFromCloud(
   opts?: CloudRestoreOptions,
 ): Promise<CloudRestoreResult> {
   if (!uid) return { kind: 'no_cloud_account' };
-  const ref = firestore().collection(USERS_COLLECTION).doc(uid);
+  const ref = userDocRef(uid);
   const hadLocalMeta = opts?.hadLocalAccountMeta === true;
   try {
     let cacheHadDoc = false;
     try {
-      const cached = await ref.get({ source: 'cache' });
+      const cached = await getDocFromCache(ref);
       cacheHadDoc = snapExists(cached);
       if (cacheHadDoc) {
         const fromCache = parsePlayerFromSnap(cached);
@@ -155,11 +172,9 @@ export async function checkNicknameAvailable(nickname: string): Promise<boolean>
   const n = nickname.trim();
   if (!n) return false;
   try {
-    const snap = await firestore()
-      .collection(USERS_COLLECTION)
-      .where('nickname', '==', n)
-      .limit(1)
-      .get();
+    const snap = await getDocs(
+      query(usersCollectionRef(), where('nickname', '==', n), limit(1)),
+    );
     return snap.empty;
   } catch (e) {
     // 오프라인에서는 로컬 플레이를 막지 않는다(중복 검증은 온라인 복귀 시 최종 반영).
@@ -178,11 +193,21 @@ export function isAdminDeviceUid(uid: string): boolean {
   return ADMIN_UID_ALLOWLIST.has(uid);
 }
 
+export async function deleteUserCloudSave(uid: string): Promise<void> {
+  if (!uid) return;
+  try {
+    await deleteDoc(userDocRef(uid));
+  } catch (e) {
+    console.warn('[firestore] deleteUserCloudSave failed (offline/queued):', e);
+  }
+}
+
 export async function createUserDocOnNicknameConfirm(uid: string, nickname: string): Promise<void> {
   if (!uid) return;
   const safeNickname = nickname.trim() || 'Unknown';
   try {
-    await firestore().collection(USERS_COLLECTION).doc(uid).set(
+    await setDoc(
+      userDocRef(uid),
       {
         uid,
         nickname: safeNickname,
@@ -206,7 +231,8 @@ export async function incrementInventoryItemOnServer(
   const itemField = `inventory.ledgersByUid.${uid}.balances.${itemId}`;
   const txnsField = `inventory.ledgersByUid.${uid}.txns`;
   try {
-    await firestore().collection(USERS_COLLECTION).doc(uid).set(
+    await setDoc(
+      userDocRef(uid),
       {
         uid,
         [itemField]: firestore.FieldValue.increment(deltaQty),

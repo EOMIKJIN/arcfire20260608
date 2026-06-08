@@ -2,16 +2,17 @@
 // 아크파이어 온라인 - 닉네임 생성 화면
 // ============================================================
 
-import React, { useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
   StyleSheet, ActivityIndicator,
   KeyboardAvoidingView, Platform,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { usePlayerStore } from '../../src/store/playerStore';
+import { useMissionStore } from '../../src/store/missionStore';
 import { checkNicknameAvailable, createUserDocOnNicknameConfirm } from '../../src/firebase/firestore';
 import { getCurrentUser } from '../../src/firebase/auth';
 import { StageShell } from '../../src/stages/StageShell';
@@ -23,10 +24,21 @@ const NICKNAME_REGEX = /^[a-zA-Z0-9가-힣]{2,12}$/;
 export default function NicknameScreen() {
   const [nickname, setNickname] = useState('');
   const [checking, setChecking] = useState(false);
+  const inputRef = useRef<TextInput>(null);
   const createPlayer = usePlayerStore(s => s.createPlayer);
-  const persist      = usePlayerStore(s => s.persist);
+  const setPlayer = usePlayerStore(s => s.setPlayer);
+  const persist = usePlayerStore(s => s.persist);
+  const initMissions = useMissionStore(s => s.initMissions);
 
   const validate = (text: string) => NICKNAME_REGEX.test(text);
+
+  /** 인트로 직후 전환에서는 autoFocus만으로는 키보드가 안 뜨는 경우가 있어 1회 보강 */
+  useFocusEffect(
+    useCallback(() => {
+      const t = setTimeout(() => inputRef.current?.focus(), 200);
+      return () => clearTimeout(t);
+    }, []),
+  );
 
   const handleConfirm = async () => {
     if (!validate(nickname)) {
@@ -50,20 +62,33 @@ export default function NicknameScreen() {
       }
 
       createPlayer(user.uid, nickname);
+      const created = usePlayerStore.getState().player;
+      if (created) {
+        setPlayer({
+          ...created,
+          flags: {
+            ...created.flags,
+            introSeen: true,
+            firstMissionStarted: true,
+          },
+        });
+      }
       bootstrapAccountData({
         uid: user.uid,
         nickname,
-        ownedSkillIds: [],
+        ownedSkillIds: usePlayerStore.getState().player?.skills ?? [],
         playerLevel: 1,
       });
+      initMissions();
       await createUserDocOnNicknameConfirm(user.uid, nickname);
       await persist();
       await persistAccountDataBundle();
       await syncUserDataWithServer();
 
-      router.replace('/(game)/intro?sceneId=intro01');
-    } catch (e: any) {
-      showArcAlert('오류', e?.message ?? '다시 시도해주세요.');
+      router.replace('/(game)/continue-warp?target=planet');
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : '다시 시도해주세요.';
+      showArcAlert('오류', message);
     } finally {
       setChecking(false);
     }
@@ -85,6 +110,7 @@ export default function NicknameScreen() {
 
           <Text style={styles.label}>파일럿 식별명</Text>
           <TextInput
+            ref={inputRef}
             style={styles.input}
             value={nickname}
             onChangeText={setNickname}
@@ -94,6 +120,10 @@ export default function NicknameScreen() {
             autoFocus
             autoCapitalize="none"
             autoCorrect={false}
+            returnKeyType="done"
+            onSubmitEditing={() => {
+              if (validate(nickname) && !checking) void handleConfirm();
+            }}
           />
           <Text style={styles.hint}>
             {nickname.length}/12{'  '}{validate(nickname) ? '✓ 사용 가능' : ''}

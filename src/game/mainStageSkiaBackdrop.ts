@@ -3,11 +3,12 @@ import type { Planet } from '../types';
 import { resolvePlanetBackdropSource } from './planetBackdropAssets';
 
 /**
- * 메인 스테이지 Skia 배경 — 성운 셰이더 레이어와 테이블 배경 이미지 레이어를 독립적으로 켜고 끈다.
+ * 메인 스테이지 Skia 배경 — 베이크 성운 PNG 레이어와 테이블 배경 이미지 레이어를 독립적으로 켜고 끈다.
  * 정본: `planets.csv`의 `mainStageSkiaNebulaLayer` / `mainStageBackdropImageLayer` 및 `backdropImageAssetKey`.
+ * 성운 PNG는 `npm run build:planet-nebula-bakes`로 생성(`planetNebulaBakedAssets`).
  *
- * - 두 레이어 모두 끄면: Skia 쪽은 어두운 단색 필만 채운다(프레임 루프도 성운이 꺼져 있으면 생략 가능).
- * - 두 레이어 모두 켜면: 배경 이미지를 아래에, 성운 셰이더를 위에 합성한다.
+ * - 두 레이어 모두 끄면: Skia 쪽은 어두운 단색 필만 채운다.
+ * - 두 레이어 모두 켜면: 배경 이미지를 아래에, 베이크 성운을 위에 합성한다.
  */
 export type MainStageSkiaBackdropResolved = {
   nebulaShaderEnabled: boolean;

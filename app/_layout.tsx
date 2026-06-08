@@ -8,7 +8,6 @@ import * as NavigationBar from 'expo-navigation-bar';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
-  ActivityIndicator,
   AppState,
   Linking,
   LogBox,
@@ -33,9 +32,10 @@ import { usePlanetCoreRuntimeStore } from '../src/store/planetCoreRuntimeStore';
 import { usePlanetNebulaStore } from '../src/store/planetNebulaStore';
 import { useTavernBoardStore } from '../src/store/tavernBoardStore';
 import { useWorldObjectRuntimeStore } from '../src/store/worldObjectRuntimeStore';
-import { consumeFreshStartFlag, initGuestAuth } from '../src/firebase/auth';
+import { initGuestAuth } from '../src/firebase/auth';
 import { arcCoreHub, attachArcCoreRuntimeCommandBridge } from '../src/arcCore';
 import { ArcMessageModalHost } from '../src/components/ArcMessageModalHost';
+import { LevelUpModalHost } from '../src/components/LevelUpModalHost';
 import { initializeFirebase, logAppOpen } from '../utils/logger';
 import { cancelScheduledUserCloudSync, scheduleUserCloudSync } from '../src/firebase/userCloudSyncSchedule';
 import { resolveAppVersion, syncUserDataWithServer } from '../src/firebase/userDataSync';
@@ -106,12 +106,14 @@ export default function RootLayout() {
 
   useEffect(() => {
     void (async () => {
+      let authUser: Awaited<ReturnType<typeof initGuestAuth>> | null = null;
       try {
         // Table-First: CSV 정적 Map 인덱스 1회 빌드 (`1.arcfire_flowchart.md` §1)
         buildCsvStaticIndexes();
         await useAabsPolicyStore.getState().loadAsync();
         // release에서도 androidId가 확정된 뒤에만 계정/서버 로딩 진행
-        const authUser = await initGuestAuth();
+        const authUserResult = await initGuestAuth();
+        authUser = authUserResult;
         await loadArcExpansionTestOneShotDoneFromStorage();
         await loadLocalPlayer();
         await loadLocalClanWarFoundation();
@@ -130,12 +132,41 @@ export default function RootLayout() {
         await loadLocalNpcCaptainProgress();
         await loadLocalPlanetNebulaProfiles();
         await loadLocalBoard();
-        // 이미지 프리페치는 부팅 게이트와 분리 — 첫 실행 디코드·캐시 미스 시 로딩 화면이 과하게 길어지는 것을 막는다.
-        void runCriticalSessionAssetPrewarm();
+        ensureCaptainsRegistered(NPC_CAPTAINS_FROM_CSV.map(c => c.id));
+        const p = usePlayerStore.getState().player;
+        const session = useUserSessionStore.getState().record;
+        const nickname = p?.nickname ?? null;
+        if (p?.uid) {
+          useClanWarFoundationStore.getState().ensureSoloClan(p.uid, p.nickname, p.political.megaFactionId);
+          ensureAccountLedger(p.uid);
+          ensureAccountProfile(p.uid, p.nickname);
+          ensureSkillDb(p.uid);
+          syncFromPlayerAndSession(p, session);
+          syncOwnedSkills({
+            uid: p.uid,
+            ownedSkillIds: p.skills,
+            playerLevel: p.level,
+            source: 'unknown',
+          });
+        }
+        recordAppLaunch(nickname);
+        await persistUserSession();
+        await persistItemLedger();
+        await persistAccountProfiles();
+        await persistSkillDb();
+      } finally {
+        setBootReady(true);
+      }
+
+      // 네트워크·프리웜은 타이틀 표시 후 백그라운드 — 스플래시 직후 별도 로딩 화면을 두지 않는다.
+      void runCriticalSessionAssetPrewarm();
+      void syncUserDataWithServer();
+      try {
+        if (!authUser) return;
         await withBootTimeout(
           'ensureArcCoreCollectionSeeded',
           12_000,
-          () => ensureArcCoreCollectionSeeded({ uid: authUser.uid }),
+          () => ensureArcCoreCollectionSeeded({ uid: authUser!.uid }),
           undefined,
         );
         const currentVersion = resolveAppVersion();
@@ -164,32 +195,8 @@ export default function RootLayout() {
             playStoreUrl: updatePolicy.playStoreUrl,
           });
         }
-        ensureCaptainsRegistered(NPC_CAPTAINS_FROM_CSV.map(c => c.id));
-        void consumeFreshStartFlag();
-        const p = usePlayerStore.getState().player;
-        const session = useUserSessionStore.getState().record;
-        const nickname = p?.nickname ?? null;
-        if (p?.uid) {
-          useClanWarFoundationStore.getState().ensureSoloClan(p.uid, p.nickname, p.political.megaFactionId);
-          ensureAccountLedger(p.uid);
-          ensureAccountProfile(p.uid, p.nickname);
-          ensureSkillDb(p.uid);
-          syncFromPlayerAndSession(p, session);
-          syncOwnedSkills({
-            uid: p.uid,
-            ownedSkillIds: p.skills,
-            playerLevel: p.level,
-            source: 'unknown',
-          });
-        }
-        recordAppLaunch(nickname);
-        await persistUserSession();
-        await persistItemLedger();
-        await persistAccountProfiles();
-        await persistSkillDb();
-        void syncUserDataWithServer();
-      } finally {
-        setBootReady(true);
+      } catch {
+        /* 부팅 후 백그라운드 — 실패해도 로컬 플레이 진행 */
       }
     })();
   }, [
@@ -311,19 +318,6 @@ export default function RootLayout() {
     return () => sub.remove();
   }, []);
 
-  if (!bootReady) {
-    return (
-      <GestureHandlerRootView style={styles.root}>
-        <StatusBar style="light" backgroundColor="#060A14" />
-        <View style={styles.bootLoading}>
-          <ActivityIndicator color={COLORS.ink_dark} size="large" />
-          <Text style={styles.bootLoadingText}>로딩중...</Text>
-        </View>
-        <ArcMessageModalHost />
-      </GestureHandlerRootView>
-    );
-  }
-
   return (
     <GestureHandlerRootView style={styles.root}>
       <StatusBar style="light" backgroundColor="#060A14" />
@@ -373,6 +367,7 @@ export default function RootLayout() {
         </View>
       ) : null}
       <ArcMessageModalHost />
+      <LevelUpModalHost />
     </GestureHandlerRootView>
   );
 }
@@ -380,16 +375,6 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   /** 전환 중 스택 뒤가 비지 않도록 루트도 게임 배경색 */
   root: { flex: 1, backgroundColor: COLORS.bg_primary },
-  bootLoading: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLORS.bg_primary,
-  },
-  bootLoadingText: {
-    marginTop: 12,
-    color: COLORS.ink_light,
-  },
   updateGateOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(6,10,20,0.76)',

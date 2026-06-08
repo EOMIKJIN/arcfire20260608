@@ -4,7 +4,7 @@
 // - 플레이어층: UI·계정 경험은 그 위에서 상호작용
 // - 서브코어(도메인): AI NPC, AI Planets, 경제(무역소) …
 // - 프로세스(세부 작업): 서브코어 하위 실행 단위
-// - 단일 벽시계 축(gameLoop)으로 모두 구동
+// - 단일 벽시계 축(gameLoop) — 연출·관측은 실시간, 운영·밸런스 재배치는 ArcCoreDailyOpsSubCore 일 1회 배치
 // ============================================================
 
 import { AppState, type AppStateStatus } from 'react-native';

@@ -9,13 +9,18 @@ import {
   getPlanetRecord,
   listPlanetIdsWithTradePort,
   removeTradePortItem,
+  replaceTradePortCatalog,
   resetTradePortItemOverrides,
 } from '../../world/planetTradePortDb';
+import { runPlayScenarioEconomyPass } from '../balance/runPlayScenarioEconomyPass';
+import { settleArcTransportDwellTrade } from '../economy/runArcTransportTradePass';
+import { runTradeRouteMarketPass } from '../economy/runTradeRouteMarketPass';
+import { useArcCoreTempBankStore } from '../../store/arcCoreTempBankStore';
 
 /**
  * 경제 서브코어 — 무역소 런타임 진열·오버레이의 단일 실행 주체.
- * - 상위(관리자·정책·허브)는 `economy_trade_port_bulk` 또는 `dispatchEconomyTradePortBulk` 만 발행.
- * - 실제 행성별 분배·적용은 이 클래스가 `planetTradePortDb` 에 위임한다.
+ * - `01_레벨업구조` 시나리오: `runPlayScenarioEconomyPass` → 무역소 카탈로그·경제 메타
+ * - 상위는 `economy_trade_port_bulk` 또는 `dispatchEconomyTradePortBulk` 만 발행.
  */
 export class AiEconomySubCore extends BaseArcSubCore {
   private unsubCommands: (() => void) | null = null;
@@ -26,6 +31,9 @@ export class AiEconomySubCore extends BaseArcSubCore {
 
   override onBoot(): void {
     this.unsubCommands = subscribeArcCoreCommands((cmd) => this.onArcCoreCommand(cmd));
+    void useArcCoreTempBankStore.getState().hydrate().then(() => {
+      runPlayScenarioEconomyPass(true);
+    });
   }
 
   override onShutdown(): void {
@@ -34,6 +42,10 @@ export class AiEconomySubCore extends BaseArcSubCore {
   }
 
   private onArcCoreCommand(cmd: ArcCoreCommand): void {
+    if (cmd.type === 'economy_transport_dwell_settled') {
+      settleArcTransportDwellTrade(cmd.shipId, cmd.planetId);
+      return;
+    }
     if (cmd.type !== 'economy_trade_port_bulk') return;
     const planetIds = this.resolveTargetPlanetIds(cmd.scope);
     if (planetIds.length === 0) return;
@@ -48,6 +60,12 @@ export class AiEconomySubCore extends BaseArcSubCore {
     if (cmd.action === 'reset_overrides') {
       for (const planetId of planetIds) {
         resetTradePortItemOverrides(planetId);
+      }
+      return;
+    }
+    if (cmd.action === 'set_catalog') {
+      for (const planetId of planetIds) {
+        replaceTradePortCatalog(planetId, cmd.itemIds);
       }
       return;
     }

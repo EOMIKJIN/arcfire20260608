@@ -31,7 +31,11 @@ export type EconomyTradePortBulkScope =
   | { kind: 'all_trade_ports' }
   | { kind: 'planet_ids'; planetIds: readonly string[] };
 
-export type EconomyTradePortBulkAction = 'add_items' | 'remove_items' | 'reset_overrides';
+export type EconomyTradePortBulkAction =
+  | 'add_items'
+  | 'remove_items'
+  | 'reset_overrides'
+  | 'set_catalog';
 
 export type ArcCoreCommand =
   | { type: 'npc_gather_planet'; planetId: string; meta?: ArcCoreCommandMeta }
@@ -56,6 +60,12 @@ export type ArcCoreCommand =
       scope: EconomyTradePortBulkScope;
       /** `add_items` / `remove_items` 에만 사용. `reset_overrides` 에서는 무시 */
       itemIds: readonly string[];
+      meta?: ArcCoreCommandMeta;
+    }
+  | {
+      type: 'economy_transport_dwell_settled';
+      shipId: string;
+      planetId: string;
       meta?: ArcCoreCommandMeta;
     };
 

@@ -4,25 +4,10 @@
 
 import type { PlayerShip, WeaponData } from '../types';
 import {
-  CAPITAL_WEAPON_LIST_FROM_CSV,
   NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV,
   NPC_CAPITAL_SHIPS_FROM_CSV,
 } from '../data/generated';
-
-function weaponFromCapitalWeaponId(weaponId: string): WeaponData | null {
-  const w = CAPITAL_WEAPON_LIST_FROM_CSV[weaponId];
-  if (!w) return null;
-  const sides = Math.max(6, Math.min(14, w.damage + 4));
-  return {
-    id: w.id,
-    catalogId: w.id,
-    name: w.name,
-    type: w.kind,
-    attackBonus: Math.max(0, Math.floor(w.damage * 0.8)),
-    range: Math.min(900, Math.max(420, Math.round(w.rangePx * 3.2))),
-    damageDice: { count: 1, sides, bonus: 0 },
-  };
-}
+import { buildWeaponDataFromCapitalWeaponId } from './capitalWeaponRange';
 
 /**
  * `npc_ai_ships.csv` id 기준으로 현재 함선 전투 스냅샷·무장·표시명·포트레이트를 덮어쓴다.
@@ -37,11 +22,11 @@ export function applyNpcCapitalShipToPlayerShip(
   const cfg = NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV[npcCapitalShipId];
   const weapons: WeaponData[] = [];
   if (cfg?.laserWeaponId) {
-    const lw = weaponFromCapitalWeaponId(cfg.laserWeaponId);
+    const lw = buildWeaponDataFromCapitalWeaponId(cfg.laserWeaponId);
     if (lw) weapons.push(lw);
   }
   if (cfg?.missileWeaponId) {
-    const mw = weaponFromCapitalWeaponId(cfg.missileWeaponId);
+    const mw = buildWeaponDataFromCapitalWeaponId(cfg.missileWeaponId);
     if (mw) weapons.push(mw);
   }
   // 전함 교체 시에도 현재 계정 무기 로드아웃(공용)을 우선 유지한다.

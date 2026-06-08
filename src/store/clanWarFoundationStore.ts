@@ -25,6 +25,7 @@ import {
   resetClanWarFoundationDb,
   saveClanWarFoundationDb,
 } from '../world/clanWarFoundationDb';
+import { seedPlanetOccupationHoldsFromBalance } from '../arcCore/balance/seedPlanetOccupationFromBalance';
 
 interface ClanWarFoundationState {
   hydrated: boolean;
@@ -102,12 +103,23 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
   loadLocalClanWarFoundation: async () => {
     try {
       const loaded = await loadClanWarFoundationDb();
+      const seeded = seedPlanetOccupationHoldsFromBalance(loaded.planetHolds);
+      const nextClans = { ...loaded.clans, ...seeded.clans };
+      const holdsChanged = Object.keys(seeded.holds).length > Object.keys(loaded.planetHolds).length;
       set({
-        clans: loaded.clans,
-        planetHolds: loaded.planetHolds,
+        clans: nextClans,
+        planetHolds: seeded.holds,
         deployments: loaded.deployments,
         operations: loaded.operations,
       });
+      if (holdsChanged) {
+        await saveClanWarFoundationDb({
+          clans: nextClans,
+          planetHolds: seeded.holds,
+          deployments: loaded.deployments,
+          operations: loaded.operations,
+        });
+      }
     } finally {
       set({ hydrated: true });
     }

@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getWorldExpansionTimingPolicy } from './balance/balanceTableRegistry';
 
 const ONE_SHOT_DONE_KEY = 'arcfire_arc_expansion_test_one_shot_done_v1';
-const PROD_INTERVAL_SEC = 24 * 60 * 60;
+const PROD_INTERVAL_SEC = getWorldExpansionTimingPolicy().prodUnlockIntervalSec;
 
 let oneShotDone = false;
 

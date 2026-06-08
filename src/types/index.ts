@@ -14,6 +14,25 @@ export interface PlayerHangarShip {
   acquiredAt: number;
 }
 
+/** 파일럿 레벨 연동 전투 숙련도 — `arcfire_player_v1` 영속 */
+export interface PlayerCombatProficiency {
+  combatLevel: number;
+  proficiencyMultiplier: number;
+  operatingEfficiencyPct: number;
+  updatedAt: number;
+}
+
+/** 레벨업 모달 전용 스냅샷 — 비영속 */
+export interface LevelUpSummary {
+  previousLevel: number;
+  newLevel: number;
+  skillPointsGained: number;
+  expRemainingForNextLevel: number;
+  nextLevelThresholdExp: number;
+  proficiencyBefore: PlayerCombatProficiency;
+  proficiencyAfter: PlayerCombatProficiency;
+}
+
 export interface Player {
   uid: string;
   nickname: string;
@@ -48,6 +67,8 @@ export interface Player {
    * 정본은 `arcfire_player_v1`의 `player` 레코드.
    */
   inventorySlots: (CargoItem | null)[];
+  /** 계정 레벨 연동 전투 숙련도 */
+  combatProficiency: PlayerCombatProficiency;
   createdAt: number;
 }
 
@@ -247,6 +268,7 @@ export interface WeaponData {
   name: string;
   damageDice: DiceDef;
   attackBonus: number;
+  /** `weapon_list.csv` `사거리px` — px 단위 정본 */
   range: number;
   type: 'laser' | 'missile' | 'cannon' | 'emp';
 }

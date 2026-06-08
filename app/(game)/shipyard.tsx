@@ -20,6 +20,7 @@ import {
 } from '../../src/data/generated';
 import { resolveNpcCapitalShipPortraitSource } from '../../src/game/npcCapitalShipPortraitAssets';
 import { applyNpcCapitalShipToPlayerShip } from '../../src/game/applyNpcCapitalShipPurchase';
+import { buildWeaponDataFromCapitalRow } from '../../src/game/capitalWeaponRange';
 import { PLAYER_INVENTORY_SLOT_COUNT } from '../../src/game/playerInventory';
 import { SHIPYARD_EQUIP_SLOT_DEFS } from '../../src/game/shipyardEquipSlots';
 import { TRADE_GOODS } from '../../src/data/goods';
@@ -35,6 +36,8 @@ import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
 import { resolveShipFinalStatResult } from '../../src/ship/shipStatPipeline';
+import { resolveMineralUpgradeMaxLevel } from '../../src/game/shipyardMineralUpgrade/mineralUpgradeModel';
+import { normalizePlayerCombatProficiency } from '../../src/combat/playerCombatProficiency';
 import {
   normalizeInventorySlots,
 } from '../../src/game/playerInventory';
@@ -43,6 +46,11 @@ import {
   resolveWeaponItemDef,
   weaponIdFromWeaponItemId,
 } from '../../src/game/weaponItemBridge';
+import {
+  checkCapitalHullPurchase,
+  listCapitalHullPurchasePolicyRows,
+  resolveNpcShipIdForHullTier,
+} from '../../src/arcCore/balance/capitalHullPurchaseFromBalance';
 
 const REPAIR_COST_PER_HP = 5;
 const SHIELD_RECHARGE_COST = 200;
@@ -61,6 +69,7 @@ export default function ShipyardScreen() {
   const loadLocalPlayer = usePlayerStore(s => s.loadLocalPlayer);
   const updateShip = usePlayerStore(s => s.updateShip);
   const spendCredits = usePlayerStore(s => s.spendCredits);
+  const addHangarShipFromNpcPurchase = usePlayerStore(s => s.addHangarShipFromNpcPurchase);
   const persist = usePlayerStore(s => s.persist);
   const [tab, setTab] = useState<'status' | 'capital' | 'upgrade' | 'hangar'>('status');
 
@@ -79,6 +88,14 @@ export default function ShipyardScreen() {
     if (!player) return null;
     return resolveShipFinalStatResult(player.ship);
   }, [player]);
+  const combatProficiency = useMemo(
+    () => (player ? normalizePlayerCombatProficiency(player.combatProficiency, player.level) : null),
+    [player],
+  );
+  const mineralUpgradeCap = useMemo(
+    () => (combatProficiency ? resolveMineralUpgradeMaxLevel(combatProficiency.combatLevel) : 0),
+    [combatProficiency],
+  );
   const safeBack = useSafeRouterBack();
   usePlanetSubStageMemory('shipyard', () => {
     setTab('status');
@@ -154,6 +171,46 @@ export default function ShipyardScreen() {
     updateShip(applied.ship);
     await persist();
     showArcAlert('전함 선택', '현재 운항 전함으로 설정했습니다.');
+  };
+
+  const handlePurchaseHullTier = async (hullTierKey: string) => {
+    const row = listCapitalHullPurchasePolicyRows().find((r) => r.hullTierKey === hullTierKey);
+    if (!row) return;
+    const price = Number(row.purchaseCredits) || 0;
+    const check = checkCapitalHullPurchase(hullTierKey, player.level, credits);
+    if (!check.ok) {
+      showArcAlert('구매 불가', check.reasonKo ?? '조건을 충족하지 못했습니다.');
+      return;
+    }
+    const npcShipId = resolveNpcShipIdForHullTier(hullTierKey);
+    if (!npcShipId) {
+      showArcAlert('구매 불가', '해당 등급 전함 데이터가 없습니다.');
+      return;
+    }
+    showArcAlert(
+      '함선 구매',
+      `${row.labelKo}\n가격: ${price.toLocaleString()} cr`,
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '구매',
+          onPress: async () => {
+            if (price > 0 && !spendCredits(price)) {
+              showArcAlert('크레딧 부족', '크레딧이 부족합니다.');
+              return;
+            }
+            if (!addHangarShipFromNpcPurchase(npcShipId)) {
+              showArcAlert('격납고 가득참', '격납고 슬롯이 부족합니다.');
+              return;
+            }
+            const applied = applyNpcCapitalShipToPlayerShip(ship, npcShipId);
+            if (applied.ok) updateShip(applied.ship);
+            await persist();
+            showArcAlert('구매 완료', `${row.labelKo}이(가) 격납고에 인도되었습니다.`);
+          },
+        },
+      ],
+    );
   };
 
   const handleReleaseCurrentShip = async () => {
@@ -265,6 +322,16 @@ export default function ShipyardScreen() {
         {/* 임시 개발 기준: 첫 탭 현황은 항상 현재 탑승 전함(player.ship) 기준으로 표시한다. */}
         <Text style={styles.statsTitle}>— [현재탑승전함] 함선 제원 —</Text>
         <StatRow label="함선명" value={ship.name} />
+        {combatProficiency ? (
+          <>
+            <StatRow label="전투 등급" value={`Lv.${combatProficiency.combatLevel}`} />
+            <StatRow label="운용 효율" value={`${combatProficiency.operatingEfficiencyPct}%`} />
+            <StatRow
+              label="숙련 계수"
+              value={`×${combatProficiency.proficiencyMultiplier.toFixed(3)}`}
+            />
+          </>
+        ) : null}
         <StatRow label="내구도" value={`${finalStats.maxHp}`} />
         <StatRow label="실드" value={`${finalStats.maxShield}`} />
         <StatRow label="속도" value={`${finalStats.speed}`} />
@@ -360,10 +427,37 @@ export default function ShipyardScreen() {
         )}
 
         {tab === 'upgrade' && (
-          <View style={styles.comingSoon}>
-            <Text style={styles.comingSoonIcon}>🔩</Text>
-            <Text style={styles.comingSoonText}>업그레이드 시스템</Text>
-            <Text style={styles.comingSoonSub}>추후 업데이트 예정</Text>
+          <View style={styles.hangarSection}>
+            <Text style={styles.hangarCapLine}>
+              전투 Lv.{combatProficiency?.combatLevel ?? 1} · 상한 Lv.{mineralUpgradeCap}
+            </Text>
+            <Text style={styles.hangarHeading}>— 함선 체급 구매 —</Text>
+            <Text style={styles.hangarEmptySub}>
+              `capital_hull_purchase_policy.csv` 기준 · 파일럿 Lv·크레딧 충족 시 구매
+            </Text>
+            {listCapitalHullPurchasePolicyRows()
+              .filter((row) => row.hullTierKey !== 'frigate_default')
+              .map((row) => {
+                const price = Number(row.purchaseCredits) || 0;
+                const minLv = Number(row.requiredPilotLevelMin) || 1;
+                const canBuy = checkCapitalHullPurchase(row.hullTierKey, player.level, credits).ok;
+                return (
+                  <TouchableOpacity
+                    key={row.hullTierKey}
+                    style={[styles.hangarRow, !canBuy && styles.serviceBtnDisabled]}
+                    onPress={() => void handlePurchaseHullTier(row.hullTierKey)}
+                    disabled={!canBuy}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.serviceBtnTitle}>{row.labelKo}</Text>
+                      <Text style={styles.serviceBtnSub}>
+                        Lv.{minLv}+ · {price.toLocaleString()} cr
+                      </Text>
+                    </View>
+                    <Text style={styles.serviceBtnAction}>{canBuy ? '[ 구매 ]' : '[ 잠김 ]'}</Text>
+                  </TouchableOpacity>
+                );
+              })}
           </View>
         )}
 
@@ -469,18 +563,7 @@ function ShipyardInventoryGrid({
       .map((itemDefId) => weaponIdFromSlotItemDef(itemDefId))
       .map((weaponId) => CAPITAL_WEAPON_LIST_FROM_CSV[weaponId])
       .filter((w): w is NonNullable<typeof w> => Boolean(w))
-      .map((w) => {
-        const sides = Math.max(6, Math.min(14, w.damage + 4));
-        return {
-          id: w.id,
-          catalogId: w.id,
-          name: w.name,
-          type: w.kind,
-          attackBonus: Math.max(0, Math.floor(w.damage * 0.8)),
-          range: Math.min(900, Math.max(420, Math.round(w.rangePx * 3.2))),
-          damageDice: { count: 1, sides, bonus: 0 },
-        };
-      });
+      .map((w) => buildWeaponDataFromCapitalRow(w));
   };
 
   const equipWeaponFromInventory = async (itemId: string) => {
@@ -488,17 +571,7 @@ function ShipyardInventoryGrid({
     if (!weaponId) return;
     const row = CAPITAL_WEAPON_LIST_FROM_CSV[weaponId];
     const weapon = ship.weapons.find((w) => w.id === weaponId)
-      ?? (row
-        ? {
-          id: row.id,
-          catalogId: row.id,
-          name: row.name,
-          type: row.kind,
-          attackBonus: Math.max(0, Math.floor(row.damage * 0.8)),
-          range: Math.min(900, Math.max(420, Math.round(row.rangePx * 3.2))),
-          damageDice: { count: 1, sides: Math.max(6, Math.min(14, row.damage + 4)), bonus: 0 },
-        }
-        : null);
+      ?? (row ? buildWeaponDataFromCapitalRow(row) : null);
     if (!weapon) {
       showArcAlert('장착 실패', '무기 테이블 데이터를 찾을 수 없습니다.');
       return;
@@ -605,18 +678,7 @@ function ShipyardEquipSlotsBlock({
       .map((itemDefId) => weaponIdFromSlotItemDef(itemDefId))
       .map((weaponId) => CAPITAL_WEAPON_LIST_FROM_CSV[weaponId])
       .filter((w): w is NonNullable<typeof w> => Boolean(w))
-      .map((w) => {
-        const sides = Math.max(6, Math.min(14, w.damage + 4));
-        return {
-          id: w.id,
-          catalogId: w.id,
-          name: w.name,
-          type: w.kind,
-          attackBonus: Math.max(0, Math.floor(w.damage * 0.8)),
-          range: Math.min(900, Math.max(420, Math.round(w.rangePx * 3.2))),
-          damageDice: { count: 1, sides, bonus: 0 },
-        };
-      });
+      .map((w) => buildWeaponDataFromCapitalRow(w));
   };
   const equipCapacity = Math.max(
     0,
@@ -952,6 +1014,13 @@ const styles = StyleSheet.create({
   hangarSection: {
     marginHorizontal: SPACING.md,
     marginTop: SPACING.sm,
+  },
+  hangarCapLine: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    color: COLORS.gold,
+    textAlign: 'center',
+    marginBottom: SPACING.sm,
   },
   hangarHeading: {
     fontFamily: FONTS.mono,

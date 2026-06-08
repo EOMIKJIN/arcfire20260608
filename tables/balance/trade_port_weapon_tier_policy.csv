@@ -1,0 +1,16 @@
+tierKey,tierRank,maxWeaponRequiredLevel,weaponFamilyKindFilter,notesKo
+t1_laser,1,6,laser,T1 레이저
+t1_missile,1,6,missile,T1 미사일
+t1_railgun,1,6,railgun,T1 레일건
+t1_plasma,1,6,plasma,T1 플라즈마
+t2_laser,2,12,laser,T2 레이저
+t2_missile,2,12,missile,T2 미사일
+t2_railgun,2,12,railgun,T2 레일건
+t2_plasma,2,12,plasma,T2 플라즈마
+t3_laser,3,24,laser,T3 레이저
+t3_missile,3,24,missile,T3 미사일
+t3_railgun,3,24,railgun,T3 레일건
+t3_plasma,3,24,plasma,T3 플라즈마
+t4_plasma,4,60,plasma,T4 플라즈마
+t4_railgun,4,60,railgun,T4 레일건
+t4_endgame,4,60,*,T4 엔드게임 전 계열

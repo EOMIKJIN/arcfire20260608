@@ -1,32 +1,29 @@
 import type { ItemDef, TradeGood } from '../types';
 import { CAPITAL_WEAPON_LIST_FROM_CSV } from '../data/generated';
+import { resolveIntegratedWeaponTradePrice } from '../economy/integratedWeaponTradePricing';
 import { getCapitalWeaponRow } from './capitalWeaponRegistry';
+import {
+  isWeaponItemId,
+  weaponIdFromWeaponItemId,
+  weaponItemIdFromWeaponId,
+} from './weaponItemId';
 
-const WEAPON_ITEM_ID_PREFIX = 'weapon_item_';
+export {
+  isWeaponItemId,
+  weaponIdFromWeaponItemId,
+  weaponItemIdFromWeaponId,
+  WEAPON_ITEM_ID_PREFIX,
+} from './weaponItemId';
 
-export function weaponItemIdFromWeaponId(weaponId: string): string {
-  return `${WEAPON_ITEM_ID_PREFIX}${weaponId}`;
-}
-
-export function weaponIdFromWeaponItemId(itemId: string): string | null {
-  if (!itemId.startsWith(WEAPON_ITEM_ID_PREFIX)) return null;
-  const weaponId = itemId.slice(WEAPON_ITEM_ID_PREFIX.length).trim();
-  return weaponId.length > 0 ? weaponId : null;
-}
-
-export function isWeaponItemId(itemId: string): boolean {
-  const weaponId = weaponIdFromWeaponItemId(itemId);
-  return Boolean(weaponId && CAPITAL_WEAPON_LIST_FROM_CSV[weaponId]);
-}
-
-export function resolveWeaponItemDef(itemId: string): ItemDef | null {
+export function resolveWeaponItemDef(
+  itemId: string,
+  cumulativeCredits = 0,
+): ItemDef | null {
   const weaponId = weaponIdFromWeaponItemId(itemId);
   if (!weaponId) return null;
   const row = getCapitalWeaponRow(weaponId);
   if (!row) return null;
-  const basePrice = row.purchasePrice > 0
-    ? row.purchasePrice
-    : Math.max(600, Math.floor(row.damage * 280 + row.rangePx * 2 + row.projectileSpeedPxPerSec * 0.6));
+  const basePrice = resolveIntegratedWeaponTradePrice(weaponId, cumulativeCredits);
   return {
     id: itemId,
     name: `${row.name} 모듈`,
@@ -56,8 +53,8 @@ export function resolveWeaponItemDef(itemId: string): ItemDef | null {
   };
 }
 
-export function resolveWeaponTradeGood(itemId: string): TradeGood | null {
-  const def = resolveWeaponItemDef(itemId);
+export function resolveWeaponTradeGood(itemId: string, cumulativeCredits = 0): TradeGood | null {
+  const def = resolveWeaponItemDef(itemId, cumulativeCredits);
   if (!def) return null;
   return {
     id: def.id,

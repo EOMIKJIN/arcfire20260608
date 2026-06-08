@@ -1,6 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
-
-const ARCCORE_COLLECTION = 'arccore';
+import { arccoreDocRef, getDoc, setDoc } from './firestoreRefs';
 
 /**
  * 아크코어 제어 컬렉션 기본 문서를 시드한다.
@@ -14,15 +13,15 @@ export async function ensureArcCoreCollectionSeeded(input: {
   if (!uid) return;
 
   try {
-    const col = firestore().collection(ARCCORE_COLLECTION);
-    const configRef = col.doc('config');
-    const existingConfig = await configRef.get();
+    const configRef = arccoreDocRef('config');
+    const existingConfig = await getDoc(configRef);
     // 관리자가 이미 만든 arccore를 사용: 앱 실행마다 재시드하지 않는다.
     if (existingConfig.exists()) return;
 
     const now = firestore.FieldValue.serverTimestamp();
     await Promise.all([
-      configRef.set(
+      setDoc(
+        configRef,
         {
           enabled: true,
           safeMode: false,
@@ -32,18 +31,20 @@ export async function ensureArcCoreCollectionSeeded(input: {
         },
         { merge: true },
       ),
-      col.doc('schedule').set(
+      setDoc(
+        arccoreDocRef('schedule'),
         {
           dailyCycleEnabled: true,
           timeZone: 'UTC',
-          runHour: 0,
+          runHour: 12,
           runMinute: 0,
           updatedBy: uid,
           updatedAt: now,
         },
         { merge: true },
       ),
-      col.doc('subcores').set(
+      setDoc(
+        arccoreDocRef('subcores'),
         {
           world_expansion_subcore: { enabled: true, timeScale: 1 },
           arc_news_board_subcore: { enabled: true, timeScale: 1 },

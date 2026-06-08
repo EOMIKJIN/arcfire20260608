@@ -2,7 +2,7 @@
 // 아크파이어 온라인 - 연구소 화면
 // ============================================================
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet,
   ScrollView,
@@ -11,7 +11,7 @@ import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { usePlayerStore } from '../../src/store/playerStore';
 import { SKILLS, SKILL_CATEGORIES } from '../../src/data/skills';
-import { SkillCategory } from '../../src/types';
+import { Skill, SkillCategory } from '../../src/types';
 import { canLearnSkill } from '../../src/engine/SkillEngine';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
@@ -19,11 +19,8 @@ import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrame
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
+import { SkillTreeBoard } from '../../src/components/skillTree/SkillTreeBoard';
 
-const SKILL_DETAIL_WIP_ALERT = {
-  title: '준비 중',
-  message: '스킬 상세·습득 화면은 아직 미완성입니다.\n추후 업데이트에서 제공됩니다.',
-};
 /** 메인스테이지 기준 하단 공백과 동기 */
 const SKILLTREE_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
 
@@ -38,158 +35,129 @@ export default function SkillTreeScreen() {
     setSelectedCategory('combat');
   });
 
+  const handleSkillPress = useCallback((skill: Skill) => {
+    if (!player) return;
+    const learned = player.skills.includes(skill.id);
+    const canLearn = canLearnSkill(skill, player);
+    const prereqLearned = skill.prerequisiteIds.every((id) => player.skills.includes(id));
+
+    if (learned) {
+      showArcAlert(
+        `${skill.name} ✓`,
+        `${skill.description}\n\n${skill.effect.description}`,
+      );
+      return;
+    }
+    if (canLearn) {
+      showArcAlert(
+        `${skill.name} 습득`,
+        `${skill.description}\n\n${skill.effect.description}\n\n스킬 포인트 1을 사용해 습득하시겠습니까? (SP ${player.skillPoints})`,
+        [
+          { text: '취소', style: 'cancel' },
+          {
+            text: '습득',
+            onPress: async () => {
+              learnSkill(skill.id);
+              await persist();
+            },
+          },
+        ],
+      );
+      return;
+    }
+    if (!prereqLearned) {
+      const names = skill.prerequisiteIds.map((id) => SKILLS[id]?.name ?? id).join(', ');
+      showArcAlert('선행 스킬 필요', `먼저 습득: ${names}`);
+      return;
+    }
+    if (player.level < skill.levelRequired) {
+      showArcAlert('레벨 부족', `파일럿 Lv.${skill.levelRequired} 이상 필요합니다.`);
+      return;
+    }
+    if (player.skillPoints <= 0) {
+      showArcAlert('SP 부족', '스킬 포인트가 부족합니다.');
+      return;
+    }
+    showArcAlert(skill.name, skill.description);
+  }, [learnSkill, persist, player]);
+
   if (!player) return null;
 
   const categories = Object.entries(SKILL_CATEGORIES) as [SkillCategory, { name: string; icon: string }][];
-  const filteredSkills = Object.values(SKILLS).filter(s => s.category === selectedCategory);
 
   return (
     <StageShell routeName="skilltree" background="none" edges={['bottom']}>
-      <View style={{ flex: 1 }}>
-      {/* 헤더 */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={safeBack}
-          style={styles.backBtn}
-          hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-        >
-          <Text style={styles.backText}>◀ 나가기</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>연구소</Text>
-        <View style={styles.spBadge}>
-          <Text style={styles.spText}>SP {player.skillPoints}</Text>
-        </View>
-      </View>
-
-      {/* 카테고리 탭 */}
-      <View style={styles.tabs}>
-        {categories.map(([cat, info]) => (
+      <View style={styles.root}>
+        <View style={styles.header}>
           <TouchableOpacity
-            key={cat}
-            style={[styles.tab, selectedCategory === cat && styles.tabActive]}
-            onPress={() => setSelectedCategory(cat)}
+            onPress={safeBack}
+            style={styles.backBtn}
+            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
           >
-            <Text style={[styles.tabText, selectedCategory === cat && styles.tabTextActive]}>
-              [{` ${info.name} `}]
-            </Text>
+            <Text style={styles.backText}>◀ 나가기</Text>
           </TouchableOpacity>
-        ))}
-      </View>
+          <Text style={styles.headerTitle}>연구소</Text>
+          <View style={styles.spBadge}>
+            <Text style={styles.spText}>SP {player.skillPoints}</Text>
+          </View>
+        </View>
 
-      {/* 스킬 목록 */}
-      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        {[1, 2, 3, 4].map(tier => {
-          const tierSkills = filteredSkills.filter(s => s.tier === tier);
-          if (!tierSkills.length) return null;
-          return (
-            <View key={tier} style={styles.tierBlock}>
-              <Text style={styles.tierLabel}>— Tier {tier} —</Text>
-              {tierSkills.map(skill => {
-                const learned = player.skills.includes(skill.id);
-                const canLearn = canLearnSkill(skill, player);
-                const prereqLearned = skill.prerequisiteIds.every(id => player.skills.includes(id));
+        <View style={styles.tabs}>
+          {categories.map(([cat, info]) => (
+            <TouchableOpacity
+              key={cat}
+              style={[styles.tab, selectedCategory === cat && styles.tabActive]}
+              onPress={() => setSelectedCategory(cat)}
+            >
+              <Text style={[styles.tabText, selectedCategory === cat && styles.tabTextActive]}>
+                [{` ${info.name} `}]
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-                return (
-                  <TouchableOpacity
-                    key={skill.id}
-                    style={[
-                      styles.skillCard,
-                      learned && styles.skillCardLearned,
-                      canLearn && !learned && styles.skillCardAvailable,
-                      !prereqLearned && styles.skillCardLocked,
-                    ]}
-                    onPress={() => {
-                      if (learned) {
-                        showArcAlert('습득 완료', '이미 보유한 스킬입니다.');
-                        return;
-                      }
-                      if (canLearn) {
-                        showArcAlert(
-                          `${skill.name} 습득`,
-                          `스킬 포인트 1을 사용해 습득하시겠습니까?\n현재 SP: ${player.skillPoints}`,
-                          [
-                            { text: '취소', style: 'cancel' },
-                            {
-                              text: '습득',
-                              onPress: async () => {
-                                learnSkill(skill.id);
-                                await persist();
-                              },
-                            },
-                          ],
-                        );
-                        return;
-                      }
-                      showArcAlert(SKILL_DETAIL_WIP_ALERT.title, SKILL_DETAIL_WIP_ALERT.message, [
-                        { text: '확인', style: 'default' },
-                      ]);
-                    }}
-                  >
-                    <View style={styles.skillHeader}>
-                      <Text style={styles.skillIcon}>{skill.icon}</Text>
-                      <View style={styles.skillInfo}>
-                        <Text style={[styles.skillName, learned && styles.skillNameLearned]}>
-                          {skill.name}
-                          {learned ? ' ✓' : ''}
-                        </Text>
-                        <Text style={styles.skillReq}>
-                          Lv.{skill.levelRequired} 필요
-                          {skill.prerequisiteIds.length > 0
-                            ? `  ·  선행: ${skill.prerequisiteIds.map(id => SKILLS[id]?.name).join(', ')}`
-                            : ''}
-                        </Text>
-                      </View>
-                      <Text style={styles.skillType}>
-                        {skill.effect.type === 'active' ? '[액티브]' : '[패시브]'}
-                      </Text>
-                    </View>
-                    <Text style={styles.skillDesc}>{skill.description}</Text>
-                    <Text style={styles.skillStateLine}>
-                      {learned
-                        ? '상태: 습득됨'
-                        : canLearn
-                          ? '상태: 활성화(습득 가능)'
-                          : !prereqLearned
-                            ? '상태: 선행 스킬 필요'
-                            : player.level < skill.levelRequired
-                              ? `상태: 레벨 ${skill.levelRequired} 필요`
-                              : '상태: 스킬 포인트 부족'}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          );
-        })}
-        <View style={{ height: SKILLTREE_BOTTOM_STAGE_RESERVE_PX }} />
-      </ScrollView>
-      <StageLoadingOverlay visible={!stageFrameReady} />
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.treePanel}>
+            <SkillTreeBoard
+              category={selectedCategory}
+              player={player}
+              onSkillPress={handleSkillPress}
+            />
+          </View>
+          <View style={{ height: SKILLTREE_BOTTOM_STAGE_RESERVE_PX }} />
+        </ScrollView>
+        <StageLoadingOverlay visible={!stageFrameReady} />
       </View>
     </StageShell>
   );
 }
 
 const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: '#0B1020' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.bg_panel,
+    borderBottomColor: 'rgba(148, 163, 184, 0.25)',
+    backgroundColor: 'rgba(15, 23, 42, 0.95)',
   },
   backBtn: { paddingVertical: SPACING.xs, paddingHorizontal: SPACING.sm, marginRight: SPACING.sm },
-  backText: { fontFamily: FONTS.mono, fontSize: FONTS.size.md, color: COLORS.ink_mid },
+  backText: { fontFamily: FONTS.mono, fontSize: FONTS.size.md, color: '#C7D2EA' },
   headerTitle: {
     flex: 1,
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.md,
     fontWeight: FONTS.weight.bold,
-    color: COLORS.ink_dark,
+    color: '#F1F5F9',
   },
   spBadge: {
-    backgroundColor: COLORS.skill + '22',
+    backgroundColor: 'rgba(159, 123, 255, 0.15)',
     borderWidth: 1,
     borderColor: COLORS.skill,
     borderRadius: 4,
@@ -204,90 +172,36 @@ const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: 'row',
-    backgroundColor: COLORS.bg_secondary,
+    backgroundColor: 'rgba(15, 23, 42, 0.88)',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: 'rgba(148, 163, 184, 0.2)',
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     paddingVertical: SPACING.sm,
-    rowGap: 2, columnGap: 2,
   },
   tabActive: {
     borderBottomWidth: 2,
-    borderBottomColor: COLORS.ink_dark,
-    backgroundColor: COLORS.bg_panel,
+    borderBottomColor: '#F8FAFC',
+    backgroundColor: 'rgba(30, 41, 59, 0.65)',
   },
   tabText: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
-    color: COLORS.ink_light,
+    color: 'rgba(148, 163, 184, 0.9)',
   },
-  tabTextActive: { color: COLORS.ink_dark, fontWeight: FONTS.weight.bold },
-  scroll: { flex: 1, paddingHorizontal: SPACING.md },
-  tierBlock: { marginTop: SPACING.lg },
-  tierLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
-    textAlign: 'center',
-    marginBottom: SPACING.sm,
+  tabTextActive: { color: '#F8FAFC', fontWeight: FONTS.weight.bold },
+  scroll: { flex: 1 },
+  scrollContent: {
+    paddingHorizontal: SPACING.sm,
+    paddingTop: SPACING.sm,
   },
-  skillCard: {
-    backgroundColor: COLORS.bg_panel,
+  treePanel: {
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 4,
-    padding: SPACING.md,
-    marginBottom: SPACING.sm,
-  },
-  skillCardLearned: {
-    borderColor: COLORS.exp,
-    backgroundColor: COLORS.exp + '11',
-  },
-  skillCardAvailable: {
-    borderColor: COLORS.skill,
-    backgroundColor: COLORS.skill + '0A',
-  },
-  skillCardLocked: {
-    opacity: 0.4,
-  },
-  skillHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: SPACING.xs,
-  },
-  skillIcon: { fontSize: 20, marginRight: SPACING.sm },
-  skillInfo: { flex: 1 },
-  skillName: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.md,
-    fontWeight: FONTS.weight.bold,
-    color: COLORS.ink_dark,
-  },
-  skillNameLearned: { color: COLORS.exp },
-  skillReq: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
-    marginTop: 2,
-  },
-  skillType: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_faint,
-  },
-  skillDesc: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_mid,
-    lineHeight: 18,
-  },
-  skillStateLine: {
-    marginTop: SPACING.xs,
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
+    borderColor: 'rgba(107, 212, 255, 0.12)',
+    backgroundColor: 'rgba(6, 10, 20, 0.55)',
+    paddingVertical: SPACING.sm,
   },
 });

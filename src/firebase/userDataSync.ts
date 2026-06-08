@@ -1,6 +1,7 @@
 import Constants from 'expo-constants';
 import * as Application from 'expo-application';
 import firestore from '@react-native-firebase/firestore';
+import { setDoc, userDocRef } from './firestoreRefs';
 import { NPC_CAPTAINS_FROM_CSV } from '../data/generated';
 import { useAccountProfileStore } from '../store/accountProfileStore';
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
@@ -12,8 +13,6 @@ import { useSkillDbStore } from '../store/skillDbStore';
 import { useUserSessionStore } from '../store/userSessionStore';
 import { useWorldStore } from '../store/worldStore';
 import { countGoodInInventory, normalizeInventorySlots } from '../game/playerInventory';
-
-const USERS_COLLECTION = 'users';
 
 const ADMIN_NICKNAME = 'Representative';
 const ADMIN_UID_ALLOWLIST = new Set(
@@ -250,7 +249,7 @@ export async function syncUserDataWithServer(): Promise<void> {
   };
 
   try {
-    await firestore().collection(USERS_COLLECTION).doc(uid).set(payload, { merge: true });
+    await setDoc(userDocRef(uid), payload as Record<string, unknown>, { merge: true });
   } catch (e) {
     console.warn('[userDataSync] syncUserDataWithServer failed (queued offline if persistence enabled):', e);
   }

@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
 import type { Planet, StarSystem } from '../types';
 import { useWorldStore } from './worldStore';
-import type { PlanetCoreMetricsDetail } from './planetCoreMetricTypes';
+import type { PlanetCoreMetricsDetail, PlanetMasterBalanceDetail } from './planetCoreMetricTypes';
 
 const STORAGE_KEY = 'arcfire_planet_core_runtime_v1';
 
@@ -113,6 +113,10 @@ interface PlanetCoreRuntimeState {
   patchPlanetCore: (planetId: string, patch: Partial<PlanetCoreGaugeView>) => void;
   /** 여러 행성 5지표를 한 번에 갱신 후 디스크 1회 저장 */
   patchPlanetCoresBulk: (updates: Record<string, PlanetCoreGaugeView>) => void;
+  /** 마스터 밸런스 패스 — 5지표 + detail.masterBalance 일괄 갱신 */
+  patchPlanetMasterBalanceBulk: (
+    updates: Record<string, { gauge: PlanetCoreGaugeView; masterBalance: PlanetMasterBalanceDetail }>,
+  ) => void;
 }
 
 export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, get) => ({
@@ -235,6 +239,40 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
           environment: clamp100(patch.environment ?? prev.environment),
           updatedAt: t,
           detail: prev.detail,
+        },
+      };
+    }
+    set({ byPlanetId: next });
+    void get().persistPlanetCoreRuntime();
+  },
+
+  patchPlanetMasterBalanceBulk: (updates) => {
+    const keys = Object.keys(updates);
+    if (keys.length === 0) return;
+    const systems = useWorldStore.getState().systems;
+    let next = { ...get().byPlanetId };
+    const t = Date.now();
+    for (const planetId of keys) {
+      if (!planetId) continue;
+      const planet = findPlanetInSystems(systems, planetId);
+      if (!planet) continue;
+      const patch = updates[planetId];
+      if (!patch) continue;
+      const prev = next[planetId] ?? planetCsvBaselineToRuntime(planet);
+      const g = patch.gauge;
+      next = {
+        ...next,
+        [planetId]: {
+          resource: clamp100(g.resource ?? prev.resource),
+          population: clamp100(g.population ?? prev.population),
+          defense: clamp100(g.defense ?? prev.defense),
+          technology: clamp100(g.technology ?? prev.technology),
+          environment: clamp100(g.environment ?? prev.environment),
+          updatedAt: t,
+          detail: {
+            ...prev.detail,
+            masterBalance: patch.masterBalance,
+          },
         },
       };
     }

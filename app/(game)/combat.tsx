@@ -36,7 +36,7 @@ import {
 import { resolveNpcCapitalShip } from '../../src/npc';
 import { SkiaPlanetNebulaShaderBackdrop } from '../../src/components/planet/SkiaPlanetNebulaShaderBackdrop';
 import { usePlanetNebulaStore } from '../../src/store/planetNebulaStore';
-import type { PlanetNebulaProfile } from '../../src/store/planetNebulaStore';
+import { resolvePlanetNebulaBakedSource } from '../../src/game/planetNebulaBakedAssets';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { releaseCombatStageMemory } from '../../src/game/stageMemoryRelease';
 
@@ -44,18 +44,22 @@ import { releaseCombatStageMemory } from '../../src/game/stageMemoryRelease';
 function CombatOrbitNebulaBackdrop({
   size,
   active,
-  profile,
+  planetId,
 }: {
   size: number;
   active: boolean;
-  profile: PlanetNebulaProfile | null;
+  planetId: string;
 }) {
   const sim = useCapitalRealtimeCombatSimContext();
+  const nebulaBakedImageSource = useMemo(
+    () => resolvePlanetNebulaBakedSource(planetId),
+    [planetId],
+  );
   return (
     <SkiaPlanetNebulaShaderBackdrop
       size={size}
       active={active}
-      profile={profile}
+      nebulaBakedImageSource={nebulaBakedImageSource}
       dodgeHitFxRef={sim?.missileHitFxRef ?? null}
       dodgeTimeMsRef={sim?.tMsRef ?? null}
       dodgeOrbitSize={sim?.orbitSize ?? size}
@@ -96,9 +100,6 @@ export default function CombatScreen() {
   const [battleStageWidth, setBattleStageWidth] = useState(windowOrbitSize);
   const orbitSize = useMemo(() => Math.max(220, Math.floor(battleStageWidth)), [battleStageWidth]);
   const nebulaPlanetId = player?.currentPlanetId ?? '';
-  const nebulaProfile = usePlanetNebulaStore(
-    useCallback((s) => s.profilesByPlanetId[nebulaPlanetId] ?? null, [nebulaPlanetId]),
-  );
   const ensureNebulaProfileForPlanet = usePlanetNebulaStore((s) => s.ensureProfileForPlanet);
 
   useStageMemory(
@@ -250,7 +251,7 @@ export default function CombatScreen() {
             <CombatOrbitNebulaBackdrop
               size={orbitSize}
               active={isCombatRouteFocused}
-              profile={nebulaProfile}
+              planetId={nebulaPlanetId}
             />
             <CapitalRealtimeCombatOrbitSvg />
           </View>

@@ -4,7 +4,8 @@
 
 import React from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet } from 'react-native';
-import { MissionReward } from '../types';
+import { LevelUpSummary, MissionReward } from '../types';
+import { LevelUpDetailPanel } from './LevelUpDetailPanel';
 import { COLORS, FONTS, SPACING } from '../utils/theme';
 
 interface RewardModalProps {
@@ -13,11 +14,13 @@ interface RewardModalProps {
   missionTitle: string;
   leveledUp?: boolean;
   newLevel?: number;
+  /** 레벨업 상세 — 호출부 연결 전까지 선택적 */
+  levelUpDetail?: LevelUpSummary | null;
   onClose: () => void;
 }
 
 export function RewardModal({
-  visible, reward, missionTitle, leveledUp, newLevel, onClose,
+  visible, reward, missionTitle, leveledUp, newLevel, levelUpDetail, onClose,
 }: RewardModalProps) {
   return (
     <Modal transparent visible={visible} animationType="fade">
@@ -47,11 +50,15 @@ export function RewardModal({
             </View>
           )}
 
-          {leveledUp && (
+          {levelUpDetail ? (
+            <View style={styles.levelUpBox}>
+              <LevelUpDetailPanel summary={levelUpDetail} />
+            </View>
+          ) : leveledUp ? (
             <View style={styles.levelUpBox}>
               <Text style={styles.levelUpText}>🎉 LEVEL UP! → Lv.{newLevel}</Text>
             </View>
-          )}
+          ) : null}
 
           <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
             <Text style={styles.closeBtnText}>[ 계속 ]</Text>

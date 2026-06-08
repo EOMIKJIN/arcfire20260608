@@ -20,8 +20,10 @@ const STORY_IMAGE_ASSETS: Record<string, any> = {
 
 export default function IntroScreen() {
   const { width, height } = useWindowDimensions();
-  const params = useLocalSearchParams<{ sceneId?: string | string[] }>();
+  const params = useLocalSearchParams<{ sceneId?: string | string[]; flow?: string | string[] }>();
   const paramSceneId = Array.isArray(params.sceneId) ? params.sceneId[0] : params.sceneId;
+  const paramFlow = Array.isArray(params.flow) ? params.flow[0] : params.flow;
+  const isPreNicknameFlow = paramFlow === 'preNickname';
   const sceneId = typeof paramSceneId === 'string' && paramSceneId.trim().length > 0
     ? paramSceneId
     : 'intro01';
@@ -60,6 +62,10 @@ export default function IntroScreen() {
     if (isLast) {
       setIsTransitioning(true);
       try {
+        if (isPreNicknameFlow && !player) {
+          router.replace('/(game)/nickname');
+          return;
+        }
         if (scene.completionPolicy === 'mark_intro_seen_and_start_first_mission') {
           if (player) {
             const updated = {
@@ -68,7 +74,6 @@ export default function IntroScreen() {
                 ...player.flags,
                 introSeen: true,
                 firstMissionStarted: true,
-                pendingArcadiaDialog01: true,
               },
             };
             setPlayer(updated);
@@ -90,7 +95,7 @@ export default function IntroScreen() {
       setPage(p => p + 1);
       setPageComplete(false);
     }
-  }, [isTransitioning, pageComplete, isLast, player, scene, pages.length, setPlayer, persist, initMissions]);
+  }, [isTransitioning, pageComplete, isLast, isPreNicknameFlow, player, scene, pages.length, setPlayer, persist, initMissions]);
 
   return (
     <StageShell routeName="intro" background="stars">
@@ -163,7 +168,7 @@ export default function IntroScreen() {
 
           <TouchableOpacity style={styles.nextBtn} onPress={handleNext} disabled={isTransitioning}>
             <Text style={styles.nextText}>
-              {!pageComplete ? '[ 스킵 ]' : isLast ? '[ 게임 시작 ]' : '[ 다음 ▶ ]'}
+              {!pageComplete ? '[ 스킵 ]' : isLast ? (isPreNicknameFlow && !player ? '[ 파일럿 등록 ]' : '[ 게임 시작 ]') : '[ 다음 ▶ ]'}
             </Text>
           </TouchableOpacity>
         </View>

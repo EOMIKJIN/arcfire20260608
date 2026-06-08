@@ -5,4 +5,7 @@ min_price_credits,800,최저가(초반 T1)
 max_price_credits,12000000,최고가(코스믹 Lv.60)
 catalog_stock_min,1,카탈로그 재고 하한
 catalog_stock_max,60,카탈로그 재고 상한
+trade_port_capital_listing_count,10,행성 무역소 전함 판매 종류 수(등급 대표·재고와 무관)
+capital_ship_stock_min,10,전함 SKU 재고 하한(종류당 수량)
+capital_ship_stock_max,15,전함 SKU 재고 상한(종류당 수량·결정론 RNG)
 legacy_damage_formula_retired,v1,구 Price=Base×Damage^Exp 공식은 v2에서 폐기

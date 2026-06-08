@@ -6,6 +6,9 @@ export const WeaponTradeBasePricePolicy_FROM_BALANCE_CSV = [
   { "key": "max_price_credits", "value": "12000000", "notesKo": "최고가(코스믹 Lv.60)" },
   { "key": "catalog_stock_min", "value": "1", "notesKo": "카탈로그 재고 하한" },
   { "key": "catalog_stock_max", "value": "60", "notesKo": "카탈로그 재고 상한" },
+  { "key": "trade_port_capital_listing_count", "value": "10", "notesKo": "행성 무역소 전함 판매 종류 수(등급 대표·재고와 무관)" },
+  { "key": "capital_ship_stock_min", "value": "10", "notesKo": "전함 SKU 재고 하한(종류당 수량)" },
+  { "key": "capital_ship_stock_max", "value": "15", "notesKo": "전함 SKU 재고 상한(종류당 수량·결정론 RNG)" },
   { "key": "legacy_damage_formula_retired", "value": "v1", "notesKo": "구 Price=Base×Damage^Exp 공식은 v2에서 폐기" },
 ] as const;
 export type WeaponTradeBasePricePolicyRow = (typeof WeaponTradeBasePricePolicy_FROM_BALANCE_CSV)[number];

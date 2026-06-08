@@ -24,8 +24,6 @@ import type { Agent, Missile, PlanetEdenRaidSim } from './PlanetEdenRaidTestLaye
 const ALLY_MARK_HALF = 7;
 const DIAMOND_HEADING_OFFSET_DEG = 90;
 const DEBUG_CAPITAL_BOW_LINE_PX = 22;
-const PLANET_DIAM_PX = 120;
-const LASER_MAX_RANGE = PLANET_DIAM_PX;
 const LASER_DURATION_MS = 320;
 const LASER_BOLT_TRAVEL_MS_FALLBACK = 26;
 const LASER_FADE_START_MS = 170;
@@ -174,7 +172,7 @@ function buildLaserBolt(
   const laserT = tMs - ag.lastLaserStartMs;
   if (laserT < 0 || laserT >= LASER_DURATION_MS) return null;
   const muzzle = laserMuzzleFromAgent(ag);
-  const targetEnd = clampPointToward({ x: ag.x, y: ag.y }, { x: other.x, y: other.y }, LASER_MAX_RANGE);
+  const targetEnd = clampPointToward({ x: ag.x, y: ag.y }, { x: other.x, y: other.y }, ag.laserEngageRangePx);
   const tx = targetEnd.x - muzzle.x;
   const ty = targetEnd.y - muzzle.y;
   const td = Math.hypot(tx, ty);

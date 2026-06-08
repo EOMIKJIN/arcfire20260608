@@ -215,7 +215,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -242,7 +242,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -323,7 +323,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -377,7 +377,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -404,7 +404,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -431,7 +431,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -458,7 +458,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -485,7 +485,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -512,7 +512,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -539,7 +539,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -620,7 +620,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -647,7 +647,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -701,7 +701,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -728,7 +728,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -755,7 +755,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -782,7 +782,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -809,7 +809,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -836,7 +836,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -863,7 +863,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -944,7 +944,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -971,7 +971,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -998,7 +998,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -1025,7 +1025,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -1052,7 +1052,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -1079,7 +1079,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -1106,7 +1106,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -1133,7 +1133,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -1160,7 +1160,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -1187,7 +1187,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -1214,7 +1214,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -1241,7 +1241,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -1268,7 +1268,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -1295,7 +1295,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -1322,7 +1322,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4211,7 +4211,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/ship_001.png",
   },
   {
@@ -4238,7 +4238,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4265,7 +4265,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4292,7 +4292,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4319,7 +4319,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4346,7 +4346,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4373,7 +4373,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4400,7 +4400,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4427,7 +4427,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4454,7 +4454,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4481,7 +4481,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4508,7 +4508,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4535,7 +4535,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4562,7 +4562,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4589,7 +4589,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4616,7 +4616,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4643,7 +4643,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4670,7 +4670,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4697,7 +4697,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4724,7 +4724,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4751,7 +4751,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4778,7 +4778,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4805,7 +4805,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4832,7 +4832,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4859,7 +4859,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4886,7 +4886,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4913,7 +4913,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4940,7 +4940,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4967,7 +4967,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -4994,7 +4994,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5021,7 +5021,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5048,7 +5048,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5075,7 +5075,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5102,7 +5102,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5129,7 +5129,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5156,7 +5156,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5183,7 +5183,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5210,7 +5210,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5237,7 +5237,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5264,7 +5264,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5291,7 +5291,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5318,7 +5318,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5345,7 +5345,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5372,7 +5372,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5399,7 +5399,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5426,7 +5426,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5453,7 +5453,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5480,7 +5480,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
@@ -5507,7 +5507,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
-    tradePortListed: true,
+    tradePortListed: false,
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   }
 ];

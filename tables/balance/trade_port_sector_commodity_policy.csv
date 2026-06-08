@@ -1,0 +1,5 @@
+sectorBand,commodityItemIdsPipe,notesKo
+early,food|minerals,존 early — 기초 교역품
+mid_early,food|minerals|tech,존 mid_early — 기술품 추가
+mid,food|minerals|tech|luxury|weapon,존 mid — 사치·무기류 교역품
+late,food|minerals|tech|luxury|weapon|contraband,존 late — 밀수품 추가

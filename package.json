@@ -11,6 +11,7 @@
     "clean:android": "cd android && ./gradlew clean && cd .. && npx expo prebuild",
     "fix:content-csv-encoding": "node tools/content-tables/ensure-csv-utf8-bom.mjs",
     "build:content-tables": "node tools/content-tables/build-content-from-csv.mjs",
+    "build:planet-nebula-bakes": "tsx tools/planet-nebula-bake/bake-planet-nebula-images.ts",
     "build:balance-tables": "node tools/balance-tables/build-balance-from-csv.mjs",
     "audit:balance": "node tools/balance-audit/run-balance-audit.cjs",
     "audit:aabs-verify": "node tools/aabs-verify/run-aabs-verify.cjs",

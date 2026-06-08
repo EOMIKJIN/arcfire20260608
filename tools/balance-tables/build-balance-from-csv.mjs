@@ -90,7 +90,15 @@ function emitRowObject(row) {
 
 if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
 
-const csvFiles = readdirSync(TABLE_DIR).filter((f) => f.endsWith('.csv'));
+/** 머신 가독 CSV만 TS 생성. `01_레벨업구조(csv).csv` 등 디자인 원본은 play_scenario_* 정규화본 사용 */
+function isMachineReadableBalanceCsv(fileName) {
+  if (!fileName.endsWith('.csv')) return false;
+  const base = fileName.replace(/\.csv$/i, '');
+  if (/^01_/.test(base)) return false;
+  return /^[a-zA-Z][a-zA-Z0-9_]*$/.test(base);
+}
+
+const csvFiles = readdirSync(TABLE_DIR).filter(isMachineReadableBalanceCsv);
 const exports = [];
 
 for (const file of csvFiles.sort()) {

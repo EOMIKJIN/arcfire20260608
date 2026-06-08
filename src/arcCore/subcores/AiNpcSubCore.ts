@@ -1,5 +1,5 @@
 import { BaseArcSubCore } from './BaseArcSubCore';
-import { subscribeArcCoreCommands, type ArcCoreCommand } from '../ArcCoreCommandBus';
+import { dispatchArcCoreCommand, subscribeArcCoreCommands, type ArcCoreCommand } from '../ArcCoreCommandBus';
 import { useWorldStore } from '../../store/worldStore';
 import {
   useArcNpcTrafficStore,
@@ -8,6 +8,10 @@ import {
   type ArcNpcTrafficShip,
 } from '../../store/arcNpcTrafficStore';
 import { listArcNpcTrafficRowsFromTables } from '../arcNpcTrafficTableRegistry';
+import {
+  pickBalancedArcTrafficPlanetId,
+  spreadArcTrafficInitialPlanetIds,
+} from '../orbitPresence/balanceArcTrafficPlanetPick';
 import { getNpcCapitalShip } from '../../npc/npcFleetRegistry';
 import { readPlanetOrbitClockMs } from '../orbitClockMsBridge';
 import { usePlanetDevelopmentAccStore } from '../../store/planetDevelopmentAccStore';
@@ -16,7 +20,7 @@ import { listNpcCapitalShips } from '../../npc/npcFleetRegistry';
 /**
  * AI NPC 서브코어
  * - 모든 NPC의 판단/행동/전투/생산 스케줄을 이 축으로 수렴시키는 기반.
- * - 궤도 **수송선**(테이블 `arcOrbitPresenceFill` 전용 함·함장, 현재 12척) 다음 행성: 월드 **전 행성** 풀 균등(`pickNextPlanetId`).
+ * - 궤도 **수송선**(테이블 `arcOrbitPresenceFill` 전용 함·함장, 현재 12척) 다음 행성: 월드 전 행성 풀 **최소 부하 균형**(`balanceArcTrafficPlanetPick`).
  * - 행성 체류(dwell): `npc_ai_ships.csv` min/max(초), 엔진 **상한 600초(10분)**.
  */
 export class AiNpcSubCore extends BaseArcSubCore {
@@ -91,7 +95,7 @@ export class AiNpcSubCore extends BaseArcSubCore {
     if (cmd.type === 'npc_release_gather') {
       this.gatherDirectivePlanetId = null;
       for (const s of this.ships) {
-        s.planetId = this.pickNextPlanetId();
+        s.planetId = this.pickNextPlanetId(s.id);
       }
       this.publishSnapshot();
       return;
@@ -149,6 +153,7 @@ export class AiNpcSubCore extends BaseArcSubCore {
       id: captain.id,
       name: captain.displayName,
     }));
+    const initialPlanets = spreadArcTrafficInitialPlanetIds(this.listAllPlanetIds(), rows.length);
     this.ships = rows.map(({ captain, shipId }, i) => {
       const hull = getNpcCapitalShip(shipId);
       const dwell = hull?.arcTrafficDwellRadPerSec ?? 0.46;
@@ -158,7 +163,7 @@ export class AiNpcSubCore extends BaseArcSubCore {
       return {
         id: shipId,
         captainId: captain.id,
-        planetId: this.pickNextPlanetId(),
+        planetId: initialPlanets[i] ?? this.pickNextPlanetId(shipId),
         phase: 'entering' as const,
         phaseElapsedSec: Math.random() * 1.2,
         phaseDurationSec: (4.5 + Math.random() * 1.2) * phaseMul,
@@ -224,7 +229,7 @@ export class AiNpcSubCore extends BaseArcSubCore {
     const pm = ship.arcTrafficPhaseDurationMul;
     const next = this.nextPhase(ship.phase);
     if (next === 'entering') {
-      ship.planetId = this.pickNextPlanetId();
+      ship.planetId = this.pickNextPlanetId(ship.id);
       ship.phase = next;
       ship.phaseElapsedSec = 0;
       ship.phaseDurationSec = (4.2 + Math.random() * 1.6) * pm;
@@ -238,6 +243,14 @@ export class AiNpcSubCore extends BaseArcSubCore {
       ship.orbitRadiusPx = 106 + Math.random() * 28;
       return;
     }
+    if (ship.phase === 'dwelling') {
+      dispatchArcCoreCommand({
+        type: 'economy_transport_dwell_settled',
+        shipId: ship.id,
+        planetId: ship.planetId,
+        meta: { origin: 'arc_core_policy', reason: 'transport_dwell_trade' },
+      });
+    }
     ship.phase = 'departing';
     ship.phaseElapsedSec = 0;
     ship.phaseDurationSec = (4 + Math.random() * 1.6) * pm;
@@ -250,14 +263,17 @@ export class AiNpcSubCore extends BaseArcSubCore {
     return 'entering';
   }
 
-  private pickNextPlanetId(): string {
-    if (this.gatherDirectivePlanetId) {
-      return this.gatherDirectivePlanetId;
-    }
+  private listAllPlanetIds(): string[] {
     const world = useWorldStore.getState().systems;
-    const allPlanetIds = Object.values(world).flatMap((s) => s.planets.map((p) => p.id));
-    if (allPlanetIds.length === 0) return 'arcadia_prime';
-    return allPlanetIds[Math.floor(Math.random() * allPlanetIds.length)] ?? allPlanetIds[0];
+    return Object.values(world).flatMap((s) => s.planets.map((p) => p.id));
+  }
+
+  private pickNextPlanetId(excludeShipId?: string): string {
+    const allPlanetIds = this.listAllPlanetIds();
+    return pickBalancedArcTrafficPlanetId(allPlanetIds, this.ships, {
+      excludeShipId,
+      gatherPlanetId: this.gatherDirectivePlanetId,
+    });
   }
 
   /** 행성 체류(dwell) — 테이블 [min,max] 초, 엔진 상한 600 */

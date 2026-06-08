@@ -34,6 +34,8 @@ import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
 import { getPlanetTradePortItemIds } from '../../src/world/planetTradePortDb';
+import { adjustPlanetTradeMarketStock } from '../../src/world/planetTradeMarketStore';
+import { filterTradePortCatalogForPlayer } from '../../src/arcCore/balance/tradePortCatalogPolicy';
 import {
   TRADE_BUY_SUB_TAB_LABELS,
   TRADE_BUY_SUB_TAB_ORDER,
@@ -90,6 +92,7 @@ export default function TradeScreen() {
 
   const [tab, setTab] = useState<'buy' | 'sell'>('buy');
   const [buySubTab, setBuySubTab] = useState<TradeBuySubTabId>('weapon');
+  const [marketTick, setMarketTick] = useState(0);
   const safeBack = useSafeRouterBack();
   const stageFrameReady = useStageFirstFrameReady();
   usePlanetSubStageMemory('trade', () => {
@@ -100,9 +103,20 @@ export default function TradeScreen() {
   const system = player ? getSystem(player.currentSystemId) : undefined;
   const planet = system?.planets.find(p => p.id === player?.currentPlanetId) ?? system?.planets[0];
 
-  const market = useMemo(() =>
-    planet ? generateMarketByItemIds(getPlanetTradePortItemIds(planet.id), planet.id.length * 37) : [],
-    [planet?.id],
+  const market = useMemo(
+    () =>
+      planet && player
+        ? generateMarketByItemIds(
+            filterTradePortCatalogForPlayer(
+              getPlanetTradePortItemIds(planet.id),
+              player.level,
+            ),
+            planet.id.length * 37,
+            player.credits,
+            planet.id,
+          )
+        : [],
+    [planet?.id, player?.credits, player?.level, marketTick],
   );
   const inventorySellAgg = useMemo(() => {
     if (!player) return [];
@@ -147,6 +161,18 @@ export default function TradeScreen() {
     () => market.filter(m => inferTradeBuySubTabFromGoodId(m.goodId) === buySubTab),
     [market, buySubTab],
   );
+
+  const sortedInventorySellAgg = useMemo(() => {
+    return [...inventorySellAgg].sort((a, b) => {
+      const listingA = market.find(m => m.goodId === a.goodId);
+      const listingB = market.find(m => m.goodId === b.goodId);
+      const goodA = resolveTradeGoodById(a.goodId);
+      const goodB = resolveTradeGoodById(b.goodId);
+      const priceA = listingA ? getSellPrice(listingA) : Math.floor((goodA?.basePrice ?? 0) * 0.7);
+      const priceB = listingB ? getSellPrice(listingB) : Math.floor((goodB?.basePrice ?? 0) * 0.7);
+      return priceA - priceB;
+    });
+  }, [inventorySellAgg, market]);
 
   const tradePlanetIdRef = useRef<string | undefined>(undefined);
   useEffect(() => {
@@ -194,6 +220,10 @@ export default function TradeScreen() {
     );
     if ((isCapitalShipItemType && alreadyOwnsCapitalShip) || (!isCapitalShipItemType && blockedByHistory)) {
       showArcAlert('재구매 불가', '이 아이템은 계정당 1회만 구매할 수 있습니다.');
+      return;
+    }
+    if (!filterTradePortCatalogForPlayer([listing.goodId], player.level).includes(listing.goodId)) {
+      showArcAlert('구매 불가', '파일럿 레벨이 이 상품의 요구 조건에 미달합니다.');
       return;
     }
     const price = getBuyPrice(listing);
@@ -353,6 +383,10 @@ export default function TradeScreen() {
                 }
               });
             }
+            if (itemDef?.type === 'trade_route' && player.currentPlanetId) {
+              adjustPlanetTradeMarketStock(player.currentPlanetId, listing.goodId, -1);
+              setMarketTick((t) => t + 1);
+            }
             await persist();
           },
         },
@@ -462,6 +496,10 @@ export default function TradeScreen() {
                 note: 'inventory',
               });
               await persistItemLedger();
+            }
+            if (itemDef?.type === 'trade_route' && player.currentPlanetId) {
+              adjustPlanetTradeMarketStock(player.currentPlanetId, item.goodId, sellQty);
+              setMarketTick((t) => t + 1);
             }
             await persist();
           },
@@ -577,7 +615,7 @@ export default function TradeScreen() {
         ) : (
           <>
             <Text style={styles.sellSectionTitle}>— 인벤토리 —</Text>
-            {inventorySellAgg.map(item => {
+            {sortedInventorySellAgg.map(item => {
               const rowItemDef = resolveItemDefById(item.goodId);
               const good = resolveTradeGoodById(item.goodId) ?? (
                 rowItemDef

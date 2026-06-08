@@ -19,13 +19,21 @@ alwaysApply: true
 - **인간 플레이 계정**은 그 위에서 플레이·경험·각 행성 환경과 상호작용한다. UI·입력·장면 전개는 **플레이어 경험층**; **세계가 어떻게 돌아가는지에 대한 최종 책임**은 **데이터 테이블(정본) + 아크코어(허브·명령 버스·서브코어·프로세스)**에 둔다.
 - 이후 클랜전·서버 동기·시즌 이벤트·상위 AI 팩션 정책 등은 **가능한 한 아크코어에 편입하거나 `dispatchCommand` / 서브코어 명령으로 수렴**시키고, 게임 전체 구조를 **“최종 시스템 = 아크코어 + 테이블 + 플레이어층”**으로 확장해 나간다.
 
+### 일일 운영(벽시계 24h · 정오 1회 배치) — 필수 계약
+
+- 아크코어 **운영·밸런스 재배치**는 **벽시계 24시간 관측 → 분석 → 하루 1회 일괄 실행**이 정본이다. 고빈도(수십~수백 초) 행성 코어·경제·AABS 패스를 서브코어에 새로 두지 말고 **`ArcCoreDailyOpsSubCore` 배치**로 수렴한다.
+- **정책 테이블**: `tables/balance/arc_core_daily_ops_policy.csv` → `npm run build:balance-tables` → `resolveArcCoreDailyOpsPolicy()`. 기본 `Asia/Seoul` **12:00**, `observationWindowHours=24`.
+- **실시간(벽시계 틱 유지)**: 궤도 수송 시뮬·교통 체류·`planetDevelopmentAccStore` 누적 등 **연출·관측** — `AiNpcSubCore` 등. 코어 5지표·무역소 시나리오·AABS 정렬·성계 개방은 **배치에서만** 반영.
+- **배치 실행체**: `runArcCoreDailyOpsBatch()` — (정책 플래그 순) `runPlanetEnergyCorePass` → `runPlanetEnvironmentDiversityPass` → `runGlobalPlanetMasterBalancePass` → `runPlayScenarioEconomyPass` → `runDailyPolicyAlignment` → `tryArcCoreWorldDailyUnlock`.
+- **마지막 실행일**은 `arcfire_arc_core_daily_ops_v1`(AsyncStorage). 앱이 배치 시각 이후 첫 기동·포그라운드일 때 1회 실행. 아크코어 판단으로 패스 on/off·시각·타임존은 **CSV만** 바꾼다.
+
 ### 테이블 우선(환경·NPC 함장·전함) — 필수 계약
 
 - 아크코어가 **부트스트랩하거나 “전체 환경”을 구성**할 때도 **항상 테이블(CSV) 단일 소스 우선**이다. 함장·전함·궤도 인포 보충 등 **새 엔티티를 코드에 하드코딩·랜덤 이름 풀로 만들지 말고**, `tables/content/` CSV에 등록한 뒤 `npm run build:content-tables`로 생성 TS를 갱신한다.
 - **현재 방식(기억할 것)**  
   - 함장: `npc_ai_captains.csv` → `npcFleetRegistry` / `listNpcCaptains()`  
   - 전함: `npc_ai_ships.csv` → `NPC_CAPITAL_SHIPS` 경로(생성본) — 아크코어 궤도 수송: `arcTrafficDwellRadPerSec`·`arcTrafficPhaseDurationMul`·행성 체류 `arcTrafficPlanetDwellSecMin`/`Max`(초, 엔진 상한 600); **다음 행성은 월드 전 행성 균등**(`AiNpcSubCore.pickNextPlanetId`)  
-  - 행성 핵심지표: `planets.csv`의 동일 5필드(0..100)는 **초기값**; 런타임 변화는 `planetCoreRuntimeStore`(로컬 행성 DB). `AiPlanetsSubCore`는 행성 단위 시뮬·갱신의 아크코어 진입점  
+  - 행성 핵심지표: `planets.csv`의 동일 5필드(0..100)는 **초기값**; 런타임 변화는 `planetCoreRuntimeStore`(로컬 행성 DB). 일일 갱신은 `ArcCoreDailyOpsSubCore` 배치; `AiPlanetsSubCore`는 부트스트랩 진입점  
   - **경제(무역소)**: `AiEconomySubCore` — 상위 일괄 지시는 `arcCoreHub.dispatchCommand` / `dispatchEconomyTradePortBulk` → `economy_trade_port_bulk` 명령으로 수렴; 실행은 `planetTradePortDb`(행성별 추가·제거·오버레이 리셋)에 위임. 화면·엔진은 직접 DB를 건드리기보다 **아크코어 명령 축**을 우선한다.  
   - 궤도 교통 행: `listArcNpcTrafficRowsFromTables` (`arcNpcTrafficTableRegistry.ts`) — **`arcOrbitPresenceFill=true` 수송 전용**(현재 12척); 전투 전용 함장은 제외  
   - 행성 궤도 인포 보충: 동일 `arcOrbitPresenceFill` 풀 — `nearbyOrbitPresenceSystem.ts`에서 테이블 매칭 없을 때만 슬롯 채움(교통 시뮬과 행 동일·역할만 다름)  
@@ -67,9 +75,16 @@ alwaysApply: true
 - 요청 범위 **밖** 리팩터·포맷 통일·주석 대량 추가 금지.
 - TS/React 수정 후 **`npx tsc --noEmit`** (Windows: `Set-Location` 후 실행).
 
+### 아키텍처 감사·리스크 (정기)
+
+- **문서 인덱스**: `docs/README_ARCHITECTURE.md` — 마스터 스펙 §18 = 구현 정본.
+- **전수 검사·드리프트**: `docs/Arcfire_Architecture_Audit_2026-06-08.md`
+- **리스크 레지스터**: `docs/ARCHITECTURE_RISK_REGISTER.md` — 보안·메모리·파편화 방지책.
+
 ### 일일 성능·위생 점검(자동화)
 
 - **`npm run audit:daily`** — 타입 검사·콘텐츠 테이블 빌드·대용량 소스·타이머/구독 후보 목록을 `tools/daily-perf-audit/reports/latest.md`에 기록한다. **자동 대량 수정은 하지 않는다**; 보고서 기반으로 후속 수정.
+- **`npm run audit:memory`** — 스테이지 replace·postStepRef·useStageMemory 계약 20항목 (`tools/memory-audit/reports/latest.md`).
 - **원격**: `.github/workflows/daily-performance-audit.yml`(스케줄 + `workflow_dispatch`). **로컬 1일 1회**: `tools/daily-perf-audit/README.md`의 Windows 작업 스케줄러 예시.
 
 ### 아크코어 × Cursor 에이전트(자기 최적화)

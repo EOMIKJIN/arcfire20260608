@@ -1,0 +1,11 @@
+key,value,notesKo
+policy_version,1,전함 무역소 가격 — 성능 우선·수요 보조
+hp_weight,1.0,성능 지수 HP 가중
+shield_weight,0.55,성능 지수 실드 가중
+armor_weight,8.0,성능 지수 장갑 가중
+damage_weight,12.0,성능 지수 DPR(주사위) 가중
+perf_ratio_min,0.88,체급 기준가 대비 성능 비율 하한
+perf_ratio_max,1.14,체급 기준가 대비 성능 비율 상한
+demand_low_mul,0.92,수요 low — TradeEngine 2차 적용 참고
+demand_normal_mul,1.0,수요 normal
+demand_high_mul,1.08,수요 high

@@ -21,8 +21,7 @@ export type ArcNpcTrafficTableRow = {
  *   일반 순찰·해적 함장(예: 스카 레인·레드전함3)은 여기에 넣지 않음 — 행성 궤도 표시·에덴 실시간과 혼동 방지.
  * - 전투 전용(`operationalState === 'combat'`) 함장은 제외.
  * - `assignedShipId` 가 있고, 해당 전함이 존재할 때만 포함.
- * - 행성 인포 보충 풀(`nearbyOrbitPresenceSystem`의 `buildArcOrbitPresenceFillRows`)과 **동일 12척**을 쓰되,
- *   본 목록은 아크코어 벽시계 이동 시뮬 입력으로만 사용한다.
+ * - 테이블 순찰 함장 궤도 마크는 `captainOrbitPlanetAssignment`로 행성당 1명만 — 본 12척은 AiNpcSubCore 실시간 교통 전용.
  */
 export function listArcNpcTrafficRowsFromTables(): ArcNpcTrafficTableRow[] {
   const rows: ArcNpcTrafficTableRow[] = [];

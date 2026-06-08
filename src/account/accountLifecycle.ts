@@ -57,13 +57,9 @@ export async function persistAccountDataBundle(): Promise<void> {
   await skillDb.persistSkillDb();
 }
 
-/**
- * 계정 `uid`에 매달린 로컬 DB(아이템 장부·프로필·스킬)를 제거한다.
- * 로컬 플레이어(`arcfire_player_v1`, 내 함선 `ship.equipSlots` 포함)가 동일 `uid`이면 함께 초기화한다.
- */
-export async function purgeAccountDataByUid(uid: string): Promise<void> {
+/** 계정 `uid`에 매달린 로컬 DB(아이템 장부·프로필·스킬)만 제거 — 플레이어 스토어는 호출자가 정리한다. */
+export async function purgeAccountLedgerProfileSkillByUid(uid: string): Promise<void> {
   if (!uid) return;
-  const localPlayer = usePlayerStore.getState().player;
   const ledger = useItemLedgerStore.getState();
   const profile = useAccountProfileStore.getState();
   const skillDb = useSkillDbStore.getState();
@@ -71,6 +67,16 @@ export async function purgeAccountDataByUid(uid: string): Promise<void> {
   profile.purgeAccountProfile(uid);
   skillDb.purgeAccountSkillDb(uid);
   await persistAccountDataBundle();
+}
+
+/**
+ * 계정 `uid`에 매달린 로컬 DB(아이템 장부·프로필·스킬)를 제거한다.
+ * 로컬 플레이어(`arcfire_player_v1`, 내 함선 `ship.equipSlots` 포함)가 동일 `uid`이면 함께 초기화한다.
+ */
+export async function purgeAccountDataByUid(uid: string): Promise<void> {
+  if (!uid) return;
+  const localPlayer = usePlayerStore.getState().player;
+  await purgeAccountLedgerProfileSkillByUid(uid);
   if (localPlayer?.uid === uid) {
     await usePlayerStore.getState().resetLocalPlayer();
   }

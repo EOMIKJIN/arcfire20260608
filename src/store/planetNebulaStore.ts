@@ -2,22 +2,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import type { Planet, ZoneType } from '../types';
 import { useWorldStore } from './worldStore';
+import { buildNebulaProfile, type PlanetNebulaProfile } from '../game/planetNebulaProfile';
+
+export type { PlanetNebulaProfile } from '../game/planetNebulaProfile';
 
 const STORAGE_KEY = 'arcfire_planet_nebula_profiles_v1';
 const PERSIST_DEBOUNCE_MS = 700;
 
 let persistTimer: ReturnType<typeof setTimeout> | null = null;
-
-export type PlanetNebulaProfile = {
-  seed: number;
-  flowSpeed: number;
-  swirl: number;
-  density: number;
-  paletteA: string;
-  paletteB: string;
-  paletteC: string;
-  updatedAt: number;
-};
 
 type PlanetNebulaState = {
   profilesByPlanetId: Record<string, PlanetNebulaProfile>;
@@ -49,16 +41,12 @@ function mulberry32(seed: number) {
   };
 }
 
-function clamp01(v: number): number {
-  return Math.max(0, Math.min(1, v));
-}
-
 function clamp(v: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, v));
 }
 
 function mixHex(a: string, b: string, tRaw: number): string {
-  const t = clamp01(tRaw);
+  const t = Math.max(0, Math.min(1, tRaw));
   const pa = parseInt(a.slice(1), 16);
   const pb = parseInt(b.slice(1), 16);
   const ar = (pa >> 16) & 0xff;
@@ -73,49 +61,8 @@ function mixHex(a: string, b: string, tRaw: number): string {
   return `#${[r, g, bch].map((n) => n.toString(16).padStart(2, '0')).join('')}`;
 }
 
-function resolveZonePalette(zone: ZoneType): { a: string; b: string; c: string } {
-  switch (zone) {
-    case 'safe':
-      return { a: '#17253f', b: '#335b9a', c: '#78b7ff' };
-    case 'neutral':
-      return { a: '#221b3e', b: '#5a3d9a', c: '#7f65d7' };
-    case 'pvp':
-      return { a: '#33142a', b: '#8c2f51', c: '#f29e5c' };
-    case 'endgame':
-    default:
-      return { a: '#161128', b: '#4c3f87', c: '#d7c46f' };
-  }
-}
-
 function dayKeyUtc(ms: number): number {
   return Math.floor(ms / 86400000);
-}
-
-function buildNebulaProfile(planet: Planet, zone: ZoneType): PlanetNebulaProfile {
-  const seed = hashStringToInt(
-    `${planet.id}:${planet.factionId}:${planet.coreResource}:${planet.corePopulation}:${planet.coreDefense}:${planet.coreTechnology}:${planet.coreEnvironment}`,
-  );
-  const rand = mulberry32(seed);
-  const base = resolveZonePalette(zone);
-  const techFactor = clamp01(planet.coreTechnology / 100);
-  const envFactor = clamp01(planet.coreEnvironment / 100);
-  const defenseFactor = clamp01(planet.coreDefense / 100);
-  const resourceFactor = clamp01(planet.coreResource / 100);
-
-  const paletteA = mixHex(base.a, '#0b0f18', 0.24 * (1 - envFactor));
-  const paletteB = mixHex(base.b, '#4ec5ff', 0.18 * techFactor + rand() * 0.08);
-  const paletteC = mixHex(base.c, '#ffcc66', 0.12 * resourceFactor + 0.1 * defenseFactor);
-
-  return {
-    seed,
-    flowSpeed: 0.012 + techFactor * 0.018 + rand() * 0.01,
-    swirl: 1.2 + defenseFactor * 1.1 + rand() * 0.6,
-    density: 0.36 + resourceFactor * 0.42 + rand() * 0.14,
-    paletteA,
-    paletteB,
-    paletteC,
-    updatedAt: Date.now(),
-  };
 }
 
 function resolvePlanetWithZone(planetId: string): { planet: Planet; zone: ZoneType } | null {
@@ -270,4 +217,3 @@ export const usePlanetNebulaStore = create<PlanetNebulaState>((set, get) => ({
     return { applied: true, changedCount };
   },
 }));
-

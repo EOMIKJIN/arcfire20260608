@@ -1,6 +1,5 @@
-import firestore from '@react-native-firebase/firestore';
+import { arccoreDocRef, getDoc } from './firestoreRefs';
 
-const ARCCORE_COLLECTION = 'arccore';
 const ARCCORE_CONFIG_DOC = 'config';
 
 export type AppUpdatePolicy = {
@@ -32,7 +31,7 @@ export function compareSemver(aRaw: string, bRaw: string): number {
 
 export async function fetchAppUpdatePolicyFromArcCore(): Promise<AppUpdatePolicy> {
   try {
-    const snap = await firestore().collection(ARCCORE_COLLECTION).doc(ARCCORE_CONFIG_DOC).get();
+    const snap = await getDoc(arccoreDocRef(ARCCORE_CONFIG_DOC));
     if (!snap.exists) {
       return {
         latestVersion: null,

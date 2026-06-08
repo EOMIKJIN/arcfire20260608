@@ -1,59 +1,61 @@
 // ============================================================
-// 행성 허브 궤도 — Skia: ◇ 경로만 / 함장 캡션: 전투 궤도와 동일하게 RN Text(절대 위치)
-// `PlanetEdenRaidOrbitSkiaCombat` — Canvas 밖 `Text` + `FONTS.mono` (시스템 한글 폴백)
+// 행성 허브 궤도 — 아크코어 수송선: ◇ + 함장 캡션을 한 마크로 동기 이동
+// (Skia 다이아 / RN 캡션 분리 시 궤도 회전 중 위치가 어긋나 보이는 문제 방지)
 // ============================================================
 
-import React, { memo, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import React, { memo, useLayoutEffect, useMemo, useRef } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Canvas, Group, Path, Skia } from '@shopify/react-native-skia';
-import Animated, { type SharedValue, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated';
+import Animated, { type SharedValue, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import type { ArcNpcTrafficShip } from '../../store/arcNpcTrafficStore';
 import { FONTS } from '../../utils/theme';
 import { PLANET_MAIN_ORBIT_SCENE_SIZE } from '../../stages/planetMainStageLayout';
-import { appendSkiaDiamondPath, computeArcNpcShipScreenPacked, packArcNpcShipsToFloat32 } from './planetOrbitHubWorklets';
+import { computeArcNpcShipScreenPacked, packArcNpcShipsToFloat32 } from './planetOrbitHubWorklets';
 
-const AnimatedText = Animated.createAnimatedComponent(Text);
+const AnimatedView = Animated.createAnimatedComponent(View);
 
 const HUB_ARC_CAPTION_MAX = 12;
-const ARC_DIAMOND_R = 7;
-const CAPTION_DY = 10;
-const CAPTION_WIDTH = 72;
-const CAPTION_OFFSET_X = 36;
+const ORBIT_MARK_ANCHOR_PX = 7;
 
-const orbitCaptionStyles = StyleSheet.create({
-  table: {
-    position: 'absolute',
-    width: CAPTION_WIDTH,
-    fontFamily: FONTS.mono,
-    fontSize: 7,
-    lineHeight: 9,
-    textAlign: 'center',
-    color: 'rgba(200,208,220,0.92)',
-    textShadowColor: 'rgba(6,10,20,0.75)',
-    textShadowOffset: { width: 0, height: 0.5 },
-    textShadowRadius: 1.5,
+const styles = StyleSheet.create({
+  root: {
+    ...StyleSheet.absoluteFillObject,
   },
-  arc: {
+  markWrap: {
     position: 'absolute',
-    width: CAPTION_WIDTH,
+    width: ORBIT_MARK_ANCHOR_PX * 2,
+    height: ORBIT_MARK_ANCHOR_PX * 2,
+    left: 0,
+    top: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  labelCol: {
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    maxWidth: 220,
+  },
+  diamond: {
     fontFamily: FONTS.mono,
-    fontSize: 7,
-    lineHeight: 9,
-    textAlign: 'center',
+    fontSize: 9,
     color: 'rgba(220,200,255,0.92)',
+    lineHeight: 11,
+    textAlign: 'center',
+  },
+  caption: {
+    fontFamily: FONTS.mono,
+    fontSize: 6,
+    lineHeight: 8,
+    color: 'rgba(220,200,255,0.9)',
+    textAlign: 'center',
+    marginTop: 1,
+    maxWidth: 70,
     textShadowColor: 'rgba(20,10,32,0.65)',
     textShadowOffset: { width: 0, height: 0.5 },
     textShadowRadius: 1.5,
   },
 });
 
-const styles = StyleSheet.create({
-  root: {
-    ...StyleSheet.absoluteFillObject,
-  },
-});
-
-const HubArcRnCaption = memo(function HubArcRnCaption({
+const HubArcOrbitMark = memo(function HubArcOrbitMark({
   index,
   caption,
   orbitClockMs,
@@ -72,9 +74,6 @@ const HubArcRnCaption = memo(function HubArcRnCaption({
 }) {
   const animated = useAnimatedStyle(() => {
     'worklet';
-    if (caption.length === 0) {
-      return { left: -9999, top: 0, opacity: 0 };
-    }
     const p = computeArcNpcShipScreenPacked(
       index,
       orbitClockMs.value,
@@ -84,19 +83,28 @@ const HubArcRnCaption = memo(function HubArcRnCaption({
       center,
     );
     if (!p) {
-      return { left: -9999, top: 0, opacity: 0 };
+      return {
+        opacity: 0,
+        transform: [{ translateX: -9999 }, { translateY: -9999 }],
+      };
     }
     return {
-      left: p.x - CAPTION_OFFSET_X,
-      top: p.y + CAPTION_DY,
       opacity: p.opacity,
+      transform: [{ translateX: p.x - ORBIT_MARK_ANCHOR_PX }, { translateY: p.y - ORBIT_MARK_ANCHOR_PX }],
     };
-  }, [caption, index, center]);
+  }, [index, center]);
 
   return (
-    <AnimatedText style={[orbitCaptionStyles.arc, animated]} numberOfLines={1} ellipsizeMode="tail">
-      {caption}
-    </AnimatedText>
+    <AnimatedView style={[styles.markWrap, animated]} pointerEvents="none">
+      <View style={styles.labelCol}>
+        <Text style={styles.diamond}>◇</Text>
+        {caption ? (
+          <Text style={styles.caption} numberOfLines={1} ellipsizeMode="tail">
+            {caption}
+          </Text>
+        ) : null}
+      </View>
+    </AnimatedView>
   );
 });
 
@@ -104,23 +112,14 @@ export const PlanetHubOrbitSkiaLayer = memo(function PlanetHubOrbitSkiaLayer({
   orbitClockMs,
   arcShips,
   arcCaptionHeads,
-  paused = false,
 }: {
   orbitClockMs: SharedValue<number>;
   arcShips: ArcNpcTrafficShip[];
   arcCaptionHeads: string[];
-  /**
-   * Phase 1: 메인스테이지가 비포커스(워드맵·시설 push 직후)일 때 worklet 재계산을 스킵.
-   * orbitClockMs 자체가 비포커스 시 정지하므로 이 가드는 보조이지만, derived/animated style 의
-   * 1회성 invalidation 도 건너뛰어 GPU 큐를 더 가볍게 한다.
-   */
-  paused?: boolean;
 }) {
   const flatSv = useSharedValue<number[]>([]);
   const syncMsSv = useSharedValue(0);
   const shipCountSv = useSharedValue(0);
-  /** 매 프레임 `Skia.Path.Make()` 대신 단일 경로를 rewind 해 재사용 — 네이티브 Path 할당 폭주 방지 */
-  const hubArcDiamondPath = useSharedValue(Skia.Path.Make());
   const arcPackSigRef = useRef('');
 
   const arcPackSig = useMemo(
@@ -148,65 +147,27 @@ export const PlanetHubOrbitSkiaLayer = memo(function PlanetHubOrbitSkiaLayer({
     syncMsSv.value = orbitClockMs.value;
   }, [arcPackSig, arcShips, orbitClockMs, flatSv, shipCountSv, syncMsSv]);
 
-  useEffect(() => {
-    return () => {
-      try {
-        const p = hubArcDiamondPath.value;
-        (p as unknown as { dispose?: () => void }).dispose?.();
-      } catch {
-        /* 언마운트 시 dispose 미지원·실패 무시 */
-      }
-    };
-  }, [hubArcDiamondPath]);
-
   const center = PLANET_MAIN_ORBIT_SCENE_SIZE / 2;
-  const sceneSize = PLANET_MAIN_ORBIT_SCENE_SIZE;
-
-  const arcDiamondPath = useDerivedValue(() => {
-    'worklet';
-    const p = hubArcDiamondPath.value;
-    const anyP = p as unknown as { rewind?: () => void; reset?: () => void };
-    if (typeof anyP.rewind === 'function') anyP.rewind();
-    else if (typeof anyP.reset === 'function') anyP.reset();
-    if (paused) return p;
-    const m = orbitClockMs.value;
-    const t0 = syncMsSv.value;
-    const flat = flatSv.value;
-    const shipCount = shipCountSv.value;
-    const n = Math.min(shipCount, Math.floor(flat.length / 7));
-    for (let i = 0; i < n; i++) {
-      const pt = computeArcNpcShipScreenPacked(i, m, t0, flat, shipCount, center);
-      if (pt) appendSkiaDiamondPath(p, pt.x, pt.y, ARC_DIAMOND_R);
-    }
-    return p;
-  });
-
   const arcCaptionSlots = useMemo(
     () => Array.from({ length: HUB_ARC_CAPTION_MAX }, (_, i) => arcCaptionHeads[i] ?? ''),
     [arcCaptionHeads],
   );
+  const markCount = Math.min(arcShips.length, HUB_ARC_CAPTION_MAX);
+  if (markCount <= 0) return null;
 
   return (
     <View
       style={styles.root}
       pointerEvents="none"
-      accessibilityLabel="행성 궤도 함선"
+      accessibilityLabel="행성 궤도 아크 수송선"
       accessibilityRole="image"
       accessible
     >
-      <Canvas style={{ width: sceneSize, height: sceneSize }} pointerEvents="none">
-        <Group>
-          <Path path={arcDiamondPath} style="stroke" strokeWidth={3.2} opacity={0.14} color="#B084FF" />
-          <Path path={arcDiamondPath} style="stroke" strokeWidth={2} opacity={0.32} color="#B084FF" />
-          <Path path={arcDiamondPath} style="stroke" strokeWidth={1.25} color="#E8D4FF" />
-          <Path path={arcDiamondPath} style="fill" color="rgba(176,132,255,0.22)" />
-        </Group>
-      </Canvas>
-      {arcCaptionSlots.map((caption, index) => (
-        <HubArcRnCaption
-          key={`hub-acap-rn-${index}`}
+      {Array.from({ length: markCount }, (_, index) => (
+        <HubArcOrbitMark
+          key={`hub-arc-mark-${index}`}
           index={index}
-          caption={caption}
+          caption={arcCaptionSlots[index] ?? ''}
           orbitClockMs={orbitClockMs}
           syncMsSv={syncMsSv}
           flatSv={flatSv}

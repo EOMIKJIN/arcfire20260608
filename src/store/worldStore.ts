@@ -3,6 +3,10 @@ import { create } from 'zustand';
 import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
 import { StarSystem } from '../types';
 import { GALAXY_SYSTEMS, GAMEPLAY_SYSTEM_IDS, LEGACY_VISIBLE_TOTAL_SYSTEMS, parseSynthOrdinal } from '../data/galaxy100';
+import {
+  getSynthSystemColonizationRow,
+  getWorldExpansionTimingPolicy,
+} from '../arcCore/balance/balanceTableRegistry';
 import { GALAXY_ROUTE_POLICIES, GalaxyRouteDirection } from '../world/galaxyRouteFactionPolicy';
 
 const STORAGE_KEY = 'arcfire_world_v1';
@@ -39,18 +43,20 @@ function normalizeSynthSystemId(id: string): string {
   return `synth_${String(n).padStart(3, '0')}`;
 }
 
+function resolveLegacySynthColonizationCount(): number {
+  return getWorldExpansionTimingPolicy().legacySynthColonizationCount;
+}
+
 function isLegacySynthSystemId(id: string): boolean {
   const ord = parseSynthOrdinal(id);
   if (ord === null) return false;
-  const legacySynthCount = Math.max(0, LEGACY_VISIBLE_TOTAL_SYSTEMS - GAMEPLAY_SYSTEM_IDS.size);
-  return ord <= legacySynthCount;
+  return ord <= resolveLegacySynthColonizationCount();
 }
 
 function isExpansionSynthSystemId(id: string): boolean {
   const ord = parseSynthOrdinal(id);
   if (ord === null) return false;
-  const legacySynthCount = Math.max(0, LEGACY_VISIBLE_TOTAL_SYSTEMS - GAMEPLAY_SYSTEM_IDS.size);
-  return ord > legacySynthCount;
+  return ord > resolveLegacySynthColonizationCount();
 }
 
 function resolveQuadrantForSystem(pos: { x: number; y: number }): QuadrantKey {
@@ -68,35 +74,65 @@ function resolveZoneForQuadrant(q: QuadrantKey): StarSystem['zone'] {
   return GALAXY_ROUTE_POLICIES[q].zone;
 }
 
+function parseCsvNum(raw: string | number | undefined, fallback: number): number {
+  const n = typeof raw === 'number' ? raw : Number(raw);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function parseCsvBool(raw: string | undefined): boolean {
+  return String(raw ?? '').trim().toLowerCase() === 'true';
+}
+
+function resolveZoneFromBalanceZoneIndex(zoneIndex: number): StarSystem['zone'] {
+  if (zoneIndex <= 5) return 'safe';
+  if (zoneIndex <= 12) return 'neutral';
+  return 'pvp';
+}
+
+function resolveQuadrantFromTradeProfile(profile: string | undefined, fallback: QuadrantKey): QuadrantKey {
+  const p = String(profile ?? '').trim().toLowerCase();
+  if (p === 'north' || p === 'east' || p === 'south' || p === 'west') return p;
+  return fallback;
+}
+
 function applySynthSystemAutogen(base: StarSystem): StarSystem {
   if (!base.id.startsWith('synth_')) return base;
-  const q = resolveQuadrantForSystem(base.position);
+  const normalizedId = normalizeSynthSystemId(base.id);
+  const csvRow = getSynthSystemColonizationRow(normalizedId);
+  const posQuadrant = resolveQuadrantForSystem(base.position);
+  const q = csvRow
+    ? resolveQuadrantFromTradeProfile(csvRow.tradeProfile, posQuadrant)
+    : posQuadrant;
   const factionId = resolveFactionForQuadrant(q);
-  const zone = resolveZoneForQuadrant(q);
+  const zoneIndex = csvRow ? parseCsvNum(csvRow.zoneIndex, 1) : 1;
+  const zone = csvRow ? resolveZoneFromBalanceZoneIndex(zoneIndex) : resolveZoneForQuadrant(q);
+  const targetCombatLevel = csvRow ? parseCsvNum(csvRow.targetCombatLevel, 3) : (zone === 'pvp' ? 7 : zone === 'neutral' ? 5 : 3);
   const rawSuffix = base.id.slice('synth_'.length);
   const suffixNum = Number.parseInt(rawSuffix, 10);
   const nameSuffix = Number.isFinite(suffixNum)
     ? String(suffixNum).padStart(3, '0')
     : rawSuffix;
+  const tierN = Math.min(1, (zoneIndex - 1) / 19);
+  const lvN = Math.min(1, targetCombatLevel / 40);
   return {
     ...base,
-    name: `미개척 ${nameSuffix}`,
+    name: csvRow?.systemNameKo ?? `미개척 ${nameSuffix}`,
     zone,
-    description: '최초 발견 이후 아직 본격 개발되지 않은 미개척 성계.',
-    enemyLevel: zone === 'pvp' ? 7 : zone === 'neutral' ? 5 : 3,
+    description: csvRow?.systemDescriptionKo ?? '최초 발견 이후 아직 본격 개발되지 않은 미개척 성계.',
+    enemyLevel: targetCombatLevel,
     planets: base.planets.map((p, i) => ({
       ...p,
-      name: i === 0 ? `미개척 행성-${nameSuffix}` : p.name,
-      description: `최초 발견 이후 개발 전 단계 · ${factionId} 영향권`,
+      name: i === 0 ? (csvRow?.planetNameKo ?? `미개척 행성-${nameSuffix}`) : p.name,
+      description: csvRow?.planetDescriptionKo ?? `최초 발견 이후 개발 전 단계 · ${factionId} 영향권`,
       factionId,
-      hasTradePort: zone !== 'pvp',
-      hasShipyard: zone !== 'pvp',
-      hasTavern: true,
-      coreResource: q === 'south' ? 72 : 58,
-      corePopulation: q === 'north' ? 68 : 52,
-      coreDefense: q === 'south' ? 74 : 50,
-      coreTechnology: q === 'east' ? 70 : 49,
-      coreEnvironment: q === 'west' ? 66 : 48,
+      hasTradePort: csvRow ? parseCsvBool(csvRow.hasTradePort) : zone !== 'pvp',
+      hasShipyard: csvRow ? parseCsvBool(csvRow.hasShipyard) : zone !== 'pvp',
+      hasTavern: csvRow ? parseCsvBool(csvRow.hasTavern) : true,
+      coreResource: Math.round(40 + lvN * 30 + tierN * 10),
+      corePopulation: Math.round(38 + lvN * 28 + tierN * 12),
+      coreDefense: Math.round(36 + lvN * 34 + tierN * 14),
+      coreTechnology: Math.round(34 + lvN * 32 + tierN * 16),
+      coreEnvironment: Math.round(42 + lvN * 24 + tierN * 8),
     })),
   };
 }
