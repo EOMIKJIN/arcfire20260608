@@ -1,0 +1,68 @@
+﻿sceneId,pageIndex,label,text,imageAssetKey,speakerNpcCaptainId,viewMode,textBoxPreset,imageScalePct
+intro01,0,[ 서기 2847년 ],인류는 은하계 전역으로 퍼져나갔다.\n\n수백 개의 성계 수천 개의 행성.\n그리고 끝없는 전쟁과 무역의 역사.,,,cinematic,default,100
+intro01,1,[ 아크파이어 은하 ],"이 은하의 중심에는 ""아크코어"" 가 있다.\n\n이전의 기술문명이 남긴 신비로운 존재.\n이것을 차지하려는 자들의 싸움이 지금도 계속된다.",,,cinematic,default,100
+intro01,2,[ 그리고 당신 ],당신이 지금 이곳에 있는 이유.\n무명의 파일럿.\n\n영원한 의문이다.\n하지만 지금은 오직 앞으로 나아가야 한다.,,,cinematic,default,100
+intro01,3,[ 아르카디아 행성 격납고 ],삐익— 통신이 들어온다.\n\n파일럿. 아르카디아 행성에서 임무가 내려왔습니다.\n베가 전초기지의 지휘관이\n당신을 찾고 있습니다.,,,cinematic,default,100
+intro01,4,[ 출발 준비 완료 ],엔진에 불이 들어온다.\n\n이것이 당신의 첫 번째 임무다.\n\n그리고 전설의 시작이다.,,,cinematic,default,100
+ingame_dialog_01,0,[ 안내 오퍼레이터 ],환영합니다. [닉네임]님.\n\n아르카디아에 무사히 도착하셨습니다.\n먼저 이곳에서 채굴방법을 알려드리겠습니다.\n먼저 스캔을 클릭하세요.\n\n스캔이 완료되면 채굴 버튼이 활성화 됩니다.\n채굴된 광물은 무역소에서 판매가능합니다.\n행운을 빌겠습니다.,,npc_cpt_operator_stella,ingame_dialog,compact,100
+ingame_dialog_wave_defense_end,0,[ 안내 오퍼레이터 ],[닉네임]님. 전투가 종료되었습니다.\n\n다시 정비한 뒤 다음 침공에 대비해 주십시오.,,npc_cpt_operator_stella,ingame_dialog,compact,100
+npc_dialog_default,0,[ 함장 ],반갑습니다 [닉네임]님.\n\n현재 이 행성에 잠시 정박 중입니다.\n특별한 용건은 아직 없습니다.\n다음 기회에 다시 들러 주십시오.,,,ingame_dialog,compact,100
+npc_dialog_arc_transport_temp,0,[ 아크수송선단 ],스캔 채널 확인.\n\n현재 항로 운항 중인 아크수송선단 함장입니다.\n화물·항로·임무 연동은 아직 준비 중입니다.\n지금은 통신 테스트만 가능합니다.,,,ingame_dialog,compact,100
+npc_dialog_orbit_captain_temp,0,[ 궤도 함장 ],통신 연결 확인.\n\n현재 이 행성 궤도를 선회 중인 함장입니다.\n정식 임무·보급·정보 교환은 후속 단계에서 개방됩니다.,,,ingame_dialog,compact,100
+npc_dialog_mireille,0,[ 미레유 보스 ],함대 채널 열렸군.\n경고 광파를 한 번 보낸다.\n도발만 없으면 통과시키지.,,npc_cpt_mireille,ingame_dialog,compact,100
+npc_dialog_orin,0,[ 오린 케이드 ],약한 신호는 무시한다.\n위협만 응답하지.\n잡담은 본부에서 하시오.,,npc_cpt_orin,ingame_dialog,compact,100
+npc_dialog_sela,0,[ 셀라 모른 ],광물 호송 중이다.\n안전 거리만 지켜주면 좋겠군.\n이쪽은 선공할 일이 거의 없다.,,npc_cpt_sela,ingame_dialog,compact,100
+npc_dialog_jex,0,[ 젝스 타르 ],신원 식별 즉시 응답하라.\n응답 없으면 정해진 절차대로 처리한다.\n이쪽은 변경 사격권이다.,,npc_cpt_jex,ingame_dialog,compact,100
+npc_dialog_vector,0,[ 벡터-7 ],관측 채널 1번 개방.\n당신의 추력 패턴은 정상 범위.\n이상 신호 감지 시 다시 호출한다.,,npc_cpt_vector,ingame_dialog,compact,100
+npc_dialog_kresh,0,[ 크레쉬 박 ],포획? 시간 낭비다.\n격파가 더 빠르고 깔끔하지.\n살아 돌아갔다면 운이 좋았던 거다.,,npc_cpt_kresh,ingame_dialog,compact,100
+npc_dialog_raid_scar,0,[ 스카 레인 ],베가 외곽은 우리지역이다.\n빠르게 들어와 빠르게 공격한다.\n살아돌아갈 생각은마라.,,npc_cpt_raid_scar,ingame_dialog,compact,100
+npc_dialog_eden_08,0,[ 카일 렌드 ],베가 보급 항로 감독 중이다.\n일정에 차질만 없으면 그만이지.\n동행은 사양한다.,,npc_cpt_eden_08,ingame_dialog,compact,100
+npc_dialog_eden_09,0,[ 라나 벨 ],에덴 정비독 대기 줄이 길다.\n다음 슬롯은 좀 기다려야 한다.\n급하면 다른 항구를 알아봐.,,npc_cpt_eden_09,ingame_dialog,compact,100
+npc_dialog_eden_10,0,[ 오멜 카르 ],외곽 접근 함선은 모두 추적한다.\n당신도 예외는 아니다.\n행동만 깔끔하면 그걸로 끝이지.,,npc_cpt_eden_10,ingame_dialog,compact,100
+npc_dialog_vega_watch_01,0,[ 하르만 돌 ],베가 외곽 초계 중이다.\n정해진 코스를 벗어나는 신호는 즉시 보고된다.,,npc_cpt_vega_watch_01,ingame_dialog,compact,100
+npc_dialog_vega_watch_02,0,[ 세린 코프 ],민간선 호위 임무 중.\n동행 신청은 본부 채널로 부탁한다.,,npc_cpt_vega_watch_02,ingame_dialog,compact,100
+npc_dialog_solar_guard_01,0,[ 이사 벤트 ],솔라 항구 항만사령부입니다.\n도킹 안내가 필요하면 항만 콘솔에 접속해 주십시오.,,npc_cpt_solar_guard_01,ingame_dialog,compact,100
+npc_dialog_solar_guard_02,0,[ 토닉 레일 ],무역선 호위 중이다.\n잡음 통신은 짧게 끝내자.\n다음 점프창이 곧이다.,,npc_cpt_solar_guard_02,ingame_dialog,compact,100
+npc_dialog_vega_test_a,0,[ 베가 보조대 알파 ],보조 순항 시험 비행 중.\n기록용 통신만 허용된다.\n잡음은 사양한다.,,npc_cpt_vega_test_a,ingame_dialog,compact,100
+npc_dialog_vega_test_b,0,[ 베가 보조대 브라보 ],베가 보급 항로 모니터링 중.\n통신은 30초 단위로 끊어 주길.,,npc_cpt_vega_test_b,ingame_dialog,compact,100
+npc_dialog_vega_red_04,0,[ 베가 레드 04 ],외곽 급습 편대다.\n운 좋으면 그냥 지나가게 둘지도 모르지.,,npc_cpt_vega_red_04,ingame_dialog,compact,100
+npc_dialog_vega_red_05,0,[ 베가 레드 05 ],차단 임무 중이다.\n보급선이면 멈추는 게 좋을 거야.,,npc_cpt_vega_red_05,ingame_dialog,compact,100
+npc_dialog_vega_red_06,0,[ 베가 레드 06 ],방어선이고 뭐고 다 부순다.\n그게 내 일이지.\n자비는 기대하지 마.,,npc_cpt_vega_red_06,ingame_dialog,compact,100
+npc_dialog_vega_red_07,0,[ 베가 레드 07 ],베가 압박은 우리 조의 일이다.\n이쪽 길은 비키시는 게 좋을 거야.,,npc_cpt_vega_red_07,ingame_dialog,compact,100
+npc_dialog_vega_red_08,0,[ 베가 레드 08 ],궤도 요격이 우리 임무다.\n잘못 걸리면 그대로 부서진다.,,npc_cpt_vega_red_08,ingame_dialog,compact,100
+npc_dialog_vega_red_09,0,[ 베가 레드 09 ],보급선 사냥 중이다.\n너는 보급선처럼 안 보이는군.\n그러니 길게 얘기 안 한다.,,npc_cpt_vega_red_09,ingame_dialog,compact,100
+npc_dialog_vega_red_10,0,[ 베가 레드 10 ],근접 돌파다.\n거리를 두는 게 서로한테 좋을 거야.,,npc_cpt_vega_red_10,ingame_dialog,compact,100
+npc_dialog_vega_red_11,0,[ 베가 레드 11 ],추가 돌파조다.\n통신할 시간 없다.\n다음 채널에서 보지.,,npc_cpt_vega_red_11,ingame_dialog,compact,100
+npc_dialog_vega_red_12,0,[ 베가 레드 12 ],증원 돌격조다.\n채널 닫는다.\n방해되면 골치 아플 텐데.,,npc_cpt_vega_red_12,ingame_dialog,compact,100
+npc_dialog_vega_blue_07,0,[ 베가 블루 07 ],외곽 방어 증원이다.\n식별만 부탁한다.,,npc_cpt_vega_blue_07,ingame_dialog,compact,100
+npc_dialog_vega_blue_08,0,[ 베가 블루 08 ],항로 호위 임무 수행 중.\n동행 요청은 정식 채널로 해주길.,,npc_cpt_vega_blue_08,ingame_dialog,compact,100
+npc_dialog_vega_blue_09,0,[ 베가 블루 09 ],고가치 구역 순찰이다.\n머무는 시간은 최소화하길 권한다.,,npc_cpt_vega_blue_09,ingame_dialog,compact,100
+npc_dialog_vega_blue_10,0,[ 베가 블루 10 ],정찰 증원이다.\n위치는 길게 알리지 않는다.\n잠시면 사라질 거다.,,npc_cpt_vega_blue_10,ingame_dialog,compact,100
+npc_dialog_vega_blue_11,0,[ 베가 블루 11 ],민간호위 연합 지원이다.\n분쟁선이 있으면 미리 알려달라.,,npc_cpt_vega_blue_11,ingame_dialog,compact,100
+npc_dialog_neweden_red_07,0,[ 뉴에덴 레드 07 ],암시장 외곽이다.\n정직한 거래는 기대하지 마라.\n이쪽은 다른 규칙으로 돌아가지.,,npc_cpt_neweden_red_07,ingame_dialog,compact,100
+npc_dialog_neweden_blue_07,0,[ 뉴에덴 블루 07 ],중립 항로 방어다.\n분쟁은 다른 곳에서 처리해 주길.,,npc_cpt_neweden_blue_07,ingame_dialog,compact,100
+npc_dialog_arcadia_lane_01,0,[ 엘렌 드 코르 ],아르카디아 관문 궤도는 늘 붐빈다.\n통과 절차만 지켜주면 된다.,,npc_cpt_arcadia_lane_01,ingame_dialog,compact,100
+npc_dialog_arcadia_lane_02,0,[ 마르크 세인 ],외곽 항로 교차 감시 중.\n잘못 들어선 항로는 우리 책임이 아니다.,,npc_cpt_arcadia_lane_02,ingame_dialog,compact,100
+npc_dialog_ai_clan_safe_01,0,[ 아델린 루크 ],솔라무역 방위연합 함대장 아델린 루크다.\n이 권역의 안전은 우리가 책임진다.,,npc_cpt_ai_clan_safe_01,ingame_dialog,compact,100
+npc_dialog_ai_clan_neutral_01,0,[ 린 켄달 ],오메가 중립 회항단 린 켄달이다.\n우리 권역에서는 어떤 깃발도 강요하지 않는다.,,npc_cpt_ai_clan_neutral_01,ingame_dialog,compact,100
+npc_dialog_ai_clan_pvp_01,0,[ 모라 섀이어 ],홍월 약탈 함대 모라 섀이어다.\n이 권역에서는 내가 정한 것이 곧 법이다.,,npc_cpt_ai_clan_pvp_01,ingame_dialog,compact,100
+npc_dialog_arc_pf_01,0,[ 루안 베르 ],보충 라인 1번이다.\n식료·생활품 위주로 도는 항로지.,,npc_cpt_arc_pf_01,ingame_dialog,compact,100
+npc_dialog_arc_pf_02,0,[ 테오 반성 ],보충 라인 2번 운항 중.\n정비 부품 보급이 메인이다.,,npc_cpt_arc_pf_02,ingame_dialog,compact,100
+npc_dialog_arc_pf_03,0,[ 미카 소렌 ],보충 라인 3번이다.\n의료 물자 우선 배송 중이다.,,npc_cpt_arc_pf_03,ingame_dialog,compact,100
+npc_dialog_arc_pf_04,0,[ 조이 힐데 ],보충 라인 4번이다.\n가공 광물 운반 중이고\n일정이 빠듯하다.,,npc_cpt_arc_pf_04,ingame_dialog,compact,100
+npc_dialog_arc_pf_05,0,[ 카이 네므 ],보충 라인 5번 운항 중.\n합성 식품 중심 항로다.,,npc_cpt_arc_pf_05,ingame_dialog,compact,100
+npc_dialog_arc_pf_06,0,[ 사라 올튼 ],보충 라인 6번이다.\n연료셀 보급 임무 수행 중이다.,,npc_cpt_arc_pf_06,ingame_dialog,compact,100
+npc_dialog_arc_pf_07,0,[ 데렉 훈 ],보충 라인 7번이다.\n전자 부품 운반 중.\n충격 회피 부탁한다.,,npc_cpt_arc_pf_07,ingame_dialog,compact,100
+npc_dialog_arc_pf_08,0,[ 이안 크로프 ],보충 라인 8번 운항 중.\n무역소 재고 보충이 목적이다.,,npc_cpt_arc_pf_08,ingame_dialog,compact,100
+npc_dialog_arc_pf_09,0,[ 노바 린 ],보충 라인 9번이다.\n의약품·생필품 혼합 화물이다.,,npc_cpt_arc_pf_09,ingame_dialog,compact,100
+npc_dialog_arc_pf_10,0,[ 제이 파크 ],보충 라인 10번이다.\n정밀 부속 운송 중이니 진동 주의.,,npc_cpt_arc_pf_10,ingame_dialog,compact,100
+npc_dialog_arc_pf_11,0,[ 윤 하림 ],보충 라인 11번이다.\n식수 정수 모듈을 옮긴다.,,npc_cpt_arc_pf_11,ingame_dialog,compact,100
+npc_dialog_arc_pf_12,0,[ 리스 베가 ],보충 라인 12번이다.\n비상 보급용 예비 화물이다.,,npc_cpt_arc_pf_12,ingame_dialog,compact,100
+npc_dialog_tavern_ret_01,0,[ 한로 크레인 ],젊은 함장. 한 잔 하시려나?\n내 시절엔 이 술이 보급품이었지.\n자리는 늘 비어 있네.,,npc_cpt_tavern_ret_01,ingame_dialog,compact,100
+npc_dialog_tavern_ret_02,0,[ 미아 벨로 ],소식판 정리 중이라네.\n미네르바 쪽 항로에 잡음이 좀 있다더군.\n조심해서 다니시게.,,npc_cpt_tavern_ret_02,ingame_dialog,compact,100
+npc_dialog_tavern_ret_03,0,[ 타드 레인 ],드라코 성운에서 본 광경 얘기는 늘 있지.\n자리 잡고 들어볼 텐가.,,npc_cpt_tavern_ret_03,ingame_dialog,compact,100
+npc_dialog_tavern_ret_04,0,[ 세라 미온 ],여기선 깃발도 직책도 다 내려놓고 마신다네.\n그게 우리 집 규칙이지.,,npc_cpt_tavern_ret_04,ingame_dialog,compact,100
+mission_clear_default,0,[ AI 오퍼레이터 ],미션 완료 보고.\n\n「[미션제목]」 임무가 모두 완료되었습니다.\n\n보상이 지급되었습니다. 다음 지시를 기다려 주십시오.\n[닉네임]님.,,npc_cpt_ai_robot_default,ingame_dialog,compact,100
+mission_clear_mission_001,0,[ AI 오퍼레이터 ],미션 완료 보고.\n\n「첫 비행」 임무가 완료되었습니다.\n베가 전초기지 도착을 확인했습니다.\n\n다음 임무를 준비하십시오.\n[닉네임]님.,,npc_cpt_ai_robot_default,ingame_dialog,compact,100
+mission_clear_mission_002,0,[ AI 오퍼레이터 ],미션 완료 보고.\n\n「해적 소탕」 임무가 완료되었습니다.\n교전 결과가 기록되었습니다.\n\n보상이 지급되었습니다.,,npc_cpt_ai_robot_default,ingame_dialog,compact,100
+mission_clear_mission_003,0,[ AI 오퍼레이터 ],미션 완료 보고.\n\n「무역 루트 개척」 임무가 완료되었습니다.\n구매·배달 조건을 모두 충족했습니다.\n\n수고하셨습니다.\n[닉네임]님.,,npc_cpt_ai_robot_default,ingame_dialog,compact,100

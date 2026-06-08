@@ -1,0 +1,67 @@
+import {
+  resolvePlanetAsteroidAssignedMineralIds,
+  resolvePlanetAsteroidOrbitCount,
+} from '../world/mineralDepositModel';
+import { useWorldObjectRuntimeStore } from '../store/worldObjectRuntimeStore';
+import type { WorldObject } from './types';
+
+type PlanetLike = { id: string; name?: string };
+type SystemLike = { id: string };
+
+export interface PlanetWorldObjectQueryInput {
+  planet: PlanetLike;
+  system: SystemLike;
+  nowMs?: number;
+}
+
+/**
+ * 월드오브젝트 공통 조회 진입점.
+ * 현재는 소행성 골격만 생성하며, 추후 CSV/DB 기반 객체(기지/잔해물)를 여기에 합류시킨다.
+ */
+export function listPlanetWorldObjects(input: PlanetWorldObjectQueryInput): WorldObject[] {
+  const fallbackOrbitCount = resolvePlanetAsteroidOrbitCount(input.planet.id);
+  const runtime = useWorldObjectRuntimeStore.getState();
+  const orbitCount = runtime.getAsteroidOrbitCount(input.planet.id, fallbackOrbitCount);
+  const fallbackAssigned = resolvePlanetAsteroidAssignedMineralIds(input.planet.id, orbitCount);
+  const assignedMineralIds = runtime.getAsteroidAssignedMineralItemIds(
+    input.planet.id,
+    orbitCount,
+    fallbackAssigned,
+  );
+  const asteroids: WorldObject[] = Array.from({ length: orbitCount }, (_, i) => {
+    const n = i + 1;
+    const mineralItemId = assignedMineralIds[i] ?? 'ore_mineral_1';
+    return {
+      id: `${input.planet.id}:asteroid:${n}`,
+      kind: 'asteroid',
+      planetId: input.planet.id,
+      systemId: input.system.id,
+      mineralItemId,
+      title: `소행성 ${n}`,
+      description: `채광 가능한 우주 오브젝트 · 배정 광물: ${mineralItemId}`,
+      transform: {
+        orbitSlotIndex: i,
+        radiusScale: 0.58 + i * 0.035,
+        phaseBias: (i * 0.13) % 1,
+      },
+      interactions: [
+        {
+          kind: 'mining',
+          enabled: true,
+        },
+        {
+          kind: 'scan',
+          enabled: true,
+        },
+      ],
+      state: {
+        depleted: false,
+        cooldownUntilMs: null,
+      },
+      tags: ['world_object', 'asteroid'],
+    };
+  });
+
+  return asteroids;
+}
+

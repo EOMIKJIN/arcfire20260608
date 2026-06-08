@@ -1,0 +1,10 @@
+﻿statId,label,upgradeGroup,sortOrder,perLevelHint,effectKind,effectValuePerLevel,effectFloor
+ship_hull_hp,선체 내구도 (HP),ship,1,+50 최대 HP,ship_bonus_max_hp,50,0
+ship_shield,실드 (Shield),ship,2,+30 최대 실드,ship_bonus_max_shield,30,0
+ship_turn_speed,선회 속도,ship,3,+3% 선회율,ship_turn_rate_mul_per_level,0.03,0
+weapon_laser_damage,레이저 공격력,weapon_laser,4,+1 DMG,weapon_damage_flat,1,0
+weapon_laser_fire_rate,레이저 연사,weapon_laser,5,쿨다운 -5%,weapon_fire_rate_cooldown,0.95,120
+weapon_laser_range,레이저 사거리,weapon_laser,6,+8 px,weapon_range_flat,8,0
+weapon_missile_damage,미사일 공격력,weapon_missile,7,+1 DMG,weapon_damage_flat,1,0
+weapon_missile_fire_rate,미사일 연사,weapon_missile,8,쿨다운 -5%,weapon_fire_rate_cooldown,0.95,120
+weapon_missile_range,미사일 사거리,weapon_missile,9,+10 px,weapon_range_flat,10,0

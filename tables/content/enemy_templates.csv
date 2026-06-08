@@ -1,0 +1,5 @@
+﻿id,name,level,hp,shield,armor,attackBonus,damageDiceCount,damageDiceSides,damageDiceBonus,expReward,creditReward
+pirate_fighter,해적 전투기,1,60,20,11,2,1,6,1,200,300
+pirate_cruiser,해적 순양함,5,150,60,13,4,2,6,2,600,900
+bounty_hunter,현상금 사냥꾼,10,200,100,15,7,2,8,3,1500,2000
+void_wraith,보이드 레이스,20,400,200,18,12,3,8,5,5000,7000

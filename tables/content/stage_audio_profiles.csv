@@ -1,0 +1,14 @@
+﻿stageRouteName,bgmTrackId,preloadTrackIdsPipe,sfxTrackIdsPipe,notesKo
+title,bgm_title,,sfx_ui_confirm|sfx_ui_back,시작 화면
+character_select,bgm_title,,sfx_ui_confirm|sfx_ui_back,캐릭터 선택
+nickname,bgm_title,,sfx_ui_confirm|sfx_ui_back,닉네임 등록
+intro,bgm_story,bgm_planet_hub,sfx_ui_confirm,스토리
+continue_warp,bgm_galaxy_map,bgm_planet_hub|bgm_combat,sfx_ui_confirm,항로 진입
+planet,bgm_planet_hub,bgm_combat|bgm_galaxy_map,sfx_ui_confirm|sfx_mission_complete,메인스테이지
+worldmap,bgm_galaxy_map,bgm_combat|bgm_planet_hub,sfx_ui_confirm,은하계 지도
+combat,bgm_combat,bgm_planet_hub,sfx_combat_hit|sfx_combat_destroy,전투
+trade,bgm_trade,bgm_planet_hub,sfx_ui_confirm|sfx_ui_back,무역소
+shipyard,bgm_shipyard,bgm_planet_hub,sfx_ui_confirm|sfx_ui_back,조선소
+tavern,bgm_tavern,bgm_planet_hub,sfx_ui_confirm|sfx_ui_back,선술집
+skilltree,bgm_skilltree,bgm_planet_hub,sfx_ui_confirm|sfx_ui_back,연구소
+gem-shop,bgm_trade,bgm_planet_hub,sfx_ui_confirm|sfx_ui_back,보석 상점

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "573669488610",
+    "project_id": "arcfire-49d69",
+    "storage_bucket": "arcfire-49d69.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:573669488610:android:b1f9839972401e2eb22bbb",
+        "android_client_info": {
+          "package_name": "com.arcfire.online"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChJzCBWUofXfhJhSWutQ9ypFqHzhBltP0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

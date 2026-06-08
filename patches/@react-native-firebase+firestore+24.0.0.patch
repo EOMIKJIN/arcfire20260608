@@ -1,0 +1,26 @@
+diff --git a/node_modules/@react-native-firebase/firestore/app.plugin.js b/node_modules/@react-native-firebase/firestore/app.plugin.js
+new file mode 100644
+index 0000000..7fe90e8
+--- /dev/null
++++ b/node_modules/@react-native-firebase/firestore/app.plugin.js
+@@ -0,0 +1,13 @@
++'use strict';
++/**
++ * Expo config plugin stub — upstream @react-native-firebase/firestore does not ship app.plugin.js.
++ * Native Firestore is autolinked; this plugin satisfies Expo prebuild resolution only.
++ */
++const { createRunOncePlugin } = require('@expo/config-plugins');
++const pak = require('./package.json');
++
++function withRnFirebaseFirestoreStub(config) {
++  return config;
++}
++
++module.exports = createRunOncePlugin(withRnFirebaseFirestoreStub, `${pak.name}/expo-stub`, pak.version);
+diff --git a/node_modules/@react-native-firebase/firestore/dist/module/package.json b/node_modules/@react-native-firebase/firestore/dist/module/package.json
+deleted file mode 100644
+index 089153b..0000000
+--- a/node_modules/@react-native-firebase/firestore/dist/module/package.json
++++ /dev/null
+@@ -1 +0,0 @@
+-{"type":"module"}

@@ -1,0 +1,4 @@
+﻿id,sortOrder,nameKo,labelKo,summaryKo,portraitImageAssetKey,statStrength,statDexterity,statConstitution,statIntelligence,statWisdom,statCharisma
+prof_striker,1,강습 파일럿,[ 강습 파일럿 ],근접 교전과 화력 돌파에 특화한 전투형 파일럿입니다.,assets/images/npc/stella_aris_char001.png,14,12,12,8,8,8
+prof_scout,2,정찰 파일럿,[ 정찰 파일럿 ],민첩한 기동과 정찰·회피에 특화한 정찰형 파일럿입니다.,assets/images/npc/mia_bello_char002.png,10,14,10,10,10,10
+prof_tactician,3,전술 파일럿,[ 전술 파일럿 ],함대 지휘와 전술 판단에 특화한 지휘형 파일럿입니다.,assets/images/stella_aris_char001.png,10,10,10,14,12,10

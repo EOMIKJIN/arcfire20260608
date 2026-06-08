@@ -1,0 +1,16 @@
+progressionOrder,planetId,systemId,zoneIndex,hostileShipCount,targetCombatLevel,requiredFleetMinDps,enemyAffinityKind,targetEngageSec,mainStageCombatEnabled,mainStageCombatVariant
+1,draco_haven,draco_nebula,1,1,1,150,light,32,true,draco_wave
+2,iron_remnant,iron_cross,2,2,3,250,light,32,true,draco_wave
+3,omega_hub,omega_station,3,2,5,400,light,32,true,draco_wave
+4,helios_core,helios,4,2,7,650,light,32,true,draco_wave
+5,sirius_border,sirius,5,2,9,900,light,32,true,draco_wave
+6,titan_ruins,titan_gate,6,2,12,1200,shielded,32,true,draco_wave
+7,perseus_memorial,perseus,7,3,15,1600,shielded,32,true,draco_wave
+8,shadow_market,shadow_nexus,8,3,18,2100,shielded,32,true,draco_wave
+9,crimson_base,crimson_zone,9,3,21,2700,shielded,32,true,draco_wave
+10,dark_haven,dark_rift,10,3,25,3400,shielded,32,true,draco_wave
+11,blood_station,blood_field,11,3,28,4200,heavy,32,true,draco_wave
+12,nightfall_citadel,nightfall,12,3,31,5100,heavy,32,true,draco_wave
+13,abyss_gate,abyss,13,3,34,6200,heavy,32,true,draco_wave
+14,core_prime,arcfire_core,14,3,37,7500,heavy,32,true,draco_wave
+15,eternal_throne,eternity,15,3,40,9000,heavy,32,true,draco_wave

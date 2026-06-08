@@ -1,0 +1,16 @@
+﻿id,kind,assetKey,loop,defaultVolumePct,maxConcurrent,memoryTier,notesKo
+bgm_title,bgm,assets/audio/bgm/title_loop.mp3,TRUE,55,1,hot,시작·타이틀 화면
+bgm_planet_hub,bgm,assets/audio/bgm/planet_hub_loop.mp3,TRUE,50,1,hot,행성 메인스테이지
+bgm_galaxy_map,bgm,assets/audio/bgm/galaxy_map_loop.mp3,TRUE,48,1,warm,은하계 지도
+bgm_combat,bgm,assets/audio/bgm/combat_loop.mp3,TRUE,58,1,hot,궤도·이동중 전투
+bgm_trade,bgm,assets/audio/bgm/trade_loop.mp3,TRUE,45,1,warm,무역소
+bgm_shipyard,bgm,assets/audio/bgm/shipyard_loop.mp3,TRUE,45,1,warm,조선소
+bgm_tavern,bgm,assets/audio/bgm/tavern_loop.mp3,TRUE,42,1,warm,선술집
+bgm_skilltree,bgm,assets/audio/bgm/skilltree_loop.mp3,TRUE,44,1,warm,연구소·스킬
+bgm_story,bgm,assets/audio/bgm/story_loop.mp3,TRUE,40,1,cold,인트로·스토리
+sfx_ui_confirm,sfx,assets/audio/sfx/ui_confirm.wav,FALSE,75,2,hot,UI 확인·탭
+sfx_ui_back,sfx,assets/audio/sfx/ui_back.wav,FALSE,70,2,hot,UI 뒤로·닫기
+sfx_ui_error,sfx,assets/audio/sfx/ui_error.wav,FALSE,80,2,warm,UI 오류·불가
+sfx_mission_complete,sfx,assets/audio/sfx/mission_complete.wav,FALSE,85,1,warm,미션 완료
+sfx_combat_hit,sfx,assets/audio/sfx/combat_hit.wav,FALSE,65,3,hot,전투 피격(경량)
+sfx_combat_destroy,sfx,assets/audio/sfx/combat_destroy.wav,FALSE,70,2,warm,격침

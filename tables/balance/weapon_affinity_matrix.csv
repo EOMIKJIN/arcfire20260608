@@ -1,0 +1,22 @@
+weaponKind,targetAffinityKind,damageMultiplier,notesKo
+laser,light,1.0,기본 — 경장갑
+laser,shielded,1.5,실드 특화
+laser,heavy,0.7,중장갑 약화
+missile,light,1.0,기본
+missile,shielded,0.7,실드 약화
+missile,heavy,1.5,장갑 특화
+railgun,light,1.0,하이브리드 기본
+railgun,shielded,1.2,실드 보정
+railgun,heavy,1.2,장갑 보정
+plasma,light,1.0,하이브리드 기본
+plasma,shielded,1.2,실드 보정
+plasma,heavy,1.4,장갑 특화
+rocket,light,1.0,로켓 — 미사일 계열 폴백
+rocket,shielded,0.7,로켓 — 미사일 계열
+rocket,heavy,1.5,로켓 — 미사일 계열
+drone,light,1.0,드론 — 미사일 계열 폴백
+drone,shielded,0.7,드론 — 미사일 계열
+drone,heavy,1.5,드론 — 미사일 계열
+carrier,light,1.0,함재기 — 미사일 계열 폴백
+carrier,shielded,0.7,함재기 — 미사일 계열
+carrier,heavy,1.5,함재기 — 미사일 계열

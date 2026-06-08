@@ -1,0 +1,9 @@
+hullTierKey,labelKo,purchaseCredits,requiredPilotLevelMin,recommendedAfterZoneIndex,notesKo
+frigate_default,프리깃(기본 지급),0,1,0,신규 계정 기본
+frigate_upgraded,프리깃 개량형,250000,7,4,행성4~5 구간 권장 구매
+destroyer,구축함(Destroyer),1200000,15,7,행성7 — Shielded 대응 체급 전환
+destroyer_upgraded,구축함 개량형,1800000,25,10,행성10
+cruiser,순양함(Cruiser),5000000,31,12,행성12 — Heavy 대응
+cruiser_upgraded,순양함 개량형,7500000,40,15,행성15
+battlecruiser,순양전함(Battlecruiser),15000000,52,18,행성18 엔드게임
+battlecruiser_max,순양전함 최종 풀강,0,60,20,행성20 만렙 카타르시스(업그레이드 완료 상태)

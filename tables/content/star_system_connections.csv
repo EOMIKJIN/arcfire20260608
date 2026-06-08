@@ -1,0 +1,10 @@
+﻿systemId,connectedSystemId
+arcadia,solar_port
+arcadia,vega_outpost
+solar_port,arcadia
+solar_port,minerva
+solar_port,new_eden
+new_eden,solar_port
+new_eden,vega_outpost
+new_eden,iron_cross
+new_eden,omega_station

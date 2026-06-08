@@ -1,0 +1,6 @@
+planetType,baseCount,combatShare,tradeShare,exploreShare,notes
+safe,4,0.4,0.35,0.25,평화권
+neutral,6,0.45,0.35,0.2,중립·무역 허브
+pvp,8,0.55,0.25,0.2,분쟁·PvP
+endgame,6,0.5,0.3,0.2,엔드게임 성계
+default,5,0.45,0.35,0.2,미매칭 폴백

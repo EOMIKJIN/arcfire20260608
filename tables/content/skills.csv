@@ -1,0 +1,44 @@
+﻿id,name,description,category,tier,prerequisiteIdsPipe,levelRequired,effectType,effectStat,effectValue,effectDescription,icon
+double_shot,이중 사격,전투 자동 사격 루틴을 가속하고 미사일 살보를 1발 늘린다.,combat,1,,2,active,,,자동 전투: 무기 쿨다운 -12% / 미사일 살보 +1,⚡
+shield_overload,실드 과부하,전투 시작 시 실드 출력 한계를 높인다.,combat,1,,3,active,,,자동 전투: 최대 실드 +20%,🛡
+emp_blast,EMP 폭발,명중 시 적 실드를 추가로 붕괴시킨다.,combat,2,double_shot,5,active,,,자동 전투: 명중 시 적 최대 실드의 25% 방전,💥
+armor_piercing,장갑 관통,적 장갑을 5 무시하고 공격한다.,combat,2,double_shot,6,passive,armor_pierce,5,전투 계산: 적 장갑 -5,🎯
+reactive_armor,반응 장갑,피격 직전 장갑판을 사출해 충격을 상쇄한다.,combat,2,shield_overload,5,passive,damage_reduction,15,전투 계산: 대미지 15% 감소,🩹
+critical_focus,집중 타격,19~20이 크리티컬로 판정된다.,combat,3,armor_piercing,10,passive,crit_range,19,전투 계산: 크리티컬 범위 19-20,💎
+plasma_cannon,플라즈마 포,실드를 투과하여 선체에 직접 타격을 준다.,combat,3,emp_blast,12,active,shield_pen,10,자동 전투: 실드 관통 10%,🔥
+fortress_mode,요새화 모드,기동성을 포기하고 방어 출력을 극대화한다.,combat,3,reactive_armor,15,active,defense_boost,50,이동 불가 상태: 방어력 +50%,🏰
+multi_lockon,다중 타겟팅,사거리 내 모든 적을 동시에 록온하여 발사한다.,combat,4,double_shot,28,active,target_count,3,자동 전투: 최대 3개 타겟 동시 공격,🎯
+hull_regeneration,나노봇 수복,전투 중 선체 장갑을 실시간으로 수복한다.,combat,4,reactive_armor,32,passive,regen_rate,5,매 턴 감소된 체력의 5% 회복,🧪
+singularity_cannon,싱귤래리티 포,적 함선을 한 점으로 끌어모으는 특이점을 발사한다.,combat,5,multi_lockon,50,active,gravity_pull,100,적 함선 밀집 유도 및 광역 대미지,🕳
+perfect_defense,절대 방어 체계,모든 피해를 1로 고정하는 절대 장벽을 생성한다.,combat,5,hull_regeneration,55,active,invincibility,1,1턴 동안 모든 피해 무효화,🛡
+jump_boost,점프 가속,하이퍼점프 속도 30% 향상.,navigation,1,,2,passive,jump_speed,30,이동 속도 +30%,🚀
+sensor_array,정찰 센서,광범위 스캔을 통해 성계 내 위협을 먼저 식별한다.,navigation,1,,2,passive,sensor_range,20,탐지 범위 +20%,📡
+stealth_drive,스텔스 드라이브,3턴 동안 적에게 감지되지 않는다.,navigation,2,jump_boost,5,active,,,3턴 스텔스,👁
+warp_stabilizer,워프 안정기,차원 도약 시 발생하는 에너지 손실을 최소화한다.,navigation,2,sensor_array,6,passive,fuel_efficiency,20,이동 시 연료 소모 -20%,🌀
+ghost_vessel,유령선,완벽한 저소음 기동으로 기습 우위를 점한다.,navigation,3,stealth_drive,11,passive,sneak_attack,100,은신 후 첫 공격 대미지 +100%,👻
+wormhole_finder,웜홀 탐색기,불안정한 공간의 틈을 찾아 항로를 단축한다.,navigation,3,warp_stabilizer,13,passive,shortcut_find,15,웜홀 발견 확률 +15%,🕳
+gravity_swing,중력 가속,행성이나 항성의 중력을 이용하여 폭발적인 추진력을 얻는다.,navigation,3,jump_boost,18,active,speed_boost,50,교전 구역 내 일시적 최고 속도 +50%,🌌
+dimensional_blink,차원 도약,물리적 충돌을 무시하고 전장의 지점으로 즉시 이동한다.,navigation,4,ghost_vessel,30,active,teleport_range,500,전투 중 무적 판정 이동,✨
+orbit_surge,궤도 슬링 증폭,근점 통과 궤도에서 추가 추력을 끌어낸다.,navigation,4,gravity_swing,34,passive,fuel_efficiency,15,워프·항법 연료 효율 +15%,🔥
+star_pathfinder,성계 개척자,미지의 좌표를 선점하여 효율적인 항로를 개척한다.,navigation,4,wormhole_finder,35,passive,fuel_efficiency,100,미개척 항로 워프 시 연료 추가 절감,🗺️
+wormhole_generator,웜홀 생성기,성계와 성계를 직접 잇는 영구 이동 통로를 개설한다.,navigation,5,wormhole_finder,52,active,gate_creation,1,두 지점 간 즉시 이동 포탈 생성,🌀
+market_sense,시장 감지,인접 성계의 가격 정보를 미리 볼 수 있다.,trade,1,,2,passive,market_range,1,인접 성계 가격 공개,📊
+cargo_stacking,화물 최적화,화물창의 공간 활용도를 극대화하여 적재량을 늘린다.,trade,1,,3,passive,cargo_capacity,10,인벤토리 슬롯 +10,📦
+negotiation_pro,협상 전문가,상업 지구에서의 영향력을 통해 거래 우위를 점한다.,trade,2,market_sense,8,passive,trade_bonus,5,매입가 -5% / 매도가 +5%,🤝
+smuggler_route,밀수 루트,금지 물품 거래 시 단속 확률 50% 감소.,trade,2,market_sense,7,passive,contraband_risk,-50,밀수 위험도 -50%,🎭
+bulk_trading,대량 거래,대규모 물량을 한 번에 처리하여 추가 마진을 남긴다.,trade,3,negotiation_pro,20,passive,profit_margin,10,대량 거래 시 추가 이익 +10%,💰
+tax_exemption,관세 면제,각 성계의 무역 허브와 협약을 맺어 세금을 감면받는다.,trade,3,cargo_stacking,22,passive,tax_cut,10,무역 거래 세금 10% 감면,📜
+black_market_boss,암시장 거물,범죄 조직과 연계하여 금지 물품 권한을 얻는다.,trade,4,smuggler_route,35,passive,trade_access,1,모든 밀수품 거래 허용 및 세금 면제,👑
+investor_deal,투자자 협약,스테이션의 주요 투자자로 등록되어 최우수 대우를 받는다.,trade,4,tax_exemption|bulk_trading,38,passive,service_fee,0,정거장 수리·이용 수수료 면제,💎
+monopoly_master,시장 독점자,특정 성계의 물가를 조작하여 독점 이득을 취한다.,trade,5,black_market_boss,58,active,price_control,30,성계 물가 강제 조정 (매입가-30% 등),💎
+wingman_recruit,윙맨 모집,함대 네트워크를 개방하여 더 많은 용병을 수용한다.,fleet,1,,4,passive,fleet_slot,1,격납고 최대 함선 수 +1,🤝
+formation_basic,기본 대형,함대 간 간격을 유지하여 방어 효율을 높인다.,fleet,1,,3,passive,armor_bonus,5,플래그십 장갑 +5,🛡️
+wingman,윙맨,전투 시작 시 AI 윙맨 함선 1대 소환. 3턴 유지.,fleet,2,wingman_recruit,8,active,,,윙맨 소환 (3턴 유지),✈
+repair_drone,수리 드론,자동 복구 드론을 사출하여 함대를 상시 정비한다.,fleet,2,formation_basic,10,passive,fleet_regen,1,비전투 시 함선 체력 저속 재생,🛠️
+wingman_synergy,윙맨 시너지,동료와의 연계 공격으로 무기 시스템을 최적화한다.,fleet,2,wingman_recruit,12,passive,cooldown_reduction,5,무기 재장전 시간 -5%,🔗
+fleet_command,함대 지휘,파티원 전체에게 명중 +2 보너스 부여.,fleet,3,wingman,15,passive,party_attack_bonus,2,파티 명중 +2,⚓
+emergency_warp,긴급 탈출,선체 붕괴 위험 시 차원을 강제로 도약하여 퇴각한다.,fleet,3,repair_drone,25,active,auto_escape,10,함체 위험 시 생존 보정 (표시용),🚨
+tactical_link,전술 링크,함대 전원을 데이터 링크로 연결하여 성능을 증폭한다.,fleet,4,fleet_command|emergency_warp,40,passive,stat_multiplier,5,지휘·긴급 계열 스킬과 시너지 시 전투 보정 +5,📶
+carrier_command,항모 지휘관,최대 함대 구성 인원을 늘리고 지원함을 강화한다.,fleet,4,fleet_command,38,passive,fleet_size,2,최대 함대 슬롯 +2 확장,🏗️
+carrier_protocol,항모 프로토콜,함재기 및 드론의 관제 시스템을 오버클럭한다.,fleet,4,carrier_command|emergency_warp,42,passive,drone_damage,50,함재기·드론 피해 +50%,🚢
+overlord_presence,오버로드의 위엄,사령관의 존재로 아군 사기가 급증하고 적 명중이 급감한다.,fleet,5,carrier_command,60,passive,aura_effect,10,아군 명중+4 / 적 명중-4,🔱

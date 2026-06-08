@@ -1,0 +1,114 @@
+{
+  "generatedAt": "2026-06-07T13:25:24.101Z",
+  "policySource": "level_band_targets.csv",
+  "drifts": [
+    {
+      "key": "band_early",
+      "target": 15,
+      "observed": 16.5,
+      "gapPercent": 10,
+      "severity": "warn",
+      "decision": "adjust_multiplier"
+    },
+    {
+      "key": "band_mid_early",
+      "target": 60,
+      "observed": 66,
+      "gapPercent": 10,
+      "severity": "warn",
+      "decision": "adjust_multiplier"
+    },
+    {
+      "key": "band_mid",
+      "target": 90,
+      "observed": 99.00000000000001,
+      "gapPercent": 10,
+      "severity": "warn",
+      "decision": "adjust_multiplier"
+    },
+    {
+      "key": "band_late",
+      "target": 120,
+      "observed": 132,
+      "gapPercent": 10,
+      "severity": "warn",
+      "decision": "adjust_multiplier"
+    }
+  ],
+  "bands": [
+    {
+      "bandId": "early",
+      "minLevel": "1",
+      "maxLevel": "10",
+      "targetMinutesPerLevel": "15",
+      "targetCreditsPerHour": "800",
+      "targetCombatPowerTier": "1",
+      "dwellAlertRatio": "1.5"
+    },
+    {
+      "bandId": "mid_early",
+      "minLevel": "11",
+      "maxLevel": "20",
+      "targetMinutesPerLevel": "60",
+      "targetCreditsPerHour": "2400",
+      "targetCombatPowerTier": "2",
+      "dwellAlertRatio": "1.5"
+    },
+    {
+      "bandId": "mid",
+      "minLevel": "21",
+      "maxLevel": "40",
+      "targetMinutesPerLevel": "90",
+      "targetCreditsPerHour": "6000",
+      "targetCombatPowerTier": "3",
+      "dwellAlertRatio": "1.5"
+    },
+    {
+      "bandId": "late",
+      "minLevel": "41",
+      "maxLevel": "60",
+      "targetMinutesPerLevel": "120",
+      "targetCreditsPerHour": "12000",
+      "targetCombatPowerTier": "4",
+      "dwellAlertRatio": "1.5"
+    }
+  ],
+  "overlay": [
+    {
+      "key": "expReward",
+      "multiplier": "1.03",
+      "source": "aabs_audit",
+      "updatedAt": "2026-05-17T07:23:04.057Z"
+    },
+    {
+      "key": "creditReward",
+      "multiplier": "1",
+      "source": "",
+      "updatedAt": " "
+    },
+    {
+      "key": "tradeIncome",
+      "multiplier": "1",
+      "source": "",
+      "updatedAt": " "
+    },
+    {
+      "key": "dropWeight",
+      "multiplier": "1",
+      "source": "",
+      "updatedAt": " "
+    },
+    {
+      "key": "miningYield",
+      "multiplier": "1",
+      "source": "",
+      "updatedAt": " "
+    },
+    {
+      "key": "combatDifficulty",
+      "multiplier": "1",
+      "source": "",
+      "updatedAt": ""
+    }
+  ]
+}

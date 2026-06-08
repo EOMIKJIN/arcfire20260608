@@ -1,0 +1,8 @@
+key,value,notesKo
+policy_version,2,무역소 무기 기준가 — integrated_leveling_v1(누적 크레딧×구간 예산×등급)
+pricing_model,integrated_leveling_v1,docs/ARCFIRE_INTEGRATED_LEVELING_SPEC.md · integratedWeaponTradePricing.ts
+min_price_credits,800,최저가(초반 T1)
+max_price_credits,12000000,최고가(코스믹 Lv.60)
+catalog_stock_min,1,카탈로그 재고 하한
+catalog_stock_max,60,카탈로그 재고 상한
+legacy_damage_formula_retired,v1,구 Price=Base×Damage^Exp 공식은 v2에서 폐기

@@ -1,0 +1,64 @@
+﻿id,displayName,triggerKey,triggerTargetId,triggerRepeat,maxLinesPerPage,completionPolicy,nextRoute,skippable,typewriterSpeedMs,fadeInEnabled,fadeInDurationMs,fadeOutEnabled,fadeOutDurationMs
+intro01,튜토리얼 인트로,nickname_created,,once,5,mark_intro_seen_and_start_first_mission,/(game)/planet,TRUE,40,TRUE,700,TRUE,600
+ingame_dialog_01,아르카디아 환영 대사,planet_landed,arcadia_prime,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+ingame_dialog_wave_defense_end,웨이브 디펜스 종료,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_default,함장 인사 폴백,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arc_transport_temp,아크수송선단 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,70,FALSE,0,FALSE,0
+npc_dialog_orbit_captain_temp,궤도함장 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_mireille,미레유 보스 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_orin,오린 케이드 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_sela,셀라 모른 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_jex,젝스 타르 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vector,벡터-7 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_kresh,크레쉬 박 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_raid_scar,스카 레인 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_eden_08,카일 렌드 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_eden_09,라나 벨 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_eden_10,오멜 카르 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_watch_01,하르만 돌 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_watch_02,세린 코프 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_solar_guard_01,이사 벤트 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_solar_guard_02,토닉 레일 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_test_a,베가 보조대 알파 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_test_b,베가 보조대 브라보 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_red_04,베가 레드 04 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_red_05,베가 레드 05 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_red_06,베가 레드 06 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_red_07,베가 레드 07 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_red_08,베가 레드 08 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_red_09,베가 레드 09 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_red_10,베가 레드 10 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_red_11,베가 레드 11 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_red_12,베가 레드 12 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_blue_07,베가 블루 07 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_blue_08,베가 블루 08 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_blue_09,베가 블루 09 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_blue_10,베가 블루 10 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_vega_blue_11,베가 블루 11 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_neweden_red_07,뉴에덴 레드 07 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_neweden_blue_07,뉴에덴 블루 07 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arcadia_lane_01,엘렌 드 코르 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arcadia_lane_02,마르크 세인 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_ai_clan_safe_01,아델린 루크 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_ai_clan_neutral_01,린 켄달 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_ai_clan_pvp_01,모라 섀이어 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arc_pf_01,루안 베르 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arc_pf_02,테오 반성 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arc_pf_03,미카 소렌 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arc_pf_04,조이 힐데 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arc_pf_05,카이 네므 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arc_pf_06,사라 올튼 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arc_pf_07,데렉 훈 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arc_pf_08,이안 크로프 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arc_pf_09,노바 린 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arc_pf_10,제이 파크 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arc_pf_11,윤 하림 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arc_pf_12,리스 베가 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_tavern_ret_01,한로 크레인 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_tavern_ret_02,미아 벨로 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_tavern_ret_03,타드 레인 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_tavern_ret_04,세라 미온 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+mission_clear_default,미션 완료(범용),manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+mission_clear_mission_001,첫 비행 완료,manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+mission_clear_mission_002,해적 소탕 완료,manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+mission_clear_mission_003,무역 루트 개척 완료,manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
