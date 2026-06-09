@@ -1,0 +1,9 @@
+key,value,notesKo
+policy_version,1,교역품 생산지·수요지 구매탭 분배 정본
+import_seed_stock_pct,0.35,수요지 초기 재고 = stock_max × 이 비율
+convoy_channel_share,0.65,수요지 재고 중 수송선 유입 비중(초기·증가)
+player_channel_share,0.35,수요지 재고 중 플레이어 매입 비중(초기·증가)
+import_buy_price_ratio,0.55,수요지 재판매 구매가 = baseBuy+(baseSell-baseBuy)×비율
+local_origin_resale_buy_ratio,0.70,생산지 재판매 = inventory 구매가×비율(−30%·동일 생산 팩션 무역소 공통)
+player_buy_catalog_role,supply,플레이어 교역품 구매=생산지 무역소만(수요지 수입 재고 제외)
+supply_assignment_mode,planet_per_item,교역품 생산·수요=trade_route_planet_supply_assignments 행성 1:1

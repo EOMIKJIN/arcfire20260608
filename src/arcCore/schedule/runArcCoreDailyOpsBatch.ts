@@ -7,6 +7,8 @@ import { runPlayScenarioEconomyPass } from '../balance/runPlayScenarioEconomyPas
 import { runGlobalPlanetMasterBalancePass } from '../planetBalance/runGlobalPlanetMasterBalancePass';
 import { runPlanetEnergyCorePass } from '../planetEnergy/runPlanetEnergyCorePass';
 import { runPlanetEnvironmentDiversityPass } from '../planetEnvironment/runPlanetEnvironmentDiversityPass';
+import { runMarketMicroAdjustPass } from '../economy/runMarketMicroAdjustPass';
+import { runTradeRouteDailyMarketPass } from '../economy/runTradeRouteDailyMarketPass';
 import { tryArcCoreWorldDailyUnlock } from '../worldExpansionDailyUnlock';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { resolveArcCoreDailyOpsPolicy } from './arcCoreDailyOpsPolicy';
@@ -17,6 +19,8 @@ export type ArcCoreDailyOpsBatchResult = {
   planetEnvironment: boolean;
   planetMasterBalance: boolean;
   scenarioEconomy: boolean;
+  marketPriceAdjust: boolean;
+  tradeRouteDailyMarket: boolean;
   aabsAlignment: boolean;
   worldExpansionUnlock: boolean;
 };
@@ -33,6 +37,8 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     planetEnvironment: false,
     planetMasterBalance: false,
     scenarioEconomy: false,
+    marketPriceAdjust: false,
+    tradeRouteDailyMarket: false,
     aabsAlignment: false,
     worldExpansionUnlock: false,
   };
@@ -56,6 +62,12 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   if (policy.runScenarioEconomyPass) {
     runPlayScenarioEconomyPass(true);
     result.scenarioEconomy = true;
+  }
+  if (policy.runMarketPricePass) {
+    await runMarketMicroAdjustPass();
+    result.marketPriceAdjust = true;
+    const tradeRouteDaily = runTradeRouteDailyMarketPass();
+    result.tradeRouteDailyMarket = tradeRouteDaily.ran;
   }
   if (policy.runAabsAlignmentPass) {
     await runDailyPolicyAlignment(true);

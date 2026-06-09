@@ -1,7 +1,10 @@
 import type { MiningSessionState, MiningTickResult } from './types';
 import { ORBIT_MINING_REWARD_GOOD_ID } from '../../game/miningConfig';
+import { rollMiningDropGoodId } from '../../arcCore/economy/mineralMiningDropPolicy';
+import { isArcCorePricedMineral } from '../../arcCore/economy/mineralTradePricing';
 import { useMenuNotificationStore } from '../../store/menuNotificationStore';
 import { usePlayerStore } from '../../store/playerStore';
+import { scheduleMiningPlayerPersist } from './miningPlayerPersist';
 
 const INITIAL_STATE: MiningSessionState = {
   planetId: null,
@@ -46,8 +49,7 @@ export function stopMiningSession(): MiningSessionState {
 }
 
 /**
- * TODO(mining): 실제 채광 규칙(보상 테이블/쿨다운/인벤 반영)을 연결한다.
- * 현재는 작업 기반만 제공하는 no-op tick.
+ * 광물 1사이클 — 아크코어 확률 드랍(존 풀 · 70% 주력 / 30% 부가).
  */
 export function runMiningTick(prev: MiningSessionState, nowMs: number): MiningTickResult {
   if (prev.status !== 'running' || !prev.planetId) {
@@ -59,20 +61,17 @@ export function runMiningTick(prev: MiningSessionState, nowMs: number): MiningTi
       },
     };
   }
-  const rewardGoodId = (prev.miningGoodId && prev.miningGoodId.trim()) || ORBIT_MINING_REWARD_GOOD_ID;
+  const rewardGoodId = rollMiningDropGoodId(prev.planetId);
   return {
     grantedItems: [{ goodId: rewardGoodId, quantity: 1 }],
     nextState: {
       ...prev,
       lastTickAtMs: nowMs,
+      miningGoodId: rewardGoodId,
     },
   };
 }
 
-/**
- * 아크코어 채굴 사이클 완료 시, 현재 착륙 행성이 채굴 가능하면 보상을 인벤토리에 자동 적재한다.
- * 반환값: 실제 적재 성공 여부.
- */
 export function applyOrbitalMiningRewardForCurrentPlayerCycle(quantity = 1): boolean {
   const q = Math.max(1, Math.floor(Number.isFinite(quantity) ? quantity : 1));
   const playerState = usePlayerStore.getState();
@@ -80,12 +79,14 @@ export function applyOrbitalMiningRewardForCurrentPlayerCycle(quantity = 1): boo
   const planetId = player?.currentPlanetId ?? null;
   if (!planetId) return false;
 
-  const rewardGoodId = ORBIT_MINING_REWARD_GOOD_ID;
-  playerState.addInventoryItem(rewardGoodId, q);
-  if (rewardGoodId === ORBIT_MINING_REWARD_GOOD_ID) {
-    playerState.recordOrbitalMiningOre1Delivery(planetId, q);
+  for (let i = 0; i < q; i += 1) {
+    const rewardGoodId = rollMiningDropGoodId(planetId);
+    playerState.addInventoryItem(rewardGoodId, 1);
+    if (isArcCorePricedMineral(rewardGoodId) || rewardGoodId === ORBIT_MINING_REWARD_GOOD_ID) {
+      playerState.recordOrbitalMiningDelivery(planetId, rewardGoodId, 1);
+    }
   }
   useMenuNotificationStore.getState().setBadge('trade', true);
-  void playerState.persist();
+  scheduleMiningPlayerPersist();
   return true;
 }

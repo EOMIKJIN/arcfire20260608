@@ -3,50 +3,30 @@
 // ============================================================
 
 import { applyAabsTradeIncomeMultiplier } from '../aabs/aabsPolicyStore';
-import {
-  getTradeRouteConvoyCargoBounds,
-} from '../balance/balanceTableRegistry';
 import { useArcCoreTempBankStore } from '../../store/arcCoreTempBankStore';
 import { adjustPlanetTradeMarketStock } from '../../world/planetTradeMarketStore';
 import {
+  planArcConvoyRouteAtSupply,
+  resolveArcConvoyUnloadSettlement,
+} from './arcConvoyTradePlanner';
+import { getItemDef } from '../../data/goods';
+import {
   getPlanetTradeRouteProfile,
   isTradeRouteDestinationPlanet,
-  listConvoySourceRoutesAtPlanet,
   parseTradeRouteAttrs,
   type TradeRouteAttrs,
 } from './tradeRouteRegistry';
-import { getItemDef } from '../../data/goods';
 
 type ShipCargo = {
   tgId: string;
   qty: number;
   unitBuyPrice: number;
   srcPlanetId: string;
+  plannedDestPlanetId: string;
   attrs: TradeRouteAttrs;
 };
 
 const shipCargoById = new Map<string, ShipCargo>();
-
-function pseudoRandom(seed: number): number {
-  const x = Math.sin(seed) * 10000;
-  return x - Math.floor(x);
-}
-
-function sampleConvoyQty(shipId: string, planetId: string): number {
-  const bounds = getTradeRouteConvoyCargoBounds();
-  const span = bounds.max - bounds.min;
-  const seed = shipId.length * 17 + planetId.length * 31;
-  return bounds.min + Math.floor(pseudoRandom(seed) * (span + 1));
-}
-
-function pickRouteForShip(planetId: string, shipId: string) {
-  const routes = listConvoySourceRoutesAtPlanet(planetId);
-  if (routes.length === 0) return null;
-  let hash = 0;
-  const key = `${shipId}:${planetId}`;
-  for (let i = 0; i < key.length; i += 1) hash = (hash * 33 + key.charCodeAt(i)) | 0;
-  return routes[Math.abs(hash) % routes.length] ?? null;
-}
 
 /**
  * 수송선 행성 체류 종료 시 1회 — 적재 또는 하역·수익 정산.
@@ -62,38 +42,66 @@ export function settleArcTransportDwellTrade(shipId: string, planetId: string): 
   const existing = shipCargoById.get(shipId);
   if (existing) {
     if (isTradeRouteDestinationPlanet(planetId, existing.attrs)) {
-      const gross = (existing.attrs.baseSellPrice - existing.unitBuyPrice) * existing.qty;
-      const profit = applyAabsTradeIncomeMultiplier(Math.max(0, gross));
-      bank.appendProfit(profit, {
-        tgId: existing.tgId,
-        shipId,
+      const settlement = resolveArcConvoyUnloadSettlement(
+        existing.srcPlanetId,
         planetId,
-        note: `${existing.srcPlanetId}→${planetId}`,
-      });
-      adjustPlanetTradeMarketStock(planetId, existing.tgId, existing.qty);
+        existing.tgId,
+        existing.qty,
+        existing.unitBuyPrice,
+      );
+      const profit = applyAabsTradeIncomeMultiplier(settlement.netProfitTotal);
+      if (profit > 0) {
+        bank.appendProfit(profit, {
+          tgId: existing.tgId,
+          shipId,
+          planetId,
+          note: [
+            `${existing.srcPlanetId}→${planetId}`,
+            `qty=${existing.qty}`,
+            `buy@${existing.unitBuyPrice}`,
+            `sell@${settlement.unitSellPrice}`,
+            `ship@${settlement.transportCostPerUnit}/u`,
+            `net=${profit}`,
+          ].join(' '),
+        });
+      }
+      adjustPlanetTradeMarketStock(planetId, existing.tgId, existing.qty, 'convoy');
       shipCargoById.delete(shipId);
     }
     return;
   }
 
-  const route = pickRouteForShip(planetId, shipId);
-  if (!route) return;
+  const plan = planArcConvoyRouteAtSupply(planetId, shipId, bank.balanceCredits);
+  if (!plan) return;
 
-  const def = getItemDef(route.tgId);
+  const def = getItemDef(plan.tgId);
   const attrs = parseTradeRouteAttrs(def);
   if (!attrs) return;
 
-  const qty = sampleConvoyQty(shipId, planetId);
-  const unitBuyPrice = attrs.baseBuyPrice;
-  const cost = unitBuyPrice * qty;
-  if (!bank.trySpend(cost, { tgId: route.tgId, shipId, planetId, note: '수송선 적재' })) return;
+  const cost = plan.unitBuyPrice * plan.qty;
+  if (!bank.trySpend(cost, {
+    tgId: plan.tgId,
+    shipId,
+    planetId,
+    note: [
+      '수송선 적재',
+      `${planetId}→${plan.destPlanetId}`,
+      `qty=${plan.qty}`,
+      `buy@${plan.unitBuyPrice}`,
+      `sell@${plan.unitSellPrice}`,
+      `estNet=${plan.netProfitPerUnit}/u`,
+    ].join(' '),
+  })) {
+    return;
+  }
 
-  adjustPlanetTradeMarketStock(planetId, route.tgId, -qty);
+  adjustPlanetTradeMarketStock(planetId, plan.tgId, -plan.qty);
   shipCargoById.set(shipId, {
-    tgId: route.tgId,
-    qty,
-    unitBuyPrice,
+    tgId: plan.tgId,
+    qty: plan.qty,
+    unitBuyPrice: plan.unitBuyPrice,
     srcPlanetId: planetId,
+    plannedDestPlanetId: plan.destPlanetId,
     attrs,
   });
 }

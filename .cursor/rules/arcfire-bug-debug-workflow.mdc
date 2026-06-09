@@ -1,0 +1,39 @@
+---
+description: 런타임 버그 수정 — adb logcat 재현·분석 표준 절차 (RN/Skia/백그라운드)
+alwaysApply: true
+---
+
+# 버그 수정 — 재현·로그·수정 표준
+
+런타임 크래시·튕김·백그라운드 이상은 **추측 수정 금지**. 아래 순서를 기본으로 따른다.
+
+## 1. 조사(에이전트)
+
+1. `adb devices`로 기기 확인.
+2. `adb logcat -c` 후 백그라운드 캡처 시작. RN/Skia 위주:
+   `adb logcat AndroidRuntime:E ReactNativeJS:E libc:E DEBUG:E *:S`
+   (또는 `*:F` + `FATAL|librnskia|ReactNativeJS|SIGSEGV` 필터)
+3. 필요 시 **디버그 빌드**(`npx expo run:android`) — JS는 Metro, 네이티브는 logcat.
+4. 사용자에게 **재현 단계만** 요청(예: 채굴 시작 → 홈). 에이전트는 기기 UI 조작 불가.
+
+## 2. 재현(사용자)
+
+- 에이전트 안내 직후, 동일 조건에서 1회 재현.
+- 완료 시 **「했어」** 등 한 줄로 알림.
+
+## 3. 수정(에이전트)
+
+- 터미널·logcat 출력에서 `FATAL` / `signal` / `librnskia` / `ReactNativeJS` 스택을 근거로 원인 특정.
+- **로그 근거 없이** 대규모 리팩터·방어 코드 남발 금지.
+- 수정 후 `npx tsc --noEmit`. 네이티브/Skia 변경 시 **`expo run:android` 재빌드** 안내.
+- 동일 재현으로 **한 번 더** 확인 요청. 마지막에 release 1회 검증(배포 조건과 다를 수 있음).
+
+## Cursor 모드
+
+- **Agent(기본)로 충분** — 셸·logcat·코드 수정·Metro 모두 가능. **Debug 모드로 바꿀 필요 없음.**
+- Debug 모드는 브레이크포인트·계측 루프가 필요할 때만 선택(선택 사항).
+
+## 한계
+
+- 에이전트는 실기기 터치·홈 버튼 재현 불가 → 사용자 재현 필수.
+- logcat 없이 “원인 확정” 주장 금지. release 전용 이슈면 디버그 재현 후 release로 교차 확인.

@@ -1,4 +1,4 @@
-matchType,matchValue,displayColorHex,priority,notesKo
+﻿matchType,matchValue,displayColorHex,priority,notesKo
 clan_id,balance_seed_faction_blue,#4EA3FF,100,시드 블루 점유(아르카디아·솔라 등)
 clan_id,balance_seed_faction_red,#E36B6B,100,시드 레드 점유
 clan_prefix,ai_clan_safe,#4EA3FF,90,AI 블루팀 거점

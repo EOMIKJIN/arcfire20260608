@@ -9,6 +9,12 @@ import {
   getPlanetLevelingRowForZone,
   resolvePlanetZoneIndex,
 } from '../planetBalance/planetZoneIndexRegistry';
+import {
+  listTradeRouteDemandAssignedItemIdsForPlanet,
+  listTradeRouteSupplyAssignedItemIdsForPlanet,
+  resolveTradeRouteAssignedDemandPlanetId,
+  resolveTradeRouteAssignedSupplyPlanetId,
+} from './tradeRoutePlanetAssignmentRegistry';
 import { splitPipeCategoriesFromSectorBand } from './tradeRouteSectorCategories';
 
 export type TradeRouteAttrs = {
@@ -112,8 +118,10 @@ export function resolveTradeRouteRole(
   return null;
 }
 
-/** 행성 zone·교역 팩션 — 공급(src)·수요(dst) tg_* 진열 */
-export function listTradeRouteItemIdsForPlanet(planetId: string): string[] {
+function listTradeRouteItemIdsForPlanetByRole(
+  planetId: string,
+  role: TradeRouteRole,
+): string[] {
   const profile = getPlanetTradeRouteProfile(planetId);
   if (!profile) return [];
 
@@ -123,18 +131,57 @@ export function listTradeRouteItemIdsForPlanet(planetId: string): string[] {
   const sectorBand = String(row.sectorBand ?? 'early');
   const allowedCategories = splitPipeCategoriesFromSectorBand(sectorBand);
 
+  const factionKey = role === 'supply' ? 'srcFactionCode' : 'dstFactionCode';
   const out: string[] = [];
   for (const item of listTradeRouteItems()) {
     if (!allowedCategories.has(item.category)) continue;
-    const { attrs } = item;
-    if (
-      attrs.srcFactionCode === profile.tradeFactionCode
-      || attrs.dstFactionCode === profile.tradeFactionCode
-    ) {
+    if (item.attrs[factionKey] === profile.tradeFactionCode) {
       out.push(item.id);
     }
   }
   return [...new Set(out)].sort();
+}
+
+/** 생산지 — `trade_route_planet_supply_assignments` 행성별 1:1 배정 */
+export function listTradeRouteSupplyBuyItemIdsForPlanet(planetId: string): string[] {
+  const profile = getPlanetTradeRouteProfile(planetId);
+  if (!profile) return [];
+
+  const system = findSystemForPlanetId(planetId);
+  const zoneIndex = resolvePlanetZoneIndex(planetId, system ?? null);
+  const row = getPlanetLevelingRowForZone(zoneIndex);
+  const sectorBand = String(row.sectorBand ?? 'early');
+  const allowedCategories = splitPipeCategoriesFromSectorBand(sectorBand);
+
+  return listTradeRouteSupplyAssignedItemIdsForPlanet(planetId).filter((tgId) => {
+    const item = listTradeRouteItems().find((r) => r.id === tgId);
+    return item != null && allowedCategories.has(item.category);
+  });
+}
+
+/** 수요지 — `trade_route_planet_supply_assignments` 수요 행성 배정 */
+export function listTradeRouteDemandImportItemIdsForPlanet(planetId: string): string[] {
+  const profile = getPlanetTradeRouteProfile(planetId);
+  if (!profile) return [];
+
+  const system = findSystemForPlanetId(planetId);
+  const zoneIndex = resolvePlanetZoneIndex(planetId, system ?? null);
+  const row = getPlanetLevelingRowForZone(zoneIndex);
+  const sectorBand = String(row.sectorBand ?? 'early');
+  const allowedCategories = splitPipeCategoriesFromSectorBand(sectorBand);
+
+  return listTradeRouteDemandAssignedItemIdsForPlanet(planetId).filter((tgId) => {
+    const item = listTradeRouteItems().find((r) => r.id === tgId);
+    return item != null && allowedCategories.has(item.category);
+  });
+}
+
+/** @deprecated 공급+수요 혼합 진열 — `listTradeRouteSupplyBuyItemIdsForPlanet` 사용 */
+export function listTradeRouteItemIdsForPlanet(planetId: string): string[] {
+  return [
+    ...listTradeRouteSupplyBuyItemIdsForPlanet(planetId),
+    ...listTradeRouteDemandImportItemIdsForPlanet(planetId),
+  ];
 }
 
 /** 수송선 — 현재 행성이 출발지인 교역로(수익 내림차순) */
@@ -152,16 +199,19 @@ export function listConvoySourceRoutesAtPlanet(planetId: string): Array<{
   const sectorBand = String(row.sectorBand ?? 'early');
   const allowedCategories = splitPipeCategoriesFromSectorBand(sectorBand);
 
-  return listTradeRouteItems()
-    .filter((item) => {
-      if (!allowedCategories.has(item.category)) return false;
-      return item.attrs.srcFactionCode === profile.tradeFactionCode;
+  return listTradeRouteSupplyAssignedItemIdsForPlanet(planetId)
+    .filter((tgId) => {
+      const item = listTradeRouteItems().find((r) => r.id === tgId);
+      return item != null && allowedCategories.has(item.category);
     })
-    .map((item) => ({
-      tgId: item.id,
-      attrs: item.attrs,
-      baseProfit: item.attrs.baseProfit,
-    }))
+    .map((tgId) => {
+      const item = listTradeRouteItems().find((r) => r.id === tgId)!;
+      return {
+        tgId: item.id,
+        attrs: item.attrs,
+        baseProfit: item.attrs.baseProfit,
+      };
+    })
     .sort((a, b) => b.baseProfit - a.baseProfit);
 }
 
@@ -176,8 +226,27 @@ export function pickTradePortPlanetForDstFaction(dstFactionCode: string, seed: s
   return candidates[Math.abs(hash) % candidates.length] ?? null;
 }
 
+/** 공급(src) 팩션 무역소 행성 id */
+export function pickTradePortPlanetForSrcFaction(srcFactionCode: string, seed: string): string | null {
+  return pickTradePortPlanetForDstFaction(srcFactionCode, seed);
+}
+
+/** 교역품 수요지 행성 id 목록(배정 정본 1건) */
+export function listDemandPlanetIdsForTradeGood(goodId: string): string[] {
+  const planetId = resolveTradeRouteAssignedDemandPlanetId(goodId);
+  return planetId ? [planetId] : [];
+}
+
 export function isTradeRouteDestinationPlanet(planetId: string, attrs: TradeRouteAttrs): boolean {
   const profile = getPlanetTradeRouteProfile(planetId);
   if (!profile) return false;
   return attrs.dstFactionCode === profile.tradeFactionCode;
+}
+
+/** 수요 행성 — 동일 교역품 공급(생산) 행성 중 맵 거리 최단 */
+export function resolveNearestSupplyPlanetForTradeGood(
+  _demandPlanetId: string,
+  goodId: string,
+): string | null {
+  return resolveTradeRouteAssignedSupplyPlanetId(goodId);
 }

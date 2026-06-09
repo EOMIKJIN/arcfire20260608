@@ -3,16 +3,18 @@
 // ============================================================
 
 import React, { useState, useCallback } from 'react';
-import {
-  View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, Image,
-} from 'react-native';
+import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { TypewriterText } from '../../src/components/TypewriterText';
 import { usePlayerStore } from '../../src/store/playerStore';
 import { useMissionStore } from '../../src/store/missionStore';
 import { StageShell } from '../../src/stages/StageShell';
 import { STORY_SCENES_FROM_CSV } from '../../src/data/generated';
+import { NarrativeDialogRow } from '../../src/ui/overlay/NarrativeDialogRow';
+import { resolveOverlayBottomAnchorPad } from '../../src/ui/overlay/overlayInsets';
+import { ArcButton } from '../../src/ui/overlay/ArcButton';
 
 const STORY_IMAGE_ASSETS: Record<string, any> = {
   'assets/images/stella_aris_char001.png': require('../../assets/images/stella_aris_char001.png'),
@@ -20,6 +22,7 @@ const STORY_IMAGE_ASSETS: Record<string, any> = {
 
 export default function IntroScreen() {
   const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ sceneId?: string | string[]; flow?: string | string[] }>();
   const paramSceneId = Array.isArray(params.sceneId) ? params.sceneId[0] : params.sceneId;
   const paramFlow = Array.isArray(params.flow) ? params.flow[0] : params.flow;
@@ -41,11 +44,12 @@ export default function IntroScreen() {
   const current = pages[page];
   const currentViewMode = current?.viewMode ?? 'cinematic';
   const currentTextBoxPreset = current?.textBoxPreset ?? 'default';
-  const popupImageScale = Math.max(40, Math.min(140, current?.imageScalePct ?? 100));
+  const popupImageScale = Math.max(40, Math.min(140, current?.imageScalePct ?? 100)) / 100;
   const renderedText = (current?.text ?? '').replace(/\[닉네임\]/g, player?.nickname ?? '파일럿');
   const currentDialogImageSource = current?.imageAssetKey
     ? STORY_IMAGE_ASSETS[current.imageAssetKey]
     : undefined;
+  const ingameDialogBottomPad = resolveOverlayBottomAnchorPad(insets, SPACING.md);
 
   const handleNext = useCallback(async () => {
     if (isTransitioning) return;
@@ -54,7 +58,6 @@ export default function IntroScreen() {
       return;
     }
     if (!pageComplete) {
-      // 타이핑 스킵
       setPageComplete(true);
       return;
     }
@@ -82,7 +85,6 @@ export default function IntroScreen() {
           initMissions();
         }
         const nextRoute = (scene.nextRoute as '/(game)/planet') || '/(game)/planet';
-        /** 첫 스토리 완료 후에도 이어하기와 동일: 항로 로딩 → 프리워arm → 행성 */
         if (nextRoute === '/(game)/planet') {
           router.replace('/(game)/continue-warp?target=planet');
         } else {
@@ -97,49 +99,36 @@ export default function IntroScreen() {
     }
   }, [isTransitioning, pageComplete, isLast, isPreNicknameFlow, player, scene, pages.length, setPlayer, persist, initMissions]);
 
+  const nextLabel = !pageComplete
+    ? '[ 스킵 ]'
+    : isLast
+      ? (isPreNicknameFlow && !player ? '[ 파일럿 등록 ]' : '[ 게임 시작 ]')
+      : '[ 다음 ▶ ]';
+
   return (
     <StageShell routeName="intro" background="stars">
       <View style={[styles.container, { width, height }]}>
-        {/* 페이지 번호 */}
         <View style={styles.pageIndicator}>
           {pages.map((_, i) => (
-            <View
-              key={i}
-              style={[styles.dot, i === page && styles.dotActive]}
-            />
+            <View key={i} style={[styles.dot, i === page && styles.dotActive]} />
           ))}
         </View>
 
-        {/* 스토리 본문 */}
         <View style={styles.storyArea}>
           {currentViewMode === 'ingame_dialog' ? (
-            <View style={styles.popupLayer} pointerEvents="none">
-              <View style={styles.dialogRow}>
-                {currentDialogImageSource ? (
-                  <View style={[styles.popupImageCard, { transform: [{ scale: popupImageScale / 100 }] }]}>
-                    <Image
-                      source={currentDialogImageSource}
-                      style={styles.popupImage}
-                      resizeMode="cover"
-                    />
-                  </View>
-                ) : (
-                  <View style={styles.popupImageCardPlaceholder} />
-                )}
-                <View style={styles.dialogHudBox}>
-                  <Text style={styles.dialogHudLabel}>{current?.label ?? '통신'}</Text>
-                  <TypewriterText
-                    key={`dialog-${page}`}
-                    text={renderedText}
-                    speed={Math.max(1, scene?.typewriterSpeedMs ?? 40)}
-                    onComplete={() => setPageComplete(true)}
-                    style={styles.dialogHudText}
-                  />
-                </View>
-              </View>
+            <View style={[styles.ingameDialogSlot, { paddingBottom: ingameDialogBottomPad }]}>
+              <NarrativeDialogRow
+                label={current?.label ?? '[ 통신 ]'}
+                text={renderedText}
+                typewriterKey={`intro-dialog-${page}`}
+                typewriterSpeedMs={scene?.typewriterSpeedMs ?? 40}
+                onTextComplete={() => setPageComplete(true)}
+                imageSource={currentDialogImageSource}
+                portraitScale={popupImageScale}
+                showActionButton={false}
+              />
             </View>
-          ) : null}
-          {currentViewMode !== 'ingame_dialog' ? (
+          ) : (
             <>
               <Text style={styles.sceneLabel}>{current?.label ?? ''}</Text>
               <View style={[styles.textBox, currentTextBoxPreset === 'compact' && styles.textBoxCompact]}>
@@ -152,25 +141,31 @@ export default function IntroScreen() {
                 />
               </View>
             </>
-          ) : null}
+          )}
         </View>
 
-        {/* 하단 버튼 */}
         <View style={styles.footer}>
           {scene?.skippable ? (
-            <TouchableOpacity style={styles.skipBtn} disabled={isTransitioning} onPress={() => {
-              setPage(Math.max(0, pages.length - 1));
-              setPageComplete(false);
-            }}>
-              <Text style={styles.skipText}>[ 건너뛰기 ]</Text>
-            </TouchableOpacity>
-          ) : <View style={styles.skipBtn} />}
-
-          <TouchableOpacity style={styles.nextBtn} onPress={handleNext} disabled={isTransitioning}>
-            <Text style={styles.nextText}>
-              {!pageComplete ? '[ 스킵 ]' : isLast ? (isPreNicknameFlow && !player ? '[ 파일럿 등록 ]' : '[ 게임 시작 ]') : '[ 다음 ▶ ]'}
-            </Text>
-          </TouchableOpacity>
+            <ArcButton
+              label="[ 건너뛰기 ]"
+              variant="secondary"
+              disabled={isTransitioning}
+              onPress={() => {
+                setPage(Math.max(0, pages.length - 1));
+                setPageComplete(false);
+              }}
+              style={styles.skipBtn}
+            />
+          ) : (
+            <View style={styles.skipBtn} />
+          )}
+          <ArcButton
+            label={nextLabel}
+            variant="panel"
+            disabled={isTransitioning}
+            onPress={handleNext}
+            style={styles.nextBtn}
+          />
         </View>
       </View>
     </StageShell>
@@ -187,7 +182,8 @@ const styles = StyleSheet.create({
   pageIndicator: {
     flexDirection: 'row',
     justifyContent: 'center',
-    rowGap: SPACING.sm, columnGap: SPACING.sm,
+    rowGap: SPACING.sm,
+    columnGap: SPACING.sm,
     paddingTop: SPACING.md,
   },
   dot: {
@@ -204,58 +200,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: SPACING.xl,
   },
-  popupLayer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    paddingBottom: SPACING.xl + 6,
-  },
-  dialogRow: {
-    width: '100%',
-    maxWidth: 420,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    columnGap: SPACING.md,
-  },
-  popupImageCard: {
-    width: 150,
-    height: 190,
-    borderRadius: 10,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: '#000',
-    opacity: 0.92,
-  },
-  popupImage: {
-    width: '100%',
-    height: '100%',
-  },
-  popupImageCardPlaceholder: {
-    width: 150,
-    height: 190,
-  },
-  dialogHudBox: {
+  ingameDialogSlot: {
     flex: 1,
-    minHeight: 132,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 8,
-    padding: SPACING.md,
-    backgroundColor: 'rgba(8, 12, 20, 0.85)',
-  },
-  dialogHudLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
-    marginBottom: SPACING.xs,
-    letterSpacing: 1,
-  },
-  dialogHudText: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.bg_primary,
-    lineHeight: 20,
+    justifyContent: 'flex-end',
+    width: '100%',
   },
   sceneLabel: {
     fontFamily: FONTS.mono,
@@ -293,25 +241,9 @@ const styles = StyleSheet.create({
     paddingBottom: SPACING.md,
   },
   skipBtn: {
-    padding: SPACING.md,
-  },
-  skipText: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_light,
+    minWidth: 96,
   },
   nextBtn: {
-    borderWidth: 1.5,
-    borderColor: COLORS.ink_dark,
-    borderRadius: 4,
-    paddingVertical: SPACING.sm,
-    paddingHorizontal: SPACING.lg,
-    backgroundColor: COLORS.ink_dark,
-  },
-  nextText: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.md,
-    color: COLORS.bg_primary,
-    fontWeight: FONTS.weight.bold,
+    minWidth: 120,
   },
 });

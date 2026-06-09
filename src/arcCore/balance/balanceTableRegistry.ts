@@ -11,7 +11,10 @@ import {
   PlayScenarioEconomy_FROM_BALANCE_CSV,
   PlayScenarioZonePlanets_FROM_BALANCE_CSV,
   SynthSystemColonization_FROM_BALANCE_CSV,
+  TradeRouteDailyMarketPolicy_FROM_BALANCE_CSV,
+  TradeRouteDistributionPolicy_FROM_BALANCE_CSV,
   TradeRouteEconomyPolicy_FROM_BALANCE_CSV,
+  EconomyPriceMicroPolicy_FROM_BALANCE_CSV,
   WeaponTradeBasePricePolicy_FROM_BALANCE_CSV,
   WorldExpansionTimingPolicy_FROM_BALANCE_CSV,
 } from '../../data/balance/generated';
@@ -35,6 +38,8 @@ let hullByTierKey: Map<string, (typeof CapitalHullPurchasePolicy_FROM_BALANCE_CS
   null;
 let weaponTradePolicyKv: Map<string, string> | null = null;
 let tradeRouteEconomyPolicyKv: Map<string, string> | null = null;
+let tradeRouteDistributionPolicyKv: Map<string, string> | null = null;
+let tradeRouteDailyMarketPolicyKv: Map<string, string> | null = null;
 let capitalShipTradePricePolicyKv: Map<string, string> | null = null;
 let hostileLoadoutPolicyKv: Map<string, string> | null = null;
 
@@ -90,6 +95,59 @@ function getTradeRouteEconomyPolicyKv(): Map<string, string> {
     );
   }
   return tradeRouteEconomyPolicyKv;
+}
+
+function getTradeRouteDistributionPolicyKv(): Map<string, string> {
+  if (!tradeRouteDistributionPolicyKv) {
+    tradeRouteDistributionPolicyKv = new Map(
+      TradeRouteDistributionPolicy_FROM_BALANCE_CSV.map((row) => [row.key, row.value] as const),
+    );
+  }
+  return tradeRouteDistributionPolicyKv;
+}
+
+export function getTradeRouteImportSeedStockPct(): number {
+  const kv = getTradeRouteDistributionPolicyKv();
+  return Math.max(0, Math.min(1, parseNum(kv.get('import_seed_stock_pct'), 0.35)));
+}
+
+export function getTradeRouteConvoyChannelShare(): number {
+  const kv = getTradeRouteDistributionPolicyKv();
+  return Math.max(0, parseNum(kv.get('convoy_channel_share'), 0.65));
+}
+
+export function getTradeRoutePlayerChannelShare(): number {
+  const kv = getTradeRouteDistributionPolicyKv();
+  return Math.max(0, parseNum(kv.get('player_channel_share'), 0.35));
+}
+
+export function getTradeRouteImportBuyPriceRatio(): number {
+  const kv = getTradeRouteDistributionPolicyKv();
+  return Math.max(0, Math.min(1, parseNum(kv.get('import_buy_price_ratio'), 0.55)));
+}
+
+/** 생산지 동일 행성 재판매 — 구매가 대비 비율(0.70 = −30%) */
+export function getTradeRouteLocalOriginResaleBuyRatio(): number {
+  const kv = getTradeRouteDistributionPolicyKv();
+  return Math.max(0.05, Math.min(1, parseNum(kv.get('local_origin_resale_buy_ratio'), 0.7)));
+}
+
+function getTradeRouteDailyMarketPolicyKv(): Map<string, string> {
+  if (!tradeRouteDailyMarketPolicyKv) {
+    tradeRouteDailyMarketPolicyKv = new Map(
+      TradeRouteDailyMarketPolicy_FROM_BALANCE_CSV.map((row) => [row.key, row.value] as const),
+    );
+  }
+  return tradeRouteDailyMarketPolicyKv;
+}
+
+export function getTradeRouteDailyMarketPolicyNum(key: string, fallback: number): number {
+  return parseNum(getTradeRouteDailyMarketPolicyKv().get(key), fallback);
+}
+
+/** 교역품 행성 기준가 대비 허용 밴드(±%) — 10이면 300→270~330 */
+export function getTradeRouteMaxPriceBandPct(): number {
+  return Math.max(1, Math.min(25, getTradeRouteDailyMarketPolicyNum('max_price_band_pct', 10)));
 }
 
 function getCapitalShipTradePricePolicyKvInternal(): Map<string, string> {
@@ -279,6 +337,31 @@ export function getWorldExpansionTimingPolicy() {
     legacySynthColonizationCount,
     prodUnlockIntervalSec: Math.round(avgDays * 24 * 60 * 60),
   };
+}
+
+let economyPriceMicroPolicyKv: Map<string, string> | null = null;
+
+function getEconomyPriceMicroPolicyKv(): Map<string, string> {
+  if (!economyPriceMicroPolicyKv) {
+    economyPriceMicroPolicyKv = new Map(
+      EconomyPriceMicroPolicy_FROM_BALANCE_CSV.map((row) => [row.key, row.value] as const),
+    );
+  }
+  return economyPriceMicroPolicyKv;
+}
+
+export function getEconomyPriceMicroPolicyNum(key: string, fallback: number): number {
+  return parseNum(getEconomyPriceMicroPolicyKv().get(key), fallback);
+}
+
+export function getTradeRoutePriceElasticity(): number {
+  const kv = getTradeRouteEconomyPolicyKv();
+  return parseNum(kv.get('price_elasticity'), 0.35);
+}
+
+export function getTradeRouteTargetStockMid(): number {
+  const kv = getTradeRouteEconomyPolicyKv();
+  return parseNum(kv.get('target_stock_mid'), 55);
 }
 
 export function getHostileLoadoutPolicyValue(key: string): string | undefined {

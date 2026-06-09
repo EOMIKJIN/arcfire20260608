@@ -13,7 +13,7 @@ import { router, useFocusEffect, useNavigation } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { showArcAlert } from '../../src/utils/showArcAlert';
-import { RewardModal } from '../../src/components/RewardModal';
+import { showArcOverlayReward } from '../../src/ui/overlay/showArcOverlay';
 import { QuestHUD } from '../../src/components/QuestHUD';
 import { StageShell } from '../../src/stages/StageShell';
 import {
@@ -85,15 +85,12 @@ export default function CombatScreen() {
   const updateShip = usePlayerStore(s => s.updateShip);
   const addExp = usePlayerStore(s => s.addExp);
   const addCredits = usePlayerStore(s => s.addCredits);
-  const levelUpPending = usePlayerStore(s => s.levelUpPending);
   const clearLevelUp = usePlayerStore(s => s.clearLevelUp);
   const persist = usePlayerStore(s => s.persist);
   const getActiveMission = useMissionStore(s => s.getActiveMission);
   const completeObjective = useMissionStore(s => s.completeObjective);
 
-  const [showReward, setShowReward] = useState(false);
   const [resolving, setResolving] = useState(false);
-  const [reward, setReward] = useState({ credits: 0, exp: 0 });
   const resolvedRef = useRef(false);
   const [isCombatRouteFocused, setIsCombatRouteFocused] = useState(() => navigation.isFocused());
   const windowOrbitSize = useMemo(() => Math.max(220, Math.floor(width)), [width]);
@@ -166,10 +163,20 @@ export default function CombatScreen() {
       });
     }
     await persist();
-    setReward({ credits: creditGain, exp: expGain });
-    setShowReward(true);
+    const levelUpPendingNow = usePlayerStore.getState().levelUpPending;
+    const playerLevel = usePlayerStore.getState().player?.level;
+    showArcOverlayReward({
+      reward: { credits: creditGain, exp: expGain },
+      missionTitle: `${enemyTemplate.name} 격파`,
+      leveledUp: levelUpPendingNow,
+      newLevel: playerLevel,
+      onClose: () => {
+        clearLevelUp();
+        router.replace('/(game)/worldmap');
+      },
+    });
     setResolving(false);
-  }, [addCredits, addExp, completeObjective, enemyTemplate.creditReward, enemyTemplate.expReward, enemyTemplate.id, getActiveMission, persist]);
+  }, [addCredits, addExp, clearLevelUp, completeObjective, enemyTemplate.creditReward, enemyTemplate.expReward, enemyTemplate.id, enemyTemplate.name, getActiveMission, persist]);
 
   const handleDefeat = useCallback(async () => {
     if (resolvedRef.current || !player) return;
@@ -198,12 +205,6 @@ export default function CombatScreen() {
       ],
     );
   }, [resolving]);
-
-  const handleRewardClose = useCallback(() => {
-    setShowReward(false);
-    clearLevelUp();
-    router.replace('/(game)/worldmap');
-  }, [clearLevelUp]);
 
   if (!player) return null;
   if (!transitPirateShipId || !pirateNpc) {
@@ -261,17 +262,6 @@ export default function CombatScreen() {
         </View>
 
         <CombatRealtimeBindings onEnemyDefeated={handleVictory} onPlayerDefeated={handleDefeat} />
-
-        {showReward ? (
-          <RewardModal
-            visible={showReward}
-            reward={{ credits: reward.credits, exp: reward.exp }}
-            missionTitle={`${enemyTemplate.name} 격파`}
-            leveledUp={levelUpPending}
-            newLevel={player.level}
-            onClose={handleRewardClose}
-          />
-        ) : null}
       </StageShell>
     </CapitalRealtimeCombatSimBinder>
   );

@@ -6532,7 +6532,7 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMinMs: 0,
     engageStartDelayMaxMs: 1000,
     laserWeaponId: "w_laser_heavy_01",
-    missileWeaponId: "w_missile_nova_01",
+    missileWeaponId: "w_missile_guided_triple_01",
   },
   "Player_scout_ship": {
     id: "Player_scout_ship",

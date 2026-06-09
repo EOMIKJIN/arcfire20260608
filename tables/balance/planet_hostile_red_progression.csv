@@ -1,4 +1,4 @@
-progressionOrder,planetId,systemId,zoneIndex,hostileShipCount,targetCombatLevel,requiredFleetMinDps,enemyAffinityKind,targetEngageSec,mainStageCombatEnabled,mainStageCombatVariant
+﻿progressionOrder,planetId,systemId,zoneIndex,hostileShipCount,targetCombatLevel,requiredFleetMinDps,enemyAffinityKind,targetEngageSec,mainStageCombatEnabled,mainStageCombatVariant
 1,arcadia_prime,arcadia,1,1,1,150,light,36,true,tutorial_escape
 2,vega_base,vega_outpost,2,2,3,250,light,40,false,draco_wave
 3,solar_station,solar_port,3,2,5,400,light,44,false,draco_wave

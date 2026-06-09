@@ -20,6 +20,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Line, Polyline } from 'react-native-svg';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { COLORS, FONTS, SPACING, ZONE_LABELS, ZONE_COLORS } from '../../src/utils/theme';
+import { formatCredits } from '../../src/utils/formatCredits';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import type { StarSystem, ZoneType } from '../../src/types';
 import { usePlayerStore } from '../../src/store/playerStore';
@@ -64,7 +65,9 @@ import {
   packArcNpcShipsToFloat32,
 } from '../../src/components/planet/planetOrbitHubWorklets';
 import { QuestHUD } from '../../src/components/QuestHUD';
-import { IngameDialogOverlay } from '../../src/components/IngameDialogOverlay';
+import { useArcNarrativeOverlay } from '../../src/ui/overlay/useArcNarrativeOverlay';
+import type { ArcNarrativeOverlayConfig } from '../../src/ui/overlay/useArcNarrativeOverlay';
+import { ArcMenuTile } from '../../src/ui/overlay/ArcMenuTile';
 import { StageShell } from '../../src/stages/StageShell';
 import {
   getPlanetMainStageVerticalMetrics,
@@ -97,15 +100,20 @@ import {
   useCapitalRealtimeCombatSimContext,
   type PlanetEdenRaidSim,
 } from '../../src/combat';
-import { ORBIT_MINING_CYCLE_MS } from '../../src/game/miningConfig';
+import { isArcCorePricedMineral } from '../../src/arcCore/economy/mineralTradePricing';
+import { resolvePlanetDisplayPrimaryMineralId } from '../../src/arcCore/economy/mineralMiningDropPolicy';
+import { ORBIT_MINING_CYCLE_MS, ORBIT_MINING_REWARD_GOOD_ID } from '../../src/game/miningConfig';
+import { planetHasMineableOrbitalDeposits } from '../../src/world/mineralDepositModel';
 import { listPlanetWorldObjects, type WorldObject } from '../../src/worldObjects';
 import {
   captureMiningResumeSnapshot,
   clearMiningResumeSnapshot,
   consumeMiningResumeSnapshotForPlanet,
   createInitialMiningSessionState,
+  flushMiningPlayerPersist,
   hydrateMiningResumeStore,
   miningResumeSnapshotToSession,
+  scheduleMiningPlayerPersist,
   startMiningSession,
   stopMiningSession,
   useMiningDriver,
@@ -266,6 +274,7 @@ export default function PlanetScreen() {
   const { width: windowWidth, height: windowHeight, fontScale } = useWindowDimensions();
   const setPlayer = usePlayerStore(s => s.setPlayer);
   const addInventoryItem = usePlayerStore(s => s.addInventoryItem);
+  const recordOrbitalMiningDelivery = usePlayerStore(s => s.recordOrbitalMiningDelivery);
   const persist = usePlayerStore(s => s.persist);
   const setMenuBadge = useMenuNotificationStore(s => s.setBadge);
   const clearMenuBadge = useMenuNotificationStore(s => s.clearBadge);
@@ -289,25 +298,32 @@ export default function PlanetScreen() {
   const navigation = useNavigation();
   const [isPlanetRouteFocused, setIsPlanetRouteFocused] = useState(() => navigation.isFocused());
   const [appStateActive, setAppStateActive] = useState(() => AppState.currentState === 'active');
-  useEffect(() => {
-    const sub = AppState.addEventListener('change', (next) => {
-      setAppStateActive(next === 'active');
-    });
-    return () => sub.remove();
-  }, []);
   const [miningSession, setMiningSession] = useState<MiningSessionState>(() => createInitialMiningSessionState());
   const miningSessionRef = useRef<MiningSessionState>(createInitialMiningSessionState());
   const [miningUiNowMs, setMiningUiNowMs] = useState(() => Date.now());
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (next) => {
+      const active = next === 'active';
+      setAppStateActive(active);
+      if (!active) {
+        const ms = miningSessionRef.current;
+        if (ms.status === 'running') {
+          captureMiningResumeSnapshot(ms, Date.now());
+        }
+        flushMiningPlayerPersist();
+      }
+    });
+    return () => sub.remove();
+  }, []);
 
   /** Phase 2: 메인스테이지 라이프사이클(Active/Suspending/Frozen/Resuming) 단일 진입점. */
   const stageSession = usePlanetStageSession();
   /**
    * 성운 셰이더·허브 궤도 Skia·Reanimated 궤도 시계 공통 게이트.
-   * 출발 직후 `lifecycle !== 'active'` 인 동안 `routeFocused` 는 아직 true 로 남아 Skia 레이어만
-   * 따로 계속 도는 상태가 된다 → 전투 Skia 레이어 dispose 와 같은 프레임에서 `librnskia.so` 레이스
-   * (SIGSEGV) 가 보고되어, lifecycle 과 반드시 AND 한다.
+   * 출발 직후 lifecycle≠active 동안 Skia만 계속 돌면 전투 dispose 와 레이스(SIGSEGV).
+   * 백그라운드에서도 Skia·궤도 rAF 유지 시 네이티브 크래시 — appStateActive 와 AND.
    */
-  const planetStageSkiaActive = isPlanetRouteFocused && stageSession.isActive;
+  const planetStageSkiaActive = isPlanetRouteFocused && stageSession.isActive && appStateActive;
   /** 출발 시점에 전투 sim 스냅샷을 동기 캡처하기 위한 *바인더 내부* sim 참조 — `<CombatSimRefBridge/>`가 채운다. */
   const combatSimRef = useRef<PlanetEdenRaidSim | null>(null);
 
@@ -331,6 +347,7 @@ export default function PlanetScreen() {
       usePlanetStageLifecycleStore.getState().beginResume();
       return () => {
         setIsPlanetRouteFocused(false);
+        flushMiningPlayerPersist();
         const blurPid = usePlayerStore.getState().player?.currentPlanetId ?? null;
         releasePlanetMainStageSession({ reason: 'route_blur', previousPlanetId: blurPid });
       };
@@ -378,6 +395,7 @@ export default function PlanetScreen() {
     } else {
       clearMiningResumeSnapshot();
     }
+    flushMiningPlayerPersist();
     miningSessionRef.current = stopMiningSession();
     setMiningSession(miningSessionRef.current);
 
@@ -492,15 +510,16 @@ export default function PlanetScreen() {
    */
   const capitalCombatOrbitActive =
     enemyFleetEntered && !battleReadyVisible && stageSession.isActive;
-  const capitalCombatOrbitPaused = !isPlanetRouteFocused;
+  const capitalCombatOrbitPaused = !isPlanetRouteFocused || !appStateActive;
 
   const planetWorldObjects = useMemo(
     () => (planet && system ? listPlanetWorldObjects({ planet, system }) : []),
     [planet, system],
   );
   const canOrbitalMine = useMemo(
-    () => planetWorldObjects.some((object) => object.kind === 'asteroid'),
-    [planetWorldObjects],
+    () => Boolean(planet && planetHasMineableOrbitalDeposits(planet.id)
+      && planetWorldObjects.some((object) => object.kind === 'asteroid')),
+    [planet, planetWorldObjects],
   );
   const activeMineableAsteroid = useMemo(
     () => planetWorldObjects.find((object) => object.kind === 'asteroid') ?? null,
@@ -514,16 +533,17 @@ export default function PlanetScreen() {
   }, [miningSession.lastTickAtMs, miningSession.status, miningUiNowMs]);
   const handleToggleMining = useCallback(() => {
     if (!planet || !canOrbitalMine) return;
-    const miningGoodId = activeMineableAsteroid?.mineralItemId ?? 'ore_mineral_1';
+    const miningGoodId = resolvePlanetDisplayPrimaryMineralId(planet.id);
     setMiningSession((prev) => {
       if (prev.status === 'running') {
         /** 사용자 수동 중단 → 출발-재개 스냅샷도 함께 폐기 */
         clearMiningResumeSnapshot();
+        flushMiningPlayerPersist();
         return stopMiningSession();
       }
       return startMiningSession(prev, planet.id, miningGoodId, Date.now());
     });
-  }, [planet, canOrbitalMine, activeMineableAsteroid]);
+  }, [planet, canOrbitalMine]);
   useEffect(() => {
     if (!planet) return;
     /** 행성 변경/초진입 시 우선 동기 초기화(다른 행성의 잔류 상태 격리) */
@@ -558,14 +578,22 @@ export default function PlanetScreen() {
     stageSession.isActive;
   const handleMiningGrant = useCallback(
     (grants: { goodId: string; quantity: number }[]) => {
-      if (grants.length === 0) return;
+      if (grants.length === 0 || AppState.currentState !== 'active') return;
+      const planetId =
+        miningSessionRef.current.planetId
+        ?? usePlayerStore.getState().player?.currentPlanetId
+        ?? null;
       for (const g of grants) {
-        if (g.quantity > 0) addInventoryItem(g.goodId, g.quantity);
+        if (g.quantity <= 0) continue;
+        addInventoryItem(g.goodId, g.quantity);
+        if (planetId && (isArcCorePricedMineral(g.goodId) || g.goodId === 'ore_mineral_1')) {
+          recordOrbitalMiningDelivery(planetId, g.goodId, g.quantity);
+        }
       }
       setMenuBadge('trade', true);
-      void persist();
+      scheduleMiningPlayerPersist();
     },
-    [addInventoryItem, setMenuBadge, persist],
+    [addInventoryItem, recordOrbitalMiningDelivery, setMenuBadge],
   );
   useMiningDriver({
     enabled: miningDriverEnabled,
@@ -711,6 +739,38 @@ export default function PlanetScreen() {
     ingameDialogPageComplete,
     markIngameDialogSceneSeen,
   ]);
+
+  const planetIngameNarrativeConfig = useMemo((): ArcNarrativeOverlayConfig | null => {
+    if (!activeIngameDialogScene) return null;
+    return {
+      anchor: 'center',
+      label: activeIngameDialogCurrentPage?.label ?? '[ 통신 ]',
+      text: activeIngameDialogText,
+      typewriterKey: `ingame-dialog-${activeIngameDialogScene.id}-${ingameDialogPage}-${ingameDialogSegment}`,
+      typewriterSpeedMs: activeIngameDialogScene.typewriterSpeedMs ?? 28,
+      onTextComplete: () => setIngameDialogPageComplete(true),
+      imageSource: activeIngameDialogImageSource,
+      onPressNext: handleNextIngameDialog,
+      nextDisabled: !ingameDialogPageComplete,
+      buttonText: isFinalIngameDialogStep ? '[ 확인 ]' : '[ 다음 ]',
+    };
+  }, [
+    activeIngameDialogScene,
+    activeIngameDialogCurrentPage?.label,
+    activeIngameDialogText,
+    ingameDialogPage,
+    ingameDialogSegment,
+    activeIngameDialogImageSource,
+    handleNextIngameDialog,
+    ingameDialogPageComplete,
+    isFinalIngameDialogStep,
+  ]);
+
+  useArcNarrativeOverlay(
+    'planet-ingame-dialog',
+    Boolean(activeIngameDialogScene),
+    planetIngameNarrativeConfig,
+  );
 
   const [nearbyPresence, setNearbyPresence] = useState<ReturnType<typeof resolvePlanetNearbyPresence>>([]);
   useEffect(() => {
@@ -992,7 +1052,7 @@ export default function PlanetScreen() {
           arcSkiaCaptionHeads={arcSkiaCaptionHeads}
           worldObjects={planetWorldObjects}
           showEdenRaidTest={capitalCombatOrbitActive}
-          miningPathActive={miningSession.status === 'running'}
+          miningPathActive={miningSession.status === 'running' && appStateActive}
           miningProgressPct={miningCycleProgressPct}
           territorySubtitle={clanTerritorySubtitle}
           safeAiClanTerritoryPlate={safeAiClanTerritoryPlate}
@@ -1123,7 +1183,7 @@ export default function PlanetScreen() {
           <View style={styles.statsRow}>
             <StatItem label="닉네임" value={player.nickname} />
             <StatItem label="레벨" value={`Lv.${player.level} (${formatPilotExp8(player.exp)})`} />
-            <StatItem label="크레딧" value={player.credits.toLocaleString()} />
+            <StatItem label="크레딧" value={formatCredits(player.credits, { suffix: false })} />
           </View>
           <View style={styles.statsRow}>
             <StatItem label="함선" value={player.ship.name} />
@@ -1166,19 +1226,6 @@ export default function PlanetScreen() {
             <Text style={styles.battleReadyCounter}>{`- ${battleReadyCounterSec} -`}</Text>
           </View>
         ) : null}
-        <IngameDialogOverlay
-          visible={Boolean(activeIngameDialogScene)}
-          label={activeIngameDialogCurrentPage?.label ?? '[ 통신 ]'}
-          text={activeIngameDialogText}
-          typewriterKey={`ingame-dialog-${activeIngameDialogScene?.id ?? 'none'}-${ingameDialogPage}-${ingameDialogSegment}`}
-          typewriterSpeedMs={activeIngameDialogScene?.typewriterSpeedMs ?? 28}
-          onTextComplete={() => setIngameDialogPageComplete(true)}
-          imageSource={activeIngameDialogImageSource}
-          onPressNext={handleNextIngameDialog}
-          nextDisabled={!ingameDialogPageComplete}
-          buttonText={isFinalIngameDialogStep ? '[ 확인 ]' : '[ 다음 ]'}
-          align="center"
-        />
         </View>
       </View>
       </View>
@@ -2082,16 +2129,13 @@ function MenuButton({
   onPress: () => void; primary?: boolean; disabled?: boolean; showBadge?: boolean;
 }) {
   return (
-    <TouchableOpacity
-      style={[styles.menuBtn, primary && styles.menuBtnPrimary, disabled && styles.menuBtnDisabled]}
+    <ArcMenuTile
+      label={label}
       onPress={onPress}
+      primary={primary}
       disabled={disabled}
-    >
-      {showBadge ? <View style={styles.menuBadgeDot} /> : null}
-      <Text style={[styles.menuLabel, primary && styles.menuLabelPrimary, disabled && styles.menuLabelDisabled]}>
-        {label}
-      </Text>
-    </TouchableOpacity>
+      showBadge={showBadge}
+    />
   );
 }
 

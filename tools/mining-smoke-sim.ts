@@ -17,6 +17,7 @@ function run(): void {
   const rewardDef = getItemDef(ORBIT_MINING_REWARD_GOOD_ID);
   assert(rewardDef, `Missing item_def for ${ORBIT_MINING_REWARD_GOOD_ID}`);
   assert(rewardDef?.tradeable === true, `${ORBIT_MINING_REWARD_GOOD_ID} must be tradeable=true`);
+  assert(rewardDef?.id === 'ore_ferrite', 'ORBIT_MINING_REWARD_GOOD_ID should be ore_ferrite');
 
   const empty = createEmptyInventorySlots();
   const added = addToInventorySlotsMax(empty, ORBIT_MINING_REWARD_GOOD_ID, 3, 0);

@@ -6,7 +6,8 @@ import {
   TradePortGlobalItems_FROM_BALANCE_CSV,
   TradePortWeaponTierPolicy_FROM_BALANCE_CSV,
 } from '../../data/balance/generated';
-import { listTradeRouteItemIdsForPlanet } from '../economy/tradeRouteRegistry';
+import { listZoneTradeableMineralIds } from '../economy/mineralTradePricing';
+import { listTradeRoutePlayerBuyItemIds } from '../economy/tradeRouteCommercePolicy';
 import { getItemDef, listItemDefs } from '../../data/itemRegistry';
 import { STAR_SYSTEMS } from '../../data/systems';
 import { dispatchEconomyTradePortBulk } from '../ArcCoreCommandBus';
@@ -102,7 +103,8 @@ export function resolveTradePortCatalogItemIds(planetId: string): string[] {
   const recommendedWeaponTierKey = String(row.recommendedWeaponTierKey ?? 't1_laser');
 
   const parts = [
-    ...listTradeRouteItemIdsForPlanet(planetId),
+    ...listTradeRoutePlayerBuyItemIds(planetId),
+    ...listZoneTradeableMineralIds(zoneIndex),
     ...listWeaponModuleItemIdsForPlanetZone(recommendedPilotLevel, recommendedWeaponTierKey),
     ...listCapitalShipItemIdsForPlanet(planetId),
     ...globalTradePortItemIds,

@@ -1,6 +1,6 @@
-key,value,notesKo
-policy_version,2,무역소 무기 기준가 — integrated_leveling_v1(누적 크레딧×구간 예산×등급)
-pricing_model,integrated_leveling_v1,docs/ARCFIRE_INTEGRATED_LEVELING_SPEC.md · integratedWeaponTradePricing.ts
+﻿key,value,notesKo
+policy_version,3,무역소 무기 — integrated_leveling_v2(성능×수요×일일오버레이)
+pricing_model,integrated_leveling_v2,integratedWeaponTradePricing.ts · DPS·사거리 연속 스케일
 min_price_credits,800,최저가(초반 T1)
 max_price_credits,12000000,최고가(코스믹 Lv.60)
 catalog_stock_min,1,카탈로그 재고 하한

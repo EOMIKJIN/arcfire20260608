@@ -6,7 +6,9 @@ export const TradeRouteEconomyPolicy_FROM_BALANCE_CSV = [
   { "key": "convoy_cargo_units_max", "value": "8", "notesKo": "수송선 1회 적재 상한" },
   { "key": "trade_route_stock_min", "value": "20", "notesKo": "교역품 무역소 재고 하한" },
   { "key": "trade_route_stock_max", "value": "90", "notesKo": "교역품 무역소 재고 상한" },
-  { "key": "market_price_variance_pct", "value": "12", "notesKo": "행성 시장가 RNG 변동(%)" },
+  { "key": "market_price_variance_pct", "value": "6", "notesKo": "행성 시장가 초기 시드 변동(% — 밴드 내)" },
+  { "key": "price_elasticity", "value": "0", "notesKo": "거래 즉시 탄력 비활성(일 1회 패스만)" },
+  { "key": "target_stock_mid", "value": "55", "notesKo": "교역품 목표 재고 중앙값" },
   { "key": "txn_history_limit", "value": "120", "notesKo": "임시은행 거래 기록 상한" },
 ] as const;
 export type TradeRouteEconomyPolicyRow = (typeof TradeRouteEconomyPolicy_FROM_BALANCE_CSV)[number];

@@ -13,9 +13,6 @@ import {
   LogBox,
   Platform,
   StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
 } from 'react-native';
 import { COLORS } from '../src/utils/theme';
 import { usePlayerStore } from '../src/store/playerStore';
@@ -34,8 +31,9 @@ import { useTavernBoardStore } from '../src/store/tavernBoardStore';
 import { useWorldObjectRuntimeStore } from '../src/store/worldObjectRuntimeStore';
 import { initGuestAuth } from '../src/firebase/auth';
 import { arcCoreHub, attachArcCoreRuntimeCommandBridge } from '../src/arcCore';
-import { ArcMessageModalHost } from '../src/components/ArcMessageModalHost';
-import { LevelUpModalHost } from '../src/components/LevelUpModalHost';
+import { ArcOverlayHost } from '../src/ui/overlay/ArcOverlayHost';
+import { LevelUpOverlayBridge } from '../src/ui/overlay/LevelUpOverlayBridge';
+import { useArcOverlayStore } from '../src/ui/overlay/arcOverlayStore';
 import { initializeFirebase, logAppOpen } from '../utils/logger';
 import { cancelScheduledUserCloudSync, scheduleUserCloudSync } from '../src/firebase/userCloudSyncSchedule';
 import { resolveAppVersion, syncUserDataWithServer } from '../src/firebase/userDataSync';
@@ -318,6 +316,40 @@ export default function RootLayout() {
     return () => sub.remove();
   }, []);
 
+  useEffect(() => {
+    const gateId = 'app-update-gate';
+    if (!updateGate?.visible) {
+      useArcOverlayStore.getState().dismissWhere((e) => e.id === gateId);
+      return;
+    }
+    const storeUrl =
+      updateGate.playStoreUrl
+      ?? 'https://play.google.com/store/apps/details?id=com.arcfire.online';
+    const message = updateGate.required
+      ? `이 버전은 더 이상 지원되지 않습니다.\n최신 버전 ${updateGate.latestVersion}으로 업데이트해 주세요.`
+      : `최신 버전 ${updateGate.latestVersion}이 배포되었습니다.\n지금 업데이트하시겠습니까?`;
+    useArcOverlayStore.getState().present({
+      id: gateId,
+      kind: 'alert',
+      title: updateGate.required ? '업데이트 필요' : '새 버전 안내',
+      message,
+      dismissOnBackdrop: !updateGate.required,
+      buttons: updateGate.required
+        ? [{ text: '업데이트', onPress: () => { void Linking.openURL(storeUrl); } }]
+        : [
+            {
+              text: '나중에',
+              style: 'cancel',
+              onPress: () => setUpdateGate((prev) => (prev ? { ...prev, visible: false } : prev)),
+            },
+            { text: '업데이트', onPress: () => { void Linking.openURL(storeUrl); } },
+          ],
+    });
+    return () => {
+      useArcOverlayStore.getState().dismissWhere((e) => e.id === gateId);
+    };
+  }, [updateGate]);
+
   return (
     <GestureHandlerRootView style={styles.root}>
       <StatusBar style="light" backgroundColor="#060A14" />
@@ -331,43 +363,8 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="(game)" />
       </Stack>
-      {updateGate?.visible ? (
-        <View style={styles.updateGateOverlay}>
-          <View style={styles.updateGateCard}>
-            <Text style={styles.updateGateTitle}>
-              {updateGate.required ? '업데이트 필요' : '새 버전 안내'}
-            </Text>
-            <Text style={styles.updateGateBody}>
-              {updateGate.required
-                ? `이 버전은 더 이상 지원되지 않습니다.\n최신 버전 ${updateGate.latestVersion}으로 업데이트해 주세요.`
-                : `최신 버전 ${updateGate.latestVersion}이 배포되었습니다.\n지금 업데이트하시겠습니까?`}
-            </Text>
-            <View style={styles.updateGateBtnRow}>
-              {!updateGate.required ? (
-                <TouchableOpacity
-                  style={[styles.updateGateBtn, styles.updateGateBtnLater]}
-                  onPress={() => setUpdateGate((prev) => (prev ? { ...prev, visible: false } : prev))}
-                >
-                  <Text style={styles.updateGateBtnLaterText}>나중에</Text>
-                </TouchableOpacity>
-              ) : null}
-              <TouchableOpacity
-                style={[styles.updateGateBtn, styles.updateGateBtnUpdate]}
-                onPress={() => {
-                  const url =
-                    updateGate.playStoreUrl
-                    ?? 'https://play.google.com/store/apps/details?id=com.arcfire.online';
-                  void Linking.openURL(url);
-                }}
-              >
-                <Text style={styles.updateGateBtnUpdateText}>업데이트</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      ) : null}
-      <ArcMessageModalHost />
-      <LevelUpModalHost />
+      <ArcOverlayHost />
+      <LevelUpOverlayBridge />
     </GestureHandlerRootView>
   );
 }
@@ -375,66 +372,4 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   /** 전환 중 스택 뒤가 비지 않도록 루트도 게임 배경색 */
   root: { flex: 1, backgroundColor: COLORS.bg_primary },
-  updateGateOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(6,10,20,0.76)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    zIndex: 1000,
-  },
-  updateGateCard: {
-    width: '100%',
-    maxWidth: 380,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(120,132,160,0.45)',
-    backgroundColor: '#0d1528',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 14,
-  },
-  updateGateTitle: {
-    color: '#F4F7FF',
-    fontSize: 17,
-    fontWeight: '700',
-    marginBottom: 8,
-  },
-  updateGateBody: {
-    color: '#C7D2EA',
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 14,
-  },
-  updateGateBtnRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    columnGap: 10,
-  },
-  updateGateBtn: {
-    minWidth: 96,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  updateGateBtnLater: {
-    borderWidth: 1,
-    borderColor: 'rgba(148,163,184,0.55)',
-    backgroundColor: 'rgba(15,23,42,0.75)',
-  },
-  updateGateBtnUpdate: {
-    backgroundColor: '#2563EB',
-  },
-  updateGateBtnLaterText: {
-    color: '#CBD5E1',
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  updateGateBtnUpdateText: {
-    color: '#F8FAFC',
-    fontWeight: '700',
-    fontSize: 14,
-  },
 });

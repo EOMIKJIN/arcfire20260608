@@ -1,4 +1,4 @@
-bandId,minLevel,maxLevel,targetMinutesPerLevel,targetCreditsPerHour,targetCombatPowerTier,dwellAlertRatio
+﻿bandId,minLevel,maxLevel,targetMinutesPerLevel,targetCreditsPerHour,targetCombatPowerTier,dwellAlertRatio
 early,1,10,15,800,1,1.5
 mid_early,11,20,60,2400,2,1.5
 mid,21,40,90,6000,3,1.5

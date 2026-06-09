@@ -1,2 +1,2 @@
-policyKey,enabled,timeZone,batchRunHour,batchRunMinute,observationWindowHours,runPlanetEnergyPass,runPlanetEnvironmentPass,runPlanetMasterBalancePass,runScenarioEconomyPass,runAabsAlignmentPass,runWorldExpansionUnlock,notesKo
-default,TRUE,Asia/Seoul,12,0,24,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,벽시계 24h 관측·수집 후 정오 1회 일괄 분석·재배치·밸런스
+﻿policyKey,enabled,timeZone,batchRunHour,batchRunMinute,observationWindowHours,runPlanetEnergyPass,runPlanetEnvironmentPass,runPlanetMasterBalancePass,runScenarioEconomyPass,runMarketPricePass,runAabsAlignmentPass,runWorldExpansionUnlock,notesKo
+default,TRUE,Asia/Seoul,12,0,24,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,벽시계 24h 관측·수집 후 정오 1회 일괄 분석·재배치·밸런스·가격미세조정

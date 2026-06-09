@@ -5,6 +5,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS, FONTS, SPACING, LAYOUT } from '../utils/theme';
+import { formatCredits } from '../utils/formatCredits';
 import { usePlayerStore } from '../store/playerStore';
 
 export function PlayerStatusBar() {
@@ -35,7 +36,7 @@ export function PlayerStatusBar() {
       {/* 오른쪽: 크레딧 */}
       <View style={styles.section}>
         <Text style={styles.creditLabel}>크레딧</Text>
-        <Text style={styles.creditValue}>{credits.toLocaleString()}</Text>
+        <Text style={styles.creditValue}>{formatCredits(credits, { suffix: false })}</Text>
       </View>
     </View>
   );

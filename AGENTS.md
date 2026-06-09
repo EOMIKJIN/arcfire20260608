@@ -28,5 +28,7 @@ Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/arcfire-online.mdc`**�
 
 - **일일 성능·위생 점검**: `npm run audit:daily` → `tools/daily-perf-audit/reports/latest.md`. GitHub에는 `.github/workflows/daily-performance-audit.yml` 스케줄(1일 1회)이 있으며, 로컬은 `tools/daily-perf-audit/README.md`의 작업 스케줄러 예시를 참고.
 - **아크코어 × Cursor 에이전트 자기 최적화**: `npm run audit:arc-self-optimize:pack` → `tools/arc-core-self-optimize/outbox/cursor-handoff.md` 를 Cloud Agent 등에 첨부. 옵트인 `stop` 훅은 `.cursor/trigger-arc-self-optimize-on-stop` 플래그 파일로 1회 안내 — `tools/arc-core-self-optimize/README.md`.
+- **런타임 버그 수정**: `.cursor/rules/arcfire-bug-debug-workflow.mdc` — adb logcat 캡처 → 사용자 재현 → 로그 근거 수정. Cursor **Agent 모드 그대로** 사용(Debug 전환 불필요).
+- **UI 오버레이·모달**: `src/ui/overlay/` — `ArcOverlayHost` 루트 단일 호스트, `showArcAlert` 등 imperative API. RN `Modal`·magic bottom padding 금지. 점검: `npm run audit:ui-overlay`.
 
 자세한 규칙은 `.cursor/rules/arcfire-online.mdc`를 읽으세요.

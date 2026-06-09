@@ -1,0 +1,11 @@
+key,value,notesKo
+policy_version,1,교역품 행성별 일 1회 시장 미세조정
+max_price_band_pct,10,기준가 대비 누적 허용 밴드(±10% — 300→270~330)
+max_daily_price_step_pct,2,행성·품목 가격 1일 최대 변동(%)
+max_daily_stock_restock_pct,18,목표재고 대비 1일 보충(%)
+stock_pressure_price_coef,0.06,재고 편차→가격 압력(일 1회만)
+trade_pressure_price_coef,0.35,가상수요 trade_route 압력 반영 계수
+distance_price_premium_per_ref,0.9,기준거리 1.0당 수요지 프리미엄(%/일)
+import_buy_ratio_adjust_step,0.02,수요지 재판매가 비율 1일 조정 상한
+min_import_buy_ratio,0.42,수요지 재판매 구매가 비율 하한
+max_import_buy_ratio,0.68,수요지 재판매 구매가 비율 상한

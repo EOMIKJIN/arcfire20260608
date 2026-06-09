@@ -30,7 +30,7 @@ export function listPlanetWorldObjects(input: PlanetWorldObjectQueryInput): Worl
   );
   const asteroids: WorldObject[] = Array.from({ length: orbitCount }, (_, i) => {
     const n = i + 1;
-    const mineralItemId = assignedMineralIds[i] ?? 'ore_mineral_1';
+    const mineralItemId = assignedMineralIds[i] ?? 'ore_ferrite';
     return {
       id: `${input.planet.id}:asteroid:${n}`,
       kind: 'asteroid',
@@ -38,7 +38,7 @@ export function listPlanetWorldObjects(input: PlanetWorldObjectQueryInput): Worl
       systemId: input.system.id,
       mineralItemId,
       title: `소행성 ${n}`,
-      description: `채광 가능한 우주 오브젝트 · 배정 광물: ${mineralItemId}`,
+      description: `채광 가능 · 표시 광물(참고): ${mineralItemId}`,
       transform: {
         orbitSlotIndex: i,
         radiusScale: 0.58 + i * 0.035,

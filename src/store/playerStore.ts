@@ -16,7 +16,16 @@ import {
   createPlayerCombatProficiency,
   normalizePlayerCombatProficiency,
 } from '../combat/playerCombatProficiency';
-import { NPC_CAPITAL_SHIPS_FROM_CSV, NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV } from '../data/generated';
+import { NPC_CAPITAL_SHIPS_FROM_CSV } from '../data/generated';
+import { resolvePlayerDefaultNpcCapitalShipId } from '../arcCore/balance/capitalHullPurchaseFromBalance';
+import {
+  grantNpcCapitalShipBundleToInventory,
+  reconcileEquippedWeaponsInInventory,
+} from '../game/grantNpcCapitalShipBundle';
+import {
+  applyDefaultCombatLoadout,
+  seedCombatEquipSlotsFromNpcDefaults,
+} from '../game/seedShipCombatEquipSlots';
 import { gainExp, processLevelUp, learnSkill as engineLearnSkill } from '../engine/SkillEngine';
 import { applyAabsCreditMultiplier, applyAabsExpMultiplier } from '../arcCore/aabs/aabsPolicyStore';
 import { SKILLS } from '../data/skills';
@@ -38,9 +47,6 @@ import { ITEM_DEFS_FROM_CSV } from '../data/generated/csvItemDefs';
 const STORAGE_KEY = 'arcfire_player_v1';
 const DEFAULT_GRANTED_SKILL_IDS = ['double_shot'] as const;
 const TEMP_MAX_HANGAR_SHIPS = 30;
-const DEFAULT_AUTO_PURCHASE_CAPITAL_SHIP_ITEM_ID = 'capital_ship_npc_red_fleet_1';
-const DEFAULT_AUTO_PURCHASE_CAPITAL_SHIP_NPC_ID = 'npc_red_fleet_1';
-
 /** 신규·구세이브 보정용. `mega_*` id는 추후 거대 세력 콘텐츠 테이블과 맞출 것 */
 const DEFAULT_PLAYER_POLITICAL: PlayerPoliticalProfile = {
   megaFactionId: 'mega_stellium_alliance',
@@ -49,10 +55,11 @@ const DEFAULT_PLAYER_POLITICAL: PlayerPoliticalProfile = {
 };
 
 /** 로컬 저장 v1: 과거 데이터에 `political` / `homePlanetId` / `shipHangar` 없을 수 있음 */
-type PlayerPersistenceShape = Omit<Player, 'political' | 'homePlanetId' | 'orbitalMiningOre1DeliveredByPlanet' | 'shipHangar'> & {
+type PlayerPersistenceShape = Omit<Player, 'political' | 'homePlanetId' | 'orbitalMiningOre1DeliveredByPlanet' | 'orbitalMiningDeliveredByPlanet' | 'shipHangar'> & {
   political?: PlayerPoliticalProfile;
   homePlanetId?: string | null;
   orbitalMiningOre1DeliveredByPlanet?: Record<string, number>;
+  orbitalMiningDeliveredByPlanet?: Record<string, Record<string, number>>;
   shipHangar?: PlayerHangarShip[];
 };
 
@@ -73,31 +80,6 @@ function sanitizeShipEquipSlots(raw: PlayerShip['equipSlots'] | unknown): Player
     const name = o.name.trim();
     if (!itemDefId || !name) continue;
     out[k as ShipyardEquipSlotId] = { itemDefId, name };
-  }
-  return out;
-}
-
-/** equipSlots 미장착 시 NPC 전함 테이블 기본 무장으로 전투 슬롯 시드 */
-function seedCombatEquipSlotsFromNpcDefaults(ship: PlayerShip): NonNullable<PlayerShip['equipSlots']> {
-  const existing = sanitizeShipEquipSlots(ship.equipSlots ?? {}) as NonNullable<PlayerShip['equipSlots']>;
-  const hasWeapon1 = Boolean(existing.WEAPON_1?.itemDefId?.trim());
-  const hasWeapon2 = Boolean(existing.WEAPON_2?.itemDefId?.trim());
-  if (hasWeapon1 && hasWeapon2) return existing;
-
-  const npcId = ship.portraitNpcCapitalShipId?.trim();
-  const runtime = npcId ? NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV[npcId] : undefined;
-  if (!runtime) return existing;
-
-  const out = { ...existing };
-  if (!hasWeapon1 && runtime.laserWeaponId?.trim()) {
-    const itemDefId = `weapon_item_${runtime.laserWeaponId.trim()}`;
-    const def = ITEM_DEFS_FROM_CSV[itemDefId];
-    out.WEAPON_1 = { itemDefId, name: def?.name ?? runtime.laserWeaponId.trim() };
-  }
-  if (!hasWeapon2 && runtime.missileWeaponId?.trim()) {
-    const itemDefId = `weapon_item_${runtime.missileWeaponId.trim()}`;
-    const def = ITEM_DEFS_FROM_CSV[itemDefId];
-    out.WEAPON_2 = { itemDefId, name: def?.name ?? runtime.missileWeaponId.trim() };
   }
   return out;
 }
@@ -201,7 +183,7 @@ function normalizeLoadedPlayerShip(ship: PlayerShip | undefined, templateIdFallb
     };
   }
   const legacyCargoCapacity = (ship as PlayerShip & { cargoCapacity?: unknown }).cargoCapacity;
-  return {
+  const normalized: PlayerShip = {
     ...ship,
     equipCapacity:
       typeof ship.equipCapacity === 'number' && Number.isFinite(ship.equipCapacity)
@@ -216,6 +198,7 @@ function normalizeLoadedPlayerShip(ship: PlayerShip | undefined, templateIdFallb
     weaponItems: buildShipWeaponItems(ship),
     equipmentItems: buildShipEquipmentItems(ship),
   };
+  return applyDefaultCombatLoadout(normalized);
 }
 
 function normalizeShipHangar(raw: unknown): PlayerHangarShip[] {
@@ -270,18 +253,23 @@ function normalizePlayerPolitical(raw: PlayerPersistenceShape): Player {
     political,
     homePlanetId: raw.homePlanetId !== undefined ? raw.homePlanetId : null,
     orbitalMiningOre1DeliveredByPlanet: raw.orbitalMiningOre1DeliveredByPlanet ?? {},
+    orbitalMiningDeliveredByPlanet: raw.orbitalMiningDeliveredByPlanet ?? {},
     shipHangar: normalizeShipHangar(raw.shipHangar),
     inventorySlots: normalizeInventorySlots((raw as { inventorySlots?: unknown }).inventorySlots),
     ship: raw.ship as PlayerShip,
   };
   const normalizedHangar = normalizeShipHangar(base.shipHangar);
+  const normalizedShip = normalizeLoadedPlayerShip(base.ship, tid);
   return {
     ...base,
     shipHangar: normalizedHangar,
-    ship: normalizeLoadedPlayerShip(base.ship, tid),
-    inventorySlots: reconcileCapitalShipInventoryFromHangar(
-      normalizeInventorySlots(base.inventorySlots),
-      normalizedHangar,
+    ship: normalizedShip,
+    inventorySlots: reconcileEquippedWeaponsInInventory(
+      reconcileCapitalShipInventoryFromHangar(
+        normalizeInventorySlots(base.inventorySlots),
+        normalizedHangar,
+      ),
+      normalizedShip,
     ),
   };
 }
@@ -343,30 +331,23 @@ function shipFromTemplate(templateId: string): PlayerShip {
     speed: t.speed,
     // 선창 용량이 아니라 장착 허용량(capacity)으로 사용한다.
     equipCapacity: Math.max(0, Math.floor(t.equipSlots ?? 0)),
-    weapons: [{ ...t.baseWeapon }],
-    weaponItems: [{
-      itemId: `weapon_item_${t.baseWeapon.id}`,
-      weaponId: t.baseWeapon.id,
-      name: t.baseWeapon.name,
-      type: t.baseWeapon.type,
-    }],
+    weapons: [],
+    weaponItems: [],
     equipmentItems: [],
     equipment: [],
     equipSlots: {},
   };
-  const withEquip = {
+  return applyDefaultCombatLoadout({
     ...seed,
-    equipSlots: seedCombatEquipSlotsFromNpcDefaults(seed),
-  };
-  return {
-    ...withEquip,
-    equipmentItems: buildShipEquipmentItems(withEquip),
-  };
+    equipmentItems: buildShipEquipmentItems(seed),
+  });
 }
 
 function buildInitialInventoryWithDefaultCapitalShip() {
-  const slots = createEmptyInventorySlots();
-  return addToInventorySlotsMax(slots, DEFAULT_AUTO_PURCHASE_CAPITAL_SHIP_ITEM_ID, 1, 1).slots;
+  const npcCapitalShipId = resolvePlayerDefaultNpcCapitalShipId();
+  return grantNpcCapitalShipBundleToInventory(createEmptyInventorySlots(), npcCapitalShipId, {
+    shipBuyPrice: 1,
+  });
 }
 
 function ensurePlayerHasDefaultShip(player: Player): Player {
@@ -377,9 +358,12 @@ function ensurePlayerHasDefaultShip(player: Player): Player {
       : starterTemplateId;
   const normalizedShip = normalizeLoadedPlayerShip(player.ship, safeShipId);
   const normalizedHangar = normalizeShipHangar(player.shipHangar);
-  const normalizedInventory = reconcileCapitalShipInventoryFromHangar(
-    normalizeInventorySlots(player.inventorySlots),
-    normalizedHangar,
+  const normalizedInventory = reconcileEquippedWeaponsInInventory(
+    reconcileCapitalShipInventoryFromHangar(
+      normalizeInventorySlots(player.inventorySlots),
+      normalizedHangar,
+    ),
+    normalizedShip,
   );
   return {
     ...player,
@@ -412,8 +396,10 @@ interface PlayerState {
   removeHangarShipByNpcId: (npcCapitalShipId: string) => boolean;
   /** 아이템 획득은 인벤토리 슬롯 단일 체계로 누적 */
   addInventoryItem: (goodId: string, quantity: number) => void;
-  /** 궤도 채굴 1회분 무역소 입고 실적(행성별 ore_mineral_1 누적) */
+  /** @deprecated — `recordOrbitalMiningDelivery` 사용 */
   recordOrbitalMiningOre1Delivery: (planetId: string, quantity: number) => void;
+  /** 궤도 채굴 무역소 입고 실적(행성·광물 id별 누적) */
+  recordOrbitalMiningDelivery: (planetId: string, goodId: string, quantity: number) => void;
   addExp: (amount: number) => void;
   learnSkill: (skillId: string) => void;
   clearLevelUp: () => void;
@@ -429,6 +415,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
   createPlayer: (uid, nickname) => {
     const templateId = 'starter_fighter';
+    const defaultNpcCapitalShipId = resolvePlayerDefaultNpcCapitalShipId();
     const now = Date.now();
     const player: Player = {
       uid,
@@ -438,6 +425,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       expToNext: EXP_TABLE[2] ?? 300,
       skillPoints: 0,
       credits: 500,
+      lifetimeCreditsEarned: 500,
       currentSystemId: 'arcadia',
       currentPlanetId: 'arcadia_prime',
       shipId: templateId,
@@ -445,7 +433,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       // 신규 유저 디폴트 자동구매: 기본 전함 1척을 격납고/인벤에 지급
       shipHangar: [{
         id: `hg_boot_${now.toString(36)}`,
-        npcCapitalShipId: DEFAULT_AUTO_PURCHASE_CAPITAL_SHIP_NPC_ID,
+        npcCapitalShipId: defaultNpcCapitalShipId,
         acquiredAt: now,
       }],
       // 기본 액티브 스킬(테스트): 신규 파일럿은 이중 사격을 기본 보유
@@ -469,6 +457,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       political: { ...DEFAULT_PLAYER_POLITICAL },
       homePlanetId: null,
       orbitalMiningOre1DeliveredByPlanet: {},
+      orbitalMiningDeliveredByPlanet: {},
       inventorySlots: buildInitialInventoryWithDefaultCapitalShip(),
       combatProficiency: createPlayerCombatProficiency(1, now),
       createdAt: now,
@@ -544,7 +533,15 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   addCredits: (amount) => {
     const { player } = get();
     if (!player) return;
-    set({ player: { ...player, credits: player.credits + applyAabsCreditMultiplier(amount) } });
+    const applied = applyAabsCreditMultiplier(amount);
+    const prevLifetime = player.lifetimeCreditsEarned ?? player.credits;
+    set({
+      player: {
+        ...player,
+        credits: player.credits + applied,
+        lifetimeCreditsEarned: prevLifetime + Math.max(0, applied),
+      },
+    });
   },
 
   updateShip: (ship) => {
@@ -599,11 +596,27 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   },
 
   recordOrbitalMiningOre1Delivery: (planetId, quantity) => {
+    get().recordOrbitalMiningDelivery(planetId, 'ore_mineral_1', quantity);
+  },
+
+  recordOrbitalMiningDelivery: (planetId, goodId, quantity) => {
     const { player } = get();
-    if (!player || quantity <= 0 || !planetId) return;
-    const prev = player.orbitalMiningOre1DeliveredByPlanet ?? {};
-    const next = { ...prev, [planetId]: (prev[planetId] ?? 0) + quantity };
-    set({ player: { ...player, orbitalMiningOre1DeliveredByPlanet: next } });
+    if (!player || quantity <= 0 || !planetId || !goodId) return;
+    const prevDelivered = player.orbitalMiningDeliveredByPlanet ?? {};
+    const prevPlanet = prevDelivered[planetId] ?? {};
+    const nextPlanet = { ...prevPlanet, [goodId]: (prevPlanet[goodId] ?? 0) + quantity };
+    const nextDelivered = { ...prevDelivered, [planetId]: nextPlanet };
+    const legacyOre1 = { ...(player.orbitalMiningOre1DeliveredByPlanet ?? {}) };
+    if (goodId === 'ore_mineral_1' || goodId === 'ore_ferrite') {
+      legacyOre1[planetId] = (legacyOre1[planetId] ?? 0) + quantity;
+    }
+    set({
+      player: {
+        ...player,
+        orbitalMiningDeliveredByPlanet: nextDelivered,
+        orbitalMiningOre1DeliveredByPlanet: legacyOre1,
+      },
+    });
   },
 
   addExp: (amount) => {

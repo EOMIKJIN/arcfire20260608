@@ -14,6 +14,7 @@ export type ArcCoreDailyOpsPolicy = {
   runPlanetEnvironmentPass: boolean;
   runPlanetMasterBalancePass: boolean;
   runScenarioEconomyPass: boolean;
+  runMarketPricePass: boolean;
   runAabsAlignmentPass: boolean;
   runWorldExpansionUnlock: boolean;
 };
@@ -28,6 +29,7 @@ const FALLBACK: ArcCoreDailyOpsPolicy = {
   runPlanetEnvironmentPass: true,
   runPlanetMasterBalancePass: true,
   runScenarioEconomyPass: true,
+  runMarketPricePass: true,
   runAabsAlignmentPass: true,
   runWorldExpansionUnlock: true,
 };
@@ -66,6 +68,7 @@ function rowToPolicy(row: (typeof ArcCoreDailyOpsPolicy_FROM_BALANCE_CSV)[number
     runPlanetEnvironmentPass: parseBool(row.runPlanetEnvironmentPass),
     runPlanetMasterBalancePass: parseBool(row.runPlanetMasterBalancePass),
     runScenarioEconomyPass: parseBool(row.runScenarioEconomyPass),
+    runMarketPricePass: parseBool(row.runMarketPricePass ?? row.runScenarioEconomyPass),
     runAabsAlignmentPass: parseBool(row.runAabsAlignmentPass),
     runWorldExpansionUnlock: parseBool(row.runWorldExpansionUnlock),
   };

@@ -23,6 +23,14 @@ export function listCapitalHullPurchasePolicyRows() {
   return CapitalHullPurchasePolicy_FROM_BALANCE_CSV;
 }
 
+/** 신규 파일럿 기본 지급 전함 — `frigate_default` 플레이어 대표 hull */
+export function resolvePlayerDefaultNpcCapitalShipId(): string {
+  const mapped = HULL_TIER_NPC_SHIP_ID.frigate_default;
+  if (mapped && NPC_CAPITAL_SHIPS_FROM_CSV.some((s) => s.id === mapped)) return mapped;
+  const playerHull = NPC_CAPITAL_SHIPS_FROM_CSV.find((s) => s.id.startsWith('Player_'));
+  return playerHull?.id ?? mapped ?? 'Player_npc_red_fleet_1';
+}
+
 export function resolveNpcShipIdForHullTier(hullTierKey: string): string | null {
   const canonical = getCanonicalNpcShipIdForHullTier(hullTierKey);
   if (canonical && NPC_CAPITAL_SHIPS_FROM_CSV.some((s) => s.id === canonical)) return canonical;

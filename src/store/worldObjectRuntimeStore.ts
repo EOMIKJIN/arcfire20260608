@@ -2,13 +2,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import type { StarSystem } from '../types';
 import {
+  ASTEROID_ORBIT_COUNT_MAX,
+  ASTEROID_ORBIT_COUNT_MIN,
   resolvePlanetAsteroidAssignedMineralIds,
   resolvePlanetAsteroidOrbitCount,
 } from '../world/mineralDepositModel';
 
 const STORAGE_KEY = 'arcfire_world_object_runtime_v1';
-const ASTEROID_ORBIT_COUNT_MIN = 1;
-const ASTEROID_ORBIT_COUNT_MAX = 10;
 
 type PatchSource = 'bootstrap' | 'arc_core_cycle' | 'manual';
 

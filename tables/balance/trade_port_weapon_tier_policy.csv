@@ -1,4 +1,4 @@
-tierKey,tierRank,maxWeaponRequiredLevel,weaponFamilyKindFilter,notesKo
+﻿tierKey,tierRank,maxWeaponRequiredLevel,weaponFamilyKindFilter,notesKo
 t1_laser,1,6,laser,T1 레이저
 t1_missile,1,6,missile,T1 미사일
 t1_railgun,1,6,railgun,T1 레일건

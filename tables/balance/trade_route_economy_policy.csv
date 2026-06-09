@@ -1,9 +1,11 @@
-key,value,notesKo
+﻿key,value,notesKo
 policy_version,1,tg_* 교역·수송선·임시은행 정본
 temp_bank_seed_credits,500000,아크코어 임시은행 초기 잔고
 convoy_cargo_units_min,2,수송선 1회 적재 하한
 convoy_cargo_units_max,8,수송선 1회 적재 상한
 trade_route_stock_min,20,교역품 무역소 재고 하한
 trade_route_stock_max,90,교역품 무역소 재고 상한
-market_price_variance_pct,12,행성 시장가 RNG 변동(%)
+market_price_variance_pct,6,행성 시장가 초기 시드 변동(% — 밴드 내)
+price_elasticity,0,거래 즉시 탄력 비활성(일 1회 패스만)
+target_stock_mid,55,교역품 목표 재고 중앙값
 txn_history_limit,120,임시은행 거래 기록 상한

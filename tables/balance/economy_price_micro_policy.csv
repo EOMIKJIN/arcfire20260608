@@ -1,0 +1,10 @@
+key,value,notesKo
+policy_version,1,일 1회 가격 미세조정·가상수요 시뮬
+virtual_population_size,100000,참고용 가상 유저 집단 규모
+sample_bot_count,500,표본 봇 수(×200 = 10만 유저 환산)
+max_daily_price_step_pct,2,카테고리 1일 최대 조정(%)
+max_cumulative_price_drift_pct,10,정본 대비 누적 상한(±10%)
+weapon_zone_budget_coef,0.048,무기 = zoneBudget × coef × perfNorm × 수요
+weapon_perf_exponent,0.72,성능비 지수(계단 완화)
+price_elasticity_trade_route,0.35,교역품 재고→가격 탄력
+target_stock_mid,55,교역품 목표 재고(재고 탄력 기준)

@@ -1,4 +1,4 @@
-hullTierKey,labelKo,purchaseCredits,requiredPilotLevelMin,recommendedAfterZoneIndex,notesKo
+﻿hullTierKey,labelKo,purchaseCredits,requiredPilotLevelMin,recommendedAfterZoneIndex,notesKo
 frigate_default,프리깃(기본 지급),0,1,0,신규 계정 기본
 frigate_upgraded,프리깃 개량형,250000,7,4,행성4~5 구간 권장 구매
 destroyer,구축함(Destroyer),1200000,15,7,행성7 — Shielded 대응 체급 전환

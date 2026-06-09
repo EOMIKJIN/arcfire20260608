@@ -10,6 +10,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { showArcAlert } from '../../src/utils/showArcAlert';
+import { formatCredits } from '../../src/utils/formatCredits';
 import { ShipGridPlaceholder } from '../../src/components/ShipGridPlaceholder';
 import { usePlayerStore } from '../../src/store/playerStore';
 import { SHIP_TEMPLATES } from '../../src/data/ships';
@@ -33,6 +34,8 @@ import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
+import { ArcStageBackButton } from '../../src/ui/overlay/ArcStageBackButton';
+import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacilityTabBar';
 import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
 import { resolveShipFinalStatResult } from '../../src/ship/shipStatPipeline';
@@ -119,7 +122,7 @@ export default function ShipyardScreen() {
     }
     showArcAlert(
       '함선 수리',
-      `손상: ${missingHp}HP\n수리 비용: ${repairCost.toLocaleString()} cr`,
+      `손상: ${missingHp}HP\n수리 비용: ${formatCredits(repairCost)}`,
       [
         { text: '취소', style: 'cancel' },
         {
@@ -145,7 +148,7 @@ export default function ShipyardScreen() {
     }
     showArcAlert(
       '실드 충전',
-      `충전 비용: ${SHIELD_RECHARGE_COST.toLocaleString()} cr`,
+      `충전 비용: ${formatCredits(SHIELD_RECHARGE_COST)}`,
       [
         { text: '취소', style: 'cancel' },
         {
@@ -189,7 +192,7 @@ export default function ShipyardScreen() {
     }
     showArcAlert(
       '함선 구매',
-      `${row.labelKo}\n가격: ${price.toLocaleString()} cr`,
+      `${row.labelKo}\n가격: ${formatCredits(price)}`,
       [
         { text: '취소', style: 'cancel' },
         {
@@ -219,21 +222,25 @@ export default function ShipyardScreen() {
       showArcAlert('해제 실패', '기본 전함 템플릿을 찾을 수 없습니다.');
       return;
     }
-    updateShip({
-      ...ship,
-      templateId: baseTemplate.id,
-      portraitNpcCapitalShipId: baseTemplate.portraitNpcCapitalShipId,
-      name: baseTemplate.name,
-      maxHp: baseTemplate.maxHp,
-      hp: baseTemplate.maxHp,
-      maxShield: baseTemplate.maxShield,
-      shield: baseTemplate.maxShield,
-      armor: baseTemplate.armor,
-      speed: baseTemplate.speed,
-      equipCapacity: Math.max(0, Math.floor(baseTemplate.equipSlots ?? 0)),
-      // 탑승 전함을 바꿔도 현재 무기/슬롯은 공용으로 유지
-      weapons: ship.weapons.length > 0 ? [...ship.weapons] : [{ ...baseTemplate.baseWeapon }],
-    });
+    const portraitNpcId = baseTemplate.portraitNpcCapitalShipId ?? '';
+    const released = applyNpcCapitalShipToPlayerShip(
+      {
+        ...ship,
+        templateId: baseTemplate.id,
+        portraitNpcCapitalShipId: portraitNpcId,
+        name: baseTemplate.name,
+        maxHp: baseTemplate.maxHp,
+        hp: baseTemplate.maxHp,
+        maxShield: baseTemplate.maxShield,
+        shield: baseTemplate.maxShield,
+        armor: baseTemplate.armor,
+        speed: baseTemplate.speed,
+        equipCapacity: Math.max(0, Math.floor(baseTemplate.equipSlots ?? 0)),
+        weapons: ship.weapons.length > 0 ? [...ship.weapons] : [{ ...baseTemplate.baseWeapon }],
+      },
+      portraitNpcId,
+    );
+    updateShip(released.ok ? released.ship : ship);
     await persist();
     showArcAlert('전함 해제', '기본 운항 전함으로 전환했습니다.');
   };
@@ -356,34 +363,21 @@ export default function ShipyardScreen() {
     <StageShell routeName="shipyard" background="none" edges={['bottom']}>
       <View style={{ flex: 1 }}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={safeBack} style={styles.backBtn} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={styles.backText}>◀ 나가기</Text>
-        </TouchableOpacity>
+        <ArcStageBackButton onPress={safeBack} style={styles.backBtn} />
         <Text style={styles.headerTitle}>조선소</Text>
-        <Text style={styles.creditsText}>{credits.toLocaleString()} cr</Text>
+        <Text style={styles.creditsText}>{formatCredits(credits)}</Text>
       </View>
 
-      {/* 탭 */}
-      <View style={styles.tabs}>
-        {(['status', 'capital', 'upgrade', 'hangar'] as const).map((t) => (
-          <TouchableOpacity
-            key={t}
-            style={[styles.tab, tab === t && styles.tabActive]}
-            onPress={() => setTab(t)}
-            activeOpacity={1}
-          >
-            <Text style={[styles.tabText, tab === t && styles.tabTextActive]} numberOfLines={1}>
-              {t === 'status'
-                ? '[ 현황 ]'
-                : t === 'capital'
-                  ? '[ 전함 ]'
-                  : t === 'upgrade'
-                    ? '[ 업그레이드 ]'
-                    : '[ 격납고 ]'}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <PlanetFacilityTabBar
+        tabs={[
+          { id: 'status', label: '현황' },
+          { id: 'capital', label: '전함' },
+          { id: 'upgrade', label: '업그레이드' },
+          { id: 'hangar', label: '격납고' },
+        ]}
+        activeId={tab}
+        onSelect={(id) => setTab(id as 'status' | 'capital' | 'upgrade' | 'hangar')}
+      />
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 
@@ -399,7 +393,7 @@ export default function ShipyardScreen() {
               <View style={styles.serviceBtnLeft}>
                 <Text style={styles.serviceBtnTitle}>🔧 선체 수리</Text>
                 <Text style={styles.serviceBtnSub}>
-                  손상: {missingHp}HP → {repairCost.toLocaleString()} cr
+                  손상: {missingHp}HP → {formatCredits(repairCost)}
                 </Text>
               </View>
               <Text style={styles.serviceBtnAction}>[ 수리 ]</Text>
@@ -411,7 +405,7 @@ export default function ShipyardScreen() {
             >
               <View style={styles.serviceBtnLeft}>
                 <Text style={styles.serviceBtnTitle}>⚡ 실드 충전</Text>
-                <Text style={styles.serviceBtnSub}>{SHIELD_RECHARGE_COST.toLocaleString()} cr</Text>
+                <Text style={styles.serviceBtnSub}>{formatCredits(SHIELD_RECHARGE_COST)}</Text>
               </View>
               <Text style={styles.serviceBtnAction}>[ 충전 ]</Text>
             </TouchableOpacity>
@@ -451,7 +445,7 @@ export default function ShipyardScreen() {
                     <View style={{ flex: 1 }}>
                       <Text style={styles.serviceBtnTitle}>{row.labelKo}</Text>
                       <Text style={styles.serviceBtnSub}>
-                        Lv.{minLv}+ · {price.toLocaleString()} cr
+                        Lv.{minLv}+ · {formatCredits(price)}
                       </Text>
                     </View>
                     <Text style={styles.serviceBtnAction}>{canBuy ? '[ 구매 ]' : '[ 잠김 ]'}</Text>
@@ -527,7 +521,7 @@ export default function ShipyardScreen() {
 
         <View style={{ height: SHIPYARD_BOTTOM_STAGE_RESERVE_PX }} />
       </ScrollView>
-      <StageLoadingOverlay visible={!stageFrameReady} />
+      <StageLoadingOverlay visible={!stageFrameReady} overlayId="stage-loading-shipyard" />
       </View>
     </StageShell>
   );
@@ -761,8 +755,7 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.border,
     backgroundColor: COLORS.bg_panel,
   },
-  backBtn: { paddingVertical: SPACING.xs, paddingHorizontal: SPACING.sm, marginRight: SPACING.sm },
-  backText: { fontFamily: FONTS.mono, fontSize: FONTS.size.md, color: COLORS.ink_mid },
+  backBtn: { marginRight: SPACING.sm },
   headerTitle: {
     flex: 1,
     fontFamily: FONTS.mono,
@@ -774,33 +767,6 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
     color: COLORS.gold,
-    fontWeight: FONTS.weight.bold,
-  },
-  tabs: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.bg_panel,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-  },
-  tab: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: SPACING.sm,
-    paddingHorizontal: 2,
-    backgroundColor: COLORS.bg_panel,
-  },
-  tabActive: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#5EA8FF',
-    backgroundColor: COLORS.bg_panel,
-  },
-  tabText: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_mid,
-  },
-  tabTextActive: {
-    color: COLORS.ink_dark,
     fontWeight: FONTS.weight.bold,
   },
   scroll: { flex: 1 },

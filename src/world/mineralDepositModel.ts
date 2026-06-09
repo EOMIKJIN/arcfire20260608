@@ -14,6 +14,17 @@
  */
 
 import type { PlanetMineralDepositProfile } from '../types';
+import {
+  filterMineralIdsForPlanetZone,
+  resolveZonePrimaryMineralId,
+} from '../arcCore/economy/mineralTradePricing';
+import {
+  ASTEROID_VISUAL_ORBIT_MAX,
+  ASTEROID_VISUAL_ORBIT_MIN,
+  resolvePlanetAsteroidOrbitCountFromEnvironment,
+  resolvePlanetAsteroidVisualMineralIds,
+} from '../arcCore/planetEnvironment/resolvePlanetAsteroidVisualPolicy';
+import { resolvePlanetZoneIndex } from '../arcCore/planetBalance/planetZoneIndexRegistry';
 import { ORBIT_ASTEROID_MINING_ENABLED } from '../game/miningConfig';
 import {
   GALACTIC_MINERAL_POOL_FROM_CSV,
@@ -21,6 +32,7 @@ import {
   MINERAL_REGIONS_FROM_CSV,
 } from '../data/generated/csvMineralEconomy';
 import { STAR_SYSTEMS } from '../data/systems';
+import { getPlanetRecord } from './planetTradePortDb';
 
 const KNOWN_PLANET_IDS = new Set<string>();
 for (const sys of Object.values(STAR_SYSTEMS)) {
@@ -139,15 +151,21 @@ export function logMineralDepositWarnings(result: MineralDepositBuildResult): vo
 }
 
 let cachedDepositProfiles: ReadonlyMap<string, PlanetMineralDepositProfile> | null = null;
-/** 테스트 임시 오버라이드: 전역 채굴 비활성 상태에서도 소행성 노출을 허용할 행성 */
-const TEMP_ASTEROID_ENABLED_PLANET_IDS = new Set<string>(['arcadia_prime', 'minerva_deep']);
-/** 테스트 임시 오버라이드: 행성별 소행성 개수(향후 CSV로 이관 가능) */
-const TEMP_ASTEROID_ORBIT_COUNT_BY_PLANET_ID: Record<string, number> = {
-  arcadia_prime: 1,
-  minerva_deep: 4,
-};
-export const ASTEROID_ORBIT_COUNT_MIN = 1;
-export const ASTEROID_ORBIT_COUNT_MAX = 10;
+
+export function invalidateMineralDepositProfileCache(): void {
+  cachedDepositProfiles = null;
+}
+
+function resolveZoneIndexForPlanetId(planetId: string): number {
+  const planet = getPlanetRecord(planetId);
+  const system = planet
+    ? Object.values(STAR_SYSTEMS).find((s) => s.planets.some((p) => p.id === planetId))
+    : undefined;
+  return resolvePlanetZoneIndex(planetId, system ?? null);
+}
+
+export const ASTEROID_ORBIT_COUNT_MIN = ASTEROID_VISUAL_ORBIT_MIN;
+export const ASTEROID_ORBIT_COUNT_MAX = ASTEROID_VISUAL_ORBIT_MAX;
 
 function getCachedPlanetDepositProfiles(): ReadonlyMap<string, PlanetMineralDepositProfile> {
   if (!cachedDepositProfiles) {
@@ -156,30 +174,20 @@ function getCachedPlanetDepositProfiles(): ReadonlyMap<string, PlanetMineralDepo
   return cachedDepositProfiles;
 }
 
-/** 테이블에 매장 프로필이 있는 행성 = 궤도 채광 소행성 노출 후보 (`ORBIT_ASTEROID_MINING_ENABLED` 꺼지면 항상 false) */
+/** 테이블에 매장 프로필이 있는 행성 = 궤도 채광 소행성 노출 후보 */
 export function planetHasMineableOrbitalDeposits(planetId: string): boolean {
-  if (TEMP_ASTEROID_ENABLED_PLANET_IDS.has(planetId)) return true;
   if (!ORBIT_ASTEROID_MINING_ENABLED) return false;
   return getCachedPlanetDepositProfiles().has(planetId);
 }
 
 /**
- * 행성별 궤도 소행성 개수(최소 1 ~ 최대 10).
- * - 현재는 테스트 행성 override 우선
- * - 그 외는 매장 비중(total share) 기반 자동 산정
- * 추후 CSV 컬럼으로 직접 지정 가능하도록 이 API를 단일 진입점으로 유지.
+ * 행성별 궤도 소행성 **비주얼** 개수(1~3).
+ * - 아크코어 `resolvePlanetAsteroidOrbitCountFromEnvironment` — 행성 환경 지표 기준
+ * - 광물 종 수·매장 share와 **무관** (1 광물 = 1 소행성 아님)
  */
 export function resolvePlanetAsteroidOrbitCount(planetId: string): number {
-  const override = TEMP_ASTEROID_ORBIT_COUNT_BY_PLANET_ID[planetId];
-  if (override != null) {
-    return Math.max(ASTEROID_ORBIT_COUNT_MIN, Math.min(ASTEROID_ORBIT_COUNT_MAX, Math.round(override)));
-  }
-  const profile = getCachedPlanetDepositProfiles().get(planetId);
-  if (!profile) return ASTEROID_ORBIT_COUNT_MIN;
-  const totalShare = Object.values(profile.shareOfGalaxyByMineral).reduce((s, v) => s + Math.max(0, v), 0);
-  // 기본 자동 분포: 매우 작은 share라도 1개는 보장, 상한은 10개.
-  const scaled = Math.round(totalShare * 1200);
-  return Math.max(ASTEROID_ORBIT_COUNT_MIN, Math.min(ASTEROID_ORBIT_COUNT_MAX, scaled));
+  if (!planetHasMineableOrbitalDeposits(planetId)) return 0;
+  return resolvePlanetAsteroidOrbitCountFromEnvironment(planetId);
 }
 
 /**
@@ -189,28 +197,19 @@ export function resolvePlanetAsteroidOrbitCount(planetId: string): number {
 export function resolvePlanetMineableMineralItemIds(planetId: string): string[] {
   const profile = getCachedPlanetDepositProfiles().get(planetId);
   if (!profile) return [];
-  return Object.entries(profile.shareOfGalaxyByMineral)
+  const ranked = Object.entries(profile.shareOfGalaxyByMineral)
     .filter(([, share]) => Number.isFinite(share) && share > 0)
     .sort((a, b) => b[1] - a[1])
     .map(([mineralId]) => mineralId);
+  const filtered = filterMineralIdsForPlanetZone(planetId, ranked);
+  if (filtered.length > 0) return filtered;
+  const zoneIndex = resolveZoneIndexForPlanetId(planetId);
+  return [resolveZonePrimaryMineralId(zoneIndex)];
 }
 
 /**
- * 행성 소행성 슬롯(궤도 개수) 기준 광물 배정.
- * - 테이블 광물 목록을 순환(round-robin) 배정
- * - 테이블이 비어 있으면 기본 채굴 아이템(`ore_mineral_1`)로 폴백
+ * 행성 소행성 슬롯(궤도 개수) 기준 광물 배정 — 시각용(실제 채굴은 확률 드랍).
  */
 export function resolvePlanetAsteroidAssignedMineralIds(planetId: string, orbitCount: number): string[] {
-  const count = Math.max(ASTEROID_ORBIT_COUNT_MIN, Math.floor(Number.isFinite(orbitCount) ? orbitCount : 0));
-  const pool = GALACTIC_MINERAL_POOL_FROM_CSV
-    .filter((row) => String(row.mineralId ?? '').trim().length > 0)
-    .sort((a, b) => Math.max(0, b.poolWeight) - Math.max(0, a.poolWeight))
-    .map((row) => row.mineralId.trim());
-  if (pool.length === 0) {
-    return Array.from({ length: count }, () => 'ore_mineral_1');
-  }
-  const start = Math.abs(
-    [...planetId].reduce((acc, ch) => (acc * 31 + ch.charCodeAt(0)) | 0, 0),
-  ) % pool.length;
-  return Array.from({ length: count }, (_, i) => pool[(start + i) % pool.length]);
+  return resolvePlanetAsteroidVisualMineralIds(planetId, orbitCount);
 }

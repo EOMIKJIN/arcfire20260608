@@ -20,6 +20,41 @@ export const GALACTIC_MINERAL_POOL_FROM_CSV: readonly GalacticMineralPoolEntry[]
     mineralId: "ore_crystal",
     displayName: "에너지 결정",
     poolWeight: 0.4,
+  },
+  {
+    mineralId: "ore_carbon",
+    displayName: "탄소질 광",
+    poolWeight: 0.75,
+  },
+  {
+    mineralId: "ore_nickel",
+    displayName: "니켈 광",
+    poolWeight: 0.7,
+  },
+  {
+    mineralId: "ore_titanium",
+    displayName: "티타늄 광",
+    poolWeight: 0.55,
+  },
+  {
+    mineralId: "ore_platinum",
+    displayName: "백금 광",
+    poolWeight: 0.32,
+  },
+  {
+    mineralId: "ore_orichalcum",
+    displayName: "오리하르콘 광",
+    poolWeight: 0.24,
+  },
+  {
+    mineralId: "ore_neutronium",
+    displayName: "중성자 광",
+    poolWeight: 0.16,
+  },
+  {
+    mineralId: "ore_voidstone",
+    displayName: "공허석",
+    poolWeight: 0.1,
   }
 ];
 
@@ -37,5 +72,404 @@ export const MINERAL_REGIONS_FROM_CSV: readonly MineralRegionDef[] = [
 ];
 
 export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
-
+  {
+    regionId: "region_core_belt",
+    planetId: "arcadia_prime",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "vega_base",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "solar_station",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "minerva_deep",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "draco_haven",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "eden_city",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "iron_remnant",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "sirius_border",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "perseus_memorial",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "crimson_base",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "blood_station",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "helios_core",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "titan_ruins",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "omega_hub",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "nightfall_citadel",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "shadow_market",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "dark_haven",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "abyss_gate",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "core_prime",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "eternal_throne",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "genesis_origin",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_001_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_002_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_003_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_004_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_005_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_006_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_007_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_008_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_009_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_010_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_011_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_012_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_013_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_014_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_015_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_016_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_017_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_018_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_019_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_020_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_021_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_022_p",
+  },
+  {
+    regionId: "region_core_belt",
+    planetId: "synth_023_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_024_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_025_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_026_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_027_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_028_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_029_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_030_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_031_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_032_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_033_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_034_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_035_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_036_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_037_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_038_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_039_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_040_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_041_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_042_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_043_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_044_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_045_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_046_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_047_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_048_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_049_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_050_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_051_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_052_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_053_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_054_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_055_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_056_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_057_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_058_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_059_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_060_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_061_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_062_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_063_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_064_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_065_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_066_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_067_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_068_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_069_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_070_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_071_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_072_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_073_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_074_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_075_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_076_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_077_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_078_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_079_p",
+  }
 ];

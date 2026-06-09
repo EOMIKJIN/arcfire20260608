@@ -14,6 +14,10 @@ export {
 } from './service';
 
 export {
+  scheduleMiningPlayerPersist,
+  flushMiningPlayerPersist,
+} from './miningPlayerPersist';
+export {
   captureMiningResumeSnapshot,
   clearMiningResumeSnapshot,
   consumeMiningResumeSnapshotForPlanet,

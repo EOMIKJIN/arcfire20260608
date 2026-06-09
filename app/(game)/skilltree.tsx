@@ -4,7 +4,7 @@
 
 import React, { useCallback, useState } from 'react';
 import {
-  View, Text, TouchableOpacity, StyleSheet,
+  View, Text, StyleSheet,
   ScrollView,
 } from 'react-native';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
@@ -17,6 +17,8 @@ import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
+import { ArcStageBackButton } from '../../src/ui/overlay/ArcStageBackButton';
+import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacilityTabBar';
 import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
 import { SkillTreeBoard } from '../../src/components/skillTree/SkillTreeBoard';
@@ -89,32 +91,18 @@ export default function SkillTreeScreen() {
     <StageShell routeName="skilltree" background="none" edges={['bottom']}>
       <View style={styles.root}>
         <View style={styles.header}>
-          <TouchableOpacity
-            onPress={safeBack}
-            style={styles.backBtn}
-            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-          >
-            <Text style={styles.backText}>◀ 나가기</Text>
-          </TouchableOpacity>
+          <ArcStageBackButton onPress={safeBack} style={styles.backBtn} />
           <Text style={styles.headerTitle}>연구소</Text>
           <View style={styles.spBadge}>
             <Text style={styles.spText}>SP {player.skillPoints}</Text>
           </View>
         </View>
 
-        <View style={styles.tabs}>
-          {categories.map(([cat, info]) => (
-            <TouchableOpacity
-              key={cat}
-              style={[styles.tab, selectedCategory === cat && styles.tabActive]}
-              onPress={() => setSelectedCategory(cat)}
-            >
-              <Text style={[styles.tabText, selectedCategory === cat && styles.tabTextActive]}>
-                [{` ${info.name} `}]
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <PlanetFacilityTabBar
+          tabs={categories.map(([cat, info]) => ({ id: cat, label: info.name }))}
+          activeId={selectedCategory}
+          onSelect={(id) => setSelectedCategory(id as SkillCategory)}
+        />
 
         <ScrollView
           style={styles.scroll}
@@ -130,7 +118,7 @@ export default function SkillTreeScreen() {
           </View>
           <View style={{ height: SKILLTREE_BOTTOM_STAGE_RESERVE_PX }} />
         </ScrollView>
-        <StageLoadingOverlay visible={!stageFrameReady} />
+        <StageLoadingOverlay visible={!stageFrameReady} overlayId="stage-loading-skilltree" />
       </View>
     </StageShell>
   );
@@ -147,8 +135,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'rgba(148, 163, 184, 0.25)',
     backgroundColor: 'rgba(15, 23, 42, 0.95)',
   },
-  backBtn: { paddingVertical: SPACING.xs, paddingHorizontal: SPACING.sm, marginRight: SPACING.sm },
-  backText: { fontFamily: FONTS.mono, fontSize: FONTS.size.md, color: '#C7D2EA' },
+  backBtn: { marginRight: SPACING.sm },
   headerTitle: {
     flex: 1,
     fontFamily: FONTS.mono,
@@ -170,28 +157,6 @@ const styles = StyleSheet.create({
     color: COLORS.skill,
     fontWeight: FONTS.weight.bold,
   },
-  tabs: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(15, 23, 42, 0.88)',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(148, 163, 184, 0.2)',
-  },
-  tab: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: SPACING.sm,
-  },
-  tabActive: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#F8FAFC',
-    backgroundColor: 'rgba(30, 41, 59, 0.65)',
-  },
-  tabText: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: 'rgba(148, 163, 184, 0.9)',
-  },
-  tabTextActive: { color: '#F8FAFC', fontWeight: FONTS.weight.bold },
   scroll: { flex: 1 },
   scrollContent: {
     paddingHorizontal: SPACING.sm,

@@ -1,4 +1,4 @@
-weaponKind,targetAffinityKind,damageMultiplier,notesKo
+﻿weaponKind,targetAffinityKind,damageMultiplier,notesKo
 laser,light,1.0,기본 — 경장갑
 laser,shielded,1.5,실드 특화
 laser,heavy,0.7,중장갑 약화

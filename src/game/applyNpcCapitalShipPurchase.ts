@@ -8,6 +8,7 @@ import {
   NPC_CAPITAL_SHIPS_FROM_CSV,
 } from '../data/generated';
 import { buildWeaponDataFromCapitalWeaponId } from './capitalWeaponRange';
+import { applyDefaultCombatLoadout } from './seedShipCombatEquipSlots';
 
 /**
  * `npc_ai_ships.csv` id 기준으로 현재 함선 전투 스냅샷·무장·표시명·포트레이트를 덮어쓴다.
@@ -29,21 +30,20 @@ export function applyNpcCapitalShipToPlayerShip(
     const mw = buildWeaponDataFromCapitalWeaponId(cfg.missileWeaponId);
     if (mw) weapons.push(mw);
   }
-  // 전함 교체 시에도 현재 계정 무기 로드아웃(공용)을 우선 유지한다.
-  const nextWeapons = ship.weapons.length > 0 ? [...ship.weapons] : weapons;
   const c = row.combat;
+  const merged: PlayerShip = {
+    ...ship,
+    name: row.name,
+    portraitNpcCapitalShipId: npcCapitalShipId,
+    maxHp: c.maxHp,
+    hp: c.maxHp,
+    maxShield: c.maxShield,
+    shield: c.maxShield,
+    armor: c.armor,
+    weapons: ship.weapons.length > 0 ? [...ship.weapons] : weapons,
+  };
   return {
     ok: true,
-    ship: {
-      ...ship,
-      name: row.name,
-      portraitNpcCapitalShipId: npcCapitalShipId,
-      maxHp: c.maxHp,
-      hp: c.maxHp,
-      maxShield: c.maxShield,
-      shield: c.maxShield,
-      armor: c.armor,
-      weapons: nextWeapons,
-    },
+    ship: applyDefaultCombatLoadout(merged),
   };
 }

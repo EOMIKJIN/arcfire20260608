@@ -1,4 +1,4 @@
-zoneIndex,primaryPlanetId,systemId,planetLabelKo,scenarioLocationKo,hostileShipCount,targetCombatLevel,requiredFleetMinDps,enemyAffinityKind,targetEngageSec,mainStageCombatEnabled,mainStageCombatVariant
+﻿zoneIndex,primaryPlanetId,systemId,planetLabelKo,scenarioLocationKo,hostileShipCount,targetCombatLevel,requiredFleetMinDps,enemyAffinityKind,targetEngageSec,mainStageCombatEnabled,mainStageCombatVariant
 1,arcadia_prime,arcadia,아르카디아,아르카디아(Arcadia),1,1,150,light,36,true,tutorial_escape
 2,vega_base,vega_outpost,베가 전초기지,베가 전초기지(Vega Outpost),2,3,250,light,40,false,draco_wave
 3,solar_station,solar_port,솔라 항구,솔라 항구(Solar Port),2,5,400,light,44,false,draco_wave

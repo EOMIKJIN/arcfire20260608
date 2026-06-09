@@ -11,7 +11,16 @@ import {
 } from '../arcCore/balance/balanceTableRegistry';
 import { resolveCapitalShipTradePrice } from '../arcCore/balance/tradePortCapitalShipPolicy';
 import { resolveIntegratedWeaponTradePrice } from '../economy/integratedWeaponTradePricing';
-import { getPlanetTradeMarketEntry } from '../world/planetTradeMarketStore';
+import {
+  isArcCorePricedMineral,
+  resolveMineralListingBuyPrice,
+} from '../arcCore/economy/mineralTradePricing';
+import { resolveItemCategoryPriceMul } from '../arcCore/economy/economyPriceOverlayStore';
+import { estimateTradeRouteProfitPerUnit } from '../arcCore/economy/tradeRouteMarketQuotes';
+import { resolveTradeRouteMarketListing } from '../world/planetTradeMarketStore';
+import { getBuyPrice, getSellPrice } from './marketListingPrices';
+
+export { getBuyPrice, getSellPrice } from './marketListingPrices';
 
 /** 행성 시장 가격 계산 (시드 기반 결정론적) */
 export function generateMarket(planet: Planet, seed: number = Date.now()): MarketListing[] {
@@ -36,14 +45,9 @@ export function generateMarketByItemIds(
     const isTradeRoute = itemDef?.type === 'trade_route';
 
     if (isTradeRoute && planetId) {
-      const managed = getPlanetTradeMarketEntry(planetId, goodId);
+      const managed = resolveTradeRouteMarketListing(planetId, goodId);
       if (managed) {
-        return {
-          goodId,
-          price: managed.price,
-          stock: managed.stock,
-          demand: managed.demand,
-        };
+        return managed;
       }
     }
 
@@ -51,8 +55,16 @@ export function generateMarketByItemIds(
     const rng = pseudoRandom(seed + goodId.charCodeAt(0));
     const priceMod = 1 + (rng - 0.5) * variance * 2;
     let price = Math.max(1, Math.floor(good.basePrice * priceMod));
-    if (isCapitalShip) {
-      price = resolveCapitalShipTradePrice(goodId, planetId);
+    if (planetId && isArcCorePricedMineral(goodId)) {
+      price = Math.max(
+        1,
+        Math.floor(resolveMineralListingBuyPrice(planetId, goodId) * resolveItemCategoryPriceMul('mineral', itemDef?.type)),
+      );
+    } else if (isCapitalShip) {
+      price = Math.max(
+        1,
+        Math.floor(resolveCapitalShipTradePrice(goodId, planetId) * resolveItemCategoryPriceMul('capital_ship', itemDef?.type)),
+      );
     } else if (isWeaponModule) {
       const weaponId = String(itemDef?.attrs?.weaponId ?? '').trim();
       if (weaponId) {
@@ -61,6 +73,9 @@ export function generateMarketByItemIds(
         const { min, max } = getWeaponTradePriceBounds();
         price = Math.max(min, Math.min(max, price));
       }
+    } else {
+      const catMul = resolveItemCategoryPriceMul(good.category, itemDef?.type);
+      price = Math.max(1, Math.floor(price * catMul));
     }
 
     const demandRng = pseudoRandom(seed + goodId.charCodeAt(1));
@@ -87,17 +102,6 @@ export function sortMarketListingsByBuyPrice(listings: readonly MarketListing[])
   return [...listings].sort((a, b) => getBuyPrice(a) - getBuyPrice(b));
 }
 
-/** 구매 가격 계산 */
-export function getBuyPrice(listing: MarketListing): number {
-  const demandMod = listing.demand === 'high' ? 1.2 : listing.demand === 'low' ? 0.8 : 1.0;
-  return Math.max(1, Math.floor(listing.price * demandMod));
-}
-
-/** 판매 가격 계산 (구매가의 90%) */
-export function getSellPrice(listing: MarketListing): number {
-  return Math.floor(getBuyPrice(listing) * 0.9);
-}
-
 /** 수익 예측 — 무역소 시장 리스팅 기준 */
 export function estimateProfit(
   buyListing: MarketListing,
@@ -114,13 +118,7 @@ export function estimateTradeRouteProfit(
   sellPlanetId: string,
   quantity: number,
 ): number {
-  const buyEntry = getPlanetTradeMarketEntry(buyPlanetId, tgId);
-  const sellEntry = getPlanetTradeMarketEntry(sellPlanetId, tgId);
-  if (!buyEntry || !sellEntry) return 0;
-  if (buyEntry.role !== 'supply' || sellEntry.role !== 'demand') return 0;
-  const buyPrice = Math.floor(buyEntry.price * (buyEntry.demand === 'high' ? 1.2 : buyEntry.demand === 'low' ? 0.8 : 1));
-  const sellPrice = Math.floor(sellEntry.price * (sellEntry.demand === 'high' ? 1.2 : sellEntry.demand === 'low' ? 0.8 : 1) * 0.9);
-  return Math.max(0, (sellPrice - buyPrice) * quantity);
+  return estimateTradeRouteProfitPerUnit(tgId, buyPlanetId, sellPlanetId) * quantity;
 }
 
 function pseudoRandom(seed: number): number {

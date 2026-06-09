@@ -3,7 +3,7 @@
 // ============================================================
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
@@ -15,7 +15,10 @@ import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMa
 import { useTavernBoardStore } from '../../src/store/tavernBoardStore';
 import { usePlayerStore } from '../../src/store/playerStore';
 import { NPC_CAPTAINS_FROM_CSV } from '../../src/data/generated';
-import { IngameDialogOverlay } from '../../src/components/IngameDialogOverlay';
+import { ArcStageBackButton } from '../../src/ui/overlay/ArcStageBackButton';
+import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacilityTabBar';
+import { useArcNarrativeOverlay } from '../../src/ui/overlay/useArcNarrativeOverlay';
+import type { ArcNarrativeOverlayConfig } from '../../src/ui/overlay/useArcNarrativeOverlay';
 import { resolveNpcCaptainPortraitSource } from '../../src/game/npcCaptainPortraitAssets';
 
 const TAVERN_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
@@ -88,20 +91,41 @@ export default function TavernScreen() {
     setHostDialogDone(false);
   });
 
+  const tavernNarrativeConfig = useMemo((): ArcNarrativeOverlayConfig | null => {
+    if (!tavernHostCaptain) return null;
+    return {
+      anchor: 'bottom',
+      label: `[ 선술집 주인 · ${tavernHostCaptain.displayName} ]`,
+      text: hostGreeting,
+      typewriterKey: `${tavernHostCaptain.id}:${player?.nickname ?? 'pilot'}`,
+      typewriterSpeedMs: 42,
+      onTextComplete: () => setHostDialogDone(true),
+      imageSource: tavernHostImage,
+      onPressNext: () => setHostDialogVisible(false),
+      nextDisabled: !hostDialogDone,
+      buttonText: '[ 확인 ]',
+    };
+  }, [tavernHostCaptain, hostGreeting, hostDialogDone, tavernHostImage, player?.nickname]);
+
+  useArcNarrativeOverlay(
+    'tavern-host-greeting',
+    hostDialogVisible && Boolean(tavernHostCaptain),
+    tavernNarrativeConfig,
+  );
+
   return (
     <StageShell routeName="tavern" background="none" edges={['bottom']}>
       <View style={{ flex: 1 }}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={safeBack}
-          style={styles.backBtn}
-          hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-        >
-          <Text style={styles.backText}>◀ 나가기</Text>
-        </TouchableOpacity>
+        <ArcStageBackButton onPress={safeBack} style={styles.backBtn} />
         <Text style={styles.headerTitle}>선술집</Text>
-        <Text style={styles.headerSub}>공지 보드</Text>
       </View>
+
+      <PlanetFacilityTabBar
+        tabs={[{ id: 'board', label: '공지판' }]}
+        activeId="board"
+        onSelect={() => {}}
+      />
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
         {tavernHostCaptain ? (
@@ -132,20 +156,7 @@ export default function TavernScreen() {
         <View style={{ height: TAVERN_BOTTOM_STAGE_RESERVE_PX }} />
       </ScrollView>
 
-      <IngameDialogOverlay
-        visible={hostDialogVisible && Boolean(tavernHostCaptain)}
-        align="bottom"
-        label={`[ 선술집 주인 · ${tavernHostCaptain?.displayName ?? '퇴역 함장'} ]`}
-        text={hostGreeting}
-        typewriterKey={`${tavernHostCaptain?.id ?? 'none'}:${player?.nickname ?? 'pilot'}`}
-        typewriterSpeedMs={42}
-        onTextComplete={() => setHostDialogDone(true)}
-        imageSource={tavernHostImage}
-        onPressNext={() => setHostDialogVisible(false)}
-        nextDisabled={!hostDialogDone}
-        buttonText="[ 확인 ]"
-      />
-      <StageLoadingOverlay visible={!stageFrameReady} />
+      <StageLoadingOverlay visible={!stageFrameReady} overlayId="stage-loading-tavern" />
       </View>
     </StageShell>
   );
@@ -161,19 +172,13 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.border,
     backgroundColor: COLORS.bg_panel,
   },
-  backBtn: { paddingVertical: SPACING.xs, paddingHorizontal: SPACING.sm, marginRight: SPACING.sm },
-  backText: { fontFamily: FONTS.mono, fontSize: FONTS.size.md, color: COLORS.ink_mid },
+  backBtn: { marginRight: SPACING.sm },
   headerTitle: {
     flex: 1,
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.md,
     fontWeight: FONTS.weight.bold,
     color: COLORS.ink_dark,
-  },
-  headerSub: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_light,
   },
   scroll: {
     flex: 1,

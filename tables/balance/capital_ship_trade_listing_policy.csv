@@ -1,4 +1,4 @@
-tradeGradeRank,tradeGradeKey,hullTierKey,canonicalNpcShipId,notesKo
+﻿tradeGradeRank,tradeGradeKey,hullTierKey,canonicalNpcShipId,notesKo
 1,tg01_scout_patrol,frigate_default,npc_draco_patrol_01,초반 정찰·관측(프리깃 최하)
 2,tg02_escort_light,frigate_default,npc_draco_escort_01,경호·초반 호위
 3,tg03_research_hull,frigate_default,npc_blue_fleet_2,연구형·저체력 고실드

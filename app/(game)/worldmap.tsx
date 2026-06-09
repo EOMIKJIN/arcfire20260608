@@ -20,6 +20,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { COLORS, FONTS, SPACING, LAYOUT, ZONE_COLORS, ZONE_LABELS } from '../../src/utils/theme';
 import { showArcAlert } from '../../src/utils/showArcAlert';
+import { ArcButton } from '../../src/ui/overlay/ArcButton';
 import { QuestHUD } from '../../src/components/QuestHUD';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { StageShell } from '../../src/stages/StageShell';
@@ -838,7 +839,7 @@ export default function WorldMapScreen() {
             </View>
           </GestureDetector>
         ) : null}
-        <StageLoadingOverlay visible={!mapMetricsReady} />
+        <StageLoadingOverlay visible={!mapMetricsReady} overlayId="stage-loading-worldmap" />
       </View>
 
       {showPanel && selectedSystem ? (
@@ -875,29 +876,22 @@ export default function WorldMapScreen() {
                   ? '✓ 이동 가능'
                   : '✗ 직접 이동 불가'}
             </Text>
-            <TouchableOpacity
-              style={[
-                styles.moveBtn,
-                isMoving && styles.moveBtnDisabled,
-                !reachableIds.includes(selectedSystem.id) &&
-                  selectedSystem.id !== player.currentSystemId &&
-                  styles.moveBtnDisabled,
-              ]}
+            <ArcButton
+              label={
+                isMoving
+                  ? '[ 이동중... ]'
+                  : selectedSystem.id === player.currentSystemId
+                    ? '[ 행성 착륙 ]'
+                    : '[ 이동 ]'
+              }
+              variant="cta"
               onPress={handleMove}
               disabled={
                 isMoving ||
                 (!reachableIds.includes(selectedSystem.id) &&
                   selectedSystem.id !== player.currentSystemId)
               }
-            >
-              <Text style={styles.moveBtnText}>
-                {isMoving
-                  ? '[ 이동중... ]'
-                  : selectedSystem.id === player.currentSystemId
-                    ? '[ 행성 착륙 ]'
-                    : '[ 이동 ]'}
-              </Text>
-            </TouchableOpacity>
+            />
           </View>
         </View>
       ) : (

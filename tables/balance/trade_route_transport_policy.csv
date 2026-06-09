@@ -1,0 +1,11 @@
+key,value,notesKo
+policy_version,2,tg_* 교역로 운송비·거리 스케일·차익률 정본
+reference_map_distance,0.28,차익 스케일 기준 맵 거리(성계 좌표 유클리드)
+transport_cost_per_map_unit,150,맵 거리 1.0당 CR(×아이템 volume)
+transport_volume_mul_per_unit,1,volume 추가 배율
+min_net_profit_per_unit,1,순차익 하한(개당)
+supply_buy_price_factor,0.8,생산지 매입가 = baseBuy×이 비율(시장 시드)
+short_route_max_hops,2,성계 노드 홉 이하=근거리 차익 상한
+short_route_max_profit_margin_pct,30,근거리 최대 차익률(생산지 매입가 대비 %)
+reference_route_hops,6,이 홉 이상 테이블 baseSell−생산매입 차익 100%
+profit_distance_scale_axis,hops,차익 가중 축(hops|map)

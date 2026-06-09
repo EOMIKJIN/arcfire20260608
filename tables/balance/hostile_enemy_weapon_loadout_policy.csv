@@ -1,4 +1,4 @@
-key,value,notesKo
+﻿key,value,notesKo
 policy_version,2,적함 무기 로드아웃 — A/B/C 3패턴(행성·스폰 인덱스 %3 균등)
 default_spawn_group_size,6,웨이브 1스폰 그룹 기본 척수(참고)
 missile_long_combat_level_min,13,이상이면 type_b/type_c 장거리 미사일 FK

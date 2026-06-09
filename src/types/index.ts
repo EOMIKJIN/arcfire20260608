@@ -41,6 +41,8 @@ export interface Player {
   expToNext: number;
   skillPoints: number;
   credits: number;
+  /** 누적 획득 크레딧(무기 가격 progressive·경제 분석) */
+  lifetimeCreditsEarned?: number;
   currentSystemId: string;
   currentPlanetId: string | null;
   shipId: string;
@@ -58,10 +60,11 @@ export interface Player {
    */
   homePlanetId: string | null;
   /**
-   * 행성 id → 궤도 채굴 1사이클 완료로 무역소에 반입된 광물1(ore_mineral_1) 누적.
-   * 인벤토리에서 판매해도 이 값은 줄지 않음(무역소 입고 실적).
+   * @deprecated — `orbitalMiningDeliveredByPlanet` 사용. 하위 호환용 ore_mineral_1/ore_ferrite 합산.
    */
   orbitalMiningOre1DeliveredByPlanet: Record<string, number>;
+  /** 행성 id → 광물 id → 궤도 채굴 무역소 입고 누적 */
+  orbitalMiningDeliveredByPlanet?: Record<string, Record<string, number>>;
   /**
    * 개인 인벤토리(100칸). 무역 구매·획득 시 우선 적재, 무역소 판매 탭과 연동.
    * 정본은 `arcfire_player_v1`의 `player` 레코드.

@@ -1,0 +1,17 @@
+﻿node : file:///D:/arcfire20260607/tools/report-planet-mining-minerals.mjs:90
+위치 C:\Users\eomsp\AppData\Local\Temp\ps-script-6f38cca7-6079-4e50-8e7c-198541d0e3fe.ps1:95 문자:34
++ ... re20260607; node tools/report-planet-mining-minerals.mjs 2>&1 | Out-F ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (file:///D:/arcf...minerals.mjs:90:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+for (const row of synthRows) {
+                  ^
+
+ReferenceError: Cannot access 'synthRows' before initialization
+    at file:///D:/arcfire20260607/tools/report-planet-mining-minerals.mjs:90:19
+    at ModuleJob.run (node:internal/modules/esm/module_job:377:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:671:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.11.1

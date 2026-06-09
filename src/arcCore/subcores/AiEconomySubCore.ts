@@ -15,6 +15,7 @@ import {
 import { runPlayScenarioEconomyPass } from '../balance/runPlayScenarioEconomyPass';
 import { settleArcTransportDwellTrade } from '../economy/runArcTransportTradePass';
 import { runTradeRouteMarketPass } from '../economy/runTradeRouteMarketPass';
+import { useEconomyPriceOverlayStore } from '../economy/economyPriceOverlayStore';
 import { useArcCoreTempBankStore } from '../../store/arcCoreTempBankStore';
 
 /**
@@ -32,7 +33,9 @@ export class AiEconomySubCore extends BaseArcSubCore {
   override onBoot(): void {
     this.unsubCommands = subscribeArcCoreCommands((cmd) => this.onArcCoreCommand(cmd));
     void useArcCoreTempBankStore.getState().hydrate().then(() => {
-      runPlayScenarioEconomyPass(true);
+      void useEconomyPriceOverlayStore.getState().loadAsync().then(() => {
+        runPlayScenarioEconomyPass(true);
+      });
     });
   }
 

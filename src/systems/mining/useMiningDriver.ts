@@ -17,6 +17,7 @@
 // ============================================================
 
 import { useEffect, useRef, type MutableRefObject } from 'react';
+import { AppState } from 'react-native';
 import {
   ORBIT_MINING_CYCLE_MS,
   ORBIT_MINING_MAX_CATCH_UP_CYCLES,
@@ -68,7 +69,9 @@ export function useMiningDriver(opts: UseMiningDriverOptions): void {
 
   useEffect(() => {
     if (!enabled) return;
+    let alive = true;
     const id = setInterval(() => {
+      if (!alive || AppState.currentState !== 'active') return;
       const now = Date.now();
       const prev = sessionRef.current;
       if (prev.status !== 'running') return;
@@ -140,6 +143,9 @@ export function useMiningDriver(opts: UseMiningDriverOptions): void {
         onGrantRef.current(grantsForInventory.filter((g) => g.quantity > 0));
       }
     }, MINING_TICK_INTERVAL_MS);
-    return () => clearInterval(id);
+    return () => {
+      alive = false;
+      clearInterval(id);
+    };
   }, [enabled, sessionRef]);
 }

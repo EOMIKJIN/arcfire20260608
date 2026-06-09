@@ -1,4 +1,4 @@
-zoneIndex,growthStageKo,targetItemKo,requiredCredits,mineralQtyTotal,pureMiningMinutes,bountyHuntMinutes,playerFeedbackKo
+﻿zoneIndex,growthStageKo,targetItemKo,requiredCredits,mineralQtyTotal,pureMiningMinutes,bountyHuntMinutes,playerFeedbackKo
 1,-,기본 채굴 1사이클,2000,20,12,0,한 보따리 채굴·판매 기본 루프 인식
 3,1단계(초반 정착),초급 무기 1개,5000,50,30,20,장비 교체 초반 도파민
 5,1.5단계(장비 풀세팅),초급 장비 세트,20000,200,120,80,전투·채굴 속도 체감 성장

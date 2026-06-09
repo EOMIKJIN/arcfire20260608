@@ -1,4 +1,4 @@
-planetId,systemId,initialOwner,occupationCombatEnabled,alertLabelKo
+﻿planetId,systemId,initialOwner,occupationCombatEnabled,alertLabelKo
 arcadia_prime,arcadia,BLUE,false,아르카디아
 solar_station,solar_port,BLUE,true,솔라 항구
 minerva_deep,minerva,BLUE,true,미네르바

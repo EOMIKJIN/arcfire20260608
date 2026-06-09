@@ -74,6 +74,8 @@ alwaysApply: true
 
 - 요청 범위 **밖** 리팩터·포맷 통일·주석 대량 추가 금지.
 - TS/React 수정 후 **`npx tsc --noEmit`** (Windows: `Set-Location` 후 실행).
+- **런타임 버그(크래시·튕김·백그라운드)**: `.cursor/rules/arcfire-bug-debug-workflow.mdc` — 에이전트가 logcat 캡처 → 사용자 재현 → 로그 근거 수정. **Agent 모드 유지**(Debug 전환 불필요).
+- **UI 오버레이·모달**: `src/ui/overlay/` (`ArcOverlayHost`, `arcOverlayStore`, `ArcButton`, `ArcMenuTile`, `overlayInsets`) 단일 축. 신규 alert/dialog는 RN `Modal`·화면별 absolute 셸 금지 — `showArcAlert` / `useArcNarrativeOverlay` / `useArcBlockingOverlay` 경유. 하단 padding은 `resolveOverlayBottomAnchorPad`만. **`npm run audit:ui-overlay`** 로 통합 점검.
 
 ### 아키텍처 감사·리스크 (정기)
 

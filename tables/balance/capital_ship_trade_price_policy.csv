@@ -1,4 +1,4 @@
-key,value,notesKo
+﻿key,value,notesKo
 policy_version,1,전함 무역소 가격 — 성능 우선·수요 보조
 hp_weight,1.0,성능 지수 HP 가중
 shield_weight,0.55,성능 지수 실드 가중

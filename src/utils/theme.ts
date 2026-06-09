@@ -66,3 +66,13 @@ export const LAYOUT = {
   map_line_color: '#2D3F5E',
   map_line_width: 1,
 };
+
+/** 전역 오버레이·모달 UI 토큰 — ArcOverlayHost / ArcButton 단일 소스 */
+export const OVERLAY_TOKENS = {
+  phosphorAccent: '#6BD4FF',
+  phosphorBorder: 'rgba(107, 212, 255, 0.35)',
+  phosphorCardBg: 'rgba(107, 212, 255, 0.08)',
+  phosphorBtnBg: 'rgba(107, 212, 255, 0.1)',
+  cardMaxWidth: 300,
+  narrativeMaxWidth: 440,
+} as const;
