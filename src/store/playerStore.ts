@@ -162,6 +162,7 @@ function buildShipEquipmentItems(ship: PlayerShip): ShipEquipmentItemAssignment[
   });
   Object.values(ITEM_DEFS_FROM_CSV).forEach((def) => {
     if (def.kind !== 'equipment') return;
+    if (def.type === 'weapon_module') return;
     if (byItemId.has(def.id)) return;
     byItemId.set(def.id, {
       itemId: def.id,

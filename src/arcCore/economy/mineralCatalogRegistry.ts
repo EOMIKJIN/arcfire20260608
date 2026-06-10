@@ -104,5 +104,5 @@ export function filterMineralIdsToZonePool(zoneIndex: number, mineralIds: readon
 }
 
 export function resolveCatalogSellPriceAnchor(mineralId: string): number {
-  return getMineralCatalogEntryById(mineralId)?.sellPriceAnchorCr ?? 100;
+  return getMineralCatalogEntryById(mineralId)?.sellPriceAnchorCr ?? 10;
 }

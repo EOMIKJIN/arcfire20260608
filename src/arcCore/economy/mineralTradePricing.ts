@@ -69,11 +69,11 @@ function findSellPricePolicy(zoneIndex: number, mineralId: string): number | nul
 
 function scenarioAnchorSellPrice(zoneIndex: number): number {
   const econ = getPlayScenarioEconomyRow(zoneIndex);
-  if (!econ) return 100;
+  if (!econ) return 10;
   const credits = parseNum(econ.requiredCredits, 0);
   const qty = parseNum(econ.mineralQtyTotal, 0);
   if (credits > 0 && qty > 0) return Math.max(1, Math.floor(credits / qty));
-  return 100;
+  return 10;
 }
 
 /** 무역소 리스팅 없을 때 — catalog·정책 글로벌 판매가(존 풀 제한 없음) */
@@ -82,14 +82,16 @@ export function resolveMineralCatalogSellPrice(mineralId: string): number | null
   const def = getItemDef(mineralId);
   if (!def?.tradeable || !def.sellable) return null;
 
+  const anchor = resolveCatalogSellPriceAnchor(mineralId);
+  if (anchor > 0) return anchor;
+
   for (const row of MiningSellPricePolicy_FROM_BALANCE_CSV) {
     if (String(row.mineralId).trim() !== mineralId) continue;
     const price = parseNum(row.sellPriceCredits, 0);
     if (price > 0) return Math.floor(price);
   }
 
-  const anchor = resolveCatalogSellPriceAnchor(mineralId);
-  return anchor > 0 ? anchor : null;
+  return null;
 }
 
 export function resolveMineralSellPriceCredits(planetId: string, mineralId: string): number | null {
@@ -100,11 +102,11 @@ export function resolveMineralSellPriceCredits(planetId: string, mineralId: stri
   const zoneIndex = resolveZoneIndexForPlanet(planetId);
   if (!isMineralAllowedInZone(zoneIndex, mineralId)) return null;
 
-  const policy = findSellPricePolicy(zoneIndex, mineralId);
-  if (policy != null) return policy;
-
   const anchor = resolveCatalogSellPriceAnchor(mineralId);
   if (anchor > 0) return anchor;
+
+  const policy = findSellPricePolicy(zoneIndex, mineralId);
+  if (policy != null) return policy;
 
   return scenarioAnchorSellPrice(zoneIndex);
 }

@@ -26,7 +26,7 @@ export function resolveWeaponItemDef(
   const basePrice = resolveIntegratedWeaponTradePrice(weaponId, cumulativeCredits);
   return {
     id: itemId,
-    name: `${row.name} 모듈`,
+    name: row.name,
     description: `${row.familyKind.toUpperCase()} · DMG ${row.damage} · RANGE ${Math.round(row.rangePx)}`,
     basePrice,
     priceVariance: 18,

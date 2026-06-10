@@ -74,6 +74,24 @@ export function getTradePortWeaponModuleRequiredLevel(itemId: string): number | 
   return weaponModuleRequiredLevelFromDef(def);
 }
 
+function equipmentRequiredLevelFromDef(def: NonNullable<ReturnType<typeof getItemDef>>): number {
+  const raw = def.attrs?.equipmentRequiredLevel;
+  if (typeof raw === 'number' && Number.isFinite(raw)) return Math.max(1, Math.floor(raw));
+  if (typeof raw === 'string') {
+    const parsed = Number.parseInt(raw, 10);
+    if (Number.isFinite(parsed)) return Math.max(1, parsed);
+  }
+  return 1;
+}
+
+/** 함선 장비 `equipmentRequiredLevel` — UI·정책 연동용 */
+export function getTradePortEquipmentRequiredLevel(itemId: string): number | null {
+  const def = getItemDef(itemId);
+  if (!def || def.kind !== 'equipment' || def.type === 'weapon_module') return null;
+  if (def.type !== 'ship_equipment') return null;
+  return equipmentRequiredLevelFromDef(def);
+}
+
 /** 아크코어 `set_catalog` — 행성 무역소 진열 전체 교체 */
 export function replaceTradePortCatalog(planetId: string, itemIds: readonly string[]): void {
   const mutable = getOrCreateMutableState(planetId);

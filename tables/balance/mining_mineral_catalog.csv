@@ -1,11 +1,11 @@
 mineralIndex,mineralId,displayNameKo,tierRank,sellPriceAnchorCr,poolWeight,notesKo
-1,ore_ferrite,페라이트,1,100,1.0,저급·석탄급 앵커
-2,ore_silicate,실리케이트,2,118,0.85,저중급
-3,ore_carbon,탄소질,3,155,0.75,중저급
-4,ore_nickel,니켈,4,210,0.7,중급·존1~5 상한
-5,ore_titanium,티타늄,5,320,0.55,중상급·존6~10 하한
-6,ore_crystal,에너지 결정,6,520,0.4,상급
-7,ore_platinum,백금,7,850,0.32,고급·금속급·존6~10 상한
-8,ore_orichalcum,오리하르콘,8,1400,0.24,희귀·존11~15 상한
-9,ore_neutronium,중성자,9,2400,0.16,극희귀·존16~21 하한
-10,ore_voidstone,공허석,10,4200,0.1,엔드·존16~21 상한(~42× tier1)
+1,ore_ferrite,페라이트,1,10,1.0,MAU tier1=10CR·무기가격 유지(채굴 시간↑)
+2,ore_silicate,실리케이트,2,12,0.85,저중급
+3,ore_carbon,탄소질,3,16,0.75,중저급
+4,ore_nickel,니켈,4,21,0.7,중급·존1~5 상한
+5,ore_titanium,티타늄,5,32,0.55,중상급·존6~10 하한
+6,ore_crystal,에너지 결정,6,52,0.4,상급
+7,ore_platinum,백금,7,85,0.32,고급·금속급·존6~10 상한
+8,ore_orichalcum,오리하르콘,8,140,0.24,희귀·존11~15 상한
+9,ore_neutronium,중성자,9,240,0.16,극희귀·존16~21 하한
+10,ore_voidstone,공허석,10,420,0.1,엔드·존16~21 상한(~42× tier1)

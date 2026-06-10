@@ -50,10 +50,7 @@ import {
   inferTradeBuySubTabFromGoodId,
   type TradeBuySubTabId,
 } from '../../src/game/tradeBuySubTab';
-
-const CATEGORY_ICONS: Record<string, string> = {
-  food: '🌾', mineral: '⛏', tech: '⚙', weapon: '⚔', luxury: '💎', contraband: '🚫',
-};
+import { TradeListingIcon } from '../../src/ui/trade/TradeListingIcon';
 
 const DEMAND_LABELS: Record<string, string> = {
   low: '낮음 ↓', normal: '보통', high: '높음 ↑',
@@ -678,8 +675,12 @@ export default function TradeScreen() {
                   disabled={!canAfford || !hasSpace}
                 >
                   <View style={styles.listingLeft}>
-                    <Text style={styles.goodIcon}>{CATEGORY_ICONS[good.category] ?? '📦'}</Text>
-                    <View>
+                    <TradeListingIcon
+                      goodId={listing.goodId}
+                      category={good.category}
+                      buySubTab={buySubTab}
+                    />
+                    <View style={styles.listingTextBlock}>
                       <Text style={styles.goodName}>{good.name}</Text>
                       <Text style={styles.goodDesc} numberOfLines={1}>{good.description}</Text>
                     </View>
@@ -735,8 +736,12 @@ export default function TradeScreen() {
                   disabled={!sellable}
                 >
                   <View style={styles.listingLeft}>
-                    <Text style={styles.goodIcon}>{CATEGORY_ICONS[good.category] ?? '📦'}</Text>
-                    <View>
+                    <TradeListingIcon
+                      goodId={item.goodId}
+                      category={good.category}
+                      buySubTab={inferTradeBuySubTabFromGoodId(item.goodId)}
+                    />
+                    <View style={styles.listingTextBlock}>
                       <Text style={styles.goodName}>{good.name}</Text>
                       <Text style={styles.goodDesc}>
                         평균 구매가: {formatCredits(item.buyPrice)} · 보유: {item.quantity}개
@@ -807,8 +812,8 @@ const styles = StyleSheet.create({
   },
   listingDisabled: { opacity: 0.4 },
   listingLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, rowGap: SPACING.sm, columnGap: SPACING.sm },
+  listingTextBlock: { flex: 1, minWidth: 0 },
   listingRight: { alignItems: 'flex-end', minWidth: 90 },
-  goodIcon: { fontSize: 24 },
   goodName: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,

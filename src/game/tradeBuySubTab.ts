@@ -25,7 +25,7 @@ export const TRADE_BUY_SUB_TAB_LABELS: Record<TradeBuySubTabId, string> = {
  * 무역 목록 한 줄(`goodId`) → 구매 서브 탭.
  * - type `capital_ship` → 함선
  * - type `weapon_module` → 무기
- * - kind `equipment` → 장비
+ * - kind `equipment`(무기 모듈 제외) → 장비 — `ship_equipment`·`mining_drone`
  * - 그 외(교역품·광물·식량·소유권·tg_* 등) → 아이템
  */
 export function inferTradeBuySubTabFromGoodId(goodId: string): TradeBuySubTabId {

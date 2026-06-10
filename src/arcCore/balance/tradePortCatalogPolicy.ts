@@ -3,6 +3,7 @@
 // ============================================================
 
 import {
+  TradePortEquipmentTierPolicy_FROM_BALANCE_CSV,
   TradePortGlobalItems_FROM_BALANCE_CSV,
   TradePortWeaponTierPolicy_FROM_BALANCE_CSV,
 } from '../../data/balance/generated';
@@ -16,7 +17,10 @@ import {
   resolvePlanetZoneIndex,
 } from '../planetBalance/planetZoneIndexRegistry';
 import { listPlanetIdsWithTradePort } from '../../world/planetTradePortDb';
-import { getTradePortWeaponModuleRequiredLevel } from '../../world/planetTradePortDb';
+import {
+  getTradePortEquipmentRequiredLevel,
+  getTradePortWeaponModuleRequiredLevel,
+} from '../../world/planetTradePortDb';
 import { listCapitalShipItemIdsForPlanet } from './tradePortCapitalShipPolicy';
 import { getCapitalHullPurchaseRow } from './balanceTableRegistry';
 import {
@@ -42,6 +46,12 @@ const weaponTierByKey = new Map(
   ),
 );
 
+const equipmentTierByKey = new Map(
+  TradePortEquipmentTierPolicy_FROM_BALANCE_CSV.map(
+    (row) => [String(row.tierKey).trim(), row] as const,
+  ),
+);
+
 const globalTradePortItemIds = TradePortGlobalItems_FROM_BALANCE_CSV.map((row) =>
   String(row.itemId).trim(),
 ).filter(Boolean);
@@ -60,6 +70,47 @@ function weaponModuleRequiredLevelFromDef(def: ReturnType<typeof getItemDef>): n
 function weaponFamilyKindFromDef(def: ReturnType<typeof getItemDef>): string {
   const family = def?.attrs?.weaponFamilyKind ?? def?.attrs?.weaponKind;
   return typeof family === 'string' ? family.trim().toLowerCase() : '';
+}
+
+function equipmentRequiredLevelFromDef(def: ReturnType<typeof getItemDef>): number {
+  if (!def) return Number.POSITIVE_INFINITY;
+  const raw = def.attrs?.equipmentRequiredLevel;
+  if (typeof raw === 'number' && Number.isFinite(raw)) return Math.max(1, Math.floor(raw));
+  if (typeof raw === 'string') {
+    const parsed = Number.parseInt(raw, 10);
+    if (Number.isFinite(parsed)) return Math.max(1, parsed);
+  }
+  return 1;
+}
+
+function equipmentCategoryFromDef(def: ReturnType<typeof getItemDef>): string {
+  const raw = def?.attrs?.equipmentCategory;
+  return typeof raw === 'string' ? raw.trim().toLowerCase() : '';
+}
+
+function equipmentGradeFromDef(def: ReturnType<typeof getItemDef>): number {
+  if (!def) return Number.POSITIVE_INFINITY;
+  const raw = def.attrs?.equipmentGrade;
+  if (typeof raw === 'number' && Number.isFinite(raw)) return Math.max(1, Math.min(3, Math.floor(raw)));
+  if (typeof raw === 'string') {
+    const parsed = Number.parseInt(raw, 10);
+    if (Number.isFinite(parsed)) return Math.max(1, Math.min(3, parsed));
+  }
+  return 1;
+}
+
+function isShipTradeEquipmentDef(def: ReturnType<typeof getItemDef>): boolean {
+  if (!def?.tradeable || def.kind !== 'equipment') return false;
+  if (def.type === 'weapon_module') return false;
+  return def.type === 'ship_equipment';
+}
+
+function resolveEquipmentTierKeyFromWeaponTier(recommendedWeaponTierKey: string): string {
+  const prefix = recommendedWeaponTierKey.trim().toLowerCase().match(/^t(\d)/)?.[1];
+  if (prefix === '4') return 'eq_t4';
+  if (prefix === '3') return 'eq_t3';
+  if (prefix === '2') return 'eq_t2';
+  return 'eq_t1';
 }
 
 function resolvePlanetOwnershipItemId(planetId: string): string | null {
@@ -94,6 +145,41 @@ export function listWeaponModuleItemIdsForPlanetZone(
   return allInBand.map((d) => d.id);
 }
 
+/** 행성 zone · 무기 티어 연동 함선 장비 진열(무기 제외 `kind:equipment`) */
+export function listShipEquipmentItemIdsForPlanetZone(
+  recommendedPilotLevel: number,
+  recommendedWeaponTierKey: string,
+): string[] {
+  const eqTierKey = resolveEquipmentTierKeyFromWeaponTier(recommendedWeaponTierKey);
+  const tierRow = equipmentTierByKey.get(eqTierKey);
+  const tierCap = tierRow
+    ? parseNum(tierRow.maxEquipmentRequiredLevel, 60)
+    : Math.max(1, Math.floor(recommendedPilotLevel));
+  const levelCap = Math.min(Math.max(1, Math.floor(recommendedPilotLevel)), tierCap);
+  const gradeCap = tierRow
+    ? Math.max(1, Math.min(3, parseNum(tierRow.maxEquipmentGrade, 3)))
+    : 3;
+  const categoryFilter = tierRow
+    ? String(tierRow.equipmentCategoryFilter ?? '*').trim().toLowerCase()
+    : '*';
+
+  const allInBand = listItemDefs().filter((d) => {
+    if (!isShipTradeEquipmentDef(d)) return false;
+    if (equipmentGradeFromDef(d) > gradeCap) return false;
+    return equipmentRequiredLevelFromDef(d) <= levelCap;
+  });
+
+  if (categoryFilter === '*' || categoryFilter === '') {
+    return allInBand.map((d) => d.id);
+  }
+
+  const categoryMatched = allInBand.filter(
+    (d) => equipmentCategoryFromDef(d) === categoryFilter,
+  );
+  if (categoryMatched.length > 0) return categoryMatched.map((d) => d.id);
+  return allInBand.map((d) => d.id);
+}
+
 /** 아크코어 — 행성별 무역소 전체 진열 id (교역품·무기·전함·소유권·글로벌) */
 export function resolveTradePortCatalogItemIds(planetId: string): string[] {
   const system = findSystemForPlanetId(planetId);
@@ -106,6 +192,7 @@ export function resolveTradePortCatalogItemIds(planetId: string): string[] {
     ...listTradeRoutePlayerBuyItemIds(planetId),
     ...listZoneTradeableMineralIds(zoneIndex),
     ...listWeaponModuleItemIdsForPlanetZone(recommendedPilotLevel, recommendedWeaponTierKey),
+    ...listShipEquipmentItemIdsForPlanetZone(recommendedPilotLevel, recommendedWeaponTierKey),
     ...listCapitalShipItemIdsForPlanet(planetId),
     ...globalTradePortItemIds,
   ];
@@ -135,6 +222,11 @@ export function isTradePortItemPurchasableByPlayer(itemId: string, playerLevel: 
     const tier = resolveHullTierKeyForTradeCatalogShip(npcId);
     const row = getCapitalHullPurchaseRow(tier);
     return lv >= parseNum(row?.requiredPilotLevelMin, 1);
+  }
+
+  if (isShipTradeEquipmentDef(def)) {
+    const req = getTradePortEquipmentRequiredLevel(itemId);
+    return req != null && req <= lv;
   }
 
   return true;

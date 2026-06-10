@@ -22,7 +22,17 @@ import {
 import { resolveNpcCapitalShipPortraitSource } from '../../src/game/npcCapitalShipPortraitAssets';
 import { applyNpcCapitalShipToPlayerShip } from '../../src/game/applyNpcCapitalShipPurchase';
 import { buildWeaponDataFromCapitalRow } from '../../src/game/capitalWeaponRange';
+import { resolveEquipSlotDisplayName } from '../../src/game/equipSlotDisplayName';
 import { PLAYER_INVENTORY_SLOT_COUNT } from '../../src/game/playerInventory';
+import { computeCapitalWeaponDps } from '../../src/game/capitalWeaponRegistry';
+import {
+  COMBAT_WEAPON_SLOT_IDS,
+  isCombatWeaponEquipSlot,
+  isEquipSlotFilled,
+  isShipyardEquipSlotLockedByCapacity,
+  resolveCombatWeaponSlotForWeaponId,
+  UNEQUIPPED_WEAPON_ITEM_ID,
+} from '../../src/game/combatWeaponSlots';
 import { SHIPYARD_EQUIP_SLOT_DEFS } from '../../src/game/shipyardEquipSlots';
 import { TRADE_GOODS } from '../../src/data/goods';
 import type {
@@ -59,12 +69,34 @@ const REPAIR_COST_PER_HP = 5;
 const SHIELD_RECHARGE_COST = 200;
 /** 메인스테이지 기준 하단 공백과 동기 */
 const SHIPYARD_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
-const UNEQUIPPED_WEAPON_ITEM_ID = '0';
-
 function weaponIdFromSlotItemDef(itemDefId: string | null | undefined): string {
   const raw = String(itemDefId ?? '').trim();
   if (!raw || raw === UNEQUIPPED_WEAPON_ITEM_ID) return '';
   return raw.replace(/^weapon_item_/, '').trim();
+}
+
+function formatEquippedWeaponStatValue(
+  slot: { itemDefId?: string; name?: string } | null | undefined,
+): string {
+  const weaponId = weaponIdFromSlotItemDef(slot?.itemDefId);
+  if (!weaponId) return 'NULL - DPS NULL';
+  const name = resolveEquipSlotDisplayName(slot?.itemDefId, slot?.name);
+  const dps = computeCapitalWeaponDps(weaponId);
+  const dpsText = dps != null ? `${dps.toFixed(1)}/초` : 'NULL';
+  return `${name} - DPS ${dpsText}`;
+}
+
+function sumEquippedWeaponTableDamage(
+  equipSlots: PlayerShip['equipSlots'] | undefined,
+): number {
+  let sum = 0;
+  for (const slotId of COMBAT_WEAPON_SLOT_IDS) {
+    const weaponId = weaponIdFromSlotItemDef(equipSlots?.[slotId]?.itemDefId);
+    if (!weaponId) continue;
+    const damage = CAPITAL_WEAPON_LIST_FROM_CSV[weaponId]?.damage;
+    if (typeof damage === 'number' && Number.isFinite(damage)) sum += damage;
+  }
+  return sum;
 }
 
 export default function ShipyardScreen() {
@@ -108,8 +140,6 @@ export default function ShipyardScreen() {
   if (!player || !shipFinal) return null;
 
   const { ship, credits } = player;
-  const slotWeapon1 = ship.equipSlots?.WEAPON_1?.name;
-  const slotWeapon2 = ship.equipSlots?.WEAPON_2?.name;
   const inventorySlots = player.inventorySlots;
   const finalStats = shipFinal.finalStats;
   const missingHp = finalStats.maxHp - finalStats.hp;
@@ -250,29 +280,17 @@ export default function ShipyardScreen() {
   const portraitRow = portraitNpcId
     ? NPC_CAPITAL_SHIPS_FROM_CSV.find((s) => s.id === portraitNpcId)
     : undefined;
-  const equippedWeapon1Id = weaponIdFromSlotItemDef(ship.equipSlots?.WEAPON_1?.itemDefId);
-  const equippedWeapon2Id = weaponIdFromSlotItemDef(ship.equipSlots?.WEAPON_2?.itemDefId);
-  const laserWeapon = equippedWeapon1Id ? CAPITAL_WEAPON_LIST_FROM_CSV[equippedWeapon1Id] : undefined;
-  const missileWeapon = equippedWeapon2Id ? CAPITAL_WEAPON_LIST_FROM_CSV[equippedWeapon2Id] : undefined;
-  const equippedWeapon1 = slotWeapon1 ?? laserWeapon?.name ?? '없음';
-  const equippedWeapon2 = slotWeapon2 ?? missileWeapon?.name ?? '없음';
   const combatStats = portraitRow?.combat;
   const strStat = combatStats?.strStat ?? 14;
   const dexStat = combatStats?.dexStat ?? 14;
   const sizeClass = combatStats?.sizeClass ?? 0;
-  const strMod = Math.floor(strStat / 2) - 5;
-  const dexMod = Math.floor(dexStat / 2) - 5;
-  const baseDiceMin = combatStats ? combatStats.damageDice.count + combatStats.damageDice.bonus : 1;
-  const baseDiceMax = combatStats
-    ? combatStats.damageDice.count * combatStats.damageDice.sides + combatStats.damageDice.bonus
-    : 6;
-  const laserDamage = laserWeapon?.damage ?? 0;
-  const missileDamage = missileWeapon?.damage ?? 0;
-  const laserMinDamage = Math.max(1, baseDiceMin + laserDamage + strMod);
-  const laserMaxDamage = Math.max(laserMinDamage, baseDiceMax + laserDamage + strMod);
-  const missileMinDamage = Math.max(1, baseDiceMin + missileDamage + strMod);
-  const missileMaxDamage = Math.max(missileMinDamage, baseDiceMax + missileDamage + strMod);
-  const attackAc = 10 + dexMod + finalStats.armor + sizeClass;
+  const totalWeaponDamage = sumEquippedWeaponTableDamage(ship.equipSlots);
+  const weaponStatLines = {
+    WEAPON_1: formatEquippedWeaponStatValue(ship.equipSlots?.WEAPON_1),
+    WEAPON_2: formatEquippedWeaponStatValue(ship.equipSlots?.WEAPON_2),
+    WEAPON_3: formatEquippedWeaponStatValue(ship.equipSlots?.WEAPON_3),
+    WEAPON_4: formatEquippedWeaponStatValue(ship.equipSlots?.WEAPON_4),
+  };
   const shipPortraitSource = resolveNpcCapitalShipPortraitSource(portraitRow?.portraitImageAssetKey);
 
   const renderShipOverview = (showEquipScaffold = false) => (
@@ -347,12 +365,11 @@ export default function ShipyardScreen() {
         <StatRow label="기동력(DEX)" value={`${dexStat}`} />
         <StatRow label="중량(SIZE)" value={`${sizeClass}`} />
         <StatRow label="명중 보너스" value={`${combatStats?.attackBonus ?? 0}`} />
-        <StatRow
-          label="공격력"
-          value={`${equippedWeapon1} ${laserDamage} / ${equippedWeapon2} ${missileDamage}`}
-        />
-        <StatRow label="장착무기1" value={equippedWeapon1} />
-        <StatRow label="장착무기2" value={equippedWeapon2} />
+        <StatRow label="공격력" value={`${totalWeaponDamage}`} />
+        <StatRow label="장착무기1" value={weaponStatLines.WEAPON_1} />
+        <StatRow label="장착무기2" value={weaponStatLines.WEAPON_2} />
+        <StatRow label="장착무기3" value={weaponStatLines.WEAPON_3} />
+        <StatRow label="장착무기4" value={weaponStatLines.WEAPON_4} />
         <StatRow label="인벤토리" value={`${inventorySlots.length}`} />
       </View>
 
@@ -552,8 +569,8 @@ function ShipyardInventoryGrid({
   const rebuildWeaponsFromSlots = (
     nextSlots: Partial<Record<ShipyardEquipSlotId, { itemDefId: string; name: string } | null>>,
   ) => {
-    return ['WEAPON_1', 'WEAPON_2']
-      .map((slotId) => nextSlots[slotId as ShipyardEquipSlotId]?.itemDefId ?? '')
+    return COMBAT_WEAPON_SLOT_IDS
+      .map((slotId) => nextSlots[slotId]?.itemDefId ?? '')
       .map((itemDefId) => weaponIdFromSlotItemDef(itemDefId))
       .map((weaponId) => CAPITAL_WEAPON_LIST_FROM_CSV[weaponId])
       .filter((w): w is NonNullable<typeof w> => Boolean(w))
@@ -570,21 +587,24 @@ function ShipyardInventoryGrid({
       showArcAlert('장착 실패', '무기 테이블 데이터를 찾을 수 없습니다.');
       return;
     }
-    const slotId: 'WEAPON_1' | 'WEAPON_2' = weapon.type === 'missile' ? 'WEAPON_2' : 'WEAPON_1';
+    const slotId = resolveCombatWeaponSlotForWeaponId(weaponId);
+    if (!slotId) {
+      showArcAlert('장착 실패', '이 무기는 장착 슬롯을 결정할 수 없습니다.');
+      return;
+    }
     const nextSlots = { ...(ship.equipSlots ?? {}) };
-    nextSlots[slotId] = { itemDefId: itemId, name: weapon.name };
+    nextSlots[slotId] = {
+      itemDefId: itemId,
+      name: resolveEquipSlotDisplayName(itemId, row?.name ?? weapon.name),
+    };
     const nextWeapons = rebuildWeaponsFromSlots(nextSlots);
     updateShip({ ...ship, equipSlots: nextSlots, weapons: nextWeapons });
     await persist();
   };
 
   const unequipWeaponToInventory = async (itemId: string) => {
-    const slotId: 'WEAPON_1' | 'WEAPON_2' | null =
-      ship.equipSlots?.WEAPON_1?.itemDefId === itemId
-        ? 'WEAPON_1'
-        : ship.equipSlots?.WEAPON_2?.itemDefId === itemId
-          ? 'WEAPON_2'
-          : null;
+    const slotId =
+      COMBAT_WEAPON_SLOT_IDS.find((id) => ship.equipSlots?.[id]?.itemDefId === itemId) ?? null;
     if (!slotId) return;
     const nextSlots = { ...(ship.equipSlots ?? {}) };
     nextSlots[slotId] = { itemDefId: UNEQUIPPED_WEAPON_ITEM_ID, name: '미장착' };
@@ -604,10 +624,7 @@ function ShipyardInventoryGrid({
           const isWeaponModule = Boolean(cell && isWeaponItemId(cell.goodId));
           const isEquipped = Boolean(
             cell
-            && (
-              ship.equipSlots?.WEAPON_1?.itemDefId === cell.goodId
-              || ship.equipSlots?.WEAPON_2?.itemDefId === cell.goodId
-            ),
+            && COMBAT_WEAPON_SLOT_IDS.some((id) => ship.equipSlots?.[id]?.itemDefId === cell.goodId),
           );
           const itemName = cell ? (good?.name ?? weaponDef?.name ?? cell.goodId) : '— 빈 슬롯 —';
           return (
@@ -667,8 +684,8 @@ function ShipyardEquipSlotsBlock({
   const rebuildWeaponsFromSlots = (
     nextSlots: Partial<Record<ShipyardEquipSlotId, { itemDefId: string; name: string } | null>>,
   ) => {
-    return ['WEAPON_1', 'WEAPON_2']
-      .map((slotId) => nextSlots[slotId as ShipyardEquipSlotId]?.itemDefId ?? '')
+    return COMBAT_WEAPON_SLOT_IDS
+      .map((slotId) => nextSlots[slotId]?.itemDefId ?? '')
       .map((itemDefId) => weaponIdFromSlotItemDef(itemDefId))
       .map((weaponId) => CAPITAL_WEAPON_LIST_FROM_CSV[weaponId])
       .filter((w): w is NonNullable<typeof w> => Boolean(w))
@@ -689,14 +706,15 @@ function ShipyardEquipSlotsBlock({
       return;
     }
     const cur = map[slotId] ?? null;
-    if (cur) {
-      showArcAlert(`[${order}.${slotId}]`, `${cur.name}\n\n슬롯에서 해제할까요?`, [
+    if (isEquipSlotFilled(cur)) {
+      const displayName = resolveEquipSlotDisplayName(cur!.itemDefId, cur!.name);
+      showArcAlert(`[${order}.${slotId}]`, `${displayName}\n\n슬롯에서 해제할까요?`, [
         { text: '닫기', style: 'cancel' },
         {
           text: '해제',
           onPress: async () => {
             const nextSlots = { ...map };
-            if (slotId === 'WEAPON_1' || slotId === 'WEAPON_2') {
+            if (isCombatWeaponEquipSlot(slotId)) {
               nextSlots[slotId] = { itemDefId: UNEQUIPPED_WEAPON_ITEM_ID, name: '미장착' };
             } else {
               delete nextSlots[slotId];
@@ -721,13 +739,14 @@ function ShipyardEquipSlotsBlock({
       <View style={styles.equipSlotsGrid}>
         {SHIPYARD_EQUIP_SLOT_DEFS.map(({ order, id }) => {
           const cur = map[id];
-          const locked = order > equipCapacity;
+          const filled = isEquipSlotFilled(cur);
+          const locked = isShipyardEquipSlotLockedByCapacity(order, id, equipCapacity);
           return (
             <TouchableOpacity
               key={id}
               style={[
                 styles.equipSlotCell,
-                cur ? styles.equipSlotFilled : styles.equipSlotEmpty,
+                filled ? styles.equipSlotFilled : styles.equipSlotEmpty,
                 locked && styles.equipSlotLocked,
               ]}
               onPress={() => openSlot(id, order)}
@@ -735,7 +754,11 @@ function ShipyardEquipSlotsBlock({
             >
               <Text style={styles.equipSlotTag}>{`[${order}.${id}]`}</Text>
               <Text style={styles.equipSlotItem} numberOfLines={2}>
-                {locked ? '— 잠금 —' : cur ? cur.name : '— 빈 슬롯 —'}
+                {locked
+                  ? '— 잠금 —'
+                  : filled
+                    ? resolveEquipSlotDisplayName(cur!.itemDefId, cur!.name)
+                    : '— 빈 슬롯 —'}
               </Text>
             </TouchableOpacity>
           );

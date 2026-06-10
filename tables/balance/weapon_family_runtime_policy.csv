@@ -1,0 +1,6 @@
+familyKind,trajectoryMode,impactMode,hitFxKind,projectileRenderKind,implementationStatus,notesKo
+laser,instant_beam,target_track,laser_dodge,laser_beam,active,즉시 판정 직선 빔
+missile,bezier_guided,target_track,default,missile_trail,active,베지어 유도 미사일
+rocket,straight_fixed,spread_circle,rocket_spread,rocket_bolt,active,직선 고속·원형 착탄 분산
+drone,orbit_loiter,spread_circle,drone_burst,drone_sprite,effectPending,표적 주위 선회 후 타격(미구현)
+carrier,arc_loiter_turn,spread_circle,carrier_bomb,carrier_wing,effectPending,선회 비행 후 투하(미구현)

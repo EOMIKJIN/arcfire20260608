@@ -11,11 +11,9 @@ import {
   type PlayerInventorySlot,
 } from './playerInventory';
 import { isWeaponItemId, weaponItemIdFromWeaponId } from './weaponItemId';
-import { SHIPYARD_EQUIP_SLOT_DEFS } from './shipyardEquipSlots';
+import { COMBAT_WEAPON_SLOT_IDS, DEFAULT_CLOSE_RANGE_WEAPON_ID } from './combatWeaponSlots';
 
-const WEAPON_SLOT_IDS = SHIPYARD_EQUIP_SLOT_DEFS
-  .map((d) => d.id)
-  .filter((id): id is 'WEAPON_1' | 'WEAPON_2' => id === 'WEAPON_1' || id === 'WEAPON_2');
+const WEAPON_SLOT_IDS = [...COMBAT_WEAPON_SLOT_IDS];
 
 const UNEQUIPPED_WEAPON_ITEM_ID = '0';
 
@@ -26,8 +24,12 @@ export function listDefaultWeaponItemDefIdsForNpcShip(npcCapitalShipId: string):
   const out: string[] = [];
   const laser = runtime.laserWeaponId?.trim();
   const missile = runtime.missileWeaponId?.trim();
+  const closeRange = runtime.closeRangeWeaponId?.trim() || DEFAULT_CLOSE_RANGE_WEAPON_ID;
+  const aux = runtime.auxWeaponId?.trim();
   if (laser) out.push(weaponItemIdFromWeaponId(laser));
   if (missile) out.push(weaponItemIdFromWeaponId(missile));
+  if (closeRange) out.push(weaponItemIdFromWeaponId(closeRange));
+  if (aux) out.push(weaponItemIdFromWeaponId(aux));
   return out;
 }
 

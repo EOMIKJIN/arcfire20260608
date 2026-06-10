@@ -35,7 +35,6 @@ import {
 } from '../../npc/edenCapitalFleetConfig';
 import { captainMatchesPlanetOrbitTable } from '../../npc/captainOrbitTableMatch';
 import {
-  CAPITAL_WEAPON_LIST_FROM_CSV,
   NPC_CAPTAINS_FROM_CSV,
   NPC_CAPITAL_SHIPS_FROM_CSV,
   NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV,
@@ -45,8 +44,14 @@ import {
   isKnownCapitalWeaponId,
   resolveMissileSalvoCount,
   resolveMissileSalvoIntervalMs,
-  shouldLockMissileImpactPoint,
 } from '../../game/capitalWeaponRegistry';
+import {
+  buildCapitalProjectileSpawn,
+  isNovaAoeWeapon,
+  resolveCapitalLaserBeamPresentation,
+  resolveCapitalWeaponImpact,
+} from '../../combat/capitalWeaponPipeline';
+import { DEFAULT_CLOSE_RANGE_WEAPON_ID } from '../../game/combatWeaponSlots';
 import {
   resolveMainStageCombatEnabled,
   resolvePlanetEnemyAffinityKind,
@@ -404,12 +409,19 @@ export type Agent = {
   nextFireMs: number;
   /** 다음 미사일 살보(3발) 시작 가능 시각 */
   nextMissileSalvoAt: number;
+  /** 다음 근접 로켓 살보 시작 가능 시각 */
+  nextCloseRangeSalvoAt: number;
   /** 현재 살보 시작 시각, null 이면 대기 */
   activeSalvoBaseMs: number | null;
+  /** 근접 로켓 살보 시작 시각 */
+  activeCloseRangeSalvoBaseMs: number | null;
   /** 이번 살보에서 이미 쏜 발 수(0 이상, 살보 진행 중 `missileSalvoCount` 미만) */
   salvoSpawned: number;
+  /** 근접 로켓 살보 발사 수 */
+  closeRangeSalvoSpawned: number;
   /** 현재 살보의 다음 발사 예정 시각(ms). null 이면 살보 대기 */
   activeSalvoNextShotAtMs: number | null;
+  activeCloseRangeNextShotAtMs: number | null;
   lastLaserStartMs: number;
   lastDestroyedAtMs: number;
   /** 객체별 행동 랜덤화(동기화 방지) */
@@ -450,6 +462,10 @@ export type Agent = {
   captainLabel: string;
   laserWeaponId: string;
   missileWeaponId: string;
+  /** WEAPON_3 — 근접 로켓탄 */
+  closeRangeWeaponId: string;
+  /** WEAPON_4 — 임시(연동만, 발사 미구현) */
+  auxWeaponId: string;
   strStat: number;
   dexStat: number;
   strMod: number;
@@ -464,16 +480,23 @@ export type Agent = {
   laserMaxDamage: number;
   missileMinDamage: number;
   missileMaxDamage: number;
+  closeRangeMinDamage: number;
+  closeRangeMaxDamage: number;
   laserRechargeMs: number;
   missileFireIntervalMs: number;
   missileSalvoCount: number;
   missileSalvoIntervalMs: number;
+  closeRangeFireIntervalMs: number;
+  closeRangeSalvoCount: number;
+  closeRangeSalvoIntervalMs: number;
   laserEngageRangePx: number;
   missileMaxRangePx: number;
+  closeRangeMaxRangePx: number;
   /** `weapon_list.csv` 사거리에서 파생한 항법·교전 구간 */
   rangeBands: CapitalCombatRangeBands;
   laserBoltTravelMs: number;
   missileFlightSpeedPxPerMs: number;
+  closeRangeFlightSpeedPxPerMs: number;
   /** weapon_affinity_matrix.csv — 적 장갑 유형(light/shielded/heavy) */
   enemyAffinityKind: string;
 };
@@ -512,25 +535,6 @@ export type Missile = {
   lockImpactPoint: boolean;
 };
 
-type MissileImpactEffectContext = {
-  owner: Agent;
-  primaryVictim?: Agent;
-  impactPoint: Pt;
-  missiles: Missile[];
-  currentMissile: Missile;
-  agents: Agent[];
-  elapsedMs: number;
-  orbitSize: number;
-  margin: number;
-};
-
-type MissileImpactEffectHandler = (ctx: MissileImpactEffectContext) => void;
-
-type MissileWeaponEffectModule = {
-  missileWeaponId: string;
-  onImpact?: MissileImpactEffectHandler;
-};
-
 export type MissileHitFx = {
   id: number;
   x: number;
@@ -539,7 +543,7 @@ export type MissileHitFx = {
   color: string;
   missileWeaponId?: string;
   ownerTeam?: 'red' | 'blue' | 'orange';
-  effectKind?: 'default' | 'nova_dodge' | 'laser_dodge';
+  effectKind?: 'default' | 'nova_dodge' | 'laser_dodge' | 'rocket_spread' | 'drone_burst' | 'carrier_bomb';
 };
 
 function quadBezier(p0: Pt, p1: Pt, p2: Pt, t: number): Pt {
@@ -893,7 +897,7 @@ function randRange(min: number, max: number): number {
   return min + Math.random() * (max - min);
 }
 
-type CombatWeaponType = 'laser' | 'missile';
+type CombatWeaponType = 'laser' | 'missile' | 'closeRange';
 
 function getAbilityModifier(stat: number): number {
   return Math.floor(stat / 2) - 5;
@@ -925,8 +929,18 @@ function rollAgentWeaponDamage(
   weaponType: CombatWeaponType,
   outcome: 0 | 1 | 2,
 ): number {
-  const min = weaponType === 'laser' ? attacker.laserMinDamage : attacker.missileMinDamage;
-  const max = weaponType === 'laser' ? attacker.laserMaxDamage : attacker.missileMaxDamage;
+  const min =
+    weaponType === 'laser'
+      ? attacker.laserMinDamage
+      : weaponType === 'closeRange'
+        ? attacker.closeRangeMinDamage
+        : attacker.missileMinDamage;
+  const max =
+    weaponType === 'laser'
+      ? attacker.laserMaxDamage
+      : weaponType === 'closeRange'
+        ? attacker.closeRangeMaxDamage
+        : attacker.missileMaxDamage;
   const hi = Math.max(min, max);
   const raw = min + Math.floor(Math.random() * (hi - min + 1));
   const withStr = Math.max(1, raw + attacker.strMod);
@@ -935,13 +949,19 @@ function rollAgentWeaponDamage(
     : 'NEUTRAL';
   const dmgMult = stance === 'AGGRESSIVE' ? 1.25 : stance === 'DEFENSIVE' ? 0.85 : 1;
   let stanceDamage = Math.max(1, Math.round(withStr * dmgMult));
-  const weaponId = weaponType === 'laser' ? attacker.laserWeaponId : attacker.missileWeaponId;
+  const weaponId =
+    weaponType === 'laser'
+      ? attacker.laserWeaponId
+      : weaponType === 'closeRange'
+        ? attacker.closeRangeWeaponId
+        : attacker.missileWeaponId;
   if (weaponId.trim()) {
+    const affinitySlot = weaponType === 'closeRange' ? 'missile' : weaponType;
     stanceDamage = Math.max(
       1,
       Math.round(
         stanceDamage
-          * resolveWeaponAffinityDamageMultiplier(weaponId, weaponType, defender.enemyAffinityKind),
+          * resolveWeaponAffinityDamageMultiplier(weaponId, affinitySlot, defender.enemyAffinityKind),
       ),
     );
   }
@@ -1852,10 +1872,16 @@ function resolvePlayerFlagshipCombatBinding(): PlayerFlagshipCombatBinding | nul
   // 플레이어 전투 무장은 equipSlots가 정본이다. ship.weapons 잔존값은 발사 판정에 쓰지 않는다.
   const slotLaserRaw = String(player.ship.equipSlots?.WEAPON_1?.itemDefId ?? '').trim();
   const slotMissileRaw = String(player.ship.equipSlots?.WEAPON_2?.itemDefId ?? '').trim();
+  const slotCloseRaw = String(player.ship.equipSlots?.WEAPON_3?.itemDefId ?? '').trim();
+  const slotAuxRaw = String(player.ship.equipSlots?.WEAPON_4?.itemDefId ?? '').trim();
   const slotLaserId = slotLaserRaw && slotLaserRaw !== '0' ? slotLaserRaw.replace(/^weapon_item_/, '').trim() : '';
   const slotMissileId = slotMissileRaw && slotMissileRaw !== '0' ? slotMissileRaw.replace(/^weapon_item_/, '').trim() : '';
+  const slotCloseId = slotCloseRaw && slotCloseRaw !== '0' ? slotCloseRaw.replace(/^weapon_item_/, '').trim() : '';
+  const slotAuxId = slotAuxRaw && slotAuxRaw !== '0' ? slotAuxRaw.replace(/^weapon_item_/, '').trim() : '';
   let laserWeaponId = slotLaserId && isKnownCapitalWeaponId(slotLaserId) ? slotLaserId : '';
   let missileWeaponId = slotMissileId && isKnownCapitalWeaponId(slotMissileId) ? slotMissileId : '';
+  let closeRangeWeaponId = slotCloseId && isKnownCapitalWeaponId(slotCloseId) ? slotCloseId : '';
+  let auxWeaponId = slotAuxId && isKnownCapitalWeaponId(slotAuxId) ? slotAuxId : '';
   if (!laserWeaponId && runtimeBase?.laserWeaponId?.trim()) {
     const fallback = runtimeBase.laserWeaponId.trim();
     if (isKnownCapitalWeaponId(fallback)) laserWeaponId = fallback;
@@ -1863,6 +1889,17 @@ function resolvePlayerFlagshipCombatBinding(): PlayerFlagshipCombatBinding | nul
   if (!missileWeaponId && runtimeBase?.missileWeaponId?.trim()) {
     const fallback = runtimeBase.missileWeaponId.trim();
     if (isKnownCapitalWeaponId(fallback)) missileWeaponId = fallback;
+  }
+  if (!closeRangeWeaponId && runtimeBase?.closeRangeWeaponId?.trim()) {
+    const fallback = runtimeBase.closeRangeWeaponId.trim();
+    if (isKnownCapitalWeaponId(fallback)) closeRangeWeaponId = fallback;
+  }
+  if (!closeRangeWeaponId && isKnownCapitalWeaponId(DEFAULT_CLOSE_RANGE_WEAPON_ID)) {
+    closeRangeWeaponId = DEFAULT_CLOSE_RANGE_WEAPON_ID;
+  }
+  if (!auxWeaponId && runtimeBase?.auxWeaponId?.trim()) {
+    const fallback = runtimeBase.auxWeaponId.trim();
+    if (isKnownCapitalWeaponId(fallback)) auxWeaponId = fallback;
   }
 
   const baseCombat = {
@@ -1885,12 +1922,16 @@ function resolvePlayerFlagshipCombatBinding(): PlayerFlagshipCombatBinding | nul
         ...perf.runtimeConfig,
         laserWeaponId: laserWeaponId || '',
         missileWeaponId: missileWeaponId || '',
+        closeRangeWeaponId: closeRangeWeaponId || '',
+        auxWeaponId: auxWeaponId || '',
       }
     : perf.runtimeConfig
       ? {
           ...perf.runtimeConfig,
           laserWeaponId: laserWeaponId || '',
           missileWeaponId: missileWeaponId || '',
+          closeRangeWeaponId: closeRangeWeaponId || '',
+          auxWeaponId: auxWeaponId || '',
         }
       : undefined;
 
@@ -1940,42 +1981,6 @@ function finalizeShipDestroyed(victim: Agent, owner: Agent | undefined, elapsedM
     void s.persistNpcCaptainProgress();
   }
 }
-
-const NOVA_MISSILE_EFFECT_MODULE: MissileWeaponEffectModule = {
-  missileWeaponId: '',
-  onImpact: ({ owner, impactPoint, agents, elapsedMs, orbitSize }) => {
-    const effectRadius = orbitSize * 0.25; // 지름=전투영역 가로 1/2
-    const slowMul = 0.5;
-    const slowDurationMs = 6000;
-    for (const ag of agents) {
-      if (!ag.alive) continue;
-      if (ag.team === owner.team) continue;
-      const dist = Math.hypot(ag.x - impactPoint.x, ag.y - impactPoint.y);
-      if (dist > effectRadius) continue;
-      ag.speedSlowMul = Math.min(ag.speedSlowMul, slowMul);
-      ag.speedSlowUntilMs = Math.max(ag.speedSlowUntilMs, elapsedMs + slowDurationMs);
-      const hpDelta = Math.max(1, Math.floor(ag.maxHullHp * 0.3));
-      ag.hullHp = Math.max(0, ag.hullHp - hpDelta);
-      if (ag.hullHp <= 0) {
-        finalizeShipDestroyed(ag, owner, elapsedMs);
-      }
-    }
-  },
-};
-
-/**
- * 특수 미사일(AoE 등): `weapon_list.csv` lockImpactPoint·hitAreaNote 기준 자동 등록.
- * 일반 유도/속성은 테이블 수치만으로 동일 파이프라인 — 메인 궤도·이동중 전투 공용.
- */
-const MISSILE_WEAPON_EFFECT_MODULES: Record<string, MissileWeaponEffectModule> = (() => {
-  const out: Record<string, MissileWeaponEffectModule> = {};
-  for (const row of Object.values(CAPITAL_WEAPON_LIST_FROM_CSV)) {
-    if (!row.lockImpactPoint) continue;
-    if (!row.hitAreaNote.includes('60')) continue;
-    out[row.id] = { ...NOVA_MISSILE_EFFECT_MODULE, missileWeaponId: row.id };
-  }
-  return out;
-})();
 
 function isPlayerFlagshipSlot(
   captainId: string | null,
@@ -2064,8 +2069,12 @@ function createCapitalAgentBase(
   const detectRangeScale = runtimeConfig?.detectRangeScale ?? randRange(0.84, 1.18);
   const laserWeaponId = runtimeConfig?.laserWeaponId?.trim() ?? '';
   const missileWeaponId = runtimeConfig?.missileWeaponId?.trim() ?? '';
+  const closeRangeWeaponId =
+    runtimeConfig?.closeRangeWeaponId?.trim() || DEFAULT_CLOSE_RANGE_WEAPON_ID;
+  const auxWeaponId = runtimeConfig?.auxWeaponId?.trim() ?? '';
   const laserWeapon = laserWeaponId ? getCapitalWeaponRow(laserWeaponId) : null;
   const missileWeapon = missileWeaponId ? getCapitalWeaponRow(missileWeaponId) : null;
+  const closeRangeWeapon = closeRangeWeaponId ? getCapitalWeaponRow(closeRangeWeaponId) : null;
   const hasLaserWeaponId = laserWeaponId.trim().length > 0;
   const hasMissileWeaponId = missileWeaponId.trim().length > 0;
   if (__DEV__) {
@@ -2077,17 +2086,27 @@ function createCapitalAgentBase(
       WARNED_MISSING_WEAPON_IDS.add(missileWeaponId);
       console.warn(`[combat] weapon_list.csv 매핑 누락(missile): ${missileWeaponId}`);
     }
+    if (closeRangeWeaponId && !closeRangeWeapon && !WARNED_MISSING_WEAPON_IDS.has(closeRangeWeaponId)) {
+      WARNED_MISSING_WEAPON_IDS.add(closeRangeWeaponId);
+      console.warn(`[combat] weapon_list.csv 매핑 누락(closeRange): ${closeRangeWeaponId}`);
+    }
   }
   const hasLaserWeapon = Boolean(laserWeapon);
   const hasMissileWeapon = Boolean(missileWeapon);
+  const hasCloseRangeWeapon = Boolean(closeRangeWeapon);
   const laserRechargeMs = hasLaserWeapon
     ? Math.max(120, laserWeapon?.cooldownMs ?? LASER_RECHARGE_MS)
     : Number.POSITIVE_INFINITY;
   const missileFireIntervalMs = hasMissileWeapon
     ? Math.max(900, missileWeapon?.cooldownMs ?? MISSILE_FIRE_INTERVAL_MS)
     : Number.POSITIVE_INFINITY;
+  const closeRangeFireIntervalMs = hasCloseRangeWeapon
+    ? Math.max(420, closeRangeWeapon?.cooldownMs ?? MISSILE_FIRE_INTERVAL_MS)
+    : Number.POSITIVE_INFINITY;
   const laserEngageRangePx = hasLaserWeapon && laserWeapon ? resolveCapitalWeaponRangePx(laserWeapon) : 0;
   const missileMaxRangePx = hasMissileWeapon && missileWeapon ? resolveCapitalWeaponRangePx(missileWeapon) : 0;
+  const closeRangeMaxRangePx =
+    hasCloseRangeWeapon && closeRangeWeapon ? resolveCapitalWeaponRangePx(closeRangeWeapon) : 0;
   const rangeBands = deriveCapitalCombatRangeBands(laserEngageRangePx, missileMaxRangePx);
   const laserSpeedPxPerSec = Math.max(1, laserWeapon?.projectileSpeedPxPerSec ?? 5200);
   const laserBoltTravelMs = Math.max(8, Math.round((Math.max(1, laserEngageRangePx) / laserSpeedPxPerSec) * 1000));
@@ -2096,6 +2115,11 @@ function createCapitalAgentBase(
     missileWeapon?.projectileSpeedPxPerSec ?? MISSILE_FLIGHT_SPEED_PX_PER_MS_FALLBACK * 1000,
   );
   const missileFlightSpeedPxPerMs = missileSpeedPxPerSec / 1000;
+  const closeRangeSpeedPxPerSec = Math.max(
+    1,
+    closeRangeWeapon?.projectileSpeedPxPerSec ?? missileSpeedPxPerSec,
+  );
+  const closeRangeFlightSpeedPxPerMs = closeRangeSpeedPxPerSec / 1000;
   const diceCount = Math.max(1, combatStats?.damageDice.count ?? 1);
   const diceSides = Math.max(2, combatStats?.damageDice.sides ?? 6);
   const diceBonus = combatStats?.damageDice.bonus ?? 0;
@@ -2103,15 +2127,26 @@ function createCapitalAgentBase(
   const baseMaxDamage = diceCount * diceSides + diceBonus;
   const laserDamageBonus = hasLaserWeapon ? Math.max(1, laserWeapon?.damage ?? DEFAULT_LASER_DMG_FALLBACK) : 0;
   const missileDamageBonus = hasMissileWeapon ? Math.max(1, missileWeapon?.damage ?? DEFAULT_MISSILE_DMG_FALLBACK) : 0;
+  const closeRangeDamageBonus = hasCloseRangeWeapon
+    ? Math.max(1, closeRangeWeapon?.damage ?? DEFAULT_MISSILE_DMG_FALLBACK)
+    : 0;
   const laserMinDamage = Math.max(1, baseMinDamage + laserDamageBonus);
   const laserMaxDamage = Math.max(laserMinDamage, baseMaxDamage + laserDamageBonus);
   const missileMinDamage = Math.max(1, baseMinDamage + missileDamageBonus);
   const missileMaxDamage = Math.max(missileMinDamage, baseMaxDamage + missileDamageBonus);
+  const closeRangeMinDamage = Math.max(1, baseMinDamage + closeRangeDamageBonus);
+  const closeRangeMaxDamage = Math.max(closeRangeMinDamage, baseMaxDamage + closeRangeDamageBonus);
   const missileSalvoCount = hasMissileWeapon
     ? resolveMissileSalvoCount(missileWeaponId)
     : 0;
+  const closeRangeSalvoCount = hasCloseRangeWeapon
+    ? resolveMissileSalvoCount(closeRangeWeaponId)
+    : 0;
   const missileSalvoIntervalMs = hasMissileWeapon
     ? resolveMissileSalvoIntervalMs(missileWeaponId, randRange(salvoStepMin, salvoStepMax))
+    : randRange(salvoStepMin, salvoStepMax);
+  const closeRangeSalvoIntervalMs = hasCloseRangeWeapon
+    ? resolveMissileSalvoIntervalMs(closeRangeWeaponId, randRange(salvoStepMin, salvoStepMax))
     : randRange(salvoStepMin, salvoStepMax);
   return {
     id,
@@ -2144,9 +2179,14 @@ function createCapitalAgentBase(
     nextFireMs: wallBaseMs,
     nextMissileSalvoAt:
       wallBaseMs + (redLikeStats ? 0 : missileFireIntervalMs * 0.5) + id * 70,
+    nextCloseRangeSalvoAt:
+      wallBaseMs + (redLikeStats ? 120 : closeRangeFireIntervalMs * 0.35) + id * 55,
     activeSalvoBaseMs: null,
+    activeCloseRangeSalvoBaseMs: null,
     activeSalvoNextShotAtMs: null,
+    activeCloseRangeNextShotAtMs: null,
     salvoSpawned: 0,
+    closeRangeSalvoSpawned: 0,
     lastLaserStartMs: wallBaseMs - 1e9,
     lastDestroyedAtMs: -1e9,
     behaviorTimeOffsetMs: randRange(-1200, 1200),
@@ -2171,6 +2211,8 @@ function createCapitalAgentBase(
     captainLabel,
     laserWeaponId,
     missileWeaponId,
+    closeRangeWeaponId: hasCloseRangeWeapon ? closeRangeWeaponId : '',
+    auxWeaponId,
     strStat,
     dexStat,
     strMod,
@@ -2183,15 +2225,22 @@ function createCapitalAgentBase(
     laserMaxDamage,
     missileMinDamage,
     missileMaxDamage,
+    closeRangeMinDamage,
+    closeRangeMaxDamage,
     laserRechargeMs,
     missileFireIntervalMs,
     missileSalvoCount,
     missileSalvoIntervalMs,
+    closeRangeFireIntervalMs,
+    closeRangeSalvoCount,
+    closeRangeSalvoIntervalMs,
     laserEngageRangePx,
     missileMaxRangePx,
+    closeRangeMaxRangePx,
     rangeBands,
     laserBoltTravelMs,
     missileFlightSpeedPxPerMs,
+    closeRangeFlightSpeedPxPerMs,
     enemyAffinityKind,
   };
 }
@@ -2616,6 +2665,55 @@ export function usePlanetEdenRaidSim(
     elapsedCarryRef.current = 0;
   }, [active]);
 
+  const pushCapitalProjectileMissile = useCallback((
+    owner: Agent,
+    weaponId: string,
+    target: Pt,
+    targetAgentId: number,
+    elapsed: number,
+    spreadIdx: number,
+    salvoCount: number,
+    flightSpeedPxPerMs: number,
+  ) => {
+    if (!weaponId.trim()) return;
+    if (salvoCount <= 1) {
+      const hasActive = missilesRef.current.some((m) => {
+        if (m.ownerAgentId !== owner.id) return false;
+        if (m.missileWeaponId !== weaponId) return false;
+        if (m.hitApplied) return false;
+        return elapsed - m.startMs < m.travelMs;
+      });
+      if (hasActive) return;
+    }
+    const curveSign: 1 | -1 = ((owner.id + targetAgentId + spreadIdx) & 1) === 0 ? 1 : -1;
+    const spawn = buildCapitalProjectileSpawn({
+      weaponId,
+      p0: laserMuzzleFromAgent(owner),
+      aimCenter: { x: target.x, y: target.y },
+      spreadIdx,
+      salvoCount,
+      flightSpeedPxPerMs,
+      curveSign,
+    });
+    if (!spawn) return;
+    missilesRef.current.push({
+      id: nextMissileId.current++,
+      startMs: elapsed,
+      p0: spawn.p0,
+      p1: spawn.p1,
+      p2: spawn.p2,
+      travelMs: spawn.travelMs,
+      hitApplied: false,
+      ownerAgentId: owner.id,
+      targetAgentId,
+      spreadLane: spawn.spreadLane,
+      salvoCount: spawn.salvoCount,
+      curveSign: spawn.curveSign,
+      missileWeaponId: weaponId,
+      lockImpactPoint: spawn.lockImpactPoint,
+    });
+  }, []);
+
   const spawnSingleMissile = useCallback((
     owner: Agent,
     target: Pt,
@@ -2623,57 +2721,36 @@ export function usePlanetEdenRaidSim(
     elapsed: number,
     spreadIdx: number,
   ) => {
-    // 단발 무기(현재 기본)에서 동일 발사자의 중복 스폰을 차단한다.
-    if (owner.missileSalvoCount <= 1) {
-      const hasActive = missilesRef.current.some((m) => {
-        if (m.ownerAgentId !== owner.id) return false;
-        if (m.hitApplied) return false;
-        return elapsed - m.startMs < m.travelMs;
-      });
-      if (hasActive) return;
-    }
-    const p0 = laserMuzzleFromAgent(owner);
-    /** 2차 베지어 낙점 = 표적 함선 중심(유도탄 필중) */
-    const aim = { x: target.x, y: target.y };
-    const chord = Math.hypot(aim.x - p0.x, aim.y - p0.y) || 1e-4;
-    const travelMs = Math.round(
-      Math.max(400, Math.min(24_000, chord / Math.max(1e-5, owner.missileFlightSpeedPxPerMs))),
-    );
-    const i = spreadIdx % Math.max(1, owner.missileSalvoCount);
-    const lane = missileSpreadLane(i, owner.missileSalvoCount);
-    const dx = aim.x - p0.x;
-    const dy = aim.y - p0.y;
-    const d = Math.hypot(dx, dy);
-    const ux = d > 1e-9 ? dx / d : 1;
-    const uy = d > 1e-9 ? dy / d : 0;
-    const nx = -uy;
-    const ny = ux;
-    const curveSign: 1 | -1 = ((owner.id + targetAgentId + spreadIdx) & 1) === 0 ? 1 : -1;
-    const laneLateral = 24 * lane;
-    const baseArcLateral = lane === 0 ? 20 * curveSign : 0;
-    const lateral = laneLateral + baseArcLateral;
-    const forward = 18 + Math.abs(lane) * 6;
-    const p1 = {
-      x: (p0.x + aim.x) / 2 + nx * lateral + ux * forward,
-      y: (p0.y + aim.y) / 2 + ny * lateral + uy * forward,
-    };
-    missilesRef.current.push({
-      id: nextMissileId.current++,
-      startMs: elapsed,
-      p0: { ...p0 },
-      p1: { ...p1 },
-      p2: { ...aim },
-      travelMs,
-      hitApplied: false,
-      ownerAgentId: owner.id,
+    pushCapitalProjectileMissile(
+      owner,
+      owner.missileWeaponId,
+      target,
       targetAgentId,
-      spreadLane: spreadIdx % Math.max(1, owner.missileSalvoCount),
-      salvoCount: Math.max(1, owner.missileSalvoCount),
-      curveSign,
-      missileWeaponId: owner.missileWeaponId,
-      lockImpactPoint: shouldLockMissileImpactPoint(owner.missileWeaponId),
-    });
-  }, []);
+      elapsed,
+      spreadIdx,
+      owner.missileSalvoCount,
+      owner.missileFlightSpeedPxPerMs,
+    );
+  }, [pushCapitalProjectileMissile]);
+
+  const spawnSingleCloseRangeRocket = useCallback((
+    owner: Agent,
+    target: Pt,
+    targetAgentId: number,
+    elapsed: number,
+    spreadIdx: number,
+  ) => {
+    pushCapitalProjectileMissile(
+      owner,
+      owner.closeRangeWeaponId,
+      target,
+      targetAgentId,
+      elapsed,
+      spreadIdx,
+      owner.closeRangeSalvoCount,
+      owner.closeRangeFlightSpeedPxPerMs,
+    );
+  }, [pushCapitalProjectileMissile]);
 
   useEffect(() => {
     if (!active || paused) {
@@ -3055,6 +3132,57 @@ export function usePlanetEdenRaidSim(
             ag.salvoSpawned = 0;
           }
         }
+
+        const canFireCloseRange =
+          ag.closeRangeSalvoCount > 0 && ag.closeRangeWeaponId.trim().length > 0;
+        const inCloseRange =
+          canFireCloseRange &&
+          dist <= ag.closeRangeMaxRangePx + CAPITAL_MISSILE_RANGE_LOOSEN_PX &&
+          inAttackArc;
+        const closeRangeSalvoReady = elapsed >= ag.nextCloseRangeSalvoAt;
+        if (ag.activeCloseRangeSalvoBaseMs === null && closeRangeSalvoReady && inCloseRange) {
+          ag.activeCloseRangeSalvoBaseMs = elapsed;
+          ag.activeCloseRangeNextShotAtMs = elapsed;
+          ag.closeRangeSalvoSpawned = 0;
+        }
+        if (ag.activeCloseRangeSalvoBaseMs !== null) {
+          const closeSalvoCount = Math.max(1, ag.closeRangeSalvoCount);
+          const nextCloseShotDueAt =
+            ag.activeCloseRangeNextShotAtMs ?? ag.activeCloseRangeSalvoBaseMs;
+          if (ag.closeRangeSalvoSpawned < closeSalvoCount && elapsed >= nextCloseShotDueAt) {
+            spawnSingleCloseRangeRocket(
+              ag,
+              { x: other.x, y: other.y },
+              other.id,
+              elapsed,
+              ag.closeRangeSalvoSpawned,
+            );
+            ag.lastWeaponFireAtMs = elapsed;
+            ag.stallChaseBoostUntilMs = 0;
+            ag.closeRangeSalvoSpawned += 1;
+            ag.activeCloseRangeNextShotAtMs = elapsed + ag.closeRangeSalvoIntervalMs;
+          }
+          if (ag.closeRangeSalvoSpawned >= closeSalvoCount) {
+            ag.nextCloseRangeSalvoAt =
+              ag.activeCloseRangeSalvoBaseMs
+              + ag.closeRangeFireIntervalMs
+              + ag.missileCooldownJitterMs;
+            ag.activeCloseRangeSalvoBaseMs = null;
+            ag.activeCloseRangeNextShotAtMs = null;
+            ag.closeRangeSalvoSpawned = 0;
+          } else if (
+            elapsed >
+            ag.activeCloseRangeSalvoBaseMs
+              + closeSalvoCount * ag.salvoStepMs
+              + MISSILE_SALVO_STALL_ABORT_GRACE_MS
+          ) {
+            ag.nextCloseRangeSalvoAt =
+              elapsed + ag.closeRangeFireIntervalMs * 0.42 + ag.missileCooldownJitterMs;
+            ag.activeCloseRangeSalvoBaseMs = null;
+            ag.activeCloseRangeNextShotAtMs = null;
+            ag.closeRangeSalvoSpawned = 0;
+          }
+        }
       }
 
       for (const m of missilesRef.current) {
@@ -3062,41 +3190,34 @@ export function usePlanetEdenRaidSim(
         if (elapsed - m.startMs < m.travelMs) continue;
         m.hitApplied = true;
         const owner = idBuf[m.ownerAgentId];
-        const effectModule = MISSILE_WEAPON_EFFECT_MODULES[m.missileWeaponId];
         const victim = idBuf[m.targetAgentId];
-        const isNova = shouldLockMissileImpactPoint(m.missileWeaponId);
-        const impactPoint: Pt = isNova
-          ? { x: m.p2.x, y: m.p2.y }
-          : victim?.alive
-            ? { x: victim.x, y: victim.y }
-            : { x: m.p2.x, y: m.p2.y };
+        const isNova = isNovaAoeWeapon(m.missileWeaponId);
+        const impactPoint: Pt =
+          isNova || m.lockImpactPoint
+            ? { x: m.p2.x, y: m.p2.y }
+            : victim?.alive
+              ? { x: victim.x, y: victim.y }
+              : { x: m.p2.x, y: m.p2.y };
+        const impactResult = resolveCapitalWeaponImpact({
+          owner,
+          primaryVictim: victim?.alive ? victim : undefined,
+          impactPoint,
+          missile: m,
+          agents,
+          elapsedMs: elapsed,
+          orbitSize,
+          margin,
+          rollDamage: rollAgentWeaponDamage,
+          resolveAttackOutcome: resolveAgentAttackOutcome,
+          applyIncomingDamage: applyAgentIncomingDamage,
+          applyKnockback: applyHitKnockback,
+          finalizeDestroyed: finalizeShipDestroyed,
+        });
         missileHitFxRef.current.push({
           id: m.id,
-          x: impactPoint.x,
-          y: impactPoint.y,
-          startMs: elapsed,
-          color: victim?.stroke ?? '#94A3B8',
-          missileWeaponId: m.missileWeaponId,
-          ownerTeam: owner?.team,
-          effectKind: isNova ? 'nova_dodge' : 'default',
+          ...impactResult.hitFx,
         });
-
-        if (owner && effectModule?.onImpact) {
-          effectModule.onImpact({
-            owner,
-            primaryVictim: victim?.alive ? victim : undefined,
-            impactPoint,
-            missiles: missilesRef.current,
-            currentMissile: m,
-            agents,
-            elapsedMs: elapsed,
-            orbitSize,
-            margin,
-          });
-        }
-
-        if (isNova) {
-          // 노바는 공간 고정 폭발형: 개별 표적 추적/직접 타격 루틴을 타지 않는다.
+        if (impactResult.skipDefaultMissileDamage) {
           continue;
         }
         if (victim?.alive) {
@@ -3138,7 +3259,7 @@ export function usePlanetEdenRaidSim(
       cancelAnimationFrame(raf);
       elapsedCarryRef.current = lastElapsedRef.current;
     };
-  }, [active, paused, cx, cy, margin, orbitSize, spawnSingleMissile]);
+  }, [active, paused, cx, cy, margin, orbitSize, spawnSingleMissile, spawnSingleCloseRangeRocket]);
 
   const captureSuspendSnapshot = useCallback((suspendedAtMs: number) => {
     const sessionKey = sessionCombatKeyRef.current;
@@ -3571,9 +3692,10 @@ function buildSvgCombatLaserForAgent(
       1 - (laserT - LASER_FADE_START_MS) / Math.max(1, LASER_DURATION_MS - LASER_FADE_START_MS),
     );
   }
+  const laserVis = resolveCapitalLaserBeamPresentation(ag.laserWeaponId);
   return {
     bolt: { x1: muzzle.x, y1: muzzle.y, x2, y2, opacity },
-    beamColor: '#E04050',
+    beamColor: laserVis.coreColor,
     renderLaserGlow,
   };
 }

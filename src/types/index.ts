@@ -202,6 +202,8 @@ export interface ShipTemplate {
 export type ShipyardEquipSlotId =
   | 'WEAPON_1'
   | 'WEAPON_2'
+  | 'WEAPON_3'
+  | 'WEAPON_4'
   | 'ARMOR'
   | 'SYSTEM'
   | 'ENGINE'

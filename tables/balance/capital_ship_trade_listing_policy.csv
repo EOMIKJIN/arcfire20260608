@@ -1,18 +1,18 @@
-﻿tradeGradeRank,tradeGradeKey,hullTierKey,canonicalNpcShipId,notesKo
+tradeGradeRank,tradeGradeKey,hullTierKey,canonicalNpcShipId,notesKo
 1,tg01_scout_patrol,frigate_default,npc_draco_patrol_01,초반 정찰·관측(프리깃 최하)
 2,tg02_escort_light,frigate_default,npc_draco_escort_01,경호·초반 호위
 3,tg03_research_hull,frigate_default,npc_blue_fleet_2,연구형·저체력 고실드
 4,tg04_carrier_light,frigate_default,npc_blue_fleet_3,경량 모선형
-5,tg05_raider_hull,frigate_default,npc_red_fleet_3,돌격형 프리깃
-6,tg06_patrol_carrier,frigate_default,npc_solar_guard_1,순찰·보급 혼합
-7,tg07_patrol_standard,frigate_default,npc_blue_fleet_1,표준 순찰함
-8,tg08_patrol_arcadia,frigate_default,npc_arcadia_orbit_1,관문 순찰형
-9,tg09_patrol_vega,frigate_default,npc_vega_guard_1,전초 순찰형
-10,tg10_patrol_eden,frigate_default,npc_eden_orbit_4,에덴 궤도 순찰
-11,tg11_line_upgraded,frigate_upgraded,npc_arcadia_orbit_2,개량 라인함
-12,tg12_line_heavy,frigate_upgraded,npc_red_fleet_1,중장 라인함
-13,tg13_destroyer_siege,destroyer,npc_vega_red_8,구축·공성형
-14,tg14_destroyer_elite,destroyer_upgraded,npc_vega_red_12,구축 개량형
-15,tg15_cruiser_standard,cruiser,npc_blue_fleet_6,순양함
-16,tg16_cruiser_elite,cruiser_upgraded,npc_red_fleet_2,순양 개량형
-17,tg17_battlecruiser,battlecruiser,npc_vega_red_9,순양전함
+5,tg05_raider_hull,frigate_default,npc_solar_guard_1,돌격형 프리깃
+6,tg06_patrol_carrier,frigate_default,npc_red_fleet_3,순찰·보급 혼합
+7,tg07_patrol_standard,frigate_default,npc_arcadia_orbit_1,표준 순찰함
+8,tg08_patrol_arcadia,frigate_default,npc_vega_guard_1,관문 순찰형
+9,tg09_patrol_vega,frigate_default,npc_eden_orbit_4,전초 순찰형
+10,tg10_patrol_eden,frigate_default,npc_arcadia_orbit_2,에덴 궤도 순찰
+11,tg11_line_upgraded,frigate_upgraded,npc_red_fleet_2,개량 라인함
+12,tg12_line_heavy,frigate_upgraded,npc_blue_fleet_6,중장 라인함
+13,tg13_destroyer_siege,destroyer,npc_blue_fleet_1,구축·공성형
+14,tg14_destroyer_elite,destroyer_upgraded,npc_red_fleet_1,구축 개량형
+15,tg15_cruiser_standard,cruiser,npc_vega_red_8,순양함
+16,tg16_cruiser_elite,cruiser_upgraded,npc_vega_red_9,순양 개량형
+17,tg17_battlecruiser,battlecruiser,npc_vega_red_12,순양전함

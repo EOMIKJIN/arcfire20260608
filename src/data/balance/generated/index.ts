@@ -21,6 +21,7 @@ export { PlanetTradeRouteProfile_FROM_BALANCE_CSV } from './csvPlanetTradeRouteP
 export { PlayScenarioEconomy_FROM_BALANCE_CSV } from './csvPlayScenarioEconomy';
 export { PlayScenarioZonePlanets_FROM_BALANCE_CSV } from './csvPlayScenarioZonePlanets';
 export { SynthSystemColonization_FROM_BALANCE_CSV } from './csvSynthSystemColonization';
+export { TradePortEquipmentTierPolicy_FROM_BALANCE_CSV } from './csvTradePortEquipmentTierPolicy';
 export { TradePortGlobalItems_FROM_BALANCE_CSV } from './csvTradePortGlobalItems';
 export { TradePortSectorCommodityPolicy_FROM_BALANCE_CSV } from './csvTradePortSectorCommodityPolicy';
 export { TradePortWeaponTierPolicy_FROM_BALANCE_CSV } from './csvTradePortWeaponTierPolicy';
@@ -30,5 +31,7 @@ export { TradeRouteEconomyPolicy_FROM_BALANCE_CSV } from './csvTradeRouteEconomy
 export { TradeRoutePlanetSupplyAssignments_FROM_BALANCE_CSV } from './csvTradeRoutePlanetSupplyAssignments';
 export { TradeRouteTransportPolicy_FROM_BALANCE_CSV } from './csvTradeRouteTransportPolicy';
 export { WeaponAffinityMatrix_FROM_BALANCE_CSV } from './csvWeaponAffinityMatrix';
+export { WeaponFamilyRuntimePolicy_FROM_BALANCE_CSV } from './csvWeaponFamilyRuntimePolicy';
+export { WeaponLaserTierColorPolicy_FROM_BALANCE_CSV } from './csvWeaponLaserTierColorPolicy';
 export { WeaponTradeBasePricePolicy_FROM_BALANCE_CSV } from './csvWeaponTradeBasePricePolicy';
 export { WorldExpansionTimingPolicy_FROM_BALANCE_CSV } from './csvWorldExpansionTimingPolicy';

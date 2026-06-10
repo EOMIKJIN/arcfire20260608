@@ -18,7 +18,12 @@ import {
 import type { SkPaint } from '@shopify/react-native-skia';
 import type { SkPicture } from '@shopify/react-native-skia';
 import { FONTS } from '../../utils/theme';
-import { shouldLockMissileImpactPoint } from '../../game/capitalWeaponRegistry';
+import {
+  isNovaAoeWeapon,
+  isRocketFamilyWeapon,
+  resolveCapitalLaserBeamPresentation,
+  resolveCapitalProjectilePresentation,
+} from '../../combat/capitalWeaponPipeline';
 import type { Agent, Missile, PlanetEdenRaidSim } from './PlanetEdenRaidTestLayer';
 
 const ALLY_MARK_HALF = 7;
@@ -164,7 +169,16 @@ function buildLaserBolt(
   ag: Agent,
   idBuf: (Agent | undefined)[],
   tMs: number,
-): { x1: number; y1: number; x2: number; y2: number; opacity: number } | null {
+): {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  opacity: number;
+  coreColor: string;
+  glowColor: string;
+  glowWidthMul: number;
+} | null {
   const other = currentTargetAliveByBuf(ag, idBuf);
   if (!other?.alive) return null;
   const dist = Math.hypot(other.x - ag.x, other.y - ag.y);
@@ -190,7 +204,17 @@ function buildLaserBolt(
       1 - (laserT - LASER_FADE_START_MS) / Math.max(1, LASER_DURATION_MS - LASER_FADE_START_MS),
     );
   }
-  return { x1: muzzle.x, y1: muzzle.y, x2, y2, opacity };
+  const laserVis = resolveCapitalLaserBeamPresentation(ag.laserWeaponId);
+  return {
+    x1: muzzle.x,
+    y1: muzzle.y,
+    x2,
+    y2,
+    opacity,
+    coreColor: laserVis.coreColor,
+    glowColor: laserVis.glowColor,
+    glowWidthMul: laserVis.glowWidthMul,
+  };
 }
 
 function resetPath(path: SkPath): void {
@@ -516,8 +540,11 @@ function recordCombatOrbitPicture(
     if (!trail.visible) continue;
 
     const tSince = tMs - m.startMs;
+    const isRocket = isRocketFamilyWeapon(m.missileWeaponId);
+    const isNovaLocked = isNovaAoeWeapon(m.missileWeaponId);
+    const projectileVis = resolveCapitalProjectilePresentation(m.missileWeaponId);
     const showNovaTelegraph =
-      shouldLockMissileImpactPoint(m.missileWeaponId) &&
+      isNovaLocked &&
       tSince >= 0 &&
       tSince <= NOVA_TELEGRAPH_DURATION_MS &&
       finiteNum(m.p2.x) &&
@@ -531,12 +558,17 @@ function recordCombatOrbitPicture(
 
     draw.pathStroke(
       trail.path,
-      'rgba(156,170,194,0.7)',
+      projectileVis.trailGlowColor,
       1 * MISSILE_TRAIL_GLOW_STROKE_MUL,
       trail.trailOpacity * MISSILE_TRAIL_GLOW_OPACITY_MUL,
     );
     if (MISSILE_TRAIL_MAIN_PASS_ENABLED) {
-      draw.pathStroke(trail.path, 'rgba(139,149,168,0.9)', 1, trail.trailOpacity);
+      draw.pathStroke(
+        trail.path,
+        projectileVis.trailColor,
+        isRocket ? 1.35 : 1,
+        trail.trailOpacity,
+      );
     }
 
     const drawNovaHead =
@@ -544,7 +576,7 @@ function recordCombatOrbitPicture(
       trail.headVisible &&
       finiteNum(trail.head.x) &&
       finiteNum(trail.head.y) &&
-      shouldLockMissileImpactPoint(m.missileWeaponId);
+      isNovaLocked;
 
     if (drawNovaHead) {
       const uProg = Math.min(1, Math.max(0, tSince / Math.max(1, m.travelMs)));
@@ -577,7 +609,16 @@ function recordCombatOrbitPicture(
       finiteNum(trail.head.x) &&
       finiteNum(trail.head.y)
     ) {
-      draw.circle(trail.head.x, trail.head.y, MISSILE_HEAD_DOT_RADIUS, 'rgba(186,196,214,0.98)', 'fill', undefined, trail.headOpacity);
+      const headR = MISSILE_HEAD_DOT_RADIUS * projectileVis.headRadiusMul;
+      draw.circle(
+        trail.head.x,
+        trail.head.y,
+        headR,
+        projectileVis.headColor,
+        'fill',
+        undefined,
+        trail.headOpacity,
+      );
     }
   }
 
@@ -592,9 +633,17 @@ function recordCombatOrbitPicture(
     const bolt = buildLaserBolt(ag, idBuf, tMs);
     if (bolt) {
       if (vfx.renderLaserGlow) {
-        draw.line(bolt.x1, bolt.y1, bolt.x2, bolt.y2, 'rgba(224,64,80,0.28)', 2.2, bolt.opacity);
+        draw.line(
+          bolt.x1,
+          bolt.y1,
+          bolt.x2,
+          bolt.y2,
+          bolt.glowColor,
+          2.2 * bolt.glowWidthMul,
+          bolt.opacity * 0.35,
+        );
       }
-      draw.line(bolt.x1, bolt.y1, bolt.x2, bolt.y2, 'rgba(224,64,80,0.98)', 0.85, bolt.opacity);
+      draw.line(bolt.x1, bolt.y1, bolt.x2, bolt.y2, bolt.coreColor, 0.85 * bolt.glowWidthMul, bolt.opacity);
     }
 
     if (ag.alive) {

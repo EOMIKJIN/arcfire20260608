@@ -21,7 +21,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 14,
       sizeClass: 0,
     },
-    infoLineSuffix: "MK.I|trade:250000",
+    infoLineSuffix: "MK.I|trade:1800000",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -75,7 +75,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 14,
       sizeClass: 0,
     },
-    infoLineSuffix: "MK.III|trade:250000",
+    infoLineSuffix: "MK.III|trade:113999",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -102,7 +102,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 14,
       sizeClass: 0,
     },
-    infoLineSuffix: "MK.IV|trade:250000",
+    infoLineSuffix: "MK.IV|trade:1200000",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -129,7 +129,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 14,
       sizeClass: 0,
     },
-    infoLineSuffix: "MK.V|trade:250000",
+    infoLineSuffix: "MK.V|trade:113999",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -156,7 +156,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 14,
       sizeClass: 0,
     },
-    infoLineSuffix: "MK.I|trade:250000",
+    infoLineSuffix: "MK.I|trade:113999",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -183,7 +183,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 14,
       sizeClass: 0,
     },
-    infoLineSuffix: "MK.II|trade:250000",
+    infoLineSuffix: "MK.II|trade:113999",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -264,7 +264,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 14,
       sizeClass: 0,
     },
-    infoLineSuffix: "MK.V|trade:250000",
+    infoLineSuffix: "MK.V|trade:250375",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -291,7 +291,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 14,
       sizeClass: 0,
     },
-    infoLineSuffix: "MK.I|trade:250000",
+    infoLineSuffix: "MK.I|trade:113999",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -345,7 +345,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 14,
       sizeClass: 0,
     },
-    infoLineSuffix: "MK.III|trade:250000",
+    infoLineSuffix: "MK.III|trade:113999",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -561,7 +561,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 14,
       sizeClass: 0,
     },
-    infoLineSuffix: "V-R8|trade:1200000",
+    infoLineSuffix: "V-R8|trade:5000000",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -588,7 +588,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 14,
       sizeClass: 0,
     },
-    infoLineSuffix: "V-R9|trade:1200000",
+    infoLineSuffix: "V-R9|trade:7500000",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -669,7 +669,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 14,
       sizeClass: 0,
     },
-    infoLineSuffix: "V-R12|trade:1200000",
+    infoLineSuffix: "V-R12|trade:15000000",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -885,7 +885,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 14,
       sizeClass: 0,
     },
-    infoLineSuffix: "P-1|trade:250000",
+    infoLineSuffix: "P-1|trade:113999",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -912,7 +912,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 14,
       sizeClass: 0,
     },
-    infoLineSuffix: "P-2|trade:250000",
+    infoLineSuffix: "P-2|trade:113999",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -3342,7 +3342,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 10,
       sizeClass: 8,
     },
-    infoLineSuffix: "DRACO_ESCORT_01|trade:131040",
+    infoLineSuffix: "DRACO_ESCORT_01|trade:105139",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -3369,7 +3369,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       dexStat: 10,
       sizeClass: 8,
     },
-    infoLineSuffix: "DRACO_PATROL_01|trade:116520",
+    infoLineSuffix: "DRACO_PATROL_01|trade:100000",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -5531,6 +5531,8 @@ export type NpcCapitalShipCombatRuntimeConfig = {
   engageStartDelayMaxMs?: number;
   laserWeaponId?: string;
   missileWeaponId?: string;
+  closeRangeWeaponId?: string;
+  auxWeaponId?: string;
 };
 
 export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, NpcCapitalShipCombatRuntimeConfig> = {
@@ -5553,6 +5555,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1000,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_nova_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_red_fleet_2": {
     id: "npc_red_fleet_2",
@@ -5573,6 +5577,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1200,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_nova_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_red_fleet_3": {
     id: "npc_red_fleet_3",
@@ -5593,6 +5599,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_blue_fleet_1": {
     id: "npc_blue_fleet_1",
@@ -5613,6 +5621,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1200,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_blue_fleet_2": {
     id: "npc_blue_fleet_2",
@@ -5633,6 +5643,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1300,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_blue_fleet_3": {
     id: "npc_blue_fleet_3",
@@ -5653,6 +5665,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1300,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_eden_orbit_4": {
     id: "npc_eden_orbit_4",
@@ -5673,6 +5687,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1200,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_blue_fleet_4": {
     id: "npc_blue_fleet_4",
@@ -5693,6 +5709,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1100,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_nova_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_blue_fleet_5": {
     id: "npc_blue_fleet_5",
@@ -5713,6 +5731,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1050,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_blue_fleet_6": {
     id: "npc_blue_fleet_6",
@@ -5733,6 +5753,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1200,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_guard_1": {
     id: "npc_vega_guard_1",
@@ -5753,6 +5775,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1100,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_guard_2": {
     id: "npc_vega_guard_2",
@@ -5773,6 +5797,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1250,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_solar_guard_1": {
     id: "npc_solar_guard_1",
@@ -5793,6 +5819,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1200,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_solar_guard_2": {
     id: "npc_solar_guard_2",
@@ -5813,6 +5841,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1100,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_test_ship_a": {
     id: "npc_vega_test_ship_a",
@@ -5833,6 +5863,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 950,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_test_ship_b": {
     id: "npc_vega_test_ship_b",
@@ -5853,6 +5885,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1150,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_red_4": {
     id: "npc_vega_red_4",
@@ -5873,6 +5907,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 920,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_red_5": {
     id: "npc_vega_red_5",
@@ -5893,6 +5929,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 920,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_red_6": {
     id: "npc_vega_red_6",
@@ -5913,6 +5951,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 950,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_nova_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_red_7": {
     id: "npc_vega_red_7",
@@ -5933,6 +5973,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 950,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_red_8": {
     id: "npc_vega_red_8",
@@ -5953,6 +5995,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1110,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_nova_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_red_9": {
     id: "npc_vega_red_9",
@@ -5973,6 +6017,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1110,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_red_10": {
     id: "npc_vega_red_10",
@@ -5993,6 +6039,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_red_11": {
     id: "npc_vega_red_11",
@@ -6013,6 +6061,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 950,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_red_12": {
     id: "npc_vega_red_12",
@@ -6033,6 +6083,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1110,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_nova_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_blue_7": {
     id: "npc_vega_blue_7",
@@ -6053,6 +6105,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1100,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_blue_8": {
     id: "npc_vega_blue_8",
@@ -6073,6 +6127,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1100,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_blue_9": {
     id: "npc_vega_blue_9",
@@ -6093,6 +6149,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1100,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_blue_10": {
     id: "npc_vega_blue_10",
@@ -6113,6 +6171,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1180,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_vega_blue_11": {
     id: "npc_vega_blue_11",
@@ -6133,6 +6193,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1150,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_neweden_red_7": {
     id: "npc_neweden_red_7",
@@ -6153,6 +6215,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 930,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_neweden_blue_7": {
     id: "npc_neweden_blue_7",
@@ -6173,6 +6237,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1110,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_arcadia_orbit_1": {
     id: "npc_arcadia_orbit_1",
@@ -6193,6 +6259,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1105,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_arcadia_orbit_2": {
     id: "npc_arcadia_orbit_2",
@@ -6213,6 +6281,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1095,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_ai_clan_safe_flagship": {
     id: "npc_ai_clan_safe_flagship",
@@ -6233,6 +6303,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1200,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_ai_clan_neutral_flagship": {
     id: "npc_ai_clan_neutral_flagship",
@@ -6253,6 +6325,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1100,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_ai_clan_pvp_flagship": {
     id: "npc_ai_clan_pvp_flagship",
@@ -6273,6 +6347,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_arc_presence_ship_01": {
     id: "npc_arc_presence_ship_01",
@@ -6293,6 +6369,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_arc_presence_ship_02": {
     id: "npc_arc_presence_ship_02",
@@ -6313,6 +6391,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1125,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_arc_presence_ship_03": {
     id: "npc_arc_presence_ship_03",
@@ -6333,6 +6413,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1130,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_arc_presence_ship_04": {
     id: "npc_arc_presence_ship_04",
@@ -6353,6 +6435,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1135,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_arc_presence_ship_05": {
     id: "npc_arc_presence_ship_05",
@@ -6373,6 +6457,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1140,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_arc_presence_ship_06": {
     id: "npc_arc_presence_ship_06",
@@ -6393,6 +6479,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1145,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_arc_presence_ship_07": {
     id: "npc_arc_presence_ship_07",
@@ -6413,6 +6501,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1150,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_arc_presence_ship_08": {
     id: "npc_arc_presence_ship_08",
@@ -6433,6 +6523,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1155,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_arc_presence_ship_09": {
     id: "npc_arc_presence_ship_09",
@@ -6453,6 +6545,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1160,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_arc_presence_ship_10": {
     id: "npc_arc_presence_ship_10",
@@ -6473,6 +6567,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1165,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_arc_presence_ship_11": {
     id: "npc_arc_presence_ship_11",
@@ -6493,6 +6589,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1170,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_arc_presence_ship_12": {
     id: "npc_arc_presence_ship_12",
@@ -6513,6 +6611,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1175,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "Player_npc_red_fleet_1": {
     id: "Player_npc_red_fleet_1",
@@ -6533,6 +6633,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1000,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "Player_scout_ship": {
     id: "Player_scout_ship",
@@ -6553,6 +6655,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_single_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "Player_freighter": {
     id: "Player_freighter",
@@ -6573,6 +6677,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1600,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_01": {
     id: "npc_mock_pvp_ship_01",
@@ -6593,6 +6699,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1080,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_02": {
     id: "npc_mock_pvp_ship_02",
@@ -6613,6 +6721,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1070,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_nova_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_03": {
     id: "npc_mock_pvp_ship_03",
@@ -6633,6 +6743,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1060,
     laserWeaponId: "w_laser_arc_001",
     missileWeaponId: "w_missile_arc_006",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_04": {
     id: "npc_mock_pvp_ship_04",
@@ -6653,6 +6765,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1180,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_05": {
     id: "npc_mock_pvp_ship_05",
@@ -6673,6 +6787,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1110,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_06": {
     id: "npc_mock_pvp_ship_06",
@@ -6693,6 +6809,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1200,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_07": {
     id: "npc_mock_pvp_ship_07",
@@ -6713,6 +6831,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1105,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_08": {
     id: "npc_mock_pvp_ship_08",
@@ -6733,6 +6853,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1095,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_09": {
     id: "npc_mock_pvp_ship_09",
@@ -6753,6 +6875,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1150,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_10": {
     id: "npc_mock_pvp_ship_10",
@@ -6773,6 +6897,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1160,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_11": {
     id: "npc_mock_pvp_ship_11",
@@ -6793,6 +6919,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1200,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_12": {
     id: "npc_mock_pvp_ship_12",
@@ -6813,6 +6941,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1100,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_13": {
     id: "npc_mock_pvp_ship_13",
@@ -6833,6 +6963,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1200,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_14": {
     id: "npc_mock_pvp_ship_14",
@@ -6853,6 +6985,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1100,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_15": {
     id: "npc_mock_pvp_ship_15",
@@ -6873,6 +7007,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1250,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_16": {
     id: "npc_mock_pvp_ship_16",
@@ -6893,6 +7029,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1150,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_17": {
     id: "npc_mock_pvp_ship_17",
@@ -6913,6 +7051,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1095,
     laserWeaponId: "w_laser_heavy_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_18": {
     id: "npc_mock_pvp_ship_18",
@@ -6933,6 +7073,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1100,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_mock_pvp_ship_19": {
     id: "npc_mock_pvp_ship_19",
@@ -6953,6 +7095,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1105,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_abyss_01": {
     id: "npc_enemy_abyss_01",
@@ -6973,6 +7117,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_abyss_02": {
     id: "npc_enemy_abyss_02",
@@ -6993,6 +7139,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_abyss_03": {
     id: "npc_enemy_abyss_03",
@@ -7013,6 +7161,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_arcadia_01": {
     id: "npc_enemy_arcadia_01",
@@ -7033,6 +7183,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_arcadia_02": {
     id: "npc_enemy_arcadia_02",
@@ -7053,6 +7205,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_arcadia_03": {
     id: "npc_enemy_arcadia_03",
@@ -7073,6 +7227,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_blood_01": {
     id: "npc_enemy_blood_01",
@@ -7093,6 +7249,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_blood_02": {
     id: "npc_enemy_blood_02",
@@ -7113,6 +7271,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_blood_03": {
     id: "npc_enemy_blood_03",
@@ -7133,6 +7293,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_core_01": {
     id: "npc_enemy_core_01",
@@ -7153,6 +7315,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_core_02": {
     id: "npc_enemy_core_02",
@@ -7173,6 +7337,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_core_03": {
     id: "npc_enemy_core_03",
@@ -7193,6 +7359,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_crimson_01": {
     id: "npc_enemy_crimson_01",
@@ -7213,6 +7381,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_crimson_02": {
     id: "npc_enemy_crimson_02",
@@ -7233,6 +7403,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_crimson_03": {
     id: "npc_enemy_crimson_03",
@@ -7253,6 +7425,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_dark_01": {
     id: "npc_enemy_dark_01",
@@ -7273,6 +7447,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_dark_02": {
     id: "npc_enemy_dark_02",
@@ -7293,6 +7469,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_dark_03": {
     id: "npc_enemy_dark_03",
@@ -7313,6 +7491,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_draco_01": {
     id: "npc_enemy_draco_01",
@@ -7333,6 +7513,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_arc_004",
     missileWeaponId: "w_missile_arc_022",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_draco_02": {
     id: "npc_enemy_draco_02",
@@ -7353,6 +7535,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_arc_010",
     missileWeaponId: "w_missile_arc_003",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_draco_03": {
     id: "npc_enemy_draco_03",
@@ -7373,6 +7557,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_arc_019",
     missileWeaponId: "w_missile_arc_006",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_eden_01": {
     id: "npc_enemy_eden_01",
@@ -7393,6 +7579,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_eternity_01": {
     id: "npc_enemy_eternity_01",
@@ -7413,6 +7601,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_eternity_02": {
     id: "npc_enemy_eternity_02",
@@ -7433,6 +7623,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_eternity_03": {
     id: "npc_enemy_eternity_03",
@@ -7453,6 +7645,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_helios_01": {
     id: "npc_enemy_helios_01",
@@ -7473,6 +7667,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_helios_02": {
     id: "npc_enemy_helios_02",
@@ -7493,6 +7689,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_helios_03": {
     id: "npc_enemy_helios_03",
@@ -7513,6 +7711,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_iron_01": {
     id: "npc_enemy_iron_01",
@@ -7533,6 +7733,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_iron_02": {
     id: "npc_enemy_iron_02",
@@ -7553,6 +7755,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_iron_03": {
     id: "npc_enemy_iron_03",
@@ -7573,6 +7777,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_minerva_01": {
     id: "npc_enemy_minerva_01",
@@ -7593,6 +7799,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_nightfall_01": {
     id: "npc_enemy_nightfall_01",
@@ -7613,6 +7821,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_nightfall_02": {
     id: "npc_enemy_nightfall_02",
@@ -7633,6 +7843,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_nightfall_03": {
     id: "npc_enemy_nightfall_03",
@@ -7653,6 +7865,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_omega_01": {
     id: "npc_enemy_omega_01",
@@ -7673,6 +7887,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_omega_02": {
     id: "npc_enemy_omega_02",
@@ -7693,6 +7909,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_omega_03": {
     id: "npc_enemy_omega_03",
@@ -7713,6 +7931,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_perseus_01": {
     id: "npc_enemy_perseus_01",
@@ -7733,6 +7953,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_perseus_02": {
     id: "npc_enemy_perseus_02",
@@ -7753,6 +7975,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_perseus_03": {
     id: "npc_enemy_perseus_03",
@@ -7773,6 +7997,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_shadow_01": {
     id: "npc_enemy_shadow_01",
@@ -7793,6 +8019,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_shadow_02": {
     id: "npc_enemy_shadow_02",
@@ -7813,6 +8041,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_shadow_03": {
     id: "npc_enemy_shadow_03",
@@ -7833,6 +8063,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_sirius_01": {
     id: "npc_enemy_sirius_01",
@@ -7853,6 +8085,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_sirius_02": {
     id: "npc_enemy_sirius_02",
@@ -7873,6 +8107,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_sirius_03": {
     id: "npc_enemy_sirius_03",
@@ -7893,6 +8129,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_solar_01": {
     id: "npc_enemy_solar_01",
@@ -7913,6 +8151,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_titan_01": {
     id: "npc_enemy_titan_01",
@@ -7933,6 +8173,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_titan_02": {
     id: "npc_enemy_titan_02",
@@ -7953,6 +8195,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_titan_03": {
     id: "npc_enemy_titan_03",
@@ -7973,6 +8217,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_enemy_vega_01": {
     id: "npc_enemy_vega_01",
@@ -7993,6 +8239,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_standard_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_draco_escort_01": {
     id: "npc_draco_escort_01",
@@ -8013,6 +8261,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_draco_patrol_01": {
     id: "npc_draco_patrol_01",
@@ -8033,6 +8283,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 900,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t1": {
     id: "npc_wave_invader_t1",
@@ -8053,6 +8305,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_arc_005",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t2": {
     id: "npc_wave_invader_t2",
@@ -8073,6 +8327,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_arc_005",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t3": {
     id: "npc_wave_invader_t3",
@@ -8093,6 +8349,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_arc_005",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t4": {
     id: "npc_wave_invader_t4",
@@ -8113,6 +8371,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_arc_005",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t5": {
     id: "npc_wave_invader_t5",
@@ -8133,6 +8393,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_arc_005",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t6": {
     id: "npc_wave_invader_t6",
@@ -8153,6 +8415,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_007",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t7": {
     id: "npc_wave_invader_t7",
@@ -8173,6 +8437,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_007",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t8": {
     id: "npc_wave_invader_t8",
@@ -8193,6 +8459,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_007",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t9": {
     id: "npc_wave_invader_t9",
@@ -8213,6 +8481,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_007",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t10": {
     id: "npc_wave_invader_t10",
@@ -8233,6 +8503,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_007",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t11": {
     id: "npc_wave_invader_t11",
@@ -8253,6 +8525,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_012",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t12": {
     id: "npc_wave_invader_t12",
@@ -8273,6 +8547,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_012",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t13": {
     id: "npc_wave_invader_t13",
@@ -8293,6 +8569,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_012",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t14": {
     id: "npc_wave_invader_t14",
@@ -8313,6 +8591,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_012",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t15": {
     id: "npc_wave_invader_t15",
@@ -8333,6 +8613,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_012",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t16": {
     id: "npc_wave_invader_t16",
@@ -8353,6 +8635,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_arc_005",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t17": {
     id: "npc_wave_invader_t17",
@@ -8373,6 +8657,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_arc_005",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t18": {
     id: "npc_wave_invader_t18",
@@ -8393,6 +8679,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_arc_005",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t19": {
     id: "npc_wave_invader_t19",
@@ -8413,6 +8701,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_arc_005",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t20": {
     id: "npc_wave_invader_t20",
@@ -8433,6 +8723,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_arc_005",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t21": {
     id: "npc_wave_invader_t21",
@@ -8453,6 +8745,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_007",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t22": {
     id: "npc_wave_invader_t22",
@@ -8473,6 +8767,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_007",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t23": {
     id: "npc_wave_invader_t23",
@@ -8493,6 +8789,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_007",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t24": {
     id: "npc_wave_invader_t24",
@@ -8513,6 +8811,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_007",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t25": {
     id: "npc_wave_invader_t25",
@@ -8533,6 +8833,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_007",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t26": {
     id: "npc_wave_invader_t26",
@@ -8553,6 +8855,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_012",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t27": {
     id: "npc_wave_invader_t27",
@@ -8573,6 +8877,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_012",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t28": {
     id: "npc_wave_invader_t28",
@@ -8593,6 +8899,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_012",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t29": {
     id: "npc_wave_invader_t29",
@@ -8613,6 +8921,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_012",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_wave_invader_t30": {
     id: "npc_wave_invader_t30",
@@ -8633,6 +8943,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 800,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_laser_arc_012",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "player_wave_ship": {
     id: "player_wave_ship",
@@ -8653,6 +8965,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 780,
     laserWeaponId: "w_laser_arc_064",
     missileWeaponId: "w_missile_arc_072",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_w_01": {
     id: "npc_faction_cargo_ship_w_01",
@@ -8673,6 +8987,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_w_02": {
     id: "npc_faction_cargo_ship_w_02",
@@ -8693,6 +9009,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_w_03": {
     id: "npc_faction_cargo_ship_w_03",
@@ -8713,6 +9031,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_w_04": {
     id: "npc_faction_cargo_ship_w_04",
@@ -8733,6 +9053,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_w_05": {
     id: "npc_faction_cargo_ship_w_05",
@@ -8753,6 +9075,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_w_06": {
     id: "npc_faction_cargo_ship_w_06",
@@ -8773,6 +9097,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_w_07": {
     id: "npc_faction_cargo_ship_w_07",
@@ -8793,6 +9119,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_w_08": {
     id: "npc_faction_cargo_ship_w_08",
@@ -8813,6 +9141,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_w_09": {
     id: "npc_faction_cargo_ship_w_09",
@@ -8833,6 +9163,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_w_10": {
     id: "npc_faction_cargo_ship_w_10",
@@ -8853,6 +9185,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_w_11": {
     id: "npc_faction_cargo_ship_w_11",
@@ -8873,6 +9207,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_w_12": {
     id: "npc_faction_cargo_ship_w_12",
@@ -8893,6 +9229,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_s_01": {
     id: "npc_faction_cargo_ship_s_01",
@@ -8913,6 +9251,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_s_02": {
     id: "npc_faction_cargo_ship_s_02",
@@ -8933,6 +9273,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_s_03": {
     id: "npc_faction_cargo_ship_s_03",
@@ -8953,6 +9295,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_s_04": {
     id: "npc_faction_cargo_ship_s_04",
@@ -8973,6 +9317,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_s_05": {
     id: "npc_faction_cargo_ship_s_05",
@@ -8993,6 +9339,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_s_06": {
     id: "npc_faction_cargo_ship_s_06",
@@ -9013,6 +9361,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_s_07": {
     id: "npc_faction_cargo_ship_s_07",
@@ -9033,6 +9383,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_s_08": {
     id: "npc_faction_cargo_ship_s_08",
@@ -9053,6 +9405,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_s_09": {
     id: "npc_faction_cargo_ship_s_09",
@@ -9073,6 +9427,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_s_10": {
     id: "npc_faction_cargo_ship_s_10",
@@ -9093,6 +9449,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_s_11": {
     id: "npc_faction_cargo_ship_s_11",
@@ -9113,6 +9471,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_s_12": {
     id: "npc_faction_cargo_ship_s_12",
@@ -9133,6 +9493,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_e_01": {
     id: "npc_faction_cargo_ship_e_01",
@@ -9153,6 +9515,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_e_02": {
     id: "npc_faction_cargo_ship_e_02",
@@ -9173,6 +9537,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_e_03": {
     id: "npc_faction_cargo_ship_e_03",
@@ -9193,6 +9559,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_e_04": {
     id: "npc_faction_cargo_ship_e_04",
@@ -9213,6 +9581,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_e_05": {
     id: "npc_faction_cargo_ship_e_05",
@@ -9233,6 +9603,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_e_06": {
     id: "npc_faction_cargo_ship_e_06",
@@ -9253,6 +9625,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_e_07": {
     id: "npc_faction_cargo_ship_e_07",
@@ -9273,6 +9647,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_e_08": {
     id: "npc_faction_cargo_ship_e_08",
@@ -9293,6 +9669,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_e_09": {
     id: "npc_faction_cargo_ship_e_09",
@@ -9313,6 +9691,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_e_10": {
     id: "npc_faction_cargo_ship_e_10",
@@ -9333,6 +9713,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_e_11": {
     id: "npc_faction_cargo_ship_e_11",
@@ -9353,6 +9735,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_e_12": {
     id: "npc_faction_cargo_ship_e_12",
@@ -9373,6 +9757,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_n_01": {
     id: "npc_faction_cargo_ship_n_01",
@@ -9393,6 +9779,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_n_02": {
     id: "npc_faction_cargo_ship_n_02",
@@ -9413,6 +9801,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_n_03": {
     id: "npc_faction_cargo_ship_n_03",
@@ -9433,6 +9823,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_n_04": {
     id: "npc_faction_cargo_ship_n_04",
@@ -9453,6 +9845,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_n_05": {
     id: "npc_faction_cargo_ship_n_05",
@@ -9473,6 +9867,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_n_06": {
     id: "npc_faction_cargo_ship_n_06",
@@ -9493,6 +9889,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_n_07": {
     id: "npc_faction_cargo_ship_n_07",
@@ -9513,6 +9911,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_n_08": {
     id: "npc_faction_cargo_ship_n_08",
@@ -9533,6 +9933,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_n_09": {
     id: "npc_faction_cargo_ship_n_09",
@@ -9553,6 +9955,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_n_10": {
     id: "npc_faction_cargo_ship_n_10",
@@ -9573,6 +9977,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_n_11": {
     id: "npc_faction_cargo_ship_n_11",
@@ -9593,6 +9999,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   },
   "npc_faction_cargo_ship_n_12": {
     id: "npc_faction_cargo_ship_n_12",
@@ -9613,5 +10021,7 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     engageStartDelayMaxMs: 1120,
     laserWeaponId: "w_laser_light_01",
     missileWeaponId: "w_missile_guided_triple_01",
+    closeRangeWeaponId: "w_missile_arc_005",
+    auxWeaponId: "",
   }
 };

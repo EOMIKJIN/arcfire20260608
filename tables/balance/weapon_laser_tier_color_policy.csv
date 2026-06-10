@@ -1,0 +1,9 @@
+minRequiredLevel,maxRequiredLevel,beamCoreColor,beamGlowColor,glowWidthMul,tierLabelKo
+1,6,#EF4444,#FCA5A5,1.0,T1 약함(붉은색)
+7,12,#F97316,#FDBA74,1.05,T2 주황
+13,18,#EAB308,#FDE047,1.1,T3 황금
+19,24,#38BDF8,#7DD3FC,1.15,T4 청색
+25,30,#A78BFA,#C4B5FD,1.2,T5 보라
+31,40,#22D3EE,#A5F3FC,1.25,T6 청록
+41,54,#F1F5F9,#FFFFFF,1.35,T7 최강(백색)
+55,999,#FFFFFF,#FFFFFF,1.4,T8 코스믹

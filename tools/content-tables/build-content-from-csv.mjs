@@ -180,8 +180,9 @@ function normalizeWeaponListRow(r) {
     targeting,
     lockImpactPoint,
     hitAreaNote: String(r.hitAreaNote ?? r['타격범위'] ?? '').trim(),
-    laserColor: String(r.laserColor ?? r['레이저색'] ?? '').trim(),
+    laserColor: String(r.laserColor ?? r['레이저색'] ?? r['색상'] ?? '').trim(),
     projectileColor: String(r.projectileColor ?? r['발사체색'] ?? '').trim(),
+    glowColor: String(r.glowColor ?? r['글로우색'] ?? '').trim(),
   };
 }
 function unescapeStoryText(v) {
@@ -356,6 +357,8 @@ function buildNpcShips() {
     engageStartDelayMaxMs: ${toNumOptional(r.engageStartDelayMaxMs) ?? 'undefined'},
     laserWeaponId: ${q(r.laserWeaponId || '')},
     missileWeaponId: ${q(r.missileWeaponId || '')},
+    closeRangeWeaponId: ${q(r.closeRangeWeaponId || 'w_missile_arc_005')},
+    auxWeaponId: ${q(r.auxWeaponId || '')},
   }`)
     .join(',\n');
   return `import type { NpcCapitalShip } from '../../types';
@@ -383,6 +386,8 @@ export type NpcCapitalShipCombatRuntimeConfig = {
   engageStartDelayMaxMs?: number;
   laserWeaponId?: string;
   missileWeaponId?: string;
+  closeRangeWeaponId?: string;
+  auxWeaponId?: string;
 };
 
 export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, NpcCapitalShipCombatRuntimeConfig> = {
@@ -412,8 +417,11 @@ function buildWeapons() {
     targeting: ${q(r.targeting)},
     lockImpactPoint: ${r.lockImpactPoint},
     hitAreaNote: ${q(r.hitAreaNote)},
+    requiredLevel: ${r.requiredLevel},
+    tierLabel: ${q(r.tierLabel)},
     laserColor: ${q(r.laserColor)},
     projectileColor: ${q(r.projectileColor)},
+    glowColor: ${q(r.glowColor)},
   }`)
     .join(',\n');
   return `export type CapitalWeaponCsvRow = {
@@ -434,8 +442,11 @@ function buildWeapons() {
   targeting: string;
   lockImpactPoint: boolean;
   hitAreaNote: string;
+  requiredLevel: number;
+  tierLabel: string;
   laserColor: string;
   projectileColor: string;
+  glowColor: string;
 };
 
 export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> = {
@@ -695,7 +706,7 @@ function buildItemDefs() {
         : String(Math.max(600, Math.floor(damage * 280 + rangePx * 2 + speed * 0.6)));
       return {
         id: itemId,
-        name: `${name} 모듈`,
+        name,
         description: `${r.familyKind.toUpperCase()} · DMG ${damage} · RANGE ${Math.round(rangePx)}`,
         basePrice,
         priceVariance: '0',

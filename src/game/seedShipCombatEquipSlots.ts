@@ -1,14 +1,15 @@
 // ============================================================
-// 전함 기본 무장 → ship.equipSlots (WEAPON_1/2) 시드
+// 전함 기본 무장 → ship.equipSlots (WEAPON_1~4) 시드
 // ============================================================
 
-import { ITEM_DEFS_FROM_CSV } from '../data/generated';
 import type { PlayerShip, ShipyardEquipSlotId } from '../types';
 import { buildWeaponDataFromCapitalWeaponId } from './capitalWeaponRange';
+import { COMBAT_WEAPON_SLOT_IDS, isEquipSlotFilled } from './combatWeaponSlots';
+import { resolveEquipSlotDisplayName, normalizeEquipSlotNamesFromTables } from './equipSlotDisplayName';
 import { listDefaultWeaponItemDefIdsForNpcShip } from './grantNpcCapitalShipBundle';
 import { weaponIdFromWeaponItemId } from './weaponItemId';
 
-const WEAPON_SLOT_IDS: ShipyardEquipSlotId[] = ['WEAPON_1', 'WEAPON_2'];
+const WEAPON_SLOT_IDS: ShipyardEquipSlotId[] = [...COMBAT_WEAPON_SLOT_IDS];
 
 function sanitizeEquipSlots(raw: PlayerShip['equipSlots'] | unknown): NonNullable<PlayerShip['equipSlots']> {
   if (!raw || typeof raw !== 'object') return {};
@@ -31,9 +32,8 @@ export function seedCombatEquipSlotsFromNpcDefaults(
   ship: PlayerShip,
 ): NonNullable<PlayerShip['equipSlots']> {
   const existing = sanitizeEquipSlots(ship.equipSlots ?? {});
-  const hasWeapon1 = Boolean(existing.WEAPON_1?.itemDefId?.trim());
-  const hasWeapon2 = Boolean(existing.WEAPON_2?.itemDefId?.trim());
-  if (hasWeapon1 && hasWeapon2) return existing;
+  const allFilled = WEAPON_SLOT_IDS.every((slotId) => isEquipSlotFilled(existing[slotId]));
+  if (allFilled) return normalizeEquipSlotNamesFromTables(existing);
 
   const npcId = ship.portraitNpcCapitalShipId?.trim();
   if (!npcId) return existing;
@@ -41,19 +41,19 @@ export function seedCombatEquipSlotsFromNpcDefaults(
   const out = { ...existing };
   const defaultItemIds = listDefaultWeaponItemDefIdsForNpcShip(npcId);
   if (defaultItemIds.length === 0) return existing;
-  if (!hasWeapon1 && defaultItemIds[0]) {
-    const itemDefId = defaultItemIds[0];
-    const weaponId = weaponIdFromWeaponItemId(itemDefId) ?? itemDefId;
-    const def = ITEM_DEFS_FROM_CSV[itemDefId];
-    out.WEAPON_1 = { itemDefId, name: def?.name ?? weaponId };
-  }
-  if (!hasWeapon2 && defaultItemIds[1]) {
-    const itemDefId = defaultItemIds[1];
-    const weaponId = weaponIdFromWeaponItemId(itemDefId) ?? itemDefId;
-    const def = ITEM_DEFS_FROM_CSV[itemDefId];
-    out.WEAPON_2 = { itemDefId, name: def?.name ?? weaponId };
-  }
-  return out;
+
+  WEAPON_SLOT_IDS.forEach((slotId, idx) => {
+    // 장착됨·의도적 해제('0') 모두 유지 — 슬롯 키가 없을 때만 기본 무장 시드
+    const cur = out[slotId]?.itemDefId?.trim();
+    if (cur) return;
+    const itemDefId = defaultItemIds[idx];
+    if (!itemDefId) return;
+    out[slotId] = {
+      itemDefId,
+      name: resolveEquipSlotDisplayName(itemDefId),
+    };
+  });
+  return normalizeEquipSlotNamesFromTables(out);
 }
 
 /** equipSlots 정본 → weapons / weaponItems 동기(전투·조선소 표시) */
@@ -68,6 +68,7 @@ export function syncShipWeaponsFromEquipSlots(ship: PlayerShip): PlayerShip {
     const slot = slots[slotId];
     if (!slot?.itemDefId?.trim()) continue;
     const itemDefId = slot.itemDefId.trim();
+    if (itemDefId === '0') continue;
     const weaponId = itemDefId.replace(/^weapon_item_/, '').trim();
     if (!weaponId) continue;
     const built = buildWeaponDataFromCapitalWeaponId(weaponId);
@@ -79,7 +80,7 @@ export function syncShipWeaponsFromEquipSlots(ship: PlayerShip): PlayerShip {
       weaponItems.push({
         itemId: itemDefId,
         weaponId,
-        name: slot.name,
+        name: resolveEquipSlotDisplayName(itemDefId, slot.name),
         type: built?.type ?? 'laser',
       });
       itemIds.add(itemDefId);
@@ -93,7 +94,9 @@ export function syncShipWeaponsFromEquipSlots(ship: PlayerShip): PlayerShip {
 export function applyDefaultCombatLoadout(ship: PlayerShip): PlayerShip {
   const withSlots = {
     ...ship,
-    equipSlots: seedCombatEquipSlotsFromNpcDefaults(ship),
+    equipSlots: normalizeEquipSlotNamesFromTables(
+      seedCombatEquipSlotsFromNpcDefaults(ship),
+    ),
   };
   return syncShipWeaponsFromEquipSlots(withSlots);
 }

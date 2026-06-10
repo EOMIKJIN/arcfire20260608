@@ -22,6 +22,11 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
   const totalPrice = entry.unitPrice * qty;
   const canDec = qty > minQty;
   const canInc = qty < entry.maxQty;
+  const canMax = qty < entry.maxQty;
+
+  const setMaxQty = () => {
+    if (entry.maxQty >= minQty) setQty(entry.maxQty);
+  };
 
   const topTip = useMemo(() => {
     const tips = entry.tips ?? [];
@@ -73,6 +78,14 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
           accessibilityLabel="수량 증가"
         >
           <Text style={styles.qtyBtnText}>+</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.maxBtn, !canMax && styles.qtyBtnDisabled]}
+          onPress={() => canMax && setMaxQty()}
+          disabled={!canMax}
+          accessibilityLabel="최대 수량"
+        >
+          <Text style={styles.maxBtnText}>MAX</Text>
         </TouchableOpacity>
       </View>
 
@@ -146,6 +159,24 @@ const styles = StyleSheet.create({
     fontWeight: FONTS.weight.bold,
     color: PH,
     lineHeight: 28,
+  },
+  maxBtn: {
+    minWidth: 52,
+    height: 44,
+    paddingHorizontal: SPACING.sm,
+    borderRadius: 4,
+    borderWidth: 1.5,
+    borderColor: OVERLAY_TOKENS.phosphorBorder,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(107, 212, 255, 0.14)',
+  },
+  maxBtnText: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    fontWeight: FONTS.weight.bold,
+    color: PH,
+    letterSpacing: 0.5,
   },
   qtyValue: {
     minWidth: 48,

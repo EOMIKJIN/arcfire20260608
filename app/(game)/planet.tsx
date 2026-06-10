@@ -2347,7 +2347,8 @@ const styles = StyleSheet.create({
   },
   miningQuickControlRow: {
     width: '100%',
-    paddingHorizontal: 2,
+    flexDirection: 'row',
+    paddingHorizontal: SPACING.md,
     marginTop: -30,
     marginBottom: 4,
   },

@@ -1,11 +1,11 @@
 zoneIndexMin,zoneIndexMax,mineralId,sellPriceCredits,notesKo
-1,99,ore_ferrite,100,석탄급 앵커·play_scenario 존1
-1,99,ore_silicate,118,지수곡선 tier2
-1,99,ore_carbon,155,tier3
-1,99,ore_nickel,210,tier4
-1,99,ore_titanium,320,tier5
-1,99,ore_crystal,520,tier6
-1,99,ore_platinum,850,tier7·금속급
-1,99,ore_orichalcum,1400,tier8
-1,99,ore_neutronium,2400,tier9
-1,99,ore_voidstone,4200,tier10·희귀(~42× ferrite)
+1,99,ore_ferrite,10,catalog sellPriceAnchorCr 정본 동기
+1,99,ore_silicate,12,catalog tier2
+1,99,ore_carbon,16,tier3
+1,99,ore_nickel,21,tier4
+1,99,ore_titanium,32,tier5
+1,99,ore_crystal,52,tier6
+1,99,ore_platinum,85,tier7
+1,99,ore_orichalcum,140,tier8
+1,99,ore_neutronium,240,tier9
+1,99,ore_voidstone,420,tier10

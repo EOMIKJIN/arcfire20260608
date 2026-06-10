@@ -30,6 +30,14 @@ export function applyNpcCapitalShipToPlayerShip(
     const mw = buildWeaponDataFromCapitalWeaponId(cfg.missileWeaponId);
     if (mw) weapons.push(mw);
   }
+  if (cfg?.closeRangeWeaponId) {
+    const cw = buildWeaponDataFromCapitalWeaponId(cfg.closeRangeWeaponId);
+    if (cw) weapons.push(cw);
+  }
+  if (cfg?.auxWeaponId) {
+    const aw = buildWeaponDataFromCapitalWeaponId(cfg.auxWeaponId);
+    if (aw) weapons.push(aw);
+  }
   const c = row.combat;
   const merged: PlayerShip = {
     ...ship,
