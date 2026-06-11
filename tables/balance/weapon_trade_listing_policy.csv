@@ -1,0 +1,81 @@
+tradeGradeRank,canonicalWeaponId,weaponFamilyKind,requiredPilotLevelMin,listingAnchor,notesKo
+1,w_laser_heavy_01,laser,1,pinned,중량 레이저
+2,w_laser_light_01,laser,1,pinned,경량 레이저
+3,w_missile_barrage_01,missile,1,pinned,연사 미사일
+4,w_missile_guided_dual_01,missile,1,pinned,유도 미사일 2연발
+5,w_missile_guided_single_01,missile,1,pinned,유도 미사일 단발
+6,w_missile_guided_triple_01,missile,1,pinned,유도 미사일 3연발
+7,w_missile_nova_01,missile,1,pinned,노바미사일
+8,w_missile_standard_01,missile,1,pinned,표준 미사일
+9,w_laser_arc_001,laser,1,progression,펄스 레이저
+10,w_missile_arc_002,missile,1,progression,추적 연발 미사일
+11,w_missile_arc_003,drone,1,progression,요격 드론 군집
+12,w_laser_arc_004,laser,2,progression,MK-II 속사 레이저
+13,w_missile_arc_005,rocket,2,progression,고정밀 장거리 로켓탄
+14,w_missile_arc_006,carrier,2,progression,범용 폭격 함재기
+15,w_laser_arc_007,rocket,4,progression,전술 로켓탄 런처
+16,w_missile_arc_008,missile,4,progression,+1 유도 미사일
+17,w_missile_arc_009,missile,4,progression,소형 파편 탄두
+18,w_laser_arc_010,laser,5,progression,고스트 위상 레이저
+19,w_laser_arc_011,laser,5,progression,고출력 커팅 빔
+20,w_laser_arc_012,rocket,6,progression,중형 돌격 로켓탄
+21,w_missile_arc_013,rocket,7,progression,헤비 임팩트 로켓탄
+22,w_missile_arc_014,missile,8,progression,복합 열추적 미사일
+23,w_missile_arc_015,rocket,9,progression,롱레인지 융합 로켓탄
+24,w_missile_arc_016,drone,9,progression,스파이크 와이어 드론
+25,w_missile_arc_017,drone,9,progression,가속 돌격기
+26,w_missile_arc_018,missile,9,progression,중력자 산탄 포드
+27,w_laser_arc_019,laser,10,progression,메가 입자포
+28,w_laser_arc_020,laser,11,progression,연사형 광자 레이저
+29,w_laser_arc_021,rocket,12,progression,파쇄 핵 로켓탄
+30,w_missile_arc_022,missile,13,progression,장거리 순항 미사일
+31,w_missile_arc_023,rocket,14,progression,초장거리 레일 로켓탄
+32,w_missile_arc_024,rocket,15,progression,자기장 가속 로켓탄
+33,w_missile_arc_025,drone,15,progression,전술 무인기 편대
+34,w_missile_arc_026,missile,15,progression,다목적 미사일 포드
+35,w_missile_arc_027,carrier,15,progression,침투형 함재기
+36,w_laser_arc_028,rocket,16,progression,디펜더 연발 로켓탄
+37,w_laser_arc_029,laser,17,progression,반물질 입자포
+38,w_laser_arc_030,laser,18,progression,성계 방위용 빔
+39,w_missile_arc_031,missile,19,progression,시공간 유도 미사일
+40,w_missile_arc_032,missile,20,progression,에너지 보우 캐넌
+41,w_missile_arc_033,rocket,20,progression,관통형 타키온 로켓탄
+42,w_missile_arc_034,drone,20,progression,자율 기동 댄싱 드론
+43,w_missile_arc_035,missile,20,progression,메테오 스트라이커
+44,w_missile_arc_036,carrier,20,progression,아다만틴 함재기
+45,w_laser_arc_037,laser,21,progression,에픽 페이저 뱅크
+46,w_laser_arc_038,rocket,22,progression,지각 붕괴 로켓탄
+47,w_laser_arc_039,rocket,23,progression,카스의 파멸 로켓탄
+48,w_missile_arc_040,missile,24,progression,초광속 미사일
+49,w_missile_arc_041,missile,25,progression,트리플 탄두 런처
+50,w_missile_arc_042,rocket,26,progression,다이어 레일 로켓탄
+51,w_missile_arc_043,carrier,27,progression,무한 기동 함재기
+52,w_missile_arc_044,missile,28,progression,전방위 레이저 망
+53,w_missile_arc_045,missile,29,progression,섹터 클린 미사일
+54,w_laser_arc_046,laser,30,progression,보이드 보텍스 레이저
+55,w_laser_arc_047,rocket,31,progression,나노 소울 분해 로켓탄
+56,w_laser_arc_048,rocket,33,progression,신격 학살용 로켓탄 어뢰
+57,w_missile_arc_049,missile,35,progression,코스믹 트레이서
+58,w_missile_arc_050,rocket,37,progression,항성 낙하 로켓탄 투창
+59,w_missile_arc_051,missile,39,progression,차원 도약 미사일
+60,w_missile_arc_052,missile,40,progression,선더링 격침기
+61,w_missile_arc_053,drone,40,progression,아차원 수용 드론
+62,w_missile_arc_054,missile,40,progression,안티매직 펄스 캐넌
+63,w_laser_arc_055,rocket,41,progression,카이로스 시공간 로켓탄포
+64,w_laser_arc_056,laser,43,progression,하이어라키 제어 빔
+65,w_laser_arc_057,laser,45,progression,판테온 총력포
+66,w_missile_arc_058,missile,47,progression,영겁의 추적 미사일
+67,w_missile_arc_059,missile,49,progression,스타-제네시스 캐넌
+68,w_missile_arc_060,missile,50,progression,옴니-조준 시스템
+69,w_missile_arc_061,missile,50,progression,월드-에코 충격파포
+70,w_missile_arc_062,missile,50,progression,아포칼립스 클러스터
+71,w_missile_arc_063,missile,50,progression,제네시스 모함
+72,w_laser_arc_064,laser,51,progression,인피니티 제로 레이저
+73,w_laser_arc_065,rocket,53,progression,싱귤래리티 로켓탄
+74,w_laser_arc_066,laser,55,progression,데스티니 빔 라이플
+75,w_missile_arc_067,rocket,57,progression,오메가 포인트 로켓탄 어뢰
+76,w_missile_arc_068,missile,59,progression,에테르 파편 미사일
+77,w_missile_arc_069,missile,60,progression,보이드 스트라이크
+78,w_missile_arc_070,drone,60,progression,엔트로피 종말 드론
+79,w_missile_arc_071,carrier,60,progression,유니버스 함재기
+80,w_missile_arc_072,missile,60,progression,오리진 코어 로그

@@ -1,8 +1,8 @@
 # Balance Audit Report
 
-Generated: 2026-06-07T13:25:24.101Z
+Generated: 2026-06-11T07:21:31.097Z
 
-**Result:** PASS (5/5)
+**Result:** PASS (12/12)
 
 **logic_input.json:** D:\arcfire20260607\tools\balance-audit\reports\logic_input.json
 

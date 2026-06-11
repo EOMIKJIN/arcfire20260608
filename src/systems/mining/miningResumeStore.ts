@@ -2,10 +2,9 @@
 // 채굴 재개 스냅샷 — 메인스테이지 출발(은하지도 이동) 시 채굴 세션을 안전 종료하고
 // 같은 행성으로 돌아왔을 때 그대로 재개하기 위한 단일 저장소.
 //
-// 정책:
-//   - 출발 시점에만 캡처(`captureMiningResumeSnapshot`).
-//   - 같은 행성에 다시 진입하면 1회 소비(`consumeMiningResumeSnapshotForPlanet`).
-//   - 다른 행성으로 갈아타거나 사용자가 수동으로 채굴 중단·완료를 누르면 즉시 폐기.
+// 정책(2026-06):
+//   - 행성 허브 이탈·재진입 시 자동 재개는 하지 않는다 — `teardownPlanetHubMiningPresentation`.
+//   - 본 스토어 API는 계정 초기화·레거시 호환용으로만 유지한다.
 //
 // 영속성: AsyncStorage 1키(`arcfire_mining_resume_v1`). 인벤토리·지급 카운트는
 // 사이클 완료 시 이미 `playerStore.persist()`로 저장되므로 본 스냅샷은 *세션 진척*만 보존한다.

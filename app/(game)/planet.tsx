@@ -47,6 +47,7 @@ import { releasePlanetMainStageSession } from '../../src/game/planetMainStageSes
 import { registerPlanetSessionResource } from '../../src/game/planetSessionRegistry';
 import { usePlanetStageSession } from '../../src/game/usePlanetStageSession';
 import { buildCsvStaticIndexes } from '../../src/game/buildCsvStaticIndexes';
+import { isPlayerShipCombatCapable } from '../../src/game/playerSurvivalPod';
 import { releasePlanetHubStageMemory } from '../../src/game/stageMemoryRelease';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { usePlanetStageLifecycleStore } from '../../src/game/planetStageLifecycle';
@@ -67,7 +68,6 @@ import {
 import { QuestHUD } from '../../src/components/QuestHUD';
 import { useArcNarrativeOverlay } from '../../src/ui/overlay/useArcNarrativeOverlay';
 import type { ArcNarrativeOverlayConfig } from '../../src/ui/overlay/useArcNarrativeOverlay';
-import { ArcMenuTile } from '../../src/ui/overlay/ArcMenuTile';
 import { StageShell } from '../../src/stages/StageShell';
 import {
   getPlanetMainStageVerticalMetrics,
@@ -78,8 +78,9 @@ import {
   PLANET_MAIN_BACKGROUND_CLAN_PLATE_SLOT_HEIGHT_PX,
   PLANET_MAIN_BACKGROUND_SYSTEM_BADGE_BLOCK_EST_PX,
   PLANET_MAIN_BACKGROUND_SYSTEM_NAME_MIN_HEIGHT_PX,
+  PLANET_MAIN_BOTTOM_DOCK_BASE_PX,
+  PLANET_MAIN_BOTTOM_DOCK_WITH_SCAN_EST_PX,
   PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX,
-  PLANET_MAIN_FOREGROUND_MENU_STACK_OFFSET_TOP_PX,
   PLANET_MAIN_FOREGROUND_TOP_CHROME_LIFT_PX,
   PLANET_MAIN_ORBIT_SCENE_SIZE as ORBIT_SCENE_SIZE,
   PLANET_MAIN_TOPBAR_BORDER_BOTTOM_PX,
@@ -106,18 +107,14 @@ import { ORBIT_MINING_CYCLE_MS, ORBIT_MINING_REWARD_GOOD_ID } from '../../src/ga
 import { planetHasMineableOrbitalDeposits } from '../../src/world/mineralDepositModel';
 import { listPlanetWorldObjects, type WorldObject } from '../../src/worldObjects';
 import {
-  captureMiningResumeSnapshot,
-  clearMiningResumeSnapshot,
-  consumeMiningResumeSnapshotForPlanet,
   createInitialMiningSessionState,
   flushMiningPlayerPersist,
-  hydrateMiningResumeStore,
-  miningResumeSnapshotToSession,
   scheduleMiningPlayerPersist,
   startMiningSession,
-  stopMiningSession,
+  teardownPlanetHubMiningPresentation,
   useMiningDriver,
   type MiningSessionState,
+  type PlanetHubMiningTeardownReason,
 } from '../../src/systems/mining';
 import { STORY_SCENES_FROM_CSV } from '../../src/data/generated/csvStoryScenes';
 import { NPC_CAPTAINS_FROM_CSV } from '../../src/data/generated/csvNpcCaptains';
@@ -128,6 +125,14 @@ import { requestLocalAccountResetFromPlanetHub } from '../../src/account/localAc
 import { resolveNpcCaptainPortraitSource } from '../../src/game/npcCaptainPortraitAssets';
 import { countGoodInInventory } from '../../src/game/playerInventory';
 import { buildPlanetHubFeatureMenuItems } from '../../src/systems/planetHub/planetHubFeatureSystems';
+import { PlanetHubFeatureMenuRow } from '../../src/components/planet/PlanetHubFeatureMenuRow';
+import { PlanetMainScanActionRow } from '../../src/components/planet/PlanetMainScanActionRow';
+import { PlanetMainPilotInfoPanel } from '../../src/components/planet/PlanetMainPilotInfoPanel';
+import {
+  collectPlanetHubCaptainIds,
+  resolvePlanetHubNpcDialogSceneId,
+} from '../../src/game/planetHubNpcDialog';
+import { formatSalvageLootLabel, pickSalvageLootItemId } from '../../src/game/planetSalvageSearch';
 
 /** 행성 허브 궤도 worklet·Skia 공통 — `PlanetScreen`보다 아래에 두면 TDZ이므로 상단 고정 */
 const NPC_ORBIT_CYCLE_MS = 54000;
@@ -272,6 +277,7 @@ export default function PlanetScreen() {
   const playerHydrated = usePlayerStore(s => s.hydrated);
   const getSystem = useWorldStore(s => s.getSystem);
   const { width: windowWidth, height: windowHeight, fontScale } = useWindowDimensions();
+  const safeAreaInsets = useSafeAreaInsets();
   const setPlayer = usePlayerStore(s => s.setPlayer);
   const addInventoryItem = usePlayerStore(s => s.addInventoryItem);
   const recordOrbitalMiningDelivery = usePlayerStore(s => s.recordOrbitalMiningDelivery);
@@ -301,15 +307,18 @@ export default function PlanetScreen() {
   const [miningSession, setMiningSession] = useState<MiningSessionState>(() => createInitialMiningSessionState());
   const miningSessionRef = useRef<MiningSessionState>(createInitialMiningSessionState());
   const [miningUiNowMs, setMiningUiNowMs] = useState(() => Date.now());
+  const applyMiningTeardownRef = useRef<(reason: PlanetHubMiningTeardownReason) => void>(() => {});
+  applyMiningTeardownRef.current = (reason) => {
+    const { session, uiNowMs } = teardownPlanetHubMiningPresentation(reason);
+    miningSessionRef.current = session;
+    setMiningSession(session);
+    setMiningUiNowMs(uiNowMs);
+  };
   useEffect(() => {
     const sub = AppState.addEventListener('change', (next) => {
       const active = next === 'active';
       setAppStateActive(active);
       if (!active) {
-        const ms = miningSessionRef.current;
-        if (ms.status === 'running') {
-          captureMiningResumeSnapshot(ms, Date.now());
-        }
         flushMiningPlayerPersist();
       }
     });
@@ -389,15 +398,7 @@ export default function PlanetScreen() {
    */
   const beginPlanetHubSuspendingNavigation = useCallback((navigate: () => void) => {
     const now = Date.now();
-    const ms = miningSessionRef.current;
-    if (ms.status === 'running') {
-      captureMiningResumeSnapshot(ms, now);
-    } else {
-      clearMiningResumeSnapshot();
-    }
-    flushMiningPlayerPersist();
-    miningSessionRef.current = stopMiningSession();
-    setMiningSession(miningSessionRef.current);
+    applyMiningTeardownRef.current('hub_navigation');
 
     const sim = combatSimRef.current;
     if (sim) sim.captureSuspendSnapshot(now);
@@ -468,6 +469,7 @@ export default function PlanetScreen() {
     player
     && planet
     && system
+    && isPlayerShipCombatCapable(player.ship)
     && hasEnemyFleetEnteredPlanetOrbit(planet.id, system.id)
     && resolveMainStageCombatEnabled(planet.id),
   );
@@ -531,39 +533,46 @@ export default function PlanetScreen() {
     const ratio = Math.max(0, Math.min(1, elapsed / ORBIT_MINING_CYCLE_MS));
     return Math.round(ratio * 100);
   }, [miningSession.lastTickAtMs, miningSession.status, miningUiNowMs]);
-  const handleToggleMining = useCallback(() => {
-    if (!planet || !canOrbitalMine) return;
-    const miningGoodId = resolvePlanetDisplayPrimaryMineralId(planet.id);
-    setMiningSession((prev) => {
-      if (prev.status === 'running') {
-        /** 사용자 수동 중단 → 출발-재개 스냅샷도 함께 폐기 */
-        clearMiningResumeSnapshot();
-        flushMiningPlayerPersist();
-        return stopMiningSession();
-      }
-      return startMiningSession(prev, planet.id, miningGoodId, Date.now());
-    });
-  }, [planet, canOrbitalMine]);
+  const [planetScanActionsUnlocked, setPlanetScanActionsUnlocked] = useState(false);
   useEffect(() => {
-    if (!planet) return;
-    /** 행성 변경/초진입 시 우선 동기 초기화(다른 행성의 잔류 상태 격리) */
-    setMiningSession(createInitialMiningSessionState());
-    miningSessionRef.current = createInitialMiningSessionState();
-    let mounted = true;
-    void hydrateMiningResumeStore().then(() => {
-      if (!mounted) return;
-      /** 사용자가 하이드레이트 중에 직접 채굴을 시작했으면 그 의도가 우선이므로 복원 생략. */
-      if (miningSessionRef.current.status !== 'idle') return;
-      const snap = consumeMiningResumeSnapshotForPlanet(planet.id);
-      if (snap) {
-        const restored = miningResumeSnapshotToSession(snap);
-        miningSessionRef.current = restored;
-        setMiningSession(restored);
-      }
+    setPlanetScanActionsUnlocked(false);
+  }, [planet?.id]);
+  const handlePlanetScanComplete = useCallback(() => {
+    setPlanetScanActionsUnlocked(true);
+  }, []);
+  const salvageAttemptRef = useRef(0);
+  useEffect(() => {
+    salvageAttemptRef.current = 0;
+  }, [planet?.id]);
+  const activeSalvageWreck = useMemo(
+    () => planetWorldObjects.find((object) => object.kind === 'wreck') ?? null,
+    [planetWorldObjects],
+  );
+  const handleToggleMining = useCallback(() => {
+    if (!planet || !canOrbitalMine || !planetScanActionsUnlocked) return;
+    if (miningSessionRef.current.status === 'running') {
+      applyMiningTeardownRef.current('manual_stop');
+      return;
+    }
+    const miningGoodId = resolvePlanetDisplayPrimaryMineralId(planet.id);
+    const now = Date.now();
+    const next = startMiningSession(miningSessionRef.current, planet.id, miningGoodId, now);
+    miningSessionRef.current = next;
+    setMiningSession(next);
+    setMiningUiNowMs(now);
+  }, [planet, canOrbitalMine, planetScanActionsUnlocked]);
+  useEffect(() => {
+    if (!planet?.id) return;
+    applyMiningTeardownRef.current('planet_change');
+  }, [planet?.id]);
+  useEffect(() => {
+    if (!planet?.id) return undefined;
+    const token = registerPlanetSessionResource({
+      ownerId: 'planet_hub_mining',
+      planetId: planet.id,
+      dispose: () => applyMiningTeardownRef.current('route_blur'),
     });
-    return () => {
-      mounted = false;
-    };
+    return () => token.release();
   }, [planet?.id]);
   /**
    * Phase 3: 채굴 tick 인터벌·분배 알고리즘은 `useMiningDriver` 로 추출.
@@ -573,6 +582,7 @@ export default function PlanetScreen() {
     miningSession.status === 'running' &&
     Boolean(planet) &&
     canOrbitalMine &&
+    planetScanActionsUnlocked &&
     isPlanetRouteFocused &&
     appStateActive &&
     stageSession.isActive;
@@ -800,6 +810,35 @@ export default function PlanetScreen() {
 
   const hubMergedRowsRef = useRef(hubMergedNearbyPresence);
   hubMergedRowsRef.current = hubMergedNearbyPresence;
+  const planetHubCaptainIds = useMemo(() => {
+    if (!planet || !system) return [];
+    return collectPlanetHubCaptainIds(
+      planet.id,
+      system.id,
+      arcNpcShipsAtPlanet,
+      hubMergedNearbyPresence,
+    );
+  }, [planet, system, arcNpcShipsAtPlanet, hubMergedNearbyPresence]);
+  const openPlanetHubNpcDialog = useCallback(() => {
+    if (activeIngameDialogSceneId) return;
+    const sceneId = resolvePlanetHubNpcDialogSceneId(planetHubCaptainIds);
+    setIngameDialogPage(0);
+    setIngameDialogSegment(0);
+    setIngameDialogPageComplete(false);
+    setActiveIngameDialogSceneId(sceneId);
+  }, [planetHubCaptainIds, activeIngameDialogSceneId]);
+  const handlePlanetSalvageSearch = useCallback(() => {
+    if (!planet || !activeSalvageWreck) {
+      showArcAlert('수색', '궤도 잔해 신호가 감지되지 않았습니다.');
+      return;
+    }
+    const attempt = salvageAttemptRef.current;
+    salvageAttemptRef.current += 1;
+    const itemId = pickSalvageLootItemId(planet.id, activeSalvageWreck.id, attempt);
+    addInventoryItem(itemId, 1);
+    setMenuBadge('trade', true);
+    showArcAlert('수색 완료', `${formatSalvageLootLabel(itemId)} 1개를 회수했습니다.`);
+  }, [planet, activeSalvageWreck, addInventoryItem, setMenuBadge]);
   const tableOrbitSlotCountRef = useRef(0);
   tableOrbitSlotCountRef.current = nearbyPresence.length;
   const arcShipIndexByIdRef = useRef<Map<string, number>>(new Map());
@@ -1128,7 +1167,17 @@ export default function PlanetScreen() {
         <View style={styles.mainArea}>
         <ScrollView
           style={[styles.scroll, styles.scrollTransparent]}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[
+            styles.scrollContent,
+            {
+              paddingBottom:
+                (capitalCombatOrbitActive
+                  ? PLANET_MAIN_BOTTOM_DOCK_BASE_PX
+                  : PLANET_MAIN_BOTTOM_DOCK_WITH_SCAN_EST_PX)
+                + PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX
+                + safeAreaInsets.bottom,
+            },
+          ]}
           showsVerticalScrollIndicator={false}
           pointerEvents="box-none"
         >
@@ -1140,64 +1189,42 @@ export default function PlanetScreen() {
 
         {/* 소형 메뉴 버튼 — marginTop만 포그라운드: 배경 행성 `paddingBottom`과 분리 */}
         <PlanetMainStanceRow routeFocused={isPlanetRouteFocused && appStateActive} />
-        {!capitalCombatOrbitActive ? (
-          <View style={styles.miningQuickControlRow}>
-            <MenuButton
-              label={miningSession.status === 'running' ? '채굴 중단' : '채굴 시작'}
-              onPress={handleToggleMining}
-              disabled={!canOrbitalMine}
-              primary={miningSession.status === 'running'}
-            />
-          </View>
-        ) : null}
+        </ScrollView>
+
         <View
           style={[
-            styles.menuRow,
-            {
-              marginTop: Math.max(
-                0,
-                PLANET_MAIN_FOREGROUND_MENU_STACK_OFFSET_TOP_PX
-                  - PLANET_MAIN_STANCE_ROW_HEIGHT_EST_PX
-                  - 14,
-              ),
-            },
+            styles.planetBottomDock,
+            { paddingBottom: Math.max(SPACING.xs, safeAreaInsets.bottom) },
           ]}
         >
-          {featureMenuItems.map((item) => (
-            <MenuButton
-              key={item.id}
-              label={item.label}
-              onPress={item.onPress}
-              disabled={item.disabled}
-              showBadge={item.showBadge}
-              primary={item.primary}
+          {!capitalCombatOrbitActive ? (
+            <PlanetMainScanActionRow
+              layout="dock"
+              planetId={planet?.id ?? null}
+              scanEnabled={Boolean(planet)}
+              actionsUnlocked={planetScanActionsUnlocked}
+              miningLabel={miningSession.status === 'running' ? '채굴 중단' : '채굴'}
+              miningDisabled={!canOrbitalMine}
+              miningPrimary={miningSession.status === 'running'}
+              dialogDisabled={false}
+              searchDisabled={!activeSalvageWreck}
+              onScanComplete={handlePlanetScanComplete}
+              onPressMining={handleToggleMining}
+              onPressDialog={openPlanetHubNpcDialog}
+              onSearchComplete={handlePlanetSalvageSearch}
             />
-          ))}
+          ) : null}
+          <PlanetMainPilotInfoPanel
+            nickname={player.nickname}
+            level={player.level}
+            expLabel={formatPilotExp8(player.exp)}
+            creditsLabel={formatCredits(player.credits, { suffix: false })}
+            shipName={player.ship.name}
+            skillPoints={player.skillPoints}
+            clanName={currentPilotClanName}
+            menuSlot={<PlanetHubFeatureMenuRow items={featureMenuItems} />}
+          />
         </View>
-
-        {null}
-
-        {/* 하단 캐릭터 정보 */}
-        <View style={styles.statsBox}>
-          <Text style={styles.statsTitle}>— 파일럿 정보 —</Text>
-          <View style={styles.statsRow}>
-            <StatItem label="닉네임" value={player.nickname} />
-            <StatItem label="레벨" value={`Lv.${player.level} (${formatPilotExp8(player.exp)})`} />
-            <StatItem label="크레딧" value={formatCredits(player.credits, { suffix: false })} />
-          </View>
-          <View style={styles.statsRow}>
-            <StatItem label="함선" value={player.ship.name} />
-            <StatItem label="스킬 포인트" value={`${player.skillPoints}P`} highlight={player.skillPoints > 0} />
-            <StatItem label="클랜" value={currentPilotClanName} />
-          </View>
-        </View>
-
-        <View
-          style={[styles.bottomFeatureReserve, { minHeight: PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX }]}
-          pointerEvents="box-none"
-          accessibilityLabel="하단 확장 예약 영역"
-        />
-        </ScrollView>
 
         <View style={styles.infoOverlaySlot} pointerEvents="box-none">
           <NearbyShipInfoPanel rows={sortedShipInfoRows} mutedForCapitalCombat={capitalCombatOrbitActive} />
@@ -1855,6 +1882,9 @@ const PlanetStageBackground = memo(function PlanetStageBackground({
 const WORLD_OBJECT_ORBIT_CYCLE_MS = 168000;
 const MAX_WORLD_OBJECT_MARKS = 16;
 const WORLD_OBJECT_ANCHOR_PX = 11;
+/** 소행성 원(15px)보다 작은 잔해 — 속 빈 사각형 테두리 */
+const WORLD_OBJECT_WRECK_MARK_PX = 9;
+const WORLD_OBJECT_WRECK_STROKE_COLOR = '#8B5E3C';
 /** 설명선: 소행성 마커 중심에서 우상향 45°로 이 거만큼(+/- 동일) 뻗음(SVG y축 아래방향). */
 const MINING_GUIDE_LINE_RUN_PX = 24;
 /** 설명선 끝점(오버레이 좌표)에서 텍스트를 살짝 바깥쪽(대각 방향)으로 밀 오프셋. */
@@ -1862,7 +1892,6 @@ const MINING_GUIDE_LABEL_PAST_TIP_PX = 2;
 
 function worldObjectGlyph(kind: WorldObject['kind']): string {
   if (kind === 'station') return '▣';
-  if (kind === 'wreck') return '✦';
   if (kind === 'anomaly') return '◇';
   return '';
 }
@@ -1950,6 +1979,8 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
               </View>
             ) : null}
           </>
+        ) : object.kind === 'wreck' ? (
+          <View style={bgStyles.worldObjectWreckMark} accessibilityLabel="잔해" />
         ) : (
           <Text style={bgStyles.worldObjectGlyph}>{worldObjectGlyph(object.kind)}</Text>
         )}
@@ -2120,36 +2151,6 @@ const PlanetPlayerBlueOrbitMark = memo(function PlanetPlayerBlueOrbitMark({
   );
 });
 
-// ── 메뉴 버튼 ──────────────────────────────────────────────────
-
-function MenuButton({
-  label, onPress, primary, disabled, showBadge,
-}: {
-  label: string;
-  onPress: () => void; primary?: boolean; disabled?: boolean; showBadge?: boolean;
-}) {
-  return (
-    <ArcMenuTile
-      label={label}
-      onPress={onPress}
-      primary={primary}
-      disabled={disabled}
-      showBadge={showBadge}
-    />
-  );
-}
-
-function StatItem({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
-  return (
-    <View style={styles.statItem}>
-      <Text style={styles.statLabel}>{label}</Text>
-      <Text style={[styles.statValue, highlight && { color: COLORS.skill, fontWeight: FONTS.weight.bold }]}>
-        {value}
-      </Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   stageRoot: { flex: 1, position: 'relative' },
   foreground: {
@@ -2160,6 +2161,12 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 0,
     position: 'relative',
+    flexDirection: 'column',
+  },
+  planetBottomDock: {
+    width: '100%',
+    zIndex: 15,
+    backgroundColor: 'transparent',
   },
   scroll: { flex: 1 },
   /** Android 등에서 스크롤 기본 불투명 레이어가 배경 궤도를 덮는 경우 방지 */
@@ -2345,13 +2352,6 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: 'transparent',
   },
-  miningQuickControlRow: {
-    width: '100%',
-    flexDirection: 'row',
-    paddingHorizontal: SPACING.md,
-    marginTop: -30,
-    marginBottom: 4,
-  },
   planetOuter: {
     position: 'relative',
     overflow: 'hidden',
@@ -2404,13 +2404,6 @@ const styles = StyleSheet.create({
   planetCoreGaugeSegOff: {
     backgroundColor: 'rgba(110,128,160,0.16)',
     borderColor: 'rgba(110,128,160,0.35)',
-  },
-  menuRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: SPACING.md,
-    columnGap: SPACING.sm,
-    marginBottom: SPACING.lg,
   },
   miningCard: {
     marginHorizontal: SPACING.md,
@@ -2573,40 +2566,6 @@ const styles = StyleSheet.create({
   },
   menuLabelPrimary: { color: COLORS.bg_primary },
   menuLabelDisabled: { color: COLORS.ink_light },
-  statsBox: {
-    marginHorizontal: SPACING.md,
-    marginBottom: SPACING.xl,
-    backgroundColor: COLORS.bg_panel,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 6,
-    paddingTop: SPACING.md,
-    paddingHorizontal: SPACING.md,
-    paddingBottom: SPACING.xl,
-  },
-  statsTitle: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
-    textAlign: 'center',
-    marginBottom: SPACING.sm,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: SPACING.xs,
-  },
-  statItem: { flex: 1 },
-  statLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
-  },
-  statValue: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_dark,
-  },
   bottomFeatureReserve: {
     width: '100%',
     marginHorizontal: SPACING.md,
@@ -2856,6 +2815,14 @@ const bgStyles = StyleSheet.create({
   worldObjectAsteroidDotInactive: {
     backgroundColor: '#7C8798',
     borderColor: 'rgba(180, 190, 206, 0.75)',
+  },
+  worldObjectWreckMark: {
+    width: WORLD_OBJECT_WRECK_MARK_PX,
+    height: WORLD_OBJECT_WRECK_MARK_PX,
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: WORLD_OBJECT_WRECK_STROKE_COLOR,
+    borderRadius: 1,
   },
   worldObjectMiningGuideWrap: {
     position: 'absolute',

@@ -1,6 +1,6 @@
 import type { ItemDef, TradeGood } from '../types';
 import { CAPITAL_WEAPON_LIST_FROM_CSV } from '../data/generated';
-import { resolveIntegratedWeaponTradePrice } from '../economy/integratedWeaponTradePricing';
+import { resolveIntegratedWeaponTradePrice } from '../arcCore/economy/weaponTradePricing';
 import { getCapitalWeaponRow } from './capitalWeaponRegistry';
 import {
   isWeaponItemId,

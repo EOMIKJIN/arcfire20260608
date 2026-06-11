@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-07T13:25:24.101Z",
+  "generatedAt": "2026-06-11T07:21:31.097Z",
   "policySource": "level_band_targets.csv",
   "drifts": [
     {
@@ -76,39 +76,39 @@
   "overlay": [
     {
       "key": "expReward",
-      "multiplier": "1.03",
-      "source": "aabs_audit",
-      "updatedAt": "2026-05-17T07:23:04.057Z"
+      "multiplier": "1.030",
+      "source": "aabs_agds",
+      "updatedAt": "2026-06-07T13:25:46.870Z"
     },
     {
       "key": "creditReward",
-      "multiplier": "1",
-      "source": "",
-      "updatedAt": " "
+      "multiplier": "1.000",
+      "source": "aabs_agds",
+      "updatedAt": "2026-06-07T13:25:46.870Z"
     },
     {
       "key": "tradeIncome",
-      "multiplier": "1",
-      "source": "",
-      "updatedAt": " "
+      "multiplier": "1.000",
+      "source": "aabs_agds",
+      "updatedAt": "2026-06-07T13:25:46.870Z"
     },
     {
       "key": "dropWeight",
-      "multiplier": "1",
-      "source": "",
-      "updatedAt": " "
+      "multiplier": "1.000",
+      "source": "aabs_agds",
+      "updatedAt": "2026-06-07T13:25:46.870Z"
     },
     {
       "key": "miningYield",
-      "multiplier": "1",
-      "source": "",
-      "updatedAt": " "
+      "multiplier": "1.000",
+      "source": "aabs_agds",
+      "updatedAt": "2026-06-07T13:25:46.870Z"
     },
     {
       "key": "combatDifficulty",
-      "multiplier": "1",
-      "source": "",
-      "updatedAt": ""
+      "multiplier": "1.000",
+      "source": "aabs_agds",
+      "updatedAt": "2026-06-07T13:25:46.870Z"
     }
   ]
 }

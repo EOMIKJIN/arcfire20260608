@@ -1,0 +1,17 @@
+key,value,notesKo
+policy_version,1,D&D3rd 기반 TTK 기준 적·함선 참조
+dice_count,1,함선 주사위 개수
+dice_sides,6,함선 주사위 면
+dice_bonus,0,함선 주사위 보너스
+str_stat,10,공격 STR(능력치 수정치 0)
+attack_bonus,6,공격 보너스(NEUTRAL)
+defender_ac_flat,14,방어 AC = 10+size+dexMod+armorStat 근사
+defender_dex_stat,10,방어 DEX
+defender_size_class,0,방어 size
+crit_natural_threshold,20,자연 20 크리티컬
+crit_damage_bonus_str_mul,2,크리 시 STR 수정치 추가 배수
+affinity_kind,light,기준 적 상성(배율 1.0)
+reference_range_ratio,0.72,이상 사거리 TTK — 무기 rangePx 사용 비율
+travel_overlap_factor,0.35,비행시간과 재장전 겹침 보정(0=완전 순차)
+anchor_tier_label,기본,레벨별 TTK 앵커 레이저 등급
+hull_hp_reference,300,참조 적 함체 HP(검증용)

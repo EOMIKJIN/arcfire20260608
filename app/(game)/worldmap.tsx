@@ -20,6 +20,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { COLORS, FONTS, SPACING, LAYOUT, ZONE_COLORS, ZONE_LABELS } from '../../src/utils/theme';
 import { showArcAlert } from '../../src/utils/showArcAlert';
+import { isPlayerShipCombatCapable } from '../../src/game/playerSurvivalPod';
 import { ArcButton } from '../../src/ui/overlay/ArcButton';
 import { QuestHUD } from '../../src/components/QuestHUD';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
@@ -572,6 +573,13 @@ export default function WorldMapScreen() {
   const doMove = useCallback(
     async (targetSystem: StarSystem) => {
       if (!player) return;
+      if (!isPlayerShipCombatCapable(player.ship)) {
+        showArcAlert(
+          '생존포드',
+          '전함이 격침된 상태입니다. 거점 조선소에서 전함을 재구매·탑승한 뒤 이동할 수 있습니다.',
+        );
+        return;
+      }
       if (!mapMetricsReady) return;
       const fromSystem = systems[player.currentSystemId];
       if (!fromSystem) return;
@@ -672,7 +680,7 @@ export default function WorldMapScreen() {
       const encounterChance =
         targetSystem.zone === 'pvp' ? 0.7 : targetSystem.zone === 'neutral' ? 0.3 : 0.1;
 
-      if (Math.random() < encounterChance) {
+      if (Math.random() < encounterChance && isPlayerShipCombatCapable(player.ship)) {
         selectSystem(targetSystem.id);
         // finally 블록에서 transit·타이머 정리 완료 — Combat replace (`2.1.memory.md` §4-2)
         router.replace('/(game)/combat');
@@ -703,6 +711,14 @@ export default function WorldMapScreen() {
   const handleMove = useCallback(async () => {
     if (!selectedSystem || !player) return;
     if (isMoving) return;
+
+    if (!isPlayerShipCombatCapable(player.ship)) {
+      showArcAlert(
+        '생존포드',
+        '전함이 격침된 상태입니다. 거점 조선소에서 전함을 재구매·탑승한 뒤 이동할 수 있습니다.',
+      );
+      return;
+    }
 
     if (selectedSystem.id === player.currentSystemId) {
       const planet = selectedSystem.planets[0];

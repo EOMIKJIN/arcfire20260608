@@ -41,7 +41,11 @@ import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMa
 import { getPlanetTradePortItemIds } from '../../src/world/planetTradePortDb';
 import { adjustPlanetTradeMarketStock } from '../../src/world/planetTradeMarketStore';
 import { resolveTradeRoutePlayerSellUnit } from '../../src/arcCore/economy/tradeRouteCommercePolicy';
-import { filterTradePortCatalogForPlayer } from '../../src/arcCore/balance/tradePortCatalogPolicy';
+import {
+  filterTradePortCatalogForBuyMarket,
+  filterTradePortCatalogForPlayer,
+} from '../../src/arcCore/balance/tradePortCatalogPolicy';
+import { isSurvivalPodCapitalShipItemId, isSurvivalPodNpcShipId } from '../../src/game/playerSurvivalPod';
 import { runTradeRouteMarketPass } from '../../src/arcCore/economy/runTradeRouteMarketPass';
 import { resolvePlayerLifetimeCredits } from '../../src/game/resolvePlayerLifetimeCredits';
 import {
@@ -130,7 +134,7 @@ export default function TradeScreen() {
     () =>
       planet && player
         ? generateMarketByItemIds(
-            filterTradePortCatalogForPlayer(getPlanetTradePortItemIds(planet.id), player.level),
+            filterTradePortCatalogForBuyMarket(getPlanetTradePortItemIds(planet.id), player.level),
             planet.id.length * 37,
             resolvePlayerLifetimeCredits(player),
             planet.id,
@@ -532,10 +536,14 @@ export default function TradeScreen() {
       return;
     }
     if (itemDef?.type === 'capital_ship') {
-      const currentShipNpcId = player.ship.portraitNpcCapitalShipId ?? null;
       const targetNpcId = typeof itemDef.attrs?.npcCapitalShipId === 'string'
         ? String(itemDef.attrs.npcCapitalShipId)
         : null;
+      if (isSurvivalPodCapitalShipItemId(item.goodId) || isSurvivalPodNpcShipId(targetNpcId)) {
+        showArcAlert('판매 불가', '생존포드는 판매할 수 없습니다.');
+        return;
+      }
+      const currentShipNpcId = player.ship.portraitNpcCapitalShipId ?? null;
       if (currentShipNpcId && targetNpcId && currentShipNpcId === targetNpcId) {
         showArcAlert('판매 불가', '현재 탑승 중인 전함은 판매할 수 없습니다. 다른 전함으로 교체 후 판매하세요.');
         return;

@@ -5,6 +5,7 @@
 import type { PlayerShip, ShipyardEquipSlotId } from '../types';
 import { buildWeaponDataFromCapitalWeaponId } from './capitalWeaponRange';
 import { COMBAT_WEAPON_SLOT_IDS, isEquipSlotFilled } from './combatWeaponSlots';
+import { clearSurvivalPodWeaponLoadout, isSurvivalPodNpcShipId } from './survivalPodShip';
 import { resolveEquipSlotDisplayName, normalizeEquipSlotNamesFromTables } from './equipSlotDisplayName';
 import { listDefaultWeaponItemDefIdsForNpcShip } from './grantNpcCapitalShipBundle';
 import { weaponIdFromWeaponItemId } from './weaponItemId';
@@ -31,6 +32,10 @@ function sanitizeEquipSlots(raw: PlayerShip['equipSlots'] | unknown): NonNullabl
 export function seedCombatEquipSlotsFromNpcDefaults(
   ship: PlayerShip,
 ): NonNullable<PlayerShip['equipSlots']> {
+  const npcPortraitId = ship.portraitNpcCapitalShipId?.trim();
+  if (npcPortraitId && isSurvivalPodNpcShipId(npcPortraitId)) {
+    return {};
+  }
   const existing = sanitizeEquipSlots(ship.equipSlots ?? {});
   const allFilled = WEAPON_SLOT_IDS.every((slotId) => isEquipSlotFilled(existing[slotId]));
   if (allFilled) return normalizeEquipSlotNamesFromTables(existing);
@@ -58,6 +63,9 @@ export function seedCombatEquipSlotsFromNpcDefaults(
 
 /** equipSlots 정본 → weapons / weaponItems 동기(전투·조선소 표시) */
 export function syncShipWeaponsFromEquipSlots(ship: PlayerShip): PlayerShip {
+  if (isSurvivalPodNpcShipId(ship.portraitNpcCapitalShipId)) {
+    return clearSurvivalPodWeaponLoadout(ship);
+  }
   const slots = ship.equipSlots ?? {};
   const weapons = [...ship.weapons];
   const weaponItems = [...(ship.weaponItems ?? [])];

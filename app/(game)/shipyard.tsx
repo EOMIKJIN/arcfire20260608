@@ -21,6 +21,7 @@ import {
 } from '../../src/data/generated';
 import { resolveNpcCapitalShipPortraitSource } from '../../src/game/npcCapitalShipPortraitAssets';
 import { applyNpcCapitalShipToPlayerShip } from '../../src/game/applyNpcCapitalShipPurchase';
+import { isSurvivalPodNpcShipId } from '../../src/game/playerSurvivalPod';
 import { buildWeaponDataFromCapitalRow } from '../../src/game/capitalWeaponRange';
 import { resolveEquipSlotDisplayName } from '../../src/game/equipSlotDisplayName';
 import { PLAYER_INVENTORY_SLOT_COUNT } from '../../src/game/playerInventory';
@@ -247,6 +248,10 @@ export default function ShipyardScreen() {
   };
 
   const handleReleaseCurrentShip = async () => {
+    if (isSurvivalPodNpcShipId(ship.portraitNpcCapitalShipId)) {
+      showArcAlert('생존포드', '생존포드 상태에서는 전함 해제를 할 수 없습니다. 격납고에서 전함을 선택해 탑승하세요.');
+      return;
+    }
     const baseTemplate = SHIP_TEMPLATES[player.shipId];
     if (!baseTemplate) {
       showArcAlert('해제 실패', '기본 전함 템플릿을 찾을 수 없습니다.');
@@ -346,6 +351,11 @@ export default function ShipyardScreen() {
       <View style={styles.statsBox}>
         {/* 임시 개발 기준: 첫 탭 현황은 항상 현재 탑승 전함(player.ship) 기준으로 표시한다. */}
         <Text style={styles.statsTitle}>— [현재탑승전함] 함선 제원 —</Text>
+        {isSurvivalPodNpcShipId(ship.portraitNpcCapitalShipId) ? (
+          <Text style={styles.survivalPodNotice}>
+            생존포드 — 은하 이동·전투 불가. 조선소에서 전함 재구매 후 격납고에서 탑승하세요.
+          </Text>
+        ) : null}
         <StatRow label="함선명" value={ship.name} />
         {combatProficiency ? (
           <>
@@ -489,6 +499,7 @@ export default function ShipyardScreen() {
                   ? resolveNpcCapitalShipPortraitSource(row.portraitImageAssetKey)
                   : undefined;
                 const isCurrentShip = ship.portraitNpcCapitalShipId === entry.npcCapitalShipId;
+                const isSurvivalPodEntry = isSurvivalPodNpcShipId(entry.npcCapitalShipId);
                 return (
                   <View key={entry.id} style={styles.hangarRow}>
                     {thumbSrc ? (
@@ -505,6 +516,9 @@ export default function ShipyardScreen() {
                     )}
                     <View style={styles.hangarMeta}>
                       <Text style={styles.hangarName}>{row?.name ?? entry.npcCapitalShipId}</Text>
+                      {isSurvivalPodEntry ? (
+                        <Text style={styles.hangarCurrentBadge}>[생존포드·무장불가]</Text>
+                      ) : null}
                       {isCurrentShip ? <Text style={styles.hangarCurrentBadge}>[현재탑승전함]</Text> : null}
                       <Text style={styles.hangarSub} numberOfLines={2}>
                         인도 {new Date(entry.acquiredAt).toLocaleString('ko-KR')}
@@ -512,19 +526,30 @@ export default function ShipyardScreen() {
                     </View>
                     <View style={styles.hangarActions}>
                       <TouchableOpacity
-                        style={[styles.hangarActionBtn, styles.hangarSelectBtn]}
+                        style={[
+                          styles.hangarActionBtn,
+                          styles.hangarSelectBtn,
+                          isSurvivalPodEntry && styles.hangarActionDisabled,
+                        ]}
                         onPress={() => {
+                          if (isSurvivalPodEntry) return;
                           void handleSelectHangarShip(entry.npcCapitalShipId);
                         }}
+                        disabled={isSurvivalPodEntry}
                       >
                         <Text style={styles.hangarActionText}>[선택]</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        style={[styles.hangarActionBtn, styles.hangarReleaseBtn, !isCurrentShip && styles.hangarActionDisabled]}
+                        style={[
+                          styles.hangarActionBtn,
+                          styles.hangarReleaseBtn,
+                          (isSurvivalPodEntry || !isCurrentShip) && styles.hangarActionDisabled,
+                        ]}
                         onPress={() => {
+                          if (isSurvivalPodEntry || !isCurrentShip) return;
                           void handleReleaseCurrentShip();
                         }}
-                        disabled={!isCurrentShip}
+                        disabled={isSurvivalPodEntry || !isCurrentShip}
                       >
                         <Text style={styles.hangarActionText}>[해제]</Text>
                       </TouchableOpacity>
@@ -578,6 +603,10 @@ function ShipyardInventoryGrid({
   };
 
   const equipWeaponFromInventory = async (itemId: string) => {
+    if (isSurvivalPodNpcShipId(ship.portraitNpcCapitalShipId)) {
+      showArcAlert('생존포드', '생존포드에는 무기를 장착할 수 없습니다.');
+      return;
+    }
     const weaponId = weaponIdFromWeaponItemId(itemId);
     if (!weaponId) return;
     const row = CAPITAL_WEAPON_LIST_FROM_CSV[weaponId];
@@ -901,6 +930,14 @@ const styles = StyleSheet.create({
     color: COLORS.ink_light,
     textAlign: 'center',
     marginBottom: SPACING.sm,
+  },
+  survivalPodNotice: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    color: COLORS.pvp_zone,
+    textAlign: 'center',
+    marginBottom: SPACING.sm,
+    lineHeight: 20,
   },
   statRow: {
     flexDirection: 'row',

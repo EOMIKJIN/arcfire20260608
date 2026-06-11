@@ -10,6 +10,8 @@ type PlanetHubMenuPlanet = {
 export type PlanetHubFeatureMenuItem = {
   id: string;
   label: string;
+  /** 스캔 행과 동일한 유니코드·심볼 아이콘 슬롯 */
+  icon: string;
   disabled?: boolean;
   showBadge?: boolean;
   primary?: boolean;
@@ -52,6 +54,7 @@ export function buildPlanetHubFeatureMenuItems(
     {
       id: 'trade',
       label: '무역소',
+      icon: '🏪',
       disabled: !hasTradePort,
       showBadge: ctx.hasTradeBadge,
       onPress: () => {
@@ -65,6 +68,7 @@ export function buildPlanetHubFeatureMenuItems(
     {
       id: 'shipyard',
       label: '조선소',
+      icon: '⚓',
       disabled: !hasShipyard,
       onPress: () => {
         if (!hasShipyard) return;
@@ -74,6 +78,7 @@ export function buildPlanetHubFeatureMenuItems(
     {
       id: 'tavern',
       label: '선술집',
+      icon: '🍺',
       disabled: !hasTavern,
       onPress: () => {
         if (!hasTavern) return;
@@ -83,6 +88,7 @@ export function buildPlanetHubFeatureMenuItems(
     {
       id: 'skilltree',
       label: '연구소',
+      icon: '⚗',
       onPress: () => {
         runThrottledPlanetHubNavigation(() => ctx.onFacilityNavigate('/(game)/skilltree'));
       },
@@ -90,6 +96,7 @@ export function buildPlanetHubFeatureMenuItems(
     {
       id: 'departure',
       label: '출발',
+      icon: '🚀',
       primary: true,
       onPress: () => {
         runThrottledPlanetHubNavigation(() => {

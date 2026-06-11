@@ -78,6 +78,8 @@ import {
 } from '../../game/capitalWeaponRange';
 import { useNpcCaptainProgressStore, NPC_CAPTAIN_PROGRESS_EXP } from '../../store/npcCaptainProgressStore';
 import { usePlayerStore } from '../../store/playerStore';
+import { isSurvivalPodNpcShipId } from '../../game/playerSurvivalPod';
+import { showArcAlert } from '../../utils/showArcAlert';
 import { useOrbitCapitalCombatUiStore } from '../../store/orbitCapitalCombatUiStore';
 import { useBattleStanceStore, type BattleStanceId } from '../../store/battleStanceStore';
 import { resolveShipFinalStatResult } from '../../ship/shipStatPipeline';
@@ -2587,6 +2589,8 @@ export function usePlanetEdenRaidSim(
   const respawnAtWallRef = useRef<number | null>(null);
   /** 팀 승패 보상(함장 EXP) 중복 지급 방지 */
   const waveOutcomeAwardedRef = useRef(false);
+  /** 플레이어 전함 격침 → 생존포드 1회 처리 */
+  const playerCapitalDestroyedRef = useRef(false);
   /** 스폰·리스폰 구간 시작 `elapsed` */
   const wideSpawnLayoutFromElapsedRef = useRef(0);
   /** 스폰·리스폰 구간 끝 `elapsed` */
@@ -2640,6 +2644,7 @@ export function usePlanetEdenRaidSim(
     wideSpawnLayoutFromElapsedRef.current = resumeSnap ? resumeSnap.elapsedMs : 0;
     wideSpawnLayoutUntilElapsedRef.current = (resumeSnap ? resumeSnap.elapsedMs : 0) + WIDE_SPAWN_LAYOUT_MS;
     waveOutcomeAwardedRef.current = resumeSnap ? resumeSnap.waveOutcomeAwarded : false;
+    playerCapitalDestroyedRef.current = false;
     const captainIds = agentsRef.current.map(a => a.captainId).filter((id): id is string => Boolean(id));
     if (captainIds.length > 0) {
       const s = useNpcCaptainProgressStore.getState();
@@ -2661,6 +2666,7 @@ export function usePlanetEdenRaidSim(
     respawnAtWallRef.current = null;
     respawnCountdownSecRef.current = null;
     waveOutcomeAwardedRef.current = false;
+    playerCapitalDestroyedRef.current = false;
     sessionCombatKeyRef.current = null;
     elapsedCarryRef.current = 0;
   }, [active]);
@@ -2798,6 +2804,23 @@ export function usePlanetEdenRaidSim(
       refillTeamBucketsWithSlots(agents, teamBucketsRef.current, teamSlotByAgentIdRef.current, maxAgentId);
       for (const ag of agents) {
         if (!ag.team) ag.team = ag.id % 2 === 0 ? 'red' : 'blue';
+      }
+      const playerAgent = agents.find((a) => isPlayerCombatAgent(a));
+      if (
+        playerAgent
+        && !playerAgent.alive
+        && !playerCapitalDestroyedRef.current
+        && !isSurvivalPodNpcShipId(usePlayerStore.getState().player?.ship?.portraitNpcCapitalShipId)
+      ) {
+        playerCapitalDestroyedRef.current = true;
+        respawnAtWallRef.current = null;
+        respawnCountdownSecRef.current = null;
+        void usePlayerStore.getState().applyCapitalShipDestruction().then(() => {
+          showArcAlert(
+            '전함 격침',
+            '전함이 파괴되어 생존포드로 거점 행성에 귀환했습니다.\n조선소에서 전함을 재구매·탑승하세요.',
+          );
+        });
       }
       const allAlive = agents.every(a => a.alive);
       if (!allAlive && respawnAtWallRef.current === null) {

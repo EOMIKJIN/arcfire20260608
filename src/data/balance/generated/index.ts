@@ -31,7 +31,11 @@ export { TradeRouteEconomyPolicy_FROM_BALANCE_CSV } from './csvTradeRouteEconomy
 export { TradeRoutePlanetSupplyAssignments_FROM_BALANCE_CSV } from './csvTradeRoutePlanetSupplyAssignments';
 export { TradeRouteTransportPolicy_FROM_BALANCE_CSV } from './csvTradeRouteTransportPolicy';
 export { WeaponAffinityMatrix_FROM_BALANCE_CSV } from './csvWeaponAffinityMatrix';
+export { WeaponCombatReferencePolicy_FROM_BALANCE_CSV } from './csvWeaponCombatReferencePolicy';
 export { WeaponFamilyRuntimePolicy_FROM_BALANCE_CSV } from './csvWeaponFamilyRuntimePolicy';
+export { WeaponFamilyTtkBalancePolicy_FROM_BALANCE_CSV } from './csvWeaponFamilyTtkBalancePolicy';
 export { WeaponLaserTierColorPolicy_FROM_BALANCE_CSV } from './csvWeaponLaserTierColorPolicy';
+export { WeaponSpecialCombatBalancePolicy_FROM_BALANCE_CSV } from './csvWeaponSpecialCombatBalancePolicy';
 export { WeaponTradeBasePricePolicy_FROM_BALANCE_CSV } from './csvWeaponTradeBasePricePolicy';
+export { WeaponTradeListingPolicy_FROM_BALANCE_CSV } from './csvWeaponTradeListingPolicy';
 export { WorldExpansionTimingPolicy_FROM_BALANCE_CSV } from './csvWorldExpansionTimingPolicy';

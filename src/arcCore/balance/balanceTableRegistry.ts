@@ -248,6 +248,22 @@ export function getTradePortCapitalListingCount(): number {
   return Math.max(1, Math.floor(parseNum(kv.get('trade_port_capital_listing_count'), 10)));
 }
 
+export function getTradePortWeaponListingCount(): number {
+  const kv = getWeaponTradePolicyKv();
+  return Math.max(1, Math.floor(parseNum(kv.get('trade_port_weapon_listing_count'), 12)));
+}
+
+export function getTradePortWeaponMinPerPlanet(): number {
+  const kv = getWeaponTradePolicyKv();
+  return Math.max(1, Math.floor(parseNum(kv.get('trade_port_weapon_min_per_planet'), 4)));
+}
+
+/** 인접 zone 권장 레벨을 밴드에 포함 — 행성 간 동일 SKU 중복 판매 허용 */
+export function getTradePortWeaponZoneOverlap(): number {
+  const kv = getWeaponTradePolicyKv();
+  return Math.max(0, Math.floor(parseNum(kv.get('trade_port_weapon_zone_overlap'), 1)));
+}
+
 export function getCapitalShipTradeStockBounds(): { min: number; max: number } {
   const kv = getWeaponTradePolicyKv();
   return {

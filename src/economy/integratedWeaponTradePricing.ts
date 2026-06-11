@@ -8,6 +8,8 @@ import {
   getWeaponTradePriceBounds,
 } from '../arcCore/balance/balanceTableRegistry';
 import { getPlanetLevelingRowForZone } from '../arcCore/planetBalance/planetZoneIndexRegistry';
+import { computeWeaponEffectiveCombatDps } from '../combat/weaponFamilyTtkBalance';
+import { resolveWeaponMinPurchasePriceCredits } from '../combat/weaponSpecialCombatBalance';
 import { getCapitalWeaponRow } from '../game/capitalWeaponRegistry';
 import { getItemDef } from '../data/itemRegistry';
 import { weaponItemIdFromWeaponId } from '../game/weaponItemId';
@@ -30,11 +32,9 @@ function resolveWeaponRequiredLevel(weaponId: string): number {
   return Number.isFinite(n) && n > 0 ? Math.floor(n) : 1;
 }
 
-/** DPS·사거리·연발 기반 연속 성능 점수 */
+/** D&D3 TTK 기대 DPS·사거리 기반 연속 성능 점수(레이저·미사일 패리티 반영) */
 export function weaponPerformanceScore(weapon: CapitalWeaponCsvRow): number {
-  const reloadSec = Math.max(0.45, weapon.cooldownMs / 1000);
-  const salvo = Math.max(1, weapon.salvoCount);
-  const dps = (weapon.damage * salvo) / reloadSec;
+  const dps = computeWeaponEffectiveCombatDps(weapon);
   const rangeNorm = Math.sqrt(Math.max(40, weapon.rangePx) / 150);
   const speedBonus = Math.min(0.12, weapon.projectileSpeedPxPerSec / 50_000);
   return dps * (0.82 + rangeNorm * 0.14 + speedBonus);
@@ -71,6 +71,7 @@ export function resolveIntegratedWeaponTradePrice(
   const demandMul = getEconomyCategoryPriceMul('weapon');
 
   const raw = zoneBudget * zoneCoef * perfNorm * levelScale * creditFactor * demandMul;
-  const csvFallback = weapon.purchasePrice > 0 ? weapon.purchasePrice : raw;
+  const priceFloor = resolveWeaponMinPurchasePriceCredits(weaponId, weapon.purchasePrice);
+  const csvFallback = priceFloor > 0 ? priceFloor : raw;
   return clampPrice(Math.max(raw, csvFallback * 0.85));
 }

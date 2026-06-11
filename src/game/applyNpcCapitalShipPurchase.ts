@@ -8,6 +8,7 @@ import {
   NPC_CAPITAL_SHIPS_FROM_CSV,
 } from '../data/generated';
 import { buildWeaponDataFromCapitalWeaponId } from './capitalWeaponRange';
+import { isSurvivalPodNpcShipId } from './survivalPodShip';
 import { applyDefaultCombatLoadout } from './seedShipCombatEquipSlots';
 
 /**
@@ -39,6 +40,7 @@ export function applyNpcCapitalShipToPlayerShip(
     if (aw) weapons.push(aw);
   }
   const c = row.combat;
+  const isSurvivalPod = isSurvivalPodNpcShipId(npcCapitalShipId);
   const merged: PlayerShip = {
     ...ship,
     name: row.name,
@@ -48,7 +50,9 @@ export function applyNpcCapitalShipToPlayerShip(
     maxShield: c.maxShield,
     shield: c.maxShield,
     armor: c.armor,
-    weapons: ship.weapons.length > 0 ? [...ship.weapons] : weapons,
+    weapons: isSurvivalPod ? [] : ship.weapons.length > 0 ? [...ship.weapons] : weapons,
+    weaponItems: isSurvivalPod ? [] : ship.weaponItems,
+    equipSlots: isSurvivalPod ? {} : ship.equipSlots,
   };
   return {
     ok: true,

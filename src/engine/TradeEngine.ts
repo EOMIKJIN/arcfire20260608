@@ -10,7 +10,7 @@ import {
   getWeaponTradePriceBounds,
 } from '../arcCore/balance/balanceTableRegistry';
 import { resolveCapitalShipTradePrice } from '../arcCore/balance/tradePortCapitalShipPolicy';
-import { resolveIntegratedWeaponTradePrice } from '../economy/integratedWeaponTradePricing';
+import { resolveIntegratedWeaponTradePrice } from '../arcCore/economy/weaponTradePricing';
 import {
   isArcCorePricedMineral,
   resolveMineralListingBuyPrice,

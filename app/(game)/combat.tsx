@@ -39,6 +39,7 @@ import { usePlanetNebulaStore } from '../../src/store/planetNebulaStore';
 import { resolvePlanetNebulaBakedSource } from '../../src/game/planetNebulaBakedAssets';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { releaseCombatStageMemory } from '../../src/game/stageMemoryRelease';
+import { isPlayerShipCombatCapable } from '../../src/game/playerSurvivalPod';
 
 /** `CapitalRealtimeCombatSimBinder` 내부 — 시뮬 ref로 메인과 동일한 미사일 폭발 colorDodge 연출 */
 function CombatOrbitNebulaBackdrop({
@@ -82,7 +83,6 @@ export default function CombatScreen() {
   const { width } = useWindowDimensions();
   const navigation = useNavigation();
   const player = usePlayerStore(s => s.player);
-  const updateShip = usePlayerStore(s => s.updateShip);
   const addExp = usePlayerStore(s => s.addExp);
   const addCredits = usePlayerStore(s => s.addCredits);
   const clearLevelUp = usePlayerStore(s => s.clearLevelUp);
@@ -183,15 +183,14 @@ export default function CombatScreen() {
     resolvedRef.current = true;
     setResolving(true);
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-    updateShip({ ...player.ship, hp: 1 });
-    await persist();
+    await usePlayerStore.getState().applyCapitalShipDestruction();
     showArcAlert(
-      '전투 패배',
-      '함선이 심각한 손상을 입었습니다.\n가장 가까운 행성으로 귀환합니다.',
-      [{ text: '귀환', onPress: () => router.replace('/(game)/planet') }],
+      '전함 격침',
+      '전함이 파괴되어 생존포드로 거점 행성에 귀환했습니다.\n조선소에서 전함을 재구매·탑승하세요.',
+      [{ text: '확인', onPress: () => router.replace('/(game)/planet') }],
     );
     setResolving(false);
-  }, [persist, player, updateShip]);
+  }, [player]);
 
   const handleFlee = useCallback(async () => {
     if (resolving) return;
@@ -207,6 +206,21 @@ export default function CombatScreen() {
   }, [resolving]);
 
   if (!player) return null;
+  if (!isPlayerShipCombatCapable(player.ship)) {
+    return (
+      <StageShell routeName="combat" background="none" edges={['bottom']}>
+        <View style={styles.errorWrap}>
+          <Text style={styles.errorTitle}>전투 불가</Text>
+          <Text style={styles.errorBody}>
+            생존포드 상태에서는 전투에 참여할 수 없습니다. 조선소에서 전함을 재구매·탑승하세요.
+          </Text>
+          <TouchableOpacity style={styles.fleeBtn} onPress={() => router.replace('/(game)/planet')}>
+            <Text style={styles.fleeBtnText}>행성으로 돌아가기</Text>
+          </TouchableOpacity>
+        </View>
+      </StageShell>
+    );
+  }
   if (!transitPirateShipId || !pirateNpc) {
     return (
       <StageShell routeName="combat" background="none" edges={['bottom']}>

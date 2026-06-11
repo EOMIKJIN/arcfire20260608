@@ -177,6 +177,7 @@ function normalizeWeaponListRow(r) {
     purchasePrice: toInt(r.purchasePrice ?? r['구매가'], 0),
     requiredLevel: Math.max(1, toInt(r.requiredLevel ?? r['요구레벨'], 1)),
     tierLabel: String(r.tierLabel ?? r['등급라벨'] ?? '').trim(),
+    tradePortListed: toBool(r.tradePortListed),
     targeting,
     lockImpactPoint,
     hitAreaNote: String(r.hitAreaNote ?? r['타격범위'] ?? '').trim(),
@@ -419,6 +420,7 @@ function buildWeapons() {
     hitAreaNote: ${q(r.hitAreaNote)},
     requiredLevel: ${r.requiredLevel},
     tierLabel: ${q(r.tierLabel)},
+    tradePortListed: ${r.tradePortListed},
     laserColor: ${q(r.laserColor)},
     projectileColor: ${q(r.projectileColor)},
     glowColor: ${q(r.glowColor)},
@@ -444,6 +446,7 @@ function buildWeapons() {
   hitAreaNote: string;
   requiredLevel: number;
   tierLabel: string;
+  tradePortListed: boolean;
   laserColor: string;
   projectileColor: string;
   glowColor: string;
@@ -714,7 +717,7 @@ function buildItemDefs() {
         category: 'weapon',
         kind: 'equipment',
         type: 'weapon_module',
-        tradeable: 'true',
+        tradeable: r.tradePortListed ? 'true' : 'false',
         sellable: 'true',
         cargoHoldable: 'true',
         capitalShipMountable: 'true',

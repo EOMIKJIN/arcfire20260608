@@ -26,6 +26,13 @@ import {
   applyDefaultCombatLoadout,
   seedCombatEquipSlotsFromNpcDefaults,
 } from '../game/seedShipCombatEquipSlots';
+import {
+  applyCapitalShipDestructionToPlayer,
+  ensureSurvivalPodInHangar,
+  grantSurvivalPodShipToInventory,
+  isSurvivalPodNpcShipId,
+  SURVIVAL_POD_NPC_SHIP_ID,
+} from '../game/playerSurvivalPod';
 import { gainExp, processLevelUp, learnSkill as engineLearnSkill } from '../engine/SkillEngine';
 import { applyAabsCreditMultiplier, applyAabsExpMultiplier } from '../arcCore/aabs/aabsPolicyStore';
 import { SKILLS } from '../data/skills';
@@ -346,9 +353,11 @@ function shipFromTemplate(templateId: string): PlayerShip {
 
 function buildInitialInventoryWithDefaultCapitalShip() {
   const npcCapitalShipId = resolvePlayerDefaultNpcCapitalShipId();
-  return grantNpcCapitalShipBundleToInventory(createEmptyInventorySlots(), npcCapitalShipId, {
+  let slots = grantNpcCapitalShipBundleToInventory(createEmptyInventorySlots(), npcCapitalShipId, {
     shipBuyPrice: 1,
   });
+  slots = grantSurvivalPodShipToInventory(slots);
+  return slots;
 }
 
 function ensurePlayerHasDefaultShip(player: Player): Player {
@@ -358,11 +367,13 @@ function ensurePlayerHasDefaultShip(player: Player): Player {
       ? player.shipId
       : starterTemplateId;
   const normalizedShip = normalizeLoadedPlayerShip(player.ship, safeShipId);
-  const normalizedHangar = normalizeShipHangar(player.shipHangar);
+  const normalizedHangar = ensureSurvivalPodInHangar(normalizeShipHangar(player.shipHangar));
   const normalizedInventory = reconcileEquippedWeaponsInInventory(
-    reconcileCapitalShipInventoryFromHangar(
-      normalizeInventorySlots(player.inventorySlots),
-      normalizedHangar,
+    grantSurvivalPodShipToInventory(
+      reconcileCapitalShipInventoryFromHangar(
+        normalizeInventorySlots(player.inventorySlots),
+        normalizedHangar,
+      ),
     ),
     normalizedShip,
   );
@@ -391,6 +402,8 @@ interface PlayerState {
   spendCredits: (amount: number) => boolean;
   addCredits: (amount: number) => void;
   updateShip: (ship: PlayerShip) => void;
+  /** 전함 격침 — 생존포드 탑승·거점 귀환·격납고에서 파괴함 제거 */
+  applyCapitalShipDestruction: () => Promise<void>;
   /** 무역소 전함 인도분을 격납고에 추가 */
   addHangarShipFromNpcPurchase: (npcCapitalShipId: string) => boolean;
   /** 무역소 전함 아이템 판매 시 격납고 1척 회수 */
@@ -432,11 +445,18 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       shipId: templateId,
       ship: shipFromTemplate(templateId),
       // 신규 유저 디폴트 자동구매: 기본 전함 1척을 격납고/인벤에 지급
-      shipHangar: [{
-        id: `hg_boot_${now.toString(36)}`,
-        npcCapitalShipId: defaultNpcCapitalShipId,
-        acquiredAt: now,
-      }],
+      shipHangar: [
+        {
+          id: `hg_boot_${now.toString(36)}`,
+          npcCapitalShipId: defaultNpcCapitalShipId,
+          acquiredAt: now,
+        },
+        {
+          id: `hg_survival_${now.toString(36)}`,
+          npcCapitalShipId: SURVIVAL_POD_NPC_SHIP_ID,
+          acquiredAt: now,
+        },
+      ],
       // 기본 액티브 스킬(테스트): 신규 파일럿은 이중 사격을 기본 보유
       skills: [...DEFAULT_GRANTED_SKILL_IDS],
       stats: {
@@ -551,9 +571,18 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     set({ player: { ...player, ship } });
   },
 
+  applyCapitalShipDestruction: async () => {
+    const { player } = get();
+    if (!player) return;
+    const next = applyCapitalShipDestructionToPlayer(player);
+    set({ player: ensurePlayerHasDefaultShip(next) });
+    await get().persist();
+  },
+
   addHangarShipFromNpcPurchase: (npcCapitalShipId) => {
     const { player } = get();
     if (!player || !npcCapitalShipId) return false;
+    if (isSurvivalPodNpcShipId(npcCapitalShipId)) return false;
     if (!NPC_CAPITAL_SHIPS_FROM_CSV.some(s => s.id === npcCapitalShipId)) return false;
     if (player.shipHangar.length >= TEMP_MAX_HANGAR_SHIPS) return false;
     const id = `hg_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
@@ -574,6 +603,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   removeHangarShipByNpcId: (npcCapitalShipId) => {
     const { player } = get();
     if (!player || !npcCapitalShipId) return false;
+    if (isSurvivalPodNpcShipId(npcCapitalShipId)) return false;
     const idx = player.shipHangar.findIndex((h) => h.npcCapitalShipId === npcCapitalShipId);
     if (idx < 0) return false;
     const nextHangar = [...player.shipHangar];

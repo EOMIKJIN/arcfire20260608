@@ -92,7 +92,12 @@ function resolveMaxHullTierRankForZone(zoneIndex: number): number {
   const zone = Math.max(1, Math.min(20, Math.round(zoneIndex)));
   const leveling = getPlanetLevelingRowForZone(zone);
   const recommended = String(leveling.recommendedHullTierKey ?? 'frigate_default').trim();
-  if (recommended === 'battlecruiser_max') return hullTierRank('battlecruiser');
+  if (recommended === 'battlecruiser_max' || recommended === 'apex_legend') {
+    return hullTierRank('apex_legend');
+  }
+  if (recommended === 'dreadnought' || recommended === 'super_capital') {
+    return hullTierRank(recommended);
+  }
   return hullTierRank(recommended);
 }
 

@@ -86,6 +86,27 @@ export const PLANET_MAIN_SCROLL_CHROME_HEADROOM_PX = 380;
 /** 스크롤 하단 확장 예약(파일럿 아래 투명 블록) */
 export const PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX = 140;
 
+/** 스캔·게이지 블록 ↔ 무역소 메뉴 행 간격 */
+export const PLANET_MAIN_SCAN_MENU_GAP_PX = 5;
+
+/**
+ * 하단 도크 — 게이지(20) + 행간(4) + 액션 타일(52) + 스캔↔메뉴 간격(5)
+ * @see PlanetHubActionGaugeSlot · PlanetHubActionTile
+ */
+export const PLANET_MAIN_SCAN_ACTION_BLOCK_EST_PX = 81;
+
+/**
+ * 메뉴 행(52) + 헤더 간격(5) + 파일럿 헤더(44)
+ */
+export const PLANET_MAIN_BOTTOM_DOCK_BASE_PX = 101;
+
+/** 스캔 행 포함 하단 도크 전체 높이 추정 — `ScrollView` `paddingBottom` */
+export const PLANET_MAIN_BOTTOM_DOCK_WITH_SCAN_EST_PX =
+  PLANET_MAIN_BOTTOM_DOCK_BASE_PX + PLANET_MAIN_SCAN_ACTION_BLOCK_EST_PX;
+
+/** @deprecated 스캔 미포함 도크 — 전투 등 스캔 숨김 시 */
+export const PLANET_MAIN_BOTTOM_DOCK_EST_PX = PLANET_MAIN_BOTTOM_DOCK_BASE_PX;
+
 /**
  * 무역소·조선소 등 메뉴 행 + 파일럿 정보만 스크롤 안에서 아래로 내림.
  * 배경 `paddingBottom` / `backgroundChrome`과 무관 — 행성 위치를 바꾸지 않는다.

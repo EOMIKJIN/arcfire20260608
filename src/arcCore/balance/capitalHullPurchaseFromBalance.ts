@@ -10,13 +10,16 @@ import { getCanonicalNpcShipIdForHullTier } from './capitalShipTradeListingPolic
 /** hullTierKey → 대표 npc_ai_ships id (tradePortListed 우선) */
 const HULL_TIER_NPC_SHIP_ID: Record<string, string> = {
   frigate_default: 'Player_npc_red_fleet_1',
-  frigate_upgraded: 'npc_red_fleet_1',
-  destroyer: 'npc_vega_red_8',
-  destroyer_upgraded: 'npc_vega_red_12',
-  cruiser: 'npc_blue_fleet_6',
-  cruiser_upgraded: 'npc_red_fleet_2',
-  battlecruiser: 'npc_vega_red_9',
-  battlecruiser_max: 'npc_vega_red_12',
+  frigate_upgraded: 'Player_frigate_mk2',
+  destroyer: 'Player_destroyer_mk1',
+  destroyer_upgraded: 'Player_destroyer_mk2',
+  cruiser: 'Player_cruiser_mk1',
+  cruiser_upgraded: 'Player_cruiser_mk2',
+  battlecruiser: 'Player_battlecruiser_mk1',
+  battlecruiser_max: 'Player_battlecruiser_apex',
+  dreadnought: 'Player_dreadnought_mk1',
+  super_capital: 'Player_super_capital_mk1',
+  apex_legend: 'Player_apex_legend_mk1',
 };
 
 export function listCapitalHullPurchasePolicyRows() {

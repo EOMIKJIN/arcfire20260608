@@ -1,0 +1,2 @@
+weaponId,excludeFromTtkRebalance,pricingAoeHullFraction,pricingAoeTargetCount,pricingAoeBlendWeight,minPurchasePriceCredits,notesKo
+w_missile_nova_01,true,0.30,1.75,0.048,3600,노바 AoE(맥스HP 30%·궤도 25% 반경·감속) — 단일표적 TTK rebalance 제외·가격에 광역 반영

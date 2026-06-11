@@ -29,3 +29,8 @@ export type { MiningResumeSnapshot } from './miningResumeStore';
 
 export { useMiningDriver } from './useMiningDriver';
 export type { MiningGrant, UseMiningDriverOptions } from './useMiningDriver';
+
+export {
+  teardownPlanetHubMiningPresentation,
+} from './planetHubMiningLifecycle';
+export type { PlanetHubMiningTeardownReason } from './planetHubMiningLifecycle';

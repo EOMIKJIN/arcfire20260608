@@ -28,6 +28,29 @@ export function listPlanetWorldObjects(input: PlanetWorldObjectQueryInput): Worl
     orbitCount,
     fallbackAssigned,
   );
+  const wreck: WorldObject = {
+    id: `${input.planet.id}:wreck:1`,
+    kind: 'wreck',
+    planetId: input.planet.id,
+    systemId: input.system.id,
+    title: '잔해',
+    description: '궤도 표류 잔해 — 수색 시 회수품 획득 가능(기초)',
+    transform: {
+      orbitSlotIndex: 960,
+      radiusScale: 0.78,
+      phaseBias: 0.41,
+    },
+    interactions: [
+      { kind: 'salvage', enabled: true },
+      { kind: 'scan', enabled: true },
+    ],
+    state: {
+      depleted: false,
+      cooldownUntilMs: null,
+    },
+    tags: ['world_object', 'wreck', 'salvage_stub'],
+  };
+
   const asteroids: WorldObject[] = Array.from({ length: orbitCount }, (_, i) => {
     const n = i + 1;
     const mineralItemId = assignedMineralIds[i] ?? 'ore_ferrite';
@@ -62,6 +85,6 @@ export function listPlanetWorldObjects(input: PlanetWorldObjectQueryInput): Worl
     };
   });
 
-  return asteroids;
+  return [...asteroids, wreck];
 }
 

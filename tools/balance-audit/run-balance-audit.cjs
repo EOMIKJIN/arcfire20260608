@@ -93,6 +93,39 @@ check('player_level_exp.csv present', playerExp.length >= 10, `${playerExp.lengt
 check('dynamic_overlay.csv present', overlay.length >= 1, `${overlay.length} keys`);
 check('weapon_list.csv present', weapons.length >= 5, `${weapons.length} weapons`);
 
+const weaponPricePolicy = loadCsv(BALANCE_DIR, 'weapon_trade_base_price_policy.csv');
+const weaponPriceKv = Object.fromEntries(weaponPricePolicy.map((r) => [r.key, r.value]));
+check(
+  'weapon pricing_model integrated_leveling_v2',
+  weaponPriceKv.pricing_model === 'integrated_leveling_v2',
+  weaponPriceKv.pricing_model ?? 'missing',
+);
+check(
+  'arcCore weaponTradePricing entry',
+  fs.existsSync(path.join(ROOT, 'src/arcCore/economy/weaponTradePricing.ts')),
+  'src/arcCore/economy/weaponTradePricing.ts',
+);
+const tradeEngineSrc = fs.readFileSync(path.join(ROOT, 'src/engine/TradeEngine.ts'), 'utf8');
+check(
+  'TradeEngine imports arcCore weapon pricing',
+  tradeEngineSrc.includes('arcCore/economy/weaponTradePricing'),
+  'TradeEngine.ts',
+);
+for (const tbl of [
+  'weapon_combat_reference_policy.csv',
+  'weapon_family_ttk_balance_policy.csv',
+  'weapon_special_combat_balance_policy.csv',
+]) {
+  check(`weapon balance table ${tbl}`, fs.existsSync(path.join(BALANCE_DIR, tbl)), tbl);
+}
+const novaRow = weapons.find((w) => w.id === 'w_missile_nova_01');
+const stdRow = weapons.find((w) => w.id === 'w_missile_standard_01');
+if (novaRow && stdRow) {
+  const novaPrice = Number(novaRow['구매가'] ?? novaRow.purchasePrice);
+  const stdPrice = Number(stdRow['구매가'] ?? stdRow.purchasePrice);
+  check('nova purchasePrice > standard missile', novaPrice > stdPrice, `${novaPrice} vs ${stdPrice}`);
+}
+
 for (const w of weapons.slice(0, 200)) {
   const req = Number(w.requiredLevel);
   if (!Number.isFinite(req)) continue;

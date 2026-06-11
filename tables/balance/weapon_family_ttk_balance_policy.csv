@@ -1,0 +1,6 @@
+familyKind,targetDpsVsLaser,cycleTimeScale,minCooldownMs,maxCooldownMs,notesKo
+laser,1.0,1.0,120,3000,기준 — 레이저 TTK 앵커(D&D3 풀액션 대비 반복 타격)
+missile,1.0,0.48,2400,7200,이상 거리·시스템 조건 충족 시 레이저와 유사 격파시간
+rocket,0.87,0.55,1800,6500,단거리 특화 — 시간대비 약 13% 저효율
+drone,1.12,0.46,2200,7000,특수 무기 — 소폭 고효율
+carrier,1.12,0.46,2200,7000,특수 무기 — 소폭 고효율

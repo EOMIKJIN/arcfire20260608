@@ -1,11 +1,21 @@
 ﻿key,value,notesKo
-policy_version,3,무역소 무기 — integrated_leveling_v2(성능×수요×일일오버레이)
-pricing_model,integrated_leveling_v2,integratedWeaponTradePricing.ts · DPS·사거리 연속 스케일
+policy_version,4,무역소 무기 — integrated_leveling_v2(TTK×특수×수요×일일오버레이)
+pricing_model,integrated_leveling_v2,arcCore/economy/weaponTradePricing.ts 단일 진입
+pricing_impl_module,src/economy/integratedWeaponTradePricing.ts,구현체(존 예산×TTK DPS×특수정책)
+pricing_ttk_reference_table,weapon_combat_reference_policy.csv,D&D3 참조 적·함선
+pricing_family_ttk_table,weapon_family_ttk_balance_policy.csv,레이저·미사일·로켓·드론 TTK
+pricing_special_weapon_table,weapon_special_combat_balance_policy.csv,노바 AoE 등 예외·가격하한
+pricing_content_stats_table,weapon_list.csv,무기 스탯·구매가(일반 하한)
+pricing_build_chain,build:balance-tables+build:content-tables,정책 TS·weapon_list rebalance 동기
 min_price_credits,800,최저가(초반 T1)
 max_price_credits,12000000,최고가(코스믹 Lv.60)
 catalog_stock_min,1,카탈로그 재고 하한
 catalog_stock_max,60,카탈로그 재고 상한
 trade_port_capital_listing_count,10,행성 무역소 전함 판매 종류 수(등급 대표·재고와 무관)
+trade_port_weapon_listing_count,20,행성당 진열 상한(기본 pinned 8 + progression 밴드)
+trade_port_weapon_min_per_planet,4,행성 무역소 무기 최소 진열 종류(성능 밴드 내)
+trade_port_weapon_zone_overlap,1,인접 zone 레벨 밴드 겹침(2~3행성 이동 시 동일 무기 재등장)
+trade_port_weapon_exclude_rule,vmock_wave_only,제외=vmock·wave NPC슬롯복제만(기본_01·arc·NPC기본무장 판매)
 capital_ship_stock_min,10,전함 SKU 재고 하한(종류당 수량)
 capital_ship_stock_max,15,전함 SKU 재고 상한(종류당 수량·결정론 RNG)
 legacy_damage_formula_retired,v1,구 Price=Base×Damage^Exp 공식은 v2에서 폐기

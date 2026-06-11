@@ -22,11 +22,13 @@ import {
   getTradePortWeaponModuleRequiredLevel,
 } from '../../world/planetTradePortDb';
 import { listCapitalShipItemIdsForPlanet } from './tradePortCapitalShipPolicy';
+import { listWeaponModuleItemIdsForPlanet } from './tradePortWeaponPolicy';
 import { getCapitalHullPurchaseRow } from './balanceTableRegistry';
 import {
   isCanonicalTradePortCapitalShip,
   resolveHullTierKeyForTradeCatalogShip,
 } from './capitalShipTradeListingPolicy';
+import { isCanonicalTradePortWeapon } from './weaponTradeListingPolicy';
 
 function parseNum(raw: string | number | undefined, fallback = 0): number {
   const n = typeof raw === 'number' ? raw : Number(raw);
@@ -191,7 +193,7 @@ export function resolveTradePortCatalogItemIds(planetId: string): string[] {
   const parts = [
     ...listTradeRoutePlayerBuyItemIds(planetId),
     ...listZoneTradeableMineralIds(zoneIndex),
-    ...listWeaponModuleItemIdsForPlanetZone(recommendedPilotLevel, recommendedWeaponTierKey),
+    ...listWeaponModuleItemIdsForPlanet(planetId),
     ...listShipEquipmentItemIdsForPlanetZone(recommendedPilotLevel, recommendedWeaponTierKey),
     ...listCapitalShipItemIdsForPlanet(planetId),
     ...globalTradePortItemIds,
@@ -212,6 +214,8 @@ export function isTradePortItemPurchasableByPlayer(itemId: string, playerLevel: 
   const lv = Math.max(1, Math.floor(playerLevel));
 
   if (def.type === 'weapon_module') {
+    const weaponId = String(def.attrs?.weaponId ?? '').trim();
+    if (!weaponId || !isCanonicalTradePortWeapon(weaponId)) return false;
     const req = getTradePortWeaponModuleRequiredLevel(itemId);
     return req != null && req <= lv;
   }
@@ -235,6 +239,25 @@ export function isTradePortItemPurchasableByPlayer(itemId: string, playerLevel: 
 /** UI·시장 — 행성 진열 ∩ 플레이어 구매 가능 */
 export function filterTradePortCatalogForPlayer(itemIds: readonly string[], playerLevel: number): string[] {
   return itemIds.filter((id) => isTradePortItemPurchasableByPlayer(id, playerLevel));
+}
+
+/**
+ * 구매 탭 진열 — 무기는 행성 카탈로그 전부 표시(레벨 미달은 구매 시 차단).
+ * 전함·장비 등은 기존처럼 플레이어 레벨로 진열 필터.
+ */
+export function filterTradePortCatalogForBuyMarket(
+  itemIds: readonly string[],
+  playerLevel: number,
+): string[] {
+  return itemIds.filter((id) => {
+    const def = getItemDef(id);
+    if (!def?.tradeable) return false;
+    if (def.type === 'weapon_module') {
+      const weaponId = String(def.attrs?.weaponId ?? '').trim();
+      return Boolean(weaponId && isCanonicalTradePortWeapon(weaponId));
+    }
+    return isTradePortItemPurchasableByPlayer(id, playerLevel);
+  });
 }
 
 let lastSyncSignature = '';

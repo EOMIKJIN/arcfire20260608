@@ -1,9 +1,9 @@
 ﻿sceneId,pageIndex,label,text,imageAssetKey,speakerNpcCaptainId,viewMode,textBoxPreset,imageScalePct
-intro01,0,[ 서기 2847년 ],인류는 은하계 전역으로 퍼져나갔다.\n\n수백 개의 성계 수천 개의 행성.\n그리고 끝없는 전쟁과 무역의 역사.,,,cinematic,default,100
-intro01,1,[ 아크파이어 은하 ],"이 은하의 중심에는 ""아크코어"" 가 있다.\n\n이전의 기술문명이 남긴 신비로운 존재.\n이것을 차지하려는 자들의 싸움이 지금도 계속된다.",,,cinematic,default,100
-intro01,2,[ 그리고 당신 ],당신이 지금 이곳에 있는 이유.\n무명의 파일럿.\n\n영원한 의문이다.\n하지만 지금은 오직 앞으로 나아가야 한다.,,,cinematic,default,100
-intro01,3,[ 아르카디아 행성 격납고 ],삐익— 통신이 들어온다.\n\n파일럿. 아르카디아 행성에서 임무가 내려왔습니다.\n베가 전초기지의 지휘관이\n당신을 찾고 있습니다.,,,cinematic,default,100
-intro01,4,[ 출발 준비 완료 ],엔진에 불이 들어온다.\n\n이것이 당신의 첫 번째 임무다.\n\n그리고 전설의 시작이다.,,,cinematic,default,100
+intro01,0,[ 서기 2847년 ],"인류는 인공지능 아크코어를 완성한 이후,\n마침내 찬란한 번영과 발전을 이루었다.\n\n",,,cinematic,default,100
+intro01,1,[ 인류 ],"하지만, 인간의 원초적인 갈등과 시기심은\n기껏 이뤄놓은 질서를 무너뜨리고,\n파괴와 폭력을 이어갔다.\n\n",,,cinematic,default,100
+intro01,2,[ 비밀 ],인류를 위해 봉사하던 아크코어는\n스스로의 인류에게서 떨어져 나갔다.\n은하계 저멀리 깊숙히 숨어버린 아크코어는\n\n,,,cinematic,default,100
+intro01,3,[ 카오스 ],"이제 우리 모두에게 두려움의 대상이 되었다.\n지금 여기가 어디인지,\n정확히 어디를 향해 가는지는 아무도 모른다.\n\n",,,cinematic,default,100
+intro01,4,[ 운명 ],"하지만, 명심하자 우리에겐,\n그 어디에도 안전한 곳은 없다는 것을…\n\n",,,cinematic,default,100
 ingame_dialog_01,0,[ 안내 오퍼레이터 ],환영합니다. [닉네임]님.\n\n아르카디아에 무사히 도착하셨습니다.\n먼저 이곳에서 채굴방법을 알려드리겠습니다.\n먼저 스캔을 클릭하세요.\n\n스캔이 완료되면 채굴 버튼이 활성화 됩니다.\n채굴된 광물은 무역소에서 판매가능합니다.\n행운을 빌겠습니다.,,npc_cpt_operator_stella,ingame_dialog,compact,100
 ingame_dialog_wave_defense_end,0,[ 안내 오퍼레이터 ],[닉네임]님. 전투가 종료되었습니다.\n\n다시 정비한 뒤 다음 침공에 대비해 주십시오.,,npc_cpt_operator_stella,ingame_dialog,compact,100
 npc_dialog_default,0,[ 함장 ],반갑습니다 [닉네임]님.\n\n현재 이 행성에 잠시 정박 중입니다.\n특별한 용건은 아직 없습니다.\n다음 기회에 다시 들러 주십시오.,,,ingame_dialog,compact,100
