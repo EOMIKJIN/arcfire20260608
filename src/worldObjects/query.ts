@@ -1,9 +1,6 @@
-import {
-  resolvePlanetAsteroidAssignedMineralIds,
-  resolvePlanetAsteroidOrbitCount,
-} from '../world/mineralDepositModel';
-import { useWorldObjectRuntimeStore } from '../store/worldObjectRuntimeStore';
-import type { WorldObject } from './types';
+import { memoizePerPlanetSystem } from '../game/planetMemoCache';
+import { listPlanetWorldObjectsFromProviders } from './providers/registry';
+import type { WorldObject, WorldObjectKind } from './types';
 
 type PlanetLike = { id: string; name?: string };
 type SystemLike = { id: string };
@@ -14,77 +11,54 @@ export interface PlanetWorldObjectQueryInput {
   nowMs?: number;
 }
 
-/**
- * 월드오브젝트 공통 조회 진입점.
- * 현재는 소행성 골격만 생성하며, 추후 CSV/DB 기반 객체(기지/잔해물)를 여기에 합류시킨다.
- */
-export function listPlanetWorldObjects(input: PlanetWorldObjectQueryInput): WorldObject[] {
-  const fallbackOrbitCount = resolvePlanetAsteroidOrbitCount(input.planet.id);
-  const runtime = useWorldObjectRuntimeStore.getState();
-  const orbitCount = runtime.getAsteroidOrbitCount(input.planet.id, fallbackOrbitCount);
-  const fallbackAssigned = resolvePlanetAsteroidAssignedMineralIds(input.planet.id, orbitCount);
-  const assignedMineralIds = runtime.getAsteroidAssignedMineralItemIds(
-    input.planet.id,
-    orbitCount,
-    fallbackAssigned,
-  );
-  const wreck: WorldObject = {
-    id: `${input.planet.id}:wreck:1`,
-    kind: 'wreck',
-    planetId: input.planet.id,
-    systemId: input.system.id,
-    title: '잔해',
-    description: '궤도 표류 잔해 — 수색 시 회수품 획득 가능(기초)',
-    transform: {
-      orbitSlotIndex: 960,
-      radiusScale: 0.78,
-      phaseBias: 0.41,
-    },
-    interactions: [
-      { kind: 'salvage', enabled: true },
-      { kind: 'scan', enabled: true },
-    ],
-    state: {
-      depleted: false,
-      cooldownUntilMs: null,
-    },
-    tags: ['world_object', 'wreck', 'salvage_stub'],
-  };
+const listPlanetWorldObjectsMemo = memoizePerPlanetSystem(
+  'planet_world_objects_v2',
+  (planetId: string, systemId: string) =>
+    listPlanetWorldObjectsFromProviders({ planetId, systemId }),
+);
 
-  const asteroids: WorldObject[] = Array.from({ length: orbitCount }, (_, i) => {
-    const n = i + 1;
-    const mineralItemId = assignedMineralIds[i] ?? 'ore_ferrite';
-    return {
-      id: `${input.planet.id}:asteroid:${n}`,
-      kind: 'asteroid',
-      planetId: input.planet.id,
-      systemId: input.system.id,
-      mineralItemId,
-      title: `소행성 ${n}`,
-      description: `채광 가능 · 표시 광물(참고): ${mineralItemId}`,
-      transform: {
-        orbitSlotIndex: i,
-        radiusScale: 0.58 + i * 0.035,
-        phaseBias: (i * 0.13) % 1,
-      },
-      interactions: [
-        {
-          kind: 'mining',
-          enabled: true,
-        },
-        {
-          kind: 'scan',
-          enabled: true,
-        },
-      ],
-      state: {
-        depleted: false,
-        cooldownUntilMs: null,
-      },
-      tags: ['world_object', 'asteroid'],
-    };
-  });
-
-  return [...asteroids, wreck];
+function uncachedListPlanetWorldObjects(
+  planetId: string,
+  systemId: string,
+): WorldObject[] {
+  return listPlanetWorldObjectsFromProviders({ planetId, systemId });
 }
 
+/**
+ * 월드오브젝트 공통 조회 진입점.
+ * 종류별 소스는 `providers/registry` — 행성·성계 키 메모 캐시.
+ */
+export function listPlanetWorldObjects(input: PlanetWorldObjectQueryInput): WorldObject[] {
+  return listPlanetWorldObjectsMemo(input.planet.id, input.system.id);
+}
+
+export function listPlanetWorldObjectsByPlanetSystem(
+  planetId: string,
+  systemId: string,
+): WorldObject[] {
+  return listPlanetWorldObjectsMemo(planetId, systemId);
+}
+
+export function listPlanetWorldObjectsByKind(
+  planetId: string,
+  systemId: string,
+  kind: WorldObjectKind,
+): WorldObject[] {
+  return listPlanetWorldObjectsMemo(planetId, systemId).filter((o) => o.kind === kind);
+}
+
+export function getPlanetWorldObject(
+  planetId: string,
+  systemId: string,
+  objectId: string,
+): WorldObject | undefined {
+  return listPlanetWorldObjectsMemo(planetId, systemId).find((o) => o.id === objectId);
+}
+
+/** 메모 우회 — 아크코어·디버그용(일반 UI는 memo 경로 사용) */
+export function listPlanetWorldObjectsUncached(
+  planetId: string,
+  systemId: string,
+): WorldObject[] {
+  return uncachedListPlanetWorldObjects(planetId, systemId);
+}

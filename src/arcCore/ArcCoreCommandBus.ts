@@ -1,3 +1,5 @@
+import type { ArcCoreInboundTrajectoryPattern } from './message/arcCoreInboundTrajectoryPattern';
+
 // ============================================================
 // 아크코어 런타임 명령 — 리빌드 없이 JS 번들만 갱신되면 즉시 반영
 // 구독자(서브코어 등)는 `subscribeArcCoreCommands` 로 등록
@@ -66,6 +68,46 @@ export type ArcCoreCommand =
       type: 'economy_transport_dwell_settled';
       shipId: string;
       planetId: string;
+      meta?: ArcCoreCommandMeta;
+    }
+  /** 아크코어 메시지 — 장거리 미사일 경고(공격 2분 전) */
+  | {
+      type: 'arc_core_message_missile_warning';
+      planetId: string;
+      messageKo: string;
+      warningDurationSec: number;
+      strikeEtaSec: number;
+      meta?: ArcCoreCommandMeta;
+    }
+  /** 아크코어 메시지 — 장거리 미사일 궤도 통과(비명중) */
+  | {
+      type: 'arc_core_message_missile_inbound';
+      planetId: string;
+      messageKo: string;
+      travelMs: number;
+      /** 미지정 시 베지어 기하로 선판정(top_miss|center_strike|bottom_miss) */
+      trajectoryPattern?: ArcCoreInboundTrajectoryPattern;
+      meta?: ArcCoreCommandMeta;
+    }
+  /** 아크코어 메시지 — 근접 비명중 완료(행성 파라미터 패스 트리거) */
+  | {
+      type: 'arc_core_message_missile_near_miss';
+      planetId: string;
+      messageKo: string;
+      defenseLevel?: number;
+      interceptChancePct?: number;
+      interceptRollFailed?: boolean;
+      meta?: ArcCoreCommandMeta;
+    }
+  /** 아크코어 메시지 — 방위위성 요격 성공 */
+  | {
+      type: 'arc_core_message_missile_intercepted';
+      planetId: string;
+      messageKo: string;
+      weaponId?: string;
+      satelliteCount?: number;
+      defenseLevel?: number;
+      interceptChancePct?: number;
       meta?: ArcCoreCommandMeta;
     };
 

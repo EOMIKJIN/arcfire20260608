@@ -1,7 +1,5 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Animated,
-  Easing,
   StyleSheet,
   View,
 } from 'react-native';
@@ -61,7 +59,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
   const [scanPhase, setScanPhase] = useState<PlanetScanPhase>(actionsUnlockedProp ? 'complete' : 'idle');
   const [gaugeKind, setGaugeKind] = useState<PlanetHubGaugeActivityKind | null>(null);
   const [progressPct, setProgressPct] = useState(0);
-  const revealOpacity = useRef(new Animated.Value(actionsUnlockedProp ? 1 : 0.35)).current;
+  const prevPlanetIdRef = useRef<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const completeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -82,15 +80,20 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
   useEffect(() => {
     if (actionsUnlockedProp) {
       setScanPhase('complete');
-      revealOpacity.setValue(1);
-      return;
     }
+  }, [actionsUnlockedProp]);
+
+  /** 최초 마운트가 아닌 행성 전환 시에만 잠금으로 초기화 */
+  useEffect(() => {
+    if (prevPlanetIdRef.current === planetId) return;
+    const isPlanetChange = prevPlanetIdRef.current !== null;
+    prevPlanetIdRef.current = planetId;
+    if (!isPlanetChange) return;
     setScanPhase('idle');
     setGaugeKind(null);
     setProgressPct(0);
-    revealOpacity.setValue(0.35);
     clearGaugeTimers();
-  }, [planetId, actionsUnlockedProp, clearGaugeTimers, revealOpacity]);
+  }, [planetId, clearGaugeTimers]);
 
   useEffect(() => {
     if (!planetId) return undefined;
@@ -101,15 +104,6 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
     });
     return () => token.release();
   }, [planetId, clearGaugeTimers]);
-
-  const runRevealAnimation = useCallback(() => {
-    Animated.timing(revealOpacity, {
-      toValue: 1,
-      duration: 480,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-  }, [revealOpacity]);
 
   const startGaugeActivity = useCallback((
     kind: PlanetHubGaugeActivityKind,
@@ -137,7 +131,6 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
     if (!scanEnabled || actionsUnlocked || gaugeActive) return;
     startGaugeActivity('scan', randomDurationMs(SCAN_DURATION_MIN_MS, SCAN_DURATION_MAX_MS), () => {
       setScanPhase('complete');
-      runRevealAnimation();
       onScanComplete?.();
     });
   }, [
@@ -145,7 +138,6 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
     actionsUnlocked,
     gaugeActive,
     startGaugeActivity,
-    runRevealAnimation,
     onScanComplete,
   ]);
 
@@ -192,7 +184,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
             active={gaugeKind === 'scan'}
           />
         </View>
-        <Animated.View style={[styles.secondaryGroup, { opacity: revealOpacity }]}>
+        <View style={styles.secondaryGroup}>
           <View style={styles.tileSlot}>
             <PlanetHubActionTile
               label={miningLabel}
@@ -200,7 +192,6 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
               onPress={handlePressMining}
               disabled={secondaryDisabled || miningDisabled}
               primary={miningPrimary}
-              dimmed={!actionsUnlocked}
             />
           </View>
           <View style={styles.tileSlot}>
@@ -209,7 +200,6 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
               icon="💬"
               onPress={handlePressDialog}
               disabled={secondaryDisabled || dialogDisabled}
-              dimmed={!actionsUnlocked}
             />
           </View>
           <View style={styles.tileSlot}>
@@ -218,11 +208,10 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
               icon="🔍"
               onPress={handlePressSearch}
               disabled={secondaryDisabled || searchDisabled}
-              dimmed={!actionsUnlocked}
               active={gaugeKind === 'search'}
             />
           </View>
-        </Animated.View>
+        </View>
       </View>
     </View>
   );

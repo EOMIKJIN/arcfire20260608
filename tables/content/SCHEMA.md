@@ -51,6 +51,7 @@
 - `topViewImageAssetKey` string (선택) — 전투 탑뷰 스프라이트(예: `assets/images/ship/ship_top_001.png`). `build-content-from-csv`·궤도 전투 렌더가 우선 참조한다.
 - `tradePortListed` bool — `true`이면 `item_defs`에 `capital_ship_<id>`가 병합되고, 무역소(`hasTradePort`) 진열에 포함된다. 플레이어 기함(`Player_` id) 등 무역 비노출은 `false`.
 - `strStat`, `dexStat`, `sizeClass`, `expReward` — 전투 스탯·보상
+- `capitalShipArchetype` enum: `fighter|ranger|survival|special|neutral` — D&D3 스타일 구분(격투 STR·중장갑 vs 정찰 DEX·경장갑). 플레이어 전함 필수; NPC 기본 `neutral`
 - `combatLevel`, `proficiencyMultiplier` — NPC 전투 등급·숙련 배율(`ShipPerformanceCalculator` 입력)
 - `size` int (2~5) — 전투 탑뷰 스케일 등급(`combatVisualSize`, 3=100%)
 - 수송선 다음 행성: 월드에 등록된 **전 행성**에서 균등 선택(아크코어 `AiNpcSubCore`)

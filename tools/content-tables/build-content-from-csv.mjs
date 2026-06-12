@@ -115,6 +115,14 @@ function toNumOptional(v) {
 function toBool(v) {
   return String(v ?? '').trim().toLowerCase() === 'true';
 }
+
+const CAPITAL_SHIP_ARCHETYPES = new Set(['fighter', 'ranger', 'survival', 'special', 'neutral']);
+
+function normalizeCapitalShipArchetype(v) {
+  const s = String(v ?? '').trim().toLowerCase();
+  return CAPITAL_SHIP_ARCHETYPES.has(s) ? s : 'neutral';
+}
+
 /** CSV 1/0, true/false, 비어 있음(기본값) */
 function toLayerBoolWithDefault(v, whenEmpty) {
   const s = String(v ?? '').trim().toLowerCase();
@@ -328,6 +336,7 @@ function buildNpcShips() {
       strStat: ${toInt(r.strStat, Math.min(24, Math.max(6, Math.round(toInt(r.maxHp, 300) / 10))))},
       dexStat: ${toInt(r.dexStat, Math.min(24, Math.max(6, Math.round(toNum(r.maxMoveSpeedPxPerMs, 0.02) * 1000))))},
       sizeClass: ${toInt(r.sizeClass, 0)},
+      capitalShipArchetype: ${q(normalizeCapitalShipArchetype(r.capitalShipArchetype))},
     },
     ${r.infoLineSuffix && String(r.infoLineSuffix).trim() ? `infoLineSuffix: ${q(String(r.infoLineSuffix).trim())},` : ''}
     arcTrafficDwellRadPerSec: ${toNum(r.arcTrafficDwellRadPerSec, 0.46)},

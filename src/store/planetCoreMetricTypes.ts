@@ -13,6 +13,24 @@ export type PlanetDevelopmentDetail = {
   version?: number;
 };
 
+/** 아크코어 메시지(장거리 미사일) 이력 — 전략·피해·요격 연동 */
+export type PlanetArcCoreMessageDetail = {
+  version: 1;
+  nearMissCount: number;
+  lastNearMissAtMs?: number;
+  interceptCount?: number;
+  lastInterceptAtMs?: number;
+  lastMessageKo?: string;
+};
+
+/** 행성 방위위성 — 플레이어 업그레이드 레벨(런타임 정본) */
+export type PlanetDefenseSatelliteDetail = {
+  version: 1;
+  /** 1..10 — `planet_defense_satellite_level_policy.csv` */
+  level: number;
+  updatedAtMs?: number;
+};
+
 /** 아크코어 마스터 밸런스(`planet_leveling_progression.csv`) — 런타임 동적 보정 메타 */
 export type PlanetMasterBalanceDetail = {
   version: 1;
@@ -49,4 +67,6 @@ export type PlanetCoreMetricsDetail = {
   resource?: PlanetResourceDetail;
   development?: PlanetDevelopmentDetail;
   masterBalance?: PlanetMasterBalanceDetail;
+  arcCoreMessage?: PlanetArcCoreMessageDetail;
+  defenseSatellite?: PlanetDefenseSatelliteDetail;
 };

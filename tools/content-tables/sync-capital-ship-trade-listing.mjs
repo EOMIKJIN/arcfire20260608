@@ -83,12 +83,14 @@ if (!existsSync(POLICY_CSV)) {
 
 const policyRows = parseCsv(readFileSync(POLICY_CSV, 'utf8').trim());
 const policyHdr = policyRows[0];
-const canonicalIds = new Set(
-  policyRows.slice(1).map((cols) => {
-    const row = Object.fromEntries(policyHdr.map((h, i) => [h, cols[i] ?? '']));
-    return String(row.canonicalNpcShipId).trim();
-  }),
-);
+const canonicalIds = new Set();
+for (const cols of policyRows.slice(1)) {
+  const row = Object.fromEntries(policyHdr.map((h, i) => [h, cols[i] ?? '']));
+  const primary = String(row.canonicalNpcShipId ?? '').trim();
+  const alternate = String(row.alternateNpcShipId ?? '').trim();
+  if (primary) canonicalIds.add(primary);
+  if (alternate) canonicalIds.add(alternate);
+}
 
 const shipRows = parseCsv(readFileSync(SHIPS_CSV, 'utf8').trim());
 const shipHdr = shipRows[0];
@@ -113,5 +115,6 @@ for (const cols of shipRows.slice(1)) {
   out.push(next);
 }
 
-writeFileSync(SHIPS_CSV, rowsToCsv(out), 'utf8');
+const UTF8_BOM = '\uFEFF';
+writeFileSync(SHIPS_CSV, UTF8_BOM + rowsToCsv(out), 'utf8');
 console.log(`tradePortListed sync: canonical=${canonicalIds.size} TRUE=${setTrue} demoted=${setFalse}`);

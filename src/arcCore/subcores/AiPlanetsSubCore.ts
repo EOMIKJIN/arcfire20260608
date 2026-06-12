@@ -1,4 +1,7 @@
 import { BaseArcSubCore } from './BaseArcSubCore';
+import { subscribeArcCoreCommands, type ArcCoreCommand } from '../ArcCoreCommandBus';
+import { runArcCoreMessageNearMissPlanetPass } from '../message/runArcCoreMessageNearMissPlanetPass';
+import { runArcCoreMessageInterceptPlanetPass } from '../message/runArcCoreMessageInterceptPlanetPass';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 
 /**
@@ -10,11 +13,29 @@ import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
  * - 행성 허브 **원형 초상**은 `planetCorePortrait`가 5지표 구독으로 재합성.
  */
 export class AiPlanetsSubCore extends BaseArcSubCore {
+  private unsubCommands: (() => void) | null = null;
+
   constructor() {
     super('ai_planets_subcore', 'AI Planets 서브코어');
   }
 
   override onBoot(): void {
     void usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync();
+    this.unsubCommands = subscribeArcCoreCommands((cmd) => this.onArcCoreCommand(cmd));
+  }
+
+  override onShutdown(): void {
+    this.unsubCommands?.();
+    this.unsubCommands = null;
+  }
+
+  private onArcCoreCommand(cmd: ArcCoreCommand): void {
+    if (cmd.type === 'arc_core_message_missile_near_miss') {
+      runArcCoreMessageNearMissPlanetPass(cmd.planetId, cmd.messageKo);
+      return;
+    }
+    if (cmd.type === 'arc_core_message_missile_intercepted') {
+      runArcCoreMessageInterceptPlanetPass(cmd.planetId, cmd.messageKo);
+    }
   }
 }

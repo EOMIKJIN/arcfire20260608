@@ -8,6 +8,7 @@ import { ArcPlanetNebulaSubCore } from './ArcPlanetNebulaSubCore';
 import { WorldExpansionSubCore } from './WorldExpansionSubCore';
 import { AiAabsSubCore } from './AiAabsSubCore';
 import { ArcCoreDailyOpsSubCore } from './ArcCoreDailyOpsSubCore';
+import { ArcCoreMessageSubCore } from './ArcCoreMessageSubCore';
 
 /**
  * 기본 서브코어 세트 등록.
@@ -15,6 +16,7 @@ import { ArcCoreDailyOpsSubCore } from './ArcCoreDailyOpsSubCore';
  */
 export function registerDefaultArcSubCores(hub: ArcCoreHub): void {
   hub.registerSubCore(new ArcCoreDailyOpsSubCore());
+  hub.registerSubCore(new ArcCoreMessageSubCore());
   hub.registerSubCore(new AiAabsSubCore());
   hub.registerSubCore(new AiNpcSubCore());
   hub.registerSubCore(new AiPlanetsSubCore());

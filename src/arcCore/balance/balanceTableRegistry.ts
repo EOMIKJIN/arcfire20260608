@@ -245,7 +245,23 @@ export function getWeaponCatalogStockBounds(): { min: number; max: number } {
 
 export function getTradePortCapitalListingCount(): number {
   const kv = getWeaponTradePolicyKv();
-  return Math.max(1, Math.floor(parseNum(kv.get('trade_port_capital_listing_count'), 10)));
+  return Math.max(1, Math.floor(parseNum(kv.get('trade_port_capital_listing_count'), 12)));
+}
+
+/** 행성당 전함 SKU 최소 척수(등급 그룹 펼침 후) */
+export function getTradePortCapitalMinPerPlanet(): number {
+  const kv = getWeaponTradePolicyKv();
+  return Math.max(4, Math.floor(parseNum(kv.get('trade_port_capital_min_per_planet'), 4)));
+}
+
+/** 인접 zone 파일럿 레벨 밴드 겹침 — 무기와 동일 축(행성 독점 방지) */
+export function getTradePortCapitalZoneOverlap(): number {
+  const kv = getWeaponTradePolicyKv();
+  const dedicated = parseNum(kv.get('trade_port_capital_zone_overlap'), Number.NaN);
+  if (Number.isFinite(dedicated)) {
+    return Math.max(0, Math.floor(dedicated));
+  }
+  return getTradePortWeaponZoneOverlap();
 }
 
 export function getTradePortWeaponListingCount(): number {

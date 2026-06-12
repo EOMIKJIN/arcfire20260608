@@ -110,7 +110,10 @@ interface PlanetCoreRuntimeState {
   persistPlanetCoreRuntime: () => Promise<void>;
   resetLocalPlanetCoreRuntime: () => Promise<void>;
   getPlanetCoreRuntime: (planetId: string) => PlanetCoreRuntime | undefined;
-  patchPlanetCore: (planetId: string, patch: Partial<PlanetCoreGaugeView>) => void;
+  patchPlanetCore: (
+    planetId: string,
+    patch: Partial<PlanetCoreGaugeView> & { detail?: PlanetCoreRuntime['detail'] },
+  ) => void;
   /** 여러 행성 5지표를 한 번에 갱신 후 디스크 1회 저장 */
   patchPlanetCoresBulk: (updates: Record<string, PlanetCoreGaugeView>) => void;
   /** 마스터 밸런스 패스 — 5지표 + detail.masterBalance 일괄 갱신 */
@@ -210,7 +213,7 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
       technology: clamp100(patch.technology ?? prev.technology),
       environment: clamp100(patch.environment ?? prev.environment),
       updatedAt: Date.now(),
-      detail: prev.detail,
+      detail: patch.detail ?? prev.detail,
     };
     set({ byPlanetId: { ...get().byPlanetId, [planetId]: merged } });
     void get().persistPlanetCoreRuntime();

@@ -65,6 +65,51 @@ export class ArcNewsBoardSubCore extends BaseArcSubCore {
       );
       return;
     }
+    if (cmd.type === 'arc_core_message_missile_warning') {
+      this.pushNotice(
+        'Missile 공습경고',
+        `아크코어 장거리 미사일이 ${cmd.strikeEtaSec}초 내 접근합니다. (행성 ${cmd.planetId})`,
+        '작전',
+        `arc_core_msg_warn_${cmd.planetId}_${Date.now()}`,
+      );
+      return;
+    }
+    if (cmd.type === 'arc_core_message_missile_inbound') {
+      this.pushNotice(
+        '아크코어 메시지 미사일',
+        cmd.messageKo,
+        '아크코어',
+        `arc_core_msg_inbound_${cmd.planetId}_${Date.now()}`,
+      );
+      return;
+    }
+    if (cmd.type === 'arc_core_message_missile_near_miss') {
+      const body = cmd.interceptRollFailed && cmd.defenseLevel != null && cmd.interceptChancePct != null
+        ? `${cmd.messageKo} (방위위성 Lv.${cmd.defenseLevel} · 요격확률 ${cmd.interceptChancePct}% — 요격 실패, 행성 스침)`
+        : `${cmd.messageKo} (방어위성 미배치 — 행성 스침)`;
+      this.pushNotice(
+        '아크코어 메시지 — 근접 비명중',
+        body,
+        '아크코어',
+        `arc_core_msg_near_miss_${cmd.planetId}_${Date.now()}`,
+      );
+      return;
+    }
+    if (cmd.type === 'arc_core_message_missile_intercepted') {
+      const levelLabel = cmd.defenseLevel != null ? ` Lv.${cmd.defenseLevel}` : '';
+      const chanceLabel = cmd.interceptChancePct != null ? ` · 요격확률 ${cmd.interceptChancePct}%` : '';
+      const weaponLabel = cmd.weaponId ? ` · ${cmd.weaponId}` : '';
+      const satLabel = cmd.satelliteCount && cmd.satelliteCount > 0
+        ? `방위위성 ${cmd.satelliteCount}기${levelLabel}`
+        : `방위위성${levelLabel}`;
+      this.pushNotice(
+        '방위위성 — 요격 성공',
+        `${satLabel}이(가) 아크코어 장거리 미사일을 요격했습니다.${chanceLabel}${weaponLabel}`,
+        '작전',
+        `arc_core_msg_intercept_${cmd.planetId}_${Date.now()}`,
+      );
+      return;
+    }
     if (cmd.type === 'economy_trade_port_bulk') {
       const scopeLabel =
         cmd.scope.kind === 'all_trade_ports'

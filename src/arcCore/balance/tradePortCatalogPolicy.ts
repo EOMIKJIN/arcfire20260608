@@ -242,8 +242,8 @@ export function filterTradePortCatalogForPlayer(itemIds: readonly string[], play
 }
 
 /**
- * 구매 탭 진열 — 무기는 행성 카탈로그 전부 표시(레벨 미달은 구매 시 차단).
- * 전함·장비 등은 기존처럼 플레이어 레벨로 진열 필터.
+ * 구매 탭 진열 — 무기·전함은 행성 카탈로그 전부 표시(레벨 미달은 구매 시 차단).
+ * 장비 등만 플레이어 레벨로 진열 필터.
  */
 export function filterTradePortCatalogForBuyMarket(
   itemIds: readonly string[],
@@ -255,6 +255,10 @@ export function filterTradePortCatalogForBuyMarket(
     if (def.type === 'weapon_module') {
       const weaponId = String(def.attrs?.weaponId ?? '').trim();
       return Boolean(weaponId && isCanonicalTradePortWeapon(weaponId));
+    }
+    if (def.type === 'capital_ship') {
+      const npcId = String(def.attrs?.npcCapitalShipId ?? '').trim();
+      return Boolean(npcId && isCanonicalTradePortCapitalShip(npcId));
     }
     return isTradePortItemPurchasableByPlayer(id, playerLevel);
   });

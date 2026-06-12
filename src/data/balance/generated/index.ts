@@ -14,6 +14,8 @@ export { MiningMineralCatalog_FROM_BALANCE_CSV } from './csvMiningMineralCatalog
 export { MiningMineralZoneTier_FROM_BALANCE_CSV } from './csvMiningMineralZoneTier';
 export { MiningSellPricePolicy_FROM_BALANCE_CSV } from './csvMiningSellPricePolicy';
 export { MiningZoneMineralPool_FROM_BALANCE_CSV } from './csvMiningZoneMineralPool';
+export { PlanetDefenseSatelliteLevelPolicy_FROM_BALANCE_CSV } from './csvPlanetDefenseSatelliteLevelPolicy';
+export { PlanetDefenseSatellitePolicy_FROM_BALANCE_CSV } from './csvPlanetDefenseSatellitePolicy';
 export { PlanetHostileRedProgression_FROM_BALANCE_CSV } from './csvPlanetHostileRedProgression';
 export { PlanetLevelingProgression_FROM_BALANCE_CSV } from './csvPlanetLevelingProgression';
 export { PlanetOccupationSeeds_FROM_BALANCE_CSV } from './csvPlanetOccupationSeeds';

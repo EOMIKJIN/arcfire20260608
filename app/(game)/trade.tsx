@@ -68,6 +68,11 @@ const DEMAND_COLORS: Record<string, string> = {
 /** 메인스테이지 기준 하단 공백과 동기 */
 const TRADE_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
 
+const ARC_TRADE_DIALOG_BUTTONS = [
+  { text: '취소', style: 'cancel' as const },
+  { text: '확인' },
+];
+
 function isSellableByTable(itemDef: ItemDef | null | undefined): boolean {
   if (!itemDef) return false;
   if (!itemDef.tradeable) return false;
@@ -305,15 +310,15 @@ export default function TradeScreen() {
     const invSlotsNow = normalizeInventorySlots(player.inventorySlots);
     const maxInv = maxAddableToInventory(invSlotsNow, listing.goodId, listing.stock);
     const maxQty = isNoInventoryPurchase
-      ? Math.min(1, listing.stock, Math.floor(player.credits / price))
-      : Math.min(listing.stock, maxInv, Math.floor(player.credits / price));
+      ? Math.min(1, listing.stock)
+      : Math.min(listing.stock, maxInv);
 
     if (maxQty <= 0) {
       showArcAlert(
         '구매 불가',
         isNoInventoryPurchase
-          ? '크레딧이 부족하거나 재고가 없습니다.'
-          : '크레딧이 부족하거나 인벤토리 공간이 부족합니다.',
+          ? '재고가 없습니다.'
+          : '인벤토리 공간이 부족합니다.',
       );
       return;
     }
@@ -331,7 +336,22 @@ export default function TradeScreen() {
         price,
         resolvePlayerLifetimeCredits(player),
       ),
-      onConfirm: (qty) => executeBuyQuantity(listing, qty, itemDef, price, capitalShipNpcId),
+      onConfirm: (qty) => {
+        const buyQty = Math.max(1, Math.floor(qty));
+        const totalCost = price * buyQty;
+        const creditsNow = usePlayerStore.getState().player?.credits ?? player.credits;
+        if (creditsNow < totalCost) {
+          showArcAlert('잔고가 부족해 구매가 불가합니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
+          return;
+        }
+        showArcAlert('구매를 진행하시겠습니까?', undefined, [
+          { text: '취소', style: 'cancel' },
+          {
+            text: '확인',
+            onPress: () => executeBuyQuantity(listing, buyQty, itemDef, price, capitalShipNpcId),
+          },
+        ]);
+      },
     });
   };
 
@@ -347,7 +367,7 @@ export default function TradeScreen() {
     const totalCost = unitPrice * qty;
     const ok = spendCredits(totalCost);
     if (!ok) {
-      showArcAlert('구매 실패', '크레딧이 부족합니다.');
+      showArcAlert('잔고가 부족해 구매가 불가합니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
       return;
     }
 
@@ -506,10 +526,6 @@ export default function TradeScreen() {
         : null
     );
     if (!good) return;
-    if (!isSellableByTable(itemDef)) {
-      showArcAlert('판매 불가', '이 아이템은 재판매할 수 없습니다.');
-      return;
-    }
 
     const price = resolveInventorySellPrice(
       planet.id,
@@ -535,20 +551,6 @@ export default function TradeScreen() {
       showArcAlert('판매 실패', '격납고 보유 전함이 없어 판매할 수 없습니다.');
       return;
     }
-    if (itemDef?.type === 'capital_ship') {
-      const targetNpcId = typeof itemDef.attrs?.npcCapitalShipId === 'string'
-        ? String(itemDef.attrs.npcCapitalShipId)
-        : null;
-      if (isSurvivalPodCapitalShipItemId(item.goodId) || isSurvivalPodNpcShipId(targetNpcId)) {
-        showArcAlert('판매 불가', '생존포드는 판매할 수 없습니다.');
-        return;
-      }
-      const currentShipNpcId = player.ship.portraitNpcCapitalShipId ?? null;
-      if (currentShipNpcId && targetNpcId && currentShipNpcId === targetNpcId) {
-        showArcAlert('판매 불가', '현재 탑승 중인 전함은 판매할 수 없습니다. 다른 전함으로 교체 후 판매하세요.');
-        return;
-      }
-    }
 
     presentArcOverlayTradeQuantity({
       mode: 'sell',
@@ -556,7 +558,52 @@ export default function TradeScreen() {
       unitPrice: price,
       maxQty: sellQty,
       ownedQty: item.quantity,
-      onConfirm: (qty) => executeSellQuantity(item, qty, itemDef, price),
+      onConfirm: (qty) => {
+        const qtyToSell = Math.max(1, Math.floor(qty));
+        if (!isSellableByTable(itemDef)) {
+          showArcAlert('이 아이템은 재판매할 수 없습니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
+          return;
+        }
+        if (itemDef?.type === 'capital_ship') {
+          const targetNpcId = typeof itemDef.attrs?.npcCapitalShipId === 'string'
+            ? String(itemDef.attrs.npcCapitalShipId)
+            : null;
+          if (isSurvivalPodCapitalShipItemId(item.goodId) || isSurvivalPodNpcShipId(targetNpcId)) {
+            showArcAlert('생존포드는 판매할 수 없습니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
+            return;
+          }
+          const currentShipNpcId = player.ship.portraitNpcCapitalShipId ?? null;
+          if (currentShipNpcId && targetNpcId && currentShipNpcId === targetNpcId) {
+            showArcAlert(
+              '현재 탑승 중인 전함은 판매할 수 없습니다. 다른 전함으로 교체 후 판매하세요.',
+              undefined,
+              ARC_TRADE_DIALOG_BUTTONS,
+            );
+            return;
+          }
+          const npcCapitalShipId = typeof itemDef.attrs?.npcCapitalShipId === 'string'
+            ? String(itemDef.attrs.npcCapitalShipId)
+            : '';
+          const ownedCount = npcCapitalShipId
+            ? (usePlayerStore.getState().player ?? player).shipHangar
+              .filter((h) => h.npcCapitalShipId === npcCapitalShipId).length
+            : 0;
+          if (ownedCount < qtyToSell) {
+            showArcAlert('격납고 보유 전함이 없어 판매할 수 없습니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
+            return;
+          }
+        } else if (qtyToSell > item.quantity) {
+          showArcAlert('인벤토리 수량을 확인할 수 없습니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
+          return;
+        }
+        showArcAlert('판매를 진행하시겠습니까?', undefined, [
+          { text: '취소', style: 'cancel' },
+          {
+            text: '확인',
+            onPress: () => executeSellQuantity(item, qtyToSell, itemDef, price),
+          },
+        ]);
+      },
     });
   };
 
@@ -575,12 +622,12 @@ export default function TradeScreen() {
         ? String(itemDef.attrs.npcCapitalShipId)
         : '';
       if (!npcCapitalShipId) {
-        showArcAlert('판매 실패', '전함 아이템 데이터가 올바르지 않습니다.');
+        showArcAlert('전함 아이템 데이터가 올바르지 않습니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
         return;
       }
       const ownedCount = workingPlayer.shipHangar.filter((h) => h.npcCapitalShipId === npcCapitalShipId).length;
       if (ownedCount < sellQty) {
-        showArcAlert('판매 실패', '격납고 보유 전함이 없어 판매할 수 없습니다.');
+        showArcAlert('격납고 보유 전함이 없어 판매할 수 없습니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
         return;
       }
       for (let i = 0; i < sellQty; i += 1) {
@@ -595,7 +642,7 @@ export default function TradeScreen() {
       sellQty,
     );
     if (!next) {
-      showArcAlert('판매 실패', '인벤토리 수량을 확인할 수 없습니다.');
+      showArcAlert('인벤토리 수량을 확인할 수 없습니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
       return;
     }
     const latestPlayerBeforeSellSync = usePlayerStore.getState().player ?? workingPlayer;
@@ -663,7 +710,6 @@ export default function TradeScreen() {
               const good = resolveTradeGoodById(listing.goodId);
               if (!good) return null;
               const price = getBuyPrice(listing);
-              const canAfford = player.credits >= price;
               const rowItemDef = resolveItemDefById(listing.goodId);
               const purchaseIgnoresCargo =
                 rowItemDef?.type === 'planet_ownership'
@@ -678,9 +724,9 @@ export default function TradeScreen() {
               return (
                 <TouchableOpacity
                   key={listing.goodId}
-                  style={[styles.listingCard, (!canAfford || !hasSpace) && styles.listingDisabled]}
+                  style={[styles.listingCard, !hasSpace && styles.listingDisabled]}
                   onPress={() => handleBuy(listing)}
-                  disabled={!canAfford || !hasSpace}
+                  disabled={!hasSpace}
                 >
                   <View style={styles.listingLeft}>
                     <TradeListingIcon
@@ -739,9 +785,8 @@ export default function TradeScreen() {
               return (
                 <TouchableOpacity
                   key={`sell-${item.goodId}`}
-                  style={[styles.listingCard, !sellable && styles.listingDisabled]}
+                  style={styles.listingCard}
                   onPress={() => handleSell(item)}
-                  disabled={!sellable}
                 >
                   <View style={styles.listingLeft}>
                     <TradeListingIcon

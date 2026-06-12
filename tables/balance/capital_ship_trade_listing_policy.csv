@@ -1,13 +1,13 @@
-tradeGradeRank,tradeGradeKey,hullTierKey,canonicalNpcShipId,notesKo
-1,tg01_scout_patrol,frigate_default,Player_scout_ship,입문 정찰함(상점 최저가)
-2,tg02_fighter_mk1,frigate_default,Player_npc_red_fleet_1,기본 지급·파이터 Mk.I
-3,tg03_striker_mk2,frigate_upgraded,Player_frigate_mk2,스트라이커 Mk.II
-4,tg04_guardian_d1,destroyer,Player_destroyer_mk1,가디언 구축함
-5,tg05_guardian_d2,destroyer_upgraded,Player_destroyer_mk2,가디언 Mk.II
-6,tg06_oracle_c1,cruiser,Player_cruiser_mk1,오라클 순양함
-7,tg07_oracle_c2,cruiser_upgraded,Player_cruiser_mk2,오라클 Mk.II
-8,tg08_sovereign_bc1,battlecruiser,Player_battlecruiser_mk1,소버린 순양전함
-9,tg09_sovereign_apex,battlecruiser_max,Player_battlecruiser_apex,소버린 완성형
-10,tg10_dreadnought,dreadnought,Player_dreadnought_mk1,드레드노트
-11,tg11_super_capital,super_capital,Player_super_capital_mk1,슈퍼캐피털
-12,tg12_apex_legend,apex_legend,Player_apex_legend_mk1,아펙스 레전드
+tradeGradeRank,tradeGradeKey,hullTierKey,canonicalNpcShipId,alternateNpcShipId,listingAnchor,notesKo
+1,tg01_scout_patrol,frigate_default,Player_scout_ship,,pinned,입문 레인저(상점 최저가)
+2,tg02_fighter_mk1,frigate_default,Player_npc_red_fleet_1,,pinned,기본 지급·파이터 Mk.I
+3,tg03_striker_mk2,frigate_upgraded,Player_frigate_mk2,,pinned,스트라이커 Mk.II(입문 레인저·전 행성 상시)
+4,tg04_guardian_d1,destroyer,Player_destroyer_mk1,Player_hunter_mk1,progression,가디언(격투)/헌터(정찰) 동시
+5,tg05_guardian_d2,destroyer_upgraded,Player_destroyer_mk2,Player_hunter_mk2,progression,가디언 Mk.II/헌터 Mk.II 동시
+6,tg06_oracle_c1,cruiser,Player_cruiser_mk1,Player_shadow_cruiser_mk1,progression,오라클/섀도우 순양함 동시
+7,tg07_oracle_c2,cruiser_upgraded,Player_cruiser_mk2,Player_shadow_cruiser_mk2,progression,오라클 Mk.II/섀도우 Mk.II 동시
+8,tg08_sovereign_bc1,battlecruiser,Player_battlecruiser_mk1,Player_raptor_bc_mk1,progression,소버린/랩터 순양전함 동시
+9,tg09_sovereign_apex,battlecruiser_max,Player_battlecruiser_apex,Player_raptor_bc_apex,progression,소버린/랩터 완성형 동시
+10,tg10_dreadnought,dreadnought,Player_dreadnought_mk1,Player_phantom_dreadnought_mk1,progression,드레드노트/팬텀 동시
+11,tg11_super_capital,super_capital,Player_super_capital_mk1,Player_phantom_super_capital_mk1,progression,슈퍼캐피털/팬텀 동시
+12,tg12_apex_legend,apex_legend,Player_apex_legend_mk1,Player_phantom_apex_legend_mk1,progression,아펙스/팬텀 레전드 동시

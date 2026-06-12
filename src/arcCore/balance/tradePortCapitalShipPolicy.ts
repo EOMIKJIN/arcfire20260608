@@ -1,14 +1,11 @@
 // ============================================================
-// 무역소 전함 진열 — 등급 대표 10종 × 행성 zone(성능 사다리 슬라이딩)
+// 무역소 전함 진열 — pinned + 파일럿 레벨 밴드(인접 zone 버퍼) · 격투/정찰 쌍 동시
 // ============================================================
 
 import { CapitalHullPurchasePolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
 import { NPC_CAPITAL_SHIPS_FROM_CSV } from '../../data/generated';
 import { STAR_SYSTEMS } from '../../data/systems';
-import {
-  getPlanetLevelingRowForZone,
-  resolvePlanetZoneIndex,
-} from '../planetBalance/planetZoneIndexRegistry';
+import { resolvePlanetZoneIndex } from '../planetBalance/planetZoneIndexRegistry';
 import { getCapitalHullPurchaseRow } from './balanceTableRegistry';
 import { resolveCapitalShipPerformanceBasePrice } from './capitalShipPerformancePricing';
 import {
@@ -16,6 +13,7 @@ import {
   isCanonicalTradePortCapitalShip,
   listCanonicalTradePortNpcShipIds,
   listTradeGradeListingRows,
+  resolveCapitalPilotLevelBandForZone,
   resolveHullTierKeyForTradeCatalogShip,
   resolveTradePortNpcShipIdsForZone,
 } from './capitalShipTradeListingPolicy';
@@ -88,18 +86,6 @@ function isTradeListableHullTier(tierKey: string): boolean {
   return row != null && parseNum(row.purchaseCredits, 0) > 0;
 }
 
-function resolveMaxHullTierRankForZone(zoneIndex: number): number {
-  const zone = Math.max(1, Math.min(20, Math.round(zoneIndex)));
-  const leveling = getPlanetLevelingRowForZone(zone);
-  const recommended = String(leveling.recommendedHullTierKey ?? 'frigate_default').trim();
-  if (recommended === 'battlecruiser_max' || recommended === 'apex_legend') {
-    return hullTierRank('apex_legend');
-  }
-  if (recommended === 'dreadnought' || recommended === 'super_capital') {
-    return hullTierRank(recommended);
-  }
-  return hullTierRank(recommended);
-}
 
 /** 무역소에 올릴 수 있는 전함 `capital_ship_*` id (정책 등급 대표 전체) */
 export function listAllTradePortCapitalShipItemIds(): string[] {
@@ -108,15 +94,18 @@ export function listAllTradePortCapitalShipItemIds(): string[] {
     .map((id) => `capital_ship_${id}`);
 }
 
-/** zoneIndex 기준 무역소에 허용되는 hullTierKey */
+/** zoneIndex 기준 무역소에 허용되는 hullTierKey(레벨 밴드·버퍼) */
 export function resolveTradePortHullTiersForZone(zoneIndex: number): string[] {
-  const maxRank = resolveMaxHullTierRankForZone(zoneIndex);
-  return HULL_TIER_ORDER.filter(
-    (tier, idx) => idx <= maxRank && isTradeListableHullTier(tier),
-  );
+  const { minLv, maxLv } = resolveCapitalPilotLevelBandForZone(zoneIndex);
+  return HULL_TIER_ORDER.filter((tier) => {
+    if (!isTradeListableHullTier(tier)) return false;
+    const row = getCapitalHullPurchaseRow(tier);
+    const req = parseNum(row?.requiredPilotLevelMin, 1);
+    return req >= minLv && req <= maxLv;
+  });
 }
 
-/** 행성 zone — 등급 대표 전함 10종(재고 수량과 무관) */
+/** 행성 zone — 등급 그룹 기반 전함 SKU(재고 수량과 무관) */
 export function listCapitalShipItemIdsForPlanet(planetId: string): string[] {
   const system = findSystemForPlanetId(planetId);
   const zoneIndex = resolvePlanetZoneIndex(planetId, system ?? null);

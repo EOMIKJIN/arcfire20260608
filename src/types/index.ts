@@ -456,7 +456,15 @@ export interface NpcCapitalCombatStats {
   dexStat: number;
   /** D&D size 보정치(-2..+2 권장, 미기입 시 0) */
   sizeClass: number;
+  /**
+   * 전함 구분 스탯 축 — 파이터(STR·중장갑·강타) vs 레인저(DEX·경장갑·연사·탐지).
+   * `ShipPerformanceCalculator` 숙련도 편향 입력.
+   */
+  capitalShipArchetype?: CapitalShipArchetype;
 }
+
+/** D&D3 스타일 전함 클래스 구분 — npc_ai_ships.csv `capitalShipArchetype` */
+export type CapitalShipArchetype = 'fighter' | 'ranger' | 'survival' | 'special' | 'neutral';
 
 /** NPC AI 전함(기함급) DB 레코드 */
 export interface NpcCapitalShip {

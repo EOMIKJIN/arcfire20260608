@@ -107,6 +107,10 @@ import { ORBIT_MINING_CYCLE_MS, ORBIT_MINING_REWARD_GOOD_ID } from '../../src/ga
 import { planetHasMineableOrbitalDeposits } from '../../src/world/mineralDepositModel';
 import { listPlanetWorldObjects, type WorldObject } from '../../src/worldObjects';
 import {
+  WORLD_OBJECT_DEFENSE_SATELLITE_ORBIT_CYCLE_MS,
+  WORLD_OBJECT_ORBIT_CYCLE_MS,
+} from '../../src/worldObjects/planetWorldObjectOrbit';
+import {
   createInitialMiningSessionState,
   flushMiningPlayerPersist,
   scheduleMiningPlayerPersist,
@@ -133,6 +137,10 @@ import {
   resolvePlanetHubNpcDialogSceneId,
 } from '../../src/game/planetHubNpcDialog';
 import { formatSalvageLootLabel, pickSalvageLootItemId } from '../../src/game/planetSalvageSearch';
+import { usePlanetArcCoreMessagePresentation } from '../../src/game/usePlanetArcCoreMessagePresentation';
+import { PlanetArcCoreMessageMissileSkiaLayer } from '../../src/components/planet/PlanetArcCoreMessageMissileSkiaLayer';
+import { PlanetDefenseInterceptMissileSkiaLayer } from '../../src/components/planet/PlanetDefenseInterceptMissileSkiaLayer';
+import type { DefenseInterceptVisualPlan } from '../../src/arcCore/message/defenseInterceptVisualPlan';
 
 /** 행성 허브 궤도 worklet·Skia 공통 — `PlanetScreen`보다 아래에 두면 TDZ이므로 상단 고정 */
 const NPC_ORBIT_CYCLE_MS = 54000;
@@ -367,12 +375,22 @@ export default function PlanetScreen() {
     miningSessionRef.current = miningSession;
   }, [miningSession]);
 
+  /** 착륙 행성 id — store 순간 공백·fallback planets[0] 로 id 가 바뀌면 useStageMemory·채굴이 초기화된다. */
+  const hubPlanetIdRef = useRef<string | null>(null);
+  const currentPlanetId = player?.currentPlanetId ?? null;
+  if (currentPlanetId) {
+    hubPlanetIdRef.current = currentPlanetId;
+  }
+  const resolvedPlanetId = currentPlanetId ?? hubPlanetIdRef.current;
+
   const system = player ? getSystem(player.currentSystemId) : undefined;
-  const planet = system?.planets.find(p => p.id === player?.currentPlanetId)
-    ?? system?.planets[0];
+  const planet =
+    resolvedPlanetId && system
+      ? system.planets.find((p) => p.id === resolvedPlanetId) ?? null
+      : null;
 
   useStageMemory(
-    planet?.id ?? 'planet_main_stage_hub',
+    'planet_main_stage_hub',
     () => {
       buildCsvStaticIndexes();
     },
@@ -384,13 +402,15 @@ export default function PlanetScreen() {
 
   const prevMainStagePlanetIdRef = useRef<string | null>(null);
   useEffect(() => {
-    const cur = planet?.id ?? null;
+    const cur = player?.currentPlanetId ?? null;
     const prev = prevMainStagePlanetIdRef.current;
     if (prev !== null && cur !== null && prev !== cur) {
       releasePlanetMainStageSession({ reason: 'planet_change', previousPlanetId: prev });
     }
-    prevMainStagePlanetIdRef.current = cur;
-  }, [planet?.id]);
+    if (cur) {
+      prevMainStagePlanetIdRef.current = cur;
+    }
+  }, [player?.currentPlanetId]);
   /**
    * 출발·시설 공통 — 진행 중인 채굴·전투 스냅샷 후 lifecycle suspend → frozen 뒤 navigate.
    * 무역소·조선소 등 즉시 push 만 하면 메인스테이지 Skia·sim 과 신규 화면 첫 mount 가 겹쳐 크래시가 날 수 있어
@@ -534,16 +554,20 @@ export default function PlanetScreen() {
     return Math.round(ratio * 100);
   }, [miningSession.lastTickAtMs, miningSession.status, miningUiNowMs]);
   const [planetScanActionsUnlocked, setPlanetScanActionsUnlocked] = useState(false);
+  const prevScanPlanetIdRef = useRef<string | null>(null);
   useEffect(() => {
+    const cur = player?.currentPlanetId ?? null;
+    if (!cur || prevScanPlanetIdRef.current === cur) return;
+    prevScanPlanetIdRef.current = cur;
     setPlanetScanActionsUnlocked(false);
-  }, [planet?.id]);
+  }, [player?.currentPlanetId]);
   const handlePlanetScanComplete = useCallback(() => {
     setPlanetScanActionsUnlocked(true);
   }, []);
   const salvageAttemptRef = useRef(0);
   useEffect(() => {
     salvageAttemptRef.current = 0;
-  }, [planet?.id]);
+  }, [player?.currentPlanetId]);
   const activeSalvageWreck = useMemo(
     () => planetWorldObjects.find((object) => object.kind === 'wreck') ?? null,
     [planetWorldObjects],
@@ -562,18 +586,15 @@ export default function PlanetScreen() {
     setMiningUiNowMs(now);
   }, [planet, canOrbitalMine, planetScanActionsUnlocked]);
   useEffect(() => {
-    if (!planet?.id) return;
-    applyMiningTeardownRef.current('planet_change');
-  }, [planet?.id]);
-  useEffect(() => {
-    if (!planet?.id) return undefined;
+    const pid = player?.currentPlanetId;
+    if (!pid) return undefined;
     const token = registerPlanetSessionResource({
       ownerId: 'planet_hub_mining',
-      planetId: planet.id,
+      planetId: pid,
       dispose: () => applyMiningTeardownRef.current('route_blur'),
     });
     return () => token.release();
-  }, [planet?.id]);
+  }, [player?.currentPlanetId]);
   /**
    * Phase 3: 채굴 tick 인터벌·분배 알고리즘은 `useMiningDriver` 로 추출.
    * `enabled` 신호 한 곳에 정책을 모아두면 lifecycle/포커스/앱 상태 변경 시 즉시 정지.
@@ -612,6 +633,19 @@ export default function PlanetScreen() {
     applyUiNowMs: setMiningUiNowMs,
     onGrant: handleMiningGrant,
   });
+  const arcCoreMessagePresentation = usePlanetArcCoreMessagePresentation(
+    resolvedPlanetId,
+    planetStageSkiaActive && isPlanetRouteFocused,
+  );
+  const [arcCoreWarningBlinkOn, setArcCoreWarningBlinkOn] = useState(true);
+  useEffect(() => {
+    if (!arcCoreMessagePresentation.warningVisible) {
+      setArcCoreWarningBlinkOn(true);
+      return;
+    }
+    const id = setInterval(() => setArcCoreWarningBlinkOn((v) => !v), PLANET_MAIN_BATTLE_READY_BLINK_MS);
+    return () => clearInterval(id);
+  }, [arcCoreMessagePresentation.warningVisible]);
   const [activeIngameDialogSceneId, setActiveIngameDialogSceneId] = useState<string | null>(null);
   const [ingameDialogPage, setIngameDialogPage] = useState(0);
   const [ingameDialogSegment, setIngameDialogSegment] = useState(0);
@@ -1102,6 +1136,12 @@ export default function PlanetScreen() {
            * 출발 순간에는 routeFocused 만으로는 불충분(전투 Skia teardown 과 동시 draw 방지).
            */
           skiaLoopsActive={planetStageSkiaActive}
+          arcCoreMissileActive={arcCoreMessagePresentation.missileVisible}
+          arcCoreMissileStartMs={arcCoreMessagePresentation.missileStartMs}
+          arcCoreMissileTravelMs={arcCoreMessagePresentation.missileTravelMs}
+          arcCoreInterceptVisualPlan={arcCoreMessagePresentation.interceptVisualPlan}
+          arcCoreInterceptSucceeded={arcCoreMessagePresentation.interceptSucceeded}
+          onArcCoreMissileFlightComplete={arcCoreMessagePresentation.onMissileFlightComplete}
         />
       }
       absoluteOverlay={
@@ -1251,6 +1291,18 @@ export default function PlanetScreen() {
               - Ready to Battle! -
             </Text>
             <Text style={styles.battleReadyCounter}>{`- ${battleReadyCounterSec} -`}</Text>
+          </View>
+        ) : null}
+        {arcCoreMessagePresentation.warningVisible ? (
+          <View style={styles.battleReadyOverlay} pointerEvents="none">
+            <Text
+              style={[
+                styles.battleReadyText,
+                arcCoreWarningBlinkOn ? styles.battleReadyTextBlinkOn : styles.battleReadyTextBlinkOff,
+              ]}
+            >
+              Missile 공습경고
+            </Text>
           </View>
         ) : null}
         </View>
@@ -1551,6 +1603,12 @@ const PlanetStageBackground = memo(function PlanetStageBackground({
    * `isPlanetRouteFocused && stageLifecycle === 'active'` — 출발 순간 teardown 레이스 방지 필수 AND.
    */
   skiaLoopsActive,
+  arcCoreMissileActive,
+  arcCoreMissileStartMs,
+  arcCoreMissileTravelMs,
+  arcCoreInterceptVisualPlan,
+  arcCoreInterceptSucceeded,
+  onArcCoreMissileFlightComplete,
 }: {
   planetId: string;
   system: StarSystem;
@@ -1567,6 +1625,13 @@ const PlanetStageBackground = memo(function PlanetStageBackground({
   /** 채굴 활성 중에는 Skia 궤도 대신 정적 마커로 안전 모드 렌더 */
   miningPathActive?: boolean;
   miningProgressPct?: number;
+  /** 아크코어 메시지 — 장거리 미사일 궤도 통과 */
+  arcCoreMissileActive?: boolean;
+  arcCoreMissileStartMs?: number;
+  arcCoreMissileTravelMs?: number;
+  arcCoreInterceptVisualPlan?: DefenseInterceptVisualPlan | null;
+  arcCoreInterceptSucceeded?: boolean;
+  onArcCoreMissileFlightComplete?: () => void;
   /** 클랜전 점유/거점 한 줄(없으면 null) */
   territorySubtitle?: string | null;
   /** 안전구역 AI 클랜 소유 — `systemBadge` 내 표시(궤도 컬럼과 분리) */
@@ -1619,6 +1684,44 @@ const PlanetStageBackground = memo(function PlanetStageBackground({
     });
   }, [recomputeDodgeOrbitOffset]);
   const edenSim = useCapitalRealtimeCombatSimContext();
+  const interceptLaunchAtBySatelliteId = useMemo(() => {
+    const map = new Map<string, number>();
+    if (
+      !arcCoreMissileActive
+      || !arcCoreInterceptVisualPlan
+      || !(arcCoreMissileStartMs ?? 0)
+      || !arcCoreInterceptVisualPlan.engagementEligible
+    ) {
+      return map;
+    }
+    for (const slot of arcCoreInterceptVisualPlan.missiles) {
+      map.set(slot.satelliteId, (arcCoreMissileStartMs ?? 0) + slot.launchDelayMs);
+    }
+    return map;
+  }, [
+    arcCoreMissileActive,
+    arcCoreMissileStartMs,
+    arcCoreInterceptVisualPlan?.strikeId,
+    arcCoreInterceptVisualPlan?.engagementEligible,
+    arcCoreInterceptVisualPlan?.missiles,
+  ]);
+  const [interceptHitRelativeMs, setInterceptHitRelativeMs] = useState<number | null>(null);
+  useEffect(() => {
+    setInterceptHitRelativeMs(null);
+  }, [arcCoreInterceptVisualPlan?.strikeId]);
+  const handleInterceptVisualHit = useCallback((relativeMs: number) => {
+    setInterceptHitRelativeMs(relativeMs);
+  }, []);
+  const arcCoreSuppressWarheadAfterMs = useMemo(() => {
+    if (!arcCoreInterceptSucceeded || !(arcCoreMissileStartMs ?? 0)) return 0;
+    const rel = interceptHitRelativeMs ?? arcCoreInterceptVisualPlan?.interceptAtMs ?? 0;
+    return (arcCoreMissileStartMs ?? 0) + rel;
+  }, [
+    arcCoreInterceptSucceeded,
+    arcCoreInterceptVisualPlan?.interceptAtMs,
+    arcCoreMissileStartMs,
+    interceptHitRelativeMs,
+  ]);
   const planetCoreHydrated = usePlanetCoreRuntimeStore((s) => s.hydrated);
   const planetCoreRuntime = usePlanetCoreRuntimeStore(
     useCallback((s) => s.byPlanetId[planetId], [planetId]),
@@ -1835,6 +1938,7 @@ const PlanetStageBackground = memo(function PlanetStageBackground({
                     worldObjects={worldObjects}
                     miningPathActive={Boolean(miningPathActive)}
                     miningProgressPct={Math.max(0, Math.min(100, Math.round(miningProgressPct ?? 0)))}
+                    interceptLaunchAtBySatelliteId={interceptLaunchAtBySatelliteId}
                   />
                 </View>
               ) : null}
@@ -1871,6 +1975,32 @@ const PlanetStageBackground = memo(function PlanetStageBackground({
                   <PlanetPlayerBlueOrbitMark orbitClockMs={orbitClockMs} />
                 </View>
               ) : null}
+              {arcCoreMissileActive ? (
+                <>
+                  <PlanetDefenseInterceptMissileSkiaLayer
+                    orbitSize={ORBIT_SCENE_SIZE}
+                    active={Boolean(arcCoreMissileActive)}
+                    inboundStartMs={arcCoreMissileStartMs ?? 0}
+                    travelMs={arcCoreMissileTravelMs ?? 0}
+                    plan={arcCoreInterceptVisualPlan ?? null}
+                    loopsActive={skiaLoopsActive}
+                    onInterceptVisualHit={handleInterceptVisualHit}
+                  />
+                  <PlanetArcCoreMessageMissileSkiaLayer
+                    orbitSize={ORBIT_SCENE_SIZE}
+                    active={Boolean(arcCoreMissileActive)}
+                    missileStartMs={arcCoreMissileStartMs ?? 0}
+                    travelMs={arcCoreMissileTravelMs ?? 0}
+                    loopsActive={skiaLoopsActive}
+                    onFlightComplete={onArcCoreMissileFlightComplete}
+                    suppressWarheadAfterMs={arcCoreSuppressWarheadAfterMs}
+                    interceptSucceeded={arcCoreInterceptSucceeded ?? false}
+                    interceptAtRelativeMs={
+                      interceptHitRelativeMs ?? arcCoreInterceptVisualPlan?.interceptAtMs ?? 0
+                    }
+                  />
+                </>
+              ) : null}
             </View>
           </View>
         </View>
@@ -1879,12 +2009,17 @@ const PlanetStageBackground = memo(function PlanetStageBackground({
   );
 });
 
-const WORLD_OBJECT_ORBIT_CYCLE_MS = 168000;
 const MAX_WORLD_OBJECT_MARKS = 16;
 const WORLD_OBJECT_ANCHOR_PX = 11;
 /** 소행성 원(15px)보다 작은 잔해 — 속 빈 사각형 테두리 */
 const WORLD_OBJECT_WRECK_MARK_PX = 9;
 const WORLD_OBJECT_WRECK_STROKE_COLOR = '#8B5E3C';
+/** 방위위성 — 잔해 사각형과 유사 크기의 역삼각형(▼) */
+const WORLD_OBJECT_DEFENSE_SATELLITE_MARK_PX = 9;
+const WORLD_OBJECT_DEFENSE_SATELLITE_COLOR = '#FF8C32';
+/** 요격 준비 — 얇은 녹색 볼드 아웃라인(발사 전까지 깜박임) */
+const DEFENSE_SATELLITE_INTERCEPT_READY_STROKE = '#4ADE80';
+const DEFENSE_SATELLITE_INTERCEPT_READY_BLINK_HZ = 4.8;
 /** 설명선: 소행성 마커 중심에서 우상향 45°로 이 거만큼(+/- 동일) 뻗음(SVG y축 아래방향). */
 const MINING_GUIDE_LINE_RUN_PX = 24;
 /** 설명선 끝점(오버레이 좌표)에서 텍스트를 살짝 바깥쪽(대각 방향)으로 밀 오프셋. */
@@ -1902,17 +2037,40 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
   miningPathActive,
   mineable,
   miningProgressPct,
+  interceptLaunchAtWallMs,
 }: {
   object: WorldObject;
   orbitClockMs: SharedValue<number>;
   miningPathActive: boolean;
   mineable: boolean;
   miningProgressPct: number;
+  /** 0=비활성, >0=이 시각까지 요격 준비 깜박임 */
+  interceptLaunchAtWallMs: number;
 }) {
+  const interceptLaunchAtSv = useSharedValue(interceptLaunchAtWallMs);
+  useEffect(() => {
+    interceptLaunchAtSv.value = interceptLaunchAtWallMs;
+  }, [interceptLaunchAtWallMs, interceptLaunchAtSv]);
+
+  const interceptReadyOutlineStyle = useAnimatedStyle(() => {
+    'worklet';
+    void orbitClockMs.value;
+    const launchAt = interceptLaunchAtSv.value;
+    if (launchAt <= 0) return { opacity: 0 };
+    const now = Date.now();
+    if (now >= launchAt) return { opacity: 0 };
+    const phase = now * 0.001 * DEFENSE_SATELLITE_INTERCEPT_READY_BLINK_HZ * Math.PI * 2;
+    return { opacity: 0.32 + 0.68 * (0.5 + 0.5 * Math.sin(phase)) };
+  }, [orbitClockMs, interceptLaunchAtSv]);
+
   const animated = useAnimatedStyle(() => {
     'worklet';
     const now = orbitClockMs.value;
-    const phase = ((now % WORLD_OBJECT_ORBIT_CYCLE_MS) / WORLD_OBJECT_ORBIT_CYCLE_MS + object.transform.phaseBias) % 1;
+    const cycleMs =
+      object.kind === 'defense_satellite'
+        ? WORLD_OBJECT_DEFENSE_SATELLITE_ORBIT_CYCLE_MS
+        : WORLD_OBJECT_ORBIT_CYCLE_MS;
+    const phase = ((now % cycleMs) / cycleMs + object.transform.phaseBias) % 1;
     const angle = phase * Math.PI * 2;
     const orbitRadius = ORBIT_CENTER * Math.max(0.5, Math.min(0.96, object.transform.radiusScale));
     const x = ORBIT_CENTER + Math.cos(angle) * orbitRadius;
@@ -1981,6 +2139,25 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
           </>
         ) : object.kind === 'wreck' ? (
           <View style={bgStyles.worldObjectWreckMark} accessibilityLabel="잔해" />
+        ) : object.kind === 'defense_satellite' ? (
+          <View style={bgStyles.worldObjectDefenseSatelliteWrap} accessibilityLabel="방위위성">
+            <Animated.View
+              style={[bgStyles.worldObjectDefenseSatelliteReadyOutline, interceptReadyOutlineStyle]}
+              pointerEvents="none"
+            >
+              <Svg width={16} height={14} viewBox="0 0 16 14">
+                <Polyline
+                  points="8,1.5 14.5,12.5 1.5,12.5 8,1.5"
+                  fill="none"
+                  stroke={DEFENSE_SATELLITE_INTERCEPT_READY_STROKE}
+                  strokeWidth={2.2}
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                />
+              </Svg>
+            </Animated.View>
+            <View style={bgStyles.worldObjectDefenseSatelliteMark} />
+          </View>
         ) : (
           <Text style={bgStyles.worldObjectGlyph}>{worldObjectGlyph(object.kind)}</Text>
         )}
@@ -2001,11 +2178,13 @@ const PlanetWorldObjectOrbitMarks = memo(function PlanetWorldObjectOrbitMarks({
   orbitClockMs,
   miningPathActive,
   miningProgressPct,
+  interceptLaunchAtBySatelliteId,
 }: {
   worldObjects: WorldObject[];
   orbitClockMs: SharedValue<number>;
   miningPathActive: boolean;
   miningProgressPct: number;
+  interceptLaunchAtBySatelliteId: ReadonlyMap<string, number>;
 }) {
   const renderTargets = worldObjects.slice(0, MAX_WORLD_OBJECT_MARKS);
   const activeMineableAsteroidId = useMemo(
@@ -2022,6 +2201,11 @@ const PlanetWorldObjectOrbitMarks = memo(function PlanetWorldObjectOrbitMarks({
           miningPathActive={miningPathActive}
           mineable={object.kind === 'asteroid' && object.id === activeMineableAsteroidId}
           miningProgressPct={miningProgressPct}
+          interceptLaunchAtWallMs={
+            object.kind === 'defense_satellite'
+              ? (interceptLaunchAtBySatelliteId.get(object.id) ?? 0)
+              : 0
+          }
         />
       ))}
     </>
@@ -2705,6 +2889,7 @@ const bgStyles = StyleSheet.create({
     height: ORBIT_SCENE_SIZE,
     alignSelf: 'center',
     position: 'relative',
+    overflow: 'visible',
   },
   orbitLayerPlanet: {
     ...StyleSheet.absoluteFillObject,
@@ -2823,6 +3008,31 @@ const bgStyles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: WORLD_OBJECT_WRECK_STROKE_COLOR,
     borderRadius: 1,
+  },
+  worldObjectDefenseSatelliteWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: WORLD_OBJECT_ANCHOR_PX * 2,
+    height: WORLD_OBJECT_ANCHOR_PX * 2,
+  },
+  worldObjectDefenseSatelliteReadyOutline: {
+    position: 'absolute',
+    top: WORLD_OBJECT_ANCHOR_PX - 8,
+    left: WORLD_OBJECT_ANCHOR_PX - 8,
+    width: 16,
+    height: 14,
+  },
+  worldObjectDefenseSatelliteMark: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderLeftWidth: WORLD_OBJECT_DEFENSE_SATELLITE_MARK_PX / 2,
+    borderRightWidth: WORLD_OBJECT_DEFENSE_SATELLITE_MARK_PX / 2,
+    borderBottomWidth: WORLD_OBJECT_DEFENSE_SATELLITE_MARK_PX,
+    borderTopWidth: 0,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: WORLD_OBJECT_DEFENSE_SATELLITE_COLOR,
   },
   worldObjectMiningGuideWrap: {
     position: 'absolute',
