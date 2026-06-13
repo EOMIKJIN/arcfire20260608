@@ -9,6 +9,10 @@ import {
   resolvePlanetDefenseSatelliteInterceptChancePct,
   resolvePlanetDefenseSatelliteLevel,
 } from './planetDefenseSatelliteLevel';
+import {
+  resolveDefenseSatelliteInterceptChanceForObject,
+  resolveDefenseSatelliteLevelForObject,
+} from './resolveDefenseSatelliteLevelForObject';
 
 /** 행성 `planetId` 기준 방위위성 — 월드오브젝트 리스트 단일 경로 */
 export function listPlanetDefenseSatellites(planetId: string): WorldObject[] {
@@ -39,14 +43,14 @@ export function resolvePlanetDefenseInterceptRoll(
   _opts?: { travelMs?: number; orbitClockAtInboundMs?: number },
 ): PlanetDefenseInterceptRollResult {
   const policy = getPlanetDefenseSatellitePolicy();
-  const defenseLevel = resolvePlanetDefenseSatelliteLevel(planetId);
-  const interceptChancePct = resolvePlanetDefenseSatelliteInterceptChancePct(planetId);
+  const planetFallbackLevel = resolvePlanetDefenseSatelliteLevel(planetId);
+  const planetFallbackPct = resolvePlanetDefenseSatelliteInterceptChancePct(planetId);
   const empty: PlanetDefenseInterceptRollResult = {
     hasActiveSatellites: false,
     activeSatelliteCount: 0,
     weaponId: null,
-    defenseLevel,
-    interceptChancePct,
+    defenseLevel: planetFallbackLevel,
+    interceptChancePct: planetFallbackPct,
     engagementEligible: false,
     rollAttempted: false,
     interceptSucceeded: false,
@@ -61,12 +65,17 @@ export function resolvePlanetDefenseInterceptRoll(
   const weaponId = satellites.find((o) => o.defenseWeaponId)?.defenseWeaponId
     ?? policy.defaultWeaponId;
 
+  const defenseLevels = satellites.map((sat) => resolveDefenseSatelliteLevelForObject(sat));
+  const summaryDefenseLevel = Math.max(...defenseLevels);
+  const interceptChances = satellites.map((sat) => resolveDefenseSatelliteInterceptChanceForObject(sat));
+  const summaryInterceptChancePct = Math.max(...interceptChances);
+
   return {
     hasActiveSatellites: true,
     activeSatelliteCount: satellites.length,
     weaponId,
-    defenseLevel,
-    interceptChancePct,
+    defenseLevel: summaryDefenseLevel,
+    interceptChancePct: summaryInterceptChancePct,
     engagementEligible: true,
     engagementBlockReason: 'ok',
     rollAttempted: false,

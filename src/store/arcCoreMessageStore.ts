@@ -5,11 +5,12 @@ import {
   type ArcCoreCommand,
 } from '../arcCore/ArcCoreCommandBus';
 import {
+  ARC_CORE_MESSAGE_DEFAULT_KO,
   ARC_CORE_MESSAGE_MISSILE_TRAIL_FADE_MS,
   ARC_CORE_MESSAGE_MISSILE_TRAVEL_MS,
 } from '../arcCore/message/arcCoreMessagePolicy';
 import { readPlanetOrbitClockMs } from '../arcCore/orbitClockMsBridge';
-import { rollDefenseSatelliteInterceptSuccess } from '../arcCore/balance/planetDefenseSatelliteLevelPolicy';
+import { rollDefenseSatelliteInterceptSuccessForSlot } from '../arcCore/balance/planetDefenseSatelliteLevelPolicy';
 import { resolvePlanetDefenseInterceptRoll } from '../systems/planetaryDefense';
 import type { PlanetDefenseInterceptRollResult } from '../systems/planetaryDefense/planetDefenseSatelliteService';
 import {
@@ -28,27 +29,85 @@ export type ArcCoreMessageStrikeView = {
   missileStartMs: number;
   missileTravelMs: number;
   nearMissDispatched: boolean;
-  /** inbound 시 1회 선행 롤 — 연출·최종 판정 동기 */
   interceptRoll: PlanetDefenseInterceptRollResult | null;
   interceptVisualPlan: DefenseInterceptVisualPlan | null;
 };
 
+/** dev 20초 요격 버스트 — 정적 inbound/위성과 분리 */
+export type ArcCoreDevInterceptBurstView = {
+  planetId: string;
+  strikeId: string;
+  burstStartMs: number;
+  interceptRoll: PlanetDefenseInterceptRollResult;
+  interceptVisualPlan: DefenseInterceptVisualPlan;
+  burstCompleted: boolean;
+};
+
 interface ArcCoreMessageState {
   strike: ArcCoreMessageStrikeView | null;
+  devInterceptBurst: ArcCoreDevInterceptBurstView | null;
   clearStrikeForPlanet: (planetId: string) => void;
+  clearDevInterceptBurstForPlanet: (planetId: string) => void;
   clearAllStrikes: () => void;
-  /** 주 요격탄 예측 교차점 통과 시 1회 확률 롤 */
   resolveInterceptRollAtCrossing: (
     planetId: string,
     strikeId: string,
     relativeMs: number,
+    slotIndex: number,
   ) => boolean;
-  /** inbound 애니메이션 종료 시 1회 호출 */
-  tryCompleteNearMiss: (planetId: string, nowMs: number) => void;
+  tryCompleteNearMiss: (planetId: string, nowMs: number, opts?: { force?: boolean; visualReady?: boolean }) => void;
+  tryCompleteDevInterceptBurst: (planetId: string) => void;
 }
 
 function makeStrikeId(planetId: string): string {
   return `arc_msg_${planetId}_${Date.now()}`;
+}
+
+function applyInterceptRollAtCrossing(input: {
+  planetId: string;
+  strikeId: string;
+  relativeMs: number;
+  slotIndex: number;
+  roll: PlanetDefenseInterceptRollResult;
+  plan: DefenseInterceptVisualPlan | null;
+}): { roll: PlanetDefenseInterceptRollResult; plan: DefenseInterceptVisualPlan | null; succeeded: boolean; mutated: boolean } {
+  const { planetId, strikeId, relativeMs, slotIndex, roll, plan } = input;
+  if (!roll.hasActiveSatellites || !plan) {
+    return { roll, plan, succeeded: false, mutated: false };
+  }
+  const slot = plan.missiles[slotIndex];
+  if (!slot) {
+    return { roll, plan, succeeded: false, mutated: false };
+  }
+  if (slot.rollAttempted) {
+    return { roll, plan, succeeded: slot.willHit, mutated: false };
+  }
+
+  const interceptChancePct = slot.interceptChancePct;
+  const missileHit = rollDefenseSatelliteInterceptSuccessForSlot(
+    strikeId,
+    planetId,
+    slot.satelliteId,
+    slotIndex,
+    interceptChancePct,
+  );
+
+  const nextPlan: DefenseInterceptVisualPlan = {
+    ...plan,
+    interceptSucceeded: plan.interceptSucceeded || missileHit,
+    interceptAtMs: missileHit ? relativeMs : plan.interceptAtMs,
+    missiles: plan.missiles.map((m, i) =>
+      i === slotIndex
+        ? { ...m, willHit: missileHit, rollAttempted: true }
+        : m,
+    ),
+  };
+  const nextRoll: PlanetDefenseInterceptRollResult = {
+    ...roll,
+    rollAttempted: roll.rollAttempted || true,
+    interceptSucceeded: roll.interceptSucceeded || missileHit,
+  };
+  return { roll: nextRoll, plan: nextPlan, succeeded: missileHit, mutated: true };
 }
 
 function applyWarningCommand(cmd: Extract<ArcCoreCommand, { type: 'arc_core_message_missile_warning' }>): void {
@@ -74,8 +133,9 @@ function applyInboundCommand(cmd: Extract<ArcCoreCommand, { type: 'arc_core_mess
   const prev = useArcCoreMessageStore.getState().strike;
   const strikeId = prev?.planetId === cmd.planetId ? prev.strikeId : makeStrikeId(cmd.planetId);
   const orbitClockAtInboundMs = readPlanetOrbitClockMs();
+  const travelMs = cmd.travelMs ?? ARC_CORE_MESSAGE_MISSILE_TRAVEL_MS;
   const interceptRoll = resolvePlanetDefenseInterceptRoll(cmd.planetId, strikeId, {
-    travelMs: cmd.travelMs,
+    travelMs,
     orbitClockAtInboundMs,
   });
   const interceptVisualPlan = buildDefenseInterceptVisualPlan({
@@ -83,7 +143,7 @@ function applyInboundCommand(cmd: Extract<ArcCoreCommand, { type: 'arc_core_mess
     strikeId,
     roll: interceptRoll,
     inboundStartMs: now,
-    travelMs: cmd.travelMs,
+    travelMs,
     trajectoryPattern: cmd.trajectoryPattern ?? null,
   });
   const rollWithEngagement: PlanetDefenseInterceptRollResult = {
@@ -98,7 +158,7 @@ function applyInboundCommand(cmd: Extract<ArcCoreCommand, { type: 'arc_core_mess
       phase: 'inbound',
       warningEndsAtMs: prev?.warningEndsAtMs ?? now,
       missileStartMs: now,
-      missileTravelMs: cmd.travelMs,
+      missileTravelMs: travelMs,
       nearMissDispatched: false,
       interceptRoll: rollWithEngagement,
       interceptVisualPlan,
@@ -126,71 +186,69 @@ ensureArcCoreMessageCommandBridge();
 
 export const useArcCoreMessageStore = create<ArcCoreMessageState>((set, get) => ({
   strike: null,
+  devInterceptBurst: null,
 
   clearStrikeForPlanet: (planetId) => {
     const s = get().strike;
-    if (s?.planetId === planetId) {
-      set({ strike: null });
+    const patch: Partial<ArcCoreMessageState> = {};
+    if (s?.planetId === planetId) patch.strike = null;
+    const burst = get().devInterceptBurst;
+    if (burst?.planetId === planetId) patch.devInterceptBurst = null;
+    if (Object.keys(patch).length > 0) set(patch);
+  },
+
+  clearDevInterceptBurstForPlanet: (planetId) => {
+    const burst = get().devInterceptBurst;
+    if (burst?.planetId === planetId) {
+      set({ devInterceptBurst: null });
     }
   },
 
-  clearAllStrikes: () => set({ strike: null }),
+  clearAllStrikes: () => set({ strike: null, devInterceptBurst: null }),
 
-  resolveInterceptRollAtCrossing: (planetId, strikeId, relativeMs) => {
+  resolveInterceptRollAtCrossing: (planetId, strikeId, relativeMs, slotIndex) => {
     const s = get().strike;
     if (!s || s.planetId !== planetId || s.strikeId !== strikeId) return false;
-    const roll = s.interceptRoll;
-    if (!roll?.hasActiveSatellites) return false;
-    if (roll.rollAttempted) return roll.interceptSucceeded;
-
-    const interceptSucceeded = rollDefenseSatelliteInterceptSuccess(
-      strikeId,
+    const applied = applyInterceptRollAtCrossing({
       planetId,
-      roll.defenseLevel,
-    );
-    const nextRoll: PlanetDefenseInterceptRollResult = {
-      ...roll,
-      rollAttempted: true,
-      interceptSucceeded,
-    };
-    let nextPlan = s.interceptVisualPlan;
-    if (nextPlan && interceptSucceeded) {
-      nextPlan = {
-        ...nextPlan,
-        interceptSucceeded: true,
-        interceptAtMs: relativeMs,
-        missiles: nextPlan.missiles.map((m, i) =>
-          i === 0 ? { ...m, willHit: true } : m,
-        ),
-      };
-    }
-    set({
-      strike: {
-        ...s,
-        interceptRoll: nextRoll,
-        interceptVisualPlan: nextPlan,
-      },
+      strikeId,
+      relativeMs,
+      slotIndex,
+      roll: s.interceptRoll!,
+      plan: s.interceptVisualPlan,
     });
-    return interceptSucceeded;
+    if (applied.mutated) {
+      set({
+        strike: {
+          ...s,
+          interceptRoll: applied.roll,
+          interceptVisualPlan: applied.plan,
+        },
+      });
+    }
+    return applied.succeeded;
   },
 
-  tryCompleteNearMiss: (planetId, nowMs) => {
+  tryCompleteNearMiss: (planetId, _nowMs, opts) => {
     const s = get().strike;
     if (!s || s.planetId !== planetId || s.phase !== 'inbound' || s.nearMissDispatched) return;
-    const endMs = s.missileStartMs + s.missileTravelMs + ARC_CORE_MESSAGE_MISSILE_TRAIL_FADE_MS;
-    if (nowMs < endMs) return;
+    const roll = s.interceptRoll;
+    const forceEarly = opts?.force === true;
+    const visualReady = opts?.visualReady === true;
+    // strike 종료는 planetHub strikeVisualGate(inbound+intercept) 경유 visualReady만 허용.
+    if (!forceEarly && !visualReady) return;
     set({ strike: { ...s, nearMissDispatched: true } });
 
-    const roll = s.interceptRoll ?? resolvePlanetDefenseInterceptRoll(planetId, s.strikeId);
-    if (roll.rollAttempted && roll.interceptSucceeded) {
+    const resolvedRoll = roll ?? resolvePlanetDefenseInterceptRoll(planetId, s.strikeId);
+    if (resolvedRoll.rollAttempted && resolvedRoll.interceptSucceeded) {
       dispatchArcCoreCommand({
         type: 'arc_core_message_missile_intercepted',
         planetId,
         messageKo: s.messageKo,
-        weaponId: roll.weaponId ?? undefined,
-        satelliteCount: roll.activeSatelliteCount,
-        defenseLevel: roll.defenseLevel,
-        interceptChancePct: roll.interceptChancePct,
+        weaponId: resolvedRoll.weaponId ?? undefined,
+        satelliteCount: resolvedRoll.activeSatelliteCount,
+        defenseLevel: resolvedRoll.defenseLevel,
+        interceptChancePct: resolvedRoll.interceptChancePct,
         meta: { origin: 'arc_core_policy', reason: 'defense_satellite_intercept' },
       });
       set({ strike: null });
@@ -201,12 +259,31 @@ export const useArcCoreMessageStore = create<ArcCoreMessageState>((set, get) => 
       type: 'arc_core_message_missile_near_miss',
       planetId,
       messageKo: s.messageKo,
-      defenseLevel: roll.hasActiveSatellites ? roll.defenseLevel : undefined,
-      interceptChancePct: roll.hasActiveSatellites ? roll.interceptChancePct : undefined,
-      interceptRollFailed: roll.rollAttempted && !roll.interceptSucceeded,
+      defenseLevel: resolvedRoll.hasActiveSatellites ? resolvedRoll.defenseLevel : undefined,
+      interceptChancePct: resolvedRoll.hasActiveSatellites ? resolvedRoll.interceptChancePct : undefined,
+      interceptRollFailed: resolvedRoll.rollAttempted && !resolvedRoll.interceptSucceeded,
       meta: { origin: 'arc_core_policy', reason: 'arc_core_message_near_miss' },
     });
     set({ strike: null });
+  },
+
+  tryCompleteDevInterceptBurst: (planetId) => {
+    const burst = get().devInterceptBurst;
+    if (!burst || burst.planetId !== planetId || burst.burstCompleted) return;
+    const roll = burst.interceptRoll;
+    if (!roll.rollAttempted || !roll.interceptSucceeded) return;
+    set({ devInterceptBurst: { ...burst, burstCompleted: true } });
+    dispatchArcCoreCommand({
+      type: 'arc_core_message_missile_intercepted',
+      planetId,
+      messageKo: ARC_CORE_MESSAGE_DEFAULT_KO,
+      weaponId: roll.weaponId ?? undefined,
+      satelliteCount: roll.activeSatelliteCount,
+      defenseLevel: roll.defenseLevel,
+      interceptChancePct: roll.interceptChancePct,
+      meta: { origin: 'arc_core_policy', reason: 'dev_intercept_burst' },
+    });
+    set({ devInterceptBurst: null });
   },
 }));
 

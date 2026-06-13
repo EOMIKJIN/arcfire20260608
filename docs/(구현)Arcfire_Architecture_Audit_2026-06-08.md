@@ -1,7 +1,7 @@
 # Arcfire Online — 아키텍처 전수 검사 보고서
 
 **검사일**: 2026-06-08  
-**대상**: `docs/Arcfire_RN_Architecture_Master_Spec(single).md` · `.cursor/rules/arcfire-online.mdc` · `AGENTS.md` · `src/` · `app/`  
+**대상**: `docs/Arcfire_RN_Architecture_Master_Spec(single).md` · `.cursor/rules/Arcfire_Master_Spec_v3.1_Final-1781345284482521549.mdc` · `AGENTS.md` · `src/` · `app/`  
 **자동 감사**: `npm run audit:memory` PASS (20/20) · `npm run audit:daily` (functions/ tsc 제외 src·app 정상)
 
 ---
@@ -47,7 +47,7 @@
 
 ### 2-3. 커서 규칙 vs AGENTS.md
 
-| 항목 | arcfire-online.mdc | AGENTS.md | 조치 |
+| 항목 | Arcfire_Master_Spec_v3.1_Final-1781345284482521549.mdc | AGENTS.md | 조치 |
 |------|-------------------|-----------|------|
 | 일일 운영 배치 | ✅ 상세 | ✅ 요약 | 일치 |
 | `AiPlanetsSubCore` 역할 | 부트스트랩 + 배치 분리 | “틱·시뮬 진입점” 문구 잔존 | AGENTS.md 수정 |
@@ -138,7 +138,7 @@ docs/
 ├── 2.1.memory.md                                 ← 메모리 계약 상세
 └── README_ARCHITECTURE.md                        ← 진입 인덱스
 
-.cursor/rules/arcfire-online.mdc  ← 에이전트 실행 규칙 (코드와 동기)
+.cursor/rules/Arcfire_Master_Spec_v3.1_Final-1781345284482521549.mdc  ← 에이전트 실행 규칙 (헌법 v3.1)
 AGENTS.md                         ← 요약 + 한계 고지
 ```
 

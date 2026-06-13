@@ -16,9 +16,9 @@ import { usePlayerStore } from '../../src/store/playerStore';
 import { SHIP_TEMPLATES } from '../../src/data/ships';
 import {
   CAPITAL_WEAPON_LIST_FROM_CSV,
-  NPC_CAPITAL_SHIPS_FROM_CSV,
   NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV,
 } from '../../src/data/generated';
+import { getNpcCapitalShip } from '../../src/npc/npcFleetRegistry';
 import { resolveNpcCapitalShipPortraitSource } from '../../src/game/npcCapitalShipPortraitAssets';
 import { applyNpcCapitalShipToPlayerShip } from '../../src/game/applyNpcCapitalShipPurchase';
 import { isSurvivalPodNpcShipId } from '../../src/game/playerSurvivalPod';
@@ -49,6 +49,9 @@ import { ArcStageBackButton } from '../../src/ui/overlay/ArcStageBackButton';
 import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacilityTabBar';
 import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
+import {
+  resolveCapitalShipClassification,
+} from '../../src/arcCore/balance/capitalShipClassification';
 import { resolveShipFinalStatResult } from '../../src/ship/shipStatPipeline';
 import { resolveMineralUpgradeMaxLevel } from '../../src/game/shipyardMineralUpgrade/mineralUpgradeModel';
 import { normalizePlayerCombatProficiency } from '../../src/combat/playerCombatProficiency';
@@ -283,9 +286,12 @@ export default function ShipyardScreen() {
   const template = SHIP_TEMPLATES[ship.templateId];
   const portraitNpcId = ship.portraitNpcCapitalShipId ?? template?.portraitNpcCapitalShipId;
   const portraitRow = portraitNpcId
-    ? NPC_CAPITAL_SHIPS_FROM_CSV.find((s) => s.id === portraitNpcId)
+    ? getNpcCapitalShip(portraitNpcId)
     : undefined;
   const combatStats = portraitRow?.combat;
+  const shipClassification = portraitNpcId
+    ? resolveCapitalShipClassification(portraitNpcId)
+    : null;
   const strStat = combatStats?.strStat ?? 14;
   const dexStat = combatStats?.dexStat ?? 14;
   const sizeClass = combatStats?.sizeClass ?? 0;
@@ -357,6 +363,12 @@ export default function ShipyardScreen() {
           </Text>
         ) : null}
         <StatRow label="함선명" value={ship.name} />
+        {shipClassification ? (
+          <>
+            <StatRow label="함급 분류" value={shipClassification.identityHeadline} />
+            <StatRow label="역할" value={shipClassification.roleSummaryKo} />
+          </>
+        ) : null}
         {combatProficiency ? (
           <>
             <StatRow label="전투 등급" value={`Lv.${combatProficiency.combatLevel}`} />
@@ -494,7 +506,7 @@ export default function ShipyardScreen() {
               <Text style={styles.hangarHeading}>— 보관 중인 전함 —</Text>
               <Text style={styles.hangarCurrentLine}>[현재탑승전함] {ship.name}</Text>
               {hangarSorted.map(entry => {
-                const row = NPC_CAPITAL_SHIPS_FROM_CSV.find(s => s.id === entry.npcCapitalShipId);
+                const row = getNpcCapitalShip(entry.npcCapitalShipId);
                 const thumbSrc = row?.portraitImageAssetKey
                   ? resolveNpcCapitalShipPortraitSource(row.portraitImageAssetKey)
                   : undefined;

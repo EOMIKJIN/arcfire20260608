@@ -7,6 +7,10 @@
 // ============================================================
 
 import type { NpcCapitalAiContext, NpcCapitalOrbitKinematic, NpcCapitalShip } from '../types';
+import {
+  formatCapitalShipInfoPanelBadge,
+  resolveCapitalShipClassification,
+} from '../arcCore/balance/capitalShipClassification';
 import { NPC_CAPITAL_SHIPS_FROM_CSV, NPC_CAPTAINS_FROM_CSV } from '../data/generated';
 import { getNpcCapitalAiContext } from './npcFleetRegistry';
 import { getNpcCapitalHullClassDef, resolveNpcCapitalOrbitKinematic } from './npcCapitalClassRegistry';
@@ -115,8 +119,10 @@ function buildPlanetNearbyPresence(
 
     const hullClass = getNpcCapitalHullClassDef(generalShip.ship.hullTypeId);
     const orbit = resolveNpcCapitalOrbitKinematic(planetId, systemId, slot, hullClass.orbit);
-    const infoRight =
-      (generalShip.ship.infoLineSuffix && generalShip.ship.infoLineSuffix.trim()) || mk;
+    const classification = resolveCapitalShipClassification(generalShip.ship.id);
+    const infoRight = classification
+      ? formatCapitalShipInfoPanelBadge(classification)
+      : (generalShip.ship.infoLineSuffix && generalShip.ship.infoLineSuffix.trim()) || mk;
     rows.push({
       slotIndex: slot,
       hullClassId: hullClass.id,

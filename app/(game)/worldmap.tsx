@@ -46,7 +46,7 @@ import { StarSystem } from '../../src/types';
 import { countGoodInInventory, normalizeInventorySlots, removeGoodFromInventorySlots } from '../../src/game/playerInventory';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { releaseGalaxyMapStageMemory } from '../../src/game/stageMemoryRelease';
-import { buildCsvStaticIndexes } from '../../src/game/buildCsvStaticIndexes';
+import { buildCsvStaticIndexesFull } from '../../src/game/buildCsvStaticIndexes';
 
 const NODE_R = LAYOUT.map_node_radius;
 const NODE_R_CURRENT = LAYOUT.map_node_radius_start;
@@ -101,7 +101,7 @@ export default function WorldMapScreen() {
   useStageMemory(
     'galaxy_map',
     () => {
-      buildCsvStaticIndexes();
+      buildCsvStaticIndexesFull();
     },
     () => {
       if (transitAnimRef.current) {

@@ -4,7 +4,7 @@
 
 import { LevelBandTargets_FROM_BALANCE_CSV } from '../../../data/balance/generated';
 import { AABS_USER_DWELL_ALERT_RATIO } from '../aabsConstants';
-import { useAabsPolicyStore } from '../aabsPolicyStore';
+import { enqueueDailyOpsObservation } from '../../userMod/dailyOpsObservationQueue';
 import { usePlayerStore } from '../../../store/playerStore';
 
 export type UserDwellAlert = {
@@ -35,9 +35,11 @@ export function detectUserDwellAnomaly(
 
 export function applyUserDwellCorrection(alert: UserDwellAlert): void {
   if (!alert.suggestReduceDifficulty) return;
-  const store = useAabsPolicyStore.getState();
-  store.applyStepToward('expReward', (store.multipliers.expReward ?? 1) * 1.03);
-  store.applyStepToward('combatDifficulty', (store.multipliers.combatDifficulty ?? 1) * 0.97);
+  void enqueueDailyOpsObservation({
+    kind: 'dwell_correction',
+    alert,
+    observedAt: Date.now(),
+  });
 }
 
 export function shouldShowOnboardingGuide(): boolean {

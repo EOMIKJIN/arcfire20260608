@@ -4,9 +4,9 @@
 
 | 순서 | 문서 | 역할 |
 |------|------|------|
-| 1 | [`.cursor/rules/arcfire-online.mdc`](../.cursor/rules/arcfire-online.mdc) | **실행 규칙** (코드와 동기 유지) |
+| 1 | [`.cursor/rules/Arcfire_Master_Spec_v3.1_Final-1781345284482521549.mdc`](../.cursor/rules/Arcfire_Master_Spec_v3.1_Final-1781345284482521549.mdc) | **실행 규칙 (헌법 v3.1)** |
 | 2 | [`AGENTS.md`](../AGENTS.md) | 에이전트 요약·한계 고지 |
-| 3 | [`Arcfire_RN_Architecture_Master_Spec(single).md`](./Arcfire_RN_Architecture_Master_Spec(single).md) | 설계 정책 v2.0 + **§18 구현 정본** |
+| 3 | [`Arcfire_RN_Architecture_Master_Spec(single).md`](./Arcfire_RN_Architecture_Master_Spec(single).md) | 설계 정책 v2.0 + **§18 구현 정본** — v2.0 `aiVirtualPlayerStore` 등 **superseded**, 헌법은 **#1 v3.1** |
 | 4 | [`2.1.memory.md`](./2.1.memory.md) | 메모리·스테이지 계약 상세 |
 | 5 | [`Arcfire_Architecture_Audit_2026-06-08.md`](./Arcfire_Architecture_Audit_2026-06-08.md) | 최근 전수 검사 |
 | 6 | [`ARCHITECTURE_RISK_REGISTER.md`](./ARCHITECTURE_RISK_REGISTER.md) | 리스크·방지책 |

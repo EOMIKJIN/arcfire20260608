@@ -1,6 +1,6 @@
 key,value,notesKo
 policy_version,1,행성 방위위성 시험운용 정책
-min_per_planet,2,행성당 최소 배치 수(정반대 2기 — 상·하반원 요격 공백 보완)
+min_per_planet,2,행성당 최소 배치 수(정반대 2기 — 궤도 커버)
 default_weapon_id,w_intercept_missile_01,기본 탑재 요격미사일
 default_radius_scale,0.52,궤도 반경(행성 바깥·소행성 안쪽 밴드 ORBIT_CENTER 대비)
 default_phase_bias,0.08,1번 위성 위상 바이어스(0..1)

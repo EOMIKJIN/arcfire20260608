@@ -3,7 +3,6 @@ import type { ArcCoreMessageMissileBezier } from './arcCoreMessageMissileGeometr
 
 export const ARC_MSG_BEZIER_FLAT_LEN = 6;
 export const ARC_CORE_MISSILE_TRAIL_WINDOW_U = 0.72;
-export const ARC_CORE_MISSILE_TRAIL_SAMPLES = 5;
 
 /** 꼬리·탄두 그라데이션 — 보라(꼬리) → 마젠타 → 빨강(탄두) */
 export const ARC_CORE_MISSILE_TRAIL_GRADIENT_COLORS = [
@@ -36,8 +35,9 @@ export const ARC_CORE_MSG_VIS_IDX = {
 
 /**
  * 탄두·꼬리·닷지 공통 시각 상태 — worklet 단일 함수(내부 호출 없음).
- * - 비행 중: 꼬리 머리 = 탄두 u (혜성 꼬리)
- * - 화면 이탈(uExit) 이후: 꼬리 구간 고정 + lifeOpacity 페이드
+ * - 비행 중: 꼬리 머리 = 탄두 u (혜성 꼬리), 탄두는 u=1(화면 밖)까지 유지
+ * - u=1 도달 후: 탄두·꼬리 동시 fadeMs 페이드
+ * - 요격 명중(suppress): 탄두 즉시 숨김, 꼬리는 격추 u에서 고정 후 fadeMs 페이드(흘러가지 않음)
  */
 export function packArcCoreMessageMissileVisualSnapshot(
   active: number,
@@ -47,6 +47,8 @@ export function packArcCoreMessageMissileVisualSnapshot(
   fadeMs: number,
   uEnter: number,
   uExit: number,
+  /** 요격 명중 등 — 절대 시각 ms. 이후 탄두 숨김·꼬리 u 고정 + fadeMs 페이드 */
+  suppressAfterMs: number = 0,
 ): number[] {
   'worklet';
   if (!active) return [0, 0, 0, 0, 0, 0, 0];
@@ -56,11 +58,31 @@ export function packArcCoreMessageMissileVisualSnapshot(
   const uEnterClamped = Math.min(1, Math.max(0, uEnter));
   const uExitClamped = Math.min(1, Math.max(uEnterClamped, uExit));
   const travelClamped = Math.max(1, travelMs);
-  const tExit = travelClamped * uExitClamped;
-  const lifeEnd = travelClamped + fadeMs;
+  const suppressed = suppressAfterMs > startMs;
+  const lifeEnd = suppressed
+    ? (suppressAfterMs - startMs) + fadeMs
+    : travelClamped + fadeMs;
 
   if (tSince < 0 || tSince >= lifeEnd) {
     return [0, 0, 0, 0, 0, 0, 0];
+  }
+
+  if (suppressed && clockMs >= suppressAfterMs) {
+    const uDestroy = Math.min(1, Math.max(0, (suppressAfterMs - startMs) / travelClamped));
+    const uHead = uDestroy;
+    const uTail = Math.max(0, uDestroy - windowU);
+    const tSinceDestroy = clockMs - suppressAfterMs;
+    const lifeOpacity = Math.max(0, 1 - tSinceDestroy / Math.max(1, fadeMs));
+    const alive = lifeOpacity > 0.02 ? 1 : 0;
+    return [
+      alive,
+      uHead,
+      uTail,
+      uDestroy,
+      0,
+      lifeOpacity,
+      0,
+    ];
   }
 
   const u = Math.min(1, tSince / travelClamped);
@@ -68,28 +90,19 @@ export function packArcCoreMessageMissileVisualSnapshot(
   const beforeEnter = u < uEnterClamped;
 
   let lifeOpacity = 1;
-  if (pastExit) {
-    const fadeEnd = Math.min(tExit + fadeMs, lifeEnd);
-    lifeOpacity = Math.max(0, 1 - (tSince - tExit) / Math.max(1, fadeEnd - tExit));
+  if (u >= 1) {
+    lifeOpacity = Math.max(0, 1 - (tSince - travelClamped) / Math.max(1, fadeMs));
   }
 
-  const warheadShown = !beforeEnter && !pastExit;
-  let uHead: number;
-  let uTail: number;
-
-  if (!pastExit) {
-    uHead = u;
-    uTail = Math.max(0, uHead - windowU);
-  } else {
-    uHead = uExitClamped;
-    uTail = Math.max(0, uExitClamped - windowU);
-  }
-
-  const warheadU = warheadShown ? u : Math.min(u, uExitClamped);
+  /** 탄두 — 베지어 끝(u=1)까지 꼬리와 동행, 이후 동시 페이드 */
+  const uHead = u;
+  const uTail = Math.max(0, uHead - windowU);
+  const warheadU = u;
+  const warheadShown = lifeOpacity > 0.02;
   const inFlight = tSince < travelClamped && !pastExit && !beforeEnter;
 
   return [
-    1,
+    lifeOpacity > 0.02 ? 1 : 0,
     uHead,
     uTail,
     warheadU,

@@ -1,6 +1,7 @@
 // ============================================================
 // 방위위성 요격 — ArcCore inbound 근접(최근접) 예측·발사 시각
 // 즉시 추적 사격 금지: 행성 근접 지점을 선행 계산 후 lead time 발사
+// ── 미사일 요격체계 · 안정버전 2026-06-12 — predict 축 ──
 // ============================================================
 
 import { PLANET_MAIN_ORBIT_SCENE_SIZE } from '../../stages/planetMainStageLayout';
@@ -119,8 +120,8 @@ export function resolveDefenseInterceptExitPoint(
 }
 
 /**
- * 위성 1기 — lead time 발사 시각·조준·exit.
- * willHit=false면 예측점 주변 miss offset.
+ * 위성 1기 — lead time 발사 시각·조준·exit (단일 위성 빠른 경로).
+ * 다위성·tier 스캔은 scheduleDefenseInterceptLaunch 사용.
  */
 export function resolveDefenseInterceptLaunchSolution(input: {
   launchX: number;

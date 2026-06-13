@@ -8,6 +8,7 @@ import {
   Paint,
   useImage,
 } from '@shopify/react-native-skia';
+import { registerPlanetSessionResource } from '../../game/planetSessionRegistry';
 import type { MissileHitFx } from './PlanetEdenRaidTestLayer';
 
 const DODGE_HIT_FX_DURATION_MS = 203;
@@ -37,6 +38,7 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   dodgeOrbitVisualScaleY = 1,
   dodgeOrbitOffsetX = 0,
   dodgeOrbitOffsetY = 0,
+  sessionPlanetId = null,
 }: {
   size: number;
   active: boolean;
@@ -50,6 +52,8 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   dodgeOrbitVisualScaleY?: number;
   dodgeOrbitOffsetX?: number;
   dodgeOrbitOffsetY?: number;
+  /** Stage 1 행성 허브 — setInterval을 planet session dispose에 연동 */
+  sessionPlanetId?: string | null;
 }) {
   const [frameTickMs, setFrameTickMs] = useState(() => Date.now());
 
@@ -72,8 +76,18 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
       }
       if (needsRedraw) setFrameTickMs(Date.now());
     }, 50);
-    return () => clearInterval(id);
-  }, [active, dodgeHitFxRef, dodgeTimeMsRef]);
+    const sessionToken = sessionPlanetId
+      ? registerPlanetSessionResource({
+        ownerId: 'skia_nebula_dodge_fx_tick',
+        planetId: sessionPlanetId,
+        dispose: () => clearInterval(id),
+      })
+      : null;
+    return () => {
+      clearInterval(id);
+      sessionToken?.release();
+    };
+  }, [active, dodgeHitFxRef, dodgeTimeMsRef, sessionPlanetId]);
 
   void frameTickMs;
 

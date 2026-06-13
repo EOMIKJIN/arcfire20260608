@@ -130,7 +130,8 @@ export function listWeaponModuleItemIdsForPlanetZone(
   const tierCap = tierRow
     ? parseNum(tierRow.maxWeaponRequiredLevel, 60)
     : Math.max(1, Math.floor(recommendedPilotLevel));
-  const levelCap = Math.min(Math.max(1, Math.floor(recommendedPilotLevel)), tierCap);
+  /** zone 티어 상한 — recommendedPilotLevel(행성 권장 Lv)과 분리 */
+  const levelCap = tierCap;
   const kindFilter = tierRow ? String(tierRow.weaponFamilyKindFilter ?? '*').trim().toLowerCase() : '*';
 
   const allInBand = listItemDefs().filter((d) => {
@@ -157,7 +158,8 @@ export function listShipEquipmentItemIdsForPlanetZone(
   const tierCap = tierRow
     ? parseNum(tierRow.maxEquipmentRequiredLevel, 60)
     : Math.max(1, Math.floor(recommendedPilotLevel));
-  const levelCap = Math.min(Math.max(1, Math.floor(recommendedPilotLevel)), tierCap);
+  /** zone 티어(eq_t*) 상한 — 행성 권장 Lv와 분리, 구매 Lv는 isTradePortItemPurchasableByPlayer */
+  const levelCap = tierCap;
   const gradeCap = tierRow
     ? Math.max(1, Math.min(3, parseNum(tierRow.maxEquipmentGrade, 3)))
     : 3;
@@ -236,32 +238,42 @@ export function isTradePortItemPurchasableByPlayer(itemId: string, playerLevel: 
   return true;
 }
 
+/** 무역소 구매 탭 — 행성 카탈로그 진열(플레이어 Lv 무관). 구매 차단은 isTradePortItemPurchasableByPlayer */
+export function isTradePortBuyMarketListedItem(itemId: string): boolean {
+  const def = getItemDef(itemId);
+  if (!def?.tradeable) return false;
+
+  if (def.type === 'weapon_module') {
+    const weaponId = String(def.attrs?.weaponId ?? '').trim();
+    return Boolean(weaponId && isCanonicalTradePortWeapon(weaponId));
+  }
+
+  if (def.type === 'capital_ship') {
+    const npcId = String(def.attrs?.npcCapitalShipId ?? '').trim();
+    return Boolean(npcId && isCanonicalTradePortCapitalShip(npcId));
+  }
+
+  if (isShipTradeEquipmentDef(def)) {
+    return getTradePortEquipmentRequiredLevel(itemId) != null;
+  }
+
+  return true;
+}
+
 /** UI·시장 — 행성 진열 ∩ 플레이어 구매 가능 */
 export function filterTradePortCatalogForPlayer(itemIds: readonly string[], playerLevel: number): string[] {
   return itemIds.filter((id) => isTradePortItemPurchasableByPlayer(id, playerLevel));
 }
 
 /**
- * 구매 탭 진열 — 무기·전함은 행성 카탈로그 전부 표시(레벨 미달은 구매 시 차단).
- * 장비 등만 플레이어 레벨로 진열 필터.
+ * 구매 탭 진열 — 무기·전함·장비·교역품 공통: 행성 카탈로그 전부 표시.
+ * 레벨·재고·잔고 등은 구매 버튼(resolveTradeBuyBlock)에서만 차단.
  */
 export function filterTradePortCatalogForBuyMarket(
   itemIds: readonly string[],
-  playerLevel: number,
+  _playerLevel?: number,
 ): string[] {
-  return itemIds.filter((id) => {
-    const def = getItemDef(id);
-    if (!def?.tradeable) return false;
-    if (def.type === 'weapon_module') {
-      const weaponId = String(def.attrs?.weaponId ?? '').trim();
-      return Boolean(weaponId && isCanonicalTradePortWeapon(weaponId));
-    }
-    if (def.type === 'capital_ship') {
-      const npcId = String(def.attrs?.npcCapitalShipId ?? '').trim();
-      return Boolean(npcId && isCanonicalTradePortCapitalShip(npcId));
-    }
-    return isTradePortItemPurchasableByPlayer(id, playerLevel);
-  });
+  return itemIds.filter((id) => isTradePortBuyMarketListedItem(id));
 }
 
 let lastSyncSignature = '';

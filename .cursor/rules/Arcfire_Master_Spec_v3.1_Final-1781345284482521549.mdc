@@ -1,0 +1,286 @@
+---
+description: Arcfire Online 아키텍처 마스터 스펙 v3.1 — 헌법·STAGE·15대 금지·Daily Ops
+alwaysApply: true
+---
+
+# 🚀 아크파이어 온라인 — React Native 모바일게임 프로젝트 아키텍처 마스터 스펙 v3.1 (무손실 완전판)
+
+> **문서 버전**: v3.1 (Single-Player Ultimate & ArcCore Native - Unabridged)
+> **최종 업데이트**: 2026-06-13
+> **문서 상태**: 설계 및 구현 동기화 완결판 (Master Spec)
+> **핵심 원칙**: `Table-First` · `Session-Based Memory` · `Hybrid Rendering` · `Navigation.replace()` · `Local-AI-First`
+> **구현 세부 인덱스**: `AGENTS.md` (테이블·행성 허브·Skia·요격 등 운영 계약 요약)
+
+---
+
+## 🔄 정밀 검사 리포트: 이전 버전의 오류 및 v3.1 수정 사항
+
+| 해결된 충돌/오류 | v3.1 해결 방안 (반영 완료) |
+|------------------|----------------------------|
+| **[설계 충돌] 유령 스토어 `aiVirtualPlayerStore`** | `aiVirtualPlayerStore` 개념 **전면 폐기**. 가상 유저는 독자적 상태 스토어 없이 `AiNpcSubCore`의 궤도 수송 트래픽(`nearbyOrbitPresenceSystem`)과 `npc_ai_captains.csv`로 완벽히 단일화. |
+| **[설계 충돌] 실시간 밸런싱(AABS) 부하** | 고빈도 실시간 밸런스 패스 전면 금지. 모든 밸런싱(AABS)과 정책 배포는 벽시계 기준 **일 1회(12:00) `runArcCoreDailyOpsBatch()`** 배치 처리로 수렴. |
+| **[누락 보완] 메인 레이아웃 수학적 제약** | `PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX` 등 에이전트가 화면 레이아웃을 망가뜨리지 않도록 컨텍스트 제약 사항을 공식 15대 헌법에 편입. |
+| **[잔재 제거] 멀티플레이 용어 완벽 소거** | 채널, 실시간 동기화, `battle_logs_queue` 등 서버 통신 암시 잔재 100% 소거. 완전한 오프라인/싱글 샌드박스. |
+| **[복원 완료] 축약되었던 상세 스펙 복구** | BM 스키마, 플로우차트, Cursor 개발 체크리스트, 세션 생명주기 코드를 모두 무손실 복원. |
+
+---
+
+## 🎯 0. 게임 핵심 컨셉 정의 (Core Concept)
+
+### 0-1. 게임 장르 및 규모
+| 항목 | 정의 |
+|------|------|
+| **장르** | **싱글플레이 우주 전략 샌드박스** — 실유저 간 네트워크 상호작용 완전 배제. |
+| **플랫폼** | React Native 모바일 (iOS / Android) |
+| **서버 구조** | **서버리스 (Serverless)** — 전용 게임 서버 없음. Firestore(유저 데이터) + 클라이언트 로컬 AI(ArcCore) 처리. |
+| **오프라인** | 세계 시뮬레이션(전투/경제/트래픽)은 100% 로컬 ArcCore가 처리하므로 **오프라인 플레이 가능**. |
+
+### 0-2. AI 기반 세계관 계층 구조 (World Layer)
+- **채널 개념 없음**: 실유저 동기화 필요 없음.
+- **세계 근원 마스터 (ArcCore)**: `AiNpcSubCore`(트래픽 연출), `AiEconomySubCore`(경제), `ArcCoreDailyOpsSubCore`(일일 밸런스)가 세계를 통제함.
+- **생동감 연출**: 타 유저처럼 보이는 전함들은 `AiNpcSubCore`가 `npc_ai_captains.csv`를 기반으로 렌더링하는 AI 궤도 트래픽임.
+
+### 0-3. Firestore 역할 명확화 (서버 통신 최소화)
+```text
+Firestore 사용 범위 (실 플레이어 데이터만 단발성 동기화):
+  ✅ arcfire_player_v1 (유저 프로필 및 진행도)
+  ✅ ship.equipSlots (함선 장착 정보)
+  ✅ BM 구매 및 퍼널 데이터
+
+  ❌ 실시간 타유저 동기화 (onSnapshot) → 절대 금지
+  ❌ 유저 실시간 XY 좌표 업데이트 → 절대 금지
+  ❌ AI 트래픽/가상 유저 상태 데이터 Firestore 저장 → 절대 금지
+```
+
+---
+
+## 📑 목차
+
+1. 시스템 개요 및 5대 설계 원칙
+2. 기술 스택
+3. 앱 초기화 및 부트스트랩 (Table-First)
+4. 사용자 인증 및 STAGE 진입
+5. 스테이지 구조 및 메모리 예산
+6. 메인 스테이지 허브 (Stage 1) 및 UI 제약
+7. 게임플레이 루프: 출격·이동·전투 (Stage 2~3)
+8. 메모리 관리 핵심 설계 (누수 방지 패턴)
+9. 렌더링 파이프라인 (Skia)
+10. 아크코어 일일 운영 (Daily Ops) 및 AABS
+11. AGDS: 자율형 개발 운영 시스템
+12. BM 구조 및 스테이지 매핑
+13. 파일 아키텍처 트리
+14. **🚨 절대 금지 사항 (System Rule 15)**
+15. Cursor 개발 체크리스트
+16. 전체 플로우차트 (Mermaid)
+
+---
+
+## 1. 시스템 개요 및 5대 설계 원칙
+
+| 원칙 | 내용 | 위반 시 결과 |
+|------|------|-------------|
+| **Table-First** | `tables/content/` CSV 정본 데이터를 부트 시 Map 인덱싱. 코드 하드코딩 금지 | 검색 성능 저하, 데이터 파편화 |
+| **Session-Based Memory** | STAGE 전환 시 이전 세션 `dispose` 강제. 영속성은 `planetCoreRuntimeStore`만. | OOM(Out of Memory) 크래시 |
+| **Hybrid Rendering** | 궤도 트래픽, 전투 이펙트 등 대량 객체는 Skia, 상호작용은 RN Animated로 분리. | 프레임 드랍(FPS 저하) |
+| **Navigation.replace()** | STAGE 전환 시 `navigate` 절대 금지, 무조건 `replace()` 강제. | 네비게이션 스택 누적, 메모리 초과 |
+| **Local-AI-First** | 밸런스, 트래픽 이동, 전투는 100% 클라이언트 ArcCore에서 로컬 연산. | 파이어베이스 통신 요금 폭탄 |
+
+---
+
+## 2. 기술 스택
+
+| 영역 | 기술 | 역할 |
+|------|------|------|
+| **프레임워크** | React Native | 앱 UI 셸 |
+| **렌더링 (대량)** | `@shopify/react-native-skia` | 전투 미사일 궤적, 함선, 궤도 트래픽 |
+| **렌더링 (UI)** | `Animated.transform` | NPC 마커, 화면 애니메이션 |
+| **데이터베이스** | Firebase Firestore | 단발성 `.get()`, `.set()` 프로필 동기화 |
+| **영속 로컬 DB** | `planetCoreRuntimeStore` | 게임 행성 지표 및 AABS 보정값 |
+| **휘발 로컬 DB** | `planetMemoCache` | STAGE 세션 단위 캐시 (이탈 시 `.clear()` 강제) |
+
+---
+
+## 3. 앱 초기화 및 부트스트랩 (Table-First)
+
+CSV 인덱싱은 핫 패스 최적화를 위해 **앱 생명주기 동안 단 1회**만 실행한다.
+
+```typescript
+// src/game/buildCsvStaticIndexes.ts
+export function buildCsvStaticIndexes(csvData: CsvBundle): void {
+  csvData.ships.forEach(row => shipMap.set(row.id, row));
+  csvData.weapons.forEach(row => weaponMap.set(row.id, row));
+  csvData.npcs.forEach(row => npcMap.set(row.id, row));
+}
+// ⚠️ 화면 렌더링 틱 내부에서 Array.prototype.find() 또는 filter() 사용 금지 (O(1) 조회 강제)
+```
+
+---
+
+## 4. 사용자 인증 및 STAGE 진입
+
+```text
+Firestore 접속 → arcfire_player_v1 프로필 로드 (단발성 Read)
+       │
+       ├─ [신규 유저] → 스토리 재생 → 초기 데이터 생성
+       └─ [기존 유저] → ship.equipSlots 장착 정보 로드
+       │
+       └─ [공통] → registerPlanetSessionResource() 호출 후 Stage 1 진입
+```
+
+---
+
+## 5. 스테이지 구조 및 메모리 예산
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│  STAGE 0: Splash / Auth              목표: < 50MB           │
+│  STAGE 1: Planet Hub (Main)          목표: < 200MB          │
+│  STAGE 2: Galaxy Map                 목표: < 120MB          │
+│  STAGE 3: Combat                     목표: < 250MB          │
+│  SUB-STAGE: 행성 시설 (Hub 위 Modal) 목표: < 80MB           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 6. 메인 스테이지 허브 (Stage 1) 및 UI 레이아웃 제약
+
+> **설계 철학**: 단일 기준 아키텍처. STAGE 1 레이아웃은 `src/stages/planetMainStageLayout.ts` 정본.
+
+### 6-1. 레이아웃 수학적 제약 (수정 절대 금지)
+1. **탑바 및 Quest HUD**: `PLANET_MAIN_FOREGROUND_TOP_CHROME_LIFT_PX`의 `translateY`만. 배경 `paddingTop` 수정 금지.
+2. **Quest HUD 높이**: `PLANET_MAIN_QUEST_HUD_ACTIVE_EST_PX`는 실제 레이아웃과 100% 동기.
+3. **배경 높이 고정**: `PLANET_MAIN_BACKGROUND_*` 슬롯은 `PlanetStageBackground`와 맞춤.
+4. **배경 이미지**: `planets.csv`의 `backdropImageAssetKey`만 (범용 하드코딩 금지).
+5. **하단 공백**: `PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX` 하나 — `ScrollView` 내부 마지막 spacer만.
+
+### 6-2. 허브 주요 기능
+- **거리 스캔**: `INFO_DISTANCE_SORT_INTERVAL_MS = 5000` 스로틀 (매 프레임 sort 금지).
+- **궤도 연출**: `AiNpcSubCore` + `npc_ai_captains.csv` (VirtualPlayer Store 없음).
+- **세션 콘텐츠**: `registerPlanetSessionResource` + `planetMemoCache` — 화면별 `setInterval`/캐시 산재 금지.
+
+---
+
+## 7. 게임플레이 루프: 출격·이동·전투 (Stage 2~3)
+
+### 7-1. 은하 이동 (Stage 2)
+```typescript
+releasePlanetMainStageSession();
+Navigation.replace('GalaxyMap');
+beginPlanetHubSuspendingNavigation();
+```
+
+### 7-2. 전투 파이프라인 (Stage 3)
+- **정본**: `PlanetEdenRaidOrbitSkiaCombat` 단일 렌더러, `postStepRef` 동기.
+- **탄두**: `shouldRenderHead = !m.hitApplied` — 명중 시 탄두 즉시 제거.
+
+### 7-3. STAGE 3 이탈 메모리 계약
+1. rAF 중단 2. `combatOrbitPostStepRef = null` 3. Skia `dispose()` 4. 배열 비우기 5. `replace`
+
+---
+
+## 8. 메모리 관리 핵심 설계
+
+- dispose는 할당과 **쌍(Pair)** 으로 `useEffect` 클린업.
+- `Animated.Value` 렌더 함수 내 재생성 금지.
+- 마커 이동은 `transform`만 — `left`/`top` 금지.
+
+---
+
+## 9. 렌더링 파이프라인 (Skia)
+
+1. SVG 레거시·이중 전투 렌더 **금지** — Skia 단일.
+2. Canvas 언마운트 시 **`dispose()`** 필수.
+3. 전투 Skia **독립 rAF 금지** — `postStepRef` 유지 (Stage 3).
+4. Stage 1 Skia(궤도·요격 등)는 세션 dispose 계약 준수.
+
+---
+
+## 10. 아크코어 일일 운영 (Daily Ops) 및 AABS
+
+- **배치**: 벽시계 24h 관측 → **12:00 1회** `runArcCoreDailyOpsBatch()`.
+- **정책**: `tables/balance/arc_core_daily_ops_policy.csv`
+- **고빈도 코어/AABS 패스 금지** — 연출 틱(`AiNpcSubCore` 등)만 실시간.
+- **AABS**: CSV 직접 수정 ❌ → `planetCoreRuntimeStore.globalMultipliers` · 1회 ±5% · 누적 ±15%.
+
+---
+
+## 11. AGDS: 자율형 개발 운영
+
+- `npm run audit:daily` / `audit:memory` / `audit:balance`
+- `npm run audit:arc-self-optimize:pack`
+- 런타임 버그: `.cursor/rules/arcfire-bug-debug-workflow.mdc`
+- UI 오버레이: `ArcOverlayHost` / `showArcAlert` · `npm run audit:ui-overlay`
+
+---
+
+## 12. BM 구조 및 스테이지 매핑
+
+| STAGE | 과금 | OOM 주의 |
+|-------|------|----------|
+| 1 Hub | 시즌패스, VIP | Modal 메모리 |
+| 2 Map | 이동권 | CSV O(1) |
+| 3 Combat | 부활, 버프 | **Skia dispose 후** Modal |
+
+---
+
+## 13. 파일 아키텍처 트리
+
+```text
+app/(game)/planet.tsx · worldmap.tsx · combat.tsx
+src/arcCore/ · game/planetSessionRegistry.ts · planetMemoCache.ts
+src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx
+tables/content/ · tables/balance/
+```
+
+---
+
+## 14. 🚨 절대 금지 사항 (System Rule 15)
+
+1. CSV 정본 런타임 overwrite 금지 (AABS multiplier만)
+2. STAGE 전환 `navigate` 금지 → `replace`
+3. Combat Skia 독립 rAF 금지
+4. 미사일 `!m.hitApplied` 탄두 제거 조건 변경 금지
+5. 거리 sort 매 프레임 금지 → 5s 스로틀
+6. 마커 `left/top` 금지 → `Animated.transform`
+7. 핫패스 O(N) `find`/`filter` 금지 → Map O(1)
+8. AABS ±5%/±15% 상한 초과 금지
+9. Stage 1 레이아웃 상수 임의 변경·우회 View 금지
+10. Firestore `onSnapshot`·실시간 좌표 동기 금지
+11. Skia dispose 전 BM Modal 금지
+12. `aiVirtualPlayerStore` 재생성 금지
+13. SVG·이중 전투 렌더 금지
+14. AABS/경제 실시간 틱 재배치 금지
+15. RN Modal/산재 Alert 금지 → `ArcOverlayHost`
+
+---
+
+## 15. Cursor 개발 체크리스트
+
+**P0**: replace · postStepRef null · Skia dispose · virtual store 제거 · onSnapshot 제거  
+**P1**: useStageMemory · sort 스로틀 · Daily Batch · NPC 트래픽 매핑  
+**P2**: useDisposable 확대 · DEV 메모리 체크포인트
+
+---
+
+## 16. 전체 플로우차트 (Mermaid)
+
+```mermaid
+graph TD
+    START([App Launch]) --> INIT[RN & ArcCore Init]
+    INIT --> TABLE_IDX[Build CSV Static Indexes]
+    TABLE_IDX --> SPLASH[Start Screen]
+    SPLASH --> DB_CONN{Firestore Access}
+    DB_CONN --> SESSION[Register Planet Session]
+    SESSION --> MAIN_STAGE[Stage 1 Hub]
+    MAIN_STAGE --> GALAXY_MAP[Stage 2 Map]
+    GALAXY_MAP --> CHK_BATTLE{전투?}
+    CHK_BATTLE --> BATTLE[Stage 3 Skia Combat]
+    BATTLE --> DISPOSE[Dispose Skia + rAF]
+    DISPOSE --> SESSION
+    MAIN_STAGE -.->|Daily 12:00| BATCH[runArcCoreDailyOpsBatch]
+```
+
+---
+
+**Arcfire Architecture Master Spec v3.1 Final Unabridged — END**

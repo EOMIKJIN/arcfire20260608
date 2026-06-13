@@ -4,16 +4,21 @@
  */
 
 export {
-  NEW_EDEN_RAID_TEST_PLANET_ID as CAPITAL_REALTIME_COMBAT_ORBIT_TEST_PLANET_ID,
   CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID,
-  DRACO_SEAMLESS_PVP_TEST_PLANET_ID,
-  DRACO_SEAMLESS_PVP_TEST_SYSTEM_ID,
   hasCapitalRealtimeCombatSlotsForPlanet,
   isCapitalRealtimeCombatOrbitPlanet,
+} from './capitalRealtimeCombatGate';
+
+export {
+  NEW_EDEN_RAID_TEST_PLANET_ID as CAPITAL_REALTIME_COMBAT_ORBIT_TEST_PLANET_ID,
+  DRACO_SEAMLESS_PVP_TEST_PLANET_ID,
+  DRACO_SEAMLESS_PVP_TEST_SYSTEM_ID,
   usePlanetEdenRaidSim as useCapitalRealtimeCombatSim,
   PlanetEdenRaidSimBinder as CapitalRealtimeCombatSimBinder,
   PlanetEdenRaidSimContext as CapitalRealtimeCombatSimContext,
   usePlanetEdenRaidSimContext as useCapitalRealtimeCombatSimContext,
+  PlanetEdenRaidOrbitSvg as CapitalRealtimeCombatOrbitSkia,
+  /** @deprecated Skia 단일 렌더 — `CapitalRealtimeCombatOrbitSkia` 사용 */
   PlanetEdenRaidOrbitSvg as CapitalRealtimeCombatOrbitSvg,
   PlanetEdenRaidCombatHudOverlay as CapitalRealtimeCombatHudOverlay,
   type PlanetEdenRaidSim,

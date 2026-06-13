@@ -378,7 +378,7 @@ function makeMissileTrailPath(
   // 탄두는 항상 궤적 선두(uHead)에 고정한다.
   // (중간 샘플점 사용 시 "끝까지 안 날아감"처럼 보이는 시각 오해가 발생)
   const head = quadBezier(p0, p1, p2, uHead);
-  const headVisible = tSince < m.travelMs;
+  const headVisible = !m.hitApplied && tSince < m.travelMs;
   const visible = trailOpacity > 0.01 && (span >= 0.004 || headVisible);
   return { path, head, headOpacity, trailOpacity, headVisible, visible };
 }
@@ -738,21 +738,32 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
     if (!ag.alive) continue;
     if (!finiteNum(ag.x) || !finiteNum(ag.y)) continue;
     labelEls.push(
-      <Text
+      <View
         key={`lb-${ag.id}`}
         style={[
-          styles.caption,
+          styles.captionWrap,
           {
-            left: ag.x - 36,
-            top: ag.y - ALLY_MARK_HALF - 18,
-            width: 72,
-            color: typeof ag.stroke === 'string' && ag.stroke.length > 0 ? ag.stroke : 'rgba(248,250,252,0.96)',
+            transform: [
+              { translateX: ag.x - 36 },
+              { translateY: ag.y - ALLY_MARK_HALF - 18 },
+            ],
           },
         ]}
-        numberOfLines={1}
+        pointerEvents="none"
       >
-        {ag.captainLabel}
-      </Text>,
+        <Text
+          style={[
+            styles.caption,
+            {
+              width: 72,
+              color: typeof ag.stroke === 'string' && ag.stroke.length > 0 ? ag.stroke : 'rgba(248,250,252,0.96)',
+            },
+          ]}
+          numberOfLines={1}
+        >
+          {ag.captainLabel}
+        </Text>
+      </View>,
     );
   }
 
@@ -767,8 +778,12 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
 });
 
 const styles = StyleSheet.create({
-  caption: {
+  captionWrap: {
     position: 'absolute',
+    left: 0,
+    top: 0,
+  },
+  caption: {
     fontFamily: FONTS.mono,
     fontSize: 8,
     lineHeight: 10,

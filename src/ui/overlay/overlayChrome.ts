@@ -1,4 +1,5 @@
 import type { ArcOverlayKind } from './arcOverlayStore';
+import { OVERLAY_TOKENS } from '../../utils/theme';
 
 export const OVERLAY_Z = {
   blocking: 2000,
@@ -7,10 +8,11 @@ export const OVERLAY_Z = {
   alert: 9999,
 } as const;
 
+/** ArcOverlayHost 전체 딤 — OVERLAY_TOKENS.backdropColor 단일 소스 */
 export const OVERLAY_BACKDROP = {
-  phosphor: 'rgba(6, 10, 20, 0.78)',
-  narrative: 'rgba(3, 8, 17, 0.55)',
-  panel: 'rgba(6, 10, 20, 0.82)',
+  phosphor: OVERLAY_TOKENS.backdropColor,
+  narrative: OVERLAY_TOKENS.backdropColor,
+  panel: OVERLAY_TOKENS.backdropColor,
 } as const;
 
 export type OverlayCardVariant = 'phosphor' | 'panel' | 'narrative';

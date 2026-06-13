@@ -777,6 +777,8 @@ export interface ItemDef {
   id: string;
   name: string;
   description: string;
+  /** 무역소 구매 팝업 — tables/content `특징설명` */
+  featureDescription: string;
   basePrice: number;
   priceVariance: number;
   volume: number;

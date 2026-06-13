@@ -1,0 +1,10 @@
+shipClass,tierBand,labelKo,labelEn,roleSummaryKo,sizeClassBase,affinityKind
+corvette,1,코벳,Corvette,함재기보다 크고 장갑이 있음. 대공 방어 및 소형함 교전.,0,light
+frigate,1,호위함,Frigate,가장 기본적인 전투 단위. 수리·방어·저격 등 특정 용도 특화.,1,light
+destroyer,2,구축함,Destroyer,호위함을 사냥하는 포식자. 강력한 전면 화력 집중.,2,shielded
+cruiser,2,순양함,Cruiser,함대의 중추. 균형 잡힌 공방 능력으로 단독 작전 가능.,2,heavy
+battleship,3,전함,Battleship,압도적인 거포와 장갑. 함대 결전의 핵심 화력 거점.,3,heavy
+carrier,3,항공모함,Carrier,함재기 사출·수 repair 이동 기지. 자체 전투보다 항공력 중심.,3,heavy
+dreadnought,4,드레드노트,Dreadnought,초대형 화력·장갑. 성계 결전용 엔드게임 함급.,4,heavy
+super_capital,4,슈퍼캐피털,Super Capital,은하급 전략 자산. 압도적 체급과 화력.,4,heavy
+apex_legend,4,아펙스,Apex Legend,전설급 최종 함선. 모든 지표가 극한에 달함.,4,heavy

@@ -1,0 +1,5 @@
+waveTierMin,waveTierMax,shipClass,tierBand,defaultLoadoutProfile
+1,10,frigate,1,neutral
+11,20,destroyer,2,neutral
+21,25,cruiser,2,neutral
+26,30,battleship,3,neutral

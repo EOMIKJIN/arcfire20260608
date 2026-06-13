@@ -1,5 +1,5 @@
 import { STORY_SCENES_FROM_CSV } from '../data/generated/csvStoryScenes';
-import { NPC_CAPTAINS_FROM_CSV } from '../data/generated/csvNpcCaptains';
+import { listNpcCaptains, getNpcCaptainByAssignedShipId } from '../npc/npcFleetRegistry';
 import { captainMatchesPlanetOrbitTable } from '../npc/captainOrbitTableMatch';
 import type { NearbyOrbitPresenceRow } from '../npc/nearbyOrbitPresenceSystem';
 
@@ -11,7 +11,7 @@ type DialogCandidate = {
 
 const CAPTAIN_DIALOG_INDEX: Map<string, DialogCandidate> = (() => {
   const map = new Map<string, DialogCandidate>();
-  for (const captain of NPC_CAPTAINS_FROM_CSV) {
+  for (const captain of listNpcCaptains()) {
     if (!captain.mainStageTalkEnabled) continue;
     const sceneId = captain.arcOrbitPresenceFill
       ? 'npc_dialog_arc_transport_temp'
@@ -41,10 +41,8 @@ export function collectPlanetHubCaptainIds(
   for (const row of nearbyRows) {
     const shipId = row.linkedCapitalShipId;
     if (!shipId) continue;
-    const captain = NPC_CAPTAINS_FROM_CSV.find(
-      (c) => c.assignedShipId === shipId && captainMatchesPlanetOrbitTable(c, planetId, systemId),
-    );
-    if (captain) ids.add(captain.id);
+    const captain = getNpcCaptainByAssignedShipId(shipId);
+    if (captain && captainMatchesPlanetOrbitTable(captain, planetId, systemId)) ids.add(captain.id);
   }
   return [...ids];
 }

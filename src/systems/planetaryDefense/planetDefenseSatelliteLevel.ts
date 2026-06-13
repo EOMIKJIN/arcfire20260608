@@ -5,6 +5,7 @@ import {
 import { getPlanetDefenseSatellitePolicy } from '../../arcCore/balance/planetDefenseSatellitePolicy';
 import { invalidatePlanetMemoCachesForPlanet } from '../../game/planetMemoCache';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
+import { patchPlanetDefenseSatelliteInstanceState } from './planetDefenseSatelliteInstanceRuntime';
 
 /** 행성 방위위성 현재 레벨 — 런타임 detail 우선, 없으면 정책 디폴트(1) */
 export function resolvePlanetDefenseSatelliteLevel(planetId: string): number {
@@ -21,7 +22,18 @@ export function resolvePlanetDefenseSatelliteInterceptChancePct(planetId: string
   return resolveDefenseSatelliteInterceptChancePct(resolvePlanetDefenseSatelliteLevel(planetId));
 }
 
-/** 추후 플레이어 업그레이드 UI — 레벨 영속 저장 */
+export function patchPlanetDefenseSatelliteInstanceLevel(
+  planetId: string,
+  instanceKey: string,
+  level: number,
+): void {
+  patchPlanetDefenseSatelliteInstanceState(planetId, instanceKey, {
+    defenseLevel: clampPlanetDefenseSatelliteLevel(level),
+  });
+  invalidatePlanetMemoCachesForPlanet(planetId);
+}
+
+/** @deprecated 행성 공통 레벨 — 신규는 patchPlanetDefenseSatelliteInstanceLevel 사용 */
 export function patchPlanetDefenseSatelliteLevel(planetId: string, level: number): void {
   const clamped = clampPlanetDefenseSatelliteLevel(level);
   const store = usePlanetCoreRuntimeStore.getState();

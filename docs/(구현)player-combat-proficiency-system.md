@@ -109,7 +109,7 @@ operatingEfficiencyPct = round(proficiencyMultiplier × 100)
   → createPlayerCombatProficiency(최종 level)
   → levelUpSummary 생성 (levelsGained > 0)
   → player 저장 + levelUpPending = true
-  → LevelUpModalHost 표시
+  → LevelUpOverlayBridge 표시
 ```
 
 ### 4.1 경험치 유입 경로
@@ -181,11 +181,11 @@ operatingEfficiencyPct = round(proficiencyMultiplier × 100)
 
 | UI | 경로 | 비고 |
 |----|------|------|
-| 레벨업 전역 모달 | `LevelUpModalHost` (`app/_layout.tsx`) | `LevelUpDetailPanel` |
+| 레벨업 전역 모달 | `LevelUpOverlayBridge` (`app/_layout.tsx`) | `LevelUpDetailPanel` |
 | 미션 보상 모달 | `RewardModal` | `levelUpDetail` 지원, **호출부 미연결** |
 | 행성 파일럿 패널 | `PilotInfoStatsPanel` | 숙련도 **미표시** |
 
-### 모달 표시 조건 (`LevelUpModalHost`)
+### 모달 표시 조건 (`LevelUpOverlayBridge`)
 
 - `levelUpPending && levelUpSummary && player`
 - **숨김:** `pathname`에 `combat` 포함, 궤도 전투 UI 활성 (`orbitCapitalCombatUiStore.active`)

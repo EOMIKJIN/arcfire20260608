@@ -71,8 +71,14 @@ export const LAYOUT = {
 export const OVERLAY_TOKENS = {
   phosphorAccent: '#6BD4FF',
   phosphorBorder: 'rgba(107, 212, 255, 0.35)',
-  phosphorCardBg: 'rgba(107, 212, 255, 0.08)',
-  phosphorBtnBg: 'rgba(107, 212, 255, 0.1)',
+  /** 전체 화면 딤 — 뒤 배경 가림 (~80%) */
+  backdropColor: 'rgba(6, 10, 20, 0.80)',
+  /** 알림·구매 등 포스포르 카드 본체 */
+  phosphorCardBg: 'rgba(13, 19, 31, 0.92)',
+  /** 카드 내부 설명·Tips 등 inset 패널 */
+  phosphorCardInsetBg: 'rgba(6, 14, 28, 0.88)',
+  phosphorBtnBg: 'rgba(107, 212, 255, 0.16)',
+  phosphorBtnBgEmphasis: 'rgba(107, 212, 255, 0.22)',
   cardMaxWidth: 300,
   narrativeMaxWidth: 440,
 } as const;

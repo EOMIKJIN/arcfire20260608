@@ -1,0 +1,3 @@
+itemType,mineralItemId,qtyPerUnit,notesKo
+weapon_module,ore_mineral_1,8,무기 모듈 구매 시 광물 소모
+capital_ship,ore_mineral_1,120,전함 구매 시 광물 소모

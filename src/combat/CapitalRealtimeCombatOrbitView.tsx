@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, type ViewStyle } from 'react-native';
 import type { CapitalRealtimeCombatSim } from './capitalRealtimeTypes';
-import { CapitalRealtimeCombatOrbitSvg } from './capitalRealtimeBridge';
+import { CapitalRealtimeCombatOrbitSkia } from './capitalRealtimeBridge';
 
 export type CapitalRealtimeCombatOrbitViewProps = {
   sim: CapitalRealtimeCombatSim;
@@ -20,7 +20,7 @@ export function CapitalRealtimeCombatOrbitView({
 }: CapitalRealtimeCombatOrbitViewProps) {
   return (
     <View style={[styles.box, { width: orbitSize, height: orbitSize }, style]}>
-      <CapitalRealtimeCombatOrbitSvg sim={sim} />
+      <CapitalRealtimeCombatOrbitSkia sim={sim} />
       {children}
     </View>
   );

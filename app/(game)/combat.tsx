@@ -24,16 +24,16 @@ import {
 import { usePlayerStore } from '../../src/store/playerStore';
 import { useMissionStore } from '../../src/store/missionStore';
 import { ENEMY_TEMPLATES } from '../../src/data/d20tables';
-import { NPC_CAPTAINS_FROM_CSV } from '../../src/data/generated';
+import { resolveNpcCapitalShip, getNpcCapitalShip } from '../../src/npc';
+import { resolveTransitPirateShipIdFromTables } from '../../src/combat/capitalTransitCombatSeed';
 import {
   CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID,
   CapitalRealtimeCombatHudOverlay,
-  CapitalRealtimeCombatOrbitSvg,
+  CapitalRealtimeCombatOrbitSkia,
   CapitalRealtimeCombatSimBinder,
   useCapitalRealtimeCombatSimContext,
   useCapitalRealtimeDuelOutcome,
 } from '../../src/combat';
-import { resolveNpcCapitalShip } from '../../src/npc';
 import { SkiaPlanetNebulaShaderBackdrop } from '../../src/components/planet/SkiaPlanetNebulaShaderBackdrop';
 import { usePlanetNebulaStore } from '../../src/store/planetNebulaStore';
 import { resolvePlanetNebulaBakedSource } from '../../src/game/planetNebulaBakedAssets';
@@ -66,17 +66,6 @@ function CombatOrbitNebulaBackdrop({
       dodgeOrbitSize={sim?.orbitSize ?? size}
     />
   );
-}
-
-function resolveTransitPirateShipIdFromTables(): string | null {
-  const pirateCaptain = NPC_CAPTAINS_FROM_CSV.find((captain) => {
-    if (captain.factionId !== 'pirates') return false;
-    if (!captain.assignedShipId || !captain.assignedShipId.trim()) return false;
-    if (!resolveNpcCapitalShip(captain.assignedShipId.trim())) return false;
-    // 이동중 전투는 실전 함장 우선
-    return captain.operationalState === 'combat' || captain.operationalState === 'general';
-  });
-  return pirateCaptain?.assignedShipId?.trim() ?? null;
 }
 
 export default function CombatScreen() {
@@ -136,7 +125,7 @@ export default function CombatScreen() {
     return templates[Math.floor(Math.random() * Math.min(2, templates.length))];
   });
   const transitPirateShipId = useMemo(
-    () => resolveTransitPirateShipIdFromTables(),
+    () => resolveTransitPirateShipIdFromTables(null),
     [],
   );
   const pirateNpc = useMemo(() => {
@@ -268,7 +257,7 @@ export default function CombatScreen() {
               active={isCombatRouteFocused}
               planetId={nebulaPlanetId}
             />
-            <CapitalRealtimeCombatOrbitSvg />
+            <CapitalRealtimeCombatOrbitSkia />
           </View>
           <View style={styles.hudWrap} pointerEvents="box-none">
             <CapitalRealtimeCombatHudOverlay />

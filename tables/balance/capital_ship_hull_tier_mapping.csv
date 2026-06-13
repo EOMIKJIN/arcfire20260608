@@ -1,0 +1,12 @@
+hullTierKey,shipClass,tierBand,variantGrade
+frigate_default,frigate,1,default
+frigate_upgraded,frigate,1,mk2
+destroyer,destroyer,2,default
+destroyer_upgraded,destroyer,2,mk2
+cruiser,cruiser,2,default
+cruiser_upgraded,cruiser,2,mk2
+battlecruiser,battleship,3,default
+battlecruiser_max,battleship,3,apex
+dreadnought,dreadnought,4,default
+super_capital,super_capital,4,default
+apex_legend,apex_legend,4,default

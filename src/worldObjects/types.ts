@@ -25,6 +25,8 @@ export interface WorldObjectRuntimeState {
   hp?: number;
   ownerFactionId?: string | null;
   cooldownUntilMs?: number | null;
+  /** 방위위성 인스턴스별 레벨 override */
+  defenseLevel?: number;
 }
 
 export interface WorldObject {

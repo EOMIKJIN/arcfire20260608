@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
 import type { NpcCaptainProgress } from '../types';
-import { NPC_CAPTAINS_FROM_CSV } from '../data/generated';
+import { getNpcCaptain } from '../npc/npcFleetRegistry';
 
 const STORAGE_KEY = 'arcfire_npc_captain_progress_v1';
 
@@ -22,7 +22,7 @@ function getCaptainProgressionSeed(captainId: string): {
   expCurveLinear: number;
   expCurveQuadratic: number;
 } {
-  const captain = NPC_CAPTAINS_FROM_CSV.find(c => c.id === captainId);
+  const captain = getNpcCaptain(captainId);
   return {
     initialLevel: Math.max(1, captain?.progression.initialLevel ?? 1),
     initialExp: Math.max(0, captain?.progression.initialExp ?? 0),

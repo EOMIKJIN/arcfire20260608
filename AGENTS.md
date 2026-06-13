@@ -1,10 +1,12 @@
 # 에이전트 안내 (Arcfire Online)
 
-Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/arcfire-online.mdc`**를 따릅니다. 요약만 여기 둡니다.
+Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v3.1_Final-1781345284482521549.mdc`** (프로젝트 헌법)를 따릅니다. 구현·운영 세부 요약은 아래와 `AGENTS.md`에 둡니다.
 
 - **아크코어**: `src/arcCore` — **세계 전체를 구축·유지하는 근원 마스터 AI(최종 시스템 축)**로 둔다. 인간 플레이 계정은 그 위에서 플레이·경험·행성 환경 상호작용을 한다. 신규 AI 시계·틱·세계 규칙은 가능하면 **`arcCoreHub`·명령 버스·서브코어**로 수렴시키고, 화면 전용 백그라운드 루프를 남발하지 않는다.
 - **아크코어 일일 운영**: 벽시계 **24h 관측** 후 **하루 1회**(기본 12:00 `Asia/Seoul`) `ArcCoreDailyOpsSubCore`가 행성 코어·경제·AABS·성계 개방을 일괄 재배치한다. 정책: `tables/balance/arc_core_daily_ops_policy.csv`. 궤도 수송·연출은 실시간 틱 유지.
-- **테이블 우선**: 환경 부트스트랩·NPC 함장·전함은 **`tables/content` CSV → `npm run build:content-tables`** 가 정본이다. 아크코어가 스스로 환경을 깔 때도 **코드에 임의 엔티티·이름 풀을 두지 말고** CSV·레지스트리(`npcFleetRegistry`, `arcNpcTrafficTableRegistry`, `nearbyOrbitPresenceSystem`) 패턴을 따른다. 상세는 `.cursor/rules/arcfire-online.mdc`의 “테이블 우선” 절.
+- **경제·무역 생태계 참고**: `docs/ECONOMY_TRADE_ECOSYSTEM_REFERENCE.md` — 무역소 카탈로그·tg_* 교역·zone 진열·17/21 허브·갭 목록(2026-06-12 스냅샷).
+- **Macro economy SIM**: `npm run sim:economy` → `docs/ECONOMY_SIM_DAILY_OPS.md` — delta ingest → 일일 배치 overlay.
+- **테이블 우선**: 환경 부트스트랩·NPC 함장·전함은 **`tables/content` CSV → `npm run build:content-tables`** 가 정본이다. 아크코어가 스스로 환경을 깔 때도 **코드에 임의 엔티티·이름 풀을 두지 말고** CSV·레지스트리(`npcFleetRegistry`, `arcNpcTrafficTableRegistry`, `nearbyOrbitPresenceSystem`) 패턴을 따른다. 헌법: `.cursor/rules/Arcfire_Master_Spec_v3.1_Final-1781345284482521549.mdc` §1·§6.
 - **궤도 수송선(아크코어)**: `listArcNpcTrafficRowsFromTables`는 **`arcOrbitPresenceFill` 함장·전함만**(현재 12척 P-01…); 다음 행성은 **월드 전 행성 균등**; 체류(dwell)는 `npc_ai_ships.csv`의 `arcTrafficPlanetDwellSecMin`/`Max`(초), **상한 600초(10분)**.
 - **행성 핵심지표**: `planets.csv`의 `coreResource/corePopulation/coreDefense/coreTechnology/coreEnvironment`(0..100)는 **초기 시드**만. 변화하는 값은 **`planetCoreRuntimeStore`**(AsyncStorage, `arcfire_planet_core_runtime_v1`)가 정본이다. **일일 갱신**은 `ArcCoreDailyOpsSubCore` 배치; `AiPlanetsSubCore`는 코어 DB 부트스트랩만. UI는 `R,P,D,T,E` 5색 디지털 게이지(20%/칸). **에너지는 R(Resource)에 통합**.
 - **아키텍처 감사·리스크**: `docs/README_ARCHITECTURE.md` → `Arcfire_Architecture_Audit_2026-06-08.md`, `ARCHITECTURE_RISK_REGISTER.md`. 마스터 스펙 정본: `docs/Arcfire_RN_Architecture_Master_Spec(single).md` **§18**.
@@ -23,12 +25,12 @@ Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/arcfire-online.mdc`**�
 - **포그라운드 탑 크롬**은 `translateY`로만 올리고, 그 때문에 **배경 `paddingTop`을 같이 바꾸지 마세요**.
 - **`.git` 없음**일 수 있으니 대규모 변경 전 Git 사용을 권장합니다.
 
-- **React Native Skia (벡터·고프레임 UI)**: 매 프레임 그리기가 많은 2D(궤도·탄도·게이지 등)는 **Skia를 기본 후보**로 두고, 적용 범위는 **점진적으로 넓힌다**. 현재 실시간 전함 궤도: `src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx` (`PlanetEdenRaidOrbitSvg` 경유). **안정화**: `orbitSize`/좌표 `NaN` 방어, sim 교체·언마운트 시 **rAF 중단 플래그 + `cancelAnimationFrame`**. Skia는 **`expo run:*` 등 네이티브 재빌드** 전제; Path 등 **프레임당 생성량**은 이후 LOD·재사용·worklet로 튜닝 가능.
-- **전투 렌더 단일 구현 고정**: 전투 궤도 렌더의 정본은 `PlanetEdenRaidOrbitSkiaCombat` 하나만 유지한다. 동일 기능(궤적/탄두/빔/명중 FX)의 이중 구현을 상시 유지하지 않는다. 무기 연결은 `weapon_list.csv` → `missileWeaponId`/`laserWeaponId` 단일 체인을 고정한다. 테스트 때문에 이중 구현이 필요한 경우에는 구현 전에 목적·임시 범위·제거 시점을 사용자에게 먼저 고지한다.
+- **React Native Skia (벡터·고프레임 UI)**: 매 프레임 그리기가 많은 2D(궤도·탄도·게이지 등)는 **Skia를 기본 후보**로 두고, 적용 범위는 **점진적으로 넓힌다**. 현재 실시간 전함 궤도: `PlanetEdenRaidOrbitSkiaCombat` (`CapitalRealtimeCombatOrbitSkia` / `capitalRealtimeBridge` 경유). **안정화**: `orbitSize`/좌표 `NaN` 방어, sim 교체·언마운트 시 **rAF 중단 플래그 + `cancelAnimationFrame`**. Skia는 **`expo run:*` 등 네이티브 재빌드** 전제; Path 등 **프레임당 생성량**은 이후 LOD·재사용·worklet로 튜닝 가능.
+- **전투 렌더 단일 구현 고정**: 전투 궤도 렌더의 정본은 `PlanetEdenRaidOrbitSkiaCombat` 하나만 유지한다. `CapitalRealtimeCombatOrbitSvg`는 **deprecated 별칭** — 신규 코드는 `CapitalRealtimeCombatOrbitSkia`만 사용.
 
 - **일일 성능·위생 점검**: `npm run audit:daily` → `tools/daily-perf-audit/reports/latest.md`. GitHub에는 `.github/workflows/daily-performance-audit.yml` 스케줄(1일 1회)이 있으며, 로컬은 `tools/daily-perf-audit/README.md`의 작업 스케줄러 예시를 참고.
 - **아크코어 × Cursor 에이전트 자기 최적화**: `npm run audit:arc-self-optimize:pack` → `tools/arc-core-self-optimize/outbox/cursor-handoff.md` 를 Cloud Agent 등에 첨부. 옵트인 `stop` 훅은 `.cursor/trigger-arc-self-optimize-on-stop` 플래그 파일로 1회 안내 — `tools/arc-core-self-optimize/README.md`.
 - **런타임 버그 수정**: `.cursor/rules/arcfire-bug-debug-workflow.mdc` — adb logcat 캡처 → 사용자 재현 → 로그 근거 수정. Cursor **Agent 모드 그대로** 사용(Debug 전환 불필요).
 - **UI 오버레이·모달**: `src/ui/overlay/` — `ArcOverlayHost` 루트 단일 호스트, `showArcAlert` 등 imperative API. RN `Modal`·magic bottom padding 금지. 점검: `npm run audit:ui-overlay`.
 
-자세한 규칙은 `.cursor/rules/arcfire-online.mdc`를 읽으세요.
+자세한 헌법·15대 금지·STAGE 계약은 **`.cursor/rules/Arcfire_Master_Spec_v3.1_Final-1781345284482521549.mdc`** 를 읽으세요. 런타임 버그는 **`.cursor/rules/arcfire-bug-debug-workflow.mdc`**.

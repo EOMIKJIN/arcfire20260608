@@ -87,8 +87,8 @@ function main() {
   const lines = [];
   const stamp = new Date().toISOString();
   lines.push(`# Daily audit — ${stamp}`, '');
-  lines.push('## TypeScript (`npx tsc --noEmit`)', '');
-  const tsc = run('npx', ['tsc', '--noEmit']);
+  lines.push('## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)', '');
+  const tsc = run('npx', ['tsc', '--noEmit', '-p', 'tsconfig.client.json']);
   lines.push('```');
   lines.push((tsc.stdout + tsc.stderr).trim() || '(no output)');
   lines.push('```', '');
@@ -107,7 +107,17 @@ function main() {
   }
   lines.push('');
 
-  lines.push('## `setInterval(` occurrences (manual leak review)', '');
+  lines.push('## Planet hub eager `src/combat` import (should be absent)', '');
+  const planetPath = path.join(ROOT, 'app', '(game)', 'planet.tsx');
+  let planetCombatEager = false;
+  try {
+    const planetSrc = fs.readFileSync(planetPath, 'utf8');
+    planetCombatEager = /from ['\"][^'\"]*\/combat['\"]/.test(planetSrc);
+  } catch {
+    planetCombatEager = false;
+  }
+  lines.push(planetCombatEager ? '- **WARN** `planet.tsx` still has eager `src/combat` import' : '- OK — no eager combat barrel in `planet.tsx`');
+  lines.push('');
   const intervals = grepPatternInProject('setInterval(', 60);
   lines.push(intervals.length ? intervals.map((h) => `- \`${h}\``).join('\n') : '_none_');
   lines.push('');

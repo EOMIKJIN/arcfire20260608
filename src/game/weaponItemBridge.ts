@@ -28,6 +28,7 @@ export function resolveWeaponItemDef(
     id: itemId,
     name: row.name,
     description: `${row.familyKind.toUpperCase()} · DMG ${row.damage} · RANGE ${Math.round(row.rangePx)}`,
+    featureDescription: row.featureDescription?.trim() || '',
     basePrice,
     priceVariance: 18,
     volume: 1,

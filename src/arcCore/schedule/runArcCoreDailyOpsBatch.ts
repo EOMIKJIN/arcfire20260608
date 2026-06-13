@@ -7,10 +7,12 @@ import { runPlayScenarioEconomyPass } from '../balance/runPlayScenarioEconomyPas
 import { runGlobalPlanetMasterBalancePass } from '../planetBalance/runGlobalPlanetMasterBalancePass';
 import { runPlanetEnergyCorePass } from '../planetEnergy/runPlanetEnergyCorePass';
 import { runPlanetEnvironmentDiversityPass } from '../planetEnvironment/runPlanetEnvironmentDiversityPass';
+import { ingestBalanceOverlayDeltaIfPending } from '../economy/ingestBalanceOverlayDelta';
 import { runMarketMicroAdjustPass } from '../economy/runMarketMicroAdjustPass';
 import { runTradeRouteDailyMarketPass } from '../economy/runTradeRouteDailyMarketPass';
 import { tryArcCoreWorldDailyUnlock } from '../worldExpansionDailyUnlock';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
+import { flushDailyOpsObservationsToAabs } from '../userMod/dailyOpsObservationQueue';
 import { resolveArcCoreDailyOpsPolicy } from './arcCoreDailyOpsPolicy';
 
 export type ArcCoreDailyOpsBatchResult = {
@@ -20,6 +22,7 @@ export type ArcCoreDailyOpsBatchResult = {
   planetMasterBalance: boolean;
   scenarioEconomy: boolean;
   marketPriceAdjust: boolean;
+  simOverlayIngest: boolean;
   tradeRouteDailyMarket: boolean;
   aabsAlignment: boolean;
   worldExpansionUnlock: boolean;
@@ -38,6 +41,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     planetMasterBalance: false,
     scenarioEconomy: false,
     marketPriceAdjust: false,
+    simOverlayIngest: false,
     tradeRouteDailyMarket: false,
     aabsAlignment: false,
     worldExpansionUnlock: false,
@@ -64,12 +68,15 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     result.scenarioEconomy = true;
   }
   if (policy.runMarketPricePass) {
+    const ingest = await ingestBalanceOverlayDeltaIfPending();
+    result.simOverlayIngest = ingest.ran;
     await runMarketMicroAdjustPass();
     result.marketPriceAdjust = true;
     const tradeRouteDaily = runTradeRouteDailyMarketPass();
     result.tradeRouteDailyMarket = tradeRouteDaily.ran;
   }
   if (policy.runAabsAlignmentPass) {
+    await flushDailyOpsObservationsToAabs();
     await runDailyPolicyAlignment(true);
     result.aabsAlignment = true;
   }

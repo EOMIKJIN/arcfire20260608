@@ -3,10 +3,8 @@
 // ============================================================
 
 import type { PlayerShip, WeaponData } from '../types';
-import {
-  NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV,
-  NPC_CAPITAL_SHIPS_FROM_CSV,
-} from '../data/generated';
+import { getNpcCapitalShip } from '../npc/npcFleetRegistry';
+import { NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV } from '../data/generated';
 import { buildWeaponDataFromCapitalWeaponId } from './capitalWeaponRange';
 import { isSurvivalPodNpcShipId } from './survivalPodShip';
 import { applyDefaultCombatLoadout } from './seedShipCombatEquipSlots';
@@ -19,7 +17,7 @@ export function applyNpcCapitalShipToPlayerShip(
   ship: PlayerShip,
   npcCapitalShipId: string,
 ): { ok: true; ship: PlayerShip } | { ok: false; reason: string } {
-  const row = NPC_CAPITAL_SHIPS_FROM_CSV.find(s => s.id === npcCapitalShipId);
+  const row = getNpcCapitalShip(npcCapitalShipId);
   if (!row) return { ok: false, reason: 'unknown_ship' };
   const cfg = NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV[npcCapitalShipId];
   const weapons: WeaponData[] = [];

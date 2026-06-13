@@ -1,0 +1,44 @@
+name: Daily economy sim
+
+on:
+  schedule:
+    # KST 15:00 ≈ UTC 06:00
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  economy-sim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Verify macro cohort order
+        run: npm run verify:economy-sim-cohort
+
+      - name: Run macro economy sim
+        run: npm run sim:economy
+
+      - name: Commit sim outputs if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/balance/generated/economySimOverlayDelta.ts
+          git add tools/economy-sim/outbox/
+          git add tools/economy-sim/reports/
+          if git diff --cached --quiet; then
+            echo "No sim output changes"
+            exit 0
+          fi
+          DAY=$(TZ=Asia/Seoul date +%Y-%m-%d)
+          git commit -m "chore(sim): economy overlay delta ${DAY} (KST)"
+          git push

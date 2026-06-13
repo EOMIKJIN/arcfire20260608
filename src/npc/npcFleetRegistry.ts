@@ -97,6 +97,49 @@ export function getNpcCapitalShip(id: string): NpcCapitalShip | undefined {
   return SHIP_BY_ID.get(id);
 }
 
+export function hasNpcCapitalShipId(id: string): boolean {
+  return SHIP_BY_ID.has(id);
+}
+
+/** `assignedShipId` → 함장 (O(1)) */
+export function getNpcCaptainByAssignedShipId(shipId: string): NpcCaptain | undefined {
+  const sid = shipId.trim();
+  if (!sid) return undefined;
+  return CAPTAIN_BY_ASSIGNED_SHIP_ID.get(sid) ?? undefined;
+}
+
+/** 이동중 전투(해적) — `operationalState` combat/general, pirates faction */
+export function resolveTransitPirateCaptainForSystem(
+  systemId: string | null,
+): NpcCaptain | undefined {
+  for (const captain of NPC_CAPTAINS) {
+    if (captain.factionId !== 'pirates') continue;
+    if (captain.operationalState !== 'combat' && captain.operationalState !== 'general') continue;
+    const sid = (captain.assignedShipId ?? '').trim();
+    if (!sid || !SHIP_BY_ID.has(sid)) continue;
+    if (!systemId) return captain;
+    if (captain.baseSystemId === systemId || captain.activitySystemIds.includes(systemId)) {
+      return captain;
+    }
+  }
+  return undefined;
+}
+
+let firstPlayerRegistryShipIdCache: string | null | undefined;
+
+/** `Player_` 접두 첫 전함 id — 폴백용 (모듈 1회 스캔) */
+export function resolveFirstPlayerRegistryCapitalShipId(): string | null {
+  if (firstPlayerRegistryShipIdCache !== undefined) return firstPlayerRegistryShipIdCache;
+  for (const ship of NPC_CAPITAL_SHIPS) {
+    if (ship.id.startsWith('Player_')) {
+      firstPlayerRegistryShipIdCache = ship.id;
+      return ship.id;
+    }
+  }
+  firstPlayerRegistryShipIdCache = null;
+  return null;
+}
+
 export function resolveNpcCapitalShip(id: string): NpcCapitalShipResolved | undefined {
   const ship = SHIP_BY_ID.get(id);
   if (!ship) return undefined;
@@ -120,6 +163,11 @@ export function listNpcCaptains(): readonly NpcCaptain[] {
 
 export function listNpcCapitalShips(): readonly NpcCapitalShip[] {
   return NPC_CAPITAL_SHIPS.filter(s => !isPlayerRegistryCapitalShipId(s.id));
+}
+
+/** 무역·구매 정책 — Player_ hull 포함 전체 CSV 행 */
+export function listAllNpcCapitalShipRows(): readonly NpcCapitalShip[] {
+  return NPC_CAPITAL_SHIPS;
 }
 
 export function listNpcCapitalShipsInSystem(systemId: string): NpcCapitalShip[] {

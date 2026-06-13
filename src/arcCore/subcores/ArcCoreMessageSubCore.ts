@@ -3,6 +3,7 @@ import { dispatchArcCoreCommand } from '../ArcCoreCommandBus';
 import {
   ARC_CORE_MESSAGE_DEFAULT_KO,
   ARC_CORE_MESSAGE_MISSILE_TRAVEL_MS,
+  ARC_CORE_MESSAGE_TEST_INTERVAL_STRIKES,
   ARC_CORE_MESSAGE_WARNING_DURATION_SEC,
   ARC_CORE_MESSAGE_WARNING_LEAD_SEC,
 } from '../message/arcCoreMessagePolicy';
@@ -12,7 +13,7 @@ import { resolveArcCoreMessageTargetPlanetId } from '../message/resolveArcCoreMe
 /**
  * 아크코어 메시지 서브코어 — 장거리 미사일(메시지 폭격) 스케줄.
  * 기본: 로컬 1일 12회 랜덤(`ArcCoreMessageDailyRandomStrikeScheduleProvider`).
- * 테스트: `ARC_CORE_MESSAGE_TEST_INTERVAL_STRIKES` — 60초 간격(`ArcCoreMessageIntervalTestStrikeScheduleProvider`).
+ * 테스트: `ARC_CORE_MESSAGE_TEST_INTERVAL_STRIKES` — 20초마다 inbound+요격(dev·prod 동일 파이프).
  * 향후 `scheduleController.setProvider()` 로 전략 교체.
  */
 export class ArcCoreMessageSubCore extends BaseArcSubCore {
@@ -57,9 +58,21 @@ export class ArcCoreMessageSubCore extends BaseArcSubCore {
 
   private onScheduleTick(): void {
     const nowMs = Date.now();
-    // wall tick 이 초당 1회 미만일 수 있어 슬롯 누락 방지 — 최소 250ms 간격
     if (nowMs - this.lastScheduleTickMs < 250) return;
     this.lastScheduleTickMs = nowMs;
+
+    if (ARC_CORE_MESSAGE_TEST_INTERVAL_STRIKES) {
+      this.scheduleController.tick(nowMs, {
+        onWarning: () => false,
+        onStrike: () => {
+          const planetId = this.resolveTargetPlanetId();
+          if (!planetId) return false;
+          this.dispatchInbound(planetId);
+          return true;
+        },
+      });
+      return;
+    }
 
     this.scheduleController.tick(nowMs, {
       onWarning: () => {

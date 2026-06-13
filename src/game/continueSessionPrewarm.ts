@@ -6,12 +6,13 @@ import { useNpcCaptainProgressStore } from '../store/npcCaptainProgressStore';
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
 import { NPC_CAPTAINS_FROM_CSV } from '../data/generated';
 import { resolvePlanetNearbyPresence } from '../npc/nearbyOrbitPresenceSystem';
-import { buildCsvStaticIndexes } from './buildCsvStaticIndexes';
+import { buildCsvStaticIndexesFull } from './buildCsvStaticIndexes';
+import { markBootPerf, measureBootPhase } from './bootPerformance';
 import { listArcNpcTrafficRowsFromTables } from '../arcCore/arcNpcTrafficTableRegistry';
 import { runCriticalSessionAssetPrewarm } from '../assetPipeline/runCriticalSessionAssetPrewarm';
 
-/** 이어하기 로딩 UI 최소 유지 시간(ms) */
-export const CONTINUE_SESSION_MIN_LOADING_MS = 3000;
+/** 이어하기 로딩 UI 최소 유지 시간(ms) — prewarm 완료 후에도 짧게 유지 */
+export const CONTINUE_SESSION_MIN_LOADING_MS = 1200;
 
 function yieldToUi(): Promise<void> {
   return new Promise((resolve) => {
@@ -25,28 +26,30 @@ function yieldToUi(): Promise<void> {
  * (향후: `expo-asset`·스토리 이미지 프리캐시, 무거운 서브모듈 분할 로드 등을 여기서 확장)
  */
 export async function runContinueSessionPrewarm(): Promise<void> {
-  buildCsvStaticIndexes();
-  await new Promise<void>((resolve) => {
-    InteractionManager.runAfterInteractions(() => resolve());
+  await measureBootPhase('continue_prewarm_start', 'continue_prewarm_end', async () => {
+    buildCsvStaticIndexesFull();
+    await new Promise<void>((resolve) => {
+      InteractionManager.runAfterInteractions(() => resolve());
+    });
+
+    await runCriticalSessionAssetPrewarm();
+
+    const p = usePlayerStore.getState().player;
+    const planetId = p?.currentPlanetId ?? 'arcadia_prime';
+    const systemId = p?.currentSystemId ?? 'arcadia';
+
+    await Promise.all([
+      usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync(),
+      useNpcCaptainProgressStore.getState().loadLocalNpcCaptainProgress(),
+    ]);
+
+    useClanWarFoundationStore
+      .getState()
+      .syncNpcAiClanTerritoryFromGalaxy(useWorldStore.getState().systems);
+    useNpcCaptainProgressStore.getState().ensureCaptainsRegistered(NPC_CAPTAINS_FROM_CSV.map((c) => c.id));
+
+    void resolvePlanetNearbyPresence(planetId, systemId);
+    void listArcNpcTrafficRowsFromTables();
+    await yieldToUi();
   });
-
-  await runCriticalSessionAssetPrewarm();
-
-  const p = usePlayerStore.getState().player;
-  const planetId = p?.currentPlanetId ?? 'arcadia_prime';
-  const systemId = p?.currentSystemId ?? 'arcadia';
-
-  await Promise.all([
-    usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync(),
-    useNpcCaptainProgressStore.getState().loadLocalNpcCaptainProgress(),
-  ]);
-
-  useClanWarFoundationStore
-    .getState()
-    .syncNpcAiClanTerritoryFromGalaxy(useWorldStore.getState().systems);
-  useNpcCaptainProgressStore.getState().ensureCaptainsRegistered(NPC_CAPTAINS_FROM_CSV.map((c) => c.id));
-
-  void resolvePlanetNearbyPresence(planetId, systemId);
-  void listArcNpcTrafficRowsFromTables();
-  await yieldToUi();
 }

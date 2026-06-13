@@ -137,14 +137,22 @@ function splitPipe(v) {
     .filter(Boolean);
 }
 
+/** CSV attrsJson — 표준 JSON + 레거시(키·팩션코드 무인용) */
 function parseAttrsJson(v) {
   const s = String(v ?? '').trim();
   if (!s) return {};
   try {
     return JSON.parse(s);
   } catch {
-    console.warn(`[item_defs] attrsJson parse failed (id row may be wrong): ${s.slice(0, 160)}`);
-    return {};
+    try {
+      const normalized = s
+        .replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":')
+        .replace(/:([A-Za-z_][A-Za-z0-9_]*)(?=[,}])/g, ':"$1"');
+      return JSON.parse(normalized);
+    } catch {
+      console.warn(`[item_defs] attrsJson parse failed (id row may be wrong): ${s.slice(0, 160)}`);
+      return {};
+    }
   }
 }
 function nullable(v) {
@@ -153,6 +161,13 @@ function nullable(v) {
 }
 function q(v) {
   return JSON.stringify(v);
+}
+
+/** weapon_list.csv — 한글·영문 헤더 모두 수용 */
+function readFeatureDescription(r) {
+  return String(
+    r.featureDescription ?? r['특징설명'] ?? r['특성설명'] ?? '',
+  ).trim();
 }
 
 /** weapon_list.csv — 한글·영문 헤더 모두 수용 */
@@ -189,6 +204,7 @@ function normalizeWeaponListRow(r) {
     targeting,
     lockImpactPoint,
     hitAreaNote: String(r.hitAreaNote ?? r['타격범위'] ?? '').trim(),
+    featureDescription: readFeatureDescription(r),
     laserColor: String(r.laserColor ?? r['레이저색'] ?? r['색상'] ?? '').trim(),
     projectileColor: String(r.projectileColor ?? r['발사체색'] ?? '').trim(),
     glowColor: String(r.glowColor ?? r['글로우색'] ?? '').trim(),
@@ -430,6 +446,7 @@ function buildWeapons() {
     requiredLevel: ${r.requiredLevel},
     tierLabel: ${q(r.tierLabel)},
     tradePortListed: ${r.tradePortListed},
+    featureDescription: ${q(r.featureDescription)},
     laserColor: ${q(r.laserColor)},
     projectileColor: ${q(r.projectileColor)},
     glowColor: ${q(r.glowColor)},
@@ -456,6 +473,7 @@ function buildWeapons() {
   requiredLevel: number;
   tierLabel: string;
   tradePortListed: boolean;
+  featureDescription: string;
   laserColor: string;
   projectileColor: string;
   glowColor: string;
@@ -695,6 +713,27 @@ function capitalShipTradeItemBasePriceFromShipRow(r) {
   return Math.min(220000, Math.max(14000, raw));
 }
 
+function verifyTradeRouteItemDefs(rows) {
+  const errors = [];
+  for (const r of rows) {
+    const id = String(r.id ?? '').trim();
+    const type = String(r.type ?? '').trim();
+    if (!id.startsWith('tg_') && type !== 'trade_route') continue;
+    const attrs = parseAttrsJson(r.attrsJson);
+    const tradeRoute = attrs.tradeRoute === true || attrs.tradeRoute === 'true';
+    if (!tradeRoute) {
+      errors.push(`${id}: attrsJson.tradeRoute missing — CSV attrsJson 손상 또는 파싱 실패`);
+    }
+  }
+  if (errors.length > 0) {
+    const preview = errors.slice(0, 8).join('\n  ');
+    const suffix = errors.length > 8 ? `\n  ... 외 ${errors.length - 8}건` : '';
+    throw new Error(
+      `[build-content-from-csv] item_defs 교역품 검증 실패 (${errors.length}건)\n  ${preview}${suffix}`,
+    );
+  }
+}
+
 function buildItemDefs() {
   const rows = loadCsv('item_defs.csv').filter(r => String(r.id ?? '').trim());
   const weaponRows = loadCsvOptional('weapon_list.csv')
@@ -720,6 +759,7 @@ function buildItemDefs() {
         id: itemId,
         name,
         description: `${r.familyKind.toUpperCase()} · DMG ${damage} · RANGE ${Math.round(rangePx)}`,
+        featureDescription: r.featureDescription,
         basePrice,
         priceVariance: '0',
         volume: '1',
@@ -759,6 +799,7 @@ function buildItemDefs() {
         name: `${shipName} (인도)`,
         description:
           '무역소 전함 인도. 구매 시 해당 전함이 조선소 격납고에 보관됩니다.',
+        featureDescription: readFeatureDescription(r),
         basePrice: String(basePrice),
         priceVariance: '14',
         volume: '1',
@@ -775,6 +816,7 @@ function buildItemDefs() {
       };
     });
   const merged = [...rows, ...weaponItemRows, ...shipItemRows];
+  verifyTradeRouteItemDefs(merged);
   const body = merged
     .map(
       r => {
@@ -787,6 +829,7 @@ function buildItemDefs() {
     id: ${q(r.id)},
     name: ${q(r.name)},
     description: ${q(r.description)},
+    featureDescription: ${q(readFeatureDescription(r) || r.description)},
     basePrice: ${toInt(r.basePrice)},
     priceVariance: ${toInt(r.priceVariance)},
     volume: ${toInt(r.volume)},

@@ -1,7 +1,7 @@
 // ============================================================
 // 뉴 에덴(에덴 시티) 전용 — NPC AI 간 상호 타겟·전투 테스트
 // 스테이지·이벤트 공용 진입: `src/combat/index.ts` (직접 import 지양).
-// 함선 규모는 `edenCapitalFleetConfig`(소규모 기본; 대규모는 `LARGE_SCALE_*`). 규약은 `capitalCombatConventions.ts`. 궤도 표시는 `PlanetEdenRaidOrbitSvg`(Skia 단일 Canvas + rAF, 시뮬 `agentsRef` 등 직접 읽기)·agentById·HUD stride. 표적 재지정은 라운드로빈 창+주기적 전수 스캔.
+// 함선 규모는 `edenCapitalFleetConfig`(소규모 기본; 대규모는 `LARGE_SCALE_*`). 규약은 `capitalCombatConventions.ts`. 궤도 표시는 `PlanetEdenRaidOrbitSkiaCombat`(Skia 단일 Canvas + postStepRef, 시뮬 `agentsRef` 등 직접 읽기).
 // 무기 교환 루프는 여전히 O(N²) 근사 — 대규모 함대는 공간 분할·타깃 수 상한이 별도 필요.
 // 전투비행: 탐지→추격→미사일사거리+패턴(거리띄우기 링)→근접레이저. 미사일은 살보 3발 중 1발 비유도(낙점 고정·무피해), 나머지 유도·궤적 전량 렌더. 근접은 미사일 비발사. 복합 목표·분리. 가속/요속 적분. 스폰 블렌드.
 // ============================================================
@@ -33,12 +33,16 @@ import {
 import {
   EDEN_CAPITAL_FLEET_BLUE_COUNT as DUEL_TEAM_BLUE_COUNT_FALLBACK,
 } from '../../npc/edenCapitalFleetConfig';
-import { captainMatchesPlanetOrbitTable } from '../../npc/captainOrbitTableMatch';
 import {
-  NPC_CAPTAINS_FROM_CSV,
-  NPC_CAPITAL_SHIPS_FROM_CSV,
-  NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV,
-} from '../../data/generated';
+  CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID,
+  resolveCombatFleetSlotsFromCaptains,
+  hasCapitalRealtimeCombatSlotsForPlanet,
+  isCapitalRealtimeCombatOrbitPlanet,
+} from '../../combat/capitalRealtimeCombatGate';
+import { buildTransitCombatSeedSlots } from '../../combat/capitalTransitCombatSeed';
+import { NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV } from '../../data/generated';
+import { getNpcCapitalShip, hasNpcCapitalShipId, listAllNpcCapitalShipRows, listNpcCaptains } from '../../npc/npcFleetRegistry';
+import type { NpcCapitalShip } from '../../types';
 import {
   getCapitalWeaponRow,
   isKnownCapitalWeaponId,
@@ -55,7 +59,6 @@ import { DEFAULT_CLOSE_RANGE_WEAPON_ID } from '../../game/combatWeaponSlots';
 import {
   resolveMainStageCombatEnabled,
   resolvePlanetEnemyAffinityKind,
-  resolvePlanetHostileShipCount,
   resolvePlanetMainStageCombatVariant,
   resolvePlanetTargetCombatLevel,
 } from '../../arcCore/balance/balanceTableRegistry';
@@ -91,31 +94,11 @@ export const NEW_EDEN_RAID_TEST_PLANET_ID = 'eden_city';
 export const DRACO_SEAMLESS_PVP_TEST_PLANET_ID = 'draco_haven';
 export const DRACO_SEAMLESS_PVP_TEST_SYSTEM_ID = 'draco_nebula';
 
-/**
- * `/(game)/combat` 이동중(강제) 교전 — 실제 행성 id가 아님. CSV 궤도 함대와 섞이지 않도록 전용 키.
- * 행성 궤도 전투는 `planet.tsx`에서 `player` 행성 id + 함장 CSV로만 구동.
- */
-export const CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID = '__transit__';
-
-/**
- * 메인스테이지 궤도 실시간 전투 — 해당 행성에 `operationalState=combat` 이고
- * CSV 함장의 base/activity **행성** 또는 **성계**가 맞고 `operationalState=combat` 이면 활성.
- * 일반↔전투 CSV 전환만으로 레이어 on/off.
- */
-export function hasCapitalRealtimeCombatSlotsForPlanet(
-  planetId: string,
-  systemId: string | null = null,
-): boolean {
-  return resolveCombatFleetSlotsFromCaptains(planetId, systemId).length > 0;
-}
-
-/** @deprecated `hasCapitalRealtimeCombatSlotsForPlanet`와 동일 — 호환용 별칭 */
-export function isCapitalRealtimeCombatOrbitPlanet(
-  planetId: string,
-  systemId: string | null = null,
-): boolean {
-  return hasCapitalRealtimeCombatSlotsForPlanet(planetId, systemId);
-}
+export {
+  CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID,
+  hasCapitalRealtimeCombatSlotsForPlanet,
+  isCapitalRealtimeCombatOrbitPlanet,
+} from '../../combat/capitalRealtimeCombatGate';
 
 type StageFleetSeedSlot = {
   team: 'red' | 'blue' | 'orange';
@@ -124,58 +107,8 @@ type StageFleetSeedSlot = {
 };
 
 function resolveTransitCombatSeedSlots(systemId: string | null): StageFleetSeedSlot[] {
-  const shipById = new Map(NPC_CAPITAL_SHIPS_FROM_CSV.map((s) => [s.id, s]));
-  const redCaptain = NPC_CAPTAINS_FROM_CSV.find((captain) => {
-    if (captain.factionId !== 'pirates') return false;
-    if (captain.operationalState !== 'combat' && captain.operationalState !== 'general') return false;
-    const sid = (captain.assignedShipId ?? '').trim();
-    if (!sid || !shipById.has(sid)) return false;
-    if (!systemId) return true;
-    return captain.baseSystemId === systemId || captain.activitySystemIds.includes(systemId);
-  });
-  const redShipId = redCaptain?.assignedShipId?.trim() ?? null;
-
-  // 플레이어 기함은 조선소/격납고에서 현재 탑승 중인 전함 id를 우선 사용.
   const currentFlagshipNpcId = resolveCurrentPlayerFlagshipNpcShipId();
-  const blueShipId = shipById.has(currentFlagshipNpcId) ? currentFlagshipNpcId : null;
-  return [
-    { team: 'red', npcShipId: redShipId, captainId: redCaptain?.id ?? null },
-    { team: 'blue', npcShipId: blueShipId, captainId: null },
-  ];
-}
-
-function resolveCombatFleetSlotsFromCaptains(
-  planetId: string,
-  systemId: string | null,
-): StageFleetSeedSlot[] {
-  const shipById = new Map(NPC_CAPITAL_SHIPS_FROM_CSV.map(s => [s.id, s]));
-  const rows: StageFleetSeedSlot[] = [];
-  for (const captain of NPC_CAPTAINS_FROM_CSV) {
-    const planetMatch = systemId
-      ? captainMatchesPlanetOrbitTable(captain, planetId, systemId)
-      : captain.basePlanetId === planetId || captain.activityPlanetIds.includes(planetId);
-    if (!planetMatch || captain.operationalState !== 'combat') continue;
-    const assignedShipId = captain.assignedShipId || '';
-    rows.push({
-      team:
-        captain.combatTeam === 'blue'
-          ? 'blue'
-          : captain.combatTeam === 'orange'
-            ? 'orange'
-            : 'red',
-      npcShipId: shipById.has(assignedShipId) ? assignedShipId : null,
-      captainId: captain.id,
-    });
-  }
-  const cap = resolvePlanetHostileShipCount(planetId);
-  if (cap == null) return rows;
-  let redCount = 0;
-  return rows.filter((slot) => {
-    if (slot.team !== 'red') return true;
-    if (redCount >= cap) return false;
-    redCount += 1;
-    return true;
-  });
+  return buildTransitCombatSeedSlots(systemId, currentFlagshipNpcId);
 }
 
 /** 전 행성 공통: 전투 함장 매칭(`npc_ai_captains.csv`) → 없으면 기본 폴백 편성. */
@@ -190,9 +123,8 @@ function resolveStageFleetSeedSlotsForPlanet(
   if (fromCaptains.length > 0) {
     const hasBlue = fromCaptains.some((slot) => slot.team === 'blue');
     if (!hasBlue && resolveMainStageCombatEnabled(planetId)) {
-      const shipById = new Map(NPC_CAPITAL_SHIPS_FROM_CSV.map((s) => [s.id, s]));
       const currentFlagshipNpcId = resolveCurrentPlayerFlagshipNpcShipId();
-      const blueShipId = shipById.has(currentFlagshipNpcId) ? currentFlagshipNpcId : null;
+      const blueShipId = hasNpcCapitalShipId(currentFlagshipNpcId) ? currentFlagshipNpcId : null;
       return [...fromCaptains, { team: 'blue', npcShipId: blueShipId, captainId: null }];
     }
     return fromCaptains;
@@ -214,30 +146,6 @@ const LASER_BOLT_TRAVEL_MS_FALLBACK = 26;
 const LASER_FADE_START_MS = 170;
 /** 레이저 재장전: 이전 발사 가능 시각부터 다음 발사까지 */
 const LASER_RECHARGE_MS = 1800;
-const BEZIER_SAMPLES = 16;
-const MISSILE_MAX_TRAIL_SEGMENTS = 10;
-
-type CombatOrbitVfxBudget = {
-  missileSegmentBudget: number;
-  bezierSampleCap: number;
-  renderLaserGlow: boolean;
-  /** false면 궤적 Polyline만(탄두 원 1개/탄 절약 — 곡선은 유지) */
-  missileHeadDotEnabled: boolean;
-};
-
-function resolveCombatOrbitVfxBudget(
-  _agentCount: number,
-  _approxActiveMissiles: number,
-  _fpsNow: number,
-): CombatOrbitVfxBudget {
-  // 전투 표현은 절대 축소하지 않는다: 궤적/레이저 글로우/탄두를 항상 풀렌더.
-  return {
-    missileSegmentBudget: MISSILE_MAX_TRAIL_SEGMENTS,
-    bezierSampleCap: BEZIER_SAMPLES,
-    renderLaserGlow: true,
-    missileHeadDotEnabled: true,
-  };
-}
 
 const TEMPO_JUDGE_INTERVAL_MS = 30_000;
 const TEMPO_JUDGE_START_DELAY_MS = 60_000;
@@ -1857,7 +1765,7 @@ function resolveCurrentPlayerFlagshipNpcShipId(): string {
 
 type PlayerFlagshipCombatBinding = {
   displayName: string;
-  combatStats: (typeof NPC_CAPITAL_SHIPS_FROM_CSV)[number]['combat'];
+  combatStats: NpcCapitalShip['combat'];
   runtimeConfig: (typeof NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV)[string] | undefined;
 };
 
@@ -1867,7 +1775,7 @@ function resolvePlayerFlagshipCombatBinding(): PlayerFlagshipCombatBinding | nul
   const shipForCombat = resolveShipFinalStatResult(player.ship).shipForCombat;
   const npcShipId = shipForCombat.portraitNpcCapitalShipId?.trim();
   if (!npcShipId) return null;
-  const npcRow = NPC_CAPITAL_SHIPS_FROM_CSV.find((s) => s.id === npcShipId);
+  const npcRow = getNpcCapitalShip(npcShipId);
   if (!npcRow) return null;
   const runtimeBase = NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV[npcShipId];
 
@@ -2043,7 +1951,7 @@ function createCapitalAgentBase(
   captainId: string | null,
   displayName: string,
   captainLabel: string,
-  combatStats?: (typeof NPC_CAPITAL_SHIPS_FROM_CSV)[number]['combat'],
+  combatStats?: NpcCapitalShip['combat'],
   runtimeConfig?: (typeof NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV)[string],
   enemyAffinityKind = 'light',
 ): Agent {
@@ -2303,8 +2211,8 @@ function initAgents(
   const redSlots = stageSlots.filter(s => s.team === 'red');
   const blueSlots = stageSlots.filter(s => s.team === 'blue');
   const orangeSlots = stageSlots.filter(s => s.team === 'orange');
-  const shipMap = new Map(NPC_CAPITAL_SHIPS_FROM_CSV.map(s => [s.id, s]));
-  const captainNameMap = new Map(NPC_CAPTAINS_FROM_CSV.map(c => [c.id, c.displayName]));
+  const shipMap = new Map(listAllNpcCapitalShipRows().map((s) => [s.id, s]));
+  const captainNameMap = new Map(listNpcCaptains().map((c) => [c.id, c.displayName]));
   const playerBinding = resolvePlayerFlagshipCombatBinding();
   let id = 0;
   for (let r = 0; r < redSlots.length; r++) {
@@ -3355,472 +3263,7 @@ export function PlanetEdenRaidSimBinder({
   );
 }
 
-type EdenLaserBoltProps = {
-  beamColor: string;
-  renderLaserGlow: boolean;
-  bolt: { x1: number; y1: number; x2: number; y2: number; opacity: number };
-};
-
-const EdenOrbitLaserBolt = memo(
-  function EdenOrbitLaserBolt({ beamColor, renderLaserGlow, bolt }: EdenLaserBoltProps) {
-    return (
-      <>
-        {renderLaserGlow ? (
-          <Line
-            x1={bolt.x1}
-            y1={bolt.y1}
-            x2={bolt.x2}
-            y2={bolt.y2}
-            stroke={beamColor}
-            strokeWidth={2.2}
-            strokeLinecap="butt"
-            opacity={bolt.opacity * 0.28}
-          />
-        ) : null}
-        <Line
-          x1={bolt.x1}
-          y1={bolt.y1}
-          x2={bolt.x2}
-          y2={bolt.y2}
-          stroke={beamColor}
-          strokeWidth={0.85}
-          strokeLinecap="butt"
-          opacity={bolt.opacity}
-        />
-      </>
-    );
-  },
-  (a, b) =>
-    a.beamColor === b.beamColor &&
-    a.renderLaserGlow === b.renderLaserGlow &&
-    a.bolt.x1 === b.bolt.x1 &&
-    a.bolt.y1 === b.bolt.y1 &&
-    a.bolt.x2 === b.bolt.x2 &&
-    a.bolt.y2 === b.bolt.y2 &&
-    a.bolt.opacity === b.bolt.opacity,
-);
-
-type EdenOrbitMissileGraphicProps = {
-  id: number;
-  p0x: number;
-  p0y: number;
-  p1x: number;
-  p1y: number;
-  p2x: number;
-  p2y: number;
-  travelMs: number;
-  tSince: number;
-  missileSegmentBudget: number;
-  bezierSampleCap: number;
-  /** 고부하 시 false — 궤적 Polyline만 그려 GPU·RN 브릿지 부담 완화 */
-  showHeadDot?: boolean;
-};
-
-/** 미사일은 `tSince`가 매 프레임 변하므로 `memo`로 동결되면 궤적이 끊겨 보일 수 있어 일반 함수 컴포넌트로 둔다. */
-function EdenOrbitMissileGraphic({
-  id: _id,
-  p0x,
-  p0y,
-  p1x,
-  p1y,
-  p2x,
-  p2y,
-  travelMs,
-  tSince,
-  missileSegmentBudget,
-  bezierSampleCap,
-  showHeadDot = true,
-}: EdenOrbitMissileGraphicProps) {
-  const p0 = { x: p0x, y: p0y };
-  const p1 = { x: p1x, y: p1y };
-  const p2 = { x: p2x, y: p2y };
-  const lifeEnd = travelMs + MISSILE_TRAIL_FADE_MS + 200;
-  if (tSince >= lifeEnd) return null;
-
-  const uFlight = Math.min(1, tSince / travelMs);
-  const tailStartAtImpact = Math.max(0, 1 - MISSILE_INFLIGHT_TRAIL_WINDOW_U);
-  let uHead: number;
-  let uTail: number;
-  if (tSince < travelMs) {
-    uHead = uFlight;
-    // 오래된 구간(시작점 쪽)부터 점진 소거
-    uTail = Math.max(0, uHead - MISSILE_INFLIGHT_TRAIL_WINDOW_U);
-  } else {
-    uHead = 1;
-    const postHitFade = Math.min(1, (tSince - travelMs) / MISSILE_TRAIL_FADE_MS);
-    // 명중 프레임에서 꼬리 시작점을 0으로 되돌리지 않고, 비행 말단 상태에서 연속적으로 페이드
-    uTail = tailStartAtImpact + (1 - tailStartAtImpact) * postHitFade;
-  }
-  const span = uHead - uTail;
-
-  const head = quadBezier(p0, p1, p2, uHead);
-  const trailOpacity = 0.9;
-  const headOpacity = 0.98;
-
-  let polylineEl: React.ReactNode = null;
-  if (span >= 0.004) {
-    const n = Math.max(2, Math.min(missileSegmentBudget, Math.ceil(bezierSampleCap * span)));
-    const pts: string[] = [];
-    for (let k = 0; k <= n; k++) {
-      const s = uTail + (k / n) * span;
-      const q = quadBezier(p0, p1, p2, s);
-      pts.push(`${q.x},${q.y}`);
-    }
-    polylineEl = (
-      <Polyline
-        points={pts.join(' ')}
-        fill="none"
-        stroke="#8B95A8"
-        strokeWidth={1}
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        opacity={trailOpacity}
-      />
-    );
-  }
-
-  return (
-    <>
-      {polylineEl}
-      {showHeadDot && tSince < travelMs ? (
-        <Circle cx={head.x} cy={head.y} r={1.15} fill="#F8FAFC" opacity={headOpacity} />
-      ) : null}
-    </>
-  );
-}
-
-type EdenOrbitShipGraphicProps = {
-  agId: number;
-  x: number;
-  y: number;
-  headingRad: number;
-  stroke: string;
-  alive: boolean;
-  showDestroyFx: boolean;
-  destroyedForMs: number;
-  h: number;
-  laserBolt: EdenLaserBoltProps['bolt'] | null;
-  beamColor: string;
-  renderLaserGlow: boolean;
-  captainLabel: string;
-};
-
-const EdenOrbitShipGraphic = memo(
-  function EdenOrbitShipGraphic({
-    agId,
-    x,
-    y,
-    headingRad,
-    stroke,
-    alive,
-    showDestroyFx,
-    destroyedForMs,
-    h,
-    laserBolt,
-    beamColor,
-    renderLaserGlow,
-    captainLabel,
-  }: EdenOrbitShipGraphicProps) {
-    const diamondLocal = `0,-${h} ${h},0 0,${h} -${h},0`;
-    const rotDeg = (headingRad * 180) / Math.PI + DIAMOND_HEADING_OFFSET_DEG;
-    return (
-      <>
-        {laserBolt ? (
-          <EdenOrbitLaserBolt
-            beamColor={beamColor}
-            renderLaserGlow={renderLaserGlow}
-            bolt={laserBolt}
-          />
-        ) : null}
-        {alive ? (
-          <>
-            <G transform={`translate(${x},${y}) rotate(${rotDeg})`}>
-              <Polygon
-                points={diamondLocal}
-                fill="none"
-                stroke={stroke}
-                strokeWidth={2.5}
-                strokeLinejoin="miter"
-                opacity={0.98}
-              />
-            </G>
-            <Line
-              x1={x}
-              y1={y}
-              x2={x + Math.cos(headingRad) * DEBUG_CAPITAL_BOW_LINE_PX}
-              y2={y + Math.sin(headingRad) * DEBUG_CAPITAL_BOW_LINE_PX}
-              stroke={stroke}
-              strokeWidth={1.35}
-              strokeLinecap="round"
-              opacity={0.9}
-            />
-            <SvgText
-              x={x}
-              y={y - h - 8}
-              fill={stroke}
-              fontSize={8}
-              fontFamily={FONTS.mono}
-              textAnchor="middle"
-              opacity={0.96}
-            >
-              {captainLabel}
-            </SvgText>
-          </>
-        ) : showDestroyFx ? (
-          <>
-            {Array.from({ length: DESTROY_FX_PARTICLES }, (_, i) => {
-              const t01 = Math.min(1, destroyedForMs / DESTROY_FX_DURATION_MS);
-              const p = destroyFxParticlePoint({ id: agId, x, y, stroke } as Agent, t01, i);
-              const fade = 1 - Math.pow(t01, 1.25);
-              return (
-                <Circle
-                  key={`fx-${agId}-${i}`}
-                  cx={p.x}
-                  cy={p.y}
-                  r={Math.max(0.2, 1.1 - t01 * 0.8)}
-                  fill={stroke}
-                  opacity={0.9 * fade}
-                />
-              );
-            })}
-          </>
-        ) : null}
-      </>
-    );
-  },
-  (prev, next) => {
-    if (prev.agId !== next.agId) return false;
-    if (
-      prev.x !== next.x ||
-      prev.y !== next.y ||
-      prev.headingRad !== next.headingRad ||
-      prev.stroke !== next.stroke ||
-      prev.alive !== next.alive ||
-      prev.showDestroyFx !== next.showDestroyFx ||
-      prev.h !== next.h ||
-      prev.beamColor !== next.beamColor ||
-      prev.renderLaserGlow !== next.renderLaserGlow ||
-      prev.captainLabel !== next.captainLabel
-    ) {
-      return false;
-    }
-    if (prev.showDestroyFx || next.showDestroyFx) {
-      if (Math.round(prev.destroyedForMs) !== Math.round(next.destroyedForMs)) return false;
-    }
-    const pl = prev.laserBolt;
-    const nl = next.laserBolt;
-    if (pl === nl) return true;
-    if (pl === null || nl === null) return false;
-    return (
-      pl.x1 === nl.x1 &&
-      pl.y1 === nl.y1 &&
-      pl.x2 === nl.x2 &&
-      pl.y2 === nl.y2 &&
-      pl.opacity === nl.opacity
-    );
-  },
-);
-
-type EdenOrbitHitFxBurstProps = {
-  fxId: number;
-  fxStartMs: number;
-  fxX: number;
-  fxY: number;
-  color: string;
-  tMs: number;
-};
-
-const EdenOrbitHitFxBurst = memo(
-  function EdenOrbitHitFxBurst({ fxId, fxStartMs, fxX, fxY, color, tMs }: EdenOrbitHitFxBurstProps) {
-    const t = tMs - fxStartMs;
-    const t01 = Math.min(1, t / MISSILE_HIT_FX_DURATION_MS);
-    const fade = 1 - Math.pow(t01, 0.55);
-    const fxStub: MissileHitFx = { id: fxId, x: fxX, y: fxY, startMs: fxStartMs, color };
-    return (
-      <>
-        {Array.from({ length: MISSILE_HIT_FX_PARTICLES }, (_, i) => {
-          const p = missileHitFxParticlePoint(fxStub, t01, i);
-          return (
-            <Circle
-              key={`hitfx-p-${fxId}-${fxStartMs}-${i}`}
-              cx={p.x}
-              cy={p.y}
-              r={Math.max(0.2, 0.9 - t01 * 0.55)}
-              fill={color}
-              opacity={0.75 * fade}
-            />
-          );
-        })}
-      </>
-    );
-  },
-  (a, b) =>
-    a.fxId === b.fxId &&
-    a.fxStartMs === b.fxStartMs &&
-    a.fxX === b.fxX &&
-    a.fxY === b.fxY &&
-    a.color === b.color &&
-    a.tMs === b.tMs,
-);
-
-function svgCombatLaserMuzzle(ag: Agent): Pt {
-  const u = { x: Math.cos(ag.headingRad), y: Math.sin(ag.headingRad) };
-  return { x: ag.x + u.x * LASER_MUZZLE_FORWARD_PX, y: ag.y + u.y * LASER_MUZZLE_FORWARD_PX };
-}
-
-function svgCombatClampToward(from: Pt, to: Pt, maxDist: number): Pt {
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const d = Math.hypot(dx, dy);
-  if (d <= maxDist + 1e-6) return { x: to.x, y: to.y };
-  if (d < 1e-9) return { x: from.x, y: from.y };
-  const s = maxDist / d;
-  return { x: from.x + dx * s, y: from.y + dy * s };
-}
-
-function buildSvgCombatLaserForAgent(
-  ag: Agent,
-  idBuf: (Agent | undefined)[],
-  tMs: number,
-  renderLaserGlow: boolean,
-): { bolt: EdenLaserBoltProps['bolt'] | null; beamColor: string; renderLaserGlow: boolean } {
-  const other = currentTargetAliveByBuf(ag, idBuf);
-  if (!other?.alive) {
-    return { bolt: null, beamColor: '#E04050', renderLaserGlow };
-  }
-  const dist = Math.hypot(other.x - ag.x, other.y - ag.y);
-  if (dist > ag.laserEngageRangePx || !targetInCapitalFrontAttackArc(ag, other)) {
-    return { bolt: null, beamColor: '#E04050', renderLaserGlow };
-  }
-  const laserT = tMs - ag.lastLaserStartMs;
-  if (laserT < 0 || laserT >= LASER_DURATION_MS) {
-    return { bolt: null, beamColor: '#E04050', renderLaserGlow };
-  }
-  const muzzle = svgCombatLaserMuzzle(ag);
-  const targetEnd = svgCombatClampToward({ x: ag.x, y: ag.y }, { x: other.x, y: other.y }, ag.laserEngageRangePx);
-  const tx = targetEnd.x - muzzle.x;
-  const ty = targetEnd.y - muzzle.y;
-  const td = Math.hypot(tx, ty);
-  if (td < 1e-9) return { bolt: null, beamColor: '#E04050', renderLaserGlow };
-  const boltU = Math.min(1, laserT / Math.max(1, ag.laserBoltTravelMs || LASER_BOLT_TRAVEL_MS_FALLBACK));
-  const reach = td * boltU;
-  const ux = tx / td;
-  const uy = ty / td;
-  const x2 = muzzle.x + ux * reach;
-  const y2 = muzzle.y + uy * reach;
-  let opacity = 0.97;
-  if (laserT >= LASER_FADE_START_MS) {
-    opacity *= Math.max(
-      0,
-      1 - (laserT - LASER_FADE_START_MS) / Math.max(1, LASER_DURATION_MS - LASER_FADE_START_MS),
-    );
-  }
-  const laserVis = resolveCapitalLaserBeamPresentation(ag.laserWeaponId);
-  return {
-    bolt: { x1: muzzle.x, y1: muzzle.y, x2, y2, opacity },
-    beamColor: laserVis.coreColor,
-    renderLaserGlow,
-  };
-}
-
-/** 이동중 전투·행성 궤도·드라코 등 공통 — 레거시: SVG+rAF. 활성 궤도는 Skia 단일 Canvas(`PlanetEdenRaidOrbitSkiaCombat`). */
-const PlanetEdenRaidOrbitSvgRafCombat = memo(function PlanetEdenRaidOrbitSvgRafCombat({
-  sim,
-}: {
-  sim: PlanetEdenRaidSim;
-}) {
-  const [, force] = useReducer((x: number) => x + 1, 0);
-  useEffect(() => {
-    let alive = true;
-    let id = 0;
-    const loop = () => {
-      if (!alive) return;
-      force();
-      id = requestAnimationFrame(loop);
-    };
-    id = requestAnimationFrame(loop);
-    return () => {
-      alive = false;
-      cancelAnimationFrame(id);
-    };
-  }, [sim]);
-
-  const { orbitSize } = sim;
-  const tMs = sim.tMsRef.current;
-  const agents = sim.agentsRef.current;
-  const missiles = sim.missilesRef.current;
-  const hitFx = sim.missileHitFxRef.current;
-  const idBuf = sim.agentByIdSparseRef.current;
-  const fpsNow = sim.fpsRef.current;
-  const vfx = resolveCombatOrbitVfxBudget(agents.length, missiles.length, fpsNow);
-
-  return (
-    <View style={{ width: orbitSize, height: orbitSize, position: 'relative' }} pointerEvents="none">
-      <Svg width={orbitSize} height={orbitSize}>
-        <G>
-          {missiles.map(m => (
-            <EdenOrbitMissileGraphic
-              key={m.id}
-              id={m.id}
-              p0x={m.p0.x}
-              p0y={m.p0.y}
-              p1x={m.p1.x}
-              p1y={m.p1.y}
-              p2x={m.p2.x}
-              p2y={m.p2.y}
-              travelMs={m.travelMs}
-              tSince={tMs - m.startMs}
-              missileSegmentBudget={vfx.missileSegmentBudget}
-              bezierSampleCap={vfx.bezierSampleCap}
-              showHeadDot={vfx.missileHeadDotEnabled}
-            />
-          ))}
-          {hitFx.map(fx => (
-            <EdenOrbitHitFxBurst
-              key={`${fx.id}-${fx.startMs}`}
-              fxId={fx.id}
-              fxStartMs={fx.startMs}
-              fxX={fx.x}
-              fxY={fx.y}
-              color={fx.color}
-              tMs={tMs}
-            />
-          ))}
-          {agents.map(ag => {
-            const destroyedForMs = tMs - ag.lastDestroyedAtMs;
-            const showDestroyFx =
-              !ag.alive && destroyedForMs >= 0 && destroyedForMs < DESTROY_FX_DURATION_MS;
-            if (!ag.alive && !showDestroyFx) return null;
-            const { bolt, beamColor, renderLaserGlow } = buildSvgCombatLaserForAgent(
-              ag,
-              idBuf,
-              tMs,
-              vfx.renderLaserGlow,
-            );
-            return (
-              <EdenOrbitShipGraphic
-                key={ag.id}
-                agId={ag.id}
-                x={ag.x}
-                y={ag.y}
-                headingRad={ag.headingRad}
-                stroke={ag.stroke}
-                alive={ag.alive}
-                showDestroyFx={showDestroyFx}
-                destroyedForMs={destroyedForMs}
-                h={ALLY_MARK_HALF}
-                laserBolt={bolt}
-                beamColor={beamColor}
-                renderLaserGlow={renderLaserGlow}
-                captainLabel={ag.captainLabel}
-              />
-            );
-          })}
-        </G>
-      </Svg>
-    </View>
-  );
-});
+/** Skia 단일 렌더 — 레거시 SVG+rAF(PlanetEdenRaidOrbitSvgRafCombat) 제거됨. */
 
 export function PlanetEdenRaidOrbitSvg({ sim: simOverride }: { sim?: PlanetEdenRaidSim }) {
   const fromCtx = useContext(PlanetEdenRaidSimContext);

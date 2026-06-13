@@ -3,7 +3,7 @@
 // ============================================================
 
 import { CapitalHullPurchasePolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
-import { NPC_CAPITAL_SHIPS_FROM_CSV } from '../../data/generated';
+import { getNpcCapitalShip } from '../../npc/npcFleetRegistry';
 import { STAR_SYSTEMS } from '../../data/systems';
 import { resolvePlanetZoneIndex } from '../planetBalance/planetZoneIndexRegistry';
 import { getCapitalHullPurchaseRow } from './balanceTableRegistry';
@@ -60,7 +60,7 @@ export function resolveHullTierKeyForListedNpcShip(npcShipId: string): string {
   const explicit = resolveHullTierKeyForNpcShipId(npcShipId);
   if (explicit) return explicit;
 
-  const ship = NPC_CAPITAL_SHIPS_FROM_CSV.find((s) => s.id === npcShipId);
+  const ship = getNpcCapitalShip(npcShipId);
   if (!ship) return 'frigate_default';
 
   const hp = ship.combat.maxHp;

@@ -3,7 +3,7 @@
 // UI 전용 컨텍스트 없이 getState() 기준 — 벽시계 패스에서만 읽음
 // ============================================================
 
-import { hasCapitalRealtimeCombatSlotsForPlanet } from '../../combat/capitalRealtimeBridge';
+import { hasCapitalRealtimeCombatSlotsForPlanet } from '../../combat/capitalRealtimeCombatGate';
 import { useArcNpcTrafficStore } from '../../store/arcNpcTrafficStore';
 import type { ArcNpcTrafficShip } from '../../store/arcNpcTrafficStore';
 

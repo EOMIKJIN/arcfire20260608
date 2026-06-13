@@ -4,7 +4,7 @@
 // ============================================================
 
 import { CapitalShipTradeListingPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
-import { NPC_CAPITAL_SHIPS_FROM_CSV } from '../../data/generated';
+import { getNpcCapitalShip } from '../../npc/npcFleetRegistry';
 import { CapitalHullPurchasePolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
 import { getPlanetLevelingRowForZone } from '../planetBalance/planetZoneIndexRegistry';
 import {
@@ -192,7 +192,7 @@ export function listCanonicalTradePortNpcShipIds(): string[] {
 /** 무역소 상품으로 등록된 전함(npc_ai_ships.tradePortListed + 정책 대표) */
 export function isCanonicalTradePortCapitalShip(npcShipId: string): boolean {
   if (!canonicalNpcShipIds.has(npcShipId)) return false;
-  const ship = NPC_CAPITAL_SHIPS_FROM_CSV.find((s) => s.id === npcShipId);
+  const ship = getNpcCapitalShip(npcShipId);
   return ship?.tradePortListed === true;
 }
 

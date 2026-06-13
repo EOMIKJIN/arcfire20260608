@@ -7,6 +7,10 @@ import type { ArcNpcTrafficCaptain, ArcNpcTrafficShip } from '../store/arcNpcTra
 import { NPC_CAPITAL_HULL_FALLBACK_ID } from '../types';
 import { getNpcCapitalHullClassDef, resolveNpcCapitalOrbitKinematic } from './npcCapitalClassRegistry';
 import { getNpcCapitalShip } from './npcFleetRegistry';
+import {
+  formatCapitalShipInfoPanelBadge,
+  resolveCapitalShipClassification,
+} from '../arcCore/balance/capitalShipClassification';
 import { NEARBY_PRESENCE_DISPLAY_SEP, type NearbyOrbitPresenceRow } from './nearbyOrbitPresenceSystem';
 
 const ARC_HUB_INFO_SLOT_BASE = 1000;
@@ -72,7 +76,10 @@ export function mergeArcShipsIntoNearbyHubPresence(
     const captainName = nameById.get(ship.captainId) ?? ship.captainId;
     if (seenCaptainLabel.has(captainName.trim())) continue;
     const shipName = hull?.name ?? ship.id;
-    const infoRight = (hull?.infoLineSuffix && hull.infoLineSuffix.trim()) || '';
+    const classification = resolveCapitalShipClassification(ship.id);
+    const infoRight = classification
+      ? formatCapitalShipInfoPanelBadge(classification)
+      : (hull?.infoLineSuffix && hull.infoLineSuffix.trim()) || '';
     const mk = 'MK.I';
     const hullClassId = hull?.hullTypeId ?? NPC_CAPITAL_HULL_FALLBACK_ID;
     extra.push({

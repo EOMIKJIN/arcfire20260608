@@ -80,6 +80,10 @@ export type ArcOverlayTradeQuantityEntry = ArcOverlayBase & {
   stock?: number;
   demandLabel?: string;
   ownedQty?: number;
+  /** 구매 모달 — 수량 ± 시 (보유 − 합계) 미리보기용 */
+  playerCredits?: number;
+  /** 전함·무기 구매 모달 — 테이블 기반 간단 설명(최대 3줄 UI) */
+  itemDescription?: string;
   tips?: TradeProfitTip[];
   onConfirm: (qty: number) => void | Promise<void>;
 };

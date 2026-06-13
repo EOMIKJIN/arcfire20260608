@@ -40,3 +40,6 @@ Thumbs.db
 expo-env.d.ts
 .expo-shared/
 web-build/
+
+# --- 데일리 커밋 로그 (로컬) ---
+tools/daily-commit/logs/*.log

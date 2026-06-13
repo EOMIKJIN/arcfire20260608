@@ -1,15 +1,12 @@
-# Daily audit — 2026-06-12T10:11:46.941Z
+# Daily audit — 2026-06-12T11:36:45.143Z
 
-## TypeScript (`npx tsc --noEmit`)
+## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
 ```
-functions/src/index.ts(6,24): error TS2307: Cannot find module 'firebase-admin' or its corresponding type declarations.
-functions/src/index.ts(7,27): error TS2307: Cannot find module 'firebase-functions/v2/https' or its corresponding type declarations.
-functions/src/index.ts(11,32): error TS7006: Parameter 'req' implicitly has an 'any' type.
-functions/src/index.ts(11,37): error TS7006: Parameter 'res' implicitly has an 'any' type.
+(no output)
 ```
 
-**exit:** 2
+**exit:** 0
 
 ## Content tables (`npm run build:content-tables`)
 
@@ -31,32 +28,35 @@ Generated CSV-driven content TS files at src/data/generated
 - 357,358 — `src/data/generated/csvNpcCapitalShips.ts`
 - 205,747 — `src/data/generated/csvItemDefs.ts`
 - 178,362 — `src/data/generated/csvNpcCaptains.ts`
-- 153,002 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
-- 113,545 — `app/(game)/planet.tsx`
+- 136,537 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 56,993 — `src/data/generated/csvStoryScenes.ts`
 - 56,611 — `src/data/generated/csvWeapons.ts`
+- 47,434 — `app/(game)/planet.tsx`
 - 46,287 — `src/data/balance/generated/csvSynthSystemColonization.ts`
 - 43,816 — `app/(game)/shipyard.tsx`
-- 41,933 — `app/(game)/worldmap.tsx`
+- 41,941 — `app/(game)/worldmap.tsx`
+- 37,554 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
 - 35,638 — `app/(game)/trade.tsx`
 - 27,734 — `src/types/index.ts`
 - 25,525 — `src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx`
 - 25,324 — `src/store/playerStore.ts`
 - 25,125 — `src/data/generated/csvMissions.ts`
 - 21,671 — `src/data/galaxy100.ts`
-- 18,909 — `src/data/generated/csvSystems.ts`
-- 18,615 — `src/data/generated/csvSkills.ts`
+- 20,815 — `src/components/planet/planetHub/planetHubStyles.ts`
 
-## `setInterval(` occurrences (manual leak review)
+## Planet hub eager `src/combat` import (should be absent)
+
+- OK — no eager combat barrel in `planet.tsx`
 
 - `src/combat/useCapitalRealtimeDuelOutcome.ts`
 - `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - `src/components/planet/PlanetMainScanActionRow.tsx`
 - `src/components/planet/SkiaPlanetNebulaShaderBackdrop.tsx`
 - `src/components/TypewriterText.tsx`
+- `src/game/planetCapitalCombatHeavyUi.tsx`
+- `src/game/planetHub/usePlanetHubInterval.ts`
 - `src/game/usePlanetArcCoreMessagePresentation.ts`
 - `src/systems/mining/useMiningDriver.ts`
-- `app/(game)/planet.tsx`
 
 ## `subscribe(` / `addEventListener(` hints (manual cleanup review)
 

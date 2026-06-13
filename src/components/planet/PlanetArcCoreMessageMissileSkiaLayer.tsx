@@ -20,13 +20,17 @@ import {
 } from '@shopify/react-native-skia';
 import type { SharedValue } from 'react-native-reanimated';
 import { PLANET_MAIN_ORBIT_SCENE_SIZE } from '../../stages/planetMainStageLayout';
-import { ARC_CORE_MESSAGE_MISSILE_TRAIL_FADE_MS } from '../../arcCore/message/arcCoreMessagePolicy';
+import {
+  ARC_CORE_MESSAGE_MISSILE_TRAIL_FADE_MS,
+  ARC_CORE_MESSAGE_TRAIL_STROKE_HEAD_RATIO,
+} from '../../arcCore/message/arcCoreMessagePolicy';
 import {
   buildArcCoreMessageMissileBezier,
   resolveArcCoreMessageClosestApproach,
   resolveArcCoreMessageMissileCanvasPadPx,
   resolveArcCoreMessageMissileViewportURange,
   resolveArcCoreMeteorHeadRadiiPx,
+  resolvePlanetHubOrbitPlanetCenterPx,
 } from '../../arcCore/message/arcCoreMessageMissileGeometry';
 import {
   packDefenseInterceptDodgeFlash,
@@ -48,7 +52,6 @@ import {
 } from '../../arcCore/message/arcCoreMessageMissileWorklets';
 
 const DODGE_BLINK_HZ = 8;
-const DODGE_HEAD_SIZE_RATIO = 0.13;
 const WARHEAD_PASS_RING_BASE_R_MUL = 2.35;
 const WARHEAD_PASS_RING_OUTER_R_MUL = 3.15;
 
@@ -139,7 +142,6 @@ type Props = {
   active: boolean;
   missileStartMs: number;
   travelMs: number;
-  loopsActive: boolean;
   onFlightComplete?: () => void;
   /** 요격 명중 시 탄두 숨김(절대 시각 ms) */
   suppressWarheadAfterMs?: number;
@@ -153,7 +155,6 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
   active,
   missileStartMs,
   travelMs,
-  loopsActive,
   onFlightComplete,
   suppressWarheadAfterMs = 0,
   interceptSucceeded = false,
@@ -167,9 +168,12 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
   const uEnterSv = useSharedValue(0);
   const uExitSv = useSharedValue(1);
   const bezierFlat = useSharedValue<number[]>([0, 0, 0, 0, 0, 0]);
+  const suppressWarheadAfterMsSv = useSharedValue(0);
+  const baseWarheadGlowSv = useSharedValue(0.78);
   const flightCompleteFiredRef = useRef(false);
 
-  const planetCenter = useMemo(() => ({ x: orbitSize / 2, y: orbitSize / 2 }), [orbitSize]);
+  const simActive = active && missileStartMs > 0 && travelMs > 0;
+  const planetCenter = useMemo(() => resolvePlanetHubOrbitPlanetCenterPx(orbitSize), [orbitSize]);
   const headRadii = useMemo(() => resolveArcCoreMeteorHeadRadiiPx(orbitSize), [orbitSize]);
   const viewportURange = useMemo(
     () => resolveArcCoreMessageMissileViewportURange(orbitSize, headRadii.major * 0.6),
@@ -177,7 +181,7 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
   );
   const canvasPad = useMemo(() => resolveArcCoreMessageMissileCanvasPadPx(orbitSize), [orbitSize]);
   const canvasSize = orbitSize + canvasPad * 2;
-  const headDodgeSize = orbitSize * DODGE_HEAD_SIZE_RATIO;
+  const headDodgeSize = headRadii.major * 9.5;
 
   const closestApproach = useMemo(() => {
     const bezier = buildArcCoreMessageMissileBezier(orbitSize);
@@ -190,6 +194,10 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
     onFlightComplete?.();
   }, [onFlightComplete]);
 
+  useEffect(() => {
+    suppressWarheadAfterMsSv.value = suppressWarheadAfterMs;
+  }, [suppressWarheadAfterMs, suppressWarheadAfterMsSv]);
+
   useLayoutEffect(() => {
     flightCompleteFiredRef.current = false;
     const bezier = buildArcCoreMessageMissileBezier(orbitSize);
@@ -197,7 +205,7 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
     uClosestSv.value = closestApproach.u;
     uEnterSv.value = viewportURange.uEnter;
     uExitSv.value = viewportURange.uExit;
-    if (active && loopsActive && missileStartMs > 0 && travelMs > 0) {
+    if (simActive) {
       startMsSv.value = missileStartMs;
       travelMsSv.value = travelMs;
       activeSv.value = 1;
@@ -206,8 +214,7 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
       activeSv.value = 0;
     }
   }, [
-    active,
-    loopsActive,
+    simActive,
     missileStartMs,
     travelMs,
     orbitSize,
@@ -222,7 +229,11 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
     clockMs.value = Date.now();
     const tSince = clockMs.value - startMsSv.value;
     const travel = Math.max(1, travelMsSv.value);
-    const lifeEnd = travel + ARC_CORE_MESSAGE_MISSILE_TRAIL_FADE_MS;
+    const fadeMs = ARC_CORE_MESSAGE_MISSILE_TRAIL_FADE_MS;
+    const suppressMs = suppressWarheadAfterMsSv.value;
+    const lifeEnd = suppressMs > startMsSv.value
+      ? (suppressMs - startMsSv.value) + fadeMs
+      : travel + fadeMs;
     if (tSince >= lifeEnd) {
       activeSv.value = 0;
       runOnJS(fireFlightComplete)();
@@ -230,10 +241,16 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
   }, false);
 
   useEffect(() => {
-    const on = active && loopsActive && missileStartMs > 0 && travelMs > 0;
-    flightFrame.setActive(on);
+    flightFrame.setActive(simActive);
+    if (simActive) clockMs.value = Date.now();
     return () => flightFrame.setActive(false);
-  }, [active, loopsActive, missileStartMs, travelMs, flightFrame]);
+  }, [simActive, missileStartMs, travelMs, flightFrame, clockMs]);
+
+  const canvasOffsetMatrix = useMemo(() => {
+    const m = Skia.Matrix();
+    m.translate(canvasPad, canvasPad);
+    return m;
+  }, [canvasPad]);
 
   const visPack = useDerivedValue(() => {
     'worklet';
@@ -245,6 +262,7 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
       ARC_CORE_MESSAGE_MISSILE_TRAIL_FADE_MS,
       uEnterSv.value,
       uExitSv.value,
+      suppressWarheadAfterMsSv.value,
     );
   });
 
@@ -285,15 +303,16 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
     const v = visPack.value;
     if (v[VIS.alive] < 0.5 || v[VIS.warheadShown] < 0.5) return 0;
     if (suppressWarheadAfterMs > 0 && clockMs.value >= suppressWarheadAfterMs) return 0;
-    return v[VIS.lifeOpacity];
+    return Math.max(0.92, v[VIS.lifeOpacity]);
   });
 
   const warheadPositionMatrix = useDerivedValue(() => {
     'worklet';
     const v = visPack.value;
     if (v[VIS.alive] < 0.5 || v[VIS.warheadShown] < 0.5) return Skia.Matrix();
-    const p = arcCoreMessageBezierPointFlat(bezierFlat.value, v[VIS.warheadU]);
-    const rad = arcCoreMessageBezierTangentFlat(bezierFlat.value, v[VIS.warheadU]);
+    const uDraw = v[VIS.uHead];
+    const p = arcCoreMessageBezierPointFlat(bezierFlat.value, uDraw);
+    const rad = arcCoreMessageBezierTangentFlat(bezierFlat.value, uDraw);
     const m = Skia.Matrix();
     m.translate(p.x, p.y);
     m.rotate(rad);
@@ -343,7 +362,7 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
     const v = visPack.value;
     if (v[VIS.alive] < 0.5 || v[VIS.warheadShown] < 0.5) return 0;
     if (suppressWarheadAfterMs > 0 && clockMs.value >= suppressWarheadAfterMs) return 0;
-    const scrape = arcCoreMessageScrapeIntensity(v[VIS.warheadU], uClosestSv.value);
+    const scrape = arcCoreMessageScrapeIntensity(v[VIS.uHead], uClosestSv.value);
     const blink = arcCoreMessageDodgeBlinkPulse(clockMs.value, DODGE_BLINK_HZ + 2);
     const interceptFlash = packDefenseInterceptDodgeFlash(
       clockMs.value,
@@ -352,11 +371,11 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
       interceptSucceeded,
       DEFENSE_INTERCEPT_EXPLOSION_MS,
     );
-    const base = 0.38 + scrape * 0.5 + interceptFlash * 0.85;
-    return base * blink * 0.85 * v[VIS.lifeOpacity];
+    const base = 0.62 + scrape * 0.38 + interceptFlash * 0.85;
+    return Math.max(0.55, base * blink * v[VIS.lifeOpacity]);
   });
 
-  if (!active || !loopsActive || missileStartMs <= 0) {
+  if (!simActive) {
     return null;
   }
 
@@ -374,10 +393,11 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
       pointerEvents="none"
     >
       <Canvas style={{ width: canvasSize, height: canvasSize }}>
+        <Group matrix={canvasOffsetMatrix}>
         <Path
           path={trailPath}
           style="stroke"
-          strokeWidth={Math.max(1, headRadii.major * 0.55)}
+          strokeWidth={Math.max(1, headRadii.major * ARC_CORE_MESSAGE_TRAIL_STROKE_HEAD_RATIO)}
           strokeJoin="round"
           strokeCap="round"
           opacity={trailOpacity}
@@ -390,6 +410,11 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
           />
         </Path>
         <Group matrix={warheadPositionMatrix} opacity={warheadOpacity}>
+          <Group layer={<Paint blendMode="plus" opacity={baseWarheadGlowSv} />}>
+            <Circle cx={0} cy={0} r={headRadii.major * 2.8} color="rgba(255, 120, 48, 0.55)">
+              <BlurMask blur={headRadii.major * 1.6} style="normal" />
+            </Circle>
+          </Group>
           <ArcCoreMessageWarheadPassFx
             headMajor={headRadii.major}
             glowOpacity={warheadPassGlowOpacity}
@@ -407,6 +432,7 @@ export const PlanetArcCoreMessageMissileSkiaLayer = memo(function PlanetArcCoreM
             </Circle>
           </Group>
           <ArcCoreMessageHeadDodgeGlow boxSize={headDodgeSize} opacity={headDodgeOpacity} />
+        </Group>
         </Group>
       </Canvas>
     </View>

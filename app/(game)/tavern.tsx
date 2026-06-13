@@ -14,7 +14,7 @@ import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
 import { useTavernBoardStore } from '../../src/store/tavernBoardStore';
 import { usePlayerStore } from '../../src/store/playerStore';
-import { NPC_CAPTAINS_FROM_CSV } from '../../src/data/generated';
+import { listNpcCaptains } from '../../src/npc/npcFleetRegistry';
 import { ArcStageBackButton } from '../../src/ui/overlay/ArcStageBackButton';
 import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacilityTabBar';
 import { useArcNarrativeOverlay } from '../../src/ui/overlay/useArcNarrativeOverlay';
@@ -43,10 +43,10 @@ export default function TavernScreen() {
     [notices.length],
   );
   const tavernHostCaptain = useMemo(() => {
-    const retiredPool = NPC_CAPTAINS_FROM_CSV.filter((captain) => captain.tavernPlanetIds.length > 0);
+    const retiredPool = listNpcCaptains().filter((captain) => captain.tavernPlanetIds.length > 0);
     if (retiredPool.length === 0) return null;
     if (currentPlanetId) {
-      const direct = NPC_CAPTAINS_FROM_CSV.find((captain) => captain.tavernPlanetIds.includes(currentPlanetId));
+      const direct = retiredPool.find((captain) => captain.tavernPlanetIds.includes(currentPlanetId));
       if (direct) return direct;
       const hash = Array.from(currentPlanetId).reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
       return retiredPool[hash % retiredPool.length] ?? retiredPool[0] ?? null;

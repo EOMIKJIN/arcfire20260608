@@ -1,0 +1,8 @@
+expRewardMin,expRewardMax,shipClass,tierBand,defaultLoadoutProfile
+1,39,corvette,1,neutral
+40,90,frigate,1,neutral
+91,120,destroyer,2,neutral
+121,145,cruiser,2,neutral
+146,200,battleship,3,neutral
+201,300,dreadnought,4,neutral
+301,99999,super_capital,4,neutral

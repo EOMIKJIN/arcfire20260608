@@ -4,7 +4,7 @@
 // - 런타임 인스턴스(내구·개조)는 별도 슬롯/인벤토리 모델에서 참조
 // ============================================================
 
-import type { BattleWeaponVisualKind } from '../realtimeBattle/battleTypes';
+import type { BattleWeaponVisualKind } from '../combat/battleVisualTypes';
 import type { DiceDef } from '../types';
 
 /** 카탈로그 문자열 id (예: wpn_pulse_laser_i, mod_shield_i) */

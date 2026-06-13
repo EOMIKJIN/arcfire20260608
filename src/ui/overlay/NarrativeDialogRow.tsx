@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     borderRadius: 10,
     overflow: 'hidden',
-    backgroundColor: 'rgba(8,12,20,0.86)',
+    backgroundColor: OVERLAY_TOKENS.phosphorCardBg,
   },
   portraitCard: {
     width: 145,

@@ -30,7 +30,8 @@ import { usePlanetNebulaStore } from '../src/store/planetNebulaStore';
 import { useTavernBoardStore } from '../src/store/tavernBoardStore';
 import { useWorldObjectRuntimeStore } from '../src/store/worldObjectRuntimeStore';
 import { initGuestAuth } from '../src/firebase/auth';
-import { arcCoreHub, attachArcCoreRuntimeCommandBridge } from '../src/arcCore';
+import { arcCoreHub } from '../src/arcCore/ArcCoreHub';
+import { attachArcCoreRuntimeCommandBridge } from '../src/arcCore/ArcCoreRuntimeBridge';
 import { ArcOverlayHost } from '../src/ui/overlay/ArcOverlayHost';
 import { LevelUpOverlayBridge } from '../src/ui/overlay/LevelUpOverlayBridge';
 import { useArcOverlayStore } from '../src/ui/overlay/arcOverlayStore';
@@ -50,7 +51,8 @@ import {
 } from '../src/firebase/appUpdatePolicy';
 import { runCriticalSessionAssetPrewarm } from '../src/assetPipeline/runCriticalSessionAssetPrewarm';
 import { withBootTimeout } from '../src/utils/withBootTimeout';
-import { buildCsvStaticIndexes } from '../src/game/buildCsvStaticIndexes';
+import { buildCsvStaticIndexesMinimal } from '../src/game/buildCsvStaticIndexes';
+import { markBootPerf, logBootPerfSummary } from '../src/game/bootPerformance';
 import { useAabsPolicyStore } from '../src/arcCore/aabs/aabsPolicyStore';
 
 type UpdateGateState = {
@@ -105,31 +107,34 @@ export default function RootLayout() {
   useEffect(() => {
     void (async () => {
       let authUser: Awaited<ReturnType<typeof initGuestAuth>> | null = null;
+      markBootPerf('layout_effect_start');
       try {
-        // Table-First: CSV 정적 Map 인덱스 1회 빌드 (`1.arcfire_flowchart.md` §1)
-        buildCsvStaticIndexes();
+        buildCsvStaticIndexesMinimal();
         await useAabsPolicyStore.getState().loadAsync();
-        // release에서도 androidId가 확정된 뒤에만 계정/서버 로딩 진행
         const authUserResult = await initGuestAuth();
         authUser = authUserResult;
         await loadArcExpansionTestOneShotDoneFromStorage();
-        await loadLocalPlayer();
-        await loadLocalClanWarFoundation();
-        await loadLocalMissions();
-        await loadLocalWorld();
+        markBootPerf('storage_load_start');
+        await Promise.all([
+          loadLocalPlayer(),
+          loadLocalClanWarFoundation(),
+          loadLocalMissions(),
+          loadLocalWorld(),
+          loadLocalUserSession(),
+          loadLocalItemLedger(),
+          loadLocalAccountProfiles(),
+          loadLocalSkillDb(),
+          loadLocalNpcCaptainProgress(),
+          loadLocalPlanetNebulaProfiles(),
+          loadLocalBoard(),
+        ]);
         await bootstrapWorldObjectRuntimeFromWorld(useWorldStore.getState().systems);
         await applyArcCoreWallClockCatchUpFromPersistedGap(arcCoreHub);
         await usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync();
+        markBootPerf('storage_load_end');
         useClanWarFoundationStore
           .getState()
           .syncNpcAiClanTerritoryFromGalaxy(useWorldStore.getState().systems);
-        await loadLocalUserSession();
-        await loadLocalItemLedger();
-        await loadLocalAccountProfiles();
-        await loadLocalSkillDb();
-        await loadLocalNpcCaptainProgress();
-        await loadLocalPlanetNebulaProfiles();
-        await loadLocalBoard();
         ensureCaptainsRegistered(NPC_CAPTAINS_FROM_CSV.map(c => c.id));
         const p = usePlayerStore.getState().player;
         const session = useUserSessionStore.getState().record;
@@ -148,12 +153,18 @@ export default function RootLayout() {
           });
         }
         recordAppLaunch(nickname);
-        await persistUserSession();
-        await persistItemLedger();
-        await persistAccountProfiles();
-        await persistSkillDb();
       } finally {
+        markBootPerf('boot_ready');
+        logBootPerfSummary('root_layout');
         setBootReady(true);
+        void Promise.all([
+          persistUserSession(),
+          persistItemLedger(),
+          persistAccountProfiles(),
+          persistSkillDb(),
+        ]).catch(() => {
+          /* 부팅 직후 persist 실패 — 다음 저장 주기에 재시도 */
+        });
       }
 
       // 네트워크·프리웜은 타이틀 표시 후 백그라운드 — 스플래시 직후 별도 로딩 화면을 두지 않는다.
@@ -226,6 +237,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!bootReady) return;
+    markBootPerf('arc_core_start');
     arcCoreHub.bootstrapDefaultSubCores();
     arcCoreHub.start();
     const detachArcCoreBridge = attachArcCoreRuntimeCommandBridge();

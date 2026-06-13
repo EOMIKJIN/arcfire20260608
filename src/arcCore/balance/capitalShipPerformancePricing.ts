@@ -3,7 +3,7 @@
 // ============================================================
 
 import type { NpcCapitalShip } from '../../types';
-import { NPC_CAPITAL_SHIPS_FROM_CSV } from '../../data/generated';
+import { getNpcCapitalShip, listAllNpcCapitalShipRows } from '../../npc/npcFleetRegistry';
 import {
   getCapitalShipTradePricePolicyKv,
   getCapitalHullPurchaseRow,
@@ -33,13 +33,14 @@ function combatPerformanceScore(ship: NpcCapitalShip): number {
 }
 
 function tierBaselinePerformanceScore(hullTierKey: string): number {
-  const canonicalId = NPC_CAPITAL_SHIPS_FROM_CSV.find(
-    (s) => resolveHullTierKeyForTradeCatalogShip(s.id) === hullTierKey && s.tradePortListed,
-  )?.id;
-  const ship = canonicalId
-    ? NPC_CAPITAL_SHIPS_FROM_CSV.find((s) => s.id === canonicalId)
-    : undefined;
-  if (ship) return Math.max(1, combatPerformanceScore(ship));
+  let canonicalShip: NpcCapitalShip | undefined;
+  for (const s of listAllNpcCapitalShipRows()) {
+    if (!s.tradePortListed) continue;
+    if (resolveHullTierKeyForTradeCatalogShip(s.id) !== hullTierKey) continue;
+    canonicalShip = s;
+    break;
+  }
+  if (canonicalShip) return Math.max(1, combatPerformanceScore(canonicalShip));
   const row = getCapitalHullPurchaseRow(hullTierKey);
   const minLv = parseNum(row?.requiredPilotLevelMin, 1);
   return Math.max(1, 400 + minLv * 24);
@@ -47,7 +48,7 @@ function tierBaselinePerformanceScore(hullTierKey: string): number {
 
 /** 성능 지수 기반 무역소 기준가(수요 전) */
 export function resolveCapitalShipPerformanceBasePrice(npcShipId: string): number {
-  const ship = NPC_CAPITAL_SHIPS_FROM_CSV.find((s) => s.id === npcShipId);
+  const ship = getNpcCapitalShip(npcShipId);
   if (!ship) return 1;
 
   const tier = resolveHullTierKeyForTradeCatalogShip(npcShipId);

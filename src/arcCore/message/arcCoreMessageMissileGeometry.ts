@@ -1,11 +1,112 @@
 import { PLANET_MAIN_ORBIT_SCENE_SIZE } from '../../stages/planetMainStageLayout';
-import { ARC_CORE_MESSAGE_VISUAL_SCALE, ARC_CORE_MESSAGE_WARHEAD_SCALE } from './arcCoreMessagePolicy';
+import {
+  ARC_CORE_MESSAGE_VISUAL_SCALE,
+  ARC_CORE_MESSAGE_VISUAL_SIZE_MUL,
+  ARC_CORE_MESSAGE_WARHEAD_SCALE,
+} from './arcCoreMessagePolicy';
+
+// Inbound SSOT: bezier + resolveArcCoreInboundWarheadTopAnchor* → Skia·sim·요격.
+
+/** `PlanetDot` size={120} — 궤도 씬 행성 도트 직경과 동기 */
+export const PLANET_HUB_ORBIT_PLANET_DOT_DIAM_PX = 120;
 
 export type ArcCoreMessageMissileBezier = {
   p0: { x: number; y: number };
   p1: { x: number; y: number };
   p2: { x: number; y: number };
 };
+
+/** 행성 허브 궤도 씬 — PlanetDot 반경(px) */
+export function resolvePlanetHubOrbitPlanetVisualRadiusPx(
+  orbitSize: number = PLANET_MAIN_ORBIT_SCENE_SIZE,
+): number {
+  return (PLANET_HUB_ORBIT_PLANET_DOT_DIAM_PX / 2) * (orbitSize / PLANET_MAIN_ORBIT_SCENE_SIZE);
+}
+
+export function resolvePlanetHubOrbitPlanetCenterPx(
+  orbitSize: number = PLANET_MAIN_ORBIT_SCENE_SIZE,
+): { x: number; y: number } {
+  return { x: orbitSize / 2, y: orbitSize / 2 };
+}
+
+/** 행성 림 바로 위 여백(px) — PlanetDot(120) 기준 */
+export function resolveArcCoreInboundWarheadRimClearancePx(
+  orbitSize: number = PLANET_MAIN_ORBIT_SCENE_SIZE,
+): number {
+  const headMajor = resolveArcCoreMeteorHeadRadiiPx(orbitSize).major;
+  return Math.max(20, headMajor * 2.4 + orbitSize * 0.04);
+}
+
+/** 행성 12시 정중앙 — x=중심, y=림+여백 */
+export function resolveArcCoreInboundWarheadTopCenterPx(
+  orbitSize: number = PLANET_MAIN_ORBIT_SCENE_SIZE,
+): { x: number; y: number } {
+  const { x: cx, y: cy } = resolvePlanetHubOrbitPlanetCenterPx(orbitSize);
+  const rim = resolvePlanetHubOrbitPlanetVisualRadiusPx(orbitSize);
+  const clearance = resolveArcCoreInboundWarheadRimClearancePx(orbitSize);
+  return { x: cx, y: cy - rim - clearance };
+}
+
+/** dev·정적 inbound 꼬리 — p2=탄두(행성 12시), p0=우상단 진입. 꼬리 끝=탄두(u=1). */
+export const ARC_CORE_STATIC_INBOUND_TRAIL_TAIL_U = 0.16;
+
+export function buildArcCoreStaticInboundTrailBezier(
+  orbitSize: number = PLANET_MAIN_ORBIT_SCENE_SIZE,
+): ArcCoreMessageMissileBezier {
+  const head = resolveArcCoreInboundWarheadTopCenterPx(orbitSize);
+  const { x: cx } = resolvePlanetHubOrbitPlanetCenterPx(orbitSize);
+  const pad = orbitSize * 0.22;
+  return {
+    p0: { x: orbitSize + pad * 1.05, y: -pad * 0.35 },
+    p1: { x: cx + pad * 0.62, y: head.y - pad * 0.52 },
+    p2: { x: head.x, y: head.y },
+  };
+}
+
+export type ArcCoreInboundWarheadTopAnchor = {
+  x: number;
+  y: number;
+  /** 꼬리·탄두 공통 베지어 끝(u=1) */
+  u: number;
+  visible: boolean;
+};
+
+/** dev·정적 — 탄두=행성 정중앙 위, 꼬리=trailBezier uTail→1 */
+export function resolveArcCoreInboundWarheadTopAnchorWithTrailU(
+  orbitSize: number = PLANET_MAIN_ORBIT_SCENE_SIZE,
+): ArcCoreInboundWarheadTopAnchor {
+  const head = resolveArcCoreInboundWarheadTopCenterPx(orbitSize);
+  return { x: head.x, y: head.y, u: 1, visible: true };
+}
+
+/** uTail..1 구간 Skia Path — 탄두까지 단일 2차 곡선 */
+export function writeArcCoreStaticInboundTrailSkiaPath(
+  path: { moveTo: (x: number, y: number) => void; lineTo: (x: number, y: number) => void },
+  orbitSize: number = PLANET_MAIN_ORBIT_SCENE_SIZE,
+  uTail: number = ARC_CORE_STATIC_INBOUND_TRAIL_TAIL_U,
+): boolean {
+  const bezier = buildArcCoreStaticInboundTrailBezier(orbitSize);
+  const uEnd = 1;
+  const uStart = Math.max(0, Math.min(uTail, uEnd - 0.02));
+  const span = uEnd - uStart;
+  if (span < 0.01) return false;
+  const q0 = quadBezierPoint(bezier.p0, bezier.p1, bezier.p2, uStart);
+  path.moveTo(q0.x, q0.y);
+  const steps = Math.min(36, Math.max(8, Math.ceil(10 + 26 * span)));
+  for (let k = 1; k <= steps; k += 1) {
+    const u = uStart + (span * k) / steps;
+    const p = quadBezierPoint(bezier.p0, bezier.p1, bezier.p2, u);
+    path.lineTo(p.x, p.y);
+  }
+  return true;
+}
+
+/** @deprecated — WithTrailU 사용 */
+export function resolveArcCoreInboundWarheadTopAnchorPx(
+  orbitSize: number = PLANET_MAIN_ORBIT_SCENE_SIZE,
+): { x: number; y: number } {
+  return resolveArcCoreInboundWarheadTopCenterPx(orbitSize);
+}
 
 /**
  * 오른쪽 위 → 왼쪽 아래 대각선.
@@ -17,7 +118,7 @@ export function buildArcCoreMessageMissileBezier(
   const cx = orbitSize / 2;
   const cy = orbitSize / 2;
   const pad = orbitSize * 0.22;
-  const planetVisualRadius = orbitSize * (120 / 320) * 0.5;
+  const planetVisualRadius = resolvePlanetHubOrbitPlanetVisualRadiusPx(orbitSize);
   return {
     p0: { x: orbitSize + pad * 1.05, y: -pad * 0.4 },
     p1: { x: cx + pad * 0.42, y: cy - planetVisualRadius - pad * 0.18 },
@@ -119,9 +220,9 @@ export function resolveArcCoreMessageClosestApproach(
   planetCenter: { x: number; y: number },
   samples = 24,
 ): ArcCoreMessageClosestApproach {
-  let bestU = 0.5;
+  let bestU = 0;
   let bestD = Number.POSITIVE_INFINITY;
-  let bestP = planetCenter;
+  let bestP = quadBezierPoint(bezier.p0, bezier.p1, bezier.p2, 0);
   for (let i = 0; i <= samples; i += 1) {
     const u = i / samples;
     const p = quadBezierPoint(bezier.p0, bezier.p1, bezier.p2, u);
@@ -137,8 +238,9 @@ export function resolveArcCoreMessageClosestApproach(
 
 /** 탄두 타원 반경(px) — 고정 크기(비행 중 커졌다 작아지지 않음) */
 export function resolveArcCoreMeteorHeadRadiiPx(orbitSize: number): { major: number; minor: number } {
-  const scale = ARC_CORE_MESSAGE_VISUAL_SCALE * ARC_CORE_MESSAGE_WARHEAD_SCALE;
-  const major = orbitSize * 0.055 * scale;
+  const scale =
+    ARC_CORE_MESSAGE_VISUAL_SCALE * ARC_CORE_MESSAGE_WARHEAD_SCALE * ARC_CORE_MESSAGE_VISUAL_SIZE_MUL;
+  const major = Math.max(10, orbitSize * 0.055 * scale);
   return { major, minor: major * 0.72 };
 }
 
@@ -174,4 +276,51 @@ export function quadBezierTangentRad(
     return Math.atan2(p2.y - p0.y, p2.x - p0.x);
   }
   return Math.atan2(vy, vx);
+}
+
+/** inbound 시작 기준 ms → warhead (아크코어 베지어 위) */
+export function resolveArcCoreInboundWarheadAtRelativeMs(
+  relativeMs: number,
+  inboundTravelMs: number,
+  orbitSize: number = PLANET_MAIN_ORBIT_SCENE_SIZE,
+): { x: number; y: number; u: number; visible: boolean } {
+  const bezier = buildArcCoreMessageMissileBezier(orbitSize);
+  const u = Math.min(1, Math.max(0, relativeMs / Math.max(1, inboundTravelMs)));
+  const p = quadBezierPoint(bezier.p0, bezier.p1, bezier.p2, u);
+  const { uEnter, uExit } = resolveArcCoreMessageMissileViewportURange(orbitSize);
+  return { x: p.x, y: p.y, u, visible: u >= uEnter && u < uExit };
+}
+
+/** 절대 시각 → inbound warhead (요격·inbound Skia 공용 SSOT) */
+export function resolveArcCoreInboundWarheadAtMs(
+  clockMs: number,
+  inboundStartMs: number,
+  travelMs: number,
+  orbitSize: number = PLANET_MAIN_ORBIT_SCENE_SIZE,
+): { x: number; y: number; u: number; visible: boolean } {
+  return resolveArcCoreInboundWarheadAtRelativeMs(
+    clockMs - inboundStartMs,
+    travelMs,
+    orbitSize,
+  );
+}
+
+/** 요격탄 vs inbound 탄두 충돌 반경(px) — 탄두 이미지 대비 여유 */
+export function resolveDefenseInterceptCollisionRadiusPx(
+  orbitSize: number = PLANET_MAIN_ORBIT_SCENE_SIZE,
+): number {
+  const warheadMajor = resolveArcCoreMeteorHeadRadiiPx(orbitSize).major;
+  const interceptHeadMajor = 2.2 * 2;
+  return Math.max(52, warheadMajor * 2.5 + interceptHeadMajor * 2);
+}
+
+/** 충돌 판정용 inbound 탄두 가시성 — viewport uEnter/uExit ± margin */
+export function isInboundWarheadCollisionEligible(
+  warhead: { u: number; visible: boolean },
+  orbitSize: number = PLANET_MAIN_ORBIT_SCENE_SIZE,
+  uMargin = 0.04,
+): boolean {
+  if (warhead.visible) return true;
+  const { uEnter, uExit } = resolveArcCoreMessageMissileViewportURange(orbitSize);
+  return warhead.u >= uEnter - uMargin && warhead.u <= uExit + uMargin;
 }

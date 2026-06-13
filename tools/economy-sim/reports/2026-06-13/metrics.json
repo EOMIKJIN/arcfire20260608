@@ -1,0 +1,47 @@
+{
+  "delta": {
+    "schemaVersion": 1,
+    "deltaId": "2026-06-13-1781330807879",
+    "generatedAt": "2026-06-13T06:06:47.879Z",
+    "simDays": 30,
+    "virtualPopulation": 1000,
+    "combatWeight": 0,
+    "kpi": {
+      "f2pAvgPower": 11.663914701597788,
+      "dolphinAvgPower": 14.774079029762285,
+      "whaleAvgPower": 41.591807177660165,
+      "whaleToF2pPowerRatio": 3.565853166944258,
+      "status": "ok"
+    },
+    "categoryTargetMul": {
+      "weapon": 1.2499994668423215,
+      "mineral": 0.8839693598772964,
+      "food": 1.004935639878698,
+      "tech": 1.249998063990159,
+      "luxury": 1.2499980869483431,
+      "contraband": 1.2499970915550322,
+      "trade_route": 1.2499993109673377,
+      "capital_ship": 1.2499960022310748
+    },
+    "aabsTargetMul": {
+      "creditReward": 0.9502720973466283,
+      "tradeIncome": 0.9627040730099713
+    }
+  },
+  "demandSim": {
+    "categoryPressures": {
+      "weapon": 0.999997867369286,
+      "mineral": -0.7735376008180236,
+      "food": 0.019742559514791678,
+      "tech": 0.9999922559606355,
+      "luxury": 0.9999923477933728,
+      "contraband": 0.9999883662201289,
+      "trade_route": 0.9999972438693508,
+      "capital_ship": 0.9999840089242995
+    },
+    "virtualPopulation": 100000,
+    "sampleCount": 500,
+    "observedCreditsPerHour": 6372.959269900287,
+    "targetCreditsPerHour": 6000
+  }
+}

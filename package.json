@@ -19,10 +19,14 @@
     "agds:patch-overlay": "node tools/agds/patch-dynamic-overlay.cjs",
     "build:world-expansion-graph": "npx tsx tools/world-expansion/export-master-graph.ts",
     "verify:arc-expansion": "npx tsx tools/world-expansion/verify-arc-core-daily-unlock.ts",
+    "verify:trade-port-listing": "npx tsx tools/verify-trade-port-buy-listing.ts",
     "audit:daily": "node tools/daily-perf-audit/run-daily-audit.cjs",
+    "daily:commit": "node tools/daily-commit/run-daily-commit.cjs",
     "audit:memory": "node tools/memory-audit/run-memory-audit.cjs",
     "audit:ui-overlay": "node tools/ui-overlay-audit/run-ui-overlay-audit.cjs",
     "audit:arc-self-optimize:pack": "node tools/arc-core-self-optimize/prepare-handoff.cjs",
+    "sim:economy": "npm run verify:economy-sim-cohort && npx tsx tools/economy-sim/run-economy-sim.ts",
+    "verify:economy-sim-cohort": "npx tsx tools/verify-economy-sim-cohort.ts",
     "export:galaxy-map:image": "tsx tools/galaxy-map/export-galaxy-map-image.ts"
   },
   "dependencies": {

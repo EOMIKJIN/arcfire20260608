@@ -109,6 +109,12 @@ export type ArcCoreCommand =
       defenseLevel?: number;
       interceptChancePct?: number;
       meta?: ArcCoreCommandMeta;
+    }
+  /** dev 전용 — 20초마다 요격탄만 발사(정적 inbound·위성은 화면 상시) */
+  | {
+      type: 'arc_core_dev_intercept_burst';
+      planetId: string;
+      meta?: ArcCoreCommandMeta;
     };
 
 /**

@@ -58,13 +58,18 @@ export type {
 } from './capitalRealtimeTypes';
 
 export {
-  CAPITAL_REALTIME_COMBAT_ORBIT_TEST_PLANET_ID,
   CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID,
-  DRACO_SEAMLESS_PVP_TEST_PLANET_ID,
-  DRACO_SEAMLESS_PVP_TEST_SYSTEM_ID,
   hasCapitalRealtimeCombatSlotsForPlanet,
   isCapitalRealtimeCombatOrbitPlanet,
+} from './capitalRealtimeCombatGate';
+
+export {
+  CAPITAL_REALTIME_COMBAT_ORBIT_TEST_PLANET_ID,
+  DRACO_SEAMLESS_PVP_TEST_PLANET_ID,
+  DRACO_SEAMLESS_PVP_TEST_SYSTEM_ID,
   CapitalRealtimeCombatHudOverlay,
+  CapitalRealtimeCombatOrbitSkia,
+  /** @deprecated — `CapitalRealtimeCombatOrbitSkia` */
   CapitalRealtimeCombatOrbitSvg,
   CapitalRealtimeCombatSimBinder,
   CapitalRealtimeCombatSimContext,

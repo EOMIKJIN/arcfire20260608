@@ -16,7 +16,7 @@
 
 ## 작업 원칙
 
-- **테이블 단일 소스**, **아크코어 = 세계 근원 축** — `.cursor/rules/arcfire-online.mdc` 계약을 따른다.
+- **테이블 단일 소스**, **아크코어 = 세계 근원 축** — `.cursor/rules/Arcfire_Master_Spec_v3.1_Final-1781345284482521549.mdc` 계약을 따른다.
 - 일일 보고서의 `setInterval` / `subscribe` / `addEventListener` 목록이 있으면, **해당 파일에서 누수 가능성만** 최소 수정으로 정리한다.
 - 변경 후 `npx tsc --noEmit` 통과를 목표로 한다.
 

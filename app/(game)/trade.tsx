@@ -24,12 +24,11 @@ import {
   addToInventorySlotsMax,
   aggregateInventoryForTrade,
   countGoodInInventory,
-  inventoryHasRoomFor,
   maxAddableToInventory,
   normalizeInventorySlots,
   removeGoodFromInventorySlots,
 } from '../../src/game/playerInventory';
-import { MarketListing, CargoItem, ItemDef } from '../../src/types';
+import { MarketListing, CargoItem, ItemDef, Player } from '../../src/types';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
@@ -41,6 +40,7 @@ import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMa
 import { getPlanetTradePortItemIds } from '../../src/world/planetTradePortDb';
 import { adjustPlanetTradeMarketStock } from '../../src/world/planetTradeMarketStore';
 import { resolveTradeRoutePlayerSellUnit } from '../../src/arcCore/economy/tradeRouteCommercePolicy';
+import { resolveTradeMineralSinkTotalQty } from '../../src/arcCore/economy/tradeMineralSinkPolicy';
 import {
   filterTradePortCatalogForBuyMarket,
   filterTradePortCatalogForPlayer,
@@ -55,6 +55,7 @@ import {
   type TradeBuySubTabId,
 } from '../../src/game/tradeBuySubTab';
 import { TradeListingIcon } from '../../src/ui/trade/TradeListingIcon';
+import { resolveTradePortPurchaseDescription } from '../../src/game/tradePortPurchaseDescription';
 
 const DEMAND_LABELS: Record<string, string> = {
   low: '낮음 ↓', normal: '보통', high: '높음 ↑',
@@ -85,6 +86,131 @@ function resolveTradeGoodById(goodId: string) {
 
 function resolveItemDefById(goodId: string) {
   return getItemDef(goodId);
+}
+
+type TradeBuyBlock = { title: string; message: string };
+
+function resolveTradeBuyBlock(input: {
+  listing: MarketListing;
+  qty: number;
+  itemDef: ItemDef | null | undefined;
+  player: Player;
+  unitPrice: number;
+  hasEverPurchasedItem: (uid: string, itemId: string) => boolean;
+}): TradeBuyBlock | null {
+  const { listing, qty, itemDef, player, unitPrice, hasEverPurchasedItem } = input;
+  const buyQty = Math.max(1, Math.floor(qty));
+  const isPlanetOwnershipItemType = itemDef?.type === 'planet_ownership';
+  const isCapitalShipItemType = itemDef?.type === 'capital_ship';
+  const capitalShipNpcId = isCapitalShipItemType && typeof itemDef?.attrs?.npcCapitalShipId === 'string'
+    ? String(itemDef.attrs.npcCapitalShipId)
+    : null;
+  const alreadyOwnsCapitalShip = isCapitalShipItemType && capitalShipNpcId
+    ? (
+        countGoodInInventory(normalizeInventorySlots(player.inventorySlots), listing.goodId) > 0
+        || player.shipHangar.some((h) => h.npcCapitalShipId === capitalShipNpcId)
+      )
+    : false;
+  const blockedByHistory = Boolean(
+    (itemDef?.nonRepurchase || isCapitalShipItemType)
+    && !isPlanetOwnershipItemType
+    && player.uid
+    && hasEverPurchasedItem(player.uid, listing.goodId),
+  );
+
+  if ((isCapitalShipItemType && alreadyOwnsCapitalShip) || (!isCapitalShipItemType && blockedByHistory)) {
+    return { title: '재구매 불가', message: '이 아이템은 계정당 1회만 구매할 수 있습니다.' };
+  }
+  if (!filterTradePortCatalogForPlayer([listing.goodId], player.level).includes(listing.goodId)) {
+    return { title: '구매 불가', message: '파일럿 레벨이 이 상품의 요구 조건에 미달합니다.' };
+  }
+  if (listing.stock <= 0 || buyQty > listing.stock) {
+    return { title: '구매 불가', message: '재고가 없어서 구매할 수 없습니다.' };
+  }
+
+  const isNoInventoryPurchase =
+    itemDef?.type === 'planet_ownership'
+    || itemDef?.type === 'clan_disband'
+    || itemDef?.type === 'capital_ship';
+  if (!isNoInventoryPurchase) {
+    const invSlotsNow = normalizeInventorySlots(player.inventorySlots);
+    const maxInv = maxAddableToInventory(invSlotsNow, listing.goodId, listing.stock);
+    if (maxInv < buyQty) {
+      return { title: '구매 불가', message: '인벤토리 공간이 부족합니다.' };
+    }
+  }
+
+  const totalCost = unitPrice * buyQty;
+  if (player.credits < totalCost) {
+    return { title: '구매 불가', message: '잔고가 부족해 구매할 수 없습니다.' };
+  }
+
+  const mineralSink = resolveTradeMineralSinkTotalQty(itemDef, buyQty);
+  if (mineralSink) {
+    const ownedMineral = countGoodInInventory(
+      normalizeInventorySlots(player.inventorySlots),
+      mineralSink.mineralItemId,
+    );
+    if (ownedMineral < mineralSink.totalQty) {
+      return {
+        title: '구매 불가',
+        message: `광물 ${mineralSink.totalQty}개가 필요합니다. (보유 ${ownedMineral}개)`,
+      };
+    }
+  }
+
+  return null;
+}
+
+function refundTradeMineralSink(
+  player: Player,
+  itemDef: ItemDef | null | undefined,
+  buyQty: number,
+): Player {
+  const mineralSink = resolveTradeMineralSinkTotalQty(itemDef, buyQty);
+  if (!mineralSink) return player;
+  const restored = addToInventorySlotsMax(
+    normalizeInventorySlots(player.inventorySlots),
+    mineralSink.mineralItemId,
+    mineralSink.totalQty,
+    0,
+  );
+  return { ...player, inventorySlots: restored.slots };
+}
+
+function rollbackTradeBuyFailure(input: {
+  itemDef: ItemDef | null | undefined;
+  buyQty: number;
+  totalCost: number;
+  capitalShipNpcId?: string | null;
+}): void {
+  const store = usePlayerStore.getState();
+  const current = store.player;
+  if (current) {
+    const restored = refundTradeMineralSink(current, input.itemDef, input.buyQty);
+    if (restored !== current) store.setPlayer(restored);
+  }
+  store.addCredits(input.totalCost);
+  if (input.capitalShipNpcId) store.removeHangarShipByNpcId(input.capitalShipNpcId);
+}
+
+function resolveFreshTradeBuyUnitPrice(
+  listing: MarketListing,
+  planetId: string,
+  player: Player,
+): number {
+  const freshListing = generateMarketByItemIds(
+    filterTradePortCatalogForBuyMarket(getPlanetTradePortItemIds(planetId), player.level),
+    planetId.length * 37,
+    resolvePlayerLifetimeCredits(player),
+    planetId,
+  ).find((m) => m.goodId === listing.goodId);
+  return getBuyPrice(freshListing ?? listing);
+}
+
+/** 수량 선택 UI 상한 — 진열 재고 기준(0이면 1). 구매 가능 여부는 구매 버튼에서 검증 */
+function resolveTradeBuyPickerMaxQty(listing: MarketListing): number {
+  return Math.max(1, listing.stock);
 }
 
 function resolveInventorySellPrice(
@@ -277,57 +403,16 @@ export default function TradeScreen() {
     const good = resolveTradeGoodById(listing.goodId);
     if (!good) return;
     const itemDef = resolveItemDefById(listing.goodId);
-    const isPlanetOwnershipItemType = itemDef?.type === 'planet_ownership';
-    const isCapitalShipItemType = itemDef?.type === 'capital_ship';
-    const capitalShipNpcId = isCapitalShipItemType && typeof itemDef?.attrs?.npcCapitalShipId === 'string'
-      ? String(itemDef.attrs.npcCapitalShipId)
-      : null;
-    const alreadyOwnsCapitalShip = isCapitalShipItemType && capitalShipNpcId
-      ? (
-          countGoodInInventory(normalizeInventorySlots(player.inventorySlots), listing.goodId) > 0
-          || player.shipHangar.some((h) => h.npcCapitalShipId === capitalShipNpcId)
-        )
-      : false;
-    const isNoInventoryPurchase =
-      itemDef?.type === 'planet_ownership'
-      || itemDef?.type === 'clan_disband'
-      || itemDef?.type === 'capital_ship';
-    const blockedByHistory = Boolean(
-      (itemDef?.nonRepurchase || isCapitalShipItemType)
-      && !isPlanetOwnershipItemType
-      && player.uid
-      && hasEverPurchasedItem(player.uid, listing.goodId),
-    );
-    if ((isCapitalShipItemType && alreadyOwnsCapitalShip) || (!isCapitalShipItemType && blockedByHistory)) {
-      showArcAlert('재구매 불가', '이 아이템은 계정당 1회만 구매할 수 있습니다.');
-      return;
-    }
-    if (!filterTradePortCatalogForPlayer([listing.goodId], player.level).includes(listing.goodId)) {
-      showArcAlert('구매 불가', '파일럿 레벨이 이 상품의 요구 조건에 미달합니다.');
-      return;
-    }
     const price = getBuyPrice(listing);
-    const invSlotsNow = normalizeInventorySlots(player.inventorySlots);
-    const maxInv = maxAddableToInventory(invSlotsNow, listing.goodId, listing.stock);
-    const maxQty = isNoInventoryPurchase
-      ? Math.min(1, listing.stock)
-      : Math.min(listing.stock, maxInv);
-
-    if (maxQty <= 0) {
-      showArcAlert(
-        '구매 불가',
-        isNoInventoryPurchase
-          ? '재고가 없습니다.'
-          : '인벤토리 공간이 부족합니다.',
-      );
-      return;
-    }
+    const playerCredits = player.credits;
 
     presentArcOverlayTradeQuantity({
       mode: 'buy',
       title: `${good.name} 구매`,
       unitPrice: price,
-      maxQty,
+      maxQty: resolveTradeBuyPickerMaxQty(listing),
+      playerCredits,
+      itemDescription: resolveTradePortPurchaseDescription(itemDef) ?? undefined,
       stock: listing.stock,
       demandLabel: DEMAND_LABELS[listing.demand],
       tips: listTradeResellProfitTips(
@@ -338,17 +423,39 @@ export default function TradeScreen() {
       ),
       onConfirm: (qty) => {
         const buyQty = Math.max(1, Math.floor(qty));
-        const totalCost = price * buyQty;
-        const creditsNow = usePlayerStore.getState().player?.credits ?? player.credits;
-        if (creditsNow < totalCost) {
-          showArcAlert('잔고가 부족해 구매가 불가합니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
+        const latestPlayer = usePlayerStore.getState().player;
+        if (!latestPlayer || !planet) return;
+        const freshUnitPrice = resolveFreshTradeBuyUnitPrice(listing, planet.id, latestPlayer);
+        if (freshUnitPrice !== price) {
+          setMarketTick((t) => t + 1);
+          showArcAlert(
+            '시세 변동',
+            '시세가 변동되었습니다. 목록을 확인한 뒤 다시 구매해 주세요.',
+            ARC_TRADE_DIALOG_BUTTONS,
+          );
           return;
         }
+        const block = resolveTradeBuyBlock({
+          listing,
+          qty: buyQty,
+          itemDef,
+          player: latestPlayer,
+          unitPrice: freshUnitPrice,
+          hasEverPurchasedItem,
+        });
+        if (block) {
+          showArcAlert(block.title, block.message, ARC_TRADE_DIALOG_BUTTONS);
+          return;
+        }
+        const capitalShipNpcId = itemDef?.type === 'capital_ship'
+          && typeof itemDef?.attrs?.npcCapitalShipId === 'string'
+          ? String(itemDef.attrs.npcCapitalShipId)
+          : null;
         showArcAlert('구매를 진행하시겠습니까?', undefined, [
           { text: '취소', style: 'cancel' },
           {
             text: '확인',
-            onPress: () => executeBuyQuantity(listing, buyQty, itemDef, price, capitalShipNpcId),
+            onPress: () => executeBuyQuantity(listing, buyQty, itemDef, freshUnitPrice, capitalShipNpcId),
           },
         ]);
       },
@@ -371,6 +478,22 @@ export default function TradeScreen() {
       return;
     }
 
+    const mineralSink = resolveTradeMineralSinkTotalQty(itemDef, qty);
+    if (mineralSink) {
+      const slotsBefore = normalizeInventorySlots(player.inventorySlots);
+      const slotsAfter = removeGoodFromInventorySlots(
+        slotsBefore,
+        mineralSink.mineralItemId,
+        mineralSink.totalQty,
+      );
+      if (!slotsAfter) {
+        addCredits(totalCost);
+        showArcAlert('구매 실패', '광물이 부족합니다.', ARC_TRADE_DIALOG_BUTTONS);
+        return;
+      }
+      setPlayer({ ...player, inventorySlots: slotsAfter });
+    }
+
     const ownershipPlanetId = typeof itemDef?.attrs?.planetId === 'string'
       ? String(itemDef.attrs.planetId)
       : null;
@@ -389,7 +512,7 @@ export default function TradeScreen() {
         megaFactionId: player.political.megaFactionId,
       });
       if (!claim.ok) {
-        addCredits(totalCost);
+        rollbackTradeBuyFailure({ itemDef, buyQty, totalCost });
         showArcAlert('소유권 획득 실패', '이미 다른 클랜이 점유한 행성입니다.');
         return;
       }
@@ -413,7 +536,7 @@ export default function TradeScreen() {
     if (isClanDisbandItem) {
       const dissolve = dissolvePlayerClanByPurchase({ uid: player.uid });
       if (!dissolve.ok) {
-        addCredits(totalCost);
+        rollbackTradeBuyFailure({ itemDef, buyQty, totalCost });
         showArcAlert('클랜 해산 실패', '현재 해산 가능한 클랜이 없습니다.');
         return;
       }
@@ -436,7 +559,7 @@ export default function TradeScreen() {
     }
     if (isCapitalShipItem) {
       if (player.shipHangar.length >= 30) {
-        addCredits(totalCost);
+        rollbackTradeBuyFailure({ itemDef, buyQty, totalCost });
         showArcAlert('인도 실패', '격납고 보유 한도(30대)에 도달했습니다.');
         return;
       }
@@ -444,13 +567,13 @@ export default function TradeScreen() {
         ? String(itemDef.attrs.npcCapitalShipId)
         : '';
       if (!npcCapitalShipId) {
-        addCredits(totalCost);
+        rollbackTradeBuyFailure({ itemDef, buyQty, totalCost });
         showArcAlert('인도 실패', '전함 데이터가 올바르지 않습니다.');
         return;
       }
       const hangarOk = addHangarShipFromNpcPurchase(npcCapitalShipId);
       if (!hangarOk) {
-        addCredits(totalCost);
+        rollbackTradeBuyFailure({ itemDef, buyQty, totalCost });
         showArcAlert('인도 실패', '등록되지 않은 전함입니다.');
         return;
       }
@@ -458,15 +581,19 @@ export default function TradeScreen() {
       capitalShipIdForRollback = npcCapitalShipId;
     }
 
-    const slots0 = normalizeInventorySlots(player.inventorySlots);
+    const slots0 = normalizeInventorySlots(
+      (usePlayerStore.getState().player ?? player).inventorySlots,
+    );
     const invTry = addToInventorySlotsMax(slots0, listing.goodId, qty, unitPrice);
     const inventoryAdded = invTry.added > 0;
     const shouldAllowWithoutInventory = isCapitalShipItem;
     if (!inventoryAdded && !shouldAllowWithoutInventory) {
-      if (capitalShipIdForRollback) {
-        removeHangarShipByNpcId(capitalShipIdForRollback);
-      }
-      addCredits(totalCost);
+      rollbackTradeBuyFailure({
+        itemDef,
+        buyQty,
+        totalCost,
+        capitalShipNpcId: capitalShipIdForRollback,
+      });
       showArcAlert('구매 실패', '인벤토리 공간이 부족합니다.');
       return;
     }
@@ -710,23 +837,12 @@ export default function TradeScreen() {
               const good = resolveTradeGoodById(listing.goodId);
               if (!good) return null;
               const price = getBuyPrice(listing);
-              const rowItemDef = resolveItemDefById(listing.goodId);
-              const purchaseIgnoresCargo =
-                rowItemDef?.type === 'planet_ownership'
-                || rowItemDef?.type === 'clan_disband'
-                || rowItemDef?.type === 'capital_ship';
-              const hasInv = inventoryHasRoomFor(
-                normalizeInventorySlots(player.inventorySlots),
-                listing.goodId,
-              );
-              const hasSpace = purchaseIgnoresCargo || hasInv;
 
               return (
                 <TouchableOpacity
                   key={listing.goodId}
-                  style={[styles.listingCard, !hasSpace && styles.listingDisabled]}
+                  style={styles.listingCard}
                   onPress={() => handleBuy(listing)}
-                  disabled={!hasSpace}
                 >
                   <View style={styles.listingLeft}>
                     <TradeListingIcon

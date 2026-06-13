@@ -20,6 +20,9 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
   const [qty, setQty] = useState(() => Math.min(entry.maxQty, Math.max(minQty, entry.initialQty ?? 1)));
 
   const totalPrice = entry.unitPrice * qty;
+  const playerCredits = entry.playerCredits;
+  const remainingCredits =
+    entry.mode === 'buy' && playerCredits != null ? playerCredits - totalPrice : null;
   const canDec = qty > minQty;
   const canInc = qty < entry.maxQty;
   const canMax = qty < entry.maxQty;
@@ -46,6 +49,14 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
       ) : null}
       {entry.ownedQty != null ? (
         <Text style={styles.line}>보유: {entry.ownedQty}개</Text>
+      ) : null}
+
+      {entry.mode === 'buy' && entry.itemDescription ? (
+        <View style={styles.descBox}>
+          <Text style={styles.descText} numberOfLines={3} ellipsizeMode="tail">
+            {entry.itemDescription}
+          </Text>
+        </View>
       ) : null}
 
       {entry.mode === 'buy' ? (
@@ -89,7 +100,19 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.totalLine}>합계: {formatCredits(totalPrice)}</Text>
+      <Text style={styles.totalLine}>
+        합계: {formatCredits(totalPrice)}
+        {remainingCredits != null ? (
+          <Text
+            style={[
+              styles.totalCreditsSuffix,
+              remainingCredits < 0 ? styles.totalCreditsOver : styles.totalCreditsOk,
+            ]}
+          >
+            {`  (보유크레딧: ${formatCredits(remainingCredits, { suffix: false })})`}
+          </Text>
+        ) : null}
+      </Text>
       <Text style={styles.maxHint}>최대 {entry.maxQty}개</Text>
 
       <View style={styles.btnRow}>
@@ -132,6 +155,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: SPACING.xs,
   },
+  descBox: {
+    marginTop: SPACING.md,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.sm,
+    borderWidth: 1,
+    borderColor: 'rgba(107, 212, 255, 0.2)',
+    borderRadius: 4,
+    backgroundColor: OVERLAY_TOKENS.phosphorCardInsetBg,
+  },
+  descText: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    color: PH,
+    lineHeight: 18,
+    textAlign: 'center',
+  },
   qtyRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -148,7 +187,7 @@ const styles = StyleSheet.create({
     borderColor: OVERLAY_TOKENS.phosphorBorder,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(107, 212, 255, 0.08)',
+    backgroundColor: OVERLAY_TOKENS.phosphorBtnBg,
   },
   qtyBtnDisabled: {
     opacity: 0.35,
@@ -169,7 +208,7 @@ const styles = StyleSheet.create({
     borderColor: OVERLAY_TOKENS.phosphorBorder,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(107, 212, 255, 0.14)',
+    backgroundColor: OVERLAY_TOKENS.phosphorBtnBgEmphasis,
   },
   maxBtnText: {
     fontFamily: FONTS.mono,
@@ -194,6 +233,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: SPACING.xs,
   },
+  totalCreditsSuffix: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    fontWeight: FONTS.weight.bold,
+  },
+  totalCreditsOk: {
+    color: PH,
+  },
+  totalCreditsOver: {
+    color: COLORS.danger,
+  },
   maxHint: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
@@ -207,7 +257,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(107, 212, 255, 0.25)',
     borderRadius: 4,
-    backgroundColor: 'rgba(6, 14, 28, 0.45)',
+    backgroundColor: OVERLAY_TOKENS.phosphorCardInsetBg,
   },
   tipsTitle: {
     fontFamily: FONTS.mono,

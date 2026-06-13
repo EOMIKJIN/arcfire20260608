@@ -1,31 +1,20 @@
 // ============================================================
-// UserMod / Governor — `5.Arcfire_Integrated_Master_Spec_v1.0.md` §2.1
+// UserMod / Governor — Daily Ops 관측 큐 경유 (v3.1: 실시간 AABS 금지)
 // ============================================================
 
 import { dispatchArcCoreCommand } from '../ArcCoreCommandBus';
-import { useAabsPolicyStore, type AabsGlobalMultipliers } from '../aabs/aabsPolicyStore';
-import type { AabsMultiplierKey } from '../aabs/aabsConstants';
+import { enqueueDailyOpsObservation, type GovernorPolicyChoice } from './dailyOpsObservationQueue';
 
-export type GovernorPolicyChoice = 'security' | 'free_trade' | 'tech_prospecting';
-
-const POLICY_SHIFTS: Record<GovernorPolicyChoice, Partial<AabsGlobalMultipliers>> = {
-  security: { expReward: 1.05, combatDifficulty: 1.05, tradeIncome: 0.98 },
-  free_trade: { tradeIncome: 1.05, creditReward: 1.03, combatDifficulty: 0.98 },
-  tech_prospecting: { dropWeight: 1.05, miningYield: 1.04, expReward: 1.02 },
-};
+export type { GovernorPolicyChoice };
 
 export class UserModController {
   applyPolicyShift(choice: GovernorPolicyChoice, planetId: string): void {
-    const shift = POLICY_SHIFTS[choice];
-    const store = useAabsPolicyStore.getState();
-    if (store.safeModeEnabled) return;
-
-    (Object.keys(shift) as AabsMultiplierKey[]).forEach((key) => {
-      const target = shift[key as keyof typeof shift];
-      if (target != null) store.applyStepToward(key, target);
+    void enqueueDailyOpsObservation({
+      kind: 'governor_policy',
+      choice,
+      planetId,
+      observedAt: Date.now(),
     });
-
-    void store.persistAsync();
 
     if (choice === 'security') {
       dispatchArcCoreCommand({
@@ -36,15 +25,16 @@ export class UserModController {
     }
   }
 
-  /** 번영 비콘 — 채굴·드랍 보정 */
-  deployProsperityBeacon(_planetId: string): void {
-    const store = useAabsPolicyStore.getState();
-    store.applyStepToward('miningYield', (store.multipliers.miningYield ?? 1) * 1.05);
-    store.applyStepToward('dropWeight', (store.multipliers.dropWeight ?? 1) * 1.05);
-    void store.persistAsync();
+  /** 번영 비콘 — AABS는 다음 Daily Ops 배치에서 반영 */
+  deployProsperityBeacon(planetId: string): void {
+    void enqueueDailyOpsObservation({
+      kind: 'prosperity_beacon',
+      planetId,
+      observedAt: Date.now(),
+    });
   }
 
-  /** 유인 비콘 — NPC gather */
+  /** 유인 비콘 — NPC gather (연출·명령 축, AABS 아님) */
   deployLureBeacon(planetId: string): void {
     dispatchArcCoreCommand({
       type: 'npc_gather_planet',

@@ -1,4 +1,6 @@
 import { PlanetDefenseSatelliteLevelPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
+import { ARC_CORE_MESSAGE_TEST_INTERVAL_STRIKES } from '../message/arcCoreMessagePolicy';
+import { DEFENSE_INTERCEPT_TEST_HIT_CHANCE_PCT } from '../message/defenseInterceptConstants';
 
 export type PlanetDefenseSatelliteLevelRow = {
   level: number;
@@ -65,22 +67,49 @@ export function resolveDefenseSatelliteInterceptChance01(level: number): number 
   return resolveDefenseSatelliteInterceptChancePct(level) / 100;
 }
 
+/** dev 테스트 51% · prod는 행성 방어 레벨 테이블(%) */
+export function resolveDefenseSatelliteInterceptHitChancePctForRoll(level: number): number {
+  if (ARC_CORE_MESSAGE_TEST_INTERVAL_STRIKES) {
+    return DEFENSE_INTERCEPT_TEST_HIT_CHANCE_PCT;
+  }
+  return resolveDefenseSatelliteInterceptChancePct(level);
+}
+
 /**
- * strikeId·planetId 기반 결정론 롤 — 동일 공습 재현 시 결과 일치.
+ * strikeId·위성·슬롯 기반 결정론 롤 — 위성별 interceptChancePct(개별 레벨)로 독립 판정.
+ */
+export function rollDefenseSatelliteInterceptSuccessForSlot(
+  strikeId: string,
+  planetId: string,
+  satelliteId: string,
+  slotIndex: number,
+  interceptChancePct: number,
+): boolean {
+  const chance = Math.max(0, Math.min(100, interceptChancePct)) / 100;
+  if (chance <= 0) return false;
+  if (chance >= 1) return true;
+  let hash = 0;
+  const seed = `${strikeId}:${planetId}:${satelliteId}:${slotIndex}:defense_intercept`;
+  for (let i = 0; i < seed.length; i += 1) {
+    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  }
+  const roll = (hash % 1_000_000) / 1_000_000;
+  return roll < chance;
+}
+
+/**
+ * @deprecated — rollDefenseSatelliteInterceptSuccessForSlot 사용
  */
 export function rollDefenseSatelliteInterceptSuccess(
   strikeId: string,
   planetId: string,
   level: number,
 ): boolean {
-  const chance = resolveDefenseSatelliteInterceptChance01(level);
-  if (chance <= 0) return false;
-  if (chance >= 1) return true;
-  let hash = 0;
-  const seed = `${strikeId}:${planetId}:defense_intercept`;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
-  }
-  const roll = (hash % 1_000_000) / 1_000_000;
-  return roll < chance;
+  return rollDefenseSatelliteInterceptSuccessForSlot(
+    strikeId,
+    planetId,
+    'legacy',
+    0,
+    resolveDefenseSatelliteInterceptChancePct(level),
+  );
 }

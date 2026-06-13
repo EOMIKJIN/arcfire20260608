@@ -7,6 +7,7 @@ export function withWorldObjectInstanceRuntime(object: WorldObject): WorldObject
   if (!patch) return object;
   return {
     ...object,
+    defenseLevel: patch.defenseLevel ?? object.defenseLevel,
     state: {
       depleted: patch.depleted ?? object.state.depleted,
       hp: patch.hp ?? object.state.hp,

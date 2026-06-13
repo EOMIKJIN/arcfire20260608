@@ -1,0 +1,40 @@
+name: Daily audit report commit
+
+on:
+  schedule:
+    # KST 00:00 ≈ UTC 15:00 (전일)
+    - cron: '0 15 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Daily audit
+        run: npm run audit:daily
+
+      - name: Commit audit reports if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "No report changes"
+            exit 0
+          fi
+          DAY=$(TZ=Asia/Seoul date +%Y-%m-%d)
+          git add tools/daily-perf-audit/reports/
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(daily): audit report ${DAY} (KST)"
+          git push

@@ -3,7 +3,7 @@
 // ============================================================
 
 import { CapitalHullPurchasePolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
-import { NPC_CAPITAL_SHIPS_FROM_CSV } from '../../data/generated';
+import { getNpcCapitalShip, resolveFirstPlayerRegistryCapitalShipId, listAllNpcCapitalShipRows } from '../../npc/npcFleetRegistry';
 import { getCapitalHullPurchaseRow } from './balanceTableRegistry';
 import { getCanonicalNpcShipIdForHullTier } from './capitalShipTradeListingPolicy';
 
@@ -29,21 +29,21 @@ export function listCapitalHullPurchasePolicyRows() {
 /** 신규 파일럿 기본 지급 전함 — `frigate_default` 플레이어 대표 hull */
 export function resolvePlayerDefaultNpcCapitalShipId(): string {
   const mapped = HULL_TIER_NPC_SHIP_ID.frigate_default;
-  if (mapped && NPC_CAPITAL_SHIPS_FROM_CSV.some((s) => s.id === mapped)) return mapped;
-  const playerHull = NPC_CAPITAL_SHIPS_FROM_CSV.find((s) => s.id.startsWith('Player_'));
-  return playerHull?.id ?? mapped ?? 'Player_npc_red_fleet_1';
+  if (mapped && getNpcCapitalShip(mapped)) return mapped;
+  const playerHull = resolveFirstPlayerRegistryCapitalShipId();
+  return playerHull ?? mapped ?? 'Player_npc_red_fleet_1';
 }
 
 export function resolveNpcShipIdForHullTier(hullTierKey: string): string | null {
   const canonical = getCanonicalNpcShipIdForHullTier(hullTierKey);
-  if (canonical && NPC_CAPITAL_SHIPS_FROM_CSV.some((s) => s.id === canonical)) return canonical;
+  if (canonical && getNpcCapitalShip(canonical)) return canonical;
   const mapped = HULL_TIER_NPC_SHIP_ID[hullTierKey];
-  if (mapped && NPC_CAPITAL_SHIPS_FROM_CSV.some((s) => s.id === mapped)) return mapped;
+  if (mapped && getNpcCapitalShip(mapped)) return mapped;
   const row = getCapitalHullPurchaseRow(hullTierKey);
   if (!row) return null;
   const minLv = parseNum(row.requiredPilotLevelMin, 1);
   const targetHp = 400 + minLv * 8;
-  const listed = NPC_CAPITAL_SHIPS_FROM_CSV.filter((s) => s.tradePortListed);
+  const listed = listAllNpcCapitalShipRows().filter((s) => s.tradePortListed);
   const match = listed
     .slice()
     .sort((a, b) => Math.abs(a.combat.maxHp - targetHp) - Math.abs(b.combat.maxHp - targetHp))[0];
