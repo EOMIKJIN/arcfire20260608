@@ -12,7 +12,6 @@ export {
 export { listPlanetDefenseSatellites } from './planetDefenseSatelliteService';
 export {
   patchPlanetDefenseSatelliteInstanceLevel,
-  patchPlanetDefenseSatelliteLevel,
   resolvePlanetDefenseSatelliteLevel,
   isPlanetDefenseSatelliteInstalled,
 } from './planetDefenseSatelliteLevel';

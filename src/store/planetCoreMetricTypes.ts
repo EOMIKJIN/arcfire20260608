@@ -8,9 +8,10 @@ export type PlanetResourceDetail = {
   version?: number;
 };
 
-/** 발전/교통 등 하위 속성 자리 */
+/** PlanetDevelopment — 모듈별 런타임 슬롯 (방위위성·향후 9개) */
 export type PlanetDevelopmentDetail = {
-  version?: number;
+  version: 1;
+  byModuleId?: Record<string, PlanetDefenseSatelliteDetail | Record<string, unknown>>;
 };
 
 /** 행성 공격 1회 적용 기록 — `applyPlanetAttackCoreDamage` */
@@ -44,7 +45,7 @@ export type PlanetAttackDamageDetail = {
 
 /** Economy Fabric — 운영 실물(수송·피해·재고) 누적 · 일 1회 reconcile */
 export type PlanetEconomyFabricEvent = {
-  kind: 'attack' | 'convoy_settlement' | 'daily_reconcile';
+  kind: 'attack' | 'convoy_settlement' | 'player_trade' | 'daily_reconcile';
   atMs: number;
   payload: Record<string, number>;
 };
@@ -58,11 +59,18 @@ export type PlanetEconomyFabricDetail = {
     supplyUnitsDelivered: number;
     attackDefenseLoss: number;
     attackPopulationLoss: number;
+    /** 플레이어 무역 — 금일 총 거래액(수수료 전) */
+    playerTradeGrossCredits: number;
+    playerTradeCount: number;
+    playerBuyUnits: number;
+    playerSellUnits: number;
   };
   lastDailyReconcile?: {
     atMs: number;
     supplyStockScale: number;
     operationalBase: number;
+    resourceNudge: number;
+    populationNudge: number;
     windowSummary: PlanetEconomyFabricDetail['window'];
   };
   recentEvents: PlanetEconomyFabricEvent[];

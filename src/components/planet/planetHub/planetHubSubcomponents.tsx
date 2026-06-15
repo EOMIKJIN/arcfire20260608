@@ -28,7 +28,7 @@ import { SkiaPlanetNebulaShaderBackdrop } from '../SkiaPlanetNebulaShaderBackdro
 import { resolveMainStageSkiaBackdrop } from '../../../game/mainStageSkiaBackdrop';
 import { useCapitalRealtimeCombatSimContext } from '../../../combat';
 import { resolvePlanetNebulaBakedSource } from '../../../game/planetNebulaBakedAssets';
-import { getArcCoreInboundDronePolicy } from '../../../arcCore/balance/arcCoreInboundDronePolicy';
+import { resolveDefenseSatelliteCombatStatsForObject } from '../../../systems/planetaryDefense/resolveDefenseSatelliteCombatStats';
 import { computeTableNpcOrbitXY } from '../planetOrbitHubWorklets';
 import {
   PLANET_MAIN_BACKGROUND_CLAN_PLATE_AFTER_NAME_GAP_PX,
@@ -779,8 +779,8 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
 
   const defenseZoneDiameterPx = useMemo(() => {
     if (object.kind !== 'defense_satellite') return 0;
-    return getArcCoreInboundDronePolicy().defenseZoneDiameterPx;
-  }, [object.kind]);
+    return resolveDefenseSatelliteCombatStatsForObject(object).defenseZoneDiameterPx;
+  }, [object]);
 
   const defenseZoneRingStyle = useMemo(() => {
     const d = defenseZoneDiameterPx;

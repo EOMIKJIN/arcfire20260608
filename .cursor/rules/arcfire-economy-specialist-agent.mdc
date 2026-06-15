@@ -10,7 +10,7 @@ alwaysApply: false
 **상급**: **김팀장 에이전트** — 산출물 **1일 1회 검수** · **최종 연동·코드 정리** 책임.  
 **협업 정본**: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
 
-**역할**: 경제·밸런스·아크코어 운영 **구축·테스트**. 본 세션·glob 작업 시 Lead Frontend / Composer 기본 사용 금지.
+**역할**: 경제·밸런스·아크코어 운영 **구축·테스트**. 본 세션·glob 작업 시 Opus UI·Skia 기본 라우팅 사용 금지.
 
 ## 전담 범위
 
@@ -50,4 +50,4 @@ npx tsc --noEmit -p tsconfig.client.json
 
 ## 위임
 
-- 무기 72단계·대량 CSV → @Fable · arcCore 비경제 아키텍처 → @Opus · 무역 UI 리라이트 → @Composer(김팀장)
+- 무기 72단계·대량 CSV → @Fable · arcCore 비경제 아키텍처 → @Opus · 무역 UI 리라이트 → @Opus(김팀장)

@@ -28,6 +28,7 @@ export { PlanetAttackCoreDamage_FROM_BALANCE_CSV } from './csvPlanetAttackCoreDa
 export { PlanetDefenseSatelliteInstanceLevel_FROM_BALANCE_CSV } from './csvPlanetDefenseSatelliteInstanceLevel';
 export { PlanetDefenseSatelliteLevelPolicy_FROM_BALANCE_CSV } from './csvPlanetDefenseSatelliteLevelPolicy';
 export { PlanetDefenseSatellitePolicy_FROM_BALANCE_CSV } from './csvPlanetDefenseSatellitePolicy';
+export { PlanetDevelopmentCatalog_FROM_BALANCE_CSV } from './csvPlanetDevelopmentCatalog';
 export { PlanetHostileRedProgression_FROM_BALANCE_CSV } from './csvPlanetHostileRedProgression';
 export { PlanetLevelingProgression_FROM_BALANCE_CSV } from './csvPlanetLevelingProgression';
 export { PlanetOccupationSeeds_FROM_BALANCE_CSV } from './csvPlanetOccupationSeeds';

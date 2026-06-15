@@ -48,6 +48,7 @@ import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { releaseGalaxyMapStageMemory } from '../../src/game/stageMemoryRelease';
 import { buildCsvStaticIndexesFull } from '../../src/game/buildCsvStaticIndexes';
+import { GalaxyMapTerritoryVoronoiSvg } from '../../src/galaxyMap/GalaxyMapTerritoryVoronoiSvg';
 
 const NODE_R = LAYOUT.map_node_radius;
 const NODE_R_CURRENT = LAYOUT.map_node_radius_start;
@@ -478,6 +479,26 @@ export default function WorldMapScreen() {
     return out;
   }, [visibleSystemsList, planetHolds]);
 
+  /** 보로노이 국경선 — 성계별 점유 클랜 id */
+  const occupierClanIdBySystemId = useMemo(() => {
+    const out: Record<string, string | undefined> = {};
+    for (const sys of visibleSystemsList) {
+      const p0 = sys.planets[0];
+      if (!p0) continue;
+      const hold = planetHolds[p0.id];
+      if (!hold || hold.kind === 'neutral') continue;
+      out[sys.id] = hold.occupierClanId;
+    }
+    return out;
+  }, [visibleSystemsList, planetHolds]);
+
+  const territoryMapBounds = useMemo(() => ({
+    x0: MAP_PAD_PX,
+    y0: MAP_PAD_PX,
+    x1: Math.max(MAP_PAD_PX + 1, mapContentSize.cw - MAP_PAD_PX),
+    y1: Math.max(MAP_PAD_PX + 1, mapContentSize.ch - MAP_PAD_PX),
+  }), [mapContentSize.cw, mapContentSize.ch]);
+
   const panelPrimaryPlanetClanLine = useClanWarFoundationStore(
     useCallback(
       (s) => {
@@ -810,6 +831,12 @@ export default function WorldMapScreen() {
                   height={mapContentSize.ch}
                   pointerEvents="none"
                 >
+                  <GalaxyMapTerritoryVoronoiSvg
+                    systems={visibleSystemsList}
+                    occupierClanIdBySystemId={occupierClanIdBySystemId}
+                    mapBounds={territoryMapBounds}
+                    toScreen={toScreen}
+                  />
                   <MemoGalaxyMapSvg
                     systems={visibleSystemsList}
                     systemById={systems}

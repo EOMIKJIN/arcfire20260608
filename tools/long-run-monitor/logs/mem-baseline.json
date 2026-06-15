@@ -1,7 +1,8 @@
 ﻿{
-    "peakGlMb":  8.3,
-    "updatedAt":  "2026-06-15T09:06:45.4626502+09:00",
-    "pid":  "6727",
-    "pssMb":  474.8,
-    "glMb":  8.3
+    "glMb":  5.9,
+    "peakGlMb":  5.9,
+    "pid":  "4813",
+    "note":  "post_auto_remediation_gl_critical_active_hub",
+    "pssMb":  335.5,
+    "updatedAt":  "2026-06-16T00:42:44.2888057+09:00"
 }

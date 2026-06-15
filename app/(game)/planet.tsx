@@ -410,7 +410,9 @@ export default function PlanetScreen() {
   const defenseSatelliteRuntimeKey = usePlanetCoreRuntimeStore((s) => {
     const pid = planet?.id;
     if (!pid) return '';
-    return JSON.stringify(s.byPlanetId[pid]?.detail?.defenseSatellite ?? null);
+    const detail = s.byPlanetId[pid]?.detail;
+    const dev = detail?.development?.byModuleId?.defense_satellite ?? detail?.defenseSatellite;
+    return JSON.stringify(dev ?? null);
   });
 
   /** 방위위성 업그레이드 — 오버레이 닫혀도 허브 체류 중 wall-clock 완료 */

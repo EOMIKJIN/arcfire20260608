@@ -69,8 +69,9 @@
 - `detail.economyFabric` — `planetCoreMetricTypes`
 - 드론 피해 → `recordPlanetEconomyAttackSignal`
 - convoy 정산 → `recordPlanetEconomyConvoySettlement`
+- 플레이어 매매 → `recordPlanetEconomyPlayerTrade` (`trade.tsx` 성공 시)
 - 생산지 stock ← `resolvePlanetSupplyStockScale`
-- 일일 배치 → `runPlanetEconomyFabricDailyPass` → `runPlayScenarioEconomyPass` 전
+- 일일 배치 → `runPlanetEconomyFabricDailyPass` (R·P nudge ±2/일, `supplyStockScale`) → `runPlayScenarioEconomyPass` 전
 
 ---
 
@@ -78,8 +79,8 @@
 
 | 페이즈 | 내용 | 산출 |
 |--------|------|------|
-| **P2** | fabric reconcile → **P·R 소폭 nudge** (일 1회 ±2, 캡) | 스탯이 실물 뒤따라가기 |
-| **P3** | 생산지 카탈로그 **SKU 수**를 zone+stockScale 연동 | 진열 다양성=생산력 |
+| **P2** | fabric reconcile → **P·R 소폭 nudge** (일 1회 ±2, 캡) | 스탯이 실물 뒤따라가기 | ✅ `runPlanetEconomyFabricDailyPass` |
+| **P3** | 생산지 카탈로그 **SKU 수**를 zone+stockScale 연동 | 진열 다양성=생산력 | ✅ `listMineralIdsForPlanetCatalog` |
 | **P4** | 17무역소 convoy·profit **집계 KPI** → `audit:balance-ops` | 김경제 3h 보고 |
 | **P5** | TDI·R&D 스킬트리 → fabric `development` 슬롯 | 기획 문서 연동 |
 
@@ -109,19 +110,20 @@ npx tsc --noEmit -p tsconfig.client.json
 | `runPlanetEnvironmentDiversityPass` | R,P,D,T,E | 성계 다양성·전투 궤도 시그널 | 일 1회 |
 | `planetDevelopmentAccStore` → diversity | R,P,D,T,E | **궤도 NPC 수송선** 체류/위상 (연출 트래픽) | ~84s 패스 |
 | `runPlayScenarioEconomyPass` | — (메타만) | `detail.masterBalance` 시나리오 필드 | 부트·일일 |
+| `runPlanetEconomyFabricDailyPass` | **R,P** | convoy·플레이어 무역·공격 윈도우 | 일 1회 |
 | `planetDefenseSatelliteLevel` | — | `detail.defenseSatellite.level` (**D 스칼라 무관**) | 업그레이드 시 |
 
-**레벨링 CSV → 스탯**과 **광물 → R**은 연결됨. **교역·무역소·플레이어 매매·convoy 수익**은 스탯에 **직접 반영되지 않음**.
+**레벨링 CSV → 스탯**과 **광물 → R**은 연결됨. **교역·convoy·플레이어 매매**는 fabric window → **일 1회 R/P nudge**로 연결됨(즉시 스탯 변동 아님).
 
 ### 8-2. 실물 운영 데이터 (스탯 미연결)
 
 | 실물 | 저장 위치 | 스탯 연동 | 비고 |
 |------|-----------|-----------|------|
 | tg 생산지 **재고·가격** | `planetTradeMarketStore` | ❌ | `supplyStockScale`만 **읽기**(스탯→재고) |
-| **Arc convoy** 정산·수익 | `arcCoreTransportFleetBankStore` + fabric window | ❌ | 행성별 profit 누적만, R/P 무관 |
-| **플레이어** 무역소 매수/매도 | stock delta `trade.tsx` | ❌ | 재고만 변동 |
-| 무역소 **진열 SKU** | `tradePortCatalogPolicy` | ❌ | zoneIndex·레벨링만 |
-| 존 **광물 진열** | `listZoneTradeableMineralIds(zone)` | ❌ | 행성 R 무관 |
+| **Arc convoy** 정산·수익 | `arcCoreTransportFleetBankStore` + fabric window | **R,P** (일 1회 nudge) | 행성별 profit·출하량 |
+| **플레이어** 무역소 매수/매도 | fabric window + stock delta | **R,P** (일 1회 nudge) | 재고는 즉시 |
+| 무역소 **진열 SKU** | `tradePortCatalogPolicy` | **R** (광물 슬롯) | zone + `supplyStockScale` |
+| 존 **광물 진열** | `listMineralIdsForPlanetCatalog` | **R** (간접) | 스케일×zone 풀 |
 | **채굴** 세션 보상 | player inventory / mining driver | ❌ | 행성 R 무관 |
 | 방위위성 **레벨** | `detail.defenseSatellite` | ❌ | D 스칼라 분리 |
 | Macro SIM overlay | category mul | ❌ | 글로벌 가격만 |
@@ -145,7 +147,7 @@ npx tsc --noEmit -p tsconfig.client.json
 | **S3** | 생산지 **재고 합** 스냅샷 → reconcile **R 힌트** | R | **S** | ✅ | `getPlanetTradeMarketListings` |
 | **M1** | `supplyStockScale` ← **R·P 스냅샷** (공격 penalty 제거 옵션) | 재고←스탯 | **S** | ✅ | 이미 반쯤 구현 |
 | **M2** | 방위위성 **level ↔ D** 양방향 (레벨업 시 D+nudge, D 하한→캡) | D | **M** | 업그레이드·일일 캡 | detail만 있던 문제 해소 |
-| **M3** | 진열 **광물 SKU 수** = `f(R, zone)` not zone alone | R,T | **M** | 카탈로그 리빌드 시 | `tradePortCatalogPolicy` |
+| **M3** | 진열 **광물 SKU 수** = `f(R, zone)` not zone alone | R,T | **M** | ✅ | `listMineralIdsForPlanetCatalog` |
 | **M4** | convoy **행성별 profit** → `detail.economyFabric` KPI + R nudge | R,P | **M** | ✅ | temp bank는 글로벌 |
 | **L1** | 채굴 세션 → **행성 R** (planetId 기준 누적) | R | **L** | tick 금지·세션 종료 1회 | mining driver 연동 |
 | **L2** | `masterBalance` 목표를 **운영 스냅샷 보조**로만 (레벨링 캡) | 전체 | **L** | ✅ | `deriveMasterBalance` 개편 |

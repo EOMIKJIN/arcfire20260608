@@ -8,13 +8,16 @@ import {
   resolveDefenseSatelliteUpgradeDurationSec,
 } from '../../arcCore/balance/planetDefenseSatelliteLevelPolicy';
 import { invalidatePlanetMemoCachesForPlanet } from '../../game/planetMemoCache';
+import {
+  isPlanetDefenseSatelliteInstalled,
+  readDefenseSatelliteDetailFromPlanet,
+  writeDefenseSatelliteDetailToPlanet,
+} from '../../game/planetDevelopment/planetDefenseSatelliteRuntime';
 import { usePlayerStore } from '../../store/playerStore';
 import type { PlanetDefenseSatelliteDetail } from '../../store/planetCoreMetricTypes';
-import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import {
   patchPlanetDefenseSatelliteInstanceLevel,
   resolvePlanetDefenseSatelliteLevel,
-  isPlanetDefenseSatelliteInstalled,
 } from './planetDefenseSatelliteLevel';
 
 export type DefenseSatelliteDevSnapshot = {
@@ -43,7 +46,7 @@ function normalizeDefenseSatelliteDetail(
     return { version: 1, installed: false, level: 1, upgradeJob: null };
   }
   const level = Math.max(1, Math.floor(Number(raw.level) || 1));
-  const installed = raw.installed === true || (raw.installed !== false && level >= 1 && raw.updatedAtMs != null);
+  const installed = raw.installed === true;
   const job = raw.upgradeJob;
   const upgradeJob =
     job
@@ -64,32 +67,23 @@ function normalizeDefenseSatelliteDetail(
 export function readPlanetDefenseSatelliteDetail(
   planetId: string,
 ): PlanetDefenseSatelliteDetail {
-  const runtime = usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId);
-  return normalizeDefenseSatelliteDetail(runtime?.detail?.defenseSatellite);
+  return normalizeDefenseSatelliteDetail(readDefenseSatelliteDetailFromPlanet(planetId));
 }
 
-export { isPlanetDefenseSatelliteInstalled } from './planetDefenseSatelliteLevel';
+export { isPlanetDefenseSatelliteInstalled } from '../../game/planetDevelopment/planetDefenseSatelliteRuntime';
 
 function patchDefenseSatelliteDetail(
   planetId: string,
   patch: Partial<PlanetDefenseSatelliteDetail>,
 ): void {
-  const store = usePlanetCoreRuntimeStore.getState();
-  const cur = store.getPlanetCoreRuntime(planetId);
-  if (!cur) return;
-  const prev = normalizeDefenseSatelliteDetail(cur.detail?.defenseSatellite);
+  const prev = normalizeDefenseSatelliteDetail(readDefenseSatelliteDetailFromPlanet(planetId));
   const next: PlanetDefenseSatelliteDetail = {
     ...prev,
     ...patch,
     version: 1,
     updatedAtMs: Date.now(),
   };
-  store.patchPlanetCore(planetId, {
-    detail: {
-      ...cur.detail,
-      defenseSatellite: next,
-    },
-  });
+  writeDefenseSatelliteDetailToPlanet(planetId, next);
 }
 
 function syncDefenseSatelliteInstances(planetId: string, level: number): void {
@@ -254,7 +248,6 @@ export function instantCompleteDefenseSatelliteUpgrade(
   return { ok: true };
 }
 
-/** 타이머 없이 다음 레벨 즉시 (기본비 + 즉시비) */
 export function instantUpgradeDefenseSatelliteNext(
   planetId: string,
 ): { ok: true } | { ok: false; reason: string } {

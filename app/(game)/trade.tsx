@@ -24,6 +24,7 @@ import {
   computeTradeFeeForGross,
   reversePlanetTradeTransactionFee,
 } from '../../src/arcCore/economy/applyPlanetTradeTransactionFee';
+import { recordPlanetEconomyPlayerTrade } from '../../src/arcCore/economy/planetEconomyFabric';
 import {
   listArcCoreGalacticMineralItemIds,
   resolveMineralCatalogSellPrice,
@@ -689,6 +690,9 @@ export default function TradeScreen() {
       adjustPlanetTradeMarketStock(player.currentPlanetId, listing.goodId, -invTry.added);
       setMarketTick((t) => t + 1);
     }
+    const fabricPlanetId = player.currentPlanetId ?? planet.id;
+    const fabricQty = inventoryAdded ? invTry.added : qty;
+    recordPlanetEconomyPlayerTrade(fabricPlanetId, 'buy', fabricQty, gross);
     await persist();
   };
 
@@ -850,6 +854,12 @@ export default function TradeScreen() {
       adjustPlanetTradeMarketStock(player.currentPlanetId, item.goodId, sellQty, 'player');
       setMarketTick((t) => t + 1);
     }
+    recordPlanetEconomyPlayerTrade(
+      player.currentPlanetId ?? planet.id,
+      'sell',
+      sellQty,
+      sellGross,
+    );
     await persist();
   };
 

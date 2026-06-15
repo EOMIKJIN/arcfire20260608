@@ -27,10 +27,10 @@ powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.
 
 ## AI 페르소나·모델 자동 라우팅 (Auto)
 
-- **정본**: `.cursor/rules/gemini-code-agent-routing.mdc` — `alwaysApply`, 매 턴 @김팀장/@김경제/@Fable/@Opus/@Composer/@Sonnet **없이** 자동 선별 (김팀장 세션 내부 라우팅).
+- **정본**: `.cursor/rules/gemini-code-agent-routing.mdc` — `alwaysApply`, 매 턴 @김팀장/@김경제/@Fable/@Opus/@Sonnet **없이** 자동 선별 (김팀장 세션 내부 라우팅).
 - **원본 기획**: `.cursor/rules/gemini-code-1781406772084.md`
 - **세션 훅**: `.cursor/hooks/on-session-start-agent-routing.cjs` (`sessionStart`)
-- **Task 위임 model**: Economy/Fable `claude-fable-5-thinking-high` · Opus `claude-opus-4-8-thinking-high` · Sonnet `claude-4.6-sonnet-medium-thinking` · Composer `composer-2.5-fast`
+- **Task 위임 model**: Economy/Fable `claude-fable-5-thinking-high` · Opus(UI·Skia·기본 포함) `claude-opus-4-8-thinking-high` · Sonnet `claude-4.6-sonnet-medium-thinking`
 
 Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc`** (프로젝트 헌법 v4.0)를 따릅니다. 구현·운영 세부 요약은 아래와 `AGENTS.md`에 둡니다.
 

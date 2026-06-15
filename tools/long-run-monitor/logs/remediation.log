@@ -71,3 +71,8 @@
 [2026-06-15 08:57:27] AUTO_FIX baseline reset pid=19560 gl=3.7MB pss=191MB
 [2026-06-15 08:57:27] AUTO_FIX done reason=gl_spike_snapshot critical=False ctx={"deltaGlMb":33.9,"lastGlMb":38.8}
 [2026-06-15 09:06:45] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-16 00:42:25] AUTO_FIX static audit:skia-memory start
+[2026-06-16 00:42:27] AUTO_FIX audit:skia-memory PASS
+[2026-06-16 00:42:28] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-06-16 00:42:45] AUTO_FIX baseline reset pid=4813 gl=5.9MB pss=335.5MB
+[2026-06-16 00:42:45] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"deltaGlMb":88.5,"views":922,"lastGlMb":151}

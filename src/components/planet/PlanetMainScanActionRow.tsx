@@ -3,6 +3,8 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import { isDefenseSatelliteInstalledDetail } from '../../game/planetDevelopment/planetDefenseSatelliteRuntime';
+import type { PlanetDefenseSatelliteDetail } from '../../store/planetCoreMetricTypes';
 import { registerPlanetSessionResource } from '../../game/planetSessionRegistry';
 import { presentPlanetEconomyInfoOverlay, presentPlanetDevelopmentOverlay } from '../../ui/overlay/arcOverlayStore';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
@@ -138,13 +140,12 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
 
   const defenseSatelliteInstalled = usePlanetCoreRuntimeStore((s) => {
     if (!planetId) return false;
-    const raw = s.byPlanetId[planetId]?.detail?.defenseSatellite;
-    if (!raw || raw.version !== 1) return false;
-    if (raw.installed === true) return true;
-    return raw.installed !== false
-      && typeof raw.level === 'number'
-      && raw.level >= 1
-      && raw.updatedAtMs != null;
+    const detail = s.byPlanetId[planetId]?.detail;
+    const fromModule = detail?.development?.byModuleId?.defense_satellite;
+    if (fromModule && typeof fromModule === 'object' && (fromModule as PlanetDefenseSatelliteDetail).version === 1) {
+      return isDefenseSatelliteInstalledDetail(fromModule as PlanetDefenseSatelliteDetail);
+    }
+    return isDefenseSatelliteInstalledDetail(detail?.defenseSatellite);
   });
 
   const planetDevelopmentIcon = defenseSatelliteInstalled ? '🛰' : '⟦⚙⟧';

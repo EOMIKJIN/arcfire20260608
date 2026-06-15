@@ -13,6 +13,14 @@ import { planetAttackKstDayKey } from '../planetAttack/planetAttackKstDayKey';
 
 const MAX_RECENT_EVENTS = 24;
 
+/** 일 1회 R·P 보정 상한(공격 신호와 분리) */
+const FABRIC_GAUGE_NUDGE_CAP = 2;
+const FABRIC_SUPPLY_UNITS_PER_R = 80;
+const FABRIC_PLAYER_SELL_UNITS_PER_R = 40;
+const FABRIC_PLAYER_TRADES_PER_P = 4;
+const FABRIC_CONVOY_TRIPS_PER_P = 2;
+const FABRIC_PLAYER_BUY_UNITS_PER_P = 30;
+
 export type PlanetEconomyOperationalSnapshot = {
   planetId: string;
   gauge: PlanetCoreGaugeView;
@@ -21,6 +29,8 @@ export type PlanetEconomyOperationalSnapshot = {
   windowConvoyTrips: number;
   windowDefenseLoss: number;
   windowSupplyUnitsDelivered: number;
+  windowPlayerTradeGross: number;
+  windowPlayerTradeCount: number;
 };
 
 function emptyFabricDetail(kstDayKey: string): PlanetEconomyFabricDetail {
@@ -33,8 +43,29 @@ function emptyFabricDetail(kstDayKey: string): PlanetEconomyFabricDetail {
       supplyUnitsDelivered: 0,
       attackDefenseLoss: 0,
       attackPopulationLoss: 0,
+      playerTradeGrossCredits: 0,
+      playerTradeCount: 0,
+      playerBuyUnits: 0,
+      playerSellUnits: 0,
     },
     recentEvents: [],
+  };
+}
+
+function normalizeFabricWindow(
+  window: Partial<PlanetEconomyFabricDetail['window']> & { kstDayKey: string },
+): PlanetEconomyFabricDetail['window'] {
+  return {
+    kstDayKey: window.kstDayKey,
+    convoyProfitCredits: Math.max(0, Number(window.convoyProfitCredits) || 0),
+    convoyTrips: Math.max(0, Number(window.convoyTrips) || 0),
+    supplyUnitsDelivered: Math.max(0, Number(window.supplyUnitsDelivered) || 0),
+    attackDefenseLoss: Math.max(0, Number(window.attackDefenseLoss) || 0),
+    attackPopulationLoss: Math.max(0, Number(window.attackPopulationLoss) || 0),
+    playerTradeGrossCredits: Math.max(0, Number(window.playerTradeGrossCredits) || 0),
+    playerTradeCount: Math.max(0, Number(window.playerTradeCount) || 0),
+    playerBuyUnits: Math.max(0, Number(window.playerBuyUnits) || 0),
+    playerSellUnits: Math.max(0, Number(window.playerSellUnits) || 0),
   };
 }
 
@@ -49,7 +80,10 @@ function resolveFabricDetail(
       window: emptyFabricDetail(kstDayKey).window,
     };
   }
-  return prev;
+  return {
+    ...prev,
+    window: normalizeFabricWindow(prev.window),
+  };
 }
 
 function appendEvent(
@@ -115,6 +149,40 @@ export function recordPlanetEconomyAttackSignal(
   });
 }
 
+/** 플레이어 무역 — fabric 창에 누적(수수료 전 거래액·수량) */
+export function recordPlanetEconomyPlayerTrade(
+  planetId: string,
+  side: 'buy' | 'sell',
+  qty: number,
+  grossCredits: number,
+): void {
+  const units = Math.max(0, Math.floor(qty));
+  const gross = Math.max(0, Math.floor(grossCredits));
+  if (!planetId || units <= 0 || gross <= 0) return;
+
+  patchPlanetFabricDetail(planetId, (detail) => {
+    const next: PlanetEconomyFabricDetail = {
+      ...detail,
+      window: {
+        ...detail.window,
+        playerTradeGrossCredits: detail.window.playerTradeGrossCredits + gross,
+        playerTradeCount: detail.window.playerTradeCount + 1,
+        playerBuyUnits: detail.window.playerBuyUnits + (side === 'buy' ? units : 0),
+        playerSellUnits: detail.window.playerSellUnits + (side === 'sell' ? units : 0),
+      },
+    };
+    return appendEvent(next, {
+      kind: 'player_trade',
+      atMs: Date.now(),
+      payload: {
+        side: side === 'buy' ? 1 : 2,
+        units,
+        gross,
+      },
+    });
+  });
+}
+
 /** 아크 수송선 체류 정산 — 수익·물량 운영 윈도우 */
 export function recordPlanetEconomyConvoySettlement(
   planetId: string,
@@ -176,6 +244,8 @@ export function capturePlanetEconomyOperationalSnapshot(planetId: string): Plane
     windowConvoyTrips: fabric?.window.convoyTrips ?? 0,
     windowDefenseLoss: fabric?.window.attackDefenseLoss ?? 0,
     windowSupplyUnitsDelivered: fabric?.window.supplyUnitsDelivered ?? 0,
+    windowPlayerTradeGross: fabric?.window.playerTradeGrossCredits ?? 0,
+    windowPlayerTradeCount: fabric?.window.playerTradeCount ?? 0,
   };
 }
 
@@ -211,12 +281,40 @@ export function runPlanetEconomyFabricDailyPass(): PlanetEconomyFabricDailyPassR
     const operationalBase =
       (gauge.resource * 0.55 + gauge.population * 0.45) / 100;
     const convoyBoost = Math.min(0.15, fabric.window.convoyTrips * 0.02);
+    const playerTradeBoost = Math.min(
+      0.12,
+      Math.floor(fabric.window.playerTradeGrossCredits / 1200) * 0.02 +
+        Math.floor(fabric.window.playerTradeCount / 5) * 0.01,
+    );
     const defensePenalty = Math.min(0.25, fabric.window.attackDefenseLoss * 0.004);
     const populationPenalty = Math.min(0.2, fabric.window.attackPopulationLoss * 0.006);
     const supplyStockScale = Math.max(
       0.35,
-      Math.min(1.65, operationalBase * 0.85 + convoyBoost + 0.25 - defensePenalty - populationPenalty),
+      Math.min(
+        1.65,
+        operationalBase * 0.85 + convoyBoost + playerTradeBoost + 0.25 - defensePenalty - populationPenalty,
+      ),
     );
+
+    const resourceNudge = Math.min(
+      FABRIC_GAUGE_NUDGE_CAP,
+      Math.floor(fabric.window.supplyUnitsDelivered / FABRIC_SUPPLY_UNITS_PER_R) +
+        Math.floor(fabric.window.playerSellUnits / FABRIC_PLAYER_SELL_UNITS_PER_R),
+    );
+    const populationNudge = Math.min(
+      FABRIC_GAUGE_NUDGE_CAP,
+      Math.floor(fabric.window.playerTradeCount / FABRIC_PLAYER_TRADES_PER_P) +
+        Math.floor(fabric.window.convoyTrips / FABRIC_CONVOY_TRIPS_PER_P) +
+        Math.floor(fabric.window.playerBuyUnits / FABRIC_PLAYER_BUY_UNITS_PER_P),
+    );
+
+    const nextGauge: PlanetCoreGaugeView = {
+      resource: Math.min(100, gauge.resource + resourceNudge),
+      population: Math.min(100, gauge.population + populationNudge),
+      defense: gauge.defense,
+      technology: gauge.technology,
+      environment: gauge.environment,
+    };
 
     const nextFabric: PlanetEconomyFabricDetail = {
       ...fabric,
@@ -224,12 +322,16 @@ export function runPlanetEconomyFabricDailyPass(): PlanetEconomyFabricDailyPassR
         atMs: Date.now(),
         supplyStockScale,
         operationalBase,
+        resourceNudge,
+        populationNudge,
         windowSummary: { ...fabric.window },
       },
       window: emptyFabricDetail(kstDayKey).window,
     };
 
     core.patchPlanetCore(planetId, {
+      resource: nextGauge.resource,
+      population: nextGauge.population,
       detail: {
         ...runtime.detail,
         economyFabric: nextFabric,

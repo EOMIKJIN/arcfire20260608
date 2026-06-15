@@ -7,8 +7,12 @@ import {
   TradePortGlobalItems_FROM_BALANCE_CSV,
   TradePortWeaponTierPolicy_FROM_BALANCE_CSV,
 } from '../../data/balance/generated';
-import { listZoneTradeableMineralIds } from '../economy/mineralTradePricing';
 import { listTradeRoutePlayerBuyItemIds } from '../economy/tradeRouteCommercePolicy';
+import { resolvePlanetSupplyStockScale } from '../economy/planetEconomyFabric';
+import {
+  listZoneTradeableMineralIds,
+  resolveZonePrimaryMineralId,
+} from '../economy/mineralTradePricing';
 import { getItemDef, listItemDefs } from '../../data/itemRegistry';
 import { STAR_SYSTEMS } from '../../data/systems';
 import { dispatchEconomyTradePortBulk } from '../ArcCoreCommandBus';
@@ -184,6 +188,21 @@ export function listShipEquipmentItemIdsForPlanetZone(
   return allInBand.map((d) => d.id);
 }
 
+/** 생산 재고 배율·zone 풀 — 광물 SKU 슬롯 수(최소 1) */
+function listMineralIdsForPlanetCatalog(planetId: string, zoneIndex: number): string[] {
+  const pool = [...listZoneTradeableMineralIds(zoneIndex)];
+  if (pool.length === 0) return [];
+
+  const primary = resolveZonePrimaryMineralId(zoneIndex);
+  if (primary && pool.includes(primary)) {
+    pool.sort((a, b) => (a === primary ? -1 : b === primary ? 1 : 0));
+  }
+
+  const scale = resolvePlanetSupplyStockScale(planetId);
+  const slotCount = Math.max(1, Math.min(pool.length, Math.round(scale * pool.length)));
+  return pool.slice(0, slotCount);
+}
+
 /** 아크코어 — 행성별 무역소 전체 진열 id (교역품·무기·전함·소유권·글로벌) */
 export function resolveTradePortCatalogItemIds(planetId: string): string[] {
   const system = findSystemForPlanetId(planetId);
@@ -194,7 +213,7 @@ export function resolveTradePortCatalogItemIds(planetId: string): string[] {
 
   const parts = [
     ...listTradeRoutePlayerBuyItemIds(planetId),
-    ...listZoneTradeableMineralIds(zoneIndex),
+    ...listMineralIdsForPlanetCatalog(planetId, zoneIndex),
     ...listWeaponModuleItemIdsForPlanet(planetId),
     ...listShipEquipmentItemIdsForPlanetZone(recommendedPilotLevel, recommendedWeaponTierKey),
     ...listCapitalShipItemIdsForPlanet(planetId),
