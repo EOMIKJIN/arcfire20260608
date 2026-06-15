@@ -1,6 +1,4 @@
 import { PlanetDefenseSatelliteLevelPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
-import { ARC_CORE_MESSAGE_TEST_INTERVAL_STRIKES } from '../message/arcCoreMessagePolicy';
-import { DEFENSE_INTERCEPT_TEST_HIT_CHANCE_PCT } from '../message/defenseInterceptConstants';
 
 export type PlanetDefenseSatelliteLevelRow = {
   level: number;
@@ -45,14 +43,9 @@ export function getPlanetDefenseSatelliteLevelRow(level: number): PlanetDefenseS
   return listPlanetDefenseSatelliteLevelRows().find((r) => r.level === clamped) ?? null;
 }
 
-/** 레벨별 요격 확률(%) — 테이블 정본 */
+/** 레벨별 요격 확률(%) — 테이블 정본 (재도입 시 사용) */
 export function resolveDefenseSatelliteInterceptChancePct(level: number): number {
   return getPlanetDefenseSatelliteLevelRow(level)?.interceptChancePct ?? 0;
-}
-
-/** 레벨별 요격미사일 발사 수 — 디폴트 1 */
-export function resolveDefenseSatelliteInterceptMissileCount(level: number): number {
-  return getPlanetDefenseSatelliteLevelRow(level)?.interceptMissileCount ?? 1;
 }
 
 /** 추후 업그레이드 UI — 현재 레벨에서 다음 레벨로 올릴 비용 */
@@ -60,56 +53,4 @@ export function resolveDefenseSatelliteUpgradeCostCredits(currentLevel: number):
   const next = getPlanetDefenseSatelliteLevelRow(currentLevel + 1);
   if (!next) return null;
   return next.upgradeCostCredits;
-}
-
-/** 0..1 확률 */
-export function resolveDefenseSatelliteInterceptChance01(level: number): number {
-  return resolveDefenseSatelliteInterceptChancePct(level) / 100;
-}
-
-/** dev 테스트 51% · prod는 행성 방어 레벨 테이블(%) */
-export function resolveDefenseSatelliteInterceptHitChancePctForRoll(level: number): number {
-  if (ARC_CORE_MESSAGE_TEST_INTERVAL_STRIKES) {
-    return DEFENSE_INTERCEPT_TEST_HIT_CHANCE_PCT;
-  }
-  return resolveDefenseSatelliteInterceptChancePct(level);
-}
-
-/**
- * strikeId·위성·슬롯 기반 결정론 롤 — 위성별 interceptChancePct(개별 레벨)로 독립 판정.
- */
-export function rollDefenseSatelliteInterceptSuccessForSlot(
-  strikeId: string,
-  planetId: string,
-  satelliteId: string,
-  slotIndex: number,
-  interceptChancePct: number,
-): boolean {
-  const chance = Math.max(0, Math.min(100, interceptChancePct)) / 100;
-  if (chance <= 0) return false;
-  if (chance >= 1) return true;
-  let hash = 0;
-  const seed = `${strikeId}:${planetId}:${satelliteId}:${slotIndex}:defense_intercept`;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
-  }
-  const roll = (hash % 1_000_000) / 1_000_000;
-  return roll < chance;
-}
-
-/**
- * @deprecated — rollDefenseSatelliteInterceptSuccessForSlot 사용
- */
-export function rollDefenseSatelliteInterceptSuccess(
-  strikeId: string,
-  planetId: string,
-  level: number,
-): boolean {
-  return rollDefenseSatelliteInterceptSuccessForSlot(
-    strikeId,
-    planetId,
-    'legacy',
-    0,
-    resolveDefenseSatelliteInterceptChancePct(level),
-  );
 }

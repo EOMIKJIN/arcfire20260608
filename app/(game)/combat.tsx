@@ -41,14 +41,12 @@ import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { releaseCombatStageMemory } from '../../src/game/stageMemoryRelease';
 import { isPlayerShipCombatCapable } from '../../src/game/playerSurvivalPod';
 
-/** `CapitalRealtimeCombatSimBinder` 내부 — 시뮬 ref로 메인과 동일한 미사일 폭발 colorDodge 연출 */
+/** 성운 Skia 백드롭 — colorDodge 닷지는 성운 픽셀과 동일 캔버스에 그린다 */
 function CombatOrbitNebulaBackdrop({
   size,
-  active,
   planetId,
 }: {
   size: number;
-  active: boolean;
   planetId: string;
 }) {
   const sim = useCapitalRealtimeCombatSimContext();
@@ -59,7 +57,7 @@ function CombatOrbitNebulaBackdrop({
   return (
     <SkiaPlanetNebulaShaderBackdrop
       size={size}
-      active={active}
+      active
       nebulaBakedImageSource={nebulaBakedImageSource}
       dodgeHitFxRef={sim?.missileHitFxRef ?? null}
       dodgeTimeMsRef={sim?.tMsRef ?? null}
@@ -254,10 +252,9 @@ export default function CombatScreen() {
           <View style={[styles.orbitWrap, { width: orbitSize, height: orbitSize }]}>
             <CombatOrbitNebulaBackdrop
               size={orbitSize}
-              active={isCombatRouteFocused}
               planetId={nebulaPlanetId}
             />
-            <CapitalRealtimeCombatOrbitSkia />
+            <CapitalRealtimeCombatOrbitSkia renderMissileDodgeFx={false} />
           </View>
           <View style={styles.hudWrap} pointerEvents="box-none">
             <CapitalRealtimeCombatHudOverlay />

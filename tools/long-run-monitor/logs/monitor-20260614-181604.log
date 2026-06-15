@@ -1,0 +1,6 @@
+[2026-06-14 18:16:04] monitor start package=com.arcfire.online interval=30m
+[2026-06-14 18:16:04] meminfo -> D:\arcfire20260607\tools\long-run-monitor\logs\meminfo-20260614-181604.log
+[2026-06-14 18:16:04] timeline -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-timeline.csv
+[2026-06-14 18:16:04] alerts -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-alerts.log
+[2026-06-14 18:16:04] FOCUS: hub Skia orbit + nebula + combat (no ArcCore missile ??isolation test)
+[2026-06-14 18:16:05] snap PSS=1029.5MB GL=287.5MB dPSS=-5.4 dGL=0 

@@ -1,0 +1,161 @@
+---
+description: "[CRITICAL P0] Skia·Reanimated GL 메모리 누수 차단 — 신규 기능 필수 헌법"
+globs:
+  - src/components/planet/**/*Skia*.tsx
+  - src/components/planet/planetHub/planetHubSubcomponents.tsx
+  - src/components/planet/PlanetEdenRaidTestLayer.tsx
+  - src/components/planet/CapitalRealtimeCombatOrbitSkia.tsx
+  - src/game/planetStageGpuSupervisor.ts
+  - src/combat/**/*.ts
+  - app/(game)/planet.tsx
+alwaysApply: true
+---
+
+# 🚨 Arcfire Skia 메모리 폭증(1GB Leak) 원천 차단 개발 헌법 (Strict Mode)
+
+> **경고 (Crisis Alert)**: 미사일·트레일 Skia 개발 시 **500MB~1GB GL OOM**이 실측됨. 기능 구현보다 **메모리 누수 방지가 P0**이다.
+
+## 0. 필수 적용 (2026-06-14~ — 다음 기능개발부터)
+
+**Skia·Reanimated·고프레임 Canvas**(궤도·탄도·파티클·성운·전투 FX 등)를 **신규 추가·수정·재도입**할 때 아래를 **완료 전 게이트**로 반드시 통과한다. 예외·우회 금지.
+
+| 단계 | 의무 | 실패 시 |
+|------|------|---------|
+| 설계 | §1 금지·§2 Zero-Allocation 패턴만 허용 | `.map()` Path·루프 내 `Make()` 제안 금지 |
+| 구현 | Pre-allocation + `rewind()` + 단일 Canvas 배칭 | PR/커밋 전 재작성 |
+| 정적 검증 | `npm run audit:skia-memory` **PASS** | merge/완료 불가 |
+| 타입 | `npx tsc --noEmit -p tsconfig.client.json` | merge/완료 불가 |
+| 런타임 | GL mtrack Δ ±15MB 이내 복구(§4) | logcat·`dumpsys meminfo` 근거 없이 “완료” 금지 |
+
+에이전트는 Skia 관련 작업 **시작 시** 본 문서를 확인하고, **종료 시** 위 게이트 미충족이면 사용자에게 GL 실측·audit 재실행을 안내한다.
+
+**정본 교차참조**: `Arcfire_Master_Spec_v4.0` §8·§9 · `docs/(구현)SKIA_WORKLET_MEMORY_CONTRACT.md` · `AGENTS.md`
+
+---
+
+## 1. 💀 5대 절대 금지 사항 (위반 시 즉각적인 1GB 누수 발생)
+
+| 금지 패턴 (DO NOT) | 이유 (Why it crashes) |
+|-------------------|----------------------|
+| **1. 렌더 루프 내부에서 `Skia.Path.Make()`, `Skia.Paint()` 생성 금지** | 60FPS로 초당 60개의 C++ 메모리 객체를 생성합니다. JS 가비지 컬렉터(GC)가 처리하지 못해 10초 만에 1GB 메모리가 누수됩니다. `useDerivedValue`나 `useFrameCallback` 안에서 절대 할당하지 마십시오. |
+| **2. N개의 객체 배칭(Batching) 없는 개별 렌더링 금지** | 배열 요소 개수만큼 `<Path>` 컴포넌트를 `map()`으로 순회 렌더링하지 마십시오. React 렌더 사이클이 폭발하고 컨텍스트 스위칭 부하가 발생합니다. |
+| **3. UI 스레드(Worklet) 내 Dispose 금지** | UI 스레드에서 SharedValue로 감싸진 네이티브 객체를 파괴하면 SIGSEGV(C++ 세그멘테이션 결함) 크래시가 발생합니다. |
+| **4. 무분별한 Canvas 리마운트 금지** | 이벤트마다 `<Canvas>` 컴포넌트를 새로 마운트/언마운트 하지 마십시오. C++ 자원 할당/해제 오버헤드가 극심합니다. |
+| **5. 메모리 수정 후 GL mtrack 미측정 금지** | 코드를 수정한 후 시각적으로만 테스트하고 개발을 끝내지 마십시오. 반드시 물리적인 GL 메모리 계측을 수행해야 합니다. |
+
+---
+
+## 2. ✅ 무손실 Skia 렌더링 표준 아키텍처 (Must Do)
+
+미사일, 트레일(궤적), 파티클 등 수십~수백 개의 객체를 렌더링할 때는 **"단 1개의 Path 재사용 (Single Mutable Path)"** 및 **"사전 할당 (Pre-allocation)"** 패턴만을 허용합니다.
+
+### Step 1: C++ 객체 사전 할당 (Pre-allocation)
+모든 `SkPath`, `SkPaint` 객체는 컴포넌트 마운트 시 **단 1번만** 생성합니다. `useMemo` 또는 `useSharedValue`를 활용하십시오.
+
+```tsx
+// ✅ 올바른 패턴: useMemo를 사용해 1회만 할당
+const missilePaint = useMemo(() => {
+  const paint = Skia.Paint();
+  paint.setColor(Skia.Color('cyan'));
+  paint.setStrokeWidth(2);
+  paint.setStyle(PaintStyle.Stroke);
+  paint.setAntiAlias(true);
+  return paint;
+}, []);
+
+// 단일 마스터 Path 1회 할당 (SharedValue 활용)
+const trailPathShared = useSharedValue(Skia.Path.Make());
+```
+
+### Step 2: 렌더링 루프에서는 `.rewind()`와 점 찍기만 수행 (Mutation)
+매 프레임 새로운 객체를 만들지 말고, 기존 객체의 내용물을 비우고(`rewind` 또는 `reset`) 다시 그립니다. 여러 개의 미사일 경로를 **하나의 Path 객체에 모두 병합**합니다.
+
+```tsx
+// ✅ 올바른 패턴: useFrameCallback에서 단일 Path 재활용 (Zero-Allocation Batching)
+useFrameCallback((frameInfo) => {
+  if (!skiaLoopsActive.value) return;
+
+  const path = trailPathShared.value;
+  
+  // 1. 기존 경로 초기화 (절대 Skia.Path.Make()로 새로 만들지 말 것!)
+  path.rewind(); 
+
+  // 2. 살아있는 미사일 상태를 바탕으로 경로 재작성 (배열 순회 렌더링 금지)
+  const missiles = activeMissilesShared.value;
+  for (let i = 0; i < missiles.length; i++) {
+    const m = missiles[i];
+    if (!m.hitApplied) { // 명중한 객체는 그리지 않음
+      // 트레일 히스토리가 있다고 가정
+      if (m.trailHistory && m.trailHistory.length > 0) {
+        path.moveTo(m.trailHistory[0].x, m.trailHistory[0].y);
+        for (let j = 1; j < m.trailHistory.length; j++) {
+          path.lineTo(m.trailHistory[j].x, m.trailHistory[j].y);
+        }
+      }
+    }
+  }
+
+  // 3. UI 갱신 (SharedValue 트리거)
+  // Reanimated 3+ 에서는 Skia 객체를 갱신하기 위해 value 재할당이 필요할 수 있습니다.
+  trailPathShared.value = path;
+});
+```
+
+### Step 3: 단일 캔버스 렌더링 (Single Batch Draw Call)
+수십 개의 미사일을 개별 `<Path>`로 그리지 말고, 병합된 단 하나의 `<Path>`로 일괄 렌더링합니다. `<Canvas>`는 화면에 1개만 유지합니다.
+
+```tsx
+// ✅ 올바른 패턴: 단일 컴포넌트로 일괄 렌더링
+return (
+  <Canvas style={StyleSheet.absoluteFill} pointerEvents="none">
+    <Path path={trailPathShared} paint={missilePaint} />
+  </Canvas>
+);
+```
+
+---
+
+## 3. 🧹 완벽한 메모리 해제 계약 (The Cleanup Contract)
+
+전투(STAGE 3) 종료 및 허브 이탈 시, Skia 객체는 리액트 생명주기가 끝날 때 반드시 수동으로 파괴해야 메모리가 즉시 회수됩니다. **단, UI 스레드(Worklet)가 실행 중일 때 해제하면 앱이 강제 종료되므로 주의합니다.**
+
+1. **rAF / Worklet 루프 우선 중단**
+2. **C++ 객체 명시적 `dispose()` 호출 (오직 JS 스레드 클린업에서)**
+3. **물리 배열 메모리 클리어**
+
+```tsx
+useEffect(() => {
+  return () => {
+    // 1. 렌더/물리 루프 강제 정지
+    skiaLoopsActive.value = false;
+    
+    // 2. JSI 객체 메모리 반환 (C++ 자원 회수)
+    // 약간의 지연(setTimeout)을 주어 Worklet이 완전히 멈춘 후 dispose 하는 것이 안전할 수 있습니다.
+    setTimeout(() => {
+      if (trailPathShared.value) trailPathShared.value.dispose();
+      if (missilePaint) missilePaint.dispose();
+    }, 16);
+  };
+}, [missilePaint, trailPathShared]);
+```
+
+---
+
+## 4. 🔬 GL 메모리 실측 및 디버깅 의무 (QA 프로토콜)
+
+AI 에이전트는 미사일 트레일, 애니메이션 등 Skia 코드를 생성/수정한 후 반드시 아래 절차에 기반하여 메모리 누수 검증 지침을 사용자에게 안내해야 합니다.
+
+### 메모리 프로파일링 명령어 (Android)
+```powershell
+adb shell dumpsys meminfo com.arcfire.online | findstr "TOTAL PSS GL mtrack"
+tools/long-run-monitor/start-watch-30m.ps1
+```
+
+### 🎯 합격 기준 (Checklist)
+- [ ] 렌더 루프(`useFrameCallback`, `useDerivedValue`) 내부에 `Make()`, `Paint()`, `new` 키워드가 단 하나도 없는가?
+- [ ] 여러 이펙트를 그릴 때 배열 `.map()`을 쓰지 않고 단일 Path 객체에 `rewind() -> moveTo -> lineTo` 로 Batching 처리 했는가?
+- [ ] 전투/허브 진입 전 GL 메모리와, 진입 후 이탈했을 때의 GL 메모리 델타(Δ)가 **±15MB 이내**로 복구되는가?
+- [ ] 미사일 발사를 반복해도 메모리가 계단식으로 +50MB 이상 누적 증가하지 않는가?
+- [ ] 컴포넌트 해제 시 `dispose()` 처리가 완벽하게 호출되는가?
+
+> **Cursor AI 에이전트 행동 강령**: 이 문서를 확인한 즉시, Skia 렌더링 로직 작성 시 배열 `.map()` 렌더링 및 루프 내 동적 할당을 원천 봉쇄하라. 오직 **[1회 사전 할당(Pre-allocation) + 매 프레임 rewind() 재사용(Mutation)]** 패턴만을 출력해야 한다.

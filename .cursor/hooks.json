@@ -1,6 +1,11 @@
 {
   "version": 1,
   "hooks": {
+    "sessionStart": [
+      {
+        "command": ".cursor/hooks/on-session-start-agent-routing.cjs"
+      }
+    ],
     "stop": []
   }
 }

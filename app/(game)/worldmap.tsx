@@ -45,6 +45,7 @@ import {
 import { StarSystem } from '../../src/types';
 import { countGoodInInventory, normalizeInventorySlots, removeGoodFromInventorySlots } from '../../src/game/playerInventory';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
+import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { releaseGalaxyMapStageMemory } from '../../src/game/stageMemoryRelease';
 import { buildCsvStaticIndexesFull } from '../../src/game/buildCsvStaticIndexes';
 
@@ -58,6 +59,8 @@ const MAP_PAN_DECELERATION = 0.992;
 /** 루트 간 이동 시간(임시 고정) */
 const SHIP_TRANSIT_DURATION_MS = 3000;
 const DEFERRED_TILE_STEP_MS = 120;
+/** 출발 직후 replace — 맵 onLayout·첫 rAF 전까지 LOADING 유지(시설 서브스테이지와 동일 패턴) */
+const GALAXY_MAP_LOADING_MIN_MS = 520;
 type DeferredDirection = 'north' | 'east' | 'south' | 'west';
 const ROUTE_LABEL_META: Record<DeferredDirection, { text: string; color: string }> = {
   north: { text: '북부항로', color: '#7CC7FF' },
@@ -153,6 +156,19 @@ export default function WorldMapScreen() {
 
   const PANEL_H = 148;
   const [mapLayout, setMapLayout] = useState({ w: width, h: 1 });
+  const stageFrameReady = useStageFirstFrameReady();
+  const [galaxyLoadingMinHold, setGalaxyLoadingMinHold] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      setGalaxyLoadingMinHold(false);
+      const t = setTimeout(() => setGalaxyLoadingMinHold(true), GALAXY_MAP_LOADING_MIN_MS);
+      return () => {
+        clearTimeout(t);
+        setGalaxyLoadingMinHold(false);
+      };
+    }, []),
+  );
 
   const mapAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: -scrollX.value }, { translateY: -scrollY.value }],
@@ -345,6 +361,7 @@ export default function WorldMapScreen() {
   }, [galaxyBounds, mapLayout.w, mapLayout.h]);
 
   const mapMetricsReady = useMemo(() => mapLayout.w > 0 && mapLayout.h > 1, [mapLayout.h, mapLayout.w]);
+  const galaxyMapStageReady = mapMetricsReady && stageFrameReady && galaxyLoadingMinHold;
 
   const computeScrollTargetForSystem = useCallback(
     (systemId: string): { x: number; y: number } | null => {
@@ -855,7 +872,7 @@ export default function WorldMapScreen() {
             </View>
           </GestureDetector>
         ) : null}
-        <StageLoadingOverlay visible={!mapMetricsReady} overlayId="stage-loading-worldmap" />
+        <StageLoadingOverlay visible={!galaxyMapStageReady} overlayId="stage-loading-worldmap" />
       </View>
 
       {showPanel && selectedSystem ? (

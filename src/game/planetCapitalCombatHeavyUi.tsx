@@ -172,7 +172,7 @@ export const PlanetCapitalCombatOrbitForegroundOverlay = memo(
 
                 <View style={overlayStyles.orbitTestLayer} pointerEvents="none">
 
-                  <CapitalRealtimeCombatOrbitSkia />
+                  <CapitalRealtimeCombatOrbitSkia renderMissileDodgeFx={false} />
 
                 </View>
 

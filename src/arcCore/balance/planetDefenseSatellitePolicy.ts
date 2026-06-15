@@ -9,7 +9,6 @@ export type PlanetDefenseSatellitePolicy = {
   defaultPhaseBias: number;
   phaseBiasStep: number;
   radiusScaleStep: number;
-  interceptEnabled: boolean;
   defaultLevel: number;
   maxLevel: number;
 };
@@ -25,13 +24,6 @@ function readPolicyNumber(key: string, fallback: number): number {
   return Number.isFinite(n) ? n : fallback;
 }
 
-function readPolicyBoolean(key: string, fallback: boolean): boolean {
-  const raw = readPolicyValue(key, fallback ? 'true' : 'false').toLowerCase();
-  if (raw === 'true' || raw === '1' || raw === 'yes') return true;
-  if (raw === 'false' || raw === '0' || raw === 'no') return false;
-  return fallback;
-}
-
 let cachedPolicy: PlanetDefenseSatellitePolicy | null = null;
 
 export function getPlanetDefenseSatellitePolicy(): PlanetDefenseSatellitePolicy {
@@ -43,7 +35,6 @@ export function getPlanetDefenseSatellitePolicy(): PlanetDefenseSatellitePolicy 
     defaultPhaseBias: readPolicyNumber('default_phase_bias', 0.08),
     phaseBiasStep: readPolicyNumber('phase_bias_step', 0.11),
     radiusScaleStep: readPolicyNumber('radius_scale_step', 0.025),
-    interceptEnabled: readPolicyBoolean('intercept_enabled', true),
     defaultLevel: Math.max(1, Math.floor(readPolicyNumber('default_level', 1))),
     maxLevel: Math.max(1, Math.floor(readPolicyNumber('max_level', getPlanetDefenseSatelliteMaxLevel()))),
   };

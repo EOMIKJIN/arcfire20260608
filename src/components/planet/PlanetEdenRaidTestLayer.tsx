@@ -81,6 +81,8 @@ import {
 } from '../../game/capitalWeaponRange';
 import { useNpcCaptainProgressStore, NPC_CAPTAIN_PROGRESS_EXP } from '../../store/npcCaptainProgressStore';
 import { usePlayerStore } from '../../store/playerStore';
+import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
+import { recordMatchSummary } from '../../store/combatMatchTelemetryStore';
 import { isSurvivalPodNpcShipId } from '../../game/playerSurvivalPod';
 import { showArcAlert } from '../../utils/showArcAlert';
 import { useOrbitCapitalCombatUiStore } from '../../store/orbitCapitalCombatUiStore';
@@ -1955,7 +1957,11 @@ function createCapitalAgentBase(
   runtimeConfig?: (typeof NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV)[string],
   enemyAffinityKind = 'light',
 ): Agent {
-  const maxHullHp = Math.max(1, combatStats?.maxHp ?? CAPITAL_BASE_HULL_HP);
+  let maxHullHp = Math.max(1, combatStats?.maxHp ?? CAPITAL_BASE_HULL_HP);
+  if (team === 'red' || team === 'orange') {
+    const engageMul = usePlanetCoreRuntimeStore.getState().getGlobalEngageHpMul();
+    maxHullHp = Math.max(1, Math.round(maxHullHp * engageMul));
+  }
   const maxShieldHp = Math.max(0, combatStats?.maxShield ?? 0);
   const armorStat = Math.max(0, combatStats?.armor ?? (redLikeStats ? 14 : 12));
   const attackBonusStat = combatStats?.attackBonus ?? (redLikeStats ? 8 : 6);
@@ -2497,6 +2503,7 @@ export function usePlanetEdenRaidSim(
   const respawnAtWallRef = useRef<number | null>(null);
   /** 팀 승패 보상(함장 EXP) 중복 지급 방지 */
   const waveOutcomeAwardedRef = useRef(false);
+  const battleEngageStartMsRef = useRef<number | null>(null);
   /** 플레이어 전함 격침 → 생존포드 1회 처리 */
   const playerCapitalDestroyedRef = useRef(false);
   /** 스폰·리스폰 구간 시작 `elapsed` */
@@ -2552,6 +2559,7 @@ export function usePlanetEdenRaidSim(
     wideSpawnLayoutFromElapsedRef.current = resumeSnap ? resumeSnap.elapsedMs : 0;
     wideSpawnLayoutUntilElapsedRef.current = (resumeSnap ? resumeSnap.elapsedMs : 0) + WIDE_SPAWN_LAYOUT_MS;
     waveOutcomeAwardedRef.current = resumeSnap ? resumeSnap.waveOutcomeAwarded : false;
+    battleEngageStartMsRef.current = null;
     playerCapitalDestroyedRef.current = false;
     const captainIds = agentsRef.current.map(a => a.captainId).filter((id): id is string => Boolean(id));
     if (captainIds.length > 0) {
@@ -2574,6 +2582,7 @@ export function usePlanetEdenRaidSim(
     respawnAtWallRef.current = null;
     respawnCountdownSecRef.current = null;
     waveOutcomeAwardedRef.current = false;
+    battleEngageStartMsRef.current = null;
     playerCapitalDestroyedRef.current = false;
     sessionCombatKeyRef.current = null;
     elapsedCarryRef.current = 0;
@@ -2750,6 +2759,9 @@ export function usePlanetEdenRaidSim(
       const activeBattle = aliveOrange ? aliveCount >= 2 : aliveRed && aliveBlue;
       if (activeBattle) {
         waveOutcomeAwardedRef.current = false;
+        if (battleEngageStartMsRef.current === null) {
+          battleEngageStartMsRef.current = elapsed;
+        }
       } else if (!waveOutcomeAwardedRef.current && (aliveRed || aliveBlue || aliveOrange)) {
         const participants = agents
           .map(a => a.captainId)
@@ -2763,8 +2775,18 @@ export function usePlanetEdenRaidSim(
           const s = useNpcCaptainProgressStore.getState();
           s.grantBattleWaveResult(participants, winners);
           void s.persistNpcCaptainProgress();
+          if (combatPlanetId) {
+            const startMs = battleEngageStartMsRef.current ?? Math.max(0, elapsed - 32_000);
+            void recordMatchSummary({
+              planetId: combatPlanetId,
+              systemId: combatSystemId,
+              engageSec: Math.max(1, (elapsed - startMs) / 1000),
+              playerWon: winnerTeam === 'blue',
+            });
+          }
         }
         waveOutcomeAwardedRef.current = true;
+        battleEngageStartMsRef.current = null;
       }
       for (const ag of agents) {
         if (!ag.alive) continue;
@@ -3265,11 +3287,17 @@ export function PlanetEdenRaidSimBinder({
 
 /** Skia 단일 렌더 — 레거시 SVG+rAF(PlanetEdenRaidOrbitSvgRafCombat) 제거됨. */
 
-export function PlanetEdenRaidOrbitSvg({ sim: simOverride }: { sim?: PlanetEdenRaidSim }) {
+export function PlanetEdenRaidOrbitSvg({
+  sim: simOverride,
+  renderMissileDodgeFx = true,
+}: {
+  sim?: PlanetEdenRaidSim;
+  renderMissileDodgeFx?: boolean;
+}) {
   const fromCtx = useContext(PlanetEdenRaidSimContext);
   const sim = simOverride ?? fromCtx;
   if (!sim) return null;
-  return <PlanetEdenRaidOrbitSkiaCombat sim={sim} />;
+  return <PlanetEdenRaidOrbitSkiaCombat sim={sim} renderMissileDodgeFx={renderMissileDodgeFx} />;
 }
 
 /** 전함 수가 늘수록 HUD 텍스트 `setState` 주기를 늘려 JS 부담을 줄인다. */

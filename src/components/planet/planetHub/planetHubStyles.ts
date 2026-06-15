@@ -711,13 +711,6 @@ export const planetHubBgStyles = StyleSheet.create({
     width: WORLD_OBJECT_ANCHOR_PX * 2,
     height: WORLD_OBJECT_ANCHOR_PX * 2,
   },
-  worldObjectDefenseSatelliteReadyOutline: {
-    position: 'absolute',
-    top: WORLD_OBJECT_ANCHOR_PX - 8,
-    left: WORLD_OBJECT_ANCHOR_PX - 8,
-    width: 16,
-    height: 14,
-  },
   worldObjectDefenseSatelliteMark: {
     width: 0,
     height: 0,

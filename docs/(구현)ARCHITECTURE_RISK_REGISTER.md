@@ -62,8 +62,26 @@
 |------|------|
 | **설명** | 스펙 Stage 1 <200MB 등은 설계 목표이나 자동화된 힙 실측 CI 없음. |
 | **영향** | 저사양 기기 크래시 사전 감지 불가. |
-| **방지책** | ① `audit:memory` 정적 계약 CI 유지 ② 분기별 Android Profiler 10회 전투 루프 기록 |
+| **방지책** | ① `audit:memory` 정적 계약 CI 유지 ② **`audit:skia-memory`** (worklet Path/Matrix/runOnJS) ③ 분기별 Android Profiler + 30분 허브 strike `dumpsys meminfo` |
 | **상태** | OPEN |
+
+### R-08 — Skia worklet Path dispose 레이스 (P0, 2026-06-14)
+
+| 항목 | 내용 |
+|------|------|
+| **설명** | SharedValue SkPath에 `dispose()` 후 worklet `path.reset()` → `librnskia` SIGSEGV. Combat Picture pool 패턴을 worklet에 오적용. |
+| **영향** | 장시간 허브 strike 후 즉사·홈 튕김. |
+| **방지책** | ① `.cursor/rules/arcfire-skia-memory-lifecycle.mdc` ② `audit:skia-memory` ③ `docs/(구현)SKIA_WORKLET_MEMORY_CONTRACT.md` |
+| **상태** | MITIGATED (코드·감사·규칙 반영) |
+
+### R-09 — audit:memory 범위 공백 (P1)
+
+| 항목 | 내용 |
+|------|------|
+| **설명** | 기존 20항목은 Combat·스테이지 replace만 검사. ArcCore 요격/inbound Skia 미포함 → 6/08 「양호」 false negative. |
+| **영향** | 프레임당 Path/Matrix·runOnJS 누적이 PR 게이트를 통과. |
+| **방지책** | PR 전 `npm run audit:memory:all` · Skia worklet 파일 변경 시 `arcfire-skia-memory-lifecycle.mdc` 필수 |
+| **상태** | MITIGATED |
 
 ### R-06 — functions/ 타입체크 실패 (P2)
 
@@ -103,4 +121,4 @@
 2. **행성 정적 데이터** → `memoizePerPlanet` / CSV 인덱스 1회.
 3. **세계 규칙·밸런스 패스** → `ArcCoreDailyOpsSubCore` 또는 `dispatchCommand` — 화면 전용 루프 금지.
 4. **CSV 엔티티** → `tables/content` 등록 후 `build:*-tables` — 코드 하드코딩 금지.
-5. **PR 전** → `npm run audit:memory` + `npx tsc --noEmit` (app·src).
+5. **PR 전** → `npm run audit:memory:all` + `npx tsc --noEmit` (app·src). Skia worklet 변경 시 `.cursor/rules/arcfire-skia-memory-lifecycle.mdc` 준수.

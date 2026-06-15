@@ -1,6 +1,9 @@
 import { clearCapitalRealtimeCombatPresentationCaches } from '../combat/clearCapitalRealtimeCombatCaches';
 import { releaseAllPlanetSessionResources } from './planetSessionRegistry';
 import { invalidatePlanetMemoCachesForPlanet, invalidateAllPlanetMemoCaches } from './planetMemoCache';
+import { releaseAllPlanetGpuLayers } from './planetStageGpuSupervisor';
+import { prunePlanetNebulaProfilesLru } from '../store/planetNebulaStore';
+import { resetHubInboundDroneDodgeBridge } from '../arcCore/inboundDrone/hubInboundDroneDodgeBridge';
 
 export type PlanetMainStageReleaseReason = 'route_blur' | 'planet_change';
 
@@ -28,6 +31,12 @@ export function releasePlanetMainStageSession(opts: {
     previousPlanetId: opts.previousPlanetId ?? null,
   });
 
+  releaseAllPlanetGpuLayers(opts.reason);
+
+  if (opts.reason === 'route_blur') {
+    prunePlanetNebulaProfilesLru(2);
+  }
+
   if (opts.reason === 'planet_change' && opts.previousPlanetId) {
     invalidatePlanetMemoCachesForPlanet(opts.previousPlanetId);
   } else if (opts.reason === 'route_blur') {
@@ -35,4 +44,5 @@ export function releasePlanetMainStageSession(opts: {
   }
 
   clearCapitalRealtimeCombatPresentationCaches();
+  resetHubInboundDroneDodgeBridge();
 }

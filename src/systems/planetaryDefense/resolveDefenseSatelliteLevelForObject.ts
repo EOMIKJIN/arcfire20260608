@@ -3,7 +3,6 @@ import {
 } from '../../arcCore/balance/planetDefenseSatelliteInstanceLevelPolicy';
 import {
   clampPlanetDefenseSatelliteLevel,
-  resolveDefenseSatelliteInterceptHitChancePctForRoll,
 } from '../../arcCore/balance/planetDefenseSatelliteLevelPolicy';
 import { parseWorldObjectId } from '../../worldObjects/ids';
 import type { WorldObject } from '../../worldObjects';
@@ -25,11 +24,4 @@ export function resolveDefenseSatelliteLevelForObject(sat: WorldObject): number 
     return clampPlanetDefenseSatelliteLevel(sat.defenseLevel);
   }
   return resolvePlanetDefenseSatelliteLevel(sat.planetId);
-}
-
-/** 위성 1기 요격 확률(%) — 해당 위성 레벨 테이블 */
-export function resolveDefenseSatelliteInterceptChanceForObject(sat: WorldObject): number {
-  return resolveDefenseSatelliteInterceptHitChancePctForRoll(
-    resolveDefenseSatelliteLevelForObject(sat),
-  );
 }

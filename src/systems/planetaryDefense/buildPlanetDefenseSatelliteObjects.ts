@@ -3,7 +3,6 @@ import {
   resolveDefenseSatellitePhaseBias,
   resolveDefenseSatelliteRadiusScale,
 } from '../../arcCore/balance/planetDefenseSatellitePolicy';
-import { resolveDefenseSatelliteInterceptChancePct } from '../../arcCore/balance/planetDefenseSatelliteLevelPolicy';
 import { resolveDefenseSatelliteInstanceSeedLevel } from '../../arcCore/balance/planetDefenseSatelliteInstanceLevelPolicy';
 import { withWorldObjectInstanceRuntimeAll } from '../../worldObjects/applyInstanceRuntime';
 import { makeWorldObjectId } from '../../worldObjects/ids';
@@ -49,11 +48,10 @@ export function buildPlanetDefenseSatelliteObjects(
   });
   return withWorldObjectInstanceRuntimeAll(objects).map((sat) => {
     const level = resolveDefenseSatelliteLevelForObject(sat);
-    const interceptPct = resolveDefenseSatelliteInterceptChancePct(level);
     return {
       ...sat,
       defenseLevel: level,
-      description: `Lv.${level} · 요격확률 ${interceptPct}% · 시험운용`,
+      description: `Lv.${level}`,
     };
   });
 }

@@ -1,6 +1,5 @@
 import {
   clampPlanetDefenseSatelliteLevel,
-  resolveDefenseSatelliteInterceptChancePct,
 } from '../../arcCore/balance/planetDefenseSatelliteLevelPolicy';
 import { getPlanetDefenseSatellitePolicy } from '../../arcCore/balance/planetDefenseSatellitePolicy';
 import { invalidatePlanetMemoCachesForPlanet } from '../../game/planetMemoCache';
@@ -16,10 +15,6 @@ export function resolvePlanetDefenseSatelliteLevel(planetId: string): number {
     return clampPlanetDefenseSatelliteLevel(stored);
   }
   return clampPlanetDefenseSatelliteLevel(policy.defaultLevel);
-}
-
-export function resolvePlanetDefenseSatelliteInterceptChancePct(planetId: string): number {
-  return resolveDefenseSatelliteInterceptChancePct(resolvePlanetDefenseSatelliteLevel(planetId));
 }
 
 export function patchPlanetDefenseSatelliteInstanceLevel(

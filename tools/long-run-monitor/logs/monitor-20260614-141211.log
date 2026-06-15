@@ -1,0 +1,6 @@
+[2026-06-14 14:12:11] monitor start package=com.arcfire.online interval=10m
+[2026-06-14 14:12:11] meminfo -> D:\arcfire20260607\tools\long-run-monitor\logs\meminfo-20260614-141211.log
+[2026-06-14 14:12:11] timeline -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-timeline.csv
+[2026-06-14 14:12:11] alerts -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-alerts.log
+[2026-06-14 14:12:11] FOCUS: ArcCore inbound+intercept Skia (GL mtrack stair-step = primary leak signal)
+[2026-06-14 14:12:12] snap PSS=712.3MB GL=120.8MB dPSS= dGL= 

@@ -1,0 +1,11 @@
+[2026-06-14 14:15:23] monitor start package=com.arcfire.online interval=10m
+[2026-06-14 14:15:23] meminfo -> D:\arcfire20260607\tools\long-run-monitor\logs\meminfo-20260614-141523.log
+[2026-06-14 14:15:23] timeline -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-timeline.csv
+[2026-06-14 14:15:23] alerts -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-alerts.log
+[2026-06-14 14:15:23] FOCUS: ArcCore inbound+intercept Skia (GL mtrack stair-step = primary leak signal)
+[2026-06-14 14:15:25] ALERT PSS +127.3MB
+[2026-06-14 14:15:25] snap PSS=753.7MB GL=115.8MB dPSS=127.3 dGL=-3.3 PSS_SPIKE review=graphics+native
+[2026-06-14 14:25:26] snap PSS=721.6MB GL=112.4MB dPSS=-4.3 dGL=0 
+[2026-06-14 14:35:28] snap PSS=688.3MB GL=112.4MB dPSS=-32.5 dGL=0 
+[2026-06-14 14:45:30] ALERT GL +15.4MB
+[2026-06-14 14:45:30] snap PSS=780.1MB GL=127.8MB dPSS=93.4 dGL=15.4 GL_SPIKE suspect=arc_core_missile_or_intercept_skia

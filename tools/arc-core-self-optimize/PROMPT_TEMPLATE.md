@@ -1,26 +1,36 @@
-# Cursor 에이전트용 — 아크코어 자기 최적화 (범위 고정)
+# Cursor 에이전트용 — 아크코어 경제·밸런스 자기 최적화 (v4.0)
 
-당신은 **Arcfire Online** 저장소에서 작업한다. 첨부된 **`cursor-handoff.md`** 상단의 일일 점검 요약을 읽고, **아크코어 및 직접 연결된 런타임 경로만** 성능·메모리·구조 개선을 수행한다.
+당신은 **Arcfire Online** 저장소에서 작업한다. 첨부된 **`cursor-handoff.md`**의 학습 권장 조치·감사 보고를 읽고, **아크코어 경제·밸런스 운영 경로만** 개선한다.
 
-## 수정 허용 범위 (우선순위)
+## 헌법 (필수)
 
-1. `src/arcCore/**` — 허브, 명령 버스, 서브코어, 프로세스, 레지스트리
-2. `src/world/planetTradePortDb.ts` — 경제 서브코어가 위임하는 무역소 DB (아크코어 명령 축과 일치하게만)
-3. `tools/daily-perf-audit/**`, `tools/arc-core-self-optimize/**` — 점검·핸드오프 도구 (필요 시)
+- **일 1회 배치만**: `runArcCoreDailyOpsBatch` / `ArcCoreDailyOpsSubCore` — 12:00 KST, 24h 관측 후 1회.
+- **실시간 가격 탄력 금지**: `price_elasticity=0` — `runMarketMicroAdjustPass`는 일일 배치 내부만.
+- **AABS HP 보정**: `runIntegratedEngageHpAdjustPass` — 일 1회, ±0.025, 캡 0.7~1.3.
+- **Economy SIM**: PC/CI `npm run sim:economy` → 앱은 `ingestBalanceOverlayDeltaIfPending` 1회만.
+- 정본: `.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc` §10.
 
-## 수정 금지·보류
+## 수정 허용 범위
 
-- `tables/content/**` CSV 데이터 정본 — 변경이 필요하면 **사용자에게 요청**만 하고 직접 수정하지 않는다.
-- `app/(game)/**` UI 대규모 리라이트 — 이번 작업 범위 밖 (무역 화면은 경제 명령과 충돌 시 최소 수정만).
-- 아크코어와 무관한 리팩터·스타일 통일 드라이브.
+1. `src/arcCore/**` — 일일 배치·경제·AABS·SIM ingest
+2. `src/world/planetTradePortDb.ts`, `planetTradeMarketStore.ts` — 무역소 DB (아크코어 명령 축과 일치)
+3. `tools/balance-ops-audit/**`, `tools/arc-core-self-optimize/**`, `tools/economy-sim/**` — 감사·핸드오프
 
-## 작업 원칙
+## 수정 금지
 
-- **테이블 단일 소스**, **아크코어 = 세계 근원 축** — `.cursor/rules/Arcfire_Master_Spec_v3.1_Final-1781345284482521549.mdc` 계약을 따른다.
-- 일일 보고서의 `setInterval` / `subscribe` / `addEventListener` 목록이 있으면, **해당 파일에서 누수 가능성만** 최소 수정으로 정리한다.
-- 변경 후 `npx tsc --noEmit` 통과를 목표로 한다.
+- `tables/content/**` CSV — 필요 시 사용자에게 요청만.
+- `app/(game)/**` UI 대규모 리라이트.
+- 고빈도 밸런스 패스를 화면·서브코어 틱에 추가하는 것.
+
+## 작업 우선순위
+
+1. handoff **학습 권장 조치** (`learning-state.json`) 상위 3건.
+2. **고빈도 밸런스 호출** violation — `runArcCoreDailyOpsBatch`로 수렴.
+3. Whale/F2P KPI `warn`/`critical` — `economy_sim_macro_policy.csv`·밴드 드리프트 검토(표 수정은 사용자 승인).
+4. `setInterval` / 구독 누수 — 일일 보고 목록만 최소 수정.
 
 ## 산출
 
-- 변경 요약을 짧게 한국어로 보고한다.
-- 불확실하면 코드를 바꾸지 말고 **질문 목록**만 제시한다.
+- 변경 요약 한국어.
+- `npx tsc --noEmit -p tsconfig.client.json` 통과 목표.
+- 불확실하면 코드 변경 없이 질문 목록만.

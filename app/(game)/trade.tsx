@@ -525,7 +525,7 @@ export default function TradeScreen() {
           unitPrice,
           systemId: player.currentSystemId,
           planetId: player.currentPlanetId,
-          note: `planet_ownership_claim:${ownershipPlanetId}`,
+          note: `planet_holds:${ownershipPlanetId}`,
         });
         await persistItemLedger();
       }

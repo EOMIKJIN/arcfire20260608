@@ -76,11 +76,8 @@ const subHeader = [
   '  PLANET_MAIN_ORBIT_SCENE_SIZE as ORBIT_SCENE_SIZE,',
   "} from '../../../stages/planetMainStageLayout';",
   "import type { CapitalRealtimeCombatSim } from '../../../combat/capitalRealtimeTypes';",
-  "import type { DefenseInterceptVisualPlan } from '../../../arcCore/message/defenseInterceptVisualPlan';",
   "import type { WorldObject } from '../../../worldObjects';",
   "import { WORLD_OBJECT_DEFENSE_SATELLITE_ORBIT_CYCLE_MS, WORLD_OBJECT_ORBIT_CYCLE_MS } from '../../../worldObjects/planetWorldObjectOrbit';",
-  "import { PlanetArcCoreMessageMissileSkiaLayer } from '../PlanetArcCoreMessageMissileSkiaLayer';",
-  "import { PlanetDefenseInterceptMissileSkiaLayer } from '../PlanetDefenseInterceptMissileSkiaLayer';",
   "import {",
   '  INFO_LOG_SCROLL_VIEWPORT_PX,',
   '  INFO_LOG_VIEWPORT_ROWS,',
@@ -132,15 +129,14 @@ const extraImports = [
   '  resolvePlanetBattleReadyDurationMs,',
   '  splitStoryTextByMaxLines,',
   "} from '../../src/game/planetHub/planetHubConstants';",
-  "import { usePlanetHubArcCoreWarningBlink } from '../../src/game/planetHub/usePlanetHubArcCoreWarningBlink';",
   "import { usePlanetHubBattleReady } from '../../src/game/planetHub/usePlanetHubBattleReady';",
   "import { usePlanetHubInfoDistanceSort } from '../../src/game/planetHub/usePlanetHubInfoDistanceSort';",
   '',
 ].join('\n');
 
 screenPart = screenPart.replace(
-  "import type { DefenseInterceptVisualPlan } from '../../src/arcCore/message/defenseInterceptVisualPlan';",
-  "import type { DefenseInterceptVisualPlan } from '../../src/arcCore/message/defenseInterceptVisualPlan';\n" + extraImports,
+  "import { usePlanetHubBattleReady } from '../../src/game/planetHub/usePlanetHubBattleReady';",
+  "import { usePlanetHubBattleReady } from '../../src/game/planetHub/usePlanetHubBattleReady';\n" + extraImports,
 );
 
 fs.writeFileSync(planetPath, screenPart);

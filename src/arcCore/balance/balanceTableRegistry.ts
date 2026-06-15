@@ -388,7 +388,11 @@ export function getEconomyPriceMicroPolicyNum(key: string, fallback: number): nu
 
 export function getTradeRoutePriceElasticity(): number {
   const kv = getTradeRouteEconomyPolicyKv();
-  return parseNum(kv.get('price_elasticity'), 0.35);
+  return parseNum(kv.get('price_elasticity'), 0);
+}
+
+export function getTradeRouteMicroPriceElasticity(): number {
+  return getEconomyPriceMicroPolicyNum('price_elasticity_trade_route', 0);
 }
 
 export function getTradeRouteTargetStockMid(): number {

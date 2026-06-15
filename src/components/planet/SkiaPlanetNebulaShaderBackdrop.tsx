@@ -9,22 +9,19 @@ import {
   useImage,
 } from '@shopify/react-native-skia';
 import { registerPlanetSessionResource } from '../../game/planetSessionRegistry';
+import { registerGpuLayer, unregisterGpuLayer } from '../../game/planetStageGpuSupervisor';
 import type { MissileHitFx } from './PlanetEdenRaidTestLayer';
+import { INBOUND_DRONE_FX_ORBIT_AGE_SLOP_MS } from './planetSkiaHitFxContract';
+import {
+  NEBULA_DODGE_FX_RENDER_LIMIT,
+  resolveNebulaDodgeFxDurationMs,
+  resolveNebulaDodgeFxPulse,
+  resolveNebulaDodgeFxSizeScale,
+} from './planetSkiaHitFxContract';
 
-const DODGE_HIT_FX_DURATION_MS = 203;
-const DODGE_HIT_FX_RENDER_LIMIT = 12;
+const DODGE_HIT_FX_RENDER_LIMIT = NEBULA_DODGE_FX_RENDER_LIMIT;
 
-function resolveDodgeFxDurationMs(fx: MissileHitFx): number {
-  if (fx.effectKind === 'laser_dodge') return Math.max(1, Math.round(DODGE_HIT_FX_DURATION_MS * 0.5));
-  return DODGE_HIT_FX_DURATION_MS;
-}
-
-function resolveDodgeFxSizeScale(fx: MissileHitFx): number {
-  if (fx.effectKind === 'laser_dodge') return 0.5;
-  return 1;
-}
-
-/** 메인·전투 스테이지 Skia 성운 — 행성별 베이크 PNG + 선택적 배경·명중 FX. */
+/** @deprecated 행·전투 배경은 `PlanetNebulaImageBackdrop`(RN Image). dodge FX는 궤도 SkPicture. */
 export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShaderBackdrop({
   size,
   active,
@@ -58,6 +55,14 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   const [frameTickMs, setFrameTickMs] = useState(() => Date.now());
 
   useEffect(() => {
+    if (!active) return undefined;
+    registerGpuLayer('skia_nebula_backdrop', 'T0');
+    return () => {
+      unregisterGpuLayer('skia_nebula_backdrop');
+    };
+  }, [active]);
+
+  useEffect(() => {
     if (!active) return () => {};
     const id = setInterval(() => {
       if (!active) return;
@@ -68,7 +73,7 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
         for (let i = 0; i < fxList.length; i += 1) {
           const fx = fxList[i]!;
           const age = t - fx.startMs;
-          if (age >= 0 && age <= resolveDodgeFxDurationMs(fx)) {
+          if (age >= -INBOUND_DRONE_FX_ORBIT_AGE_SLOP_MS && age <= resolveNebulaDodgeFxDurationMs(fx)) {
             needsRedraw = true;
             break;
           }
@@ -163,15 +168,15 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
               if (nodes.length >= DODGE_HIT_FX_RENDER_LIMIT) break;
               const fx = dodgeHitFx![i]!;
               const age = dodgeTimeMs - fx.startMs;
-              const fxDurationMs = resolveDodgeFxDurationMs(fx);
-              if (age < 0 || age > fxDurationMs) continue;
-              const t01 = Math.max(0, Math.min(1, age / fxDurationMs));
-              const pulse = 1 - Math.abs(t01 * 2 - 1);
-              const baseSizeScale = resolveDodgeFxSizeScale(fx);
-              const pulseScale = (0.72 + pulse * 0.85) * baseSizeScale;
-              const pulseSize = 60 * pulseScale;
-              const pulseOpacity = Math.max(0, 1 - Math.pow(t01, 0.58));
-              if (pulseOpacity < 0.015) continue;
+              const fxDurationMs = resolveNebulaDodgeFxDurationMs(fx);
+              if (age < -INBOUND_DRONE_FX_ORBIT_AGE_SLOP_MS || age > fxDurationMs) continue;
+              const pulse = resolveNebulaDodgeFxPulse(
+                age,
+                fxDurationMs,
+                resolveNebulaDodgeFxSizeScale(fx),
+              );
+              if (!pulse) continue;
+              const { pulseSize, pulseOpacity } = pulse;
               const orbitCenter = dodgeOrbitSize / 2;
               const px = size / 2 + dodgeOrbitOffsetX + (fx.x - orbitCenter) * dodgeOrbitVisualScaleX;
               const py = size / 2 + dodgeOrbitOffsetY + (fx.y - orbitCenter) * dodgeOrbitVisualScaleY;

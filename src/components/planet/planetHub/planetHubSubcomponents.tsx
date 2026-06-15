@@ -2,8 +2,14 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, ScrollView, useWindowDimensions, Platform } from 'react-native';
 import type { LayoutChangeEvent } from 'react-native';
-import Animated, { type SharedValue, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
-import Svg, { Line, Polyline } from 'react-native-svg';
+import Animated, {
+  runOnJS,
+  type SharedValue,
+  useAnimatedReaction,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
+import Svg, { Line } from 'react-native-svg';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { COLORS, FONTS, SPACING, ZONE_LABELS, ZONE_COLORS } from '../../../utils/theme';
 import type { StarSystem, ZoneType } from '../../../types';
@@ -12,12 +18,16 @@ import { planetCoreRuntimeToGaugeView, planetCsvBaselineToRuntime, usePlanetCore
 import { usePlanetNebulaStore } from '../../../store/planetNebulaStore';
 import { usePlayerStore } from '../../../store/playerStore';
 import type { ArcNpcTrafficShip } from '../../../store/arcNpcTrafficStore';
+import type { ArcInboundDrone } from '../../../store/arcInboundDroneStore';
 import { PlanetCorePortraitWithTempAdminOverride } from '../PlanetCorePortraitWithTempAdminOverride';
 import { PlanetHubOrbitSkiaLayer } from '../PlanetHubOrbitSkiaLayer';
+import { PlanetHubInboundDroneLayer } from '../PlanetHubInboundDroneLayer';
+import { hubInboundDroneDodgeHitFxRef } from '../../../arcCore/inboundDrone/hubInboundDroneDodgeBridge';
+import { PlanetNebulaImageBackdrop } from '../PlanetNebulaImageBackdrop';
 import { SkiaPlanetNebulaShaderBackdrop } from '../SkiaPlanetNebulaShaderBackdrop';
 import { resolveMainStageSkiaBackdrop } from '../../../game/mainStageSkiaBackdrop';
+import { useCapitalRealtimeCombatSimContext } from '../../../combat';
 import { resolvePlanetNebulaBakedSource } from '../../../game/planetNebulaBakedAssets';
-import { registerPlanetSessionResource } from '../../../game/planetSessionRegistry';
 import { computeTableNpcOrbitXY } from '../planetOrbitHubWorklets';
 import {
   PLANET_MAIN_BACKGROUND_CLAN_PLATE_AFTER_NAME_GAP_PX,
@@ -28,16 +38,9 @@ import {
   PLANET_MAIN_ORBIT_SCENE_SIZE as ORBIT_SCENE_SIZE,
 } from '../../../stages/planetMainStageLayout';
 import type { CapitalRealtimeCombatSim } from '../../../combat/capitalRealtimeTypes';
-import type { DefenseInterceptVisualPlan } from '../../../arcCore/message/defenseInterceptVisualPlan';
-import { DEFENSE_INTERCEPT_EXPLOSION_MS } from '../../../arcCore/message/defenseInterceptVisualPlan';
-import { parseWorldObjectId } from '../../../worldObjects/ids';
-import { useArcCoreMessageStore } from '../../../store/arcCoreMessageStore';
 import type { WorldObject } from '../../../worldObjects';
 import { WORLD_OBJECT_DEFENSE_SATELLITE_ORBIT_CYCLE_MS, WORLD_OBJECT_ORBIT_CYCLE_MS, clampDefenseSatelliteRadiusScale, clampWorldObjectRadiusScale } from '../../../worldObjects/planetWorldObjectOrbit';
-import { PlanetArcCoreMessageMissileSkiaLayer } from '../PlanetArcCoreMessageMissileSkiaLayer';
-import { PlanetDefenseInterceptMissileSkiaLayer } from '../PlanetDefenseInterceptMissileSkiaLayer';
 import {
-  DEFENSE_SATELLITE_INTERCEPT_READY_BLINK_HZ,
   INFO_LOG_SCROLL_VIEWPORT_PX,
   INFO_LOG_VIEWPORT_ROWS,
   MAX_WORLD_OBJECT_MARKS,
@@ -50,7 +53,6 @@ import {
   PLANET_MAIN_ORBIT_VISUAL_LIFT_PX,
   splitNearbyInfoLine,
   WORLD_OBJECT_ANCHOR_PX,
-  DEFENSE_SATELLITE_INTERCEPT_READY_STROKE,
 } from '../../../game/planetHub/planetHubConstants';
 import { planetHubStyles as styles, planetHubBgStyles as bgStyles } from './planetHubStyles';
 
@@ -276,6 +278,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   orbitClockMs,
   arcNpcShipsAtPlanet,
   arcSkiaCaptionHeads,
+  arcInboundDronesAtPlanet,
   worldObjects,
   showEdenRaidTest,
   miningPathActive,
@@ -286,16 +289,6 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   planetStageScale,
   /** `getPlanetMainStageVerticalMetrics` 결과 — 포그라운드와 동일한 세로 패딩만 허용 */
   backgroundChrome,
-  /**
-   * Skia 레이어(성운 셰이더·허브 아크 궤도) 활성 플래그.
-   * `isPlanetRouteFocused && stageLifecycle === 'active'` — 출발 순간 teardown 레이스 방지 필수 AND.
-   */
-  skiaLoopsActive,
-  arcCoreMissileActive,
-  arcCoreMissileStartMs,
-  arcCoreMissileTravelMs,
-  arcCoreInterceptVisualPlan,
-  arcCoreInterceptSucceeded,
   combatSimRef,
 }: {
   planetId: string;
@@ -308,16 +301,12 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   orbitClockMs: SharedValue<number>;
   arcNpcShipsAtPlanet: ArcNpcTrafficShip[];
   arcSkiaCaptionHeads: string[];
+  arcInboundDronesAtPlanet: ArcInboundDrone[];
   worldObjects: WorldObject[];
   showEdenRaidTest: boolean;
   /** 채굴 활성 중에는 Skia 궤도 대신 정적 마커로 안전 모드 렌더 */
   miningPathActive?: boolean;
   miningProgressPct?: number;
-  arcCoreMissileActive?: boolean;
-  arcCoreMissileStartMs?: number;
-  arcCoreMissileTravelMs?: number;
-  arcCoreInterceptVisualPlan?: DefenseInterceptVisualPlan | null;
-  arcCoreInterceptSucceeded?: boolean;
   combatSimRef: React.MutableRefObject<CapitalRealtimeCombatSim | null>;
   /** 클랜전 점유/거점 한 줄(없으면 null) */
   territorySubtitle?: string | null;
@@ -325,7 +314,6 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   safeAiClanTerritoryPlate?: { clanName: string; clanColor: string } | null;
   planetStageScale: number;
   backgroundChrome: { paddingTop: number; paddingBottom: number };
-  skiaLoopsActive: boolean;
 }) {
   const { width: bgWindowWidth, height: bgWindowHeight } = useWindowDimensions();
   const nebulaBackdropRef = useRef<View | null>(null);
@@ -338,6 +326,21 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
     };
   }, []);
   const [dodgeOrbitOffset, setDodgeOrbitOffset] = useState({ x: 0, y: 0 });
+  const [inboundDroneSkiaDodgeLatch, setInboundDroneSkiaDodgeLatch] = useState(false);
+  const hubDodgeTimeMsRef = useRef(0);
+  const noteHubDodgeTimeMs = useCallback((ms: number) => {
+    hubDodgeTimeMsRef.current = ms;
+  }, []);
+  useAnimatedReaction(
+    () => orbitClockMs.value,
+    (ms) => {
+      runOnJS(noteHubDodgeTimeMs)(ms);
+    },
+    [orbitClockMs, noteHubDodgeTimeMs],
+  );
+  const handleInboundDroneSkiaDodgeLatch = useCallback((active: boolean) => {
+    setInboundDroneSkiaDodgeLatch(active);
+  }, []);
   const recomputeDodgeOrbitOffset = useCallback(() => {
     if (!dodgeStageMountedRef.current) return;
     const nebulaNode = nebulaBackdropRef.current;
@@ -370,67 +373,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
       recomputeDodgeOrbitOffset();
     });
   }, [recomputeDodgeOrbitOffset]);
-  const edenSim = combatSimRef.current;
-  const interceptInboundStartMs = arcCoreMissileStartMs ?? 0;
-  const interceptLaunchAtBySatelliteId = useMemo(() => {
-    const map = new Map<string, number>();
-    if (
-      !arcCoreMissileActive
-      || !arcCoreInterceptVisualPlan
-      || !interceptInboundStartMs
-      || !arcCoreInterceptVisualPlan.engagementEligible
-    ) {
-      return map;
-    }
-    for (const slot of arcCoreInterceptVisualPlan.missiles) {
-      map.set(slot.satelliteId, interceptInboundStartMs + slot.launchDelayMs);
-    }
-    return map;
-  }, [
-    arcCoreMissileActive,
-    interceptInboundStartMs,
-    arcCoreInterceptVisualPlan?.strikeId,
-    arcCoreInterceptVisualPlan?.engagementEligible,
-    arcCoreInterceptVisualPlan?.missiles,
-  ]);
-  const tryCompleteNearMiss = useArcCoreMessageStore((s) => s.tryCompleteNearMiss);
-  const [interceptHitRelativeMs, setInterceptHitRelativeMs] = useState<number | null>(null);
-  const strikeVisualGateRef = useRef({ inbound: false, intercept: false });
-  const interceptEngagementEligible = Boolean(
-    arcCoreInterceptVisualPlan?.engagementEligible
-    && (arcCoreInterceptVisualPlan?.missiles.length ?? 0) > 0,
-  );
-  useEffect(() => {
-    setInterceptHitRelativeMs(null);
-    strikeVisualGateRef.current = {
-      inbound: false,
-      intercept: !interceptEngagementEligible,
-    };
-  }, [arcCoreInterceptVisualPlan?.strikeId, interceptEngagementEligible]);
-  const tryFinishArcCoreStrike = useCallback(() => {
-    const gate = strikeVisualGateRef.current;
-    if (!gate.inbound || !gate.intercept) return;
-    tryCompleteNearMiss(planetId, Date.now(), { visualReady: true });
-  }, [planetId, tryCompleteNearMiss]);
-  const handleInterceptVisualHit = useCallback((relativeMs: number) => {
-    setInterceptHitRelativeMs(relativeMs);
-  }, []);
-  const handleInterceptAllMissilesComplete = useCallback(() => {
-    strikeVisualGateRef.current.intercept = true;
-    tryFinishArcCoreStrike();
-  }, [tryFinishArcCoreStrike]);
-  const handleArcCoreMissileFlightComplete = useCallback(() => {
-    strikeVisualGateRef.current.inbound = true;
-    tryFinishArcCoreStrike();
-  }, [tryFinishArcCoreStrike]);
-  const arcCoreSuppressWarheadAfterMs = useMemo(() => {
-    if (interceptHitRelativeMs == null || !(arcCoreMissileStartMs ?? 0)) return 0;
-    return (arcCoreMissileStartMs ?? 0) + interceptHitRelativeMs;
-  }, [
-    arcCoreMissileStartMs,
-    interceptHitRelativeMs,
-  ]);
-  const showArcCoreMissileLayers = Boolean(arcCoreMissileActive);
+  const combatSimFromCtx = useCapitalRealtimeCombatSimContext();
   const planetCoreHydrated = usePlanetCoreRuntimeStore((s) => s.hydrated);
   const planetCoreRuntime = usePlanetCoreRuntimeStore(
     useCallback((s) => s.byPlanetId[planetId], [planetId]),
@@ -452,11 +395,21 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
    * 자본궤도 실시간 전투가 이 행성 허브에서 활성일 때 — Sim 컨텍스트가 붙은 뒤에만 톤다운(전투 레이어는 제외).
    * `showEdenRaidTest`는 부모의 `capitalCombatOrbitActive`와 동일 신호.
    */
-  const hubCapitalCombatMute = Boolean(showEdenRaidTest && edenSim);
   const mainStageBackdrop = useMemo(
     () => resolveMainStageSkiaBackdrop(templatePlanet ?? null),
     [templatePlanet],
   );
+  const hubCapitalCombatMute = Boolean(showEdenRaidTest && combatSimFromCtx);
+  /** colorDodge 닷지는 성운 Skia 캔버스와 동일 버퍼 — 전투·인바운드 드론 */
+  const useSkiaCombatNebulaBackdrop = Boolean(
+    showEdenRaidTest && mainStageBackdrop.nebulaShaderEnabled,
+  );
+  const useSkiaInboundDroneDodgeBackdrop = Boolean(
+    !showEdenRaidTest &&
+    mainStageBackdrop.nebulaShaderEnabled &&
+    inboundDroneSkiaDodgeLatch,
+  );
+  const useSkiaNebulaBackdrop = useSkiaCombatNebulaBackdrop || useSkiaInboundDroneDodgeBackdrop;
   const nebulaBakedImageSource = useMemo(
     () => resolvePlanetNebulaBakedSource(planetId),
     [planetId],
@@ -501,22 +454,38 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
         ]}
         pointerEvents="none"
       >
-        <SkiaPlanetNebulaShaderBackdrop
-          size={nebulaBackdropSize}
-          /** 성운 베이크 PNG: 포커스 + lifecycle active 일 때만 명중 FX 루프. */
-          active={skiaLoopsActive}
-          sessionPlanetId={planetId}
-          nebulaBakedImageSource={nebulaBakedImageSource}
-          renderNebulaShader={mainStageBackdrop.nebulaShaderEnabled}
-          backgroundImageSource={mainStageBackdrop.backdropImageSource}
-          dodgeHitFxRef={edenSim?.missileHitFxRef ?? null}
-          dodgeTimeMsRef={edenSim?.tMsRef ?? null}
-          dodgeOrbitSize={ORBIT_SCENE_SIZE}
-          dodgeOrbitVisualScaleX={PLANET_MAIN_COMBAT_LAYER_WIDTH_SCALE_X}
-          dodgeOrbitVisualScaleY={PLANET_MAIN_COMBAT_LAYER_HEIGHT_SCALE_Y}
-          dodgeOrbitOffsetX={dodgeOrbitOffset.x}
-          dodgeOrbitOffsetY={dodgeOrbitOffset.y}
-        />
+        {useSkiaNebulaBackdrop ? (
+          <SkiaPlanetNebulaShaderBackdrop
+            size={nebulaBackdropSize}
+            active
+            nebulaBakedImageSource={nebulaBakedImageSource}
+            renderNebulaShader={mainStageBackdrop.nebulaShaderEnabled}
+            backgroundImageSource={mainStageBackdrop.backdropImageSource}
+            dodgeHitFxRef={
+              showEdenRaidTest && combatSimFromCtx
+                ? combatSimFromCtx.missileHitFxRef
+                : hubInboundDroneDodgeHitFxRef
+            }
+            dodgeTimeMsRef={
+              showEdenRaidTest && combatSimFromCtx?.tMsRef
+                ? combatSimFromCtx.tMsRef
+                : hubDodgeTimeMsRef
+            }
+            dodgeOrbitSize={combatSimFromCtx?.orbitSize ?? ORBIT_SCENE_SIZE}
+            dodgeOrbitVisualScaleX={PLANET_MAIN_COMBAT_LAYER_WIDTH_SCALE_X}
+            dodgeOrbitVisualScaleY={PLANET_MAIN_COMBAT_LAYER_HEIGHT_SCALE_Y}
+            dodgeOrbitOffsetX={dodgeOrbitOffset.x}
+            dodgeOrbitOffsetY={dodgeOrbitOffset.y}
+            sessionPlanetId={planetId}
+          />
+        ) : (
+          <PlanetNebulaImageBackdrop
+            size={nebulaBackdropSize}
+            nebulaBakedImageSource={nebulaBakedImageSource}
+            renderNebulaLayer={mainStageBackdrop.nebulaShaderEnabled}
+            backgroundImageSource={mainStageBackdrop.backdropImageSource}
+          />
+        )}
       </View>
       <View style={bgStyles.planetBgStack}>
         <View style={[bgStyles.systemBadge, hubCapitalCombatMute && bgStyles.planetHubCapitalCombatBadgeDim]}>
@@ -648,11 +617,10 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                     worldObjects={worldObjects}
                     miningPathActive={Boolean(miningPathActive)}
                     miningProgressPct={Math.max(0, Math.min(100, Math.round(miningProgressPct ?? 0)))}
-                    interceptLaunchAtBySatelliteId={interceptLaunchAtBySatelliteId}
                   />
                 </View>
               ) : null}
-              {tableOrbitSlotCount > 0 || arcNpcShipsAtPlanet.length > 0 ? (
+              {tableOrbitSlotCount > 0 || arcNpcShipsAtPlanet.length > 0 || arcInboundDronesAtPlanet.length > 0 ? (
                 <View
                   style={[
                     bgStyles.orbitLayerShips,
@@ -672,6 +640,13 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                     arcShips={arcNpcShipsAtPlanet}
                     arcCaptionHeads={arcSkiaCaptionHeads}
                   />
+                  {!showEdenRaidTest && arcInboundDronesAtPlanet.length > 0 ? (
+                    <PlanetHubInboundDroneLayer
+                      orbitClockMs={orbitClockMs}
+                      drones={arcInboundDronesAtPlanet}
+                      onSkiaDodgeBackdropLatch={handleInboundDroneSkiaDodgeLatch}
+                    />
+                  ) : null}
                 </View>
               ) : null}
               {!showEdenRaidTest ? (
@@ -684,30 +659,6 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                 >
                   <PlanetPlayerBlueOrbitMark orbitClockMs={orbitClockMs} />
                 </View>
-              ) : null}
-              {showArcCoreMissileLayers ? (
-                <>
-                  <PlanetDefenseInterceptMissileSkiaLayer
-                    orbitSize={ORBIT_SCENE_SIZE}
-                    planetId={planetId}
-                    active
-                    inboundStartMs={interceptInboundStartMs}
-                    travelMs={arcCoreMissileTravelMs ?? 0}
-                    plan={arcCoreInterceptVisualPlan ?? null}
-                    onInterceptVisualHit={handleInterceptVisualHit}
-                    onAllMissilesComplete={handleInterceptAllMissilesComplete}
-                  />
-                  <PlanetArcCoreMessageMissileSkiaLayer
-                    orbitSize={ORBIT_SCENE_SIZE}
-                    active
-                    missileStartMs={arcCoreMissileStartMs ?? 0}
-                    travelMs={arcCoreMissileTravelMs ?? 0}
-                    onFlightComplete={handleArcCoreMissileFlightComplete}
-                    suppressWarheadAfterMs={arcCoreSuppressWarheadAfterMs}
-                    interceptSucceeded={arcCoreInterceptSucceeded ?? false}
-                    interceptAtRelativeMs={interceptHitRelativeMs ?? 0}
-                  />
-                </>
               ) : null}
             </View>
           </View>
@@ -729,39 +680,13 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
   miningPathActive,
   mineable,
   miningProgressPct,
-  interceptLaunchAtWallMs,
-  defenseSatelliteOrbitFreezeMs = -1,
 }: {
   object: WorldObject;
   orbitClockMs: SharedValue<number>;
   miningPathActive: boolean;
   mineable: boolean;
   miningProgressPct: number;
-  /** 0=비활성, >0=이 시각까지 요격 준비 깜박임 */
-  interceptLaunchAtWallMs: number;
-  /** >=0 — 방위위성만 이 시계(ms)에 고정 */
-  defenseSatelliteOrbitFreezeMs?: number;
 }) {
-  const defenseOrbitFreezeSv = useSharedValue(defenseSatelliteOrbitFreezeMs);
-  useEffect(() => {
-    defenseOrbitFreezeSv.value = defenseSatelliteOrbitFreezeMs;
-  }, [defenseSatelliteOrbitFreezeMs, defenseOrbitFreezeSv]);
-  const interceptLaunchAtSv = useSharedValue(interceptLaunchAtWallMs);
-  useEffect(() => {
-    interceptLaunchAtSv.value = interceptLaunchAtWallMs;
-  }, [interceptLaunchAtWallMs, interceptLaunchAtSv]);
-
-  const interceptReadyOutlineStyle = useAnimatedStyle(() => {
-    'worklet';
-    void orbitClockMs.value;
-    const launchAt = interceptLaunchAtSv.value;
-    if (launchAt <= 0) return { opacity: 0 };
-    const now = Date.now();
-    if (now >= launchAt) return { opacity: 0 };
-    const phase = now * 0.001 * DEFENSE_SATELLITE_INTERCEPT_READY_BLINK_HZ * Math.PI * 2;
-    return { opacity: 0.32 + 0.68 * (0.5 + 0.5 * Math.sin(phase)) };
-  }, [orbitClockMs, interceptLaunchAtSv]);
-
   const orbitRadiusPx = useMemo(() => {
     const radiusScale =
       object.kind === 'defense_satellite'
@@ -772,10 +697,7 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
 
   const animated = useAnimatedStyle(() => {
     'worklet';
-    const freezeMs = defenseOrbitFreezeSv.value;
-    const now = object.kind === 'defense_satellite' && freezeMs >= 0
-      ? freezeMs
-      : orbitClockMs.value;
+    const now = orbitClockMs.value;
     const cycleMs =
       object.kind === 'defense_satellite'
         ? WORLD_OBJECT_DEFENSE_SATELLITE_ORBIT_CYCLE_MS
@@ -788,7 +710,7 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
       opacity: object.kind === 'station' ? 0.95 : 0.88,
       transform: [{ translateX: x - WORLD_OBJECT_ANCHOR_PX }, { translateY: y - WORLD_OBJECT_ANCHOR_PX }],
     };
-  }, [object.kind, object.transform.phaseBias, orbitRadiusPx, orbitClockMs, defenseOrbitFreezeSv]);
+  }, [object.kind, object.transform.phaseBias, orbitRadiusPx, orbitClockMs]);
 
   return (
     <Animated.View style={[bgStyles.orbitMarkWrap, bgStyles.worldObjectMarkWrap, animated]}>
@@ -850,21 +772,6 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
           <View style={bgStyles.worldObjectWreckMark} accessibilityLabel="잔해" />
         ) : object.kind === 'defense_satellite' ? (
           <View style={bgStyles.worldObjectDefenseSatelliteWrap} accessibilityLabel="방위위성">
-            <Animated.View
-              style={[bgStyles.worldObjectDefenseSatelliteReadyOutline, interceptReadyOutlineStyle]}
-              pointerEvents="none"
-            >
-              <Svg width={16} height={14} viewBox="0 0 16 14">
-                <Polyline
-                  points="8,1.5 14.5,12.5 1.5,12.5 8,1.5"
-                  fill="none"
-                  stroke={DEFENSE_SATELLITE_INTERCEPT_READY_STROKE}
-                  strokeWidth={2.2}
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                />
-              </Svg>
-            </Animated.View>
             <View style={bgStyles.worldObjectDefenseSatelliteMark} />
           </View>
         ) : (
@@ -887,15 +794,11 @@ const PlanetWorldObjectOrbitMarks = memo(function PlanetWorldObjectOrbitMarks({
   orbitClockMs,
   miningPathActive,
   miningProgressPct,
-  interceptLaunchAtBySatelliteId,
-  defenseSatelliteOrbitFreezeById,
 }: {
   worldObjects: WorldObject[];
   orbitClockMs: SharedValue<number>;
   miningPathActive: boolean;
   miningProgressPct: number;
-  interceptLaunchAtBySatelliteId: ReadonlyMap<string, number>;
-  defenseSatelliteOrbitFreezeById?: ReadonlyMap<string, number>;
 }) {
   const renderTargets = worldObjects.slice(0, MAX_WORLD_OBJECT_MARKS);
   const activeMineableAsteroidId = useMemo(
@@ -912,16 +815,6 @@ const PlanetWorldObjectOrbitMarks = memo(function PlanetWorldObjectOrbitMarks({
           miningPathActive={miningPathActive}
           mineable={object.kind === 'asteroid' && object.id === activeMineableAsteroidId}
           miningProgressPct={miningProgressPct}
-          interceptLaunchAtWallMs={
-            object.kind === 'defense_satellite'
-              ? (interceptLaunchAtBySatelliteId.get(object.id) ?? 0)
-              : 0
-          }
-          defenseSatelliteOrbitFreezeMs={
-            object.kind === 'defense_satellite'
-              ? (defenseSatelliteOrbitFreezeById?.get(object.id) ?? -1)
-              : -1
-          }
         />
       ))}
     </>

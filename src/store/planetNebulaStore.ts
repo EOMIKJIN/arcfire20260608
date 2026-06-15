@@ -217,3 +217,21 @@ export const usePlanetNebulaStore = create<PlanetNebulaState>((set, get) => ({
     return { applied: true, changedCount };
   },
 }));
+
+/** route_blur 등 — 메모리 상주 프로필 LRU 정리 (updatedAt 기준) */
+export function prunePlanetNebulaProfilesLru(keepMax: number): number {
+  const keep = Math.max(0, keepMax);
+  const { profilesByPlanetId } = usePlanetNebulaStore.getState();
+  const entries = Object.entries(profilesByPlanetId);
+  if (entries.length <= keep) return 0;
+  entries.sort((a, b) => (b[1].updatedAt ?? 0) - (a[1].updatedAt ?? 0));
+  const keepIds = new Set(entries.slice(0, keep).map(([id]) => id));
+  const next: Record<string, PlanetNebulaProfile> = {};
+  for (const [id, profile] of entries) {
+    if (keepIds.has(id)) next[id] = profile;
+  }
+  const removed = entries.length - keep;
+  usePlanetNebulaStore.setState({ profilesByPlanetId: next });
+  usePlanetNebulaStore.getState().schedulePersistProfiles();
+  return removed;
+}

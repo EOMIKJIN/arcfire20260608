@@ -1,0 +1,18 @@
+[2026-06-15 03:26:54] monitor start package=com.arcfire.online interval=30m
+[2026-06-15 03:26:54] meminfo -> D:\arcfire20260607\tools\long-run-monitor\logs\meminfo-20260615-032654.log
+[2026-06-15 03:26:54] timeline -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-timeline.csv
+[2026-06-15 03:26:54] alerts -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-alerts.log
+[2026-06-15 03:26:54] FOCUS: hub Skia orbit + nebula + combat (no ArcCore missile ??isolation test)
+[2026-06-15 03:26:55] snap PSS=687.4MB GL=32MB dPSS=-57.6 dGL=-6.7 GL_RECOVERED idle_ok
+[2026-06-15 03:56:58] snap PSS=786.3MB GL=51.4MB dPSS=18.5 dGL=0.4 
+[2026-06-15 04:26:59] snap PSS=753.5MB GL=45MB dPSS=-7.4 dGL=2.1 
+[2026-06-15 04:57:00] snap PSS=747.6MB GL=43MB dPSS=-2.9 dGL=0 
+[2026-06-15 05:27:01] snap PSS=734.6MB GL=43MB dPSS=-48.7 dGL=-10.8 GL_RECOVERED idle_ok
+[2026-06-15 05:57:02] snap PSS=452.8MB GL=4.9MB dPSS= dGL= 
+[2026-06-15 06:27:03] snap PSS=450.7MB GL=4.9MB dPSS=0.7 dGL=0 
+[2026-06-15 06:57:04] snap PSS=453MB GL=4.9MB dPSS=5 dGL=0 
+[2026-06-15 07:27:05] snap PSS=448.4MB GL=4.9MB dPSS=-1.2 dGL=0 
+[2026-06-15 07:57:06] snap PSS=447MB GL=4.9MB dPSS=-2.3 dGL=0 
+[2026-06-15 08:27:07] snap PSS=386.2MB GL=4.9MB dPSS=0.3 dGL=0 
+[2026-06-15 08:57:07] ALERT GL +33.9MB
+[2026-06-15 08:57:27] snap PSS=538.6MB GL=38.8MB dPSS=150.3 dGL=33.9 GL_SPIKE suspect=hub_skia_orbit_nebula_combat

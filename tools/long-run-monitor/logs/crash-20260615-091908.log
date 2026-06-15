@@ -1,0 +1,40 @@
+--------- beginning of system
+06-15 09:21:23.837  1909  2065 I ActivityManager: Changes in 10248 19 to 8, 0 to 128
+06-15 09:21:23.858  1909  1973 I ActivityManager: Start proc 9312:com.google.android.apps.tachyon/u0a254 for service {com.google.android.apps.tachyon/androidx.work.impl.background.systemjob.SystemJobService}
+06-15 09:21:23.860  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 09:21:23.896  1909  1973 I ActivityManager: Start proc 9323:com.samsung.mfcontents/u0a95 for service {com.samsung.mfcontents/com.samsung.mfcontents.scheduler.MFCJobService}
+06-15 09:21:23.896  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 09:21:23.911  1909  1973 I ActivityManager: Start proc 9325:com.lguplus.appstore/u0a99 for service {com.lguplus.appstore/androidx.work.impl.background.systemjob.SystemJobService}
+06-15 09:21:23.918  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 09:21:23.938  1909  2225 I ActivityManager: Changes in 10248 8 to 10, 128 to 0
+06-15 09:21:24.018  1909  4174 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
+06-15 09:21:24.046  1909  2225 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+06-15 09:21:24.051  1909  4407 I ActivityManager: Killing 8192:com.google.android.googlequicksearchbox:search/u0a253 (adj 905): empty #25
+06-15 09:21:24.175  1909  1973 I ActivityManager: Start proc 9378:com.sec.android.provider.badge/u0a55 for broadcast {com.sec.android.provider.badge/com.sec.android.provider.badge.BadgeCountReceiver}
+06-15 09:21:24.175  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 09:21:24.238  1909  2720 I ActivityManager: Changes in 99097 19 to 8, 0 to 128
+06-15 09:21:24.238  1909  2720 I ActivityManager: Changes in 10099 19 to 8, 0 to 128
+06-15 09:21:24.317  1909  2720 I ActivityManager: Changes in 10251 19 to 8, 0 to 128
+06-15 09:21:24.323  1909  4174 I ActivityManager: Changes in 10055 19 to 11, 0 to 128
+06-15 09:21:24.369  1909  4174 I ActivityManager: Changes in 10055 11 to 5, 128 to 144
+06-15 09:21:24.390  1909  4407 I ActivityManager: Changes in 99097 8 to 10, 128 to 0
+06-15 09:21:24.395  1909  4407 I ActivityManager: Changes in 10251 8 to 10, 128 to 0
+06-15 09:21:24.395  1909  4407 I ActivityManager: Changes in 10099 8 to 10, 128 to 0
+06-15 09:21:24.406  1909  3606 I ActivityManager: Killing 8424:com.samsung.storyservice/5004 (adj 905): empty #25
+06-15 09:21:24.674  1909  3050 I ActivityManager: Changes in 99097 19 to 8, 0 to 128
+06-15 09:21:24.674  1909  3050 I ActivityManager: Changes in 10254 19 to 8, 0 to 128
+06-15 09:21:24.674  1909  3050 I ActivityManager: Changes in 10251 19 to 8, 0 to 128
+06-15 09:21:25.477  1909  4227 I ActivityManager: Changes in 99097 8 to 10, 128 to 0
+06-15 09:21:25.478  1909  4227 I ActivityManager: Changes in 10254 8 to 10, 128 to 0
+06-15 09:21:25.478  1909  4227 I ActivityManager: Changes in 10251 8 to 10, 128 to 0
+06-15 09:21:25.485  1909  4227 I ActivityManager: Killing 8545:com.samsung.android.privateaccesstokens/u0a198 (adj 905): empty #25
+06-15 09:21:25.520  1909  4227 W ActivityManager: Scheduling restart of crashed service com.samsung.android.privateaccesstokens/.components.services.PATService in 1000ms for connection
+06-15 09:21:26.539  1909  1973 I ActivityManager: Start proc 9472:com.samsung.android.privateaccesstokens/u0a198 for service {com.samsung.android.privateaccesstokens/com.samsung.android.privateaccesstokens.components.services.PATService}
+06-15 09:21:26.539  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 09:21:26.654  1909  3050 I ActivityManager: Killing 8521:com.samsung.aasaservice/1000 (adj 905): empty #25
+06-15 09:21:30.461  1909  1971 I ActivityManager: Changes in 10055 5 to 15, 144 to 0
+06-15 09:21:50.464  1909  1972 I ActivityManager: Killing 8646:com.skt.skaf.OA00018282/u0a104 (adj 905): empty #25
+06-15 09:26:54.227  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-15 09:26:54.234  1909  2720 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-15 09:26:54.249  1909  2065 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+06-15 09:26:54.263  1909  3606 I ActivityManager: Changes in 5004 8 to 10, 128 to 0

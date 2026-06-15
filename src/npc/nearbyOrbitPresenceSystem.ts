@@ -1,7 +1,7 @@
 // ============================================================
 // 행성 궤도 근접 NPC — 표시(info) · 궤도 · NPC AI DB 연동 (단일 시스템)
 // - planetId + systemId 로 결정론적 변형 (행성마다 이름·궤도 다름)
-// - 주둔 기함: CSV 함장·아크코어 단일행성 배정(`captainOrbitPlanetAssignment`) — 수송 12척은 AiNpcSubCore만
+// - 주둔 기함: CSV 함장·아크코어 단일행성 배정(`captainOrbitPlanetAssignment`) — 수송 8척은 AiNpcSubCore만
 // - 함급(hull class) 레지스트리에서 궤도·이름 패턴을 읽음
 // - 전함 DB(CSV 함장의 assignedShipId) + 함장의 base/activity **행성** 또는 **성계** 매칭으로 슬롯 구성
 // ============================================================

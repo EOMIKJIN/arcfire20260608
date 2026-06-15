@@ -7,7 +7,6 @@ export const PlanetDefenseSatellitePolicy_FROM_BALANCE_CSV = [
   { "key": "default_phase_bias", "value": "0.08", "notesKo": "1번 위성 위상 바이어스(0..1)" },
   { "key": "phase_bias_step", "value": "0.5", "notesKo": "짝 위성 정반대(+180°) 위상·추가 쌍 간격" },
   { "key": "radius_scale_step", "value": "0", "notesKo": "동일 궤도 반경(동일 회전 속도)" },
-  { "key": "intercept_enabled", "value": "true", "notesKo": "아크코어 장거리 미사일 요격 시험운용" },
   { "key": "default_level", "value": "1", "notesKo": "방위위성 디폴트 레벨" },
   { "key": "max_level", "value": "10", "notesKo": "방위위성 최대 레벨" },
 ] as const;

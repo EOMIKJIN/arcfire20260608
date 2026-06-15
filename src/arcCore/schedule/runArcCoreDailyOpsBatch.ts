@@ -13,6 +13,7 @@ import { runTradeRouteDailyMarketPass } from '../economy/runTradeRouteDailyMarke
 import { tryArcCoreWorldDailyUnlock } from '../worldExpansionDailyUnlock';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { flushDailyOpsObservationsToAabs } from '../userMod/dailyOpsObservationQueue';
+import { runIntegratedEngageHpAdjustPass } from '../balance/runIntegratedEngageHpAdjustPass';
 import { resolveArcCoreDailyOpsPolicy } from './arcCoreDailyOpsPolicy';
 
 export type ArcCoreDailyOpsBatchResult = {
@@ -26,6 +27,7 @@ export type ArcCoreDailyOpsBatchResult = {
   tradeRouteDailyMarket: boolean;
   aabsAlignment: boolean;
   worldExpansionUnlock: boolean;
+  integratedEngageHpAdjust: boolean;
 };
 
 /**
@@ -45,6 +47,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     tradeRouteDailyMarket: false,
     aabsAlignment: false,
     worldExpansionUnlock: false,
+    integratedEngageHpAdjust: false,
   };
 
   if (!usePlanetCoreRuntimeStore.getState().hydrated) {
@@ -79,6 +82,8 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     await flushDailyOpsObservationsToAabs();
     await runDailyPolicyAlignment(true);
     result.aabsAlignment = true;
+    const engageAdjust = await runIntegratedEngageHpAdjustPass();
+    result.integratedEngageHpAdjust = engageAdjust.ran;
   }
   if (policy.runWorldExpansionUnlock) {
     result.worldExpansionUnlock = tryArcCoreWorldDailyUnlock();

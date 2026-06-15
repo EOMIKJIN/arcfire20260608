@@ -1,0 +1,73 @@
+[2026-06-14 14:56:30] INCIDENT GL_LEAK_SUSPECT spikes=2 ??in-app gpu watchdog only; no auto reload
+[2026-06-14 15:06:31] INCIDENT GL_LEAK_SUSPECT spikes=3 ??in-app gpu watchdog only; no auto reload
+[2026-06-14 15:16:32] INCIDENT GL_LEAK_SUSPECT spikes=3 ??in-app gpu watchdog only; no auto reload
+[2026-06-14 15:25:15] INCIDENT GL_LEAK_SUSPECT spikes=3 (interval=30m)
+[2026-06-14 15:25:15] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 15:25:42] INCIDENT GL_LEAK_SUSPECT spikes=2 (interval=30m)
+[2026-06-14 15:25:42] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 15:26:34] INCIDENT GL_LEAK_SUSPECT spikes=2 (interval=30m)
+[2026-06-14 15:26:34] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 15:36:37] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 15:36:37] INCIDENT GL_LEAK_SUSPECT spikes=3 (interval=30m)
+[2026-06-14 15:36:37] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 15:36:37] INCIDENT GL_BASELINE_DRIFT peak=292.3 baseline=67.9 current=292.3
+[2026-06-14 15:36:37] REFIX_REQUESTED baseline_gl_drift -> gl-leak-refix-requested.flag
+[2026-06-14 15:46:37] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 15:55:18] INCIDENT GL_LEAK_SUSPECT spikes=2 (interval=30m)
+[2026-06-14 15:55:18] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 15:56:38] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 15:56:38] INCIDENT GL_LEAK_SUSPECT spikes=3 (interval=30m)
+[2026-06-14 15:56:38] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 16:06:39] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 16:16:40] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 16:25:18] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 16:46:43] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 16:56:43] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 17:06:45] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 17:06:45] INCIDENT GL_LEAK_SUSPECT spikes=2 (interval=30m)
+[2026-06-14 17:06:45] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 17:16:46] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 17:16:46] INCIDENT GL_LEAK_SUSPECT spikes=3 (interval=30m)
+[2026-06-14 17:16:46] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 17:22:32] INCIDENT GL_LEAK_SUSPECT spikes=3 (interval=30m)
+[2026-06-14 17:22:32] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 17:25:22] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 17:25:22] INCIDENT GL_LEAK_SUSPECT spikes=3 (interval=30m)
+[2026-06-14 17:25:22] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 17:26:49] INCIDENT GL_LEAK_SUSPECT spikes=4 (interval=30m)
+[2026-06-14 17:26:49] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 17:36:51] INCIDENT GL_LEAK_SUSPECT spikes=4 (interval=30m)
+[2026-06-14 17:36:51] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 17:46:52] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 17:52:33] INCIDENT GL_LEAK_SUSPECT spikes=2 (interval=30m)
+[2026-06-14 17:52:33] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 17:55:23] INCIDENT GL_LEAK_SUSPECT spikes=3 (interval=30m)
+[2026-06-14 17:55:23] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 17:56:52] INCIDENT GL_LEAK_SUSPECT spikes=4 (interval=30m)
+[2026-06-14 17:56:52] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 18:06:54] INCIDENT GL_LEAK_SUSPECT spikes=4 (interval=30m)
+[2026-06-14 18:06:54] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-14 19:05:00] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 20:05:02] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 20:35:04] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 21:35:06] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-14 23:05:09] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-15 00:35:14] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-15 02:05:16] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-15 03:06:13] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-15 03:26:55] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-15 03:36:15] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-15 05:36:18] INCIDENT GL_LEAK_SUSPECT spikes=2 (interval=30m)
+[2026-06-15 05:36:18] REFIX_REQUESTED consecutive_gl_spikes -> gl-leak-refix-requested.flag
+[2026-06-15 05:36:19] AUTO_FIX static audit:skia-memory start
+[2026-06-15 05:36:20] AUTO_FIX audit:skia-memory PASS
+[2026-06-15 05:36:21] AUTO_FIX app relaunch reason=consecutive_gl_spikes package=com.arcfire.online
+[2026-06-15 05:36:39] AUTO_FIX baseline reset pid=17276 gl=4.4MB pss=343.6MB
+[2026-06-15 05:36:39] AUTO_FIX done reason=consecutive_gl_spikes critical=False ctx={"baselineGlMb":28.1,"lastGlMb":51.4,"spikes":2}
+[2026-06-15 06:27:03] INCIDENT CRASH logged -> incidents.log (app restart: manual)
+[2026-06-15 08:57:07] AUTO_FIX static audit:skia-memory start
+[2026-06-15 08:57:10] AUTO_FIX audit:skia-memory PASS
+[2026-06-15 08:57:10] AUTO_FIX app relaunch reason=gl_spike_snapshot package=com.arcfire.online
+[2026-06-15 08:57:27] AUTO_FIX baseline reset pid=19560 gl=3.7MB pss=191MB
+[2026-06-15 08:57:27] AUTO_FIX done reason=gl_spike_snapshot critical=False ctx={"deltaGlMb":33.9,"lastGlMb":38.8}
+[2026-06-15 09:06:45] INCIDENT CRASH logged -> incidents.log (app restart: manual)

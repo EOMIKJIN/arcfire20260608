@@ -3,16 +3,16 @@ import type { BalanceOverlayDelta } from '../../../arcCore/economy/balanceOverla
 
 export const EconomySimOverlayDelta_FROM_SIM: BalanceOverlayDelta = {
   "schemaVersion": 1,
-  "deltaId": "2026-06-13-1781330807879",
-  "generatedAt": "2026-06-13T06:06:47.879Z",
+  "deltaId": "2026-06-14-1781435091651",
+  "generatedAt": "2026-06-14T11:04:51.651Z",
   "simDays": 30,
   "virtualPopulation": 1000,
   "combatWeight": 0,
   "kpi": {
-    "f2pAvgPower": 11.663914701597788,
-    "dolphinAvgPower": 14.774079029762285,
-    "whaleAvgPower": 41.591807177660165,
-    "whaleToF2pPowerRatio": 3.565853166944258,
+    "f2pAvgPower": 11.645361007079238,
+    "dolphinAvgPower": 15.557705464624856,
+    "whaleAvgPower": 40.47970181322122,
+    "whaleToF2pPowerRatio": 3.476036662892076,
     "status": "ok"
   },
   "categoryTargetMul": {

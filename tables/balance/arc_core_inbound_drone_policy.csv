@@ -1,0 +1,11 @@
+key,value,notesKo
+wave_interval_sec,60,웨이브 간격(초)
+wave_count,10,웨이브당 드론 수
+drone_hp,30,드론 HP
+inbound_duration_sec,9,행성 외곽 도달까지 비행(초) — 2× 속도(기존 18)
+stagger_sec,0.4,웨이브 내 스폰 간격(초)
+impact_radius_px,62,행성 외곽 충돌 반경(px)
+edge_spawn_radius_px,218,전방향 스폰 가장자리 반경(px)
+intercept_range_px,200,방위위성 요격 사거리(px)
+intercept_cooldown_sec,2.4,위성 재사격 쿨(초)
+max_active_drones,24,동시 활성 드론 상한

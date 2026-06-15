@@ -192,6 +192,7 @@ export function buildUnifiedLocalUserObject(uid: string): Record<string, unknown
     deployments: cw.deployments,
     operations: cw.operations,
   };
+  const planet_holds = cw.planetHolds;
 
   const nickname = player?.nickname ?? accountProfile?.nicknameSnapshot ?? null;
 
@@ -208,6 +209,7 @@ export function buildUnifiedLocalUserObject(uid: string): Record<string, unknown
     world,
     planetCoreRuntime,
     clanWarFoundation,
+    planet_holds,
     user_type: resolveUserType(uid, nickname),
     isAdmin: resolveUserType(uid, nickname) === 'admin',
   }) as Record<string, unknown>;

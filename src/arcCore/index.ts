@@ -28,18 +28,6 @@ export { AiEconomySubCore } from './subcores/AiEconomySubCore';
 export { AiNpcSubCore } from './subcores/AiNpcSubCore';
 export { AiPlanetsSubCore } from './subcores/AiPlanetsSubCore';
 export { ArcNewsBoardSubCore } from './subcores/ArcNewsBoardSubCore';
-export { ArcCoreMessageSubCore } from './subcores/ArcCoreMessageSubCore';
-export { ARC_CORE_MESSAGE_DEFAULT_KO } from './message/arcCoreMessagePolicy';
-export { ARC_CORE_MESSAGE_STRIKES_PER_DAY } from './message/arcCoreMessageDailyRandomStrikeSchedule';
-export type {
-  ArcCoreMessageStrikeScheduleProvider,
-  ArcCoreMessageStrikeDayPlan,
-} from './message/arcCoreMessageStrikeScheduleTypes';
-export {
-  ArcCoreMessageDailyRandomStrikeScheduleProvider,
-  buildArcCoreMessageStrikeDayPlan,
-} from './message/arcCoreMessageDailyRandomStrikeSchedule';
-export { ArcCoreMessageStrikeScheduleController } from './message/arcCoreMessageStrikeScheduleController';
 export { ArcPlanetNebulaSubCore } from './subcores/ArcPlanetNebulaSubCore';
 export { AiAabsSubCore } from './subcores/AiAabsSubCore';
 export {
@@ -50,6 +38,7 @@ export {
 } from './aabs';
 export { applyPolicyShift, userModController } from './userMod/UserModController';
 export {
+  ARC_ORBIT_PRESENCE_FILL_MAX,
   ARC_NPC_TRAFFIC_MAX_SLOTS,
   listArcNpcTrafficRowsFromTables,
   type ArcNpcTrafficTableRow,

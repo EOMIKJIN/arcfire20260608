@@ -6,11 +6,14 @@ import { STAR_SYSTEMS, STARTING_PLANET_ID, STARTING_SYSTEM_ID } from '../data/sy
 import type { Player, PlayerHangarShip, PlayerShip } from '../types';
 import { applyNpcCapitalShipToPlayerShip } from './applyNpcCapitalShipPurchase';
 import {
+  ensureStarterCapitalShipInHangar,
   ensureSurvivalPodInHangar,
   grantSurvivalPodShipToInventory,
   isSurvivalPodNpcShipId,
+  resolveStarterNpcCapitalShipId,
   SURVIVAL_POD_NPC_SHIP_ID,
 } from './survivalPodShip';
+import { grantNpcCapitalShipBundleToInventory } from './grantNpcCapitalShipBundle';
 
 export {
   ensureSurvivalPodInHangar,
@@ -19,6 +22,10 @@ export {
   isSurvivalPodNpcShipId,
   SURVIVAL_POD_CAPITAL_SHIP_ITEM_ID,
   SURVIVAL_POD_NPC_SHIP_ID,
+  ensureStarterCapitalShipInHangar,
+  isStarterNpcCapitalShipId,
+  resolveStarterNpcCapitalShipId,
+  STARTER_NPC_CAPITAL_SHIP_ID,
 } from './survivalPodShip';
 import { getItemDef } from '../data/itemRegistry';
 import {
@@ -112,9 +119,24 @@ function buildSurvivalPodShip(currentShip: PlayerShip): PlayerShip {
   };
 }
 
+function finalizeInventoryAfterDestruction(
+  hangar: PlayerHangarShip[],
+  slots: ReturnType<typeof normalizeInventorySlots>,
+  addedStarter: boolean,
+): ReturnType<typeof normalizeInventorySlots> {
+  let next = reconcileCapitalShipInventoryFromHangar(slots, hangar);
+  if (addedStarter) {
+    next = grantNpcCapitalShipBundleToInventory(next, resolveStarterNpcCapitalShipId(), {
+      shipBuyPrice: 0,
+    });
+  }
+  return grantSurvivalPodShipToInventory(next);
+}
+
 /**
  * 탑승 전함 격침 처리:
  * - 격납고·인벤에서 해당 전함 1척 제거
+ * - 전투 전함 0척이면 기본전함 1척 격납고 지급
  * - 생존포드 탑승
  * - 거점(현재 arcadia_prime) 착륙
  */
@@ -124,33 +146,40 @@ export function applyCapitalShipDestructionToPlayer(player: Player): Player {
   const homeSystemId = resolvePlayerHomeSystemId(homePlanetId);
 
   if (!destroyedId || isSurvivalPodNpcShipId(destroyedId)) {
+    const starterResult = ensureStarterCapitalShipInHangar(player.shipHangar);
+    const hangar = ensureSurvivalPodInHangar(starterResult.hangar);
     return {
       ...player,
       currentPlanetId: homePlanetId,
       currentSystemId: homeSystemId,
-      shipHangar: ensureSurvivalPodInHangar(player.shipHangar),
-      inventorySlots: grantSurvivalPodShipToInventory(
+      shipHangar: hangar,
+      inventorySlots: finalizeInventoryAfterDestruction(
+        hangar,
         normalizeInventorySlots(player.inventorySlots),
+        starterResult.addedStarter,
       ),
       ship: buildSurvivalPodShip(player.ship),
     };
   }
 
-  const hangar = [...player.shipHangar];
-  const idx = hangar.findIndex((h) => h.npcCapitalShipId === destroyedId);
-  if (idx >= 0) hangar.splice(idx, 1);
+  const hangarAfterRemoval = [...player.shipHangar];
+  const idx = hangarAfterRemoval.findIndex((h) => h.npcCapitalShipId === destroyedId);
+  if (idx >= 0) hangarAfterRemoval.splice(idx, 1);
 
-  const inventorySlots = reconcileCapitalShipInventoryFromHangar(
-    normalizeInventorySlots(player.inventorySlots),
+  const starterResult = ensureStarterCapitalShipInHangar(hangarAfterRemoval);
+  const hangar = ensureSurvivalPodInHangar(starterResult.hangar);
+  const inventorySlots = finalizeInventoryAfterDestruction(
     hangar,
+    normalizeInventorySlots(player.inventorySlots),
+    starterResult.addedStarter,
   );
 
   return {
     ...player,
     currentPlanetId: homePlanetId,
     currentSystemId: homeSystemId,
-    shipHangar: ensureSurvivalPodInHangar(hangar),
-    inventorySlots: grantSurvivalPodShipToInventory(inventorySlots),
+    shipHangar: hangar,
+    inventorySlots,
     ship: buildSurvivalPodShip(player.ship),
   };
 }

@@ -20,7 +20,7 @@ import { listNpcCapitalShips } from '../../npc/npcFleetRegistry';
 /**
  * AI NPC 서브코어
  * - 모든 NPC의 판단/행동/전투/생산 스케줄을 이 축으로 수렴시키는 기반.
- * - 궤도 **수송선**(테이블 `arcOrbitPresenceFill` 전용 함·함장, 현재 12척) 다음 행성: 월드 전 행성 풀 **최소 부하 균형**(`balanceArcTrafficPlanetPick`).
+ * - 궤도 **수송선**(테이블 `arcOrbitPresenceFill` 전용 함·함장, 최대 8척) 다음 행성: 월드 전 행성 풀 **최소 부하 균형**(`balanceArcTrafficPlanetPick`).
  * - 행성 체류(dwell): `npc_ai_ships.csv` min/max(초), 엔진 **상한 600초(10분)**.
  */
 export class AiNpcSubCore extends BaseArcSubCore {

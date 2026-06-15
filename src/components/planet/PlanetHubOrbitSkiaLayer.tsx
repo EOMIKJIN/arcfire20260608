@@ -13,7 +13,9 @@ import { computeArcNpcShipScreenPacked, packArcNpcShipsToFloat32 } from './plane
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-const HUB_ARC_CAPTION_MAX = 12;
+import { PLANET_HUB_ORBIT_CAPITAL_RENDER_MAX } from '../../game/planetHubOrbitRenderBudget';
+
+const HUB_ARC_CAPTION_MAX = PLANET_HUB_ORBIT_CAPITAL_RENDER_MAX;
 const ORBIT_MARK_ANCHOR_PX = 7;
 
 const styles = StyleSheet.create({

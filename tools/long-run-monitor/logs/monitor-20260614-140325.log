@@ -1,0 +1,2 @@
+[2026-06-14 14:03:25] monitor start package=com.arcfire.online interval=15m
+[2026-06-14 14:03:25] meminfo -> D:\arcfire20260607\tools\long-run-monitor\logs\meminfo-20260614-140325.log

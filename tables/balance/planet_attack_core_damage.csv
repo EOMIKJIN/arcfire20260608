@@ -1,0 +1,3 @@
+attack_kind,resource_delta,population_delta,defense_delta,technology_delta,environment_delta,daily_event_cap,enabled,notesKo
+arc_inbound_drone_impact,0,0,-2,-1,0,120,1,아크코어 드론 외곽 충돌 1회 — 방위·기술 소폭 감소
+planetary_bombardment_stub,0,-3,-4,0,-2,24,0,향후 전투/공성 타격(미연동 스텁)

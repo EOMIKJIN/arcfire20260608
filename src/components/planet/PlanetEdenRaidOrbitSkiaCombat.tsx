@@ -14,9 +14,11 @@ import {
   Skia,
   StrokeCap,
   StrokeJoin,
+  useImage,
 } from '@shopify/react-native-skia';
 import type { SkPaint } from '@shopify/react-native-skia';
 import type { SkPicture } from '@shopify/react-native-skia';
+import type { SkImage } from '@shopify/react-native-skia';
 import { FONTS } from '../../utils/theme';
 import {
   isNovaAoeWeapon,
@@ -25,6 +27,7 @@ import {
   resolveCapitalProjectilePresentation,
 } from '../../combat/capitalWeaponPipeline';
 import type { Agent, Missile, PlanetEdenRaidSim } from './PlanetEdenRaidTestLayer';
+import { drawMissileHitFxOnSkCanvas } from './planetNebulaMissileHitFxDraw';
 
 const ALLY_MARK_HALF = 7;
 const DIAMOND_HEADING_OFFSET_DEG = 90;
@@ -479,6 +482,8 @@ function recordCombatOrbitPicture(
   sim: PlanetEdenRaidSim,
   pools: CombatSkiaPoolBundle,
   orbitSize: number,
+  dodgeImage: SkImage | null,
+  renderMissileDodgeFx: boolean,
 ): SkPicture {
   const tMs = sim.tMsRef.current;
   const agents = sim.agentsRef.current;
@@ -673,16 +678,25 @@ function recordCombatOrbitPicture(
     }
   }
 
+  if (renderMissileDodgeFx && dodgeImage) {
+    drawMissileHitFxOnSkCanvas(canvas, dodgeImage, sim.missileHitFxRef.current, tMs);
+  }
+
   return recorder.finishRecordingAsPicture();
 }
 
 export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSkiaCombat({
   sim,
+  renderMissileDodgeFx = true,
 }: {
   sim: PlanetEdenRaidSim;
+  /** false — 성운 Skia 백드롭(`SkiaPlanetNebulaShaderBackdrop`)에서 colorDodge 처리 */
+  renderMissileDodgeFx?: boolean;
 }) {
   const mountedRef = useRef(true);
   const orbitSizeRef = useRef(0);
+  const renderMissileDodgeFxRef = useRef(renderMissileDodgeFx);
+  renderMissileDodgeFxRef.current = renderMissileDodgeFx;
   const picLiveRef = useRef<SkPicture | null>(null);
   /** Path 풀·노바 접선 맵을 한 객체에 유지 — 분리 ref 시 HMR/번들 불일치로 런타임 ReferenceError·Skia SIGSEGV로 이어진 사례 방지 */
   const poolsRef = useRef<CombatSkiaPoolBundle | null>(null);
@@ -690,6 +704,18 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
     poolsRef.current = createCombatSkiaPoolBundle();
   }
   const pools = poolsRef.current;
+  const dodgeImage = useImage(require('../../../assets/images/effects/color_dodge_02.png'));
+  const dodgeImageRef = useRef<SkImage | null>(null);
+  useEffect(() => {
+    dodgeImageRef.current = dodgeImage ?? null;
+  }, [dodgeImage]);
+  useEffect(() => {
+    return () => {
+      try {
+        (dodgeImage as unknown as { dispose?: () => void })?.dispose?.();
+      } catch { /* ignore */ }
+    };
+  }, [dodgeImage]);
 
   const [picture, setPicture] = useState<SkPicture | null>(null);
 
@@ -703,7 +729,13 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
       if (!mountedRef.current) return;
       const orbitSz = orbitSizeRef.current;
       if (orbitSz < 1) return;
-      const next = recordCombatOrbitPicture(sim, pools, orbitSz);
+      const next = recordCombatOrbitPicture(
+        sim,
+        pools,
+        orbitSz,
+        dodgeImageRef.current,
+        renderMissileDodgeFxRef.current,
+      );
       const prev = picLiveRef.current;
       picLiveRef.current = next;
       setPicture(next);

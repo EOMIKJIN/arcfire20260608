@@ -1963,7 +1963,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_15",
+    id: "npc_mock_ai_ship_15",
     name: "모의전함 15",
     hullTypeId: "hull_cap_research_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -1991,7 +1991,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_04",
+    id: "npc_mock_ai_ship_04",
     name: "모의전함 04",
     hullTypeId: "hull_cap_research_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -2019,7 +2019,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_11",
+    id: "npc_mock_ai_ship_11",
     name: "모의전함 11",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -2271,7 +2271,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_10",
+    id: "npc_mock_ai_ship_10",
     name: "모의전함 10",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -2299,7 +2299,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_16",
+    id: "npc_mock_ai_ship_16",
     name: "모의전함 16",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -2327,7 +2327,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_09",
+    id: "npc_mock_ai_ship_09",
     name: "모의전함 09",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -2355,7 +2355,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_19",
+    id: "npc_mock_ai_ship_19",
     name: "모의전함 19",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -2411,7 +2411,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_06",
+    id: "npc_mock_ai_ship_06",
     name: "모의전함 06",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -2439,7 +2439,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_14",
+    id: "npc_mock_ai_ship_14",
     name: "모의전함 14",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -2467,7 +2467,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_18",
+    id: "npc_mock_ai_ship_18",
     name: "모의전함 18",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -2495,7 +2495,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_07",
+    id: "npc_mock_ai_ship_07",
     name: "모의전함 07",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -2579,7 +2579,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_01",
+    id: "npc_mock_ai_ship_01",
     name: "모의전함 01",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -2691,7 +2691,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_02",
+    id: "npc_mock_ai_ship_02",
     name: "모의전함 02",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -2943,7 +2943,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_08",
+    id: "npc_mock_ai_ship_08",
     name: "모의전함 08",
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -2999,7 +2999,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_17",
+    id: "npc_mock_ai_ship_17",
     name: "모의전함 17",
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -3055,7 +3055,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_12",
+    id: "npc_mock_ai_ship_12",
     name: "모의전함 12",
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -3139,7 +3139,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_03",
+    id: "npc_mock_ai_ship_03",
     name: "모의전함 03",
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -3167,7 +3167,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_13",
+    id: "npc_mock_ai_ship_13",
     name: "모의전함 13",
     hullTypeId: "hull_cap_siege_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -3195,7 +3195,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
   },
   {
-    id: "npc_mock_pvp_ship_05",
+    id: "npc_mock_ai_ship_05",
     name: "모의전함 05",
     hullTypeId: "hull_cap_siege_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
@@ -7812,8 +7812,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_15": {
-    id: "npc_mock_pvp_ship_15",
+  "npc_mock_ai_ship_15": {
+    id: "npc_mock_ai_ship_15",
     displayName: "모의전함 15",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0193,
@@ -7834,8 +7834,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_04": {
-    id: "npc_mock_pvp_ship_04",
+  "npc_mock_ai_ship_04": {
+    id: "npc_mock_ai_ship_04",
     displayName: "모의전함 04",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0194,
@@ -7856,8 +7856,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_11": {
-    id: "npc_mock_pvp_ship_11",
+  "npc_mock_ai_ship_11": {
+    id: "npc_mock_ai_ship_11",
     displayName: "모의전함 11",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0198,
@@ -8054,8 +8054,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_10": {
-    id: "npc_mock_pvp_ship_10",
+  "npc_mock_ai_ship_10": {
+    id: "npc_mock_ai_ship_10",
     displayName: "모의전함 10",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.02,
@@ -8076,8 +8076,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_16": {
-    id: "npc_mock_pvp_ship_16",
+  "npc_mock_ai_ship_16": {
+    id: "npc_mock_ai_ship_16",
     displayName: "모의전함 16",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0202,
@@ -8098,8 +8098,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_09": {
-    id: "npc_mock_pvp_ship_09",
+  "npc_mock_ai_ship_09": {
+    id: "npc_mock_ai_ship_09",
     displayName: "모의전함 09",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0202,
@@ -8120,8 +8120,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_19": {
-    id: "npc_mock_pvp_ship_19",
+  "npc_mock_ai_ship_19": {
+    id: "npc_mock_ai_ship_19",
     displayName: "모의전함 19",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0203,
@@ -8164,8 +8164,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_06": {
-    id: "npc_mock_pvp_ship_06",
+  "npc_mock_ai_ship_06": {
+    id: "npc_mock_ai_ship_06",
     displayName: "모의전함 06",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0201,
@@ -8186,8 +8186,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_14": {
-    id: "npc_mock_pvp_ship_14",
+  "npc_mock_ai_ship_14": {
+    id: "npc_mock_ai_ship_14",
     displayName: "모의전함 14",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0203,
@@ -8208,8 +8208,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_18": {
-    id: "npc_mock_pvp_ship_18",
+  "npc_mock_ai_ship_18": {
+    id: "npc_mock_ai_ship_18",
     displayName: "모의전함 18",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0204,
@@ -8230,8 +8230,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_07": {
-    id: "npc_mock_pvp_ship_07",
+  "npc_mock_ai_ship_07": {
+    id: "npc_mock_ai_ship_07",
     displayName: "모의전함 07",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0204,
@@ -8296,8 +8296,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_01": {
-    id: "npc_mock_pvp_ship_01",
+  "npc_mock_ai_ship_01": {
+    id: "npc_mock_ai_ship_01",
     displayName: "모의전함 01",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0203,
@@ -8384,8 +8384,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_02": {
-    id: "npc_mock_pvp_ship_02",
+  "npc_mock_ai_ship_02": {
+    id: "npc_mock_ai_ship_02",
     displayName: "모의전함 02",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0206,
@@ -8582,8 +8582,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_08": {
-    id: "npc_mock_pvp_ship_08",
+  "npc_mock_ai_ship_08": {
+    id: "npc_mock_ai_ship_08",
     displayName: "모의전함 08",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0211,
@@ -8626,8 +8626,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_17": {
-    id: "npc_mock_pvp_ship_17",
+  "npc_mock_ai_ship_17": {
+    id: "npc_mock_ai_ship_17",
     displayName: "모의전함 17",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.021,
@@ -8670,8 +8670,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_12": {
-    id: "npc_mock_pvp_ship_12",
+  "npc_mock_ai_ship_12": {
+    id: "npc_mock_ai_ship_12",
     displayName: "모의전함 12",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0212,
@@ -8736,8 +8736,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_03": {
-    id: "npc_mock_pvp_ship_03",
+  "npc_mock_ai_ship_03": {
+    id: "npc_mock_ai_ship_03",
     displayName: "모의전함 03",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0212,
@@ -8758,8 +8758,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_13": {
-    id: "npc_mock_pvp_ship_13",
+  "npc_mock_ai_ship_13": {
+    id: "npc_mock_ai_ship_13",
     displayName: "모의전함 13",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.0209,
@@ -8780,8 +8780,8 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
     closeRangeWeaponId: "w_missile_arc_005",
     auxWeaponId: "",
   },
-  "npc_mock_pvp_ship_05": {
-    id: "npc_mock_pvp_ship_05",
+  "npc_mock_ai_ship_05": {
+    id: "npc_mock_ai_ship_05",
     displayName: "모의전함 05",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.021,

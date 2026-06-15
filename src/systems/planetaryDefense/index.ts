@@ -1,17 +1,10 @@
-export {
-  listPlanetDefenseSatellites,
-  resolvePlanetDefenseInterceptCapability,
-  resolvePlanetDefenseInterceptRoll,
-  type PlanetDefenseInterceptRollResult,
-} from './planetDefenseSatelliteService';
+export { listPlanetDefenseSatellites } from './planetDefenseSatelliteService';
 export {
   patchPlanetDefenseSatelliteInstanceLevel,
   patchPlanetDefenseSatelliteLevel,
-  resolvePlanetDefenseSatelliteInterceptChancePct,
   resolvePlanetDefenseSatelliteLevel,
 } from './planetDefenseSatelliteLevel';
 export {
-  resolveDefenseSatelliteInterceptChanceForObject,
   resolveDefenseSatelliteLevelForObject,
 } from './resolveDefenseSatelliteLevelForObject';
 export {

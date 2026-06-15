@@ -1,4 +1,4 @@
-# Daily audit — 2026-06-12T11:36:45.143Z
+# Daily audit — 2026-06-14T11:04:32.320Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -18,31 +18,44 @@
 [rebalance-weapon-ttk] updated 0 weapons in weapon_list.csv
 weapon_trade_listing_policy: shop=81 excluded_npc_clone=22
 tradePortListed sync: canonical=81 TRUE=81 demoted=0
-Generated CSV-driven content TS files at src/data/generated
+file:///D:/arcfire20260607/tools/content-tables/build-content-from-csv.mjs:279
+      throw new Error(
+            ^
+
+Error: [npc_ai_captains] displayName 중복(항상 서로 다른 이름 유지): "���� ���� 07" — npc_cpt_vega_red_07 vs npc_cpt_vega_blue_07
+    at assertUniqueNpcCaptainDisplayNames (file:///D:/arcfire20260607/tools/content-tables/build-content-from-csv.mjs:279:13)
+    at buildNpcCaptains (file:///D:/arcfire20260607/tools/content-tables/build-content-from-csv.mjs:289:3)
+    at main (file:///D:/arcfire20260607/tools/content-tables/build-content-from-csv.mjs:1012:33)
+    at file:///D:/arcfire20260607/tools/content-tables/build-content-from-csv.mjs:1050:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:377:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:671:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.11.1
 ```
 
-**exit:** 0
+**exit:** 1
 
 ## Largest TS/TSX under `src/` + `app/` (bytes)
 
-- 357,358 — `src/data/generated/csvNpcCapitalShips.ts`
-- 205,747 — `src/data/generated/csvItemDefs.ts`
-- 178,362 — `src/data/generated/csvNpcCaptains.ts`
-- 136,537 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 368,482 — `src/data/generated/csvNpcCapitalShips.ts`
+- 237,614 — `src/data/generated/csvItemDefs.ts`
+- 184,370 — `src/data/generated/csvNpcCaptains.ts`
+- 136,679 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 67,271 — `src/data/generated/csvWeapons.ts`
 - 56,993 — `src/data/generated/csvStoryScenes.ts`
-- 56,611 — `src/data/generated/csvWeapons.ts`
-- 47,434 — `app/(game)/planet.tsx`
+- 48,385 — `app/(game)/planet.tsx`
 - 46,287 — `src/data/balance/generated/csvSynthSystemColonization.ts`
-- 43,816 — `app/(game)/shipyard.tsx`
+- 44,259 — `app/(game)/shipyard.tsx`
 - 41,941 — `app/(game)/worldmap.tsx`
-- 37,554 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
-- 35,638 — `app/(game)/trade.tsx`
-- 27,734 — `src/types/index.ts`
-- 25,525 — `src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx`
+- 39,627 — `app/(game)/trade.tsx`
+- 32,500 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
+- 27,831 — `src/types/index.ts`
+- 26,371 — `src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx`
 - 25,324 — `src/store/playerStore.ts`
 - 25,125 — `src/data/generated/csvMissions.ts`
 - 21,671 — `src/data/galaxy100.ts`
-- 20,815 — `src/components/planet/planetHub/planetHubStyles.ts`
+- 20,633 — `src/components/planet/planetHub/planetHubStyles.ts`
 
 ## Planet hub eager `src/combat` import (should be absent)
 
@@ -53,9 +66,7 @@ Generated CSV-driven content TS files at src/data/generated
 - `src/components/planet/PlanetMainScanActionRow.tsx`
 - `src/components/planet/SkiaPlanetNebulaShaderBackdrop.tsx`
 - `src/components/TypewriterText.tsx`
-- `src/game/planetCapitalCombatHeavyUi.tsx`
 - `src/game/planetHub/usePlanetHubInterval.ts`
-- `src/game/usePlanetArcCoreMessagePresentation.ts`
 - `src/systems/mining/useMiningDriver.ts`
 
 ## `subscribe(` / `addEventListener(` hints (manual cleanup review)

@@ -1,12 +1,24 @@
 # 에이전트 안내 (Arcfire Online)
 
-Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v3.1_Final-1781345284482521549.mdc`** (프로젝트 헌법)를 따릅니다. 구현·운영 세부 요약은 아래와 `AGENTS.md`에 둡니다.
+## AI 페르소나·모델 자동 라우팅 (Auto)
+
+- **정본**: `.cursor/rules/gemini-code-agent-routing.mdc` — `alwaysApply`, 매 턴 @Fable/@Opus/@Composer/@Sonnet **없이** 자동 선별.
+- **원본 기획**: `.cursor/rules/gemini-code-1781406772084.md`
+- **세션 훅**: `.cursor/hooks/on-session-start-agent-routing.cjs` (`sessionStart`)
+- **Task 위임 model**: Fable `claude-fable-5-thinking-high` · Opus `claude-opus-4-8-thinking-high` · Sonnet `claude-4.6-sonnet-medium-thinking` · Composer `composer-2.5-fast`
+
+Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc`** (프로젝트 헌법 v4.0)를 따릅니다. 구현·운영 세부 요약은 아래와 `AGENTS.md`에 둡니다.
 
 - **아크코어**: `src/arcCore` — **세계 전체를 구축·유지하는 근원 마스터 AI(최종 시스템 축)**로 둔다. 인간 플레이 계정은 그 위에서 플레이·경험·행성 환경 상호작용을 한다. 신규 AI 시계·틱·세계 규칙은 가능하면 **`arcCoreHub`·명령 버스·서브코어**로 수렴시키고, 화면 전용 백그라운드 루프를 남발하지 않는다.
 - **아크코어 일일 운영**: 벽시계 **24h 관측** 후 **하루 1회**(기본 12:00 `Asia/Seoul`) `ArcCoreDailyOpsSubCore`가 행성 코어·경제·AABS·성계 개방을 일괄 재배치한다. 정책: `tables/balance/arc_core_daily_ops_policy.csv`. 궤도 수송·연출은 실시간 틱 유지.
 - **경제·무역 생태계 참고**: `docs/ECONOMY_TRADE_ECOSYSTEM_REFERENCE.md` — 무역소 카탈로그·tg_* 교역·zone 진열·17/21 허브·갭 목록(2026-06-12 스냅샷).
 - **Macro economy SIM**: `npm run sim:economy` → `docs/ECONOMY_SIM_DAILY_OPS.md` — delta ingest → 일일 배치 overlay.
-- **테이블 우선**: 환경 부트스트랩·NPC 함장·전함은 **`tables/content` CSV → `npm run build:content-tables`** 가 정본이다. 아크코어가 스스로 환경을 깔 때도 **코드에 임의 엔티티·이름 풀을 두지 말고** CSV·레지스트리(`npcFleetRegistry`, `arcNpcTrafficTableRegistry`, `nearbyOrbitPresenceSystem`) 패턴을 따른다. 헌법: `.cursor/rules/Arcfire_Master_Spec_v3.1_Final-1781345284482521549.mdc` §1·§6.
+- **테이블 우선**: 환경 부트스트랩·NPC 함장·전함은 **`tables/content` CSV → `npm run build:content-tables`** 가 정본이다. 아크코어가 스스로 환경을 깔 때도 **코드에 임의 엔티티·이름 풀을 두지 말고** CSV·레지스트리(`npcFleetRegistry`, `arcNpcTrafficTableRegistry`, `nearbyOrbitPresenceSystem`) 패턴을 따른다. 헌법: `.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc` §1·§6.
+- **허브 궤도 트래픽(v4.0 §6-2)**: STAGE 1 동시 최대 **5척**, **15초** spawn/despawn — `src/game/hubOrbitTrafficSession.ts` + `planetMemoCache/hub_traffic` 풀. info 패널 `‹AI›` 접두. `onSnapshot`·`hub_peers`·`aiVirtualPlayerStore` 금지.
+- **행성 로컬 점유(v4.0 §6-3)**: `planet_holds` 프로필 단발 병합(`userDataSync.planet_holds`) — `ownership_claim` 트랜잭션 금지.
+- **경제 탄력(v4.0 §10-2)**: `price_elasticity=0` — 실시간 가격 변동 없음, `runArcCoreDailyOpsBatch` → `runMarketPricePass`만.
+- **통합 레벨링(v4.0 §10-3)**: 전투 종료 `recordMatchSummary`(로컬) → 일일 배치 `runIntegratedEngageHpAdjustPass` → `globalEngageHpMul`(0.7~1.3).
+- **전함 식별자(v4.0 §7-2)**: `npc_mock_pvp_ship_*` → **`npc_mock_ai_ship_*`** (CSV 정본).
 - **궤도 수송선(아크코어)**: `listArcNpcTrafficRowsFromTables`는 **`arcOrbitPresenceFill` 함장·전함만**(현재 12척 P-01…); 다음 행성은 **월드 전 행성 균등**; 체류(dwell)는 `npc_ai_ships.csv`의 `arcTrafficPlanetDwellSecMin`/`Max`(초), **상한 600초(10분)**.
 - **행성 핵심지표**: `planets.csv`의 `coreResource/corePopulation/coreDefense/coreTechnology/coreEnvironment`(0..100)는 **초기 시드**만. 변화하는 값은 **`planetCoreRuntimeStore`**(AsyncStorage, `arcfire_planet_core_runtime_v1`)가 정본이다. **일일 갱신**은 `ArcCoreDailyOpsSubCore` 배치; `AiPlanetsSubCore`는 코어 DB 부트스트랩만. UI는 `R,P,D,T,E` 5색 디지털 게이지(20%/칸). **에너지는 R(Resource)에 통합**.
 - **아키텍처 감사·리스크**: `docs/README_ARCHITECTURE.md` → `Arcfire_Architecture_Audit_2026-06-08.md`, `ARCHITECTURE_RISK_REGISTER.md`. 마스터 스펙 정본: `docs/Arcfire_RN_Architecture_Master_Spec(single).md` **§18**.
@@ -31,6 +43,34 @@ Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v3
 - **일일 성능·위생 점검**: `npm run audit:daily` → `tools/daily-perf-audit/reports/latest.md`. GitHub에는 `.github/workflows/daily-performance-audit.yml` 스케줄(1일 1회)이 있으며, 로컬은 `tools/daily-perf-audit/README.md`의 작업 스케줄러 예시를 참고.
 - **아크코어 × Cursor 에이전트 자기 최적화**: `npm run audit:arc-self-optimize:pack` → `tools/arc-core-self-optimize/outbox/cursor-handoff.md` 를 Cloud Agent 등에 첨부. 옵트인 `stop` 훅은 `.cursor/trigger-arc-self-optimize-on-stop` 플래그 파일로 1회 안내 — `tools/arc-core-self-optimize/README.md`.
 - **런타임 버그 수정**: `.cursor/rules/arcfire-bug-debug-workflow.mdc` — adb logcat 캡처 → 사용자 재현 → 로그 근거 수정. Cursor **Agent 모드 그대로** 사용(Debug 전환 불필요).
+- **Skia GL 메모리 헌법 (P0 · 2026-06-14~ 필수)**: `.cursor/rules/arcfire-skia-memory-lifecycle.mdc` — **다음 기능개발부터** Skia/Reanimated 고프레임 코드는 Zero-Allocation(Pre-allocation + `rewind()` + 단일 Canvas)만 허용. **완료 게이트**: `npm run audit:skia-memory` PASS + `tsc` + GL mtrack Δ ±15MB. 루프 내 `Skia.Path.Make()`/`Paint()`·`<Path>` `.map()`·이벤트마다 Canvas 리마운트 **금지**. `docs/(구현)SKIA_WORKLET_MEMORY_CONTRACT.md` · UI 스레드 SharedValue Path **dispose 금지**.
+- **장거리 미사일(1차)**: 2026-06 제거됨 — 메모리 격리 테스트 중. 방어위성은 `planetaryDefense` + 궤도 마커만 유지. 재도입 시 Skia 단일 Canvas·GL 실측 필수.
 - **UI 오버레이·모달**: `src/ui/overlay/` — `ArcOverlayHost` 루트 단일 호스트, `showArcAlert` 등 imperative API. RN `Modal`·magic bottom padding 금지. 점검: `npm run audit:ui-overlay`.
 
-자세한 헌법·15대 금지·STAGE 계약은 **`.cursor/rules/Arcfire_Master_Spec_v3.1_Final-1781345284482521549.mdc`** 를 읽으세요. 런타임 버그는 **`.cursor/rules/arcfire-bug-debug-workflow.mdc`**.
+## Metro·앱 반영 (사용자 안내)
+
+에이전트는 검증·완료 안내 시 **기본은 앱 리로드(`r`)** 만 제안한다. **Metro 재시작·앱 완전 재시작·네이티브 재빌드**가 **실제로 필요할 때만** 아래 형식으로 **반드시** 표시한다(불필요한 Metro 재시작 권유 금지).
+
+```text
+⚠️ 중요 — Metro 재시작 필요
+(이유 한 줄 · 명령 예: npx expo start --clear)
+
+또는
+
+⚠️ 중요 — 앱 완전 재시작 필요
+(이유: 모듈 캐시·balance policy 등)
+
+또는
+
+⚠️ 중요 — 네이티브 재빌드 필요
+(이유 · 명령 예: npx expo run:android)
+```
+
+| 변경 종류 | 보통 충분 | ⚠️ 중요 표시가 필요한 경우 |
+|---|---|---|
+| TS/TSX·JS만 | Metro에서 **`r` 리로드** | — |
+| `npm run build:*-tables` 후 **모듈 캐시 정책** | 앱 **완전 종료 후 재실행** | `getArcCoreInboundDronePolicy` 등 **프로세스 생명주기 캐시** |
+| Metro/Hermes 꼬임·구버전 번들 | — | **`npx expo start --clear`** |
+| 네이티브·Skia·gradle | — | **`expo run:android`** (또는 iOS 동등) |
+
+자세한 헌법·16대 금지·STAGE 계약은 **`.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc`** 를 읽으세요. 런타임 버그는 **`.cursor/rules/arcfire-bug-debug-workflow.mdc`**.

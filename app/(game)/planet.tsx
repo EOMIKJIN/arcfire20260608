@@ -29,7 +29,13 @@ import { useSkillDbStore } from '../../src/store/skillDbStore';
 import { useClanWarFoundationStore } from '../../src/store/clanWarFoundationStore';
 import { useMenuNotificationStore } from '../../src/store/menuNotificationStore';
 import { useArcNpcTrafficStore, type ArcNpcTrafficShip } from '../../src/store/arcNpcTrafficStore';
+import { useArcInboundDroneStore } from '../../src/store/arcInboundDroneStore';
 import { registerPlanetOrbitClockMs } from '../../src/arcCore/orbitClockMsBridge';
+import {
+  publishArcInboundDroneHubBridge,
+  resetArcInboundDroneHubBridge,
+} from '../../src/arcCore/inboundDrone/arcInboundDroneHubBridge';
+import { resetHubInboundDroneDodgeBridge } from '../../src/arcCore/inboundDrone/hubInboundDroneDodgeBridge';
 import { resolveMainStageCombatEnabled } from '../../src/arcCore/planetBalance/planetZoneIndexRegistry';
 import { releasePlanetMainStageSession } from '../../src/game/planetMainStageSession';
 import { registerPlanetSessionResource } from '../../src/game/planetSessionRegistry';
@@ -54,6 +60,7 @@ import {
   packArcNpcShipsToFloat32,
 } from '../../src/components/planet/planetOrbitHubWorklets';
 import { QuestHUD } from '../../src/components/QuestHUD';
+import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { useArcNarrativeOverlay } from '../../src/ui/overlay/useArcNarrativeOverlay';
 import type { ArcNarrativeOverlayConfig } from '../../src/ui/overlay/useArcNarrativeOverlay';
 import { StageShell } from '../../src/stages/StageShell';
@@ -112,7 +119,6 @@ import {
   resolvePlanetHubNpcDialogSceneId,
 } from '../../src/game/planetHubNpcDialog';
 import { formatSalvageLootLabel, pickSalvageLootItemId } from '../../src/game/planetSalvageSearch';
-import { usePlanetArcCoreMessagePresentation } from '../../src/game/usePlanetArcCoreMessagePresentation';
 import { NearbyShipInfoPanel, PlanetStageBackground } from '../../src/components/planet/planetHub/planetHubSubcomponents';
 import { planetHubStyles as styles } from '../../src/components/planet/planetHub/planetHubStyles';
 import {
@@ -128,9 +134,18 @@ import {
   resolvePlanetBattleReadyDurationMs,
   splitStoryTextByMaxLines,
 } from '../../src/game/planetHub/planetHubConstants';
-import { usePlanetHubArcCoreWarningBlink } from '../../src/game/planetHub/usePlanetHubArcCoreWarningBlink';
 import { usePlanetHubBattleReady } from '../../src/game/planetHub/usePlanetHubBattleReady';
 import { usePlanetHubInfoDistanceSort } from '../../src/game/planetHub/usePlanetHubInfoDistanceSort';
+import { usePlanetHubInterval } from '../../src/game/planetHub/usePlanetHubInterval';
+import {
+  buildHubTrafficPresenceRows,
+  capHubOrbitPresenceToBudget,
+  HUB_ORBIT_TRAFFIC_CYCLE_MS,
+  seedHubOrbitTraffic,
+  startHubOrbitTrafficSession,
+  tickHubOrbitTraffic,
+} from '../../src/game/hubOrbitTrafficSession';
+import { applyPlanetHubOrbitRenderBudget } from '../../src/game/planetHubOrbitRenderBudget';
 
 
 export default function PlanetScreen() {
@@ -308,18 +323,6 @@ export default function PlanetScreen() {
     }),
     [planet, hasTradeMenuBadge, clearMenuBadge, handleDeparture, onFacilityNavigate],
   );
-  /** 궤도 시계 활성 조건용 — 함선 수만 구독해 스냅샷 갱신마다 전체 행성 화면이 리렌더되지 않게 함 */
-  const arcNpcAtPlanetCount = useArcNpcTrafficStore(
-    useCallback((s) => {
-      const pid = planet?.id;
-      if (!pid) return 0;
-      let n = 0;
-      for (const sh of s.ships) {
-        if (sh.planetId === pid) n += 1;
-      }
-      return n;
-    }, [planet?.id]),
-  );
   const arcNpcCaptainsSnap = useArcNpcTrafficStore((s) => s.captains);
   const arcNpcShipsSnap = useArcNpcTrafficStore((s) => s.ships);
   const arcNpcShipsAtPlanet = useMemo(() => {
@@ -332,10 +335,20 @@ export default function PlanetScreen() {
     out.sort((a, b) => a.id.localeCompare(b.id));
     return out;
   }, [arcNpcShipsSnap, planet?.id]);
-  const arcSkiaCaptionHeads = useMemo(() => {
-    const m = new Map(arcNpcCaptainsSnap.map((c) => [c.id, c.name] as const));
-    return arcNpcShipsAtPlanet.map((s) => orbitLabelHead3(m.get(s.captainId) ?? s.captainId));
-  }, [arcNpcShipsAtPlanet, arcNpcCaptainsSnap]);
+
+  const arcInboundDronesSnap = useArcInboundDroneStore((s) => s.drones);
+  const arcInboundDronesAtPlanet = useMemo(() => {
+    const pid = planet?.id;
+    if (!pid) return [];
+    const out: typeof arcInboundDronesSnap = [];
+    for (const d of arcInboundDronesSnap) {
+      if (d.planetId !== pid) continue;
+      if (d.phase === 'inbound' || d.phase === 'destroyed' || d.phase === 'impacted') {
+        out.push(d);
+      }
+    }
+    return out;
+  }, [arcInboundDronesSnap, planet?.id]);
 
   /** 적팀(red/orange) 진입 + balance CSV `mainStageCombatEnabled` 게이트 */
   const enemyFleetEntered = Boolean(
@@ -364,6 +377,33 @@ export default function PlanetScreen() {
     stageSessionActive: stageSession.isActive,
   });
   const capitalCombatOrbitPaused = !isPlanetRouteFocused || !appStateActive;
+
+  useEffect(() => {
+    if (!planet?.id || !system?.id) {
+      resetArcInboundDroneHubBridge();
+      resetHubInboundDroneDodgeBridge();
+      return;
+    }
+    publishArcInboundDroneHubBridge({
+      planetId: planet.id,
+      systemId: system.id,
+      hubCombatActive: capitalCombatOrbitActive,
+      routeFocused: isPlanetRouteFocused,
+      appActive: appStateActive,
+      stageSessionActive: stageSession.isActive,
+    });
+    return () => {
+      resetArcInboundDroneHubBridge();
+      resetHubInboundDroneDodgeBridge();
+    };
+  }, [
+    planet?.id,
+    system?.id,
+    capitalCombatOrbitActive,
+    isPlanetRouteFocused,
+    appStateActive,
+    stageSession.isActive,
+  ]);
 
   const planetWorldObjects = useMemo(
     () => (planet && system ? listPlanetWorldObjects({ planet, system }) : []),
@@ -464,14 +504,6 @@ export default function PlanetScreen() {
     applyUiNowMs: setMiningUiNowMs,
     onGrant: handleMiningGrant,
   });
-  const arcCoreMessagePresentation = usePlanetArcCoreMessagePresentation(
-    resolvedPlanetId,
-    planetStageSkiaActive && isPlanetRouteFocused,
-  );
-  const arcCoreWarningBlinkOn = usePlanetHubArcCoreWarningBlink(
-    resolvedPlanetId,
-    arcCoreMessagePresentation.warningVisible,
-  );
   const [activeIngameDialogSceneId, setActiveIngameDialogSceneId] = useState<string | null>(null);
   const [ingameDialogPage, setIngameDialogPage] = useState(0);
   const [ingameDialogSegment, setIngameDialogSegment] = useState(0);
@@ -661,17 +693,80 @@ export default function PlanetScreen() {
     };
   }, [isPlanetRouteFocused, planet?.id, system?.id]);
 
-  /** 테이블 근접 + 현재 행성에 머문 아크 수송선 — INFO 목록·궤도 표시 공통 */
+  /** 궤도 Skia·마크 렌더 — 테이블+아크 합산 상한 (아르카디아 17척 등 GL·뷰 폭주 방지) */
+  const orbitRenderBudget = useMemo(
+    () => applyPlanetHubOrbitRenderBudget(nearbyPresence, arcNpcShipsAtPlanet),
+    [nearbyPresence, arcNpcShipsAtPlanet],
+  );
+  const orbitTablePresence = orbitRenderBudget.tableRows;
+  const orbitArcShipsAtPlanet = orbitRenderBudget.arcShips;
+  const orbitArcSkiaCaptionHeads = useMemo(() => {
+    const m = new Map(arcNpcCaptainsSnap.map((c) => [c.id, c.name] as const));
+    return orbitArcShipsAtPlanet.map((s) => orbitLabelHead3(m.get(s.captainId) ?? s.captainId));
+  }, [orbitArcShipsAtPlanet, arcNpcCaptainsSnap]);
+
+  /** 테이블 근접 + 현재 행성에 머문 아크 수송선 + 허브 트래픽(‹AI›) — INFO·궤도 공통 · v4.0 최대 5척 */
+  const [hubTrafficTick, setHubTrafficTick] = useState(0);
   const hubMergedNearbyPresence = useMemo(() => {
     if (!planet || !system) return nearbyPresence;
-    return mergeArcShipsIntoNearbyHubPresence(
+    const merged = mergeArcShipsIntoNearbyHubPresence(
       nearbyPresence,
       arcNpcShipsAtPlanet,
       arcNpcCaptainsSnap,
       planet.id,
       system.id,
     );
-  }, [nearbyPresence, arcNpcShipsAtPlanet, arcNpcCaptainsSnap, planet, system]);
+    const hubTrafficRows = buildHubTrafficPresenceRows(planet.id, system.id);
+    void hubTrafficTick;
+    return capHubOrbitPresenceToBudget([...merged, ...hubTrafficRows]);
+  }, [nearbyPresence, arcNpcShipsAtPlanet, arcNpcCaptainsSnap, planet, system, hubTrafficTick]);
+
+  useEffect(() => {
+    if (!isPlanetRouteFocused || !planet || !system) return;
+    const stopSession = startHubOrbitTrafficSession(planet.id, system.id);
+    const excludeCaptains = new Set<string>();
+    const excludeShips = new Set<string>();
+    for (const row of nearbyPresence) {
+      const sid = row.linkedCapitalShipId;
+      if (sid) excludeShips.add(sid);
+    }
+    for (const ship of arcNpcShipsAtPlanet) {
+      excludeCaptains.add(ship.captainId);
+      excludeShips.add(ship.id);
+    }
+    seedHubOrbitTraffic(planet.id, system.id, excludeCaptains, excludeShips);
+    setHubTrafficTick((v) => v + 1);
+    const token = registerPlanetSessionResource({
+      ownerId: 'hub_orbit_traffic_session',
+      planetId: planet.id,
+      dispose: stopSession,
+    });
+    return () => token.release();
+  }, [isPlanetRouteFocused, planet?.id, system?.id, nearbyPresence, arcNpcShipsAtPlanet]);
+
+  const tickHubTraffic = useCallback(() => {
+    if (!planet || !system) return;
+    const excludeCaptains = new Set<string>();
+    const excludeShips = new Set<string>();
+    for (const row of nearbyPresence) {
+      const sid = row.linkedCapitalShipId;
+      if (sid) excludeShips.add(sid);
+    }
+    for (const ship of arcNpcShipsAtPlanet) {
+      excludeCaptains.add(ship.captainId);
+      excludeShips.add(ship.id);
+    }
+    tickHubOrbitTraffic(planet.id, system.id, excludeCaptains, excludeShips);
+    setHubTrafficTick((v) => v + 1);
+  }, [planet, system, nearbyPresence, arcNpcShipsAtPlanet]);
+
+  usePlanetHubInterval(
+    'planet_hub_orbit_traffic',
+    planet?.id ?? null,
+    isPlanetRouteFocused && Boolean(planet && system),
+    HUB_ORBIT_TRAFFIC_CYCLE_MS,
+    tickHubTraffic,
+  );
 
   const hubMergedRowsRef = useRef(hubMergedNearbyPresence);
   hubMergedRowsRef.current = hubMergedNearbyPresence;
@@ -705,7 +800,7 @@ export default function PlanetScreen() {
     showArcAlert('수색 완료', `${formatSalvageLootLabel(itemId)} 1개를 회수했습니다.`);
   }, [planet, activeSalvageWreck, addInventoryItem, setMenuBadge]);
   const tableOrbitSlotCountRef = useRef(0);
-  tableOrbitSlotCountRef.current = nearbyPresence.length;
+  tableOrbitSlotCountRef.current = orbitTablePresence.length;
   const arcShipIndexByIdRef = useRef<Map<string, number>>(new Map());
   useEffect(() => {
     const m = new Map<string, number>();
@@ -721,7 +816,7 @@ export default function PlanetScreen() {
   /** 궤도 worklet용 평탄화 (ORBIT_FLAT_STRIDE 개/슬롯) */
   const orbitFlatParams = useMemo(
     () =>
-      nearbyPresence.flatMap(r => {
+      orbitTablePresence.flatMap(r => {
         const o = r.orbit;
         const radius = o.radius * NEAR_PLANET_ORBIT_RADIUS_SCALE;
         return [
@@ -734,7 +829,7 @@ export default function PlanetScreen() {
           o.periodScale,
         ];
       }),
-    [nearbyPresence],
+    [orbitTablePresence],
   );
 
   /** 누적 경과 ms — %1 없이 각도만 선형 증가 (함선별 periodScale 로 고유 속도) */
@@ -764,7 +859,10 @@ export default function PlanetScreen() {
   useEffect(() => {
     const needOrbitClock =
       planetStageSkiaActive &&
-      (nearbyPresence.length > 0 || planetWorldObjects.length > 0 || arcNpcAtPlanetCount > 0);
+      (orbitTablePresence.length > 0 ||
+        planetWorldObjects.length > 0 ||
+        orbitArcShipsAtPlanet.length > 0 ||
+        arcInboundDronesAtPlanet.length > 0);
     if (!needOrbitClock) {
       orbitFrame.setActive(false);
       return;
@@ -781,9 +879,10 @@ export default function PlanetScreen() {
     };
   }, [
     planetStageSkiaActive,
-    nearbyPresence.length,
+    orbitTablePresence.length,
     planetWorldObjects.length,
-    arcNpcAtPlanetCount,
+    orbitArcShipsAtPlanet.length,
+    arcInboundDronesAtPlanet.length,
     orbitFrame,
     planet?.id,
     system?.id,
@@ -796,11 +895,11 @@ export default function PlanetScreen() {
   });
   useEffect(() => {
     arcPackSortRef.current = {
-      flat: packArcNpcShipsToFloat32(arcNpcShipsAtPlanet),
+      flat: packArcNpcShipsToFloat32(orbitArcShipsAtPlanet),
       t0: orbitClockMs.value,
-      count: arcNpcShipsAtPlanet.length,
+      count: orbitArcShipsAtPlanet.length,
     };
-  }, [arcNpcShipsAtPlanet, orbitClockMs]);
+  }, [orbitArcShipsAtPlanet, orbitClockMs]);
 
   const [infoLineOrder, setInfoLineOrder] = useState<number[]>([]);
   useEffect(() => {
@@ -862,8 +961,8 @@ export default function PlanetScreen() {
     }));
   }, [infoLineOrder, hubMergedNearbyPresence]);
   const orbitCaptionsBySlot = useMemo(
-    () => nearbyPresence.map(r => orbitCaptainCaptionFromLine(r.displayLine)),
-    [nearbyPresence],
+    () => orbitTablePresence.map(r => orbitCaptainCaptionFromLine(r.displayLine)),
+    [orbitTablePresence],
   );
 
   const handleExitToTitle = useCallback(() => {
@@ -958,12 +1057,13 @@ export default function PlanetScreen() {
           system={system}
           zoneColor={zoneColor}
           orbitParamsSv={orbitParamsSv}
-          tableOrbitSlotCount={nearbyPresence.length}
+          tableOrbitSlotCount={orbitTablePresence.length}
           npcOrbitCycleMs={NPC_ORBIT_CYCLE_MS}
           orbitCaptionsBySlot={orbitCaptionsBySlot}
           orbitClockMs={orbitClockMs}
-          arcNpcShipsAtPlanet={arcNpcShipsAtPlanet}
-          arcSkiaCaptionHeads={arcSkiaCaptionHeads}
+          arcNpcShipsAtPlanet={orbitArcShipsAtPlanet}
+          arcSkiaCaptionHeads={orbitArcSkiaCaptionHeads}
+          arcInboundDronesAtPlanet={arcInboundDronesAtPlanet}
           worldObjects={planetWorldObjects}
           showEdenRaidTest={capitalCombatOrbitActive}
           miningPathActive={miningSession.status === 'running' && appStateActive}
@@ -972,16 +1072,6 @@ export default function PlanetScreen() {
           safeAiClanTerritoryPlate={safeAiClanTerritoryPlate}
           backgroundChrome={mainStageVertical.backgroundChrome}
           planetStageScale={planetStageScale}
-          /**
-           * Skia 레이어(성운 셰이더·허브 궤도) 활성 게이트: 포커스 + lifecycle active.
-           * 출발 순간에는 routeFocused 만으로는 불충분(전투 Skia teardown 과 동시 draw 방지).
-           */
-          skiaLoopsActive={planetStageSkiaActive}
-          arcCoreMissileActive={arcCoreMessagePresentation.missileVisible}
-          arcCoreMissileStartMs={arcCoreMessagePresentation.missileStartMs}
-          arcCoreMissileTravelMs={arcCoreMessagePresentation.missileTravelMs}
-          arcCoreInterceptVisualPlan={arcCoreMessagePresentation.interceptVisualPlan}
-          arcCoreInterceptSucceeded={arcCoreMessagePresentation.interceptSucceeded}
           combatSimRef={combatSimRef}
         />
       }
@@ -1150,22 +1240,14 @@ export default function PlanetScreen() {
             <Text style={styles.battleReadyCounter}>{`- ${battleReadyCounterSec} -`}</Text>
           </View>
         ) : null}
-        {arcCoreMessagePresentation.warningVisible ? (
-          <View style={styles.battleReadyOverlay} pointerEvents="none">
-            <Text
-              style={[
-                styles.battleReadyText,
-                arcCoreWarningBlinkOn ? styles.battleReadyTextBlinkOn : styles.battleReadyTextBlinkOff,
-              ]}
-            >
-              Missile 공습경고
-            </Text>
-          </View>
-        ) : null}
         </View>
       </View>
       </View>
     </StageShell>
+    <StageLoadingOverlay
+      visible={stageSession.isTransiting}
+      overlayId="stage-loading-planet-departure"
+    />
     </PlanetCapitalCombatRoot>
   );
 }

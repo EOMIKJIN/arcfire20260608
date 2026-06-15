@@ -28,6 +28,30 @@ function formatId(): string {
   return `board_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
+/** 삭제된 ArcCore 장거리 미사일(arc_core_message_*) 공지 — AsyncStorage 잔존분 제거용 */
+function isLegacyArcCoreMissileNotice(
+  notice: Pick<TavernNotice, 'title' | 'body' | 'dedupeKey'>,
+): boolean {
+  const dedupe = notice.dedupeKey ?? '';
+  if (dedupe.startsWith('arc_core_msg_')) return true;
+
+  const title = notice.title;
+  if (title === 'Missile 공습경고') return true;
+  if (title.startsWith('아크코어 메시지 미사일')) return true;
+  if (title.includes('아크코어 메시지') && title.includes('근접')) return true;
+  if (title.includes('방위위성') && title.includes('요격')) return true;
+
+  const body = notice.body;
+  if (body.includes('아크코어 장거리 미사일')) return true;
+  if (body.includes('장거리 미사일') && body.includes('아크코어')) return true;
+
+  return false;
+}
+
+function stripLegacyArcCoreMissileNotices(notices: TavernNotice[]): TavernNotice[] {
+  return notices.filter((n) => !isLegacyArcCoreMissileNotice(n));
+}
+
 function getDefaultNotices(): TavernNotice[] {
   const now = Date.now();
   return [
@@ -66,7 +90,7 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
         set({ loaded: true });
         return;
       }
-      const safe = parsed.notices
+      const mapped = parsed.notices
         .filter((n) => n && typeof n.title === 'string' && typeof n.body === 'string')
         .map((n) => ({
           id: typeof n.id === 'string' ? n.id : formatId(),
@@ -75,10 +99,15 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
           tag: (n.tag ?? '소문') as TavernNoticeTag,
           postedAtMs: Number.isFinite(Number(n.postedAtMs)) ? Number(n.postedAtMs) : Date.now(),
           dedupeKey: typeof n.dedupeKey === 'string' ? n.dedupeKey : undefined,
-        }))
+        }));
+      const safe = stripLegacyArcCoreMissileNotices(mapped)
         .sort((a, b) => b.postedAtMs - a.postedAtMs)
         .slice(0, MAX_NOTICE_COUNT);
-      set({ notices: safe.length > 0 ? safe : getDefaultNotices(), loaded: true });
+      const nextNotices = safe.length > 0 ? safe : getDefaultNotices();
+      set({ notices: nextNotices, loaded: true });
+      if (safe.length !== mapped.length) {
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ notices: nextNotices }));
+      }
     } catch {
       set({ loaded: true });
     }
@@ -91,6 +120,7 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
   },
 
   pushNotice: (notice) => {
+    if (isLegacyArcCoreMissileNotice(notice)) return;
     const nextPostedAtMs = notice.postedAtMs ?? Date.now();
     set((state) => {
       if (notice.dedupeKey && state.notices.some((n) => n.dedupeKey === notice.dedupeKey)) {

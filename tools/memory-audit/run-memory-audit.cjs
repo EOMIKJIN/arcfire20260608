@@ -100,8 +100,8 @@ checks.push(
 checks.push(
   check(
     'INFO_DISTANCE_SORT_INTERVAL_MS = 5000',
-    /INFO_DISTANCE_SORT_INTERVAL_MS = 5000/.test(read('app/(game)/planet.tsx')),
-    '2.1.memory.md §9',
+    /INFO_DISTANCE_SORT_INTERVAL_MS = 5000/.test(read('src/game/planetHub/planetHubConstants.ts')),
+    '2.1.memory.md §9 — planetHubConstants.ts',
   ),
 );
 
@@ -109,8 +109,9 @@ checks.push(
 checks.push(
   check(
     'buildCsvStaticIndexes at app boot',
-    read('app/_layout.tsx').includes('buildCsvStaticIndexes()'),
-    '_layout.tsx',
+    read('app/_layout.tsx').includes('buildCsvStaticIndexesMinimal()')
+      || read('app/_layout.tsx').includes('buildCsvStaticIndexes()'),
+    '_layout.tsx — minimal tier at boot',
   ),
 );
 
@@ -168,5 +169,17 @@ console.log(lines.slice(0, 6).join('\n'));
 if (failed.length > 0) {
   console.error('\nFailed checks:');
   for (const f of failed) console.error(`  - ${f.name}: ${f.detail}`);
+  process.exitCode = 1;
+}
+
+// Skia worklet 계약 — ArcCore missile·Nebula lazy mount (별도 리포트 skia-worklet-latest.md)
+const { execSync } = require('child_process');
+console.log('\n--- Skia worklet contract (chained) ---');
+try {
+  execSync('node tools/memory-audit/run-skia-worklet-memory-audit.cjs', {
+    cwd: ROOT,
+    stdio: 'inherit',
+  });
+} catch {
   process.exitCode = 1;
 }

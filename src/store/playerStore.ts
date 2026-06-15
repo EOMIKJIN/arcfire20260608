@@ -28,9 +28,11 @@ import {
 } from '../game/seedShipCombatEquipSlots';
 import {
   applyCapitalShipDestructionToPlayer,
+  ensureStarterCapitalShipInHangar,
   ensureSurvivalPodInHangar,
   grantSurvivalPodShipToInventory,
   isSurvivalPodNpcShipId,
+  resolveStarterNpcCapitalShipId,
   SURVIVAL_POD_NPC_SHIP_ID,
 } from '../game/playerSurvivalPod';
 import { gainExp, processLevelUp, learnSkill as engineLearnSkill } from '../engine/SkillEngine';
@@ -367,14 +369,21 @@ function ensurePlayerHasDefaultShip(player: Player): Player {
       ? player.shipId
       : starterTemplateId;
   const normalizedShip = normalizeLoadedPlayerShip(player.ship, safeShipId);
-  const normalizedHangar = ensureSurvivalPodInHangar(normalizeShipHangar(player.shipHangar));
-  const normalizedInventory = reconcileEquippedWeaponsInInventory(
-    grantSurvivalPodShipToInventory(
-      reconcileCapitalShipInventoryFromHangar(
-        normalizeInventorySlots(player.inventorySlots),
-        normalizedHangar,
-      ),
-    ),
+  const starterHangar = ensureStarterCapitalShipInHangar(normalizeShipHangar(player.shipHangar));
+  const normalizedHangar = ensureSurvivalPodInHangar(starterHangar.hangar);
+  let normalizedInventory = reconcileCapitalShipInventoryFromHangar(
+    normalizeInventorySlots(player.inventorySlots),
+    normalizedHangar,
+  );
+  if (starterHangar.addedStarter) {
+    normalizedInventory = grantNpcCapitalShipBundleToInventory(
+      normalizedInventory,
+      resolveStarterNpcCapitalShipId(),
+      { shipBuyPrice: 0 },
+    );
+  }
+  normalizedInventory = reconcileEquippedWeaponsInInventory(
+    grantSurvivalPodShipToInventory(normalizedInventory),
     normalizedShip,
   );
   return {

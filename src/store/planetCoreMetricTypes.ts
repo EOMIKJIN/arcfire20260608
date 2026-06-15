@@ -13,14 +13,33 @@ export type PlanetDevelopmentDetail = {
   version?: number;
 };
 
-/** 아크코어 메시지(장거리 미사일) 이력 — 전략·피해·요격 연동 */
-export type PlanetArcCoreMessageDetail = {
+/** 행성 공격 1회 적용 기록 — `applyPlanetAttackCoreDamage` */
+export type PlanetAttackLastEvent = {
+  attackKind: string;
+  atMs: number;
+  sourceId?: string;
+  /** 실제 반영된 Δ (클램프 후) */
+  applied: {
+    resource: number;
+    population: number;
+    defense: number;
+    technology: number;
+    environment: number;
+  };
+};
+
+/** KST 일별 공격 이벤트 카운터 — daily_event_cap 집계 */
+export type PlanetAttackDailyCounter = {
+  kstDayKey: string;
+  byKind: Record<string, number>;
+};
+
+/** 행성 5대 스탯 공격 피해 텔레메트리 — `PlanetCoreRuntime.detail.attackDamage` */
+export type PlanetAttackDamageDetail = {
   version: 1;
-  nearMissCount: number;
-  lastNearMissAtMs?: number;
-  interceptCount?: number;
-  lastInterceptAtMs?: number;
-  lastMessageKo?: string;
+  daily: PlanetAttackDailyCounter;
+  lastEvents: PlanetAttackLastEvent[];
+  totalEvents: number;
 };
 
 /** 행성 방위위성 — 플레이어 업그레이드 레벨(런타임 정본) */
@@ -67,6 +86,7 @@ export type PlanetCoreMetricsDetail = {
   resource?: PlanetResourceDetail;
   development?: PlanetDevelopmentDetail;
   masterBalance?: PlanetMasterBalanceDetail;
-  arcCoreMessage?: PlanetArcCoreMessageDetail;
   defenseSatellite?: PlanetDefenseSatelliteDetail;
+  /** 행성 공격 요소(드론·공성 등) → 5대 스탯 피해 이력 */
+  attackDamage?: PlanetAttackDamageDetail;
 };

@@ -1,0 +1,1018 @@
+[2026-06-14 14:56:30] GL_LEAK_SUSPECT consecutive_spikes=2 suspect=arc_core_missile_intercept_skia
+[2026-06-14 15:06:31] GL_LEAK_SUSPECT consecutive_spikes=3 suspect=arc_core_missile_intercept_skia
+[2026-06-14 15:16:32] GL_LEAK_SUSPECT consecutive_spikes=3 suspect=arc_core_missile_intercept_skia
+[2026-06-14 15:25:15] GL_LEAK_SUSPECT consecutive_spikes=3 suspect=arc_core_missile_intercept_skia
+[2026-06-14 15:25:15] REFIX_REQUESTED consecutive_gl_spikes
+[2026-06-14 15:25:42] GL_LEAK_SUSPECT consecutive_spikes=2 suspect=arc_core_missile_intercept_skia
+[2026-06-14 15:25:42] REFIX_REQUESTED consecutive_gl_spikes
+[2026-06-14 15:26:34] GL_LEAK_SUSPECT consecutive_spikes=2 suspect=arc_core_missile_intercept_skia
+[2026-06-14 15:26:34] REFIX_REQUESTED consecutive_gl_spikes
+
+===== CRASH 2026-06-14 15:36:37 =====
+r SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 15:35:07.601 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:35:07.601 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 15:35:08.590 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:35:08.591 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 15:35:08.591 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:35:08.591 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 15:35:08.789 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:35:08.790 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 15:35:08.790 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:35:08.790 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 15:35:16.244  1909  3050 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-14 15:35:17.189 31992 32089 W ReactNativeJS: '[arcCoreStrikeGpuWatchdog] orphan GPU layers auto-released', { planetId: 'arcadia_prime' }, { [Component Stack] name: 'Component Stack' }
+06-14 15:35:17.220 31992 32089 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 15:35:17.235 31992 32089 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 15:35:17.253 31992 32089 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 15:35:17.332  1909  3050 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-14 15:35:19.601 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:35:19.601 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 15:35:19.601 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:35:19.602 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 15:35:27.516  1909  4174 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-14 15:35:44.280 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:35:44.280 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 15:35:44.281 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:35:44.281 31992 32089 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 15:35:50.407 31992 32089 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 15:35:50.422 31992 32089 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 15:35:50.441 31992 32089 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 15:35:50.461 31992 32089 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 15:35:50.476 31992 32089 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+
+[2026-06-14 15:36:37] GL_LEAK_SUSPECT consecutive_spikes=3 suspect=arc_core_missile_intercept_skia
+[2026-06-14 15:36:37] REFIX_REQUESTED consecutive_gl_spikes
+[2026-06-14 15:36:37] GL_BASELINE_DRIFT peak=292.3 baseline=67.9 current=292.3
+[2026-06-14 15:36:37] REFIX_REQUESTED baseline_gl_drift
+
+===== CRASH 2026-06-14 15:46:37 =====
+06-14 15:38:25.612  1909  1973 I ActivityManager: Start proc 2435:com.arcfire.online/u0a1041 for activelaunch {com.arcfire.online/com.arcfire.online.MainActivity}
+06-14 15:38:25.613  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 15:38:26.729  1909  3050 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-14 15:38:26.730  1909  3050 I ActivityManager: Changes in 11041 19 to 2, 0 to 255
+06-14 15:38:26.981  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-14 15:38:26.999  1909  2870 I ActivityManager: Changes in 10297 5 to 19, 184 to 128
+06-14 15:38:37.099  1909  3050 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-14 15:39:16.797  2435  2666 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 15:39:16.814  2435  2666 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 15:39:16.830  2435  2666 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 15:39:16.852  2435  2666 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 15:39:16.862  2435  2666 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 15:39:16.974  1909  3050 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-14 15:39:17.238  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:39:17.239  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 15:39:17.240  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:39:17.240  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 15:39:21.819  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:39:21.820  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 15:39:21.820  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:39:21.820  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 15:39:27.139  1909  3050 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-14 15:41:21.803  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:41:21.804  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 15:41:21.804  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:41:21.804  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 15:42:48.149  1909  1973 I ActivityManager: Start proc 3084:com.google.android.googlequicksearchbox:search/u0a253 for broadcast {com.google.android.googlequicksearchbox/com.google.android.libraries.search.gcm.search.SearchProcessGcmBroadcastReceiver_Receiver}
+06-14 15:42:48.149  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 15:43:29.571  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:43:29.572  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 15:43:29.574  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:43:29.576  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 15:44:03.566  1909  2769 I ActivityManager: Changes in 99097 19 to 10, 0 to 128
+06-14 15:44:33.357  1909  4211 I ActivityManager: Changes in 99097 19 to 10, 128 to 0
+06-14 15:45:39.293  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:45:39.293  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 15:45:39.294  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:45:39.294  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 15:46:29.678  1909  2769 I ActivityManager: Changes in 10096 6 to 5, 128 to 184
+
+[2026-06-14 15:55:18] GL_LEAK_SUSPECT consecutive_spikes=2 suspect=arc_core_missile_intercept_skia
+[2026-06-14 15:55:18] REFIX_REQUESTED consecutive_gl_spikes
+
+===== CRASH 2026-06-14 15:56:38 =====
+06-14 15:49:06.358  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 15:49:06.420  1909  2870 W ActivityManager: pid 7119 com.samsung.android.lool sent binder code 4 with flags 2 to frozen apps and got error -2147483646
+06-14 15:49:06.422  1909  1972 I ActivityManager: Killing 31166:com.samsung.android.sm.provider/1000 (adj 905): Sync transaction while frozen
+06-14 15:49:06.426  1909  2803 I ActivityManager: Process com.samsung.android.sm.provider (pid 31166) early provider death
+06-14 15:49:06.446  1909  3050 W ActivityManager: ProcessRecord{decbcb5 0:com.samsung.android.sm.provider/1000} is attached to a previous process 31166
+06-14 15:49:06.496  1909  1973 I ActivityManager: Start proc 3572:com.samsung.android.sm.provider/1000 for content provider {com.samsung.android.lool/com.samsung.android.sm.database.SmProvider}
+06-14 15:49:06.496  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 15:49:06.987  1909  1973 I ActivityManager: Start proc 3624:com.sec.android.daemonapp/u0a215 for service {com.sec.android.daemonapp/androidx.room.MultiInstanceInvalidationService}
+06-14 15:49:06.987  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 15:49:07.004  1909  2803 I ActivityManager: Changes in 10215 19 to 5, 0 to 144
+06-14 15:49:07.449  1909  3050 I ActivityManager: Changes in 10215 5 to 5, 144 to 184
+06-14 15:49:07.486  1909  2870 I ActivityManager: Changes in 10108 10 to 5, 0 to 144
+06-14 15:49:13.044  1909  1971 I ActivityManager: Changes in 10215 5 to 15, 184 to 0
+06-14 15:49:13.046  1909  1971 I ActivityManager: Changes in 10108 5 to 10, 144 to 0
+06-14 15:49:33.849  1909  1972 I ActivityManager: Killing 31168:com.samsung.android.voc/u0a329 (adj 955): empty #25
+06-14 15:49:33.852  1909  1972 I ActivityManager: Killing 31164:com.samsung.android.sm.devicesecurity/u0a214 (adj 955): empty #26
+06-14 15:49:41.825  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:49:41.826  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 15:49:41.826  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:49:41.827  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 15:51:58.722  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:51:58.723  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 15:51:58.725  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:51:58.727  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 15:53:36.592  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-14 15:53:36.598  1909  2769 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-14 15:53:59.263  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:53:59.264  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 15:53:59.266  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:53:59.267  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 15:56:01.703  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:56:01.703  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 15:56:01.704  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 15:56:01.704  2435  2666 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 15:56:09.576  1909  1973 I ActivityManager: Start proc 3935:com.samsung.android.privacydashboard/u0a107 for content provider {com.samsung.android.privacydashboard/com.samsung.android.privacydashboard.provider.PermissionAccessInformationContentProvider}
+06-14 15:56:09.576  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 15:56:09.780  1909  2769 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-14 15:56:15.892  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-14 15:56:35.893  1909  1972 I ActivityManager: Killing 790:com.samsung.android.app.notes/u0a326 (adj 945): empty #25
+
+[2026-06-14 15:56:38] GL_LEAK_SUSPECT consecutive_spikes=3 suspect=arc_core_missile_intercept_skia
+[2026-06-14 15:56:38] REFIX_REQUESTED consecutive_gl_spikes
+
+===== CRASH 2026-06-14 16:06:39 =====
+06-14 16:05:32.195  1909  4341 I ActivityManager: Changes in 10117 5 to 5, 184 to 144
+06-14 16:05:34.018  1909  1971 I ActivityManager: Changes in 5004 5 to 15, 144 to 0
+06-14 16:05:34.442  1909  1971 I ActivityManager: Changes in 10120 5 to 10, 144 to 0
+06-14 16:05:34.546  1909  1971 I ActivityManager: Changes in 99097 5 to 15, 184 to 0
+06-14 16:05:34.547  1909  1971 I ActivityManager: Changes in 10330 5 to 15, 184 to 0
+06-14 16:05:34.547  1909  1971 I ActivityManager: Changes in 10328 5 to 15, 144 to 0
+06-14 16:05:34.548  1909  1971 I ActivityManager: Changes in 10326 5 to 15, 144 to 0
+06-14 16:05:34.548  1909  1971 I ActivityManager: Changes in 10224 5 to 15, 144 to 0
+06-14 16:05:34.548  1909  1971 I ActivityManager: Changes in 10222 5 to 15, 144 to 0
+06-14 16:05:34.548  1909  1971 I ActivityManager: Changes in 10127 5 to 15, 144 to 0
+06-14 16:05:34.548  1909  1971 I ActivityManager: Changes in 10117 5 to 15, 144 to 0
+06-14 16:05:34.548  1909  1971 I ActivityManager: Changes in 10050 5 to 15, 144 to 0
+06-14 16:05:34.548  1909  1971 I ActivityManager: Changes in 5278 5 to 15, 184 to 0
+06-14 16:05:34.611  1909  1971 I ActivityManager: Changes in 5009 5 to 15, 144 to 0
+06-14 16:05:35.774  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-14 16:05:36.023  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-14 16:05:37.380  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-14 16:05:37.750  1909  1971 I ActivityManager: Killing 4825:com.samsung.android.mobileservice/u0a119 (adj 965): empty #25
+06-14 16:05:37.754  1909  1971 I ActivityManager: Killing 5849:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a266i-9000 (adj 975): empty #26
+06-14 16:05:37.803  1909  3050 W ActivityManager: Scheduling restart of crashed service com.android.chrome/org.chromium.content.app.SandboxedProcessService0:0 in 1000ms for connection
+06-14 16:05:38.070  1909  1971 I ActivityManager: Killing 938:com.android.providers.calendar/u0a115 (adj 985): empty #25
+06-14 16:05:38.143  1909  1965 I ActivityManager: Changes in 11041 16 to 2, 0 to 255
+06-14 16:05:38.203  1909  3301 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-14 16:05:38.454  1909  1962 I ActivityManager: SwappinessController() - new value is lower than default value, go back to default
+06-14 16:05:38.458  1909  1962 I ActivityManager: SwappinessController() - changed from 130 -> 130
+06-14 16:05:38.493  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-14 16:05:48.510  1909  2867 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-14 16:05:51.963  1909  1972 I ActivityManager: Killing 5688:com.android.chrome:privileged_process0/u0a266 (adj 975): empty #25
+06-14 16:05:52.012  1909  2225 W ActivityManager: Scheduling restart of crashed service com.android.chrome/org.chromium.content.app.PrivilegedProcessService0 in 1000ms for connection
+06-14 16:05:54.018  1909  1972 I ActivityManager: Killing 5433:com.android.chrome/u0a266 (adj 975): empty #25
+06-14 16:05:55.024  1909  1972 I ActivityManager: Killing 4615:com.android.vending:background/u0a251 (adj 965): empty #25
+06-14 16:05:55.030  1909  1972 I ActivityManager: Killing 5076:com.samsung.faceservice/5004 (adj 975): empty #26
+06-14 16:05:55.080  1909  2870 W ActivityManager: Scheduling restart of crashed service com.android.vending/com.google.android.finsky.multiusercoordinator.MultiUserCoordinatorService in 1000ms for connection
+06-14 16:05:56.020  1909  1972 I ActivityManager: Killing 5381:com.samsung.android.messaging/u0a130 (adj 955): empty #25
+06-14 16:05:56.023  1909  1972 I ActivityManager: Killing 9102:com.android.vending/u0a251 (adj 965): empty #26
+06-14 16:05:56.107  1909  1973 I ActivityManager: Start proc 7381:com.android.vending:background/u0a251 for service {com.android.vending/com.google.android.finsky.multiusercoordinator.MultiUserCoordinatorService}
+06-14 16:05:56.108  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 16:05:56.429  1909  4227 I ActivityManager: Killing 5705:com.samsung.android.scs/u0a116 (adj 945): empty #25
+06-14 16:05:57.022  1909  1972 I ActivityManager: Killing 1875:com.samsung.android.ce/u0a96 (adj 945): empty #25
+
+
+===== CRASH 2026-06-14 16:16:40 =====
+06-14 16:11:58.617  6193  6288 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 16:11:58.629  6193  6288 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 16:11:58.650  1909  2720 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-14 16:11:59.175  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:11:59.176  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:11:59.176  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:11:59.176  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 16:11:59.210  6193  6288 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 16:11:59.222  6193  6288 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 16:11:59.231  6193  6288 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 16:11:59.780  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:11:59.780  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:11:59.781  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:11:59.781  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 16:12:01.901  6193  6288 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 16:12:01.914  6193  6288 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 16:12:01.924  6193  6288 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 16:12:02.463  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:12:02.463  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:12:02.463  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:12:02.463  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 16:12:11.992  1909  2225 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-14 16:12:46.237  1909  1973 I ActivityManager: Start proc 7820:com.sec.android.app.samsungapps/u0a86 for service {com.sec.android.app.samsungapps/com.sec.android.app.samsungapps.jobscheduling.PollJobService}
+06-14 16:12:46.237  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 16:12:46.835  1909  2225 I ActivityManager: Changes in 99097 19 to 8, 0 to 128
+06-14 16:12:46.836  1909  2225 I ActivityManager: Changes in 10117 19 to 8, 0 to 128
+06-14 16:12:46.837  1909  2225 I ActivityManager: Changes in 10086 19 to 8, 0 to 128
+06-14 16:12:46.847  1909  2720 I ActivityManager: Changes in 99097 8 to 10, 128 to 0
+06-14 16:12:52.825  1909  1971 I ActivityManager: Changes in 10117 8 to 15, 128 to 0
+06-14 16:13:37.364  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:13:37.365  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:13:37.366  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:13:37.367  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 16:14:31.668  1909  2057 I ActivityManager: Changes in 10086 8 to 10, 128 to 0
+06-14 16:14:31.677  1909  2720 I ActivityManager: Killing 5816:com.samsung.android.calendar/u0a222 (adj 935): empty #25
+06-14 16:15:54.564  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:15:54.565  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:15:54.566  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:15:54.567  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+
+
+===== CRASH 2026-06-14 16:25:18 =====
+06-14 16:17:38.498  1909  1972 I ActivityManager: Killing 6989:com.samsung.android.sm.provider/1000 (adj 905): empty #26
+06-14 16:18:07.510  1909  2065 I ActivityManager: Changes in 10248 19 to 8, 0 to 128
+06-14 16:18:07.557  1909  3698 I ActivityManager: Changes in 10248 8 to 10, 128 to 0
+06-14 16:18:11.971  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:18:11.972  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:18:11.973  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:18:11.974  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 16:19:36.232  1909  1973 I ActivityManager: Start proc 8947:com.samsung.android.mobileservice/u0a119 for content provider {com.samsung.android.mobileservice/com.samsung.android.mobileservice.social.common.provider.OpenSessionProvider}
+06-14 16:19:36.232  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 16:19:36.462  1909  2720 I ActivityManager: Changes in 10119 19 to 8, 0 to 128
+06-14 16:19:36.477  1909  3698 I ActivityManager: Changes in 10119 8 to 8, 128 to 0
+06-14 16:20:02.438  1909  1972 I ActivityManager: Killing 7111:com.samsung.android.sm.devicesecurity/u0a214 (adj 905): empty #25
+06-14 16:20:14.359  1909  3174 I ActivityManager: Changes in 10356 19 to 8, 0 to 128
+06-14 16:20:14.609  1909  2225 I ActivityManager: Changes in 10356 8 to 10, 128 to 0
+06-14 16:20:37.106  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:20:37.107  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:20:37.107  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:20:37.108  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 16:20:37.164  1909  1973 I ActivityManager: Start proc 9030:com.samsung.mfcontents/u0a95 for service {com.samsung.mfcontents/com.samsung.mfcontents.scheduler.MFCJobService}
+06-14 16:20:37.164  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 16:20:37.253  1909  3174 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
+06-14 16:20:37.261  1909  3174 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+06-14 16:20:37.263  1909  2057 I ActivityManager: Killing 6757:com.samsung.android.app.notes/u0a326 (adj 905): empty #25
+06-14 16:22:46.926  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:22:46.927  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:22:46.928  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:22:46.929  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 16:22:48.827  1909  1972 I ActivityManager: Changes in 10356 19 to 11, 0 to 128
+06-14 16:22:48.837  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-14 16:22:48.845  1909  2720 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-14 16:22:48.854  1909  2720 I ActivityManager: Changes in 10356 11 to 19, 128 to 0
+06-14 16:24:56.490  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:24:56.491  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:24:56.492  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:24:56.493  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 16:25:07.479  1909  1973 I ActivityManager: Start proc 9367:com.skt.skaf.OA00018282/u0a104 for content provider {com.skt.skaf.OA00018282/com.onestore.utils.ApiContentProvider}
+06-14 16:25:07.480  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 16:25:08.787  1909  4341 I ActivityManager: Killing 8887:com.google.android.adservices.api/u0a297 (adj 905): empty #25
+06-14 16:25:08.851  1909  1935 W ActivityManager: Scheduling restart of crashed service com.google.android.adservices.api/com.android.adservices.measurement.MeasurementService in 1000ms for connection
+
+
+===== CRASH 2026-06-14 16:46:43 =====
+06-14 16:42:56.404  6193  6288 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 16:44:56.632  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-14 16:44:57.217  1909  1965 I ActivityManager: Changes in 11041 2 to 15, 255 to 128
+06-14 16:44:57.358  1909  3174 I ActivityManager: Changes in 99097 19 to 10, 0 to 128
+06-14 16:44:57.371  1909  2057 I ActivityManager: Changes in 99097 10 to 10, 128 to 0
+06-14 16:44:57.371  1909  2057 I ActivityManager: Changes in 11041 15 to 15, 128 to 0
+06-14 16:44:57.811  1909  1965 I ActivityManager: Killing 6474:com.android.settings/1000 (adj 850): remove task
+06-14 16:44:57.817  1909  1965 I ActivityManager: Killing 3489:com.samsung.android.dqagent/1000 (adj 975): empty #25
+06-14 16:44:57.818  1909  1965 I ActivityManager: Killing 7564:com.google.android.apps.restore/u0a249 (adj 975): empty #26
+06-14 16:44:57.820  1909  1965 I ActivityManager: Killing 6193:com.arcfire.online/u0a1041 (adj 905): remove task
+06-14 16:44:57.912  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 6474
+06-14 16:44:58.179  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 6193
+06-14 16:44:59.104  1909  1973 I ActivityManager: Start proc 10022:com.arcfire.online/u0a1041 for activelaunch {com.arcfire.online/com.arcfire.online.MainActivity}
+06-14 16:44:59.105  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 16:44:59.207  1909  3434 W ActivityManager: Slow operation: 51ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+06-14 16:45:00.186  1909  1965 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-14 16:45:00.186  1909  1965 I ActivityManager: Changes in 11041 19 to 2, 0 to 255
+06-14 16:45:00.437  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-14 16:45:10.578  1909  2870 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-14 16:45:44.026 10022 10195 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 16:45:44.043 10022 10195 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 16:45:44.056 10022 10195 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 16:45:44.077 10022 10195 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 16:45:44.086 10022 10195 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 16:45:44.203  1909  2803 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-14 16:45:44.438 10022 10195 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:45:44.438 10022 10195 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:45:44.439 10022 10195 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:45:44.439 10022 10195 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 16:45:47.234 10022 10195 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:45:47.234 10022 10195 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:45:47.234 10022 10195 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:45:47.234 10022 10195 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 16:45:54.303  1909  4206 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-14 16:46:39.936  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-14 16:46:40.415  1909  1965 I ActivityManager: Changes in 11041 2 to 15, 255 to 128
+06-14 16:46:40.556  1909  3050 I ActivityManager: Changes in 99097 19 to 10, 0 to 128
+06-14 16:46:40.574  1909  3050 I ActivityManager: Changes in 99097 15 to 15, 128 to 0
+06-14 16:46:40.577  1909  3050 I ActivityManager: Changes in 11041 15 to 15, 128 to 0
+
+
+===== CRASH 2026-06-14 16:56:43 =====
+06-14 16:51:20.432  1909  1971 I ActivityManager: Changes in 10224 5 to 15, 144 to 0
+06-14 16:51:20.466  1909  1971 I ActivityManager: Changes in 5009 5 to 15, 144 to 0
+06-14 16:51:20.938  1909  1965 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-14 16:51:20.938  1909  1965 I ActivityManager: Changes in 11041 16 to 2, 0 to 255
+06-14 16:51:21.301  1909  2867 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-14 16:51:31.404  1909  2867 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-14 16:52:09.320 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:52:09.321 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:52:09.325 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:52:09.325 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 16:54:19.240 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:54:19.242 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:54:19.245 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:54:19.247 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 16:56:26.247  1909  1973 I ActivityManager: Start proc 11685:com.ss.android.ugc.trill/u0a388 for broadcast {com.ss.android.ugc.trill/com.google.firebase.iid.FirebaseInstanceIdReceiver}
+06-14 16:56:26.247  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 16:56:27.385  1909  3050 I ActivityManager: Changes in 10388 19 to 11, 0 to 128
+06-14 16:56:27.425  1909  1935 I ActivityManager: Killing 8947:com.samsung.android.mobileservice/u0a119 (adj 975): empty #25
+06-14 16:56:27.439  1909  4227 I ActivityManager: Changes in 99097 19 to 10, 0 to 128
+06-14 16:56:27.517  1909  4227 I ActivityManager: Changes in 99097 10 to 10, 128 to 0
+06-14 16:56:27.735  1909  1973 I ActivityManager: Start proc 11842:com.sec.android.provider.badge/u0a55 for broadcast {com.sec.android.provider.badge/com.sec.android.provider.badge.BadgeCountReceiver}
+06-14 16:56:27.736  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 16:56:27.831  1909  1935 I ActivityManager: Changes in 10055 19 to 11, 0 to 128
+06-14 16:56:27.879  1909  1935 I ActivityManager: Changes in 10055 11 to 5, 128 to 144
+06-14 16:56:28.394  1909  9411 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-14 16:56:31.522 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:56:31.522 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:56:31.523 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:56:31.523 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 16:56:33.918  1909  1971 I ActivityManager: Changes in 99097 19 to 19, 0 to 128
+06-14 16:56:33.918  1909  1971 I ActivityManager: Changes in 10055 5 to 15, 144 to 0
+06-14 16:56:34.184  1909  1973 I ActivityManager: Start proc 12014:com.samsung.drmboost/u0a339 for service {com.samsung.drmboost/com.samsung.drmboost.DrmEventService}
+06-14 16:56:34.184  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 16:56:34.436  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-14 16:56:37.491  1909  1973 I ActivityManager: Start proc 12032:com.android.vending/u0a251 for service {com.android.vending/com.google.android.finsky.billing.iab.InAppBillingService}
+06-14 16:56:37.491  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 16:56:37.762  1909  4227 I ActivityManager: Changes in 10251 19 to 10, 0 to 128
+06-14 16:56:37.803  1909  1935 I ActivityManager: Killing 9367:com.skt.skaf.OA00018282/u0a104 (adj 965): empty #25
+06-14 16:56:38.512  1909  4227 I ActivityManager: Changes in 10251 19 to 10, 128 to 0
+
+
+===== CRASH 2026-06-14 17:06:45 =====
+06-14 16:56:33.918  1909  1971 I ActivityManager: Changes in 10055 5 to 15, 144 to 0
+06-14 16:56:34.184  1909  1973 I ActivityManager: Start proc 12014:com.samsung.drmboost/u0a339 for service {com.samsung.drmboost/com.samsung.drmboost.DrmEventService}
+06-14 16:56:34.184  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 16:56:34.436  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-14 16:56:37.491  1909  1973 I ActivityManager: Start proc 12032:com.android.vending/u0a251 for service {com.android.vending/com.google.android.finsky.billing.iab.InAppBillingService}
+06-14 16:56:37.491  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 16:56:37.762  1909  4227 I ActivityManager: Changes in 10251 19 to 10, 0 to 128
+06-14 16:56:37.803  1909  1935 I ActivityManager: Killing 9367:com.skt.skaf.OA00018282/u0a104 (adj 965): empty #25
+06-14 16:56:38.512  1909  4227 I ActivityManager: Changes in 10251 19 to 10, 128 to 0
+06-14 16:56:43.858  1909  4407 I ActivityManager: Changes in 99097 19 to 10, 128 to 0
+06-14 16:56:47.402  1909  2065 I ActivityManager: Changes in 10388 19 to 19, 128 to 0
+06-14 16:56:47.862  1909  1973 I ActivityManager: Start proc 12198:com.android.vending:background/u0a251 for service {com.android.vending/com.google.frameworks.client.data.android.server.play.BackgroundProcessEndpointService}
+06-14 16:56:47.864  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 16:56:54.922  1909  1972 I ActivityManager: Killing 8067:com.facebook.katana/u0a356 (adj 955): empty #25
+06-14 16:56:59.592  1909  1973 I ActivityManager: Start proc 12340:com.google.android.rkpdapp/u0a348 for service {com.google.android.rkpdapp/com.android.rkpdapp.service.RemoteProvisioningService}
+06-14 16:56:59.592  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 16:56:59.721  1909  3174 I ActivityManager: Changes in 10348 19 to 6, 0 to 128
+06-14 16:56:59.737  1909  4343 I ActivityManager: Changes in 10348 6 to 10, 128 to 0
+06-14 16:56:59.741  1909  4227 I ActivityManager: Killing 8068:com.lguplus.appstore/u0a99 (adj 935): empty #25
+06-14 16:57:02.952  1909  4343 I ActivityManager: Killing 8823:com.google.android.as.oss/u0a248 (adj 925): empty #25
+06-14 16:57:02.953  1909  4343 I ActivityManager: Killing 10936:com.google.android.adservices.api/u0a297 (adj 925): empty #26
+06-14 16:58:31.732 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:58:31.733 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 16:58:31.733 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 16:58:31.733 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 17:00:49.513 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:00:49.514 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 17:00:49.516 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:00:49.518 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 17:03:01.413 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:03:01.413 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 17:03:01.413 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:03:01.414 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 17:05:01.741 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:05:01.741 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 17:05:01.742 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:05:01.742 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 17:05:07.249  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-14 17:05:07.265  1909  2867 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+
+[2026-06-14 17:06:45] GL_LEAK_SUSPECT consecutive_spikes=2 suspect=arc_core_missile_intercept_skia
+[2026-06-14 17:06:45] REFIX_REQUESTED consecutive_gl_spikes
+
+===== CRASH 2026-06-14 17:16:46 =====
+06-14 17:07:09.310 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:07:09.311 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 17:07:09.314 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:07:09.316 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 17:09:19.108 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:09:19.109 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 17:09:19.113 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:09:19.114 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 17:11:19.474 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:11:19.474 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 17:11:19.478 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:11:19.478 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 17:13:31.586 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:13:31.586 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 17:13:31.587 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:13:31.587 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 17:15:31.607 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:15:31.607 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 17:15:31.607 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:15:31.608 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+
+[2026-06-14 17:16:46] GL_LEAK_SUSPECT consecutive_spikes=3 suspect=arc_core_missile_intercept_skia
+[2026-06-14 17:16:46] REFIX_REQUESTED consecutive_gl_spikes
+[2026-06-14 17:22:32] GL_LEAK_SUSPECT consecutive_spikes=3 suspect=arc_core_missile_intercept_skia
+[2026-06-14 17:22:32] REFIX_REQUESTED consecutive_gl_spikes
+
+===== CRASH 2026-06-14 17:25:22 =====
+06-14 17:17:39.343 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:17:39.343 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 17:17:39.349 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:17:39.351 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 17:19:49.038 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:19:49.040 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 17:19:49.042 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:19:49.043 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 17:22:01.653 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:22:01.654 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 17:22:01.654 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:22:01.655 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 17:22:12.442  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-14 17:22:13.152  1909  1965 I ActivityManager: Changes in 11041 2 to 15, 255 to 128
+06-14 17:22:13.367  1909  4343 I ActivityManager: Changes in 99097 19 to 10, 0 to 128
+06-14 17:22:13.398  1909  4343 I ActivityManager: Changes in 99097 15 to 15, 128 to 0
+06-14 17:22:13.398  1909  4343 I ActivityManager: Changes in 11041 15 to 15, 128 to 0
+06-14 17:22:13.846  1909  1933 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-14 17:22:14.500  1909  1933 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-14 17:22:14.514  1909  1933 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-14 17:22:17.006  1909  2410 I ActivityManager: Killing 11685:com.ss.android.ugc.trill/u0a388 (adj 945): Chimera #0
+06-14 17:22:20.535  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-14 17:22:20.559  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-14 17:22:21.136  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-14 17:22:21.136  1909  1965 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+06-14 17:22:21.892  1909  1965 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-14 17:22:21.892  1909  1965 I ActivityManager: Changes in 11041 16 to 2, 0 to 255
+06-14 17:22:22.213  1909  1933 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-14 17:22:32.297  1909  2867 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-14 17:22:37.302  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-14 17:22:37.309  1909  4341 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-14 17:22:37.373  1909  1933 I ActivityManager: Changes in 99097 19 to 5, 0 to 184
+06-14 17:22:52.423  1909  1933 I ActivityManager: Changes in 99097 5 to 10, 184 to 0
+06-14 17:24:01.714 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:24:01.714 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 17:24:01.715 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:24:01.715 11127 11218 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+
+[2026-06-14 17:25:22] GL_LEAK_SUSPECT consecutive_spikes=3 suspect=arc_core_missile_intercept_skia
+[2026-06-14 17:25:22] REFIX_REQUESTED consecutive_gl_spikes
+[2026-06-14 17:26:49] GL_LEAK_SUSPECT consecutive_spikes=4 suspect=arc_core_missile_intercept_skia
+[2026-06-14 17:26:49] REFIX_REQUESTED consecutive_gl_spikes
+[2026-06-14 17:36:51] GL_LEAK_SUSPECT consecutive_spikes=4 suspect=arc_core_missile_intercept_skia
+[2026-06-14 17:36:51] REFIX_REQUESTED consecutive_gl_spikes
+
+===== CRASH 2026-06-14 17:46:52 =====
+06-14 17:43:00.460  1909  1972 I ActivityManager: Killing 14453:com.android.vending:background/u0a251 (adj 975): empty #26
+06-14 17:43:01.454  1909  1972 I ActivityManager: Killing 17240:com.samsung.android.app.routines/u0a53 (adj 965): empty #25
+06-14 17:43:49.062 18001 18103 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:43:49.064 18001 18103 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 17:43:49.066 18001 18103 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:43:49.068 18001 18103 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 17:44:47.763  1909  2537 I ActivityManager: Killing 17908:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a266i-9000 (adj 955): empty #25
+06-14 17:44:47.763  1909  2537 I ActivityManager: Killing 17784:com.android.chrome:privileged_process0/u0a266 (adj 955): empty #26
+06-14 17:44:47.764  1909  2537 I ActivityManager: Killing 17637:com.google.android.webview:webview_service/u0a263 (adj 955): empty #27
+06-14 17:44:47.832  1909  2537 W ActivityManager: Scheduling restart of crashed service com.android.chrome/org.chromium.content.app.SandboxedProcessService0:0 in 1000ms for connection
+06-14 17:44:47.840  1909  4407 W ActivityManager: Scheduling restart of crashed service com.android.chrome/org.chromium.content.app.PrivilegedProcessService0 in 10989ms for connection
+06-14 17:46:01.353 18001 18103 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:46:01.354 18001 18103 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 17:46:01.354 18001 18103 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 17:46:01.354 18001 18103 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 17:46:28.897  1909  1973 I ActivityManager: Start proc 19308:com.google.android.as.oss/u0a248 for service {com.google.android.as.oss/com.google.android.gms.learning.internal.training.InAppJobService}
+06-14 17:46:28.898  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 17:46:29.130  1909  4407 I ActivityManager: Changes in 10248 19 to 8, 0 to 128
+06-14 17:46:29.173  1909  1973 I ActivityManager: Start proc 19329:com.lguplus.appstore/u0a99 for service {com.lguplus.appstore/androidx.work.impl.background.systemjob.SystemJobService}
+06-14 17:46:29.174  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 17:46:29.195  1909  4407 I ActivityManager: Changes in 10248 8 to 10, 128 to 0
+06-14 17:46:29.202  1909  4407 I ActivityManager: Killing 18181:com.samsung.android.samsungpassautofill/u0a207 (adj 945): empty #25
+06-14 17:46:29.714  1909  1973 I ActivityManager: Start proc 19372:com.sec.android.provider.badge/u0a55 for broadcast {com.sec.android.provider.badge/com.sec.android.provider.badge.BadgeCountReceiver}
+06-14 17:46:29.715  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 17:46:29.804  1909  4407 I ActivityManager: Changes in 99097 19 to 8, 0 to 128
+06-14 17:46:29.804  1909  4407 I ActivityManager: Changes in 10099 19 to 8, 0 to 128
+06-14 17:46:29.847  1909  2225 I ActivityManager: Changes in 10055 19 to 11, 0 to 128
+06-14 17:46:29.856  1909  2537 I ActivityManager: Changes in 10251 19 to 8, 0 to 128
+06-14 17:46:29.872  1909  2537 I ActivityManager: Changes in 99097 8 to 10, 128 to 0
+06-14 17:46:29.872  1909  2537 I ActivityManager: Changes in 10251 8 to 10, 128 to 0
+06-14 17:46:29.872  1909  2537 I ActivityManager: Changes in 10099 8 to 10, 128 to 0
+06-14 17:46:29.884  1909  2225 I ActivityManager: Killing 17033:com.samsung.android.stickercenter/1000 (adj 935): empty #25
+06-14 17:46:29.956  1909  2225 I ActivityManager: Changes in 10055 11 to 5, 128 to 144
+06-14 17:46:29.966  1909  1935 W ActivityManager: Scheduling restart of crashed service com.samsung.android.stickercenter/.StickerCenterService in 1000ms for connection
+06-14 17:46:30.984  1909  1973 I ActivityManager: Start proc 19402:com.samsung.android.stickercenter/1000 for service {com.samsung.android.stickercenter/com.samsung.android.stickercenter.StickerCenterService}
+06-14 17:46:30.984  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 17:46:31.173  1909  2225 I ActivityManager: Killing 18917:com.sec.android.app.sbrowser:privileged_process0/u0a330 (adj 935): empty #25
+06-14 17:46:31.220  1909  1935 W ActivityManager: Scheduling restart of crashed service com.sec.android.app.sbrowser/org.chromium.content.app.PrivilegedProcessService0 in 1000ms for connection
+06-14 17:46:35.985  1909  1971 I ActivityManager: Changes in 10055 5 to 15, 144 to 0
+
+[2026-06-14 17:52:33] GL_LEAK_SUSPECT consecutive_spikes=2 suspect=arc_core_missile_intercept_skia
+[2026-06-14 17:52:33] REFIX_REQUESTED consecutive_gl_spikes
+[2026-06-14 17:55:23] GL_LEAK_SUSPECT consecutive_spikes=3 suspect=arc_core_missile_intercept_skia
+[2026-06-14 17:55:23] REFIX_REQUESTED consecutive_gl_spikes
+[2026-06-14 17:56:52] GL_LEAK_SUSPECT consecutive_spikes=4 suspect=arc_core_missile_intercept_skia
+[2026-06-14 17:56:52] REFIX_REQUESTED consecutive_gl_spikes
+[2026-06-14 18:06:54] GL_LEAK_SUSPECT consecutive_spikes=4 suspect=arc_core_missile_intercept_skia
+[2026-06-14 18:06:54] REFIX_REQUESTED consecutive_gl_spikes
+
+===== CRASH 2026-06-14 19:05:00 =====
+06-14 18:54:16.263  1909  1972 I ActivityManager: Killing 24056:com.sec.android.provider.badge/u0a55 (adj 945): empty #27
+06-14 18:54:16.264  1909  1972 I ActivityManager: Killing 23941:com.google.android.gms.unstable/u0a252 (adj 955): empty #28
+06-14 18:54:16.265  1909  1972 I ActivityManager: Killing 23862:com.google.android.apps.tachyon/u0a254 (adj 955): empty #29
+06-14 18:54:16.266  1909  1972 I ActivityManager: Killing 23787:com.google.android.as.oss/u0a248 (adj 965): empty #30
+06-14 18:54:17.261  1909  1972 I ActivityManager: Killing 23372:com.samsung.android.ce/u0a96 (adj 925): empty #25
+06-14 18:54:17.262  1909  1972 I ActivityManager: Killing 24204:com.android.vending:background/u0a251 (adj 935): empty #26
+06-14 18:55:06.177 22362 22448 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 18:55:06.208 22362 22448 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 18:55:06.226 22362 22448 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 18:55:06.273  1909  3301 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-14 18:55:07.165 22362 22448 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 18:55:07.180 22362 22448 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 18:55:07.198 22362 22448 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 18:55:07.716 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 18:55:07.716 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 18:55:07.717 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 18:55:07.717 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 18:55:08.392 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 18:55:08.393 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 18:55:08.393 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 18:55:08.394 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 18:55:17.295  1909  3050 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-14 19:00:22.457  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-14 19:00:22.465  1909  2776 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-14 19:00:22.478  1909  1973 I ActivityManager: Start proc 25862:com.samsung.android.game.gos/u0a76 for service {com.samsung.android.game.gos/com.samsung.android.game.gos.service.MainIntentService}
+06-14 19:00:22.479  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 19:00:22.550  1909  3301 I ActivityManager: Changes in 99097 19 to 8, 0 to 128
+06-14 19:00:22.592  1909  3301 I ActivityManager: Changes in 99097 8 to 10, 128 to 0
+06-14 19:00:22.822  1909  2720 I ActivityManager: Killing 24842:com.sec.android.gallery3d/u0a124 (adj 925): empty #25
+06-14 19:01:06.019  1909  1973 I ActivityManager: Start proc 25900:com.samsung.android.privacydashboard/u0a107 for content provider {com.samsung.android.privacydashboard/com.samsung.android.privacydashboard.provider.PermissionAccessInformationContentProvider}
+06-14 19:01:06.020  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 19:01:06.152  1909  2776 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-14 19:01:12.270  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-14 19:01:32.274  1909  1972 I ActivityManager: Killing 25006:com.samsung.mfcontents/u0a95 (adj 915): empty #25
+06-14 19:03:44.499  1909  1973 I ActivityManager: Start proc 25965:com.samsung.android.ce/u0a96 for broadcast {com.samsung.android.mcfds/com.samsung.android.ce.ContextEngineReceiver}
+06-14 19:03:44.501  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 19:03:44.692  1909  2720 I ActivityManager: Killing 25022:com.samsung.android.dqagent/1000 (adj 915): empty #25
+06-14 19:03:45.066  1909  2776 I ActivityManager: Changes in 10096 6 to 5, 128 to 184
+06-14 19:03:55.113  1909  2776 I ActivityManager: Changes in 10096 5 to 6, 184 to 128
+
+
+===== CRASH 2026-06-14 20:05:02 =====
+06-14 19:58:07.623  1909  1973 I ActivityManager: Start proc 28645:com.samsung.android.sm.provider/1000 for content provider {com.samsung.android.lool/com.samsung.android.sm.database.SmProvider}
+06-14 19:58:07.640  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 19:58:07.655  1909  1973 W ActivityManager: Slow operation: 53ms so far, now at startProcess: returned from zygote!
+06-14 19:58:07.655  1909  1973 W ActivityManager: Slow operation: 54ms so far, now at startProcess: done updating battery stats
+06-14 19:58:07.656  1909  1973 W ActivityManager: Slow operation: 54ms so far, now at startProcess: building log message
+06-14 19:58:07.656  1909  1973 I ActivityManager: Start proc 28654:com.samsung.android.voc/u0a329 for content provider {com.samsung.android.voc/com.samsung.android.voc.diagnosis.provider.SamsungMembersDiagnosisProvider}
+06-14 19:58:07.656  1909  1973 W ActivityManager: Slow operation: 54ms so far, now at startProcess: starting to update pids map
+06-14 19:58:07.658  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 19:58:07.659  1909  1973 W ActivityManager: Slow operation: 57ms so far, now at startProcess: done updating pids map
+06-14 19:58:07.775  1909  3050 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-14 19:58:07.909  1909  3698 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-14 19:58:13.877  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-14 19:58:13.879  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-14 19:58:14.626  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-14 19:58:15.446  1909  1965 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-14 19:58:15.446  1909  1965 I ActivityManager: Changes in 11042 16 to 2, 0 to 255
+06-14 19:58:15.828  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-14 19:58:16.449 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 19:58:16.449 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 19:58:16.454 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 19:58:16.455 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 19:58:25.686  1909  4407 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-14 19:58:33.878  1909  1972 I ActivityManager: Killing 25357:com.sec.android.app.sbrowser/u0a330 (adj 975): empty #25
+06-14 19:58:34.879  1909  1972 I ActivityManager: Killing 24841:com.samsung.android.app.reminder/u0a224 (adj 965): empty #25
+06-14 19:58:34.884  1909  1972 I ActivityManager: Killing 25379:com.samsung.android.calendar/u0a222 (adj 975): empty #26
+06-14 20:01:15.831  1909  9411 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-14 20:01:21.895  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-14 20:04:58.440 22362 22448 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 20:04:58.459 22362 22448 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 20:04:58.474 22362 22448 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 20:04:58.519  1909  4407 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-14 20:04:59.608 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 20:04:59.609 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 20:04:59.609 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 20:04:59.609 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 20:05:00.637 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 20:05:00.637 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 20:05:00.641 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 20:05:00.642 22362 22448 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+
+
+===== CRASH 2026-06-14 20:35:04 =====
+06-14 20:30:48.105  1909  4407 I ActivityManager: Changes in 99107 19 to 10, 0 to 128
+06-14 20:30:48.112  1909  3174 I ActivityManager: Killing 30489:com.google.android.partnersetup/u0a243 (adj 975): empty #25
+06-14 20:30:50.597  1909  1973 I ActivityManager: Start proc 31805:com.google.android.webview:webview_service/u0a263 for service {com.google.android.webview/org.chromium.android_webview.services.VariationsSeedServer}
+06-14 20:30:50.597  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 20:30:50.659  1909  4225 I ActivityManager: Changes in 10263 19 to 10, 0 to 128
+06-14 20:30:50.674  1909  4343 I ActivityManager: Changes in 10263 19 to 19, 128 to 0
+06-14 20:30:57.431  1909  4225 I ActivityManager: Killing 30528:com.google.android.apps.turbo:aab/u0a250 (adj 975): empty #25
+06-14 20:31:03.364  1909  2749 I ActivityManager: Changes in 99097 19 to 10, 128 to 0
+06-14 20:31:33.002  1909  1973 I ActivityManager: Start proc 31839:com.samsung.android.privacydashboard/u0a107 for content provider {com.samsung.android.privacydashboard/com.samsung.android.privacydashboard.provider.PermissionAccessInformationContentProvider}
+06-14 20:31:33.002  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 20:31:33.119  1909  2749 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-14 20:31:39.232  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-14 20:31:59.227  1909  1972 I ActivityManager: Killing 30232:com.google.android.syncadapters.calendar/u0a257 (adj 965): empty #25
+06-14 20:32:01.603  1909  3434 I ActivityManager: Changes in 10297 6 to 6, 0 to 128
+06-14 20:32:10.706  1909  4407 I ActivityManager: Changes in 10297 6 to 3, 128 to 184
+06-14 20:33:02.049  1909  1972 I ActivityManager: Changes in 10356 19 to 11, 0 to 128
+06-14 20:33:02.062  1909  1973 I ActivityManager: Start proc 31902:com.samsung.android.ce/u0a96 for broadcast {com.samsung.android.mcfds/com.samsung.android.ce.ContextEngineReceiver}
+06-14 20:33:02.062  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 20:33:02.066  1909  3301 I ActivityManager: Changes in 10356 11 to 19, 128 to 0
+06-14 20:33:02.234  1909  3050 I ActivityManager: Killing 30647:com.sec.android.provider.badge/u0a55 (adj 985): empty #25
+06-14 20:33:02.422  1909  1973 I ActivityManager: Start proc 31960:com.sec.android.app.shealth/u0a328 for content provider {com.sec.android.app.shealth/com.samsung.android.app.shealth.insights.healthcontext.HealthContextProvider}
+06-14 20:33:02.422  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 20:33:03.067  1909  1973 I ActivityManager: Start proc 31990:com.sec.android.app.shealth:remote/u0a328 for service {com.sec.android.app.shealth/com.samsung.android.service.health.HealthService}
+06-14 20:33:03.067  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 20:33:03.146  1909  3301 I ActivityManager: Changes in 10096 6 to 5, 128 to 184
+06-14 20:33:03.231  1909  4226 I ActivityManager: Changes in 10328 19 to 5, 0 to 184
+06-14 20:33:03.233  1909  4226 I ActivityManager: Changes in 10117 19 to 5, 0 to 144
+06-14 20:33:09.058  1909  1971 I ActivityManager: Changes in 10328 5 to 15, 184 to 0
+06-14 20:33:09.059  1909  1971 I ActivityManager: Changes in 10117 5 to 15, 144 to 0
+06-14 20:33:13.203  1909  4407 I ActivityManager: Changes in 10096 5 to 6, 184 to 128
+06-14 20:33:29.348  1909  1972 I ActivityManager: Killing 30934:com.samsung.android.stickercenter/1000 (adj 975): empty #25
+06-14 20:33:29.357  1909  1972 I ActivityManager: Killing 30065:com.samsung.android.app.reminder/u0a224 (adj 985): empty #26
+06-14 20:34:16.993  1909  4226 I ActivityManager: com.samsung.android.app.telephonyui is exempt from freezer by list
+06-14 20:34:17.001  1909  1973 I ActivityManager: Start proc 32127:com.samsung.android.game.gos/u0a76 for service {com.samsung.android.game.gos/com.samsung.android.game.gos.service.GameIntentService}
+06-14 20:34:17.002  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 20:34:17.015  1909  1973 I ActivityManager: Start proc 32128:com.samsung.android.app.telephonyui/1001 for content provider {com.samsung.android.app.telephonyui/com.samsung.android.app.telephonyui.provider.InternalContentProvider}
+06-14 20:34:17.015  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 20:34:17.183  1909  3301 I ActivityManager: Killing 25519:com.samsung.android.scpm/5009 (adj 975): empty #25
+06-14 20:34:43.262  1909  1972 I ActivityManager: Killing 28643:com.samsung.android.sm.devicesecurity/u0a214 (adj 975): empty #25
+
+
+===== CRASH 2026-06-14 21:35:06 =====
+06-14 21:27:46.141  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 21:27:46.141  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 21:27:46.141  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 21:27:46.141  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 21:27:46.205  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 21:27:46.205  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 21:27:46.205  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 21:27:46.205  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 21:27:46.329  1909  1965 I ActivityManager: Changes in 10209 5 to 7, 255 to 128
+06-14 21:27:46.329  1909  1965 I ActivityManager: Changes in 10117 5 to 6, 144 to 128
+06-14 21:27:48.124  1909  1909 I ActivityManager: Changes in 10207 6 to 10, 128 to 0
+06-14 21:27:48.125  1909  1909 I ActivityManager: Changes in 10127 6 to 10, 128 to 0
+06-14 21:27:48.125  1909  1909 I ActivityManager: Changes in 5278 6 to 10, 128 to 0
+06-14 21:27:48.543  1909  1971 I ActivityManager: Changes in 10117 7 to 15, 128 to 0
+06-14 21:28:57.037  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 21:28:57.038  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 21:28:57.038  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 21:28:57.038  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 21:30:58.173  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 21:30:58.174  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 21:30:58.175  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 21:30:58.176  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 21:31:10.354  1909  3301 I ActivityManager: Changes in 99097 6 to 6, 0 to 128
+06-14 21:31:10.685  1909  3174 I ActivityManager: Changes in 99097 6 to 6, 128 to 0
+06-14 21:31:17.477  1909  3606 I ActivityManager: Killing 4166:com.samsung.android.app.telephonyui/1001 (adj 975): empty #25
+06-14 21:31:17.479  1909  3606 I ActivityManager: Killing 3849:com.samsung.android.app.routines/u0a53 (adj 975): empty #26
+06-14 21:31:39.552  1909  1973 I ActivityManager: Start proc 6355:com.samsung.android.privacydashboard/u0a107 for content provider {com.samsung.android.privacydashboard/com.samsung.android.privacydashboard.provider.PermissionAccessInformationContentProvider}
+06-14 21:31:39.553  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 21:31:39.679  1909  4341 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-14 21:31:45.756  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-14 21:32:05.756  1909  1972 I ActivityManager: Killing 32605:com.android.vending:background/u0a251 (adj 965): empty #25
+06-14 21:32:05.808  1909  4341 W ActivityManager: Scheduling restart of crashed service com.android.vending/com.google.android.finsky.multiusercoordinator.MultiUserCoordinatorService in 1000ms for connection
+06-14 21:32:06.830  1909  1973 I ActivityManager: Start proc 6418:com.android.vending:background/u0a251 for service {com.android.vending/com.google.android.finsky.multiusercoordinator.MultiUserCoordinatorService}
+06-14 21:32:06.831  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 21:32:07.146  1909  4341 I ActivityManager: Killing 32504:com.android.vending/u0a251 (adj 965): empty #25
+06-14 21:33:20.988  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 21:33:20.990  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 21:33:20.991  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 21:33:20.994  5775  5869 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+
+
+===== CRASH 2026-06-14 23:05:09 =====
+06-14 23:03:16.650 14300 14300 F DEBUG   :       #66 pc 00000000002fc254  /apex/com.android.art/lib64/libart.so (artQuickToInterpreterBridge+916) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-14 23:03:16.650 14300 14300 F DEBUG   :       #67 pc 00000000002b04d8  /apex/com.android.art/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-14 23:03:16.650 14300 14300 F DEBUG   :       #68 pc 0000000000298f94  /apex/com.android.art/lib64/libart.so (art_quick_invoke_stub+612) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-14 23:03:16.650 14300 14300 F DEBUG   :       #69 pc 000000000029738c  /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+148) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-14 23:03:16.650 14300 14300 F DEBUG   :       #70 pc 00000000004d5fd0  /apex/com.android.art/lib64/libart.so (art::Thread::CreateCallback(void*)+1384) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-14 23:03:16.650 14300 14300 F DEBUG   :       #71 pc 00000000004d5a54  /apex/com.android.art/lib64/libart.so (art::Thread::CreateCallbackWithUffdGc(void*)+12) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-14 23:03:16.650 14300 14300 F DEBUG   :       #72 pc 0000000000080f8c  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+236) (BuildId: 8ff701fa7a74a8ad475206062b5b72aa)
+06-14 23:03:16.650 14300 14300 F DEBUG   :       #73 pc 00000000000737f0  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: 8ff701fa7a74a8ad475206062b5b72aa)
+06-14 23:03:16.707  1909 14306 W ActivityManager: crash : com.arcfire.online,11042
+06-14 23:03:16.737  1909  1963 I ActivityManager: Showing crash dialog for package com.arcfire.online u0
+06-14 23:03:16.744  1909 14303 I ActivityManager: Killing 13011:com.arcfire.online/u0a1042 (adj 0): crash
+06-14 23:03:16.758  1909  1963 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-14 23:03:16.771  1909  2224 I ActivityManager: Changes in 10297 6 to 3, 128 to 184
+06-14 23:03:16.894  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 13011
+06-14 23:03:17.144  1909  3606 W ActivityManager: pid 1909 system sent binder code 7 with flags 1 to frozen apps and got error -32
+06-14 23:03:17.144  1909  3606 W ActivityManager: pid 1909 system sent binder code 7 with flags 1 to frozen apps and got error -32
+06-14 23:03:19.843  1909  1973 I ActivityManager: Start proc 14333:com.arcfire.online/u0a1042 for activelaunch {com.arcfire.online/com.arcfire.online.MainActivity}
+06-14 23:03:19.843  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-14 23:03:19.926  1909  3174 I ActivityManager: PendingStartActivityUids startActivity to updateOomAdj delay:2713ms, uid:10147
+06-14 23:03:20.934  1909  3434 I ActivityManager: Changes in 99097 6 to 3, 0 to 184
+06-14 23:03:20.935  1909  3434 I ActivityManager: Changes in 11042 19 to 2, 0 to 255
+06-14 23:03:21.205  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-14 23:03:21.213  1909  4407 I ActivityManager: Changes in 10297 5 to 6, 184 to 128
+06-14 23:03:31.338  1909  3174 I ActivityManager: Changes in 99097 3 to 6, 184 to 0
+06-14 23:04:08.264 14333 14421 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 23:04:08.284 14333 14421 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 23:04:08.301 14333 14421 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 23:04:08.325 14333 14421 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 23:04:08.338 14333 14421 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-14 23:04:08.450  1909  4407 I ActivityManager: Changes in 99097 6 to 3, 0 to 184
+06-14 23:04:08.730 14333 14421 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 23:04:08.730 14333 14421 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 23:04:08.731 14333 14421 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 23:04:08.731 14333 14421 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 23:04:11.963 14333 14421 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 23:04:11.963 14333 14421 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-14 23:04:11.964 14333 14421 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-14 23:04:11.964 14333 14421 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-14 23:04:18.533  1909  4407 I ActivityManager: Changes in 99097 3 to 6, 184 to 0
+
+
+===== CRASH 2026-06-15 00:35:14 =====
+06-15 00:30:48.612  1909  3606 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+06-15 00:30:48.620  1909  1973 I ActivityManager: Start proc 17936:com.google.android.apps.turbo:aab/u0a250 for service {com.google.android.apps.turbo/com.google.android.libraries.smartbattery.appusage.library.InferAppBucketsJob}
+06-15 00:30:48.621  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 00:30:48.623  1909  2065 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+06-15 00:30:48.631  1909  3606 I ActivityManager: Changes in 10243 8 to 10, 128 to 0
+06-15 00:30:48.654  1909  4356 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+06-15 00:30:48.689  1909  3606 I ActivityManager: Changes in 10250 19 to 8, 0 to 128
+06-15 00:30:48.710  1909  2065 I ActivityManager: Changes in 10248 19 to 8, 0 to 128
+06-15 00:30:48.739  1909  4356 I ActivityManager: Changes in 10248 8 to 10, 128 to 0
+06-15 00:30:48.971  1909  3606 I ActivityManager: Changes in 10250 8 to 10, 128 to 0
+06-15 00:30:48.981  1909  4356 I ActivityManager: Killing 16011:com.sec.android.gallery3d/u0a124 (adj 905): empty #25
+06-15 00:31:31.865  1909  2065 I ActivityManager: Changes in 10248 19 to 8, 0 to 128
+06-15 00:31:31.877  1909  2057 I ActivityManager: Changes in 10248 8 to 10, 128 to 0
+06-15 00:31:41.091  1909  9411 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-15 00:31:47.159  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-15 00:33:03.114  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-15 00:33:03.130  1909  4206 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-15 00:33:03.257  1909  1973 I ActivityManager: Start proc 18004:com.google.android.gms.unstable/u0a252 for service {com.google.android.gms/com.google.android.gms.droidguard.DroidGuardService}
+06-15 00:33:03.257  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 00:33:03.318  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-15 00:33:03.325  1909  2749 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-15 00:33:03.348  1909  4343 I ActivityManager: Changes in 10108 10 to 8, 0 to 128
+06-15 00:33:03.353  1909  1973 I ActivityManager: Start proc 18020:com.sec.android.app.shealth/u0a328 for broadcast {com.sec.android.app.shealth/com.samsung.android.app.shealth.insights.controller.RuneStoneConditionController}
+06-15 00:33:03.353  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 00:33:03.469  1909  2057 I ActivityManager: Changes in 10108 8 to 10, 128 to 0
+06-15 00:33:03.637  1909  1973 I ActivityManager: Start proc 18070:com.osp.app.signin/u0a117 for content provider {com.osp.app.signin/com.samsung.android.samsungaccount.utils.accounts.AccountManagerProvider}
+06-15 00:33:03.638  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 00:33:03.650  1909  1973 I ActivityManager: Start proc 18076:com.sec.android.app.shealth:remote/u0a328 for service {com.sec.android.app.shealth/com.samsung.android.service.health.HealthService}
+06-15 00:33:03.651  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 00:33:03.821  1909  4342 I ActivityManager: Changes in 10328 19 to 11, 0 to 128
+06-15 00:33:03.830  1909  2057 I ActivityManager: Changes in 10328 11 to 19, 128 to 0
+06-15 00:33:04.041  1909  2749 I ActivityManager: Killing 15830:com.android.vending/u0a251 (adj 905): empty #25
+06-15 00:33:04.044  1909  2749 I ActivityManager: Killing 16334:com.samsung.android.app.telephonyui/1001 (adj 905): empty #26
+06-15 00:33:04.046  1909  2749 I ActivityManager: Killing 16155:com.android.vending:background/u0a251 (adj 905): empty #27
+06-15 00:33:04.093  1909  4342 I ActivityManager: Killing 16333:com.samsung.android.game.gos/u0a76 (adj 905): empty #25
+06-15 00:33:04.149  1909  4342 I ActivityManager: Changes in 99097 19 to 8, 0 to 128
+06-15 00:33:04.150  1909  4342 I ActivityManager: Changes in 10117 19 to 8, 0 to 128
+06-15 00:33:04.177  1909  4225 I ActivityManager: Changes in 99097 8 to 10, 128 to 0
+06-15 00:33:04.177  1909  4225 I ActivityManager: Changes in 10117 8 to 10, 128 to 0
+
+
+===== CRASH 2026-06-15 02:05:16 =====
+06-15 02:03:01.750  1909  1973 I ActivityManager: Start proc 20740:com.sec.android.provider.badge/u0a55 for broadcast {com.sec.android.provider.badge/com.sec.android.provider.badge.BadgeCountReceiver}
+06-15 02:03:01.750  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 02:03:01.857  1909  4227 I ActivityManager: Changes in 10055 19 to 11, 0 to 128
+06-15 02:03:01.887  1909  4227 I ActivityManager: Changes in 10055 11 to 19, 128 to 0
+06-15 02:03:01.888  1909  4338 I ActivityManager: Changes in 10055 19 to 5, 0 to 144
+06-15 02:03:07.912  1909  1971 I ActivityManager: Changes in 10055 5 to 15, 144 to 0
+06-15 02:03:12.504 14783 15528 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 02:03:12.504 14783 15528 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-15 02:03:12.504 14783 15528 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 02:03:12.505 14783 15528 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-15 02:03:27.911  1909  1972 I ActivityManager: Killing 18596:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/u0a253i109 (adj 905): empty #25
+06-15 02:03:27.952  1909  4338 W ActivityManager: Scheduling restart of crashed service com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:1 in 1000ms for connection
+06-15 02:04:00.458  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-15 02:04:00.500  1909  2065 I ActivityManager: Changes in 10333 10 to 8, 0 to 128
+06-15 02:04:00.805  1909  1965 I ActivityManager: Killing 18076:com.sec.android.app.shealth:remote/u0a328 (adj 985): empty #25
+06-15 02:04:01.083  1909  1933 I ActivityManager: Changes in 10333 8 to 10, 128 to 0
+06-15 02:04:01.306  1909  1965 I ActivityManager: Changes in 11042 2 to 15, 255 to 128
+06-15 02:04:01.432  1909  3606 I ActivityManager: Changes in 11042 15 to 15, 128 to 0
+06-15 02:04:02.171  1909  4356 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-15 02:04:02.762  1909  1973 I ActivityManager: Start proc 20938:com.samsung.android.sm.devicesecurity/u0a214 for content provider {com.samsung.android.sm.devicesecurity/com.samsung.android.sm.devicesecurity.DeviceSecurityProvider}
+06-15 02:04:02.763  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 02:04:02.784  1909  1973 I ActivityManager: Start proc 20939:com.samsung.android.sm.provider/1000 for content provider {com.samsung.android.lool/com.samsung.android.sm.database.SmProvider}
+06-15 02:04:02.787  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 02:04:02.808  1909  1973 I ActivityManager: Start proc 20949:com.samsung.android.voc/u0a329 for content provider {com.samsung.android.voc/com.samsung.android.voc.diagnosis.provider.SamsungMembersDiagnosisProvider}
+06-15 02:04:02.808  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 02:04:02.960  1909  3174 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-15 02:04:03.365  1909  2776 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-15 02:04:09.049  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-15 02:04:09.270  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-15 02:04:09.330  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-15 02:04:10.032  1909  1965 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-15 02:04:10.032  1909  1965 I ActivityManager: Changes in 11042 16 to 2, 0 to 255
+06-15 02:04:10.389  1909  4342 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-15 02:04:20.429  1909  4342 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-15 02:04:29.051  1909  1972 I ActivityManager: Killing 19076:com.google.android.youtube/u0a271 (adj 975): empty #25
+06-15 02:04:30.052  1909  1972 I ActivityManager: Killing 18004:com.google.android.gms.unstable/u0a252 (adj 975): empty #25
+06-15 02:04:30.055  1909  1972 I ActivityManager: Killing 19248:com.google.android.apps.tachyon/u0a254 (adj 975): empty #26
+06-15 02:04:54.067  1909  2065 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
+06-15 02:04:54.082  1909  4206 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+
+
+===== CRASH 2026-06-15 03:06:13 =====
+06-15 02:45:34.792  1909  2776 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-15 02:47:58.710 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 02:47:58.710 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-15 02:47:58.711 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 02:47:58.711 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-15 02:50:08.663 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 02:50:08.663 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-15 02:50:08.663 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 02:50:08.664 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-15 02:50:29.809  1909  1972 I ActivityManager: Changes in 99097 19 to 11, 0 to 128
+06-15 02:50:29.834  1909  2870 I ActivityManager: Changes in 99097 8 to 5, 128 to 184
+06-15 02:50:29.867  1909  1973 I ActivityManager: Start proc 23042:com.google.android.gms:com.google.android.gms.chimera.IsolatedBoundBrokerService/u0i110 for service {com.google.android.gms/com.google.android.gms.chimera.IsolatedBoundBrokerService}
+06-15 02:50:29.867  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 02:50:29.997  1909  2870 I ActivityManager: Changes in 99110 19 to 5, 0 to 184
+06-15 02:50:31.416  1909  2870 I ActivityManager: Killing 23042:com.google.android.gms:com.google.android.gms.chimera.IsolatedBoundBrokerService/u0a252i110 (adj 0): isolated not needed
+06-15 02:50:31.417  1909  2870 I ActivityManager: Changes in 99110 5 to 19, 184 to 0
+06-15 02:50:31.595  1909  4407 I ActivityManager: Changes in 10249 19 to 5, 0 to 184
+06-15 02:50:31.639  1909  2870 I ActivityManager: Changes in 10313 19 to 5, 0 to 184
+06-15 02:50:46.643  1909  2776 I ActivityManager: Changes in 99097 5 to 10, 184 to 0
+06-15 02:50:46.644  1909  2776 I ActivityManager: Changes in 10249 5 to 10, 184 to 0
+06-15 02:51:36.710  1909  2057 I ActivityManager: Changes in 10313 5 to 10, 184 to 0
+06-15 02:52:18.177 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 02:52:18.178 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-15 02:52:18.178 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 02:52:18.179 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-15 02:53:48.430  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-15 02:53:48.440  1909  2057 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-15 02:54:28.625 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 02:54:28.625 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-15 02:54:28.626 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 02:54:28.626 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-15 02:56:38.875 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 02:56:38.876 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-15 02:56:38.876 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 02:56:38.876 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-15 03:01:42.419  1909  9411 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-15 03:01:48.463  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-15 03:04:25.200  1909  4407 I ActivityManager: Changes in 99097 19 to 5, 0 to 184
+06-15 03:04:40.264  1909  2537 I ActivityManager: Changes in 99097 5 to 10, 184 to 0
+
+
+===== CRASH 2026-06-15 03:26:55 =====
+06-15 03:22:10.026  1909  1965 I ActivityManager: Changes in 11042 2 to 15, 255 to 128
+06-15 03:22:10.120  1909  4340 I ActivityManager: Changes in 99097 19 to 10, 0 to 128
+06-15 03:22:10.158  1909  2867 I ActivityManager: Changes in 99097 15 to 15, 128 to 0
+06-15 03:22:10.158  1909  2867 I ActivityManager: Changes in 11042 15 to 15, 128 to 0
+06-15 03:22:11.017  1909  2867 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-15 03:22:12.674  1909  1973 I ActivityManager: Start proc 23842:com.samsung.android.sm.devicesecurity/u0a214 for content provider {com.samsung.android.sm.devicesecurity/com.samsung.android.sm.devicesecurity.DeviceSecurityProvider}
+06-15 03:22:12.674  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 03:22:12.687  1909  1973 I ActivityManager: Start proc 23846:com.samsung.android.voc/u0a329 for content provider {com.samsung.android.voc/com.samsung.android.voc.diagnosis.provider.SamsungMembersDiagnosisProvider}
+06-15 03:22:12.688  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 03:22:12.812  1909  2225 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-15 03:22:12.931  1909  2867 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-15 03:22:18.915  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-15 03:22:18.951  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-15 03:22:20.820  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-15 03:22:21.659  1909  1965 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-15 03:22:21.659  1909  1965 I ActivityManager: Changes in 11042 16 to 2, 0 to 255
+06-15 03:22:21.960  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-15 03:22:22.798 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 03:22:22.798 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-15 03:22:22.801 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 03:22:22.801 14783 22872 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-15 03:22:31.866  1909  4338 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-15 03:22:39.918  1909  1972 I ActivityManager: Killing 22183:com.google.android.apps.tachyon/u0a254 (adj 965): empty #25
+06-15 03:22:39.920  1909  1972 I ActivityManager: Killing 15719:com.lguplus.appstore/u0a99 (adj 975): empty #26
+06-15 03:24:25.193  1909  4343 I ActivityManager: Changes in 99097 19 to 5, 0 to 184
+06-15 03:24:40.264  1909  2867 I ActivityManager: Changes in 99097 5 to 10, 184 to 0
+06-15 03:26:27.853  1909  1973 I ActivityManager: Start proc 24096:com.samsung.android.dqagent/1000 for broadcast {com.samsung.android.dqagent/com.samsung.android.dqagent.receiver.DQADataReceiver}
+06-15 03:26:27.854  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 03:26:28.050  1909  2867 I ActivityManager: Killing 17936:com.google.android.apps.turbo:aab/u0a250 (adj 965): empty #25
+06-15 03:26:52.029 14783 24083 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-15 03:26:52.049 14783 24083 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-15 03:26:52.066 14783 24083 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-15 03:26:52.092 14783 24083 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-15 03:26:52.105 14783 24083 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-15 03:26:52.132  1909  4343 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-15 03:26:52.458 14783 24083 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 03:26:52.459 14783 24083 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-15 03:26:52.459 14783 24083 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 03:26:52.460 14783 24083 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+
+
+===== CRASH 2026-06-15 03:36:15 =====
+06-15 03:24:25.193  1909  4343 I ActivityManager: Changes in 99097 19 to 5, 0 to 184
+06-15 03:24:40.264  1909  2867 I ActivityManager: Changes in 99097 5 to 10, 184 to 0
+06-15 03:26:27.853  1909  1973 I ActivityManager: Start proc 24096:com.samsung.android.dqagent/1000 for broadcast {com.samsung.android.dqagent/com.samsung.android.dqagent.receiver.DQADataReceiver}
+06-15 03:26:27.854  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 03:26:28.050  1909  2867 I ActivityManager: Killing 17936:com.google.android.apps.turbo:aab/u0a250 (adj 965): empty #25
+06-15 03:26:52.029 14783 24083 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-15 03:26:52.049 14783 24083 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-15 03:26:52.066 14783 24083 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-15 03:26:52.092 14783 24083 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-15 03:26:52.105 14783 24083 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-15 03:26:52.132  1909  4343 I ActivityManager: Changes in 99097 19 to 3, 0 to 184
+06-15 03:26:52.458 14783 24083 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 03:26:52.459 14783 24083 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-15 03:26:52.459 14783 24083 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 03:26:52.460 14783 24083 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-15 03:26:55.166 14783 24083 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 03:26:55.166 14783 24083 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-15 03:26:55.166 14783 24083 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-15 03:26:55.166 14783 24083 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-15 03:27:02.191  1909  2057 I ActivityManager: Changes in 99097 3 to 10, 184 to 0
+06-15 03:28:48.468  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-15 03:28:48.472  1909  4343 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-15 03:31:42.513  1909  9411 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-15 03:31:48.582  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-15 03:33:03.103  1909  2094 E ActivityManager: Sending non-protected broadcast com.sec.android.intent.action.BIGDATA_EVERY_DAY_UPDATE from system 1909:system/1000 pkg android
+06-15 03:33:03.103  1909  2094 E ActivityManager: java.lang.Throwable
+06-15 03:33:03.103  1909  2094 E ActivityManager: 	at com.android.server.am.BroadcastController.checkBroadcastFromSystem(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:252)
+06-15 03:33:03.103  1909  2094 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLockedTraced(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:344)
+06-15 03:33:03.103  1909  2094 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:18)
+06-15 03:33:03.103  1909  2094 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentInPackage(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:86)
+06-15 03:33:03.103  1909  2094 E ActivityManager: 	at com.android.server.am.ActivityManagerService$LocalService.broadcastIntentInPackage(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:59)
+06-15 03:33:03.103  1909  2094 E ActivityManager: 	at com.android.server.am.PendingIntentRecord.sendInner(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:133)
+06-15 03:33:03.103  1909  2094 E ActivityManager: 	at com.android.server.am.ActivityManagerService.sendIntentSender(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:17)
+06-15 03:33:03.103  1909  2094 E ActivityManager: 	at com.android.server.am.ActivityManagerService.sendIntentSender(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:1)
+06-15 03:33:03.103  1909  2094 E ActivityManager: 	at android.app.PendingIntent.sendAndReturnResult(PendingIntent.java:1133)
+06-15 03:33:03.103  1909  2094 E ActivityManager: 	at android.app.PendingIntent.send(PendingIntent.java:1099)
+06-15 03:33:03.103  1909  2094 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:112)
+06-15 03:33:03.103  1909  2094 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:75)
+06-15 03:33:03.103  1909  2094 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:720)
+
+[2026-06-15 05:36:18] GL_LEAK_SUSPECT consecutive_spikes=2 suspect=hub_skia_orbit_nebula_combat
+[2026-06-15 05:36:18] REFIX_REQUESTED consecutive_gl_spikes
+
+===== CRASH 2026-06-15 06:27:03 =====
+06-15 05:56:01.235  1909  1933 I ActivityManager: Killing 28157:com.samsung.android.app.telephonyui/1001 (adj 905): empty #25
+06-15 06:00:00.019  1909  2359 I ActivityManager: Changes in 10108 10 to 5, 0 to 144
+06-15 06:00:06.066  1909  1971 I ActivityManager: Changes in 10108 5 to 10, 144 to 0
+06-15 06:00:52.256  1909  1973 I ActivityManager: Start proc 30379:com.samsung.android.scpm/5009 for content provider {com.samsung.android.scpm/com.samsung.scsp.common.ScpmProvider}
+06-15 06:00:52.256  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 06:00:52.440  1909  4341 I ActivityManager: Changes in 5009 19 to 5, 0 to 144
+06-15 06:00:52.465  1909  3606 I ActivityManager: Changes in 10117 19 to 5, 0 to 144
+06-15 06:00:58.491  1909  1971 I ActivityManager: Changes in 10117 5 to 15, 144 to 0
+06-15 06:01:35.799  1909  1971 I ActivityManager: Changes in 5009 5 to 15, 144 to 0
+06-15 06:01:44.020  1909  1973 I ActivityManager: Start proc 30452:com.samsung.android.privacydashboard/u0a107 for content provider {com.samsung.android.privacydashboard/com.samsung.android.privacydashboard.provider.PermissionAccessInformationContentProvider}
+06-15 06:01:44.020  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 06:01:44.167  1909  4343 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-15 06:01:50.254  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-15 06:01:55.801  1909  1972 I ActivityManager: Killing 28878:com.samsung.android.mobileservice/u0a119 (adj 905): empty #25
+06-15 06:02:10.253  1909  1972 I ActivityManager: Killing 29047:com.google.android.apps.tachyon/u0a254 (adj 905): empty #25
+06-15 06:04:25.210  1909  4343 I ActivityManager: Changes in 99097 19 to 5, 0 to 184
+06-15 06:04:40.275  1909  2537 I ActivityManager: Changes in 99097 5 to 10, 184 to 0
+06-15 06:04:50.983  1909  2065 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
+06-15 06:04:50.997  1909  4407 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+06-15 06:06:20.206  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-15 06:06:30.218  1909  2065 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-15 06:09:34.241  1909  2065 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+06-15 06:09:34.286  1909  4341 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+06-15 06:12:06.426  1909  2065 I ActivityManager: Changes in 10248 19 to 8, 0 to 128
+06-15 06:12:06.473  1909  4407 I ActivityManager: Changes in 10248 8 to 10, 128 to 0
+06-15 06:16:37.773  1909  1933 I ActivityManager: Changes in 99097 19 to 5, 0 to 184
+06-15 06:16:52.825  1909  2537 I ActivityManager: Changes in 99097 5 to 10, 184 to 0
+06-15 06:19:44.939  1909  2065 I ActivityManager: Changes in 10099 19 to 8, 0 to 128
+06-15 06:19:44.955  1909  1933 I ActivityManager: Changes in 10099 8 to 10, 128 to 0
+06-15 06:19:50.978  1909  2065 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
+06-15 06:19:50.986  1909  1933 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+06-15 06:24:11.307  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-15 06:24:11.317  1909  2537 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-15 06:24:11.322  1909  2065 I ActivityManager: Changes in 10250 19 to 8, 0 to 128
+06-15 06:24:11.331  1909  2065 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+06-15 06:24:11.346  1909  2537 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+06-15 06:24:11.483  1909  4343 I ActivityManager: Changes in 10250 8 to 10, 128 to 0
+06-15 06:24:25.213  1909  2537 I ActivityManager: Changes in 99097 19 to 5, 0 to 184
+06-15 06:24:40.277  1909  4342 I ActivityManager: Changes in 99097 5 to 10, 184 to 0
+
+
+===== CRASH 2026-06-15 09:06:45 =====
+06-15 09:00:27.686  1909  1972 I ActivityManager: Killing 6445:com.google.android.setupwizard:remote/u0a279 (adj 935): empty #27
+06-15 09:00:42.020  1909  2065 I ActivityManager: Changes in 10251 19 to 8, 0 to 128
+06-15 09:00:42.128  1909  1933 I ActivityManager: Changes in 10251 8 to 10, 128 to 0
+06-15 09:01:35.891  1909  1973 I ActivityManager: Start proc 7877:com.google.android.as.oss/u0a248 for service {com.google.android.as.oss/com.google.android.gms.learning.internal.training.InAppJobService}
+06-15 09:01:35.891  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 09:01:36.045  1909  1933 I ActivityManager: Changes in 10248 19 to 8, 0 to 128
+06-15 09:01:36.058  1909  4206 I ActivityManager: Changes in 10248 8 to 10, 128 to 0
+06-15 09:01:36.061  1909  1933 I ActivityManager: Killing 6060:com.android.vending:quick_launch/u0a251 (adj 925): empty #25
+06-15 09:01:45.322  1909  1973 I ActivityManager: Start proc 7910:com.samsung.android.privacydashboard/u0a107 for content provider {com.samsung.android.privacydashboard/com.samsung.android.privacydashboard.provider.PermissionAccessInformationContentProvider}
+06-15 09:01:45.322  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 09:01:45.427  1909  4206 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-15 09:01:51.539  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-15 09:02:11.542  1909  1972 I ActivityManager: Killing 6556:com.google.android.cellbroadcastreceiver/u0a296 (adj 925): empty #25
+06-15 09:04:25.234  1909  4343 I ActivityManager: Changes in 99097 19 to 5, 0 to 184
+06-15 09:04:40.289  1909  4343 I ActivityManager: Changes in 99097 5 to 10, 184 to 0
+06-15 09:06:15.306  1909  2065 I ActivityManager: Changes in 10248 19 to 8, 0 to 128
+06-15 09:06:15.330  1909  1973 I ActivityManager: Start proc 8041:com.lguplus.appstore/u0a99 for service {com.lguplus.appstore/androidx.work.impl.background.systemjob.SystemJobService}
+06-15 09:06:15.330  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 09:06:15.372  1909  1973 I ActivityManager: Start proc 8052:com.samsung.mfcontents/u0a95 for service {com.samsung.mfcontents/com.samsung.mfcontents.scheduler.MFCJobService}
+06-15 09:06:15.372  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 09:06:15.378  1909  4343 I ActivityManager: Changes in 10248 8 to 10, 128 to 0
+06-15 09:06:15.457  1909  4206 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
+06-15 09:06:15.470  1909  4343 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+06-15 09:06:15.480  1909  4206 I ActivityManager: Killing 29417:com.samsung.faceservice/5004 (adj 905): empty #25
+06-15 09:06:15.770  1909  1973 I ActivityManager: Start proc 8098:com.sec.android.provider.badge/u0a55 for broadcast {com.sec.android.provider.badge/com.sec.android.provider.badge.BadgeCountReceiver}
+06-15 09:06:15.770  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-15 09:06:15.827  1909  4206 I ActivityManager: Changes in 99097 19 to 8, 0 to 128
+06-15 09:06:15.827  1909  4206 I ActivityManager: Changes in 10099 19 to 8, 0 to 128
+06-15 09:06:15.856  1909  3698 I ActivityManager: Changes in 10251 19 to 8, 0 to 128
+06-15 09:06:15.858  1909  4206 I ActivityManager: Changes in 10055 19 to 11, 0 to 128
+06-15 09:06:15.885  1909  4206 I ActivityManager: Changes in 99097 8 to 10, 128 to 0
+06-15 09:06:15.885  1909  4206 I ActivityManager: Changes in 10251 8 to 10, 128 to 0
+06-15 09:06:15.885  1909  4206 I ActivityManager: Changes in 10099 8 to 10, 128 to 0
+06-15 09:06:15.887  1909  4206 I ActivityManager: Killing 29215:com.samsung.cmh/5004 (adj 905): empty #25
+06-15 09:06:15.919  1909  4206 I ActivityManager: Changes in 10055 11 to 5, 128 to 144
+06-15 09:06:20.320  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-15 09:06:21.939  1909  1971 I ActivityManager: Changes in 10055 5 to 15, 144 to 0
+06-15 09:06:30.330  1909  2065 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-15 09:06:41.941  1909  1972 I ActivityManager: Killing 6715:com.google.android.googlequicksearchbox:search/u0a253 (adj 905): empty #25
+

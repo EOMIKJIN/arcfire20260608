@@ -6,6 +6,5 @@ default_radius_scale,0.52,궤도 반경(행성 바깥·소행성 안쪽 밴드 O
 default_phase_bias,0.08,1번 위성 위상 바이어스(0..1)
 phase_bias_step,0.5,짝 위성 정반대(+180°) 위상·추가 쌍 간격
 radius_scale_step,0,동일 궤도 반경(동일 회전 속도)
-intercept_enabled,true,아크코어 장거리 미사일 요격 시험운용
 default_level,1,방위위성 디폴트 레벨
 max_level,10,방위위성 최대 레벨
