@@ -7,8 +7,10 @@ export const ArcCoreInboundDronePolicy_FROM_BALANCE_CSV = [
   { "key": "stagger_sec", "value": "0.4", "notesKo": "웨이브 내 스폰 간격(초)" },
   { "key": "impact_radius_px", "value": "62", "notesKo": "행성 외곽 충돌 반경(px)" },
   { "key": "edge_spawn_radius_px", "value": "218", "notesKo": "전방향 스폰 가장자리 반경(px)" },
-  { "key": "intercept_range_px", "value": "200", "notesKo": "방위위성 요격 사거리(px)" },
-  { "key": "intercept_cooldown_sec", "value": "2.4", "notesKo": "위성 재사격 쿨(초)" },
+  { "key": "defense_zone_diameter_px", "value": "150", "notesKo": "방위위성 방어구 작동 지름(px)" },
+  { "key": "intercept_dwell_sec", "value": "3", "notesKo": "방어구 안 체류 후 드론 파괴(초)" },
+  { "key": "intercept_range_px", "value": "75", "notesKo": "deprecated — 반경=defense_zone_diameter_px/2" },
+  { "key": "intercept_cooldown_sec", "value": "2.4", "notesKo": "legacy — 체류 요격 미사용" },
   { "key": "max_active_drones", "value": "24", "notesKo": "동시 활성 드론 상한" },
 ] as const;
 export type ArcCoreInboundDronePolicyRow = (typeof ArcCoreInboundDronePolicy_FROM_BALANCE_CSV)[number];

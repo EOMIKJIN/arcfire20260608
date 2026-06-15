@@ -42,11 +42,47 @@ export type PlanetAttackDamageDetail = {
   totalEvents: number;
 };
 
-/** 행성 방위위성 — 플레이어 업그레이드 레벨(런타임 정본) */
+/** Economy Fabric — 운영 실물(수송·피해·재고) 누적 · 일 1회 reconcile */
+export type PlanetEconomyFabricEvent = {
+  kind: 'attack' | 'convoy_settlement' | 'daily_reconcile';
+  atMs: number;
+  payload: Record<string, number>;
+};
+
+export type PlanetEconomyFabricDetail = {
+  version: 1;
+  window: {
+    kstDayKey: string;
+    convoyProfitCredits: number;
+    convoyTrips: number;
+    supplyUnitsDelivered: number;
+    attackDefenseLoss: number;
+    attackPopulationLoss: number;
+  };
+  lastDailyReconcile?: {
+    atMs: number;
+    supplyStockScale: number;
+    operationalBase: number;
+    windowSummary: PlanetEconomyFabricDetail['window'];
+  };
+  recentEvents: PlanetEconomyFabricEvent[];
+};
+
+/** 행성 방위위성 — 플레이어 설치·업그레이드 런타임 정본 */
+export type PlanetDefenseSatelliteUpgradeJob = {
+  targetLevel: number;
+  startedAtMs: number;
+  completeAtMs: number;
+};
+
 export type PlanetDefenseSatelliteDetail = {
   version: 1;
+  /** 최초 설치 완료 여부 */
+  installed: boolean;
   /** 1..10 — `planet_defense_satellite_level_policy.csv` */
   level: number;
+  /** 진행 중 업그레이드 (없으면 null) */
+  upgradeJob?: PlanetDefenseSatelliteUpgradeJob | null;
   updatedAtMs?: number;
 };
 
@@ -89,4 +125,6 @@ export type PlanetCoreMetricsDetail = {
   defenseSatellite?: PlanetDefenseSatelliteDetail;
   /** 행성 공격 요소(드론·공성 등) → 5대 스탯 피해 이력 */
   attackDamage?: PlanetAttackDamageDetail;
+  /** 운영 실물 → 스탯·무역 재고 연결 패브릭 */
+  economyFabric?: PlanetEconomyFabricDetail;
 };

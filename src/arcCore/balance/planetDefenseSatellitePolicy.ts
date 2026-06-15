@@ -4,6 +4,8 @@ import { getPlanetDefenseSatelliteMaxLevel } from './planetDefenseSatelliteLevel
 
 export type PlanetDefenseSatellitePolicy = {
   minPerPlanet: number;
+  maxPerPlanet: number;
+  secondSatelliteUnlockLevel: number;
   defaultWeaponId: string;
   defaultRadiusScale: number;
   defaultPhaseBias: number;
@@ -30,6 +32,11 @@ export function getPlanetDefenseSatellitePolicy(): PlanetDefenseSatellitePolicy 
   if (cachedPolicy) return cachedPolicy;
   cachedPolicy = {
     minPerPlanet: Math.max(0, Math.floor(readPolicyNumber('min_per_planet', 1))),
+    maxPerPlanet: Math.max(1, Math.floor(readPolicyNumber('max_per_planet', 2))),
+    secondSatelliteUnlockLevel: Math.max(
+      2,
+      Math.floor(readPolicyNumber('second_satellite_unlock_level', 10)),
+    ),
     defaultWeaponId: readPolicyValue('default_weapon_id', 'w_intercept_missile_01'),
     defaultRadiusScale: readPolicyNumber('default_radius_scale', 0.72),
     defaultPhaseBias: readPolicyNumber('default_phase_bias', 0.08),

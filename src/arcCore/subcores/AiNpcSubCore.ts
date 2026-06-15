@@ -16,6 +16,7 @@ import { getNpcCapitalShip } from '../../npc/npcFleetRegistry';
 import { readPlanetOrbitClockMs } from '../orbitClockMsBridge';
 import { usePlanetDevelopmentAccStore } from '../../store/planetDevelopmentAccStore';
 import { listNpcCapitalShips } from '../../npc/npcFleetRegistry';
+import { getConvoyShipCargoDestination } from '../economy/runArcTransportTradePass';
 
 /**
  * AI NPC 서브코어
@@ -268,10 +269,15 @@ export class AiNpcSubCore extends BaseArcSubCore {
     return Object.values(world).flatMap((s) => s.planets.map((p) => p.id));
   }
 
-  private pickNextPlanetId(excludeShipId?: string): string {
+  private pickNextPlanetId(shipId?: string): string {
+    if (this.gatherDirectivePlanetId) return this.gatherDirectivePlanetId;
+    if (shipId) {
+      const cargoDest = getConvoyShipCargoDestination(shipId);
+      if (cargoDest) return cargoDest;
+    }
     const allPlanetIds = this.listAllPlanetIds();
     return pickBalancedArcTrafficPlanetId(allPlanetIds, this.ships, {
-      excludeShipId,
+      excludeShipId: shipId,
       gatherPlanetId: this.gatherDirectivePlanetId,
     });
   }

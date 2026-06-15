@@ -301,6 +301,14 @@ function main() {
   fs.mkdirSync(REPORT_DIR, { recursive: true });
 
   const balanceAudit = runNpm('audit:balance');
+  const planetEconomyAudit = spawnSync('node', ['tools/planet-economy-3h-audit/run-planet-economy-3h-audit.cjs'], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    shell: process.platform === 'win32',
+    maxBuffer: 16 * 1024 * 1024,
+  });
+  const planetEconomyMd = readText(path.join(ROOT, 'tools/planet-economy-3h-audit/reports/latest.md'));
+  const planetEconomyExit = planetEconomyAudit.status ?? 1;
   const dailyPolicy = parseDailyOpsPolicy();
   const violations = scanDailyOnlyViolations();
   const economyKpi = readEconomySimKpi();
@@ -319,6 +327,8 @@ function main() {
     maxGapPercent: drift.maxGapPercent,
     warnBandCount: drift.warnCount,
     balanceAuditExit: balanceAudit.status ?? 1,
+    planetEconomyExit,
+    planetEconomyOverall: planetEconomyMd.match(/\*\*Overall:\*\* (\w+)/)?.[1] ?? 'unknown',
     priceElasticity: elasticity.priceElasticity,
     realtimePriceDisabled: elasticity.realtimeDisabled,
   };
@@ -329,7 +339,11 @@ function main() {
   const criticalInsights = insights.filter((i) => i.severity === 'critical');
   const warnInsights = insights.filter((i) => i.severity === 'warn');
   snapshot.overall =
-    violations.length > 0 || !dailyPolicy.ok || balanceAudit.status !== 0 || criticalInsights.length > 0
+    violations.length > 0 ||
+    !dailyPolicy.ok ||
+    balanceAudit.status !== 0 ||
+    planetEconomyExit !== 0 ||
+    criticalInsights.length > 0
       ? 'FAIL'
       : warnInsights.length > 0
         ? 'WARN'
@@ -387,6 +401,10 @@ function main() {
     for (const i of learning.recommendedNext) {
       lines.push(`1. ${i.action} — ${i.message}`);
     }
+  }
+
+  if (planetEconomyMd.trim()) {
+    lines.push('', '---', '', planetEconomyMd.trim());
   }
 
   lines.push('', '## 타임라인', '', `- CSV: \`${path.relative(ROOT, TIMELINE_CSV).replace(/\\/g, '/')}\``);

@@ -12,6 +12,8 @@ export interface ArcInboundDrone {
   hp: number;
   maxHp: number;
   phase: ArcInboundDronePhase;
+  /** 방어위성 방어구 내 누적 체류(초) — 이탈 시 0 */
+  defenseZoneDwellSec?: number;
   /** 요격/충돌 시점(벽시계 sec) — 트레일 페이드 동안 스냅샷 유지 */
   trailEndWallSec?: number;
 }

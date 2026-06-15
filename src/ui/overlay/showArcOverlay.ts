@@ -6,11 +6,13 @@ import {
   type ArcOverlayNarrativeEntry,
 } from './arcOverlayStore';
 
-export type { ArcAlertButton, ArcOverlayEntry, ArcOverlayKind } from './arcOverlayStore';
+export type { ArcAlertButton, ArcOverlayEntry, ArcOverlayKind, PlanetDevelopmentInitialView } from './arcOverlayStore';
 export {
   presentArcOverlayAlert,
   dismissArcOverlay,
   dismissAllArcOverlays,
+  presentPlanetEconomyInfoOverlay,
+  presentPlanetDevelopmentOverlay,
   useArcOverlayStore,
 } from './arcOverlayStore';
 

@@ -28,6 +28,7 @@ import {
   WORLD_OBJECT_ANCHOR_PX,
   WORLD_OBJECT_DEFENSE_SATELLITE_COLOR,
   WORLD_OBJECT_DEFENSE_SATELLITE_MARK_PX,
+  WORLD_OBJECT_DEFENSE_ZONE_STROKE,
   WORLD_OBJECT_WRECK_MARK_PX,
   WORLD_OBJECT_WRECK_STROKE_COLOR,
 } from '../../../game/planetHub/planetHubConstants';
@@ -710,6 +711,12 @@ export const planetHubBgStyles = StyleSheet.create({
     justifyContent: 'center',
     width: WORLD_OBJECT_ANCHOR_PX * 2,
     height: WORLD_OBJECT_ANCHOR_PX * 2,
+  },
+  worldObjectDefenseZoneRing: {
+    position: 'absolute',
+    borderWidth: 1,
+    borderColor: WORLD_OBJECT_DEFENSE_ZONE_STROKE,
+    backgroundColor: 'transparent',
   },
   worldObjectDefenseSatelliteMark: {
     width: 0,

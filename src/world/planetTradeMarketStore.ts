@@ -26,6 +26,7 @@ import { resolveTradeRouteAssignedSupplyPlanetId } from '../arcCore/economy/trad
 import { resolveNearestSupplyPlanetForTradeGood } from '../arcCore/economy/tradeRouteRegistry';
 import { listPlanetIdsWithTradePort } from './planetTradePortDb';
 import { getEconomyCategoryPriceMul } from '../arcCore/economy/economyPriceOverlayStore';
+import { resolvePlanetSupplyStockScale } from '../arcCore/economy/planetEconomyFabric';
 import { resolveSamePlanetOriginResaleSellUnit } from '../arcCore/economy/localOriginResalePolicy';
 import {
   listTradeRouteDemandImportItemIdsForPlanet,
@@ -79,14 +80,17 @@ function clampToPriceBand(value: number, anchor: number): number {
 }
 
 function buildSupplyEntry(
+  planetId: string,
   goodId: string,
   attrs: NonNullable<ReturnType<typeof parseTradeRouteAttrs>>,
   seed: number,
 ): PlanetTradeMarketEntry {
   const stockBounds = getTradeRouteStockBounds();
   const stockSpan = stockBounds.max - stockBounds.min;
+  const stockScale = resolvePlanetSupplyStockScale(planetId);
   const stock =
-    stockBounds.min + Math.floor(pseudoRandom(seed + goodId.length) * (stockSpan + 1));
+    stockBounds.min +
+    Math.floor(pseudoRandom(seed + goodId.length) * (stockSpan + 1) * stockScale);
   const tradeMul = getEconomyCategoryPriceMul('trade_route');
   const mod = priceMod(seed, goodId);
   const baselinePrice = Math.max(1, Math.floor(attrs.baseBuyPrice * mod * getTradeRouteSupplyBuyPriceFactor()));
@@ -166,7 +170,7 @@ function buildEntry(
   const def = getItemDef(goodId);
   const attrs = parseTradeRouteAttrs(def);
   if (!attrs) return null;
-  if (role === 'supply') return buildSupplyEntry(goodId, attrs, seed);
+  if (role === 'supply') return buildSupplyEntry(planetId, goodId, attrs, seed);
   return buildDemandImportEntry(planetId, goodId, attrs, seed);
 }
 

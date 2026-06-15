@@ -56,6 +56,7 @@ export function planArcConvoyRouteAtSupply(
   supplyPlanetId: string,
   shipId: string,
   bankBalance: number,
+  opts?: { ignoreBankAffordability?: boolean; minQty?: number; forceDestPlanetId?: string },
 ): ArcConvoyRoutePlan | null {
   const routes = listConvoySourceRoutesAtPlanet(supplyPlanetId);
   if (routes.length === 0) return null;
@@ -72,11 +73,17 @@ export function planArcConvoyRouteAtSupply(
     if (supplyStock <= 0) continue;
 
     const qtyCap = sampleConvoyQtyCap(shipId, supplyPlanetId);
-    const affordQty = Math.floor(bankBalance / unitBuyPrice);
-    const maxQty = Math.min(qtyCap, supplyStock, affordQty);
+    const affordQty = opts?.ignoreBankAffordability
+      ? supplyStock
+      : Math.floor(bankBalance / unitBuyPrice);
+    let maxQty = Math.min(qtyCap, supplyStock, Math.max(0, affordQty));
+    if (opts?.minQty != null) {
+      maxQty = Math.max(maxQty, Math.min(opts.minQty, supplyStock));
+    }
     if (maxQty <= 0) continue;
 
     for (const destPlanetId of listDemandPlanetIdsForTradeGood(route.tgId)) {
+      if (opts?.forceDestPlanetId && destPlanetId !== opts.forceDestPlanetId) continue;
       const unitSellPrice = resolveDemandPlanetSellUnit(destPlanetId, route.tgId);
       if (unitSellPrice <= 0) continue;
 

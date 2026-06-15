@@ -4,6 +4,8 @@ import {
   View,
 } from 'react-native';
 import { registerPlanetSessionResource } from '../../game/planetSessionRegistry';
+import { presentPlanetEconomyInfoOverlay, presentPlanetDevelopmentOverlay } from '../../ui/overlay/arcOverlayStore';
+import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { PlanetHubActionTile } from './PlanetHubActionTile';
 import { PlanetHubActionGaugeSlot } from './PlanetHubActionGaugeSlot';
 import { PLANET_MAIN_SCAN_MENU_GAP_PX } from '../../stages/planetMainStageLayout';
@@ -27,6 +29,7 @@ type Props = {
   /** `dock` — 하단 도크(무역소 메뉴 바로 위 5px) */
   layout?: 'dock' | 'scroll';
   planetId: string | null;
+  planetName?: string | null;
   scanEnabled?: boolean;
   actionsUnlocked?: boolean;
   miningLabel: string;
@@ -44,6 +47,7 @@ type Props = {
 export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
   layout = 'dock',
   planetId,
+  planetName,
   scanEnabled = true,
   actionsUnlocked: actionsUnlockedProp = false,
   miningLabel,
@@ -127,6 +131,29 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
     }, durationMs);
   }, [clearGaugeTimers]);
 
+  const handlePressPlanetDevelopment = useCallback(() => {
+    if (!planetId || gaugeActive) return;
+    presentPlanetDevelopmentOverlay(planetId, planetName?.trim() || planetId, 'list');
+  }, [planetId, planetName, gaugeActive]);
+
+  const defenseSatelliteInstalled = usePlanetCoreRuntimeStore((s) => {
+    if (!planetId) return false;
+    const raw = s.byPlanetId[planetId]?.detail?.defenseSatellite;
+    if (!raw || raw.version !== 1) return false;
+    if (raw.installed === true) return true;
+    return raw.installed !== false
+      && typeof raw.level === 'number'
+      && raw.level >= 1
+      && raw.updatedAtMs != null;
+  });
+
+  const planetDevelopmentIcon = defenseSatelliteInstalled ? '🛰' : '⟦⚙⟧';
+
+  const handlePressPlanetInfo = useCallback(() => {
+    if (!planetId || gaugeActive) return;
+    presentPlanetEconomyInfoOverlay(planetId, planetName?.trim() || planetId);
+  }, [planetId, planetName, gaugeActive]);
+
   const handlePressScan = useCallback(() => {
     if (!scanEnabled || actionsUnlocked || gaugeActive) return;
     startGaugeActivity('scan', randomDurationMs(SCAN_DURATION_MIN_MS, SCAN_DURATION_MAX_MS), () => {
@@ -174,6 +201,23 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
         progressPct={progressPct}
         accessibilityLabel={gaugeAccessibilityLabel}
       />
+      <View style={styles.row}>
+        <View style={styles.leftColumn}>
+          <PlanetHubActionTile
+            label="행성정보"
+            icon="⟦◎⟧"
+            onPress={handlePressPlanetInfo}
+            disabled={!planetId || gaugeActive}
+          />
+          <PlanetHubActionTile
+            label="행성개발"
+            icon={planetDevelopmentIcon}
+            onPress={handlePressPlanetDevelopment}
+            disabled={!planetId || gaugeActive}
+          />
+        </View>
+        <View style={styles.topRightSpacer} />
+      </View>
       <View style={styles.row}>
         <View style={styles.tileSlot}>
           <PlanetHubActionTile
@@ -236,10 +280,18 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     columnGap: SPACING.sm,
   },
+  leftColumn: {
+    flex: 1,
+    rowGap: 4,
+  },
+  topRightSpacer: {
+    flex: 3,
+  },
   secondaryGroup: {
     flex: 3,
     flexDirection: 'row',
     columnGap: SPACING.sm,
+    alignItems: 'stretch',
   },
   tileSlot: {
     flex: 1,

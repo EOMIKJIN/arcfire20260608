@@ -1,0 +1,15 @@
+key,value,notesKo
+policy_version,1,행성 유지비·거래수수료 정본
+enabled,true,일 1회 배치에서 유지비·수수료 정산
+upkeep_base_credits,200,행성 유지비 기본(크레딧)
+upkeep_per_population_credit,12,인구 스칼라(0-100) 1당 추가 크레딧
+trade_fee_rate_pct,10,거래 총액 대비 수수료(%)
+trade_fee_player_wallet_share_pct,5,플레이어 지갑 일일 지급 풀(총액 대비 %)
+trade_fee_arc_immediate_share_pct,5,팩션 금고 즉시 적립(총액 대비 %)
+transport_fleet_seed_credits,500000,아크코어 수송선단 금고 시드
+arc_core_vault_seed_credits,100000,아크코어(RED) 금고 시드
+blue_team_vault_seed_credits,100000,블루팀 공용 금고 시드
+allow_negative_vault_balance,true,금고 잔고 마이너스 허용(경제 시뮬)
+convoy_daily_coverage_enabled,true,교역 행성 일 1회 수송선단 정산
+convoy_daily_min_trade_qty,2,일일 정산 최소 교역 수량
+transport_fleet_display_name_ko,아크코어 수송선단,거래 독점 선단 표시명

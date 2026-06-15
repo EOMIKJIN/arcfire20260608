@@ -90,10 +90,10 @@ export const PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX = 140;
 export const PLANET_MAIN_SCAN_MENU_GAP_PX = 5;
 
 /**
- * 하단 도크 — 게이지(20) + 행간(4) + 액션 타일(52) + 스캔↔메뉴 간격(5)
+ * 하단 도크 — 게이지(20) + 행간(4) + 액션 타일×2(52+4+52) + 스캔↔메뉴 간격(5)
  * @see PlanetHubActionGaugeSlot · PlanetHubActionTile
  */
-export const PLANET_MAIN_SCAN_ACTION_BLOCK_EST_PX = 81;
+export const PLANET_MAIN_SCAN_ACTION_BLOCK_EST_PX = 137;
 
 /**
  * 메뉴 행(52) + 헤더 간격(5) + 파일럿 헤더(44)

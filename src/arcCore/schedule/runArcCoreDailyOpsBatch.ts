@@ -14,6 +14,9 @@ import { tryArcCoreWorldDailyUnlock } from '../worldExpansionDailyUnlock';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { flushDailyOpsObservationsToAabs } from '../userMod/dailyOpsObservationQueue';
 import { runIntegratedEngageHpAdjustPass } from '../balance/runIntegratedEngageHpAdjustPass';
+import { runPlanetEconomyFabricDailyPass } from '../economy/planetEconomyFabric';
+import { runArcCoreConvoyDailySettlementPass } from '../economy/runArcCoreConvoyDailySettlementPass';
+import { runArcCorePlanetUpkeepDailyPass } from '../economy/runArcCorePlanetUpkeepDailyPass';
 import { resolveArcCoreDailyOpsPolicy } from './arcCoreDailyOpsPolicy';
 
 export type ArcCoreDailyOpsBatchResult = {
@@ -21,6 +24,7 @@ export type ArcCoreDailyOpsBatchResult = {
   planetEnergy: boolean;
   planetEnvironment: boolean;
   planetMasterBalance: boolean;
+  economyFabric: boolean;
   scenarioEconomy: boolean;
   marketPriceAdjust: boolean;
   simOverlayIngest: boolean;
@@ -28,6 +32,8 @@ export type ArcCoreDailyOpsBatchResult = {
   aabsAlignment: boolean;
   worldExpansionUnlock: boolean;
   integratedEngageHpAdjust: boolean;
+  planetUpkeep: boolean;
+  convoyDailySettlement: boolean;
 };
 
 /**
@@ -41,6 +47,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     planetEnergy: false,
     planetEnvironment: false,
     planetMasterBalance: false,
+    economyFabric: false,
     scenarioEconomy: false,
     marketPriceAdjust: false,
     simOverlayIngest: false,
@@ -48,6 +55,8 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     aabsAlignment: false,
     worldExpansionUnlock: false,
     integratedEngageHpAdjust: false,
+    planetUpkeep: false,
+    convoyDailySettlement: false,
   };
 
   if (!usePlanetCoreRuntimeStore.getState().hydrated) {
@@ -67,6 +76,8 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     result.planetMasterBalance = true;
   }
   if (policy.runScenarioEconomyPass) {
+    const fabric = runPlanetEconomyFabricDailyPass();
+    result.economyFabric = fabric.ran;
     runPlayScenarioEconomyPass(true);
     result.scenarioEconomy = true;
   }
@@ -88,6 +99,12 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   if (policy.runWorldExpansionUnlock) {
     result.worldExpansionUnlock = tryArcCoreWorldDailyUnlock();
   }
+
+  const convoyDaily = await runArcCoreConvoyDailySettlementPass();
+  result.convoyDailySettlement = convoyDaily.ran;
+
+  const upkeep = await runArcCorePlanetUpkeepDailyPass();
+  result.planetUpkeep = upkeep.ran;
 
   return result;
 }

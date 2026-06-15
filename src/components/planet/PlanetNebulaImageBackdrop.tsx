@@ -12,6 +12,8 @@ type Props = {
   nebulaBakedImageSource?: ImageSourcePropType | null;
   renderNebulaLayer?: boolean;
   backgroundImageSource?: ImageSourcePropType | null;
+  /** 드론 dodge Skia 교차 페이드 — 0이면 RN Image 숨김 */
+  opacity?: number;
 };
 
 export const PlanetNebulaImageBackdrop = memo(function PlanetNebulaImageBackdrop({
@@ -19,6 +21,7 @@ export const PlanetNebulaImageBackdrop = memo(function PlanetNebulaImageBackdrop
   nebulaBakedImageSource = null,
   renderNebulaLayer = true,
   backgroundImageSource = null,
+  opacity = 1,
 }: Props) {
   const showNebula = renderNebulaLayer && nebulaBakedImageSource != null;
   const showBackdrop = backgroundImageSource != null;
@@ -31,6 +34,7 @@ export const PlanetNebulaImageBackdrop = memo(function PlanetNebulaImageBackdrop
         {
           width: size,
           height: size,
+          opacity,
           backgroundColor: fillWhenEmpty ? NEBULA_EMPTY_FILL : 'transparent',
         },
       ]}

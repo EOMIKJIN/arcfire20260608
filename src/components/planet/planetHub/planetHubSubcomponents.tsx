@@ -28,6 +28,7 @@ import { SkiaPlanetNebulaShaderBackdrop } from '../SkiaPlanetNebulaShaderBackdro
 import { resolveMainStageSkiaBackdrop } from '../../../game/mainStageSkiaBackdrop';
 import { useCapitalRealtimeCombatSimContext } from '../../../combat';
 import { resolvePlanetNebulaBakedSource } from '../../../game/planetNebulaBakedAssets';
+import { getArcCoreInboundDronePolicy } from '../../../arcCore/balance/arcCoreInboundDronePolicy';
 import { computeTableNpcOrbitXY } from '../planetOrbitHubWorklets';
 import {
   PLANET_MAIN_BACKGROUND_CLAN_PLATE_AFTER_NAME_GAP_PX,
@@ -327,6 +328,12 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   }, []);
   const [dodgeOrbitOffset, setDodgeOrbitOffset] = useState({ x: 0, y: 0 });
   const [inboundDroneSkiaDodgeLatch, setInboundDroneSkiaDodgeLatch] = useState(false);
+  /** 드론 FX 1회 — Skia 교차 페이드 후 RN 언마운트(영구 이중 마운트 방지) */
+  const [skiaNebulaSwappedIn, setSkiaNebulaSwappedIn] = useState(false);
+  const [skiaNebulaImagesReady, setSkiaNebulaImagesReady] = useState(false);
+  const [skiaNebulaCommitted, setSkiaNebulaCommitted] = useState(false);
+  /** Canvas 1프레임 선그린 뒤 RN→Skia opacity 전환 */
+  const [skiaNebulaRevealed, setSkiaNebulaRevealed] = useState(false);
   const hubDodgeTimeMsRef = useRef(0);
   const noteHubDodgeTimeMs = useCallback((ms: number) => {
     hubDodgeTimeMsRef.current = ms;
@@ -340,7 +347,37 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   );
   const handleInboundDroneSkiaDodgeLatch = useCallback((active: boolean) => {
     setInboundDroneSkiaDodgeLatch(active);
+    if (active) setSkiaNebulaSwappedIn(true);
   }, []);
+  const handleSkiaNebulaImagesReady = useCallback(() => {
+    setSkiaNebulaImagesReady(true);
+  }, []);
+  useEffect(() => {
+    setInboundDroneSkiaDodgeLatch(false);
+    setSkiaNebulaSwappedIn(false);
+    setSkiaNebulaImagesReady(false);
+    setSkiaNebulaCommitted(false);
+    setSkiaNebulaRevealed(false);
+  }, [planetId]);
+  useEffect(() => {
+    if (!skiaNebulaSwappedIn || !skiaNebulaImagesReady) {
+      setSkiaNebulaRevealed(false);
+      return undefined;
+    }
+    const id = requestAnimationFrame(() => {
+      setSkiaNebulaRevealed(true);
+    });
+    return () => cancelAnimationFrame(id);
+  }, [skiaNebulaSwappedIn, skiaNebulaImagesReady]);
+  useEffect(() => {
+    if (!skiaNebulaRevealed || skiaNebulaCommitted) return undefined;
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setSkiaNebulaCommitted(true);
+      });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [skiaNebulaRevealed, skiaNebulaCommitted]);
   const recomputeDodgeOrbitOffset = useCallback(() => {
     if (!dodgeStageMountedRef.current) return;
     const nebulaNode = nebulaBackdropRef.current;
@@ -404,12 +441,11 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   const useSkiaCombatNebulaBackdrop = Boolean(
     showEdenRaidTest && mainStageBackdrop.nebulaShaderEnabled,
   );
-  const useSkiaInboundDroneDodgeBackdrop = Boolean(
-    !showEdenRaidTest &&
-    mainStageBackdrop.nebulaShaderEnabled &&
-    inboundDroneSkiaDodgeLatch,
+  const hubNebulaDualStack = Boolean(
+    !showEdenRaidTest && mainStageBackdrop.nebulaShaderEnabled,
   );
-  const useSkiaNebulaBackdrop = useSkiaCombatNebulaBackdrop || useSkiaInboundDroneDodgeBackdrop;
+  /** Skia 표시 — 1프레임 선그린(revealed) 후 RN opacity 0 */
+  const skiaNebulaLayerActive = skiaNebulaRevealed;
   const nebulaBakedImageSource = useMemo(
     () => resolvePlanetNebulaBakedSource(planetId),
     [planetId],
@@ -436,6 +472,26 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   ]);
   const nebulaBackdropSize = Math.round(Math.max(bgWindowWidth, bgWindowHeight) * 0.59);
 
+  const hubInboundSkiaNebulaLayer = (
+    <SkiaPlanetNebulaShaderBackdrop
+      size={nebulaBackdropSize}
+      dodgeFxActive={inboundDroneSkiaDodgeLatch}
+      nebulaBakedImageSource={nebulaBakedImageSource}
+      renderNebulaShader={mainStageBackdrop.nebulaShaderEnabled}
+      backgroundImageSource={mainStageBackdrop.backdropImageSource}
+      dodgeHitFxRef={hubInboundDroneDodgeHitFxRef}
+      dodgeTimeMsRef={hubDodgeTimeMsRef}
+      dodgeOrbitSize={ORBIT_SCENE_SIZE}
+      dodgeOrbitVisualScaleX={PLANET_MAIN_COMBAT_LAYER_WIDTH_SCALE_X}
+      dodgeOrbitVisualScaleY={PLANET_MAIN_COMBAT_LAYER_HEIGHT_SCALE_Y}
+      dodgeOrbitOffsetX={dodgeOrbitOffset.x}
+      dodgeOrbitOffsetY={dodgeOrbitOffset.y}
+      sessionPlanetId={planetId}
+      hideUntilImagesReady={!skiaNebulaImagesReady}
+      onNebulaImagesReady={handleSkiaNebulaImagesReady}
+    />
+  );
+
   return (
     <View style={[bgStyles.root, backgroundChrome]} pointerEvents="box-none">
       <View
@@ -454,10 +510,11 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
         ]}
         pointerEvents="none"
       >
-        {useSkiaNebulaBackdrop ? (
+        {useSkiaCombatNebulaBackdrop ? (
           <SkiaPlanetNebulaShaderBackdrop
             size={nebulaBackdropSize}
             active
+            dodgeFxActive
             nebulaBakedImageSource={nebulaBakedImageSource}
             renderNebulaShader={mainStageBackdrop.nebulaShaderEnabled}
             backgroundImageSource={mainStageBackdrop.backdropImageSource}
@@ -478,6 +535,31 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
             dodgeOrbitOffsetY={dodgeOrbitOffset.y}
             sessionPlanetId={planetId}
           />
+        ) : hubNebulaDualStack ? (
+          <>
+            {!skiaNebulaCommitted ? (
+              <PlanetNebulaImageBackdrop
+                size={nebulaBackdropSize}
+                nebulaBakedImageSource={nebulaBakedImageSource}
+                renderNebulaLayer={mainStageBackdrop.nebulaShaderEnabled}
+                backgroundImageSource={mainStageBackdrop.backdropImageSource}
+                opacity={skiaNebulaLayerActive ? 0 : 1}
+              />
+            ) : null}
+            <View
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                width: nebulaBackdropSize,
+                height: nebulaBackdropSize,
+                opacity: skiaNebulaLayerActive || skiaNebulaCommitted ? 1 : 0,
+              }}
+              pointerEvents="none"
+            >
+              {hubInboundSkiaNebulaLayer}
+            </View>
+          </>
         ) : (
           <PlanetNebulaImageBackdrop
             size={nebulaBackdropSize}
@@ -695,6 +777,23 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
     return ORBIT_CENTER * radiusScale;
   }, [object.kind, object.transform.radiusScale]);
 
+  const defenseZoneDiameterPx = useMemo(() => {
+    if (object.kind !== 'defense_satellite') return 0;
+    return getArcCoreInboundDronePolicy().defenseZoneDiameterPx;
+  }, [object.kind]);
+
+  const defenseZoneRingStyle = useMemo(() => {
+    const d = defenseZoneDiameterPx;
+    const half = d / 2;
+    return {
+      width: d,
+      height: d,
+      borderRadius: half,
+      left: WORLD_OBJECT_ANCHOR_PX - half,
+      top: WORLD_OBJECT_ANCHOR_PX - half,
+    };
+  }, [defenseZoneDiameterPx]);
+
   const animated = useAnimatedStyle(() => {
     'worklet';
     const now = orbitClockMs.value;
@@ -772,6 +871,11 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
           <View style={bgStyles.worldObjectWreckMark} accessibilityLabel="잔해" />
         ) : object.kind === 'defense_satellite' ? (
           <View style={bgStyles.worldObjectDefenseSatelliteWrap} accessibilityLabel="방위위성">
+            <View
+              style={[bgStyles.worldObjectDefenseZoneRing, defenseZoneRingStyle]}
+              pointerEvents="none"
+              accessibilityLabel="방어구"
+            />
             <View style={bgStyles.worldObjectDefenseSatelliteMark} />
           </View>
         ) : (

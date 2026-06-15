@@ -19,7 +19,15 @@ import { useItemLedgerStore } from '../../src/store/itemLedgerStore';
 import { useClanWarFoundationStore } from '../../src/store/clanWarFoundationStore';
 import { generateMarketByItemIds, getBuyPrice, getSellPrice } from '../../src/engine/TradeEngine';
 import { TRADE_GOODS, getItemDef } from '../../src/data/goods';
-import { listArcCoreGalacticMineralItemIds, resolveMineralCatalogSellPrice } from '../../src/arcCore/economy/mineralTradePricing';
+import {
+  applyPlanetTradeTransactionFee,
+  computeTradeFeeForGross,
+  reversePlanetTradeTransactionFee,
+} from '../../src/arcCore/economy/applyPlanetTradeTransactionFee';
+import {
+  listArcCoreGalacticMineralItemIds,
+  resolveMineralCatalogSellPrice,
+} from '../../src/arcCore/economy/mineralTradePricing';
 import {
   addToInventorySlotsMax,
   aggregateInventoryForTrade,
@@ -140,8 +148,10 @@ function resolveTradeBuyBlock(input: {
     }
   }
 
-  const totalCost = unitPrice * buyQty;
-  if (player.credits < totalCost) {
+  const grossPreview = unitPrice * buyQty;
+  const feePreview = computeTradeFeeForGross(grossPreview);
+  const totalChargedPreview = grossPreview + feePreview.totalFee;
+  if (player.credits < totalChargedPreview) {
     return { title: '구매 불가', message: '잔고가 부족해 구매할 수 없습니다.' };
   }
 
@@ -181,7 +191,9 @@ function refundTradeMineralSink(
 function rollbackTradeBuyFailure(input: {
   itemDef: ItemDef | null | undefined;
   buyQty: number;
-  totalCost: number;
+  totalCharged: number;
+  planetId?: string | null;
+  grossCredits?: number;
   capitalShipNpcId?: string | null;
 }): void {
   const store = usePlayerStore.getState();
@@ -190,7 +202,10 @@ function rollbackTradeBuyFailure(input: {
     const restored = refundTradeMineralSink(current, input.itemDef, input.buyQty);
     if (restored !== current) store.setPlayer(restored);
   }
-  store.addCredits(input.totalCost);
+  store.addCredits(input.totalCharged);
+  if (input.planetId && input.grossCredits != null && input.grossCredits > 0) {
+    reversePlanetTradeTransactionFee(input.planetId, input.grossCredits);
+  }
   if (input.capitalShipNpcId) store.removeHangarShipByNpcId(input.capitalShipNpcId);
 }
 
@@ -471,12 +486,15 @@ export default function TradeScreen() {
   ) => {
     if (!player || !planet) return;
     const qty = Math.max(1, Math.floor(buyQty));
-    const totalCost = unitPrice * qty;
-    const ok = spendCredits(totalCost);
+    const gross = unitPrice * qty;
+    const feeBreakdown = computeTradeFeeForGross(gross);
+    const totalCharged = gross + feeBreakdown.totalFee;
+    const ok = spendCredits(totalCharged);
     if (!ok) {
       showArcAlert('잔고가 부족해 구매가 불가합니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
       return;
     }
+    applyPlanetTradeTransactionFee(player.currentPlanetId ?? planet.id, gross);
 
     const mineralSink = resolveTradeMineralSinkTotalQty(itemDef, qty);
     if (mineralSink) {
@@ -487,7 +505,13 @@ export default function TradeScreen() {
         mineralSink.totalQty,
       );
       if (!slotsAfter) {
-        addCredits(totalCost);
+        rollbackTradeBuyFailure({
+          itemDef,
+          buyQty: qty,
+          totalCharged,
+          planetId: player.currentPlanetId,
+          grossCredits: gross,
+        });
         showArcAlert('구매 실패', '광물이 부족합니다.', ARC_TRADE_DIALOG_BUTTONS);
         return;
       }
@@ -512,7 +536,13 @@ export default function TradeScreen() {
         megaFactionId: player.political.megaFactionId,
       });
       if (!claim.ok) {
-        rollbackTradeBuyFailure({ itemDef, buyQty, totalCost });
+        rollbackTradeBuyFailure({
+          itemDef,
+          buyQty: qty,
+          totalCharged,
+          planetId: player.currentPlanetId,
+          grossCredits: gross,
+        });
         showArcAlert('소유권 획득 실패', '이미 다른 클랜이 점유한 행성입니다.');
         return;
       }
@@ -536,7 +566,13 @@ export default function TradeScreen() {
     if (isClanDisbandItem) {
       const dissolve = dissolvePlayerClanByPurchase({ uid: player.uid });
       if (!dissolve.ok) {
-        rollbackTradeBuyFailure({ itemDef, buyQty, totalCost });
+        rollbackTradeBuyFailure({
+          itemDef,
+          buyQty: qty,
+          totalCharged,
+          planetId: player.currentPlanetId,
+          grossCredits: gross,
+        });
         showArcAlert('클랜 해산 실패', '현재 해산 가능한 클랜이 없습니다.');
         return;
       }
@@ -559,7 +595,13 @@ export default function TradeScreen() {
     }
     if (isCapitalShipItem) {
       if (player.shipHangar.length >= 30) {
-        rollbackTradeBuyFailure({ itemDef, buyQty, totalCost });
+        rollbackTradeBuyFailure({
+          itemDef,
+          buyQty: qty,
+          totalCharged,
+          planetId: player.currentPlanetId,
+          grossCredits: gross,
+        });
         showArcAlert('인도 실패', '격납고 보유 한도(30대)에 도달했습니다.');
         return;
       }
@@ -567,13 +609,25 @@ export default function TradeScreen() {
         ? String(itemDef.attrs.npcCapitalShipId)
         : '';
       if (!npcCapitalShipId) {
-        rollbackTradeBuyFailure({ itemDef, buyQty, totalCost });
+        rollbackTradeBuyFailure({
+          itemDef,
+          buyQty: qty,
+          totalCharged,
+          planetId: player.currentPlanetId,
+          grossCredits: gross,
+        });
         showArcAlert('인도 실패', '전함 데이터가 올바르지 않습니다.');
         return;
       }
       const hangarOk = addHangarShipFromNpcPurchase(npcCapitalShipId);
       if (!hangarOk) {
-        rollbackTradeBuyFailure({ itemDef, buyQty, totalCost });
+        rollbackTradeBuyFailure({
+          itemDef,
+          buyQty: qty,
+          totalCharged,
+          planetId: player.currentPlanetId,
+          grossCredits: gross,
+        });
         showArcAlert('인도 실패', '등록되지 않은 전함입니다.');
         return;
       }
@@ -590,8 +644,10 @@ export default function TradeScreen() {
     if (!inventoryAdded && !shouldAllowWithoutInventory) {
       rollbackTradeBuyFailure({
         itemDef,
-        buyQty,
-        totalCost,
+        buyQty: qty,
+        totalCharged,
+        planetId: player.currentPlanetId,
+        grossCredits: gross,
         capitalShipNpcId: capitalShipIdForRollback,
       });
       showArcAlert('구매 실패', '인벤토리 공간이 부족합니다.');
@@ -762,7 +818,10 @@ export default function TradeScreen() {
       }
       workingPlayer = usePlayerStore.getState().player ?? workingPlayer;
     }
-    addCredits(unitPrice * sellQty);
+    const sellGross = unitPrice * sellQty;
+    const sellFee = computeTradeFeeForGross(sellGross);
+    applyPlanetTradeTransactionFee(player.currentPlanetId ?? planet.id, sellGross);
+    addCredits(sellGross - sellFee.totalFee);
     const next = removeGoodFromInventorySlots(
       normalizeInventorySlots(workingPlayer.inventorySlots),
       item.goodId,

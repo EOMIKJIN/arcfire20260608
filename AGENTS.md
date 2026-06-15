@@ -1,11 +1,36 @@
 # 에이전트 안내 (Arcfire Online)
 
+## 메인 개발 · 팀 구조
+
+| 에이전트 | 호출 | 역할 |
+|---------|------|------|
+| **김팀장** | `@김팀장` · 「김팀장」 | **메인 개발·총괄** — UI·Skia·arcCore·버그 · **김경제 산출물 1일 1회 검수·최종 연동** |
+| **김경제** (팀원) | `@김경제` · 「김경제」 | 경제·밸런스·SIM·일일 배치 **구축·테스트** → handoff 제출 |
+
+- **협업 워크플로**: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
+- **김팀장 일일 검수**: `npm run audit:team-lead:daily` → `tools/kim-team-lead/reports/daily-review-latest.md`
+- **김경제 handoff**: `tools/kim-team-lead/reports/kim-economy-handoff.md`
+- **김팀장 규칙**: `.cursor/rules/arcfire-main-lead-agent.mdc` · `docs/KIM_TEAM_LEAD_AGENT.md`
+- **김경제 규칙**: `.cursor/rules/arcfire-economy-specialist-agent.mdc` · `docs/KIM_ECONOMY_AGENT.md`
+
+## 장기 메모리·안정화 감시 (상시 · 개발과 독립)
+
+기능 개발과 **별도**로 **계속** 실행·점검한다. 정본: `tools/long-run-monitor/logs/WATCH_README.md`
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.ps1
+```
+
+- **30분** `mem-timeline.csv` · crash logcat · v2 계단식 GL 누수 판정
+- **자동**: 3× GL_SPIKE(활성 허브) / GL≥80MB / 크래시 → `audit:skia-memory` + 앱 재시작( throttle )
+- **수동 확인**: `remediation.log` · `incidents.log` · monitor PID `logs/watch-30m.pid`
+
 ## AI 페르소나·모델 자동 라우팅 (Auto)
 
-- **정본**: `.cursor/rules/gemini-code-agent-routing.mdc` — `alwaysApply`, 매 턴 @Fable/@Opus/@Composer/@Sonnet **없이** 자동 선별.
+- **정본**: `.cursor/rules/gemini-code-agent-routing.mdc` — `alwaysApply`, 매 턴 @김팀장/@김경제/@Fable/@Opus/@Composer/@Sonnet **없이** 자동 선별 (김팀장 세션 내부 라우팅).
 - **원본 기획**: `.cursor/rules/gemini-code-1781406772084.md`
 - **세션 훅**: `.cursor/hooks/on-session-start-agent-routing.cjs` (`sessionStart`)
-- **Task 위임 model**: Fable `claude-fable-5-thinking-high` · Opus `claude-opus-4-8-thinking-high` · Sonnet `claude-4.6-sonnet-medium-thinking` · Composer `composer-2.5-fast`
+- **Task 위임 model**: Economy/Fable `claude-fable-5-thinking-high` · Opus `claude-opus-4-8-thinking-high` · Sonnet `claude-4.6-sonnet-medium-thinking` · Composer `composer-2.5-fast`
 
 Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc`** (프로젝트 헌법 v4.0)를 따릅니다. 구현·운영 세부 요약은 아래와 `AGENTS.md`에 둡니다.
 
@@ -13,6 +38,8 @@ Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4
 - **아크코어 일일 운영**: 벽시계 **24h 관측** 후 **하루 1회**(기본 12:00 `Asia/Seoul`) `ArcCoreDailyOpsSubCore`가 행성 코어·경제·AABS·성계 개방을 일괄 재배치한다. 정책: `tables/balance/arc_core_daily_ops_policy.csv`. 궤도 수송·연출은 실시간 틱 유지.
 - **경제·무역 생태계 참고**: `docs/ECONOMY_TRADE_ECOSYSTEM_REFERENCE.md` — 무역소 카탈로그·tg_* 교역·zone 진열·17/21 허브·갭 목록(2026-06-12 스냅샷).
 - **Macro economy SIM**: `npm run sim:economy` → `docs/ECONOMY_SIM_DAILY_OPS.md` — delta ingest → 일일 배치 overlay.
+- **경제·밸런스 운영 감사**: `npm run audit:balance-ops` (3h 로컬·CI) · `tools/balance-ops-audit/README.md` · 학습 상태 `reports/learning-state.json`.
+- **경제 시스템 종합 평가 히스토리**: `docs/economy-evaluation/README.md` (타이틀 비교·효율성 스냅샷).
 - **테이블 우선**: 환경 부트스트랩·NPC 함장·전함은 **`tables/content` CSV → `npm run build:content-tables`** 가 정본이다. 아크코어가 스스로 환경을 깔 때도 **코드에 임의 엔티티·이름 풀을 두지 말고** CSV·레지스트리(`npcFleetRegistry`, `arcNpcTrafficTableRegistry`, `nearbyOrbitPresenceSystem`) 패턴을 따른다. 헌법: `.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc` §1·§6.
 - **허브 궤도 트래픽(v4.0 §6-2)**: STAGE 1 동시 최대 **5척**, **15초** spawn/despawn — `src/game/hubOrbitTrafficSession.ts` + `planetMemoCache/hub_traffic` 풀. info 패널 `‹AI›` 접두. `onSnapshot`·`hub_peers`·`aiVirtualPlayerStore` 금지.
 - **행성 로컬 점유(v4.0 §6-3)**: `planet_holds` 프로필 단발 병합(`userDataSync.planet_holds`) — `ownership_claim` 트랜잭션 금지.

@@ -243,6 +243,29 @@ export function isTradeRouteDestinationPlanet(planetId: string, attrs: TradeRout
   return attrs.dstFactionCode === profile.tradeFactionCode;
 }
 
+/** 교역 프로필이 있는 모든 무역소 행성 id */
+export function listAllTradeRoutePlanetIds(): string[] {
+  return PlanetTradeRouteProfile_FROM_BALANCE_CSV.map((row) => String(row.planetId).trim());
+}
+
+/** 수송선이 생산지에서 출발 가능한 행성 id */
+export function listConvoySupplyPlanetIds(): string[] {
+  const out: string[] = [];
+  for (const planetId of listAllTradeRoutePlanetIds()) {
+    if (listConvoySourceRoutesAtPlanet(planetId).length > 0) out.push(planetId);
+  }
+  return out;
+}
+
+/** 수요지 역할 교역품이 배정된 행성 id */
+export function listConvoyDemandPlanetIds(): string[] {
+  const out: string[] = [];
+  for (const planetId of listAllTradeRoutePlanetIds()) {
+    if (listTradeRouteDemandImportItemIdsForPlanet(planetId).length > 0) out.push(planetId);
+  }
+  return out;
+}
+
 /** 수요 행성 — 동일 교역품 공급(생산) 행성 중 맵 거리 최단 */
 export function resolveNearestSupplyPlanetForTradeGood(
   _demandPlanetId: string,

@@ -1,0 +1,17 @@
+{
+  "lastRun": "2026-06-15T04:24:41.928Z",
+  "lastKstDate": "2026-06-15",
+  "overall": "PASS",
+  "balanceOpsOverall": "PASS",
+  "tscOk": true,
+  "handoffPendingCount": 0,
+  "economyDirtyCount": 0,
+  "kimEconomyInsights": [
+    {
+      "kind": "stable",
+      "severity": "ok",
+      "message": "No actionable drift or contract violations detected",
+      "action": "continue_3h_monitor"
+    }
+  ]
+}

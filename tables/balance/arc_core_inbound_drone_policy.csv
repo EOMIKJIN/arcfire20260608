@@ -6,6 +6,8 @@ inbound_duration_sec,9,행성 외곽 도달까지 비행(초) — 2× 속도(기
 stagger_sec,0.4,웨이브 내 스폰 간격(초)
 impact_radius_px,62,행성 외곽 충돌 반경(px)
 edge_spawn_radius_px,218,전방향 스폰 가장자리 반경(px)
-intercept_range_px,200,방위위성 요격 사거리(px)
-intercept_cooldown_sec,2.4,위성 재사격 쿨(초)
+defense_zone_diameter_px,150,방위위성 방어구 작동 지름(px)
+intercept_dwell_sec,3,방어구 안 체류 후 드론 파괴(초)
+intercept_range_px,75,deprecated — 반경=defense_zone_diameter_px/2
+intercept_cooldown_sec,2.4,legacy — 체류 요격 미사용
 max_active_drones,24,동시 활성 드론 상한

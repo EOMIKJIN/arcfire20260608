@@ -290,7 +290,9 @@ export function getCapitalShipTradeStockBounds(): { min: number; max: number } {
 
 export function getTradeRouteTempBankSeedCredits(): number {
   const kv = getTradeRouteEconomyPolicyKv();
-  return parseNum(kv.get('temp_bank_seed_credits'), 500_000);
+  const legacy = parseNum(kv.get('temp_bank_seed_credits'), 500_000);
+  const fleet = parseNum(kv.get('transport_fleet_seed_credits'), legacy);
+  return fleet;
 }
 
 export function getTradeRouteConvoyCargoBounds(): { min: number; max: number } {

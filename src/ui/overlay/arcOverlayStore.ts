@@ -16,7 +16,15 @@ export type ArcAlertButton = {
   onPress?: () => void | Promise<void>;
 };
 
-export type ArcOverlayKind = 'alert' | 'levelUp' | 'reward' | 'narrative' | 'blocking' | 'tradeQuantity';
+export type ArcOverlayKind =
+  | 'alert'
+  | 'levelUp'
+  | 'reward'
+  | 'narrative'
+  | 'blocking'
+  | 'tradeQuantity'
+  | 'planetEconomyInfo'
+  | 'planetDevelopment';
 
 type ArcOverlayBase = {
   id: string;
@@ -88,13 +96,30 @@ export type ArcOverlayTradeQuantityEntry = ArcOverlayBase & {
   onConfirm: (qty: number) => void | Promise<void>;
 };
 
+export type ArcOverlayPlanetEconomyInfoEntry = ArcOverlayBase & {
+  kind: 'planetEconomyInfo';
+  planetId: string;
+  planetName: string;
+};
+
+export type PlanetDevelopmentInitialView = 'list' | 'defense_satellite';
+
+export type ArcOverlayPlanetDevelopmentEntry = ArcOverlayBase & {
+  kind: 'planetDevelopment';
+  planetId: string;
+  planetName: string;
+  initialView?: PlanetDevelopmentInitialView;
+};
+
 export type ArcOverlayEntry =
   | ArcOverlayAlertEntry
   | ArcOverlayLevelUpEntry
   | ArcOverlayRewardEntry
   | ArcOverlayNarrativeEntry
   | ArcOverlayBlockingEntry
-  | ArcOverlayTradeQuantityEntry;
+  | ArcOverlayTradeQuantityEntry
+  | ArcOverlayPlanetEconomyInfoEntry
+  | ArcOverlayPlanetDevelopmentEntry;
 
 export type ArcOverlayInput =
   | (Omit<ArcOverlayAlertEntry, 'id'> & { id?: string })
@@ -102,7 +127,9 @@ export type ArcOverlayInput =
   | (Omit<ArcOverlayRewardEntry, 'id'> & { id?: string })
   | (Omit<ArcOverlayNarrativeEntry, 'id'> & { id?: string })
   | (Omit<ArcOverlayBlockingEntry, 'id'> & { id?: string })
-  | (Omit<ArcOverlayTradeQuantityEntry, 'id'> & { id?: string });
+  | (Omit<ArcOverlayTradeQuantityEntry, 'id'> & { id?: string })
+  | (Omit<ArcOverlayPlanetEconomyInfoEntry, 'id'> & { id?: string })
+  | (Omit<ArcOverlayPlanetDevelopmentEntry, 'id'> & { id?: string });
 
 type ArcOverlayState = {
   stack: ArcOverlayEntry[];
@@ -183,4 +210,44 @@ export function dismissArcOverlay(): void {
 
 export function dismissAllArcOverlays(): void {
   useArcOverlayStore.getState().dismissAll();
+}
+
+const PLANET_ECONOMY_INFO_OVERLAY_ID = 'planet-economy-info';
+const PLANET_DEVELOPMENT_OVERLAY_ID = 'planet-development';
+
+export function presentPlanetEconomyInfoOverlay(planetId: string, planetName: string): void {
+  const entry: ArcOverlayInput = {
+    kind: 'planetEconomyInfo',
+    planetId,
+    planetName,
+    dismissOnBackdrop: true,
+    id: PLANET_ECONOMY_INFO_OVERLAY_ID,
+  };
+  const top = useArcOverlayStore.getState().top();
+  if (top?.kind === 'planetEconomyInfo' && top.planetId === planetId) {
+    useArcOverlayStore.getState().replaceTop(entry);
+  } else {
+    useArcOverlayStore.getState().present(entry);
+  }
+}
+
+export function presentPlanetDevelopmentOverlay(
+  planetId: string,
+  planetName: string,
+  initialView: PlanetDevelopmentInitialView = 'list',
+): void {
+  const entry: ArcOverlayInput = {
+    kind: 'planetDevelopment',
+    planetId,
+    planetName,
+    initialView,
+    dismissOnBackdrop: true,
+    id: PLANET_DEVELOPMENT_OVERLAY_ID,
+  };
+  const top = useArcOverlayStore.getState().top();
+  if (top?.kind === 'planetDevelopment' && top.planetId === planetId) {
+    useArcOverlayStore.getState().replaceTop(entry);
+  } else {
+    useArcOverlayStore.getState().present(entry);
+  }
 }

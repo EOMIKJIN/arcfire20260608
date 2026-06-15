@@ -14,9 +14,12 @@ import {
 } from '../../world/planetTradePortDb';
 import { runPlayScenarioEconomyPass } from '../balance/runPlayScenarioEconomyPass';
 import { settleArcTransportDwellTrade } from '../economy/runArcTransportTradePass';
-import { runTradeRouteMarketPass } from '../economy/runTradeRouteMarketPass';
 import { useEconomyPriceOverlayStore } from '../economy/economyPriceOverlayStore';
-import { useArcCoreTempBankStore } from '../../store/arcCoreTempBankStore';
+import { migrateLegacyArcCoreTempBankOnce } from '../economy/migrateLegacyTempBank';
+import { useArcCoreTransportFleetBankStore } from '../../store/factionVault/arcCoreTransportFleetBankStore';
+import { useArcCoreVaultStore } from '../../store/factionVault/arcCoreVaultStore';
+import { useBlueTeamSharedVaultStore } from '../../store/factionVault/blueTeamSharedVaultStore';
+import { usePlanetTradeFeeLedgerStore } from '../../store/planetTradeFeeLedgerStore';
 
 /**
  * 경제 서브코어 — 무역소 런타임 진열·오버레이의 단일 실행 주체.
@@ -32,9 +35,17 @@ export class AiEconomySubCore extends BaseArcSubCore {
 
   override onBoot(): void {
     this.unsubCommands = subscribeArcCoreCommands((cmd) => this.onArcCoreCommand(cmd));
-    void useArcCoreTempBankStore.getState().hydrate().then(() => {
-      void useEconomyPriceOverlayStore.getState().loadAsync().then(() => {
-        runPlayScenarioEconomyPass(true);
+    void migrateLegacyArcCoreTempBankOnce().then(() => {
+      void useArcCoreTransportFleetBankStore.getState().hydrate().then(() => {
+        void useArcCoreVaultStore.getState().hydrate().then(() => {
+          void useBlueTeamSharedVaultStore.getState().hydrate().then(() => {
+            void usePlanetTradeFeeLedgerStore.getState().hydrate().then(() => {
+              void useEconomyPriceOverlayStore.getState().loadAsync().then(() => {
+                runPlayScenarioEconomyPass(true);
+              });
+            });
+          });
+        });
       });
     });
   }

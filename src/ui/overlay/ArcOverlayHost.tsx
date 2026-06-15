@@ -17,6 +17,8 @@ import { RewardOverlayContent } from './content/RewardOverlayContent';
 import { NarrativeOverlayContent } from './content/NarrativeOverlayContent';
 import { BlockingOverlayContent } from './content/BlockingOverlayContent';
 import { TradeQuantityOverlayContent } from './content/TradeQuantityOverlayContent';
+import { PlanetEconomyInfoOverlayContent } from './content/PlanetEconomyInfoOverlayContent';
+import { PlanetDevelopmentOverlayContent } from './content/PlanetDevelopmentOverlayContent';
 
 export const ArcOverlayHost = memo(function ArcOverlayHost() {
   const { width: winW, height: winH } = useWindowDimensions();
@@ -141,6 +143,12 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
             onConfirm={handleTradeQuantityConfirm}
             onCancel={handleTradeQuantityCancel}
           />
+        ) : null}
+        {entry.kind === 'planetEconomyInfo' ? (
+          <PlanetEconomyInfoOverlayContent entry={entry} onClose={dismiss} />
+        ) : null}
+        {entry.kind === 'planetDevelopment' ? (
+          <PlanetDevelopmentOverlayContent entry={entry} onClose={dismiss} />
         ) : null}
       </View>
     </View>

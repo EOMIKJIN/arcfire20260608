@@ -365,8 +365,8 @@ export default function ShipyardScreen() {
         <StatRow label="함선명" value={ship.name} />
         {shipClassification ? (
           <>
-            <StatRow label="함급 분류" value={shipClassification.identityHeadline} />
-            <StatRow label="역할" value={shipClassification.roleSummaryKo} />
+            <StatDescRow label="함급 분류" value={shipClassification.identityHeadline} />
+            <StatDescRow label="역할" value={shipClassification.roleSummaryKo} />
           </>
         ) : null}
         {combatProficiency ? (
@@ -586,6 +586,18 @@ function StatRow({ label, value }: { label: string; value: string }) {
     <View style={styles.statRow}>
       <Text style={styles.statLabel}>{label}</Text>
       <Text style={styles.statValue}>{value}</Text>
+    </View>
+  );
+}
+
+/** 함급 분류·역할 등 긴 설명 — 라벨 아래 최대 2줄 */
+function StatDescRow({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={styles.statRowStacked}>
+      <Text style={styles.statLabel}>{label}</Text>
+      <Text style={styles.statStackedValue} numberOfLines={2}>
+        {value}
+      </Text>
     </View>
   );
 }
@@ -958,6 +970,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.divider,
   },
+  statRowStacked: {
+    paddingVertical: SPACING.xs,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.divider,
+  },
   statLabel: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
@@ -968,6 +985,14 @@ const styles = StyleSheet.create({
     fontSize: FONTS.size.sm,
     color: COLORS.ink_dark,
     fontWeight: FONTS.weight.bold,
+  },
+  statStackedValue: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    color: COLORS.ink_dark,
+    fontWeight: FONTS.weight.bold,
+    marginTop: SPACING.xs,
+    lineHeight: 20,
   },
   serviceBox: {
     marginHorizontal: SPACING.md,

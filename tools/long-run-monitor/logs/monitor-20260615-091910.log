@@ -4,3 +4,14 @@
 [2026-06-15 09:19:10] alerts -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-alerts.log
 [2026-06-15 09:19:10] FOCUS: hub Skia orbit + nebula + combat ??restart only active hub GL>=80MB or 3x dGL>=8MB
 [2026-06-15 09:19:12] snap PSS=591.2MB GL=23.4MB views=108 dPSS= dGL= 
+[2026-06-15 09:49:13] snap PSS=580.2MB GL=43.3MB views=289 dPSS= dGL= 
+[2026-06-15 10:19:14] snap PSS=689.8MB GL=45.5MB views=291 dPSS= dGL= 
+[2026-06-15 10:49:15] snap PSS=749.5MB GL=48.4MB views=312 dPSS=18.8 dGL=-21.9 GL_RECOVERED idle_ok
+[2026-06-15 11:19:16] snap PSS=736MB GL=49MB views=321 dPSS=9.5 dGL=0.4 
+[2026-06-15 11:49:17] snap PSS=721.3MB GL=48.6MB views=310 dPSS=-6.2 dGL=0 
+[2026-06-15 12:19:18] snap PSS=646.6MB GL=48.7MB views=318 dPSS=-0.9 dGL=-0.1 
+[2026-06-15 12:49:19] snap PSS=635MB GL=48.7MB views=304 dPSS=5.7 dGL=0 
+[2026-06-15 13:19:20] snap PSS=638.2MB GL=37.9MB views=335 dPSS=6.5 dGL=-10.8 GL_RECOVERED idle_ok
+[2026-06-15 13:49:22] snap PSS=630MB GL=37.7MB views=306 dPSS=-11.3 dGL=0 
+[2026-06-15 14:19:23] INFO hub activation GL 25.6->47.7MB views 119->355 (no restart)
+[2026-06-15 14:19:23] snap PSS=696.4MB GL=47.7MB views=355 dPSS=45.7 dGL=22.1 HUB_ACTIVATION gl_mount_ok

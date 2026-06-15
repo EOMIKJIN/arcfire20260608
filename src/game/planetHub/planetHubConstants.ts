@@ -117,5 +117,7 @@ export const WORLD_OBJECT_WRECK_MARK_PX = 9;
 export const WORLD_OBJECT_WRECK_STROKE_COLOR = '#8B5E3C';
 export const WORLD_OBJECT_DEFENSE_SATELLITE_MARK_PX = 9;
 export const WORLD_OBJECT_DEFENSE_SATELLITE_COLOR = '#FF8C32';
+/** 방위위성 방어구 표시 — 연한 녹색 테두리만 (내부 무효과 · 80% 투명) */
+export const WORLD_OBJECT_DEFENSE_ZONE_STROKE = 'rgba(120, 220, 150, 0.2)';
 export const MINING_GUIDE_LINE_RUN_PX = 24;
 export const MINING_GUIDE_LABEL_PAST_TIP_PX = 2;

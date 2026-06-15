@@ -64,8 +64,11 @@ function normalizeInstanceStateRecord(input: unknown): Record<string, WorldObjec
     if (row.ownerFactionId === null || typeof row.ownerFactionId === 'string') {
       state.ownerFactionId = row.ownerFactionId as string | null;
     }
-    if (row.cooldownUntilMs === null || typeof row.cooldownUntilMs === 'number') {
+    if (typeof row.cooldownUntilMs === 'number' || row.cooldownUntilMs === null) {
       state.cooldownUntilMs = row.cooldownUntilMs as number | null;
+    }
+    if (typeof row.defenseLevel === 'number' && Number.isFinite(row.defenseLevel)) {
+      state.defenseLevel = Math.max(1, Math.floor(row.defenseLevel));
     }
     if (Object.keys(state).length > 0) out[k] = state;
   }
@@ -196,6 +199,7 @@ export const useWorldObjectRuntimeStore = create<WorldObjectRuntimeStoreState>((
       && prev.hp === nextState.hp
       && prev.ownerFactionId === nextState.ownerFactionId
       && prev.cooldownUntilMs === nextState.cooldownUntilMs
+      && prev.defenseLevel === nextState.defenseLevel
     ) {
       return;
     }

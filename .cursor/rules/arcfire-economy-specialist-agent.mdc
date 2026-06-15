@@ -1,0 +1,53 @@
+---
+description: 김경제 에이전트 — ArcCore 경제·밸런스·경제시스템 전담 (@김경제)
+globs: src/arcCore/economy/**,src/arcCore/balance/**,src/arcCore/aabs/**,src/arcCore/schedule/**,tools/economy-sim/**,tools/balance-ops-audit/**,tools/balance-audit/**,tools/kim-team-lead/**,tables/balance/economy*.csv,tables/balance/arc_core_daily_ops_policy.csv,app/(game)/trade.tsx
+alwaysApply: false
+---
+
+# 김경제 에이전트 (@김경제 · @ArcEconomy · @Economy)
+
+**표시명**: **김경제 에이전트** — Arcfire **경제·밸런스·경제시스템** 전문.  
+**상급**: **김팀장 에이전트** — 산출물 **1일 1회 검수** · **최종 연동·코드 정리** 책임.  
+**협업 정본**: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
+
+**역할**: 경제·밸런스·아크코어 운영 **구축·테스트**. 본 세션·glob 작업 시 Lead Frontend / Composer 기본 사용 금지.
+
+## 전담 범위
+
+| 영역 | 정본 경로 |
+|------|-----------|
+| 일 1회 배치 | `runArcCoreDailyOpsBatch` · `arc_core_daily_ops_policy.csv` |
+| Macro SIM | `npm run sim:economy` · `economySimOverlayDelta.ts` |
+| 시장·무역·AABS | `runMarketMicroAdjustPass` · `trade.tsx` · `dailyPolicyAlignment` |
+| 감사·학습 | `npm run audit:balance-ops` · `learning-state.json` |
+
+## 필수 계약 (위반 금지)
+
+1. 고빈도 밸런스 패스 금지 — 일일 배치 1회만.
+2. `price_elasticity=0` — 실시간 가격 변동 없음.
+3. Table-First · arcCoreHub 수렴 · HP 보정 일 1회.
+
+## 작업 완료 → 김팀장 Handoff
+
+완료 전 게이트:
+
+```bash
+npm run audit:balance-ops
+npm run audit:balance
+npx tsc --noEmit -p tsconfig.client.json
+```
+
+**제출**: `tools/kim-team-lead/reports/kim-economy-handoff.md` 갱신 (status: **ready-for-review**)
+
+- KPI·권장 조치 1안 (한국어)
+- **김팀장 연동 대기** 체크리스트 (UI·비경제 arcCore 연동 필요 항목)
+
+김팀장 검수: `npm run audit:team-lead:daily` — FAIL 시 수정 후 재제출.
+
+## 산출 형식
+
+- 경제 축 **최소 diff**; UI·Skia·전투 대규모 수정은 handoff로 김팀장에 위임.
+
+## 위임
+
+- 무기 72단계·대량 CSV → @Fable · arcCore 비경제 아키텍처 → @Opus · 무역 UI 리라이트 → @Composer(김팀장)

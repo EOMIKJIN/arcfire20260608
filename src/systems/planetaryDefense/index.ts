@@ -1,8 +1,20 @@
+export {
+  buildDefenseSatelliteDevSnapshot,
+  formatDefenseSatelliteDurationLabel,
+  getDefenseSatelliteLevelStatRow,
+  installPlanetDefenseSatellite,
+  instantCompleteDefenseSatelliteUpgrade,
+  instantUpgradeDefenseSatelliteNext,
+  readPlanetDefenseSatelliteDetail,
+  startPlanetDefenseSatelliteUpgrade,
+  tryCompleteDefenseSatelliteUpgrade,
+} from './planetDefenseSatelliteDevelopment';
 export { listPlanetDefenseSatellites } from './planetDefenseSatelliteService';
 export {
   patchPlanetDefenseSatelliteInstanceLevel,
   patchPlanetDefenseSatelliteLevel,
   resolvePlanetDefenseSatelliteLevel,
+  isPlanetDefenseSatelliteInstalled,
 } from './planetDefenseSatelliteLevel';
 export {
   resolveDefenseSatelliteLevelForObject,

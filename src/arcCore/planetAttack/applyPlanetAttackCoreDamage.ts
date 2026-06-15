@@ -20,6 +20,7 @@ import {
   getPlanetAttackCoreDamagePolicy,
   scalePlanetCoreMetricDelta,
 } from './planetAttackCoreDamagePolicy';
+import { recordPlanetEconomyAttackSignal } from '../economy/planetEconomyFabric';
 
 const MAX_LAST_EVENTS = 8;
 
@@ -166,6 +167,13 @@ export function applyPlanetAttackCoreDamage(
       attackDamage: attackDetail,
     },
   });
+
+  if (applied.defense < 0 || applied.population < 0) {
+    recordPlanetEconomyAttackSignal(planetId, attackKind, {
+      defense: applied.defense,
+      population: applied.population,
+    });
+  }
 
   return { ok: true, applied, after };
 }

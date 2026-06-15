@@ -27,6 +27,7 @@ import { useItemLedgerStore } from '../../src/store/itemLedgerStore';
 import { useAccountProfileStore } from '../../src/store/accountProfileStore';
 import { useSkillDbStore } from '../../src/store/skillDbStore';
 import { useClanWarFoundationStore } from '../../src/store/clanWarFoundationStore';
+import { usePlanetCoreRuntimeStore } from '../../src/store/planetCoreRuntimeStore';
 import { useMenuNotificationStore } from '../../src/store/menuNotificationStore';
 import { useArcNpcTrafficStore, type ArcNpcTrafficShip } from '../../src/store/arcNpcTrafficStore';
 import { useArcInboundDroneStore } from '../../src/store/arcInboundDroneStore';
@@ -93,6 +94,7 @@ import { resolvePlanetDisplayPrimaryMineralId } from '../../src/arcCore/economy/
 import { ORBIT_MINING_CYCLE_MS, ORBIT_MINING_REWARD_GOOD_ID } from '../../src/game/miningConfig';
 import { planetHasMineableOrbitalDeposits } from '../../src/world/mineralDepositModel';
 import { listPlanetWorldObjects } from '../../src/worldObjects';
+import { tryCompleteDefenseSatelliteUpgrade } from '../../src/systems/planetaryDefense/planetDefenseSatelliteDevelopment';
 import {
   createInitialMiningSessionState,
   flushMiningPlayerPersist,
@@ -405,9 +407,33 @@ export default function PlanetScreen() {
     stageSession.isActive,
   ]);
 
+  const defenseSatelliteRuntimeKey = usePlanetCoreRuntimeStore((s) => {
+    const pid = planet?.id;
+    if (!pid) return '';
+    return JSON.stringify(s.byPlanetId[pid]?.detail?.defenseSatellite ?? null);
+  });
+
+  /** 방위위성 업그레이드 — 오버레이 닫혀도 허브 체류 중 wall-clock 완료 */
+  useEffect(() => {
+    const pid = planet?.id;
+    if (!pid || !isPlanetRouteFocused || !appStateActive || !stageSession.isActive) return undefined;
+    const intervalId = setInterval(() => {
+      tryCompleteDefenseSatelliteUpgrade(pid);
+    }, 2000);
+    const token = registerPlanetSessionResource({
+      ownerId: 'planet_defense_satellite_upgrade_tick',
+      planetId: pid,
+      dispose: () => clearInterval(intervalId),
+    });
+    return () => {
+      clearInterval(intervalId);
+      token.release();
+    };
+  }, [planet?.id, isPlanetRouteFocused, appStateActive, stageSession.isActive]);
+
   const planetWorldObjects = useMemo(
     () => (planet && system ? listPlanetWorldObjects({ planet, system }) : []),
-    [planet, system],
+    [planet, system, defenseSatelliteRuntimeKey],
   );
   const canOrbitalMine = useMemo(
     () => Boolean(planet && planetHasMineableOrbitalDeposits(planet.id)
@@ -1185,6 +1211,7 @@ export default function PlanetScreen() {
             <PlanetMainScanActionRow
               layout="dock"
               planetId={planet?.id ?? null}
+              planetName={planet?.name ?? null}
               scanEnabled={Boolean(planet)}
               actionsUnlocked={planetScanActionsUnlocked}
               miningLabel={miningSession.status === 'running' ? '채굴 중단' : '채굴'}

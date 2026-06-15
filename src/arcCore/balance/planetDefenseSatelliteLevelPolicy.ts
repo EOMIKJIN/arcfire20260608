@@ -2,18 +2,42 @@ import { PlanetDefenseSatelliteLevelPolicy_FROM_BALANCE_CSV } from '../../data/b
 
 export type PlanetDefenseSatelliteLevelRow = {
   level: number;
-  interceptChancePct: number;
-  interceptMissileCount: number;
+  hpMax: number;
+  defenseZoneDiameterPx: number;
+  interceptHitPct: number;
+  interceptDwellSec: number;
+  upgradeDurationSec: number;
+  installCostCredits: number;
   upgradeCostCredits: number;
+  instantUpgradeCostCredits: number;
+  grantsSecondSatellite: boolean;
+  interceptMissileCount: number;
   notesKo: string;
 };
 
+function parseBool(raw: string | undefined): boolean {
+  const v = String(raw ?? '').trim().toLowerCase();
+  return v === 'true' || v === '1' || v === 'yes';
+}
+
 function parseLevelRow(raw: (typeof PlanetDefenseSatelliteLevelPolicy_FROM_BALANCE_CSV)[number]): PlanetDefenseSatelliteLevelRow {
+  const legacyHit = Number((raw as { interceptChancePct?: string }).interceptChancePct);
+  const hitRaw = Number(raw.interceptHitPct);
+  const interceptHitPct = Number.isFinite(hitRaw) && hitRaw > 0
+    ? hitRaw
+    : (Number.isFinite(legacyHit) ? legacyHit : 0);
   return {
     level: Math.max(1, Math.floor(Number(raw.level) || 1)),
-    interceptChancePct: Math.max(0, Number(raw.interceptChancePct) || 0),
-    interceptMissileCount: Math.max(1, Math.floor(Number(raw.interceptMissileCount) || 1)),
+    hpMax: Math.max(1, Math.floor(Number(raw.hpMax) || 100)),
+    defenseZoneDiameterPx: Math.max(1, Math.floor(Number(raw.defenseZoneDiameterPx) || 150)),
+    interceptHitPct: Math.max(0, interceptHitPct),
+    interceptDwellSec: Math.max(0.05, Number(raw.interceptDwellSec) || 3),
+    upgradeDurationSec: Math.max(0, Math.floor(Number(raw.upgradeDurationSec) || 0)),
+    installCostCredits: Math.max(0, Math.floor(Number(raw.installCostCredits) || 0)),
     upgradeCostCredits: Math.max(0, Math.floor(Number(raw.upgradeCostCredits) || 0)),
+    instantUpgradeCostCredits: Math.max(0, Math.floor(Number(raw.instantUpgradeCostCredits) || 0)),
+    grantsSecondSatellite: parseBool(raw.grantsSecondSatellite),
+    interceptMissileCount: Math.max(1, Math.floor(Number(raw.interceptMissileCount) || 1)),
     notesKo: String(raw.notesKo ?? ''),
   };
 }
@@ -43,14 +67,44 @@ export function getPlanetDefenseSatelliteLevelRow(level: number): PlanetDefenseS
   return listPlanetDefenseSatelliteLevelRows().find((r) => r.level === clamped) ?? null;
 }
 
-/** 레벨별 요격 확률(%) — 테이블 정본 (재도입 시 사용) */
+/** @deprecated `interceptHitPct` 사용 — 하위 호환 alias */
 export function resolveDefenseSatelliteInterceptChancePct(level: number): number {
-  return getPlanetDefenseSatelliteLevelRow(level)?.interceptChancePct ?? 0;
+  return getPlanetDefenseSatelliteLevelRow(level)?.interceptHitPct ?? 0;
 }
 
-/** 추후 업그레이드 UI — 현재 레벨에서 다음 레벨로 올릴 비용 */
+export function resolveDefenseSatelliteInterceptHitPct(level: number): number {
+  return getPlanetDefenseSatelliteLevelRow(level)?.interceptHitPct ?? 0;
+}
+
+/** Lv.1 최초 설치 비용 — `planet_defense_satellite_level_policy.csv` L1.installCostCredits */
+export function resolveDefenseSatelliteInstallCostCredits(): number {
+  return getPlanetDefenseSatelliteLevelRow(1)?.installCostCredits ?? 0;
+}
+
+/** 현재 레벨 → 다음 레벨 업그레이드 비용(다음 레벨 행의 upgradeCostCredits) */
 export function resolveDefenseSatelliteUpgradeCostCredits(currentLevel: number): number | null {
   const next = getPlanetDefenseSatelliteLevelRow(currentLevel + 1);
   if (!next) return null;
   return next.upgradeCostCredits;
+}
+
+/** 현재 레벨 → 다음 레벨 즉시 완료 비용 */
+export function resolveDefenseSatelliteInstantUpgradeCostCredits(currentLevel: number): number | null {
+  const next = getPlanetDefenseSatelliteLevelRow(currentLevel + 1);
+  if (!next) return null;
+  return next.instantUpgradeCostCredits;
+}
+
+/** 다음 레벨 업그레이드 소요 시간(초) */
+export function resolveDefenseSatelliteUpgradeDurationSec(currentLevel: number): number | null {
+  const next = getPlanetDefenseSatelliteLevelRow(currentLevel + 1);
+  if (!next) return null;
+  return next.upgradeDurationSec;
+}
+
+/** 레벨 기준 가동 위성 수 — Lv10+ 2기, 그 외 1기 */
+export function resolveDefenseSatelliteActiveCountForLevel(level: number): number {
+  const row = getPlanetDefenseSatelliteLevelRow(level);
+  if (!row) return 1;
+  return row.grantsSecondSatellite || level >= 10 ? 2 : 1;
 }

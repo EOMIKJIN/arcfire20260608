@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, type ImageSourcePropType } from 'react-native';
 import {
   Canvas,
@@ -24,7 +24,8 @@ const DODGE_HIT_FX_RENDER_LIMIT = NEBULA_DODGE_FX_RENDER_LIMIT;
 /** @deprecated 행·전투 배경은 `PlanetNebulaImageBackdrop`(RN Image). dodge FX는 궤도 SkPicture. */
 export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShaderBackdrop({
   size,
-  active,
+  active = true,
+  dodgeFxActive,
   nebulaBakedImageSource = null,
   renderNebulaShader = true,
   backgroundImageSource = null,
@@ -36,9 +37,16 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   dodgeOrbitOffsetX = 0,
   dodgeOrbitOffsetY = 0,
   sessionPlanetId = null,
+  onNebulaImagesReady,
+  opacity = 1,
+  /** true — useImage 프리로드만, Canvas·dark Fill 미생성(깜박임 방지) */
+  hideUntilImagesReady = false,
 }: {
   size: number;
-  active: boolean;
+  /** @deprecated dodgeFxActive 사용 — GPU·interval 게이트 */
+  active?: boolean;
+  /** colorDodge FX tick·GPU supervisor — idle prefetch 시 false */
+  dodgeFxActive?: boolean;
   nebulaBakedImageSource?: ImageSourcePropType | null;
   renderNebulaShader?: boolean;
   backgroundImageSource?: unknown;
@@ -51,21 +59,27 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   dodgeOrbitOffsetY?: number;
   /** Stage 1 행성 허브 — setInterval을 planet session dispose에 연동 */
   sessionPlanetId?: string | null;
+  /** Skia useImage 프리로드 완료 — Canvas·dark Fill 미생성(깜박임 방지) */
+  onNebulaImagesReady?: () => void;
+  opacity?: number;
+  hideUntilImagesReady?: boolean;
 }) {
+  const fxLoopActive = dodgeFxActive ?? active;
   const [frameTickMs, setFrameTickMs] = useState(() => Date.now());
+  const imagesReadyNotifiedRef = useRef(false);
 
   useEffect(() => {
-    if (!active) return undefined;
+    if (!fxLoopActive) return undefined;
     registerGpuLayer('skia_nebula_backdrop', 'T0');
     return () => {
       unregisterGpuLayer('skia_nebula_backdrop');
     };
-  }, [active]);
+  }, [fxLoopActive]);
 
   useEffect(() => {
-    if (!active) return () => {};
+    if (!fxLoopActive) return () => {};
     const id = setInterval(() => {
-      if (!active) return;
+      if (!fxLoopActive) return;
       let needsRedraw = false;
       if (dodgeHitFxRef?.current?.length) {
         const t = dodgeTimeMsRef?.current ?? 0;
@@ -92,19 +106,43 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
       clearInterval(id);
       sessionToken?.release();
     };
-  }, [active, dodgeHitFxRef, dodgeTimeMsRef, sessionPlanetId]);
+  }, [fxLoopActive, dodgeHitFxRef, dodgeTimeMsRef, sessionPlanetId]);
 
   void frameTickMs;
 
   const nebulaImage = useImage((nebulaBakedImageSource as any) ?? null);
   const backdropImage = useImage((backgroundImageSource as any) ?? null);
   const dodgeImage = useImage(require('../../../assets/images/effects/color_dodge_02.png'));
+
+  useEffect(() => {
+    imagesReadyNotifiedRef.current = false;
+  }, [nebulaBakedImageSource, backgroundImageSource, renderNebulaShader]);
+
+  useEffect(() => {
+    if (imagesReadyNotifiedRef.current || !onNebulaImagesReady) return;
+    const nebulaOk = !renderNebulaShader || !nebulaBakedImageSource || Boolean(nebulaImage);
+    const backdropOk = !backgroundImageSource || Boolean(backdropImage);
+    if (!nebulaOk || !backdropOk) return;
+    imagesReadyNotifiedRef.current = true;
+    onNebulaImagesReady();
+  }, [
+    backdropImage,
+    backgroundImageSource,
+    nebulaBakedImageSource,
+    nebulaImage,
+    onNebulaImagesReady,
+    renderNebulaShader,
+  ]);
   const dodgeHitFx = dodgeHitFxRef?.current;
   const dodgeTimeMs = dodgeTimeMsRef?.current ?? 0;
   const canRenderDodgeHitFx = Boolean(dodgeHitFx && dodgeOrbitSize > 0 && dodgeImage);
   const showNebulaBaked = renderNebulaShader && Boolean(nebulaImage);
   const showBackdropImage = Boolean(backdropImage);
+  const imagesReady =
+    (!renderNebulaShader || !nebulaBakedImageSource || Boolean(nebulaImage))
+    && (!backgroundImageSource || Boolean(backdropImage));
   const fillWhenEmpty = !showNebulaBaked && !showBackdropImage;
+  const deferCanvas = hideUntilImagesReady && !imagesReady;
 
   useEffect(() => {
     return () => {
@@ -137,7 +175,8 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   }, [dodgeImage]);
 
   return (
-    <View style={styles.root} pointerEvents="none">
+    <View style={[styles.root, { opacity, width: size, height: size }]} pointerEvents="none">
+      {deferCanvas ? null : (
       <Canvas style={{ width: size, height: size }}>
         {fillWhenEmpty ? <Fill color="#0a0f18" /> : null}
         {showBackdropImage ? (
@@ -196,6 +235,7 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
           })()
           : null}
       </Canvas>
+      )}
     </View>
   );
 });

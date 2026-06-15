@@ -20,7 +20,7 @@ function Write-Log([string]$msg) {
 Write-Log "balance-ops watch start interval=${IntervalHours}h"
 
 while ($true) {
-  Write-Log 'audit:start npm run audit:balance-ops'
+  Write-Log 'audit:start npm run audit:balance-ops (balance + planet economy 3h)'
   $proc = Start-Process -FilePath 'npm' -ArgumentList @('run', 'audit:balance-ops') `
     -WorkingDirectory $root -NoNewWindow -Wait -PassThru -RedirectStandardOutput "$logDir\audit-last.stdout" `
     -RedirectStandardError "$logDir\audit-last.stderr"

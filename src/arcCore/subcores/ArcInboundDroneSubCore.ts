@@ -29,7 +29,6 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
   private pendingSpawns: PendingSpawn[] = [];
   private droneSeq = 0;
   private lastPublishedKey: string | null = null;
-  private satelliteCooldowns = new Map<string, number>();
 
   private static readonly SNAPSHOT_INTERVAL_SEC = 0.25;
   /** Skia trail 페이드 — `INBOUND_DRONE_TRAIL_FADE_MS`와 맞춤 */
@@ -54,7 +53,6 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
   override onShutdown(): void {
     this.drones = [];
     this.pendingSpawns = [];
-    this.satelliteCooldowns.clear();
     this.publishSnapshot(true);
   }
 
@@ -67,7 +65,6 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
       if (this.drones.length > 0 || this.pendingSpawns.length > 0) {
         this.drones = [];
         this.pendingSpawns = [];
-        this.satelliteCooldowns.clear();
         this.waveAccSec = 0;
       }
       return;
@@ -97,7 +94,7 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
       }
     }
 
-    runInboundDroneInterceptPass(planetId, this.drones, elapsedWallSec, this.satelliteCooldowns);
+    runInboundDroneInterceptPass(planetId, this.drones, wallDeltaSec);
 
     for (const d of this.drones) {
       if (d.phase !== 'inbound' && d.trailEndWallSec == null) {
@@ -164,6 +161,7 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
       hp: policy.droneHp,
       maxHp: policy.droneHp,
       phase: 'inbound',
+      defenseZoneDwellSec: 0,
     };
     this.drones.push(drone);
   }

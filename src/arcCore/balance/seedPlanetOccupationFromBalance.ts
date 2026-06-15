@@ -6,7 +6,9 @@ import { PlanetOccupationSeeds_FROM_BALANCE_CSV } from '../../data/balance/gener
 import type { ClanBasicsRecord, PlanetClanHold } from '../../types';
 
 const SEED_BLUE_CLAN_ID = 'balance_seed_faction_blue';
-const SEED_RED_CLAN_ID = 'balance_seed_faction_red';
+export const ARC_CORE_SEED_BLUE_CLAN_ID = SEED_BLUE_CLAN_ID;
+export const ARC_CORE_SEED_RED_CLAN_ID = 'balance_seed_faction_red';
+const SEED_RED_CLAN_ID = ARC_CORE_SEED_RED_CLAN_ID;
 
 function parseOwner(owner: string): 'BLUE' | 'RED' | 'NEUTRAL' {
   const o = owner.trim().toUpperCase();

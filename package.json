@@ -16,6 +16,8 @@
     "build:balance-tables": "node tools/gen-trade-route-planet-assignments.mjs && node tools/balance-tables/build-balance-from-csv.mjs",
     "audit:balance": "node tools/balance-audit/run-balance-audit.cjs",
     "audit:balance-ops": "node tools/balance-ops-audit/run-balance-ops-audit.cjs",
+    "audit:planet-economy-3h": "node tools/planet-economy-3h-audit/run-planet-economy-3h-audit.cjs",
+    "audit:team-lead:daily": "node tools/kim-team-lead/run-daily-economy-review.cjs",
     "audit:aabs-verify": "node tools/aabs-verify/run-aabs-verify.cjs",
     "agds:patch-overlay": "node tools/agds/patch-dynamic-overlay.cjs",
     "build:world-expansion-graph": "npx tsx tools/world-expansion/export-master-graph.ts",
