@@ -1,0 +1,45 @@
+[2026-06-16 15:18:52] long-run-monitor pid=21640 (existing)
+[2026-06-16 15:18:52] session_start id=20260616-151852 duration=5h interval=30m end_at=2026-06-16 20:18:52
+[2026-06-16 15:18:52] economy_tick start tick=1
+[2026-06-16 15:19:36] economy_tick done tick=1 exit=0
+[2026-06-16 15:19:36] {"sessionId":"20260616-151852","tick":1,"iso":"2026-06-16T06:19:36.024Z","balanceOpsExit":0,"balanceOverall":"PASS","planetEcoExit":0,"planetOverall":"PASS","glMb":"50.6","pssMb":"671.2","alertCount":0,"tickMd":"tools\\session-stability-watch\\reports\\tick-20260616-151852-01.md","timelineCsv":"tools\\session-stability-watch\\reports\\session-timeline-20260616-151852.csv"}
+[2026-06-16 15:19:36] sleep 30m (remaining 299.3m)
+[2026-06-16 15:49:36] economy_tick start tick=2
+[2026-06-16 15:50:14] economy_tick done tick=2 exit=0
+[2026-06-16 15:50:14] {"sessionId":"20260616-151852","tick":2,"iso":"2026-06-16T06:50:14.070Z","balanceOpsExit":0,"balanceOverall":"PASS","planetEcoExit":0,"planetOverall":"PASS","glMb":"38.6","pssMb":"1067.6","alertCount":0,"tickMd":"tools\\session-stability-watch\\reports\\tick-20260616-151852-02.md","timelineCsv":"tools\\session-stability-watch\\reports\\session-timeline-20260616-151852.csv"}
+[2026-06-16 15:50:14] sleep 30m (remaining 268.6m)
+[2026-06-16 16:20:14] economy_tick start tick=3
+[2026-06-16 16:20:54] economy_tick done tick=3 exit=0
+[2026-06-16 16:20:54] {"sessionId":"20260616-151852","tick":3,"iso":"2026-06-16T07:20:54.885Z","balanceOpsExit":0,"balanceOverall":"PASS","planetEcoExit":0,"planetOverall":"PASS","glMb":"46.8","pssMb":"702.1","alertCount":0,"tickMd":"tools\\session-stability-watch\\reports\\tick-20260616-151852-03.md","timelineCsv":"tools\\session-stability-watch\\reports\\session-timeline-20260616-151852.csv"}
+[2026-06-16 16:20:54] sleep 30m (remaining 238m)
+[2026-06-16 16:50:54] economy_tick start tick=4
+[2026-06-16 16:51:31] economy_tick done tick=4 exit=0
+[2026-06-16 16:51:31] {"sessionId":"20260616-151852","tick":4,"iso":"2026-06-16T07:51:31.125Z","balanceOpsExit":0,"balanceOverall":"PASS","planetEcoExit":0,"planetOverall":"PASS","glMb":"46.6","pssMb":"626.3","alertCount":0,"tickMd":"tools\\session-stability-watch\\reports\\tick-20260616-151852-04.md","timelineCsv":"tools\\session-stability-watch\\reports\\session-timeline-20260616-151852.csv"}
+[2026-06-16 16:51:31] sleep 30m (remaining 207.4m)
+[2026-06-16 17:21:31] economy_tick start tick=5
+[2026-06-16 17:22:08] economy_tick done tick=5 exit=0
+[2026-06-16 17:22:08] {"sessionId":"20260616-151852","tick":5,"iso":"2026-06-16T08:22:08.374Z","balanceOpsExit":0,"balanceOverall":"PASS","planetEcoExit":0,"planetOverall":"PASS","glMb":"62.3","pssMb":"627.9","alertCount":1,"tickMd":"tools\\session-stability-watch\\reports\\tick-20260616-151852-05.md","timelineCsv":"tools\\session-stability-watch\\reports\\session-timeline-20260616-151852.csv"}
+[2026-06-16 17:22:08] sleep 30m (remaining 176.7m)
+[2026-06-16 17:52:08] economy_tick start tick=6
+[2026-06-16 17:52:45] economy_tick done tick=6 exit=0
+[2026-06-16 17:52:45] {"sessionId":"20260616-151852","tick":6,"iso":"2026-06-16T08:52:45.371Z","balanceOpsExit":0,"balanceOverall":"PASS","planetEcoExit":0,"planetOverall":"PASS","glMb":"62.9","pssMb":"636.2","alertCount":1,"tickMd":"tools\\session-stability-watch\\reports\\tick-20260616-151852-06.md","timelineCsv":"tools\\session-stability-watch\\reports\\session-timeline-20260616-151852.csv"}
+[2026-06-16 17:52:45] sleep 30m (remaining 146.1m)
+[2026-06-16 18:22:45] economy_tick start tick=7
+[2026-06-16 18:23:22] economy_tick done tick=7 exit=0
+[2026-06-16 18:23:22] {"sessionId":"20260616-151852","tick":7,"iso":"2026-06-16T09:23:22.626Z","balanceOpsExit":0,"balanceOverall":"PASS","planetEcoExit":0,"planetOverall":"PASS","glMb":"62.4","pssMb":"630.1","alertCount":1,"tickMd":"tools\\session-stability-watch\\reports\\tick-20260616-151852-07.md","timelineCsv":"tools\\session-stability-watch\\reports\\session-timeline-20260616-151852.csv"}
+[2026-06-16 18:23:22] sleep 30m (remaining 115.5m)
+[2026-06-16 18:53:22] economy_tick start tick=8
+[2026-06-16 18:54:04] economy_tick done tick=8 exit=0
+[2026-06-16 18:54:04] {"sessionId":"20260616-151852","tick":8,"iso":"2026-06-16T09:54:04.018Z","balanceOpsExit":0,"balanceOverall":"PASS","planetEcoExit":0,"planetOverall":"PASS","glMb":"64.5","pssMb":"635.7","alertCount":1,"tickMd":"tools\\session-stability-watch\\reports\\tick-20260616-151852-08.md","timelineCsv":"tools\\session-stability-watch\\reports\\session-timeline-20260616-151852.csv"}
+[2026-06-16 18:54:04] sleep 30m (remaining 84.8m)
+[2026-06-16 19:24:04] economy_tick start tick=9
+[2026-06-16 19:24:52] economy_tick done tick=9 exit=0
+[2026-06-16 19:24:52] {"sessionId":"20260616-151852","tick":9,"iso":"2026-06-16T10:24:52.052Z","balanceOpsExit":0,"balanceOverall":"PASS","planetEcoExit":0,"planetOverall":"PASS","glMb":"62.5","pssMb":"637.6","alertCount":1,"tickMd":"tools\\session-stability-watch\\reports\\tick-20260616-151852-09.md","timelineCsv":"tools\\session-stability-watch\\reports\\session-timeline-20260616-151852.csv"}
+[2026-06-16 19:24:52] sleep 30m (remaining 54m)
+[2026-06-16 19:54:52] economy_tick start tick=10
+[2026-06-16 19:55:27] economy_tick done tick=10 exit=0
+[2026-06-16 19:55:27] {"sessionId":"20260616-151852","tick":10,"iso":"2026-06-16T10:55:27.941Z","balanceOpsExit":0,"balanceOverall":"PASS","planetEcoExit":0,"planetOverall":"PASS","glMb":"71.4","pssMb":"682.1","alertCount":2,"tickMd":"tools\\session-stability-watch\\reports\\tick-20260616-151852-10.md","timelineCsv":"tools\\session-stability-watch\\reports\\session-timeline-20260616-151852.csv"}
+[2026-06-16 19:55:27] sleep 24m (remaining 23.4m)
+[2026-06-16 20:19:27] final_5h_audit start
+[2026-06-16 20:21:17] final_5h_audit done exit=0
+[2026-06-16 20:21:17] {"sessionId":"20260616-151852","verdict":"STABLE","stabilized":true,"blockers":[],"reportPath":"tools\\session-stability-watch\\reports\\session-final-20260616-151852.md","latestPath":"tools\\session-stability-watch\\reports\\session-final-latest.md","memTrend":{"rows":10,"glMax":71.4,"glSpikes":2,"processDeaths":0,"hubActivations":0},"economyTicks":10,"iso":"2026-06-16T11:21:17.220Z"}

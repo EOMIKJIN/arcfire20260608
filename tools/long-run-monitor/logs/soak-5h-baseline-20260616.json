@@ -1,0 +1,17 @@
+﻿{
+    "glMtrackMb":  47.4,
+    "note":  "user keeps app running; 30min monitor pid 21640 active; final audit at +5h",
+    "pssMb":  584.5,
+    "pssKb":  598512,
+    "startedAtKst":  "2026-06-16 15:15:22",
+    "glMtrackKb":  48536,
+    "views":  287,
+    "headCommit":  "72a234d",
+    "appliedFixes":  [
+                         "arcCore onBoot defer (DailyOps/Economy)",
+                         "csv UTF-8 (captains restore, ships convert)"
+                     ],
+    "session":  "soak-5h-stabilization-20260616",
+    "eglMtrackMb":  22.1,
+    "appPid":  16401
+}

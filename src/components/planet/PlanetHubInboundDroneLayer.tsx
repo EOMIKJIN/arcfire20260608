@@ -16,6 +16,7 @@ import { getArcCoreInboundDronePolicy } from '../../arcCore/balance/arcCoreInbou
 import { WORLD_OBJECT_WRECK_MARK_PX } from '../../game/planetHub/planetHubConstants';
 import { PLANET_MAIN_ORBIT_SCENE_SIZE } from '../../stages/planetMainStageLayout';
 import {
+  buildInboundDronePackSig,
   computeInboundDroneScreenPacked,
   packInboundDronesToFloat32,
 } from './planetOrbitInboundDroneWorklets';
@@ -188,6 +189,8 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
   const startOrbitMsByIdRef = useRef<Map<string, number>>(new Map());
   const endOrbitMsByIdRef = useRef<Map<string, number>>(new Map());
   const prevPhaseByIdRef = useRef<Map<string, ArcInboundDronePhase>>(new Map());
+  const inboundPackSigRef = useRef('');
+  const trailPackSigRef = useRef('');
   const hitFxRef = useRef<InboundDroneHitFx[]>([]);
   const spawnedHitFxIdsRef = useRef<Set<string>>(new Set());
   const inboundDronesRef = useRef<ArcInboundDrone[]>([]);
@@ -203,6 +206,9 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
     () => drones.filter(isTrailEligibleDrone).slice(0, PLANET_HUB_INBOUND_DRONE_RENDER_MAX),
     [drones],
   );
+
+  const inboundPackSig = useMemo(() => buildInboundDronePackSig(inboundDrones), [inboundDrones]);
+  const trailPackSig = useMemo(() => buildInboundDronePackSig(trailDrones), [trailDrones]);
 
   inboundDronesRef.current = inboundDrones;
 
@@ -290,11 +296,10 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
     for (const d of trailDrones) {
       activeTrailIds.add(d.id);
       const prevPhase = prevPhaseById.get(d.id);
-      if (d.phase === 'inbound') {
+      if (d.phase === 'inbound' && !startOrbitMsById.has(d.id)) {
         const elapsedSec = Number.isFinite(d.inboundElapsedSec) ? d.inboundElapsedSec : 0;
-        // wall(아크코어) ↔ orbit(렌더) 드리프트 방지 — 스냅샷마다 재동기화
         startOrbitMsById.set(d.id, nowMs - elapsedSec * 1000);
-      } else if (!endOrbitMsById.has(d.id)) {
+      } else if (d.phase !== 'inbound' && !endOrbitMsById.has(d.id)) {
         endOrbitMsById.set(d.id, nowMs);
       }
 
@@ -331,15 +336,21 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
       if (droneId && !activeTrailIds.has(droneId)) spawnedHitFxIds.delete(key);
     }
 
-    droneCountSv.value = inboundDrones.length;
-    flatSv.value = packInboundDronesToFloat32(inboundDrones, startOrbitMsById);
-    trailCountSv.value = trailDrones.length;
-    trailFlatSv.value = packInboundDroneTrailFlat(
-      trailDrones,
-      startOrbitMsById,
-      endOrbitMsById,
-      nowMs,
-    );
+    if (inboundPackSigRef.current !== inboundPackSig) {
+      inboundPackSigRef.current = inboundPackSig;
+      droneCountSv.value = inboundDrones.length;
+      flatSv.value = packInboundDronesToFloat32(inboundDrones, startOrbitMsById);
+    }
+    if (trailPackSigRef.current !== trailPackSig) {
+      trailPackSigRef.current = trailPackSig;
+      trailCountSv.value = trailDrones.length;
+      trailFlatSv.value = packInboundDroneTrailFlat(
+        trailDrones,
+        startOrbitMsById,
+        endOrbitMsById,
+        nowMs,
+      );
+    }
 
     compactInboundDroneHitFxInPlace(hitFxRef.current, nowMs);
     compactHubInboundDroneDodgeFxInPlace(hubInboundDroneDodgeHitFxRef.current, nowMs);
@@ -359,6 +370,8 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
       onSkiaDodgeBackdropLatch?.(false);
     }
   }, [
+    inboundPackSig,
+    trailPackSig,
     drones,
     inboundDrones,
     trailDrones,

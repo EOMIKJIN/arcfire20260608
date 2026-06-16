@@ -1,3 +1,4 @@
+import { InteractionManager } from 'react-native';
 import { BaseArcSubCore } from './BaseArcSubCore';
 import { shouldRunArcCoreDailyBatch } from '../schedule/arcCoreDailyOpsPolicy';
 import {
@@ -21,7 +22,11 @@ export class ArcCoreDailyOpsSubCore extends BaseArcSubCore {
   }
 
   override onBoot(): void {
-    void this.probeDailyBatch('boot');
+    // 부트 프레임 차단 금지 — 타이틀/허브 첫 렌더가 끝난 뒤 유휴 시점에 일일 배치 실행.
+    // (정오 이후 부팅 시 무거운 경제·코어 배치가 JS 스레드를 점유해 시작 화면이 멈추는 회귀 방지)
+    InteractionManager.runAfterInteractions(() => {
+      void this.probeDailyBatch('boot');
+    });
   }
 
   override _advanceWallClock(wallDeltaSec: number): void {

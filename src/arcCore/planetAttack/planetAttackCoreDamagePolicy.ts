@@ -7,8 +7,15 @@ export type PlanetAttackCoreDamagePolicyRow = {
   delta: PlanetCoreMetricDelta;
   dailyEventCap: number;
   enabled: boolean;
+  /** 정책 delta에 곱하는 미세 반영 배율(0..1, 기본 1) */
+  impactScale: number;
   notesKo: string;
 };
+
+function parseFloatField(raw: string | undefined, fallback: number): number {
+  const n = Number(raw);
+  return Number.isFinite(n) && n >= 0 ? n : fallback;
+}
 
 function parseIntField(raw: string | undefined, fallback: number): number {
   const n = Number(raw);
@@ -41,6 +48,7 @@ function rowToPolicy(row: (typeof PlanetAttackCoreDamage_FROM_BALANCE_CSV)[numbe
     delta,
     dailyEventCap: Math.max(0, parseIntField(String(row.daily_event_cap ?? '0'), 0)),
     enabled: parseBool01(String(row.enabled ?? '0')),
+    impactScale: parseFloatField(String(row.impact_scale ?? '1'), 1),
     notesKo: String(row.notesKo ?? '').trim(),
   };
 }
@@ -75,6 +83,73 @@ export function scalePlanetCoreMetricDelta(
     out[key] = Math.round(delta[key] * mul);
   }
   return out;
+}
+
+function remainderToMetricDelta(
+  remainder: Partial<Record<PlanetCoreMetricKey, number>> | undefined,
+): PlanetCoreMetricDelta {
+  const out = zeroPlanetCoreMetricDelta();
+  if (!remainder) return out;
+  for (const key of PLANET_CORE_METRIC_KEYS) {
+    const v = remainder[key];
+    out[key] = Number.isFinite(v) ? v! : 0;
+  }
+  return out;
+}
+
+function metricDeltaToRemainder(delta: PlanetCoreMetricDelta): Partial<Record<PlanetCoreMetricKey, number>> {
+  const out: Partial<Record<PlanetCoreMetricKey, number>> = {};
+  for (const key of PLANET_CORE_METRIC_KEYS) {
+    if (delta[key] !== 0) out[key] = delta[key];
+  }
+  return out;
+}
+
+/**
+ * impact_scale·intensityMul로 미세 Δ를 누적하고, 정수 게이지 변화만 반환한다.
+ */
+export function computeFractionalPlanetAttackAppliedDelta(
+  current: PlanetCoreMetricDelta,
+  rawDelta: PlanetCoreMetricDelta,
+  impactScale: number,
+  intensityMul: number,
+  remainderIn: Partial<Record<PlanetCoreMetricKey, number>> | undefined,
+): {
+  applied: PlanetCoreMetricDelta;
+  remainderOut: Partial<Record<PlanetCoreMetricKey, number>>;
+} {
+  const scale =
+    (Number.isFinite(impactScale) && impactScale >= 0 ? impactScale : 1) *
+    (Number.isFinite(intensityMul) && intensityMul > 0 ? intensityMul : 1);
+  const acc = remainderToMetricDelta(remainderIn);
+  const applied = zeroPlanetCoreMetricDelta();
+
+  for (const key of PLANET_CORE_METRIC_KEYS) {
+    const base = rawDelta[key];
+    if (base === 0) continue;
+    acc[key] += base * scale;
+    let deltaApplied = 0;
+    if (base < 0) {
+      while (acc[key] <= -1) {
+        deltaApplied -= 1;
+        acc[key] += 1;
+      }
+    } else {
+      while (acc[key] >= 1) {
+        deltaApplied += 1;
+        acc[key] -= 1;
+      }
+    }
+    if (deltaApplied === 0) {
+      applied[key] = 0;
+      continue;
+    }
+    const before = Math.max(0, Math.min(100, Math.round(current[key])));
+    const after = Math.max(0, Math.min(100, before + deltaApplied));
+    applied[key] = after - before;
+  }
+
+  return { applied, remainderOut: metricDeltaToRemainder(acc) };
 }
 
 /** 정책 delta를 0..100 게이지에 적용할 실제 변화량(음수=피해) */

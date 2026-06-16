@@ -16,9 +16,8 @@ import { PLANET_CORE_METRIC_KEYS, zeroPlanetCoreMetricDelta } from './planetAtta
 import { planetAttackKstDayKey } from './planetAttackKstDayKey';
 import {
   applyDeltaToGauge,
-  computePlanetAttackAppliedDelta,
+  computeFractionalPlanetAttackAppliedDelta,
   getPlanetAttackCoreDamagePolicy,
-  scalePlanetCoreMetricDelta,
 } from './planetAttackCoreDamagePolicy';
 import { recordPlanetEconomyAttackSignal } from '../economy/planetEconomyFabric';
 
@@ -130,12 +129,17 @@ export function applyPlanetAttackCoreDamage(
 
   const currentGauge = planetCoreRuntimeToGaugeView(prevRuntime);
   const currentMetrics = gaugeToMetricDelta(currentGauge);
-  const scaledDelta = scalePlanetCoreMetricDelta(policy.delta, intensityMul);
-  if (PLANET_CORE_METRIC_KEYS.every((k) => scaledDelta[k] === 0)) {
+  if (PLANET_CORE_METRIC_KEYS.every((k) => policy.delta[k] === 0)) {
     return { ok: false, reason: 'disabled' };
   }
 
-  const applied = computePlanetAttackAppliedDelta(currentMetrics, scaledDelta);
+  const { applied, remainderOut } = computeFractionalPlanetAttackAppliedDelta(
+    currentMetrics,
+    policy.delta,
+    policy.impactScale,
+    intensityMul,
+    attackDetail.microRemainder,
+  );
 
   const nextMetrics = applyDeltaToGauge(currentMetrics, applied);
   const after: PlanetCoreGaugeView = {
@@ -147,6 +151,10 @@ export function applyPlanetAttackCoreDamage(
   };
 
   attackDetail = bumpDailyCount(attackDetail, attackKind);
+  attackDetail = {
+    ...attackDetail,
+    microRemainder: remainderOut,
+  };
   attackDetail = appendLastEvent(attackDetail, {
     attackKind,
     atMs,

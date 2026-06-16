@@ -35,12 +35,25 @@ export type PlanetAttackDailyCounter = {
   byKind: Record<string, number>;
 };
 
+/** 미세 피해 누적 — 정수 게이지 반영 전 소수 잔량 */
+export type PlanetAttackMicroRemainder = {
+  resource?: number;
+  population?: number;
+  defense?: number;
+  technology?: number;
+  environment?: number;
+};
+
 /** 행성 5대 스탯 공격 피해 텔레메트리 — `PlanetCoreRuntime.detail.attackDamage` */
 export type PlanetAttackDamageDetail = {
   version: 1;
   daily: PlanetAttackDailyCounter;
   lastEvents: PlanetAttackLastEvent[];
   totalEvents: number;
+  /** impact_scale 미세 반영 시 소수 잔량 */
+  microRemainder?: PlanetAttackMicroRemainder;
+  /** CSV 기준 D/T 재정렬 마이그레이션 rev */
+  realignRev?: number;
 };
 
 /** Economy Fabric — 운영 실물(수송·피해·재고) 누적 · 일 1회 reconcile */

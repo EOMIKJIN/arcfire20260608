@@ -160,7 +160,52 @@ function mergeWorldWithDisk(
       next[planet.id] = stored ?? planetCsvBaselineToRuntime(planet);
     }
   }
-  return next;
+  return realignStarterPlanetDefenseTechnology(systems, next);
+}
+
+/** 아르카디아 등 스타터 행성 — CSV 경제 생태계 기본 D/T로 1회 재정렬 */
+const PLANET_DT_REALIGN_REV = 1;
+const PLANET_DT_REALIGN_IDS = new Set(['arcadia_prime']);
+
+function realignStarterPlanetDefenseTechnology(
+  systems: Record<string, StarSystem>,
+  byPlanetId: Record<string, PlanetCoreRuntime>,
+): Record<string, PlanetCoreRuntime> {
+  const out = { ...byPlanetId };
+  for (const planetId of PLANET_DT_REALIGN_IDS) {
+    const stored = out[planetId];
+    if (!stored) continue;
+    const planet = findPlanetInSystems(systems, planetId);
+    if (!planet) continue;
+    const rev = stored.detail?.attackDamage?.realignRev ?? 0;
+    if (rev >= PLANET_DT_REALIGN_REV) continue;
+
+    const baseline = planetCsvBaselineToRuntime(planet);
+    const prevAttack = stored.detail?.attackDamage;
+    out[planetId] = {
+      ...stored,
+      defense: baseline.defense,
+      technology: baseline.technology,
+      updatedAt: Date.now(),
+      detail: {
+        ...stored.detail,
+        attackDamage: prevAttack
+          ? {
+              ...prevAttack,
+              realignRev: PLANET_DT_REALIGN_REV,
+              microRemainder: undefined,
+            }
+          : {
+              version: 1,
+              daily: { kstDayKey: '', byKind: {} },
+              lastEvents: [],
+              totalEvents: 0,
+              realignRev: PLANET_DT_REALIGN_REV,
+            },
+      },
+    };
+  }
+  return out;
 }
 
 interface PlanetCoreRuntimeState {

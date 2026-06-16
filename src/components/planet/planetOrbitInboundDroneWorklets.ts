@@ -17,7 +17,7 @@ function finiteOr(v: number, fallback: number): number {
   return Number.isFinite(v) ? v : fallback;
 }
 
-/** b+1 = spawn 시 orbitClockMs 앵커 — 4Hz 스냅샷·sync 리셋 없이 프레임 보간 */
+/** b+1 = 드론별 spawn orbitClockMs 앵커 — 스냅샷마다 재설정 금지 */
 export function computeInboundDroneScreenPacked(
   index: number,
   orbitMs: number,

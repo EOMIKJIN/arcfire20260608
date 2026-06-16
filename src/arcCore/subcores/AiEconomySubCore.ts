@@ -1,3 +1,4 @@
+import { InteractionManager } from 'react-native';
 import { BaseArcSubCore } from './BaseArcSubCore';
 import {
   subscribeArcCoreCommands,
@@ -34,14 +35,18 @@ export class AiEconomySubCore extends BaseArcSubCore {
   }
 
   override onBoot(): void {
+    // 명령 구독은 즉시(경량) — 부트 프레임 영향 없음.
     this.unsubCommands = subscribeArcCoreCommands((cmd) => this.onArcCoreCommand(cmd));
-    void migrateLegacyArcCoreTempBankOnce().then(() => {
-      void useArcCoreTransportFleetBankStore.getState().hydrate().then(() => {
-        void useArcCoreVaultStore.getState().hydrate().then(() => {
-          void useBlueTeamSharedVaultStore.getState().hydrate().then(() => {
-            void usePlanetTradeFeeLedgerStore.getState().hydrate().then(() => {
-              void useEconomyPriceOverlayStore.getState().loadAsync().then(() => {
-                runPlayScenarioEconomyPass(true);
+    // 무역소 카탈로그 강제 재빌드 등 무거운 경제 부팅 패스는 첫 렌더 이후로 분리한다.
+    InteractionManager.runAfterInteractions(() => {
+      void migrateLegacyArcCoreTempBankOnce().then(() => {
+        void useArcCoreTransportFleetBankStore.getState().hydrate().then(() => {
+          void useArcCoreVaultStore.getState().hydrate().then(() => {
+            void useBlueTeamSharedVaultStore.getState().hydrate().then(() => {
+              void usePlanetTradeFeeLedgerStore.getState().hydrate().then(() => {
+                void useEconomyPriceOverlayStore.getState().loadAsync().then(() => {
+                  runPlayScenarioEconomyPass(true);
+                });
               });
             });
           });

@@ -1,0 +1,11 @@
+iso_time,tick,balance_ops_exit,balance_ops_overall,planet_economy_exit,planet_economy_overall,gl_mb,pss_mb,delta_gl_mb,views,alert_count_since_start,note
+2026-06-16T06:19:36.024Z,1,0,PASS,0,PASS,50.6,671.2,,312,0,economy_ok
+2026-06-16T06:50:14.070Z,2,0,PASS,0,PASS,38.6,1067.6,,291,0,economy_ok
+2026-06-16T07:20:54.885Z,3,0,PASS,0,PASS,46.8,702.1,,291,0,economy_ok
+2026-06-16T07:51:31.125Z,4,0,PASS,0,PASS,46.6,626.3,-0.2,293,0,economy_ok
+2026-06-16T08:22:08.374Z,5,0,PASS,0,PASS,62.3,627.9,15.7,289,1,economy_ok
+2026-06-16T08:52:45.371Z,6,0,PASS,0,PASS,62.9,636.2,0.6,296,1,economy_ok
+2026-06-16T09:23:22.626Z,7,0,PASS,0,PASS,62.4,630.1,-0.5,293,1,economy_ok
+2026-06-16T09:54:04.018Z,8,0,PASS,0,PASS,64.5,635.7,2.1,293,1,economy_ok
+2026-06-16T10:24:52.052Z,9,0,PASS,0,PASS,62.5,637.6,-2,295,1,economy_ok
+2026-06-16T10:55:27.941Z,10,0,PASS,0,PASS,71.4,682.1,8.9,312,2,economy_ok

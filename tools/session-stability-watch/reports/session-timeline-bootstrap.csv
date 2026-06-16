@@ -1,0 +1,2 @@
+iso_time,tick,balance_ops_exit,balance_ops_overall,planet_economy_exit,planet_economy_overall,gl_mb,pss_mb,delta_gl_mb,views,alert_count_since_start,note
+2026-06-16T06:17:48.004Z,1,0,PASS,0,PASS,50.6,671.2,,312,0,economy_ok

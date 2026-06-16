@@ -44,10 +44,28 @@ function makeTxnId(now: number, kind: string): string {
   return `${now}_${kind}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
+/** 거래마다 즉시 직렬화·디스크 기록(garbage·I/O 폭주)을 막는 코얼레싱 지연(ms) */
+const VAULT_PERSIST_COALESCE_MS = 1500;
+
 export function createFactionVaultStore(
   config: FactionVaultConfig,
 ): UseBoundStore<StoreApi<FactionVaultState>> {
-  return create<FactionVaultState>((set, get) => ({
+  // 인스턴스 단위 persist 코얼레싱 — 잔액은 메모리에서 즉시 정확, 디스크 기록만 묶는다.
+  let persistTimer: ReturnType<typeof setTimeout> | null = null;
+  let flushPersist: (() => void) | null = null;
+  const schedulePersist = () => {
+    if (persistTimer) return;
+    persistTimer = setTimeout(() => {
+      persistTimer = null;
+      flushPersist?.();
+    }, VAULT_PERSIST_COALESCE_MS);
+  };
+
+  return create<FactionVaultState>((set, get) => {
+    flushPersist = () => {
+      void get().persist();
+    };
+    return {
     hydrated: false,
     balanceCredits: 0,
     totalInflowCredits: 0,
@@ -148,7 +166,8 @@ export function createFactionVaultStore(
         totalOutflowCredits: state.totalOutflowCredits + (delta < 0 ? -delta : 0),
         txns: [txn, ...state.txns].slice(0, limit),
       });
-      void get().persist();
+      // 거래 1건마다 즉시 직렬화·기록 금지 — 코얼레싱(잔액은 메모리에서 이미 정확).
+      schedulePersist();
     },
 
     trySpend: (amount, meta) => {
@@ -165,5 +184,6 @@ export function createFactionVaultStore(
       if (inflow <= 0) return;
       get().applyDelta(inflow, meta);
     },
-  }));
+    };
+  });
 }
