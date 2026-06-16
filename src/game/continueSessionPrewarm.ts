@@ -1,4 +1,3 @@
-import { InteractionManager } from 'react-native';
 import { usePlayerStore } from '../store/playerStore';
 import { useWorldStore } from '../store/worldStore';
 import { usePlanetCoreRuntimeStore } from '../store/planetCoreRuntimeStore';
@@ -28,9 +27,10 @@ function yieldToUi(): Promise<void> {
 export async function runContinueSessionPrewarm(): Promise<void> {
   await measureBootPhase('continue_prewarm_start', 'continue_prewarm_end', async () => {
     buildCsvStaticIndexesFull();
-    await new Promise<void>((resolve) => {
-      InteractionManager.runAfterInteractions(() => resolve());
-    });
+    // 차원항로(continue-warp) 화면은 Reanimated 워프 애니메이션이 상시 돌아간다.
+    // InteractionManager.runAfterInteractions는 인터랙션/전환이 안 풀리면 영구 대기 →
+    // prewarm Promise 미완 → planet으로 navigate 못 함(검은 화면 정지). 단순 1프레임 yield로 교체.
+    await yieldToUi();
 
     await runCriticalSessionAssetPrewarm();
 

@@ -11818,3 +11818,68 @@
 06-16 16:00:56.698 20490 20693 E ReactNativeJS:  [90m     |[39m    [31m[1m^[22m[39m
 06-16 16:00:56.698 20490 20693 E ReactNativeJS:  [90m 188 |[39m }
 06-16 16:00:56.698 20490 20693 E ReactNativeJS:  [90m 189 |[39m[0m] preventSymbolication: true }
+06-16 21:33:37.094 13545 13545 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+06-16 21:33:41.404 13928 13928 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+06-16 22:26:24.984 21204 21204 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+06-16 22:37:00.121 23549 23631 E ReactNativeJS: ReferenceError: Property 'SplashScreen' doesn't exist
+06-16 22:37:08.922 23549 23631 E ReactNativeJS: ReferenceError: Property 'SplashScreen' doesn't exist
+06-16 22:37:08.922 23549 23631 E ReactNativeJS: 
+06-16 22:37:08.922 23549 23631 E ReactNativeJS: This error is located at:
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in RootLayout
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in Unknown (created by Route())
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in Suspense (created by Route())
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in Route (created by Route())
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in Route() (created by ContextNavigator)
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in RNCSafeAreaProvider (created by SafeAreaProvider)
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in SafeAreaProvider (created by wrapper)
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in wrapper (created by ContextNavigator)
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in EnsureSingleNavigator
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in BaseNavigationContainer
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in ThemeProvider
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in NavigationContainerInner (created by ContextNavigator)
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in ContextNavigator (created by ExpoRoot)
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in ExpoRoot (created by App)
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in App (created by ErrorOverlay)
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in ErrorToastContainer (created by ErrorOverlay)
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in ErrorOverlay (created by withDevTools(ErrorOverlay))
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in withDevTools(ErrorOverlay)
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in RCTView (created by View)
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in View (created by AppContainer)
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in RCTView (created by View)
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in View (created by AppContainer)
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in AppContainer
+06-16 22:37:08.922 23549 23631 E ReactNativeJS:     in main(RootComponent)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS: ReferenceError: Property 'SplashScreen' doesn't exist
+06-16 22:37:08.948 23549 23631 E ReactNativeJS: 
+06-16 22:37:08.948 23549 23631 E ReactNativeJS: This error is located at:
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in RootLayout
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in Unknown (created by Route())
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in Suspense (created by Route())
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in Route (created by Route())
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in Route() (created by ContextNavigator)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in RNCSafeAreaProvider (created by SafeAreaProvider)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in SafeAreaProvider (created by wrapper)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in wrapper (created by ContextNavigator)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in EnsureSingleNavigator
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in BaseNavigationContainer
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in ThemeProvider
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in NavigationContainerInner (created by ContextNavigator)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in ContextNavigator (created by ExpoRoot)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in ExpoRoot (created by App)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in App (created by ErrorOverlay)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in ErrorToastContainer (created by ErrorOverlay)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in ErrorOverlay (created by withDevTools(ErrorOverlay))
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in withDevTools(ErrorOverlay)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in RCTView (created by View)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in View (created by AppContainer)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in RCTView (created by View)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in View (created by AppContainer)
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in AppContainer
+06-16 22:37:08.948 23549 23631 E ReactNativeJS:     in main(RootComponent)
+06-16 22:54:48.091 26456 26456 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+06-16 23:10:23.559 29226 29226 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+06-16 23:10:30.923 29612 29612 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+06-16 23:19:11.267 31446 31446 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+06-16 23:19:12.363 31487 31487 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+06-16 23:30:48.310  3384  3384 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+06-16 23:48:30.625  5129  5129 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported

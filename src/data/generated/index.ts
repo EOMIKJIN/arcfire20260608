@@ -19,3 +19,8 @@ export { ENEMY_TEMPLATES_FROM_CSV, type EnemyTemplateCsvRow } from './csvEnemyTe
 export { ITEM_DEFS_FROM_CSV } from './csvItemDefs';
 export { SKILLS_FROM_CSV } from './csvSkills';
 export { STORY_SCENES_FROM_CSV } from './csvStoryScenes';
+export {
+  PLAYER_PROFESSIONS_FROM_CSV,
+  PLAYER_PROFESSION_LIST_FROM_CSV,
+  type PlayerProfessionCsvRow,
+} from './csvPlayerProfessions';

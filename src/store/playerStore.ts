@@ -16,6 +16,14 @@ import {
   createPlayerCombatProficiency,
   normalizePlayerCombatProficiency,
 } from '../combat/playerCombatProficiency';
+import {
+  buildPlayerPilotProfileFromProfession,
+  getDefaultPlayerProfession,
+  getPlayerProfessionById,
+  normalizePlayerPilotProfile,
+  normalizePlayerSocialStats,
+  resolvePlayerSocialStatsFromProfession,
+} from '../game/playerPilotProfessionModel';
 import { NPC_CAPITAL_SHIPS_FROM_CSV } from '../data/generated';
 import { resolvePlayerDefaultNpcCapitalShipId } from '../arcCore/balance/capitalHullPurchaseFromBalance';
 import {
@@ -393,6 +401,8 @@ function ensurePlayerHasDefaultShip(player: Player): Player {
     shipHangar: normalizedHangar,
     inventorySlots: normalizedInventory,
     combatProficiency: normalizePlayerCombatProficiency(player.combatProficiency, player.level),
+    stats: normalizePlayerSocialStats(player.stats, player.pilotProfile?.professionId),
+    pilotProfile: normalizePlayerPilotProfile(player.pilotProfile),
   };
 }
 
@@ -402,7 +412,7 @@ interface PlayerState {
   levelUpSummary: LevelUpSummary | null;
   hydrated: boolean;
   setPlayer: (p: Player | null) => void;
-  createPlayer: (uid: string, nickname: string) => void;
+  createPlayer: (uid: string, nickname: string, professionId?: string) => void;
   loadLocalPlayer: () => Promise<void>;
   resetLocalPlayer: () => Promise<void>;
   persist: () => Promise<void>;
@@ -436,7 +446,9 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
   setPlayer: (p) => set({ player: p ? ensurePlayerHasDefaultShip(p) : null }),
 
-  createPlayer: (uid, nickname) => {
+  createPlayer: (uid, nickname, professionId) => {
+    const profession =
+      getPlayerProfessionById(professionId) ?? getDefaultPlayerProfession();
     const templateId = 'starter_fighter';
     const defaultNpcCapitalShipId = resolvePlayerDefaultNpcCapitalShipId();
     const now = Date.now();
@@ -468,14 +480,8 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       ],
       // 기본 액티브 스킬(테스트): 신규 파일럿은 이중 사격을 기본 보유
       skills: [...DEFAULT_GRANTED_SKILL_IDS],
-      stats: {
-        strength: 12,
-        dexterity: 12,
-        constitution: 12,
-        intelligence: 10,
-        wisdom: 10,
-        charisma: 10,
-      },
+      stats: resolvePlayerSocialStatsFromProfession(profession.id),
+      pilotProfile: buildPlayerPilotProfileFromProfession(profession),
       flags: {
         tutorialComplete: false,
         introSeen: false,
@@ -727,3 +733,11 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 }));
 
 export { createPlayerCombatProficiency, normalizePlayerCombatProficiency };
+
+/** 로컬·Firestore 복원 공통 — political/함선/함장(pilotProfile·stats) 정규화 */
+export function hydratePersistedPlayer(raw: unknown): Player | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const candidate = raw as Partial<Player>;
+  if (typeof candidate.uid !== 'string' || !candidate.uid.trim()) return null;
+  return ensurePlayerHasDefaultShip(normalizePlayerPolitical(raw as PlayerPersistenceShape));
+}

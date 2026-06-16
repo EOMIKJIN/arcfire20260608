@@ -31,6 +31,7 @@
     "audit:session:economy-tick": "node tools/session-stability-watch/run-economy-balance-tick.cjs",
     "audit:session:5h-final": "node tools/session-stability-watch/run-final-5h-audit.cjs",
     "audit:session:watch": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/session-stability-watch/start-session-watch.ps1",
+    "test:planet-pgp": "npx tsx src/world/planetPgpModel.test.ts",
     "audit:ui-overlay": "node tools/ui-overlay-audit/run-ui-overlay-audit.cjs",
     "audit:arc-self-optimize:pack": "node tools/arc-core-self-optimize/prepare-handoff.cjs",
     "sim:economy": "npm run verify:economy-sim-cohort && npx tsx tools/economy-sim/run-economy-sim.ts",

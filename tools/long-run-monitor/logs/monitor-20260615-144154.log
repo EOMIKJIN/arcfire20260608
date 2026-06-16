@@ -46,3 +46,10 @@
 [2026-06-16 19:43:44] ALERT GL +8.9MB active hub views=312
 [2026-06-16 19:43:44] snap PSS=682.1MB GL=71.4MB views=312 dPSS=44.5 dGL=8.9 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
 [2026-06-16 20:13:45] snap PSS=667.4MB GL=67.2MB views=291 dPSS=-14.7 dGL=-4.2 
+[2026-06-16 20:43:51] snap PSS=MB GL=MB views=0 dPSS= dGL= GL_RECOVERED idle_ok
+[2026-06-16 21:13:55] snap PSS=630.1MB GL=8.3MB views=93 dPSS= dGL= 
+[2026-06-16 21:43:56] snap PSS=MB GL=MB views=0 dPSS= dGL= 
+[2026-06-16 22:13:57] snap PSS=MB GL=MB views=0 dPSS= dGL= 
+[2026-06-16 22:43:58] snap PSS=578.7MB GL=31.2MB views=41 dPSS= dGL= 
+[2026-06-16 23:14:00] snap PSS=604.5MB GL=17.1MB views=283 dPSS= dGL= 
+[2026-06-16 23:44:02] snap PSS=MB GL=MB views=0 dPSS= dGL= 

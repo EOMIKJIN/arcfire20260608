@@ -1,4 +1,7 @@
-﻿id,sortOrder,nameKo,labelKo,summaryKo,portraitImageAssetKey,statStrength,statDexterity,statConstitution,statIntelligence,statWisdom,statCharisma
-prof_striker,1,강습 파일럿,[ 강습 파일럿 ],근접 교전과 화력 돌파에 특화한 전투형 파일럿입니다.,assets/images/npc/stella_aris_char001.png,14,12,12,8,8,8
-prof_scout,2,정찰 파일럿,[ 정찰 파일럿 ],민첩한 기동과 정찰·회피에 특화한 정찰형 파일럿입니다.,assets/images/npc/mia_bello_char002.png,10,14,10,10,10,10
-prof_tactician,3,전술 파일럿,[ 전술 파일럿 ],함대 지휘와 전술 판단에 특화한 지휘형 파일럿입니다.,assets/images/stella_aris_char001.png,10,10,10,14,12,10
+﻿id,sortOrder,nameKo,labelKo,gender,summaryKo,personalityKo,traitIdsPipe,portraitImageAssetKey,combatArchetype,statWisdom,statCharisma
+
+prof_striker,1,렌 카제,[ 강습 파일럿 ],male,근접 교전과 화력 돌파에 특화한 전투형 파일럿입니다.,과묵하고 단호한 돌파형,trait_aggressive|trait_shield_breaker,assets/images/npc/stella_aris_char001.png,fighter,8,8
+
+prof_scout,2,미아 벨로,[ 정찰 파일럿 ],female,민첩한 기동과 정찰·회피에 특화한 정찰형 파일럿입니다.,침착하고 관찰력이 뛰어남,trait_evasive|trait_scout_sense,assets/images/npc/mia_bello_char002.png,ranger,10,10
+
+prof_tactician,3,카일 드레이크,[ 전술 파일럿 ],male,함대 지휘와 전술 판단에 특화한 지휘형 파일럿입니다.,냉철하고 분석적인 지휘관,trait_tactical|trait_fleet_command,assets/images/stella_aris_char001.png,neutral,12,10

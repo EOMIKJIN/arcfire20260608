@@ -51,6 +51,8 @@ export interface Player {
   shipHangar: PlayerHangarShip[];
   skills: string[];
   stats: PlayerStats;
+  /** 선택 함장(프로페션) 프로필 — CSV `player_professions` 정본 */
+  pilotProfile?: PlayerPilotProfile;
   flags: PlayerFlags;
   /** 거대 팩션·클랜·NPC와의 관계(월드 규칙 기본값) */
   political: PlayerPoliticalProfile;
@@ -76,12 +78,23 @@ export interface Player {
 }
 
 export interface PlayerStats {
-  strength: number;
-  dexterity: number;
-  constitution: number;
-  intelligence: number;
+  /** 전함 CSV와 분리 — 사회·협상·운영 스탯 */
   wisdom: number;
   charisma: number;
+}
+
+/** 온보딩 캐릭터(함장) 성별 — CSV `player_professions` 정본 */
+export type PlayerPilotGender = 'male' | 'female';
+
+export interface PlayerPilotProfile {
+  professionId: string;
+  gender: PlayerPilotGender;
+  /** CSV personalityKo — UI·대화 연출 */
+  personalityTag: string;
+  /** CSV traitIdsPipe — 성격·수동 특성 태그 */
+  traitIds: string[];
+  /** UI·대사용 — npc_ai_ships 전투 스탯과 분리(combat 미적용) */
+  combatArchetype: CapitalShipArchetype;
 }
 
 export interface PlayerFlags {

@@ -202,15 +202,21 @@ export async function deleteUserCloudSave(uid: string): Promise<void> {
   }
 }
 
-export async function createUserDocOnNicknameConfirm(uid: string, nickname: string): Promise<void> {
+export async function createUserDocOnNicknameConfirm(
+  uid: string,
+  nickname: string,
+  options?: { professionId?: string },
+): Promise<void> {
   if (!uid) return;
   const safeNickname = nickname.trim() || 'Unknown';
+  const professionId = options?.professionId?.trim();
   try {
     await setDoc(
       userDocRef(uid),
       {
         uid,
         nickname: safeNickname,
+        ...(professionId ? { professionId } : {}),
         isAdmin: isAdminDeviceUid(uid),
         createdAt: firestore.FieldValue.serverTimestamp(),
         server_updatedAt: firestore.FieldValue.serverTimestamp(),

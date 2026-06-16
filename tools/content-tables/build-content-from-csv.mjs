@@ -945,6 +945,54 @@ ${body}
 `;
 }
 
+function buildPlayerProfessions() {
+  const rows = loadCsvOptional('player_professions.csv')
+    .filter(r => String(r.id ?? '').trim())
+    .sort((a, b) => toInt(a.sortOrder, 0) - toInt(b.sortOrder, 0));
+  const body = rows
+    .map(r => `  ${JSON.stringify(r.id)}: {
+    id: ${q(r.id)},
+    sortOrder: ${toInt(r.sortOrder, 0)},
+    nameKo: ${q(r.nameKo || r.id)},
+    labelKo: ${q(r.labelKo || '')},
+    gender: ${q((r.gender || 'male').trim())},
+    summaryKo: ${q(r.summaryKo || '')},
+    personalityKo: ${q(r.personalityKo || '')},
+    traitIds: ${JSON.stringify(String(r.traitIdsPipe || '').split('|').map(s => s.trim()).filter(Boolean))},
+    portraitImageAssetKey: ${q(r.portraitImageAssetKey || '')},
+    combatArchetype: ${q((r.combatArchetype || 'neutral').trim())},
+    socialStats: {
+      wisdom: ${toInt(r.statWisdom, 10)},
+      charisma: ${toInt(r.statCharisma, 10)},
+    },
+  }`)
+    .join(',\n');
+  return `import type { CapitalShipArchetype, PlayerPilotGender, PlayerStats } from '../../types';
+
+export type PlayerProfessionCsvRow = {
+  id: string;
+  sortOrder: number;
+  nameKo: string;
+  labelKo: string;
+  gender: PlayerPilotGender;
+  summaryKo: string;
+  personalityKo: string;
+  traitIds: string[];
+  portraitImageAssetKey: string;
+  combatArchetype: CapitalShipArchetype;
+  socialStats: PlayerStats;
+};
+
+export const PLAYER_PROFESSIONS_FROM_CSV: Record<string, PlayerProfessionCsvRow> = {
+${body}
+};
+
+export const PLAYER_PROFESSION_LIST_FROM_CSV: readonly PlayerProfessionCsvRow[] = [
+${rows.map(r => `  PLAYER_PROFESSIONS_FROM_CSV[${JSON.stringify(r.id)}]!,`).join('\n')}
+];
+`;
+}
+
 function buildStoryScenes() {
   const scenes = loadCsvOptional('story_scenes.csv').filter(r => String(r.id ?? '').trim());
   const pages = loadCsvOptional('story_scene_pages.csv').filter(r => String(r.sceneId ?? '').trim());
@@ -1019,6 +1067,7 @@ function main() {
   writeOut('csvEnemyTemplates.ts', buildEnemyTemplates());
   writeOut('csvItemDefs.ts', buildItemDefs());
   writeOut('csvSkills.ts', buildSkills());
+  writeOut('csvPlayerProfessions.ts', buildPlayerProfessions());
   writeOut('csvStoryScenes.ts', buildStoryScenes());
   writeOut(
     'index.ts',
@@ -1042,6 +1091,11 @@ export { ENEMY_TEMPLATES_FROM_CSV, type EnemyTemplateCsvRow } from './csvEnemyTe
 export { ITEM_DEFS_FROM_CSV } from './csvItemDefs';
 export { SKILLS_FROM_CSV } from './csvSkills';
 export { STORY_SCENES_FROM_CSV } from './csvStoryScenes';
+export {
+  PLAYER_PROFESSIONS_FROM_CSV,
+  PLAYER_PROFESSION_LIST_FROM_CSV,
+  type PlayerProfessionCsvRow,
+} from './csvPlayerProfessions';
 `,
   );
   console.log('Generated CSV-driven content TS files at src/data/generated');

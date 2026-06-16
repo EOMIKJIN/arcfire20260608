@@ -66,7 +66,7 @@ export default function IntroScreen() {
       setIsTransitioning(true);
       try {
         if (isPreNicknameFlow && !player) {
-          router.replace('/(game)/nickname');
+          router.replace('/(game)/character-select');
           return;
         }
         if (scene.completionPolicy === 'mark_intro_seen_and_start_first_mission') {

@@ -21,6 +21,7 @@ type TavernBoardState = {
   loaded: boolean;
   loadLocalBoard: () => Promise<void>;
   persistBoard: () => Promise<void>;
+  resetLocalBoard: () => Promise<void>;
   pushNotice: (notice: Omit<TavernNotice, 'id' | 'postedAtMs'> & { postedAtMs?: number }) => void;
 };
 
@@ -117,6 +118,15 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
     const notices = get().notices.slice(0, MAX_NOTICE_COUNT);
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ notices }));
     scheduleUserCloudSync();
+  },
+
+  resetLocalBoard: async () => {
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+    set({ notices: getDefaultNotices(), loaded: true });
   },
 
   pushNotice: (notice) => {

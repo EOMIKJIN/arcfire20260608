@@ -13,6 +13,7 @@ export type StageId =
 
 export type StageRouteName =
   | 'title'
+  | 'character_select'
   | 'nickname'
   | 'intro'
   | 'continue_warp'

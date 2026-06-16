@@ -2,6 +2,7 @@ import React, { memo, useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { ArcOverlayPlanetEconomyInfoEntry } from '../arcOverlayStore';
 import { buildPlanetEconomyInfoSnapshot } from '../../../game/planetHub/planetEconomyInfoSnapshot';
+import { formatPlanetPgpBmu } from '../../../world/planetPgpModel';
 import { useArcCoreTransportFleetBankStore } from '../../../store/factionVault/arcCoreTransportFleetBankStore';
 import { useArcCoreVaultStore } from '../../../store/factionVault/arcCoreVaultStore';
 import { useBlueTeamSharedVaultStore } from '../../../store/factionVault/blueTeamSharedVaultStore';
@@ -32,7 +33,7 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
   onClose,
 }: Props) {
   const { planetId, planetName } = entry;
-  const coreRuntime = usePlanetCoreRuntimeStore((s) => s.byPlanetId[planetId]);
+  usePlanetCoreRuntimeStore((s) => s.byPlanetId[planetId]);
   const feeBucket = usePlanetTradeFeeLedgerStore((s) => s.byPlanetId[planetId]);
   const fleetBalance = useArcCoreTransportFleetBankStore((s) => s.balanceCredits);
   const arcVaultBalance = useArcCoreVaultStore((s) => s.balanceCredits);
@@ -54,10 +55,14 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
 
   return (
     <View style={styles.card}>
-      <Text style={[styles.title, { color: PH }]}>행성 경제 정보</Text>
+      <Text style={[styles.title, { color: PH }]}>행성 정보</Text>
       <Text style={[styles.subtitle, { color: PH }]}>
         {snapshot.planetName} · KST {snapshot.kstDayKey}
       </Text>
+      <View style={styles.pgpBanner}>
+        <Text style={[styles.pgpLabel, { color: PH }]}>PGP 총생산</Text>
+        <Text style={[styles.pgpValue, { color: PH }]}>{formatPlanetPgpBmu(snapshot.pgpBmu)}</Text>
+      </View>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         <Text style={[styles.section, { color: PH }]}>유지비 (인구 {snapshot.populationPct}%)</Text>
         <InfoRow
@@ -147,6 +152,32 @@ const styles = StyleSheet.create({
     fontSize: FONTS.size.xs,
     textAlign: 'center',
     opacity: 0.85,
+  },
+  pgpBanner: {
+    marginTop: SPACING.md,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+    borderWidth: 1,
+    borderColor: OVERLAY_TOKENS.phosphorBorder,
+    borderRadius: 4,
+    backgroundColor: 'rgba(53, 208, 255, 0.08)',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: SPACING.sm,
+  },
+  pgpLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    fontWeight: FONTS.weight.bold,
+    letterSpacing: 0.5,
+  },
+  pgpValue: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.md,
+    fontWeight: FONTS.weight.bold,
+    textAlign: 'right',
+    flexShrink: 1,
   },
   scroll: {
     marginTop: SPACING.md,

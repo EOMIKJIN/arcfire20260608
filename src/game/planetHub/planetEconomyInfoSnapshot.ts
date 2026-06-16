@@ -16,6 +16,7 @@ import {
 import { findPlanetById } from '../../arcCore/planetEnvironment/resolvePlanetAsteroidVisualPolicy';
 import { planetAttackKstDayKey } from '../../arcCore/planetAttack/planetAttackKstDayKey';
 import { resolvePlanetSupplyStockScale } from '../../arcCore/economy/planetEconomyFabric';
+import { calculatePlanetPgpFromStats } from '../../world/planetPgpModel';
 import { useArcCoreTransportFleetBankStore } from '../../store/factionVault/arcCoreTransportFleetBankStore';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
 import {
@@ -48,6 +49,8 @@ export type PlanetEconomyInfoSnapshot = {
   defensePct: number;
   technologyPct: number;
   environmentPct: number;
+  /** 5대 스탯 기반 행성 총생산(PGP, BMU) */
+  pgpBmu: number;
   convoyMonopolyLabel: string;
   occupierFactionLabel: string;
   factionVaultLabel: string | null;
@@ -163,6 +166,13 @@ export function buildPlanetEconomyInfoSnapshot(
     defensePct: core.defense,
     technologyPct: core.technology,
     environmentPct: core.environment,
+    pgpBmu: calculatePlanetPgpFromStats({
+      resource: core.resource,
+      population: core.population,
+      defense: core.defense,
+      technology: core.technology,
+      environment: core.environment,
+    }),
     convoyMonopolyLabel: convoyLabel || getTransportFleetDisplayNameKo(),
     occupierFactionLabel: occupierFactionLabelKo(faction),
     factionVaultLabel,

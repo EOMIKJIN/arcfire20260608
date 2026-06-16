@@ -8,7 +8,13 @@ import { clearMiningResumeSnapshot } from '../systems/mining/miningResumeStore';
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
 import { useMissionStore } from '../store/missionStore';
 import { useNpcCaptainProgressStore } from '../store/npcCaptainProgressStore';
+import { usePlanetCoreRuntimeStore } from '../store/planetCoreRuntimeStore';
 import { usePlayerStore } from '../store/playerStore';
+import { useUserSessionStore } from '../store/userSessionStore';
+import { useWorldStore } from '../store/worldStore';
+import { useWorldObjectRuntimeStore } from '../store/worldObjectRuntimeStore';
+import { useTavernBoardStore } from '../store/tavernBoardStore';
+import { resetCombatMatchTelemetry } from '../store/combatMatchTelemetryStore';
 import { showArcAlert } from '../utils/showArcAlert';
 import { purgeAccountLedgerProfileSkillByUid } from './accountLifecycle';
 
@@ -55,6 +61,20 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await usePlayerStore.getState().resetLocalPlayer();
   await useMissionStore.getState().resetLocalMissions();
   await useNpcCaptainProgressStore.getState().resetLocalNpcCaptainProgress();
+  // ── 플레이어 계정 귀속 — 인터랙티브로 누적된 모든 진행을 함께 초기화한다. ──
+  // (ArcCore 환경·자율 경제 시스템은 제외: faction vault·trade fee ledger·galaxy 확장)
+  // 행성개발(R/P/D/T/E·방위위성·개발 모듈) — planetCoreRuntimeStore
+  await usePlanetCoreRuntimeStore.getState().resetLocalPlanetCoreRuntime();
+  // 갤럭시 개방·항행 기록(방문/개방 성계) — worldStore (초기 시드 galaxy로 복귀)
+  await useWorldStore.getState().resetLocalWorld();
+  // 행성 월드오브젝트 인스턴스 상태(방위위성 HP·고갈 노드 등) — worldObjectRuntimeStore
+  await useWorldObjectRuntimeStore.getState().resetRuntime();
+  // 전투 텔레메트리(교전 기록) — combatMatchTelemetry
+  await resetCombatMatchTelemetry();
+  // 플레이 세션·투여 시간 — userSessionStore
+  await useUserSessionStore.getState().resetLocalUserSession();
+  // 선술집 공지 보드(클라우드 동기 대상) — tavernBoardStore
+  await useTavernBoardStore.getState().resetLocalBoard();
 
   await markFreshStartAfterReset();
 }

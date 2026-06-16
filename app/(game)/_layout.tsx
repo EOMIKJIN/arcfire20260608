@@ -14,6 +14,7 @@ export default function GameLayout() {
         contentStyle: { backgroundColor: COLORS.bg_primary },
       }}
     >
+      <Stack.Screen name="character-select" />
       <Stack.Screen name="nickname" />
       <Stack.Screen name="intro" />
       <Stack.Screen name="continue-warp" />

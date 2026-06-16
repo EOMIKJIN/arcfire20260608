@@ -63,14 +63,10 @@ export const ENEMY_TEMPLATES: Record<string, EnemyTemplate> = Object.fromEntries
   ]),
 );
 
-// 기본 플레이어 스탯
+// 기본 플레이어 스탯 (WIS/CHA — 전함 CSV와 분리)
 export const DEFAULT_PLAYER_STATS = {
-  strength:     10,
-  dexterity:    10,
-  constitution: 10,
-  intelligence: 10,
-  wisdom:       10,
-  charisma:     10,
+  wisdom: 10,
+  charisma: 10,
 };
 
 // 레벨업 시 스킬 포인트

@@ -11,13 +11,12 @@ import {
 import { router, useFocusEffect } from 'expo-router';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { showArcAlert } from '../../src/utils/showArcAlert';
-import { usePlayerStore } from '../../src/store/playerStore';
-import { useMissionStore } from '../../src/store/missionStore';
-import { checkNicknameAvailable, createUserDocOnNicknameConfirm } from '../../src/firebase/firestore';
 import { getCurrentUser } from '../../src/firebase/auth';
 import { StageShell } from '../../src/stages/StageShell';
-import { bootstrapAccountData, persistAccountDataBundle } from '../../src/account/accountLifecycle';
-import { syncUserDataWithServer } from '../../src/firebase/userDataSync';
+import {
+  completePilotRegistration,
+  PilotRegistrationError,
+} from '../../src/game/onboardingPilotRegistration';
 
 const NICKNAME_REGEX = /^[a-zA-Z0-9가-힣]{2,12}$/;
 
@@ -25,10 +24,6 @@ export default function NicknameScreen() {
   const [nickname, setNickname] = useState('');
   const [checking, setChecking] = useState(false);
   const inputRef = useRef<TextInput>(null);
-  const createPlayer = usePlayerStore(s => s.createPlayer);
-  const setPlayer = usePlayerStore(s => s.setPlayer);
-  const persist = usePlayerStore(s => s.persist);
-  const initMissions = useMissionStore(s => s.initMissions);
 
   const validate = (text: string) => NICKNAME_REGEX.test(text);
 
@@ -55,39 +50,15 @@ export default function NicknameScreen() {
 
     try {
       setChecking(true);
-      const available = await checkNicknameAvailable(nickname);
-      if (!available) {
-        showArcAlert('닉네임 중복', '이미 사용 중인 닉네임입니다.');
-        return;
-      }
-
-      createPlayer(user.uid, nickname);
-      const created = usePlayerStore.getState().player;
-      if (created) {
-        setPlayer({
-          ...created,
-          flags: {
-            ...created.flags,
-            introSeen: true,
-            firstMissionStarted: true,
-          },
-        });
-      }
-      bootstrapAccountData({
-        uid: user.uid,
-        nickname,
-        ownedSkillIds: usePlayerStore.getState().player?.skills ?? [],
-        playerLevel: 1,
-      });
-      initMissions();
-      await createUserDocOnNicknameConfirm(user.uid, nickname);
-      await persist();
-      await persistAccountDataBundle();
-      await syncUserDataWithServer();
-
+      await completePilotRegistration(user.uid, nickname);
       router.replace('/(game)/continue-warp?target=planet');
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : '다시 시도해주세요.';
+      const message =
+        e instanceof PilotRegistrationError
+          ? e.message
+          : e instanceof Error
+            ? e.message
+            : '다시 시도해주세요.';
       showArcAlert('오류', message);
     } finally {
       setChecking(false);

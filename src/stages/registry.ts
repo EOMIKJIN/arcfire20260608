@@ -6,6 +6,11 @@ export const STAGES: Record<StageRouteName, StageDefinition> = {
     routeName: 'title',
     displayName: '시작',
   },
+  character_select: {
+    id: 'pilot_registration',
+    routeName: 'character_select',
+    displayName: '캐릭터 선택',
+  },
   nickname: {
     id: 'pilot_registration',
     routeName: 'nickname',

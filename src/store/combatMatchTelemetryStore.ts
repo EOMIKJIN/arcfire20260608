@@ -75,3 +75,12 @@ export async function listRecentMatchSummaries(limit = 20): Promise<CombatMatchS
   const payload = await readPayload();
   return payload.entries.slice(-Math.max(1, limit));
 }
+
+/** 계정 초기화 — 플레이어 전투 텔레메트리(교전 기록) 제거 */
+export async function resetCombatMatchTelemetry(): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
