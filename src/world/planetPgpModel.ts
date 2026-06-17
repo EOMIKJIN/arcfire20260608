@@ -13,8 +13,13 @@ export type PlanetPgpStats = {
   environment: number;
 };
 
-const R_BMU_PER_POINT = 1000;
-const P_BMU_PER_POINT = 500;
+/** [보완 #4] 5스탯 평균 × 3,375 BMU — 50%×5 시 84,375 BMU (= sum×3375/10) */
+export const PLANET_PGP_BMU_MULTIPLIER = 3375;
+
+/** AsyncStorage `arcfire_planet_core_runtime_v1` 행성별 PGP 키 */
+export function planetPgpStorageKey(planetId: string): string {
+  return `planet_${planetId}_pgp`;
+}
 
 /** 0..100 정수로 클램프·반올림 */
 export function clampPlanetPgpStat(value: number): number {
@@ -87,13 +92,7 @@ export class PlanetPgpPlanet {
     };
   }
 
-  /**
-   * 행성 총생산(PGP, BMU) — 정수 반환.
-   *
-   * base_output = R×1000 + P×500
-   * T_mod = 1 + T/100, E_mod = 0.5 + E/100, D_mod = 0.5 + D/200
-   * total_pgp = floor(base_output × T_mod × E_mod × D_mod)
-   */
+  /** [보완 #4] 행성 총생산(PGP, BMU) — 일 1회 배치 갱신 정본 */
   calculatePgp(): number {
     return calculatePlanetPgpFromStats(this.toStats());
   }
@@ -104,19 +103,15 @@ export class PlanetPgpPlanet {
   }
 }
 
+/** [보완 #4] PGP = (R+P+D+T+E)/5 × 3,375 BMU — 정수 연산: sum×3375/10 */
 export function calculatePlanetPgpFromStats(stats: PlanetPgpStats): number {
   const r = clampPlanetPgpStat(stats.resource);
   const p = clampPlanetPgpStat(stats.population);
   const d = clampPlanetPgpStat(stats.defense);
   const t = clampPlanetPgpStat(stats.technology);
   const e = clampPlanetPgpStat(stats.environment);
-
-  const baseOutput = r * R_BMU_PER_POINT + p * P_BMU_PER_POINT;
-  const tMod = 1.0 + t / 100;
-  const eMod = 0.5 + e / 100;
-  const dMod = 0.5 + d / 200;
-
-  return Math.floor(baseOutput * tMod * eMod * dMod);
+  const sum = r + p + d + t + e;
+  return Math.floor((sum * PLANET_PGP_BMU_MULTIPLIER) / 10);
 }
 
 /** `planetCoreRuntimeStore` 게이지 → PGP 행성 값 객체 */

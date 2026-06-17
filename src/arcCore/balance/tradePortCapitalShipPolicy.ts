@@ -18,6 +18,10 @@ import {
   resolveTradePortNpcShipIdsForZone,
 } from './capitalShipTradeListingPolicy';
 import { resolveNpcShipIdForHullTier } from './capitalHullPurchaseFromBalance';
+import {
+  WAVE_TEST_TRADE_PRICE_CREDITS,
+  isWaveTestTradeShipId,
+} from '../../economy/waveDefenseTestTradeItems';
 
 const HULL_TIER_ORDER: string[] = CapitalHullPurchasePolicy_FROM_BALANCE_CSV.map(
   (r) => r.hullTierKey,
@@ -134,6 +138,9 @@ export function resolveCapitalShipTradePrice(itemId: string, planetId?: string):
   }
 
   if (!isCanonicalTradePortCapitalShip(npcId)) return Number.POSITIVE_INFINITY;
+
+  // 웨이브 디펜스 테스트함 — 테스트 단계 거래가 1(성능 기준가 우회). 운영 전함 무관.
+  if (isWaveTestTradeShipId(npcId)) return WAVE_TEST_TRADE_PRICE_CREDITS;
 
   return resolveCapitalShipPerformanceBasePrice(npcId);
 }

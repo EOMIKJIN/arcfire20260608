@@ -81,5 +81,7 @@ export const WeaponTradeListingPolicy_FROM_BALANCE_CSV = [
   { "tradeGradeRank": "79", "canonicalWeaponId": "w_missile_arc_070", "weaponFamilyKind": "drone", "requiredPilotLevelMin": "60", "listingAnchor": "progression", "notesKo": "엔트로피 종말 드론" },
   { "tradeGradeRank": "80", "canonicalWeaponId": "w_missile_arc_071", "weaponFamilyKind": "carrier", "requiredPilotLevelMin": "60", "listingAnchor": "progression", "notesKo": "유니버스 함재기" },
   { "tradeGradeRank": "81", "canonicalWeaponId": "w_missile_arc_072", "weaponFamilyKind": "missile", "requiredPilotLevelMin": "60", "listingAnchor": "progression", "notesKo": "오리진 코어 로그" },
+  { "tradeGradeRank": "82", "canonicalWeaponId": "w_laser_wave", "weaponFamilyKind": "laser", "requiredPilotLevelMin": "1", "listingAnchor": "pinned", "notesKo": "레이저_웨이브" },
+  { "tradeGradeRank": "83", "canonicalWeaponId": "w_missile_wave", "weaponFamilyKind": "missile", "requiredPilotLevelMin": "1", "listingAnchor": "pinned", "notesKo": "미사일_웨이브" },
 ] as const;
 export type WeaponTradeListingPolicyRow = (typeof WeaponTradeListingPolicy_FROM_BALANCE_CSV)[number];

@@ -12,5 +12,6 @@ export const CapitalShipTradeListingPolicy_FROM_BALANCE_CSV = [
   { "tradeGradeRank": "10", "tradeGradeKey": "tg10_dreadnought", "hullTierKey": "dreadnought", "canonicalNpcShipId": "Player_dreadnought_mk1", "alternateNpcShipId": "Player_phantom_dreadnought_mk1", "listingAnchor": "progression", "notesKo": "드레드노트/팬텀 동시" },
   { "tradeGradeRank": "11", "tradeGradeKey": "tg11_super_capital", "hullTierKey": "super_capital", "canonicalNpcShipId": "Player_super_capital_mk1", "alternateNpcShipId": "Player_phantom_super_capital_mk1", "listingAnchor": "progression", "notesKo": "슈퍼캐피털/팬텀 동시" },
   { "tradeGradeRank": "12", "tradeGradeKey": "tg12_apex_legend", "hullTierKey": "apex_legend", "canonicalNpcShipId": "Player_apex_legend_mk1", "alternateNpcShipId": "Player_phantom_apex_legend_mk1", "listingAnchor": "progression", "notesKo": "아펙스/팬텀 레전드 동시" },
+  { "tradeGradeRank": "13", "tradeGradeKey": "tg13_wave_defense_test", "hullTierKey": "frigate_default", "canonicalNpcShipId": "player_wave_ship", "alternateNpcShipId": "", "listingAnchor": "pinned", "notesKo": "웨이브 디펜스 테스트함(상시·테스트 거래가 1)" },
 ] as const;
 export type CapitalShipTradeListingPolicyRow = (typeof CapitalShipTradeListingPolicy_FROM_BALANCE_CSV)[number];

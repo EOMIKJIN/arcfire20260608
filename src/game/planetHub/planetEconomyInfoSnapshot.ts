@@ -149,6 +149,19 @@ export function buildPlanetEconomyInfoSnapshot(
     },
   ];
 
+  const runtimeRec = usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId);
+  // [보완 #4] 배치 갱신 PGP 우선 — 없으면 레거시 즉시 계산 폴백
+  const pgpBmu =
+    typeof runtimeRec?.pgp === 'number' && Number.isFinite(runtimeRec.pgp)
+      ? runtimeRec.pgp
+      : calculatePlanetPgpFromStats({
+          resource: core.resource,
+          population: core.population,
+          defense: core.defense,
+          technology: core.technology,
+          environment: core.environment,
+        });
+
   return {
     planetId,
     planetName,
@@ -166,13 +179,7 @@ export function buildPlanetEconomyInfoSnapshot(
     defensePct: core.defense,
     technologyPct: core.technology,
     environmentPct: core.environment,
-    pgpBmu: calculatePlanetPgpFromStats({
-      resource: core.resource,
-      population: core.population,
-      defense: core.defense,
-      technology: core.technology,
-      environment: core.environment,
-    }),
+    pgpBmu,
     convoyMonopolyLabel: convoyLabel || getTransportFleetDisplayNameKo(),
     occupierFactionLabel: occupierFactionLabelKo(faction),
     factionVaultLabel,

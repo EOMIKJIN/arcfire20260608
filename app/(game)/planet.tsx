@@ -137,17 +137,24 @@ import {
   splitStoryTextByMaxLines,
 } from '../../src/game/planetHub/planetHubConstants';
 import { usePlanetHubBattleReady } from '../../src/game/planetHub/usePlanetHubBattleReady';
+import { useWaveDefenseStore } from '../../src/game/waveDefense/waveDefenseStore';
+import { useWaveDefenseController } from '../../src/game/waveDefense/useWaveDefenseController';
+import { WAVE_DEFENSE_MAX_WAVES } from '../../src/game/waveDefense/waveDefenseFleet';
+import { presentWaveResultOverlay } from '../../src/ui/overlay/showArcOverlay';
 import { usePlanetHubInfoDistanceSort } from '../../src/game/planetHub/usePlanetHubInfoDistanceSort';
 import { usePlanetHubInterval } from '../../src/game/planetHub/usePlanetHubInterval';
 import {
   buildHubTrafficPresenceRows,
-  capHubOrbitPresenceToBudget,
   HUB_ORBIT_TRAFFIC_CYCLE_MS,
+  HUB_ORBIT_TRAFFIC_MAX_ACTIVE,
   seedHubOrbitTraffic,
   startHubOrbitTrafficSession,
   tickHubOrbitTraffic,
 } from '../../src/game/hubOrbitTrafficSession';
-import { applyPlanetHubOrbitRenderBudget } from '../../src/game/planetHubOrbitRenderBudget';
+import {
+  applyPlanetHubOrbitRenderBudget,
+  capHubOrbitPresenceByRenderPriority,
+} from '../../src/game/planetHubOrbitRenderBudget';
 
 
 export default function PlanetScreen() {
@@ -314,16 +321,30 @@ export default function PlanetScreen() {
     [beginPlanetHubSuspendingNavigation],
   );
 
+  // 궤도 조선소 개발 설치 여부 — 설치 시 허브 조선소 시설 활성(hasShipyard OR 설치됨)
+  const orbitShipyardInstalled = usePlanetCoreRuntimeStore((s) => {
+    const pid = planet?.id;
+    if (!pid) return false;
+    const dev = s.byPlanetId[pid]?.detail?.development?.byModuleId?.dev_orbit_shipyard as
+      | { installed?: boolean }
+      | undefined;
+    return Boolean(dev && dev.installed === true);
+  });
+  const featureMenuPlanet = useMemo(
+    () => (planet ? { ...planet, hasShipyard: Boolean(planet.hasShipyard) || orbitShipyardInstalled } : planet),
+    [planet, orbitShipyardInstalled],
+  );
+
   const featureMenuItems = useMemo(
     () => buildPlanetHubFeatureMenuItems({
-      planet,
+      planet: featureMenuPlanet,
       hasTradeBadge: hasTradeMenuBadge,
       clearTradeBadge: () => clearMenuBadge('trade'),
       push: router.push,
       onFacilityNavigate,
       onDeparture: handleDeparture,
     }),
-    [planet, hasTradeMenuBadge, clearMenuBadge, handleDeparture, onFacilityNavigate],
+    [featureMenuPlanet, hasTradeMenuBadge, clearMenuBadge, handleDeparture, onFacilityNavigate],
   );
   const arcNpcCaptainsSnap = useArcNpcTrafficStore((s) => s.captains);
   const arcNpcShipsSnap = useArcNpcTrafficStore((s) => s.ships);
@@ -352,14 +373,21 @@ export default function PlanetScreen() {
     return out;
   }, [arcInboundDronesSnap, planet?.id]);
 
-  /** 적팀(red/orange) 진입 + balance CSV `mainStageCombatEnabled` 게이트 */
+  /** 웨이브 디펜스 활성(이 행성) — 전투 활성 게이트 우회 + Wave UI */
+  const waveDefenseActiveHere = useWaveDefenseStore(
+    (s) => s.active && s.planetId === (planet?.id ?? null),
+  );
+  const waveDefenseWaveIndex = useWaveDefenseStore((s) => s.waveIndex);
+  /** 적팀(red/orange) 진입 + balance CSV `mainStageCombatEnabled` 게이트, 또는 웨이브 디펜스 활성 */
   const enemyFleetEntered = Boolean(
     player
     && planet
     && system
     && isPlayerShipCombatCapable(player.ship)
-    && hasEnemyFleetEnteredPlanetOrbit(planet.id, system.id)
-    && resolveMainStageCombatEnabled(planet.id),
+    && (
+      (hasEnemyFleetEnteredPlanetOrbit(planet.id, system.id) && resolveMainStageCombatEnabled(planet.id))
+      || waveDefenseActiveHere
+    ),
   );
   const battleReadyDurationMs = useMemo(
     () => resolvePlanetBattleReadyDurationMs(planet?.id),
@@ -536,6 +564,47 @@ export default function PlanetScreen() {
   const [ingameDialogPage, setIngameDialogPage] = useState(0);
   const [ingameDialogSegment, setIngameDialogSegment] = useState(0);
   const [ingameDialogPageComplete, setIngameDialogPageComplete] = useState(false);
+
+  /** 웨이브 디펜스 전체 종료 → 오퍼레이터 종료 대사 1회 */
+  const handleWaveDefenseRunEnded = useCallback(() => {
+    setIngameDialogPage(0);
+    setIngameDialogSegment(0);
+    setIngameDialogPageComplete(false);
+    setActiveIngameDialogSceneId('ingame_dialog_wave_defense_end');
+  }, []);
+  useWaveDefenseController({
+    planetId: planet?.id ?? null,
+    systemId: system?.id ?? null,
+    isTestBed: planet?.id === 'vega_base',
+    introDone: !activeIngameDialogSceneId,
+    routeFocused: isPlanetRouteFocused,
+    appActive: appStateActive,
+    onRunEnded: handleWaveDefenseRunEnded,
+  });
+
+  // 웨이브 종료 대사(ingame_dialog_wave_defense_end)가 닫히면 최종 결과창 표시.
+  // 결과창 닫을 때 누적 경험치를 실제 지급(addExp)하고 웨이브 상태를 초기화한다.
+  const waveEndDialogShownRef = useRef(false);
+  useEffect(() => {
+    if (activeIngameDialogSceneId === 'ingame_dialog_wave_defense_end') {
+      waveEndDialogShownRef.current = true;
+      return;
+    }
+    if (!waveEndDialogShownRef.current || activeIngameDialogSceneId) return;
+    waveEndDialogShownRef.current = false;
+    const s = useWaveDefenseStore.getState();
+    const expEarned = s.expEarned;
+    presentWaveResultOverlay({
+      outcome: s.outcome ?? 'win',
+      wavesCleared: s.wavesCleared,
+      totalWaves: WAVE_DEFENSE_MAX_WAVES,
+      expEarned,
+      onClose: () => {
+        if (expEarned > 0) usePlayerStore.getState().addExp(expEarned);
+        useWaveDefenseStore.getState().reset();
+      },
+    });
+  }, [activeIngameDialogSceneId]);
   /**
    * 인게임 대화 트리거 전용: `player.currentPlanetId`(메인 행성 허브 착륙) 기준으로만 소비.
    * 무역소·조선소 등 세부 화면 라우트 포커스와 무관.
@@ -736,18 +805,30 @@ export default function PlanetScreen() {
   /** 테이블 근접 + 현재 행성에 머문 아크 수송선 + 허브 트래픽(‹AI›) — INFO·궤도 공통 · v4.0 최대 5척 */
   const [hubTrafficTick, setHubTrafficTick] = useState(0);
   const hubMergedNearbyPresence = useMemo(() => {
-    if (!planet || !system) return nearbyPresence;
-    const merged = mergeArcShipsIntoNearbyHubPresence(
-      nearbyPresence,
-      arcNpcShipsAtPlanet,
+    if (!planet || !system) return [];
+    const arcInfoRows = mergeArcShipsIntoNearbyHubPresence(
+      [],
+      orbitArcShipsAtPlanet,
       arcNpcCaptainsSnap,
       planet.id,
       system.id,
     );
     const hubTrafficRows = buildHubTrafficPresenceRows(planet.id, system.id);
     void hubTrafficTick;
-    return capHubOrbitPresenceToBudget([...merged, ...hubTrafficRows]);
-  }, [nearbyPresence, arcNpcShipsAtPlanet, arcNpcCaptainsSnap, planet, system, hubTrafficTick]);
+    return capHubOrbitPresenceByRenderPriority(
+      arcInfoRows,
+      hubTrafficRows,
+      orbitTablePresence,
+      HUB_ORBIT_TRAFFIC_MAX_ACTIVE,
+    );
+  }, [
+    orbitTablePresence,
+    orbitArcShipsAtPlanet,
+    arcNpcCaptainsSnap,
+    planet,
+    system,
+    hubTrafficTick,
+  ]);
 
   useEffect(() => {
     if (!isPlanetRouteFocused || !planet || !system) return;
@@ -1267,6 +1348,11 @@ export default function PlanetScreen() {
               - Ready to Battle! -
             </Text>
             <Text style={styles.battleReadyCounter}>{`- ${battleReadyCounterSec} -`}</Text>
+          </View>
+        ) : null}
+        {capitalCombatOrbitActive && waveDefenseActiveHere && waveDefenseWaveIndex > 0 ? (
+          <View style={styles.battleReadyOverlay} pointerEvents="none">
+            <Text style={styles.battleReadyText}>{`- WAVE ${waveDefenseWaveIndex} -`}</Text>
           </View>
         ) : null}
         </View>

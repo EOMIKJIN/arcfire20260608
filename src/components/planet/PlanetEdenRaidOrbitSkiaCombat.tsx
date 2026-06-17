@@ -8,6 +8,7 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {
+  BlendMode,
   Canvas,
   PaintStyle,
   Picture,
@@ -16,9 +17,10 @@ import {
   StrokeJoin,
   useImage,
 } from '@shopify/react-native-skia';
-import type { SkPaint } from '@shopify/react-native-skia';
+import type { SkCanvas, SkColorFilter, SkPaint } from '@shopify/react-native-skia';
 import type { SkPicture } from '@shopify/react-native-skia';
 import type { SkImage } from '@shopify/react-native-skia';
+import type { SkColor } from '@shopify/react-native-skia';
 import { FONTS } from '../../utils/theme';
 import {
   isNovaAoeWeapon,
@@ -28,6 +30,11 @@ import {
 } from '../../combat/capitalWeaponPipeline';
 import type { Agent, Missile, PlanetEdenRaidSim } from './PlanetEdenRaidTestLayer';
 import { drawMissileHitFxOnSkCanvas } from './planetNebulaMissileHitFxDraw';
+import {
+  drawPlanetFlameBurstOnSkCanvas,
+  PLANET_FLAME_BURST_BASE,
+  PLANET_FLAME_BURST_FADE_MS,
+} from './planetSkiaHitFxContract';
 
 const ALLY_MARK_HALF = 7;
 const DIAMOND_HEADING_OFFSET_DEG = 90;
@@ -47,8 +54,11 @@ const NOVA_HEAD_MAJOR_RADIUS = MISSILE_HEAD_DOT_RADIUS * 2;
 const NOVA_HEAD_MINOR_RADIUS = MISSILE_HEAD_DOT_RADIUS * 1.35;
 const BEZIER_SAMPLES = 16;
 const MISSILE_MAX_TRAIL_SEGMENTS = 10;
-const DESTROY_FX_DURATION_MS = 1100;
-const DESTROY_FX_PARTICLES = 10;
+// 전함 폭발 FX — 아크코어 드론 미사일 폭발과 동일한 화염 폭발 FX(planetSkiaHitFxContract) 재사용.
+/** 전함 폭발 화염 FX 지속(화염 burst 페이드 기준) */
+const SHIP_DESTROY_FLAME_FX_MS = PLANET_FLAME_BURST_FADE_MS;
+/** 전함(캐피털) 폭발 화염 스케일 — 드론(0.5)보다 큰 폭발 */
+const SHIP_DESTROY_FLAME_BURST_SCALE = 1.3;
 const NOVA_TELEGRAPH_DURATION_MS = 420;
 const NOVA_EFFECT_RADIUS_ORBIT_MUL = 0.25; // 지름=전투영역 가로 1/2
 type Pt = { x: number; y: number };
@@ -60,6 +70,8 @@ type CombatSkiaPoolBundle = {
   novaHead: Map<number, SkPath>;
   /** 미사일 id → atan2 불연속(±π) 제거용 연속 접선 각 */
   novaTangentStable: Map<number, number>;
+  /** 에이전트 id → 분사화염 길이(속도 연동 ease 상태) */
+  thrusterLenSmooth: Map<number, number>;
 };
 
 function createCombatSkiaPoolBundle(): CombatSkiaPoolBundle {
@@ -68,6 +80,7 @@ function createCombatSkiaPoolBundle(): CombatSkiaPoolBundle {
     diamond: new Map(),
     novaHead: new Map(),
     novaTangentStable: new Map(),
+    thrusterLenSmooth: new Map(),
   };
 }
 
@@ -144,27 +157,50 @@ function currentTargetAliveByBuf(self: Agent, idBuf: (Agent | undefined)[]): Age
   return t;
 }
 
+/** 부하(미사일 수) 단계 임계 — 비용 주도 변수라 fps보다 안정적(플리커 방지) */
+const VFX_MISSILES_HEAVY = 28;
+const VFX_MISSILES_SEVERE = 40;
+/** fps 백스톱 — 부하가 낮아도 프레임이 무너지면 디테일 삭감(25fps 바닥 방어) */
+const VFX_FPS_MILD = 30;
+const VFX_FPS_SEVERE = 25;
+
+/**
+ * 전투 VFX 버짓 — fps·미사일 수 인지 단계적 축소.
+ * 프레임이 건강하면(부하 낮음 + fps≥30) 풀옵션 유지, 저하 시에만 디테일을 삭감해
+ * 디버그 빌드 25fps 바닥을 방어한다(GPU가 아니라 CPU/JS 기록 비용이 병목).
+ * 주(主) 트리거는 미사일 수(단조·안정), fps는 백스톱(오실레이션 방지).
+ */
 function resolveCombatOrbitVfxBudget(
   _agentCount: number,
-  _approxActiveMissiles: number,
-  _fpsNow: number,
+  approxActiveMissiles: number,
+  fpsNow: number,
 ): CombatOrbitVfxBudget {
-  // Skia 전투 오버레이는 표현 축소 없이 항상 풀옵션 렌더를 유지한다.
+  // 미사일 탄두(head)는 게임 가독성 핵심이라 어떤 단계에서도 끄지 않는다.
+  // (메인 트레일 패스가 off라 탄두까지 끄면 미사일이 흐린 잔상만 남아 "탄두 미표시" 회귀가 됨)
+  // 비용 큰 요소만 단계 축소: 트레일 세그먼트·베지어 샘플 캡, 레이저 글로우 패스.
+  const severe = approxActiveMissiles >= VFX_MISSILES_SEVERE || fpsNow < VFX_FPS_SEVERE;
+  if (severe) {
+    return {
+      missileSegmentBudget: Math.max(4, Math.round(MISSILE_MAX_TRAIL_SEGMENTS * 0.5)),
+      bezierSampleCap: Math.max(8, Math.round(BEZIER_SAMPLES * 0.6)),
+      renderLaserGlow: false,
+      missileHeadDotEnabled: true,
+    };
+  }
+  const heavy = approxActiveMissiles >= VFX_MISSILES_HEAVY || fpsNow < VFX_FPS_MILD;
+  if (heavy) {
+    return {
+      missileSegmentBudget: Math.max(6, Math.round(MISSILE_MAX_TRAIL_SEGMENTS * 0.75)),
+      bezierSampleCap: Math.max(10, Math.round(BEZIER_SAMPLES * 0.8)),
+      renderLaserGlow: false,
+      missileHeadDotEnabled: true,
+    };
+  }
   return {
     missileSegmentBudget: MISSILE_MAX_TRAIL_SEGMENTS,
     bezierSampleCap: BEZIER_SAMPLES,
     renderLaserGlow: true,
     missileHeadDotEnabled: true,
-  };
-}
-
-function destroyFxParticlePoint(agent: Agent, t01: number, idx: number): Pt {
-  const base = (idx / DESTROY_FX_PARTICLES) * Math.PI * 2 + agent.id * 0.37;
-  const drift = 16 + idx * 2.2;
-  const slowT = Math.pow(Math.min(1, Math.max(0, t01)), 1.65);
-  return {
-    x: agent.x + Math.cos(base) * drift * slowT,
-    y: agent.y + Math.sin(base) * drift * slowT,
   };
 }
 
@@ -248,16 +284,17 @@ function disposePathPool(map: Map<number, SkPath>): void {
  */
 function scheduleSkPictureDispose(pic: SkPicture | null): void {
   if (!pic) return;
+  // native 회수 가속: 펜딩 picture 수↓ → Native Heap high-water↓.
+  // 단일 rAF(직전 프레임 picture가 이미 교체 렌더됨) + 48ms 마진으로 비동기 <Picture>
+  // 렌더 use-after-free 를 방어한다(과단축 금지).
   requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        try {
-          pic.dispose();
-        } catch {
-          /* 이미 dispose 또는 네이티브 핸들 무효 */
-        }
-      }, 48);
-    });
+    setTimeout(() => {
+      try {
+        pic.dispose();
+      } catch {
+        /* 이미 dispose 또는 네이티브 핸들 무효 */
+      }
+    }, 48);
   });
 }
 
@@ -439,8 +476,25 @@ function syncCombatSkiaPoolsFromSim(
     if (!activeAgentIds.has(id)) {
       disposeSkiaPath(diamondPoolSync.get(id));
       diamondPoolSync.delete(id);
+      pools.thrusterLenSmooth.delete(id);
     }
   }
+}
+
+/**
+ * CSS 색 문자열 → SkColor(Float32Array) 캐시.
+ * 전투 색은 유한한 정적 집합인데 드로우마다 Skia.Color()로 파싱하면 프레임당 100+회
+ * 문자열 파싱 + JSI 왕복이 발생한다(디버그 빌드 CPU 병목). 1회 파싱 후 재사용한다.
+ * setColor 는 색 값을 paint 로 복사하므로 캐시된 SkColor 공유는 안전하다.
+ */
+const skColorCache = new Map<string, SkColor>();
+function cachedSkColor(colorCss: string): SkColor {
+  let c = skColorCache.get(colorCss);
+  if (c === undefined) {
+    c = Skia.Color(colorCss);
+    skColorCache.set(colorCss, c);
+  }
+  return c;
 }
 
 function strokePaint(
@@ -458,7 +512,7 @@ function strokePaint(
   p.setStrokeJoin(join);
   p.setStrokeCap(cap);
   // SkColor는 Float32Array — CSS 문자열은 Skia.Color()로 변환해야 함(문자열 그대로 넘기면 JSI 타입 오류).
-  p.setColor(Skia.Color(colorCss));
+  p.setColor(cachedSkColor(colorCss));
   if (alphaMul !== 1) {
     p.setAlphaf(Math.max(0, Math.min(1, p.getAlphaf() * alphaMul)));
   }
@@ -470,12 +524,126 @@ function fillPaint(colorCss: string, alphaMul: number): SkPaint {
   p.reset();
   p.setAntiAlias(true);
   p.setStyle(PaintStyle.Fill);
-  p.setColor(Skia.Color(colorCss));
+  p.setColor(cachedSkColor(colorCss));
   if (alphaMul !== 1) {
     p.setAlphaf(Math.max(0, Math.min(1, p.getAlphaf() * alphaMul)));
   }
   return p;
 }
+
+// ── 전함 분사화염 테일 (thruster flame) ───────────────────────────────────────
+// tail_fire_02.png(원형)을 함선 후미에 타원형으로 늘려 분사 형태로 렌더.
+// 속도 연동(엑셀링): 정지=원형(짧음), 이동=현재 길이까지 늘어남.
+// 색은 향후 팀별 보정 가능(resolveTeamFlameTint) — 현재는 원본 색 그대로(틴트 없음).
+/** 최대 분사 길이(함축 방향, 최고속에서) */
+const THRUSTER_FLAME_LENGTH_PX = 34;
+/** 분사 폭(가로축) — 정지 시 길이도 이 값이 되어 원형 */
+const THRUSTER_FLAME_WIDTH_PX = 15;
+/** 함선 중심에서 후미 시작점까지 오프셋 */
+const THRUSTER_FLAME_REAR_OFFSET_PX = ALLY_MARK_HALF * 0.5;
+const THRUSTER_FLAME_OPACITY = 0.92;
+/** 최대 길이 도달 속도 기준 — maxMoveSpeed 의 이 비율에서 풀 길이(순항에서 충분히 길게) */
+const THRUSTER_FULL_LEN_SPEED_RATIO = 0.7;
+/** 길이 ease 계수(프레임당 보간) — 출렁임 완화 */
+const THRUSTER_LEN_EASE = 0.22;
+
+let _thrusterFlamePaint: SkPaint | null = null;
+function getThrusterFlamePaint(): SkPaint {
+  if (!_thrusterFlamePaint) {
+    const p = Skia.Paint();
+    p.setAntiAlias(true);
+    // 어두운 우주/성운 위에서 화염은 Screen 오버레이(다른 화염 FX와 동일 계약)
+    p.setBlendMode(BlendMode.Screen);
+    _thrusterFlamePaint = p;
+  }
+  return _thrusterFlamePaint;
+}
+
+/** sigma·team 별 SkColorFilter 캐시 — 향후 팀 색 보정 진입점 */
+const _teamFlameTintCache = new Map<string, SkColorFilter | null>();
+/**
+ * 팀별 화염 색 보정 — 현재는 모두 원본 색(null = 틴트 없음).
+ * 향후 팀 색으로 칠하려면 이 맵만 채우면 된다:
+ *   예) Skia.ColorFilter.MakeBlend(Skia.Color('rgba(80,160,255,1)'), BlendMode.Modulate)
+ */
+function resolveTeamFlameTint(team: Agent['team']): SkColorFilter | null {
+  if (_teamFlameTintCache.has(team)) return _teamFlameTintCache.get(team) ?? null;
+  const tint: SkColorFilter | null = null; // 원본 색 그대로 (red/blue/orange 공통)
+  _teamFlameTintCache.set(team, tint);
+  return tint;
+}
+
+/**
+ * 함선 후미에 타원형 분사화염을 1장 그린다(이미지 stretch). flameImage 없으면 no-op.
+ * 속도 연동: 정지=원형(길이=폭), 이동=최대 길이까지 ease 보간.
+ * 드로우 콜·할당 추가 없음(기존 1장 drawImageRect, dest 값만 속도로 변함).
+ */
+function drawThrusterFlame(
+  canvas: SkCanvas,
+  ag: Agent,
+  flameImage: SkImage | null,
+  lenSmoothMap: Map<number, number>,
+): void {
+  if (!flameImage) return;
+  const iw = flameImage.width();
+  const ih = flameImage.height();
+  if (iw <= 0 || ih <= 0) return;
+
+  // 속도 0~1 (maxMoveSpeed 의 FULL_LEN_SPEED_RATIO 에서 1로 포화)
+  const maxSpd = ag.maxMoveSpeedPxPerMs > 0 ? ag.maxMoveSpeedPxPerMs : 0.02;
+  const spd = Math.sqrt(ag.vx * ag.vx + ag.vy * ag.vy);
+  const speed01 = Math.min(1, spd / (maxSpd * THRUSTER_FULL_LEN_SPEED_RATIO));
+  // 정지=폭(원형) → 이동=최대 길이
+  const targetLen = THRUSTER_FLAME_WIDTH_PX + (THRUSTER_FLAME_LENGTH_PX - THRUSTER_FLAME_WIDTH_PX) * speed01;
+  const prevLen = lenSmoothMap.get(ag.id);
+  const len =
+    prevLen === undefined ? targetLen : prevLen + (targetLen - prevLen) * THRUSTER_LEN_EASE;
+  lenSmoothMap.set(ag.id, len);
+
+  const paint = getThrusterFlamePaint();
+  paint.setAlphaf(THRUSTER_FLAME_OPACITY);
+  paint.setColorFilter(resolveTeamFlameTint(ag.team));
+  const src = Skia.XYWHRect(0, 0, iw, ih);
+  // 함선 후미(−heading 방향)로: 로컬 +x = 함수(bow) 방향이므로 −x 로 분사.
+  const dest = Skia.XYWHRect(
+    -(THRUSTER_FLAME_REAR_OFFSET_PX + len),
+    -THRUSTER_FLAME_WIDTH_PX * 0.5,
+    len,
+    THRUSTER_FLAME_WIDTH_PX,
+  );
+  canvas.save();
+  canvas.translate(ag.x, ag.y);
+  canvas.rotate((ag.headingRad * 180) / Math.PI, 0, 0);
+  canvas.drawImageRect(flameImage, src, dest, paint);
+  canvas.restore();
+}
+
+// 프레임당 클로저 할당 제거 — draw 헬퍼는 모듈 싱글톤(1회 생성), 캔버스만 기록 시 주입.
+// 기록은 recordCombatOrbitPicture 내부에서 동기 완료되므로 모듈 캔버스 공유가 안전(재진입 없음).
+let _recCanvas: SkCanvas | null = null;
+const recDraw = {
+  pathStroke(
+    path: SkPath,
+    colorCss: string,
+    width: number,
+    opacityMul: number,
+    join = StrokeJoin.Round,
+    cap = StrokeCap.Round,
+  ) {
+    _recCanvas!.drawPath(path, strokePaint(colorCss, width, opacityMul, join, cap));
+  },
+  line(x0: number, y0: number, x1: number, y1: number, colorCss: string, width: number, opacityMul: number) {
+    _recCanvas!.drawLine(x0, y0, x1, y1, strokePaint(colorCss, width, opacityMul, StrokeJoin.Round, StrokeCap.Round));
+  },
+  circle(cx: number, cy: number, r: number, colorCss: string, mode: 'fill' | 'stroke', strokeW?: number, opacityMul = 1) {
+    if (mode === 'fill') {
+      _recCanvas!.drawCircle(cx, cy, r, fillPaint(colorCss, opacityMul));
+    } else {
+      const w = strokeW ?? 1;
+      _recCanvas!.drawCircle(cx, cy, r, strokePaint(colorCss, w, opacityMul, StrokeJoin.Round, StrokeCap.Round));
+    }
+  },
+};
 
 /** 한 틱 분량을 SkPicture로 기록 — React에는 Picture 노드만 넘긴다. */
 function recordCombatOrbitPicture(
@@ -483,6 +651,7 @@ function recordCombatOrbitPicture(
   pools: CombatSkiaPoolBundle,
   orbitSize: number,
   dodgeImage: SkImage | null,
+  flameImage: SkImage | null,
   renderMissileDodgeFx: boolean,
 ): SkPicture {
   const tMs = sim.tMsRef.current;
@@ -497,29 +666,8 @@ function recordCombatOrbitPicture(
   const recorder = Skia.PictureRecorder();
   const canvas = recorder.beginRecording(Skia.XYWHRect(0, 0, orbitSize, orbitSize));
 
-  const draw = {
-    pathStroke(
-      path: SkPath,
-      colorCss: string,
-      width: number,
-      opacityMul: number,
-      join = StrokeJoin.Round,
-      cap = StrokeCap.Round,
-    ) {
-      canvas.drawPath(path, strokePaint(colorCss, width, opacityMul, join, cap));
-    },
-    line(x0: number, y0: number, x1: number, y1: number, colorCss: string, width: number, opacityMul: number) {
-      canvas.drawLine(x0, y0, x1, y1, strokePaint(colorCss, width, opacityMul, StrokeJoin.Round, StrokeCap.Round));
-    },
-    circle(cx: number, cy: number, r: number, colorCss: string, mode: 'fill' | 'stroke', strokeW?: number, opacityMul = 1) {
-      if (mode === 'fill') {
-        canvas.drawCircle(cx, cy, r, fillPaint(colorCss, opacityMul));
-      } else {
-        const w = strokeW ?? 1;
-        canvas.drawCircle(cx, cy, r, strokePaint(colorCss, w, opacityMul, StrokeJoin.Round, StrokeCap.Round));
-      }
-    },
-  };
+  _recCanvas = canvas;
+  const draw = recDraw;
 
   for (let mi = 0; mi < missiles.length; mi++) {
     const m = missiles[mi]!;
@@ -632,7 +780,7 @@ function recordCombatOrbitPicture(
     if (!finiteNum(ag.x) || !finiteNum(ag.y) || !finiteNum(ag.headingRad)) continue;
     const destroyedForMs = tMs - ag.lastDestroyedAtMs;
     const showDestroyFx =
-      !ag.alive && destroyedForMs >= 0 && destroyedForMs < DESTROY_FX_DURATION_MS;
+      !ag.alive && destroyedForMs >= 0 && destroyedForMs < SHIP_DESTROY_FLAME_FX_MS;
     if (!ag.alive && !showDestroyFx) continue;
 
     const bolt = buildLaserBolt(ag, idBuf, tMs);
@@ -652,6 +800,9 @@ function recordCombatOrbitPicture(
     }
 
     if (ag.alive) {
+      // 분사화염 테일 — 함선(다이아몬드) 아래에 먼저 그린다(red/blue/플레이어 공통)
+      drawThrusterFlame(canvas, ag, flameImage, pools.thrusterLenSmooth);
+
       const diamondPool = pools.diamond;
       const dPath =
         diamondPool.get(ag.id) ??
@@ -667,14 +818,16 @@ function recordCombatOrbitPicture(
       const by = ag.y + Math.sin(ag.headingRad) * DEBUG_CAPITAL_BOW_LINE_PX;
       draw.line(ag.x, ag.y, bx, by, ag.stroke, 1.35, 0.9);
     } else if (showDestroyFx) {
-      const t01 = Math.min(1, destroyedForMs / DESTROY_FX_DURATION_MS);
-      const fade = 1 - Math.pow(t01, 1.25);
-      const strokeCol = typeof ag.stroke === 'string' && ag.stroke.length > 0 ? ag.stroke : '#94A3B8';
-      for (let i = 0; i < DESTROY_FX_PARTICLES; i++) {
-        const pt = destroyFxParticlePoint(ag, t01, i);
-        const rad = Math.max(0.2, 1.1 - t01 * 0.8);
-        draw.circle(pt.x, pt.y, rad, strokeCol, 'fill', undefined, 0.9 * fade);
-      }
+      // 전함 폭발 — 아크코어 드론 미사일 폭발과 동일한 화염 폭발 FX(궤도 Picture 전용)
+      drawPlanetFlameBurstOnSkCanvas(
+        canvas,
+        ag.x,
+        ag.y,
+        destroyedForMs,
+        SHIP_DESTROY_FLAME_BURST_SCALE,
+        PLANET_FLAME_BURST_BASE,
+        flameImage,
+      );
     }
   }
 
@@ -709,13 +862,15 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
   useEffect(() => {
     dodgeImageRef.current = dodgeImage ?? null;
   }, [dodgeImage]);
+  // 전함 폭발 화염 FX 스프라이트(아크코어 드론 폭발과 동일 에셋)
+  const flameImage = useImage(require('../../../assets/images/effects/tail_fire_02.png'));
+  const flameImageRef = useRef<SkImage | null>(null);
   useEffect(() => {
-    return () => {
-      try {
-        (dodgeImage as unknown as { dispose?: () => void })?.dispose?.();
-      } catch { /* ignore */ }
-    };
-  }, [dodgeImage]);
+    flameImageRef.current = flameImage ?? null;
+  }, [flameImage]);
+  // SkImage(useImage 반환) 수동 dispose 금지 — 훅이 수명을 자체 관리한다.
+  // 수동 해제는 SkPicture/JsiImageNode 가 아직 참조 중인 이미지를 조기 해제해
+  // use-after-free → GC FinalizerDaemon 파괴 시 SIGSEGV 를 유발한다(2026-06-17 크래시).
 
   const [picture, setPicture] = useState<SkPicture | null>(null);
 
@@ -734,6 +889,7 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
         pools,
         orbitSz,
         dodgeImageRef.current,
+        flameImageRef.current,
         renderMissileDodgeFxRef.current,
       );
       const prev = picLiveRef.current;
@@ -754,6 +910,7 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
       disposePathPool(pools.novaHead);
       disposePathPool(pools.diamond);
       pools.novaTangentStable.clear();
+      pools.thrusterLenSmooth.clear();
       const live = picLiveRef.current;
       picLiveRef.current = null;
       scheduleSkPictureDispose(live);
@@ -768,6 +925,9 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
   const labelEls: React.ReactNode[] = [];
   for (const ag of agents) {
     if (!ag.alive) continue;
+    // 프레임 효율: 적함(red/orange) 닉네임은 렌더하지 않는다(매 프레임 RN Text 레이아웃 비용 절감).
+    // 플레이어(blue 팀)만 닉네임 유지 — 웨이브 전투에서 텍스트 노드 ~12개 제거.
+    if (ag.team !== 'blue') continue;
     if (!finiteNum(ag.x) || !finiteNum(ag.y)) continue;
     labelEls.push(
       <View

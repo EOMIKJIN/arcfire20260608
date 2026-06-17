@@ -54,6 +54,8 @@ Windows 스케줄 (권장 09:00 KST):
 | STAGE·PR | `npm run audit:memory:all` + `tsc` |
 | 크래시 | `arcfire-bug-debug-workflow.mdc` |
 
+> **장기 메모리·GL 누수 — 「감시」만 김경제로 이관됨(2026-06-17)** — `tools/long-run-monitor/` 30분 watch의 **모니터 가동·관측·탐지·보고**는 김경제. 김팀장은 그 **이후 전부**를 책임진다 — 자동조치(`apply-auto-remediation`) 판단·재시작, 누수·크래시 **원인 코드 수정(Skia·허브·STAGE)**, 위 코드 작성 시점 완료 게이트. 정본: `docs/KIM_ECONOMY_AGENT.md`.
+
 ## 정본
 
 - `docs/KIM_ECONOMY_AGENT.md` — 팀원 김경제

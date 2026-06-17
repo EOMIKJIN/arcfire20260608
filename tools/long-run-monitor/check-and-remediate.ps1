@@ -138,12 +138,7 @@ if ($hubActiveNow -and $spikeCount -ge $MEM_CONSECUTIVE_SPIKE_LIMIT) {
   }
 }
 
-if (
-  $hubActiveNow
-  -and $peakAboveBaseline -ge $MEM_BASELINE_LEAK_MARGIN_MB
-  -and $noRecoveryCount -ge 2
-  -and $lastGl -ge ($baseline.glMb + 15)
-) {
+if ($hubActiveNow -and $peakAboveBaseline -ge $MEM_BASELINE_LEAK_MARGIN_MB -and $noRecoveryCount -ge 2 -and $lastGl -ge ($baseline.glMb + 15)) {
   Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] GL_BASELINE_DRIFT peak=$($baseline.peakGlMb) baseline=$($baseline.glMb) current=$lastGl views=$lastViews"
   Write-Remediation "INCIDENT GL_BASELINE_DRIFT peak=$($baseline.peakGlMb) baseline=$($baseline.glMb) current=$lastGl views=$lastViews"
   Request-Refix 'baseline_gl_drift' @{
@@ -156,9 +151,26 @@ if (
 }
 
 if ($hubActiveNow -and (Test-MemGlCriticalActiveHub -GlMb $lastGl -Views $lastViews)) {
-  Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] GL_CRITICAL_ACTIVE gl=$lastGl views=$lastViews"
-  Write-Remediation "INCIDENT GL_CRITICAL_ACTIVE gl=$lastGl views=$lastViews"
-  Request-Refix 'gl_critical_active_hub' @{ lastGlMb = $lastGl; views = $lastViews }
+  # 활성 Skia 세션(전투·웨이브)의 높은 GL 은 정상 footprint 다(이탈 시 GL_RECOVERED 로 회수).
+  # 절대 GL 수치만으로는 재시작하지 않는다 — 30분 간격에선 전투 진입 첫 고-GL 샘플이
+  # plateau 를 확정할 표본이 없어 false-positive 재시작을 유발했다(2026-06-17).
+  # 진짜 누수는 consecutive_gl_spikes·baseline_gl_drift(상단)가, 진짜 OOM 임박은
+  # 하드 실링(GL>=200MB·PSS>=950MB)이 담당한다. 여기서는 하드 실링일 때만 강제 조치.
+  $hardCeiling = Test-MemHardCeilingBreach -GlMb $lastGl -PssMb $lastPss
+  if ($hardCeiling) {
+    Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] GL_HARD_CEILING gl=$lastGl pss=$lastPss views=$lastViews"
+    Write-Remediation "INCIDENT GL_HARD_CEILING gl=$lastGl pss=$lastPss views=$lastViews -> immediate remediation (OOM imminent)"
+    Request-Refix 'gl_critical_active_hub' @{ lastGlMb = $lastGl; pssMb = $lastPss; views = $lastViews; hardCeiling = $true }
+  } else {
+    $recentActiveCols = @(
+      $recent | ForEach-Object { Get-MemTimelineCols -Cols ($_ -split ',') } |
+        Where-Object { $_.Valid -and (Test-MemHubActive -Views $_.Views) -and ($_.Note -notlike 'HUB_ACTIVATION*') }
+    )
+    $stableFootprint = Test-MemGlStableCombatFootprint -RecentActiveCols $recentActiveCols -CurGlMb $lastGl -BaselineGlMb $baseline.glMb
+    $tag = if ($stableFootprint) { 'GL_ELEVATED_STABLE active_combat_footprint' } else { 'GL_ELEVATED mounting_or_insufficient_samples' }
+    Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $tag gl=$lastGl pss=$lastPss views=$lastViews restart_held"
+    Write-Remediation "INFO $tag gl=$lastGl pss=$lastPss views=$lastViews -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)"
+  }
 }
 
 # --- Process death ---

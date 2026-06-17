@@ -28,7 +28,14 @@ export type FactionVaultState = {
   getBalance: () => number;
   applyDelta: (deltaCredits: number, meta?: Partial<FactionVaultTxn>) => void;
   trySpend: (amount: number, meta?: Partial<FactionVaultTxn>) => boolean;
+  /** [보완 #2] 잔고 이상 차감 금지 — 부족분 shortfall 반환 */
+  spendUpToBalance: (
+    amount: number,
+    meta?: Partial<FactionVaultTxn>,
+  ) => { spent: number; shortfall: number };
   appendInflow: (amount: number, meta?: Partial<FactionVaultTxn>) => void;
+  /** [보완 #2] 잔액 변동 없이 거래 로그만 기록 */
+  recordAudit: (kind: string, meta?: Partial<FactionVaultTxn>) => void;
 };
 
 type FactionVaultConfig = {
@@ -179,10 +186,39 @@ export function createFactionVaultStore(
       return true;
     },
 
+  // [보완 #2] 유지비 — 0까지만 차감, 마이너스 금고 없음
+    spendUpToBalance: (amount, meta) => {
+      const requested = Math.max(0, Math.floor(amount));
+      if (requested <= 0) return { spent: 0, shortfall: 0 };
+      const available = Math.max(0, get().balanceCredits);
+      const spent = Math.min(requested, available);
+      if (spent > 0) {
+        get().applyDelta(-spent, meta);
+      }
+      return { spent, shortfall: requested - spent };
+    },
+
     appendInflow: (amount, meta) => {
       const inflow = Math.max(0, Math.floor(amount));
       if (inflow <= 0) return;
       get().applyDelta(inflow, meta);
+    },
+
+    recordAudit: (kind, meta) => {
+      const state = get();
+      const txn: FactionVaultTxn = {
+        id: makeTxnId(Date.now(), kind),
+        kind,
+        deltaCredits: 0,
+        balanceAfter: state.balanceCredits,
+        createdAt: Date.now(),
+        ...meta,
+      };
+      const limit = config.txnHistoryLimit();
+      set({
+        txns: [txn, ...state.txns].slice(0, limit),
+      });
+      schedulePersist();
     },
     };
   });

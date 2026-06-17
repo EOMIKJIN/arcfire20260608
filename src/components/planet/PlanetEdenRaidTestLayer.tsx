@@ -101,6 +101,7 @@ export {
   hasCapitalRealtimeCombatSlotsForPlanet,
   isCapitalRealtimeCombatOrbitPlanet,
 } from '../../combat/capitalRealtimeCombatGate';
+import { getWaveFleetSeedOverride, useWaveDefenseStore } from '../../game/waveDefense/waveDefenseStore';
 
 type StageFleetSeedSlot = {
   team: 'red' | 'blue' | 'orange';
@@ -120,6 +121,17 @@ function resolveStageFleetSeedSlotsForPlanet(
 ): StageFleetSeedSlot[] {
   if (planetId === CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID) {
     return resolveTransitCombatSeedSlots(systemId);
+  }
+  // 웨이브 디펜스 — 활성 시 해당 행성에 커스텀 적(red) 함대 주입 + 플레이어 blue 기함 자동 추가.
+  const waveOverride = getWaveFleetSeedOverride(planetId);
+  if (waveOverride && waveOverride.length > 0) {
+    const hasBlue = waveOverride.some((slot) => slot.team === 'blue');
+    if (!hasBlue) {
+      const currentFlagshipNpcId = resolveCurrentPlayerFlagshipNpcShipId();
+      const blueShipId = hasNpcCapitalShipId(currentFlagshipNpcId) ? currentFlagshipNpcId : null;
+      return [...waveOverride, { team: 'blue', npcShipId: blueShipId, captainId: null }];
+    }
+    return waveOverride;
   }
   const fromCaptains = resolveCombatFleetSlotsFromCaptains(planetId, systemId);
   if (fromCaptains.length > 0) {
@@ -2516,13 +2528,18 @@ export function usePlanetEdenRaidSim(
   const elapsedCarryRef = useRef(0);
   const combatOrbitPostStepRef = useRef<(() => void) | null>(null);
   const combatTargetRingTickRef = useRef(0);
+  /** 웨이브 전환 재시드 트리거 — 값이 바뀌면 같은 활성 세션에서 함대만 재초기화(Canvas 리마운트 없음) */
+  const waveGenKey = useWaveDefenseStore((s) => s.waveGenKey);
+  const lastWaveGenKeyRef = useRef(0);
 
   useEffect(() => {
     if (!active || !combatPlanetId) return;
     const sessionKey = `${combatPlanetId}:${combatSystemId ?? ''}`;
-    if (sessionCombatKeyRef.current === sessionKey && agentsRef.current.length > 0) {
+    const waveReseed = waveGenKey !== lastWaveGenKeyRef.current;
+    if (sessionCombatKeyRef.current === sessionKey && agentsRef.current.length > 0 && !waveReseed) {
       return;
     }
+    lastWaveGenKeyRef.current = waveGenKey;
     sessionCombatKeyRef.current = sessionKey;
     /** 메인스테이지 출발(은하지도)로 안전 종료된 직후라면 같은 sessionKey 의 스냅샷이 있을 수 있다 — 1회 소비. */
     const resumeSnap = consumeCombatResumeSnapshotForSession(sessionKey);
@@ -2567,7 +2584,7 @@ export function usePlanetEdenRaidSim(
       s.ensureCaptainsRegistered(captainIds);
       void s.persistNpcCaptainProgress();
     }
-  }, [active, combatPlanetId, combatSystemId, margin, orbitSize]);
+  }, [active, combatPlanetId, combatSystemId, margin, orbitSize, waveGenKey]);
 
   useEffect(() => {
     if (active) return;
@@ -2732,6 +2749,10 @@ export function usePlanetEdenRaidSim(
         playerCapitalDestroyedRef.current = true;
         respawnAtWallRef.current = null;
         respawnCountdownSecRef.current = null;
+        // 웨이브 디펜스: 플레이어 격파 = 패배 종료 → 컨트롤러가 오퍼레이터 종료 대사 처리
+        if (useWaveDefenseStore.getState().active) {
+          useWaveDefenseStore.getState().endRun('lose');
+        }
         void usePlayerStore.getState().applyCapitalShipDestruction().then(() => {
           showArcAlert(
             '전함 격침',
@@ -2740,7 +2761,8 @@ export function usePlanetEdenRaidSim(
         });
       }
       const allAlive = agents.every(a => a.alive);
-      if (!allAlive && respawnAtWallRef.current === null) {
+      if (!allAlive && respawnAtWallRef.current === null && !useWaveDefenseStore.getState().active) {
+        // 웨이브 모드에서는 자동 리스폰 금지 — 전멸(다음 웨이브)·격파(종료)는 웨이브 컨트롤러가 처리
         respawnAtWallRef.current = elapsed + RESPAWN_DELAY_MS;
       }
 
@@ -2787,6 +2809,10 @@ export function usePlanetEdenRaidSim(
         }
         waveOutcomeAwardedRef.current = true;
         battleEngageStartMsRef.current = null;
+        // 웨이브 디펜스: red 전멸(blue 승) → 컨트롤러에 클리어 신호(다음 웨이브 재장전)
+        if (winnerTeam === 'blue' && useWaveDefenseStore.getState().active) {
+          useWaveDefenseStore.getState().setPhase('cleared');
+        }
       }
       for (const ag of agents) {
         if (!ag.alive) continue;

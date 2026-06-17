@@ -13,3 +13,24 @@ export type {
   ApplyPlanetAttackCoreDamageInput,
   ApplyPlanetAttackCoreDamageResult,
 } from './applyPlanetAttackCoreDamage';
+
+// 통합 공격 시스템 기반 (1~5 레벨 · inert)
+export {
+  ARC_ATTACK_CATEGORY,
+  ARC_ATTACK_LEVEL_MIN,
+  ARC_ATTACK_LEVEL_MAX,
+  ARC_ATTACK_LEVEL_BASELINE,
+  ARC_ATTACK_SAFETY,
+  clampArcAttackLevel,
+} from './arcCoreAttackModel';
+export type { ArcAttackCategory } from './arcCoreAttackModel';
+export {
+  getArcCorePlanetAttackLevelPolicy,
+  resolveEffectiveInboundDronePolicy,
+  resolveAttackIntensityMul,
+  resolveAttackDailyCapMul,
+  resolveGeneralCombatLevelMul,
+  resolveTransitEncounterMul,
+} from './arcCorePlanetAttackLevelPolicy';
+export type { ArcCorePlanetAttackLevelRow } from './arcCorePlanetAttackLevelPolicy';
+export { resolvePlanetAttackLevel } from './resolvePlanetAttackLevel';

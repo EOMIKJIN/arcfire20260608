@@ -9,6 +9,8 @@ export type PlanetAttackCoreDamagePolicyRow = {
   enabled: boolean;
   /** 정책 delta에 곱하는 미세 반영 배율(0..1, 기본 1) */
   impactScale: number;
+  /** 지표별 impact_scale 오버라이드(미설정 시 impactScale) */
+  metricImpactScale: Partial<Record<PlanetCoreMetricKey, number>>;
   notesKo: string;
 };
 
@@ -43,12 +45,24 @@ function rowToPolicy(row: (typeof PlanetAttackCoreDamage_FROM_BALANCE_CSV)[numbe
     delta[key] = parseIntField(String(row[deltaColumn[key]] ?? '0'), 0);
   }
 
+  const impactScale = parseFloatField(String(row.impact_scale ?? '1'), 1);
+  const metricImpactScale: Partial<Record<PlanetCoreMetricKey, number>> = {};
+  const defenseImpactRaw = String(row.defense_impact_scale ?? '').trim();
+  if (defenseImpactRaw !== '') {
+    metricImpactScale.defense = parseFloatField(defenseImpactRaw, impactScale);
+  }
+  const technologyImpactRaw = String(row.technology_impact_scale ?? '').trim();
+  if (technologyImpactRaw !== '') {
+    metricImpactScale.technology = parseFloatField(technologyImpactRaw, impactScale);
+  }
+
   return {
     attackKind,
     delta,
     dailyEventCap: Math.max(0, parseIntField(String(row.daily_event_cap ?? '0'), 0)),
     enabled: parseBool01(String(row.enabled ?? '0')),
-    impactScale: parseFloatField(String(row.impact_scale ?? '1'), 1),
+    impactScale,
+    metricImpactScale,
     notesKo: String(row.notesKo ?? '').trim(),
   };
 }
@@ -114,19 +128,22 @@ export function computeFractionalPlanetAttackAppliedDelta(
   impactScale: number,
   intensityMul: number,
   remainderIn: Partial<Record<PlanetCoreMetricKey, number>> | undefined,
+  metricImpactScale?: Partial<Record<PlanetCoreMetricKey, number>>,
 ): {
   applied: PlanetCoreMetricDelta;
   remainderOut: Partial<Record<PlanetCoreMetricKey, number>>;
 } {
-  const scale =
-    (Number.isFinite(impactScale) && impactScale >= 0 ? impactScale : 1) *
-    (Number.isFinite(intensityMul) && intensityMul > 0 ? intensityMul : 1);
+  const defaultScale = Number.isFinite(impactScale) && impactScale >= 0 ? impactScale : 1;
+  const intensity = Number.isFinite(intensityMul) && intensityMul > 0 ? intensityMul : 1;
   const acc = remainderToMetricDelta(remainderIn);
   const applied = zeroPlanetCoreMetricDelta();
 
   for (const key of PLANET_CORE_METRIC_KEYS) {
     const base = rawDelta[key];
     if (base === 0) continue;
+    const metricScale = metricImpactScale?.[key] ?? defaultScale;
+    const scale =
+      (Number.isFinite(metricScale) && metricScale >= 0 ? metricScale : defaultScale) * intensity;
     acc[key] += base * scale;
     let deltaApplied = 0;
     if (base < 0) {

@@ -1,6 +1,7 @@
 import React, { memo, useCallback } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { listPlanetDevelopmentCatalogRows } from '../../../game/planetDevelopment/planetDevelopmentCatalog';
+import { buildOrbitShipyardDevSnapshot } from '../../../game/planetDevelopment/planetOrbitShipyardDevelopment';
 import { buildDefenseSatelliteDevSnapshot } from '../../../systems/planetaryDefense/planetDefenseSatelliteDevelopment';
 import { formatCredits } from '../../../utils/formatCredits';
 import { showArcAlert } from '../../../utils/showArcAlert';
@@ -28,6 +29,7 @@ export const PlanetDevelopmentListContent = memo(function PlanetDevelopmentListC
   const PH = OVERLAY_TOKENS.phosphorAccent;
   const catalogRows = listPlanetDevelopmentCatalogRows();
   const defenseSnapshot = buildDefenseSatelliteDevSnapshot(planetId);
+  const shipyardSnapshot = buildOrbitShipyardDevSnapshot(planetId);
 
   const handlePressRow = useCallback((id: string, enabled: boolean, labelKo: string) => {
     if (enabled) {
@@ -51,12 +53,17 @@ export const PlanetDevelopmentListContent = memo(function PlanetDevelopmentListC
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {catalogRows.map((row) => {
           const isDefense = row.id === 'defense_satellite';
+          const isShipyard = row.id === 'dev_orbit_shipyard';
           const meta = isDefense
             ? (defenseSnapshot.installed
               ? `Lv.${defenseSnapshot.level} · 가동 ${defenseSnapshot.activeSatelliteCount}기`
               : '미설치 · 탭하여 설치')
               + (defenseSnapshot.isUpgrading ? ' · 업그레이드 중' : '')
-            : `${row.summaryKo} · 준비 중`;
+            : isShipyard
+              ? (shipyardSnapshot.operational
+                ? (shipyardSnapshot.baseOperational ? '기본 보유 · 조선소 가동' : '설치됨 · 조선소 가동')
+                : '미설치 · 탭하여 설치')
+              : `${row.summaryKo} · 준비 중`;
           return (
             <Pressable
               key={row.id}
@@ -75,6 +82,7 @@ export const PlanetDevelopmentListContent = memo(function PlanetDevelopmentListC
                 ]}
               >
                 {isDefense && defenseSnapshot.installed ? '🛰 ' : ''}
+                {isShipyard && shipyardSnapshot.operational ? '⚓ ' : ''}
                 {row.labelKo}
               </Text>
               <Text style={[styles.listItemMeta, { color: PH }]}>{meta}</Text>

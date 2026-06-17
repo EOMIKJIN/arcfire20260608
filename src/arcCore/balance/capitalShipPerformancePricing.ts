@@ -9,6 +9,7 @@ import {
   getCapitalHullPurchaseRow,
 } from './balanceTableRegistry';
 import { resolveHullTierKeyForTradeCatalogShip } from './capitalShipTradeListingPolicy';
+import { isWaveTestTradeShipId } from '../../economy/waveDefenseTestTradeItems';
 
 function parseNum(raw: string | number | undefined, fallback = 0): number {
   const n = typeof raw === 'number' ? raw : Number(raw);
@@ -36,6 +37,8 @@ function tierBaselinePerformanceScore(hullTierKey: string): number {
   let canonicalShip: NpcCapitalShip | undefined;
   for (const s of listAllNpcCapitalShipRows()) {
     if (!s.tradePortListed) continue;
+    // 웨이브 테스트함은 운영 tier 기준가 산정에서 제외(체급 대비 비정상 스탯 — 기준 오염 방지).
+    if (isWaveTestTradeShipId(s.id)) continue;
     if (resolveHullTierKeyForTradeCatalogShip(s.id) !== hullTierKey) continue;
     canonicalShip = s;
     break;

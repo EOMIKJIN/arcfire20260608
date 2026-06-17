@@ -1,3 +1,3 @@
-attack_kind,resource_delta,population_delta,defense_delta,technology_delta,environment_delta,daily_event_cap,enabled,impact_scale,notesKo
-arc_inbound_drone_impact,0,0,-2,-1,0,120,1,0.12,아크코어 드론 외곽 충돌 — D/T 연동·미세 반영(테스트)
-planetary_bombardment_stub,0,-3,-4,0,-2,24,0,1,향후 전투/공성 타격(미연동 스텁)
+attack_kind,resource_delta,population_delta,defense_delta,technology_delta,environment_delta,daily_event_cap,enabled,impact_scale,defense_impact_scale,technology_impact_scale,notesKo
+arc_inbound_drone_impact,0,0,-2,-1,0,120,1,0.12,0.012,0.012,아크코어 드론 외곽 충돌 — D/T 10% 미세 반영(테스트)
+planetary_bombardment_stub,0,-3,-4,0,-2,24,0,1,,,향후 전투/공성 타격(미연동 스텁)

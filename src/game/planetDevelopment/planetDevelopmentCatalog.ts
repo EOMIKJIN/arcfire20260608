@@ -6,6 +6,8 @@ export type PlanetDevelopmentCatalogRow = {
   summaryKo: string;
   enabled: boolean;
   detailModuleKey: string;
+  /** 최초 설치 비용(CR) — 0이면 무료/미사용(모듈별 레벨정책 CSV가 따로 있으면 그쪽 우선) */
+  installCostCredits: number;
   notesKo: string;
 };
 
@@ -15,6 +17,7 @@ type RawPlanetDevelopmentCatalogRow = {
   summaryKo?: string;
   enabled?: string;
   detailModuleKey?: string;
+  installCostCredits?: string;
   notesKo?: string;
 };
 
@@ -32,6 +35,7 @@ function parseRow(raw: RawPlanetDevelopmentCatalogRow): PlanetDevelopmentCatalog
     summaryKo: String(raw.summaryKo ?? ''),
     enabled: parseBool(raw.enabled),
     detailModuleKey: String(raw.detailModuleKey ?? raw.id ?? '').trim(),
+    installCostCredits: Math.max(0, Math.floor(Number(raw.installCostCredits) || 0)),
     notesKo: String(raw.notesKo ?? ''),
   };
 }

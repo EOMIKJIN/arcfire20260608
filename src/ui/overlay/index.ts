@@ -10,6 +10,7 @@ export {
   showArcOverlayNarrative,
   dismissArcOverlayNarrative,
   presentArcOverlayAlert,
+  presentWaveResultOverlay,
   dismissArcOverlay,
   dismissAllArcOverlays,
   useArcOverlayStore,

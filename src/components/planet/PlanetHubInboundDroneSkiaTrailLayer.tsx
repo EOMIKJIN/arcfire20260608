@@ -145,12 +145,9 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
     flameImageRef.current = flameImage ?? null;
   }, [flameImage]);
 
-  // flameImage 교체 시 이전 이미지 해제
-  useEffect(() => {
-    return () => {
-      safeDispose(flameImage as unknown as { dispose?: () => void });
-    };
-  }, [flameImage]);
+  // SkImage(useImage 반환) 수동 dispose 금지 — 훅이 수명을 자체 관리한다.
+  // 수동 해제는 SkPicture/JsiImageNode 가 참조 중인 이미지를 조기 해제해
+  // use-after-free → GC FinalizerDaemon 파괴 시 SIGSEGV 를 유발한다(2026-06-17 크래시).
 
   const [picture, setPicture] = useState<SkPicture | null>(null);
 

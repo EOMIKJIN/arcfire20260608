@@ -8,6 +8,7 @@ import { resolve } from 'node:path';
 import {
   isPinnedStarterTradeWeapon,
   isTradePortEligibleWeapon,
+  isWaveTestTradeWeapon,
 } from './weapon-trade-listing-rules.mjs';
 
 const ROOT = resolve(process.cwd());
@@ -100,15 +101,26 @@ const candidates = weaponRows.slice(1).map((cols) => {
   const requiredLevel = Number.parseInt(String(cols[lvIdx] ?? '1'), 10) || 1;
   const weaponFamilyKind = String(cols[kindIdx] ?? 'laser').trim().toLowerCase();
   const name = String(cols[nameIdx] ?? id).trim();
-  const listingAnchor = isPinnedStarterTradeWeapon(tierLabel) ? 'pinned' : 'progression';
-  return { id, name, requiredLevel, weaponFamilyKind, listingAnchor };
+  const isWaveTest = isWaveTestTradeWeapon(id);
+  // 웨이브 테스트 무기는 전 무역소 상시(pinned). 운영 무기는 기존 규칙 유지.
+  const listingAnchor = isWaveTest || isPinnedStarterTradeWeapon(tierLabel) ? 'pinned' : 'progression';
+  return { id, name, requiredLevel, weaponFamilyKind, listingAnchor, isWaveTest };
 }).filter(Boolean);
 
-candidates.sort((a, b) => {
+// 운영 무기: 기존 정렬 그대로 → 기존 tradeGradeRank 보존(대량 재배열 방지).
+// 웨이브 테스트 무기: 정렬·랭크 교란 없이 항상 맨 뒤에 추가(pinned).
+const operationalCandidates = candidates.filter((w) => !w.isWaveTest);
+const waveTestCandidates = candidates.filter((w) => w.isWaveTest);
+
+operationalCandidates.sort((a, b) => {
   if (a.requiredLevel !== b.requiredLevel) return a.requiredLevel - b.requiredLevel;
   if (a.listingAnchor !== b.listingAnchor) return a.listingAnchor === 'pinned' ? -1 : 1;
   return a.id.localeCompare(b.id);
 });
+
+waveTestCandidates.sort((a, b) => a.id.localeCompare(b.id));
+
+const orderedCandidates = [...operationalCandidates, ...waveTestCandidates];
 
 const out = [
   [
@@ -119,7 +131,7 @@ const out = [
     'listingAnchor',
     'notesKo',
   ],
-  ...candidates.map((w, idx) => [
+  ...orderedCandidates.map((w, idx) => [
     String(idx + 1),
     w.id,
     w.weaponFamilyKind,
@@ -130,7 +142,7 @@ const out = [
 ];
 
 writeFileSync(POLICY_CSV, rowsToCsv(out), 'utf8');
-const excluded = weaponRows.slice(1).length - candidates.length;
+const excluded = weaponRows.slice(1).length - orderedCandidates.length;
 console.log(
   `weapon_trade_listing_policy: shop=${candidates.length} excluded_npc_clone=${excluded}`,
 );

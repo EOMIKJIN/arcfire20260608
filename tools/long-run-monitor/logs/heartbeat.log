@@ -1,0 +1,25 @@
+﻿[2026-06-17 12:53:52] === report-watch 시작 (pkg=com.arcfire.online · 30m 간격 · 감시만) ===
+[12:53] !! 이상감지:  (상세 logs/incidents.log)
+[2026-06-17 12:55:12] === report-watch 시작 (pkg=com.arcfire.online · 30m 간격 · 감시만) ===
+[12:55] OK 이상없음 · PSS 570.8MB / GL 34.7MB / views 285
+[13:25] OK 이상없음 · PSS 909.3MB / GL 151.3MB / views 291
+[13:55] OK 이상없음 · PSS 675.1MB / GL 40.8MB / views 306
+[14:25] OK 이상없음 · PSS 654.4MB / GL 48.6MB / views 315
+[14:55] OK 이상없음 · PSS 646.3MB / GL 42.8MB / views 106
+[15:25] .. 앱 미실행(대기중)
+[2026-06-17 15:35:01] MANUAL OK PSS 338.5MB / GL 4.4MB / views 13 (MANUAL_RESUME_CHECK)
+[2026-06-17 15:40:54] MANUAL OK PSS 725MB / GL 111MB / views 290 (HUB_ACTIVATION gl_mount_ok MANUAL)
+[15:55] !! 비정상종료/크래시 흔적 감지 — 06-17 15:34:32.526 12113 12120 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 12120 (FinalizerDaemon), pid 12113 (.arcfire.online) (상세 crash-20260617-124500.log)
+[16:25] !! 이상감지: [2026-06-17 16:23:55] GL_ELEVATED mounting_or_insufficient_samples gl=129.2 pss=746.1 views=294 restart_held (상세 logs/incidents.log)
+[16:55] !! 비정상종료/크래시 흔적 감지 — 06-17 15:34:32.526 12113 12120 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 12120 (FinalizerDaemon), pid 12113 (.arcfire.online) (상세 crash-20260617-124500.log)
+[17:25] !! 이상감지: [2026-06-17 17:23:57] GL_ELEVATED mounting_or_insufficient_samples gl=141.8 pss=828.9 views=292 restart_held (상세 logs/incidents.log)
+[17:55] !! 비정상종료/크래시 흔적 감지 — 06-17 17:54:10.838 15834 15841 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 15841 (FinalizerDaemon), pid 15834 (.arcfire.online) (상세 crash-20260617-124500.log)
+[18:25] !! 이상감지: [2026-06-17 18:24:00] GL_ELEVATED mounting_or_insufficient_samples gl=134.3 pss=751.1 views=296 restart_held (상세 logs/incidents.log)
+[18:55] !! 이상감지: [2026-06-17 18:54:01] GL_ELEVATED mounting_or_insufficient_samples gl=132.8 pss=841.5 views=308 restart_held (상세 logs/incidents.log)
+[19:25] !! 비정상종료/크래시 흔적 감지 — 06-17 19:03:52.411 20328 20422 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20 in tid 20422 (mqt_v_js), pid 20328 (.arcfire.online) (상세 crash-20260617-124500.log)
+[19:55] !! 비정상종료/크래시 흔적 감지 — 06-17 19:37:41.926 25156 25913 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20 in tid 25913 (mqt_v_js), pid 25156 (.arcfire.online) (상세 crash-20260617-124500.log)
+[20:25] !! 비정상종료/크래시 흔적 감지 — 06-17 16:32:27.767 15021 15033 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 15033 (FinalizerDaemon), pid 15021 (.arcfire.online) (상세 crash-20260617-162351.log)
+[20:55] !! 비정상종료/크래시 흔적 감지 — 06-17 16:32:27.767 15021 15033 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 15033 (FinalizerDaemon), pid 15021 (.arcfire.online) (상세 crash-20260617-161627.log)
+[21:25] !! 비정상종료/크래시 흔적 감지 — 06-17 15:34:32.526 12113 12120 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 12120 (FinalizerDaemon), pid 12113 (.arcfire.online) (상세 crash-20260617-124500.log)
+[21:55] !! 이상감지: [2026-06-17 21:54:08] GL_ELEVATED mounting_or_insufficient_samples gl=138.9 pss=817.3 views=295 restart_held (상세 logs/incidents.log)
+[22:25] !! 이상감지: [2026-06-17 22:24:09] GL_ELEVATED mounting_or_insufficient_samples gl=138.9 pss=746.3 views=293 restart_held (상세 logs/incidents.log)

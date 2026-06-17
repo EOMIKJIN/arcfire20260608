@@ -17,6 +17,7 @@ import { runIntegratedEngageHpAdjustPass } from '../balance/runIntegratedEngageH
 import { runPlanetEconomyFabricDailyPass } from '../economy/planetEconomyFabric';
 import { runArcCoreConvoyDailySettlementPass } from '../economy/runArcCoreConvoyDailySettlementPass';
 import { runArcCorePlanetUpkeepDailyPass } from '../economy/runArcCorePlanetUpkeepDailyPass';
+import { runPlanetPgpDailyPass } from '../economy/runPlanetPgpDailyPass';
 import { resolveArcCoreDailyOpsPolicy } from './arcCoreDailyOpsPolicy';
 
 export type ArcCoreDailyOpsBatchResult = {
@@ -34,6 +35,7 @@ export type ArcCoreDailyOpsBatchResult = {
   integratedEngageHpAdjust: boolean;
   planetUpkeep: boolean;
   convoyDailySettlement: boolean;
+  planetPgp: boolean;
 };
 
 /**
@@ -57,6 +59,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     integratedEngageHpAdjust: false,
     planetUpkeep: false,
     convoyDailySettlement: false,
+    planetPgp: false,
   };
 
   if (!usePlanetCoreRuntimeStore.getState().hydrated) {
@@ -105,6 +108,9 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
 
   const upkeep = await runArcCorePlanetUpkeepDailyPass();
   result.planetUpkeep = upkeep.ran;
+
+  const pgpPass = runPlanetPgpDailyPass();
+  result.planetPgp = pgpPass.ran;
 
   return result;
 }

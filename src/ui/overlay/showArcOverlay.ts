@@ -13,6 +13,7 @@ export {
   dismissAllArcOverlays,
   presentPlanetEconomyInfoOverlay,
   presentPlanetDevelopmentOverlay,
+  presentWaveResultOverlay,
   useArcOverlayStore,
 } from './arcOverlayStore';
 

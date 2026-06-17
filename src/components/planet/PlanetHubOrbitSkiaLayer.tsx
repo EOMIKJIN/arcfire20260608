@@ -21,6 +21,7 @@ const ORBIT_MARK_ANCHOR_PX = 7;
 const styles = StyleSheet.create({
   root: {
     ...StyleSheet.absoluteFillObject,
+    zIndex: 3,
   },
   markWrap: {
     position: 'absolute',

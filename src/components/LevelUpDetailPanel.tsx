@@ -5,7 +5,10 @@
 import React, { memo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import type { LevelUpSummary } from '../types';
-import { COLORS, FONTS, SPACING } from '../utils/theme';
+import { FONTS, OVERLAY_TOKENS, SPACING } from '../utils/theme';
+
+const PH = OVERLAY_TOKENS.phosphorAccent;
+const PH_MUTED = 'rgba(107, 212, 255, 0.62)';
 
 type Props = {
   summary: LevelUpSummary;
@@ -67,39 +70,39 @@ const styles = StyleSheet.create({
   heading: {
     fontFamily: FONTS.mono,
     fontSize: 14,
-    color: COLORS.gold,
+    color: PH,
     marginBottom: SPACING.xs,
   },
   subHeading: {
     fontFamily: FONTS.mono,
     fontSize: 12,
-    color: COLORS.ink_light,
+    color: PH_MUTED,
     marginBottom: SPACING.xs,
   },
   levelLine: {
     fontFamily: FONTS.mono,
     fontSize: 18,
-    color: COLORS.ink_dark,
+    color: PH,
     fontWeight: '700',
   },
   row: {
     fontFamily: FONTS.mono,
     fontSize: 13,
-    color: COLORS.ink_dark,
+    color: PH,
     marginBottom: 4,
     textAlign: 'center',
   },
   rowMuted: {
     fontFamily: FONTS.mono,
     fontSize: 12,
-    color: COLORS.ink_light,
+    color: PH_MUTED,
     marginBottom: 4,
     textAlign: 'center',
   },
   divider: {
     width: '80%',
     height: 1,
-    backgroundColor: COLORS.border_dark,
+    backgroundColor: OVERLAY_TOKENS.phosphorBorder,
     marginVertical: SPACING.sm,
   },
 });

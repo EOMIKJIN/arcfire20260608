@@ -80,3 +80,5 @@ tradeGradeRank,canonicalWeaponId,weaponFamilyKind,requiredPilotLevelMin,listingA
 79,w_missile_arc_070,drone,60,progression,엔트로피 종말 드론
 80,w_missile_arc_071,carrier,60,progression,유니버스 함재기
 81,w_missile_arc_072,missile,60,progression,오리진 코어 로그
+82,w_laser_wave,laser,1,pinned,레이저_웨이브
+83,w_missile_wave,missile,1,pinned,미사일_웨이브

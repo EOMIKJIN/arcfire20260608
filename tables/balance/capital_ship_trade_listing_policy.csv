@@ -11,3 +11,4 @@ tradeGradeRank,tradeGradeKey,hullTierKey,canonicalNpcShipId,alternateNpcShipId,l
 10,tg10_dreadnought,dreadnought,Player_dreadnought_mk1,Player_phantom_dreadnought_mk1,progression,드레드노트/팬텀 동시
 11,tg11_super_capital,super_capital,Player_super_capital_mk1,Player_phantom_super_capital_mk1,progression,슈퍼캐피털/팬텀 동시
 12,tg12_apex_legend,apex_legend,Player_apex_legend_mk1,Player_phantom_apex_legend_mk1,progression,아펙스/팬텀 레전드 동시
+13,tg13_wave_defense_test,frigate_default,player_wave_ship,,pinned,웨이브 디펜스 테스트함(상시·테스트 거래가 1)

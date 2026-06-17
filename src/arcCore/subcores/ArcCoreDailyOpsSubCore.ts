@@ -7,6 +7,7 @@ import {
   markArcCoreDailyBatchCompleted,
 } from '../schedule/arcCoreDailyOpsState';
 import { runArcCoreDailyOpsBatch } from '../schedule/runArcCoreDailyOpsBatch';
+import { usePlayerStore } from '../../store/playerStore';
 
 /**
  * 아크코어 일일 운영 서브코어
@@ -41,7 +42,15 @@ export class ArcCoreDailyOpsSubCore extends BaseArcSubCore {
     if (this.batchRunning) return;
     await hydrateArcCoreDailyOpsState();
     const now = Date.now();
-    if (!shouldRunArcCoreDailyBatch(now, getArcCoreDailyOpsLastBatchDayKey())) return;
+    const signupAtMs = usePlayerStore.getState().player?.createdAt ?? null;
+    if (
+      !shouldRunArcCoreDailyBatch(now, {
+        lastBatchDayKey: getArcCoreDailyOpsLastBatchDayKey(),
+        signupAtMs,
+      })
+    ) {
+      return;
+    }
 
     this.batchRunning = true;
     try {

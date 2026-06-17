@@ -6,12 +6,14 @@ import {
   registerPlanetDevelopmentModule,
 } from '../../../game/planetDevelopment/planetDevelopmentRegistry';
 import { markPlanetDevelopmentModuleRegistered } from '../../../game/planetDevelopment/registerPlanetDevelopmentModules';
+import { PLANET_DEV_MODULE_ORBIT_SHIPYARD } from '../../../game/planetDevelopment/planetOrbitShipyardDevelopment';
 import { registerPlanetSessionResource } from '../../../game/planetSessionRegistry';
 import { usePlayerStore } from '../../../store/playerStore';
 import { usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore';
 import type { ArcOverlayPlanetDevelopmentEntry } from '../arcOverlayStore';
 import { PlanetDefenseSatelliteDevContent } from './PlanetDefenseSatelliteDevContent';
 import { PlanetDevelopmentListContent } from './PlanetDevelopmentListContent';
+import { PlanetOrbitShipyardDevContent } from './PlanetOrbitShipyardDevContent';
 
 type DevView = 'list' | string;
 
@@ -22,7 +24,7 @@ type Props = {
 
 let modulesRegistered = false;
 
-function ensureDefenseSatelliteModuleRegistered(): void {
+function ensurePlanetDevelopmentModulesRegistered(): void {
   if (modulesRegistered) return;
   registerPlanetDevelopmentModule({
     id: PLANET_DEV_MODULE_DEFENSE_SATELLITE,
@@ -30,6 +32,13 @@ function ensureDefenseSatelliteModuleRegistered(): void {
     summaryKo: '궤도 방어·inbound 드론 요격',
     enabled: true,
     DetailView: PlanetDefenseSatelliteDevContent,
+  });
+  registerPlanetDevelopmentModule({
+    id: PLANET_DEV_MODULE_ORBIT_SHIPYARD,
+    labelKo: '궤도 조선소',
+    summaryKo: '함대 지원·함선 정비',
+    enabled: true,
+    DetailView: PlanetOrbitShipyardDevContent,
   });
   markPlanetDevelopmentModuleRegistered();
   modulesRegistered = true;
@@ -47,7 +56,7 @@ export const PlanetDevelopmentOverlayContent = memo(function PlanetDevelopmentOv
   const credits = player?.credits ?? 0;
 
   useEffect(() => {
-    ensureDefenseSatelliteModuleRegistered();
+    ensurePlanetDevelopmentModulesRegistered();
   }, []);
 
   useEffect(() => {

@@ -2,13 +2,8 @@
 // 일 1회 — 팩션 금고 유지비 · 플레이어 소유 행성 · 수수료 지갑 지급
 // ============================================================
 
-import { findPlanetById } from '../planetEnvironment/resolvePlanetAsteroidVisualPolicy';
-import { planetAttackKstDayKey } from '../planetAttack/planetAttackKstDayKey';
-import { useArcCoreVaultStore } from '../../store/factionVault/arcCoreVaultStore';
-import { useBlueTeamSharedVaultStore } from '../../store/factionVault/blueTeamSharedVaultStore';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
 import {
-  planetCsvBaselineToRuntime,
   usePlanetCoreRuntimeStore,
 } from '../../store/planetCoreRuntimeStore';
 import { usePlanetTradeFeeLedgerStore } from '../../store/planetTradeFeeLedgerStore';
@@ -19,9 +14,14 @@ import {
   resolvePlanetUpkeepPolicy,
 } from './planetUpkeepPolicy';
 import {
+  getVaultKeyByFaction,
   resolveOccupierFactionKindForHold,
-  resolveFactionVaultForOccupierClanId,
+  VAULT_KEY_ARCCORE,
+  VAULT_KEY_BLUE,
 } from './resolveFactionVault';
+import { planetAttackKstDayKey } from '../planetAttack/planetAttackKstDayKey';
+import { useArcCoreVaultStore } from '../../store/factionVault/arcCoreVaultStore';
+import { useBlueTeamSharedVaultStore } from '../../store/factionVault/blueTeamSharedVaultStore';
 
 export type ArcCorePlanetUpkeepDailyPassResult = {
   ran: boolean;
@@ -41,14 +41,6 @@ function isPlayerOwnedHold(hold: PlanetClanHold, playerUid: string | null | unde
   if (hold.homePlayerUid === playerUid) return true;
   if (hold.kind === 'player_home' && hold.homePlayerUid === playerUid) return true;
   return false;
-}
-
-function resolvePlanetPopulation(planetId: string): number {
-  const runtime = usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId);
-  if (runtime) return runtime.population;
-  const planet = findPlanetById(planetId);
-  if (!planet) return 50;
-  return planetCsvBaselineToRuntime(planet).population;
 }
 
 function listPlayerOwnedPlanetIds(playerUid: string): string[] {
@@ -117,10 +109,11 @@ export async function runArcCorePlanetUpkeepDailyPass(): Promise<ArcCorePlanetUp
   let playerUpkeepFailedCredits = 0;
   let planetsProcessed = 0;
 
+  const arcVault = useArcCoreVaultStore.getState();
+  const blueVault = useBlueTeamSharedVaultStore.getState();
+
   for (const [planetId, hold] of Object.entries(holds)) {
-    if (hold.kind === 'neutral' || hold.occupierClanId === 'neutral') continue;
-    const population = resolvePlanetPopulation(planetId);
-    const upkeep = computePlanetDailyUpkeepCredits(population, policy);
+    const upkeep = computePlanetDailyUpkeepCredits(undefined, policy);
     if (upkeep <= 0) continue;
     planetsProcessed += 1;
 
@@ -135,25 +128,31 @@ export async function runArcCorePlanetUpkeepDailyPass(): Promise<ArcCorePlanetUp
     }
 
     const faction = resolveOccupierFactionKindForHold(hold);
-    if (faction !== 'red' && faction !== 'blue') continue;
+    if (faction === 'player_clan') continue;
 
-    const vault = resolveFactionVaultForOccupierClanId(hold.occupierClanId);
-    if (!vault) continue;
+    // [보완 #2][#3] BLUE→blue_vault, RED·중립→arccore_vault
+    const vaultKey = getVaultKeyByFaction(faction === 'blue' ? 'blue' : 'red');
+    const vault = vaultKey === VAULT_KEY_BLUE ? blueVault : arcVault;
 
-    const balanceBefore = vault.getBalance();
-    const spent = vault.trySpend(upkeep, {
+    const { spent, shortfall } = vault.spendUpToBalance(upkeep, {
       kind: 'upkeep_spend',
       planetId,
       note: `${faction}_planet_upkeep`,
     });
-    const charged = balanceBefore - vault.getBalance();
 
-    if (spent && charged > 0) {
-      if (faction === 'red') redUpkeepChargedCredits += charged;
-      else blueUpkeepChargedCredits += charged;
-    } else if (!spent) {
-      if (faction === 'red') redUpkeepFailedCredits += upkeep;
-      else blueUpkeepFailedCredits += upkeep;
+    if (spent > 0) {
+      if (vaultKey === VAULT_KEY_ARCCORE) redUpkeepChargedCredits += spent;
+      else blueUpkeepChargedCredits += spent;
+    }
+
+  // [보완 #2] 부족분 — 0까지만 차감, 로그만(행성 패널티 추후)
+    if (shortfall > 0) {
+      vault.recordAudit('upkeep_shortfall', {
+        planetId,
+        note: `upkeep_shortfall_${shortfall}`,
+      });
+      if (vaultKey === VAULT_KEY_ARCCORE) redUpkeepFailedCredits += shortfall;
+      else blueUpkeepFailedCredits += shortfall;
     }
   }
 

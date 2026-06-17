@@ -1,11 +1,11 @@
-id,labelKo,summaryKo,enabled,detailModuleKey,notesKo
-defense_satellite,방위위성,궤도 방어·inbound 드론 요격,true,defense_satellite,1차 구현 완료
-dev_energy_plant,에너지 발전소,행성 R(자원) 생산,false,dev_energy_plant,임시 · 향후 모듈
-dev_mineral_refinery,광물 정제소,광물 가공,false,dev_mineral_refinery,임시
-dev_population_dome,인구 거주 돔,P(인구) 성장,false,dev_population_dome,임시
-dev_research_lab,과학 연구소,T(기술) 연구,false,dev_research_lab,임시
-dev_trade_route,무역 항로 확장,무역소 수익,false,dev_trade_route,임시
-dev_orbit_shipyard,궤도 조선소,함대 지원,false,dev_orbit_shipyard,임시
-dev_smart_farm,스마트 농장,식량·보급,false,dev_smart_farm,임시
-dev_eco_restore,환경 재생망,E(환경) 회복,false,dev_eco_restore,임시
-dev_fleet_support,함대 지원 기지,D(방어) 보조,false,dev_fleet_support,임시
+id,labelKo,summaryKo,enabled,detailModuleKey,installCostCredits,notesKo
+defense_satellite,방위위성,궤도 방어·inbound 드론 요격,true,defense_satellite,0,1차 구현 완료 · 설치비는 레벨정책 CSV
+dev_energy_plant,에너지 발전소,행성 R(자원) 생산,false,dev_energy_plant,0,임시 · 향후 모듈
+dev_mineral_refinery,광물 정제소,광물 가공,false,dev_mineral_refinery,0,임시
+dev_population_dome,인구 거주 돔,P(인구) 성장,false,dev_population_dome,0,임시
+dev_research_lab,과학 연구소,T(기술) 연구,false,dev_research_lab,0,임시
+dev_trade_route,무역 항로 확장,무역소 수익,false,dev_trade_route,0,임시
+dev_orbit_shipyard,궤도 조선소,함대 지원·함선 정비,true,dev_orbit_shipyard,1,[TEST·임시] installCost 1cr — Kim경제 적정가 예정 · 설치 시 조선소 허브 활성(v0 설치만)
+dev_smart_farm,스마트 농장,식량·보급,false,dev_smart_farm,0,임시
+dev_eco_restore,환경 재생망,E(환경) 회복,false,dev_eco_restore,0,임시
+dev_fleet_support,함대 지원 기지,D(방어) 보조,false,dev_fleet_support,0,임시

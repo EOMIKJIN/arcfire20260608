@@ -13,17 +13,19 @@
 - **김팀장 규칙**: `.cursor/rules/arcfire-main-lead-agent.mdc` · `docs/KIM_TEAM_LEAD_AGENT.md`
 - **김경제 규칙**: `.cursor/rules/arcfire-economy-specialist-agent.mdc` · `docs/KIM_ECONOMY_AGENT.md`
 
-## 장기 메모리·안정화 감시 (상시 · 개발과 독립)
+## 장기 메모리·안정화 감시 (상시 · 개발과 독립) — **감시만 김경제 (2026-06-17 이관)**
 
-기능 개발과 **별도**로 **계속** 실행·점검한다. 정본: `tools/long-run-monitor/logs/WATCH_README.md`
+> **[김경제 메모리 테스트] = Cursor 세션 #1 자동 시작·상시 주업무.** Cursor가 켜지면 다른 작업보다 먼저 별도 지시 없이 자동 1순위로 시작해 항시 병행한다. 세션 시작 훅(`.cursor/hooks/on-session-start-agent-routing.cjs`)이 매 세션 주입. 멱등 절차·판정은 `arcfire-economy-specialist-agent.mdc` 참조.
+
+기능 개발과 **별도**로 **계속** 실행·관측한다. **감시 주체: 김경제 에이전트**(2026-06-17 김팀장 → 김경제 이관, 「감시」 한정). 정본: `tools/long-run-monitor/logs/WATCH_README.md` · `docs/KIM_ECONOMY_AGENT.md`
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.ps1
 ```
 
 - **30분** `mem-timeline.csv` · crash logcat · v2 계단식 GL 누수 판정
-- **자동**: 3× GL_SPIKE(활성 허브) / GL≥80MB / 크래시 → `audit:skia-memory` + 앱 재시작( throttle )
-- **수동 확인**: `remediation.log` · `incidents.log` · monitor PID `logs/watch-30m.pid`
+- **김경제(감시만)**: 모니터 가동·관측·`incidents.log`/누수·크래시 **탐지·보고**, 모니터 중단 시 재가동
+- **김팀장(이후 전부)**: 자동조치(3× GL_SPIKE / GL≥80MB / 크래시 → `audit:skia-memory` + 앱 재시작 throttle) **판단**, 누수·크래시 **원인 코드 수정(Skia·허브·STAGE)**, 코드 작성 시점 메모리 게이트(`audit:skia-memory`·`audit:memory:all`)
 
 ## AI 페르소나·모델 자동 라우팅 (Auto)
 

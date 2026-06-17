@@ -1016,3 +1016,20 @@ r SDK API. Please see migration guide for more details: https://rnfirebase.io/mi
 06-15 09:06:30.330  1909  2065 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
 06-15 09:06:41.941  1909  1972 I ActivityManager: Killing 6715:com.google.android.googlequicksearchbox:search/u0a253 (adj 905): empty #25
 
+[2026-06-17 15:40:55] GL_CRITICAL_ACTIVE gl=111 views=290
+[2026-06-17 15:40:55] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-17 16:15:13] GL_CRITICAL_ACTIVE gl=134.3 pss=741.6 views=304 hardCeiling=False
+[2026-06-17 16:15:13] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-17 16:23:55] GL_ELEVATED mounting_or_insufficient_samples gl=129.2 pss=746.1 views=294 restart_held
+[2026-06-17 16:53:56] GL_ELEVATED mounting_or_insufficient_samples gl=126.5 pss=790.2 views=306 restart_held
+[2026-06-17 17:23:57] GL_ELEVATED mounting_or_insufficient_samples gl=141.8 pss=828.9 views=292 restart_held
+[2026-06-17 17:53:58] GL_ELEVATED mounting_or_insufficient_samples gl=136.7 pss=858.8 views=290 restart_held
+[2026-06-17 18:24:00] GL_ELEVATED mounting_or_insufficient_samples gl=134.3 pss=751.1 views=296 restart_held
+[2026-06-17 18:54:01] GL_ELEVATED mounting_or_insufficient_samples gl=132.8 pss=841.5 views=308 restart_held
+[2026-06-17 19:24:02] GL_ELEVATED mounting_or_insufficient_samples gl=127.9 pss=803.9 views=282 restart_held
+[2026-06-17 19:54:03] GL_ELEVATED mounting_or_insufficient_samples gl=130.7 pss=738.7 views=282 restart_held
+[2026-06-17 20:24:06] GL_ELEVATED mounting_or_insufficient_samples gl=140.5 pss=831 views=282 restart_held
+[2026-06-17 20:54:07] GL_ELEVATED mounting_or_insufficient_samples gl=133.3 pss=781 views=282 restart_held
+[2026-06-17 21:24:07] GL_ELEVATED mounting_or_insufficient_samples gl=138.9 pss=816.9 views=289 restart_held
+[2026-06-17 21:54:08] GL_ELEVATED mounting_or_insufficient_samples gl=138.9 pss=817.3 views=295 restart_held
+[2026-06-17 22:24:09] GL_ELEVATED mounting_or_insufficient_samples gl=138.9 pss=746.3 views=293 restart_held

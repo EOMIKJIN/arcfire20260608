@@ -39322,3 +39322,988 @@
 06-16 23:50:16.250  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
 06-16 23:50:16.539  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
 06-16 23:50:26.438  1909  4226 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-16 23:52:16.861  1909  1972 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-16 23:52:16.862  1909  3434 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-16 23:53:23.586  1909  1973 I ActivityManager: Start proc 6330:com.samsung.android.ce/u0a96 for broadcast {com.samsung.android.mcfds/com.samsung.android.ce.ContextEngineReceiver}
+06-16 23:53:23.586  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-16 23:53:23.844  1909  4206 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-16 23:53:23.852  1909  3434 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-16 23:53:24.021  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-16 23:53:24.036  1909  4206 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-16 23:53:24.167  1909  1973 I ActivityManager: Start proc 6395:com.samsung.android.mcfds/u0a96 for content provider {com.samsung.android.mcfds/com.samsung.android.mcfds.handler.client.ClientProvider}
+06-16 23:53:24.167  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-16 23:53:24.350  1909  4226 I ActivityManager: Changes in 10096 19 to 5, 0 to 184
+06-16 23:53:34.411  1909  4226 I ActivityManager: Changes in 10096 5 to 10, 184 to 0
+06-16 23:53:54.349  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-16 23:53:54.353  1909  4226 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-16 23:54:13.594  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-16 23:54:23.610  1909  2065 I ActivityManager: Changes in 10096 19 to 19, 128 to 0
+06-16 23:54:33.809  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-16 23:54:43.822  1909  2065 I ActivityManager: Changes in 10096 19 to 19, 128 to 0
+06-16 23:54:50.458  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-16 23:54:50.459  1909  1965 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+06-16 23:54:51.072  1909  1965 I ActivityManager: Changes in 11050 2 to 15, 255 to 128
+06-16 23:54:51.209  1909  3301 I ActivityManager: Changes in 99137 19 to 10, 0 to 128
+06-16 23:54:51.230  1909  4206 I ActivityManager: Changes in 99137 15 to 15, 128 to 0
+06-16 23:54:51.230  1909  4206 I ActivityManager: Changes in 11050 15 to 15, 128 to 0
+06-16 23:54:52.019  1909  3174 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-16 23:54:52.560  1909  3174 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-16 23:54:52.575  1909  3174 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-16 23:54:58.596  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-16 23:54:58.633  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-16 23:54:59.493  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-16 23:55:00.352  1909  1965 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-16 23:55:00.352  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
+06-16 23:55:00.725  1909  3434 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-16 23:55:10.542  1909  3434 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-16 23:56:18.035  1909  1972 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-16 23:56:18.039  1909  4206 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-16 23:57:07.096  1909  1973 I ActivityManager: Start proc 6689:com.samsung.android.privacydashboard/u0a107 for content provider {com.samsung.android.privacydashboard/com.samsung.android.privacydashboard.provider.PermissionAccessInformationContentProvider}
+06-16 23:57:07.097  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-16 23:57:07.277  1909  3174 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-16 23:57:13.389  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-16 23:59:49.061  1909  1972 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-16 23:59:49.065  1909  4206 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-17 00:00:00.013  1909  2359 I ActivityManager: Changes in 10108 10 to 5, 0 to 144
+06-17 00:00:00.099  1909  3434 E ActivityManager: Sending non-protected broadcast com.samsung.android.app.aodservice.LOCK_WIDGET_REQUEST from system 2640:com.android.systemui/u0a53 pkg com.android.systemui
+06-17 00:00:00.099  1909  3434 E ActivityManager: java.lang.Throwable
+06-17 00:00:00.099  1909  3434 E ActivityManager: 	at com.android.server.am.BroadcastController.checkBroadcastFromSystem(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:252)
+06-17 00:00:00.099  1909  3434 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLockedTraced(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:344)
+06-17 00:00:00.099  1909  3434 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:18)
+06-17 00:00:00.099  1909  3434 E ActivityManager: 	at com.android.server.am.ActivityManagerService.broadcastIntentWithFeature(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:149)
+06-17 00:00:00.099  1909  3434 E ActivityManager: 	at android.app.IActivityManager$Stub.onTransact$broadcastIntentWithFeature$(IActivityManager.java:12412)
+06-17 00:00:00.099  1909  3434 E ActivityManager: 	at android.app.IActivityManager$Stub.onTransact(IActivityManager.java:3205)
+06-17 00:00:00.099  1909  3434 E ActivityManager: 	at com.android.server.am.ActivityManagerService.onTransact(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:425)
+06-17 00:00:00.099  1909  3434 E ActivityManager: 	at android.os.Binder.execTransactInternal(Binder.java:1462)
+06-17 00:00:00.099  1909  3434 E ActivityManager: 	at android.os.Binder.execTransact(Binder.java:1401)
+06-17 00:00:00.126  1909  1973 I ActivityManager: Start proc 6843:com.samsung.android.calendar/u0a222 for broadcast {com.samsung.android.calendar/com.samsung.android.app.calendar.widget.AodCalendarReceiver}
+06-17 00:00:00.126  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:00:00.140  1909  1973 I ActivityManager: Start proc 6844:com.samsung.android.app.routines/u0a53 for service {com.samsung.android.app.routines/com.samsung.android.app.routines.domainmodel.service.RoutineService}
+06-17 00:00:00.140  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:00:00.567  1909  4206 I ActivityManager: Changes in 10222 19 to 11, 0 to 128
+06-17 00:00:00.586  1909  1973 I ActivityManager: Start proc 6886:com.samsung.android.app.reminder/u0a224 for content provider {com.samsung.android.app.reminder/com.samsung.android.app.reminder.data.provider.ReminderProvider}
+06-17 00:00:00.586  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:00:00.602  1909  1973 I ActivityManager: Start proc 6887:com.android.providers.calendar/u0a115 for content provider {com.android.providers.calendar/com.android.providers.calendar.CalendarProvider2}
+06-17 00:00:00.602  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:00:00.660  1909  3434 I ActivityManager: Changes in 10222 11 to 19, 128 to 0
+06-17 00:00:00.804  1909  1973 I ActivityManager: Start proc 6954:com.samsung.android.app.aodservice:provider/u0a53 for content provider {com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.provider.AODContentProvider}
+06-17 00:00:00.804  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:00:01.109  1909  3434 I ActivityManager: Changes in 10115 19 to 5, 0 to 144
+06-17 00:00:01.133  1909  2537 I ActivityManager: Changes in 10224 19 to 5, 0 to 144
+06-17 00:00:01.133  1909  2537 I ActivityManager: Changes in 10222 19 to 5, 0 to 144
+06-17 00:00:02.782  1909  1973 I ActivityManager: Start proc 7035:android.process.acore/u0a56 for content provider {com.samsung.android.providers.contacts/com.samsung.android.providers.contacts.SamsungContactsProvider2}
+06-17 00:00:02.783  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:00:03.109  1909  4206 I ActivityManager: Changes in 10056 19 to 5, 0 to 144
+06-17 00:00:03.270  1909  3434 I ActivityManager: Changes in 99137 10 to 8, 0 to 128
+06-17 00:00:03.307  1909  2537 I ActivityManager: Changes in 99137 8 to 10, 128 to 0
+06-17 00:00:06.146  1909  1971 I ActivityManager: Changes in 10108 5 to 10, 144 to 0
+06-17 00:00:07.130  1909  1971 I ActivityManager: Changes in 10224 5 to 15, 144 to 0
+06-17 00:00:07.154  1909  1971 I ActivityManager: Changes in 10222 5 to 15, 144 to 0
+06-17 00:00:07.167  1909  1971 I ActivityManager: Changes in 10115 5 to 15, 144 to 0
+06-17 00:00:07.168  1909  1971 I ActivityManager: Changes in 10056 5 to 15, 144 to 0
+06-17 00:00:10.020  1909  1973 I ActivityManager: Start proc 7080:com.samsung.android.forest/1000 for service {com.samsung.android.forest/com.samsung.android.forest.service.WAlarmIntentService}
+06-17 00:00:10.021  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:00:10.394  1909  4206 I ActivityManager: Killing 3384:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a253i144 (adj 905): empty #25
+06-17 00:00:10.435  1909  4407 W ActivityManager: Scheduling restart of crashed service com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:0 in 1000ms for connection
+06-17 00:00:13.244  1909  1973 I ActivityManager: Start proc 7127:com.samsung.android.app.contacts/u0a120 for service {com.samsung.android.app.contacts/com.samsung.android.contacts.services.ContactMonitoringBgService}
+06-17 00:00:13.244  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:00:13.619  1909  4206 I ActivityManager: Changes in 10120 19 to 8, 0 to 128
+06-17 00:00:13.650  1909  4206 I ActivityManager: Changes in 10056 19 to 8, 0 to 128
+06-17 00:00:13.731  1909  4206 I ActivityManager: Changes in 10120 8 to 10, 128 to 0
+06-17 00:00:13.731  1909  4206 I ActivityManager: Changes in 10056 8 to 10, 128 to 0
+06-17 00:00:13.735  1909  4206 I ActivityManager: Killing 4991:com.android.chrome:privileged_process0/u0a266 (adj 975): empty #25
+06-17 00:00:13.789  1909  4407 W ActivityManager: Scheduling restart of crashed service com.android.chrome/org.chromium.content.app.PrivilegedProcessService0 in 1000ms for connection
+06-17 00:00:23.624  1909  4407 I ActivityManager: Changes in 10120 19 to 8, 0 to 128
+06-17 00:00:23.728  1909  2720 I ActivityManager: Changes in 10056 19 to 8, 0 to 128
+06-17 00:00:23.774  1909  2720 I ActivityManager: Changes in 10120 8 to 10, 128 to 0
+06-17 00:00:23.774  1909  2720 I ActivityManager: Changes in 10056 8 to 10, 128 to 0
+06-17 00:00:27.149  1909  1972 I ActivityManager: Killing 4726:com.sec.android.provider.badge/u0a55 (adj 975): empty #25
+06-17 00:00:28.152  1909  1972 I ActivityManager: Killing 5129:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a266i-9000 (adj 921): empty #25
+06-17 00:00:28.154  1909  1972 I ActivityManager: Killing 5229:com.samsung.android.app.watchmanager:contentprovider/u0a327 (adj 965): empty #26
+06-17 00:00:28.202  1909  1933 W ActivityManager: Scheduling restart of crashed service com.android.chrome/org.chromium.content.app.SandboxedProcessService0:0 in 1000ms for connection
+06-17 00:03:44.713  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 00:03:44.715  1909  3174 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 00:03:50.227  1909  1972 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-17 00:03:50.228  1909  3434 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-17 00:04:56.965  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 00:04:56.973  1909  4407 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 00:04:56.989  1909  1973 I ActivityManager: Start proc 7266:com.samsung.android.game.gos/u0a76 for service {com.samsung.android.game.gos/com.samsung.android.game.gos.service.MainIntentService}
+06-17 00:04:56.989  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:04:57.005  1909  1973 I ActivityManager: Start proc 7268:com.lguplus.appstore/u0a99 for service {com.lguplus.appstore/androidx.work.impl.background.systemjob.SystemJobService}
+06-17 00:04:57.005  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:04:57.249  1909  1973 I ActivityManager: Start proc 7324:com.sec.android.provider.badge/u0a55 for broadcast {com.sec.android.provider.badge/com.sec.android.provider.badge.BadgeCountReceiver}
+06-17 00:04:57.249  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:04:57.323  1909  3434 I ActivityManager: Changes in 99137 19 to 8, 0 to 128
+06-17 00:04:57.323  1909  3434 I ActivityManager: Changes in 10099 19 to 8, 0 to 128
+06-17 00:04:57.361  1909  3434 I ActivityManager: Changes in 10251 19 to 8, 0 to 128
+06-17 00:04:57.373  1909  3174 I ActivityManager: Changes in 10055 19 to 11, 0 to 128
+06-17 00:04:57.399  1909  3174 I ActivityManager: Changes in 99137 8 to 10, 128 to 0
+06-17 00:04:57.399  1909  3174 I ActivityManager: Changes in 10251 8 to 10, 128 to 0
+06-17 00:04:57.399  1909  3174 I ActivityManager: Changes in 10099 8 to 10, 128 to 0
+06-17 00:04:57.404  1909  3174 I ActivityManager: Changes in 10055 11 to 5, 128 to 144
+06-17 00:05:03.434  1909  1971 I ActivityManager: Changes in 10055 5 to 15, 144 to 0
+06-17 00:05:07.444  1909  3301 I ActivityManager: Killing 5943:com.samsung.android.authfw/5278 (adj 945): empty #25
+06-17 00:05:07.445  1909  3301 I ActivityManager: Killing 5207:com.samsung.android.app.watchmanager:remote/u0a327 (adj 955): empty #26
+06-17 00:05:07.496  1909  3301 W ActivityManager: Scheduling restart of crashed service com.samsung.android.authfw/.pass.PassService in 1000ms for connection
+06-17 00:05:08.513  1909  1973 I ActivityManager: Start proc 7364:com.samsung.android.authfw/5278 for service {com.samsung.android.authfw/com.samsung.android.authfw.pass.PassService}
+06-17 00:05:08.513  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:05:08.709  1909  3174 I ActivityManager: Killing 5836:com.samsung.android.samsungpass/u0a127 (adj 945): empty #25
+06-17 00:05:08.758  1909  3174 W ActivityManager: Scheduling restart of crashed service com.samsung.android.samsungpass/.passservice.PassService in 1000ms for connection
+06-17 00:05:09.775  1909  1973 I ActivityManager: Start proc 7380:com.samsung.android.samsungpass/u0a127 for service {com.samsung.android.samsungpass/com.samsung.android.samsungpass.passservice.PassService}
+06-17 00:05:09.776  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:05:09.986  1909  4407 I ActivityManager: Killing 5835:com.osp.app.signin/u0a117 (adj 935): empty #25
+06-17 00:05:10.037  1909  4407 W ActivityManager: ProcessRecord{56f02fa 5835:com.osp.app.signin/u0a117} is attached to a previous process
+06-17 00:05:10.037  1909  4407 W ActivityManager: Existing proc ProcessRecord{56f02fa 5835:com.osp.app.signin/u0a117} was killed 49ms ago when adding ProcessRecord{b94a48e 0:com.osp.app.signin/u0a117}
+06-17 00:05:10.067  1909  1973 I ActivityManager: Start proc 7430:com.osp.app.signin/u0a117 for content provider {com.osp.app.signin/com.samsung.android.samsungaccount.utils.accounts.AccountManagerProvider}
+06-17 00:05:10.067  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:05:10.378  1909  1933 I ActivityManager: Killing 5806:com.samsung.android.samsungpassautofill/u0a207 (adj 935): empty #25
+06-17 00:05:10.410  1909  4407 I ActivityManager: Changes in 99137 19 to 8, 0 to 128
+06-17 00:05:10.410  1909  4407 I ActivityManager: Changes in 10251 19 to 8, 0 to 128
+06-17 00:05:10.410  1909  4407 I ActivityManager: Changes in 10117 19 to 8, 0 to 128
+06-17 00:05:10.442  1909  1933 I ActivityManager: Changes in 99137 8 to 10, 128 to 0
+06-17 00:05:10.442  1909  1933 I ActivityManager: Changes in 10251 8 to 10, 128 to 0
+06-17 00:05:10.442  1909  1933 I ActivityManager: Changes in 10117 8 to 10, 128 to 0
+06-17 00:05:22.067  1909  1972 I ActivityManager: Changes in 10214 19 to 11, 0 to 128
+06-17 00:05:22.114  1909  3434 W ActivityManager: Unable to start service Intent { xflg=0x4 cmp=com.samsung.android.app.tips/.TipsIntentService (has extras) } U=0: not found
+06-17 00:05:22.124  1909  1972 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-17 00:05:22.130  1909  2537 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-17 00:05:22.134  1909  2537 I ActivityManager: Changes in 10214 11 to 19, 128 to 0
+06-17 00:05:22.137  1909  1973 I ActivityManager: Start proc 7512:com.samsung.sait.sohservice/1000 for broadcast {com.samsung.sait.sohservice/com.samsung.sait.sohservice.receiver.MyReceiver}
+06-17 00:05:22.139  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:05:22.209  1909  3434 W ActivityManager: Unable to start service Intent { act=com.google.android.gms.lockbox.service.START xflg=0x4 pkg=com.google.android.gms } U=0: not found
+06-17 00:05:22.212  1909  3434 W ActivityManager: Unbind failed: could not find connection for android.os.BinderProxy@dae7d48
+06-17 00:05:22.637  1909  1973 I ActivityManager: Start proc 7549:com.samsung.cmh/5004 for service {com.samsung.cmh/com.samsung.cmh.core.cmhjobservice.CMHJobService}
+06-17 00:05:22.640  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:05:22.656  1909  1973 I ActivityManager: Start proc 7550:com.samsung.faceservice/5004 for service {com.samsung.faceservice/androidx.work.impl.background.systemjob.SystemJobService}
+06-17 00:05:22.656  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:05:22.673  1909  1973 I ActivityManager: Start proc 7556:com.google.android.as.oss/u0a248 for service {com.google.android.as.oss/com.google.android.gms.learning.internal.training.InAppJobService}
+06-17 00:05:22.673  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:05:22.893  1909  3174 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+06-17 00:05:22.973  1909  2870 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+06-17 00:05:22.995  1909  1973 I ActivityManager: Start proc 7627:com.samsung.mfcontents/u0a95 for service {com.samsung.mfcontents/com.samsung.mfcontents.scheduler.MFCJobService}
+06-17 00:05:22.995  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:05:23.082  1909  1933 I ActivityManager: Changes in 10248 19 to 8, 0 to 128
+06-17 00:05:23.153  1909  1933 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+06-17 00:05:23.247  1909  1933 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+06-17 00:05:23.265  1909  3174 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
+06-17 00:05:23.347  1909  2720 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+06-17 00:05:23.361  1909  4407 I ActivityManager: Killing 5309:com.android.vending:background/u0a251 (adj 925): empty #25
+06-17 00:05:23.365  1909  2870 I ActivityManager: Changes in 10248 8 to 10, 128 to 0
+06-17 00:05:23.372  1909  2870 I ActivityManager: Killing 2950:com.samsung.android.scs/u0a116 (adj 915): empty #25
+06-17 00:05:23.437  1909  1972 I ActivityManager: Killing 5601:com.samsung.android.sm.provider/1000 (adj 905): empty #25
+06-17 00:05:29.219  1909  3174 I ActivityManager: Killing 6689:com.samsung.android.privacydashboard/u0a107 (adj 905): empty #25
+06-17 00:05:29.223  1909  3174 I ActivityManager: Killing 5662:com.samsung.android.voc/u0a329 (adj 905): empty #26
+06-17 00:06:23.454  1909  1972 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-17 00:06:23.457  1909  4338 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-17 00:06:47.804  1909  2537 I ActivityManager: Changes in 99137 19 to 8, 0 to 128
+06-17 00:06:48.197  1909  1973 I ActivityManager: Start proc 7756:com.google.android.googlequicksearchbox:search/u0a253 for broadcast {com.google.android.googlequicksearchbox/com.google.android.libraries.search.gcm.search.SearchProcessGcmBroadcastReceiver_Receiver}
+06-17 00:06:48.198  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:06:49.337  1909  4356 I ActivityManager: Changes in 99137 8 to 10, 128 to 0
+06-17 00:06:49.343  1909  4338 I ActivityManager: Killing 6954:com.samsung.android.app.aodservice:provider/u0a53 (adj 905): empty #25
+06-17 00:08:04.954  1909  1972 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-17 00:08:04.958  1909  4356 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-17 00:09:24.006  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 00:09:24.009  1909  1965 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+06-17 00:09:24.665  1909  1965 I ActivityManager: Changes in 11050 2 to 15, 255 to 128
+06-17 00:09:24.721  1909  4338 I ActivityManager: Changes in 99137 19 to 10, 0 to 128
+06-17 00:09:24.765  1909  4338 I ActivityManager: Changes in 99137 15 to 15, 128 to 0
+06-17 00:09:24.765  1909  4338 I ActivityManager: Changes in 11050 15 to 15, 128 to 0
+06-17 00:09:25.241  1909  4227 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 00:09:25.847  1909  3174 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 00:09:25.869  1909  1973 I ActivityManager: Start proc 7972:com.samsung.android.sm.provider/1000 for content provider {com.samsung.android.lool/com.samsung.android.sm.database.SmProvider}
+06-17 00:09:25.869  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:09:25.882  1909  1973 I ActivityManager: Start proc 7973:com.samsung.android.voc/u0a329 for content provider {com.samsung.android.voc/com.samsung.android.voc.diagnosis.provider.SamsungMembersDiagnosisProvider}
+06-17 00:09:25.888  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:09:26.162  1909  2057 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 00:09:31.917  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-17 00:09:32.097  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-17 00:09:36.420  1909  1972 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-17 00:09:36.423  1909  3174 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-17 00:09:44.514  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 00:09:44.514  1909  1965 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+06-17 00:09:45.327  1909  1965 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 00:09:45.327  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
+06-17 00:09:45.644  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 00:09:55.500  1909  4338 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-17 00:09:55.503  1909  4227 I ActivityManager: Killing 6887:com.android.providers.calendar/u0a115 (adj 975): empty #25
+06-17 00:09:55.504  1909  4227 I ActivityManager: Killing 6886:com.samsung.android.app.reminder/u0a224 (adj 975): empty #26
+06-17 00:11:08.004  1909  4338 I ActivityManager: Killing 6843:com.samsung.android.calendar/u0a222 (adj 975): empty #25
+06-17 00:11:08.355  1909  1972 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-17 00:11:08.358  1909  2537 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-17 00:11:08.686  1909  1973 I ActivityManager: Start proc 8115:com.samsung.android.dqagent/1000 for broadcast {com.samsung.android.dqagent/com.samsung.android.dqagent.receiver.DQADataReceiver}
+06-17 00:11:08.686  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:11:08.903  1909  2537 I ActivityManager: Killing 7080:com.samsung.android.forest/1000 (adj 965): empty #25
+06-17 00:12:12.905  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-17 00:12:12.911  1909  4356 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-17 00:12:20.542  1909  2776 W ActivityManager: pid 6077 com.google.android.gms.persistent sent binder code 2 with flags 1 to frozen apps and got error -32
+06-17 00:12:20.823  1909  1973 I ActivityManager: Start proc 8201:com.samsung.android.app.sharelive/5026 for broadcast {com.samsung.android.app.sharelive/com.samsung.android.app.sharelive.presentation.receiver.NearbyShareReceiver}
+06-17 00:12:20.823  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:12:21.242  1909  2776 I ActivityManager: Changes in 10117 19 to 11, 0 to 128
+06-17 00:12:21.244  1909  2776 I ActivityManager: Changes in 5026 19 to 11, 0 to 128
+06-17 00:12:21.244  1909  2776 I ActivityManager: Changes in 5025 8 to 8, 0 to 128
+06-17 00:12:21.267  1909  4356 I ActivityManager: Changes in 10117 11 to 19, 128 to 0
+06-17 00:12:21.267  1909  4356 I ActivityManager: Changes in 5026 11 to 19, 128 to 0
+06-17 00:12:21.267  1909  4356 I ActivityManager: Changes in 5025 8 to 8, 128 to 0
+06-17 00:12:27.937  1909  4356 I ActivityManager: Killing 7127:com.samsung.android.app.contacts/u0a120 (adj 965): empty #25
+06-17 00:15:17.306  1909  4356 I ActivityManager: Changes in 99137 19 to 10, 0 to 128
+06-17 00:15:17.434  1909  4407 I ActivityManager: Changes in 99137 10 to 5, 128 to 184
+06-17 00:15:27.309  1909  3050 I ActivityManager: Process com.google.android.googlequicksearchbox:search (pid 7756) has died: cch+5 CEM (268,1767)
+06-17 00:15:27.310  1909  3174 W ActivityManager: pid 6725 com.google.android.googlequicksearchbox:interactor sent binder code 2 with flags 1 to frozen apps and got error -32
+06-17 00:15:32.492  1909  3050 I ActivityManager: Changes in 99137 5 to 10, 184 to 0
+06-17 00:18:28.614  1909  1972 I ActivityManager: Changes in 10122 6 to 10, 128 to 0
+06-17 00:22:26.981  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 00:22:26.987  1909  3050 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 00:29:10.734  1909  1973 I ActivityManager: Start proc 8599:com.samsung.android.privacydashboard/u0a107 for content provider {com.samsung.android.privacydashboard/com.samsung.android.privacydashboard.provider.PermissionAccessInformationContentProvider}
+06-17 00:29:10.738  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:29:10.863  1909  3606 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-17 00:29:16.936  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-17 00:33:44.717  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 00:33:44.723  1909  2224 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 00:39:57.005  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 00:39:57.017  1909  4174 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 00:39:57.045  1909  4174 I ActivityManager: Changes in 99137 19 to 5, 0 to 184
+06-17 00:40:12.090  1909  3174 I ActivityManager: Changes in 99137 5 to 10, 184 to 0
+06-17 00:42:49.172  1909  1973 I ActivityManager: Start proc 8959:com.google.android.googlequicksearchbox:search/u0a253 for broadcast {com.google.android.googlequicksearchbox/com.google.android.libraries.search.gcm.search.SearchProcessGcmBroadcastReceiver_Receiver}
+06-17 00:42:49.172  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:42:49.379  1909  3174 I ActivityManager: Killing 7266:com.samsung.android.game.gos/u0a76 (adj 955): empty #25
+06-17 00:48:52.677  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 00:48:52.689  1909  4227 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 00:48:52.749  1909  1973 I ActivityManager: Start proc 9117:com.sec.android.app.shealth:remote/u0a328 for service {com.sec.android.app.shealth/com.samsung.android.service.health.data.phd.PrivilegedHealthService}
+06-17 00:48:52.749  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:48:53.417  1909  3174 I ActivityManager: Killing 7324:com.sec.android.provider.badge/u0a55 (adj 955): empty #25
+06-17 00:51:32.558  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 00:51:32.562  1909  2224 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 00:51:57.039  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 00:52:07.051  1909  2065 I ActivityManager: Changes in 10096 19 to 19, 128 to 0
+06-17 00:55:04.375  1909  1972 I ActivityManager: Changes in 10122 10 to 10, 0 to 128
+06-17 00:55:24.395  1909  2065 I ActivityManager: Changes in 10122 10 to 10, 128 to 0
+06-17 00:57:27.035  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-17 00:57:27.049  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 00:57:27.050  1909  4206 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-17 00:57:27.052  1909  1973 I ActivityManager: Start proc 9373:com.samsung.android.game.gos/u0a76 for service {com.samsung.android.game.gos/com.samsung.android.game.gos.service.MainIntentService}
+06-17 00:57:27.053  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:57:27.062  1909  4206 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 00:57:27.250  1909  2224 I ActivityManager: Killing 7364:com.samsung.android.authfw/5278 (adj 945): empty #25
+06-17 00:57:27.276  1909  2224 W ActivityManager: Scheduling restart of crashed service com.samsung.android.authfw/.pass.PassService in 1000ms for connection
+06-17 00:57:28.305  1909  1973 I ActivityManager: Start proc 9397:com.samsung.android.authfw/5278 for service {com.samsung.android.authfw/com.samsung.android.authfw.pass.PassService}
+06-17 00:57:28.305  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:57:28.444  1909  4206 I ActivityManager: Killing 7380:com.samsung.android.samsungpass/u0a127 (adj 945): empty #25
+06-17 00:58:01.313  1909  1973 I ActivityManager: Start proc 9448:com.google.android.partnersetup/u0a243 for service {com.google.android.partnersetup/com.google.android.partnersetup.InstalledAppJobService}
+06-17 00:58:01.313  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:58:01.328  1909  1973 I ActivityManager: Start proc 9449:com.google.android.apps.turbo:aab/u0a250 for service {com.google.android.apps.turbo/com.google.android.libraries.smartbattery.appusage.library.InferAppBucketsJob}
+06-17 00:58:01.328  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:58:01.353  1909  1909 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+06-17 00:58:01.371  1909  4338 I ActivityManager: Changes in 10099 19 to 8, 0 to 128
+06-17 00:58:01.382  1909  2224 I ActivityManager: Changes in 10248 19 to 8, 0 to 128
+06-17 00:58:01.410  1909  3174 I ActivityManager: Changes in 10099 8 to 10, 128 to 0
+06-17 00:58:01.435  1909  4174 I ActivityManager: Changes in 10250 19 to 8, 0 to 128
+06-17 00:58:01.446  1909  2224 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+06-17 00:58:01.449  1909  2224 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
+06-17 00:58:01.456  1909  3174 I ActivityManager: Changes in 10243 19 to 8, 0 to 128
+06-17 00:58:01.473  1909  3606 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+06-17 00:58:01.482  1909  4338 I ActivityManager: Changes in 10248 8 to 10, 128 to 0
+06-17 00:58:01.495  1909  2224 I ActivityManager: Changes in 10214 19 to 8, 0 to 128
+06-17 00:58:01.518  1909  4227 I ActivityManager: Changes in 10243 8 to 10, 128 to 0
+06-17 00:58:01.533  1909  4227 I ActivityManager: Changes in 10214 8 to 10, 128 to 0
+06-17 00:58:01.554  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-17 00:58:01.564  1909  3050 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-17 00:58:01.565  1909  2065 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+06-17 00:58:01.576  1909  3606 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+06-17 00:58:01.582  1909  3606 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
+06-17 00:58:01.596  1909  1909 I ActivityManager: Changes in 10243 19 to 8, 0 to 128
+06-17 00:58:01.606  1909  4206 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+06-17 00:58:01.643  1909  4206 I ActivityManager: Changes in 10243 8 to 10, 128 to 0
+06-17 00:58:01.742  1909  2065 I ActivityManager: Changes in 10243 19 to 8, 0 to 128
+06-17 00:58:01.769  1909  3606 I ActivityManager: Changes in 10243 8 to 10, 128 to 0
+06-17 00:58:01.869  1909  2065 I ActivityManager: Changes in 10243 19 to 8, 0 to 128
+06-17 00:58:01.880  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-17 00:58:01.895  1909  4338 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-17 00:58:01.911  1909  4338 I ActivityManager: Changes in 99137 19 to 8, 0 to 128
+06-17 00:58:01.926  1909  1973 I ActivityManager: Start proc 9547:com.sec.android.app.shealth/u0a328 for broadcast {com.sec.android.app.shealth/com.samsung.android.app.shealth.insights.controller.RuneStoneConditionController}
+06-17 00:58:01.926  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 00:58:01.936  1909  4227 I ActivityManager: Changes in 10108 10 to 8, 0 to 128
+06-17 00:58:02.049  1909  4338 I ActivityManager: Changes in 10108 8 to 10, 128 to 0
+06-17 00:58:02.055  1909  4206 I ActivityManager: Changes in 10250 8 to 10, 128 to 0
+06-17 00:58:02.165  1909  3174 I ActivityManager: Changes in 99137 8 to 10, 128 to 0
+06-17 00:58:02.165  1909  3174 I ActivityManager: Changes in 10243 8 to 10, 128 to 0
+06-17 00:58:02.210  1909  3174 I ActivityManager: Changes in 10328 19 to 11, 0 to 128
+06-17 00:58:02.210  1909  3174 I ActivityManager: Changes in 10117 19 to 11, 0 to 128
+06-17 00:58:02.218  1909  2749 I ActivityManager: Killing 4757:com.android.vending/u0a251 (adj 935): empty #25
+06-17 00:58:02.219  1909  2749 I ActivityManager: Changes in 10328 11 to 19, 128 to 0
+06-17 00:58:02.219  1909  2749 I ActivityManager: Changes in 10117 11 to 19, 128 to 0
+06-17 00:58:02.402  1909  4338 I ActivityManager: Changes in 99137 19 to 8, 0 to 128
+06-17 00:58:02.474  1909  3050 I ActivityManager: Changes in 99137 8 to 10, 128 to 0
+06-17 00:58:02.476  1909  1933 I ActivityManager: Killing 6395:com.samsung.android.mcfds/u0a96 (adj 905): empty #25
+06-17 00:58:07.612  1909  1971 I ActivityManager: Killing 7973:com.samsung.android.voc/u0a329 (adj 905): empty #25
+06-17 00:59:28.063  1909  9411 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-17 00:59:34.106  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-17 01:03:44.715  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 01:03:44.721  1909  3050 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 01:04:58.056  1909  2065 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
+06-17 01:04:58.079  1909  1933 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+06-17 01:05:41.314  1909  2065 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+06-17 01:05:41.332  1909  2224 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+06-17 01:06:20.040  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-17 01:06:30.043  1909  2065 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-17 01:11:02.850  1909  2224 I ActivityManager: Changes in 99137 19 to 8, 0 to 128
+06-17 01:11:03.094  1909  1933 I ActivityManager: Changes in 99137 8 to 10, 128 to 0
+06-17 01:14:08.929  1909  3050 I ActivityManager: Force stopping com.arcfire.online appid=11050 user=0: from pid 10004
+06-17 01:14:08.930  1909  3050 I ActivityManager: Killing 4838:com.arcfire.online/u0a1050 (adj 0): stop com.arcfire.online due to from pid 10004
+06-17 01:14:08.951  1909  3050 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:14:08.951  1909  3050 I ActivityManager: Changes in 10122 10 to 6, 0 to 128
+06-17 01:14:09.087  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 4838
+06-17 01:14:09.353  1909  3606 W ActivityManager: pid 1909 system sent binder code 7 with flags 1 to frozen apps and got error -32
+06-17 01:14:12.830  1909  3606 W ActivityManager: registerReceiverWithFeature: no app for null
+06-17 01:14:12.910  1909  1973 I ActivityManager: Start proc 10063:com.arcfire.online/u0a1050 for next-top-activity {com.arcfire.online/com.arcfire.online.MainActivity}
+06-17 01:14:12.910  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:14:12.951  1909  3606 I ActivityManager: Changes in 11050 19 to 2, 0 to 255
+06-17 01:14:13.100  1909  4206 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:14:13.358  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:14:21.493  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:14:22.113  1909  1965 I ActivityManager: Changes in 99137 3 to 15, 184 to 128
+06-17 01:14:22.113  1909  1965 I ActivityManager: Changes in 11050 2 to 15, 255 to 128
+06-17 01:14:22.145  1909  1933 I ActivityManager: Changes in 99137 15 to 15, 128 to 0
+06-17 01:14:22.145  1909  1933 I ActivityManager: Changes in 11050 15 to 15, 128 to 0
+06-17 01:14:23.088  1909  4206 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:14:26.836  1909  3050 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:14:26.878  1909  1973 I ActivityManager: Start proc 10205:com.samsung.android.voc/u0a329 for content provider {com.samsung.android.voc/com.samsung.android.voc.diagnosis.provider.SamsungMembersDiagnosisProvider}
+06-17 01:14:26.878  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:14:27.153  1909  4407 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:14:32.890  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-17 01:14:33.122  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-17 01:14:36.239  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:14:36.239  1909  1965 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+06-17 01:14:37.061  1909  1965 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:14:37.061  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
+06-17 01:14:37.318  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:14:47.114  1909  1933 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-17 01:14:49.442  1909  1933 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:14:57.066  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 01:14:57.080  1909  1933 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 01:14:57.086  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-17 01:14:57.089  1909  1933 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-17 01:15:12.193  1909  3050 I ActivityManager: Changes in 99137 5 to 10, 184 to 0
+06-17 01:15:12.201  1909  1933 I ActivityManager: Killing 5416:com.google.android.apps.turbo/u0a250 (adj 965): empty #25
+06-17 01:16:00.652  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:16:00.658  1909  1965 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+06-17 01:16:01.305  1909  1965 I ActivityManager: Changes in 11050 2 to 15, 255 to 128
+06-17 01:16:01.380  1909  2870 I ActivityManager: Changes in 99137 19 to 10, 0 to 128
+06-17 01:16:01.387  1909  4338 I ActivityManager: Changes in 99137 10 to 10, 128 to 0
+06-17 01:16:01.388  1909  4338 I ActivityManager: Changes in 11050 15 to 15, 128 to 0
+06-17 01:16:02.113  1909  2537 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:16:03.566  1909  2870 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:16:03.578  1909  4407 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:16:09.597  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-17 01:16:09.621  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-17 01:16:09.951  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:16:09.951  1909  1965 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+06-17 01:17:07.599  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 01:17:07.605  1909  3050 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 01:17:08.166  1909  1973 I ActivityManager: Start proc 10529:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/u0i145 for  {com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:1}
+06-17 01:17:08.166  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:17:08.172 10529 10529 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+06-17 01:17:08.212  1909  3050 I ActivityManager: Changes in 99145 19 to 3, 0 to 184
+06-17 01:17:08.727  1909  3050 I ActivityManager: Killing 8201:com.samsung.android.app.sharelive/5026 (adj 965): empty #25
+06-17 01:17:08.730  1909  3050 I ActivityManager: Changes in 99145 3 to 19, 184 to 128
+06-17 01:17:18.156  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
+06-17 01:17:18.212  1909  4206 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:17:18.521  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:17:21.245  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:17:21.888  1909  1965 I ActivityManager: Changes in 99137 3 to 15, 184 to 128
+06-17 01:17:21.889  1909  1965 I ActivityManager: Changes in 11050 2 to 15, 255 to 128
+06-17 01:17:21.992  1909  3606 I ActivityManager: Changes in 99137 15 to 15, 128 to 0
+06-17 01:17:21.992  1909  3606 I ActivityManager: Changes in 11050 15 to 15, 128 to 0
+06-17 01:17:22.421  1909  4226 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:17:23.099  1909  2720 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:17:23.111  1909  1933 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:17:29.160  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-17 01:17:29.163  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-17 01:17:57.231  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:17:57.978  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
+06-17 01:17:58.029  1909  2537 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:17:58.362  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:18:08.125  1909  2720 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-17 01:18:14.273  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:18:14.939  1909  1965 I ActivityManager: Changes in 11050 2 to 15, 255 to 128
+06-17 01:18:15.008  1909  4338 I ActivityManager: Changes in 99137 19 to 10, 0 to 128
+06-17 01:18:15.048  1909  3606 I ActivityManager: Changes in 99137 15 to 15, 128 to 0
+06-17 01:18:15.048  1909  3606 I ActivityManager: Changes in 11050 15 to 15, 128 to 0
+06-17 01:18:16.041  1909  4338 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:18:16.534  1909  4206 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:18:16.549  1909  4206 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:18:17.460  1909  4338 I ActivityManager: Changes in 10329 3 to 10, 144 to 128
+06-17 01:18:17.460  1909  4338 I ActivityManager: Changes in 10214 3 to 10, 144 to 128
+06-17 01:18:17.542  1909  4338 I ActivityManager: Changes in 10117 19 to 3, 0 to 144
+06-17 01:18:18.065  1909  1965 I ActivityManager: Changes in 10329 19 to 19, 128 to 0
+06-17 01:18:18.065  1909  1965 I ActivityManager: Changes in 10214 19 to 19, 128 to 0
+06-17 01:18:18.777  1909  1973 I ActivityManager: Start proc 10821:com.google.android.gms.ui/u0a252 for next-top-activity {com.google.android.gms/com.google.android.gms.app.settings.GoogleSettingsIALink}
+06-17 01:18:18.777  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:19.132  1909  4226 I ActivityManager: Changes in 99137 15 to 3, 0 to 184
+06-17 01:18:19.334  1909  1973 I ActivityManager: Start proc 10906:com.samsung.android.scloud/5009 for content provider {com.samsung.android.scloud/com.samsung.android.scloud.app.manifest.SCloudStatusProvider}
+06-17 01:18:19.339  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:19.434  1909  1973 I ActivityManager: Start proc 10930:com.android.vending/u0a251 for service {com.android.vending/com.google.android.finsky.billing.service.BillingService}
+06-17 01:18:19.451  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:19.607  1909  1973 I ActivityManager: Start proc 10969:com.google.android.apps.restore/u0a249 for service {com.google.android.apps.restore/com.google.android.apps.restore.backup.photos.apiservice.PhotosBackupApiEndpointService}
+06-17 01:18:19.607  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:19.854  1909  2720 I ActivityManager: Changes in 10117 3 to 15, 144 to 0
+06-17 01:18:20.180  1909  3050 I ActivityManager: Changes in 10249 19 to 3, 0 to 184
+06-17 01:18:20.293  1909  2867 I ActivityManager: Changes in 10251 19 to 3, 0 to 184
+06-17 01:18:20.370  1909  1965 I ActivityManager: Changes in 10117 15 to 3, 0 to 144
+06-17 01:18:20.582  1909  2867 I ActivityManager: Changes in 5004 19 to 5, 0 to 144
+06-17 01:18:20.648  1909  1973 I ActivityManager: Start proc 11193:com.google.android.apps.photos/u0a313 for service {com.google.android.apps.photos/com.google.android.apps.photos.backup.apiservice.grpc.PhotosBackupGrpcService}
+06-17 01:18:20.648  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:20.732  1909  2537 I ActivityManager: Changes in 10251 5 to 10, 184 to 0
+06-17 01:18:20.753  1909  4338 I ActivityManager: Changes in 10251 10 to 5, 0 to 184
+06-17 01:18:20.841  1909  2749 I ActivityManager: Changes in 10251 5 to 10, 184 to 0
+06-17 01:18:21.102  1909  3606 I ActivityManager: Changes in 10328 19 to 5, 0 to 144
+06-17 01:18:21.110  1909  1973 W ActivityManager: Slow operation: 70ms so far, now at startProcess: done updating battery stats
+06-17 01:18:21.110  1909  1973 W ActivityManager: Slow operation: 70ms so far, now at startProcess: building log message
+06-17 01:18:21.110  1909  1973 I ActivityManager: Start proc 11271:com.samsung.android.app.contacts/u0a120 for content provider {com.samsung.android.app.contacts/com.samsung.android.dialtacts.model.internal.datasource.samsungcloudrpc.SamsungCloudRPCSettingProvider}
+06-17 01:18:21.110  1909  1973 W ActivityManager: Slow operation: 70ms so far, now at startProcess: starting to update pids map
+06-17 01:18:21.110  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:21.110  1909  1973 W ActivityManager: Slow operation: 70ms so far, now at startProcess: done updating pids map
+06-17 01:18:21.110  1909  1973 W ActivityManager: Slow operation: 51ms so far, now at startProcess: asking zygote to start proc
+06-17 01:18:21.122  1909  1973 W ActivityManager: Slow operation: 63ms so far, now at startProcess: returned from zygote!
+06-17 01:18:21.131  1909  1973 W ActivityManager: Slow operation: 72ms so far, now at startProcess: done updating battery stats
+06-17 01:18:21.132  1909  1973 W ActivityManager: Slow operation: 73ms so far, now at startProcess: building log message
+06-17 01:18:21.132  1909  1973 I ActivityManager: Start proc 11295:com.samsung.android.aremoji/u0a50 for content provider {com.samsung.android.aremoji/com.samsung.android.aremoji.home.sync.SamsungCloudProvider}
+06-17 01:18:21.132  1909  1973 W ActivityManager: Slow operation: 73ms so far, now at startProcess: starting to update pids map
+06-17 01:18:21.135  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:21.136  1909  1973 W ActivityManager: Slow operation: 77ms so far, now at startProcess: done updating pids map
+06-17 01:18:21.137  1909  1973 W ActivityManager: Slow operation: 64ms so far, now at startProcess: asking zygote to start proc
+06-17 01:18:21.153  1909  1973 W ActivityManager: Slow operation: 80ms so far, now at startProcess: returned from zygote!
+06-17 01:18:21.153  1909  1973 W ActivityManager: Slow operation: 80ms so far, now at startProcess: done updating battery stats
+06-17 01:18:21.153  1909  1973 W ActivityManager: Slow operation: 80ms so far, now at startProcess: building log message
+06-17 01:18:21.153  1909  1973 I ActivityManager: Start proc 11301:com.samsung.android.app.notes/u0a326 for content provider {com.samsung.android.app.notes/com.samsung.android.support.senl.nt.app.sync.cloudsettings.callee.NotesSyncRpcProvider}
+06-17 01:18:21.153  1909  1973 W ActivityManager: Slow operation: 80ms so far, now at startProcess: starting to update pids map
+06-17 01:18:21.153  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:21.153  1909  1973 W ActivityManager: Slow operation: 80ms so far, now at startProcess: done updating pids map
+06-17 01:18:21.153  1909  1973 W ActivityManager: Slow operation: 76ms so far, now at startProcess: asking zygote to start proc
+06-17 01:18:21.200  1909  1973 W ActivityManager: Slow operation: 123ms so far, now at startProcess: returned from zygote!
+06-17 01:18:21.213  1909  1973 W ActivityManager: Slow operation: 136ms so far, now at startProcess: done updating battery stats
+06-17 01:18:21.232  1909  1973 W ActivityManager: Slow operation: 155ms so far, now at startProcess: building log message
+06-17 01:18:21.236  1909  1973 I ActivityManager: Start proc 11304:com.samsung.android.app.reminder/u0a224 for content provider {com.samsung.android.app.reminder/com.samsung.android.app.reminder.data.sync.CloudConnectionProvider}
+06-17 01:18:21.236  1909  1973 W ActivityManager: Slow operation: 159ms so far, now at startProcess: starting to update pids map
+06-17 01:18:21.236  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:21.236  1909  1973 W ActivityManager: Slow operation: 159ms so far, now at startProcess: done updating pids map
+06-17 01:18:21.236  1909  1973 W ActivityManager: Slow operation: 150ms so far, now at startProcess: asking zygote to start proc
+06-17 01:18:21.251  1909  1973 W ActivityManager: Slow operation: 165ms so far, now at startProcess: returned from zygote!
+06-17 01:18:21.304  1909  1973 W ActivityManager: Slow operation: 218ms so far, now at startProcess: done updating battery stats
+06-17 01:18:21.304  1909  1973 W ActivityManager: Slow operation: 218ms so far, now at startProcess: building log message
+06-17 01:18:21.304  1909  1973 I ActivityManager: Start proc 11341:com.samsung.android.samsungpass/u0a127 for content provider {com.samsung.android.samsungpass/com.samsung.android.samsungpass.websignin.signindb.SCSyncSettingLibraryProvider}
+06-17 01:18:21.304  1909  1973 W ActivityManager: Slow operation: 218ms so far, now at startProcess: starting to update pids map
+06-17 01:18:21.304  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:21.304  1909  1973 W ActivityManager: Slow operation: 218ms so far, now at startProcess: done updating pids map
+06-17 01:18:21.307  1909  1973 W ActivityManager: Slow operation: 215ms so far, now at startProcess: asking zygote to start proc
+06-17 01:18:21.327  1909  1973 W ActivityManager: Slow operation: 235ms so far, now at startProcess: returned from zygote!
+06-17 01:18:21.378  1909  2749 W ActivityManager: Slow operation: 68ms so far, now at attachApplicationLocked: immediately after bindApplication
+06-17 01:18:21.380  1909  2749 W ActivityManager: Slow operation: 70ms so far, now at attachApplicationLocked: after updateLruProcessLocked
+06-17 01:18:21.394  1909  2749 W ActivityManager: Slow operation: 84ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+06-17 01:18:21.396  1909  1973 W ActivityManager: Slow operation: 304ms so far, now at startProcess: done updating battery stats
+06-17 01:18:21.396  1909  1973 W ActivityManager: Slow operation: 304ms so far, now at startProcess: building log message
+06-17 01:18:21.396  1909  1973 I ActivityManager: Start proc 11347:com.sec.android.app.sbrowser/u0a330 for content provider {com.sec.android.app.sbrowser/com.sec.android.app.sbrowser.sync.SamsungCloudSyncSettingProvider}
+06-17 01:18:21.396  1909  1973 W ActivityManager: Slow operation: 304ms so far, now at startProcess: starting to update pids map
+06-17 01:18:21.397  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:21.397  1909  1973 W ActivityManager: Slow operation: 305ms so far, now at startProcess: done updating pids map
+06-17 01:18:21.397  1909  1973 W ActivityManager: Slow operation: 302ms so far, now at startProcess: asking zygote to start proc
+06-17 01:18:21.424  1909  1973 W ActivityManager: Slow operation: 329ms so far, now at startProcess: returned from zygote!
+06-17 01:18:21.441  1909  1973 W ActivityManager: Slow operation: 346ms so far, now at startProcess: done updating battery stats
+06-17 01:18:21.441  1909  1973 W ActivityManager: Slow operation: 346ms so far, now at startProcess: building log message
+06-17 01:18:21.441  1909  1973 I ActivityManager: Start proc 11368:com.samsung.android.calendar/u0a222 for content provider {com.samsung.android.calendar/com.samsung.android.libcalendar.platform.samsungcloud.RPCSettingProvider}
+06-17 01:18:21.441  1909  1973 W ActivityManager: Slow operation: 346ms so far, now at startProcess: starting to update pids map
+06-17 01:18:21.441  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:21.441  1909  1973 W ActivityManager: Slow operation: 347ms so far, now at startProcess: done updating pids map
+06-17 01:18:21.497  1909  3434 I ActivityManager: Changes in 10120 19 to 5, 0 to 144
+06-17 01:18:21.533  1909  3050 I ActivityManager: Changes in 10313 19 to 5, 0 to 184
+06-17 01:18:21.579  1909  2870 I ActivityManager: Changes in 10224 19 to 5, 0 to 144
+06-17 01:18:21.633  1909  3050 I ActivityManager: Changes in 10056 19 to 5, 0 to 144
+06-17 01:18:21.718  1909  2057 I ActivityManager: Changes in 10222 19 to 5, 0 to 144
+06-17 01:18:21.744  1909  1973 I ActivityManager: Start proc 11457:com.android.providers.calendar/u0a115 for content provider {com.android.providers.calendar/com.android.providers.calendar.CalendarProvider2}
+06-17 01:18:21.745  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:21.830  1909  4174 I ActivityManager: Changes in 10127 19 to 5, 0 to 144
+06-17 01:18:21.830  1909  4174 I ActivityManager: Changes in 5278 10 to 5, 0 to 184
+06-17 01:18:21.869  1909  1973 I ActivityManager: Start proc 11509:com.samsung.android.stickercenter/1000 for service {com.samsung.android.stickercenter/com.samsung.android.stickercenter.StickerCenterService}
+06-17 01:18:21.869  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:21.889  1909  3606 I ActivityManager: Changes in 10115 19 to 5, 0 to 144
+06-17 01:18:21.905  1909  3606 I ActivityManager: Changes in 10050 19 to 5, 0 to 144
+06-17 01:18:21.996  1909  2057 I ActivityManager: Changes in 10330 19 to 5, 0 to 144
+06-17 01:18:22.274  1909  1965 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:18:22.274  1909  1965 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:18:22.294  1909  1965 I ActivityManager: Changes in 10328 5 to 5, 144 to 184
+06-17 01:18:22.469  1909  2057 I ActivityManager: Changes in 10326 19 to 5, 0 to 144
+06-17 01:18:22.559  1909  1973 I ActivityManager: Start proc 11593:com.sec.android.app.sbrowser:privileged_process0/u0a330 for service {com.sec.android.app.sbrowser/org.chromium.content.app.PrivilegedProcessService0}
+06-17 01:18:22.572  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:22.756  1909  2537 I ActivityManager: Changes in 10330 5 to 5, 144 to 184
+06-17 01:18:23.009  1909  2537 I ActivityManager: Changes in 10328 5 to 5, 184 to 144
+06-17 01:18:23.028  1909  2057 I ActivityManager: Changes in 10328 5 to 5, 144 to 184
+06-17 01:18:25.351  1909  2537 I ActivityManager: Changes in 10117 5 to 5, 144 to 184
+06-17 01:18:25.552  1909  2537 I ActivityManager: Changes in 10117 5 to 5, 184 to 144
+06-17 01:18:26.610  1909  1971 I ActivityManager: Changes in 5004 5 to 15, 144 to 0
+06-17 01:18:27.118  1909  1971 I ActivityManager: Changes in 10328 5 to 15, 184 to 0
+06-17 01:18:27.893  1909  1971 I ActivityManager: Changes in 10115 5 to 15, 144 to 0
+06-17 01:18:28.058  1909  1971 I ActivityManager: Changes in 10330 5 to 15, 184 to 0
+06-17 01:18:28.059  1909  1971 I ActivityManager: Changes in 10326 5 to 15, 144 to 0
+06-17 01:18:28.059  1909  1971 I ActivityManager: Changes in 10224 5 to 15, 144 to 0
+06-17 01:18:28.059  1909  1971 I ActivityManager: Changes in 10222 5 to 15, 144 to 0
+06-17 01:18:28.059  1909  1971 I ActivityManager: Changes in 10127 5 to 15, 144 to 0
+06-17 01:18:28.059  1909  1971 I ActivityManager: Changes in 10120 5 to 15, 144 to 0
+06-17 01:18:28.059  1909  1971 I ActivityManager: Changes in 10117 5 to 15, 144 to 0
+06-17 01:18:28.059  1909  1971 I ActivityManager: Changes in 10056 5 to 15, 144 to 0
+06-17 01:18:28.059  1909  1971 I ActivityManager: Changes in 10050 5 to 15, 144 to 0
+06-17 01:18:28.059  1909  1971 I ActivityManager: Changes in 5278 5 to 15, 184 to 0
+06-17 01:18:28.461  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-17 01:18:28.523  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-17 01:18:30.242  1909  1973 I ActivityManager: Start proc 11737:com.android.vending:background/u0a251 for service {com.android.vending/com.google.frameworks.client.data.android.server.play.BackgroundProcessEndpointService}
+06-17 01:18:30.243  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:31.001  1909  1971 I ActivityManager: Killing 9373:com.samsung.android.game.gos/u0a76 (adj 985): empty #25
+06-17 01:18:31.363  1909  1971 I ActivityManager: Killing 7268:com.lguplus.appstore/u0a99 (adj 985): empty #25
+06-17 01:18:31.496  1909  2057 I ActivityManager: Changes in 10120 19 to 8, 0 to 128
+06-17 01:18:31.560  1909  2749 I ActivityManager: Changes in 10056 19 to 8, 0 to 128
+06-17 01:18:31.619  1909  2057 I ActivityManager: Changes in 10120 8 to 10, 128 to 0
+06-17 01:18:31.620  1909  2057 I ActivityManager: Changes in 10056 8 to 10, 128 to 0
+06-17 01:18:34.696  1909  2867 I ActivityManager: Changes in 99137 5 to 10, 184 to 0
+06-17 01:18:34.698  1909  2867 I ActivityManager: Changes in 10313 5 to 10, 184 to 0
+06-17 01:18:34.698  1909  2867 I ActivityManager: Changes in 10249 5 to 10, 184 to 0
+06-17 01:18:37.816  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:18:38.660  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
+06-17 01:18:38.707  1909  4338 I ActivityManager: Changes in 99137 10 to 3, 0 to 184
+06-17 01:18:38.707  1909  4338 I ActivityManager: Changes in 10313 10 to 3, 0 to 184
+06-17 01:18:38.708  1909  4338 I ActivityManager: Changes in 10249 10 to 3, 0 to 184
+06-17 01:18:39.007  1909  4174 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:18:46.606  1909  1972 I ActivityManager: Killing 7556:com.google.android.as.oss/u0a248 (adj 985): empty #25
+06-17 01:18:47.607  1909  1972 I ActivityManager: Killing 6844:com.samsung.android.app.routines/u0a53 (adj 985): empty #25
+06-17 01:18:48.607  1909  1972 I ActivityManager: Killing 7627:com.samsung.mfcontents/u0a95 (adj 965): empty #25
+06-17 01:18:48.607  1909  1972 I ActivityManager: Killing 8599:com.samsung.android.privacydashboard/u0a107 (adj 965): empty #26
+06-17 01:18:48.607  1909  1972 I ActivityManager: Killing 8959:com.google.android.googlequicksearchbox:search/u0a253 (adj 975): empty #27
+06-17 01:18:48.608  1909  1972 I ActivityManager: Killing 9547:com.sec.android.app.shealth/u0a328 (adj 975): empty #28
+06-17 01:18:48.611  1909  1972 I ActivityManager: Killing 9448:com.google.android.partnersetup/u0a243 (adj 975): empty #29
+06-17 01:18:48.612  1909  1972 I ActivityManager: Killing 9449:com.google.android.apps.turbo:aab/u0a250 (adj 985): empty #30
+06-17 01:18:49.065  1909  2749 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-17 01:18:49.066  1909  2749 I ActivityManager: Changes in 10313 3 to 10, 184 to 0
+06-17 01:18:49.066  1909  2749 I ActivityManager: Changes in 10249 3 to 10, 184 to 0
+06-17 01:18:49.606  1909  1972 I ActivityManager: Killing 7512:com.samsung.sait.sohservice/1000 (adj 965): empty #25
+06-17 01:18:53.802  1909  1973 I ActivityManager: Start proc 11916:com.google.android.googlequicksearchbox:search/u0a253 for broadcast {com.google.android.googlequicksearchbox/com.google.android.libraries.search.gcm.search.SearchProcessGcmBroadcastReceiver_Receiver}
+06-17 01:18:53.802  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:18:54.004  1909  4407 I ActivityManager: Killing 7550:com.samsung.faceservice/5004 (adj 955): empty #25
+06-17 01:19:16.850  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:19:17.443  1909  1965 I ActivityManager: Changes in 11050 2 to 15, 255 to 128
+06-17 01:19:17.532  1909  4407 I ActivityManager: Changes in 99137 10 to 10, 0 to 128
+06-17 01:19:17.532  1909  4407 I ActivityManager: Changes in 10313 10 to 10, 0 to 128
+06-17 01:19:17.533  1909  4407 I ActivityManager: Changes in 10249 10 to 10, 0 to 128
+06-17 01:19:17.562  1909  1935 I ActivityManager: Changes in 99137 10 to 10, 128 to 0
+06-17 01:19:17.563  1909  1935 I ActivityManager: Changes in 11050 15 to 15, 128 to 0
+06-17 01:19:17.563  1909  1935 I ActivityManager: Changes in 10313 10 to 10, 128 to 0
+06-17 01:19:17.563  1909  1935 I ActivityManager: Changes in 10249 10 to 10, 128 to 0
+06-17 01:19:18.252  1909  1965 I ActivityManager: Changes in 99143 6 to 3, 0 to 184
+06-17 01:19:18.253  1909  1965 I ActivityManager: Changes in 10275 6 to 2, 0 to 255
+06-17 01:19:18.253  1909  1965 I ActivityManager: Changes in 10266 17 to 17, 0 to 128
+06-17 01:19:18.569  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:19:19.620  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:19:20.232  1909  1965 I ActivityManager: Changes in 99143 3 to 6, 184 to 128
+06-17 01:19:20.237  1909  1965 I ActivityManager: Changes in 10275 2 to 6, 255 to 128
+06-17 01:19:20.381  1909  2720 I ActivityManager: Changes in 99143 6 to 6, 128 to 0
+06-17 01:19:20.381  1909  2720 I ActivityManager: Changes in 10275 6 to 6, 128 to 0
+06-17 01:19:20.381  1909  2720 I ActivityManager: Changes in 10266 17 to 17, 128 to 0
+06-17 01:19:20.434  1909  2720 I ActivityManager: Killing 8115:com.samsung.android.dqagent/1000 (adj 999): empty #25
+06-17 01:19:21.191  1909  4407 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:19:21.820  1909  4407 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:19:21.834  1909  2870 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:19:22.917  1909  2870 I ActivityManager: Changes in 10329 3 to 10, 144 to 128
+06-17 01:19:22.917  1909  2870 I ActivityManager: Changes in 10214 3 to 10, 144 to 128
+06-17 01:19:22.923  1909  2870 I ActivityManager: Killing 6330:com.samsung.android.ce/u0a96 (adj 985): empty #25
+06-17 01:19:22.959  1909  2870 I ActivityManager: Changes in 10117 19 to 3, 0 to 144
+06-17 01:19:23.456  1909  1965 I ActivityManager: Changes in 10329 19 to 19, 128 to 0
+06-17 01:19:23.457  1909  1965 I ActivityManager: Changes in 10214 19 to 19, 128 to 0
+06-17 01:19:24.132  1909  1965 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:19:24.132  1909  1965 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:19:24.556  1909  4206 I ActivityManager: Changes in 10326 19 to 5, 0 to 144
+06-17 01:19:24.567  1909  4206 I ActivityManager: Changes in 10224 19 to 5, 0 to 144
+06-17 01:19:24.790  1909  1965 I ActivityManager: Changes in 10117 3 to 15, 144 to 128
+06-17 01:19:24.830  1909  2720 I ActivityManager: Changes in 10117 15 to 15, 128 to 0
+06-17 01:19:27.844  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-17 01:19:27.889  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-17 01:19:30.654  1909  1971 I ActivityManager: Changes in 10326 5 to 15, 144 to 0
+06-17 01:19:30.659  1909  1971 I ActivityManager: Changes in 10224 5 to 15, 144 to 0
+06-17 01:19:34.202  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:19:35.380  1909  1965 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:19:35.380  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
+06-17 01:19:35.710  1909  2720 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:19:45.576  1909  4341 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-17 01:19:51.657  1909  1972 I ActivityManager: Killing 10529:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/u0a253i145 (adj 905): empty #25
+06-17 01:19:51.704  1909  4341 W ActivityManager: Scheduling restart of crashed service com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:1 in 1000ms for connection
+06-17 01:19:53.022  1909  1972 I ActivityManager: Killing 10930:com.android.vending/u0a251 (adj 995): empty #25
+06-17 01:20:20.226  1909  1973 I ActivityManager: Start proc 12267:com.android.vending/u0a251 for service {com.android.vending/com.google.android.finsky.billing.service.BillingService}
+06-17 01:20:20.226  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:20:20.353  1909  3434 I ActivityManager: Changes in 10251 19 to 5, 0 to 184
+06-17 01:20:20.392  1909  3434 I ActivityManager: Changes in 10251 5 to 10, 184 to 0
+06-17 01:20:20.782  1909  1972 I ActivityManager: Changes in 10251 19 to 11, 0 to 128
+06-17 01:20:20.791  1909  2057 I ActivityManager: Changes in 10251 11 to 19, 128 to 0
+06-17 01:20:27.597  1909  4174 I ActivityManager: Killing 11457:com.android.providers.calendar/u0a115 (adj 985): empty #25
+06-17 01:20:27.606  1909  4174 W ActivityManager: stopServiceToken startId 11 is last, but have 1 remaining args
+06-17 01:20:27.620  1909  4174 I ActivityManager: Killing 9397:com.samsung.android.authfw/5278 (adj 985): empty #25
+06-17 01:20:27.654  1909  4174 W ActivityManager: Scheduling restart of crashed service com.samsung.android.authfw/.pass.PassService in 1000ms for connection
+06-17 01:20:28.683  1909  1973 I ActivityManager: Start proc 12347:com.samsung.android.authfw/5278 for service {com.samsung.android.authfw/com.samsung.android.authfw.pass.PassService}
+06-17 01:20:28.683  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:20:28.811  1909  4174 I ActivityManager: Killing 11509:com.samsung.android.stickercenter/1000 (adj 975): empty #25
+06-17 01:20:28.841  1909  3434 W ActivityManager: Scheduling restart of crashed service com.samsung.android.stickercenter/.StickerCenterService in 1000ms for connection
+06-17 01:20:29.869  1909  1973 I ActivityManager: Start proc 12363:com.samsung.android.stickercenter/1000 for service {com.samsung.android.stickercenter/com.samsung.android.stickercenter.StickerCenterService}
+06-17 01:20:29.869  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:20:29.973  1909  3434 I ActivityManager: Killing 11593:com.sec.android.app.sbrowser:privileged_process0/u0a330 (adj 975): empty #25
+06-17 01:20:30.027  1909  3050 W ActivityManager: Scheduling restart of crashed service com.sec.android.app.sbrowser/org.chromium.content.app.PrivilegedProcessService0 in 1000ms for connection
+06-17 01:20:32.408  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:20:32.967  1909  1965 I ActivityManager: Changes in 11050 2 to 15, 255 to 128
+06-17 01:20:33.013  1909  4226 I ActivityManager: Changes in 99137 19 to 10, 0 to 128
+06-17 01:20:33.013  1909  4226 I ActivityManager: Changes in 10313 19 to 10, 0 to 128
+06-17 01:20:33.013  1909  4226 I ActivityManager: Changes in 10249 19 to 10, 0 to 128
+06-17 01:20:33.022  1909  2225 I ActivityManager: Changes in 99137 15 to 15, 128 to 0
+06-17 01:20:33.022  1909  2225 I ActivityManager: Changes in 11050 15 to 15, 128 to 0
+06-17 01:20:33.028  1909  2225 I ActivityManager: Changes in 10313 15 to 15, 128 to 0
+06-17 01:20:33.028  1909  2225 I ActivityManager: Changes in 10249 15 to 15, 128 to 0
+06-17 01:20:33.916  1909  4226 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:20:34.649  1909  4206 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:20:34.673  1909  2225 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:20:36.296  1909  4206 I ActivityManager: Changes in 10329 3 to 10, 144 to 128
+06-17 01:20:36.296  1909  4206 I ActivityManager: Changes in 10214 3 to 10, 144 to 128
+06-17 01:20:36.322  1909  4206 I ActivityManager: Changes in 10117 19 to 3, 0 to 144
+06-17 01:20:36.815  1909  1965 I ActivityManager: Changes in 10329 19 to 19, 128 to 0
+06-17 01:20:36.815  1909  1965 I ActivityManager: Changes in 10214 19 to 19, 128 to 0
+06-17 01:20:37.580  1909  1965 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:20:37.580  1909  1965 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:20:37.913  1909  3434 I ActivityManager: Changes in 10326 19 to 5, 0 to 144
+06-17 01:20:37.921  1909  2057 I ActivityManager: Changes in 10224 19 to 5, 0 to 144
+06-17 01:20:38.197  1909  1965 I ActivityManager: Changes in 10117 3 to 15, 144 to 128
+06-17 01:20:38.238  1909  3434 I ActivityManager: Changes in 10117 15 to 15, 128 to 0
+06-17 01:20:40.677  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-17 01:20:40.711  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-17 01:20:43.986  1909  1971 I ActivityManager: Changes in 10326 5 to 15, 144 to 0
+06-17 01:20:43.990  1909  1971 I ActivityManager: Changes in 10224 5 to 15, 144 to 0
+06-17 01:20:59.245  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:20:59.246  1909  1965 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+06-17 01:21:00.143  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
+06-17 01:21:00.212  1909  4226 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:21:00.212  1909  4226 I ActivityManager: Changes in 10313 19 to 3, 0 to 184
+06-17 01:21:00.212  1909  4226 I ActivityManager: Changes in 10249 19 to 3, 0 to 184
+06-17 01:21:00.490  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:21:10.410  1909  4174 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-17 01:21:10.410  1909  4174 I ActivityManager: Changes in 10313 3 to 10, 184 to 0
+06-17 01:21:10.411  1909  4174 I ActivityManager: Changes in 10249 3 to 10, 184 to 0
+06-17 01:21:18.899  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:21:18.901  1909  1965 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+06-17 01:21:19.464  1909  1965 I ActivityManager: Changes in 11050 2 to 15, 255 to 128
+06-17 01:21:20.228  1909  3050 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:21:20.859  1909  3050 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:21:20.887  1909  4174 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:21:21.246  1909  3050 I ActivityManager: Changes in 99137 19 to 10, 0 to 128
+06-17 01:21:21.247  1909  3050 I ActivityManager: Changes in 10313 19 to 10, 0 to 128
+06-17 01:21:21.247  1909  3050 I ActivityManager: Changes in 10249 19 to 10, 0 to 128
+06-17 01:21:21.273  1909  4211 I ActivityManager: Changes in 99137 15 to 15, 128 to 0
+06-17 01:21:21.273  1909  4211 I ActivityManager: Changes in 11050 15 to 15, 128 to 0
+06-17 01:21:21.273  1909  4211 I ActivityManager: Changes in 10313 15 to 15, 128 to 0
+06-17 01:21:21.273  1909  4211 I ActivityManager: Changes in 10249 15 to 15, 128 to 0
+06-17 01:21:22.312  1909  4211 I ActivityManager: Changes in 10329 3 to 10, 144 to 128
+06-17 01:21:22.312  1909  4211 I ActivityManager: Changes in 10214 3 to 10, 144 to 128
+06-17 01:21:22.356  1909  3050 I ActivityManager: Changes in 10117 19 to 3, 0 to 144
+06-17 01:21:22.857  1909  1965 I ActivityManager: Changes in 10329 19 to 19, 128 to 0
+06-17 01:21:22.857  1909  1965 I ActivityManager: Changes in 10214 19 to 19, 128 to 0
+06-17 01:21:23.616  1909  1965 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:21:23.617  1909  1965 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:21:23.956  1909  2057 I ActivityManager: Changes in 10326 19 to 5, 0 to 144
+06-17 01:21:23.961  1909  2057 I ActivityManager: Changes in 10224 19 to 5, 0 to 144
+06-17 01:21:24.239  1909  1965 I ActivityManager: Changes in 10117 3 to 15, 144 to 128
+06-17 01:21:24.281  1909  3050 I ActivityManager: Changes in 10117 15 to 15, 128 to 0
+06-17 01:21:26.896  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-17 01:21:26.935  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-17 01:21:30.046  1909  1971 I ActivityManager: Changes in 10326 5 to 15, 144 to 0
+06-17 01:21:30.052  1909  1971 I ActivityManager: Changes in 10224 5 to 15, 144 to 0
+06-17 01:21:30.670  1909  4174 I ActivityManager: Changes in 10214 15 to 3, 0 to 144
+06-17 01:21:30.677  1909  3050 I ActivityManager: Changes in 10329 15 to 3, 0 to 144
+06-17 01:21:31.501  1909  4211 I ActivityManager: Changes in 10329 3 to 10, 144 to 128
+06-17 01:21:31.501  1909  4211 I ActivityManager: Changes in 10214 3 to 10, 144 to 128
+06-17 01:21:31.516  1909  3434 I ActivityManager: Changes in 10117 19 to 3, 0 to 144
+06-17 01:21:31.970  1909  1965 I ActivityManager: Changes in 10329 15 to 15, 128 to 0
+06-17 01:21:31.970  1909  1965 I ActivityManager: Changes in 10214 15 to 15, 128 to 0
+06-17 01:21:32.827  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:21:33.067  1909  4211 I ActivityManager: Changes in 10326 15 to 5, 0 to 144
+06-17 01:21:33.080  1909  4174 I ActivityManager: Changes in 10224 15 to 5, 0 to 144
+06-17 01:21:33.438  1909  4206 I ActivityManager: Changes in 10117 3 to 15, 144 to 0
+06-17 01:21:33.780  1909  1965 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:21:33.781  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
+06-17 01:21:34.054  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:21:39.198  1909  1971 I ActivityManager: Changes in 10326 5 to 15, 144 to 0
+06-17 01:21:39.209  1909  1971 I ActivityManager: Changes in 10224 5 to 15, 144 to 0
+06-17 01:21:43.983  1909  2225 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-17 01:21:56.445 10063 10112 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x50 in tid 10112 (mqt_v_js), pid 10063 (.arcfire.online)
+06-17 01:21:57.239 12906 12906 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+06-17 01:21:57.240 12906 12906 F DEBUG   : Build fingerprint: 'samsung/a34xks/a34x:16/BP2A.250605.031.A3/A346NKSSEEZD4:user/release-keys'
+06-17 01:21:57.240 12906 12906 F DEBUG   : Revision: '6'
+06-17 01:21:57.240 12906 12906 F DEBUG   : ABI: 'arm64'
+06-17 01:21:57.240 12906 12906 F DEBUG   : Processor: '6'
+06-17 01:21:57.240 12906 12906 F DEBUG   : Timestamp: 2026-06-17 01:21:56.572438634+0900
+06-17 01:21:57.240 12906 12906 F DEBUG   : Process uptime: 465s
+06-17 01:21:57.240 12906 12906 F DEBUG   : Cmdline: com.arcfire.online
+06-17 01:21:57.240 12906 12906 F DEBUG   : pid: 10063, tid: 10112, name: mqt_v_js  >>> com.arcfire.online <<<
+06-17 01:21:57.240 12906 12906 F DEBUG   : uid: 11050
+06-17 01:21:57.240 12906 12906 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+06-17 01:21:57.240 12906 12906 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000050
+06-17 01:21:57.240 12906 12906 F DEBUG   : Cause: null pointer dereference
+06-17 01:21:57.240 12906 12906 F DEBUG   :     x0  0002a700fcfd5eb6  x1  00000078488180f0  x2  0000000000000018  x3  000009db6aedc463
+06-17 01:21:57.240 12906 12906 F DEBUG   :     x4  00ffffffffffffff  x5  0000000013b3dbec  x6  676e756f59204347  x7  6e654720676e756f
+06-17 01:21:57.240 12906 12906 F DEBUG   :     x8  00000000000b644c  x9  00000000262166b6  x10 000000003b9aca00  x11 0000000000000001
+06-17 01:21:57.240 12906 12906 F DEBUG   :     x12 00000000000b644c  x13 000000007fffffff  x14 0000000013b3dbec  x15 000009db6aeecf08
+06-17 01:21:57.240 12906 12906 F DEBUG   :     x16 0025d1479826c3b3  x17 000000004cec4ec5  x18 00000078478a8000  x19 00000076b1800380
+06-17 01:21:57.240 12906 12906 F DEBUG   :     x20 0000000000000000  x21 0000007848818340  x22 0000000000000001  x23 00000076b18006a0
+06-17 01:21:57.240 12906 12906 F DEBUG   :     x24 00000076b1802128  x25 0000000000000000  x26 000000784881a700  x27 0000000000000000
+06-17 01:21:57.240 12906 12906 F DEBUG   :     x28 0000000000000048  x29 0000007848818110
+06-17 01:21:57.240 12906 12906 F DEBUG   :     lr  00000078416e91b0  sp  0000007848818110  pc  00000078416e91b0  pst 0000000080001000
+06-17 01:21:57.240 12906 12906 F DEBUG   : 56 total frames
+06-17 01:21:57.240 12906 12906 F DEBUG   : backtrace:
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #00 pc 000000000014a1b0  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #01 pc 00000000001472a4  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #02 pc 0000000000149808  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #03 pc 00000000000f3880  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #04 pc 00000000000f1c28  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #05 pc 000000000008b59c  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #06 pc 000000000008b50c  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #07 pc 00000000000aafbc  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libreanimated.so (offset 0x1bab000) (facebook::jsi::WithRuntimeDecorator<reanimated::AroundLock, facebook::jsi::Runtime, facebook::jsi::Runtime>::createStringFromAscii(char const*, unsigned long)+88) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #08 pc 000000000009b220  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libreanimated.so (offset 0x1bab000) (void facebook::jsi::Object::setProperty<facebook::jsi::Value>(facebook::jsi::Runtime&, char const*, facebook::jsi::Value&&) const+84) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #09 pc 00000000000b9e04  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::ShareableObject::toJSValue(facebook::jsi::Runtime&)+176) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #10 pc 00000000000ba35c  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::ShareableWorklet::toJSValue(facebook::jsi::Runtime&)+44) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #11 pc 00000000000a92b0  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::WorkletRuntime::executeSync(facebook::jsi::Runtime&, facebook::jsi::Value const&) const+184) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #12 pc 0000000000096070  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #13 pc 0000000000095cd0  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #14 pc 000000000009c7b8  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #15 pc 00000000000aca40  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #16 pc 00000000000ae3f4  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #17 pc 00000000000adaac  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #18 pc 000000000009c8c8  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #19 pc 000000000009b20c  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #20 pc 00000000000c1184  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #21 pc 00000000000afce0  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #22 pc 00000000000adaac  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #23 pc 000000000009c8c8  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #24 pc 000000000009b4d0  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #25 pc 00000000000fcb08  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #26 pc 000000000009c7b8  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #27 pc 00000000000aca40  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #28 pc 00000000000ae3f4  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #29 pc 00000000000adaac  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #30 pc 000000000009c8c8  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #31 pc 000000000009c444  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #32 pc 000000000008e0ec  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #33 pc 00000000001a4d98  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libfabricjni.so (offset 0xec6000) (facebook::react::Task::execute(facebook::jsi::Runtime&, bool)+256) (BuildId: 074196c1ce0fefdd)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #34 pc 00000000001a322c  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libfabricjni.so (offset 0xec6000) (facebook::react::RuntimeScheduler_Modern::executeMacrotask(facebook::jsi::Runtime&, facebook::react::Task&, bool) const+52) (BuildId: 074196c1ce0fefdd)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #35 pc 00000000001a3120  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libfabricjni.so (offset 0xec6000) (facebook::react::RuntimeScheduler_Modern::executeTask(facebook::jsi::Runtime&, facebook::react::Task&, std::__ndk1::chrono::time_point<std::__ndk1::chrono::steady_clock, std::__ndk1::chrono::duration<long long, std::__ndk1::ratio<1l, 1000000000l>>>)+48) (BuildId: 074196c1ce0fefdd)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #36 pc 00000000001a2d98  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libfabricjni.so (offset 0xec6000) (facebook::react::RuntimeScheduler_Modern::startWorkLoop(facebook::jsi::Runtime&, bool)+144) (BuildId: 074196c1ce0fefdd)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #37 pc 00000000000560c0  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!librninstance.so (offset 0x1c9f000) (BuildId: 44780688da79cb26)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #38 pc 0000000000093194  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libreactnativejni.so (offset 0x1acb000) (BuildId: 414dcce2b8e85959)
+06-17 01:21:57.240 12906 12906 F DEBUG   :       #39 pc 0000000000019804  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libfbjni.so (offset 0x10e4000) (facebook::jni::detail::MethodWrapper<void (facebook::jni::JNativeRunnable::*)(), &facebook::jni::JNativeRunnable::run(), facebook::jni::JNativeRunnable, void>::dispatch(facebook::jni::alias_ref<facebook::jni::detail::JTypeFor<facebook::jni::HybridClass<facebook::jni::JNativeRunnable, facebook::jni::JRunnable>::JavaPart, facebook::jni::JRunnable, void>::_javaobject*>)+72) (BuildId: a22242831a7971267de570e06121acb588ce64cd)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #40 pc 0000000000019744  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/base.apk!libfbjni.so (offset 0x10e4000) (facebook::jni::detail::FunctionWrapper<void (*)(facebook::jni::alias_ref<facebook::jni::detail::JTypeFor<facebook::jni::HybridClass<facebook::jni::JNativeRunnable, facebook::jni::JRunnable>::JavaPart, facebook::jni::JRunnable, void>::_javaobject*>), facebook::jni::detail::JTypeFor<facebook::jni::HybridClass<facebook::jni::JNativeRunnable, facebook::jni::JRunnable>::JavaPart, facebook::jni::JRunnable, void>::_javaobject*, void>::call(_JNIEnv*, _jobject*, void (*)(facebook::jni::alias_ref<facebook::jni::detail::JTypeFor<facebook::jni::HybridClass<facebook::jni::JNativeRunnable, facebook::jni::JRunnable>::JavaPart, facebook::jni::JRunnable, void>::_javaobject*>))+60) (BuildId: a22242831a7971267de570e06121acb588ce64cd)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #41 pc 0000000000f2f23c  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (art_jni_trampoline+108)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #42 pc 0000000000972264  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.os.Handler.dispatchMessage+68)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #43 pc 000000000072c8dc  /apex/com.android.art/lib64/libart.so (nterp_helper+2124) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #44 pc 000000000043bf66  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/oat/arm64/base.vdex (com.facebook.react.bridge.queue.MessageQueueThreadHandler.dispatchMessage+6)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #45 pc 00000000009c3500  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.os.Looper.loopOnce+1952)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #46 pc 00000000009c2ce4  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.os.Looper.loop+244)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #47 pc 000000000072c104  /apex/com.android.art/lib64/libart.so (nterp_helper+116) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #48 pc 000000000043c0f4  /data/app/~~HN5FALFSd1ABL-M8x_s_nA==/com.arcfire.online-sWfge0QqmubotkQTr7sczA==/oat/arm64/base.vdex (com.facebook.react.bridge.queue.MessageQueueThreadImpl$4.run+80)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #49 pc 000000000038dd10  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (java.lang.Thread.run+64)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #50 pc 0000000000298f94  /apex/com.android.art/lib64/libart.so (art_quick_invoke_stub+612) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #51 pc 000000000029738c  /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+148) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #52 pc 00000000004d5fd0  /apex/com.android.art/lib64/libart.so (art::Thread::CreateCallback(void*)+1384) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #53 pc 00000000004d5a54  /apex/com.android.art/lib64/libart.so (art::Thread::CreateCallbackWithUffdGc(void*)+12) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #54 pc 0000000000080f8c  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+236) (BuildId: 8ff701fa7a74a8ad475206062b5b72aa)
+06-17 01:21:57.241 12906 12906 F DEBUG   :       #55 pc 00000000000737f0  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: 8ff701fa7a74a8ad475206062b5b72aa)
+06-17 01:21:57.299  1909 12912 W ActivityManager: crash : com.arcfire.online,11050
+06-17 01:21:57.329  1909  1963 I ActivityManager: Showing crash dialog for package com.arcfire.online u0
+06-17 01:21:57.347  1909 12909 I ActivityManager: Killing 10063:com.arcfire.online/u0a1050 (adj 0): crash
+06-17 01:21:57.353  1909  2342 W ActivityManager: pid 1909 system sent binder code 1 with flags 1 to frozen apps and got error -32
+06-17 01:21:57.397  1909  2225 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:21:57.421  1909  1973 I ActivityManager: Start proc 12919:com.samsung.android.dqagent/1000 for broadcast {com.samsung.android.dqagent/com.samsung.android.dqagent.receiver.DQADataReceiver}
+06-17 01:21:57.445  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:21:57.445  1909  1973 W ActivityManager: Slow operation: 72ms so far, now at startProcess: done updating pids map
+06-17 01:21:57.469  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 10063
+06-17 01:21:57.538  1909  2057 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:21:57.754  1909  2057 W ActivityManager: pid 1909 system sent binder code 7 with flags 1 to frozen apps and got error -32
+06-17 01:21:59.203  1909  1972 I ActivityManager: PendingStartActivityUids startActivity to updateOomAdj delay:1396ms, uid:10147
+06-17 01:22:12.627  1909  2537 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-17 01:22:12.635  1909  2537 I ActivityManager: Killing 7549:com.samsung.cmh/5004 (adj 975): empty #25
+06-17 01:22:17.230  1909  1973 I ActivityManager: Start proc 12965:com.lguplus.appstore/u0a99 for activelaunch {com.lguplus.appstore/com.onestore.default_launcher}
+06-17 01:22:17.233  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:22:17.545  1909  1973 I ActivityManager: Start proc 13007:com.sec.android.provider.badge/u0a55 for broadcast {com.sec.android.provider.badge/com.sec.android.provider.badge.BadgeCountReceiver}
+06-17 01:22:17.546  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:22:17.654  1909  4206 I ActivityManager: Changes in 10055 19 to 11, 0 to 128
+06-17 01:22:17.681  1909  4206 I ActivityManager: Changes in 10055 11 to 3, 128 to 144
+06-17 01:22:18.215  1909  1973 I ActivityManager: Start proc 13035:com.arcfire.online/u0a1050 for activelaunch {com.arcfire.online/com.arcfire.online.MainActivity}
+06-17 01:22:18.215  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:22:18.427  1909  2537 I ActivityManager: Changes in 11050 19 to 2, 0 to 255
+06-17 01:22:18.447  1909  4211 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:22:18.447  1909  4211 I ActivityManager: Changes in 10251 19 to 3, 0 to 184
+06-17 01:22:18.733  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:22:22.593  1909  4226 I ActivityManager: Killing 12965:com.lguplus.appstore/u0a99 (adj 905): AL_Kill : over 3 sec
+06-17 01:22:22.623  1909  4226 I ActivityManager: Changes in 10251 3 to 10, 184 to 0
+06-17 01:22:23.737  1909  1971 I ActivityManager: Changes in 10055 5 to 15, 144 to 0
+06-17 01:22:28.720  1909  2537 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-17 01:22:38.406  1909  2537 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:22:48.483  1909  4227 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-17 01:22:48.486  1909  4226 I ActivityManager: Killing 9117:com.sec.android.app.shealth:remote/u0a328 (adj 985): empty #25
+06-17 01:22:58.757  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:22:59.359  1909  1965 I ActivityManager: Changes in 11050 2 to 15, 255 to 128
+06-17 01:22:59.445  1909  2537 I ActivityManager: Changes in 99137 19 to 10, 0 to 128
+06-17 01:22:59.496  1909  3434 I ActivityManager: Changes in 99137 15 to 15, 128 to 0
+06-17 01:22:59.496  1909  3434 I ActivityManager: Changes in 11050 15 to 15, 128 to 0
+06-17 01:22:59.688  1909  4227 I ActivityManager: Changes in 10117 19 to 3, 0 to 144
+06-17 01:22:59.949  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:23:00.897  1909  2537 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:23:00.911  1909  3050 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:23:01.366  1909  2537 I ActivityManager: Changes in 10326 19 to 5, 0 to 144
+06-17 01:23:01.394  1909  4206 I ActivityManager: Changes in 10224 19 to 5, 0 to 144
+06-17 01:23:01.481  1909  1965 I ActivityManager: Changes in 10117 3 to 15, 144 to 128
+06-17 01:23:01.521  1909  4206 I ActivityManager: Changes in 10117 15 to 15, 128 to 0
+06-17 01:23:06.929  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-17 01:23:06.981  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-17 01:23:07.426  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:23:07.506  1909  1971 I ActivityManager: Changes in 10326 5 to 15, 144 to 0
+06-17 01:23:07.515  1909  1971 I ActivityManager: Changes in 10224 5 to 15, 144 to 0
+06-17 01:23:08.273  1909  1965 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:23:08.273  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
+06-17 01:23:08.589  1909  4226 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:23:18.473  1909  2057 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-17 01:23:59.741  1909  1973 I ActivityManager: Start proc 13366:com.samsung.android.ce/u0a96 for service {com.samsung.android.mcfds/com.samsung.android.ce.ContextEngineSystemService}
+06-17 01:23:59.741  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:24:00.039  1909  3434 I ActivityManager: Changes in 10096 19 to 5, 0 to 184
+06-17 01:24:00.316  1909  1973 I ActivityManager: Start proc 13425:com.sec.android.app.shealth/u0a328 for content provider {com.sec.android.app.shealth/com.samsung.android.app.shealth.insights.healthcontext.HealthContextProvider}
+06-17 01:24:00.316  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:24:00.497  1909  1973 I ActivityManager: Start proc 13455:com.sec.android.app.shealth:remote/u0a328 for service {com.sec.android.app.shealth/com.samsung.android.service.health.HealthService}
+06-17 01:24:00.497  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:24:00.617  1909  1973 I ActivityManager: Start proc 13483:com.samsung.android.mcfds/u0a96 for content provider {com.samsung.android.mcfds/com.samsung.android.mcfds.handler.client.ClientProvider}
+06-17 01:24:00.617  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:24:00.770  1909  4226 I ActivityManager: Changes in 10328 10 to 5, 0 to 184
+06-17 01:24:00.770  1909  4226 I ActivityManager: Changes in 10117 10 to 5, 0 to 144
+06-17 01:24:06.495  1909  1971 I ActivityManager: Changes in 10328 5 to 15, 184 to 0
+06-17 01:24:06.496  1909  1971 I ActivityManager: Changes in 10117 5 to 15, 144 to 0
+06-17 01:24:10.957  1909  2225 I ActivityManager: Changes in 10096 5 to 10, 184 to 0
+06-17 01:24:10.963  1909  2225 I ActivityManager: Killing 11295:com.samsung.android.aremoji/u0a50 (adj 985): empty #25
+06-17 01:24:27.157  1909  1972 I ActivityManager: Killing 11368:com.samsung.android.calendar/u0a222 (adj 975): empty #25
+06-17 01:24:27.158  1909  1972 I ActivityManager: Killing 11347:com.sec.android.app.sbrowser/u0a330 (adj 975): empty #26
+06-17 01:24:27.158  1909  1972 I ActivityManager: Killing 11341:com.samsung.android.samsungpass/u0a127 (adj 985): empty #27
+06-17 01:24:30.953  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 01:24:30.959  1909  2537 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 01:26:12.535  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:26:13.158  1909  1965 I ActivityManager: Changes in 11050 2 to 15, 255 to 128
+06-17 01:26:13.227  1909  2537 I ActivityManager: Changes in 99137 19 to 10, 0 to 128
+06-17 01:26:13.302  1909  2537 I ActivityManager: Changes in 99137 15 to 15, 128 to 0
+06-17 01:26:13.302  1909  2537 I ActivityManager: Changes in 11050 15 to 15, 128 to 0
+06-17 01:26:13.815  1909  4206 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:26:14.359  1909  2057 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:26:14.371  1909  3050 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:26:20.395  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-17 01:26:20.437  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-17 01:26:21.404  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:26:22.977  1909  1965 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:26:22.978  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
+06-17 01:26:23.273  1909  3606 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:26:27.865  1909  1972 I ActivityManager: Changes in 10214 15 to 11, 0 to 128
+06-17 01:26:27.916  1909  1973 I ActivityManager: Start proc 13931:com.google.android.apps.turbo/u0a250 for broadcast {com.google.android.apps.turbo/com.google.android.apps.turbo.nudges.broadcasts.BatteryStatusChangedReceiver}
+06-17 01:26:27.916  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:26:28.036  1909  4226 I ActivityManager: Changes in 10214 11 to 15, 128 to 0
+06-17 01:26:28.135  1909  2057 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-17 01:26:28.144  1909  2057 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-17 01:26:33.104  1909  2537 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-17 01:26:41.396  1909  1972 I ActivityManager: Killing 11271:com.samsung.android.app.contacts/u0a120 (adj 965): empty #25
+06-17 01:27:58.671  1909  1972 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-17 01:27:58.673  1909  3434 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-17 01:29:31.005  1909  1973 I ActivityManager: Start proc 14091:com.samsung.android.privacydashboard/u0a107 for content provider {com.samsung.android.privacydashboard/com.samsung.android.privacydashboard.provider.PermissionAccessInformationContentProvider}
+06-17 01:29:31.008  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:29:31.172  1909  2537 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-17 01:29:37.279  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-17 01:29:57.285  1909  1972 I ActivityManager: Killing 11916:com.google.android.googlequicksearchbox:search/u0a253 (adj 965): empty #25
+06-17 01:31:59.832  1909  1972 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-17 01:31:59.837  1909  2537 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-17 01:32:04.984  1909  2065 I ActivityManager: Changes in 10122 10 to 10, 128 to 0
+06-17 01:33:04.783  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:33:04.783  1909  1965 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+06-17 01:33:04.946  1909  1965 I ActivityManager: Changes in 10122 10 to 6, 0 to 128
+06-17 01:33:05.457  1909  1965 I ActivityManager: Changes in 11050 2 to 15, 255 to 128
+06-17 01:33:05.485  1909  3606 I ActivityManager: Changes in 99137 19 to 10, 0 to 128
+06-17 01:33:05.563  1909  4341 I ActivityManager: Changes in 99137 15 to 15, 128 to 0
+06-17 01:33:05.564  1909  4341 I ActivityManager: Changes in 11050 15 to 15, 128 to 0
+06-17 01:33:06.107  1909  3050 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:33:06.867  1909  3434 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:33:06.890  1909  4341 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:33:12.903  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:33:12.904  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-17 01:33:12.946  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-17 01:33:13.949  1909  1965 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:33:13.949  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
+06-17 01:33:14.274  1909  3606 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:33:24.107  1909  3606 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-17 01:33:44.717  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 01:33:44.725  1909  2749 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 01:34:37.598  1909  1973 I ActivityManager: Start proc 14456:com.google.android.cellbroadcastreceiver/u0a296 for broadcast {com.google.android.cellbroadcastreceiver/com.android.cellbroadcastreceiver.CellBroadcastReceiver}
+06-17 01:34:37.598  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-17 01:34:37.787  1909  2749 I ActivityManager: Changes in 10296 19 to 11, 0 to 128
+06-17 01:34:37.822  1909  2749 I ActivityManager: Killing 10821:com.google.android.gms.ui/u0a252 (adj 965): empty #25
+06-17 01:34:37.824  1909  2749 I ActivityManager: Changes in 10296 11 to 19, 128 to 0
+06-17 01:34:37.905  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 10821
+06-17 01:34:38.681  1909  1972 I ActivityManager: Changes in 10296 19 to 11, 0 to 128
+06-17 01:34:38.691  1909  2803 I ActivityManager: Changes in 10296 11 to 19, 128 to 0
+06-17 01:36:01.001  1909  1972 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-17 01:36:01.009  1909  2803 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-17 01:36:17.355  1909  1972 I ActivityManager: Changes in 10296 19 to 11, 0 to 128
+06-17 01:36:17.364  1909  2803 I ActivityManager: Changes in 10296 11 to 19, 128 to 0
+06-17 01:36:18.520  1909  1972 I ActivityManager: Changes in 10296 19 to 11, 0 to 128
+06-17 01:36:18.532  1909  2749 I ActivityManager: Changes in 10296 11 to 19, 128 to 0
+06-17 01:36:20.060  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-17 01:36:30.069  1909  2065 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-17 01:37:33.484  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:37:33.488  1909  1965 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+06-17 01:37:34.094  1909  1965 I ActivityManager: Changes in 11050 2 to 15, 255 to 128
+06-17 01:37:34.219  1909  2803 I ActivityManager: Changes in 99137 19 to 10, 0 to 128
+06-17 01:37:34.293  1909  2225 I ActivityManager: Changes in 99137 15 to 15, 128 to 0
+06-17 01:37:34.293  1909  2225 I ActivityManager: Changes in 11050 15 to 15, 128 to 0
+06-17 01:37:34.776  1909  1935 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:37:35.388  1909  2803 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:37:35.406  1909  2225 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:37:40.727  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:37:41.305  1909  2803 I ActivityManager: Changes in 10329 3 to 10, 144 to 128
+06-17 01:37:41.305  1909  2803 I ActivityManager: Changes in 10214 3 to 10, 144 to 128
+06-17 01:37:41.359  1909  4343 I ActivityManager: Changes in 10329 10 to 10, 128 to 0
+06-17 01:37:41.359  1909  4343 I ActivityManager: Changes in 10214 10 to 10, 128 to 0
+06-17 01:37:41.570  1909  1965 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:37:41.570  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
+06-17 01:37:41.921  1909  4343 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:37:51.706  1909  4342 I ActivityManager: Changes in 99137 3 to 10, 184 to 0
+06-17 01:39:00.707  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 01:39:10.722  1909  2065 I ActivityManager: Changes in 10096 19 to 19, 128 to 0
+06-17 01:39:13.601  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 01:39:13.605  1909  4342 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 01:39:20.868  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 01:39:30.874  1909  2065 I ActivityManager: Changes in 10096 19 to 19, 128 to 0
+06-17 01:40:02.160  1909  1972 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-17 01:40:02.165  1909  4342 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-17 01:42:21.576  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 01:42:21.582  1909  4342 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-17 01:43:58.722  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-17 01:43:58.725  1909  1935 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-17 01:44:03.323  1909  1972 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+06-17 01:44:03.326  1909  4342 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+06-17 01:44:20.778  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 01:44:30.798  1909  2065 I ActivityManager: Changes in 10096 19 to 19, 128 to 0
+06-17 01:44:40.787  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-17 01:44:50.802  1909  2065 I ActivityManager: Changes in 10096 19 to 19, 128 to 0
+06-17 01:47:19.300  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:47:19.300  1909  1965 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+06-17 01:47:19.911  1909  1965 I ActivityManager: Changes in 11050 2 to 15, 255 to 128
+06-17 01:47:19.977  1909  2749 I ActivityManager: Changes in 99137 19 to 10, 0 to 128
+06-17 01:47:20.045  1909  4342 I ActivityManager: Changes in 99137 15 to 15, 128 to 0
+06-17 01:47:20.045  1909  4342 I ActivityManager: Changes in 11050 15 to 15, 128 to 0
+06-17 01:47:20.740  1909  2776 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:47:22.118  1909  4343 I ActivityManager: Changes in 10214 19 to 3, 0 to 144
+06-17 01:47:22.133  1909  1935 I ActivityManager: Changes in 10329 19 to 3, 0 to 144
+06-17 01:47:28.150  1909  1971 I ActivityManager: Changes in 10329 3 to 15, 144 to 0
+06-17 01:47:28.190  1909  1971 I ActivityManager: Changes in 10214 3 to 15, 144 to 0
+06-17 01:47:30.494  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-17 01:47:31.352  1909  1965 I ActivityManager: Changes in 99137 19 to 3, 0 to 184
+06-17 01:47:31.358  1909  1965 I ActivityManager: Changes in 11050 16 to 2, 0 to 255
+06-17 01:47:31.650  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-17 01:47:41.525  1909  4342 I ActivityManager: Changes in 99137 3 to 10, 184 to 0

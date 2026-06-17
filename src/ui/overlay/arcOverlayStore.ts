@@ -24,7 +24,8 @@ export type ArcOverlayKind =
   | 'blocking'
   | 'tradeQuantity'
   | 'planetEconomyInfo'
-  | 'planetDevelopment';
+  | 'planetDevelopment'
+  | 'waveResult';
 
 type ArcOverlayBase = {
   id: string;
@@ -111,6 +112,18 @@ export type ArcOverlayPlanetDevelopmentEntry = ArcOverlayBase & {
   initialView?: PlanetDevelopmentInitialView;
 };
 
+/** 웨이브 디펜스 전투 결과창(승리/패배 + 경험치 + 기타 보상) */
+export type ArcOverlayWaveResultEntry = ArcOverlayBase & {
+  kind: 'waveResult';
+  outcome: 'win' | 'lose';
+  wavesCleared: number;
+  totalWaves: number;
+  expEarned: number;
+  /** 추후 설정: 기타 아이템 획득 목록(현재 비어 있음) */
+  itemRewards?: { icon: string; label: string }[];
+  onClose: () => void;
+};
+
 export type ArcOverlayEntry =
   | ArcOverlayAlertEntry
   | ArcOverlayLevelUpEntry
@@ -119,7 +132,8 @@ export type ArcOverlayEntry =
   | ArcOverlayBlockingEntry
   | ArcOverlayTradeQuantityEntry
   | ArcOverlayPlanetEconomyInfoEntry
-  | ArcOverlayPlanetDevelopmentEntry;
+  | ArcOverlayPlanetDevelopmentEntry
+  | ArcOverlayWaveResultEntry;
 
 export type ArcOverlayInput =
   | (Omit<ArcOverlayAlertEntry, 'id'> & { id?: string })
@@ -129,7 +143,8 @@ export type ArcOverlayInput =
   | (Omit<ArcOverlayBlockingEntry, 'id'> & { id?: string })
   | (Omit<ArcOverlayTradeQuantityEntry, 'id'> & { id?: string })
   | (Omit<ArcOverlayPlanetEconomyInfoEntry, 'id'> & { id?: string })
-  | (Omit<ArcOverlayPlanetDevelopmentEntry, 'id'> & { id?: string });
+  | (Omit<ArcOverlayPlanetDevelopmentEntry, 'id'> & { id?: string })
+  | (Omit<ArcOverlayWaveResultEntry, 'id'> & { id?: string });
 
 type ArcOverlayState = {
   stack: ArcOverlayEntry[];
@@ -229,6 +244,21 @@ export function presentPlanetEconomyInfoOverlay(planetId: string, planetName: st
   } else {
     useArcOverlayStore.getState().present(entry);
   }
+}
+
+const WAVE_RESULT_OVERLAY_ID = 'wave-result';
+
+/** 웨이브 디펜스 최종 결과창 표시 — 중복 present 방지(동일 id 교체) */
+export function presentWaveResultOverlay(
+  payload: Omit<ArcOverlayWaveResultEntry, 'id' | 'kind'>,
+): void {
+  useArcOverlayStore.getState().dismissWhere((e) => e.id === WAVE_RESULT_OVERLAY_ID);
+  useArcOverlayStore.getState().present({
+    id: WAVE_RESULT_OVERLAY_ID,
+    kind: 'waveResult',
+    dismissOnBackdrop: false,
+    ...payload,
+  });
 }
 
 export function presentPlanetDevelopmentOverlay(

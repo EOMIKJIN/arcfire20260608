@@ -25,6 +25,7 @@ export function getOverlayChrome(kind: ArcOverlayKind): {
   switch (kind) {
     case 'levelUp':
     case 'reward':
+    case 'waveResult':
       return {
         zIndex: OVERLAY_Z.panel,
         backdrop: OVERLAY_BACKDROP.panel,

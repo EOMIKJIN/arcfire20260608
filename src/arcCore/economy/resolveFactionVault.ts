@@ -16,7 +16,18 @@ function getClanWarFoundationStore() {
   return require('../../store/clanWarFoundationStore').useClanWarFoundationStore as typeof import('../../store/clanWarFoundationStore').useClanWarFoundationStore;
 }
 
+/** [보완 #3] AsyncStorage 금고 키 — BLUE / RED·중립(아크코어) */
+export const VAULT_KEY_ARCCORE = 'arccore_vault';
+export const VAULT_KEY_BLUE = 'blue_vault';
+
 export type OccupierFactionKind = 'red' | 'blue' | 'neutral' | 'player_clan';
+
+/** [보완 #3] 팩션·점유 문자열 → 금고 키 (BLUE=블루팀, RED·중립·폴백=아크코어) */
+export function getVaultKeyByFaction(faction: string): string {
+  const f = faction.trim().toLowerCase();
+  if (f === 'blue' || f === ARC_CORE_SEED_BLUE_CLAN_ID) return VAULT_KEY_BLUE;
+  return VAULT_KEY_ARCCORE;
+}
 
 export function resolveOccupierFactionKind(occupierClanId: string): OccupierFactionKind {
   if (occupierClanId === ARC_CORE_SEED_RED_CLAN_ID) return 'red';
@@ -30,31 +41,47 @@ export function resolveOccupierFactionKindForHold(hold: PlanetClanHold | undefin
   return resolveOccupierFactionKind(hold.occupierClanId);
 }
 
-/** RED·BLUE 시드 점유 행성의 팩션 금고. 플레이어·중립은 null (플레이어 지갑·아크 금고 폴백). */
+function resolveVaultStoreByKey(vaultKey: string): Pick<
+  FactionVaultState,
+  'hydrate' | 'applyDelta' | 'trySpend' | 'spendUpToBalance' | 'appendInflow' | 'getBalance'
+> {
+  if (vaultKey === VAULT_KEY_BLUE) return useBlueTeamSharedVaultStore.getState();
+  return useArcCoreVaultStore.getState();
+}
+
+/** [보완 #3] RED·BLUE·중립·폴백 → 팩션 금고 스토어 */
 export function resolveFactionVaultForOccupierClanId(
   occupierClanId: string,
-): Pick<FactionVaultState, 'hydrate' | 'applyDelta' | 'trySpend' | 'appendInflow' | 'getBalance'> | null {
+): Pick<
+  FactionVaultState,
+  'hydrate' | 'applyDelta' | 'trySpend' | 'spendUpToBalance' | 'appendInflow' | 'getBalance'
+> | null {
   const faction = resolveOccupierFactionKind(occupierClanId);
-  if (faction === 'red') return useArcCoreVaultStore.getState();
-  if (faction === 'blue') return useBlueTeamSharedVaultStore.getState();
-  return null;
+  if (faction === 'player_clan') return null;
+  const vaultKey = getVaultKeyByFaction(faction === 'blue' ? 'blue' : 'red');
+  return resolveVaultStoreByKey(vaultKey);
 }
 
 export function resolveFactionVaultForPlanetId(
   planetId: string,
-): Pick<FactionVaultState, 'hydrate' | 'applyDelta' | 'trySpend' | 'appendInflow' | 'getBalance'> | null {
+): Pick<
+  FactionVaultState,
+  'hydrate' | 'applyDelta' | 'trySpend' | 'spendUpToBalance' | 'appendInflow' | 'getBalance'
+> | null {
   const hold = getClanWarFoundationStore().getState().getHold(planetId);
   if (!hold) return null;
   return resolveFactionVaultForOccupierClanId(hold.occupierClanId);
 }
 
-/** 무역 수수료(팩션 몫) — RED/BLUE 행성은 각 금고, 중립·플레이어 클랜 점유는 아크코어 금고 */
+/** [보완 #3] 무역 수수료 — BLUE→blue_vault, RED·중립·플레이어클랜→arccore_vault */
 export function resolveTradeFeeFactionVault(
   planetId: string,
-): Pick<FactionVaultState, 'hydrate' | 'applyDelta' | 'trySpend' | 'appendInflow' | 'getBalance'> {
+): Pick<FactionVaultState, 'hydrate' | 'applyDelta' | 'trySpend' | 'spendUpToBalance' | 'appendInflow' | 'getBalance'> {
   if (process.env.ARCFIRE_HEADLESS_ECONOMY_AUDIT === '1') {
     return useArcCoreVaultStore.getState();
   }
-  const vault = resolveFactionVaultForPlanetId(planetId);
-  return vault ?? useArcCoreVaultStore.getState();
+  const hold = getClanWarFoundationStore().getState().getHold(planetId);
+  const faction = resolveOccupierFactionKindForHold(hold);
+  const vaultKey = getVaultKeyByFaction(faction === 'blue' ? 'blue' : 'red');
+  return resolveVaultStoreByKey(vaultKey);
 }

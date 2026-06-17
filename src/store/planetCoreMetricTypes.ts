@@ -11,7 +11,7 @@ export type PlanetResourceDetail = {
 /** PlanetDevelopment — 모듈별 런타임 슬롯 (방위위성·향후 9개) */
 export type PlanetDevelopmentDetail = {
   version: 1;
-  byModuleId?: Record<string, PlanetDefenseSatelliteDetail | Record<string, unknown>>;
+  byModuleId?: Record<string, PlanetDefenseSatelliteDetail | PlanetFacilityModuleDetail | Record<string, unknown>>;
 };
 
 /** 행성 공격 1회 적용 기록 — `applyPlanetAttackCoreDamage` */
@@ -101,6 +101,21 @@ export type PlanetDefenseSatelliteDetail = {
   /** 최초 설치 완료 여부 */
   installed: boolean;
   /** 1..10 — `planet_defense_satellite_level_policy.csv` */
+  level: number;
+  /** 진행 중 업그레이드 (없으면 null) */
+  upgradeJob?: PlanetDefenseSatelliteUpgradeJob | null;
+  updatedAtMs?: number;
+};
+
+/**
+ * 범용 시설 개발 모듈 런타임 정본 — 방위위성과 동일한 install·레벨업 구조를 공유한다.
+ * (조선소·무역소 등 facility 모듈이 `development.byModuleId[모듈id]`에 이 형태로 저장)
+ */
+export type PlanetFacilityModuleDetail = {
+  version: 1;
+  /** 최초 설치(메뉴 활성) 완료 여부 */
+  installed: boolean;
+  /** 1.. — 모듈별 레벨 정책 CSV 기준 */
   level: number;
   /** 진행 중 업그레이드 (없으면 null) */
   upgradeJob?: PlanetDefenseSatelliteUpgradeJob | null;

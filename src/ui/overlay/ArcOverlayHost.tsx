@@ -19,6 +19,7 @@ import { BlockingOverlayContent } from './content/BlockingOverlayContent';
 import { TradeQuantityOverlayContent } from './content/TradeQuantityOverlayContent';
 import { PlanetEconomyInfoOverlayContent } from './content/PlanetEconomyInfoOverlayContent';
 import { PlanetDevelopmentOverlayContent } from './content/PlanetDevelopmentOverlayContent';
+import { WaveResultOverlayContent } from './content/WaveResultOverlayContent';
 
 export const ArcOverlayHost = memo(function ArcOverlayHost() {
   const { width: winW, height: winH } = useWindowDimensions();
@@ -67,6 +68,11 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
 
   const handleRewardClose = useCallback(() => {
     if (entry?.kind === 'reward') entry.onClose();
+    dismiss();
+  }, [dismiss, entry]);
+
+  const handleWaveResultClose = useCallback(() => {
+    if (entry?.kind === 'waveResult') entry.onClose();
     dismiss();
   }, [dismiss, entry]);
 
@@ -149,6 +155,9 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
         ) : null}
         {entry.kind === 'planetDevelopment' ? (
           <PlanetDevelopmentOverlayContent entry={entry} onClose={dismiss} />
+        ) : null}
+        {entry.kind === 'waveResult' ? (
+          <WaveResultOverlayContent entry={entry} onClose={handleWaveResultClose} />
         ) : null}
       </View>
     </View>

@@ -139,6 +139,7 @@ export function applyPlanetAttackCoreDamage(
     policy.impactScale,
     intensityMul,
     attackDetail.microRemainder,
+    policy.metricImpactScale,
   );
 
   const nextMetrics = applyDeltaToGauge(currentMetrics, applied);

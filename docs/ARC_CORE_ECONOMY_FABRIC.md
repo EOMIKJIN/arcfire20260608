@@ -186,9 +186,8 @@ BLUE 행성 유지비·무역 수수료(5%) → blueTeamSharedVault
 | `transport_fleet_seed_credits` | 500000 | 수송선단 금고 시드 |
 | `arc_core_vault_seed_credits` | 100000 | 아크코어(RED) 금고 시드 |
 | `blue_team_vault_seed_credits` | 100000 | 블루팀 금고 시드 |
-| `allow_negative_vault_balance` | true | 금고 마이너스 허용 |
-| `upkeep_base_credits` | 200 | 행성 유지비 기본 |
-| `upkeep_per_population_credit` | 12 | 인구 스칼라(0–100) 1당 추가 |
+| `allow_negative_vault_balance` | true | SIM용; **유지비는 spendUpToBalance로 0 캡** |
+| `upkeep_fixed_credits_per_planet` | 800 | [보완 #2] 행성 1개당 일 유지비 고정 |
 | `trade_fee_rate_pct` | 10 | 거래 총액 대비 수수료 |
 | `trade_fee_player_wallet_share_pct` | 5 | 플레이어 일일 지급 풀 |
 | `trade_fee_arc_immediate_share_pct` | 5 | 팩션 금고 즉시 적립 |
@@ -214,12 +213,69 @@ BLUE 행성 유지비·무역 수수료(5%) → blueTeamSharedVault
 |-----------|-------------|
 | convoy → **수송선단 금고** (팩션 금고와 분리) | 수송선단→팩션 **자동 이전** (의도적 미구현) |
 | RED·BLUE 각 금고 유지비·수수료 | 미납 시 점령 상실·스탯 패널티 |
-| 금고 마이너스 잔고 허용 | 오프라인 플레이어(uid 없음) 유지비 |
+| 금고 마이너스 잔고 허용(SIM) | **유지비는 0까지만** (`spendUpToBalance`) |
 | 무역 10% 수수료·5%+5% 분배 | 무역소 외 경로(채굴 직판 등) 수수료 |
 | 소유 행성 무역 수수료 풀 → 1일 1회 지갑 | 수수료가 5대 스탯(R,P…)에 직접 반영 |
-| 잔고·은행 부족 시 실패 기록(강제 차감 없음) | Macro SIM·overlay와 유지비 연동 |
+| 잔고·은행 부족 시 `upkeep_shortfall` 로그 | Macro SIM·overlay와 유지비 연동 |
+| **중립 행성 수수료 → arccore_vault** | [보완 #3] |
 
 유지비 인구 입력: `planetCoreRuntimeStore.population` (없으면 `planets.csv` 시드).
+
+---
+
+## 11. 경제 초기 설계 보완 (2026-06-16)
+
+> AsyncStorage + CSV 시드 + 12:00 KST 배치 구조 유지. 상세 구현은 각 모듈 `// [보완 #n]` 주석.
+
+### 11-1. [보완 #1] 일일 배치 타이밍 · `arcfire_arc_core_daily_ops_v1`
+
+| 항목 | 규칙 |
+|------|------|
+| **lastBatchDate** | `lastBatchDayKey`와 동일 KST `YYYY-MM-DD` — 배치 완료 시 AsyncStorage 기록 |
+| **오늘 미실행** | `lastBatchDate !== today`이면 `ArcCoreDailyOpsSubCore` probe에서 **즉시** `runArcCoreDailyOpsBatch()` |
+| **누락 보정** | 앱 꺼짐 등으로 `lastBatchDate < today` → 다음 실행 시 **12:00 대기 없이** 1회 보정 |
+| **첫 가입 당일** | `lastBatchDate` 없음 + `player.createdAt` 당일 → 배치 **스킵**(CSV 시드 유지) |
+| **가입 다음날** | `lastBatchDate` 없음 + 가입일 < 오늘 → 누락 보정 **즉시** |
+| **정상 스케줄** | 가입 다음날 이후 당일 첫 배치는 **12:00 KST** 이후 (`arc_core_daily_ops_policy.csv`) |
+
+코드: `arcCoreDailyOpsPolicy.shouldRunArcCoreDailyBatch` · `arcCoreDailyOpsState` · `ArcCoreDailyOpsSubCore`.
+
+### 11-2. [보완 #2] 유지비 800 cr/일 · 행성 1개당
+
+| 항목 | 값 |
+|------|-----|
+| 일 유지비 | **800 cr/행성** 고정 (`upkeep_fixed_credits_per_planet=800`) — P=50% 기준 설계, **P 변동 무시**(추후 동적) |
+| BLUE 행성 | `blue_vault` (블루팀 공용 금고) |
+| RED 행성 | `arccore_vault` |
+| 중립 행성 | `arccore_vault` (폴백) |
+| 잔고 부족 | `spendUpToBalance` — **0까지만** 차감, `upkeep_shortfall` txn 로그 (행성 패널티 추후) |
+| 플레이어 소유 | `player.credits` (기존) |
+
+CSV: `tables/balance/arc_core_planet_upkeep_policy.csv` · `runArcCorePlanetUpkeepDailyPass.ts`.
+
+### 11-3. [보완 #3] 수수료 귀속 · 금고 키
+
+| 점유 | 금고 키 | 스토어 |
+|------|---------|--------|
+| BLUE | `blue_vault` | `blueTeamSharedVaultStore` |
+| RED | `arccore_vault` | `arcCoreVaultStore` |
+| **중립** | `arccore_vault` | 플레이어·convoy 수수료 **전부** 아크코어 금고 |
+| 플레이어 클랜 | `arccore_vault` | 수수료 폴백 |
+
+분기 정본: `getVaultKeyByFaction(faction)` · `resolveTradeFeeFactionVault` (`resolveFactionVault.ts`).
+
+### 11-4. [보완 #4] PGP(행성 총생산)
+
+**식**: `PGP = (R+P+D+T+E)/5 × 3,375 BMU` (0..100 스탯; 정수화 `sum×3375/10`).  
+**검증**: 전 스탯 50 → **84,375 BMU**.
+
+| 항목 | 규칙 |
+|------|------|
+| 재계산 | **12:00 KST 배치만** (`runPlanetPgpDailyPass`) — 실시간 없음 |
+| 저장 | `arcfire_planet_core_runtime_v1` — `byPlanetId[].pgp` + 플랫 키 `planet_{planetId}_pgp` |
+| UI | 배치 저장값 우선, 없으면 레거시 즉시 계산 폴백 |
+
+코드: `planetPgpModel.ts` · `runPlanetPgpDailyPass.ts` · `planetCoreRuntimeStore` persist.
 
 ---
 

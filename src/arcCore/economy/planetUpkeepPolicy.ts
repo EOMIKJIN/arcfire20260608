@@ -30,8 +30,8 @@ function policyNum(key: string, fallback: number): number {
 
 export type PlanetUpkeepPolicy = {
   enabled: boolean;
-  upkeepBaseCredits: number;
-  upkeepPerPopulationCredit: number;
+  /** [보완 #2] 행성 1개당 일 유지비 고정(크레딧) — P=50% 기준 800 */
+  upkeepFixedCreditsPerPlanet: number;
   tradeFeeRatePct: number;
   tradeFeePlayerWalletSharePct: number;
   tradeFeeArcImmediateSharePct: number;
@@ -40,8 +40,10 @@ export type PlanetUpkeepPolicy = {
 export function resolvePlanetUpkeepPolicy(): PlanetUpkeepPolicy {
   return {
     enabled: parseBool(getPolicyKv().get('enabled')),
-    upkeepBaseCredits: Math.max(0, Math.floor(policyNum('upkeep_base_credits', 200))),
-    upkeepPerPopulationCredit: Math.max(0, Math.floor(policyNum('upkeep_per_population_credit', 12))),
+    upkeepFixedCreditsPerPlanet: Math.max(
+      0,
+      Math.floor(policyNum('upkeep_fixed_credits_per_planet', 800)),
+    ),
     tradeFeeRatePct: Math.max(0, Math.min(50, policyNum('trade_fee_rate_pct', 10))),
     tradeFeePlayerWalletSharePct: Math.max(
       0,
@@ -54,12 +56,12 @@ export function resolvePlanetUpkeepPolicy(): PlanetUpkeepPolicy {
   };
 }
 
+/** [보완 #2] 행성 1개당 일 유지비 — P 스탯 무관 고정(추후 동적 계산 예정) */
 export function computePlanetDailyUpkeepCredits(
-  populationScalar: number,
+  _populationScalar?: number,
   policy = resolvePlanetUpkeepPolicy(),
 ): number {
-  const pop = Math.max(0, Math.min(100, Math.round(populationScalar)));
-  return policy.upkeepBaseCredits + pop * policy.upkeepPerPopulationCredit;
+  return policy.upkeepFixedCreditsPerPlanet;
 }
 
 export type PlanetTradeFeeBreakdown = {

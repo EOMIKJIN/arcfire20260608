@@ -144,35 +144,10 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   const fillWhenEmpty = !showNebulaBaked && !showBackdropImage;
   const deferCanvas = hideUntilImagesReady && !imagesReady;
 
-  useEffect(() => {
-    return () => {
-      try {
-        (nebulaImage as unknown as { dispose?: () => void })?.dispose?.();
-      } catch {
-        /* SkImage.dispose 미지원·이중 호출 방어 */
-      }
-    };
-  }, [nebulaImage]);
-
-  useEffect(() => {
-    return () => {
-      try {
-        (backdropImage as unknown as { dispose?: () => void })?.dispose?.();
-      } catch {
-        /* SkImage.dispose 미지원·이중 호출 방어 */
-      }
-    };
-  }, [backdropImage]);
-
-  useEffect(() => {
-    return () => {
-      try {
-        (dodgeImage as unknown as { dispose?: () => void })?.dispose?.();
-      } catch {
-        /*同上*/
-      }
-    };
-  }, [dodgeImage]);
+  // SkImage(useImage 반환) 수동 dispose 금지 — 훅이 언마운트·소스 변경 시 수명을 자체 관리한다.
+  // 수동 .dispose()는 <SkiaImage>(JsiImageNode)가 아직 참조 중인 SkImage를 조기 해제해
+  // 이중 해제(use-after-free)를 유발하고, GC FinalizerDaemon 의 JsiImageNode 파괴 시
+  // SIGSEGV(null deref)로 이어진다(2026-06-17 크래시). 해제는 react-native-skia 가 담당.
 
   return (
     <View style={[styles.root, { opacity, width: size, height: size }]} pointerEvents="none">

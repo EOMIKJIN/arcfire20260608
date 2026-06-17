@@ -4,6 +4,7 @@ import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
 import type { Planet, StarSystem } from '../types';
 import { useWorldStore } from './worldStore';
 import type { PlanetCoreMetricsDetail, PlanetMasterBalanceDetail } from './planetCoreMetricTypes';
+import { planetPgpStorageKey } from '../world/planetPgpModel';
 
 const STORAGE_KEY = 'arcfire_planet_core_runtime_v1';
 
@@ -24,11 +25,13 @@ export type PlanetCoreRuntime = {
   technology: number;
   environment: number;
   updatedAt: number;
+  /** [보완 #4] 행성 총생산(PGP, BMU) — 12:00 KST 배치에서만 갱신 */
+  pgp?: number;
   /** 지표별 세부 속성 확장 슬롯 */
   detail?: PlanetCoreMetricsDetail;
 };
 
-export type PlanetCoreGaugeView = Omit<PlanetCoreRuntime, 'updatedAt' | 'detail'>;
+export type PlanetCoreGaugeView = Omit<PlanetCoreRuntime, 'updatedAt' | 'detail' | 'pgp'>;
 
 function clamp100(n: number): number {
   return Math.max(0, Math.min(100, Math.round(Number.isFinite(n) ? n : 0)));
@@ -81,6 +84,11 @@ function normalizeRuntime(raw: unknown): PlanetCoreRuntime | null {
   const defense = clamp100(Number(o.defense));
   const technology = clamp100(Number(o.technology));
   const environment = clamp100(Number(o.environment));
+  const pgpRaw = o.pgp;
+  const pgp =
+    typeof pgpRaw === 'number' && Number.isFinite(pgpRaw)
+      ? Math.max(0, Math.floor(pgpRaw))
+      : undefined;
   return {
     resource,
     population,
@@ -88,6 +96,7 @@ function normalizeRuntime(raw: unknown): PlanetCoreRuntime | null {
     technology,
     environment,
     updatedAt: typeof o.updatedAt === 'number' && Number.isFinite(o.updatedAt) ? o.updatedAt : Date.now(),
+    pgp,
     detail: normalizeDetail(o.detail),
   };
 }
@@ -110,16 +119,25 @@ function parseStoragePayload(raw: string | null): {
     return { byPlanetId: {}, globalMultipliers: { ...DEFAULT_GLOBAL_MULTIPLIERS } };
   }
   try {
-    const parsed = JSON.parse(raw) as {
-      byPlanetId?: Record<string, unknown>;
-      globalMultipliers?: unknown;
-    };
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
     const fromDisk: Record<string, PlanetCoreRuntime> = {};
     const bag = parsed.byPlanetId;
     if (bag && typeof bag === 'object') {
-      for (const [id, rec] of Object.entries(bag)) {
+      for (const [id, rec] of Object.entries(bag as Record<string, unknown>)) {
         const n = normalizeRuntime(rec);
         if (n) fromDisk[id] = n;
+      }
+    }
+    // [보완 #4] planet_{planetId}_pgp 플랫 키 → byPlanetId.pgp 병합
+    for (const [key, value] of Object.entries(parsed)) {
+      if (!key.startsWith('planet_') || !key.endsWith('_pgp')) continue;
+      const planetId = key.slice('planet_'.length, -'_pgp'.length);
+      if (!planetId) continue;
+      const pgp = typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.floor(value)) : null;
+      if (pgp === null) continue;
+      const existing = fromDisk[planetId];
+      if (existing) {
+        fromDisk[planetId] = { ...existing, pgp };
       }
     }
     return {
@@ -131,18 +149,29 @@ function parseStoragePayload(raw: string | null): {
   }
 }
 
+function buildPlanetCoreRuntimeStoragePayload(state: {
+  byPlanetId: Record<string, PlanetCoreRuntime>;
+  globalMultipliers: PlanetCoreGlobalMultipliers;
+}): Record<string, unknown> {
+  const payload: Record<string, unknown> = {
+    byPlanetId: state.byPlanetId,
+    globalMultipliers: state.globalMultipliers,
+  };
+  // [보완 #4] AsyncStorage 행성별 PGP 키 planet_{planetId}_pgp
+  for (const [planetId, rec] of Object.entries(state.byPlanetId)) {
+    if (typeof rec.pgp === 'number' && Number.isFinite(rec.pgp)) {
+      payload[planetPgpStorageKey(planetId)] = rec.pgp;
+    }
+  }
+  return payload;
+}
+
 async function persistStoragePayload(state: {
   byPlanetId: Record<string, PlanetCoreRuntime>;
   globalMultipliers: PlanetCoreGlobalMultipliers;
 }): Promise<void> {
   try {
-    await AsyncStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        byPlanetId: state.byPlanetId,
-        globalMultipliers: state.globalMultipliers,
-      }),
-    );
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(buildPlanetCoreRuntimeStoragePayload(state)));
     scheduleUserCloudSync();
   } catch {
     /* ignore */
@@ -223,7 +252,7 @@ interface PlanetCoreRuntimeState {
   getPlanetCoreRuntime: (planetId: string) => PlanetCoreRuntime | undefined;
   patchPlanetCore: (
     planetId: string,
-    patch: Partial<PlanetCoreGaugeView> & { detail?: PlanetCoreRuntime['detail'] },
+    patch: Partial<PlanetCoreGaugeView> & { pgp?: number; detail?: PlanetCoreRuntime['detail'] },
   ) => void;
   /** 여러 행성 5지표를 한 번에 갱신 후 디스크 1회 저장 */
   patchPlanetCoresBulk: (updates: Record<string, PlanetCoreGaugeView>) => void;
@@ -308,6 +337,7 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
       technology: clamp100(patch.technology ?? prev.technology),
       environment: clamp100(patch.environment ?? prev.environment),
       updatedAt: Date.now(),
+      pgp: typeof patch.pgp === 'number' ? Math.max(0, Math.floor(patch.pgp)) : prev.pgp,
       detail: patch.detail ?? prev.detail,
     };
     set({ byPlanetId: { ...get().byPlanetId, [planetId]: merged } });

@@ -122,13 +122,39 @@ export function arcCoreOpsMinutesOfDay(nowMs: number, timeZone: string): number 
   }
 }
 
-/** 오늘 배치 시각(분)을 지났고, 오늘 아직 배치하지 않았으면 true */
-export function shouldRunArcCoreDailyBatch(nowMs: number, lastBatchDayKey: string | null): boolean {
+export type ArcCoreDailyBatchGateInput = {
+  /** AsyncStorage `lastBatchDate` (= lastBatchDayKey) */
+  lastBatchDayKey: string | null;
+  /** 플레이어 `createdAt` — 첫 가입 당일 배치 스킵 판별 */
+  signupAtMs?: number | null;
+};
+
+/** [보완 #1] 오늘 배치 미실행·누락 보정·첫 가입 당일 예외 */
+export function shouldRunArcCoreDailyBatch(nowMs: number, input: ArcCoreDailyBatchGateInput): boolean {
   const policy = resolveArcCoreDailyOpsPolicy();
   if (!policy.enabled) return false;
+
+  const { lastBatchDayKey, signupAtMs } = input;
   const todayKey = formatArcCoreOpsDayKey(nowMs, policy.timeZone);
+  // [보완 #1] 오늘 이미 실행됨 (lastBatchDate === today)
   if (lastBatchDayKey === todayKey) return false;
+
   const batchMinuteOfDay = policy.batchRunHour * 60 + policy.batchRunMinute;
   const nowMinute = arcCoreOpsMinutesOfDay(nowMs, policy.timeZone);
-  return nowMinute >= batchMinuteOfDay;
+
+  if (typeof signupAtMs === 'number' && Number.isFinite(signupAtMs)) {
+    const signupDayKey = formatArcCoreOpsDayKey(signupAtMs, policy.timeZone);
+    // [보완 #1] 첫 가입 당일 — lastBatchDate 없으면 배치 스킵(시드 유지)
+    if (lastBatchDayKey === null && signupDayKey === todayKey) return false;
+    // [보완 #1] 가입 다음날 이후 한 번도 배치 없음 → 누락 보정 즉시
+    if (lastBatchDayKey === null && signupDayKey < todayKey) return true;
+  }
+
+  // [보완 #1] 이전 날짜 배치 후 앱 꺼짐 → 다음 실행 시 즉시 보정
+  if (lastBatchDayKey !== null && lastBatchDayKey < todayKey) return true;
+
+  // [보완 #1] 당일 첫 배치 — 정책 시각(12:00 KST) 이후
+  if (lastBatchDayKey === null) return nowMinute >= batchMinuteOfDay;
+
+  return false;
 }
