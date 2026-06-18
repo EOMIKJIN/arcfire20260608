@@ -5,6 +5,7 @@
 import React, { memo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import type { LevelUpSummary } from '../types';
+import { useT } from '../i18n';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../utils/theme';
 
 const PH = OVERLAY_TOKENS.phosphorAccent;
@@ -19,14 +20,17 @@ function formatMultiplier(mult: number): string {
 }
 
 export const LevelUpDetailPanel = memo(function LevelUpDetailPanel({ summary }: Props) {
+  const t = useT();
   const profBefore = summary.proficiencyBefore;
   const profAfter = summary.proficiencyAfter;
   const effDelta = profAfter.operatingEfficiencyPct - profBefore.operatingEfficiencyPct;
   const multDelta = profAfter.proficiencyMultiplier - profBefore.proficiencyMultiplier;
+  const effDeltaLabel = effDelta !== 0 ? ` (${effDelta > 0 ? '+' : ''}${effDelta}%p)` : '';
+  const multDeltaLabel = multDelta !== 0 ? ` (${multDelta > 0 ? '+' : ''}${multDelta.toFixed(3)})` : '';
 
   return (
     <View style={styles.wrap}>
-      <Text style={styles.heading}>— 레벨 업 —</Text>
+      <Text style={styles.heading}>{t('levelUp.heading')}</Text>
       <Text style={styles.levelLine}>
         Lv.{summary.previousLevel} → Lv.{summary.newLevel}
       </Text>
@@ -34,29 +38,26 @@ export const LevelUpDetailPanel = memo(function LevelUpDetailPanel({ summary }: 
       <View style={styles.divider} />
 
       <Text style={styles.row}>
-        스킬 포인트 +{summary.skillPointsGained}
+        {t('levelUp.skillPoints', { count: summary.skillPointsGained })}
       </Text>
       <Text style={styles.rowMuted}>
-        다음 레벨까지 {summary.expRemainingForNextLevel.toLocaleString()} EXP
+        {t('levelUp.expToNext', { exp: summary.expRemainingForNextLevel.toLocaleString() })}
       </Text>
       <Text style={styles.rowMuted}>
-        누적 임계 {summary.nextLevelThresholdExp.toLocaleString()} EXP
+        {t('levelUp.expThreshold', { exp: summary.nextLevelThresholdExp.toLocaleString() })}
       </Text>
 
       <View style={styles.divider} />
 
-      <Text style={styles.subHeading}>전투 숙련도</Text>
+      <Text style={styles.subHeading}>{t('levelUp.combatProficiency')}</Text>
       <Text style={styles.row}>
-        전투 등급 {profBefore.combatLevel} → {profAfter.combatLevel}
+        {t('levelUp.combatGrade', { from: profBefore.combatLevel, to: profAfter.combatLevel })}
       </Text>
       <Text style={styles.row}>
-        운용 효율 {profBefore.operatingEfficiencyPct}% → {profAfter.operatingEfficiencyPct}%
-        {effDelta !== 0 ? ` (${effDelta > 0 ? '+' : ''}${effDelta}%p)` : ''}
+        {t('levelUp.operatingEff', { from: profBefore.operatingEfficiencyPct, to: profAfter.operatingEfficiencyPct, delta: effDeltaLabel })}
       </Text>
       <Text style={styles.row}>
-        숙련 계수 {formatMultiplier(profBefore.proficiencyMultiplier)} →{' '}
-        {formatMultiplier(profAfter.proficiencyMultiplier)}
-        {multDelta !== 0 ? ` (${multDelta > 0 ? '+' : ''}${multDelta.toFixed(3)})` : ''}
+        {t('levelUp.proficiencyMult', { from: formatMultiplier(profBefore.proficiencyMultiplier), to: formatMultiplier(profAfter.proficiencyMultiplier), delta: multDeltaLabel })}
       </Text>
     </View>
   );

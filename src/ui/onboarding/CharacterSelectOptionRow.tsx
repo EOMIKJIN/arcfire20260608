@@ -8,6 +8,13 @@ import {
   type ImageSourcePropType,
 } from 'react-native';
 import { COLORS, FONTS, OVERLAY_TOKENS, SPACING } from '../../utils/theme';
+import { useT } from '../../i18n';
+import { useAppSettingsStore } from '../../store/appSettingsStore';
+import {
+  resolveProfessionName,
+  resolveProfessionPersonality,
+  resolveProfessionSummary,
+} from '../../i18n/professionText';
 import type { PlayerProfessionCsvRow } from '../../data/generated';
 
 export type CharacterSelectOptionRowProps = {
@@ -24,7 +31,9 @@ export const CharacterSelectOptionRow = memo(function CharacterSelectOptionRow({
   portraitSource,
   onPress,
 }: CharacterSelectOptionRowProps) {
-  const genderLabel = profession.gender === 'female' ? '여성' : '남성';
+  const t = useT();
+  const locale = useAppSettingsStore((s) => s.locale);
+  const genderLabel = profession.gender === 'female' ? t('charSelect.female') : t('charSelect.male');
 
   return (
     <Pressable
@@ -41,14 +50,14 @@ export const CharacterSelectOptionRow = memo(function CharacterSelectOptionRow({
         <View style={styles.portraitPlaceholder} />
       )}
       <View style={styles.hud}>
-        <Text style={styles.name}>{profession.nameKo}</Text>
+        <Text style={styles.name}>{resolveProfessionName(profession, locale)}</Text>
         <Text style={styles.demographics}>
-          성별 : {genderLabel}
+          {t('charSelect.gender')} : {genderLabel}
           {'  '}
-          나이 : ??
+          {t('charSelect.age')} : ??
         </Text>
-        <Text style={styles.summary}>{profession.summaryKo}</Text>
-        <Text style={styles.personality}>성격 : {profession.personalityKo}</Text>
+        <Text style={styles.summary}>{resolveProfessionSummary(profession, locale)}</Text>
+        <Text style={styles.personality}>{t('charSelect.personality')} : {resolveProfessionPersonality(profession, locale)}</Text>
       </View>
     </Pressable>
   );

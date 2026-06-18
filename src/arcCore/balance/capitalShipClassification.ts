@@ -15,6 +15,8 @@ import {
 import { NPC_CAPITAL_SHIPS_FROM_CSV } from '../../data/generated';
 import type { CapitalShipArchetype } from '../../types';
 import { resolveHullTierKeyForTradeCatalogShip } from './capitalShipTradeListingPolicy';
+import type { AppLocale } from '../../i18n/types';
+import { useAppSettingsStore } from '../../store/appSettingsStore';
 
 export type CapitalShipLoadoutProfileKey =
   | 'fighter'
@@ -31,8 +33,11 @@ export type CapitalShipClassification = {
   labelKo: string;
   labelEn: string;
   loadoutLabelKo: string;
+  loadoutLabelEn: string;
   combatRangeKo: string;
+  combatRangeEn: string;
   roleSummaryKo: string;
+  roleSummaryEn: string;
   identityHeadline: string;
   infoPanelBadge: string;
 };
@@ -163,8 +168,11 @@ function buildClassification(
   const labelKo = String(classRow.labelKo).trim();
   const labelEn = String(classRow.labelEn).trim();
   const loadoutLabelKo = String(loadoutRow?.labelKo ?? '표준형').trim();
+  const loadoutLabelEn = String(loadoutRow?.labelEn ?? loadoutLabelKo).trim();
   const combatRangeKo = String(loadoutRow?.combatRangeKo ?? '혼합').trim();
+  const combatRangeEn = String(loadoutRow?.combatRangeEn ?? combatRangeKo).trim();
   const roleSummaryKo = roleOverrideKo?.trim() || String(classRow.roleSummaryKo).trim();
+  const roleSummaryEn = String(classRow.roleSummaryEn ?? roleSummaryKo).trim();
 
   const identityHeadline = `Tier ${tierBand} · ${labelKo} (${labelEn}) · ${loadoutLabelKo} · ${combatRangeKo}`;
   const infoPanelBadge = `T${tierBand} ${labelKo}`;
@@ -177,8 +185,11 @@ function buildClassification(
     labelKo,
     labelEn,
     loadoutLabelKo,
+    loadoutLabelEn,
     combatRangeKo,
+    combatRangeEn,
     roleSummaryKo,
+    roleSummaryEn,
     identityHeadline,
     infoPanelBadge,
   };
@@ -235,16 +246,26 @@ export function resolveCapitalShipClassification(
 }
 
 /** 무역소·조선소용 — identity + 역할 */
-export function formatCapitalShipIdentityBlock(classification: CapitalShipClassification): string {
+export function formatCapitalShipIdentityBlock(
+  classification: CapitalShipClassification,
+  locale: AppLocale = useAppSettingsStore.getState().locale,
+): string {
+  if (locale !== 'ko') {
+    const headline = `Tier ${classification.tierBand} · ${classification.labelEn} · ${classification.loadoutLabelEn} · ${classification.combatRangeEn}`;
+    return `${headline}\n${classification.roleSummaryEn}`;
+  }
   return `${classification.identityHeadline}\n${classification.roleSummaryKo}`;
 }
 
 /** info 패널 우측 — T2 구축함 · Fighter형 */
 export function formatCapitalShipInfoPanelBadge(
   classification: CapitalShipClassification,
+  locale: AppLocale = useAppSettingsStore.getState().locale,
 ): string {
   if (classification.loadoutProfile === 'survival') {
-    return classification.infoPanelBadge;
+    return locale !== 'ko' ? classification.loadoutLabelEn : classification.infoPanelBadge;
   }
-  return `${classification.infoPanelBadge} · ${classification.loadoutLabelKo}`;
+  const hull = locale !== 'ko' ? classification.labelEn : classification.labelKo;
+  const loadout = locale !== 'ko' ? classification.loadoutLabelEn : classification.loadoutLabelKo;
+  return `T${classification.tierBand} ${hull} · ${loadout}`;
 }

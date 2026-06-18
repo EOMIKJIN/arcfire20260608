@@ -15,6 +15,7 @@ import { listPlayerProfessions, getPlayerProfessionById } from '../../src/game/p
 import { resolveNpcCaptainPortraitSource } from '../../src/game/npcCaptainPortraitAssets';
 import { setOnboardingProfessionId } from '../../src/game/onboardingDraftStorage';
 import { showArcAlert } from '../../src/utils/showArcAlert';
+import { useT } from '../../src/i18n';
 import type { PlayerProfessionCsvRow } from '../../src/data/generated';
 import {
   ONBOARDING_CHARACTER_SELECT_HEADER_TOP_PX,
@@ -22,6 +23,7 @@ import {
 } from '../../src/ui/onboarding/onboardingScreenLayout';
 
 export default function CharacterSelectScreen() {
+  const t = useT();
   const insets = useSafeAreaInsets();
   const professions = useMemo(() => [...listPlayerProfessions()], []);
   const [selectedId, setSelectedId] = useState(professions[0]?.id ?? '');
@@ -30,7 +32,7 @@ export default function CharacterSelectScreen() {
   const handleConfirm = useCallback(async () => {
     if (!selectedId || submitting) return;
     if (!getPlayerProfessionById(selectedId)) {
-      showArcAlert('오류', '선택한 캐릭터 데이터를 찾을 수 없습니다.');
+      showArcAlert(t('charSelect.errorTitle'), t('charSelect.notFound'));
       return;
     }
     setSubmitting(true);
@@ -40,7 +42,7 @@ export default function CharacterSelectScreen() {
     } finally {
       setSubmitting(false);
     }
-  }, [selectedId, submitting]);
+  }, [selectedId, submitting, t]);
 
   const renderItem = useCallback(
     ({ item }: { item: PlayerProfessionCsvRow }) => (
@@ -57,10 +59,10 @@ export default function CharacterSelectScreen() {
   return (
     <StageShell routeName="character_select" background="stars" topInset={false}>
       <View style={styles.container}>
-        <Text style={styles.title}>캐릭터 선택</Text>
+        <Text style={styles.title}>{t('charSelect.title')}</Text>
 
         {professions.length === 0 ? (
-          <Text style={styles.emptyHint}>캐릭터 목록을 불러올 수 없습니다. 앱을 재시작해 주세요.</Text>
+          <Text style={styles.emptyHint}>{t('charSelect.emptyHint')}</Text>
         ) : null}
 
         <FlatList
@@ -76,7 +78,7 @@ export default function CharacterSelectScreen() {
 
         <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, SPACING.md) }]}>
           <ArcButton
-            label="[ 파일럿 등록 ]"
+            label={t('charSelect.register')}
             variant="panel"
             disabled={!selectedId || submitting}
             onPress={() => {

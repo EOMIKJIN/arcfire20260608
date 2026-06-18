@@ -12,8 +12,6 @@ export type PlanetDevelopmentModuleContext = {
 
 export type PlanetDevelopmentModuleRegistration = {
   id: string;
-  labelKo: string;
-  summaryKo: string;
   enabled: boolean;
   /** null — list 행만, 상세는 별도 라우팅 */
   DetailView?: ComponentType<PlanetDevelopmentModuleContext>;
@@ -35,8 +33,6 @@ export function listPlanetDevelopmentModulesForUi(): PlanetDevelopmentModuleRegi
     const reg = moduleRegistry.get(row.detailModuleKey);
     return {
       id: row.id,
-      labelKo: row.labelKo,
-      summaryKo: row.summaryKo,
       enabled: row.enabled,
       DetailView: reg?.DetailView,
     };

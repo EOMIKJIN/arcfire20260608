@@ -1838,7 +1838,7 @@ function resolvePlayerFlagshipCombatBinding(): PlayerFlagshipCombatBinding | nul
     { level: player.level, proficiencyMultiplier: proficiency.proficiencyMultiplier },
     runtimeBase,
   );
-  perf = applyMineralUpgradeToShipPerformance(perf, undefined);
+  perf = applyMineralUpgradeToShipPerformance(perf, player.mineralUpgrades);
 
   const mergedRuntime = runtimeBase
     ? {

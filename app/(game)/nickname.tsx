@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
+import { useT } from '../../src/i18n';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { getCurrentUser } from '../../src/firebase/auth';
 import { StageShell } from '../../src/stages/StageShell';
@@ -21,6 +22,7 @@ import {
 const NICKNAME_REGEX = /^[a-zA-Z0-9가-힣]{2,12}$/;
 
 export default function NicknameScreen() {
+  const t = useT();
   const [nickname, setNickname] = useState('');
   const [checking, setChecking] = useState(false);
   const inputRef = useRef<TextInput>(null);
@@ -37,13 +39,13 @@ export default function NicknameScreen() {
 
   const handleConfirm = async () => {
     if (!validate(nickname)) {
-      showArcAlert('닉네임 오류', '2~12자, 한글/영문/숫자만 사용 가능합니다.');
+      showArcAlert(t('nickname.errTitle'), t('nickname.errBody'));
       return;
     }
 
     const user = getCurrentUser();
     if (!user) {
-      showArcAlert('오류', '인증 정보를 찾을 수 없습니다. 다시 시작해주세요.');
+      showArcAlert(t('nickname.genericErrTitle'), t('nickname.authErr'));
       router.replace('/');
       return;
     }
@@ -55,11 +57,11 @@ export default function NicknameScreen() {
     } catch (e: unknown) {
       const message =
         e instanceof PilotRegistrationError
-          ? e.message
+          ? t(`pilotReg.${e.code}`)
           : e instanceof Error
             ? e.message
-            : '다시 시도해주세요.';
-      showArcAlert('오류', message);
+            : t('nickname.retry');
+      showArcAlert(t('nickname.genericErrTitle'), message);
     } finally {
       setChecking(false);
     }
@@ -72,20 +74,20 @@ export default function NicknameScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.inner}>
-          <Text style={styles.title}>파일럿 등록</Text>
+          <Text style={styles.title}>{t('nickname.title')}</Text>
           <Text style={styles.subtitle}>
-            {'은하계에 기록될 당신의 이름을\n입력하십시오.'}
+            {t('nickname.subtitle')}
           </Text>
 
           <View style={styles.divider} />
 
-          <Text style={styles.label}>파일럿 식별명</Text>
+          <Text style={styles.label}>{t('nickname.label')}</Text>
           <TextInput
             ref={inputRef}
             style={styles.input}
             value={nickname}
             onChangeText={setNickname}
-            placeholder="2~12자 (한글/영문/숫자)"
+            placeholder={t('nickname.placeholder')}
             placeholderTextColor={COLORS.ink_faint}
             maxLength={12}
             autoFocus
@@ -97,7 +99,7 @@ export default function NicknameScreen() {
             }}
           />
           <Text style={styles.hint}>
-            {nickname.length}/12{'  '}{validate(nickname) ? '✓ 사용 가능' : ''}
+            {nickname.length}/12{'  '}{validate(nickname) ? t('nickname.available') : ''}
           </Text>
 
           <TouchableOpacity
@@ -107,12 +109,12 @@ export default function NicknameScreen() {
           >
             {checking
               ? <ActivityIndicator color={COLORS.bg_primary} />
-              : <Text style={styles.btnText}>[ 등록 확정 ]</Text>
+              : <Text style={styles.btnText}>{t('nickname.confirm')}</Text>
             }
           </TouchableOpacity>
 
           <Text style={styles.warning}>
-            ※ 닉네임은 한 번 설정하면 변경할 수 없습니다.
+            {t('nickname.warning')}
           </Text>
         </View>
       </KeyboardAvoidingView>

@@ -28,15 +28,11 @@ function ensurePlanetDevelopmentModulesRegistered(): void {
   if (modulesRegistered) return;
   registerPlanetDevelopmentModule({
     id: PLANET_DEV_MODULE_DEFENSE_SATELLITE,
-    labelKo: '방위위성',
-    summaryKo: '궤도 방어·inbound 드론 요격',
     enabled: true,
     DetailView: PlanetDefenseSatelliteDevContent,
   });
   registerPlanetDevelopmentModule({
     id: PLANET_DEV_MODULE_ORBIT_SHIPYARD,
-    labelKo: '궤도 조선소',
-    summaryKo: '함대 지원·함선 정비',
     enabled: true,
     DetailView: PlanetOrbitShipyardDevContent,
   });

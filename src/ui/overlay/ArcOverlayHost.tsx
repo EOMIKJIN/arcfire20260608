@@ -20,6 +20,8 @@ import { TradeQuantityOverlayContent } from './content/TradeQuantityOverlayConte
 import { PlanetEconomyInfoOverlayContent } from './content/PlanetEconomyInfoOverlayContent';
 import { PlanetDevelopmentOverlayContent } from './content/PlanetDevelopmentOverlayContent';
 import { WaveResultOverlayContent } from './content/WaveResultOverlayContent';
+import { SettingsOverlayContent } from './content/SettingsOverlayContent';
+import { BmShopOverlayContent } from './content/BmShopOverlayContent';
 
 export const ArcOverlayHost = memo(function ArcOverlayHost() {
   const { width: winW, height: winH } = useWindowDimensions();
@@ -74,6 +76,14 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
   const handleWaveResultClose = useCallback(() => {
     if (entry?.kind === 'waveResult') entry.onClose();
     dismiss();
+  }, [dismiss, entry]);
+
+  const handleSettingsReset = useCallback(() => {
+    if (entry?.kind !== 'settings') return;
+    const reset = entry.onResetAccount;
+    dismiss();
+    // 확인 알림(alert, z 9999)이 설정 패널 위로 자연스럽게 뜨도록 닫은 뒤 호출
+    reset();
   }, [dismiss, entry]);
 
   const handleNarrativeNext = useCallback(() => {
@@ -158,6 +168,12 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
         ) : null}
         {entry.kind === 'waveResult' ? (
           <WaveResultOverlayContent entry={entry} onClose={handleWaveResultClose} />
+        ) : null}
+        {entry.kind === 'settings' ? (
+          <SettingsOverlayContent entry={entry} onClose={dismiss} onResetAccount={handleSettingsReset} />
+        ) : null}
+        {entry.kind === 'bmShop' ? (
+          <BmShopOverlayContent entry={entry} onClose={dismiss} />
         ) : null}
       </View>
     </View>

@@ -9,6 +9,10 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
+import { useT, t as tStatic, intlTag } from '../../src/i18n';
+import { useAppSettingsStore } from '../../src/store/appSettingsStore';
+import { resolveNpcCapitalShipDisplayName, resolveCapitalHullPurchaseLabel, resolveShipTemplateDescription } from '../../src/i18n/shipText';
+import { resolveItemName } from '../../src/i18n/itemText';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { formatCredits } from '../../src/utils/formatCredits';
 import { ShipGridPlaceholder } from '../../src/components/ShipGridPlaceholder';
@@ -43,6 +47,7 @@ import type {
 } from '../../src/types';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
+import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { ArcStageBackButton } from '../../src/ui/overlay/ArcStageBackButton';
@@ -51,9 +56,10 @@ import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
 import {
   resolveCapitalShipClassification,
+  formatCapitalShipIdentityBlock,
 } from '../../src/arcCore/balance/capitalShipClassification';
 import { resolveShipFinalStatResult } from '../../src/ship/shipStatPipeline';
-import { resolveMineralUpgradeMaxLevel } from '../../src/game/shipyardMineralUpgrade/mineralUpgradeModel';
+import { ShipyardMineralUpgradeTab } from '../../src/components/shipyard/ShipyardMineralUpgradeTab';
 import { normalizePlayerCombatProficiency } from '../../src/combat/playerCombatProficiency';
 import {
   normalizeInventorySlots,
@@ -79,17 +85,6 @@ function weaponIdFromSlotItemDef(itemDefId: string | null | undefined): string {
   return raw.replace(/^weapon_item_/, '').trim();
 }
 
-function formatEquippedWeaponStatValue(
-  slot: { itemDefId?: string; name?: string } | null | undefined,
-): string {
-  const weaponId = weaponIdFromSlotItemDef(slot?.itemDefId);
-  if (!weaponId) return 'NULL - DPS NULL';
-  const name = resolveEquipSlotDisplayName(slot?.itemDefId, slot?.name);
-  const dps = computeCapitalWeaponDps(weaponId);
-  const dpsText = dps != null ? `${dps.toFixed(1)}/초` : 'NULL';
-  return `${name} - DPS ${dpsText}`;
-}
-
 function sumEquippedWeaponTableDamage(
   equipSlots: PlayerShip['equipSlots'] | undefined,
 ): number {
@@ -104,6 +99,9 @@ function sumEquippedWeaponTableDamage(
 }
 
 export default function ShipyardScreen() {
+  const t = useT();
+  const localeRenderKey = useLocaleRenderKey();
+  const locale = useAppSettingsStore((s) => s.locale);
   const player = usePlayerStore(s => s.player);
   const loadLocalPlayer = usePlayerStore(s => s.loadLocalPlayer);
   const updateShip = usePlayerStore(s => s.updateShip);
@@ -131,10 +129,6 @@ export default function ShipyardScreen() {
     () => (player ? normalizePlayerCombatProficiency(player.combatProficiency, player.level) : null),
     [player],
   );
-  const mineralUpgradeCap = useMemo(
-    () => (combatProficiency ? resolveMineralUpgradeMaxLevel(combatProficiency.combatLevel) : 0),
-    [combatProficiency],
-  );
   const safeBack = useSafeRouterBack();
   usePlanetSubStageMemory('shipyard', () => {
     setTab('status');
@@ -151,24 +145,24 @@ export default function ShipyardScreen() {
 
   const handleRepair = () => {
     if (missingHp <= 0) {
-      showArcAlert('수리 불필요', '함선이 완전한 상태입니다.');
+      showArcAlert(t('shipyard.repair.noneTitle'), t('shipyard.repair.noneBody'));
       return;
     }
     showArcAlert(
-      '함선 수리',
-      `손상: ${missingHp}HP\n수리 비용: ${formatCredits(repairCost)}`,
+      t('shipyard.repair.confirmTitle'),
+      t('shipyard.repair.confirmBody', { hp: missingHp, cost: formatCredits(repairCost) }),
       [
-        { text: '취소', style: 'cancel' },
+        { text: t('shipyard.btn.cancel'), style: 'cancel' },
         {
-          text: '수리',
+          text: t('shipyard.repair.doConfirm'),
           onPress: async () => {
             if (!spendCredits(repairCost)) {
-              showArcAlert('크레딧 부족', '크레딧이 부족합니다.');
+              showArcAlert(t('shipyard.creditShortTitle'), t('shipyard.creditShortBody'));
               return;
             }
             updateShip({ ...ship, hp: finalStats.maxHp });
             await persist();
-            showArcAlert('수리 완료', '함선이 완전히 수리되었습니다.');
+            showArcAlert(t('shipyard.repair.doneTitle'), t('shipyard.repair.doneBody'));
           },
         },
       ],
@@ -177,19 +171,19 @@ export default function ShipyardScreen() {
 
   const handleShieldRecharge = () => {
     if (finalStats.shield >= finalStats.maxShield) {
-      showArcAlert('충전 불필요', '실드가 완전한 상태입니다.');
+      showArcAlert(t('shipyard.shield.noneTitle'), t('shipyard.shield.noneBody'));
       return;
     }
     showArcAlert(
-      '실드 충전',
-      `충전 비용: ${formatCredits(SHIELD_RECHARGE_COST)}`,
+      t('shipyard.shield.confirmTitle'),
+      t('shipyard.shield.confirmBody', { cost: formatCredits(SHIELD_RECHARGE_COST) }),
       [
-        { text: '취소', style: 'cancel' },
+        { text: t('shipyard.btn.cancel'), style: 'cancel' },
         {
-          text: '충전',
+          text: t('shipyard.shield.doConfirm'),
           onPress: async () => {
             if (!spendCredits(SHIELD_RECHARGE_COST)) {
-              showArcAlert('크레딧 부족', '크레딧이 부족합니다.');
+              showArcAlert(t('shipyard.creditShortTitle'), t('shipyard.creditShortBody'));
               return;
             }
             updateShip({ ...ship, shield: finalStats.maxShield });
@@ -202,12 +196,12 @@ export default function ShipyardScreen() {
   const handleSelectHangarShip = async (npcCapitalShipId: string) => {
     const applied = applyNpcCapitalShipToPlayerShip(ship, npcCapitalShipId);
     if (!applied.ok) {
-      showArcAlert('선택 실패', '전함 전환 데이터를 찾을 수 없습니다.');
+      showArcAlert(t('shipyard.select.failTitle'), t('shipyard.select.failBody'));
       return;
     }
     updateShip(applied.ship);
     await persist();
-    showArcAlert('전함 선택', '현재 운항 전함으로 설정했습니다.');
+    showArcAlert(t('shipyard.select.doneTitle'), t('shipyard.select.doneBody'));
   };
 
   const handlePurchaseHullTier = async (hullTierKey: string) => {
@@ -216,34 +210,42 @@ export default function ShipyardScreen() {
     const price = Number(row.purchaseCredits) || 0;
     const check = checkCapitalHullPurchase(hullTierKey, player.level, credits);
     if (!check.ok) {
-      showArcAlert('구매 불가', check.reasonKo ?? '조건을 충족하지 못했습니다.');
+      const reasonBody = check.reasonCode === 'level_required'
+        ? t('shipyard.buy.reason.level_required', { level: check.reasonParams?.level ?? 1 })
+        : check.reasonCode === 'credits_required'
+          ? t('shipyard.buy.reason.credits_required', { price: formatCredits(check.reasonParams?.price ?? 0) })
+          : check.reasonCode === 'unknown_tier'
+            ? t('shipyard.buy.reason.unknown_tier')
+            : t('shipyard.buy.unavailableDefault');
+      showArcAlert(t('shipyard.buy.unavailableTitle'), reasonBody);
       return;
     }
+    const hullLabel = resolveCapitalHullPurchaseLabel(row, locale);
     const npcShipId = resolveNpcShipIdForHullTier(hullTierKey);
     if (!npcShipId) {
-      showArcAlert('구매 불가', '해당 등급 전함 데이터가 없습니다.');
+      showArcAlert(t('shipyard.buy.unavailableTitle'), t('shipyard.buy.noShipData'));
       return;
     }
     showArcAlert(
-      '함선 구매',
-      `${row.labelKo}\n가격: ${formatCredits(price)}`,
+      t('shipyard.buy.confirmTitle'),
+      t('shipyard.buy.confirmBody', { label: hullLabel, price: formatCredits(price) }),
       [
-        { text: '취소', style: 'cancel' },
+        { text: t('shipyard.btn.cancel'), style: 'cancel' },
         {
-          text: '구매',
+          text: t('shipyard.buy.doConfirm'),
           onPress: async () => {
             if (price > 0 && !spendCredits(price)) {
-              showArcAlert('크레딧 부족', '크레딧이 부족합니다.');
+              showArcAlert(t('shipyard.creditShortTitle'), t('shipyard.creditShortBody'));
               return;
             }
             if (!addHangarShipFromNpcPurchase(npcShipId)) {
-              showArcAlert('격납고 가득참', '격납고 슬롯이 부족합니다.');
+              showArcAlert(t('shipyard.buy.hangarFullTitle'), t('shipyard.buy.hangarFullBody'));
               return;
             }
             const applied = applyNpcCapitalShipToPlayerShip(ship, npcShipId);
             if (applied.ok) updateShip(applied.ship);
             await persist();
-            showArcAlert('구매 완료', `${row.labelKo}이(가) 격납고에 인도되었습니다.`);
+            showArcAlert(t('shipyard.buy.doneTitle'), t('shipyard.buy.doneBody', { label: hullLabel }));
           },
         },
       ],
@@ -252,12 +254,12 @@ export default function ShipyardScreen() {
 
   const handleReleaseCurrentShip = async () => {
     if (isSurvivalPodNpcShipId(ship.portraitNpcCapitalShipId)) {
-      showArcAlert('생존포드', '생존포드 상태에서는 전함 해제를 할 수 없습니다. 격납고에서 전함을 선택해 탑승하세요.');
+      showArcAlert(t('shipyard.release.podTitle'), t('shipyard.release.podBody'));
       return;
     }
     const baseTemplate = SHIP_TEMPLATES[player.shipId];
     if (!baseTemplate) {
-      showArcAlert('해제 실패', '기본 전함 템플릿을 찾을 수 없습니다.');
+      showArcAlert(t('shipyard.release.failTitle'), t('shipyard.release.failBody'));
       return;
     }
     const portraitNpcId = baseTemplate.portraitNpcCapitalShipId ?? '';
@@ -280,7 +282,7 @@ export default function ShipyardScreen() {
     );
     updateShip(released.ok ? released.ship : ship);
     await persist();
-    showArcAlert('전함 해제', '기본 운항 전함으로 전환했습니다.');
+    showArcAlert(t('shipyard.release.doneTitle'), t('shipyard.release.doneBody'));
   };
 
   const template = SHIP_TEMPLATES[ship.templateId];
@@ -292,10 +294,30 @@ export default function ShipyardScreen() {
   const shipClassification = portraitNpcId
     ? resolveCapitalShipClassification(portraitNpcId)
     : null;
+  const displayShipName = resolveNpcCapitalShipDisplayName(
+    portraitNpcId,
+    ship.name,
+    locale,
+  );
   const strStat = combatStats?.strStat ?? 14;
   const dexStat = combatStats?.dexStat ?? 14;
   const sizeClass = combatStats?.sizeClass ?? 0;
   const totalWeaponDamage = sumEquippedWeaponTableDamage(ship.equipSlots);
+  const formatEquippedWeaponStatValue = (
+    slot: { itemDefId?: string; name?: string } | null | undefined,
+  ): string => {
+    const weaponId = weaponIdFromSlotItemDef(slot?.itemDefId);
+    if (!weaponId) return t('shipyard.weapon.empty');
+    const name = resolveEquipSlotDisplayName(slot?.itemDefId, slot?.name, locale);
+    const dps = computeCapitalWeaponDps(weaponId);
+    const dpsText = dps != null
+      ? t('shipyard.weapon.dps', { value: dps.toFixed(1) })
+      : t('shipyard.weapon.dpsNull');
+    return t('shipyard.weapon.stat', { name, dps: dpsText });
+  };
+  const shipSubtitle = shipClassification
+    ? (locale !== 'ko' ? shipClassification.roleSummaryEn : shipClassification.roleSummaryKo)
+    : resolveShipTemplateDescription(ship.templateId, template?.description, locale);
   const weaponStatLines = {
     WEAPON_1: formatEquippedWeaponStatValue(ship.equipSlots?.WEAPON_1),
     WEAPON_2: formatEquippedWeaponStatValue(ship.equipSlots?.WEAPON_2),
@@ -323,7 +345,7 @@ export default function ShipyardScreen() {
                 source={shipPortraitSource}
                 style={styles.shipPortrait}
                 resizeMode="contain"
-                accessibilityLabel={`${ship.name} 함선 이미지`}
+                accessibilityLabel={displayShipName}
               />
             ) : (
               <ShipGridPlaceholder cellSize={10} tone="player" />
@@ -350,69 +372,75 @@ export default function ShipyardScreen() {
             </View>
           </View>
         ) : null}
-        <Text style={styles.shipName}>{ship.name}</Text>
-        <Text style={styles.shipClass}>{template?.description ?? ''}</Text>
+        <Text style={styles.shipName}>{displayShipName}</Text>
+        <Text style={styles.shipClass}>{shipSubtitle}</Text>
       </View>
 
       <View style={styles.statsBox}>
         {/* 임시 개발 기준: 첫 탭 현황은 항상 현재 탑승 전함(player.ship) 기준으로 표시한다. */}
-        <Text style={styles.statsTitle}>— [현재탑승전함] 함선 제원 —</Text>
+        <Text style={styles.statsTitle}>{t('shipyard.stats.title')}</Text>
         {isSurvivalPodNpcShipId(ship.portraitNpcCapitalShipId) ? (
           <Text style={styles.survivalPodNotice}>
-            생존포드 — 은하 이동·전투 불가. 조선소에서 전함 재구매 후 격납고에서 탑승하세요.
+            {t('shipyard.stats.survivalPod')}
           </Text>
         ) : null}
-        <StatRow label="함선명" value={ship.name} />
+        <StatRow label={t('shipyard.stats.shipName')} value={displayShipName} />
         {shipClassification ? (
           <>
-            <StatDescRow label="함급 분류" value={shipClassification.identityHeadline} />
-            <StatDescRow label="역할" value={shipClassification.roleSummaryKo} />
+            <StatDescRow
+              label={t('shipyard.stats.classification')}
+              value={formatCapitalShipIdentityBlock(shipClassification, locale).split('\n')[0] ?? ''}
+            />
+            <StatDescRow
+              label={t('shipyard.stats.role')}
+              value={locale !== 'ko' ? shipClassification.roleSummaryEn : shipClassification.roleSummaryKo}
+            />
           </>
         ) : null}
         {combatProficiency ? (
           <>
-            <StatRow label="전투 등급" value={`Lv.${combatProficiency.combatLevel}`} />
-            <StatRow label="운용 효율" value={`${combatProficiency.operatingEfficiencyPct}%`} />
+            <StatRow label={t('shipyard.stats.combatGrade')} value={`Lv.${combatProficiency.combatLevel}`} />
+            <StatRow label={t('shipyard.stats.efficiency')} value={`${combatProficiency.operatingEfficiencyPct}%`} />
             <StatRow
-              label="숙련 계수"
+              label={t('shipyard.stats.proficiency')}
               value={`×${combatProficiency.proficiencyMultiplier.toFixed(3)}`}
             />
           </>
         ) : null}
-        <StatRow label="내구도" value={`${finalStats.maxHp}`} />
-        <StatRow label="실드" value={`${finalStats.maxShield}`} />
-        <StatRow label="속도" value={`${finalStats.speed}`} />
+        <StatRow label={t('shipyard.stats.durability')} value={`${finalStats.maxHp}`} />
+        <StatRow label={t('shipyard.stats.shield')} value={`${finalStats.maxShield}`} />
+        <StatRow label={t('shipyard.stats.speed')} value={`${finalStats.speed}`} />
 
-        <StatRow label="출력(STR)" value={`${strStat}`} />
-        <StatRow label="기동력(DEX)" value={`${dexStat}`} />
-        <StatRow label="중량(SIZE)" value={`${sizeClass}`} />
-        <StatRow label="명중 보너스" value={`${combatStats?.attackBonus ?? 0}`} />
-        <StatRow label="공격력" value={`${totalWeaponDamage}`} />
-        <StatRow label="장착무기1" value={weaponStatLines.WEAPON_1} />
-        <StatRow label="장착무기2" value={weaponStatLines.WEAPON_2} />
-        <StatRow label="장착무기3" value={weaponStatLines.WEAPON_3} />
-        <StatRow label="장착무기4" value={weaponStatLines.WEAPON_4} />
-        <StatRow label="인벤토리" value={`${inventorySlots.length}`} />
+        <StatRow label={t('shipyard.stats.str')} value={`${strStat}`} />
+        <StatRow label={t('shipyard.stats.dex')} value={`${dexStat}`} />
+        <StatRow label={t('shipyard.stats.size')} value={`${sizeClass}`} />
+        <StatRow label={t('shipyard.stats.accuracy')} value={`${combatStats?.attackBonus ?? 0}`} />
+        <StatRow label={t('shipyard.stats.attack')} value={`${totalWeaponDamage}`} />
+        <StatRow label={t('shipyard.stats.weapon1')} value={weaponStatLines.WEAPON_1} />
+        <StatRow label={t('shipyard.stats.weapon2')} value={weaponStatLines.WEAPON_2} />
+        <StatRow label={t('shipyard.stats.weapon3')} value={weaponStatLines.WEAPON_3} />
+        <StatRow label={t('shipyard.stats.weapon4')} value={weaponStatLines.WEAPON_4} />
+        <StatRow label={t('shipyard.stats.inventory')} value={`${inventorySlots.length}`} />
       </View>
 
     </>
   );
 
   return (
-    <StageShell routeName="shipyard" background="none" edges={['bottom']}>
+    <StageShell key={localeRenderKey} routeName="shipyard" background="none" edges={['bottom']}>
       <View style={{ flex: 1 }}>
       <View style={styles.header}>
         <ArcStageBackButton onPress={safeBack} style={styles.backBtn} />
-        <Text style={styles.headerTitle}>조선소</Text>
+        <Text style={styles.headerTitle}>{t('shipyard.title')}</Text>
         <Text style={styles.creditsText}>{formatCredits(credits)}</Text>
       </View>
 
       <PlanetFacilityTabBar
         tabs={[
-          { id: 'status', label: '현황' },
-          { id: 'capital', label: '전함' },
-          { id: 'upgrade', label: '업그레이드' },
-          { id: 'hangar', label: '격납고' },
+          { id: 'status', label: t('shipyard.tab.status') },
+          { id: 'capital', label: t('shipyard.tab.capital') },
+          { id: 'upgrade', label: t('shipyard.tab.upgrade') },
+          { id: 'hangar', label: t('shipyard.tab.hangar') },
         ]}
         activeId={tab}
         onSelect={(id) => setTab(id as 'status' | 'capital' | 'upgrade' | 'hangar')}
@@ -423,19 +451,19 @@ export default function ShipyardScreen() {
         {tab === 'status' && <>{renderShipOverview(false)}</>}
         {tab === 'status' && (
           <View style={styles.serviceBox}>
-            <Text style={styles.statsTitle}>— 정비 서비스 —</Text>
+            <Text style={styles.statsTitle}>{t('shipyard.service.title')}</Text>
 
             <TouchableOpacity
               style={[styles.serviceBtn, missingHp <= 0 && styles.serviceBtnDisabled]}
               onPress={handleRepair}
             >
               <View style={styles.serviceBtnLeft}>
-                <Text style={styles.serviceBtnTitle}>🔧 선체 수리</Text>
+                <Text style={styles.serviceBtnTitle}>{t('shipyard.repair.btn')}</Text>
                 <Text style={styles.serviceBtnSub}>
-                  손상: {missingHp}HP → {formatCredits(repairCost)}
+                  {t('shipyard.repair.sub', { hp: missingHp, cost: formatCredits(repairCost) })}
                 </Text>
               </View>
-              <Text style={styles.serviceBtnAction}>[ 수리 ]</Text>
+              <Text style={styles.serviceBtnAction}>{t('shipyard.repair.action')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -443,10 +471,10 @@ export default function ShipyardScreen() {
               onPress={handleShieldRecharge}
             >
               <View style={styles.serviceBtnLeft}>
-                <Text style={styles.serviceBtnTitle}>⚡ 실드 충전</Text>
+                <Text style={styles.serviceBtnTitle}>{t('shipyard.shield.btn')}</Text>
                 <Text style={styles.serviceBtnSub}>{formatCredits(SHIELD_RECHARGE_COST)}</Text>
               </View>
-              <Text style={styles.serviceBtnAction}>[ 충전 ]</Text>
+              <Text style={styles.serviceBtnAction}>{t('shipyard.shield.action')}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -461,12 +489,10 @@ export default function ShipyardScreen() {
 
         {tab === 'upgrade' && (
           <View style={styles.hangarSection}>
-            <Text style={styles.hangarCapLine}>
-              전투 Lv.{combatProficiency?.combatLevel ?? 1} · 상한 Lv.{mineralUpgradeCap}
-            </Text>
-            <Text style={styles.hangarHeading}>— 함선 체급 구매 —</Text>
+            <ShipyardMineralUpgradeTab />
+            <Text style={styles.hangarHeading}>{t('shipyard.upgrade.hullSection')}</Text>
             <Text style={styles.hangarEmptySub}>
-              `capital_hull_purchase_policy.csv` 기준 · 파일럿 Lv·크레딧 충족 시 구매
+              {t('shipyard.upgrade.hullHint')}
             </Text>
             {listCapitalHullPurchasePolicyRows()
               .filter((row) => row.hullTierKey !== 'frigate_default')
@@ -482,12 +508,12 @@ export default function ShipyardScreen() {
                     disabled={!canBuy}
                   >
                     <View style={{ flex: 1 }}>
-                      <Text style={styles.serviceBtnTitle}>{row.labelKo}</Text>
+                      <Text style={styles.serviceBtnTitle}>{resolveCapitalHullPurchaseLabel(row, locale)}</Text>
                       <Text style={styles.serviceBtnSub}>
-                        Lv.{minLv}+ · {formatCredits(price)}
+                        {t('shipyard.upgrade.hullSub', { lv: minLv, price: formatCredits(price) })}
                       </Text>
                     </View>
-                    <Text style={styles.serviceBtnAction}>{canBuy ? '[ 구매 ]' : '[ 잠김 ]'}</Text>
+                    <Text style={styles.serviceBtnAction}>{canBuy ? t('shipyard.btn.buy') : t('shipyard.btn.locked')}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -498,15 +524,20 @@ export default function ShipyardScreen() {
           hangarSorted.length === 0 ? (
             <View style={styles.hangarEmpty}>
               <Text style={styles.hangarEmptyIcon}>🚢</Text>
-              <Text style={styles.hangarEmptyTitle}>격납고가 비어 있습니다</Text>
-              <Text style={styles.hangarEmptySub}>무역소에서 전함을 구매하면 이곳에 인도됩니다.</Text>
+              <Text style={styles.hangarEmptyTitle}>{t('shipyard.hangar.emptyTitle')}</Text>
+              <Text style={styles.hangarEmptySub}>{t('shipyard.hangar.emptySub')}</Text>
             </View>
           ) : (
             <View style={styles.hangarSection}>
-              <Text style={styles.hangarHeading}>— 보관 중인 전함 —</Text>
-              <Text style={styles.hangarCurrentLine}>[현재탑승전함] {ship.name}</Text>
+              <Text style={styles.hangarHeading}>{t('shipyard.hangar.stored')}</Text>
+              <Text style={styles.hangarCurrentLine}>{t('shipyard.hangar.current', { name: displayShipName })}</Text>
               {hangarSorted.map(entry => {
                 const row = getNpcCapitalShip(entry.npcCapitalShipId);
+                const hangarShipName = resolveNpcCapitalShipDisplayName(
+                  entry.npcCapitalShipId,
+                  row?.name ?? entry.npcCapitalShipId,
+                  locale,
+                );
                 const thumbSrc = row?.portraitImageAssetKey
                   ? resolveNpcCapitalShipPortraitSource(row.portraitImageAssetKey)
                   : undefined;
@@ -519,21 +550,21 @@ export default function ShipyardScreen() {
                         source={thumbSrc}
                         style={styles.hangarThumb}
                         resizeMode="contain"
-                        accessibilityLabel={`${row?.name ?? entry.npcCapitalShipId} 썸네일`}
+                        accessibilityLabel={hangarShipName}
                       />
                     ) : (
-                      <View style={styles.hangarThumbPlaceholder} accessibilityLabel="이미지 없음">
+                      <View style={styles.hangarThumbPlaceholder} accessibilityLabel={t('shipyard.hangar.noImage')}>
                         <Text style={styles.hangarThumbPhText}>⋯</Text>
                       </View>
                     )}
                     <View style={styles.hangarMeta}>
-                      <Text style={styles.hangarName}>{row?.name ?? entry.npcCapitalShipId}</Text>
+                      <Text style={styles.hangarName}>{hangarShipName}</Text>
                       {isSurvivalPodEntry ? (
-                        <Text style={styles.hangarCurrentBadge}>[생존포드·무장불가]</Text>
+                        <Text style={styles.hangarCurrentBadge}>{t('shipyard.hangar.badgePod')}</Text>
                       ) : null}
-                      {isCurrentShip ? <Text style={styles.hangarCurrentBadge}>[현재탑승전함]</Text> : null}
+                      {isCurrentShip ? <Text style={styles.hangarCurrentBadge}>{t('shipyard.hangar.badgeCurrent')}</Text> : null}
                       <Text style={styles.hangarSub} numberOfLines={2}>
-                        인도 {new Date(entry.acquiredAt).toLocaleString('ko-KR')}
+                        {t('shipyard.hangar.delivered', { date: new Date(entry.acquiredAt).toLocaleString(intlTag()) })}
                       </Text>
                     </View>
                     <View style={styles.hangarActions}>
@@ -549,7 +580,7 @@ export default function ShipyardScreen() {
                         }}
                         disabled={isSurvivalPodEntry}
                       >
-                        <Text style={styles.hangarActionText}>[선택]</Text>
+                        <Text style={styles.hangarActionText}>{t('shipyard.btn.select')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={[
@@ -563,7 +594,7 @@ export default function ShipyardScreen() {
                         }}
                         disabled={isSurvivalPodEntry || !isCurrentShip}
                       >
-                        <Text style={styles.hangarActionText}>[해제]</Text>
+                        <Text style={styles.hangarActionText}>{t('shipyard.btn.release')}</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -613,6 +644,8 @@ function ShipyardInventoryGrid({
   updateShip: (s: PlayerShip) => void;
   persist: () => Promise<void>;
 }) {
+  const t = useT();
+  const locale = useAppSettingsStore((s) => s.locale);
   const slots = normalizeInventorySlots(player.inventorySlots);
   const used = slots.filter(Boolean).length;
   const rebuildWeaponsFromSlots = (
@@ -628,7 +661,7 @@ function ShipyardInventoryGrid({
 
   const equipWeaponFromInventory = async (itemId: string) => {
     if (isSurvivalPodNpcShipId(ship.portraitNpcCapitalShipId)) {
-      showArcAlert('생존포드', '생존포드에는 무기를 장착할 수 없습니다.');
+      showArcAlert(t('shipyard.inventory.equipPodTitle'), t('shipyard.inventory.equipPodBody'));
       return;
     }
     const weaponId = weaponIdFromWeaponItemId(itemId);
@@ -637,18 +670,18 @@ function ShipyardInventoryGrid({
     const weapon = ship.weapons.find((w) => w.id === weaponId)
       ?? (row ? buildWeaponDataFromCapitalRow(row) : null);
     if (!weapon) {
-      showArcAlert('장착 실패', '무기 테이블 데이터를 찾을 수 없습니다.');
+      showArcAlert(t('shipyard.inventory.equipFailTitle'), t('shipyard.inventory.equipFailNoTable'));
       return;
     }
     const slotId = resolveCombatWeaponSlotForWeaponId(weaponId);
     if (!slotId) {
-      showArcAlert('장착 실패', '이 무기는 장착 슬롯을 결정할 수 없습니다.');
+      showArcAlert(t('shipyard.inventory.equipFailTitle'), t('shipyard.inventory.equipFailNoSlot'));
       return;
     }
     const nextSlots = { ...(ship.equipSlots ?? {}) };
     nextSlots[slotId] = {
       itemDefId: itemId,
-      name: resolveEquipSlotDisplayName(itemId, row?.name ?? weapon.name),
+      name: resolveEquipSlotDisplayName(itemId, row?.name ?? weapon.name, locale),
     };
     const nextWeapons = rebuildWeaponsFromSlots(nextSlots);
     updateShip({ ...ship, equipSlots: nextSlots, weapons: nextWeapons });
@@ -660,7 +693,7 @@ function ShipyardInventoryGrid({
       COMBAT_WEAPON_SLOT_IDS.find((id) => ship.equipSlots?.[id]?.itemDefId === itemId) ?? null;
     if (!slotId) return;
     const nextSlots = { ...(ship.equipSlots ?? {}) };
-    nextSlots[slotId] = { itemDefId: UNEQUIPPED_WEAPON_ITEM_ID, name: '미장착' };
+    nextSlots[slotId] = { itemDefId: UNEQUIPPED_WEAPON_ITEM_ID, name: tStatic('shipyard.unequipped') };
     const nextWeapons = rebuildWeaponsFromSlots(nextSlots);
     updateShip({ ...ship, equipSlots: nextSlots, weapons: nextWeapons });
     await persist();
@@ -668,8 +701,8 @@ function ShipyardInventoryGrid({
 
   return (
     <View style={styles.equipSlotsBox}>
-      <Text style={styles.statsTitle}>— 인벤토리 —</Text>
-      <Text style={styles.hangarCurrentLine}>슬롯 {PLAYER_INVENTORY_SLOT_COUNT} · 사용 {used}</Text>
+      <Text style={styles.statsTitle}>{t('shipyard.inventory.title')}</Text>
+      <Text style={styles.hangarCurrentLine}>{t('shipyard.inventory.slotLine', { slots: PLAYER_INVENTORY_SLOT_COUNT, used })}</Text>
       <View style={styles.inventoryList}>
         {slots.map((cell, i) => {
           const good = cell ? TRADE_GOODS[cell.goodId] : undefined;
@@ -679,20 +712,26 @@ function ShipyardInventoryGrid({
             cell
             && COMBAT_WEAPON_SLOT_IDS.some((id) => ship.equipSlots?.[id]?.itemDefId === cell.goodId),
           );
-          const itemName = cell ? (good?.name ?? weaponDef?.name ?? cell.goodId) : '— 빈 슬롯 —';
+          const itemName = cell
+            ? good
+              ? resolveItemName(good, locale)
+              : weaponDef
+                ? resolveEquipSlotDisplayName(cell.goodId, weaponDef.name, locale)
+                : cell.goodId
+            : t('shipyard.inventory.emptyCell');
           return (
             <View
               key={`inv-${i}`}
               style={[styles.hangarRow, !cell && styles.inventoryRowEmpty]}
-              accessibilityLabel={cell ? `인벤 슬롯 ${i + 1} ${cell.goodId}` : `인벤 슬롯 ${i + 1} 빈칸`}
+              accessibilityLabel={`${i + 1} ${cell ? cell.goodId : ''}`}
             >
-              <View style={styles.inventoryThumbPlaceholder} accessibilityLabel="아이템 아이콘">
+              <View style={styles.inventoryThumbPlaceholder}>
                 <Text style={styles.inventoryThumbIcon}>{cell ? '📦' : '·'}</Text>
               </View>
               <View style={styles.hangarMeta}>
                 <Text style={styles.hangarName} numberOfLines={1}>{itemName}</Text>
                 <Text style={styles.hangarSub} numberOfLines={1}>
-                  {cell ? `수량 ${cell.quantity}${isEquipped ? ' · 장착중' : ''}` : '빈 슬롯'}
+                  {cell ? t('shipyard.inventory.qty', { qty: cell.quantity, equipped: isEquipped ? t('shipyard.inventory.equippedSuffix') : '' }) : t('shipyard.inventory.emptySlot')}
                 </Text>
               </View>
               {cell && isWeaponModule ? (
@@ -703,7 +742,7 @@ function ShipyardInventoryGrid({
                       void equipWeaponFromInventory(cell.goodId);
                     }}
                   >
-                    <Text style={styles.hangarActionText}>[장착]</Text>
+                    <Text style={styles.hangarActionText}>{t('shipyard.btn.equip')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.hangarActionBtn, styles.hangarReleaseBtn, !isEquipped && styles.hangarActionDisabled]}
@@ -712,7 +751,7 @@ function ShipyardInventoryGrid({
                       void unequipWeaponToInventory(cell.goodId);
                     }}
                   >
-                    <Text style={styles.hangarActionText}>[해제]</Text>
+                    <Text style={styles.hangarActionText}>{t('shipyard.btn.unequip')}</Text>
                   </TouchableOpacity>
                 </View>
               ) : null}
@@ -733,6 +772,8 @@ function ShipyardEquipSlotsBlock({
   updateShip: (s: PlayerShip) => void;
   persist: () => Promise<void>;
 }) {
+  const t = useT();
+  const locale = useAppSettingsStore((s) => s.locale);
   const map = ship.equipSlots ?? {};
   const rebuildWeaponsFromSlots = (
     nextSlots: Partial<Record<ShipyardEquipSlotId, { itemDefId: string; name: string } | null>>,
@@ -755,20 +796,20 @@ function ShipyardEquipSlotsBlock({
 
   const openSlot = (slotId: ShipyardEquipSlotId, order: number) => {
     if (order > equipCapacity) {
-      showArcAlert('잠금 슬롯', `이 함선의 장착 허용량은 ${equipCapacity}칸입니다.`);
+      showArcAlert(t('shipyard.equip.lockTitle'), t('shipyard.equip.lockBody', { n: equipCapacity }));
       return;
     }
     const cur = map[slotId] ?? null;
     if (isEquipSlotFilled(cur)) {
-      const displayName = resolveEquipSlotDisplayName(cur!.itemDefId, cur!.name);
-      showArcAlert(`[${order}.${slotId}]`, `${displayName}\n\n슬롯에서 해제할까요?`, [
-        { text: '닫기', style: 'cancel' },
+      const displayName = resolveEquipSlotDisplayName(cur!.itemDefId, cur!.name, locale);
+      showArcAlert(`[${order}.${slotId}]`, t('shipyard.equip.unequipBody', { name: displayName }), [
+        { text: t('shipyard.btn.close'), style: 'cancel' },
         {
-          text: '해제',
+          text: t('shipyard.equip.doUnequip'),
           onPress: async () => {
             const nextSlots = { ...map };
             if (isCombatWeaponEquipSlot(slotId)) {
-              nextSlots[slotId] = { itemDefId: UNEQUIPPED_WEAPON_ITEM_ID, name: '미장착' };
+              nextSlots[slotId] = { itemDefId: UNEQUIPPED_WEAPON_ITEM_ID, name: tStatic('shipyard.unequipped') };
             } else {
               delete nextSlots[slotId];
             }
@@ -780,15 +821,15 @@ function ShipyardEquipSlotsBlock({
       ]);
       return;
     }
-    showArcAlert(`[${order}.${slotId}]`, '비어 있는 슬롯입니다. 인벤토리에서 아이템을 선택해 장착하세요.', [
-      { text: '닫기', style: 'cancel' },
+    showArcAlert(`[${order}.${slotId}]`, t('shipyard.equip.emptyBody'), [
+      { text: t('shipyard.btn.close'), style: 'cancel' },
     ]);
   };
 
   return (
     <View style={styles.equipSlotsBox}>
-      <Text style={styles.statsTitle}>— 장비 및 아이템 장착 슬롯 —</Text>
-      <Text style={styles.equipCapacityLine}>장착 허용량: {equipCapacity}칸</Text>
+      <Text style={styles.statsTitle}>{t('shipyard.equip.title')}</Text>
+      <Text style={styles.equipCapacityLine}>{t('shipyard.equip.capacity', { n: equipCapacity })}</Text>
       <View style={styles.equipSlotsGrid}>
         {SHIPYARD_EQUIP_SLOT_DEFS.map(({ order, id }) => {
           const cur = map[id];
@@ -803,15 +844,15 @@ function ShipyardEquipSlotsBlock({
                 locked && styles.equipSlotLocked,
               ]}
               onPress={() => openSlot(id, order)}
-              accessibilityLabel={`슬롯 ${order} ${id}`}
+              accessibilityLabel={`${order} ${id}`}
             >
               <Text style={styles.equipSlotTag}>{`[${order}.${id}]`}</Text>
               <Text style={styles.equipSlotItem} numberOfLines={2}>
                 {locked
-                  ? '— 잠금 —'
+                  ? t('shipyard.equip.slotLocked')
                   : filled
-                    ? resolveEquipSlotDisplayName(cur!.itemDefId, cur!.name)
-                    : '— 빈 슬롯 —'}
+                    ? resolveEquipSlotDisplayName(cur!.itemDefId, cur!.name, locale)
+                    : t('shipyard.equip.slotEmpty')}
               </Text>
             </TouchableOpacity>
           );

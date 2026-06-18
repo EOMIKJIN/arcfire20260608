@@ -12,12 +12,21 @@ $remediationLog = Join-Path $LogDir 'remediation.log'
 $refixFlag = Join-Path $LogDir 'gl-leak-refix-requested.flag'
 $throttleFile = Join-Path $LogDir 'last-auto-remediation.txt'
 $baselineJson = Join-Path $LogDir 'mem-baseline.json'
+$pauseFlag = Join-Path $LogDir 'monitor-paused.flag'
 $root = Resolve-Path (Join-Path $PSScriptRoot '../..')
 
 function Write-Remediation([string]$msg) {
   $line = "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $msg"
   Add-Content -Path $remediationLog -Value $line
   Write-Host $line
+}
+
+# 검증 분리: logs/monitor-paused.flag 가 있으면 자동조치(앱 강제 재시작·정적 감사)를 건너뛴다.
+# release/첫 빌드 검증 중에는 이 플래그를 만들어 두면 PSS/GL 하드실링에도 앱이 강제 재시작되지 않는다.
+# 감시·기록(run-monitor·report-watch)은 계속된다. 검증 종료 후 플래그를 지우면 자동조치 복귀.
+if (Test-Path $pauseFlag) {
+  Write-Remediation "AUTO_FIX SKIPPED (monitor-paused.flag present) reason=$Reason — verification mode, no relaunch"
+  exit 0
 }
 
 function Get-LastRemediationAgeMin {

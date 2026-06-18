@@ -10,6 +10,7 @@ export { CapitalShipCombatLevelClass_FROM_BALANCE_CSV } from './csvCapitalShipCo
 export { CapitalShipHullTierMapping_FROM_BALANCE_CSV } from './csvCapitalShipHullTierMapping';
 export { CapitalShipInstanceClass_FROM_BALANCE_CSV } from './csvCapitalShipInstanceClass';
 export { CapitalShipLoadoutProfile_FROM_BALANCE_CSV } from './csvCapitalShipLoadoutProfile';
+export { CapitalShipMaxUpgradeValue_FROM_BALANCE_CSV } from './csvCapitalShipMaxUpgradeValue';
 export { CapitalShipTradeListingPolicy_FROM_BALANCE_CSV } from './csvCapitalShipTradeListingPolicy';
 export { CapitalShipTradePricePolicy_FROM_BALANCE_CSV } from './csvCapitalShipTradePricePolicy';
 export { CapitalShipWaveTierClass_FROM_BALANCE_CSV } from './csvCapitalShipWaveTierClass';

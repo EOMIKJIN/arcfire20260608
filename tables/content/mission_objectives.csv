@@ -1,52 +1,52 @@
-﻿missionId,id,description,type,targetId,quantity
-mission_001,obj_001_a,베가 전초기지로 이동,reach_system,vega_outpost,
-mission_002,obj_002_a,해적 전투기 격파 (1대),defeat_enemy,pirate_fighter,1
-mission_003,obj_003_a,솔라 항구에서 식량 팩 구매 (10개),buy_goods,food,10
-mission_003,obj_003_b,미네르바로 배달,reach_system,minerva,
-mission_004,obj_004_a,뉴 에덴 도착,reach_system,new_eden,
-mission_005,obj_005_a,오메가 스테이션 도착,reach_system,omega_station,
-sandbox_001,obj_s001_a,해적 전투기 격파,defeat_enemy,pirate_fighter,1
-sandbox_002,obj_s002_a,식량 팩 3개 구매,buy_goods,food,3
-sandbox_002,obj_s002_b,베가 전초기지로 이동,reach_system,vega_outpost,
-sandbox_003,obj_s003_a,해적 전투기 격파,defeat_enemy,pirate_fighter,1
-sandbox_004,obj_s004_a,기술 부품 2개 구매,buy_goods,tech,2
-sandbox_004,obj_s004_b,미네르바로 이동,reach_system,minerva,
-sandbox_005,obj_s005_a,해적 전투기 격파,defeat_enemy,pirate_fighter,1
-sandbox_006,obj_s006_a,원자재 광물 3개 구매,buy_goods,minerals,3
-sandbox_006,obj_s006_b,뉴 에덴으로 이동,reach_system,new_eden,
-sandbox_007,obj_s007_a,해적 전투기 격파,defeat_enemy,pirate_fighter,1
-sandbox_008,obj_s008_a,식량 팩 4개 구매,buy_goods,food,4
-sandbox_008,obj_s008_b,솔라 항구로 이동,reach_system,solar_port,
-sandbox_009,obj_s009_a,해적 순양함 격파,defeat_enemy,pirate_cruiser,1
-sandbox_010,obj_s010_a,기술 부품 3개 구매,buy_goods,tech,3
-sandbox_010,obj_s010_b,아이언 크로스로 이동,reach_system,iron_cross,
-sandbox_011,obj_s011_a,해적 순양함 격파,defeat_enemy,pirate_cruiser,1
-sandbox_012,obj_s012_a,원자재 광물 4개 구매,buy_goods,minerals,4
-sandbox_012,obj_s012_b,오메가 스테이션으로 이동,reach_system,omega_station,
-sandbox_013,obj_s013_a,해적 순양함 격파,defeat_enemy,pirate_cruiser,1
-sandbox_014,obj_s014_a,사치품 2개 구매,buy_goods,luxury,2
-sandbox_014,obj_s014_b,오메가 스테이션으로 이동,reach_system,omega_station,
-sandbox_015,obj_s015_a,해적 순양함 격파,defeat_enemy,pirate_cruiser,1
-sandbox_016,obj_s016_a,식량 팩 5개 구매,buy_goods,food,5
-sandbox_016,obj_s016_b,헬리오스로 이동,reach_system,helios,
-sandbox_017,obj_s017_a,해적 순양함 격파,defeat_enemy,pirate_cruiser,1
-sandbox_018,obj_s018_a,기술 부품 4개 구매,buy_goods,tech,4
-sandbox_018,obj_s018_b,시리우스로 이동,reach_system,sirius,
-sandbox_019,obj_s019_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1
-sandbox_020,obj_s020_a,사치품 3개 구매,buy_goods,luxury,3
-sandbox_020,obj_s020_b,페르세우스로 이동,reach_system,perseus,
-sandbox_021,obj_s021_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1
-sandbox_022,obj_s022_a,무기류 3개 구매,buy_goods,weapon,3
-sandbox_022,obj_s022_b,크림슨 구역으로 이동,reach_system,crimson_zone,
-sandbox_023,obj_s023_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1
-sandbox_024,obj_s024_a,금지 물품 2개 구매,buy_goods,contraband,2
-sandbox_024,obj_s024_b,섀도우 넥서스로 이동,reach_system,shadow_nexus,
-sandbox_025,obj_s025_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1
-sandbox_026,obj_s026_a,식량 팩 6개 구매,buy_goods,food,6
-sandbox_026,obj_s026_b,블러드 필드로 이동,reach_system,blood_field,
-sandbox_027,obj_s027_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1
-sandbox_028,obj_s028_a,기술 부품 5개 구매,buy_goods,tech,5
-sandbox_028,obj_s028_b,어비스로 이동,reach_system,abyss,
-sandbox_029,obj_s029_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1
-sandbox_030,obj_s030_a,기술 부품 6개 구매,buy_goods,tech,6
-sandbox_030,obj_s030_b,아크파이어 코어로 이동,reach_system,arcfire_core,
+missionId,id,description,type,targetId,quantity,description_en
+mission_001,obj_001_a,베가 전초기지로 이동,reach_system,vega_outpost,,Travel to Vega Outpost
+mission_002,obj_002_a,해적 전투기 격파 (1대),defeat_enemy,pirate_fighter,1,Destroy pirate fighter (1)
+mission_003,obj_003_a,솔라 항구에서 식량 팩 구매 (10개),buy_goods,food,10,Buy food packs at Sola Port (10)
+mission_003,obj_003_b,미네르바로 배달,reach_system,minerva,,Deliver to Minerva
+mission_004,obj_004_a,뉴 에덴 도착,reach_system,new_eden,,Arrive at New Eden
+mission_005,obj_005_a,오메가 스테이션 도착,reach_system,omega_station,,Arrive at Omega Station
+sandbox_001,obj_s001_a,해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter
+sandbox_002,obj_s002_a,식량 팩 3개 구매,buy_goods,food,3,Buy 3 food packs
+sandbox_002,obj_s002_b,베가 전초기지로 이동,reach_system,vega_outpost,,Travel to Vega Outpost
+sandbox_003,obj_s003_a,해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter
+sandbox_004,obj_s004_a,기술 부품 2개 구매,buy_goods,tech,2,Buy 2 tech components
+sandbox_004,obj_s004_b,미네르바로 이동,reach_system,minerva,,Travel to Minerva
+sandbox_005,obj_s005_a,해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter
+sandbox_006,obj_s006_a,원자재 광물 3개 구매,buy_goods,minerals,3,Buy 3 raw minerals
+sandbox_006,obj_s006_b,뉴 에덴으로 이동,reach_system,new_eden,,Travel to New Eden
+sandbox_007,obj_s007_a,해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter
+sandbox_008,obj_s008_a,식량 팩 4개 구매,buy_goods,food,4,Buy 4 food packs
+sandbox_008,obj_s008_b,솔라 항구로 이동,reach_system,solar_port,,Travel to Sola Port
+sandbox_009,obj_s009_a,해적 순양함 격파,defeat_enemy,pirate_cruiser,1,Destroy pirate cruiser
+sandbox_010,obj_s010_a,기술 부품 3개 구매,buy_goods,tech,3,Buy 3 tech components
+sandbox_010,obj_s010_b,아이언 크로스로 이동,reach_system,iron_cross,,Travel to Iron Cross
+sandbox_011,obj_s011_a,해적 순양함 격파,defeat_enemy,pirate_cruiser,1,Destroy pirate cruiser
+sandbox_012,obj_s012_a,원자재 광물 4개 구매,buy_goods,minerals,4,Buy 4 raw minerals
+sandbox_012,obj_s012_b,오메가 스테이션으로 이동,reach_system,omega_station,,Travel to Omega Station
+sandbox_013,obj_s013_a,해적 순양함 격파,defeat_enemy,pirate_cruiser,1,Destroy pirate cruiser
+sandbox_014,obj_s014_a,사치품 2개 구매,buy_goods,luxury,2,Buy 2 luxury goods
+sandbox_014,obj_s014_b,오메가 스테이션으로 이동,reach_system,omega_station,,Travel to Omega Station
+sandbox_015,obj_s015_a,해적 순양함 격파,defeat_enemy,pirate_cruiser,1,Destroy pirate cruiser
+sandbox_016,obj_s016_a,식량 팩 5개 구매,buy_goods,food,5,Buy 5 food packs
+sandbox_016,obj_s016_b,헬리오스로 이동,reach_system,helios,,Travel to Helios
+sandbox_017,obj_s017_a,해적 순양함 격파,defeat_enemy,pirate_cruiser,1,Destroy pirate cruiser
+sandbox_018,obj_s018_a,기술 부품 4개 구매,buy_goods,tech,4,Buy 4 tech components
+sandbox_018,obj_s018_b,시리우스로 이동,reach_system,sirius,,Travel to Sirius
+sandbox_019,obj_s019_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter
+sandbox_020,obj_s020_a,사치품 3개 구매,buy_goods,luxury,3,Buy 3 luxury goods
+sandbox_020,obj_s020_b,페르세우스로 이동,reach_system,perseus,,Travel to Perseus
+sandbox_021,obj_s021_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter
+sandbox_022,obj_s022_a,무기류 3개 구매,buy_goods,weapon,3,Buy 3 weapons
+sandbox_022,obj_s022_b,크림슨 구역으로 이동,reach_system,crimson_zone,,Travel to Crimson Zone
+sandbox_023,obj_s023_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter
+sandbox_024,obj_s024_a,금지 물품 2개 구매,buy_goods,contraband,2,Buy 2 contraband
+sandbox_024,obj_s024_b,섀도우 넥서스로 이동,reach_system,shadow_nexus,,Travel to Shadow Nexus
+sandbox_025,obj_s025_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter
+sandbox_026,obj_s026_a,식량 팩 6개 구매,buy_goods,food,6,Buy 6 food packs
+sandbox_026,obj_s026_b,블러드 필드로 이동,reach_system,blood_field,,Travel to Blood Field
+sandbox_027,obj_s027_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter
+sandbox_028,obj_s028_a,기술 부품 5개 구매,buy_goods,tech,5,Buy 5 tech components
+sandbox_028,obj_s028_b,어비스로 이동,reach_system,abyss,,Travel to Abyss
+sandbox_029,obj_s029_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter
+sandbox_030,obj_s030_a,기술 부품 6개 구매,buy_goods,tech,6,Buy 6 tech components
+sandbox_030,obj_s030_b,아크파이어 코어로 이동,reach_system,arcfire_core,,Travel to Arcfire Core

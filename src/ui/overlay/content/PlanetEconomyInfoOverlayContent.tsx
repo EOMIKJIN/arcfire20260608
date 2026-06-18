@@ -10,6 +10,7 @@ import { useClanWarFoundationStore } from '../../../store/clanWarFoundationStore
 import { usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore';
 import { usePlanetTradeFeeLedgerStore } from '../../../store/planetTradeFeeLedgerStore';
 import { formatCredits } from '../../../utils/formatCredits';
+import { useT } from '../../../i18n';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
 
@@ -32,6 +33,7 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
   entry,
   onClose,
 }: Props) {
+  const t = useT();
   const { planetId, planetName } = entry;
   usePlanetCoreRuntimeStore((s) => s.byPlanetId[planetId]);
   const feeBucket = usePlanetTradeFeeLedgerStore((s) => s.byPlanetId[planetId]);
@@ -55,53 +57,53 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
 
   return (
     <View style={styles.card}>
-      <Text style={[styles.title, { color: PH }]}>행성 정보</Text>
+      <Text style={[styles.title, { color: PH }]}>{t('econInfo.title')}</Text>
       <Text style={[styles.subtitle, { color: PH }]}>
         {snapshot.planetName} · KST {snapshot.kstDayKey}
       </Text>
       <View style={styles.pgpBanner}>
-        <Text style={[styles.pgpLabel, { color: PH }]}>PGP 총생산</Text>
+        <Text style={[styles.pgpLabel, { color: PH }]}>{t('econInfo.pgpTotal')}</Text>
         <Text style={[styles.pgpValue, { color: PH }]}>{formatPlanetPgpBmu(snapshot.pgpBmu)}</Text>
       </View>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-        <Text style={[styles.section, { color: PH }]}>유지비 (인구 {snapshot.populationPct}%)</Text>
+        <Text style={[styles.section, { color: PH }]}>{t('econInfo.upkeep', { pct: snapshot.populationPct })}</Text>
         <InfoRow
-          label="일간"
+          label={t('econInfo.daily')}
           value={formatCredits(snapshot.upkeepDailyCredits, { suffix: true })}
         />
         <InfoRow
-          label="월간 추정"
+          label={t('econInfo.monthlyEst')}
           value={formatCredits(snapshot.upkeepMonthlyCredits, { suffix: true })}
         />
 
-        <Text style={[styles.section, { color: PH }]}>무역소 수수료 수익</Text>
+        <Text style={[styles.section, { color: PH }]}>{t('econInfo.tradeFee')}</Text>
         <InfoRow
-          label="금일 팩션 몫"
+          label={t('econInfo.factionShareToday')}
           value={formatCredits(snapshot.tradeFeeTodayCredits, { suffix: true })}
         />
         <InfoRow
-          label="수송선단 거래수익(금일)"
+          label={t('econInfo.convoyFeeToday')}
           value={formatCredits(snapshot.convoyTradeFeeTodayCredits, { suffix: true })}
         />
         <InfoRow
-          label="플레이어 거래수익(금일)"
+          label={t('econInfo.playerFeeToday')}
           value={formatCredits(snapshot.playerTradeFeeTodayCredits, { suffix: true })}
         />
         <InfoRow
-          label="월간 추정"
+          label={t('econInfo.monthlyEst')}
           value={formatCredits(snapshot.tradeFeeMonthlyEstCredits, { suffix: true })}
         />
 
-        <Text style={[styles.section, { color: PH }]}>5대 핵심 지표 (%)</Text>
-        <InfoRow label="R 자원" value={`${snapshot.resourcePct}%`} />
-        <InfoRow label="P 인구" value={`${snapshot.populationStatPct}%`} />
-        <InfoRow label="D 방어" value={`${snapshot.defensePct}%`} />
-        <InfoRow label="T 기술" value={`${snapshot.technologyPct}%`} />
-        <InfoRow label="E 환경" value={`${snapshot.environmentPct}%`} />
+        <Text style={[styles.section, { color: PH }]}>{t('econInfo.coreMetrics')}</Text>
+        <InfoRow label={t('econInfo.resource')} value={`${snapshot.resourcePct}%`} />
+        <InfoRow label={t('econInfo.population')} value={`${snapshot.populationStatPct}%`} />
+        <InfoRow label={t('econInfo.defense')} value={`${snapshot.defensePct}%`} />
+        <InfoRow label={t('econInfo.technology')} value={`${snapshot.technologyPct}%`} />
+        <InfoRow label={t('econInfo.environment')} value={`${snapshot.environmentPct}%`} />
 
-        <Text style={[styles.section, { color: PH }]}>교역·점유</Text>
-        <InfoRow label="거래 독점 선단" value={snapshot.convoyMonopolyLabel} />
-        <InfoRow label="점유 팩션" value={snapshot.occupierFactionLabel} />
+        <Text style={[styles.section, { color: PH }]}>{t('econInfo.tradeOccupy')}</Text>
+        <InfoRow label={t('econInfo.convoyMonopoly')} value={snapshot.convoyMonopolyLabel} />
+        <InfoRow label={t('econInfo.occupierFaction')} value={snapshot.occupierFactionLabel} />
         {snapshot.factionVaultLabel != null ? (
           <InfoRow
             label={snapshot.factionVaultLabel}
@@ -113,13 +115,13 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
           />
         ) : null}
 
-        <Text style={[styles.section, { color: PH }]}>기타</Text>
+        <Text style={[styles.section, { color: PH }]}>{t('econInfo.others')}</Text>
         {snapshot.extras.map((row) => (
           <InfoRow key={row.label} label={row.label} value={row.value} />
         ))}
       </ScrollView>
       <View style={styles.btnRow}>
-        <ArcButton label="닫기" variant="primary" onPress={onClose} />
+        <ArcButton label={t('econInfo.close')} variant="primary" onPress={onClose} />
       </View>
     </View>
   );

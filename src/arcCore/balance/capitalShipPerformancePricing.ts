@@ -2,7 +2,7 @@
 // 전함 무역 가격 — 기능·성능 우선, 수요는 TradeEngine 2차 반영
 // ============================================================
 
-import type { NpcCapitalShip } from '../../types';
+import type { NpcCapitalShip, NpcCapitalCombatStats } from '../../types';
 import { getNpcCapitalShip, listAllNpcCapitalShipRows } from '../../npc/npcFleetRegistry';
 import {
   getCapitalShipTradePricePolicyKv,
@@ -21,8 +21,11 @@ function policyNum(key: string, fallback: number): number {
   return parseNum(kv.get(key), fallback);
 }
 
-function combatPerformanceScore(ship: NpcCapitalShip): number {
-  const c = ship.combat;
+/**
+ * 임의 전투 스탯의 성능 지수(무역소 가격 정본 가중). 풀강(광물 업그레이드 적용) 스탯
+ * 가치 추산 등에서 재사용하기 위해 combat stats 단위로 노출한다.
+ */
+export function scoreCapitalCombatStats(c: NpcCapitalCombatStats): number {
   const diceMean = c.damageDice.count * ((c.damageDice.sides + 1) / 2) + c.damageDice.bonus;
   return (
     c.maxHp * policyNum('hp_weight', 1)
@@ -31,6 +34,10 @@ function combatPerformanceScore(ship: NpcCapitalShip): number {
     + diceMean * policyNum('damage_weight', 12)
     + c.attackBonus * 6
   );
+}
+
+function combatPerformanceScore(ship: NpcCapitalShip): number {
+  return scoreCapitalCombatStats(ship.combat);
 }
 
 function tierBaselinePerformanceScore(hullTierKey: string): number {

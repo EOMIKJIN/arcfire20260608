@@ -14,13 +14,7 @@ export const TRADE_BUY_SUB_TAB_ORDER: TradeBuySubTabId[] = [
   'item',
 ];
 
-export const TRADE_BUY_SUB_TAB_LABELS: Record<TradeBuySubTabId, string> = {
-  weapon: '무기',
-  equipment: '장비',
-  ship: '함선',
-  item: '아이템',
-};
-
+/** UI 라벨은 `trade.subTab.{id}` i18n 키 사용 */
 /**
  * 무역 목록 한 줄(`goodId`) → 구매 서브 탭.
  * - type `capital_ship` → 함선

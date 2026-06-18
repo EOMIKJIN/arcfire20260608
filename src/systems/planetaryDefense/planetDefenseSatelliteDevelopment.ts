@@ -8,6 +8,7 @@ import {
   resolveDefenseSatelliteUpgradeDurationSec,
 } from '../../arcCore/balance/planetDefenseSatelliteLevelPolicy';
 import { invalidatePlanetMemoCachesForPlanet } from '../../game/planetMemoCache';
+import { t } from '../../i18n';
 import {
   isPlanetDefenseSatelliteInstalled,
   readDefenseSatelliteDetailFromPlanet,
@@ -183,9 +184,9 @@ export function buildDefenseSatelliteDevSnapshot(planetId: string): DefenseSatel
 
 export function installPlanetDefenseSatellite(planetId: string): { ok: true } | { ok: false; reason: string } {
   const detail = readPlanetDefenseSatelliteDetail(planetId);
-  if (detail.installed) return { ok: false, reason: '이미 설치되어 있습니다.' };
+  if (detail.installed) return { ok: false, reason: t('defenseSatDev.alreadyInstalled') };
   const cost = resolveDefenseSatelliteInstallCostCredits();
-  if (!spendPlayerCredits(cost)) return { ok: false, reason: '크레딧이 부족합니다.' };
+  if (!spendPlayerCredits(cost)) return { ok: false, reason: t('defenseSatDev.notEnoughCredits') };
   patchDefenseSatelliteDetail(planetId, {
     installed: true,
     level: 1,
@@ -209,14 +210,14 @@ export function startPlanetDefenseSatelliteUpgrade(
   planetId: string,
 ): { ok: true } | { ok: false; reason: string } {
   const detail = readPlanetDefenseSatelliteDetail(planetId);
-  if (!detail.installed) return { ok: false, reason: '방위위성을 먼저 설치하세요.' };
-  if (detail.upgradeJob) return { ok: false, reason: '업그레이드가 진행 중입니다.' };
+  if (!detail.installed) return { ok: false, reason: t('defenseSatDev.installFirst') };
+  if (detail.upgradeJob) return { ok: false, reason: t('defenseSatDev.upgradeInProgress') };
   const level = resolvePlanetDefenseSatelliteLevel(planetId);
   const maxLevel = getPlanetDefenseSatelliteMaxLevel();
-  if (level >= maxLevel) return { ok: false, reason: '최대 레벨입니다.' };
+  if (level >= maxLevel) return { ok: false, reason: t('defenseSatDev.maxLevel') };
   const cost = resolveDefenseSatelliteUpgradeCostCredits(level);
-  if (cost == null) return { ok: false, reason: '더 이상 업그레이드할 수 없습니다.' };
-  if (!spendPlayerCredits(cost)) return { ok: false, reason: '크레딧이 부족합니다.' };
+  if (cost == null) return { ok: false, reason: t('defenseSatDev.cannotUpgrade') };
+  if (!spendPlayerCredits(cost)) return { ok: false, reason: t('defenseSatDev.notEnoughCredits') };
   const durationSec = resolveDefenseSatelliteUpgradeDurationSec(level) ?? 0;
   const targetLevel = level + 1;
   if (durationSec <= 0) {
@@ -239,11 +240,11 @@ export function instantCompleteDefenseSatelliteUpgrade(
   planetId: string,
 ): { ok: true } | { ok: false; reason: string } {
   const detail = readPlanetDefenseSatelliteDetail(planetId);
-  if (!detail.upgradeJob) return { ok: false, reason: '진행 중인 업그레이드가 없습니다.' };
+  if (!detail.upgradeJob) return { ok: false, reason: t('defenseSatDev.noUpgradeJob') };
   const level = resolvePlanetDefenseSatelliteLevel(planetId);
   const instantCost = resolveDefenseSatelliteInstantUpgradeCostCredits(level);
-  if (instantCost == null) return { ok: false, reason: '즉시 완료할 수 없습니다.' };
-  if (!spendPlayerCredits(instantCost)) return { ok: false, reason: '크레딧이 부족합니다.' };
+  if (instantCost == null) return { ok: false, reason: t('defenseSatDev.cannotInstant') };
+  if (!spendPlayerCredits(instantCost)) return { ok: false, reason: t('defenseSatDev.notEnoughCredits') };
   applyDefenseSatelliteLevel(planetId, detail.upgradeJob.targetLevel);
   return { ok: true };
 }
@@ -252,27 +253,27 @@ export function instantUpgradeDefenseSatelliteNext(
   planetId: string,
 ): { ok: true } | { ok: false; reason: string } {
   const detail = readPlanetDefenseSatelliteDetail(planetId);
-  if (!detail.installed) return { ok: false, reason: '방위위성을 먼저 설치하세요.' };
-  if (detail.upgradeJob) return { ok: false, reason: '업그레이드가 진행 중입니다.' };
+  if (!detail.installed) return { ok: false, reason: t('defenseSatDev.installFirst') };
+  if (detail.upgradeJob) return { ok: false, reason: t('defenseSatDev.upgradeInProgress') };
   const level = resolvePlanetDefenseSatelliteLevel(planetId);
   const maxLevel = getPlanetDefenseSatelliteMaxLevel();
-  if (level >= maxLevel) return { ok: false, reason: '최대 레벨입니다.' };
+  if (level >= maxLevel) return { ok: false, reason: t('defenseSatDev.maxLevel') };
   const baseCost = resolveDefenseSatelliteUpgradeCostCredits(level) ?? 0;
   const instantCost = resolveDefenseSatelliteInstantUpgradeCostCredits(level) ?? 0;
   if (!spendPlayerCredits(baseCost + instantCost)) {
-    return { ok: false, reason: '크레딧이 부족합니다.' };
+    return { ok: false, reason: t('defenseSatDev.notEnoughCredits') };
   }
   applyDefenseSatelliteLevel(planetId, level + 1);
   return { ok: true };
 }
 
 export function formatDefenseSatelliteDurationLabel(sec: number): string {
-  if (sec <= 0) return '즉시';
+  if (sec <= 0) return t('defenseSatDev.durationInstant');
   const totalMin = Math.ceil(sec / 60);
-  if (totalMin < 60) return `${totalMin}분`;
+  if (totalMin < 60) return t('defenseSatDev.durationMin', { min: totalMin });
   const hours = Math.floor(totalMin / 60);
   const mins = totalMin % 60;
-  return mins > 0 ? `${hours}시간 ${mins}분` : `${hours}시간`;
+  return mins > 0 ? t('defenseSatDev.durationHourMin', { hours, mins }) : t('defenseSatDev.durationHour', { hours });
 }
 
 export function getDefenseSatelliteLevelStatRow(level: number) {

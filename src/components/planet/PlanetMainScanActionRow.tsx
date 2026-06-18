@@ -11,6 +11,7 @@ import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { PlanetHubActionTile } from './PlanetHubActionTile';
 import { PlanetHubActionGaugeSlot } from './PlanetHubActionGaugeSlot';
 import { PLANET_MAIN_SCAN_MENU_GAP_PX } from '../../stages/planetMainStageLayout';
+import { useT } from '../../i18n';
 import { SPACING } from '../../utils/theme';
 
 const SCAN_DURATION_MIN_MS = 5000;
@@ -62,6 +63,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
   onPressMining,
   onPressDialog,
 }: Props) {
+  const t = useT();
   const [scanPhase, setScanPhase] = useState<PlanetScanPhase>(actionsUnlockedProp ? 'complete' : 'idle');
   const [gaugeKind, setGaugeKind] = useState<PlanetHubGaugeActivityKind | null>(null);
   const [progressPct, setProgressPct] = useState(0);
@@ -190,9 +192,9 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
 
   const gaugeAccessibilityLabel =
     gaugeKind === 'scan'
-      ? `스캔 진행 ${progressPct}%`
+      ? t('scanRow.scanProgress', { pct: progressPct })
       : gaugeKind === 'search'
-        ? `수색 진행 ${progressPct}%`
+        ? t('scanRow.searchProgress', { pct: progressPct })
         : undefined;
 
   return (
@@ -205,13 +207,13 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
       <View style={styles.row}>
         <View style={styles.leftColumn}>
           <PlanetHubActionTile
-            label="행성정보"
+            label={t('scanRow.planetInfo')}
             icon="⟦◎⟧"
             onPress={handlePressPlanetInfo}
             disabled={!planetId || gaugeActive}
           />
           <PlanetHubActionTile
-            label="행성개발"
+            label={t('scanRow.planetDev')}
             icon={planetDevelopmentIcon}
             onPress={handlePressPlanetDevelopment}
             disabled={!planetId || gaugeActive}
@@ -222,7 +224,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
       <View style={styles.row}>
         <View style={styles.tileSlot}>
           <PlanetHubActionTile
-            label={gaugeKind === 'scan' ? '스캔 중' : '스캔'}
+            label={gaugeKind === 'scan' ? t('scanRow.scanning') : t('scanRow.scan')}
             icon={gaugeKind === 'scan' ? '⟦═⟧' : '⟦ ◇ ⟧'}
             onPress={handlePressScan}
             disabled={!scanEnabled || actionsUnlocked || gaugeActive}
@@ -241,7 +243,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
           </View>
           <View style={styles.tileSlot}>
             <PlanetHubActionTile
-              label="대화"
+              label={t('scanRow.dialog')}
               icon="💬"
               onPress={handlePressDialog}
               disabled={secondaryDisabled || dialogDisabled}
@@ -249,7 +251,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
           </View>
           <View style={styles.tileSlot}>
             <PlanetHubActionTile
-              label={gaugeKind === 'search' ? '수색 중' : '수색'}
+              label={gaugeKind === 'search' ? t('scanRow.searching') : t('scanRow.search')}
               icon="🔍"
               onPress={handlePressSearch}
               disabled={secondaryDisabled || searchDisabled}

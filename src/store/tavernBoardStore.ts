@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
+import type { I18nParams } from '../i18n/types';
 
 const STORAGE_KEY = 'arcfire_tavern_board_v1';
 const MAX_NOTICE_COUNT = 80;
@@ -14,6 +15,8 @@ export type TavernNotice = {
   tag: TavernNoticeTag;
   postedAtMs: number;
   dedupeKey?: string;
+  i18nKey?: string;
+  i18nParams?: I18nParams;
 };
 
 type TavernBoardState = {
@@ -53,6 +56,67 @@ function stripLegacyArcCoreMissileNotices(notices: TavernNotice[]): TavernNotice
   return notices.filter((n) => !isLegacyArcCoreMissileNotice(n));
 }
 
+/** AsyncStorage에 한국어만 저장된 구형 공지 → i18nKey 부여(표시 시점 locale 해석) */
+function migrateLegacyNoticeI18n(notice: TavernNotice): TavernNotice {
+  if (notice.i18nKey) return notice;
+
+  if (notice.dedupeKey === 'seed_boot_1' || notice.title === '아크코어 공지 보드 가동') {
+    return { ...notice, i18nKey: 'news.boardBoot' };
+  }
+  if (notice.dedupeKey === 'seed_boot_2' || notice.title === '은하계 운영 소식판 안내') {
+    return { ...notice, i18nKey: 'news.guide' };
+  }
+  if (notice.dedupeKey === 'arc_news_boot_notice' || notice.title === '아크코어 공지 보드 동기화 완료') {
+    return { ...notice, i18nKey: 'news.sync' };
+  }
+
+  const unlockMatch = notice.title.match(/^성계 개척: (.+)$/);
+  if (unlockMatch) {
+    const systemName = unlockMatch[1]!.trim();
+    const idMatch = notice.body.match(/\(([a-z0-9_]+)\)\s*$/i);
+    return {
+      ...notice,
+      i18nKey: 'news.worldUnlock',
+      i18nParams: { systemName, systemId: idMatch?.[1] ?? '' },
+    };
+  }
+
+  if (notice.title === '수송선단 파견 보고') {
+    const factionMatch = notice.body.match(/^(.+?) 소속/);
+    return {
+      ...notice,
+      i18nKey: 'news.transport',
+      i18nParams: { factionId: factionMatch?.[1]?.trim() ?? '' },
+    };
+  }
+
+  if (notice.title.startsWith('경제 지시 반영:')) {
+    const scopeLabel = notice.title.replace('경제 지시 반영: ', '').trim();
+    const actionMatch = notice.body.match(/가 (.+?) 정책을/);
+    const scopeKind = scopeLabel === '전체 무역소' ? 'all' : 'planets';
+    const planetCount =
+      scopeKind === 'planets' ? Number.parseInt(scopeLabel.replace(/[^\d]/g, ''), 10) || 0 : 0;
+    return {
+      ...notice,
+      i18nKey: 'news.economyBulk',
+      i18nParams: { scopeKind, planetCount, action: actionMatch?.[1]?.trim() ?? '' },
+    };
+  }
+
+  if (notice.title === '아크코어 정기 브리핑') {
+    const m = notice.body.match(/개방 성계 (\d+)\/(\d+), 활성 수송선 (\d+)척/);
+    if (m) {
+      return {
+        ...notice,
+        i18nKey: 'news.briefing',
+        i18nParams: { unlocked: m[1]!, total: m[2]!, traffic: m[3]! },
+      };
+    }
+  }
+
+  return notice;
+}
+
 function getDefaultNotices(): TavernNotice[] {
   const now = Date.now();
   return [
@@ -63,6 +127,7 @@ function getDefaultNotices(): TavernNotice[] {
       tag: '아크코어',
       postedAtMs: now - 2 * 60 * 1000,
       dedupeKey: 'seed_boot_1',
+      i18nKey: 'news.boardBoot',
     },
     {
       id: `seed_${now}_2`,
@@ -71,6 +136,7 @@ function getDefaultNotices(): TavernNotice[] {
       tag: '작전',
       postedAtMs: now - 1 * 60 * 1000,
       dedupeKey: 'seed_boot_2',
+      i18nKey: 'news.guide',
     },
   ];
 }
@@ -100,13 +166,20 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
           tag: (n.tag ?? '소문') as TavernNoticeTag,
           postedAtMs: Number.isFinite(Number(n.postedAtMs)) ? Number(n.postedAtMs) : Date.now(),
           dedupeKey: typeof n.dedupeKey === 'string' ? n.dedupeKey : undefined,
+          i18nKey: typeof n.i18nKey === 'string' ? n.i18nKey : undefined,
+          i18nParams:
+            n.i18nParams && typeof n.i18nParams === 'object' ? (n.i18nParams as I18nParams) : undefined,
         }));
-      const safe = stripLegacyArcCoreMissileNotices(mapped)
+      const migrated = mapped.map(migrateLegacyNoticeI18n);
+      const safe = stripLegacyArcCoreMissileNotices(migrated)
         .sort((a, b) => b.postedAtMs - a.postedAtMs)
         .slice(0, MAX_NOTICE_COUNT);
       const nextNotices = safe.length > 0 ? safe : getDefaultNotices();
+      const needsPersist =
+        safe.length !== mapped.length ||
+        migrated.some((n, i) => n.i18nKey !== mapped[i]?.i18nKey);
       set({ notices: nextNotices, loaded: true });
-      if (safe.length !== mapped.length) {
+      if (needsPersist) {
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ notices: nextNotices }));
       }
     } catch {
@@ -143,6 +216,8 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
         tag: notice.tag,
         postedAtMs: nextPostedAtMs,
         dedupeKey: notice.dedupeKey,
+        i18nKey: notice.i18nKey,
+        i18nParams: notice.i18nParams,
       };
       return { notices: [next, ...state.notices].slice(0, MAX_NOTICE_COUNT) };
     });

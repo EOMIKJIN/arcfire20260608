@@ -86,8 +86,10 @@ while ($true) {
   }
 
   $crashSeen = ($newCrashHits.Count -gt 0)
-  # alert/incident 중 비정상종료 류
-  $abnormalAlert = @(@($newAlerts) + @($newIncidents) | Where-Object { $_ -match 'process not running|PROCESS_NOT_RUNNING|CRITICAL|FATAL|SIGSEGV' })
+  # alert/incident 중 "진짜" 비정상종료만(크래시 시그니처·하드실링). 단순 프로세스 미발견은
+  # 클린 종료(앱 닫기·재설치·검증)일 수 있어 적색 오탐을 막기 위해 제외한다.
+  # PROCESS_DEATH(크래시 동반)는 incidents.log 에 기록되며 crashSeen 으로도 잡힌다.
+  $abnormalAlert = @(@($newAlerts) + @($newIncidents) | Where-Object { $_ -match 'PROCESS_DEATH|FATAL|SIGSEGV|GL_HARD_CEILING|GL_LEAK_SUSPECT' })
 
   if ($appPid) {
     # 실행 중 — meminfo 1회

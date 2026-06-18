@@ -1,6 +1,6 @@
-loadoutProfile,labelKo,combatRangeKo,descriptionKo
-fighter,Fighter형,중단거리,근·중거리 화력 교전. STR·장갑·전면 화력 특화.
-ranger,Ranger형,중장거리,기동·탐지·원거리 교전. DEX·경장·연사 특화.
-neutral,표준형,혼합,특화 없는 기본 운용 프로필.
-survival,생존형,근거리,수송·탈출·생존 포드. 전투 분류에서 제외.
-special,특수형,혼합,이벤트·웨이브 전용 특수 함선.
+loadoutProfile,labelKo,labelEn,combatRangeKo,combatRangeEn,descriptionKo
+fighter,Fighter형,Fighter,중단거리,Mid-range,근·중거리 화력 교전. STR·장갑·전면 화력 특화.
+ranger,Ranger형,Ranger,중장거리,Long-range,기동·탐지·원거리 교전. DEX·경장·연사 특화.
+neutral,표준형,Standard,혼합,Mixed,특화 없는 기본 운용 프로필.
+survival,생존형,Survival,근거리,Close,수송·탈출·생존 포드. 전투 분류에서 제외.
+special,특수형,Special,혼합,Mixed,이벤트·웨이브 전용 특수 함선.

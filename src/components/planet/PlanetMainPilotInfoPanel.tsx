@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { COLORS, FONTS, SPACING } from '../../utils/theme';
+import { useT } from '../../i18n';
 
 /** 하단 고정 헤더 높이 — `planetMainStageLayout` 도크 추정과 동기 */
 export const PLANET_MAIN_PILOT_HEADER_CHROME_PX = 44;
@@ -66,6 +67,7 @@ export const PlanetMainPilotInfoPanel = memo(function PlanetMainPilotInfoPanel({
   clanName,
   menuSlot,
 }: Props) {
+  const t = useT();
   const [expanded, setExpanded] = useState(false);
   const expandAnim = useRef(new Animated.Value(0)).current;
 
@@ -107,21 +109,21 @@ export const PlanetMainPilotInfoPanel = memo(function PlanetMainPilotInfoPanel({
             },
           ]}
         >
-          <View style={styles.statsPanel} accessibilityLabel="파일럿 정보 상세">
+          <View style={styles.statsPanel} accessibilityLabel={t('pilotPanel.detailA11y')}>
             <View style={styles.statsBody}>
               <View style={styles.statsRow}>
-                <StatItem label="닉네임" value={nickname} />
-                <StatItem label="레벨" value={`Lv.${level} (${expLabel})`} />
-                <StatItem label="크레딧" value={creditsLabel} />
+                <StatItem label={t('pilotPanel.nickname')} value={nickname} />
+                <StatItem label={t('pilotPanel.level')} value={`Lv.${level} (${expLabel})`} />
+                <StatItem label={t('pilotPanel.credits')} value={creditsLabel} />
               </View>
               <View style={styles.statsRow}>
-                <StatItem label="함선" value={shipName} />
+                <StatItem label={t('pilotPanel.ship')} value={shipName} />
                 <StatItem
-                  label="스킬 포인트"
+                  label={t('pilotPanel.skillPoints')}
                   value={`${skillPoints}P`}
                   highlight={skillPoints > 0}
                 />
-                <StatItem label="클랜" value={clanName} />
+                <StatItem label={t('pilotPanel.clan')} value={clanName} />
               </View>
             </View>
           </View>
@@ -135,10 +137,10 @@ export const PlanetMainPilotInfoPanel = memo(function PlanetMainPilotInfoPanel({
           onPress={() => setExpanded((v) => !v)}
           accessibilityRole="button"
           accessibilityState={{ expanded }}
-          accessibilityLabel="파일럿 정보"
+          accessibilityLabel={t('pilotPanel.a11y')}
           hitSlop={8}
         >
-          <Text style={styles.headerText}>— 파일럿 정보 —</Text>
+          <Text style={styles.headerText}>{t('pilotPanel.header')}</Text>
           <Text style={styles.chevron}>{expanded ? '▼' : '▲'}</Text>
         </Pressable>
       </View>

@@ -12,6 +12,7 @@ import {
 import { router, useFocusEffect, useNavigation } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
+import { useT } from '../../src/i18n';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { showArcOverlayReward } from '../../src/ui/overlay/showArcOverlay';
 import { QuestHUD } from '../../src/components/QuestHUD';
@@ -67,6 +68,7 @@ function CombatOrbitNebulaBackdrop({
 }
 
 export default function CombatScreen() {
+  const t = useT();
   const { width } = useWindowDimensions();
   const navigation = useNavigation();
   const player = usePlayerStore(s => s.player);
@@ -154,7 +156,7 @@ export default function CombatScreen() {
     const playerLevel = usePlayerStore.getState().player?.level;
     showArcOverlayReward({
       reward: { credits: creditGain, exp: expGain },
-      missionTitle: `${enemyTemplate.name} 격파`,
+      missionTitle: t('combat.victoryTitle', { name: enemyTemplate.name }),
       leveledUp: levelUpPendingNow,
       newLevel: playerLevel,
       onClose: () => {
@@ -163,7 +165,7 @@ export default function CombatScreen() {
       },
     });
     setResolving(false);
-  }, [addCredits, addExp, clearLevelUp, completeObjective, enemyTemplate.creditReward, enemyTemplate.expReward, enemyTemplate.id, enemyTemplate.name, getActiveMission, persist]);
+  }, [addCredits, addExp, clearLevelUp, completeObjective, enemyTemplate.creditReward, enemyTemplate.expReward, enemyTemplate.id, enemyTemplate.name, getActiveMission, persist, t]);
 
   const handleDefeat = useCallback(async () => {
     if (resolvedRef.current || !player) return;
@@ -172,37 +174,37 @@ export default function CombatScreen() {
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     await usePlayerStore.getState().applyCapitalShipDestruction();
     showArcAlert(
-      '전함 격침',
-      '전함이 파괴되어 생존포드로 거점 행성에 귀환했습니다.\n조선소에서 전함을 재구매·탑승하세요.',
-      [{ text: '확인', onPress: () => router.replace('/(game)/planet') }],
+      t('combat.shipDestroyedTitle'),
+      t('combat.shipDestroyedBody'),
+      [{ text: t('combat.confirm'), onPress: () => router.replace('/(game)/planet') }],
     );
     setResolving(false);
-  }, [player]);
+  }, [player, t]);
 
   const handleFlee = useCallback(async () => {
     if (resolving) return;
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     showArcAlert(
-      '도주',
-      '전투를 포기하고 도주하시겠습니까?',
+      t('combat.fleeTitle'),
+      t('combat.fleeBody'),
       [
-        { text: '취소', style: 'cancel' },
-        { text: '도주', onPress: () => router.replace('/(game)/worldmap') },
+        { text: t('combat.cancel'), style: 'cancel' },
+        { text: t('combat.flee'), onPress: () => router.replace('/(game)/worldmap') },
       ],
     );
-  }, [resolving]);
+  }, [resolving, t]);
 
   if (!player) return null;
   if (!isPlayerShipCombatCapable(player.ship)) {
     return (
       <StageShell routeName="combat" background="none" edges={['bottom']}>
         <View style={styles.errorWrap}>
-          <Text style={styles.errorTitle}>전투 불가</Text>
+          <Text style={styles.errorTitle}>{t('combat.cannotFightTitle')}</Text>
           <Text style={styles.errorBody}>
-            생존포드 상태에서는 전투에 참여할 수 없습니다. 조선소에서 전함을 재구매·탑승하세요.
+            {t('combat.cannotFightBody')}
           </Text>
           <TouchableOpacity style={styles.fleeBtn} onPress={() => router.replace('/(game)/planet')}>
-            <Text style={styles.fleeBtnText}>행성으로 돌아가기</Text>
+            <Text style={styles.fleeBtnText}>{t('combat.backToPlanet')}</Text>
           </TouchableOpacity>
         </View>
       </StageShell>
@@ -212,12 +214,12 @@ export default function CombatScreen() {
     return (
       <StageShell routeName="combat" background="none" edges={['bottom']}>
         <View style={styles.errorWrap}>
-          <Text style={styles.errorTitle}>전투 데이터 누락</Text>
+          <Text style={styles.errorTitle}>{t('combat.missingDataTitle')}</Text>
           <Text style={styles.errorBody}>
-            이동중 전투용 해적 전함 테이블 참조를 찾지 못했습니다.
+            {t('combat.missingDataBody')}
           </Text>
           <TouchableOpacity style={styles.fleeBtn} onPress={() => router.replace('/(game)/worldmap')}>
-            <Text style={styles.fleeBtnText}>행성으로 돌아가기</Text>
+            <Text style={styles.fleeBtnText}>{t('combat.backToPlanet')}</Text>
           </TouchableOpacity>
         </View>
       </StageShell>
@@ -234,7 +236,7 @@ export default function CombatScreen() {
       <StageShell routeName="combat" background="none" edges={['bottom']}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.headerTitle}>⚔ 이동중 전투</Text>
+            <Text style={styles.headerTitle}>{t('combat.headerTitle')}</Text>
             <Text style={styles.headerSub}>{pirateLabel}</Text>
           </View>
           <TouchableOpacity
@@ -242,7 +244,7 @@ export default function CombatScreen() {
             onPress={handleFlee}
             disabled={resolving}
           >
-            <Text style={styles.fleeBtnText}>도주</Text>
+            <Text style={styles.fleeBtnText}>{t('combat.flee')}</Text>
           </TouchableOpacity>
         </View>
 

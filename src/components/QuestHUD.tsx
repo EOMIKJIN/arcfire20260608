@@ -1,14 +1,17 @@
-// ============================================================
-// 아크파이어 온라인 - 퀘스트 HUD
-// 활성 미션 목표 표시 — 타입별 계약: ../missions/missionObjectiveDsl.ts
-// ============================================================
-
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS, FONTS } from '../utils/theme';
 import { useMissionStore } from '../store/missionStore';
+import { useT } from '../i18n';
+import { useAppSettingsStore } from '../store/appSettingsStore';
+import {
+  resolveMissionObjectiveDescription,
+  resolveMissionTitle,
+} from '../i18n/missionText';
 
 export function QuestHUD() {
+  const t = useT();
+  const locale = useAppSettingsStore((s) => s.locale);
   const getActiveMission = useMissionStore(s => s.getActiveMission);
   const active = getActiveMission();
 
@@ -19,15 +22,29 @@ export function QuestHUD() {
     obj => !progress.objectives[obj.id],
   );
 
+  const titleKey = `mission.${mission.id}.title`;
+  const titleFromKey = t(titleKey);
+  const titleText =
+    titleFromKey !== titleKey ? titleFromKey : resolveMissionTitle(mission, locale);
+
+  const objKey = incompleteObj ? `mission.${mission.id}.obj.${incompleteObj.id}` : '';
+  const objFromKey = incompleteObj ? t(objKey) : '';
+  const objText =
+    incompleteObj && objFromKey !== objKey
+      ? objFromKey
+      : incompleteObj
+        ? resolveMissionObjectiveDescription(incompleteObj, locale)
+        : '';
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.icon}>📋</Text>
-        <Text style={styles.title} numberOfLines={1}>{mission.title}</Text>
+        <Text style={styles.title} numberOfLines={1}>{titleText}</Text>
       </View>
       {incompleteObj && (
         <Text style={styles.objective} numberOfLines={2}>
-          ▶ {incompleteObj.description}
+          ▶ {objText}
         </Text>
       )}
     </View>
@@ -44,23 +61,24 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 2,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    gap: 6,
   },
-  icon: {
-    fontSize: 12,
-    marginRight: 4,
-  },
+  icon: { fontSize: 14 },
   title: {
+    flex: 1,
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
-    fontWeight: FONTS.weight.bold,
     color: COLORS.ink_dark,
-    flex: 1,
+    fontWeight: FONTS.weight.bold,
   },
   objective: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
     color: COLORS.ink_mid,
-    lineHeight: 16,
+    paddingHorizontal: 10,
+    paddingBottom: 8,
+    lineHeight: 18,
   },
 });

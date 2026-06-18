@@ -174,11 +174,26 @@ if ($hubActiveNow -and (Test-MemGlCriticalActiveHub -GlMb $lastGl -Views $lastVi
 }
 
 # --- Process death ---
+# 프로세스 미발견 != 크래시. 클린 종료(앱 닫기·재설치·검증)에서도 PROCESS_NOT_RUNNING 이 찍힌다.
+# 따라서 "최근 크래시 흔적"이 있을 때만 비정상종료로 보고 + 재기동한다.
+# 흔적이 없으면 PROCESS_EXIT(clean)로 기록만 — 검증·수동 종료 중 강제 재시작을 막는다.
 if ($rows[-1] -match 'PROCESS_NOT_RUNNING') {
-  Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] PROCESS_DEATH see crash log"
-  Write-Remediation 'INCIDENT PROCESS_DEATH'
   if (Test-Path $baselineJson) { Remove-Item $baselineJson -Force -ErrorAction SilentlyContinue }
-  & (Join-Path $PSScriptRoot 'apply-auto-remediation.ps1') -LogDir $LogDir -Package $Package -Reason 'process_death' -Ctx @{ lastGlMb = $lastGl } -MinIntervalMin 20
+
+  $recentCrash = $null
+  if ($crashFiles) {
+    $ageMin = ((Get-Date) - $crashFiles[0].LastWriteTime).TotalMinutes
+    if ($ageMin -le ([math]::Max(15, $IntervalMin * 2))) { $recentCrash = $crashFiles[0] }
+  }
+
+  if ($recentCrash) {
+    Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] PROCESS_DEATH crash=$($recentCrash.Name) age<=$([math]::Max(15, $IntervalMin*2))m"
+    Write-Remediation "INCIDENT PROCESS_DEATH (recent crash $($recentCrash.Name)) -> relaunch"
+    & (Join-Path $PSScriptRoot 'apply-auto-remediation.ps1') -LogDir $LogDir -Package $Package -Reason 'process_death' -Ctx @{ lastGlMb = $lastGl } -MinIntervalMin 20
+  } else {
+    Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] PROCESS_EXIT clean (no recent crash signature) — relaunch skipped"
+    Write-Remediation 'INFO PROCESS_EXIT clean (no recent crash) -> relaunch skipped (manual close / verification safe)'
+  }
 }
 
 exit 0

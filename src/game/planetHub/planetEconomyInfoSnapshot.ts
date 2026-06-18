@@ -16,6 +16,7 @@ import {
 import { findPlanetById } from '../../arcCore/planetEnvironment/resolvePlanetAsteroidVisualPolicy';
 import { planetAttackKstDayKey } from '../../arcCore/planetAttack/planetAttackKstDayKey';
 import { resolvePlanetSupplyStockScale } from '../../arcCore/economy/planetEconomyFabric';
+import { computePlanetDevelopmentDailyUpkeepCredits } from '../../arcCore/economy/planetDevelopmentUpkeep';
 import { calculatePlanetPgpFromStats } from '../../world/planetPgpModel';
 import { useArcCoreTransportFleetBankStore } from '../../store/factionVault/arcCoreTransportFleetBankStore';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
@@ -24,6 +25,7 @@ import {
   usePlanetCoreRuntimeStore,
 } from '../../store/planetCoreRuntimeStore';
 import { usePlanetTradeFeeLedgerStore } from '../../store/planetTradeFeeLedgerStore';
+import { t } from '../../i18n';
 
 export type PlanetEconomyInfoExtraRow = {
   label: string;
@@ -63,13 +65,13 @@ function occupierFactionLabelKo(
 ): string {
   switch (faction) {
     case 'red':
-      return 'RED 점령 (아크코어)';
+      return t('econSnap.redOccupied');
     case 'blue':
-      return 'BLUE 점령 (연합)';
+      return t('econSnap.blueOccupied');
     case 'neutral':
-      return '중립';
+      return t('econSnap.neutral');
     case 'player_clan':
-      return '플레이어 클랜 점유';
+      return t('econSnap.playerClanOccupied');
     default:
       return '—';
   }
@@ -113,7 +115,8 @@ export function buildPlanetEconomyInfoSnapshot(
 ): PlanetEconomyInfoSnapshot {
   const policy = resolvePlanetUpkeepPolicy();
   const population = resolvePopulation(planetId);
-  const upkeepDaily = computePlanetDailyUpkeepCredits(population, policy);
+  const devUpkeep = computePlanetDevelopmentDailyUpkeepCredits(planetId);
+  const upkeepDaily = computePlanetDailyUpkeepCredits(devUpkeep, policy);
   const core = resolveCoreRuntime(planetId);
   const hold = useClanWarFoundationStore.getState().getHold(planetId);
   const faction = resolveOccupierFactionKindForHold(hold);
@@ -123,10 +126,10 @@ export function buildPlanetEconomyInfoSnapshot(
   let factionVaultLabel: string | null = null;
   let factionVaultBalance: number | null = null;
   if (faction === 'red') {
-    factionVaultLabel = '아크코어 금고 (팩션 통합)';
+    factionVaultLabel = t('econSnap.arcVault');
     factionVaultBalance = vault?.getBalance() ?? null;
   } else if (faction === 'blue') {
-    factionVaultLabel = '블루팀 공용 금고';
+    factionVaultLabel = t('econSnap.blueVault');
     factionVaultBalance = vault?.getBalance() ?? null;
   }
 
@@ -136,15 +139,15 @@ export function buildPlanetEconomyInfoSnapshot(
 
   const extras: PlanetEconomyInfoExtraRow[] = [
     {
-      label: '수송선단 금고',
+      label: t('econSnap.fleetVault'),
       value: `${fleetBalance.toLocaleString('ko-KR')} cr`,
     },
     {
-      label: '생산 재고 배율',
+      label: t('econSnap.supplyScale'),
       value: `${(supplyScale * 100).toFixed(1)}%`,
     },
     {
-      label: '플레이어 수수료 풀(금일)',
+      label: t('econSnap.playerFeePool'),
       value: `${bucket.playerWalletPending.toLocaleString('ko-KR')} cr`,
     },
   ];

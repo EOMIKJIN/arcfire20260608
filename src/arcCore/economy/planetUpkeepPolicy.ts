@@ -30,8 +30,10 @@ function policyNum(key: string, fallback: number): number {
 
 export type PlanetUpkeepPolicy = {
   enabled: boolean;
-  /** [보완 #2] 행성 1개당 일 유지비 고정(크레딧) — P=50% 기준 800 */
+  /** [보완 #2] 행성 1개당 일 유지비 고정 베이스(크레딧) — P=50% 기준 800 */
   upkeepFixedCreditsPerPlanet: number;
+  /** [v3] 개발 엔티티 레벨별 유지비를 베이스에 가산할지 */
+  developmentScalingEnabled: boolean;
   tradeFeeRatePct: number;
   tradeFeePlayerWalletSharePct: number;
   tradeFeeArcImmediateSharePct: number;
@@ -43,6 +45,9 @@ export function resolvePlanetUpkeepPolicy(): PlanetUpkeepPolicy {
     upkeepFixedCreditsPerPlanet: Math.max(
       0,
       Math.floor(policyNum('upkeep_fixed_credits_per_planet', 800)),
+    ),
+    developmentScalingEnabled: parseBool(
+      getPolicyKv().get('upkeep_development_scaling_enabled') ?? 'true',
     ),
     tradeFeeRatePct: Math.max(0, Math.min(50, policyNum('trade_fee_rate_pct', 10))),
     tradeFeePlayerWalletSharePct: Math.max(
@@ -56,12 +61,20 @@ export function resolvePlanetUpkeepPolicy(): PlanetUpkeepPolicy {
   };
 }
 
-/** [보완 #2] 행성 1개당 일 유지비 — P 스탯 무관 고정(추후 동적 계산 예정) */
+/**
+ * 행성 1개당 1일 유지비 = 고정 베이스 + 개발 엔티티 유지비 가산분.
+ * [v3] 개발도 비례: developmentUpkeepCredits 는 호출부에서 행성별 개발 엔티티
+ *   레벨 유지비를 합산해 전달(`computePlanetDevelopmentDailyUpkeepCredits`). 정책 플래그로 가산 게이트.
+ */
 export function computePlanetDailyUpkeepCredits(
-  _populationScalar?: number,
+  developmentUpkeepCredits = 0,
   policy = resolvePlanetUpkeepPolicy(),
 ): number {
-  return policy.upkeepFixedCreditsPerPlanet;
+  const base = policy.upkeepFixedCreditsPerPlanet;
+  const dev = policy.developmentScalingEnabled
+    ? Math.max(0, Math.floor(developmentUpkeepCredits))
+    : 0;
+  return base + dev;
 }
 
 export type PlanetTradeFeeBreakdown = {

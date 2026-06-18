@@ -118,7 +118,8 @@ function main() {
   }
 
   const msg = `chore(daily): snapshot ${dateKey} (KST)`;
-  const commit = run('git', ['commit', '-m', msg]);
+  // Windows shell:true 시 -m 인자가 공백·괄호로 분리되어 pathspec 오류 — shell:false
+  const commit = run('git', ['commit', '-m', msg], { shell: false });
   if (commit.status !== 0) {
     logLine(`git commit failed: ${(commit.stdout + commit.stderr).trim()}`);
     process.exit(commit.status);

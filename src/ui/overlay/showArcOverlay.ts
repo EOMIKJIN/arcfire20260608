@@ -14,6 +14,8 @@ export {
   presentPlanetEconomyInfoOverlay,
   presentPlanetDevelopmentOverlay,
   presentWaveResultOverlay,
+  presentSettingsOverlay,
+  presentBmShopOverlay,
   useArcOverlayStore,
 } from './arcOverlayStore';
 

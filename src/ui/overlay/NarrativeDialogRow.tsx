@@ -22,7 +22,7 @@ export type NarrativeDialogRowProps = {
   portraitScale?: number;
   measureTextRaw?: string;
   onMeasureTextLayout?: (e: NativeSyntheticEvent<TextLayoutEventData>) => void;
-  buttonText?: '[ 다음 ]' | '[ 확인 ]';
+  buttonText?: string;
   nextDisabled?: boolean;
   onPressNext?: () => void;
   /** false — intro 등 화면 하단 버튼이 진행을 담당할 때 */

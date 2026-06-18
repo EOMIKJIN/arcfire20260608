@@ -26,6 +26,8 @@ export function getOverlayChrome(kind: ArcOverlayKind): {
     case 'levelUp':
     case 'reward':
     case 'waveResult':
+    case 'settings':
+    case 'bmShop':
       return {
         zIndex: OVERLAY_Z.panel,
         backdrop: OVERLAY_BACKDROP.panel,

@@ -1,7 +1,8 @@
 key,value,notesKo
-policy_version,2,행성 유지비·거래수수료 정본
+policy_version,3,행성 유지비·거래수수료 정본 (v3: 개발도 비례 유지비)
 enabled,true,일 1회 배치에서 유지비·수수료 정산
-upkeep_fixed_credits_per_planet,800,[보완 #2] 행성 1개당 일 유지비 고정(P=50% 기준 800cr·P 변동 무시)
+upkeep_fixed_credits_per_planet,800,[보완 #2] 행성 1개당 일 유지비 고정 베이스(P=50% 기준 800cr)
+upkeep_development_scaling_enabled,true,[v3] 개발 엔티티(방위위성 등) 레벨별 1일 유지비를 베이스에 가산 — planet_defense_satellite_level_policy.dailyUpkeepCredits 정본
 trade_fee_rate_pct,10,거래 총액 대비 수수료(%)
 trade_fee_player_wallet_share_pct,5,플레이어 지갑 일일 지급 풀(총액 대비 %)
 trade_fee_arc_immediate_share_pct,5,팩션 금고 즉시 적립(총액 대비 %)

@@ -18,6 +18,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { COLORS, FONTS, SPACING, ZONE_COLORS } from '../../src/utils/theme';
 import { formatCredits } from '../../src/utils/formatCredits';
+import { formatGemBalance, resolvePlayerGemBalance } from '../../src/bm/bmWalletDisplay';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import type { StarSystem } from '../../src/types';
 import { usePlayerStore } from '../../src/store/playerStore';
@@ -109,7 +110,7 @@ import { STORY_SCENES_FROM_CSV } from '../../src/data/generated/csvStoryScenes';
 import { getNpcCaptain } from '../../src/npc/npcFleetRegistry';
 import { resolveTempClanColor } from '../../src/clanWar/tempClanColors';
 import { getCurrentUser } from '../../src/firebase/auth';
-import { requestLocalAccountResetFromPlanetHub } from '../../src/account/localAccountReset';
+import { requestLocalAccountResetFromPlanetHub, isAccountResetInProgress } from '../../src/account/localAccountReset';
 import { resolveNpcCaptainPortraitSource } from '../../src/game/npcCaptainPortraitAssets';
 import { countGoodInInventory } from '../../src/game/playerInventory';
 import { buildPlanetHubFeatureMenuItems } from '../../src/systems/planetHub/planetHubFeatureSystems';
@@ -140,7 +141,10 @@ import { usePlanetHubBattleReady } from '../../src/game/planetHub/usePlanetHubBa
 import { useWaveDefenseStore } from '../../src/game/waveDefense/waveDefenseStore';
 import { useWaveDefenseController } from '../../src/game/waveDefense/useWaveDefenseController';
 import { WAVE_DEFENSE_MAX_WAVES } from '../../src/game/waveDefense/waveDefenseFleet';
-import { presentWaveResultOverlay } from '../../src/ui/overlay/showArcOverlay';
+import { presentWaveResultOverlay, presentSettingsOverlay, presentBmShopOverlay } from '../../src/ui/overlay/showArcOverlay';
+import { useAppSettingsStore } from '../../src/store/appSettingsStore';
+import { useT } from '../../src/i18n';
+import { resolveStoryPageText, resolveStoryPageLabel } from '../../src/i18n/storyText';
 import { usePlanetHubInfoDistanceSort } from '../../src/game/planetHub/usePlanetHubInfoDistanceSort';
 import { usePlanetHubInterval } from '../../src/game/planetHub/usePlanetHubInterval';
 import {
@@ -159,6 +163,8 @@ import {
 
 export default function PlanetScreen() {
   const player = usePlayerStore(s => s.player);
+  const t = useT();
+  const appLocale = useAppSettingsStore(s => s.locale);
   const playerHydrated = usePlayerStore(s => s.hydrated);
   const getSystem = useWorldStore(s => s.getSystem);
   const { width: windowWidth, height: windowHeight, fontScale } = useWindowDimensions();
@@ -343,8 +349,8 @@ export default function PlanetScreen() {
       push: router.push,
       onFacilityNavigate,
       onDeparture: handleDeparture,
-    }),
-    [featureMenuPlanet, hasTradeMenuBadge, clearMenuBadge, handleDeparture, onFacilityNavigate],
+    }, t),
+    [featureMenuPlanet, hasTradeMenuBadge, clearMenuBadge, handleDeparture, onFacilityNavigate, t],
   );
   const arcNpcCaptainsSnap = useArcNpcTrafficStore((s) => s.captains);
   const arcNpcShipsSnap = useArcNpcTrafficStore((s) => s.ships);
@@ -617,7 +623,9 @@ export default function PlanetScreen() {
 
   useEffect(() => {
     if (!playerHydrated) return;
-    if (!player) router.replace('/');
+    // 계정 초기화 purge 도중 player 가 null 이 되어도 여기서 조기 리다이렉트하지 않는다.
+    // (나머지 purge 완료 후 finalize 가 1회 타이틀로 이동 — 부하정리 완료 후 복귀 보장)
+    if (!player && !isAccountResetInProgress()) router.replace('/');
   }, [player, playerHydrated]);
 
   useEffect(() => {
@@ -668,8 +676,11 @@ export default function PlanetScreen() {
     resolveNpcCaptainPortraitSource(
       activeIngameDialogSpeaker?.portraitImageAssetKey ?? activeIngameDialogCurrentPage?.imageAssetKey,
     ) ?? undefined;
-  const activeIngameDialogTextRaw = (activeIngameDialogCurrentPage?.text ?? '')
-    .replace(/\[닉네임\]/g, player?.nickname ?? '파일럿')
+  const activeIngameDialogTextRaw = (
+    activeIngameDialogCurrentPage
+      ? resolveStoryPageText(activeIngameDialogCurrentPage, appLocale, player?.nickname)
+      : ''
+  )
     .replace(/\r\n/g, '\n')
     .replace(/\r/g, '\n')
     .replace(/\n{3,}/g, '\n\n');
@@ -748,7 +759,10 @@ export default function PlanetScreen() {
     if (!activeIngameDialogScene) return null;
     return {
       anchor: 'center',
-      label: activeIngameDialogCurrentPage?.label ?? '[ 통신 ]',
+      label:
+        (activeIngameDialogCurrentPage
+          ? resolveStoryPageLabel(activeIngameDialogCurrentPage, appLocale)
+          : '') || (appLocale === 'ko' ? '[ 통신 ]' : '[ COMM ]'),
       text: activeIngameDialogText,
       typewriterKey: `ingame-dialog-${activeIngameDialogScene.id}-${ingameDialogPage}-${ingameDialogSegment}`,
       typewriterSpeedMs: activeIngameDialogScene.typewriterSpeedMs ?? 28,
@@ -756,11 +770,14 @@ export default function PlanetScreen() {
       imageSource: activeIngameDialogImageSource,
       onPressNext: handleNextIngameDialog,
       nextDisabled: !ingameDialogPageComplete,
-      buttonText: isFinalIngameDialogStep ? '[ 확인 ]' : '[ 다음 ]',
+      buttonText: isFinalIngameDialogStep
+        ? (appLocale === 'ko' ? '[ 확인 ]' : '[ OK ]')
+        : (appLocale === 'ko' ? '[ 다음 ]' : '[ Next ]'),
     };
   }, [
     activeIngameDialogScene,
-    activeIngameDialogCurrentPage?.label,
+    activeIngameDialogCurrentPage,
+    appLocale,
     activeIngameDialogText,
     ingameDialogPage,
     ingameDialogSegment,
@@ -898,7 +915,7 @@ export default function PlanetScreen() {
   }, [planetHubCaptainIds, activeIngameDialogSceneId]);
   const handlePlanetSalvageSearch = useCallback(() => {
     if (!planet || !activeSalvageWreck) {
-      showArcAlert('수색', '궤도 잔해 신호가 감지되지 않았습니다.');
+      showArcAlert(t('planet.searchTitle'), t('planet.searchNone'));
       return;
     }
     const attempt = salvageAttemptRef.current;
@@ -906,8 +923,8 @@ export default function PlanetScreen() {
     const itemId = pickSalvageLootItemId(planet.id, activeSalvageWreck.id, attempt);
     addInventoryItem(itemId, 1);
     setMenuBadge('trade', true);
-    showArcAlert('수색 완료', `${formatSalvageLootLabel(itemId)} 1개를 회수했습니다.`);
-  }, [planet, activeSalvageWreck, addInventoryItem, setMenuBadge]);
+    showArcAlert(t('planet.searchDoneTitle'), t('planet.searchDoneBody', { item: formatSalvageLootLabel(itemId) }));
+  }, [planet, activeSalvageWreck, addInventoryItem, setMenuBadge, t]);
   const tableOrbitSlotCountRef = useRef(0);
   tableOrbitSlotCountRef.current = orbitTablePresence.length;
   const arcShipIndexByIdRef = useRef<Map<string, number>>(new Map());
@@ -1076,27 +1093,27 @@ export default function PlanetScreen() {
 
   const handleExitToTitle = useCallback(() => {
     showArcAlert(
-      '게임 종료',
-      '타이틀 화면으로 돌아가시겠습니까?',
+      t('planet.exitGameTitle'),
+      t('planet.exitGameBody'),
       [
-        { text: '취소', style: 'cancel' },
+        { text: t('planet.cancel'), style: 'cancel' },
         {
-          text: '종료',
+          text: t('planet.exit'),
           style: 'destructive',
           onPress: () => beginPlanetHubSuspendingNavigation(() => router.replace('/?forceTitle=1')),
         },
       ],
     );
-  }, [beginPlanetHubSuspendingNavigation]);
+  }, [beginPlanetHubSuspendingNavigation, t]);
 
   const handleResetAllData = useCallback(() => {
     showArcAlert(
-      '캐릭터 초기화',
-      '플레이어 계정 데이터(닉네임/진행/미션/인벤/스킬)만 삭제하고\n최종 시작 화면(타이틀)으로 돌아갑니다.\n월드/클랜전 배치 및 테이블 설정은 유지됩니다.\n계속하시겠습니까?',
+      t('planet.resetTitle'),
+      t('planet.resetBody'),
       [
-        { text: '취소', style: 'cancel' },
+        { text: t('planet.cancel'), style: 'cancel' },
         {
-          text: '초기화',
+          text: t('planet.reset'),
           style: 'destructive',
           onPress: () => {
             const playerSnapshot = usePlayerStore.getState().player;
@@ -1112,7 +1129,11 @@ export default function PlanetScreen() {
         },
       ],
     );
-  }, [beginPlanetHubSuspendingNavigation]);
+  }, [beginPlanetHubSuspendingNavigation, t]);
+
+  const handleOpenSettings = useCallback(() => {
+    presentSettingsOverlay({ onResetAccount: handleResetAllData });
+  }, [handleResetAllData]);
 
   /** 클랜 점유: 솔라 스테이션과 동일 플로우(플레이트만, 성계별 보정 없음) */
   const safeAiClanTerritoryPlate = useClanWarFoundationStore(
@@ -1133,10 +1154,10 @@ export default function PlanetScreen() {
   const currentPilotClanName = useClanWarFoundationStore(
     useCallback((s) => {
       const clanId = player?.political.clanId;
-      if (!clanId) return '미소속';
+      if (!clanId) return t('planet.unaffiliated');
       const displayName = (s.clans[clanId]?.displayName ?? '').trim();
       return displayName.length > 0 ? displayName : clanId;
-    }, [player?.political.clanId]),
+    }, [player?.political.clanId, t]),
   );
   if (!player || !system || !planet) return null;
 
@@ -1210,37 +1231,43 @@ export default function PlanetScreen() {
         >
           <View style={styles.topBar}>
             <View style={styles.topBarLeft}>
-              <TouchableOpacity style={styles.iconBtn} onPress={handleExitToTitle} accessibilityLabel="게임 종료">
+              <TouchableOpacity style={styles.iconBtn} onPress={handleExitToTitle} accessibilityLabel={t('planet.a11yExitGame')}>
                 <Ionicons name="power" size={18} color={COLORS.ink_dark} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.iconBtn} onPress={handleResetAllData} accessibilityLabel="설정(임시: 전체 초기화)">
+              <TouchableOpacity style={styles.iconBtn} onPress={handleOpenSettings} accessibilityLabel={t('planet.a11ySettings')}>
                 <Ionicons name="settings-outline" size={18} color={COLORS.ink_dark} />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.iconBtn}
-                onPress={() => showArcAlert('랭킹', '랭킹은 준비 중입니다.')}
-                accessibilityLabel="랭킹"
+                onPress={() => showArcAlert(t('planet.rankingTitle'), t('planet.rankingBody'))}
+                accessibilityLabel={t('planet.a11yRanking')}
               >
                 <Ionicons name="podium-outline" size={18} color={COLORS.ink_dark} />
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.topBarTitle} numberOfLines={1}>메인스테이지</Text>
+            <Text style={styles.topBarTitle} numberOfLines={1}>{t('planet.mainStage')}</Text>
 
             <View style={styles.topBarRight}>
               <TouchableOpacity
-                style={styles.iconBtn}
-                onPress={() => showArcAlert('코인 충전', '코인 충전은 준비 중입니다.')}
-                accessibilityLabel="코인 충전"
+                style={[styles.currencyChip, styles.currencyChipGem]}
+                onPress={() => presentBmShopOverlay('premium')}
+                accessibilityLabel={t('planet.a11yGemShop')}
               >
-                <Ionicons name="logo-usd" size={18} color={COLORS.gold} />
+                <Ionicons name="diamond-outline" size={14} color={COLORS.info} />
+                <Text style={styles.currencyChipTextGem} numberOfLines={1}>
+                  {formatGemBalance(resolvePlayerGemBalance(player))}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.iconBtn}
-                onPress={() => showArcAlert('보석 충전', '보석 충전은 준비 중입니다.')}
-                accessibilityLabel="보석 충전"
+                style={[styles.currencyChip, styles.currencyChipCredits]}
+                onPress={() => presentBmShopOverlay('exchange')}
+                accessibilityLabel={t('planet.a11yCreditExchange')}
               >
-                <Ionicons name="diamond-outline" size={18} color={COLORS.info} />
+                <Ionicons name="logo-usd" size={14} color={COLORS.gold} />
+                <Text style={styles.currencyChipTextCredits} numberOfLines={1}>
+                  {formatCredits(player?.credits ?? 0, { suffix: false })}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -1269,7 +1296,7 @@ export default function PlanetScreen() {
         {/* 행성·궤도는 배경 레이어 — 여기는 투명 예약으로 메뉴가 가리지 않게 함 */}
         <View
           style={[styles.planetStageReserve, { minHeight: planetStageReservePx }]}
-          accessibilityLabel="행성 시야 예약 영역"
+          accessibilityLabel={t('planet.a11yPlanetView')}
         />
 
         {/* 소형 메뉴 버튼 — marginTop만 포그라운드: 배경 행성 `paddingBottom`과 분리 */}
@@ -1297,7 +1324,7 @@ export default function PlanetScreen() {
               planetName={planet?.name ?? null}
               scanEnabled={Boolean(planet)}
               actionsUnlocked={planetScanActionsUnlocked}
-              miningLabel={miningSession.status === 'running' ? '채굴 중단' : '채굴'}
+              miningLabel={miningSession.status === 'running' ? t('planet.miningStop') : t('planet.mining')}
               miningDisabled={!canOrbitalMine}
               miningPrimary={miningSession.status === 'running'}
               dialogDisabled={false}
@@ -1316,7 +1343,7 @@ export default function PlanetScreen() {
             shipName={player.ship.name}
             skillPoints={player.skillPoints}
             clanName={currentPilotClanName}
-            menuSlot={<PlanetHubFeatureMenuRow items={featureMenuItems} />}
+            menuSlot={<PlanetHubFeatureMenuRow key={appLocale} items={featureMenuItems} />}
           />
         </View>
 

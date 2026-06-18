@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import type { WorldObject, WorldObjectInteractionKind } from '../../worldObjects';
+import { useT } from '../../i18n';
 
 export interface WorldObjectInteractionComponentProps {
   object: WorldObject;
@@ -32,26 +33,35 @@ function PlaceholderActionButton({
   );
 }
 
-const MiningInteractionComponent: WorldObjectInteractionComponent = ({ object, onExecute }) => (
-  <View style={styles.block}>
-    <Text style={styles.title}>채광</Text>
-    <PlaceholderActionButton label="채광 시작" kind="mining" object={object} onExecute={onExecute} />
-  </View>
-);
+const MiningInteractionComponent: WorldObjectInteractionComponent = ({ object, onExecute }) => {
+  const t = useT();
+  return (
+    <View style={styles.block}>
+      <Text style={styles.title}>{t('worldObj.mining')}</Text>
+      <PlaceholderActionButton label={t('worldObj.miningStart')} kind="mining" object={object} onExecute={onExecute} />
+    </View>
+  );
+};
 
-const SalvageInteractionComponent: WorldObjectInteractionComponent = ({ object, onExecute }) => (
-  <View style={styles.block}>
-    <Text style={styles.title}>수거</Text>
-    <PlaceholderActionButton label="잔해 수거" kind="salvage" object={object} onExecute={onExecute} />
-  </View>
-);
+const SalvageInteractionComponent: WorldObjectInteractionComponent = ({ object, onExecute }) => {
+  const t = useT();
+  return (
+    <View style={styles.block}>
+      <Text style={styles.title}>{t('worldObj.salvage')}</Text>
+      <PlaceholderActionButton label={t('worldObj.salvageCollect')} kind="salvage" object={object} onExecute={onExecute} />
+    </View>
+  );
+};
 
-const DockInteractionComponent: WorldObjectInteractionComponent = ({ object, onExecute }) => (
-  <View style={styles.block}>
-    <Text style={styles.title}>도킹</Text>
-    <PlaceholderActionButton label="기지 도킹" kind="dock" object={object} onExecute={onExecute} />
-  </View>
-);
+const DockInteractionComponent: WorldObjectInteractionComponent = ({ object, onExecute }) => {
+  const t = useT();
+  return (
+    <View style={styles.block}>
+      <Text style={styles.title}>{t('worldObj.dock')}</Text>
+      <PlaceholderActionButton label={t('worldObj.dockBase')} kind="dock" object={object} onExecute={onExecute} />
+    </View>
+  );
+};
 
 export const WORLD_OBJECT_INTERACTION_COMPONENTS:
 Record<WorldObjectInteractionKind, WorldObjectInteractionComponent | null> = {

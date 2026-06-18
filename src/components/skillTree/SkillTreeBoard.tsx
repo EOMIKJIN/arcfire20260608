@@ -9,6 +9,8 @@ import type { Player, Skill, SkillCategory } from '../../types';
 import { SKILLS } from '../../data/skills';
 import { canLearnSkill } from '../../engine/SkillEngine';
 import { COLORS, FONTS, SPACING } from '../../utils/theme';
+import { useT } from '../../i18n';
+import { resolveSkillName } from '../../i18n/skillText';
 import {
   getMaxSkillTreeTier,
   listSkillTreeEdgesForCategory,
@@ -147,6 +149,7 @@ const SkillTreeNode = memo(function SkillTreeNode({
   player: Player;
   onPress: () => void;
 }) {
+  const t = useT();
   const { learned, prereqLearned, canLearn } = resolveNodeVisualState(skill, player);
   const { left, top } = nodeTopLeft(layout.tier, layout.column);
   const locked = !learned && !prereqLearned;
@@ -170,7 +173,7 @@ const SkillTreeNode = memo(function SkillTreeNode({
     >
       <Text style={styles.nodeIcon}>{skill.icon}</Text>
       <Text style={styles.nodeName} numberOfLines={1}>
-        {skill.name}
+        {resolveSkillName(skill, t)}
       </Text>
       <Text style={styles.nodeLevel}>Lv.{skill.levelRequired}</Text>
     </Pressable>

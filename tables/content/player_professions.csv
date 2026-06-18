@@ -1,7 +1,7 @@
-﻿id,sortOrder,nameKo,labelKo,gender,summaryKo,personalityKo,traitIdsPipe,portraitImageAssetKey,combatArchetype,statWisdom,statCharisma
-
-prof_striker,1,렌 카제,[ 강습 파일럿 ],male,근접 교전과 화력 돌파에 특화한 전투형 파일럿입니다.,과묵하고 단호한 돌파형,trait_aggressive|trait_shield_breaker,assets/images/npc/stella_aris_char001.png,fighter,8,8
-
-prof_scout,2,미아 벨로,[ 정찰 파일럿 ],female,민첩한 기동과 정찰·회피에 특화한 정찰형 파일럿입니다.,침착하고 관찰력이 뛰어남,trait_evasive|trait_scout_sense,assets/images/npc/mia_bello_char002.png,ranger,10,10
-
-prof_tactician,3,카일 드레이크,[ 전술 파일럿 ],male,함대 지휘와 전술 판단에 특화한 지휘형 파일럿입니다.,냉철하고 분석적인 지휘관,trait_tactical|trait_fleet_command,assets/images/stella_aris_char001.png,neutral,12,10
+﻿id,sortOrder,nameKo,nameEn,labelKo,labelEn,gender,summaryKo,summaryEn,personalityKo,personalityEn,traitIdsPipe,portraitImageAssetKey,combatArchetype,statWisdom,statCharisma
+
+prof_striker,1,렌 카제,Ren Kaze,[ 강습 파일럿 ],[ Assault Pilot ],male,근접 교전과 화력 돌파에 특화한 전투형 파일럿입니다.,A combat pilot specialized in close engagements and firepower breakthroughs.,과묵하고 단호한 돌파형,Stoic and decisive breakthrough specialist,trait_aggressive|trait_shield_breaker,assets/images/npc/stella_aris_char001.png,fighter,8,8
+
+prof_scout,2,미아 벨로,Mia Bello,[ 정찰 파일럿 ],[ Scout Pilot ],female,민첩한 기동과 정찰·회피에 특화한 정찰형 파일럿입니다.,A scout pilot specialized in agile maneuvering and reconnaissance/evasion.,침착하고 관찰력이 뛰어남,Calm with exceptional observational skill,trait_evasive|trait_scout_sense,assets/images/npc/mia_bello_char002.png,ranger,10,10
+
+prof_tactician,3,카일 드레이크,Kyle Drake,[ 전술 파일럿 ],[ Tactical Pilot ],male,함대 지휘와 전술 판단에 특화한 지휘형 파일럿입니다.,A command pilot specialized in fleet leadership and tactical judgment.,냉철하고 분석적인 지휘관,Cool-headed and analytical commander,trait_tactical|trait_fleet_command,assets/images/stella_aris_char001.png,neutral,12,10

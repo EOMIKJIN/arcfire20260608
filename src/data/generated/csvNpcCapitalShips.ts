@@ -5,6 +5,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_scout_ship",
     name: "기본전함 레인저 CM.I",
+    nameEn: "Starter Ranger CM.I",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -33,6 +34,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_freighter",
     name: "생존포드",
+    nameEn: undefined,
     hullTypeId: "hull_cap_carrier_light_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -61,6 +63,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_npc_red_fleet_1",
     name: "기본전함 파이터 Mk.I",
+    nameEn: "Starter Fighter Mk.I",
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -89,6 +92,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_frigate_mk2",
     name: "스트라이커 Mk.II",
+    nameEn: "Striker Mk.II",
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -117,6 +121,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_destroyer_mk1",
     name: "가디언 구축함",
+    nameEn: "Guardian Destroyer",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -145,6 +150,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_destroyer_mk2",
     name: "가디언 구축함 Mk.II",
+    nameEn: "Guardian Destroyer Mk.II",
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -173,6 +179,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_cruiser_mk1",
     name: "오라클 순양함",
+    nameEn: "Oracle Cruiser",
     hullTypeId: "hull_cap_siege_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -201,6 +208,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_cruiser_mk2",
     name: "오라클 순양함 Mk.II",
+    nameEn: "Oracle Cruiser Mk.II",
     hullTypeId: "hull_cap_siege_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -229,6 +237,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_battlecruiser_mk1",
     name: "소버린 순양전함",
+    nameEn: "Sovereign Battlecruiser",
     hullTypeId: "hull_cap_siege_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -257,6 +266,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_battlecruiser_apex",
     name: "소버린 순양전함·완성형",
+    nameEn: "Sovereign Battlecruiser Apex",
     hullTypeId: "hull_cap_siege_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -285,6 +295,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_dreadnought_mk1",
     name: "드레드노트",
+    nameEn: "Dreadnought",
     hullTypeId: "hull_cap_siege_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -313,6 +324,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_super_capital_mk1",
     name: "슈퍼캐피털",
+    nameEn: "Super Capital",
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -341,6 +353,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_apex_legend_mk1",
     name: "아펙스 레전드",
+    nameEn: "Apex Legend",
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -369,6 +382,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "player_wave_ship",
     name: "웨이브 디펜스 전함",
+    nameEn: "Wave Defense Battleship",
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -397,6 +411,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_hunter_mk1",
     name: "헌터 구축함",
+    nameEn: "Hunter Destroyer",
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -425,6 +440,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_hunter_mk2",
     name: "헌터 구축함 Mk.II",
+    nameEn: "Hunter Destroyer Mk.II",
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -453,6 +469,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_shadow_cruiser_mk1",
     name: "섀도우 순양함",
+    nameEn: "Shadow Cruiser",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -481,6 +498,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_shadow_cruiser_mk2",
     name: "섀도우 순양함 Mk.II",
+    nameEn: "Shadow Cruiser Mk.II",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -509,6 +527,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_raptor_bc_mk1",
     name: "랩터 순양전함",
+    nameEn: "Raptor Battlecruiser",
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -537,6 +556,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_raptor_bc_apex",
     name: "랩터 순양전함·완성형",
+    nameEn: "Raptor Battlecruiser Apex",
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -565,6 +585,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_phantom_dreadnought_mk1",
     name: "팬텀 드레드노트",
+    nameEn: "Phantom Dreadnought",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -593,6 +614,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_phantom_super_capital_mk1",
     name: "팬텀 슈퍼캐피털",
+    nameEn: "Phantom Super Capital",
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -621,6 +643,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "Player_phantom_apex_legend_mk1",
     name: "팬텀 레전드",
+    nameEn: "Phantom Legend",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -649,6 +672,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t1",
     name: "웨이브 적함 T1(기본)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -677,6 +701,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t2",
     name: "웨이브 적함 T2(로켓 연발)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -705,6 +730,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t3",
     name: "웨이브 적함 T3(유격 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -733,6 +759,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t4",
     name: "웨이브 적함 T4(고속 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -761,6 +788,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t5",
     name: "웨이브 적함 T5(융합 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -789,6 +817,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t6",
     name: "웨이브 적함 T6(중형 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -817,6 +846,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t7",
     name: "웨이브 적함 T7(레일 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -845,6 +875,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t8",
     name: "웨이브 적함 T8(근거리 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -873,6 +904,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t9",
     name: "웨이브 적함 T9(연발 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -901,6 +933,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t10",
     name: "웨이브 적함 T10(플라즈마 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -929,6 +962,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t11",
     name: "웨이브 적함 T11(지역 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -957,6 +991,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t12",
     name: "웨이브 적함 T12(섬멸 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -985,6 +1020,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t13",
     name: "웨이브 적함 T13(가이드 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1013,6 +1049,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t14",
     name: "웨이브 적함 T14(플라즈노바 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1041,6 +1078,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t15",
     name: "웨이브 적함 T15(근격 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1069,6 +1107,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t16",
     name: "웨이브 적함 T16(하이퍼 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1097,6 +1136,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t17",
     name: "웨이브 적함 T17(카이로스 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1125,6 +1165,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t18",
     name: "웨이브 적함 T18(시귤러리티 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1153,6 +1194,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t19",
     name: "웨이브 적함 T19(코스메가 로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1181,6 +1223,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t20",
     name: "웨이브 적함 T20(속사+돌격드론)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1209,6 +1252,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t21",
     name: "웨이브 적함 T21(속사+폭격함재기)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1237,6 +1281,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t22",
     name: "웨이브 적함 T22(위상+단거리로켓)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1265,6 +1310,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t23",
     name: "웨이브 적함 T23(커팅+유도미사일)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1293,6 +1339,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t24",
     name: "웨이브 적함 T24(돌격로켓+스파이크드론)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1321,6 +1368,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t25",
     name: "웨이브 적함 T25(융합로켓+댄싱드론)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1349,6 +1397,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t26",
     name: "웨이브 적함 T26(입자포+침투함재기)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1377,6 +1426,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t27",
     name: "웨이브 적함 T27(광자레이저+추적미사일)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1405,6 +1455,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t28",
     name: "웨이브 적함 T28(핵로켓+순항미사일)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1433,6 +1484,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t29",
     name: "웨이브 적함 T29(반물질+아다만틴함재기)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1461,6 +1513,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_wave_invader_t30",
     name: "웨이브 적함 T30(방위빔+전술드론)",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1489,6 +1542,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_arcadia_01",
     name: "아르카디아 침입함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1517,6 +1571,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_arcadia_02",
     name: "아르카디아 차단함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1545,6 +1600,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_arcadia_03",
     name: "아르카디아 추격함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1573,6 +1629,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_draco_01",
     name: "드라코 성운함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1601,6 +1658,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_draco_02",
     name: "드라코 잠행함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1629,6 +1687,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_solar_01",
     name: "솔라 침입함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1657,6 +1716,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_draco_03",
     name: "드라코 추격함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1685,6 +1745,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_minerva_01",
     name: "미네르바 침입함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1713,6 +1774,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_vega_01",
     name: "베가 침입함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1741,6 +1803,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_eden_01",
     name: "뉴 에덴 순양함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1769,6 +1832,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_blue_fleet_2",
     name: "블루전함2",
+    nameEn: undefined,
     hullTypeId: "hull_cap_research_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1797,6 +1861,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_iron_01",
     name: "아이언 약탈함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1825,6 +1890,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_iron_02",
     name: "아이언 차단함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1853,6 +1919,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_iron_03",
     name: "아이언 사냥함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1881,6 +1948,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_blue_fleet_3",
     name: "블루전함3",
+    nameEn: undefined,
     hullTypeId: "hull_cap_carrier_light_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1909,6 +1977,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_ai_clan_pvp_flagship",
     name: "홍월기함1",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1937,6 +2006,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_red_fleet_3",
     name: "레드전함3",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1965,6 +2035,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_15",
     name: "모의전함 15",
+    nameEn: undefined,
     hullTypeId: "hull_cap_research_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -1993,6 +2064,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_04",
     name: "모의전함 04",
+    nameEn: undefined,
     hullTypeId: "hull_cap_research_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2021,6 +2093,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_11",
     name: "모의전함 11",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2049,6 +2122,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_omega_01",
     name: "오메가 약탈함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2077,6 +2151,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_omega_02",
     name: "오메가 차단함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2105,6 +2180,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_omega_03",
     name: "오메가 사냥함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2133,6 +2209,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_helios_01",
     name: "헬리오스 강습함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2161,6 +2238,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_helios_02",
     name: "헬리오스 코일함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2189,6 +2267,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_helios_03",
     name: "헬리오스 추격함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2217,6 +2296,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_blue_fleet_1",
     name: "블루전함1",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2245,6 +2325,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_blue_10",
     name: "베가 블루 수호 10",
+    nameEn: undefined,
     hullTypeId: "hull_cap_research_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2273,6 +2354,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_10",
     name: "모의전함 10",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2301,6 +2383,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_16",
     name: "모의전함 16",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2329,6 +2412,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_09",
     name: "모의전함 09",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2357,6 +2441,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_19",
     name: "모의전함 19",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2385,6 +2470,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_blue_fleet_4",
     name: "블루전함4",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2413,6 +2499,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_06",
     name: "모의전함 06",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2441,6 +2528,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_14",
     name: "모의전함 14",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2469,6 +2557,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_18",
     name: "모의전함 18",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2497,6 +2586,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_07",
     name: "모의전함 07",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2525,6 +2615,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_blue_11",
     name: "베가 블루 수호 11",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2553,6 +2644,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_blue_7",
     name: "베가 블루 수호 7",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2581,6 +2673,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_01",
     name: "모의전함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2609,6 +2702,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_red_fleet_2",
     name: "레드전함2",
+    nameEn: undefined,
     hullTypeId: "hull_cap_siege_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2637,6 +2731,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_blue_8",
     name: "베가 블루 수호 8",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2665,6 +2760,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_neweden_blue_7",
     name: "뉴에덴 블루 7",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2693,6 +2789,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_02",
     name: "모의전함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2721,6 +2818,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_blue_fleet_6",
     name: "블루전함6",
+    nameEn: undefined,
     hullTypeId: "hull_cap_siege_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2749,6 +2847,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_sirius_01",
     name: "시리우스 약탈함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2777,6 +2876,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_sirius_02",
     name: "시리우스 침투함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2805,6 +2905,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_sirius_03",
     name: "시리우스 호위함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2833,6 +2934,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_titan_01",
     name: "타이탄 강탈함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2861,6 +2963,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_titan_02",
     name: "타이탄 추적함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2889,6 +2992,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_titan_03",
     name: "타이탄 차단함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2917,6 +3021,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_red_10",
     name: "베가 레드 돌격 10",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2945,6 +3050,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_08",
     name: "모의전함 08",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -2973,6 +3079,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_red_4",
     name: "베가 레드 돌격 4",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3001,6 +3108,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_17",
     name: "모의전함 17",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3029,6 +3137,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_red_5",
     name: "베가 레드 돌격 5",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3057,6 +3166,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_12",
     name: "모의전함 12",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3085,6 +3195,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_blue_9",
     name: "베가 블루 수호 9",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3113,6 +3224,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_blue_fleet_5",
     name: "블루전함5",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3141,6 +3253,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_03",
     name: "모의전함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3169,6 +3282,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_13",
     name: "모의전함 13",
+    nameEn: undefined,
     hullTypeId: "hull_cap_siege_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3197,6 +3311,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_mock_ai_ship_05",
     name: "모의전함 05",
+    nameEn: undefined,
     hullTypeId: "hull_cap_siege_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3225,6 +3340,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_red_fleet_1",
     name: "레드전함1",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3253,6 +3369,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_perseus_01",
     name: "페르세우스 약탈함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3281,6 +3398,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_perseus_02",
     name: "페르세우스 수집함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3309,6 +3427,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_perseus_03",
     name: "페르세우스 요격함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3337,6 +3456,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_neweden_red_7",
     name: "뉴에덴 레드 7",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3365,6 +3485,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_red_6",
     name: "베가 레드 돌격 6",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3393,6 +3514,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_red_11",
     name: "베가 레드 돌격 11",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3421,6 +3543,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_red_7",
     name: "베가 레드 돌격 7",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3449,6 +3572,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_red_8",
     name: "베가 레드 돌격 8",
+    nameEn: undefined,
     hullTypeId: "hull_cap_siege_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3477,6 +3601,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_red_9",
     name: "베가 레드 돌격 9",
+    nameEn: undefined,
     hullTypeId: "hull_cap_siege_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3505,6 +3630,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_red_12",
     name: "베가 레드 돌격 12",
+    nameEn: undefined,
     hullTypeId: "hull_cap_siege_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3533,6 +3659,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_crimson_01",
     name: "크림슨 전열함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3561,6 +3688,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_crimson_02",
     name: "크림슨 차단함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3589,6 +3717,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_crimson_03",
     name: "크림슨 포식함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3617,6 +3746,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_shadow_01",
     name: "섀도우 암시장함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3645,6 +3775,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_shadow_02",
     name: "섀도우 그림자함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3673,6 +3804,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_shadow_03",
     name: "섀도우 은폐함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3701,6 +3833,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_dark_01",
     name: "다크 리프트함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3729,6 +3862,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_dark_02",
     name: "다크 차단함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3757,6 +3891,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_dark_03",
     name: "다크 추격함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3785,6 +3920,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_blood_01",
     name: "블러드 지휘함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3813,6 +3949,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_blood_02",
     name: "블러드 감독함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3841,6 +3978,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_blood_03",
     name: "블러드 요격함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3869,6 +4007,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_nightfall_01",
     name: "나이트폴 군주함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3897,6 +4036,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_nightfall_02",
     name: "나이트폴 강습함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3925,6 +4065,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_nightfall_03",
     name: "나이트폴 포위함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3953,6 +4094,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_abyss_01",
     name: "어비스 문막기함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -3981,6 +4123,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_abyss_02",
     name: "어비스 심연함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4009,6 +4152,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_abyss_03",
     name: "어비스 차단함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_raider_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4037,6 +4181,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_core_01",
     name: "코어 수문장함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4065,6 +4210,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_core_02",
     name: "코어 감시함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4093,6 +4239,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_core_03",
     name: "코어 요격함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4121,6 +4268,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_eternity_01",
     name: "이터니티 영원함 01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4149,6 +4297,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_eternity_02",
     name: "이터니티 감시함 02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4177,6 +4326,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_enemy_eternity_03",
     name: "이터니티 요격함 03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4205,6 +4355,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_ai_clan_neutral_flagship",
     name: "중립회항함1",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4233,6 +4384,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_ai_clan_safe_flagship",
     name: "연합기지함1",
+    nameEn: undefined,
     hullTypeId: "hull_cap_carrier_light_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4261,6 +4413,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_arc_presence_ship_01",
     name: "루안다급 근접수송 P-01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4289,6 +4442,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_arc_presence_ship_02",
     name: "테란급 근접무역 P-02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4317,6 +4471,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_arc_presence_ship_03",
     name: "미코급 순환보급 P-03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4345,6 +4500,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_arc_presence_ship_04",
     name: "조이드급 정박보조 P-04",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4373,6 +4529,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_arc_presence_ship_05",
     name: "카이로급 초계연락 P-05",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4401,6 +4558,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_arc_presence_ship_06",
     name: "사렌급 광물운반 P-06",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4429,6 +4587,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_arc_presence_ship_07",
     name: "훈텍급 연료이송 P-07",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4457,6 +4616,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_arc_presence_ship_08",
     name: "크로나급 구난연락 P-08",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4485,6 +4645,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_arc_presence_ship_09",
     name: "린델급 화물선박 P-09",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4513,6 +4674,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_arc_presence_ship_10",
     name: "파크급 항로감시 P-10",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4541,6 +4703,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_arc_presence_ship_11",
     name: "하림급 민간호위 P-11",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4569,6 +4732,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_arc_presence_ship_12",
     name: "베가린급 외곽연락 P-12",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4597,6 +4761,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_arcadia_orbit_1",
     name: "아르카디아 순항1",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4625,6 +4790,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_arcadia_orbit_2",
     name: "아르카디아 순항2",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4653,6 +4819,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_draco_escort_01",
     name: "드라코 호위함",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4681,6 +4848,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_draco_patrol_01",
     name: "드라코 관측함",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4709,6 +4877,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_eden_orbit_4",
     name: "에덴전함4",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4737,6 +4906,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_e_01",
     name: "자유 화물선 E-01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4765,6 +4935,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_e_02",
     name: "자유 화물선 E-02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4793,6 +4964,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_e_03",
     name: "자유 화물선 E-03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4821,6 +4993,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_e_04",
     name: "자유 화물선 E-04",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4849,6 +5022,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_e_05",
     name: "자유 화물선 E-05",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4877,6 +5051,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_e_06",
     name: "자유 화물선 E-06",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4905,6 +5080,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_e_07",
     name: "자유 화물선 E-07",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4933,6 +5109,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_e_08",
     name: "자유 화물선 E-08",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4961,6 +5138,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_e_09",
     name: "자유 화물선 E-09",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -4989,6 +5167,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_e_10",
     name: "자유 화물선 E-10",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5017,6 +5196,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_e_11",
     name: "자유 화물선 E-11",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5045,6 +5225,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_e_12",
     name: "자유 화물선 E-12",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5073,6 +5254,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_n_01",
     name: "외곽 화물선 N-01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5101,6 +5283,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_n_02",
     name: "외곽 화물선 N-02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5129,6 +5312,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_n_03",
     name: "외곽 화물선 N-03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5157,6 +5341,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_n_04",
     name: "외곽 화물선 N-04",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5185,6 +5370,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_n_05",
     name: "외곽 화물선 N-05",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5213,6 +5399,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_n_06",
     name: "외곽 화물선 N-06",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5241,6 +5428,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_n_07",
     name: "외곽 화물선 N-07",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5269,6 +5457,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_n_08",
     name: "외곽 화물선 N-08",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5297,6 +5486,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_n_09",
     name: "외곽 화물선 N-09",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5325,6 +5515,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_n_10",
     name: "외곽 화물선 N-10",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5353,6 +5544,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_n_11",
     name: "외곽 화물선 N-11",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5381,6 +5573,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_n_12",
     name: "외곽 화물선 N-12",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5409,6 +5602,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_s_01",
     name: "산업 화물선 S-01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5437,6 +5631,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_s_02",
     name: "산업 화물선 S-02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5465,6 +5660,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_s_03",
     name: "산업 화물선 S-03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5493,6 +5689,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_s_04",
     name: "산업 화물선 S-04",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5521,6 +5718,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_s_05",
     name: "산업 화물선 S-05",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5549,6 +5747,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_s_06",
     name: "산업 화물선 S-06",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5577,6 +5776,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_s_07",
     name: "산업 화물선 S-07",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5605,6 +5805,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_s_08",
     name: "산업 화물선 S-08",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5633,6 +5834,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_s_09",
     name: "산업 화물선 S-09",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5661,6 +5863,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_s_10",
     name: "산업 화물선 S-10",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5689,6 +5892,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_s_11",
     name: "산업 화물선 S-11",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5717,6 +5921,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_s_12",
     name: "산업 화물선 S-12",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5745,6 +5950,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_w_01",
     name: "연방 화물선 W-01",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5773,6 +5979,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_w_02",
     name: "연방 화물선 W-02",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5801,6 +6008,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_w_03",
     name: "연방 화물선 W-03",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5829,6 +6037,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_w_04",
     name: "연방 화물선 W-04",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5857,6 +6066,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_w_05",
     name: "연방 화물선 W-05",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5885,6 +6095,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_w_06",
     name: "연방 화물선 W-06",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5913,6 +6124,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_w_07",
     name: "연방 화물선 W-07",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5941,6 +6153,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_w_08",
     name: "연방 화물선 W-08",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5969,6 +6182,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_w_09",
     name: "연방 화물선 W-09",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -5997,6 +6211,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_w_10",
     name: "연방 화물선 W-10",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -6025,6 +6240,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_w_11",
     name: "연방 화물선 W-11",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -6053,6 +6269,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_faction_cargo_ship_w_12",
     name: "연방 화물선 W-12",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -6081,6 +6298,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_solar_guard_1",
     name: "솔라경비함1",
+    nameEn: undefined,
     hullTypeId: "hull_cap_carrier_light_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -6109,6 +6327,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_solar_guard_2",
     name: "솔라경비함2",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -6137,6 +6356,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_guard_1",
     name: "베가경비함1",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -6165,6 +6385,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_guard_2",
     name: "베가경비함2",
+    nameEn: undefined,
     hullTypeId: "hull_cap_research_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -6193,6 +6414,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_test_ship_a",
     name: "베가전함A",
+    nameEn: undefined,
     hullTypeId: "hull_cap_line_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -6221,6 +6443,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   {
     id: "npc_vega_test_ship_b",
     name: "베가전함B",
+    nameEn: undefined,
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.

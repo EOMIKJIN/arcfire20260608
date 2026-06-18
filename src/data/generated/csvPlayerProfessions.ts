@@ -5,10 +5,14 @@ export type PlayerProfessionCsvRow = {
   id: string;
   sortOrder: number;
   nameKo: string;
+  nameEn?: string;
   labelKo: string;
+  labelEn?: string;
   gender: PlayerPilotGender;
   summaryKo: string;
+  summaryEn?: string;
   personalityKo: string;
+  personalityEn?: string;
   traitIds: string[];
   portraitImageAssetKey: string;
   combatArchetype: CapitalShipArchetype;
@@ -20,10 +24,14 @@ export const PLAYER_PROFESSIONS_FROM_CSV: Record<string, PlayerProfessionCsvRow>
     id: "prof_striker",
     sortOrder: 1,
     nameKo: "렌 카제",
+    nameEn: "Ren Kaze",
     labelKo: "[ 강습 파일럿 ]",
+    labelEn: "[ Assault Pilot ]",
     gender: "male",
     summaryKo: "근접 교전과 화력 돌파에 특화한 전투형 파일럿입니다.",
+    summaryEn: "A combat pilot specialized in close engagements and firepower breakthroughs.",
     personalityKo: "과묵하고 단호한 돌파형",
+    personalityEn: "Stoic and decisive breakthrough specialist",
     traitIds: ["trait_aggressive","trait_shield_breaker"],
     portraitImageAssetKey: "assets/images/npc/stella_aris_char001.png",
     combatArchetype: "fighter",
@@ -36,10 +44,14 @@ export const PLAYER_PROFESSIONS_FROM_CSV: Record<string, PlayerProfessionCsvRow>
     id: "prof_scout",
     sortOrder: 2,
     nameKo: "미아 벨로",
+    nameEn: "Mia Bello",
     labelKo: "[ 정찰 파일럿 ]",
+    labelEn: "[ Scout Pilot ]",
     gender: "female",
     summaryKo: "민첩한 기동과 정찰·회피에 특화한 정찰형 파일럿입니다.",
+    summaryEn: "A scout pilot specialized in agile maneuvering and reconnaissance/evasion.",
     personalityKo: "침착하고 관찰력이 뛰어남",
+    personalityEn: "Calm with exceptional observational skill",
     traitIds: ["trait_evasive","trait_scout_sense"],
     portraitImageAssetKey: "assets/images/npc/mia_bello_char002.png",
     combatArchetype: "ranger",
@@ -52,10 +64,14 @@ export const PLAYER_PROFESSIONS_FROM_CSV: Record<string, PlayerProfessionCsvRow>
     id: "prof_tactician",
     sortOrder: 3,
     nameKo: "카일 드레이크",
+    nameEn: "Kyle Drake",
     labelKo: "[ 전술 파일럿 ]",
+    labelEn: "[ Tactical Pilot ]",
     gender: "male",
     summaryKo: "함대 지휘와 전술 판단에 특화한 지휘형 파일럿입니다.",
+    summaryEn: "A command pilot specialized in fleet leadership and tactical judgment.",
     personalityKo: "냉철하고 분석적인 지휘관",
+    personalityEn: "Cool-headed and analytical commander",
     traitIds: ["trait_tactical","trait_fleet_command"],
     portraitImageAssetKey: "assets/images/stella_aris_char001.png",
     combatArchetype: "neutral",

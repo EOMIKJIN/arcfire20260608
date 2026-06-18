@@ -9,6 +9,7 @@ import {
 import { usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore';
 import { formatCredits } from '../../../utils/formatCredits';
 import { showArcAlert } from '../../../utils/showArcAlert';
+import { useT } from '../../../i18n';
 import { OVERLAY_TOKENS } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
@@ -30,6 +31,7 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
   onBack,
   onClose,
 }: PlanetDevelopmentModuleContext) {
+  const t = useT();
   // 설치 직후 리렌더 — 런타임 정본 변경 구독
   const shipyardRev = usePlanetCoreRuntimeStore(
     useCallback((s) => {
@@ -44,61 +46,61 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
 
   const handlePressInstall = useCallback(() => {
     if (!isHomePlanet) {
-      showArcAlert('거점 행성 전용', '조선소 설치는 거점 행성에서만 가능합니다.');
+      showArcAlert(t('orbitShipyard.homeOnlyTitle'), t('orbitShipyard.homeOnlyBody'));
       return;
     }
     showArcAlert(
-      '궤도 조선소 설치',
-      `궤도 조선소를 설치하시겠습니까?\n\n비용: ${formatCredits(snapshot.installCost, { suffix: true })}\n설치 후 이 행성 허브에서 조선소를 이용할 수 있습니다.`,
+      t('orbitShipyard.installTitle'),
+      t('orbitShipyard.installBody', { cost: formatCredits(snapshot.installCost, { suffix: true }) }),
       [
-        { text: '취소', style: 'cancel' },
+        { text: t('orbitShipyard.cancel'), style: 'cancel' },
         {
-          text: '설치',
+          text: t('orbitShipyard.install'),
           onPress: () => {
             const res = installPlanetOrbitShipyard(planetId);
-            if (!res.ok) showArcAlert('설치 실패', res.reason);
+            if (!res.ok) showArcAlert(t('orbitShipyard.installFailTitle'), res.reason);
           },
         },
       ],
     );
-  }, [isHomePlanet, planetId, snapshot.installCost]);
+  }, [isHomePlanet, planetId, snapshot.installCost, t]);
 
   return (
     <View style={styles.card}>
-      <Text style={[styles.title, { color: PH }]}>궤도 조선소 개발</Text>
+      <Text style={[styles.title, { color: PH }]}>{t('orbitShipyard.title')}</Text>
       <Text style={[styles.subtitle, { color: PH }]}>{planetName}</Text>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-        <Text style={[styles.section, { color: PH }]}>현황</Text>
+        <Text style={[styles.section, { color: PH }]}>{t('orbitShipyard.status')}</Text>
         <InfoRow
-          label="상태"
+          label={t('orbitShipyard.stateLabel')}
           value={
             snapshot.baseOperational
-              ? '기본 보유 · 조선소 가동'
+              ? t('orbitShipyard.stateBase')
               : snapshot.installedByDev
-                ? '설치됨 · 조선소 가동'
-                : '미설치'
+                ? t('orbitShipyard.stateInstalled')
+                : t('orbitShipyard.stateNotInstalled')
           }
         />
         <Text style={[styles.hint, { color: PH }]}>
           {snapshot.baseOperational
-            ? '이 행성은 조선소를 기본 보유 중입니다. 별도 개발이 필요 없습니다.'
-            : '설치하면 이 행성 허브 메뉴에서 조선소를 이용할 수 있습니다. (레벨 업그레이드는 향후 추가)'}
+            ? t('orbitShipyard.hintBase')
+            : t('orbitShipyard.hintInstall')}
         </Text>
       </ScrollView>
 
       <View style={styles.btnCol}>
         {!snapshot.operational ? (
           <ArcButton
-            label={`설치 (${formatCredits(snapshot.installCost, { suffix: true })})`}
+            label={t('orbitShipyard.installBtn', { cost: formatCredits(snapshot.installCost, { suffix: true }) })}
             variant="cta"
             disabled={!isHomePlanet || !snapshot.canInstall}
             onPress={handlePressInstall}
           />
         ) : (
-          <Text style={[styles.hint, { color: PH }]}>✅ 조선소가 가동되어 허브에서 이용 가능합니다.</Text>
+          <Text style={[styles.hint, { color: PH }]}>{t('orbitShipyard.operationalHint')}</Text>
         )}
-        <ArcButton label="← 개발 목록" variant="secondary" onPress={onBack} />
-        <ArcButton label="닫기" variant="secondary" onPress={onClose} />
+        <ArcButton label={t('orbitShipyard.backToList')} variant="secondary" onPress={onBack} />
+        <ArcButton label={t('orbitShipyard.close')} variant="secondary" onPress={onClose} />
       </View>
     </View>
   );

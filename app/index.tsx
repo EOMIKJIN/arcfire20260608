@@ -19,6 +19,8 @@ import { COLORS, FONTS, SPACING } from '../src/utils/theme';
 import { StarField } from '../src/renderer/StarField';
 import { usePlayerStore } from '../src/store/playerStore';
 import { useMissionStore } from '../src/store/missionStore';
+import { useAppBootStore } from '../src/store/appBootStore';
+import { useT } from '../src/i18n';
 import { useAccountProfileStore } from '../src/store/accountProfileStore';
 import { getCurrentUser, wasFreshStartThisBoot, consumeFreshStartForTitle } from '../src/firebase/auth';
 import { tryRestorePlayerFromCloud } from '../src/firebase/firestore';
@@ -74,6 +76,7 @@ function resolveTitleAppVersion(): string {
 }
 
 export default function TitleScreen() {
+  const t = useT();
   const appVersion = resolveTitleAppVersion();
   const { width, height } = useWindowDimensions();
   const logoZoneHeight = Math.round(height * TITLE_LOGO_ZONE_HEIGHT_RATIO);
@@ -83,11 +86,15 @@ export default function TitleScreen() {
   );
   const hydrated = usePlayerStore((s) => s.hydrated);
   const player = usePlayerStore((s) => s.player);
+  // 로컬 하이드레이션·월드/코어 부트스트랩이 전부 끝난 뒤에만 버튼을 활성화한다.
+  const bootReady = useAppBootStore((s) => s.bootReady);
   const getActiveMission = useMissionStore((s) => s.getActiveMission);
   const initMissions = useMissionStore((s) => s.initMissions);
 
   const [continueFlowActive, setContinueFlowActive] = useState(false);
   const [cloudRestorePending, setCloudRestorePending] = useState(false);
+  /** 타이틀 입력 준비 완료 — RN 부트·하이드레이션·(있다면)클라우드 복원 판정까지 종료 */
+  const titleInteractive = bootReady && hydrated && !cloudRestorePending;
   const cloudCheckStartedRef = useRef(false);
   const flowCancelledRef = useRef(false);
   const prewarmPromiseRef = useRef<Promise<void> | null>(null);
@@ -104,7 +111,8 @@ export default function TitleScreen() {
   }, []);
 
   useEffect(() => {
-    if (!hydrated || player) {
+    // 부트가 완전히 끝나기 전에는 클라우드 복원 판정을 시작하지 않는다(부트 경합·렉 방지).
+    if (!bootReady || !hydrated || player) {
       setCloudRestorePending(false);
       return;
     }
@@ -160,7 +168,7 @@ export default function TitleScreen() {
     return () => {
       cancelled = true;
     };
-  }, [hydrated, player]);
+  }, [bootReady, hydrated, player]);
 
   const handleStart = () => {
     const p = usePlayerStore.getState().player;
@@ -200,7 +208,7 @@ export default function TitleScreen() {
           <ContinueSessionLoadingView
             width={width}
             height={height}
-            phaseLabel="불러오는 중…"
+            phaseLabel={t('title.loading')}
           />
         </View>
       </StageShell>
@@ -230,7 +238,7 @@ export default function TitleScreen() {
               source={require('../assets/images/arcfire_logo_02.png')}
               style={styles.logoImage}
               resizeMode="cover"
-              accessibilityLabel="ARCFIRE ONLINE 로고"
+              accessibilityLabel={t('title.logoA11y')}
             />
           </View>
 
@@ -238,13 +246,13 @@ export default function TitleScreen() {
             style={[styles.absTagline, { top: TITLE_SLOT_TAGLINE_TOP_PX }]}
             accessibilityRole="text"
           >
-            그 어디에도 안전한 곳은 없다
+            {t('title.tagline')}
           </Text>
 
           <View
             pointerEvents="none"
             style={[styles.absHeroSlot, { top: TITLE_SLOT_HERO_TOP_PX }]}
-            accessibilityLabel="타이틀 비주얼 영역(예비)"
+            accessibilityLabel={t('title.heroA11y')}
           >
             <View
               style={{
@@ -263,13 +271,13 @@ export default function TitleScreen() {
                 style={[styles.btnStart, player ? styles.btnStartWithSave : null]}
                 onPress={handleStart}
                 activeOpacity={0.82}
-                disabled={!hydrated || cloudRestorePending}
+                disabled={!titleInteractive}
               >
-                {!hydrated || cloudRestorePending ? (
+                {!titleInteractive ? (
                   <ActivityIndicator color={COLORS.ink_dark} />
                 ) : (
                   <Text style={[styles.btnText, player ? styles.btnTextContinue : null]}>
-                    [{player ? ' 이어하기 ' : ' 게임 시작 '}]
+                    [{player ? t('title.continue') : t('title.start')}]
                   </Text>
                 )}
               </TouchableOpacity>
@@ -280,7 +288,7 @@ export default function TitleScreen() {
             pointerEvents="none"
             style={[styles.absFooter, { bottom: TITLE_SLOT_FOOTER_BOTTOM_PX }]}
           >
-            <Text style={styles.version}>{`v${appVersion} · 로컬 빌드`}</Text>
+            <Text style={styles.version}>{t('title.localBuild', { version: appVersion })}</Text>
             <Text style={styles.copyright}>© 2026 NFLOYD INC</Text>
           </View>
         </View>

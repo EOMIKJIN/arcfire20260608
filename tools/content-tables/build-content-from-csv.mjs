@@ -175,6 +175,7 @@ function normalizeWeaponListRow(r) {
   const id = String(r.id ?? '').trim();
   if (!id) return null;
   const name = String(r.name ?? r['이름'] ?? id).trim();
+  const nameEn = String(r.nameEn ?? r['영문명'] ?? '').trim() || undefined;
   const familyKind = String(r.kind ?? r['종류'] ?? 'laser').trim().toLowerCase();
   const combatKind = familyKind === 'laser' ? 'laser' : 'missile';
   const targeting = String(r.targeting ?? r['타겟팅'] ?? '').trim();
@@ -185,6 +186,7 @@ function normalizeWeaponListRow(r) {
   return {
     id,
     name,
+    nameEn,
     familyKind,
     combatKind,
     damage: toInt(r.damage ?? r['대미지'], 0),
@@ -337,6 +339,7 @@ function buildNpcShips() {
     .map(r => `  {
     id: ${q(r.id)},
     name: ${q(r.name)},
+    nameEn: ${readCsvEnField(r, 'nameEn', 'name_en') ? q(readCsvEnField(r, 'nameEn', 'name_en')) : 'undefined'},
     hullTypeId: ${q(r.hullTypeId)},
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
@@ -430,6 +433,7 @@ function buildWeapons() {
     .map(r => `  ${JSON.stringify(r.id)}: {
     id: ${q(r.id)},
     name: ${q(r.name)},
+    nameEn: ${r.nameEn ? q(r.nameEn) : 'undefined'},
     kind: ${q(r.combatKind)},
     familyKind: ${q(r.familyKind)},
     damage: ${r.damage},
@@ -455,6 +459,7 @@ function buildWeapons() {
   return `export type CapitalWeaponCsvRow = {
   id: string;
   name: string;
+  nameEn?: string;
   /** 전투 엔진 슬롯(laser/missile) */
   kind: 'laser' | 'missile';
   /** CSV 종류 원본(laser/missile/rocket/drone/carrier 등) */
@@ -514,6 +519,7 @@ function buildMissions() {
         .map(o => `      {
         id: ${q(o.id)},
         description: ${q(o.description)},
+        descriptionEn: ${readCsvEnField(o, 'descriptionEn', 'description_en') ? q(readCsvEnField(o, 'descriptionEn', 'description_en')) : 'undefined'},
         type: ${q(o.type)},
         targetId: ${q(o.targetId)},
         quantity: ${o.quantity ? toInt(o.quantity) : 'undefined'},
@@ -525,7 +531,9 @@ function buildMissions() {
       return `  ${JSON.stringify(m.id)}: {
     id: ${q(m.id)},
     title: ${q(m.title)},
+    titleEn: ${readCsvEnField(m, 'titleEn', 'title_en') ? q(readCsvEnField(m, 'titleEn', 'title_en')) : 'undefined'},
     description: ${q(m.description)},
+    descriptionEn: ${readCsvEnField(m, 'descriptionEn', 'description_en') ? q(readCsvEnField(m, 'descriptionEn', 'description_en')) : 'undefined'},
     type: ${q(m.type)},
     objectives: [
 ${objs}
@@ -561,12 +569,14 @@ function buildSystems() {
       systemsById.set(p.systemId, {
         id: p.systemId,
         name: p.systemName,
+        nameEn: readCsvEnField(p, 'systemNameEn', 'system_name_en'),
         posX: p.systemPosX,
         posY: p.systemPosY,
         zone: p.systemZone,
         connectionsPipe: p.systemConnectionsPipe,
         enemyLevel: p.systemEnemyLevel,
         description: p.systemDescription,
+        descriptionEn: readCsvEnField(p, 'systemDescriptionEn', 'system_description_en'),
       });
     }
     const arr = planetsBySystem.get(p.systemId) ?? [];
@@ -594,11 +604,15 @@ function buildSystems() {
             p.mainStageBackdropImageLayer,
             defaultBackdropImageLayer,
           );
+          const planetNameEn = readCsvEnField(p, 'nameEn', 'name_en');
+          const planetDescEn = readCsvEnField(p, 'descriptionEn', 'description_en');
           return `      {
         id: ${q(p.id)},
         systemId: ${q(p.systemId)},
         name: ${q(p.name)},
+        nameEn: ${planetNameEn ? q(planetNameEn) : 'undefined'},
         description: ${q(p.description)},
+        descriptionEn: ${planetDescEn ? q(planetDescEn) : 'undefined'},
         hasTradePort: ${toBool(p.hasTradePort)},
         hasShipyard: ${toBool(p.hasShipyard)},
         hasTavern: ${toBool(p.hasTavern)},
@@ -619,6 +633,7 @@ function buildSystems() {
       return `  ${JSON.stringify(s.id)}: {
     id: ${q(s.id)},
     name: ${q(s.name)},
+    nameEn: ${s.nameEn ? q(s.nameEn) : 'undefined'},
     position: { x: ${toNum(s.posX, 0)}, y: ${toNum(s.posY, 0)} },
     zone: ${q(s.zone)},
     planets: [
@@ -627,6 +642,7 @@ ${pls}
     connections: ${JSON.stringify(connections)},
     enemyLevel: ${toInt(s.enemyLevel)},
     description: ${q(s.description)},
+    descriptionEn: ${s.descriptionEn ? q(s.descriptionEn) : 'undefined'},
   }`;
     })
     .join(',\n');
@@ -734,6 +750,14 @@ function verifyTradeRouteItemDefs(rows) {
   }
 }
 
+function readCsvEnField(r, ...keys) {
+  for (const k of keys) {
+    const v = String(r[k] ?? '').trim();
+    if (v) return v;
+  }
+  return undefined;
+}
+
 function buildItemDefs() {
   const rows = loadCsv('item_defs.csv').filter(r => String(r.id ?? '').trim());
   const weaponRows = loadCsvOptional('weapon_list.csv')
@@ -758,8 +782,11 @@ function buildItemDefs() {
       return {
         id: itemId,
         name,
+        nameEn: r.nameEn,
         description: `${r.familyKind.toUpperCase()} · DMG ${damage} · RANGE ${Math.round(rangePx)}`,
+        descriptionEn: `${r.familyKind.toUpperCase()} · DMG ${damage} · RANGE ${Math.round(rangePx)}`,
         featureDescription: r.featureDescription,
+        featureDescriptionEn: r.featureDescriptionEn,
         basePrice,
         priceVariance: '0',
         volume: '1',
@@ -793,13 +820,18 @@ function buildItemDefs() {
       const npcId = String(r.id).trim();
       const id = `capital_ship_${npcId}`;
       const shipName = String(r.name ?? '').trim() || npcId;
+      const shipNameEn = readCsvEnField(r, 'nameEn', 'name_en');
       const basePrice = capitalShipTradeItemBasePriceFromShipRow(r);
       return {
         id,
         name: `${shipName} (인도)`,
+        nameEn: shipNameEn ? `${shipNameEn} (Delivery)` : `${shipName} (Delivery)`,
         description:
           '무역소 전함 인도. 구매 시 해당 전함이 조선소 격납고에 보관됩니다.',
+        descriptionEn:
+          'Capital ship delivery from the trade port. The purchased ship is stored in your shipyard hangar.',
         featureDescription: readFeatureDescription(r),
+        featureDescriptionEn: readCsvEnField(r, 'featureDescriptionEn', 'featureDescription_en', '특징설명_en'),
         basePrice: String(basePrice),
         priceVariance: '14',
         volume: '1',
@@ -828,8 +860,11 @@ function buildItemDefs() {
         return `  ${JSON.stringify(r.id)}: {
     id: ${q(r.id)},
     name: ${q(r.name)},
+    nameEn: ${r.nameEn ? q(r.nameEn) : readCsvEnField(r, 'nameEn', 'name_en') ? q(readCsvEnField(r, 'nameEn', 'name_en')) : 'undefined'},
     description: ${q(r.description)},
+    descriptionEn: ${r.descriptionEn ? q(r.descriptionEn) : readCsvEnField(r, 'descriptionEn', 'description_en') ? q(readCsvEnField(r, 'descriptionEn', 'description_en')) : 'undefined'},
     featureDescription: ${q(readFeatureDescription(r) || r.description)},
+    featureDescriptionEn: ${r.featureDescriptionEn ? q(r.featureDescriptionEn) : readCsvEnField(r, 'featureDescriptionEn', 'featureDescription_en', '특징설명_en') ? q(readCsvEnField(r, 'featureDescriptionEn', 'featureDescription_en', '특징설명_en')) : 'undefined'},
     basePrice: ${toInt(r.basePrice)},
     priceVariance: ${toInt(r.priceVariance)},
     volume: ${toInt(r.volume)},
@@ -954,10 +989,14 @@ function buildPlayerProfessions() {
     id: ${q(r.id)},
     sortOrder: ${toInt(r.sortOrder, 0)},
     nameKo: ${q(r.nameKo || r.id)},
+    nameEn: ${readCsvEnField(r, 'nameEn', 'name_en') ? q(readCsvEnField(r, 'nameEn', 'name_en')) : 'undefined'},
     labelKo: ${q(r.labelKo || '')},
+    labelEn: ${readCsvEnField(r, 'labelEn', 'label_en') ? q(readCsvEnField(r, 'labelEn', 'label_en')) : 'undefined'},
     gender: ${q((r.gender || 'male').trim())},
     summaryKo: ${q(r.summaryKo || '')},
+    summaryEn: ${readCsvEnField(r, 'summaryEn', 'summary_en') ? q(readCsvEnField(r, 'summaryEn', 'summary_en')) : 'undefined'},
     personalityKo: ${q(r.personalityKo || '')},
+    personalityEn: ${readCsvEnField(r, 'personalityEn', 'personality_en') ? q(readCsvEnField(r, 'personalityEn', 'personality_en')) : 'undefined'},
     traitIds: ${JSON.stringify(String(r.traitIdsPipe || '').split('|').map(s => s.trim()).filter(Boolean))},
     portraitImageAssetKey: ${q(r.portraitImageAssetKey || '')},
     combatArchetype: ${q((r.combatArchetype || 'neutral').trim())},
@@ -973,10 +1012,14 @@ export type PlayerProfessionCsvRow = {
   id: string;
   sortOrder: number;
   nameKo: string;
+  nameEn?: string;
   labelKo: string;
+  labelEn?: string;
   gender: PlayerPilotGender;
   summaryKo: string;
+  summaryEn?: string;
   personalityKo: string;
+  personalityEn?: string;
   traitIds: string[];
   portraitImageAssetKey: string;
   combatArchetype: CapitalShipArchetype;
@@ -1012,6 +1055,8 @@ function buildStoryScenes() {
         pageIndex: ${toInt(p.pageIndex, 0)},
         label: ${q(p.label || '')},
         text: ${q(unescapeStoryText(p.text || ''))},
+        labelEn: ${q(nullable(p.label_en))},
+        textEn: ${String(p.text_en ?? '').trim() === '' ? 'null' : q(unescapeStoryText(p.text_en))},
         imageAssetKey: ${q(nullable(p.imageAssetKey))},
         speakerNpcCaptainId: ${q(nullable(p.speakerNpcCaptainId))},
         viewMode: ${q((p.viewMode || 'cinematic').trim() || 'cinematic')},

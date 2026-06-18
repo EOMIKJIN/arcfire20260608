@@ -5,6 +5,7 @@ import { buildOrbitShipyardDevSnapshot } from '../../../game/planetDevelopment/p
 import { buildDefenseSatelliteDevSnapshot } from '../../../systems/planetaryDefense/planetDefenseSatelliteDevelopment';
 import { formatCredits } from '../../../utils/formatCredits';
 import { showArcAlert } from '../../../utils/showArcAlert';
+import { useT } from '../../../i18n';
 import { OVERLAY_TOKENS } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
@@ -26,28 +27,40 @@ export const PlanetDevelopmentListContent = memo(function PlanetDevelopmentListC
   onSelectModule,
   onClose,
 }: Props) {
+  const t = useT();
   const PH = OVERLAY_TOKENS.phosphorAccent;
   const catalogRows = listPlanetDevelopmentCatalogRows();
   const defenseSnapshot = buildDefenseSatelliteDevSnapshot(planetId);
   const shipyardSnapshot = buildOrbitShipyardDevSnapshot(planetId);
 
-  const handlePressRow = useCallback((id: string, enabled: boolean, labelKo: string) => {
+  const resolveLabel = useCallback((row: { id: string; labelKo: string }) => {
+    const key = `planetDev.label.${row.id}`;
+    const val = t(key);
+    return val === key ? row.labelKo : val;
+  }, [t]);
+  const resolveSummary = useCallback((row: { id: string; summaryKo: string }) => {
+    const key = `planetDev.summary.${row.id}`;
+    const val = t(key);
+    return val === key ? row.summaryKo : val;
+  }, [t]);
+
+  const handlePressRow = useCallback((id: string, enabled: boolean, label: string) => {
     if (enabled) {
       onSelectModule(id);
       return;
     }
-    showArcAlert('준비 중', `${labelKo} 개발은 향후 업데이트에서 추가됩니다.`);
-  }, [onSelectModule]);
+    showArcAlert(t('planetDev.comingSoonTitle'), t('planetDev.comingSoonBody', { label }));
+  }, [onSelectModule, t]);
 
   return (
     <View style={styles.card}>
-      <Text style={[styles.title, { color: PH }]}>행성 개발</Text>
+      <Text style={[styles.title, { color: PH }]}>{t('planetDev.title')}</Text>
       <Text style={[styles.subtitle, { color: PH }]}>
-        {planetName} · 보유 {formatCredits(credits, { suffix: true })}
+        {t('planetDev.subtitle', { name: planetName, credits: formatCredits(credits, { suffix: true }) })}
       </Text>
       {!isHomePlanet ? (
         <Text style={[styles.hint, { color: PH }]}>
-          거점 행성이 아닙니다. 설치·업그레이드는 거점에서만 가능합니다.
+          {t('planetDev.notHomeHint')}
         </Text>
       ) : null}
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
@@ -56,14 +69,14 @@ export const PlanetDevelopmentListContent = memo(function PlanetDevelopmentListC
           const isShipyard = row.id === 'dev_orbit_shipyard';
           const meta = isDefense
             ? (defenseSnapshot.installed
-              ? `Lv.${defenseSnapshot.level} · 가동 ${defenseSnapshot.activeSatelliteCount}기`
-              : '미설치 · 탭하여 설치')
-              + (defenseSnapshot.isUpgrading ? ' · 업그레이드 중' : '')
+              ? t('planetDev.defenseInstalled', { level: defenseSnapshot.level, count: defenseSnapshot.activeSatelliteCount })
+              : t('planetDev.notInstalledTap'))
+              + (defenseSnapshot.isUpgrading ? t('planetDev.upgrading') : '')
             : isShipyard
               ? (shipyardSnapshot.operational
-                ? (shipyardSnapshot.baseOperational ? '기본 보유 · 조선소 가동' : '설치됨 · 조선소 가동')
-                : '미설치 · 탭하여 설치')
-              : `${row.summaryKo} · 준비 중`;
+                ? (shipyardSnapshot.baseOperational ? t('planetDev.shipyardBase') : t('planetDev.shipyardInstalled'))
+                : t('planetDev.notInstalledTap'))
+              : t('planetDev.summaryComingSoon', { summary: resolveSummary(row) });
           return (
             <Pressable
               key={row.id}
@@ -72,7 +85,7 @@ export const PlanetDevelopmentListContent = memo(function PlanetDevelopmentListC
                 !row.enabled && styles.listItemDisabled,
                 pressed && styles.listItemPressed,
               ]}
-              onPress={() => handlePressRow(row.id, row.enabled, row.labelKo)}
+              onPress={() => handlePressRow(row.id, row.enabled, resolveLabel(row))}
             >
               <Text
                 style={[
@@ -83,7 +96,7 @@ export const PlanetDevelopmentListContent = memo(function PlanetDevelopmentListC
               >
                 {isDefense && defenseSnapshot.installed ? '🛰 ' : ''}
                 {isShipyard && shipyardSnapshot.operational ? '⚓ ' : ''}
-                {row.labelKo}
+                {resolveLabel(row)}
               </Text>
               <Text style={[styles.listItemMeta, { color: PH }]}>{meta}</Text>
             </Pressable>
@@ -91,7 +104,7 @@ export const PlanetDevelopmentListContent = memo(function PlanetDevelopmentListC
         })}
       </ScrollView>
       <View style={styles.btnRow}>
-        <ArcButton label="닫기" variant="primary" onPress={onClose} />
+        <ArcButton label={t('planetDev.close')} variant="primary" onPress={onClose} />
       </View>
     </View>
   );

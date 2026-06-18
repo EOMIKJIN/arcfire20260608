@@ -15,6 +15,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { COLORS } from '../src/utils/theme';
+import { t as tStatic } from '../src/i18n';
 import { usePlayerStore } from '../src/store/playerStore';
 import { useMissionStore } from '../src/store/missionStore';
 import { useWorldStore } from '../src/store/worldStore';
@@ -58,6 +59,7 @@ import { withBootTimeout } from '../src/utils/withBootTimeout';
 import { buildCsvStaticIndexesMinimal } from '../src/game/buildCsvStaticIndexes';
 import { markBootPerf, logBootPerfSummary } from '../src/game/bootPerformance';
 import { useAabsPolicyStore } from '../src/arcCore/aabs/aabsPolicyStore';
+import { useAppBootStore } from '../src/store/appBootStore';
 
 type UpdateGateState = {
   visible: boolean;
@@ -164,6 +166,9 @@ export default function RootLayout() {
         markBootPerf('boot_ready');
         logBootPerfSummary('root_layout');
         setBootReady(true);
+        // 타이틀 버튼 활성화 게이트 — 로컬 하이드레이션·월드/코어 부트스트랩이 모두 끝난
+        // 이 시점에만 true. 이후 버튼 탭이 무거운 부트와 경합해 렉이 나지 않게 한다.
+        useAppBootStore.getState().setBootReady(true);
         void Promise.all([
           persistUserSession(),
           persistItemLedger(),
@@ -345,23 +350,23 @@ export default function RootLayout() {
       updateGate.playStoreUrl
       ?? 'https://play.google.com/store/apps/details?id=com.arcfire.online';
     const message = updateGate.required
-      ? `이 버전은 더 이상 지원되지 않습니다.\n최신 버전 ${updateGate.latestVersion}으로 업데이트해 주세요.`
-      : `최신 버전 ${updateGate.latestVersion}이 배포되었습니다.\n지금 업데이트하시겠습니까?`;
+      ? tStatic('updateGate.requiredMsg', { version: updateGate.latestVersion })
+      : tStatic('updateGate.optionalMsg', { version: updateGate.latestVersion });
     useArcOverlayStore.getState().present({
       id: gateId,
       kind: 'alert',
-      title: updateGate.required ? '업데이트 필요' : '새 버전 안내',
+      title: updateGate.required ? tStatic('updateGate.requiredTitle') : tStatic('updateGate.optionalTitle'),
       message,
       dismissOnBackdrop: !updateGate.required,
       buttons: updateGate.required
-        ? [{ text: '업데이트', onPress: () => { void Linking.openURL(storeUrl); } }]
+        ? [{ text: tStatic('updateGate.update'), onPress: () => { void Linking.openURL(storeUrl); } }]
         : [
             {
-              text: '나중에',
+              text: tStatic('updateGate.later'),
               style: 'cancel',
               onPress: () => setUpdateGate((prev) => (prev ? { ...prev, visible: false } : prev)),
             },
-            { text: '업데이트', onPress: () => { void Linking.openURL(storeUrl); } },
+            { text: tStatic('updateGate.update'), onPress: () => { void Linking.openURL(storeUrl); } },
           ],
     });
     return () => {

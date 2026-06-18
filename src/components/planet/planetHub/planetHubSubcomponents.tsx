@@ -11,7 +11,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { Line } from 'react-native-svg';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { COLORS, FONTS, SPACING, ZONE_LABELS, ZONE_COLORS } from '../../../utils/theme';
+import { COLORS, FONTS, SPACING, ZONE_COLORS } from '../../../utils/theme';
+import { useT } from '../../../i18n';
+import { useAppSettingsStore } from '../../../store/appSettingsStore';
+import { resolveStarSystemDisplayName } from '../../../i18n/systemText';
+import { resolveZoneLabel } from '../../../i18n/zoneText';
 import type { StarSystem, ZoneType } from '../../../types';
 import type { PlanetCoreGaugeView } from '../../../store/planetCoreRuntimeStore';
 import { planetCoreRuntimeToGaugeView, planetCsvBaselineToRuntime, usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore';
@@ -316,6 +320,8 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   planetStageScale: number;
   backgroundChrome: { paddingTop: number; paddingBottom: number };
 }) {
+  const t = useT();
+  const locale = useAppSettingsStore((s) => s.locale);
   const { width: bgWindowWidth, height: bgWindowHeight } = useWindowDimensions();
   const nebulaBackdropRef = useRef<View | null>(null);
   const orbitSceneRef = useRef<View | null>(null);
@@ -454,8 +460,8 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   /** Skia 표시 — 1프레임 선그린(revealed) 후 RN opacity 0 */
   const skiaNebulaLayerActive = skiaNebulaRevealed;
   const nebulaBakedImageSource = useMemo(
-    () => resolvePlanetNebulaBakedSource(planetId),
-    [planetId],
+    () => resolvePlanetNebulaBakedSource(planetId, system.zone),
+    [planetId, system.zone],
   );
   const ensureNebulaProfileForPlanet = usePlanetNebulaStore((s) => s.ensureProfileForPlanet);
 
@@ -545,15 +551,21 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
           />
         ) : hubNebulaDualStack ? (
           <>
-            {!skiaNebulaCommitted ? (
-              <PlanetNebulaImageBackdrop
-                size={nebulaBackdropSize}
-                nebulaBakedImageSource={nebulaBakedImageSource}
-                renderNebulaLayer={mainStageBackdrop.nebulaShaderEnabled}
-                backgroundImageSource={mainStageBackdrop.backdropImageSource}
-                opacity={skiaNebulaLayerActive ? 0 : 1}
-              />
-            ) : null}
+            {/*
+              RN 성운 백드롭을 "항상" 베이스로 유지한다(opacity 1, 언마운트·투명화 금지).
+              과거엔 skiaNebulaCommitted 시 RN을 언마운트하고 Skia 단독 렌더했으나,
+              무역소/조선소 등 다른 GL 화면 왕복 시 Android가 Skia 성운 텍스처를 축출하면
+              (useImage SkImage 객체는 non-null로 남아 onNebulaImagesLost 미발화) Skia가
+              빈 화면을 그려 성운이 사라졌다(2026-06-18 릴리즈 회귀). Skia는 드론 colorDodge
+              FX 블렌드용 오버레이로만 위에 얹는다 — 정상 시 Skia가 덮고, 텍스처 축출 시
+              Skia가 투명해져 밑의 RN 성운이 그대로 보인다(단일 실패점 제거).
+            */}
+            <PlanetNebulaImageBackdrop
+              size={nebulaBackdropSize}
+              nebulaBakedImageSource={nebulaBakedImageSource}
+              renderNebulaLayer={mainStageBackdrop.nebulaShaderEnabled}
+              backgroundImageSource={mainStageBackdrop.backdropImageSource}
+            />
             <View
               style={{
                 position: 'absolute',
@@ -593,7 +605,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                   : { color: zoneColor, borderColor: zoneColor },
             ]}
           >
-            {ZONE_LABELS[system.zone]}
+            {resolveZoneLabel(system.zone, t)}
           </Text>
           <View
             style={[
@@ -613,7 +625,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
               numberOfLines={2}
               ellipsizeMode="tail"
             >
-              {system.name}
+              {resolveStarSystemDisplayName(system, locale)}
             </Text>
           </View>
           <View
@@ -630,7 +642,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
             ]}
           >
             {safeAiClanTerritoryPlate ? (
-              <View style={bgStyles.safeAiClanPlate} accessibilityRole="text" accessibilityLabel="AI 클랜 거점">
+              <View style={bgStyles.safeAiClanPlate} accessibilityRole="text" accessibilityLabel={t('hubBg.aiClanBase')}>
                 <Ionicons
                   name="shield-checkmark"
                   size={22}
@@ -640,7 +652,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                       : safeAiClanTerritoryPlate.clanColor
                   }
                   style={bgStyles.safeAiClanPlateMark}
-                  accessibilityLabel="클랜 마크"
+                  accessibilityLabel={t('hubBg.clanMark')}
                 />
                 <View style={bgStyles.safeAiClanPlateTextCol}>
                   <Text
@@ -650,7 +662,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                     ]}
                     numberOfLines={1}
                   >
-                    {safeAiClanTerritoryPlate.clanName} (소유중)
+                    {t('hubBg.owned', { clan: safeAiClanTerritoryPlate.clanName })}
                   </Text>
                 </View>
               </View>
@@ -777,6 +789,7 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
   mineable: boolean;
   miningProgressPct: number;
 }) {
+  const t = useT();
   const orbitRadiusPx = useMemo(() => {
     const radiusScale =
       object.kind === 'defense_satellite'
@@ -855,7 +868,7 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
                     miningPathActive ? bgStyles.worldObjectMiningLabelActive : null,
                   ]}
                 >
-                  [채굴]
+                  {t('hubBg.mining')}
                 </Text>
                 <View style={bgStyles.worldObjectMiningGaugeRow}>
                   {Array.from({ length: 10 }, (_, i) => (
@@ -876,13 +889,13 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
             ) : null}
           </>
         ) : object.kind === 'wreck' ? (
-          <View style={bgStyles.worldObjectWreckMark} accessibilityLabel="잔해" />
+          <View style={bgStyles.worldObjectWreckMark} accessibilityLabel={t('hubBg.wreck')} />
         ) : object.kind === 'defense_satellite' ? (
-          <View style={bgStyles.worldObjectDefenseSatelliteWrap} accessibilityLabel="방위위성">
+          <View style={bgStyles.worldObjectDefenseSatelliteWrap} accessibilityLabel={t('hubBg.defenseSatellite')}>
             <View
               style={[bgStyles.worldObjectDefenseZoneRing, defenseZoneRingStyle]}
               pointerEvents="none"
-              accessibilityLabel="방어구"
+              accessibilityLabel={t('hubBg.defenseZone')}
             />
             <View style={bgStyles.worldObjectDefenseSatelliteMark} />
           </View>

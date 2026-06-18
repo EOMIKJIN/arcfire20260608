@@ -12,6 +12,8 @@ export type PlanetDefenseSatelliteLevelRow = {
   instantUpgradeCostCredits: number;
   grantsSecondSatellite: boolean;
   interceptMissileCount: number;
+  /** [v3] 레벨별 1일 유지비(크레딧) — 행성 유지비 개발도 비례 가산분 */
+  dailyUpkeepCredits: number;
   notesKo: string;
 };
 
@@ -38,6 +40,7 @@ function parseLevelRow(raw: (typeof PlanetDefenseSatelliteLevelPolicy_FROM_BALAN
     instantUpgradeCostCredits: Math.max(0, Math.floor(Number(raw.instantUpgradeCostCredits) || 0)),
     grantsSecondSatellite: parseBool(raw.grantsSecondSatellite),
     interceptMissileCount: Math.max(1, Math.floor(Number(raw.interceptMissileCount) || 1)),
+    dailyUpkeepCredits: Math.max(0, Math.floor(Number((raw as { dailyUpkeepCredits?: string }).dailyUpkeepCredits) || 0)),
     notesKo: String(raw.notesKo ?? ''),
   };
 }
@@ -100,6 +103,12 @@ export function resolveDefenseSatelliteUpgradeDurationSec(currentLevel: number):
   const next = getPlanetDefenseSatelliteLevelRow(currentLevel + 1);
   if (!next) return null;
   return next.upgradeDurationSec;
+}
+
+/** [v3] 레벨별 1일 유지비(크레딧) — 미설치(level<=0)는 0 */
+export function resolveDefenseSatelliteDailyUpkeepCredits(level: number): number {
+  if (!Number.isFinite(level) || level <= 0) return 0;
+  return getPlanetDefenseSatelliteLevelRow(level)?.dailyUpkeepCredits ?? 0;
 }
 
 /** 레벨 기준 가동 위성 수 — Lv10+ 2기, 그 외 1기 */

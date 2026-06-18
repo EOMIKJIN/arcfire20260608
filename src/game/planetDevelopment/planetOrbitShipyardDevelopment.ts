@@ -13,6 +13,7 @@ import {
   writeFacilityModuleDetail,
 } from './planetFacilityModuleRuntime';
 import { invalidatePlanetMemoCachesForPlanet } from '../planetMemoCache';
+import { t } from '../../i18n';
 import { usePlayerStore } from '../../store/playerStore';
 import { useWorldStore } from '../../store/worldStore';
 
@@ -75,18 +76,18 @@ export function installPlanetOrbitShipyard(
   planetId: string,
 ): { ok: true } | { ok: false; reason: string } {
   if (planetHasBaseShipyard(planetId)) {
-    return { ok: false, reason: '이 행성은 이미 조선소를 운영 중입니다.' };
+    return { ok: false, reason: t('orbitShipyardDev.alreadyOperating') };
   }
   if (isPlanetOrbitShipyardInstalled(planetId)) {
-    return { ok: false, reason: '이미 설치되어 있습니다.' };
+    return { ok: false, reason: t('orbitShipyardDev.alreadyInstalled') };
   }
   // 크레딧 차감 전 런타임 엔트리 보장 — 설치 기록 유실로 크레딧만 차감되는 사고 방지
   if (!hasPlanetCoreRuntimeEntry(planetId)) {
-    return { ok: false, reason: '행성 데이터가 아직 준비되지 않았습니다. 잠시 후 다시 시도하세요.' };
+    return { ok: false, reason: t('orbitShipyardDev.notReady') };
   }
   const cost = resolveOrbitShipyardInstallCostCredits();
   if (!spendPlayerCredits(cost)) {
-    return { ok: false, reason: '크레딧이 부족합니다.' };
+    return { ok: false, reason: t('orbitShipyardDev.notEnoughCredits') };
   }
   const prev = readFacilityModuleDetail(planetId, PLANET_DEV_MODULE_ORBIT_SHIPYARD);
   const written = writeFacilityModuleDetail(planetId, PLANET_DEV_MODULE_ORBIT_SHIPYARD, {
@@ -101,7 +102,7 @@ export function installPlanetOrbitShipyard(
     // 엔트리가 사라진 극단적 경합 — 차감 크레딧 환불
     usePlayerStore.getState().addCredits(cost);
     void usePlayerStore.getState().persist();
-    return { ok: false, reason: '설치 기록에 실패했습니다. 다시 시도하세요.' };
+    return { ok: false, reason: t('orbitShipyardDev.recordFailed') };
   }
   invalidatePlanetMemoCachesForPlanet(planetId);
   return { ok: true };

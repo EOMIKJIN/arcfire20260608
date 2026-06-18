@@ -23,6 +23,20 @@ export type LocalAccountResetParams = {
   currentClanId: string | null;
 };
 
+/**
+ * 계정 초기화 진행 중 플래그 — purge 도중 `resetLocalPlayer()`가 player 를 null 로 만들면
+ * 행성 허브의 `!player → router.replace('/')` 안전망이 즉시 발화해, 나머지 purge(코어·월드·
+ * 세션·fresh-start 플래그)가 끝나기 전에 타이틀이 조기 노출되는 회귀가 있었다. 이 플래그가
+ * 켜진 동안에는 화면 측 자동 리다이렉트를 보류하고, 타이틀 이동은 오직 finalize 가
+ * "완전한 purge 완료 후" 1회 수행한다(부하정리 완료 후 복귀 보장).
+ */
+let accountResetInProgress = false;
+
+/** 계정 초기화(purge) 진행 중 여부 — 화면 측 자동 타이틀 리다이렉트 보류용. */
+export function isAccountResetInProgress(): boolean {
+  return accountResetInProgress;
+}
+
 function resolveResetUids(playerUid: string | null | undefined): string[] {
   const ids = new Set<string>();
   const fromPlayer = playerUid?.trim();
@@ -88,6 +102,7 @@ export async function finalizeLocalAccountResetNavigation(
   params: LocalAccountResetParams,
 ): Promise<void> {
   let purgeError: unknown = null;
+  accountResetInProgress = true;
   try {
     await purgeLocalAccountData(params);
   } catch (e) {
@@ -105,6 +120,8 @@ export async function finalizeLocalAccountResetNavigation(
       }
     }
 
+    // 완전한 purge 완료 후에만 타이틀 이동(여기까지 화면 측 리다이렉트는 보류됨).
+    accountResetInProgress = false;
     navigateToTitle();
 
     if (purgeError || usePlayerStore.getState().player) {

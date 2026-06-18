@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import type { ArcOverlayRewardEntry } from '../arcOverlayStore';
 import { LevelUpDetailPanel } from '../../../components/LevelUpDetailPanel';
 import { formatCredits } from '../../../utils/formatCredits';
+import { useT } from '../../../i18n';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
 import { phosphorOverlay } from './phosphorOverlayStyles';
@@ -13,25 +14,26 @@ type Props = {
 };
 
 export const RewardOverlayContent = memo(function RewardOverlayContent({ entry, onClose }: Props) {
+  const t = useT();
   const { reward, missionTitle, leveledUp, newLevel, levelUpDetail } = entry;
   return (
     <View style={phosphorOverlay.card}>
-      <Text style={phosphorOverlay.title}>✦ 미션 완료 ✦</Text>
+      <Text style={phosphorOverlay.title}>{t('reward.missionComplete')}</Text>
       <Text style={phosphorOverlay.subtitle}>{missionTitle}</Text>
       <View style={phosphorOverlay.divider} />
-      <Text style={phosphorOverlay.sectionLabel}>— 보상 획득 —</Text>
+      <Text style={phosphorOverlay.sectionLabel}>{t('reward.gained')}</Text>
       <View style={phosphorOverlay.row}>
         <Text style={phosphorOverlay.rowIcon}>💰</Text>
-        <Text style={phosphorOverlay.rowText}>크레딧 +{formatCredits(reward.credits, { suffix: false })}</Text>
+        <Text style={phosphorOverlay.rowText}>{t('reward.credits', { value: formatCredits(reward.credits, { suffix: false }) })}</Text>
       </View>
       <View style={phosphorOverlay.row}>
         <Text style={phosphorOverlay.rowIcon}>⭐</Text>
-        <Text style={phosphorOverlay.rowText}>경험치 +{reward.exp.toLocaleString()}</Text>
+        <Text style={phosphorOverlay.rowText}>{t('reward.exp', { value: reward.exp.toLocaleString() })}</Text>
       </View>
       {reward.skillPointBonus && reward.skillPointBonus > 0 ? (
         <View style={phosphorOverlay.row}>
           <Text style={phosphorOverlay.rowIcon}>✦</Text>
-          <Text style={phosphorOverlay.rowText}>스킬 포인트 +{reward.skillPointBonus}</Text>
+          <Text style={phosphorOverlay.rowText}>{t('reward.skillPoint', { value: reward.skillPointBonus })}</Text>
         </View>
       ) : null}
       {levelUpDetail ? (
@@ -40,10 +42,10 @@ export const RewardOverlayContent = memo(function RewardOverlayContent({ entry, 
         </View>
       ) : leveledUp ? (
         <View style={styles.levelUpBox}>
-          <Text style={styles.levelUpText}>🎉 LEVEL UP! → Lv.{newLevel}</Text>
+          <Text style={styles.levelUpText}>{t('reward.levelUp', { level: newLevel ?? 0 })}</Text>
         </View>
       ) : null}
-      <ArcButton label="[ 계속 ]" variant="primary" onPress={onClose} style={phosphorOverlay.closeBtn} />
+      <ArcButton label={t('reward.continue')} variant="primary" onPress={onClose} style={phosphorOverlay.closeBtn} />
     </View>
   );
 });

@@ -15,12 +15,16 @@ import { STORY_SCENES_FROM_CSV } from '../../src/data/generated';
 import { NarrativeDialogRow } from '../../src/ui/overlay/NarrativeDialogRow';
 import { resolveOverlayBottomAnchorPad } from '../../src/ui/overlay/overlayInsets';
 import { ArcButton } from '../../src/ui/overlay/ArcButton';
+import { resolveStoryPageText, resolveStoryPageLabel } from '../../src/i18n/storyText';
+import { useAppSettingsStore } from '../../src/store/appSettingsStore';
+import { useT } from '../../src/i18n';
 
 const STORY_IMAGE_ASSETS: Record<string, any> = {
   'assets/images/stella_aris_char001.png': require('../../assets/images/stella_aris_char001.png'),
 };
 
 export default function IntroScreen() {
+  const t = useT();
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ sceneId?: string | string[]; flow?: string | string[] }>();
@@ -35,6 +39,7 @@ export default function IntroScreen() {
   const [page, setPage] = useState(0);
   const [pageComplete, setPageComplete] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const appLocale = useAppSettingsStore(s => s.locale);
   const player = usePlayerStore(s => s.player);
   const setPlayer = usePlayerStore(s => s.setPlayer);
   const persist = usePlayerStore(s => s.persist);
@@ -45,7 +50,10 @@ export default function IntroScreen() {
   const currentViewMode = current?.viewMode ?? 'cinematic';
   const currentTextBoxPreset = current?.textBoxPreset ?? 'default';
   const popupImageScale = Math.max(40, Math.min(140, current?.imageScalePct ?? 100)) / 100;
-  const renderedText = (current?.text ?? '').replace(/\[닉네임\]/g, player?.nickname ?? '파일럿');
+  const renderedText = current
+    ? resolveStoryPageText(current, appLocale, player?.nickname)
+    : '';
+  const renderedLabel = current ? resolveStoryPageLabel(current, appLocale) : '';
   const currentDialogImageSource = current?.imageAssetKey
     ? STORY_IMAGE_ASSETS[current.imageAssetKey]
     : undefined;
@@ -100,10 +108,12 @@ export default function IntroScreen() {
   }, [isTransitioning, pageComplete, isLast, isPreNicknameFlow, player, scene, pages.length, setPlayer, persist, initMissions]);
 
   const nextLabel = !pageComplete
-    ? '[ 스킵 ]'
+    ? t('intro.btn.skipTyping')
     : isLast
-      ? (isPreNicknameFlow && !player ? '[ 파일럿 등록 ]' : '[ 게임 시작 ]')
-      : '[ 다음 ▶ ]';
+      ? (isPreNicknameFlow && !player
+          ? t('intro.btn.registerPilot')
+          : t('intro.btn.startGame'))
+      : t('intro.btn.next');
 
   return (
     <StageShell routeName="intro" background="stars">
@@ -118,7 +128,7 @@ export default function IntroScreen() {
           {currentViewMode === 'ingame_dialog' ? (
             <View style={[styles.ingameDialogSlot, { paddingBottom: ingameDialogBottomPad }]}>
               <NarrativeDialogRow
-                label={current?.label ?? '[ 통신 ]'}
+                label={renderedLabel || t('intro.commLabel')}
                 text={renderedText}
                 typewriterKey={`intro-dialog-${page}`}
                 typewriterSpeedMs={scene?.typewriterSpeedMs ?? 40}
@@ -130,7 +140,7 @@ export default function IntroScreen() {
             </View>
           ) : (
             <>
-              <Text style={styles.sceneLabel}>{current?.label ?? ''}</Text>
+              <Text style={styles.sceneLabel}>{renderedLabel}</Text>
               <View style={[styles.textBox, currentTextBoxPreset === 'compact' && styles.textBoxCompact]}>
                 <TypewriterText
                   key={page}
@@ -147,7 +157,7 @@ export default function IntroScreen() {
         <View style={styles.footer}>
           {scene?.skippable ? (
             <ArcButton
-              label="[ 건너뛰기 ]"
+              label={t('intro.btn.skipScene')}
               variant="secondary"
               disabled={isTransitioning}
               onPress={() => {

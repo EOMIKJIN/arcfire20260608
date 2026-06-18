@@ -13,6 +13,7 @@ import {
   computePlanetDailyUpkeepCredits,
   resolvePlanetUpkeepPolicy,
 } from './planetUpkeepPolicy';
+import { computePlanetDevelopmentDailyUpkeepCredits } from './planetDevelopmentUpkeep';
 import {
   getVaultKeyByFaction,
   resolveOccupierFactionKindForHold,
@@ -113,7 +114,8 @@ export async function runArcCorePlanetUpkeepDailyPass(): Promise<ArcCorePlanetUp
   const blueVault = useBlueTeamSharedVaultStore.getState();
 
   for (const [planetId, hold] of Object.entries(holds)) {
-    const upkeep = computePlanetDailyUpkeepCredits(undefined, policy);
+    const devUpkeep = computePlanetDevelopmentDailyUpkeepCredits(planetId);
+    const upkeep = computePlanetDailyUpkeepCredits(devUpkeep, policy);
     if (upkeep <= 0) continue;
     planetsProcessed += 1;
 

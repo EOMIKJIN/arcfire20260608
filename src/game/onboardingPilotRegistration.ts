@@ -7,7 +7,6 @@ import { checkNicknameAvailable, createUserDocOnNicknameConfirm } from '../fireb
 import { syncUserDataWithServer } from '../firebase/userDataSync';
 import {
   isRemoteNetworkTimeoutError,
-  REMOTE_NETWORK_TIMEOUT_ALERT,
   withRemoteNetworkTimeout,
 } from './sessionLoadingPolicy';
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
@@ -22,10 +21,24 @@ import {
   getPlayerProfessionById,
 } from './playerPilotProfessionModel';
 
+export type PilotRegistrationErrorCode =
+  | 'profession_not_found'
+  | 'no_auth'
+  | 'nickname_required'
+  | 'account_mismatch'
+  | 'already_registered'
+  | 'nickname_taken'
+  | 'create_failed'
+  | 'save_failed'
+  | 'network_timeout';
+
 export class PilotRegistrationError extends Error {
-  constructor(message: string) {
-    super(message);
+  readonly code: PilotRegistrationErrorCode;
+
+  constructor(code: PilotRegistrationErrorCode) {
+    super(code);
     this.name = 'PilotRegistrationError';
+    this.code = code;
   }
 }
 
@@ -34,7 +47,7 @@ async function runRemoteRegistrationStep<T>(label: string, step: () => Promise<T
     return await withRemoteNetworkTimeout(label, step);
   } catch (e) {
     if (isRemoteNetworkTimeoutError(e)) {
-      throw new PilotRegistrationError(REMOTE_NETWORK_TIMEOUT_ALERT.message);
+      throw new PilotRegistrationError('network_timeout');
     }
     throw e;
   }
@@ -45,7 +58,7 @@ export async function resolveOnboardingProfessionId(): Promise<string> {
   const draft = (await getOnboardingProfessionId())?.trim();
   const id = draft || getDefaultPlayerProfession().id;
   if (!getPlayerProfessionById(id)) {
-    throw new PilotRegistrationError('선택한 캐릭터 정보를 불러올 수 없습니다. 다시 선택해 주세요.');
+    throw new PilotRegistrationError('profession_not_found');
   }
   return id;
 }
@@ -56,23 +69,23 @@ export async function resolveOnboardingProfessionId(): Promise<string> {
  */
 export async function completePilotRegistration(uid: string, nickname: string): Promise<void> {
   const trimmedNick = nickname.trim();
-  if (!uid) throw new PilotRegistrationError('인증 정보가 없습니다.');
-  if (!trimmedNick) throw new PilotRegistrationError('닉네임을 입력하세요.');
+  if (!uid) throw new PilotRegistrationError('no_auth');
+  if (!trimmedNick) throw new PilotRegistrationError('nickname_required');
 
   const playerStore = usePlayerStore.getState();
   const existing = playerStore.player;
   if (existing?.uid && existing.uid !== uid) {
-    throw new PilotRegistrationError('다른 계정 데이터가 남아 있습니다. 앱을 재시작해 주세요.');
+    throw new PilotRegistrationError('account_mismatch');
   }
   if (existing?.uid === uid && existing.nickname?.trim() && existing.flags.introSeen) {
-    throw new PilotRegistrationError('이미 등록된 파일럿입니다.');
+    throw new PilotRegistrationError('already_registered');
   }
 
   const available = await runRemoteRegistrationStep('check_nickname', () =>
     checkNicknameAvailable(trimmedNick),
   );
   if (!available) {
-    throw new PilotRegistrationError('이미 사용 중인 닉네임입니다.');
+    throw new PilotRegistrationError('nickname_taken');
   }
 
   const professionId = await resolveOnboardingProfessionId();
@@ -80,7 +93,7 @@ export async function completePilotRegistration(uid: string, nickname: string): 
   playerStore.createPlayer(uid, trimmedNick, professionId);
   const created = usePlayerStore.getState().player;
   if (!created) {
-    throw new PilotRegistrationError('캐릭터 생성에 실패했습니다.');
+    throw new PilotRegistrationError('create_failed');
   }
 
   usePlayerStore.getState().setPlayer({
@@ -94,7 +107,7 @@ export async function completePilotRegistration(uid: string, nickname: string): 
 
   const player = usePlayerStore.getState().player;
   if (!player) {
-    throw new PilotRegistrationError('캐릭터 저장에 실패했습니다.');
+    throw new PilotRegistrationError('save_failed');
   }
 
   bootstrapAccountData({

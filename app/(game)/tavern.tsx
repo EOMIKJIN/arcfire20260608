@@ -6,8 +6,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
+import { useT, t as tStatic } from '../../src/i18n';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
+import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { StageShell } from '../../src/stages/StageShell';
@@ -20,6 +22,7 @@ import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacility
 import { useArcNarrativeOverlay } from '../../src/ui/overlay/useArcNarrativeOverlay';
 import type { ArcNarrativeOverlayConfig } from '../../src/ui/overlay/useArcNarrativeOverlay';
 import { resolveNpcCaptainPortraitSource } from '../../src/game/npcCaptainPortraitAssets';
+import { resolveNoticeBody, resolveNoticeTitle } from '../../src/i18n/noticeText';
 
 const TAVERN_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
 
@@ -27,20 +30,22 @@ function formatPostedAt(postedAtMs: number): string {
   const now = Date.now();
   const d = new Date(postedAtMs);
   const hm = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-  if (now - postedAtMs < 24 * 60 * 60 * 1000) return `오늘 ${hm}`;
-  if (now - postedAtMs < 48 * 60 * 60 * 1000) return `어제 ${hm}`;
-  return `${d.getMonth() + 1}/${d.getDate()} ${hm}`;
+  if (now - postedAtMs < 24 * 60 * 60 * 1000) return tStatic('tavern.today', { hm });
+  if (now - postedAtMs < 48 * 60 * 60 * 1000) return tStatic('tavern.yesterday', { hm });
+  return tStatic('tavern.date', { month: d.getMonth() + 1, day: d.getDate(), hm });
 }
 
 export default function TavernScreen() {
+  const t = useT();
+  const localeRenderKey = useLocaleRenderKey();
   const player = usePlayerStore((s) => s.player);
   const notices = useTavernBoardStore((s) => s.notices);
   const currentPlanetId = player?.currentPlanetId ?? null;
   const [hostDialogVisible, setHostDialogVisible] = useState(false);
   const [hostDialogDone, setHostDialogDone] = useState(false);
   const boardMeta = useMemo(
-    () => `자동 갱신 · 공지 ${notices.length}건`,
-    [notices.length],
+    () => t('tavern.boardMeta', { count: notices.length }),
+    [notices.length, t],
   );
   const tavernHostCaptain = useMemo(() => {
     const retiredPool = listNpcCaptains().filter((captain) => captain.tavernPlanetIds.length > 0);
@@ -55,9 +60,9 @@ export default function TavernScreen() {
   }, [currentPlanetId]);
   const hostGreeting = useMemo(() => {
     if (!tavernHostCaptain) return '';
-    const nickname = player?.nickname ?? '파일럿';
-    return `어서오세요! ${nickname} 함장님`;
-  }, [player?.nickname, tavernHostCaptain]);
+    const nickname = player?.nickname ?? t('tavern.defaultPilot');
+    return t('tavern.greeting', { name: nickname });
+  }, [player?.nickname, tavernHostCaptain, t]);
   const tavernHostImage = useMemo(
     () =>
       resolveNpcCaptainPortraitSource(tavernHostCaptain?.portraitImageAssetKey)
@@ -95,7 +100,7 @@ export default function TavernScreen() {
     if (!tavernHostCaptain) return null;
     return {
       anchor: 'bottom',
-      label: `[ 선술집 주인 · ${tavernHostCaptain.displayName} ]`,
+      label: t('tavern.hostLabel', { name: tavernHostCaptain.displayName }),
       text: hostGreeting,
       typewriterKey: `${tavernHostCaptain.id}:${player?.nickname ?? 'pilot'}`,
       typewriterSpeedMs: 42,
@@ -103,9 +108,9 @@ export default function TavernScreen() {
       imageSource: tavernHostImage,
       onPressNext: () => setHostDialogVisible(false),
       nextDisabled: !hostDialogDone,
-      buttonText: '[ 확인 ]',
+      buttonText: t('tavern.hostConfirm'),
     };
-  }, [tavernHostCaptain, hostGreeting, hostDialogDone, tavernHostImage, player?.nickname]);
+  }, [tavernHostCaptain, hostGreeting, hostDialogDone, tavernHostImage, player?.nickname, t]);
 
   useArcNarrativeOverlay(
     'tavern-host-greeting',
@@ -114,15 +119,15 @@ export default function TavernScreen() {
   );
 
   return (
-    <StageShell routeName="tavern" background="none" edges={['bottom']}>
+    <StageShell key={localeRenderKey} routeName="tavern" background="none" edges={['bottom']}>
       <View style={{ flex: 1 }}>
       <View style={styles.header}>
         <ArcStageBackButton onPress={safeBack} style={styles.backBtn} />
-        <Text style={styles.headerTitle}>선술집</Text>
+        <Text style={styles.headerTitle}>{t('tavern.title')}</Text>
       </View>
 
       <PlanetFacilityTabBar
-        tabs={[{ id: 'board', label: '공지판' }]}
+        tabs={[{ id: 'board', label: t('tavern.tab.board') }]}
         activeId="board"
         onSelect={() => {}}
       />
@@ -130,26 +135,26 @@ export default function TavernScreen() {
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
         {tavernHostCaptain ? (
           <View style={styles.hostCard}>
-            <Text style={styles.hostCardTitle}>— 선술집 주인 —</Text>
+            <Text style={styles.hostCardTitle}>{t('tavern.hostCardTitle')}</Text>
             <Text style={styles.hostMeta}>
-              {tavernHostCaptain.displayName} · {tavernHostCaptain.rank} (퇴역 함장)
+              {t('tavern.hostMeta', { name: tavernHostCaptain.displayName, rank: tavernHostCaptain.rank })}
             </Text>
           </View>
         ) : null}
 
         <View style={styles.boardHeader}>
-          <Text style={styles.boardTitle}>— 은하계 소식판 —</Text>
+          <Text style={styles.boardTitle}>{t('tavern.boardTitle')}</Text>
           <Text style={styles.boardSub}>{boardMeta}</Text>
         </View>
 
         {notices.map((notice) => (
           <View key={notice.id} style={styles.noticeCard}>
             <View style={styles.noticeTopRow}>
-              <Text style={styles.noticeTag}>[{notice.tag}]</Text>
+              <Text style={styles.noticeTag}>[{t(`noticeTag.${notice.tag}`)}]</Text>
               <Text style={styles.noticeTime}>{formatPostedAt(notice.postedAtMs)}</Text>
             </View>
-            <Text style={styles.noticeTitle}>{notice.title}</Text>
-            <Text style={styles.noticeBody}>{notice.body}</Text>
+            <Text style={styles.noticeTitle}>{resolveNoticeTitle(notice, t)}</Text>
+            <Text style={styles.noticeBody}>{resolveNoticeBody(notice, t)}</Text>
           </View>
         ))}
 

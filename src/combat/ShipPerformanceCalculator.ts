@@ -5,6 +5,10 @@
 
 import type { CapitalShipArchetype, NpcCapitalCombatStats } from '../types';
 import type { NpcCapitalShipCombatRuntimeConfig } from '../data/generated/csvNpcCapitalShips';
+import {
+  computeMineralUpgradeEffectScalar,
+  getMineralUpgradeStatDef,
+} from '../game/shipyardMineralUpgrade/mineralUpgradeModel';
 
 export const UNASSIGNED_CAPTAIN_PROFICIENCY_MULTIPLIER = 0.9;
 
@@ -130,10 +134,73 @@ export function calculateShipPerformance(
   };
 }
 
-/** 광물 업그레이드 DB 연동 전까지 입력 그대로 반환 */
+function clampCooldown(value: number | undefined, factor: number, floor: number): number | undefined {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return value;
+  return Math.max(floor, Math.round(value * factor));
+}
+
+/**
+ * 조선소 광물 업그레이드(statId→level)를 전함 성능에 적용.
+ * 정본: mineralUpgradeModel(기존 테이블). 플레이어 함선에만 적용(적 NPC 미적용).
+ * v1 매핑: HP/실드(가산) · 선회율(배수) · 무기 쿨다운(배수, 하한) · 무기 데미지(damageDice.bonus 가산).
+ * 사거리(weapon_range_flat)는 per-weapon 해석이라 본 경유 미적용(후속 보완).
+ */
 export function applyMineralUpgradeToShipPerformance(
   perf: ShipPerformanceResult,
-  _mineralUpgrades?: MineralUpgradeState,
+  mineralUpgrades?: MineralUpgradeState,
 ): ShipPerformanceResult {
-  return perf;
+  if (!mineralUpgrades) return perf;
+  const entries = Object.entries(mineralUpgrades).filter(
+    ([, lv]) => Number.isFinite(lv) && (lv as number) > 0,
+  );
+  if (entries.length === 0) return perf;
+
+  const combat: NpcCapitalCombatStats = {
+    ...perf.combat,
+    damageDice: { ...perf.combat.damageDice },
+  };
+  const runtime: NpcCapitalShipCombatRuntimeConfig | undefined = perf.runtimeConfig
+    ? { ...perf.runtimeConfig }
+    : perf.runtimeConfig;
+
+  for (const [statId, level] of entries) {
+    const def = getMineralUpgradeStatDef(statId);
+    if (!def) continue;
+    const scalar = computeMineralUpgradeEffectScalar(statId, level as number);
+    switch (def.effectKind) {
+      case 'ship_bonus_max_hp':
+        combat.maxHp = Math.max(1, Math.round(combat.maxHp + scalar));
+        break;
+      case 'ship_bonus_max_shield':
+        combat.maxShield = Math.max(0, Math.round(combat.maxShield + scalar));
+        break;
+      case 'ship_turn_rate_mul_per_level':
+        if (runtime && typeof runtime.maxTurnRateRadPerMs === 'number') {
+          runtime.maxTurnRateRadPerMs = runtime.maxTurnRateRadPerMs * scalar;
+        }
+        break;
+      case 'weapon_damage_flat':
+        combat.damageDice = {
+          ...combat.damageDice,
+          bonus: combat.damageDice.bonus + Math.round(scalar),
+        };
+        break;
+      case 'weapon_fire_rate_cooldown':
+        if (runtime) {
+          if (def.upgradeGroup === 'weapon_laser') {
+            runtime.laserCooldownJitterMinMs = clampCooldown(runtime.laserCooldownJitterMinMs, scalar, def.effectFloor);
+            runtime.laserCooldownJitterMaxMs = clampCooldown(runtime.laserCooldownJitterMaxMs, scalar, def.effectFloor);
+          } else if (def.upgradeGroup === 'weapon_missile') {
+            runtime.missileCooldownJitterMinMs = clampCooldown(runtime.missileCooldownJitterMinMs, scalar, def.effectFloor);
+            runtime.missileCooldownJitterMaxMs = clampCooldown(runtime.missileCooldownJitterMaxMs, scalar, def.effectFloor);
+          }
+        }
+        break;
+      case 'weapon_range_flat':
+        // v1 보류: 사거리는 per-weapon 해석 경로(ag.laserEngageRangePx 등)라 본 경유로 적용하지 않음.
+        break;
+    }
+  }
+
+  return { combat, runtimeConfig: runtime };
 }

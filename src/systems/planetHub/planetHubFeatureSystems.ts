@@ -1,5 +1,8 @@
 import type { Href } from 'expo-router';
 import { runThrottledPlanetHubNavigation } from '../../navigation/safePlanetHubNavigate';
+import type { I18nParams } from '../../i18n/types';
+
+type TranslateFn = (key: string, params?: I18nParams) => string;
 
 type PlanetHubMenuPlanet = {
   hasTradePort: boolean;
@@ -46,6 +49,7 @@ type PlanetHubFeatureContext = {
  */
 export function buildPlanetHubFeatureMenuItems(
   ctx: PlanetHubFeatureContext,
+  tr: TranslateFn,
 ): PlanetHubFeatureMenuItem[] {
   const hasTradePort = Boolean(ctx.planet?.hasTradePort);
   const hasShipyard = Boolean(ctx.planet?.hasShipyard);
@@ -53,7 +57,7 @@ export function buildPlanetHubFeatureMenuItems(
   return [
     {
       id: 'trade',
-      label: '무역소',
+      label: tr('hubMenu.trade'),
       icon: '🏪',
       disabled: !hasTradePort,
       showBadge: ctx.hasTradeBadge,
@@ -67,7 +71,7 @@ export function buildPlanetHubFeatureMenuItems(
     },
     {
       id: 'shipyard',
-      label: '조선소',
+      label: tr('hubMenu.shipyard'),
       icon: '⚓',
       disabled: !hasShipyard,
       onPress: () => {
@@ -77,7 +81,7 @@ export function buildPlanetHubFeatureMenuItems(
     },
     {
       id: 'tavern',
-      label: '선술집',
+      label: tr('hubMenu.tavern'),
       icon: '🍺',
       disabled: !hasTavern,
       onPress: () => {
@@ -87,7 +91,7 @@ export function buildPlanetHubFeatureMenuItems(
     },
     {
       id: 'skilltree',
-      label: '연구소',
+      label: tr('hubMenu.skilltree'),
       icon: '⚗',
       onPress: () => {
         runThrottledPlanetHubNavigation(() => ctx.onFacilityNavigate('/(game)/skilltree'));
@@ -95,7 +99,7 @@ export function buildPlanetHubFeatureMenuItems(
     },
     {
       id: 'departure',
-      label: '출발',
+      label: tr('hubMenu.departure'),
       icon: '🚀',
       primary: true,
       onPress: () => {

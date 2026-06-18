@@ -1,12 +1,12 @@
-﻿hullTierKey,labelKo,purchaseCredits,requiredPilotLevelMin,recommendedAfterZoneIndex,notesKo
-frigate_default,프리깃(기본 지급),0,1,0,신규 계정 기본·레인저 입문
-frigate_upgraded,프리깃 개량형,250000,7,4,스트라이커 Mk.II
-destroyer,구축함(Destroyer),1200000,15,7,가디언 구축함
-destroyer_upgraded,구축함 개량형,1800000,25,10,가디언 Mk.II
-cruiser,순양함(Cruiser),5000000,31,12,오라클 순양함
-cruiser_upgraded,순양함 개량형,7500000,40,15,오라클 Mk.II
-battlecruiser,순양전함(Battlecruiser),15000000,52,18,소버린 순양전함
-battlecruiser_max,순양전함 최종 풀강,0,60,20,소버린 완성형(업그레이드 정점)
-dreadnought,드레드노트,25000000,65,20,엔드 이후 장기 목표·1
-super_capital,슈퍼캐피털,50000000,72,20,엔드 이후 장기 목표·2
-apex_legend,아펙스 레전드,100000000,80,20,6개월+ 장기 정점 함선
+﻿hullTierKey,labelKo,labelEn,purchaseCredits,requiredPilotLevelMin,recommendedAfterZoneIndex,notesKo
+frigate_default,프리깃(기본 지급),Frigate (Starter),0,1,0,신규 계정 기본·레인저 입문
+frigate_upgraded,프리깃 개량형,Frigate Mk.II,250000,7,4,스트라이커 Mk.II
+destroyer,구축함(Destroyer),Destroyer,1200000,15,7,가디언 구축함
+destroyer_upgraded,구축함 개량형,Destroyer Mk.II,1800000,25,10,가디언 Mk.II
+cruiser,순양함(Cruiser),Cruiser,5000000,31,12,오라클 순양함
+cruiser_upgraded,순양함 개량형,Cruiser Mk.II,7500000,40,15,오라클 Mk.II
+battlecruiser,순양전함(Battlecruiser),Battlecruiser,15000000,52,18,소버린 순양전함
+battlecruiser_max,순양전함 최종 풀강,Battlecruiser (Max),0,60,20,소버린 완성형(업그레이드 정점)
+dreadnought,드레드노트,Dreadnought,25000000,65,20,엔드 이후 장기 목표·1
+super_capital,슈퍼캐피털,Super Capital,50000000,72,20,엔드 이후 장기 목표·2
+apex_legend,아펙스 레전드,Apex Legend,100000000,80,20,6개월+ 장기 정점 함선

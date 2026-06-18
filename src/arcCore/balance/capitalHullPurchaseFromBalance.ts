@@ -63,7 +63,8 @@ function parseNum(raw: string | number | undefined, fallback = 0): number {
 
 export type CapitalHullPurchaseCheck = {
   ok: boolean;
-  reasonKo?: string;
+  reasonCode?: 'unknown_tier' | 'level_required' | 'credits_required';
+  reasonParams?: { level?: number; price?: number };
 };
 
 export function checkCapitalHullPurchase(
@@ -72,16 +73,16 @@ export function checkCapitalHullPurchase(
   credits: number,
 ): CapitalHullPurchaseCheck {
   const row = getCapitalHullPurchaseRow(hullTierKey);
-  if (!row) return { ok: false, reasonKo: '등록되지 않은 함선 등급입니다.' };
+  if (!row) return { ok: false, reasonCode: 'unknown_tier' };
 
   const requiredLevel = parseNum(row.requiredPilotLevelMin, 1);
   if (pilotLevel < requiredLevel) {
-    return { ok: false, reasonKo: `파일럿 Lv.${requiredLevel} 이상 필요합니다.` };
+    return { ok: false, reasonCode: 'level_required', reasonParams: { level: requiredLevel } };
   }
 
   const price = parseNum(row.purchaseCredits, 0);
   if (price > 0 && credits < price) {
-    return { ok: false, reasonKo: `크레딧 ${price.toLocaleString('ko-KR')}이 필요합니다.` };
+    return { ok: false, reasonCode: 'credits_required', reasonParams: { price } };
   }
 
   return { ok: true };

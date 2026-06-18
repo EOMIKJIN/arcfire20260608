@@ -55,6 +55,11 @@ import {
   removeGoodFromInventorySlots,
 } from '../game/playerInventory';
 import { SHIPYARD_EQUIP_SLOT_DEFS } from '../game/shipyardEquipSlots';
+import {
+  getMineralUpgradeOreCost,
+  isMineralUpgradeStatId,
+  resolveMineralUpgradeMaxLevel,
+} from '../game/shipyardMineralUpgrade/mineralUpgradeModel';
 import { useAccountProfileStore } from './accountProfileStore';
 import { useUserSessionStore } from './userSessionStore';
 import { useSkillDbStore } from './skillDbStore';
@@ -400,6 +405,10 @@ function ensurePlayerHasDefaultShip(player: Player): Player {
     ship: normalizedShip,
     shipHangar: normalizedHangar,
     inventorySlots: normalizedInventory,
+    gems:
+      typeof player.gems === 'number' && Number.isFinite(player.gems)
+        ? Math.max(0, Math.floor(player.gems))
+        : 0,
     combatProficiency: normalizePlayerCombatProficiency(player.combatProficiency, player.level),
     stats: normalizePlayerSocialStats(player.stats, player.pilotProfile?.professionId),
     pilotProfile: normalizePlayerPilotProfile(player.pilotProfile),
@@ -429,6 +438,8 @@ interface PlayerState {
   removeHangarShipByNpcId: (npcCapitalShipId: string) => boolean;
   /** 아이템 획득은 인벤토리 슬롯 단일 체계로 누적 */
   addInventoryItem: (goodId: string, quantity: number) => void;
+  /** 조선소 광물 업그레이드 실행 — ore 차감·레벨+1·저장. 성공 여부·실패 사유 반환. */
+  applyMineralUpgrade: (statId: string) => { ok: boolean; reason?: string };
   /** @deprecated — `recordOrbitalMiningDelivery` 사용 */
   recordOrbitalMiningOre1Delivery: (planetId: string, quantity: number) => void;
   /** 궤도 채굴 무역소 입고 실적(행성·광물 id별 누적) */
@@ -460,6 +471,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       expToNext: EXP_TABLE[2] ?? 300,
       skillPoints: 0,
       credits: 500,
+      gems: 0,
       lifetimeCreditsEarned: 500,
       currentSystemId: 'arcadia',
       currentPlanetId: 'arcadia_prime',
@@ -639,6 +651,32 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     const inv = addToInventorySlotsMax(slots, goodId, quantity, 0);
     if (inv.added <= 0) return;
     set({ player: { ...player, inventorySlots: inv.slots } });
+  },
+
+  applyMineralUpgrade: (statId) => {
+    const { player } = get();
+    if (!player) return { ok: false, reason: 'no_player' };
+    if (!isMineralUpgradeStatId(statId)) return { ok: false, reason: 'bad_stat' };
+    const current = Math.max(0, Math.floor(player.mineralUpgrades?.[statId] ?? 0));
+    const cap = resolveMineralUpgradeMaxLevel(player.combatProficiency?.combatLevel ?? player.level ?? 1);
+    if (current >= cap) return { ok: false, reason: 'cap' };
+    const targetLevel = current + 1;
+    const cost = getMineralUpgradeOreCost(statId, targetLevel);
+    let slots = normalizeInventorySlots(player.inventorySlots);
+    // 1) 전체 비용 충족 선검사(부분 차감 방지)
+    for (const c of cost) {
+      if (countGoodInInventory(slots, c.oreId) < c.qty) return { ok: false, reason: 'insufficient' };
+    }
+    // 2) ore 차감(트랜잭션)
+    for (const c of cost) {
+      const next = removeGoodFromInventorySlots(slots, c.oreId, c.qty);
+      if (!next) return { ok: false, reason: 'deduct_failed' };
+      slots = next;
+    }
+    const mineralUpgrades = { ...(player.mineralUpgrades ?? {}), [statId]: targetLevel };
+    set({ player: { ...player, inventorySlots: slots, mineralUpgrades } });
+    void get().persist();
+    return { ok: true };
   },
 
   recordOrbitalMiningOre1Delivery: (planetId, quantity) => {

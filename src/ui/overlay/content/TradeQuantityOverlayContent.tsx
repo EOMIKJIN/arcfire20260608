@@ -2,6 +2,7 @@ import React, { memo, useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { ArcOverlayTradeQuantityEntry } from '../arcOverlayStore';
 import { formatCredits } from '../../../utils/formatCredits';
+import { useT } from '../../../i18n';
 import { COLORS, FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
 
@@ -16,6 +17,7 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
   onConfirm,
   onCancel,
 }: Props) {
+  const t = useT();
   const minQty = entry.minQty ?? 1;
   const [qty, setQty] = useState(() => Math.min(entry.maxQty, Math.max(minQty, entry.initialQty ?? 1)));
 
@@ -40,15 +42,15 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
     <View style={styles.card}>
       <Text style={styles.title}>{entry.title}</Text>
 
-      <Text style={styles.line}>단가: {formatCredits(entry.unitPrice)}</Text>
+      <Text style={styles.line}>{t('tradeQty.unit', { price: formatCredits(entry.unitPrice) })}</Text>
       {entry.stock != null ? (
-        <Text style={styles.line}>재고: {entry.stock}개</Text>
+        <Text style={styles.line}>{t('tradeQty.stock', { n: entry.stock })}</Text>
       ) : null}
       {entry.demandLabel ? (
-        <Text style={styles.line}>수요: {entry.demandLabel}</Text>
+        <Text style={styles.line}>{t('tradeQty.demand', { label: entry.demandLabel })}</Text>
       ) : null}
       {entry.ownedQty != null ? (
-        <Text style={styles.line}>보유: {entry.ownedQty}개</Text>
+        <Text style={styles.line}>{t('tradeQty.owned', { n: entry.ownedQty })}</Text>
       ) : null}
 
       {entry.mode === 'buy' && entry.itemDescription ? (
@@ -61,13 +63,13 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
 
       {entry.mode === 'buy' ? (
         <View style={styles.tipsBox}>
-          <Text style={styles.tipsTitle}>Tips</Text>
+          <Text style={styles.tipsTitle}>{t('tradeQty.tipsTitle')}</Text>
           {topTip ? (
             <Text style={styles.tipLine}>
-              {`${topTip.planetName}에서 ${formatCredits(topTip.profitPerUnit)}/개 차익으로 판매 가능`}
+              {t('tradeQty.tipLine', { planet: topTip.planetName, profit: formatCredits(topTip.profitPerUnit) })}
             </Text>
           ) : (
-            <Text style={styles.tipEmpty}>현재 행성 기준 확인 가능한 차익 행성이 없습니다.</Text>
+            <Text style={styles.tipEmpty}>{t('tradeQty.tipEmpty')}</Text>
           )}
         </View>
       ) : null}
@@ -77,7 +79,7 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
           style={[styles.qtyBtn, !canDec && styles.qtyBtnDisabled]}
           onPress={() => canDec && setQty((q) => Math.max(minQty, q - 1))}
           disabled={!canDec}
-          accessibilityLabel="수량 감소"
+          accessibilityLabel={t('tradeQty.a11yDec')}
         >
           <Text style={styles.qtyBtnText}>−</Text>
         </TouchableOpacity>
@@ -86,7 +88,7 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
           style={[styles.qtyBtn, !canInc && styles.qtyBtnDisabled]}
           onPress={() => canInc && setQty((q) => Math.min(entry.maxQty, q + 1))}
           disabled={!canInc}
-          accessibilityLabel="수량 증가"
+          accessibilityLabel={t('tradeQty.a11yInc')}
         >
           <Text style={styles.qtyBtnText}>+</Text>
         </TouchableOpacity>
@@ -94,14 +96,14 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
           style={[styles.maxBtn, !canMax && styles.qtyBtnDisabled]}
           onPress={() => canMax && setMaxQty()}
           disabled={!canMax}
-          accessibilityLabel="최대 수량"
+          accessibilityLabel={t('tradeQty.a11yMax')}
         >
           <Text style={styles.maxBtnText}>MAX</Text>
         </TouchableOpacity>
       </View>
 
       <Text style={styles.totalLine}>
-        합계: {formatCredits(totalPrice)}
+        {t('tradeQty.total', { price: formatCredits(totalPrice) })}
         {remainingCredits != null ? (
           <Text
             style={[
@@ -109,16 +111,16 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
               remainingCredits < 0 ? styles.totalCreditsOver : styles.totalCreditsOk,
             ]}
           >
-            {`  (보유크레딧: ${formatCredits(remainingCredits, { suffix: false })})`}
+            {t('tradeQty.remaining', { credits: formatCredits(remainingCredits, { suffix: false }) })}
           </Text>
         ) : null}
       </Text>
-      <Text style={styles.maxHint}>최대 {entry.maxQty}개</Text>
+      <Text style={styles.maxHint}>{t('tradeQty.maxHint', { n: entry.maxQty })}</Text>
 
       <View style={styles.btnRow}>
-        <ArcButton label="취소" variant="secondary" onPress={onCancel} />
+        <ArcButton label={t('tradeQty.cancel')} variant="secondary" onPress={onCancel} />
         <ArcButton
-          label={entry.mode === 'buy' ? `${qty}개 구매` : `${qty}개 판매`}
+          label={entry.mode === 'buy' ? t('tradeQty.buy', { qty }) : t('tradeQty.sell', { qty })}
           variant="primary"
           onPress={() => onConfirm(qty)}
         />

@@ -8,6 +8,8 @@ import {
   ScrollView,
 } from 'react-native';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
+import { useT } from '../../src/i18n';
+import { resolveSkillDescription, resolveSkillEffectDescription, resolveSkillName } from '../../src/i18n/skillText';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { usePlayerStore } from '../../src/store/playerStore';
 import { SKILLS, SKILL_CATEGORIES } from '../../src/data/skills';
@@ -15,6 +17,7 @@ import { Skill, SkillCategory } from '../../src/types';
 import { canLearnSkill } from '../../src/engine/SkillEngine';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
+import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { ArcStageBackButton } from '../../src/ui/overlay/ArcStageBackButton';
@@ -27,6 +30,8 @@ import { SkillTreeBoard } from '../../src/components/skillTree/SkillTreeBoard';
 const SKILLTREE_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
 
 export default function SkillTreeScreen() {
+  const t = useT();
+  const localeRenderKey = useLocaleRenderKey();
   const player = usePlayerStore(s => s.player);
   const learnSkill = usePlayerStore(s => s.learnSkill);
   const persist = usePlayerStore(s => s.persist);
@@ -42,22 +47,25 @@ export default function SkillTreeScreen() {
     const learned = player.skills.includes(skill.id);
     const canLearn = canLearnSkill(skill, player);
     const prereqLearned = skill.prerequisiteIds.every((id) => player.skills.includes(id));
+    const name = resolveSkillName(skill, t);
+    const desc = resolveSkillDescription(skill, t);
+    const effect = resolveSkillEffectDescription(skill, t);
 
     if (learned) {
       showArcAlert(
-        `${skill.name} ✓`,
-        `${skill.description}\n\n${skill.effect.description}`,
+        t('skilltree.learnedTitle', { name }),
+        t('skilltree.body', { desc, effect }),
       );
       return;
     }
     if (canLearn) {
       showArcAlert(
-        `${skill.name} 습득`,
-        `${skill.description}\n\n${skill.effect.description}\n\n스킬 포인트 1을 사용해 습득하시겠습니까? (SP ${player.skillPoints})`,
+        t('skilltree.learnTitle', { name }),
+        t('skilltree.learnBody', { desc, effect, sp: player.skillPoints }),
         [
-          { text: '취소', style: 'cancel' },
+          { text: t('skilltree.cancel'), style: 'cancel' },
           {
-            text: '습득',
+            text: t('skilltree.learn'),
             onPress: async () => {
               learnSkill(skill.id);
               await persist();
@@ -68,38 +76,40 @@ export default function SkillTreeScreen() {
       return;
     }
     if (!prereqLearned) {
-      const names = skill.prerequisiteIds.map((id) => SKILLS[id]?.name ?? id).join(', ');
-      showArcAlert('선행 스킬 필요', `먼저 습득: ${names}`);
+      const names = skill.prerequisiteIds
+        .map((id) => (SKILLS[id] ? resolveSkillName(SKILLS[id], t) : id))
+        .join(', ');
+      showArcAlert(t('skilltree.prereqTitle'), t('skilltree.prereqBody', { names }));
       return;
     }
     if (player.level < skill.levelRequired) {
-      showArcAlert('레벨 부족', `파일럿 Lv.${skill.levelRequired} 이상 필요합니다.`);
+      showArcAlert(t('skilltree.levelTitle'), t('skilltree.levelBody', { level: skill.levelRequired }));
       return;
     }
     if (player.skillPoints <= 0) {
-      showArcAlert('SP 부족', '스킬 포인트가 부족합니다.');
+      showArcAlert(t('skilltree.spTitle'), t('skilltree.spBody'));
       return;
     }
-    showArcAlert(skill.name, skill.description);
-  }, [learnSkill, persist, player]);
+    showArcAlert(name, desc);
+  }, [learnSkill, persist, player, t]);
 
   if (!player) return null;
 
   const categories = Object.entries(SKILL_CATEGORIES) as [SkillCategory, { name: string; icon: string }][];
 
   return (
-    <StageShell routeName="skilltree" background="none" edges={['bottom']}>
+    <StageShell key={localeRenderKey} routeName="skilltree" background="none" edges={['bottom']}>
       <View style={styles.root}>
         <View style={styles.header}>
           <ArcStageBackButton onPress={safeBack} style={styles.backBtn} />
-          <Text style={styles.headerTitle}>연구소</Text>
+          <Text style={styles.headerTitle}>{t('skilltree.title')}</Text>
           <View style={styles.spBadge}>
             <Text style={styles.spText}>SP {player.skillPoints}</Text>
           </View>
         </View>
 
         <PlanetFacilityTabBar
-          tabs={categories.map(([cat, info]) => ({ id: cat, label: info.name }))}
+          tabs={categories.map(([cat, info]) => ({ id: cat, label: t(`skillCat.${cat}`) === `skillCat.${cat}` ? info.name : t(`skillCat.${cat}`) }))}
           activeId={selectedCategory}
           onSelect={(id) => setSelectedCategory(id as SkillCategory)}
         />

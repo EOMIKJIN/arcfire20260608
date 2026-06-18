@@ -16,6 +16,7 @@ import {
 } from '../../../systems/planetaryDefense/planetDefenseSatelliteDevelopment';
 import { formatCredits } from '../../../utils/formatCredits';
 import { showArcAlert } from '../../../utils/showArcAlert';
+import { useT } from '../../../i18n';
 import { OVERLAY_TOKENS } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
@@ -37,6 +38,7 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
   onBack,
   onClose,
 }: PlanetDevelopmentModuleContext) {
+  const t = useT();
   const [tick, setTick] = useState(0);
 
   const defenseRev = usePlanetCoreRuntimeStore(
@@ -68,98 +70,98 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
 
   const handlePressInstall = useCallback(() => {
     if (!isHomePlanet) {
-      showArcAlert('거점 행성 전용', '방위위성 설치는 거점 행성에서만 가능합니다.');
+      showArcAlert(t('defenseSat.homeOnlyTitle'), t('defenseSat.installHomeOnly'));
       return;
     }
     showArcAlert(
-      '방위위성 설치',
-      `방위위성을 설치하시겠습니까?\n\n비용: ${formatCredits(snapshot.installCost, { suffix: true })}\n설치 후 Lv.1 · 위성 1기 가동`,
+      t('defenseSat.installTitle'),
+      t('defenseSat.installBody', { cost: formatCredits(snapshot.installCost, { suffix: true }) }),
       [
-        { text: '취소', style: 'cancel' },
+        { text: t('defenseSat.cancel'), style: 'cancel' },
         {
-          text: '설치',
+          text: t('defenseSat.install'),
           onPress: () => {
             const res = installPlanetDefenseSatellite(planetId);
-            if (!res.ok) showArcAlert('설치 실패', res.reason);
+            if (!res.ok) showArcAlert(t('defenseSat.installFailTitle'), res.reason);
           },
         },
       ],
     );
-  }, [isHomePlanet, planetId, snapshot.installCost]);
+  }, [isHomePlanet, planetId, snapshot.installCost, t]);
 
   const handleStartUpgrade = useCallback(() => {
     if (!isHomePlanet) {
-      showArcAlert('거점 행성 전용', '업그레이드는 거점 행성에서만 가능합니다.');
+      showArcAlert(t('defenseSat.homeOnlyTitle'), t('defenseSat.upgradeHomeOnly'));
       return;
     }
     const res = startPlanetDefenseSatelliteUpgrade(planetId);
-    if (!res.ok) showArcAlert('업그레이드', res.reason);
-  }, [isHomePlanet, planetId]);
+    if (!res.ok) showArcAlert(t('defenseSat.upgradeTitle'), res.reason);
+  }, [isHomePlanet, planetId, t]);
 
   const handleInstantComplete = useCallback(() => {
     const res = instantCompleteDefenseSatelliteUpgrade(planetId);
-    if (!res.ok) showArcAlert('즉시 완료', res.reason);
-  }, [planetId]);
+    if (!res.ok) showArcAlert(t('defenseSat.instantCompleteTitle'), res.reason);
+  }, [planetId, t]);
 
   const handleInstantNext = useCallback(() => {
     if (!isHomePlanet) {
-      showArcAlert('거점 행성 전용', '업그레이드는 거점 행성에서만 가능합니다.');
+      showArcAlert(t('defenseSat.homeOnlyTitle'), t('defenseSat.upgradeHomeOnly'));
       return;
     }
     const total = (snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0);
     showArcAlert(
-      '즉시 업그레이드',
-      `다음 레벨로 즉시 업그레이드하시겠습니까?\n\n비용: ${formatCredits(total, { suffix: true })}`,
+      t('defenseSat.instantUpgradeTitle'),
+      t('defenseSat.instantUpgradeBody', { cost: formatCredits(total, { suffix: true }) }),
       [
-        { text: '취소', style: 'cancel' },
+        { text: t('defenseSat.cancel'), style: 'cancel' },
         {
-          text: '즉시 업그레이드',
+          text: t('defenseSat.instantUpgradeTitle'),
           onPress: () => {
             const res = instantUpgradeDefenseSatelliteNext(planetId);
-            if (!res.ok) showArcAlert('즉시 업그레이드', res.reason);
+            if (!res.ok) showArcAlert(t('defenseSat.instantUpgradeTitle'), res.reason);
           },
         },
       ],
     );
-  }, [isHomePlanet, planetId, snapshot.nextInstantCost, snapshot.nextUpgradeCost]);
+  }, [isHomePlanet, planetId, snapshot.nextInstantCost, snapshot.nextUpgradeCost, t]);
 
   return (
     <View style={styles.card}>
-      <Text style={[styles.title, { color: PH }]}>방위위성 개발</Text>
+      <Text style={[styles.title, { color: PH }]}>{t('defenseSat.title')}</Text>
       <Text style={[styles.subtitle, { color: PH }]}>{planetName}</Text>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-        <Text style={[styles.section, { color: PH }]}>현황</Text>
+        <Text style={[styles.section, { color: PH }]}>{t('defenseSat.status')}</Text>
         <InfoRow
-          label="상태"
+          label={t('defenseSat.stateLabel')}
           value={
             snapshot.installed
-              ? `Lv.${snapshot.level} · 위성 ${snapshot.activeSatelliteCount}기`
-              : '미설치'
+              ? t('defenseSat.stateInstalled', { level: snapshot.level, count: snapshot.activeSatelliteCount })
+              : t('defenseSat.stateNotInstalled')
           }
         />
         {currentRow ? (
           <>
-            <InfoRow label="체력" value={`${currentRow.hpMax}`} />
-            <InfoRow label="방어범위" value={`${currentRow.defenseZoneDiameterPx}px`} />
-            <InfoRow label="명중률" value={`${currentRow.interceptHitPct}%`} />
-            <InfoRow label="요격(체류)" value={`${currentRow.interceptDwellSec}초`} />
+            <InfoRow label={t('defenseSat.hp')} value={`${currentRow.hpMax}`} />
+            <InfoRow label={t('defenseSat.defenseZone')} value={`${currentRow.defenseZoneDiameterPx}px`} />
+            <InfoRow label={t('defenseSat.hitRate')} value={`${currentRow.interceptHitPct}%`} />
+            <InfoRow label={t('defenseSat.interceptDwell')} value={t('defenseSat.interceptDwellValue', { sec: currentRow.interceptDwellSec })} />
           </>
         ) : null}
 
         {snapshot.isUpgrading ? (
           <View style={styles.gaugeBlock}>
-            <Text style={[styles.section, { color: PH }]}>업그레이드 진행</Text>
+            <Text style={[styles.section, { color: PH }]}>{t('defenseSat.upgradeProgress')}</Text>
             <Text style={[styles.hint, { color: PH }]}>
               Lv.{snapshot.level} → Lv.{snapshot.upgradeJob?.targetLevel ?? '?'}
             </Text>
             <PlanetHubDigitalGauge
               progressPct={snapshot.upgradeProgressPct}
-              accessibilityLabel={`업그레이드 ${snapshot.upgradeProgressPct}%`}
+              accessibilityLabel={t('defenseSat.upgradeProgressA11y', { pct: snapshot.upgradeProgressPct })}
             />
           </View>
         ) : null}
 
-        <Text style={[styles.section, { color: PH }]}>레벨별 스탯 (L1~L10)</Text>
+        <Text style={[styles.section, { color: PH }]}>{t('defenseSat.levelStats')}</Text>
         {levelRows.map((row) => (
           <View
             key={row.level}
@@ -170,11 +172,11 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
           >
             <Text style={[styles.levelRowTitle, { color: PH }]}>
               Lv.{row.level}
-              {row.grantsSecondSatellite ? ' · 2기' : ''}
+              {row.grantsSecondSatellite ? t('defenseSat.twoSats') : ''}
               {row.level === snapshot.level ? ' ◀' : ''}
             </Text>
             <Text style={[styles.levelRowMeta, { color: PH }]}>
-              HP {row.hpMax} · {row.defenseZoneDiameterPx}px · 명중 {row.interceptHitPct}% · {row.interceptDwellSec}s
+              {t('defenseSat.levelMeta', { hp: row.hpMax, zone: row.defenseZoneDiameterPx, hit: row.interceptHitPct, dwell: row.interceptDwellSec })}
             </Text>
           </View>
         ))}
@@ -183,7 +185,7 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
       <View style={styles.btnCol}>
         {!snapshot.installed ? (
           <ArcButton
-            label={`설치 (${formatCredits(snapshot.installCost, { suffix: true })})`}
+            label={t('defenseSat.installBtn', { cost: formatCredits(snapshot.installCost, { suffix: true }) })}
             variant="cta"
             disabled={!isHomePlanet || !snapshot.canInstall}
             onPress={handlePressInstall}
@@ -192,13 +194,13 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
         {snapshot.installed && !snapshot.isUpgrading && snapshot.nextTargetLevel != null ? (
           <>
             <ArcButton
-              label={`Lv.${snapshot.level}→${snapshot.nextTargetLevel} 업그레이드 (${formatCredits(snapshot.nextUpgradeCost ?? 0, { suffix: true })} · ${nextDurationLabel})`}
+              label={t('defenseSat.upgradeBtn', { from: snapshot.level, to: snapshot.nextTargetLevel, cost: formatCredits(snapshot.nextUpgradeCost ?? 0, { suffix: true }), duration: nextDurationLabel })}
               variant="primary"
               disabled={!isHomePlanet || !snapshot.canStartUpgrade}
               onPress={handleStartUpgrade}
             />
             <ArcButton
-              label={`즉시 Lv.${snapshot.nextTargetLevel} (${formatCredits((snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0), { suffix: true })})`}
+              label={t('defenseSat.instantUpgradeBtn', { to: snapshot.nextTargetLevel, cost: formatCredits((snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0), { suffix: true }) })}
               variant="secondary"
               disabled={!isHomePlanet || !snapshot.canInstantUpgradeNext}
               onPress={handleInstantNext}
@@ -207,14 +209,14 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
         ) : null}
         {snapshot.isUpgrading ? (
           <ArcButton
-            label={`즉시 완료 (${formatCredits(snapshot.nextInstantCost ?? 0, { suffix: true })})`}
+            label={t('defenseSat.instantCompleteBtn', { cost: formatCredits(snapshot.nextInstantCost ?? 0, { suffix: true }) })}
             variant="cta"
             disabled={!snapshot.canInstantComplete}
             onPress={handleInstantComplete}
           />
         ) : null}
-        <ArcButton label="← 개발 목록" variant="secondary" onPress={onBack} />
-        <ArcButton label="닫기" variant="secondary" onPress={onClose} />
+        <ArcButton label={t('defenseSat.backToList')} variant="secondary" onPress={onBack} />
+        <ArcButton label={t('defenseSat.close')} variant="secondary" onPress={onClose} />
       </View>
     </View>
   );

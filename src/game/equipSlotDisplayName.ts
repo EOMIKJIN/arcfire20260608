@@ -7,6 +7,9 @@ import { CAPITAL_WEAPON_LIST_FROM_CSV, ITEM_DEFS_FROM_CSV } from '../data/genera
 import type { PlayerShip, ShipyardEquipSlotId } from '../types';
 import { UNEQUIPPED_WEAPON_ITEM_ID } from './combatWeaponSlots';
 import { weaponIdFromWeaponItemId } from './weaponItemId';
+import { getLocale } from '../i18n';
+import { resolveItemName } from '../i18n/itemText';
+import type { AppLocale } from '../i18n/types';
 
 /** 레거시 접미사 제거(과거 빌드가 붙이던 " 모듈" / " Module") */
 export function stripWeaponModuleSuffix(name: string): string {
@@ -25,18 +28,22 @@ export function stripWeaponModuleSuffix(name: string): string {
 export function resolveEquipSlotDisplayName(
   itemDefId: string | null | undefined,
   storedName?: string | null,
+  locale: AppLocale = getLocale(),
 ): string {
   const raw = String(itemDefId ?? '').trim();
   if (!raw || raw === UNEQUIPPED_WEAPON_ITEM_ID) {
-    return '미장착';
+    return locale !== 'ko' ? 'Unequipped' : '미장착';
   }
   const weaponId = weaponIdFromWeaponItemId(raw);
   if (weaponId) {
     const row = CAPITAL_WEAPON_LIST_FROM_CSV[weaponId];
-    if (row?.name?.trim()) return row.name.trim();
+    if (row) {
+      if (locale !== 'ko' && row.nameEn?.trim()) return row.nameEn.trim();
+      if (row.name?.trim()) return row.name.trim();
+    }
   }
   const def = ITEM_DEFS_FROM_CSV[raw];
-  if (def?.name?.trim()) return stripWeaponModuleSuffix(def.name.trim());
+  if (def) return resolveItemName(def, locale);
   const legacy = storedName?.trim();
   if (legacy) return stripWeaponModuleSuffix(legacy);
   return raw;

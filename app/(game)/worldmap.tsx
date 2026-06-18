@@ -18,7 +18,15 @@ import Animated, {
 } from 'react-native-reanimated';
 import { router, useFocusEffect } from 'expo-router';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
-import { COLORS, FONTS, SPACING, LAYOUT, ZONE_COLORS, ZONE_LABELS } from '../../src/utils/theme';
+import { useT } from '../../src/i18n';
+import { resolveZoneLabel } from '../../src/i18n/zoneText';
+import {
+  resolveStarSystemDescription,
+  resolveStarSystemDisplayName,
+} from '../../src/i18n/systemText';
+import { useAppSettingsStore } from '../../src/store/appSettingsStore';
+import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
+import { COLORS, FONTS, SPACING, LAYOUT, ZONE_COLORS } from '../../src/utils/theme';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { isPlayerShipCombatCapable } from '../../src/game/playerSurvivalPod';
 import { ArcButton } from '../../src/ui/overlay/ArcButton';
@@ -43,6 +51,7 @@ import {
   parseSynthOrdinal,
 } from '../../src/data/galaxy100';
 import { StarSystem } from '../../src/types';
+import type { AppLocale } from '../../src/i18n/types';
 import { countGoodInInventory, normalizeInventorySlots, removeGoodFromInventorySlots } from '../../src/game/playerInventory';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
@@ -63,14 +72,17 @@ const DEFERRED_TILE_STEP_MS = 120;
 /** 출발 직후 replace — 맵 onLayout·첫 rAF 전까지 LOADING 유지(시설 서브스테이지와 동일 패턴) */
 const GALAXY_MAP_LOADING_MIN_MS = 520;
 type DeferredDirection = 'north' | 'east' | 'south' | 'west';
-const ROUTE_LABEL_META: Record<DeferredDirection, { text: string; color: string }> = {
-  north: { text: '북부항로', color: '#7CC7FF' },
-  east: { text: '동부항로', color: '#9CE47A' },
-  south: { text: '남부항로', color: '#FFC97A' },
-  west: { text: '서부항로', color: '#D5A1FF' },
+const ROUTE_LABEL_META: Record<DeferredDirection, { textKey: string; color: string }> = {
+  north: { textKey: 'worldmap.route.north', color: '#7CC7FF' },
+  east: { textKey: 'worldmap.route.east', color: '#9CE47A' },
+  south: { textKey: 'worldmap.route.south', color: '#FFC97A' },
+  west: { textKey: 'worldmap.route.west', color: '#D5A1FF' },
 };
 
 export default function WorldMapScreen() {
+  const t = useT();
+  const locale = useAppSettingsStore((s) => s.locale);
+  const localeRenderKey = useLocaleRenderKey();
   const { width } = useWindowDimensions();
   const player = usePlayerStore((s) => s.player);
   const moveToSystem = usePlayerStore((s) => s.moveToSystem);
@@ -340,12 +352,12 @@ export default function WorldMapScreen() {
         id: dir,
         x: sx / n,
         y: sy / n,
-        text: meta.text,
+        text: t(meta.textKey),
         color: meta.color,
       });
     }
     return out;
-  }, [systems, toScreen, triggerSystemIdsByDirection]);
+  }, [systems, toScreen, triggerSystemIdsByDirection, t]);
 
   const mapContentSize = useMemo(() => {
     const spanX = Math.max(galaxyBounds.maxX - galaxyBounds.minX, 0.001);
@@ -507,11 +519,11 @@ export default function WorldMapScreen() {
         const h = s.planetHolds[p0.id];
         if (!h || h.kind === 'neutral') return null;
         const nm = s.clans[h.occupierClanId]?.displayName ?? h.occupierClanId;
-        if (h.kind === 'player_home') return `주 행성 거점 · ${nm}`;
-        if (h.occupierClanId.startsWith('ai_clan_')) return `AI 클랜 기지 · ${nm}`;
-        return `점유 클랜 · ${nm}`;
+        if (h.kind === 'player_home') return t('worldmap.panel.homeBase', { name: nm });
+        if (h.occupierClanId.startsWith('ai_clan_')) return t('worldmap.panel.aiClan', { name: nm });
+        return t('worldmap.panel.clan', { name: nm });
       },
-      [selectedSystem?.planets[0]?.id],
+      [selectedSystem?.planets[0]?.id, t],
     ),
   );
   const currentSystem = player ? systems[player.currentSystemId] : null;
@@ -613,8 +625,8 @@ export default function WorldMapScreen() {
       if (!player) return;
       if (!isPlayerShipCombatCapable(player.ship)) {
         showArcAlert(
-          '생존포드',
-          '전함이 격침된 상태입니다. 거점 조선소에서 전함을 재구매·탑승한 뒤 이동할 수 있습니다.',
+          t('worldmap.podTitle'),
+          t('worldmap.podBody'),
         );
         return;
       }
@@ -701,7 +713,7 @@ export default function WorldMapScreen() {
               });
 
               if (!canDeliver) {
-                showArcAlert('배달 실패', '도착했지만 배달 화물이 부족합니다. 화물을 다시 준비하세요.');
+                showArcAlert(t('worldmap.deliverFailTitle'), t('worldmap.deliverFailBody'));
                 return;
               }
 
@@ -743,6 +755,7 @@ export default function WorldMapScreen() {
       mapMetricsReady,
       galaxyBounds.minX,
       galaxyBounds.minY,
+      t,
     ],
   );
 
@@ -752,8 +765,8 @@ export default function WorldMapScreen() {
 
     if (!isPlayerShipCombatCapable(player.ship)) {
       showArcAlert(
-        '생존포드',
-        '전함이 격침된 상태입니다. 거점 조선소에서 전함을 재구매·탑승한 뒤 이동할 수 있습니다.',
+        t('worldmap.podTitle'),
+        t('worldmap.podBody'),
       );
       return;
     }
@@ -769,39 +782,41 @@ export default function WorldMapScreen() {
     }
 
     if (!reachableIds.includes(selectedSystem.id)) {
-      showArcAlert('이동 불가', '인접한 성계로만 이동할 수 있습니다.');
+      showArcAlert(t('worldmap.moveBlockedTitle'), t('worldmap.moveBlockedBody'));
       return;
     }
 
     if (selectedSystem.zone === 'pvp') {
       showArcAlert(
-        '⚠ PvP 구역',
-        '이 구역에서는 다른 파일럿의 공격을 받을 수 있습니다.\n계속하시겠습니까?',
+        t('worldmap.pvpTitle'),
+        t('worldmap.pvpBody'),
         [
-          { text: '취소', style: 'cancel' },
-          { text: '진입', onPress: () => doMove(selectedSystem) },
+          { text: t('worldmap.btn.cancel'), style: 'cancel' },
+          { text: t('worldmap.btn.enter'), onPress: () => doMove(selectedSystem) },
         ],
       );
     } else {
       doMove(selectedSystem);
     }
-  }, [selectedSystem, player, reachableIds, doMove, landOnPlanet, persist, isMoving]);
+  }, [selectedSystem, player, reachableIds, doMove, landOnPlanet, persist, isMoving, t]);
 
   if (!player) return null;
 
   return (
-    <StageShell routeName="worldmap" background="none" edges={['bottom']}>
+    <StageShell routeName="worldmap" background="none" edges={['bottom']} key={localeRenderKey}>
       <View style={styles.rootColumn}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={safeMenuBack}
           style={styles.menuBtn}
-          accessibilityLabel="메뉴"
+          accessibilityLabel={t('worldmap.menu.a11y')}
         >
-          <Text style={styles.menuText}>☰ 메뉴</Text>
+          <Text style={styles.menuText}>{t('worldmap.menu.label')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>은하계 지도</Text>
-        <Text style={styles.headerSub}>{currentSystem?.name ?? ''}</Text>
+        <Text style={styles.headerTitle}>{t('worldmap.title')}</Text>
+        <Text style={styles.headerSub}>
+          {currentSystem ? resolveStarSystemDisplayName(currentSystem, locale) : ''}
+        </Text>
       </View>
 
       <QuestHUD />
@@ -847,6 +862,7 @@ export default function WorldMapScreen() {
                     unlockedIds={unlockedSystemIds}
                     clanOwnerColorBySystemId={clanOwnerColorBySystemId}
                     toScreen={toScreen}
+                    locale={locale}
                   />
                 </Svg>
                 <View style={[StyleSheet.absoluteFillObject, styles.routeLabelOverlay]} pointerEvents="none">
@@ -906,9 +922,11 @@ export default function WorldMapScreen() {
         <View style={[styles.panel, { height: PANEL_H }]}>
           <View style={styles.panelHeader}>
             <View>
-              <Text style={styles.panelSystemName}>{selectedSystem.name}</Text>
+              <Text style={styles.panelSystemName}>
+                {resolveStarSystemDisplayName(selectedSystem, locale)}
+              </Text>
               <Text style={[styles.panelZone, { color: ZONE_COLORS[selectedSystem.zone] ?? COLORS.ink_mid }]}>
-                {ZONE_LABELS[selectedSystem.zone]} · 위험도 Lv.{selectedSystem.enemyLevel}
+                {t('worldmap.panel.zoneLine', { zone: resolveZoneLabel(selectedSystem.zone, t), level: selectedSystem.enemyLevel })}
               </Text>
             </View>
             <TouchableOpacity
@@ -921,7 +939,7 @@ export default function WorldMapScreen() {
             </TouchableOpacity>
           </View>
           <Text style={styles.panelDesc} numberOfLines={2}>
-            {selectedSystem.description}
+            {resolveStarSystemDescription(selectedSystem, locale)}
           </Text>
           {panelPrimaryPlanetClanLine ? (
             <Text style={styles.panelClanLine} numberOfLines={2}>
@@ -931,18 +949,18 @@ export default function WorldMapScreen() {
           <View style={styles.panelActions}>
             <Text style={styles.panelReachable}>
               {selectedSystem.id === player.currentSystemId
-                ? '[ 현재 위치 ]'
+                ? t('worldmap.panel.here')
                 : reachableIds.includes(selectedSystem.id)
-                  ? '✓ 이동 가능'
-                  : '✗ 직접 이동 불가'}
+                  ? t('worldmap.panel.reachable')
+                  : t('worldmap.panel.unreachable')}
             </Text>
             <ArcButton
               label={
                 isMoving
-                  ? '[ 이동중... ]'
+                  ? t('worldmap.btn.moving')
                   : selectedSystem.id === player.currentSystemId
-                    ? '[ 행성 착륙 ]'
-                    : '[ 이동 ]'
+                    ? t('worldmap.btn.land')
+                    : t('worldmap.btn.move')
               }
               variant="cta"
               onPress={handleMove}
@@ -956,7 +974,7 @@ export default function WorldMapScreen() {
         </View>
       ) : (
         <View style={[styles.panel, { height: PANEL_H, justifyContent: 'center', alignItems: 'center' }]}>
-          <Text style={styles.panelHint}>성계를 탭하여 정보를 확인하세요</Text>
+          <Text style={styles.panelHint}>{t('worldmap.panel.hint')}</Text>
         </View>
       )}
       </View>
@@ -974,6 +992,7 @@ interface GalaxyMapSvgProps {
   unlockedIds: string[];
   clanOwnerColorBySystemId: Record<string, string | undefined>;
   toScreen: (pos: { x: number; y: number }) => { x: number; y: number };
+  locale: AppLocale;
 }
 
 function GalaxyMapSvg({
@@ -986,6 +1005,7 @@ function GalaxyMapSvg({
   unlockedIds,
   clanOwnerColorBySystemId,
   toScreen,
+  locale,
 }: GalaxyMapSvgProps) {
   const unlockedSet = new Set(unlockedIds);
   const LOCK_LINE = '#526483';
@@ -1051,7 +1071,7 @@ function GalaxyMapSvg({
     const r = isCurrent ? NODE_R_CURRENT : NODE_R;
     const opacity = isGameplay ? (isVisited || isCurrent || isReachable ? 1 : 0.75) : 0.55;
 
-    const label = shortName(sys.name);
+    const label = shortName(resolveStarSystemDisplayName(sys, locale));
     const labelFill = isGameplay ? '#FFFFFF' : '#7F93B8';
 
     return (

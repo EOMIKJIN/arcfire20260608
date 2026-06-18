@@ -4,6 +4,10 @@
     "sessionStart": [
       {
         "command": ".cursor/hooks/on-session-start-agent-routing.cjs"
+      },
+      {
+        "command": ".cursor/hooks/on-session-start-monitor-autostart.cjs",
+        "timeout": 20
       }
     ],
     "stop": []

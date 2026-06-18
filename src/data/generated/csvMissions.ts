@@ -5,12 +5,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "mission_001": {
     id: "mission_001",
     title: "첫 비행",
+    titleEn: "First Flight",
     description: "함장 연방 임무. 베가 전초기지로 이동하여 지휘관을 만나라.",
+    descriptionEn: "Captain, a Federation order: travel to Vega Outpost and meet the commander.",
     type: "travel",
     objectives: [
       {
         id: "obj_001_a",
         description: "베가 전초기지로 이동",
+        descriptionEn: "Travel to Vega Outpost",
         type: "reach_system",
         targetId: "vega_outpost",
         quantity: undefined,
@@ -30,12 +33,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "mission_002": {
     id: "mission_002",
     title: "해적 소탕",
+    titleEn: "Pirate Sweep",
     description: "아르카디아 주변 해적 1척을 격파하고 돌아오라.",
+    descriptionEn: "Destroy 1 pirate near Arcadia and return.",
     type: "combat",
     objectives: [
       {
         id: "obj_002_a",
         description: "해적 전투기 격파 (1대)",
+        descriptionEn: "Destroy pirate fighter (1)",
         type: "defeat_enemy",
         targetId: "pirate_fighter",
         quantity: 1,
@@ -55,12 +61,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "mission_003": {
     id: "mission_003",
     title: "무역 루트 개척",
+    titleEn: "Open a Trade Route",
     description: "솔라 항구에서 식량 팩 10개를 구매해 미네르바로 운반하라.",
+    descriptionEn: "Buy 10 food packs at Sola Port and deliver them to Minerva.",
     type: "delivery",
     objectives: [
       {
         id: "obj_003_a",
         description: "솔라 항구에서 식량 팩 구매 (10개)",
+        descriptionEn: "Buy food packs at Sola Port (10)",
         type: "buy_goods",
         targetId: "food",
         quantity: 10,
@@ -69,6 +78,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_003_b",
         description: "미네르바로 배달",
+        descriptionEn: "Deliver to Minerva",
         type: "reach_system",
         targetId: "minerva",
         quantity: undefined,
@@ -88,12 +98,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "mission_004": {
     id: "mission_004",
     title: "중립 지대 탐험",
+    titleEn: "Neutral Zone Recon",
     description: "중립 구역의 뉴 에덴으로 이동하여 현지 상황을 파악하라.",
+    descriptionEn: "Travel to New Eden in the neutral zone and assess the situation.",
     type: "explore",
     objectives: [
       {
         id: "obj_004_a",
         description: "뉴 에덴 도착",
+        descriptionEn: "Arrive at New Eden",
         type: "reach_system",
         targetId: "new_eden",
         quantity: undefined,
@@ -113,12 +126,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "mission_005": {
     id: "mission_005",
     title: "은하의 심장을 향해",
+    titleEn: "Toward the Heart of the Galaxy",
     description: "오메가 스테이션으로 이동해 아크파이어 코어의 단서를 확보하라.",
+    descriptionEn: "Travel to Omega Station and secure a clue to the Arcfire Core.",
     type: "explore",
     objectives: [
       {
         id: "obj_005_a",
         description: "오메가 스테이션 도착",
+        descriptionEn: "Arrive at Omega Station",
         type: "reach_system",
         targetId: "omega_station",
         quantity: undefined,
@@ -138,12 +154,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_001": {
     id: "sandbox_001",
     title: "관문 흔적 추적",
+    titleEn: "Gate Trail Hunt",
     description: "엘렌 드 코르가 아르카디아 관문 근처 해적 정찰기를 제거해 달라고 요청했다.",
+    descriptionEn: "Ellen de Cor asked you to eliminate a pirate scout near the Arcadia gate.",
     type: "combat",
     objectives: [
       {
         id: "obj_s001_a",
         description: "해적 전투기 격파",
+        descriptionEn: "Destroy pirate fighter",
         type: "defeat_enemy",
         targetId: "pirate_fighter",
         quantity: 1,
@@ -163,12 +182,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_002": {
     id: "sandbox_002",
     title: "외곽 항로 점검",
+    titleEn: "Outer Route Check",
     description: "마르크 세인이 베가 접속로로 향하는 보급품을 확인해 달라고 했다.",
+    descriptionEn: "Mark Sain asked you to verify supplies heading to the Vega access route.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s002_a",
         description: "식량 팩 3개 구매",
+        descriptionEn: "Buy 3 food packs",
         type: "buy_goods",
         targetId: "food",
         quantity: 3,
@@ -177,6 +199,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s002_b",
         description: "베가 전초기지로 이동",
+        descriptionEn: "Travel to Vega Outpost",
         type: "reach_system",
         targetId: "vega_outpost",
         quantity: undefined,
@@ -196,12 +219,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_003": {
     id: "sandbox_003",
     title: "항만 질서 유지",
+    titleEn: "Harbor Order",
     description: "이사 벤트가 솔라 항구 주변 밀수 호위선을 격퇴해 달라고 요청했다.",
+    descriptionEn: "Isa Vent asked you to repel smuggler escorts near Sola Port.",
     type: "combat",
     objectives: [
       {
         id: "obj_s003_a",
         description: "해적 전투기 격파",
+        descriptionEn: "Destroy pirate fighter",
         type: "defeat_enemy",
         targetId: "pirate_fighter",
         quantity: 1,
@@ -221,12 +247,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_004": {
     id: "sandbox_004",
     title: "고가 화물 인계",
+    titleEn: "High-Value Cargo Handoff",
     description: "토닉 레일이 기술 부품을 미네르바 쪽 검사소로 옮겨 달라고 했다.",
+    descriptionEn: "Tonic Rail asked you to move tech parts to a Minerva inspection post.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s004_a",
         description: "기술 부품 2개 구매",
+        descriptionEn: "Buy 2 tech components",
         type: "buy_goods",
         targetId: "tech",
         quantity: 2,
@@ -235,6 +264,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s004_b",
         description: "미네르바로 이동",
+        descriptionEn: "Travel to Minerva",
         type: "reach_system",
         targetId: "minerva",
         quantity: undefined,
@@ -254,12 +284,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_005": {
     id: "sandbox_005",
     title: "광산 통로 경비",
+    titleEn: "Mine Tunnel Guard",
     description: "셀라 모른이 미네르바 광산 진입로에 붙은 해적 전투기를 처리해 달라고 했다.",
+    descriptionEn: "Cela Morn asked you to clear pirates on the Minerva mine approach.",
     type: "combat",
     objectives: [
       {
         id: "obj_s005_a",
         description: "해적 전투기 격파",
+        descriptionEn: "Destroy pirate fighter",
         type: "defeat_enemy",
         targetId: "pirate_fighter",
         quantity: 1,
@@ -279,12 +312,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_006": {
     id: "sandbox_006",
     title: "정제광 샘플 배송",
+    titleEn: "Refined Ore Sample",
     description: "미아 벨로가 미네르바의 정제광 샘플을 뉴 에덴으로 보내 달라고 부탁했다.",
+    descriptionEn: "Mia Bello asked you to send refined ore samples to New Eden.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s006_a",
         description: "원자재 광물 3개 구매",
+        descriptionEn: "Buy 3 raw minerals",
         type: "buy_goods",
         targetId: "minerals",
         quantity: 3,
@@ -293,6 +329,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s006_b",
         description: "뉴 에덴으로 이동",
+        descriptionEn: "Travel to New Eden",
         type: "reach_system",
         targetId: "new_eden",
         quantity: undefined,
@@ -312,12 +349,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_007": {
     id: "sandbox_007",
     title: "베가 급습 차단",
+    titleEn: "Vega Raid Block",
     description: "하르만 돌이 베가 외곽의 소형 해적 편대를 선제 차단해 달라고 했다.",
+    descriptionEn: "Herman Dol asked you to preempt a small pirate squad on Vega outskirts.",
     type: "combat",
     objectives: [
       {
         id: "obj_s007_a",
         description: "해적 전투기 격파",
+        descriptionEn: "Destroy pirate fighter",
         type: "defeat_enemy",
         targetId: "pirate_fighter",
         quantity: 1,
@@ -337,12 +377,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_008": {
     id: "sandbox_008",
     title: "민간선 예비 식량",
+    titleEn: "Civilian Reserve Food",
     description: "세린 코프가 베가 민간 호위선에 식량 예비분을 보내 달라고 했다.",
+    descriptionEn: "Serin Koff asked you to send reserve food to Vega civilian escorts.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s008_a",
         description: "식량 팩 4개 구매",
+        descriptionEn: "Buy 4 food packs",
         type: "buy_goods",
         targetId: "food",
         quantity: 4,
@@ -351,6 +394,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s008_b",
         description: "솔라 항구로 이동",
+        descriptionEn: "Travel to Sola Port",
         type: "reach_system",
         targetId: "solar_port",
         quantity: undefined,
@@ -370,12 +414,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_009": {
     id: "sandbox_009",
     title: "암시장 꼬리표",
+    titleEn: "Black Market Tail",
     description: "라나 벨이 뉴 에덴 정비독을 맴도는 해적 순양함 추적을 의뢰했다.",
+    descriptionEn: "Lana Bel contracted tracking a cruiser loitering at New Eden docks.",
     type: "combat",
     objectives: [
       {
         id: "obj_s009_a",
         description: "해적 순양함 격파",
+        descriptionEn: "Destroy pirate cruiser",
         type: "defeat_enemy",
         targetId: "pirate_cruiser",
         quantity: 1,
@@ -395,12 +442,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_010": {
     id: "sandbox_010",
     title: "중립 항로 부품",
+    titleEn: "Neutral Route Parts",
     description: "뉴에덴 블루 07이 중립 항로 방어선에 기술 부품을 전달해 달라고 했다.",
+    descriptionEn: "New Eden Blue 07 asked you to deliver tech parts to neutral route defenses.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s010_a",
         description: "기술 부품 3개 구매",
+        descriptionEn: "Buy 3 tech components",
         type: "buy_goods",
         targetId: "tech",
         quantity: 3,
@@ -409,6 +459,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s010_b",
         description: "아이언 크로스로 이동",
+        descriptionEn: "Travel to Iron Cross",
         type: "reach_system",
         targetId: "iron_cross",
         quantity: undefined,
@@ -428,12 +479,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_011": {
     id: "sandbox_011",
     title: "아이언 잔해 사냥",
+    titleEn: "Iron Wreck Hunt",
     description: "오멜 카르가 아이언 잔해 지대에 숨어든 순양함을 제거해 달라고 했다.",
+    descriptionEn: "Omel Kar asked you to remove a cruiser hiding in the Iron Remnant zone.",
     type: "combat",
     objectives: [
       {
         id: "obj_s011_a",
         description: "해적 순양함 격파",
+        descriptionEn: "Destroy pirate cruiser",
         type: "defeat_enemy",
         targetId: "pirate_cruiser",
         quantity: 1,
@@ -453,12 +507,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_012": {
     id: "sandbox_012",
     title: "고철 길드 계약",
+    titleEn: "Scrap Guild Contract",
     description: "세라 미온이 아이언 레므난트의 회수품 명세를 오메가로 옮겨 달라고 했다.",
+    descriptionEn: "Sera Mion asked you to move salvage manifests to Omega.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s012_a",
         description: "원자재 광물 4개 구매",
+        descriptionEn: "Buy 4 raw minerals",
         type: "buy_goods",
         targetId: "minerals",
         quantity: 4,
@@ -467,6 +524,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s012_b",
         description: "오메가 스테이션으로 이동",
+        descriptionEn: "Travel to Omega Station",
         type: "reach_system",
         targetId: "omega_station",
         quantity: undefined,
@@ -486,12 +544,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_013": {
     id: "sandbox_013",
     title: "드라코 관측 보정",
+    titleEn: "Draco Survey Fix",
     description: "벡터-7이 드라코 성운의 이상 신호 근처 적 함선을 격파해 달라고 했다.",
+    descriptionEn: "Vector-7 asked you to destroy hostiles near an anomaly signal in Draco Nebula.",
     type: "combat",
     objectives: [
       {
         id: "obj_s013_a",
         description: "해적 순양함 격파",
+        descriptionEn: "Destroy pirate cruiser",
         type: "defeat_enemy",
         targetId: "pirate_cruiser",
         quantity: 1,
@@ -511,12 +572,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_014": {
     id: "sandbox_014",
     title: "성운 연구 시료",
+    titleEn: "Nebula Research Sample",
     description: "타드 레인이 드라코 연구 시료를 오메가 허브로 운송해 달라고 했다.",
+    descriptionEn: "Tad Rain asked you to transport research samples to Omega Hub.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s014_a",
         description: "사치품 2개 구매",
+        descriptionEn: "Buy 2 luxury goods",
         type: "buy_goods",
         targetId: "luxury",
         quantity: 2,
@@ -525,6 +589,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s014_b",
         description: "오메가 스테이션으로 이동",
+        descriptionEn: "Travel to Omega Station",
         type: "reach_system",
         targetId: "omega_station",
         quantity: undefined,
@@ -544,12 +609,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_015": {
     id: "sandbox_015",
     title: "오메가 회항단 호출",
+    titleEn: "Omega Convoy Call",
     description: "린 켄달이 오메가 주변 통행세를 요구하는 해적 순양함 처리를 의뢰했다.",
+    descriptionEn: "Lyndall Kendall asked you to handle a cruiser demanding tolls near Omega.",
     type: "combat",
     objectives: [
       {
         id: "obj_s015_a",
         description: "해적 순양함 격파",
+        descriptionEn: "Destroy pirate cruiser",
         type: "defeat_enemy",
         targetId: "pirate_cruiser",
         quantity: 1,
@@ -569,12 +637,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_016": {
     id: "sandbox_016",
     title: "교차항 물자 정리",
+    titleEn: "Cross-hub Supply",
     description: "린 켄달이 오메가 허브에서 헬리오스 코어로 식량과 기술 물자를 보내 달라고 했다.",
+    descriptionEn: "Lyndall Kendall asked you to send food and tech from Omega to Helios Core.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s016_a",
         description: "식량 팩 5개 구매",
+        descriptionEn: "Buy 5 food packs",
         type: "buy_goods",
         targetId: "food",
         quantity: 5,
@@ -583,6 +654,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s016_b",
         description: "헬리오스로 이동",
+        descriptionEn: "Travel to Helios",
         type: "reach_system",
         targetId: "helios",
         quantity: undefined,
@@ -602,12 +674,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_017": {
     id: "sandbox_017",
     title: "태양권 접근 차단",
+    titleEn: "Solar Belt Intercept",
     description: "벡터-7이 헬리오스 태양권에 접근한 무장선을 제거해 달라고 했다.",
+    descriptionEn: "Vector-7 asked you to remove an armed ship entering the Helios solar belt.",
     type: "combat",
     objectives: [
       {
         id: "obj_s017_a",
         description: "해적 순양함 격파",
+        descriptionEn: "Destroy pirate cruiser",
         type: "defeat_enemy",
         targetId: "pirate_cruiser",
         quantity: 1,
@@ -627,12 +702,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_018": {
     id: "sandbox_018",
     title: "에너지 코일 운송",
+    titleEn: "Energy Coil Transport",
     description: "아델린 루크가 헬리오스 코일을 시리우스 변경으로 보내 달라고 했다.",
+    descriptionEn: "Adeline Luke asked you to send Helios coils toward Sirius Border.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s018_a",
         description: "기술 부품 4개 구매",
+        descriptionEn: "Buy 4 tech components",
         type: "buy_goods",
         targetId: "tech",
         quantity: 4,
@@ -641,6 +719,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s018_b",
         description: "시리우스로 이동",
+        descriptionEn: "Travel to Sirius",
         type: "reach_system",
         targetId: "sirius",
         quantity: undefined,
@@ -660,12 +739,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_019": {
     id: "sandbox_019",
     title: "시리우스 변경 사냥",
+    titleEn: "Sirius Border Hunt",
     description: "젝스 타르가 변경 지대의 현상금 사냥꾼을 역추적해 달라고 했다.",
+    descriptionEn: "Jex Tar asked you to backtrace a bounty hunter in the border zone.",
     type: "combat",
     objectives: [
       {
         id: "obj_s019_a",
         description: "현상금 사냥꾼 격파",
+        descriptionEn: "Destroy bounty hunter",
         type: "defeat_enemy",
         targetId: "bounty_hunter",
         quantity: 1,
@@ -685,12 +767,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_020": {
     id: "sandbox_020",
     title: "타이탄 기록 봉인",
+    titleEn: "Titan Record Seal",
     description: "타드 레인이 타이탄 유적 기록판을 페르세우스 기념관으로 옮겨 달라고 했다.",
+    descriptionEn: "Tad Rain asked you to move Titan relic plates to Perseus Memorial.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s020_a",
         description: "사치품 3개 구매",
+        descriptionEn: "Buy 3 luxury goods",
         type: "buy_goods",
         targetId: "luxury",
         quantity: 3,
@@ -699,6 +784,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s020_b",
         description: "페르세우스로 이동",
+        descriptionEn: "Travel to Perseus",
         type: "reach_system",
         targetId: "perseus",
         quantity: undefined,
@@ -718,12 +804,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_021": {
     id: "sandbox_021",
     title: "페르세우스 추모 경계",
+    titleEn: "Perseus Memorial Guard",
     description: "세라 미온이 추모 항로를 위협하는 현상금 사냥꾼을 처리해 달라고 했다.",
+    descriptionEn: "Sera Mion asked you to stop a bounty hunter threatening the memorial route.",
     type: "combat",
     objectives: [
       {
         id: "obj_s021_a",
         description: "현상금 사냥꾼 격파",
+        descriptionEn: "Destroy bounty hunter",
         type: "defeat_enemy",
         targetId: "bounty_hunter",
         quantity: 1,
@@ -743,12 +832,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_022": {
     id: "sandbox_022",
     title: "경계선 보급 계약",
+    titleEn: "Border Supply Contract",
     description: "젝스 타르가 시리우스 보더에서 크림슨 경계 전초로 무기류를 운송해 달라고 했다.",
+    descriptionEn: "Jex Tar asked you to haul weapons from Sirius Border to Crimson Outpost.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s022_a",
         description: "무기류 3개 구매",
+        descriptionEn: "Buy 3 weapons",
         type: "buy_goods",
         targetId: "weapon",
         quantity: 3,
@@ -757,6 +849,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s022_b",
         description: "크림슨 구역으로 이동",
+        descriptionEn: "Travel to Crimson Zone",
         type: "reach_system",
         targetId: "crimson_zone",
         quantity: undefined,
@@ -776,12 +869,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_023": {
     id: "sandbox_023",
     title: "크림슨 첫 현상금",
+    titleEn: "Crimson First Bounty",
     description: "모라 섀이어가 크림슨 베이스 주변에서 배신한 현상금 사냥꾼을 제거하라고 했다.",
+    descriptionEn: "Mora Sayer ordered elimination of a traitor bounty hunter near Crimson Base.",
     type: "combat",
     objectives: [
       {
         id: "obj_s023_a",
         description: "현상금 사냥꾼 격파",
+        descriptionEn: "Destroy bounty hunter",
         type: "defeat_enemy",
         targetId: "bounty_hunter",
         quantity: 1,
@@ -801,12 +897,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_024": {
     id: "sandbox_024",
     title: "섀도우 암거래 품목",
+    titleEn: "Shadow Contraband Lot",
     description: "모라 섀이어가 금지 물품 한 묶음을 섀도우 마켓으로 옮기라고 했다.",
+    descriptionEn: "Mora Sayer asked you to move contraband to Shadow Market.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s024_a",
         description: "금지 물품 2개 구매",
+        descriptionEn: "Buy 2 contraband",
         type: "buy_goods",
         targetId: "contraband",
         quantity: 2,
@@ -815,6 +914,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s024_b",
         description: "섀도우 넥서스로 이동",
+        descriptionEn: "Travel to Shadow Nexus",
         type: "reach_system",
         targetId: "shadow_nexus",
         quantity: undefined,
@@ -834,12 +934,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_025": {
     id: "sandbox_025",
     title: "다크 리프트 표식",
+    titleEn: "Dark Lift Mark",
     description: "크레쉬 박이 다크 리프트에 숨은 현상금 사냥꾼을 잡아오라고 했다.",
+    descriptionEn: "Kresh Park asked you to capture a bounty hunter hiding at Dark Lift.",
     type: "combat",
     objectives: [
       {
         id: "obj_s025_a",
         description: "현상금 사냥꾼 격파",
+        descriptionEn: "Destroy bounty hunter",
         type: "defeat_enemy",
         targetId: "bounty_hunter",
         quantity: 1,
@@ -859,12 +962,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_026": {
     id: "sandbox_026",
     title: "혈장 보급선",
+    titleEn: "Bloodfield Med Supply",
     description: "세라 미온이 블러드 스테이션으로 의료 보급품을 우회 배송해 달라고 했다.",
+    descriptionEn: "Sera Mion asked you to reroute medical supplies to Blood Station.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s026_a",
         description: "식량 팩 6개 구매",
+        descriptionEn: "Buy 6 food packs",
         type: "buy_goods",
         targetId: "food",
         quantity: 6,
@@ -873,6 +979,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s026_b",
         description: "블러드 필드로 이동",
+        descriptionEn: "Travel to Blood Field",
         type: "reach_system",
         targetId: "blood_field",
         quantity: undefined,
@@ -892,12 +999,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_027": {
     id: "sandbox_027",
     title: "섀도우 추적자",
+    titleEn: "Shadow Stalker",
     description: "모라 섀이어가 섀도우 넥서스에 출몰한 추적자를 제거하라고 했다.",
+    descriptionEn: "Mora Sayer ordered removal of a stalker at Shadow Nexus.",
     type: "combat",
     objectives: [
       {
         id: "obj_s027_a",
         description: "현상금 사냥꾼 격파",
+        descriptionEn: "Destroy bounty hunter",
         type: "defeat_enemy",
         targetId: "bounty_hunter",
         quantity: 1,
@@ -917,12 +1027,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_028": {
     id: "sandbox_028",
     title: "어비스 관문 예열",
+    titleEn: "Abyss Gate Warmup",
     description: "린 켄달이 어비스 관문으로 향하는 예비 기술 부품을 확보해 달라고 했다.",
+    descriptionEn: "Lyndall Kendall asked you to secure spare tech parts bound for Abyss Gate.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s028_a",
         description: "기술 부품 5개 구매",
+        descriptionEn: "Buy 5 tech components",
         type: "buy_goods",
         targetId: "tech",
         quantity: 5,
@@ -931,6 +1044,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s028_b",
         description: "어비스로 이동",
+        descriptionEn: "Travel to Abyss",
         type: "reach_system",
         targetId: "abyss",
         quantity: undefined,
@@ -950,12 +1064,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_029": {
     id: "sandbox_029",
     title: "나이트폴 적색 계약",
+    titleEn: "Nightfall Red Contract",
     description: "모라 섀이어가 나이트폴 시타델 근처 현상금 사냥꾼을 처리하라고 명령했다.",
+    descriptionEn: "Mora Sayer ordered a bounty hunter cleared near Nightfall Citadel.",
     type: "combat",
     objectives: [
       {
         id: "obj_s029_a",
         description: "현상금 사냥꾼 격파",
+        descriptionEn: "Destroy bounty hunter",
         type: "defeat_enemy",
         targetId: "bounty_hunter",
         quantity: 1,
@@ -975,12 +1092,15 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
   "sandbox_030": {
     id: "sandbox_030",
     title: "코어 전초 보급",
+    titleEn: "Core Outpost Supply",
     description: "아델린 루크가 아크파이어 코어 진입 전초로 고급 기술 부품을 보내 달라고 했다.",
+    descriptionEn: "Adeline Luke asked you to send advanced tech parts to the Arcfire Core outpost.",
     type: "delivery",
     objectives: [
       {
         id: "obj_s030_a",
         description: "기술 부품 6개 구매",
+        descriptionEn: "Buy 6 tech components",
         type: "buy_goods",
         targetId: "tech",
         quantity: 6,
@@ -989,6 +1109,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
       {
         id: "obj_s030_b",
         description: "아크파이어 코어로 이동",
+        descriptionEn: "Travel to Arcfire Core",
         type: "reach_system",
         targetId: "arcfire_core",
         quantity: undefined,

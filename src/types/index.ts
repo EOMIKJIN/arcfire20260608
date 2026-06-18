@@ -41,6 +41,8 @@ export interface Player {
   expToNext: number;
   skillPoints: number;
   credits: number;
+  /** v2.0 BM — 프리미엄 통화(보석). IAP·교환 연동 전 optional, 미설정 시 0 */
+  gems?: number;
   /** 누적 획득 크레딧(무기 가격 progressive·경제 분석) */
   lifetimeCreditsEarned?: number;
   currentSystemId: string;
@@ -74,6 +76,8 @@ export interface Player {
   inventorySlots: (CargoItem | null)[];
   /** 계정 레벨 연동 전투 숙련도 */
   combatProficiency: PlayerCombatProficiency;
+  /** 조선소 광물 업그레이드 — statId(mineralUpgradeModel) → 강화 레벨. 계정 귀속 진행 데이터. */
+  mineralUpgrades?: Record<string, number>;
   createdAt: number;
 }
 
@@ -483,6 +487,7 @@ export type CapitalShipArchetype = 'fighter' | 'ranger' | 'survival' | 'special'
 export interface NpcCapitalShip {
   id: string;
   name: string;
+  nameEn?: string;
   /** 함체/밸런스 타입 키 (예: hull_cap_siege_01) */
   hullTypeId: string;
   captainId: string;
@@ -615,19 +620,27 @@ export type ZoneType = 'safe' | 'neutral' | 'pvp' | 'endgame';
 export interface StarSystem {
   id: string;
   name: string;
+  /** CSV `systemNameEn` — locale en 표시용 */
+  nameEn?: string;
   position: Vec2;
   zone: ZoneType;
   planets: Planet[];
   connections: string[];
   enemyLevel: number;
   description: string;
+  /** CSV `systemDescriptionEn` — locale en 표시용 */
+  descriptionEn?: string;
 }
 
 export interface Planet {
   id: string;
   systemId: string;
   name: string;
+  /** CSV `nameEn` — locale en 표시용 */
+  nameEn?: string;
   description: string;
+  /** CSV `descriptionEn` — locale en 표시용 */
+  descriptionEn?: string;
   /** 행성 배경 이미지 에셋 키(미할당 시 null — `planetBackdropAssets`에 매핑 필요) */
   backdropImageAssetKey?: string | null;
   /** 메인 스테이지 Skia 성운 셰이더 레이어 (CSV `mainStageSkiaNebulaLayer`, 기본 true) */
@@ -697,7 +710,9 @@ export type MissionType = 'travel' | 'combat' | 'trade' | 'delivery' | 'explore'
 export interface Mission {
   id: string;
   title: string;
+  titleEn?: string;
   description: string;
+  descriptionEn?: string;
   type: MissionType;
   objectives: MissionObjective[];
   rewards: MissionReward;
@@ -713,6 +728,7 @@ export interface Mission {
 export interface MissionObjective {
   id: string;
   description: string;
+  descriptionEn?: string;
   type: 'reach_system' | 'defeat_enemy' | 'deliver_cargo' | 'buy_goods';
   targetId: string;
   quantity?: number;
@@ -789,9 +805,13 @@ export type ItemMasterKind =
 export interface ItemDef {
   id: string;
   name: string;
+  /** locale !== ko 시 표시 — tables/content `name_en` */
+  nameEn?: string;
   description: string;
+  descriptionEn?: string;
   /** 무역소 구매 팝업 — tables/content `특징설명` */
   featureDescription: string;
+  featureDescriptionEn?: string;
   basePrice: number;
   priceVariance: number;
   volume: number;
@@ -841,6 +861,10 @@ export interface StoryScenePageDef {
   pageIndex: number;
   label: string;
   text: string;
+  /** 영어 번역(없으면 한국어 label 폴백) */
+  labelEn?: string | null;
+  /** 영어 번역(없으면 한국어 text 폴백) */
+  textEn?: string | null;
   imageAssetKey: string | null;
   speakerNpcCaptainId: string | null;
   viewMode: 'cinematic' | 'popup_overlay' | 'ingame_dialog';

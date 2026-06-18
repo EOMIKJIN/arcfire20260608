@@ -118,3 +118,13 @@
 [2026-06-18 03:24:40] INFO GL_ELEVATED mounting_or_insufficient_samples gl=129.7 pss=467.3 views=288 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
 [2026-06-18 03:54:41] INFO GL_ELEVATED mounting_or_insufficient_samples gl=131.3 pss=443.4 views=288 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
 [2026-06-18 04:24:44] INFO GL_ELEVATED mounting_or_insufficient_samples gl=129.3 pss=440 views=289 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-18 15:25:08] INFO GL_ELEVATED mounting_or_insufficient_samples gl=96.7 pss=452.6 views=286 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-18 18:55:16] INCIDENT CRASH logged -> incidents.log
+[2026-06-18 19:25:17] INCIDENT CRASH logged -> incidents.log
+[2026-06-18 19:55:19] INCIDENT CRASH logged -> incidents.log
+[2026-06-18 20:55:21] INCIDENT CRASH logged -> incidents.log
+[2026-06-18 21:25:22] INCIDENT CRASH logged -> incidents.log
+[2026-06-18 21:55:22] INCIDENT CRASH logged -> incidents.log
+[2026-06-18 22:55:24] INCIDENT CRASH logged -> incidents.log
+[2026-06-18 23:25:25] INCIDENT CRASH logged -> incidents.log
+[2026-06-18 23:55:29] INCIDENT CRASH logged -> incidents.log

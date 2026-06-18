@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { BmShopKind } from '../../bm/bmShopCatalog';
 import type { LevelUpSummary, MissionReward } from '../../types';
 import type { TradeProfitTip } from '../../game/tradeProfitTips';
 import type { ImageSourcePropType } from 'react-native';
@@ -25,7 +26,9 @@ export type ArcOverlayKind =
   | 'tradeQuantity'
   | 'planetEconomyInfo'
   | 'planetDevelopment'
-  | 'waveResult';
+  | 'waveResult'
+  | 'settings'
+  | 'bmShop';
 
 type ArcOverlayBase = {
   id: string;
@@ -61,7 +64,7 @@ export type ArcOverlayNarrativeEntry = ArcOverlayBase & {
   label: string;
   text: string;
   typewriterKey: string;
-  buttonText: '[ 다음 ]' | '[ 확인 ]';
+  buttonText: string;
   onPressNext: () => void;
   nextDisabled?: boolean;
   onTextComplete?: () => void;
@@ -124,6 +127,19 @@ export type ArcOverlayWaveResultEntry = ArcOverlayBase & {
   onClose: () => void;
 };
 
+/** 통합 설정 — 배경음악·효과음·언어·계정 초기화 */
+export type ArcOverlaySettingsEntry = ArcOverlayBase & {
+  kind: 'settings';
+  /** 계정(캐릭터) 초기화 트리거 — 화면 측 확인 플로우 호출 */
+  onResetAccount: () => void;
+};
+
+/** BM 더미 상점 — 크레딧(코인)·보석 IAP 목업 (결제 연동 추후) */
+export type ArcOverlayBmShopEntry = ArcOverlayBase & {
+  kind: 'bmShop';
+  shopKind: BmShopKind;
+};
+
 export type ArcOverlayEntry =
   | ArcOverlayAlertEntry
   | ArcOverlayLevelUpEntry
@@ -133,7 +149,9 @@ export type ArcOverlayEntry =
   | ArcOverlayTradeQuantityEntry
   | ArcOverlayPlanetEconomyInfoEntry
   | ArcOverlayPlanetDevelopmentEntry
-  | ArcOverlayWaveResultEntry;
+  | ArcOverlayWaveResultEntry
+  | ArcOverlaySettingsEntry
+  | ArcOverlayBmShopEntry;
 
 export type ArcOverlayInput =
   | (Omit<ArcOverlayAlertEntry, 'id'> & { id?: string })
@@ -144,7 +162,9 @@ export type ArcOverlayInput =
   | (Omit<ArcOverlayTradeQuantityEntry, 'id'> & { id?: string })
   | (Omit<ArcOverlayPlanetEconomyInfoEntry, 'id'> & { id?: string })
   | (Omit<ArcOverlayPlanetDevelopmentEntry, 'id'> & { id?: string })
-  | (Omit<ArcOverlayWaveResultEntry, 'id'> & { id?: string });
+  | (Omit<ArcOverlayWaveResultEntry, 'id'> & { id?: string })
+  | (Omit<ArcOverlaySettingsEntry, 'id'> & { id?: string })
+  | (Omit<ArcOverlayBmShopEntry, 'id'> & { id?: string });
 
 type ArcOverlayState = {
   stack: ArcOverlayEntry[];
@@ -246,6 +266,19 @@ export function presentPlanetEconomyInfoOverlay(planetId: string, planetName: st
   }
 }
 
+const SETTINGS_OVERLAY_ID = 'app-settings';
+
+/** 통합 설정 오버레이 표시(중복 방지) */
+export function presentSettingsOverlay(payload: Omit<ArcOverlaySettingsEntry, 'id' | 'kind'>): void {
+  useArcOverlayStore.getState().dismissWhere((e) => e.id === SETTINGS_OVERLAY_ID);
+  useArcOverlayStore.getState().present({
+    id: SETTINGS_OVERLAY_ID,
+    kind: 'settings',
+    dismissOnBackdrop: true,
+    ...payload,
+  });
+}
+
 const WAVE_RESULT_OVERLAY_ID = 'wave-result';
 
 /** 웨이브 디펜스 최종 결과창 표시 — 중복 present 방지(동일 id 교체) */
@@ -258,6 +291,19 @@ export function presentWaveResultOverlay(
     kind: 'waveResult',
     dismissOnBackdrop: false,
     ...payload,
+  });
+}
+
+const BM_SHOP_OVERLAY_ID = 'bm-shop';
+
+/** BM 더미 상점 — premium(IAP) · exchange(보석→크레딧) */
+export function presentBmShopOverlay(shopKind: BmShopKind): void {
+  useArcOverlayStore.getState().dismissWhere((e) => e.id === BM_SHOP_OVERLAY_ID);
+  useArcOverlayStore.getState().present({
+    id: BM_SHOP_OVERLAY_ID,
+    kind: 'bmShop',
+    shopKind,
+    dismissOnBackdrop: true,
   });
 }
 

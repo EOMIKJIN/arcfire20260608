@@ -8,6 +8,12 @@ import {
   ScrollView,
 } from 'react-native';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
+import { useT, t as tStatic } from '../../src/i18n';
+import {
+  resolveItemDescription,
+  resolveItemName,
+} from '../../src/i18n/itemText';
+import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { presentArcOverlayTradeQuantity } from '../../src/ui/overlay/presentArcTradeQuantity';
 import { listTradeResellProfitTips } from '../../src/game/tradeProfitTips';
@@ -40,6 +46,7 @@ import {
 import { MarketListing, CargoItem, ItemDef, Player } from '../../src/types';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
+import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { ArcStageBackButton } from '../../src/ui/overlay/ArcStageBackButton';
@@ -58,7 +65,6 @@ import { isSurvivalPodCapitalShipItemId, isSurvivalPodNpcShipId } from '../../sr
 import { runTradeRouteMarketPass } from '../../src/arcCore/economy/runTradeRouteMarketPass';
 import { resolvePlayerLifetimeCredits } from '../../src/game/resolvePlayerLifetimeCredits';
 import {
-  TRADE_BUY_SUB_TAB_LABELS,
   TRADE_BUY_SUB_TAB_ORDER,
   inferTradeBuySubTabFromGoodId,
   type TradeBuySubTabId,
@@ -66,9 +72,12 @@ import {
 import { TradeListingIcon } from '../../src/ui/trade/TradeListingIcon';
 import { resolveTradePortPurchaseDescription } from '../../src/game/tradePortPurchaseDescription';
 
-const DEMAND_LABELS: Record<string, string> = {
-  low: '낮음 ↓', normal: '보통', high: '높음 ↑',
+const DEMAND_LABEL_KEYS: Record<string, string> = {
+  low: 'trade.demand.low', normal: 'trade.demand.normal', high: 'trade.demand.high',
 };
+function demandLabel(demand: string): string {
+  return tStatic(DEMAND_LABEL_KEYS[demand] ?? 'trade.demand.normal');
+}
 
 const DEMAND_COLORS: Record<string, string> = {
   low: COLORS.ink_light,
@@ -78,9 +87,9 @@ const DEMAND_COLORS: Record<string, string> = {
 /** 메인스테이지 기준 하단 공백과 동기 */
 const TRADE_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
 
-const ARC_TRADE_DIALOG_BUTTONS = [
-  { text: '취소', style: 'cancel' as const },
-  { text: '확인' },
+const arcTradeDialogButtons = () => [
+  { text: tStatic('trade.btn.cancel'), style: 'cancel' as const },
+  { text: tStatic('trade.btn.confirm') },
 ];
 
 function isSellableByTable(itemDef: ItemDef | null | undefined): boolean {
@@ -128,13 +137,13 @@ function resolveTradeBuyBlock(input: {
   );
 
   if ((isCapitalShipItemType && alreadyOwnsCapitalShip) || (!isCapitalShipItemType && blockedByHistory)) {
-    return { title: '재구매 불가', message: '이 아이템은 계정당 1회만 구매할 수 있습니다.' };
+    return { title: tStatic('trade.block.norepurchaseTitle'), message: tStatic('trade.block.norepurchaseMsg') };
   }
   if (!filterTradePortCatalogForPlayer([listing.goodId], player.level).includes(listing.goodId)) {
-    return { title: '구매 불가', message: '파일럿 레벨이 이 상품의 요구 조건에 미달합니다.' };
+    return { title: tStatic('trade.block.cannotBuyTitle'), message: tStatic('trade.block.level') };
   }
   if (listing.stock <= 0 || buyQty > listing.stock) {
-    return { title: '구매 불가', message: '재고가 없어서 구매할 수 없습니다.' };
+    return { title: tStatic('trade.block.cannotBuyTitle'), message: tStatic('trade.block.stock') };
   }
 
   const isNoInventoryPurchase =
@@ -145,7 +154,7 @@ function resolveTradeBuyBlock(input: {
     const invSlotsNow = normalizeInventorySlots(player.inventorySlots);
     const maxInv = maxAddableToInventory(invSlotsNow, listing.goodId, listing.stock);
     if (maxInv < buyQty) {
-      return { title: '구매 불가', message: '인벤토리 공간이 부족합니다.' };
+      return { title: tStatic('trade.block.cannotBuyTitle'), message: tStatic('trade.block.invSpace') };
     }
   }
 
@@ -153,7 +162,7 @@ function resolveTradeBuyBlock(input: {
   const feePreview = computeTradeFeeForGross(grossPreview);
   const totalChargedPreview = grossPreview + feePreview.totalFee;
   if (player.credits < totalChargedPreview) {
-    return { title: '구매 불가', message: '잔고가 부족해 구매할 수 없습니다.' };
+    return { title: tStatic('trade.block.cannotBuyTitle'), message: tStatic('trade.block.credits') };
   }
 
   const mineralSink = resolveTradeMineralSinkTotalQty(itemDef, buyQty);
@@ -164,8 +173,8 @@ function resolveTradeBuyBlock(input: {
     );
     if (ownedMineral < mineralSink.totalQty) {
       return {
-        title: '구매 불가',
-        message: `광물 ${mineralSink.totalQty}개가 필요합니다. (보유 ${ownedMineral}개)`,
+        title: tStatic('trade.block.cannotBuyTitle'),
+        message: tStatic('trade.block.mineral', { need: mineralSink.totalQty, owned: ownedMineral }),
       };
     }
   }
@@ -248,6 +257,9 @@ function resolveInventorySellPrice(
 }
 
 export default function TradeScreen() {
+  const t = useT();
+  const localeRenderKey = useLocaleRenderKey();
+  const locale = useAppSettingsStore((s) => s.locale);
   const player = usePlayerStore(s => s.player);
   const spendCredits = usePlayerStore(s => s.spendCredits);
   const addCredits = usePlayerStore(s => s.addCredits);
@@ -365,18 +377,18 @@ export default function TradeScreen() {
 
   const tradeMainTabs = useMemo(
     () => [
-      { id: 'buy', label: '구매' },
+      { id: 'buy', label: t('trade.tab.buy') },
       {
         id: 'sell',
-        label: inventorySellAgg.length > 0 ? `판매 (${inventorySellAgg.length})` : '판매',
+        label: inventorySellAgg.length > 0 ? t('trade.tab.sellCount', { n: inventorySellAgg.length }) : t('trade.tab.sell'),
       },
     ],
-    [inventorySellAgg.length],
+    [inventorySellAgg.length, t],
   );
 
   const tradeBuyCategoryTabs = useMemo(
-    () => TRADE_BUY_SUB_TAB_ORDER.map((id) => ({ id, label: TRADE_BUY_SUB_TAB_LABELS[id] })),
-    [],
+    () => TRADE_BUY_SUB_TAB_ORDER.map((id) => ({ id, label: t(`trade.subTab.${id}`) })),
+    [t],
   );
 
   const tradePlanetIdRef = useRef<string | undefined>(undefined);
@@ -384,7 +396,7 @@ export default function TradeScreen() {
   useEffect(() => {
     if (!planet?.id) return;
     runTradeRouteMarketPass(false);
-    setMarketTick((t) => t + 1);
+    setMarketTick((tick) => tick + 1);
   }, [planet?.id]);
 
   useEffect(() => {
@@ -424,13 +436,13 @@ export default function TradeScreen() {
 
     presentArcOverlayTradeQuantity({
       mode: 'buy',
-      title: `${good.name} 구매`,
+      title: t('trade.buy.title', { name: resolveItemName(itemDef ?? good, locale) }),
       unitPrice: price,
       maxQty: resolveTradeBuyPickerMaxQty(listing),
       playerCredits,
-      itemDescription: resolveTradePortPurchaseDescription(itemDef) ?? undefined,
+      itemDescription: resolveTradePortPurchaseDescription(itemDef, locale) ?? undefined,
       stock: listing.stock,
-      demandLabel: DEMAND_LABELS[listing.demand],
+      demandLabel: demandLabel(listing.demand),
       tips: listTradeResellProfitTips(
         planet.id,
         listing.goodId,
@@ -443,11 +455,11 @@ export default function TradeScreen() {
         if (!latestPlayer || !planet) return;
         const freshUnitPrice = resolveFreshTradeBuyUnitPrice(listing, planet.id, latestPlayer);
         if (freshUnitPrice !== price) {
-          setMarketTick((t) => t + 1);
+          setMarketTick((tick) => tick + 1);
           showArcAlert(
-            '시세 변동',
-            '시세가 변동되었습니다. 목록을 확인한 뒤 다시 구매해 주세요.',
-            ARC_TRADE_DIALOG_BUTTONS,
+            t('trade.buy.priceChangedTitle'),
+            t('trade.buy.priceChangedMsg'),
+            arcTradeDialogButtons(),
           );
           return;
         }
@@ -460,17 +472,17 @@ export default function TradeScreen() {
           hasEverPurchasedItem,
         });
         if (block) {
-          showArcAlert(block.title, block.message, ARC_TRADE_DIALOG_BUTTONS);
+          showArcAlert(block.title, block.message, arcTradeDialogButtons());
           return;
         }
         const capitalShipNpcId = itemDef?.type === 'capital_ship'
           && typeof itemDef?.attrs?.npcCapitalShipId === 'string'
           ? String(itemDef.attrs.npcCapitalShipId)
           : null;
-        showArcAlert('구매를 진행하시겠습니까?', undefined, [
-          { text: '취소', style: 'cancel' },
+        showArcAlert(t('trade.buy.confirmAsk'), undefined, [
+          { text: t('trade.btn.cancel'), style: 'cancel' },
           {
-            text: '확인',
+            text: t('trade.btn.confirm'),
             onPress: () => executeBuyQuantity(listing, buyQty, itemDef, freshUnitPrice, capitalShipNpcId),
           },
         ]);
@@ -492,7 +504,7 @@ export default function TradeScreen() {
     const totalCharged = gross + feeBreakdown.totalFee;
     const ok = spendCredits(totalCharged);
     if (!ok) {
-      showArcAlert('잔고가 부족해 구매가 불가합니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
+      showArcAlert(t('trade.buy.notEnough'), undefined, arcTradeDialogButtons());
       return;
     }
     applyPlanetTradeTransactionFee(player.currentPlanetId ?? planet.id, gross);
@@ -513,7 +525,7 @@ export default function TradeScreen() {
           planetId: player.currentPlanetId,
           grossCredits: gross,
         });
-        showArcAlert('구매 실패', '광물이 부족합니다.', ARC_TRADE_DIALOG_BUTTONS);
+        showArcAlert(t('trade.buy.failTitle'), t('trade.buy.mineralShort'), arcTradeDialogButtons());
         return;
       }
       setPlayer({ ...player, inventorySlots: slotsAfter });
@@ -544,7 +556,7 @@ export default function TradeScreen() {
           planetId: player.currentPlanetId,
           grossCredits: gross,
         });
-        showArcAlert('소유권 획득 실패', '이미 다른 클랜이 점유한 행성입니다.');
+        showArcAlert(t('trade.own.claimFailTitle'), t('trade.own.claimFailMsg'));
         return;
       }
       if (player.uid) {
@@ -561,7 +573,7 @@ export default function TradeScreen() {
         await persistItemLedger();
       }
       await persist();
-      showArcAlert('소유권 획득', `${planet.name} 소유권을 구매해 현재 클랜이 행성을 점유했습니다.`);
+      showArcAlert(t('trade.own.claimDoneTitle'), t('trade.own.claimDoneMsg', { planet: planet.name }));
       return;
     }
     if (isClanDisbandItem) {
@@ -574,7 +586,7 @@ export default function TradeScreen() {
           planetId: player.currentPlanetId,
           grossCredits: gross,
         });
-        showArcAlert('클랜 해산 실패', '현재 해산 가능한 클랜이 없습니다.');
+        showArcAlert(t('trade.clan.disbandFailTitle'), t('trade.clan.disbandFailMsg'));
         return;
       }
       if (player.uid) {
@@ -591,7 +603,7 @@ export default function TradeScreen() {
         await persistItemLedger();
       }
       await persist();
-      showArcAlert('클랜 해산 완료', `클랜이 해산되었고 점유 행성 ${dissolve.releasedPlanetCount ?? 0}개가 중립 상태로 복귀했습니다.`);
+      showArcAlert(t('trade.clan.disbandDoneTitle'), t('trade.clan.disbandDoneMsg', { count: dissolve.releasedPlanetCount ?? 0 }));
       return;
     }
     if (isCapitalShipItem) {
@@ -603,7 +615,7 @@ export default function TradeScreen() {
           planetId: player.currentPlanetId,
           grossCredits: gross,
         });
-        showArcAlert('인도 실패', '격납고 보유 한도(30대)에 도달했습니다.');
+        showArcAlert(t('trade.ship.deliverFailTitle'), t('trade.ship.hangarLimit'));
         return;
       }
       const npcCapitalShipId = typeof itemDef?.attrs?.npcCapitalShipId === 'string'
@@ -617,7 +629,7 @@ export default function TradeScreen() {
           planetId: player.currentPlanetId,
           grossCredits: gross,
         });
-        showArcAlert('인도 실패', '전함 데이터가 올바르지 않습니다.');
+        showArcAlert(t('trade.ship.deliverFailTitle'), t('trade.ship.badData'));
         return;
       }
       const hangarOk = addHangarShipFromNpcPurchase(npcCapitalShipId);
@@ -629,7 +641,7 @@ export default function TradeScreen() {
           planetId: player.currentPlanetId,
           grossCredits: gross,
         });
-        showArcAlert('인도 실패', '등록되지 않은 전함입니다.');
+        showArcAlert(t('trade.ship.deliverFailTitle'), t('trade.ship.unregistered'));
         return;
       }
       purchaseNote = `capital_ship_hangar:${npcCapitalShipId}`;
@@ -651,7 +663,7 @@ export default function TradeScreen() {
         grossCredits: gross,
         capitalShipNpcId: capitalShipIdForRollback,
       });
-      showArcAlert('구매 실패', '인벤토리 공간이 부족합니다.');
+      showArcAlert(t('trade.buy.failTitle'), t('trade.buy.invShort'));
       return;
     }
     if (inventoryAdded) {
@@ -688,7 +700,7 @@ export default function TradeScreen() {
     }
     if (itemDef?.type === 'trade_route' && player.currentPlanetId && inventoryAdded) {
       adjustPlanetTradeMarketStock(player.currentPlanetId, listing.goodId, -invTry.added);
-      setMarketTick((t) => t + 1);
+      setMarketTick((tick) => tick + 1);
     }
     const fabricPlanetId = player.currentPlanetId ?? planet.id;
     const fabricQty = inventoryAdded ? invTry.added : qty;
@@ -735,20 +747,20 @@ export default function TradeScreen() {
       ? Math.min(item.quantity, shipHangarOwnedCount)
       : item.quantity;
     if (sellQty <= 0) {
-      showArcAlert('판매 실패', '격납고 보유 전함이 없어 판매할 수 없습니다.');
+      showArcAlert(t('trade.sell.failTitle'), t('trade.sell.noHangarShip'));
       return;
     }
 
     presentArcOverlayTradeQuantity({
       mode: 'sell',
-      title: `${good.name} 판매 (인벤토리)`,
+      title: t('trade.sell.title', { name: resolveItemName(itemDef ?? good, locale) }),
       unitPrice: price,
       maxQty: sellQty,
       ownedQty: item.quantity,
       onConfirm: (qty) => {
         const qtyToSell = Math.max(1, Math.floor(qty));
         if (!isSellableByTable(itemDef)) {
-          showArcAlert('이 아이템은 재판매할 수 없습니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
+          showArcAlert(t('trade.sell.notResellable'), undefined, arcTradeDialogButtons());
           return;
         }
         if (itemDef?.type === 'capital_ship') {
@@ -756,15 +768,15 @@ export default function TradeScreen() {
             ? String(itemDef.attrs.npcCapitalShipId)
             : null;
           if (isSurvivalPodCapitalShipItemId(item.goodId) || isSurvivalPodNpcShipId(targetNpcId)) {
-            showArcAlert('생존포드는 판매할 수 없습니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
+            showArcAlert(t('trade.sell.podNotSellable'), undefined, arcTradeDialogButtons());
             return;
           }
           const currentShipNpcId = player.ship.portraitNpcCapitalShipId ?? null;
           if (currentShipNpcId && targetNpcId && currentShipNpcId === targetNpcId) {
             showArcAlert(
-              '현재 탑승 중인 전함은 판매할 수 없습니다. 다른 전함으로 교체 후 판매하세요.',
+              t('trade.sell.currentShip'),
               undefined,
-              ARC_TRADE_DIALOG_BUTTONS,
+              arcTradeDialogButtons(),
             );
             return;
           }
@@ -776,17 +788,17 @@ export default function TradeScreen() {
               .filter((h) => h.npcCapitalShipId === npcCapitalShipId).length
             : 0;
           if (ownedCount < qtyToSell) {
-            showArcAlert('격납고 보유 전함이 없어 판매할 수 없습니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
+            showArcAlert(t('trade.sell.noHangarShip'), undefined, arcTradeDialogButtons());
             return;
           }
         } else if (qtyToSell > item.quantity) {
-          showArcAlert('인벤토리 수량을 확인할 수 없습니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
+          showArcAlert(t('trade.sell.invQtyUnknown'), undefined, arcTradeDialogButtons());
           return;
         }
-        showArcAlert('판매를 진행하시겠습니까?', undefined, [
-          { text: '취소', style: 'cancel' },
+        showArcAlert(t('trade.sell.confirmAsk'), undefined, [
+          { text: t('trade.btn.cancel'), style: 'cancel' },
           {
-            text: '확인',
+            text: t('trade.btn.confirm'),
             onPress: () => executeSellQuantity(item, qtyToSell, itemDef, price),
           },
         ]);
@@ -809,12 +821,12 @@ export default function TradeScreen() {
         ? String(itemDef.attrs.npcCapitalShipId)
         : '';
       if (!npcCapitalShipId) {
-        showArcAlert('전함 아이템 데이터가 올바르지 않습니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
+        showArcAlert(t('trade.sell.shipBadData'), undefined, arcTradeDialogButtons());
         return;
       }
       const ownedCount = workingPlayer.shipHangar.filter((h) => h.npcCapitalShipId === npcCapitalShipId).length;
       if (ownedCount < sellQty) {
-        showArcAlert('격납고 보유 전함이 없어 판매할 수 없습니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
+        showArcAlert(t('trade.sell.noHangarShip'), undefined, arcTradeDialogButtons());
         return;
       }
       for (let i = 0; i < sellQty; i += 1) {
@@ -832,7 +844,7 @@ export default function TradeScreen() {
       sellQty,
     );
     if (!next) {
-      showArcAlert('인벤토리 수량을 확인할 수 없습니다.', undefined, ARC_TRADE_DIALOG_BUTTONS);
+      showArcAlert(t('trade.sell.invQtyUnknown'), undefined, arcTradeDialogButtons());
       return;
     }
     const latestPlayerBeforeSellSync = usePlayerStore.getState().player ?? workingPlayer;
@@ -852,7 +864,7 @@ export default function TradeScreen() {
     }
     if (itemDef?.type === 'trade_route' && player.currentPlanetId) {
       adjustPlanetTradeMarketStock(player.currentPlanetId, item.goodId, sellQty, 'player');
-      setMarketTick((t) => t + 1);
+      setMarketTick((tick) => tick + 1);
     }
     recordPlanetEconomyPlayerTrade(
       player.currentPlanetId ?? planet.id,
@@ -864,19 +876,19 @@ export default function TradeScreen() {
   };
 
   return (
-    <StageShell routeName="trade" background="none" edges={['bottom']}>
+    <StageShell key={localeRenderKey} routeName="trade" background="none" edges={['bottom']}>
       <View style={{ flex: 1 }}>
       <View style={styles.header}>
         <ArcStageBackButton onPress={safeBack} style={styles.backBtn} />
         <View style={styles.headerTitleBlock}>
-          <Text style={styles.headerTitle}>무역소</Text>
+          <Text style={styles.headerTitle}>{t('trade.title')}</Text>
           {(tradePortMiningTotal > 0 || inventoryMiningQty > 0) && (
             <Text style={styles.headerMiningLine} numberOfLines={1}>
-              채굴 광물 무역소 누적 입고 {tradePortMiningTotal.toLocaleString()} · 인벤 보유 {inventoryMiningQty.toLocaleString()}
+              {t('trade.header.mining', { delivered: tradePortMiningTotal.toLocaleString(), inv: inventoryMiningQty.toLocaleString() })}
             </Text>
           )}
         </View>
-        <Text style={styles.cargoText}>인벤 슬롯 {inventorySellAgg.length}</Text>
+        <Text style={styles.cargoText}>{t('trade.header.invSlots', { n: inventorySellAgg.length })}</Text>
       </View>
 
       <PlanetFacilityTabBar
@@ -896,15 +908,16 @@ export default function TradeScreen() {
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
         {tab === 'buy' ? (
           market.length === 0 ? (
-            <Text style={styles.empty}>거래 가능한 상품이 없습니다.</Text>
+            <Text style={styles.empty}>{t('trade.empty.noGoods')}</Text>
           ) : (
             <>
               {filteredBuyMarket.length === 0 ? (
-                <Text style={styles.empty}>이 하위 구분에 거래 가능한 상품이 없습니다.</Text>
+                <Text style={styles.empty}>{t('trade.empty.noSubGoods')}</Text>
               ) : null}
               {filteredBuyMarket.map(listing => {
               const good = resolveTradeGoodById(listing.goodId);
               if (!good) return null;
+              const rowItemDef = resolveItemDefById(listing.goodId);
               const price = getBuyPrice(listing);
 
               return (
@@ -920,16 +933,16 @@ export default function TradeScreen() {
                       buySubTab={buySubTab}
                     />
                     <View style={styles.listingTextBlock}>
-                      <Text style={styles.goodName}>{good.name}</Text>
-                      <Text style={styles.goodDesc} numberOfLines={1}>{good.description}</Text>
+                      <Text style={styles.goodName}>{resolveItemName(rowItemDef ?? good, locale)}</Text>
+                      <Text style={styles.goodDesc} numberOfLines={1}>{resolveItemDescription(rowItemDef ?? good, locale)}</Text>
                     </View>
                   </View>
                   <View style={styles.listingRight}>
                     <Text style={styles.goodPrice}>{formatCredits(price)}</Text>
                     <Text style={[styles.goodDemand, { color: DEMAND_COLORS[listing.demand] }]}>
-                      수요 {DEMAND_LABELS[listing.demand]}
+                      {t('trade.row.demand', { label: demandLabel(listing.demand) })}
                     </Text>
-                    <Text style={styles.goodStock}>재고 {listing.stock}</Text>
+                    <Text style={styles.goodStock}>{t('trade.row.stock', { n: listing.stock })}</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -937,10 +950,10 @@ export default function TradeScreen() {
             </>
           )
         ) : inventorySellAgg.length === 0 ? (
-          <Text style={styles.empty}>인벤토리가 비어 있습니다.</Text>
+          <Text style={styles.empty}>{t('trade.empty.inventory')}</Text>
         ) : (
           <>
-            <Text style={styles.sellSectionTitle}>— 인벤토리 —</Text>
+            <Text style={styles.sellSectionTitle}>{t('trade.sell.section')}</Text>
             {sortedInventorySellAgg.map(item => {
               const rowItemDef = resolveItemDefById(item.goodId);
               const good = resolveTradeGoodById(item.goodId) ?? (
@@ -980,19 +993,19 @@ export default function TradeScreen() {
                       buySubTab={inferTradeBuySubTabFromGoodId(item.goodId)}
                     />
                     <View style={styles.listingTextBlock}>
-                      <Text style={styles.goodName}>{good.name}</Text>
+                      <Text style={styles.goodName}>{resolveItemName(rowItemDef ?? good, locale)}</Text>
                       <Text style={styles.goodDesc}>
-                        평균 구매가: {formatCredits(item.buyPrice)} · 보유: {item.quantity}개
+                        {t('trade.row.sellMeta', { price: formatCredits(item.buyPrice), qty: item.quantity })}
                       </Text>
                     </View>
                   </View>
                   <View style={styles.listingRight}>
-                    <Text style={styles.goodPrice}>{sellable ? formatCredits(sellPrice) : '판매 불가'}</Text>
-                    {!sellable ? <Text style={styles.unsellableBadge}>[판매불가]</Text> : null}
+                    <Text style={styles.goodPrice}>{sellable ? formatCredits(sellPrice) : t('trade.row.unsellable')}</Text>
+                    {!sellable ? <Text style={styles.unsellableBadge}>{t('trade.row.unsellableBadge')}</Text> : null}
                     <Text style={[styles.goodDemand, { color: profit >= 0 ? COLORS.exp : COLORS.danger }]}>
                       {profit >= 0 ? '▲' : '▼'} {formatCredits(Math.abs(profit))}
                     </Text>
-                    <Text style={styles.goodStock}>전량 판매</Text>
+                    <Text style={styles.goodStock}>{t('trade.row.sellAll')}</Text>
                   </View>
                 </TouchableOpacity>
               );

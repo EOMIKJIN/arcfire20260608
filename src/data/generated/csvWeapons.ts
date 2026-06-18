@@ -2,6 +2,7 @@
 export type CapitalWeaponCsvRow = {
   id: string;
   name: string;
+  nameEn?: string;
   /** 전투 엔진 슬롯(laser/missile) */
   kind: 'laser' | 'missile';
   /** CSV 종류 원본(laser/missile/rocket/drone/carrier 등) */
@@ -30,6 +31,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_light_01": {
     id: "w_laser_light_01",
     name: "경량 레이저",
+    nameEn: "Light Laser",
     kind: "laser",
     familyKind: "laser",
     damage: 4,
@@ -54,6 +56,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_heavy_01": {
     id: "w_laser_heavy_01",
     name: "중량 레이저",
+    nameEn: "Heavy Laser",
     kind: "laser",
     familyKind: "laser",
     damage: 6,
@@ -78,6 +81,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_standard_01": {
     id: "w_missile_standard_01",
     name: "표준 미사일",
+    nameEn: "Standard Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 12,
@@ -102,6 +106,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_barrage_01": {
     id: "w_missile_barrage_01",
     name: "연사 미사일",
+    nameEn: "Barrage Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 2,
@@ -126,6 +131,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_guided_single_01": {
     id: "w_missile_guided_single_01",
     name: "유도 미사일 단발",
+    nameEn: "Guided Missile Single",
     kind: "missile",
     familyKind: "missile",
     damage: 13,
@@ -150,6 +156,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_guided_dual_01": {
     id: "w_missile_guided_dual_01",
     name: "유도 미사일 2연발",
+    nameEn: "Guided Missile Dual",
     kind: "missile",
     familyKind: "missile",
     damage: 5,
@@ -174,6 +181,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_guided_triple_01": {
     id: "w_missile_guided_triple_01",
     name: "유도 미사일 3연발",
+    nameEn: "Guided Missile Triple",
     kind: "missile",
     familyKind: "missile",
     damage: 3,
@@ -198,6 +206,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_nova_01": {
     id: "w_missile_nova_01",
     name: "노바미사일",
+    nameEn: "Nova Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 5,
@@ -222,6 +231,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_001": {
     id: "w_laser_arc_001",
     name: "펄스 레이저",
+    nameEn: "Pulse Laser",
     kind: "laser",
     familyKind: "laser",
     damage: 3,
@@ -246,6 +256,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_002": {
     id: "w_missile_arc_002",
     name: "추적 연발 미사일",
+    nameEn: "Tracking Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 2,
@@ -270,6 +281,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_003": {
     id: "w_missile_arc_003",
     name: "요격 드론 군집",
+    nameEn: "Interceptor Drone Swarm",
     kind: "missile",
     familyKind: "drone",
     damage: 12,
@@ -294,6 +306,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_intercept_missile_01": {
     id: "w_intercept_missile_01",
     name: "요격미사일",
+    nameEn: "Interceptor Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 8,
@@ -318,6 +331,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_004": {
     id: "w_laser_arc_004",
     name: "MK-II 속사 레이저",
+    nameEn: "MK-II Rapid-Fire Laser",
     kind: "laser",
     familyKind: "laser",
     damage: 4,
@@ -342,6 +356,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_005": {
     id: "w_missile_arc_005",
     name: "고정밀 장거리 로켓탄",
+    nameEn: "High-Precision Long-Range Round",
     kind: "missile",
     familyKind: "rocket",
     damage: 3,
@@ -366,6 +381,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_006": {
     id: "w_missile_arc_006",
     name: "범용 폭격 함재기",
+    nameEn: "General-Purpose Bomber",
     kind: "missile",
     familyKind: "carrier",
     damage: 12,
@@ -390,6 +406,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_007": {
     id: "w_laser_arc_007",
     name: "전술 로켓탄 런처",
+    nameEn: "Tactical Rocket Launcher",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -414,6 +431,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_008": {
     id: "w_missile_arc_008",
     name: "+1 유도 미사일",
+    nameEn: "+1 Guided Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 8,
@@ -438,6 +456,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_009": {
     id: "w_missile_arc_009",
     name: "소형 파편 탄두",
+    nameEn: "Small Shrapnel Warhead",
     kind: "missile",
     familyKind: "missile",
     damage: 12,
@@ -462,6 +481,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_010": {
     id: "w_laser_arc_010",
     name: "고스트 위상 레이저",
+    nameEn: "Ghost Phase Laser",
     kind: "laser",
     familyKind: "laser",
     damage: 4,
@@ -486,6 +506,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_011": {
     id: "w_laser_arc_011",
     name: "고출력 커팅 빔",
+    nameEn: "High-Power Cutting Beam",
     kind: "laser",
     familyKind: "laser",
     damage: 6,
@@ -510,6 +531,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_012": {
     id: "w_laser_arc_012",
     name: "중형 돌격 로켓탄",
+    nameEn: "Medium Assault Rocket",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -534,6 +556,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_013": {
     id: "w_missile_arc_013",
     name: "헤비 임팩트 로켓탄",
+    nameEn: "Heavy Impact Shell",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -558,6 +581,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_014": {
     id: "w_missile_arc_014",
     name: "복합 열추적 미사일",
+    nameEn: "Composite Heat-Seeking Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 8,
@@ -582,6 +606,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_015": {
     id: "w_missile_arc_015",
     name: "롱레인지 융합 로켓탄",
+    nameEn: "Long-Range Fusion Warhead",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -606,6 +631,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_016": {
     id: "w_missile_arc_016",
     name: "스파이크 와이어 드론",
+    nameEn: "Spike-Wire Drone",
     kind: "missile",
     familyKind: "drone",
     damage: 12,
@@ -630,6 +656,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_017": {
     id: "w_missile_arc_017",
     name: "가속 돌격기",
+    nameEn: "Accelerated Striker",
     kind: "missile",
     familyKind: "drone",
     damage: 12,
@@ -654,6 +681,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_018": {
     id: "w_missile_arc_018",
     name: "중력자 산탄 포드",
+    nameEn: "Graviton Cluster Pod",
     kind: "missile",
     familyKind: "missile",
     damage: 11,
@@ -678,6 +706,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_019": {
     id: "w_laser_arc_019",
     name: "메가 입자포",
+    nameEn: "Mega Particle Cannon",
     kind: "laser",
     familyKind: "laser",
     damage: 10,
@@ -702,6 +731,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_020": {
     id: "w_laser_arc_020",
     name: "연사형 광자 레이저",
+    nameEn: "Rapid Photon Laser",
     kind: "laser",
     familyKind: "laser",
     damage: 7,
@@ -726,6 +756,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_021": {
     id: "w_laser_arc_021",
     name: "파쇄 핵 로켓탄",
+    nameEn: "Shredding Nuclear Rocket",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -750,6 +781,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_022": {
     id: "w_missile_arc_022",
     name: "장거리 순항 미사일",
+    nameEn: "Long-Range Cruise Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -774,6 +806,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_023": {
     id: "w_missile_arc_023",
     name: "초장거리 레일 로켓탄",
+    nameEn: "Ultra-Range Railgun",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -798,6 +831,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_024": {
     id: "w_missile_arc_024",
     name: "자기장 가속 로켓탄",
+    nameEn: "Magnetic Accelerated Bullet",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -822,6 +856,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_025": {
     id: "w_missile_arc_025",
     name: "전술 무인기 편대",
+    nameEn: "Tactical UAV Squadron",
     kind: "missile",
     familyKind: "drone",
     damage: 12,
@@ -846,6 +881,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_026": {
     id: "w_missile_arc_026",
     name: "다목적 미사일 포드",
+    nameEn: "Multi-Purpose Missile Pod",
     kind: "missile",
     familyKind: "missile",
     damage: 10,
@@ -870,6 +906,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_027": {
     id: "w_missile_arc_027",
     name: "침투형 함재기",
+    nameEn: "Infiltration Fighter",
     kind: "missile",
     familyKind: "carrier",
     damage: 12,
@@ -894,6 +931,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_028": {
     id: "w_laser_arc_028",
     name: "디펜더 연발 로켓탄",
+    nameEn: "Defender Auto-Cannon",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -918,6 +956,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_029": {
     id: "w_laser_arc_029",
     name: "반물질 입자포",
+    nameEn: "Anti-Matter Particle Cannon",
     kind: "laser",
     familyKind: "laser",
     damage: 999,
@@ -942,6 +981,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_030": {
     id: "w_laser_arc_030",
     name: "성계 방위용 빔",
+    nameEn: "Star-System Defense Beam",
     kind: "laser",
     familyKind: "laser",
     damage: 10,
@@ -966,6 +1006,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_031": {
     id: "w_missile_arc_031",
     name: "시공간 유도 미사일",
+    nameEn: "Space-Time Guided Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -990,6 +1031,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_032": {
     id: "w_missile_arc_032",
     name: "에너지 보우 캐넌",
+    nameEn: "Energy Bow Cannon",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1014,6 +1056,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_033": {
     id: "w_missile_arc_033",
     name: "관통형 타키온 로켓탄",
+    nameEn: "Penetrating Tachyon Round",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -1038,6 +1081,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_034": {
     id: "w_missile_arc_034",
     name: "자율 기동 댄싱 드론",
+    nameEn: "Autonomous Dancing Drone",
     kind: "missile",
     familyKind: "drone",
     damage: 11,
@@ -1062,6 +1106,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_035": {
     id: "w_missile_arc_035",
     name: "메테오 스트라이커",
+    nameEn: "Meteoric Striker",
     kind: "missile",
     familyKind: "missile",
     damage: 10,
@@ -1086,6 +1131,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_036": {
     id: "w_missile_arc_036",
     name: "아다만틴 함재기",
+    nameEn: "Adamantine Star-Fighter",
     kind: "missile",
     familyKind: "carrier",
     damage: 12,
@@ -1110,6 +1156,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_037": {
     id: "w_laser_arc_037",
     name: "에픽 페이저 뱅크",
+    nameEn: "Epic Phased Bank",
     kind: "laser",
     familyKind: "laser",
     damage: 11,
@@ -1134,6 +1181,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_038": {
     id: "w_laser_arc_038",
     name: "지각 붕괴 로켓탄",
+    nameEn: "Tectonic Disruption Rocket",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -1158,6 +1206,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_039": {
     id: "w_laser_arc_039",
     name: "카스의 파멸 로켓탄",
+    nameEn: "Doom Cannon of Kas",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -1182,6 +1231,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_040": {
     id: "w_missile_arc_040",
     name: "초광속 미사일",
+    nameEn: "Superluminal Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1206,6 +1256,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_041": {
     id: "w_missile_arc_041",
     name: "트리플 탄두 런처",
+    nameEn: "Triple-Warhead Launcher",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1230,6 +1281,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_042": {
     id: "w_missile_arc_042",
     name: "다이어 레일 로켓탄",
+    nameEn: "Dire Railgun",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -1254,6 +1306,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_043": {
     id: "w_missile_arc_043",
     name: "무한 기동 함재기",
+    nameEn: "Infinite Maneuver Fighter",
     kind: "missile",
     familyKind: "carrier",
     damage: 11,
@@ -1278,6 +1331,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_044": {
     id: "w_missile_arc_044",
     name: "전방위 레이저 망",
+    nameEn: "Omni-Directional Laser Net",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1302,6 +1356,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_045": {
     id: "w_missile_arc_045",
     name: "섹터 클린 미사일",
+    nameEn: "Sector-Clean Scythe Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1326,6 +1381,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_046": {
     id: "w_laser_arc_046",
     name: "보이드 보텍스 레이저",
+    nameEn: "Void Vortex Laser",
     kind: "laser",
     familyKind: "laser",
     damage: 17,
@@ -1350,6 +1406,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_047": {
     id: "w_laser_arc_047",
     name: "나노 소울 분해 로켓탄",
+    nameEn: "Nano-Soul Disintegration Rocket",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -1374,6 +1431,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_048": {
     id: "w_laser_arc_048",
     name: "신격 학살용 로켓탄 어뢰",
+    nameEn: "Divine-Slaying Torpedo",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -1398,6 +1456,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_049": {
     id: "w_missile_arc_049",
     name: "코스믹 트레이서",
+    nameEn: "Cosmic Tracer",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1422,6 +1481,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_050": {
     id: "w_missile_arc_050",
     name: "항성 낙하 로켓탄 투창",
+    nameEn: "Stellar-Fall Javelin Round",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -1446,6 +1506,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_051": {
     id: "w_missile_arc_051",
     name: "차원 도약 미사일",
+    nameEn: "Dimensional Leap Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1470,6 +1531,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_052": {
     id: "w_missile_arc_052",
     name: "선더링 격침기",
+    nameEn: "Sundering Ship-Breaker",
     kind: "missile",
     familyKind: "missile",
     damage: 10,
@@ -1494,6 +1556,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_053": {
     id: "w_missile_arc_053",
     name: "아차원 수용 드론",
+    nameEn: "Demiplane Containment Drone",
     kind: "missile",
     familyKind: "drone",
     damage: 10,
@@ -1518,6 +1581,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_054": {
     id: "w_missile_arc_054",
     name: "안티매직 펄스 캐넌",
+    nameEn: "Anti-Magic Pulse Cannon",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1542,6 +1606,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_055": {
     id: "w_laser_arc_055",
     name: "카이로스 시공간 로켓탄포",
+    nameEn: "Kairos Space-Time Cannon",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -1566,6 +1631,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_056": {
     id: "w_laser_arc_056",
     name: "하이어라키 제어 빔",
+    nameEn: "Hierarchy Control Beam",
     kind: "laser",
     familyKind: "laser",
     damage: 29,
@@ -1590,6 +1656,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_057": {
     id: "w_laser_arc_057",
     name: "판테온 총력포",
+    nameEn: "Pantheon Total Cannon",
     kind: "laser",
     familyKind: "laser",
     damage: 37,
@@ -1614,6 +1681,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_058": {
     id: "w_missile_arc_058",
     name: "영겁의 추적 미사일",
+    nameEn: "Eternal Tracking Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1638,6 +1706,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_059": {
     id: "w_missile_arc_059",
     name: "스타-제네시스 캐넌",
+    nameEn: "Star-Genesis Cannon",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1662,6 +1731,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_060": {
     id: "w_missile_arc_060",
     name: "옴니-조준 시스템",
+    nameEn: "Omni-Targeting System",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1686,6 +1756,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_061": {
     id: "w_missile_arc_061",
     name: "월드-에코 충격파포",
+    nameEn: "World-Echo Shockwave Cannon",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1710,6 +1781,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_062": {
     id: "w_missile_arc_062",
     name: "아포칼립스 클러스터",
+    nameEn: "Apocalypse Cluster",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1734,6 +1806,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_063": {
     id: "w_missile_arc_063",
     name: "제네시스 모함",
+    nameEn: "Genesis Mothership",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1758,6 +1831,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_064": {
     id: "w_laser_arc_064",
     name: "인피니티 제로 레이저",
+    nameEn: "Infinity Zero Laser",
     kind: "laser",
     familyKind: "laser",
     damage: 46,
@@ -1782,6 +1856,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_065": {
     id: "w_laser_arc_065",
     name: "싱귤래리티 로켓탄",
+    nameEn: "Singularity Rocket",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -1806,6 +1881,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_arc_066": {
     id: "w_laser_arc_066",
     name: "데스티니 빔 라이플",
+    nameEn: "Destiny Beam Rifle",
     kind: "laser",
     familyKind: "laser",
     damage: 60,
@@ -1830,6 +1906,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_067": {
     id: "w_missile_arc_067",
     name: "오메가 포인트 로켓탄 어뢰",
+    nameEn: "Omega Point Torpedo",
     kind: "missile",
     familyKind: "rocket",
     damage: 1,
@@ -1854,6 +1931,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_068": {
     id: "w_missile_arc_068",
     name: "에테르 파편 미사일",
+    nameEn: "Ethereal Fragment Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1878,6 +1956,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_069": {
     id: "w_missile_arc_069",
     name: "보이드 스트라이크",
+    nameEn: "Void Strike",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1902,6 +1981,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_070": {
     id: "w_missile_arc_070",
     name: "엔트로피 종말 드론",
+    nameEn: "Entropy Doomsday Drone",
     kind: "missile",
     familyKind: "drone",
     damage: 9,
@@ -1926,6 +2006,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_071": {
     id: "w_missile_arc_071",
     name: "유니버스 함재기",
+    nameEn: "Universe Core Star-Fighter",
     kind: "missile",
     familyKind: "carrier",
     damage: 10,
@@ -1950,6 +2031,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_arc_072": {
     id: "w_missile_arc_072",
     name: "오리진 코어 로그",
+    nameEn: "Origin Core Log",
     kind: "missile",
     familyKind: "missile",
     damage: 9,
@@ -1974,6 +2056,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_wave": {
     id: "w_laser_wave",
     name: "레이저_웨이브",
+    nameEn: "Wave Laser",
     kind: "laser",
     familyKind: "laser",
     damage: 46,
@@ -1998,6 +2081,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_missile_wave": {
     id: "w_missile_wave",
     name: "미사일_웨이브",
+    nameEn: "Wave Missile",
     kind: "missile",
     familyKind: "missile",
     damage: 63,
@@ -2022,6 +2106,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_vmock_draco_v01": {
     id: "w_laser_vmock_draco_v01",
     name: "드라코 VMock 레이저 01",
+    nameEn: "Draco VMock Laser 01",
     kind: "laser",
     familyKind: "laser",
     damage: 3,
@@ -2046,6 +2131,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_carrier_vmock_draco_v01": {
     id: "w_carrier_vmock_draco_v01",
     name: "드라코 VMock 함재기 01",
+    nameEn: "Draco VMock Carrier 01",
     kind: "missile",
     familyKind: "carrier",
     damage: 5,
@@ -2070,6 +2156,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_vmock_draco_v02": {
     id: "w_laser_vmock_draco_v02",
     name: "드라코 VMock 레이저 02",
+    nameEn: "Draco VMock Laser 02",
     kind: "laser",
     familyKind: "laser",
     damage: 3,
@@ -2094,6 +2181,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_drone_vmock_draco_v02": {
     id: "w_drone_vmock_draco_v02",
     name: "드라코 VMock 드론 02",
+    nameEn: "Draco VMock Drone 02",
     kind: "missile",
     familyKind: "drone",
     damage: 4,
@@ -2118,6 +2206,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_vmock_draco_v03": {
     id: "w_laser_vmock_draco_v03",
     name: "드라코 VMock 레이저 03",
+    nameEn: "Draco VMock Laser 03",
     kind: "laser",
     familyKind: "laser",
     damage: 3,
@@ -2142,6 +2231,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_carrier_vmock_draco_v03": {
     id: "w_carrier_vmock_draco_v03",
     name: "드라코 VMock 함재기 03",
+    nameEn: "Draco VMock Carrier 03",
     kind: "missile",
     familyKind: "carrier",
     damage: 5,
@@ -2166,6 +2256,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_vmock_draco_v04": {
     id: "w_laser_vmock_draco_v04",
     name: "드라코 VMock 레이저 04",
+    nameEn: "Draco VMock Laser 04",
     kind: "laser",
     familyKind: "laser",
     damage: 3,
@@ -2190,6 +2281,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_drone_vmock_draco_v04": {
     id: "w_drone_vmock_draco_v04",
     name: "드라코 VMock 드론 04",
+    nameEn: "Draco VMock Drone 04",
     kind: "missile",
     familyKind: "drone",
     damage: 4,
@@ -2214,6 +2306,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_vmock_draco_v05": {
     id: "w_laser_vmock_draco_v05",
     name: "드라코 VMock 레이저 05",
+    nameEn: "Draco VMock Laser 05",
     kind: "laser",
     familyKind: "laser",
     damage: 3,
@@ -2238,6 +2331,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_carrier_vmock_draco_v05": {
     id: "w_carrier_vmock_draco_v05",
     name: "드라코 VMock 함재기 05",
+    nameEn: "Draco VMock Carrier 05",
     kind: "missile",
     familyKind: "carrier",
     damage: 5,
@@ -2262,6 +2356,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_vmock_draco_v06": {
     id: "w_laser_vmock_draco_v06",
     name: "드라코 VMock 레이저 06",
+    nameEn: "Draco VMock Laser 06",
     kind: "laser",
     familyKind: "laser",
     damage: 3,
@@ -2286,6 +2381,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_drone_vmock_draco_v06": {
     id: "w_drone_vmock_draco_v06",
     name: "드라코 VMock 드론 06",
+    nameEn: "Draco VMock Drone 06",
     kind: "missile",
     familyKind: "drone",
     damage: 4,
@@ -2310,6 +2406,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_vmock_draco_v07": {
     id: "w_laser_vmock_draco_v07",
     name: "드라코 VMock 레이저 07",
+    nameEn: "Draco VMock Laser 07",
     kind: "laser",
     familyKind: "laser",
     damage: 3,
@@ -2334,6 +2431,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_carrier_vmock_draco_v07": {
     id: "w_carrier_vmock_draco_v07",
     name: "드라코 VMock 함재기 07",
+    nameEn: "Draco VMock Carrier 07",
     kind: "missile",
     familyKind: "carrier",
     damage: 5,
@@ -2358,6 +2456,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_vmock_draco_v08": {
     id: "w_laser_vmock_draco_v08",
     name: "드라코 VMock 레이저 08",
+    nameEn: "Draco VMock Laser 08",
     kind: "laser",
     familyKind: "laser",
     damage: 3,
@@ -2382,6 +2481,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_drone_vmock_draco_v08": {
     id: "w_drone_vmock_draco_v08",
     name: "드라코 VMock 드론 08",
+    nameEn: "Draco VMock Drone 08",
     kind: "missile",
     familyKind: "drone",
     damage: 4,
@@ -2406,6 +2506,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_vmock_draco_v09": {
     id: "w_laser_vmock_draco_v09",
     name: "드라코 VMock 레이저 09",
+    nameEn: "Draco VMock Laser 09",
     kind: "laser",
     familyKind: "laser",
     damage: 3,
@@ -2430,6 +2531,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_carrier_vmock_draco_v09": {
     id: "w_carrier_vmock_draco_v09",
     name: "드라코 VMock 함재기 09",
+    nameEn: "Draco VMock Carrier 09",
     kind: "missile",
     familyKind: "carrier",
     damage: 5,
@@ -2454,6 +2556,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_laser_vmock_draco_v10": {
     id: "w_laser_vmock_draco_v10",
     name: "드라코 VMock 레이저 10",
+    nameEn: "Draco VMock Laser 10",
     kind: "laser",
     familyKind: "laser",
     damage: 3,
@@ -2478,6 +2581,7 @@ export const CAPITAL_WEAPON_LIST_FROM_CSV: Record<string, CapitalWeaponCsvRow> =
   "w_drone_vmock_draco_v10": {
     id: "w_drone_vmock_draco_v10",
     name: "드라코 VMock 드론 10",
+    nameEn: "Draco VMock Drone 10",
     kind: "missile",
     familyKind: "drone",
     damage: 4,

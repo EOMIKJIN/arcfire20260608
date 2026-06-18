@@ -55,16 +55,12 @@ export async function withRemoteNetworkTimeout<T>(
 /** @deprecated 인게임 프리로드에 쓰지 말 것 — `withRemoteNetworkTimeout` */
 export const withSessionLoadingTimeout = withRemoteNetworkTimeout;
 
-export const REMOTE_NETWORK_TIMEOUT_ALERT = {
-  title: '접속 시간 초과',
-  message:
-    '서버 연결이 5초를 넘겼습니다.\n네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
+export const REMOTE_NETWORK_TIMEOUT_ALERT_KEYS = {
+  title: 'session.remoteTimeout.title',
+  message: 'session.remoteTimeout.body',
 } as const;
 
-/** @deprecated `REMOTE_NETWORK_TIMEOUT_ALERT` */
-export const SESSION_LOADING_TIMEOUT_ALERT = REMOTE_NETWORK_TIMEOUT_ALERT;
-
-export const SESSION_CLOUD_RESTORE_FAIL_ALERT = {
-  title: '클라우드 복구 실패',
-  message: '저장 데이터를 불러오지 못했습니다.\n네트워크를 확인한 뒤 다시 시도해 주세요.',
+export const SESSION_CLOUD_RESTORE_FAIL_ALERT_KEYS = {
+  title: 'session.cloudRestoreFail.title',
+  message: 'session.cloudRestoreFail.body',
 } as const;
