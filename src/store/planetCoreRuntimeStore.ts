@@ -186,7 +186,19 @@ function mergeWorldWithDisk(
   for (const sys of Object.values(systems)) {
     for (const planet of sys.planets) {
       const stored = fromDisk[planet.id];
-      next[planet.id] = stored ?? planetCsvBaselineToRuntime(planet);
+      const baseline = planetCsvBaselineToRuntime(planet);
+      if (/^synth_\d{3}_p$/.test(planet.id)) {
+        next[planet.id] = stored
+          ? {
+              ...baseline,
+              pgp: stored.pgp,
+              detail: stored.detail,
+              updatedAt: stored.updatedAt,
+            }
+          : baseline;
+        continue;
+      }
+      next[planet.id] = stored ?? baseline;
     }
   }
   return realignStarterPlanetDefenseTechnology(systems, next);

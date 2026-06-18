@@ -38,6 +38,7 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   dodgeOrbitOffsetY = 0,
   sessionPlanetId = null,
   onNebulaImagesReady,
+  onNebulaImagesLost,
   opacity = 1,
   /** true — useImage 프리로드만, Canvas·dark Fill 미생성(깜박임 방지) */
   hideUntilImagesReady = false,
@@ -61,12 +62,15 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   sessionPlanetId?: string | null;
   /** Skia useImage 프리로드 완료 — Canvas·dark Fill 미생성(깜박임 방지) */
   onNebulaImagesReady?: () => void;
+  /** 한 번 ready였던 이미지가 소실(useImage null 복귀)됨 — 부모가 RN 폴백 재표시용 */
+  onNebulaImagesLost?: () => void;
   opacity?: number;
   hideUntilImagesReady?: boolean;
 }) {
   const fxLoopActive = dodgeFxActive ?? active;
   const [frameTickMs, setFrameTickMs] = useState(() => Date.now());
   const imagesReadyNotifiedRef = useRef(false);
+  const everReadyRef = useRef(false);
 
   useEffect(() => {
     if (!fxLoopActive) return undefined;
@@ -141,8 +145,24 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   const imagesReady =
     (!renderNebulaShader || !nebulaBakedImageSource || Boolean(nebulaImage))
     && (!backgroundImageSource || Boolean(backdropImage));
-  const fillWhenEmpty = !showNebulaBaked && !showBackdropImage;
   const deferCanvas = hideUntilImagesReady && !imagesReady;
+
+  // 이미지가 한 번 ready였다가 소실되면(useImage null 복귀: 서브메뉴 왕복 등) 부모에 알려
+  // RN 폴백을 재표시하게 한다(서브메뉴 후 성운 소실·미복구 버그 수정). 소실 중엔 불투명
+  // dark Fill 을 그리지 않아(투명 유지) 깜박임을 줄인다.
+  useEffect(() => {
+    if (imagesReady) {
+      everReadyRef.current = true;
+    } else if (everReadyRef.current) {
+      everReadyRef.current = false;
+      // 재로드 시 onNebulaImagesReady 가 다시 발화하도록 허용(소실→복구 사이클 완성)
+      imagesReadyNotifiedRef.current = false;
+      onNebulaImagesLost?.();
+    }
+  }, [imagesReady, onNebulaImagesLost]);
+
+  // 최초 로드 전(아직 ready 경험 없음)엔 dark Fill 로 깜박임 방지, 소실 구간엔 투명 유지.
+  const fillWhenEmpty = !showNebulaBaked && !showBackdropImage && !everReadyRef.current;
 
   // SkImage(useImage 반환) 수동 dispose 금지 — 훅이 언마운트·소스 변경 시 수명을 자체 관리한다.
   // 수동 .dispose()는 <SkiaImage>(JsiImageNode)가 아직 참조 중인 SkImage를 조기 해제해

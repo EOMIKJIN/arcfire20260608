@@ -352,6 +352,13 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   const handleSkiaNebulaImagesReady = useCallback(() => {
     setSkiaNebulaImagesReady(true);
   }, []);
+  // 한 번 ready였던 Skia 성운 이미지가 소실되면(서브메뉴 왕복 등) 상태를 되돌려
+  // RN 폴백 백드롭을 즉시 재표시한다(성운 소실·미복구 버그 수정 — planetId 리셋 불필요).
+  const handleSkiaNebulaImagesLost = useCallback(() => {
+    setSkiaNebulaCommitted(false);
+    setSkiaNebulaRevealed(false);
+    setSkiaNebulaImagesReady(false);
+  }, []);
   useEffect(() => {
     setInboundDroneSkiaDodgeLatch(false);
     setSkiaNebulaSwappedIn(false);
@@ -489,6 +496,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
       sessionPlanetId={planetId}
       hideUntilImagesReady={!skiaNebulaImagesReady}
       onNebulaImagesReady={handleSkiaNebulaImagesReady}
+      onNebulaImagesLost={handleSkiaNebulaImagesLost}
     />
   );
 

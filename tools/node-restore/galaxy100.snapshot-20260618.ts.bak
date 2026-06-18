@@ -5,14 +5,6 @@ export const GAMEPLAY_SYSTEM_IDS = new Set(Object.keys(STAR_SYSTEMS));
 export const LEGACY_VISIBLE_TOTAL_SYSTEMS = 100;
 export const EXPANSION_GATEWAYS_PER_DIRECTION = 4;
 
-/**
- * 비활성(은하지도 비표시) 미개척 노드 ordinal — 미네르바↔아이언크로스 이동 동선 조정용.
- * synth_007=미개척-7 · synth_012=미개척-12 · synth_038=미개척-38.
- * 연결(엣지) 생성 이전에 제외하므로 나머지 노드 id·번호는 유지되고 경로만 재배선된다.
- * ▶ '노드복구': 이 Set 를 비우거나(`new Set()`) tools/node-restore 스냅샷으로 원복.
- */
-export const DISABLED_SYNTH_ORDINALS: ReadonlySet<number> = new Set([7, 12, 38]);
-
 /** 은하 지도상 성계 중심 간 최소 거리(정규화 좌표, 대략 화면에서 노드·라벨이 겹치지 않게) */
 const GALAXY_MIN_CENTER_DIST = 0.09;
 
@@ -521,18 +513,9 @@ export function buildGalaxySystems100(): Record<string, StarSystem> {
     };
   });
 
-  // 비활성 미개척 노드 제외 — 연결 단계 이전이라 경로가 자동 재배선되고 나머지 id·번호는 유지된다.
-  // ('노드복구' 시 DISABLED_SYNTH_ORDINALS 를 비우면 원복)
-  const synthsActive = DISABLED_SYNTH_ORDINALS.size === 0
-    ? synths
-    : synths.filter((s) => {
-      const ord = parseSynthOrdinal(s.id);
-      return ord == null || !DISABLED_SYNTH_ORDINALS.has(ord);
-    });
-
-  const all = [...bases, ...synthsActive];
+  const all = [...bases, ...synths];
   relaxGalaxyMinDistance(all, baseOriginal, GALAXY_MIN_CENTER_DIST, rand);
-  const connectedSynths = synthsActive;
+  const connectedSynths = synths;
   const legacySynths = connectedSynths.filter((s) => {
     const ord = parseSynthOrdinal(s.id);
     return ord !== null && ord <= legacySynthCount;

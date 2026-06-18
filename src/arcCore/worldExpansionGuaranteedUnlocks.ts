@@ -1,13 +1,16 @@
 /**
  * 아크코어 레거시 보장 개방 — 월드스토어 초기 배열에 박지 않고,
  * `WorldExpansionSubCore` 부트에서 일일 개방과 동일한 해금·명령 발행 경로로 수행한다.
+ *
+ * release·운영 기본 비활성 — DEV 하네스 + `EXPO_PUBLIC_ARCCORE_LEGACY_GUARANTEED_UNLOCK=1` 전용.
  */
 import { useWorldStore } from '../store/worldStore';
 import { dispatchArcCoreAfterSystemUnlock } from './worldExpansionUnlockDispatch';
 import { persistArcCoreDailyUnlockRecord } from './arcCoreDailyUnlockVerification';
+import { isArcCoreLegacyGuaranteedUnlockEnabled } from './arcCoreExpansionTestFlags';
+import { ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS } from './worldExpansionConstants';
 
-/** 정책상 항상 개방할 합성 성계 id(3자리 패딩). */
-export const ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS: readonly string[] = ['synth_073', 'synth_033'];
+export { ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS } from './worldExpansionConstants';
 
 /**
  * `world.loaded` 이후 호출. 아직 잠금인 보장 성계에 대해
@@ -15,6 +18,8 @@ export const ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS: readonly string[] = ['synth_
  * `lastExpansionAtMs`(일일 주기)는 건드리지 않는다.
  */
 export function applyArcCoreLegacyGuaranteedUnlocks(): void {
+  if (!isArcCoreLegacyGuaranteedUnlockEnabled()) return;
+
   const world0 = useWorldStore.getState();
   if (!world0.loaded) return;
 

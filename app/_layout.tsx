@@ -45,6 +45,10 @@ import {
 } from '../src/arcCore/arcCoreWallClockSessionPersistence';
 import { loadArcExpansionTestOneShotDoneFromStorage } from '../src/arcCore/arcCoreExpansionTestFlags';
 import {
+  getLastProductionBootResult,
+  runProductionBootBootstrap,
+} from '../src/game/productionBootBootstrap';
+import {
   compareSemver,
   fetchAppUpdatePolicyFromArcCore,
   type AppUpdatePolicy,
@@ -111,9 +115,12 @@ export default function RootLayout() {
       try {
         buildCsvStaticIndexesMinimal();
         await useAabsPolicyStore.getState().loadAsync();
+        await runProductionBootBootstrap();
         const authUserResult = await initGuestAuth();
         authUser = authUserResult;
-        await loadArcExpansionTestOneShotDoneFromStorage();
+        if (getLastProductionBootResult()?.devHarness) {
+          await loadArcExpansionTestOneShotDoneFromStorage();
+        }
         markBootPerf('storage_load_start');
         await Promise.all([
           loadLocalPlayer(),

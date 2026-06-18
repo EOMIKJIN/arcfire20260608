@@ -9,7 +9,8 @@ import {
   LEGACY_VISIBLE_TOTAL_SYSTEMS,
   parseSynthOrdinal,
 } from '../../src/data/galaxy100';
-import { ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS } from '../../src/arcCore/worldExpansionGuaranteedUnlocks';
+import { ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS } from '../../src/arcCore/worldExpansionConstants';
+import { isArcCoreLegacyGuaranteedUnlockEnabled } from '../../src/arcCore/arcCoreExpansionTestFlags';
 
 function normalizeSynthSystemId(id: string): string {
   if (!id.startsWith('synth_')) return id;
@@ -20,6 +21,7 @@ function normalizeSynthSystemId(id: string): string {
 }
 
 function buildGuaranteedUnlockIds(): string[] {
+  if (!isArcCoreLegacyGuaranteedUnlockEnabled()) return [];
   return [...ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS];
 }
 

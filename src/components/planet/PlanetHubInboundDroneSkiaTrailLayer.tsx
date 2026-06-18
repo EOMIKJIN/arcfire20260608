@@ -155,6 +155,20 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
     rafIdRef.current = null;
     if (!mountedRef.current) return;
 
+    const droneCount = trailCountRef.current;
+    // 허브 상시 누수 방지: 드론·히트FX 가 전혀 없으면 PictureRecorder 를 만들지 않는다.
+    // (orbit clock 틱마다 빈 recorder 생성/finish/dispose → 장시간 네이티브(JSI finalizer 지연) 누적 원인)
+    if (droneCount <= 0 && hitFxRef.current.length === 0) {
+      const liveIdle = liveFrameRef.current;
+      if (liveIdle != null) {
+        liveFrameRef.current = null;
+        setPicture(null);
+        schedulePictureDispose(liveIdle);
+      }
+      onVfxIdleRef.current?.();
+      return;
+    }
+
     // trail paint 지연 초기화
     if (!trailPaintRef.current) {
       const p = Skia.Paint();
@@ -164,7 +178,6 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
       trailPaintRef.current = p;
     }
 
-    const droneCount = trailCountRef.current;
     const next = recordInboundDroneVfxPicture({
       orbitMs: pendingOrbitMsRef.current,
       flat: trailFlatRef.current,

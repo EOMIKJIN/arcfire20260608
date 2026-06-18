@@ -8,6 +8,8 @@ import {
   getWorldExpansionTimingPolicy,
 } from '../arcCore/balance/balanceTableRegistry';
 import { GALAXY_ROUTE_POLICIES, GalaxyRouteDirection } from '../world/galaxyRouteFactionPolicy';
+import { isDevHarnessAllowed } from '../game/gameplayModeContract';
+import { ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS } from '../arcCore/worldExpansionConstants';
 
 const STORAGE_KEY = 'arcfire_world_v1';
 
@@ -41,6 +43,17 @@ function normalizeSynthSystemId(id: string): string {
   const n = Number.parseInt(raw, 10);
   if (!Number.isFinite(n) || n <= 0) return id;
   return `synth_${String(n).padStart(3, '0')}`;
+}
+
+/** 운영 경로 — 레거시 부트 시드 synth 잔재(in-memory) 제거. */
+function stripLegacyGuaranteedUnlockIdsForProduction(
+  ids: readonly string[],
+  lastExpansionAtMs: number | null | undefined,
+): string[] {
+  if (isDevHarnessAllowed()) return [...ids];
+  if (typeof lastExpansionAtMs === 'number' && Number.isFinite(lastExpansionAtMs)) return [...ids];
+  const blocked = new Set(ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS.map(normalizeSynthSystemId));
+  return ids.filter((id) => !blocked.has(normalizeSynthSystemId(id)));
 }
 
 function resolveLegacySynthColonizationCount(): number {
@@ -95,6 +108,9 @@ function resolveQuadrantFromTradeProfile(profile: string | undefined, fallback: 
   return fallback;
 }
 
+/** synth 행성 5대 코어 — CSV·galaxy100 시드와 동일(개척 직후·첫 실행 50 고정). 일일 배치에서만 변동. */
+export const SYNTH_PLANET_CORE_SEED = 50;
+
 function applySynthSystemAutogen(base: StarSystem): StarSystem {
   if (!base.id.startsWith('synth_')) return base;
   const normalizedId = normalizeSynthSystemId(base.id);
@@ -112,8 +128,7 @@ function applySynthSystemAutogen(base: StarSystem): StarSystem {
   const nameSuffix = Number.isFinite(suffixNum)
     ? String(suffixNum).padStart(3, '0')
     : rawSuffix;
-  const tierN = Math.min(1, (zoneIndex - 1) / 19);
-  const lvN = Math.min(1, targetCombatLevel / 40);
+  const coreSeed = SYNTH_PLANET_CORE_SEED;
   return {
     ...base,
     name: csvRow?.systemNameKo ?? `미개척 ${nameSuffix}`,
@@ -128,13 +143,30 @@ function applySynthSystemAutogen(base: StarSystem): StarSystem {
       hasTradePort: csvRow ? parseCsvBool(csvRow.hasTradePort) : zone !== 'pvp',
       hasShipyard: csvRow ? parseCsvBool(csvRow.hasShipyard) : zone !== 'pvp',
       hasTavern: csvRow ? parseCsvBool(csvRow.hasTavern) : true,
-      coreResource: Math.round(40 + lvN * 30 + tierN * 10),
-      corePopulation: Math.round(38 + lvN * 28 + tierN * 12),
-      coreDefense: Math.round(36 + lvN * 34 + tierN * 14),
-      coreTechnology: Math.round(34 + lvN * 32 + tierN * 16),
-      coreEnvironment: Math.round(42 + lvN * 24 + tierN * 8),
+      coreResource: coreSeed,
+      corePopulation: coreSeed,
+      coreDefense: coreSeed,
+      coreTechnology: coreSeed,
+      coreEnvironment: coreSeed,
     })),
   };
+}
+
+/** 디스크에 unlocked만 남은 synth — 재기동 시 colonization autogen 재적용(이름·존·50 시드). */
+function rehydrateUnlockedSynthSystems(
+  systems: Record<string, StarSystem>,
+  unlockedSystemIds: readonly string[],
+): Record<string, StarSystem> {
+  let next: Record<string, StarSystem> | null = null;
+  for (const id of unlockedSystemIds) {
+    const normalizedId = normalizeSynthSystemId(id);
+    if (!normalizedId.startsWith('synth_')) continue;
+    const src = (next ?? systems)[normalizedId];
+    if (!src) continue;
+    if (!next) next = { ...systems };
+    next[normalizedId] = applySynthSystemAutogen(src);
+  }
+  return next ?? systems;
 }
 
 export const useWorldStore = create<WorldState>((set, get) => ({
@@ -163,9 +195,12 @@ export const useWorldStore = create<WorldState>((set, get) => ({
         }
         if (parsed.unlockedSystemIds?.length) {
           const systems = get().systems;
-          const cleanedUnlocked = parsed.unlockedSystemIds
-            .map(normalizeSynthSystemId)
-            .filter((id) => systems[id]);
+          const cleanedUnlocked = stripLegacyGuaranteedUnlockIdsForProduction(
+            parsed.unlockedSystemIds
+              .map(normalizeSynthSystemId)
+              .filter((id) => systems[id]),
+            parsed.lastExpansionAtMs,
+          );
           set({
             unlockedSystemIds: cleanedUnlocked.length
               ? Array.from(new Set([...DEFAULT_UNLOCKED_SYSTEM_IDS, ...cleanedUnlocked]))
@@ -179,6 +214,11 @@ export const useWorldStore = create<WorldState>((set, get) => ({
     } catch {
       /* ignore */
     } finally {
+      const state = get();
+      const systems = rehydrateUnlockedSynthSystems(state.systems, state.unlockedSystemIds);
+      if (systems !== state.systems) {
+        set({ systems });
+      }
       set({ loaded: true });
     }
   },
@@ -194,12 +234,13 @@ export const useWorldStore = create<WorldState>((set, get) => ({
 
   resetLocalWorld: async () => {
     await AsyncStorage.removeItem(STORAGE_KEY);
+    const unlockedSystemIds = Array.from(new Set([...DEFAULT_UNLOCKED_SYSTEM_IDS]));
     set({
-      systems: { ...GALAXY_SYSTEMS },
+      systems: rehydrateUnlockedSynthSystems({ ...GALAXY_SYSTEMS }, unlockedSystemIds),
       loaded: true,
       selectedSystemId: null,
       visitedSystemIds: ['arcadia'],
-      unlockedSystemIds: Array.from(new Set([...DEFAULT_UNLOCKED_SYSTEM_IDS])),
+      unlockedSystemIds,
       lastExpansionAtMs: null,
     });
   },

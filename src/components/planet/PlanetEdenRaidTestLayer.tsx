@@ -1894,7 +1894,11 @@ function finalizeShipDestroyed(victim: Agent, owner: Agent | undefined, elapsedM
   victim.alive = false;
   victim.lastDestroyedAtMs = elapsedMs;
   if (owner && isPlayerCombatAgent(owner)) {
-    usePlayerStore.getState().addExp(victim.expRewardStat);
+    // 웨이브 디펜스 중엔 per-kill 플레이어 exp 미지급 — exp는 전투 종료 후 결과창(인게임 대화 뒤)에서
+    // 1회만 지급한다. (전투 종료 즉시 + 결과창 후 레벨업창이 두 번 뜨던 현상 방지)
+    if (!useWaveDefenseStore.getState().active) {
+      usePlayerStore.getState().addExp(victim.expRewardStat);
+    }
   }
   if (owner?.captainId) {
     const s = useNpcCaptainProgressStore.getState();
