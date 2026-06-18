@@ -1,11 +1,13 @@
 'use strict';
 /**
- * 데일리 스냅샷 커밋 — 변경이 있을 때만 KST 날짜 기준으로 1회 commit.
- * push는 DAILY_COMMIT_PUSH=1 일 때만 (로컬 자격 증명 필요).
+ * 데일리 스냅샷 — KST 날짜 기준 1회 commit (변경 있을 때).
  *
- * npm run daily:commit
- * DAILY_COMMIT_RUN_AUDIT=1 npm run daily:commit  — commit 전 audit:daily
- * DAILY_COMMIT_PUSH=1 npm run daily:commit       — commit 후 push
+ * npm run daily:commit          — commit만 (push·audit 없음)
+ * npm run daily:release         — audit:daily → commit → push (12:00 정오 파이프라인)
+ *
+ * 환경 변수:
+ *   DAILY_COMMIT_RUN_AUDIT=1  — commit 전 audit:daily (실패 시 중단)
+ *   DAILY_COMMIT_PUSH=1       — commit 후 push (미 push 커밋만 있어도 push)
  */
 
 const { spawnSync } = require('child_process');
@@ -80,6 +82,33 @@ function unstageSensitivePaths() {
   }
 }
 
+function commitsAheadOfUpstream() {
+  const r = run('git', ['rev-list', '--count', '@{u}..HEAD'], { shell: false });
+  if (r.status !== 0) return 0;
+  const n = Number.parseInt(String(r.stdout).trim(), 10);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+function pushIfEnabled(reason) {
+  if (process.env.DAILY_COMMIT_PUSH !== '1') {
+    logLine('push skipped (set DAILY_COMMIT_PUSH=1 to enable)');
+    return true;
+  }
+  const ahead = commitsAheadOfUpstream();
+  if (ahead <= 0) {
+    logLine('push skipped — no commits ahead of upstream');
+    return true;
+  }
+  logLine(`${reason} — pushing ${ahead} commit(s) to remote …`);
+  const push = run('git', ['push'], { shell: false });
+  if (push.status !== 0) {
+    logLine(`git push failed: ${(push.stdout + push.stderr).trim()}`);
+    return false;
+  }
+  logLine('pushed to remote');
+  return true;
+}
+
 function main() {
   ensureGitRepo();
   const dateKey = kstDateKey();
@@ -94,12 +123,14 @@ function main() {
   }
 
   if (!hasWorkingTreeChanges()) {
-    logLine('no working tree changes — skip');
+    if (!pushIfEnabled('no working tree changes')) process.exit(1);
+    logLine('no working tree changes — skip commit');
     process.exit(0);
   }
 
   if (alreadySnapshottedToday(dateKey)) {
-    logLine(`daily snapshot for ${dateKey} already exists on HEAD — skip`);
+    if (!pushIfEnabled('daily snapshot already on HEAD')) process.exit(1);
+    logLine(`daily snapshot for ${dateKey} already exists on HEAD — skip commit`);
     process.exit(0);
   }
 
@@ -127,16 +158,7 @@ function main() {
 
   logLine(`committed: ${msg}`);
 
-  if (process.env.DAILY_COMMIT_PUSH === '1') {
-    const push = run('git', ['push']);
-    if (push.status !== 0) {
-      logLine(`git push failed: ${push.stderr.trim()}`);
-      process.exit(push.status);
-    }
-    logLine('pushed to remote');
-  } else {
-    logLine('push skipped (set DAILY_COMMIT_PUSH=1 to enable)');
-  }
+  if (!pushIfEnabled('after commit')) process.exit(1);
 
   process.exit(0);
 }

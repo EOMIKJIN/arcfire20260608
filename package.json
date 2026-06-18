@@ -25,6 +25,7 @@
     "verify:trade-port-listing": "npx tsx tools/verify-trade-port-buy-listing.ts",
     "audit:daily": "node tools/daily-perf-audit/run-daily-audit.cjs",
     "daily:commit": "node tools/daily-commit/run-daily-commit.cjs",
+    "daily:release": "node tools/daily-commit/run-daily-release.cjs",
     "audit:memory": "node tools/memory-audit/run-memory-audit.cjs",
     "audit:skia-memory": "node tools/memory-audit/run-skia-worklet-memory-audit.cjs",
     "audit:memory:all": "npm run audit:memory && npm run audit:skia-memory",

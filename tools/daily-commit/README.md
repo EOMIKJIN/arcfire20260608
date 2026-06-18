@@ -1,8 +1,20 @@
-# Daily commit automation
+# Daily release automation (정오 KST)
 
-KST 날짜 기준으로 **하루 1회** 작업 트리 스냅샷을 commit합니다. 변경이 없으면 skip.
+매일 **12:00 KST**에 **안정화 검증 → commit → push**까지 한 번에 끝나도록 구성합니다.
 
-## 수동 실행
+## 정오 파이프라인 (기본)
+
+```bash
+npm run daily:release
+```
+
+순서:
+
+1. `npm run audit:daily` — 실패 시 commit·push **중단**
+2. 변경 있으면 `chore(daily): snapshot YYYY-MM-DD (KST)` commit (같은 KST 날 중복 snapshot 방지)
+3. upstream 대비 미 push 커밋이 있으면 `git push` (commit을 skip해도 push는 수행)
+
+## 수동 — commit만
 
 ```bash
 npm run daily:commit
@@ -10,42 +22,44 @@ npm run daily:commit
 
 | 환경 변수 | 의미 |
 |-----------|------|
-| `DAILY_COMMIT_PUSH=1` | commit 후 `git push` |
-| `DAILY_COMMIT_RUN_AUDIT=1` | commit 전 `npm run audit:daily` (실패 시 commit 안 함) |
+| `DAILY_COMMIT_PUSH=1` | commit 후 push (미 push 커밋만 있어도 push) |
+| `DAILY_COMMIT_RUN_AUDIT=1` | commit 전 `audit:daily` |
 
-PowerShell 래퍼:
+PowerShell 래퍼 (`settings.ps1` 기본값: audit+push ON):
 
 ```powershell
 .\tools\daily-commit\daily-commit.ps1
-.\tools\daily-commit\daily-commit.ps1 -Push
-.\tools\daily-commit\daily-commit.ps1 -RunAudit -Push
+.\tools\daily-commit\daily-commit.ps1 -NoPush          # audit + commit만
+.\tools\daily-commit\daily-commit.ps1 -NoAudit -Push   # commit + push만
 ```
 
 로그: `tools/daily-commit/logs/YYYY-MM-DD.log`
 
-## Windows — 매일 자정 자동화 (권장)
+## Windows — 매일 12:00 자동화 (권장)
 
-PC **시스템 시간대를 KST** 로 두면 `/ST 00:00` = 자정 KST.  
-**기본 첫 실행일 = 내일(KST)** — 오늘 밤에는 돌지 않음.
+PC **시스템 시간대를 KST**로 두면 `/ST 12:00` = 정오 KST.
 
 ```powershell
 Set-Location D:\arcfire20260607
-.\tools\daily-commit\register-windows-task.ps1 -Push
-# 특정 시작일: -StartDate "06/14/2026"
+.\tools\daily-commit\register-windows-task.ps1
 ```
 
-- `-Push`: 자정 commit 후 GitHub push (자격 증명·`git credential` 필요)
-- `-RunAudit`: commit 전 일일 audit 실행
+- 작업 이름: `ArcfireOnline_DailyRelease`
+- 기본: `audit:daily` + commit + push (`settings.ps1`)
+- 이전 자정 작업(`ArcfireOnline_DailyCommit`)이 있으면 제거:
 
-작업 확인: `taskschd.msc` → `ArcfireOnline_DailyCommit`
+```powershell
+schtasks /Delete /TN "ArcfireOnline_DailyCommit" /F
+```
+
+확인: `taskschd.msc` → `ArcfireOnline_DailyRelease`  
+즉시 테스트: `npm run daily:release`
 
 ## 커밋 메시지
 
 ```
-chore(daily): snapshot 2026-06-13 (KST)
+chore(daily): snapshot 2026-06-19 (KST)
 ```
-
-같은 KST 날짜에 이미 daily snapshot 커밋이 HEAD에 있으면 **중복 commit 하지 않음**.
 
 ## 제외
 
@@ -53,6 +67,6 @@ chore(daily): snapshot 2026-06-13 (KST)
 
 ## GitHub Actions (선택)
 
-`.github/workflows/daily-commit-audit.yml` — 원격에서 **audit 보고서만** commit/push (로컬 작업 스냅샷 대체 아님).
+`.github/workflows/daily-commit-audit.yml` — 원격 audit 보고서만 (로컬 전체 스냅샷 대체 아님).
 
-로컬 전체 스냅샷은 **Windows 작업 스케줄러**가 담당합니다.
+로컬 **정오 release**는 Windows 작업 스케줄러가 담당합니다.
