@@ -52,6 +52,7 @@ import {
 import type { CapitalRealtimeCombatSim } from '../../src/combat/capitalRealtimeTypes';
 import { isPlayerShipCombatCapable } from '../../src/game/playerSurvivalPod';
 import { releasePlanetHubStageMemory } from '../../src/game/stageMemoryRelease';
+import { ackDevMetroReloadMount } from '../../src/game/devMetroReloadGuard';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { usePlanetStageLifecycleStore } from '../../src/game/planetStageLifecycle';
 import { resetPlanetHubNavigationThrottle } from '../../src/navigation/safePlanetHubNavigate';
@@ -96,6 +97,7 @@ import { ORBIT_MINING_CYCLE_MS, ORBIT_MINING_REWARD_GOOD_ID } from '../../src/ga
 import { planetHasMineableOrbitalDeposits } from '../../src/world/mineralDepositModel';
 import { listPlanetWorldObjects } from '../../src/worldObjects';
 import { tryCompleteDefenseSatelliteUpgrade } from '../../src/systems/planetaryDefense/planetDefenseSatelliteDevelopment';
+import { tryCompleteOrbitShipyardUpgrade } from '../../src/game/planetDevelopment/planetOrbitShipyardDevelopment';
 import {
   createInitialMiningSessionState,
   flushMiningPlayerPersist,
@@ -245,6 +247,7 @@ export default function PlanetScreen() {
        * 의존성을 `[]` 로 고정하기 위해 store 의 stable action 을 getState() 로 직접 호출.
        */
       usePlanetStageLifecycleStore.getState().beginResume();
+      ackDevMetroReloadMount();
       return () => {
         setIsPlanetRouteFocused(false);
         flushMiningPlayerPersist();
@@ -327,7 +330,7 @@ export default function PlanetScreen() {
     [beginPlanetHubSuspendingNavigation],
   );
 
-  // 궤도 조선소 개발 설치 여부 — 설치 시 허브 조선소 시설 활성(hasShipyard OR 설치됨)
+  // 행성개발 설치 → 허브 시설 메뉴 (planets.csv 플래그 대신 런타임 development 정본)
   const orbitShipyardInstalled = usePlanetCoreRuntimeStore((s) => {
     const pid = planet?.id;
     if (!pid) return false;
@@ -336,9 +339,41 @@ export default function PlanetScreen() {
       | undefined;
     return Boolean(dev && dev.installed === true);
   });
+  const tradePortInstalled = usePlanetCoreRuntimeStore((s) => {
+    const pid = planet?.id;
+    if (!pid) return false;
+    const dev = s.byPlanetId[pid]?.detail?.development?.byModuleId?.dev_trade_port as
+      | { installed?: boolean }
+      | undefined;
+    return Boolean(dev && dev.installed === true);
+  });
+  const researchLabInstalled = usePlanetCoreRuntimeStore((s) => {
+    const pid = planet?.id;
+    if (!pid) return false;
+    const byModule = s.byPlanetId[pid]?.detail?.development?.byModuleId;
+    const cur = byModule?.dev_research_lab as { installed?: boolean } | undefined;
+    const leg = byModule?.dev_laboratory as { installed?: boolean } | undefined;
+    return Boolean(cur?.installed === true || leg?.installed === true);
+  });
+  const populationDomeInstalled = usePlanetCoreRuntimeStore((s) => {
+    const pid = planet?.id;
+    if (!pid) return false;
+    const byModule = s.byPlanetId[pid]?.detail?.development?.byModuleId;
+    const cur = byModule?.dev_population_dome as { installed?: boolean } | undefined;
+    const leg = byModule?.dev_tavern as { installed?: boolean } | undefined;
+    return Boolean(cur?.installed === true || leg?.installed === true);
+  });
   const featureMenuPlanet = useMemo(
-    () => (planet ? { ...planet, hasShipyard: Boolean(planet.hasShipyard) || orbitShipyardInstalled } : planet),
-    [planet, orbitShipyardInstalled],
+    () => (planet
+      ? {
+        ...planet,
+        hasShipyard: orbitShipyardInstalled,
+        hasTradePort: tradePortInstalled,
+        hasResearchLab: researchLabInstalled,
+        hasTavern: populationDomeInstalled,
+      }
+      : planet),
+    [planet, orbitShipyardInstalled, tradePortInstalled, researchLabInstalled, populationDomeInstalled],
   );
 
   const featureMenuItems = useMemo(
@@ -455,6 +490,7 @@ export default function PlanetScreen() {
     if (!pid || !isPlanetRouteFocused || !appStateActive || !stageSession.isActive) return undefined;
     const intervalId = setInterval(() => {
       tryCompleteDefenseSatelliteUpgrade(pid);
+      tryCompleteOrbitShipyardUpgrade(pid);
     }, 2000);
     const token = registerPlanetSessionResource({
       ownerId: 'planet_defense_satellite_upgrade_tick',

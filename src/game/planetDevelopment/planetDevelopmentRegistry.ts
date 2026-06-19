@@ -5,7 +5,8 @@ import { getPlanetDevelopmentCatalogRow, listPlanetDevelopmentCatalogRows } from
 export type PlanetDevelopmentModuleContext = {
   planetId: string;
   planetName: string;
-  isHomePlanet: boolean;
+  /** 거점·블루팩션 영역 등 설치·업그레이드 허용 행성 */
+  canManageDevelopment: boolean;
   onBack: () => void;
   onClose: () => void;
 };

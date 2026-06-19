@@ -9,6 +9,7 @@ import {
   usePlanetCoreRuntimeStore,
 } from '../../store/planetCoreRuntimeStore';
 import { calculatePlanetPgpFromStats } from '../../world/planetPgpModel';
+import { resolvePlanetDevelopmentTdiPgpBonusBmu } from '../planetDevelopment/planetDevelopmentLevelBenefits';
 
 export type PlanetPgpDailyPassResult = {
   ran: boolean;
@@ -28,7 +29,7 @@ export function runPlanetPgpDailyPass(): PlanetPgpDailyPassResult {
     for (const planet of sys.planets) {
       const prev = next[planet.id] ?? planetCsvBaselineToRuntime(planet);
       const gauge = planetCoreRuntimeToGaugeView(prev);
-      const pgp = calculatePlanetPgpFromStats(gauge);
+      const pgp = calculatePlanetPgpFromStats(gauge) + resolvePlanetDevelopmentTdiPgpBonusBmu(planet.id);
       if (prev.pgp === pgp) continue;
       next = {
         ...next,

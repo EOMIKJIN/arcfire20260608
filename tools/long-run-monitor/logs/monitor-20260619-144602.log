@@ -1,0 +1,22 @@
+[2026-06-19 14:46:02] monitor start package=com.arcfire.online interval=30m rules=v2(hub_activation_excluded)
+[2026-06-19 14:46:02] meminfo -> D:\arcfire20260607\tools\long-run-monitor\logs\meminfo-20260619-144602.log
+[2026-06-19 14:46:02] timeline -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-timeline.csv
+[2026-06-19 14:46:02] alerts -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-alerts.log
+[2026-06-19 14:46:02] FOCUS: hub Skia orbit + nebula + combat ??restart only active hub GL>=80MB or 3x dGL>=8MB
+[2026-06-19 14:46:03] snap PSS=629MB GL=55.8MB views=293 dPSS= dGL= 
+[2026-06-19 15:16:05] ALERT PSS +53.9MB
+[2026-06-19 15:16:05] snap PSS=684.3MB GL=55.6MB views=325 dPSS=53.9 dGL=-0.2 PSS_SPIKE review=graphics+native
+[2026-06-19 15:46:06] ALERT GL +19.7MB active hub views=306
+[2026-06-19 15:46:06] snap PSS=727.3MB GL=75.3MB views=306 dPSS=43 dGL=19.7 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-06-19 16:16:07] snap PSS=752.6MB GL=76.6MB views=326 dPSS=25.3 dGL=1.3 
+[2026-06-19 16:46:10] snap PSS=705.9MB GL=75.9MB views=297 dPSS=-46.7 dGL=-0.7 
+[2026-06-19 17:16:11] snap PSS=644.3MB GL=59.4MB views=330 dPSS=-61.6 dGL=-16.5 GL_RECOVERED idle_ok
+[2026-06-19 17:46:12] snap PSS=649.4MB GL=55.1MB views=301 dPSS=5.1 dGL=-4.3 
+[2026-06-19 18:16:13] snap PSS=644.6MB GL=55.2MB views=297 dPSS=-4.8 dGL=0.1 
+[2026-06-19 18:46:14] snap PSS=644.2MB GL=55.2MB views=317 dPSS=-0.4 dGL=0 
+[2026-06-19 19:16:15] snap PSS=646.4MB GL=55.2MB views=305 dPSS=2.2 dGL=0 
+[2026-06-19 19:46:16] snap PSS=585.3MB GL=50.1MB views=21 dPSS=-61.1 dGL=-5.1 GL_RECOVERED idle_ok
+[2026-06-19 20:16:18] ALERT PSS +230.9MB
+[2026-06-19 20:16:18] snap PSS=816.2MB GL=50.1MB views=104 dPSS=230.9 dGL=0 PSS_SPIKE review=graphics+native
+[2026-06-19 20:46:27] snap PSS=502.7MB GL=16.9MB views=15 dPSS= dGL= 
+[2026-06-19 21:16:28] snap PSS=MB GL=MB views=0 dPSS= dGL= 

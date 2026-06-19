@@ -17,6 +17,12 @@ import { findPlanetById } from '../../arcCore/planetEnvironment/resolvePlanetAst
 import { planetAttackKstDayKey } from '../../arcCore/planetAttack/planetAttackKstDayKey';
 import { resolvePlanetSupplyStockScale } from '../../arcCore/economy/planetEconomyFabric';
 import { computePlanetDevelopmentDailyUpkeepCredits } from '../../arcCore/economy/planetDevelopmentUpkeep';
+import {
+  applyPlanetDevUpkeepEfficiency,
+  resolvePlanetDevCostEfficiencyDiscountPct,
+  resolvePlanetDevelopmentTdiPgpBonusBmu,
+  resolvePlanetDevelopmentTdiScore,
+} from '../../arcCore/planetDevelopment/planetDevelopmentLevelBenefits';
 import { calculatePlanetPgpFromStats } from '../../world/planetPgpModel';
 import { useArcCoreTransportFleetBankStore } from '../../store/factionVault/arcCoreTransportFleetBankStore';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
@@ -115,7 +121,8 @@ export function buildPlanetEconomyInfoSnapshot(
 ): PlanetEconomyInfoSnapshot {
   const policy = resolvePlanetUpkeepPolicy();
   const population = resolvePopulation(planetId);
-  const devUpkeep = computePlanetDevelopmentDailyUpkeepCredits(planetId);
+  const devUpkeepRaw = computePlanetDevelopmentDailyUpkeepCredits(planetId);
+  const devUpkeep = applyPlanetDevUpkeepEfficiency(planetId, devUpkeepRaw);
   const upkeepDaily = computePlanetDailyUpkeepCredits(devUpkeep, policy);
   const core = resolveCoreRuntime(planetId);
   const hold = useClanWarFoundationStore.getState().getHold(planetId);
@@ -147,6 +154,14 @@ export function buildPlanetEconomyInfoSnapshot(
       value: `${(supplyScale * 100).toFixed(1)}%`,
     },
     {
+      label: t('econSnap.devCostEfficiency'),
+      value: `${resolvePlanetDevCostEfficiencyDiscountPct(planetId).toFixed(1)}%`,
+    },
+    {
+      label: t('econSnap.devTdiScore'),
+      value: String(resolvePlanetDevelopmentTdiScore(planetId)),
+    },
+    {
       label: t('econSnap.playerFeePool'),
       value: `${bucket.playerWalletPending.toLocaleString('ko-KR')} cr`,
     },
@@ -163,7 +178,7 @@ export function buildPlanetEconomyInfoSnapshot(
           defense: core.defense,
           technology: core.technology,
           environment: core.environment,
-        });
+        }) + resolvePlanetDevelopmentTdiPgpBonusBmu(planetId);
 
   return {
     planetId,

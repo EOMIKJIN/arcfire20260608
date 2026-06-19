@@ -349,6 +349,12 @@ export function isPlanetOccupationCombatEnabled(planetId: string): boolean {
   return parseBool(row.occupationCombatEnabled);
 }
 
+export function isPlanetContestedZone(planetId: string): boolean {
+  const row = getPlanetOccupationSeedRow(planetId);
+  if (!row) return false;
+  return parseBool(row.contestedZone);
+}
+
 export function resolveVirtualPlayerDensityPlanetType(
   zone: 'safe' | 'neutral' | 'pvp' | 'endgame' | string | undefined,
 ): string {

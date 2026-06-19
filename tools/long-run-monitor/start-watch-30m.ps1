@@ -1,4 +1,4 @@
-# Arcfire long-run watch — 30분 간격 meminfo + crash (앱 재시작: 사용자 수동)
+# Arcfire long-run watch — 30분 간격 meminfo + crash logcat (기본 장기앱 실행 테스트)
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$IntervalMin = 30

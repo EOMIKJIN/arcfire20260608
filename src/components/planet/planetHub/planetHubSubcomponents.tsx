@@ -4,6 +4,7 @@ import { View, Text, ScrollView, useWindowDimensions, Platform } from 'react-nat
 import type { LayoutChangeEvent } from 'react-native';
 import Animated, {
   runOnJS,
+  runOnUI,
   type SharedValue,
   useAnimatedReaction,
   useAnimatedStyle,
@@ -32,6 +33,7 @@ import { SkiaPlanetNebulaShaderBackdrop } from '../SkiaPlanetNebulaShaderBackdro
 import { resolveMainStageSkiaBackdrop } from '../../../game/mainStageSkiaBackdrop';
 import { useCapitalRealtimeCombatSimContext } from '../../../combat';
 import { resolvePlanetNebulaBakedSource } from '../../../game/planetNebulaBakedAssets';
+import { useDevSkiaMountAllowed } from '../../../hooks/useDevSkiaMountAllowed';
 import { resolveDefenseSatelliteCombatStatsForObject } from '../../../systems/planetaryDefense/resolveDefenseSatelliteCombatStats';
 import { computeTableNpcOrbitXY } from '../planetOrbitHubWorklets';
 import {
@@ -322,6 +324,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
 }) {
   const t = useT();
   const locale = useAppSettingsStore((s) => s.locale);
+  const devSkiaMountAllowed = useDevSkiaMountAllowed();
   const { width: bgWindowWidth, height: bgWindowHeight } = useWindowDimensions();
   const nebulaBackdropRef = useRef<View | null>(null);
   const orbitSceneRef = useRef<View | null>(null);
@@ -334,63 +337,52 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   }, []);
   const [dodgeOrbitOffset, setDodgeOrbitOffset] = useState({ x: 0, y: 0 });
   const [inboundDroneSkiaDodgeLatch, setInboundDroneSkiaDodgeLatch] = useState(false);
-  /** 드론 FX 1회 — Skia 교차 페이드 후 RN 언마운트(영구 이중 마운트 방지) */
-  const [skiaNebulaSwappedIn, setSkiaNebulaSwappedIn] = useState(false);
-  const [skiaNebulaImagesReady, setSkiaNebulaImagesReady] = useState(false);
-  const [skiaNebulaCommitted, setSkiaNebulaCommitted] = useState(false);
-  /** Canvas 1프레임 선그린 뒤 RN→Skia opacity 전환 */
-  const [skiaNebulaRevealed, setSkiaNebulaRevealed] = useState(false);
+  /** dodge Skia 오버레이 — latch OFF마다 언마운트하면 useImage/GC FinalizerDaemon SIGSEGV 유발 → 세션 sticky */
+  const [hubDodgeSkiaOverlayMounted, setHubDodgeSkiaOverlayMounted] = useState(false);
+  /** Skia dodge Canvas 성운 로드 완료 — 이때 RN 성운 중복 그리기 숨김 */
+  const [hubSkiaDodgeNebulaReady, setHubSkiaDodgeNebulaReady] = useState(false);
+  const handleSkiaDodgeNebulaReady = useCallback(() => setHubSkiaDodgeNebulaReady(true), []);
+  const handleSkiaDodgeNebulaLost = useCallback(() => setHubSkiaDodgeNebulaReady(false), []);
   const hubDodgeTimeMsRef = useRef(0);
   const noteHubDodgeTimeMs = useCallback((ms: number) => {
     hubDodgeTimeMsRef.current = ms;
   }, []);
+  /** 드론 dodge FX 구간에만 orbitClock → JS ref 동기 (~20Hz — 60Hz runOnJS 장시간 PSS creep 방지) */
+  const dodgeFxBridgeActive = useSharedValue(0);
+  const dodgeBridgeLastSyncMs = useSharedValue(0);
+  const HUB_DODGE_BRIDGE_INTERVAL_MS = 48;
+  useEffect(() => {
+    dodgeFxBridgeActive.value = inboundDroneSkiaDodgeLatch ? 1 : 0;
+    if (inboundDroneSkiaDodgeLatch) {
+      setHubDodgeSkiaOverlayMounted(true);
+      // latch ON 직후 reaction은 ms 변경 전까지 fire 안 함 → 즉시 1회 동기
+      runOnUI(() => {
+        'worklet';
+        dodgeBridgeLastSyncMs.value = orbitClockMs.value;
+        runOnJS(noteHubDodgeTimeMs)(orbitClockMs.value);
+      })();
+    }
+  }, [inboundDroneSkiaDodgeLatch, dodgeFxBridgeActive, dodgeBridgeLastSyncMs, noteHubDodgeTimeMs, orbitClockMs]);
   useAnimatedReaction(
     () => orbitClockMs.value,
     (ms) => {
+      'worklet';
+      if (dodgeFxBridgeActive.value === 0) return;
+      if (ms - dodgeBridgeLastSyncMs.value < HUB_DODGE_BRIDGE_INTERVAL_MS) return;
+      dodgeBridgeLastSyncMs.value = ms;
       runOnJS(noteHubDodgeTimeMs)(ms);
     },
-    [orbitClockMs, noteHubDodgeTimeMs],
+    [orbitClockMs, noteHubDodgeTimeMs, dodgeFxBridgeActive, dodgeBridgeLastSyncMs],
   );
   const handleInboundDroneSkiaDodgeLatch = useCallback((active: boolean) => {
     setInboundDroneSkiaDodgeLatch(active);
-    if (active) setSkiaNebulaSwappedIn(true);
-  }, []);
-  const handleSkiaNebulaImagesReady = useCallback(() => {
-    setSkiaNebulaImagesReady(true);
-  }, []);
-  // 한 번 ready였던 Skia 성운 이미지가 소실되면(서브메뉴 왕복 등) 상태를 되돌려
-  // RN 폴백 백드롭을 즉시 재표시한다(성운 소실·미복구 버그 수정 — planetId 리셋 불필요).
-  const handleSkiaNebulaImagesLost = useCallback(() => {
-    setSkiaNebulaCommitted(false);
-    setSkiaNebulaRevealed(false);
-    setSkiaNebulaImagesReady(false);
   }, []);
   useEffect(() => {
     setInboundDroneSkiaDodgeLatch(false);
-    setSkiaNebulaSwappedIn(false);
-    setSkiaNebulaImagesReady(false);
-    setSkiaNebulaCommitted(false);
-    setSkiaNebulaRevealed(false);
-  }, [planetId]);
-  useEffect(() => {
-    if (!skiaNebulaSwappedIn || !skiaNebulaImagesReady) {
-      setSkiaNebulaRevealed(false);
-      return undefined;
-    }
-    const id = requestAnimationFrame(() => {
-      setSkiaNebulaRevealed(true);
-    });
-    return () => cancelAnimationFrame(id);
-  }, [skiaNebulaSwappedIn, skiaNebulaImagesReady]);
-  useEffect(() => {
-    if (!skiaNebulaRevealed || skiaNebulaCommitted) return undefined;
-    const id = requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setSkiaNebulaCommitted(true);
-      });
-    });
-    return () => cancelAnimationFrame(id);
-  }, [skiaNebulaRevealed, skiaNebulaCommitted]);
+    setHubDodgeSkiaOverlayMounted(false);
+    setHubSkiaDodgeNebulaReady(false);
+    dodgeBridgeLastSyncMs.value = 0;
+  }, [planetId, dodgeBridgeLastSyncMs]);
   const recomputeDodgeOrbitOffset = useCallback(() => {
     if (!dodgeStageMountedRef.current) return;
     const nebulaNode = nebulaBackdropRef.current;
@@ -457,8 +449,6 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   const hubNebulaDualStack = Boolean(
     !showEdenRaidTest && mainStageBackdrop.nebulaShaderEnabled,
   );
-  /** Skia 표시 — 1프레임 선그린(revealed) 후 RN opacity 0 */
-  const skiaNebulaLayerActive = skiaNebulaRevealed;
   const nebulaBakedImageSource = useMemo(
     () => resolvePlanetNebulaBakedSource(planetId, system.zone),
     [planetId, system.zone],
@@ -484,13 +474,21 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
     showEdenRaidTest,
   ]);
   const nebulaBackdropSize = Math.round(Math.max(bgWindowWidth, bgWindowHeight) * 0.59);
+  /** dual-stack: Skia가 성운+colorDodge를 그릴 때 RN Image 중복 방지 */
+  const hideRnNebulaForSkiaDodge = Boolean(
+    hubNebulaDualStack
+    && inboundDroneSkiaDodgeLatch
+    && hubDodgeSkiaOverlayMounted
+    && hubSkiaDodgeNebulaReady,
+  );
 
-  const hubInboundSkiaNebulaLayer = (
+  const hubInboundSkiaDodgeOverlay = (
     <SkiaPlanetNebulaShaderBackdrop
       size={nebulaBackdropSize}
       dodgeFxActive={inboundDroneSkiaDodgeLatch}
-      nebulaBakedImageSource={nebulaBakedImageSource}
+      dodgeFxOnlyOverlay
       renderNebulaShader={mainStageBackdrop.nebulaShaderEnabled}
+      nebulaBakedImageSource={nebulaBakedImageSource}
       backgroundImageSource={mainStageBackdrop.backdropImageSource}
       dodgeHitFxRef={hubInboundDroneDodgeHitFxRef}
       dodgeTimeMsRef={hubDodgeTimeMsRef}
@@ -500,9 +498,9 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
       dodgeOrbitOffsetX={dodgeOrbitOffset.x}
       dodgeOrbitOffsetY={dodgeOrbitOffset.y}
       sessionPlanetId={planetId}
-      hideUntilImagesReady={!skiaNebulaImagesReady}
-      onNebulaImagesReady={handleSkiaNebulaImagesReady}
-      onNebulaImagesLost={handleSkiaNebulaImagesLost}
+      hideUntilImagesReady={Boolean(mainStageBackdrop.nebulaShaderEnabled && nebulaBakedImageSource)}
+      onNebulaImagesReady={handleSkiaDodgeNebulaReady}
+      onNebulaImagesLost={handleSkiaDodgeNebulaLost}
     />
   );
 
@@ -524,7 +522,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
         ]}
         pointerEvents="none"
       >
-        {useSkiaCombatNebulaBackdrop ? (
+        {useSkiaCombatNebulaBackdrop && devSkiaMountAllowed ? (
           <SkiaPlanetNebulaShaderBackdrop
             size={nebulaBackdropSize}
             active
@@ -565,20 +563,22 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
               nebulaBakedImageSource={nebulaBakedImageSource}
               renderNebulaLayer={mainStageBackdrop.nebulaShaderEnabled}
               backgroundImageSource={mainStageBackdrop.backdropImageSource}
+              opacity={hideRnNebulaForSkiaDodge ? 0 : 1}
             />
-            <View
-              style={{
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                width: nebulaBackdropSize,
-                height: nebulaBackdropSize,
-                opacity: skiaNebulaLayerActive || skiaNebulaCommitted ? 1 : 0,
-              }}
-              pointerEvents="none"
-            >
-              {hubInboundSkiaNebulaLayer}
-            </View>
+            {devSkiaMountAllowed && hubDodgeSkiaOverlayMounted ? (
+              <View
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  width: nebulaBackdropSize,
+                  height: nebulaBackdropSize,
+                }}
+                pointerEvents="none"
+              >
+                {hubInboundSkiaDodgeOverlay}
+              </View>
+            ) : null}
           </>
         ) : (
           <PlanetNebulaImageBackdrop

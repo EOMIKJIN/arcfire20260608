@@ -9,12 +9,14 @@ import { WorldExpansionSubCore } from './WorldExpansionSubCore';
 import { AiAabsSubCore } from './AiAabsSubCore';
 import { ArcInboundDroneSubCore } from './ArcInboundDroneSubCore';
 import { ArcCoreDailyOpsSubCore } from './ArcCoreDailyOpsSubCore';
+import { ArcCoreTerritorialCombatSubCore } from './ArcCoreTerritorialCombatSubCore';
 /**
  * 기본 서브코어 세트 등록.
  * 중복 호출 방지는 허브(`bootstrapDefaultSubCores`)에서 책임진다.
  */
 export function registerDefaultArcSubCores(hub: ArcCoreHub): void {
   hub.registerSubCore(new ArcCoreDailyOpsSubCore());
+  hub.registerSubCore(new ArcCoreTerritorialCombatSubCore());
   hub.registerSubCore(new AiAabsSubCore());
   hub.registerSubCore(new AiNpcSubCore());
   hub.registerSubCore(new ArcInboundDroneSubCore());

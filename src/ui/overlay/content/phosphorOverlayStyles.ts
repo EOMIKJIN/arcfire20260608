@@ -96,6 +96,22 @@ export const phosphorOverlay = StyleSheet.create({
   },
   closeBtn: {
     marginTop: SPACING.lg,
+    alignSelf: 'flex-end',
+  },
+  /** [확인] 단일 버튼(알림·닫기) — 카드 우측 정렬 */
+  btnRowAckOnly: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
     alignSelf: 'stretch',
+    marginTop: SPACING.lg,
+    gap: SPACING.sm,
+  },
+  /** [취소][확인] — 우측 정렬(취소 왼쪽 · 확인 오른쪽) */
+  btnRowCancelConfirm: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignSelf: 'stretch',
+    marginTop: SPACING.lg,
+    gap: SPACING.sm,
   },
 });

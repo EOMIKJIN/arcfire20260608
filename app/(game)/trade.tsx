@@ -2,7 +2,7 @@
 // 아크파이어 온라인 - 무역소 화면
 // ============================================================
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet,
   ScrollView,
@@ -27,7 +27,6 @@ import { generateMarketByItemIds, getBuyPrice, getSellPrice } from '../../src/en
 import { TRADE_GOODS, getItemDef } from '../../src/data/goods';
 import {
   applyPlanetTradeTransactionFee,
-  computeTradeFeeForGross,
   reversePlanetTradeTransactionFee,
 } from '../../src/arcCore/economy/applyPlanetTradeTransactionFee';
 import { recordPlanetEconomyPlayerTrade } from '../../src/arcCore/economy/planetEconomyFabric';
@@ -46,6 +45,10 @@ import {
 import { MarketListing, CargoItem, ItemDef, Player } from '../../src/types';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
+import { usePlanetHubFacilityAccessGate } from '../../src/hooks/usePlanetHubFacilityAccessGate';
+import {
+  computeTradeFeeForPlanetGross,
+} from '../../src/game/planetDevelopment/planetTradePortRuntimeBridge';
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
@@ -71,6 +74,11 @@ import {
 } from '../../src/game/tradeBuySubTab';
 import { TradeListingIcon } from '../../src/ui/trade/TradeListingIcon';
 import { resolveTradePortPurchaseDescription } from '../../src/game/tradePortPurchaseDescription';
+import {
+  isPlanetTradeShipTabEnabled,
+  PLANET_DEV_MODULE_ORBIT_SHIPYARD,
+} from '../../src/game/planetDevelopment/planetOrbitShipyardDevelopment';
+import { usePlanetCoreRuntimeStore } from '../../src/store/planetCoreRuntimeStore';
 
 const DEMAND_LABEL_KEYS: Record<string, string> = {
   low: 'trade.demand.low', normal: 'trade.demand.normal', high: 'trade.demand.high',
@@ -108,6 +116,10 @@ function resolveItemDefById(goodId: string) {
 
 type TradeBuyBlock = { title: string; message: string };
 
+function resolveTradePortListedItemIds(planetId: string, playerLevel: number): string[] {
+  return filterTradePortCatalogForBuyMarket(getPlanetTradePortItemIds(planetId), playerLevel);
+}
+
 function resolveTradeBuyBlock(input: {
   listing: MarketListing;
   qty: number;
@@ -115,8 +127,9 @@ function resolveTradeBuyBlock(input: {
   player: Player;
   unitPrice: number;
   hasEverPurchasedItem: (uid: string, itemId: string) => boolean;
+  planetId?: string | null;
 }): TradeBuyBlock | null {
-  const { listing, qty, itemDef, player, unitPrice, hasEverPurchasedItem } = input;
+  const { listing, qty, itemDef, player, unitPrice, hasEverPurchasedItem, planetId } = input;
   const buyQty = Math.max(1, Math.floor(qty));
   const isPlanetOwnershipItemType = itemDef?.type === 'planet_ownership';
   const isCapitalShipItemType = itemDef?.type === 'capital_ship';
@@ -159,7 +172,7 @@ function resolveTradeBuyBlock(input: {
   }
 
   const grossPreview = unitPrice * buyQty;
-  const feePreview = computeTradeFeeForGross(grossPreview);
+  const feePreview = computeTradeFeeForPlanetGross(planetId ?? player.currentPlanetId, grossPreview);
   const totalChargedPreview = grossPreview + feePreview.totalFee;
   if (player.credits < totalChargedPreview) {
     return { title: tStatic('trade.block.cannotBuyTitle'), message: tStatic('trade.block.credits') };
@@ -225,7 +238,7 @@ function resolveFreshTradeBuyUnitPrice(
   player: Player,
 ): number {
   const freshListing = generateMarketByItemIds(
-    filterTradePortCatalogForBuyMarket(getPlanetTradePortItemIds(planetId), player.level),
+    resolveTradePortListedItemIds(planetId, player.level),
     planetId.length * 37,
     resolvePlayerLifetimeCredits(player),
     planetId,
@@ -285,21 +298,40 @@ export default function TradeScreen() {
     setTab('buy');
     setBuySubTab('weapon');
   });
+  usePlanetHubFacilityAccessGate('trade');
 
   const system = player ? getSystem(player.currentSystemId) : undefined;
   const planet = system?.planets.find(p => p.id === player?.currentPlanetId) ?? system?.planets[0];
+
+  const shipyardCatalogRev = usePlanetCoreRuntimeStore(
+    useCallback((s) => {
+      const pid = planet?.id;
+      if (!pid) return '';
+      const dev = s.byPlanetId[pid]?.detail?.development?.byModuleId?.[PLANET_DEV_MODULE_ORBIT_SHIPYARD];
+      return JSON.stringify(dev ?? null);
+    }, [planet?.id]),
+  );
+
+  const tradePortDevRev = usePlanetCoreRuntimeStore(
+    useCallback((s) => {
+      const pid = planet?.id;
+      if (!pid) return '';
+      const dev = s.byPlanetId[pid]?.detail?.development?.byModuleId?.dev_trade_port;
+      return JSON.stringify(dev ?? null);
+    }, [planet?.id]),
+  );
 
   const market = useMemo(
     () =>
       planet && player
         ? generateMarketByItemIds(
-            filterTradePortCatalogForBuyMarket(getPlanetTradePortItemIds(planet.id), player.level),
+            resolveTradePortListedItemIds(planet.id, player.level),
             planet.id.length * 37,
             resolvePlayerLifetimeCredits(player),
             planet.id,
           )
         : [],
-    [planet?.id, player?.level, player?.lifetimeCreditsEarned, player?.credits, marketTick],
+    [planet?.id, player?.level, player?.lifetimeCreditsEarned, player?.credits, marketTick, shipyardCatalogRev, tradePortDevRev],
   );
   const inventorySellAgg = useMemo(() => {
     if (!player) return [];
@@ -386,10 +418,19 @@ export default function TradeScreen() {
     [inventorySellAgg.length, t],
   );
 
-  const tradeBuyCategoryTabs = useMemo(
-    () => TRADE_BUY_SUB_TAB_ORDER.map((id) => ({ id, label: t(`trade.subTab.${id}`) })),
-    [t],
-  );
+  const tradeBuyCategoryTabs = useMemo(() => {
+    const shipEnabled = planet?.id ? isPlanetTradeShipTabEnabled(planet.id) : true;
+    return TRADE_BUY_SUB_TAB_ORDER
+      .filter((id) => (id === 'ship' ? shipEnabled : true))
+      .map((id) => ({ id, label: t(`trade.subTab.${id}`) }));
+  }, [planet?.id, t]);
+
+  useEffect(() => {
+    if (!planet?.id) return;
+    if (!isPlanetTradeShipTabEnabled(planet.id) && buySubTab === 'ship') {
+      setBuySubTab('weapon');
+    }
+  }, [planet?.id, buySubTab]);
 
   const tradePlanetIdRef = useRef<string | undefined>(undefined);
 
@@ -470,6 +511,7 @@ export default function TradeScreen() {
           player: latestPlayer,
           unitPrice: freshUnitPrice,
           hasEverPurchasedItem,
+          planetId: planet.id,
         });
         if (block) {
           showArcAlert(block.title, block.message, arcTradeDialogButtons());
@@ -500,7 +542,7 @@ export default function TradeScreen() {
     if (!player || !planet) return;
     const qty = Math.max(1, Math.floor(buyQty));
     const gross = unitPrice * qty;
-    const feeBreakdown = computeTradeFeeForGross(gross);
+    const feeBreakdown = computeTradeFeeForPlanetGross(planet.id, gross);
     const totalCharged = gross + feeBreakdown.totalFee;
     const ok = spendCredits(totalCharged);
     if (!ok) {
@@ -835,7 +877,7 @@ export default function TradeScreen() {
       workingPlayer = usePlayerStore.getState().player ?? workingPlayer;
     }
     const sellGross = unitPrice * sellQty;
-    const sellFee = computeTradeFeeForGross(sellGross);
+    const sellFee = computeTradeFeeForPlanetGross(planet.id, sellGross);
     applyPlanetTradeTransactionFee(player.currentPlanetId ?? planet.id, sellGross);
     addCredits(sellGross - sellFee.totalFee);
     const next = removeGoodFromInventorySlots(

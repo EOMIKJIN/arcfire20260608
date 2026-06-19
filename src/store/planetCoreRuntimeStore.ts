@@ -59,6 +59,14 @@ export function planetCoreRuntimeToGaugeView(r: PlanetCoreRuntime): PlanetCoreGa
   };
 }
 
+/** store 초기화 후 지연 로드 — planetFacilityLegacyMigration ↔ store 순환 참조 방지 */
+async function runLegacyPlanetDevModuleMigrationAll(): Promise<void> {
+  const { migrateLegacyPlanetDevModulesAll } = await import(
+    '../game/planetDevelopment/planetFacilityLegacyMigration'
+  );
+  migrateLegacyPlanetDevModulesAll();
+}
+
 function findPlanetInSystems(systems: Record<string, StarSystem>, planetId: string): Planet | undefined {
   for (const sys of Object.values(systems)) {
     const hit = sys.planets.find((p) => p.id === planetId);
@@ -297,7 +305,8 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
       }
       const next = mergeWorldWithDisk(systems, fromDisk);
       set({ byPlanetId: next, globalMultipliers, hydrated: true });
-      await persistStoragePayload({ byPlanetId: next, globalMultipliers });
+      await runLegacyPlanetDevModuleMigrationAll();
+      await persistStoragePayload({ byPlanetId: get().byPlanetId, globalMultipliers });
       return;
     }
 
@@ -314,7 +323,8 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
     }
     if (dirty) {
       set({ byPlanetId: next });
-      await persistStoragePayload({ byPlanetId: next, globalMultipliers: get().globalMultipliers });
+      await runLegacyPlanetDevModuleMigrationAll();
+      await persistStoragePayload({ byPlanetId: get().byPlanetId, globalMultipliers: get().globalMultipliers });
     }
   },
 

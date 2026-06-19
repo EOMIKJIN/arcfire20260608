@@ -57,8 +57,8 @@ import {
 import { SHIPYARD_EQUIP_SLOT_DEFS } from '../game/shipyardEquipSlots';
 import {
   getMineralUpgradeOreCost,
+  getFinalMineralUpgradeCap,
   isMineralUpgradeStatId,
-  resolveMineralUpgradeMaxLevel,
 } from '../game/shipyardMineralUpgrade/mineralUpgradeModel';
 import { useAccountProfileStore } from './accountProfileStore';
 import { useUserSessionStore } from './userSessionStore';
@@ -438,8 +438,8 @@ interface PlayerState {
   removeHangarShipByNpcId: (npcCapitalShipId: string) => boolean;
   /** 아이템 획득은 인벤토리 슬롯 단일 체계로 누적 */
   addInventoryItem: (goodId: string, quantity: number) => void;
-  /** 조선소 광물 업그레이드 실행 — ore 차감·레벨+1·저장. 성공 여부·실패 사유 반환. */
-  applyMineralUpgrade: (statId: string) => { ok: boolean; reason?: string };
+  /** 조선소 광물 업그레이드 — ore 차감·레벨+1. shipyardLevel은 UI(조선소)에서 전달(순환 import 방지). */
+  applyMineralUpgrade: (statId: string, shipyardLevel?: number) => { ok: boolean; reason?: string };
   /** @deprecated — `recordOrbitalMiningDelivery` 사용 */
   recordOrbitalMiningOre1Delivery: (planetId: string, quantity: number) => void;
   /** 궤도 채굴 무역소 입고 실적(행성·광물 id별 누적) */
@@ -653,12 +653,13 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     set({ player: { ...player, inventorySlots: inv.slots } });
   },
 
-  applyMineralUpgrade: (statId) => {
+  applyMineralUpgrade: (statId, shipyardLevel) => {
     const { player } = get();
     if (!player) return { ok: false, reason: 'no_player' };
     if (!isMineralUpgradeStatId(statId)) return { ok: false, reason: 'bad_stat' };
     const current = Math.max(0, Math.floor(player.mineralUpgrades?.[statId] ?? 0));
-    const cap = resolveMineralUpgradeMaxLevel(player.combatProficiency?.combatLevel ?? player.level ?? 1);
+    const combatLevel = player.combatProficiency?.combatLevel ?? player.level ?? 1;
+    const cap = getFinalMineralUpgradeCap(combatLevel, shipyardLevel ?? 0);
     if (current >= cap) return { ok: false, reason: 'cap' };
     const targetLevel = current + 1;
     const cost = getMineralUpgradeOreCost(statId, targetLevel);

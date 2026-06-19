@@ -23,3 +23,6 @@
 [21:25] !! 비정상종료/크래시 흔적 감지 — 06-17 15:34:32.526 12113 12120 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 12120 (FinalizerDaemon), pid 12113 (.arcfire.online) (상세 crash-20260617-124500.log)
 [21:55] !! 이상감지: [2026-06-17 21:54:08] GL_ELEVATED mounting_or_insufficient_samples gl=138.9 pss=817.3 views=295 restart_held (상세 logs/incidents.log)
 [22:25] !! 이상감지: [2026-06-17 22:24:09] GL_ELEVATED mounting_or_insufficient_samples gl=138.9 pss=746.3 views=293 restart_held (상세 logs/incidents.log)
+[2026-06-19 14:46:14] MANUAL OK PSS 630.4MB / GL 55.8MB / views 289 (SOAK5H_BASELINE_20260619_restart)
+[2026-06-19 21:32:17] MANUAL OK PSS 652MB / GL 55.3MB / views 311 (SOAK_5H_SESSION_START)
+[2026-06-19 21:32:25] === SOAK 5H+ 감시 시작 (monitor_pid=28192 · 30m 간격 · 목표종료 2026-06-20 02:32:25) ===

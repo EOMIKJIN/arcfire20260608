@@ -1,0 +1,33 @@
+diff --git a/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DevSupportManagerBase.java b/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DevSupportManagerBase.java
+index ed08050..fedd973 100644
+--- a/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DevSupportManagerBase.java
++++ b/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DevSupportManagerBase.java
+@@ -19,7 +19,9 @@ import android.content.pm.PackageInfo;
+ import android.content.pm.PackageManager;
+ import android.graphics.Typeface;
+ import android.hardware.SensorManager;
+-import android.os.Build;
++import android.os.Handler;
++import android.os.Looper;
++import com.facebook.react.modules.core.DeviceEventManagerModule;
+ import android.util.Pair;
+ import android.view.Gravity;
+ import android.view.View;
+@@ -1072,7 +1074,16 @@ public abstract class DevSupportManagerBase implements DevSupportManager {
+                 // Disable debugger to resume the JsVM & avoid thread locks while reloading
+                 mDevServerHelper.disableDebugger();
+               }
+-              UiThreadUtil.runOnUiThread(() -> handleReloadJS());
++              ReactContext prepareContext = getCurrentContext();
++              if (prepareContext != null && prepareContext.hasActiveCatalystInstance()) {
++                prepareContext
++                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
++                    .emit("ArcfirePrepareMetroReload", null);
++              }
++              UiThreadUtil.runOnUiThread(
++                  () ->
++                      new Handler(Looper.getMainLooper())
++                          .postDelayed(() -> handleReloadJS(), 350));
+             }
+ 
+             @Override

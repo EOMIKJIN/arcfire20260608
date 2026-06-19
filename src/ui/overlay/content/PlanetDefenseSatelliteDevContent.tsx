@@ -34,7 +34,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatelliteDevContent({
   planetId,
   planetName,
-  isHomePlanet,
+  canManageDevelopment,
   onBack,
   onClose,
 }: PlanetDevelopmentModuleContext) {
@@ -69,8 +69,8 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
     : '—';
 
   const handlePressInstall = useCallback(() => {
-    if (!isHomePlanet) {
-      showArcAlert(t('defenseSat.homeOnlyTitle'), t('defenseSat.installHomeOnly'));
+    if (!canManageDevelopment) {
+      showArcAlert(t('planetDev.manageDeniedTitle'), t('defenseSat.installHomeOnly'));
       return;
     }
     showArcAlert(
@@ -87,16 +87,16 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
         },
       ],
     );
-  }, [isHomePlanet, planetId, snapshot.installCost, t]);
+  }, [canManageDevelopment, planetId, snapshot.installCost, t]);
 
   const handleStartUpgrade = useCallback(() => {
-    if (!isHomePlanet) {
-      showArcAlert(t('defenseSat.homeOnlyTitle'), t('defenseSat.upgradeHomeOnly'));
+    if (!canManageDevelopment) {
+      showArcAlert(t('planetDev.manageDeniedTitle'), t('defenseSat.upgradeHomeOnly'));
       return;
     }
     const res = startPlanetDefenseSatelliteUpgrade(planetId);
     if (!res.ok) showArcAlert(t('defenseSat.upgradeTitle'), res.reason);
-  }, [isHomePlanet, planetId, t]);
+  }, [canManageDevelopment, planetId, t]);
 
   const handleInstantComplete = useCallback(() => {
     const res = instantCompleteDefenseSatelliteUpgrade(planetId);
@@ -104,8 +104,8 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
   }, [planetId, t]);
 
   const handleInstantNext = useCallback(() => {
-    if (!isHomePlanet) {
-      showArcAlert(t('defenseSat.homeOnlyTitle'), t('defenseSat.upgradeHomeOnly'));
+    if (!canManageDevelopment) {
+      showArcAlert(t('planetDev.manageDeniedTitle'), t('defenseSat.upgradeHomeOnly'));
       return;
     }
     const total = (snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0);
@@ -123,7 +123,7 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
         },
       ],
     );
-  }, [isHomePlanet, planetId, snapshot.nextInstantCost, snapshot.nextUpgradeCost, t]);
+  }, [canManageDevelopment, planetId, snapshot.nextInstantCost, snapshot.nextUpgradeCost, t]);
 
   return (
     <View style={styles.card}>
@@ -187,7 +187,7 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
           <ArcButton
             label={t('defenseSat.installBtn', { cost: formatCredits(snapshot.installCost, { suffix: true }) })}
             variant="cta"
-            disabled={!isHomePlanet || !snapshot.canInstall}
+            disabled={!canManageDevelopment || !snapshot.canInstall}
             onPress={handlePressInstall}
           />
         ) : null}
@@ -196,13 +196,13 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
             <ArcButton
               label={t('defenseSat.upgradeBtn', { from: snapshot.level, to: snapshot.nextTargetLevel, cost: formatCredits(snapshot.nextUpgradeCost ?? 0, { suffix: true }), duration: nextDurationLabel })}
               variant="primary"
-              disabled={!isHomePlanet || !snapshot.canStartUpgrade}
+              disabled={!canManageDevelopment || !snapshot.canStartUpgrade}
               onPress={handleStartUpgrade}
             />
             <ArcButton
               label={t('defenseSat.instantUpgradeBtn', { to: snapshot.nextTargetLevel, cost: formatCredits((snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0), { suffix: true }) })}
               variant="secondary"
-              disabled={!isHomePlanet || !snapshot.canInstantUpgradeNext}
+              disabled={!canManageDevelopment || !snapshot.canInstantUpgradeNext}
               onPress={handleInstantNext}
             />
           </>

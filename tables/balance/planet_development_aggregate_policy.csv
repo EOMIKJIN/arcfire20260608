@@ -1,0 +1,9 @@
+key,value,notesKo
+cost_efficiency_tech_weight_per_point,0.004,T 스탯 1pt당 업그레이드·설치 비용 0.4%p 할인
+cost_efficiency_aggregate_weight_per_level,0.12,설치 시설 레벨 합 1당 0.12%p 할인
+cost_efficiency_discount_cap_pct,25,비용 효율(할인) 총 상한 %
+level_up_stat_nudge_daily_fraction,1.0,레벨업 시 해당 Lv 일일 nudge 즉시 적용 비율
+tdi_pgp_bmu_per_point,80,TDI 1점당 PGP BMU 가산(일일 배치)
+upkeep_efficiency_tech_weight_per_point,0.003,T 1pt당 개발 유지비 0.3%p 절감
+upkeep_efficiency_aggregate_weight_per_level,0.08,시설 레벨 합 1당 유지비 0.08%p 절감
+upkeep_efficiency_discount_cap_pct,15,유지비 효율(절감) 상한 %

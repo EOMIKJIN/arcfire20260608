@@ -17,6 +17,8 @@ import {
   resolveHullTierKeyForTradeCatalogShip,
   resolveTradePortNpcShipIdsForZone,
 } from './capitalShipTradeListingPolicy';
+import { resolvePlanetShipyardListingMode } from '../../game/planetDevelopment/planetOrbitShipyardListing';
+import { isPlanetCsvShipyardWorldEnabled } from '../../game/planetDevelopment/planetCsvWorldFlags';
 import { resolveNpcShipIdForHullTier } from './capitalHullPurchaseFromBalance';
 import {
   WAVE_TEST_TRADE_PRICE_CREDITS,
@@ -109,22 +111,46 @@ export function resolveTradePortHullTiersForZone(zoneIndex: number): string[] {
   });
 }
 
-/** 행성 zone — 등급 그룹 기반 전함 SKU(재고 수량과 무관) */
+/** 행성 zone — 등급 그룹 + 조선소 builtHullTierKeys 교차 필터 */
 export function listCapitalShipItemIdsForPlanet(planetId: string): string[] {
   const system = findSystemForPlanetId(planetId);
   const zoneIndex = resolvePlanetZoneIndex(planetId, system ?? null);
   const npcIds = resolveTradePortNpcShipIdsForZone(zoneIndex);
+  const listingMode = resolvePlanetShipyardListingMode(planetId);
 
-  return npcIds
-    .filter((id) => isCanonicalTradePortCapitalShip(id))
-    .map((id) => `capital_ship_${id}`)
-    .sort((a, b) => {
-      const tierA = resolveHullTierKeyForTradeCatalogShip(a.slice('capital_ship_'.length));
-      const tierB = resolveHullTierKeyForTradeCatalogShip(b.slice('capital_ship_'.length));
-      const rankDiff = hullTierRank(tierA) - hullTierRank(tierB);
-      if (rankDiff !== 0) return rankDiff;
-      return a.localeCompare(b);
-    });
+  if (listingMode.mode === 'filtered') {
+    const tierFilter = new Set(listingMode.builtHullTierKeys);
+    return npcIds
+      .filter((id) => isCanonicalTradePortCapitalShip(id))
+      .filter((id) => tierFilter.has(resolveHullTierKeyForTradeCatalogShip(id)))
+      .map((id) => `capital_ship_${id}`)
+      .sort((a, b) => {
+        const tierA = resolveHullTierKeyForTradeCatalogShip(a.slice('capital_ship_'.length));
+        const tierB = resolveHullTierKeyForTradeCatalogShip(b.slice('capital_ship_'.length));
+        const rankDiff = hullTierRank(tierA) - hullTierRank(tierB);
+        if (rankDiff !== 0) return rankDiff;
+        return a.localeCompare(b);
+      });
+  }
+
+  // dev 미설치 · CSV 조선소 보유 — zone 티어 정본(기존 밸런스 유지)
+  if (isPlanetCsvShipyardWorldEnabled(planetId)) {
+    const zoneTiers = resolveTradePortHullTiersForZone(zoneIndex);
+    const tierFilter = new Set(zoneTiers);
+    return npcIds
+      .filter((id) => isCanonicalTradePortCapitalShip(id))
+      .filter((id) => tierFilter.has(resolveHullTierKeyForTradeCatalogShip(id)))
+      .map((id) => `capital_ship_${id}`)
+      .sort((a, b) => {
+        const tierA = resolveHullTierKeyForTradeCatalogShip(a.slice('capital_ship_'.length));
+        const tierB = resolveHullTierKeyForTradeCatalogShip(b.slice('capital_ship_'.length));
+        const rankDiff = hullTierRank(tierA) - hullTierRank(tierB);
+        if (rankDiff !== 0) return rankDiff;
+        return a.localeCompare(b);
+      });
+  }
+
+  return [];
 }
 
 /** 성능 기준가 — 수요는 TradeEngine.getBuyPrice 2차 반영 */

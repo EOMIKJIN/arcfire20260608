@@ -9,6 +9,7 @@ import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { useT, t as tStatic } from '../../src/i18n';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
+import { usePlanetHubFacilityAccessGate } from '../../src/hooks/usePlanetHubFacilityAccessGate';
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
@@ -95,6 +96,7 @@ export default function TavernScreen() {
     setHostDialogVisible(false);
     setHostDialogDone(false);
   });
+  usePlanetHubFacilityAccessGate('tavern');
 
   const tavernNarrativeConfig = useMemo((): ArcNarrativeOverlayConfig | null => {
     if (!tavernHostCaptain) return null;

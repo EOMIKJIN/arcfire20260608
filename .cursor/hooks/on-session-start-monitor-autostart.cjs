@@ -1,7 +1,7 @@
 'use strict';
 /**
- * sessionStart — [김경제 메모리 테스트] 모니터 자동 가동 (멱등)
- *   Cursor 세션이 켜지는 시점에, 별도 호출 없이 장기 메모리 모니터를 자동 재가동한다.
+ * sessionStart — [기본 장기앱 실행 테스트] 모니터 자동 가동 (멱등)
+ *   start-watch-30m.ps1 만 detached 가동. 부가 soak/floor 테스트는 실행하지 않음.
  *   - watch-30m.pid 의 프로세스가 살아있으면 아무것도 하지 않음(중복 가동 방지).
  *   - 죽었거나 없으면 start-watch-30m.ps1 을 detached 로 띄움(Cursor 종료와 무관하게 생존).
  *   - 어떤 경우에도 세션 시작을 막지 않는다(fail-open). 게임/빌드 코드와 무관한 데브옵스 훅.

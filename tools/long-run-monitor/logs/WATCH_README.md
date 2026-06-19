@@ -21,6 +21,10 @@
 
 > **v2.1 변경(2026-06-17)**: 활성 Skia 전투의 정상 GL footprint(~110~140MB)는 이탈 시 회수되므로 **절대 GL 수치(`gl_critical_active_hub`)만으로는 재시작하지 않는다**(30분 간격 모니터에서 전투 진입 첫 고-GL 샘플의 false-positive 재시작을 차단). 재시작은 **(1) 3회 연속 GL_SPIKE, (2) baseline drift, (3) 하드 실링(GL≥200MB·PSS≥950MB), (4) 크래시 동반 프로세스 사망** 시에만. 단일 GL_SPIKE 즉시 재시작은 폐지(추세 기반 판단으로 통합).
 
+> **v2.6 변경(2026-06-19 · 김팀장)**: (a) **CRASH arcfire 한정 + 신선도** — `Get-ArcfireCrashLogEvents`: `.arcfire.online` FATAL/`Killing: crash`/`Process died`만, 타임스탬프 ≤max(35, 2×interval+5)분. DEBUG 백트레이스·타앱 `crashed service`·자동조치 `force-stop` 제외. (b) **handoff dedupe** — `.crash-last-event` 동일 키 재패킹 금지. (c) **hard-ceiling 단일 경로** — `run-monitor` 즉시 relaunch 제거 → `check-and-remediate` coalesce만.
+
+> **v2.3 변경(2026-06-19 · 김팀장)**: (a) **주기당 재시작 1회** — `consecutive_gl_spikes` + `GL_HARD_CEILING` 동시 충족 시 이중 `force-stop` 방지(우선순위: hard-ceiling > spikes > drift). (b) **CRASH 오탐 제거** — Firebase `W ReactNativeJS` deprecation은 CRASH/PROCESS_DEATH 판정에서 제외(FATAL·SIGSEGV·`E ReactNativeJS`만). (c) **`.auto-remediation.lock`** — 10분 내 중복 relaunch 차단.
+
 > **v2.2 변경(2026-06-18 · 김팀장)**: (a) **PROCESS_DEATH 분류 정밀화** — 프로세스 미발견은 그 자체로 크래시가 아니다. **최근(≤max(15, 2×interval)분) 크래시 로그가 있을 때만** `PROCESS_DEATH`로 재기동하고, 흔적 없으면 `PROCESS_EXIT clean`으로 **기록만**(수동 종료·검증 안전). (b) **수동 스냅샷 안전** — `manual-mem-snapshot.ps1`은 기본 **기록 전용**, 자동조치는 `-Remediate` 명시 시에만. (c) **report-watch 오탐 제거** — 단순 `PROCESS_NOT_RUNNING`은 적색 "비정상종료"로 보고하지 않음(실제 FATAL/SIGSEGV/PROCESS_DEATH/하드실링/누수만 적색).
 
 ## 검증 분리 (release·첫 빌드 검증 중 강제 재시작 차단)
@@ -48,3 +52,30 @@ powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.
 ```
 
 규칙 변경 후 **기존 monitor PID 종료 후 재시작** 필요.
+
+## incident → 자동조치 + 점검 + 김팀장 코드 수정 (v2.5 · 2026-06-19)
+
+**유지 범위:** `start-watch-30m.ps1` **기본 장기앱 실행 테스트만** (30분 meminfo + crash logcat).  
+전투 soak·floor 전용 샘플러·report-watch 등 **부가 테스트는 기본 가동하지 않음**.
+
+| 단계 | 동작 |
+|------|------|
+| 감지 | `check-and-remediate` — 비정상종료·ABNORMAL_RESTART(조치 후 25m 내 재사망)·GL 누수·하드실링 |
+| 자동조치 | `apply-auto-remediation` — `audit:skia-memory` + 앱 재기동(throttle) |
+| **사후 점검** | 재기동 20s 후 프로세스 생존 + GL/PSS 하드실링 미충족 → `VERIFY PASS/FAIL` (`remediation.log`) |
+| 핸드오프 | VERIFY FAIL · 반복 크래시 → `pack-incident-handoff.cjs` → `outbox/cursor-incident-handoff.md` |
+| Cursor | `on-session-start-incident-triage.cjs` — 세션 시작 시 김팀장 P0 조사·코드 수정·tsc·ack |
+
+> **v2.5 변경(2026-06-19)**: 기본 장기 테스트만 유지. 자동조치 후 **사후 VERIFY** 필수. 조치 후 25분 내 재크래시는 `ABNORMAL_RESTART`로 분류·짧은 throttle(10m) 재조치 + 핸드오프.
+
+## incident → 김팀장 자동 조사·수정 (v2.4 · 2026-06-19)
+
+| 단계 | 동작 |
+|------|------|
+| 감지 | `check-and-remediate` — GL 하드실링·누수·진짜 크래시·PROCESS_DEATH |
+| 런타임 | `apply-auto-remediation` — audit:skia-memory + 앱 재시작( throttle ) |
+| 핸드오프 | `pack-incident-handoff.cjs` → `outbox/cursor-incident-handoff.md` |
+| Cursor | `on-session-start-incident-triage.cjs` — 세션 시작 시 P0 조사·수정 주입 |
+| 완료 | `node tools/long-run-monitor/ack-incident-handoff.cjs` |
+
+> 김경제 = 감시·기록·핸드오프 생성 · 김팀장 = logcat 근거 코드 수정

@@ -1,8 +1,8 @@
-# Daily release automation (정오 KST)
+# Daily release automation (자정 KST)
 
-매일 **12:00 KST**에 **안정화 검증 → commit → push**까지 한 번에 끝나도록 구성합니다.
+매일 **자정 00:00 KST**에 **안정화 검증 → commit → push**까지 한 번에 끝나도록 구성합니다.
 
-## 정오 파이프라인 (기본)
+## 자정 파이프라인 (기본)
 
 ```bash
 npm run daily:release
@@ -35,24 +35,25 @@ PowerShell 래퍼 (`settings.ps1` 기본값: audit+push ON):
 
 로그: `tools/daily-commit/logs/YYYY-MM-DD.log`
 
-## Windows — 매일 12:00 자동화 (권장)
+## Windows — 매일 자정 자동화 (권장)
 
-PC **시스템 시간대를 KST**로 두면 `/ST 12:00` = 정오 KST.
+PC **시스템 시간대를 KST**로 두면 `/ST 00:00` = 자정 KST.  
+**기본 첫 실행일 = 내일(KST) 자정** — 오늘 밤에는 돌지 않음.
 
 ```powershell
 Set-Location D:\arcfire20260607
 .\tools\daily-commit\register-windows-task.ps1
 ```
 
-- 작업 이름: `ArcfireOnline_DailyRelease`
+- 작업 이름: `ArcfireOnline_DailyCommit`
 - 기본: `audit:daily` + commit + push (`settings.ps1`)
-- 이전 자정 작업(`ArcfireOnline_DailyCommit`)이 있으면 제거:
+- 이전 정오 작업(`ArcfireOnline_DailyRelease`)이 있으면 제거:
 
 ```powershell
-schtasks /Delete /TN "ArcfireOnline_DailyCommit" /F
+schtasks /Delete /TN "ArcfireOnline_DailyRelease" /F
 ```
 
-확인: `taskschd.msc` → `ArcfireOnline_DailyRelease`  
+확인: `taskschd.msc` → `ArcfireOnline_DailyCommit`  
 즉시 테스트: `npm run daily:release`
 
 ## 커밋 메시지
@@ -69,4 +70,4 @@ chore(daily): snapshot 2026-06-19 (KST)
 
 `.github/workflows/daily-commit-audit.yml` — 원격 audit 보고서만 (로컬 전체 스냅샷 대체 아님).
 
-로컬 **정오 release**는 Windows 작업 스케줄러가 담당합니다.
+로컬 **자정 release**는 Windows 작업 스케줄러가 담당합니다.

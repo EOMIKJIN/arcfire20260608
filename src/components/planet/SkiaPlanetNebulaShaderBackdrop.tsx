@@ -42,12 +42,15 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   opacity = 1,
   /** true — useImage 프리로드만, Canvas·dark Fill 미생성(깜박임 방지) */
   hideUntilImagesReady = false,
+  dodgeFxOnlyOverlay = false,
 }: {
   size: number;
   /** @deprecated dodgeFxActive 사용 — GPU·interval 게이트 */
   active?: boolean;
   /** colorDodge FX tick·GPU supervisor — idle prefetch 시 false */
   dodgeFxActive?: boolean;
+  /** dual-stack: RN 성운 아래 colorDodge FX 전용 — nebula/backdrop SkImage 로드 금지 */
+  dodgeFxOnlyOverlay?: boolean;
   nebulaBakedImageSource?: ImageSourcePropType | null;
   renderNebulaShader?: boolean;
   backgroundImageSource?: unknown;
@@ -68,6 +71,8 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   hideUntilImagesReady?: boolean;
 }) {
   const fxLoopActive = dodgeFxActive ?? active;
+  /** dual-stack 오вер레이도 colorDodge는 성운 SkImage와 동일 Canvas 필수(투명 Picture 위 dodge = 깨짐) */
+  const loadNebulaImages = true;
   const [frameTickMs, setFrameTickMs] = useState(() => Date.now());
   const imagesReadyNotifiedRef = useRef(false);
   const everReadyRef = useRef(false);
@@ -114,22 +119,25 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
 
   void frameTickMs;
 
-  const nebulaImage = useImage((nebulaBakedImageSource as any) ?? null);
-  const backdropImage = useImage((backgroundImageSource as any) ?? null);
+  const nebulaImage = useImage(loadNebulaImages && renderNebulaShader ? ((nebulaBakedImageSource as any) ?? null) : null);
+  const backdropImage = useImage(loadNebulaImages && backgroundImageSource ? (backgroundImageSource as any) : null);
   const dodgeImage = useImage(require('../../../assets/images/effects/color_dodge_02.png'));
 
   useEffect(() => {
+    if (!loadNebulaImages) return;
     imagesReadyNotifiedRef.current = false;
-  }, [nebulaBakedImageSource, backgroundImageSource, renderNebulaShader]);
+  }, [loadNebulaImages, nebulaBakedImageSource, backgroundImageSource, renderNebulaShader]);
 
   useEffect(() => {
-    if (imagesReadyNotifiedRef.current || !onNebulaImagesReady) return;
+    if (!loadNebulaImages || imagesReadyNotifiedRef.current || !onNebulaImagesReady) return;
+    if (dodgeFxOnlyOverlay) return;
     const nebulaOk = !renderNebulaShader || !nebulaBakedImageSource || Boolean(nebulaImage);
     const backdropOk = !backgroundImageSource || Boolean(backdropImage);
     if (!nebulaOk || !backdropOk) return;
     imagesReadyNotifiedRef.current = true;
     onNebulaImagesReady();
   }, [
+    loadNebulaImages,
     backdropImage,
     backgroundImageSource,
     nebulaBakedImageSource,
@@ -140,8 +148,8 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   const dodgeHitFx = dodgeHitFxRef?.current;
   const dodgeTimeMs = dodgeTimeMsRef?.current ?? 0;
   const canRenderDodgeHitFx = Boolean(dodgeHitFx && dodgeOrbitSize > 0 && dodgeImage);
-  const showNebulaBaked = renderNebulaShader && Boolean(nebulaImage);
-  const showBackdropImage = Boolean(backdropImage);
+  const showNebulaBaked = loadNebulaImages && renderNebulaShader && Boolean(nebulaImage);
+  const showBackdropImage = loadNebulaImages && Boolean(backdropImage);
   const imagesReady =
     (!renderNebulaShader || !nebulaBakedImageSource || Boolean(nebulaImage))
     && (!backgroundImageSource || Boolean(backdropImage));
@@ -151,18 +159,37 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   // RN 폴백을 재표시하게 한다(서브메뉴 후 성운 소실·미복구 버그 수정). 소실 중엔 불투명
   // dark Fill 을 그리지 않아(투명 유지) 깜박임을 줄인다.
   useEffect(() => {
+    if (dodgeFxOnlyOverlay) return;
     if (imagesReady) {
       everReadyRef.current = true;
     } else if (everReadyRef.current) {
       everReadyRef.current = false;
-      // 재로드 시 onNebulaImagesReady 가 다시 발화하도록 허용(소실→복구 사이클 완성)
       imagesReadyNotifiedRef.current = false;
       onNebulaImagesLost?.();
     }
-  }, [imagesReady, onNebulaImagesLost]);
+  }, [dodgeFxOnlyOverlay, imagesReady, onNebulaImagesLost]);
 
-  // 최초 로드 전(아직 ready 경험 없음)엔 dark Fill 로 깜박임 방지, 소실 구간엔 투명 유지.
-  const fillWhenEmpty = !showNebulaBaked && !showBackdropImage && !everReadyRef.current;
+  useEffect(() => {
+    if (!dodgeFxOnlyOverlay || !onNebulaImagesReady) return;
+    if (!imagesReady) {
+      if (imagesReadyNotifiedRef.current) {
+        imagesReadyNotifiedRef.current = false;
+        onNebulaImagesLost?.();
+      }
+      return;
+    }
+    if (imagesReadyNotifiedRef.current) return;
+    imagesReadyNotifiedRef.current = true;
+    onNebulaImagesReady();
+  }, [dodgeFxOnlyOverlay, imagesReady, onNebulaImagesReady, onNebulaImagesLost]);
+
+  if (dodgeFxOnlyOverlay && !fxLoopActive) {
+    return <View style={[styles.root, { opacity, width: size, height: size }]} pointerEvents="none" />;
+  }
+
+  // dodge-only: nebula 로드 전엔 투명 유지(RN 성운 노출). full backdrop은 dark Fill.
+  const fillWhenEmpty =
+    !dodgeFxOnlyOverlay && !showNebulaBaked && !showBackdropImage && !everReadyRef.current;
 
   // SkImage(useImage 반환) 수동 dispose 금지 — 훅이 언마운트·소스 변경 시 수명을 자체 관리한다.
   // 수동 .dispose()는 <SkiaImage>(JsiImageNode)가 아직 참조 중인 SkImage를 조기 해제해

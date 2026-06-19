@@ -3,7 +3,7 @@
  * 데일리 스냅샷 — KST 날짜 기준 1회 commit (변경 있을 때).
  *
  * npm run daily:commit          — commit만 (push·audit 없음)
- * npm run daily:release         — audit:daily → commit → push (12:00 정오 파이프라인)
+ * npm run daily:release         — audit:daily → commit → push (자정 00:00 파이프라인)
  *
  * 환경 변수:
  *   DAILY_COMMIT_RUN_AUDIT=1  — commit 전 audit:daily (실패 시 중단)

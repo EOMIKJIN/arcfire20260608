@@ -1,6 +1,6 @@
 'use strict';
 /**
- * 정오(KST) 안정화 파이프라인 — audit:daily → commit → push
+ * 자정(KST 00:00) 안정화 파이프라인 — audit:daily → commit → push
  * npm run daily:release
  */
 if (process.env.DAILY_COMMIT_RUN_AUDIT !== '0') {

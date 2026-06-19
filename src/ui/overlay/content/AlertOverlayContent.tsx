@@ -11,13 +11,16 @@ type Props = {
 
 export const AlertOverlayContent = memo(function AlertOverlayContent({ entry, onButton }: Props) {
   const PH = OVERLAY_TOKENS.phosphorAccent;
+  const hasCancel = entry.buttons.some((b) => b.style === 'cancel');
+  const isAckOnly = entry.buttons.length === 1 || !hasCancel;
+  const btnRowStyle = isAckOnly ? styles.btnRowAckOnly : styles.btnRowCancelConfirm;
   return (
     <View style={styles.card}>
       <Text style={[styles.title, { color: PH }]}>{entry.title}</Text>
       {entry.message.length > 0 ? (
         <Text style={[styles.body, { color: PH }]}>{entry.message}</Text>
       ) : null}
-      <View style={styles.btnRow}>
+      <View style={btnRowStyle}>
         {entry.buttons.map((b, i) => {
           const variant =
             b.style === 'destructive'
@@ -70,10 +73,17 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 6,
   },
-  btnRow: {
+  btnRowAckOnly: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-end',
+    alignSelf: 'stretch',
+    gap: SPACING.sm,
+    marginTop: SPACING.lg,
+  },
+  btnRowCancelConfirm: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignSelf: 'stretch',
     gap: SPACING.sm,
     marginTop: SPACING.lg,
   },

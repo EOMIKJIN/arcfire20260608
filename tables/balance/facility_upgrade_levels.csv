@@ -1,0 +1,51 @@
+facility_type,level,display_name_kr,stat_r_nudge_daily,stat_p_nudge_daily,stat_d_nudge_daily,stat_t_nudge_daily,stat_e_nudge_daily,tdi_contribution_formula,notesKo
+trade_port,1,간이 교역소,0.2,0.2,0,0,0,level*2,v2.0 무역소 Lv1
+trade_port,2,소형 무역소,0.4,0.4,0,0,0,level*2,v2.0
+trade_port,3,무역소,0.6,0.6,0,0,0,level*2,v2.0
+trade_port,4,확장 무역소,0.8,0.8,0,0,0,level*2,v2.0
+trade_port,5,지역 교역 센터,1.0,1.0,0,0,0,level*2,v2.0
+trade_port,6,광역 교역 센터,1.2,1.2,0,0,0,level*2,v2.0
+trade_port,7,성계 무역 허브,1.4,1.4,0,0,0,level*2,v2.0
+trade_port,8,광역 무역 허브,1.6,1.6,0,0,0,level*2,v2.0
+trade_port,9,은하 교역소,1.8,1.8,0,0,0,level*2,v2.0
+trade_port,10,은하 무역 중심,2.0,2.0,0,0,0,level*2,v2.0
+shipyard,1,간이 정비소,0,0,0,0.1,0,level*2,v2.0 조선소 — facility_shipyard_level_policy.csv와 병행
+shipyard,2,소형 조선소,0,0,0,0.2,0,level*2,v2.0
+shipyard,3,조선소,0,0,0,0.3,0,level*2,v2.0
+shipyard,4,확장 조선소,0,0,0,0.4,0,level*2,v2.0
+shipyard,5,중형 조선소,0,0,0,0.5,0,level*2,v2.0
+shipyard,6,대형 조선소,0,0,0,0.6,0,level*2,v2.0
+shipyard,7,성계 조선소,0,0,0,0.7,0,level*2,v2.0
+shipyard,8,광역 조선소,0,0,0,0.8,0,level*2,v2.0
+shipyard,9,은하 조선소,0,0,0,0.9,0,level*2,v2.0
+shipyard,10,은하 최대 조선소,0,0,0,1.0,0,level*2,v2.0
+defense_satellite,1,궤도 초소,0,0,0.3,0,0,level*3,v2.0 방위위성 — planet_defense_satellite_level_policy.csv와 병행
+defense_satellite,2,경량 방위망,0,0,0.6,0,0,level*3,v2.0
+defense_satellite,3,표준 방위망,0,0,0.9,0,0,level*3,v2.0
+defense_satellite,4,강화 방위망,0,0,1.2,0,0,level*3,v2.0
+defense_satellite,5,전략 방위망,0,0,1.5,0,0,level*3,v2.0
+defense_satellite,6,요새 방위망,0,0,1.8,0,0,level*3,v2.0
+defense_satellite,7,성계 방위망,0,0,2.1,0,0,level*3,v2.0
+defense_satellite,8,광역 방위망,0,0,2.4,0,0,level*3,v2.0
+defense_satellite,9,은하 요새,0,0,2.7,0,0,level*3,v2.0
+defense_satellite,10,난공불락 요새,0,0,3.0,0,0,level*3,v2.0
+laboratory,1,간이 연구실,0,0,0,0.3,0.3,level*4,v2.0 연구소 신규
+laboratory,2,소형 연구소,0,0,0,0.6,0.6,level*4,v2.0
+laboratory,3,연구소,0,0,0,0.9,0.9,level*4,v2.0
+laboratory,4,확장 연구소,0,0,0,1.2,1.2,level*4,v2.0
+laboratory,5,고급 연구소,0,0,0,1.5,1.5,level*4,v2.0
+laboratory,6,정예 연구소,0,0,0,1.8,1.8,level*4,v2.0
+laboratory,7,성계 연구소,0,0,0,2.1,2.1,level*4,v2.0
+laboratory,8,광역 연구소,0,0,0,2.4,2.4,level*4,v2.0
+laboratory,9,은하 연구소,0,0,0,2.7,2.7,level*4,v2.0
+laboratory,10,아크파이어 연구원,0,0,0,3.0,3.0,level*4,v2.0
+tavern,1,임시 주점,0,0.25,0,0,0,level*3,v2.0 선술집 신규
+tavern,2,소형 선술집,0,0.5,0,0,0,level*3,v2.0
+tavern,3,선술집,0,0.75,0,0,0,level*3,v2.0
+tavern,4,확장 선술집,0,1.0,0,0,0,level*3,v2.0
+tavern,5,주요 선술집,0,1.25,0,0,0,level*3,v2.0
+tavern,6,고급 선술집,0,1.5,0,0,0,level*3,v2.0
+tavern,7,성계 선술집,0,1.75,0,0,0,level*3,v2.0
+tavern,8,광역 선술집,0,2.0,0,0,0,level*3,v2.0
+tavern,9,은하 주점,0,2.25,0,0,0,level*3,v2.0
+tavern,10,은하 전설의 주점,0,2.5,0,0,0,level*3,v2.0

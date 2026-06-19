@@ -14,12 +14,12 @@ const ROUTING_CONTEXT = [
   '페르소나·model: 김경제→claude-fable-5-thinking-high | Fable→tables/무기곡선 | Opus→arcCore·UI·Skia·기본 | Sonnet→logcat/tsc.',
   'Skia P0: arcfire-skia-memory-lifecycle.mdc. 크래시: arcfire-bug-debug-workflow.',
   '',
-  '※ #1 자동 시작·상시 주업무 — [김경제 메모리 테스트]:',
-  '  - Cursor 세션이 켜지면 다른 작업보다 먼저, 별도 지시 없이 자동으로 1순위로 시작해 상시 수행한다(김경제 감시 역할).',
-  '  - 절차(멱등): 1) tools/long-run-monitor/logs/watch-30m.pid 와 프로세스 생존 확인 → 죽었으면 start-watch-30m.ps1 재가동.',
-  '    2) 신규 크래시 감시(adb logcat libc:F "Fatal signal") 가동. 3) 전투/전환 메모리 floor(native heap·GL·PSS) 주기 샘플 → leak vs high-water 판정.',
-  '  - 정본: arcfire-economy-specialist-agent.mdc(메모리 감시) · tools/long-run-monitor/logs/WATCH_README.md.',
-  '  - 보고: GL 계단식 누수·native heap creep·크래시 탐지 시 즉시 요약·인계(원인 코드 수정은 김팀장). 개발 작업과 독립으로 항시 병행.',
+  '※ #1 자동 시작·상시 — [기본 장기앱 실행 테스트]:',
+  '  - Cursor 세션이 켜지면 별도 지시 없이 start-watch-30m.ps1 만 멱등 가동(30분 meminfo + crash logcat).',
+  '  - 전투 soak·floor 전용 샘플러 등 부가 테스트는 실행하지 않는다.',
+  '  - 비정상종료·비정상 재시작·메모리 이상 시 apply-auto-remediation → audit:skia-memory + 앱 재기동 + 사후 VERIFY.',
+  '  - VERIFY 실패·반복 크래시는 outbox/cursor-incident-handoff.md → 김팀장 P0 코드 수정·tsc·ack.',
+  '  - 정본: tools/long-run-monitor/logs/WATCH_README.md · arcfire-economy-specialist-agent.mdc.',
 ].join('\n');
 
 function main() {

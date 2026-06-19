@@ -37,9 +37,15 @@ npm run audit:team-lead:daily
 
 Windows 스케줄: `tools/kim-team-lead/start-daily-review.ps1` (권장 09:00 KST)
 
-## 장기 메모리·안정화 — **감시만 김경제로 이관 (2026-06-17)**
+## 장기 메모리·안정화 — **기본 장기앱 실행 테스트 + 자동조치·점검 (2026-06-19)**
 
-기능 개발과 독립된 **장기 메모리·GL 누수 정기 감시**(`tools/long-run-monitor/` · 30분 watch)에서 **김경제는 「감시」만** 맡는다 — 모니터 가동·관측·incident/누수 탐지·보고. 정본: `.cursor/rules/arcfire-economy-specialist-agent.mdc` · `docs/KIM_ECONOMY_AGENT.md`.
+`tools/long-run-monitor/start-watch-30m.ps1` **만** 상시 가동(30분 meminfo + crash logcat). 부가 soak·floor 샘플러는 기본 실행하지 않는다.
+
+| 역할 | 담당 |
+|------|------|
+| 감시·기록 | 김경제 — 모니터 PID·mem-timeline·incident **탐지·보고** |
+| 자동조치·점검 | `apply-auto-remediation` — audit:skia-memory + 재기동 + **VERIFY** |
+| 코드 수정 | 김팀장 — VERIFY FAIL·반복 크래시 핸드오ff → logcat 근거 수정 · tsc · ack |
 
 **그 외 전부 김팀장**(변경 없음):
 

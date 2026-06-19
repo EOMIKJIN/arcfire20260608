@@ -1,4 +1,4 @@
-# Daily audit — 2026-06-16T11:20:51.320Z
+# Daily audit — 2026-06-19T15:00:06.219Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -12,12 +12,16 @@
 
 ```
 > arcfire-online@0.1.1 build:content-tables
-> node tools/gen-mineral-region-members.mjs && node tools/balance-tables/rebalance-weapon-ttk.mjs && node tools/content-tables/gen-weapon-trade-listing-policy.mjs && node tools/content-tables/sync-weapon-trade-listing.mjs && node tools/content-tables/build-content-from-csv.mjs
+> node tools/gen-mineral-region-members.mjs && node tools/balance-tables/rebalance-weapon-ttk.mjs && node tools/content-tables/gen-weapon-trade-listing-policy.mjs && node tools/content-tables/sync-weapon-trade-listing.mjs && node tools/content-tables/patch-item-defs-en.mjs && node tools/content-tables/patch-missions-en.mjs && node tools/content-tables/patch-npc-ships-en.mjs && node tools/content-tables/patch-planets-en.mjs && node tools/content-tables/build-content-from-csv.mjs
 
 [gen-mineral-region-members] 100 rows
 [rebalance-weapon-ttk] updated 0 weapons in weapon_list.csv
-weapon_trade_listing_policy: shop=81 excluded_npc_clone=22
-tradePortListed sync: canonical=81 TRUE=81 demoted=0
+weapon_trade_listing_policy: shop=83 excluded_npc_clone=20
+tradePortListed sync: canonical=83 TRUE=83 demoted=0
+patched D:\arcfire20260607\tables\content\item_defs.csv (196 data rows)
+patched missions.csv + mission_objectives.csv
+patched 0 npc ship name_en rows
+patched planets.csv
 Generated CSV-driven content TS files at src/data/generated
 ```
 
@@ -25,24 +29,24 @@ Generated CSV-driven content TS files at src/data/generated
 
 ## Largest TS/TSX under `src/` + `app/` (bytes)
 
-- 357,301 — `src/data/generated/csvNpcCapitalShips.ts`
-- 237,614 — `src/data/generated/csvItemDefs.ts`
+- 362,677 — `src/data/generated/csvNpcCapitalShips.ts`
+- 289,923 — `src/data/generated/csvItemDefs.ts`
 - 178,347 — `src/data/generated/csvNpcCaptains.ts`
-- 140,360 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
-- 67,271 — `src/data/generated/csvWeapons.ts`
-- 56,993 — `src/data/generated/csvStoryScenes.ts`
-- 52,840 — `app/(game)/planet.tsx`
-- 46,287 — `src/data/balance/generated/csvSynthSystemColonization.ts`
-- 44,950 — `app/(game)/shipyard.tsx`
-- 43,813 — `app/(game)/worldmap.tsx`
-- 41,818 — `app/(game)/trade.tsx`
-- 38,815 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
-- 28,705 — `src/types/index.ts`
-- 27,806 — `src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx`
-- 26,426 — `src/store/playerStore.ts`
-- 25,125 — `src/data/generated/csvMissions.ts`
-- 21,671 — `src/data/galaxy100.ts`
-- 20,839 — `src/components/planet/planetHub/planetHubStyles.ts`
+- 142,526 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 71,055 — `src/data/generated/csvWeapons.ts`
+- 68,657 — `src/data/balance/generated/csvSynthSystemColonization.ts`
+- 66,777 — `src/data/generated/csvStoryScenes.ts`
+- 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
+- 59,410 — `app/(game)/planet.tsx`
+- 56,694 — `src/i18n/locales/ko.ts`
+- 51,332 — `src/i18n/locales/en.ts`
+- 45,292 — `app/(game)/trade.tsx`
+- 44,533 — `app/(game)/worldmap.tsx`
+- 43,892 — `app/(game)/shipyard.tsx`
+- 40,842 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
+- 36,023 — `src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx`
+- 31,920 — `src/data/generated/csvMissions.ts`
+- 30,323 — `src/types/index.ts`
 
 ## Planet hub eager `src/combat` import (should be absent)
 
@@ -56,6 +60,8 @@ Generated CSV-driven content TS files at src/data/generated
 - `src/game/planetHub/usePlanetHubInterval.ts`
 - `src/systems/mining/useMiningDriver.ts`
 - `src/ui/overlay/content/PlanetDefenseSatelliteDevContent.tsx`
+- `src/ui/overlay/content/PlanetGenericFacilityDevContent.tsx`
+- `src/ui/overlay/content/PlanetOrbitShipyardDevContent.tsx`
 - `app/(game)/planet.tsx`
 
 ## `subscribe(` / `addEventListener(` hints (manual cleanup review)

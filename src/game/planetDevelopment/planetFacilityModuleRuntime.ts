@@ -1,7 +1,7 @@
 // ============================================================
-// 범용 시설 개발 모듈 런타임 — 방위위성(planetDefenseSatelliteRuntime)을 일반화.
-// development.byModuleId[모듈id]에 PlanetFacilityModuleDetail 형태로 install·레벨 영속.
-// (조선소·무역소 등 신규 시설 모듈이 공유; 방위위성 전용 legacy 미러는 쓰지 않는다)
+// 범용 시설 개발 모듈 런타임 — 방위위성·궤도 조선소 등 공통 계약:
+//   미설치(installed=false) → 허브·무역 해금 없음
+//   설치 Lv.1 → upgradeJob 타이머·레벨별 CSV 해금 (방위위성 development 패턴)
 // ============================================================
 
 import type {

@@ -45,15 +45,26 @@ export function getPlanetRecord(planetId: string): Planet | undefined {
   return findPlanet(planetId);
 }
 
-/** 무역소가 있는 행성 id 목록(성계 순회) */
+/** 무역소가 있는 행성 id — CSV 정본(17/21) ∪ dev_trade_port 설치 */
 export function listPlanetIdsWithTradePort(): string[] {
-  const out: string[] = [];
+  const ids = new Set<string>();
   for (const system of Object.values(STAR_SYSTEMS)) {
     for (const planet of system.planets) {
-      if (planet.hasTradePort) out.push(planet.id);
+      if (planet.hasTradePort) ids.add(planet.id);
     }
   }
-  return out;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { isPlanetTradePortInstalled } = require('../game/planetDevelopment/planetTradePortListing') as typeof import('../game/planetDevelopment/planetTradePortListing');
+    for (const system of Object.values(STAR_SYSTEMS)) {
+      for (const planet of system.planets) {
+        if (isPlanetTradePortInstalled(planet.id)) ids.add(planet.id);
+      }
+    }
+  } catch {
+    /* dev module 미로드 — CSV만 */
+  }
+  return [...ids];
 }
 
 function weaponModuleRequiredLevelFromDef(def: ReturnType<typeof getItemDef>): number {

@@ -288,13 +288,26 @@ export function runPlanetEconomyFabricDailyPass(): PlanetEconomyFabricDailyPassR
     );
     const defensePenalty = Math.min(0.25, fabric.window.attackDefenseLoss * 0.004);
     const populationPenalty = Math.min(0.2, fabric.window.attackPopulationLoss * 0.006);
-    const supplyStockScale = Math.max(
+    let supplyStockScale = Math.max(
       0.35,
       Math.min(
         1.65,
         operationalBase * 0.85 + convoyBoost + playerTradeBoost + 0.25 - defensePenalty - populationPenalty,
       ),
     );
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const tradeListing = require('../../game/planetDevelopment/planetTradePortListing') as typeof import('../../game/planetDevelopment/planetTradePortListing');
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const tradePolicy = require('../balance/facilityTradePortLevelPolicy') as typeof import('../balance/facilityTradePortLevelPolicy');
+      if (tradeListing.isPlanetTradePortInstalled(planetId)) {
+        const tpLv = tradeListing.readPlanetTradePortDetail(planetId).level;
+        const tpScale = tradePolicy.resolveTradePortSupplyStockScale(tpLv);
+        supplyStockScale = Math.min(1.65, supplyStockScale * tpScale);
+      }
+    } catch {
+      /* optional */
+    }
 
     const resourceNudge = Math.min(
       FABRIC_GAUGE_NUDGE_CAP,

@@ -11,7 +11,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { useT, t as tStatic, intlTag } from '../../src/i18n';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
-import { resolveNpcCapitalShipDisplayName, resolveCapitalHullPurchaseLabel, resolveShipTemplateDescription } from '../../src/i18n/shipText';
+import { resolveNpcCapitalShipDisplayName, resolveShipTemplateDescription } from '../../src/i18n/shipText';
 import { resolveItemName } from '../../src/i18n/itemText';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { formatCredits } from '../../src/utils/formatCredits';
@@ -47,6 +47,7 @@ import type {
 } from '../../src/types';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
+import { usePlanetHubFacilityAccessGate } from '../../src/hooks/usePlanetHubFacilityAccessGate';
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
@@ -69,12 +70,6 @@ import {
   resolveWeaponItemDef,
   weaponIdFromWeaponItemId,
 } from '../../src/game/weaponItemBridge';
-import {
-  checkCapitalHullPurchase,
-  listCapitalHullPurchasePolicyRows,
-  resolveNpcShipIdForHullTier,
-} from '../../src/arcCore/balance/capitalHullPurchaseFromBalance';
-
 const REPAIR_COST_PER_HP = 5;
 const SHIELD_RECHARGE_COST = 200;
 /** 메인스테이지 기준 하단 공백과 동기 */
@@ -106,7 +101,6 @@ export default function ShipyardScreen() {
   const loadLocalPlayer = usePlayerStore(s => s.loadLocalPlayer);
   const updateShip = usePlayerStore(s => s.updateShip);
   const spendCredits = usePlayerStore(s => s.spendCredits);
-  const addHangarShipFromNpcPurchase = usePlayerStore(s => s.addHangarShipFromNpcPurchase);
   const persist = usePlayerStore(s => s.persist);
   const [tab, setTab] = useState<'status' | 'capital' | 'upgrade' | 'hangar'>('status');
 
@@ -133,6 +127,7 @@ export default function ShipyardScreen() {
   usePlanetSubStageMemory('shipyard', () => {
     setTab('status');
   });
+  usePlanetHubFacilityAccessGate('shipyard');
   const stageFrameReady = useStageFirstFrameReady();
 
   if (!player || !shipFinal) return null;
@@ -202,54 +197,6 @@ export default function ShipyardScreen() {
     updateShip(applied.ship);
     await persist();
     showArcAlert(t('shipyard.select.doneTitle'), t('shipyard.select.doneBody'));
-  };
-
-  const handlePurchaseHullTier = async (hullTierKey: string) => {
-    const row = listCapitalHullPurchasePolicyRows().find((r) => r.hullTierKey === hullTierKey);
-    if (!row) return;
-    const price = Number(row.purchaseCredits) || 0;
-    const check = checkCapitalHullPurchase(hullTierKey, player.level, credits);
-    if (!check.ok) {
-      const reasonBody = check.reasonCode === 'level_required'
-        ? t('shipyard.buy.reason.level_required', { level: check.reasonParams?.level ?? 1 })
-        : check.reasonCode === 'credits_required'
-          ? t('shipyard.buy.reason.credits_required', { price: formatCredits(check.reasonParams?.price ?? 0) })
-          : check.reasonCode === 'unknown_tier'
-            ? t('shipyard.buy.reason.unknown_tier')
-            : t('shipyard.buy.unavailableDefault');
-      showArcAlert(t('shipyard.buy.unavailableTitle'), reasonBody);
-      return;
-    }
-    const hullLabel = resolveCapitalHullPurchaseLabel(row, locale);
-    const npcShipId = resolveNpcShipIdForHullTier(hullTierKey);
-    if (!npcShipId) {
-      showArcAlert(t('shipyard.buy.unavailableTitle'), t('shipyard.buy.noShipData'));
-      return;
-    }
-    showArcAlert(
-      t('shipyard.buy.confirmTitle'),
-      t('shipyard.buy.confirmBody', { label: hullLabel, price: formatCredits(price) }),
-      [
-        { text: t('shipyard.btn.cancel'), style: 'cancel' },
-        {
-          text: t('shipyard.buy.doConfirm'),
-          onPress: async () => {
-            if (price > 0 && !spendCredits(price)) {
-              showArcAlert(t('shipyard.creditShortTitle'), t('shipyard.creditShortBody'));
-              return;
-            }
-            if (!addHangarShipFromNpcPurchase(npcShipId)) {
-              showArcAlert(t('shipyard.buy.hangarFullTitle'), t('shipyard.buy.hangarFullBody'));
-              return;
-            }
-            const applied = applyNpcCapitalShipToPlayerShip(ship, npcShipId);
-            if (applied.ok) updateShip(applied.ship);
-            await persist();
-            showArcAlert(t('shipyard.buy.doneTitle'), t('shipyard.buy.doneBody', { label: hullLabel }));
-          },
-        },
-      ],
-    );
   };
 
   const handleReleaseCurrentShip = async () => {
@@ -490,33 +437,6 @@ export default function ShipyardScreen() {
         {tab === 'upgrade' && (
           <View style={styles.hangarSection}>
             <ShipyardMineralUpgradeTab />
-            <Text style={styles.hangarHeading}>{t('shipyard.upgrade.hullSection')}</Text>
-            <Text style={styles.hangarEmptySub}>
-              {t('shipyard.upgrade.hullHint')}
-            </Text>
-            {listCapitalHullPurchasePolicyRows()
-              .filter((row) => row.hullTierKey !== 'frigate_default')
-              .map((row) => {
-                const price = Number(row.purchaseCredits) || 0;
-                const minLv = Number(row.requiredPilotLevelMin) || 1;
-                const canBuy = checkCapitalHullPurchase(row.hullTierKey, player.level, credits).ok;
-                return (
-                  <TouchableOpacity
-                    key={row.hullTierKey}
-                    style={[styles.hangarRow, !canBuy && styles.serviceBtnDisabled]}
-                    onPress={() => void handlePurchaseHullTier(row.hullTierKey)}
-                    disabled={!canBuy}
-                  >
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.serviceBtnTitle}>{resolveCapitalHullPurchaseLabel(row, locale)}</Text>
-                      <Text style={styles.serviceBtnSub}>
-                        {t('shipyard.upgrade.hullSub', { lv: minLv, price: formatCredits(price) })}
-                      </Text>
-                    </View>
-                    <Text style={styles.serviceBtnAction}>{canBuy ? t('shipyard.btn.buy') : t('shipyard.btn.locked')}</Text>
-                  </TouchableOpacity>
-                );
-              })}
           </View>
         )}
 

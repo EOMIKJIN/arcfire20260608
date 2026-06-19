@@ -8,6 +8,7 @@ type PlanetHubMenuPlanet = {
   hasTradePort: boolean;
   hasShipyard: boolean;
   hasTavern: boolean;
+  hasResearchLab: boolean;
 };
 
 export type PlanetHubFeatureMenuItem = {
@@ -54,6 +55,7 @@ export function buildPlanetHubFeatureMenuItems(
   const hasTradePort = Boolean(ctx.planet?.hasTradePort);
   const hasShipyard = Boolean(ctx.planet?.hasShipyard);
   const hasTavern = Boolean(ctx.planet?.hasTavern);
+  const hasResearchLab = Boolean(ctx.planet?.hasResearchLab);
   return [
     {
       id: 'trade',
@@ -93,7 +95,9 @@ export function buildPlanetHubFeatureMenuItems(
       id: 'skilltree',
       label: tr('hubMenu.skilltree'),
       icon: '⚗',
+      disabled: !hasResearchLab,
       onPress: () => {
+        if (!hasResearchLab) return;
         runThrottledPlanetHubNavigation(() => ctx.onFacilityNavigate('/(game)/skilltree'));
       },
     },

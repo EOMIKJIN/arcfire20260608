@@ -1,6 +1,6 @@
 #Requires -Version 5.1
 <#
-  Windows 작업 스케줄러 — 매일 12:00(KST) 정오 안정화·커밋·푸시.
+  Windows 작업 스케줄러 — 매일 자정 00:00(KST) 안정화·커밋·푸시.
 
   관리자 PowerShell:
     Set-ExecutionPolicy -Scope CurrentUser RemoteSigned   # 최초 1회
@@ -8,13 +8,13 @@
     .\tools\daily-commit\register-windows-task.ps1
 
   제거:
-    schtasks /Delete /TN "ArcfireOnline_DailyRelease" /F
+    schtasks /Delete /TN "ArcfireOnline_DailyCommit" /F
 #>
 param(
   [string]$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path,
-  [string]$TaskName = 'ArcfireOnline_DailyRelease',
-  [string]$TimeLocal = '12:00',
-  [string]$StartDate = '',  # MM/dd/yyyy — 비우면 오늘 또는 내일(KST) 12:00
+  [string]$TaskName = 'ArcfireOnline_DailyCommit',
+  [string]$TimeLocal = '00:00',
+  [string]$StartDate = '',  # MM/dd/yyyy — 비우면 내일(KST) 자정
   [switch]$Push,
   [switch]$RunAudit,
   [switch]$NoPush,
@@ -42,7 +42,7 @@ $tr = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$scriptPath`" -
 
 if (-not $StartDate) {
   $nowKst = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId((Get-Date), 'Korea Standard Time')
-  $target = $nowKst.Date.AddHours(12)
+  $target = $nowKst.Date
   if ($nowKst -ge $target) { $target = $target.AddDays(1) }
   $StartDate = $target.ToString('MM/dd/yyyy')
 }
@@ -64,6 +64,6 @@ Write-Host "OK — task '$TaskName' daily at $TimeLocal (PC local time), first r
 Write-Host "Pipeline: audit=$doAudit push=$doPush"
 Write-Host "TR: $tr"
 Write-Host ""
-Write-Host "Note: Set Windows timezone to Korea Standard Time so 12:00 = KST noon."
+Write-Host "Note: Set Windows timezone to Korea Standard Time so 00:00 = KST midnight."
 Write-Host "Test now: powershell -File `"$scriptPath`"$flagStr"
 Write-Host "Or: npm run daily:release"

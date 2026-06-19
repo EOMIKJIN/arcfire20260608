@@ -18,6 +18,9 @@ import { runPlanetEconomyFabricDailyPass } from '../economy/planetEconomyFabric'
 import { runArcCoreConvoyDailySettlementPass } from '../economy/runArcCoreConvoyDailySettlementPass';
 import { runArcCorePlanetUpkeepDailyPass } from '../economy/runArcCorePlanetUpkeepDailyPass';
 import { runPlanetPgpDailyPass } from '../economy/runPlanetPgpDailyPass';
+import { runFacilityStatNudgePass } from '../planetFacility/runFacilityStatNudgePass';
+import { runLaboratoryRdSpeedPass } from '../planetFacility/runLaboratoryRdSpeedPass';
+import { runTavernBountyRefreshPass } from '../planetFacility/runTavernBountyRefreshPass';
 import { resolveArcCoreDailyOpsPolicy } from './arcCoreDailyOpsPolicy';
 
 export type ArcCoreDailyOpsBatchResult = {
@@ -35,6 +38,9 @@ export type ArcCoreDailyOpsBatchResult = {
   integratedEngageHpAdjust: boolean;
   planetUpkeep: boolean;
   convoyDailySettlement: boolean;
+  facilityStatNudge: boolean;
+  laboratoryRdSpeed: boolean;
+  tavernBountyRefresh: boolean;
   planetPgp: boolean;
 };
 
@@ -59,6 +65,9 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     integratedEngageHpAdjust: false,
     planetUpkeep: false,
     convoyDailySettlement: false,
+    facilityStatNudge: false,
+    laboratoryRdSpeed: false,
+    tavernBountyRefresh: false,
     planetPgp: false,
   };
 
@@ -108,6 +117,13 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
 
   const upkeep = await runArcCorePlanetUpkeepDailyPass();
   result.planetUpkeep = upkeep.ran;
+
+  const facilityNudge = runFacilityStatNudgePass();
+  result.facilityStatNudge = facilityNudge.ran;
+  const labRd = runLaboratoryRdSpeedPass();
+  result.laboratoryRdSpeed = labRd.ran;
+  const tavernRefresh = runTavernBountyRefreshPass();
+  result.tavernBountyRefresh = tavernRefresh.ran;
 
   const pgpPass = runPlanetPgpDailyPass();
   result.planetPgp = pgpPass.ran;

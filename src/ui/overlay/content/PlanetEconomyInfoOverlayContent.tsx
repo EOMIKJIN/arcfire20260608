@@ -13,6 +13,8 @@ import { formatCredits } from '../../../utils/formatCredits';
 import { useT } from '../../../i18n';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
+import { phosphorOverlay } from './phosphorOverlayStyles';
+import { PlanetInfoPortraitSlot } from './PlanetInfoPortraitSlot';
 
 type Props = {
   entry: ArcOverlayPlanetEconomyInfoEntry;
@@ -61,6 +63,7 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
       <Text style={[styles.subtitle, { color: PH }]}>
         {snapshot.planetName} · KST {snapshot.kstDayKey}
       </Text>
+      <PlanetInfoPortraitSlot planetId={planetId} />
       <View style={styles.pgpBanner}>
         <Text style={[styles.pgpLabel, { color: PH }]}>{t('econInfo.pgpTotal')}</Text>
         <Text style={[styles.pgpValue, { color: PH }]}>{formatPlanetPgpBmu(snapshot.pgpBmu)}</Text>
@@ -120,7 +123,7 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
           <InfoRow key={row.label} label={row.label} value={row.value} />
         ))}
       </ScrollView>
-      <View style={styles.btnRow}>
+      <View style={phosphorOverlay.btnRowAckOnly}>
         <ArcButton label={t('econInfo.close')} variant="primary" onPress={onClose} />
       </View>
     </View>
@@ -216,8 +219,5 @@ const styles = StyleSheet.create({
     fontWeight: FONTS.weight.bold,
     textAlign: 'right',
     lineHeight: 18,
-  },
-  btnRow: {
-    marginTop: SPACING.md,
   },
 });

@@ -124,16 +124,9 @@ while ($true) {
         Write-Meta "ALERT GL +${deltaGl}MB active hub views=${curViews}"
         # 단일 스파이크만으로 즉시 재시작하지 않는다(전투 진입 마운트 급상승 false-positive 방지).
         # 재시작 판단은 직후 호출되는 check-and-remediate(추세·plateau·하드실링 컨텍스트 보유)에 위임.
-        # 단, 진짜 OOM 임박(하드 실링)은 추세와 무관하게 즉시 조치.
+        # 단, 진짜 OOM 임박(하드 실링)은 추세와 무관하게 즉시 조치 — check-and-remediate 단일 경로로 coalesce.
         if (Test-MemHardCeilingBreach -GlMb ([double]$glMb) -PssMb ([double]$pssMb)) {
-          Write-Meta "ALERT GL/PSS hard-ceiling breach gl=${glMb}MB pss=${pssMb}MB — immediate remediation"
-          & (Join-Path $PSScriptRoot 'apply-auto-remediation.ps1') -LogDir $logDir -Package $Package -Reason 'gl_critical_active_hub' -Ctx @{
-            lastGlMb = [double]$glMb
-            pssMb = [double]$pssMb
-            deltaGlMb = [double]$deltaGl
-            views = $curViews
-            hardCeiling = $true
-          } -MinIntervalMin 45
+          Write-Meta "ALERT GL/PSS hard-ceiling breach gl=${glMb}MB pss=${pssMb}MB — defer remediation to check-and-remediate"
         }
       } else {
         $note = 'GL_DELTA background_or_transition'

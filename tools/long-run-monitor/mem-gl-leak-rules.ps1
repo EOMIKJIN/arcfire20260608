@@ -84,6 +84,86 @@ function Test-MemHardCeilingBreach {
   return ($GlMb -ge $script:MEM_GL_HARD_CEILING_MB) -or ($PssMb -ge $script:MEM_PSS_HARD_CEILING_MB)
 }
 
+# logcat tail — Firebase deprecation(W ReactNativeJS) · 타앱 crashed service · 자동조치 force-stop 제외.
+# arcfire.online 한정 FATAL + 타임스탬프 신선도(≤MaxAgeMin) 필수.
+function Get-ArcfireCrashLogEvents {
+  param(
+    [string]$Text,
+    [int]$MaxAgeMin = 40
+  )
+  if ([string]::IsNullOrWhiteSpace($Text)) { return @() }
+
+  $now = Get-Date
+  $year = $now.Year
+  $events = @()
+
+  foreach ($line in ($Text -split "`n")) {
+    if ([string]::IsNullOrWhiteSpace($line)) { continue }
+    if ($line -match 'Force stopping com\.arcfire\.online') { continue }
+    if ($line -match 'stop com\.arcfire\.online due to') { continue }
+    if ($line -match 'Killing \d+:com\.arcfire\.online[^\n]*: stop\b') { continue }
+    if ($line -match 'Scheduling restart of crashed service(?! com\.arcfire\.online)') { continue }
+
+    $isArcfireFatal = $false
+    if ($line -match '\.arcfire\.online' -and $line -match 'Fatal signal \d+|F libc\s*:\s*Fatal signal') {
+      $isArcfireFatal = $true
+    }
+    if ($line -match 'Killing \d+:com\.arcfire\.online[^\n]*: crash\b') {
+      $isArcfireFatal = $true
+    }
+    if ($line -match 'Process com\.arcfire\.online .* has died') {
+      $isArcfireFatal = $true
+    }
+    if ($line -match 'F DEBUG\s*:.*Cmdline: com\.arcfire\.online' -and $line -match 'signal 11|SIGSEGV') {
+      $isArcfireFatal = $true
+    }
+    if ($line -match '\bE ReactNativeJS:.*(?:Error|Exception|Invariant|Fatal|TypeError|ReferenceError)' -and $line -match '\.arcfire\.online') {
+      $isArcfireFatal = $true
+    }
+    if (-not $isArcfireFatal) { continue }
+
+    $ageMin = 9999.0
+    if ($line -match '^(\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\.') {
+      try {
+        $evt = [datetime]::ParseExact("$year-$($Matches[1]) $($Matches[2])", 'yyyy-MM-dd HH:mm:ss', $null)
+        if ($evt -gt $now.AddMinutes(5)) {
+          $evtPrevDay = $evt.AddDays(-1)
+          if ($evtPrevDay -le $now.AddMinutes(5)) {
+            $evt = $evtPrevDay
+          } else {
+            $evt = $evt.AddYears(-1)
+          }
+        }
+        $ageMin = ($now - $evt).TotalMinutes
+        if ($ageMin -lt 0) { $ageMin = 0 }
+      } catch { }
+    }
+    if ($ageMin -le $MaxAgeMin) {
+      $events += @{ Line = $line.Trim(); AgeMin = [math]::Round($ageMin, 1) }
+    }
+  }
+  return $events
+}
+
+function Test-ArcfireCrashLogText {
+  param(
+    [string]$Text,
+    [int]$MaxAgeMin = 40
+  )
+  return ((Get-ArcfireCrashLogEvents -Text $Text -MaxAgeMin $MaxAgeMin).Count -gt 0)
+}
+
+function Get-RefixReasonPriority {
+  param([string]$Reason)
+  switch ($Reason) {
+    'gl_critical_active_hub' { return 100 }
+    'process_death' { return 90 }
+    'consecutive_gl_spikes' { return 50 }
+    'baseline_gl_drift' { return 40 }
+    default { return 0 }
+  }
+}
+
 function Get-MemTimelineCols {
   param([string[]]$Cols)
   $out = @{

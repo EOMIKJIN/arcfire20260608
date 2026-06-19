@@ -25,7 +25,15 @@ import {
   resetClanWarFoundationDb,
   saveClanWarFoundationDb,
 } from '../world/clanWarFoundationDb';
-import { seedPlanetOccupationHoldsFromBalance } from '../arcCore/balance/seedPlanetOccupationFromBalance';
+import {
+  seedPlanetOccupationHoldsFromBalance,
+  ARC_CORE_SEED_BLUE_CLAN_ID,
+  ARC_CORE_SEED_RED_CLAN_ID,
+} from '../arcCore/balance/seedPlanetOccupationFromBalance';
+import {
+  resolveMapFactionSideFromClanIdPure,
+  type MapFactionSide,
+} from '../galaxyMap/mapFactionSideCore';
 
 interface ClanWarFoundationState {
   hydrated: boolean;
@@ -79,6 +87,13 @@ interface ClanWarFoundationState {
     defenderClanId: string | null;
     targetPlanetId: string;
   }) => string;
+  /** ArcCore 접전지역 자동전투 — 점유 변경 + 작전 기록 */
+  applyArcCoreTerritorialHold: (params: {
+    planetId: string;
+    systemId: string;
+    factionSide: 'BLUE' | 'RED' | 'NEUTRAL';
+    operationMeta: Record<string, unknown>;
+  }) => { changed: boolean; previousSide: MapFactionSide; newSide: MapFactionSide; operationId: string };
   getHold: (planetId: string) => PlanetClanHold | undefined;
   listDeploymentsForPlanet: (planetId: string) => PlanetCapitalDeployment[];
   getClanBasics: (clanId: string) => ClanBasicsRecord | undefined;
@@ -414,6 +429,71 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     set({ operations: [op, ...get().operations] });
     void get().persistClanWarFoundation();
     return id;
+  },
+
+  applyArcCoreTerritorialHold: ({ planetId, systemId, factionSide, operationMeta }) => {
+    const state = get();
+    const prevHold = state.planetHolds[planetId];
+    const previousSide = resolveMapFactionSideFromClanIdPure(
+      prevHold?.occupierClanId ?? 'neutral',
+      state.clans,
+    );
+
+    const occupierClanId =
+      factionSide === 'NEUTRAL'
+        ? 'neutral'
+        : factionSide === 'RED'
+          ? ARC_CORE_SEED_RED_CLAN_ID
+          : ARC_CORE_SEED_BLUE_CLAN_ID;
+    const kind: PlanetClanHold['kind'] = factionSide === 'NEUTRAL' ? 'neutral' : 'clan_hold';
+    const newSide = resolveMapFactionSideFromClanIdPure(occupierClanId, state.clans);
+    const unchanged =
+      prevHold?.occupierClanId === occupierClanId && prevHold?.kind === kind;
+    if (unchanged) {
+      return { changed: false, previousSide, newSide, operationId: makeId('op_skip') };
+    }
+
+    const now = Date.now();
+    const nextHold: PlanetClanHold = {
+      planetId,
+      systemId,
+      occupierClanId,
+      homePlayerUid: null,
+      kind,
+      capturedAt: now,
+    };
+
+    const attackerClanId =
+      operationMeta.attackerSide === 'RED'
+        ? ARC_CORE_SEED_RED_CLAN_ID
+        : operationMeta.attackerSide === 'BLUE'
+          ? ARC_CORE_SEED_BLUE_CLAN_ID
+          : occupierClanId;
+    const defenderClanId =
+      operationMeta.defenderSide === 'RED'
+        ? ARC_CORE_SEED_RED_CLAN_ID
+        : operationMeta.defenderSide === 'BLUE'
+          ? ARC_CORE_SEED_BLUE_CLAN_ID
+          : prevHold?.occupierClanId ?? null;
+
+    const operationId = makeId('op_arc');
+    const op: ClanWarOperation = {
+      id: operationId,
+      attackerClanId,
+      defenderClanId: defenderClanId === 'neutral' ? null : defenderClanId,
+      targetPlanetId: planetId,
+      phase: 'resolved',
+      startedAt: now,
+      updatedAt: now,
+      ext: { ...operationMeta, previousSide, newSide },
+    };
+
+    set({
+      planetHolds: { ...state.planetHolds, [planetId]: nextHold },
+      operations: [op, ...state.operations],
+    });
+    void get().persistClanWarFoundation();
+    return { changed: true, previousSide, newSide, operationId };
   },
 
   getHold: (planetId) => get().planetHolds[planetId],

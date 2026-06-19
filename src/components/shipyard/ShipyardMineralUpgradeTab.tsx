@@ -11,10 +11,12 @@ import { countGoodInInventory, normalizeInventorySlots } from '../../game/player
 import { normalizePlayerCombatProficiency } from '../../combat/playerCombatProficiency';
 import {
   getMineralUpgradeOreCost,
+  getFinalMineralUpgradeCap,
   listMineralUpgradeStats,
   resolveMineralUpgradeMaxLevel,
   type MineralUpgradeGroup,
 } from '../../game/shipyardMineralUpgrade/mineralUpgradeModel';
+import { resolvePlanetShipyardLevelForMineralCap } from '../../game/planetDevelopment/planetOrbitShipyardMineralCap';
 import { showArcAlert } from '../../utils/showArcAlert';
 import { useT } from '../../i18n';
 import { COLORS, FONTS, SPACING } from '../../utils/theme';
@@ -28,7 +30,12 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
     () => (player ? normalizePlayerCombatProficiency(player.combatProficiency, player.level) : null),
     [player],
   );
-  const cap = combatProficiency ? resolveMineralUpgradeMaxLevel(combatProficiency.combatLevel) : 0;
+  const shipyardLevel = useMemo(
+    () => (player?.currentPlanetId ? resolvePlanetShipyardLevelForMineralCap(player.currentPlanetId) : 0),
+    [player?.currentPlanetId],
+  );
+  const combatCap = combatProficiency ? resolveMineralUpgradeMaxLevel(combatProficiency.combatLevel) : 0;
+  const cap = combatProficiency ? getFinalMineralUpgradeCap(combatProficiency.combatLevel, shipyardLevel) : 0;
   const slots = useMemo(() => normalizeInventorySlots(player?.inventorySlots), [player?.inventorySlots]);
   const upgrades = player?.mineralUpgrades ?? {};
 
@@ -38,7 +45,7 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
   const groups = Array.from(new Set(stats.map((s) => s.upgradeGroup))) as MineralUpgradeGroup[];
 
   const handleUpgrade = (statId: string) => {
-    const res = applyMineralUpgrade(statId);
+    const res = applyMineralUpgrade(statId, shipyardLevel);
     if (!res.ok) {
       const reasonKey = `shipyard.up.fail.${res.reason ?? 'default'}`;
       const reasonText = res.reason ? t(reasonKey) : t('shipyard.up.fail.default');
@@ -49,7 +56,12 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
   return (
     <View style={styles.root}>
       <Text style={styles.capLine}>
-        {t('shipyard.up.capLine', { lv: combatProficiency?.combatLevel ?? 1, cap })}
+        {t('shipyard.up.capLine', {
+          lv: combatProficiency?.combatLevel ?? 1,
+          cap,
+          shipyardLv: shipyardLevel,
+          combatCap,
+        })}
       </Text>
       <Text style={styles.intro}>{t('shipyard.up.intro')}</Text>
 

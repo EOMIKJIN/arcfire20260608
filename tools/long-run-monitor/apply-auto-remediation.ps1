@@ -1,4 +1,4 @@
-# GL/PSS 이상 감지 시 런타임 자동 복구 + 정적 Skia 감사
+# GL/PSS 이상 감지 시 런타임 자동 복구 + 정적 Skia 감사 + 사후 점검
 param(
   [string]$Package = 'com.arcfire.online',
   [string]$LogDir = (Join-Path $PSScriptRoot 'logs'),
@@ -8,11 +8,62 @@ param(
   [double]$CriticalGlMb = 80
 )
 
+. (Join-Path $PSScriptRoot 'mem-gl-leak-rules.ps1')
+
+function Invoke-PostRemediationVerify {
+  param([string]$VerifyReason)
+  Write-Remediation "VERIFY post-remediation start reason=$VerifyReason (wait 20s)"
+  Start-Sleep -Seconds 20
+
+  $appPid = (adb shell "pidof $Package" 2>$null).ToString().Trim()
+  if (-not $appPid) {
+    Write-Remediation 'VERIFY FAIL process_not_running after relaunch'
+    return $false
+  }
+
+  $raw = (adb shell dumpsys meminfo $Package 2>&1 | Out-String)
+  $gl = Parse-GlMb $raw
+  $pss = 0.0
+  if ($raw -match 'TOTAL PSS:\s+(\d+)') { $pss = [math]::Round([int]$Matches[1] / 1024, 1) }
+  $views = 0
+  if ($raw -match 'Views:\s+(\d+)') { $views = [int]$Matches[1] }
+
+  if ($null -eq $gl) {
+    Write-Remediation "VERIFY WARN gl_unparsed pid=$appPid pss=${pss}MB — process alive"
+    return $true
+  }
+
+  if (Test-MemHardCeilingBreach -GlMb $gl -PssMb $pss) {
+    Write-Remediation "VERIFY FAIL hard_ceiling_still_breached gl=${gl}MB pss=${pss}MB views=$views"
+    return $false
+  }
+
+  $timelineCsv = Join-Path $LogDir 'mem-timeline.csv'
+  if (Test-Path $timelineCsv) {
+    $iso = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+    $line = "$iso,$appPid,$pss,,${gl},,,,,,$views,,,POST_REMEDIATION_VERIFY_OK"
+    Add-Content -Path $timelineCsv -Value $line -Encoding utf8
+  }
+
+  Write-Remediation "VERIFY PASS pid=$appPid gl=${gl}MB pss=${pss}MB views=$views"
+  return $true
+}
+
+function Invoke-IncidentHandoff([string]$HandoffReason) {
+  try {
+    & node (Join-Path $PSScriptRoot 'pack-incident-handoff.cjs') $HandoffReason 2>&1 | Out-Null
+    Write-Remediation "HANDOFF packed -> outbox/cursor-incident-handoff.md ($HandoffReason)"
+  } catch {
+    Write-Remediation "WARN handoff pack skipped: $($_.Exception.Message)"
+  }
+}
+
 $remediationLog = Join-Path $LogDir 'remediation.log'
 $refixFlag = Join-Path $LogDir 'gl-leak-refix-requested.flag'
 $throttleFile = Join-Path $LogDir 'last-auto-remediation.txt'
 $baselineJson = Join-Path $LogDir 'mem-baseline.json'
 $pauseFlag = Join-Path $LogDir 'monitor-paused.flag'
+$lockFile = Join-Path $LogDir '.auto-remediation.lock'
 $root = Resolve-Path (Join-Path $PSScriptRoot '../..')
 
 function Write-Remediation([string]$msg) {
@@ -28,6 +79,17 @@ if (Test-Path $pauseFlag) {
   Write-Remediation "AUTO_FIX SKIPPED (monitor-paused.flag present) reason=$Reason — verification mode, no relaunch"
   exit 0
 }
+
+if (Test-Path $lockFile) {
+  try {
+    $lockAgeMin = ((Get-Date) - (Get-Item $lockFile).LastWriteTime).TotalMinutes
+    if ($lockAgeMin -lt 10) {
+      Write-Remediation "AUTO_FIX skipped (remediation lock ${([math]::Round($lockAgeMin,1))}m ago) reason=$Reason — no duplicate relaunch"
+      exit 0
+    }
+  } catch { }
+}
+Set-Content -Path $lockFile -Value (Get-Date -Format 'o') -Encoding utf8
 
 function Get-LastRemediationAgeMin {
   if (-not (Test-Path $throttleFile)) { return 9999 }
@@ -101,14 +163,19 @@ function Reset-GlBaseline {
 
 $ageMin = Get-LastRemediationAgeMin
 $currentGl = $Ctx['lastGlMb']
+$currentPss = $Ctx['pssMb']
 if ($null -eq $currentGl -and (Test-Path (Join-Path $LogDir 'mem-timeline.csv'))) {
   $lastRow = (Get-Content (Join-Path $LogDir 'mem-timeline.csv') | Select-Object -Last 1) -split ','
   if ($lastRow.Count -ge 5) { [void][double]::TryParse($lastRow[4], [ref]$currentGl) }
+  if ($lastRow.Count -ge 3) { [void][double]::TryParse($lastRow[2], [ref]$currentPss) }
 }
 
-$critical = ($currentGl -ge $CriticalGlMb)
+$hardCeiling = ($Ctx['hardCeiling'] -eq $true)
+if (-not $hardCeiling -and $currentPss -ge 950) { $hardCeiling = $true }
+$critical = ($currentGl -ge $CriticalGlMb) -or $hardCeiling
 if (-not $critical -and $ageMin -lt $MinIntervalMin) {
   Write-Remediation "AUTO_FIX throttled reason=$Reason age=${([math]::Round($ageMin,1))}m min=${MinIntervalMin}m gl=${currentGl}MB"
+  Remove-Item $lockFile -Force -ErrorAction SilentlyContinue
   exit 0
 }
 
@@ -120,12 +187,23 @@ $needsRelaunch = @(
   'consecutive_gl_spikes',
   'baseline_gl_drift',
   'process_death',
-  'gl_critical_active_hub'
+  'gl_critical_active_hub',
+  'abnormal_restart_after_remediation'
 ) -contains $Reason
 
+$didRelaunch = $false
 if ($needsRelaunch -or $critical) {
   Invoke-AppRelaunch
   Reset-GlBaseline
+  $didRelaunch = $true
+}
+
+if ($didRelaunch) {
+  $verifyOk = Invoke-PostRemediationVerify -VerifyReason $Reason
+  if (-not $verifyOk) {
+    Add-Content -Path (Join-Path $LogDir 'incidents.log') -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] VERIFY_FAIL post_remediation reason=$Reason"
+    Invoke-IncidentHandoff 'verify_failed_post_remediation'
+  }
 }
 
 if (Test-Path $refixFlag) {
@@ -133,4 +211,5 @@ if (Test-Path $refixFlag) {
 }
 
 Write-Remediation "AUTO_FIX done reason=$Reason critical=$critical ctx=$($Ctx | ConvertTo-Json -Compress)"
+Remove-Item $lockFile -Force -ErrorAction SilentlyContinue
 exit 0

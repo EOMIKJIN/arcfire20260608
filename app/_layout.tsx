@@ -29,6 +29,7 @@ import { useClanWarFoundationStore } from '../src/store/clanWarFoundationStore';
 import { usePlanetCoreRuntimeStore } from '../src/store/planetCoreRuntimeStore';
 import { usePlanetNebulaStore } from '../src/store/planetNebulaStore';
 import { useTavernBoardStore } from '../src/store/tavernBoardStore';
+import { hydrateCombatMatchTelemetryCache } from '../src/store/combatMatchTelemetryStore';
 import { useWorldObjectRuntimeStore } from '../src/store/worldObjectRuntimeStore';
 import { initGuestAuth } from '../src/firebase/auth';
 import { arcCoreHub } from '../src/arcCore/ArcCoreHub';
@@ -60,6 +61,7 @@ import { buildCsvStaticIndexesMinimal } from '../src/game/buildCsvStaticIndexes'
 import { markBootPerf, logBootPerfSummary } from '../src/game/bootPerformance';
 import { useAabsPolicyStore } from '../src/arcCore/aabs/aabsPolicyStore';
 import { useAppBootStore } from '../src/store/appBootStore';
+import { installDevMetroReloadGuard } from '../src/game/devMetroReloadGuard';
 
 type UpdateGateState = {
   visible: boolean;
@@ -103,6 +105,10 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
+    installDevMetroReloadGuard();
+  }, []);
+
+  useEffect(() => {
     LogBox.ignoreLogs([
       'deprecated',
       'Deprecation',
@@ -137,6 +143,7 @@ export default function RootLayout() {
           loadLocalPlanetNebulaProfiles(),
           loadLocalBoard(),
         ]);
+        await hydrateCombatMatchTelemetryCache();
         await bootstrapWorldObjectRuntimeFromWorld(useWorldStore.getState().systems);
         await applyArcCoreWallClockCatchUpFromPersistedGap(arcCoreHub);
         await usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync();

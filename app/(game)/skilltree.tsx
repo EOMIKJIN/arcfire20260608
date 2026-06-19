@@ -17,6 +17,7 @@ import { Skill, SkillCategory } from '../../src/types';
 import { canLearnSkill } from '../../src/engine/SkillEngine';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
+import { usePlanetHubFacilityAccessGate } from '../../src/hooks/usePlanetHubFacilityAccessGate';
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
@@ -41,6 +42,7 @@ export default function SkillTreeScreen() {
   usePlanetSubStageMemory('skilltree', () => {
     setSelectedCategory('combat');
   });
+  usePlanetHubFacilityAccessGate('research_lab');
 
   const handleSkillPress = useCallback((skill: Skill) => {
     if (!player) return;

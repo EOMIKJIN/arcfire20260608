@@ -87,4 +87,66 @@
 - 사거리(`weapon_range_flat`) 강화는 calculator v1에서 미적용 상태 → 전투력 지수에도 미반영. 후속 보완 시 표 재생성 필요.
 - 데이터 재생성: `npm run sim:ship-upgrade-value`.
 
-_(김팀장 검수 코멘트·반려 사유는 아래에 이어서 기록)_
+_(김팀장 검수 코멘트·반려 사유는 아래에 기록)_
+
+---
+
+## [김팀장 지시 · 2026-06-18] 행성개발 v2.0 × 무역소·경제 구조 검토 요청
+
+> **원칙**: 행성개발 적용으로 SKU·배치·수수료 등 **세분화**는 가능하나, **zone 17/21 무역소·교역 SKU 분배·일일 배치(AABS/convoy) 큰 골격은 변경 금지**.
+
+### 김경제 검토 과제 (우선)
+
+1. **이중 기준 맵** — `planets.csv hasTradePort` vs `dev_trade_port` 설치 vs `listPlanetIdsWithTradePort()` (김팀장: CSV∪dev로 통합 연동 완료, SIM 재검증 요망)
+2. **무역소 SKU “사라짐” 회귀** — Lv1 `unlockSkuCount=5` + `applyTradePortDevCatalogGate`가 zone 정본(교역·무기·장비·전함) 대비 과도 축소였음 → **parity Lv**(카탈로그 규모 커버 최소 Lv) 도입. **Kim: zone별 parity Lv·수수료율이 SIM KPI(F2P/Dolphin/Whale) 내인지 확인**
+3. **배치 항목** — `syncTradePortCatalogFromBalance`·`trade_route_planet_supply_assignments.csv`·`runMarketPricePass`가 dev-only 행성을 누락하지 않는지 전 행성 diff
+4. **Arcadia (`arcadia_prime`)** — CSV 3시설 true; 시드 후 무역 탭 SKU 수 = 행성개발 전 zone 정본과 동일한지 스냅샷 비교
+5. **미연동(P1)** — `stockLimit`/`supplyStockScale`(facility Lv) ↔ `planetEconomyFabric`/`planetTradeMarketStore` — 큰 구조 변경 없이 게이트만 추가할 설계안
+
+### 김팀장 1차 조치 (코드 · 2026-06-18)
+
+- `planetFacilityCsvLegacySeed.ts` — CSV `hasTradePort|hasShipyard|hasTavern` → dev 모듈 1회 시드
+- `planetTradePortParity.ts` — CSV 무역 행성 SKU 하한(parity Lv)
+- `planetTradePortRuntimeBridge` — 실효 Lv = max(설치 Lv, parity)
+- `listPlanetIdsWithTradePort()` — CSV ∪ dev 설치
+
+### 김경제 산출물 요청
+
+- [ ] `npm run audit:balance-ops` + arcadia_prime SKU diff 리포트 (before/after parity)
+- [ ] `sim:economy` KPI 변동 ±5% 이내 여부 (Whale/F2P ratio critical 유지)
+- [ ] `facility_trade_port_level_policy.csv` Lv1 TEST 값(5 SKU) — **신규 개척 행성 전용**으로 명시할지, zone band별 Lv1 floor 제안
+- [ ] handoff 본 섹션에 **PASS/FAIL** 및 CSV 수정안만 제출 (코드는 김팀장 연동)
+
+---
+
+## [2026-06-19] 행성개발 집계 허브 v2.3 — 5대 지표·비용 효율
+
+**상태**: `ready-for-review` · `audit:balance-ops` PASS · `tsc` PASS
+
+### 큰 방향 (2층)
+
+| 층 | 역할 |
+|---|---|
+| **1층 모듈** | 무역소 수수료·고급무기 가중, 조선소 티어/광물캡, 방위전투, 연구소 RD, 선술집 현상금 등 **시설 고유 보상** |
+| **2층 집계** | `planetDevelopmentLevelBenefits.ts` — 레벨업 **5대 지표 즉시 상승** + **T·집계레벨 비용/유지비 효율** + **TDI→PGP** |
+
+### 정본 CSV
+
+- `planet_development_aggregate_policy.csv` — 비용·유지비 효율 상한, 레벨업 nudge 비율, TDI→PGP 계수
+- `facility_upgrade_levels.csv` — 일일 nudge + `tdi_contribution_formula` (이제 코드 소비)
+
+### 밸런스 스냅샷 (정책 기본값)
+
+| 항목 | 중반 (T30·시설합15Lv) | 맥스 (T100·전시설Lv10) |
+|---|---|---|
+| 업그레이드 비용 할인 | ~14% | **25%** (cap) |
+| 개발 유지비 절감 | ~12% | **15%** (cap) |
+| TDI 점수 | ~40 | **~135** |
+| TDI PGP 가산 | ~3,200 BMU | **~10,800 BMU** |
+
+### 김경제 후속 튜닝 제안
+
+- [ ] `facility_*_level_policy.csv` TEST 1cr → 실제 곡선 (비용 효율과 역학 검증)
+- [ ] `sim:economy` — TDI PGP 가산이 Whale/F2P ratio critical(≥8) 유발 여부
+- [ ] `level_up_stat_nudge_daily_fraction` 1.0 → 일일+즉시 이중 상승 속도 SIM
+

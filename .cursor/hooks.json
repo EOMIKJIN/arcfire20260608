@@ -8,6 +8,10 @@
       {
         "command": ".cursor/hooks/on-session-start-monitor-autostart.cjs",
         "timeout": 20
+      },
+      {
+        "command": ".cursor/hooks/on-session-start-incident-triage.cjs",
+        "timeout": 15
       }
     ],
     "stop": []

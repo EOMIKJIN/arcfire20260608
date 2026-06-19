@@ -103,13 +103,36 @@ export function resolvePilotLevelBandForZone(zoneIndex: number): { minLv: number
   return { minLv: Math.max(1, minLv), maxLv: Math.max(minLv, maxLv) };
 }
 
-/**
- * 행성 zone — 기본 무장(pinned) 상시 + 성능 밴드 progression + 계열 최소 1종.
- */
-export function resolveTradePortWeaponIdsForZone(zoneIndex: number): string[] {
+export const MAX_WEAPON_TRADE_GRADE_RANK = SORTED_LISTING_ROWS.length > 0
+  ? parseNum(SORTED_LISTING_ROWS[SORTED_LISTING_ROWS.length - 1].tradeGradeRank, 1)
+  : 1;
+
+const tradeGradeRankByWeaponId = new Map(
+  SORTED_LISTING_ROWS.map((row) => [
+    String(row.canonicalWeaponId).trim(),
+    parseNum(row.tradeGradeRank, 1),
+  ] as const),
+);
+
+export function resolveWeaponTradeGradeRank(weaponId: string): number {
+  return tradeGradeRankByWeaponId.get(weaponId.trim()) ?? 1;
+}
+
+export function sortTradePortWeaponIds(ids: readonly string[]): string[] {
+  return [...ids].sort((a, b) => {
+    const aPinned = isPinnedTradePortWeapon(a) ? 0 : 1;
+    const bPinned = isPinnedTradePortWeapon(b) ? 0 : 1;
+    if (aPinned !== bPinned) return aPinned - bPinned;
+    const lvDiff = resolveWeaponRequiredPilotLevel(a) - resolveWeaponRequiredPilotLevel(b);
+    if (lvDiff !== 0) return lvDiff;
+    return a.localeCompare(b);
+  });
+}
+
+/** zone 밴드·계열 규칙으로 풀 구성(진열 상한 적용 전) */
+export function buildTradePortWeaponIdsForZoneUncapped(zoneIndex: number): string[] {
   const { minLv, maxLv } = resolvePilotLevelBandForZone(zoneIndex);
   const minCount = getTradePortWeaponMinPerPlanet();
-  const listingCap = getTradePortWeaponListingCount();
 
   const selected = new Set<string>();
 
@@ -149,21 +172,25 @@ export function resolveTradePortWeaponIdsForZone(zoneIndex: number): string[] {
     }
   }
 
-  const sorted = [...selected].sort((a, b) => {
-    const aPinned = isPinnedTradePortWeapon(a) ? 0 : 1;
-    const bPinned = isPinnedTradePortWeapon(b) ? 0 : 1;
-    if (aPinned !== bPinned) return aPinned - bPinned;
-    const lvDiff = resolveWeaponRequiredPilotLevel(a) - resolveWeaponRequiredPilotLevel(b);
-    if (lvDiff !== 0) return lvDiff;
-    return a.localeCompare(b);
-  });
+  return sortTradePortWeaponIds([...selected]);
+}
 
-  if (sorted.length <= listingCap) return sorted;
+/** pinned 유지 + progression 선두 N종(기본 zone 배분) */
+export function capTradePortWeaponListingToZonePolicy(sortedUncapped: readonly string[]): string[] {
+  const listingCap = getTradePortWeaponListingCount();
+  if (sortedUncapped.length <= listingCap) return [...sortedUncapped];
 
-  const pinned = sorted.filter((id) => isPinnedTradePortWeapon(id));
-  const progression = sorted.filter((id) => !isPinnedTradePortWeapon(id));
+  const pinned = sortedUncapped.filter((id) => isPinnedTradePortWeapon(id));
+  const progression = sortedUncapped.filter((id) => !isPinnedTradePortWeapon(id));
   const progressionSlots = Math.max(0, listingCap - pinned.length);
   return [...pinned, ...progression.slice(0, progressionSlots)];
+}
+
+/**
+ * 행성 zone — 기본 무장(pinned) 상시 + 성능 밴드 progression + 계열 최소 1종.
+ */
+export function resolveTradePortWeaponIdsForZone(zoneIndex: number): string[] {
+  return capTradePortWeaponListingToZonePolicy(buildTradePortWeaponIdsForZoneUncapped(zoneIndex));
 }
 
 export function resolveWeaponFamilyKindForTradeCatalogWeapon(weaponId: string): string {

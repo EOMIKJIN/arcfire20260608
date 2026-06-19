@@ -42,7 +42,6 @@
 
 - 3h: `tools/balance-ops-audit/start-watch-3h.ps1` (김경제 운영)
 - 1d: `tools/kim-team-lead/start-daily-review.ps1` (김팀장 검수, 권장 09:00 KST)
-- **30m 장기 메모리·GL 누수 — 감시만**: `tools/long-run-monitor/start-watch-30m.ps1` (**2026-06-17 김팀장 → 김경제 이관, 「감시」 한정**)
-  - 김경제가 하는 것: 모니터 가동 · mem-timeline·crash logcat·incidents 관측 · 계단식 GL 누수/크래시 **탐지·보고**
-  - 세션 시작 시 monitor PID(`logs/watch-30m.pid`) 확인, **모니터 중단 시 재가동**
-  - **경계**: 김경제는 **탐지·보고까지**. 자동조치(`apply-auto-remediation.ps1`) 판단·재시작·**누수/크래시 원인 코드 수정(Skia·허브·STAGE)** 은 **전부 김팀장**에 인계
+- **30m 기본 장기앱 실행 테스트 — 감시만**: `tools/long-run-monitor/start-watch-30m.ps1` (30분 meminfo + crash logcat만; 부가 soak/floor 미실행)
+  - 김경제: 모니터 가동 · mem-timeline·incidents **탐지·보고**
+  - 이상 시 `apply-auto-remediation` → audit + 재기동 + **VERIFY** → 실패 시 김팀장 핸드오ff(P0 코드 수정)

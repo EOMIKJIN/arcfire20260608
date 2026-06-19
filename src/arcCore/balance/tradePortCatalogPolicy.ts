@@ -297,6 +297,20 @@ export function filterTradePortCatalogForBuyMarket(
 
 let lastSyncSignature = '';
 
+/** 단일 행성 무역소 진열 재동기 — 조선소 레벨 변경 등 */
+export function syncTradePortCatalogForPlanet(planetId: string): void {
+  if (!planetId) return;
+  dispatchEconomyTradePortBulk({
+    action: 'set_catalog',
+    scope: { kind: 'planet_ids', planetIds: [planetId] },
+    itemIds: resolveTradePortCatalogItemIds(planetId),
+    meta: {
+      origin: 'arc_core_policy',
+      reason: 'trade_port_planet_resync',
+    },
+  });
+}
+
 /** 아크코어 — 전 무역소 진열 재동기(단일 채널) */
 export function syncTradePortCatalogFromBalance(force = false): void {
   const planetIds = listPlanetIdsWithTradePort();

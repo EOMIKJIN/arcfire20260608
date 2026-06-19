@@ -13,19 +13,19 @@
 - **김팀장 규칙**: `.cursor/rules/arcfire-main-lead-agent.mdc` · `docs/KIM_TEAM_LEAD_AGENT.md`
 - **김경제 규칙**: `.cursor/rules/arcfire-economy-specialist-agent.mdc` · `docs/KIM_ECONOMY_AGENT.md`
 
-## 장기 메모리·안정화 감시 (상시 · 개발과 독립) — **감시만 김경제 (2026-06-17 이관)**
+## 장기 메모리·안정화 감시 (상시 · 개발과 독립) — **기본 장기앱 실행 테스트 (2026-06-19)**
 
-> **[김경제 메모리 테스트] = Cursor 세션 #1 자동 시작·상시 주업무.** Cursor가 켜지면 다른 작업보다 먼저 별도 지시 없이 자동 1순위로 시작해 항시 병행한다. 세션 시작 훅(`.cursor/hooks/on-session-start-agent-routing.cjs`)이 매 세션 주입. 멱등 절차·판정은 `arcfire-economy-specialist-agent.mdc` 참조.
-
-기능 개발과 **별도**로 **계속** 실행·관측한다. **감시 주체: 김경제 에이전트**(2026-06-17 김팀장 → 김경제 이관, 「감시」 한정). 정본: `tools/long-run-monitor/logs/WATCH_README.md` · `docs/KIM_ECONOMY_AGENT.md`
+> **`start-watch-30m.ps1` 만** 멱등 가동 — 30분 meminfo + crash logcat. 부가 soak/floor 테스트는 기본 미실행.
+> 이상(비정상종료·ABNORMAL_RESTART·메모리) 시 **자동조치 + 사후 VERIFY** → 실패 시 김팀장 P0 코드 수정.
+> 정본: `tools/long-run-monitor/logs/WATCH_README.md` · `docs/KIM_ECONOMY_AGENT.md`
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.ps1
 ```
 
-- **30분** `mem-timeline.csv` · crash logcat · v2 계단식 GL 누수 판정
-- **김경제(감시만)**: 모니터 가동·관측·`incidents.log`/누수·크래시 **탐지·보고**, 모니터 중단 시 재가동
-- **김팀장(이후 전부)**: 자동조치(3× GL_SPIKE / GL≥80MB / 크래시 → `audit:skia-memory` + 앱 재시작 throttle) **판단**, 누수·크래시 **원인 코드 수정(Skia·허브·STAGE)**, 코드 작성 시점 메모리 게이트(`audit:skia-memory`·`audit:memory:all`)
+- **30분** `mem-timeline.csv` · crash logcat · v2 계단식 GL 누수 판정 · **VERIFY** after auto-fix
+- **김경제(감시)**: 모니터 가동·관측·incident 탐지·보고
+- **김팀장**: VERIFY FAIL·반복 크래시 **원인 코드 수정**, 자동조치 정책·Skia/허브/STAGE 패치
 
 ## AI 페르소나·모델 자동 라우팅 (Auto)
 

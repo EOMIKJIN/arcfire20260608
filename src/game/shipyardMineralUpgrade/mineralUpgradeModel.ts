@@ -8,6 +8,8 @@
 // 스탯 적용은 ShipPerformanceCalculator.applyMineralUpgradeToShipPerformance 경유.
 // ============================================================
 
+import { resolveShipyardMineralUpgradeCapForLevel } from '../../arcCore/balance/facilityShipyardLevelPolicy';
+
 /** 강화 효과 종류 — ShipPerformanceCalculator 에서 해석 */
 export type MineralUpgradeEffectKind =
   | 'ship_bonus_max_hp'
@@ -86,6 +88,15 @@ export function resolveMineralUpgradeMaxLevel(combatLevel: number): number {
     if (lv <= row.combatLevelMaxInclusive) return row.maxUpgradeLevel;
   }
   return 15;
+}
+
+/** combatLevel 캡 × 조선소 mineralUpgradeCap — §2-3 설계 정본 */
+export function getFinalMineralUpgradeCap(combatLevel: number, shipyardLevel: number): number {
+  const combatCap = resolveMineralUpgradeMaxLevel(combatLevel);
+  const shipyardCap = shipyardLevel > 0
+    ? resolveShipyardMineralUpgradeCapForLevel(shipyardLevel)
+    : combatCap;
+  return Math.min(combatCap, shipyardCap);
 }
 
 const STAT_BY_ID = new Map(MINERAL_UPGRADE_STATS.map((s) => [s.statId, s]));

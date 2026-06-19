@@ -36,6 +36,7 @@ import {
 } from './inboundDroneHitFx';
 import { inboundDroneHitFxAsDodge } from './inboundDroneHitFxDraw';
 import { PlanetHubInboundDroneSkiaTrailLayer } from './PlanetHubInboundDroneSkiaTrailLayer';
+import { useDevSkiaMountAllowed } from '../../hooks/useDevSkiaMountAllowed';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -182,6 +183,7 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
   onSkiaDodgeBackdropLatch?: (active: boolean) => void;
 }) {
   const policy = useMemo(() => getArcCoreInboundDronePolicy(), []);
+  const devSkiaMountAllowed = useDevSkiaMountAllowed();
   const flatSv = useSharedValue<number[]>([]);
   const trailFlatSv = useSharedValue<number[]>([]);
   const droneCountSv = useSharedValue(0);
@@ -402,7 +404,7 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
       accessibilityRole="image"
       accessible
     >
-      {showVfxLayer ? (
+      {showVfxLayer && devSkiaMountAllowed ? (
         <PlanetHubInboundDroneSkiaTrailLayer
           orbitClockMs={orbitClockMs}
           trailFlatSv={trailFlatSv}

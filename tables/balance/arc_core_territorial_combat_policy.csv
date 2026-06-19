@@ -1,0 +1,2 @@
+planetId,systemId,enabled,contestedZone,passIntervalSec,battleWeightPct,neutralDeclareWeightPct,statusQuoWeightPct,defenderAdvantagePct,combatNoisePct,alertLabelKo,notesKo
+draco_haven,draco_nebula,true,true,3600,51,29,20,8,12,드라코 성운,접전지역 자동전투 테스트(1시간·51/29/20)

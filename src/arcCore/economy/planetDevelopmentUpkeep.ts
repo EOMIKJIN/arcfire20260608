@@ -48,7 +48,7 @@ export function computePlanetDevelopmentUpkeepBreakdown(
   return { planetId, totalCredits, lines };
 }
 
-/** 행성 개발 엔티티 1일 유지비 합계(크레딧)만 필요할 때의 단축 헬퍼. */
+/** 행성 개발 엔티티 1일 유지비 합계(크레딧) — 효율 절감은 upkeep pass에서 적용 */
 export function computePlanetDevelopmentDailyUpkeepCredits(planetId: string): number {
   return computePlanetDevelopmentUpkeepBreakdown(planetId).totalCredits;
 }

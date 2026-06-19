@@ -1,0 +1,11 @@
+level,displayNameKr,highGradeWeaponWeightBonus,tradeFeeRatePct,stockLimit,supplyStockScale,upgradeDurationSec,installCostCredits,upgradeCostCredits,instantUpgradeCostCredits,requiredPlayerLevelMin,requiredStatType,requiredStatValue,notesKo
+1,간이 교역소,0,10,100,1,0,1,0,1,0,,0,"v2.2 Lv1=zone 정본 배분 · 업그레이드=수수료↓·고급무기 가중↑"
+2,소형 무역소,5,9.5,200,1,10800,0,1,1,0,,0,"[TEST·임시] 3h upgrade"
+3,무역소,10,9,350,1.05,28800,0,1,1,0,,0,"[TEST·임시] 8h · supplyStockScale 1.05"
+4,확장 무역소,15,8.5,500,1.05,57600,0,1,1,0,,0,"[TEST·임시] 16h"
+5,지역 교역 센터,20,8,750,1.15,86400,0,1,1,15,,0,"[TEST·임시] 1일 · 파일럿 Lv15+"
+6,광역 교역 센터,25,7.5,1000,1.15,129600,0,1,1,0,,0,"[TEST·임시] 1.5일"
+7,성계 무역 허브,30,7,1500,1.25,172800,0,1,1,0,,0,"[TEST·임시] 2일"
+8,광역 무역 허브,35,6.5,2000,1.25,259200,0,1,1,30,,0,"[TEST·임시] 3일 · 파일럿 Lv30+"
+9,은하 교역소,40,6,3000,1.4,345600,0,1,1,0,,0,"[TEST·임시] 4일"
+10,은하 무역 중심,45,5,5000,1.4,604800,0,1,1,0,,0,"[TEST·임시] 7일 · 수수료 하한 5% · 고급무기 가중 +45%"

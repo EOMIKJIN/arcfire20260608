@@ -128,3 +128,28 @@
 [2026-06-18 22:55:24] INCIDENT CRASH logged -> incidents.log
 [2026-06-18 23:25:25] INCIDENT CRASH logged -> incidents.log
 [2026-06-18 23:55:29] INCIDENT CRASH logged -> incidents.log
+[2026-06-19 00:25:30] AUTO_FIX static audit:skia-memory start
+[2026-06-19 00:25:32] AUTO_FIX audit:skia-memory PASS
+[2026-06-19 00:25:32] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-06-19 00:25:50] AUTO_FIX baseline reset pid=2188 gl=6MB pss=199.6MB
+[2026-06-19 00:25:50] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"deltaGlMb":98.8,"pssMb":1313.2,"views":309,"lastGlMb":157.2,"hardCeiling":true}
+[2026-06-19 00:25:50] INCIDENT CRASH logged -> incidents.log
+[2026-06-19 00:25:50] INCIDENT GL_HARD_CEILING gl=157.2 pss=1313.2 views=309 -> immediate remediation (OOM imminent)
+[2026-06-19 00:25:50] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-06-19 00:25:50] AUTO_FIX static audit:skia-memory start
+[2026-06-19 00:25:52] AUTO_FIX audit:skia-memory PASS
+[2026-06-19 00:25:52] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-06-19 00:26:08] AUTO_FIX baseline reset pid=2514 gl=3.7MB pss=354.4MB
+[2026-06-19 00:26:08] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":1313.2,"views":309,"lastGlMb":157.2,"hardCeiling":true}
+[2026-06-19 00:56:09] INCIDENT CRASH logged -> incidents.log
+[2026-06-19 01:26:09] INCIDENT CRASH logged -> incidents.log
+[2026-06-19 01:56:12] INCIDENT CRASH logged -> incidents.log
+[2026-06-19 03:56:18] INCIDENT CRASH logged -> incidents.log
+[2026-06-19 04:26:19] INCIDENT CRASH logged -> incidents.log (real signature)
+[2026-06-19 06:26:24] INCIDENT CRASH logged -> incidents.log (real signature)
+[2026-06-19 06:26:25] HANDOFF packed -> outbox/cursor-incident-handoff.md (crash)
+[2026-06-19 08:56:29] INFO GL_ELEVATED mounting_or_insufficient_samples gl=81.2 pss=723.9 views=320 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-19 12:56:39] INFO GL_ELEVATED mounting_or_insufficient_samples gl=92.3 pss=929 views=318 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-19 13:26:40] INFO GL_ELEVATED mounting_or_insufficient_samples gl=91.6 pss=923.4 views=313 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-19 13:56:41] INFO GL_ELEVATED mounting_or_insufficient_samples gl=80.5 pss=946.6 views=305 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-19 22:32:16] INFO GL_ELEVATED mounting_or_insufficient_samples gl=147.5 pss=774.5 views=933 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)

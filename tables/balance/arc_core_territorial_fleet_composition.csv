@@ -1,0 +1,7 @@
+planetId,factionSide,shipAssetId,sortOrder,notesKo
+draco_haven,BLUE,npc_draco_patrol_01,1,블루 방어·공격 1
+draco_haven,BLUE,npc_draco_escort_01,2,블루 방어·공격 2
+draco_haven,BLUE,npc_draco_patrol_01,3,블루 방어·공격 3(동급 편성)
+draco_haven,RED,npc_enemy_draco_01,1,레드 방어·공격 1
+draco_haven,RED,npc_enemy_draco_02,2,레드 방어·공격 2
+draco_haven,RED,npc_enemy_draco_03,3,레드 방어·공격 3

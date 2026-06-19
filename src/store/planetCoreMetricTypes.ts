@@ -117,6 +117,13 @@ export type PlanetFacilityModuleDetail = {
   installed: boolean;
   /** 1.. — 모듈별 레벨 정책 CSV 기준 */
   level: number;
+  /** 조선소 — 현재 레벨까지 건조 완료 hullTierKey (무역소 listing 필터) */
+  builtHullTierKeys?: string[];
+  /** 연구소 — R&D 속도 감소율 캐시(%) */
+  rdSpeedBonusPct?: number;
+  /** 선술집 — 활성 바운티 수 · 마지막 갱신 시각 */
+  activeBountyCount?: number;
+  lastBountyRefreshTimestamp?: number;
   /** 진행 중 업그레이드 (없으면 null) */
   upgradeJob?: PlanetDefenseSatelliteUpgradeJob | null;
   updatedAtMs?: number;
