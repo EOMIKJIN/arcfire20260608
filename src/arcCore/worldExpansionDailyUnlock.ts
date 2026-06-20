@@ -1,7 +1,7 @@
 import { usePlayerStore } from '../store/playerStore';
 import { useWorldStore } from '../store/worldStore';
 import { useTavernBoardStore } from '../store/tavernBoardStore';
-import { dispatchArcCoreAfterSystemUnlock } from './worldExpansionUnlockDispatch';
+import { finalizeArcCoreSynthFrontierUnlock } from './worldExpansionSynthColonization';
 import {
   getExpansionUnlockIntervalSec,
   isArcExpansionTestOneShotConsumed,
@@ -29,7 +29,7 @@ export function tryArcCoreWorldDailyUnlock(): boolean {
   if (!sourcePlanetId) return false;
 
   world.unlockSystem(candidateId, 'arc_core_daily');
-  dispatchArcCoreAfterSystemUnlock(candidateId, 'daily');
+  finalizeArcCoreSynthFrontierUnlock(candidateId, 'daily');
   void persistArcCoreDailyUnlockRecord(candidateId);
 
   if (isArcExpansionTestOneShotEnvOn() && !isArcExpansionTestOneShotConsumed()) {

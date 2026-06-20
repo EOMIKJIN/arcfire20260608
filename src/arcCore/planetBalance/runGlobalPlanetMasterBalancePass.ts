@@ -13,7 +13,11 @@ import {
 } from '../../store/planetCoreRuntimeStore';
 import type { PlanetMasterBalanceDetail } from '../../store/planetCoreMetricTypes';
 import { getPlanetMasterBalanceDetailForPlanet } from './planetZoneIndexRegistry';
-import { deriveMasterBalanceCoreTargets, nudgeGaugeTowardTarget } from './deriveMasterBalanceCoreTargets';
+import { deriveMasterBalanceCoreTargets } from './deriveMasterBalanceCoreTargets';
+import {
+  nudgeGaugeTowardTargetWithOptionalFloor,
+  resolveEarlyZoneMasterBalanceAdjust,
+} from './resolveEarlyZoneMasterBalanceTarget';
 import { runPlayScenarioEconomyPass } from '../balance/runPlayScenarioEconomyPass';
 
 export type GlobalPlanetMasterBalancePassOptions = {
@@ -51,7 +55,7 @@ export function runGlobalPlanetMasterBalancePass(
   const coreStore = usePlanetCoreRuntimeStore.getState();
   if (!coreStore.hydrated) return;
 
-  const maxDelta = options?.maxDeltaPerStat ?? 4;
+  const defaultMaxDelta = options?.maxDeltaPerStat;
   const systems = useWorldStore.getState().systems;
   const updates: Record<string, PlanetBalancePatch> = {};
 
@@ -65,9 +69,20 @@ export function runGlobalPlanetMasterBalancePass(
         ...baseDetail,
         runtimeCpmMul: resolveRuntimeCpmMul(baseDetail.recommendedPilotLevel),
       };
-      const target = deriveMasterBalanceCoreTargets(masterBalance);
+      const zoneTarget = deriveMasterBalanceCoreTargets(masterBalance);
+      const { target, maxDelta, gaugeFloorPct } = resolveEarlyZoneMasterBalanceAdjust(
+        planet,
+        masterBalance.zoneIndex,
+        zoneTarget,
+      );
       const current = planetCoreRuntimeToGaugeView(runtime);
-      const gauge = nudgeGaugeTowardTarget(current, target, maxDelta);
+      const effectiveMaxDelta = defaultMaxDelta ?? maxDelta;
+      const gauge = nudgeGaugeTowardTargetWithOptionalFloor(
+        current,
+        target,
+        effectiveMaxDelta,
+        gaugeFloorPct,
+      );
 
       const prevBal = runtime.detail?.masterBalance;
       const gaugeChanged =

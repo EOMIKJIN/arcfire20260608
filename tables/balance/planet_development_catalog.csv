@@ -1,6 +1,6 @@
 id,labelKo,summaryKo,enabled,detailModuleKey,installCostCredits,notesKo
-defense_satellite,방위위성,궤도 방어·inbound 드론 요격,true,defense_satellite,0,v2.0 · 허브 방위위성 연동
-dev_orbit_shipyard,궤도 조선소,함선 건조·광물 강화,true,dev_orbit_shipyard,1,v2.0 · 허브 조선소 — Lv1 설치 시 활성
-dev_trade_port,무역소,SKU·수수료·재고·convoy,true,dev_trade_port,1,v2.0 · 허브 무역소 — Lv1 설치 시 활성
-dev_research_lab,과학 연구소,R&D·T/E 스탯·장비 분석,true,dev_research_lab,1,v2.0 · 허브 연구소(skilltree) — Lv1 설치 시 활성 · 무역소 Lv3 선행
-dev_population_dome,인구 거주 돔,P(인구)·바운티·선술집,true,dev_population_dome,1,v2.0 · 허브 선술집 — Lv1 설치 시 활성 · Lv11+ 확장 예정 · 방위위성 Lv1 선행
+defense_satellite,방위위성,궤도 방어·inbound 드론 요격,true,defense_satellite,0,v2.0 · 허브 방위위성 — Lv1 비용은 planet_defense_satellite_level_policy
+dev_orbit_shipyard,궤도 조선소,함선 건조·광물 강화,true,dev_orbit_shipyard,800,v2.0 §8 조선소 Lv1 800 Cr (초기자금 500×곡선 0.01)
+dev_trade_port,무역소,SKU·수수료·재고·convoy,true,dev_trade_port,500,v2.0 §8 무역소 Lv1 500 Cr · 신규 계정 시작 자금과 동일
+dev_research_lab,과학 연구소,R&D·T/E 스탯·장비 분석,true,dev_research_lab,2000,v2.0 §8 연구소 Lv1 2000 Cr
+dev_population_dome,인구 거주 돔,P(인구)·바운티·선술집,true,dev_population_dome,800,v2.0 §8 선술집 Lv1 800 Cr

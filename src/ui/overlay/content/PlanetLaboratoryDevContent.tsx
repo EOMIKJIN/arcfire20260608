@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { Text, View } from 'react-native';
 import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';
+import { readPlanetCoreStatRdSnapshot } from '../../../game/planetDevelopment/planetCoreStatRdRuntime';
 import {
   PLANET_DEV_MODULE_RESEARCH_LAB,
   buildLaboratoryDevSnapshot,
@@ -45,6 +46,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 export const PlanetLaboratoryDevContent = memo(function PlanetLaboratoryDevContent(props: PlanetDevelopmentModuleContext) {
   const t = useT();
+  const rdSnapshot = readPlanetCoreStatRdSnapshot(props.planetId);
   return (
     <PlanetGenericFacilityDevContent
       {...props}
@@ -59,6 +61,15 @@ export const PlanetLaboratoryDevContent = memo(function PlanetLaboratoryDevConte
               label={t('researchLabDev.rdSpeedLabel')}
               value={t('researchLabDev.rdSpeedValue', { pct: resolveLaboratoryRdSpeedReductionPct(snapshot.level) })}
             />
+            {rdSnapshot.nextTechnologyRdHours != null ? (
+              <InfoRow
+                label={t('researchLabDev.coreStatRdLabel')}
+                value={t('researchLabDev.coreStatRdValue', {
+                  stage: rdSnapshot.technologyStage,
+                  hours: rdSnapshot.nextTechnologyRdHours,
+                })}
+              />
+            ) : null}
             <InfoRow
               label={t('researchLabDev.equipmentTierLabel')}
               value={resolveLaboratoryEquipmentTierUnlock(snapshot.level) || '—'}

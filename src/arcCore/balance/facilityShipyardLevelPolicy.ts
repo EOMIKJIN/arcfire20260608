@@ -1,4 +1,5 @@
 import { FacilityShipyardLevelPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
+import { resolvePlanetFacilityUpgradeDurationSec } from './facilityUpgradeDurationPolicy';
 
 export type FacilityShipyardLevelRow = {
   level: number;
@@ -86,9 +87,7 @@ export function resolveShipyardInstantUpgradeCostCredits(currentLevel: number): 
 }
 
 export function resolveShipyardUpgradeDurationSec(currentLevel: number): number | null {
-  const next = getFacilityShipyardLevelRow(currentLevel + 1);
-  if (!next) return null;
-  return next.upgradeDurationSec;
+  return resolvePlanetFacilityUpgradeDurationSec('shipyard', currentLevel);
 }
 
 /** L→L+1 업그레이드 시 필요 파일럿 레벨(목표 레벨 행) */

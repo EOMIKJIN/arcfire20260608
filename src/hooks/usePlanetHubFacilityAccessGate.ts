@@ -47,9 +47,6 @@ export function usePlanetHubFacilityAccessGate(kind: PlanetHubFacilityGateKind):
         return undefined;
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { migrateLegacyPlanetDevModulesForPlanet } = require('../game/planetDevelopment/planetFacilityLegacyMigration') as typeof import('../game/planetDevelopment/planetFacilityLegacyMigration');
-      migrateLegacyPlanetDevModulesForPlanet(planetId);
       const enabled = GATE_CHECKERS[kind](planetId);
       if (enabled) return undefined;
 

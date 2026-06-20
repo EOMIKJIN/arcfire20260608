@@ -1,0 +1,13 @@
+duration_tier,target_level,per_hour_multiplier,min_credits,notesKo
+standard,1,1.05,100,v3.1 Lv1 설치 · 15~30분
+standard,2,1.60,120,v3.1 L1→2 · 45분대
+standard,3,1.85,200,v3.1 L2→3 · 2h
+standard,4,2.15,400,v3.1 L3→4 · 6h
+standard,5,2.55,800,v3.1 L4→5 · 1d
+standard,6,2.95,2000,v3.1 L5→6 · 2d
+standard,7,3.35,5000,v3.1 L6→7 · 4d
+standard,8,3.70,12000,v3.1 L7→8 · 7d
+standard,9,4.05,30000,v3.1 L8→9 · 14d
+standard,10,4.35,80000,v3.1 L9→10 · 30d
+epic,11,5.50,150000,v3.1 예약 L10→11 · 미활성
+epic,12,6.50,250000,v3.1 예약 L11→12 · 미활성

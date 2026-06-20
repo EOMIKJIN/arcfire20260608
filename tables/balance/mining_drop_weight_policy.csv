@@ -1,2 +1,7 @@
 zoneIndexMin,zoneIndexMax,primaryWeightPct,secondaryShareMode,notesKo
-1,21,70,uniform,주력(존 풀 최저 index) 70% · 나머지 30% 균등
+1,1,100,uniform,튜토리얼 단일광물
+2,3,88,uniform,초반 88% 주력·12% 부가
+4,6,82,uniform,초중반 82% 주력
+7,10,76,uniform,중반 76% 주력
+11,15,72,uniform,후반 72% 주력
+16,21,70,uniform,엔드 70% 주력

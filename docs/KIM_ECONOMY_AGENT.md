@@ -1,47 +1,57 @@
-# 김경제 에이전트 — 경제·밸런스·경제시스템 전담
+# 김경제 에이전트 — 실시간 감시·경제 밸런스 주기 점검
 
-> **호출**: `@김경제` · `@ArcEconomy` · `@Economy` · 채팅 제목 **「김경제」**  
-> **상급 검수**: **김팀장** `@김팀장` — `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
+> **호출**: `@김경제` · 채팅 제목 **「김경제」** — **김팀장이 배정한 감시 세션만**  
+> **상급**: **김팀장** `@김팀장` — **유일한 사용자 지시·코드 수정**  
+> **2026-06-19**: **코드 수정 금지** · 사용자는 김팀장 대화창에만 작업 지시
 
-## 다른 에이전트와 구분
+## 역할 (이 두 가지만)
 
-| 에이전트 | 쓰는 일 |
-|---------|---------|
-| **김팀장** `@김팀장` | **총괄** — 개발·**김경제 산출물 일 1회 검수**·**최종 연동** |
-| **김경제** `@김경제` | 경제·밸런스·SIM·일일 배치 **구축·테스트** (**본 세션**) |
-| @Opus (김팀장 내부) | arcCore·UI·Skia·일반 구현·기본(미분류) |
-| @Fable | 무기 72단계·대량 CSV |
+| # | 업무 | 산출 |
+|---|------|------|
+| 1 | **실시간 감시** | `tools/long-run-monitor/` — mem·crash **탐지·보고** |
+| 2 | **경제·밸런스 점검** | `audit:balance-ops` · `audit:balance` **실행·리포트** (코드 없음) |
 
-## 작업 → 제출 (Handoff)
+## 절대 하지 않는 것
 
-1. 경제·밸런스·아크코어 운영 **구축·테스트**
-2. 게이트: `audit:balance-ops` · `audit:balance` · `tsc`
-3. **`tools/kim-team-lead/reports/kim-economy-handoff.md`** 갱신 (`ready-for-review`)
-4. 김팀장 **일 1회 검수** (`npm run audit:team-lead:daily`) 대기
+- `src/` · `app/` · `tables/` 수정
+- `sim:economy` 결과를 코드에 반영
+- `apply-auto-remediation` 실행·재기동 판단
+- 사용자가 직접 내린 **기능·코드** 지시 수행
 
-제출 예시:
+→ 위 요청은 **「김팀장 세션으로 지시해 주세요」** 안내
 
-```text
-@김경제 handoff ready-for-review. audit:balance-ops PASS. 김팀장 검수 대기.
-```
-
-## 재시작 후 이어하기
-
-1. 동일 워크스페이스 `D:\arcfire20260607`
-2. 「김경제」채팅 선택
-3. 상태 파일:
-   - `tools/balance-ops-audit/reports/learning-state.json`
-   - `tools/kim-team-lead/reports/kim-economy-handoff.md`
-   - `tools/kim-team-lead/reports/daily-review-latest.md` (김팀장 검수 결과)
+## 김팀장 배정 예시
 
 ```text
-@김경제 세션 재개. handoff·learning-state 읽고 이어서.
+@김경제 start-watch-30m 상태 확인하고 mem-timeline 최근 6시간 요약만 handoff 관측 섹션에 적어줘. 코드 수정 없음.
 ```
 
-## 백그라운드 감시
+```text
+@김경제 audit:balance-ops 실행하고 FAIL 항목만 kim-economy-handoff 관측 섹션에. 패치는 김팀장이 할게.
+```
 
-- 3h: `tools/balance-ops-audit/start-watch-3h.ps1` (김경제 운영)
-- 1d: `tools/kim-team-lead/start-daily-review.ps1` (김팀장 검수, 권장 09:00 KST)
-- **30m 기본 장기앱 실행 테스트 — 감시만**: `tools/long-run-monitor/start-watch-30m.ps1` (30분 meminfo + crash logcat만; 부가 soak/floor 미실행)
-  - 김경제: 모니터 가동 · mem-timeline·incidents **탐지·보고**
-  - 이상 시 `apply-auto-remediation` → audit + 재기동 + **VERIFY** → 실패 시 김팀장 핸드오ff(P0 코드 수정)
+## Handoff (관측만)
+
+`tools/kim-team-lead/reports/kim-economy-handoff.md` — **`observation-only`** 또는 **`ready-for-team-lead-action`**
+
+```markdown
+## [관측] YYYY-MM-DD
+- audit:balance-ops: PASS|FAIL (요약)
+- mem-monitor: OK|WARN|CRITICAL
+- 권장: (김팀장 조치 1안 — 코드는 김팀장 세션)
+```
+
+## Incident
+
+이상 탐지 시: `tools/long-run-monitor/outbox/cursor-incident-handoff.md` → **김팀장 P0**
+
+## 백그라운드
+
+- **30m**: `tools/long-run-monitor/start-watch-30m.ps1` (김경제 감시)
+- **3h**: `tools/balance-ops-audit/start-watch-3h.ps1` (경제 KPI 관측)
+- **1d**: `npm run audit:team-lead:daily` (**김팀장** 검수·코드 조치)
+
+## 관련
+
+- `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
+- `.cursor/rules/arcfire-economy-specialist-agent.mdc`

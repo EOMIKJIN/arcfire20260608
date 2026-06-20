@@ -74,8 +74,9 @@ export function getExpansionProbeIntervalSec(unlockIntervalSec: number): number 
 }
 
 /**
- * synth_033·073 부트 강제 개방 — 하네스 + `EXPO_PUBLIC_ARCCORE_LEGACY_GUARANTEED_UNLOCK=1` 전용.
+ * synth_033 부트 강제 개방 — 하네스 + `EXPO_PUBLIC_ARCCORE_LEGACY_GUARANTEED_UNLOCK=1` 전용.
  * release 및 일반 debug 빌드에서는 항상 false.
+ * (운영 fresh-start synth_073은 `worldExpansionFreshStartSeed` 경로)
  */
 export function isArcCoreLegacyGuaranteedUnlockEnabled(): boolean {
   if (!isDevHarnessAllowed()) return false;

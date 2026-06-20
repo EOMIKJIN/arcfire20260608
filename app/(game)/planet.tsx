@@ -161,6 +161,12 @@ import {
   applyPlanetHubOrbitRenderBudget,
   capHubOrbitPresenceByRenderPriority,
 } from '../../src/game/planetHubOrbitRenderBudget';
+import {
+  isPlanetHubResearchLabEnabled,
+  isPlanetHubShipyardEnabled,
+  isPlanetHubTavernEnabled,
+  isPlanetHubTradePortEnabled,
+} from '../../src/game/planetDevelopment/planetHubFacilityGates';
 
 
 export default function PlanetScreen() {
@@ -330,51 +336,23 @@ export default function PlanetScreen() {
     [beginPlanetHubSuspendingNavigation],
   );
 
-  // 행성개발 설치 → 허브 시설 메뉴 (planets.csv 플래그 대신 런타임 development 정본)
-  const orbitShipyardInstalled = usePlanetCoreRuntimeStore((s) => {
-    const pid = planet?.id;
-    if (!pid) return false;
-    const dev = s.byPlanetId[pid]?.detail?.development?.byModuleId?.dev_orbit_shipyard as
-      | { installed?: boolean }
-      | undefined;
-    return Boolean(dev && dev.installed === true);
+  /** dev 설치·CSV 월드 플래그 변경 시 메뉴 게이트 재계산 (SUB-STAGE 게이트와 동일 정본) */
+  const hubFacilityDevRev = usePlanetCoreRuntimeStore((s) => {
+    const pid = resolvedPlanetId;
+    if (!pid) return '';
+    return JSON.stringify(s.byPlanetId[pid]?.detail?.development?.byModuleId ?? null);
   });
-  const tradePortInstalled = usePlanetCoreRuntimeStore((s) => {
-    const pid = planet?.id;
-    if (!pid) return false;
-    const dev = s.byPlanetId[pid]?.detail?.development?.byModuleId?.dev_trade_port as
-      | { installed?: boolean }
-      | undefined;
-    return Boolean(dev && dev.installed === true);
-  });
-  const researchLabInstalled = usePlanetCoreRuntimeStore((s) => {
-    const pid = planet?.id;
-    if (!pid) return false;
-    const byModule = s.byPlanetId[pid]?.detail?.development?.byModuleId;
-    const cur = byModule?.dev_research_lab as { installed?: boolean } | undefined;
-    const leg = byModule?.dev_laboratory as { installed?: boolean } | undefined;
-    return Boolean(cur?.installed === true || leg?.installed === true);
-  });
-  const populationDomeInstalled = usePlanetCoreRuntimeStore((s) => {
-    const pid = planet?.id;
-    if (!pid) return false;
-    const byModule = s.byPlanetId[pid]?.detail?.development?.byModuleId;
-    const cur = byModule?.dev_population_dome as { installed?: boolean } | undefined;
-    const leg = byModule?.dev_tavern as { installed?: boolean } | undefined;
-    return Boolean(cur?.installed === true || leg?.installed === true);
-  });
-  const featureMenuPlanet = useMemo(
-    () => (planet
-      ? {
-        ...planet,
-        hasShipyard: orbitShipyardInstalled,
-        hasTradePort: tradePortInstalled,
-        hasResearchLab: researchLabInstalled,
-        hasTavern: populationDomeInstalled,
-      }
-      : planet),
-    [planet, orbitShipyardInstalled, tradePortInstalled, researchLabInstalled, populationDomeInstalled],
-  );
+  const featureMenuPlanet = useMemo(() => {
+    if (!planet) return planet;
+    const pid = resolvedPlanetId ?? planet.id;
+    return {
+      ...planet,
+      hasShipyard: isPlanetHubShipyardEnabled(pid),
+      hasTradePort: isPlanetHubTradePortEnabled(pid),
+      hasResearchLab: isPlanetHubResearchLabEnabled(pid),
+      hasTavern: isPlanetHubTavernEnabled(pid),
+    };
+  }, [planet, resolvedPlanetId, hubFacilityDevRev]);
 
   const featureMenuItems = useMemo(
     () => buildPlanetHubFeatureMenuItems({

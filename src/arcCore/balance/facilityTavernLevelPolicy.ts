@@ -1,5 +1,6 @@
 import { FacilityTavernLevelPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
 import { buildFacilityGenericLevelPolicy } from './facilityGenericLevelPolicy';
+import { resolvePlanetFacilityUpgradeDurationSec } from './facilityUpgradeDurationPolicy';
 
 const policy = buildFacilityGenericLevelPolicy(FacilityTavernLevelPolicy_FROM_BALANCE_CSV);
 
@@ -8,8 +9,10 @@ export const getFacilityTavernMaxLevel = policy.getMaxLevel;
 export const getFacilityTavernLevelRow = policy.getLevelRow;
 export const resolveTavernUpgradeCostCredits = policy.resolveUpgradeCostCredits;
 export const resolveTavernInstantUpgradeCostCredits = policy.resolveInstantUpgradeCostCredits;
-export const resolveTavernUpgradeDurationSec = policy.resolveUpgradeDurationSec;
-export const resolveTavernUpgradeRequiredPlayerLevel = policy.resolveUpgradeRequiredPlayerLevel;
+
+export function resolveTavernUpgradeDurationSec(currentLevel: number): number | null {
+  return resolvePlanetFacilityUpgradeDurationSec('tavern', currentLevel);
+}export const resolveTavernUpgradeRequiredPlayerLevel = policy.resolveUpgradeRequiredPlayerLevel;
 export const resolveTavernUpgradeRequiredStat = policy.resolveUpgradeRequiredStat;
 
 export function resolveTavernBountySlots(level: number): number {

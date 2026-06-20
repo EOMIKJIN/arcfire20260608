@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { listPlanetDefenseSatelliteLevelRows } from '../../../arcCore/balance/planetDefenseSatelliteLevelPolicy';
 import { PlanetHubDigitalGauge } from '../../../components/planet/PlanetHubActionGaugeSlot';
 import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';
@@ -19,6 +19,8 @@ import { showArcAlert } from '../../../utils/showArcAlert';
 import { useT } from '../../../i18n';
 import { OVERLAY_TOKENS } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
+import { ArcOverlayCard } from '../ArcOverlayCard';
+import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
 
 function InfoRow({ label, value }: { label: string; value: string }) {
@@ -125,11 +127,58 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
     );
   }, [canManageDevelopment, planetId, snapshot.nextInstantCost, snapshot.nextUpgradeCost, t]);
 
+  const footer = (
+    <View style={styles.footerStack}>
+      <View style={styles.btnCol}>
+        {!snapshot.installed && !snapshot.isInstalling ? (
+          <ArcButton
+            label={t('defenseSat.installBtn', { cost: formatCredits(snapshot.installCost, { suffix: true }) })}
+            variant="cta"
+            disabled={!canManageDevelopment || !snapshot.canInstall}
+            onPress={handlePressInstall}
+          />
+        ) : null}
+        {snapshot.installed && !snapshot.isUpgrading && snapshot.nextTargetLevel != null ? (
+          <>
+            <ArcButton
+              label={t('defenseSat.upgradeBtn', { from: snapshot.level, to: snapshot.nextTargetLevel, cost: formatCredits(snapshot.nextUpgradeCost ?? 0, { suffix: true }), duration: nextDurationLabel })}
+              variant="primary"
+              disabled={!canManageDevelopment || !snapshot.canStartUpgrade}
+              onPress={handleStartUpgrade}
+            />
+            <ArcButton
+              label={t('defenseSat.instantUpgradeBtn', { to: snapshot.nextTargetLevel, cost: formatCredits((snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0), { suffix: true }) })}
+              variant="secondary"
+              disabled={!canManageDevelopment || !snapshot.canInstantUpgradeNext}
+              onPress={handleInstantNext}
+            />
+          </>
+        ) : null}
+        {snapshot.isUpgrading || snapshot.isInstalling ? (
+          <ArcButton
+            label={t('defenseSat.instantCompleteBtn', { cost: formatCredits(snapshot.nextInstantCost ?? 0, { suffix: true }) })}
+            variant="cta"
+            disabled={!snapshot.canInstantComplete}
+            onPress={handleInstantComplete}
+          />
+        ) : null}
+      </View>
+      <ArcOverlayFooterActions
+        onCancel={onBack}
+        onConfirm={onClose}
+        cancelLabel={t('defenseSat.backToList')}
+        confirmLabel={t('defenseSat.close')}
+      />
+    </View>
+  );
+
   return (
-    <View style={styles.card}>
-      <Text style={[styles.title, { color: PH }]}>{t('defenseSat.title')}</Text>
-      <Text style={[styles.subtitle, { color: PH }]}>{planetName}</Text>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+    <ArcOverlayCard
+      title={t('defenseSat.title')}
+      subtitle={planetName}
+      layout="panel"
+      footer={footer}
+    >
         <Text style={[styles.section, { color: PH }]}>{t('defenseSat.status')}</Text>
         <InfoRow
           label={t('defenseSat.stateLabel')}
@@ -146,6 +195,21 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
             <InfoRow label={t('defenseSat.hitRate')} value={`${currentRow.interceptHitPct}%`} />
             <InfoRow label={t('defenseSat.interceptDwell')} value={t('defenseSat.interceptDwellValue', { sec: currentRow.interceptDwellSec })} />
           </>
+        ) : null}
+
+        {snapshot.isInstalling ? (
+          <View style={styles.gaugeBlock}>
+            <Text style={[styles.section, { color: PH }]}>{t('planetDev.installProgress')}</Text>
+            <Text style={[styles.hint, { color: PH }]}>
+              {snapshot.installDurationSec != null
+                ? formatDefenseSatelliteDurationLabel(snapshot.installDurationSec)
+                : '—'}
+            </Text>
+            <PlanetHubDigitalGauge
+              progressPct={snapshot.upgradeProgressPct}
+              accessibilityLabel={t('planetDev.installProgressA11y', { pct: snapshot.upgradeProgressPct })}
+            />
+          </View>
         ) : null}
 
         {snapshot.isUpgrading ? (
@@ -180,44 +244,6 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
             </Text>
           </View>
         ))}
-      </ScrollView>
-
-      <View style={styles.btnCol}>
-        {!snapshot.installed ? (
-          <ArcButton
-            label={t('defenseSat.installBtn', { cost: formatCredits(snapshot.installCost, { suffix: true }) })}
-            variant="cta"
-            disabled={!canManageDevelopment || !snapshot.canInstall}
-            onPress={handlePressInstall}
-          />
-        ) : null}
-        {snapshot.installed && !snapshot.isUpgrading && snapshot.nextTargetLevel != null ? (
-          <>
-            <ArcButton
-              label={t('defenseSat.upgradeBtn', { from: snapshot.level, to: snapshot.nextTargetLevel, cost: formatCredits(snapshot.nextUpgradeCost ?? 0, { suffix: true }), duration: nextDurationLabel })}
-              variant="primary"
-              disabled={!canManageDevelopment || !snapshot.canStartUpgrade}
-              onPress={handleStartUpgrade}
-            />
-            <ArcButton
-              label={t('defenseSat.instantUpgradeBtn', { to: snapshot.nextTargetLevel, cost: formatCredits((snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0), { suffix: true }) })}
-              variant="secondary"
-              disabled={!canManageDevelopment || !snapshot.canInstantUpgradeNext}
-              onPress={handleInstantNext}
-            />
-          </>
-        ) : null}
-        {snapshot.isUpgrading ? (
-          <ArcButton
-            label={t('defenseSat.instantCompleteBtn', { cost: formatCredits(snapshot.nextInstantCost ?? 0, { suffix: true }) })}
-            variant="cta"
-            disabled={!snapshot.canInstantComplete}
-            onPress={handleInstantComplete}
-          />
-        ) : null}
-        <ArcButton label={t('defenseSat.backToList')} variant="secondary" onPress={onBack} />
-        <ArcButton label={t('defenseSat.close')} variant="secondary" onPress={onClose} />
-      </View>
-    </View>
+    </ArcOverlayCard>
   );
 });

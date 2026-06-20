@@ -1,0 +1,6 @@
+facility_type,install_duration_sec,upgrade_duration_mul,instant_complete_mul,notesKo
+trade_port,900,0.95,0.95,v3.1 무역소 · BM 즉시완료 0.95×
+shipyard,1080,1.00,1.00,v3.1 조선소
+defense_satellite,1500,1.05,1.05,v3.1 방위위성
+laboratory,1800,1.10,1.10,v3.1 연구소
+tavern,1200,0.98,0.98,v3.1 선술집

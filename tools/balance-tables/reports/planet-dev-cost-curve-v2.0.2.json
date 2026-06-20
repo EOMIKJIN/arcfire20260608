@@ -1,0 +1,46 @@
+{
+  "version": "v2.0.2-tier-curve",
+  "l1Anchor": {
+    "trade_port": 500,
+    "shipyard": 800,
+    "tavern": 800,
+    "laboratory": 2000,
+    "defense": 1000
+  },
+  "tierMult": {
+    "1": 0.01,
+    "2": 0.018,
+    "3": 0.018,
+    "4": 0.032,
+    "5": 0.032,
+    "6": 0.055,
+    "7": 0.055,
+    "8": 0.09,
+    "9": 0.09,
+    "10": 0.14
+  },
+  "perFacilityMaxCr": {
+    "trade_port": 11363200,
+    "shipyard": 26052900,
+    "tavern": 17550400,
+    "laboratory": 33272600,
+    "defense": 33694800
+  },
+  "tradePortUpgradeSteps": [
+    2700,
+    7200,
+    28800,
+    64000,
+    220000,
+    440000,
+    1350000,
+    2250000,
+    7000000
+  ],
+  "playScenarioBands": {
+    "zone3": 5000,
+    "zone5": 20000,
+    "zone9": 150000,
+    "zone18": 1500000
+  }
+}

@@ -4,6 +4,7 @@
 // ============================================================
 
 import { resolveTavernBountySlots, resolveTavernRefreshIntervalHours } from '../balance/facilityTavernLevelPolicy';
+import { generateTavernBountyBoard } from '../../game/tavern/tavernBountyGenerator';
 import { writeFacilityModuleDetail } from '../../game/planetDevelopment/planetFacilityModuleRuntime';
 import {
   PLANET_DEV_MODULE_POPULATION_DOME,
@@ -47,6 +48,9 @@ export function runTavernBountyRefreshPass(nowMs = Date.now()): TavernBountyRefr
       version: 1,
       activeBountyCount: slots,
       lastBountyRefreshTimestamp: needsRefresh ? nowMs : last,
+      bountyBoard: needsRefresh
+        ? generateTavernBountyBoard(planetId, detail.level, slots, nowMs, intervalH)
+        : detail.bountyBoard,
       updatedAtMs: nowMs,
     });
     planetsRefreshed += 1;

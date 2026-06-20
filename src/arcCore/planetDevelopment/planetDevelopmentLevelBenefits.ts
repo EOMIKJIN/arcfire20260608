@@ -114,7 +114,8 @@ export function applyPlanetDevUpkeepEfficiency(planetId: string, baseUpkeepCredi
 }
 
 /**
- * 시설 레벨 적용 시 — 해당 Lv 일일 nudge를 즉시 5대 지표에 반영(점유 행성만).
+ * 시설 레벨 적용 시 — v2.0 §1-2: 5대 스탯 nudge는 일 1회 배치 전용.
+ * level_up_stat_nudge_daily_fraction=0 이면 no-op(캐시·TDI 등은 별도 패스).
  */
 export function applyPlanetFacilityLevelUpBenefits(
   planetId: string,

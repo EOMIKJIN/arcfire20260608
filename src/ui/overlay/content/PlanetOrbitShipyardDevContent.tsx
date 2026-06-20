@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';
 import {
   buildOrbitShipyardDevSnapshot,
@@ -20,6 +20,8 @@ import { showArcAlert } from '../../../utils/showArcAlert';
 import { useT } from '../../../i18n';
 import { OVERLAY_TOKENS } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
+import { ArcOverlayCard } from '../ArcOverlayCard';
+import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
 
 function InfoRow({ label, value }: { label: string; value: string }) {
@@ -73,6 +75,10 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
       showArcAlert(t('planetDev.manageDeniedTitle'), t('orbitShipyard.homeOnlyBody'));
       return;
     }
+    if (snapshot.installBlockReason) {
+      showArcAlert(t('orbitShipyard.installFailTitle'), snapshot.installBlockReason);
+      return;
+    }
     showArcAlert(
       t('orbitShipyard.installTitle'),
       t('orbitShipyard.installBody', { cost: formatCredits(snapshot.installCost, { suffix: true }) }),
@@ -87,7 +93,7 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
         },
       ],
     );
-  }, [canManageDevelopment, planetId, snapshot.installCost, t]);
+  }, [canManageDevelopment, planetId, snapshot.installBlockReason, snapshot.installCost, t]);
 
   const handleStartUpgrade = useCallback(() => {
     if (!canManageDevelopment) {
@@ -125,20 +131,82 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
     );
   }, [canManageDevelopment, planetId, snapshot.nextInstantCost, snapshot.nextUpgradeCost, t]);
 
+  const footer = (
+    <View style={styles.footerStack}>
+      <View style={styles.btnCol}>
+        {!snapshot.installed && !snapshot.isInstalling ? (
+          <ArcButton
+            label={t('orbitShipyard.installBtn', { cost: formatCredits(snapshot.installCost, { suffix: true }) })}
+            variant="cta"
+            disabled={!canManageDevelopment || !snapshot.canInstall}
+            onPress={handlePressInstall}
+          />
+        ) : null}
+        {snapshot.installed && !snapshot.isUpgrading && snapshot.nextTargetLevel != null ? (
+          <>
+            <ArcButton
+              label={t('orbitShipyard.upgradeBtn', {
+                from: snapshot.level,
+                to: snapshot.nextTargetLevel,
+                cost: formatCredits(snapshot.nextUpgradeCost ?? 0, { suffix: true }),
+                duration: nextDurationLabel,
+              })}
+              variant="primary"
+              disabled={!canManageDevelopment || !snapshot.canStartUpgrade}
+              onPress={handleStartUpgrade}
+            />
+            <ArcButton
+              label={t('orbitShipyard.instantUpgradeBtn', {
+                to: snapshot.nextTargetLevel,
+                cost: formatCredits((snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0), { suffix: true }),
+              })}
+              variant="secondary"
+              disabled={!canManageDevelopment || !snapshot.canInstantUpgradeNext}
+              onPress={handleInstantNext}
+            />
+          </>
+        ) : null}
+        {snapshot.isUpgrading || snapshot.isInstalling ? (
+          <ArcButton
+            label={t('orbitShipyard.instantCompleteBtn', {
+              cost: formatCredits(snapshot.nextInstantCost ?? 0, { suffix: true }),
+            })}
+            variant="cta"
+            disabled={!snapshot.canInstantComplete}
+            onPress={handleInstantComplete}
+          />
+        ) : null}
+      </View>
+      <ArcOverlayFooterActions
+        onCancel={onBack}
+        onConfirm={onClose}
+        cancelLabel={t('orbitShipyard.backToList')}
+        confirmLabel={t('orbitShipyard.close')}
+      />
+    </View>
+  );
+
   return (
-    <View style={styles.card}>
-      <Text style={[styles.title, { color: PH }]}>{t('orbitShipyard.title')}</Text>
-      <Text style={[styles.subtitle, { color: PH }]}>{planetName}</Text>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+    <ArcOverlayCard
+      title={t('orbitShipyard.title')}
+      subtitle={planetName}
+      layout="panel"
+      footer={footer}
+    >
         <Text style={[styles.section, { color: PH }]}>{t('orbitShipyard.status')}</Text>
         <InfoRow
           label={t('orbitShipyard.stateLabel')}
           value={
             snapshot.installed
-              ? t('orbitShipyard.stateInstalled', { level: snapshot.level })
+              ? (snapshot.isCsvWorldBaseline
+                ? t('orbitShipyard.stateBase', { level: snapshot.level })
+                : t('orbitShipyard.stateInstalled', { level: snapshot.level }))
               : t('orbitShipyard.stateNotInstalled')
           }
         />
+        {snapshot.isCsvWorldBaseline ? (
+          <Text style={[styles.hint, { color: PH }]}>{t('planetDev.worldBuiltHint')}</Text>
+        ) : null}
         {snapshot.installed ? (
           <>
             <InfoRow
@@ -157,6 +225,21 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
           <>
             <InfoRow label={t('orbitShipyard.buildSpeedLabel')} value={`${currentRow.buildSpeedBonusPct}%`} />
           </>
+        ) : null}
+
+        {snapshot.isInstalling ? (
+          <View style={styles.gaugeBlock}>
+            <Text style={[styles.section, { color: PH }]}>{t('planetDev.installProgress')}</Text>
+            <Text style={[styles.hint, { color: PH }]}>
+              {snapshot.installDurationSec != null
+                ? formatOrbitShipyardDurationLabel(snapshot.installDurationSec)
+                : '—'}
+            </Text>
+            <PlanetHubDigitalGauge
+              progressPct={snapshot.upgradeProgressPct}
+              accessibilityLabel={t('planetDev.installProgressA11y', { pct: snapshot.upgradeProgressPct })}
+            />
+          </View>
         ) : null}
 
         {snapshot.isUpgrading ? (
@@ -193,54 +276,6 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
             </Text>
           </View>
         ))}
-      </ScrollView>
-
-      <View style={styles.btnCol}>
-        {!snapshot.installed ? (
-          <ArcButton
-            label={t('orbitShipyard.installBtn', { cost: formatCredits(snapshot.installCost, { suffix: true }) })}
-            variant="cta"
-            disabled={!canManageDevelopment || !snapshot.canInstall}
-            onPress={handlePressInstall}
-          />
-        ) : null}
-        {snapshot.installed && !snapshot.isUpgrading && snapshot.nextTargetLevel != null ? (
-          <>
-            <ArcButton
-              label={t('orbitShipyard.upgradeBtn', {
-                from: snapshot.level,
-                to: snapshot.nextTargetLevel,
-                cost: formatCredits(snapshot.nextUpgradeCost ?? 0, { suffix: true }),
-                duration: nextDurationLabel,
-              })}
-              variant="primary"
-              disabled={!canManageDevelopment || !snapshot.canStartUpgrade}
-              onPress={handleStartUpgrade}
-            />
-            <ArcButton
-              label={t('orbitShipyard.instantUpgradeBtn', {
-                to: snapshot.nextTargetLevel,
-                cost: formatCredits((snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0), { suffix: true }),
-              })}
-              variant="secondary"
-              disabled={!canManageDevelopment || !snapshot.canInstantUpgradeNext}
-              onPress={handleInstantNext}
-            />
-          </>
-        ) : null}
-        {snapshot.isUpgrading ? (
-          <ArcButton
-            label={t('orbitShipyard.instantCompleteBtn', {
-              cost: formatCredits(snapshot.nextInstantCost ?? 0, { suffix: true }),
-            })}
-            variant="cta"
-            disabled={!snapshot.canInstantComplete}
-            onPress={handleInstantComplete}
-          />
-        ) : null}
-        <ArcButton label={t('orbitShipyard.backToList')} variant="secondary" onPress={onBack} />
-        <ArcButton label={t('orbitShipyard.close')} variant="secondary" onPress={onClose} />
-      </View>
-    </View>
+    </ArcOverlayCard>
   );
 });

@@ -1,11 +1,13 @@
 # 에이전트 안내 (Arcfire Online)
 
-## 메인 개발 · 팀 구조
+## 메인 개발 · 팀 구조 (2026-06-19 단일 지휘)
 
-| 에이전트 | 호출 | 역할 |
-|---------|------|------|
-| **김팀장** | `@김팀장` · 「김팀장」 | **메인 개발·총괄** — UI·Skia·arcCore·버그 · **김경제 산출물 1일 1회 검수·최종 연동** |
-| **김경제** (팀원) | `@김경제` · 「김경제」 | 경제·밸런스·SIM·일일 배치 **구축·테스트** → handoff 제출 |
+| 에이전트 | 호출 | 역할 | 코드 |
+|---------|------|------|------|
+| **김팀장** | `@김팀장` · 「김팀장」 | **유일한 사용자 지시** — UI·Skia·arcCore·**경제·밸런스**·버그 **전부** | **O** |
+| **김경제** (팀원) | `@김경제` · 「김경제」 | **김팀장 배정만** — 실시간 감시·`audit:balance-ops` **점검·리포트** | **X** |
+
+> 사용자는 **김팀장 대화창 하나**에만 작업 지시. 김경제 별도 창 = 감시·점검 전용(충돌 방지).
 
 - **협업 워크플로**: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
 - **김팀장 일일 검수**: `npm run audit:team-lead:daily` → `tools/kim-team-lead/reports/daily-review-latest.md`
@@ -24,15 +26,15 @@ powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.
 ```
 
 - **30분** `mem-timeline.csv` · crash logcat · v2 계단식 GL 누수 판정 · **VERIFY** after auto-fix
-- **김경제(감시)**: 모니터 가동·관측·incident 탐지·보고
-- **김팀장**: VERIFY FAIL·반복 크래시 **원인 코드 수정**, 자동조치 정책·Skia/허브/STAGE 패치
+- **김경제(감시)**: 모니터 가동·관측·incident·audit **탐지·보고만** (코드 수정 없음)
+- **김팀장**: incident·audit FAIL **코드 조치** · 자동조치 정책 · Skia/허브/STAGE 패치
 
 ## AI 페르소나·모델 자동 라우팅 (Auto)
 
 - **정본**: `.cursor/rules/gemini-code-agent-routing.mdc` — `alwaysApply`, 매 턴 @김팀장/@김경제/@Fable/@Opus/@Sonnet **없이** 자동 선별 (김팀장 세션 내부 라우팅).
 - **원본 기획**: `.cursor/rules/gemini-code-1781406772084.md`
 - **세션 훅**: `.cursor/hooks/on-session-start-agent-routing.cjs` (`sessionStart`)
-- **Task 위임 model**: Economy/Fable `claude-fable-5-thinking-high` · Opus(UI·Skia·기본 포함) `claude-opus-4-8-thinking-high` · Sonnet `claude-4.6-sonnet-medium-thinking`
+- **Task 위임 model**: 김경제(감시만) `claude-fable-5-thinking-high` · Opus(코드·경제 포함) `claude-opus-4-8-thinking-high` · Sonnet `claude-4.6-sonnet-medium-thinking`
 
 Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc`** (프로젝트 헌법 v4.0)를 따릅니다. 구현·운영 세부 요약은 아래와 `AGENTS.md`에 둡니다.
 
@@ -74,7 +76,7 @@ Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4
 - **런타임 버그 수정**: `.cursor/rules/arcfire-bug-debug-workflow.mdc` — adb logcat 캡처 → 사용자 재현 → 로그 근거 수정. Cursor **Agent 모드 그대로** 사용(Debug 전환 불필요).
 - **Skia GL 메모리 헌법 (P0 · 2026-06-14~ 필수)**: `.cursor/rules/arcfire-skia-memory-lifecycle.mdc` — **다음 기능개발부터** Skia/Reanimated 고프레임 코드는 Zero-Allocation(Pre-allocation + `rewind()` + 단일 Canvas)만 허용. **완료 게이트**: `npm run audit:skia-memory` PASS + `tsc` + GL mtrack Δ ±15MB. 루프 내 `Skia.Path.Make()`/`Paint()`·`<Path>` `.map()`·이벤트마다 Canvas 리마운트 **금지**. `docs/(구현)SKIA_WORKLET_MEMORY_CONTRACT.md` · UI 스레드 SharedValue Path **dispose 금지**.
 - **장거리 미사일(1차)**: 2026-06 제거됨 — 메모리 격리 테스트 중. 방어위성은 `planetaryDefense` + 궤도 마커만 유지. 재도입 시 Skia 단일 Canvas·GL 실측 필수.
-- **UI 오버레이·모달**: `src/ui/overlay/` — `ArcOverlayHost` 루트 단일 호스트, `showArcAlert` 등 imperative API. RN `Modal`·magic bottom padding 금지. 점검: `npm run audit:ui-overlay`.
+- **UI 오버레이·모달**: `src/ui/overlay/` — `ArcOverlayHost` 루트 단일 호스트, `showArcAlert` 등 imperative API. RN `Modal`·magic bottom padding 금지. 점검: `npm run audit:ui-overlay`. **범용 UI 현황·로드맵**: `docs/OVERLAY_UI_UNIVERSAL_SPEC.md` · 에이전트 계약: `.cursor/rules/arcfire-overlay-ui-contract.mdc`. **조립 정본**: `ArcOverlayCard` + `ArcOverlayTitleHeader` + `ArcOverlayFooterActions` + `overlayPanelLayout.ts`(패널 세로 85~96%, center bias 36px). 패널형(planetEconomy·planetDevelopment·settings·bmShop·tradeQuantity) 마이그레이션 **완료** — alert/levelUp/reward/waveResult는 compact 잔존(Phase A 예정).
 
 ## Metro·앱 반영 (사용자 안내)
 

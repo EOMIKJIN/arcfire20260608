@@ -1,0 +1,2 @@
+policyKey,earlyZoneMaxIndex,baselineBlendBase,baselineBlendPerZoneStep,tradeHubBlendBonus,maxDeltaEarlyZone,maxDeltaDefault,gaugeFloorPctEarly,notesKo
+default,5,0.90,-0.03,0.08,1,4,38,초반 zone1~5 — CSV시드·zone목표 블렌드 / 무역허브 가산 / 일일당김 완화 / P·D·T·R·E 하한

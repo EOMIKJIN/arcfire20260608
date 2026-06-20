@@ -23,6 +23,9 @@ import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacility
 import { useArcNarrativeOverlay } from '../../src/ui/overlay/useArcNarrativeOverlay';
 import type { ArcNarrativeOverlayConfig } from '../../src/ui/overlay/useArcNarrativeOverlay';
 import { resolveNpcCaptainPortraitSource } from '../../src/game/npcCaptainPortraitAssets';
+import { formatCredits } from '../../src/utils/formatCredits';
+import { readPlanetPopulationDomeDetail } from '../../src/game/planetDevelopment/planetPopulationDomeListing';
+import { listActiveTavernBounties } from '../../src/game/tavern/tavernBountyGenerator';
 import { resolveNoticeBody, resolveNoticeTitle } from '../../src/i18n/noticeText';
 
 const TAVERN_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
@@ -48,6 +51,18 @@ export default function TavernScreen() {
     () => t('tavern.boardMeta', { count: notices.length }),
     [notices.length, t],
   );
+  const tavernBounties = useMemo(() => {
+    if (!currentPlanetId) return [];
+    const detail = readPlanetPopulationDomeDetail(currentPlanetId);
+    return listActiveTavernBounties(detail.bountyBoard);
+  }, [currentPlanetId]);
+  const bountyMeta = useMemo(() => {
+    const total = tavernBounties.reduce((sum, b) => sum + b.rewardCredits, 0);
+    return t('tavern.bountyMeta', {
+      count: tavernBounties.length,
+      credits: formatCredits(total, { suffix: true }),
+    });
+  }, [tavernBounties, t]);
   const tavernHostCaptain = useMemo(() => {
     const retiredPool = listNpcCaptains().filter((captain) => captain.tavernPlanetIds.length > 0);
     if (retiredPool.length === 0) return null;
@@ -143,6 +158,24 @@ export default function TavernScreen() {
             </Text>
           </View>
         ) : null}
+
+        <View style={styles.boardHeader}>
+          <Text style={styles.boardTitle}>{t('tavern.bountySectionTitle')}</Text>
+          <Text style={styles.boardSub}>{bountyMeta}</Text>
+        </View>
+
+        {tavernBounties.map((bounty) => (
+          <View key={bounty.id} style={styles.noticeCard}>
+            <View style={styles.noticeTopRow}>
+              <Text style={styles.noticeTag}>{t('tavern.bountyMercTier', { tier: bounty.mercTier })}</Text>
+              <Text style={styles.noticeTime}>{formatPostedAt(bounty.postedAtMs)}</Text>
+            </View>
+            <Text style={styles.noticeTitle}>{t(bounty.titleKey)}</Text>
+            <Text style={styles.noticeBody}>
+              {t('tavern.bountyReward', { credits: formatCredits(bounty.rewardCredits, { suffix: true }) })}
+            </Text>
+          </View>
+        ))}
 
         <View style={styles.boardHeader}>
           <Text style={styles.boardTitle}>{t('tavern.boardTitle')}</Text>

@@ -1,6 +1,6 @@
-facility_type,requiredFacilityType,requiredFacilityLevel,requiredCombatWins,installDurationSec,notesKo
-trade_port,,0,0,3600,v2.0 무역소 Lv1 설치 — 조선소 동일(크레딧·거점만) · 승리/선행은 UI 안내
-shipyard,,0,0,7200,v2.0 조선소 Lv1 설치 — 크레딧·거점만
-defense_satellite,,0,0,10800,v2.0 방위위성 · 점유 후 즉시
-laboratory,,0,0,14400,v2.0 과학 연구소 Lv1 — 조선소 동일 · 무역소 Lv3는 업그레이드 정책 별도
-tavern,,0,0,7200,v2.0 인구 거주 돔 Lv1 — 조선소 동일 · 방위위성 선행은 UI 안내
+facility_type,requiredFacilityType,requiredFacilityLevel,requiredCombatWins,installDurationSec,notesKo
+trade_port,,0,0,900,v3.1 Lv1 15분 · 시간 정본=facility_upgrade_duration_facility_mod.csv
+shipyard,,0,0,1080,v3.1 Lv1 18분
+defense_satellite,,0,0,1500,v3.1 Lv1 25분
+laboratory,,0,0,1800,v3.1 Lv1 30분
+tavern,,0,0,1200,v3.1 Lv1 20분

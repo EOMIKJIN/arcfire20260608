@@ -70,7 +70,12 @@ function rebuildWinCountCache(entries: CombatMatchSummary[]): Record<string, num
   return out;
 }
 
-/** 행성별 전투 승리 누적 — facility_install_prerequisites 검사용 */
+/** 행성에서 전투 승리 1회 이상 — 레드·점령 거점 설치 선행 */
+export function hasPlanetCombatVictorySync(planetId: string): boolean {
+  return countPlanetCombatWinsSync(planetId) >= 1;
+}
+
+/** 행성별 전투 승리 누적 — AABS·레거시 참조 */
 export function countPlanetCombatWinsSync(planetId: string): number {
   if (!planetId) return 0;
   if (!winCountByPlanetCache) return 0;

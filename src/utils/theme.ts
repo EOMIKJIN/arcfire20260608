@@ -79,6 +79,12 @@ export const OVERLAY_TOKENS = {
   phosphorCardInsetBg: 'rgba(6, 14, 28, 0.88)',
   phosphorBtnBg: 'rgba(107, 212, 255, 0.16)',
   phosphorBtnBgEmphasis: 'rgba(107, 212, 255, 0.22)',
+  /** 범용 오버레이 탭형 제목 헤더 — 본문 카드보다 한 톤 진한 네이비 + 대각 패턴 */
+  titleHeaderBg: '#121E34',
+  titleHeaderTopAccent: 'rgba(107, 212, 255, 0.55)',
+  titleHeaderBorder: 'rgba(107, 212, 255, 0.32)',
+  titleHeaderTitleColor: '#FFFFFF',
+  titleHeaderSubtitleColor: 'rgba(220, 236, 255, 0.72)',
   cardMaxWidth: 300,
   narrativeMaxWidth: 440,
 } as const;

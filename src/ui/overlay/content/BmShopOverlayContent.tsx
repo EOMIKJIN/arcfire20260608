@@ -4,7 +4,7 @@
 //   exchange: 보석 → 크레딧 단방향 교환
 // ============================================================
 import React, { memo, useCallback } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import type { ArcOverlayBmShopEntry } from '../arcOverlayStore';
 import type { BmShopProduct, BmShopProductVisual } from '../../../bm/bmShopCatalog';
 import {
@@ -20,6 +20,8 @@ import { usePlayerStore } from '../../../store/playerStore';
 import { formatCredits } from '../../../utils/formatCredits';
 import { showArcAlert } from '../../../utils/showArcAlert';
 import { ArcButton } from '../ArcButton';
+import { ArcOverlayCard } from '../ArcOverlayCard';
+import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { bmShopOverlayStyles as styles } from './bmShopOverlayStyles';
 
 type Props = {
@@ -106,18 +108,8 @@ export const BmShopOverlayContent = memo(function BmShopOverlayContent({
     [t],
   );
 
-  return (
-    <View style={styles.card}>
-      <View style={styles.headerRow}>
-        <View style={styles.headerText}>
-          <Text style={styles.title}>{t(resolveBmShopTitleKey(entry.shopKind))}</Text>
-          <Text style={styles.subtitle}>{t(resolveBmShopSubtitleKey(entry.shopKind))}</Text>
-        </View>
-        <Pressable style={styles.closeBtn} onPress={onClose} hitSlop={8}>
-          <Text style={styles.closeBtnText}>✕</Text>
-        </Pressable>
-      </View>
-
+  const panelPrefix = (
+    <>
       <View style={styles.balanceRow}>
         <Text style={styles.balanceChipGem}>
           {t('bmShop.hud.gems', { amount: formatGemBalance(gemBalance) })}
@@ -126,23 +118,31 @@ export const BmShopOverlayContent = memo(function BmShopOverlayContent({
           {t('bmShop.hud.credits', { amount: formatCredits(creditBalance, { suffix: false }) })}
         </Text>
       </View>
-
       <Text style={styles.notice}>{t(resolveBmShopNoticeKey(entry.shopKind))}</Text>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator
-        nestedScrollEnabled
-      >
-        {products.map((product) => (
-          <ProductRow
-            key={product.id}
-            product={product}
-            actionLabel={actionLabel}
-            onAction={handleAction}
-          />
-        ))}
-      </ScrollView>
-    </View>
+    </>
+  );
+
+  return (
+    <ArcOverlayCard
+      title={t(resolveBmShopTitleKey(entry.shopKind))}
+      subtitle={t(resolveBmShopSubtitleKey(entry.shopKind))}
+      layout="panel"
+      panelPrefix={panelPrefix}
+      footer={<ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} />}
+      trailing={(
+        <Pressable style={styles.closeBtn} onPress={onClose} hitSlop={8}>
+          <Text style={styles.closeBtnText}>✕</Text>
+        </Pressable>
+      )}
+    >
+      {products.map((product) => (
+        <ProductRow
+          key={product.id}
+          product={product}
+          actionLabel={actionLabel}
+          onAction={handleAction}
+        />
+      ))}
+    </ArcOverlayCard>
   );
 });

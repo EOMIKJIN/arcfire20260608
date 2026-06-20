@@ -1,4 +1,5 @@
 import { PlanetDefenseSatelliteLevelPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
+import { resolvePlanetFacilityUpgradeDurationSec } from './facilityUpgradeDurationPolicy';
 
 export type PlanetDefenseSatelliteLevelRow = {
   level: number;
@@ -98,11 +99,9 @@ export function resolveDefenseSatelliteInstantUpgradeCostCredits(currentLevel: n
   return next.instantUpgradeCostCredits;
 }
 
-/** 다음 레벨 업그레이드 소요 시간(초) */
+/** 다음 레벨 업그레이드 소요 시간(초) — v3.1 facility_upgrade_duration_steps.csv 정본 */
 export function resolveDefenseSatelliteUpgradeDurationSec(currentLevel: number): number | null {
-  const next = getPlanetDefenseSatelliteLevelRow(currentLevel + 1);
-  if (!next) return null;
-  return next.upgradeDurationSec;
+  return resolvePlanetFacilityUpgradeDurationSec('defense_satellite', currentLevel);
 }
 
 /** [v3] 레벨별 1일 유지비(크레딧) — 미설치(level<=0)는 0 */

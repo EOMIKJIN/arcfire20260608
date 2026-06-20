@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';
 import type { GenericFacilityDevSnapshot } from '../../../game/planetDevelopment/planetGenericFacilityDevelopment';
 import { PlanetHubDigitalGauge } from '../../../components/planet/PlanetHubActionGaugeSlot';
@@ -8,6 +8,8 @@ import { showArcAlert } from '../../../utils/showArcAlert';
 import { useT } from '../../../i18n';
 import { OVERLAY_TOKENS } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
+import { ArcOverlayCard } from '../ArcOverlayCard';
+import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
 
 type LevelRow = { level: number; displayNameKr: string };
@@ -136,63 +138,10 @@ export const PlanetGenericFacilityDevContent = memo(function PlanetGenericFacili
     );
   }, [api, i18nPrefix, canManageDevelopment, planetId, snapshot.nextInstantCost, snapshot.nextUpgradeCost, t]);
 
-  return (
-    <View style={styles.card}>
-      <Text style={[styles.title, { color: PH }]}>{t(`${i18nPrefix}.title`)}</Text>
-      <Text style={[styles.subtitle, { color: PH }]}>{planetName}</Text>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-        <Text style={[styles.section, { color: PH }]}>{t(`${i18nPrefix}.status`)}</Text>
-        <InfoRow
-          label={t(`${i18nPrefix}.stateLabel`)}
-          value={
-            snapshot.installed
-              ? t(`${i18nPrefix}.stateInstalled`, { level: snapshot.level })
-              : t(`${i18nPrefix}.stateNotInstalled`)
-          }
-        />
-        {!snapshot.installed && snapshot.requiredCombatWins > 0 ? (
-          <InfoRow
-            label={t(`${i18nPrefix}.combatWinsLabel`)}
-            value={t(`${i18nPrefix}.combatWinsValue`, {
-              current: snapshot.currentCombatWins,
-              need: snapshot.requiredCombatWins,
-            })}
-          />
-        ) : null}
-        {renderExtraStats?.(snapshot, currentRow)}
-
-        {snapshot.isUpgrading ? (
-          <View style={styles.gaugeBlock}>
-            <Text style={[styles.section, { color: PH }]}>{t(`${i18nPrefix}.upgradeProgress`)}</Text>
-            <Text style={[styles.hint, { color: PH }]}>
-              Lv.{snapshot.level} → Lv.{snapshot.upgradeJob?.targetLevel ?? '?'}
-            </Text>
-            <PlanetHubDigitalGauge
-              progressPct={snapshot.upgradeProgressPct}
-              accessibilityLabel={t(`${i18nPrefix}.upgradeProgressA11y`, { pct: snapshot.upgradeProgressPct })}
-            />
-          </View>
-        ) : null}
-
-        <Text style={[styles.section, { color: PH }]}>{t(`${i18nPrefix}.levelStats`)}</Text>
-        {levelRows.map((row) => (
-          <View
-            key={row.level}
-            style={[styles.levelRow, row.level === snapshot.level ? styles.levelRowActive : null]}
-          >
-            <Text style={[styles.levelRowTitle, { color: PH }]}>
-              Lv.{row.level} {row.displayNameKr}
-              {row.level === snapshot.level ? ' ◀' : ''}
-            </Text>
-            {renderLevelMeta ? (
-              <Text style={[styles.levelRowMeta, { color: PH }]}>{renderLevelMeta(row)}</Text>
-            ) : null}
-          </View>
-        ))}
-      </ScrollView>
-
+  const footer = (
+    <View style={styles.footerStack}>
       <View style={styles.btnCol}>
-        {!snapshot.installed ? (
+        {!snapshot.installed && !snapshot.isInstalling ? (
           <ArcButton
             label={t(`${i18nPrefix}.installBtn`, { cost: formatCredits(snapshot.installCost, { suffix: true }) })}
             variant="cta"
@@ -224,7 +173,7 @@ export const PlanetGenericFacilityDevContent = memo(function PlanetGenericFacili
             />
           </>
         ) : null}
-        {snapshot.isUpgrading ? (
+        {snapshot.isUpgrading || snapshot.isInstalling ? (
           <ArcButton
             label={t(`${i18nPrefix}.instantCompleteBtn`, {
               cost: formatCredits(snapshot.nextInstantCost ?? 0, { suffix: true }),
@@ -234,9 +183,88 @@ export const PlanetGenericFacilityDevContent = memo(function PlanetGenericFacili
             onPress={handleInstantComplete}
           />
         ) : null}
-        <ArcButton label={t(`${i18nPrefix}.backToList`)} variant="secondary" onPress={onBack} />
-        <ArcButton label={t(`${i18nPrefix}.close`)} variant="secondary" onPress={onClose} />
       </View>
+      <ArcOverlayFooterActions
+        onCancel={onBack}
+        onConfirm={onClose}
+        cancelLabel={t(`${i18nPrefix}.backToList`)}
+        confirmLabel={t(`${i18nPrefix}.close`)}
+      />
     </View>
+  );
+
+  return (
+    <ArcOverlayCard
+      title={t(`${i18nPrefix}.title`)}
+      subtitle={planetName}
+      layout="panel"
+      footer={footer}
+    >
+        <Text style={[styles.section, { color: PH }]}>{t(`${i18nPrefix}.status`)}</Text>
+        <InfoRow
+          label={t(`${i18nPrefix}.stateLabel`)}
+          value={
+            snapshot.installed
+              ? (snapshot.isCsvWorldBaseline
+                ? t('planetDev.worldBuiltState', { level: snapshot.level })
+                : t(`${i18nPrefix}.stateInstalled`, { level: snapshot.level }))
+              : t(`${i18nPrefix}.stateNotInstalled`)
+          }
+        />
+        {snapshot.isCsvWorldBaseline ? (
+          <Text style={[styles.hint, { color: PH }]}>{t('planetDev.worldBuiltHint')}</Text>
+        ) : null}
+        {!snapshot.installed && snapshot.requiresInstallVictory && !snapshot.hasInstallVictory ? (
+          <InfoRow
+            label={t('planetDev.victoryPrereqLabel')}
+            value={t('planetDev.installCombatVictoryRequired')}
+          />
+        ) : null}
+        {renderExtraStats?.(snapshot, currentRow)}
+
+        {snapshot.isInstalling ? (
+          <View style={styles.gaugeBlock}>
+            <Text style={[styles.section, { color: PH }]}>{t('planetDev.installProgress')}</Text>
+            <Text style={[styles.hint, { color: PH }]}>
+              {snapshot.installDurationSec != null
+                ? api.formatDurationLabel(snapshot.installDurationSec)
+                : '—'}
+            </Text>
+            <PlanetHubDigitalGauge
+              progressPct={snapshot.upgradeProgressPct}
+              accessibilityLabel={t('planetDev.installProgressA11y', { pct: snapshot.upgradeProgressPct })}
+            />
+          </View>
+        ) : null}
+
+        {snapshot.isUpgrading ? (
+          <View style={styles.gaugeBlock}>
+            <Text style={[styles.section, { color: PH }]}>{t(`${i18nPrefix}.upgradeProgress`)}</Text>
+            <Text style={[styles.hint, { color: PH }]}>
+              Lv.{snapshot.level} → Lv.{snapshot.upgradeJob?.targetLevel ?? '?'}
+            </Text>
+            <PlanetHubDigitalGauge
+              progressPct={snapshot.upgradeProgressPct}
+              accessibilityLabel={t(`${i18nPrefix}.upgradeProgressA11y`, { pct: snapshot.upgradeProgressPct })}
+            />
+          </View>
+        ) : null}
+
+        <Text style={[styles.section, { color: PH }]}>{t(`${i18nPrefix}.levelStats`)}</Text>
+        {levelRows.map((row) => (
+          <View
+            key={row.level}
+            style={[styles.levelRow, row.level === snapshot.level ? styles.levelRowActive : null]}
+          >
+            <Text style={[styles.levelRowTitle, { color: PH }]}>
+              Lv.{row.level} {row.displayNameKr}
+              {row.level === snapshot.level ? ' ◀' : ''}
+            </Text>
+            {renderLevelMeta ? (
+              <Text style={[styles.levelRowMeta, { color: PH }]}>{renderLevelMeta(row)}</Text>
+            ) : null}
+          </View>
+        ))}
+    </ArcOverlayCard>
   );
 });

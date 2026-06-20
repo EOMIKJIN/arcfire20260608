@@ -102,6 +102,8 @@ interface ClanWarFoundationState {
    * 플레이어 `player_home`이 이미 있으면 해당 행성은 건너뜀.
    */
   syncNpcAiClanTerritoryFromGalaxy: (systems: Record<string, StarSystem>) => void;
+  /** synth 아크코어 개방 직후 — 블루/레드·플레이어 home 은 덮어쓰지 않음 */
+  seedSynthFrontierNeutralHold: (planetId: string, systemId: string) => void;
 }
 
 function makeId(prefix: string): string {
@@ -497,6 +499,31 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
   },
 
   getHold: (planetId) => get().planetHolds[planetId],
+
+  seedSynthFrontierNeutralHold: (planetId, systemId) => {
+    const state = get();
+    const cur = state.planetHolds[planetId];
+    if (cur?.kind === 'player_home') return;
+    if (cur && cur.kind === 'clan_hold' && cur.occupierClanId !== 'neutral') return;
+
+    const now = Date.now();
+    const nextHold: PlanetClanHold = {
+      planetId,
+      systemId,
+      occupierClanId: 'neutral',
+      homePlayerUid: null,
+      kind: 'neutral',
+      capturedAt: cur?.capturedAt ?? now,
+    };
+    if (
+      cur?.occupierClanId === nextHold.occupierClanId
+      && cur?.kind === nextHold.kind
+    ) {
+      return;
+    }
+    set({ planetHolds: { ...state.planetHolds, [planetId]: nextHold } });
+    void get().persistClanWarFoundation();
+  },
 
   listDeploymentsForPlanet: (planetId) => get().deployments.filter((d) => d.planetId === planetId),
 

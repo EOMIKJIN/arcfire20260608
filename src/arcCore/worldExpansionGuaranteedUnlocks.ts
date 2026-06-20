@@ -5,7 +5,7 @@
  * release·운영 기본 비활성 — DEV 하네스 + `EXPO_PUBLIC_ARCCORE_LEGACY_GUARANTEED_UNLOCK=1` 전용.
  */
 import { useWorldStore } from '../store/worldStore';
-import { dispatchArcCoreAfterSystemUnlock } from './worldExpansionUnlockDispatch';
+import { finalizeArcCoreSynthFrontierUnlock } from './worldExpansionSynthColonization';
 import { persistArcCoreDailyUnlockRecord } from './arcCoreDailyUnlockVerification';
 import { isArcCoreLegacyGuaranteedUnlockEnabled } from './arcCoreExpansionTestFlags';
 import { ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS } from './worldExpansionConstants';
@@ -30,7 +30,7 @@ export function applyArcCoreLegacyGuaranteedUnlocks(): void {
     if (!target?.planets[0]?.id) continue;
 
     world.unlockSystem(systemId, 'arc_core_legacy_seed');
-    dispatchArcCoreAfterSystemUnlock(systemId, 'legacy_seed');
+    finalizeArcCoreSynthFrontierUnlock(systemId, 'legacy_seed');
     void persistArcCoreDailyUnlockRecord(systemId);
   }
 }

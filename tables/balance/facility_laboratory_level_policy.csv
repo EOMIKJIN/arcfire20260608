@@ -1,11 +1,11 @@
 level,displayNameKr,labRdSpeedReductionPct,labEquipmentTierUnlock,labEnvRegenPctDaily,upgradeDurationSec,installCostCredits,upgradeCostCredits,instantUpgradeCostCredits,requiredPlayerLevelMin,requiredStatType,requiredStatValue,notesKo
-1,간이 연구실,5,t1_basic,0.5,0,1,0,1,0,,0,"[TEST·임시] v2.0 Lv1 · install 1cr · 4h=14400s는 catalog"
-2,소형 연구소,8,t1_all,1.0,36000,0,1,1,0,,0,"[TEST·임시] 10h"
-3,연구소,12,t2_unlock,1.5,72000,0,1,1,0,,0,"[TEST·임시] 20h"
-4,확장 연구소,16,t2_all,2.0,129600,0,1,1,0,,0,"[TEST·임시] 1.5일"
-5,고급 연구소,20,t3_unlock,2.5,172800,0,1,1,20,technology,30,"[TEST·임시] 2일 · T≥30"
-6,정예 연구소,25,t3_all,3.0,259200,0,1,1,0,,0,"[TEST·임시] 3일"
-7,성계 연구소,30,t4_unlock,3.5,345600,0,1,1,0,,0,"[TEST·임시] 4일"
-8,광역 연구소,36,t4_all,4.0,432000,0,1,1,40,technology,55,"[TEST·임시] 5일 · T≥55"
-9,은하 연구소,43,special,4.5,518400,0,1,1,0,,0,"[TEST·임시] 6일"
-10,아크파이어 연구원,50,all,5.0,691200,0,1,1,0,,0,"[TEST·임시] 8일 · R&D -50%"
+1,간이 연구실,5,t1_basic,0.5,0,2000,0,1000,0,,0,v2.0 §5 Lv1 · catalog 200k · 즉시 100k
+2,소형 연구소,8,t1_all,1.0,36000,0,9000,3600,0,,0,v2.0 · 10h
+3,연구소,12,t2_unlock,1.5,72000,0,21600,8640,0,,0,v2.0 · 20h
+4,확장 연구소,16,t2_all,2.0,129600,0,80000,32000,0,,0,v2.0 · 1.5일
+5,고급 연구소,20,t3_unlock,2.5,172800,0,160000,64000,20,technology,30,v2.0 · 2일 · T≥30
+6,정예 연구소,25,t3_all,3.0,259200,0,550000,220000,0,,0,v2.0 · 3일
+7,성계 연구소,30,t4_unlock,3.5,345600,0,1100000,440000,0,,0,v2.0 · 4일
+8,광역 연구소,36,t4_all,4.0,432000,0,3600000,1440000,40,technology,55,v2.0 · 5일 · T≥55
+9,은하 연구소,43,special,4.5,518400,0,6750000,2700000,0,,0,v2.0 · 6일
+10,아크파이어 연구원,50,all,5.0,691200,0,21000000,8400000,0,,0,v2.0 L10 · 8일 · R&D -50%

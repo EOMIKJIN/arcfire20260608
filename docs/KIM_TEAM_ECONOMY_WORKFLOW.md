@@ -1,70 +1,64 @@
 # 김팀장 · 김경제 협업 워크플로
 
-> **목표**: 경제시스템·밸런스·아크코어 운영 고도화를 **김경제**가 구축·테스트하고, **김팀장**이 총괄 검수·연동하여 책임 체계를 명확히 한다.
+> **2026-06-19 — 단일 지휘**: 사용자는 **김팀장 대화창 하나**에만 작업 지시.  
+> **김경제** = 감시·점검·리포트만 · **코드 수정 없음** · **김팀장이 별도 배정**.
 
 ## 역할
 
-| 단계 | 김경제 `@김경제` | 김팀장 `@김팀장` |
+| 구분 | 김팀장 `@김팀장` | 김경제 `@김경제` |
 |------|------------------|------------------|
-| 설계·구현 | 경제·밸런스·일일 배치·SIM·무역 경제 **1차 구현** | v4.0·STAGE·비경제 arcCore **헌법 준수 감독** |
-| 테스트 | `audit:balance-ops` · `audit:balance` · `sim:economy` · `tsc` | **1일 1회** `audit:team-lead:daily` 자동 검수 |
-| Handoff | `tools/kim-team-lead/reports/kim-economy-handoff.md` 작성 | handoff **연동 대기** 항목 검수·머지 |
-| 최종 책임 | 경제 축 **품질·계약** (일 1회 배치·price_elasticity=0) | **코드 연동·정리·릴리스 게이트** 총괄 |
+| 사용자 지시 | **유일한 수신** | **받지 않음** (김팀장 배정만) |
+| 코드 | **전부** (경제·UI·Skia·arcCore) | **금지** |
+| 감시 | 김경제 리포트 검토 → **본 세션에서 조치** | mem·crash **탐지·보고** |
+| 경제 감사 | FAIL 항목 **본 세션에서 수정** | `audit:balance-ops` **실행·리포트** |
+| Handoff | 관측 리포트 **검토·코드 반영** | `kim-economy-handoff.md` **관측 섹션만** |
 
-## 일일 사이클 (KST 기준)
+## 흐름
 
 ```mermaid
-graph LR
-  A[김경제 구축·테스트] --> B[handoff.md 갱신]
-  B --> C[audit:team-lead:daily]
-  C --> D{PASS?}
-  D -- Yes --> E[김팀장 연동·정리·커밋]
-  D -- No --> F[김경제 반려·수정]
-  F --> A
+graph TD
+  U[사용자] -->|작업 지시| TL[김팀장 세션]
+  TL -->|코드 구현| CODE[src/app/tables]
+  TL -->|감시·점검 배정| E[김경제 세션/Task]
+  E -->|관측·audit 리포트| R[kim-economy-handoff / incident]
+  R --> TL
+  TL -->|FAIL·incident 조치| CODE
 ```
 
-| 시각 (권장) | 주체 | 작업 |
-|-------------|------|------|
-| 수시 | 김경제 | 경제·밸런스 작업 · 게이트 실행 · handoff 갱신 |
-| **09:00** | 김팀장 (자동) | `npm run audit:team-lead:daily` 또는 `start-daily-review.ps1` |
-| 검수 후 | 김팀장 | handoff 연동 · UI/arcCore 비경제 연결 · FAIL 시 김경제 지시 |
-| 12:00 | 앱 | `runArcCoreDailyOpsBatch` (일 1회 배치 ingest) |
+## 일일 사이클 (KST)
 
-## 김경제 작업 완료 체크리스트
+| 시각 | 주체 | 작업 |
+|------|------|------|
+| 상시 | 김경제 (배정) | `start-watch-30m.ps1` · incident 탐지 |
+| 수시 | 김팀장 | 기능·경제 **코드** · 사용자 지시 처리 |
+| 수시 | 김경제 (배정) | `audit:balance-ops` 실행 → 리포트 |
+| **09:00** | 김팀장 | `npm run audit:team-lead:daily` · 관측 교차 확인 · **코드 정리** |
+| 12:00 | 앱 | `runArcCoreDailyOpsBatch` |
 
-1. v4.0 §10 계약 (고빈도 밸런스 금지 · elasticity=0)
-2. `npm run audit:balance-ops` **PASS**
-3. `npx tsc --noEmit -p tsconfig.client.json`
-4. SIM/overlay 변경 시 `npm run sim:economy`
-5. `tools/kim-team-lead/reports/kim-economy-handoff.md` — **ready-for-review**
-
-## 김팀장 일일 검수 (자동)
-
-```bash
-npm run audit:team-lead:daily
-```
-
-산출:
-
-- `tools/kim-team-lead/reports/daily-review-latest.md`
-- `tools/kim-team-lead/reports/daily-review-state.json`
-
-검수 항목: balance-ops · tsc · handoff 연동 대기 · 경제 축 git dirty
-
-## 김팀장 세션 시작 (검수 이어하기)
+## 김팀장 → 김경제 배정 템플릿
 
 ```text
-@김팀장 일일 경제 검수 이어줘. daily-review-latest.md·kim-economy-handoff.md 읽고 연동 정리.
+@김경제 모니터 PID 확인, mem-timeline 6h 요약, incident 있으면 handoff만. 코드 수정 금지.
 ```
-
-## 김경제 세션 (작업 제출)
 
 ```text
-@김경제 handoff ready-for-review. audit:balance-ops PASS 확인했어. 김팀장 검수 대기.
+@김경제 audit:balance-ops 실행 후 FAIL만 handoff 관측 섹션. 수정은 김팀장 세션에서 할게.
 ```
+
+## 김팀장 세션 (코드·기능)
+
+```text
+@김팀장 audit:balance-ops FAIL 항목 수정해줘. kim-economy-handoff 관측 섹션 참고.
+```
+
+## 금지
+
+- 사용자가 **김팀장·김경제 두 창**에 동시에 상충하는 코드 지시
+- 김경제 세션에서 **src/app/tables** 수정
+- 김경제가 **sim:economy overlay** 코드 반영
 
 ## 관련 문서
 
-- `docs/KIM_TEAM_LEAD_AGENT.md` — 김팀장 운영
-- `docs/KIM_ECONOMY_AGENT.md` — 김경제 운영
-- `tools/kim-team-lead/README.md` — 스크립트·스케줄러
+- `docs/KIM_TEAM_LEAD_AGENT.md`
+- `docs/KIM_ECONOMY_AGENT.md`
+- `tools/kim-team-lead/README.md`

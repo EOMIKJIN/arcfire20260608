@@ -9,7 +9,10 @@ import {
   LEGACY_VISIBLE_TOTAL_SYSTEMS,
   parseSynthOrdinal,
 } from '../../src/data/galaxy100';
-import { ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS } from '../../src/arcCore/worldExpansionConstants';
+import {
+  ARC_CORE_ACCOUNT_FRESH_START_SEED_SYSTEM_ID,
+  ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS,
+} from '../../src/arcCore/worldExpansionConstants';
 import { isArcCoreLegacyGuaranteedUnlockEnabled } from '../../src/arcCore/arcCoreExpansionTestFlags';
 
 function normalizeSynthSystemId(id: string): string {
@@ -26,7 +29,11 @@ function buildGuaranteedUnlockIds(): string[] {
 }
 
 const defaultUnlocked = Array.from(
-  new Set([...Array.from(GAMEPLAY_SYSTEM_IDS), ...buildGuaranteedUnlockIds()]),
+  new Set([
+    ...Array.from(GAMEPLAY_SYSTEM_IDS),
+    ARC_CORE_ACCOUNT_FRESH_START_SEED_SYSTEM_ID,
+    ...buildGuaranteedUnlockIds(),
+  ]),
 ).sort();
 
 function isLegacySynthSystemId(id: string): boolean {

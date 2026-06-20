@@ -27,6 +27,7 @@ import { resolveNearestSupplyPlanetForTradeGood } from '../arcCore/economy/trade
 import { listPlanetIdsWithTradePort } from './planetTradePortDb';
 import { getEconomyCategoryPriceMul } from '../arcCore/economy/economyPriceOverlayStore';
 import { resolvePlanetSupplyStockScale } from '../arcCore/economy/planetEconomyFabric';
+import { clampStockToTradePortLimit } from '../game/planetDevelopment/planetTradePortStockLimit';
 import { resolveSamePlanetOriginResaleSellUnit } from '../arcCore/economy/localOriginResalePolicy';
 import {
   listTradeRouteDemandImportItemIdsForPlanet,
@@ -91,6 +92,7 @@ function buildSupplyEntry(
   const stock =
     stockBounds.min +
     Math.floor(pseudoRandom(seed + goodId.length) * (stockSpan + 1) * stockScale);
+  const cappedStock = clampStockToTradePortLimit(planetId, stock);
   const tradeMul = getEconomyCategoryPriceMul('trade_route');
   const mod = priceMod(seed, goodId);
   const baselinePrice = Math.max(1, Math.floor(attrs.baseBuyPrice * mod * getTradeRouteSupplyBuyPriceFactor()));
@@ -104,7 +106,7 @@ function buildSupplyEntry(
     npcSellPrice: clampToPriceBand(Math.floor(baselineNpcSellPrice * tradeMul), baselineNpcSellPrice * tradeMul),
     baselinePrice,
     baselineNpcSellPrice,
-    stock,
+    stock: cappedStock,
     convoyStock: 0,
     playerResaleStock: 0,
     demand: 'low',
@@ -304,6 +306,16 @@ function applyStockDelta(
   entry.stock = Math.max(0, entry.convoyStock + entry.playerResaleStock);
 }
 
+function applyTradePortStockCap(planetId: string, entry: PlanetTradeMarketEntry): void {
+  if (entry.role !== 'supply') return;
+  const capped = clampStockToTradePortLimit(planetId, entry.stock);
+  if (capped >= entry.stock) return;
+  const ratio = entry.stock > 0 ? capped / entry.stock : 0;
+  entry.convoyStock = Math.floor(entry.convoyStock * ratio);
+  entry.playerResaleStock = Math.max(0, capped - entry.convoyStock);
+  entry.stock = capped;
+}
+
 export function adjustPlanetTradeMarketStock(
   planetId: string,
   goodId: string,
@@ -334,6 +346,7 @@ export function adjustPlanetTradeMarketStock(
   if (!entry) return;
 
   applyStockDelta(entry, delta, source);
+  applyTradePortStockCap(planetId, entry);
   entry.updatedAt = Date.now();
 }
 
@@ -457,6 +470,7 @@ function applyDailyAdjustToEntry(
   else if (entry.stock >= targetStock * 1.65) entry.demand = 'low';
   else entry.demand = entry.role === 'demand' ? 'high' : 'low';
 
+  applyTradePortStockCap(planetId, entry);
   entry.updatedAt = Date.now();
 }
 

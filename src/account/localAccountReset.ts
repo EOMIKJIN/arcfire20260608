@@ -11,11 +11,13 @@ import { useNpcCaptainProgressStore } from '../store/npcCaptainProgressStore';
 import { usePlanetCoreRuntimeStore } from '../store/planetCoreRuntimeStore';
 import { usePlayerStore } from '../store/playerStore';
 import { useUserSessionStore } from '../store/userSessionStore';
+import { applyArcCoreAccountFreshStartSeedUnlock } from '../arcCore/worldExpansionFreshStartSeed';
 import { useWorldStore } from '../store/worldStore';
 import { useWorldObjectRuntimeStore } from '../store/worldObjectRuntimeStore';
 import { useTavernBoardStore } from '../store/tavernBoardStore';
 import { resetCombatMatchTelemetry } from '../store/combatMatchTelemetryStore';
 import { showArcAlert } from '../utils/showArcAlert';
+import { clearOnboardingProfessionId } from '../game/onboardingDraftStorage';
 import { purgeAccountLedgerProfileSkillByUid } from './accountLifecycle';
 
 export type LocalAccountResetParams = {
@@ -81,6 +83,7 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await usePlanetCoreRuntimeStore.getState().resetLocalPlanetCoreRuntime();
   // 갤럭시 개방·항행 기록(방문/개방 성계) — worldStore (초기 시드 galaxy로 복귀)
   await useWorldStore.getState().resetLocalWorld();
+  applyArcCoreAccountFreshStartSeedUnlock();
   // 행성 월드오브젝트 인스턴스 상태(방위위성 HP·고갈 노드 등) — worldObjectRuntimeStore
   await useWorldObjectRuntimeStore.getState().resetRuntime();
   // 전투 텔레메트리(교전 기록) — combatMatchTelemetry
@@ -89,6 +92,8 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await useUserSessionStore.getState().resetLocalUserSession();
   // 선술집 공지 보드(클라우드 동기 대상) — tavernBoardStore
   await useTavernBoardStore.getState().resetLocalBoard();
+  // 캐릭터 선택 중간 초안 — character-select → nickname 사이 professionId
+  await clearOnboardingProfessionId();
 
   await markFreshStartAfterReset();
 }

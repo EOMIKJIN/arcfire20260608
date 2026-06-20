@@ -259,16 +259,18 @@ function orbitCount(planetId) {
   return 3;
 }
 
+function displayKindCap(zoneIndex) {
+  const z = clampZone(zoneIndex);
+  if (z <= 1) return 1;
+  if (z <= 10) return 2;
+  return 3;
+}
+
 function displayMineralPool(planetId, zoneIndex) {
   const pool = mineableIds(planetId, zoneIndex);
   const primary = zonePrimary(zoneIndex);
   if (pool.length <= 1) return [primary];
-  const core = planetCoreById.get(planetId);
-  const resource01 = core ? core.coreResource / 100 : 0.5;
-  let kinds = 1;
-  if (resource01 >= 0.38) kinds = 2;
-  if (resource01 >= 0.62) kinds = 3;
-  kinds = Math.min(3, pool.length, kinds);
+  const kinds = Math.min(3, pool.length, displayKindCap(zoneIndex));
   const ordered = [primary, ...pool.filter((id) => id !== primary)];
   const seed = planetIdSeed(planetId);
   const picked = [];

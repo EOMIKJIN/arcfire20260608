@@ -1,9 +1,11 @@
-# 김팀장 · 김경제 팀 운영 (일일 검수)
+# 김팀장 · 김경제 팀 운영
 
-**김경제** — 경제·밸런스·아크코어 운영 **구축·테스트**  
-**김팀장** — 산출물 **1일 1회 자동 검수** · **최종 코드 연동·정리** 책임
+**2026-06-19 단일 지휘**
 
-워크플로 정본: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
+- **김팀장** — **유일한 사용자 지시** · **모든 코드**(경제·UI·Skia 포함)
+- **김경제** — **김팀장 배정만** · 실시간 감시 · `audit:balance-ops` **점검·리포트** · **코드 수정 없음**
+
+워크플로: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
 
 ## 일 1회 총괄 검수
 
@@ -25,6 +27,6 @@ npm run audit:team-lead:daily
 
 작업 스케줄러에 위 스크립트 등록 · 로그: `reports/daily-review-scheduler.log`
 
-## Handoff
+## Handoff (관측)
 
-김경제 작업 완료 시: `reports/kim-economy-handoff.md` 갱신 → 김팀장 `@김팀장 일일 검수` 또는 자동 스케줄
+김경제 **관측** 리포트: `reports/kim-economy-handoff.md` → 김팀장 **본 세션에서** 코드 조치

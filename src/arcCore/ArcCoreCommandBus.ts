@@ -44,7 +44,7 @@ export type ArcCoreCommand =
       type: 'world_system_unlocked';
       systemId: string;
       systemName: string;
-      source: 'arc_core_daily' | 'arc_core_legacy_seed' | 'manual';
+      source: 'arc_core_daily' | 'arc_core_legacy_seed' | 'arc_core_fresh_start_seed' | 'manual';
       meta?: ArcCoreCommandMeta;
     }
   | {

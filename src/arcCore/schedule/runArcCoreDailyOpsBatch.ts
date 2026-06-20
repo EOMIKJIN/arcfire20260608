@@ -11,6 +11,7 @@ import { ingestBalanceOverlayDeltaIfPending } from '../economy/ingestBalanceOver
 import { runMarketMicroAdjustPass } from '../economy/runMarketMicroAdjustPass';
 import { runTradeRouteDailyMarketPass } from '../economy/runTradeRouteDailyMarketPass';
 import { tryArcCoreWorldDailyUnlock } from '../worldExpansionDailyUnlock';
+import { runSynthColonizationAdvancePass } from '../worldExpansionSynthColonization';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { flushDailyOpsObservationsToAabs } from '../userMod/dailyOpsObservationQueue';
 import { runIntegratedEngageHpAdjustPass } from '../balance/runIntegratedEngageHpAdjustPass';
@@ -42,6 +43,7 @@ export type ArcCoreDailyOpsBatchResult = {
   laboratoryRdSpeed: boolean;
   tavernBountyRefresh: boolean;
   planetPgp: boolean;
+  synthColonizationAdvance: boolean;
 };
 
 /**
@@ -69,6 +71,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     laboratoryRdSpeed: false,
     tavernBountyRefresh: false,
     planetPgp: false,
+    synthColonizationAdvance: false,
   };
 
   if (!usePlanetCoreRuntimeStore.getState().hydrated) {
@@ -109,7 +112,12 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     result.integratedEngageHpAdjust = engageAdjust.ran;
   }
   if (policy.runWorldExpansionUnlock) {
+    const colonization = runSynthColonizationAdvancePass();
+    result.synthColonizationAdvance = colonization.advanced > 0;
     result.worldExpansionUnlock = tryArcCoreWorldDailyUnlock();
+  } else {
+    const colonization = runSynthColonizationAdvancePass();
+    result.synthColonizationAdvance = colonization.advanced > 0;
   }
 
   const convoyDaily = await runArcCoreConvoyDailySettlementPass();

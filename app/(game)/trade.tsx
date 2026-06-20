@@ -477,7 +477,7 @@ export default function TradeScreen() {
 
     presentArcOverlayTradeQuantity({
       mode: 'buy',
-      title: t('trade.buy.title', { name: resolveItemName(itemDef ?? good, locale) }),
+      title: resolveItemName(itemDef ?? good, locale),
       unitPrice: price,
       maxQty: resolveTradeBuyPickerMaxQty(listing),
       playerCredits,
@@ -795,7 +795,7 @@ export default function TradeScreen() {
 
     presentArcOverlayTradeQuantity({
       mode: 'sell',
-      title: t('trade.sell.title', { name: resolveItemName(itemDef ?? good, locale) }),
+      title: resolveItemName(itemDef ?? good, locale),
       unitPrice: price,
       maxQty: sellQty,
       ownedQty: item.quantity,

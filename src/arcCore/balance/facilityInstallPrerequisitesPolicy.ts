@@ -2,9 +2,13 @@ import { FacilityInstallPrerequisites_FROM_BALANCE_CSV } from '../../data/balanc
 
 export type FacilityInstallPrerequisiteRow = {
   facilityType: string;
+  /** @deprecated 설치 게이트 폐기 — installDurationSec만 사용 */
   requiredFacilityType: string;
+  /** @deprecated 설치 게이트 폐기 */
   requiredFacilityLevel: number;
+  /** @deprecated 설치 게이트 폐기 — planetDevelopmentInstallCombatPolicy */
   requiredCombatWins: number;
+  /** @deprecated v3.1 — 런타임은 facility_upgrade_duration_facility_mod.csv 정본. 감사용 미러 */
   installDurationSec: number;
   notesKo: string;
 };

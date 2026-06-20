@@ -9,12 +9,21 @@ import {
   getFacilityShipyardMaxLevel,
   listFacilityShipyardLevelRows,
   resolveShipyardBuiltHullTierKeysForLevel,
-  resolveShipyardInstantUpgradeCostCredits,
   resolveShipyardMineralUpgradeCapForLevel,
   resolveShipyardUpgradeCostCredits,
   resolveShipyardUpgradeDurationSec,
   resolveShipyardUpgradeRequiredPlayerLevel,
 } from '../../arcCore/balance/facilityShipyardLevelPolicy';
+import { resolvePlanetInstallVictoryBlock } from './planetDevelopmentInstallCombatPolicy';
+import {
+  buildInstallUpgradeJob,
+  buildUpgradeJob,
+  isFacilityInstallJob,
+  resolveFacilityInstallDurationSec,
+  resolveJobProgressPct,
+} from './planetFacilityInstallJob';
+import { resolveActivePlanetFacilityDurationTier } from '../../arcCore/balance/facilityUpgradeDurationPolicy';
+import { resolvePlanetFacilityInstantCompleteCredits } from './planetFacilityInstantCompleteModel';
 import {
   applyPlanetFacilityLevelUpBenefits,
   resolvePlanetDevDiscountedCredits,
@@ -33,6 +42,11 @@ import {
   isPlanetOrbitShipyardInstalled,
   readPlanetOrbitShipyardDetail,
 } from './planetOrbitShipyardListing';
+import {
+  isPlanetCsvWorldDevModuleBaseline,
+  materializeCsvWorldBaselineDevModule,
+  resolveEffectiveFacilityDevView,
+} from './planetCsvWorldFacilityBaseline';
 
 export {
   PLANET_DEV_MODULE_ORBIT_SHIPYARD,
@@ -52,6 +66,9 @@ export type OrbitShipyardDevSnapshot = {
   upgradeJob: PlanetFacilityModuleDetail['upgradeJob'];
   upgradeProgressPct: number;
   isUpgrading: boolean;
+  isInstalling: boolean;
+  installDurationSec: number | null;
+  installBlockReason: string | null;
   canInstall: boolean;
   canStartUpgrade: boolean;
   canInstantComplete: boolean;
@@ -61,6 +78,7 @@ export type OrbitShipyardDevSnapshot = {
   nextInstantCost: number | null;
   nextUpgradeDurationSec: number | null;
   nextTargetLevel: number | null;
+  isCsvWorldBaseline: boolean;
 };
 
 /** 최초 설치 비용 — catalog + 개발 비용 효율 */
@@ -118,21 +136,58 @@ function applyOrbitShipyardLevel(planetId: string, targetLevel: number): void {
   syncTradeCatalogAfterShipyardChange(planetId);
 }
 
+function completeOrbitShipyardInstall(planetId: string): void {
+  patchOrbitShipyardDetail(planetId, {
+    installed: true,
+    level: 1,
+    builtHullTierKeys: resolveShipyardBuiltHullTierKeysForLevel(1),
+    upgradeJob: null,
+  });
+  invalidatePlanetMemoCachesForPlanet(planetId);
+  applyPlanetFacilityLevelUpBenefits(planetId, 'shipyard', 1);
+  syncTradeCatalogAfterShipyardChange(planetId);
+}
+
+function resolveShipyardInstallPrerequisiteBlock(planetId: string): string | null {
+  const victoryBlock = resolvePlanetInstallVictoryBlock(planetId);
+  if (victoryBlock) return victoryBlock;
+  return null;
+}
+
 export function tryCompleteOrbitShipyardUpgrade(planetId: string): boolean {
   const detail = readPlanetOrbitShipyardDetail(planetId);
-  if (!detail.installed || !detail.upgradeJob) return false;
+  if (!detail.upgradeJob) return false;
   const now = Date.now();
   if (now < detail.upgradeJob.completeAtMs) return false;
+  if (isFacilityInstallJob(detail)) {
+    completeOrbitShipyardInstall(planetId);
+    return true;
+  }
+  if (!detail.installed) return false;
   applyOrbitShipyardLevel(planetId, detail.upgradeJob.targetLevel);
   return true;
 }
 
 export function buildOrbitShipyardDevSnapshot(planetId: string): OrbitShipyardDevSnapshot {
   const detail = readPlanetOrbitShipyardDetail(planetId);
+  const effective = resolveEffectiveFacilityDevView(planetId, PLANET_DEV_MODULE_ORBIT_SHIPYARD, detail);
   const maxLevel = getFacilityShipyardMaxLevel();
-  const level = detail.installed ? detail.level : 0;
+  const level = effective.effectiveLevel;
+  const installed = effective.effectiveInstalled;
+  const isCsvWorldBaseline = effective.csvWorldBaselineOnly;
   const nextTargetLevel = level > 0 && level < maxLevel ? level + 1 : null;
-  const isUpgrading = Boolean(detail.upgradeJob);
+  const isInstalling = isFacilityInstallJob(detail);
+  const isUpgrading = detail.installed && Boolean(detail.upgradeJob);
+  const installDurationSec = !installed && !isCsvWorldBaseline
+    ? resolveFacilityInstallDurationSec('shipyard')
+    : null;
+  const previewInstallInstant = resolvePlanetDevDiscountedCredits(
+    planetId,
+    resolvePlanetFacilityInstantCompleteCredits({ facilityType: 'shipyard', kind: 'install', currentLevel: 0 }),
+  );
+  const installPrereqBlock = !installed && !detail.upgradeJob
+    ? resolveShipyardInstallPrerequisiteBlock(planetId)
+    : null;
   const player = usePlayerStore.getState().player;
   const playerCredits = player?.credits ?? 0;
   const playerLevel = player?.level ?? 1;
@@ -141,8 +196,11 @@ export function buildOrbitShipyardDevSnapshot(planetId: string): OrbitShipyardDe
   const nextUpgradeCost = nextTargetLevel != null
     ? resolvePlanetDevDiscountedCredits(planetId, resolveShipyardUpgradeCostCredits(level) ?? 0)
     : null;
-  const nextInstantCost = nextTargetLevel != null
-    ? resolvePlanetDevDiscountedCredits(planetId, resolveShipyardInstantUpgradeCostCredits(level) ?? 0)
+  const previewUpgradeInstant = nextTargetLevel != null && !detail.upgradeJob
+    ? resolvePlanetDevDiscountedCredits(
+      planetId,
+      resolvePlanetFacilityInstantCompleteCredits({ facilityType: 'shipyard', kind: 'upgrade', currentLevel: level }),
+    )
     : null;
   const nextUpgradeDurationSec = nextTargetLevel != null
     ? resolveShipyardUpgradeDurationSec(level)
@@ -152,68 +210,116 @@ export function buildOrbitShipyardDevSnapshot(planetId: string): OrbitShipyardDe
     : 0;
   const pilotOk = requiredPilot <= 0 || playerLevel >= requiredPilot;
 
-  const canInstall = !detail.installed && playerCredits >= installCost;
-  const canStartUpgrade = detail.installed
+  const canInstall = !installed
+    && !isCsvWorldBaseline
+    && !detail.upgradeJob
+    && playerCredits >= installCost
+    && installPrereqBlock == null;
+  const canStartUpgrade = installed
     && !isUpgrading
+    && !isInstalling
     && nextTargetLevel != null
     && nextUpgradeCost != null
     && playerCredits >= nextUpgradeCost
     && pilotOk;
-  const canInstantComplete = detail.installed
-    && isUpgrading
-    && nextInstantCost != null
-    && playerCredits >= nextInstantCost;
-  const instantNextTotal = (nextUpgradeCost ?? 0) + (nextInstantCost ?? 0);
-  const canInstantUpgradeNext = detail.installed
+  const activeInstantRaw = detail.upgradeJob
+    ? resolvePlanetFacilityInstantCompleteCredits({
+      facilityType: 'shipyard',
+      kind: isInstalling ? 'install' : 'upgrade',
+      currentLevel: isInstalling ? 0 : level,
+      job: detail.upgradeJob,
+    })
+    : null;
+  const activeInstantCost = activeInstantRaw != null
+    ? resolvePlanetDevDiscountedCredits(planetId, activeInstantRaw)
+    : null;
+  const canInstantComplete = Boolean(detail.upgradeJob)
+    && activeInstantCost != null
+    && playerCredits >= activeInstantCost;
+  const instantNextTotal = (nextUpgradeCost ?? 0) + (previewUpgradeInstant ?? 0);
+  const canInstantUpgradeNext = installed
     && !isUpgrading
+    && !isInstalling
     && nextTargetLevel != null
     && playerCredits >= instantNextTotal
     && pilotOk;
 
-  const builtHullTierKeys = detail.installed
-    ? (detail.builtHullTierKeys ?? resolveShipyardBuiltHullTierKeysForLevel(level))
+  const builtHullTierKeys = installed
+    ? (detail.installed
+      ? (detail.builtHullTierKeys ?? resolveShipyardBuiltHullTierKeysForLevel(level))
+      : resolveShipyardBuiltHullTierKeysForLevel(level))
     : [];
 
   return {
-    installed: detail.installed,
+    installed,
     level,
     maxLevel,
     builtHullTierKeys,
     mineralUpgradeCap: resolveShipyardMineralUpgradeCapForLevel(level),
     upgradeJob: detail.upgradeJob ?? null,
-    upgradeProgressPct: resolveOrbitShipyardUpgradeProgressPct(detail.upgradeJob),
+    upgradeProgressPct: resolveJobProgressPct(detail.upgradeJob),
     isUpgrading,
+    isInstalling,
+    installDurationSec,
+    installBlockReason: installPrereqBlock
+      ?? (playerCredits < installCost ? t('orbitShipyardDev.notEnoughCredits') : null),
     canInstall,
     canStartUpgrade,
     canInstantComplete,
     canInstantUpgradeNext,
     installCost,
     nextUpgradeCost,
-    nextInstantCost,
+    nextInstantCost: detail.upgradeJob ? activeInstantCost : (isInstalling ? previewInstallInstant : previewUpgradeInstant),
     nextUpgradeDurationSec,
     nextTargetLevel,
+    isCsvWorldBaseline,
   };
 }
 
 export function installPlanetOrbitShipyard(
   planetId: string,
 ): { ok: true } | { ok: false; reason: string } {
-  if (isPlanetOrbitShipyardInstalled(planetId)) {
+  const detail = readPlanetOrbitShipyardDetail(planetId);
+  if (isPlanetOrbitShipyardInstalled(planetId) || isPlanetCsvWorldDevModuleBaseline(planetId, PLANET_DEV_MODULE_ORBIT_SHIPYARD)) {
     return { ok: false, reason: t('orbitShipyardDev.alreadyInstalled') };
+  }
+  if (detail.upgradeJob) {
+    return { ok: false, reason: t('orbitShipyardDev.upgradeInProgress') };
   }
   if (!hasPlanetCoreRuntimeEntry(planetId)) {
     return { ok: false, reason: t('orbitShipyardDev.notReady') };
   }
+  const prereqBlock = resolveShipyardInstallPrerequisiteBlock(planetId);
+  if (prereqBlock) return { ok: false, reason: prereqBlock };
   const cost = resolveOrbitShipyardInstallCostCredits(planetId);
   if (!spendPlayerCredits(cost)) {
     return { ok: false, reason: t('orbitShipyardDev.notEnoughCredits') };
   }
+  const durationSec = resolveFacilityInstallDurationSec('shipyard');
+  if (durationSec <= 0) {
+    const written = writeFacilityModuleDetail(planetId, PLANET_DEV_MODULE_ORBIT_SHIPYARD, {
+      version: 1,
+      installed: true,
+      level: 1,
+      builtHullTierKeys: resolveShipyardBuiltHullTierKeysForLevel(1),
+      upgradeJob: null,
+      updatedAtMs: Date.now(),
+    });
+    if (!written) {
+      usePlayerStore.getState().addCredits(cost);
+      void usePlayerStore.getState().persist();
+      return { ok: false, reason: t('orbitShipyardDev.recordFailed') };
+    }
+    invalidatePlanetMemoCachesForPlanet(planetId);
+    applyPlanetFacilityLevelUpBenefits(planetId, 'shipyard', 1);
+    syncTradeCatalogAfterShipyardChange(planetId);
+    return { ok: true };
+  }
   const written = writeFacilityModuleDetail(planetId, PLANET_DEV_MODULE_ORBIT_SHIPYARD, {
     version: 1,
-    installed: true,
-    level: 1,
-    builtHullTierKeys: resolveShipyardBuiltHullTierKeysForLevel(1),
-    upgradeJob: null,
+    installed: false,
+    level: 0,
+    upgradeJob: buildInstallUpgradeJob(durationSec, Date.now(), resolveActivePlanetFacilityDurationTier()),
     updatedAtMs: Date.now(),
   });
   if (!written) {
@@ -222,16 +328,27 @@ export function installPlanetOrbitShipyard(
     return { ok: false, reason: t('orbitShipyardDev.recordFailed') };
   }
   invalidatePlanetMemoCachesForPlanet(planetId);
-  applyPlanetFacilityLevelUpBenefits(planetId, 'shipyard', 1);
-  syncTradeCatalogAfterShipyardChange(planetId);
   return { ok: true };
 }
 
 export function startPlanetOrbitShipyardUpgrade(
   planetId: string,
 ): { ok: true } | { ok: false; reason: string } {
-  const detail = readPlanetOrbitShipyardDetail(planetId);
-  if (!detail.installed) return { ok: false, reason: t('orbitShipyardDev.installFirst') };
+  let detail = readPlanetOrbitShipyardDetail(planetId);
+  if (!detail.installed) {
+    if (!isPlanetCsvWorldDevModuleBaseline(planetId, PLANET_DEV_MODULE_ORBIT_SHIPYARD)) {
+      return { ok: false, reason: t('orbitShipyardDev.installFirst') };
+    }
+    if (!materializeCsvWorldBaselineDevModule(planetId, PLANET_DEV_MODULE_ORBIT_SHIPYARD, detail, {
+      builtHullTierKeys: resolveShipyardBuiltHullTierKeysForLevel(1),
+    })) {
+      return { ok: false, reason: t('orbitShipyardDev.notReady') };
+    }
+    invalidatePlanetMemoCachesForPlanet(planetId);
+    applyPlanetFacilityLevelUpBenefits(planetId, 'shipyard', 1);
+    syncTradeCatalogAfterShipyardChange(planetId);
+    detail = readPlanetOrbitShipyardDetail(planetId);
+  }
   if (detail.upgradeJob) return { ok: false, reason: t('orbitShipyardDev.upgradeInProgress') };
   const level = detail.level;
   const maxLevel = getFacilityShipyardMaxLevel();
@@ -251,13 +368,13 @@ export function startPlanetOrbitShipyardUpgrade(
     applyOrbitShipyardLevel(planetId, targetLevel);
     return { ok: true };
   }
-  const startedAtMs = Date.now();
   patchOrbitShipyardDetail(planetId, {
-    upgradeJob: {
+    upgradeJob: buildUpgradeJob(
       targetLevel,
-      startedAtMs,
-      completeAtMs: startedAtMs + durationSec * 1000,
-    },
+      durationSec,
+      Date.now(),
+      resolveActivePlanetFacilityDurationTier(),
+    ),
   });
   invalidatePlanetMemoCachesForPlanet(planetId);
   return { ok: true };
@@ -268,19 +385,42 @@ export function instantCompleteOrbitShipyardUpgrade(
 ): { ok: true } | { ok: false; reason: string } {
   const detail = readPlanetOrbitShipyardDetail(planetId);
   if (!detail.upgradeJob) return { ok: false, reason: t('orbitShipyardDev.noUpgradeJob') };
-  const rawInstant = resolveShipyardInstantUpgradeCostCredits(detail.level);
-  if (rawInstant == null) return { ok: false, reason: t('orbitShipyardDev.cannotInstant') };
+  const isInstall = isFacilityInstallJob(detail);
+  const rawInstant = resolvePlanetFacilityInstantCompleteCredits({
+    facilityType: 'shipyard',
+    kind: isInstall ? 'install' : 'upgrade',
+    currentLevel: isInstall ? 0 : detail.level,
+    job: detail.upgradeJob,
+  });
+  if (rawInstant <= 0) return { ok: false, reason: t('orbitShipyardDev.cannotInstant') };
   const instantCost = resolvePlanetDevDiscountedCredits(planetId, rawInstant);
   if (!spendPlayerCredits(instantCost)) return { ok: false, reason: t('orbitShipyardDev.notEnoughCredits') };
-  applyOrbitShipyardLevel(planetId, detail.upgradeJob.targetLevel);
+  if (isInstall) {
+    completeOrbitShipyardInstall(planetId);
+  } else {
+    applyOrbitShipyardLevel(planetId, detail.upgradeJob.targetLevel);
+  }
   return { ok: true };
 }
 
 export function instantUpgradeOrbitShipyardNext(
   planetId: string,
 ): { ok: true } | { ok: false; reason: string } {
-  const detail = readPlanetOrbitShipyardDetail(planetId);
-  if (!detail.installed) return { ok: false, reason: t('orbitShipyardDev.installFirst') };
+  let detail = readPlanetOrbitShipyardDetail(planetId);
+  if (!detail.installed) {
+    if (!isPlanetCsvWorldDevModuleBaseline(planetId, PLANET_DEV_MODULE_ORBIT_SHIPYARD)) {
+      return { ok: false, reason: t('orbitShipyardDev.installFirst') };
+    }
+    if (!materializeCsvWorldBaselineDevModule(planetId, PLANET_DEV_MODULE_ORBIT_SHIPYARD, detail, {
+      builtHullTierKeys: resolveShipyardBuiltHullTierKeysForLevel(1),
+    })) {
+      return { ok: false, reason: t('orbitShipyardDev.notReady') };
+    }
+    invalidatePlanetMemoCachesForPlanet(planetId);
+    applyPlanetFacilityLevelUpBenefits(planetId, 'shipyard', 1);
+    syncTradeCatalogAfterShipyardChange(planetId);
+    detail = readPlanetOrbitShipyardDetail(planetId);
+  }
   if (detail.upgradeJob) return { ok: false, reason: t('orbitShipyardDev.upgradeInProgress') };
   const level = detail.level;
   const maxLevel = getFacilityShipyardMaxLevel();
@@ -291,7 +431,12 @@ export function instantUpgradeOrbitShipyardNext(
     return { ok: false, reason: t('orbitShipyardDev.pilotLevelRequired', { level: reqPilot }) };
   }
   const baseCost = resolvePlanetDevDiscountedCredits(planetId, resolveShipyardUpgradeCostCredits(level) ?? 0);
-  const instantCost = resolvePlanetDevDiscountedCredits(planetId, resolveShipyardInstantUpgradeCostCredits(level) ?? 0);
+  const instantRaw = resolvePlanetFacilityInstantCompleteCredits({
+    facilityType: 'shipyard',
+    kind: 'upgrade',
+    currentLevel: level,
+  });
+  const instantCost = resolvePlanetDevDiscountedCredits(planetId, instantRaw);
   if (!spendPlayerCredits(baseCost + instantCost)) {
     return { ok: false, reason: t('orbitShipyardDev.notEnoughCredits') };
   }
@@ -299,15 +444,10 @@ export function instantUpgradeOrbitShipyardNext(
   return { ok: true };
 }
 
+import { formatPlanetFacilityDurationLabel } from './formatPlanetFacilityDurationLabel';
+
 export function formatOrbitShipyardDurationLabel(sec: number): string {
-  if (sec <= 0) return t('orbitShipyardDev.durationInstant');
-  const totalMin = Math.ceil(sec / 60);
-  if (totalMin < 60) return t('orbitShipyardDev.durationMin', { min: totalMin });
-  const hours = Math.floor(totalMin / 60);
-  const mins = totalMin % 60;
-  return mins > 0
-    ? t('orbitShipyardDev.durationHourMin', { hours, mins })
-    : t('orbitShipyardDev.durationHour', { hours });
+  return formatPlanetFacilityDurationLabel(sec);
 }
 
 export function getOrbitShipyardLevelStatRow(level: number) {

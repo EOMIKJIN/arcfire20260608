@@ -1,11 +1,11 @@
 level,hpMax,defenseZoneDiameterPx,interceptHitPct,interceptDwellSec,upgradeDurationSec,installCostCredits,upgradeCostCredits,instantUpgradeCostCredits,grantsSecondSatellite,interceptMissileCount,dailyUpkeepCredits,notesKo
-1,100,120,55,3.00,0,1,0,1,false,1,100,"[TEST·임시] installCost·instant 1cr — 기능개발 완료 후 Kim경제 에이전트가 installCostCredits·upgradeCostCredits·instantUpgradeCostCredits 적정가 재설정. Lv1 1기 가동 · dailyUpkeep=round(100·lv·(1+0.12·(lv-1)))"
-2,130,128,60,2.51,1800,0,1,1,false,1,224,"[TEST·임시] upgrade·instant 1cr — Kim경제 적정가 예정. L1→2 업그레이드 30분"
-3,169,136,65,2.09,2700,0,1,1,false,2,372,"[TEST·임시] 비용 1cr — Kim경제 적정가 예정"
-4,220,144,70,1.75,3900,0,1,1,false,2,544,"[TEST·임시] 비용 1cr — Kim경제 적정가 예정"
-5,286,152,75,1.46,5700,0,1,1,false,3,740,"[TEST·임시] 비용 1cr — Kim경제 적정가 예정"
-6,372,160,79,1.22,8400,0,1,1,false,3,960,"[TEST·임시] 비용 1cr — Kim경제 적정가 예정"
-7,484,168,83,1.02,12300,0,1,1,false,4,1204,"[TEST·임시] 비용 1cr — Kim경제 적정가 예정"
-8,629,176,87,0.85,18000,0,1,1,false,4,1472,"[TEST·임시] 비용 1cr — Kim경제 적정가 예정"
-9,818,184,90,0.71,26400,0,1,1,false,5,1764,"[TEST·임시] 비용 1cr — Kim경제 적정가 예정"
-10,1064,200,92,0.50,43200,0,1,1,true,5,2080,"[TEST·임시] L9→10 upgrade·instant 1cr — Kim경제 마일스톤가 재설정. 2번째 방위위성 해금·최대 레벨 · dailyUpkeep 2080"
+1,100,120,55,3.00,0,1000,0,500,false,1,26,v2.0 §4 Lv1 · 설치 100k · 즉시 50k
+2,130,128,60,2.51,28800,0,5400,2160,false,1,68,v2.0 L1→2 · 8h · 300k
+3,169,136,65,2.09,57600,0,14400,5760,false,2,113,v2.0 · 16h
+4,220,144,70,1.75,86400,0,64000,25600,false,2,208,v2.0 · 1일
+5,286,152,75,1.46,129600,0,160000,64000,false,3,283,v2.0 · 1.5일
+6,372,160,79,1.22,172800,0,550000,220000,false,3,494,v2.0 · 2일
+7,484,168,83,1.02,259200,0,1100000,440000,false,4,619,v2.0 · 3일
+8,629,176,87,0.85,345600,0,3600000,1440000,false,4,1051,v2.0 · 4일
+9,818,184,90,0.71,432000,0,7200000,2880000,false,5,1260,v2.0 · 5일
+10,1064,200,92,0.50,604800,0,21000000,8400000,true,5,2080,v2.0 L10 · 7일 · 2번째 위성

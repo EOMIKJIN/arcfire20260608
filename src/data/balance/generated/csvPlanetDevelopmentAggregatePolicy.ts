@@ -3,10 +3,16 @@ export const PlanetDevelopmentAggregatePolicy_FROM_BALANCE_CSV = [
   { "key": "cost_efficiency_tech_weight_per_point", "value": "0.004", "notesKo": "T 스탯 1pt당 업그레이드·설치 비용 0.4%p 할인" },
   { "key": "cost_efficiency_aggregate_weight_per_level", "value": "0.12", "notesKo": "설치 시설 레벨 합 1당 0.12%p 할인" },
   { "key": "cost_efficiency_discount_cap_pct", "value": "25", "notesKo": "비용 효율(할인) 총 상한 %" },
-  { "key": "level_up_stat_nudge_daily_fraction", "value": "1.0", "notesKo": "레벨업 시 해당 Lv 일일 nudge 즉시 적용 비율" },
+  { "key": "level_up_stat_nudge_daily_fraction", "value": "0", "notesKo": "레벨업 즉시 nudge 비율 — v2.0 §1-2 배치 전용(0=일 1회 runFacilityStatNudgePass만)" },
   { "key": "tdi_pgp_bmu_per_point", "value": "80", "notesKo": "TDI 1점당 PGP BMU 가산(일일 배치)" },
   { "key": "upkeep_efficiency_tech_weight_per_point", "value": "0.003", "notesKo": "T 1pt당 개발 유지비 0.3%p 절감" },
   { "key": "upkeep_efficiency_aggregate_weight_per_level", "value": "0.08", "notesKo": "시설 레벨 합 1당 유지비 0.08%p 절감" },
   { "key": "upkeep_efficiency_discount_cap_pct", "value": "15", "notesKo": "유지비 효율(절감) 상한 %" },
+  { "key": "planet_dev_credit_curve_version", "value": "v2.0.2", "notesKo": "play_scenario 정합 tier 곡선 — tools/balance-tables/generate-planet-dev-cost-curve.mjs" },
+  { "key": "planet_dev_credit_l1_anchor_trade_cr", "value": "500", "notesKo": "시작자금 500 Cr · 무역소 Lv1 어드밴티지" },
+  { "key": "planet_dev_credit_tier_mult_l2_l3", "value": "0.018", "notesKo": "zone3~5 밴드 (5k~20k)" },
+  { "key": "planet_dev_credit_tier_mult_l4_l5", "value": "0.032", "notesKo": "중반 진입 싱크" },
+  { "key": "planet_dev_credit_tier_mult_l6_l7", "value": "0.055", "notesKo": "zone9 전후 (150k)" },
+  { "key": "planet_dev_credit_tier_mult_l8_l10", "value": "0.14", "notesKo": "후반·엔드 인플레이션 싱크 (L8-L9=0.09)" },
 ] as const;
 export type PlanetDevelopmentAggregatePolicyRow = (typeof PlanetDevelopmentAggregatePolicy_FROM_BALANCE_CSV)[number];

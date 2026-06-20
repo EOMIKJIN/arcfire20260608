@@ -5,39 +5,6 @@ import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 export const BM_SHOP_ART_HEIGHT = 132;
 
 export const bmShopOverlayStyles = StyleSheet.create({
-  card: {
-    width: '100%',
-    maxWidth: OVERLAY_TOKENS.cardMaxWidth,
-    maxHeight: '88%',
-    borderWidth: 1.5,
-    borderColor: OVERLAY_TOKENS.phosphorBorder,
-    borderRadius: 6,
-    padding: SPACING.lg,
-    backgroundColor: OVERLAY_TOKENS.phosphorCardBg,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: SPACING.sm,
-  },
-  headerText: {
-    flex: 1,
-  },
-  title: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.lg,
-    fontWeight: FONTS.weight.bold,
-    letterSpacing: 0.5,
-    color: OVERLAY_TOKENS.phosphorAccent,
-  },
-  subtitle: {
-    marginTop: SPACING.xs,
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: 'rgba(107, 212, 255, 0.62)',
-    lineHeight: 18,
-  },
   notice: {
     marginTop: SPACING.sm,
     fontFamily: FONTS.mono,
@@ -57,21 +24,13 @@ export const bmShopOverlayStyles = StyleSheet.create({
     fontSize: FONTS.size.sm,
     color: OVERLAY_TOKENS.phosphorAccent,
   },
-  scroll: {
-    marginTop: SPACING.md,
-    flexGrow: 0,
-    maxHeight: 420,
-  },
-  scrollContent: {
-    paddingBottom: SPACING.md,
-    gap: SPACING.md,
-  },
   productCard: {
     borderWidth: 1,
     borderColor: OVERLAY_TOKENS.phosphorBorder,
     borderRadius: 6,
     overflow: 'hidden',
     backgroundColor: 'rgba(8, 14, 22, 0.55)',
+    marginBottom: SPACING.md,
   },
   artSlot: {
     width: '100%',

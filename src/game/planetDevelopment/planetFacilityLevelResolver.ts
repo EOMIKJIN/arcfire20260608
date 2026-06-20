@@ -22,6 +22,8 @@ import {
   isPlanetPopulationDomeInstalled,
   readPlanetPopulationDomeDetail,
 } from './planetPopulationDomeListing';
+import { readFacilityModuleDetail } from './planetFacilityModuleRuntime';
+import { resolveEffectiveFacilityDevView } from './planetCsvWorldFacilityBaseline';
 
 export type InstalledFacilityLevel = {
   moduleId: string;
@@ -68,19 +70,39 @@ const MODULE_FACILITY_PAIRS: Array<{
   },
 ];
 
+function resolvePairEffectiveLevel(
+  planetId: string,
+  moduleId: string,
+  isDevInstalled: (planetId: string) => boolean,
+  readDevLevel: (planetId: string) => number,
+): { installed: boolean; level: number } {
+  const detail = readFacilityModuleDetail(planetId, moduleId);
+  const effective = resolveEffectiveFacilityDevView(planetId, moduleId, detail);
+  if (effective.effectiveInstalled) {
+    return { installed: true, level: effective.effectiveLevel };
+  }
+  if (isDevInstalled(planetId)) {
+    return { installed: true, level: readDevLevel(planetId) };
+  }
+  return { installed: false, level: 0 };
+}
+
 export function listInstalledFacilityLevels(planetId: string): InstalledFacilityLevel[] {
-  return MODULE_FACILITY_PAIRS.map((p) => ({
-    moduleId: p.moduleId,
-    facilityType: p.facilityType,
-    installed: p.isInstalled(planetId),
-    level: p.readLevel(planetId),
-  }));
+  return MODULE_FACILITY_PAIRS.map((p) => {
+    const eff = resolvePairEffectiveLevel(planetId, p.moduleId, p.isInstalled, p.readLevel);
+    return {
+      moduleId: p.moduleId,
+      facilityType: p.facilityType,
+      installed: eff.installed,
+      level: eff.level,
+    };
+  });
 }
 
 export function resolveFacilityLevelByType(planetId: string, facilityType: string): number {
   const hit = MODULE_FACILITY_PAIRS.find((p) => p.facilityType === facilityType);
   if (!hit) return 0;
-  return hit.readLevel(planetId);
+  return resolvePairEffectiveLevel(planetId, hit.moduleId, hit.isInstalled, hit.readLevel).level;
 }
 
 export function resolveModuleIdFromFacilityType(facilityType: string): string | null {

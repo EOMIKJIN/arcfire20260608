@@ -20,7 +20,7 @@
 | 단계 | 대상 파일 | 잔여(약) |
 |---|---|---|
 | P1 | `app/(game)/shipyard.tsx` + `ShipyardMineralUpgradeTab` | ~118 |
-| P2 | `app/(game)/trade.tsx` + `TradeQuantityOverlayContent` | ~68 |
+| P2 | `app/(game)/trade.tsx` + `TradeQuantityOverlayContent` | ~68 | 오버레이 **레이아웃·ArcOverlayCard 마이그레이션 완료**(2026-06-20) — i18n 문자열 치환 잔여 |
 | P3 | 행성 개발/방위위성 오버레이(`PlanetDefenseSatelliteDevContent` 등) | ~85 |
 | P4 | `app/(game)/worldmap.tsx` · `combat.tsx` · `planet.tsx` 잔여 HUD | ~70 |
 | P5 | 경제 정보·뉴스보드·tavern·nickname·미션(`missions.ts`) | ~120 |

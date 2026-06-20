@@ -1,0 +1,12 @@
+duration_tier,target_level,base_duration_sec,enabled,notesKo
+standard,2,2700,true,v3.1 L1→2 · 45분
+standard,3,7200,true,v3.1 L2→3 · 2시간
+standard,4,21600,true,v3.1 L3→4 · 6시간
+standard,5,86400,true,v3.1 L4→5 · 1일
+standard,6,172800,true,v3.1 L5→6 · 2일
+standard,7,345600,true,v3.1 L6→7 · 4일
+standard,8,604800,true,v3.1 L7→8 · 7일
+standard,9,1209600,true,v3.1 L8→9 · 14일
+standard,10,2592000,true,v3.1 L9→10 · 30일(표준 상한)
+epic,11,3888000,false,v3.1 예약 L10→11 · 45일(미활성)
+epic,12,5184000,false,v3.1 예약 L11→12 · 60일(미활성)

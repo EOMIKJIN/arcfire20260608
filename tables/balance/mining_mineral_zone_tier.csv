@@ -1,6 +1,9 @@
 zoneIndexMin,zoneIndexMax,allowedMineralIdsPipe,primaryMineralId,notesKo
-1,3,ore_ferrite,ore_ferrite,초반 저급(페라이트만)
-4,6,ore_ferrite|ore_silicate,ore_ferrite,실리케이트 개방
-7,12,ore_ferrite|ore_silicate,ore_silicate,중반 실리케이트 주력
-13,20,ore_ferrite|ore_silicate|ore_crystal,ore_silicate,에너지 결정 개방
-21,21,ore_ferrite|ore_silicate|ore_crystal,ore_crystal,엔드존 결정 주력
+1,1,ore_ferrite,ore_ferrite,튜토리얼 단일
+2,3,ore_ferrite|ore_silicate,ore_ferrite,초반 2종
+4,5,ore_ferrite|ore_silicate|ore_carbon,ore_ferrite,초중반 3종
+6,8,ore_silicate|ore_carbon|ore_nickel,ore_silicate,중반 3종
+9,11,ore_carbon|ore_nickel|ore_titanium,ore_carbon,중상급 3종
+12,14,ore_nickel|ore_titanium|ore_crystal|ore_platinum,ore_nickel,후반 4종
+15,17,ore_crystal|ore_platinum|ore_orichalcum,ore_crystal,고급 3종
+18,21,ore_platinum|ore_orichalcum|ore_neutronium|ore_voidstone,ore_platinum,엔드 4종

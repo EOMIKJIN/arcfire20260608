@@ -2,43 +2,12 @@ import { StyleSheet } from 'react-native';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 
 export const planetDevelopmentOverlayStyles = StyleSheet.create({
-  card: {
-    width: '100%',
-    maxWidth: OVERLAY_TOKENS.cardMaxWidth,
-    maxHeight: '86%',
-    borderWidth: 1.5,
-    borderColor: OVERLAY_TOKENS.phosphorBorder,
-    borderRadius: 6,
-    padding: SPACING.lg,
-    backgroundColor: OVERLAY_TOKENS.phosphorCardBg,
-  },
-  title: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.md,
-    fontWeight: FONTS.weight.bold,
-    letterSpacing: 1,
-    textAlign: 'center',
-  },
-  subtitle: {
-    marginTop: SPACING.xs,
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    textAlign: 'center',
-    opacity: 0.85,
-  },
   hint: {
     marginTop: SPACING.sm,
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
     textAlign: 'center',
     opacity: 0.8,
-  },
-  scroll: {
-    marginTop: SPACING.md,
-    maxHeight: 340,
-  },
-  scrollContent: {
-    paddingBottom: SPACING.sm,
   },
   section: {
     marginTop: SPACING.sm,
@@ -92,6 +61,58 @@ export const planetDevelopmentOverlayStyles = StyleSheet.create({
     fontSize: FONTS.size.xs,
     opacity: 0.9,
   },
+  listItemRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    columnGap: SPACING.md,
+  },
+  listItemImageSlot: {
+    width: 72,
+    height: 72,
+    borderWidth: 1,
+    borderColor: OVERLAY_TOKENS.phosphorBorder,
+    borderRadius: 4,
+    backgroundColor: 'rgba(8, 18, 32, 0.55)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  listItemImagePlaceholder: {
+    fontSize: 28,
+    opacity: 0.88,
+  },
+  listItemBody: {
+    flex: 1,
+    minWidth: 0,
+  },
+  listItemSummary: {
+    marginTop: 4,
+    minHeight: 48,
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    lineHeight: 16,
+    opacity: 0.88,
+  },
+  listItemComingSoonBadge: {
+    opacity: 0.72,
+  },
+  listItemStatusComplete: {
+    marginTop: SPACING.xs,
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    fontWeight: FONTS.weight.bold,
+    opacity: 0.95,
+  },
+  listItemProgressBlock: {
+    marginTop: SPACING.xs,
+  },
+  listItemProgressLabel: {
+    marginBottom: 4,
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    fontWeight: FONTS.weight.bold,
+    opacity: 0.92,
+  },
   levelRow: {
     paddingVertical: 4,
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -114,10 +135,15 @@ export const planetDevelopmentOverlayStyles = StyleSheet.create({
     marginVertical: SPACING.sm,
   },
   btnRow: {
+    flexShrink: 0,
     marginTop: SPACING.md,
   },
   btnCol: {
-    marginTop: SPACING.md,
+    flexShrink: 0,
     rowGap: SPACING.sm,
+  },
+  footerStack: {
+    alignSelf: 'stretch',
+    rowGap: SPACING.md,
   },
 });

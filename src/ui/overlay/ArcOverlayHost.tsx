@@ -6,10 +6,11 @@
 import React, { memo, useCallback, useEffect } from 'react';
 import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SPACING } from '../../utils/theme';
+import { SPACING, OVERLAY_TOKENS } from '../../utils/theme';
 import { useArcOverlayStore } from './arcOverlayStore';
 import { getOverlayChrome } from './overlayChrome';
 import { resolveOverlayBottomAnchorPad, resolveOverlayEdgeInsets } from './overlayInsets';
+import { OVERLAY_CENTER_VERTICAL_BIAS_PX } from './overlayPanelLayout';
 import { reapplyAndroidImmersiveNavBar } from './reapplyAndroidImmersiveNavBar';
 import { AlertOverlayContent } from './content/AlertOverlayContent';
 import { LevelUpOverlayContent } from './content/LevelUpOverlayContent';
@@ -120,8 +121,8 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
           height: winH,
           backgroundColor: chrome.backdrop,
           zIndex: chrome.zIndex,
-          paddingTop: SPACING.lg + edges.top,
-          paddingBottom: isBottomNarrative ? bottomPad : SPACING.lg + edges.bottom,
+          paddingTop: SPACING.sm + edges.top,
+          paddingBottom: isBottomNarrative ? bottomPad : SPACING.sm + edges.bottom,
           paddingLeft: SPACING.lg + edges.left,
           paddingRight: SPACING.lg + edges.right,
         },
@@ -140,6 +141,7 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
         ]}
         pointerEvents="box-none"
       >
+        <View style={isBottomNarrative ? undefined : styles.centerSlot} pointerEvents="box-none">
         {entry.kind === 'alert' ? (
           <AlertOverlayContent entry={entry} onButton={handleAlertButton} />
         ) : null}
@@ -175,6 +177,7 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
         {entry.kind === 'bmShop' ? (
           <BmShopOverlayContent entry={entry} onClose={dismiss} />
         ) : null}
+        </View>
       </View>
     </View>
   );
@@ -190,8 +193,18 @@ const styles = StyleSheet.create({
   },
   centerWrap: {
     flex: 1,
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'column',
+    paddingTop: OVERLAY_CENTER_VERTICAL_BIAS_PX,
+    paddingBottom: SPACING.xs,
+  },
+  centerSlot: {
+    width: OVERLAY_TOKENS.cardMaxWidth,
+    maxWidth: '100%',
+    alignSelf: 'center',
+    flexShrink: 0,
   },
   bottomWrap: {
     flex: 1,

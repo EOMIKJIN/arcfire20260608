@@ -1,3 +1,6 @@
+export { ArcOverlayTitleHeader } from './ArcOverlayTitleHeader';
+export { ArcOverlayCard } from './ArcOverlayCard';
+export { ArcOverlayFooterActions } from './ArcOverlayFooterActions';
 export { ArcOverlayHost } from './ArcOverlayHost';
 export { LevelUpOverlayBridge } from './LevelUpOverlayBridge';
 export { ArcButton } from './ArcButton';

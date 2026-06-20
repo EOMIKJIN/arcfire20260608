@@ -4,13 +4,23 @@ import type { ArcOverlayTradeQuantityEntry } from '../arcOverlayStore';
 import { formatCredits } from '../../../utils/formatCredits';
 import { useT } from '../../../i18n';
 import { COLORS, FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
-import { ArcButton } from '../ArcButton';
+import { ArcOverlayCard } from '../ArcOverlayCard';
+import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 
 type Props = {
   entry: ArcOverlayTradeQuantityEntry;
   onConfirm: (qty: number) => void;
   onCancel: () => void;
 };
+
+function MetaRow({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={styles.metaRow}>
+      <Text style={styles.metaLabel}>{label}</Text>
+      <Text style={styles.metaValue}>{value}</Text>
+    </View>
+  );
+}
 
 export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayContent({
   entry,
@@ -38,21 +48,37 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
     return tips.length > 0 ? tips[0]! : null;
   }, [entry.tips]);
 
-  return (
-    <View style={styles.card}>
-      <Text style={styles.title}>{entry.title}</Text>
+  const headerSubtitle = entry.mode === 'buy' ? t('tradeQty.headerBuy') : t('tradeQty.headerSell');
 
-      <Text style={styles.line}>{t('tradeQty.unit', { price: formatCredits(entry.unitPrice) })}</Text>
+  const metaPrefix = (
+    <View style={styles.metaBlock}>
+      <MetaRow label={t('tradeQty.unitLabel')} value={formatCredits(entry.unitPrice, { suffix: true })} />
       {entry.stock != null ? (
-        <Text style={styles.line}>{t('tradeQty.stock', { n: entry.stock })}</Text>
+        <MetaRow label={t('tradeQty.stockLabel')} value={t('tradeQty.stockValue', { n: entry.stock })} />
       ) : null}
       {entry.demandLabel ? (
-        <Text style={styles.line}>{t('tradeQty.demand', { label: entry.demandLabel })}</Text>
+        <MetaRow label={t('tradeQty.demandLabelShort')} value={entry.demandLabel} />
       ) : null}
       {entry.ownedQty != null ? (
-        <Text style={styles.line}>{t('tradeQty.owned', { n: entry.ownedQty })}</Text>
+        <MetaRow label={t('tradeQty.ownedLabel')} value={t('tradeQty.ownedValue', { n: entry.ownedQty })} />
       ) : null}
+    </View>
+  );
 
+  return (
+    <ArcOverlayCard
+      title={entry.title}
+      subtitle={headerSubtitle}
+      layout="panel"
+      panelPrefix={metaPrefix}
+      footer={(
+        <ArcOverlayFooterActions
+          onCancel={onCancel}
+          onConfirm={() => onConfirm(qty)}
+          confirmLabel={entry.mode === 'buy' ? t('tradeQty.buy', { qty }) : t('tradeQty.sell', { qty })}
+        />
+      )}
+    >
       {entry.mode === 'buy' && entry.itemDescription ? (
         <View style={styles.descBox}>
           <Text style={styles.descText} numberOfLines={3} ellipsizeMode="tail">
@@ -74,91 +100,91 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
         </View>
       ) : null}
 
-      <View style={styles.qtyRow}>
-        <TouchableOpacity
-          style={[styles.qtyBtn, !canDec && styles.qtyBtnDisabled]}
-          onPress={() => canDec && setQty((q) => Math.max(minQty, q - 1))}
-          disabled={!canDec}
-          accessibilityLabel={t('tradeQty.a11yDec')}
-        >
-          <Text style={styles.qtyBtnText}>−</Text>
-        </TouchableOpacity>
-        <Text style={styles.qtyValue}>{qty}</Text>
-        <TouchableOpacity
-          style={[styles.qtyBtn, !canInc && styles.qtyBtnDisabled]}
-          onPress={() => canInc && setQty((q) => Math.min(entry.maxQty, q + 1))}
-          disabled={!canInc}
-          accessibilityLabel={t('tradeQty.a11yInc')}
-        >
-          <Text style={styles.qtyBtnText}>+</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.maxBtn, !canMax && styles.qtyBtnDisabled]}
-          onPress={() => canMax && setMaxQty()}
-          disabled={!canMax}
-          accessibilityLabel={t('tradeQty.a11yMax')}
-        >
-          <Text style={styles.maxBtnText}>MAX</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Text style={styles.totalLine}>
-        {t('tradeQty.total', { price: formatCredits(totalPrice) })}
-        {remainingCredits != null ? (
-          <Text
-            style={[
-              styles.totalCreditsSuffix,
-              remainingCredits < 0 ? styles.totalCreditsOver : styles.totalCreditsOk,
-            ]}
+      <View style={styles.qtySection}>
+        <Text style={styles.qtySectionLabel}>{t('tradeQty.qtyLabel')}</Text>
+        <View style={styles.qtyRow}>
+          <TouchableOpacity
+            style={[styles.qtyBtn, !canDec && styles.qtyBtnDisabled]}
+            onPress={() => canDec && setQty((q) => Math.max(minQty, q - 1))}
+            disabled={!canDec}
+            accessibilityLabel={t('tradeQty.a11yDec')}
           >
-            {t('tradeQty.remaining', { credits: formatCredits(remainingCredits, { suffix: false }) })}
-          </Text>
-        ) : null}
-      </Text>
-      <Text style={styles.maxHint}>{t('tradeQty.maxHint', { n: entry.maxQty })}</Text>
-
-      <View style={styles.btnRow}>
-        <ArcButton label={t('tradeQty.cancel')} variant="secondary" onPress={onCancel} />
-        <ArcButton
-          label={entry.mode === 'buy' ? t('tradeQty.buy', { qty }) : t('tradeQty.sell', { qty })}
-          variant="primary"
-          onPress={() => onConfirm(qty)}
-        />
+            <Text style={styles.qtyBtnText}>−</Text>
+          </TouchableOpacity>
+          <Text style={styles.qtyValue}>{qty}</Text>
+          <TouchableOpacity
+            style={[styles.qtyBtn, !canInc && styles.qtyBtnDisabled]}
+            onPress={() => canInc && setQty((q) => Math.min(entry.maxQty, q + 1))}
+            disabled={!canInc}
+            accessibilityLabel={t('tradeQty.a11yInc')}
+          >
+            <Text style={styles.qtyBtnText}>+</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.maxBtn, !canMax && styles.qtyBtnDisabled]}
+            onPress={() => canMax && setMaxQty()}
+            disabled={!canMax}
+            accessibilityLabel={t('tradeQty.a11yMax')}
+          >
+            <Text style={styles.maxBtnText}>MAX</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.totalLine}>
+          {t('tradeQty.total', { price: formatCredits(totalPrice) })}
+          {remainingCredits != null ? (
+            <Text
+              style={[
+                styles.totalCreditsSuffix,
+                remainingCredits < 0 ? styles.totalCreditsOver : styles.totalCreditsOk,
+              ]}
+            >
+              {t('tradeQty.remaining', { credits: formatCredits(remainingCredits, { suffix: false }) })}
+            </Text>
+          ) : null}
+        </Text>
+        <Text style={styles.maxHint}>{t('tradeQty.maxHint', { n: entry.maxQty })}</Text>
       </View>
-    </View>
+    </ArcOverlayCard>
   );
 });
 
 const PH = OVERLAY_TOKENS.phosphorAccent;
 
 const styles = StyleSheet.create({
-  card: {
+  metaBlock: {
+    alignSelf: 'stretch',
     width: '100%',
-    maxWidth: OVERLAY_TOKENS.cardMaxWidth,
-    borderWidth: 1.5,
-    borderColor: OVERLAY_TOKENS.phosphorBorder,
-    borderRadius: 6,
-    padding: SPACING.xl,
-    backgroundColor: OVERLAY_TOKENS.phosphorCardBg,
-  },
-  title: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.md,
-    fontWeight: FONTS.weight.bold,
-    color: PH,
-    letterSpacing: 1,
-    textAlign: 'center',
     marginBottom: SPACING.md,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+    borderWidth: 1,
+    borderColor: OVERLAY_TOKENS.phosphorBorder,
+    borderRadius: 4,
+    backgroundColor: OVERLAY_TOKENS.phosphorCardInsetBg,
+    gap: SPACING.xs,
   },
-  line: {
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: SPACING.sm,
+  },
+  metaLabel: {
+    flexShrink: 0,
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    color: 'rgba(107, 212, 255, 0.62)',
+  },
+  metaValue: {
+    flex: 1,
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
+    fontWeight: FONTS.weight.bold,
     color: PH,
-    textAlign: 'center',
-    marginBottom: SPACING.xs,
+    textAlign: 'right',
   },
   descBox: {
-    marginTop: SPACING.md,
+    marginBottom: SPACING.md,
     paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.sm,
     borderWidth: 1,
@@ -173,12 +199,26 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     textAlign: 'center',
   },
+  qtySection: {
+    alignSelf: 'stretch',
+    width: '100%',
+    marginTop: SPACING.sm,
+    paddingTop: SPACING.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: OVERLAY_TOKENS.phosphorBorder,
+  },
+  qtySectionLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    color: 'rgba(107, 212, 255, 0.62)',
+    textAlign: 'center',
+    marginBottom: SPACING.sm,
+  },
   qtyRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: SPACING.lg,
-    marginTop: SPACING.md,
     marginBottom: SPACING.sm,
   },
   qtyBtn: {
@@ -254,7 +294,7 @@ const styles = StyleSheet.create({
     marginTop: SPACING.xs,
   },
   tipsBox: {
-    marginTop: SPACING.lg,
+    marginBottom: SPACING.md,
     padding: SPACING.md,
     borderWidth: 1,
     borderColor: 'rgba(107, 212, 255, 0.25)',
@@ -279,12 +319,5 @@ const styles = StyleSheet.create({
     fontSize: FONTS.size.xs,
     color: COLORS.ink_light,
     lineHeight: 18,
-  },
-  btnRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-end',
-    gap: SPACING.sm,
-    marginTop: SPACING.lg,
   },
 });

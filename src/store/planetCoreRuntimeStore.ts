@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { InteractionManager } from 'react-native';
 import { create } from 'zustand';
 import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
 import type { Planet, StarSystem } from '../types';
@@ -65,6 +66,28 @@ async function runLegacyPlanetDevModuleMigrationAll(): Promise<void> {
     '../game/planetDevelopment/planetFacilityLegacyMigration'
   );
   migrateLegacyPlanetDevModulesAll();
+}
+
+let legacyMigrationQueued = false;
+
+function scheduleDeferredLegacyPlanetDevMigration(
+  persistAfter: boolean,
+  getState: () => { persistPlanetCoreRuntime: () => Promise<void> },
+): void {
+  if (legacyMigrationQueued) return;
+  legacyMigrationQueued = true;
+  InteractionManager.runAfterInteractions(() => {
+    void (async () => {
+      try {
+        await runLegacyPlanetDevModuleMigrationAll();
+        if (persistAfter) {
+          await getState().persistPlanetCoreRuntime();
+        }
+      } finally {
+        legacyMigrationQueued = false;
+      }
+    })();
+  });
 }
 
 function findPlanetInSystems(systems: Record<string, StarSystem>, planetId: string): Planet | undefined {
@@ -305,8 +328,7 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
       }
       const next = mergeWorldWithDisk(systems, fromDisk);
       set({ byPlanetId: next, globalMultipliers, hydrated: true });
-      await runLegacyPlanetDevModuleMigrationAll();
-      await persistStoragePayload({ byPlanetId: get().byPlanetId, globalMultipliers });
+      scheduleDeferredLegacyPlanetDevMigration(true, get);
       return;
     }
 
@@ -323,8 +345,7 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
     }
     if (dirty) {
       set({ byPlanetId: next });
-      await runLegacyPlanetDevModuleMigrationAll();
-      await persistStoragePayload({ byPlanetId: get().byPlanetId, globalMultipliers: get().globalMultipliers });
+      scheduleDeferredLegacyPlanetDevMigration(true, get);
     }
   },
 

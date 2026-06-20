@@ -153,3 +153,37 @@
 [2026-06-19 13:26:40] INFO GL_ELEVATED mounting_or_insufficient_samples gl=91.6 pss=923.4 views=313 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
 [2026-06-19 13:56:41] INFO GL_ELEVATED mounting_or_insufficient_samples gl=80.5 pss=946.6 views=305 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
 [2026-06-19 22:32:16] INFO GL_ELEVATED mounting_or_insufficient_samples gl=147.5 pss=774.5 views=933 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-20 02:03:06] INFO GL_ELEVATED mounting_or_insufficient_samples gl=135.4 pss=857.7 views=284 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-20 10:33:26] INCIDENT GL_HARD_CEILING gl=44.5 pss=1025.3 views=342 -> immediate remediation (OOM imminent)
+[2026-06-20 10:33:26] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-06-20 10:33:26] AUTO_FIX static audit:skia-memory start
+[2026-06-20 10:33:28] AUTO_FIX audit:skia-memory PASS
+[2026-06-20 10:33:28] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-06-20 10:33:47] AUTO_FIX baseline reset pid=20388 gl=2.2MB pss=195MB
+[2026-06-20 10:33:47] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-06-20 10:34:09] VERIFY PASS pid=20388 gl=2.2MB pss=369.1MB views=13
+[2026-06-20 10:34:09] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":1025.3,"views":342,"lastGlMb":44.5,"hardCeiling":true}
+[2026-06-20 10:34:10] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-06-20 11:04:11] INFO GL_ELEVATED mounting_or_insufficient_samples gl=150.1 pss=911 views=299 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-20 14:34:19] INCIDENT GL_HARD_CEILING gl=108.6 pss=1015.4 views=932 -> immediate remediation (OOM imminent)
+[2026-06-20 14:34:19] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-06-20 14:34:19] AUTO_FIX static audit:skia-memory start
+[2026-06-20 14:34:22] AUTO_FIX audit:skia-memory PASS
+[2026-06-20 14:34:22] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-06-20 14:34:44] AUTO_FIX baseline reset pid=31767 gl=3.7MB pss=385.7MB
+[2026-06-20 14:34:44] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-06-20 14:35:04] VERIFY PASS pid=31767 gl=3.7MB pss=367MB views=13
+[2026-06-20 14:35:04] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":1015.4,"views":932,"lastGlMb":108.6,"hardCeiling":true}
+[2026-06-20 14:35:04] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-06-20 16:05:09] INCIDENT CRASH logged -> incidents.log (arcfire fresh=2 maxAge=65m)
+[2026-06-20 16:05:09] HANDOFF packed -> outbox/cursor-incident-handoff.md (crash)
+[2026-06-20 22:05:26] INCIDENT GL_HARD_CEILING gl=62 pss=985.3 views=305 -> immediate remediation (OOM imminent)
+[2026-06-20 22:05:26] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-06-20 22:05:26] AUTO_FIX static audit:skia-memory start
+[2026-06-20 22:05:28] AUTO_FIX audit:skia-memory PASS
+[2026-06-20 22:05:28] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-06-20 22:05:46] AUTO_FIX baseline reset pid=3924 gl=6MB pss=193.2MB
+[2026-06-20 22:05:46] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-06-20 22:06:06] VERIFY PASS pid=3924 gl=4.4MB pss=352.5MB views=13
+[2026-06-20 22:06:06] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":985.3,"views":305,"lastGlMb":62,"hardCeiling":true}
+[2026-06-20 22:06:06] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)

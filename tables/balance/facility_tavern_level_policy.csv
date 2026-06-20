@@ -1,11 +1,11 @@
 level,displayNameKr,tavernBountySlots,tavernReputationBonusPct,tavernMercTierUnlock,tavernRefreshIntervalHours,upgradeDurationSec,installCostCredits,upgradeCostCredits,instantUpgradeCostCredits,requiredPlayerLevelMin,requiredStatType,requiredStatValue,notesKo
-1,임시 주점,2,0,standard,24,0,1,0,1,0,,0,"[TEST·임시] v2.0 Lv1 · install 1cr"
-2,소형 선술집,3,2,standard,24,18000,0,1,1,0,,0,"[TEST·임시] 5h"
-3,선술집,4,5,skilled,24,43200,0,1,1,0,,0,"[TEST·임시] 12h · 숙련 용병"
-4,확장 선술집,5,8,skilled,18,86400,0,1,1,0,,0,"[TEST·임시] 1일"
-5,주요 선술집,7,12,elite,18,129600,0,1,1,15,population,30,"[TEST·임시] 1.5일 · P≥30"
-6,고급 선술집,9,16,elite,18,172800,0,1,1,0,,0,"[TEST·임시] 2일"
-7,성계 선술집,12,20,special,12,259200,0,1,1,0,,0,"[TEST·임시] 3일"
-8,광역 선술집,15,25,special,12,345600,0,1,1,30,population,55,"[TEST·임시] 4일 · P≥55"
-9,은하 주점,20,30,legendary,12,432000,0,1,1,0,,0,"[TEST·임시] 5일"
-10,은하 전설의 주점,25,35,legendary,8,604800,0,1,1,0,,0,"[TEST·임시] 7일 · 바운티 25슬롯"
+1,임시 주점,2,0,standard,24,0,800,0,400,0,,0,v2.0 §6 Lv1 · catalog 80k · 즉시 40k
+2,소형 선술집,3,2,standard,24,18000,0,3600,1440,0,,0,v2.0 · 5h
+3,선술집,4,5,skilled,24,43200,0,9000,3600,0,,0,v2.0 · 12h · 숙련 용병
+4,확장 선술집,5,8,skilled,18,86400,0,32000,12800,0,,0,v2.0 · 1일
+5,주요 선술집,7,12,elite,18,129600,0,80000,32000,15,population,30,v2.0 · 1.5일 · P≥30
+6,고급 선술집,9,16,elite,18,172800,0,275000,110000,0,,0,v2.0 · 2일
+7,성계 선술집,12,20,special,12,259200,0,550000,220000,0,,0,v2.0 · 3일
+8,광역 선술집,15,25,special,12,345600,0,1800000,720000,30,population,55,v2.0 · 4일 · P≥55
+9,은하 주점,20,30,legendary,12,432000,0,3600000,1440000,0,,0,v2.0 · 5일
+10,은하 전설의 주점,25,35,legendary,8,604800,0,11200000,4480000,0,,0,v2.0 L10 · 7일 · 바운티 25슬롯

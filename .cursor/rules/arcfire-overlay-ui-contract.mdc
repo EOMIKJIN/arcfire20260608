@@ -1,0 +1,42 @@
+---
+description: Arcfire 범용 오버레이 UI — ArcOverlayCard·footerDock·신규 kind 추가 시 준수 (2026-06-20)
+globs: src/ui/overlay/**,app/(game)/trade.tsx
+alwaysApply: false
+---
+
+# Arcfire Overlay UI Contract
+
+**상세 로드맵**: `docs/OVERLAY_UI_UNIVERSAL_SPEC.md`
+
+## 필수 구조
+
+- 모든 팝업 → `ArcOverlayHost` + `ArcOverlayCard` (RN `Modal` / `Alert.alert` 금지)
+- **제목**: `ArcOverlayTitleHeader`만 — 단가·재고·설명 텍스트는 `panelPrefix` 또는 scroll body
+- **하단**: `ArcOverlayFooterActions`를 `footer` prop → `footerDock` (스크롤 밖)
+- **패널 세로**: `layout="panel"` 기본 · `overlayPanelLayout.ts` 상수(85%/96%) — 로컬 `flex:1` cardBody 금지
+
+## 금지
+
+- `phosphorOverlay.card` / `planetDevelopmentOverlayStyles.card` 등 **로컬 card shell** 신규 추가
+- `cardBody` + `flex:1` + `minHeight:0` (bounded 부모 없을 때 높이 0 붕괴)
+- `alignSelf:'stretch'` on card inside `centerWrap` without `centerSlot`
+- footer 버튼을 ScrollView **안**에 배치 (가림 회귀)
+
+## 완료 게이트
+
+```bash
+npx tsc --noEmit -p tsconfig.client.json
+npm run audit:ui-overlay
+```
+
+Skia/Reanimated 변경 없으면 `audit:skia-memory` 생략 가능.
+
+## 신규 Content 템플릿
+
+```tsx
+<ArcOverlayCard title={...} subtitle={...} layout="panel" panelPrefix={...} footer={<ArcOverlayFooterActions ... />}>
+  {/* scroll body only */}
+</ArcOverlayCard>
+```
+
+무역(구매/판매): `title`=아이템명만 · `subtitle`=구매/판매 · 메타=`panelPrefix`.

@@ -1,14 +1,10 @@
-// ============================================================
-// 통합 설정 — 배경음악·효과음·언어 선택·계정 초기화 (범용 Phosphor 카드)
-//   · 오디오: 선호값 저장(appSettingsStore). 실제 재생 엔진은 향후 연동.
-//   · 언어: setLocale → i18n 런타임 즉시 반영(완전 사전은 ko/en, 그 외 폴백).
-//   · 계정 초기화: 화면 측 확인 플로우(onResetAccount) 호출.
-// ============================================================
 import React, { memo, useCallback, useRef } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { ArcOverlaySettingsEntry } from '../arcOverlayStore';
-import { COLORS, FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
+import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
+import { ArcOverlayCard } from '../ArcOverlayCard';
+import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { phosphorOverlay, PHOSPHOR_MUTED } from './phosphorOverlayStyles';
 import {
   useAppSettingsStore,
@@ -27,7 +23,6 @@ type Props = {
 
 const VOLUME_STEP = 0.1;
 
-/** 0..1 → 막대(10칸) */
 function VolumeBar({ value, muted }: { value: number; muted: boolean }) {
   const filled = muted ? 0 : Math.round(value * 10);
   const cells = [];
@@ -94,8 +89,6 @@ export const SettingsOverlayContent = memo(function SettingsOverlayContent({
 
   const onSelectLocale = useCallback((l: AppLocale) => setLocale(l), [setLocale]);
 
-  // 열린 시점의 설정 스냅샷 — [취소] 시 변경(언어·볼륨·음소거)을 원복한다.
-  // (설정은 즉시 반영·영속되므로, 취소는 스냅샷 값으로 되돌려 다시 영속한다.)
   const initialRef = useRef<{
     locale: AppLocale;
     bgmMuted: boolean;
@@ -126,87 +119,61 @@ export const SettingsOverlayContent = memo(function SettingsOverlayContent({
     onClose();
   }, [onClose, setLocale, setBgmMuted, setBgmVolume, setSfxMuted, setSfxVolume]);
 
+  const footer = (
+    <ArcOverlayFooterActions onCancel={handleCancel} onConfirm={onClose} />
+  );
+
   return (
-    <View style={[phosphorOverlay.card, styles.card]}>
-      <Text style={phosphorOverlay.title}>{t('settings.title')}</Text>
-      <Text style={phosphorOverlay.subtitle}>{t('settings.subtitle')}</Text>
+    <ArcOverlayCard
+      title={t('settings.title')}
+      subtitle={t('settings.subtitle')}
+      layout="panel"
+      footer={footer}
+    >
       <View style={phosphorOverlay.divider} />
-
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator
-      >
-        {/* 오디오 */}
-        <Text style={phosphorOverlay.sectionLabel}>{t('settings.section.sound')}</Text>
-        <AudioRow
-          label={t('settings.bgm')}
-          mutedLabel={t('settings.muted')}
-          volume={bgmVolume}
-          muted={bgmMuted}
-          onToggleMute={() => setBgmMuted(!bgmMuted)}
-          onStep={(d) => setBgmVolume(bgmVolume + d)}
-        />
-        <AudioRow
-          label={t('settings.sfx')}
-          mutedLabel={t('settings.muted')}
-          volume={sfxVolume}
-          muted={sfxMuted}
-          onToggleMute={() => setSfxMuted(!sfxMuted)}
-          onStep={(d) => setSfxVolume(sfxVolume + d)}
-        />
-
-        <View style={phosphorOverlay.divider} />
-
-        {/* 언어 */}
-        <Text style={phosphorOverlay.sectionLabel}>{t('settings.section.language')}</Text>
-        {SUPPORTED_LOCALES.map((l) => {
-          const selected = l === locale;
-          const ready = FULLY_TRANSLATED_LOCALES.includes(l);
-          return (
-            <Pressable
-              key={l}
-              style={[styles.langRow, selected && styles.langRowSel]}
-              onPress={() => onSelectLocale(l)}
-            >
-              <Text style={[styles.langCheck, selected && styles.langCheckSel]}>{selected ? '◉' : '○'}</Text>
-              <Text style={[styles.langLabel, selected && styles.langLabelSel]}>{LOCALE_LABELS[l]}</Text>
-              {!ready ? <Text style={styles.langPending}>{t('settings.language.pending')}</Text> : null}
-            </Pressable>
-          );
-        })}
-
-        <View style={phosphorOverlay.divider} />
-
-        {/* 계정 */}
-        <Text style={phosphorOverlay.sectionLabel}>{t('settings.section.account')}</Text>
-        <Text style={styles.resetHint}>{t('settings.reset.hint')}</Text>
-        <ArcButton label={t('settings.reset.button')} variant="destructive" onPress={onResetAccount} style={styles.resetBtn} />
-      </ScrollView>
-
-      {/* 범용 컨벤션: 왼쪽 취소 · 오른쪽 확인(기본) */}
-      <View style={styles.footerRow}>
-        <ArcButton
-          label={t('common.cancel')}
-          variant="secondary"
-          onPress={handleCancel}
-          style={styles.footerBtn}
-        />
-        <ArcButton
-          label={t('common.confirm')}
-          variant="primary"
-          onPress={onClose}
-          style={styles.footerBtn}
-        />
-      </View>
-    </View>
+      <Text style={phosphorOverlay.sectionLabel}>{t('settings.section.sound')}</Text>
+      <AudioRow
+        label={t('settings.bgm')}
+        mutedLabel={t('settings.muted')}
+        volume={bgmVolume}
+        muted={bgmMuted}
+        onToggleMute={() => setBgmMuted(!bgmMuted)}
+        onStep={(d) => setBgmVolume(bgmVolume + d)}
+      />
+      <AudioRow
+        label={t('settings.sfx')}
+        mutedLabel={t('settings.muted')}
+        volume={sfxVolume}
+        muted={sfxMuted}
+        onToggleMute={() => setSfxMuted(!sfxMuted)}
+        onStep={(d) => setSfxVolume(sfxVolume + d)}
+      />
+      <View style={phosphorOverlay.divider} />
+      <Text style={phosphorOverlay.sectionLabel}>{t('settings.section.language')}</Text>
+      {SUPPORTED_LOCALES.map((l) => {
+        const selected = l === locale;
+        const ready = FULLY_TRANSLATED_LOCALES.includes(l);
+        return (
+          <Pressable
+            key={l}
+            style={[styles.langRow, selected && styles.langRowSel]}
+            onPress={() => onSelectLocale(l)}
+          >
+            <Text style={[styles.langCheck, selected && styles.langCheckSel]}>{selected ? '◉' : '○'}</Text>
+            <Text style={[styles.langLabel, selected && styles.langLabelSel]}>{LOCALE_LABELS[l]}</Text>
+            {!ready ? <Text style={styles.langPending}>{t('settings.language.pending')}</Text> : null}
+          </Pressable>
+        );
+      })}
+      <View style={phosphorOverlay.divider} />
+      <Text style={phosphorOverlay.sectionLabel}>{t('settings.section.account')}</Text>
+      <Text style={styles.resetHint}>{t('settings.reset.hint')}</Text>
+      <ArcButton label={t('settings.reset.button')} variant="destructive" onPress={onResetAccount} style={styles.resetBtn} />
+    </ArcOverlayCard>
   );
 });
 
 const styles = StyleSheet.create({
-  card: { maxHeight: '88%' },
-  scroll: { alignSelf: 'stretch' },
-  scrollContent: { paddingBottom: SPACING.sm },
   audioRow: {
     alignSelf: 'stretch',
     marginBottom: SPACING.md,
@@ -299,11 +266,4 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.sm,
   },
   resetBtn: { alignSelf: 'stretch' },
-  footerRow: {
-    flexDirection: 'row',
-    alignSelf: 'stretch',
-    gap: SPACING.sm,
-    marginTop: SPACING.md,
-  },
-  footerBtn: { flex: 1 },
 });

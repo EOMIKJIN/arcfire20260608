@@ -89,11 +89,26 @@ export type PlanetEconomyFabricDetail = {
   recentEvents: PlanetEconomyFabricEvent[];
 };
 
+/** 선술집 바운티 보드 항목 — v2.0 §6-3 */
+export type TavernBountyEntry = {
+  id: string;
+  titleKey: string;
+  rewardCredits: number;
+  mercTier: string;
+  postedAtMs: number;
+  expiresAtMs: number;
+};
+
 /** 행성 방위위성 — 플레이어 설치·업그레이드 런타임 정본 */
+/** v3.1 — standard Lv1~10 · epic L11+ (facility_upgrade_duration_global.csv) */
+export type PlanetFacilityDurationTier = 'standard' | 'epic';
+
 export type PlanetDefenseSatelliteUpgradeJob = {
   targetLevel: number;
   startedAtMs: number;
   completeAtMs: number;
+  /** omit → standard (구 세이브 호환) */
+  durationTier?: PlanetFacilityDurationTier;
 };
 
 export type PlanetDefenseSatelliteDetail = {
@@ -124,6 +139,8 @@ export type PlanetFacilityModuleDetail = {
   /** 선술집 — 활성 바운티 수 · 마지막 갱신 시각 */
   activeBountyCount?: number;
   lastBountyRefreshTimestamp?: number;
+  /** 선술집 — 바운티 보드 슬롯 (일일 배치 갱신) */
+  bountyBoard?: TavernBountyEntry[];
   /** 진행 중 업그레이드 (없으면 null) */
   upgradeJob?: PlanetDefenseSatelliteUpgradeJob | null;
   updatedAtMs?: number;
@@ -157,6 +174,21 @@ export type PlanetMasterBalanceDetail = {
   scenarioBountyMinutes?: number;
 };
 
+/** v2.0 §5-3 — 행성 코어 스탯 15단계 R&D */
+export type PlanetCoreStatRdJob = {
+  statType: 'resource' | 'population' | 'defense' | 'technology' | 'environment';
+  fromStage: number;
+  targetStage: number;
+  startedAtMs: number;
+  completeAtMs: number;
+};
+
+export type PlanetCoreStatRdDetail = {
+  version: 1;
+  stages?: Partial<Record<PlanetCoreStatRdJob['statType'], number>>;
+  activeJob?: PlanetCoreStatRdJob | null;
+};
+
 /**
  * 런타임 `PlanetCoreRuntime.detail` — 직렬화 가능한 얕은 JSON 위주.
  * 필드는 필요할 때만 채운다.
@@ -170,4 +202,6 @@ export type PlanetCoreMetricsDetail = {
   attackDamage?: PlanetAttackDamageDetail;
   /** 운영 실물 → 스탯·무역 재고 연결 패브릭 */
   economyFabric?: PlanetEconomyFabricDetail;
+  /** 연구소 R&D 15단계 진행 */
+  coreStatRd?: PlanetCoreStatRdDetail;
 };

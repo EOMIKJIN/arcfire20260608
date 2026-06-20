@@ -3,7 +3,6 @@ import {
   getPlanetDefenseSatelliteMaxLevel,
   resolveDefenseSatelliteActiveCountForLevel,
   resolveDefenseSatelliteInstallCostCredits,
-  resolveDefenseSatelliteInstantUpgradeCostCredits,
   resolveDefenseSatelliteUpgradeCostCredits,
   resolveDefenseSatelliteUpgradeDurationSec,
 } from '../../arcCore/balance/planetDefenseSatelliteLevelPolicy';
@@ -11,6 +10,15 @@ import {
   applyPlanetFacilityLevelUpBenefits,
   resolvePlanetDevDiscountedCredits,
 } from '../../arcCore/planetDevelopment/planetDevelopmentLevelBenefits';
+import {
+  buildInstallUpgradeJob,
+  buildUpgradeJob,
+  isFacilityInstallJob,
+  resolveFacilityInstallDurationSec,
+  resolveJobProgressPct,
+} from '../../game/planetDevelopment/planetFacilityInstallJob';
+import { resolveActivePlanetFacilityDurationTier } from '../../arcCore/balance/facilityUpgradeDurationPolicy';
+import { resolvePlanetFacilityInstantCompleteCredits } from '../../game/planetDevelopment/planetFacilityInstantCompleteModel';
 import { invalidatePlanetMemoCachesForPlanet } from '../../game/planetMemoCache';
 import { t } from '../../i18n';
 import {
@@ -18,6 +26,7 @@ import {
   readDefenseSatelliteDetailFromPlanet,
   writeDefenseSatelliteDetailToPlanet,
 } from '../../game/planetDevelopment/planetDefenseSatelliteRuntime';
+import { resolvePlanetInstallVictoryBlock } from '../../game/planetDevelopment/planetDevelopmentInstallCombatPolicy';
 import { usePlayerStore } from '../../store/playerStore';
 import type { PlanetDefenseSatelliteDetail } from '../../store/planetCoreMetricTypes';
 import {
@@ -33,6 +42,8 @@ export type DefenseSatelliteDevSnapshot = {
   upgradeJob: PlanetDefenseSatelliteDetail['upgradeJob'];
   upgradeProgressPct: number;
   isUpgrading: boolean;
+  isInstalling: boolean;
+  installDurationSec: number | null;
   canInstall: boolean;
   canStartUpgrade: boolean;
   canInstantComplete: boolean;
@@ -50,8 +61,10 @@ function normalizeDefenseSatelliteDetail(
   if (!raw || raw.version !== 1) {
     return { version: 1, installed: false, level: 1, upgradeJob: null };
   }
-  const level = Math.max(1, Math.floor(Number(raw.level) || 1));
   const installed = raw.installed === true;
+  const level = installed
+    ? Math.max(1, Math.floor(Number(raw.level) || 1))
+    : Math.max(0, Math.floor(Number(raw.level) || 0));
   const job = raw.upgradeJob;
   const upgradeJob =
     job
@@ -118,9 +131,21 @@ export function resolveDefenseSatelliteUpgradeProgressPct(
 
 export function tryCompleteDefenseSatelliteUpgrade(planetId: string): boolean {
   const detail = readPlanetDefenseSatelliteDetail(planetId);
-  if (!detail.installed || !detail.upgradeJob) return false;
+  if (!detail.upgradeJob) return false;
   const now = Date.now();
   if (now < detail.upgradeJob.completeAtMs) return false;
+  if (isFacilityInstallJob(detail)) {
+    patchDefenseSatelliteDetail(planetId, {
+      installed: true,
+      level: 1,
+      upgradeJob: null,
+    });
+    syncDefenseSatelliteInstances(planetId, 1);
+    invalidatePlanetMemoCachesForPlanet(planetId);
+    applyPlanetFacilityLevelUpBenefits(planetId, 'defense_satellite', 1);
+    return true;
+  }
+  if (!detail.installed) return false;
   const targetLevel = detail.upgradeJob.targetLevel;
   patchDefenseSatelliteDetail(planetId, {
     level: targetLevel,
@@ -128,6 +153,7 @@ export function tryCompleteDefenseSatelliteUpgrade(planetId: string): boolean {
   });
   syncDefenseSatelliteInstances(planetId, targetLevel);
   invalidatePlanetMemoCachesForPlanet(planetId);
+  applyPlanetFacilityLevelUpBenefits(planetId, 'defense_satellite', targetLevel);
   return true;
 }
 
@@ -136,31 +162,54 @@ export function buildDefenseSatelliteDevSnapshot(planetId: string): DefenseSatel
   const maxLevel = getPlanetDefenseSatelliteMaxLevel();
   const level = detail.installed ? resolvePlanetDefenseSatelliteLevel(planetId) : 0;
   const nextTargetLevel = level > 0 && level < maxLevel ? level + 1 : null;
-  const isUpgrading = Boolean(detail.upgradeJob);
-  const playerCredits = usePlayerStore.getState().player?.credits ?? 0;
-
-  const installCost = resolvePlanetDevDiscountedCredits(planetId, resolveDefenseSatelliteInstallCostCredits());
-  const nextUpgradeCost = nextTargetLevel != null
-    ? resolvePlanetDevDiscountedCredits(planetId, resolveDefenseSatelliteUpgradeCostCredits(level) ?? 0)
+  const isInstalling = isFacilityInstallJob(detail);
+  const isUpgrading = detail.installed && Boolean(detail.upgradeJob);
+  const installDurationSec = !detail.installed ? resolveFacilityInstallDurationSec('defense_satellite') : null;
+  const previewInstallInstant = resolvePlanetDevDiscountedCredits(
+    planetId,
+    resolvePlanetFacilityInstantCompleteCredits({ facilityType: 'defense_satellite', kind: 'install', currentLevel: 0 }),
+  );
+  const previewUpgradeInstant = nextTargetLevel != null && !detail.upgradeJob
+    ? resolvePlanetDevDiscountedCredits(
+      planetId,
+      resolvePlanetFacilityInstantCompleteCredits({ facilityType: 'defense_satellite', kind: 'upgrade', currentLevel: level }),
+    )
     : null;
-  const nextInstantCost = nextTargetLevel != null
-    ? resolvePlanetDevDiscountedCredits(planetId, resolveDefenseSatelliteInstantUpgradeCostCredits(level) ?? 0)
+  const activeInstantRaw = detail.upgradeJob
+    ? resolvePlanetFacilityInstantCompleteCredits({
+      facilityType: 'defense_satellite',
+      kind: isInstalling ? 'install' : 'upgrade',
+      currentLevel: isInstalling ? 0 : level,
+      job: detail.upgradeJob,
+    })
+    : null;
+  const activeInstantCost = activeInstantRaw != null
+    ? resolvePlanetDevDiscountedCredits(planetId, activeInstantRaw)
     : null;
   const nextUpgradeDurationSec = nextTargetLevel != null
     ? resolveDefenseSatelliteUpgradeDurationSec(level)
     : null;
+  const playerCredits = usePlayerStore.getState().player?.credits ?? 0;
+  const installCost = resolvePlanetDevDiscountedCredits(planetId, resolveDefenseSatelliteInstallCostCredits());
+  const nextUpgradeCost = nextTargetLevel != null
+    ? resolvePlanetDevDiscountedCredits(planetId, resolveDefenseSatelliteUpgradeCostCredits(level) ?? 0)
+    : null;
 
-  const canInstall = !detail.installed && playerCredits >= installCost;
+  const installVictoryBlock = !detail.installed && !detail.upgradeJob
+    ? resolvePlanetInstallVictoryBlock(planetId)
+    : null;
+
+  const canInstall = !detail.installed && !detail.upgradeJob && playerCredits >= installCost
+    && installVictoryBlock == null;
   const canStartUpgrade = detail.installed
     && !isUpgrading
     && nextTargetLevel != null
     && nextUpgradeCost != null
     && playerCredits >= nextUpgradeCost;
-  const canInstantComplete = detail.installed
-    && isUpgrading
-    && nextInstantCost != null
-    && playerCredits >= nextInstantCost;
-  const instantNextTotal = (nextUpgradeCost ?? 0) + (nextInstantCost ?? 0);
+  const canInstantComplete = Boolean(detail.upgradeJob)
+    && activeInstantCost != null
+    && playerCredits >= activeInstantCost;
+  const instantNextTotal = (nextUpgradeCost ?? 0) + (previewUpgradeInstant ?? 0);
   const canInstantUpgradeNext = detail.installed
     && !isUpgrading
     && nextTargetLevel != null
@@ -172,15 +221,17 @@ export function buildDefenseSatelliteDevSnapshot(planetId: string): DefenseSatel
     maxLevel,
     activeSatelliteCount: detail.installed ? resolveDefenseSatelliteActiveCountForLevel(level) : 0,
     upgradeJob: detail.upgradeJob ?? null,
-    upgradeProgressPct: resolveDefenseSatelliteUpgradeProgressPct(detail.upgradeJob),
+    upgradeProgressPct: resolveJobProgressPct(detail.upgradeJob),
     isUpgrading,
+    isInstalling,
+    installDurationSec,
     canInstall,
     canStartUpgrade,
     canInstantComplete,
     canInstantUpgradeNext,
     installCost,
     nextUpgradeCost,
-    nextInstantCost,
+    nextInstantCost: detail.upgradeJob ? activeInstantCost : (isInstalling ? previewInstallInstant : previewUpgradeInstant),
     nextUpgradeDurationSec,
     nextTargetLevel,
   };
@@ -189,16 +240,29 @@ export function buildDefenseSatelliteDevSnapshot(planetId: string): DefenseSatel
 export function installPlanetDefenseSatellite(planetId: string): { ok: true } | { ok: false; reason: string } {
   const detail = readPlanetDefenseSatelliteDetail(planetId);
   if (detail.installed) return { ok: false, reason: t('defenseSatDev.alreadyInstalled') };
+  if (detail.upgradeJob) return { ok: false, reason: t('defenseSatDev.upgradeInProgress') };
+  const victoryBlock = resolvePlanetInstallVictoryBlock(planetId);
+  if (victoryBlock) return { ok: false, reason: victoryBlock };
   const cost = resolvePlanetDevDiscountedCredits(planetId, resolveDefenseSatelliteInstallCostCredits());
   if (!spendPlayerCredits(cost)) return { ok: false, reason: t('defenseSatDev.notEnoughCredits') };
+  const durationSec = resolveFacilityInstallDurationSec('defense_satellite');
+  if (durationSec <= 0) {
+    patchDefenseSatelliteDetail(planetId, {
+      installed: true,
+      level: 1,
+      upgradeJob: null,
+    });
+    syncDefenseSatelliteInstances(planetId, 1);
+    invalidatePlanetMemoCachesForPlanet(planetId);
+    applyPlanetFacilityLevelUpBenefits(planetId, 'defense_satellite', 1);
+    return { ok: true };
+  }
   patchDefenseSatelliteDetail(planetId, {
-    installed: true,
-    level: 1,
-    upgradeJob: null,
+    installed: false,
+    level: 0,
+    upgradeJob: buildInstallUpgradeJob(durationSec, Date.now(), resolveActivePlanetFacilityDurationTier()),
   });
-  syncDefenseSatelliteInstances(planetId, 1);
   invalidatePlanetMemoCachesForPlanet(planetId);
-  applyPlanetFacilityLevelUpBenefits(planetId, 'defense_satellite', 1);
   return { ok: true };
 }
 
@@ -231,13 +295,13 @@ export function startPlanetDefenseSatelliteUpgrade(
     applyDefenseSatelliteLevel(planetId, targetLevel);
     return { ok: true };
   }
-  const startedAtMs = Date.now();
   patchDefenseSatelliteDetail(planetId, {
-    upgradeJob: {
+    upgradeJob: buildUpgradeJob(
       targetLevel,
-      startedAtMs,
-      completeAtMs: startedAtMs + durationSec * 1000,
-    },
+      durationSec,
+      Date.now(),
+      resolveActivePlanetFacilityDurationTier(),
+    ),
   });
   invalidatePlanetMemoCachesForPlanet(planetId);
   return { ok: true };
@@ -248,12 +312,25 @@ export function instantCompleteDefenseSatelliteUpgrade(
 ): { ok: true } | { ok: false; reason: string } {
   const detail = readPlanetDefenseSatelliteDetail(planetId);
   if (!detail.upgradeJob) return { ok: false, reason: t('defenseSatDev.noUpgradeJob') };
-  const level = resolvePlanetDefenseSatelliteLevel(planetId);
-  const rawInstant = resolveDefenseSatelliteInstantUpgradeCostCredits(level);
-  if (rawInstant == null) return { ok: false, reason: t('defenseSatDev.cannotInstant') };
+  const isInstall = isFacilityInstallJob(detail);
+  const level = isInstall ? 0 : resolvePlanetDefenseSatelliteLevel(planetId);
+  const rawInstant = resolvePlanetFacilityInstantCompleteCredits({
+    facilityType: 'defense_satellite',
+    kind: isInstall ? 'install' : 'upgrade',
+    currentLevel: level,
+    job: detail.upgradeJob,
+  });
+  if (rawInstant <= 0) return { ok: false, reason: t('defenseSatDev.cannotInstant') };
   const instantCost = resolvePlanetDevDiscountedCredits(planetId, rawInstant);
   if (!spendPlayerCredits(instantCost)) return { ok: false, reason: t('defenseSatDev.notEnoughCredits') };
-  applyDefenseSatelliteLevel(planetId, detail.upgradeJob.targetLevel);
+  if (isInstall) {
+    patchDefenseSatelliteDetail(planetId, { installed: true, level: 1, upgradeJob: null });
+    syncDefenseSatelliteInstances(planetId, 1);
+    invalidatePlanetMemoCachesForPlanet(planetId);
+    applyPlanetFacilityLevelUpBenefits(planetId, 'defense_satellite', 1);
+  } else {
+    applyDefenseSatelliteLevel(planetId, detail.upgradeJob.targetLevel);
+  }
   return { ok: true };
 }
 
@@ -267,7 +344,12 @@ export function instantUpgradeDefenseSatelliteNext(
   const maxLevel = getPlanetDefenseSatelliteMaxLevel();
   if (level >= maxLevel) return { ok: false, reason: t('defenseSatDev.maxLevel') };
   const baseCost = resolvePlanetDevDiscountedCredits(planetId, resolveDefenseSatelliteUpgradeCostCredits(level) ?? 0);
-  const instantCost = resolvePlanetDevDiscountedCredits(planetId, resolveDefenseSatelliteInstantUpgradeCostCredits(level) ?? 0);
+  const instantRaw = resolvePlanetFacilityInstantCompleteCredits({
+    facilityType: 'defense_satellite',
+    kind: 'upgrade',
+    currentLevel: level,
+  });
+  const instantCost = resolvePlanetDevDiscountedCredits(planetId, instantRaw);
   if (!spendPlayerCredits(baseCost + instantCost)) {
     return { ok: false, reason: t('defenseSatDev.notEnoughCredits') };
   }
@@ -275,13 +357,10 @@ export function instantUpgradeDefenseSatelliteNext(
   return { ok: true };
 }
 
+import { formatPlanetFacilityDurationLabel } from '../../game/planetDevelopment/formatPlanetFacilityDurationLabel';
+
 export function formatDefenseSatelliteDurationLabel(sec: number): string {
-  if (sec <= 0) return t('defenseSatDev.durationInstant');
-  const totalMin = Math.ceil(sec / 60);
-  if (totalMin < 60) return t('defenseSatDev.durationMin', { min: totalMin });
-  const hours = Math.floor(totalMin / 60);
-  const mins = totalMin % 60;
-  return mins > 0 ? t('defenseSatDev.durationHourMin', { hours, mins }) : t('defenseSatDev.durationHour', { hours });
+  return formatPlanetFacilityDurationLabel(sec);
 }
 
 export function getDefenseSatelliteLevelStatRow(level: number) {

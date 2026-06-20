@@ -1,5 +1,6 @@
 import { FacilityTradePortLevelPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
 import { buildFacilityGenericLevelPolicy } from './facilityGenericLevelPolicy';
+import { resolvePlanetFacilityUpgradeDurationSec } from './facilityUpgradeDurationPolicy';
 
 const policy = buildFacilityGenericLevelPolicy(FacilityTradePortLevelPolicy_FROM_BALANCE_CSV);
 
@@ -8,8 +9,10 @@ export const getFacilityTradePortMaxLevel = policy.getMaxLevel;
 export const getFacilityTradePortLevelRow = policy.getLevelRow;
 export const resolveTradePortUpgradeCostCredits = policy.resolveUpgradeCostCredits;
 export const resolveTradePortInstantUpgradeCostCredits = policy.resolveInstantUpgradeCostCredits;
-export const resolveTradePortUpgradeDurationSec = policy.resolveUpgradeDurationSec;
-export const resolveTradePortUpgradeRequiredPlayerLevel = policy.resolveUpgradeRequiredPlayerLevel;
+
+export function resolveTradePortUpgradeDurationSec(currentLevel: number): number | null {
+  return resolvePlanetFacilityUpgradeDurationSec('trade_port', currentLevel);
+}export const resolveTradePortUpgradeRequiredPlayerLevel = policy.resolveUpgradeRequiredPlayerLevel;
 export const resolveTradePortUpgradeRequiredStat = policy.resolveUpgradeRequiredStat;
 
 /** 고급 무기(tradeGradeRank) 진열 가중 보너스(%) — Lv1=0, Lv10=45 */

@@ -134,7 +134,7 @@ export function normalizePlanetDevModulesToBaselineLevel(planetId: string): bool
   return true;
 }
 
-/** CSV 월드 시설 보유 행성 — 레거시 Lv1 자동설치 dev 모듈 제거(서브메뉴는 CSV로 유지) */
+/** CSV 월드 시설 보유 행성 — 레거시 Lv1 자동시드 dev 모듈만 제거(플레이어 설치·서브메뉴 CSV 유지) */
 export function uninstallCsvWorldLegacyDevModules(planetId: string): boolean {
   const store = planetCoreStoreState();
   const cur = store.getPlanetCoreRuntime(planetId);
@@ -152,6 +152,8 @@ export function uninstallCsvWorldLegacyDevModules(planetId: string): boolean {
     if (!detail.installed || detail.upgradeJob != null) continue;
     const level = Math.max(1, Math.floor(Number(detail.level) || 1));
     if (level > 1) continue;
+    // 플레이어 행성개발 설치(updatedAtMs)는 유지 — 레거시 자동시드(Lv1·타임스탬프 없음)만 제거
+    if (typeof detail.updatedAtMs === 'number' && Number.isFinite(detail.updatedAtMs)) continue;
     delete nextByModuleId[moduleId];
     changed = true;
   }

@@ -68,18 +68,21 @@ function resolveZoneIndexForPlanet(planetId: string): number {
   return Math.max(1, Math.min(21, Math.round(resolvePlanetZoneIndex(planetId, system ?? null))));
 }
 
-/** 행성에 표시·채굴 UI용으로 쓸 광물 종류 수(1~3) — 존 풀 상한 */
+/** 존 진행도 기준 표시 광물 종류 상한 — 초반 1종 → 점진 확대 */
+function resolveMaxDisplayKindsForZone(zoneIndex: number): number {
+  const z = Math.max(1, Math.min(21, Math.round(zoneIndex)));
+  if (z <= 1) return 1;
+  if (z <= 10) return 2;
+  return ASTEROID_VISUAL_ORBIT_MAX;
+}
+
+/** 행성에 표시·채굴 UI용으로 쓸 광물 종류 수(1~3) — 존 풀·존 상한 */
 export function resolvePlanetAsteroidDisplayMineralKindCount(planetId: string): number {
   const zoneIndex = resolveZoneIndexForPlanet(planetId);
   const pool = listZonePoolMineralIds(zoneIndex);
   const poolCap = Math.max(1, pool.length);
-  const planet = findPlanetById(planetId);
-  const resource01 = planet ? planet.coreResource / 100 : 0.5;
-
-  let kinds = 1;
-  if (resource01 >= 0.38) kinds = 2;
-  if (resource01 >= 0.62) kinds = 3;
-  return Math.min(ASTEROID_VISUAL_ORBIT_MAX, poolCap, kinds);
+  const zoneCap = resolveMaxDisplayKindsForZone(zoneIndex);
+  return Math.min(ASTEROID_VISUAL_ORBIT_MAX, poolCap, zoneCap);
 }
 
 /** 표시용 광물 id 풀(1~3종) — 존 풀에서 결정론적 추출 */

@@ -1,5 +1,6 @@
 import { FacilityLaboratoryLevelPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
 import { buildFacilityGenericLevelPolicy } from './facilityGenericLevelPolicy';
+import { resolvePlanetFacilityUpgradeDurationSec } from './facilityUpgradeDurationPolicy';
 
 const policy = buildFacilityGenericLevelPolicy(FacilityLaboratoryLevelPolicy_FROM_BALANCE_CSV);
 
@@ -8,8 +9,10 @@ export const getFacilityLaboratoryMaxLevel = policy.getMaxLevel;
 export const getFacilityLaboratoryLevelRow = policy.getLevelRow;
 export const resolveLaboratoryUpgradeCostCredits = policy.resolveUpgradeCostCredits;
 export const resolveLaboratoryInstantUpgradeCostCredits = policy.resolveInstantUpgradeCostCredits;
-export const resolveLaboratoryUpgradeDurationSec = policy.resolveUpgradeDurationSec;
-export const resolveLaboratoryUpgradeRequiredPlayerLevel = policy.resolveUpgradeRequiredPlayerLevel;
+
+export function resolveLaboratoryUpgradeDurationSec(currentLevel: number): number | null {
+  return resolvePlanetFacilityUpgradeDurationSec('laboratory', currentLevel);
+}export const resolveLaboratoryUpgradeRequiredPlayerLevel = policy.resolveUpgradeRequiredPlayerLevel;
 export const resolveLaboratoryUpgradeRequiredStat = policy.resolveUpgradeRequiredStat;
 
 export function resolveLaboratoryRdSpeedReductionPct(level: number): number {

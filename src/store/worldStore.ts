@@ -7,6 +7,11 @@ import {
   getSynthSystemColonizationRow,
   getWorldExpansionTimingPolicy,
 } from '../arcCore/balance/balanceTableRegistry';
+import {
+  getSynthColonizationPhaseRow,
+  SYNTH_COLONIZATION_MAX_PHASE,
+  SYNTH_FRONTIER_FACTION_ID,
+} from '../arcCore/synthColonizationPhasePolicy';
 import { GALAXY_ROUTE_POLICIES, GalaxyRouteDirection } from '../world/galaxyRouteFactionPolicy';
 import { isDevHarnessAllowed } from '../game/gameplayModeContract';
 import { ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS } from '../arcCore/worldExpansionConstants';
@@ -20,6 +25,8 @@ interface WorldState {
   visitedSystemIds: string[];
   unlockedSystemIds: string[];
   lastExpansionAtMs: number | null;
+  /** synth 행성 id → 개척 단계(0~3). 미기록 legacy는 phase 3으로 간주 */
+  synthColonizationPhaseByPlanetId: Record<string, number>;
   loadLocalWorld: () => Promise<void>;
   persistWorld: () => Promise<void>;
   resetLocalWorld: () => Promise<void>;
@@ -27,10 +34,15 @@ interface WorldState {
   selectSystem: (id: string | null) => void;
   markVisited: (id: string) => void;
   isSystemUnlocked: (id: string) => boolean;
-  unlockSystem: (id: string, source?: 'arc_core_daily' | 'arc_core_legacy_seed' | 'manual') => void;
+  unlockSystem: (
+    id: string,
+    source?: 'arc_core_daily' | 'arc_core_legacy_seed' | 'arc_core_fresh_start_seed' | 'manual',
+  ) => void;
   pickNextUnlockCandidateNearCurrent: (currentSystemId: string | null | undefined) => string | null;
   /** 아크코어 마스터 일일 개방: 잠금 synth만, 개방 성계와 연결선이 있는 프론티어만 (후보 없으면 null). */
   pickArcCoreDailyUnlockCandidate: (currentSystemId: string | null | undefined) => string | null;
+  getSynthColonizationPhase: (planetId: string) => number;
+  applySynthColonizationPhase: (systemId: string, phase: number) => void;
 }
 
 const DEFAULT_UNLOCKED_SYSTEM_IDS = Array.from(GAMEPLAY_SYSTEM_IDS);
@@ -111,15 +123,38 @@ function resolveQuadrantFromTradeProfile(profile: string | undefined, fallback: 
 /** synth 행성 5대 코어 — CSV·galaxy100 시드와 동일(개척 직후·첫 실행 50 고정). 일일 배치에서만 변동. */
 export const SYNTH_PLANET_CORE_SEED = 50;
 
-function applySynthSystemAutogen(base: StarSystem): StarSystem {
+function resolveFrontierPlanetDescription(
+  phase: number,
+  csvDescription: string | undefined,
+  factionId: string,
+  nameSuffix: string,
+): string {
+  if (phase <= 0) {
+    return csvDescription?.replace(/아크코어 자동 개발 프로토콜로 가동된 거점 행성\.?/g, '').trim()
+      || `아크코어가 항로만 개방한 미개척 행성-${nameSuffix}. 아직 어느 세력의 점유 기록도 없다.`;
+  }
+  if (phase === 1) {
+    return `개척 초기 거점 · ${nameSuffix} — 소규모 전초만 가동 중이다.`;
+  }
+  if (phase === 2) {
+    return `개발 진행 중 · ${nameSuffix} — 무역·조선 시설이 확장되고 있다.`;
+  }
+  return csvDescription ?? `최초 발견 이후 개발 전 단계 · ${factionId} 영향권`;
+}
+
+/** synth 행성 autogen — colonizationPhase(0~3)에 따라 시설·팩션 단계 적용 */
+export function applySynthSystemAutogen(base: StarSystem, colonizationPhase = SYNTH_COLONIZATION_MAX_PHASE): StarSystem {
   if (!base.id.startsWith('synth_')) return base;
+  const phase = Math.max(0, Math.min(SYNTH_COLONIZATION_MAX_PHASE, Math.floor(colonizationPhase)));
+  const phaseRow = getSynthColonizationPhaseRow(phase);
   const normalizedId = normalizeSynthSystemId(base.id);
   const csvRow = getSynthSystemColonizationRow(normalizedId);
   const posQuadrant = resolveQuadrantForSystem(base.position);
   const q = csvRow
     ? resolveQuadrantFromTradeProfile(csvRow.tradeProfile, posQuadrant)
     : posQuadrant;
-  const factionId = resolveFactionForQuadrant(q);
+  const quadrantFactionId = resolveFactionForQuadrant(q);
+  const factionId = phaseRow.useQuadrantFaction ? quadrantFactionId : SYNTH_FRONTIER_FACTION_ID;
   const zoneIndex = csvRow ? parseCsvNum(csvRow.zoneIndex, 1) : 1;
   const zone = csvRow ? resolveZoneFromBalanceZoneIndex(zoneIndex) : resolveZoneForQuadrant(q);
   const targetCombatLevel = csvRow ? parseCsvNum(csvRow.targetCombatLevel, 3) : (zone === 'pvp' ? 7 : zone === 'neutral' ? 5 : 3);
@@ -129,20 +164,31 @@ function applySynthSystemAutogen(base: StarSystem): StarSystem {
     ? String(suffixNum).padStart(3, '0')
     : rawSuffix;
   const coreSeed = SYNTH_PLANET_CORE_SEED;
+  const csvHasTrade = csvRow ? parseCsvBool(csvRow.hasTradePort) : zone !== 'pvp';
+  const csvHasShipyard = csvRow ? parseCsvBool(csvRow.hasShipyard) : zone !== 'pvp';
+  const csvHasTavern = csvRow ? parseCsvBool(csvRow.hasTavern) : true;
+
   return {
     ...base,
     name: csvRow?.systemNameKo ?? `미개척 ${nameSuffix}`,
     zone,
-    description: csvRow?.systemDescriptionKo ?? '최초 발견 이후 아직 본격 개발되지 않은 미개척 성계.',
+    description: phase <= 0
+      ? (csvRow?.systemDescriptionKo ?? '최초 발견 이후 아직 본격 개발되지 않은 미개척 성계.')
+      : (csvRow?.systemDescriptionKo ?? '최초 발견 이후 아직 본격 개발되지 않은 미개척 성계.'),
     enemyLevel: targetCombatLevel,
     planets: base.planets.map((p, i) => ({
       ...p,
       name: i === 0 ? (csvRow?.planetNameKo ?? `미개척 행성-${nameSuffix}`) : p.name,
-      description: csvRow?.planetDescriptionKo ?? `최초 발견 이후 개발 전 단계 · ${factionId} 영향권`,
+      description: resolveFrontierPlanetDescription(
+        phase,
+        csvRow?.planetDescriptionKo,
+        factionId,
+        nameSuffix,
+      ),
       factionId,
-      hasTradePort: csvRow ? parseCsvBool(csvRow.hasTradePort) : zone !== 'pvp',
-      hasShipyard: csvRow ? parseCsvBool(csvRow.hasShipyard) : zone !== 'pvp',
-      hasTavern: csvRow ? parseCsvBool(csvRow.hasTavern) : true,
+      hasTradePort: phaseRow.hasTradePort && csvHasTrade,
+      hasShipyard: phaseRow.hasShipyard && csvHasShipyard,
+      hasTavern: phaseRow.hasTavern && csvHasTavern,
       coreResource: coreSeed,
       corePopulation: coreSeed,
       coreDefense: coreSeed,
@@ -156,6 +202,8 @@ function applySynthSystemAutogen(base: StarSystem): StarSystem {
 function rehydrateUnlockedSynthSystems(
   systems: Record<string, StarSystem>,
   unlockedSystemIds: readonly string[],
+  phaseByPlanetId: Record<string, number>,
+  getPhase: (planetId: string) => number,
 ): Record<string, StarSystem> {
   let next: Record<string, StarSystem> | null = null;
   for (const id of unlockedSystemIds) {
@@ -163,8 +211,12 @@ function rehydrateUnlockedSynthSystems(
     if (!normalizedId.startsWith('synth_')) continue;
     const src = (next ?? systems)[normalizedId];
     if (!src) continue;
+    const planetId = src.planets[0]?.id;
+    const phase = planetId
+      ? (phaseByPlanetId[planetId] ?? getPhase(planetId))
+      : SYNTH_COLONIZATION_MAX_PHASE;
     if (!next) next = { ...systems };
-    next[normalizedId] = applySynthSystemAutogen(src);
+    next[normalizedId] = applySynthSystemAutogen(src, phase);
   }
   return next ?? systems;
 }
@@ -176,6 +228,7 @@ export const useWorldStore = create<WorldState>((set, get) => ({
   visitedSystemIds: ['arcadia'],
   unlockedSystemIds: Array.from(new Set([...DEFAULT_UNLOCKED_SYSTEM_IDS])),
   lastExpansionAtMs: null,
+  synthColonizationPhaseByPlanetId: {},
 
   loadLocalWorld: async () => {
     try {
@@ -185,6 +238,7 @@ export const useWorldStore = create<WorldState>((set, get) => ({
           visitedSystemIds?: string[];
           unlockedSystemIds?: string[];
           lastExpansionAtMs?: number | null;
+          synthColonizationPhaseByPlanetId?: Record<string, number>;
         };
         if (parsed.visitedSystemIds?.length) {
           const systems = get().systems;
@@ -210,12 +264,20 @@ export const useWorldStore = create<WorldState>((set, get) => ({
         if (typeof parsed.lastExpansionAtMs === 'number' || parsed.lastExpansionAtMs === null) {
           set({ lastExpansionAtMs: parsed.lastExpansionAtMs ?? null });
         }
+        if (parsed.synthColonizationPhaseByPlanetId && typeof parsed.synthColonizationPhaseByPlanetId === 'object') {
+          set({ synthColonizationPhaseByPlanetId: { ...parsed.synthColonizationPhaseByPlanetId } });
+        }
       }
     } catch {
       /* ignore */
     } finally {
       const state = get();
-      const systems = rehydrateUnlockedSynthSystems(state.systems, state.unlockedSystemIds);
+      const systems = rehydrateUnlockedSynthSystems(
+        state.systems,
+        state.unlockedSystemIds,
+        state.synthColonizationPhaseByPlanetId,
+        (planetId) => get().getSynthColonizationPhase(planetId),
+      );
       if (systems !== state.systems) {
         set({ systems });
       }
@@ -224,10 +286,15 @@ export const useWorldStore = create<WorldState>((set, get) => ({
   },
 
   persistWorld: async () => {
-    const { visitedSystemIds, unlockedSystemIds, lastExpansionAtMs } = get();
+    const { visitedSystemIds, unlockedSystemIds, lastExpansionAtMs, synthColonizationPhaseByPlanetId } = get();
     await AsyncStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ visitedSystemIds, unlockedSystemIds, lastExpansionAtMs }),
+      JSON.stringify({
+        visitedSystemIds,
+        unlockedSystemIds,
+        lastExpansionAtMs,
+        synthColonizationPhaseByPlanetId,
+      }),
     );
     scheduleUserCloudSync();
   },
@@ -236,12 +303,18 @@ export const useWorldStore = create<WorldState>((set, get) => ({
     await AsyncStorage.removeItem(STORAGE_KEY);
     const unlockedSystemIds = Array.from(new Set([...DEFAULT_UNLOCKED_SYSTEM_IDS]));
     set({
-      systems: rehydrateUnlockedSynthSystems({ ...GALAXY_SYSTEMS }, unlockedSystemIds),
+      systems: rehydrateUnlockedSynthSystems(
+        { ...GALAXY_SYSTEMS },
+        unlockedSystemIds,
+        {},
+        () => SYNTH_COLONIZATION_MAX_PHASE,
+      ),
       loaded: true,
       selectedSystemId: null,
       visitedSystemIds: ['arcadia'],
       unlockedSystemIds,
       lastExpansionAtMs: null,
+      synthColonizationPhaseByPlanetId: {},
     });
   },
 
@@ -264,14 +337,54 @@ export const useWorldStore = create<WorldState>((set, get) => ({
     const target = state.systems[normalizedId];
     if (!target) return;
     if (state.unlockedSystemIds.includes(normalizedId)) return;
+
+    const isArcCoreUnlock =
+      source === 'arc_core_daily'
+      || source === 'arc_core_legacy_seed'
+      || source === 'arc_core_fresh_start_seed';
+    const initialPhase = isArcCoreUnlock ? 0 : SYNTH_COLONIZATION_MAX_PHASE;
+    const planetId = target.planets[0]?.id;
+    const nextPhaseMap = { ...state.synthColonizationPhaseByPlanetId };
+    if (planetId && isArcCoreUnlock) {
+      nextPhaseMap[planetId] = 0;
+    }
+
     const unlockedSystemIds = [...state.unlockedSystemIds, normalizedId];
     const nextSystems = { ...state.systems };
-    nextSystems[normalizedId] = applySynthSystemAutogen(target);
+    nextSystems[normalizedId] = applySynthSystemAutogen(target, initialPhase);
     set({
       systems: nextSystems,
       unlockedSystemIds,
+      synthColonizationPhaseByPlanetId: nextPhaseMap,
       lastExpansionAtMs:
         source === 'arc_core_daily' ? Date.now() : state.lastExpansionAtMs,
+    });
+    void get().persistWorld();
+  },
+
+  getSynthColonizationPhase: (planetId) => {
+    const stored = get().synthColonizationPhaseByPlanetId[planetId];
+    if (stored !== undefined) {
+      return Math.max(0, Math.min(SYNTH_COLONIZATION_MAX_PHASE, Math.floor(stored)));
+    }
+    return SYNTH_COLONIZATION_MAX_PHASE;
+  },
+
+  applySynthColonizationPhase: (systemId, phase) => {
+    const normalizedId = normalizeSynthSystemId(systemId);
+    const state = get();
+    const target = state.systems[normalizedId];
+    if (!target?.planets[0]?.id) return;
+    const planetId = target.planets[0].id;
+    const clamped = Math.max(0, Math.min(SYNTH_COLONIZATION_MAX_PHASE, Math.floor(phase)));
+    const nextSystems = { ...state.systems };
+    nextSystems[normalizedId] = applySynthSystemAutogen(target, clamped);
+    set({
+      systems: nextSystems,
+      synthColonizationPhaseByPlanetId: {
+        ...state.synthColonizationPhaseByPlanetId,
+        [planetId]: clamped,
+      },
     });
     void get().persistWorld();
   },

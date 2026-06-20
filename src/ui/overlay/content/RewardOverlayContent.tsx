@@ -6,6 +6,7 @@ import { formatCredits } from '../../../utils/formatCredits';
 import { useT } from '../../../i18n';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
+import { ArcOverlayCard } from '../ArcOverlayCard';
 import { phosphorOverlay } from './phosphorOverlayStyles';
 
 type Props = {
@@ -17,9 +18,7 @@ export const RewardOverlayContent = memo(function RewardOverlayContent({ entry, 
   const t = useT();
   const { reward, missionTitle, leveledUp, newLevel, levelUpDetail } = entry;
   return (
-    <View style={phosphorOverlay.card}>
-      <Text style={phosphorOverlay.title}>{t('reward.missionComplete')}</Text>
-      <Text style={phosphorOverlay.subtitle}>{missionTitle}</Text>
+    <ArcOverlayCard title={t('reward.missionComplete')} subtitle={missionTitle} layout="compact">
       <View style={phosphorOverlay.divider} />
       <Text style={phosphorOverlay.sectionLabel}>{t('reward.gained')}</Text>
       <View style={phosphorOverlay.row}>
@@ -46,7 +45,7 @@ export const RewardOverlayContent = memo(function RewardOverlayContent({ entry, 
         </View>
       ) : null}
       <ArcButton label={t('reward.continue')} variant="primary" onPress={onClose} style={phosphorOverlay.closeBtn} />
-    </View>
+    </ArcOverlayCard>
   );
 });
 

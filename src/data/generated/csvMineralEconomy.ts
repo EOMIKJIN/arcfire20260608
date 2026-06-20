@@ -157,7 +157,7 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "genesis_origin",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_001_p",
   },
   {
@@ -165,11 +165,11 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_002_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_003_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_004_p",
   },
   {
@@ -177,31 +177,31 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_005_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_006_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_007_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_008_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_009_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_010_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_011_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_012_p",
   },
   {
@@ -209,39 +209,39 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_013_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_014_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_015_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_016_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_017_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_018_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_019_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_020_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_021_p",
   },
   {
-    regionId: "region_core_belt",
+    regionId: "region_frontier_rim",
     planetId: "synth_022_p",
   },
   {
@@ -257,7 +257,7 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_025_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_026_p",
   },
   {
@@ -277,7 +277,7 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_030_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_031_p",
   },
   {
@@ -285,11 +285,11 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_032_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_033_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_034_p",
   },
   {
@@ -297,7 +297,7 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_035_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_036_p",
   },
   {
@@ -309,7 +309,7 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_038_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_039_p",
   },
   {
@@ -317,7 +317,7 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_040_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_041_p",
   },
   {
@@ -329,7 +329,7 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_043_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_044_p",
   },
   {
@@ -349,7 +349,7 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_048_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_049_p",
   },
   {
@@ -361,7 +361,7 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_051_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_052_p",
   },
   {
@@ -369,7 +369,7 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_053_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_054_p",
   },
   {
@@ -381,7 +381,7 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_056_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_057_p",
   },
   {
@@ -401,7 +401,7 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_061_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_062_p",
   },
   {
@@ -445,7 +445,7 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_072_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_073_p",
   },
   {
@@ -465,7 +465,7 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
     planetId: "synth_077_p",
   },
   {
-    regionId: "region_frontier_rim",
+    regionId: "region_core_belt",
     planetId: "synth_078_p",
   },
   {

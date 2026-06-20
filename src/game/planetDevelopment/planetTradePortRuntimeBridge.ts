@@ -8,11 +8,15 @@ import type { PlanetTradeFeeBreakdown } from '../../arcCore/economy/planetUpkeep
 import {
   resolveTradePortFeeRatePct,
 } from '../../arcCore/balance/facilityTradePortLevelPolicy';
+import { isPlanetCsvTradePortWorldEnabled } from './planetCsvWorldFlags';
 import { isPlanetTradePortInstalled, readPlanetTradePortDetail } from './planetTradePortListing';
 
 export function resolvePlanetTradePortDevLevel(planetId: string): number | null {
-  if (!isPlanetTradePortInstalled(planetId)) return null;
-  return readPlanetTradePortDetail(planetId).level;
+  if (isPlanetTradePortInstalled(planetId)) {
+    return readPlanetTradePortDetail(planetId).level;
+  }
+  if (isPlanetCsvTradePortWorldEnabled(planetId)) return 1;
+  return null;
 }
 
 /** dev_trade_port 설치 시 Lv별 수수료율 적용 */

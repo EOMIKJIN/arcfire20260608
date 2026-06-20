@@ -2,7 +2,7 @@
 // 아크파이어 온라인 - 연구소 화면
 // ============================================================
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   View, Text, StyleSheet,
   ScrollView,
@@ -26,6 +26,9 @@ import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacility
 import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
 import { SkillTreeBoard } from '../../src/components/skillTree/SkillTreeBoard';
+import { resolveLaboratoryRdSpeedReductionPct } from '../../src/arcCore/balance/facilityLaboratoryLevelPolicy';
+import { resolveFacilityLevelByType } from '../../src/game/planetDevelopment/planetFacilityLevelResolver';
+import { readPlanetCoreStatRdSnapshot } from '../../src/game/planetDevelopment/planetCoreStatRdRuntime';
 
 /** 메인스테이지 기준 하단 공백과 동기 */
 const SKILLTREE_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
@@ -43,6 +46,21 @@ export default function SkillTreeScreen() {
     setSelectedCategory('combat');
   });
   usePlanetHubFacilityAccessGate('research_lab');
+
+  const labRdBanner = useMemo(() => {
+    const planetId = player?.currentPlanetId;
+    if (!planetId) return null;
+    const labLevel = resolveFacilityLevelByType(planetId, 'laboratory');
+    if (labLevel <= 0) return null;
+    const rd = readPlanetCoreStatRdSnapshot(planetId);
+    const pct = resolveLaboratoryRdSpeedReductionPct(labLevel);
+    return {
+      bonus: t('skilltree.labRdBonus', { level: labLevel, pct }),
+      hours: rd.nextTechnologyRdHours != null
+        ? t('skilltree.labRdNextHours', { hours: rd.nextTechnologyRdHours })
+        : null,
+    };
+  }, [player?.currentPlanetId, t]);
 
   const handleSkillPress = useCallback((skill: Skill) => {
     if (!player) return;
@@ -121,6 +139,14 @@ export default function SkillTreeScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {labRdBanner ? (
+            <View style={styles.labBanner}>
+              <Text style={styles.labBannerText}>{labRdBanner.bonus}</Text>
+              {labRdBanner.hours ? (
+                <Text style={styles.labBannerSub}>{labRdBanner.hours}</Text>
+              ) : null}
+            </View>
+          ) : null}
           <View style={styles.treePanel}>
             <SkillTreeBoard
               category={selectedCategory}
@@ -173,6 +199,26 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: SPACING.sm,
     paddingTop: SPACING.sm,
+  },
+  labBanner: {
+    marginBottom: SPACING.sm,
+    padding: SPACING.sm,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(107, 212, 255, 0.25)',
+    backgroundColor: 'rgba(6, 10, 20, 0.65)',
+  },
+  labBannerText: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    color: COLORS.info,
+    fontWeight: FONTS.weight.bold,
+  },
+  labBannerSub: {
+    marginTop: 4,
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    color: COLORS.ink_light,
   },
   treePanel: {
     borderRadius: 8,
