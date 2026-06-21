@@ -1,7 +1,10 @@
-import { STORY_SCENES_FROM_CSV } from '../data/generated/csvStoryScenes';
 import { listNpcCaptains, getNpcCaptainByAssignedShipId } from '../npc/npcFleetRegistry';
 import { captainMatchesPlanetOrbitTable } from '../npc/captainOrbitTableMatch';
 import type { NearbyOrbitPresenceRow } from '../npc/nearbyOrbitPresenceSystem';
+import {
+  resolveIngameDialogFallbackSceneId,
+  resolveNpcCaptainDialogSceneId,
+} from './ingameDialog/resolveNpcCaptainDialogSceneId';
 
 type DialogCandidate = {
   sceneId: string;
@@ -13,14 +16,11 @@ const CAPTAIN_DIALOG_INDEX: Map<string, DialogCandidate> = (() => {
   const map = new Map<string, DialogCandidate>();
   for (const captain of listNpcCaptains()) {
     if (!captain.mainStageTalkEnabled) continue;
-    const sceneId = captain.arcOrbitPresenceFill
-      ? 'npc_dialog_arc_transport_temp'
-      : `npc_dialog_${captain.id.replace(/^npc_cpt_/, '')}`;
-    const scene = STORY_SCENES_FROM_CSV[sceneId];
-    if (!scene?.pages.some((page) => page.viewMode === 'ingame_dialog')) continue;
+    const sceneId = resolveNpcCaptainDialogSceneId(captain);
+    if (!sceneId) continue;
     map.set(captain.id, {
       sceneId,
-      priority: captain.arcOrbitPresenceFill ? 80 : 10,
+      priority: captain.mainStageTalkPriority,
       captainId: captain.id,
     });
   }
@@ -57,10 +57,6 @@ export function resolvePlanetHubNpcDialogSceneId(presentCaptainIds: readonly str
       best = candidate;
     }
   }
-  const fallback = STORY_SCENES_FROM_CSV.npc_dialog_default;
   if (best) return best.sceneId;
-  if (fallback?.pages.some((page) => page.viewMode === 'ingame_dialog')) {
-    return 'npc_dialog_default';
-  }
-  return 'npc_dialog_orbit_captain_temp';
+  return resolveIngameDialogFallbackSceneId();
 }

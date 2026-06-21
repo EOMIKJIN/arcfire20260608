@@ -13,14 +13,14 @@ export const MISSIONS: Record<string, Mission> = {
     id: 'mission_001',
     title: '첫 비행',
     description:
-      '함장, 연방의 임무가 내려왔습니다. 베가 전초기지로 이동하여 지휘관 마코프를 만나십시오.',
+      '함장, 연방의 임무가 내려왔습니다. 베가 전초기지 행성에 진입하여 지휘관 마코프를 만나십시오.',
     type: 'travel',
     objectives: [
       {
         id: 'obj_001_a',
-        description: '베가 전초기지로 이동',
-        type: 'reach_system',
-        targetId: 'vega_outpost',
+        description: '베가 전초기지 행성 진입',
+        type: 'reach_planet',
+        targetId: 'vega_base',
         complete: false,
       },
     ],

@@ -9,6 +9,20 @@ import { planetPgpStorageKey } from '../world/planetPgpModel';
 
 const STORAGE_KEY = 'arcfire_planet_core_runtime_v1';
 
+/** 드론 impact 등 고빈도 patch — 메모리 즉시·디스크는 코얼레싱 (faction vault 패턴) */
+const PLANET_CORE_PERSIST_COALESCE_MS = 1500;
+let planetCorePersistCoalesceTimer: ReturnType<typeof setTimeout> | null = null;
+
+function scheduleCoalescedPlanetCorePersist(
+  getState: () => { persistPlanetCoreRuntime: () => Promise<void> },
+): void {
+  if (planetCorePersistCoalesceTimer) return;
+  planetCorePersistCoalesceTimer = setTimeout(() => {
+    planetCorePersistCoalesceTimer = null;
+    void getState().persistPlanetCoreRuntime();
+  }, PLANET_CORE_PERSIST_COALESCE_MS);
+}
+
 export type PlanetCoreGlobalMultipliers = {
   globalEngageHpMul: number;
 };
@@ -384,7 +398,7 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
       detail: patch.detail ?? prev.detail,
     };
     set({ byPlanetId: { ...get().byPlanetId, [planetId]: merged } });
-    void get().persistPlanetCoreRuntime();
+    scheduleCoalescedPlanetCorePersist(get);
   },
 
   patchPlanetCoresBulk: (updates) => {
@@ -414,7 +428,7 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
       };
     }
     set({ byPlanetId: next });
-    void get().persistPlanetCoreRuntime();
+    scheduleCoalescedPlanetCorePersist(get);
   },
 
   patchPlanetMasterBalanceBulk: (updates) => {
@@ -448,7 +462,7 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
       };
     }
     set({ byPlanetId: next });
-    void get().persistPlanetCoreRuntime();
+    scheduleCoalescedPlanetCorePersist(get);
   },
 
   getGlobalEngageHpMul: () => get().globalMultipliers.globalEngageHpMul,

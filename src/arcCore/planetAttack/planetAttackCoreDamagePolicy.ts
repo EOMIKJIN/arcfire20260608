@@ -51,6 +51,10 @@ function rowToPolicy(row: (typeof PlanetAttackCoreDamage_FROM_BALANCE_CSV)[numbe
   if (defenseImpactRaw !== '') {
     metricImpactScale.defense = parseFloatField(defenseImpactRaw, impactScale);
   }
+  const populationImpactRaw = String(row.population_impact_scale ?? '').trim();
+  if (populationImpactRaw !== '') {
+    metricImpactScale.population = parseFloatField(populationImpactRaw, impactScale);
+  }
   const technologyImpactRaw = String(row.technology_impact_scale ?? '').trim();
   if (technologyImpactRaw !== '') {
     metricImpactScale.technology = parseFloatField(technologyImpactRaw, impactScale);

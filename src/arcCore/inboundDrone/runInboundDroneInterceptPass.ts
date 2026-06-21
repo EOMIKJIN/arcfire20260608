@@ -12,13 +12,17 @@ import {
   resolveDefenseSatelliteOrbitXY,
 } from '../../worldObjects/planetWorldObjectOrbit';
 import type { ArcInboundDrone } from '../../store/arcInboundDroneStore';
-import { resolveInboundDroneScreenXY } from './inboundDroneKinematics';
+import { resolveInboundDroneElapsedSecAtOrbitMs, resolveInboundDroneScreenXY } from './inboundDroneKinematics';
+import { leakFractionFromInterceptHitPct } from './resolveInboundDroneStrikeLeak';
 import type { WorldObject } from '../../worldObjects';
 
 const ORBIT_CENTER = PLANET_MAIN_ORBIT_SCENE_SIZE / 2;
 
-function resolveDroneSceneXY(drone: ArcInboundDrone): { x: number; y: number } | null {
-  const rel = resolveInboundDroneScreenXY(drone);
+function resolveDroneSceneXY(
+  drone: ArcInboundDrone,
+  orbitClockMs: number,
+): { x: number; y: number } | null {
+  const rel = resolveInboundDroneScreenXY(drone, orbitClockMs);
   if (!rel) return null;
   return { x: ORBIT_CENTER + rel.x, y: ORBIT_CENTER + rel.y };
 }
@@ -81,7 +85,7 @@ export function runInboundDroneInterceptPass(
 
   for (const drone of drones) {
     if (drone.phase !== 'inbound') continue;
-    const droneScene = resolveDroneSceneXY(drone);
+    const droneScene = resolveDroneSceneXY(drone, orbitClockMs);
     if (!droneScene) continue;
 
     const zone = resolveStrongestInterceptZone(droneScene, satellites, orbitClockMs);
@@ -90,11 +94,15 @@ export function runInboundDroneInterceptPass(
       continue;
     }
 
+    const leak = leakFractionFromInterceptHitPct(zone.hitPct);
+    drone.strikeLeakMul = Math.min(drone.strikeLeakMul ?? 1, leak);
+
     drone.defenseZoneDwellSec = (drone.defenseZoneDwellSec ?? 0) + wallDeltaSec;
     if (drone.defenseZoneDwellSec < zone.requiredDwellSec) continue;
 
     const roll = Math.random() * 100;
     if (roll < zone.hitPct) {
+      drone.inboundElapsedSec = resolveInboundDroneElapsedSecAtOrbitMs(drone, orbitClockMs);
       drone.phase = 'destroyed';
     }
     drone.defenseZoneDwellSec = 0;

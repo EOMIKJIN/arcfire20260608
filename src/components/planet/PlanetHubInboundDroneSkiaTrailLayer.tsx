@@ -25,7 +25,9 @@ import {
   useAnimatedReaction,
   useSharedValue,
 } from 'react-native-reanimated';
+import { readPlanetOrbitClockMs } from '../../arcCore/orbitClockMsBridge';
 import { PLANET_MAIN_ORBIT_SCENE_SIZE } from '../../stages/planetMainStageLayout';
+import { HUB_WORKLET_JS_BRIDGE_INTERVAL_MS } from './planetHubWorkletContract';
 import type { InboundDroneHitFx } from './inboundDroneHitFx';
 import { drawInboundDroneHitFxOnSkCanvas } from './inboundDroneHitFxDraw';
 import {
@@ -37,7 +39,7 @@ import {
 
 const SCENE_SIZE = PLANET_MAIN_ORBIT_SCENE_SIZE;
 const PICTURE_DISPOSE_DELAY_MS = 120;
-const TRAIL_BRIDGE_INTERVAL_MS = 48;
+const TRAIL_BRIDGE_INTERVAL_MS = HUB_WORKLET_JS_BRIDGE_INTERVAL_MS;
 
 function safeDispose(obj: { dispose?: () => void } | null | undefined): void {
   try { obj?.dispose?.(); } catch { /* ignore */ }
@@ -106,6 +108,8 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
   orbitClockMs,
   trailFlatSv,
   trailCountSv,
+  trailFlatJsRef,
+  trailCountJsRef,
   droneIds,
   hitFxRef,
   hitFxTick,
@@ -117,6 +121,9 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
   orbitClockMs: SharedValue<number>;
   trailFlatSv: SharedValue<number[]>;
   trailCountSv: SharedValue<number>;
+  /** JS 팩 미러 — SharedValue.value JS 읽기 금지 */
+  trailFlatJsRef: React.MutableRefObject<number[]>;
+  trailCountJsRef: React.MutableRefObject<number>;
   droneIds: string[];
   hitFxRef: React.MutableRefObject<InboundDroneHitFx[]>;
   hitFxTick: number;
@@ -137,6 +144,7 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
   const pendingOrbitMsRef = useRef(0);
   const rafIdRef = useRef<number | null>(null);
   const trailBridgeLastSyncMs = useSharedValue(0);
+  const trailBridgeAliveSv = useSharedValue(1);
   const hitFxActiveSv = useSharedValue(0);
 
   // ── 사전 할당 Path 풀 + trail scratch Paint (컴포넌트 수명)
@@ -219,21 +227,31 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
     rafIdRef.current = requestAnimationFrame(flushPicture);
   }, [flushPicture]);
 
-  const noteOrbitMs = useCallback(
+  const noteOrbitMsImpl = useCallback(
     (orbitMs: number) => {
+      if (!mountedRef.current) return;
       pendingOrbitMsRef.current = orbitMs;
       scheduleFlush();
     },
     [scheduleFlush],
   );
 
+  const noteOrbitMsRef = useRef(noteOrbitMsImpl);
+  noteOrbitMsRef.current = noteOrbitMsImpl;
+
+  /** identity 고정 — reaction deps 변경 시 triggerUI ShareableWorklet SIGSEGV 방지 */
+  const bridgeNoteOrbitMs = useCallback((orbitMs: number) => {
+    if (!mountedRef.current) return;
+    noteOrbitMsRef.current(orbitMs);
+  }, []);
+
   useLayoutEffect(() => {
-    trailFlatRef.current = trailFlatSv.value;
-    trailCountRef.current = trailCountSv.value;
-    pendingOrbitMsRef.current = orbitClockMs.value;
+    trailFlatRef.current = trailFlatJsRef.current;
+    trailCountRef.current = trailCountJsRef.current;
+    pendingOrbitMsRef.current = readPlanetOrbitClockMs();
     hitFxActiveSv.value = hitFxRef.current.length > 0 ? 1 : 0;
     scheduleFlush();
-  }, [droneIds, hitFxTick, orbitClockMs, trailFlatSv, trailCountSv, scheduleFlush, hitFxRef, hitFxActiveSv]);
+  }, [droneIds, hitFxTick, trailFlatJsRef, trailCountJsRef, scheduleFlush, hitFxRef, hitFxActiveSv]);
 
   useAnimatedReaction(
     () => ({
@@ -243,17 +261,20 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
     }),
     (cur) => {
       'worklet';
+      if (trailBridgeAliveSv.value === 0) return;
       if (cur.trailCount <= 0 && cur.hitFxActive === 0) return;
       if (cur.ms - trailBridgeLastSyncMs.value < TRAIL_BRIDGE_INTERVAL_MS) return;
       trailBridgeLastSyncMs.value = cur.ms;
-      runOnJS(noteOrbitMs)(cur.ms);
+      runOnJS(bridgeNoteOrbitMs)(cur.ms);
     },
-    [orbitClockMs, trailCountSv, hitFxActiveSv, noteOrbitMs, trailBridgeLastSyncMs],
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     mountedRef.current = true;
+    trailBridgeAliveSv.value = 1;
     return () => {
+      trailBridgeAliveSv.value = 0;
+      trailBridgeLastSyncMs.value = 0;
       mountedRef.current = false;
       if (rafIdRef.current != null) {
         cancelAnimationFrame(rafIdRef.current);
@@ -272,7 +293,7 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
       liveFrameRef.current = null;
       schedulePictureDispose(live);
     };
-  }, []);
+  }, [trailBridgeAliveSv]);
 
   return (
     <Canvas style={styles.canvas} pointerEvents="none">

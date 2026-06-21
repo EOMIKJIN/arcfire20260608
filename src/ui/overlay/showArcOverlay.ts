@@ -43,6 +43,7 @@ export function showArcOverlayReward(payload: {
   });
 }
 
+/** @deprecated IngameDialogHost + presentIngameDialogScene 사용. Table-First narrative 전용. */
 export function showArcOverlayNarrative(
   payload: Omit<ArcOverlayNarrativeEntry, 'id' | 'kind'>,
 ): void {
@@ -53,6 +54,7 @@ export function showArcOverlayNarrative(
   });
 }
 
+/** @deprecated dismissIngameDialog / useArcOverlayStore.dismiss 사용 */
 export function dismissArcOverlayNarrative(): void {
   useArcOverlayStore.getState().dismissWhere((e) => e.kind === 'narrative');
 }

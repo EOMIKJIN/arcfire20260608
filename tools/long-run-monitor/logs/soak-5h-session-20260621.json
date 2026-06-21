@@ -1,0 +1,29 @@
+{
+  "session": "soak-5h-hub-drone-patch-20260621",
+  "startedAtKst": "2026-06-21 00:46:52",
+  "expectedEndKst": "2026-06-21 05:46:52",
+  "headCommit": "6a058c2",
+  "baseline": {
+    "appPid": 3924,
+    "pssMb": 832.8,
+    "glMb": 53.4,
+    "nativeHeapMb": 449.9,
+    "views": 294
+  },
+  "scenario": "arcadia_prime hub only — passive soak, inbound drone waves only, no player actions",
+  "correlationCsv": "mem-correlation-soak-20260621.csv",
+  "correlationIntervalMin": 10,
+  "correlationMaxSamples": 31,
+  "watchMonitorPid": 28192,
+  "appliedFixes": [
+    "PlanetHubInboundDroneLayer impact bridge 48ms + idle skip",
+    "planetCoreRuntimeStore persist coalesce 1.5s",
+    "ArcInboundDroneSubCore publish key without inbound elapsed",
+    "planet.tsx hub traffic exclude sig + tickHubTraffic refs"
+  ],
+  "passCriteria": {
+    "floorCreepMaxMb": 50,
+    "hardCeilingEvents": 0,
+    "autoRestartDuringSession": 0
+  }
+}

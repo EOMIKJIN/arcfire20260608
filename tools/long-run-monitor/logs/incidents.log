@@ -1729,3 +1729,102 @@ r SDK API. Please see migration guide for more details: https://rnfirebase.io/mi
 06-20 15:52:50.504  1909  4225 I ActivityManager: Process com.arcfire.online (pid 31767) has died: cch CAC (2046,927)
 [2026-06-20 22:05:26] GL_HARD_CEILING gl=62 pss=985.3 views=305
 [2026-06-20 22:05:26] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-21 10:21:01] GL_ELEVATED mounting_or_insufficient_samples gl=139.2 pss=484 views=297 restart_held
+[2026-06-21 13:42:12] PROCESS_EXIT clean (no recent crash signature) ??relaunch skipped
+
+===== CRASH 2026-06-21 13:42:36 arcfire_fresh=2 maxAge=35m =====
+06-21 13:39:58.340  5542  5604 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xc0 in tid 5604 (mqt_v_js), pid 5542 (.arcfire.online)
+06-21 13:39:59.553  1909 15549 I ActivityManager: Killing 5542:com.arcfire.online/u0a1058 (adj 0): crash
+
+===== CRASH 2026-06-21 13:42:45 arcfire_fresh=2 maxAge=35m =====
+06-21 13:39:58.340  5542  5604 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xc0 in tid 5604 (mqt_v_js), pid 5542 (.arcfire.online)
+06-21 13:39:59.553  1909 15549 I ActivityManager: Killing 5542:com.arcfire.online/u0a1058 (adj 0): crash
+
+===== CRASH 2026-06-21 13:42:46 arcfire_fresh=2 maxAge=65m =====
+06-21 13:39:58.340  5542  5604 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xc0 in tid 5604 (mqt_v_js), pid 5542 (.arcfire.online)
+06-21 13:39:59.553  1909 15549 I ActivityManager: Killing 5542:com.arcfire.online/u0a1058 (adj 0): crash
+
+===== CRASH 2026-06-21 14:31:58 arcfire_fresh=2 maxAge=35m =====
+06-21 14:31:52.128  6366  6366 F libc    : Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x77000002b4 in tid 6366 (.arcfire.online), pid 6366 (.arcfire.online)
+06-21 14:31:53.113  1909  9101 I ActivityManager: Killing 6366:com.arcfire.online/u0a1059 (adj 0): crash
+
+===== CRASH 2026-06-21 15:22:24 arcfire_fresh=2 maxAge=35m =====
+06-21 15:20:32.751 23643 23707 F libc    : Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x776340008b in tid 23707 (mqt_v_js), pid 23643 (.arcfire.online)
+06-21 15:20:33.888  1909 27650 I ActivityManager: Killing 23643:com.arcfire.online/u0a1060 (adj 0): crash
+
+===== SOAK_CHECKPOINT 2026-06-21 16:55:09 KST =====
+session=soak-worklet-mirror-20260621 commit=6a058c2 pid=9392
+planet=arcadia_prime stage=hub activities=mining+defense_satellite_dev_L1 mode=passive_idle
+baseline PSS=343.6MB GL=48.3MB views=281 native=112.2MB
+prior_crash=2026-06-21_15:20:32 mqt_v_js executeSync/ShareableWorklet (pre-fix)
+fix=orbitClock_JS_mirror+worklet_contract audit:worklet-contract PASS
+pass_criteria=min_15min no_FATAL_after_16:55:09
+ref=tools/long-run-monitor/logs/soak-worklet-mirror-20260621.json
+[2026-06-21 19:13:24] GL_ELEVATED mounting_or_insufficient_samples gl=148.5 pss=480.8 views=928 restart_held
+[2026-06-21 19:13:27] GL_ELEVATED mounting_or_insufficient_samples gl=145.8 pss=466.7 views=928 restart_held
+[2026-06-21 19:13:30] GL_ELEVATED mounting_or_insufficient_samples gl=145.8 pss=466.2 views=928 restart_held
+[2026-06-21 19:13:34] GL_ELEVATED mounting_or_insufficient_samples gl=180.9 pss=513.9 views=286 restart_held
+[2026-06-21 20:19:36] GL_HARD_CEILING gl=244.8 pss=582 views=937
+[2026-06-21 20:19:36] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-21 23:26:40] GL_ELEVATED mounting_or_insufficient_samples gl=139.9 pss=754.9 views=923 restart_held
+[2026-06-21 23:26:44] GL_ELEVATED mounting_or_insufficient_samples gl=137.2 pss=743.3 views=923 restart_held
+[2026-06-21 23:26:47] GL_ELEVATED mounting_or_insufficient_samples gl=137.2 pss=742.5 views=923 restart_held
+[2026-06-21 23:26:51] GL_ELEVATED mounting_or_insufficient_samples gl=137.2 pss=742.5 views=923 restart_held
+[2026-06-21 23:26:54] GL_ELEVATED mounting_or_insufficient_samples gl=137.2 pss=742.4 views=923 restart_held
+[2026-06-21 23:26:58] GL_ELEVATED mounting_or_insufficient_samples gl=137.2 pss=742.1 views=923 restart_held
+[2026-06-21 23:27:02] GL_ELEVATED mounting_or_insufficient_samples gl=137.2 pss=742.1 views=923 restart_held
+[2026-06-21 23:27:09] GL_ELEVATED mounting_or_insufficient_samples gl=137.2 pss=742.1 views=923 restart_held
+[2026-06-21 23:27:13] GL_ELEVATED mounting_or_insufficient_samples gl=137.2 pss=742.3 views=923 restart_held
+[2026-06-21 23:27:18] GL_ELEVATED mounting_or_insufficient_samples gl=137.2 pss=742.1 views=923 restart_held
+[2026-06-21 23:27:22] GL_ELEVATED mounting_or_insufficient_samples gl=137.2 pss=742.1 views=923 restart_held
+[2026-06-21 23:27:25] GL_ELEVATED mounting_or_insufficient_samples gl=137.2 pss=742.1 views=923 restart_held
+[2026-06-21 23:27:31] GL_ELEVATED mounting_or_insufficient_samples gl=145.5 pss=747.2 views=931 restart_held
+[2026-06-21 23:27:35] GL_ELEVATED mounting_or_insufficient_samples gl=167.7 pss=781.7 views=283 restart_held
+[2026-06-21 23:27:56] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=775.7 views=934 restart_held
+[2026-06-21 23:28:00] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=767.2 views=934 restart_held
+[2026-06-21 23:28:04] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=766.9 views=934 restart_held
+[2026-06-21 23:28:09] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=752.4 views=934 restart_held
+[2026-06-21 23:28:14] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=752.3 views=934 restart_held
+[2026-06-21 23:28:18] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:28:22] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:28:27] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:28:32] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.3 views=934 restart_held
+[2026-06-21 23:28:37] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:28:42] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:28:46] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:28:51] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:28:54] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.5 views=934 restart_held
+[2026-06-21 23:28:58] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:02] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:05] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:09] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:12] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:16] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:19] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:23] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:26] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:30] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:34] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:38] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:42] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:45] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:49] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.2 views=934 restart_held
+[2026-06-21 23:29:52] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.5 views=934 restart_held
+[2026-06-21 23:29:56] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.8 views=934 restart_held
+[2026-06-21 23:29:59] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.5 views=934 restart_held
+[2026-06-21 23:30:03] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.5 views=934 restart_held
+[2026-06-21 23:30:07] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.5 views=934 restart_held
+[2026-06-21 23:30:11] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.5 views=934 restart_held
+[2026-06-21 23:30:15] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.5 views=934 restart_held
+[2026-06-21 23:30:19] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.5 views=934 restart_held
+[2026-06-21 23:30:22] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.5 views=934 restart_held
+[2026-06-21 23:30:26] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.5 views=934 restart_held
+[2026-06-21 23:30:30] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.4 views=934 restart_held
+[2026-06-21 23:30:34] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.4 views=934 restart_held
+[2026-06-21 23:30:38] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.4 views=934 restart_held
+[2026-06-21 23:30:41] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.4 views=934 restart_held
+[2026-06-21 23:30:46] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=754.3 views=934 restart_held
+[2026-06-21 23:30:57] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=754.4 views=934 restart_held
+[2026-06-21 23:31:02] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=754.1 views=934 restart_held
+[2026-06-21 23:31:08] GL_ELEVATED mounting_or_insufficient_samples gl=136.8 pss=752 views=942 restart_held
+[2026-06-21 23:31:13] GL_ELEVATED mounting_or_insufficient_samples gl=167.5 pss=820.7 views=294 restart_held

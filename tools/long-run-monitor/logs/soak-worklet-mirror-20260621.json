@@ -1,0 +1,44 @@
+{
+  "session": "soak-worklet-mirror-20260621",
+  "startedAtKst": "2026-06-21 16:55:09",
+  "headCommit": "6a058c2",
+  "buildNote": "post native rebuild — worklet contract root fix (orbitClock JS mirror)",
+  "baseline": {
+    "appPid": 9392,
+    "pssMb": 343.6,
+    "glMb": 48.3,
+    "nativeHeapMb": 112.2,
+    "views": 281,
+    "snapshotNote": "SOAK_WORKLET_MIRROR_20260621_START",
+    "snapshotAtKst": "2026-06-21 16:55:35"
+  },
+  "scenario": {
+    "planet": "arcadia_prime",
+    "stage": "planet_hub",
+    "activities": [
+      "mining_in_progress",
+      "planet_development_defense_satellite_level_1_in_progress"
+    ],
+    "playerMode": "passive_idle — no further input after setup"
+  },
+  "priorCrashRef": {
+    "lastPreFixCrashKst": "2026-06-21 15:20:32",
+    "tombstone": "tombstone_12",
+    "thread": "mqt_v_js",
+    "stack": "WorkletRuntime::executeSync → ShareableWorklet::toJSValue",
+    "rootCause": "JS-thread SharedValue.value read (executeSync SIGSEGV)"
+  },
+  "appliedFixes": [
+    "orbitClockMsBridge JS mirror (32ms runOnJS from useFrameCallback)",
+    "eliminate all JS-thread SharedValue reads in planet hub",
+    "createJsWorkletPackMirror for drone trail flat pack",
+    "planetHubWorkletContract.ts + audit:worklet-contract"
+  ],
+  "passCriteria": {
+    "minSoakMinutes": 15,
+    "priorCrashUptimeSec": 554,
+    "hardCeilingEvents": 0,
+    "fatalSignalAfterStart": 0
+  },
+  "correlationHint": "If crash after this timestamp → compare tombstone thread/stack vs prior mqt_v_js executeSync pattern"
+}

@@ -12,7 +12,10 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import type { ArcInboundDrone, ArcInboundDronePhase } from '../../store/arcInboundDroneStore';
+import { readPlanetOrbitClockMs } from '../../arcCore/orbitClockMsBridge';
 import { getArcCoreInboundDronePolicy } from '../../arcCore/balance/arcCoreInboundDronePolicy';
+import { createJsWorkletPackMirror, HUB_WORKLET_JS_BRIDGE_INTERVAL_MS } from './planetHubWorkletContract';
+import { resolveInboundDroneStartOrbitMs } from '../../arcCore/inboundDrone/inboundDroneKinematics';
 import { WORLD_OBJECT_WRECK_MARK_PX } from '../../game/planetHub/planetHubConstants';
 import { PLANET_MAIN_ORBIT_SCENE_SIZE } from '../../stages/planetMainStageLayout';
 import {
@@ -41,6 +44,9 @@ import { useDevSkiaMountAllowed } from '../../hooks/useDevSkiaMountAllowed';
 const AnimatedView = Animated.createAnimatedComponent(View);
 
 export const PLANET_HUB_INBOUND_DRONE_RENDER_MAX = 24;
+
+/** trail/dodge와 동일 — 60Hz runOnJS 장시간 PSS creep 방지 */
+const IMPACT_BRIDGE_INTERVAL_MS = HUB_WORKLET_JS_BRIDGE_INTERVAL_MS;
 
 /** 잔해(`worldObjectWreckMark`) 정사각 9px — 드론은 절반 직경의 붉은 원 */
 const INBOUND_DRONE_MARK_PX = WORLD_OBJECT_WRECK_MARK_PX / 2;
@@ -74,7 +80,15 @@ function spawnDroneEndHitFx(input: {
           inboundElapsedSec: drone.inboundDurationSec,
         }
       : drone;
-  const hit = resolveInboundDroneHitXY(posDrone, center, edgeR, impactR);
+  const hit = resolveInboundDroneHitXY(
+    posDrone,
+    center,
+    edgeR,
+    impactR,
+    variant === 'impact'
+      ? nowMs
+      : resolveInboundDroneStartOrbitMs(drone, nowMs) + drone.inboundElapsedSec * 1000,
+  );
   const fxId = fxKey;
   pushInboundDroneHitFx(hitFxRef.current, {
     id: fxId,
@@ -188,6 +202,8 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
   const trailFlatSv = useSharedValue<number[]>([]);
   const droneCountSv = useSharedValue(0);
   const trailCountSv = useSharedValue(0);
+  const trailPackMirror = useRef(createJsWorkletPackMirror<number[]>([])).current;
+  const trailCountJsRef = useRef(0);
   const startOrbitMsByIdRef = useRef<Map<string, number>>(new Map());
   const endOrbitMsByIdRef = useRef<Map<string, number>>(new Map());
   const prevPhaseByIdRef = useRef<Map<string, ArcInboundDronePhase>>(new Map());
@@ -196,6 +212,11 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
   const hitFxRef = useRef<InboundDroneHitFx[]>([]);
   const spawnedHitFxIdsRef = useRef<Set<string>>(new Set());
   const inboundDronesRef = useRef<ArcInboundDrone[]>([]);
+  const inboundCountSv = useSharedValue(0);
+  const impactBridgeLastSyncMs = useSharedValue(0);
+  /** worklet→JS impact bridge — unmount 후 runOnJS SIGSEGV 방지 */
+  const impactBridgeAliveSv = useSharedValue(1);
+  const layerMountedRef = useRef(true);
   const [hitFxTick, setHitFxTick] = useState(0);
   const [vfxOverlayOpen, setVfxOverlayOpen] = useState(false);
 
@@ -214,32 +235,45 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
 
   inboundDronesRef.current = inboundDrones;
 
+  useEffect(() => {
+    inboundCountSv.value = inboundDrones.length;
+  }, [inboundDrones.length, inboundCountSv]);
+
   const center = PLANET_MAIN_ORBIT_SCENE_SIZE / 2;
   const edgeR = policy.edgeSpawnRadiusPx;
   const impactR = policy.impactRadiusPx;
   const geomRef = useRef({ center, edgeR, impactR });
   geomRef.current = { center, edgeR, impactR };
 
+  const onSkiaDodgeBackdropLatchRef = useRef(onSkiaDodgeBackdropLatch);
+  onSkiaDodgeBackdropLatchRef.current = onSkiaDodgeBackdropLatch;
+
   const noteHitSpawn = useCallback(() => {
     setHitFxTick((t) => t + 1);
     setVfxOverlayOpen(true);
-    onSkiaDodgeBackdropLatch?.(true);
-  }, [onSkiaDodgeBackdropLatch]);
+    onSkiaDodgeBackdropLatchRef.current?.(true);
+  }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    layerMountedRef.current = true;
+    impactBridgeAliveSv.value = 1;
     return () => {
+      impactBridgeAliveSv.value = 0;
+      impactBridgeLastSyncMs.value = 0;
+      layerMountedRef.current = false;
       hitFxRef.current.length = 0;
       spawnedHitFxIdsRef.current.clear();
       startOrbitMsByIdRef.current.clear();
       endOrbitMsByIdRef.current.clear();
       prevPhaseByIdRef.current.clear();
       resetHubInboundDroneDodgeBridge();
-      onSkiaDodgeBackdropLatch?.(false);
+      onSkiaDodgeBackdropLatchRef.current?.(false);
     };
-  }, [onSkiaDodgeBackdropLatch]);
+  }, [impactBridgeAliveSv, impactBridgeLastSyncMs]);
 
-  const checkVisualImpacts = useCallback(
+  const checkVisualImpactsImpl = useCallback(
     (orbitMs: number) => {
+      if (!layerMountedRef.current) return;
       const { center: c, edgeR: er, impactR: ir } = geomRef.current;
       let spawned = false;
       for (const d of inboundDronesRef.current) {
@@ -270,24 +304,40 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
     [noteHitSpawn],
   );
 
+  const checkVisualImpactsRef = useRef(checkVisualImpactsImpl);
+  checkVisualImpactsRef.current = checkVisualImpactsImpl;
+
+  /** identity 고정 — reaction deps에 넣으면 ShareableWorklet SIGSEGV(2026-06-21 14:31) */
+  const bridgeCheckVisualImpacts = useCallback((orbitMs: number) => {
+    if (!layerMountedRef.current) return;
+    checkVisualImpactsRef.current(orbitMs);
+  }, []);
+
   useAnimatedReaction(
-    () => orbitClockMs.value,
-    (orbitMs) => {
-      runOnJS(checkVisualImpacts)(orbitMs);
+    () => ({
+      ms: orbitClockMs.value,
+      inboundCount: inboundCountSv.value,
+    }),
+    (cur) => {
+      'worklet';
+      if (impactBridgeAliveSv.value === 0) return;
+      if (cur.inboundCount <= 0) return;
+      if (cur.ms - impactBridgeLastSyncMs.value < IMPACT_BRIDGE_INTERVAL_MS) return;
+      impactBridgeLastSyncMs.value = cur.ms;
+      runOnJS(bridgeCheckVisualImpacts)(cur.ms);
     },
-    [orbitClockMs, checkVisualImpacts],
   );
 
   const handleVfxIdle = useCallback(() => {
-    compactHubInboundDroneDodgeFxInPlace(hubInboundDroneDodgeHitFxRef.current, orbitClockMs.value);
+    compactHubInboundDroneDodgeFxInPlace(hubInboundDroneDodgeHitFxRef.current, readPlanetOrbitClockMs());
     setVfxOverlayOpen(false);
     if (inboundDrones.length === 0 && trailDrones.length === 0) {
-      onSkiaDodgeBackdropLatch?.(false);
+      onSkiaDodgeBackdropLatchRef.current?.(false);
     }
-  }, [inboundDrones.length, onSkiaDodgeBackdropLatch, orbitClockMs, trailDrones.length]);
+  }, [inboundDrones.length, trailDrones.length]);
 
   useLayoutEffect(() => {
-    const nowMs = orbitClockMs.value;
+    const nowMs = readPlanetOrbitClockMs();
     const startOrbitMsById = startOrbitMsByIdRef.current;
     const endOrbitMsById = endOrbitMsByIdRef.current;
     const prevPhaseById = prevPhaseByIdRef.current;
@@ -299,8 +349,7 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
       activeTrailIds.add(d.id);
       const prevPhase = prevPhaseById.get(d.id);
       if (d.phase === 'inbound' && !startOrbitMsById.has(d.id)) {
-        const elapsedSec = Number.isFinite(d.inboundElapsedSec) ? d.inboundElapsedSec : 0;
-        startOrbitMsById.set(d.id, nowMs - elapsedSec * 1000);
+        startOrbitMsById.set(d.id, resolveInboundDroneStartOrbitMs(d, nowMs));
       } else if (d.phase !== 'inbound' && !endOrbitMsById.has(d.id)) {
         endOrbitMsById.set(d.id, nowMs);
       }
@@ -345,13 +394,17 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
     }
     if (trailPackSigRef.current !== trailPackSig) {
       trailPackSigRef.current = trailPackSig;
-      trailCountSv.value = trailDrones.length;
-      trailFlatSv.value = packInboundDroneTrailFlat(
+      const packed = packInboundDroneTrailFlat(
         trailDrones,
         startOrbitMsById,
         endOrbitMsById,
         nowMs,
       );
+      trailCountJsRef.current = trailDrones.length;
+      trailPackMirror.publish(packed, (v) => {
+        trailFlatSv.value = v;
+      });
+      trailCountSv.value = trailDrones.length;
     }
 
     compactInboundDroneHitFxInPlace(hitFxRef.current, nowMs);
@@ -362,22 +415,18 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
     }
     if (trailDrones.length > 0) {
       setVfxOverlayOpen(true);
-      onSkiaDodgeBackdropLatch?.(true);
+      onSkiaDodgeBackdropLatchRef.current?.(true);
     } else if (
       inboundDrones.length === 0 &&
       hitFxRef.current.length === 0 &&
       hubInboundDroneDodgeHitFxRef.current.length === 0
     ) {
       setVfxOverlayOpen(false);
-      onSkiaDodgeBackdropLatch?.(false);
+      onSkiaDodgeBackdropLatchRef.current?.(false);
     }
   }, [
     inboundPackSig,
     trailPackSig,
-    drones,
-    inboundDrones,
-    trailDrones,
-    orbitClockMs,
     flatSv,
     trailFlatSv,
     droneCountSv,
@@ -386,7 +435,7 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
     edgeR,
     impactR,
     noteHitSpawn,
-    onSkiaDodgeBackdropLatch,
+    trailPackMirror,
   ]);
 
   const markCount = inboundDrones.length;
@@ -409,6 +458,8 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
           orbitClockMs={orbitClockMs}
           trailFlatSv={trailFlatSv}
           trailCountSv={trailCountSv}
+          trailFlatJsRef={trailPackMirror.jsRef}
+          trailCountJsRef={trailCountJsRef}
           droneIds={droneIds}
           hitFxRef={hitFxRef}
           hitFxTick={hitFxTick}

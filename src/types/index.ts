@@ -105,7 +105,6 @@ export interface PlayerFlags {
   tutorialComplete: boolean;
   introSeen: boolean;
   firstMissionStarted: boolean;
-  ingameDialog01Seen: boolean;
   pendingArcadiaDialog01: boolean;
   seenStorySceneIds: string[];
 }
@@ -427,6 +426,10 @@ export interface NpcCaptain {
   arcOrbitPresenceFill: boolean;
   /** 메인스테이지에서 해당 함장과 만났을 때 대화 버튼/인터랙션 UI 활성화 여부 */
   mainStageTalkEnabled: boolean;
+  /** 대화 버튼 우선순위(숫자 낮을수록 우선). CSV `mainStageTalkPriority` */
+  mainStageTalkPriority: number;
+  /** 인게임 대화 씬 id(`story_scenes.csv`). 비어 있으면 `npc_dialog_{id}` 규칙 폴백 */
+  mainStageTalkSceneId: string | null;
   /** 대화 진입 시 함께 발동할 미션 트리거 id(없으면 null) */
   mainStageMissionTriggerId: string | null;
   /** 대화 진입 시 함께 발동할 이벤트 트리거 id(없으면 null) */
@@ -729,7 +732,7 @@ export interface MissionObjective {
   id: string;
   description: string;
   descriptionEn?: string;
-  type: 'reach_system' | 'defeat_enemy' | 'deliver_cargo' | 'buy_goods';
+  type: 'reach_system' | 'reach_planet' | 'defeat_enemy' | 'deliver_cargo' | 'buy_goods';
   targetId: string;
   quantity?: number;
   complete: boolean;

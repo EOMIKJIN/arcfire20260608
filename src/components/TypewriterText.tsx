@@ -3,7 +3,7 @@
 // ============================================================
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Text, TextStyle } from 'react-native';
+import { Platform, Text, TextStyle } from 'react-native';
 import { COLORS, FONTS } from '../utils/theme';
 
 interface TypewriterTextProps {
@@ -12,6 +12,7 @@ interface TypewriterTextProps {
   onComplete?: () => void;
   style?: TextStyle;
   cursor?: boolean;
+  numberOfLines?: number;
 }
 
 export function TypewriterText({
@@ -20,6 +21,7 @@ export function TypewriterText({
   onComplete,
   style,
   cursor = true,
+  numberOfLines,
 }: TypewriterTextProps) {
   const [displayed, setDisplayed] = useState('');
   const [done, setDone] = useState(false);
@@ -59,7 +61,7 @@ export function TypewriterText({
   }, [text, speed]);
 
   return (
-    <Text style={[defaultStyle, style]}>
+    <Text style={[defaultStyle, style]} numberOfLines={numberOfLines}>
       {displayed}
       {cursor && !done ? (
         <Text style={{ color: COLORS.ink_mid }}>▌</Text>
@@ -72,5 +74,6 @@ const defaultStyle: TextStyle = {
   fontFamily: FONTS.mono,
   fontSize: FONTS.size.md,
   color: COLORS.ink_dark,
-  lineHeight: 22,
+  lineHeight: 26,
+  ...(Platform.OS === 'android' ? { includeFontPadding: false } : null),
 };

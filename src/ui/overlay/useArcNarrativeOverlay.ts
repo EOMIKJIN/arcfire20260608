@@ -31,8 +31,15 @@ export function useArcNarrativeOverlay(
     };
     if (!existing) {
       state.present(entry);
-    } else if (existing.kind === 'narrative' && existing.typewriterKey !== config.typewriterKey) {
-      state.patchOverlay(overlayId, entry);
+    } else if (existing.kind === 'narrative') {
+      const contentChanged =
+        existing.typewriterKey !== config.typewriterKey
+        || existing.text !== config.text
+        || existing.label !== config.label
+        || existing.imageSource !== config.imageSource;
+      if (contentChanged) {
+        state.patchOverlay(overlayId, entry);
+      }
     }
     return () => {
       useArcOverlayStore.getState().dismissWhere((e) => e.id === overlayId);

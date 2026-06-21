@@ -664,6 +664,10 @@ export const planetHubBgStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  /** 플레이어 함선 닉네임 — worldObjectCaption(96px) 클리핑 방지 */
+  orbitPlayerMarkWrap: {
+    overflow: 'visible',
+  },
   worldObjectMarkWrap: {
     width: WORLD_OBJECT_ANCHOR_PX * 2,
     height: WORLD_OBJECT_ANCHOR_PX * 2,
@@ -844,14 +848,14 @@ export const planetHubBgStyles = StyleSheet.create({
   },
   orbitShipCaptionPlayerBlue: {
     fontFamily: FONTS.mono,
-    fontSize: 6,
-    lineHeight: 8,
+    fontSize: 9,
+    lineHeight: 12,
+    width: 96,
     color: '#9ED0FF',
     textAlign: 'center',
     marginBottom: 1,
-    maxWidth: 70,
-    textShadowColor: 'rgba(6,10,20,0.75)',
-    textShadowOffset: { width: 0, height: 0.5 },
-    textShadowRadius: 1.5,
+    textShadowColor: 'rgba(6,10,18,0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
 });

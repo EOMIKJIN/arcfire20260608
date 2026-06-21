@@ -4,6 +4,9 @@
 
 import type { ArcInboundDrone } from '../../store/arcInboundDroneStore';
 import { INBOUND_DRONE_Y_MUL } from './planetOrbitInboundDroneConstants';
+import {
+  resolveInboundDroneProgressAtOrbitMs,
+} from '../../arcCore/inboundDrone/inboundDroneKinematics';
 
 import {
   INBOUND_DRONE_FLAME_FX_MS,
@@ -30,12 +33,22 @@ export function resolveInboundDroneHitXY(
   center: number,
   edgeR: number,
   impactR: number,
+  orbitMs?: number,
 ): { x: number; y: number } {
   const ang = Number.isFinite(drone.approachAngleRad) ? drone.approachAngleRad : 0;
   const dur = Math.max(0.001, Number.isFinite(drone.inboundDurationSec) ? drone.inboundDurationSec : 0.001);
-  const elapsed = Math.max(0, Number.isFinite(drone.inboundElapsedSec) ? drone.inboundElapsedSec : 0);
   const progress =
-    drone.phase === 'impacted' ? 1 : Math.min(1, Math.max(0, elapsed / dur));
+    orbitMs != null
+      ? resolveInboundDroneProgressAtOrbitMs(drone, orbitMs)
+      : drone.phase === 'impacted'
+        ? 1
+        : Math.min(
+            1,
+            Math.max(
+              0,
+              (Number.isFinite(drone.inboundElapsedSec) ? drone.inboundElapsedSec : 0) / dur,
+            ),
+          );
   const r = impactR + (edgeR - impactR) * (1 - progress);
   return {
     x: center + Math.cos(ang) * r,

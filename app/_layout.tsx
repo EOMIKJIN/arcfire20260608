@@ -35,6 +35,7 @@ import { initGuestAuth } from '../src/firebase/auth';
 import { arcCoreHub } from '../src/arcCore/ArcCoreHub';
 import { attachArcCoreRuntimeCommandBridge } from '../src/arcCore/ArcCoreRuntimeBridge';
 import { ArcOverlayHost } from '../src/ui/overlay/ArcOverlayHost';
+import { IngameDialogHost } from '../src/game/ingameDialog/IngameDialogHost';
 import { LevelUpOverlayBridge } from '../src/ui/overlay/LevelUpOverlayBridge';
 import { useArcOverlayStore } from '../src/ui/overlay/arcOverlayStore';
 import { initializeFirebase, logAppOpen } from '../utils/logger';
@@ -395,6 +396,7 @@ export default function RootLayout() {
         <Stack.Screen name="(game)" />
       </Stack>
       <ArcOverlayHost />
+      <IngameDialogHost />
       <LevelUpOverlayBridge />
     </GestureHandlerRootView>
   );

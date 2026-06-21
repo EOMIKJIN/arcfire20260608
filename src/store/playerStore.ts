@@ -262,11 +262,19 @@ function normalizePlayerPolitical(raw: PlayerPersistenceShape): Player {
     tutorialComplete: Boolean(f.tutorialComplete),
     introSeen: Boolean(f.introSeen),
     firstMissionStarted: Boolean(f.firstMissionStarted),
-    ingameDialog01Seen: Boolean((f as { ingameDialog01Seen?: boolean }).ingameDialog01Seen),
     pendingArcadiaDialog01: Boolean((f as { pendingArcadiaDialog01?: boolean }).pendingArcadiaDialog01),
-    seenStorySceneIds: Array.isArray((f as { seenStorySceneIds?: string[] }).seenStorySceneIds)
-      ? (f as { seenStorySceneIds?: string[] }).seenStorySceneIds!.filter((v) => typeof v === 'string')
-      : [],
+    seenStorySceneIds: (() => {
+      const base = Array.isArray((f as { seenStorySceneIds?: string[] }).seenStorySceneIds)
+        ? (f as { seenStorySceneIds?: string[] }).seenStorySceneIds!.filter((v) => typeof v === 'string')
+        : [];
+      if (
+        Boolean((f as { ingameDialog01Seen?: boolean }).ingameDialog01Seen)
+        && !base.includes('ingame_dialog_01')
+      ) {
+        return [...base, 'ingame_dialog_01'];
+      }
+      return base;
+    })(),
   };
   const tid = typeof raw.shipId === 'string' && raw.shipId ? raw.shipId : 'starter_fighter';
   const base: Player = {
@@ -498,7 +506,6 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
         tutorialComplete: false,
         introSeen: false,
         firstMissionStarted: false,
-        ingameDialog01Seen: false,
         pendingArcadiaDialog01: false,
         seenStorySceneIds: [],
       },

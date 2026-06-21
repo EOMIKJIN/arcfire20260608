@@ -77,6 +77,7 @@ Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4
 - **Skia GL 메모리 헌법 (P0 · 2026-06-14~ 필수)**: `.cursor/rules/arcfire-skia-memory-lifecycle.mdc` — **다음 기능개발부터** Skia/Reanimated 고프레임 코드는 Zero-Allocation(Pre-allocation + `rewind()` + 단일 Canvas)만 허용. **완료 게이트**: `npm run audit:skia-memory` PASS + `tsc` + GL mtrack Δ ±15MB. 루프 내 `Skia.Path.Make()`/`Paint()`·`<Path>` `.map()`·이벤트마다 Canvas 리마운트 **금지**. `docs/(구현)SKIA_WORKLET_MEMORY_CONTRACT.md` · UI 스레드 SharedValue Path **dispose 금지**.
 - **장거리 미사일(1차)**: 2026-06 제거됨 — 메모리 격리 테스트 중. 방어위성은 `planetaryDefense` + 궤도 마커만 유지. 재도입 시 Skia 단일 Canvas·GL 실측 필수.
 - **UI 오버레이·모달**: `src/ui/overlay/` — `ArcOverlayHost` 루트 단일 호스트, `showArcAlert` 등 imperative API. RN `Modal`·magic bottom padding 금지. 점검: `npm run audit:ui-overlay`. **범용 UI 현황·로드맵**: `docs/OVERLAY_UI_UNIVERSAL_SPEC.md` · 에이전트 계약: `.cursor/rules/arcfire-overlay-ui-contract.mdc`. **조립 정본**: `ArcOverlayCard` + `ArcOverlayTitleHeader` + `ArcOverlayFooterActions` + `overlayPanelLayout.ts`(패널 세로 85~96%, center bias 36px). 패널형(planetEconomy·planetDevelopment·settings·bmShop·tradeQuantity) 마이그레이션 **완료** — alert/levelUp/reward/waveResult는 compact 잔존(Phase A 예정).
+- **인게임 대사 UI (기본 디폴트 · 2026-06-18)**: `NarrativeDialogRow` + `NARRATIVE_DIALOG_LAYOUT` — 고정 204px·초상 145px·3줄 세그먼트·`[ 다음 ]` 진행. 규칙: `.cursor/rules/arcfire-ingame-dialog-ui-default.mdc` · 초상: `resolveIngameDialogPortraitSource`.
 
 ## Metro·앱 반영 (사용자 안내)
 

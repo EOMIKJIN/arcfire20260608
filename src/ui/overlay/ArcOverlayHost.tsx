@@ -11,6 +11,7 @@ import { useArcOverlayStore } from './arcOverlayStore';
 import { getOverlayChrome } from './overlayChrome';
 import { resolveOverlayBottomAnchorPad, resolveOverlayEdgeInsets } from './overlayInsets';
 import { OVERLAY_CENTER_VERTICAL_BIAS_PX } from './overlayPanelLayout';
+import { NARRATIVE_DIALOG_LAYOUT } from './narrativeDialogLayout';
 import { reapplyAndroidImmersiveNavBar } from './reapplyAndroidImmersiveNavBar';
 import { AlertOverlayContent } from './content/AlertOverlayContent';
 import { LevelUpOverlayContent } from './content/LevelUpOverlayContent';
@@ -108,9 +109,18 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
   if (!entry) return null;
 
   const chrome = getOverlayChrome(entry.kind);
-  const isBottomNarrative = entry.kind === 'narrative' && entry.anchor === 'bottom';
+  const isNarrative = entry.kind === 'narrative';
+  const isBottomNarrative = isNarrative && entry.anchor === 'bottom';
   const isBlocking = entry.kind === 'blocking';
   const bottomPad = isBottomNarrative ? resolveOverlayBottomAnchorPad(insets, SPACING.md) : 0;
+  const overlayHorizontalPad = isBottomNarrative
+    ? NARRATIVE_DIALOG_LAYOUT.hostHorizontalPadPx
+    : SPACING.lg;
+  const contentSlotStyle = isBottomNarrative
+    ? styles.bottomNarrativeSlot
+    : isNarrative
+      ? styles.narrativeCenterSlot
+      : styles.centerSlot;
 
   return (
     <View
@@ -123,8 +133,8 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
           zIndex: chrome.zIndex,
           paddingTop: SPACING.sm + edges.top,
           paddingBottom: isBottomNarrative ? bottomPad : SPACING.sm + edges.bottom,
-          paddingLeft: SPACING.lg + edges.left,
-          paddingRight: SPACING.lg + edges.right,
+          paddingLeft: overlayHorizontalPad + edges.left,
+          paddingRight: overlayHorizontalPad + edges.right,
         },
       ]}
       pointerEvents={isBlocking ? 'auto' : 'box-none'}
@@ -141,7 +151,7 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
         ]}
         pointerEvents="box-none"
       >
-        <View style={isBottomNarrative ? undefined : styles.centerSlot} pointerEvents="box-none">
+        <View style={contentSlotStyle} pointerEvents="box-none">
         {entry.kind === 'alert' ? (
           <AlertOverlayContent entry={entry} onButton={handleAlertButton} />
         ) : null}
@@ -211,7 +221,17 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'stretch',
   },
+  bottomNarrativeSlot: {
+    width: '100%',
+    alignSelf: 'stretch',
+    flexShrink: 0,
+  },
+  narrativeCenterSlot: {
+    width: '100%',
+    alignSelf: 'stretch',
+    flexShrink: 0,
+  },
   narrativeCenterWrap: {
-    paddingHorizontal: 0,
+    paddingHorizontal: SPACING.sm,
   },
 });

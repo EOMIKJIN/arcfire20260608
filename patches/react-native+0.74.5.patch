@@ -1,3 +1,16 @@
+diff --git a/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DefaultDevLoadingViewImplementation.java b/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DefaultDevLoadingViewImplementation.java
+index 74052bb..c3f8cf3 100644
+--- a/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DefaultDevLoadingViewImplementation.java
++++ b/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DefaultDevLoadingViewImplementation.java
+@@ -31,7 +31,7 @@ import java.util.Locale;
+  * screen. All methods are thread safe.
+  */
+ public class DefaultDevLoadingViewImplementation implements DevLoadingViewManager {
+-  private static boolean sEnabled = true;
++  private static boolean sEnabled = false;
+   private final ReactInstanceDevHelper mReactInstanceDevHelper;
+   private @Nullable TextView mDevLoadingView;
+   private @Nullable PopupWindow mDevLoadingPopup;
 diff --git a/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DevSupportManagerBase.java b/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DevSupportManagerBase.java
 index ed08050..fedd973 100644
 --- a/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DevSupportManagerBase.java

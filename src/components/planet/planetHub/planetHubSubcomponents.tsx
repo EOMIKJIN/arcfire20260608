@@ -1,10 +1,9 @@
 // planet hub subcomponents — extracted from app/(game)/planet.tsx
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, ScrollView, useWindowDimensions, Platform } from 'react-native';
 import type { LayoutChangeEvent } from 'react-native';
 import Animated, {
   runOnJS,
-  runOnUI,
   type SharedValue,
   useAnimatedReaction,
   useAnimatedStyle,
@@ -28,6 +27,8 @@ import { PlanetCorePortraitWithTempAdminOverride } from '../PlanetCorePortraitWi
 import { PlanetHubOrbitSkiaLayer } from '../PlanetHubOrbitSkiaLayer';
 import { PlanetHubInboundDroneLayer } from '../PlanetHubInboundDroneLayer';
 import { hubInboundDroneDodgeHitFxRef } from '../../../arcCore/inboundDrone/hubInboundDroneDodgeBridge';
+import { readPlanetOrbitClockMs } from '../../../arcCore/orbitClockMsBridge';
+import { HUB_WORKLET_JS_BRIDGE_INTERVAL_MS } from '../planetHubWorkletContract';
 import { PlanetNebulaImageBackdrop } from '../PlanetNebulaImageBackdrop';
 import { SkiaPlanetNebulaShaderBackdrop } from '../SkiaPlanetNebulaShaderBackdrop';
 import { resolveMainStageSkiaBackdrop } from '../../../game/mainStageSkiaBackdrop';
@@ -329,12 +330,8 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   const nebulaBackdropRef = useRef<View | null>(null);
   const orbitSceneRef = useRef<View | null>(null);
   const dodgeStageMountedRef = useRef(true);
-  useEffect(() => {
-    dodgeStageMountedRef.current = true;
-    return () => {
-      dodgeStageMountedRef.current = false;
-    };
-  }, []);
+  /** worklet→JS bridge — unmount 후 runOnJS SIGSEGV 방지 (SharedValue만 worklet에서 안전) */
+  const dodgeBridgeAliveSv = useSharedValue(1);
   const [dodgeOrbitOffset, setDodgeOrbitOffset] = useState({ x: 0, y: 0 });
   const [inboundDroneSkiaDodgeLatch, setInboundDroneSkiaDodgeLatch] = useState(false);
   /** dodge Skia 오버레이 — latch OFF마다 언마운트하면 useImage/GC FinalizerDaemon SIGSEGV 유발 → 세션 sticky */
@@ -344,45 +341,65 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   const handleSkiaDodgeNebulaReady = useCallback(() => setHubSkiaDodgeNebulaReady(true), []);
   const handleSkiaDodgeNebulaLost = useCallback(() => setHubSkiaDodgeNebulaReady(false), []);
   const hubDodgeTimeMsRef = useRef(0);
-  const noteHubDodgeTimeMs = useCallback((ms: number) => {
+  const noteHubDodgeTimeMsImpl = useCallback((ms: number) => {
+    if (!dodgeStageMountedRef.current) return;
     hubDodgeTimeMsRef.current = ms;
   }, []);
+
+  const noteHubDodgeTimeMsRef = useRef(noteHubDodgeTimeMsImpl);
+  noteHubDodgeTimeMsRef.current = noteHubDodgeTimeMsImpl;
+
+  /** identity 고정 — reaction deps 변경 시 triggerUI ShareableWorklet SIGSEGV 방지 */
+  const bridgeNoteHubDodgeTimeMs = useCallback((ms: number) => {
+    if (!dodgeStageMountedRef.current) return;
+    noteHubDodgeTimeMsRef.current(ms);
+  }, []);
+
   /** 드론 dodge FX 구간에만 orbitClock → JS ref 동기 (~20Hz — 60Hz runOnJS 장시간 PSS creep 방지) */
   const dodgeFxBridgeActive = useSharedValue(0);
   const dodgeBridgeLastSyncMs = useSharedValue(0);
-  const HUB_DODGE_BRIDGE_INTERVAL_MS = 48;
+  const HUB_DODGE_BRIDGE_INTERVAL_MS = HUB_WORKLET_JS_BRIDGE_INTERVAL_MS;
+  useLayoutEffect(() => {
+    dodgeBridgeAliveSv.value = 1;
+    dodgeStageMountedRef.current = true;
+    return () => {
+      dodgeBridgeAliveSv.value = 0;
+      dodgeFxBridgeActive.value = 0;
+      dodgeBridgeLastSyncMs.value = 0;
+      dodgeStageMountedRef.current = false;
+    };
+  }, [dodgeBridgeAliveSv, dodgeFxBridgeActive, dodgeBridgeLastSyncMs]);
   useEffect(() => {
     dodgeFxBridgeActive.value = inboundDroneSkiaDodgeLatch ? 1 : 0;
     if (inboundDroneSkiaDodgeLatch) {
       setHubDodgeSkiaOverlayMounted(true);
-      // latch ON 직후 reaction은 ms 변경 전까지 fire 안 함 → 즉시 1회 동기
-      runOnUI(() => {
-        'worklet';
-        dodgeBridgeLastSyncMs.value = orbitClockMs.value;
-        runOnJS(noteHubDodgeTimeMs)(orbitClockMs.value);
-      })();
+      // latch ON 직후 reaction은 ms 변경 전까지 fire 안 함 → JS 미러 1회 동기
+      const nowMs = readPlanetOrbitClockMs();
+      dodgeBridgeLastSyncMs.value = nowMs;
+      bridgeNoteHubDodgeTimeMs(nowMs);
     }
-  }, [inboundDroneSkiaDodgeLatch, dodgeFxBridgeActive, dodgeBridgeLastSyncMs, noteHubDodgeTimeMs, orbitClockMs]);
+  }, [inboundDroneSkiaDodgeLatch, dodgeFxBridgeActive, dodgeBridgeLastSyncMs, bridgeNoteHubDodgeTimeMs]);
   useAnimatedReaction(
     () => orbitClockMs.value,
     (ms) => {
       'worklet';
+      if (dodgeBridgeAliveSv.value === 0) return;
       if (dodgeFxBridgeActive.value === 0) return;
       if (ms - dodgeBridgeLastSyncMs.value < HUB_DODGE_BRIDGE_INTERVAL_MS) return;
       dodgeBridgeLastSyncMs.value = ms;
-      runOnJS(noteHubDodgeTimeMs)(ms);
+      runOnJS(bridgeNoteHubDodgeTimeMs)(ms);
     },
-    [orbitClockMs, noteHubDodgeTimeMs, dodgeFxBridgeActive, dodgeBridgeLastSyncMs],
   );
   const handleInboundDroneSkiaDodgeLatch = useCallback((active: boolean) => {
     setInboundDroneSkiaDodgeLatch(active);
   }, []);
   useEffect(() => {
+    dodgeFxBridgeActive.value = 0;
     setInboundDroneSkiaDodgeLatch(false);
     setHubDodgeSkiaOverlayMounted(false);
     setHubSkiaDodgeNebulaReady(false);
     dodgeBridgeLastSyncMs.value = 0;
-  }, [planetId, dodgeBridgeLastSyncMs]);
+  }, [planetId, dodgeBridgeLastSyncMs, dodgeFxBridgeActive]);
   const recomputeDodgeOrbitOffset = useCallback(() => {
     if (!dodgeStageMountedRef.current) return;
     const nebulaNode = nebulaBackdropRef.current;
@@ -1058,9 +1075,9 @@ const PlanetPlayerBlueOrbitMark = memo(function PlanetPlayerBlueOrbitMark({
   }, [orbitClockMs]);
 
   return (
-    <Animated.View style={[bgStyles.orbitMarkWrap, animated]} pointerEvents="none">
+    <Animated.View style={[bgStyles.orbitMarkWrap, bgStyles.orbitPlayerMarkWrap, animated]} pointerEvents="none">
       <View style={bgStyles.orbitMarkLabelCol}>
-        <Text style={bgStyles.orbitShipCaptionPlayerBlue} numberOfLines={1} ellipsizeMode="tail">
+        <Text style={bgStyles.orbitShipCaptionPlayerBlue} numberOfLines={1} ellipsizeMode="clip">
           {playerNickLabel}
         </Text>
         <Text style={bgStyles.orbitMarkPlayerBlue}>◇</Text>

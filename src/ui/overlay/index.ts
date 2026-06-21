@@ -10,8 +10,6 @@ export { getOverlayChrome, OVERLAY_Z, OVERLAY_BACKDROP } from './overlayChrome';
 export {
   showArcOverlayAlert,
   showArcOverlayReward,
-  showArcOverlayNarrative,
-  dismissArcOverlayNarrative,
   presentArcOverlayAlert,
   presentWaveResultOverlay,
   dismissArcOverlay,
@@ -24,3 +22,9 @@ export { NarrativeDialogRow } from './NarrativeDialogRow';
 export type { NarrativeDialogRowProps } from './NarrativeDialogRow';
 export { useArcNarrativeOverlay } from './useArcNarrativeOverlay';
 export type { ArcNarrativeOverlayConfig } from './useArcNarrativeOverlay';
+export {
+  dismissIngameDialog,
+  isIngameDialogActive,
+  presentIngameDialogScene,
+  tryFireIngameDialogTrigger,
+} from '../../game/ingameDialog';

@@ -14,9 +14,14 @@
  *
  * ---
  * ### `reach_system`
- * - **의미**: 플레이어 함선이 지정 성계에 도달.
- * - **완료 조건**: 월드/항법 플로우에서 `targetId` 성계 진입 시 해당 `objectiveId`에 대해 `completeObjective` 호출(현재 구현은 미션 스토어 외부에서 연결 필요).
- * - **targetId**: `StarSystem.id` (예: `vega_outpost`).
+ * - **의미**: 플레이어 함선이 지정 성계에 도달(월드맵 이동 완료).
+ * - **완료 조건**: `worldmap.tsx` `doMove` 종료 시 `targetId` 성계 id 일치.
+ * - **targetId**: `StarSystem.id` (예: `minerva`).
+ *
+ * ### `reach_planet`
+ * - **의미**: 지정 행성 허브(STAGE 1)에 **진입**(착륙 + planet route focus).
+ * - **완료 조건**: `syncPlanetHubMissionAndDialog(planetId)` — `landOnPlanet` 후 planet 허브 포커스.
+ * - **targetId**: `Planet.id` (예: `vega_base`). 성계 도달만으로는 완료되지 않음.
  *
  * ### `defeat_enemy`
  * - **의미**: 전투(또는 스크립트)로 표적 격파.

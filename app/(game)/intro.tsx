@@ -2,14 +2,14 @@
 // 아크파이어 온라인 - 인트로 스토리 화면
 // ============================================================
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { TypewriterText } from '../../src/components/TypewriterText';
 import { usePlayerStore } from '../../src/store/playerStore';
-import { useMissionStore } from '../../src/store/missionStore';
+import { runIntroSeenAndStartFirstMissionPolicy } from '../../src/game/ingameDialog';
 import { StageShell } from '../../src/stages/StageShell';
 import { STORY_SCENES_FROM_CSV } from '../../src/data/generated';
 import { NarrativeDialogRow } from '../../src/ui/overlay/NarrativeDialogRow';
@@ -17,11 +17,10 @@ import { resolveOverlayBottomAnchorPad } from '../../src/ui/overlay/overlayInset
 import { ArcButton } from '../../src/ui/overlay/ArcButton';
 import { resolveStoryPageText, resolveStoryPageLabel } from '../../src/i18n/storyText';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
+import { splitNarrativeDialogSegments } from '../../src/ui/overlay/splitNarrativeDialogSegments';
+import { NARRATIVE_DIALOG_LAYOUT } from '../../src/ui/overlay/narrativeDialogLayout';
+import { resolveIngameDialogPortraitSource } from '../../src/game/ingameDialog/resolveIngameDialogPortraitSource';
 import { useT } from '../../src/i18n';
-
-const STORY_IMAGE_ASSETS: Record<string, any> = {
-  'assets/images/stella_aris_char001.png': require('../../assets/images/stella_aris_char001.png'),
-};
 
 export default function IntroScreen() {
   const t = useT();
@@ -37,13 +36,13 @@ export default function IntroScreen() {
   const scene = STORY_SCENES_FROM_CSV[sceneId] ?? STORY_SCENES_FROM_CSV.intro01;
   const pages = scene?.pages ?? [];
   const [page, setPage] = useState(0);
+  const [segmentIndex, setSegmentIndex] = useState(0);
   const [pageComplete, setPageComplete] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const appLocale = useAppSettingsStore(s => s.locale);
   const player = usePlayerStore(s => s.player);
   const setPlayer = usePlayerStore(s => s.setPlayer);
   const persist = usePlayerStore(s => s.persist);
-  const initMissions = useMissionStore(s => s.initMissions);
 
   const isLast = page === pages.length - 1;
   const current = pages[page];
@@ -54,8 +53,27 @@ export default function IntroScreen() {
     ? resolveStoryPageText(current, appLocale, player?.nickname)
     : '';
   const renderedLabel = current ? resolveStoryPageLabel(current, appLocale) : '';
-  const currentDialogImageSource = current?.imageAssetKey
-    ? STORY_IMAGE_ASSETS[current.imageAssetKey]
+  const ingameMaxLines = NARRATIVE_DIALOG_LAYOUT.maxLinesDefault;
+  const ingameSplitOptions = useMemo(
+    () => ({
+      windowWidth: width,
+      widthInsets: { hostHorizontalPadPx: NARRATIVE_DIALOG_LAYOUT.hostHorizontalPadPx },
+    }),
+    [width],
+  );
+  const ingameTextSegments = useMemo(() => {
+    if (currentViewMode !== 'ingame_dialog') return [renderedText];
+    return splitNarrativeDialogSegments(renderedText, ingameMaxLines, ingameSplitOptions);
+  }, [currentViewMode, renderedText, ingameMaxLines, ingameSplitOptions]);
+  const ingameSegmentText = ingameTextSegments[segmentIndex] ?? '';
+  const isLastIngameSegment = segmentIndex >= Math.max(0, ingameTextSegments.length - 1);
+
+  useEffect(() => {
+    setSegmentIndex(0);
+    setPageComplete(false);
+  }, [page]);
+  const currentDialogImageSource = current
+    ? resolveIngameDialogPortraitSource(current)
     : undefined;
   const ingameDialogBottomPad = resolveOverlayBottomAnchorPad(insets, SPACING.md);
 
@@ -70,6 +88,12 @@ export default function IntroScreen() {
       return;
     }
 
+    if (currentViewMode === 'ingame_dialog' && !isLastIngameSegment) {
+      setSegmentIndex((i) => i + 1);
+      setPageComplete(false);
+      return;
+    }
+
     if (isLast) {
       setIsTransitioning(true);
       try {
@@ -78,19 +102,7 @@ export default function IntroScreen() {
           return;
         }
         if (scene.completionPolicy === 'mark_intro_seen_and_start_first_mission') {
-          if (player) {
-            const updated = {
-              ...player,
-              flags: {
-                ...player.flags,
-                introSeen: true,
-                firstMissionStarted: true,
-              },
-            };
-            setPlayer(updated);
-            await persist();
-          }
-          initMissions();
+          runIntroSeenAndStartFirstMissionPolicy();
         }
         const nextRoute = (scene.nextRoute as '/(game)/planet') || '/(game)/planet';
         if (nextRoute === '/(game)/planet') {
@@ -105,15 +117,17 @@ export default function IntroScreen() {
       setPage(p => p + 1);
       setPageComplete(false);
     }
-  }, [isTransitioning, pageComplete, isLast, isPreNicknameFlow, player, scene, pages.length, setPlayer, persist, initMissions]);
+  }, [isTransitioning, pageComplete, isLast, isLastIngameSegment, currentViewMode, isPreNicknameFlow, player, scene, pages.length, setPlayer, persist]);
 
   const nextLabel = !pageComplete
     ? t('intro.btn.skipTyping')
-    : isLast
-      ? (isPreNicknameFlow && !player
-          ? t('intro.btn.registerPilot')
-          : t('intro.btn.startGame'))
-      : t('intro.btn.next');
+    : currentViewMode === 'ingame_dialog' && !isLastIngameSegment
+      ? t('intro.btn.next')
+      : isLast
+        ? (isPreNicknameFlow && !player
+            ? t('intro.btn.registerPilot')
+            : t('intro.btn.startGame'))
+        : t('intro.btn.next');
 
   return (
     <StageShell routeName="intro" background="stars">
@@ -129,12 +143,13 @@ export default function IntroScreen() {
             <View style={[styles.ingameDialogSlot, { paddingBottom: ingameDialogBottomPad }]}>
               <NarrativeDialogRow
                 label={renderedLabel || t('intro.commLabel')}
-                text={renderedText}
-                typewriterKey={`intro-dialog-${page}`}
+                text={ingameSegmentText}
+                typewriterKey={`intro-dialog-${page}-${segmentIndex}`}
                 typewriterSpeedMs={scene?.typewriterSpeedMs ?? 40}
                 onTextComplete={() => setPageComplete(true)}
                 imageSource={currentDialogImageSource}
                 portraitScale={popupImageScale}
+                maxLines={ingameMaxLines}
                 showActionButton={false}
               />
             </View>
@@ -213,7 +228,10 @@ const styles = StyleSheet.create({
   ingameDialogSlot: {
     flex: 1,
     justifyContent: 'flex-end',
+    alignSelf: 'stretch',
     width: '100%',
+    marginHorizontal: -SPACING.xl,
+    paddingHorizontal: NARRATIVE_DIALOG_LAYOUT.hostHorizontalPadPx,
   },
   sceneLabel: {
     fontFamily: FONTS.mono,

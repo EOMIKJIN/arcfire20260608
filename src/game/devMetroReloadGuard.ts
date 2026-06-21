@@ -9,6 +9,7 @@
  */
 import { DeviceEventEmitter, DevSettings, InteractionManager } from 'react-native';
 import { releasePlanetHubStageMemory } from './stageMemoryRelease';
+import { installDevLoadingViewSuppress } from './devLoadingViewSuppress';
 
 const PREPARE_EVENT = 'ArcfirePrepareMetroReload';
 const PREPARE_DELAY_MS = 350;
@@ -90,6 +91,7 @@ export function installDevMetroReloadGuard(): void {
   if (typeof __DEV__ === 'undefined' || !__DEV__ || installed) return;
   installed = true;
 
+  installDevLoadingViewSuppress();
   patchDevSettingsReload();
 
   DeviceEventEmitter.addListener(PREPARE_EVENT, () => {

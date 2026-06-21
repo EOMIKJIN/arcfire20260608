@@ -26,3 +26,37 @@
 [2026-06-19 14:46:14] MANUAL OK PSS 630.4MB / GL 55.8MB / views 289 (SOAK5H_BASELINE_20260619_restart)
 [2026-06-19 21:32:17] MANUAL OK PSS 652MB / GL 55.3MB / views 311 (SOAK_5H_SESSION_START)
 [2026-06-19 21:32:25] === SOAK 5H+ 감시 시작 (monitor_pid=28192 · 30m 간격 · 목표종료 2026-06-20 02:32:25) ===
+[2026-06-21 00:46:52] MANUAL OK PSS 832.8MB / GL 53.4MB / views 294 (HUB_ACTIVATION gl_mount_ok MANUAL)
+[2026-06-21 00:47:29] MANUAL OK PSS 980MB / GL 152.7MB / views 288 (GL_SPIKE suspect=hub_skia MANUAL)
+[2026-06-21 09:35:37] MANUAL OK PSS 830.2MB / GL 49.1MB / views 325 (SOAK5H_PATCH_HUB_DRONE_20260621_END)
+[2026-06-21 10:20:58] MANUAL OK PSS 484MB / GL 139.2MB / views 297 (HUB_ACTIVATION gl_mount_ok MANUAL)
+[2026-06-21 10:21:03] === report-watch 시작 (pkg=com.arcfire.online · 30m 간격 · 감시만) ===
+[10:21] OK 이상없음 · PSS 337.4MB / GL 30.1MB / views 281
+[10:51] OK 이상없음 · PSS 360.6MB / GL 32.1MB / views 289
+[11:21] !! 비정상종료/크래시 흔적 감지 — 06-17 15:34:32.526 12113 12120 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 12120 (FinalizerDaemon), pid 12113 (.arcfire.online) (상세 crash-20260617-124500.log)
+[11:51] !! 비정상종료/크래시 흔적 감지 — 06-17 16:32:27.767 15021 15033 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 15033 (FinalizerDaemon), pid 15021 (.arcfire.online) (상세 crash-20260617-162351.log)
+[12:21] !! 비정상종료/크래시 흔적 감지 — 06-17 15:34:32.526 12113 12120 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 12120 (FinalizerDaemon), pid 12113 (.arcfire.online) (상세 crash-20260617-124500.log)
+[12:51] !! 이상감지: [2026-06-21 12:36:42] GL +15.4MB views=308 (PSS 15.1MB) ??active hub (상세 logs/incidents.log)
+[13:21] !! 비정상종료/크래시 흔적 감지 — 06-20 00:52:00.980 19274 19374 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x8 in tid 19374 (mqt_v_js), pid 19274 (.arcfire.online) (상세 crash-20260619-144600.log)
+[13:51] !! 비정상종료/크래시 흔적 감지 — 06-17 16:32:27.767 15021 15033 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 15033 (FinalizerDaemon), pid 15021 (.arcfire.online) (상세 crash-20260617-161627.log)
+[14:21] !! 비정상종료 감지 — crash 로그 확인 (06-20 00:52:00.980 19274 19374 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x8 in tid 19374 (mqt_v_js), pid 19274 (.arcfire.online))
+[14:51] !! 비정상종료 감지 — crash 로그 확인 (06-17 15:34:32.526 12113 12120 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 12120 (FinalizerDaemon), pid 12113 (.arcfire.online))
+[15:21] !! 비정상종료 감지 — crash 로그 확인 (06-20 00:52:00.980 19274 19374 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x8 in tid 19374 (mqt_v_js), pid 19274 (.arcfire.online))
+[15:52] !! 비정상종료 감지 — crash 로그 확인 (06-17 15:34:32.526 12113 12120 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 12120 (FinalizerDaemon), pid 12113 (.arcfire.online))
+[16:22] !! 비정상종료/크래시 흔적 감지 — 06-17 16:32:27.767 15021 15033 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 15033 (FinalizerDaemon), pid 15021 (.arcfire.online) (상세 crash-20260617-162351.log)
+[16:52] !! 비정상종료/크래시 흔적 감지 — 06-17 15:34:32.526 12113 12120 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 12120 (FinalizerDaemon), pid 12113 (.arcfire.online) (상세 crash-20260617-124500.log)
+[2026-06-21 16:55:35] MANUAL OK PSS 343.6MB / GL 48.3MB / views 281 (SOAK_WORKLET_MIRROR_20260621_START)
+[17:22] !! 비정상종료/크래시 흔적 감지 — 06-20 00:52:00.980 19274 19374 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x8 in tid 19374 (mqt_v_js), pid 19274 (.arcfire.online) (상세 crash-20260619-144600.log)
+[17:52] !! 비정상종료/크래시 흔적 감지 — 06-17 16:32:27.767 15021 15033 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 15033 (FinalizerDaemon), pid 15021 (.arcfire.online) (상세 crash-20260617-162351.log)
+[18:22] OK 이상없음 · PSS 368.7MB / GL 58MB / views 300
+[18:52] OK 이상없음 · PSS 374.8MB / GL 58MB / views 302
+[19:22] !! 이상감지: [2026-06-21 19:13:34] GL_ELEVATED mounting_or_insufficient_samples gl=180.9 pss=513.9 views=286 restart_held (상세 logs/incidents.log)
+[19:52] !! 비정상종료/크래시 흔적 감지 — 06-20 00:52:00.980 19274 19374 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x8 in tid 19374 (mqt_v_js), pid 19274 (.arcfire.online) (상세 crash-20260619-213209.log)
+[20:22] !! 비정상종료 감지 — crash 로그 확인 (06-17 15:34:32.526 12113 12120 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 12120 (FinalizerDaemon), pid 12113 (.arcfire.online))
+[20:52] !! 이상감지: [2026-06-21 20:46:27] GL +8.8MB views=303 (PSS 42.2MB) ??active hub (상세 logs/incidents.log)
+[21:22] !! 이상감지: [2026-06-21 21:15:56] GL +8.3MB views=319 (PSS 22.7MB) ??active hub (상세 logs/incidents.log)
+[21:52] !! 비정상종료 감지 — crash 로그 확인 (06-17 16:32:27.767 15021 15033 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 15033 (FinalizerDaemon), pid 15021 (.arcfire.online))
+[22:23] !! 이상감지: [2026-06-21 22:06:05] GL +9.9MB views=299 (PSS 20MB) ??active hub (상세 logs/incidents.log)
+[22:53] OK 이상없음 · PSS 698.8MB / GL 47.6MB / views 305
+[23:23] OK 이상없음 · PSS 646.4MB / GL 47.4MB / views 283
+[23:53] !! 이상감지: [2026-06-21 23:31:13] GL_ELEVATED mounting_or_insufficient_samples gl=167.5 pss=820.7 views=294 restart_held (상세 logs/incidents.log)

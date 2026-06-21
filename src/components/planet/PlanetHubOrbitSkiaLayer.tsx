@@ -8,6 +8,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Animated, { type SharedValue, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import type { ArcNpcTrafficShip } from '../../store/arcNpcTrafficStore';
 import { FONTS } from '../../utils/theme';
+import { readPlanetOrbitClockMs } from '../../arcCore/orbitClockMsBridge';
 import { PLANET_MAIN_ORBIT_SCENE_SIZE } from '../../stages/planetMainStageLayout';
 import { computeArcNpcShipScreenPacked, packArcNpcShipsToFloat32 } from './planetOrbitHubWorklets';
 
@@ -147,8 +148,8 @@ export const PlanetHubOrbitSkiaLayer = memo(function PlanetHubOrbitSkiaLayer({
     arcPackSigRef.current = arcPackSig;
     shipCountSv.value = arcShips.length;
     flatSv.value = packArcNpcShipsToFloat32(arcShips);
-    syncMsSv.value = orbitClockMs.value;
-  }, [arcPackSig, arcShips, orbitClockMs, flatSv, shipCountSv, syncMsSv]);
+    syncMsSv.value = readPlanetOrbitClockMs();
+  }, [arcPackSig, arcShips, flatSv, shipCountSv, syncMsSv]);
 
   const center = PLANET_MAIN_ORBIT_SCENE_SIZE / 2;
   const arcCaptionSlots = useMemo(

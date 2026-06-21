@@ -1,5 +1,5 @@
 missionId,id,description,type,targetId,quantity,description_en
-mission_001,obj_001_a,베가 전초기지로 이동,reach_system,vega_outpost,,Travel to Vega Outpost
+mission_001,obj_001_a,베가 전초기지 행성 진입,reach_planet,vega_base,,Enter Vega Outpost planet
 mission_002,obj_002_a,해적 전투기 격파 (1대),defeat_enemy,pirate_fighter,1,Destroy pirate fighter (1)
 mission_003,obj_003_a,솔라 항구에서 식량 팩 구매 (10개),buy_goods,food,10,Buy food packs at Sola Port (10)
 mission_003,obj_003_b,미네르바로 배달,reach_system,minerva,,Deliver to Minerva

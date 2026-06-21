@@ -8,6 +8,14 @@ import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
 import { Mission, MissionProgress } from '../types';
 import { MISSIONS, FIRST_MISSION_ID } from '../data/missions';
 import { usePlayerStore } from './playerStore';
+import { resolveMissionClearDialogSceneId } from '../game/ingameDialog/ingameDialogSceneIndex';
+import type { PresentIngameDialogOptions } from '../game/ingameDialog/ingameDialogTypes';
+
+export type PendingMissionClearDialog = {
+  missionId: string;
+  sceneId: string;
+  options: PresentIngameDialogOptions;
+};
 
 const STORAGE_KEY = 'arcfire_missions_v1';
 
@@ -17,20 +25,77 @@ function emptyObjectives(m: Mission): Record<string, boolean> {
   return Object.fromEntries(m.objectives.map((o) => [o.id, false]));
 }
 
+/** 대화 종료 후 보상·다음 미션 — completeObjective / finalizeMissionCompletion 공용 */
+function applyMissionCompletionRewards(missionId: string): void {
+  const mission = MISSIONS[missionId];
+  if (!mission) return;
+  const r = mission.rewards;
+  const ps = usePlayerStore.getState();
+  if (ps.player) {
+    ps.addCredits(r.credits);
+    if (r.exp) ps.addExp(r.exp);
+    if (r.skillPointBonus) {
+      const p = usePlayerStore.getState().player!;
+      ps.setPlayer({ ...p, skillPoints: p.skillPoints + r.skillPointBonus });
+    }
+    void ps.persist();
+  }
+}
+
+function advanceMissionChainAfterComplete(
+  missionId: string,
+  completed: MissionProgress,
+  progresses: Record<string, MissionProgress>,
+  activeMissionId: string | null,
+): { progresses: Record<string, MissionProgress>; activeMissionId: string | null } {
+  const mission = MISSIONS[missionId];
+  if (!mission) {
+    return { progresses, activeMissionId };
+  }
+  const nextProgresses = { ...progresses, [missionId]: completed };
+  let nextActiveId = activeMissionId;
+
+  if (mission.nextMissionId) {
+    const nextM = MISSIONS[mission.nextMissionId];
+    if (nextM) {
+      nextActiveId = nextM.id;
+      nextProgresses[nextM.id] = {
+        missionId: nextM.id,
+        status: 'active',
+        objectives: emptyObjectives(nextM),
+        startedAt: Date.now(),
+      };
+    } else {
+      nextActiveId = null;
+    }
+  } else {
+    nextActiveId = null;
+  }
+
+  return { progresses: nextProgresses, activeMissionId: nextActiveId };
+}
+
 interface MissionState {
   progresses: Record<string, MissionProgress>;
   activeMissionId: string | null;
+  pendingMissionDialogId: string | null;
+  /** 미션 클리어 대화 — planet 허브 진입 시에만 present (월드맵 overlay 크래시 방지) */
+  pendingMissionClearDialog: PendingMissionClearDialog | null;
   loadLocalMissions: () => Promise<void>;
   persistMissions: () => Promise<void>;
   resetLocalMissions: () => Promise<void>;
   initMissions: () => void;
   getActiveMission: () => ActiveBundle | null;
   completeObjective: (missionId: string, objectiveId: string) => void;
+  /** 인게임 미션 완료 대화 종료 후 호출 */
+  finalizeMissionCompletion: (missionId: string) => void;
 }
 
 export const useMissionStore = create<MissionState>((set, get) => ({
   progresses: {},
   activeMissionId: null,
+  pendingMissionDialogId: null,
+  pendingMissionClearDialog: null,
 
   loadLocalMissions: async () => {
     try {
@@ -55,7 +120,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
 
   resetLocalMissions: async () => {
     await AsyncStorage.removeItem(STORAGE_KEY);
-    set({ progresses: {}, activeMissionId: null });
+    set({ progresses: {}, activeMissionId: null, pendingMissionDialogId: null, pendingMissionClearDialog: null });
   },
 
   initMissions: () => {
@@ -89,6 +154,8 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     if (!mission) return;
 
     const state = get();
+    if (state.pendingMissionDialogId === missionId) return;
+
     const prev = state.progresses[missionId];
     if (!prev || prev.status !== 'active') return;
 
@@ -109,39 +176,58 @@ export const useMissionStore = create<MissionState>((set, get) => ({
       status: 'complete',
       completedAt: Date.now(),
     };
-    const nextProgresses = { ...state.progresses, [missionId]: completed };
-    let activeMissionId = state.activeMissionId;
 
-    if (mission.nextMissionId) {
-      const nextM = MISSIONS[mission.nextMissionId];
-      if (nextM) {
-        activeMissionId = nextM.id;
-        nextProgresses[nextM.id] = {
-          missionId: nextM.id,
-          status: 'active',
-          objectives: emptyObjectives(nextM),
-          startedAt: Date.now(),
-        };
-      } else {
-        activeMissionId = null;
-      }
-    } else {
-      activeMissionId = null;
+    const clearSceneId = resolveMissionClearDialogSceneId(missionId);
+    if (clearSceneId) {
+      set({
+        pendingMissionDialogId: missionId,
+        pendingMissionClearDialog: {
+          missionId,
+          sceneId: clearSceneId,
+          options: {
+            context: {
+              missionTitle: mission.title,
+              missionTitleEn: mission.titleEn,
+            },
+            completionActions: [{ type: 'grant_mission_rewards', missionId }],
+          },
+        },
+        progresses: { ...state.progresses, [missionId]: { ...prev, objectives } },
+      });
+      void get().persistMissions();
+      return;
     }
 
-    set({ progresses: nextProgresses, activeMissionId });
+    const chain = advanceMissionChainAfterComplete(
+      missionId,
+      completed,
+      state.progresses,
+      state.activeMissionId,
+    );
+    set({ ...chain, pendingMissionDialogId: null, pendingMissionClearDialog: null });
+    applyMissionCompletionRewards(missionId);
+    void get().persistMissions();
+  },
 
-    const r = mission.rewards;
-    const ps = usePlayerStore.getState();
-    if (ps.player) {
-      ps.addCredits(r.credits);
-      if (r.exp) ps.addExp(r.exp);
-      if (r.skillPointBonus) {
-        const p = usePlayerStore.getState().player!;
-        ps.setPlayer({ ...p, skillPoints: p.skillPoints + r.skillPointBonus });
-      }
-      void ps.persist();
-    }
+  finalizeMissionCompletion: (missionId) => {
+    const state = get();
+    if (state.pendingMissionDialogId !== missionId) return;
+    const prev = state.progresses[missionId];
+    if (!prev) return;
+
+    const completed: MissionProgress = {
+      ...prev,
+      status: 'complete',
+      completedAt: prev.completedAt ?? Date.now(),
+    };
+    const chain = advanceMissionChainAfterComplete(
+      missionId,
+      completed,
+      state.progresses,
+      state.activeMissionId,
+    );
+    set({ ...chain, pendingMissionDialogId: null, pendingMissionClearDialog: null });
+    applyMissionCompletionRewards(missionId);
     void get().persistMissions();
   },
 }));

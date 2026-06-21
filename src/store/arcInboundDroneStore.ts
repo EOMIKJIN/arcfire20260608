@@ -7,6 +7,8 @@ export interface ArcInboundDrone {
   planetId: string;
   /** 전방향 접근 — 0..2π 랜덤 */
   approachAngleRad: number;
+  /** 스폰 시점 orbitClockMs — 연출·요격·충돌 판정 단일 시계 앵커 */
+  inboundStartOrbitMs?: number;
   inboundElapsedSec: number;
   inboundDurationSec: number;
   hp: number;
@@ -14,6 +16,8 @@ export interface ArcInboundDrone {
   phase: ArcInboundDronePhase;
   /** 방어위성 방어구 내 누적 체류(초) — 이탈 시 0 */
   defenseZoneDwellSec?: number;
+  /** 방어구 통과 중 최소 누수율(0.05..1) — impact 시 스탯 intensityMul */
+  strikeLeakMul?: number;
   /** 요격/충돌 시점(벽시계 sec) — 트레일 페이드 동안 스냅샷 유지 */
   trailEndWallSec?: number;
 }

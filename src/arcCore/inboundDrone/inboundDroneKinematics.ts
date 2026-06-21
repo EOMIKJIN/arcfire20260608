@@ -3,6 +3,7 @@
 // ============================================================
 
 import { getArcCoreInboundDronePolicy } from '../balance/arcCoreInboundDronePolicy';
+import { readPlanetOrbitClockMs } from '../orbitClockMsBridge';
 import type { ArcInboundDrone } from '../../store/arcInboundDroneStore';
 
 export const INBOUND_DRONE_PACK_STRIDE = 5;
@@ -14,15 +15,46 @@ function finiteOr(v: number, fallback: number): number {
   return Number.isFinite(v) ? v : fallback;
 }
 
-/** JS — 요격 거리 판정용 (center 오프셋 전) */
+/** orbitClockMs 앵커 — 스폰 시 저장값 우선, 없으면 elapsed 역산 */
+export function resolveInboundDroneStartOrbitMs(
+  drone: ArcInboundDrone,
+  orbitMsNow = readPlanetOrbitClockMs(),
+): number {
+  const stored = drone.inboundStartOrbitMs;
+  if (typeof stored === 'number' && Number.isFinite(stored)) return stored;
+  const elapsed = finiteOr(drone.inboundElapsedSec, 0);
+  return orbitMsNow - elapsed * 1000;
+}
+
+/** 0..1 — impacted는 1, 그 외 orbit 시계 기준 */
+export function resolveInboundDroneProgressAtOrbitMs(
+  drone: ArcInboundDrone,
+  orbitMs: number,
+): number {
+  if (drone.phase === 'impacted') return 1;
+  const dur = Math.max(0.001, finiteOr(drone.inboundDurationSec, 0.001));
+  const startMs = resolveInboundDroneStartOrbitMs(drone, orbitMs);
+  const elapsed = Math.max(0, (orbitMs - startMs) * 0.001);
+  return Math.min(1, elapsed / dur);
+}
+
+/** orbit 시계 기준 elapsed(초) — SubCore·요격·FX 공용 */
+export function resolveInboundDroneElapsedSecAtOrbitMs(
+  drone: ArcInboundDrone,
+  orbitMs: number,
+): number {
+  const dur = Math.max(0.001, finiteOr(drone.inboundDurationSec, 0.001));
+  return resolveInboundDroneProgressAtOrbitMs(drone, orbitMs) * dur;
+}
+
+/** JS — 요격 거리 판정용 (center 오프셋 전, orbit 시계 정본) */
 export function resolveInboundDroneScreenXY(
   drone: ArcInboundDrone,
+  orbitMs = readPlanetOrbitClockMs(),
 ): { x: number; y: number } | null {
-  if (drone.phase !== 'inbound') return null;
+  if (drone.phase !== 'inbound' && drone.phase !== 'destroyed') return null;
   const policy = getArcCoreInboundDronePolicy();
-  const dur = Math.max(0.001, finiteOr(drone.inboundDurationSec, 0.001));
-  const elapsed = finiteOr(drone.inboundElapsedSec, 0);
-  const progress = Math.min(1, Math.max(0, elapsed / dur));
+  const progress = resolveInboundDroneProgressAtOrbitMs(drone, orbitMs);
   const edgeR = policy.edgeSpawnRadiusPx;
   const impactR = policy.impactRadiusPx;
   const r = impactR + (edgeR - impactR) * (1 - progress);

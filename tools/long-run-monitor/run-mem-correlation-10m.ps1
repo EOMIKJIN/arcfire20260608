@@ -2,12 +2,13 @@
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$IntervalMin = 10,
-  [int]$MaxSamples = 0
+  [int]$MaxSamples = 0,
+  [string]$OutputCsv = ''
 )
 
 $logDir = Join-Path $PSScriptRoot 'logs'
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
-$csv = Join-Path $logDir 'mem-correlation-10m.csv'
+$csv = if ($OutputCsv) { $OutputCsv } else { Join-Path $logDir 'mem-correlation-10m.csv' }
 $header = 'iso_time,pid,pss_mb,gl_mb,native_heap_mb,graphics_mb,unknown_pss_est_mb,views,note'
 
 if (-not (Test-Path $csv)) {
@@ -28,8 +29,8 @@ function Parse-Metrics([string]$raw) {
 $n = 0
 while ($true) {
   $iso = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
-  $pid = (adb shell "pidof $Package" 2>$null).ToString().Trim()
-  if (-not $pid) {
+  $appPid = (adb shell "pidof $Package" 2>$null).ToString().Trim()
+  if (-not $appPid) {
     $line = "$iso,,,,,,,PROCESS_NOT_RUNNING"
     Add-Content -Path $csv -Value $line -Encoding utf8
     Write-Host "[$iso] process not running"
@@ -41,9 +42,9 @@ while ($true) {
     $native = [math]::Round($m.NativeKb / 1024, 1)
     $gfx = [math]::Round($m.GraphicsKb / 1024, 1)
     $unk = [math]::Round($m.UnknownKb / 1024, 1)
-    $line = "$iso,$pid,$pss,$gl,$native,$gfx,$unk,$($m.Views),"
+    $line = "$iso,$appPid,$pss,$gl,$native,$gfx,$unk,$($m.Views),"
     Add-Content -Path $csv -Value $line -Encoding utf8
-    Write-Host "[$iso] pid=$pid PSS=${pss}MB GL=${gl}MB Native=${native}MB Unknown=${unk}MB views=$($m.Views)"
+    Write-Host "[$iso] pid=$appPid PSS=${pss}MB GL=${gl}MB Native=${native}MB Unknown=${unk}MB views=$($m.Views)"
   }
   $n++
   if ($MaxSamples -gt 0 -and $n -ge $MaxSamples) { break }

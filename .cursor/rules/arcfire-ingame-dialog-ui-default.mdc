@@ -1,0 +1,53 @@
+---
+description: 인게임 대사창(NarrativeDialogRow) 기본 UI 계약 — 추가 구현 시 정본
+globs: src/ui/overlay/NarrativeDialogRow.tsx,src/ui/overlay/narrativeDialogLayout.ts,src/ui/overlay/splitNarrativeDialogSegments.ts,src/game/ingameDialog/**,app/(game)/intro.tsx
+alwaysApply: false
+---
+
+# 인게임 대사 UI — 기본 디폴트 (2026-06-18 정본)
+
+행성 허브·intro·NPC 대화 등 **인게임 대사**는 아래 형태를 **기본 디폴트**로 유지한다. 새 기능·리팩터 시 이 계약을 우선한다.
+
+## 정본 파일
+
+| 역할 | 파일 |
+|---|---|
+| 치수·분할 토큰 | `src/ui/overlay/narrativeDialogLayout.ts` → `NARRATIVE_DIALOG_LAYOUT` |
+| UI 렌더 | `src/ui/overlay/NarrativeDialogRow.tsx` |
+| 줄바꿈·세그먼트 | `src/ui/overlay/splitNarrativeDialogSegments.ts` |
+| 초상 resolve | `src/game/ingameDialog/resolveIngameDialogPortraitSource.ts` |
+| 행성 오버레이 | `IngameDialogHost` → `ArcOverlayHost` bottom narrative |
+
+## 레이아웃 (변경 시 split 수학과 함께 갱신)
+
+- **가로**: 100% (`alignSelf: 'stretch'`)
+- **높이**: 204px 고정 — 스크롤·가변 높이 **금지**
+- **초상**: 왼쪽 145px 카드 (`portraitWidth`) — `resizeMode: contain`
+- **본문 hud**: `flex:1` · 좌우 패딩 `hudHorizontalPadPx`(8px)
+- **텍스트**: mono md · `lineHeight` 26 · 최대 3줄
+- **버튼**: hud 하단 우측 `[ 다음 ]` / `[ 확인 ]` — 본문 완료 후 활성
+
+## 분할·진행
+
+- hud **물리 너비** 기준 soft-wrap (`charWidthPx` 12.7) — 임의 `MAX_CHARS` cap 금지
+- 3줄 초과 → 세그먼트 분할 → `[ 다음 ]`으로만 넘김
+- `numberOfLines` ellipsis로 대사 생략 **금지**
+
+## 초상 이미지
+
+- **반드시** `resolveIngameDialogPortraitSource(page)` 사용
+- 우선순위: `speakerNpcCaptainId` → `npc_ai_captains.csv` `portraitImageAssetKey` → `page.imageAssetKey`
+- 에셋 등록: `src/game/npcCaptainPortraitAssets.ts` — CSV 키와 1:1
+- 초상 없을 때만 145px placeholder(검은 슬롯) — portraitWidth 축소로 본문 넓히기 **금지**
+
+## 오버레이 패딩
+
+- bottom narrative 좌우: `hostHorizontalPadPx` (4px) + safe area
+- split `widthInsets`와 `ArcOverlayHost` / intro `ingameDialogSlot` 패딩 **동일 값** 유지
+
+## 금지
+
+- `NarrativeDialogRow` 우회 커스텀 대사 박스
+- portraitWidth 임의 축소로 “본문 넓히기”
+- 스크롤뷰·가변 높이 대사창
+- `page.imageAssetKey`만 보고 speaker 초상 무시 (intro 포함)

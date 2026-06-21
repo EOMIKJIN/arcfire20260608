@@ -3,7 +3,6 @@ import type { BmShopKind } from '../../bm/bmShopCatalog';
 import type { LevelUpSummary, MissionReward } from '../../types';
 import type { TradeProfitTip } from '../../game/tradeProfitTips';
 import type { ImageSourcePropType } from 'react-native';
-import type { NativeSyntheticEvent, TextLayoutEventData } from 'react-native';
 
 let overlaySeq = 0;
 function nextOverlayId(prefix: string): string {
@@ -70,8 +69,7 @@ export type ArcOverlayNarrativeEntry = ArcOverlayBase & {
   onTextComplete?: () => void;
   typewriterSpeedMs?: number;
   imageSource?: ImageSourcePropType;
-  measureTextRaw?: string;
-  onMeasureTextLayout?: (e: NativeSyntheticEvent<TextLayoutEventData>) => void;
+  maxLines?: number;
   /** false — 화면 외부 버튼이 진행 담당(intro footer 등) */
   showActionButton?: boolean;
 };

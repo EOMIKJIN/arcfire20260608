@@ -1,6 +1,6 @@
 # Arcfire long-run incident — Kim Team Lead auto-triage
 
-packedAt: 2026-06-20T13:06:06.802Z
+packedAt: 2026-06-21T11:20:24.804Z
 triggerReason: gl_critical_active_hub
 refixPayload: (none)
 
@@ -15,40 +15,34 @@ refixPayload: (none)
 ## Recent remediation
 
 ```
-[2026-06-20 14:35:04] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
-[2026-06-20 16:05:09] INCIDENT CRASH logged -> incidents.log (arcfire fresh=2 maxAge=65m)
-[2026-06-20 16:05:09] HANDOFF packed -> outbox/cursor-incident-handoff.md (crash)
-[2026-06-20 22:05:26] INCIDENT GL_HARD_CEILING gl=62 pss=985.3 views=305 -> immediate remediation (OOM imminent)
-[2026-06-20 22:05:26] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
-[2026-06-20 22:05:26] AUTO_FIX static audit:skia-memory start
-[2026-06-20 22:05:28] AUTO_FIX audit:skia-memory PASS
-[2026-06-20 22:05:28] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
-[2026-06-20 22:05:46] AUTO_FIX baseline reset pid=3924 gl=6MB pss=193.2MB
-[2026-06-20 22:05:46] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
-[2026-06-20 22:06:06] VERIFY PASS pid=3924 gl=4.4MB pss=352.5MB views=13
-[2026-06-20 22:06:06] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":985.3,"views":305,"lastGlMb":62,"hardCeiling":true}
+[2026-06-21 19:13:27] INFO GL_ELEVATED mounting_or_insufficient_samples gl=145.8 pss=466.7 views=928 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-21 19:13:30] INFO GL_ELEVATED mounting_or_insufficient_samples gl=145.8 pss=466.2 views=928 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-21 19:13:34] INFO GL_ELEVATED mounting_or_insufficient_samples gl=180.9 pss=513.9 views=286 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-21 20:19:36] INCIDENT GL_HARD_CEILING gl=244.8 pss=582 views=937 -> immediate remediation (OOM imminent)
+[2026-06-21 20:19:36] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-06-21 20:19:36] AUTO_FIX static audit:skia-memory start
+[2026-06-21 20:19:46] AUTO_FIX audit:skia-memory PASS
+[2026-06-21 20:19:46] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-06-21 20:20:02] AUTO_FIX baseline reset pid=20926 gl=3.7MB pss=175.7MB
+[2026-06-21 20:20:02] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-06-21 20:20:24] VERIFY PASS pid=20926 gl=8.4MB pss=210.5MB views=93
+[2026-06-21 20:20:24] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":582,"views":937,"lastGlMb":244.8,"hardCeiling":true}
 ```
 
 ## Recent incidents
 
 ```
-[2026-06-20 14:34:19] GL_HARD_CEILING gl=108.6 pss=1015.4 views=932
-[2026-06-20 14:34:19] REFIX_REQUESTED gl_critical_active_hub
-===== CRASH 2026-06-20 16:05:09 arcfire_fresh=2 maxAge=65m =====
-06-20 15:52:50.504  1909  4225 I ActivityManager: Process com.arcfire.online (pid 31767) has died: cch CAC (2046,927)
-[2026-06-20 22:05:26] GL_HARD_CEILING gl=62 pss=985.3 views=305
-[2026-06-20 22:05:26] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-21 19:13:24] GL_ELEVATED mounting_or_insufficient_samples gl=148.5 pss=480.8 views=928 restart_held
+[2026-06-21 19:13:27] GL_ELEVATED mounting_or_insufficient_samples gl=145.8 pss=466.7 views=928 restart_held
+[2026-06-21 19:13:30] GL_ELEVATED mounting_or_insufficient_samples gl=145.8 pss=466.2 views=928 restart_held
+[2026-06-21 19:13:34] GL_ELEVATED mounting_or_insufficient_samples gl=180.9 pss=513.9 views=286 restart_held
+[2026-06-21 20:19:36] GL_HARD_CEILING gl=244.8 pss=582 views=937
+[2026-06-21 20:19:36] REFIX_REQUESTED gl_critical_active_hub
 ```
 
 ## Crash signature (tail)
 
 ```
-06-19 04:17:42.427 13353 13353 F DEBUG   :       #63 pc 0000000000786138  /data/app/~~fXK6tBXO2xBbtnDokMXonw==/com.arcfire.online-RoPVHoIBd2UvT9ybW5yO0A==/base.apk!librnskia.so (offset 0x414a000) (RNSkia::JsiDomNode::invalidate()+200) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-06-19 04:17:42.427 13353 13353 F DEBUG   :       #64 pc 00000000007850f4  /data/app/~~fXK6tBXO2xBbtnDokMXonw==/com.arcfire.online-RoPVHoIBd2UvT9ybW5yO0A==/base.apk!librnskia.so (offset 0x414a000) (RNSkia::JsiDomNode::dispose(bool)+92) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-06-19 04:17:42.427 13353 13353 F DEBUG   :       #65 pc 0000000000783d7c  /data/app/~~fXK6tBXO2xBbtnDokMXonw==/com.arcfire.online-RoPVHoIBd2UvT9ybW5yO0A==/base.apk!librnskia.so (offset 0x414a000) (RNSkia::JsiDomRenderNode::dispose(bool)+44) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-06-19 04:17:42.427 13353 13353 F DEBUG   :       #66 pc 0000000000786274  /data/app/~~fXK6tBXO2xBbtnDokMXonw==/com.arcfire.online-RoPVHoIBd2UvT9ybW5yO0A==/base.apk!librnskia.so (offset 0x414a000) (RNSkia::JsiDomNode::invalidate()+516) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-06-19 04:17:42.427 13353 13353 F DEBUG   :       #67 pc 00000000007850f4  /data/app/~~fXK6tBXO2xBbtnDokMXonw==/com.arcfire.online-RoPVHoIBd2UvT9ybW5yO0A==/base.apk!librnskia.so (offset 0x414a000) (RNSkia::JsiDomNode::dispose(bool)+92) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-06-19 04:17:42.427 13353 13353 F DEBUG   :       #68 pc 0000000000783d7c  /data/app/~~fXK6tBXO2xBbtnDokMXonw==/com.arcfire.online-RoPVHoIBd2UvT9ybW5yO0A==/base.apk!librnskia.so (offset 0x414a000) (RNSkia::JsiDomRenderNode::dispose(bool)+44) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
 06-19 04:17:42.427 13353 13353 F DEBUG   :       #69 pc 00000000008e835c  /data/app/~~fXK6tBXO2xBbtnDokMXonw==/com.arcfire.online-RoPVHoIBd2UvT9ybW5yO0A==/base.apk!librnskia.so (offset 0x414a000) (RNSkia::RNSkDomRenderer::~RNSkDomRenderer()+96) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
 06-19 04:17:42.427 13353 13353 F DEBUG   :       #70 pc 0000000000630cb8  /data/app/~~fXK6tBXO2xBbtnDokMXonw==/com.arcfire.online-RoPVHoIBd2UvT9ybW5yO0A==/base.apk!librnskia.so (offset 0x414a000) (std::__ndk1::__shared_ptr_emplace<RNSkia::RNSkDomRenderer, std::__ndk1::allocator<RNSkia::RNSkDomRenderer>>::__on_zero_shared()+28) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
 06-19 04:17:42.427 13353 13353 F DEBUG   :       #71 pc 000000000061eb5c  /data/app/~~fXK6tBXO2xBbtnDokMXonw==/com.arcfire.online-RoPVHoIBd2UvT9ybW5yO0A==/base.apk!librnskia.so (offset 0x414a000) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
@@ -68,22 +62,28 @@ refixPayload: (none)
 06-19 14:38:40.625 16643 16643 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x1472000700140000
 06-20 00:52:00.980 19274 19374 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x8 in tid 19374 (mqt_v_js), pid 19274 (.arcfire.online)
 06-20 00:52:02.018 19616 19616 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000008
+06-21 13:39:58.340  5542  5604 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xc0 in tid 5604 (mqt_v_js), pid 5542 (.arcfire.online)
+06-21 13:39:59.428 15541 15541 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x00000000000000c0
+06-21 14:31:52.128  6366  6366 F libc    : Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x77000002b4 in tid 6366 (.arcfire.online), pid 6366 (.arcfire.online)
+06-21 14:31:53.014  9087  9087 F DEBUG   : signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x00000077000002b4
+06-21 15:20:32.751 23643 23707 F libc    : Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x776340008b in tid 23707 (mqt_v_js), pid 23643 (.arcfire.online)
+06-21 15:20:33.810 27647 27647 F DEBUG   : signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x000000776340008b
 ```
 
 ## mem-timeline (tail)
 
 ```csv
 ﻿iso_time,pid,pss_mb,rss_mb,gl_mb,egl_mb,graphics_mb,native_heap_mb,java_heap_mb,threads,views,delta_pss_mb,delta_gl_mb,note
-2026-06-20 17:05:10,11807,2362.6,1856.9,49.4,19.8,69.2,567.2,17.4,,271,175.9,2,PSS_SPIKE review=graphics+native
-2026-06-20 17:35:11,11807,1977,1471.7,47.4,19.8,67.2,316.5,30.7,,279,-385.6,-2,
-2026-06-20 18:05:12,11807,704,702.7,49.3,19.8,69.1,369.2,36.3,,283,-1273,1.9,
-2026-06-20 18:35:14,11807,693.3,693.7,50.2,19.8,70,368.5,15.8,,282,-10.7,0.9,
-2026-06-20 19:05:15,11807,686.2,676.3,25.9,19.8,45.7,366.4,30.6,,106,-7.1,-24.3,GL_RECOVERED idle_ok
-2026-06-20 19:35:16,11807,826.5,820,47.2,34.3,81.5,417.5,32.5,,331,140.3,21.3,HUB_ACTIVATION gl_mount_ok
-2026-06-20 20:05:17,11807,808.6,782.1,56.3,20,76.3,412.1,30.1,,318,-17.9,9.1,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
-2026-06-20 20:35:19,11807,796.7,715.6,54.6,19.8,74.4,361.8,26.3,,314,-11.9,-1.7,
-2026-06-20 21:05:20,11807,942.6,889,53.8,19.8,73.7,478.2,34.6,,306,145.9,-0.8,PSS_SPIKE review=graphics+native
-2026-06-20 21:35:21,11807,962.2,908,43.2,19.8,63.1,484.8,57,,190,19.6,-10.6,GL_RECOVERED idle_ok
-2026-06-20 22:05:23,11807,985.3,830.1,62,19.8,81.9,450.2,31.9,,305,23.1,18.8,HUB_ACTIVATION gl_mount_ok
-2026-06-20 22:06:06,3924,352.5,,4.4,,,,,,13,,,POST_REMEDIATION_VERIFY_OK
+2026-06-21 20:19:00,9392,356.7,468.2,52.8,19.8,72.7,140.8,23.9,,351,3.7,2,
+2026-06-21 20:19:04,9392,357.7,469.1,52.8,19.8,72.7,141,24.6,,351,1,0,
+2026-06-21 20:19:07,9392,355,466.4,50.8,19.8,70.7,141.5,23.3,,351,-2.7,-2,
+2026-06-21 20:19:09,9392,358,469.4,50.8,19.8,70.7,141.1,26.3,,351,3,0,
+2026-06-21 20:19:13,9392,355.2,466.6,50.8,19.8,70.7,141.2,23.9,,285,-2.8,0,
+2026-06-21 20:19:16,9392,371.1,482.5,53,34.3,87.3,140.6,23.7,,294,15.9,2.2,
+2026-06-21 20:19:18,9392,367,478.4,51.1,34.3,85.4,140.6,21.5,,310,-4.1,-1.9,
+2026-06-21 20:19:22,9392,371.2,482.6,51.5,40.7,92.1,140.3,19.2,,308,4.2,0.4,
+2026-06-21 20:19:26,9392,375.5,486.9,51.5,40.7,92.1,140.5,23.3,,296,4.3,0,
+2026-06-21 20:19:30,9392,357.9,469.3,50.8,20,70.8,141.8,25.8,,295,-17.6,-0.7,
+2026-06-21 20:19:33,9392,582,693.4,244.8,19.8,264.7,179.8,17.7,,937,224.1,194,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+2026-06-21 20:20:24,20926,210.5,,8.4,,,,,,93,,,POST_REMEDIATION_VERIFY_OK
 ```

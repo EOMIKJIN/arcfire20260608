@@ -5,6 +5,9 @@ import {
   readArcInboundDroneHubBridge,
 } from '../inboundDrone/arcInboundDroneHubBridge';
 import { runInboundDroneInterceptPass } from '../inboundDrone/runInboundDroneInterceptPass';
+import { readPlanetOrbitClockMs } from '../orbitClockMsBridge';
+import { resolveInboundDroneElapsedSecAtOrbitMs } from '../inboundDrone/inboundDroneKinematics';
+import { resolveArcInboundDroneStrikeLeakMul } from '../inboundDrone/resolveInboundDroneStrikeLeak';
 import { applyPlanetAttackCoreDamage } from '../planetAttack/applyPlanetAttackCoreDamage';
 import { PLANET_ATTACK_KIND } from '../planetAttack/planetAttackKind';
 import { usePlayerStore } from '../../store/playerStore';
@@ -83,13 +86,16 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
 
     for (const d of this.drones) {
       if (d.phase !== 'inbound') continue;
-      d.inboundElapsedSec += wallDeltaSec;
-      if (d.inboundElapsedSec >= d.inboundDurationSec) {
+      const orbitMs = readPlanetOrbitClockMs();
+      const elapsed = resolveInboundDroneElapsedSecAtOrbitMs(d, orbitMs);
+      d.inboundElapsedSec = elapsed;
+      if (elapsed >= d.inboundDurationSec) {
         d.phase = 'impacted';
         applyPlanetAttackCoreDamage({
           planetId: d.planetId,
           attackKind: PLANET_ATTACK_KIND.ARC_INBOUND_DRONE_IMPACT,
           sourceId: d.id,
+          intensityMul: resolveArcInboundDroneStrikeLeakMul(d),
         });
       }
     }
@@ -156,6 +162,7 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
       id: `arc_inbound_drone_${planetId}_${this.droneSeq}`,
       planetId,
       approachAngleRad: Math.random() * Math.PI * 2,
+      inboundStartOrbitMs: readPlanetOrbitClockMs(),
       inboundElapsedSec: 0,
       inboundDurationSec: policy.inboundDurationSec,
       hp: policy.droneHp,
@@ -169,7 +176,12 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
   private publishSnapshot(force = false): void {
     let key = `${this.drones.length}`;
     for (const d of this.drones) {
-      key += `|${d.id}:${d.phase}:${Math.round(d.inboundElapsedSec * 10)}:${d.hp}`;
+      // inbound 비행 중 elapsed는 orbit clock(worklet)이 담당 — store 4Hz publish·planet 리렌더 억제
+      if (d.phase === 'inbound') {
+        key += `|${d.id}:${d.phase}:${d.hp}`;
+      } else {
+        key += `|${d.id}:${d.phase}:${Math.round(d.inboundElapsedSec * 10)}:${d.hp}`;
+      }
     }
     if (!force && key === this.lastPublishedKey) return;
     this.lastPublishedKey = key;

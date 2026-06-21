@@ -4,6 +4,11 @@ param(
   [int]$IntervalMin = 10
 )
 
+if ($IntervalMin -lt 1) {
+  Write-Error 'IntervalMin must be >= 1. For one-shot use manual-mem-snapshot.ps1'
+  exit 1
+}
+
 . (Join-Path $PSScriptRoot 'mem-gl-leak-rules.ps1')
 
 $logDir = Join-Path $PSScriptRoot 'logs'
@@ -66,7 +71,8 @@ Write-Meta "FOCUS: hub Skia orbit + nebula + combat — restart only active hub 
 
 while ($true) {
   $iso = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
-  $appPid = (adb shell "pidof $Package" 2>$null).ToString().Trim()
+  $appPidRaw = adb shell "pidof $Package" 2>$null
+  $appPid = if ($appPidRaw) { ($appPidRaw | Out-String).Trim() } else { '' }
   Add-Content -Path $memLog -Value "`n===== $iso pid=$appPid ====="
 
   if (-not $appPid) {

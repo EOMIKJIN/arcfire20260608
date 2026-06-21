@@ -12,10 +12,10 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     objectives: [
       {
         id: "obj_001_a",
-        description: "베가 전초기지로 이동",
-        descriptionEn: "Travel to Vega Outpost",
-        type: "reach_system",
-        targetId: "vega_outpost",
+        description: "베가 전초기지 행성 진입",
+        descriptionEn: "Enter Vega Outpost planet",
+        type: "reach_planet",
+        targetId: "vega_base",
         quantity: undefined,
         complete: false,
       }

@@ -9,6 +9,7 @@ import {
   AppState,
 } from 'react-native';
 import Animated, {
+  runOnJS,
   type SharedValue,
   useFrameCallback,
   useSharedValue,
@@ -32,7 +33,12 @@ import { usePlanetCoreRuntimeStore } from '../../src/store/planetCoreRuntimeStor
 import { useMenuNotificationStore } from '../../src/store/menuNotificationStore';
 import { useArcNpcTrafficStore, type ArcNpcTrafficShip } from '../../src/store/arcNpcTrafficStore';
 import { useArcInboundDroneStore } from '../../src/store/arcInboundDroneStore';
-import { registerPlanetOrbitClockMs } from '../../src/arcCore/orbitClockMsBridge';
+import {
+  notePlanetOrbitClockMsJs,
+  readPlanetOrbitClockMs,
+  registerPlanetOrbitClockMs,
+} from '../../src/arcCore/orbitClockMsBridge';
+import { ORBIT_CLOCK_JS_MIRROR_INTERVAL_MS } from '../../src/components/planet/planetHubWorkletContract';
 import {
   publishArcInboundDroneHubBridge,
   resetArcInboundDroneHubBridge,
@@ -64,8 +70,13 @@ import {
 } from '../../src/components/planet/planetOrbitHubWorklets';
 import { QuestHUD } from '../../src/components/QuestHUD';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
-import { useArcNarrativeOverlay } from '../../src/ui/overlay/useArcNarrativeOverlay';
-import type { ArcNarrativeOverlayConfig } from '../../src/ui/overlay/useArcNarrativeOverlay';
+import {
+  isIngameDialogActive,
+  presentIngameDialogScene,
+  resetIngameDialogPlanetLandedDedupe,
+} from '../../src/game/ingameDialog';
+import { syncPlanetHubMissionAndDialog } from '../../src/missions/missionPlanetHubSync';
+import { useIngameDialogStore } from '../../src/store/ingameDialogStore';
 import { StageShell } from '../../src/stages/StageShell';
 import {
   getPlanetMainStageVerticalMetrics,
@@ -108,12 +119,9 @@ import {
   type MiningSessionState,
   type PlanetHubMiningTeardownReason,
 } from '../../src/systems/mining';
-import { STORY_SCENES_FROM_CSV } from '../../src/data/generated/csvStoryScenes';
-import { getNpcCaptain } from '../../src/npc/npcFleetRegistry';
-import { resolveTempClanColor } from '../../src/clanWar/tempClanColors';
 import { getCurrentUser } from '../../src/firebase/auth';
+import { resolveTempClanColor } from '../../src/clanWar/tempClanColors';
 import { requestLocalAccountResetFromPlanetHub, isAccountResetInProgress } from '../../src/account/localAccountReset';
-import { resolveNpcCaptainPortraitSource } from '../../src/game/npcCaptainPortraitAssets';
 import { countGoodInInventory } from '../../src/game/playerInventory';
 import { buildPlanetHubFeatureMenuItems } from '../../src/systems/planetHub/planetHubFeatureSystems';
 import { PlanetHubFeatureMenuRow } from '../../src/components/planet/PlanetHubFeatureMenuRow';
@@ -137,7 +145,6 @@ import {
   orbitLabelHead3,
   PLANET_MAIN_STANCE_ROW_HEIGHT_EST_PX,
   resolvePlanetBattleReadyDurationMs,
-  splitStoryTextByMaxLines,
 } from '../../src/game/planetHub/planetHubConstants';
 import { usePlanetHubBattleReady } from '../../src/game/planetHub/usePlanetHubBattleReady';
 import { useWaveDefenseStore } from '../../src/game/waveDefense/waveDefenseStore';
@@ -146,7 +153,6 @@ import { WAVE_DEFENSE_MAX_WAVES } from '../../src/game/waveDefense/waveDefenseFl
 import { presentWaveResultOverlay, presentSettingsOverlay, presentBmShopOverlay } from '../../src/ui/overlay/showArcOverlay';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { useT } from '../../src/i18n';
-import { resolveStoryPageText, resolveStoryPageLabel } from '../../src/i18n/storyText';
 import { usePlanetHubInfoDistanceSort } from '../../src/game/planetHub/usePlanetHubInfoDistanceSort';
 import { usePlanetHubInterval } from '../../src/game/planetHub/usePlanetHubInterval';
 import {
@@ -392,6 +398,29 @@ export default function PlanetScreen() {
     return out;
   }, [arcInboundDronesSnap, planet?.id]);
 
+  /** 허브 트래픽 exclude — arc NPC publish 참조 변경만으로 session re-seed 방지 */
+  const arcNpcHubExcludeSig = useMemo(() => {
+    const parts: string[] = [];
+    for (const ship of arcNpcShipsAtPlanet) {
+      parts.push(`${ship.id}:${ship.captainId}`);
+    }
+    parts.sort();
+    return parts.join('|');
+  }, [arcNpcShipsAtPlanet]);
+
+  /** AiNpc publish와 동일 키 — 궤도 예산 useMemo 불필요 재계산 억제 */
+  const arcNpcAtPlanetRenderSig = useMemo(() => {
+    const parts: string[] = [];
+    for (const ship of arcNpcShipsAtPlanet) {
+      parts.push(`${ship.id}:${ship.phase}:${ship.planetId}:${Math.round(ship.orbitRadiusPx)}`);
+    }
+    parts.sort();
+    return parts.join('|');
+  }, [arcNpcShipsAtPlanet]);
+
+  const arcNpcShipsAtPlanetRef = useRef(arcNpcShipsAtPlanet);
+  arcNpcShipsAtPlanetRef.current = arcNpcShipsAtPlanet;
+
   /** 웨이브 디펜스 활성(이 행성) — 전투 활성 게이트 우회 + Wave UI */
   const waveDefenseActiveHere = useWaveDefenseStore(
     (s) => s.active && s.planetId === (planet?.id ?? null),
@@ -580,56 +609,41 @@ export default function PlanetScreen() {
     applyUiNowMs: setMiningUiNowMs,
     onGrant: handleMiningGrant,
   });
-  const [activeIngameDialogSceneId, setActiveIngameDialogSceneId] = useState<string | null>(null);
-  const [ingameDialogPage, setIngameDialogPage] = useState(0);
-  const [ingameDialogSegment, setIngameDialogSegment] = useState(0);
-  const [ingameDialogPageComplete, setIngameDialogPageComplete] = useState(false);
+  const ingameDialogActive = useIngameDialogStore((s) => s.session != null);
 
   /** 웨이브 디펜스 전체 종료 → 오퍼레이터 종료 대사 1회 */
+  const waveEndDialogShownRef = useRef(false);
   const handleWaveDefenseRunEnded = useCallback(() => {
-    setIngameDialogPage(0);
-    setIngameDialogSegment(0);
-    setIngameDialogPageComplete(false);
-    setActiveIngameDialogSceneId('ingame_dialog_wave_defense_end');
+    waveEndDialogShownRef.current = true;
+    presentIngameDialogScene('ingame_dialog_wave_defense_end', {
+      onDismiss: () => {
+        if (!waveEndDialogShownRef.current) return;
+        waveEndDialogShownRef.current = false;
+        const s = useWaveDefenseStore.getState();
+        const expEarned = s.expEarned;
+        presentWaveResultOverlay({
+          outcome: s.outcome ?? 'win',
+          wavesCleared: s.wavesCleared,
+          totalWaves: WAVE_DEFENSE_MAX_WAVES,
+          expEarned,
+          onClose: () => {
+            if (expEarned > 0) usePlayerStore.getState().addExp(expEarned);
+            useWaveDefenseStore.getState().reset();
+          },
+        });
+      },
+    });
   }, []);
   useWaveDefenseController({
     planetId: planet?.id ?? null,
     systemId: system?.id ?? null,
     isTestBed: planet?.id === 'vega_base',
-    introDone: !activeIngameDialogSceneId,
+    introDone: !ingameDialogActive,
     routeFocused: isPlanetRouteFocused,
     appActive: appStateActive,
     onRunEnded: handleWaveDefenseRunEnded,
   });
 
-  // 웨이브 종료 대사(ingame_dialog_wave_defense_end)가 닫히면 최종 결과창 표시.
-  // 결과창 닫을 때 누적 경험치를 실제 지급(addExp)하고 웨이브 상태를 초기화한다.
-  const waveEndDialogShownRef = useRef(false);
-  useEffect(() => {
-    if (activeIngameDialogSceneId === 'ingame_dialog_wave_defense_end') {
-      waveEndDialogShownRef.current = true;
-      return;
-    }
-    if (!waveEndDialogShownRef.current || activeIngameDialogSceneId) return;
-    waveEndDialogShownRef.current = false;
-    const s = useWaveDefenseStore.getState();
-    const expEarned = s.expEarned;
-    presentWaveResultOverlay({
-      outcome: s.outcome ?? 'win',
-      wavesCleared: s.wavesCleared,
-      totalWaves: WAVE_DEFENSE_MAX_WAVES,
-      expEarned,
-      onClose: () => {
-        if (expEarned > 0) usePlayerStore.getState().addExp(expEarned);
-        useWaveDefenseStore.getState().reset();
-      },
-    });
-  }, [activeIngameDialogSceneId]);
-  /**
-   * 인게임 대화 트리거 전용: `player.currentPlanetId`(메인 행성 허브 착륙) 기준으로만 소비.
-   * 무역소·조선소 등 세부 화면 라우트 포커스와 무관.
-   */
-  const ingameDialogLastLandedPlanetIdRef = useRef<string | null>(null);
   useEffect(() => {
     if (!playerHydrated || !player?.currentPlanetId) return;
     markBootPerf('planet_first_render');
@@ -637,175 +651,19 @@ export default function PlanetScreen() {
 
   useEffect(() => {
     if (!playerHydrated) return;
-    // 계정 초기화 purge 도중 player 가 null 이 되어도 여기서 조기 리다이렉트하지 않는다.
-    // (나머지 purge 완료 후 finalize 가 1회 타이틀로 이동 — 부하정리 완료 후 복귀 보장)
     if (!player && !isAccountResetInProgress()) router.replace('/');
   }, [player, playerHydrated]);
 
+  /** STAGE 1 포커스 + 착륙 시에만 planet_landed·reach_planet·미션 클리어 대화 */
   useEffect(() => {
-    const p = usePlayerStore.getState().player;
-    const landedPlanetId = p?.currentPlanetId ?? null;
-
+    if (!playerHydrated || !isPlanetRouteFocused) return;
+    const landedPlanetId = player?.currentPlanetId ?? null;
     if (!landedPlanetId) {
-      ingameDialogLastLandedPlanetIdRef.current = null;
+      resetIngameDialogPlanetLandedDedupe();
       return;
     }
-
-    // 단일 조건: 메인스테이지(행성 허브) = currentPlanetId 가 비어 있지 않은 값으로 막 바뀐 착륙 1회
-    if (ingameDialogLastLandedPlanetIdRef.current === landedPlanetId) {
-      return;
-    }
-    ingameDialogLastLandedPlanetIdRef.current = landedPlanetId;
-
-    if (activeIngameDialogSceneId) return;
-
-    const candidate = Object.values(STORY_SCENES_FROM_CSV).find((sceneDef) => {
-      if (sceneDef.triggerKey !== 'planet_landed') return false;
-      if (sceneDef.triggerTargetId !== landedPlanetId) return false;
-      if (!sceneDef.pages.some((page) => page.viewMode === 'ingame_dialog')) return false;
-      if (sceneDef.triggerRepeat === 'once' && p && p.flags.seenStorySceneIds.includes(sceneDef.id)) {
-        return false;
-      }
-      return true;
-    });
-    if (!candidate) return;
-
-    setIngameDialogPage(0);
-    setIngameDialogSegment(0);
-    setIngameDialogPageComplete(false);
-    setActiveIngameDialogSceneId(candidate.id);
-  }, [player?.currentPlanetId, activeIngameDialogSceneId]);
-
-  const activeIngameDialogScene = activeIngameDialogSceneId
-    ? STORY_SCENES_FROM_CSV[activeIngameDialogSceneId]
-    : null;
-  const activeIngameDialogPages = activeIngameDialogScene?.pages ?? [];
-  const activeIngameDialogCurrentPage = activeIngameDialogPages[ingameDialogPage];
-  const activeIngameDialogSpeaker = useMemo(() => {
-    const sid = activeIngameDialogCurrentPage?.speakerNpcCaptainId;
-    if (!sid) return null;
-    return getNpcCaptain(sid) ?? null;
-  }, [activeIngameDialogCurrentPage?.speakerNpcCaptainId]);
-  const activeIngameDialogImageSource =
-    resolveNpcCaptainPortraitSource(
-      activeIngameDialogSpeaker?.portraitImageAssetKey ?? activeIngameDialogCurrentPage?.imageAssetKey,
-    ) ?? undefined;
-  const activeIngameDialogTextRaw = (
-    activeIngameDialogCurrentPage
-      ? resolveStoryPageText(activeIngameDialogCurrentPage, appLocale, player?.nickname)
-      : ''
-  )
-    .replace(/\r\n/g, '\n')
-    .replace(/\r/g, '\n')
-    .replace(/\n{3,}/g, '\n\n');
-  const activeIngameDialogTextChunks = splitStoryTextByMaxLines(
-    activeIngameDialogTextRaw,
-    activeIngameDialogScene?.maxLinesPerPage ?? 4,
-  );
-  const activeIngameDialogText = activeIngameDialogTextChunks[ingameDialogSegment] ?? '';
-  const activeIngameDialogIsLastSegment =
-    ingameDialogSegment >= Math.max(0, activeIngameDialogTextChunks.length - 1);
-  const activeIngameDialogIsLast = ingameDialogPage >= Math.max(0, activeIngameDialogPages.length - 1);
-  const isFinalIngameDialogStep =
-    activeIngameDialogIsLast && activeIngameDialogIsLastSegment;
-  const markIngameDialogSceneSeen = useCallback((sceneId: string) => {
-    const snapshot = usePlayerStore.getState().player;
-    if (!snapshot) return;
-    const prevSeen = snapshot.flags.seenStorySceneIds ?? [];
-    if (prevSeen.includes(sceneId)) return;
-    setPlayer({
-      ...snapshot,
-      flags: {
-        ...snapshot.flags,
-        seenStorySceneIds: [...prevSeen, sceneId],
-      },
-    });
-    void persist();
-  }, [setPlayer, persist]);
-
-  const handleNextIngameDialog = useCallback(() => {
-    if (!activeIngameDialogScene || activeIngameDialogPages.length === 0) {
-      setActiveIngameDialogSceneId(null);
-      return;
-    }
-    if (isFinalIngameDialogStep && ingameDialogPageComplete) {
-      if (activeIngameDialogScene.triggerRepeat === 'once') {
-        markIngameDialogSceneSeen(activeIngameDialogScene.id);
-      }
-      setActiveIngameDialogSceneId(null);
-      setIngameDialogPage(0);
-      setIngameDialogSegment(0);
-      setIngameDialogPageComplete(false);
-      return;
-    }
-    if (!ingameDialogPageComplete) {
-      return;
-    }
-    if (!activeIngameDialogIsLastSegment) {
-      setIngameDialogSegment((s) => s + 1);
-      setIngameDialogPageComplete(false);
-      return;
-    }
-    if (activeIngameDialogIsLast) {
-      if (activeIngameDialogScene.triggerRepeat === 'once') {
-        markIngameDialogSceneSeen(activeIngameDialogScene.id);
-      }
-      setActiveIngameDialogSceneId(null);
-      setIngameDialogPage(0);
-      setIngameDialogSegment(0);
-      setIngameDialogPageComplete(false);
-      return;
-    }
-    setIngameDialogPage((p) => p + 1);
-    setIngameDialogSegment(0);
-    setIngameDialogPageComplete(false);
-  }, [
-    activeIngameDialogScene,
-    activeIngameDialogPages.length,
-    activeIngameDialogIsLast,
-    activeIngameDialogIsLastSegment,
-    isFinalIngameDialogStep,
-    ingameDialogPageComplete,
-    markIngameDialogSceneSeen,
-  ]);
-
-  const planetIngameNarrativeConfig = useMemo((): ArcNarrativeOverlayConfig | null => {
-    if (!activeIngameDialogScene) return null;
-    return {
-      anchor: 'center',
-      label:
-        (activeIngameDialogCurrentPage
-          ? resolveStoryPageLabel(activeIngameDialogCurrentPage, appLocale)
-          : '') || (appLocale === 'ko' ? '[ 통신 ]' : '[ COMM ]'),
-      text: activeIngameDialogText,
-      typewriterKey: `ingame-dialog-${activeIngameDialogScene.id}-${ingameDialogPage}-${ingameDialogSegment}`,
-      typewriterSpeedMs: activeIngameDialogScene.typewriterSpeedMs ?? 28,
-      onTextComplete: () => setIngameDialogPageComplete(true),
-      imageSource: activeIngameDialogImageSource,
-      onPressNext: handleNextIngameDialog,
-      nextDisabled: !ingameDialogPageComplete,
-      buttonText: isFinalIngameDialogStep
-        ? (appLocale === 'ko' ? '[ 확인 ]' : '[ OK ]')
-        : (appLocale === 'ko' ? '[ 다음 ]' : '[ Next ]'),
-    };
-  }, [
-    activeIngameDialogScene,
-    activeIngameDialogCurrentPage,
-    appLocale,
-    activeIngameDialogText,
-    ingameDialogPage,
-    ingameDialogSegment,
-    activeIngameDialogImageSource,
-    handleNextIngameDialog,
-    ingameDialogPageComplete,
-    isFinalIngameDialogStep,
-  ]);
-
-  useArcNarrativeOverlay(
-    'planet-ingame-dialog',
-    Boolean(activeIngameDialogScene),
-    planetIngameNarrativeConfig,
-  );
+    syncPlanetHubMissionAndDialog(landedPlanetId);
+  }, [player?.currentPlanetId, playerHydrated, isPlanetRouteFocused]);
 
   const [nearbyPresence, setNearbyPresence] = useState<ReturnType<typeof resolvePlanetNearbyPresence>>([]);
   useEffect(() => {
@@ -821,10 +679,23 @@ export default function PlanetScreen() {
     };
   }, [isPlanetRouteFocused, planet?.id, system?.id]);
 
+  const nearbyPresenceRef = useRef(nearbyPresence);
+  nearbyPresenceRef.current = nearbyPresence;
+
+  const nearbyHubExcludeSig = useMemo(() => {
+    const parts: string[] = [];
+    for (const row of nearbyPresence) {
+      const sid = row.linkedCapitalShipId;
+      if (sid) parts.push(sid);
+    }
+    parts.sort();
+    return parts.join('|');
+  }, [nearbyPresence]);
+
   /** 궤도 Skia·마크 렌더 — 테이블+아크 합산 상한 (아르카디아 17척 등 GL·뷰 폭주 방지) */
   const orbitRenderBudget = useMemo(
     () => applyPlanetHubOrbitRenderBudget(nearbyPresence, arcNpcShipsAtPlanet),
-    [nearbyPresence, arcNpcShipsAtPlanet],
+    [nearbyPresence, arcNpcAtPlanetRenderSig],
   );
   const orbitTablePresence = orbitRenderBudget.tableRows;
   const orbitArcShipsAtPlanet = orbitRenderBudget.arcShips;
@@ -866,11 +737,11 @@ export default function PlanetScreen() {
     const stopSession = startHubOrbitTrafficSession(planet.id, system.id);
     const excludeCaptains = new Set<string>();
     const excludeShips = new Set<string>();
-    for (const row of nearbyPresence) {
+    for (const row of nearbyPresenceRef.current) {
       const sid = row.linkedCapitalShipId;
       if (sid) excludeShips.add(sid);
     }
-    for (const ship of arcNpcShipsAtPlanet) {
+    for (const ship of arcNpcShipsAtPlanetRef.current) {
       excludeCaptains.add(ship.captainId);
       excludeShips.add(ship.id);
     }
@@ -882,23 +753,23 @@ export default function PlanetScreen() {
       dispose: stopSession,
     });
     return () => token.release();
-  }, [isPlanetRouteFocused, planet?.id, system?.id, nearbyPresence, arcNpcShipsAtPlanet]);
+  }, [isPlanetRouteFocused, planet?.id, system?.id, nearbyHubExcludeSig, arcNpcHubExcludeSig]);
 
   const tickHubTraffic = useCallback(() => {
     if (!planet || !system) return;
     const excludeCaptains = new Set<string>();
     const excludeShips = new Set<string>();
-    for (const row of nearbyPresence) {
+    for (const row of nearbyPresenceRef.current) {
       const sid = row.linkedCapitalShipId;
       if (sid) excludeShips.add(sid);
     }
-    for (const ship of arcNpcShipsAtPlanet) {
+    for (const ship of arcNpcShipsAtPlanetRef.current) {
       excludeCaptains.add(ship.captainId);
       excludeShips.add(ship.id);
     }
     tickHubOrbitTraffic(planet.id, system.id, excludeCaptains, excludeShips);
     setHubTrafficTick((v) => v + 1);
-  }, [planet, system, nearbyPresence, arcNpcShipsAtPlanet]);
+  }, [planet?.id, system?.id]);
 
   usePlanetHubInterval(
     'planet_hub_orbit_traffic',
@@ -920,13 +791,10 @@ export default function PlanetScreen() {
     );
   }, [planet, system, arcNpcShipsAtPlanet, hubMergedNearbyPresence]);
   const openPlanetHubNpcDialog = useCallback(() => {
-    if (activeIngameDialogSceneId) return;
+    if (isIngameDialogActive()) return;
     const sceneId = resolvePlanetHubNpcDialogSceneId(planetHubCaptainIds);
-    setIngameDialogPage(0);
-    setIngameDialogSegment(0);
-    setIngameDialogPageComplete(false);
-    setActiveIngameDialogSceneId(sceneId);
-  }, [planetHubCaptainIds, activeIngameDialogSceneId]);
+    presentIngameDialogScene(sceneId);
+  }, [planetHubCaptainIds]);
   const handlePlanetSalvageSearch = useCallback(() => {
     if (!planet || !activeSalvageWreck) {
       showArcAlert(t('planet.searchTitle'), t('planet.searchNone'));
@@ -975,6 +843,12 @@ export default function PlanetScreen() {
   /** 누적 경과 ms — %1 없이 각도만 선형 증가 (함선별 periodScale 로 고유 속도) */
   const orbitClockMs = useSharedValue(0);
   const orbitParamsSv = useSharedValue<number[]>([]);
+  const orbitClockJsBridgeLastSyncSv = useSharedValue(0);
+  const bridgeNoteOrbitClockJs = useCallback((ms: number) => {
+    notePlanetOrbitClockMsJs(ms);
+  }, []);
+  const orbitFlatParamsJsRef = useRef(orbitFlatParams);
+  orbitFlatParamsJsRef.current = orbitFlatParams;
 
   useEffect(() => {
     if (!isPlanetRouteFocused) {
@@ -990,6 +864,11 @@ export default function PlanetScreen() {
     const dt = Math.min(timeSincePreviousFrame ?? 0, ORBIT_FRAME_DT_MAX_MS);
     if (dt <= 0 || !Number.isFinite(dt)) return;
     orbitClockMs.value += dt;
+    const now = orbitClockMs.value;
+    if (now - orbitClockJsBridgeLastSyncSv.value >= ORBIT_CLOCK_JS_MIRROR_INTERVAL_MS) {
+      orbitClockJsBridgeLastSyncSv.value = now;
+      runOnJS(bridgeNoteOrbitClockJs)(now);
+    }
   }, false);
 
   useEffect(() => {
@@ -1016,6 +895,7 @@ export default function PlanetScreen() {
     return () => {
       token.release();
       orbitFrame.setActive(false);
+      notePlanetOrbitClockMsJs(0);
     };
   }, [
     planetStageSkiaActive,
@@ -1036,10 +916,10 @@ export default function PlanetScreen() {
   useEffect(() => {
     arcPackSortRef.current = {
       flat: packArcNpcShipsToFloat32(orbitArcShipsAtPlanet),
-      t0: orbitClockMs.value,
+      t0: readPlanetOrbitClockMs(),
       count: orbitArcShipsAtPlanet.length,
     };
-  }, [orbitArcShipsAtPlanet, orbitClockMs]);
+  }, [orbitArcShipsAtPlanet]);
 
   const [infoLineOrder, setInfoLineOrder] = useState<number[]>([]);
   useEffect(() => {
@@ -1060,8 +940,8 @@ export default function PlanetScreen() {
     }
     const baseLen = tableOrbitSlotCountRef.current;
     const arcIndexById = arcShipIndexByIdRef.current;
-    const m = orbitClockMs.value;
-    const flatTable = orbitParamsSv.value;
+    const m = readPlanetOrbitClockMs();
+    const flatTable = orbitFlatParamsJsRef.current;
     const { flat: arcFlat, t0: arcT0, count: arcCount } = arcPackSortRef.current;
     const distances = new Array<number>(L);
     for (let i = 0; i < L; i++) {
@@ -1081,7 +961,7 @@ export default function PlanetScreen() {
     const idx = Array.from({ length: L }, (_, i) => i);
     idx.sort((a, b) => distances[a]! - distances[b]! || a - b);
     setInfoLineOrder(prev => (prev.length === L && prev.every((v, k) => v === idx[k]) ? prev : idx));
-  }, [orbitClockMs, orbitParamsSv]);
+  }, []);
 
   usePlanetHubInfoDistanceSort(
     resolvedPlanetId,

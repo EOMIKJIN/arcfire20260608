@@ -312,6 +312,8 @@ function buildNpcCaptains() {
     aiClanZone: ${['safe', 'neutral', 'pvp'].includes(String(r.aiClanZone ?? '').trim()) ? q(String(r.aiClanZone).trim()) : 'null'},
     arcOrbitPresenceFill: ${toBool(r.arcOrbitPresenceFill)},
     mainStageTalkEnabled: ${toBool(r.mainStageTalkEnabled)},
+    mainStageTalkPriority: ${toInt(r.mainStageTalkPriority || 5, 5)},
+    mainStageTalkSceneId: ${q(nullable(r.mainStageTalkSceneId))},
     mainStageMissionTriggerId: ${q(nullable(r.mainStageMissionTriggerId))},
     mainStageEventTriggerId: ${q(nullable(r.mainStageEventTriggerId))},
     tavernPlanetIds: ${JSON.stringify(splitPipe(r.tavernPlanetIdsPipe))},

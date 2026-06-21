@@ -20,9 +20,10 @@ import { usePlayerStore } from '../../src/store/playerStore';
 import { listNpcCaptains } from '../../src/npc/npcFleetRegistry';
 import { ArcStageBackButton } from '../../src/ui/overlay/ArcStageBackButton';
 import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacilityTabBar';
-import { useArcNarrativeOverlay } from '../../src/ui/overlay/useArcNarrativeOverlay';
-import type { ArcNarrativeOverlayConfig } from '../../src/ui/overlay/useArcNarrativeOverlay';
-import { resolveNpcCaptainPortraitSource } from '../../src/game/npcCaptainPortraitAssets';
+import {
+  presentIngameDialogScene,
+} from '../../src/game/ingameDialog';
+import { resolveTavernHostDialogSceneId } from '../../src/game/ingameDialog/resolveTavernHostDialogSceneId';
 import { formatCredits } from '../../src/utils/formatCredits';
 import { readPlanetPopulationDomeDetail } from '../../src/game/planetDevelopment/planetPopulationDomeListing';
 import { listActiveTavernBounties } from '../../src/game/tavern/tavernBountyGenerator';
@@ -46,7 +47,6 @@ export default function TavernScreen() {
   const notices = useTavernBoardStore((s) => s.notices);
   const currentPlanetId = player?.currentPlanetId ?? null;
   const [hostDialogVisible, setHostDialogVisible] = useState(false);
-  const [hostDialogDone, setHostDialogDone] = useState(false);
   const boardMeta = useMemo(
     () => t('tavern.boardMeta', { count: notices.length }),
     [notices.length, t],
@@ -74,21 +74,13 @@ export default function TavernScreen() {
     }
     return retiredPool[0] ?? null;
   }, [currentPlanetId]);
-  const hostGreeting = useMemo(() => {
-    if (!tavernHostCaptain) return '';
-    const nickname = player?.nickname ?? t('tavern.defaultPilot');
-    return t('tavern.greeting', { name: nickname });
-  }, [player?.nickname, tavernHostCaptain, t]);
-  const tavernHostImage = useMemo(
-    () =>
-      resolveNpcCaptainPortraitSource(tavernHostCaptain?.portraitImageAssetKey)
-      ?? resolveNpcCaptainPortraitSource('assets/images/npc/mia_bello_char002.png')
-      ?? undefined,
-    [tavernHostCaptain?.portraitImageAssetKey],
-  );
+  useEffect(() => {
+    if (!hostDialogVisible || !tavernHostCaptain) return;
+    const sceneId = resolveTavernHostDialogSceneId(tavernHostCaptain.id);
+    presentIngameDialogScene(sceneId, { onDismiss: () => setHostDialogVisible(false) });
+  }, [hostDialogVisible, tavernHostCaptain]);
 
   useEffect(() => {
-    setHostDialogDone(false);
     if (!tavernHostCaptain) {
       setHostDialogVisible(false);
       return;
@@ -100,7 +92,6 @@ export default function TavernScreen() {
   useFocusEffect(
     useCallback(() => {
       if (!tavernHostCaptain) return;
-      setHostDialogDone(false);
       setHostDialogVisible(true);
     }, [tavernHostCaptain]),
   );
@@ -109,31 +100,8 @@ export default function TavernScreen() {
   const stageFrameReady = useStageFirstFrameReady();
   usePlanetSubStageMemory('tavern', () => {
     setHostDialogVisible(false);
-    setHostDialogDone(false);
   });
   usePlanetHubFacilityAccessGate('tavern');
-
-  const tavernNarrativeConfig = useMemo((): ArcNarrativeOverlayConfig | null => {
-    if (!tavernHostCaptain) return null;
-    return {
-      anchor: 'bottom',
-      label: t('tavern.hostLabel', { name: tavernHostCaptain.displayName }),
-      text: hostGreeting,
-      typewriterKey: `${tavernHostCaptain.id}:${player?.nickname ?? 'pilot'}`,
-      typewriterSpeedMs: 42,
-      onTextComplete: () => setHostDialogDone(true),
-      imageSource: tavernHostImage,
-      onPressNext: () => setHostDialogVisible(false),
-      nextDisabled: !hostDialogDone,
-      buttonText: t('tavern.hostConfirm'),
-    };
-  }, [tavernHostCaptain, hostGreeting, hostDialogDone, tavernHostImage, player?.nickname, t]);
-
-  useArcNarrativeOverlay(
-    'tavern-host-greeting',
-    hostDialogVisible && Boolean(tavernHostCaptain),
-    tavernNarrativeConfig,
-  );
 
   return (
     <StageShell key={localeRenderKey} routeName="tavern" background="none" edges={['bottom']}>

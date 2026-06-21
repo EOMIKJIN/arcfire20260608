@@ -1,4 +1,4 @@
-﻿id,displayName,triggerKey,triggerTargetId,triggerRepeat,maxLinesPerPage,completionPolicy,nextRoute,skippable,typewriterSpeedMs,fadeInEnabled,fadeInDurationMs,fadeOutEnabled,fadeOutDurationMs
+id,displayName,triggerKey,triggerTargetId,triggerRepeat,maxLinesPerPage,completionPolicy,nextRoute,skippable,typewriterSpeedMs,fadeInEnabled,fadeInDurationMs,fadeOutEnabled,fadeOutDurationMs
 intro01,튜토리얼 인트로,nickname_created,,once,5,mark_intro_seen_and_start_first_mission,/(game)/planet,TRUE,40,TRUE,700,TRUE,600
 ingame_dialog_01,아르카디아 환영 대사,planet_landed,arcadia_prime,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 ingame_dialog_wave_defense_end,웨이브 디펜스 종료,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
@@ -62,3 +62,6 @@ mission_clear_default,미션 완료(범용),manual,,repeat,6,none,/(game)/planet
 mission_clear_mission_001,첫 비행 완료,manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 mission_clear_mission_002,해적 소탕 완료,manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 mission_clear_mission_003,무역 루트 개척 완료,manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_draco_obs_01,세레나 드릴 성운관측 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_draco_escort_01,델 라인 호위 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_operator_stella,스텔라 아리스 안내 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
