@@ -1,0 +1,5 @@
+productId,gemCost,creditAmount,rateBonusPct,badgeKey,notesKo
+ex_gems_50,50,20000,0,,400Cr/💎 — impulse(최저 효율)
+ex_gems_100,100,44000,10,popular,440Cr/💎
+ex_gems_300,300,144000,20,,480Cr/💎
+ex_gems_500,500,250000,25,bestValue,500Cr/💎 — 최고 효율

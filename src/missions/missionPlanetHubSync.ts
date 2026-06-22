@@ -9,6 +9,7 @@ import {
   tryFireIngameDialogTrigger,
 } from '../game/ingameDialog/ingameDialogApi';
 import { useMissionStore } from '../store/missionStore';
+import { listActiveMissionBundles } from './missionActiveBundles';
 
 function tryPresentPendingMissionClearDialog(): boolean {
   const pending = useMissionStore.getState().pendingMissionClearDialog;
@@ -21,8 +22,8 @@ function tryPresentPendingMissionClearDialog(): boolean {
 }
 
 export function syncPlanetHubMissionAndDialog(planetId: string): void {
-  const active = useMissionStore.getState().getActiveMission();
-  if (active) {
+  const bundles = listActiveMissionBundles(useMissionStore.getState().progresses);
+  for (const active of bundles) {
     for (const obj of active.mission.objectives) {
       if (
         obj.type === 'reach_planet'

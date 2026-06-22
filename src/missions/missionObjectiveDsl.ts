@@ -9,8 +9,8 @@
  * - 목표 타입별로 `true`가 되는 조건은 아래 각 절. 완료는 `completeObjective(missionId, objectiveId)`로만 기록.
  *
  * **UI** (`QuestHUD`)
- * - 활성 미션 1건: `getActiveMission()` → `mission.title` + 첫 미완료 `objective.description` 표시.
- * - 타입별 전용 UI·진행률 바는 없음(텍스트만). 신규 타입 추가 시 HUD 분기 명세를 이 파일에 추가할 것.
+ * - 주 표시: `getActiveMission()` (`activeMissionId` 1건) → title + 첫 미완료 objective.
+ * - 인스턴스 병행 시 objective 완료는 `listActiveMissionBundles()` 전체를 순회(허브·월드맵·무역·전투).
  *
  * ---
  * ### `reach_system`

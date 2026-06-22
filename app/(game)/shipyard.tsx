@@ -7,7 +7,6 @@ import {
   View, Text, TouchableOpacity, StyleSheet,
   ScrollView, Image,
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { useT, t as tStatic, intlTag } from '../../src/i18n';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
@@ -46,6 +45,11 @@ import type {
   ShipyardEquipSlotId,
 } from '../../src/types';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
+import {
+  createShipyardScreenSession,
+  HeavyUiStageErrorPanel,
+  useHeavyUiDataSession,
+} from '../../src/ui/heavyUiDataSession';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
 import { usePlanetHubFacilityAccessGate } from '../../src/hooks/usePlanetHubFacilityAccessGate';
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
@@ -70,6 +74,11 @@ import {
   resolveWeaponItemDef,
   weaponIdFromWeaponItemId,
 } from '../../src/game/weaponItemBridge';
+import {
+  isShipEquipmentItemId,
+  resolveShipEquipmentSlotForItemDef,
+  formatShipEquipmentListingSuffix,
+} from '../../src/game/shipEquipment';
 const REPAIR_COST_PER_HP = 5;
 const SHIELD_RECHARGE_COST = 200;
 /** 메인스테이지 기준 하단 공백과 동기 */
@@ -98,17 +107,20 @@ export default function ShipyardScreen() {
   const localeRenderKey = useLocaleRenderKey();
   const locale = useAppSettingsStore((s) => s.locale);
   const player = usePlayerStore(s => s.player);
-  const loadLocalPlayer = usePlayerStore(s => s.loadLocalPlayer);
   const updateShip = usePlayerStore(s => s.updateShip);
   const spendCredits = usePlayerStore(s => s.spendCredits);
   const persist = usePlayerStore(s => s.persist);
   const [tab, setTab] = useState<'status' | 'capital' | 'upgrade' | 'hangar'>('status');
+  const safeBack = useSafeRouterBack();
+  const stageFrameReady = useStageFirstFrameReady();
 
-  useFocusEffect(
-    React.useCallback(() => {
-      void loadLocalPlayer();
-    }, [loadLocalPlayer]),
+  const shipyardSessionConfig = useMemo(
+    () => (player?.currentPlanetId ? createShipyardScreenSession(player.currentPlanetId) : null),
+    [player?.currentPlanetId],
   );
+  const shipyardSession = useHeavyUiDataSession(shipyardSessionConfig);
+  const screenReady = shipyardSession.phase === 'ready' && stageFrameReady;
+
   const hangarSorted = useMemo(() => {
     if (!player) return [];
     return [...player.shipHangar].sort((a, b) => b.acquiredAt - a.acquiredAt);
@@ -123,12 +135,10 @@ export default function ShipyardScreen() {
     () => (player ? normalizePlayerCombatProficiency(player.combatProficiency, player.level) : null),
     [player],
   );
-  const safeBack = useSafeRouterBack();
   usePlanetSubStageMemory('shipyard', () => {
     setTab('status');
   });
   usePlanetHubFacilityAccessGate('shipyard');
-  const stageFrameReady = useStageFirstFrameReady();
 
   if (!player || !shipFinal) return null;
 
@@ -526,7 +536,16 @@ export default function ShipyardScreen() {
 
         <View style={{ height: SHIPYARD_BOTTOM_STAGE_RESERVE_PX }} />
       </ScrollView>
-      <StageLoadingOverlay visible={!stageFrameReady} overlayId="stage-loading-shipyard" />
+      <StageLoadingOverlay visible={!screenReady && shipyardSession.phase !== 'error'} overlayId="stage-loading-shipyard" />
+      {shipyardSession.phase === 'error' ? (
+        <HeavyUiStageErrorPanel
+          preflightCode={shipyardSession.preflightCode}
+          error={shipyardSession.error}
+          facilityKind="shipyard"
+          onRetry={shipyardSession.retry}
+          onBack={safeBack}
+        />
+      ) : null}
       </View>
     </StageShell>
   );
@@ -619,6 +638,42 @@ function ShipyardInventoryGrid({
     await persist();
   };
 
+  const equipEquipmentFromInventory = async (itemId: string) => {
+    if (isSurvivalPodNpcShipId(ship.portraitNpcCapitalShipId)) {
+      showArcAlert(t('shipyard.inventory.equipPodTitle'), t('shipyard.inventory.equipPodBody'));
+      return;
+    }
+    const slotId = resolveShipEquipmentSlotForItemDef(itemId);
+    if (!slotId) {
+      showArcAlert(t('shipyard.inventory.equipFailTitle'), t('shipyard.inventory.equipFailNoSlot'));
+      return;
+    }
+    const slotDef = SHIPYARD_EQUIP_SLOT_DEFS.find((d) => d.id === slotId);
+    const order = slotDef?.order ?? 99;
+    if (isShipyardEquipSlotLockedByCapacity(order, slotId, ship.equipCapacity ?? 0)) {
+      showArcAlert(t('shipyard.equip.lockTitle'), t('shipyard.equip.lockBody', { n: ship.equipCapacity ?? 0 }));
+      return;
+    }
+    const nextSlots = { ...(ship.equipSlots ?? {}) };
+    nextSlots[slotId] = {
+      itemDefId: itemId,
+      name: resolveEquipSlotDisplayName(itemId, itemId, locale),
+    };
+    updateShip({ ...ship, equipSlots: nextSlots });
+    await persist();
+  };
+
+  const unequipEquipmentFromInventory = async (itemId: string) => {
+    const slotId = SHIPYARD_EQUIP_SLOT_DEFS.find(
+      (d) => ship.equipSlots?.[d.id]?.itemDefId === itemId,
+    )?.id ?? null;
+    if (!slotId) return;
+    const nextSlots = { ...(ship.equipSlots ?? {}) };
+    delete nextSlots[slotId];
+    updateShip({ ...ship, equipSlots: nextSlots });
+    await persist();
+  };
+
   return (
     <View style={styles.equipSlotsBox}>
       <Text style={styles.statsTitle}>{t('shipyard.inventory.title')}</Text>
@@ -628,16 +683,26 @@ function ShipyardInventoryGrid({
           const good = cell ? TRADE_GOODS[cell.goodId] : undefined;
           const weaponDef = cell ? resolveWeaponItemDef(cell.goodId) : null;
           const isWeaponModule = Boolean(cell && isWeaponItemId(cell.goodId));
+          const isEquipmentModule = Boolean(cell && isShipEquipmentItemId(cell.goodId));
           const isEquipped = Boolean(
             cell
-            && COMBAT_WEAPON_SLOT_IDS.some((id) => ship.equipSlots?.[id]?.itemDefId === cell.goodId),
+            && (
+              COMBAT_WEAPON_SLOT_IDS.some((id) => ship.equipSlots?.[id]?.itemDefId === cell.goodId)
+              || SHIPYARD_EQUIP_SLOT_DEFS.some((d) => ship.equipSlots?.[d.id]?.itemDefId === cell.goodId)
+            ),
           );
           const itemName = cell
-            ? good
-              ? resolveItemName(good, locale)
-              : weaponDef
-                ? resolveEquipSlotDisplayName(cell.goodId, weaponDef.name, locale)
-                : cell.goodId
+            ? (() => {
+              const base = good
+                ? resolveItemName(good, locale)
+                : weaponDef
+                  ? resolveEquipSlotDisplayName(cell.goodId, weaponDef.name, locale)
+                  : cell.goodId;
+              const pendingSuffix = isEquipmentModule
+                ? formatShipEquipmentListingSuffix(cell.goodId, ` ${t('equipment.effectPendingSuffix')}`)
+                : '';
+              return `${base}${pendingSuffix}`;
+            })()
             : t('shipyard.inventory.emptyCell');
           return (
             <View
@@ -669,6 +734,27 @@ function ShipyardInventoryGrid({
                     disabled={!isEquipped}
                     onPress={() => {
                       void unequipWeaponToInventory(cell.goodId);
+                    }}
+                  >
+                    <Text style={styles.hangarActionText}>{t('shipyard.btn.unequip')}</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+              {cell && isEquipmentModule ? (
+                <View style={styles.hangarActions}>
+                  <TouchableOpacity
+                    style={[styles.hangarActionBtn, styles.hangarSelectBtn]}
+                    onPress={() => {
+                      void equipEquipmentFromInventory(cell.goodId);
+                    }}
+                  >
+                    <Text style={styles.hangarActionText}>{t('shipyard.btn.equip')}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.hangarActionBtn, styles.hangarReleaseBtn, !isEquipped && styles.hangarActionDisabled]}
+                    disabled={!isEquipped}
+                    onPress={() => {
+                      void unequipEquipmentFromInventory(cell.goodId);
                     }}
                   >
                     <Text style={styles.hangarActionText}>{t('shipyard.btn.unequip')}</Text>

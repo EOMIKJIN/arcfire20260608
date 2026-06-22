@@ -46,6 +46,7 @@ import {
   applyArcCoreWallClockCatchUpFromPersistedGap,
   persistArcCoreWallClockLeftActiveNow,
 } from '../src/arcCore/arcCoreWallClockSessionPersistence';
+import { requestTerritorialCombatProbeAfterCatchUp } from '../src/arcCore/territorial/requestTerritorialCombatProbe';
 import { loadArcExpansionTestOneShotDoneFromStorage } from '../src/arcCore/arcCoreExpansionTestFlags';
 import {
   getLastProductionBootResult,
@@ -63,6 +64,7 @@ import { markBootPerf, logBootPerfSummary } from '../src/game/bootPerformance';
 import { useAabsPolicyStore } from '../src/arcCore/aabs/aabsPolicyStore';
 import { useAppBootStore } from '../src/store/appBootStore';
 import { installDevMetroReloadGuard } from '../src/game/devMetroReloadGuard';
+import { resumePlayerToLastHubPlanet } from '../src/game/galaxyMapSessionResume';
 
 type UpdateGateState = {
   visible: boolean;
@@ -146,13 +148,13 @@ export default function RootLayout() {
         ]);
         await hydrateCombatMatchTelemetryCache();
         await bootstrapWorldObjectRuntimeFromWorld(useWorldStore.getState().systems);
-        await applyArcCoreWallClockCatchUpFromPersistedGap(arcCoreHub);
         await usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync();
         markBootPerf('storage_load_end');
         useClanWarFoundationStore
           .getState()
           .syncNpcAiClanTerritoryFromGalaxy(useWorldStore.getState().systems);
         ensureCaptainsRegistered(NPC_CAPTAINS_FROM_CSV.map(c => c.id));
+        resumePlayerToLastHubPlanet();
         const p = usePlayerStore.getState().player;
         const session = useUserSessionStore.getState().record;
         const nickname = p?.nickname ?? null;
@@ -260,6 +262,10 @@ export default function RootLayout() {
     markBootPerf('arc_core_start');
     arcCoreHub.bootstrapDefaultSubCores();
     arcCoreHub.start();
+    void (async () => {
+      await applyArcCoreWallClockCatchUpFromPersistedGap(arcCoreHub);
+      await requestTerritorialCombatProbeAfterCatchUp();
+    })();
     const detachArcCoreBridge = attachArcCoreRuntimeCommandBridge();
     return () => {
       detachArcCoreBridge();
@@ -271,7 +277,10 @@ export default function RootLayout() {
     const sub = AppState.addEventListener('change', (next) => {
       if (next === 'active') {
         if (useWorldStore.getState().loaded) {
-          void applyArcCoreWallClockCatchUpFromPersistedGap(arcCoreHub);
+          void (async () => {
+            await applyArcCoreWallClockCatchUpFromPersistedGap(arcCoreHub);
+            await requestTerritorialCombatProbeAfterCatchUp();
+          })();
         }
         resumeForegroundSession();
         void persistUserSession();

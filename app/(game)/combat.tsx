@@ -28,6 +28,12 @@ import { ENEMY_TEMPLATES } from '../../src/data/d20tables';
 import { resolveNpcCapitalShip, getNpcCapitalShip } from '../../src/npc';
 import { resolveTransitPirateShipIdFromTables } from '../../src/combat/capitalTransitCombatSeed';
 import {
+  findFirstIncompleteObjective,
+  forEachIncompleteObjective,
+  listActiveMissionBundles,
+} from '../../src/missions/missionActiveBundles';
+import { resolveCombatEnemyCaptain } from '../../src/missions/resolveMissionCombatCaptain';
+import {
   CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID,
   CapitalRealtimeCombatHudOverlay,
   CapitalRealtimeCombatOrbitSkia,
@@ -76,7 +82,6 @@ export default function CombatScreen() {
   const addCredits = usePlayerStore(s => s.addCredits);
   const clearLevelUp = usePlayerStore(s => s.clearLevelUp);
   const persist = usePlayerStore(s => s.persist);
-  const getActiveMission = useMissionStore(s => s.getActiveMission);
   const completeObjective = useMissionStore(s => s.completeObjective);
 
   const [resolving, setResolving] = useState(false);
@@ -113,26 +118,41 @@ export default function CombatScreen() {
     setBattleStageWidth(prev => (prev === measuredWidth ? prev : measuredWidth));
   }, []);
 
-  const [enemyTemplate] = useState(() => {
-    const active = useMissionStore.getState().getActiveMission();
-    const targetObjective = active?.mission.objectives.find(
-      (obj) => obj.type === 'defeat_enemy' && !active.progress.objectives[obj.id],
-    );
-    if (targetObjective?.targetId && ENEMY_TEMPLATES[targetObjective.targetId]) {
-      return ENEMY_TEMPLATES[targetObjective.targetId];
-    }
+  const [combatSetup] = useState(() => {
+    const bundles = listActiveMissionBundles(useMissionStore.getState().progresses);
+    const defeatCtx = findFirstIncompleteObjective(bundles, 'defeat_enemy');
+    const playerState = usePlayerStore.getState().player;
+    const systemId = playerState?.currentSystemId ?? null;
+    const planetId = defeatCtx?.bundle.mission.offerPlanetId ?? playerState?.currentPlanetId ?? null;
+    const templateId = defeatCtx?.objective.targetId;
     const templates = Object.values(ENEMY_TEMPLATES);
-    return templates[Math.floor(Math.random() * Math.min(2, templates.length))];
+    const enemyTemplate = templateId && ENEMY_TEMPLATES[templateId]
+      ? ENEMY_TEMPLATES[templateId]
+      : templates[Math.floor(Math.random() * Math.min(2, templates.length))];
+    const captain = resolveCombatEnemyCaptain({
+      enemyTemplateId: enemyTemplate.id,
+      planetId,
+      systemId,
+    });
+    const transitPirateShipId = captain?.assignedShipId?.trim()
+      ?? resolveTransitPirateShipIdFromTables(systemId, {
+        enemyTemplateId: enemyTemplate.id,
+        planetId,
+        systemId,
+      });
+    return { enemyTemplate, captain, transitPirateShipId };
   });
-  const transitPirateShipId = useMemo(
-    () => resolveTransitPirateShipIdFromTables(null),
-    [],
-  );
+  const enemyTemplate = combatSetup.enemyTemplate;
+  const transitPirateShipId = combatSetup.transitPirateShipId;
   const pirateNpc = useMemo(() => {
     if (!transitPirateShipId) return null;
     return resolveNpcCapitalShip(transitPirateShipId) ?? null;
   }, [transitPirateShipId]);
-  const pirateLabel = pirateNpc ? `${pirateNpc.name} · ${pirateNpc.captain.displayName}` : enemyTemplate.name;
+  const pirateLabel = pirateNpc
+    ? `${pirateNpc.name} · ${pirateNpc.captain.displayName}`
+    : combatSetup.captain
+      ? combatSetup.captain.displayName
+      : enemyTemplate.name;
 
   const handleVictory = useCallback(async () => {
     if (resolvedRef.current) return;
@@ -143,14 +163,12 @@ export default function CombatScreen() {
     const creditGain = enemyTemplate.creditReward;
     addExp(expGain);
     addCredits(creditGain);
-    const active = getActiveMission();
-    if (active) {
-      active.mission.objectives.forEach(obj => {
-        if (obj.type === 'defeat_enemy' && obj.targetId === enemyTemplate.id && !active.progress.objectives[obj.id]) {
-          completeObjective(active.mission.id, obj.id);
-        }
-      });
-    }
+    const bundles = listActiveMissionBundles(useMissionStore.getState().progresses);
+    forEachIncompleteObjective(bundles, 'defeat_enemy', (bundle, obj) => {
+      if (obj.targetId === enemyTemplate.id) {
+        completeObjective(bundle.mission.id, obj.id);
+      }
+    });
     await persist();
     const levelUpPendingNow = usePlayerStore.getState().levelUpPending;
     const playerLevel = usePlayerStore.getState().player?.level;
@@ -165,7 +183,7 @@ export default function CombatScreen() {
       },
     });
     setResolving(false);
-  }, [addCredits, addExp, clearLevelUp, completeObjective, enemyTemplate.creditReward, enemyTemplate.expReward, enemyTemplate.id, enemyTemplate.name, getActiveMission, persist, t]);
+  }, [addCredits, addExp, clearLevelUp, completeObjective, enemyTemplate.creditReward, enemyTemplate.expReward, enemyTemplate.id, enemyTemplate.name, persist, t]);
 
   const handleDefeat = useCallback(async () => {
     if (resolvedRef.current || !player) return;

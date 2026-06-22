@@ -30,8 +30,9 @@ import {
   planetCsvBaselineToRuntime,
   usePlanetCoreRuntimeStore,
 } from '../../store/planetCoreRuntimeStore';
-import { usePlanetTradeFeeLedgerStore } from '../../store/planetTradeFeeLedgerStore';
+import { usePlanetTradeFeeLedgerStore, type PlanetTradeFeeBucket } from '../../store/planetTradeFeeLedgerStore';
 import { t } from '../../i18n';
+import { formatCredits } from '../../utils/formatCredits';
 
 export type PlanetEconomyInfoExtraRow = {
   label: string;
@@ -91,6 +92,22 @@ function resolvePopulation(planetId: string): number {
   return planetCsvBaselineToRuntime(planet).population;
 }
 
+/** 레거시·미 hydrate 스토어 값 — toLocaleString 크래시 방지 */
+function finiteCredits(value: unknown): number {
+  const n = Number(value);
+  return Number.isFinite(n) ? Math.floor(n) : 0;
+}
+
+function normalizeTradeFeeBucket(raw: PlanetTradeFeeBucket) {
+  return {
+    grossCredits: finiteCredits(raw.grossCredits),
+    playerWalletPending: finiteCredits(raw.playerWalletPending),
+    arcFeeCredits: finiteCredits(raw.arcFeeCredits),
+    convoyFeeCredits: finiteCredits(raw.convoyFeeCredits),
+    playerTradeFeeCredits: finiteCredits(raw.playerTradeFeeCredits),
+  };
+}
+
 function resolveCoreRuntime(planetId: string) {
   const runtime = usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId);
   if (runtime) return runtime;
@@ -127,31 +144,34 @@ export function buildPlanetEconomyInfoSnapshot(
   const core = resolveCoreRuntime(planetId);
   const hold = useClanWarFoundationStore.getState().getHold(planetId);
   const faction = resolveOccupierFactionKindForHold(hold);
-  const bucket = usePlanetTradeFeeLedgerStore.getState().getBucket(planetId);
+  const bucket = normalizeTradeFeeBucket(
+    usePlanetTradeFeeLedgerStore.getState().getBucket(planetId),
+  );
   const tradeFeeToday = bucket.arcFeeCredits;
   const vault = hold ? resolveFactionVaultForOccupierClanId(hold.occupierClanId) : null;
   let factionVaultLabel: string | null = null;
   let factionVaultBalance: number | null = null;
   if (faction === 'red') {
     factionVaultLabel = t('econSnap.arcVault');
-    factionVaultBalance = vault?.getBalance() ?? null;
+    factionVaultBalance = vault != null ? finiteCredits(vault.getBalance()) : null;
   } else if (faction === 'blue') {
     factionVaultLabel = t('econSnap.blueVault');
-    factionVaultBalance = vault?.getBalance() ?? null;
+    factionVaultBalance = vault != null ? finiteCredits(vault.getBalance()) : null;
   }
 
-  const fleetBalance = useArcCoreTransportFleetBankStore.getState().getBalance();
+  const fleetBalance = finiteCredits(useArcCoreTransportFleetBankStore.getState().getBalance());
   const supplyScale = resolvePlanetSupplyStockScale(planetId);
+  const supplyScalePct = Number.isFinite(supplyScale) ? supplyScale * 100 : 0;
   const convoyLabel = resolvePlanetTradeConvoyMonopolyLabel(planetId);
 
   const extras: PlanetEconomyInfoExtraRow[] = [
     {
       label: t('econSnap.fleetVault'),
-      value: `${fleetBalance.toLocaleString('ko-KR')} cr`,
+      value: formatCredits(fleetBalance, { suffix: true }),
     },
     {
       label: t('econSnap.supplyScale'),
-      value: `${(supplyScale * 100).toFixed(1)}%`,
+      value: `${supplyScalePct.toFixed(1)}%`,
     },
     {
       label: t('econSnap.devCostEfficiency'),
@@ -163,7 +183,7 @@ export function buildPlanetEconomyInfoSnapshot(
     },
     {
       label: t('econSnap.playerFeePool'),
-      value: `${bucket.playerWalletPending.toLocaleString('ko-KR')} cr`,
+      value: formatCredits(bucket.playerWalletPending, { suffix: true }),
     },
   ];
 

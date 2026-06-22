@@ -1,4 +1,5 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useT } from '../../../i18n';
 import { canManagePlanetDevelopment } from '../../../game/planetDevelopment/planetDevelopmentAccess';
 import {
   getPlanetDevelopmentModule,
@@ -12,8 +13,13 @@ import { PLANET_DEV_MODULE_RESEARCH_LAB } from '../../../game/planetDevelopment/
 import { PLANET_DEV_MODULE_POPULATION_DOME } from '../../../game/planetDevelopment/planetPopulationDomeListing';
 import { registerPlanetSessionResource } from '../../../game/planetSessionRegistry';
 import { usePlayerStore } from '../../../store/playerStore';
-import { usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore';
+import {
+  HeavyUiOverlayShell,
+  createPlanetDevDetailSession,
+  useHeavyUiDataSession,
+} from '../../heavyUiDataSession';
 import type { ArcOverlayPlanetDevelopmentEntry } from '../arcOverlayStore';
+import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { PlanetDefenseSatelliteDevContent } from './PlanetDefenseSatelliteDevContent';
 import { PlanetDevelopmentListContent } from './PlanetDevelopmentListContent';
 import { PlanetOrbitShipyardDevContent } from './PlanetOrbitShipyardDevContent';
@@ -22,6 +28,67 @@ import { PlanetLaboratoryDevContent } from './PlanetLaboratoryDevContent';
 import { PlanetTavernFacilityDevContent } from './PlanetTavernFacilityDevContent';
 
 type DevView = 'list' | string;
+
+type DevDetailHydrateGateProps = {
+  planetId: string;
+  planetName: string;
+  moduleId: string;
+  titleKey: string;
+  backLabelKey: string;
+  onBack: () => void;
+  onClose: () => void;
+  children: ReactNode;
+};
+
+/** 행성개발 상세 — preflight + 코어 bootstrap 후 본문 렌더 */
+const PlanetDevDetailHydrateGate = memo(function PlanetDevDetailHydrateGate({
+  planetId,
+  planetName,
+  moduleId,
+  titleKey,
+  backLabelKey,
+  onBack,
+  onClose,
+  children,
+}: DevDetailHydrateGateProps) {
+  const t = useT();
+  const sessionConfig = useMemo(
+    () =>
+      createPlanetDevDetailSession(planetId, moduleId, () => ({
+        planetId,
+        moduleId,
+      })),
+    [moduleId, planetId],
+  );
+  const session = useHeavyUiDataSession(sessionConfig);
+
+  if (session.phase !== 'ready') {
+    return (
+      <HeavyUiOverlayShell
+        title={t(titleKey)}
+        subtitle={planetName}
+        layout="panel"
+        phase={session.phase}
+        error={session.error}
+        preflightCode={session.preflightCode}
+        onClose={onClose}
+        onRetry={session.retry}
+        footer={
+          <ArcOverlayFooterActions
+            onCancel={onBack}
+            onConfirm={onClose}
+            cancelLabel={t(backLabelKey)}
+            confirmLabel={t('planetDev.close')}
+          />
+        }
+      >
+        {null}
+      </HeavyUiOverlayShell>
+    );
+  }
+
+  return <>{children}</>;
+});
 
 type Props = {
   entry: ArcOverlayPlanetDevelopmentEntry;
@@ -91,10 +158,6 @@ export const PlanetDevelopmentOverlayContent = memo(function PlanetDevelopmentOv
   }, [entry.id, initialView]);
 
   useEffect(() => {
-    void usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync();
-  }, [planetId]);
-
-  useEffect(() => {
     if (!planetId) return undefined;
     const token = registerPlanetSessionResource({
       ownerId: 'planet_development_overlay',
@@ -128,7 +191,7 @@ export const PlanetDevelopmentOverlayContent = memo(function PlanetDevelopmentOv
   const moduleReg = getPlanetDevelopmentModule(view);
   const DetailView = moduleReg?.DetailView ?? PlanetDefenseSatelliteDevContent;
 
-  return (
+  const detailBody = (
     <DetailView
       planetId={planetId}
       planetName={planetName}
@@ -137,4 +200,34 @@ export const PlanetDevelopmentOverlayContent = memo(function PlanetDevelopmentOv
       onClose={onClose}
     />
   );
+
+  const needsHydrateGate =
+    view === PLANET_DEV_MODULE_DEFENSE_SATELLITE
+    || view === PLANET_DEV_MODULE_ORBIT_SHIPYARD;
+
+  if (needsHydrateGate) {
+    const titleKey =
+      view === PLANET_DEV_MODULE_DEFENSE_SATELLITE
+        ? 'defenseSat.title'
+        : 'orbitShipyard.title';
+    const backLabelKey =
+      view === PLANET_DEV_MODULE_DEFENSE_SATELLITE
+        ? 'defenseSat.backToList'
+        : 'orbitShipyard.backToList';
+    return (
+      <PlanetDevDetailHydrateGate
+        planetId={planetId}
+        planetName={planetName}
+        moduleId={view}
+        titleKey={titleKey}
+        backLabelKey={backLabelKey}
+        onBack={handleBack}
+        onClose={onClose}
+      >
+        {detailBody}
+      </PlanetDevDetailHydrateGate>
+    );
+  }
+
+  return detailBody;
 });

@@ -37,4 +37,3 @@ export const GALAXY_ROUTE_POLICIES: Record<GalaxyRouteDirection, GalaxyRoutePoli
     centerPlanetId: null,
   },
 };
-

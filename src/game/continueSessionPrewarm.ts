@@ -9,6 +9,7 @@ import { buildCsvStaticIndexesFull } from './buildCsvStaticIndexes';
 import { markBootPerf, measureBootPhase } from './bootPerformance';
 import { listArcNpcTrafficRowsFromTables } from '../arcCore/arcNpcTrafficTableRegistry';
 import { runCriticalSessionAssetPrewarm } from '../assetPipeline/runCriticalSessionAssetPrewarm';
+import { resumePlayerToLastHubPlanet, resolveResumeHubPlanetId } from './galaxyMapSessionResume';
 
 /** 이어하기 로딩 UI 최소 유지 시간(ms) — prewarm 완료 후에도 짧게 유지 */
 export const CONTINUE_SESSION_MIN_LOADING_MS = 1200;
@@ -34,8 +35,9 @@ export async function runContinueSessionPrewarm(): Promise<void> {
 
     await runCriticalSessionAssetPrewarm();
 
+    resumePlayerToLastHubPlanet();
     const p = usePlayerStore.getState().player;
-    const planetId = p?.currentPlanetId ?? 'arcadia_prime';
+    const planetId = p ? resolveResumeHubPlanetId(p) : 'arcadia_prime';
     const systemId = p?.currentSystemId ?? 'arcadia';
 
     await Promise.all([

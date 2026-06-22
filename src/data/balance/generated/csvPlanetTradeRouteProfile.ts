@@ -3,7 +3,7 @@ export const PlanetTradeRouteProfile_FROM_BALANCE_CSV = [
   { "planetId": "arcadia_prime", "tradeFactionCode": "F1", "tradeRegionCode": "W", "notesKo": "서부 연방 관문" },
   { "planetId": "solar_station", "tradeFactionCode": "F1", "tradeRegionCode": "W", "notesKo": "서부 무역 허브" },
   { "planetId": "minerva_deep", "tradeFactionCode": "F2", "tradeRegionCode": "S", "notesKo": "남부 광업 연합" },
-  { "planetId": "eden_city", "tradeFactionCode": "F3", "tradeRegionCode": "E", "notesKo": "동부 자유 무역" },
+  { "planetId": "eden_city", "tradeFactionCode": "F3", "tradeRegionCode": "E", "notesKo": "동부 · 블루팀 상업 수도" },
   { "planetId": "iron_remnant", "tradeFactionCode": "F2", "tradeRegionCode": "S", "notesKo": "남부 잔해 지대" },
   { "planetId": "draco_haven", "tradeFactionCode": "F3", "tradeRegionCode": "E", "notesKo": "동부 성운 연구" },
   { "planetId": "omega_hub", "tradeFactionCode": "F3", "tradeRegionCode": "E", "notesKo": "동부 교차 허브" },
@@ -15,7 +15,7 @@ export const PlanetTradeRouteProfile_FROM_BALANCE_CSV = [
   { "planetId": "blood_station", "tradeFactionCode": "F3", "tradeRegionCode": "E", "notesKo": "동부 PvP 전선" },
   { "planetId": "shadow_market", "tradeFactionCode": "F4", "tradeRegionCode": "N", "notesKo": "북부 암시장" },
   { "planetId": "nightfall_citadel", "tradeFactionCode": "F4", "tradeRegionCode": "N", "notesKo": "북부 어둠 요새" },
-  { "planetId": "core_prime", "tradeFactionCode": "F4", "tradeRegionCode": "N", "notesKo": "엔드게임 코어" },
+  { "planetId": "core_prime", "tradeFactionCode": "F4", "tradeRegionCode": "N", "notesKo": "북부 · 레드팀 수도(엔드게임)" },
   { "planetId": "genesis_origin", "tradeFactionCode": "F4", "tradeRegionCode": "N", "notesKo": "엔드게임 제네시스" },
 ] as const;
 export type PlanetTradeRouteProfileRow = (typeof PlanetTradeRouteProfile_FROM_BALANCE_CSV)[number];

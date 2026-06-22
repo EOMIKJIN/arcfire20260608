@@ -65,6 +65,7 @@ import { useUserSessionStore } from './userSessionStore';
 import { useSkillDbStore } from './skillDbStore';
 import { getItemDef } from '../data/itemRegistry';
 import { ITEM_DEFS_FROM_CSV } from '../data/generated/csvItemDefs';
+import { resolveSystemIdForPlanetId } from '../world/resolvePlanetSystemId';
 
 const STORAGE_KEY = 'arcfire_player_v1';
 const DEFAULT_GRANTED_SKILL_IDS = ['double_shot'] as const;
@@ -77,9 +78,10 @@ const DEFAULT_PLAYER_POLITICAL: PlayerPoliticalProfile = {
 };
 
 /** 로컬 저장 v1: 과거 데이터에 `political` / `homePlanetId` / `shipHangar` 없을 수 있음 */
-type PlayerPersistenceShape = Omit<Player, 'political' | 'homePlanetId' | 'orbitalMiningOre1DeliveredByPlanet' | 'orbitalMiningDeliveredByPlanet' | 'shipHangar'> & {
+type PlayerPersistenceShape = Omit<Player, 'political' | 'homePlanetId' | 'lastHubPlanetId' | 'orbitalMiningOre1DeliveredByPlanet' | 'orbitalMiningDeliveredByPlanet' | 'shipHangar'> & {
   political?: PlayerPoliticalProfile;
   homePlanetId?: string | null;
+  lastHubPlanetId?: string | null;
   orbitalMiningOre1DeliveredByPlanet?: Record<string, number>;
   orbitalMiningDeliveredByPlanet?: Record<string, Record<string, number>>;
   shipHangar?: PlayerHangarShip[];
@@ -283,6 +285,10 @@ function normalizePlayerPolitical(raw: PlayerPersistenceShape): Player {
     flags,
     political,
     homePlanetId: raw.homePlanetId !== undefined ? raw.homePlanetId : null,
+    lastHubPlanetId:
+      raw.lastHubPlanetId !== undefined
+        ? raw.lastHubPlanetId
+        : raw.currentPlanetId ?? null,
     orbitalMiningOre1DeliveredByPlanet: raw.orbitalMiningOre1DeliveredByPlanet ?? {},
     orbitalMiningDeliveredByPlanet: raw.orbitalMiningDeliveredByPlanet ?? {},
     shipHangar: normalizeShipHangar(raw.shipHangar),
@@ -437,6 +443,12 @@ interface PlayerState {
   landOnPlanet: (planetId: string) => void;
   spendCredits: (amount: number) => boolean;
   addCredits: (amount: number) => void;
+  /** v2.1 BM — 보석 소비(교환·직구). 잔액 부족 시 false */
+  spendGems: (amount: number) => boolean;
+  /** v2.1 BM — 보석 지급(IAP·이벤트). 음수 무시 */
+  addGems: (amount: number) => void;
+  /** 보석→크레딧 교환 전용 — AABS 배율 미적용, lifetime 미누적 */
+  grantExchangeCredits: (amount: number) => void;
   updateShip: (ship: PlayerShip) => void;
   /** 전함 격침 — 생존포드 탑승·거점 귀환·격납고에서 파괴함 제거 */
   applyCapitalShipDestruction: () => Promise<void>;
@@ -511,6 +523,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       },
       political: { ...DEFAULT_PLAYER_POLITICAL },
       homePlanetId: null,
+      lastHubPlanetId: 'arcadia_prime',
       orbitalMiningOre1DeliveredByPlanet: {},
       orbitalMiningDeliveredByPlanet: {},
       inventorySlots: buildInitialInventoryWithDefaultCapitalShip(),
@@ -575,7 +588,15 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   landOnPlanet: (planetId) => {
     const { player } = get();
     if (!player) return;
-    set({ player: { ...player, currentPlanetId: planetId } });
+    const systemId = resolveSystemIdForPlanetId(planetId) ?? player.currentSystemId;
+    set({
+      player: {
+        ...player,
+        currentPlanetId: planetId,
+        currentSystemId: systemId,
+        lastHubPlanetId: planetId,
+      },
+    });
   },
 
   spendCredits: (amount) => {
@@ -597,6 +618,34 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
         lifetimeCreditsEarned: prevLifetime + Math.max(0, applied),
       },
     });
+  },
+
+  spendGems: (amount) => {
+    const { player } = get();
+    if (!player) return false;
+    const cost = Math.max(0, Math.floor(amount));
+    if (cost <= 0) return true;
+    const balance = Math.max(0, Math.floor(player.gems ?? 0));
+    if (balance < cost) return false;
+    set({ player: { ...player, gems: balance - cost } });
+    return true;
+  },
+
+  addGems: (amount) => {
+    const { player } = get();
+    if (!player) return;
+    const grant = Math.max(0, Math.floor(amount));
+    if (grant <= 0) return;
+    const balance = Math.max(0, Math.floor(player.gems ?? 0));
+    set({ player: { ...player, gems: balance + grant } });
+  },
+
+  grantExchangeCredits: (amount) => {
+    const { player } = get();
+    if (!player) return;
+    const grant = Math.max(0, Math.floor(amount));
+    if (grant <= 0) return;
+    set({ player: { ...player, credits: player.credits + grant } });
   },
 
   updateShip: (ship) => {

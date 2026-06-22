@@ -60,3 +60,7 @@
 [22:53] OK 이상없음 · PSS 698.8MB / GL 47.6MB / views 305
 [23:23] OK 이상없음 · PSS 646.4MB / GL 47.4MB / views 283
 [23:53] !! 이상감지: [2026-06-21 23:31:13] GL_ELEVATED mounting_or_insufficient_samples gl=167.5 pss=820.7 views=294 restart_held (상세 logs/incidents.log)
+[00:23] !! 비정상종료 감지 — crash 로그 확인 (06-20 00:52:00.980 19274 19374 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x8 in tid 19374 (mqt_v_js), pid 19274 (.arcfire.online))
+[2026-06-22 01:13:07] MANUAL OK PSS 699.1MB / GL 56.8MB / views 297 (APP_RUNNING_WATCH_START)
+[2026-06-22 23:49:07] MANUAL OK PSS 759.4MB / GL 141.3MB / views 934 (GL_SPIKE suspect=hub_skia MANUAL)
+[2026-06-22 23:54:29] MANUAL OK PSS 753.5MB / GL 172.9MB / views 287 (GL_SPIKE suspect=hub_skia MANUAL)

@@ -1,5 +1,6 @@
 import type { PlayerShip } from '../types';
 import { applyNpcCapitalShipToPlayerShip } from '../game/applyNpcCapitalShipPurchase';
+import { resolveShipEquipmentFlatStatBonus } from '../game/shipEquipment';
 
 export type ShipStatDbSnapshot = {
   bonusHp?: number;
@@ -73,9 +74,14 @@ function resolveEquipmentBonus(ship: PlayerShip): ShipFinalStatBreakdown['equipm
   return { hp, shield, armor, speed };
 }
 
-function resolveSlotBonus(_ship: PlayerShip): ShipFinalStatBreakdown['slotBonus'] {
-  // TODO: 추후 itemDef/강화 DB 연동 시 슬롯별 상세 보정 적용
-  return { hp: 0, shield: 0, armor: 0, speed: 0 };
+function resolveSlotBonus(ship: PlayerShip): ShipFinalStatBreakdown['slotBonus'] {
+  const flat = resolveShipEquipmentFlatStatBonus(ship, ship.equipSlots);
+  return {
+    hp: flat.bonusHp,
+    shield: flat.bonusShield,
+    armor: flat.bonusArmor,
+    speed: flat.bonusSpeed,
+  };
 }
 
 function resolveDbBonus(snapshot?: ShipStatDbSnapshot): ShipFinalStatBreakdown['dbBonus'] {
@@ -93,7 +99,7 @@ export function resolveShipFinalStatResult(
 ): ShipFinalStatResult {
   const baseShip = resolveTableSyncedBaseShip(ship);
   const equipmentBonus = resolveEquipmentBonus(ship);
-  const slotBonus = resolveSlotBonus(ship);
+  const slotBonus = resolveSlotBonus(baseShip);
   const dbBonus = resolveDbBonus(dbSnapshot);
 
   const bonusHp = equipmentBonus.hp + slotBonus.hp + dbBonus.hp;

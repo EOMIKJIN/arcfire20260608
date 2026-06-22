@@ -3,10 +3,10 @@ arcadia_prime,arcadia,BLUE,false,false,아르카디아
 solar_station,solar_port,BLUE,true,false,솔라 항구
 minerva_deep,minerva,BLUE,true,false,미네르바
 vega_base,vega_outpost,BLUE,true,false,베가 전초기지
-eden_city,new_eden,BLUE,true,false,뉴 에덴
+eden_city,new_eden,BLUE,true,false,뉴 에덴(블루 수도)
 iron_remnant,iron_cross,BLUE,true,false,아이언 크로스
 draco_haven,draco_nebula,BLUE,true,true,드라코 성운
-omega_hub,omega_station,BLUE,true,false,오메가 스테이션
+omega_hub,omega_station,BLUE,true,true,오메가 스테이션
 helios_core,helios,NEUTRAL,true,false,헬리오스
 sirius_border,sirius,RED,true,false,시리우스 변경
 titan_ruins,titan_gate,NEUTRAL,true,false,타이탄 게이트
@@ -14,9 +14,9 @@ perseus_memorial,perseus,RED,true,false,페르세우스 기념관
 crimson_base,crimson_zone,RED,true,false,크림슨 구역
 dark_haven,dark_rift,RED,true,false,다크 리프트
 blood_station,blood_field,RED,true,false,블러드 필드
-shadow_market,shadow_nexus,NEUTRAL,true,false,섀도우 넥서스
+shadow_market,shadow_nexus,NEUTRAL,true,true,섀도우 넥서스
 abyss_gate,abyss,RED,true,false,어비스
 nightfall_citadel,nightfall,RED,true,false,나이트폴 시타델
-core_prime,arcfire_core,NEUTRAL,true,false,아크파이어 코어
+core_prime,arcfire_core,RED,true,false,아크파이어 코어(레드 수도)
 eternal_throne,eternity,NEUTRAL,true,false,이터니티
 genesis_origin,genesis,NEUTRAL,true,false,제네시스

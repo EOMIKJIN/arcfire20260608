@@ -5,7 +5,7 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet,
-  useWindowDimensions, Animated as RNAnimated, Easing,
+  useWindowDimensions, Animated as RNAnimated, Easing, AppState,
 } from 'react-native';
 import Svg, { Line, Circle, G, Text as SvgText } from 'react-native-svg';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -17,7 +17,6 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import { router, useFocusEffect } from 'expo-router';
-import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { useT } from '../../src/i18n';
 import { resolveZoneLabel } from '../../src/i18n/zoneText';
 import {
@@ -26,6 +25,7 @@ import {
 } from '../../src/i18n/systemText';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
+import { resolveMegaFactionCapitalHubSubtitle } from '../../src/world/megaFactionCapitalDisplay';
 import { COLORS, FONTS, SPACING, LAYOUT, ZONE_COLORS } from '../../src/utils/theme';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { isPlayerShipCombatCapable } from '../../src/game/playerSurvivalPod';
@@ -41,6 +41,8 @@ import {
 import { usePlayerStore } from '../../src/store/playerStore';
 import { useWorldStore } from '../../src/store/worldStore';
 import { useMissionStore } from '../../src/store/missionStore';
+import { listActiveMissionBundles, hasAnyActiveCombatMission } from '../../src/missions/missionActiveBundles';
+import { resolveTransitEncounterChance } from '../../src/missions/missionCombatEncounter';
 import { useClanWarFoundationStore } from '../../src/store/clanWarFoundationStore';
 import { resolveTempClanColor } from '../../src/clanWar/tempClanColors';
 import {
@@ -56,6 +58,13 @@ import { countGoodInInventory, normalizeInventorySlots, removeGoodFromInventoryS
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { releaseGalaxyMapStageMemory } from '../../src/game/stageMemoryRelease';
+import { finalizeGalaxyMapSessionForExit } from '../../src/game/galaxyMapSessionResume';
+import {
+  createWorldmapScreenSession,
+  HeavyUiStageErrorPanel,
+  readWorldmapSessionRevision,
+  useHeavyUiDataSession,
+} from '../../src/ui/heavyUiDataSession';
 import { buildCsvStaticIndexesFull } from '../../src/game/buildCsvStaticIndexes';
 import { GalaxyMapTerritoryVoronoiSvg } from '../../src/galaxyMap/GalaxyMapTerritoryVoronoiSvg';
 
@@ -90,9 +99,7 @@ export default function WorldMapScreen() {
   const persist = usePlayerStore((s) => s.persist);
   const { systems, selectedSystemId, selectSystem, markVisited, visitedSystemIds } = useWorldStore();
   const unlockedSystemIds = useWorldStore((s) => s.unlockedSystemIds);
-  const getActiveMission = useMissionStore((s) => s.getActiveMission);
   const completeObjective = useMissionStore((s) => s.completeObjective);
-  const safeMenuBack = useSafeRouterBack({ fallbackReplace: '/(game)/planet' });
 
   const [showPanel, setShowPanel] = useState(false);
   const [shipTransit, setShipTransit] = useState<{
@@ -100,6 +107,45 @@ export default function WorldMapScreen() {
     to: { x: number; y: number };
   } | null>(null);
   const [isMoving, setIsMoving] = useState(false);
+
+  const handleReturnToLastHub = useCallback(() => {
+    finalizeGalaxyMapSessionForExit({ persist: true });
+    router.replace('/(game)/planet');
+  }, []);
+
+  const handleExitToTitle = useCallback(() => {
+    showArcAlert(
+      t('planet.exitGameTitle'),
+      t('planet.exitGameBody'),
+      [
+        { text: t('planet.cancel'), style: 'cancel' },
+        {
+          text: t('planet.exit'),
+          style: 'destructive',
+          onPress: () => {
+            finalizeGalaxyMapSessionForExit({ persist: true });
+            router.replace('/?forceTitle=1');
+          },
+        },
+      ],
+    );
+  }, [t]);
+
+  const handleOpenWorldmapMenu = useCallback(() => {
+    if (isMoving) return;
+    showArcAlert(
+      t('worldmap.menu.modalTitle'),
+      t('worldmap.menu.modalBody'),
+      [
+        { text: t('worldmap.menu.close'), style: 'cancel' },
+        {
+          text: t('worldmap.menu.exitGame'),
+          style: 'destructive',
+          onPress: handleExitToTitle,
+        },
+      ],
+    );
+  }, [handleExitToTitle, isMoving, t]);
   const moveProgress = React.useRef(new RNAnimated.Value(0)).current;
   const isMountedRef = useRef(true);
   const isFocusedRef = useRef(false);
@@ -167,10 +213,43 @@ export default function WorldMapScreen() {
     }, [moveProgress]),
   );
 
+  /** 은하계 지도 이탈·백그라운드·비정상 종료 — 직전 허브 좌표 복원 후 persist */
+  useFocusEffect(
+    useCallback(() => {
+      const appSub = AppState.addEventListener('change', (next) => {
+        if (next === 'background' || next === 'inactive') {
+          finalizeGalaxyMapSessionForExit({ persist: true });
+        }
+      });
+      return () => {
+        appSub.remove();
+        const landed = usePlayerStore.getState().player?.currentPlanetId;
+        if (!landed) {
+          finalizeGalaxyMapSessionForExit({ persist: true });
+        }
+      };
+    }, []),
+  );
+
   const PANEL_H = 148;
   const [mapLayout, setMapLayout] = useState({ w: width, h: 1 });
   const stageFrameReady = useStageFirstFrameReady();
   const [galaxyLoadingMinHold, setGalaxyLoadingMinHold] = useState(false);
+  const clanWarHydrated = useClanWarFoundationStore((s) => s.hydrated);
+  /** moveToSystem은 currentPlanetId를 null로 두므로, 성계 첫 행성·홈 행성으로 세션 앵커 폴백 */
+  const worldmapSessionPlanetId = useMemo(() => {
+    if (!player) return null;
+    if (player.currentPlanetId) return player.currentPlanetId;
+    const sysPlanetId = systems[player.currentSystemId]?.planets[0]?.id;
+    if (sysPlanetId) return sysPlanetId;
+    return player.homePlanetId;
+  }, [player?.currentPlanetId, player?.currentSystemId, player?.homePlanetId, systems]);
+  const worldmapSessionConfig = useMemo(
+    () => (worldmapSessionPlanetId ? createWorldmapScreenSession(worldmapSessionPlanetId) : null),
+    [worldmapSessionPlanetId],
+  );
+  const worldmapRevision = useMemo(() => readWorldmapSessionRevision(), [clanWarHydrated]);
+  const worldmapSession = useHeavyUiDataSession(worldmapSessionConfig, worldmapRevision);
 
   useFocusEffect(
     useCallback(() => {
@@ -374,7 +453,11 @@ export default function WorldMapScreen() {
   }, [galaxyBounds, mapLayout.w, mapLayout.h]);
 
   const mapMetricsReady = useMemo(() => mapLayout.w > 0 && mapLayout.h > 1, [mapLayout.h, mapLayout.w]);
-  const galaxyMapStageReady = mapMetricsReady && stageFrameReady && galaxyLoadingMinHold;
+  const galaxyMapStageReady =
+    mapMetricsReady
+    && stageFrameReady
+    && galaxyLoadingMinHold
+    && (worldmapSessionConfig == null || worldmapSession.phase === 'ready');
 
   const computeScrollTargetForSystem = useCallback(
     (systemId: string): { x: number; y: number } | null => {
@@ -478,6 +561,10 @@ export default function WorldMapScreen() {
   }, [hiddenUndiscoveredSystems, hiddenUndiscoveredByDirection, deferredTileCount, loadedDeferredTileCount, activeDeferredDirections]);
 
   const selectedSystem = selectedSystemId ? systems[selectedSystemId] : null;
+  const selectedCapitalSubtitle = useMemo(() => {
+    const planetId = selectedSystem?.planets[0]?.id;
+    return planetId ? resolveMegaFactionCapitalHubSubtitle(planetId, t) : null;
+  }, [selectedSystem?.planets, t]);
   const planetHolds = useClanWarFoundationStore((s) => s.planetHolds);
   const clanOwnerColorBySystemId = useMemo(() => {
     const out: Record<string, string | undefined> = {};
@@ -679,12 +766,13 @@ export default function WorldMapScreen() {
       moveToSystem(targetSystem.id);
       markVisited(targetSystem.id);
 
-      const active = getActiveMission();
-      if (active) {
+      const activeBundles = listActiveMissionBundles(useMissionStore.getState().progresses);
+      for (const active of activeBundles) {
         const buyObjectives = active.mission.objectives.filter((obj) => obj.type === 'buy_goods');
         const pendingBuyObjectives = buyObjectives.filter((obj) => !active.progress.objectives[obj.id]);
 
         active.mission.objectives.forEach((obj) => {
+          // reach_planet(예: mission_001 베가)는 행성 허브 착륙 시에만 완료 — missionPlanetHubSync
           if (
             obj.type === 'reach_system' &&
             obj.targetId === targetSystem.id &&
@@ -727,8 +815,10 @@ export default function WorldMapScreen() {
 
       await persist();
 
-      const encounterChance =
-        targetSystem.zone === 'pvp' ? 0.7 : targetSystem.zone === 'neutral' ? 0.3 : 0.1;
+      const encounterChance = resolveTransitEncounterChance(
+        targetSystem.zone,
+        hasAnyActiveCombatMission(useMissionStore.getState().progresses),
+      );
 
       if (Math.random() < encounterChance && isPlayerShipCombatCapable(player.ship)) {
         selectSystem(targetSystem.id);
@@ -745,7 +835,6 @@ export default function WorldMapScreen() {
       systems,
       toScreen,
       moveProgress,
-      getActiveMission,
       completeObjective,
       moveToSystem,
       markVisited,
@@ -807,7 +896,7 @@ export default function WorldMapScreen() {
       <View style={styles.rootColumn}>
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={safeMenuBack}
+          onPress={handleOpenWorldmapMenu}
           style={styles.menuBtn}
           accessibilityLabel={t('worldmap.menu.a11y')}
         >
@@ -915,7 +1004,18 @@ export default function WorldMapScreen() {
             </View>
           </GestureDetector>
         ) : null}
-        <StageLoadingOverlay visible={!galaxyMapStageReady} overlayId="stage-loading-worldmap" />
+        <StageLoadingOverlay
+          visible={!galaxyMapStageReady && worldmapSession.phase !== 'error'}
+          overlayId="stage-loading-worldmap"
+        />
+        {worldmapSession.phase === 'error' ? (
+          <HeavyUiStageErrorPanel
+            preflightCode={worldmapSession.preflightCode}
+            error={worldmapSession.error}
+            onRetry={worldmapSession.retry}
+            onBack={handleReturnToLastHub}
+          />
+        ) : null}
       </View>
 
       {showPanel && selectedSystem ? (
@@ -941,6 +1041,11 @@ export default function WorldMapScreen() {
           <Text style={styles.panelDesc} numberOfLines={2}>
             {resolveStarSystemDescription(selectedSystem, locale)}
           </Text>
+          {selectedCapitalSubtitle ? (
+            <Text style={styles.panelCapitalLine} numberOfLines={1}>
+              {selectedCapitalSubtitle}
+            </Text>
+          ) : null}
           {panelPrimaryPlanetClanLine ? (
             <Text style={styles.panelClanLine} numberOfLines={2}>
               {panelPrimaryPlanetClanLine}
@@ -1234,6 +1339,13 @@ const styles = StyleSheet.create({
     fontSize: FONTS.size.sm,
     color: COLORS.ink_mid,
     lineHeight: 18,
+    marginBottom: SPACING.xs,
+  },
+  panelCapitalLine: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    fontWeight: FONTS.weight.bold,
+    color: COLORS.gold,
     marginBottom: SPACING.xs,
   },
   panelClanLine: {

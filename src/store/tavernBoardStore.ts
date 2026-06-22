@@ -26,6 +26,11 @@ type TavernBoardState = {
   persistBoard: () => Promise<void>;
   resetLocalBoard: () => Promise<void>;
   pushNotice: (notice: Omit<TavernNotice, 'id' | 'postedAtMs'> & { postedAtMs?: number }) => void;
+  /** dedupeKey 일치 공지를 최신 내용으로 교체(행성별 점령 갱신) */
+  pushOrRefreshNotice: (
+    notice: Omit<TavernNotice, 'id' | 'postedAtMs'> & { postedAtMs?: number },
+    dedupeKey: string,
+  ) => void;
 };
 
 function formatId(): string {
@@ -220,6 +225,26 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
         i18nParams: notice.i18nParams,
       };
       return { notices: [next, ...state.notices].slice(0, MAX_NOTICE_COUNT) };
+    });
+    void get().persistBoard();
+  },
+
+  pushOrRefreshNotice: (notice, dedupeKey) => {
+    if (isLegacyArcCoreMissileNotice(notice)) return;
+    const nextPostedAtMs = notice.postedAtMs ?? Date.now();
+    set((state) => {
+      const rest = state.notices.filter((n) => n.dedupeKey !== dedupeKey);
+      const next: TavernNotice = {
+        id: formatId(),
+        title: notice.title,
+        body: notice.body,
+        tag: notice.tag,
+        postedAtMs: nextPostedAtMs,
+        dedupeKey,
+        i18nKey: notice.i18nKey,
+        i18nParams: notice.i18nParams,
+      };
+      return { notices: [next, ...rest].slice(0, MAX_NOTICE_COUNT) };
     });
     void get().persistBoard();
   },

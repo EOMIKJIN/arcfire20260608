@@ -3,6 +3,8 @@ import type { BmShopKind } from '../../bm/bmShopCatalog';
 import type { LevelUpSummary, MissionReward } from '../../types';
 import type { TradeProfitTip } from '../../game/tradeProfitTips';
 import type { ImageSourcePropType } from 'react-native';
+import { t } from '../../i18n';
+import { preflightPlanetHubSession } from '../heavyUiDataSession/preflightPlanetHub';
 
 let overlaySeq = 0;
 function nextOverlayId(prefix: string): string {
@@ -39,6 +41,8 @@ export type ArcOverlayAlertEntry = ArcOverlayBase & {
   title: string;
   message: string;
   buttons: ArcAlertButton[];
+  /** 정보성 알림 — ms 후 자동 닫힘 (미설정 시 수동 확인) */
+  autoDismissMs?: number;
 };
 
 export type ArcOverlayLevelUpEntry = ArcOverlayBase & {
@@ -212,28 +216,43 @@ export const useArcOverlayStore = create<ArcOverlayState>((set, get) => ({
   },
 }));
 
-/** alert — 연속 호출 시 최상단 alert 만 교체 */
+/** alert — 연속 호출 시 최상단 alert 만 교체 (또는 options.id 고정 교체) */
+export type ArcAlertPresentOptions = {
+  id?: string;
+  autoDismissMs?: number;
+};
+
 export function presentArcOverlayAlert(
   title: string,
   message: string,
   buttons?: ArcAlertButton[],
+  options?: ArcAlertPresentOptions,
 ): void {
   const list =
     buttons && buttons.length > 0
       ? buttons
       : [{ text: '확인', style: 'default' as const }];
-  const entry: Omit<ArcOverlayAlertEntry, 'id'> = {
+  const alertId = options?.id?.trim();
+  const entry: Omit<ArcOverlayAlertEntry, 'id'> & { id?: string } = {
     kind: 'alert',
     title,
     message,
     buttons: list,
     dismissOnBackdrop: true,
+    autoDismissMs: options?.autoDismissMs,
+    ...(alertId ? { id: alertId } : {}),
   };
-  const top = useArcOverlayStore.getState().top();
+  const store = useArcOverlayStore.getState();
+  if (alertId) {
+    store.dismissWhere((e) => e.id === alertId);
+    store.present(entry);
+    return;
+  }
+  const top = store.top();
   if (top?.kind === 'alert') {
-    useArcOverlayStore.getState().replaceTop(entry);
+    store.replaceTop(entry);
   } else {
-    useArcOverlayStore.getState().present(entry);
+    store.present(entry);
   }
 }
 
@@ -249,6 +268,11 @@ const PLANET_ECONOMY_INFO_OVERLAY_ID = 'planet-economy-info';
 const PLANET_DEVELOPMENT_OVERLAY_ID = 'planet-development';
 
 export function presentPlanetEconomyInfoOverlay(planetId: string, planetName: string): void {
+  const pf = preflightPlanetHubSession(planetId);
+  if (!pf.ok) {
+    presentArcOverlayAlert(t('heavyUi.errorTitle'), t(`heavyUi.preflight.${pf.code}`));
+    return;
+  }
   const entry: ArcOverlayInput = {
     kind: 'planetEconomyInfo',
     planetId,
@@ -310,6 +334,11 @@ export function presentPlanetDevelopmentOverlay(
   planetName: string,
   initialView: PlanetDevelopmentInitialView = 'list',
 ): void {
+  const pf = preflightPlanetHubSession(planetId);
+  if (!pf.ok) {
+    presentArcOverlayAlert(t('heavyUi.errorTitle'), t(`heavyUi.preflight.${pf.code}`));
+    return;
+  }
   const entry: ArcOverlayInput = {
     kind: 'planetDevelopment',
     planetId,

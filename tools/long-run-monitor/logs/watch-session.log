@@ -1,0 +1,7 @@
+﻿[2026-06-22 01:13:16] USER_WATCH until=2026-06-23 08:00:00 app_pid=20400 monitor_pid=11808 autoStop=true
+[2026-06-22 17:29:17] USER_WATCH_3H until=2026-06-22 20:28:28 note=post_feature_verify
+[2026-06-22 17:29:56] SCHEDULE_START until=2026-06-22 20:28:28 note=user_3h_post_feature_verify
+[2026-06-22 19:10:59] USER_WATCH_3H until=2026-06-22 22:10:00 note=territorial_red_blue_neutral monitor_pid=26332 territorial_logcat=4296 app_pid=6506
+[2026-06-22 20:28:57] WATCH_STOP pid=26332 until_reached=2026-06-22 20:28:28
+[2026-06-22 20:28:57] SCHEDULE_DONE until=2026-06-22 20:28:28
+[2026-06-22 20:29:59] WATCH_RESTART after early 20:28 stop — resume until 22:10

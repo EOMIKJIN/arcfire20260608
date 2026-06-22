@@ -1,0 +1,15 @@
+[2026-06-22 20:30:00] monitor start package=com.arcfire.online interval=30m rules=v2(hub_activation_excluded)
+[2026-06-22 20:30:00] meminfo -> D:\arcfire20260607\tools\long-run-monitor\logs\meminfo-20260622-203000.log
+[2026-06-22 20:30:00] timeline -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-timeline.csv
+[2026-06-22 20:30:00] alerts -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-alerts.log
+[2026-06-22 20:30:00] FOCUS: hub Skia orbit + nebula + combat ??restart only active hub GL>=80MB or 3x dGL>=8MB
+[2026-06-22 20:30:02] snap PSS=799.8MB GL=56.6MB views=318 dPSS=-30 dGL=-5.1 GL_RECOVERED idle_ok
+[2026-06-22 21:00:07] snap PSS=759.2MB GL=41MB views=98 dPSS=-125.9 dGL=-111.1 GL_RECOVERED idle_ok
+[2026-06-22 21:30:13] snap PSS=788MB GL=54MB views=313 dPSS=-10.2 dGL=2 
+[2026-06-22 22:00:20] snap PSS=592.4MB GL=41.1MB views=15 dPSS=-105.2 dGL=-1.8 
+[2026-06-22 22:30:25] snap PSS=891.9MB GL=59.2MB views=323 dPSS=38.2 dGL=7.2 
+[2026-06-22 23:00:29] ALERT PSS +44.5MB
+[2026-06-22 23:00:29] snap PSS=930MB GL=61.7MB views=347 dPSS=44.5 dGL=0.6 PSS_SPIKE review=graphics+native
+[2026-06-22 23:30:33] ALERT GL +91.3MB active hub views=929
+[2026-06-22 23:30:33] ALERT GL/PSS hard-ceiling breach gl=152.4MB pss=1029.9MB ??defer remediation to check-and-remediate
+[2026-06-22 23:30:33] snap PSS=1029.9MB GL=152.4MB views=929 dPSS=126.8 dGL=91.3 GL_SPIKE suspect=hub_skia_orbit_nebula_combat

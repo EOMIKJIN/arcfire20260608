@@ -4,6 +4,7 @@ import { useWorldStore } from '../../store/worldStore';
 import { useArcNpcTrafficStore } from '../../store/arcNpcTrafficStore';
 import { useTavernBoardStore, type TavernNoticeTag } from '../../store/tavernBoardStore';
 import type { I18nParams } from '../../i18n/types';
+import { publishMegaFactionPgpDailyBriefingNotice } from '../../world/megaFactionPgpDailyBriefing';
 
 const BOARD_SUMMARY_INTERVAL_SEC = 24 * 60 * 60;
 const TRANSPORT_NOTICE_DEDUPE_PREFIX = 'seed_transport_daily_digest_';
@@ -39,6 +40,7 @@ export class ArcNewsBoardSubCore extends BaseArcSubCore {
   override onBoot(): void {
     this.unsubCommands = subscribeArcCoreCommands((cmd) => this.onArcCoreCommand(cmd));
     this.publishBootNotice();
+    publishMegaFactionPgpDailyBriefingNotice();
   }
 
   override onShutdown(): void {

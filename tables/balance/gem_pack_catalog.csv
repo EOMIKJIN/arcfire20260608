@@ -1,0 +1,7 @@
+productId,iapPriceKey,gemAmount,bonusPct,badgeKey,visual,notesKo
+starter_pack,mock_499,250,0,starterOnce,starterPack,스타터: 250💎+25000Cr+장비(별도)
+gem_pack_small,mock_099,100,0,,gems,소형 100💎 · ₩1100 앵커
+gem_pack_medium,mock_499,550,10,popular,gems,중형 605💎(+10%) · ₩5500
+gem_pack_large,mock_999,1200,20,,gems,대형 1440💎(+20%) · ₩11000
+gem_pack_xlarge,mock_4999,2000,30,bestValue,gems,특대 2600💎(+30%) · zone18 69% 이하(전량교환)
+season_pass_premium,mock_1499,0,0,limited,seasonPass,시즌패스 — 보석 직접 지급 없음(트랙 보상)

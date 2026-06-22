@@ -1,0 +1,7 @@
+itemId,stage,labelKo,gemCost,creditEquivalent,notesKo
+revive_combat,3,전투 부활권,80,32000,zone3 마일스톤 6.4% · Skia dispose 후
+combat_buff_atk,3,전투 공격 버프(1회),40,16000,편의 소모
+fast_travel_short,2,빠른 이동(근거리),25,10000,은하맵 STAGE2
+explore_ticket_locked,2,잠긴 구역 탐사,60,24000,탐사 티켓
+hull_destroyer_gem,1,구축함 보석 직구,4800,1200000,credits 1.2M × premium 1.35 / 400 ≈ 4050→4800
+hull_cruiser_gem,1,순양함 보석 직구,16875,5000000,credits 5M × premium

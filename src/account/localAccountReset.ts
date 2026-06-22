@@ -15,6 +15,7 @@ import { applyArcCoreAccountFreshStartSeedUnlock } from '../arcCore/worldExpansi
 import { useWorldStore } from '../store/worldStore';
 import { useWorldObjectRuntimeStore } from '../store/worldObjectRuntimeStore';
 import { useTavernBoardStore } from '../store/tavernBoardStore';
+import { useBmExchangeLedgerStore } from '../store/bmExchangeLedgerStore';
 import { resetCombatMatchTelemetry } from '../store/combatMatchTelemetryStore';
 import { showArcAlert } from '../utils/showArcAlert';
 import { clearOnboardingProfessionId } from '../game/onboardingDraftStorage';
@@ -92,6 +93,7 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await useUserSessionStore.getState().resetLocalUserSession();
   // 선술집 공지 보드(클라우드 동기 대상) — tavernBoardStore
   await useTavernBoardStore.getState().resetLocalBoard();
+  await useBmExchangeLedgerStore.getState().resetLocal();
   // 캐릭터 선택 중간 초안 — character-select → nickname 사이 professionId
   await clearOnboardingProfessionId();
 

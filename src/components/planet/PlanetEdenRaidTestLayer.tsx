@@ -88,6 +88,13 @@ import { showArcAlert } from '../../utils/showArcAlert';
 import { useOrbitCapitalCombatUiStore } from '../../store/orbitCapitalCombatUiStore';
 import { useBattleStanceStore, type BattleStanceId } from '../../store/battleStanceStore';
 import { resolveShipFinalStatResult } from '../../ship/shipStatPipeline';
+import {
+  applyShipEquipmentToShipPerformance,
+  aggregateShipEquipmentBonuses,
+  resolveShipEquipmentAgentKnobs,
+  type ShipEquipmentAgentKnobs,
+} from '../../game/shipEquipment';
+import { resolveNpcCapitalShipCombatBinding } from '../../game/npcCapitalShipCombatBinding';
 import { FONTS } from '../../utils/theme';
 import { PlanetEdenRaidOrbitSkiaCombat } from './PlanetEdenRaidOrbitSkiaCombat';
 
@@ -423,6 +430,14 @@ export type Agent = {
   closeRangeFlightSpeedPxPerMs: number;
   /** weapon_affinity_matrix.csv — 적 장갑 유형(light/shielded/heavy) */
   enemyAffinityKind: string;
+  /** 장비 — 회피 AC 가산 */
+  equipmentAcBonus: number;
+  /** 장비 — 피해 % 감소(외장장갑 등) */
+  equipmentIncomingDamageMul: number;
+  /** 장비 — 전투 중 선체 회복(/tick) */
+  equipmentHullRegenPerTick: number;
+  /** 장비 — 적 미사일 명중 회피 확률(0~1) */
+  equipmentMissileMissChance: number;
 };
 
 type TeamAgentBuckets = { red: Agent[]; blue: Agent[]; orange: Agent[] };
@@ -828,9 +843,16 @@ function getAbilityModifier(stat: number): number {
 }
 
 /** 0=miss, 1=hit, 2=crit */
-function resolveAgentAttackOutcome(attacker: Agent, defender: Agent): 0 | 1 | 2 {
+function resolveAgentAttackOutcome(attacker: Agent, defender: Agent, weaponType: CombatWeaponType = 'laser'): 0 | 1 | 2 {
   const natural = 1 + Math.floor(Math.random() * 20);
   if (natural === 1) return 0;
+  if (
+    weaponType === 'missile'
+    && defender.equipmentMissileMissChance > 0
+    && Math.random() < defender.equipmentMissileMissChance
+  ) {
+    return 0;
+  }
   const attackerStance = isPlayerCombatAgent(attacker)
     ? useBattleStanceStore.getState().activeStance
     : 'NEUTRAL';
@@ -842,7 +864,8 @@ function resolveAgentAttackOutcome(attacker: Agent, defender: Agent): 0 | 1 | 2 
   const critDelta = attackerStance === 'AGGRESSIVE' ? -1 : attackerStance === 'DEFENSIVE' ? 1 : 0;
   const critThreshold = Math.min(20, Math.max(2, COMBAT_CRIT_NATURAL_THRESHOLD + critDelta));
   const attackTotal = natural + attacker.attackBonusStat + attacker.sizeClass + attacker.strMod + attackBonusDelta;
-  const defenseAc = 10 + defender.sizeClass + defender.dexMod + defender.armorStat + acBonusDelta;
+  const defenseAc = 10 + defender.sizeClass + defender.dexMod + defender.armorStat + acBonusDelta
+    + Math.max(0, defender.equipmentAcBonus);
   if (natural >= critThreshold) return 2;
   return attackTotal >= defenseAc ? 1 : 0;
 }
@@ -901,7 +924,8 @@ function applyAgentIncomingDamage(defender: Agent, rawDamage: number, attackerAt
     ? useBattleStanceStore.getState().activeStance
     : 'NEUTRAL';
   const damageReduction = defenderStance === 'DEFENSIVE' ? 0.85 : 1;
-  const reducedDamage = Math.max(1, Math.round(rawDamage * damageReduction));
+  const equipmentMul = Math.max(0.65, Math.min(1, defender.equipmentIncomingDamageMul || 1));
+  const reducedDamage = Math.max(1, Math.round(rawDamage * damageReduction * equipmentMul));
   let remaining = reducedDamage;
   if (defender.shieldHp > 0) {
     const absorbed = Math.min(defender.shieldHp, remaining);
@@ -1781,6 +1805,7 @@ type PlayerFlagshipCombatBinding = {
   displayName: string;
   combatStats: NpcCapitalShip['combat'];
   runtimeConfig: (typeof NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV)[string] | undefined;
+  equipmentAgentKnobs: ShipEquipmentAgentKnobs;
 };
 
 function resolvePlayerFlagshipCombatBinding(): PlayerFlagshipCombatBinding | null {
@@ -1839,6 +1864,9 @@ function resolvePlayerFlagshipCombatBinding(): PlayerFlagshipCombatBinding | nul
     runtimeBase,
   );
   perf = applyMineralUpgradeToShipPerformance(perf, player.mineralUpgrades);
+  perf = applyShipEquipmentToShipPerformance(perf, player.ship.equipSlots);
+  const equipmentBonuses = aggregateShipEquipmentBonuses(player.ship.equipSlots);
+  const equipmentAgentKnobs = resolveShipEquipmentAgentKnobs(perf.combat.maxHp, equipmentBonuses);
 
   const mergedRuntime = runtimeBase
     ? {
@@ -1863,6 +1891,44 @@ function resolvePlayerFlagshipCombatBinding(): PlayerFlagshipCombatBinding | nul
     displayName: shipForCombat.name,
     combatStats: perf.combat,
     runtimeConfig: mergedRuntime,
+    equipmentAgentKnobs,
+  };
+}
+
+function resolveStageAgentCombatBinding(input: {
+  isPlayerSlot: boolean;
+  npcShipId: string | null;
+  npcRow: NpcCapitalShip | undefined;
+  runtimeConfig: (typeof NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV)[string] | undefined;
+  playerBinding: PlayerFlagshipCombatBinding | null;
+}): {
+  combatStats: NpcCapitalShip['combat'] | undefined;
+  runtimeConfig: (typeof NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV)[string] | undefined;
+  equipmentAgentKnobs: ShipEquipmentAgentKnobs | undefined;
+} {
+  if (input.isPlayerSlot && input.playerBinding) {
+    return {
+      combatStats: input.playerBinding.combatStats,
+      runtimeConfig: input.playerBinding.runtimeConfig,
+      equipmentAgentKnobs: input.playerBinding.equipmentAgentKnobs,
+    };
+  }
+  if (input.npcShipId && input.npcRow) {
+    const npcBinding = resolveNpcCapitalShipCombatBinding({
+      npcShipId: input.npcShipId,
+      npcRow: input.npcRow,
+      runtimeConfig: input.runtimeConfig,
+    });
+    return {
+      combatStats: npcBinding.combatStats,
+      runtimeConfig: npcBinding.runtimeConfig,
+      equipmentAgentKnobs: npcBinding.equipmentAgentKnobs,
+    };
+  }
+  return {
+    combatStats: input.npcRow?.combat,
+    runtimeConfig: input.runtimeConfig,
+    equipmentAgentKnobs: undefined,
   };
 }
 
@@ -1972,6 +2038,7 @@ function createCapitalAgentBase(
   combatStats?: NpcCapitalShip['combat'],
   runtimeConfig?: (typeof NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV)[string],
   enemyAffinityKind = 'light',
+  equipmentKnobs?: ShipEquipmentAgentKnobs,
 ): Agent {
   let maxHullHp = Math.max(1, combatStats?.maxHp ?? CAPITAL_BASE_HULL_HP);
   if (team === 'red' || team === 'orange') {
@@ -2080,6 +2147,12 @@ function createCapitalAgentBase(
   const closeRangeSalvoIntervalMs = hasCloseRangeWeapon
     ? resolveMissileSalvoIntervalMs(closeRangeWeaponId, randRange(salvoStepMin, salvoStepMax))
     : randRange(salvoStepMin, salvoStepMax);
+  const eqKnobs = equipmentKnobs ?? {
+    acBonus: 0,
+    incomingDamageMul: 1,
+    hullRegenPerTick: 0,
+    missileMissChance: 0,
+  };
   return {
     id,
     team,
@@ -2174,6 +2247,10 @@ function createCapitalAgentBase(
     missileFlightSpeedPxPerMs,
     closeRangeFlightSpeedPxPerMs,
     enemyAffinityKind,
+    equipmentAcBonus: eqKnobs.acBonus,
+    equipmentIncomingDamageMul: eqKnobs.incomingDamageMul,
+    equipmentHullRegenPerTick: eqKnobs.hullRegenPerTick,
+    equipmentMissileMissChance: eqKnobs.missileMissChance,
   };
 }
 
@@ -2257,8 +2334,15 @@ function initAgents(
       combatPlanetId,
     );
     const isPlayerSlot = isPlayerFlagshipSlot(captainId, slot.npcShipId, { combatPlanetId, team: 'red' });
-    const appliedCombatStats = isPlayerSlot ? (playerBinding?.combatStats ?? npc?.combat) : npc?.combat;
-    let appliedRuntimeConfig = isPlayerSlot ? (playerBinding?.runtimeConfig ?? runtimeConfig) : runtimeConfig;
+    const agentBinding = resolveStageAgentCombatBinding({
+      isPlayerSlot,
+      npcShipId: slot.npcShipId,
+      npcRow: npc,
+      runtimeConfig,
+      playerBinding,
+    });
+    let appliedCombatStats = agentBinding.combatStats;
+    let appliedRuntimeConfig = agentBinding.runtimeConfig;
     const appliedName = isPlayerSlot ? (playerBinding?.displayName ?? nameplate) : nameplate;
     const appliedCaptainLabel = isPlayerSlot ? (resolveLinkedAccountNicknameForFlagship() ?? '—') : nameplate;
     const planetAffinity = resolvePlanetEnemyAffinityKind(combatPlanetId);
@@ -2288,6 +2372,7 @@ function initAgents(
         appliedCombatStats,
         appliedRuntimeConfig,
         planetAffinity,
+        agentBinding.equipmentAgentKnobs,
       ),
     );
   }
@@ -2315,8 +2400,15 @@ function initAgents(
     const forcePlayerBlueSlot = b === 0 && !!playerBinding;
     const isPlayerSlot = forcePlayerBlueSlot
       || isPlayerFlagshipSlot(captainId, slot.npcShipId, { combatPlanetId, team: 'blue' });
-    const appliedCombatStats = isPlayerSlot ? (playerBinding?.combatStats ?? npc?.combat) : npc?.combat;
-    const appliedRuntimeConfig = isPlayerSlot ? (playerBinding?.runtimeConfig ?? runtimeConfig) : runtimeConfig;
+    const agentBinding = resolveStageAgentCombatBinding({
+      isPlayerSlot,
+      npcShipId: isPlayerSlot ? null : slot.npcShipId,
+      npcRow: npc,
+      runtimeConfig,
+      playerBinding,
+    });
+    const appliedCombatStats = agentBinding.combatStats;
+    const appliedRuntimeConfig = agentBinding.runtimeConfig;
     const appliedName = isPlayerSlot ? (playerBinding?.displayName ?? nameplate) : nameplate;
     const appliedCaptainLabel = isPlayerSlot ? (resolveLinkedAccountNicknameForFlagship() ?? '—') : nameplate;
     const appliedNpcShipId = isPlayerSlot ? null : slot.npcShipId;
@@ -2340,6 +2432,7 @@ function initAgents(
         appliedCombatStats,
         appliedRuntimeConfig,
         blueAffinity,
+        agentBinding.equipmentAgentKnobs,
       ),
     );
   }
@@ -2368,8 +2461,15 @@ function initAgents(
       combatPlanetId,
     );
     const isPlayerSlot = isPlayerFlagshipSlot(captainId, slot.npcShipId, { combatPlanetId, team: 'orange' });
-    const appliedCombatStats = isPlayerSlot ? (playerBinding?.combatStats ?? npc?.combat) : npc?.combat;
-    const appliedRuntimeConfig = isPlayerSlot ? (playerBinding?.runtimeConfig ?? runtimeConfig) : runtimeConfig;
+    const agentBinding = resolveStageAgentCombatBinding({
+      isPlayerSlot,
+      npcShipId: slot.npcShipId,
+      npcRow: npc,
+      runtimeConfig,
+      playerBinding,
+    });
+    const appliedCombatStats = agentBinding.combatStats;
+    const appliedRuntimeConfig = agentBinding.runtimeConfig;
     const appliedName = isPlayerSlot ? (playerBinding?.displayName ?? nameplate) : nameplate;
     const appliedCaptainLabel = isPlayerSlot ? (resolveLinkedAccountNicknameForFlagship() ?? '—') : nameplate;
     agents.push(
@@ -2386,6 +2486,8 @@ function initAgents(
         appliedCaptainLabel,
         appliedCombatStats,
         appliedRuntimeConfig,
+        'light',
+        agentBinding.equipmentAgentKnobs,
       ),
     );
   }
@@ -2833,6 +2935,17 @@ export function usePlanetEdenRaidSim(
             }
           }
         }
+        if (
+          isPlayerCombatAgent(ag)
+          && ag.equipmentHullRegenPerTick > 0
+          && ag.hullHp > 0
+          && ag.hullHp < ag.maxHullHp
+        ) {
+          ag.hullHp = Math.min(
+            ag.maxHullHp,
+            ag.hullHp + ag.equipmentHullRegenPerTick,
+          );
+        }
         if (elapsed - ag.lastWeaponFireAtMs > WEAPON_STALL_RECOVERY_MS) {
           ag.stallChaseBoostUntilMs = elapsed + STALL_CHASE_BOOST_MS;
           ag.lastWeaponFireAtMs = elapsed;
@@ -3205,7 +3318,7 @@ export function usePlanetEdenRaidSim(
         }
         if (victim?.alive) {
           if (owner) {
-            const missileOutcome = resolveAgentAttackOutcome(owner, victim);
+            const missileOutcome = resolveAgentAttackOutcome(owner, victim, 'missile');
             if (missileOutcome > 0) {
               const missileRawDamage = rollAgentWeaponDamage(owner, victim, 'missile', missileOutcome);
               const hullDamage = applyAgentIncomingDamage(victim, missileRawDamage, owner.attackBonusStat);

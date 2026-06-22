@@ -1,0 +1,4 @@
+productId,iapPriceKey,tier,dailyGemGrant,durationDays,badgeKey,notesKo
+vip_basic,mock_999,basic,15,30,,월 450💎(≈180kCr 교환가치)
+vip_plus,mock_1999,plus,35,30,,월 1050💎
+vip_max,mock_2999,max,60,30,bestValue,월 1800💎 — free_gem_monthly_cap 별도

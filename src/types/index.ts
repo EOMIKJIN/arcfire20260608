@@ -63,6 +63,8 @@ export interface Player {
    * 서버 동기화 시 동일 필드로 글로벌 클랜전 매칭의 로컬 캐시 키로 사용 가능.
    */
   homePlanetId: string | null;
+  /** 은하계 지도 출발 직전 메인 허브 행성 — 비정상 종료·재시작 시 복귀 앵커 */
+  lastHubPlanetId?: string | null;
   /**
    * @deprecated — `orbitalMiningDeliveredByPlanet` 사용. 하위 호환용 ore_mineral_1/ore_ferrite 합산.
    */
@@ -722,6 +724,14 @@ export interface Mission {
   prerequisiteIds: string[];
   nextMissionId: string | null;
   dc: number;
+  /** 선술집 인스턴스 미션 의뢰 함장 (sandbox_*). */
+  offerCaptainId?: string;
+  /** 선술집 게시 행성 id (sandbox_*). */
+  offerPlanetId?: string;
+  /** 수락 가능 최소 플레이어 레벨 (sandbox_*). */
+  levelRequired?: number;
+  /** 미션 클리어 인게임 대화 scene id. */
+  clearDialogSceneId?: string;
 }
 
 /**

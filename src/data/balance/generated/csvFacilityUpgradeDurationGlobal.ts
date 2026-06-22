@@ -8,8 +8,10 @@ export const FacilityUpgradeDurationGlobal_FROM_BALANCE_CSV = [
   { "key": "standard_max_upgrade_duration_sec", "value_num": "2592000", "value_str": "", "notesKo": "표준 티어 최고 업그레이드 상한 30일" },
   { "key": "epic_duration_multiplier", "value_num": "2.0", "value_str": "", "notesKo": "에픽 티어 기본 배율(standard 대비) — L11+ 도입 시" },
   { "key": "instant_complete_cost_per_hour_credits", "value_num": "1000", "value_str": "", "notesKo": "BM v3.1 시간당 즉시완료 기본 크레딧(0=레거시 CSV)" },
-  { "key": "install_instant_cost_ratio", "value_num": "0.5", "value_str": "", "notesKo": "Lv1 설치 즉시완료 하한 = installCost × ratio" },
-  { "key": "upgrade_instant_cost_ratio", "value_num": "0.4", "value_str": "", "notesKo": "업그레이드 즉시완료 하한 = upgradeCost × ratio" },
+  { "key": "install_instant_cost_ratio", "value_num": "0.5", "value_str": "", "notesKo": "Lv1 설치 — 시간곡선 하한 힌트(installCost×ratio · 최종은 premium 밴드)" },
+  { "key": "upgrade_instant_cost_ratio", "value_num": "0.4", "value_str": "", "notesKo": "업그레이드 — 시간곡선 하한 힌트(upgradeCost×ratio · 최종은 premium 밴드)" },
   { "key": "instant_remain_floor_pct", "value_num": "0.05", "value_str": "", "notesKo": "진행 중 즉시완료 최소 = full × 5%" },
+  { "key": "instant_premium_total_min", "value_num": "3.0", "value_str": "", "notesKo": "즉시완료 총비용 하한 = baseCost×min (base+instant)" },
+  { "key": "instant_premium_total_max", "value_num": "5.0", "value_str": "", "notesKo": "즉시완료 총비용 상한 = baseCost×max (base+instant)" },
 ] as const;
 export type FacilityUpgradeDurationGlobalRow = (typeof FacilityUpgradeDurationGlobal_FROM_BALANCE_CSV)[number];

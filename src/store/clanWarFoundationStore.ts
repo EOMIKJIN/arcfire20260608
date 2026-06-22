@@ -122,14 +122,18 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
       const loaded = await loadClanWarFoundationDb();
       const seeded = seedPlanetOccupationHoldsFromBalance(loaded.planetHolds);
       const nextClans = { ...loaded.clans, ...seeded.clans };
-      const holdsChanged = Object.keys(seeded.holds).length > Object.keys(loaded.planetHolds).length;
+      const clansChanged =
+        nextClans[ARC_CORE_SEED_BLUE_CLAN_ID]?.displayName !==
+          loaded.clans[ARC_CORE_SEED_BLUE_CLAN_ID]?.displayName
+        || nextClans[ARC_CORE_SEED_RED_CLAN_ID]?.displayName !==
+          loaded.clans[ARC_CORE_SEED_RED_CLAN_ID]?.displayName;
       set({
         clans: nextClans,
         planetHolds: seeded.holds,
         deployments: loaded.deployments,
         operations: loaded.operations,
       });
-      if (holdsChanged) {
+      if (seeded.holdsMutated || clansChanged) {
         await saveClanWarFoundationDb({
           clans: nextClans,
           planetHolds: seeded.holds,

@@ -6,5 +6,17 @@ export const ArcCoreTerritorialFleetComposition_FROM_BALANCE_CSV = [
   { "planetId": "draco_haven", "factionSide": "RED", "shipAssetId": "npc_enemy_draco_01", "sortOrder": "1", "notesKo": "레드 방어·공격 1" },
   { "planetId": "draco_haven", "factionSide": "RED", "shipAssetId": "npc_enemy_draco_02", "sortOrder": "2", "notesKo": "레드 방어·공격 2" },
   { "planetId": "draco_haven", "factionSide": "RED", "shipAssetId": "npc_enemy_draco_03", "sortOrder": "3", "notesKo": "레드 방어·공격 3" },
+  { "planetId": "omega_hub", "factionSide": "BLUE", "shipAssetId": "npc_draco_patrol_01", "sortOrder": "1", "notesKo": "오메가 블루 1" },
+  { "planetId": "omega_hub", "factionSide": "BLUE", "shipAssetId": "npc_draco_escort_01", "sortOrder": "2", "notesKo": "오메가 블루 2" },
+  { "planetId": "omega_hub", "factionSide": "BLUE", "shipAssetId": "npc_ai_clan_neutral_flagship", "sortOrder": "3", "notesKo": "오메가 블루 3" },
+  { "planetId": "omega_hub", "factionSide": "NEUTRAL", "shipAssetId": "npc_ai_clan_neutral_flagship", "sortOrder": "1", "notesKo": "오메가 중립 수비 1" },
+  { "planetId": "omega_hub", "factionSide": "NEUTRAL", "shipAssetId": "npc_ai_clan_neutral_flagship", "sortOrder": "2", "notesKo": "오메가 중립 수비 2" },
+  { "planetId": "omega_hub", "factionSide": "NEUTRAL", "shipAssetId": "npc_draco_patrol_01", "sortOrder": "3", "notesKo": "오메가 중립 순찰 3" },
+  { "planetId": "shadow_market", "factionSide": "RED", "shipAssetId": "npc_enemy_draco_01", "sortOrder": "1", "notesKo": "섀도우 레드 1" },
+  { "planetId": "shadow_market", "factionSide": "RED", "shipAssetId": "npc_enemy_draco_02", "sortOrder": "2", "notesKo": "섀도우 레드 2" },
+  { "planetId": "shadow_market", "factionSide": "RED", "shipAssetId": "npc_enemy_draco_03", "sortOrder": "3", "notesKo": "섀도우 레드 3" },
+  { "planetId": "shadow_market", "factionSide": "NEUTRAL", "shipAssetId": "npc_ai_clan_neutral_flagship", "sortOrder": "1", "notesKo": "섀도우 중립 1" },
+  { "planetId": "shadow_market", "factionSide": "NEUTRAL", "shipAssetId": "npc_ai_clan_neutral_flagship", "sortOrder": "2", "notesKo": "섀도우 중립 2" },
+  { "planetId": "shadow_market", "factionSide": "NEUTRAL", "shipAssetId": "npc_ai_clan_neutral_flagship", "sortOrder": "3", "notesKo": "섀도우 중립 3" },
 ] as const;
 export type ArcCoreTerritorialFleetCompositionRow = (typeof ArcCoreTerritorialFleetComposition_FROM_BALANCE_CSV)[number];

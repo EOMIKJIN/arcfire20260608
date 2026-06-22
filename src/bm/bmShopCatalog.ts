@@ -1,9 +1,19 @@
 // ============================================================
-// BM 더미 상점 카탈로그 — v2.0 이중통화 (크레딧 / 보석)
+// BM 더미 상점 카탈로그 — v2.1 이중통화 (크레딧 / 보석)
 //   premium: Type A/E — 현금 IAP (보석팩·스타터·시즌패스·VIP)
 //   exchange: Type B — 보석 → 크레딧 단방향 교환 (현금 크레딧 구매 없음)
-// 인앱 연동·결제는 추후. CSV 정본 연동 시 Table-First로 이전.
+// Table-First: gem_*_catalog.csv · vip_tier_policy.csv
 // ============================================================
+
+import { VipTierPolicy_FROM_BALANCE_CSV } from '../data/balance/generated';
+import {
+  getGemExchangeBaseCrPerGem,
+  listGemExchangeCatalog,
+  listGemPackCatalog,
+} from './bmCatalogIndex';
+
+/** @deprecated getGemExchangeBaseCrPerGem() 사용 */
+export const BM_DUMMY_GEM_TO_CREDIT_RATE = getGemExchangeBaseCrPerGem();
 
 /** premium = IAP 프리미엄 상점 · exchange = 보석→크레딧 교환 */
 export type BmShopKind = 'premium' | 'exchange';
@@ -27,147 +37,85 @@ export interface BmShopProduct {
   badgeKey?: string;
   visual: BmShopProductVisual;
   tint: string;
+  /** 교환 상품 — 지급 크레딧(CSV) */
+  exchangeCreditAmount?: number;
+  /** 보석팩 — 실지급 보석(CSV grant) */
+  gemGrantAmount?: number;
 }
 
-/** Type A/E — Stage 1 Hub · 현금(IAP) */
-const PREMIUM_PRODUCTS: readonly BmShopProduct[] = [
-  {
-    id: 'starter_pack',
-    titleKey: 'bmShop.product.starter_pack.title',
-    descKey: 'bmShop.product.starter_pack.desc',
-    priceKey: 'bmShop.price.mock_499',
-    priceKind: 'iap',
-    badgeKey: 'bmShop.badge.starterOnce',
-    visual: 'starterPack',
-    tint: '#3D4A2A',
-  },
-  {
-    id: 'gem_pack_small',
-    titleKey: 'bmShop.product.gem_pack_small.title',
-    descKey: 'bmShop.product.gem_pack_small.desc',
-    priceKey: 'bmShop.price.mock_099',
-    priceKind: 'iap',
-    visual: 'gems',
-    tint: '#1E3A5F',
-  },
-  {
-    id: 'gem_pack_medium',
-    titleKey: 'bmShop.product.gem_pack_medium.title',
-    descKey: 'bmShop.product.gem_pack_medium.desc',
-    priceKey: 'bmShop.price.mock_499',
-    priceKind: 'iap',
-    badgeKey: 'bmShop.badge.popular',
-    visual: 'gems',
-    tint: '#1A3352',
-  },
-  {
-    id: 'gem_pack_large',
-    titleKey: 'bmShop.product.gem_pack_large.title',
-    descKey: 'bmShop.product.gem_pack_large.desc',
-    priceKey: 'bmShop.price.mock_999',
-    priceKind: 'iap',
-    visual: 'gems',
-    tint: '#152B48',
-  },
-  {
-    id: 'gem_pack_xlarge',
-    titleKey: 'bmShop.product.gem_pack_xlarge.title',
-    descKey: 'bmShop.product.gem_pack_xlarge.desc',
-    priceKey: 'bmShop.price.mock_4999',
-    priceKind: 'iap',
-    badgeKey: 'bmShop.badge.bestValue',
-    visual: 'gems',
-    tint: '#122440',
-  },
-  {
-    id: 'season_pass_premium',
-    titleKey: 'bmShop.product.season_pass_premium.title',
-    descKey: 'bmShop.product.season_pass_premium.desc',
-    priceKey: 'bmShop.price.mock_1499',
-    priceKind: 'iap',
-    badgeKey: 'bmShop.badge.limited',
-    visual: 'seasonPass',
-    tint: '#3D2A5C',
-  },
-  {
-    id: 'vip_basic',
-    titleKey: 'bmShop.product.vip_basic.title',
-    descKey: 'bmShop.product.vip_basic.desc',
-    priceKey: 'bmShop.price.mock_999',
-    priceKind: 'iap',
-    visual: 'vip',
-    tint: '#2A3D52',
-  },
-  {
-    id: 'vip_plus',
-    titleKey: 'bmShop.product.vip_plus.title',
-    descKey: 'bmShop.product.vip_plus.desc',
-    priceKey: 'bmShop.price.mock_1999',
-    priceKind: 'iap',
-    visual: 'vip',
-    tint: '#2A3552',
-  },
-  {
-    id: 'vip_max',
-    titleKey: 'bmShop.product.vip_max.title',
-    descKey: 'bmShop.product.vip_max.desc',
-    priceKey: 'bmShop.price.mock_2999',
-    priceKind: 'iap',
-    badgeKey: 'bmShop.badge.bestValue',
-    visual: 'vip',
-    tint: '#352A52',
-  },
-];
+const GEM_PACK_TINTS: Record<string, string> = {
+  starter_pack: '#3D4A2A',
+  gem_pack_small: '#1E3A5F',
+  gem_pack_medium: '#1A3352',
+  gem_pack_large: '#152B48',
+  gem_pack_xlarge: '#122440',
+  season_pass_premium: '#3D2A5C',
+};
 
-/** Type B — 보석 → 크레딧 교환 (단방향) */
-const EXCHANGE_PRODUCTS: readonly BmShopProduct[] = [
-  {
-    id: 'ex_gems_50',
-    titleKey: 'bmShop.product.ex_gems_50.title',
-    descKey: 'bmShop.product.ex_gems_50.desc',
-    priceKey: 'bmShop.price.gem_50',
-    priceKind: 'gems',
-    visual: 'exchange',
-    tint: '#2A3D35',
-  },
-  {
-    id: 'ex_gems_100',
-    titleKey: 'bmShop.product.ex_gems_100.title',
-    descKey: 'bmShop.product.ex_gems_100.desc',
-    priceKey: 'bmShop.price.gem_100',
-    priceKind: 'gems',
-    badgeKey: 'bmShop.badge.popular',
-    visual: 'exchange',
-    tint: '#2A3540',
-  },
-  {
-    id: 'ex_gems_300',
-    titleKey: 'bmShop.product.ex_gems_300.title',
-    descKey: 'bmShop.product.ex_gems_300.desc',
-    priceKey: 'bmShop.price.gem_300',
-    priceKind: 'gems',
-    visual: 'exchange',
-    tint: '#35302A',
-  },
-  {
-    id: 'ex_gems_500',
-    titleKey: 'bmShop.product.ex_gems_500.title',
-    descKey: 'bmShop.product.ex_gems_500.desc',
-    priceKey: 'bmShop.price.gem_500',
-    priceKind: 'gems',
-    badgeKey: 'bmShop.badge.bestValue',
-    visual: 'exchange',
-    tint: '#3A2A35',
-  },
-];
+const VIP_TINTS: Record<string, string> = {
+  vip_basic: '#2A3D52',
+  vip_plus: '#2A3552',
+  vip_max: '#352A52',
+};
+
+const EXCHANGE_TINTS = ['#2A3D35', '#2A3540', '#35302A', '#3A2A35'];
+
+function mapBadgeKey(raw: string | undefined): string | undefined {
+  const key = raw?.trim();
+  if (!key) return undefined;
+  return `bmShop.badge.${key}`;
+}
+
+function buildPremiumProducts(): readonly BmShopProduct[] {
+  const fromPacks: BmShopProduct[] = listGemPackCatalog().map((row) => ({
+    id: row.productId,
+    titleKey: `bmShop.product.${row.productId}.title`,
+    descKey: `bmShop.product.${row.productId}.desc`,
+    priceKey: `bmShop.price.${row.iapPriceKey}`,
+    priceKind: 'iap' as const,
+    badgeKey: mapBadgeKey(row.badgeKey),
+    visual: row.visual as BmShopProductVisual,
+    tint: GEM_PACK_TINTS[row.productId] ?? '#1E3A5F',
+    gemGrantAmount: Number(row.gemAmount) > 0
+      ? Math.floor(Number(row.gemAmount) * (100 + Number(row.bonusPct || 0)) / 100)
+      : undefined,
+  }));
+
+  const fromVip: BmShopProduct[] = VipTierPolicy_FROM_BALANCE_CSV.map((row) => ({
+    id: row.productId,
+    titleKey: `bmShop.product.${row.productId}.title`,
+    descKey: `bmShop.product.${row.productId}.desc`,
+    priceKey: `bmShop.price.${row.iapPriceKey}`,
+    priceKind: 'iap' as const,
+    badgeKey: mapBadgeKey(row.badgeKey),
+    visual: 'vip' as const,
+    tint: VIP_TINTS[row.productId] ?? '#2A3D52',
+  }));
+
+  return [...fromPacks, ...fromVip];
+}
+
+function buildExchangeProducts(): readonly BmShopProduct[] {
+  return listGemExchangeCatalog().map((row, index) => ({
+    id: row.productId,
+    titleKey: `bmShop.product.${row.productId}.title`,
+    descKey: `bmShop.product.${row.productId}.desc`,
+    priceKey: `bmShop.price.gem_${row.gemCost}`,
+    priceKind: 'gems' as const,
+    badgeKey: mapBadgeKey(row.badgeKey),
+    visual: 'exchange' as const,
+    tint: EXCHANGE_TINTS[index % EXCHANGE_TINTS.length] ?? '#2A3D35',
+    exchangeCreditAmount: Number(row.creditAmount),
+  }));
+}
+
+const PREMIUM_PRODUCTS = buildPremiumProducts();
+const EXCHANGE_PRODUCTS = buildExchangeProducts();
 
 const BY_KIND: Record<BmShopKind, readonly BmShopProduct[]> = {
   premium: PREMIUM_PRODUCTS,
   exchange: EXCHANGE_PRODUCTS,
 };
-
-/** 더미 교환 비율 — CSV `gem_exchange_rate` 연동 전 목업 (100💎 = 50,000 Cr) */
-export const BM_DUMMY_GEM_TO_CREDIT_RATE = 500;
 
 export function listBmShopProducts(kind: BmShopKind): readonly BmShopProduct[] {
   return BY_KIND[kind];
@@ -188,3 +136,5 @@ export function resolveBmShopNoticeKey(kind: BmShopKind): string {
 export function resolveBmShopActionKey(kind: BmShopKind): string {
   return kind === 'premium' ? 'bmShop.btn.purchase' : 'bmShop.btn.exchange';
 }
+
+export { getGemExchangeBaseCrPerGem } from './bmCatalogIndex';

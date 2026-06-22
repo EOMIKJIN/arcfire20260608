@@ -6,8 +6,16 @@ export {
   NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV,
   type NpcCapitalShipCombatRuntimeConfig,
 } from './csvNpcCapitalShips';
+export {
+  NPC_CAPITAL_SHIP_EQUIP_SLOTS_FROM_CSV,
+  type NpcCapitalShipEquipSlotRow,
+} from './csvNpcCapitalShipEquipSlots';
 export { CAPITAL_WEAPON_LIST_FROM_CSV, type CapitalWeaponCsvRow } from './csvWeapons';
 export { MISSIONS_FROM_CSV } from './csvMissions';
+export {
+  MISSION_COMBAT_CAPTAINS_FROM_CSV,
+  type MissionCombatCaptainRow,
+} from './csvMissionCombatCaptains';
 export { STAR_SYSTEMS_FROM_CSV } from './csvSystems';
 export {
   GALACTIC_MINERAL_POOL_FROM_CSV,

@@ -7,6 +7,7 @@ import { isDefenseSatelliteInstalledDetail } from '../../game/planetDevelopment/
 import type { PlanetDefenseSatelliteDetail } from '../../store/planetCoreMetricTypes';
 import { registerPlanetSessionResource } from '../../game/planetSessionRegistry';
 import { presentPlanetEconomyInfoOverlay, presentPlanetDevelopmentOverlay } from '../../ui/overlay/arcOverlayStore';
+import { useHeavyUiPlanetHubAction } from '../../ui/heavyUiDataSession';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { PlanetHubActionTile } from './PlanetHubActionTile';
 import { PlanetHubActionGaugeSlot } from './PlanetHubActionGaugeSlot';
@@ -135,10 +136,10 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
     }, durationMs);
   }, [clearGaugeTimers]);
 
-  const handlePressPlanetDevelopment = useCallback(() => {
-    if (!planetId || gaugeActive) return;
-    presentPlanetDevelopmentOverlay(planetId, planetName?.trim() || planetId, 'list');
-  }, [planetId, planetName, gaugeActive]);
+  const handlePressPlanetDevelopment = useHeavyUiPlanetHubAction(planetId, () => {
+    if (gaugeActive) return;
+    presentPlanetDevelopmentOverlay(planetId!, planetName?.trim() || planetId!, 'list');
+  });
 
   const defenseSatelliteInstalled = usePlanetCoreRuntimeStore((s) => {
     if (!planetId) return false;
@@ -152,10 +153,10 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
 
   const planetDevelopmentIcon = defenseSatelliteInstalled ? '🛰' : '⟦⚙⟧';
 
-  const handlePressPlanetInfo = useCallback(() => {
-    if (!planetId || gaugeActive) return;
-    presentPlanetEconomyInfoOverlay(planetId, planetName?.trim() || planetId);
-  }, [planetId, planetName, gaugeActive]);
+  const handlePressPlanetInfo = useHeavyUiPlanetHubAction(planetId, () => {
+    if (gaugeActive) return;
+    presentPlanetEconomyInfoOverlay(planetId!, planetName?.trim() || planetId!);
+  });
 
   const handlePressScan = useCallback(() => {
     if (!scanEnabled || actionsUnlocked || gaugeActive) return;

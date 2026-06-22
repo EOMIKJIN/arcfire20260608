@@ -1,0 +1,17 @@
+{
+  "startedAt": "2026-06-22T19:10:00+09:00",
+  "untilLocal": "2026-06-22 22:10:00",
+  "timezone": "Asia/Seoul",
+  "note": "user: 3h — 행성점유·RED/BLUE/NEUTRAL 변경·비정상 감시. 시스템시각 19:09 기준 3h → 22:10 KST 보고 (요청 10:00=22:00 근사)",
+  "focus": [
+    "territorial_occupation_red_blue_neutral",
+    "crash_oom_gl_leak",
+    "process_death_abnormal_restart"
+  ],
+  "monitorPidAtStart": 26332,
+  "territorialLogcatPidAtStart": 4296,
+  "appPidAtStart": 6506,
+  "autoRestartIfWatchDies": true,
+  "reportDue": "2026-06-22 22:10:00",
+  "reportPrompt": "보고해"
+}

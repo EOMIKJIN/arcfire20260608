@@ -44,6 +44,16 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
     return () => clearTimeout(t);
   }, [entry?.id]);
 
+  useEffect(() => {
+    if (entry?.kind !== 'alert') return;
+    const autoMs = entry.autoDismissMs;
+    if (!autoMs || autoMs <= 0) return;
+    const timer = setTimeout(() => {
+      dismiss();
+    }, autoMs);
+    return () => clearTimeout(timer);
+  }, [dismiss, entry]);
+
   const handleBackdrop = useCallback(() => {
     if (!entry || entry.dismissOnBackdrop === false) return;
     if (entry.kind === 'levelUp') {

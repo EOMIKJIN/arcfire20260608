@@ -16,6 +16,22 @@ function buildParams(
     return { ...raw, scopeLabel, action: raw.action ?? '' };
   }
 
+  if (notice.i18nKey === 'news.megaFactionPgp') {
+    const leader = String(raw.leader ?? 'tie');
+    const leaderLine = t(`news.megaFactionPgp.leader.${leader}`);
+    return { ...raw, leaderLine };
+  }
+
+  if (notice.i18nKey === 'news.territorialHold') {
+    const prevSide = String(raw.prevSide ?? 'neutral');
+    const nextSide = String(raw.nextSide ?? 'neutral');
+    const decision = String(raw.decision ?? 'status_quo');
+    const prevLabel = t(`territorial.side.${prevSide}`);
+    const nextLabel = t(`territorial.side.${nextSide}`);
+    const decisionLabel = t(`news.territorialHold.decision.${decision}`);
+    return { ...raw, prevLabel, nextLabel, decisionLabel };
+  }
+
   return raw;
 }
 

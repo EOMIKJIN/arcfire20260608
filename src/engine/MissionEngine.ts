@@ -3,7 +3,7 @@
 // ============================================================
 
 import { Mission, MissionProgress, MissionObjective } from '../types';
-import { MISSIONS } from '../data/missions';
+import { getMissionById } from '../missions/missionCatalog';
 
 /** 미션 목표 달성 체크 */
 export function checkObjective(
@@ -29,7 +29,7 @@ export function isMissionComplete(
 
 /** 다음 미션 ID 반환 */
 export function getNextMission(missionId: string): string | null {
-  return MISSIONS[missionId]?.nextMissionId ?? null;
+  return getMissionById(missionId)?.nextMissionId ?? null;
 }
 
 /** 미션 사용 가능 여부 (선행 미션 완료 체크) */
@@ -56,7 +56,7 @@ export function updateObjective(
 
 /** 초기 미션 progress 생성 */
 export function createMissionProgress(missionId: string): MissionProgress {
-  const mission = MISSIONS[missionId];
+  const mission = getMissionById(missionId);
   if (!mission) throw new Error(`Mission not found: ${missionId}`);
 
   const objectives: Record<string, boolean> = {};

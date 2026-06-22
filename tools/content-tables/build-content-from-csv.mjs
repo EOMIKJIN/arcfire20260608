@@ -427,6 +427,37 @@ ${configBody}
 `;
 }
 
+function buildNpcCapitalShipEquipSlots() {
+  const rows = loadCsvOptional('npc_capital_ship_equip_slots.csv').filter(
+    (r) => String(r.npcShipId ?? '').trim() && String(r.slotId ?? '').trim(),
+  );
+  const body = rows
+    .map(
+      (r) => `  {
+    id: ${q(r.id)},
+    npcShipId: ${q(r.npcShipId)},
+    slotOrder: ${toInt(r.slotOrder, 1)},
+    slotId: ${q(r.slotId)},
+    itemDefId: ${String(r.itemDefId ?? '').trim() ? q(String(r.itemDefId).trim()) : 'undefined'},
+    ${String(r.notesKo ?? '').trim() ? `notesKo: ${q(String(r.notesKo).trim())},` : ''}
+  }`,
+    )
+    .join(',\n');
+  return `export type NpcCapitalShipEquipSlotRow = {
+  id: string;
+  npcShipId: string;
+  slotOrder: number;
+  slotId: string;
+  itemDefId?: string;
+  notesKo?: string;
+};
+
+export const NPC_CAPITAL_SHIP_EQUIP_SLOTS_FROM_CSV: readonly NpcCapitalShipEquipSlotRow[] = [
+${body}
+];
+`;
+}
+
 function buildWeapons() {
   const rows = loadCsvOptional('weapon_list.csv')
     .map(normalizeWeaponListRow)
@@ -530,6 +561,10 @@ function buildMissions() {
         .join(',\n');
       const prereqList = prereqByMission.get(m.id) ?? splitPipe(m.prerequisiteIdsPipe);
       const rewardItems = rewardItemsByMission.get(m.id) ?? splitPipe(m.rewardItemsPipe);
+      const offerCaptainId = nullable(m.offerCaptainId);
+      const offerPlanetId = nullable(m.offerPlanetId);
+      const levelRequired = m.levelRequired ? toInt(m.levelRequired) : 'undefined';
+      const clearDialogSceneId = nullable(m.clearDialogSceneId);
       return `  ${JSON.stringify(m.id)}: {
     id: ${q(m.id)},
     title: ${q(m.title)},
@@ -549,6 +584,10 @@ ${objs}
     prerequisiteIds: ${JSON.stringify(prereqList)},
     nextMissionId: ${q(nullable(m.nextMissionId))},
     dc: ${toInt(m.dc)},
+    offerCaptainId: ${offerCaptainId ? q(offerCaptainId) : 'undefined'},
+    offerPlanetId: ${offerPlanetId ? q(offerPlanetId) : 'undefined'},
+    levelRequired: ${levelRequired},
+    clearDialogSceneId: ${clearDialogSceneId ? q(clearDialogSceneId) : 'undefined'},
   }`;
     })
     .join(',\n');
@@ -557,6 +596,34 @@ ${objs}
 export const MISSIONS_FROM_CSV: Record<string, Mission> = {
 ${body}
 };
+`;
+}
+
+function buildMissionCombatCaptains() {
+  const rows = loadCsvOptional('mission_combat_captains.csv');
+  const body = rows
+    .map((row) => {
+      const planetId = nullable(row.planetId);
+      return `  {
+    id: ${q(row.id)},
+    enemyTemplateId: ${q(row.enemyTemplateId)},
+    planetId: ${planetId ? q(planetId) : 'null'},
+    captainId: ${q(row.captainId)},
+    priority: ${toInt(row.priority)},
+  }`;
+    })
+    .join(',\n');
+  return `export type MissionCombatCaptainRow = {
+  id: string;
+  enemyTemplateId: string;
+  planetId: string | null;
+  captainId: string;
+  priority: number;
+};
+
+export const MISSION_COMBAT_CAPTAINS_FROM_CSV: MissionCombatCaptainRow[] = [
+${body}
+];
 `;
 }
 
@@ -1106,8 +1173,10 @@ function main() {
   writeOut('csvShipTemplates.ts', buildShips());
   writeOut('csvNpcCaptains.ts', buildNpcCaptains());
   writeOut('csvNpcCapitalShips.ts', buildNpcShips());
+  writeOut('csvNpcCapitalShipEquipSlots.ts', buildNpcCapitalShipEquipSlots());
   writeOut('csvWeapons.ts', buildWeapons());
   writeOut('csvMissions.ts', buildMissions());
+  writeOut('csvMissionCombatCaptains.ts', buildMissionCombatCaptains());
   writeOut('csvSystems.ts', buildSystems());
   writeOut('csvMineralEconomy.ts', buildMineralEconomy());
   writeOut('csvPlayerLevelExp.ts', buildPlayerLevelExp());
@@ -1125,8 +1194,16 @@ export {
   NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV,
   type NpcCapitalShipCombatRuntimeConfig,
 } from './csvNpcCapitalShips';
+export {
+  NPC_CAPITAL_SHIP_EQUIP_SLOTS_FROM_CSV,
+  type NpcCapitalShipEquipSlotRow,
+} from './csvNpcCapitalShipEquipSlots';
 export { CAPITAL_WEAPON_LIST_FROM_CSV, type CapitalWeaponCsvRow } from './csvWeapons';
 export { MISSIONS_FROM_CSV } from './csvMissions';
+export {
+  MISSION_COMBAT_CAPTAINS_FROM_CSV,
+  type MissionCombatCaptainRow,
+} from './csvMissionCombatCaptains';
 export { STAR_SYSTEMS_FROM_CSV } from './csvSystems';
 export {
   GALACTIC_MINERAL_POOL_FROM_CSV,

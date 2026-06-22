@@ -8,8 +8,9 @@ import { resolve } from 'node:path';
 const ROOT = resolve(import.meta.dirname, '..');
 const ITEM_DEFS = resolve(ROOT, 'tables/content/item_defs.csv');
 
-const GRADE_STAT_MUL = [1, 1.4, 1.85];
-const GRADE_PRICE_MUL = [1, 2.25, 4.8];
+/** 기획: 1등급=100% · 2등급=150% · 3등급=200% (효과 수치 배율) */
+const GRADE_PERFORMANCE_MUL = [1, 1.5, 2];
+const GRADE_PRICE_MUL = [1, 2, 3.5];
 const GRADE_LEVEL_STEP = [0, 9, 20];
 
 /** @type {Array<{ stem: string, name: string, desc: string, category: string, basePrice: number, baseReq: number, statKey: string, baseStat: number }>} */
@@ -49,14 +50,17 @@ function buildRows() {
       const name = `${line.name}${g}`;
       const price = Math.round(line.basePrice * GRADE_PRICE_MUL[gi]);
       const req = line.baseReq + GRADE_LEVEL_STEP[gi];
-      const statVal = Math.round(line.baseStat * GRADE_STAT_MUL[gi] * 10) / 10;
+      const perfMul = GRADE_PERFORMANCE_MUL[gi];
+      const statVal = Math.round(line.baseStat * perfMul * 10) / 10;
+      const desc = line.desc.replace(/\(추후 연동\)/g, '').replace(/\(추후 기능 연동\)/g, '').trim();
       const attrs = {
         equipmentCategory: line.category,
         equipmentGrade: g,
         equipmentLineKey: line.stem,
         equipmentRequiredLevel: req,
+        equipmentPerformanceMul: perfMul,
         [line.statKey]: statVal,
-        effectPending: true,
+        effectPending: line.category === 'mining',
       };
       if (line.category === 'mining' && g === 1) {
         attrs.miningCycleTimeBonusPct = 0;
@@ -66,7 +70,8 @@ function buildRows() {
       rows.push([
         id,
         name,
-        line.desc,
+        desc,
+        desc,
         price,
         14 + g * 2,
         1,
@@ -89,8 +94,8 @@ function buildRows() {
 const raw = readFileSync(ITEM_DEFS, 'utf8');
 const lines = raw.replace(/^\uFEFF/, '').split(/\r?\n/);
 const header = lines[0];
-const startIdx = lines.findIndex((l) => l.startsWith('mining_drone_mk1,') || l.startsWith('eq_prop_ion_booster,'));
-const endIdx = lines.findIndex((l, i) => i > startIdx && l.startsWith('capital_ship_'));
+const startIdx = lines.findIndex((l) => l.startsWith('eq_prop_ion_booster_1,') || l.startsWith('eq_prop_ion_booster,'));
+const endIdx = lines.findIndex((l, i) => i > startIdx && (l.startsWith('capital_ship_') || l.startsWith('tg_')));
 if (startIdx < 0 || endIdx < 0) {
   console.error('Could not find equipment block in item_defs.csv');
   process.exit(1);

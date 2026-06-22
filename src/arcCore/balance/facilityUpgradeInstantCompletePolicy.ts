@@ -28,6 +28,10 @@ type InstantGlobalBm = {
   installInstantCostRatio: number;
   upgradeInstantCostRatio: number;
   instantRemainFloorPct: number;
+  /** (baseCost + instant) / baseCost 하한 — 업계 BM 3~5× 프리미엄 */
+  premiumTotalMin: number;
+  /** (baseCost + instant) / baseCost 상한 */
+  premiumTotalMax: number;
 };
 
 type InstantTierRow = {
@@ -65,11 +69,15 @@ function readNum(map: Map<string, { num: number; str: string }>, key: string, fa
 export function getPlanetFacilityInstantCompleteBmGlobal(): InstantGlobalBm {
   if (cachedBm) return cachedBm;
   const map = readGlobalMap();
+  const premiumTotalMin = Math.max(1, readNum(map, 'instant_premium_total_min', 3));
+  const premiumTotalMax = Math.max(premiumTotalMin, readNum(map, 'instant_premium_total_max', 5));
   cachedBm = {
     costPerHourCredits: Math.max(0, Math.floor(readNum(map, 'instant_complete_cost_per_hour_credits', 0))),
     installInstantCostRatio: Math.max(0, readNum(map, 'install_instant_cost_ratio', 0.5)),
     upgradeInstantCostRatio: Math.max(0, readNum(map, 'upgrade_instant_cost_ratio', 0.4)),
     instantRemainFloorPct: Math.min(1, Math.max(0, readNum(map, 'instant_remain_floor_pct', 0.05))),
+    premiumTotalMin,
+    premiumTotalMax,
   };
   return cachedBm;
 }
@@ -128,7 +136,17 @@ export function resolvePlanetFacilityFullInstantCompleteCredits(input: PlanetFac
   const ratio = input.kind === 'install' ? bm.installInstantCostRatio : bm.upgradeInstantCostRatio;
   const ratioBased = roundCredits(Math.max(0, input.baseCostCredits) * ratio);
 
-  return Math.max(tierRow.minCredits, timeBased, ratioBased);
+  let instant = Math.max(tierRow.minCredits, timeBased, ratioBased);
+  const baseCost = Math.max(0, input.baseCostCredits);
+  if (baseCost > 0 && bm.premiumTotalMin > 1) {
+    const minInstant = roundCredits(baseCost * (bm.premiumTotalMin - 1));
+    const maxInstant =
+      bm.premiumTotalMax > bm.premiumTotalMin
+        ? roundCredits(baseCost * (bm.premiumTotalMax - 1))
+        : minInstant;
+    instant = Math.min(maxInstant, Math.max(minInstant, instant));
+  }
+  return instant;
 }
 
 /** 진행 중 job — 잔여시간 비례, full×floorPct 하한 */

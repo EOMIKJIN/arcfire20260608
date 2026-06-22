@@ -56,6 +56,16 @@
 - `size` int (2~5) — 전투 탑뷰 스케일 등급(`combatVisualSize`, 3=100%)
 - 수송선 다음 행성: 월드에 등록된 **전 행성**에서 균등 선택(아크코어 `AiNpcSubCore`)
 
+### `npc_capital_ship_equip_slots.csv`
+- `id` string PK — `{npcShipId}__{slotId}` 권장
+- `npcShipId` FK → `npc_ai_ships.csv`.id
+- `slotOrder` int 1~4 — **전함당 최대 4슬롯** (무기 슬롯 제외)
+- `slotId` enum — 플레이어와 동일 slotId (`ARMOR`, `ENGINE`, `SYSTEM`, `EX_01` 등; `WEAPON_*` 제외 권장)
+- `itemDefId` FK → `item_defs.csv` (`type: ship_equipment`) — **비워도 됨**(슬롯만 예약)
+- `notesKo` string (선택)
+- 장착된 행만 `resolveNpcCapitalShipEquipSlots` → 전투 `applyShipEquipmentToShipPerformance`
+- 생성: `node tools/gen-npc-capital-ship-equip-slots.mjs` (기본 4슬롯·미장착 시드)
+
 ### `weapon_list.csv` (범용 무기 단일 정본)
 
 아크파이어 **전투 무기 전체**의 단일 카탈로그. NPC(`npc_ai_ships.laserWeaponId`/`missileWeaponId`), 플레이어 장착, 아이템(`weapon_item_*`)은 모두 여기 FK. 빌드 시 다른 ID로 치환하지 않는다.
@@ -74,17 +84,38 @@
 
 ## 3) 미션
 ### `missions.csv`
-- `id` string PK
-- `title,description,type` string
+- `id` string PK (`mission_*` 스토리 체인 · `sandbox_*` 선술집 인스턴스)
+- `title,description,type` string (`type`은 메타; 런타임은 `mission_objectives` 조합이 근거)
+- `offerCaptainId` string|null — 인스턴스 의뢰 NPC (`npc_ai_captains.id`)
+- `offerPlanetId` string|null — 선술집 게시 행성 (`planets.id`)
+- `levelRequired` int — 수락 최소 파일럿 레벨
 - `rewardCredits,rewardExp,rewardSkillPointBonus,dc` int
-- `nextMissionId` string|null
-- 레거시 호환 컬럼: `rewardItemsPipe`, `prerequisiteIdsPipe`
+- `nextMissionId` string|null — 스토리 체인만 사용
+- `clearDialogSceneId` string|null — 클리어 인게임 대화 scene id (선택)
+- `title_en`, `description_en` string (i18n)
+- 레거시 호환: `rewardItemsPipe`, `prerequisiteIdsPipe`
 
 ### `mission_objectives.csv`
 - `missionId` FK -> missions.id
 - `id` objective PK (mission 내부 unique)
 - `description,type,targetId` string
 - `quantity` int nullable
+- `description_en` string (i18n)
+- **타입 계약**: `reach_planet` · `reach_system` · `defeat_enemy` · `buy_goods` · `deliver_cargo`(v1 미연동)
+- **카테고리 파생**: `defeat_enemy`만 → 전투 · `buy_goods`+`reach_system` → 배달 · `reach_*` → 이동
+
+### `mission_combat_captains.csv`
+- `id` string PK
+- `enemyTemplateId` FK -> `enemy_templates.id` (퀘스트 태그)
+- `planetId` string|null — 행성별 우선 매핑 (비우면 템플릿 default)
+- `captainId` FK -> `npc_ai_captains.id`
+- `priority` int — 동일 템플릿·행성 내 우선순위
+- 런타임: `resolveMissionCombatCaptain()` → transit 전투 적 함장
+
+### `enemy_templates.csv`
+- `id` string PK (`pirate_fighter`, `pirate_cruiser`, `bounty_hunter` …)
+- 미션 `defeat_enemy.targetId`와 일치해야 승리 시 objective 완료
+- 전투 스탯 정본은 `npc_ai_ships.csv` (템플릿은 퀘스트 태그·즉시 보상용)
 
 ### `mission_prerequisites.csv` (권장)
 - `missionId` FK -> missions.id

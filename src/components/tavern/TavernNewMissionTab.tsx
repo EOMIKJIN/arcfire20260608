@@ -1,0 +1,280 @@
+import React, { useCallback, useMemo } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { COLORS, FONTS, SPACING } from '../../utils/theme';
+import { useT } from '../../i18n';
+import { useAppSettingsStore } from '../../store/appSettingsStore';
+import { useMissionStore, type AcceptInstanceMissionResult } from '../../store/missionStore';
+import {
+  resolveMissionDescription,
+  resolveMissionTitle,
+} from '../../i18n/missionText';
+import { formatCredits } from '../../utils/formatCredits';
+import { getNpcCaptain } from '../../npc/npcFleetRegistry';
+import { showArcAlert } from '../../utils/showArcAlert';
+import {
+  listTavernInstanceMissionOffers,
+  type InstanceMissionOfferState,
+} from '../../missions/tavernMissionBoard';
+import type { Mission } from '../../types';
+
+type TavernNewMissionTabProps = {
+  planetId: string | null;
+  playerLevel: number;
+};
+
+function resolveMissionTitleText(
+  mission: Mission,
+  t: (key: string) => string,
+  locale: ReturnType<typeof useAppSettingsStore.getState>['locale'],
+): string {
+  const titleKey = `mission.${mission.id}.title`;
+  const fromKey = t(titleKey);
+  return fromKey !== titleKey ? fromKey : resolveMissionTitle(mission, locale);
+}
+
+function resolveMissionDescText(
+  mission: Mission,
+  t: (key: string) => string,
+  locale: ReturnType<typeof useAppSettingsStore.getState>['locale'],
+): string {
+  const descKey = `mission.${mission.id}.desc`;
+  const fromKey = t(descKey);
+  return fromKey !== descKey ? fromKey : resolveMissionDescription(mission, locale);
+}
+
+function stateBadgeLabel(state: InstanceMissionOfferState, t: (key: string) => string): string {
+  switch (state) {
+    case 'available':
+      return t('tavern.newMissions.stateAvailable');
+    case 'level_locked':
+      return t('tavern.newMissions.stateLevelLocked');
+    case 'in_progress':
+      return t('tavern.newMissions.stateInProgress');
+    case 'completed':
+      return t('tavern.newMissions.stateCompleted');
+    default:
+      return '';
+  }
+}
+
+function acceptFailMessage(result: AcceptInstanceMissionResult, t: (key: string) => string): string {
+  switch (result) {
+    case 'level_locked':
+      return t('tavern.newMissions.acceptFailLevel');
+    case 'already_active':
+      return t('tavern.newMissions.acceptFailActive');
+    case 'already_complete':
+      return t('tavern.newMissions.acceptFailComplete');
+    case 'wrong_planet':
+      return t('tavern.newMissions.acceptFailPlanet');
+    case 'prereq_missing':
+      return t('tavern.newMissions.acceptFailPrereq');
+    default:
+      return t('tavern.newMissions.acceptFailGeneric');
+  }
+}
+
+function InstanceMissionCard({
+  mission,
+  state,
+  planetId,
+  playerLevel,
+}: {
+  mission: Mission;
+  state: InstanceMissionOfferState;
+  planetId: string;
+  playerLevel: number;
+}) {
+  const t = useT();
+  const locale = useAppSettingsStore((s) => s.locale);
+  const acceptInstanceMission = useMissionStore((s) => s.acceptInstanceMission);
+  const captain = mission.offerCaptainId ? getNpcCaptain(mission.offerCaptainId) : undefined;
+  const title = resolveMissionTitleText(mission, t, locale);
+  const description = resolveMissionDescText(mission, t, locale);
+  const canAccept = state === 'available';
+
+  const handleAccept = useCallback(() => {
+    const result = acceptInstanceMission(mission.id, { planetId, playerLevel });
+    if (result === 'accepted') {
+      showArcAlert(t('tavern.newMissions.acceptSuccessTitle'), t('tavern.newMissions.acceptSuccessBody', { title }));
+      return;
+    }
+    showArcAlert(t('tavern.newMissions.acceptFailTitle'), acceptFailMessage(result, t));
+  }, [acceptInstanceMission, mission.id, planetId, playerLevel, t, title]);
+
+  return (
+    <View style={styles.card}>
+      <View style={styles.cardTopRow}>
+        <Text style={styles.badge}>{stateBadgeLabel(state, t)}</Text>
+        <Text style={styles.levelMeta}>
+          {t('tavern.newMissions.levelRequired', { level: mission.levelRequired ?? 1 })}
+        </Text>
+      </View>
+      <Text style={styles.cardTitle}>{title}</Text>
+      {captain ? (
+        <Text style={styles.clientMeta}>
+          {t('tavern.newMissions.client', { name: captain.displayName, rank: captain.rank })}
+        </Text>
+      ) : null}
+      <Text style={styles.cardBody}>{description}</Text>
+      <Text style={styles.rewardMeta}>
+        {t('tavern.mission.rewardLine', {
+          credits: formatCredits(mission.rewards.credits, { suffix: true }),
+          exp: mission.rewards.exp,
+        })}
+      </Text>
+      <TouchableOpacity
+        style={[styles.acceptBtn, !canAccept && styles.acceptBtnDisabled]}
+        disabled={!canAccept}
+        activeOpacity={0.75}
+        onPress={handleAccept}
+      >
+        <Text style={[styles.acceptBtnText, !canAccept && styles.acceptBtnTextDisabled]}>
+          {canAccept ? t('tavern.newMissions.accept') : t('tavern.newMissions.acceptUnavailable')}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+export function TavernNewMissionTab({ planetId, playerLevel }: TavernNewMissionTabProps) {
+  const t = useT();
+  const progresses = useMissionStore((s) => s.progresses);
+  const offers = useMemo(() => {
+    if (!planetId) return [];
+    return listTavernInstanceMissionOffers(planetId, playerLevel, progresses);
+  }, [planetId, playerLevel, progresses]);
+  const meta = t('tavern.newMissions.meta', { count: offers.length });
+
+  if (!planetId) {
+    return (
+      <View style={styles.emptyWrap}>
+        <Text style={styles.emptyText}>{t('tavern.newMissions.noPlanet')}</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>{t('tavern.newMissions.sectionTitle')}</Text>
+        <Text style={styles.sectionMeta}>{meta}</Text>
+      </View>
+      {offers.length === 0 ? (
+        <Text style={styles.emptyText}>{t('tavern.newMissions.empty')}</Text>
+      ) : (
+        offers.map((row) => (
+          <InstanceMissionCard
+            key={row.mission.id}
+            mission={row.mission}
+            state={row.state}
+            planetId={planetId}
+            playerLevel={playerLevel}
+          />
+        ))
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  sectionHeader: {
+    marginBottom: SPACING.sm,
+    paddingHorizontal: SPACING.xs,
+  },
+  sectionTitle: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    color: COLORS.ink_mid,
+  },
+  sectionMeta: {
+    marginTop: 3,
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    color: COLORS.ink_light,
+  },
+  emptyWrap: {
+    paddingVertical: SPACING.lg,
+    paddingHorizontal: SPACING.xs,
+  },
+  emptyText: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    color: COLORS.ink_light,
+    textAlign: 'center',
+    paddingHorizontal: SPACING.xs,
+  },
+  card: {
+    backgroundColor: COLORS.bg_panel,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 4,
+    padding: SPACING.md,
+    marginBottom: SPACING.sm,
+  },
+  cardTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  badge: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    color: COLORS.info,
+    fontWeight: FONTS.weight.bold,
+  },
+  levelMeta: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    color: COLORS.ink_faint,
+  },
+  cardTitle: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    color: COLORS.ink_dark,
+    fontWeight: FONTS.weight.bold,
+    marginBottom: 4,
+  },
+  clientMeta: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    color: COLORS.ink_light,
+    marginBottom: 4,
+  },
+  cardBody: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    color: COLORS.ink_mid,
+    lineHeight: 18,
+    marginBottom: 6,
+  },
+  rewardMeta: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    color: COLORS.ink_light,
+    marginBottom: SPACING.sm,
+  },
+  acceptBtn: {
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: COLORS.border_dark,
+    borderRadius: 4,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: 6,
+    backgroundColor: COLORS.bg_secondary,
+  },
+  acceptBtnDisabled: {
+    opacity: 0.45,
+    backgroundColor: COLORS.bg_panel,
+  },
+  acceptBtnText: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    color: COLORS.ink_dark,
+    fontWeight: FONTS.weight.bold,
+  },
+  acceptBtnTextDisabled: {
+    color: COLORS.ink_light,
+  },
+});

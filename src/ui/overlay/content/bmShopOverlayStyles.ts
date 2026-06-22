@@ -12,6 +12,14 @@ export const bmShopOverlayStyles = StyleSheet.create({
     color: 'rgba(255, 200, 120, 0.85)',
     textAlign: 'center',
   },
+  capHint: {
+    marginTop: SPACING.xs,
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    color: OVERLAY_TOKENS.phosphorAccent,
+    textAlign: 'center',
+    opacity: 0.85,
+  },
   closeBtn: {
     paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.xs,

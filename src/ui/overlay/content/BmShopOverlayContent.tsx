@@ -3,7 +3,7 @@
 //   premium: IAP 보석팩·VIP·시즌패스·스타터팩
 //   exchange: 보석 → 크레딧 단방향 교환
 // ============================================================
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import type { ArcOverlayBmShopEntry } from '../arcOverlayStore';
 import type { BmShopProduct, BmShopProductVisual } from '../../../bm/bmShopCatalog';
@@ -14,7 +14,15 @@ import {
   resolveBmShopSubtitleKey,
   resolveBmShopTitleKey,
 } from '../../../bm/bmShopCatalog';
+import {
+  ensureBmExchangeLedgerReady,
+  executeGemToCreditExchange,
+  mapGemExchangeErrorKey,
+} from '../../../bm/gemExchangeService';
+import { buildExchangeCapSnapshot } from '../../../bm/gemExchangeModel';
+import { getBmPolicyNumber } from '../../../bm/bmCatalogIndex';
 import { formatGemBalance, resolvePlayerGemBalance } from '../../../bm/bmWalletDisplay';
+import { useBmExchangeLedgerStore } from '../../../store/bmExchangeLedgerStore';
 import { useT } from '../../../i18n';
 import { usePlayerStore } from '../../../store/playerStore';
 import { formatCredits } from '../../../utils/formatCredits';
@@ -100,12 +108,50 @@ export const BmShopOverlayContent = memo(function BmShopOverlayContent({
   const gemBalance = resolvePlayerGemBalance(player);
   const creditBalance = player?.credits ?? 0;
   const actionLabel = t(resolveBmShopActionKey(entry.shopKind));
+  const dailyUsedGems = useBmExchangeLedgerStore((s) => s.dailyGemsExchanged);
+  const weeklyUsedGems = useBmExchangeLedgerStore((s) => s.weeklyGemsExchanged);
+  const exchangeCap = buildExchangeCapSnapshot(
+    dailyUsedGems,
+    weeklyUsedGems,
+    getBmPolicyNumber('gem_exchange_weekly_cap_gems', 2000),
+  );
 
-  const handleAction = useCallback(
-    (_product: BmShopProduct) => {
-      showArcAlert(t('bmShop.comingSoonTitle'), t('bmShop.comingSoonBody'));
+  useEffect(() => {
+    if (entry.shopKind !== 'exchange') return;
+    void ensureBmExchangeLedgerReady();
+  }, [entry.shopKind]);
+
+  const handlePremiumAction = useCallback(() => {
+    showArcAlert(t('bmShop.comingSoonTitle'), t('bmShop.comingSoonBody'));
+  }, [t]);
+
+  const handleExchangeAction = useCallback(
+    async (product: BmShopProduct) => {
+      const result = await executeGemToCreditExchange(product.id);
+      if (result.ok) {
+        showArcAlert(
+          t('bmShop.exchange.successTitle'),
+          t('bmShop.exchange.successBody', {
+            gems: formatGemBalance(result.gemCost),
+            credits: formatCredits(result.creditsGranted, { suffix: true }),
+          }),
+        );
+        return;
+      }
+      showArcAlert(t('bmShop.errorTitle'), t(mapGemExchangeErrorKey(result.code)));
     },
     [t],
+  );
+
+  const handleAction = useCallback(
+    (product: BmShopProduct) => {
+      if (entry.shopKind === 'exchange') {
+        void handleExchangeAction(product);
+        return;
+      }
+      handlePremiumAction();
+    },
+    [entry.shopKind, handleExchangeAction, handlePremiumAction],
   );
 
   const panelPrefix = (
@@ -118,6 +164,14 @@ export const BmShopOverlayContent = memo(function BmShopOverlayContent({
           {t('bmShop.hud.credits', { amount: formatCredits(creditBalance, { suffix: false }) })}
         </Text>
       </View>
+      {entry.shopKind === 'exchange' ? (
+        <Text style={styles.capHint}>
+          {t('bmShop.hud.exchangeCapDaily', {
+            used: exchangeCap.dailyUsedGems,
+            cap: exchangeCap.dailyCapGems,
+          })}
+        </Text>
+      ) : null}
       <Text style={styles.notice}>{t(resolveBmShopNoticeKey(entry.shopKind))}</Text>
     </>
   );

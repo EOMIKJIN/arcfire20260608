@@ -35,6 +35,7 @@ import {
   CONTINUE_SESSION_MIN_LOADING_MS,
   runContinueSessionPrewarm,
 } from '../src/game/continueSessionPrewarm';
+import { resumePlayerToLastHubPlanet } from '../src/game/galaxyMapSessionResume';
 
 /** 타이틀·네이티브 스플래시와 로고 톤 맞춤 */
 const TITLE_SCREEN_BG = '#000000';
@@ -192,6 +193,8 @@ export default function TitleScreen() {
         });
         await Promise.all([prewarmPromiseRef.current ?? Promise.resolve(), minHold]);
         if (flowCancelledRef.current) return;
+        resumePlayerToLastHubPlanet();
+        await usePlayerStore.getState().persist();
         router.replace('/(game)/planet');
       })();
 

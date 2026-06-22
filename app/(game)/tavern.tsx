@@ -8,6 +8,11 @@ import { useFocusEffect } from 'expo-router';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { useT, t as tStatic } from '../../src/i18n';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
+import {
+  createTavernScreenSession,
+  HeavyUiStageErrorPanel,
+  useHeavyUiDataSession,
+} from '../../src/ui/heavyUiDataSession';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
 import { usePlanetHubFacilityAccessGate } from '../../src/hooks/usePlanetHubFacilityAccessGate';
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
@@ -28,6 +33,9 @@ import { formatCredits } from '../../src/utils/formatCredits';
 import { readPlanetPopulationDomeDetail } from '../../src/game/planetDevelopment/planetPopulationDomeListing';
 import { listActiveTavernBounties } from '../../src/game/tavern/tavernBountyGenerator';
 import { resolveNoticeBody, resolveNoticeTitle } from '../../src/i18n/noticeText';
+import { TavernMissionStatusTab } from '../../src/components/tavern/TavernMissionStatusTab';
+import { TavernNewMissionTab } from '../../src/components/tavern/TavernNewMissionTab';
+import type { TavernBoardTab } from '../../src/missions/tavernMissionBoard';
 
 const TAVERN_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
 
@@ -47,6 +55,7 @@ export default function TavernScreen() {
   const notices = useTavernBoardStore((s) => s.notices);
   const currentPlanetId = player?.currentPlanetId ?? null;
   const [hostDialogVisible, setHostDialogVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState<TavernBoardTab>('board');
   const boardMeta = useMemo(
     () => t('tavern.boardMeta', { count: notices.length }),
     [notices.length, t],
@@ -98,8 +107,15 @@ export default function TavernScreen() {
 
   const safeBack = useSafeRouterBack();
   const stageFrameReady = useStageFirstFrameReady();
+  const tavernSessionConfig = useMemo(
+    () => (currentPlanetId ? createTavernScreenSession(currentPlanetId) : null),
+    [currentPlanetId],
+  );
+  const tavernSession = useHeavyUiDataSession(tavernSessionConfig);
+  const screenReady = tavernSession.phase === 'ready' && stageFrameReady;
   usePlanetSubStageMemory('tavern', () => {
     setHostDialogVisible(false);
+    setActiveTab('board');
   });
   usePlanetHubFacilityAccessGate('tavern');
 
@@ -112,12 +128,18 @@ export default function TavernScreen() {
       </View>
 
       <PlanetFacilityTabBar
-        tabs={[{ id: 'board', label: t('tavern.tab.board') }]}
-        activeId="board"
-        onSelect={() => {}}
+        tabs={[
+          { id: 'board', label: t('tavern.tab.board') },
+          { id: 'mission_status', label: t('tavern.tab.missionStatus') },
+          { id: 'new_missions', label: t('tavern.tab.newMissions') },
+        ]}
+        activeId={activeTab}
+        onSelect={(id) => setActiveTab(id as TavernBoardTab)}
       />
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+        {activeTab === 'board' ? (
+          <>
         {tavernHostCaptain ? (
           <View style={styles.hostCard}>
             <Text style={styles.hostCardTitle}>{t('tavern.hostCardTitle')}</Text>
@@ -160,11 +182,30 @@ export default function TavernScreen() {
             <Text style={styles.noticeBody}>{resolveNoticeBody(notice, t)}</Text>
           </View>
         ))}
+          </>
+        ) : null}
+
+        {activeTab === 'mission_status' ? <TavernMissionStatusTab /> : null}
+        {activeTab === 'new_missions' ? (
+          <TavernNewMissionTab
+            planetId={currentPlanetId}
+            playerLevel={player?.level ?? 1}
+          />
+        ) : null}
 
         <View style={{ height: TAVERN_BOTTOM_STAGE_RESERVE_PX }} />
       </ScrollView>
 
-      <StageLoadingOverlay visible={!stageFrameReady} overlayId="stage-loading-tavern" />
+      <StageLoadingOverlay visible={!screenReady && tavernSession.phase !== 'error'} overlayId="stage-loading-tavern" />
+      {tavernSession.phase === 'error' ? (
+        <HeavyUiStageErrorPanel
+          preflightCode={tavernSession.preflightCode}
+          error={tavernSession.error}
+          facilityKind="tavern"
+          onRetry={tavernSession.retry}
+          onBack={safeBack}
+        />
+      ) : null}
       </View>
     </StageShell>
   );

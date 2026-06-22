@@ -2,11 +2,12 @@ import { InteractionManager } from 'react-native';
 import { BaseArcSubCore } from './BaseArcSubCore';
 import { runTerritorialCombatPass } from '../territorial/runTerritorialCombatPass';
 import { hydrateArcCoreTerritorialCombatState } from '../territorial/arcCoreTerritorialCombatState';
+import { TERRITORIAL_PASS_PROBE_INTERVAL_MS } from '../territorial/territorialCombatCampaign';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
 
 /**
- * 접전지역 자동 영토 전투 — ArcCore 전술 패스(테스트: 1시간 주기).
- * - 부트/onBoot 동기 전행성 루프 금지 → InteractionManager 지연 + 60s probe.
+ * 접전지역 자동 영토 전투 — ArcCore 전술 패스.
+ * - 부트/onBoot 동기 전행성 루프 금지 → InteractionManager 지연 + probe.
  * - 빠른 일반전투 해상(resolveTerritorialQuickCombat) + planetHolds 갱신 + 팝업.
  */
 export class ArcCoreTerritorialCombatSubCore extends BaseArcSubCore {
@@ -26,12 +27,18 @@ export class ArcCoreTerritorialCombatSubCore extends BaseArcSubCore {
   override _advanceWallClock(wallDeltaSec: number): void {
     super._advanceWallClock(wallDeltaSec);
     const now = Date.now();
-    if (now - this.lastProbeMs < 60_000) return;
+    if (now - this.lastProbeMs < TERRITORIAL_PASS_PROBE_INTERVAL_MS) return;
     this.lastProbeMs = now;
     void this.probePass('tick');
   }
 
-  private async probePass(_source: 'boot' | 'tick'): Promise<void> {
+  /** 오프라인 catch-up·포그라운드 복귀 — 60s probe 게이트 우회 */
+  async probeAfterCatchUp(): Promise<void> {
+    this.lastProbeMs = 0;
+    await this.probePass('catch_up');
+  }
+
+  private async probePass(_source: 'boot' | 'tick' | 'catch_up'): Promise<void> {
     if (this.passRunning) return;
     this.passRunning = true;
     try {

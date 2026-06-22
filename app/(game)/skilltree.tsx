@@ -16,6 +16,11 @@ import { SKILLS, SKILL_CATEGORIES } from '../../src/data/skills';
 import { Skill, SkillCategory } from '../../src/types';
 import { canLearnSkill } from '../../src/engine/SkillEngine';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
+import {
+  createSkilltreeScreenSession,
+  HeavyUiStageErrorPanel,
+  useHeavyUiDataSession,
+} from '../../src/ui/heavyUiDataSession';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
 import { usePlanetHubFacilityAccessGate } from '../../src/hooks/usePlanetHubFacilityAccessGate';
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
@@ -26,9 +31,6 @@ import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacility
 import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
 import { SkillTreeBoard } from '../../src/components/skillTree/SkillTreeBoard';
-import { resolveLaboratoryRdSpeedReductionPct } from '../../src/arcCore/balance/facilityLaboratoryLevelPolicy';
-import { resolveFacilityLevelByType } from '../../src/game/planetDevelopment/planetFacilityLevelResolver';
-import { readPlanetCoreStatRdSnapshot } from '../../src/game/planetDevelopment/planetCoreStatRdRuntime';
 
 /** 메인스테이지 기준 하단 공백과 동기 */
 const SKILLTREE_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
@@ -42,25 +44,29 @@ export default function SkillTreeScreen() {
   const [selectedCategory, setSelectedCategory] = useState<SkillCategory>('combat');
   const safeBack = useSafeRouterBack();
   const stageFrameReady = useStageFirstFrameReady();
+  const skilltreeSessionConfig = useMemo(
+    () => (player?.currentPlanetId ? createSkilltreeScreenSession(player.currentPlanetId) : null),
+    [player?.currentPlanetId],
+  );
+  const skilltreeSession = useHeavyUiDataSession(skilltreeSessionConfig);
+  const screenReady = skilltreeSession.phase === 'ready' && stageFrameReady;
   usePlanetSubStageMemory('skilltree', () => {
     setSelectedCategory('combat');
   });
   usePlanetHubFacilityAccessGate('research_lab');
 
   const labRdBanner = useMemo(() => {
-    const planetId = player?.currentPlanetId;
-    if (!planetId) return null;
-    const labLevel = resolveFacilityLevelByType(planetId, 'laboratory');
-    if (labLevel <= 0) return null;
-    const rd = readPlanetCoreStatRdSnapshot(planetId);
-    const pct = resolveLaboratoryRdSpeedReductionPct(labLevel);
-    return {
-      bonus: t('skilltree.labRdBonus', { level: labLevel, pct }),
-      hours: rd.nextTechnologyRdHours != null
-        ? t('skilltree.labRdNextHours', { hours: rd.nextTechnologyRdHours })
-        : null,
-    };
-  }, [player?.currentPlanetId, t]);
+    if (skilltreeSession.data && skilltreeSession.data.labLevel > 0) {
+      const { labLevel, rdSpeedReductionPct, nextTechnologyRdHours } = skilltreeSession.data;
+      return {
+        bonus: t('skilltree.labRdBonus', { level: labLevel, pct: rdSpeedReductionPct }),
+        hours: nextTechnologyRdHours != null
+          ? t('skilltree.labRdNextHours', { hours: nextTechnologyRdHours })
+          : null,
+      };
+    }
+    return null;
+  }, [skilltreeSession.data, t]);
 
   const handleSkillPress = useCallback((skill: Skill) => {
     if (!player) return;
@@ -156,7 +162,16 @@ export default function SkillTreeScreen() {
           </View>
           <View style={{ height: SKILLTREE_BOTTOM_STAGE_RESERVE_PX }} />
         </ScrollView>
-        <StageLoadingOverlay visible={!stageFrameReady} overlayId="stage-loading-skilltree" />
+        <StageLoadingOverlay visible={!screenReady && skilltreeSession.phase !== 'error'} overlayId="stage-loading-skilltree" />
+        {skilltreeSession.phase === 'error' ? (
+          <HeavyUiStageErrorPanel
+            preflightCode={skilltreeSession.preflightCode}
+            error={skilltreeSession.error}
+            facilityKind="research_lab"
+            onRetry={skilltreeSession.retry}
+            onBack={safeBack}
+          />
+        ) : null}
       </View>
     </StageShell>
   );

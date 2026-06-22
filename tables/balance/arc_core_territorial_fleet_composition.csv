@@ -5,3 +5,15 @@ draco_haven,BLUE,npc_draco_patrol_01,3,블루 방어·공격 3(동급 편성)
 draco_haven,RED,npc_enemy_draco_01,1,레드 방어·공격 1
 draco_haven,RED,npc_enemy_draco_02,2,레드 방어·공격 2
 draco_haven,RED,npc_enemy_draco_03,3,레드 방어·공격 3
+omega_hub,BLUE,npc_draco_patrol_01,1,오메가 블루 1
+omega_hub,BLUE,npc_draco_escort_01,2,오메가 블루 2
+omega_hub,BLUE,npc_ai_clan_neutral_flagship,3,오메가 블루 3
+omega_hub,NEUTRAL,npc_ai_clan_neutral_flagship,1,오메가 중립 수비 1
+omega_hub,NEUTRAL,npc_ai_clan_neutral_flagship,2,오메가 중립 수비 2
+omega_hub,NEUTRAL,npc_draco_patrol_01,3,오메가 중립 순찰 3
+shadow_market,RED,npc_enemy_draco_01,1,섀도우 레드 1
+shadow_market,RED,npc_enemy_draco_02,2,섀도우 레드 2
+shadow_market,RED,npc_enemy_draco_03,3,섀도우 레드 3
+shadow_market,NEUTRAL,npc_ai_clan_neutral_flagship,1,섀도우 중립 1
+shadow_market,NEUTRAL,npc_ai_clan_neutral_flagship,2,섀도우 중립 2
+shadow_market,NEUTRAL,npc_ai_clan_neutral_flagship,3,섀도우 중립 3

@@ -45,6 +45,7 @@ Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4
 - **경제·밸런스 운영 감사**: `npm run audit:balance-ops` (3h 로컬·CI) · `tools/balance-ops-audit/README.md` · 학습 상태 `reports/learning-state.json`.
 - **경제 시스템 종합 평가 히스토리**: `docs/economy-evaluation/README.md` (타이틀 비교·효율성 스냅샷).
 - **테이블 우선**: 환경 부트스트랩·NPC 함장·전함은 **`tables/content` CSV → `npm run build:content-tables`** 가 정본이다. 아크코어가 스스로 환경을 깔 때도 **코드에 임의 엔티티·이름 풀을 두지 말고** CSV·레지스트리(`npcFleetRegistry`, `arcNpcTrafficTableRegistry`, `nearbyOrbitPresenceSystem`) 패턴을 따른다. 헌법: `.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc` §1·§6.
+- **미션 시스템(Table-First)**: 정본 `missions.csv` + `mission_objectives.csv` + `mission_combat_captains.csv` → `missionCatalog.ts` · 진행 `missionStore.ts`. 작업 인수인계·다음 스프린트: **`docs/MISSION_SYSTEM_HANDOFF.md`**
 - **허브 궤도 트래픽(v4.0 §6-2)**: STAGE 1 동시 최대 **5척**, **15초** spawn/despawn — `src/game/hubOrbitTrafficSession.ts` + `planetMemoCache/hub_traffic` 풀. info 패널 `‹AI›` 접두. `onSnapshot`·`hub_peers`·`aiVirtualPlayerStore` 금지.
 - **행성 로컬 점유(v4.0 §6-3)**: `planet_holds` 프로필 단발 병합(`userDataSync.planet_holds`) — `ownership_claim` 트랜잭션 금지.
 - **경제 탄력(v4.0 §10-2)**: `price_elasticity=0` — 실시간 가격 변동 없음, `runArcCoreDailyOpsBatch` → `runMarketPricePass`만.

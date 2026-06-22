@@ -1,0 +1,12 @@
+key,value,notesKo
+policy_version,2.1,BM v2.1 — play_scenario 10000Cr/h 앵커 정합
+play_scenario_credit_per_hour_anchor,10000,requiredCredits/(pureMiningMinutes/60) — zone 1~18 공통
+gem_exchange_base_cr_per_gem,400,보석→크레딧 기본환율(1💎=40분 최적플레이)
+gem_exchange_daily_cap_gems,500,교환 일일 보석 상한(Whale/F2P 비율 방어)
+gem_exchange_weekly_cap_gems,2000,교환 주간 보석 상한
+gem_direct_purchase_premium_mul,1.35,보석 직구 프리미엄(크레딧환산×1.35)
+free_gem_monthly_cap,50,이벤트·업적 무료 보석 월 상한
+starter_pack_max_player_level,15,스타터팩 노출 레벨 상한
+f2p_optimal_daily_credit_income,50000,5h×10000Cr/h
+whale_f2p_power_target_ratio,4.0,macro KPI 목표( economy_sim_macro_policy 동기 )
+xlarge_pack_max_zone18_skip_pct,69,특대팩 전량교환 시 zone18(1.5M) 대비 상한(%)

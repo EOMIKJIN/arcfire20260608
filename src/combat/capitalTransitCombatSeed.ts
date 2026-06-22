@@ -7,9 +7,22 @@ import {
   hasNpcCapitalShipId,
   resolveTransitPirateCaptainForSystem,
 } from '../npc/npcFleetRegistry';
+import {
+  resolveCombatEnemyCaptain,
+  type MissionCombatCaptainResolveInput,
+} from '../missions/resolveMissionCombatCaptain';
 
-export function resolveTransitPirateShipIdFromTables(systemId?: string | null): string | null {
-  const captain = resolveTransitPirateCaptainForSystem(systemId ?? null);
+export function resolveTransitPirateShipIdFromTables(
+  systemId?: string | null,
+  missionContext?: MissionCombatCaptainResolveInput | null,
+): string | null {
+  const captain = missionContext?.enemyTemplateId
+    ? resolveCombatEnemyCaptain({
+        enemyTemplateId: missionContext.enemyTemplateId,
+        planetId: missionContext.planetId ?? null,
+        systemId: systemId ?? null,
+      })
+    : resolveTransitPirateCaptainForSystem(systemId ?? null);
   const shipId = captain?.assignedShipId?.trim() ?? '';
   if (!shipId || !hasNpcCapitalShipId(shipId)) return null;
   return shipId;
@@ -25,8 +38,15 @@ export type TransitCombatSeedSlot = {
 export function buildTransitCombatSeedSlots(
   systemId: string | null,
   currentFlagshipNpcId: string,
+  missionContext?: MissionCombatCaptainResolveInput | null,
 ): TransitCombatSeedSlot[] {
-  const redCaptain = resolveTransitPirateCaptainForSystem(systemId);
+  const redCaptain = missionContext?.enemyTemplateId
+    ? resolveCombatEnemyCaptain({
+        enemyTemplateId: missionContext.enemyTemplateId,
+        planetId: missionContext.planetId ?? null,
+        systemId,
+      })
+    : resolveTransitPirateCaptainForSystem(systemId);
   const redShipId = redCaptain?.assignedShipId?.trim() ?? null;
   const blueShipId = hasNpcCapitalShipId(currentFlagshipNpcId) ? currentFlagshipNpcId : null;
   return [

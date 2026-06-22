@@ -5,6 +5,8 @@ import { resolveNpcCapitalShip } from '../npc';
 import type { NpcCapitalShipResolved } from '../types';
 import type { CapitalRealtimeCombatSim, CapitalRealtimeEncounterLayout } from './capitalRealtimeTypes';
 import { applyCapitalRealtimeEncounterLayout } from './useCapitalRealtimeEncounterLayout';
+import { resolveNpcCapitalShipCombatBinding } from '../game/npcCapitalShipCombatBinding';
+import { NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV } from '../data/generated';
 
 /** 실시간 시뮬 Agent에 덮어쓸 운동·가속 필드(미지정 시 init 기본 유지) */
 export type CapitalRealtimeSimSlotKnobs = Partial<
@@ -55,12 +57,7 @@ function clamp(n: number, lo: number, hi: number): number {
 function derivePlayerSlotSimPatch(ship: PlayerShip): CapitalRealtimeSimSlotKnobs {
   const refSpeed = 5;
   let mul = 1 + (ship.speed - refSpeed) * 0.035;
-  for (const eq of ship.equipment) {
-    if (eq.type === 'engine' && typeof eq.effect.speed === 'number') {
-      mul += eq.effect.speed * 0.025;
-    }
-  }
-  mul = clamp(mul, 0.86, 1.14);
+  mul = clamp(mul, 0.86, 1.22);
   return {
     maxMoveSpeedPxPerMs: (SIM_BASE_BLUE.maxMoveSpeedPxPerMs ?? 0) * mul,
     accelPxPerMs2: (SIM_BASE_BLUE.accelPxPerMs2 ?? 0) * mul,
@@ -114,7 +111,12 @@ export function buildCapitalRealtimeEncounterDuel(input: {
   if (!enemy) {
     throw new Error(`buildCapitalRealtimeEncounterDuel: unknown enemyCapitalNpcId=${input.enemyCapitalNpcId}`);
   }
-  const enemyHp = Math.max(1, enemy.combat.maxHp);
+  const enemyBinding = resolveNpcCapitalShipCombatBinding({
+    npcShipId: input.enemyCapitalNpcId,
+    npcRow: enemy,
+    runtimeConfig: NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV[input.enemyCapitalNpcId],
+  });
+  const enemyHp = Math.max(1, enemyBinding.combatStats.maxHp);
 
   const layout: CapitalRealtimeEncounterLayout = {
     slot0: {

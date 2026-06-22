@@ -1,6 +1,7 @@
 import type { Href } from 'expo-router';
 import { runThrottledPlanetHubNavigation } from '../../navigation/safePlanetHubNavigate';
 import type { I18nParams } from '../../i18n/types';
+import { runPlanetHubSubmenuPreflight } from '../../ui/heavyUiDataSession/preflightPlanetHubFacility';
 
 type TranslateFn = (key: string, params?: I18nParams) => string;
 
@@ -23,6 +24,7 @@ export type PlanetHubFeatureMenuItem = {
 };
 
 type PlanetHubFeatureContext = {
+  planetId: string | null;
   planet: PlanetHubMenuPlanet | null | undefined;
   hasTradeBadge: boolean;
   clearTradeBadge: () => void;
@@ -65,6 +67,7 @@ export function buildPlanetHubFeatureMenuItems(
       showBadge: ctx.hasTradeBadge,
       onPress: () => {
         if (!hasTradePort) return;
+        if (!runPlanetHubSubmenuPreflight('trade', ctx.planetId)) return;
         runThrottledPlanetHubNavigation(() => {
           ctx.clearTradeBadge();
           ctx.onFacilityNavigate('/(game)/trade');
@@ -78,6 +81,7 @@ export function buildPlanetHubFeatureMenuItems(
       disabled: !hasShipyard,
       onPress: () => {
         if (!hasShipyard) return;
+        if (!runPlanetHubSubmenuPreflight('shipyard', ctx.planetId)) return;
         runThrottledPlanetHubNavigation(() => ctx.onFacilityNavigate('/(game)/shipyard'));
       },
     },
@@ -88,6 +92,7 @@ export function buildPlanetHubFeatureMenuItems(
       disabled: !hasTavern,
       onPress: () => {
         if (!hasTavern) return;
+        if (!runPlanetHubSubmenuPreflight('tavern', ctx.planetId)) return;
         runThrottledPlanetHubNavigation(() => ctx.onFacilityNavigate('/(game)/tavern'));
       },
     },
@@ -98,6 +103,7 @@ export function buildPlanetHubFeatureMenuItems(
       disabled: !hasResearchLab,
       onPress: () => {
         if (!hasResearchLab) return;
+        if (!runPlanetHubSubmenuPreflight('research_lab', ctx.planetId)) return;
         runThrottledPlanetHubNavigation(() => ctx.onFacilityNavigate('/(game)/skilltree'));
       },
     },
@@ -107,6 +113,7 @@ export function buildPlanetHubFeatureMenuItems(
       icon: '🚀',
       primary: true,
       onPress: () => {
+        if (!runPlanetHubSubmenuPreflight('departure', ctx.planetId)) return;
         runThrottledPlanetHubNavigation(() => {
           if (ctx.onDeparture) {
             /** 채굴·전투 안전 종료(스냅샷 + sim refs 정리 setState) 후 push 까지 onDeparture 가 직접 책임진다. */

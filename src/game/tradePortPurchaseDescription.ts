@@ -9,6 +9,7 @@ import {
 import type { ItemDef } from '../types';
 import type { AppLocale } from '../i18n/types';
 import { resolveItemDescription, resolveItemFeatureDescription } from '../i18n/itemText';
+import { formatShipEquipmentStatSummary } from './shipEquipment';
 import { useAppSettingsStore } from '../store/appSettingsStore';
 
 function resolveNpcCapitalShipIdFromItem(itemDef: ItemDef): string | null {
@@ -30,7 +31,11 @@ export function resolveTradePortPurchaseDescription(
 
   const feature = resolveItemFeatureDescription(itemDef, loc);
   const fallback = resolveItemDescription(itemDef, loc);
-  const body = feature?.trim() || fallback?.trim() || null;
+  let body = feature?.trim() || fallback?.trim() || null;
+  const statSummary = formatShipEquipmentStatSummary(itemDef, loc === 'en' ? 'en' : 'ko');
+  if (statSummary) {
+    body = body ? `${body}\n${statSummary}` : statSummary;
+  }
 
   if (identityBlock && body) return `${identityBlock}\n\n${body}`;
   if (identityBlock) return identityBlock;

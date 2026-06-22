@@ -1,7 +1,6 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { ArcOverlayPlanetEconomyInfoEntry } from '../arcOverlayStore';
-import { buildPlanetEconomyInfoSnapshot } from '../../../game/planetHub/planetEconomyInfoSnapshot';
 import { formatPlanetPgpBmu } from '../../../world/planetPgpModel';
 import { useArcCoreTransportFleetBankStore } from '../../../store/factionVault/arcCoreTransportFleetBankStore';
 import { useArcCoreVaultStore } from '../../../store/factionVault/arcCoreVaultStore';
@@ -12,9 +11,14 @@ import { usePlanetTradeFeeLedgerStore } from '../../../store/planetTradeFeeLedge
 import { formatCredits } from '../../../utils/formatCredits';
 import { useT } from '../../../i18n';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
-import { ArcOverlayCard } from '../ArcOverlayCard';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { PlanetInfoPortraitSlot } from './PlanetInfoPortraitSlot';
+import {
+  HeavyUiOverlayShell,
+  createPlanetEconomyInfoSession,
+  readPlanetEconomyInfoRevision,
+  useHeavyUiDataSession,
+} from '../../heavyUiDataSession';
 
 type Props = {
   entry: ArcOverlayPlanetEconomyInfoEntry;
@@ -37,77 +41,96 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
 }: Props) {
   const t = useT();
   const { planetId, planetName } = entry;
-  usePlanetCoreRuntimeStore((s) => s.byPlanetId[planetId]);
-  usePlanetTradeFeeLedgerStore((s) => s.byPlanetId[planetId]);
-  useArcCoreTransportFleetBankStore((s) => s.balanceCredits);
-  useArcCoreVaultStore((s) => s.balanceCredits);
-  useBlueTeamSharedVaultStore((s) => s.balanceCredits);
-  useClanWarFoundationStore((s) => s.planetHolds[planetId]);
 
-  useEffect(() => {
-    void usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync();
-    void useClanWarFoundationStore.getState().loadLocalClanWarFoundation();
-    void usePlanetTradeFeeLedgerStore.getState().hydrate();
-    void useArcCoreTransportFleetBankStore.getState().hydrate();
-    void useArcCoreVaultStore.getState().hydrate();
-    void useBlueTeamSharedVaultStore.getState().hydrate();
-  }, [planetId]);
+  const coreSlice = usePlanetCoreRuntimeStore((s) => s.byPlanetId[planetId]);
+  const tradeBucket = usePlanetTradeFeeLedgerStore((s) => s.byPlanetId[planetId]);
+  const fleetBalance = useArcCoreTransportFleetBankStore((s) => s.balanceCredits);
+  const arcVaultBalance = useArcCoreVaultStore((s) => s.balanceCredits);
+  const blueVaultBalance = useBlueTeamSharedVaultStore((s) => s.balanceCredits);
+  const planetHold = useClanWarFoundationStore((s) => s.planetHolds[planetId]);
 
-  const snapshot = buildPlanetEconomyInfoSnapshot(planetId, planetName);
+  const sessionConfig = useMemo(
+    () => createPlanetEconomyInfoSession(planetId, planetName),
+    [planetId, planetName],
+  );
+  const revision = useMemo(
+    () => readPlanetEconomyInfoRevision(planetId),
+    [planetId, coreSlice, tradeBucket, planetHold, fleetBalance, arcVaultBalance, blueVaultBalance],
+  );
+
+  const session = useHeavyUiDataSession(sessionConfig, revision);
   const PH = OVERLAY_TOKENS.phosphorAccent;
 
   const panelPrefix = (
     <>
       <PlanetInfoPortraitSlot planetId={planetId} />
-      <View style={styles.pgpBanner}>
-        <Text style={[styles.pgpLabel, { color: PH }]}>{t('econInfo.pgpTotal')}</Text>
-        <Text style={[styles.pgpValue, { color: PH }]}>{formatPlanetPgpBmu(snapshot.pgpBmu)}</Text>
-      </View>
+      {session.data ? (
+        <View style={styles.pgpBanner}>
+          <Text style={[styles.pgpLabel, { color: PH }]}>{t('econInfo.pgpTotal')}</Text>
+          <Text style={[styles.pgpValue, { color: PH }]}>{formatPlanetPgpBmu(session.data.pgpBmu)}</Text>
+        </View>
+      ) : null}
     </>
   );
 
-  const footer = <ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} />;
+  const snapshot = session.data;
+  const subtitle = snapshot
+    ? `${snapshot.planetName} · KST ${snapshot.kstDayKey}`
+    : planetName;
 
   return (
-    <ArcOverlayCard
+    <HeavyUiOverlayShell
       title={t('econInfo.title')}
-      subtitle={`${snapshot.planetName} · KST ${snapshot.kstDayKey}`}
+      subtitle={subtitle}
       layout="panel"
       panelPrefix={panelPrefix}
-      footer={footer}
+      phase={session.phase}
+      error={session.error}
+      preflightCode={session.preflightCode}
+      onClose={onClose}
+      onRetry={session.retry}
+      footer={
+        session.phase === 'ready' ? (
+          <ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} />
+        ) : undefined
+      }
     >
-      <Text style={[styles.section, { color: PH }]}>{t('econInfo.upkeep', { pct: snapshot.populationPct })}</Text>
-      <InfoRow label={t('econInfo.daily')} value={formatCredits(snapshot.upkeepDailyCredits, { suffix: true })} />
-      <InfoRow label={t('econInfo.monthlyEst')} value={formatCredits(snapshot.upkeepMonthlyCredits, { suffix: true })} />
-      <Text style={[styles.section, { color: PH }]}>{t('econInfo.tradeFee')}</Text>
-      <InfoRow label={t('econInfo.factionShareToday')} value={formatCredits(snapshot.tradeFeeTodayCredits, { suffix: true })} />
-      <InfoRow label={t('econInfo.convoyFeeToday')} value={formatCredits(snapshot.convoyTradeFeeTodayCredits, { suffix: true })} />
-      <InfoRow label={t('econInfo.playerFeeToday')} value={formatCredits(snapshot.playerTradeFeeTodayCredits, { suffix: true })} />
-      <InfoRow label={t('econInfo.monthlyEst')} value={formatCredits(snapshot.tradeFeeMonthlyEstCredits, { suffix: true })} />
-      <Text style={[styles.section, { color: PH }]}>{t('econInfo.coreMetrics')}</Text>
-      <InfoRow label={t('econInfo.resource')} value={`${snapshot.resourcePct}%`} />
-      <InfoRow label={t('econInfo.population')} value={`${snapshot.populationStatPct}%`} />
-      <InfoRow label={t('econInfo.defense')} value={`${snapshot.defensePct}%`} />
-      <InfoRow label={t('econInfo.technology')} value={`${snapshot.technologyPct}%`} />
-      <InfoRow label={t('econInfo.environment')} value={`${snapshot.environmentPct}%`} />
-      <Text style={[styles.section, { color: PH }]}>{t('econInfo.tradeOccupy')}</Text>
-      <InfoRow label={t('econInfo.convoyMonopoly')} value={snapshot.convoyMonopolyLabel} />
-      <InfoRow label={t('econInfo.occupierFaction')} value={snapshot.occupierFactionLabel} />
-      {snapshot.factionVaultLabel != null ? (
-        <InfoRow
-          label={snapshot.factionVaultLabel}
-          value={
-            snapshot.factionVaultBalanceCredits != null
-              ? formatCredits(snapshot.factionVaultBalanceCredits, { suffix: true })
-              : '—'
-          }
-        />
+      {snapshot ? (
+        <>
+          <Text style={[styles.section, { color: PH }]}>{t('econInfo.upkeep', { pct: snapshot.populationPct })}</Text>
+          <InfoRow label={t('econInfo.daily')} value={formatCredits(snapshot.upkeepDailyCredits, { suffix: true })} />
+          <InfoRow label={t('econInfo.monthlyEst')} value={formatCredits(snapshot.upkeepMonthlyCredits, { suffix: true })} />
+          <Text style={[styles.section, { color: PH }]}>{t('econInfo.tradeFee')}</Text>
+          <InfoRow label={t('econInfo.factionShareToday')} value={formatCredits(snapshot.tradeFeeTodayCredits, { suffix: true })} />
+          <InfoRow label={t('econInfo.convoyFeeToday')} value={formatCredits(snapshot.convoyTradeFeeTodayCredits, { suffix: true })} />
+          <InfoRow label={t('econInfo.playerFeeToday')} value={formatCredits(snapshot.playerTradeFeeTodayCredits, { suffix: true })} />
+          <InfoRow label={t('econInfo.monthlyEst')} value={formatCredits(snapshot.tradeFeeMonthlyEstCredits, { suffix: true })} />
+          <Text style={[styles.section, { color: PH }]}>{t('econInfo.coreMetrics')}</Text>
+          <InfoRow label={t('econInfo.resource')} value={`${snapshot.resourcePct}%`} />
+          <InfoRow label={t('econInfo.population')} value={`${snapshot.populationStatPct}%`} />
+          <InfoRow label={t('econInfo.defense')} value={`${snapshot.defensePct}%`} />
+          <InfoRow label={t('econInfo.technology')} value={`${snapshot.technologyPct}%`} />
+          <InfoRow label={t('econInfo.environment')} value={`${snapshot.environmentPct}%`} />
+          <Text style={[styles.section, { color: PH }]}>{t('econInfo.tradeOccupy')}</Text>
+          <InfoRow label={t('econInfo.convoyMonopoly')} value={snapshot.convoyMonopolyLabel} />
+          <InfoRow label={t('econInfo.occupierFaction')} value={snapshot.occupierFactionLabel} />
+          {snapshot.factionVaultLabel != null ? (
+            <InfoRow
+              label={snapshot.factionVaultLabel}
+              value={
+                snapshot.factionVaultBalanceCredits != null
+                  ? formatCredits(snapshot.factionVaultBalanceCredits, { suffix: true })
+                  : '—'
+              }
+            />
+          ) : null}
+          <Text style={[styles.section, { color: PH }]}>{t('econInfo.others')}</Text>
+          {snapshot.extras.map((row) => (
+            <InfoRow key={row.label} label={row.label} value={row.value} />
+          ))}
+        </>
       ) : null}
-      <Text style={[styles.section, { color: PH }]}>{t('econInfo.others')}</Text>
-      {snapshot.extras.map((row) => (
-        <InfoRow key={row.label} label={row.label} value={row.value} />
-      ))}
-    </ArcOverlayCard>
+    </HeavyUiOverlayShell>
   );
 });
 

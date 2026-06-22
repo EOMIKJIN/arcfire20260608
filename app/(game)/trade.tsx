@@ -21,6 +21,7 @@ import { formatCredits } from '../../src/utils/formatCredits';
 import { usePlayerStore } from '../../src/store/playerStore';
 import { useWorldStore } from '../../src/store/worldStore';
 import { useMissionStore } from '../../src/store/missionStore';
+import { listActiveMissionBundles } from '../../src/missions/missionActiveBundles';
 import { useItemLedgerStore } from '../../src/store/itemLedgerStore';
 import { useClanWarFoundationStore } from '../../src/store/clanWarFoundationStore';
 import { generateMarketByItemIds, getBuyPrice, getSellPrice } from '../../src/engine/TradeEngine';
@@ -65,7 +66,6 @@ import {
   filterTradePortCatalogForPlayer,
 } from '../../src/arcCore/balance/tradePortCatalogPolicy';
 import { isSurvivalPodCapitalShipItemId, isSurvivalPodNpcShipId } from '../../src/game/playerSurvivalPod';
-import { runTradeRouteMarketPass } from '../../src/arcCore/economy/runTradeRouteMarketPass';
 import { resolvePlayerLifetimeCredits } from '../../src/game/resolvePlayerLifetimeCredits';
 import {
   TRADE_BUY_SUB_TAB_ORDER,
@@ -75,10 +75,19 @@ import {
 import { TradeListingIcon } from '../../src/ui/trade/TradeListingIcon';
 import { resolveTradePortPurchaseDescription } from '../../src/game/tradePortPurchaseDescription';
 import {
+  formatShipEquipmentListingSuffix,
+  formatShipEquipmentStatSummary,
+} from '../../src/game/shipEquipment';
+import {
   isPlanetTradeShipTabEnabled,
   PLANET_DEV_MODULE_ORBIT_SHIPYARD,
 } from '../../src/game/planetDevelopment/planetOrbitShipyardDevelopment';
 import { usePlanetCoreRuntimeStore } from '../../src/store/planetCoreRuntimeStore';
+import {
+  createTradeScreenSession,
+  HeavyUiStageErrorPanel,
+  useHeavyUiDataSession,
+} from '../../src/ui/heavyUiDataSession';
 
 const DEMAND_LABEL_KEYS: Record<string, string> = {
   low: 'trade.demand.low', normal: 'trade.demand.normal', high: 'trade.demand.high',
@@ -282,7 +291,6 @@ export default function TradeScreen() {
   const setPlayer = usePlayerStore(s => s.setPlayer);
   const getSystem = useWorldStore(s => s.getSystem);
   const completeObjective = useMissionStore(s => s.completeObjective);
-  const getActiveMission = useMissionStore(s => s.getActiveMission);
   const appendItemTxn = useItemLedgerStore(s => s.appendTxn);
   const hasEverPurchasedItem = useItemLedgerStore(s => s.hasEverPurchasedItem);
   const persistItemLedger = useItemLedgerStore(s => s.persistItemLedger);
@@ -302,6 +310,13 @@ export default function TradeScreen() {
 
   const system = player ? getSystem(player.currentSystemId) : undefined;
   const planet = system?.planets.find(p => p.id === player?.currentPlanetId) ?? system?.planets[0];
+
+  const tradeSessionConfig = useMemo(
+    () => (planet?.id ? createTradeScreenSession(planet.id) : null),
+    [planet?.id],
+  );
+  const tradeSession = useHeavyUiDataSession(tradeSessionConfig, marketTick);
+  const screenReady = tradeSession.phase === 'ready' && stageFrameReady;
 
   const shipyardCatalogRev = usePlanetCoreRuntimeStore(
     useCallback((s) => {
@@ -433,12 +448,6 @@ export default function TradeScreen() {
   }, [planet?.id, buySubTab]);
 
   const tradePlanetIdRef = useRef<string | undefined>(undefined);
-
-  useEffect(() => {
-    if (!planet?.id) return;
-    runTradeRouteMarketPass(false);
-    setMarketTick((tick) => tick + 1);
-  }, [planet?.id]);
 
   useEffect(() => {
     if (!player || !planet) return;
@@ -726,13 +735,13 @@ export default function TradeScreen() {
       await persistItemLedger();
     }
 
-    const active = getActiveMission();
-    if (active) {
+    const activeBundles = listActiveMissionBundles(useMissionStore.getState().progresses);
+    for (const active of activeBundles) {
       const invAfter = inventoryAdded ? invTry.slots : normalizeInventorySlots(player.inventorySlots);
       const owned = isCapitalShipItem && capitalShipNpcId
         ? player.shipHangar.filter((h) => h.npcCapitalShipId === capitalShipNpcId).length
         : countGoodInInventory(invAfter, listing.goodId);
-      active.mission.objectives.forEach(obj => {
+      active.mission.objectives.forEach((obj) => {
         if (obj.type === 'buy_goods' && obj.targetId === listing.goodId) {
           if (!obj.quantity || owned >= obj.quantity) {
             completeObjective(active.mission.id, obj.id);
@@ -961,6 +970,12 @@ export default function TradeScreen() {
               if (!good) return null;
               const rowItemDef = resolveItemDefById(listing.goodId);
               const price = getBuyPrice(listing);
+              const equipPendingSuffix = rowItemDef
+                ? formatShipEquipmentListingSuffix(rowItemDef, ` ${t('equipment.effectPendingSuffix')}`)
+                : '';
+              const equipStatSummary = rowItemDef
+                ? formatShipEquipmentStatSummary(rowItemDef, locale === 'en' ? 'en' : 'ko')
+                : null;
 
               return (
                 <TouchableOpacity
@@ -975,8 +990,12 @@ export default function TradeScreen() {
                       buySubTab={buySubTab}
                     />
                     <View style={styles.listingTextBlock}>
-                      <Text style={styles.goodName}>{resolveItemName(rowItemDef ?? good, locale)}</Text>
-                      <Text style={styles.goodDesc} numberOfLines={1}>{resolveItemDescription(rowItemDef ?? good, locale)}</Text>
+                      <Text style={styles.goodName}>
+                        {resolveItemName(rowItemDef ?? good, locale)}{equipPendingSuffix}
+                      </Text>
+                      <Text style={styles.goodDesc} numberOfLines={1}>
+                        {equipStatSummary ?? resolveItemDescription(rowItemDef ?? good, locale)}
+                      </Text>
                     </View>
                   </View>
                   <View style={styles.listingRight}>
@@ -1056,7 +1075,16 @@ export default function TradeScreen() {
         )}
         <View style={{ height: TRADE_BOTTOM_STAGE_RESERVE_PX }} />
       </ScrollView>
-      <StageLoadingOverlay visible={!stageFrameReady} overlayId="stage-loading-trade" />
+      <StageLoadingOverlay visible={!screenReady && tradeSession.phase !== 'error'} overlayId="stage-loading-trade" />
+      {tradeSession.phase === 'error' ? (
+        <HeavyUiStageErrorPanel
+          preflightCode={tradeSession.preflightCode}
+          error={tradeSession.error}
+          facilityKind="trade"
+          onRetry={tradeSession.retry}
+          onBack={safeBack}
+        />
+      ) : null}
       </View>
     </StageShell>
   );

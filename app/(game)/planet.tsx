@@ -47,6 +47,7 @@ import { resetHubInboundDroneDodgeBridge } from '../../src/arcCore/inboundDrone/
 import { resolveMainStageCombatEnabled } from '../../src/arcCore/planetBalance/planetZoneIndexRegistry';
 import { releasePlanetMainStageSession } from '../../src/game/planetMainStageSession';
 import { registerPlanetSessionResource } from '../../src/game/planetSessionRegistry';
+import { recordHubDeparturePlanet } from '../../src/game/galaxyMapSessionResume';
 import { usePlanetStageSession } from '../../src/game/usePlanetStageSession';
 import { buildCsvStaticIndexesFull } from '../../src/game/buildCsvStaticIndexes';
 import { markBootPerf } from '../../src/game/bootPerformance';
@@ -153,6 +154,7 @@ import { WAVE_DEFENSE_MAX_WAVES } from '../../src/game/waveDefense/waveDefenseFl
 import { presentWaveResultOverlay, presentSettingsOverlay, presentBmShopOverlay } from '../../src/ui/overlay/showArcOverlay';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { useT } from '../../src/i18n';
+import { resolveMegaFactionCapitalHubSubtitle } from '../../src/world/megaFactionCapitalDisplay';
 import { usePlanetHubInfoDistanceSort } from '../../src/game/planetHub/usePlanetHubInfoDistanceSort';
 import { usePlanetHubInterval } from '../../src/game/planetHub/usePlanetHubInterval';
 import {
@@ -332,6 +334,7 @@ export default function PlanetScreen() {
    * 출발(은하계 지도) — `Navigation.replace()`로 스택 누적 방지 (`1.arcfire_flowchart.md` §4-1)
    */
   const handleDeparture = useCallback(() => {
+    recordHubDeparturePlanet(usePlayerStore.getState().player?.currentPlanetId);
     beginPlanetHubSuspendingNavigation(() => router.replace('/(game)/worldmap'));
   }, [beginPlanetHubSuspendingNavigation]);
 
@@ -362,6 +365,7 @@ export default function PlanetScreen() {
 
   const featureMenuItems = useMemo(
     () => buildPlanetHubFeatureMenuItems({
+      planetId: resolvedPlanetId,
       planet: featureMenuPlanet,
       hasTradeBadge: hasTradeMenuBadge,
       clearTradeBadge: () => clearMenuBadge('trade'),
@@ -369,7 +373,7 @@ export default function PlanetScreen() {
       onFacilityNavigate,
       onDeparture: handleDeparture,
     }, t),
-    [featureMenuPlanet, hasTradeMenuBadge, clearMenuBadge, handleDeparture, onFacilityNavigate, t],
+    [featureMenuPlanet, hasTradeMenuBadge, clearMenuBadge, handleDeparture, onFacilityNavigate, resolvedPlanetId, t],
   );
   const arcNpcCaptainsSnap = useArcNpcTrafficStore((s) => s.captains);
   const arcNpcShipsSnap = useArcNpcTrafficStore((s) => s.ships);
@@ -1043,8 +1047,12 @@ export default function PlanetScreen() {
     }, [planet?.id]),
   );
 
-  /** 클랜 소유 문구는 `safeAiClanPlate` 한 곳만 사용(솔라 스테이션과 동일 레이아웃 기준). */
-  const clanTerritorySubtitle: string | null = null;
+  /** 클랜 소유 문구는 `safeAiClanPlate` — 수도 거점은 territorySubtitle로 표시 */
+  const megaFactionCapitalSubtitle = useMemo(
+    () => (planet?.id ? resolveMegaFactionCapitalHubSubtitle(planet.id, t) : null),
+    [planet?.id, t],
+  );
+  const clanTerritorySubtitle: string | null = megaFactionCapitalSubtitle;
   const currentPilotClanName = useClanWarFoundationStore(
     useCallback((s) => {
       const clanId = player?.political.clanId;

@@ -4,6 +4,8 @@ import {
 } from '../../data/balance/generated';
 
 export type TerritorialFactionSide = 'BLUE' | 'RED';
+export type TerritorialCombatParticipant = TerritorialFactionSide | 'NEUTRAL';
+export type TerritorialCombatMode = 'blue_red' | 'blue_neutral' | 'red_neutral';
 
 export type TerritorialCombatPolicy = {
   planetId: string;
@@ -16,6 +18,11 @@ export type TerritorialCombatPolicy = {
   statusQuoWeightPct: number;
   defenderAdvantagePct: number;
   combatNoisePct: number;
+  combatMode: TerritorialCombatMode;
+  campaignGroup: string | null;
+  campaignOrder: number;
+  /** blue_neutral → BLUE, red_neutral → RED 우세 확률(%) */
+  dominantSideWeightPct: number;
   alertLabelKo: string;
 };
 
@@ -29,16 +36,29 @@ function parseBool(raw: string | boolean | undefined): boolean {
   return String(raw ?? '').trim().toLowerCase() === 'true';
 }
 
+function parseCombatMode(raw: string | undefined): TerritorialCombatMode {
+  const v = String(raw ?? '').trim().toLowerCase();
+  if (v === 'blue_neutral') return 'blue_neutral';
+  if (v === 'red_neutral') return 'red_neutral';
+  return 'blue_red';
+}
+
 let policyByPlanetId: Map<string, TerritorialCombatPolicy> | null = null;
 let fleetByPlanetSide: Map<string, string[]> | null = null;
 
-function fleetKey(planetId: string, side: TerritorialFactionSide): string {
+function fleetKey(planetId: string, side: TerritorialCombatParticipant): string {
   return `${planetId}::${side}`;
 }
 
 function buildPolicyIndex(): Map<string, TerritorialCombatPolicy> {
   const m = new Map<string, TerritorialCombatPolicy>();
   for (const row of ArcCoreTerritorialCombatPolicy_FROM_BALANCE_CSV) {
+    const campaignGroupRaw = String(row.campaignGroup ?? '').trim();
+    const dominantRaw = String(row.dominantSideWeightPct ?? '').trim();
+    const dominantSideWeightPct =
+      dominantRaw.length > 0
+        ? Math.min(100, Math.max(50, parseNum(dominantRaw, 51)))
+        : 51;
     m.set(row.planetId, {
       planetId: row.planetId,
       systemId: row.systemId,
@@ -50,6 +70,10 @@ function buildPolicyIndex(): Map<string, TerritorialCombatPolicy> {
       statusQuoWeightPct: Math.max(0, parseNum(row.statusQuoWeightPct, 20)),
       defenderAdvantagePct: Math.max(0, parseNum(row.defenderAdvantagePct, 8)),
       combatNoisePct: Math.max(0, parseNum(row.combatNoisePct, 12)),
+      combatMode: parseCombatMode(row.combatMode),
+      campaignGroup: campaignGroupRaw.length > 0 ? campaignGroupRaw : null,
+      campaignOrder: Math.max(0, parseNum(row.campaignOrder, 0)),
+      dominantSideWeightPct,
       alertLabelKo: row.alertLabelKo?.trim() || row.planetId,
     });
   }
@@ -62,8 +86,8 @@ function buildFleetIndex(): Map<string, string[]> {
     (a, b) => parseNum(a.sortOrder, 0) - parseNum(b.sortOrder, 0),
   );
   for (const row of sorted) {
-    const side = row.factionSide.trim().toUpperCase() as TerritorialFactionSide;
-    if (side !== 'BLUE' && side !== 'RED') continue;
+    const side = row.factionSide.trim().toUpperCase() as TerritorialCombatParticipant;
+    if (side !== 'BLUE' && side !== 'RED' && side !== 'NEUTRAL') continue;
     const key = fleetKey(row.planetId, side);
     const list = m.get(key) ?? [];
     const shipId = row.shipAssetId.trim();
@@ -78,6 +102,14 @@ export function listTerritorialCombatPolicies(): TerritorialCombatPolicy[] {
   return Array.from(policyByPlanetId.values());
 }
 
+export function listTerritorialCombatPoliciesForCampaign(
+  campaignGroup: string,
+): TerritorialCombatPolicy[] {
+  return listTerritorialCombatPolicies()
+    .filter((p) => p.enabled && p.campaignGroup === campaignGroup)
+    .sort((a, b) => a.campaignOrder - b.campaignOrder);
+}
+
 export function getTerritorialCombatPolicy(planetId: string): TerritorialCombatPolicy | null {
   if (!policyByPlanetId) policyByPlanetId = buildPolicyIndex();
   return policyByPlanetId.get(planetId) ?? null;
@@ -85,8 +117,14 @@ export function getTerritorialCombatPolicy(planetId: string): TerritorialCombatP
 
 export function listTerritorialFleetShipIds(
   planetId: string,
-  side: TerritorialFactionSide,
+  side: TerritorialCombatParticipant,
 ): readonly string[] {
   if (!fleetByPlanetSide) fleetByPlanetSide = buildFleetIndex();
   return fleetByPlanetSide.get(fleetKey(planetId, side)) ?? [];
+}
+
+/** 테스트·핫리로드 — CSV 재빌드 후 캐시 무효화 */
+export function invalidateTerritorialCombatPolicyCache(): void {
+  policyByPlanetId = null;
+  fleetByPlanetSide = null;
 }
