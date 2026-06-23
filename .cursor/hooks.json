@@ -18,6 +18,10 @@
       {
         "command": ".cursor/hooks/on-before-submit-prompt-agent-routing.cjs",
         "timeout": 5
+      },
+      {
+        "command": ".cursor/hooks/on-before-submit-prompt-incident-auto-fix.cjs",
+        "timeout": 8
       }
     ],
     "stop": []

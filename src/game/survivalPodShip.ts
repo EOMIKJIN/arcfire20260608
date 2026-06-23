@@ -1,5 +1,5 @@
 // ============================================================
-// 생존포드 전함 id — 순환 참조 방지용 경량 모듈
+// 생존포드 전함 — hangar/inventory 연동 (id 상수는 survivalPodIds)
 // ============================================================
 
 import type { PlayerHangarShip, PlayerShip } from '../types';
@@ -8,25 +8,22 @@ import {
   countGoodInInventory,
   type PlayerInventorySlot,
 } from './playerInventory';
+import {
+  SURVIVAL_POD_NPC_SHIP_ID,
+  STARTER_NPC_CAPITAL_SHIP_ID,
+  SURVIVAL_POD_CAPITAL_SHIP_ITEM_ID,
+  isSurvivalPodNpcShipId,
+} from './survivalPodIds';
 
-/** 생존포드 — `npc_ai_ships.csv` Player_freighter */
-export const SURVIVAL_POD_NPC_SHIP_ID = 'Player_freighter';
-
-/**
- * 신규 파일럿 기본 지급 전함 — `capitalHullPurchaseFromBalance` frigate_default 와 동일.
- * (경량 모듈 — balance 레지스트리 import 회피)
- */
-export const STARTER_NPC_CAPITAL_SHIP_ID = 'Player_npc_red_fleet_1';
-
-export const SURVIVAL_POD_CAPITAL_SHIP_ITEM_ID = `capital_ship_${SURVIVAL_POD_NPC_SHIP_ID}`;
-
-export function isSurvivalPodNpcShipId(id: string | null | undefined): boolean {
-  return String(id ?? '').trim() === SURVIVAL_POD_NPC_SHIP_ID;
-}
-
-export function isSurvivalPodCapitalShipItemId(itemId: string | null | undefined): boolean {
-  return String(itemId ?? '').trim() === SURVIVAL_POD_CAPITAL_SHIP_ITEM_ID;
-}
+export {
+  SURVIVAL_POD_NPC_SHIP_ID,
+  STARTER_NPC_CAPITAL_SHIP_ID,
+  SURVIVAL_POD_CAPITAL_SHIP_ITEM_ID,
+  isSurvivalPodNpcShipId,
+  isSurvivalPodCapitalShipItemId,
+  resolveStarterNpcCapitalShipId,
+  isStarterNpcCapitalShipId,
+} from './survivalPodIds';
 
 /** 생존포드는 무장 불가 — 전함 격침 후 탈출용 */
 export function clearSurvivalPodWeaponLoadout(ship: PlayerShip): PlayerShip {
@@ -60,14 +57,6 @@ export function grantSurvivalPodShipToInventory(slots: PlayerInventorySlot[]): P
     return slots;
   }
   return addToInventorySlotsMax(slots, SURVIVAL_POD_CAPITAL_SHIP_ITEM_ID, 1, 0).slots;
-}
-
-export function resolveStarterNpcCapitalShipId(): string {
-  return STARTER_NPC_CAPITAL_SHIP_ID;
-}
-
-export function isStarterNpcCapitalShipId(id: string | null | undefined): boolean {
-  return String(id ?? '').trim() === STARTER_NPC_CAPITAL_SHIP_ID;
 }
 
 /** 생존포드 제외 — 전투/탑승 가능 전함 수 */

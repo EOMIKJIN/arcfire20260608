@@ -311,3 +311,85 @@
 [2026-06-22 23:31:19] VERIFY PASS pid=21849 gl=4.4MB pss=390.1MB views=15
 [2026-06-22 23:31:19] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":1029.9,"views":929,"lastGlMb":152.4,"hardCeiling":true}
 [2026-06-22 23:31:19] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-06-23 12:13:08] INFO GL_ELEVATED mounting_or_insufficient_samples gl=145.8 pss=471.2 views=284 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 12:43:14] INFO GL_ELEVATED mounting_or_insufficient_samples gl=134.8 pss=411.3 views=281 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 13:13:18] INFO GL_ELEVATED mounting_or_insufficient_samples gl=145.3 pss=428.3 views=293 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 13:43:24] INFO GL_ELEVATED mounting_or_insufficient_samples gl=130.4 pss=495.8 views=937 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 15:07:59] INFO GL_ELEVATED mounting_or_insufficient_samples gl=160.9 pss=539.9 views=286 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 15:18:04] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124.9 pss=489.5 views=280 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 15:28:08] INFO GL_ELEVATED mounting_or_insufficient_samples gl=156.5 pss=533.8 views=286 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 15:38:12] INFO GL_ELEVATED mounting_or_insufficient_samples gl=156.5 pss=527.7 views=286 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 15:48:17] INFO GL_ELEVATED mounting_or_insufficient_samples gl=154.5 pss=520.4 views=286 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 15:58:22] INFO GL_ELEVATED mounting_or_insufficient_samples gl=156.7 pss=521.4 views=304 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 16:08:26] INFO GL_ELEVATED mounting_or_insufficient_samples gl=154.7 pss=514.3 views=286 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 16:18:30] INFO GL_ELEVATED mounting_or_insufficient_samples gl=156.7 pss=511.5 views=286 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 16:28:35] INFO GL_ELEVATED mounting_or_insufficient_samples gl=154.7 pss=482.8 views=286 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 16:38:40] INFO GL_ELEVATED mounting_or_insufficient_samples gl=154.7 pss=475 views=286 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 16:48:45] INFO GL_ELEVATED mounting_or_insufficient_samples gl=156.4 pss=493.3 views=285 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 16:58:49] INFO GL_ELEVATED mounting_or_insufficient_samples gl=165.8 pss=497.8 views=289 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 17:08:54] INFO GL_ELEVATED mounting_or_insufficient_samples gl=106.5 pss=501.9 views=280 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 17:18:59] INCIDENT GL_HARD_CEILING gl=226.2 pss=631.5 views=289 -> immediate remediation (OOM imminent)
+[2026-06-23 17:18:59] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-06-23 17:18:59] AUTO_FIX SKIPPED (monitor-paused.flag present) reason=gl_critical_active_hub ??verification mode, no relaunch
+[2026-06-23 17:18:59] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-06-23 17:29:04] INCIDENT GL_HARD_CEILING gl=226.2 pss=635.2 views=289 -> immediate remediation (OOM imminent)
+[2026-06-23 17:29:04] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-06-23 17:29:04] AUTO_FIX SKIPPED (monitor-paused.flag present) reason=gl_critical_active_hub ??verification mode, no relaunch
+[2026-06-23 17:29:04] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-06-23 17:39:09] INCIDENT GL_HARD_CEILING gl=224.2 pss=632.6 views=285 -> immediate remediation (OOM imminent)
+[2026-06-23 17:39:09] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-06-23 17:39:09] AUTO_FIX SKIPPED (monitor-paused.flag present) reason=gl_critical_active_hub ??verification mode, no relaunch
+[2026-06-23 17:39:09] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-06-23 17:49:13] INCIDENT GL_HARD_CEILING gl=226.2 pss=633.3 views=285 -> immediate remediation (OOM imminent)
+[2026-06-23 17:49:13] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-06-23 17:49:13] AUTO_FIX SKIPPED (monitor-paused.flag present) reason=gl_critical_active_hub ??verification mode, no relaunch
+[2026-06-23 17:49:13] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-06-23 17:59:18] INCIDENT GL_HARD_CEILING gl=224.6 pss=628 views=285 -> immediate remediation (OOM imminent)
+[2026-06-23 17:59:18] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-06-23 17:59:18] AUTO_FIX SKIPPED (monitor-paused.flag present) reason=gl_critical_active_hub ??verification mode, no relaunch
+[2026-06-23 17:59:19] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-06-23 18:09:23] INCIDENT GL_HARD_CEILING gl=224.6 pss=634.1 views=285 -> immediate remediation (OOM imminent)
+[2026-06-23 18:09:23] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-06-23 18:09:23] AUTO_FIX SKIPPED (monitor-paused.flag present) reason=gl_critical_active_hub ??verification mode, no relaunch
+[2026-06-23 18:09:23] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-06-23 18:19:27] INCIDENT GL_HARD_CEILING gl=226.8 pss=648.6 views=306 -> immediate remediation (OOM imminent)
+[2026-06-23 18:19:27] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-06-23 18:19:27] AUTO_FIX SKIPPED (monitor-paused.flag present) reason=gl_critical_active_hub ??verification mode, no relaunch
+[2026-06-23 18:19:27] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-06-23 18:29:31] INFO GL_HARD_CEILING_RECORD_ONLY gl=226.9 pss=648.5 views=310 (monitor-paused ??no incident/refix spam)
+[2026-06-23 18:39:36] INFO GL_ELEVATED mounting_or_insufficient_samples gl=102.6 pss=608.3 views=302 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 19:09:50] INFO GL_HARD_CEILING_RECORD_ONLY gl=227.2 pss=752 views=282 (monitor-paused ??no incident/refix spam)
+[2026-06-23 19:40:05] INFO GL_ELEVATED mounting_or_insufficient_samples gl=196.8 pss=684.5 views=292 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 20:30:32] INFO GL_HARD_CEILING_RECORD_ONLY gl=153.6 pss=1012.8 views=957 (monitor-paused ??no incident/refix spam)
+[2026-06-23 20:40:38] INFO GL_HARD_CEILING_RECORD_ONLY gl=163.5 pss=1118 views=325 (monitor-paused ??no incident/refix spam)
+[2026-06-23 20:41:24] INFO GL_HARD_CEILING_RECORD_ONLY gl=46.8 pss=989.8 views=326 (monitor-paused ??no incident/refix spam)
+[2026-06-23 20:45:27] INVESTIGATION start reason=arcfire_crash_playtest
+[2026-06-23 20:45:27] INVESTIGATION alert=SIGSEGV worldmap reanimated gesture fix applied
+[2026-06-23 20:45:27] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260623-204527.log
+[2026-06-23 20:45:27] INVESTIGATION mem snapshot gl=42.5MB pss=986.8MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260623-204527.log
+[2026-06-23 20:45:28] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-23 20:45:28] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-23 20:45:28] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-23 20:45:30] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-23 20:45:30] INVESTIGATION done reason=arcfire_crash_playtest
+[2026-06-23 20:53:49] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-23 20:53:49] INVESTIGATION alert=[2026-06-23 20:53:49] [MEM_HARD_CEILING] pss=1013.3MB gl=47MB
+[2026-06-23 20:53:50] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260623-205349.log
+[2026-06-23 20:53:50] INVESTIGATION mem snapshot gl=46.7MB pss=992.8MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260623-205349.log
+[2026-06-23 20:53:50] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-23 20:53:50] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-23 20:53:50] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-23 20:53:53] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-23 20:53:53] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-23 21:23:48] INFO GL_ELEVATED mounting_or_insufficient_samples gl=145.5 pss=775.6 views=939 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-23 22:46:39] INVESTIGATION start reason=arcfire_crash_playtest
+[2026-06-23 22:46:39] INVESTIGATION alert=[2026-06-23 22:46:39] [ARCFIRE_CRASH age=0.3m] 06-23 22:46:19.147 15773 15865 F libc    : Fatal signal 11 (SIGSEGV), cod
+[2026-06-23 22:46:40] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260623-224639.log
+[2026-06-23 22:46:40] INVESTIGATION mem snapshot gl=MB pss=MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260623-224639.log
+[2026-06-23 22:46:41] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-23 22:46:41] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-23 22:46:41] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-23 22:46:45] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-23 22:46:45] INVESTIGATION done reason=arcfire_crash_playtest
+[2026-06-23 22:46:45] INVESTIGATION throttled reason=arcfire_crash_playtest (duplicate within window)
+[2026-06-23 23:55:16] INFO GL_ELEVATED mounting_or_insufficient_samples gl=80.4 pss=787.6 views=317 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)

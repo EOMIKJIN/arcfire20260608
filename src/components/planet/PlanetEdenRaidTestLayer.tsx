@@ -2621,6 +2621,8 @@ export function usePlanetEdenRaidSim(
   const respawnAtWallRef = useRef<number | null>(null);
   /** 팀 승패 보상(함장 EXP) 중복 지급 방지 */
   const waveOutcomeAwardedRef = useRef(false);
+  /** 전투 1회 내구도 마모 중복 방지 */
+  const playerDurabilityWearAppliedRef = useRef(false);
   const battleEngageStartMsRef = useRef<number | null>(null);
   /** 플레이어 전함 격침 → 생존포드 1회 처리 */
   const playerCapitalDestroyedRef = useRef(false);
@@ -2859,12 +2861,20 @@ export function usePlanetEdenRaidSim(
         if (useWaveDefenseStore.getState().active) {
           useWaveDefenseStore.getState().endRun('lose');
         }
-        void usePlayerStore.getState().applyCapitalShipDestruction().then(() => {
-          showArcAlert(
-            '전함 격침',
-            '전함이 파괴되어 생존포드로 거점 행성에 귀환했습니다.\n조선소에서 전함을 재구매·탑승하세요.',
-          );
-        });
+        const applyDestruction = () => {
+          void usePlayerStore.getState().applyCapitalShipDestruction().then(() => {
+            showArcAlert(
+              '전함 격침',
+              '전함이 파괴되어 생존포드로 거점 행성에 귀환했습니다.\n조선소에서 전함을 재구매·탑승하세요.',
+            );
+          });
+        };
+        if (!playerDurabilityWearAppliedRef.current) {
+          playerDurabilityWearAppliedRef.current = true;
+          void usePlayerStore.getState().applyPostCombatDurabilityWear(elapsed).then(applyDestruction);
+        } else {
+          applyDestruction();
+        }
       }
       const allAlive = agents.every(a => a.alive);
       if (!allAlive && respawnAtWallRef.current === null && !useWaveDefenseStore.getState().active) {
@@ -2887,6 +2897,7 @@ export function usePlanetEdenRaidSim(
       const activeBattle = aliveOrange ? aliveCount >= 2 : aliveRed && aliveBlue;
       if (activeBattle) {
         waveOutcomeAwardedRef.current = false;
+        playerDurabilityWearAppliedRef.current = false;
         if (battleEngageStartMsRef.current === null) {
           battleEngageStartMsRef.current = elapsed;
         }
@@ -2903,6 +2914,11 @@ export function usePlanetEdenRaidSim(
           const s = useNpcCaptainProgressStore.getState();
           s.grantBattleWaveResult(participants, winners);
           void s.persistNpcCaptainProgress();
+          const hadPlayerCombat = agents.some((a) => isPlayerCombatAgent(a));
+          if (hadPlayerCombat && !playerDurabilityWearAppliedRef.current) {
+            playerDurabilityWearAppliedRef.current = true;
+            void usePlayerStore.getState().applyPostCombatDurabilityWear(elapsed);
+          }
           if (combatPlanetId) {
             const startMs = battleEngageStartMsRef.current ?? Math.max(0, elapsed - 32_000);
             void recordMatchSummary({

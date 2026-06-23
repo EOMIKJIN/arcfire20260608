@@ -1,8 +1,8 @@
 # Worklet Contract Audit
 
-Generated: 2026-06-21T06:34:46.438Z
+Generated: 2026-06-23T05:34:02.583Z
 
-**Result: PASS** (0 suspected JS-thread SharedValue reads)
+**Result: PASS** (0 suspected violations: 0 JS SharedValue reads, 0 runOnUI non-inline worklet)
 
 Contract: `src/components/planet/planetHubWorkletContract.ts`
 

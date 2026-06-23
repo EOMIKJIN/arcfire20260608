@@ -7,6 +7,8 @@ alwaysApply: true
 
 런타임 크래시·튕김·백그라운드 이상은 **추측 수정 금지**. 아래 순서를 기본으로 따른다.
 
+**크래시/SIGSEGV/worklet/Skia dispose** → **코드 diff 전** `.cursor/rules/arcfire-crash-fix-structural-gate.mdc` **구조 검증 게이트 필수** (이전 패치 전수검사·반쪽 패치 금지·설계 체크리스트 PASS 후에만 3. 수정 진입).
+
 ## 1. 조사(에이전트)
 
 1. `adb devices`로 기기 확인.
@@ -21,10 +23,14 @@ alwaysApply: true
 - 에이전트 안내 직후, 동일 조건에서 1회 재현.
 - 완료 시 **「했어」** 등 한 줄로 알림.
 
+## 2½. 구조 검증(에이전트 · 크래시만 · **코드 전**)
+
+`arcfire-crash-fix-structural-gate.mdc` — 이전 수정·logcat 동일 스택·계약(`planetHubWorkletContract`·Skia 헌법) **전수검사** → 수정 설계 3줄 + worklet 체크리스트 ALL PASS. **FAIL이면 코딩 금지.**
+
 ## 3. 수정(에이전트)
 
 - 터미널·logcat 출력에서 `FATAL` / `signal` / `librnskia` / `ReactNativeJS` 스택을 근거로 원인 특정.
-- **로그 근거 없이** 대규모 리팩터·방어 코드 남발 금지.
+- **2½ PASS 후에만** 패치. **로그 근거 없이** 대규모 리팩터·방어 코드 남발 금지.
 - 수정 후 `npx tsc --noEmit`. 네이티브/Skia 변경 시 **`expo run:android` 재빌드** 안내.
 - 동일 재현으로 **한 번 더** 확인 요청. 마지막에 release 1회 검증(배포 조건과 다를 수 있음).
 

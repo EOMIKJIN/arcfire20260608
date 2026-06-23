@@ -63,6 +63,11 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   for (const uid of resetUids) {
     await deleteUserCloudSave(uid);
   }
+  // 릴리즈 부팅 지연 시 `local-guest`로 등록된 고아 users 문서가 남으면
+  // 이후 deviceUid 재등록에서 동일 닉네임이 '이미 사용 중'으로 오판된다.
+  if (primaryUid && primaryUid !== 'local-guest' && !resetUids.includes('local-guest')) {
+    await deleteUserCloudSave('local-guest');
+  }
 
   if (primaryUid) {
     await useClanWarFoundationStore.getState().purgePlayerAccountWorldState({

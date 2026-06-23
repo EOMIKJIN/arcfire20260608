@@ -3,6 +3,7 @@
 // ============================================================
 
 import { clearCapitalRealtimeCombatPresentationCaches } from '../combat/clearCapitalRealtimeCombatCaches';
+import { releaseGalaxyMapStageMemoryFull } from './galaxyMapStageSession';
 import { releasePlanetMainStageSession } from './planetMainStageSession';
 import { invalidateAllPlanetMemoCaches } from './planetMemoCache';
 
@@ -21,9 +22,9 @@ export function releasePlanetHubStageMemory(previousPlanetId?: string | null): v
   });
 }
 
-/** STAGE 2 — Galaxy Map (transit 정리는 화면 ref에서 수행) */
+/** STAGE 2 — Galaxy Map scroll + deferred tiles + presentation 캐시 해제 */
 export function releaseGalaxyMapStageMemory(): void {
-  /* no-op placeholder — worldmap useStageMemory/onUnmount에서 transit stop */
+  releaseGalaxyMapStageMemoryFull();
 }
 
 /** STAGE 3 — Combat 프레젠테이션 캐시 */

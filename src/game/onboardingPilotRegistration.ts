@@ -82,7 +82,7 @@ export async function completePilotRegistration(uid: string, nickname: string): 
   }
 
   const available = await runRemoteRegistrationStep('check_nickname', () =>
-    checkNicknameAvailable(trimmedNick),
+    checkNicknameAvailable(trimmedNick, { excludeUid: uid }),
   );
   if (!available) {
     throw new PilotRegistrationError('nickname_taken');

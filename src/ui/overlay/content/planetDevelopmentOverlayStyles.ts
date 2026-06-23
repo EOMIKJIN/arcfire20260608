@@ -26,6 +26,7 @@ export const planetDevelopmentOverlayStyles = StyleSheet.create({
     flex: 1,
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
+    color: 'rgba(107, 212, 255, 0.62)',
   },
   rowValue: {
     flex: 1,
@@ -33,6 +34,7 @@ export const planetDevelopmentOverlayStyles = StyleSheet.create({
     fontSize: FONTS.size.sm,
     fontWeight: FONTS.weight.bold,
     textAlign: 'right',
+    color: OVERLAY_TOKENS.valueContentColor,
   },
   listItem: {
     borderWidth: 1,
@@ -129,7 +131,8 @@ export const planetDevelopmentOverlayStyles = StyleSheet.create({
   levelRowMeta: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    opacity: 0.85,
+    color: OVERLAY_TOKENS.valueContentColor,
+    opacity: 0.92,
   },
   gaugeBlock: {
     marginVertical: SPACING.sm,

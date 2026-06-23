@@ -1,6 +1,5 @@
-﻿# Arcfire long-run watch — 사용자용 간단 보고 콘솔 (30분 1줄 heartbeat)
-# 「감시만」 — 읽기/관측/보고 전용. 앱/Skia/허브 코드 수정 없음.
-# run-monitor.ps1(상세 샘플링) 위에 얹는 가벼운 사용자 보고창.
+﻿# Arcfire long-run watch — 사용자용 간단 보고 콘솔 (heartbeat)
+# v2.7 — 신선한 arcfire 크래시·실제 incident만 적색/황색 (구 log 오탐·paused GL 스팸 제거)
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$IntervalMin = 30
@@ -8,17 +7,22 @@ param(
 
 $ErrorActionPreference = 'Continue'
 
+. (Join-Path $PSScriptRoot 'mem-gl-leak-rules.ps1')
+. (Join-Path $PSScriptRoot 'watch-alert-filters.ps1')
+
 $logDir       = Join-Path $PSScriptRoot 'logs'
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 $heartbeatLog = Join-Path $logDir 'heartbeat.log'
 $incidentsLog = Join-Path $logDir 'incidents.log'
 $alertsLog    = Join-Path $logDir 'mem-alerts.log'
+$playtestAlerts = Join-Path $logDir 'playtest-alerts.log'
+$pauseFlag    = Join-Path $logDir 'monitor-paused.flag'
+$crashOffsetFile = Join-Path $logDir '.crash-byte-offset-heartbeat'
+$crashMaxAgeMin = [math]::Max(20, ($IntervalMin * 2) + 5)
 
 function Get-LineCount([string]$path) {
   if (-not (Test-Path $path)) { return 0 }
-  try {
-    return @(Get-Content -Path $path -ErrorAction SilentlyContinue).Count
-  } catch { return 0 }
+  try { return @(Get-Content -Path $path -ErrorAction SilentlyContinue).Count } catch { return 0 }
 }
 
 function Get-NewLines([string]$path, [int]$prevCount) {
@@ -26,23 +30,20 @@ function Get-NewLines([string]$path, [int]$prevCount) {
   try {
     $all = @(Get-Content -Path $path -ErrorAction SilentlyContinue)
     if ($all.Count -le $prevCount) { return @() }
-    $slice = $all[$prevCount..($all.Count - 1)]
-    return @($slice | Where-Object { $_ -and $_.Trim().Length -gt 0 })
+    return @($all[$prevCount..($all.Count - 1)] | Where-Object { $_ -and $_.Trim().Length -gt 0 })
   } catch { return @() }
 }
 
 function Get-LatestCrashLog() {
-  try {
-    return Get-ChildItem -Path $logDir -Filter 'crash-*.log' -ErrorAction SilentlyContinue |
-      Sort-Object LastWriteTime -Descending | Select-Object -First 1
-  } catch { return $null }
+  Get-ChildItem -Path $logDir -Filter 'crash-*.log' -ErrorAction SilentlyContinue |
+    Sort-Object LastWriteTime -Descending | Select-Object -First 1
 }
 
 function Parse-Meminfo([string]$raw) {
   $m = @{ PssKb = $null; GlKb = $null; Views = $null }
-  if ($raw -match 'TOTAL PSS:\s+(\d+)')            { $m.PssKb = [int]$Matches[1] }
-  if ($raw -match '(?m)^\s*GL mtrack\s+(\d+)')      { $m.GlKb  = [int]$Matches[1] }
-  if ($raw -match 'Views:\s+(\d+)')                 { $m.Views = [int]$Matches[1] }
+  if ($raw -match 'TOTAL PSS:\s+(\d+)')       { $m.PssKb = [int]$Matches[1] }
+  if ($raw -match '(?m)^\s*GL mtrack\s+(\d+)') { $m.GlKb  = [int]$Matches[1] }
+  if ($raw -match 'Views:\s+(\d+)')            { $m.Views = [int]$Matches[1] }
   return $m
 }
 
@@ -51,48 +52,50 @@ function Emit([string]$line, [string]$color) {
   try { Add-Content -Path $heartbeatLog -Value $line -Encoding utf8 } catch {}
 }
 
-# 직전 상태(파일 길이) 기억 — 첫 틱은 "기동 시점 이후 신규"만 이상으로 판정
 $prevIncidents = Get-LineCount $incidentsLog
 $prevAlerts    = Get-LineCount $alertsLog
-$crash         = Get-LatestCrashLog
-$prevCrashName = if ($crash) { $crash.Name } else { '' }
-$prevCrashLines = if ($crash) { Get-LineCount $crash.FullName } else { 0 }
-
+$prevPlaytest  = Get-LineCount $playtestAlerts
+$sessionPid    = ''
 $startStamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
-Emit "[$startStamp] === report-watch 시작 (pkg=$Package · ${IntervalMin}m 간격 · 감시만) ===" 'Cyan'
+$pausedNote = if (Test-Path $pauseFlag) { ' · auto-fix=OFF' } else { '' }
+Emit "[$startStamp] === report-watch v2.7 (pkg=$Package · ${IntervalMin}m · 신선 크래시만)$pausedNote ===" 'Cyan'
 
 while ($true) {
   $hhmm = Get-Date -Format 'HH:mm'
-  $crashPattern = 'FATAL|signal|SIGSEGV|librnskia'
 
-  # 1) 앱 실행 여부
   $appPid = ''
   try { $appPid = (adb shell "pidof $Package" 2>$null | Out-String).Trim() } catch { $appPid = '' }
 
-  # 2) 새 alert/incident 라인
-  $newIncidents = @(Get-NewLines $incidentsLog $prevIncidents)
-  $newAlerts    = @(Get-NewLines $alertsLog $prevAlerts)
-  $prevIncidents = Get-LineCount $incidentsLog
-  $prevAlerts    = Get-LineCount $alertsLog
+  if ($appPid -and -not $sessionPid) { $sessionPid = $appPid }
+  $pidChanged = ($sessionPid -and $appPid -and $appPid -ne $sessionPid)
 
-  # 3) 새 crash 흔적
+  # 신규 incident — actionable만
+  $newIncidents = @(Get-NewLines $incidentsLog $prevIncidents)
+  $prevIncidents = Get-LineCount $incidentsLog
+  $actionIncidents = @($newIncidents | Where-Object { Test-WatchActionableIncident $_ })
+
+  # playtest-alerts 실시간 (정밀 스캐너)
+  $newPlaytest = @(Get-NewLines $playtestAlerts $prevPlaytest)
+  $prevPlaytest = Get-LineCount $playtestAlerts
+  $realtimeCrash = @($newPlaytest | Where-Object { $_ -match '\[ARCFIRE_CRASH\]|\[PATTERN\].*Fatal signal' })
+
+  # crash log — 바이트 tail + 신선도 (구 PID 오탐 차단)
+  $freshCrashEvents = @()
   $crash = Get-LatestCrashLog
-  $newCrashHits = @()
   if ($crash) {
-    if ($crash.Name -ne $prevCrashName) { $prevCrashName = $crash.Name; $prevCrashLines = 0 }
-    $newCrashLines = @(Get-NewLines $crash.FullName $prevCrashLines)
-    $prevCrashLines = Get-LineCount $crash.FullName
-    $newCrashHits = @($newCrashLines | Where-Object { $_ -match $crashPattern })
+    $tail = Read-CrashLogTailBytes -CrashPath $crash.FullName -OffsetFile $crashOffsetFile -MaxAgeMin $crashMaxAgeMin
+    $freshCrashEvents = @($tail.Events)
   }
 
-  $crashSeen = ($newCrashHits.Count -gt 0)
-  # alert/incident 중 "진짜" 비정상종료만(크래시 시그니처·하드실링). 단순 프로세스 미발견은
-  # 클린 종료(앱 닫기·재설치·검증)일 수 있어 적색 오탐을 막기 위해 제외한다.
-  # PROCESS_DEATH(크래시 동반)는 incidents.log 에 기록되며 crashSeen 으로도 잡힌다.
-  $abnormalAlert = @(@($newAlerts) + @($newIncidents) | Where-Object { $_ -match 'PROCESS_DEATH|FATAL|SIGSEGV|GL_HARD_CEILING|GL_LEAK_SUSPECT' })
+  $hasCrash = ($freshCrashEvents.Count -gt 0) -or ($realtimeCrash.Count -gt 0)
+  $crashSample = ''
+  if ($freshCrashEvents.Count -gt 0) {
+    $crashSample = ($freshCrashEvents | Select-Object -Last 1).Line
+  } elseif ($realtimeCrash.Count -gt 0) {
+    $crashSample = ($realtimeCrash | Select-Object -Last 1)
+  }
 
   if ($appPid) {
-    # 실행 중 — meminfo 1회
     $pss = ''; $gl = ''; $views = ''
     $measOk = $false
     try {
@@ -104,28 +107,32 @@ while ($true) {
       if ($pss -ne '') { $measOk = $true }
     } catch { $measOk = $false }
 
-    if ($crashSeen) {
-      $sample = ($newCrashHits | Select-Object -First 1)
-      Emit "[$hhmm] !! 비정상종료/크래시 흔적 감지 — $sample (상세 $($crash.Name))" 'Red'
-    } elseif ($newAlerts.Count -gt 0 -or $newIncidents.Count -gt 0) {
-      $summary = if ($newIncidents.Count -gt 0) { ($newIncidents | Select-Object -Last 1) } else { ($newAlerts | Select-Object -Last 1) }
-      Emit "[$hhmm] !! 이상감지: $summary (상세 logs/incidents.log)" 'Yellow'
+    if ($pidChanged) {
+      Emit "[$hhmm] !! PID_CHANGE session=$sessionPid -> $appPid (크래시·재시작 의심)" 'Red'
+      $sessionPid = $appPid
+    } elseif ($hasCrash) {
+      Emit "[$hhmm] !! 실시간 크래시 — $crashSample" 'Red'
+    } elseif ($actionIncidents.Count -gt 0) {
+      $summary = ($actionIncidents | Select-Object -Last 1)
+      Emit "[$hhmm] !! 이상감지: $summary" 'Yellow'
     } elseif (-not $measOk) {
-      Emit "[$hhmm] ?? 측정 실패 (dumpsys/파싱) — 앱 PID=$appPid, 다음 틱 재시도" 'Magenta'
+      Emit "[$hhmm] ?? 측정 실패 — PID=$appPid" 'Magenta'
     } else {
-      Emit "[$hhmm] OK 이상없음 · PSS ${pss}MB / GL ${gl}MB / views ${views}" 'Green'
+      $glNote = ''
+      if ((Test-Path $pauseFlag) -and $gl -ne '' -and [double]$gl -ge 200) {
+        $glNote = " · GL ${gl}MB (기록만·조치OFF)"
+      }
+      Emit "[$hhmm] OK · PID $appPid · PSS ${pss}MB / GL ${gl}MB / views ${views}$glNote" 'Green'
     }
   } else {
-    # 앱 미실행
-    if ($crashSeen -or $abnormalAlert.Count -gt 0) {
-      $sample = if ($crashSeen) { ($newCrashHits | Select-Object -First 1) } else { ($abnormalAlert | Select-Object -Last 1) }
-      Emit "[$hhmm] !! 비정상종료 감지 — crash 로그 확인 ($sample)" 'Red'
+    if ($hasCrash -or $actionIncidents.Count -gt 0 -or $pidChanged) {
+      $sample = if ($crashSample) { $crashSample } else { ($actionIncidents | Select-Object -Last 1) }
+      Emit "[$hhmm] !! 앱 미실행 + 이상 — $sample" 'Red'
     } else {
       Emit "[$hhmm] .. 앱 미실행(대기중)" 'DarkGray'
     }
+    $sessionPid = ''
   }
 
   Start-Sleep -Seconds ($IntervalMin * 60)
 }
-
-

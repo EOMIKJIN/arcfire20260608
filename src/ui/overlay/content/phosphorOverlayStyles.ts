@@ -108,7 +108,7 @@ export const phosphorOverlay = StyleSheet.create({
   rowText: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.md,
-    color: OVERLAY_TOKENS.phosphorAccent,
+    color: OVERLAY_TOKENS.valueContentColor,
   },
   rowMuted: {
     fontFamily: FONTS.mono,
@@ -125,7 +125,7 @@ export const phosphorOverlay = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.lg,
     fontWeight: FONTS.weight.bold,
-    color: OVERLAY_TOKENS.phosphorAccent,
+    color: OVERLAY_TOKENS.valueContentColor,
   },
   closeBtn: {
     marginTop: SPACING.lg,

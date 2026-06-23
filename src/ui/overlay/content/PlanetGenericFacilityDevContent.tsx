@@ -10,6 +10,7 @@ import { OVERLAY_TOKENS } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
 import { ArcOverlayCard } from '../ArcOverlayCard';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
+import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
 import {
   HeavyUiOverlayShell,
@@ -44,16 +45,6 @@ type Props = PlanetDevelopmentModuleContext & {
   renderExtraStats?: (snapshot: GenericFacilityDevSnapshot, currentRow: LevelRow | null) => React.ReactNode;
   renderLevelMeta?: (row: LevelRow) => string;
 };
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  const PH = OVERLAY_TOKENS.phosphorAccent;
-  return (
-    <View style={styles.row}>
-      <Text style={[styles.rowLabel, { color: PH }]}>{label}</Text>
-      <Text style={[styles.rowValue, { color: PH }]}>{value}</Text>
-    </View>
-  );
-}
 
 type ReadyProps = Props & { data: FacilityDevSessionData };
 
@@ -195,7 +186,7 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
   return (
     <ArcOverlayCard title={t(`${i18nPrefix}.title`)} subtitle={planetName} layout="panel" footer={footer}>
       <Text style={[styles.section, { color: PH }]}>{t(`${i18nPrefix}.status`)}</Text>
-      <InfoRow
+      <ArcOverlayInfoRow
         label={t(`${i18nPrefix}.stateLabel`)}
         value={
           snapshot.installed
@@ -209,7 +200,7 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
         <Text style={[styles.hint, { color: PH }]}>{t('planetDev.worldBuiltHint')}</Text>
       ) : null}
       {!snapshot.installed && snapshot.requiresInstallVictory && !snapshot.hasInstallVictory ? (
-        <InfoRow
+        <ArcOverlayInfoRow
           label={t('planetDev.victoryPrereqLabel')}
           value={t('planetDev.installCombatVictoryRequired')}
         />
@@ -218,7 +209,7 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
       {snapshot.isInstalling ? (
         <View style={styles.gaugeBlock}>
           <Text style={[styles.section, { color: PH }]}>{t('planetDev.installProgress')}</Text>
-          <Text style={[styles.hint, { color: PH }]}>
+          <Text style={[styles.hint, { color: OVERLAY_TOKENS.valueContentColor }]}>
             {snapshot.installDurationSec != null
               ? api.formatDurationLabel(snapshot.installDurationSec)
               : '—'}
@@ -232,7 +223,7 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
       {snapshot.isUpgrading ? (
         <View style={styles.gaugeBlock}>
           <Text style={[styles.section, { color: PH }]}>{t(`${i18nPrefix}.upgradeProgress`)}</Text>
-          <Text style={[styles.hint, { color: PH }]}>
+          <Text style={[styles.hint, { color: OVERLAY_TOKENS.valueContentColor }]}>
             Lv.{snapshot.level} → Lv.{snapshot.upgradeJob?.targetLevel ?? '?'}
           </Text>
           <PlanetHubDigitalGauge
@@ -252,7 +243,7 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
             {row.level === snapshot.level ? ' ◀' : ''}
           </Text>
           {renderLevelMeta ? (
-            <Text style={[styles.levelRowMeta, { color: PH }]}>{renderLevelMeta(row)}</Text>
+            <Text style={styles.levelRowMeta}>{renderLevelMeta(row)}</Text>
           ) : null}
         </View>
       ))}

@@ -168,14 +168,29 @@ export async function loadPlayerFromFirestore(_uid: string): Promise<Player | nu
   return result.kind === 'restored' ? result.player : null;
 }
 
-export async function checkNicknameAvailable(nickname: string): Promise<boolean> {
+export type CheckNicknameAvailableOptions = {
+  /**
+   * 계정 초기화·재등록 시 — Firestore 오프라인 캐시·미삭제 본인 문서(`users/{uid}`)는
+   * '이미 사용 중'으로 오판하지 않도록 제외한다.
+   */
+  excludeUid?: string;
+};
+
+export async function checkNicknameAvailable(
+  nickname: string,
+  opts?: CheckNicknameAvailableOptions,
+): Promise<boolean> {
   const n = nickname.trim();
   if (!n) return false;
+  const excludeUid = opts?.excludeUid?.trim() || '';
   try {
     const snap = await getDocs(
       query(usersCollectionRef(), where('nickname', '==', n), limit(1)),
     );
-    return snap.empty;
+    if (snap.empty) return true;
+    if (!excludeUid) return false;
+    // 본인 uid 문서만 매칭(초기화 직후 캐시 잔존·deleteDoc 대기)이면 재사용 허용.
+    return snap.docs.every((docSnap) => docSnap.id === excludeUid);
   } catch (e) {
     // 오프라인에서는 로컬 플레이를 막지 않는다(중복 검증은 온라인 복귀 시 최종 반영).
     console.warn('[firestore] checkNicknameAvailable failed (offline fallback allow):', e);

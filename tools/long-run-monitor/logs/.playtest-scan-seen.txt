@@ -1,0 +1,5 @@
+MEMCEIL|979.9|46.6
+MEMCEIL|987.2|46.8
+MEMCEIL|1013.3|47
+CRASH|06-23 22:46:19.147 15773 15865 F libc    : Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x754e00008b in tid 15865 (mqt_v_js), pid 15773 (.arcfire.online)
+CRASH|06-23 22:46:20.462  1909 18511 I ActivityManager: Killing 15773:com.arcfire.online/u0a1067 (adj 0): crash

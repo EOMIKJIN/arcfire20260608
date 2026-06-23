@@ -1,0 +1,24 @@
+﻿{
+    "buildNote":  "incident auto-investigate+codefix pipeline",
+    "sessionId":  "playtest-20260623-204323",
+    "headCommit":  "",
+    "focusAreas":  [
+                       "long_idle_hub",
+                       "planet_worldmap_cycle",
+                       "galaxy_transit_combat",
+                       "wave_combat_skia",
+                       "facility_substage"
+                   ],
+    "intervalMin":  10,
+    "startedAtKst":  "2026-06-23 20:43:23",
+    "passCriteria":  {
+                         "workletExecuteSyncCrash":  0,
+                         "fatalSignalAfterStart":  0,
+                         "abnormalRestartWithin25m":  0,
+                         "glFloorDriftMbMax":  25
+                     },
+    "milestones":  [
+
+                   ],
+    "autoRemediationPaused":  true
+}

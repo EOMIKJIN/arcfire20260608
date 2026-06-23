@@ -1,5 +1,5 @@
 // ============================================================
-// 조선소 > 업그레이드 탭 — 광물 기반 전함 강화 (기존 테이블 정본 + 기획안 v1 참고)
+// 조선소 > 현황 탭 — 광물 기반 전함 강화 (기존 테이블 정본 + 기획안 v1 참고)
 // 정본: src/game/shipyardMineralUpgrade/mineralUpgradeModel.ts
 // 스탯 적용: ShipPerformanceCalculator.applyMineralUpgradeToShipPerformance (플레이어 전투 반영)
 // 소비: usePlayerStore.applyMineralUpgrade (ore 차감·레벨+1·저장)

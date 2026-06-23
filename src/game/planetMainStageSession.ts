@@ -7,6 +7,11 @@ import { resetHubInboundDroneDodgeBridge } from '../arcCore/inboundDrone/hubInbo
 
 export type PlanetMainStageReleaseReason = 'route_blur' | 'planet_change';
 
+/** blur + unmount 이중 release 방지 (views/native floor 계단 방지) */
+let lastPlanetMainReleaseKey = '';
+let lastPlanetMainReleaseAtMs = 0;
+const PLANET_MAIN_RELEASE_DEDUPE_MS = 800;
+
 /**
  * 메인스테이지(행성 허브) 이탈 또는 다른 행성으로 착륙 시, 이전 행성 세션과 연결된
  * 프레젠테이션 계층 정리 훅.
@@ -26,6 +31,21 @@ export function releasePlanetMainStageSession(opts: {
   reason: PlanetMainStageReleaseReason;
   previousPlanetId?: string | null;
 }): void {
+  const releaseKey = `${opts.reason}:${opts.previousPlanetId ?? ''}`;
+  const now = Date.now();
+  if (
+    releaseKey === lastPlanetMainReleaseKey
+    && now - lastPlanetMainReleaseAtMs < PLANET_MAIN_RELEASE_DEDUPE_MS
+  ) {
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.log(`[MEM] releasePlanetMainStageSession dedupe ${releaseKey}`);
+    }
+    return;
+  }
+  lastPlanetMainReleaseKey = releaseKey;
+  lastPlanetMainReleaseAtMs = now;
+
   releaseAllPlanetSessionResources({
     reason: opts.reason,
     previousPlanetId: opts.previousPlanetId ?? null,
@@ -34,7 +54,7 @@ export function releasePlanetMainStageSession(opts: {
   releaseAllPlanetGpuLayers(opts.reason);
 
   if (opts.reason === 'route_blur') {
-    prunePlanetNebulaProfilesLru(2);
+    prunePlanetNebulaProfilesLru(1);
   }
 
   if (opts.reason === 'planet_change' && opts.previousPlanetId) {

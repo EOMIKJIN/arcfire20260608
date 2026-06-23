@@ -1,0 +1,14 @@
+[2026-06-23 14:57:43] SESSION_START playtest-20260623-145743 commit=
+[2026-06-23 14:57:50] SCANNER_START pid=12060 poll=20s
+[2026-06-23 18:28:00] SCANNER_START v2 pid=20008 poll=20s maxAge=15m
+[2026-06-23 19:43:05] [ARCFIRE_CRASH age=0.3m] 06-23 19:42:47.685 20789 20789 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x441bc00000000002 in tid 20789 (.arcfire.online), pid 20789 (.arcfire.online)
+[2026-06-23 19:43:45] [ARCFIRE_CRASH age=1m] 06-23 19:42:48.815  1909  5869 I ActivityManager: Killing 20789:com.arcfire.online/u0a1066 (adj 0): crash
+[2026-06-23 20:41:16] SESSION_START playtest-20260623-204116 commit=
+[2026-06-23 20:41:19] SCANNER_START v2 pid=12428 poll=20s maxAge=15m
+[2026-06-23 20:43:23] SESSION_START playtest-20260623-204323 commit=
+[2026-06-23 20:43:27] SCANNER_START v2 pid=25124 poll=20s maxAge=15m
+[2026-06-23 20:43:27] [MEM_HARD_CEILING] pss=979.9MB gl=46.6MB
+[2026-06-23 20:43:48] [MEM_HARD_CEILING] pss=987.2MB gl=46.8MB
+[2026-06-23 20:53:49] [MEM_HARD_CEILING] pss=1013.3MB gl=47MB
+[2026-06-23 22:46:39] [ARCFIRE_CRASH age=0.3m] 06-23 22:46:19.147 15773 15865 F libc    : Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x754e00008b in tid 15865 (mqt_v_js), pid 15773 (.arcfire.online)
+[2026-06-23 22:46:45] [ARCFIRE_CRASH age=0.4m] 06-23 22:46:20.462  1909 18511 I ActivityManager: Killing 15773:com.arcfire.online/u0a1067 (adj 0): crash

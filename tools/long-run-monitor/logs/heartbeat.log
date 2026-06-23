@@ -64,3 +64,82 @@
 [2026-06-22 01:13:07] MANUAL OK PSS 699.1MB / GL 56.8MB / views 297 (APP_RUNNING_WATCH_START)
 [2026-06-22 23:49:07] MANUAL OK PSS 759.4MB / GL 141.3MB / views 934 (GL_SPIKE suspect=hub_skia MANUAL)
 [2026-06-22 23:54:29] MANUAL OK PSS 753.5MB / GL 172.9MB / views 287 (GL_SPIKE suspect=hub_skia MANUAL)
+[2026-06-23 00:03:52] MANUAL OK PSS 657.2MB / GL 56.5MB / views 320 (OVERNIGHT_WATCH_START_2026-06-23)
+[2026-06-23 10:42:38] MANUAL OK PSS 323.9MB / GL 37.1MB / views 318 (RELEASE_BUILD_WATCH_START_2026-06-23)
+[2026-06-23 14:57:46] MANUAL OK PSS 189.3MB / GL 3.7MB / views 12 (PLAYTEST_START_playtest-20260623-145743)
+[2026-06-23 14:57:51] === report-watch 시작 (pkg=com.arcfire.online · 10m 간격 · 감시만) ===
+[14:57] !! 이상감지: [2026-06-23 14:57:43] PLAYTEST_START playtest-20260623-145743 interval=10m paused=True (상세 logs/incidents.log)
+[2026-06-23 15:00:14] MANUAL OK PSS 356.8MB / GL 31.9MB / views 283 (HUB_ACTIVATION gl_mount_ok MANUAL)
+[2026-06-23 15:01:03] MANUAL OK PSS 362.7MB / GL 34.3MB / views 287 (PLAYTEST_MILESTONE:mining_in_progress_new_eden)
+[15:07] !! 비정상종료/크래시 흔적 감지 — 06-23 13:39:51.918 31582 31631 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xc0 in tid 31631 (mqt_v_js), pid 31582 (.arcfire.online) (상세 crash-20260623-104238.log)
+[2026-06-23 15:08:19] MANUAL OK PSS 516.3MB / GL 154.3MB / views 285 (PLAYTEST_MILESTONE:arcadia_land_scan_mining)
+[15:17] !! 이상감지: [2026-06-23 15:08:19] PLAYTEST_MILESTONE arcadia_land_scan_mining (상세 logs/incidents.log)
+[2026-06-23 15:18:22] MANUAL OK PSS 492.7MB / GL 124.9MB / views 284 (PLAYTEST_MILESTONE:arcadia_trade_satellite_l1_remining)
+[2026-06-23 15:20:28] MANUAL OK PSS 579.2MB / GL 160.3MB / views 280 (GL_SPIKE suspect=hub_skia MANUAL)
+[15:27] !! 이상감지: [2026-06-23 15:20:28] PLAYTEST_MILESTONE depart_solar_port_transit_new_eden_scan_mining (상세 logs/incidents.log)
+[15:37] !! 이상감지: [2026-06-23 15:28:08] GL_ELEVATED mounting_or_insufficient_samples gl=156.5 pss=533.8 views=286 restart_held (상세 logs/incidents.log)
+[15:47] !! 이상감지: [2026-06-23 15:38:12] GL_ELEVATED mounting_or_insufficient_samples gl=156.5 pss=527.7 views=286 restart_held (상세 logs/incidents.log)
+[15:57] !! 이상감지: [2026-06-23 15:48:17] GL_ELEVATED mounting_or_insufficient_samples gl=154.5 pss=520.4 views=286 restart_held (상세 logs/incidents.log)
+[16:08] !! 이상감지: [2026-06-23 15:58:22] GL_ELEVATED mounting_or_insufficient_samples gl=156.7 pss=521.4 views=304 restart_held (상세 logs/incidents.log)
+[16:18] !! 이상감지: [2026-06-23 16:08:26] GL_ELEVATED mounting_or_insufficient_samples gl=154.7 pss=514.3 views=286 restart_held (상세 logs/incidents.log)
+[16:28] !! 이상감지: [2026-06-23 16:18:30] GL_ELEVATED mounting_or_insufficient_samples gl=156.7 pss=511.5 views=286 restart_held (상세 logs/incidents.log)
+[16:38] !! 이상감지: [2026-06-23 16:28:35] GL_ELEVATED mounting_or_insufficient_samples gl=154.7 pss=482.8 views=286 restart_held (상세 logs/incidents.log)
+[2026-06-23 16:45:46] MANUAL OK PSS 525.8MB / GL 154.2MB / views 289 (PLAYTEST_MILESTONE:new_eden_depart_solar_transit_arcadia_land)
+[16:48] !! 이상감지: [2026-06-23 16:45:46] PLAYTEST_MILESTONE new_eden_depart_solar_transit_arcadia_land (상세 logs/incidents.log)
+[2026-06-23 16:48:27] MANUAL OK PSS 490.6MB / GL 156.4MB / views 289 (PLAYTEST_MILESTONE:arcadia_scan_mining)
+[16:58] !! 이상감지: [2026-06-23 16:48:45] GL_ELEVATED mounting_or_insufficient_samples gl=156.4 pss=493.3 views=285 restart_held (상세 logs/incidents.log)
+[2026-06-23 17:05:46] MANUAL OK PSS 515.2MB / GL 98.5MB / views 280 (PLAYTEST_MILESTONE:vega_outpost_mission_dialog_wave_combat_start)
+[17:08] !! 이상감지: [2026-06-23 17:05:46] PLAYTEST_MILESTONE vega_outpost_mission_dialog_wave_combat_start (상세 logs/incidents.log)
+[2026-06-23 17:16:41] MANUAL OK PSS 672.8MB / GL 221.9MB / views 283 (GL_SPIKE suspect=hub_skia MANUAL)
+[17:18] !! 이상감지: [2026-06-23 17:16:41] PLAYTEST_MILESTONE vega_wave_transit_flee_x2_arcadia_land (상세 logs/incidents.log)
+[2026-06-23 17:19:13] MANUAL OK PSS 633.6MB / GL 226.2MB / views 285 (PLAYTEST_MILESTONE:arcadia_mining_after_combat_chain)
+[17:28] !! 이상감지: [2026-06-23 17:19:13] PLAYTEST_MILESTONE arcadia_mining_after_combat_chain (상세 logs/incidents.log)
+[2026-06-23 17:37:49] MANUAL OK PSS 636.4MB / GL 224.2MB / views 297 (PLAYTEST_MILESTONE:1h_soak_repeat_play_start)
+[17:38] !! 비정상종료/크래시 흔적 감지 — 06-23 13:39:51.918 31582 31631 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xc0 in tid 31631 (mqt_v_js), pid 31582 (.arcfire.online) (상세 crash-20260623-104238.log)
+[17:48] !! 이상감지: [2026-06-23 17:39:09] REFIX_REQUESTED gl_critical_active_hub (상세 logs/incidents.log)
+[17:58] !! 이상감지: [2026-06-23 17:49:13] REFIX_REQUESTED gl_critical_active_hub (상세 logs/incidents.log)
+[18:08] !! 이상감지: [2026-06-23 17:59:18] REFIX_REQUESTED gl_critical_active_hub (상세 logs/incidents.log)
+[18:18] !! 이상감지: [2026-06-23 18:09:23] REFIX_REQUESTED gl_critical_active_hub (상세 logs/incidents.log)
+[2026-06-23 18:28:01] === report-watch v2.7 (pkg=com.arcfire.online · 10m · 신선 크래시만) · auto-fix=OFF ===
+[18:28] OK · PID 20789 · PSS 634.5MB / GL 226.6MB / views 289 · GL 226.6MB (기록만·조치OFF)
+[18:38] OK · PID 20789 · PSS 583.3MB / GL 101.6MB / views 298
+[18:48] OK · PID 20789 · PSS 587.4MB / GL 100.2MB / views 274
+[18:58] OK · PID 20789 · PSS 600.4MB / GL 100.8MB / views 316
+[19:08] OK · PID 20789 · PSS 588.7MB / GL 102.8MB / views 298
+[19:18] OK · PID 20789 · PSS 744.6MB / GL 228MB / views 313 · GL 228MB (기록만·조치OFF)
+[19:28] OK · PID 20789 · PSS 743.9MB / GL 226MB / views 303 · GL 226MB (기록만·조치OFF)
+[19:38] OK · PID 20789 · PSS 733.8MB / GL 228MB / views 304 · GL 228MB (기록만·조치OFF)
+[19:48] .. 앱 미실행(대기중)
+[19:58] !! 앱 미실행 + 이상 — 06-23 19:42:48.815  1909  5869 I ActivityManager: Killing 20789:com.arcfire.online/u0a1066 (adj 0): crash
+[20:08] OK · PID 8074 · PSS 519.1MB / GL 10.1MB / views 108
+[20:18] OK · PID 8074 · PSS 905.9MB / GL 143.1MB / views 944
+[20:28] OK · PID 8074 · PSS 1047.4MB / GL 167.6MB / views 77
+[20:38] OK · PID 8074 · PSS 1143.5MB / GL 167.1MB / views 77
+[2026-06-23 20:41:20] === report-watch v2.7 (pkg=com.arcfire.online · 10m · 신선 크래시만) · auto-fix=OFF ===
+[2026-06-23 20:41:18] MANUAL OK PSS 1001.5MB / GL 46.8MB / views 326 (PLAYTEST_START_playtest-20260623-204116)
+[20:41] OK · PID 8074 · PSS 982MB / GL 46.8MB / views 326
+[2026-06-23 20:41:34] MANUAL OK PSS 979.9MB / GL 46.6MB / views 305 (PLAYTEST_MILESTONE:precision_monitor_transit_postflow_start)
+[2026-06-23 20:43:28] === report-watch v2.7 (pkg=com.arcfire.online · 10m · 신선 크래시만) · auto-fix=OFF ===
+[2026-06-23 20:43:26] MANUAL OK PSS 1007.9MB / GL 46.8MB / views 330 (PLAYTEST_START_playtest-20260623-204323)
+[20:43] OK · PID 8074 · PSS 985.5MB / GL 48.8MB / views 326
+[20:53] OK · PID 8074 · PSS 1023.8MB / GL 46.9MB / views 334
+[21:03] OK · PID 8074 · PSS 836.2MB / GL 51.9MB / views 309
+[21:13] !! PID_CHANGE session=8074 -> 13585 (크래시·재시작 의심)
+[21:23] OK · PID 13585 · PSS 640MB / GL 46.4MB / views 256
+[21:33] OK · PID 13585 · PSS 785.9MB / GL 71.6MB / views 342
+[2026-06-23 21:38:17] MANUAL OK PSS 771.9MB / GL 71.4MB / views 305 (PLAYTEST_MILESTONE:arcadia_idle_2h_soak_start)
+[2026-06-23 21:38:21] MANUAL OK PSS 775.5MB / GL 71.4MB / views 289 (arcadia_idle_2h_soak_baseline)
+[21:43] !! PID_CHANGE session=13585 -> 15773 (크래시·재시작 의심)
+[21:53] OK · PID 15773 · PSS 650MB / GL 51.9MB / views 297
+[22:03] OK · PID 15773 · PSS 652.6MB / GL 51.9MB / views 301
+[22:13] OK · PID 15773 · PSS 671.6MB / GL 52MB / views 305
+[22:23] OK · PID 15773 · PSS 670.3MB / GL 53.3MB / views 295
+[22:33] OK · PID 15773 · PSS 703.9MB / GL 58MB / views 318
+[22:43] OK · PID 15773 · PSS 682.4MB / GL 57.7MB / views 305
+[22:53] !! PID_CHANGE session=15773 -> 21407 (크래시·재시작 의심)
+[23:03] OK · PID 21407 · PSS 769.7MB / GL 43.3MB / views 298
+[23:13] OK · PID 21407 · PSS 842.8MB / GL 54.8MB / views 302
+[23:23] OK · PID 21407 · PSS 995.8MB / GL 158.3MB / views 293
+[23:33] OK · PID 21407 · PSS 745.5MB / GL 46.5MB / views 366
+[23:43] OK · PID 21407 · PSS 708.4MB / GL 41.6MB / views 118
+[23:53] OK · PID 21407 · PSS 795.6MB / GL 80.7MB / views 338

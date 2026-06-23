@@ -14,15 +14,18 @@
  * └──────────────┴─────────────────────────────────────────────────────────────┘
  *
  * 금지: useEffect/useLayoutEffect/useCallback(비-worklet)에서 *.value 읽기
- * 금지: runOnUI / executeSync 유도 API
+ * 금지: runOnUI(식별자/useCallback) — inline () => { 'worklet'; … } 만 허용
  * 금지: useAnimatedReaction deps에 JS 콜백·props 넣기 (ShareableWorklet 재생성)
  */
 
 /** UI→JS runOnJS 스로틀 — 60Hz bridge는 PSS creep·GC 톱니 유발 */
 export const HUB_WORKLET_JS_BRIDGE_INTERVAL_MS = 48;
 
-/** orbitClock UI→JS 미러 — planet.tsx useFrameCallback 전용 */
+/** orbitClock UI→JS 미러 — inbound 드론·전투 sim 동기 필요 시 */
 export const ORBIT_CLOCK_JS_MIRROR_INTERVAL_MS = 32;
+
+/** 순수 idle 허브(드론·전투 없음) — worklet만 적분, JS 미러 2Hz면 ArcCore·5s info sort 충분 */
+export const ORBIT_CLOCK_JS_MIRROR_IDLE_MS = 512;
 
 /** JS 스레드 팩 버퍼 — SharedValue에 쓸 때 동일 배열을 ref에도 보관 */
 export type JsWorkletPackMirror<T> = {

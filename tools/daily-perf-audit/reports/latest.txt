@@ -1,4 +1,4 @@
-Daily audit — 2026-06-22T15:00:06.498Z
+Daily audit — 2026-06-23T15:00:07.395Z
 
 TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -33,18 +33,18 @@ Largest TS/TSX under `src/` + `app/` (bytes)
 - 289,808 — `src/data/generated/csvItemDefs.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
 - 190,428 — `src/data/generated/csvNpcCaptains.ts`
-- 146,338 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 147,163 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 71,055 — `src/data/generated/csvWeapons.ts`
 - 70,237 — `src/data/generated/csvStoryScenes.ts`
 - 70,149 — `src/data/balance/generated/csvSynthSystemColonization.ts`
+- 66,795 — `src/i18n/locales/ko.ts`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
-- 65,211 — `src/i18n/locales/ko.ts`
-- 59,311 — `src/i18n/locales/en.ts`
-- 52,177 — `app/(game)/planet.tsx`
-- 48,714 — `app/(game)/worldmap.tsx`
-- 47,561 — `app/(game)/shipyard.tsx`
+- 60,780 — `src/i18n/locales/en.ts`
+- 54,378 — `app/(game)/worldmap.tsx`
+- 54,230 — `app/(game)/planet.tsx`
+- 49,807 — `app/(game)/shipyard.tsx`
 - 45,252 — `app/(game)/trade.tsx`
-- 41,852 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
+- 42,551 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
 - 36,647 — `src/data/generated/csvMissions.ts`
 - 35,036 — `src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx`
 

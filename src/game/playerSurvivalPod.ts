@@ -34,13 +34,27 @@ import {
   normalizeInventorySlots,
   removeGoodFromInventorySlots,
 } from './playerInventory';
+import { resolvePlayerShipDurabilityPct } from './durability';
 
-/** 생존포드 상태에서는 은하 이동·전투 불가 */
+/** 생존포드 상태 또는 선체 내구 0% — 은하 이동·전투 불가 */
 export function isPlayerShipCombatCapable(ship: PlayerShip | null | undefined): boolean {
   if (!ship) return false;
   const id = ship.portraitNpcCapitalShipId?.trim();
-  if (!id) return true;
-  return !isSurvivalPodNpcShipId(id);
+  if (id && isSurvivalPodNpcShipId(id)) return false;
+  return resolvePlayerShipDurabilityPct(ship) > 0;
+}
+
+export type PlayerTravelBlockReason = 'pod' | 'durability' | 'missing_ship';
+
+/** 은하 이동 차단 사유 — null이면 이동 가능 */
+export function resolvePlayerTravelBlock(
+  player: Pick<Player, 'ship'> | null | undefined,
+): PlayerTravelBlockReason | null {
+  if (!player?.ship) return 'missing_ship';
+  const id = player.ship.portraitNpcCapitalShipId?.trim();
+  if (id && isSurvivalPodNpcShipId(id)) return 'pod';
+  if (resolvePlayerShipDurabilityPct(player.ship) <= 0) return 'durability';
+  return null;
 }
 
 /** 거점 행성 — 추후 `homePlanetId` 지정 기능 연동 */

@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   pct: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: PHOSPHOR_MUTED,
+    color: OVERLAY_TOKENS.valueContentColor,
     width: 52,
     textAlign: 'right',
   },

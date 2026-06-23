@@ -1,0 +1,2 @@
+policyKey,wearMinPct,wearMaxPct,repairCostRatio,repairFloorCredits
+default,0.2,0.8,0.10,500

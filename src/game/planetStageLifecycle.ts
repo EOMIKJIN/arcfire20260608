@@ -31,6 +31,9 @@ interface PlanetStageLifecycleState {
   lifecycle: PlanetStageLifecycle;
   pendingNavigation: (() => void) | null;
   suspendStartedAtMs: number | null;
+  suspendSafetyTimerId: ReturnType<typeof setTimeout> | null;
+
+  clearSuspendSafetyTimer: () => void;
 
   /**
    * 호출 즉시 lifecycle = 'suspending' 으로 전이. 이미 다른 전이 중이면 무시.
@@ -60,23 +63,43 @@ export const usePlanetStageLifecycleStore = create<PlanetStageLifecycleState>((s
   lifecycle: 'active',
   pendingNavigation: null,
   suspendStartedAtMs: null,
+  suspendSafetyTimerId: null,
+
+  clearSuspendSafetyTimer: () => {
+    const id = get().suspendSafetyTimerId;
+    if (id != null) clearTimeout(id);
+    set({ suspendSafetyTimerId: null });
+  },
 
   beginSuspend: (navigate) => {
     if (get().lifecycle !== 'active') return;
-    set({ lifecycle: 'suspending', pendingNavigation: navigate, suspendStartedAtMs: Date.now() });
-    setTimeout(() => {
+    get().clearSuspendSafetyTimer();
+    const startedAt = Date.now();
+    set({
+      lifecycle: 'suspending',
+      pendingNavigation: navigate,
+      suspendStartedAtMs: startedAt,
+    });
+    const timerId = setTimeout(() => {
       const s = get();
-      const startedAt = s.suspendStartedAtMs;
-      if (startedAt == null) return;
-      if (s.lifecycle !== 'suspending' && s.lifecycle !== 'frozen') return;
+      if (s.suspendSafetyTimerId !== timerId) return;
+      if (s.lifecycle !== 'suspending') return;
+      if (s.suspendStartedAtMs == null || s.suspendStartedAtMs !== startedAt) return;
       if (Date.now() - startedAt < SUSPEND_SAFETY_TIMEOUT_MS - 50) return;
-      set({ lifecycle: 'active', pendingNavigation: null, suspendStartedAtMs: null });
+      set({
+        lifecycle: 'active',
+        pendingNavigation: null,
+        suspendStartedAtMs: null,
+        suspendSafetyTimerId: null,
+      });
     }, SUSPEND_SAFETY_TIMEOUT_MS);
+    set({ suspendSafetyTimerId: timerId });
   },
 
   markFrozen: () => {
     if (get().lifecycle !== 'suspending') return;
-    set({ lifecycle: 'frozen' });
+    get().clearSuspendSafetyTimer();
+    set({ lifecycle: 'frozen', suspendStartedAtMs: null });
   },
 
   consumePendingNavigation: () => {
@@ -88,14 +111,17 @@ export const usePlanetStageLifecycleStore = create<PlanetStageLifecycleState>((s
   beginResume: () => {
     const cur = get().lifecycle;
     if (cur === 'active' || cur === 'resuming') return;
+    get().clearSuspendSafetyTimer();
     set({ lifecycle: 'resuming', pendingNavigation: null, suspendStartedAtMs: null });
   },
 
   finalizeResume: () => {
+    get().clearSuspendSafetyTimer();
     set({ lifecycle: 'active', pendingNavigation: null, suspendStartedAtMs: null });
   },
 
   forceActive: () => {
+    get().clearSuspendSafetyTimer();
     set({ lifecycle: 'active', pendingNavigation: null, suspendStartedAtMs: null });
   },
 }));

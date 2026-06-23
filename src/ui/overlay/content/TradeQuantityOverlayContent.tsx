@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
     fontWeight: FONTS.weight.bold,
-    color: PH,
+    color: OVERLAY_TOKENS.valueContentColor,
     textAlign: 'right',
   },
   descBox: {
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.lg,
     fontWeight: FONTS.weight.bold,
-    color: PH,
+    color: OVERLAY_TOKENS.valueContentColor,
     textAlign: 'center',
   },
   totalLine: {
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     fontWeight: FONTS.weight.bold,
   },
   totalCreditsOk: {
-    color: PH,
+    color: OVERLAY_TOKENS.valueContentColor,
   },
   totalCreditsOver: {
     color: COLORS.danger,

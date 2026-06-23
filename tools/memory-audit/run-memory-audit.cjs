@@ -88,11 +88,30 @@ for (const file of ['trade.tsx', 'shipyard.tsx', 'tavern.tsx', 'skilltree.tsx'])
 // P1 — planet memo cache invalidation path
 checks.push(
   check(
-    'releasePlanetMainStageSession invalidates memo cache',
-    /invalidateAllPlanetMemoCaches|invalidatePlanetMemoCachesForPlanet/.test(
+    'releaseGalaxyMapStageMemory clears scroll + deferred tiles + combat cache',
+    /releaseGalaxyMapStageMemoryFull|registerGalaxyMapDeferredTileReset/.test(
+      read('src/game/galaxyMapStageSession.ts'),
+    )
+      && /releaseGalaxyMapStageMemoryFull/.test(read('src/game/stageMemoryRelease.ts')),
+    'galaxyMapStageSession.ts + stageMemoryRelease.ts',
+  ),
+);
+
+checks.push(
+  check(
+    'releasePlanetMainStageSession dedupe blur+unmount',
+    /PLANET_MAIN_RELEASE_DEDUPE_MS|releasePlanetMainStageSession dedupe/.test(
       read('src/game/planetMainStageSession.ts'),
     ),
     'planetMainStageSession.ts',
+  ),
+);
+
+checks.push(
+  check(
+    'planet departure navigate uses InteractionManager barrier',
+    /InteractionManager\.runAfterInteractions/.test(read('src/game/usePlanetStageSession.ts')),
+    'usePlanetStageSession.ts frozen→navigate',
   ),
 );
 

@@ -83,13 +83,13 @@ const styles = StyleSheet.create({
   levelLine: {
     fontFamily: FONTS.mono,
     fontSize: 18,
-    color: PH,
+    color: OVERLAY_TOKENS.valueContentColor,
     fontWeight: '700',
   },
   row: {
     fontFamily: FONTS.mono,
     fontSize: 13,
-    color: PH,
+    color: OVERLAY_TOKENS.valueContentColor,
     marginBottom: 4,
     textAlign: 'center',
   },

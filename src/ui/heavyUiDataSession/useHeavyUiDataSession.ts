@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { runHeavyUiDataSession } from './runHeavyUiDataSession';
 import type { HeavyUiLoadPhase, HeavyUiPreflightCode, HeavyUiSessionConfig, HeavyUiSessionState } from './types';
 
@@ -15,7 +15,10 @@ export function useHeavyUiDataSession<TData>(
 
   const pipelineDoneRef = useRef(false);
   const configRef = useRef(config);
-  configRef.current = config;
+  // 렌더 중 ref.current 할당 — Freeze/Hermes에서 read-only TypeError (worldmap 진입 크래시)
+  useLayoutEffect(() => {
+    configRef.current = config;
+  }, [config]);
 
   const retry = useCallback(() => {
     pipelineDoneRef.current = false;

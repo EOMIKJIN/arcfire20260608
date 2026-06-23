@@ -12,6 +12,8 @@ export interface PlayerHangarShip {
   id: string;
   npcCapitalShipId: string;
   acquiredAt: number;
+  /** 선체 내구도 0~100. 미설정 시 100% */
+  durabilityPct?: number;
 }
 
 /** 파일럿 레벨 연동 전투 숙련도 — `arcfire_player_v1` 영속 */
@@ -235,6 +237,8 @@ export type ShipyardEquipSlotId =
 export interface ShipEquipSlotAssignment {
   itemDefId: string;
   name: string;
+  /** 장착 시 인벤 슬롯 인덱스 — 내구도 셀 추적 */
+  sourceInventoryIndex?: number;
 }
 
 /** 계정 DB에 저장되는 전함 무기 아이템(테이블 기반 스냅샷) */
@@ -282,6 +286,8 @@ export interface PlayerShip {
    * 저장: `player.uid`와 같은 레코드의 `arcfire_player_v1` JSON 안 `ship`에 포함 · `persist()` 시 계정 프로필 요약 동기.
    */
   equipSlots?: Partial<Record<ShipyardEquipSlotId, ShipEquipSlotAssignment | null>>;
+  /** 선체 내구도 0~100. 0%면 출항·전투 불가(조선소 수리). 미설정 시 100% */
+  durabilityPct?: number;
 }
 
 export interface WeaponData {
@@ -307,6 +313,8 @@ export interface CargoItem {
   goodId: string;
   quantity: number;
   buyPrice: number;
+  /** 무기·장비 셀 내구도 0~100. 미설정 시 100% */
+  durabilityPct?: number;
 }
 
 export interface DiceDef {

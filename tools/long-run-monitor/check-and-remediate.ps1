@@ -7,6 +7,7 @@ param(
 )
 
 . (Join-Path $PSScriptRoot 'mem-gl-leak-rules.ps1')
+. (Join-Path $PSScriptRoot 'watch-alert-filters.ps1')
 
 if (-not $TimelineCsv) {
   $TimelineCsv = Join-Path $LogDir 'mem-timeline.csv'
@@ -17,6 +18,8 @@ $remediationLog = Join-Path $LogDir 'remediation.log'
 $baselineJson = Join-Path $LogDir 'mem-baseline.json'
 $refixFlag = Join-Path $LogDir 'gl-leak-refix-requested.flag'
 $crashGlob = Join-Path $LogDir 'crash-*.log'
+$pauseFlag = Join-Path $LogDir 'monitor-paused.flag'
+$monitorPaused = Test-Path $pauseFlag
 $refixQueue = @()
 
 function Get-LastRemediationAgeMin {
@@ -41,6 +44,18 @@ function Enqueue-Refix([string]$reason, [hashtable]$ctx) {
 }
 
 function Invoke-BestRefix {
+  if ($monitorPaused) {
+    if ($refixQueue.Count -gt 0) {
+      $reasons = ($refixQueue | ForEach-Object { $_.reason }) -join ','
+      Write-Remediation "REFIX paused — handoff/investigation only (no relaunch): $reasons"
+      foreach ($item in $refixQueue) {
+        try {
+          & (Join-Path $PSScriptRoot 'invoke-incident-investigation.ps1') -Reason $item.reason -AlertLine "check-and-remediate:$($item.reason)"
+        } catch { }
+      }
+    }
+    return
+  }
   if ($refixQueue.Count -lt 1) { return }
   $best = $refixQueue | Sort-Object { Get-RefixReasonPriority $_.reason } -Descending | Select-Object -First 1
   if ($refixQueue.Count -gt 1) {
@@ -113,10 +128,14 @@ if ($crashFiles) {
         if (Test-Path $lastEventFile) { $prevKey = (Get-Content $lastEventFile -Raw).Trim() }
         if ($eventKey -ne $prevKey) {
           Set-Content -Path $lastEventFile -Value $eventKey -NoNewline -Encoding utf8
-          try {
-            & node (Join-Path $PSScriptRoot 'pack-incident-handoff.cjs') 'real_crash_signature' 2>&1 | Out-Null
-            Write-Remediation 'HANDOFF packed -> outbox/cursor-incident-handoff.md (crash)'
-          } catch { }
+          if (-not $monitorPaused) {
+            try {
+              & node (Join-Path $PSScriptRoot 'pack-incident-handoff.cjs') 'real_crash_signature' 2>&1 | Out-Null
+              Write-Remediation 'HANDOFF packed -> outbox/cursor-incident-handoff.md (crash)'
+            } catch { }
+          } else {
+            Write-Remediation 'INFO crash handoff skipped (monitor-paused) — incidents.log only'
+          }
         } else {
           Write-Remediation 'INFO crash duplicate event key — handoff skipped'
         }
@@ -175,10 +194,16 @@ foreach ($row in $recent) {
 }
 
 if ($hubActiveNow -and $hardCeilingNow) {
-  Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] GL_HARD_CEILING gl=$lastGl pss=$lastPss views=$lastViews"
-  Write-Remediation "INCIDENT GL_HARD_CEILING gl=$lastGl pss=$lastPss views=$lastViews -> immediate remediation (OOM imminent)"
-  Enqueue-Refix 'gl_critical_active_hub' @{ lastGlMb = $lastGl; pssMb = $lastPss; views = $lastViews; hardCeiling = $true }
-} elseif ($hubActiveNow -and $spikeCount -ge $MEM_CONSECUTIVE_SPIKE_LIMIT) {
+  if ($monitorPaused) {
+    if (Write-GlCeilingPausedThrottle -LogDir $LogDir -GlMb $lastGl -PssMb $lastPss -Views $lastViews) {
+      Write-Remediation "INFO GL_HARD_CEILING_RECORD_ONLY gl=$lastGl pss=$lastPss views=$lastViews (monitor-paused — no incident/refix spam)"
+    }
+  } else {
+    Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] GL_HARD_CEILING gl=$lastGl pss=$lastPss views=$lastViews"
+    Write-Remediation "INCIDENT GL_HARD_CEILING gl=$lastGl pss=$lastPss views=$lastViews -> immediate remediation (OOM imminent)"
+    Enqueue-Refix 'gl_critical_active_hub' @{ lastGlMb = $lastGl; pssMb = $lastPss; views = $lastViews; hardCeiling = $true }
+  }
+} elseif ($hubActiveNow -and $spikeCount -ge $MEM_CONSECUTIVE_SPIKE_LIMIT -and -not $monitorPaused) {
   Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] GL_LEAK_SUSPECT consecutive_spikes=$spikeCount views=$lastViews active_hub_only"
   Write-Remediation "INCIDENT GL_LEAK_SUSPECT spikes=$spikeCount views=$lastViews (interval=${IntervalMin}m)"
   Enqueue-Refix 'consecutive_gl_spikes' @{
@@ -188,7 +213,7 @@ if ($hubActiveNow -and $hardCeilingNow) {
     views = $lastViews
     pssMb = $lastPss
   }
-} elseif ($hubActiveNow -and $peakAboveBaseline -ge $MEM_BASELINE_LEAK_MARGIN_MB -and $noRecoveryCount -ge 2 -and $lastGl -ge ($baseline.glMb + 15)) {
+} elseif ($hubActiveNow -and $peakAboveBaseline -ge $MEM_BASELINE_LEAK_MARGIN_MB -and $noRecoveryCount -ge 2 -and $lastGl -ge ($baseline.glMb + 15) -and -not $monitorPaused) {
   Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] GL_BASELINE_DRIFT peak=$($baseline.peakGlMb) baseline=$($baseline.glMb) current=$lastGl views=$lastViews"
   Write-Remediation "INCIDENT GL_BASELINE_DRIFT peak=$($baseline.peakGlMb) baseline=$($baseline.glMb) current=$lastGl views=$lastViews"
   Enqueue-Refix 'baseline_gl_drift' @{
@@ -238,5 +263,9 @@ if ($rows[-1] -match 'PROCESS_NOT_RUNNING') {
     Write-Remediation 'INFO PROCESS_EXIT clean (no recent crash) -> relaunch skipped (manual close / verification safe)'
   }
 }
+
+try {
+  & (Join-Path $PSScriptRoot 'audit-idle-hub-floor.ps1') -LogDir $LogDir | Out-Null
+} catch { }
 
 exit 0

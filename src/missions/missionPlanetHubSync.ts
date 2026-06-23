@@ -11,7 +11,7 @@ import {
 import { useMissionStore } from '../store/missionStore';
 import { listActiveMissionBundles } from './missionActiveBundles';
 
-function tryPresentPendingMissionClearDialog(): boolean {
+export function tryPresentPendingMissionClearDialog(): boolean {
   const pending = useMissionStore.getState().pendingMissionClearDialog;
   if (!pending) return false;
   if (isIngameDialogActive()) return false;

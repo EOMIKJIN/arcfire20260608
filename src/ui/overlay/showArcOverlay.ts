@@ -22,6 +22,8 @@ export {
 export function showArcOverlayReward(payload: {
   reward: MissionReward;
   missionTitle: string;
+  /** 기본: reward.missionComplete — 이동중 전투 등 전용 제목 */
+  cardTitle?: string;
   leveledUp?: boolean;
   newLevel?: number;
   levelUpDetail?: LevelUpSummary | null;
@@ -36,6 +38,7 @@ export function showArcOverlayReward(payload: {
     dismissOnBackdrop: false,
     reward: payload.reward,
     missionTitle: payload.missionTitle,
+    cardTitle: payload.cardTitle,
     leveledUp: payload.leveledUp,
     newLevel: payload.newLevel,
     levelUpDetail: payload.levelUpDetail,

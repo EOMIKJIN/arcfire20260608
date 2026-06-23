@@ -1,8 +1,8 @@
 # Memory / Stage Contract Audit
 
-Generated: 2026-06-19T11:16:38.904Z
+Generated: 2026-06-23T14:32:22.644Z
 
-**Result:** PASS (20/20 checks)
+**Result:** PASS (22/22 checks)
 
 ## Passed
 - [x] worldmap → combat uses replace (full path)
@@ -17,7 +17,9 @@ Generated: 2026-06-19T11:16:38.904Z
 - [x] shipyard.tsx has usePlanetSubStageMemory
 - [x] tavern.tsx has usePlanetSubStageMemory
 - [x] skilltree.tsx has usePlanetSubStageMemory
-- [x] releasePlanetMainStageSession invalidates memo cache
+- [x] releaseGalaxyMapStageMemory clears scroll + deferred tiles + combat cache
+- [x] releasePlanetMainStageSession dedupe blur+unmount
+- [x] planet departure navigate uses InteractionManager barrier
 - [x] INFO_DISTANCE_SORT_INTERVAL_MS = 5000
 - [x] buildCsvStaticIndexes at app boot
 - [x] file exists: src/hooks/useStageMemory.ts

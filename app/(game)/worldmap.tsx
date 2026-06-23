@@ -2,10 +2,10 @@
 // 아크파이어 온라인 - 갤럭시맵 (react-native-svg)
 // ============================================================
 
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet,
-  useWindowDimensions, Animated as RNAnimated, Easing, AppState,
+  useWindowDimensions, Animated as RNAnimated, Easing, AppState, InteractionManager,
 } from 'react-native';
 import Svg, { Line, Circle, G, Text as SvgText } from 'react-native-svg';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -15,6 +15,8 @@ import Animated, {
   withDecay,
   cancelAnimation,
   runOnJS,
+  runOnUI,
+  type SharedValue,
 } from 'react-native-reanimated';
 import { router, useFocusEffect } from 'expo-router';
 import { useT } from '../../src/i18n';
@@ -28,7 +30,7 @@ import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
 import { resolveMegaFactionCapitalHubSubtitle } from '../../src/world/megaFactionCapitalDisplay';
 import { COLORS, FONTS, SPACING, LAYOUT, ZONE_COLORS } from '../../src/utils/theme';
 import { showArcAlert } from '../../src/utils/showArcAlert';
-import { isPlayerShipCombatCapable } from '../../src/game/playerSurvivalPod';
+import { isPlayerShipCombatCapable, resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 import { ArcButton } from '../../src/ui/overlay/ArcButton';
 import { QuestHUD } from '../../src/components/QuestHUD';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
@@ -41,8 +43,10 @@ import {
 import { usePlayerStore } from '../../src/store/playerStore';
 import { useWorldStore } from '../../src/store/worldStore';
 import { useMissionStore } from '../../src/store/missionStore';
-import { listActiveMissionBundles, hasAnyActiveCombatMission } from '../../src/missions/missionActiveBundles';
+import { hasAnyActiveCombatMission } from '../../src/missions/missionActiveBundles';
+import { applyReachSystemMissionObjectives } from '../../src/missions/applyReachSystemMissionObjectives';
 import { resolveTransitEncounterChance } from '../../src/missions/missionCombatEncounter';
+import { useTransitCombatSessionStore } from '../../src/game/transitCombat/transitCombatSession';
 import { useClanWarFoundationStore } from '../../src/store/clanWarFoundationStore';
 import { resolveTempClanColor } from '../../src/clanWar/tempClanColors';
 import {
@@ -54,10 +58,14 @@ import {
 } from '../../src/data/galaxy100';
 import { StarSystem } from '../../src/types';
 import type { AppLocale } from '../../src/i18n/types';
-import { countGoodInInventory, normalizeInventorySlots, removeGoodFromInventorySlots } from '../../src/game/playerInventory';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { releaseGalaxyMapStageMemory } from '../../src/game/stageMemoryRelease';
+import { registerGalaxyMapDeferredTileReset, releaseGalaxyMapStageMemoryFull } from '../../src/game/galaxyMapStageSession';
+import {
+  registerGalaxyMapScrollHandles,
+  teardownGalaxyMapScrollFromJs,
+} from '../../src/game/galaxyMapScrollLifecycle';
 import { finalizeGalaxyMapSessionForExit } from '../../src/game/galaxyMapSessionResume';
 import {
   createWorldmapScreenSession,
@@ -88,6 +96,57 @@ const ROUTE_LABEL_META: Record<DeferredDirection, { textKey: string; color: stri
   west: { textKey: 'worldmap.route.west', color: '#D5A1FF' },
 };
 
+/** UI 스레드 전용 — JS useEffect에서 scroll SharedValue 읽기 금지 (executeSync SIGSEGV) */
+function clampGalaxyMapScrollWorklet(
+  scrollX: SharedValue<number>,
+  scrollY: SharedValue<number>,
+  savedScrollX: SharedValue<number>,
+  savedScrollY: SharedValue<number>,
+  maxScrollX: SharedValue<number>,
+  maxScrollY: SharedValue<number>,
+) {
+  'worklet';
+  if (scrollX.value > maxScrollX.value) {
+    scrollX.value = maxScrollX.value;
+    savedScrollX.value = scrollX.value;
+  }
+  if (scrollY.value > maxScrollY.value) {
+    scrollY.value = maxScrollY.value;
+    savedScrollY.value = scrollY.value;
+  }
+}
+
+function applyGalaxyMapScrollTargetWorklet(
+  scrollX: SharedValue<number>,
+  scrollY: SharedValue<number>,
+  savedScrollX: SharedValue<number>,
+  savedScrollY: SharedValue<number>,
+  targetX: number,
+  targetY: number,
+) {
+  'worklet';
+  cancelAnimation(scrollX);
+  cancelAnimation(scrollY);
+  scrollX.value = targetX;
+  scrollY.value = targetY;
+  savedScrollX.value = targetX;
+  savedScrollY.value = targetY;
+}
+
+function runGalaxyMapScrollClampOnUi(
+  scrollX: SharedValue<number>,
+  scrollY: SharedValue<number>,
+  savedScrollX: SharedValue<number>,
+  savedScrollY: SharedValue<number>,
+  maxScrollX: SharedValue<number>,
+  maxScrollY: SharedValue<number>,
+) {
+  runOnUI(() => {
+    'worklet';
+    clampGalaxyMapScrollWorklet(scrollX, scrollY, savedScrollX, savedScrollY, maxScrollX, maxScrollY);
+  })();
+}
+
 export default function WorldMapScreen() {
   const t = useT();
   const locale = useAppSettingsStore((s) => s.locale);
@@ -99,7 +158,6 @@ export default function WorldMapScreen() {
   const persist = usePlayerStore((s) => s.persist);
   const { systems, selectedSystemId, selectSystem, markVisited, visitedSystemIds } = useWorldStore();
   const unlockedSystemIds = useWorldStore((s) => s.unlockedSystemIds);
-  const completeObjective = useMissionStore((s) => s.completeObjective);
 
   const [showPanel, setShowPanel] = useState(false);
   const [shipTransit, setShipTransit] = useState<{
@@ -108,7 +166,13 @@ export default function WorldMapScreen() {
   } | null>(null);
   const [isMoving, setIsMoving] = useState(false);
 
+  const isMountedRef = useRef(true);
+  const isFocusedRef = useRef(false);
+  /** combat/planet replace 시 blur finalize 오작동 방지 */
+  const worldmapInternalNavRef = useRef(false);
+
   const handleReturnToLastHub = useCallback(() => {
+    worldmapInternalNavRef.current = true;
     finalizeGalaxyMapSessionForExit({ persist: true });
     router.replace('/(game)/planet');
   }, []);
@@ -147,16 +211,95 @@ export default function WorldMapScreen() {
     );
   }, [handleExitToTitle, isMoving, t]);
   const moveProgress = React.useRef(new RNAnimated.Value(0)).current;
-  const isMountedRef = useRef(true);
-  const isFocusedRef = useRef(false);
   const transitAnimRef = useRef<RNAnimated.CompositeAnimation | null>(null);
   const transitFallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const transitWaitTokenRef = useRef(0);
+  const abortTransitWaitRef = useRef<{
+    token: number;
+    resolve: (finished: boolean) => void;
+  } | null>(null);
   const scrollX = useSharedValue(0);
   const scrollY = useSharedValue(0);
   const savedScrollX = useSharedValue(0);
   const savedScrollY = useSharedValue(0);
   const maxScrollX = useSharedValue(0);
   const maxScrollY = useSharedValue(0);
+  const scrollAliveSv = useSharedValue(0);
+  const isMovingSv = useSharedValue(0);
+  /** Pan/Tap worklet → runOnJS — 렌더 중 .current 할당 금지 (read-only ref 크래시) */
+  const isMovingRef = useRef(false);
+  const touchTargetsRef = useRef<{ id: string; x: number; y: number }[]>([]);
+  const handleNodeTapRef = useRef<(systemId: string) => void>(() => {});
+  const handleMapTapAtRef = useRef(
+    (_viewportX: number, _viewportY: number, _sx: number, _sy: number) => {},
+  );
+  /** runOnUI 스크롤 — scrollAlive=1 이전에 실행하면 executeSync SIGSEGV (장기 idle 후 출발) */
+  const pendingScrollTargetRef = useRef<{ x: number; y: number } | null>(null);
+  const scrollGesturesArmedRef = useRef(false);
+
+  const settleTransitWait = useCallback((finished: boolean) => {
+    if (transitFallbackTimerRef.current) {
+      clearTimeout(transitFallbackTimerRef.current);
+      transitFallbackTimerRef.current = null;
+    }
+    const handle = abortTransitWaitRef.current;
+    abortTransitWaitRef.current = null;
+    handle?.resolve(finished);
+  }, []);
+
+  const stopGalaxyMapInteractionLoops = useCallback(() => {
+    scrollGesturesArmedRef.current = false;
+    setMapInteractionReady(false);
+    settleTransitWait(false);
+    teardownGalaxyMapScrollFromJs({ scrollX, scrollY, scrollAliveSv });
+  }, [scrollX, scrollY, scrollAliveSv, settleTransitWait]);
+
+  const runScrollTargetOnUi = useCallback((targetX: number, targetY: number) => {
+    runOnUI(() => {
+      'worklet';
+      applyGalaxyMapScrollTargetWorklet(
+        scrollX,
+        scrollY,
+        savedScrollX,
+        savedScrollY,
+        targetX,
+        targetY,
+      );
+    })();
+  }, [scrollX, scrollY, savedScrollX, savedScrollY]);
+
+  const flushDeferredScrollUiOps = useCallback(() => {
+    if (!isFocusedRef.current) return;
+    const pending = pendingScrollTargetRef.current;
+    if (pending) {
+      runScrollTargetOnUi(pending.x, pending.y);
+    }
+    runGalaxyMapScrollClampOnUi(scrollX, scrollY, savedScrollX, savedScrollY, maxScrollX, maxScrollY);
+  }, [runScrollTargetOnUi, scrollX, scrollY, savedScrollX, savedScrollY, maxScrollX, maxScrollY]);
+
+  /** UI scroll apply → 2×rAF → scrollAlive=1 (허브 teardown·idle 직후 제스처 SIGSEGV 방지) */
+  const armGalaxyMapScrollGestures = useCallback(() => {
+    if (!isFocusedRef.current) return;
+    scrollGesturesArmedRef.current = false;
+    flushDeferredScrollUiOps();
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!isFocusedRef.current) return;
+        scrollAliveSv.value = 1;
+        scrollGesturesArmedRef.current = true;
+        setMapInteractionReady(true);
+      });
+    });
+  }, [flushDeferredScrollUiOps, scrollAliveSv]);
+
+  useEffect(() => {
+    isMovingSv.value = isMoving ? 1 : 0;
+  }, [isMoving, isMovingSv]);
+
+  useEffect(() => {
+    return registerGalaxyMapScrollHandles({ scrollX, scrollY, scrollAliveSv });
+  }, [scrollX, scrollY, scrollAliveSv]);
+
   /** 진입·currentSystemId·뷰포트 크기 변경 시 1회만 중앙 정렬 — 노드 탭·패널과 무관 */
   const autoScrollKeyRef = useRef('');
 
@@ -170,10 +313,7 @@ export default function WorldMapScreen() {
         transitAnimRef.current.stop();
         transitAnimRef.current = null;
       }
-      if (transitFallbackTimerRef.current) {
-        clearTimeout(transitFallbackTimerRef.current);
-        transitFallbackTimerRef.current = null;
-      }
+      stopGalaxyMapInteractionLoops();
       releaseGalaxyMapStageMemory();
     },
   );
@@ -181,36 +321,41 @@ export default function WorldMapScreen() {
   useEffect(() => {
     return () => {
       isMountedRef.current = false;
+      stopGalaxyMapInteractionLoops();
       if (transitAnimRef.current) {
         transitAnimRef.current.stop();
         transitAnimRef.current = null;
       }
-      if (transitFallbackTimerRef.current) {
-        clearTimeout(transitFallbackTimerRef.current);
-        transitFallbackTimerRef.current = null;
-      }
     };
-  }, []);
+  }, [stopGalaxyMapInteractionLoops]);
 
   useFocusEffect(
     useCallback(() => {
+      worldmapInternalNavRef.current = false;
       isFocusedRef.current = true;
+      // Reanimated Pan worklet — scrollAlive=1 은 runOnUI 스크롤 적용·2×rAF 이후에만 (SIGSEGV 방지)
+      const enableScrollTask = InteractionManager.runAfterInteractions(() => {
+        requestAnimationFrame(() => {
+          armGalaxyMapScrollGestures();
+        });
+      });
       return () => {
+        enableScrollTask.cancel();
         isFocusedRef.current = false;
+        scrollGesturesArmedRef.current = false;
+        setMapInteractionReady(false);
+        stopGalaxyMapInteractionLoops();
+        releaseGalaxyMapStageMemoryFull();
         if (transitAnimRef.current) {
           transitAnimRef.current.stop();
           transitAnimRef.current = null;
-        }
-        if (transitFallbackTimerRef.current) {
-          clearTimeout(transitFallbackTimerRef.current);
-          transitFallbackTimerRef.current = null;
         }
         // 화면 이탈 시 이동 잠금/잔상 즉시 해제 (재진입 후 클릭 불가 방지)
         setIsMoving(false);
         setShipTransit(null);
         moveProgress.setValue(0);
       };
-    }, [moveProgress]),
+    }, [moveProgress, armGalaxyMapScrollGestures, stopGalaxyMapInteractionLoops]),
   );
 
   /** 은하계 지도 이탈·백그라운드·비정상 종료 — 직전 허브 좌표 복원 후 persist */
@@ -223,6 +368,10 @@ export default function WorldMapScreen() {
       });
       return () => {
         appSub.remove();
+        if (worldmapInternalNavRef.current) {
+          worldmapInternalNavRef.current = false;
+          return;
+        }
         const landed = usePlayerStore.getState().player?.currentPlanetId;
         if (!landed) {
           finalizeGalaxyMapSessionForExit({ persist: true });
@@ -235,6 +384,8 @@ export default function WorldMapScreen() {
   const [mapLayout, setMapLayout] = useState({ w: width, h: 1 });
   const stageFrameReady = useStageFirstFrameReady();
   const [galaxyLoadingMinHold, setGalaxyLoadingMinHold] = useState(false);
+  /** scrollAlive=1 + runOnUI scroll 적용 후에만 SVG·gesture mount — STAGE 겹침 views 폭주 방지 */
+  const [mapInteractionReady, setMapInteractionReady] = useState(false);
   const clanWarHydrated = useClanWarFoundationStore((s) => s.hydrated);
   /** moveToSystem은 currentPlanetId를 null로 두므로, 성계 첫 행성·홈 행성으로 세션 앵커 폴백 */
   const worldmapSessionPlanetId = useMemo(() => {
@@ -260,6 +411,16 @@ export default function WorldMapScreen() {
         setGalaxyLoadingMinHold(false);
       };
     }, []),
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!useTransitCombatSessionStore.getState().consumeWorldmapArrivalUi()) return;
+      const sysId = usePlayerStore.getState().player?.currentSystemId;
+      if (!sysId) return;
+      selectSystem(sysId);
+      setShowPanel(true);
+    }, [selectSystem, setShowPanel]),
   );
 
   const mapAnimatedStyle = useAnimatedStyle(() => ({
@@ -365,6 +526,11 @@ export default function WorldMapScreen() {
   const deferredTileCount = hiddenUndiscoveredSystems.length > 700 ? 8 : 4;
   const [loadedDeferredTileCount, setLoadedDeferredTileCount] = useState(1);
   useEffect(() => {
+    return registerGalaxyMapDeferredTileReset(() => {
+      setLoadedDeferredTileCount(1);
+    });
+  }, []);
+  useEffect(() => {
     setLoadedDeferredTileCount(1);
   }, [deferredTileCount, hiddenUndiscoveredSystems.length]);
   useEffect(() => {
@@ -457,6 +623,7 @@ export default function WorldMapScreen() {
     mapMetricsReady
     && stageFrameReady
     && galaxyLoadingMinHold
+    && mapInteractionReady
     && (worldmapSessionConfig == null || worldmapSession.phase === 'ready');
 
   const computeScrollTargetForSystem = useCallback(
@@ -500,12 +667,10 @@ export default function WorldMapScreen() {
 
     const target = computeScrollTargetForSystem(systemId);
     if (target) {
-      cancelAnimation(scrollX);
-      cancelAnimation(scrollY);
-      scrollX.value = target.x;
-      scrollY.value = target.y;
-      savedScrollX.value = target.x;
-      savedScrollY.value = target.y;
+      pendingScrollTargetRef.current = { x: target.x, y: target.y };
+      if (scrollGesturesArmedRef.current && isFocusedRef.current) {
+        runScrollTargetOnUi(target.x, target.y);
+      }
     }
   }, [
     mapMetricsReady,
@@ -517,18 +682,16 @@ export default function WorldMapScreen() {
     computeScrollTargetForSystem,
     maxScrollX,
     maxScrollY,
-    scrollX,
-    scrollY,
-    savedScrollX,
-    savedScrollY,
+    runScrollTargetOnUi,
   ]);
 
   useEffect(() => {
     if (!mapMetricsReady) return;
     maxScrollX.value = Math.max(0, mapContentSize.cw - mapLayout.w);
     maxScrollY.value = Math.max(0, mapContentSize.ch - mapLayout.h);
-    if (scrollX.value > maxScrollX.value) scrollX.value = maxScrollX.value;
-    if (scrollY.value > maxScrollY.value) scrollY.value = maxScrollY.value;
+    if (scrollGesturesArmedRef.current && isFocusedRef.current) {
+      runGalaxyMapScrollClampOnUi(scrollX, scrollY, savedScrollX, savedScrollY, maxScrollX, maxScrollY);
+    }
   }, [
     mapMetricsReady,
     mapContentSize.cw,
@@ -539,6 +702,8 @@ export default function WorldMapScreen() {
     maxScrollY,
     scrollX,
     scrollY,
+    savedScrollX,
+    savedScrollY,
   ]);
 
   // 동/서/남/북 트리거 성계 도달 시, 해당 방향 미발견 성계를 분할 로딩 준비한다.
@@ -633,13 +798,6 @@ export default function WorldMapScreen() {
     [visibleSystemsList, toScreen],
   );
 
-  const isMovingRef = useRef(isMoving);
-  isMovingRef.current = isMoving;
-  const touchTargetsRef = useRef(touchTargets);
-  touchTargetsRef.current = touchTargets;
-  const handleNodeTapRef = useRef(handleNodeTap);
-  handleNodeTapRef.current = handleNodeTap;
-
   const handleMapTapAt = useCallback((viewportX: number, viewportY: number, sx: number, sy: number) => {
     if (isMovingRef.current) return;
     const cx = viewportX + sx;
@@ -656,24 +814,32 @@ export default function WorldMapScreen() {
     if (bestId) handleNodeTapRef.current(bestId);
   }, []);
 
-  const handleMapTapAtRef = useRef(handleMapTapAt);
-  handleMapTapAtRef.current = handleMapTapAt;
+  useLayoutEffect(() => {
+    isMovingRef.current = isMoving;
+    touchTargetsRef.current = touchTargets;
+    handleNodeTapRef.current = handleNodeTap;
+    handleMapTapAtRef.current = handleMapTapAt;
+  }, [isMoving, touchTargets, handleNodeTap, handleMapTapAt]);
+
+  const dispatchMapTapAt = useCallback((x: number, y: number, sx: number, sy: number) => {
+    handleMapTapAtRef.current(x, y, sx, sy);
+  }, []);
 
   const mapGesture = useMemo(() => {
     const tap = Gesture.Tap()
-      .enabled(!isMoving)
       .maxDuration(250)
       .maxDistance(12)
       .onEnd((e) => {
         'worklet';
-        runOnJS(handleMapTapAtRef.current)(e.x, e.y, scrollX.value, scrollY.value);
+        if (scrollAliveSv.value <= 0 || isMovingSv.value > 0) return;
+        runOnJS(dispatchMapTapAt)(e.x, e.y, scrollX.value, scrollY.value);
       });
 
     const pan = Gesture.Pan()
-      .enabled(!isMoving)
       .minDistance(MAP_PAN_MIN_DISTANCE_PX)
       .onBegin(() => {
         'worklet';
+        if (scrollAliveSv.value <= 0 || isMovingSv.value > 0) return;
         cancelAnimation(scrollX);
         cancelAnimation(scrollY);
         savedScrollX.value = scrollX.value;
@@ -681,6 +847,7 @@ export default function WorldMapScreen() {
       })
       .onUpdate((e) => {
         'worklet';
+        if (scrollAliveSv.value <= 0 || isMovingSv.value > 0) return;
         scrollX.value = Math.max(
           0,
           Math.min(savedScrollX.value - e.translationX, maxScrollX.value),
@@ -692,6 +859,7 @@ export default function WorldMapScreen() {
       })
       .onEnd((e) => {
         'worklet';
+        if (scrollAliveSv.value <= 0 || isMovingSv.value > 0) return;
         scrollX.value = withDecay({
           velocity: -e.velocityX,
           clamp: [0, maxScrollX.value],
@@ -705,15 +873,16 @@ export default function WorldMapScreen() {
       });
 
     return Gesture.Exclusive(tap, pan);
-  }, [isMoving, scrollX, scrollY, savedScrollX, savedScrollY, maxScrollX, maxScrollY]);
+  }, [scrollX, scrollY, savedScrollX, savedScrollY, maxScrollX, maxScrollY, scrollAliveSv, isMovingSv, dispatchMapTapAt]);
 
   const doMove = useCallback(
     async (targetSystem: StarSystem) => {
       if (!player) return;
-      if (!isPlayerShipCombatCapable(player.ship)) {
+      const travelBlock = resolvePlayerTravelBlock(player);
+      if (travelBlock) {
         showArcAlert(
-          t('worldmap.podTitle'),
-          t('worldmap.podBody'),
+          travelBlock === 'durability' ? t('worldmap.durabilityTitle') : t('worldmap.podTitle'),
+          travelBlock === 'durability' ? t('worldmap.durabilityBody') : t('worldmap.podBody'),
         );
         return;
       }
@@ -732,6 +901,7 @@ export default function WorldMapScreen() {
       selectSystem(null);
 
       let finished = false;
+      const transitToken = ++transitWaitTokenRef.current;
       try {
         const anim = RNAnimated.timing(moveProgress, {
           toValue: 1,
@@ -743,9 +913,11 @@ export default function WorldMapScreen() {
         anim.start();
         // 콜백 누락 환경 대응: 고정 시간만큼 애니메이션을 유지한 뒤 완료 처리
         finished = await new Promise<boolean>((resolve) => {
+          abortTransitWaitRef.current = { token: transitToken, resolve };
           transitFallbackTimerRef.current = setTimeout(() => {
-            transitFallbackTimerRef.current = null;
-            resolve(true);
+            const pending = abortTransitWaitRef.current;
+            if (pending?.token !== transitToken) return;
+            settleTransitWait(true);
           }, SHIP_TRANSIT_DURATION_MS + 40);
         });
       } finally {
@@ -753,6 +925,11 @@ export default function WorldMapScreen() {
         if (transitFallbackTimerRef.current) {
           clearTimeout(transitFallbackTimerRef.current);
           transitFallbackTimerRef.current = null;
+        }
+        const pending = abortTransitWaitRef.current;
+        if (pending?.token === transitToken) {
+          abortTransitWaitRef.current = null;
+          pending.resolve(false);
         }
         // 어떤 경로로든 이동 잠금이 남지 않게 항상 해제
         if (isMountedRef.current) {
@@ -763,71 +940,37 @@ export default function WorldMapScreen() {
 
       if (!finished || !isMountedRef.current || !isFocusedRef.current) return;
 
-      moveToSystem(targetSystem.id);
-      markVisited(targetSystem.id);
-
-      const activeBundles = listActiveMissionBundles(useMissionStore.getState().progresses);
-      for (const active of activeBundles) {
-        const buyObjectives = active.mission.objectives.filter((obj) => obj.type === 'buy_goods');
-        const pendingBuyObjectives = buyObjectives.filter((obj) => !active.progress.objectives[obj.id]);
-
-        active.mission.objectives.forEach((obj) => {
-          // reach_planet(예: mission_001 베가)는 행성 허브 착륙 시에만 완료 — missionPlanetHubSync
-          if (
-            obj.type === 'reach_system' &&
-            obj.targetId === targetSystem.id &&
-            !active.progress.objectives[obj.id]
-          ) {
-            // 배달형 미션은 구매 조건 충족 + 화물 보유 확인 후 도착 완료 처리
-            if (pendingBuyObjectives.length > 0) return;
-
-            if (buyObjectives.length > 0) {
-              let nextSlots = normalizeInventorySlots(player.inventorySlots);
-              let canDeliver = true;
-
-              buyObjectives.forEach((buyObj) => {
-                const required = buyObj.quantity ?? 1;
-                const currentQty = countGoodInInventory(nextSlots, buyObj.targetId);
-                if (currentQty < required) {
-                  canDeliver = false;
-                  return;
-                }
-                const removed = removeGoodFromInventorySlots(nextSlots, buyObj.targetId, required);
-                if (!removed) {
-                  canDeliver = false;
-                  return;
-                }
-                nextSlots = removed;
-              });
-
-              if (!canDeliver) {
-                showArcAlert(t('worldmap.deliverFailTitle'), t('worldmap.deliverFailBody'));
-                return;
-              }
-
-              usePlayerStore.getState().setPlayer({ ...player, inventorySlots: nextSlots });
-            }
-
-            completeObjective(active.mission.id, obj.id);
-          }
-        });
-      }
-
-      await persist();
-
       const encounterChance = resolveTransitEncounterChance(
         targetSystem.zone,
         hasAnyActiveCombatMission(useMissionStore.getState().progresses),
       );
 
       if (Math.random() < encounterChance && isPlayerShipCombatCapable(player.ship)) {
+        useTransitCombatSessionStore.getState().begin({
+          originSystemId: fromSystem.id,
+          destinationSystemId: targetSystem.id,
+        });
         selectSystem(targetSystem.id);
-        // finally 블록에서 transit·타이머 정리 완료 — Combat replace (`2.1.memory.md` §4-2)
+        worldmapInternalNavRef.current = true;
+        stopGalaxyMapInteractionLoops();
         router.replace('/(game)/combat');
-      } else {
-        selectSystem(targetSystem.id);
-        setShowPanel(true);
+        return;
       }
+
+      moveToSystem(targetSystem.id);
+      markVisited(targetSystem.id);
+
+      const playerAfterMove = usePlayerStore.getState().player;
+      if (playerAfterMove) {
+        applyReachSystemMissionObjectives(targetSystem.id, playerAfterMove, {
+          deliverFailTitle: t('worldmap.deliverFailTitle'),
+          deliverFailBody: t('worldmap.deliverFailBody'),
+        });
+      }
+
+      await persist();
+      selectSystem(targetSystem.id);
+      setShowPanel(true);
       // 도착 후 자동 착륙/행성 화면 이동 없음 — [행성 착륙]으로만 행성 화면 진입
     },
     [
@@ -835,7 +978,6 @@ export default function WorldMapScreen() {
       systems,
       toScreen,
       moveProgress,
-      completeObjective,
       moveToSystem,
       markVisited,
       persist,
@@ -844,6 +986,8 @@ export default function WorldMapScreen() {
       mapMetricsReady,
       galaxyBounds.minX,
       galaxyBounds.minY,
+      settleTransitWait,
+      stopGalaxyMapInteractionLoops,
       t,
     ],
   );
@@ -852,10 +996,11 @@ export default function WorldMapScreen() {
     if (!selectedSystem || !player) return;
     if (isMoving) return;
 
-    if (!isPlayerShipCombatCapable(player.ship)) {
+    const travelBlock = resolvePlayerTravelBlock(player);
+    if (travelBlock) {
       showArcAlert(
-        t('worldmap.podTitle'),
-        t('worldmap.podBody'),
+        travelBlock === 'durability' ? t('worldmap.durabilityTitle') : t('worldmap.podTitle'),
+        travelBlock === 'durability' ? t('worldmap.durabilityBody') : t('worldmap.podBody'),
       );
       return;
     }
@@ -866,6 +1011,7 @@ export default function WorldMapScreen() {
         landOnPlanet(planet.id);
         await persist();
       }
+      worldmapInternalNavRef.current = true;
       router.replace('/(game)/planet');
       return;
     }
@@ -918,7 +1064,7 @@ export default function WorldMapScreen() {
           setMapLayout((prev) => (prev.w === w && prev.h === h ? prev : { w, h }));
         }}
       >
-        {mapMetricsReady ? (
+        {galaxyMapStageReady ? (
           <GestureDetector gesture={mapGesture}>
             <View style={[styles.mapViewport, { width: mapLayout.w, height: mapLayout.h }]}>
               <Animated.View

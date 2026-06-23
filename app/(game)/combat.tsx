@@ -14,7 +14,8 @@ import * as Haptics from 'expo-haptics';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { useT } from '../../src/i18n';
 import { showArcAlert } from '../../src/utils/showArcAlert';
-import { showArcOverlayReward } from '../../src/ui/overlay/showArcOverlay';
+import { runTransitCombatPostFlow } from '../../src/game/transitCombat/transitCombatPostFlow';
+import { useTransitCombatSessionStore } from '../../src/game/transitCombat/transitCombatSession';
 import { QuestHUD } from '../../src/components/QuestHUD';
 import { StageShell } from '../../src/stages/StageShell';
 import {
@@ -46,7 +47,7 @@ import { usePlanetNebulaStore } from '../../src/store/planetNebulaStore';
 import { resolvePlanetNebulaBakedSource } from '../../src/game/planetNebulaBakedAssets';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { releaseCombatStageMemory } from '../../src/game/stageMemoryRelease';
-import { isPlayerShipCombatCapable } from '../../src/game/playerSurvivalPod';
+import { isPlayerShipCombatCapable, resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 
 /** 성운 Skia 백드롭 — colorDodge 닷지는 성운 픽셀과 동일 캔버스에 그린다 */
 function CombatOrbitNebulaBackdrop({
@@ -80,7 +81,6 @@ export default function CombatScreen() {
   const player = usePlayerStore(s => s.player);
   const addExp = usePlayerStore(s => s.addExp);
   const addCredits = usePlayerStore(s => s.addCredits);
-  const clearLevelUp = usePlayerStore(s => s.clearLevelUp);
   const persist = usePlayerStore(s => s.persist);
   const completeObjective = useMissionStore(s => s.completeObjective);
 
@@ -154,11 +154,22 @@ export default function CombatScreen() {
       ? combatSetup.captain.displayName
       : enemyTemplate.name;
 
+  const finishTransitCombatAndNavigate = useCallback(async (
+    postFlow: Parameters<typeof runTransitCombatPostFlow>[0],
+  ) => {
+    const completed = await runTransitCombatPostFlow(postFlow);
+    if (completed) {
+      router.replace('/(game)/worldmap');
+    }
+    setResolving(false);
+  }, []);
+
   const handleVictory = useCallback(async () => {
     if (resolvedRef.current) return;
     resolvedRef.current = true;
     setResolving(true);
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    const destroyedLabels = await usePlayerStore.getState().applyPostCombatDurabilityWear(Date.now());
     const expGain = enemyTemplate.expReward;
     const creditGain = enemyTemplate.creditReward;
     addExp(expGain);
@@ -170,26 +181,26 @@ export default function CombatScreen() {
       }
     });
     await persist();
-    const levelUpPendingNow = usePlayerStore.getState().levelUpPending;
-    const playerLevel = usePlayerStore.getState().player?.level;
-    showArcOverlayReward({
-      reward: { credits: creditGain, exp: expGain },
-      missionTitle: t('combat.victoryTitle', { name: enemyTemplate.name }),
-      leveledUp: levelUpPendingNow,
-      newLevel: playerLevel,
-      onClose: () => {
-        clearLevelUp();
-        router.replace('/(game)/worldmap');
-      },
+    useTransitCombatSessionStore.getState().commitArrival({
+      deliverFailTitle: t('worldmap.deliverFailTitle'),
+      deliverFailBody: t('worldmap.deliverFailBody'),
     });
-    setResolving(false);
-  }, [addCredits, addExp, clearLevelUp, completeObjective, enemyTemplate.creditReward, enemyTemplate.expReward, enemyTemplate.id, enemyTemplate.name, persist, t]);
+    await finishTransitCombatAndNavigate({
+      kind: 'victory',
+      enemyName: enemyTemplate.name,
+      creditGain,
+      expGain,
+      destroyedLabels,
+    });
+  }, [addCredits, addExp, completeObjective, enemyTemplate.creditReward, enemyTemplate.expReward, enemyTemplate.id, enemyTemplate.name, finishTransitCombatAndNavigate, persist, t]);
 
   const handleDefeat = useCallback(async () => {
     if (resolvedRef.current || !player) return;
     resolvedRef.current = true;
     setResolving(true);
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    await usePlayerStore.getState().applyPostCombatDurabilityWear(Date.now());
+    useTransitCombatSessionStore.getState().clear();
     await usePlayerStore.getState().applyCapitalShipDestruction();
     showArcAlert(
       t('combat.shipDestroyedTitle'),
@@ -200,26 +211,44 @@ export default function CombatScreen() {
   }, [player, t]);
 
   const handleFlee = useCallback(async () => {
-    if (resolving) return;
+    if (resolving || resolvedRef.current) return;
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     showArcAlert(
       t('combat.fleeTitle'),
       t('combat.fleeBody'),
       [
         { text: t('combat.cancel'), style: 'cancel' },
-        { text: t('combat.flee'), onPress: () => router.replace('/(game)/worldmap') },
+        {
+          text: t('combat.flee'),
+          onPress: () => {
+            void (async () => {
+              if (resolvedRef.current) return;
+              resolvedRef.current = true;
+              setResolving(true);
+              useTransitCombatSessionStore.getState().commitArrival({
+                deliverFailTitle: t('worldmap.deliverFailTitle'),
+                deliverFailBody: t('worldmap.deliverFailBody'),
+              });
+              await persist();
+              await finishTransitCombatAndNavigate({ kind: 'flee' });
+            })();
+          },
+        },
       ],
     );
-  }, [resolving, t]);
+  }, [finishTransitCombatAndNavigate, persist, resolving, t]);
 
   if (!player) return null;
   if (!isPlayerShipCombatCapable(player.ship)) {
+    const travelBlock = resolvePlayerTravelBlock(player);
     return (
       <StageShell routeName="combat" background="none" edges={['bottom']}>
         <View style={styles.errorWrap}>
-          <Text style={styles.errorTitle}>{t('combat.cannotFightTitle')}</Text>
+          <Text style={styles.errorTitle}>
+            {travelBlock === 'durability' ? t('combat.durabilityDepletedTitle') : t('combat.cannotFightTitle')}
+          </Text>
           <Text style={styles.errorBody}>
-            {t('combat.cannotFightBody')}
+            {travelBlock === 'durability' ? t('combat.durabilityDepletedBody') : t('combat.cannotFightBody')}
           </Text>
           <TouchableOpacity style={styles.fleeBtn} onPress={() => router.replace('/(game)/planet')}>
             <Text style={styles.fleeBtnText}>{t('combat.backToPlanet')}</Text>
@@ -247,9 +276,9 @@ export default function CombatScreen() {
   return (
     <CapitalRealtimeCombatSimBinder
       orbitSize={orbitSize}
-      active={isCombatRouteFocused}
-      combatPlanetId={isCombatRouteFocused ? CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID : null}
-      combatSystemId={isCombatRouteFocused ? player.currentSystemId : null}
+      active={isCombatRouteFocused && !resolving}
+      combatPlanetId={isCombatRouteFocused && !resolving ? CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID : null}
+      combatSystemId={isCombatRouteFocused && !resolving ? player.currentSystemId : null}
     >
       <StageShell routeName="combat" background="none" edges={['bottom']}>
         <View style={styles.header}>

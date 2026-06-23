@@ -1,0 +1,1412 @@
+
+===== 2026-06-23 00:04:07 pid=21849 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1259178649 Realtime: 1347416520
+
+** MEMINFO in pid 21849 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   236192   236148       12   139685   236904   508604   441086    60938
+  Dalvik Heap    47578    45900       24      201    52016    50220    25644    24576
+ Dalvik Other    17048     8280        0      284    26112                           
+        Stack     2704     2704        0      984     2712                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       19        4        8        0      560                           
+     .so mmap     7389      216      868       54    44156                           
+    .jar mmap     2851        0      588        0    32692                           
+    .apk mmap    23992     1532    18044     1064    38004                           
+    .ttf mmap     1172        0      588        0     2356                           
+    .dex mmap    12850     7000     5636    21560    14056                           
+    .oat mmap       40        0        0        0     1216                           
+    .art mmap     5224     3692       28     4733    16816                           
+   Other mmap     6488        4     1600        0    12244                           
+   EGL mtrack    20311    20311        0        0    20311                           
+    GL mtrack    55580    55580        0        0    55580                           
+      Unknown    44840    44456      336     7717    45432                           
+        TOTAL   660576   425827    27732   176282   601711   558824   466730    85514
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    49620                          68832
+         Native Heap:   236148                         236904
+                Code:    34496                         150008
+               Stack:     2704                           2712
+            Graphics:    75891                          75891
+       Private Other:    54700
+              System:   207017
+             Unknown:                                   67364
+ 
+           TOTAL PSS:   660576            TOTAL RSS:   601711       TOTAL SWAP PSS:   176282
+ 
+ Objects
+               Views:      293         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       25        Proxy Binders:       68
+       Parcel memory:       22         Parcel count:       72
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2219                            210
+ Other (nonmalloced):      107                             75
+   Bitmap (malloced):        5                           6975
+ 
+ SQL
+         MEMORY_USED:     1612
+  PAGECACHE_OVERFLOW:     1440          MALLOC_SIZE:     4100
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1196             41   651   466     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      180             92   520   313    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            651           467          1118  /data/user/0/com.arcfire.online/databases/RKStorage
+            520           314           834  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  565884 kB
+VmSwap:	  193700 kB
+Threads:	99
+
+===== 2026-06-23 00:34:12 pid=21849 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1260983320 Realtime: 1349221190
+
+** MEMINFO in pid 21849 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   221287   221260        8   166014   221976   527664   438769    83930
+  Dalvik Heap    24048    19524     4268     2903    25628    34103    17052    17051
+ Dalvik Other    17126     8296        0      369    26248                           
+        Stack     2973     2972        0     1016     2980                           
+       Ashmem       19        0        0        0      544                           
+    Other dev        8        0        8        0      544                           
+     .so mmap     4197      208      444       69    40432                           
+    .jar mmap     1901        0      328        0    27196                           
+    .apk mmap    22135     1120    19052     1152    32144                           
+    .ttf mmap     1796        0     1256        0     2936                           
+    .dex mmap    11091     5320     5748    23128    11888                           
+    .oat mmap       23        0        0        0      968                           
+    .art mmap     6889     3820     2292     4625    16884                           
+   Other mmap     5656       20      560        0    11400                           
+   EGL mtrack    41631    41631        0        0    41631                           
+    GL mtrack    43236    43236        0        0    43236                           
+      Unknown    40491    40104      360    29709    41092                           
+        TOTAL   673492   387511    34324   228985   547727   561767   455821   100981
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    25636                          42512
+         Native Heap:   221260                         221976
+                Code:    33484                         133196
+               Stack:     2972                           2980
+            Graphics:    84867                          84867
+       Private Other:    53616
+              System:   251657
+             Unknown:                                   62196
+ 
+           TOTAL PSS:   673492            TOTAL RSS:   547727       TOTAL SWAP PSS:   228985
+ 
+ Objects
+               Views:      312         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       28        Proxy Binders:       73
+       Parcel memory:       25         Parcel count:       83
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     3036                            288
+ Other (nonmalloced):      118                             84
+   Bitmap (malloced):       10                          13110
+ 
+ SQL
+         MEMORY_USED:     1616
+  PAGECACHE_OVERFLOW:     1445          MALLOC_SIZE:     4102
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1200             41  1483  1089     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      180             92  1188   584    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+           1483          1090          2573  /data/user/0/com.arcfire.online/databases/RKStorage
+           1188           585          1773  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  505196 kB
+VmSwap:	  246232 kB
+Threads:	106
+
+===== 2026-06-23 01:04:16 pid=21849 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1262787086 Realtime: 1351024957
+
+** MEMINFO in pid 21849 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   226802   226776        8   160932   227492   527304   441575    80657
+  Dalvik Heap    26689    22188     4232     2902    28292    32463    16232    16231
+ Dalvik Other    17187     8320        0      364    26348                           
+        Stack     2797     2796        0     1012     2804                           
+       Ashmem       17        0        0        0      544                           
+    Other dev       12        0       12        0      548                           
+     .so mmap     4163      208      444       69    40448                           
+    .jar mmap     1788        0      304        0    27224                           
+    .apk mmap    22466     1120    19384     1148    32476                           
+    .ttf mmap     2195        0     1540        0     3520                           
+    .dex mmap    11322     5320     5980    22896    12120                           
+    .oat mmap       22        0        0        0      968                           
+    .art mmap     6874     3840     2260     4602    16908                           
+   Other mmap     5802        4      716        0    11564                           
+   EGL mtrack    20311    20311        0        0    20311                           
+    GL mtrack    47180    47180        0        0    47180                           
+      Unknown    61379    60976      376    23873    61980                           
+        TOTAL   674804   399039    35256   217798   560727   559767   457807    96888
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    28288                          45200
+         Native Heap:   226776                         227492
+                Code:    34312                         134468
+               Stack:     2796                           2804
+            Graphics:    67491                          67491
+       Private Other:    74632
+              System:   240509
+             Unknown:                                   83272
+ 
+           TOTAL PSS:   674804            TOTAL RSS:   560727       TOTAL SWAP PSS:   217798
+ 
+ Objects
+               Views:      301         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       26        Proxy Binders:       70
+       Parcel memory:       24         Parcel count:       78
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2469                            234
+ Other (nonmalloced):      111                             79
+   Bitmap (malloced):        7                          12203
+ 
+ SQL
+         MEMORY_USED:     1616
+  PAGECACHE_OVERFLOW:     1445          MALLOC_SIZE:     4103
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1200             41  1539  1136     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      180             92  1232   699    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+           1539          1137          2676  /data/user/0/com.arcfire.online/databases/RKStorage
+           1232           700          1932  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  538704 kB
+VmSwap:	  235352 kB
+Threads:	102
+
+===== 2026-06-23 01:34:20 pid=21849 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1264591623 Realtime: 1352829493
+
+** MEMINFO in pid 21849 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   224822   224796        8   160910   225512   528228   437974    85086
+  Dalvik Heap    29392    24892     4232     2902    30996    34395    17198    17197
+ Dalvik Other    17244     8360        0      348    26424                           
+        Stack     2949     2948        0     1012     2956                           
+       Ashmem       17        0        0        0      544                           
+    Other dev       12        0       12        0      548                           
+     .so mmap     4111      208      388       68    40488                           
+    .jar mmap     1912        0      420        0    27456                           
+    .apk mmap    22665     1120    19420     1148    32912                           
+    .ttf mmap     2172        0     1512        0     3520                           
+    .dex mmap    11406     5312     6072    22812    12204                           
+    .oat mmap       21        0        0        0      968                           
+    .art mmap     6972     3972     2200     4469    17040                           
+   Other mmap     5662       20      376        0    11608                           
+   EGL mtrack    41631    41631        0        0    41631                           
+    GL mtrack    47836    47836        0        0    47836                           
+      Unknown    60929    60472      432    23873    61532                           
+        TOTAL   697295   421567    35072   217542   584175   562623   455172   102283
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    31064                          48036
+         Native Heap:   224796                         225512
+                Code:    34460                         135292
+               Stack:     2948                           2956
+            Graphics:    89467                          89467
+       Private Other:    73904
+              System:   240656
+             Unknown:                                   82912
+ 
+           TOTAL PSS:   697295            TOTAL RSS:   584175       TOTAL SWAP PSS:   217542
+ 
+ Objects
+               Views:      306         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       25        Proxy Binders:       70
+       Parcel memory:       25         Parcel count:       82
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2596                            246
+ Other (nonmalloced):      110                             78
+   Bitmap (malloced):        7                          12203
+ 
+ SQL
+         MEMORY_USED:     1616
+  PAGECACHE_OVERFLOW:     1445          MALLOC_SIZE:     4103
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1200             41  1569  1165     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      180             92  1276   814    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+           1569          1166          2735  /data/user/0/com.arcfire.online/databases/RKStorage
+           1276           815          2091  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  537632 kB
+VmSwap:	  235352 kB
+Threads:	107
+
+===== 2026-06-23 02:04:24 pid=21849 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1266395307 Realtime: 1354633178
+
+** MEMINFO in pid 21849 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   225065   225040        8   160374   225756   528976   431703    92182
+  Dalvik Heap    25160    20656     4232     2898    26760    32231    16116    16115
+ Dalvik Other    17324     8392        0      348    26548                           
+        Stack     2833     2832        0     1012     2840                           
+       Ashmem       17        0        0        0      544                           
+    Other dev       12        0       12        0      548                           
+     .so mmap     4082      208      352       68    40488                           
+    .jar mmap     1929        0      420        0    27480                           
+    .apk mmap    22736     1120    19452     1148    33008                           
+    .ttf mmap     2103        0     1376        0     3520                           
+    .dex mmap    11586     5312     6252    22632    12384                           
+    .oat mmap       21        0        0        0      968                           
+    .art mmap     6978     3976     2200     4465    17044                           
+   Other mmap     5865        4      580        0    11824                           
+   EGL mtrack    20311    20311        0        0    20311                           
+    GL mtrack    47324    47324        0        0    47324                           
+      Unknown    46021    45644      352    23869    46624                           
+        TOTAL   656181   380819    35236   216814   543971   561207   447819   108297
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    26832                          43804
+         Native Heap:   225040                         225756
+                Code:    34504                         135688
+               Stack:     2832                           2840
+            Graphics:    67635                          67635
+       Private Other:    59212
+              System:   240126
+             Unknown:                                   68248
+ 
+           TOTAL PSS:   656181            TOTAL RSS:   543971       TOTAL SWAP PSS:   216814
+ 
+ Objects
+               Views:      302         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       25        Proxy Binders:       70
+       Parcel memory:       24         Parcel count:       78
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2580                            245
+ Other (nonmalloced):      110                             78
+   Bitmap (malloced):        7                          12203
+ 
+ SQL
+         MEMORY_USED:     1616
+  PAGECACHE_OVERFLOW:     1445          MALLOC_SIZE:     4103
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1200             41  1855  1456     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      180             92  1848  1049    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+           1855          1457          3312  /data/user/0/com.arcfire.online/databases/RKStorage
+           1848          1050          2898  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  521416 kB
+VmSwap:	  234712 kB
+Threads:	103
+
+===== 2026-06-23 02:34:28 pid=21849 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1268202953 Realtime: 1356440823
+
+** MEMINFO in pid 21849 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   235801   235776        8   160290   236492   533572   443783    84511
+  Dalvik Heap    22136    19748       32     2897    25852    34599    17300    17299
+ Dalvik Other    17359     8416        0      348    26596                           
+        Stack     2789     2788        0     1012     2796                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       12        0       12        0      548                           
+     .so mmap     4477      208      336       63    40420                           
+    .jar mmap     1822        0      268        0    27424                           
+    .apk mmap    22622     1120    19320     1148    32688                           
+    .ttf mmap     2085        0     1364        0     3500                           
+    .dex mmap    11637     5312     6304    22580    12436                           
+    .oat mmap       20        0        0        0      968                           
+    .art mmap     5886     3976       84     4464    17044                           
+   Other mmap     5880        4      580        0    11848                           
+   EGL mtrack    20311    20311        0        0    20311                           
+    GL mtrack    47320    47320        0        0    47320                           
+      Unknown    46016    45596      392    23869    46616                           
+        TOTAL   662860   390575    28700   216671   553403   568171   461083   101810
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    23808                          42896
+         Native Heap:   235776                         236492
+                Code:    34244                         135300
+               Stack:     2788                           2796
+            Graphics:    67631                          67631
+       Private Other:    55028
+              System:   243585
+             Unknown:                                   68288
+ 
+           TOTAL PSS:   662860            TOTAL RSS:   553403       TOTAL SWAP PSS:   216671
+ 
+ Objects
+               Views:      302         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       25        Proxy Binders:       70
+       Parcel memory:       24         Parcel count:       78
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2669                            253
+ Other (nonmalloced):      110                             78
+   Bitmap (malloced):        7                          12203
+ 
+ SQL
+         MEMORY_USED:     1616
+  PAGECACHE_OVERFLOW:     1445          MALLOC_SIZE:     4103
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1200             41  2185  1795     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      180             92  2420  1284    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+           2185          1796          3981  /data/user/0/com.arcfire.online/databases/RKStorage
+           2420          1285          3705  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  532668 kB
+VmSwap:	  234712 kB
+Threads:	102
+
+===== 2026-06-23 03:04:36 pid= =====
+PROCESS NOT RUNNING
+
+===== 2026-06-23 03:34:37 pid=7598 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1271808226 Realtime: 1360046096
+
+** MEMINFO in pid 7598 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   334137   334064       52       50   334824   456904   400874    50088
+  Dalvik Heap    33354    30956       32       25    37076    34398    17199    17199
+ Dalvik Other    17462     8784        0        0    26436                           
+        Stack     3617     3616        0        0     3624                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       39       12       20        0      576                           
+     .so mmap    12259      248     3696       23    50544                           
+    .jar mmap     7095        0     2620        0    44636                           
+    .apk mmap    69488     2604    57912        0    92376                           
+    .ttf mmap     2573        0     1612        0     4400                           
+    .dex mmap    36761    34196     2040        0    38148                           
+    .oat mmap       59        0        0        0     1440                           
+    .art mmap    10422     8344      280       58    21780                           
+   Other mmap    22295       12    17504        0    28128                           
+   EGL mtrack    30971    30971        0        0    30971                           
+    GL mtrack    55368    55368        0        0    55368                           
+      Unknown    50726    50312      372        5    51292                           
+        TOTAL   686803   559487    86140      161   822163   491302   418073    67287
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    39580                          58856
+         Native Heap:   334064                         334824
+                Code:   105320                         249260
+               Stack:     3616                           3624
+            Graphics:    86339                          86339
+       Private Other:    76708
+              System:    41176
+             Unknown:                                   89260
+ 
+           TOTAL PSS:   686803            TOTAL RSS:   822163       TOTAL SWAP PSS:      161
+ 
+ Objects
+               Views:      300         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       26        Proxy Binders:       68
+       Parcel memory:       22         Parcel count:       72
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2181                            207
+ Other (nonmalloced):      108                             76
+   Bitmap (malloced):        5                           6975
+ 
+ SQL
+         MEMORY_USED:     1633
+  PAGECACHE_OVERFLOW:     1462          MALLOC_SIZE:     4106
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1208             41   303   225     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      188             92   296   203    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            303           226           529  /data/user/0/com.arcfire.online/databases/RKStorage
+            296           204           500  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  783072 kB
+VmSwap:	   17600 kB
+Threads:	98
+
+===== 2026-06-23 04:04:41 pid=7598 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1273613552 Realtime: 1361851422
+
+** MEMINFO in pid 7598 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   333781   333708       52       50   334468   459324   396731    56530
+  Dalvik Heap    28999    26604       32       25    32724    29598    14799    14799
+ Dalvik Other    17478     8728        0        0    26524                           
+        Stack     3601     3600        0        0     3608                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       39       12       20        0      576                           
+     .so mmap    11354      248     3696       23    49336                           
+    .jar mmap     5632        0     1472        0    42360                           
+    .apk mmap    62899     2604    51812        0    85448                           
+    .ttf mmap     2221        0     1500        0     3764                           
+    .dex mmap    36307    34196     1348        0    38148                           
+    .oat mmap       50        0        0        0     1376                           
+    .art mmap    10401     8344      272       58    21780                           
+   Other mmap    21679        4    16476        0    27924                           
+   EGL mtrack    20311    20311        0        0    20311                           
+    GL mtrack    65796    65796        0        0    65796                           
+      Unknown    61369    61020      308        5    61936                           
+        TOTAL   682094   565175    76988      161   816623   488922   411530    71329
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    35220                          54504
+         Native Heap:   333708                         334468
+                Code:    97272                         238296
+               Stack:     3600                           3608
+            Graphics:    86107                          86107
+       Private Other:    86256
+              System:    39931
+             Unknown:                                   99640
+ 
+           TOTAL PSS:   682094            TOTAL RSS:   816623       TOTAL SWAP PSS:      161
+ 
+ Objects
+               Views:      301         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       25        Proxy Binders:       68
+       Parcel memory:       22         Parcel count:       70
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2173                            206
+ Other (nonmalloced):      107                             75
+   Bitmap (malloced):        5                           6975
+ 
+ SQL
+         MEMORY_USED:     1629
+  PAGECACHE_OVERFLOW:     1457          MALLOC_SIZE:     4106
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1204             41   305   236     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      188             92   296   308    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            305           237           542  /data/user/0/com.arcfire.online/databases/RKStorage
+            296           309           605  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  789888 kB
+VmSwap:	   17600 kB
+Threads:	98
+
+===== 2026-06-23 04:34:46 pid=7598 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1275417207 Realtime: 1363655078
+
+** MEMINFO in pid 7598 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   332820   332748       52       50   333508   460232   399650    54818
+  Dalvik Heap    34137    31740       32       25    37860    30638    15319    15319
+ Dalvik Other    17624     8832        0        0    26712                           
+        Stack     3521     3520        0        0     3528                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       39       12       20        0      576                           
+     .so mmap    11203      248     3488       23    49180                           
+    .jar mmap     5436        0     1388        0    42156                           
+    .apk mmap    61161     2604    49420        0    85344                           
+    .ttf mmap     2131        0     1464        0     3604                           
+    .dex mmap    35725    34196      796        0    38148                           
+    .oat mmap       50        0        0        0     1376                           
+    .art mmap    10394     8344      268       58    21780                           
+   Other mmap    21693        4    16476        0    27912                           
+   EGL mtrack    20311    20311        0        0    20311                           
+    GL mtrack    65796    65796        0        0    65796                           
+      Unknown    57673    57296      336        5    58240                           
+        TOTAL   679891   565651    73740      161   816575   490870   414969    70137
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    40352                          59640
+         Native Heap:   332748                         333508
+                Code:    94012                         237768
+               Stack:     3520                           3528
+            Graphics:    86107                          86107
+       Private Other:    82652
+              System:    40500
+             Unknown:                                   96024
+ 
+           TOTAL PSS:   679891            TOTAL RSS:   816575       TOTAL SWAP PSS:      161
+ 
+ Objects
+               Views:      301         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       25        Proxy Binders:       68
+       Parcel memory:       22         Parcel count:       70
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2405                            228
+ Other (nonmalloced):      107                             75
+   Bitmap (malloced):        5                           6975
+ 
+ SQL
+         MEMORY_USED:     1629
+  PAGECACHE_OVERFLOW:     1457          MALLOC_SIZE:     4106
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1204             41   345   273     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      188             92   384   433    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            345           274           619  /data/user/0/com.arcfire.online/databases/RKStorage
+            384           434           818  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  786340 kB
+VmSwap:	   17600 kB
+Threads:	97
+
+===== 2026-06-23 05:04:50 pid=7598 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1277220854 Realtime: 1365458724
+
+** MEMINFO in pid 7598 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   343543   343468       52       50   344228   461360   392499    63050
+  Dalvik Heap    26601    24204       32       25    30324    29343    14672    14671
+ Dalvik Other    17528     8724        0        0    26628                           
+        Stack     3565     3564        0        0     3572                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       39       12       20        0      576                           
+     .so mmap    11350      248     3624       23    49180                           
+    .jar mmap     5521        0     1436        0    42156                           
+    .apk mmap    61159     2604    49420        0    85344                           
+    .ttf mmap     2209        0     1516        0     3652                           
+    .dex mmap    35725    34196      796        0    38148                           
+    .oat mmap       50        0        0        0     1376                           
+    .art mmap    10397     8344      268       58    21780                           
+   Other mmap    22124       16    17288        0    27948                           
+   EGL mtrack    35131    35131        0        0    35131                           
+    GL mtrack    66000    66000        0        0    66000                           
+      Unknown    45825    45448      336        5    46392                           
+        TOTAL   686944   571959    74788      161   822979   490703   407171    77721
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    32816                          52104
+         Native Heap:   343468                         344228
+                Code:    94248                         237840
+               Stack:     3564                           3572
+            Graphics:   101131                         101131
+       Private Other:    71520
+              System:    40197
+             Unknown:                                   84104
+ 
+           TOTAL PSS:   686944            TOTAL RSS:   822979       TOTAL SWAP PSS:      161
+ 
+ Objects
+               Views:      306         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       24        Proxy Binders:       68
+       Parcel memory:       22         Parcel count:       70
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2268                            215
+ Other (nonmalloced):      106                             75
+   Bitmap (malloced):        5                           6975
+ 
+ SQL
+         MEMORY_USED:     1633
+  PAGECACHE_OVERFLOW:     1462          MALLOC_SIZE:     4106
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1208             41   377   304     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      188             92   428   548    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            377           305           682  /data/user/0/com.arcfire.online/databases/RKStorage
+            428           549           977  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  780288 kB
+VmSwap:	   17600 kB
+Threads:	98
+
+===== 2026-06-23 05:34:56 pid=7598 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1279029650 Realtime: 1367267521
+
+** MEMINFO in pid 7598 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   335310   335236       52       50   335996   461896   401274    54841
+  Dalvik Heap    31612    29940       32       25    36060    30078    15039    15039
+ Dalvik Other    17576     8764        0        0    26684                           
+        Stack     3705     3704        0        0     3712                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       39       12       20        0      576                           
+     .so mmap    10991      248     3364       23    48888                           
+    .jar mmap     5268        0     1388        0    41540                           
+    .apk mmap    60797     2604    49356        0    84724                           
+    .ttf mmap     1988        0     1376        0     3336                           
+    .dex mmap    35723    34196      796        0    38148                           
+    .oat mmap       47        0        0        0     1348                           
+    .art mmap    10166     8344      268       58    21780                           
+   Other mmap    21682        4    16464        0    27896                           
+   EGL mtrack    20311    20311        0        0    20311                           
+    GL mtrack    67844    67844        0        0    67844                           
+      Unknown    45841    45484      316        5    46408                           
+        TOTAL   669077   556691    73432      161   805795   491974   416313    69880
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    38552                          57840
+         Native Heap:   335236                         335996
+                Code:    93752                         236000
+               Stack:     3704                           3712
+            Graphics:    88155                          88155
+       Private Other:    70724
+              System:    38954
+             Unknown:                                   84092
+ 
+           TOTAL PSS:   669077            TOTAL RSS:   805795       TOTAL SWAP PSS:      161
+ 
+ Objects
+               Views:      301         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       24        Proxy Binders:       68
+       Parcel memory:       23         Parcel count:       74
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2303                            218
+ Other (nonmalloced):      106                             75
+   Bitmap (malloced):        5                           6975
+ 
+ SQL
+         MEMORY_USED:     1629
+  PAGECACHE_OVERFLOW:     1457          MALLOC_SIZE:     4106
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1204             41   389   321     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      188             92   472   669    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            389           322           711  /data/user/0/com.arcfire.online/databases/RKStorage
+            472           670          1142  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  776124 kB
+VmSwap:	   17600 kB
+Threads:	102
+
+===== 2026-06-23 06:05:02 pid=7598 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1280833974 Realtime: 1369071845
+
+** MEMINFO in pid 7598 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   343660   343588       52       50   344348   462664   410408    46627
+  Dalvik Heap    29490    27820       32       25    33940    29766    14883    14883
+ Dalvik Other    17588     8772        0        0    26700                           
+        Stack     3501     3500        0        0     3508                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       39       12       20        0      576                           
+     .so mmap    10986      248     3364       23    48888                           
+    .jar mmap     5230        0     1416        0    41540                           
+    .apk mmap    60674     2604    49240        0    84724                           
+    .ttf mmap     2032        0     1420        0     3380                           
+    .dex mmap    35723    34196      796        0    38148                           
+    .oat mmap       47        0        0        0     1348                           
+    .art mmap    10163     8344      268       58    21780                           
+   Other mmap    21687        4    16468        0    27908                           
+   EGL mtrack    20311    20311        0        0    20311                           
+    GL mtrack    66052    66052        0        0    66052                           
+      Unknown    46621    46280      300        5    47188                           
+        TOTAL   673981   561731    73376      161   810883   492430   425291    61510
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    36432                          55720
+         Native Heap:   343588                         344348
+                Code:    93708                         236052
+               Stack:     3500                           3508
+            Graphics:    86363                          86363
+       Private Other:    71516
+              System:    38874
+             Unknown:                                   84892
+ 
+           TOTAL PSS:   673981            TOTAL RSS:   810883       TOTAL SWAP PSS:      161
+ 
+ Objects
+               Views:      301         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       24        Proxy Binders:       68
+       Parcel memory:       22         Parcel count:       72
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2418                            229
+ Other (nonmalloced):      106                             75
+   Bitmap (malloced):        5                           6975
+ 
+ SQL
+         MEMORY_USED:     1629
+  PAGECACHE_OVERFLOW:     1457          MALLOC_SIZE:     4106
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1204             41   391   332     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      188             92   472   774    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            391           333           724  /data/user/0/com.arcfire.online/databases/RKStorage
+            472           775          1247  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  783700 kB
+VmSwap:	   17600 kB
+Threads:	97
+
+===== 2026-06-23 06:35:07 pid=7598 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1282638008 Realtime: 1370875879
+
+** MEMINFO in pid 7598 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   337754   337680       52       50   338440   463828   397676    60473
+  Dalvik Heap    23884    22212       32       25    28332    25070    12535    12535
+ Dalvik Other    17588     8736        0        0    26736                           
+        Stack     3701     3700        0        0     3708                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       39       12       20        0      576                           
+     .so mmap    10786      248     3364       23    48888                           
+    .jar mmap     5219        0     1412        0    41540                           
+    .apk mmap    61072     2604    49296        0    84724                           
+    .ttf mmap     2000        0     1368        0     3380                           
+    .dex mmap    35724    34196      796        0    38148                           
+    .oat mmap       46        0        0        0     1348                           
+    .art mmap    10174     8344      268       59    21780                           
+   Other mmap    21712       16    16472        0    27936                           
+   EGL mtrack    35131    35131        0        0    35131                           
+    GL mtrack    66248    66248        0        0    66248                           
+      Unknown    47585    47244      300        5    48152                           
+        TOTAL   678841   566371    73380      162   815611   488898   410211    73008
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    30824                          50112
+         Native Heap:   337680                         338440
+                Code:    93700                         236116
+               Stack:     3700                           3708
+            Graphics:   101379                         101379
+       Private Other:    72468
+              System:    39090
+             Unknown:                                   85856
+ 
+           TOTAL PSS:   678841            TOTAL RSS:   815611       TOTAL SWAP PSS:      162
+ 
+ Objects
+               Views:      308         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       24        Proxy Binders:       68
+       Parcel memory:       23         Parcel count:       74
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2207                            209
+ Other (nonmalloced):      106                             75
+   Bitmap (malloced):        5                           6975
+ 
+ SQL
+         MEMORY_USED:     1633
+  PAGECACHE_OVERFLOW:     1462          MALLOC_SIZE:     4106
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1208             41   401   347     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      188             92   472   879    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            401           348           749  /data/user/0/com.arcfire.online/databases/RKStorage
+            472           880          1352  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  779228 kB
+VmSwap:	   17600 kB
+Threads:	103
+
+===== 2026-06-23 07:05:11 pid=7598 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1284443099 Realtime: 1372680970
+
+** MEMINFO in pid 7598 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   339483   339416       44       50   340176   465348   404410    55032
+  Dalvik Heap    30693    29020       32       25    35140    30206    15103    15103
+ Dalvik Other    17588     8732        0        0    26740                           
+        Stack     3593     3592        0        0     3600                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       35        4       20        0      576                           
+     .so mmap    10102      248     1988       23    48864                           
+    .jar mmap     5096        0     1364        0    41488                           
+    .apk mmap    58162     2604    47864        0    81808                           
+    .ttf mmap     1960        0     1320        0     3380                           
+    .dex mmap    35110    34196      224        0    37544                           
+    .oat mmap       46        0        0        0     1348                           
+    .art mmap    10166     8344      264       59    21780                           
+   Other mmap    21633        4    16356        0    27932                           
+   EGL mtrack    20311    20311        0        0    20311                           
+    GL mtrack    66052    66052        0        0    66052                           
+      Unknown    49327    48984      292        5    49908                           
+        TOTAL   669535   561507    69768      162   807191   495554   419513    70135
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    37628                          56920
+         Native Heap:   339416                         340176
+                Code:    90224                         232528
+               Stack:     3592                           3600
+            Graphics:    86363                          86363
+       Private Other:    74052
+              System:    38260
+             Unknown:                                   87604
+ 
+           TOTAL PSS:   669535            TOTAL RSS:   807191       TOTAL SWAP PSS:      162
+ 
+ Objects
+               Views:      301         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       24        Proxy Binders:       68
+       Parcel memory:       23         Parcel count:       74
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2605                            247
+ Other (nonmalloced):      106                             75
+   Bitmap (malloced):        5                           6975
+ 
+ SQL
+         MEMORY_USED:     1629
+  PAGECACHE_OVERFLOW:     1457          MALLOC_SIZE:     4107
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1204             41   437   380     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      188             92   560  1006    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            437           381           818  /data/user/0/com.arcfire.online/databases/RKStorage
+            560          1007          1567  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  781396 kB
+VmSwap:	   17600 kB
+Threads:	99
+
+===== 2026-06-23 07:35:16 pid=7598 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1286246820 Realtime: 1374484690
+
+** MEMINFO in pid 7598 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   349069   349004       44       50   349764   466116   411335    48910
+  Dalvik Heap    23616    21944       32       25    28064    28998    14499    14499
+ Dalvik Other    17616     8752        0        0    26776                           
+        Stack     3533     3532        0        0     3540                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       33        0       20        0      576                           
+     .so mmap    10086      248     1980       23    48864                           
+    .jar mmap     5044        0     1364        0    41488                           
+    .apk mmap    56878     2604    47552        0    81836                           
+    .ttf mmap     1960        0     1320        0     3380                           
+    .dex mmap    34976    34196      224        0    37544                           
+    .oat mmap       46        0        0        0     1348                           
+    .art mmap    10158     8344      264       59    21780                           
+   Other mmap    21613        4    16308        0    27948                           
+   EGL mtrack    20311    20311        0        0    20311                           
+    GL mtrack    66052    66052        0        0    66052                           
+      Unknown    49745    49384      308        5    50328                           
+        TOTAL   670914   564375    69416      162   810143   495114   425834    63409
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    30552                          49844
+         Native Heap:   349004                         349764
+                Code:    89916                         232584
+               Stack:     3532                           3540
+            Graphics:    86363                          86363
+       Private Other:    74424
+              System:    37123
+             Unknown:                                   88048
+ 
+           TOTAL PSS:   670914            TOTAL RSS:   810143       TOTAL SWAP PSS:      162
+ 
+ Objects
+               Views:      301         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       24        Proxy Binders:       68
+       Parcel memory:       23         Parcel count:       74
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2553                            242
+ Other (nonmalloced):      106                             75
+   Bitmap (malloced):        5                           6975
+ 
+ SQL
+         MEMORY_USED:     1629
+  PAGECACHE_OVERFLOW:     1457          MALLOC_SIZE:     4108
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1204             41   479   417     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      188             92   648  1131    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            479           418           897  /data/user/0/com.arcfire.online/databases/RKStorage
+            648          1132          1780  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  788936 kB
+VmSwap:	   17600 kB
+Threads:	98
+
+===== 2026-06-23 08:05:20 pid=7598 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1288050905 Realtime: 1376288775
+
+** MEMINFO in pid 7598 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   349441   349376       44       50   350136   466876   411245    50075
+  Dalvik Heap    23808    22136       32       25    28256    28742    14371    14371
+ Dalvik Other    17660     8788        0        0    26828                           
+        Stack     3601     3600        0        0     3608                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       33        0       20        0      576                           
+     .so mmap    10083      248     1980       23    48864                           
+    .jar mmap     5042        0     1364        0    41488                           
+    .apk mmap    56878     2604    47552        0    81836                           
+    .ttf mmap     1976        0     1336        0     3396                           
+    .dex mmap    34976    34196      224        0    37544                           
+    .oat mmap       46        0        0        0     1348                           
+    .art mmap    10158     8344      264       59    21780                           
+   Other mmap    21649        4    16336        0    27992                           
+   EGL mtrack    20311    20311        0        0    20311                           
+    GL mtrack    66052    66052        0        0    66052                           
+      Unknown    51105    50752      300        5    51688                           
+        TOTAL   672997   566411    69452      162   812247   495618   425616    64446
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    30744                          50036
+         Native Heap:   349376                         350136
+                Code:    89932                         232616
+               Stack:     3600                           3608
+            Graphics:    86363                          86363
+       Private Other:    75848
+              System:    37134
+             Unknown:                                   89488
+ 
+           TOTAL PSS:   672997            TOTAL RSS:   812247       TOTAL SWAP PSS:      162
+ 
+ Objects
+               Views:      297         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       24        Proxy Binders:       68
+       Parcel memory:       23         Parcel count:       74
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2323                            220
+ Other (nonmalloced):      106                             75
+   Bitmap (malloced):        5                           6975
+ 
+ SQL
+         MEMORY_USED:     1625
+  PAGECACHE_OVERFLOW:     1453          MALLOC_SIZE:     4108
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1204             41   503   449     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      184             92   736  1259    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            503           450           953  /data/user/0/com.arcfire.online/databases/RKStorage
+            736          1260          1996  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  793216 kB
+VmSwap:	   17600 kB
+Threads:	99
+
+===== 2026-06-23 08:35:24 pid=7598 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1289857420 Realtime: 1378095290
+
+** MEMINFO in pid 7598 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   337139   337076       44     7422   337836   467644   414415    47712
+  Dalvik Heap    32170    30500       32      201    36620    26327    13164    13163
+ Dalvik Other    17636     8736        0        0    26832                           
+        Stack     3597     3596        0       12     3604                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       17        0        8        0      564                           
+     .so mmap     6938      248      300       27    42688                           
+    .jar mmap     2614        0      424        0    33188                           
+    .apk mmap    26586     2604    18628        0    49496                           
+    .ttf mmap      631        0      236        0     1384                           
+    .dex mmap    34749    34196       40        0    37252                           
+    .oat mmap       45        0        0        0     1296                           
+    .art mmap     9842     8088      216      315    21492                           
+   Other mmap     5970        4     1144        0    11764                           
+   EGL mtrack    20311    20311        0        0    20311                           
+    GL mtrack    66040    66040        0        0    66040                           
+      Unknown    51767    51488      232      177    52356                           
+        TOTAL   624222   562887    21304     8154   743267   493971   427579    60875
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    38804                          58112
+         Native Heap:   337076                         337836
+                Code:    57104                         183500
+               Stack:     3596                           3604
+            Graphics:    86351                          86351
+       Private Other:    61260
+              System:    40031
+             Unknown:                                   73864
+ 
+           TOTAL PSS:   624222            TOTAL RSS:   743267       TOTAL SWAP PSS:     8154
+ 
+ Objects
+               Views:      301         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       24        Proxy Binders:       68
+       Parcel memory:       22         Parcel count:       72
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2173                            206
+ Other (nonmalloced):      106                             75
+   Bitmap (malloced):        5                           6975
+ 
+ SQL
+         MEMORY_USED:     1625
+  PAGECACHE_OVERFLOW:     1453          MALLOC_SIZE:     4108
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1204             41   503   458     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      184             92   736  1364    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            503           459           962  /data/user/0/com.arcfire.online/databases/RKStorage
+            736          1365          2101  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  711492 kB
+VmSwap:	   25536 kB
+Threads:	100
+
+===== 2026-06-23 09:05:30 pid=7598 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1291663630 Realtime: 1379901501
+
+** MEMINFO in pid 7598 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   342700   342636       44     7422   343396   469180   411583    51450
+  Dalvik Heap    23381    21712       32      201    27832    29695    14848    14847
+ Dalvik Other    17640     8736        0        0    26840                           
+        Stack     3529     3528        0       12     3536                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       17        0        8        0      564                           
+     .so mmap     6312      248      300       27    41400                           
+    .jar mmap     2553        0      500        0    32468                           
+    .apk mmap    26356     2604    18628        0    48788                           
+    .ttf mmap      622        0      268        0     1280                           
+    .dex mmap    34712    34196       16        0    37200                           
+    .oat mmap       40        0        0        0     1272                           
+    .art mmap     9834     8088      216      315    21492                           
+   Other mmap     5978        4     1148        0    11776                           
+   EGL mtrack    20311    20311        0        0    20311                           
+    GL mtrack    66048    66048        0        0    66048                           
+      Unknown    53203    52896      260      177    53792                           
+        TOTAL   621406   561007    21420     8154   738539   498875   426431    66297
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    30016                          49324
+         Native Heap:   342636                         343396
+                Code:    57188                         180612
+               Stack:     3528                           3536
+            Graphics:    86359                          86359
+       Private Other:    62700
+              System:    38979
+             Unknown:                                   75312
+ 
+           TOTAL PSS:   621406            TOTAL RSS:   738539       TOTAL SWAP PSS:     8154
+ 
+ Objects
+               Views:      301         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       24        Proxy Binders:       68
+       Parcel memory:       23         Parcel count:       74
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2613                            248
+ Other (nonmalloced):      106                             75
+   Bitmap (malloced):        5                           6975
+ 
+ SQL
+         MEMORY_USED:     1625
+  PAGECACHE_OVERFLOW:     1453          MALLOC_SIZE:     4109
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1204             41   529   487     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      184             92   824  1489    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            529           488          1017  /data/user/0/com.arcfire.online/databases/RKStorage
+            824          1490          2314  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  717284 kB
+VmSwap:	   25536 kB
+Threads:	99
+
+===== 2026-06-23 09:35:36 pid=7598 =====
+Applications Memory Usage (in Kilobytes):
+Uptime: 1293467271 Realtime: 1381705142
+
+** MEMINFO in pid 7598 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   334116   334052       44     7422   334812   469964   397456    67086
+  Dalvik Heap    19465    17800       24      201    23920    24823    12412    12411
+ Dalvik Other    17776     8868        0        0    26980                           
+        Stack     3597     3596        0       12     3604                           
+       Ashmem       16        0        0        0      544                           
+    Other dev       17        0        8        0      564                           
+     .so mmap     6310      248      300       27    41400                           
+    .jar mmap     2544        0      488        0    32468                           
+    .apk mmap    26355     2604    18628        0    48788                           
+    .ttf mmap      586        0      196        0     1280                           
+    .dex mmap    34712    34196       16        0    37200                           
+    .oat mmap       40        0        0        0     1272                           
+    .art mmap     9832     8088      212      315    21492                           
+   Other mmap     5960        4     1104        0    11784                           
+   EGL mtrack    20311    20311        0        0    20311                           
+    GL mtrack    68096    68096        0        0    68096                           
+      Unknown    54383    54060      276      177    54972                           
+        TOTAL   612270   551923    21296     8154   729487   494787   409868    79497
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    26100                          45412
+         Native Heap:   334052                         334812
+                Code:    57104                         180620
+               Stack:     3596                           3604
+            Graphics:    88407                          88407
+       Private Other:    63960
+              System:    39051
+             Unknown:                                   76632
+ 
+           TOTAL PSS:   612270            TOTAL RSS:   729487       TOTAL SWAP PSS:     8154
+ 
+ Objects
+               Views:      301         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       24        Proxy Binders:       68
+       Parcel memory:       23         Parcel count:       74
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2352                            223
+ Other (nonmalloced):      106                             75
+   Bitmap (malloced):        5                           6975
+ 
+ SQL
+         MEMORY_USED:     1629
+  PAGECACHE_OVERFLOW:     1457          MALLOC_SIZE:     4109
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1208             41   555   514     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      184             92   824  1594    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            555           515          1070  /data/user/0/com.arcfire.online/databases/RKStorage
+            824          1595          2419  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+
+VmRSS:	  708108 kB
+VmSwap:	   25536 kB
+Threads:	99
+
+===== 2026-06-23 10:05:40 pid= =====
+PROCESS NOT RUNNING

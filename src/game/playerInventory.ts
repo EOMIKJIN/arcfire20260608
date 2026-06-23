@@ -4,6 +4,11 @@
 // ============================================================
 
 import type { CargoItem } from '../types';
+import {
+  DURABILITY_DEFAULT_PCT,
+  isDurabilityTrackedInventoryGoodId,
+  normalizeCargoItemDurability,
+} from './durability';
 
 export const PLAYER_INVENTORY_SLOT_COUNT = 100;
 export const PLAYER_INVENTORY_MAX_STACK = 99_999;
@@ -33,11 +38,17 @@ export function normalizeInventorySlots(raw: unknown): PlayerInventorySlot[] {
       out.push(null);
       continue;
     }
-    out.push({
+    const base: CargoItem = {
       goodId: o.goodId,
       quantity: Math.min(PLAYER_INVENTORY_MAX_STACK, qty),
       buyPrice: typeof o.buyPrice === 'number' && Number.isFinite(o.buyPrice) ? o.buyPrice : 0,
-    });
+    };
+    if (typeof o.durabilityPct === 'number' && Number.isFinite(o.durabilityPct)) {
+      base.durabilityPct = o.durabilityPct;
+    } else if (isDurabilityTrackedInventoryGoodId(base.goodId)) {
+      base.durabilityPct = DURABILITY_DEFAULT_PCT;
+    }
+    out.push(normalizeCargoItemDurability(base));
   }
   return out;
 }
@@ -85,7 +96,9 @@ export function addToInventorySlotsMax(
   for (let i = 0; i < next.length && remaining > 0; i++) {
     if (next[i] == null) {
       const take = Math.min(PLAYER_INVENTORY_MAX_STACK, remaining);
-      next[i] = { goodId, quantity: take, buyPrice };
+      next[i] = isDurabilityTrackedInventoryGoodId(goodId)
+        ? { goodId, quantity: take, buyPrice, durabilityPct: DURABILITY_DEFAULT_PCT }
+        : { goodId, quantity: take, buyPrice };
       remaining -= take;
       added += take;
     }

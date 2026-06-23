@@ -55,6 +55,7 @@ export type ArcOverlayRewardEntry = ArcOverlayBase & {
   kind: 'reward';
   reward: MissionReward;
   missionTitle: string;
+  cardTitle?: string;
   leveledUp?: boolean;
   newLevel?: number;
   levelUpDetail?: LevelUpSummary | null;

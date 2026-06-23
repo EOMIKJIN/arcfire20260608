@@ -1,7 +1,5 @@
 import React, { memo } from 'react';
-import { Text, View } from 'react-native';
-import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';
-import {
+import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';import {
   PLANET_DEV_MODULE_POPULATION_DOME,
   buildTavernFacilityDevSnapshot,
   formatTavernFacilityDurationLabel,
@@ -18,10 +16,8 @@ import {
   tryCompleteTavernFacilityUpgrade,
 } from '../../../game/planetDevelopment/planetTavernFacilityDevelopment';
 import { useT } from '../../../i18n';
-import { OVERLAY_TOKENS } from '../../../utils/theme';
-import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
+import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
 import { PlanetGenericFacilityDevContent } from './PlanetGenericFacilityDevContent';
-
 const api = {
   buildSnapshot: buildTavernFacilityDevSnapshot,
   tryCompleteUpgrade: tryCompleteTavernFacilityUpgrade,
@@ -33,16 +29,6 @@ const api = {
   getLevelRow: getTavernFacilityLevelStatRow,
   listLevelRows: listFacilityTavernLevelRows,
 };
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  const PH = OVERLAY_TOKENS.phosphorAccent;
-  return (
-    <View style={styles.row}>
-      <Text style={[styles.rowLabel, { color: PH }]}>{label}</Text>
-      <Text style={[styles.rowValue, { color: PH }]}>{value}</Text>
-    </View>
-  );
-}
 
 export const PlanetTavernFacilityDevContent = memo(function PlanetTavernFacilityDevContent(props: PlanetDevelopmentModuleContext) {
   const t = useT();
@@ -56,10 +42,10 @@ export const PlanetTavernFacilityDevContent = memo(function PlanetTavernFacility
         if (!snapshot.installed) return null;
         return (
           <>
-            <InfoRow label={t('populationDomeDev.bountySlotsLabel')} value={String(resolveTavernBountySlots(snapshot.level))} />
-            <InfoRow label={t('populationDomeDev.reputationLabel')} value={`+${resolveTavernReputationBonusPct(snapshot.level)}%`} />
-            <InfoRow label={t('populationDomeDev.mercTierLabel')} value={resolveTavernMercTierUnlock(snapshot.level)} />
-            <InfoRow
+            <ArcOverlayInfoRow label={t('populationDomeDev.bountySlotsLabel')} value={String(resolveTavernBountySlots(snapshot.level))} />
+            <ArcOverlayInfoRow label={t('populationDomeDev.reputationLabel')} value={`+${resolveTavernReputationBonusPct(snapshot.level)}%`} />
+            <ArcOverlayInfoRow label={t('populationDomeDev.mercTierLabel')} value={resolveTavernMercTierUnlock(snapshot.level)} />
+            <ArcOverlayInfoRow
               label={t('populationDomeDev.refreshLabel')}
               value={t('populationDomeDev.refreshValue', { hours: resolveTavernRefreshIntervalHours(snapshot.level) })}
             />

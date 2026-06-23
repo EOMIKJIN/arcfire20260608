@@ -16,9 +16,9 @@ type Props = {
 
 export const RewardOverlayContent = memo(function RewardOverlayContent({ entry, onClose }: Props) {
   const t = useT();
-  const { reward, missionTitle, leveledUp, newLevel, levelUpDetail } = entry;
+  const { reward, missionTitle, cardTitle, leveledUp, newLevel, levelUpDetail } = entry;
   return (
-    <ArcOverlayCard title={t('reward.missionComplete')} subtitle={missionTitle} layout="compact">
+    <ArcOverlayCard title={cardTitle ?? t('reward.missionComplete')} subtitle={missionTitle} layout="compact">
       <View style={phosphorOverlay.divider} />
       <Text style={phosphorOverlay.sectionLabel}>{t('reward.gained')}</Text>
       <View style={phosphorOverlay.row}>
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.md,
     fontWeight: FONTS.weight.bold,
-    color: OVERLAY_TOKENS.phosphorAccent,
+    color: OVERLAY_TOKENS.valueContentColor,
     textShadowColor: 'rgba(107, 212, 255, 0.45)',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,

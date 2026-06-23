@@ -13,3 +13,26 @@
 [2026-06-22 23:30:33] ALERT GL +91.3MB active hub views=929
 [2026-06-22 23:30:33] ALERT GL/PSS hard-ceiling breach gl=152.4MB pss=1029.9MB ??defer remediation to check-and-remediate
 [2026-06-22 23:30:33] snap PSS=1029.9MB GL=152.4MB views=929 dPSS=126.8 dGL=91.3 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-06-23 00:01:23] snap PSS=625.5MB GL=54.3MB views=293 dPSS=-128 dGL=-118.6 GL_RECOVERED idle_ok
+[2026-06-23 00:31:27] ALERT PSS +122.2MB
+[2026-06-23 00:31:27] snap PSS=766.1MB GL=55.9MB views=314 dPSS=122.2 dGL=1.6 PSS_SPIKE review=graphics+native
+[2026-06-23 01:01:31] snap PSS=667.7MB GL=46.3MB views=324 dPSS=30.9 dGL=4.6 
+[2026-06-23 01:31:34] snap PSS=661.2MB GL=46.1MB views=322 dPSS=-16.8 dGL=-2.6 
+[2026-06-23 02:01:38] snap PSS=655MB GL=48.2MB views=322 dPSS=-1.7 dGL=2.1 
+[2026-06-23 02:31:42] snap PSS=654.9MB GL=48.2MB views=306 dPSS=8.7 dGL=2 
+[2026-06-23 03:01:44] WARN: com.arcfire.online not running
+[2026-06-23 03:31:47] snap PSS=653.5MB GL=55.9MB views=305 dPSS= dGL= 
+[2026-06-23 04:01:51] ALERT GL +10.2MB active hub views=293
+[2026-06-23 04:01:51] snap PSS=659.3MB GL=64.1MB views=293 dPSS=-7.1 dGL=10.2 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-06-23 04:31:54] snap PSS=667.5MB GL=64.3MB views=289 dPSS=-25.7 dGL=-0.6 
+[2026-06-23 05:01:59] snap PSS=660.7MB GL=64.3MB views=309 dPSS=-2.9 dGL=-2 
+[2026-06-23 05:32:03] snap PSS=646.8MB GL=66.3MB views=317 dPSS=-9.8 dGL=0 
+[2026-06-23 06:02:15] snap PSS=655.5MB GL=64.5MB views=301 dPSS=-36.9 dGL=-0.4 
+[2026-06-23 06:32:19] snap PSS=656.6MB GL=64.5MB views=313 dPSS=2 dGL=0 
+[2026-06-23 07:02:27] snap PSS=659.3MB GL=64.5MB views=317 dPSS=1 dGL=0 
+[2026-06-23 07:32:31] snap PSS=657.2MB GL=64.5MB views=317 dPSS=-12.3 dGL=-0.3 
+[2026-06-23 08:02:35] snap PSS=655MB GL=64.5MB views=301 dPSS=4.6 dGL=0 
+[2026-06-23 08:32:39] snap PSS=596MB GL=64.5MB views=297 dPSS=-40.9 dGL=0 
+[2026-06-23 09:02:48] snap PSS=597.4MB GL=64.5MB views=293 dPSS=-30.3 dGL=-0.2 
+[2026-06-23 09:32:51] snap PSS=634.3MB GL=65.1MB views=303 dPSS=16.5 dGL=-1.4 
+[2026-06-23 10:02:54] WARN: com.arcfire.online not running

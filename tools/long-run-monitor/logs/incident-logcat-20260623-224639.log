@@ -1,0 +1,6 @@
+﻿--------- beginning of system
+06-23 22:46:20.893  1909  2224 W ActivityManager: pid 1909 system sent binder code 7 with flags 1 to frozen apps and got error -32
+06-23 22:46:27.639  1909  2720 I ActivityManager: PendingStartActivityUids startActivity to updateOomAdj delay:6706ms, uid:10147
+06-23 22:46:35.632  1909  2224 I ActivityManager: Changes in 99215 3 to 10, 184 to 0
+06-23 22:46:37.840  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-23 22:46:37.850  1909  2224 I ActivityManager: Changes in 10096 11 to 19, 128 to 0

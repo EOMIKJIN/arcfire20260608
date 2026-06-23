@@ -1,0 +1,50 @@
+[2026-06-23 14:57:50] monitor start package=com.arcfire.online interval=10m rules=v2(hub_activation_excluded)
+[2026-06-23 14:57:50] meminfo -> D:\arcfire20260607\tools\long-run-monitor\logs\meminfo-20260623-145750.log
+[2026-06-23 14:57:50] timeline -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-timeline.csv
+[2026-06-23 14:57:50] alerts -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-alerts.log
+[2026-06-23 14:57:50] FOCUS: hub Skia orbit + nebula + combat ??restart only active hub GL>=80MB or 3x dGL>=8MB
+[2026-06-23 14:57:52] snap PSS=181.6MB GL=3.7MB views=12 dPSS= dGL= 
+[2026-06-23 15:07:57] ALERT GL +126.6MB active hub views=286
+[2026-06-23 15:07:57] snap PSS=539.9MB GL=160.9MB views=286 dPSS=177.2 dGL=126.6 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-06-23 15:18:02] snap PSS=489.5MB GL=124.9MB views=280 dPSS=-26.8 dGL=-29.4 GL_RECOVERED idle_ok
+[2026-06-23 15:28:06] snap PSS=533.8MB GL=156.5MB views=286 dPSS=-45.4 dGL=-3.8 
+[2026-06-23 15:38:10] snap PSS=527.7MB GL=156.5MB views=286 dPSS=-6.1 dGL=0 
+[2026-06-23 15:48:15] snap PSS=520.4MB GL=154.5MB views=286 dPSS=-7.3 dGL=-2 
+[2026-06-23 15:58:20] snap PSS=521.4MB GL=156.7MB views=304 dPSS=1 dGL=2.2 
+[2026-06-23 16:08:24] snap PSS=514.3MB GL=154.7MB views=286 dPSS=-7.1 dGL=-2 
+[2026-06-23 16:18:28] snap PSS=511.5MB GL=156.7MB views=286 dPSS=-2.8 dGL=2 
+[2026-06-23 16:28:33] snap PSS=482.8MB GL=154.7MB views=286 dPSS=-28.7 dGL=-2 
+[2026-06-23 16:38:38] snap PSS=475MB GL=154.7MB views=286 dPSS=-7.8 dGL=0 
+[2026-06-23 16:48:43] snap PSS=493.3MB GL=156.4MB views=285 dPSS=2.7 dGL=0 
+[2026-06-23 16:58:48] ALERT GL +9.4MB active hub views=289
+[2026-06-23 16:58:48] snap PSS=497.8MB GL=165.8MB views=289 dPSS=4.5 dGL=9.4 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-06-23 17:08:52] ALERT GL +8MB active hub views=280
+[2026-06-23 17:08:52] snap PSS=501.9MB GL=106.5MB views=280 dPSS=-13.3 dGL=8 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-06-23 17:18:57] snap PSS=631.5MB GL=226.2MB views=289 dPSS=-41.3 dGL=4.3 
+[2026-06-23 17:29:01] snap PSS=635.2MB GL=226.2MB views=289 dPSS=1.6 dGL=0 
+[2026-06-23 17:39:07] snap PSS=632.6MB GL=224.2MB views=285 dPSS=-3.8 dGL=0 
+[2026-06-23 17:49:11] snap PSS=633.3MB GL=226.2MB views=285 dPSS=0.7 dGL=2 
+[2026-06-23 17:59:17] snap PSS=628MB GL=224.6MB views=285 dPSS=-5.3 dGL=-1.6 
+[2026-06-23 18:09:21] snap PSS=634.1MB GL=224.6MB views=285 dPSS=6.1 dGL=0 
+[2026-06-23 18:19:25] snap PSS=648.6MB GL=226.8MB views=306 dPSS=14.5 dGL=2.2 
+[2026-06-23 18:29:29] snap PSS=648.5MB GL=226.9MB views=310 dPSS=-0.1 dGL=0.1 
+[2026-06-23 18:39:34] snap PSS=608.3MB GL=102.6MB views=302 dPSS=-40.2 dGL=-124.3 GL_RECOVERED idle_ok
+[2026-06-23 18:49:38] snap PSS=577.7MB GL=100.2MB views=274 dPSS=-30.6 dGL=-2.4 
+[2026-06-23 18:59:43] snap PSS=586.4MB GL=100.8MB views=274 dPSS=8.7 dGL=0.6 
+[2026-06-23 19:09:48] ALERT GL +126.4MB active hub views=282
+[2026-06-23 19:09:48] ALERT GL/PSS hard-ceiling breach gl=227.2MB pss=752MB ??defer remediation to check-and-remediate
+[2026-06-23 19:09:48] snap PSS=752MB GL=227.2MB views=282 dPSS=165.6 dGL=126.4 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-06-23 19:19:54] snap PSS=717.8MB GL=227.4MB views=292 dPSS=-34.2 dGL=0.2 
+[2026-06-23 19:29:59] snap PSS=714.4MB GL=225.4MB views=292 dPSS=-3.4 dGL=-2 
+[2026-06-23 19:40:03] snap PSS=684.5MB GL=196.8MB views=292 dPSS=-29.9 dGL=-28.6 GL_RECOVERED idle_ok
+[2026-06-23 19:50:07] WARN: com.arcfire.online not running
+[2026-06-23 20:00:09] snap PSS=352.5MB GL=2.8MB views=13 dPSS= dGL= 
+[2026-06-23 20:10:15] snap PSS=531.9MB GL=10.1MB views=108 dPSS= dGL= 
+[2026-06-23 20:20:21] INFO hub activation GL 10.1->43.9MB views 108->292 (no restart)
+[2026-06-23 20:20:21] snap PSS=833.3MB GL=43.9MB views=292 dPSS=301.4 dGL=33.8 HUB_ACTIVATION gl_mount_ok
+[2026-06-23 20:30:29] ALERT GL +109.7MB active hub views=957
+[2026-06-23 20:30:29] ALERT GL/PSS hard-ceiling breach gl=153.6MB pss=1012.8MB ??defer remediation to check-and-remediate
+[2026-06-23 20:30:29] snap PSS=1012.8MB GL=153.6MB views=957 dPSS=179.5 dGL=109.7 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-06-23 20:40:36] ALERT GL +9.9MB active hub views=325
+[2026-06-23 20:40:36] ALERT GL/PSS hard-ceiling breach gl=163.5MB pss=1118MB ??defer remediation to check-and-remediate
+[2026-06-23 20:40:36] snap PSS=1118MB GL=163.5MB views=325 dPSS=105.2 dGL=9.9 GL_SPIKE suspect=hub_skia_orbit_nebula_combat

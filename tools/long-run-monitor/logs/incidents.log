@@ -1840,3 +1840,60 @@ ref=tools/long-run-monitor/logs/soak-worklet-mirror-20260621.json
 [2026-06-22 20:36:16] GL_ELEVATED mounting_or_insufficient_samples gl=152.1 pss=885.1 views=943 restart_held
 [2026-06-22 23:30:35] GL_HARD_CEILING gl=152.4 pss=1029.9 views=929
 [2026-06-22 23:30:35] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-23 12:13:08] GL_ELEVATED mounting_or_insufficient_samples gl=145.8 pss=471.2 views=284 restart_held
+[2026-06-23 12:43:14] GL_ELEVATED mounting_or_insufficient_samples gl=134.8 pss=411.3 views=281 restart_held
+[2026-06-23 13:13:18] GL_ELEVATED mounting_or_insufficient_samples gl=145.3 pss=428.3 views=293 restart_held
+[2026-06-23 13:43:24] GL_ELEVATED mounting_or_insufficient_samples gl=130.4 pss=495.8 views=937 restart_held
+[2026-06-23 14:57:43] PLAYTEST_START playtest-20260623-145743 interval=10m paused=True
+[2026-06-23 15:00:14] PLAYTEST_MILESTONE moved_to_new_eden
+[2026-06-23 15:01:03] PLAYTEST_MILESTONE mining_in_progress_new_eden
+[2026-06-23 15:07:59] GL_ELEVATED mounting_or_insufficient_samples gl=160.9 pss=539.9 views=286 restart_held
+[2026-06-23 15:08:19] PLAYTEST_MILESTONE arcadia_land_scan_mining
+[2026-06-23 15:18:04] GL_ELEVATED mounting_or_insufficient_samples gl=124.9 pss=489.5 views=280 restart_held
+[2026-06-23 15:18:21] PLAYTEST_MILESTONE arcadia_trade_satellite_l1_remining
+[2026-06-23 15:20:28] PLAYTEST_MILESTONE depart_solar_port_transit_new_eden_scan_mining
+[2026-06-23 15:28:08] GL_ELEVATED mounting_or_insufficient_samples gl=156.5 pss=533.8 views=286 restart_held
+[2026-06-23 15:38:12] GL_ELEVATED mounting_or_insufficient_samples gl=156.5 pss=527.7 views=286 restart_held
+[2026-06-23 15:48:17] GL_ELEVATED mounting_or_insufficient_samples gl=154.5 pss=520.4 views=286 restart_held
+[2026-06-23 15:58:22] GL_ELEVATED mounting_or_insufficient_samples gl=156.7 pss=521.4 views=304 restart_held
+[2026-06-23 16:08:26] GL_ELEVATED mounting_or_insufficient_samples gl=154.7 pss=514.3 views=286 restart_held
+[2026-06-23 16:18:30] GL_ELEVATED mounting_or_insufficient_samples gl=156.7 pss=511.5 views=286 restart_held
+[2026-06-23 16:28:35] GL_ELEVATED mounting_or_insufficient_samples gl=154.7 pss=482.8 views=286 restart_held
+[2026-06-23 16:38:40] GL_ELEVATED mounting_or_insufficient_samples gl=154.7 pss=475 views=286 restart_held
+[2026-06-23 16:45:46] PLAYTEST_MILESTONE new_eden_depart_solar_transit_arcadia_land
+[2026-06-23 16:48:27] PLAYTEST_MILESTONE arcadia_scan_mining
+[2026-06-23 16:48:45] GL_ELEVATED mounting_or_insufficient_samples gl=156.4 pss=493.3 views=285 restart_held
+[2026-06-23 16:58:49] GL_ELEVATED mounting_or_insufficient_samples gl=165.8 pss=497.8 views=289 restart_held
+[2026-06-23 17:05:46] PLAYTEST_MILESTONE vega_outpost_mission_dialog_wave_combat_start
+[2026-06-23 17:08:54] GL_ELEVATED mounting_or_insufficient_samples gl=106.5 pss=501.9 views=280 restart_held
+[2026-06-23 17:16:41] PLAYTEST_MILESTONE vega_wave_transit_flee_x2_arcadia_land
+[2026-06-23 17:18:59] GL_HARD_CEILING gl=226.2 pss=631.5 views=289
+[2026-06-23 17:18:59] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-23 17:19:13] PLAYTEST_MILESTONE arcadia_mining_after_combat_chain
+[2026-06-23 17:29:04] GL_HARD_CEILING gl=226.2 pss=635.2 views=289
+[2026-06-23 17:29:04] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-23 17:37:49] PLAYTEST_MILESTONE 1h_soak_repeat_play_start
+[2026-06-23 17:38:55] SOAK_1H_START repeat_play_after_combat-20260623-173855 duration=60m interval=5m
+[2026-06-23 17:39:09] GL_HARD_CEILING gl=224.2 pss=632.6 views=285
+[2026-06-23 17:39:09] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-23 17:49:13] GL_HARD_CEILING gl=226.2 pss=633.3 views=285
+[2026-06-23 17:49:13] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-23 17:59:18] GL_HARD_CEILING gl=224.6 pss=628 views=285
+[2026-06-23 17:59:18] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-23 18:09:23] GL_HARD_CEILING gl=224.6 pss=634.1 views=285
+[2026-06-23 18:09:23] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-23 18:19:27] GL_HARD_CEILING gl=226.8 pss=648.6 views=306
+[2026-06-23 18:19:27] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-23 18:39:06] SOAK_1H_END repeat_play_after_combat-20260623-173855 pid_changes=0 crashes=0 peak_gl=226.6 peak_pss=703
+[2026-06-23 18:39:36] GL_ELEVATED mounting_or_insufficient_samples gl=102.6 pss=608.3 views=302 restart_held
+[2026-06-23 19:40:05] GL_ELEVATED mounting_or_insufficient_samples gl=196.8 pss=684.5 views=292 restart_held
+[2026-06-23 20:41:16] PLAYTEST_START playtest-20260623-204116 interval=10m paused=True
+[2026-06-23 20:41:34] PLAYTEST_MILESTONE precision_monitor_transit_postflow_start
+[2026-06-23 20:43:23] PLAYTEST_START playtest-20260623-204323 interval=10m paused=True
+[2026-06-23 20:45:28] INVESTIGATION_TRIGGERED arcfire_crash_playtest
+[2026-06-23 20:53:50] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-23 21:23:48] GL_ELEVATED mounting_or_insufficient_samples gl=145.5 pss=775.6 views=939 restart_held
+[2026-06-23 21:38:17] PLAYTEST_MILESTONE arcadia_idle_2h_soak_start
+[2026-06-23 21:40:57] PLAYTEST_MILESTONE arcadia_idle_codefix_applied
+[2026-06-23 22:46:41] INVESTIGATION_TRIGGERED arcfire_crash_playtest
+[2026-06-23 23:55:16] GL_ELEVATED mounting_or_insufficient_samples gl=80.4 pss=787.6 views=317 restart_held

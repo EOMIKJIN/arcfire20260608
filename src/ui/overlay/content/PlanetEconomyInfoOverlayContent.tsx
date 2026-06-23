@@ -12,6 +12,7 @@ import { formatCredits } from '../../../utils/formatCredits';
 import { useT } from '../../../i18n';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
+import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
 import { PlanetInfoPortraitSlot } from './PlanetInfoPortraitSlot';
 import {
   HeavyUiOverlayShell,
@@ -24,16 +25,6 @@ type Props = {
   entry: ArcOverlayPlanetEconomyInfoEntry;
   onClose: () => void;
 };
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  const PH = OVERLAY_TOKENS.phosphorAccent;
-  return (
-    <View style={styles.row}>
-      <Text style={[styles.rowLabel, { color: PH }]}>{label}</Text>
-      <Text style={[styles.rowValue, { color: PH }]}>{value}</Text>
-    </View>
-  );
-}
 
 export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOverlayContent({
   entry,
@@ -67,7 +58,7 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
       {session.data ? (
         <View style={styles.pgpBanner}>
           <Text style={[styles.pgpLabel, { color: PH }]}>{t('econInfo.pgpTotal')}</Text>
-          <Text style={[styles.pgpValue, { color: PH }]}>{formatPlanetPgpBmu(session.data.pgpBmu)}</Text>
+          <Text style={styles.pgpValue}>{formatPlanetPgpBmu(session.data.pgpBmu)}</Text>
         </View>
       ) : null}
     </>
@@ -98,24 +89,24 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
       {snapshot ? (
         <>
           <Text style={[styles.section, { color: PH }]}>{t('econInfo.upkeep', { pct: snapshot.populationPct })}</Text>
-          <InfoRow label={t('econInfo.daily')} value={formatCredits(snapshot.upkeepDailyCredits, { suffix: true })} />
-          <InfoRow label={t('econInfo.monthlyEst')} value={formatCredits(snapshot.upkeepMonthlyCredits, { suffix: true })} />
+          <ArcOverlayInfoRow label={t('econInfo.daily')} value={formatCredits(snapshot.upkeepDailyCredits, { suffix: true })} />
+          <ArcOverlayInfoRow label={t('econInfo.monthlyEst')} value={formatCredits(snapshot.upkeepMonthlyCredits, { suffix: true })} />
           <Text style={[styles.section, { color: PH }]}>{t('econInfo.tradeFee')}</Text>
-          <InfoRow label={t('econInfo.factionShareToday')} value={formatCredits(snapshot.tradeFeeTodayCredits, { suffix: true })} />
-          <InfoRow label={t('econInfo.convoyFeeToday')} value={formatCredits(snapshot.convoyTradeFeeTodayCredits, { suffix: true })} />
-          <InfoRow label={t('econInfo.playerFeeToday')} value={formatCredits(snapshot.playerTradeFeeTodayCredits, { suffix: true })} />
-          <InfoRow label={t('econInfo.monthlyEst')} value={formatCredits(snapshot.tradeFeeMonthlyEstCredits, { suffix: true })} />
+          <ArcOverlayInfoRow label={t('econInfo.factionShareToday')} value={formatCredits(snapshot.tradeFeeTodayCredits, { suffix: true })} />
+          <ArcOverlayInfoRow label={t('econInfo.convoyFeeToday')} value={formatCredits(snapshot.convoyTradeFeeTodayCredits, { suffix: true })} />
+          <ArcOverlayInfoRow label={t('econInfo.playerFeeToday')} value={formatCredits(snapshot.playerTradeFeeTodayCredits, { suffix: true })} />
+          <ArcOverlayInfoRow label={t('econInfo.monthlyEst')} value={formatCredits(snapshot.tradeFeeMonthlyEstCredits, { suffix: true })} />
           <Text style={[styles.section, { color: PH }]}>{t('econInfo.coreMetrics')}</Text>
-          <InfoRow label={t('econInfo.resource')} value={`${snapshot.resourcePct}%`} />
-          <InfoRow label={t('econInfo.population')} value={`${snapshot.populationStatPct}%`} />
-          <InfoRow label={t('econInfo.defense')} value={`${snapshot.defensePct}%`} />
-          <InfoRow label={t('econInfo.technology')} value={`${snapshot.technologyPct}%`} />
-          <InfoRow label={t('econInfo.environment')} value={`${snapshot.environmentPct}%`} />
+          <ArcOverlayInfoRow label={t('econInfo.resource')} value={`${snapshot.resourcePct}%`} />
+          <ArcOverlayInfoRow label={t('econInfo.population')} value={`${snapshot.populationStatPct}%`} />
+          <ArcOverlayInfoRow label={t('econInfo.defense')} value={`${snapshot.defensePct}%`} />
+          <ArcOverlayInfoRow label={t('econInfo.technology')} value={`${snapshot.technologyPct}%`} />
+          <ArcOverlayInfoRow label={t('econInfo.environment')} value={`${snapshot.environmentPct}%`} />
           <Text style={[styles.section, { color: PH }]}>{t('econInfo.tradeOccupy')}</Text>
-          <InfoRow label={t('econInfo.convoyMonopoly')} value={snapshot.convoyMonopolyLabel} />
-          <InfoRow label={t('econInfo.occupierFaction')} value={snapshot.occupierFactionLabel} />
+          <ArcOverlayInfoRow label={t('econInfo.convoyMonopoly')} value={snapshot.convoyMonopolyLabel} />
+          <ArcOverlayInfoRow label={t('econInfo.occupierFaction')} value={snapshot.occupierFactionLabel} />
           {snapshot.factionVaultLabel != null ? (
-            <InfoRow
+            <ArcOverlayInfoRow
               label={snapshot.factionVaultLabel}
               value={
                 snapshot.factionVaultBalanceCredits != null
@@ -126,7 +117,7 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
           ) : null}
           <Text style={[styles.section, { color: PH }]}>{t('econInfo.others')}</Text>
           {snapshot.extras.map((row) => (
-            <InfoRow key={row.label} label={row.label} value={row.value} />
+            <ArcOverlayInfoRow key={row.label} label={row.label} value={row.value} />
           ))}
         </>
       ) : null}
@@ -160,6 +151,7 @@ const styles = StyleSheet.create({
     fontWeight: FONTS.weight.bold,
     textAlign: 'right',
     flexShrink: 1,
+    color: OVERLAY_TOKENS.valueContentColor,
   },
   section: {
     marginTop: SPACING.sm,
@@ -168,26 +160,5 @@ const styles = StyleSheet.create({
     fontSize: FONTS.size.sm,
     fontWeight: FONTS.weight.bold,
     letterSpacing: 0.5,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    gap: SPACING.sm,
-    paddingVertical: 3,
-  },
-  rowLabel: {
-    flex: 1,
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    lineHeight: 18,
-  },
-  rowValue: {
-    flex: 1,
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    fontWeight: FONTS.weight.bold,
-    textAlign: 'right',
-    lineHeight: 18,
   },
 });

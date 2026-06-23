@@ -1,0 +1,73 @@
+---
+description: 크래시·SIGSEGV·worklet 수정 — logcat 근거 + 이전 패치 전수검사 + 구조 검증 후에만 코드 (반쪽 패치 금지)
+alwaysApply: true
+---
+
+# 크래시 수정 — 구조 검증 게이트 (코드 전 필수)
+
+> **arcfire-bug-debug-workflow** = logcat·재현. **본 규칙** = 수정 **설계**가 근본 원인·프로젝트 계약과 맞는지 **코드 diff 전**에 검증.  
+> 동일 스택(`executeSync`·`ShareableWorklet`·`librnskia`·SIGSEGV) 반복 = **반쪽 패치** 신호.
+
+## 0. 적용 트리거
+
+다음이면 **코드·패치 금지** — 아래 1~4단계 완료 전까지:
+
+- logcat/tombstone `FATAL`·`SIGSEGV`·`WorkletRuntime::executeSync`·`ShareableWorklet`
+- Reanimated `SharedValue`·`runOnUI`·`runOnJS`·Skia `dispose`·STAGE 전환 크래시
+- 사용자 「재시작」「튕김」 + `tools/long-run-monitor/logs/crash-*.log`·`incidents.log` 매칭
+
+## 1. 이전 작업·분석 전수검사 (필수)
+
+패치 전 **같은 파일·같은 스택·같은 계약**을 전부 읽는다:
+
+| 검사 | 경로 |
+|------|------|
+| 동일 스택 logcat | `tools/long-run-monitor/logs/crash-*.log` · `incidents.log` |
+| 해당 파일 git/주석 | `grep` `executeSync`·`runOnUI`·`SIGSEGV`·`worklet` |
+| 프로젝트 계약 | `planetHubWorkletContract.ts` · `arcfire-skia-memory-lifecycle.mdc` |
+| 기존 정적 감사 | `npm run audit:worklet-contract` · `audit:skia-memory` 리포트 |
+| 직전 대화/핸드오프 | agent-transcripts · `cursor-incident-handoff.md` |
+
+**산출(코드 전 3줄):**
+
+1. **근본 원인** (logcat 1줄 인용)
+2. **이전에 시도된 수정** + 왜 반쪽이었는지
+3. **이번 수정이 막는 메커니즘** (증상 우회 아님)
+
+## 2. 반쪽 패치 금지 (즉시 기각)
+
+| 금지 | 예 (worldmap 2026-06-23) |
+|------|--------------------------|
+| A만 막고 B API로 우회 | JS `.value` 읽기 금지 → `runOnUI(useCallback)` (worklet 아님 → 동일 SIGSEGV) |
+| 스택 한 줄만 수정 | `useEffect` 한 곳만 고치고 `runOnUI` 호출 형태 미검증 |
+| 감사 PASS = 완료 | `audit:worklet-contract`가 `runOnUI(식별자)` 미검출 시대 → false negative |
+| 계약 무시 | `planetHubWorkletContract` 「runOnUI(식별자) 금지」 위반 |
+
+## 3. 수정 설계 — Reanimated/worklet 체크리스트 (코드 전 ALL PASS)
+
+- [ ] JS 스레드: `SharedValue.value` **읽기** 없음 → 필요 시 `orbitClockMsBridge` **JS 미러**
+- [ ] `runOnUI`: **inline** `() => { 'worklet'; … }` 또는 모듈 `'worklet'` 함수만 — **`useCallback` 래퍼 금지**
+- [ ] `useAnimatedReaction` deps: JS 콜백·props 재생성 없음
+- [ ] Skia: 루프 내 `Make()`/`Paint()`·`.map()` Path·`useImage` 수동 dispose 없음
+- [ ] STAGE: `replace()`·sim dispose·`postStepRef` null 순서 유지
+
+**우회 API 교체 시:** 「A 금지 → B 사용」이면 B가 계약·감사·스택에 안전한지 **별도 한 줄** 근거.
+
+## 4. 코드 작업 후 게이트
+
+```bash
+npx tsc --noEmit -p tsconfig.client.json
+npm run audit:worklet-contract   # app/** · Reanimated 변경 시
+npm run audit:skia-memory        # Skia/Reanimated 고프레임 변경 시
+```
+
+**릴리즈 재현 경로 1줄 기록** (예: `신규→행성→출발→worldmap`). dev만 통과 = 완료 선언 금지.
+
+## 5. 완료 선언 형식
+
+```text
+[crash-fix-gate] root=<logcat 1줄> prior=<이전 반쪽 패치> mechanism=<근본 메커니즘>
+contract=OK audit:worklet-contract=PASS tsc=PASS repro=<경로>
+```
+
+하나라도 비면 **완료·머지·「수정됨」 선언 금지**.

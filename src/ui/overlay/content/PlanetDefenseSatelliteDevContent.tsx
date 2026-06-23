@@ -19,19 +19,10 @@ import { showArcAlert } from '../../../utils/showArcAlert';
 import { useT } from '../../../i18n';
 import { OVERLAY_TOKENS } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
+import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
 import { ArcOverlayCard } from '../ArcOverlayCard';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  const PH = OVERLAY_TOKENS.phosphorAccent;
-  return (
-    <View style={styles.row}>
-      <Text style={[styles.rowLabel, { color: PH }]}>{label}</Text>
-      <Text style={[styles.rowValue, { color: PH }]}>{value}</Text>
-    </View>
-  );
-}
 
 export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatelliteDevContent({
   planetId,
@@ -180,7 +171,7 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
       footer={footer}
     >
         <Text style={[styles.section, { color: PH }]}>{t('defenseSat.status')}</Text>
-        <InfoRow
+        <ArcOverlayInfoRow
           label={t('defenseSat.stateLabel')}
           value={
             snapshot.installed
@@ -190,17 +181,17 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
         />
         {currentRow ? (
           <>
-            <InfoRow label={t('defenseSat.hp')} value={`${currentRow.hpMax}`} />
-            <InfoRow label={t('defenseSat.defenseZone')} value={`${currentRow.defenseZoneDiameterPx}px`} />
-            <InfoRow label={t('defenseSat.hitRate')} value={`${currentRow.interceptHitPct}%`} />
-            <InfoRow label={t('defenseSat.interceptDwell')} value={t('defenseSat.interceptDwellValue', { sec: currentRow.interceptDwellSec })} />
+            <ArcOverlayInfoRow label={t('defenseSat.hp')} value={`${currentRow.hpMax}`} />
+            <ArcOverlayInfoRow label={t('defenseSat.defenseZone')} value={`${currentRow.defenseZoneDiameterPx}px`} />
+            <ArcOverlayInfoRow label={t('defenseSat.hitRate')} value={`${currentRow.interceptHitPct}%`} />
+            <ArcOverlayInfoRow label={t('defenseSat.interceptDwell')} value={t('defenseSat.interceptDwellValue', { sec: currentRow.interceptDwellSec })} />
           </>
         ) : null}
 
         {snapshot.isInstalling ? (
           <View style={styles.gaugeBlock}>
             <Text style={[styles.section, { color: PH }]}>{t('planetDev.installProgress')}</Text>
-            <Text style={[styles.hint, { color: PH }]}>
+            <Text style={[styles.hint, { color: OVERLAY_TOKENS.valueContentColor }]}>
               {snapshot.installDurationSec != null
                 ? formatDefenseSatelliteDurationLabel(snapshot.installDurationSec)
                 : '—'}
@@ -215,7 +206,7 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
         {snapshot.isUpgrading ? (
           <View style={styles.gaugeBlock}>
             <Text style={[styles.section, { color: PH }]}>{t('defenseSat.upgradeProgress')}</Text>
-            <Text style={[styles.hint, { color: PH }]}>
+            <Text style={[styles.hint, { color: OVERLAY_TOKENS.valueContentColor }]}>
               Lv.{snapshot.level} → Lv.{snapshot.upgradeJob?.targetLevel ?? '?'}
             </Text>
             <PlanetHubDigitalGauge
@@ -239,7 +230,7 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
               {row.grantsSecondSatellite ? t('defenseSat.twoSats') : ''}
               {row.level === snapshot.level ? ' ◀' : ''}
             </Text>
-            <Text style={[styles.levelRowMeta, { color: PH }]}>
+            <Text style={styles.levelRowMeta}>
               {t('defenseSat.levelMeta', { hp: row.hpMax, zone: row.defenseZoneDiameterPx, hit: row.interceptHitPct, dwell: row.interceptDwellSec })}
             </Text>
           </View>

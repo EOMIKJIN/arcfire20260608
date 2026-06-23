@@ -56,6 +56,14 @@ import {
 } from '../game/playerInventory';
 import { SHIPYARD_EQUIP_SLOT_DEFS } from '../game/shipyardEquipSlots';
 import {
+  applyPostCombatDurabilityPass,
+  backfillEquipSlotInventoryIndices,
+  DURABILITY_DEFAULT_PCT,
+  repairActiveShipHull,
+  resolveDurabilityPct,
+  resolvePlayerShipDurabilityPct,
+} from '../game/durability';
+import {
   getMineralUpgradeOreCost,
   getFinalMineralUpgradeCap,
   isMineralUpgradeStatId,
@@ -210,6 +218,7 @@ function normalizeLoadedPlayerShip(ship: PlayerShip | undefined, templateIdFallb
   const legacyCargoCapacity = (ship as PlayerShip & { cargoCapacity?: unknown }).cargoCapacity;
   const normalized: PlayerShip = {
     ...ship,
+    durabilityPct: resolvePlayerShipDurabilityPct(ship),
     equipCapacity:
       typeof ship.equipCapacity === 'number' && Number.isFinite(ship.equipCapacity)
         ? Math.max(0, Math.floor(ship.equipCapacity))
@@ -241,6 +250,9 @@ function normalizeShipHangar(raw: unknown): PlayerHangarShip[] {
         id: o.id,
         npcCapitalShipId: o.npcCapitalShipId,
         acquiredAt: o.acquiredAt,
+        durabilityPct: resolveDurabilityPct(
+          typeof o.durabilityPct === 'number' ? o.durabilityPct : undefined,
+        ),
       });
     }
   }
@@ -360,6 +372,7 @@ function shipFromTemplate(templateId: string): PlayerShip {
     templateId,
     portraitNpcCapitalShipId: t.portraitNpcCapitalShipId,
     name: t.name,
+    durabilityPct: DURABILITY_DEFAULT_PCT,
     hp: t.maxHp,
     maxHp: t.maxHp,
     shield: t.maxShield,
@@ -413,10 +426,11 @@ function ensurePlayerHasDefaultShip(player: Player): Player {
     grantSurvivalPodShipToInventory(normalizedInventory),
     normalizedShip,
   );
+  const shipWithIndices = backfillEquipSlotInventoryIndices(normalizedShip, normalizedInventory);
   return {
     ...player,
     shipId: safeShipId,
-    ship: normalizedShip,
+    ship: shipWithIndices,
     shipHangar: normalizedHangar,
     inventorySlots: normalizedInventory,
     gems:
@@ -452,6 +466,10 @@ interface PlayerState {
   updateShip: (ship: PlayerShip) => void;
   /** 전함 격침 — 생존포드 탑승·거점 귀환·격납고에서 파괴함 제거 */
   applyCapitalShipDestruction: () => Promise<void>;
+  /** 전투 종료 1회 — 장착품·선체 내구도 마모 */
+  applyPostCombatDurabilityWear: (combatSeed?: number) => Promise<string[]>;
+  /** 조선소 선체 수리 — 내구도 100% 복구 */
+  repairActiveShipHull: () => Promise<{ ok: boolean; reason?: string }>;
   /** 무역소 전함 인도분을 격납고에 추가 */
   addHangarShipFromNpcPurchase: (npcCapitalShipId: string) => boolean;
   /** 무역소 전함 아이템 판매 시 격납고 1척 회수 */
@@ -503,11 +521,13 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
           id: `hg_boot_${now.toString(36)}`,
           npcCapitalShipId: defaultNpcCapitalShipId,
           acquiredAt: now,
+          durabilityPct: DURABILITY_DEFAULT_PCT,
         },
         {
           id: `hg_survival_${now.toString(36)}`,
           npcCapitalShipId: SURVIVAL_POD_NPC_SHIP_ID,
           acquiredAt: now,
+          durabilityPct: DURABILITY_DEFAULT_PCT,
         },
       ],
       // 기본 액티브 스킬(테스트): 신규 파일럿은 이중 사격을 기본 보유
@@ -662,6 +682,32 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     await get().persist();
   },
 
+  applyPostCombatDurabilityWear: async (combatSeed) => {
+    const { player } = get();
+    if (!player) return [];
+    const result = applyPostCombatDurabilityPass(player, combatSeed ?? Date.now());
+    set({ player: ensurePlayerHasDefaultShip(result.player) });
+    await get().persist();
+    return result.destroyedItemLabels;
+  },
+
+  repairActiveShipHull: async () => {
+    const { player } = get();
+    if (!player) return { ok: false, reason: 'no_player' };
+    const repaired = repairActiveShipHull(player);
+    if (!repaired) {
+      const pct = resolvePlayerShipDurabilityPct(player.ship);
+      if (pct >= DURABILITY_DEFAULT_PCT) return { ok: false, reason: 'not_needed' };
+      if (isSurvivalPodNpcShipId(player.ship.portraitNpcCapitalShipId)) {
+        return { ok: false, reason: 'survival_pod' };
+      }
+      return { ok: false, reason: 'insufficient_credits' };
+    }
+    set({ player: ensurePlayerHasDefaultShip(repaired) });
+    await get().persist();
+    return { ok: true };
+  },
+
   addHangarShipFromNpcPurchase: (npcCapitalShipId) => {
     const { player } = get();
     if (!player || !npcCapitalShipId) return false;
@@ -673,6 +719,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       id,
       npcCapitalShipId,
       acquiredAt: Date.now(),
+      durabilityPct: DURABILITY_DEFAULT_PCT,
     };
     set({
       player: {

@@ -3,7 +3,7 @@
 // 모든 주요 스테이지 루트에서 진입(onMount)·이탈(onUnmount) 정리 쌍을 강제한다.
 // ============================================================
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { logStageMemoryRelease } from '../game/stageMemoryRelease';
 
 /**
@@ -16,8 +16,11 @@ export function useStageMemory(
 ): void {
   const onMountRef = useRef(onMount);
   const onUnmountRef = useRef(onUnmount);
-  onMountRef.current = onMount;
-  onUnmountRef.current = onUnmount;
+  // 렌더 중 ref.current 할당 — Freeze/Hermes read-only TypeError (worldmap·planet 전환)
+  useLayoutEffect(() => {
+    onMountRef.current = onMount;
+    onUnmountRef.current = onUnmount;
+  }, [onMount, onUnmount]);
 
   useEffect(() => {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {

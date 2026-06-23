@@ -55,6 +55,7 @@ alwaysApply: true
 
 ### Rapid Trouble-shooter (@Sonnet)
 - **`.cursor/rules/arcfire-bug-debug-workflow.mdc`** — logcat → 재현 → 로그 근거 수정.
+- **`.cursor/rules/arcfire-crash-fix-structural-gate.mdc`** — **코드 전** 이전 수정 전수검사·수정 설계 검증 (반쪽 패치 금지).
 - 원인 1개 + CLI/최소 패치 · Skia/OOM → `arcfire-skia-memory-lifecycle.mdc` + `audit:skia-memory`.
 
 ## 2. Task 서브에이전트 자동 위임 (명령 없이)
@@ -78,7 +79,7 @@ alwaysApply: true
 
 - **Skia·Reanimated·고프레임 Canvas (2026-06-14~ 필수)**: `.cursor/rules/arcfire-skia-memory-lifecycle.mdc` 100% 준수. 작업 **완료 전** `npm run audit:skia-memory` PASS + `tsc` + GL mtrack 안내(미충족 시 완료 선언 금지).
 - 스테이지/PR → `npm run audit:memory:all` + tsc
-- 런타임 크래시·OOM → `arcfire-bug-debug-workflow` · logcat 필수 · Skia는 위 헌법 병행
+- 런타임 크래시·OOM → `arcfire-bug-debug-workflow` · **구조 게이트** `arcfire-crash-fix-structural-gate` · logcat 필수 · Skia는 위 헌법 병행
 - UI 문구 한국어 · 권장 **1안만** 제시
 
 ## 4. 금지

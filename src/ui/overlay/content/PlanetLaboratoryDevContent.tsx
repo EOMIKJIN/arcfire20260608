@@ -1,7 +1,5 @@
 import React, { memo } from 'react';
-import { Text, View } from 'react-native';
-import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';
-import { readPlanetCoreStatRdSnapshot } from '../../../game/planetDevelopment/planetCoreStatRdRuntime';
+import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';import { readPlanetCoreStatRdSnapshot } from '../../../game/planetDevelopment/planetCoreStatRdRuntime';
 import {
   PLANET_DEV_MODULE_RESEARCH_LAB,
   buildLaboratoryDevSnapshot,
@@ -18,10 +16,8 @@ import {
   tryCompleteLaboratoryUpgrade,
 } from '../../../game/planetDevelopment/planetLaboratoryDevelopment';
 import { useT } from '../../../i18n';
-import { OVERLAY_TOKENS } from '../../../utils/theme';
-import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
+import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
 import { PlanetGenericFacilityDevContent } from './PlanetGenericFacilityDevContent';
-
 const api = {
   buildSnapshot: buildLaboratoryDevSnapshot,
   tryCompleteUpgrade: tryCompleteLaboratoryUpgrade,
@@ -33,16 +29,6 @@ const api = {
   getLevelRow: getLaboratoryLevelStatRow,
   listLevelRows: listFacilityLaboratoryLevelRows,
 };
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  const PH = OVERLAY_TOKENS.phosphorAccent;
-  return (
-    <View style={styles.row}>
-      <Text style={[styles.rowLabel, { color: PH }]}>{label}</Text>
-      <Text style={[styles.rowValue, { color: PH }]}>{value}</Text>
-    </View>
-  );
-}
 
 export const PlanetLaboratoryDevContent = memo(function PlanetLaboratoryDevContent(props: PlanetDevelopmentModuleContext) {
   const t = useT();
@@ -57,12 +43,12 @@ export const PlanetLaboratoryDevContent = memo(function PlanetLaboratoryDevConte
         if (!snapshot.installed) return null;
         return (
           <>
-            <InfoRow
+            <ArcOverlayInfoRow
               label={t('researchLabDev.rdSpeedLabel')}
               value={t('researchLabDev.rdSpeedValue', { pct: resolveLaboratoryRdSpeedReductionPct(snapshot.level) })}
             />
             {rdSnapshot.nextTechnologyRdHours != null ? (
-              <InfoRow
+              <ArcOverlayInfoRow
                 label={t('researchLabDev.coreStatRdLabel')}
                 value={t('researchLabDev.coreStatRdValue', {
                   stage: rdSnapshot.technologyStage,
@@ -70,11 +56,11 @@ export const PlanetLaboratoryDevContent = memo(function PlanetLaboratoryDevConte
                 })}
               />
             ) : null}
-            <InfoRow
+            <ArcOverlayInfoRow
               label={t('researchLabDev.equipmentTierLabel')}
               value={resolveLaboratoryEquipmentTierUnlock(snapshot.level) || '—'}
             />
-            <InfoRow
+            <ArcOverlayInfoRow
               label={t('researchLabDev.envRegenLabel')}
               value={t('researchLabDev.envRegenValue', { pct: resolveLaboratoryEnvRegenPctDaily(snapshot.level) })}
             />

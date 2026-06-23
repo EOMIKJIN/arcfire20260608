@@ -24,6 +24,7 @@ alwaysApply: true
 
 - v4.0 · Skia P0 · STAGE · Table-First **총괄**
 - UI·Skia·크래시·arcCore·**경제·밸런스 코드** **1차·최종 구현**
+- **크래시·SIGSEGV·worklet**: `arcfire-crash-fix-structural-gate.mdc` — **이전 패치·동일 스택 logcat 전수검사 → 구조 검증 PASS 후에만 코드** (반쪽 패치·우회 API 교체 금지)
 - **김경제 업무 배정** — 모니터 가동·`audit:balance-ops` 점검·incident handoff 검토 후 **본 세션에서 코드 조치**
 - 김경제 관측 리포트 검토 — `tools/kim-team-lead/reports/kim-economy-handoff.md` · incident handoff
 

@@ -12,7 +12,6 @@ type Props = {
 };
 
 export const AlertOverlayContent = memo(function AlertOverlayContent({ entry, onButton }: Props) {
-  const PH = OVERLAY_TOKENS.phosphorAccent;
   const hasCancel = entry.buttons.some((b) => b.style === 'cancel');
   const isAckOnly = entry.buttons.length === 1 || !hasCancel;
   const btnRowStyle = isAckOnly ? phosphorOverlay.btnRowAckOnly : phosphorOverlay.btnRowCancelConfirm;
@@ -20,7 +19,7 @@ export const AlertOverlayContent = memo(function AlertOverlayContent({ entry, on
   return (
     <ArcOverlayCard title={entry.title} layout="compact">
       {entry.message.length > 0 ? (
-        <Text style={[styles.body, { color: PH }]}>{entry.message}</Text>
+        <Text style={[styles.body, { color: OVERLAY_TOKENS.valueContentColor }]}>{entry.message}</Text>
       ) : null}
       <View style={btnRowStyle}>
         {entry.buttons.map((b, i) => {

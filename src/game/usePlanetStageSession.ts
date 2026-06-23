@@ -20,6 +20,7 @@
 // ============================================================
 
 import { useCallback, useEffect, useMemo } from 'react';
+import { InteractionManager } from 'react-native';
 import {
   usePlanetStageLifecycleStore,
   selectPlanetStageLifecycle,
@@ -49,19 +50,31 @@ export function usePlanetStageSession(): PlanetStageSession {
     return () => clearTimeout(t);
   }, [lifecycle, markFrozen]);
 
-  /** frozen → navigate — 1 macrotask 더 대기 후 router.push 류 콜백 실행. */
+  /**
+   * frozen → navigate — InteractionManager + 2×rAF 로 planet Skia/GPU teardown 완료 후 worldmap mount.
+   * setTimeout(0) 만으로는 views 900+ 겹침·native floor 계단이 재현됨.
+   */
   useEffect(() => {
     if (lifecycle !== 'frozen') return;
-    const t = setTimeout(() => {
-      const cb = consumePendingNavigation();
-      if (!cb) return;
-      try {
-        cb();
-      } catch {
-        /* navigate 실패는 흡수 — lifecycle 안전망 timeout 이 active 로 복귀시킨다. */
-      }
-    }, 0);
-    return () => clearTimeout(t);
+    let cancelled = false;
+    const task = InteractionManager.runAfterInteractions(() => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (cancelled) return;
+          const cb = consumePendingNavigation();
+          if (!cb) return;
+          try {
+            cb();
+          } catch {
+            /* navigate 실패는 흡수 — lifecycle 안전망 timeout 이 active 로 복귀시킨다. */
+          }
+        });
+      });
+    });
+    return () => {
+      cancelled = true;
+      task.cancel();
+    };
   }, [lifecycle, consumePendingNavigation]);
 
   /** resuming → active — 1 macrotask 대기 후 active 정착(스냅샷 consume effect 가 먼저 돌도록). */

@@ -75,12 +75,18 @@ import {
   weaponIdFromWeaponItemId,
 } from '../../src/game/weaponItemBridge';
 import {
+  formatInventoryDurabilityMeta,
+  resolveCapitalShipRepairCost,
+  resolveDurabilityPct,
+  resolveHangarShipDurabilityPct,
+  resolvePlayerShipDurabilityPct,
+  syncCurrentShipDurabilityToHangar,
+} from '../../src/game/durability';
+import {
   isShipEquipmentItemId,
   resolveShipEquipmentSlotForItemDef,
   formatShipEquipmentListingSuffix,
 } from '../../src/game/shipEquipment';
-const REPAIR_COST_PER_HP = 5;
-const SHIELD_RECHARGE_COST = 200;
 /** 메인스테이지 기준 하단 공백과 동기 */
 const SHIPYARD_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
 function weaponIdFromSlotItemDef(itemDefId: string | null | undefined): string {
@@ -108,9 +114,10 @@ export default function ShipyardScreen() {
   const locale = useAppSettingsStore((s) => s.locale);
   const player = usePlayerStore(s => s.player);
   const updateShip = usePlayerStore(s => s.updateShip);
-  const spendCredits = usePlayerStore(s => s.spendCredits);
+  const setPlayer = usePlayerStore(s => s.setPlayer);
   const persist = usePlayerStore(s => s.persist);
-  const [tab, setTab] = useState<'status' | 'capital' | 'upgrade' | 'hangar'>('status');
+  const repairActiveShipHull = usePlayerStore(s => s.repairActiveShipHull);
+  const [tab, setTab] = useState<'status' | 'capital' | 'hangar'>('status');
   const safeBack = useSafeRouterBack();
   const stageFrameReady = useStageFirstFrameReady();
 
@@ -145,68 +152,63 @@ export default function ShipyardScreen() {
   const { ship, credits } = player;
   const inventorySlots = player.inventorySlots;
   const finalStats = shipFinal.finalStats;
-  const missingHp = finalStats.maxHp - finalStats.hp;
-  const repairCost = missingHp * REPAIR_COST_PER_HP;
-
-  const handleRepair = () => {
-    if (missingHp <= 0) {
-      showArcAlert(t('shipyard.repair.noneTitle'), t('shipyard.repair.noneBody'));
-      return;
-    }
+  const showServiceComingSoon = (labelKey: 'shipyard.repair.btn' | 'shipyard.shield.btn') => {
     showArcAlert(
-      t('shipyard.repair.confirmTitle'),
-      t('shipyard.repair.confirmBody', { hp: missingHp, cost: formatCredits(repairCost) }),
-      [
-        { text: t('shipyard.btn.cancel'), style: 'cancel' },
-        {
-          text: t('shipyard.repair.doConfirm'),
-          onPress: async () => {
-            if (!spendCredits(repairCost)) {
-              showArcAlert(t('shipyard.creditShortTitle'), t('shipyard.creditShortBody'));
-              return;
-            }
-            updateShip({ ...ship, hp: finalStats.maxHp });
-            await persist();
-            showArcAlert(t('shipyard.repair.doneTitle'), t('shipyard.repair.doneBody'));
-          },
-        },
-      ],
+      t('shipyard.service.comingSoonTitle'),
+      t('shipyard.service.comingSoonBody', { label: t(labelKey) }),
     );
   };
 
-  const handleShieldRecharge = () => {
-    if (finalStats.shield >= finalStats.maxShield) {
-      showArcAlert(t('shipyard.shield.noneTitle'), t('shipyard.shield.noneBody'));
-      return;
-    }
-    showArcAlert(
-      t('shipyard.shield.confirmTitle'),
-      t('shipyard.shield.confirmBody', { cost: formatCredits(SHIELD_RECHARGE_COST) }),
-      [
-        { text: t('shipyard.btn.cancel'), style: 'cancel' },
-        {
-          text: t('shipyard.shield.doConfirm'),
-          onPress: async () => {
-            if (!spendCredits(SHIELD_RECHARGE_COST)) {
-              showArcAlert(t('shipyard.creditShortTitle'), t('shipyard.creditShortBody'));
-              return;
-            }
-            updateShip({ ...ship, shield: finalStats.maxShield });
-            await persist();
-          },
-        },
-      ],
-    );
-  };
   const handleSelectHangarShip = async (npcCapitalShipId: string) => {
+    const syncedHangar = syncCurrentShipDurabilityToHangar(ship, player.shipHangar);
     const applied = applyNpcCapitalShipToPlayerShip(ship, npcCapitalShipId);
     if (!applied.ok) {
       showArcAlert(t('shipyard.select.failTitle'), t('shipyard.select.failBody'));
       return;
     }
-    updateShip(applied.ship);
+    const nextShip: PlayerShip = {
+      ...applied.ship,
+      durabilityPct: resolveHangarShipDurabilityPct(syncedHangar, npcCapitalShipId),
+    };
+    setPlayer({ ...player, shipHangar: syncedHangar, ship: nextShip });
     await persist();
     showArcAlert(t('shipyard.select.doneTitle'), t('shipyard.select.doneBody'));
+  };
+
+  const shipDurabilityPct = Math.round(resolvePlayerShipDurabilityPct(ship));
+  const hullRepairCost = resolveCapitalShipRepairCost(ship, normalizeInventorySlots(inventorySlots));
+  const hullRepairNeeded = shipDurabilityPct < 100 && !isSurvivalPodNpcShipId(ship.portraitNpcCapitalShipId);
+
+  const handleRepairHull = () => {
+    if (!hullRepairNeeded) {
+      showArcAlert(t('shipyard.repair.noneTitle'), t('shipyard.repair.noneBody'));
+      return;
+    }
+    if (credits < hullRepairCost) {
+      showArcAlert(t('shipyard.creditShortTitle'), t('shipyard.creditShortBody'));
+      return;
+    }
+    showArcAlert(
+      t('shipyard.repair.confirmTitle'),
+      t('shipyard.repair.confirmBody', { pct: shipDurabilityPct, cost: formatCredits(hullRepairCost) }),
+      [
+        { text: t('shipyard.btn.cancel'), style: 'cancel' },
+        {
+          text: t('shipyard.repair.doConfirm'),
+          onPress: () => {
+            void repairActiveShipHull().then((result) => {
+              if (result.ok) {
+                showArcAlert(t('shipyard.repair.doneTitle'), t('shipyard.repair.doneBody'));
+                return;
+              }
+              if (result.reason === 'insufficient_credits') {
+                showArcAlert(t('shipyard.creditShortTitle'), t('shipyard.creditShortBody'));
+              }
+            });
+          },
+        },
+      ],
+    );
   };
 
   const handleReleaseCurrentShip = async () => {
@@ -364,7 +366,8 @@ export default function ShipyardScreen() {
             />
           </>
         ) : null}
-        <StatRow label={t('shipyard.stats.durability')} value={`${finalStats.maxHp}`} />
+        <StatRow label={t('shipyard.stats.hull')} value={`${finalStats.maxHp}`} />
+        <StatRow label={t('shipyard.stats.durability')} value={`${shipDurabilityPct}%`} />
         <StatRow label={t('shipyard.stats.shield')} value={`${finalStats.maxShield}`} />
         <StatRow label={t('shipyard.stats.speed')} value={`${finalStats.speed}`} />
 
@@ -396,44 +399,55 @@ export default function ShipyardScreen() {
         tabs={[
           { id: 'status', label: t('shipyard.tab.status') },
           { id: 'capital', label: t('shipyard.tab.capital') },
-          { id: 'upgrade', label: t('shipyard.tab.upgrade') },
           { id: 'hangar', label: t('shipyard.tab.hangar') },
         ]}
         activeId={tab}
-        onSelect={(id) => setTab(id as 'status' | 'capital' | 'upgrade' | 'hangar')}
+        onSelect={(id) => setTab(id as 'status' | 'capital' | 'hangar')}
       />
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 
-        {tab === 'status' && <>{renderShipOverview(false)}</>}
         {tab === 'status' && (
-          <View style={styles.serviceBox}>
-            <Text style={styles.statsTitle}>{t('shipyard.service.title')}</Text>
+          <>
+            {renderShipOverview(false)}
+            <View style={styles.serviceBox}>
+              <Text style={styles.statsTitle}>{t('shipyard.service.title')}</Text>
 
-            <TouchableOpacity
-              style={[styles.serviceBtn, missingHp <= 0 && styles.serviceBtnDisabled]}
-              onPress={handleRepair}
-            >
-              <View style={styles.serviceBtnLeft}>
-                <Text style={styles.serviceBtnTitle}>{t('shipyard.repair.btn')}</Text>
-                <Text style={styles.serviceBtnSub}>
-                  {t('shipyard.repair.sub', { hp: missingHp, cost: formatCredits(repairCost) })}
+              <TouchableOpacity
+                style={[styles.serviceBtn, !hullRepairNeeded && styles.serviceBtnDisabled]}
+                onPress={handleRepairHull}
+                disabled={!hullRepairNeeded}
+              >
+                <View style={styles.serviceBtnLeft}>
+                  <Text style={styles.serviceBtnTitle}>{t('shipyard.repair.btn')}</Text>
+                  <Text style={styles.serviceBtnSub}>
+                    {hullRepairNeeded
+                      ? t('shipyard.repair.sub', { pct: shipDurabilityPct, cost: formatCredits(hullRepairCost) })
+                      : t('shipyard.repair.fullSub', { pct: shipDurabilityPct })}
+                  </Text>
+                </View>
+                <Text style={hullRepairNeeded ? styles.serviceBtnAction : styles.serviceBtnActionMuted}>
+                  {hullRepairNeeded ? t('shipyard.repair.action') : t('shipyard.repair.fullAction')}
                 </Text>
-              </View>
-              <Text style={styles.serviceBtnAction}>{t('shipyard.repair.action')}</Text>
-            </TouchableOpacity>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.serviceBtn, finalStats.shield >= finalStats.maxShield && styles.serviceBtnDisabled]}
-              onPress={handleShieldRecharge}
-            >
-              <View style={styles.serviceBtnLeft}>
-                <Text style={styles.serviceBtnTitle}>{t('shipyard.shield.btn')}</Text>
-                <Text style={styles.serviceBtnSub}>{formatCredits(SHIELD_RECHARGE_COST)}</Text>
-              </View>
-              <Text style={styles.serviceBtnAction}>{t('shipyard.shield.action')}</Text>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity
+                style={[styles.serviceBtn, styles.serviceBtnDisabled]}
+                onPress={() => showServiceComingSoon('shipyard.shield.btn')}
+              >
+                <View style={styles.serviceBtnLeft}>
+                  <Text style={styles.serviceBtnTitle}>{t('shipyard.shield.btn')}</Text>
+                  <Text style={styles.serviceBtnSub}>{t('shipyard.service.unimplementedSub')}</Text>
+                </View>
+                <Text style={styles.serviceBtnActionMuted}>{t('shipyard.service.unimplementedAction')}</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.serviceBox}>
+              <Text style={styles.statsTitle}>{t('shipyard.upgrade.sectionTitle')}</Text>
+              <ShipyardMineralUpgradeTab />
+            </View>
+          </>
         )}
 
         {tab === 'capital' && (
@@ -442,12 +456,6 @@ export default function ShipyardScreen() {
             <ShipyardEquipSlotsBlock ship={ship} updateShip={updateShip} persist={persist} />
             <ShipyardInventoryGrid player={player} ship={ship} updateShip={updateShip} persist={persist} />
           </>
-        )}
-
-        {tab === 'upgrade' && (
-          <View style={styles.hangarSection}>
-            <ShipyardMineralUpgradeTab />
-          </View>
         )}
 
         {tab === 'hangar' && (
@@ -473,6 +481,11 @@ export default function ShipyardScreen() {
                   : undefined;
                 const isCurrentShip = ship.portraitNpcCapitalShipId === entry.npcCapitalShipId;
                 const isSurvivalPodEntry = isSurvivalPodNpcShipId(entry.npcCapitalShipId);
+                const hullDurabilityPct = Math.round(
+                  isCurrentShip
+                    ? resolvePlayerShipDurabilityPct(ship)
+                    : resolveDurabilityPct(entry.durabilityPct),
+                );
                 return (
                   <View key={entry.id} style={styles.hangarRow}>
                     {thumbSrc ? (
@@ -493,6 +506,11 @@ export default function ShipyardScreen() {
                         <Text style={styles.hangarCurrentBadge}>{t('shipyard.hangar.badgePod')}</Text>
                       ) : null}
                       {isCurrentShip ? <Text style={styles.hangarCurrentBadge}>{t('shipyard.hangar.badgeCurrent')}</Text> : null}
+                      {!isSurvivalPodEntry ? (
+                        <Text style={styles.hangarSub} numberOfLines={1}>
+                          {t('shipyard.hangar.hullDurability', { pct: hullDurabilityPct })}
+                        </Text>
+                      ) : null}
                       <Text style={styles.hangarSub} numberOfLines={2}>
                         {t('shipyard.hangar.delivered', { date: new Date(entry.acquiredAt).toLocaleString(intlTag()) })}
                       </Text>
@@ -572,6 +590,26 @@ function StatDescRow({ label, value }: { label: string; value: string }) {
   );
 }
 
+function isInventoryCellEquipped(
+  ship: PlayerShip,
+  cellIndex: number,
+  goodId: string,
+): boolean {
+  const slotIds: ShipyardEquipSlotId[] = [
+    ...COMBAT_WEAPON_SLOT_IDS,
+    ...SHIPYARD_EQUIP_SLOT_DEFS.map((d) => d.id),
+  ];
+  for (const slotId of slotIds) {
+    const slot = ship.equipSlots?.[slotId];
+    if (!slot || slot.itemDefId !== goodId) continue;
+    if (typeof slot.sourceInventoryIndex === 'number') {
+      return slot.sourceInventoryIndex === cellIndex;
+    }
+    return true;
+  }
+  return false;
+}
+
 function ShipyardInventoryGrid({
   player,
   ship,
@@ -598,7 +636,7 @@ function ShipyardInventoryGrid({
       .map((w) => buildWeaponDataFromCapitalRow(w));
   };
 
-  const equipWeaponFromInventory = async (itemId: string) => {
+  const equipWeaponFromInventory = async (itemId: string, inventoryIndex: number) => {
     if (isSurvivalPodNpcShipId(ship.portraitNpcCapitalShipId)) {
       showArcAlert(t('shipyard.inventory.equipPodTitle'), t('shipyard.inventory.equipPodBody'));
       return;
@@ -621,6 +659,7 @@ function ShipyardInventoryGrid({
     nextSlots[slotId] = {
       itemDefId: itemId,
       name: resolveEquipSlotDisplayName(itemId, row?.name ?? weapon.name, locale),
+      sourceInventoryIndex: inventoryIndex,
     };
     const nextWeapons = rebuildWeaponsFromSlots(nextSlots);
     updateShip({ ...ship, equipSlots: nextSlots, weapons: nextWeapons });
@@ -638,7 +677,7 @@ function ShipyardInventoryGrid({
     await persist();
   };
 
-  const equipEquipmentFromInventory = async (itemId: string) => {
+  const equipEquipmentFromInventory = async (itemId: string, inventoryIndex: number) => {
     if (isSurvivalPodNpcShipId(ship.portraitNpcCapitalShipId)) {
       showArcAlert(t('shipyard.inventory.equipPodTitle'), t('shipyard.inventory.equipPodBody'));
       return;
@@ -658,6 +697,7 @@ function ShipyardInventoryGrid({
     nextSlots[slotId] = {
       itemDefId: itemId,
       name: resolveEquipSlotDisplayName(itemId, itemId, locale),
+      sourceInventoryIndex: inventoryIndex,
     };
     updateShip({ ...ship, equipSlots: nextSlots });
     await persist();
@@ -684,13 +724,7 @@ function ShipyardInventoryGrid({
           const weaponDef = cell ? resolveWeaponItemDef(cell.goodId) : null;
           const isWeaponModule = Boolean(cell && isWeaponItemId(cell.goodId));
           const isEquipmentModule = Boolean(cell && isShipEquipmentItemId(cell.goodId));
-          const isEquipped = Boolean(
-            cell
-            && (
-              COMBAT_WEAPON_SLOT_IDS.some((id) => ship.equipSlots?.[id]?.itemDefId === cell.goodId)
-              || SHIPYARD_EQUIP_SLOT_DEFS.some((d) => ship.equipSlots?.[d.id]?.itemDefId === cell.goodId)
-            ),
-          );
+          const isEquipped = Boolean(cell && isInventoryCellEquipped(ship, i, cell.goodId));
           const itemName = cell
             ? (() => {
               const base = good
@@ -716,7 +750,16 @@ function ShipyardInventoryGrid({
               <View style={styles.hangarMeta}>
                 <Text style={styles.hangarName} numberOfLines={1}>{itemName}</Text>
                 <Text style={styles.hangarSub} numberOfLines={1}>
-                  {cell ? t('shipyard.inventory.qty', { qty: cell.quantity, equipped: isEquipped ? t('shipyard.inventory.equippedSuffix') : '' }) : t('shipyard.inventory.emptySlot')}
+                  {cell
+                    ? formatInventoryDurabilityMeta({
+                      cell,
+                      isEquipped,
+                      equippedSuffix: t('shipyard.inventory.equippedSuffix'),
+                      qtyLabel: (qty, equipped) => t('shipyard.inventory.qty', { qty, equipped }),
+                      durabilityLabel: (qty, equipped, pct) =>
+                        t('shipyard.inventory.durabilityMeta', { qty, equipped, pct }),
+                    })
+                    : t('shipyard.inventory.emptySlot')}
                 </Text>
               </View>
               {cell && isWeaponModule ? (
@@ -724,7 +767,7 @@ function ShipyardInventoryGrid({
                   <TouchableOpacity
                     style={[styles.hangarActionBtn, styles.hangarSelectBtn]}
                     onPress={() => {
-                      void equipWeaponFromInventory(cell.goodId);
+                      void equipWeaponFromInventory(cell.goodId, i);
                     }}
                   >
                     <Text style={styles.hangarActionText}>{t('shipyard.btn.equip')}</Text>
@@ -745,7 +788,7 @@ function ShipyardInventoryGrid({
                   <TouchableOpacity
                     style={[styles.hangarActionBtn, styles.hangarSelectBtn]}
                     onPress={() => {
-                      void equipEquipmentFromInventory(cell.goodId);
+                      void equipEquipmentFromInventory(cell.goodId, i);
                     }}
                   >
                     <Text style={styles.hangarActionText}>{t('shipyard.btn.equip')}</Text>
@@ -1076,6 +1119,12 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
     color: COLORS.safe_zone,
+    fontWeight: FONTS.weight.bold,
+  },
+  serviceBtnActionMuted: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    color: COLORS.ink_light,
     fontWeight: FONTS.weight.bold,
   },
 

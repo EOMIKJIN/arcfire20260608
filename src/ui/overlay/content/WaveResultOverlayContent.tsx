@@ -16,7 +16,6 @@ export const WaveResultOverlayContent = memo(function WaveResultOverlayContent({
   const t = useT();
   const { outcome, wavesCleared, totalWaves, expEarned, itemRewards } = entry;
   const isWin = outcome === 'win';
-  const outcomeColor = isWin ? OVERLAY_TOKENS.phosphorAccent : COLORS.danger;
 
   return (
     <ArcOverlayCard
@@ -28,7 +27,7 @@ export const WaveResultOverlayContent = memo(function WaveResultOverlayContent({
       <View style={phosphorOverlay.divider} />
       <View style={phosphorOverlay.rowBetween}>
         <Text style={phosphorOverlay.statLabel}>{t('waveResult.clearedWaves')}</Text>
-        <Text style={[phosphorOverlay.statValue, { color: outcomeColor }]}>
+        <Text style={phosphorOverlay.statValue}>
           {wavesCleared} / {totalWaves}
         </Text>
       </View>

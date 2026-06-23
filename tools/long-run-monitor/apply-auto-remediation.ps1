@@ -76,7 +76,16 @@ function Write-Remediation([string]$msg) {
 # release/첫 빌드 검증 중에는 이 플래그를 만들어 두면 PSS/GL 하드실링에도 앱이 강제 재시작되지 않는다.
 # 감시·기록(run-monitor·report-watch)은 계속된다. 검증 종료 후 플래그를 지우면 자동조치 복귀.
 if (Test-Path $pauseFlag) {
-  Write-Remediation "AUTO_FIX SKIPPED (monitor-paused.flag present) reason=$Reason — verification mode, no relaunch"
+  Write-Remediation "AUTO_FIX paused (monitor-paused.flag) reason=$Reason — handoff/investigation only, no relaunch"
+  Invoke-IncidentHandoff $Reason
+  $triggerDir = Join-Path $root '.cursor'
+  New-Item -ItemType Directory -Force -Path $triggerDir | Out-Null
+  @{
+    triggeredAt = (Get-Date).ToUniversalTime().ToString('o')
+    reason = $Reason
+    action = 'code_fix_only_paused_mode'
+  } | ConvertTo-Json | Set-Content -Path (Join-Path $triggerDir 'trigger-incident-auto-fix.json') -Encoding utf8
+  Remove-Item $lockFile -Force -ErrorAction SilentlyContinue
   exit 0
 }
 

@@ -1,0 +1,623 @@
+--------- beginning of main
+06-23 14:58:27.691 21171 21171 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+--------- beginning of system
+06-23 15:18:12.661  1909  2749 W ActivityManager: Slow operation: 52ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+06-23 15:18:23.235  1909  2870 W ActivityManager: Scheduling restart of crashed service com.samsung.android.authfw/.pass.PassService in 1000ms for connection
+06-23 15:18:23.254  1909  3050 W ActivityManager: Scheduling restart of crashed service com.samsung.android.samsungpass/.passservice.PassService in 1000ms for connection
+06-23 15:18:39.252  1909  4211 W ActivityManager: Scheduling restart of crashed service com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:0 in 1000ms for connection
+06-23 15:21:05.494  1909  4227 W ActivityManager: Unable to start service Intent { act=com.google.android.gms.lockbox.service.START xflg=0x4 pkg=com.google.android.gms } U=0: not found
+06-23 15:21:05.494  1909  4227 W ActivityManager: Unbind failed: could not find connection for android.os.BinderProxy@9b02827
+06-23 15:21:10.574  1909  4341 W ActivityManager: Unable to start service Intent { act=com.google.android.gms.lockbox.service.START xflg=0x4 pkg=com.google.android.gms } U=0: not found
+06-23 15:21:10.575  1909  4227 W ActivityManager: Unbind failed: could not find connection for android.os.BinderProxy@19b1545
+06-23 15:21:15.584  1909  4227 W ActivityManager: Unable to start service Intent { act=com.google.android.gms.lockbox.service.START xflg=0x4 pkg=com.google.android.gms } U=0: not found
+06-23 15:21:15.584  1909  4227 W ActivityManager: Unbind failed: could not find connection for android.os.BinderProxy@798b67f
+06-23 15:21:20.603  1909  4341 W ActivityManager: Unable to start service Intent { act=com.google.android.gms.lockbox.service.START xflg=0x4 pkg=com.google.android.gms } U=0: not found
+06-23 15:21:20.604  1909  4227 W ActivityManager: Unbind failed: could not find connection for android.os.BinderProxy@1219681
+06-23 15:52:33.046  1909  4174 W ActivityManager: Scheduling restart of crashed service com.samsung.android.authfw/.pass.PassService in 1000ms for connection
+06-23 15:53:43.630 23928 23928 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+06-23 15:53:50.867 24119 24119 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+06-23 16:00:00.005  1909  2094 E ActivityManager: Sending non-protected broadcast ACTION_EXACT_NOTI_NOW_UPDATE_TIME from system 1909:system/1000 pkg android
+06-23 16:00:00.005  1909  2094 E ActivityManager: java.lang.Throwable
+06-23 16:00:00.005  1909  2094 E ActivityManager: 	at com.android.server.am.BroadcastController.checkBroadcastFromSystem(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:252)
+06-23 16:00:00.005  1909  2094 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLockedTraced(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:344)
+06-23 16:00:00.005  1909  2094 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:18)
+06-23 16:00:00.005  1909  2094 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentInPackage(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:86)
+06-23 16:00:00.005  1909  2094 E ActivityManager: 	at com.android.server.am.ActivityManagerService$LocalService.broadcastIntentInPackage(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:59)
+06-23 16:00:00.005  1909  2094 E ActivityManager: 	at com.android.server.am.PendingIntentRecord.sendInner(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:133)
+06-23 16:00:00.005  1909  2094 E ActivityManager: 	at com.android.server.am.ActivityManagerService.sendIntentSender(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:17)
+06-23 16:00:00.005  1909  2094 E ActivityManager: 	at com.android.server.am.ActivityManagerService.sendIntentSender(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:1)
+06-23 16:00:00.005  1909  2094 E ActivityManager: 	at android.app.PendingIntent.sendAndReturnResult(PendingIntent.java:1133)
+06-23 16:00:00.005  1909  2094 E ActivityManager: 	at android.app.PendingIntent.send(PendingIntent.java:1099)
+06-23 16:00:00.005  1909  2094 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:112)
+06-23 16:00:00.005  1909  2094 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:75)
+06-23 16:00:00.005  1909  2094 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:720)
+06-23 16:20:28.211  1909  4338 W ActivityManager: Scheduling restart of crashed service com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:0 in 1000ms for connection
+06-23 16:21:00.171  1909  3050 W ActivityManager: Scheduling restart of crashed service com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:1 in 1000ms for connection
+06-23 18:27:25.005  1909  4342 W ActivityManager: pid 24971 com.google.android.gms.persistent sent binder code 2 with flags 1 to frozen apps and got error -32
+06-23 18:31:21.025  1909  3434 W ActivityManager: pid 6725 com.google.android.googlequicksearchbox:interactor sent binder code 2 with flags 1 to frozen apps and got error -32
+06-23 19:08:50.664  1909  1973 W ActivityManager: Slow operation: 62ms so far, now at startProcess: done updating battery stats
+06-23 19:08:50.665  1909  1973 W ActivityManager: Slow operation: 63ms so far, now at startProcess: building log message
+06-23 19:08:50.665  1909  1973 W ActivityManager: Slow operation: 63ms so far, now at startProcess: starting to update pids map
+06-23 19:08:50.667  1909  1973 W ActivityManager: Slow operation: 64ms so far, now at startProcess: done updating pids map
+06-23 19:08:51.508  1909  1973 W ActivityManager: Slow operation: 59ms so far, now at startProcess: returned from zygote!
+06-23 19:08:51.517  1909  1973 W ActivityManager: Slow operation: 69ms so far, now at startProcess: done updating battery stats
+06-23 19:08:51.518  1909  1973 W ActivityManager: Slow operation: 69ms so far, now at startProcess: building log message
+06-23 19:08:51.518  1909  1973 W ActivityManager: Slow operation: 69ms so far, now at startProcess: starting to update pids map
+06-23 19:08:51.530  1909  1973 W ActivityManager: Slow operation: 81ms so far, now at startProcess: done updating pids map
+06-23 19:19:03.354  1909  4343 W ActivityManager: Scheduling restart of crashed service com.samsung.android.privateaccesstokens/.components.services.PATService in 1000ms for connection
+--------- beginning of crash
+06-23 19:42:47.685 20789 20789 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x441bc00000000002 in tid 20789 (.arcfire.online), pid 20789 (.arcfire.online)
+06-23 19:42:48.661  5861  5861 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+06-23 19:42:48.662  5861  5861 F DEBUG   : Build fingerprint: 'samsung/a34xks/a34x:16/BP2A.250605.031.A3/A346NKSSEEZD4:user/release-keys'
+06-23 19:42:48.662  5861  5861 F DEBUG   : Revision: '6'
+06-23 19:42:48.662  5861  5861 F DEBUG   : ABI: 'arm64'
+06-23 19:42:48.662  5861  5861 F DEBUG   : Processor: '7'
+06-23 19:42:48.662  5861  5861 F DEBUG   : Timestamp: 2026-06-23 19:42:47.846573471+0900
+06-23 19:42:48.662  5861  5861 F DEBUG   : Process uptime: 17116s
+06-23 19:42:48.662  5861  5861 F DEBUG   : Cmdline: com.arcfire.online
+06-23 19:42:48.662  5861  5861 F DEBUG   : pid: 20789, tid: 20789, name: .arcfire.online  >>> com.arcfire.online <<<
+06-23 19:42:48.662  5861  5861 F DEBUG   : uid: 11066
+06-23 19:42:48.662  5861  5861 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+06-23 19:42:48.662  5861  5861 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x441bc00000000002
+06-23 19:42:48.662  5861  5861 F DEBUG   :     x0  0000007fee6153f8  x1  441bc00000000002  x2  0000000000000000  x3  000000783f918964
+06-23 19:42:48.662  5861  5861 F DEBUG   :     x4  00000076a9800000  x5  00000076a9ba5bb8  x6  676e756f59204347  x7  6e654720676e756f
+06-23 19:42:48.662  5861  5861 F DEBUG   :     x8  000000783f9cc6c0  x9  000000000218fa80  x10 441bc00000000082  x11 0000000000001d0d
+06-23 19:42:48.662  5861  5861 F DEBUG   :     x12 0000000000144394  x13 000000007fffffff  x14 0000000023ee8ab6  x15 000010c46f0b8787
+06-23 19:42:48.662  5861  5861 F DEBUG   :     x16 000000783f9ceb20  x17 0000007c58ac7c80  x18 0000007c74890000  x19 0000007fee615370
+06-23 19:42:48.662  5861  5861 F DEBUG   :     x20 0000007fee617740  x21 441bc00000000002  x22 00000000026457c0  x23 000000037eededa0
+06-23 19:42:48.662  5861  5861 F DEBUG   :     x24 441bc00000000082  x25 00000076a9002528  x26 0000007c74341700  x27 0000000000000000
+06-23 19:42:48.662  5861  5861 F DEBUG   :     x28 00000000003eb000  x29 0000007fee615270
+06-23 19:42:48.662  5861  5861 F DEBUG   :     lr  000000783f8726f8  sp  0000007fee615270  pc  000000783f9186a0  pst 0000000080001000
+06-23 19:42:48.662  5861  5861 F DEBUG   : 117 total frames
+06-23 19:42:48.662  5861  5861 F DEBUG   : backtrace:
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #00 pc 000000000014d6a0  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #01 pc 00000000000a76f4  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #02 pc 00000000000a767c  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #03 pc 00000000000e01e0  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #04 pc 000000000014a060  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #05 pc 0000000000147158  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #06 pc 0000000000149808  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #07 pc 00000000000bf124  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #08 pc 00000000000c410c  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #09 pc 00000000000c28c8  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #10 pc 00000000000c3084  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #11 pc 000000000008cad0  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libhermes.so (offset 0x122e000) (BuildId: 86f5d3fe3822a585f13315932b890fa3aca87d19)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #12 pc 00000000000ab8a0  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (facebook::jsi::WithRuntimeDecorator<reanimated::AroundLock, facebook::jsi::Runtime, facebook::jsi::Runtime>::setPropertyValue(facebook::jsi::Object const&, facebook::jsi::String const&, facebook::jsi::Value const&)+88) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #13 pc 000000000009b23c  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (void facebook::jsi::Object::setProperty<facebook::jsi::Value>(facebook::jsi::Runtime&, char const*, facebook::jsi::Value&&) const+112) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #14 pc 00000000000b9e04  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::ShareableObject::toJSValue(facebook::jsi::Runtime&)+176) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #15 pc 00000000000ba35c  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::ShareableWorklet::toJSValue(facebook::jsi::Runtime&)+44) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #16 pc 00000000000b9dec  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::ShareableObject::toJSValue(facebook::jsi::Runtime&)+152) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #17 pc 00000000000b9dec  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::ShareableObject::toJSValue(facebook::jsi::Runtime&)+152) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #18 pc 00000000000ba35c  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::ShareableWorklet::toJSValue(facebook::jsi::Runtime&)+44) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #19 pc 00000000000b9dec  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::ShareableObject::toJSValue(facebook::jsi::Runtime&)+152) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #20 pc 00000000000b9dec  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::ShareableObject::toJSValue(facebook::jsi::Runtime&)+152) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #21 pc 00000000000ba35c  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::ShareableWorklet::toJSValue(facebook::jsi::Runtime&)+44) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #22 pc 00000000000cd50c  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::WorkletEventHandler::process(std::__ndk1::shared_ptr<reanimated::WorkletRuntime> const&, double, facebook::jsi::Value const&) const+76) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #23 pc 00000000000b55a4  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::EventHandlerRegistry::processEvent(std::__ndk1::shared_ptr<reanimated::WorkletRuntime> const&, double, std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, std::__ndk1::allocator<char>> const&, int, facebook::jsi::Value const&)+856) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #24 pc 00000000000994c8  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::NativeReanimatedModule::handleEvent(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, std::__ndk1::allocator<char>> const&, int, facebook::jsi::Value const&, double)+64) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #25 pc 00000000000d8b84  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (reanimated::NativeProxy::handleEvent(facebook::jni::alias_ref<facebook::jni::JString>, int, facebook::jni::alias_ref<facebook::react::WritableMap>)+384) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #26 pc 00000000000dd290  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (std::__ndk1::__function::__func<std::__ndk1::function<void (facebook::jni::alias_ref<facebook::jni::JString>, int, facebook::jni::alias_ref<facebook::react::WritableMap>)> reanimated::NativeProxy::bindThis<void, facebook::jni::alias_ref<facebook::jni::JString>, int, facebook::jni::alias_ref<facebook::react::WritableMap>>(void (reanimated::NativeProxy::*)(facebook::jni::alias_ref<facebook::jni::JString>, int, facebook::jni::alias_ref<facebook::react::WritableMap>))::'lambda'(facebook::jni::alias_ref<facebook::jni::JString>&&, int&&, facebook::jni::alias_ref<facebook::react::WritableMap>&&), std::__ndk1::allocator<std::__ndk1::function<void (facebook::jni::alias_ref<facebook::jni::JString>, int, facebook::jni::alias_ref<facebook::react::WritableMap>)> reanimated::NativeProxy::bindThis<void, facebook::jni::alias_ref<facebook::jni::JString>, int, facebook::jni::alias_ref<facebook::react::WritableMap>>(void (reanimated::NativeProxy::*)(facebook::jni::alias_ref<facebook::jni::JString>, int, facebook::jni::alias_ref<facebook::react::WritableMap>))::'lambda'(facebook::jni::alias_ref<facebook::jni::JString>&&, int&&, facebook::jni::alias_ref<facebook::react::WritableMap>&&)>, void (facebook::jni::alias_ref<facebook::jni::JString>, int, facebook::jni::alias_ref<facebook::react::WritableMap>)>::operator()(facebook::jni::alias_ref<facebook::jni::JString>&&, int&&, facebook::jni::alias_ref<facebook::react::WritableMap>&&)+76) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #27 pc 00000000000e4c78  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (facebook::jni::detail::MethodWrapper<void (reanimated::EventHandler::*)(facebook::jni::alias_ref<facebook::jni::JString>, int, facebook::jni::alias_ref<facebook::react::WritableMap>), &reanimated::EventHandler::receiveEvent(facebook::jni::alias_ref<facebook::jni::JString>, int, facebook::jni::alias_ref<facebook::react::WritableMap>), reanimated::EventHandler, void, facebook::jni::alias_ref<facebook::jni::JString>, int, facebook::jni::alias_ref<facebook::react::WritableMap>>::dispatch(facebook::jni::alias_ref<facebook::jni::detail::JTypeFor<facebook::jni::HybridClass<reanimated::EventHandler, facebook::jni::detail::BaseHybridClass>::JavaPart, facebook::jni::JObject, void>::_javaobject*>, facebook::jni::alias_ref<facebook::jni::JString>&&, int&&, facebook::jni::alias_ref<facebook::react::WritableMap>&&)+124) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #28 pc 00000000000e4b80  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/base.apk!libreanimated.so (offset 0x1bab000) (facebook::jni::detail::FunctionWrapper<void (*)(facebook::jni::alias_ref<facebook::jni::detail::JTypeFor<facebook::jni::HybridClass<reanimated::EventHandler, facebook::jni::detail::BaseHybridClass>::JavaPart, facebook::jni::JObject, void>::_javaobject*>, facebook::jni::alias_ref<facebook::jni::JString>&&, int&&, facebook::jni::alias_ref<facebook::react::WritableMap>&&), facebook::jni::detail::JTypeFor<facebook::jni::HybridClass<reanimated::EventHandler, facebook::jni::detail::BaseHybridClass>::JavaPart, facebook::jni::JObject, void>::_javaobject*, void, facebook::jni::alias_ref<facebook::jni::JString>, int, facebook::jni::alias_ref<facebook::react::WritableMap>>::call(_JNIEnv*, _jobject*, _jstring*, int, facebook::jni::detail::JTypeFor<facebook::react::WritableMap, facebook::jni::JObject, void>::_javaobject*, void (*)(facebook::jni::alias_ref<facebook::jni::detail::JTypeFor<facebook::jni::HybridClass<reanimated::EventHandler, facebook::jni::detail::BaseHybridClass>::JavaPart, facebook::jni::JObject, void>::_javaobject*>, facebook::jni::alias_ref<facebook::jni::JString>&&, int&&, facebook::jni::alias_ref<facebook::react::WritableMap>&&))+96) (BuildId: 46cdad22725668141510151d95da88d7c5261256)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #29 pc 0000000000f55968  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (art_jni_trampoline+136)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #30 pc 00000000000f17a4  [anon_shmem:dalvik-jit-code-cache] (offset 0x2000000) (com.swmansion.reanimated.nativeProxy.EventHandler.receiveEvent+196)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #31 pc 000000000004f99c  [anon_shmem:dalvik-jit-code-cache] (offset 0x2000000) (com.facebook.react.uimanager.events.Event.dispatch+236)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #32 pc 0000000000079068  [anon_shmem:dalvik-jit-code-cache] (offset 0x2000000) (com.swmansion.reanimated.NodesManager.onEventDispatch+488)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #33 pc 000000000072c8dc  /apex/com.android.art/lib64/libart.so (nterp_helper+2124) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #34 pc 0000000001222fd6  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/oat/arm64/base.vdex (com.swmansion.gesturehandler.ReanimatedEventDispatcher.sendEvent+74)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #35 pc 000000000072c884  /apex/com.android.art/lib64/libart.so (nterp_helper+2036) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #36 pc 000000000122e072  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/oat/arm64/base.vdex (com.swmansion.gesturehandler.react.RNGestureHandlerModule.sendEventForReanimated+26)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #37 pc 000000000072c884  /apex/com.android.art/lib64/libart.so (nterp_helper+2036) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #38 pc 000000000122dd38  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/oat/arm64/base.vdex (com.swmansion.gesturehandler.react.RNGestureHandlerModule.onHandlerUpdate+88)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #39 pc 000000000072c884  /apex/com.android.art/lib64/libart.so (nterp_helper+2036) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #40 pc 000000000122d998  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/oat/arm64/base.vdex (com.swmansion.gesturehandler.react.RNGestureHandlerModule.access$onHandlerUpdate+0)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #41 pc 0000000000728c6c  /apex/com.android.art/lib64/libart.so (nterp3_op_invoke_static+44) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #42 pc 000000000122d55c  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/oat/arm64/base.vdex (com.swmansion.gesturehandler.react.RNGestureHandlerModule$eventListener$1.onHandlerUpdate+24)
+06-23 19:42:48.662  5861  5861 F DEBUG   :       #43 pc 000000000072c884  /apex/com.android.art/lib64/libart.so (nterp_helper+2036) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #44 pc 00000000012265fe  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/oat/arm64/base.vdex (com.swmansion.gesturehandler.core.GestureHandler.dispatchHandlerUpdate+26)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #45 pc 000000000004fbcc  [anon_shmem:dalvik-jit-code-cache] (offset 0x2000000) (com.swmansion.gesturehandler.core.GestureHandlerOrchestrator.deliverEventToGestureHandler+460)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #46 pc 0000000000089b20  [anon_shmem:dalvik-jit-code-cache] (offset 0x2000000) (com.swmansion.gesturehandler.core.GestureHandlerOrchestrator.deliverEventToGestureHandlers+464)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #47 pc 00000000000efae0  [anon_shmem:dalvik-jit-code-cache] (offset 0x2000000) (com.swmansion.gesturehandler.core.GestureHandlerOrchestrator.onTouchEvent+208)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #48 pc 00000000000f1cd4  [anon_shmem:dalvik-jit-code-cache] (offset 0x2000000) (com.swmansion.gesturehandler.react.RNGestureHandlerRootHelper.dispatchTouchEvent+132)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #49 pc 00000000000f3354  [anon_shmem:dalvik-jit-code-cache] (offset 0x2000000) (com.swmansion.gesturehandler.react.RNGestureHandlerRootView.dispatchTouchEvent+132)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #50 pc 0000000000b8b474  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewGroup.dispatchTransformedTouchEvent+724)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #51 pc 0000000000b92864  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewGroup.dispatchTouchEvent+4500)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #52 pc 0000000000b8b474  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewGroup.dispatchTransformedTouchEvent+724)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #53 pc 0000000000b92864  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewGroup.dispatchTouchEvent+4500)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #54 pc 0000000000b8b474  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewGroup.dispatchTransformedTouchEvent+724)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #55 pc 0000000000b92864  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewGroup.dispatchTouchEvent+4500)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #56 pc 0000000000b8b474  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewGroup.dispatchTransformedTouchEvent+724)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #57 pc 0000000000b92864  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewGroup.dispatchTouchEvent+4500)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #58 pc 0000000000b8b474  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewGroup.dispatchTransformedTouchEvent+724)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #59 pc 0000000000b92864  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewGroup.dispatchTouchEvent+4500)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #60 pc 0000000000b8b474  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewGroup.dispatchTransformedTouchEvent+724)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #61 pc 0000000000b92864  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewGroup.dispatchTouchEvent+4500)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #62 pc 0000000000b8b474  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewGroup.dispatchTransformedTouchEvent+724)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #63 pc 0000000000b92864  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewGroup.dispatchTouchEvent+4500)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #64 pc 0000000000d5705c  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (com.android.internal.policy.DecorView.superDispatchTouchEvent+44)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #65 pc 0000000000d622c0  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (com.android.internal.policy.PhoneWindow.superDispatchTouchEvent+48)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #66 pc 0000000000649e30  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.app.Activity.dispatchTouchEvent+272)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #67 pc 000000000072cb3c  /apex/com.android.art/lib64/libart.so (nterp_helper+2732) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #68 pc 000000000019cc46  /data/app/~~SEn0oC_rZtrSzFsGUHaxkQ==/com.arcfire.online-HZzdu_4T8-8GudUVUzaSpg==/oat/arm64/base.vdex (androidx.appcompat.view.WindowCallbackWrapper.dispatchTouchEvent+10)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #69 pc 0000000000d52f48  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (com.android.internal.policy.DecorView.dispatchTouchEvent+88)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #70 pc 0000000000bbbf3c  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl$ViewPostImeInputStage.processPointerEvent+940)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #71 pc 0000000000bbc858  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl$ViewPostImeInputStage.onProcess+136)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #72 pc 0000000000bb7518  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl$InputStage.deliver+152)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #73 pc 0000000000bb77d0  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl$InputStage.onDeliverToNext+336)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #74 pc 0000000000bb8378  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl$AsyncInputStage.forward+72)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #75 pc 0000000000bb73b0  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl$InputStage.apply+48)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #76 pc 0000000000bb8238  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl$AsyncInputStage.apply+88)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #77 pc 0000000000bb7594  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl$InputStage.deliver+276)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #78 pc 0000000000bb77d0  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl$InputStage.onDeliverToNext+336)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #79 pc 0000000000bb765c  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl$InputStage.forward+44)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #80 pc 0000000000bb73b0  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl$InputStage.apply+48)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #81 pc 0000000000bb7594  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl$InputStage.deliver+276)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #82 pc 0000000000bc3c7c  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl.deliverInputEvent+2236)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #83 pc 0000000000bdcb74  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl.doProcessInputEvents+388)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #84 pc 0000000000bdd1b4  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl.enqueueInputEvent+1156)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #85 pc 0000000000be0edc  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl.processRawInputEvent+1612)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #86 pc 0000000000bbfaa4  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl$WindowInputEventReceiver.onInputEvent+52)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #87 pc 0000000000b1e0cc  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.InputEventReceiver.dispatchInputEvent+332)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #88 pc 0000000000298f94  /apex/com.android.art/lib64/libart.so (art_quick_invoke_stub+612) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #89 pc 0000000000295dc8  /apex/com.android.art/lib64/libart.so (art::JValue art::InvokeVirtualOrInterfaceWithVarArgs<_jmethodID*>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, std::__va_list)+888) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #90 pc 0000000000675e80  /apex/com.android.art/lib64/libart.so (art::JNI<false>::CallVoidMethodV(_JNIEnv*, _jobject*, _jmethodID*, std::__va_list)+276) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #91 pc 00000000000ff688  /system/lib64/libandroid_runtime.so (_JNIEnv::CallVoidMethod(_jobject*, _jmethodID*, ...)+120) (BuildId: bfd0efa3956dfcd7e6ecd6111b4dd10d)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #92 pc 00000000001aaa90  /system/lib64/libandroid_runtime.so (android::NativeInputEventReceiver::consumeEvents(_JNIEnv*, bool, long, bool*)+384) (BuildId: bfd0efa3956dfcd7e6ecd6111b4dd10d)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #93 pc 00000000001ac630  /system/lib64/libandroid_runtime.so (android::nativeConsumeBatchedInputEvents(_JNIEnv*, _jclass*, long, long)+96) (BuildId: bfd0efa3956dfcd7e6ecd6111b4dd10d)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #94 pc 0000000000f3b42c  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (art_jni_trampoline+108)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #95 pc 0000000000b1e844  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.InputEventReceiver.consumeBatchedInputEvents+164)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #96 pc 0000000000bb863c  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.ViewRootImpl$ConsumeBatchedInputRunnable.run+188)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #97 pc 0000000000b21cac  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.Choreographer.doCallbacks+988)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #98 pc 0000000000b22a28  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.Choreographer.doFrame+2344)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #99 pc 0000000000b20364  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.view.Choreographer$FrameDisplayEventReceiver.run+68)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #100 pc 0000000000972264  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.os.Handler.dispatchMessage+68)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #101 pc 00000000009c3500  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.os.Looper.loopOnce+1952)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #102 pc 00000000009c2ce4  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.os.Looper.loop+244)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #103 pc 00000000006a6778  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (android.app.ActivityThread.main+1544)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #104 pc 0000000000299260  /apex/com.android.art/lib64/libart.so (art_quick_invoke_static_stub+640) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #105 pc 000000000028a194  /apex/com.android.art/lib64/libart.so (_jobject* art::InvokeMethod<(art::PointerSize)8>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jobject*, _jobject*, unsigned long)+552) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #106 pc 00000000006334c8  /apex/com.android.art/lib64/libart.so (art::Method_invoke(_JNIEnv*, _jobject*, _jobject*, _jobjectArray*) (.__uniq.165753521025965369065708152063621506277)+36) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #107 pc 0000000000f30424  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (art_jni_trampoline+116)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #108 pc 0000000000d42ccc  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run+108)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #109 pc 0000000000d4bf9c  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (com.android.internal.os.ZygoteInit.main+3244)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #110 pc 0000000000299260  /apex/com.android.art/lib64/libart.so (art_quick_invoke_static_stub+640) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #111 pc 0000000000296cb0  /apex/com.android.art/lib64/libart.so (art::JValue art::InvokeWithVarArgs<_jmethodID*>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, std::__va_list)+760) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.663  5861  5861 F DEBUG   :       #112 pc 00000000006a4960  /apex/com.android.art/lib64/libart.so (art::JNI<true>::CallStaticVoidMethodV(_JNIEnv*, _jclass*, _jmethodID*, std::__va_list)+164) (BuildId: 1f156fc62660d075a8d675db850b95d5)
+06-23 19:42:48.664  5861  5861 F DEBUG   :       #113 pc 0000000000104558  /system/lib64/libandroid_runtime.so (_JNIEnv::CallStaticVoidMethod(_jclass*, _jmethodID*, ...)+104) (BuildId: bfd0efa3956dfcd7e6ecd6111b4dd10d)
+06-23 19:42:48.664  5861  5861 F DEBUG   :       #114 pc 000000000012fd9c  /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+908) (BuildId: bfd0efa3956dfcd7e6ecd6111b4dd10d)
+06-23 19:42:48.664  5861  5861 F DEBUG   :       #115 pc 00000000000025f8  /system/bin/app_process64 (main+1304) (BuildId: 4f9e45a3242ebb6b0d26cbe7a2e4ad9d)
+06-23 19:42:48.664  5861  5861 F DEBUG   :       #116 pc 0000000000069848  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: 8ff701fa7a74a8ad475206062b5b72aa)
+06-23 19:42:48.758  1909  5882 W ActivityManager: crash : com.arcfire.online,11066
+06-23 19:42:48.938  1909  1973 W ActivityManager: Slow operation: 86ms so far, now at startProcess: done updating battery stats
+06-23 19:42:48.944  1909  1973 W ActivityManager: Slow operation: 92ms so far, now at startProcess: building log message
+06-23 19:42:48.946  1909  1973 W ActivityManager: Slow operation: 93ms so far, now at startProcess: starting to update pids map
+06-23 19:42:48.977  1909  1973 W ActivityManager: Slow operation: 125ms so far, now at startProcess: done updating pids map
+06-23 19:42:49.021  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 20789
+06-23 19:42:49.060  1909  1935 E ActivityManager: Sending non-protected broadcast com.sec.android.intent.action.APP_HQM_SEND_REQ from system 3994:com.sec.android.diagmonagent/1000 pkg com.sec.android.diagmonagent
+06-23 19:42:49.060  1909  1935 E ActivityManager: java.lang.Throwable
+06-23 19:42:49.060  1909  1935 E ActivityManager: 	at com.android.server.am.BroadcastController.checkBroadcastFromSystem(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:252)
+06-23 19:42:49.060  1909  1935 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLockedTraced(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:344)
+06-23 19:42:49.060  1909  1935 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:18)
+06-23 19:42:49.060  1909  1935 E ActivityManager: 	at com.android.server.am.ActivityManagerService.broadcastIntentWithFeature(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:149)
+06-23 19:42:49.060  1909  1935 E ActivityManager: 	at android.app.IActivityManager$Stub.onTransact$broadcastIntentWithFeature$(IActivityManager.java:12412)
+06-23 19:42:49.060  1909  1935 E ActivityManager: 	at android.app.IActivityManager$Stub.onTransact(IActivityManager.java:3205)
+06-23 19:42:49.060  1909  1935 E ActivityManager: 	at com.android.server.am.ActivityManagerService.onTransact(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:425)
+06-23 19:42:49.060  1909  1935 E ActivityManager: 	at android.os.Binder.execTransactInternal(Binder.java:1462)
+06-23 19:42:49.060  1909  1935 E ActivityManager: 	at android.os.Binder.execTransact(Binder.java:1401)
+06-23 19:42:49.247  1909  2720 W ActivityManager: pid 2184 com.samsung.android.honeyboard sent binder code 9 with flags 1 to frozen apps and got error -32
+06-23 19:42:49.437  1909  1935 W ActivityManager: pid 1909 system sent binder code 7 with flags 1 to frozen apps and got error -32
+06-23 19:47:26.128  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 6098
+06-23 19:47:27.054  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 31983
+06-23 19:47:31.083  6827  6827 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+06-23 19:47:33.639  1909  1973 W ActivityManager: Slow operation: 121ms so far, now at startProcess: returned from zygote!
+06-23 19:47:33.689  1909  1972 W ActivityManager: Slow operation: 55ms so far, now at startProcess: done creating new process record
+06-23 19:47:33.689  1909  1972 W ActivityManager: Slow operation: 55ms so far, now at startProcess: stepping in to startProcess
+06-23 19:47:33.690  1909  1972 W ActivityManager: Slow operation: 55ms so far, now at startProcess: done starting proc!
+06-23 19:47:33.933  1909  6881 W ActivityManager: Slow operation: 181ms so far, now at startProcess: done creating new process record
+06-23 19:47:33.933  1909  6881 W ActivityManager: Slow operation: 181ms so far, now at startProcess: stepping in to startProcess
+06-23 19:47:33.934  1909  6881 W ActivityManager: Slow operation: 182ms so far, now at startProcess: done starting proc!
+06-23 19:47:33.953  1909  1973 W ActivityManager: Slow operation: 434ms so far, now at startProcess: done updating battery stats
+06-23 19:47:33.953  1909  1973 W ActivityManager: Slow operation: 434ms so far, now at startProcess: building log message
+06-23 19:47:33.953  1909  1973 W ActivityManager: Slow operation: 434ms so far, now at startProcess: starting to update pids map
+06-23 19:47:33.954  1909  1973 W ActivityManager: Slow operation: 435ms so far, now at startProcess: done updating pids map
+06-23 19:47:33.954  1909  1973 W ActivityManager: Slow operation: 265ms so far, now at startProcess: asking zygote to start proc
+06-23 19:47:33.969  1909  1973 W ActivityManager: Slow operation: 279ms so far, now at startProcess: returned from zygote!
+06-23 19:47:34.065  1909  1973 W ActivityManager: Slow operation: 376ms so far, now at startProcess: done updating battery stats
+06-23 19:47:34.066  1909  1973 W ActivityManager: Slow operation: 376ms so far, now at startProcess: building log message
+06-23 19:47:34.066  1909  1973 W ActivityManager: Slow operation: 376ms so far, now at startProcess: starting to update pids map
+06-23 19:47:34.067  1909  1973 W ActivityManager: Slow operation: 377ms so far, now at startProcess: done updating pids map
+06-23 19:47:34.067  1909  1973 W ActivityManager: Slow operation: 133ms so far, now at startProcess: asking zygote to start proc
+06-23 19:47:34.090  1909  1973 W ActivityManager: Slow operation: 156ms so far, now at startProcess: returned from zygote!
+06-23 19:47:34.125  1909  1973 W ActivityManager: Slow operation: 192ms so far, now at startProcess: done updating battery stats
+06-23 19:47:34.126  1909  1973 W ActivityManager: Slow operation: 193ms so far, now at startProcess: building log message
+06-23 19:47:34.130  1909  1973 W ActivityManager: Slow operation: 195ms so far, now at startProcess: starting to update pids map
+06-23 19:47:34.132  1909  1973 W ActivityManager: Slow operation: 198ms so far, now at startProcess: done updating pids map
+06-23 19:52:34.568  1909  2867 W ActivityManager: Scheduling restart of crashed service com.samsung.android.privateaccesstokens/.components.services.PATService in 1000ms for connection
+06-23 19:53:52.247  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 6740
+06-23 19:54:09.134  1909  4206 W ActivityManager: pid 7663 com.samsung.cmh sent binder code 21 with flags 2 to frozen apps and got error -2147483646
+06-23 19:58:30.095  1909  1973 W ActivityManager: Slow operation: 65ms so far, now at startProcess: done updating battery stats
+06-23 19:58:30.095  1909  1973 W ActivityManager: Slow operation: 66ms so far, now at startProcess: building log message
+06-23 19:58:30.095  1909  1973 W ActivityManager: Slow operation: 66ms so far, now at startProcess: starting to update pids map
+06-23 19:58:30.096  1909  1973 W ActivityManager: Slow operation: 66ms so far, now at startProcess: done updating pids map
+06-23 20:00:05.834  8074  8202 W ReactNativeJS: 'Require cycle: src\\game\\playerInventory.ts -> src\\game\\durability\\index.ts -> src\\game\\durability\\durabilityModel.ts -> src\\game\\survivalPodShip.ts -> src\\game\\playerInventory.ts\n\nRequire cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.', { [Component Stack] name: 'Component Stack' }
+06-23 20:00:36.879  8074  8202 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:00:36.905  8074  8202 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:00:36.923  8074  8202 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:00:36.944  8074  8202 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:00:36.954  8074  8202 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:11:30.889  8074  8705 W ReactNativeJS: 'Require cycle: src\\game\\playerInventory.ts -> src\\game\\durability\\index.ts -> src\\game\\durability\\durabilityModel.ts -> src\\game\\survivalPodShip.ts -> src\\game\\playerInventory.ts\n\nRequire cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.', { [Component Stack] name: 'Component Stack' }
+06-23 20:12:01.101  8074  8705 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:12:01.114  8074  8705 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:12:01.131  8074  8705 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:12:01.149  8074  8705 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:12:01.161  8074  8705 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:13:13.918  8074  8805 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:13:13.935  8074  8805 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:13:13.951  8074  8805 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:13:13.970  8074  8805 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:13:13.983  8074  8805 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:15:32.409  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:15:32.409  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:15:32.410  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:15:32.410  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:15:32.574  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:15:32.575  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:15:32.575  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:15:32.575  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:15:34.465  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:15:34.466  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:15:34.467  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:15:34.469  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:18:54.329  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:18:54.331  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:18:54.332  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:18:54.333  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:21:19.500  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:21:19.500  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:21:19.500  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:21:19.501  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:22:36.962  8074  8805 E ReactNativeJS: ReferenceError: Property 'isTransitCombatPostFlowRunning' doesn't exist
+06-23 20:22:36.962  8074  8805 E ReactNativeJS: 
+06-23 20:22:36.962  8074  8805 E ReactNativeJS: This error is located at:
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in LevelUpOverlayBridge (created by RootLayout)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in RNGestureHandlerRootView (created by GestureHandlerRootView)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in GestureHandlerRootView (created by RootLayout)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in RootLayout
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in Unknown (created by Route())
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in Suspense (created by Route())
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in Route (created by Route())
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in Route() (created by ContextNavigator)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in RNCSafeAreaProvider (created by SafeAreaProvider)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in SafeAreaProvider (created by wrapper)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in wrapper (created by ContextNavigator)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in EnsureSingleNavigator
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in BaseNavigationContainer
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in ThemeProvider
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in NavigationContainerInner (created by ContextNavigator)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in ContextNavigator (created by ExpoRoot)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in ExpoRoot (created by App)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in App (created by ErrorOverlay)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in ErrorToastContainer (created by ErrorOverlay)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in ErrorOverlay (created by withDevTools(ErrorOverlay))
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in withDevTools(ErrorOverlay)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in View (created by AppContainer)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in View (created by AppContainer)
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in AppContainer
+06-23 20:22:36.962  8074  8805 E ReactNativeJS:     in main(RootComponent)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS: ReferenceError: Property 'isTransitCombatPostFlowRunning' doesn't exist
+06-23 20:22:36.998  8074  8805 E ReactNativeJS: 
+06-23 20:22:36.998  8074  8805 E ReactNativeJS: This error is located at:
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in LevelUpOverlayBridge (created by RootLayout)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in RNGestureHandlerRootView (created by GestureHandlerRootView)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in GestureHandlerRootView (created by RootLayout)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in RootLayout
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in Unknown (created by Route())
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in Suspense (created by Route())
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in Route (created by Route())
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in Route() (created by ContextNavigator)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in RNCSafeAreaProvider (created by SafeAreaProvider)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in SafeAreaProvider (created by wrapper)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in wrapper (created by ContextNavigator)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in EnsureSingleNavigator
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in BaseNavigationContainer
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in ThemeProvider
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in NavigationContainerInner (created by ContextNavigator)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in ContextNavigator (created by ExpoRoot)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in ExpoRoot (created by App)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in App (created by ErrorOverlay)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in ErrorToastContainer (created by ErrorOverlay)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in ErrorOverlay (created by withDevTools(ErrorOverlay))
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in withDevTools(ErrorOverlay)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in View (created by AppContainer)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in View (created by AppContainer)
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in AppContainer
+06-23 20:22:36.998  8074  8805 E ReactNativeJS:     in main(RootComponent)
+06-23 20:22:39.880  8074  8805 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:22:39.896  8074  8805 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:22:39.909  8074  8805 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:22:40.039  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:22:40.040  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:22:40.040  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:22:40.041  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:24:24.552  1909  4340 W ActivityManager: pid 24971 com.google.android.gms.persistent sent binder code 2 with flags 1 to frozen apps and got error -32
+06-23 20:25:18.599  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:25:18.600  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:25:18.600  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:25:18.600  8074  8805 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:25:21.106  8074  8805 E ReactNativeJS: TypeError: Cannot assign to read-only property 'current'
+06-23 20:25:21.106  8074  8805 E ReactNativeJS: 
+06-23 20:25:21.106  8074  8805 E ReactNativeJS: This error is located at:
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in WorldMapScreen
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Unknown (created by Route(worldmap))
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Suspense (created by Route(worldmap))
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Route (created by Route(worldmap))
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Route(worldmap) (created by SceneView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in StaticContainer
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in EnsureSingleNavigator (created by SceneView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in SceneView (created by SceneView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in View (created by DebugContainer)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in DebugContainer (created by MaybeNestedStack)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in MaybeNestedStack (created by SceneView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in View (created by SceneView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in RNSScreen (created by Animated(Anonymous))
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Animated(Anonymous) (created by InnerScreen)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Suspender (created by Freeze)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Suspense (created by Freeze)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in DelayedFreeze (created by InnerScreen)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in InnerScreen (created by Screen)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Screen (created by SceneView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in SceneView (created by NativeStackViewInner)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Suspender (created by Freeze)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Suspense (created by Freeze)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in DelayedFreeze (created by ScreenStack)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in RNSScreenStack (created by ScreenStack)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in ScreenStack (created by NativeStackViewInner)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in NativeStackViewInner (created by NativeStackView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in View (created by SafeAreaProviderCompat)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in SafeAreaProviderCompat (created by NativeStackView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in NativeStackView (created by NativeStackNavigator)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in PreventRemoveProvider (created by NavigationContent)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in NavigationContent
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Unknown (created by NativeStackNavigator)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in NativeStackNavigator
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Unknown (created by GameLayout)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in GameLayout
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Unknown (created by Route((game)))
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Suspense (created by Route((game)))
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Route (created by Route((game)))
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Route((game)) (created by SceneView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in StaticContainer
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in EnsureSingleNavigator (created by SceneView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in SceneView (created by SceneView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in View (created by DebugContainer)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in DebugContainer (created by MaybeNestedStack)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in MaybeNestedStack (created by SceneView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in View (created by SceneView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in RNSScreen (created by Animated(Anonymous))
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Animated(Anonymous) (created by InnerScreen)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Suspender (created by Freeze)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Suspense (created by Freeze)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in DelayedFreeze (created by InnerScreen)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in InnerScreen (created by Screen)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Screen (created by SceneView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in SceneView (created by NativeStackViewInner)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Suspender (created by Freeze)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Suspense (created by Freeze)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in DelayedFreeze (created by ScreenStack)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in RNSScreenStack (created by ScreenStack)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in ScreenStack (created by NativeStackViewInner)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in NativeStackViewInner (created by NativeStackView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in View (created by SafeAreaProviderCompat)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in SafeAreaProviderCompat (created by NativeStackView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in NativeStackView (created by NativeStackNavigator)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in PreventRemoveProvider (created by NavigationContent)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in NavigationContent
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Unknown (created by NativeStackNavigator)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in NativeStackNavigator
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Unknown (created by RootLayout)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in RNGestureHandlerRootView (created by GestureHandlerRootView)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in GestureHandlerRootView (created by RootLayout)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in RootLayout
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Unknown (created by Route())
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Suspense (created by Route())
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Route (created by Route())
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Route() (created by ContextNavigator)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in RNCSafeAreaProvider (created by SafeAreaProvider)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in SafeAreaProvider (created by wrapper)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in wrapper (created by ContextNavigator)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in EnsureSingleNavigator
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in BaseNavigationContainer
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in ThemeProvider
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in NavigationContainerInner (created by ContextNavigator)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in ContextNavigator (created by ExpoRoot)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in ExpoRoot (created by App)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in App (created by ErrorOverlay)
+06-23 20:25:21.106  8074  8805 E ReactNativeJS:     in Er
+06-23 20:25:21.117  8074  8805 E ReactNativeJS: TypeError: Cannot assign to read-only property 'current'
+06-23 20:25:21.117  8074  8805 E ReactNativeJS: 
+06-23 20:25:21.117  8074  8805 E ReactNativeJS: This error is located at:
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in WorldMapScreen
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Unknown (created by Route(worldmap))
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Suspense (created by Route(worldmap))
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Route (created by Route(worldmap))
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Route(worldmap) (created by SceneView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in StaticContainer
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in EnsureSingleNavigator (created by SceneView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in SceneView (created by SceneView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in View (created by DebugContainer)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in DebugContainer (created by MaybeNestedStack)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in MaybeNestedStack (created by SceneView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in View (created by SceneView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in RNSScreen (created by Animated(Anonymous))
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Animated(Anonymous) (created by InnerScreen)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Suspender (created by Freeze)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Suspense (created by Freeze)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in DelayedFreeze (created by InnerScreen)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in InnerScreen (created by Screen)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Screen (created by SceneView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in SceneView (created by NativeStackViewInner)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Suspender (created by Freeze)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Suspense (created by Freeze)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in DelayedFreeze (created by ScreenStack)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in RNSScreenStack (created by ScreenStack)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in ScreenStack (created by NativeStackViewInner)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in NativeStackViewInner (created by NativeStackView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in View (created by SafeAreaProviderCompat)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in SafeAreaProviderCompat (created by NativeStackView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in NativeStackView (created by NativeStackNavigator)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in PreventRemoveProvider (created by NavigationContent)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in NavigationContent
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Unknown (created by NativeStackNavigator)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in NativeStackNavigator
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Unknown (created by GameLayout)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in GameLayout
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Unknown (created by Route((game)))
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Suspense (created by Route((game)))
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Route (created by Route((game)))
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Route((game)) (created by SceneView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in StaticContainer
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in EnsureSingleNavigator (created by SceneView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in SceneView (created by SceneView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in View (created by DebugContainer)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in DebugContainer (created by MaybeNestedStack)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in MaybeNestedStack (created by SceneView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in View (created by SceneView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in RNSScreen (created by Animated(Anonymous))
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Animated(Anonymous) (created by InnerScreen)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Suspender (created by Freeze)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Suspense (created by Freeze)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in DelayedFreeze (created by InnerScreen)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in InnerScreen (created by Screen)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Screen (created by SceneView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in SceneView (created by NativeStackViewInner)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Suspender (created by Freeze)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Suspense (created by Freeze)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in DelayedFreeze (created by ScreenStack)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in RNSScreenStack (created by ScreenStack)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in ScreenStack (created by NativeStackViewInner)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in NativeStackViewInner (created by NativeStackView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in RCTView (created by View)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in View (created by SafeAreaProviderCompat)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in SafeAreaProviderCompat (created by NativeStackView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in NativeStackView (created by NativeStackNavigator)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in PreventRemoveProvider (created by NavigationContent)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in NavigationContent
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Unknown (created by NativeStackNavigator)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in NativeStackNavigator
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Unknown (created by RootLayout)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in RNGestureHandlerRootView (created by GestureHandlerRootView)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in GestureHandlerRootView (created by RootLayout)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in RootLayout
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Unknown (created by Route())
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Suspense (created by Route())
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Route (created by Route())
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Route() (created by ContextNavigator)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in RNCSafeAreaProvider (created by SafeAreaProvider)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in SafeAreaProvider (created by wrapper)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in wrapper (created by ContextNavigator)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in EnsureSingleNavigator
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in BaseNavigationContainer
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in ThemeProvider
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in NavigationContainerInner (created by ContextNavigator)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in ContextNavigator (created by ExpoRoot)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in ExpoRoot (created by App)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in App (created by ErrorOverlay)
+06-23 20:25:21.117  8074  8805 E ReactNativeJS:     in Er
+06-23 20:26:23.432  8074  9588 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:26:23.446  8074  9588 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:26:23.463  8074  9588 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:26:23.483  8074  9588 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:26:23.495  8074  9588 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:26:23.760  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:26:23.761  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:26:23.762  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:26:23.762  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:26:27.177  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:26:27.177  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:26:27.177  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:26:27.177  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:27:57.190  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 32549
+06-23 20:28:10.983  1909  2410 W ActivityManager: Scheduling restart of crashed service com.samsung.android.samsungpass/.passservice.PassService in 1000ms for connection
+06-23 20:28:10.987  1909  2410 W ActivityManager: Scheduling restart of crashed service com.samsung.android.fmm/com.samsung.android.fme.offlinefinding.OfflineFindingService in 1000ms for start-requested
+06-23 20:29:05.715  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:29:05.716  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:29:05.716  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:29:05.717  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:31:34.074  8074  9588 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:31:34.087  8074  9588 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:31:34.097  8074  9588 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:31:35.073  8074  9588 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:31:35.088  8074  9588 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:31:35.102  8074  9588 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:31:35.112  8074  9588 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:31:35.125  8074  9588 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:31:35.515  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:31:35.516  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:31:35.516  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:31:35.516  8074  9588 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:32:21.905  8074 10966 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:32:21.919  8074 10966 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:32:21.936  8074 10966 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:32:21.954  8074 10966 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:32:21.967  8074 10966 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:32:22.248  8074 10966 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:32:22.248  8074 10966 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:32:22.249  8074 10966 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:32:22.249  8074 10966 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:32:25.718  8074 10966 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:32:25.718  8074 10966 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:32:25.719  8074 10966 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:32:25.719  8074 10966 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:33:23.780  8074 11030 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:33:23.800  8074 11030 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:33:23.818  8074 11030 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:33:23.838  8074 11030 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:33:23.852  8074 11030 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-23 20:33:24.134  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:33:24.135  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:33:24.135  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:33:24.136  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:33:27.591  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:33:27.592  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:33:27.592  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:33:27.592  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:35:30.983  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:35:30.984  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:35:30.984  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:35:30.984  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:37:37.325  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:37:37.326  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:37:37.326  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:37:37.327  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-23 20:37:52.239  1909  1973 W ActivityManager: Slow operation: 61ms so far, now at startProcess: done updating battery stats
+06-23 20:37:52.240  1909  1973 W ActivityManager: Slow operation: 61ms so far, now at startProcess: building log message
+06-23 20:37:52.240  1909  1973 W ActivityManager: Slow operation: 61ms so far, now at startProcess: starting to update pids map
+06-23 20:37:52.246  1909  1973 W ActivityManager: Slow operation: 68ms so far, now at startProcess: done updating pids map
+06-23 20:37:54.806  1909  3050 W ActivityManager: Scheduling restart of crashed service com.samsung.android.privateaccesstokens/.components.services.PATService in 10000ms for connection
+06-23 20:39:39.801  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:39:39.802  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-23 20:39:39.802  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-23 20:39:39.803  8074 11030 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.

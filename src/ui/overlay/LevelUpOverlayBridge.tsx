@@ -4,6 +4,7 @@
 
 import { usePathname } from 'expo-router';
 import React, { memo, useEffect } from 'react';
+import { useTransitCombatPostFlowRunning } from '../../game/transitCombat/transitCombatPostFlow';
 import { usePlayerStore } from '../../store/playerStore';
 import { useOrbitCapitalCombatUiStore } from '../../store/orbitCapitalCombatUiStore';
 import { useArcOverlayStore } from './arcOverlayStore';
@@ -17,11 +18,14 @@ export const LevelUpOverlayBridge = memo(function LevelUpOverlayBridge() {
   const levelUpSummary = usePlayerStore((s) => s.levelUpSummary);
   const clearLevelUp = usePlayerStore((s) => s.clearLevelUp);
   const orbitCombatActive = useOrbitCapitalCombatUiStore((s) => s.active);
+  const transitPostFlowRunning = useTransitCombatPostFlowRunning();
   const present = useArcOverlayStore((s) => s.present);
   const dismissWhere = useArcOverlayStore((s) => s.dismissWhere);
 
   const hideDuringCombat =
-    (pathname?.includes('combat') ?? false) || orbitCombatActive;
+    (pathname?.includes('combat') ?? false)
+    || orbitCombatActive
+    || transitPostFlowRunning;
   const shouldShow = Boolean(
     levelUpPending && levelUpSummary && player && !hideDuringCombat,
   );

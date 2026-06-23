@@ -298,6 +298,8 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   /** `getPlanetMainStageVerticalMetrics` 결과 — 포그라운드와 동일한 세로 패딩만 허용 */
   backgroundChrome,
   combatSimRef,
+  /** false — worldmap/전투/시설 blur: Skia·성운·궤도 레이어 언마운트(PSS 재상승 방지) */
+  hubStageSkiaActive = true,
 }: {
   planetId: string;
   system: StarSystem;
@@ -322,6 +324,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   safeAiClanTerritoryPlate?: { clanName: string; clanColor: string } | null;
   planetStageScale: number;
   backgroundChrome: { paddingTop: number; paddingBottom: number };
+  hubStageSkiaActive?: boolean;
 }) {
   const t = useT();
   const locale = useAppSettingsStore((s) => s.locale);
@@ -400,6 +403,16 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
     setHubSkiaDodgeNebulaReady(false);
     dodgeBridgeLastSyncMs.value = 0;
   }, [planetId, dodgeBridgeLastSyncMs, dodgeFxBridgeActive]);
+
+  /** blur(worldmap/전투/시설) — sticky Skia dodge·성운 useImage 네이티브 상주 해제 */
+  useEffect(() => {
+    if (hubStageSkiaActive) return;
+    dodgeFxBridgeActive.value = 0;
+    setInboundDroneSkiaDodgeLatch(false);
+    setHubDodgeSkiaOverlayMounted(false);
+    setHubSkiaDodgeNebulaReady(false);
+    dodgeBridgeLastSyncMs.value = 0;
+  }, [hubStageSkiaActive, dodgeBridgeLastSyncMs, dodgeFxBridgeActive]);
   const recomputeDodgeOrbitOffset = useCallback(() => {
     if (!dodgeStageMountedRef.current) return;
     const nebulaNode = nebulaBackdropRef.current;
@@ -539,7 +552,8 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
         ]}
         pointerEvents="none"
       >
-        {useSkiaCombatNebulaBackdrop && devSkiaMountAllowed ? (
+        {hubStageSkiaActive ? (
+          useSkiaCombatNebulaBackdrop && devSkiaMountAllowed ? (
           <SkiaPlanetNebulaShaderBackdrop
             size={nebulaBackdropSize}
             active
@@ -604,7 +618,8 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
             renderNebulaLayer={mainStageBackdrop.nebulaShaderEnabled}
             backgroundImageSource={mainStageBackdrop.backdropImageSource}
           />
-        )}
+        )
+        ) : null}
       </View>
       <View style={bgStyles.planetBgStack}>
         <View style={[bgStyles.systemBadge, hubCapitalCombatMute && bgStyles.planetHubCapitalCombatBadgeDim]}>
@@ -739,7 +754,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                   />
                 </View>
               ) : null}
-              {tableOrbitSlotCount > 0 || arcNpcShipsAtPlanet.length > 0 || arcInboundDronesAtPlanet.length > 0 ? (
+              {hubStageSkiaActive && (tableOrbitSlotCount > 0 || arcNpcShipsAtPlanet.length > 0 || arcInboundDronesAtPlanet.length > 0) ? (
                 <View
                   style={[
                     bgStyles.orbitLayerShips,
@@ -768,7 +783,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                   ) : null}
                 </View>
               ) : null}
-              {!showEdenRaidTest ? (
+              {hubStageSkiaActive && !showEdenRaidTest ? (
                 <View
                   style={[
                     bgStyles.orbitLayerPlayer,

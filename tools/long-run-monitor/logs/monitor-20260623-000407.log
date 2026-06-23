@@ -1,0 +1,26 @@
+[2026-06-23 00:04:07] monitor start package=com.arcfire.online interval=30m rules=v2(hub_activation_excluded)
+[2026-06-23 00:04:07] meminfo -> D:\arcfire20260607\tools\long-run-monitor\logs\meminfo-20260623-000407.log
+[2026-06-23 00:04:07] timeline -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-timeline.csv
+[2026-06-23 00:04:07] alerts -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-alerts.log
+[2026-06-23 00:04:07] FOCUS: hub Skia orbit + nebula + combat ??restart only active hub GL>=80MB or 3x dGL>=8MB
+[2026-06-23 00:04:10] snap PSS=645.1MB GL=54.3MB views=293 dPSS=-12.1 dGL=-2.2 
+[2026-06-23 00:34:14] snap PSS=657.7MB GL=42.2MB views=312 dPSS=-108.4 dGL=-13.7 GL_RECOVERED idle_ok
+[2026-06-23 01:04:18] snap PSS=659MB GL=46.1MB views=301 dPSS=-8.7 dGL=-0.2 
+[2026-06-23 01:34:23] snap PSS=681MB GL=46.7MB views=306 dPSS=19.8 dGL=0.6 
+[2026-06-23 02:04:26] snap PSS=640.8MB GL=46.2MB views=302 dPSS=-14.2 dGL=-2 
+[2026-06-23 02:34:34] snap PSS=647.3MB GL=46.2MB views=302 dPSS=-7.6 dGL=-2 
+[2026-06-23 03:04:37] WARN: com.arcfire.online not running
+[2026-06-23 03:34:39] snap PSS=670.7MB GL=54.1MB views=300 dPSS= dGL= 
+[2026-06-23 04:04:45] snap PSS=666.1MB GL=64.3MB views=301 dPSS=6.8 dGL=0.2 
+[2026-06-23 04:34:48] snap PSS=664MB GL=64.3MB views=301 dPSS=-3.5 dGL=0 
+[2026-06-23 05:04:54] snap PSS=670.8MB GL=64.5MB views=306 dPSS=10.1 dGL=0.2 
+[2026-06-23 05:35:01] snap PSS=653.4MB GL=66.3MB views=301 dPSS=6.6 dGL=0 
+[2026-06-23 06:05:05] snap PSS=658.2MB GL=64.5MB views=301 dPSS=2.7 dGL=0 
+[2026-06-23 06:35:10] snap PSS=662.9MB GL=64.7MB views=308 dPSS=6.3 dGL=0.2 
+[2026-06-23 07:05:14] snap PSS=653.8MB GL=64.5MB views=301 dPSS=-5.5 dGL=0 
+[2026-06-23 07:35:18] snap PSS=655.2MB GL=64.5MB views=301 dPSS=-2 dGL=0 
+[2026-06-23 08:05:22] snap PSS=657.2MB GL=64.5MB views=297 dPSS=2.2 dGL=0 
+[2026-06-23 08:35:29] snap PSS=609.6MB GL=64.5MB views=301 dPSS=13.6 dGL=0 
+[2026-06-23 09:05:35] snap PSS=606.8MB GL=64.5MB views=301 dPSS=9.4 dGL=0 
+[2026-06-23 09:35:39] snap PSS=597.9MB GL=66.5MB views=301 dPSS=-36.4 dGL=1.4 
+[2026-06-23 10:05:40] WARN: com.arcfire.online not running

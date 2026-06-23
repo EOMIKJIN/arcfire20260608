@@ -18,6 +18,12 @@ try {
 } catch {
   /* ignore */
 }
+const TRIGGER = path.join(__dirname, '../../.cursor/trigger-incident-auto-fix.json');
+try {
+  if (fs.existsSync(TRIGGER)) fs.unlinkSync(TRIGGER);
+} catch {
+  /* ignore */
+}
 fs.mkdirSync(OUTBOX, { recursive: true });
 fs.writeFileSync(ACK, new Date().toISOString(), 'utf8');
 process.stdout.write('incident handoff acked\n');

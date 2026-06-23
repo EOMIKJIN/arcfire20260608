@@ -21,6 +21,8 @@
 
 > **v2.1 변경(2026-06-17)**: 활성 Skia 전투의 정상 GL footprint(~110~140MB)는 이탈 시 회수되므로 **절대 GL 수치(`gl_critical_active_hub`)만으로는 재시작하지 않는다**(30분 간격 모니터에서 전투 진입 첫 고-GL 샘플의 false-positive 재시작을 차단). 재시작은 **(1) 3회 연속 GL_SPIKE, (2) baseline drift, (3) 하드 실링(GL≥200MB·PSS≥950MB), (4) 크래시 동반 프로세스 사망** 시에만. 단일 GL_SPIKE 즉시 재시작은 폐지(추세 기반 판단으로 통합).
 
+> **v2.7 변경(2026-06-23 · 김팀장)**: (a) **report-watch v2.7** — crash는 `Get-ArcfireCrashLogEvents` **신선도+바이트 tail**만 적색. 구 PID SIGSEGV 오탐 제거. (b) **monitor-paused** 시 `GL_HARD_CEILING`/`REFIX_REQUESTED`는 incidents·heartbeat **황색 스팸 없음** — remediation 30분 throttle INFO만. (c) **scan-playtest-alerts v2** — 패턴 매칭 폐지, 신선 arcfire 크래시만 `playtest-alerts.log`. (d) **PID_CHANGE** 실시간 감지.
+
 > **v2.6 변경(2026-06-19 · 김팀장)**: (a) **CRASH arcfire 한정 + 신선도** — `Get-ArcfireCrashLogEvents`: `.arcfire.online` FATAL/`Killing: crash`/`Process died`만, 타임스탬프 ≤max(35, 2×interval+5)분. DEBUG 백트레이스·타앱 `crashed service`·자동조치 `force-stop` 제외. (b) **handoff dedupe** — `.crash-last-event` 동일 키 재패킹 금지. (c) **hard-ceiling 단일 경로** — `run-monitor` 즉시 relaunch 제거 → `check-and-remediate` coalesce만.
 
 > **v2.3 변경(2026-06-19 · 김팀장)**: (a) **주기당 재시작 1회** — `consecutive_gl_spikes` + `GL_HARD_CEILING` 동시 충족 시 이중 `force-stop` 방지(우선순위: hard-ceiling > spikes > drift). (b) **CRASH 오탐 제거** — Firebase `W ReactNativeJS` deprecation은 CRASH/PROCESS_DEATH 판정에서 제외(FATAL·SIGSEGV·`E ReactNativeJS`만). (c) **`.auto-remediation.lock`** — 10분 내 중복 relaunch 차단.
@@ -79,3 +81,15 @@ powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.
 | 완료 | `node tools/long-run-monitor/ack-incident-handoff.cjs` |
 
 > 김경제 = 감시·기록·핸드오프 생성 · 김팀장 = logcat 근거 코드 수정
+
+## 집중 검사 항목 (상시 · 2026-06-23 추가)
+
+**장기 release soak(5h+) + 계단식 GL/PSS floor 상승** 환경에서 **은하계 지도(worldmap)** 크래시를 P0로 추적한다.
+
+| 항목 | 신호 | 조치 주체 |
+|------|------|-----------|
+| worldmap focus 직후 SIGSEGV | `ShareableWorklet` · `libreanimated` · `ReanimatedEventDispatcher` | 김팀장 — scroll lifecycle·post-flow 지연 |
+| 5h+ floor drift + worldmap | `mem-timeline.csv` floor ≥ baseline+25MB 후 크래시 | 김경제 탐지 → 김팀장 수정 |
+| 이동중 전투 → worldmap | transit post-flow · `scrollAliveSv` 타이밍 | 플레이테스트 마일스톤 + precision logcat |
+
+플레이테스트 절차: `tools/long-run-monitor/PLAYTEST_WATCH.md` · 디버그 빌드 동일 시나리오 권장.
