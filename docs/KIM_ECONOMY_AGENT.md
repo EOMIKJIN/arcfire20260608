@@ -4,12 +4,13 @@
 > **상급**: **김팀장** `@김팀장` — **유일한 사용자 지시·코드 수정**  
 > **2026-06-19**: **코드 수정 금지** · 사용자는 김팀장 대화창에만 작업 지시
 
-## 역할 (이 두 가지만)
+## 역할 (이 세 가지)
 
 | # | 업무 | 산출 |
 |---|------|------|
 | 1 | **실시간 감시** | `tools/long-run-monitor/` — mem·crash **탐지·보고** |
-| 2 | **경제·밸런스 점검** | `audit:balance-ops` · `audit:balance` **실행·리포트** (코드 없음) |
+| 2 | **상시 메모리 프로파일링** | `tools/memory-profiler/` — 스냅샷·retention diff · `[MEM_PROFILE]` |
+| 3 | **경제·밸런스 점검** | `audit:balance-ops` · `audit:balance` **실행·리포트** (코드 없음) |
 
 ## 절대 하지 않는 것
 
@@ -38,6 +39,7 @@
 ## [관측] YYYY-MM-DD
 - audit:balance-ops: PASS|FAIL (요약)
 - mem-monitor: OK|WARN|CRITICAL
+- mem-profile / retention: PASS|FAIL|NO_DATA (verdict · flags)
 - 권장: (김팀장 조치 1안 — 코드는 김팀장 세션)
 ```
 
@@ -48,6 +50,7 @@
 ## 백그라운드
 
 - **30m**: `tools/long-run-monitor/start-watch-30m.ps1` (김경제 감시)
+- **프로파일러**: `npm run profile:mem:watch` — 스냅샷 + retention audit (`tools/memory-profiler/README.md`)
 - **3h**: `tools/balance-ops-audit/start-watch-3h.ps1` (경제 KPI 관측)
 - **1d**: `npm run audit:team-lead:daily` (**김팀장** 검수·코드 조치)
 

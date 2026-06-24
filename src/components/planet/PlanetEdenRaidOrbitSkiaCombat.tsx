@@ -29,6 +29,15 @@ import {
   resolveCapitalProjectilePresentation,
 } from '../../combat/capitalWeaponPipeline';
 import { registerCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
+import { disposePlanetSkiaHitFxModuleCaches } from './planetSkiaHitFxContract';
+import {
+  acquireSkPathFromPool,
+  drainSkPathPool,
+  releaseSkPathToSpare,
+  resetSkPath,
+  scheduleSkPictureDispose,
+  safeSkiaDispose,
+} from '../../game/skia/skiaMemoryLifecycle';
 import type { Agent, Missile, PlanetEdenRaidSim } from './PlanetEdenRaidTestLayer';
 import { drawMissileHitFxOnSkCanvas } from './planetNebulaMissileHitFxDraw';
 import {
@@ -67,8 +76,11 @@ type SkPath = ReturnType<typeof Skia.Path.Make>;
 
 type CombatSkiaPoolBundle = {
   missileTrail: Map<number, SkPath>;
+  missileTrailSpare: SkPath[];
   diamond: Map<number, SkPath>;
+  diamondSpare: SkPath[];
   novaHead: Map<number, SkPath>;
+  novaHeadSpare: SkPath[];
   /** 미사일 id → atan2 불연속(±π) 제거용 연속 접선 각 */
   novaTangentStable: Map<number, number>;
   /** 에이전트 id → 분사화염 길이(속도 연동 ease 상태) */
@@ -78,8 +90,11 @@ type CombatSkiaPoolBundle = {
 function createCombatSkiaPoolBundle(): CombatSkiaPoolBundle {
   return {
     missileTrail: new Map(),
+    missileTrailSpare: [],
     diamond: new Map(),
+    diamondSpare: [],
     novaHead: new Map(),
+    novaHeadSpare: [],
     novaTangentStable: new Map(),
     thrusterLenSmooth: new Map(),
   };
@@ -258,45 +273,29 @@ function buildLaserBolt(
 }
 
 function resetPath(path: SkPath): void {
-  const anyPath = path as unknown as { rewind?: () => void; reset?: () => void };
-  if (typeof anyPath.rewind === 'function') anyPath.rewind();
-  else if (typeof anyPath.reset === 'function') anyPath.reset();
+  resetSkPath(path);
 }
 
-function disposeSkiaPath(path: SkPath | undefined): void {
-  if (!path) return;
-  try {
-    const d = (path as unknown as { dispose?: () => void }).dispose;
-    if (typeof d === 'function') d.call(path);
-  } catch {
-    /* 네이티브 객체 해제 실패 무시 */
-  }
+let _combatPictureRecorder: ReturnType<typeof Skia.PictureRecorder> | null = null;
+
+function getCombatPictureRecorder(): ReturnType<typeof Skia.PictureRecorder> {
+  if (!_combatPictureRecorder) _combatPictureRecorder = Skia.PictureRecorder();
+  return _combatPictureRecorder;
 }
 
-function disposePathPool(map: Map<number, SkPath>): void {
-  for (const p of map.values()) disposeSkiaPath(p);
-  map.clear();
+let _thrusterSrcRect: ReturnType<typeof Skia.XYWHRect> | null = null;
+let _thrusterDestRect: ReturnType<typeof Skia.XYWHRect> | null = null;
+
+function thrusterSrcRect(iw: number, ih: number) {
+  if (!_thrusterSrcRect) _thrusterSrcRect = Skia.XYWHRect(0, 0, iw, ih);
+  else _thrusterSrcRect.setXYWH(0, 0, iw, ih);
+  return _thrusterSrcRect;
 }
 
-/**
- * `<Picture picture={skPicture} />`가 네이티브에서 아직 참조 중인데 JS에서 dispose 하면
- * "Missing … picture" / JSI 타입 오류가 난다. 단일 rAF만으로는 저FPS·백그라운드 복귀·장시간 전투 후에도 레이스가 남을 수 있어
- * 이중 rAF + 짧은 지연 뒤 dispose 한다.
- */
-function scheduleSkPictureDispose(pic: SkPicture | null): void {
-  if (!pic) return;
-  // native 회수 가속: 펜딩 picture 수↓ → Native Heap high-water↓.
-  // 단일 rAF(직전 프레임 picture가 이미 교체 렌더됨) + 48ms 마진으로 비동기 <Picture>
-  // 렌더 use-after-free 를 방어한다(과단축 금지).
-  requestAnimationFrame(() => {
-    setTimeout(() => {
-      try {
-        pic.dispose();
-      } catch {
-        /* 이미 dispose 또는 네이티브 핸들 무효 */
-      }
-    }, 48);
-  });
+function thrusterDestRect(x: number, y: number, w: number, h: number) {
+  if (!_thrusterDestRect) _thrusterDestRect = Skia.XYWHRect(x, y, w, h);
+  else _thrusterDestRect.setXYWH(x, y, w, h);
+  return _thrusterDestRect;
 }
 
 function writeDiamondPath(path: SkPath, cx: number, cy: number, headingRad: number, h: number) {
@@ -459,24 +458,21 @@ function syncCombatSkiaPoolsFromSim(
   const missileTrailPoolSync = pools.missileTrail;
   for (const id of missileTrailPoolSync.keys()) {
     if (!activeMissileIds.has(id)) {
-      disposeSkiaPath(missileTrailPoolSync.get(id));
-      missileTrailPoolSync.delete(id);
+      releaseSkPathToSpare(missileTrailPoolSync, pools.missileTrailSpare, id);
       pools.novaTangentStable.delete(id);
     }
   }
   const novaHeadPoolSync = pools.novaHead;
   for (const id of novaHeadPoolSync.keys()) {
     if (!activeMissileIds.has(id)) {
-      disposeSkiaPath(novaHeadPoolSync.get(id));
-      novaHeadPoolSync.delete(id);
+      releaseSkPathToSpare(novaHeadPoolSync, pools.novaHeadSpare, id);
       pools.novaTangentStable.delete(id);
     }
   }
   const diamondPoolSync = pools.diamond;
   for (const id of diamondPoolSync.keys()) {
     if (!activeAgentIds.has(id)) {
-      disposeSkiaPath(diamondPoolSync.get(id));
-      diamondPoolSync.delete(id);
+      releaseSkPathToSpare(diamondPoolSync, pools.diamondSpare, id);
       pools.thrusterLenSmooth.delete(id);
     }
   }
@@ -577,16 +573,23 @@ function resolveTeamFlameTint(team: Agent['team']): SkColorFilter | null {
 function reclaimCombatSkiaModuleCaches(): void {
   skColorCache.clear();
   for (const filter of _teamFlameTintCache.values()) {
-    try {
-      (filter as { dispose?: () => void } | null)?.dispose?.();
-    } catch {
-      /* idempotent */
-    }
+    safeSkiaDispose(filter as { dispose?: () => void });
   }
   _teamFlameTintCache.clear();
+  safeSkiaDispose(SK_PAINT_STROKE);
+  SK_PAINT_STROKE = null;
+  safeSkiaDispose(SK_PAINT_FILL);
+  SK_PAINT_FILL = null;
+  safeSkiaDispose(_thrusterFlamePaint);
+  _thrusterFlamePaint = null;
+  safeSkiaDispose(_combatPictureRecorder as unknown as { dispose?: () => void });
+  _combatPictureRecorder = null;
+  _thrusterSrcRect = null;
+  _thrusterDestRect = null;
 }
 
 registerCombatSkiaPresentationReclaim(reclaimCombatSkiaModuleCaches);
+registerCombatSkiaPresentationReclaim(disposePlanetSkiaHitFxModuleCaches);
 
 /**
  * 함선 후미에 타원형 분사화염을 1장 그린다(이미지 stretch). flameImage 없으면 no-op.
@@ -618,18 +621,16 @@ function drawThrusterFlame(
   const paint = getThrusterFlamePaint();
   paint.setAlphaf(THRUSTER_FLAME_OPACITY);
   paint.setColorFilter(resolveTeamFlameTint(ag.team));
-  const src = Skia.XYWHRect(0, 0, iw, ih);
-  // 함선 후미(−heading 방향)로: 로컬 +x = 함수(bow) 방향이므로 −x 로 분사.
-  const dest = Skia.XYWHRect(
-    -(THRUSTER_FLAME_REAR_OFFSET_PX + len),
-    -THRUSTER_FLAME_WIDTH_PX * 0.5,
-    len,
-    THRUSTER_FLAME_WIDTH_PX,
-  );
+  const lenRect = THRUSTER_FLAME_REAR_OFFSET_PX + len;
   canvas.save();
   canvas.translate(ag.x, ag.y);
   canvas.rotate((ag.headingRad * 180) / Math.PI, 0, 0);
-  canvas.drawImageRect(flameImage, src, dest, paint);
+  canvas.drawImageRect(
+    flameImage,
+    thrusterSrcRect(iw, ih),
+    thrusterDestRect(-lenRect, -THRUSTER_FLAME_WIDTH_PX * 0.5, len, THRUSTER_FLAME_WIDTH_PX),
+    paint,
+  );
   canvas.restore();
 }
 
@@ -678,7 +679,7 @@ function recordCombatOrbitPicture(
 
   const vfx = resolveCombatOrbitVfxBudget(agents.length, missiles.length, sim.fpsRef.current);
 
-  const recorder = Skia.PictureRecorder();
+  const recorder = getCombatPictureRecorder();
   const canvas = recorder.beginRecording(Skia.XYWHRect(0, 0, orbitSize, orbitSize));
 
   _recCanvas = canvas;
@@ -697,13 +698,11 @@ function recordCombatOrbitPicture(
       continue;
     }
     const missileTrailPool = pools.missileTrail;
-    const missilePath =
-      missileTrailPool.get(m.id) ??
-      (() => {
-        const created = Skia.Path.Make();
-        missileTrailPool.set(m.id, created);
-        return created;
-      })();
+    const missilePath = acquireSkPathFromPool(
+      missileTrailPool,
+      pools.missileTrailSpare,
+      m.id,
+    );
     const trail = makeMissileTrailPath(m, tMs, vfx.missileSegmentBudget, vfx.bezierSampleCap, missilePath);
     if (!trail.visible) continue;
 
@@ -755,13 +754,7 @@ function recordCombatOrbitPicture(
         prev === undefined || !Number.isFinite(prev) ? rawTan : unwrapTangentAdjacent(prev, rawTan);
       stableMap.set(m.id, stableTan);
       const novaHeadPool = pools.novaHead;
-      const ovalPath =
-        novaHeadPool.get(m.id) ??
-        (() => {
-          const created = Skia.Path.Make();
-          novaHeadPool.set(m.id, created);
-          return created;
-        })();
+      const ovalPath = acquireSkPathFromPool(novaHeadPool, pools.novaHeadSpare, m.id);
       writeNovaHeadOvalAlongTangent(
         ovalPath,
         trail.head.x,
@@ -819,13 +812,7 @@ function recordCombatOrbitPicture(
       drawThrusterFlame(canvas, ag, flameImage, pools.thrusterLenSmooth);
 
       const diamondPool = pools.diamond;
-      const dPath =
-        diamondPool.get(ag.id) ??
-        (() => {
-          const created = Skia.Path.Make();
-          diamondPool.set(ag.id, created);
-          return created;
-        })();
+      const dPath = acquireSkPathFromPool(diamondPool, pools.diamondSpare, ag.id);
       writeDiamondPath(dPath, ag.x, ag.y, ag.headingRad, ALLY_MARK_HALF);
       draw.pathStroke(dPath, ag.stroke, 2.5, 0.98, StrokeJoin.Miter, StrokeCap.Round);
 
@@ -862,6 +849,9 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
   renderMissileDodgeFx?: boolean;
 }) {
   const mountedRef = useRef(true);
+  const combatSkiaLoopsActiveRef = useRef(true);
+  const pictureFlushRafRef = useRef(0);
+  const pendingPictureRef = useRef<SkPicture | null>(null);
   const orbitSizeRef = useRef(0);
   const renderMissileDodgeFxRef = useRef(renderMissileDodgeFx);
   renderMissileDodgeFxRef.current = renderMissileDodgeFx;
@@ -895,18 +885,12 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
 
   useEffect(() => {
     mountedRef.current = true;
-    const pushFrame = () => {
-      if (!mountedRef.current) return;
-      const orbitSz = orbitSizeRef.current;
-      if (orbitSz < 1) return;
-      const next = recordCombatOrbitPicture(
-        sim,
-        pools,
-        orbitSz,
-        dodgeImageRef.current,
-        flameImageRef.current,
-        renderMissileDodgeFxRef.current,
-      );
+    combatSkiaLoopsActiveRef.current = true;
+    const flushPictureToReact = () => {
+      pictureFlushRafRef.current = 0;
+      if (!mountedRef.current || !combatSkiaLoopsActiveRef.current) return;
+      const next = pendingPictureRef.current;
+      if (!next) return;
       const prev = picLiveRef.current;
       picLiveRef.current = next;
       setPicture(next);
@@ -914,21 +898,46 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
         scheduleSkPictureDispose(prev);
       }
     };
+    const pushFrame = () => {
+      if (!mountedRef.current || !combatSkiaLoopsActiveRef.current) return;
+      const orbitSz = orbitSizeRef.current;
+      if (orbitSz < 1) return;
+      pendingPictureRef.current = recordCombatOrbitPicture(
+        sim,
+        pools,
+        orbitSz,
+        dodgeImageRef.current,
+        flameImageRef.current,
+        renderMissileDodgeFxRef.current,
+      );
+      if (pictureFlushRafRef.current === 0) {
+        pictureFlushRafRef.current = requestAnimationFrame(flushPictureToReact);
+      }
+    };
     sim.combatOrbitPostStepRef.current = pushFrame;
     pushFrame();
     return () => {
+      combatSkiaLoopsActiveRef.current = false;
       mountedRef.current = false;
+      if (pictureFlushRafRef.current !== 0) {
+        cancelAnimationFrame(pictureFlushRafRef.current);
+        pictureFlushRafRef.current = 0;
+      }
+      pendingPictureRef.current = null;
       if (sim.combatOrbitPostStepRef.current) {
         sim.combatOrbitPostStepRef.current = null;
       }
-      disposePathPool(pools.missileTrail);
-      disposePathPool(pools.novaHead);
-      disposePathPool(pools.diamond);
-      pools.novaTangentStable.clear();
-      pools.thrusterLenSmooth.clear();
-      const live = picLiveRef.current;
-      picLiveRef.current = null;
-      scheduleSkPictureDispose(live);
+      setTimeout(() => {
+        drainSkPathPool(pools.missileTrail, pools.missileTrailSpare);
+        drainSkPathPool(pools.novaHead, pools.novaHeadSpare);
+        drainSkPathPool(pools.diamond, pools.diamondSpare);
+        pools.novaTangentStable.clear();
+        pools.thrusterLenSmooth.clear();
+        const live = picLiveRef.current;
+        picLiveRef.current = null;
+        scheduleSkPictureDispose(live);
+        reclaimCombatSkiaModuleCaches();
+      }, 16);
     };
   }, [sim, pools]);
 

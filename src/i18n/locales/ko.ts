@@ -564,6 +564,7 @@ export const KO_DICTIONARY: I18nDictionary = {
 
   // ── 행성 경제 정보 (econInfo) ──
   'econInfo.title': '행성 정보',
+  'econInfo.planetGovernor': '행성총사령관 {name}',
   'econInfo.portraitSlotA11y': '행성 이미지 영역',
   'econInfo.pgpTotal': 'PGP 총생산',
   'econInfo.upkeep': '유지비 (인구 {pct}%)',

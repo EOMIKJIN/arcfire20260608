@@ -1,0 +1,2 @@
+﻿iso_time,snapshot_id,pid,stage,event,pss_mb,gl_mb,native_mb,java_mb,views,detail
+2026-06-24 20:40:47,20260624-204047-609,20679,unknown,manual,816.7,25,469.3,28.9,298,arcadia_idle_watch_until_11am_20260625

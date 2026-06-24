@@ -1,0 +1,22 @@
+planetId,systemId,occupationSide,ownershipTier,governorCaptainId,governorTitleKo,hostileToPlayerBlue,talkEnabled,talkPriority,dialogSceneId,instanceMissionTag,hostileEntryCombatEnabled,notesKo
+arcadia_prime,arcadia,BLUE,nation,npc_cpt_arcadia_lane_01,관문순찰대장,FALSE,TRUE,2,npc_dialog_arcadia_lane_01,gov_arcadia,FALSE,서부항로·스텔리움 연합 관문 수호
+solar_station,solar_port,BLUE,clan,npc_cpt_ai_clan_safe_01,연방해군,FALSE,TRUE,2,npc_dialog_ai_clan_safe_01,gov_solar,FALSE,솔라무역 방위연합 AI 클랜장
+minerva_deep,minerva,BLUE,nation,npc_cpt_gov_minerva,광산총감독,FALSE,TRUE,2,npc_dialog_gov_minerva,gov_minerva,FALSE,서부·광업 거점 국가 파견 수장
+vega_base,vega_outpost,BLUE,nation,npc_cpt_vega_watch_01,초계지휘관,FALSE,TRUE,2,npc_dialog_vega_watch_01,gov_vega,FALSE,베가 전초기지 국가 방위사령
+eden_city,new_eden,BLUE,nation,npc_cpt_mireille,제독,FALSE,TRUE,2,npc_dialog_mireille,gov_eden,FALSE,블루(서부) 상업 수도·연합 의회 수장
+iron_remnant,iron_cross,BLUE,nation,npc_cpt_gov_iron,잔해수호사령,FALSE,TRUE,2,npc_dialog_gov_iron,gov_iron,FALSE,아이언 크로스 국가 거점 수호
+draco_haven,draco_nebula,BLUE,nation,npc_cpt_draco_obs_01,성운관측장,FALSE,TRUE,2,npc_dialog_draco_obs_01,gov_draco,FALSE,드라코 성운 연구·방비 수장
+omega_hub,omega_station,BLUE,clan,npc_cpt_ai_clan_neutral_01,중립무역대장,FALSE,TRUE,2,npc_dialog_ai_clan_neutral_01,gov_omega,FALSE,오메가 중립 회항단 AI 클랜장
+helios_core,helios,NEUTRAL,nation,npc_cpt_gov_helios,태양권 관리인,FALSE,TRUE,3,npc_dialog_gov_helios,gov_helios,FALSE,헬리오스 에너지 중립 행정·국가 위탁
+sirius_border,sirius,RED,nation,npc_cpt_enemy_sirius_01,변경 약탈장,TRUE,TRUE,2,npc_dialog_gov_red_hostile,gov_sirius,TRUE,동부(레드) 변경선·아크코어 지시 수장
+titan_ruins,titan_gate,NEUTRAL,neutral,npc_cpt_enemy_titan_03,게이트 차단장,TRUE,TRUE,3,npc_dialog_gov_red_hostile,gov_titan,TRUE,타이탄 유적 중립지·무장 수호군
+perseus_memorial,perseus,RED,nation,npc_cpt_enemy_perseus_01,기념항로 약탈장,TRUE,TRUE,2,npc_dialog_gov_red_hostile,gov_perseus,TRUE,동부·크림슨 레기온 기념 행성 수장
+crimson_base,crimson_zone,RED,clan,npc_cpt_enemy_crimson_01,크림슨 전대장,TRUE,TRUE,2,npc_dialog_gov_red_hostile,gov_crimson,TRUE,레드 PvP 거점·약탈 함대 수장
+dark_haven,dark_rift,RED,nation,npc_cpt_enemy_dark_01,리프트 군주,TRUE,TRUE,2,npc_dialog_gov_red_hostile,gov_dark,TRUE,동부항로 심층·왜곡권 수호
+blood_station,blood_field,RED,nation,npc_cpt_enemy_blood_01,혈전 지휘관,TRUE,TRUE,2,npc_dialog_gov_red_hostile,gov_blood,TRUE,레드 혈전 거점 수장
+shadow_market,shadow_nexus,NEUTRAL,neutral,npc_cpt_enemy_shadow_01,암시장 함대장,TRUE,TRUE,3,npc_dialog_gov_red_hostile,gov_shadow,TRUE,섀도우 중립·불법 무장 세력
+abyss_gate,abyss,RED,nation,npc_cpt_enemy_abyss_01,어비스 문지기,TRUE,TRUE,2,npc_dialog_gov_red_hostile,gov_abyss,TRUE,레드 최종 관문 수장
+nightfall_citadel,nightfall,RED,clan,npc_cpt_enemy_nightfall_01,나이트폴 군주,TRUE,TRUE,2,npc_dialog_gov_red_hostile,gov_nightfall,TRUE,레드 야간 요새·AI 클랜 연계
+core_prime,arcfire_core,RED,nation,npc_cpt_enemy_core_01,코어 수문장,TRUE,TRUE,2,npc_dialog_gov_red_hostile,gov_core,TRUE,레드(동부) 수도·아크코어 최종 거점
+eternal_throne,eternity,NEUTRAL,neutral,npc_cpt_enemy_eternity_01,영원대장,TRUE,TRUE,3,npc_dialog_gov_red_hostile,gov_eternity,TRUE,이터니티 고대 왕좌·무장 수호
+genesis_origin,genesis,NEUTRAL,neutral,npc_cpt_gov_genesis,기원 수문장,TRUE,TRUE,2,npc_dialog_gov_genesis,gov_genesis,TRUE,제네시스 엔드존·최종 수호자

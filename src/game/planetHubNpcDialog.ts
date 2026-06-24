@@ -5,6 +5,7 @@ import {
   resolveIngameDialogFallbackSceneId,
   resolveNpcCaptainDialogSceneId,
 } from './ingameDialog/resolveNpcCaptainDialogSceneId';
+import { resolvePlanetGovernorDialogCandidate } from './planetGovernor/planetGovernorRegistry';
 
 type DialogCandidate = {
   sceneId: string;
@@ -47,16 +48,35 @@ export function collectPlanetHubCaptainIds(
   return [...ids];
 }
 
-/** 메인스테이지 대화 버튼 — 우선순위가 가장 높은(숫자 낮음) NPC 대화 씬 */
-export function resolvePlanetHubNpcDialogSceneId(presentCaptainIds: readonly string[]): string {
+function pickBestDialogCandidate(candidates: readonly DialogCandidate[]): DialogCandidate | null {
   let best: DialogCandidate | null = null;
-  for (const captainId of presentCaptainIds) {
-    const candidate = CAPTAIN_DIALOG_INDEX.get(captainId);
-    if (!candidate) continue;
+  for (const candidate of candidates) {
     if (!best || candidate.priority < best.priority) {
       best = candidate;
     }
   }
+  return best;
+}
+
+/**
+ * 메인스테이지 대화 버튼 — 우선순위(숫자 낮음) 최고 NPC 대화 씬.
+ * 행성 총사령관은 궤도 가시 여부와 무관하게 후보에 포함된다.
+ */
+export function resolvePlanetHubNpcDialogSceneId(
+  planetId: string,
+  presentCaptainIds: readonly string[],
+): string {
+  const candidates: DialogCandidate[] = [];
+
+  const governor = resolvePlanetGovernorDialogCandidate(planetId);
+  if (governor) candidates.push(governor);
+
+  for (const captainId of presentCaptainIds) {
+    const candidate = CAPTAIN_DIALOG_INDEX.get(captainId);
+    if (candidate) candidates.push(candidate);
+  }
+
+  const best = pickBestDialogCandidate(candidates);
   if (best) return best.sceneId;
   return resolveIngameDialogFallbackSceneId();
 }

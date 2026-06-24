@@ -36,23 +36,14 @@ import {
   resolveInboundDroneTrailSlice,
   writeInboundDroneTaperedTrailFillPath,
 } from './inboundDroneSkiaTrail';
+import {
+  resetSkPath,
+  scheduleSkPictureDispose,
+  safeSkiaDispose,
+} from '../../game/skia/skiaMemoryLifecycle';
 
 const SCENE_SIZE = PLANET_MAIN_ORBIT_SCENE_SIZE;
-const PICTURE_DISPOSE_DELAY_MS = 120;
 const TRAIL_BRIDGE_INTERVAL_MS = HUB_WORKLET_JS_BRIDGE_INTERVAL_MS;
-
-function safeDispose(obj: { dispose?: () => void } | null | undefined): void {
-  try { obj?.dispose?.(); } catch { /* ignore */ }
-}
-
-function schedulePictureDispose(pic: SkPicture | null): void {
-  if (!pic) return;
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      setTimeout(() => safeDispose(pic), PICTURE_DISPOSE_DELAY_MS);
-    });
-  });
-}
 
 function recordInboundDroneVfxPicture(input: {
   orbitMs: number;
@@ -79,7 +70,7 @@ function recordInboundDroneVfxPicture(input: {
     // rewind() 재사용 — Make() 금지 (Skia 메모리 헌법 §1)
     if (!pathPool[i]) pathPool[i] = Skia.Path.Make();
     const path = pathPool[i]!;
-    path.rewind();
+    resetSkPath(path);
 
     const wrote = writeInboundDroneTaperedTrailFillPath(path, center, edgeR, impactR, slice.ang, slice.uTail, slice.uHead);
     if (!wrote) continue;
@@ -97,7 +88,7 @@ function recordInboundDroneVfxPicture(input: {
   if (!drewAny) {
     // PictureRecorder 는 beginRecording 후 반드시 finishRecording 호출 필요
     const empty = recorder.finishRecordingAsPicture();
-    safeDispose(empty);
+    safeSkiaDispose(empty);
     return null;
   }
 
@@ -175,7 +166,7 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
       if (liveIdle != null) {
         liveFrameRef.current = null;
         setPicture(null);
-        schedulePictureDispose(liveIdle);
+        scheduleSkPictureDispose(liveIdle);
       }
       onVfxIdleRef.current?.();
       return;
@@ -214,7 +205,7 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
     liveFrameRef.current = next;
     setPicture(next);
     if (prev != null && prev !== next) {
-      schedulePictureDispose(prev);
+      scheduleSkPictureDispose(prev);
     }
 
     if (droneCount <= 0 && hitFxRef.current.length === 0) {
@@ -282,16 +273,14 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
       }
       // pooled path 해제 (컴포넌트 수명 객체)
       for (const p of pathPoolRef.current) {
-        safeDispose(p);
+        safeSkiaDispose(p);
       }
       pathPoolRef.current = [];
-      // scratch trail paint 해제
-      safeDispose(trailPaintRef.current);
+      safeSkiaDispose(trailPaintRef.current);
       trailPaintRef.current = null;
-      // live picture 해제
       const live = liveFrameRef.current;
       liveFrameRef.current = null;
-      schedulePictureDispose(live);
+      scheduleSkPictureDispose(live);
     };
   }, [trailBridgeAliveSv]);
 

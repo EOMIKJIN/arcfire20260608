@@ -14,7 +14,7 @@ npm run audit:team-lead:daily
 ```
 
 - `audit:balance-ops` 실행 (또는 `--skip-audit`로 생략)
-- `tsc --noEmit` · handoff · git 경제 축 dirty 스캔
+- `audit:balance-ops` · **`audit:memory:retention` 교차** · handoff · git 경제 축 dirty 스캔
 - 보고서: `reports/daily-review-latest.md`
 - 상태: `reports/daily-review-state.json`
 - 당일 KST **PASS** 이미 있으면 스킵 (`--force` 재실행)
@@ -29,4 +29,4 @@ npm run audit:team-lead:daily
 
 ## Handoff (관측)
 
-김경제 **관측** 리포트: `reports/kim-economy-handoff.md` → 김팀장 **본 세션에서** 코드 조치
+김경제 **관측** 리포트: `reports/kim-economy-handoff.md` **`## [관측]`** · `tools/memory-profiler/reports/latest-retention-audit.md` → 김팀장 **본 세션에서 코드 반영**

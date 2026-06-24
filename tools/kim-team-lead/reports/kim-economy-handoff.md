@@ -150,3 +150,40 @@ _(김팀장 검수 코멘트·반려 사유는 아래에 기록)_
 - [ ] `sim:economy` — TDI PGP 가산이 Whale/F2P ratio critical(≥8) 유발 여부
 - [ ] `level_up_stat_nudge_daily_fraction` 1.0 → 일일+즉시 이중 상승 속도 SIM
 
+---
+
+---
+
+## [관측] 2026-06-24 21:17 KST — 메모리 우선순위 · 감시 재개
+
+- **mem-monitor**: WARN (PSS ~670–850MB · Native Heap **~336–470MB** 주 원인)
+- **조치(김팀장)**: `runPlanetHubSoftNativeReclaimPass` — 허브 **5분** soft reclaim (worldmap 대칭) · 15분 deep 유지
+- **감시**: watch-30m PID **15280** OK · snapshot `mem_priority_watch_2115`
+- **다음 샘플**: ~21:39 (30m) · soft reclaim 첫 tick ~5분 후(앱 리로드 후)
+- **권장**: 아르카디아 체류 soak — PSS 850+ 재발 시 알림
+
+## [관측] 2026-06-24 20:41 KST — 아르카디아 체류 · **WARN→CRITICAL**
+
+- **mem-monitor**: **CRITICAL** (PSS 1GB 육박 반복)
+- **mem-profile / retention**: NO_DATA (스냅샷만 · arcadia_hub 20:40)
+- **profile 구간**: `2026-06-24 20:36` heartbeat · `20:39` mem-timeline · STAGE **planet_hub (arcadia)**
+- **실측 (PID 20679)**:
+  - **20:36** PSS **971.4MB** / GL **139.9MB** / views 296 ← **하드실링(950MB) 근접**
+  - **20:39** PSS 847.3MB / GL 23.6MB / views 321 (`PSS_SOFT_CEILING`)
+  - **20:40** PSS **~819MB** / GL 25MB / views 298 / **Native Heap ~470MB** (주 원인)
+- **당일 피크**: 19:15 PSS **1078.7MB** · 19:38 **1009.4MB** (hard-ceiling incident)
+- **감시**: watch-30m PID **15280** 가동 중 · 마일스톤 `arcadia_idle_watch_until_11am_20260625`
+- **권장(김팀장 1안)**: Native Heap ~470MB 누적 — 허브 체류 floor 상승. `ingress reclaim`·`planetHubIngressReclaim`·고빈도 persist/틱 할당 재점검. PSS≥950 재발 시 **은하맵 왕복 1회**로 blur reclaim 유도(플레이 중단 최소).
+
+> status: **ready-for-team-lead-action** · 감시 **2026-06-25 11:00 KST**까지 유지
+
+## [관측] _(김경제 갱신 템플릿 — 최신 항목을 위에 추가)_
+
+- **일자**:
+- **mem-monitor**: OK|WARN|CRITICAL
+- **mem-profile / retention**: PASS|FAIL|NO_DATA (verdict · failures · flags)
+- **profile 구간**: (profile-timeline 타임스탬프 · STAGE)
+- **권장(김팀장 1안)**:
+
+> retention **FAIL** → `status: ready-for-team-lead-action` · 김팀장 본 세션 P1 수정 · 수정 후 `[mem-profile-fix]` 기록
+

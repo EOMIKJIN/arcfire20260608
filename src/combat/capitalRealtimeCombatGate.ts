@@ -4,7 +4,9 @@
 
 import { resolvePlanetHostileShipCount } from '../arcCore/balance/balanceTableRegistry';
 import { NPC_CAPTAINS_FROM_CSV, NPC_CAPITAL_SHIPS_FROM_CSV } from '../data/generated';
+import { resolvePlanetGovernorHostileCombatCaptainId } from '../game/planetGovernor/planetGovernorRegistry';
 import { captainMatchesPlanetOrbitTable } from '../npc/captainOrbitTableMatch';
+import { getNpcCaptain } from '../npc/npcFleetRegistry';
 
 export const CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID = '__transit__';
 
@@ -13,6 +15,38 @@ export type CombatFleetSeedSlot = {
   npcShipId: string | null;
   captainId: string | null;
 };
+
+function resolveCombatTeamFromCaptain(
+  combatTeam: string | null | undefined,
+): CombatFleetSeedSlot['team'] {
+  if (combatTeam === 'blue') return 'blue';
+  if (combatTeam === 'orange') return 'orange';
+  return 'red';
+}
+
+function buildCombatSlotFromCaptainId(captainId: string): CombatFleetSeedSlot | null {
+  const captain = getNpcCaptain(captainId);
+  if (!captain) return null;
+  const assignedShipId = String(captain.assignedShipId ?? '').trim();
+  const shipById = new Map(NPC_CAPITAL_SHIPS_FROM_CSV.map((s) => [s.id, s]));
+  return {
+    team: resolveCombatTeamFromCaptain(captain.combatTeam),
+    npcShipId: assignedShipId && shipById.has(assignedShipId) ? assignedShipId : null,
+    captainId: captain.id,
+  };
+}
+
+function appendGovernorHostileCombatSlot(
+  planetId: string,
+  rows: CombatFleetSeedSlot[],
+): CombatFleetSeedSlot[] {
+  const governorCaptainId = resolvePlanetGovernorHostileCombatCaptainId(planetId);
+  if (!governorCaptainId) return rows;
+  if (rows.some((slot) => slot.captainId === governorCaptainId)) return rows;
+  const govSlot = buildCombatSlotFromCaptainId(governorCaptainId);
+  if (!govSlot) return rows;
+  return [govSlot, ...rows];
+}
 
 export function resolveCombatFleetSlotsFromCaptains(
   planetId: string,
@@ -27,20 +61,16 @@ export function resolveCombatFleetSlotsFromCaptains(
     if (!planetMatch || captain.operationalState !== 'combat') continue;
     const assignedShipId = captain.assignedShipId || '';
     rows.push({
-      team:
-        captain.combatTeam === 'blue'
-          ? 'blue'
-          : captain.combatTeam === 'orange'
-            ? 'orange'
-            : 'red',
+      team: resolveCombatTeamFromCaptain(captain.combatTeam),
       npcShipId: shipById.has(assignedShipId) ? assignedShipId : null,
       captainId: captain.id,
     });
   }
+  const withGovernor = appendGovernorHostileCombatSlot(planetId, rows);
   const cap = resolvePlanetHostileShipCount(planetId);
-  if (cap == null) return rows;
+  if (cap == null) return withGovernor;
   let redCount = 0;
-  return rows.filter((slot) => {
+  return withGovernor.filter((slot) => {
     if (slot.team !== 'red') return true;
     if (redCount >= cap) return false;
     redCount += 1;

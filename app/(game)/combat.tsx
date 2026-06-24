@@ -47,6 +47,8 @@ import { usePlanetNebulaStore } from '../../src/store/planetNebulaStore';
 import { resolvePlanetNebulaBakedSource } from '../../src/game/planetNebulaBakedAssets';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { releaseCombatStageMemory } from '../../src/game/stageMemoryRelease';
+import { markGalaxyMapIngressFromPlanetHub } from '../../src/game/nativeReclaim/galaxyMapIngressReclaim';
+import { markPlanetHubIngressReclaim } from '../../src/game/nativeReclaim/planetHubIngressReclaim';
 import { isPlayerShipCombatCapable, resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 
 /** 성운 Skia 백드롭 — colorDodge 닷지는 성운 픽셀과 동일 캔버스에 그린다 */
@@ -159,6 +161,7 @@ export default function CombatScreen() {
   ) => {
     const completed = await runTransitCombatPostFlow(postFlow);
     if (completed) {
+      markGalaxyMapIngressFromPlanetHub();
       router.replace('/(game)/worldmap');
     }
     setResolving(false);
@@ -205,7 +208,10 @@ export default function CombatScreen() {
     showArcAlert(
       t('combat.shipDestroyedTitle'),
       t('combat.shipDestroyedBody'),
-      [{ text: t('combat.confirm'), onPress: () => router.replace('/(game)/planet') }],
+      [{ text: t('combat.confirm'), onPress: () => {
+        markPlanetHubIngressReclaim({ invalidateMemoCaches: true });
+        router.replace('/(game)/planet');
+      } }],
     );
     setResolving(false);
   }, [player, t]);
@@ -250,7 +256,13 @@ export default function CombatScreen() {
           <Text style={styles.errorBody}>
             {travelBlock === 'durability' ? t('combat.durabilityDepletedBody') : t('combat.cannotFightBody')}
           </Text>
-          <TouchableOpacity style={styles.fleeBtn} onPress={() => router.replace('/(game)/planet')}>
+          <TouchableOpacity
+            style={styles.fleeBtn}
+            onPress={() => {
+              markPlanetHubIngressReclaim({ invalidateMemoCaches: true });
+              router.replace('/(game)/planet');
+            }}
+          >
             <Text style={styles.fleeBtnText}>{t('combat.backToPlanet')}</Text>
           </TouchableOpacity>
         </View>
@@ -265,7 +277,13 @@ export default function CombatScreen() {
           <Text style={styles.errorBody}>
             {t('combat.missingDataBody')}
           </Text>
-          <TouchableOpacity style={styles.fleeBtn} onPress={() => router.replace('/(game)/worldmap')}>
+          <TouchableOpacity
+            style={styles.fleeBtn}
+            onPress={() => {
+              markGalaxyMapIngressFromPlanetHub();
+              router.replace('/(game)/worldmap');
+            }}
+          >
             <Text style={styles.fleeBtnText}>{t('combat.backToPlanet')}</Text>
           </TouchableOpacity>
         </View>

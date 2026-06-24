@@ -11,7 +11,7 @@
 | 코드 | **전부** (경제·UI·Skia·arcCore) | **금지** |
 | 감시 | 김경제 리포트 검토 → **본 세션에서 조치** | mem·crash **탐지·보고** |
 | 경제 감사 | FAIL 항목 **본 세션에서 수정** | `audit:balance-ops` **실행·리포트** |
-| Handoff | 관측 리포트 **검토·코드 반영** | `kim-economy-handoff.md` **관측 섹션만** |
+| Handoff | 관측·**retention audit** **검토·코드 반영** | `kim-economy-handoff.md` **`## [관측]`** · `latest-retention-audit.md` |
 
 ## 흐름
 
@@ -29,7 +29,7 @@ graph TD
 
 | 시각 | 주체 | 작업 |
 |------|------|------|
-| 상시 | 김경제 (배정) | `start-watch-30m.ps1` · incident 탐지 |
+| 상시 | 김경제 (배정) | `start-watch-30m.ps1` · `profile:mem:watch` · retention audit |
 | 수시 | 김팀장 | 기능·경제 **코드** · 사용자 지시 처리 |
 | 수시 | 김경제 (배정) | `audit:balance-ops` 실행 → 리포트 |
 | **09:00** | 김팀장 | `npm run audit:team-lead:daily` · 관측 교차 확인 · **코드 정리** |
@@ -44,6 +44,25 @@ graph TD
 ```text
 @김경제 audit:balance-ops 실행 후 FAIL만 handoff 관측 섹션. 수정은 김팀장 세션에서 할게.
 ```
+
+```text
+@김경제 audit:memory:retention 실행 — FAIL·플래그만 handoff 관측. 수정은 김팀장.
+```
+
+## 프로파일링 → 김팀장 코드 반영
+
+```mermaid
+graph LR
+  E[김경제 profile:mem:watch] --> R[latest-retention-audit.md]
+  E --> H[kim-economy-handoff 관측]
+  R --> TL[김팀장 본 세션]
+  H --> TL
+  TL --> FIX[STAGE·Skia·reclaim 수정]
+  FIX --> V[audit:memory:retention 재검]
+```
+
+- **FAIL** → 김팀장 **P1** (해당 STAGE 신규 기능보다 누수 수정 선행)
+- 수정 후 handoff `[mem-profile-fix]` · 김경제에 **재감사만** 배정
 
 ## 김팀장 세션 (코드·기능)
 

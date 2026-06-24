@@ -5,13 +5,14 @@
 | 에이전트 | 호출 | 역할 | 코드 |
 |---------|------|------|------|
 | **김팀장** | `@김팀장` · 「김팀장」 | **유일한 사용자 지시** — UI·Skia·arcCore·**경제·밸런스**·버그 **전부** | **O** |
-| **김경제** (팀원) | `@김경제` · 「김경제」 | **김팀장 배정만** — 실시간 감시·`audit:balance-ops` **점검·리포트** | **X** |
+| **김경제** (팀원) | `@김경제` · 「김경제」 | **김팀장 배정만** — 감시·**메모리 프로파일링**·`audit:balance-ops` **점검·리포트** | **X** |
 
 > 사용자는 **김팀장 대화창 하나**에만 작업 지시. 김경제 별도 창 = 감시·점검 전용(충돌 방지).
 
 - **협업 워크플로**: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
 - **김팀장 일일 검수**: `npm run audit:team-lead:daily` → `tools/kim-team-lead/reports/daily-review-latest.md`
-- **김경제 handoff**: `tools/kim-team-lead/reports/kim-economy-handoff.md`
+- **김경제 handoff**: `tools/kim-team-lead/reports/kim-economy-handoff.md` — **`## [관측]`** · retention FAIL → **김팀장 본 세션 코드 반영**
+- **프로파일러**: `tools/memory-profiler/` · `npm run audit:memory:retention`
 - **김팀장 규칙**: `.cursor/rules/arcfire-main-lead-agent.mdc` · `docs/KIM_TEAM_LEAD_AGENT.md`
 - **김경제 규칙**: `.cursor/rules/arcfire-economy-specialist-agent.mdc` · `docs/KIM_ECONOMY_AGENT.md`
 
@@ -26,7 +27,8 @@ powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.
 ```
 
 - **30분** `mem-timeline.csv` · crash logcat · v2 계단식 GL 누수 판정 · **VERIFY** after auto-fix
-- **김경제(감시)**: 모니터 가동·관측·incident·audit **탐지·보고만** (코드 수정 없음)
+- **김경제(감시)**: 모니터·**profile:mem:watch**·retention audit·incident **탐지·보고만** (코드 수정 없음)
+- **김팀장**: handoff·`latest-retention-audit.md` FAIL → STAGE·Skia·reclaim **코드 수정**
 - **김팀장**: incident·audit FAIL **코드 조치** · 자동조치 정책 · Skia/허브/STAGE 패치
 - **P0 집중(2026-06-23~):** release **5h+ soak** · GL/PSS floor 계단식 상승 후 **은하계 지도(worldmap) 진입·전투 복귀** 크래시 — `PLAYTEST_WATCH.md` · `WATCH_README.md` §집중 검사 항목
 

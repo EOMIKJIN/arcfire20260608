@@ -28,6 +28,7 @@ import { clearCapitalRealtimeCombatPresentationCaches } from '../../combat/clear
 import {
   applyCombatResumeSnapshotToAgents,
   captureCombatResumeSnapshot,
+  clearCombatResumeSnapshot,
   consumeCombatResumeSnapshotForSession,
 } from '../../combat/combatResumeStore';
 import {
@@ -2574,6 +2575,10 @@ export type PlanetEdenRaidSim = {
    * 활성 세션이 아니면 no-op.
    */
   captureSuspendSnapshot: (suspendedAtMs: number) => void;
+  /**
+   * 은하계 지도 출발 — rAF·Skia postStep·resume 스냅샷 즉시 halt (freezeOnBlur 레이스 방지).
+   */
+  haltForGalaxyDeparture: () => void;
 };
 
 /** Provider는 `PlanetEdenRaidSimBinder`가 감싼다. `StageShell` 밖에서 리렌더를 유발하지 않도록 sim만 전달한다. */
@@ -2636,6 +2641,7 @@ export function usePlanetEdenRaidSim(
   const elapsedCarryRef = useRef(0);
   const combatOrbitPostStepRef = useRef<(() => void) | null>(null);
   const combatTargetRingTickRef = useRef(0);
+  const simLoopHaltedRef = useRef(false);
   /** 웨이브 전환 재시드 트리거 — 값이 바뀌면 같은 활성 세션에서 함대만 재초기화(Canvas 리마운트 없음) */
   const waveGenKey = useWaveDefenseStore((s) => s.waveGenKey);
   const lastWaveGenKeyRef = useRef(0);
@@ -2648,6 +2654,7 @@ export function usePlanetEdenRaidSim(
       return;
     }
     lastWaveGenKeyRef.current = waveGenKey;
+    simLoopHaltedRef.current = false;
     sessionCombatKeyRef.current = sessionKey;
     /** 메인스테이지 출발(은하지도)로 안전 종료된 직후라면 같은 sessionKey 의 스냅샷이 있을 수 있다 — 1회 소비. */
     const resumeSnap = consumeCombatResumeSnapshotForSession(sessionKey);
@@ -2696,6 +2703,7 @@ export function usePlanetEdenRaidSim(
 
   useEffect(() => {
     if (active) return;
+    simLoopHaltedRef.current = true;
     combatOrbitPostStepRef.current = null;
     // 메인 스테이지 세션 종료 시에만 런타임 버퍼 해제
     missilesRef.current = [];
@@ -2807,6 +2815,7 @@ export function usePlanetEdenRaidSim(
     let lastWallNowMs = performance.now();
     let raf = 0;
     const loop = () => {
+      if (simLoopHaltedRef.current) return;
       const nowMs = performance.now();
       const rawDt = Math.max(0, nowMs - lastWallNowMs);
       lastWallNowMs = nowMs;
@@ -3363,6 +3372,7 @@ export function usePlanetEdenRaidSim(
 
       tMsRef.current = elapsed;
       combatOrbitPostStepRef.current?.();
+      if (simLoopHaltedRef.current) return;
       raf = requestAnimationFrame(loop);
     };
     lastElapsedRef.current = elapsedCarryRef.current;
@@ -3388,6 +3398,24 @@ export function usePlanetEdenRaidSim(
     });
   }, []);
 
+  const haltForGalaxyDeparture = useCallback(() => {
+    simLoopHaltedRef.current = true;
+    combatOrbitPostStepRef.current = null;
+    missilesRef.current = [];
+    missileHitFxRef.current = [];
+    agentsRef.current = [];
+    agentByIdBuf.current = [];
+    prevPtsRef.current = [];
+    respawnAtWallRef.current = null;
+    respawnCountdownSecRef.current = null;
+    sessionCombatKeyRef.current = null;
+    elapsedCarryRef.current = 0;
+    lastElapsedRef.current = 0;
+    tMsRef.current = 0;
+    clearCombatResumeSnapshot();
+    clearCapitalRealtimeCombatPresentationCaches();
+  }, []);
+
   return useMemo(
     () => ({
       tMsRef,
@@ -3402,8 +3430,9 @@ export function usePlanetEdenRaidSim(
       respawnCountdownSecRef,
       combatOrbitPostStepRef,
       captureSuspendSnapshot,
+      haltForGalaxyDeparture,
     }),
-    [orbitSize, captureSuspendSnapshot],
+    [orbitSize, captureSuspendSnapshot, haltForGalaxyDeparture],
   );
 }
 

@@ -4,6 +4,7 @@ import { invalidatePlanetMemoCachesForPlanet, invalidateAllPlanetMemoCaches } fr
 import { resetHubInboundDroneDodgeBridge } from '../arcCore/inboundDrone/hubInboundDroneDodgeBridge';
 import { runStageNativeReclaimPass } from './nativeReclaim/runStageNativeReclaimPass';
 import { runPlanetChangeNativeReclaimLight } from './nativeReclaim/runPlanetChangeNativeReclaimLight';
+import { emitMemProfileMarker } from './devMemoryProfileBridge';
 
 export type PlanetMainStageReleaseReason = 'route_blur' | 'planet_change';
 
@@ -62,6 +63,11 @@ export function releasePlanetMainStageSession(opts: {
 
   if (opts.reason === 'planet_change' && opts.previousPlanetId) {
     runPlanetChangeNativeReclaimLight(opts.previousPlanetId);
+    emitMemProfileMarker({
+      stage: 'planet_hub',
+      event: 'planet_change',
+      detail: opts.previousPlanetId ?? '',
+    });
     return;
   }
 
@@ -75,5 +81,10 @@ export function releasePlanetMainStageSession(opts: {
     keepPlanetIds,
     reclaimHubSkia: true,
     releaseGpuLayers: true,
+  });
+  emitMemProfileMarker({
+    stage: 'planet_hub',
+    event: opts.reason === 'route_blur' ? 'route_blur' : 'manual',
+    detail: opts.previousPlanetId ?? '',
   });
 }

@@ -1,0 +1,20 @@
+﻿{
+    "snapshotId":  "20260624-204047-609",
+    "isoTime":  "2026-06-24 20:40:47",
+    "pid":  "20679",
+    "package":  "com.arcfire.online",
+    "stage":  "unknown",
+    "event":  "manual",
+    "detail":  "arcadia_idle_watch_until_11am_20260625",
+    "metrics":  {
+                    "RssMb":  822.1,
+                    "PssMb":  816.7,
+                    "GfxMb":  44.8,
+                    "EglMb":  19.8,
+                    "JavaMb":  28.9,
+                    "Views":  298,
+                    "GlMb":  25,
+                    "NativeMb":  469.3,
+                    "Threads":  null
+                }
+}

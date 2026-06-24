@@ -27,6 +27,9 @@ const combat = read('src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx');
 const hubOrbit = read('src/components/planet/PlanetHubOrbitSkiaLayer.tsx');
 const hub = read('src/components/planet/planetHub/planetHubSubcomponents.tsx');
 const gpuSupervisor = read('src/game/planetStageGpuSupervisor.ts');
+const nebulaBackdrop = read('src/components/planet/SkiaPlanetNebulaShaderBackdrop.tsx');
+const skiaLifecycle = read('src/game/skia/skiaMemoryLifecycle.ts');
+const inboundTrail = read('src/components/planet/PlanetHubInboundDroneSkiaTrailLayer.tsx');
 
 const checks = [];
 
@@ -119,6 +122,81 @@ checks.push(
       'planetDefenseSatellitePolicy.ts',
     ),
   );
+
+checks.push(
+  check(
+    'combat: path spare pool + recorder reuse',
+    combat.includes('missileTrailSpare')
+      && combat.includes('getCombatPictureRecorder')
+      && combat.includes('acquireSkPathFromPool'),
+    'PlanetEdenRaidOrbitSkiaCombat.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'combat: rAF-coalesced Picture + loop stop on unmount',
+    combat.includes('pictureFlushRafRef')
+      && combat.includes('combatSkiaLoopsActiveRef')
+      && combat.includes('scheduleSkPictureDispose'),
+    'PlanetEdenRaidOrbitSkiaCombat.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'combat: single Canvas + single Picture (no Path.map)',
+    combat.includes('<Picture picture={picture} />')
+      && !/<Path[\s\S]*\.map\(/.test(combat),
+    'PlanetEdenRaidOrbitSkiaCombat.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'nebula dodge: Picture batch (no per-FX Group.map)',
+    nebulaBackdrop.includes('drawNebulaColorDodgeFxTransformedOnSkCanvas')
+      && nebulaBackdrop.includes('<Picture picture={dodgePicture} />')
+      && !nebulaBackdrop.includes('blendMode="colorDodge"'),
+    'SkiaPlanetNebulaShaderBackdrop.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'nebula: skiaLoopsActive + delayed Picture dispose',
+    nebulaBackdrop.includes('skiaLoopsActiveRef')
+      && nebulaBackdrop.includes('scheduleSkPictureDispose'),
+    'SkiaPlanetNebulaShaderBackdrop.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'shared skiaMemoryLifecycle helpers',
+    skiaLifecycle.includes('scheduleSkPictureDispose')
+      && skiaLifecycle.includes('acquireSkPathFromPool')
+      && skiaLifecycle.includes('drainSkPathPool'),
+    'skiaMemoryLifecycle.ts',
+  ),
+);
+
+checks.push(
+  check(
+    'inbound drone: shared lifecycle import',
+    inboundTrail.includes('skiaMemoryLifecycle'),
+    'PlanetHubInboundDroneSkiaTrailLayer.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'SkImage manual dispose forbidden (SIGSEGV guard)',
+    /수동 dispose 금지|dispose 금지/.test(combat)
+      && /수동 dispose 금지|dispose 금지/.test(nebulaBackdrop),
+    'combat + nebula backdrop',
+  ),
+);
 
   const pass = checks.filter((c) => c.ok).length;
 const fail = checks.length - pass;

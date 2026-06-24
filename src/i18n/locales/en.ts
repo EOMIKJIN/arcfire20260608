@@ -565,6 +565,7 @@ export const EN_DICTIONARY: I18nDictionary = {
 
   // ── Planet Economy Info (econInfo) ──
   'econInfo.title': 'Planet Info',
+  'econInfo.planetGovernor': 'Planet Commander {name}',
   'econInfo.portraitSlotA11y': 'Planet image area',
   'econInfo.pgpTotal': 'PGP Total Output',
   'econInfo.upkeep': 'Upkeep (Pop {pct}%)',

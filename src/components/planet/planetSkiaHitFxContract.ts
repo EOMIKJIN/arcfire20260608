@@ -93,6 +93,52 @@ let _dodgePaint: SkPaint | null = null;
 /** sigma(×100 정수) → SkMaskFilter 캐시 — 동일 sigma는 재사용 */
 const _mfCache = new Map<number, SkMaskFilter>();
 
+/** drawImageRect scratch — 프레임당 XYWHRect 할당 금지 */
+let _scratchSrcRect: ReturnType<typeof Skia.XYWHRect> | null = null;
+let _scratchDestRect: ReturnType<typeof Skia.XYWHRect> | null = null;
+
+function scratchSrcRect(iw: number, ih: number) {
+  if (!_scratchSrcRect) _scratchSrcRect = Skia.XYWHRect(0, 0, iw, ih);
+  else _scratchSrcRect.setXYWH(0, 0, iw, ih);
+  return _scratchSrcRect;
+}
+
+function scratchDestRect(x: number, y: number, w: number, h: number) {
+  if (!_scratchDestRect) _scratchDestRect = Skia.XYWHRect(x, y, w, h);
+  else _scratchDestRect.setXYWH(x, y, w, h);
+  return _scratchDestRect;
+}
+
+export function disposePlanetSkiaHitFxModuleCaches(): void {
+  safeDisposeSkPaint(_dodgePaint);
+  _dodgePaint = null;
+  if (_burstPaints) {
+    safeDisposeSkPaint(_burstPaints.outer);
+    safeDisposeSkPaint(_burstPaints.mid);
+    safeDisposeSkPaint(_burstPaints.core);
+    safeDisposeSkPaint(_burstPaints.screen);
+    _burstPaints = null;
+  }
+  for (const mf of _mfCache.values()) {
+    try {
+      mf.dispose?.();
+    } catch {
+      /* idempotent */
+    }
+  }
+  _mfCache.clear();
+  _scratchSrcRect = null;
+  _scratchDestRect = null;
+}
+
+function safeDisposeSkPaint(obj: { dispose?: () => void } | null | undefined): void {
+  try {
+    obj?.dispose?.();
+  } catch {
+    /* idempotent */
+  }
+}
+
 function getBurstPaints(): BurstPaintScratch {
   if (_burstPaints) return _burstPaints;
   const makePlus = (): SkPaint => {
@@ -214,9 +260,12 @@ export function drawPlanetFlameBurstOnSkCanvas(
     p.screen.setAlphaf(burstOpacity * 0.88);
     const iw = flameImage.width();
     const ih = flameImage.height();
-    const src = Skia.XYWHRect(0, 0, iw, ih);
-    const dest = Skia.XYWHRect(cx - size * 0.5, cy - size * 0.5, size, size);
-    canvas.drawImageRect(flameImage, src, dest, p.screen);
+    canvas.drawImageRect(
+      flameImage,
+      scratchSrcRect(iw, ih),
+      scratchDestRect(cx - size * 0.5, cy - size * 0.5, size, size),
+      p.screen,
+    );
   }
 
   return true;
@@ -250,14 +299,84 @@ export function drawNebulaColorDodgeFxOnSkCanvas(
     paint.setAlphaf(pulse.pulseOpacity);
     const iw = dodgeImage.width();
     const ih = dodgeImage.height();
-    const src = Skia.XYWHRect(0, 0, iw, ih);
-    const dest = Skia.XYWHRect(
-      fxX - pulse.pulseSize * 0.5,
-      fxY - pulse.pulseSize * 0.5,
-      pulse.pulseSize,
-      pulse.pulseSize,
+    canvas.drawImageRect(
+      dodgeImage,
+      scratchSrcRect(iw, ih),
+      scratchDestRect(
+        fxX - pulse.pulseSize * 0.5,
+        fxY - pulse.pulseSize * 0.5,
+        pulse.pulseSize,
+        pulse.pulseSize,
+      ),
+      paint,
     );
-    canvas.drawImageRect(dodgeImage, src, dest, paint);
     drawn += 1;
   }
+}
+
+export type NebulaDodgeOrbitTransform = {
+  nebulaSize: number;
+  orbitSize: number;
+  orbitOffsetX: number;
+  orbitOffsetY: number;
+  scaleX: number;
+  scaleY: number;
+};
+
+/**
+ * orbit→nebula 좌표 변환 후 ColorDodge — SkiaPlanetNebulaShaderBackdrop Picture 전용.
+ * React `<Group><SkiaImage>` N개 렌더 금지.
+ */
+export function drawNebulaColorDodgeFxTransformedOnSkCanvas(
+  canvas: SkCanvas,
+  dodgeImage: SkImage,
+  hitFxList: readonly MissileHitFx[],
+  tMs: number,
+  transform: NebulaDodgeOrbitTransform,
+  renderLimit = NEBULA_DODGE_FX_RENDER_LIMIT,
+): boolean {
+  const paint = getDodgePaint();
+  const orbitCenter = transform.orbitSize / 2;
+  let drawn = 0;
+  for (let i = hitFxList.length - 1; i >= 0; i -= 1) {
+    if (drawn >= renderLimit) break;
+    const fx = hitFxList[i]!;
+    const fxX = Number(fx.x);
+    const fxY = Number(fx.y);
+    if (!Number.isFinite(fxX) || !Number.isFinite(fxY)) continue;
+
+    const fxDurationMs = resolveNebulaDodgeFxDurationMs(fx);
+    const pulse = resolveNebulaDodgeFxPulse(
+      tMs - fx.startMs,
+      fxDurationMs,
+      resolveNebulaDodgeFxSizeScale(fx),
+    );
+    if (!pulse) continue;
+
+    const px =
+      transform.nebulaSize / 2
+      + transform.orbitOffsetX
+      + (fxX - orbitCenter) * transform.scaleX;
+    const py =
+      transform.nebulaSize / 2
+      + transform.orbitOffsetY
+      + (fxY - orbitCenter) * transform.scaleY;
+
+    paint.setAlphaf(pulse.pulseOpacity);
+    const iw = dodgeImage.width();
+    const ih = dodgeImage.height();
+    canvas.drawImageRect(
+      dodgeImage,
+      scratchSrcRect(iw, ih),
+      scratchDestRect(
+        px - pulse.pulseSize * 0.5,
+        py - pulse.pulseSize * 0.5,
+        pulse.pulseSize,
+        pulse.pulseSize,
+      ),
+      paint,
+    );
+    drawn += 1;
+  }
+  return drawn > 0;
 }

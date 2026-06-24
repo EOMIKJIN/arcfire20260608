@@ -17,7 +17,10 @@ import {
 } from '../store/planetNebulaStore';
 import { abortHeavyUiSessions } from '../ui/heavyUiDataSession/heavyUiSessionLifecycle';
 import { useWorldStore } from '../store/worldStore';
+import { runGalaxyMapSoftNativeReclaimPass } from './nativeReclaim/runGalaxyMapSoftNativeReclaimPass';
+import { resolveSinglePlanetSessionKeepIds } from './nativeReclaim/singlePlanetSessionKeep';
 import { runStageNativeReclaimPass } from './nativeReclaim/runStageNativeReclaimPass';
+import { emitMemProfileMarker } from './devMemoryProfileBridge';
 
 export type GalaxyMapStageReleaseReason = 'route_blur' | 'system_change';
 
@@ -85,7 +88,9 @@ function resolveKeepPlanetIds(opts: GalaxyMapStageReleaseOptions): string[] {
     if (id) keep.add(id);
   }
   if (opts.anchorPlanetId) keep.add(opts.anchorPlanetId);
-  return [...keep];
+  return resolveSinglePlanetSessionKeepIds(
+    opts.anchorPlanetId ?? [...keep][0] ?? null,
+  );
 }
 
 function runGalaxyMapReleaseCore(reason: GalaxyMapStageReleaseReason, opts: GalaxyMapStageReleaseOptions): void {
@@ -104,6 +109,7 @@ function runGalaxyMapReleaseCore(reason: GalaxyMapStageReleaseReason, opts: Gala
       reason: 'route_blur',
       keepPlanetIds: keepIds,
     });
+    emitMemProfileMarker({ stage: 'galaxy_map', event: 'route_blur', detail: opts.previousSystemId ?? '' });
     return;
   }
 
@@ -118,6 +124,12 @@ function runGalaxyMapReleaseCore(reason: GalaxyMapStageReleaseReason, opts: Gala
     if (keepIds.length > 0) {
       prunePlanetNebulaProfilesExceptPlanetIds(keepIds);
     }
+    runGalaxyMapSoftNativeReclaimPass('galaxy_system_change', keepIds);
+    emitMemProfileMarker({
+      stage: 'galaxy_map',
+      event: 'system_change',
+      detail: opts.previousSystemId ?? '',
+    });
   }
 }
 

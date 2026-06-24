@@ -34,7 +34,7 @@ import { usePlanetTradeFeeLedgerStore, type PlanetTradeFeeBucket } from '../../s
 import { useAppSettingsStore } from '../../store/appSettingsStore';
 import { t } from '../../i18n';
 import { formatCredits } from '../../utils/formatCredits';
-import { resolvePlanetTableDescription } from './resolvePlanetTableDescription';
+import { resolvePlanetInfoPanelDescription } from './resolvePlanetTableDescription';
 
 export type PlanetEconomyInfoExtraRow = {
   label: string;
@@ -44,7 +44,7 @@ export type PlanetEconomyInfoExtraRow = {
 export type PlanetEconomyInfoSnapshot = {
   planetId: string;
   planetName: string;
-  /** planets.csv description / descriptionEn */
+  /** planets.csv description + planet governor line */
   planetDescription: string;
   kstDayKey: string;
   populationPct: number;
@@ -168,7 +168,7 @@ export function buildPlanetEconomyInfoSnapshot(
   const supplyScalePct = Number.isFinite(supplyScale) ? supplyScale * 100 : 0;
   const convoyLabel = resolvePlanetTradeConvoyMonopolyLabel(planetId);
   const locale = useAppSettingsStore.getState().locale;
-  const planetDescription = resolvePlanetTableDescription(planetId, locale);
+  const planetDescription = resolvePlanetInfoPanelDescription(planetId, locale);
 
   const extras: PlanetEconomyInfoExtraRow[] = [
     {

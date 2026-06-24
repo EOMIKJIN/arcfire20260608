@@ -10,3 +10,8 @@ starter_pack_max_player_level,15,스타터팩 노출 레벨 상한
 f2p_optimal_daily_credit_income,50000,5h×10000Cr/h
 whale_f2p_power_target_ratio,4.0,macro KPI 목표( economy_sim_macro_policy 동기 )
 xlarge_pack_max_zone18_skip_pct,69,특대팩 전량교환 시 zone18(1.5M) 대비 상한(%)
+bru_g_credit_ratio,100,1 G = 100 Credits (BRU 표시 단위)
+bru_base_g_per_min,1.67,채굴 BRU G/min — play_scenario_credit_per_hour_anchor/60/100
+reward_formula_version,2.0,R_eff=BRU×T×M_tier×O; EV=R/(1-p×L); Risk는 M_tier에 흡수
+reward_overhead_coeff_max,1.25,Overhead 상한 (기존 1.3→1.25 — 2등급 상한 침범 완화)
+reward_fail_loss_coeff,0.35,실패 기회비용 L (성공 EV 보정용)

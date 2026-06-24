@@ -16,6 +16,8 @@ const REPORT_DIR = path.join(__dirname, 'reports');
 const REPORT_MD = path.join(REPORT_DIR, 'daily-review-latest.md');
 const STATE_JSON = path.join(REPORT_DIR, 'daily-review-state.json');
 const HANDOFF_MD = path.join(REPORT_DIR, 'kim-economy-handoff.md');
+const RETENTION_JSON = path.join(ROOT, 'tools/memory-profiler/reports/latest-retention-audit.json');
+const RETENTION_MD = path.join(ROOT, 'tools/memory-profiler/reports/latest-retention-audit.md');
 
 const BALANCE_OPS_LATEST = path.join(ROOT, 'tools/balance-ops-audit/reports/latest.md');
 const LEARNING_JSON = path.join(ROOT, 'tools/balance-ops-audit/reports/learning-state.json');
@@ -111,7 +113,30 @@ function extractHandoffPending(handoff) {
   return pending;
 }
 
-function buildIntegrationChecklist({ tscOk, balanceOpsOk, handoffPending, economyDirty }) {
+function extractMemProfileObservation(handoff) {
+  const blocks = handoff.split(/(?=##\s*\[관측\])/i).slice(1);
+  for (const block of blocks) {
+    if (/템플릿|갱신 템플릿/i.test(block)) continue;
+    const retentionLine = block.match(/mem-profile[^\n]*/i)?.[0] ?? block.match(/retention[^\n]*/i)?.[0] ?? '';
+    if (!retentionLine || /PASS\|FAIL\|NO_DATA/.test(retentionLine)) continue;
+    if (/\d{4}-\d{2}-\d{2}/.test(block)) return retentionLine.trim();
+  }
+  return null;
+}
+
+function loadRetentionAudit() {
+  const j = readJson(RETENTION_JSON, null);
+  if (!j) return { verdict: 'NO_REPORT', failures: 0, results: [] };
+  const failures = (j.results ?? []).filter((r) => r.verdict === 'FAIL').length;
+  return {
+    verdict: j.verdict ?? 'UNKNOWN',
+    failures,
+    generatedAt: j.generatedAt ?? null,
+    results: j.results ?? [],
+  };
+}
+
+function buildIntegrationChecklist({ tscOk, balanceOpsOk, handoffPending, economyDirty, retention }) {
   const items = [];
   items.push({ ok: balanceOpsOk, text: '김경제 산출물 `audit:balance-ops` PASS' });
   items.push({ ok: tscOk, text: 'TypeScript `tsc --noEmit` 통과 (연동 전 타입 검증)' });
@@ -128,6 +153,15 @@ function buildIntegrationChecklist({ tscOk, balanceOpsOk, handoffPending, econom
       economyDirty.length === 0
         ? '경제 축 git 미커밋 변경 없음'
         : `경제 축 미커밋 ${economyDirty.length}건 — 김팀장 연동·정리 검토`,
+  });
+  items.push({
+    ok: retention.verdict !== 'FAIL',
+    text:
+      retention.verdict === 'FAIL'
+        ? `김경제 retention audit FAIL (${retention.failures}건) — 김팀장 P1 메모리 수정`
+        : retention.verdict === 'NO_DATA' || retention.verdict === 'NO_REPORT'
+          ? 'retention audit: 데이터 없음 (profile:mem:watch 대기)'
+          : `retention audit: ${retention.verdict}`,
   });
   return items;
 }
@@ -167,12 +201,20 @@ function main() {
   const handoff = readText(HANDOFF_MD);
   const handoffPending = handoff ? extractHandoffPending(handoff) : [];
   const economyDirty = gitEconomyDirtyFiles();
+  const retention = loadRetentionAudit();
+  const memProfileObs = handoff ? extractMemProfileObservation(handoff) : null;
+  const retentionMd = readText(RETENTION_MD);
+  const retentionFailLines = (retention.results ?? [])
+    .filter((r) => r.verdict === 'FAIL')
+    .map((r) => `- **${r.flag ?? r.stage}** @ ${r.stage ?? '—'} (${r.detail ?? ''})`)
+    .join('\n');
 
   const checklist = buildIntegrationChecklist({
     tscOk,
     balanceOpsOk,
     handoffPending,
     economyDirty,
+    retention,
   });
   const allCheckOk = checklist.every((c) => c.ok);
   const overall = balanceOpsOk && tscOk && allCheckOk ? 'PASS' : 'FAIL';
@@ -200,6 +242,19 @@ Generated: ${ts} (KST ${dateKey})
 | 일일 배치 계약 | ${lastSnap?.dailyPolicyOk ? 'OK' : 'CHECK'} |
 | 고빈도 호출 위반 | ${(lastSnap?.dailyViolations?.length ?? 0) === 0 ? '없음' : `${lastSnap.dailyViolations.length}건`} |
 | \`tsc --noEmit\` | ${tscOk ? 'PASS' : 'FAIL'} |
+| **retention audit** | **${retention.verdict}** (${retention.failures} FAIL) |
+
+### 메모리 프로파일링 (김경제 → 김팀장)
+
+| 항목 | 값 |
+|------|-----|
+| verdict | ${retention.verdict} |
+| generated | ${retention.generatedAt ?? '—'} |
+| handoff 관측 | ${memProfileObs ?? '_(없음)_'} |
+
+${retentionFailLines ? `\n**P1 retention FAIL:**\n${retentionFailLines}\n` : ''}
+
+${retentionMd.trim() ? `\n<details><summary>latest-retention-audit.md</summary>\n\n${retentionMd.trim()}\n\n</details>\n` : '_(latest-retention-audit.md 없음)_'}
 
 ### balance-ops 요약
 
@@ -222,9 +277,9 @@ ${economyDirty.length ? `\n### 경제 축 미커밋 파일\n\n${economyDirty.map
 
 ## 3. 김팀장 후속 (수동)
 
-1. handoff \`${path.relative(ROOT, HANDOFF_MD)}\` 검토 → UI·STAGE·비경제 arcCore **연동·정리**
-2. FAIL 항목 있으면 **김경제** 세션에 반려·수정 지시
-3. 연동 완료 후 handoff 체크박스 갱신 · 필요 시 커밋
+1. handoff \`${path.relative(ROOT, HANDOFF_MD)}\` · retention audit 검토 → **FAIL 시 STAGE·Skia·reclaim 코드 수정**
+2. 경제 FAIL → **본 세션** 수정 · 김경제에는 **재감사만** 배정
+3. 수정 후 \`audit:memory:retention\` · handoff \`[mem-profile-fix]\` · 체크박스 갱신
 
 ## 4. 재실행
 
@@ -246,6 +301,8 @@ npm run audit:team-lead:daily -- --force
     tscOk,
     handoffPendingCount: handoffPending.length,
     economyDirtyCount: economyDirty.length,
+    retentionVerdict: retention.verdict,
+    retentionFailures: retention.failures,
     kimEconomyInsights: learning.lastInsights ?? [],
   };
   fs.writeFileSync(STATE_JSON, JSON.stringify(state, null, 2) + '\n', 'utf8');

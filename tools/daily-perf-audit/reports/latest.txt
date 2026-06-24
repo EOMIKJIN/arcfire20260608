@@ -1,4 +1,4 @@
-Daily audit — 2026-06-23T15:00:07.395Z
+Daily audit — 2026-06-24T15:00:06.710Z
 
 TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -29,24 +29,24 @@ Generated CSV-driven content TS files at src/data/generated
 
 Largest TS/TSX under `src/` + `app/` (bytes)
 
-- 362,677 — `src/data/generated/csvNpcCapitalShips.ts`
-- 289,808 — `src/data/generated/csvItemDefs.ts`
+- 369,190 — `src/data/generated/csvNpcCapitalShips.ts`
+- 290,046 — `src/data/generated/csvItemDefs.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
-- 190,428 — `src/data/generated/csvNpcCaptains.ts`
-- 147,163 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 195,070 — `src/data/generated/csvNpcCaptains.ts`
+- 148,235 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 75,917 — `src/data/generated/csvStoryScenes.ts`
 - 71,055 — `src/data/generated/csvWeapons.ts`
-- 70,237 — `src/data/generated/csvStoryScenes.ts`
 - 70,149 — `src/data/balance/generated/csvSynthSystemColonization.ts`
-- 66,795 — `src/i18n/locales/ko.ts`
+- 66,853 — `src/i18n/locales/ko.ts`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
-- 60,780 — `src/i18n/locales/en.ts`
-- 54,378 — `app/(game)/worldmap.tsx`
-- 54,230 — `app/(game)/planet.tsx`
+- 60,836 — `src/i18n/locales/en.ts`
+- 56,868 — `app/(game)/planet.tsx`
+- 56,847 — `app/(game)/worldmap.tsx`
 - 49,807 — `app/(game)/shipyard.tsx`
 - 45,252 — `app/(game)/trade.tsx`
-- 42,551 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
-- 36,647 — `src/data/generated/csvMissions.ts`
-- 35,036 — `src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx`
+- 43,902 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
+- 36,821 — `src/data/generated/csvMissions.ts`
+- 36,229 — `src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx`
 
 Planet hub eager `src/combat` import (should be absent)
 
@@ -64,6 +64,7 @@ Planet hub eager `src/combat` import (should be absent)
 - `src/ui/overlay/content/PlanetGenericFacilityDevContent.tsx`
 - `src/ui/overlay/content/PlanetOrbitShipyardDevContent.tsx`
 - `app/(game)/planet.tsx`
+- `app/(game)/worldmap.tsx`
 
 `subscribe(` / `addEventListener(` hints (manual cleanup review)
 
@@ -72,6 +73,7 @@ Planet hub eager `src/combat` import (should be absent)
 
 **addEventListener**
 - `src/arcCore/ArcCoreHub.ts`
+- `src/game/nativeReclaim/nativeReclaimBootstrap.ts`
 - `app/(game)/planet.tsx`
 - `app/(game)/worldmap.tsx`
 - `app/_layout.tsx`

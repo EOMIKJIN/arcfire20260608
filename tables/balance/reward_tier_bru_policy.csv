@@ -1,0 +1,9 @@
+tierId,tierLabelKo,activityGrade,riskTier,gradeMultEffective,overheadDefault,failRateDefault,failLossCoeff,target10minGMin,target10minGMax,pointEstimate10minG,notesKo
+T0_BASE,기준 채굴,1,low,1.0,1.0,0.02,0.35,16,17,16.7,BRU 앵커 — play_scenario 10000Cr/h(167Cr/min) 정합
+T2_1,배달 최하,2,low,1.55,1.05,0.05,0.35,24,28,26,저위험·짧은 왕복
+T2_2,배달 일반,2,mid,1.95,1.10,0.10,0.35,36,44,40,이동·구매 오버헤드 반영
+T3_1,전투 일반,3,mid,2.75,1.10,0.15,0.35,52,60,58,2-2 대비 +45% 갭(행동 유인)
+T3_2,고난이도 미션,3,high,3.40,1.15,0.22,0.35,68,88,78,실패율 상향 → EV 보정 내장
+T3_3,행성방어전,3,high,3.85,1.15,0.25,0.35,95,120,108,방어전·웨이브 혼합
+T3_4,침략전투,3,extreme,4.75,1.20,0.30,0.35,140,165,150,Extreme risk는 tier 내장(별도 Risk_coeff 중복 금지)
+T3_5,적수도 전투,3,extreme,5.50,1.25,0.35,0.35,170,200,185,3-4 대비 +23% — 6.0+ 단일 배율 폐지

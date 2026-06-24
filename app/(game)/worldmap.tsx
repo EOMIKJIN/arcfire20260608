@@ -70,6 +70,17 @@ import {
 } from '../../src/game/galaxyMapScrollLifecycle';
 import { finalizeGalaxyMapSessionForExit } from '../../src/game/galaxyMapSessionResume';
 import {
+  GALAXY_MAP_SOFT_RECLAIM_INTERVAL_MS,
+  runGalaxyMapSoftNativeReclaimPass,
+} from '../../src/game/nativeReclaim';
+import { consumeGalaxyMapIngressReclaim } from '../../src/game/nativeReclaim/galaxyMapIngressReclaim';
+import { markPlanetHubIngressReclaim } from '../../src/game/nativeReclaim/planetHubIngressReclaim';
+import { emitMemProfileMarker } from '../../src/game/devMemoryProfileBridge';
+import {
+  resolveActivePlanetSessionAnchorId,
+  resolveSinglePlanetSessionKeepIds,
+} from '../../src/game/nativeReclaim/singlePlanetSessionKeep';
+import {
   createWorldmapScreenSession,
   HeavyUiStageErrorPanel,
   readWorldmapSessionRevision,
@@ -150,22 +161,11 @@ function runGalaxyMapScrollClampOnUi(
 }
 
 function resolveWorldmapReleaseAnchorPlanetId(): string | null {
-  const p = usePlayerStore.getState().player;
-  if (!p) return null;
-  return p.lastHubPlanetId ?? p.currentPlanetId ?? p.homePlanetId ?? null;
+  return resolveActivePlanetSessionAnchorId();
 }
 
 function resolveWorldmapKeepPlanetIds(anchorPlanetId: string | null): string[] {
-  const p = usePlayerStore.getState().player;
-  const keep = new Set<string>();
-  if (anchorPlanetId) keep.add(anchorPlanetId);
-  if (!p) return [...keep];
-  if (p.lastHubPlanetId) keep.add(p.lastHubPlanetId);
-  if (p.currentPlanetId) keep.add(p.currentPlanetId);
-  if (p.homePlanetId) keep.add(p.homePlanetId);
-  const sys = useWorldStore.getState().systems[p.currentSystemId];
-  for (const pl of sys?.planets ?? []) keep.add(pl.id);
-  return [...keep];
+  return resolveSinglePlanetSessionKeepIds(anchorPlanetId);
 }
 
 function releaseWorldmapSessionFloor(opts?: {
@@ -208,6 +208,7 @@ export default function WorldMapScreen() {
 
   const handleReturnToLastHub = useCallback(() => {
     worldmapInternalNavRef.current = true;
+    markPlanetHubIngressReclaim({ invalidateMemoCaches: true });
     finalizeGalaxyMapSessionForExit({ persist: true });
     router.replace('/(game)/planet');
   }, []);
@@ -368,6 +369,8 @@ export default function WorldMapScreen() {
     useCallback(() => {
       worldmapInternalNavRef.current = false;
       isFocusedRef.current = true;
+      consumeGalaxyMapIngressReclaim();
+      emitMemProfileMarker({ stage: 'galaxy_map', event: 'route_focus' });
       // Reanimated Pan worklet — scrollAlive=1 은 runOnUI 스크롤 적용·2×rAF 이후에만 (SIGSEGV 방지)
       const enableScrollTask = InteractionManager.runAfterInteractions(() => {
         requestAnimationFrame(() => {
@@ -391,6 +394,21 @@ export default function WorldMapScreen() {
         moveProgress.setValue(0);
       };
     }, [moveProgress, armGalaxyMapScrollGestures, stopGalaxyMapInteractionLoops]),
+  );
+
+  /** worldmap 체류 PSS floor — 5분 주기 soft + deferred Fresco (transit 중 skip) */
+  useFocusEffect(
+    useCallback(() => {
+      const intervalId = setInterval(() => {
+        if (isMovingRef.current) return;
+        const anchor = resolveWorldmapReleaseAnchorPlanetId();
+        runGalaxyMapSoftNativeReclaimPass(
+          'galaxy_map_periodic',
+          resolveWorldmapKeepPlanetIds(anchor),
+        );
+      }, GALAXY_MAP_SOFT_RECLAIM_INTERVAL_MS);
+      return () => clearInterval(intervalId);
+    }, []),
   );
 
   /** 은하계 지도 이탈·백그라운드·비정상 종료 — 직전 허브 좌표 복원 후 persist */
@@ -1068,6 +1086,7 @@ export default function WorldMapScreen() {
         await persist();
       }
       worldmapInternalNavRef.current = true;
+      markPlanetHubIngressReclaim({ invalidateMemoCaches: true });
       releaseWorldmapSessionFloor({ reason: 'route_blur', anchorPlanetId: planet?.id ?? null });
       router.replace('/(game)/planet');
       return;

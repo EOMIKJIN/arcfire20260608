@@ -65,3 +65,8 @@ mission_clear_mission_003,무역 루트 개척 완료,manual,,repeat,6,none,/(ga
 npc_dialog_draco_obs_01,세레나 드릴 성운관측 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_draco_escort_01,델 라인 호위 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_operator_stella,스텔라 아리스 안내 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_gov_red_hostile,레드 행성 수장 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_gov_minerva,니카 스톤 광산총감독 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_gov_iron,오렌 피스 잔해수호 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_gov_helios,솔라 핀 태양권 관리 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_gov_genesis,아르카노 원 기원수문 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0

@@ -176,7 +176,8 @@ checks.push(
   check(
     'hub backdrop remount signal subscribed',
     /subscribeHubBackdropNativeRemount/.test(hubSub)
-      && /hubBackdropRemountGen/.test(hubSub),
+      && /hubRnBackdropRemountGen/.test(hubSub)
+      && !/hubBackdropRemountGen/.test(hubSub),
     'planetHubSubcomponents.tsx',
   ),
 );

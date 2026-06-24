@@ -21,5 +21,9 @@ if (Test-Path $sessionFile) {
 }
 
 & (Join-Path $PSScriptRoot 'manual-mem-snapshot.ps1') -Package $Package -Note "PLAYTEST_MILESTONE:$Label"
+$profileTag = Join-Path (Split-Path $PSScriptRoot -Parent) 'memory-profiler\tag-stage-profile.ps1'
+if (Test-Path $profileTag) {
+  & $profileTag -Stage unknown -Event manual -Detail $Label -Package $Package 2>$null
+}
 Add-Content -Path (Join-Path $logDir 'incidents.log') -Value "[$iso] PLAYTEST_MILESTONE $Label"
 Write-Output "milestone=$Label at=$iso"

@@ -15,7 +15,7 @@ import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
 import { useAppSettingsStore } from '../../../store/appSettingsStore';
-import { resolvePlanetTableDescription } from '../../../game/planetHub/resolvePlanetTableDescription';
+import { resolvePlanetInfoPanelDescription } from '../../../game/planetHub/resolvePlanetTableDescription';
 import { PlanetInfoDescriptionBlock } from './PlanetInfoDescriptionBlock';
 import { PlanetInfoPortraitSlot } from './PlanetInfoPortraitSlot';
 import {
@@ -83,7 +83,7 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
     [],
   );
   const planetDescription = useMemo(
-    () => session.data?.planetDescription ?? resolvePlanetTableDescription(planetId, locale),
+    () => session.data?.planetDescription ?? resolvePlanetInfoPanelDescription(planetId, locale),
     [session.data?.planetDescription, planetId, locale],
   );
 
@@ -94,14 +94,6 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
       <PlanetInfoDescriptionBlock description={planetDescription} visualTheme={visualTheme} />
       {capitalSubtitle ? (
         <Text style={themeStyles.capitalSubtitle}>{capitalSubtitle}</Text>
-      ) : null}
-      {session.data ? (
-        <View style={themeStyles.pgpBanner}>
-          <Text style={[themeStyles.pgpLabel, !isTactical ? { color: PH } : null]}>
-            {t('econInfo.pgpTotal')}
-          </Text>
-          <Text style={themeStyles.pgpValue}>{formatPlanetPgpBmu(session.data.pgpBmu)}</Text>
-        </View>
       ) : null}
     </>
   );
@@ -145,6 +137,12 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
     >
       {snapshot ? (
         <>
+          <View style={themeStyles.pgpBanner}>
+            <Text style={[themeStyles.pgpLabel, !isTactical ? { color: PH } : null]}>
+              {t('econInfo.pgpTotal')}
+            </Text>
+            <Text style={themeStyles.pgpValue}>{formatPlanetPgpBmu(snapshot.pgpBmu)}</Text>
+          </View>
           {section(t('econInfo.upkeep', { pct: snapshot.populationPct }))}
           {infoRow(t('econInfo.daily'), formatCredits(snapshot.upkeepDailyCredits, { suffix: true }))}
           {infoRow(t('econInfo.monthlyEst'), formatCredits(snapshot.upkeepMonthlyCredits, { suffix: true }))}

@@ -16,6 +16,10 @@ export {
   MISSION_COMBAT_CAPTAINS_FROM_CSV,
   type MissionCombatCaptainRow,
 } from './csvMissionCombatCaptains';
+export {
+  PLANET_GOVERNOR_COMMANDERS_FROM_CSV,
+  type PlanetGovernorCommanderRow,
+} from './csvPlanetGovernorCommanders';
 export { STAR_SYSTEMS_FROM_CSV } from './csvSystems';
 export {
   GALACTIC_MINERAL_POOL_FROM_CSV,

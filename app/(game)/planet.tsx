@@ -49,9 +49,15 @@ import { releasePlanetMainStageSession } from '../../src/game/planetMainStageSes
 import { registerPlanetSessionResource } from '../../src/game/planetSessionRegistry';
 import {
   HUB_DEEP_NATIVE_RECLAIM_INTERVAL_MS,
+  HUB_SOFT_NATIVE_RECLAIM_INTERVAL_MS,
   runDeepNativeReclaimPass,
+  runPlanetHubSoftNativeReclaimPass,
 } from '../../src/game/nativeReclaim';
 import { recordHubDeparturePlanet } from '../../src/game/galaxyMapSessionResume';
+import { markGalaxyMapIngressFromPlanetHub } from '../../src/game/nativeReclaim/galaxyMapIngressReclaim';
+import { consumePlanetHubIngressReclaim } from '../../src/game/nativeReclaim/planetHubIngressReclaim';
+import { emitMemProfileMarker } from '../../src/game/devMemoryProfileBridge';
+import { teardownPlanetHubCombatForGalaxyDeparture } from '../../src/game/teardownPlanetHubCombatForGalaxyDeparture';
 import { resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 import { usePlanetStageSession } from '../../src/game/usePlanetStageSession';
 import { buildCsvStaticIndexesFull } from '../../src/game/buildCsvStaticIndexes';
@@ -267,6 +273,8 @@ export default function PlanetScreen() {
        * 의존성을 `[]` 로 고정하기 위해 store 의 stable action 을 getState() 로 직접 호출.
        */
       usePlanetStageLifecycleStore.getState().beginResume();
+      consumePlanetHubIngressReclaim();
+      emitMemProfileMarker({ stage: 'planet_hub', event: 'route_focus' });
       ackDevMetroReloadMount();
       return () => {
         setIsPlanetRouteFocused(false);
@@ -324,12 +332,22 @@ export default function PlanetScreen() {
    * 무역소·조선소 등 즉시 push 만 하면 메인스테이지 Skia·sim 과 신규 화면 첫 mount 가 겹쳐 크래시가 날 수 있어
    * 출발(은하지도)과 동일한 직렬화를 탄다.
    */
-  const beginPlanetHubSuspendingNavigation = useCallback((navigate: () => void) => {
+  const beginPlanetHubSuspendingNavigation = useCallback((
+    navigate: () => void,
+    opts?: { preserveCombatSnapshot?: boolean },
+  ) => {
     const now = Date.now();
     applyMiningTeardownRef.current('hub_navigation');
 
     const sim = combatSimRef.current;
-    if (sim) sim.captureSuspendSnapshot(now);
+    const preserveCombat = opts?.preserveCombatSnapshot !== false;
+    if (preserveCombat) {
+      if (sim) sim.captureSuspendSnapshot(now);
+    } else {
+      teardownPlanetHubCombatForGalaxyDeparture(sim, {
+        previousPlanetId: usePlayerStore.getState().player?.currentPlanetId ?? null,
+      });
+    }
 
     /**
      * 의존성 [] 고정용 — store action 은 stable. lifecycle 이 'active' 가 아니면 beginSuspend 가
@@ -352,7 +370,10 @@ export default function PlanetScreen() {
       return;
     }
     recordHubDeparturePlanet(currentPlayer?.currentPlanetId);
-    beginPlanetHubSuspendingNavigation(() => router.replace('/(game)/worldmap'));
+    markGalaxyMapIngressFromPlanetHub();
+    beginPlanetHubSuspendingNavigation(() => router.replace('/(game)/worldmap'), {
+      preserveCombatSnapshot: false,
+    });
   }, [beginPlanetHubSuspendingNavigation, t]);
 
   const onFacilityNavigate = useCallback(
@@ -530,9 +551,29 @@ export default function PlanetScreen() {
     };
   }, [planet?.id, isPlanetRouteFocused, appStateActive, stageSession.isActive]);
 
-  /** 허브 체류 Native(PSS) floor — 15분 주기 Fresco trim + RN 백드롭 remount */
   const capitalCombatOrbitActiveRef = useRef(capitalCombatOrbitActive);
   capitalCombatOrbitActiveRef.current = capitalCombatOrbitActive;
+
+  /** 허브 체류 PSS/Native floor — 5분 soft + deferred Fresco (전투 orbit 활성 시 skip) */
+  useEffect(() => {
+    const pid = planet?.id;
+    if (!pid || !isPlanetRouteFocused || !appStateActive || !stageSession.isActive) return undefined;
+    const intervalId = setInterval(() => {
+      if (capitalCombatOrbitActiveRef.current) return;
+      runPlanetHubSoftNativeReclaimPass(pid, 'hub_periodic_soft');
+    }, HUB_SOFT_NATIVE_RECLAIM_INTERVAL_MS);
+    const token = registerPlanetSessionResource({
+      ownerId: 'planet_hub_soft_native_reclaim',
+      planetId: pid,
+      dispose: () => clearInterval(intervalId),
+    });
+    return () => {
+      clearInterval(intervalId);
+      token.release();
+    };
+  }, [planet?.id, isPlanetRouteFocused, appStateActive, stageSession.isActive]);
+
+  /** 허브 체류 Native(PSS) floor — 15분 주기 Fresco trim + RN 백드롭 remount */
   useEffect(() => {
     const pid = planet?.id;
     if (!pid || !isPlanetRouteFocused || !appStateActive || !stageSession.isActive) return undefined;
@@ -839,10 +880,10 @@ export default function PlanetScreen() {
     );
   }, [planet, system, arcNpcShipsAtPlanet, hubMergedNearbyPresence]);
   const openPlanetHubNpcDialog = useCallback(() => {
-    if (isIngameDialogActive()) return;
-    const sceneId = resolvePlanetHubNpcDialogSceneId(planetHubCaptainIds);
+    if (isIngameDialogActive() || !planet) return;
+    const sceneId = resolvePlanetHubNpcDialogSceneId(planet.id, planetHubCaptainIds);
     presentIngameDialogScene(sceneId);
-  }, [planetHubCaptainIds]);
+  }, [planet, planetHubCaptainIds]);
   const handlePlanetSalvageSearch = useCallback(() => {
     if (!planet || !activeSalvageWreck) {
       showArcAlert(t('planet.searchTitle'), t('planet.searchNone'));

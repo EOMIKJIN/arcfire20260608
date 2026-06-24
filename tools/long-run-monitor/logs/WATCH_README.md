@@ -93,3 +93,14 @@ powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.
 | 이동중 전투 → worldmap | transit post-flow · `scrollAliveSv` 타이밍 | 플레이테스트 마일스톤 + precision logcat |
 
 플레이테스트 절차: `tools/long-run-monitor/PLAYTEST_WATCH.md` · 디버그 빌드 동일 시나리오 권장.
+
+## 상시 메모리 프로파일링 (2026-06 · 김경제)
+
+Instruments / Memory Profiler 유사 **스냅샷 + retention diff**:
+
+```powershell
+npm run profile:mem:watch          # 30m meminfo + MEM_PROFILE logcat + 60m retention audit
+npm run audit:memory:retention     # 수동 retention 리포트
+```
+
+정본: `tools/memory-profiler/README.md` · 리포트: `tools/memory-profiler/reports/latest-retention-audit.md`

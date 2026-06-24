@@ -627,6 +627,49 @@ ${body}
 `;
 }
 
+function buildPlanetGovernorCommanders() {
+  const rows = loadCsv('planet_governor_commanders.csv').filter((r) => String(r.planetId ?? '').trim());
+  const body = rows
+    .map((row) => {
+      return `  {
+    planetId: ${q(row.planetId)},
+    systemId: ${q(row.systemId)},
+    occupationSide: ${q(String(row.occupationSide ?? 'NEUTRAL').trim().toUpperCase())},
+    ownershipTier: ${q(row.ownershipTier)},
+    governorCaptainId: ${q(row.governorCaptainId)},
+    governorTitleKo: ${q(row.governorTitleKo ?? '')},
+    hostileToPlayerBlue: ${toBool(row.hostileToPlayerBlue)},
+    talkEnabled: ${toBool(row.talkEnabled)},
+    talkPriority: ${toInt(row.talkPriority, 5)},
+    dialogSceneId: ${q(row.dialogSceneId ?? '')},
+    instanceMissionTag: ${q(row.instanceMissionTag ?? '')},
+    hostileEntryCombatEnabled: ${toBool(row.hostileEntryCombatEnabled)},
+    notesKo: ${q(row.notesKo ?? '')},
+  }`;
+    })
+    .join(',\n');
+  return `export type PlanetGovernorCommanderRow = {
+  planetId: string;
+  systemId: string;
+  occupationSide: 'BLUE' | 'RED' | 'NEUTRAL';
+  ownershipTier: string;
+  governorCaptainId: string;
+  governorTitleKo: string;
+  hostileToPlayerBlue: boolean;
+  talkEnabled: boolean;
+  talkPriority: number;
+  dialogSceneId: string;
+  instanceMissionTag: string;
+  hostileEntryCombatEnabled: boolean;
+  notesKo: string;
+};
+
+export const PLANET_GOVERNOR_COMMANDERS_FROM_CSV: PlanetGovernorCommanderRow[] = [
+${body}
+];
+`;
+}
+
 function buildSystems() {
   const planets = loadCsv('planets.csv');
   const systemConnections = loadCsvOptional('star_system_connections.csv');
@@ -1177,6 +1220,7 @@ function main() {
   writeOut('csvWeapons.ts', buildWeapons());
   writeOut('csvMissions.ts', buildMissions());
   writeOut('csvMissionCombatCaptains.ts', buildMissionCombatCaptains());
+  writeOut('csvPlanetGovernorCommanders.ts', buildPlanetGovernorCommanders());
   writeOut('csvSystems.ts', buildSystems());
   writeOut('csvMineralEconomy.ts', buildMineralEconomy());
   writeOut('csvPlayerLevelExp.ts', buildPlayerLevelExp());
@@ -1204,6 +1248,10 @@ export {
   MISSION_COMBAT_CAPTAINS_FROM_CSV,
   type MissionCombatCaptainRow,
 } from './csvMissionCombatCaptains';
+export {
+  PLANET_GOVERNOR_COMMANDERS_FROM_CSV,
+  type PlanetGovernorCommanderRow,
+} from './csvPlanetGovernorCommanders';
 export { STAR_SYSTEMS_FROM_CSV } from './csvSystems';
 export {
   GALACTIC_MINERAL_POOL_FROM_CSV,

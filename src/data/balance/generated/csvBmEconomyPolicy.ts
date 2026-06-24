@@ -11,5 +11,10 @@ export const BmEconomyPolicy_FROM_BALANCE_CSV = [
   { "key": "f2p_optimal_daily_credit_income", "value": "50000", "notesKo": "5h×10000Cr/h" },
   { "key": "whale_f2p_power_target_ratio", "value": "4.0", "notesKo": "macro KPI 목표( economy_sim_macro_policy 동기 )" },
   { "key": "xlarge_pack_max_zone18_skip_pct", "value": "69", "notesKo": "특대팩 전량교환 시 zone18(1.5M) 대비 상한(%)" },
+  { "key": "bru_g_credit_ratio", "value": "100", "notesKo": "1 G = 100 Credits (BRU 표시 단위)" },
+  { "key": "bru_base_g_per_min", "value": "1.67", "notesKo": "채굴 BRU G/min — play_scenario_credit_per_hour_anchor/60/100" },
+  { "key": "reward_formula_version", "value": "2.0", "notesKo": "R_eff=BRU×T×M_tier×O; EV=R/(1-p×L); Risk는 M_tier에 흡수" },
+  { "key": "reward_overhead_coeff_max", "value": "1.25", "notesKo": "Overhead 상한 (기존 1.3→1.25 — 2등급 상한 침범 완화)" },
+  { "key": "reward_fail_loss_coeff", "value": "0.35", "notesKo": "실패 기회비용 L (성공 EV 보정용)" },
 ] as const;
 export type BmEconomyPolicyRow = (typeof BmEconomyPolicy_FROM_BALANCE_CSV)[number];

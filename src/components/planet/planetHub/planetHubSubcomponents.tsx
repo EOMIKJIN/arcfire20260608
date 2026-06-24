@@ -343,8 +343,8 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   const [hubDodgeSkiaOverlayMounted, setHubDodgeSkiaOverlayMounted] = useState(false);
   /** Skia dodge Canvas 성운 로드 완료 — 이때 RN 성운 중복 그리기 숨김 */
   const [hubSkiaDodgeNebulaReady, setHubSkiaDodgeNebulaReady] = useState(false);
-  /** deep reclaim — RN Image remount key (Native bitmap floor) */
-  const [hubBackdropRemountGen, setHubBackdropRemountGen] = useState(0);
+  /** deep reclaim — RN Image remount key only (Skia dodge sticky — key remount 금지) */
+  const [hubRnBackdropRemountGen, setHubRnBackdropRemountGen] = useState(0);
   const inboundDroneSkiaDodgeLatchRef = useRef(false);
   inboundDroneSkiaDodgeLatchRef.current = inboundDroneSkiaDodgeLatch;
   const handleSkiaDodgeNebulaReady = useCallback(() => setHubSkiaDodgeNebulaReady(true), []);
@@ -431,21 +431,10 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
     });
   }, [dodgeFxBridgeActive, dodgeBridgeLastSyncMs]);
 
-  /** 주기 deep reclaim — RN 성운 Image remount (전투 dodge latch 중 Skia cycle 생략) */
+  /** 주기 deep reclaim — RN 성운 Image remount만 (Skia dodge는 sticky, key cycle 금지) */
   useEffect(() => {
     return subscribeHubBackdropNativeRemount(() => {
-      setHubBackdropRemountGen((g) => g + 1);
-      if (inboundDroneSkiaDodgeLatchRef.current) return;
-      setHubDodgeSkiaOverlayMounted((wasMounted) => {
-        if (!wasMounted) return wasMounted;
-        requestAnimationFrame(() => {
-          if (!inboundDroneSkiaDodgeLatchRef.current) {
-            setHubDodgeSkiaOverlayMounted(true);
-          }
-        });
-        return false;
-      });
-      setHubSkiaDodgeNebulaReady(false);
+      setHubRnBackdropRemountGen((g) => g + 1);
     });
   }, []);
   const recomputeDodgeOrbitOffset = useCallback(() => {
@@ -549,7 +538,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
 
   const hubInboundSkiaDodgeOverlay = (
     <SkiaPlanetNebulaShaderBackdrop
-      key={`skia-dodge-${planetId}-${hubBackdropRemountGen}`}
+      key={`skia-dodge-${planetId}`}
       size={nebulaBackdropSize}
       dodgeFxActive={inboundDroneSkiaDodgeLatch}
       dodgeFxOnlyOverlay
@@ -626,7 +615,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
               Skia가 투명해져 밑의 RN 성운이 그대로 보인다(단일 실패점 제거).
             */}
             <PlanetNebulaImageBackdrop
-              key={`rn-nebula-${planetId}-${hubBackdropRemountGen}`}
+              key={`rn-nebula-${planetId}-${hubRnBackdropRemountGen}`}
               size={nebulaBackdropSize}
               nebulaBakedImageSource={nebulaBakedImageSource}
               renderNebulaLayer={mainStageBackdrop.nebulaShaderEnabled}
@@ -650,7 +639,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
           </>
         ) : (
           <PlanetNebulaImageBackdrop
-            key={`rn-nebula-solo-${planetId}-${hubBackdropRemountGen}`}
+            key={`rn-nebula-solo-${planetId}-${hubRnBackdropRemountGen}`}
             size={nebulaBackdropSize}
             nebulaBakedImageSource={nebulaBakedImageSource}
             renderNebulaLayer={mainStageBackdrop.nebulaShaderEnabled}

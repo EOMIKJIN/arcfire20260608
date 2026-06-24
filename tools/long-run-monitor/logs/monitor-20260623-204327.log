@@ -110,3 +110,88 @@
 [2026-06-24 11:32:51] WARN: com.arcfire.online not running
 [2026-06-24 11:42:53] snap PSS=790.1MB GL=121.4MB views=284 dPSS= dGL= 
 [2026-06-24 11:52:58] snap PSS=948.1MB GL=216.1MB views=388 dPSS= dGL= 
+[2026-06-24 12:03:44] WARN: com.arcfire.online not running
+[2026-06-24 12:13:45] WARN: com.arcfire.online not running
+[2026-06-24 12:23:46] WARN: com.arcfire.online not running
+[2026-06-24 12:33:46] WARN: com.arcfire.online not running
+[2026-06-24 12:43:49] snap PSS=202.9MB GL=4.6MB views=14 dPSS= dGL= 
+[2026-06-24 12:53:57] snap PSS=768.3MB GL=33.9MB views=290 dPSS= dGL= 
+[2026-06-24 13:04:03] snap PSS=795MB GL=33.9MB views=285 dPSS=26.7 dGL=0 
+[2026-06-24 13:14:08] snap PSS=746MB GL=39.4MB views=286 dPSS=-49 dGL=5.5 
+[2026-06-24 13:24:13] ALERT PSS +40.3MB
+[2026-06-24 13:24:13] snap PSS=786.3MB GL=40MB views=303 dPSS=40.3 dGL=0.6 PSS_SPIKE review=graphics+native
+[2026-06-24 13:34:18] snap PSS=729MB GL=39.4MB views=294 dPSS=-57.3 dGL=-0.6 
+[2026-06-24 13:44:23] snap PSS=721.6MB GL=39.4MB views=294 dPSS=-7.4 dGL=0 
+[2026-06-24 13:54:28] snap PSS=725.5MB GL=39.4MB views=294 dPSS=3.9 dGL=0 
+[2026-06-24 14:04:33] snap PSS=737.7MB GL=39.7MB views=323 dPSS=12.2 dGL=0.3 
+[2026-06-24 14:14:39] snap PSS=723.5MB GL=39.4MB views=318 dPSS=-14.2 dGL=-0.3 
+[2026-06-24 14:24:44] snap PSS=696.4MB GL=39.6MB views=302 dPSS=-27.1 dGL=0.2 
+[2026-06-24 14:34:49] snap PSS=701.1MB GL=39.4MB views=326 dPSS=4.7 dGL=-0.2 
+[2026-06-24 14:44:54] snap PSS=704.5MB GL=39.4MB views=324 dPSS=3.4 dGL=0 
+[2026-06-24 14:54:59] snap PSS=710.5MB GL=39.6MB views=317 dPSS=6 dGL=0.2 
+[2026-06-24 15:05:04] snap PSS=686.3MB GL=39.4MB views=306 dPSS=-24.2 dGL=-0.2 
+[2026-06-24 15:15:09] snap PSS=708.3MB GL=40MB views=309 dPSS=22 dGL=0.6 
+[2026-06-24 15:25:14] snap PSS=678.7MB GL=39.4MB views=302 dPSS=-29.6 dGL=-0.6 
+[2026-06-24 15:35:19] snap PSS=690.9MB GL=39.4MB views=318 dPSS=12.2 dGL=0 
+[2026-06-24 15:45:23] snap PSS=691.4MB GL=41.5MB views=310 dPSS=0.5 dGL=2.1 
+[2026-06-24 15:55:29] snap PSS=681.5MB GL=39.5MB views=330 dPSS=-9.9 dGL=-2 
+[2026-06-24 16:05:36] snap PSS=706.6MB GL=43.3MB views=315 dPSS=25.1 dGL=3.8 
+[2026-06-24 16:15:41] snap PSS=684.2MB GL=44.7MB views=290 dPSS=-22.4 dGL=1.4 
+[2026-06-24 16:25:48] snap PSS=694.2MB GL=44.7MB views=294 dPSS=10 dGL=0 
+[2026-06-24 16:35:53] snap PSS=690.9MB GL=52MB views=290 dPSS=-3.3 dGL=7.3 
+[2026-06-24 16:45:59] snap PSS=701.1MB GL=45.5MB views=290 dPSS=10.2 dGL=-6.5 GL_RECOVERED idle_ok
+[2026-06-24 16:56:06] snap PSS=698.3MB GL=45.5MB views=290 dPSS=-2.8 dGL=0 
+[2026-06-24 17:06:12] snap PSS=700.5MB GL=47.5MB views=295 dPSS=2.2 dGL=2 
+[2026-06-24 17:16:17] ALERT PSS +47.3MB
+[2026-06-24 17:16:17] snap PSS=747.8MB GL=38.9MB views=285 dPSS=47.3 dGL=-8.6 PSS_SPIKE review=graphics+native
+[2026-06-24 17:26:24] ALERT GL +196.2MB active hub views=945
+[2026-06-24 17:26:24] ALERT GL/PSS hard-ceiling breach gl=235.1MB pss=976.4MB ??defer remediation to check-and-remediate
+[2026-06-24 17:26:24] snap PSS=976.4MB GL=235.1MB views=945 dPSS=228.6 dGL=196.2 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-06-24 17:37:11] WARN: com.arcfire.online not running
+[2026-06-24 17:47:13] snap PSS=801.5MB GL=55.2MB views=284 dPSS= dGL= 
+[2026-06-24 17:57:20] snap PSS=781.1MB GL=36.3MB views=297 dPSS= dGL= 
+[2026-06-24 18:07:26] ALERT GL +91.3MB active hub views=945
+[2026-06-24 18:07:26] snap PSS=931MB GL=127.6MB views=945 dPSS=149.9 dGL=91.3 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-06-24 18:17:32] snap PSS=849.9MB GL=36.4MB views=297 dPSS=-81.1 dGL=-91.2 GL_RECOVERED idle_ok
+[2026-06-24 18:27:37] snap PSS=858.8MB GL=36.4MB views=297 dPSS=8.9 dGL=0 
+[2026-06-24 18:37:43] snap PSS=866.2MB GL=38.6MB views=308 dPSS=7.4 dGL=2.2 
+[2026-06-24 18:47:50] INFO GL +12.1MB views=274 (not active hub ??log only)
+[2026-06-24 18:47:50] snap PSS=904.3MB GL=50.7MB views=274 dPSS=38.1 dGL=12.1 GL_DELTA background_or_transition
+[2026-06-24 18:57:56] snap PSS=912.4MB GL=50.7MB views=366 dPSS=8.1 dGL=0 
+[2026-06-24 19:08:02] snap PSS=941.5MB GL=40.2MB views=308 dPSS=29.1 dGL=-10.5 GL_RECOVERED idle_ok
+[2026-06-24 19:18:09] snap PSS=928.1MB GL=36.4MB views=297 dPSS=-150.6 dGL=-114.9 GL_RECOVERED idle_ok
+[2026-06-24 19:28:15] snap PSS=920.8MB GL=38.5MB views=293 dPSS=-7.3 dGL=2.1 
+[2026-06-24 19:38:22] ALERT PSS +88.6MB
+[2026-06-24 19:38:22] snap PSS=1009.4MB GL=43.5MB views=288 dPSS=88.6 dGL=5 PSS_SPIKE review=graphics+native
+[2026-06-24 19:49:08] snap PSS=605.6MB GL=27.4MB views=293 dPSS= dGL= 
+[2026-06-24 19:59:13] snap PSS=618.5MB GL=27.4MB views=301 dPSS=12.9 dGL=0 
+[2026-06-24 20:09:19] ALERT PSS +41MB
+[2026-06-24 20:09:19] snap PSS=659.5MB GL=34.2MB views=326 dPSS=41 dGL=6.8 PSS_SPIKE review=graphics+native
+[2026-06-24 20:19:24] snap PSS=608.1MB GL=24.7MB views=25 dPSS=-51.4 dGL=-9.5 GL_RECOVERED idle_ok
+[2026-06-24 20:29:29] INFO hub activation GL 24.7->47.7MB views 25->310 (no restart)
+[2026-06-24 20:29:29] snap PSS=772.3MB GL=47.7MB views=310 dPSS=164.2 dGL=23 HUB_ACTIVATION gl_mount_ok
+[2026-06-24 20:39:36] ALERT PSS +75MB
+[2026-06-24 20:39:36] snap PSS=847.3MB GL=23.6MB views=321 dPSS=75 dGL=-24.1 PSS_SPIKE review=graphics+native
+[2026-06-24 20:49:43] ALERT GL +18.5MB active hub views=301
+[2026-06-24 20:49:43] snap PSS=851MB GL=43.5MB views=301 dPSS=32 dGL=18.5 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-06-24 20:59:51] snap PSS=841.9MB GL=41.6MB views=314 dPSS=-9.1 dGL=-1.9 
+[2026-06-24 21:09:58] snap PSS=649.9MB GL=39.2MB views=294 dPSS= dGL= 
+[2026-06-24 21:20:04] snap PSS=651.4MB GL=35.8MB views=294 dPSS=-4.4 dGL=2 
+[2026-06-24 21:30:13] ALERT PSS +178MB
+[2026-06-24 21:30:13] snap PSS=829.4MB GL=39.5MB views=294 dPSS=178 dGL=3.7 PSS_SPIKE review=graphics+native
+[2026-06-24 21:40:19] snap PSS=793.5MB GL=40.1MB views=302 dPSS=-35.9 dGL=0.6 
+[2026-06-24 21:50:25] snap PSS=767.3MB GL=41.9MB views=293 dPSS=2.2 dGL=2 
+[2026-06-24 22:00:31] snap PSS=464.4MB GL=8.3MB views=100 dPSS= dGL= 
+[2026-06-24 22:10:36] snap PSS=694.7MB GL=27.8MB views=322 dPSS= dGL= 
+[2026-06-24 22:20:43] snap PSS=687.2MB GL=34.2MB views=293 dPSS=-3.2 dGL=-2 
+[2026-06-24 22:30:48] ALERT GL +105.3MB active hub views=297
+[2026-06-24 22:30:48] snap PSS=829.3MB GL=139.5MB views=297 dPSS=142.1 dGL=105.3 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-06-24 22:40:54] snap PSS=677.6MB GL=25.1MB views=309 dPSS=-151.7 dGL=-114.4 GL_RECOVERED idle_ok
+[2026-06-24 22:51:02] snap PSS=706.4MB GL=30.5MB views=306 dPSS=19.7 dGL=-1.3 
+[2026-06-24 23:01:08] ALERT GL +11.3MB active hub views=284
+[2026-06-24 23:01:08] snap PSS=811MB GL=41.8MB views=284 dPSS=104.6 dGL=11.3 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-06-24 23:11:14] snap PSS=797.1MB GL=47.5MB views=284 dPSS=-13.9 dGL=5.7 
+[2026-06-24 23:21:20] snap PSS=813.3MB GL=38.5MB views=297 dPSS=9.8 dGL=0 
+[2026-06-24 23:31:30] snap PSS=679.9MB GL=42.3MB views=302 dPSS= dGL= 
+[2026-06-24 23:41:36] snap PSS=854.3MB GL=128MB views=947 dPSS= dGL= 
+[2026-06-24 23:51:41] snap PSS=802.2MB GL=50.4MB views=328 dPSS=-13.9 dGL=-0.1 

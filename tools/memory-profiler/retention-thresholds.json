@@ -1,0 +1,10 @@
+{
+  "recoveryWindowMin": 15,
+  "minSamplesAfterClose": 2,
+  "glRecoverMinDeltaMb": 12,
+  "pssRetainedWarnMb": 35,
+  "nativeRetainedWarnMb": 25,
+  "viewsClosedHubMax": 380,
+  "viewsDuplicateTreeMin": 450,
+  "hermesRetainedWarnMb": 8
+}

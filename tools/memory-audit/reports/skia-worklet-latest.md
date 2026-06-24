@@ -1,8 +1,8 @@
 # Skia worklet memory audit
 
-Generated: 2026-06-24T02:53:03.010Z
+Generated: 2026-06-24T10:38:27.965Z
 
-**12/12** passed
+**20/20** passed
 
 | Status | Check | Detail |
 |--------|-------|--------|
@@ -18,5 +18,13 @@ Generated: 2026-06-24T02:53:03.010Z
 | PASS | removed: arcCoreMissileFlightHost | FlightHost 제거 |
 | PASS | removed: usePlanetHubArcCoreWarningBlink | 경고 blink hook 제거 |
 | PASS | policy: no intercept_enabled runtime flag | planetDefenseSatellitePolicy.ts |
+| PASS | combat: path spare pool + recorder reuse | PlanetEdenRaidOrbitSkiaCombat.tsx |
+| PASS | combat: rAF-coalesced Picture + loop stop on unmount | PlanetEdenRaidOrbitSkiaCombat.tsx |
+| PASS | combat: single Canvas + single Picture (no Path.map) | PlanetEdenRaidOrbitSkiaCombat.tsx |
+| PASS | nebula dodge: Picture batch (no per-FX Group.map) | SkiaPlanetNebulaShaderBackdrop.tsx |
+| PASS | nebula: skiaLoopsActive + delayed Picture dispose | SkiaPlanetNebulaShaderBackdrop.tsx |
+| PASS | shared skiaMemoryLifecycle helpers | skiaMemoryLifecycle.ts |
+| PASS | inbound drone: shared lifecycle import | PlanetHubInboundDroneSkiaTrailLayer.tsx |
+| PASS | SkImage manual dispose forbidden (SIGSEGV guard) | combat + nebula backdrop |
 
 **OK:** no strike-system residue in audit scope.

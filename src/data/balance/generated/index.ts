@@ -57,6 +57,7 @@ export { PlanetOccupationSeeds_FROM_BALANCE_CSV } from './csvPlanetOccupationSee
 export { PlanetTradeRouteProfile_FROM_BALANCE_CSV } from './csvPlanetTradeRouteProfile';
 export { PlayScenarioEconomy_FROM_BALANCE_CSV } from './csvPlayScenarioEconomy';
 export { PlayScenarioZonePlanets_FROM_BALANCE_CSV } from './csvPlayScenarioZonePlanets';
+export { RewardTierBruPolicy_FROM_BALANCE_CSV } from './csvRewardTierBruPolicy';
 export { SynthColonizationPhasePolicy_FROM_BALANCE_CSV } from './csvSynthColonizationPhasePolicy';
 export { SynthSystemColonization_FROM_BALANCE_CSV } from './csvSynthSystemColonization';
 export { TradePortEquipmentTierPolicy_FROM_BALANCE_CSV } from './csvTradePortEquipmentTierPolicy';

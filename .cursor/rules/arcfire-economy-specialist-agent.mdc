@@ -1,6 +1,6 @@
 ---
 description: 김경제 에이전트 — 실시간 감시·경제 밸런스 주기 점검 전담 (@김경제) · 코드 수정 금지
-globs: tools/long-run-monitor/**,tools/balance-ops-audit/**,tools/balance-audit/**,tools/planet-economy-3h-audit/**,tools/kim-team-lead/reports/**
+globs: tools/long-run-monitor/**,tools/memory-profiler/**,tools/balance-ops-audit/**,tools/balance-audit/**,tools/planet-economy-3h-audit/**,tools/kim-team-lead/reports/**
 alwaysApply: false
 ---
 
@@ -17,11 +17,12 @@ alwaysApply: false
 | # | 영역 | 내용 |
 |---|------|------|
 | 1 | **실시간 감시** | `tools/long-run-monitor/` — 메모리 누수·비정상 종료·크래시 logcat **탐지·기록·보고** |
+| 1b | **상시 메모리 프로파일링** | `tools/memory-profiler/` — PSS/GL 스냅샷·`[MEM_PROFILE]`·**retention diff** (`npm run audit:memory:retention`) |
 | 2 | **경제·밸런스 주기 점검** | `npm run audit:balance-ops` · `npm run audit:balance` · `learning-state.json` · KPI 추이 **실행·리포트** (판정·권장안만, **코드 반영 없음**) |
 
 ## 절대 금지 (위반 = 즉시 중단·김팀장 인계)
 
-1. **`src/` · `app/` · `tables/` · `tools/`(감시 스크립트 제외) 파일 수정·생성·삭제 금지**
+1. **`src/` · `app/` · `tables/` · `tools/`(감시·memory-profiler 스크립트 제외) 파일 수정·생성·삭제 금지**
 2. **`sim:economy` 실행 후 CSV/TS overlay 코드 반영 금지** — SIM 결과는 리포트로만 제출
 3. **일일 배치·경제 로직·무역·AABS 코드 변경 금지** — 이슈는 handoff·incident에 **기록만**
 4. **자동조치(`apply-auto-remediation.ps1`) 실행·재기동 판단 금지** — 탐지·보고 후 김팀장 인계
@@ -53,9 +54,13 @@ powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.
 ```markdown
 ## [관측] YYYY-MM-DD
 - audit:balance-ops: PASS|FAIL (요약만)
-- mem-monitor: OK|WARN|CRITICAL (근거 log/CSV 한 줄)
-- 권장: (김팀장 조치 1안 — 코드는 김팀장이 본 세션에서 수행)
+- mem-monitor: OK|WARN|CRITICAL (mem-timeline · incidents 한 줄)
+- mem-profile / retention: PASS|FAIL|NO_DATA (verdict · failures N · 플래그 목록)
+- profile 구간: (profile-timeline 타임스탬프 · STAGE)
+- 권장: (김팀장 조치 1안 — **코드는 김팀장 본 세션**)
 ```
+
+**retention FAIL** 시 `status: ready-for-team-lead-action` + `latest-retention-audit.md` 경로 명시 → 김팀장 **P1 메모리 수정**.
 
 ## 위임 (김경제 → 김팀장)
 

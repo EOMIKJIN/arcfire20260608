@@ -21,8 +21,8 @@ export const OVERLAY_FOOTER_DOCK_MIN_HEIGHT = 76;
 /** 행성정보 — 헤더와 초상화 이미지 사이 최소 간격 */
 export const PLANET_ECONOMY_PANEL_BODY_PADDING_TOP_PX = 0;
 
-/** 행성정보 — 이미지 아래 설명 3줄 고정 높이 */
-export const PLANET_INFO_DESCRIPTION_LINES = 3;
+/** 행성정보 — 이미지 아래 설명 4줄 고정 높이 (총사령관 1줄 포함) */
+export const PLANET_INFO_DESCRIPTION_LINES = 4;
 export const PLANET_INFO_DESCRIPTION_LINE_HEIGHT_PX = 18;
 export const PLANET_INFO_DESCRIPTION_BLOCK_HEIGHT_PX =
   PLANET_INFO_DESCRIPTION_LINES * PLANET_INFO_DESCRIPTION_LINE_HEIGHT_PX + 8;
