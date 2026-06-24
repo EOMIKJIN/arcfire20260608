@@ -203,6 +203,9 @@ if ($hubActiveNow -and $hardCeilingNow) {
     Write-Remediation "INCIDENT GL_HARD_CEILING gl=$lastGl pss=$lastPss views=$lastViews -> immediate remediation (OOM imminent)"
     Enqueue-Refix 'gl_critical_active_hub' @{ lastGlMb = $lastGl; pssMb = $lastPss; views = $lastViews; hardCeiling = $true }
   }
+} elseif ($hubActiveNow -and (Test-MemPssSoftCeilingBreach -PssMb $lastPss)) {
+  Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] PSS_SOFT_CEILING pss=$lastPss gl=$lastGl views=$lastViews native_reclaim_advisory"
+  Write-Remediation "INFO PSS_SOFT_CEILING pss=$lastPss gl=$lastGl views=$lastViews -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)"
 } elseif ($hubActiveNow -and $spikeCount -ge $MEM_CONSECUTIVE_SPIKE_LIMIT -and -not $monitorPaused) {
   Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] GL_LEAK_SUSPECT consecutive_spikes=$spikeCount views=$lastViews active_hub_only"
   Write-Remediation "INCIDENT GL_LEAK_SUSPECT spikes=$spikeCount views=$lastViews (interval=${IntervalMin}m)"

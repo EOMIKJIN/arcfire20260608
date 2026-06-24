@@ -1,10 +1,10 @@
 {
-  "lastRun": "2026-06-16T11:20:49.461Z",
-  "lastKstDate": "2026-06-16",
+  "lastRun": "2026-06-24T02:52:43.190Z",
+  "lastKstDate": "2026-06-24",
   "overall": "FAIL",
-  "balanceOpsOverall": "PASS",
+  "balanceOpsOverall": "FAIL",
   "tscOk": true,
-  "handoffPendingCount": 0,
+  "handoffPendingCount": 6,
   "economyDirtyCount": 1,
   "kimEconomyInsights": [
     {

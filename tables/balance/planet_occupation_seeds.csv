@@ -1,9 +1,9 @@
-﻿planetId,systemId,initialOwner,occupationCombatEnabled,contestedZone,alertLabelKo
+planetId,systemId,initialOwner,occupationCombatEnabled,contestedZone,alertLabelKo
 arcadia_prime,arcadia,BLUE,false,false,아르카디아
 solar_station,solar_port,BLUE,true,false,솔라 항구
 minerva_deep,minerva,BLUE,true,false,미네르바
 vega_base,vega_outpost,BLUE,true,false,베가 전초기지
-eden_city,new_eden,BLUE,true,false,뉴 에덴(블루 수도)
+eden_city,new_eden,BLUE,true,false,뉴에덴 프라임(블루수도)
 iron_remnant,iron_cross,BLUE,true,false,아이언 크로스
 draco_haven,draco_nebula,BLUE,true,true,드라코 성운
 omega_hub,omega_station,BLUE,true,true,오메가 스테이션
@@ -17,6 +17,6 @@ blood_station,blood_field,RED,true,false,블러드 필드
 shadow_market,shadow_nexus,NEUTRAL,true,true,섀도우 넥서스
 abyss_gate,abyss,RED,true,false,어비스
 nightfall_citadel,nightfall,RED,true,false,나이트폴 시타델
-core_prime,arcfire_core,RED,true,false,아크파이어 코어(레드 수도)
+core_prime,arcfire_core,RED,true,false,아크파이어 코어 프라임(레드수도)
 eternal_throne,eternity,NEUTRAL,true,false,이터니티
 genesis_origin,genesis,NEUTRAL,true,false,제네시스

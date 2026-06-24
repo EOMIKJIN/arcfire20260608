@@ -1,22 +1,22 @@
-﻿zoneIndex,primaryPlanetId,systemId,planetLabelKo,scenarioLocationKo,hostileShipCount,targetCombatLevel,requiredFleetMinDps,enemyAffinityKind,targetEngageSec,mainStageCombatEnabled,mainStageCombatVariant
-1,arcadia_prime,arcadia,아르카디아,아르카디아(Arcadia),1,1,150,light,36,true,tutorial_escape
-2,vega_base,vega_outpost,베가 전초기지,베가 전초기지(Vega Outpost),2,3,250,light,40,false,draco_wave
-3,solar_station,solar_port,솔라 항구,솔라 항구(Solar Port),2,5,400,light,44,false,draco_wave
-4,minerva_deep,minerva,미네르바,미네르바(Minerva),2,7,650,light,48,false,draco_wave
-5,draco_haven,draco_nebula,드라코 성운,드라코 성운(Draco Nebula),3,9,900,shielded,72,true,draco_boss
-6,eden_city,new_eden,뉴 에덴,뉴 에덴(New Eden),2,12,1200,light,60,false,draco_wave
-7,iron_remnant,iron_cross,아이언 크로스,아이언 크로스(Iron Cross),3,15,1600,shielded,52,false,draco_wave
-8,sirius_border,sirius,시리우스,시리우스(Sirius),3,18,2100,shielded,60,false,draco_wave
-9,perseus_memorial,perseus,페르세우스,페르세우스(Perseus),3,21,2700,shielded,64,false,draco_wave
-10,crimson_base,crimson_zone,크림슨 구역,크림슨 구역(Crimson),3,25,3400,shielded,72,false,draco_wave
-11,blood_station,blood_field,블러드 필드,블러드 필드(Blood Field),3,28,4200,heavy,80,false,draco_wave
-12,helios_core,helios,헬리오스,헬리오스(Helios),3,31,5100,heavy,88,false,draco_wave
-13,titan_ruins,titan_gate,타이탄 게이트,타이탄 게이트(Titan Gate),3,34,6200,heavy,100,false,draco_wave
-14,omega_hub,omega_station,오메가 스테이션,오메가 스테이션(Omega),3,37,7500,heavy,112,false,draco_wave
-15,nightfall_citadel,nightfall,나이트폴,나이트폴(Nightfall),3,40,9000,heavy,120,false,draco_wave
-16,shadow_market,shadow_nexus,섀도우 넥서스,섀도우 넥서스(Shadow),3,44,11000,heavy,140,false,draco_wave
-17,dark_haven,dark_rift,다크 리프트,다크 리프트(Dark Rift),3,48,13500,heavy,160,false,draco_wave
-18,abyss_gate,abyss,어비스,어비스(Abyss),3,52,16500,heavy,180,true,endgame_boss
-19,core_prime,arcfire_core,아크파이어 코어,아크파이어 코어(Arcfire Core),3,56,20000,heavy,200,true,endgame_boss
-20,eternal_throne,eternity,이터니티,이터니티(Eternity),3,60,25000,boss_heavy,240,true,endgame_boss
-21,genesis_origin,genesis,제네시스,제네시스(Genesis),3,60,25000,boss_heavy,240,false,endgame_boss
+zoneIndex,primaryPlanetId,systemId,planetLabelKo,scenarioLocationKo,hostileShipCount,targetCombatLevel,requiredFleetMinDps,enemyAffinityKind,targetEngageSec,mainStageCombatEnabled,mainStageCombatVariant
+1,arcadia_prime,arcadia,아르카디아 프라임,아르카디아(Arcadia),1,1,150,light,36,true,tutorial_escape
+2,vega_base,vega_outpost,베가 전초기지 베이스,베가 전초기지(Vega Outpost),2,3,250,light,40,false,draco_wave
+3,solar_station,solar_port,솔라 항구 스테이션,솔라 항구(Solar Port),2,5,400,light,44,false,draco_wave
+4,minerva_deep,minerva,미네르바 딥,미네르바(Minerva),2,7,650,light,48,false,draco_wave
+5,draco_haven,draco_nebula,드라코 성운 헤이븐,드라코 성운(Draco Nebula),3,9,900,shielded,72,true,draco_boss
+6,eden_city,new_eden,뉴에덴 프라임,뉴에덴(New Eden),2,12,1200,light,60,false,draco_wave
+7,iron_remnant,iron_cross,아이언 크로스 레므난트,아이언 크로스(Iron Cross),3,15,1600,shielded,52,false,draco_wave
+8,sirius_border,sirius,시리우스 보더,시리우스(Sirius),3,18,2100,shielded,60,false,draco_wave
+9,perseus_memorial,perseus,페르세우스 메모리얼,페르세우스(Perseus),3,21,2700,shielded,64,false,draco_wave
+10,crimson_base,crimson_zone,크림슨 구역 베이스,크림슨 구역(Crimson),3,25,3400,shielded,72,false,draco_wave
+11,blood_station,blood_field,블러드 필드 스테이션,블러드 필드(Blood Field),3,28,4200,heavy,80,false,draco_wave
+12,helios_core,helios,헬리오스 코어,헬리오스(Helios),3,31,5100,heavy,88,false,draco_wave
+13,titan_ruins,titan_gate,타이탄 게이트 유적,타이탄 게이트(Titan Gate),3,34,6200,heavy,100,false,draco_wave
+14,omega_hub,omega_station,오메가 스테이션 허브,오메가 스테이션(Omega),3,37,7500,heavy,112,false,draco_wave
+15,nightfall_citadel,nightfall,나이트폴 시타델,나이트폴(Nightfall),3,40,9000,heavy,120,false,draco_wave
+16,shadow_market,shadow_nexus,섀도우 넥서스 마켓,섀도우 넥서스(Shadow),3,44,11000,heavy,140,false,draco_wave
+17,dark_haven,dark_rift,다크 리프트 헤이븐,다크 리프트(Dark Rift),3,48,13500,heavy,160,false,draco_wave
+18,abyss_gate,abyss,어비스 게이트,어비스(Abyss),3,52,16500,heavy,180,true,endgame_boss
+19,core_prime,arcfire_core,아크파이어 코어 프라임,아크파이어 코어(Arcfire Core),3,56,20000,heavy,200,true,endgame_boss
+20,eternal_throne,eternity,이터니티 스론,이터니티(Eternity),3,60,25000,boss_heavy,240,true,endgame_boss
+21,genesis_origin,genesis,제네시스 오리진,제네시스(Genesis),3,60,25000,boss_heavy,240,false,endgame_boss

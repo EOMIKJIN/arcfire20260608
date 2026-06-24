@@ -26,6 +26,10 @@
                        {
                            "atKst":  "2026-06-23 21:40:57",
                            "label":  "arcadia_idle_codefix_applied"
+                       },
+                       {
+                           "atKst":  "2026-06-24 00:56:48",
+                           "label":  "solar_port_idle_overnight_until_8am_opus"
                        }
                    ]
 }

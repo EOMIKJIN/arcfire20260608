@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { runHeavyUiDataSession } from './runHeavyUiDataSession';
+import { registerHeavyUiSessionAbort } from './heavyUiSessionLifecycle';
 import type { HeavyUiLoadPhase, HeavyUiPreflightCode, HeavyUiSessionConfig, HeavyUiSessionState } from './types';
 
 export function useHeavyUiDataSession<TData>(
@@ -39,6 +40,15 @@ export function useHeavyUiDataSession<TData>(
 
     pipelineDoneRef.current = false;
     const signal = { cancelled: false };
+    const abortSession = () => {
+      signal.cancelled = true;
+      pipelineDoneRef.current = false;
+      setData(null);
+      setError(null);
+      setPreflightCode(null);
+      setAttempt((v) => v + 1);
+    };
+    const unregisterAbort = registerHeavyUiSessionAbort(config.sessionKey, abortSession);
     setPhase('loading');
     setError(null);
     setPreflightCode(null);
@@ -66,6 +76,7 @@ export function useHeavyUiDataSession<TData>(
 
     return () => {
       signal.cancelled = true;
+      unregisterAbort();
     };
   }, [sessionKey, attempt]);
 

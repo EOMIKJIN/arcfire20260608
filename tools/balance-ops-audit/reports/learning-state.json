@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-06-20T01:25:03.173Z",
+  "lastUpdated": "2026-06-24T02:55:59.041Z",
   "snapshots": [
     {
       "timestamp": "2026-06-15T00:22:34.229Z",
@@ -731,6 +731,59 @@
       "priceElasticity": 0,
       "realtimePriceDisabled": true,
       "overall": "FAIL"
+    },
+    {
+      "timestamp": "2026-06-24T02:52:05.688Z",
+      "dailyPolicyOk": true,
+      "dailyPolicy": {
+        "ok": true,
+        "enabled": true,
+        "timeZone": "Asia/Seoul",
+        "batchRunHour": 12,
+        "batchRunMinute": 0,
+        "observationWindowHours": 24,
+        "allPasses": true,
+        "notesKo": "벽시계 24h 관측·수집 후 정오 1회 일괄 분석·재배치·밸런스·가격미세조정"
+      },
+      "dailyViolations": [],
+      "whaleF2pRatio": 3.476036662892076,
+      "kpiStatus": "ok",
+      "deltaId": "2026-06-14-1781435091651",
+      "maxGapPercent": 10,
+      "warnBandCount": 4,
+      "balanceAuditExit": 0,
+      "planetEconomyExit": 1,
+      "planetEconomyOverall": "unknown",
+      "priceElasticity": 0,
+      "realtimePriceDisabled": true,
+      "overall": "FAIL"
+    },
+    {
+      "timestamp": "2026-06-24T02:55:59.041Z",
+      "ciContractOnly": true,
+      "dailyPolicyOk": true,
+      "dailyPolicy": {
+        "ok": true,
+        "enabled": true,
+        "timeZone": "Asia/Seoul",
+        "batchRunHour": 12,
+        "batchRunMinute": 0,
+        "observationWindowHours": 24,
+        "allPasses": true,
+        "notesKo": "벽시계 24h 관측·수집 후 정오 1회 일괄 분석·재배치·밸런스·가격미세조정"
+      },
+      "dailyViolations": [],
+      "whaleF2pRatio": 3.476036662892076,
+      "kpiStatus": "ok",
+      "deltaId": "2026-06-14-1781435091651",
+      "maxGapPercent": 10,
+      "warnBandCount": 4,
+      "balanceAuditExit": 0,
+      "planetEconomyExit": 0,
+      "planetEconomyOverall": "unknown",
+      "priceElasticity": 0,
+      "realtimePriceDisabled": true,
+      "overall": "PASS"
     }
   ],
   "lastInsights": [

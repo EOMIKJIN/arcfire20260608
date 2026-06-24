@@ -1,9 +1,9 @@
 import { clearCapitalRealtimeCombatPresentationCaches } from '../combat/clearCapitalRealtimeCombatCaches';
 import { releaseAllPlanetSessionResources } from './planetSessionRegistry';
 import { invalidatePlanetMemoCachesForPlanet, invalidateAllPlanetMemoCaches } from './planetMemoCache';
-import { releaseAllPlanetGpuLayers } from './planetStageGpuSupervisor';
-import { prunePlanetNebulaProfilesLru } from '../store/planetNebulaStore';
 import { resetHubInboundDroneDodgeBridge } from '../arcCore/inboundDrone/hubInboundDroneDodgeBridge';
+import { runStageNativeReclaimPass } from './nativeReclaim/runStageNativeReclaimPass';
+import { runPlanetChangeNativeReclaimLight } from './nativeReclaim/runPlanetChangeNativeReclaimLight';
 
 export type PlanetMainStageReleaseReason = 'route_blur' | 'planet_change';
 
@@ -51,12 +51,6 @@ export function releasePlanetMainStageSession(opts: {
     previousPlanetId: opts.previousPlanetId ?? null,
   });
 
-  releaseAllPlanetGpuLayers(opts.reason);
-
-  if (opts.reason === 'route_blur') {
-    prunePlanetNebulaProfilesLru(1);
-  }
-
   if (opts.reason === 'planet_change' && opts.previousPlanetId) {
     invalidatePlanetMemoCachesForPlanet(opts.previousPlanetId);
   } else if (opts.reason === 'route_blur') {
@@ -65,4 +59,21 @@ export function releasePlanetMainStageSession(opts: {
 
   clearCapitalRealtimeCombatPresentationCaches();
   resetHubInboundDroneDodgeBridge();
+
+  if (opts.reason === 'planet_change' && opts.previousPlanetId) {
+    runPlanetChangeNativeReclaimLight(opts.previousPlanetId);
+    return;
+  }
+
+  const keepPlanetIds = opts.reason === 'route_blur' && opts.previousPlanetId?.trim()
+    ? [opts.previousPlanetId.trim()]
+    : [];
+
+  runStageNativeReclaimPass({
+    stage: 'planet_hub',
+    reason: opts.reason,
+    keepPlanetIds,
+    reclaimHubSkia: true,
+    releaseGpuLayers: true,
+  });
 }

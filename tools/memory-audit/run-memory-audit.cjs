@@ -88,12 +88,12 @@ for (const file of ['trade.tsx', 'shipyard.tsx', 'tavern.tsx', 'skilltree.tsx'])
 // P1 — planet memo cache invalidation path
 checks.push(
   check(
-    'releaseGalaxyMapStageMemory clears scroll + deferred tiles + combat cache',
-    /releaseGalaxyMapStageMemoryFull|registerGalaxyMapDeferredTileReset/.test(
-      read('src/game/galaxyMapStageSession.ts'),
-    )
-      && /releaseGalaxyMapStageMemoryFull/.test(read('src/game/stageMemoryRelease.ts')),
-    'galaxyMapStageSession.ts + stageMemoryRelease.ts',
+    'releaseGalaxyMapStageMemory clears scroll + memo + nebula + heavyUi',
+    /releaseGalaxyMapStageMemoryFull/.test(read('src/game/galaxyMapStageSession.ts'))
+      && /invalidateAllPlanetMemoCaches/.test(read('src/game/galaxyMapStageSession.ts'))
+      && /abortHeavyUiSessions/.test(read('src/game/galaxyMapStageSession.ts'))
+      && /GALAXY_RELEASE_DEDUPE_MS/.test(read('src/game/galaxyMapStageSession.ts')),
+    'galaxyMapStageSession.ts symmetric full release',
   ),
 );
 
@@ -104,6 +104,55 @@ checks.push(
       read('src/game/planetMainStageSession.ts'),
     ),
     'planetMainStageSession.ts',
+  ),
+);
+
+checks.push(
+  check(
+    'Native Reclaim Tier wired on STAGE release',
+    /runStageNativeReclaimPass/.test(read('src/game/planetMainStageSession.ts'))
+      && /runPlanetChangeNativeReclaimLight/.test(read('src/game/planetMainStageSession.ts'))
+      && /runStageNativeReclaimPass/.test(read('src/game/galaxyMapStageSession.ts'))
+      && /runCombatSkiaPresentationReclaim/.test(read('src/combat/clearCapitalRealtimeCombatCaches.ts')),
+    'nativeReclaim/runStageNativeReclaimPass.ts',
+  ),
+);
+
+checks.push(
+  check(
+    'GPU supervisor enforces onRelease on layer release',
+    /onRelease\?\.\(\)/.test(read('src/game/planetStageGpuSupervisor.ts')),
+    'planetStageGpuSupervisor.ts',
+  ),
+);
+
+checks.push(
+  check(
+    'hub Skia native reclaim signal subscribed',
+    /subscribeHubSkiaNativeReclaim/.test(read('src/components/planet/planetHub/planetHubSubcomponents.tsx')),
+    'planetHubSubcomponents.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'planet_change light reclaim (content-safe)',
+    /runPlanetChangeNativeReclaimLight/.test(read('src/game/planetMainStageSession.ts')),
+    'planetMainStageSession.ts',
+  ),
+);
+
+checks.push(
+  check(
+    'clearCapital combat-only (no full reclaim on planet_change)',
+    (() => {
+      const body = read('src/combat/clearCapitalRealtimeCombatCaches.ts');
+      const fnMatch = body.match(/export function clearCapitalRealtimeCombatPresentationCaches\(\)[^{]*\{([^}]*)\}/);
+      const fnBody = fnMatch ? fnMatch[1] : body;
+      return /runCombatSkiaPresentationReclaim/.test(fnBody)
+        && !/runStageNativeReclaimPass/.test(fnBody);
+    })(),
+    'clearCapitalRealtimeCombatCaches.ts',
   ),
 );
 
@@ -131,6 +180,15 @@ checks.push(
     read('app/_layout.tsx').includes('buildCsvStaticIndexesMinimal()')
       || read('app/_layout.tsx').includes('buildCsvStaticIndexes()'),
     '_layout.tsx — minimal tier at boot',
+  ),
+);
+
+checks.push(
+  check(
+    'planet core persist dirty-skip',
+    /planetCorePersistDirty/.test(read('src/store/planetCoreRuntimeStore.ts'))
+      && /if \(!planetCorePersistDirty\) return/.test(read('src/store/planetCoreRuntimeStore.ts')),
+    'planetCoreRuntimeStore.ts',
   ),
 );
 

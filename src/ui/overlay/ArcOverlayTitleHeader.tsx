@@ -6,25 +6,34 @@ import React, { memo, type ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Defs, Line, Pattern, Rect } from 'react-native-svg';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../utils/theme';
+import type { ArcOverlayVisualTheme } from './tacticalOverlayPreview';
+import { TACTICAL_OVERLAY, tacticalOverlayTitleHeaderStyles } from './tacticalOverlayStyles';
 
 const HATCH_PATTERN_ID = 'arcOverlayTitleHatchV1';
+const TACTICAL_HATCH_PATTERN_ID = 'arcOverlayTitleHatchTacticalV1';
 
-const TitleHeaderPattern = memo(function TitleHeaderPattern() {
+const TitleHeaderPattern = memo(function TitleHeaderPattern({
+  patternId,
+  stroke,
+}: {
+  patternId: string;
+  stroke: string;
+}) {
   return (
     <View style={styles.patternLayer} pointerEvents="none">
       <Svg width="100%" height="100%" style={StyleSheet.absoluteFillObject}>
         <Defs>
           <Pattern
-            id={HATCH_PATTERN_ID}
+            id={patternId}
             width={8}
             height={8}
             patternUnits="userSpaceOnUse"
             patternTransform="rotate(-45)"
           >
-            <Line x1={0} y1={0} x2={0} y2={8} stroke="rgba(255, 255, 255, 0.085)" strokeWidth={1.2} />
+            <Line x1={0} y1={0} x2={0} y2={8} stroke={stroke} strokeWidth={1.2} />
           </Pattern>
         </Defs>
-        <Rect width="100%" height="100%" fill={`url(#${HATCH_PATTERN_ID})`} />
+        <Rect width="100%" height="100%" fill={`url(#${patternId})`} />
       </Svg>
     </View>
   );
@@ -36,6 +45,7 @@ type Props = {
   /** 기본 흰색 — 패배 등 의미색만 예외 */
   titleColor?: string;
   trailing?: ReactNode;
+  visualTheme?: ArcOverlayVisualTheme;
 };
 
 export const ArcOverlayTitleHeader = memo(function ArcOverlayTitleHeader({
@@ -43,16 +53,31 @@ export const ArcOverlayTitleHeader = memo(function ArcOverlayTitleHeader({
   subtitle,
   titleColor = OVERLAY_TOKENS.titleHeaderTitleColor,
   trailing,
+  visualTheme = 'phosphor',
 }: Props) {
+  const isTactical = visualTheme === 'tactical';
   const hasTrailing = trailing != null;
   return (
-    <View style={styles.shell}>
-      <View style={styles.accentTop} pointerEvents="none" />
-      <TitleHeaderPattern />
+    <View style={[styles.shell, isTactical ? tacticalOverlayTitleHeaderStyles.shell : null]}>
+      <View
+        style={[
+          styles.accentTop,
+          isTactical ? tacticalOverlayTitleHeaderStyles.accentTop : null,
+        ]}
+        pointerEvents="none"
+      />
+      <TitleHeaderPattern
+        patternId={isTactical ? TACTICAL_HATCH_PATTERN_ID : HATCH_PATTERN_ID}
+        stroke={isTactical ? TACTICAL_OVERLAY.headerPatternStroke : 'rgba(255, 255, 255, 0.085)'}
+      />
       <View style={[styles.content, hasTrailing ? styles.contentWithTrailing : null]}>
         <View style={[styles.textBlock, hasTrailing ? styles.textBlockTrailing : null]}>
           <Text
-            style={[styles.title, hasTrailing ? styles.titleLeading : null, { color: titleColor }]}
+            style={[
+              styles.title,
+              hasTrailing ? styles.titleLeading : null,
+              { color: titleColor },
+            ]}
             numberOfLines={2}
           >
             {title}
@@ -68,7 +93,13 @@ export const ArcOverlayTitleHeader = memo(function ArcOverlayTitleHeader({
         </View>
         {hasTrailing ? <View style={styles.trailing}>{trailing}</View> : null}
       </View>
-      <View style={styles.bottomRule} pointerEvents="none" />
+      <View
+        style={[
+          styles.bottomRule,
+          isTactical ? tacticalOverlayTitleHeaderStyles.bottomRule : null,
+        ]}
+        pointerEvents="none"
+      />
     </View>
   );
 });

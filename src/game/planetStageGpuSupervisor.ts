@@ -1,5 +1,6 @@
 // ============================================================
 // 행성 허브 GPU/Skia 레이어 수명 — planetSessionRegistry 보조 축
+// Native Reclaim Tier: registerGpuLayer(onRelease) → releaseAllPlanetGpuLayers
 // ============================================================
 
 export type PlanetGpuTier = 'T0' | 'T1' | 'T2' | 'T3';
@@ -8,12 +9,17 @@ type GpuLayerEntry = {
   id: string;
   tier: PlanetGpuTier;
   mountedAt: number;
+  onRelease?: () => void;
 };
 
 const layers = new Map<string, GpuLayerEntry>();
 
-export function registerGpuLayer(id: string, tier: PlanetGpuTier): void {
-  layers.set(id, { id, tier, mountedAt: Date.now() });
+export function registerGpuLayer(
+  id: string,
+  tier: PlanetGpuTier,
+  onRelease?: () => void,
+): void {
+  layers.set(id, { id, tier, mountedAt: Date.now(), onRelease });
 }
 
 export function unregisterGpuLayer(id: string): void {
@@ -29,6 +35,13 @@ export function listRegisteredGpuLayerIds(): string[] {
 }
 
 export function releaseAllPlanetGpuLayers(_reason: 'route_blur' | 'planet_change'): void {
+  for (const entry of layers.values()) {
+    try {
+      entry.onRelease?.();
+    } catch {
+      /* idempotent */
+    }
+  }
   layers.clear();
 }
 

@@ -3,7 +3,7 @@ export const PlanetTradeRouteProfile_FROM_BALANCE_CSV = [
   { "planetId": "arcadia_prime", "tradeFactionCode": "F1", "tradeRegionCode": "W", "notesKo": "서부 연방 관문" },
   { "planetId": "solar_station", "tradeFactionCode": "F1", "tradeRegionCode": "W", "notesKo": "서부 무역 허브" },
   { "planetId": "minerva_deep", "tradeFactionCode": "F2", "tradeRegionCode": "S", "notesKo": "남부 광업 연합" },
-  { "planetId": "eden_city", "tradeFactionCode": "F3", "tradeRegionCode": "E", "notesKo": "동부 · 블루팀 상업 수도" },
+  { "planetId": "eden_city", "tradeFactionCode": "F3", "tradeRegionCode": "W", "notesKo": "서부 · 상업 수도" },
   { "planetId": "iron_remnant", "tradeFactionCode": "F2", "tradeRegionCode": "S", "notesKo": "남부 잔해 지대" },
   { "planetId": "draco_haven", "tradeFactionCode": "F3", "tradeRegionCode": "E", "notesKo": "동부 성운 연구" },
   { "planetId": "omega_hub", "tradeFactionCode": "F3", "tradeRegionCode": "E", "notesKo": "동부 교차 허브" },

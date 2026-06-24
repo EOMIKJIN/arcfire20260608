@@ -353,8 +353,8 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     id: "sandbox_006",
     title: "정제광 샘플 배송",
     titleEn: "Refined Ore Sample",
-    description: "미아 벨로가 미네르바의 정제광 샘플을 뉴 에덴으로 보내 달라고 부탁했다.",
-    descriptionEn: "Mia Bello asked you to send refined ore samples to New Eden.",
+    description: "미아 벨로가 미네르바의 정제광 샘플을 뉴에덴 프라임으로 보내 달라고 부탁했다.",
+    descriptionEn: "Mia Bello asked you to send refined ore samples to New Eden Prime.",
     type: "delivery",
     objectives: [
       {
@@ -467,8 +467,8 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     id: "sandbox_009",
     title: "암시장 꼬리표",
     titleEn: "Black Market Tail",
-    description: "라나 벨이 뉴 에덴 정비독을 맴도는 해적 순양함 추적을 의뢰했다.",
-    descriptionEn: "Lana Bel contracted tracking a cruiser loitering at New Eden docks.",
+    description: "라나 벨이 뉴에덴 프라임 정비독을 맴도는 해적 순양함 추적을 의뢰했다.",
+    descriptionEn: "Lana Bel contracted tracking a cruiser loitering at New Eden Prime docks.",
     type: "combat",
     objectives: [
       {
@@ -572,8 +572,8 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     id: "sandbox_012",
     title: "고철 길드 계약",
     titleEn: "Scrap Guild Contract",
-    description: "세라 미온이 아이언 레므난트의 회수품 명세를 오메가로 옮겨 달라고 했다.",
-    descriptionEn: "Sera Mion asked you to move salvage manifests to Omega.",
+    description: "세라 미온이 아이언 크로스 레므난트의 회수품 명세를 오메가 스테이션 허브로 옮겨 달라고 했다.",
+    descriptionEn: "Sera Mion asked you to move salvage manifests to Omega Station Hub.",
     type: "delivery",
     objectives: [
       {
@@ -645,8 +645,8 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     id: "sandbox_014",
     title: "성운 연구 시료",
     titleEn: "Nebula Research Sample",
-    description: "타드 레인이 드라코 연구 시료를 오메가 허브로 운송해 달라고 했다.",
-    descriptionEn: "Tad Rain asked you to transport research samples to Omega Hub.",
+    description: "타드 레인이 드라코 연구 시료를 오메가 스테이션 허브로 운송해 달라고 했다.",
+    descriptionEn: "Tad Rain asked you to transport research samples to Omega Station Hub.",
     type: "delivery",
     objectives: [
       {
@@ -718,8 +718,8 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     id: "sandbox_016",
     title: "교차항 물자 정리",
     titleEn: "Cross-hub Supply",
-    description: "린 켄달이 오메가 허브에서 헬리오스 코어로 식량과 기술 물자를 보내 달라고 했다.",
-    descriptionEn: "Lyndall Kendall asked you to send food and tech from Omega to Helios Core.",
+    description: "린 켄달이 오메가 스테이션 허브에서 헬리오스 코어로 식량과 기술 물자를 보내 달라고 했다.",
+    descriptionEn: "Lyndall Kendall asked you to send food and tech from Omega Station Hub to Helios Core.",
     type: "delivery",
     objectives: [
       {
@@ -864,8 +864,8 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     id: "sandbox_020",
     title: "타이탄 기록 봉인",
     titleEn: "Titan Record Seal",
-    description: "타드 레인이 타이탄 유적 기록판을 페르세우스 기념관으로 옮겨 달라고 했다.",
-    descriptionEn: "Tad Rain asked you to move Titan relic plates to Perseus Memorial.",
+    description: "타드 레인이 타이탄 게이트 유적 기록판을 페르세우스 메모리얼로 옮겨 달라고 했다.",
+    descriptionEn: "Tad Rain asked you to move Titan Gate Ruins plates to Perseus Memorial.",
     type: "delivery",
     objectives: [
       {
@@ -978,8 +978,8 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     id: "sandbox_023",
     title: "크림슨 첫 현상금",
     titleEn: "Crimson First Bounty",
-    description: "모라 섀이어가 크림슨 베이스 주변에서 배신한 현상금 사냥꾼을 제거하라고 했다.",
-    descriptionEn: "Mora Sayer ordered elimination of a traitor bounty hunter near Crimson Base.",
+    description: "모라 섀이어가 크림슨 구역 베이스 주변에서 배신한 현상금 사냥꾼을 제거하라고 했다.",
+    descriptionEn: "Mora Sayer ordered elimination of a traitor bounty hunter near Crimson Zone Base.",
     type: "combat",
     objectives: [
       {
@@ -1010,8 +1010,8 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     id: "sandbox_024",
     title: "섀도우 암거래 품목",
     titleEn: "Shadow Contraband Lot",
-    description: "모라 섀이어가 금지 물품 한 묶음을 섀도우 마켓으로 옮기라고 했다.",
-    descriptionEn: "Mora Sayer asked you to move contraband to Shadow Market.",
+    description: "모라 섀이어가 금지 물품 한 묶음을 섀도우 넥서스 마켓으로 옮기라고 했다.",
+    descriptionEn: "Mora Sayer asked you to move contraband to Shadow Nexus Market.",
     type: "delivery",
     objectives: [
       {
@@ -1083,8 +1083,8 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     id: "sandbox_026",
     title: "혈장 보급선",
     titleEn: "Bloodfield Med Supply",
-    description: "세라 미온이 블러드 스테이션으로 의료 보급품을 우회 배송해 달라고 했다.",
-    descriptionEn: "Sera Mion asked you to reroute medical supplies to Blood Station.",
+    description: "세라 미온이 블러드 필드 스테이션으로 의료 보급품을 우회 배송해 달라고 했다.",
+    descriptionEn: "Sera Mion asked you to reroute medical supplies to Blood Field Station.",
     type: "delivery",
     objectives: [
       {

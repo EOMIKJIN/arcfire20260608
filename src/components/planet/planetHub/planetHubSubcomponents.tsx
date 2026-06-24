@@ -34,6 +34,8 @@ import { SkiaPlanetNebulaShaderBackdrop } from '../SkiaPlanetNebulaShaderBackdro
 import { resolveMainStageSkiaBackdrop } from '../../../game/mainStageSkiaBackdrop';
 import { useCapitalRealtimeCombatSimContext } from '../../../combat';
 import { resolvePlanetNebulaBakedSource } from '../../../game/planetNebulaBakedAssets';
+import { subscribeHubSkiaNativeReclaim } from '../../../game/nativeReclaim/hubSkiaNativeReclaimSignal';
+import { subscribeHubBackdropNativeRemount } from '../../../game/nativeReclaim/hubBackdropNativeRemountSignal';
 import { useDevSkiaMountAllowed } from '../../../hooks/useDevSkiaMountAllowed';
 import { resolveDefenseSatelliteCombatStatsForObject } from '../../../systems/planetaryDefense/resolveDefenseSatelliteCombatStats';
 import { computeTableNpcOrbitXY } from '../planetOrbitHubWorklets';
@@ -341,6 +343,10 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   const [hubDodgeSkiaOverlayMounted, setHubDodgeSkiaOverlayMounted] = useState(false);
   /** Skia dodge Canvas 성운 로드 완료 — 이때 RN 성운 중복 그리기 숨김 */
   const [hubSkiaDodgeNebulaReady, setHubSkiaDodgeNebulaReady] = useState(false);
+  /** deep reclaim — RN Image remount key (Native bitmap floor) */
+  const [hubBackdropRemountGen, setHubBackdropRemountGen] = useState(0);
+  const inboundDroneSkiaDodgeLatchRef = useRef(false);
+  inboundDroneSkiaDodgeLatchRef.current = inboundDroneSkiaDodgeLatch;
   const handleSkiaDodgeNebulaReady = useCallback(() => setHubSkiaDodgeNebulaReady(true), []);
   const handleSkiaDodgeNebulaLost = useCallback(() => setHubSkiaDodgeNebulaReady(false), []);
   const hubDodgeTimeMsRef = useRef(0);
@@ -413,6 +419,35 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
     setHubSkiaDodgeNebulaReady(false);
     dodgeBridgeLastSyncMs.value = 0;
   }, [hubStageSkiaActive, dodgeBridgeLastSyncMs, dodgeFxBridgeActive]);
+
+  /** releasePlanetMainStageSession — focus race 무관 Skia 강제 해제 */
+  useEffect(() => {
+    return subscribeHubSkiaNativeReclaim(() => {
+      dodgeFxBridgeActive.value = 0;
+      setInboundDroneSkiaDodgeLatch(false);
+      setHubDodgeSkiaOverlayMounted(false);
+      setHubSkiaDodgeNebulaReady(false);
+      dodgeBridgeLastSyncMs.value = 0;
+    });
+  }, [dodgeFxBridgeActive, dodgeBridgeLastSyncMs]);
+
+  /** 주기 deep reclaim — RN 성운 Image remount (전투 dodge latch 중 Skia cycle 생략) */
+  useEffect(() => {
+    return subscribeHubBackdropNativeRemount(() => {
+      setHubBackdropRemountGen((g) => g + 1);
+      if (inboundDroneSkiaDodgeLatchRef.current) return;
+      setHubDodgeSkiaOverlayMounted((wasMounted) => {
+        if (!wasMounted) return wasMounted;
+        requestAnimationFrame(() => {
+          if (!inboundDroneSkiaDodgeLatchRef.current) {
+            setHubDodgeSkiaOverlayMounted(true);
+          }
+        });
+        return false;
+      });
+      setHubSkiaDodgeNebulaReady(false);
+    });
+  }, []);
   const recomputeDodgeOrbitOffset = useCallback(() => {
     if (!dodgeStageMountedRef.current) return;
     const nebulaNode = nebulaBackdropRef.current;
@@ -514,6 +549,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
 
   const hubInboundSkiaDodgeOverlay = (
     <SkiaPlanetNebulaShaderBackdrop
+      key={`skia-dodge-${planetId}-${hubBackdropRemountGen}`}
       size={nebulaBackdropSize}
       dodgeFxActive={inboundDroneSkiaDodgeLatch}
       dodgeFxOnlyOverlay
@@ -590,6 +626,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
               Skia가 투명해져 밑의 RN 성운이 그대로 보인다(단일 실패점 제거).
             */}
             <PlanetNebulaImageBackdrop
+              key={`rn-nebula-${planetId}-${hubBackdropRemountGen}`}
               size={nebulaBackdropSize}
               nebulaBakedImageSource={nebulaBakedImageSource}
               renderNebulaLayer={mainStageBackdrop.nebulaShaderEnabled}
@@ -613,6 +650,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
           </>
         ) : (
           <PlanetNebulaImageBackdrop
+            key={`rn-nebula-solo-${planetId}-${hubBackdropRemountGen}`}
             size={nebulaBackdropSize}
             nebulaBakedImageSource={nebulaBakedImageSource}
             renderNebulaLayer={mainStageBackdrop.nebulaShaderEnabled}

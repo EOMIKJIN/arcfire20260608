@@ -297,18 +297,37 @@ function updateLearningState(snapshot, insights) {
   return learning;
 }
 
+function isCiContractOnlyMode() {
+  return (
+    process.env.ARC_BALANCE_OPS_CI === '1'
+    || process.env.ARC_SKIP_PLANET_ECONOMY_HEADLESS === '1'
+    || process.env.GITHUB_ACTIONS === 'true'
+  );
+}
+
 function main() {
   fs.mkdirSync(REPORT_DIR, { recursive: true });
 
+  const ciContractOnly = isCiContractOnlyMode();
+
   const balanceAudit = runNpm('audit:balance');
-  const planetEconomyAudit = spawnSync('node', ['tools/planet-economy-3h-audit/run-planet-economy-3h-audit.cjs'], {
-    cwd: ROOT,
-    encoding: 'utf8',
-    shell: process.platform === 'win32',
-    maxBuffer: 16 * 1024 * 1024,
-  });
-  const planetEconomyMd = readText(path.join(ROOT, 'tools/planet-economy-3h-audit/reports/latest.md'));
-  const planetEconomyExit = planetEconomyAudit.status ?? 1;
+  let planetEconomyAudit = { status: 0, stdout: '', stderr: '' };
+  let planetEconomyMd = '';
+  if (ciContractOnly) {
+    planetEconomyMd =
+      '# 행성 경제 3h 검사 — CI contract-only skip\n\n'
+      + 'GitHub Actions / `ARC_BALANCE_OPS_CI=1` — React Native headless 경로 미실행.\n'
+      + '전수 검사: 로컬 `npm run audit:planet-economy-3h` · 김팀장 `audit:team-lead:daily`.\n';
+  } else {
+    planetEconomyAudit = spawnSync('node', ['tools/planet-economy-3h-audit/run-planet-economy-3h-audit.cjs'], {
+      cwd: ROOT,
+      encoding: 'utf8',
+      shell: process.platform === 'win32',
+      maxBuffer: 16 * 1024 * 1024,
+    });
+    planetEconomyMd = readText(path.join(ROOT, 'tools/planet-economy-3h-audit/reports/latest.md'));
+  }
+  const planetEconomyExit = ciContractOnly ? 0 : (planetEconomyAudit.status ?? 1);
   const dailyPolicy = parseDailyOpsPolicy();
   const violations = scanDailyOnlyViolations();
   const economyKpi = readEconomySimKpi();
@@ -318,6 +337,7 @@ function main() {
   const timestamp = new Date().toISOString();
   const snapshot = {
     timestamp,
+    ciContractOnly,
     dailyPolicyOk: dailyPolicy.ok,
     dailyPolicy: dailyPolicy,
     dailyViolations: violations,
@@ -358,6 +378,7 @@ function main() {
     `Generated: ${timestamp}`,
     '',
     `**Overall:** ${snapshot.overall}`,
+    ciContractOnly ? '**Mode:** CI contract-only (planet-economy headless skipped)' : '',
     '',
     '## 일 1회 배치 계약 (v4.0 §10)',
     '',

@@ -1,4 +1,4 @@
-]'use strict';
+'use strict';
 /**
  * beforeSubmitPrompt — 페르소나 자동 분류 · 배지 갱신 · 사용자 알림
  */

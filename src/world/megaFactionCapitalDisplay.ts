@@ -22,7 +22,7 @@ export function resolveMegaFactionCapitalHubSubtitle(
   const route = resolveGalaxyRouteDirectionForPlanet(id);
   const sideLabel = t(side === 'blue' ? 'territorial.side.blue' : 'territorial.side.red');
   const place = seed?.alertLabelKo?.trim() || id;
-  if (!route) return `${sideLabel} · ${place}`;
+  if (!route) return `${sideLabel} ${place}`;
 
-  return `${sideLabel} · ${place} · ${t(`worldmap.route.${route}`)}`;
+  return `${sideLabel} ${place} ${t(`worldmap.route.${route}`)}`;
 }

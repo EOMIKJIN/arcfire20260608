@@ -87,6 +87,7 @@ export const OVERLAY_TOKENS = {
   titleHeaderSubtitleColor: 'rgba(220, 236, 255, 0.72)',
   /** 범용 오버레이 본문 — 라벨 옆·행 우측 등 실제 변동 값(823cr, 42% 등) */
   valueContentColor: '#FFFFFF',
-  cardMaxWidth: 300,
+  /** 범용 오버레이 카드 가로 — 기준 300px 대비 +10% */
+  cardMaxWidth: 330,
   narrativeMaxWidth: 440,
 } as const;

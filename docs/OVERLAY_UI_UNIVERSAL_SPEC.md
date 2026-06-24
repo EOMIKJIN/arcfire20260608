@@ -1,7 +1,8 @@
 # Arcfire 범용 오버레이 UI — 작업 현황 · 안정성 · 로드맵
 
-> **최종 갱신**: 2026-06-20  
+> **최종 갱신**: 2026-06-18  
 > **정본 코드**: `src/ui/overlay/` · **감사**: `npm run audit:ui-overlay`  
+> **Tactical(G-ARCHIVE) 기준·전면 교체 준비**: `docs/TACTICAL_UI_BASELINE_AND_ROLLOUT_READINESS.md` · `npm run audit:ui-overlay:tactical-readiness`  
 > **헌법 교차참조**: v4.0 §15(RN Modal/Alert 금지) · `AGENTS.md` UI 오버레이 절
 
 ---

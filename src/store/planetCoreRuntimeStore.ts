@@ -12,6 +12,17 @@ const STORAGE_KEY = 'arcfire_planet_core_runtime_v1';
 /** 드론 impact 등 고빈도 patch — 메모리 즉시·디스크는 코얼레싱 (faction vault 패턴) */
 const PLANET_CORE_PERSIST_COALESCE_MS = 1500;
 let planetCorePersistCoalesceTimer: ReturnType<typeof setTimeout> | null = null;
+/** 변경 없으면 JSON.stringify+AsyncStorage skip (일일 배치·틱 GC 압력 완화) */
+let planetCorePersistDirty = false;
+
+function markPlanetCorePersistDirty(): void {
+  planetCorePersistDirty = true;
+}
+
+/** setState 직접 호출 후 persist — 일일 배치 등 외부 패스용 */
+export function markPlanetCoreRuntimeDirty(): void {
+  markPlanetCorePersistDirty();
+}
 
 function scheduleCoalescedPlanetCorePersist(
   getState: () => { persistPlanetCoreRuntime: () => Promise<void> },
@@ -95,6 +106,7 @@ function scheduleDeferredLegacyPlanetDevMigration(
       try {
         await runLegacyPlanetDevModuleMigrationAll();
         if (persistAfter) {
+          markPlanetCorePersistDirty();
           await getState().persistPlanetCoreRuntime();
         }
       } finally {
@@ -359,15 +371,18 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
     }
     if (dirty) {
       set({ byPlanetId: next });
+      markPlanetCorePersistDirty();
       scheduleDeferredLegacyPlanetDevMigration(true, get);
     }
   },
 
   persistPlanetCoreRuntime: async () => {
+    if (!planetCorePersistDirty) return;
     await persistStoragePayload({
       byPlanetId: get().byPlanetId,
       globalMultipliers: get().globalMultipliers,
     });
+    planetCorePersistDirty = false;
   },
 
   resetLocalPlanetCoreRuntime: async () => {
@@ -376,7 +391,9 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
     const next = mergeWorldWithDisk(systems, {});
     const globalMultipliers = { ...DEFAULT_GLOBAL_MULTIPLIERS };
     set({ byPlanetId: next, globalMultipliers, hydrated: true });
+    markPlanetCorePersistDirty();
     await persistStoragePayload({ byPlanetId: next, globalMultipliers });
+    planetCorePersistDirty = false;
   },
 
   getPlanetCoreRuntime: (planetId) => get().byPlanetId[planetId],
@@ -398,6 +415,7 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
       detail: patch.detail ?? prev.detail,
     };
     set({ byPlanetId: { ...get().byPlanetId, [planetId]: merged } });
+    markPlanetCorePersistDirty();
     scheduleCoalescedPlanetCorePersist(get);
   },
 
@@ -428,6 +446,7 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
       };
     }
     set({ byPlanetId: next });
+    markPlanetCorePersistDirty();
     scheduleCoalescedPlanetCorePersist(get);
   },
 
@@ -462,6 +481,7 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
       };
     }
     set({ byPlanetId: next });
+    markPlanetCorePersistDirty();
     scheduleCoalescedPlanetCorePersist(get);
   },
 
@@ -475,6 +495,7 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
         globalEngageHpMul: safe,
       },
     });
+    markPlanetCorePersistDirty();
     await get().persistPlanetCoreRuntime();
   },
 }));

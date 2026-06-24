@@ -3,7 +3,7 @@ import { Image, StyleSheet, View } from 'react-native';
 import { findPlanetById } from '../../../arcCore/planetEnvironment/resolvePlanetAsteroidVisualPolicy';
 import { resolvePlanetBackdropSource } from '../../../game/planetBackdropAssets';
 import { useT } from '../../../i18n';
-import { OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
+import { OVERLAY_TOKENS } from '../../../utils/theme';
 
 /** 행성 정보창 — 추후 행성 비주얼 PNG/Image 연동용 고정 슬롯 높이 */
 export const PLANET_INFO_PORTRAIT_SLOT_HEIGHT_PX = 132;
@@ -13,8 +13,8 @@ type Props = {
 };
 
 /**
- * 행성 정보 오버레이 — 제목·서브 설명 아래, PGP 배너 위 직사각형 이미지 영역.
- * `planets.csv` backdropImageAssetKey 가 있으면 즉시 표시, 없으면 빈 프레임 유지.
+ * 행성 정보 오버레이 — 헤더 바로 아래 카드 전폭 이미지.
+ * `ArcOverlayCard.panelBleedPrefix` 슬롯에 배치 (bodyPanel padding 밖).
  */
 export const PlanetInfoPortraitSlot = memo(function PlanetInfoPortraitSlot({ planetId }: Props) {
   const t = useT();
@@ -49,24 +49,26 @@ export const PlanetInfoPortraitSlot = memo(function PlanetInfoPortraitSlot({ pla
 
 const styles = StyleSheet.create({
   frame: {
+    alignSelf: 'stretch',
     width: '100%',
     height: PLANET_INFO_PORTRAIT_SLOT_HEIGHT_PX,
-    marginTop: SPACING.md,
-    borderRadius: 4,
     overflow: 'hidden',
   },
   frameEmpty: {
-    borderWidth: 1,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: 'rgba(107, 212, 255, 0.22)',
     backgroundColor: 'rgba(8, 18, 28, 0.55)',
   },
   frameFilled: {
-    borderWidth: 1,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: OVERLAY_TOKENS.phosphorBorder,
     backgroundColor: 'rgba(8, 18, 28, 0.72)',
   },
   image: {
-    width: '100%',
-    height: '100%',
+    ...StyleSheet.absoluteFillObject,
+    width: undefined,
+    height: undefined,
   },
 });

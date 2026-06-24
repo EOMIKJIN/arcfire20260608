@@ -9,6 +9,7 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   AppState,
+  InteractionManager,
   Linking,
   LogBox,
   Platform,
@@ -60,6 +61,7 @@ import {
 import { runCriticalSessionAssetPrewarm } from '../src/assetPipeline/runCriticalSessionAssetPrewarm';
 import { withBootTimeout } from '../src/utils/withBootTimeout';
 import { buildCsvStaticIndexesMinimal } from '../src/game/buildCsvStaticIndexes';
+import { installNativeReclaimBootstrap } from '../src/game/nativeReclaim/nativeReclaimBootstrap';
 import { markBootPerf, logBootPerfSummary } from '../src/game/bootPerformance';
 import { useAabsPolicyStore } from '../src/arcCore/aabs/aabsPolicyStore';
 import { useAppBootStore } from '../src/store/appBootStore';
@@ -179,6 +181,9 @@ export default function RootLayout() {
         // 타이틀 버튼 활성화 게이트 — 로컬 하이드레이션·월드/코어 부트스트랩이 모두 끝난
         // 이 시점에만 true. 이후 버튼 탭이 무거운 부트와 경합해 렉이 나지 않게 한다.
         useAppBootStore.getState().setBootReady(true);
+        InteractionManager.runAfterInteractions(() => {
+          installNativeReclaimBootstrap();
+        });
         void Promise.all([
           persistUserSession(),
           persistItemLedger(),

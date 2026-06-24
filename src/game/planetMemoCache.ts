@@ -115,6 +115,22 @@ export function invalidateAllPlanetMemoCaches(): void {
   }
 }
 
+/** 성계 이탈(worldmap) — 해당 성계 행성들의 memo만 비움 */
+export function invalidatePlanetMemoCachesForPlanets(planetIds: readonly string[]): void {
+  for (const planetId of planetIds) {
+    if (planetId) invalidatePlanetMemoCachesForPlanet(planetId);
+  }
+}
+
+/** invalidate 후 빈 registry shell 제거 — PID 수명 Map 누적 완화 */
+export function compactPlanetMemoRegistryShells(): void {
+  for (const [name, entry] of registry.entries()) {
+    if (entry.byKey.size === 0 && entry.keysByPlanetId.size === 0) {
+      registry.delete(name);
+    }
+  }
+}
+
 /** 디버깅·테스트용 — 등록된 캐시 이름과 행성별 항목 수 */
 export function debugSnapshotPlanetMemoCaches(): Record<string, { totalEntries: number; planets: number }> {
   const out: Record<string, { totalEntries: number; planets: number }> = {};

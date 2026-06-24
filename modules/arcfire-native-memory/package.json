@@ -1,0 +1,11 @@
+{
+  "name": "arcfire-native-memory",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "peerDependencies": {
+    "expo": "*"
+  },
+  "devDependencies": {
+    "expo-modules-core": "~1.12.0"
+  }
+}

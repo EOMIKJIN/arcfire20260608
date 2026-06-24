@@ -1,145 +1,145 @@
-﻿# Arcfire overnight watch ??final report (KST)
+﻿# Arcfire watch ??final report (KST)
 
-Generated (KST): 2026-06-23 08:00:00
+Generated (KST): 2026-06-24 08:00:00
 Package: com.arcfire.online
 
 ## Runtime
 
 | pid | PSS (MB) | GL (MB) | Views |
 |-----|----------|---------|-------|
-| 7598 | 650.6 | 64.5 | 317 |
+| 21407 | 895.9 | 54.9 | 315 |
 
 ## mem-timeline (since OVERNIGHT_WATCH_START)
 
 ```csv
-2026-06-23 03:01:44,,,,,,,,,,,PROCESS_NOT_RUNNING
-2026-06-23 03:04:36,,,,,,,,,,,PROCESS_NOT_RUNNING
-2026-06-23 03:07:12,,,,,,,,,,,PROCESS_NOT_RUNNING
-2026-06-23 03:31:44,7598,653.5,782.2,55.9,19.8,75.8,325.2,35.1,,305,,,
-2026-06-23 03:34:37,7598,670.7,802.9,54.1,30.2,84.3,326.2,38.7,,300,,,
-2026-06-23 03:37:12,7598,666.4,798.6,53.9,19.8,73.8,328.5,41.5,,301,-4.3,-0.2,
-2026-06-23 04:01:48,7598,659.3,790.1,64.1,19.8,84,324.1,28.9,,293,-7.1,10.2,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
-2026-06-23 04:04:41,7598,666.1,797.5,64.3,19.8,84.1,325.9,34.4,,301,6.8,0.2,
-2026-06-23 04:07:16,7598,693.2,824.6,64.9,40.7,105.5,326.8,39,,320,27.1,0.6,
-2026-06-23 04:31:52,7598,667.5,800.9,64.3,19.8,84.1,329.1,34.9,,289,-25.7,-0.6,
-2026-06-23 04:34:46,7598,664,797.4,64.3,19.8,84.1,324.9,39.4,,301,-3.5,0,
-2026-06-23 04:37:20,7598,663.6,796.3,66.3,19.8,86.1,323.3,37.8,,297,-0.4,2,
-2026-06-23 05:01:56,7598,660.7,793.5,64.3,20,84.2,335.5,36.2,,309,-2.9,-2,
-2026-06-23 05:04:50,7598,670.8,803.7,64.5,34.3,98.8,335.4,32,,306,10.1,0.2,
-2026-06-23 05:07:24,7598,656.6,789.4,66.3,19.8,86.1,334.6,31.1,,301,-14.2,1.8,
-2026-06-23 05:32:01,7598,646.8,780.3,66.3,19.8,86.1,328.2,30.3,,317,-9.8,0,
-2026-06-23 05:34:56,7598,653.4,786.9,66.3,19.8,86.1,327.4,37.6,,301,6.6,0,
-2026-06-23 05:37:28,7598,692.4,825.9,64.9,40.7,105.5,334.5,49.3,,320,39,-1.4,
-2026-06-23 06:02:09,7598,655.5,789.2,64.5,19.8,84.3,333.7,34.8,,301,-36.9,-0.4,
-2026-06-23 06:05:02,7598,658.2,791.9,64.5,19.8,84.3,335.5,35.6,,301,2.7,0,
-2026-06-23 06:07:32,7598,654.6,788.3,64.5,19.8,84.3,329.7,37.8,,297,-3.6,0,
-2026-06-23 06:32:17,7598,656.6,789.8,64.5,19.8,84.3,333.9,34.2,,313,2,0,
-2026-06-23 06:35:07,7598,662.9,796.5,64.7,34.3,99,329.8,30.1,,308,6.3,0.2,
-2026-06-23 06:37:38,7598,658.3,791.9,64.5,19.8,84.3,336.3,33.5,,301,-4.6,-0.2,
-2026-06-23 07:02:21,7598,659.3,793.7,64.5,19.8,84.3,337,36.6,,317,1,0,
-2026-06-23 07:05:11,7598,653.8,788.3,64.5,19.8,84.3,331.5,36.7,,301,-5.5,0,
-2026-06-23 07:07:42,7598,669.5,803.9,64.8,34.3,99.1,334,34.7,,322,15.7,0.3,
-2026-06-23 07:32:28,7598,657.2,793.2,64.5,19.8,84.3,335.8,36.8,,317,-12.3,-0.3,
-2026-06-23 07:35:16,7598,655.2,791.2,64.5,19.8,84.3,340.8,29.8,,301,-2,0,
-2026-06-23 07:37:48,7598,650.4,786.3,64.5,19.8,84.3,330.6,35,,297,-4.8,0,
+2026-06-24 03:06:56,21407,876.8,889.4,54.6,19.8,74.5,487.4,25.9,,298,-5,0,
+2026-06-24 03:17:01,21407,874.1,886.7,54.6,19.8,74.5,487.6,26.7,,302,-2.7,0,
+2026-06-24 03:27:06,21407,899.9,912.5,55.3,40.7,95.9,489.7,28.7,,307,25.8,0.7,
+2026-06-24 03:37:11,21407,872.6,885.5,54.6,19.8,74.5,487.4,29.3,,302,-27.3,-0.7,
+2026-06-24 03:47:16,21407,871.1,884.1,54.6,19.8,74.5,491.3,27.9,,302,-1.5,0,
+2026-06-24 03:57:21,21407,892.2,905,56.8,34.3,91.2,493.6,31.4,,321,21.1,2.2,
+2026-06-24 04:07:26,21407,874.9,887.8,56.6,19.8,76.5,494.4,31.3,,302,-17.3,-0.2,
+2026-06-24 04:17:32,21407,864.8,877.8,54.6,19.8,74.5,495.7,21.8,,306,-10.1,-2,
+2026-06-24 04:27:37,21407,860.3,873.2,54.6,19.8,74.5,490.7,22.4,,302,-4.5,0,
+2026-06-24 04:37:42,21407,865.1,878,54.6,19.8,74.5,489.5,27.9,,306,4.8,0,
+2026-06-24 04:47:47,21407,888.3,901.3,54.9,34.3,89.2,491.8,33.6,,327,23.2,0.3,
+2026-06-24 04:57:52,21407,880.9,893.8,56.6,19.8,76.5,497.3,33.1,,302,-7.4,1.7,
+2026-06-24 05:07:57,21407,874.1,886.9,56.6,19.8,76.5,492.7,30.2,,306,-6.8,0,
+2026-06-24 05:18:02,21407,882.7,895.6,56.6,19.8,76.5,496.5,34.8,,302,8.6,0,
+2026-06-24 05:28:07,21407,877,889.9,54.6,19.8,74.5,493.7,33.7,,306,-5.7,-2,
+2026-06-24 05:38:12,21407,884.9,897.7,54.9,34.3,89.2,491.9,28,,327,7.9,0.3,
+2026-06-24 05:48:17,21407,875.5,888.3,56.6,19.8,76.5,495.8,27.2,,306,-9.4,1.7,
+2026-06-24 05:58:22,21407,883.7,896.5,56.6,19.8,76.5,500.1,30.5,,306,8.2,0,
+2026-06-24 06:08:27,21407,872.4,885.3,56.6,19.8,76.5,493,26.1,,306,-11.3,0,
+2026-06-24 06:18:31,21407,886.7,899.6,56.6,19.8,76.5,500.3,32.6,,306,14.3,0,
+2026-06-24 06:28:37,21407,893.3,906,54.9,34.3,89.2,498.3,28.3,,331,6.6,-1.7,
+2026-06-24 06:38:42,21407,875.6,887.3,54.6,19.8,74.5,493.3,28.5,,306,-17.7,-0.3,
+2026-06-24 06:48:47,21407,875.3,888.2,54.6,19.8,74.5,493.3,28.8,,298,-0.3,0,
+2026-06-24 06:58:52,21407,879.5,888.9,54.6,19.8,74.5,496.5,29.6,,306,4.2,0,
+2026-06-24 07:08:58,21407,879.5,889,56.6,19.8,76.5,493.6,29.6,,306,0,2,
+2026-06-24 07:19:02,21407,903.2,912.9,54.9,34.3,89.2,501.1,33.4,,331,23.7,-1.7,
+2026-06-24 07:29:08,21407,885.2,894.7,56.6,19.8,76.5,493.6,35,,306,-18,1.7,
+2026-06-24 07:39:13,21407,883.7,893.7,54.6,19.8,74.5,496.3,33,,310,-1.5,-2,
+2026-06-24 07:49:18,21407,892.9,903,56.6,19.8,76.5,498.9,37.4,,306,9.2,2,
+2026-06-24 07:59:23,21407,897.5,907.8,54.6,19.8,74.5,502.6,39.4,,310,4.6,-2,
 ```
 
 ## incidents.log (tail)
 
 ```
-[2026-06-21 23:30:15] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.5 views=934 restart_held
-[2026-06-21 23:30:19] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.5 views=934 restart_held
-[2026-06-21 23:30:22] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.5 views=934 restart_held
-[2026-06-21 23:30:26] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.5 views=934 restart_held
-[2026-06-21 23:30:30] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.4 views=934 restart_held
-[2026-06-21 23:30:34] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.4 views=934 restart_held
-[2026-06-21 23:30:38] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.4 views=934 restart_held
-[2026-06-21 23:30:41] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=751.4 views=934 restart_held
-[2026-06-21 23:30:46] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=754.3 views=934 restart_held
-[2026-06-21 23:30:57] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=754.4 views=934 restart_held
-[2026-06-21 23:31:02] GL_ELEVATED mounting_or_insufficient_samples gl=139.5 pss=754.1 views=934 restart_held
-[2026-06-21 23:31:08] GL_ELEVATED mounting_or_insufficient_samples gl=136.8 pss=752 views=942 restart_held
-[2026-06-21 23:31:13] GL_ELEVATED mounting_or_insufficient_samples gl=167.5 pss=820.7 views=294 restart_held
-[2026-06-22 00:03:26] GL_ELEVATED mounting_or_insufficient_samples gl=121.7 pss=733.3 views=933 restart_held
-[2026-06-22 00:03:31] GL_ELEVATED mounting_or_insufficient_samples gl=119 pss=704.8 views=933 restart_held
-[2026-06-22 00:03:34] GL_HARD_CEILING gl=227.3 pss=811.7 views=942
-[2026-06-22 00:03:34] REFIX_REQUESTED gl_critical_active_hub
-[2026-06-22 00:04:40] GL_ELEVATED mounting_or_insufficient_samples gl=119.8 pss=731.3 views=942 restart_held
-[2026-06-22 00:04:45] GL_ELEVATED mounting_or_insufficient_samples gl=151.4 pss=762.2 views=287 restart_held
-[2026-06-22 00:04:59] GL_HARD_CEILING gl=218.1 pss=853.4 views=934
-[2026-06-22 00:04:59] REFIX_REQUESTED gl_critical_active_hub
-[2026-06-22 13:05:18] GL_ELEVATED mounting_or_insufficient_samples gl=140.6 pss=749.6 views=933 restart_held
-[2026-06-22 20:36:16] GL_ELEVATED mounting_or_insufficient_samples gl=152.1 pss=885.1 views=943 restart_held
-[2026-06-22 23:30:35] GL_HARD_CEILING gl=152.4 pss=1029.9 views=929
-[2026-06-22 23:30:35] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-23 17:59:18] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-23 18:09:23] GL_HARD_CEILING gl=224.6 pss=634.1 views=285
+[2026-06-23 18:09:23] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-23 18:19:27] GL_HARD_CEILING gl=226.8 pss=648.6 views=306
+[2026-06-23 18:19:27] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-23 18:39:06] SOAK_1H_END repeat_play_after_combat-20260623-173855 pid_changes=0 crashes=0 peak_gl=226.6 peak_pss=703
+[2026-06-23 18:39:36] GL_ELEVATED mounting_or_insufficient_samples gl=102.6 pss=608.3 views=302 restart_held
+[2026-06-23 19:40:05] GL_ELEVATED mounting_or_insufficient_samples gl=196.8 pss=684.5 views=292 restart_held
+[2026-06-23 20:41:16] PLAYTEST_START playtest-20260623-204116 interval=10m paused=True
+[2026-06-23 20:41:34] PLAYTEST_MILESTONE precision_monitor_transit_postflow_start
+[2026-06-23 20:43:23] PLAYTEST_START playtest-20260623-204323 interval=10m paused=True
+[2026-06-23 20:45:28] INVESTIGATION_TRIGGERED arcfire_crash_playtest
+[2026-06-23 20:53:50] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-23 21:23:48] GL_ELEVATED mounting_or_insufficient_samples gl=145.5 pss=775.6 views=939 restart_held
+[2026-06-23 21:38:17] PLAYTEST_MILESTONE arcadia_idle_2h_soak_start
+[2026-06-23 21:40:57] PLAYTEST_MILESTONE arcadia_idle_codefix_applied
+[2026-06-23 22:46:41] INVESTIGATION_TRIGGERED arcfire_crash_playtest
+[2026-06-23 23:55:16] GL_ELEVATED mounting_or_insufficient_samples gl=80.4 pss=787.6 views=317 restart_held
+[2026-06-24 00:05:22] GL_ELEVATED mounting_or_insufficient_samples gl=80.4 pss=795.6 views=320 restart_held
+[2026-06-24 00:15:33] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-24 00:25:37] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-24 00:46:03] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-24 00:56:08] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-24 00:56:48] PLAYTEST_MILESTONE solar_port_idle_overnight_until_8am_opus
+[2026-06-24 01:06:14] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
 ```
 
 ## remediation.log (tail)
 
 ```
-[2026-06-22 00:04:15] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
-[2026-06-22 00:04:40] INFO GL_ELEVATED mounting_or_insufficient_samples gl=119.8 pss=731.3 views=942 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
-[2026-06-22 00:04:45] INFO GL_ELEVATED mounting_or_insufficient_samples gl=151.4 pss=762.2 views=287 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
-[2026-06-22 00:04:59] INCIDENT GL_HARD_CEILING gl=218.1 pss=853.4 views=934 -> immediate remediation (OOM imminent)
-[2026-06-22 00:04:59] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
-[2026-06-22 00:04:59] AUTO_FIX static audit:skia-memory start
-[2026-06-22 00:05:01] AUTO_FIX audit:skia-memory PASS
-[2026-06-22 00:05:01] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
-[2026-06-22 00:05:17] AUTO_FIX baseline reset pid=11428 gl=3.7MB pss=208.5MB
-[2026-06-22 00:05:17] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
-[2026-06-22 00:05:38] VERIFY PASS pid=11428 gl=3.7MB pss=384.8MB views=13
-[2026-06-22 00:05:38] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":853.4,"views":934,"lastGlMb":218.1,"hardCeiling":true}
-[2026-06-22 00:05:39] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
-[2026-06-22 13:05:18] INFO GL_ELEVATED mounting_or_insufficient_samples gl=140.6 pss=749.6 views=933 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
-[2026-06-22 20:36:16] INFO GL_ELEVATED mounting_or_insufficient_samples gl=152.1 pss=885.1 views=943 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
-[2026-06-22 23:30:35] INCIDENT GL_HARD_CEILING gl=152.4 pss=1029.9 views=929 -> immediate remediation (OOM imminent)
-[2026-06-22 23:30:35] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
-[2026-06-22 23:30:35] AUTO_FIX static audit:skia-memory start
-[2026-06-22 23:30:38] AUTO_FIX audit:skia-memory PASS
-[2026-06-22 23:30:38] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
-[2026-06-22 23:30:57] AUTO_FIX baseline reset pid=21849 gl=6MB pss=206.1MB
-[2026-06-22 23:30:57] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
-[2026-06-22 23:31:19] VERIFY PASS pid=21849 gl=4.4MB pss=390.1MB views=15
-[2026-06-22 23:31:19] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":1029.9,"views":929,"lastGlMb":152.4,"hardCeiling":true}
-[2026-06-22 23:31:19] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-06-24 00:46:03] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-24 00:46:03] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-24 00:46:03] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-24 00:46:05] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-24 00:46:05] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-24 00:55:48] INFO GL_HARD_CEILING_RECORD_ONLY gl=68.9 pss=1064.7 views=290 (monitor-paused ??no incident/refix spam)
+[2026-06-24 00:56:06] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-24 00:56:06] INVESTIGATION alert=[2026-06-24 00:56:06] [MEM_HARD_CEILING] pss=1064.7MB gl=68.9MB
+[2026-06-24 00:56:08] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260624-005606.log
+[2026-06-24 00:56:08] INVESTIGATION mem snapshot gl=70.9MB pss=1070.7MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260624-005606.log
+[2026-06-24 00:56:08] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-24 00:56:08] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-24 00:56:08] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-24 00:56:11] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-24 00:56:11] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-24 00:57:11] INVESTIGATION throttled reason=mem_hard_ceiling_playtest (duplicate within window)
+[2026-06-24 01:06:12] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-24 01:06:12] INVESTIGATION alert=[2026-06-24 01:06:12] [MEM_HARD_CEILING] pss=1063.6MB gl=69.3MB
+[2026-06-24 01:06:13] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260624-010612.log
+[2026-06-24 01:06:13] INVESTIGATION mem snapshot gl=69.1MB pss=1047.1MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260624-010612.log
+[2026-06-24 01:06:13] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-24 01:06:14] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-24 01:06:14] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-24 01:06:17] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-24 01:06:17] INVESTIGATION done reason=mem_hard_ceiling_playtest
 ```
 
 ## mem-alerts.log (tail)
 
 ```
-[2026-06-22 00:06:02] PSS +74.6MB GL 8.4MB views=98
-[2026-06-22 00:06:35] GL +34MB views=284 (PSS 65.3MB) ??active hub
-[2026-06-22 00:07:34] GL +9.8MB views=311 (PSS 86.5MB) ??active hub
-[2026-06-22 00:07:44] GL +8MB views=293 (PSS 35.2MB) ??active hub
-[2026-06-22 00:13:31] GL +15.3MB views=346 (PSS 4MB) ??active hub
-[2026-06-22 00:13:48] GL +24.6MB views=412 (PSS 36MB) ??active hub
-[2026-06-22 00:15:30] PSS +153.6MB GL 35.2MB views=15
-[2026-06-22 00:16:04] PSS +172.6MB GL 35.2MB views=98
-[2026-06-22 01:03:33] CRITICAL process not running ??check crash-*.log
-[2026-06-22 09:34:45] PSS +70.3MB GL 51.9MB views=298
-[2026-06-22 10:04:50] CRITICAL process not running ??check crash-*.log
-[2026-06-22 13:05:14] GL +91.6MB views=933 (PSS 86.6MB) ??active hub
-[2026-06-22 16:35:43] PSS +62.4MB GL 50.9MB views=309
-[2026-06-22 17:05:47] CRITICAL process not running ??check crash-*.log
-[2026-06-22 18:29:38] CRITICAL process not running ??check crash-*.log
-[2026-06-22 18:35:57] CRITICAL process not running ??check crash-*.log
-[2026-06-22 19:36:01] GL +31MB views=363 (PSS 103.5MB) ??active hub
-[2026-06-22 20:36:09] GL +95.5MB views=943 (PSS 85.3MB) ??active hub
-[2026-06-22 23:00:27] PSS +44.5MB GL 61.7MB views=347
 [2026-06-22 23:30:31] GL +91.3MB views=929 (PSS 126.8MB) ??active hub
 [2026-06-23 00:31:25] PSS +122.2MB GL 55.9MB views=314
 [2026-06-23 03:01:44] CRITICAL process not running ??check crash-*.log
 [2026-06-23 03:04:36] CRITICAL process not running ??check crash-*.log
 [2026-06-23 03:07:12] CRITICAL process not running ??check crash-*.log
 [2026-06-23 04:01:48] GL +10.2MB views=293 (PSS -7.1MB) ??active hub
+[2026-06-23 10:02:53] CRITICAL process not running ??check crash-*.log
+[2026-06-23 10:05:40] CRITICAL process not running ??check crash-*.log
+[2026-06-23 11:42:59] GL +16.6MB views=310 (PSS 44.4MB) ??active hub
+[2026-06-23 12:13:05] GL +98.8MB views=284 (PSS 128.5MB) ??active hub
+[2026-06-23 13:13:14] GL +10.5MB views=293 (PSS 17MB) ??active hub
+[2026-06-23 14:43:28] CRITICAL process not running ??check crash-*.log
+[2026-06-23 15:07:55] GL +126.6MB views=286 (PSS 177.2MB) ??active hub
+[2026-06-23 16:58:45] GL +9.4MB views=289 (PSS 4.5MB) ??active hub
+[2026-06-23 17:08:49] GL +8MB views=280 (PSS -13.3MB) ??active hub
+[2026-06-23 19:09:45] GL +126.4MB views=282 (PSS 165.6MB) ??active hub
+[2026-06-23 19:50:05] CRITICAL process not running ??check crash-*.log
+[2026-06-23 20:30:25] GL +109.7MB views=957 (PSS 179.5MB) ??active hub
+[2026-06-23 20:40:32] GL +9.9MB views=325 (PSS 105.2MB) ??active hub
+[2026-06-23 22:24:11] GL +9.9MB views=302 (PSS 33.3MB) ??active hub
+[2026-06-23 23:14:45] GL +10.9MB views=300 (PSS 56.8MB) ??active hub
+[2026-06-23 23:34:57] PSS +61.3MB GL 46.6MB views=366
+[2026-06-23 23:45:05] GL +33.2MB views=922 (PSS 26.6MB) ??active hub
+[2026-06-24 00:15:23] GL +181.7MB views=951 (PSS 211.3MB) ??active hub
+[2026-06-24 01:26:00] PSS +71.4MB GL 53.5MB views=298
 ```
 
 ## KPI (overnight window)
 
 | Metric | Count |
 |--------|-------|
-| GL_HARD_CEILING incidents | 9 |
-| Crash / PROCESS_DEATH | 74 |
+| GL_HARD_CEILING incidents | 16 |
+| Crash / PROCESS_DEATH | 77 |
 | Auto app relaunch | 16 |
 
 ## Action items for Kim Team Lead

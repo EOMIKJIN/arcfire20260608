@@ -13,6 +13,8 @@ $script:MEM_BASELINE_LEAK_MARGIN_MB = 25
 # 안정 plateau는 누수가 아닌 footprint로 간주해 재시작을 보류한다.
 $script:MEM_GL_HARD_CEILING_MB = 200
 $script:MEM_PSS_HARD_CEILING_MB = 950
+# Native Reclaim Tier soft zone — 기록·앱 soft pass 권고, force-stop 없음
+$script:MEM_PSS_SOFT_CEILING_MB = 800
 
 function Test-MemHubActivationTransition {
   param(
@@ -82,6 +84,11 @@ function Test-MemHardCeilingBreach {
     [double]$PssMb
   )
   return ($GlMb -ge $script:MEM_GL_HARD_CEILING_MB) -or ($PssMb -ge $script:MEM_PSS_HARD_CEILING_MB)
+}
+
+function Test-MemPssSoftCeilingBreach {
+  param([double]$PssMb)
+  return ($PssMb -ge $script:MEM_PSS_SOFT_CEILING_MB) -and ($PssMb -lt $script:MEM_PSS_HARD_CEILING_MB)
 }
 
 # logcat tail — Firebase deprecation(W ReactNativeJS) · 타앱 crashed service · 자동조치 force-stop 제외.

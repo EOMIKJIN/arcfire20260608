@@ -27,7 +27,6 @@ import {
 } from '../../src/i18n/systemText';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
-import { resolveMegaFactionCapitalHubSubtitle } from '../../src/world/megaFactionCapitalDisplay';
 import { COLORS, FONTS, SPACING, LAYOUT, ZONE_COLORS } from '../../src/utils/theme';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { isPlayerShipCombatCapable, resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
@@ -60,8 +59,11 @@ import { StarSystem } from '../../src/types';
 import type { AppLocale } from '../../src/i18n/types';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
-import { releaseGalaxyMapStageMemory } from '../../src/game/stageMemoryRelease';
-import { registerGalaxyMapDeferredTileReset, releaseGalaxyMapStageMemoryFull } from '../../src/game/galaxyMapStageSession';
+import {
+  registerGalaxyMapDeferredTileReset,
+  registerGalaxyMapPresentationReset,
+  releaseGalaxyMapStageMemoryFull,
+} from '../../src/game/galaxyMapStageSession';
 import {
   registerGalaxyMapScrollHandles,
   teardownGalaxyMapScrollFromJs,
@@ -145,6 +147,39 @@ function runGalaxyMapScrollClampOnUi(
     'worklet';
     clampGalaxyMapScrollWorklet(scrollX, scrollY, savedScrollX, savedScrollY, maxScrollX, maxScrollY);
   })();
+}
+
+function resolveWorldmapReleaseAnchorPlanetId(): string | null {
+  const p = usePlayerStore.getState().player;
+  if (!p) return null;
+  return p.lastHubPlanetId ?? p.currentPlanetId ?? p.homePlanetId ?? null;
+}
+
+function resolveWorldmapKeepPlanetIds(anchorPlanetId: string | null): string[] {
+  const p = usePlayerStore.getState().player;
+  const keep = new Set<string>();
+  if (anchorPlanetId) keep.add(anchorPlanetId);
+  if (!p) return [...keep];
+  if (p.lastHubPlanetId) keep.add(p.lastHubPlanetId);
+  if (p.currentPlanetId) keep.add(p.currentPlanetId);
+  if (p.homePlanetId) keep.add(p.homePlanetId);
+  const sys = useWorldStore.getState().systems[p.currentSystemId];
+  for (const pl of sys?.planets ?? []) keep.add(pl.id);
+  return [...keep];
+}
+
+function releaseWorldmapSessionFloor(opts?: {
+  reason?: 'route_blur' | 'system_change';
+  previousSystemId?: string | null;
+  anchorPlanetId?: string | null;
+}): void {
+  const anchor = opts?.anchorPlanetId ?? resolveWorldmapReleaseAnchorPlanetId();
+  releaseGalaxyMapStageMemoryFull({
+    reason: opts?.reason ?? 'route_blur',
+    previousSystemId: opts?.previousSystemId ?? null,
+    anchorPlanetId: anchor,
+    keepPlanetIds: resolveWorldmapKeepPlanetIds(anchor),
+  });
 }
 
 export default function WorldMapScreen() {
@@ -314,7 +349,7 @@ export default function WorldMapScreen() {
         transitAnimRef.current = null;
       }
       stopGalaxyMapInteractionLoops();
-      releaseGalaxyMapStageMemory();
+      releaseWorldmapSessionFloor();
     },
   );
 
@@ -345,7 +380,7 @@ export default function WorldMapScreen() {
         scrollGesturesArmedRef.current = false;
         setMapInteractionReady(false);
         stopGalaxyMapInteractionLoops();
-        releaseGalaxyMapStageMemoryFull();
+        releaseWorldmapSessionFloor();
         if (transitAnimRef.current) {
           transitAnimRef.current.stop();
           transitAnimRef.current = null;
@@ -526,10 +561,35 @@ export default function WorldMapScreen() {
   const deferredTileCount = hiddenUndiscoveredSystems.length > 700 ? 8 : 4;
   const [loadedDeferredTileCount, setLoadedDeferredTileCount] = useState(1);
   useEffect(() => {
-    return registerGalaxyMapDeferredTileReset(() => {
+    const unregisterTiles = registerGalaxyMapDeferredTileReset(() => {
       setLoadedDeferredTileCount(1);
     });
-  }, []);
+    const unregisterPresentation = registerGalaxyMapPresentationReset(() => {
+      scrollGesturesArmedRef.current = false;
+      setMapInteractionReady(false);
+      setShowPanel(false);
+      setShipTransit(null);
+      setIsMoving(false);
+      moveProgress.setValue(0);
+      setLoadedDeferredTileCount(1);
+    });
+    return () => {
+      unregisterTiles();
+      unregisterPresentation();
+    };
+  }, [moveProgress]);
+  const prevWorldmapSystemIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    const cur = player?.currentSystemId ?? null;
+    const prev = prevWorldmapSystemIdRef.current;
+    if (prev && cur && prev !== cur) {
+      releaseWorldmapSessionFloor({
+        reason: 'system_change',
+        previousSystemId: prev,
+      });
+    }
+    if (cur) prevWorldmapSystemIdRef.current = cur;
+  }, [player?.currentSystemId]);
   useEffect(() => {
     setLoadedDeferredTileCount(1);
   }, [deferredTileCount, hiddenUndiscoveredSystems.length]);
@@ -726,10 +786,6 @@ export default function WorldMapScreen() {
   }, [hiddenUndiscoveredSystems, hiddenUndiscoveredByDirection, deferredTileCount, loadedDeferredTileCount, activeDeferredDirections]);
 
   const selectedSystem = selectedSystemId ? systems[selectedSystemId] : null;
-  const selectedCapitalSubtitle = useMemo(() => {
-    const planetId = selectedSystem?.planets[0]?.id;
-    return planetId ? resolveMegaFactionCapitalHubSubtitle(planetId, t) : null;
-  }, [selectedSystem?.planets, t]);
   const planetHolds = useClanWarFoundationStore((s) => s.planetHolds);
   const clanOwnerColorBySystemId = useMemo(() => {
     const out: Record<string, string | undefined> = {};
@@ -1012,6 +1068,7 @@ export default function WorldMapScreen() {
         await persist();
       }
       worldmapInternalNavRef.current = true;
+      releaseWorldmapSessionFloor({ reason: 'route_blur', anchorPlanetId: planet?.id ?? null });
       router.replace('/(game)/planet');
       return;
     }
@@ -1187,11 +1244,6 @@ export default function WorldMapScreen() {
           <Text style={styles.panelDesc} numberOfLines={2}>
             {resolveStarSystemDescription(selectedSystem, locale)}
           </Text>
-          {selectedCapitalSubtitle ? (
-            <Text style={styles.panelCapitalLine} numberOfLines={1}>
-              {selectedCapitalSubtitle}
-            </Text>
-          ) : null}
           {panelPrimaryPlanetClanLine ? (
             <Text style={styles.panelClanLine} numberOfLines={2}>
               {panelPrimaryPlanetClanLine}

@@ -1,13 +1,25 @@
-name: Balance ops audit (3h)
+# ArcCore 경제·밸런스 운영 감사 — 일 1회 배치 계약 (v4.0 §10)
+#
+# 2026-06-24: 3h cron 폐지 — GitHub 실패 알림 스팸·CI RN headless 불가.
+#   - 정본 감시: 로컬 long-run-monitor · 김경제 관측 · 김팀장 audit:team-lead:daily (KST 09:00)
+#   - CI: contract-only (CSV·고빈도 호출·balance audit) — planet-economy headless skip
+#
+# 수동 실행: Actions → Balance ops audit (daily contract) → Run workflow
+
+name: Balance ops audit (daily contract)
 
 on:
+  # KST 09:00 — 김팀장 일일 검수와 정렬 (선택). 알림 최소화를 위해 기본은 수동만 켜도 됨.
   schedule:
-  # UTC every 3 hours — KST +9
-    - cron: '0 */3 * * *'
+    - cron: '0 0 * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: balance-ops-audit
+  cancel-in-progress: true
 
 jobs:
   balance-ops:
@@ -22,11 +34,13 @@ jobs:
 
       - run: npm ci
 
-      - name: Run balance ops audit
+      - name: Run balance ops audit (CI contract-only)
+        env:
+          ARC_BALANCE_OPS_CI: '1'
         run: npm run audit:balance-ops
-        continue-on-error: true
 
       - name: Commit audit timeline if changed
+        if: success()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -36,5 +50,5 @@ jobs:
             exit 0
           fi
           STAMP=$(TZ=Asia/Seoul date +%Y-%m-%d-%H%M)
-          git commit -m "chore(audit): balance ops snapshot ${STAMP} (KST)"
+          git commit -m "chore(audit): balance ops contract snapshot ${STAMP} (KST)"
           git push

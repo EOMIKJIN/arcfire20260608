@@ -2,8 +2,9 @@ import React, { memo } from 'react';
 import { Pressable, StyleSheet, Text, type StyleProp, type ViewStyle } from 'react-native';
 import { COLORS, FONTS, SPACING } from '../../utils/theme';
 import { OVERLAY_TOKENS } from '../../utils/theme';
+import { TACTICAL_OVERLAY } from './tacticalOverlayStyles';
 
-export type ArcButtonVariant = 'primary' | 'secondary' | 'destructive' | 'panel' | 'cta';
+export type ArcButtonVariant = 'primary' | 'secondary' | 'destructive' | 'panel' | 'cta' | 'tacticalPrimary' | 'tacticalSecondary';
 
 type Props = {
   label: string;
@@ -29,6 +30,8 @@ export const ArcButton = memo(function ArcButton({
         variant === 'destructive' && styles.destructive,
         variant === 'panel' && styles.panel,
         variant === 'cta' && styles.cta,
+        variant === 'tacticalPrimary' && styles.tacticalPrimary,
+        variant === 'tacticalSecondary' && styles.tacticalSecondary,
         pressed && !disabled && styles.pressed,
         disabled && styles.disabled,
         style,
@@ -39,11 +42,14 @@ export const ArcButton = memo(function ArcButton({
     >
       <Text
         style={[
-          styles.text,
+          styles.textBase,
+          variant === 'primary' && styles.textPrimary,
           variant === 'secondary' && styles.textSecondary,
           variant === 'destructive' && styles.textDestructive,
           variant === 'panel' && styles.textPanel,
           variant === 'cta' && styles.textCta,
+          variant === 'tacticalPrimary' && styles.textTacticalPrimary,
+          variant === 'tacticalSecondary' && styles.textTacticalSecondary,
           disabled && styles.textDisabled,
         ]}
       >
@@ -86,14 +92,26 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.ink_dark,
     borderRadius: 4,
   },
+  tacticalPrimary: {
+    borderColor: TACTICAL_OVERLAY.btnPrimaryBorder,
+    backgroundColor: TACTICAL_OVERLAY.btnPrimaryBg,
+    borderRadius: 4,
+  },
+  tacticalSecondary: {
+    borderColor: TACTICAL_OVERLAY.btnSecondaryBorder,
+    backgroundColor: TACTICAL_OVERLAY.btnSecondaryBg,
+    borderRadius: 4,
+  },
   pressed: { opacity: 0.88 },
   disabled: { opacity: 0.45 },
-  text: {
+  textBase: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
     fontWeight: FONTS.weight.bold,
-    color: PH,
     letterSpacing: 1,
+  },
+  textPrimary: {
+    color: PH,
     textShadowColor: 'rgba(107, 212, 255, 0.4)',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 6,
@@ -115,6 +133,18 @@ const styles = StyleSheet.create({
     color: COLORS.bg_primary,
     letterSpacing: 0.5,
     textShadowRadius: 0,
+  },
+  textTacticalPrimary: {
+    color: TACTICAL_OVERLAY.btnPrimaryInk,
+    letterSpacing: 0.5,
+    textShadowRadius: 0,
+    textShadowColor: 'transparent',
+  },
+  textTacticalSecondary: {
+    color: TACTICAL_OVERLAY.btnSecondaryInk,
+    letterSpacing: 0.5,
+    textShadowRadius: 0,
+    textShadowColor: 'transparent',
   },
   textDisabled: {
     textShadowRadius: 0,

@@ -28,6 +28,7 @@ import {
   resolveCapitalLaserBeamPresentation,
   resolveCapitalProjectilePresentation,
 } from '../../combat/capitalWeaponPipeline';
+import { registerCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
 import type { Agent, Missile, PlanetEdenRaidSim } from './PlanetEdenRaidTestLayer';
 import { drawMissileHitFxOnSkCanvas } from './planetNebulaMissileHitFxDraw';
 import {
@@ -572,6 +573,20 @@ function resolveTeamFlameTint(team: Agent['team']): SkColorFilter | null {
   _teamFlameTintCache.set(team, tint);
   return tint;
 }
+
+function reclaimCombatSkiaModuleCaches(): void {
+  skColorCache.clear();
+  for (const filter of _teamFlameTintCache.values()) {
+    try {
+      (filter as { dispose?: () => void } | null)?.dispose?.();
+    } catch {
+      /* idempotent */
+    }
+  }
+  _teamFlameTintCache.clear();
+}
+
+registerCombatSkiaPresentationReclaim(reclaimCombatSkiaModuleCaches);
 
 /**
  * 함선 후미에 타원형 분사화염을 1장 그린다(이미지 stretch). flameImage 없으면 no-op.

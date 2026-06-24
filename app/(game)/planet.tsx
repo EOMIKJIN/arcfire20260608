@@ -47,6 +47,10 @@ import { resetHubInboundDroneDodgeBridge } from '../../src/arcCore/inboundDrone/
 import { resolveMainStageCombatEnabled } from '../../src/arcCore/planetBalance/planetZoneIndexRegistry';
 import { releasePlanetMainStageSession } from '../../src/game/planetMainStageSession';
 import { registerPlanetSessionResource } from '../../src/game/planetSessionRegistry';
+import {
+  HUB_DEEP_NATIVE_RECLAIM_INTERVAL_MS,
+  runDeepNativeReclaimPass,
+} from '../../src/game/nativeReclaim';
 import { recordHubDeparturePlanet } from '../../src/game/galaxyMapSessionResume';
 import { resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 import { usePlanetStageSession } from '../../src/game/usePlanetStageSession';
@@ -155,7 +159,6 @@ import { WAVE_DEFENSE_MAX_WAVES } from '../../src/game/waveDefense/waveDefenseFl
 import { presentWaveResultOverlay, presentSettingsOverlay, presentBmShopOverlay } from '../../src/ui/overlay/showArcOverlay';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { useT } from '../../src/i18n';
-import { resolveMegaFactionCapitalHubSubtitle } from '../../src/world/megaFactionCapitalDisplay';
 import { usePlanetHubInfoDistanceSort } from '../../src/game/planetHub/usePlanetHubInfoDistanceSort';
 import { usePlanetHubInterval } from '../../src/game/planetHub/usePlanetHubInterval';
 import {
@@ -518,6 +521,27 @@ export default function PlanetScreen() {
     }, 2000);
     const token = registerPlanetSessionResource({
       ownerId: 'planet_defense_satellite_upgrade_tick',
+      planetId: pid,
+      dispose: () => clearInterval(intervalId),
+    });
+    return () => {
+      clearInterval(intervalId);
+      token.release();
+    };
+  }, [planet?.id, isPlanetRouteFocused, appStateActive, stageSession.isActive]);
+
+  /** 허브 체류 Native(PSS) floor — 15분 주기 Fresco trim + RN 백드롭 remount */
+  const capitalCombatOrbitActiveRef = useRef(capitalCombatOrbitActive);
+  capitalCombatOrbitActiveRef.current = capitalCombatOrbitActive;
+  useEffect(() => {
+    const pid = planet?.id;
+    if (!pid || !isPlanetRouteFocused || !appStateActive || !stageSession.isActive) return undefined;
+    const intervalId = setInterval(() => {
+      if (capitalCombatOrbitActiveRef.current) return;
+      runDeepNativeReclaimPass({ planetId: pid, reason: 'hub_periodic' });
+    }, HUB_DEEP_NATIVE_RECLAIM_INTERVAL_MS);
+    const token = registerPlanetSessionResource({
+      ownerId: 'planet_hub_deep_native_reclaim',
       planetId: pid,
       dispose: () => clearInterval(intervalId),
     });
@@ -1095,12 +1119,8 @@ export default function PlanetScreen() {
     }, [planet?.id]),
   );
 
-  /** 클랜 소유 문구는 `safeAiClanPlate` — 수도 거점은 territorySubtitle로 표시 */
-  const megaFactionCapitalSubtitle = useMemo(
-    () => (planet?.id ? resolveMegaFactionCapitalHubSubtitle(planet.id, t) : null),
-    [planet?.id, t],
-  );
-  const clanTerritorySubtitle: string | null = megaFactionCapitalSubtitle;
+  /** 수도 거점 부제 — 행성 정보 오버레이(PGP 상단)로 이전, 허브 중앙 배지에는 미표시 */
+  const clanTerritorySubtitle: string | null = null;
   const currentPilotClanName = useClanWarFoundationStore(
     useCallback((s) => {
       const clanId = player?.political.clanId;

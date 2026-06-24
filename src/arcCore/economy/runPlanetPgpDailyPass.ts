@@ -4,6 +4,7 @@
 
 import { useWorldStore } from '../../store/worldStore';
 import {
+  markPlanetCoreRuntimeDirty,
   planetCsvBaselineToRuntime,
   planetCoreRuntimeToGaugeView,
   usePlanetCoreRuntimeStore,
@@ -45,6 +46,7 @@ export function runPlanetPgpDailyPass(): PlanetPgpDailyPassResult {
 
   if (planetsUpdated > 0) {
     usePlanetCoreRuntimeStore.setState({ byPlanetId: next });
+    markPlanetCoreRuntimeDirty();
     void core.persistPlanetCoreRuntime();
   }
 

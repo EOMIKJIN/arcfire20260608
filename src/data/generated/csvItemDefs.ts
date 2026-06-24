@@ -400,8 +400,8 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
   },
   "ownership_solar_station": {
     id: "ownership_solar_station",
-    name: "솔라 스테이션/소유권",
-    nameEn: "솔라 스테이션 / Ownership",
+    name: "솔라 항구 스테이션/소유권",
+    nameEn: "솔라 항구 스테이션 / Ownership",
     description: "행성 소유권 증서(재판매 불가).",
     descriptionEn: "Planet ownership deed (non-resale). Purchasing assigns your clan to hold this planet.",
     featureDescription: "행성 소유권 증서(재판매 불가).. 구매 시 소속 클랜이 해당 행성을 점유합니다.",
@@ -444,8 +444,8 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
   },
   "ownership_vega_base": {
     id: "ownership_vega_base",
-    name: "베가 베이스/소유권",
-    nameEn: "베가 베이스 / Ownership",
+    name: "베가 전초기지 베이스/소유권",
+    nameEn: "베가 전초기지 베이스 / Ownership",
     description: "행성 소유권 증서(재판매 불가).",
     descriptionEn: "Planet ownership deed (non-resale). Purchasing assigns your clan to hold this planet.",
     featureDescription: "행성 소유권 증서(재판매 불가).. 구매 시 소속 클랜이 해당 행성을 점유합니다.",
@@ -466,8 +466,8 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
   },
   "ownership_eden_city": {
     id: "ownership_eden_city",
-    name: "에덴 시티/소유권",
-    nameEn: "에덴 시티 / Ownership",
+    name: "뉴에덴 프라임/소유권",
+    nameEn: "뉴에덴 프라임 / Ownership",
     description: "행성 소유권 증서(재판매 불가).",
     descriptionEn: "Planet ownership deed (non-resale). Purchasing assigns your clan to hold this planet.",
     featureDescription: "행성 소유권 증서(재판매 불가).. 구매 시 소속 클랜이 해당 행성을 점유합니다.",
@@ -488,8 +488,8 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
   },
   "ownership_iron_remnant": {
     id: "ownership_iron_remnant",
-    name: "아이언 레므난트/소유권",
-    nameEn: "아이언 레므난트 / Ownership",
+    name: "아이언 크로스 레므난트/소유권",
+    nameEn: "아이언 크로스 레므난트 / Ownership",
     description: "행성 소유권 증서(재판매 불가).",
     descriptionEn: "Planet ownership deed (non-resale). Purchasing assigns your clan to hold this planet.",
     featureDescription: "행성 소유권 증서(재판매 불가).. 구매 시 소속 클랜이 해당 행성을 점유합니다.",
@@ -510,8 +510,8 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
   },
   "ownership_draco_haven": {
     id: "ownership_draco_haven",
-    name: "드라코 헤이븐/소유권",
-    nameEn: "드라코 헤이븐 / Ownership",
+    name: "드라코 성운 헤이븐/소유권",
+    nameEn: "드라코 성운 헤이븐 / Ownership",
     description: "행성 소유권 증서(재판매 불가).",
     descriptionEn: "Planet ownership deed (non-resale). Purchasing assigns your clan to hold this planet.",
     featureDescription: "행성 소유권 증서(재판매 불가).. 구매 시 소속 클랜이 해당 행성을 점유합니다.",
@@ -532,8 +532,8 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
   },
   "ownership_omega_hub": {
     id: "ownership_omega_hub",
-    name: "오메가 허브/소유권",
-    nameEn: "오메가 허브 / Ownership",
+    name: "오메가 스테이션 허브/소유권",
+    nameEn: "오메가 스테이션 허브 / Ownership",
     description: "행성 소유권 증서(재판매 불가).",
     descriptionEn: "Planet ownership deed (non-resale). Purchasing assigns your clan to hold this planet.",
     featureDescription: "행성 소유권 증서(재판매 불가).. 구매 시 소속 클랜이 해당 행성을 점유합니다.",
@@ -598,8 +598,8 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
   },
   "ownership_titan_ruins": {
     id: "ownership_titan_ruins",
-    name: "타이탄 유적/소유권",
-    nameEn: "타이탄 유적 / Ownership",
+    name: "타이탄 게이트 유적/소유권",
+    nameEn: "타이탄 게이트 유적 / Ownership",
     description: "행성 소유권 증서(재판매 불가).",
     descriptionEn: "Planet ownership deed (non-resale). Purchasing assigns your clan to hold this planet.",
     featureDescription: "행성 소유권 증서(재판매 불가).. 구매 시 소속 클랜이 해당 행성을 점유합니다.",
@@ -642,8 +642,8 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
   },
   "ownership_crimson_base": {
     id: "ownership_crimson_base",
-    name: "크림슨 베이스/소유권",
-    nameEn: "크림슨 베이스 / Ownership",
+    name: "크림슨 구역 베이스/소유권",
+    nameEn: "크림슨 구역 베이스 / Ownership",
     description: "행성 소유권 증서(재판매 불가).",
     descriptionEn: "Planet ownership deed (non-resale). Purchasing assigns your clan to hold this planet.",
     featureDescription: "행성 소유권 증서(재판매 불가).. 구매 시 소속 클랜이 해당 행성을 점유합니다.",
@@ -664,8 +664,8 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
   },
   "ownership_dark_haven": {
     id: "ownership_dark_haven",
-    name: "다크 헤이븐/소유권",
-    nameEn: "다크 헤이븐 / Ownership",
+    name: "다크 리프트 헤이븐/소유권",
+    nameEn: "다크 리프트 헤이븐 / Ownership",
     description: "행성 소유권 증서(재판매 불가).",
     descriptionEn: "Planet ownership deed (non-resale). Purchasing assigns your clan to hold this planet.",
     featureDescription: "행성 소유권 증서(재판매 불가).. 구매 시 소속 클랜이 해당 행성을 점유합니다.",
@@ -686,8 +686,8 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
   },
   "ownership_blood_station": {
     id: "ownership_blood_station",
-    name: "블러드 스테이션/소유권",
-    nameEn: "블러드 스테이션 / Ownership",
+    name: "블러드 필드 스테이션/소유권",
+    nameEn: "블러드 필드 스테이션 / Ownership",
     description: "행성 소유권 증서(재판매 불가).",
     descriptionEn: "Planet ownership deed (non-resale). Purchasing assigns your clan to hold this planet.",
     featureDescription: "행성 소유권 증서(재판매 불가).. 구매 시 소속 클랜이 해당 행성을 점유합니다.",
@@ -708,8 +708,8 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
   },
   "ownership_shadow_market": {
     id: "ownership_shadow_market",
-    name: "섀도우 마켓/소유권",
-    nameEn: "섀도우 마켓 / Ownership",
+    name: "섀도우 넥서스 마켓/소유권",
+    nameEn: "섀도우 넥서스 마켓 / Ownership",
     description: "행성 소유권 증서(재판매 불가).",
     descriptionEn: "Planet ownership deed (non-resale). Purchasing assigns your clan to hold this planet.",
     featureDescription: "행성 소유권 증서(재판매 불가).. 구매 시 소속 클랜이 해당 행성을 점유합니다.",
@@ -774,8 +774,8 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
   },
   "ownership_core_prime": {
     id: "ownership_core_prime",
-    name: "코어 프라임/소유권",
-    nameEn: "코어 프라임 / Ownership",
+    name: "아크파이어 코어 프라임/소유권",
+    nameEn: "아크파이어 코어 프라임 / Ownership",
     description: "행성 소유권 증서(재판매 불가).",
     descriptionEn: "Planet ownership deed (non-resale). Purchasing assigns your clan to hold this planet.",
     featureDescription: "행성 소유권 증서(재판매 불가).. 구매 시 소속 클랜이 해당 행성을 점유합니다.",
@@ -796,8 +796,8 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
   },
   "ownership_eternal_throne": {
     id: "ownership_eternal_throne",
-    name: "이터널 스론/소유권",
-    nameEn: "이터널 스론 / Ownership",
+    name: "이터니티 스론/소유권",
+    nameEn: "이터니티 스론 / Ownership",
     description: "행성 소유권 증서(재판매 불가).",
     descriptionEn: "Planet ownership deed (non-resale). Purchasing assigns your clan to hold this planet.",
     featureDescription: "행성 소유권 증서(재판매 불가).. 구매 시 소속 클랜이 해당 행성을 점유합니다.",
@@ -2420,7 +2420,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: false,
     nonRepurchase: false,
     tags: ["trade_route","src_F3","dst_F1"],
-    attrs: {"tradeRoute":true,"srcFactionCode":"F1","dstFactionCode":"F3","srcRegion":"W","dstRegion":"E","baseBuyPrice":1340,"baseSellPrice":2345,"baseProfit":1005},
+    attrs: {"tradeRoute":true,"srcFactionCode":"F1","dstFactionCode":"F3","srcRegion":"W","dstRegion":"W","baseBuyPrice":1340,"baseSellPrice":2345,"baseProfit":1005},
   },
   "tg_015": {
     id: "tg_015",
@@ -2442,7 +2442,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: false,
     nonRepurchase: false,
     tags: ["trade_route","src_F3","dst_F4"],
-    attrs: {"tradeRoute":true,"srcFactionCode":"F3","dstFactionCode":"F4","srcRegion":"E","dstRegion":"N","baseBuyPrice":1680,"baseSellPrice":3136,"baseProfit":1456},
+    attrs: {"tradeRoute":true,"srcFactionCode":"F3","dstFactionCode":"F4","srcRegion":"W","dstRegion":"N","baseBuyPrice":1680,"baseSellPrice":3136,"baseProfit":1456},
   },
   "tg_016": {
     id: "tg_016",
@@ -2882,7 +2882,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: false,
     nonRepurchase: false,
     tags: ["trade_route","src_F2","dst_F2"],
-    attrs: {"tradeRoute":true,"srcFactionCode":"F3","dstFactionCode":"F4","srcRegion":"E","dstRegion":"N","baseBuyPrice":320,"baseSellPrice":720,"baseProfit":400},
+    attrs: {"tradeRoute":true,"srcFactionCode":"F3","dstFactionCode":"F4","srcRegion":"W","dstRegion":"N","baseBuyPrice":320,"baseSellPrice":720,"baseProfit":400},
   },
   "tg_036": {
     id: "tg_036",
@@ -3146,7 +3146,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: false,
     nonRepurchase: false,
     tags: ["trade_route","src_F1","dst_F2"],
-    attrs: {"tradeRoute":true,"srcFactionCode":"F3","dstFactionCode":"F2","srcRegion":"E","dstRegion":"S","baseBuyPrice":6150,"baseSellPrice":12983,"baseProfit":6833},
+    attrs: {"tradeRoute":true,"srcFactionCode":"F3","dstFactionCode":"F2","srcRegion":"W","dstRegion":"S","baseBuyPrice":6150,"baseSellPrice":12983,"baseProfit":6833},
   },
   "tg_048": {
     id: "tg_048",
@@ -3190,7 +3190,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: false,
     nonRepurchase: false,
     tags: ["trade_route","src_F1","dst_F1"],
-    attrs: {"tradeRoute":true,"srcFactionCode":"F3","dstFactionCode":"F4","srcRegion":"E","dstRegion":"N","baseBuyPrice":4370,"baseSellPrice":9286,"baseProfit":4916},
+    attrs: {"tradeRoute":true,"srcFactionCode":"F3","dstFactionCode":"F4","srcRegion":"W","dstRegion":"N","baseBuyPrice":4370,"baseSellPrice":9286,"baseProfit":4916},
   },
   "tg_050": {
     id: "tg_050",
@@ -3278,7 +3278,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: false,
     nonRepurchase: false,
     tags: ["trade_route","src_F1","dst_F2"],
-    attrs: {"tradeRoute":true,"srcFactionCode":"F4","dstFactionCode":"F3","srcRegion":"N","dstRegion":"E","baseBuyPrice":9850,"baseSellPrice":20521,"baseProfit":10671},
+    attrs: {"tradeRoute":true,"srcFactionCode":"F4","dstFactionCode":"F3","srcRegion":"N","dstRegion":"W","baseBuyPrice":9850,"baseSellPrice":20521,"baseProfit":10671},
   },
   "tg_054": {
     id: "tg_054",
@@ -3454,7 +3454,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: false,
     nonRepurchase: false,
     tags: ["trade_route","src_F4","dst_F1"],
-    attrs: {"tradeRoute":true,"srcFactionCode":"F3","dstFactionCode":"F2","srcRegion":"E","dstRegion":"S","baseBuyPrice":3980,"baseSellPrice":9234,"baseProfit":5254},
+    attrs: {"tradeRoute":true,"srcFactionCode":"F3","dstFactionCode":"F2","srcRegion":"W","dstRegion":"S","baseBuyPrice":3980,"baseSellPrice":9234,"baseProfit":5254},
   },
   "tg_062": {
     id: "tg_062",
@@ -3564,7 +3564,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: false,
     nonRepurchase: false,
     tags: ["trade_route","src_F1","dst_F3"],
-    attrs: {"tradeRoute":true,"srcFactionCode":"F3","dstFactionCode":"F4","srcRegion":"E","dstRegion":"N","baseBuyPrice":2050,"baseSellPrice":5193,"baseProfit":3143},
+    attrs: {"tradeRoute":true,"srcFactionCode":"F3","dstFactionCode":"F4","srcRegion":"W","dstRegion":"N","baseBuyPrice":2050,"baseSellPrice":5193,"baseProfit":3143},
   },
   "tg_067": {
     id: "tg_067",
@@ -3608,7 +3608,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: false,
     nonRepurchase: false,
     tags: ["trade_route","src_F3","dst_F4"],
-    attrs: {"tradeRoute":true,"srcFactionCode":"F2","dstFactionCode":"F3","srcRegion":"S","dstRegion":"E","baseBuyPrice":670,"baseSellPrice":1731,"baseProfit":1061},
+    attrs: {"tradeRoute":true,"srcFactionCode":"F2","dstFactionCode":"F3","srcRegion":"S","dstRegion":"W","baseBuyPrice":670,"baseSellPrice":1731,"baseProfit":1061},
   },
   "tg_069": {
     id: "tg_069",
@@ -3718,7 +3718,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: false,
     nonRepurchase: false,
     tags: ["trade_route","src_F1","dst_F4"],
-    attrs: {"tradeRoute":true,"srcFactionCode":"F2","dstFactionCode":"F3","srcRegion":"S","dstRegion":"E","baseBuyPrice":1500,"baseSellPrice":3818,"baseProfit":2318},
+    attrs: {"tradeRoute":true,"srcFactionCode":"F2","dstFactionCode":"F3","srcRegion":"S","dstRegion":"W","baseBuyPrice":1500,"baseSellPrice":3818,"baseProfit":2318},
   },
   "tg_074": {
     id: "tg_074",
@@ -3828,7 +3828,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: false,
     nonRepurchase: false,
     tags: ["trade_route","src_F1","dst_F4"],
-    attrs: {"tradeRoute":true,"srcFactionCode":"F4","dstFactionCode":"F3","srcRegion":"N","dstRegion":"E","baseBuyPrice":102500,"baseSellPrice":259667,"baseProfit":157167},
+    attrs: {"tradeRoute":true,"srcFactionCode":"F4","dstFactionCode":"F3","srcRegion":"N","dstRegion":"W","baseBuyPrice":102500,"baseSellPrice":259667,"baseProfit":157167},
   },
   "tg_079": {
     id: "tg_079",
@@ -4290,7 +4290,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: false,
     nonRepurchase: false,
     tags: ["trade_route","src_F2","dst_F4"],
-    attrs: {"tradeRoute":true,"srcFactionCode":"F2","dstFactionCode":"F3","srcRegion":"S","dstRegion":"E","baseBuyPrice":6150,"baseSellPrice":15033,"baseProfit":8883},
+    attrs: {"tradeRoute":true,"srcFactionCode":"F2","dstFactionCode":"F3","srcRegion":"S","dstRegion":"W","baseBuyPrice":6150,"baseSellPrice":15033,"baseProfit":8883},
   },
   "tg_100": {
     id: "tg_100",

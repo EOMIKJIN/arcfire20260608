@@ -6,6 +6,8 @@ import React, { memo, type ReactNode } from 'react';
 import { ScrollView, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { OVERLAY_TOKENS, SPACING } from '../../utils/theme';
 import { ArcOverlayTitleHeader } from './ArcOverlayTitleHeader';
+import type { ArcOverlayVisualTheme } from './tacticalOverlayPreview';
+import { tacticalOverlayCardStyles } from './tacticalOverlayStyles';
 import {
   OVERLAY_CARD_LAYOUT,
   OVERLAY_FOOTER_DOCK_MIN_HEIGHT,
@@ -22,6 +24,8 @@ type Props = {
   trailing?: ReactNode;
   /** panel 전용 — ScrollView 위 고정 블록(초상화·배너 등) */
   panelPrefix?: ReactNode;
+  /** panel 전용 — bodyPanel padding 밖 카드 전폭(행성 이미지 등) */
+  panelBleedPrefix?: ReactNode;
   layout?: ArcOverlayCardLayout;
   /** bounded 카드에서 flex 보조 — 미전달 시 flex:1 스크롤만 사용 */
   scrollMaxHeight?: number;
@@ -31,6 +35,8 @@ type Props = {
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
   bodyStyle?: StyleProp<ViewStyle>;
+  /** phosphor(기본) · tactical(G-ARCHIVE 라이트 카드 시험) */
+  visualTheme?: ArcOverlayVisualTheme;
 };
 
 export const ArcOverlayCard = memo(function ArcOverlayCard({
@@ -39,6 +45,7 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
   titleColor,
   trailing,
   panelPrefix,
+  panelBleedPrefix,
   layout = 'compact',
   scrollMaxHeight,
   minHeight,
@@ -47,8 +54,10 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
   children,
   style,
   bodyStyle,
+  visualTheme = 'phosphor',
 }: Props) {
   const isPanel = layout === 'panel';
+  const isTactical = visualTheme === 'tactical';
   const hasFooter = footer != null;
   const resolvedMinHeight =
     minHeight
@@ -62,6 +71,7 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
     <View
       style={[
         styles.card,
+        isTactical ? tacticalOverlayCardStyles.card : null,
         isBounded ? styles.cardBounded : null,
         resolvedMinHeight != null ? { minHeight: resolvedMinHeight } : null,
         resolvedMaxHeight != null ? { maxHeight: resolvedMaxHeight } : null,
@@ -74,11 +84,22 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
           subtitle={subtitle}
           titleColor={titleColor}
           trailing={trailing}
+          visualTheme={visualTheme}
         />
       </View>
+      {isPanel && panelBleedPrefix ? (
+        <View style={styles.panelBleedWrap}>{panelBleedPrefix}</View>
+      ) : null}
       {isPanel ? (
         <>
-          <View style={[styles.bodyPanel, isBounded ? styles.bodyPanelBounded : null, bodyStyle]}>
+          <View
+            style={[
+              styles.bodyPanel,
+              isTactical ? tacticalOverlayCardStyles.bodyPanel : null,
+              isBounded ? styles.bodyPanelBounded : null,
+              bodyStyle,
+            ]}
+          >
             {panelPrefix ? <View style={styles.panelPrefixWrap}>{panelPrefix}</View> : null}
             <ScrollView
               style={[
@@ -93,7 +114,11 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
               {children}
             </ScrollView>
           </View>
-          {hasFooter ? <View style={styles.footerDock}>{footer}</View> : null}
+          {hasFooter ? (
+            <View style={[styles.footerDock, isTactical ? tacticalOverlayCardStyles.footerDock : null]}>
+              {footer}
+            </View>
+          ) : null}
         </>
       ) : (
         <>
@@ -101,12 +126,17 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
             style={[
               styles.bodyCompact,
               isBounded ? styles.bodyCompactBounded : null,
+              isTactical ? tacticalOverlayCardStyles.bodyPanel : null,
               bodyStyle,
             ]}
           >
             {children}
           </View>
-          {hasFooter ? <View style={styles.footerDock}>{footer}</View> : null}
+          {hasFooter ? (
+            <View style={[styles.footerDock, isTactical ? tacticalOverlayCardStyles.footerDock : null]}>
+              {footer}
+            </View>
+          ) : null}
         </>
       )}
     </View>
@@ -129,6 +159,11 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   headerWrap: {
+    flexShrink: 0,
+  },
+  panelBleedWrap: {
+    alignSelf: 'stretch',
+    width: '100%',
     flexShrink: 0,
   },
   bodyCompact: {

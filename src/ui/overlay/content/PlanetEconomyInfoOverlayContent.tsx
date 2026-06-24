@@ -1,6 +1,7 @@
 import React, { memo, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import type { ArcOverlayPlanetEconomyInfoEntry } from '../arcOverlayStore';
+import { resolveMegaFactionCapitalHubSubtitle } from '../../../world/megaFactionCapitalDisplay';
 import { formatPlanetPgpBmu } from '../../../world/planetPgpModel';
 import { useArcCoreTransportFleetBankStore } from '../../../store/factionVault/arcCoreTransportFleetBankStore';
 import { useArcCoreVaultStore } from '../../../store/factionVault/arcCoreVaultStore';
@@ -13,13 +14,27 @@ import { useT } from '../../../i18n';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
+import { useAppSettingsStore } from '../../../store/appSettingsStore';
+import { resolvePlanetTableDescription } from '../../../game/planetHub/resolvePlanetTableDescription';
+import { PlanetInfoDescriptionBlock } from './PlanetInfoDescriptionBlock';
 import { PlanetInfoPortraitSlot } from './PlanetInfoPortraitSlot';
+import {
+  PLANET_ECONOMY_PANEL_BODY_PADDING_TOP_PX,
+  resolvePlanetEconomyOverlayMaxHeight,
+  resolvePlanetEconomyOverlayMinHeight,
+} from '../overlayPanelLayout';
 import {
   HeavyUiOverlayShell,
   createPlanetEconomyInfoSession,
   readPlanetEconomyInfoRevision,
   useHeavyUiDataSession,
 } from '../../heavyUiDataSession';
+import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
+import {
+  formatTacticalOverlayTitle,
+  tacticalPlanetEconomyOverlayStyles,
+  tacticalTitleHeaderSubtitle,
+} from '../tacticalOverlayStyles';
 
 type Props = {
   entry: ArcOverlayPlanetEconomyInfoEntry;
@@ -31,7 +46,11 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
   onClose,
 }: Props) {
   const t = useT();
+  const { height: winH } = useWindowDimensions();
+  const locale = useAppSettingsStore((s) => s.locale);
   const { planetId, planetName } = entry;
+  const visualTheme = resolveArcOverlayVisualTheme('planetEconomyInfo');
+  const isTactical = visualTheme === 'tactical';
 
   const coreSlice = usePlanetCoreRuntimeStore((s) => s.byPlanetId[planetId]);
   const tradeBucket = usePlanetTradeFeeLedgerStore((s) => s.byPlanetId[planetId]);
@@ -51,73 +70,114 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
 
   const session = useHeavyUiDataSession(sessionConfig, revision);
   const PH = OVERLAY_TOKENS.phosphorAccent;
+  const capitalSubtitle = useMemo(
+    () => resolveMegaFactionCapitalHubSubtitle(planetId, t),
+    [planetId, t],
+  );
+
+  const themeStyles = isTactical ? tacticalPlanetEconomyOverlayStyles : styles;
+  const cardMinHeight = useMemo(() => resolvePlanetEconomyOverlayMinHeight(winH), [winH]);
+  const cardMaxHeight = useMemo(() => resolvePlanetEconomyOverlayMaxHeight(winH), [winH]);
+  const panelBodyStyle = useMemo(
+    () => ({ paddingTop: PLANET_ECONOMY_PANEL_BODY_PADDING_TOP_PX }),
+    [],
+  );
+  const planetDescription = useMemo(
+    () => session.data?.planetDescription ?? resolvePlanetTableDescription(planetId, locale),
+    [session.data?.planetDescription, planetId, locale],
+  );
+
+  const panelBleedPrefix = <PlanetInfoPortraitSlot planetId={planetId} />;
 
   const panelPrefix = (
     <>
-      <PlanetInfoPortraitSlot planetId={planetId} />
+      <PlanetInfoDescriptionBlock description={planetDescription} visualTheme={visualTheme} />
+      {capitalSubtitle ? (
+        <Text style={themeStyles.capitalSubtitle}>{capitalSubtitle}</Text>
+      ) : null}
       {session.data ? (
-        <View style={styles.pgpBanner}>
-          <Text style={[styles.pgpLabel, { color: PH }]}>{t('econInfo.pgpTotal')}</Text>
-          <Text style={styles.pgpValue}>{formatPlanetPgpBmu(session.data.pgpBmu)}</Text>
+        <View style={themeStyles.pgpBanner}>
+          <Text style={[themeStyles.pgpLabel, !isTactical ? { color: PH } : null]}>
+            {t('econInfo.pgpTotal')}
+          </Text>
+          <Text style={themeStyles.pgpValue}>{formatPlanetPgpBmu(session.data.pgpBmu)}</Text>
         </View>
       ) : null}
     </>
   );
 
   const snapshot = session.data;
-  const subtitle = snapshot
+  const subtitleRaw = snapshot
     ? `${snapshot.planetName} · KST ${snapshot.kstDayKey}`
     : planetName;
+  const title = isTactical ? formatTacticalOverlayTitle(t('econInfo.title')) : t('econInfo.title');
+  const subtitle = isTactical ? tacticalTitleHeaderSubtitle(subtitleRaw) : subtitleRaw;
+
+  const infoRow = (label: string, value: string) => (
+    <ArcOverlayInfoRow label={label} value={value} visualTheme={visualTheme} />
+  );
+
+  const section = (label: string) => (
+    <Text style={[themeStyles.section, !isTactical ? { color: PH } : null]}>{label}</Text>
+  );
 
   return (
     <HeavyUiOverlayShell
-      title={t('econInfo.title')}
+      title={title}
       subtitle={subtitle}
       layout="panel"
       panelPrefix={panelPrefix}
+      panelBleedPrefix={panelBleedPrefix}
       phase={session.phase}
       error={session.error}
       preflightCode={session.preflightCode}
       onClose={onClose}
       onRetry={session.retry}
+      visualTheme={visualTheme}
+      minHeight={cardMinHeight}
+      maxHeight={cardMaxHeight}
+      bodyStyle={panelBodyStyle}
       footer={
         session.phase === 'ready' ? (
-          <ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} />
+          <ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} visualTheme={visualTheme} />
         ) : undefined
       }
     >
       {snapshot ? (
         <>
-          <Text style={[styles.section, { color: PH }]}>{t('econInfo.upkeep', { pct: snapshot.populationPct })}</Text>
-          <ArcOverlayInfoRow label={t('econInfo.daily')} value={formatCredits(snapshot.upkeepDailyCredits, { suffix: true })} />
-          <ArcOverlayInfoRow label={t('econInfo.monthlyEst')} value={formatCredits(snapshot.upkeepMonthlyCredits, { suffix: true })} />
-          <Text style={[styles.section, { color: PH }]}>{t('econInfo.tradeFee')}</Text>
-          <ArcOverlayInfoRow label={t('econInfo.factionShareToday')} value={formatCredits(snapshot.tradeFeeTodayCredits, { suffix: true })} />
-          <ArcOverlayInfoRow label={t('econInfo.convoyFeeToday')} value={formatCredits(snapshot.convoyTradeFeeTodayCredits, { suffix: true })} />
-          <ArcOverlayInfoRow label={t('econInfo.playerFeeToday')} value={formatCredits(snapshot.playerTradeFeeTodayCredits, { suffix: true })} />
-          <ArcOverlayInfoRow label={t('econInfo.monthlyEst')} value={formatCredits(snapshot.tradeFeeMonthlyEstCredits, { suffix: true })} />
-          <Text style={[styles.section, { color: PH }]}>{t('econInfo.coreMetrics')}</Text>
-          <ArcOverlayInfoRow label={t('econInfo.resource')} value={`${snapshot.resourcePct}%`} />
-          <ArcOverlayInfoRow label={t('econInfo.population')} value={`${snapshot.populationStatPct}%`} />
-          <ArcOverlayInfoRow label={t('econInfo.defense')} value={`${snapshot.defensePct}%`} />
-          <ArcOverlayInfoRow label={t('econInfo.technology')} value={`${snapshot.technologyPct}%`} />
-          <ArcOverlayInfoRow label={t('econInfo.environment')} value={`${snapshot.environmentPct}%`} />
-          <Text style={[styles.section, { color: PH }]}>{t('econInfo.tradeOccupy')}</Text>
-          <ArcOverlayInfoRow label={t('econInfo.convoyMonopoly')} value={snapshot.convoyMonopolyLabel} />
-          <ArcOverlayInfoRow label={t('econInfo.occupierFaction')} value={snapshot.occupierFactionLabel} />
+          {section(t('econInfo.upkeep', { pct: snapshot.populationPct }))}
+          {infoRow(t('econInfo.daily'), formatCredits(snapshot.upkeepDailyCredits, { suffix: true }))}
+          {infoRow(t('econInfo.monthlyEst'), formatCredits(snapshot.upkeepMonthlyCredits, { suffix: true }))}
+          {section(t('econInfo.tradeFee'))}
+          {infoRow(t('econInfo.factionShareToday'), formatCredits(snapshot.tradeFeeTodayCredits, { suffix: true }))}
+          {infoRow(t('econInfo.convoyFeeToday'), formatCredits(snapshot.convoyTradeFeeTodayCredits, { suffix: true }))}
+          {infoRow(t('econInfo.playerFeeToday'), formatCredits(snapshot.playerTradeFeeTodayCredits, { suffix: true }))}
+          {infoRow(t('econInfo.monthlyEst'), formatCredits(snapshot.tradeFeeMonthlyEstCredits, { suffix: true }))}
+          {section(t('econInfo.coreMetrics'))}
+          {infoRow(t('econInfo.resource'), `${snapshot.resourcePct}%`)}
+          {infoRow(t('econInfo.population'), `${snapshot.populationStatPct}%`)}
+          {infoRow(t('econInfo.defense'), `${snapshot.defensePct}%`)}
+          {infoRow(t('econInfo.technology'), `${snapshot.technologyPct}%`)}
+          {infoRow(t('econInfo.environment'), `${snapshot.environmentPct}%`)}
+          {section(t('econInfo.tradeOccupy'))}
+          {infoRow(t('econInfo.convoyMonopoly'), snapshot.convoyMonopolyLabel)}
+          {infoRow(t('econInfo.occupierFaction'), snapshot.occupierFactionLabel)}
           {snapshot.factionVaultLabel != null ? (
-            <ArcOverlayInfoRow
-              label={snapshot.factionVaultLabel}
-              value={
-                snapshot.factionVaultBalanceCredits != null
-                  ? formatCredits(snapshot.factionVaultBalanceCredits, { suffix: true })
-                  : '—'
-              }
-            />
+            infoRow(
+              snapshot.factionVaultLabel,
+              snapshot.factionVaultBalanceCredits != null
+                ? formatCredits(snapshot.factionVaultBalanceCredits, { suffix: true })
+                : '—',
+            )
           ) : null}
-          <Text style={[styles.section, { color: PH }]}>{t('econInfo.others')}</Text>
-          {snapshot.extras.map((row) => (
-            <ArcOverlayInfoRow key={row.label} label={row.label} value={row.value} />
+          {section(t('econInfo.others'))}
+          {snapshot.extras.map((row, index) => (
+            <ArcOverlayInfoRow
+              key={`econ-extra-${index}`}
+              label={row.label}
+              value={row.value}
+              visualTheme={visualTheme}
+            />
           ))}
         </>
       ) : null}
@@ -126,6 +186,15 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
 });
 
 const styles = StyleSheet.create({
+  capitalSubtitle: {
+    marginTop: SPACING.sm,
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    fontWeight: FONTS.weight.bold,
+    textAlign: 'center',
+    letterSpacing: 0.3,
+    color: OVERLAY_TOKENS.valueContentColor,
+  },
   pgpBanner: {
     marginTop: SPACING.md,
     paddingVertical: SPACING.sm,

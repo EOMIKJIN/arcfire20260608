@@ -1,10 +1,11 @@
 import React, { memo, type ReactNode } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useT } from '../../i18n';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../utils/theme';
 import { ArcOverlayCard, type ArcOverlayCardLayout } from '../overlay/ArcOverlayCard';
 import { ArcOverlayFooterActions } from '../overlay/ArcOverlayFooterActions';
 import { ArcButton } from '../overlay/ArcButton';
+import type { ArcOverlayVisualTheme } from '../overlay/tacticalOverlayPreview';
 import type { HeavyUiLoadPhase, HeavyUiPreflightCode } from './types';
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
   subtitle?: string;
   layout?: ArcOverlayCardLayout;
   panelPrefix?: ReactNode;
+  panelBleedPrefix?: ReactNode;
   phase: HeavyUiLoadPhase;
   error: string | null;
   preflightCode: HeavyUiPreflightCode | null;
@@ -19,6 +21,10 @@ type Props = {
   onRetry: () => void;
   children: ReactNode;
   footer?: ReactNode;
+  visualTheme?: ArcOverlayVisualTheme;
+  minHeight?: number | `${number}%`;
+  maxHeight?: number | `${number}%`;
+  bodyStyle?: StyleProp<ViewStyle>;
 };
 
 export const HeavyUiOverlayShell = memo(function HeavyUiOverlayShell({
@@ -26,6 +32,7 @@ export const HeavyUiOverlayShell = memo(function HeavyUiOverlayShell({
   subtitle,
   layout = 'panel',
   panelPrefix,
+  panelBleedPrefix,
   phase,
   error,
   preflightCode,
@@ -33,20 +40,41 @@ export const HeavyUiOverlayShell = memo(function HeavyUiOverlayShell({
   onRetry,
   children,
   footer,
+  visualTheme = 'phosphor',
+  minHeight,
+  maxHeight,
+  bodyStyle,
 }: Props) {
   const t = useT();
   const PH = OVERLAY_TOKENS.phosphorAccent;
+  const isTactical = visualTheme === 'tactical';
+
+  const defaultFooter = (
+    <ArcOverlayFooterActions
+      onCancel={onClose}
+      onConfirm={onClose}
+      visualTheme={visualTheme}
+    />
+  );
 
   const resolvedFooter =
     footer
     ?? (
       phase === 'error' ? (
         <View style={styles.errorFooter}>
-          <ArcButton variant="primary" label={t('heavyUi.retry')} onPress={onRetry} />
-          <ArcButton variant="secondary" label={t('heavyUi.close')} onPress={onClose} />
+          <ArcButton
+            variant={isTactical ? 'tacticalPrimary' : 'primary'}
+            label={t('heavyUi.retry')}
+            onPress={onRetry}
+          />
+          <ArcButton
+            variant={isTactical ? 'tacticalSecondary' : 'secondary'}
+            label={t('heavyUi.close')}
+            onPress={onClose}
+          />
         </View>
       ) : (
-        <ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} />
+        defaultFooter
       )
     );
 
@@ -57,7 +85,19 @@ export const HeavyUiOverlayShell = memo(function HeavyUiOverlayShell({
         subtitle={subtitle}
         layout={layout}
         panelPrefix={panelPrefix}
-        footer={<ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} confirmDisabled />}
+        panelBleedPrefix={panelBleedPrefix}
+        visualTheme={visualTheme}
+        minHeight={minHeight}
+        maxHeight={maxHeight}
+        bodyStyle={bodyStyle}
+        footer={
+          <ArcOverlayFooterActions
+            onCancel={onClose}
+            onConfirm={onClose}
+            confirmDisabled
+            visualTheme={visualTheme}
+          />
+        }
       >
         <View style={styles.center}>
           <ActivityIndicator color={PH} size="small" />
@@ -73,7 +113,16 @@ export const HeavyUiOverlayShell = memo(function HeavyUiOverlayShell({
       : 'heavyUi.buildFailed';
     const detail = preflightCode ? t(messageKey) : (error ?? t('heavyUi.buildFailed'));
     return (
-      <ArcOverlayCard title={title} subtitle={subtitle} layout={layout} footer={resolvedFooter}>
+      <ArcOverlayCard
+        title={title}
+        subtitle={subtitle}
+        layout={layout}
+        visualTheme={visualTheme}
+        minHeight={minHeight}
+        maxHeight={maxHeight}
+        bodyStyle={bodyStyle}
+        footer={resolvedFooter}
+      >
         <View style={styles.center}>
           <Text style={[styles.errorTitle, { color: PH }]}>{t('heavyUi.errorTitle')}</Text>
           <Text style={[styles.errorBody, { color: PH }]}>{detail}</Text>
@@ -88,6 +137,11 @@ export const HeavyUiOverlayShell = memo(function HeavyUiOverlayShell({
       subtitle={subtitle}
       layout={layout}
       panelPrefix={panelPrefix}
+      panelBleedPrefix={panelBleedPrefix}
+      visualTheme={visualTheme}
+      minHeight={minHeight}
+      maxHeight={maxHeight}
+      bodyStyle={bodyStyle}
       footer={resolvedFooter}
     >
       {children}

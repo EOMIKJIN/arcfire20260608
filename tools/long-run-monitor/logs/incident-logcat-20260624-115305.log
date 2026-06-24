@@ -1,0 +1,6 @@
+﻿--------- beginning of system
+06-24 11:53:02.636  1909  4206 I ActivityManager: Changes in 99215 19 to 3, 0 to 184
+06-24 11:53:02.769  1909  2127 W ActivityManager: pid 1909 system sent binder code 6 with flags 1 to frozen apps and got error -32
+06-24 11:53:02.774  1909  2127 W ActivityManager: pid 1909 system sent binder code 4 with flags 1 to frozen apps and got error -32
+06-24 11:53:02.804  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 26224
+06-24 11:53:02.955  1909  4407 W ActivityManager: pid 1909 system sent binder code 7 with flags 1 to frozen apps and got error -32

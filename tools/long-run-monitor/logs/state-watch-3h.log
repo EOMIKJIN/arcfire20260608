@@ -1,0 +1,9 @@
+﻿[2026-06-24 09:58:44] START marker=STATE_WATCH_3H_START 2026-06-24 09:58:43 KST pid=12104 report=D:\arcfire20260607\tools\long-run-monitor\logs\state-watch-3h-report-20260624-0958.md
+[2026-06-24 10:03:45] ACTIONABLE incidents=1 -> check-and-remediate
+[2026-06-24 10:03:45]   [2026-06-24 10:00:36] GL_HARD_CEILING gl=120.6 pss=1082.7 views=293
+[2026-06-24 10:43:51] ACTIONABLE incidents=1 -> check-and-remediate
+[2026-06-24 10:43:51]   [2026-06-24 10:41:43] GL_HARD_CEILING gl=226.6 pss=959.9 views=293
+[2026-06-24 11:34:08] WARN app not running (was pid=12104) -> remediate
+[2026-06-24 11:54:13] ACTIONABLE incidents=1 -> check-and-remediate
+[2026-06-24 11:54:13]   [2026-06-24 11:53:01] GL_HARD_CEILING gl=216.1 pss=948.1 views=388
+[2026-06-24 11:59:19] WARN app not running (was pid=12104) -> remediate

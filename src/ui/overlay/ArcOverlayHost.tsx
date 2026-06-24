@@ -10,7 +10,7 @@ import { SPACING, OVERLAY_TOKENS } from '../../utils/theme';
 import { useArcOverlayStore } from './arcOverlayStore';
 import { getOverlayChrome } from './overlayChrome';
 import { resolveOverlayBottomAnchorPad, resolveOverlayEdgeInsets } from './overlayInsets';
-import { OVERLAY_CENTER_VERTICAL_BIAS_PX } from './overlayPanelLayout';
+import { OVERLAY_CENTER_VERTICAL_BIAS_PX, OVERLAY_PANEL_TOP_ANCHOR_PX } from './overlayPanelLayout';
 import { NARRATIVE_DIALOG_LAYOUT } from './narrativeDialogLayout';
 import { reapplyAndroidImmersiveNavBar } from './reapplyAndroidImmersiveNavBar';
 import { AlertOverlayContent } from './content/AlertOverlayContent';
@@ -122,6 +122,7 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
   const isNarrative = entry.kind === 'narrative';
   const isBottomNarrative = isNarrative && entry.anchor === 'bottom';
   const isBlocking = entry.kind === 'blocking';
+  const isTopAnchoredPanel = entry.kind === 'planetEconomyInfo';
   const bottomPad = isBottomNarrative ? resolveOverlayBottomAnchorPad(insets, SPACING.md) : 0;
   const overlayHorizontalPad = isBottomNarrative
     ? NARRATIVE_DIALOG_LAYOUT.hostHorizontalPadPx
@@ -157,6 +158,7 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
       <View
         style={[
           isBottomNarrative ? styles.bottomWrap : styles.centerWrap,
+          isTopAnchoredPanel ? styles.topAnchoredWrap : null,
           entry.kind === 'narrative' && entry.anchor === 'center' ? styles.narrativeCenterWrap : null,
         ]}
         pointerEvents="box-none"
@@ -219,6 +221,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     paddingTop: OVERLAY_CENTER_VERTICAL_BIAS_PX,
     paddingBottom: SPACING.xs,
+  },
+  topAnchoredWrap: {
+    justifyContent: 'flex-start',
+    paddingTop: OVERLAY_PANEL_TOP_ANCHOR_PX,
   },
   centerSlot: {
     width: OVERLAY_TOKENS.cardMaxWidth,

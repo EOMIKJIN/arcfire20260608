@@ -218,6 +218,45 @@ export const usePlanetNebulaStore = create<PlanetNebulaState>((set, get) => ({
   },
 }));
 
+/** 성계 이탈 — 지정 행성 프로필 제거 */
+export function prunePlanetNebulaProfilesForPlanets(planetIds: readonly string[]): number {
+  const remove = new Set(planetIds.filter(Boolean));
+  if (remove.size === 0) return 0;
+  const { profilesByPlanetId } = usePlanetNebulaStore.getState();
+  const next: Record<string, PlanetNebulaProfile> = {};
+  let removed = 0;
+  for (const [id, profile] of Object.entries(profilesByPlanetId)) {
+    if (remove.has(id)) {
+      removed += 1;
+    } else {
+      next[id] = profile;
+    }
+  }
+  if (removed === 0) return 0;
+  usePlanetNebulaStore.setState({ profilesByPlanetId: next });
+  usePlanetNebulaStore.getState().schedulePersistProfiles();
+  return removed;
+}
+
+/** keep 목록 외 nebula 프로필 제거 — 허브 앵커·현재 성계만 유지 */
+export function prunePlanetNebulaProfilesExceptPlanetIds(keepPlanetIds: readonly string[]): number {
+  const keep = new Set(keepPlanetIds.filter(Boolean));
+  const { profilesByPlanetId } = usePlanetNebulaStore.getState();
+  const next: Record<string, PlanetNebulaProfile> = {};
+  let removed = 0;
+  for (const [id, profile] of Object.entries(profilesByPlanetId)) {
+    if (keep.has(id)) {
+      next[id] = profile;
+    } else {
+      removed += 1;
+    }
+  }
+  if (removed === 0) return 0;
+  usePlanetNebulaStore.setState({ profilesByPlanetId: next });
+  usePlanetNebulaStore.getState().schedulePersistProfiles();
+  return removed;
+}
+
 /** route_blur 등 — 메모리 상주 프로필 LRU 정리 (updatedAt 기준) */
 export function prunePlanetNebulaProfilesLru(keepMax: number): number {
   const keep = Math.max(0, keepMax);
