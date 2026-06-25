@@ -20,6 +20,7 @@ import { resetCombatMatchTelemetry } from '../store/combatMatchTelemetryStore';
 import { showArcAlert } from '../utils/showArcAlert';
 import { clearOnboardingProfessionId } from '../game/onboardingDraftStorage';
 import { purgeAccountLedgerProfileSkillByUid } from './accountLifecycle';
+import { resetArcInboundDroneCampaigns } from '../arcCore/inboundDrone/resetArcInboundDroneCampaigns';
 
 export type LocalAccountResetParams = {
   uid: string | null | undefined;
@@ -101,6 +102,8 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await useBmExchangeLedgerStore.getState().resetLocal();
   // 캐릭터 선택 중간 초안 — character-select → nickname 사이 professionId
   await clearOnboardingProfessionId();
+  // 행성별 inbound 드론 벽시계 캠페인 — SubCore Map + UI store
+  resetArcInboundDroneCampaigns();
 
   await markFreshStartAfterReset();
 }

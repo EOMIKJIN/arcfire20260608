@@ -1,7 +1,7 @@
 ﻿{
-    "reason":  "arcfire_crash_playtest",
+    "reason":  "mem_hard_ceiling_playtest",
     "handoff":  "tools/long-run-monitor/outbox/cursor-incident-handoff.md",
-    "triggeredAt":  "2026-06-24T12:56:37.7964884Z",
+    "triggeredAt":  "2026-06-24T23:51:21.8057800Z",
     "action":  "P0: logcat root cause -\u003e code fix -\u003e tsc -\u003e ack-incident-handoff.cjs",
-    "alertLine":  "[2026-06-24 21:56:36] [ARCFIRE_CRASH age=0.2m] 06-24 21:56:26.392 28783 28792 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 28792 (FinalizerDaemon), pid 28783 (.arcfire.online)"
+    "alertLine":  "[2026-06-25 08:51:20] [MEM_HARD_CEILING] pss=991.1MB gl=228.9MB"
 }

@@ -42,3 +42,7 @@ export const useArcInboundDroneStore = create<ArcInboundDroneState>((set) => ({
     });
   },
 }));
+
+export function resetArcInboundDroneStore(): void {
+  useArcInboundDroneStore.setState({ drones: [], initialized: false });
+}

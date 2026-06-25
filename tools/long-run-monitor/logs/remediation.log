@@ -578,3 +578,32 @@
 [2026-06-24 23:41:38] INFO PSS_SOFT_CEILING pss=854.3 gl=128 views=947 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
 [2026-06-24 23:49:40] INFO PSS_SOFT_CEILING pss=816.1 gl=50.5 views=334 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
 [2026-06-24 23:51:43] INFO PSS_SOFT_CEILING pss=802.2 gl=50.4 views=328 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-25 00:01:48] INFO PSS_SOFT_CEILING pss=807.4 gl=50.2 views=305 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-25 00:11:54] INFO PSS_SOFT_CEILING pss=852.8 gl=43.8 views=315 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-25 00:19:47] INFO PSS_SOFT_CEILING pss=817.1 gl=50.3 views=313 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-25 00:22:01] INFO PSS_SOFT_CEILING pss=819.1 gl=50.3 views=305 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-25 00:32:10] INFO PSS_SOFT_CEILING pss=821.5 gl=39.6 views=342 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-25 00:49:55] INFO PSS_SOFT_CEILING pss=802.9 gl=39.4 views=318 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-25 00:52:22] INFO PSS_SOFT_CEILING pss=801.5 gl=39.3 views=310 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-25 01:22:38] INFO PSS_SOFT_CEILING pss=805 gl=39.9 views=328 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-25 08:16:14] INFO PSS_SOFT_CEILING pss=800.1 gl=39.9 views=352 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-25 08:51:20] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-25 08:51:20] INVESTIGATION alert=[2026-06-25 08:51:20] [MEM_HARD_CEILING] pss=991.1MB gl=228.9MB
+[2026-06-25 08:51:20] INCIDENT GL_HARD_CEILING gl=228.9 pss=991.1 views=947 -> immediate remediation (OOM imminent)
+[2026-06-25 08:51:20] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-06-25 08:51:20] AUTO_FIX static audit:skia-memory start
+[2026-06-25 08:51:21] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260625-085120.log
+[2026-06-25 08:51:21] INVESTIGATION mem snapshot gl=228.9MB pss=980MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260625-085120.log
+[2026-06-25 08:51:21] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-25 08:51:21] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-25 08:51:21] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-25 08:51:22] AUTO_FIX audit:skia-memory PASS
+[2026-06-25 08:51:22] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-06-25 08:51:40] AUTO_FIX baseline reset pid=25974 gl=3.7MB pss=362MB
+[2026-06-25 08:51:40] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-06-25 08:52:01] VERIFY PASS pid=25974 gl=3.7MB pss=361.2MB views=13
+[2026-06-25 08:52:01] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":991.1,"views":947,"lastGlMb":228.9,"hardCeiling":true}
+[2026-06-25 08:52:01] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-06-25 09:22:07] INFO GL_ELEVATED mounting_or_insufficient_samples gl=143.8 pss=491.1 views=291 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-25 11:17:46] INFO GL_ELEVATED mounting_or_insufficient_samples gl=144.3 pss=563.8 views=932 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-25 11:22:32] INFO GL_ELEVATED mounting_or_insufficient_samples gl=140.3 pss=521.6 views=932 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)

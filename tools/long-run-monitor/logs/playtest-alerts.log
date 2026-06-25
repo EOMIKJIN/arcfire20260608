@@ -27,3 +27,4 @@
 [2026-06-24 19:38:24] [MEM_HARD_CEILING] pss=1009.4MB gl=43.5MB
 [2026-06-24 21:56:36] [ARCFIRE_CRASH age=0.2m] 06-24 21:56:26.392 28783 28792 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 28792 (FinalizerDaemon), pid 28783 (.arcfire.online)
 [2026-06-24 21:58:17] [ARCFIRE_CRASH age=1.8m] 06-24 21:56:27.719  1909 30972 I ActivityManager: Killing 28783:com.arcfire.online/u0a1068 (adj 0): crash
+[2026-06-25 08:51:20] [MEM_HARD_CEILING] pss=991.1MB gl=228.9MB

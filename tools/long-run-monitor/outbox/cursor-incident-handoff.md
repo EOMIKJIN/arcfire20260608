@@ -1,7 +1,7 @@
 # Arcfire long-run incident — Kim Team Lead auto-triage
 
-packedAt: 2026-06-24T12:56:37.750Z
-triggerReason: arcfire_crash_playtest
+packedAt: 2026-06-24T23:52:01.482Z
+triggerReason: gl_critical_active_hub
 refixPayload: (none)
 
 ## Mandatory agent action (P0)
@@ -15,29 +15,29 @@ refixPayload: (none)
 ## Recent remediation
 
 ```
-[2026-06-24 19:38:44] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
-[2026-06-24 19:39:05] VERIFY PASS pid=20679 gl=3.7MB pss=381.5MB views=13
-[2026-06-24 19:39:05] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":1009.4,"views":288,"lastGlMb":43.5,"hardCeiling":true}
-[2026-06-24 19:39:05] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
-[2026-06-24 20:39:38] INFO PSS_SOFT_CEILING pss=847.3 gl=23.6 views=321 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
-[2026-06-24 20:49:46] INFO PSS_SOFT_CEILING pss=851 gl=43.5 views=301 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
-[2026-06-24 20:59:53] INFO PSS_SOFT_CEILING pss=841.9 gl=41.6 views=314 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
-[2026-06-24 21:30:15] INFO PSS_SOFT_CEILING pss=829.4 gl=39.5 views=294 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
-[2026-06-24 21:56:36] INVESTIGATION start reason=arcfire_crash_playtest
-[2026-06-24 21:56:36] INVESTIGATION alert=[2026-06-24 21:56:36] [ARCFIRE_CRASH age=0.2m] 06-24 21:56:26.392 28783 28792 F libc    : Fatal signal 11 (SIGSEGV), cod
-[2026-06-24 21:56:37] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260624-215636.log
-[2026-06-24 21:56:37] INVESTIGATION mem snapshot gl=MB pss=MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260624-215636.log
+[2026-06-25 08:51:20] AUTO_FIX static audit:skia-memory start
+[2026-06-25 08:51:21] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260625-085120.log
+[2026-06-25 08:51:21] INVESTIGATION mem snapshot gl=228.9MB pss=980MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260625-085120.log
+[2026-06-25 08:51:21] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-25 08:51:21] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-25 08:51:21] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-25 08:51:22] AUTO_FIX audit:skia-memory PASS
+[2026-06-25 08:51:22] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-06-25 08:51:40] AUTO_FIX baseline reset pid=25974 gl=3.7MB pss=362MB
+[2026-06-25 08:51:40] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-06-25 08:52:01] VERIFY PASS pid=25974 gl=3.7MB pss=361.2MB views=13
+[2026-06-25 08:52:01] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":991.1,"views":947,"lastGlMb":228.9,"hardCeiling":true}
 ```
 
 ## Recent incidents
 
 ```
-[2026-06-24 19:38:25] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
-[2026-06-24 20:39:38] PSS_SOFT_CEILING pss=847.3 gl=23.6 views=321 native_reclaim_advisory
-[2026-06-24 20:40:43] PLAYTEST_MILESTONE arcadia_idle_watch_until_11am_20260625
-[2026-06-24 20:49:46] PSS_SOFT_CEILING pss=851 gl=43.5 views=301 native_reclaim_advisory
-[2026-06-24 20:59:53] PSS_SOFT_CEILING pss=841.9 gl=41.6 views=314 native_reclaim_advisory
-[2026-06-24 21:30:15] PSS_SOFT_CEILING pss=829.4 gl=39.5 views=294 native_reclaim_advisory
+[2026-06-25 00:52:22] PSS_SOFT_CEILING pss=801.5 gl=39.3 views=310 native_reclaim_advisory
+[2026-06-25 01:22:38] PSS_SOFT_CEILING pss=805 gl=39.9 views=328 native_reclaim_advisory
+[2026-06-25 08:16:14] PSS_SOFT_CEILING pss=800.1 gl=39.9 views=352 native_reclaim_advisory
+[2026-06-25 08:51:20] GL_HARD_CEILING gl=228.9 pss=991.1 views=947
+[2026-06-25 08:51:20] REFIX_REQUESTED gl_critical_active_hub
+[2026-06-25 08:51:21] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
 ```
 
 ## Crash signature (tail)
@@ -74,16 +74,16 @@ refixPayload: (none)
 
 ```csv
 ﻿iso_time,pid,pss_mb,rss_mb,gl_mb,egl_mb,graphics_mb,native_heap_mb,java_heap_mb,threads,views,delta_pss_mb,delta_gl_mb,note
-2026-06-24 20:40:48,20679,810.9,816.3,25,19.8,44.8,469.3,23.1,,298,-1.9,2,PROFILE_SNAP stage=unknown event=manual id=20260624-204047-609
-2026-06-24 20:40:51,20679,819,824.4,25,19.8,44.8,470.1,30.4,,298,8.1,0,arcadia_hub_user_session_2039
-2026-06-24 20:49:41,20679,851,856.7,43.5,20,63.4,474.4,34.3,,301,32,18.5,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
-2026-06-24 20:59:47,20679,841.9,851.3,41.6,19.8,61.4,468.3,29.8,,314,-9.1,-1.9,
-2026-06-24 21:09:55,28783,649.9,779.2,39.2,20,59.2,323.3,32.7,,294,,,
-2026-06-24 21:17:31,28783,669.8,799.6,44.7,19.8,64.6,336.4,37.1,,408,19.9,5.5,mem_priority_watch_2115
-2026-06-24 21:19:04,28783,655.8,786,33.8,19.8,53.6,342.3,26.6,,291,-14,-10.9,GL_RECOVERED idle_ok
-2026-06-24 21:20:01,28783,651.4,781.7,35.8,19.8,55.6,335.7,26,,294,-4.4,2,
-2026-06-24 21:30:10,28783,829.4,957.9,39.5,19.8,59.3,432.3,62.6,,294,178,3.7,PSS_SPIKE review=graphics+native
-2026-06-24 21:40:16,28783,793.5,922.4,40.1,40.7,80.8,401.7,41,,302,-35.9,0.6,
-2026-06-24 21:49:11,28783,765.1,893.2,39.9,19.8,59.7,400.7,34.6,,301,-28.4,-0.2,
-2026-06-24 21:50:22,28783,767.3,895.4,41.9,19.8,61.7,404.9,29.7,,293,2.2,2,
+2026-06-25 07:35:50,7498,777.5,909.1,41.3,19.8,61.1,485.9,32.2,,329,-3.5,2,
+2026-06-25 07:45:55,7498,777.1,908.3,41.3,19.8,61.1,488.9,28.1,,305,-0.4,0,
+2026-06-25 07:51:03,7498,778.2,909.4,39.3,19.8,59.1,490.3,29.4,,313,1.1,-2,
+2026-06-25 07:56:00,7498,784.5,915.7,41.4,30.2,71.7,479.7,33.6,,320,6.3,2.1,
+2026-06-25 08:06:05,7498,787.3,918.6,39.3,19.8,59.1,491.1,37.3,,333,2.8,-2.1,
+2026-06-25 08:16:10,7498,800.1,931.4,39.9,40.7,80.6,485.8,33.7,,352,12.8,0.6,
+2026-06-25 08:21:08,7498,751.3,708.6,39.3,19.8,59.1,350.7,31.4,,313,-48.8,-0.6,
+2026-06-25 08:26:15,7498,746.8,681.9,39.3,19.8,59.1,339.1,31.2,,317,-4.5,0,
+2026-06-25 08:36:20,7498,747.2,682.3,39.4,20,59.4,338.6,31.1,,333,0.4,0.1,
+2026-06-25 08:46:25,7498,754,689.1,39.3,19.8,59.1,339.5,36.8,,313,6.8,-0.1,
+2026-06-25 08:51:13,7498,991.1,921.3,228.9,19.8,248.8,385.5,37.1,,947,237.1,189.6,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+2026-06-25 08:52:01,25974,361.2,,3.7,,,,,,13,,,POST_REMEDIATION_VERIFY_OK
 ```

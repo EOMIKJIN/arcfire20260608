@@ -5,7 +5,7 @@
 export type ArcInboundDroneHubBridge = {
   planetId: string | null;
   systemId: string | null;
-  /** 허브 자본궤도 전투 연출 중 — 드론 웨이브 중단 */
+  /** 허브 자본궤도 전투 연출 중 — 시뮬·연출 일시정지 (캠페인 유지) */
   hubCombatActive: boolean;
   routeFocused: boolean;
   appActive: boolean;
@@ -35,8 +35,11 @@ export function resetArcInboundDroneHubBridge(): void {
   bridge = { ...INACTIVE };
 }
 
-/** 플레이어 체류 행성 + 허브 활성 + 전투 비활성일 때만 드론 웨이브 */
-export function isArcInboundDroneHubEligible(
+/**
+ * 벽시계 캠페인 tick — 허브·체류 행성 일치 + 중단 조건 없을 때만 진행.
+ * false = PAUSE (drones/pending/waveAccSec 유지, catch-up 없음).
+ */
+export function isArcInboundDroneCampaignSimActive(
   playerPlanetId: string | null,
   hub: ArcInboundDroneHubBridge = readArcInboundDroneHubBridge(),
 ): boolean {
@@ -45,4 +48,20 @@ export function isArcInboundDroneHubEligible(
   if (hub.hubCombatActive) return false;
   if (!playerPlanetId || playerPlanetId !== hub.planetId) return false;
   return true;
+}
+
+/** Skia/RN 드론 레이어 연출 — simActive 와 동일 게이트 (2026-06-25) */
+export function isArcInboundDroneHubRenderEligible(
+  playerPlanetId: string | null,
+  hub: ArcInboundDroneHubBridge = readArcInboundDroneHubBridge(),
+): boolean {
+  return isArcInboundDroneCampaignSimActive(playerPlanetId, hub);
+}
+
+/** @deprecated — `isArcInboundDroneCampaignSimActive` 별칭 */
+export function isArcInboundDroneHubEligible(
+  playerPlanetId: string | null,
+  hub: ArcInboundDroneHubBridge = readArcInboundDroneHubBridge(),
+): boolean {
+  return isArcInboundDroneCampaignSimActive(playerPlanetId, hub);
 }

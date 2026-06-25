@@ -1,13 +1,13 @@
 ﻿# Arcfire release soak ??final report until 14:00 KST
 
-Generated (KST): 2026-06-25 13:52:33
+Generated (KST): 2026-06-25 13:52:31
 Package: com.arcfire.online
 
 ## Runtime
 
 | pid | PSS (MB) | GL (MB) | Views |
 |-----|----------|---------|-------|
-| 30675 | 402.9 | 45.5 | 284 |
+| 30675 | 408.2 | 45.5 | 284 |
 
 ## mem-timeline (since RELEASE_SOAK_UNTIL_14H_20260625)
 
