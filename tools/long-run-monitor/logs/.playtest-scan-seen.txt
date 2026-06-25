@@ -19,3 +19,15 @@ MEMCEIL|1009.4|43.5
 CRASH|06-24 21:56:26.392 28783 28792 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 28792 (FinalizerDaemon), pid 28783 (.arcfire.online)
 CRASH|06-24 21:56:27.719  1909 30972 I ActivityManager: Killing 28783:com.arcfire.online/u0a1068 (adj 0): crash
 MEMCEIL|991.1|228.9
+CRASH|06-25 14:31:58.070 30675 30675 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xc0 in tid 30675 (.arcfire.online), pid 30675 (.arcfire.online)
+CRASH|06-25 14:31:59.530  1909  4356 I ActivityManager: Process com.arcfire.online (pid 30675) has died: fg  TOP (685,1607)
+CRASH|06-25 15:40:33.455 17737 17788 F libc    : Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x776900008b in tid 17788 (mqt_v_js), pid 17737 (.arcfire.online)
+CRASH|06-25 15:40:34.625  1909 18629 I ActivityManager: Killing 17737:com.arcfire.online/u0a1069 (adj 0): crash
+MEMCEIL|763.6|210.5
+MEMCEIL|814.6|252.1
+CRASH|06-25 22:18:19.426 19769 19769 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x2000 in tid 19769 (.arcfire.online), pid 19769 (.arcfire.online)
+CRASH|06-25 22:18:20.768  1909 21052 I ActivityManager: Killing 19769:com.arcfire.online/u0a1070 (adj 0): crash
+MEMCEIL|941.2|226.8
+MEMCEIL|929.6|226.8
+CRASH|06-25 23:26:54.988 21140 25530 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xc7fae8ffffff00 in tid 25530 (hades), pid 21140 (.arcfire.online)
+CRASH|06-25 23:26:57.208  1909 26578 I ActivityManager: Killing 21140:com.arcfire.online/u0a1070 (adj 0): crash

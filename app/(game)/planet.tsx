@@ -135,6 +135,10 @@ import { getCurrentUser } from '../../src/firebase/auth';
 import { resolveTempClanColor } from '../../src/clanWar/tempClanColors';
 import { requestLocalAccountResetFromPlanetHub, isAccountResetInProgress } from '../../src/account/localAccountReset';
 import { countGoodInInventory } from '../../src/game/playerInventory';
+import {
+  buildNearbyInfoDetailRow,
+  normalizeNearbyInfoDetailRow,
+} from '../../src/game/planetHub/nearbyPresenceDisplay';
 import { buildPlanetHubFeatureMenuItems } from '../../src/systems/planetHub/planetHubFeatureSystems';
 import { PlanetHubFeatureMenuRow } from '../../src/components/planet/PlanetHubFeatureMenuRow';
 import { PlanetMainScanActionRow } from '../../src/components/planet/PlanetMainScanActionRow';
@@ -145,7 +149,11 @@ import {
 } from '../../src/game/planetHubNpcDialog';
 import { formatSalvageLootLabel, pickSalvageLootItemId } from '../../src/game/planetSalvageSearch';
 import { NearbyShipInfoPanel, PlanetStageBackground } from '../../src/components/planet/planetHub/planetHubSubcomponents';
+import { PlanetMainPlanetInfoTapOverlay } from '../../src/components/planet/PlanetMainPlanetInfoTapOverlay';
 import { planetHubStyles as styles } from '../../src/components/planet/planetHub/planetHubStyles';
+import { presentPlanetEconomyInfoOverlay } from '../../src/ui/overlay/arcOverlayStore';
+import { useHeavyUiPlanetHubAction } from '../../src/ui/heavyUiDataSession';
+import { TACTICAL_HUB } from '../../src/ui/tactical/tacticalHubTokens';
 import {
   EDEN_COMBAT_HUD_BLOCK_PX,
   formatPilotExp8,
@@ -1092,10 +1100,12 @@ export default function PlanetScreen() {
     if (len === 0) return [];
     const order =
       infoLineOrder.length === len ? infoLineOrder : Array.from({ length: len }, (_, i) => i);
-    return order.map(i => ({
-      keySlot: hubMergedNearbyPresence[i]!.slotIndex,
-      line: hubMergedNearbyPresence[i]!.displayLine,
-    }));
+    return order.map(i => {
+      const slot = hubMergedNearbyPresence[i]!;
+      return normalizeNearbyInfoDetailRow(
+        buildNearbyInfoDetailRow(slot.slotIndex, slot.displayLine),
+      );
+    });
   }, [infoLineOrder, hubMergedNearbyPresence]);
   const orbitCaptionsBySlot = useMemo(
     () => orbitTablePresence.map(r => orbitCaptainCaptionFromLine(r.displayLine)),
@@ -1145,6 +1155,11 @@ export default function PlanetScreen() {
   const handleOpenSettings = useCallback(() => {
     presentSettingsOverlay({ onResetAccount: handleResetAllData });
   }, [handleResetAllData]);
+
+  const handleOpenPlanetInfo = useHeavyUiPlanetHubAction(planet?.id ?? null, () => {
+    if (!planet?.id) return;
+    presentPlanetEconomyInfoOverlay(planet.id, planet.name?.trim() || planet.id);
+  });
 
   /** 클랜 점유: 솔라 스테이션과 동일 플로우(플레이트만, 성계별 보정 없음) */
   const safeAiClanTerritoryPlate = useClanWarFoundationStore(
@@ -1244,17 +1259,17 @@ export default function PlanetScreen() {
           <View style={styles.topBar}>
             <View style={styles.topBarLeft}>
               <TouchableOpacity style={styles.iconBtn} onPress={handleExitToTitle} accessibilityLabel={t('planet.a11yExitGame')}>
-                <Ionicons name="power" size={18} color={COLORS.ink_dark} />
+                <Ionicons name="power" size={18} color={TACTICAL_HUB.topBarIconInk} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconBtn} onPress={handleOpenSettings} accessibilityLabel={t('planet.a11ySettings')}>
-                <Ionicons name="settings-outline" size={18} color={COLORS.ink_dark} />
+                <Ionicons name="settings-outline" size={18} color={TACTICAL_HUB.topBarIconInk} />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.iconBtn}
                 onPress={() => showArcAlert(t('planet.rankingTitle'), t('planet.rankingBody'))}
                 accessibilityLabel={t('planet.a11yRanking')}
               >
-                <Ionicons name="podium-outline" size={18} color={COLORS.ink_dark} />
+                <Ionicons name="podium-outline" size={18} color={TACTICAL_HUB.topBarIconInk} />
               </TouchableOpacity>
             </View>
 
@@ -1266,7 +1281,7 @@ export default function PlanetScreen() {
                 onPress={() => presentBmShopOverlay('premium')}
                 accessibilityLabel={t('planet.a11yGemShop')}
               >
-                <Ionicons name="diamond-outline" size={14} color={COLORS.info} />
+                <Ionicons name="diamond-outline" size={14} color={TACTICAL_HUB.topBarIconInk} />
                 <Text style={styles.currencyChipTextGem} numberOfLines={1}>
                   {formatGemBalance(resolvePlayerGemBalance(player))}
                 </Text>
@@ -1276,7 +1291,7 @@ export default function PlanetScreen() {
                 onPress={() => presentBmShopOverlay('exchange')}
                 accessibilityLabel={t('planet.a11yCreditExchange')}
               >
-                <Ionicons name="logo-usd" size={14} color={COLORS.gold} />
+                <Ionicons name="logo-usd" size={14} color={TACTICAL_HUB.topBarIconInk} />
                 <Text style={styles.currencyChipTextCredits} numberOfLines={1}>
                   {formatCredits(player?.credits ?? 0, { suffix: false })}
                 </Text>
@@ -1309,6 +1324,7 @@ export default function PlanetScreen() {
         <View
           style={[styles.planetStageReserve, { minHeight: planetStageReservePx }]}
           accessibilityLabel={t('planet.a11yPlanetView')}
+          pointerEvents="none"
         />
 
         {/* 소형 메뉴 버튼 — marginTop만 포그라운드: 배경 행성 `paddingBottom`과 분리 */}
@@ -1322,6 +1338,13 @@ export default function PlanetScreen() {
           )}
         />
         </ScrollView>
+
+        <PlanetMainPlanetInfoTapOverlay
+          reserveHeightPx={planetStageReservePx}
+          planetStageScale={planetStageScale}
+          disabled={!planet?.id}
+          onPress={handleOpenPlanetInfo}
+        />
 
         <View
           style={[
@@ -1359,7 +1382,7 @@ export default function PlanetScreen() {
           />
         </View>
 
-        <View style={styles.infoOverlaySlot} pointerEvents="box-none">
+        <View style={styles.infoOverlaySlot}>
           <NearbyShipInfoPanel rows={sortedShipInfoRows} mutedForCapitalCombat={capitalCombatOrbitActive} />
         </View>
         {capitalCombatOrbitActive ? (

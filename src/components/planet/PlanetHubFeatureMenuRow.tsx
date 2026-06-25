@@ -32,8 +32,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'stretch',
     columnGap: SPACING.sm,
+    overflow: 'visible',
   },
   slot: {
     flex: 1,
+    overflow: 'visible',
+    paddingTop: 2,
   },
 });

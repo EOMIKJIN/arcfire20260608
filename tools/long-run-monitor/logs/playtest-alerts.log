@@ -28,3 +28,15 @@
 [2026-06-24 21:56:36] [ARCFIRE_CRASH age=0.2m] 06-24 21:56:26.392 28783 28792 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 28792 (FinalizerDaemon), pid 28783 (.arcfire.online)
 [2026-06-24 21:58:17] [ARCFIRE_CRASH age=1.8m] 06-24 21:56:27.719  1909 30972 I ActivityManager: Killing 28783:com.arcfire.online/u0a1068 (adj 0): crash
 [2026-06-25 08:51:20] [MEM_HARD_CEILING] pss=991.1MB gl=228.9MB
+[2026-06-25 14:32:04] [ARCFIRE_CRASH age=0.1m] 06-25 14:31:58.070 30675 30675 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xc0 in tid 30675 (.arcfire.online), pid 30675 (.arcfire.online)
+[2026-06-25 14:37:30] [ARCFIRE_CRASH age=5.5m] 06-25 14:31:59.530  1909  4356 I ActivityManager: Process com.arcfire.online (pid 30675) has died: fg  TOP (685,1607)
+[2026-06-25 15:40:34] [ARCFIRE_CRASH age=0m] 06-25 15:40:33.455 17737 17788 F libc    : Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x776900008b in tid 17788 (mqt_v_js), pid 17737 (.arcfire.online)
+[2026-06-25 15:40:37] [ARCFIRE_CRASH age=0.1m] 06-25 15:40:34.625  1909 18629 I ActivityManager: Killing 17737:com.arcfire.online/u0a1069 (adj 0): crash
+[2026-06-25 15:53:19] [MEM_HARD_CEILING] pss=763.6MB gl=210.5MB
+[2026-06-25 16:10:23] [MEM_HARD_CEILING] pss=814.6MB gl=252.1MB
+[2026-06-25 22:18:38] [ARCFIRE_CRASH age=0.3m] 06-25 22:18:19.426 19769 19769 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x2000 in tid 19769 (.arcfire.online), pid 19769 (.arcfire.online)
+[2026-06-25 22:18:42] [ARCFIRE_CRASH age=0.4m] 06-25 22:18:20.768  1909 21052 I ActivityManager: Killing 19769:com.arcfire.online/u0a1070 (adj 0): crash
+[2026-06-25 22:54:24] [MEM_HARD_CEILING] pss=941.2MB gl=226.8MB
+[2026-06-25 22:54:48] [MEM_HARD_CEILING] pss=929.6MB gl=226.8MB
+[2026-06-25 23:27:11] [ARCFIRE_CRASH age=0.3m] 06-25 23:26:54.988 21140 25530 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xc7fae8ffffff00 in tid 25530 (hades), pid 21140 (.arcfire.online)
+[2026-06-25 23:34:17] [ARCFIRE_CRASH age=7.3m] 06-25 23:26:57.208  1909 26578 I ActivityManager: Killing 21140:com.arcfire.online/u0a1070 (adj 0): crash

@@ -7,7 +7,8 @@ import {
   View, Text, TouchableOpacity, StyleSheet,
   ScrollView,
 } from 'react-native';
-import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
+import { FONTS, SPACING } from '../../src/utils/theme';
+import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
 import { useT, t as tStatic } from '../../src/i18n';
 import {
   resolveItemDescription,
@@ -53,8 +54,12 @@ import {
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
-import { ArcStageBackButton } from '../../src/ui/overlay/ArcStageBackButton';
 import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacilityTabBar';
+import {
+  PlanetFacilityListingTextBlock,
+  PlanetFacilityTitleHeader,
+  planetFacilityScreenStyles as fs,
+} from '../../src/ui/planetFacility/PlanetFacilityTitleHeader';
 import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
 import { getPlanetTradePortItemIds } from '../../src/world/planetTradePortDb';
@@ -97,9 +102,9 @@ function demandLabel(demand: string): string {
 }
 
 const DEMAND_COLORS: Record<string, string> = {
-  low: COLORS.ink_light,
-  normal: COLORS.ink_mid,
-  high: COLORS.danger,
+  low: TF.mutedInk,
+  normal: TF.midInk,
+  high: TF.danger,
 };
 /** 메인스테이지 기준 하단 공백과 동기 */
 const TRADE_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
@@ -927,21 +932,25 @@ export default function TradeScreen() {
   };
 
   return (
-    <StageShell key={localeRenderKey} routeName="trade" background="none" edges={['bottom']}>
-      <View style={{ flex: 1 }}>
-      <View style={styles.header}>
-        <ArcStageBackButton onPress={safeBack} style={styles.backBtn} />
-        <View style={styles.headerTitleBlock}>
-          <Text style={styles.headerTitle}>{t('trade.title')}</Text>
-          {(tradePortMiningTotal > 0 || inventoryMiningQty > 0) && (
-            <Text style={styles.headerMiningLine} numberOfLines={1}>
-              {t('trade.header.mining', { delivered: tradePortMiningTotal.toLocaleString(), inv: inventoryMiningQty.toLocaleString() })}
-            </Text>
-          )}
-        </View>
-        <Text style={styles.cargoText}>{t('trade.header.invSlots', { n: inventorySellAgg.length })}</Text>
-      </View>
+    <StageShell key={localeRenderKey} routeName="trade" background="none" edges={['bottom']} safeAreaBackgroundColor={TF.headerBg}>
+      <View style={fs.root}>
+      <PlanetFacilityTitleHeader
+        title={t('trade.title')}
+        subtitle={
+          (tradePortMiningTotal > 0 || inventoryMiningQty > 0)
+            ? t('trade.header.mining', { delivered: tradePortMiningTotal.toLocaleString(), inv: inventoryMiningQty.toLocaleString() })
+            : undefined
+        }
+        onBack={safeBack}
+        backLabel="◀ 나가기"
+        trailing={(
+          <Text style={fs.headerTrailingInk}>
+            {t('trade.header.invSlots', { n: inventorySellAgg.length })}
+          </Text>
+        )}
+      />
 
+      <View style={fs.bodyPanel}>
       <PlanetFacilityTabBar
         tabs={tradeMainTabs}
         activeId={tab}
@@ -956,14 +965,14 @@ export default function TradeScreen() {
         />
       ) : null}
 
-      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView style={fs.scroll} contentContainerStyle={fs.scrollContent} showsVerticalScrollIndicator>
         {tab === 'buy' ? (
           market.length === 0 ? (
-            <Text style={styles.empty}>{t('trade.empty.noGoods')}</Text>
+            <Text style={fs.empty}>{t('trade.empty.noGoods')}</Text>
           ) : (
             <>
               {filteredBuyMarket.length === 0 ? (
-                <Text style={styles.empty}>{t('trade.empty.noSubGoods')}</Text>
+                <Text style={fs.empty}>{t('trade.empty.noSubGoods')}</Text>
               ) : null}
               {filteredBuyMarket.map(listing => {
               const good = resolveTradeGoodById(listing.goodId);
@@ -980,30 +989,26 @@ export default function TradeScreen() {
               return (
                 <TouchableOpacity
                   key={listing.goodId}
-                  style={styles.listingCard}
+                  style={fs.listingCard}
                   onPress={() => handleBuy(listing)}
                 >
-                  <View style={styles.listingLeft}>
+                  <View style={fs.listingLeft}>
                     <TradeListingIcon
                       goodId={listing.goodId}
                       category={good.category}
                       buySubTab={buySubTab}
                     />
-                    <View style={styles.listingTextBlock}>
-                      <Text style={styles.goodName}>
-                        {resolveItemName(rowItemDef ?? good, locale)}{equipPendingSuffix}
-                      </Text>
-                      <Text style={styles.goodDesc} numberOfLines={1}>
-                        {equipStatSummary ?? resolveItemDescription(rowItemDef ?? good, locale)}
-                      </Text>
-                    </View>
+                    <PlanetFacilityListingTextBlock
+                      title={`${resolveItemName(rowItemDef ?? good, locale)}${equipPendingSuffix}`}
+                      description={equipStatSummary ?? resolveItemDescription(rowItemDef ?? good, locale)}
+                    />
                   </View>
-                  <View style={styles.listingRight}>
-                    <Text style={styles.goodPrice}>{formatCredits(price)}</Text>
-                    <Text style={[styles.goodDemand, { color: DEMAND_COLORS[listing.demand] }]}>
+                  <View style={fs.listingRight}>
+                    <Text style={fs.itemPrice}>{formatCredits(price)}</Text>
+                    <Text style={[fs.itemMeta, { color: DEMAND_COLORS[listing.demand] }]}>
                       {t('trade.row.demand', { label: demandLabel(listing.demand) })}
                     </Text>
-                    <Text style={styles.goodStock}>{t('trade.row.stock', { n: listing.stock })}</Text>
+                    <Text style={fs.itemMeta}>{t('trade.row.stock', { n: listing.stock })}</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -1011,10 +1016,10 @@ export default function TradeScreen() {
             </>
           )
         ) : inventorySellAgg.length === 0 ? (
-          <Text style={styles.empty}>{t('trade.empty.inventory')}</Text>
+          <Text style={fs.empty}>{t('trade.empty.inventory')}</Text>
         ) : (
           <>
-            <Text style={styles.sellSectionTitle}>{t('trade.sell.section')}</Text>
+            <Text style={fs.sectionBar}>{t('trade.sell.section')}</Text>
             {sortedInventorySellAgg.map(item => {
               const rowItemDef = resolveItemDefById(item.goodId);
               const good = resolveTradeGoodById(item.goodId) ?? (
@@ -1044,29 +1049,31 @@ export default function TradeScreen() {
               return (
                 <TouchableOpacity
                   key={`sell-${item.goodId}`}
-                  style={styles.listingCard}
+                  style={fs.listingCard}
                   onPress={() => handleSell(item)}
                 >
-                  <View style={styles.listingLeft}>
+                  <View style={fs.listingLeft}>
                     <TradeListingIcon
                       goodId={item.goodId}
                       category={good.category}
                       buySubTab={inferTradeBuySubTabFromGoodId(item.goodId)}
                     />
-                    <View style={styles.listingTextBlock}>
-                      <Text style={styles.goodName}>{resolveItemName(rowItemDef ?? good, locale)}</Text>
-                      <Text style={styles.goodDesc}>
-                        {t('trade.row.sellMeta', { price: formatCredits(item.buyPrice), qty: item.quantity })}
-                      </Text>
-                    </View>
+                    <PlanetFacilityListingTextBlock
+                      title={resolveItemName(rowItemDef ?? good, locale)}
+                      description={t('trade.row.sellMeta', {
+                        price: formatCredits(item.buyPrice),
+                        qty: item.quantity,
+                      })}
+                      descriptionLines={0}
+                    />
                   </View>
-                  <View style={styles.listingRight}>
-                    <Text style={styles.goodPrice}>{sellable ? formatCredits(sellPrice) : t('trade.row.unsellable')}</Text>
+                  <View style={fs.listingRight}>
+                    <Text style={fs.itemPrice}>{sellable ? formatCredits(sellPrice) : t('trade.row.unsellable')}</Text>
                     {!sellable ? <Text style={styles.unsellableBadge}>{t('trade.row.unsellableBadge')}</Text> : null}
-                    <Text style={[styles.goodDemand, { color: profit >= 0 ? COLORS.exp : COLORS.danger }]}>
+                    <Text style={[fs.itemMeta, { color: profit >= 0 ? TF.safeInk : TF.danger }]}>
                       {profit >= 0 ? '▲' : '▼'} {formatCredits(Math.abs(profit))}
                     </Text>
-                    <Text style={styles.goodStock}>{t('trade.row.sellAll')}</Text>
+                    <Text style={fs.itemMeta}>{t('trade.row.sellAll')}</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -1086,103 +1093,16 @@ export default function TradeScreen() {
         />
       ) : null}
       </View>
+      </View>
     </StageShell>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.bg_panel,
-  },
-  backBtn: { marginRight: SPACING.sm },
-  headerTitleBlock: { flex: 1, minWidth: 0 },
-  headerTitle: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.md,
-    fontWeight: FONTS.weight.bold,
-    color: COLORS.ink_dark,
-  },
-  headerMiningLine: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
-    marginTop: 2,
-  },
-  cargoText: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_mid,
-  },
-  scroll: { flex: 1, paddingHorizontal: SPACING.md, paddingTop: SPACING.sm },
-  listingCard: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.bg_panel,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 4,
-    padding: SPACING.md,
-    marginBottom: SPACING.sm,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  listingDisabled: { opacity: 0.4 },
-  listingLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, rowGap: SPACING.sm, columnGap: SPACING.sm },
-  listingTextBlock: { flex: 1, minWidth: 0 },
-  listingRight: { alignItems: 'flex-end', minWidth: 90 },
-  goodName: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    fontWeight: FONTS.weight.bold,
-    color: COLORS.ink_dark,
-  },
-  goodDesc: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
-    marginTop: 1,
-  },
-  goodPrice: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.md,
-    fontWeight: FONTS.weight.bold,
-    color: COLORS.gold,
-  },
-  goodDemand: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    marginTop: 2,
-  },
-  goodStock: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_faint,
-    marginTop: 1,
-  },
   unsellableBadge: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: COLORS.danger,
+    color: TF.danger,
     marginTop: 2,
-  },
-  sellSectionTitle: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
-    textAlign: 'center',
-    marginTop: SPACING.md,
-    marginBottom: SPACING.xs,
-  },
-  empty: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.md,
-    color: COLORS.ink_light,
-    textAlign: 'center',
-    marginTop: 60,
   },
 });

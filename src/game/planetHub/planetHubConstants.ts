@@ -11,6 +11,15 @@ export const ORBIT_FRAME_DT_MAX_MS = 34;
 /** INFO: 행성 중심 거리순 정렬 주기 */
 export const INFO_DISTANCE_SORT_INTERVAL_MS = 5000;
 
+/**
+ * false — 하단 스캔 행의 「행성정보」 타일 숨김(중앙 행성 탭으로 대체).
+ * 추후 true 로 되돌리면 타일·탭 경로가 동시에 살아난다.
+ */
+export const PLANET_MAIN_SCAN_ROW_PLANET_INFO_TILE_ENABLED = false;
+
+/** 중앙 행성 탭 히트박스 — `PlanetDot` size 120 대비 여유 */
+export const PLANET_MAIN_PLANET_TAP_HITBOX_PX = 164;
+
 export const PLANET_CORE_GAUGE_SPEC = [
   { key: 'resource', label: 'R', color: '#35D0FF' },
   { key: 'population', label: 'P', color: '#6BFF8D' },
@@ -38,7 +47,7 @@ export const PLANET_HUB_CAPITAL_COMBAT_GRAY = {
 export const INFO_LOG_LINE_HEIGHT_PX = 16;
 export const INFO_LOG_ROW_GAP_PX = 4;
 export const INFO_LOG_LINE_BLOCK_PX = INFO_LOG_LINE_HEIGHT_PX + INFO_LOG_ROW_GAP_PX;
-export const INFO_LOG_VIEWPORT_ROWS = 4;
+export const INFO_LOG_VIEWPORT_ROWS = 5;
 export const INFO_LOG_CONTENT_PAD_BOTTOM = 8;
 export const INFO_LOG_SCROLL_VIEWPORT_PX =
   INFO_LOG_VIEWPORT_ROWS * INFO_LOG_LINE_BLOCK_PX + INFO_LOG_CONTENT_PAD_BOTTOM;

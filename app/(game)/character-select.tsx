@@ -8,6 +8,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
+import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
 import { StageShell } from '../../src/stages/StageShell';
 import { ArcButton } from '../../src/ui/overlay/ArcButton';
 import { CharacterSelectOptionRow } from '../../src/ui/onboarding/CharacterSelectOptionRow';
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xxl,
     fontWeight: FONTS.weight.bold,
-    color: COLORS.ink_dark,
+    color: TF.titleInk,
     letterSpacing: 3,
     textAlign: 'center',
     marginBottom: ONBOARDING_HEADER_BODY_GAP_PX,
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
   emptyHint: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
-    color: COLORS.ink_mid,
+    color: TF.midInk,
     textAlign: 'center',
     marginBottom: SPACING.md,
   },

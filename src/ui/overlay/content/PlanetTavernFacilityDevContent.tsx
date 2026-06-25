@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';import {
+import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';
+import {
   PLANET_DEV_MODULE_POPULATION_DOME,
   buildTavernFacilityDevSnapshot,
   formatTavernFacilityDurationLabel,
@@ -18,6 +19,7 @@ import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelop
 import { useT } from '../../../i18n';
 import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
 import { PlanetGenericFacilityDevContent } from './PlanetGenericFacilityDevContent';
+
 const api = {
   buildSnapshot: buildTavernFacilityDevSnapshot,
   tryCompleteUpgrade: tryCompleteTavernFacilityUpgrade,
@@ -38,16 +40,29 @@ export const PlanetTavernFacilityDevContent = memo(function PlanetTavernFacility
       moduleId={PLANET_DEV_MODULE_POPULATION_DOME}
       i18nPrefix="populationDomeDev"
       api={api}
-      renderExtraStats={(snapshot) => {
+      renderExtraStats={(snapshot, _currentRow, visualTheme) => {
         if (!snapshot.installed) return null;
         return (
           <>
-            <ArcOverlayInfoRow label={t('populationDomeDev.bountySlotsLabel')} value={String(resolveTavernBountySlots(snapshot.level))} />
-            <ArcOverlayInfoRow label={t('populationDomeDev.reputationLabel')} value={`+${resolveTavernReputationBonusPct(snapshot.level)}%`} />
-            <ArcOverlayInfoRow label={t('populationDomeDev.mercTierLabel')} value={resolveTavernMercTierUnlock(snapshot.level)} />
+            <ArcOverlayInfoRow
+              label={t('populationDomeDev.bountySlotsLabel')}
+              value={String(resolveTavernBountySlots(snapshot.level))}
+              visualTheme={visualTheme}
+            />
+            <ArcOverlayInfoRow
+              label={t('populationDomeDev.reputationLabel')}
+              value={`+${resolveTavernReputationBonusPct(snapshot.level)}%`}
+              visualTheme={visualTheme}
+            />
+            <ArcOverlayInfoRow
+              label={t('populationDomeDev.mercTierLabel')}
+              value={resolveTavernMercTierUnlock(snapshot.level)}
+              visualTheme={visualTheme}
+            />
             <ArcOverlayInfoRow
               label={t('populationDomeDev.refreshLabel')}
               value={t('populationDomeDev.refreshValue', { hours: resolveTavernRefreshIntervalHours(snapshot.level) })}
+              visualTheme={visualTheme}
             />
           </>
         );

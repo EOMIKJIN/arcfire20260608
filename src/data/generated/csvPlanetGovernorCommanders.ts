@@ -89,7 +89,7 @@ export const PLANET_GOVERNOR_COMMANDERS_FROM_CSV: PlanetGovernorCommanderRow[] =
     dialogSceneId: "npc_dialog_mireille",
     instanceMissionTag: "gov_eden",
     hostileEntryCombatEnabled: false,
-    notesKo: "블루(서부) 상업 수도·연합 의회 수장",
+    notesKo: "서부 상업 수도·연합 의회 수장",
   },
   {
     planetId: "iron_remnant",

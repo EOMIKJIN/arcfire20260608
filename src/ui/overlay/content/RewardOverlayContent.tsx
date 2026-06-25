@@ -4,10 +4,10 @@ import type { ArcOverlayRewardEntry } from '../arcOverlayStore';
 import { LevelUpDetailPanel } from '../../../components/LevelUpDetailPanel';
 import { formatCredits } from '../../../utils/formatCredits';
 import { useT } from '../../../i18n';
-import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
 import { ArcOverlayCard } from '../ArcOverlayCard';
-import { phosphorOverlay } from './phosphorOverlayStyles';
+import { resolveOverlayCompactBodyStyles } from '../overlayCompactBodyStyles';
+import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
 
 type Props = {
   entry: ArcOverlayRewardEntry;
@@ -16,57 +16,48 @@ type Props = {
 
 export const RewardOverlayContent = memo(function RewardOverlayContent({ entry, onClose }: Props) {
   const t = useT();
+  const visualTheme = resolveArcOverlayVisualTheme('reward');
+  const body = resolveOverlayCompactBodyStyles(visualTheme);
   const { reward, missionTitle, cardTitle, leveledUp, newLevel, levelUpDetail } = entry;
   return (
-    <ArcOverlayCard title={cardTitle ?? t('reward.missionComplete')} subtitle={missionTitle} layout="compact">
-      <View style={phosphorOverlay.divider} />
-      <Text style={phosphorOverlay.sectionLabel}>{t('reward.gained')}</Text>
-      <View style={phosphorOverlay.row}>
-        <Text style={phosphorOverlay.rowIcon}>💰</Text>
-        <Text style={phosphorOverlay.rowText}>{t('reward.credits', { value: formatCredits(reward.credits, { suffix: false }) })}</Text>
+    <ArcOverlayCard
+      title={cardTitle ?? t('reward.missionComplete')}
+      subtitle={missionTitle}
+      layout="compact"
+      visualTheme={visualTheme}
+    >
+      <View style={body.divider} />
+      <Text style={body.sectionLabel}>{t('reward.gained')}</Text>
+      <View style={body.row}>
+        <Text style={body.rowIcon}>💰</Text>
+        <Text style={body.rowText}>{t('reward.credits', { value: formatCredits(reward.credits, { suffix: false }) })}</Text>
       </View>
-      <View style={phosphorOverlay.row}>
-        <Text style={phosphorOverlay.rowIcon}>⭐</Text>
-        <Text style={phosphorOverlay.rowText}>{t('reward.exp', { value: reward.exp.toLocaleString() })}</Text>
+      <View style={body.row}>
+        <Text style={body.rowIcon}>⭐</Text>
+        <Text style={body.rowText}>{t('reward.exp', { value: reward.exp.toLocaleString() })}</Text>
       </View>
       {reward.skillPointBonus && reward.skillPointBonus > 0 ? (
-        <View style={phosphorOverlay.row}>
-          <Text style={phosphorOverlay.rowIcon}>✦</Text>
-          <Text style={phosphorOverlay.rowText}>{t('reward.skillPoint', { value: reward.skillPointBonus })}</Text>
+        <View style={body.row}>
+          <Text style={body.rowIcon}>✦</Text>
+          <Text style={body.rowText}>{t('reward.skillPoint', { value: reward.skillPointBonus })}</Text>
         </View>
       ) : null}
       {levelUpDetail ? (
-        <View style={styles.levelUpBox}>
-          <LevelUpDetailPanel summary={levelUpDetail} />
+        <View style={body.insetBox}>
+          <LevelUpDetailPanel summary={levelUpDetail} visualTheme={visualTheme} />
         </View>
       ) : leveledUp ? (
-        <View style={styles.levelUpBox}>
-          <Text style={styles.levelUpText}>{t('reward.levelUp', { level: newLevel ?? 0 })}</Text>
+        <View style={body.insetBox}>
+          <Text style={body.rowText}>{t('reward.levelUp', { level: newLevel ?? 0 })}</Text>
         </View>
       ) : null}
-      <ArcButton label={t('reward.continue')} variant="primary" onPress={onClose} style={phosphorOverlay.closeBtn} />
+      <ArcButton
+        label={t('reward.continue')}
+        visualTheme={visualTheme}
+        intent="primary"
+        onPress={onClose}
+        style={body.closeBtn}
+      />
     </ArcOverlayCard>
   );
-});
-
-const styles = StyleSheet.create({
-  levelUpBox: {
-    marginTop: SPACING.md,
-    backgroundColor: OVERLAY_TOKENS.phosphorCardInsetBg,
-    borderWidth: 1,
-    borderColor: OVERLAY_TOKENS.phosphorBorder,
-    borderRadius: 4,
-    padding: SPACING.sm,
-    width: '100%',
-    alignItems: 'center',
-  },
-  levelUpText: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.md,
-    fontWeight: FONTS.weight.bold,
-    color: OVERLAY_TOKENS.valueContentColor,
-    textShadowColor: 'rgba(107, 212, 255, 0.45)',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 8,
-  },
 });

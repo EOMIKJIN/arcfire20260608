@@ -1,5 +1,5 @@
 import React, { memo, useMemo } from 'react';
-import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import type { ArcOverlayPlanetEconomyInfoEntry } from '../arcOverlayStore';
 import { resolveMegaFactionCapitalHubSubtitle } from '../../../world/megaFactionCapitalDisplay';
 import { formatPlanetPgpBmu } from '../../../world/planetPgpModel';
@@ -19,11 +19,6 @@ import { resolvePlanetInfoPanelDescription } from '../../../game/planetHub/resol
 import { PlanetInfoDescriptionBlock } from './PlanetInfoDescriptionBlock';
 import { PlanetInfoPortraitSlot } from './PlanetInfoPortraitSlot';
 import {
-  PLANET_ECONOMY_PANEL_BODY_PADDING_TOP_PX,
-  resolvePlanetEconomyOverlayMaxHeight,
-  resolvePlanetEconomyOverlayMinHeight,
-} from '../overlayPanelLayout';
-import {
   HeavyUiOverlayShell,
   createPlanetEconomyInfoSession,
   readPlanetEconomyInfoRevision,
@@ -31,9 +26,7 @@ import {
 } from '../../heavyUiDataSession';
 import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
 import {
-  formatTacticalOverlayTitle,
   tacticalPlanetEconomyOverlayStyles,
-  tacticalTitleHeaderSubtitle,
 } from '../tacticalOverlayStyles';
 
 type Props = {
@@ -46,7 +39,6 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
   onClose,
 }: Props) {
   const t = useT();
-  const { height: winH } = useWindowDimensions();
   const locale = useAppSettingsStore((s) => s.locale);
   const { planetId, planetName } = entry;
   const visualTheme = resolveArcOverlayVisualTheme('planetEconomyInfo');
@@ -71,17 +63,11 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
   const session = useHeavyUiDataSession(sessionConfig, revision);
   const PH = OVERLAY_TOKENS.phosphorAccent;
   const capitalSubtitle = useMemo(
-    () => resolveMegaFactionCapitalHubSubtitle(planetId, t),
-    [planetId, t],
+    () => resolveMegaFactionCapitalHubSubtitle(planetId, t, locale),
+    [planetId, t, locale],
   );
 
   const themeStyles = isTactical ? tacticalPlanetEconomyOverlayStyles : styles;
-  const cardMinHeight = useMemo(() => resolvePlanetEconomyOverlayMinHeight(winH), [winH]);
-  const cardMaxHeight = useMemo(() => resolvePlanetEconomyOverlayMaxHeight(winH), [winH]);
-  const panelBodyStyle = useMemo(
-    () => ({ paddingTop: PLANET_ECONOMY_PANEL_BODY_PADDING_TOP_PX }),
-    [],
-  );
   const planetDescription = useMemo(
     () => session.data?.planetDescription ?? resolvePlanetInfoPanelDescription(planetId, locale),
     [session.data?.planetDescription, planetId, locale],
@@ -102,8 +88,6 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
   const subtitleRaw = snapshot
     ? `${snapshot.planetName} · KST ${snapshot.kstDayKey}`
     : planetName;
-  const title = isTactical ? formatTacticalOverlayTitle(t('econInfo.title')) : t('econInfo.title');
-  const subtitle = isTactical ? tacticalTitleHeaderSubtitle(subtitleRaw) : subtitleRaw;
 
   const infoRow = (label: string, value: string) => (
     <ArcOverlayInfoRow label={label} value={value} visualTheme={visualTheme} />
@@ -115,8 +99,8 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
 
   return (
     <HeavyUiOverlayShell
-      title={title}
-      subtitle={subtitle}
+      title={t('econInfo.title')}
+      subtitle={subtitleRaw}
       layout="panel"
       panelPrefix={panelPrefix}
       panelBleedPrefix={panelBleedPrefix}
@@ -126,9 +110,6 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
       onClose={onClose}
       onRetry={session.retry}
       visualTheme={visualTheme}
-      minHeight={cardMinHeight}
-      maxHeight={cardMaxHeight}
-      bodyStyle={panelBodyStyle}
       footer={
         session.phase === 'ready' ? (
           <ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} visualTheme={visualTheme} />

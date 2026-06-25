@@ -1,6 +1,6 @@
 // planet hub subcomponents — extracted from app/(game)/planet.tsx
 import React, { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, ScrollView, useWindowDimensions, Platform } from 'react-native';
+import { View, Text, useWindowDimensions, Platform, Pressable } from 'react-native';
 import type { LayoutChangeEvent } from 'react-native';
 import Animated, {
   runOnJS,
@@ -51,7 +51,6 @@ import type { CapitalRealtimeCombatSim } from '../../../combat/capitalRealtimeTy
 import type { WorldObject } from '../../../worldObjects';
 import { WORLD_OBJECT_DEFENSE_SATELLITE_ORBIT_CYCLE_MS, WORLD_OBJECT_ORBIT_CYCLE_MS, clampDefenseSatelliteRadiusScale, clampWorldObjectRadiusScale } from '../../../worldObjects/planetWorldObjectOrbit';
 import {
-  INFO_LOG_SCROLL_VIEWPORT_PX,
   INFO_LOG_VIEWPORT_ROWS,
   MAX_WORLD_OBJECT_MARKS,
   MINING_GUIDE_LINE_RUN_PX,
@@ -61,14 +60,16 @@ import {
   PLANET_MAIN_COMBAT_LAYER_HEIGHT_SCALE_Y,
   PLANET_MAIN_COMBAT_LAYER_WIDTH_SCALE_X,
   PLANET_MAIN_ORBIT_VISUAL_LIFT_PX,
-  splitNearbyInfoLine,
   WORLD_OBJECT_ANCHOR_PX,
 } from '../../../game/planetHub/planetHubConstants';
 import { planetHubStyles as styles, planetHubBgStyles as bgStyles } from './planetHubStyles';
+import type { NearbyInfoDetailRow } from '../../../game/planetHub/nearbyPresenceDisplay';
+import { presentNearbyPresenceInfoOverlay } from '../../../ui/overlay/arcOverlayStore';
+import { NearbyPresenceRowActionButton } from '../NearbyPresenceRowActionButton';
 
 export const ORBIT_CENTER = ORBIT_SCENE_SIZE / 2;
 
-export type NearbyInfoRow = { keySlot: number; line: string };
+export type NearbyInfoRow = NearbyInfoDetailRow;
 /** 행성 주변 NPC 궤도·채굴 앵커 — 화면 중심 기준 */
 
 /** 궤도 박스 수직 중심에서 함선 마커까지(하단+여백+글자 반줄) 거리의 50%만큼 위로 — 행성에 가깝게 */
@@ -78,87 +79,45 @@ export function NearbyShipInfoPanel({
   rows,
   mutedForCapitalCombat,
 }: {
-  rows: NearbyInfoRow[];
+  rows: NearbyInfoDetailRow[];
   /** 메인스테이지 자본궤도 전투 중 — info 패널을 회색·낮은 불투명도로 전환 */
   mutedForCapitalCombat?: boolean;
 }) {
-  const scrollRef = useRef<ScrollView>(null);
-  /** 거리순 정렬만 바뀔 때마다 `scrollTo` 하면 패널이 흔들림 — 행 수가 바뀔 때만 맨 위로 */
-  const prevRowCountRef = useRef<number | null>(null);
+  const t = useT();
 
-  useEffect(() => {
-    const len = rows.length;
-    if (prevRowCountRef.current === null) {
-      prevRowCountRef.current = len;
-      return;
-    }
-    if (len !== prevRowCountRef.current) {
-      prevRowCountRef.current = len;
-      const id = requestAnimationFrame(() => {
-        scrollRef.current?.scrollTo({ y: 0, animated: true });
-      });
-      return () => cancelAnimationFrame(id);
-    }
-  }, [rows.length]);
+  const openDetailOverlay = useCallback(() => {
+    presentNearbyPresenceInfoOverlay(rows);
+  }, [rows]);
 
   return (
-    <View
+    <Pressable
+      onPress={openDetailOverlay}
       style={[styles.infoPanelWrap, mutedForCapitalCombat && styles.infoPanelWrapCapitalCombatMuted]}
-      accessibilityLabel="info"
+      accessibilityRole="button"
+      accessibilityLabel={t('nearbyPresence.panelA11y')}
     >
       <Text style={[styles.infoPanelTitle, mutedForCapitalCombat && styles.infoPanelTitleCapitalCombatMuted]}>
         info
       </Text>
-      <ScrollView
-        ref={scrollRef}
-        style={[styles.infoLogScroll, { height: INFO_LOG_SCROLL_VIEWPORT_PX }]}
-        contentContainerStyle={styles.infoLogContent}
-        showsVerticalScrollIndicator={rows.length > INFO_LOG_VIEWPORT_ROWS}
-        nestedScrollEnabled
-      >
-        {rows.map(({ keySlot, line }) => {
-          const { left, right } = splitNearbyInfoLine(line);
-          return (
-            <View key={`info-slot-${keySlot}`} style={styles.infoTableRow}>
-              <Text
-                style={[styles.infoRowBullet, mutedForCapitalCombat && styles.infoInkCapitalCombatMuted]}
-              >
-                ›{' '}
-              </Text>
-              {right != null ? (
-                <View style={styles.infoNameMkCluster}>
-                  <Text
-                    style={[styles.infoTableName, mutedForCapitalCombat && styles.infoInkCapitalCombatMuted]}
-                    numberOfLines={1}
-                  >
-                    {left}
-                  </Text>
-                  <Text
-                    style={[styles.infoTableSep, mutedForCapitalCombat && styles.infoInkCapitalCombatMuted]}
-                    numberOfLines={1}
-                  >
-                    │
-                  </Text>
-                  <Text
-                    style={[styles.infoTableMk, mutedForCapitalCombat && styles.infoInkCapitalCombatMuted]}
-                    numberOfLines={1}
-                  >
-                    {right}
-                  </Text>
-                </View>
-              ) : (
-                <Text
-                  style={[styles.infoTableFull, mutedForCapitalCombat && styles.infoInkCapitalCombatMuted]}
-                  numberOfLines={2}
-                >
-                  {left}
-                </Text>
-              )}
-            </View>
-          );
-        })}
-      </ScrollView>
-    </View>
+      <View style={styles.infoLogContent} pointerEvents="none">
+        {rows.slice(0, INFO_LOG_VIEWPORT_ROWS).map((row) => (
+          <View key={`info-slot-${row.keySlot}`} style={styles.infoTableRow}>
+            <Text
+              style={[styles.infoRowBullet, mutedForCapitalCombat && styles.infoInkCapitalCombatMuted]}
+            >
+              ›{' '}
+            </Text>
+            <Text
+              style={[styles.infoTableCaptain, mutedForCapitalCombat && styles.infoInkCapitalCombatMuted]}
+              numberOfLines={1}
+            >
+              {row.captainName || row.line}
+            </Text>
+            <NearbyPresenceRowActionButton action={row.action} variant="compact" />
+          </View>
+        ))}
+      </View>
+    </Pressable>
   );
 }
 

@@ -1,6 +1,7 @@
 // planet hub styles — extracted from app/(game)/planet.tsx
 import { Platform, StyleSheet } from 'react-native';
 import { COLORS, FONTS, SPACING } from '../../../utils/theme';
+import { TACTICAL_HUB } from '../../../ui/tactical/tacticalHubTokens';
 import {
   PLANET_MAIN_BACKGROUND_CLAN_PLATE_AFTER_NAME_GAP_PX,
   PLANET_MAIN_BACKGROUND_CLAN_PLATE_OFFSET_X_PX,
@@ -59,7 +60,8 @@ export const planetHubStyles = StyleSheet.create({
     position: 'absolute',
     right: SPACING.xs,
     top: SPACING.xs,
-    zIndex: 10,
+    zIndex: 20,
+    elevation: 20,
     maxWidth: '42%',
   },
   edenCombatHudSlot: {
@@ -166,6 +168,15 @@ export const planetHubStyles = StyleSheet.create({
     lineHeight: INFO_LOG_LINE_HEIGHT_PX,
     color: COLORS.ink_light,
   },
+  infoTableCaptain: {
+    flex: 1,
+    flexShrink: 1,
+    minWidth: 0,
+    fontFamily: FONTS.mono,
+    fontSize: 9,
+    lineHeight: INFO_LOG_LINE_HEIGHT_PX,
+    color: COLORS.ink_light,
+  },
   infoTableSep: {
     fontFamily: FONTS.mono,
     fontSize: 9,
@@ -194,8 +205,8 @@ export const planetHubStyles = StyleSheet.create({
     paddingHorizontal: PLANET_MAIN_TOPBAR_PADDING_HORIZONTAL,
     paddingVertical: PLANET_MAIN_TOPBAR_PADDING_VERTICAL,
     borderBottomWidth: PLANET_MAIN_TOPBAR_BORDER_BOTTOM_PX,
-    borderBottomColor: COLORS.border,
-    backgroundColor: `${COLORS.bg_panel}CC`,
+    borderBottomColor: TACTICAL_HUB.chromeBorder,
+    backgroundColor: TACTICAL_HUB.chromeBg,
   },
   topBarLeft: {
     flexDirection: 'row',
@@ -217,16 +228,16 @@ export const planetHubStyles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.md,
     fontWeight: FONTS.weight.bold,
-    color: COLORS.ink_dark,
-    letterSpacing: 1,
+    color: TACTICAL_HUB.chromeInk,
+    letterSpacing: 1.2,
   },
   iconBtn: {
     width: PLANET_MAIN_TOPBAR_ICON_BUTTON_PX,
     height: PLANET_MAIN_TOPBAR_ICON_BUTTON_PX,
     borderRadius: PLANET_MAIN_TOPBAR_ICON_BORDER_RADIUS,
     borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: `${COLORS.bg_secondary}AA`,
+    borderColor: TACTICAL_HUB.controlBtnBorder,
+    backgroundColor: TACTICAL_HUB.controlBtnBg,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -239,8 +250,8 @@ export const planetHubStyles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: PLANET_MAIN_TOPBAR_ICON_BORDER_RADIUS,
     borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: `${COLORS.bg_secondary}AA`,
+    borderColor: TACTICAL_HUB.tileBorder,
+    backgroundColor: TACTICAL_HUB.tileBg,
   },
   currencyChipGem: {},
   currencyChipCredits: {},
@@ -248,14 +259,14 @@ export const planetHubStyles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
     fontWeight: FONTS.weight.bold,
-    color: COLORS.info,
+    color: TACTICAL_HUB.topBarCurrencyInk,
     flexShrink: 1,
   },
   currencyChipTextCredits: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
     fontWeight: FONTS.weight.bold,
-    color: COLORS.gold,
+    color: TACTICAL_HUB.topBarCurrencyInk,
     flexShrink: 1,
   },
   planetStageReserve: {
@@ -320,9 +331,9 @@ export const planetHubStyles = StyleSheet.create({
     marginTop: -2,
     marginBottom: SPACING.md,
     borderWidth: 1,
-    borderColor: 'rgba(120, 158, 226, 0.45)',
+    borderColor: TACTICAL_HUB.miningCardBorder,
     borderRadius: 10,
-    backgroundColor: 'rgba(14, 24, 42, 0.8)',
+    backgroundColor: TACTICAL_HUB.miningCardBg,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
     rowGap: 6,
@@ -347,7 +358,7 @@ export const planetHubStyles = StyleSheet.create({
   miningGuideLine: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: 'rgba(188, 214, 238, 0.9)',
+    color: TACTICAL_HUB.miningGuideInk,
   },
   miningGaugeRow: {
     flexDirection: 'row',
@@ -390,7 +401,7 @@ export const planetHubStyles = StyleSheet.create({
   miningSummary: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: '#9FD7FF',
+    color: TACTICAL_HUB.miningSummaryInk,
   },
   miningSummaryMuted: {
     fontFamily: FONTS.mono,
@@ -406,16 +417,16 @@ export const planetHubStyles = StyleSheet.create({
   },
   miningControlBtn: {
     borderWidth: 1,
-    borderColor: 'rgba(140, 166, 210, 0.6)',
+    borderColor: TACTICAL_HUB.controlBtnBorder,
     borderRadius: 8,
-    backgroundColor: 'rgba(24, 38, 66, 0.85)',
+    backgroundColor: TACTICAL_HUB.controlBtnBg,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
   miningControlText: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: COLORS.ink_dark,
+    color: TACTICAL_HUB.chromeInk,
     fontWeight: FONTS.weight.bold,
   },
   stanceRow: {
@@ -430,9 +441,9 @@ export const planetHubStyles = StyleSheet.create({
   },
   stanceBtn: {
     width: '30.5%',
-    backgroundColor: COLORS.bg_panel,
+    backgroundColor: TACTICAL_HUB.tileBg,
     borderWidth: 1,
-    borderColor: COLORS.border_dark,
+    borderColor: TACTICAL_HUB.tileBorder,
     borderRadius: 6,
     paddingVertical: SPACING.md,
     alignItems: 'center',
@@ -440,14 +451,14 @@ export const planetHubStyles = StyleSheet.create({
   stanceLabel: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: COLORS.ink_mid,
+    color: TACTICAL_HUB.tileLabelInk,
   },
   menuBtn: {
     position: 'relative',
     width: '18%',
-    backgroundColor: COLORS.bg_panel,
+    backgroundColor: TACTICAL_HUB.tileBg,
     borderWidth: 1,
-    borderColor: COLORS.border_dark,
+    borderColor: TACTICAL_HUB.tileBorder,
     borderRadius: 6,
     paddingVertical: SPACING.sm,
     alignItems: 'center',
@@ -462,8 +473,8 @@ export const planetHubStyles = StyleSheet.create({
     backgroundColor: '#8A1538',
   },
   menuBtnPrimary: {
-    backgroundColor: COLORS.ink_dark,
-    borderColor: COLORS.ink_dark,
+    backgroundColor: TACTICAL_HUB.tilePrimaryBg,
+    borderColor: TACTICAL_HUB.tilePrimaryBorder,
   },
   menuBtnDisabled: {
     opacity: 0.35,
@@ -472,10 +483,10 @@ export const planetHubStyles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
     fontWeight: FONTS.weight.bold,
-    color: COLORS.ink_dark,
+    color: TACTICAL_HUB.tileLabelInk,
   },
-  menuLabelPrimary: { color: COLORS.bg_primary },
-  menuLabelDisabled: { color: COLORS.ink_light },
+  menuLabelPrimary: { color: TACTICAL_HUB.tilePrimaryInk },
+  menuLabelDisabled: { color: TACTICAL_HUB.tileDisabledInk },
   bottomFeatureReserve: {
     width: '100%',
     marginHorizontal: SPACING.md,

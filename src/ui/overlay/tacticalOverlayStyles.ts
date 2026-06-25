@@ -26,6 +26,10 @@ export const TACTICAL_OVERLAY = {
   btnSecondaryBorder: 'rgba(26, 35, 50, 0.28)',
   btnSecondaryInk: '#526483',
   rowDivider: 'rgba(26, 35, 50, 0.12)',
+  /** 패널 팝업(무역·행성정보 등) — 뒤 화면 80% dim */
+  panelBackdrop: 'rgba(37, 41, 48, 0.80)',
+  /** 인게임 대사창(narrative) — 하단 소형 창, dim 없음 (범용) */
+  narrativeBackdrop: 'transparent',
 } as const;
 
 export const tacticalOverlayTitleHeaderStyles = StyleSheet.create({
@@ -37,6 +41,9 @@ export const tacticalOverlayTitleHeaderStyles = StyleSheet.create({
   },
   bottomRule: {
     backgroundColor: TACTICAL_OVERLAY.headerBorder,
+  },
+  subtitle: {
+    color: 'rgba(255, 255, 255, 0.72)',
   },
 });
 
@@ -149,3 +156,52 @@ export function tacticalTitleHeaderSubtitle(subtitle?: string): string | undefin
   if (!subtitle) return undefined;
   return subtitle.toUpperCase();
 }
+
+/** tactical 카드 본문 — 섹션·구분선 (settings·waveResult 등) */
+export const tacticalOverlaySectionStyles = StyleSheet.create({
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: TACTICAL_OVERLAY.rowDivider,
+    marginVertical: SPACING.sm,
+  },
+  sectionLabel: {
+    marginTop: SPACING.md,
+    marginBottom: SPACING.xs,
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    fontWeight: FONTS.weight.bold,
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+    color: TACTICAL_OVERLAY.labelInk,
+  },
+  statLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    color: TACTICAL_OVERLAY.labelInk,
+  },
+  statValue: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    fontWeight: FONTS.weight.bold,
+    color: TACTICAL_OVERLAY.valueInk,
+  },
+  rowText: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    color: TACTICAL_OVERLAY.valueInk,
+  },
+  rowMuted: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    color: TACTICAL_OVERLAY.labelInk,
+    opacity: 0.85,
+  },
+  insetBox: {
+    borderWidth: 1,
+    borderColor: TACTICAL_OVERLAY.insetBorder,
+    borderRadius: 4,
+    backgroundColor: TACTICAL_OVERLAY.insetBg,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+  },
+});

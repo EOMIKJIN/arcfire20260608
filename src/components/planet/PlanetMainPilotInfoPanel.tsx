@@ -7,7 +7,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import { COLORS, FONTS, SPACING } from '../../utils/theme';
+import { FONTS, SPACING } from '../../utils/theme';
+import { TACTICAL_HUB } from '../../ui/tactical/tacticalHubTokens';
 import { useT } from '../../i18n';
 
 /** 하단 고정 헤더 높이 — `planetMainStageLayout` 도크 추정과 동기 */
@@ -172,17 +173,17 @@ const styles = StyleSheet.create({
     right: 0,
     overflow: 'hidden',
     zIndex: 3,
-    backgroundColor: COLORS.bg_panel,
+    backgroundColor: TACTICAL_HUB.pilotExpandBg,
   },
   statsPanel: {
     flex: 1,
     minHeight: PLANET_MAIN_PILOT_STATS_EXPANDED_HEIGHT_PX,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: TACTICAL_HUB.pilotExpandBorder,
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
     borderBottomWidth: 0,
-    backgroundColor: COLORS.bg_panel,
+    backgroundColor: TACTICAL_HUB.pilotExpandBg,
     paddingTop: SPACING.md,
     paddingHorizontal: SPACING.md,
     paddingBottom: PILOT_STATS_BOTTOM_INSET_PX,
@@ -197,9 +198,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     columnGap: SPACING.sm,
     minHeight: PLANET_MAIN_PILOT_HEADER_CHROME_PX,
-    backgroundColor: COLORS.bg_panel,
+    backgroundColor: TACTICAL_HUB.chromeBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: TACTICAL_HUB.chromeBorder,
     borderRadius: 6,
     paddingVertical: SPACING.sm,
     paddingHorizontal: SPACING.md,
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    borderTopColor: TACTICAL_HUB.chromeBorder,
   },
   headerBtnPressed: {
     opacity: 0.9,
@@ -217,13 +218,13 @@ const styles = StyleSheet.create({
   headerText: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
+    color: TACTICAL_HUB.chromeInk,
     textAlign: 'center',
   },
   chevron: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
+    color: TACTICAL_HUB.chromeInk,
   },
   statsRow: {
     flexDirection: 'row',
@@ -234,15 +235,15 @@ const styles = StyleSheet.create({
   statLabel: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
+    color: TACTICAL_HUB.pilotLabelInk,
   },
   statValue: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
-    color: COLORS.ink_dark,
+    color: TACTICAL_HUB.pilotValueInk,
   },
   statValueHighlight: {
-    color: COLORS.skill,
+    color: TACTICAL_HUB.pilotValueHighlightInk,
     fontWeight: FONTS.weight.bold,
   },
 });

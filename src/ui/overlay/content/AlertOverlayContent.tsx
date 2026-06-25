@@ -1,10 +1,12 @@
 import React, { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { ArcOverlayAlertEntry } from '../arcOverlayStore';
-import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
+import { FONTS, SPACING } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
 import { ArcOverlayCard } from '../ArcOverlayCard';
-import { phosphorOverlay } from './phosphorOverlayStyles';
+import { overlayInkColor } from '../overlayVisualTokens';
+import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
+import { resolveOverlayCompactBodyStyles } from '../overlayCompactBodyStyles';
 
 type Props = {
   entry: ArcOverlayAlertEntry;
@@ -12,28 +14,34 @@ type Props = {
 };
 
 export const AlertOverlayContent = memo(function AlertOverlayContent({ entry, onButton }: Props) {
+  const visualTheme = resolveArcOverlayVisualTheme('alert');
+  const body = resolveOverlayCompactBodyStyles(visualTheme);
   const hasCancel = entry.buttons.some((b) => b.style === 'cancel');
   const isAckOnly = entry.buttons.length === 1 || !hasCancel;
-  const btnRowStyle = isAckOnly ? phosphorOverlay.btnRowAckOnly : phosphorOverlay.btnRowCancelConfirm;
+  const btnRowStyle = isAckOnly ? body.btnRowAckOnly : body.btnRowCancelConfirm;
 
   return (
-    <ArcOverlayCard title={entry.title} layout="compact">
+    <ArcOverlayCard title={entry.title} layout="compact" visualTheme={visualTheme}>
       {entry.message.length > 0 ? (
-        <Text style={[styles.body, { color: OVERLAY_TOKENS.valueContentColor }]}>{entry.message}</Text>
+        <Text style={[styles.body, { color: overlayInkColor(visualTheme, 'value') }]}>
+          {entry.message}
+        </Text>
       ) : null}
       <View style={btnRowStyle}>
         {entry.buttons.map((b, i) => {
-          const variant =
+          const intent =
             b.style === 'destructive'
-              ? 'destructive'
+              ? undefined
               : b.style === 'cancel'
-                ? 'secondary'
-                : 'primary';
+                ? ('secondary' as const)
+                : ('primary' as const);
           return (
             <ArcButton
               key={`${b.text}-${i}`}
               label={b.text}
-              variant={variant}
+              variant={b.style === 'destructive' ? 'destructive' : undefined}
+              visualTheme={b.style === 'destructive' ? undefined : visualTheme}
+              intent={intent}
               onPress={() => onButton(b.onPress)}
             />
           );
@@ -53,8 +61,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignSelf: 'stretch',
     width: '100%',
-    textShadowColor: 'rgba(107, 212, 255, 0.35)',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 6,
   },
 });

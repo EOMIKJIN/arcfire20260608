@@ -18,11 +18,13 @@ import { usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore
 import { formatCredits } from '../../../utils/formatCredits';
 import { showArcAlert } from '../../../utils/showArcAlert';
 import { useT } from '../../../i18n';
-import { OVERLAY_TOKENS } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
 import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
 import { ArcOverlayCard } from '../ArcOverlayCard';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
+import { overlayInkColor } from '../overlayVisualTokens';
+import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
+import { PlanetDevHintText, PlanetDevSectionBar, PlanetDevSummaryInset } from './PlanetDevOverlayChrome';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
 
 export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDevContent({
@@ -33,6 +35,8 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
   onClose,
 }: PlanetDevelopmentModuleContext) {
   const t = useT();
+  const visualTheme = resolveArcOverlayVisualTheme('planetDevelopment');
+  const isTactical = visualTheme === 'tactical';
   const [tick, setTick] = useState(0);
 
   const shipyardRev = usePlanetCoreRuntimeStore(
@@ -55,7 +59,9 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
 
   const snapshot = buildOrbitShipyardDevSnapshot(planetId);
   const currentRow = snapshot.level > 0 ? getOrbitShipyardLevelStatRow(snapshot.level) : null;
-  const PH = OVERLAY_TOKENS.phosphorAccent;
+  const moduleSummaryKey = 'planetDev.summary.dev_orbit_shipyard';
+  const moduleSummaryRaw = t(moduleSummaryKey);
+  const moduleSummary = moduleSummaryRaw === moduleSummaryKey ? '' : moduleSummaryRaw;
   const levelRows = listFacilityShipyardLevelRows();
   const nextDurationLabel = snapshot.nextUpgradeDurationSec != null
     ? formatOrbitShipyardDurationLabel(snapshot.nextUpgradeDurationSec)
@@ -128,7 +134,8 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
         {!snapshot.installed && !snapshot.isInstalling ? (
           <ArcButton
             label={t('orbitShipyard.installBtn', { cost: formatCredits(snapshot.installCost, { suffix: true }) })}
-            variant="cta"
+            visualTheme={visualTheme}
+            intent="cta"
             disabled={!canManageDevelopment || !snapshot.canInstall}
             onPress={handlePressInstall}
           />
@@ -142,7 +149,8 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
                 cost: formatCredits(snapshot.nextUpgradeCost ?? 0, { suffix: true }),
                 duration: nextDurationLabel,
               })}
-              variant="primary"
+              visualTheme={visualTheme}
+              intent="primary"
               disabled={!canManageDevelopment || !snapshot.canStartUpgrade}
               onPress={handleStartUpgrade}
             />
@@ -151,7 +159,8 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
                 to: snapshot.nextTargetLevel,
                 cost: formatCredits((snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0), { suffix: true }),
               })}
-              variant="secondary"
+              visualTheme={visualTheme}
+              intent="secondary"
               disabled={!canManageDevelopment || !snapshot.canInstantUpgradeNext}
               onPress={handleInstantNext}
             />
@@ -162,7 +171,8 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
             label={t('orbitShipyard.instantCompleteBtn', {
               cost: formatCredits(snapshot.nextInstantCost ?? 0, { suffix: true }),
             })}
-            variant="cta"
+            visualTheme={visualTheme}
+            intent="cta"
             disabled={!snapshot.canInstantComplete}
             onPress={handleInstantComplete}
           />
@@ -173,18 +183,28 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
         onConfirm={onClose}
         cancelLabel={t('orbitShipyard.backToList')}
         confirmLabel={t('orbitShipyard.close')}
+        visualTheme={visualTheme}
       />
     </View>
   );
+
+  const levelRowTitleColor = overlayInkColor(visualTheme, isTactical ? 'value' : 'accent');
+  const levelRowMetaColor = overlayInkColor(visualTheme, isTactical ? 'label' : 'value');
 
   return (
     <ArcOverlayCard
       title={t('orbitShipyard.title')}
       subtitle={planetName}
       layout="panel"
+      panelPrefix={moduleSummary ? <PlanetDevSummaryInset text={moduleSummary} visualTheme={visualTheme} /> : undefined}
       footer={footer}
+      visualTheme={visualTheme}
     >
-        <Text style={[styles.section, { color: PH }]}>{t('orbitShipyard.status')}</Text>
+        <PlanetDevSectionBar
+          label={t('orbitShipyard.status')}
+          visualTheme={visualTheme}
+          leadSection={!moduleSummary}
+        />
         <ArcOverlayInfoRow
           label={t('orbitShipyard.stateLabel')}
           value={
@@ -194,9 +214,10 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
                 : t('orbitShipyard.stateInstalled', { level: snapshot.level }))
               : t('orbitShipyard.stateNotInstalled')
           }
+          visualTheme={visualTheme}
         />
         {snapshot.isCsvWorldBaseline ? (
-          <Text style={[styles.hint, { color: PH }]}>{t('planetDev.worldBuiltHint')}</Text>
+          <PlanetDevHintText visualTheme={visualTheme}>{t('planetDev.worldBuiltHint')}</PlanetDevHintText>
         ) : null}
         {snapshot.installed ? (
           <>
@@ -205,27 +226,29 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
               value={snapshot.builtHullTierKeys.length > 0
                 ? snapshot.builtHullTierKeys.join(', ')
                 : '—'}
+              visualTheme={visualTheme}
             />
             <ArcOverlayInfoRow
               label={t('orbitShipyard.mineralCapLabel')}
               value={t('orbitShipyard.mineralCapValue', { cap: snapshot.mineralUpgradeCap })}
+              visualTheme={visualTheme}
             />
           </>
         ) : null}
         {currentRow ? (
           <>
-            <ArcOverlayInfoRow label={t('orbitShipyard.buildSpeedLabel')} value={`${currentRow.buildSpeedBonusPct}%`} />
+            <ArcOverlayInfoRow label={t('orbitShipyard.buildSpeedLabel')} value={`${currentRow.buildSpeedBonusPct}%`} visualTheme={visualTheme} />
           </>
         ) : null}
 
         {snapshot.isInstalling ? (
           <View style={styles.gaugeBlock}>
-            <Text style={[styles.section, { color: PH }]}>{t('planetDev.installProgress')}</Text>
-            <Text style={[styles.hint, { color: OVERLAY_TOKENS.valueContentColor }]}>
+            <PlanetDevSectionBar label={t('planetDev.installProgress')} visualTheme={visualTheme} />
+            <PlanetDevHintText visualTheme={visualTheme} variant="body">
               {snapshot.installDurationSec != null
                 ? formatOrbitShipyardDurationLabel(snapshot.installDurationSec)
                 : '—'}
-            </Text>
+            </PlanetDevHintText>
             <PlanetHubDigitalGauge
               progressPct={snapshot.upgradeProgressPct}
               accessibilityLabel={t('planetDev.installProgressA11y', { pct: snapshot.upgradeProgressPct })}
@@ -235,10 +258,10 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
 
         {snapshot.isUpgrading ? (
           <View style={styles.gaugeBlock}>
-            <Text style={[styles.section, { color: PH }]}>{t('orbitShipyard.upgradeProgress')}</Text>
-            <Text style={[styles.hint, { color: OVERLAY_TOKENS.valueContentColor }]}>
+            <PlanetDevSectionBar label={t('orbitShipyard.upgradeProgress')} visualTheme={visualTheme} />
+            <PlanetDevHintText visualTheme={visualTheme} variant="body">
               Lv.{snapshot.level} → Lv.{snapshot.upgradeJob?.targetLevel ?? '?'}
-            </Text>
+            </PlanetDevHintText>
             <PlanetHubDigitalGauge
               progressPct={snapshot.upgradeProgressPct}
               accessibilityLabel={t('orbitShipyard.upgradeProgressA11y', { pct: snapshot.upgradeProgressPct })}
@@ -246,20 +269,23 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
           </View>
         ) : null}
 
-        <Text style={[styles.section, { color: PH }]}>{t('orbitShipyard.levelStats')}</Text>
+        <PlanetDevSectionBar label={t('orbitShipyard.levelStats')} visualTheme={visualTheme} />
         {levelRows.map((row) => (
           <View
             key={row.level}
             style={[
               styles.levelRow,
-              row.level === snapshot.level ? styles.levelRowActive : null,
+              isTactical && styles.levelRowTactical,
+              row.level === snapshot.level
+                ? (isTactical ? styles.levelRowActiveTactical : styles.levelRowActive)
+                : null,
             ]}
           >
-            <Text style={[styles.levelRowTitle, { color: PH }]}>
+            <Text style={[styles.levelRowTitle, { color: levelRowTitleColor }]}>
               Lv.{row.level} {row.displayNameKr}
               {row.level === snapshot.level ? ' ◀' : ''}
             </Text>
-            <Text style={styles.levelRowMeta}>
+            <Text style={[styles.levelRowMeta, { color: levelRowMetaColor }]}>
               {t('orbitShipyard.levelMeta', {
                 tiers: row.cumulativeHullTierKeys.length,
                 mineral: row.mineralUpgradeCap,

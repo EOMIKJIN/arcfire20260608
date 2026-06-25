@@ -8,8 +8,9 @@ import {
 import { formatCredits } from '../../../utils/formatCredits';
 import { showArcAlert } from '../../../utils/showArcAlert';
 import { useT } from '../../../i18n';
-import { OVERLAY_TOKENS } from '../../../utils/theme';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
+import { overlayInkColor } from '../overlayVisualTokens';
+import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
 import { PlanetDevelopmentListRow } from './PlanetDevelopmentListRow';
 import {
@@ -36,8 +37,9 @@ export const PlanetDevelopmentListContent = memo(function PlanetDevelopmentListC
   onClose,
 }: Props) {
   const t = useT();
+  const visualTheme = resolveArcOverlayVisualTheme('planetDevelopment');
+  const hintInk = overlayInkColor(visualTheme, 'label');
   const [tick, setTick] = useState(0);
-  const PH = OVERLAY_TOKENS.phosphorAccent;
 
   const sessionConfig = useMemo(
     () => createPlanetDevelopmentListSession(planetId),
@@ -83,16 +85,17 @@ export const PlanetDevelopmentListContent = memo(function PlanetDevelopmentListC
       preflightCode={session.preflightCode}
       onClose={onClose}
       onRetry={session.retry}
+      visualTheme={visualTheme}
       footer={
         session.phase === 'ready' ? (
-          <ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} />
+          <ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} visualTheme={visualTheme} />
         ) : undefined
       }
     >
       {listData ? (
         <>
           {!canManageDevelopment ? (
-            <Text style={[styles.hint, { color: PH }]}>
+            <Text style={[styles.hint, styles.hintListLead, { color: hintInk }]}>
               {t('planetDev.manageDeniedHint')}
             </Text>
           ) : null}
@@ -103,6 +106,7 @@ export const PlanetDevelopmentListContent = memo(function PlanetDevelopmentListC
               <PlanetDevelopmentListRow
                 key={row.id}
                 row={rowView}
+                visualTheme={visualTheme}
                 onPress={() => handlePressRow(row.id, row.enabled, resolveLabel(row))}
               />
             );

@@ -156,4 +156,14 @@ export const phosphorOverlay = StyleSheet.create({
     gap: SPACING.sm,
     marginTop: SPACING.md,
   },
+  insetBox: {
+    marginTop: SPACING.md,
+    borderWidth: 1,
+    borderColor: OVERLAY_TOKENS.phosphorBorder,
+    borderRadius: 4,
+    backgroundColor: OVERLAY_TOKENS.phosphorCardInsetBg,
+    padding: SPACING.sm,
+    width: '100%',
+    alignItems: 'center',
+  },
 });

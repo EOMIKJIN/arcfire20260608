@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { COLORS, FONTS } from '../utils/theme';
+import { FONTS } from '../utils/theme';
+import { TACTICAL_HUB } from '../ui/tactical/tacticalHubTokens';
 import { useMissionStore } from '../store/missionStore';
 import { useT } from '../i18n';
 import { useAppSettingsStore } from '../store/appSettingsStore';
@@ -53,9 +54,9 @@ export function QuestHUD() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.bg_panel,
+    backgroundColor: TACTICAL_HUB.chromeBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: TACTICAL_HUB.chromeBorder,
     borderRadius: 4,
   },
   header: {
@@ -70,13 +71,14 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
-    color: COLORS.ink_dark,
+    color: TACTICAL_HUB.chromeInk,
     fontWeight: FONTS.weight.bold,
+    letterSpacing: 0.4,
   },
   objective: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: COLORS.ink_mid,
+    color: TACTICAL_HUB.topBarIconInk,
     paddingHorizontal: 10,
     paddingBottom: 8,
     lineHeight: 18,

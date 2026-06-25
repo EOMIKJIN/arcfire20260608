@@ -253,6 +253,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'tradeQty.demand': 'Demand: {label}',
   'tradeQty.owned': 'Held: {n}',
   'tradeQty.tipsTitle': 'Tips',
+  'tradeQty.descSection': '— Description —',
   'tradeQty.tipLine': 'Sellable at {planet} for {profit}/unit profit',
   'tradeQty.tipEmpty': 'No profitable destination found from the current planet.',
   'tradeQty.a11yDec': 'Decrease quantity',
@@ -527,6 +528,17 @@ export const EN_DICTIONARY: I18nDictionary = {
 
   'planet.miningStop': 'Stop Mining',
   'planet.mining': 'Mining',
+
+  // ── Nearby INFO panel (nearbyPresence) ──
+  'nearbyPresence.overlayTitle': 'Nearby Ship Info',
+  'nearbyPresence.overlaySubtitle': '{count} ships by distance',
+  'nearbyPresence.close': 'Close',
+  'nearbyPresence.empty': 'No ships detected in nearby orbit.',
+  'nearbyPresence.panelA11y': 'Open nearby ship details',
+  'nearbyPresence.action.none': 'No action',
+  'nearbyPresence.action.dialog': 'Dialog',
+  'nearbyPresence.action.mission': 'Mission',
+  'nearbyPresence.action.custom': 'Other',
 
   // ── Defense Satellite Dev (defenseSat) ──
   'defenseSat.homeOnlyTitle': 'Home Planet Only',

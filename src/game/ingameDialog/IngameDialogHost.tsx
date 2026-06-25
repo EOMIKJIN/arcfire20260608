@@ -58,7 +58,7 @@ export const IngameDialogHost = memo(function IngameDialogHost() {
   const config = useMemo((): ArcNarrativeOverlayConfig | null => {
     if (!session || !viewModel) return null;
     return {
-      anchor: 'bottom',
+      anchor: NARRATIVE_DIALOG_LAYOUT.popupAnchor,
       label: viewModel.label,
       text: viewModel.text,
       typewriterKey: viewModel.typewriterKey,

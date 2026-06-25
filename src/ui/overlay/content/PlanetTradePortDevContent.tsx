@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';import {
+import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';
+import {
   resolveTradePortHighGradeWeaponWeightBonus,
   resolveTradePortFeeRatePct,
 } from '../../../arcCore/balance/facilityTradePortLevelPolicy';
@@ -19,6 +20,7 @@ import {
 import { useT } from '../../../i18n';
 import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
 import { PlanetGenericFacilityDevContent } from './PlanetGenericFacilityDevContent';
+
 const api = {
   buildSnapshot: buildTradePortDevSnapshot,
   tryCompleteUpgrade: tryCompleteTradePortUpgrade,
@@ -39,13 +41,25 @@ export const PlanetTradePortDevContent = memo(function PlanetTradePortDevContent
       moduleId={PLANET_DEV_MODULE_TRADE_PORT}
       i18nPrefix="tradePortDev"
       api={api}
-      renderExtraStats={(snapshot) => {
+      renderExtraStats={(snapshot, _currentRow, visualTheme) => {
         if (!snapshot.installed) return null;
         return (
           <>
-            <ArcOverlayInfoRow label={t('tradePortDev.highGradeLabel')} value={`+${resolveTradePortHighGradeWeaponWeightBonus(snapshot.level)}%`} />
-            <ArcOverlayInfoRow label={t('tradePortDev.feeLabel')} value={`${resolveTradePortFeeRatePct(snapshot.level)}%`} />
-            <ArcOverlayInfoRow label={t('tradePortDev.stockLabel')} value={String(resolveTradePortStockLimit(snapshot.level))} />
+            <ArcOverlayInfoRow
+              label={t('tradePortDev.highGradeLabel')}
+              value={`+${resolveTradePortHighGradeWeaponWeightBonus(snapshot.level)}%`}
+              visualTheme={visualTheme}
+            />
+            <ArcOverlayInfoRow
+              label={t('tradePortDev.feeLabel')}
+              value={`${resolveTradePortFeeRatePct(snapshot.level)}%`}
+              visualTheme={visualTheme}
+            />
+            <ArcOverlayInfoRow
+              label={t('tradePortDev.stockLabel')}
+              value={String(resolveTradePortStockLimit(snapshot.level))}
+              visualTheme={visualTheme}
+            />
           </>
         );
       }}

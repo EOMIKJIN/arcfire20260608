@@ -2,17 +2,21 @@
 // 범용 오버레이 카드 셸 — header + body(+scroll) + footerDock 레이아웃 정본
 // footer는 body 밖(card 직속) — overflow:hidden·스크롤에 버튼 가림 방지
 // ============================================================
-import React, { memo, type ReactNode } from 'react';
-import { ScrollView, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import React, { memo, useMemo, type ReactNode } from 'react';
+import { ScrollView, StyleSheet, View, useWindowDimensions, type StyleProp, type ViewStyle } from 'react-native';
 import { OVERLAY_TOKENS, SPACING } from '../../utils/theme';
 import { ArcOverlayTitleHeader } from './ArcOverlayTitleHeader';
 import type { ArcOverlayVisualTheme } from './tacticalOverlayPreview';
 import { tacticalOverlayCardStyles } from './tacticalOverlayStyles';
+import { resolveOverlayPanelTitles } from './overlayPanelTitles';
 import {
   OVERLAY_CARD_LAYOUT,
   OVERLAY_FOOTER_DOCK_MIN_HEIGHT,
+  OVERLAY_PANEL_BODY_PADDING_TOP_PX,
   OVERLAY_PANEL_CARD_MAX_HEIGHT_PCT,
   OVERLAY_PANEL_CARD_MIN_HEIGHT_PCT,
+  resolveOverlayPanelMaxHeight,
+  resolveOverlayPanelMinHeight,
 } from './overlayPanelLayout';
 
 export type ArcOverlayCardLayout = 'compact' | 'panel';
@@ -56,16 +60,26 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
   bodyStyle,
   visualTheme = 'phosphor',
 }: Props) {
+  const { height: winH } = useWindowDimensions();
   const isPanel = layout === 'panel';
   const isTactical = visualTheme === 'tactical';
   const hasFooter = footer != null;
+  const panelMinPx = useMemo(() => resolveOverlayPanelMinHeight(winH), [winH]);
+  const panelMaxPx = useMemo(() => resolveOverlayPanelMaxHeight(winH), [winH]);
   const resolvedMinHeight =
     minHeight
-    ?? (isPanel || hasFooter ? OVERLAY_PANEL_CARD_MIN_HEIGHT_PCT : undefined);
+    ?? (isPanel ? panelMinPx : hasFooter ? OVERLAY_PANEL_CARD_MIN_HEIGHT_PCT : undefined);
   const resolvedMaxHeight =
     maxHeight
-    ?? (isPanel || hasFooter ? OVERLAY_PANEL_CARD_MAX_HEIGHT_PCT : undefined);
+    ?? (isPanel ? panelMaxPx : hasFooter ? OVERLAY_PANEL_CARD_MAX_HEIGHT_PCT : undefined);
+  const resolvedBodyStyle = isPanel
+    ? [{ paddingTop: OVERLAY_PANEL_BODY_PADDING_TOP_PX }, bodyStyle]
+    : bodyStyle;
   const isBounded = resolvedMinHeight != null || resolvedMaxHeight != null;
+  const resolvedTitles = useMemo(
+    () => resolveOverlayPanelTitles(visualTheme, title, subtitle),
+    [visualTheme, title, subtitle],
+  );
 
   return (
     <View
@@ -80,8 +94,8 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
     >
       <View style={styles.headerWrap}>
         <ArcOverlayTitleHeader
-          title={title}
-          subtitle={subtitle}
+          title={resolvedTitles.title}
+          subtitle={resolvedTitles.subtitle}
           titleColor={titleColor}
           trailing={trailing}
           visualTheme={visualTheme}
@@ -97,7 +111,7 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
               styles.bodyPanel,
               isTactical ? tacticalOverlayCardStyles.bodyPanel : null,
               isBounded ? styles.bodyPanelBounded : null,
-              bodyStyle,
+              resolvedBodyStyle,
             ]}
           >
             {panelPrefix ? <View style={styles.panelPrefixWrap}>{panelPrefix}</View> : null}

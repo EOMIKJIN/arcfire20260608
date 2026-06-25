@@ -4,7 +4,7 @@ export const PlanetOccupationSeeds_FROM_BALANCE_CSV = [
   { "planetId": "solar_station", "systemId": "solar_port", "initialOwner": "BLUE", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "솔라 항구" },
   { "planetId": "minerva_deep", "systemId": "minerva", "initialOwner": "BLUE", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "미네르바" },
   { "planetId": "vega_base", "systemId": "vega_outpost", "initialOwner": "BLUE", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "베가 전초기지" },
-  { "planetId": "eden_city", "systemId": "new_eden", "initialOwner": "BLUE", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "뉴에덴 프라임(블루수도)" },
+  { "planetId": "eden_city", "systemId": "new_eden", "initialOwner": "BLUE", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "뉴에덴 프라임" },
   { "planetId": "iron_remnant", "systemId": "iron_cross", "initialOwner": "BLUE", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "아이언 크로스" },
   { "planetId": "draco_haven", "systemId": "draco_nebula", "initialOwner": "BLUE", "occupationCombatEnabled": "true", "contestedZone": "true", "alertLabelKo": "드라코 성운" },
   { "planetId": "omega_hub", "systemId": "omega_station", "initialOwner": "BLUE", "occupationCombatEnabled": "true", "contestedZone": "true", "alertLabelKo": "오메가 스테이션" },
@@ -18,7 +18,7 @@ export const PlanetOccupationSeeds_FROM_BALANCE_CSV = [
   { "planetId": "shadow_market", "systemId": "shadow_nexus", "initialOwner": "NEUTRAL", "occupationCombatEnabled": "true", "contestedZone": "true", "alertLabelKo": "섀도우 넥서스" },
   { "planetId": "abyss_gate", "systemId": "abyss", "initialOwner": "RED", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "어비스" },
   { "planetId": "nightfall_citadel", "systemId": "nightfall", "initialOwner": "RED", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "나이트폴 시타델" },
-  { "planetId": "core_prime", "systemId": "arcfire_core", "initialOwner": "RED", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "아크파이어 코어 프라임(레드수도)" },
+  { "planetId": "core_prime", "systemId": "arcfire_core", "initialOwner": "RED", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "아크파이어 코어 프라임" },
   { "planetId": "eternal_throne", "systemId": "eternity", "initialOwner": "NEUTRAL", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "이터니티" },
   { "planetId": "genesis_origin", "systemId": "genesis", "initialOwner": "NEUTRAL", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "제네시스" },
 ] as const;

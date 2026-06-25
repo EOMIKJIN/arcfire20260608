@@ -379,3 +379,62 @@
 [13:47] OK · PID 30675 · PSS 409.2MB / GL 47.5MB / views 292
 [13:57] OK · PID 30675 · PSS 411.3MB / GL 47.8MB / views 284
 [14:07] OK · PID 30675 · PSS 435.1MB / GL 75.7MB / views 303
+[14:17] OK · PID 30675 · PSS 594.5MB / GL 143.8MB / views 53
+[14:27] OK · PID 30675 · PSS 513.2MB / GL 62.5MB / views 279
+[14:37] !! 앱 미실행 + 이상 — 06-25 14:31:59.530  1909  4356 I ActivityManager: Process com.arcfire.online (pid 30675) has died: fg  TOP (685,1607)
+[14:48] .. 앱 미실행(대기중)
+[14:58] .. 앱 미실행(대기중)
+[15:08] .. 앱 미실행(대기중)
+[15:18] OK · PID 17737 · PSS 539.5MB / GL 60.2MB / views 279
+[15:28] OK · PID 17737 · PSS 536.3MB / GL 59MB / views 279
+[15:38] OK · PID 17737 · PSS 530.4MB / GL 43.4MB / views 288
+[15:48] !! PID_CHANGE session=17737 -> 19255 (크래시·재시작 의심)
+[15:58] OK · PID 19255 · PSS 632MB / GL 48.5MB / views 279
+[16:08] OK · PID 19255 · PSS 627.3MB / GL 40.9MB / views 305
+[16:18] OK · PID 19255 · PSS 708.9MB / GL 132.3MB / views 929
+[16:28] OK · PID 19255 · PSS 645.6MB / GL 54.8MB / views 279
+[16:38] OK · PID 19255 · PSS 619.6MB / GL 60.3MB / views 293
+[16:48] OK · PID 19255 · PSS 629.4MB / GL 58.3MB / views 297
+[16:58] OK · PID 19255 · PSS 554.4MB / GL 55.9MB / views 274
+[17:08] OK · PID 19255 · PSS 807.6MB / GL 248.2MB / views 921 · GL 248.2MB (기록만·조치OFF)
+[17:18] OK · PID 19255 · PSS 586MB / GL 49.1MB / views 289
+[17:28] .. 앱 미실행(대기중)
+[17:38] OK · PID 26076 · PSS 186.1MB / GL 4.6MB / views 14
+[17:48] OK · PID 26076 · PSS 717.8MB / GL 34.4MB / views 286
+[17:58] OK · PID 26076 · PSS 736.4MB / GL 39.3MB / views 371
+[18:08] !! PID_CHANGE session=26076 -> 27827 (크래시·재시작 의심)
+[18:18] .. 앱 미실행(대기중)
+[18:28] OK · PID 30046 · PSS 715.2MB / GL 56.5MB / views 365
+[18:38] OK · PID 30046 · PSS 778.4MB / GL 40.6MB / views 317
+[18:48] OK · PID 30046 · PSS 788.4MB / GL 38.6MB / views 321
+[18:58] OK · PID 30046 · PSS 830.5MB / GL 43.7MB / views 326
+[19:08] OK · PID 30046 · PSS 854.1MB / GL 43.7MB / views 315
+[19:18] OK · PID 30046 · PSS 803.6MB / GL 32MB / views 316
+[19:28] OK · PID 30046 · PSS 802MB / GL 43MB / views 461
+[19:38] OK · PID 30046 · PSS 833.6MB / GL 57.3MB / views 320
+[19:48] OK · PID 30046 · PSS 836.2MB / GL 38.3MB / views 341
+[19:58] OK · PID 30046 · PSS 872.2MB / GL 40.3MB / views 487
+[20:08] OK · PID 30046 · PSS 738.7MB / GL 55MB / views 47
+[20:18] OK · PID 30046 · PSS 890.1MB / GL 37.1MB / views 321
+[20:28] !! PID_CHANGE session=30046 -> 8974 (크래시·재시작 의심)
+[20:38] OK · PID 8974 · PSS 870.2MB / GL 58.7MB / views 285
+[20:48] OK · PID 8974 · PSS 855MB / GL 65.5MB / views 284
+[20:58] OK · PID 8974 · PSS 847.7MB / GL 59.1MB / views 297
+[21:08] OK · PID 8974 · PSS 888.7MB / GL 55MB / views 296
+[21:18] OK · PID 8974 · PSS 884.2MB / GL 57.1MB / views 301
+[21:28] OK · PID 8974 · PSS 859.7MB / GL 42.7MB / views 306
+[21:38] OK · PID 8974 · PSS 903.7MB / GL 57.2MB / views 314
+[21:48] OK · PID 8974 · PSS 900.5MB / GL 71.2MB / views 310
+[21:58] OK · PID 8974 · PSS 843.7MB / GL 46MB / views 98
+[22:08] !! PID_CHANGE session=8974 -> 19769 (크래시·재시작 의심)
+[22:18] !! PID_CHANGE session=19769 -> 21140 (크래시·재시작 의심)
+[22:28] OK · PID 21140 · PSS 615.6MB / GL 53.1MB / views 283
+[22:38] OK · PID 21140 · PSS 631.5MB / GL 40.4MB / views 304
+[22:48] OK · PID 21140 · PSS 886.2MB / GL 226.8MB / views 932 · GL 226.8MB (기록만·조치OFF)
+[22:58] OK · PID 21140 · PSS 958.3MB / GL 133.5MB / views 262
+[23:08] OK · PID 21140 · PSS 833.8MB / GL 23.3MB / views 284
+[23:18] OK · PID 21140 · PSS 855.4MB / GL 27.6MB / views 305
+[23:28] !! PID_CHANGE session=21140 -> 26724 (크래시·재시작 의심)
+[23:38] !! 실시간 크래시 — 06-25 23:26:57.208  1909 26578 I ActivityManager: Killing 21140:com.arcfire.online/u0a1070 (adj 0): crash
+[23:48] OK · PID 26724 · PSS 687.7MB / GL 51.2MB / views 320
+[23:58] OK · PID 26724 · PSS 674.5MB / GL 42MB / views 283

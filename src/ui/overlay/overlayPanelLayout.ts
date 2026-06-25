@@ -18,17 +18,26 @@ export function resolveOverlayPanelScrollMaxHeight(windowHeight: number, reserve
 /** 하단 footerDock(취소·확인) 최소 높이 */
 export const OVERLAY_FOOTER_DOCK_MIN_HEIGHT = 76;
 
-/** 행성정보 — 헤더와 초상화 이미지 사이 최소 간격 */
-export const PLANET_ECONOMY_PANEL_BODY_PADDING_TOP_PX = 0;
+/** panel 목록 카드 간격 — `planetDevelopmentOverlayStyles.listItem.marginBottom` 과 동일 */
+export const OVERLAY_PANEL_LIST_ITEM_GAP_PX = 8;
 
-/** 행성정보 — 이미지 아래 설명 4줄 고정 높이 (총사령관 1줄 포함) */
+/** panel bodyPanel 상단 — 헤더↔첫 콘텐츠 = 목록 카드 간격과 동일 */
+export const OVERLAY_PANEL_BODY_PADDING_TOP_PX = OVERLAY_PANEL_LIST_ITEM_GAP_PX;
+
+/** @deprecated `OVERLAY_PANEL_BODY_PADDING_TOP_PX` */
+export const PLANET_ECONOMY_PANEL_BODY_PADDING_TOP_PX = OVERLAY_PANEL_BODY_PADDING_TOP_PX;
+
+/** 행성정보 bleed — 이미지 아래 설명 4줄 고정 높이 (총사령관 1줄 포함) */
 export const PLANET_INFO_DESCRIPTION_LINES = 4;
 export const PLANET_INFO_DESCRIPTION_LINE_HEIGHT_PX = 18;
 export const PLANET_INFO_DESCRIPTION_BLOCK_HEIGHT_PX =
   PLANET_INFO_DESCRIPTION_LINES * PLANET_INFO_DESCRIPTION_LINE_HEIGHT_PX + 8;
 
-/** 행성정보 패널 — 기본 85% + 설명 블록만큼 아래로 확장 */
-export function resolvePlanetEconomyOverlayMinHeight(windowHeight: number): number {
+/**
+ * 범용 panel 카드 minHeight(px) — 85% + 설명 블록 보정(행성정보 bleed와 동일 창 높이).
+ * `layout="panel"` 은 ArcOverlayCard 기본값으로 자동 적용.
+ */
+export function resolveOverlayPanelMinHeight(windowHeight: number): number {
   const base = Math.floor(windowHeight * 0.85);
   return Math.min(
     Math.floor(windowHeight * 0.96) - 8,
@@ -36,8 +45,19 @@ export function resolvePlanetEconomyOverlayMinHeight(windowHeight: number): numb
   );
 }
 
-export function resolvePlanetEconomyOverlayMaxHeight(windowHeight: number): number {
+/** 범용 panel 카드 maxHeight(px) — 화면 96% */
+export function resolveOverlayPanelMaxHeight(windowHeight: number): number {
   return Math.floor(windowHeight * 0.96);
+}
+
+/** @deprecated `resolveOverlayPanelMinHeight` */
+export function resolvePlanetEconomyOverlayMinHeight(windowHeight: number): number {
+  return resolveOverlayPanelMinHeight(windowHeight);
+}
+
+/** @deprecated `resolveOverlayPanelMaxHeight` */
+export function resolvePlanetEconomyOverlayMaxHeight(windowHeight: number): number {
+  return resolveOverlayPanelMaxHeight(windowHeight);
 }
 
 /** scrollMaxHeight reserved — 패널 유형별(헤더·prefix·footerDock 추정) */
@@ -53,8 +73,8 @@ export const OVERLAY_CARD_LAYOUT = {
   flexShrink: 0,
 };
 
-/** 중앙 정렬 팝업 — 화면 정중앙보다 약간 아래(상단 여백) */
+/** 중앙 정렬 팝업(compact) — 화면 정중앙보다 약간 아래 */
 export const OVERLAY_CENTER_VERTICAL_BIAS_PX = 36;
 
-/** 행성정보 — 상단 고정·아래로 확장 패널 앵커 */
+/** panel Host — 상단 고정·아래로 확장 (`getOverlayChrome().hostAnchor === 'top'`) */
 export const OVERLAY_PANEL_TOP_ANCHOR_PX = 28;

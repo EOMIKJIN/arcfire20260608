@@ -4,40 +4,13 @@
 // ============================================================
 import React, { memo, type ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Svg, { Defs, Line, Pattern, Rect } from 'react-native-svg';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../utils/theme';
 import type { ArcOverlayVisualTheme } from './tacticalOverlayPreview';
 import { TACTICAL_OVERLAY, tacticalOverlayTitleHeaderStyles } from './tacticalOverlayStyles';
+import { TitleHeaderHatchPattern } from './TitleHeaderHatchPattern';
 
 const HATCH_PATTERN_ID = 'arcOverlayTitleHatchV1';
 const TACTICAL_HATCH_PATTERN_ID = 'arcOverlayTitleHatchTacticalV1';
-
-const TitleHeaderPattern = memo(function TitleHeaderPattern({
-  patternId,
-  stroke,
-}: {
-  patternId: string;
-  stroke: string;
-}) {
-  return (
-    <View style={styles.patternLayer} pointerEvents="none">
-      <Svg width="100%" height="100%" style={StyleSheet.absoluteFillObject}>
-        <Defs>
-          <Pattern
-            id={patternId}
-            width={8}
-            height={8}
-            patternUnits="userSpaceOnUse"
-            patternTransform="rotate(-45)"
-          >
-            <Line x1={0} y1={0} x2={0} y2={8} stroke={stroke} strokeWidth={1.2} />
-          </Pattern>
-        </Defs>
-        <Rect width="100%" height="100%" fill={`url(#${patternId})`} />
-      </Svg>
-    </View>
-  );
-});
 
 type Props = {
   title: string;
@@ -66,7 +39,7 @@ export const ArcOverlayTitleHeader = memo(function ArcOverlayTitleHeader({
         ]}
         pointerEvents="none"
       />
-      <TitleHeaderPattern
+      <TitleHeaderHatchPattern
         patternId={isTactical ? TACTICAL_HATCH_PATTERN_ID : HATCH_PATTERN_ID}
         stroke={isTactical ? TACTICAL_OVERLAY.headerPatternStroke : 'rgba(255, 255, 255, 0.085)'}
       />
@@ -84,7 +57,11 @@ export const ArcOverlayTitleHeader = memo(function ArcOverlayTitleHeader({
           </Text>
           {subtitle ? (
             <Text
-              style={[styles.subtitle, hasTrailing ? styles.subtitleLeading : null]}
+              style={[
+                styles.subtitle,
+                isTactical ? tacticalOverlayTitleHeaderStyles.subtitle : null,
+                hasTrailing ? styles.subtitleLeading : null,
+              ]}
               numberOfLines={2}
             >
               {subtitle}
@@ -112,10 +89,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 4,
     borderTopRightRadius: 4,
     minHeight: 44,
-  },
-  patternLayer: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 0,
   },
   accentTop: {
     position: 'absolute',

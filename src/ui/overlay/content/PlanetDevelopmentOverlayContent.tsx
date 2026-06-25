@@ -20,6 +20,7 @@ import {
 } from '../../heavyUiDataSession';
 import type { ArcOverlayPlanetDevelopmentEntry } from '../arcOverlayStore';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
+import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
 import { PlanetDefenseSatelliteDevContent } from './PlanetDefenseSatelliteDevContent';
 import { PlanetDevelopmentListContent } from './PlanetDevelopmentListContent';
 import { PlanetOrbitShipyardDevContent } from './PlanetOrbitShipyardDevContent';
@@ -52,6 +53,7 @@ const PlanetDevDetailHydrateGate = memo(function PlanetDevDetailHydrateGate({
   children,
 }: DevDetailHydrateGateProps) {
   const t = useT();
+  const visualTheme = resolveArcOverlayVisualTheme('planetDevelopment');
   const sessionConfig = useMemo(
     () =>
       createPlanetDevDetailSession(planetId, moduleId, () => ({
@@ -73,12 +75,14 @@ const PlanetDevDetailHydrateGate = memo(function PlanetDevDetailHydrateGate({
         preflightCode={session.preflightCode}
         onClose={onClose}
         onRetry={session.retry}
+        visualTheme={visualTheme}
         footer={
           <ArcOverlayFooterActions
             onCancel={onBack}
             onConfirm={onClose}
             cancelLabel={t(backLabelKey)}
             confirmLabel={t('planetDev.close')}
+            visualTheme={visualTheme}
           />
         }
       >

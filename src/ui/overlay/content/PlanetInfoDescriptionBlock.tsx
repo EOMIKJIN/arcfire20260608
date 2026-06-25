@@ -13,12 +13,15 @@ type Props = {
   /** planets.csv — `resolvePlanetTableDescription` / 스냅샷 `planetDescription` */
   description: string;
   visualTheme?: ArcOverlayVisualTheme;
+  /** panelPrefix 첫 블록 — bodyPanel paddingTop 만으로 간격 확보 */
+  compactTop?: boolean;
 };
 
 /** 행성 정보창 — 초상화 이미지 바로 아래 3줄 설명 */
 export const PlanetInfoDescriptionBlock = memo(function PlanetInfoDescriptionBlock({
   description,
   visualTheme = 'phosphor',
+  compactTop = false,
 }: Props) {
   const isTactical = visualTheme === 'tactical';
   const trimmed = description.trim();
@@ -28,6 +31,7 @@ export const PlanetInfoDescriptionBlock = memo(function PlanetInfoDescriptionBlo
     <Text
       style={[
         styles.block,
+        compactTop ? styles.blockCompactTop : null,
         isTactical ? styles.blockTactical : styles.blockPhosphor,
       ]}
       numberOfLines={PLANET_INFO_DESCRIPTION_LINES}
@@ -48,6 +52,9 @@ const styles = StyleSheet.create({
     fontSize: FONTS.size.sm,
     lineHeight: PLANET_INFO_DESCRIPTION_LINE_HEIGHT_PX,
     textAlign: 'left',
+  },
+  blockCompactTop: {
+    marginTop: 0,
   },
   blockPhosphor: {
     color: OVERLAY_TOKENS.valueContentColor,

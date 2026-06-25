@@ -1,9 +1,14 @@
+# Macro economy SIM — ArcCore overlay delta 산출
+#
+# 2026-06-18: schedule cron 폐지 — GitHub 실패 알림 메일 스팸 방지.
+#   - 정본: 로컬 `npm run sim:economy` · 김경제 handoff · 일일 배치 ingest
+#   - CI 자동 실행·커밋 비활성 — 필요 시 Actions에서 수동 실행만
+#
+# 수동 실행: Actions → Daily economy sim → Run workflow
+
 name: Daily economy sim
 
 on:
-  schedule:
-    # KST 15:00 ≈ UTC 06:00
-    - cron: '0 6 * * *'
   workflow_dispatch:
 
 permissions:

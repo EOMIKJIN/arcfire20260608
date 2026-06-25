@@ -3,7 +3,7 @@ arcadia_prime,arcadia,BLUE,nation,npc_cpt_arcadia_lane_01,관문순찰대장,FAL
 solar_station,solar_port,BLUE,clan,npc_cpt_ai_clan_safe_01,연방해군,FALSE,TRUE,2,npc_dialog_ai_clan_safe_01,gov_solar,FALSE,솔라무역 방위연합 AI 클랜장
 minerva_deep,minerva,BLUE,nation,npc_cpt_gov_minerva,광산총감독,FALSE,TRUE,2,npc_dialog_gov_minerva,gov_minerva,FALSE,서부·광업 거점 국가 파견 수장
 vega_base,vega_outpost,BLUE,nation,npc_cpt_vega_watch_01,초계지휘관,FALSE,TRUE,2,npc_dialog_vega_watch_01,gov_vega,FALSE,베가 전초기지 국가 방위사령
-eden_city,new_eden,BLUE,nation,npc_cpt_mireille,제독,FALSE,TRUE,2,npc_dialog_mireille,gov_eden,FALSE,블루(서부) 상업 수도·연합 의회 수장
+eden_city,new_eden,BLUE,nation,npc_cpt_mireille,제독,FALSE,TRUE,2,npc_dialog_mireille,gov_eden,FALSE,서부 상업 수도·연합 의회 수장
 iron_remnant,iron_cross,BLUE,nation,npc_cpt_gov_iron,잔해수호사령,FALSE,TRUE,2,npc_dialog_gov_iron,gov_iron,FALSE,아이언 크로스 국가 거점 수호
 draco_haven,draco_nebula,BLUE,nation,npc_cpt_draco_obs_01,성운관측장,FALSE,TRUE,2,npc_dialog_draco_obs_01,gov_draco,FALSE,드라코 성운 연구·방비 수장
 omega_hub,omega_station,BLUE,clan,npc_cpt_ai_clan_neutral_01,중립무역대장,FALSE,TRUE,2,npc_dialog_ai_clan_neutral_01,gov_omega,FALSE,오메가 중립 회항단 AI 클랜장

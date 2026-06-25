@@ -2,7 +2,8 @@
  * Tactical Archive (G-ARCHIVE) UI — 기준 확정 · 점진 롤아웃 레지스트리
  *
  * 2026-06-18: 행성정보(planetEconomyInfo) 모달 기준으로 범용 셸 스타일 확정.
- * 다른 kind 는 별도 지시 전까지 phosphor 유지 — 플래그만 여기서 관리한다.
+ * 2026-06-25: settings · planetDevelopment · tradeQuantity · waveResult + 허브 버튼 톤 (Phase T1).
+ * 2026-06-25: bmShop · alert — 미구현·단순 셸 (Phase T1 보류 판단 정정).
  */
 import type { ArcOverlayKind } from './arcOverlayStore';
 
@@ -20,16 +21,17 @@ export const TACTICAL_OVERLAY_PREVIEW_PLANET_ECONOMY = true;
  */
 export const TACTICAL_OVERLAY_KIND_FLAGS: Readonly<Record<ArcOverlayKind, boolean>> = {
   planetEconomyInfo: TACTICAL_OVERLAY_PREVIEW_PLANET_ECONOMY,
-  alert: false,
-  levelUp: false,
-  reward: false,
-  narrative: false,
-  blocking: false,
-  tradeQuantity: false,
-  planetDevelopment: false,
-  waveResult: false,
-  settings: false,
-  bmShop: false,
+  settings: true,
+  planetDevelopment: true,
+  tradeQuantity: true,
+  waveResult: true,
+  alert: true,
+  levelUp: true,
+  reward: true,
+  narrative: true,
+  blocking: true,
+  bmShop: true,
+  nearbyPresenceInfo: true,
 };
 
 /** tactical 활성 kind 목록 (감사·리포트용) */

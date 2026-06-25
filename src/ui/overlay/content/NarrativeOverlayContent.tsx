@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import type { ArcOverlayNarrativeEntry } from '../arcOverlayStore';
 import { NarrativeDialogRow } from '../NarrativeDialogRow';
+import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
 
 type Props = {
   entry: ArcOverlayNarrativeEntry;
@@ -11,6 +12,7 @@ export const NarrativeOverlayContent = memo(function NarrativeOverlayContent({
   entry,
   onPressNext,
 }: Props) {
+  const visualTheme = resolveArcOverlayVisualTheme('narrative');
   return (
     <NarrativeDialogRow
       label={entry.label}
@@ -24,6 +26,7 @@ export const NarrativeOverlayContent = memo(function NarrativeOverlayContent({
       nextDisabled={entry.nextDisabled}
       onPressNext={onPressNext}
       showActionButton={entry.showActionButton !== false}
+      visualTheme={visualTheme}
     />
   );
 });

@@ -30,7 +30,8 @@ import { showArcAlert } from '../../../utils/showArcAlert';
 import { ArcButton } from '../ArcButton';
 import { ArcOverlayCard } from '../ArcOverlayCard';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
-import { bmShopOverlayStyles as styles } from './bmShopOverlayStyles';
+import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
+import { bmShopOverlayStyles as phosphorStyles, bmShopOverlayTacticalStyles } from './bmShopOverlayStyles';
 
 type Props = {
   entry: ArcOverlayBmShopEntry;
@@ -58,15 +59,18 @@ function ProductRow({
   product,
   actionLabel,
   onAction,
+  isTactical,
 }: {
   product: BmShopProduct;
   actionLabel: string;
   onAction: (product: BmShopProduct) => void;
+  isTactical: boolean;
 }) {
   const t = useT();
+  const styles = isTactical ? bmShopOverlayTacticalStyles : phosphorStyles;
   return (
     <View style={styles.productCard}>
-      <View style={[styles.artSlot, { backgroundColor: product.tint }]}>
+      <View style={[styles.artSlot, !isTactical && { backgroundColor: product.tint }]}>
         <Text style={styles.artIcon}>{visualIcon(product.visual)}</Text>
         <Text style={styles.artPlaceholderLabel}>{t('bmShop.artPlaceholder')}</Text>
       </View>
@@ -90,7 +94,12 @@ function ProductRow({
             {t(product.priceKey)}
           </Text>
           <View style={styles.buyBtnWrap}>
-            <ArcButton label={actionLabel} variant="cta" onPress={() => onAction(product)} />
+            <ArcButton
+              label={actionLabel}
+              visualTheme={isTactical ? 'tactical' : 'phosphor'}
+              intent="cta"
+              onPress={() => onAction(product)}
+            />
           </View>
         </View>
       </View>
@@ -103,6 +112,9 @@ export const BmShopOverlayContent = memo(function BmShopOverlayContent({
   onClose,
 }: Props) {
   const t = useT();
+  const visualTheme = resolveArcOverlayVisualTheme('bmShop');
+  const isTactical = visualTheme === 'tactical';
+  const styles = isTactical ? bmShopOverlayTacticalStyles : phosphorStyles;
   const player = usePlayerStore((s) => s.player);
   const products = listBmShopProducts(entry.shopKind);
   const gemBalance = resolvePlayerGemBalance(player);
@@ -182,7 +194,8 @@ export const BmShopOverlayContent = memo(function BmShopOverlayContent({
       subtitle={t(resolveBmShopSubtitleKey(entry.shopKind))}
       layout="panel"
       panelPrefix={panelPrefix}
-      footer={<ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} />}
+      visualTheme={visualTheme}
+      footer={<ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} visualTheme={visualTheme} />}
       trailing={(
         <Pressable style={styles.closeBtn} onPress={onClose} hitSlop={8}>
           <Text style={styles.closeBtnText}>✕</Text>
@@ -195,6 +208,7 @@ export const BmShopOverlayContent = memo(function BmShopOverlayContent({
           product={product}
           actionLabel={actionLabel}
           onAction={handleAction}
+          isTactical={isTactical}
         />
       ))}
     </ArcOverlayCard>

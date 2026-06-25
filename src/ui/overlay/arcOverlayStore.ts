@@ -5,6 +5,7 @@ import type { TradeProfitTip } from '../../game/tradeProfitTips';
 import type { ImageSourcePropType } from 'react-native';
 import { t } from '../../i18n';
 import { preflightPlanetHubSession } from '../heavyUiDataSession/preflightPlanetHub';
+import type { NearbyInfoDetailRow } from '../../game/planetHub/nearbyPresenceDisplay';
 
 let overlaySeq = 0;
 function nextOverlayId(prefix: string): string {
@@ -29,7 +30,8 @@ export type ArcOverlayKind =
   | 'planetDevelopment'
   | 'waveResult'
   | 'settings'
-  | 'bmShop';
+  | 'bmShop'
+  | 'nearbyPresenceInfo';
 
 type ArcOverlayBase = {
   id: string;
@@ -143,6 +145,12 @@ export type ArcOverlayBmShopEntry = ArcOverlayBase & {
   shopKind: BmShopKind;
 };
 
+/** 궤도 근접 INFO — 거리순 함장·전함 상세 (행성 허브 우측 info 탭) */
+export type ArcOverlayNearbyPresenceInfoEntry = ArcOverlayBase & {
+  kind: 'nearbyPresenceInfo';
+  rows: NearbyInfoDetailRow[];
+};
+
 export type ArcOverlayEntry =
   | ArcOverlayAlertEntry
   | ArcOverlayLevelUpEntry
@@ -154,7 +162,8 @@ export type ArcOverlayEntry =
   | ArcOverlayPlanetDevelopmentEntry
   | ArcOverlayWaveResultEntry
   | ArcOverlaySettingsEntry
-  | ArcOverlayBmShopEntry;
+  | ArcOverlayBmShopEntry
+  | ArcOverlayNearbyPresenceInfoEntry;
 
 export type ArcOverlayInput =
   | (Omit<ArcOverlayAlertEntry, 'id'> & { id?: string })
@@ -167,7 +176,8 @@ export type ArcOverlayInput =
   | (Omit<ArcOverlayPlanetDevelopmentEntry, 'id'> & { id?: string })
   | (Omit<ArcOverlayWaveResultEntry, 'id'> & { id?: string })
   | (Omit<ArcOverlaySettingsEntry, 'id'> & { id?: string })
-  | (Omit<ArcOverlayBmShopEntry, 'id'> & { id?: string });
+  | (Omit<ArcOverlayBmShopEntry, 'id'> & { id?: string })
+  | (Omit<ArcOverlayNearbyPresenceInfoEntry, 'id'> & { id?: string });
 
 type ArcOverlayState = {
   stack: ArcOverlayEntry[];
@@ -354,4 +364,17 @@ export function presentPlanetDevelopmentOverlay(
   } else {
     useArcOverlayStore.getState().present(entry);
   }
+}
+
+const NEARBY_PRESENCE_INFO_OVERLAY_ID = 'nearby-presence-info';
+
+export function presentNearbyPresenceInfoOverlay(
+  rows: ArcOverlayNearbyPresenceInfoEntry['rows'],
+): void {
+  useArcOverlayStore.getState().present({
+    id: NEARBY_PRESENCE_INFO_OVERLAY_ID,
+    kind: 'nearbyPresenceInfo',
+    rows,
+    dismissOnBackdrop: true,
+  });
 }

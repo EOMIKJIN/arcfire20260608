@@ -1,4 +1,4 @@
-# Daily audit — 2026-06-24T15:00:06.710Z
+# Daily audit — 2026-06-25T15:00:06.624Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -37,14 +37,14 @@ Generated CSV-driven content TS files at src/data/generated
 - 75,917 — `src/data/generated/csvStoryScenes.ts`
 - 71,055 — `src/data/generated/csvWeapons.ts`
 - 70,149 — `src/data/balance/generated/csvSynthSystemColonization.ts`
-- 66,853 — `src/i18n/locales/ko.ts`
+- 67,436 — `src/i18n/locales/ko.ts`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
-- 60,836 — `src/i18n/locales/en.ts`
-- 56,868 — `app/(game)/planet.tsx`
-- 56,847 — `app/(game)/worldmap.tsx`
-- 49,807 — `app/(game)/shipyard.tsx`
-- 45,252 — `app/(game)/trade.tsx`
-- 43,902 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
+- 61,393 — `src/i18n/locales/en.ts`
+- 58,582 — `app/(game)/worldmap.tsx`
+- 57,892 — `app/(game)/planet.tsx`
+- 46,036 — `app/(game)/shipyard.tsx`
+- 42,880 — `app/(game)/trade.tsx`
+- 42,572 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
 - 36,821 — `src/data/generated/csvMissions.ts`
 - 36,229 — `src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx`
 

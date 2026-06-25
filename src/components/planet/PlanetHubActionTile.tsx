@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import { COLORS, FONTS, OVERLAY_TOKENS, SPACING } from '../../utils/theme';
+import { FONTS, SPACING } from '../../utils/theme';
+import { TACTICAL_HUB } from '../../ui/tactical/tacticalHubTokens';
 
 /** 스캔·무역소 등 메인스테이지 하단 액션 타일 공통 높이 */
 export const PLANET_HUB_ACTION_TILE_MIN_HEIGHT_PX = 52;
@@ -17,7 +18,7 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-/** 스캔 행·시설 메뉴 행 공통 타일(아이콘 + 라벨) */
+/** 스캔 행·시설 메뉴 행 공통 타일(아이콘 + 라벨) — G-ARCHIVE tactical 톤 */
 export const PlanetHubActionTile = memo(function PlanetHubActionTile({
   label,
   icon,
@@ -44,7 +45,9 @@ export const PlanetHubActionTile = memo(function PlanetHubActionTile({
       android_disableSound
     >
       {showBadge ? <View style={styles.badgeDot} /> : null}
-      <Text style={[styles.tileIcon, faded && styles.tileIconDisabled]}>{icon}</Text>
+      <Text style={[styles.tileIcon, faded && styles.tileIconDisabled, active && styles.tileIconActive]}>
+        {icon}
+      </Text>
       <Text
         style={[
           styles.tileLabel,
@@ -64,9 +67,9 @@ const styles = StyleSheet.create({
   tile: {
     width: '100%',
     minHeight: PLANET_HUB_ACTION_TILE_MIN_HEIGHT_PX,
-    backgroundColor: COLORS.bg_panel,
+    backgroundColor: TACTICAL_HUB.tileBg,
     borderWidth: 1,
-    borderColor: COLORS.border_dark,
+    borderColor: TACTICAL_HUB.tileBorder,
     borderRadius: 6,
     paddingVertical: SPACING.xs,
     paddingHorizontal: 2,
@@ -75,11 +78,11 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   tilePrimary: {
-    backgroundColor: COLORS.ink_dark,
-    borderColor: COLORS.ink_dark,
+    backgroundColor: TACTICAL_HUB.tilePrimaryBg,
+    borderColor: TACTICAL_HUB.tilePrimaryBorder,
   },
   tileDisabled: {
-    opacity: 0.35,
+    opacity: 0.38,
   },
   tilePressed: {
     opacity: 0.88,
@@ -97,27 +100,30 @@ const styles = StyleSheet.create({
   tileIcon: {
     fontSize: 14,
     lineHeight: 16,
-    color: OVERLAY_TOKENS.phosphorAccent,
+    color: TACTICAL_HUB.tileIconInk,
     marginBottom: 2,
   },
   tileIconDisabled: {
-    color: COLORS.ink_light,
+    color: TACTICAL_HUB.tileDisabledInk,
+  },
+  tileIconActive: {
+    color: TACTICAL_HUB.tileActiveInk,
   },
   tileLabel: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
     fontWeight: FONTS.weight.bold,
-    color: OVERLAY_TOKENS.phosphorAccent,
+    color: TACTICAL_HUB.tileLabelInk,
     letterSpacing: 0.3,
     textAlign: 'center',
   },
   tileLabelPrimary: {
-    color: COLORS.bg_primary,
+    color: TACTICAL_HUB.tilePrimaryInk,
   },
   tileLabelDisabled: {
-    color: COLORS.ink_light,
+    color: TACTICAL_HUB.tileDisabledInk,
   },
   tileLabelActive: {
-    color: '#7BE8FF',
+    color: TACTICAL_HUB.tileActiveInk,
   },
 });

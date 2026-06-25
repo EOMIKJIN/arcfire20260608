@@ -12,6 +12,8 @@ interface TypewriterTextProps {
   onComplete?: () => void;
   style?: TextStyle;
   cursor?: boolean;
+  /** 영화 프롤로그 등 어두운 배경용 커서 색 */
+  cursorColor?: string;
   numberOfLines?: number;
 }
 
@@ -21,6 +23,7 @@ export function TypewriterText({
   onComplete,
   style,
   cursor = true,
+  cursorColor,
   numberOfLines,
 }: TypewriterTextProps) {
   const [displayed, setDisplayed] = useState('');
@@ -64,7 +67,7 @@ export function TypewriterText({
     <Text style={[defaultStyle, style]} numberOfLines={numberOfLines}>
       {displayed}
       {cursor && !done ? (
-        <Text style={{ color: COLORS.ink_mid }}>▌</Text>
+        <Text style={{ color: cursorColor ?? COLORS.ink_mid }}>▌</Text>
       ) : null}
     </Text>
   );

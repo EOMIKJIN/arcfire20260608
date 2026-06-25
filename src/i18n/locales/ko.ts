@@ -252,6 +252,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'tradeQty.demand': '수요: {label}',
   'tradeQty.owned': '보유: {n}개',
   'tradeQty.tipsTitle': 'Tips',
+  'tradeQty.descSection': '— 설명 —',
   'tradeQty.tipLine': '{planet}에서 {profit}/개 차익으로 판매 가능',
   'tradeQty.tipEmpty': '현재 행성 기준 확인 가능한 차익 행성이 없습니다.',
   'tradeQty.a11yDec': '수량 감소',
@@ -526,6 +527,17 @@ export const KO_DICTIONARY: I18nDictionary = {
 
   'planet.miningStop': '채굴 중단',
   'planet.mining': '채굴',
+
+  // ── 근접 INFO 패널 (nearbyPresence) ──
+  'nearbyPresence.overlayTitle': '근접 함선 정보',
+  'nearbyPresence.overlaySubtitle': '거리순 {count}척',
+  'nearbyPresence.close': '닫기',
+  'nearbyPresence.empty': '근접 궤도에 감지된 함선이 없습니다.',
+  'nearbyPresence.panelA11y': '근접 함선 상세 정보 열기',
+  'nearbyPresence.action.none': '액션 없음',
+  'nearbyPresence.action.dialog': '대화',
+  'nearbyPresence.action.mission': '미션',
+  'nearbyPresence.action.custom': '기타',
 
   // ── 방위위성 개발 (defenseSat) ──
   'defenseSat.homeOnlyTitle': '거점 행성 전용',

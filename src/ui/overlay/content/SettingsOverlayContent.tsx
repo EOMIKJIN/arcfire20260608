@@ -2,6 +2,8 @@ import React, { memo, useCallback, useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { ArcOverlaySettingsEntry } from '../arcOverlayStore';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
+import { TACTICAL_OVERLAY, tacticalOverlaySectionStyles } from '../tacticalOverlayStyles';
+import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
 import { ArcButton } from '../ArcButton';
 import { ArcOverlayCard } from '../ArcOverlayCard';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
@@ -23,19 +25,6 @@ type Props = {
 
 const VOLUME_STEP = 0.1;
 
-function VolumeBar({ value, muted }: { value: number; muted: boolean }) {
-  const filled = muted ? 0 : Math.round(value * 10);
-  const cells = [];
-  for (let i = 0; i < 10; i += 1) cells.push(i < filled);
-  return (
-    <View style={styles.bar}>
-      {cells.map((on, i) => (
-        <View key={i} style={[styles.barCell, on ? styles.barCellOn : styles.barCellOff]} />
-      ))}
-    </View>
-  );
-}
-
 function AudioRow({
   label,
   mutedLabel,
@@ -43,6 +32,7 @@ function AudioRow({
   muted,
   onToggleMute,
   onStep,
+  isTactical = false,
 }: {
   label: string;
   mutedLabel: string;
@@ -50,22 +40,50 @@ function AudioRow({
   muted: boolean;
   onToggleMute: () => void;
   onStep: (delta: number) => void;
+  isTactical?: boolean;
 }) {
+  const accent = isTactical ? TACTICAL_OVERLAY.labelInk : OVERLAY_TOKENS.phosphorAccent;
+  const border = isTactical ? TACTICAL_OVERLAY.insetBorder : OVERLAY_TOKENS.phosphorBorder;
+  const barOn = isTactical ? TACTICAL_OVERLAY.sectionBarBg : OVERLAY_TOKENS.phosphorAccent;
+  const barOff = isTactical ? TACTICAL_OVERLAY.insetBg : 'rgba(107, 212, 255, 0.16)';
+  const pctColor = isTactical ? TACTICAL_OVERLAY.valueInk : OVERLAY_TOKENS.valueContentColor;
   return (
     <View style={styles.audioRow}>
-      <Text style={styles.audioLabel}>{label}</Text>
+      <Text style={[styles.audioLabel, isTactical && { color: accent }]}>{label}</Text>
       <View style={styles.audioControls}>
-        <Pressable style={styles.stepBtn} onPress={onToggleMute} hitSlop={6}>
-          <Text style={styles.stepIcon}>{muted ? '🔇' : '🔊'}</Text>
+        <Pressable style={[styles.stepBtn, { borderColor: border }]} onPress={onToggleMute} hitSlop={6}>
+          <Text style={[styles.stepIcon, { color: accent }]}>{muted ? '🔇' : '🔊'}</Text>
         </Pressable>
-        <Pressable style={styles.stepBtn} onPress={() => onStep(-VOLUME_STEP)} hitSlop={6} disabled={muted}>
-          <Text style={[styles.stepIcon, muted && styles.dimmed]}>−</Text>
+        <Pressable
+          style={[styles.stepBtn, { borderColor: border }]}
+          onPress={() => onStep(-VOLUME_STEP)}
+          hitSlop={6}
+          disabled={muted}
+        >
+          <Text style={[styles.stepIcon, { color: accent }, muted && styles.dimmed]}>−</Text>
         </Pressable>
-        <VolumeBar value={volume} muted={muted} />
-        <Pressable style={styles.stepBtn} onPress={() => onStep(VOLUME_STEP)} hitSlop={6} disabled={muted}>
-          <Text style={[styles.stepIcon, muted && styles.dimmed]}>＋</Text>
+        <View style={styles.bar}>
+          {Array.from({ length: 10 }, (_, i) => {
+            const on = !muted && i < Math.round(volume * 10);
+            return (
+              <View
+                key={i}
+                style={[styles.barCell, { backgroundColor: on ? barOn : barOff }]}
+              />
+            );
+          })}
+        </View>
+        <Pressable
+          style={[styles.stepBtn, { borderColor: border }]}
+          onPress={() => onStep(VOLUME_STEP)}
+          hitSlop={6}
+          disabled={muted}
+        >
+          <Text style={[styles.stepIcon, { color: accent }, muted && styles.dimmed]}>＋</Text>
         </Pressable>
-        <Text style={styles.pct}>{muted ? mutedLabel : `${Math.round(volume * 100)}%`}</Text>
+        <Text style={[styles.pct, isTactical && { color: pctColor }]}>
+          {muted ? mutedLabel : `${Math.round(volume * 100)}%`}
+        </Text>
       </View>
     </View>
   );
@@ -76,6 +94,9 @@ export const SettingsOverlayContent = memo(function SettingsOverlayContent({
   onResetAccount,
 }: Props) {
   const t = useT();
+  const visualTheme = resolveArcOverlayVisualTheme('settings');
+  const isTactical = visualTheme === 'tactical';
+  const section = isTactical ? tacticalOverlaySectionStyles : phosphorOverlay;
   const locale = useAppSettingsStore((s) => s.locale);
   const bgmMuted = useAppSettingsStore((s) => s.bgmMuted);
   const bgmVolume = useAppSettingsStore((s) => s.bgmVolume);
@@ -120,7 +141,7 @@ export const SettingsOverlayContent = memo(function SettingsOverlayContent({
   }, [onClose, setLocale, setBgmMuted, setBgmVolume, setSfxMuted, setSfxVolume]);
 
   const footer = (
-    <ArcOverlayFooterActions onCancel={handleCancel} onConfirm={onClose} />
+    <ArcOverlayFooterActions onCancel={handleCancel} onConfirm={onClose} visualTheme={visualTheme} />
   );
 
   return (
@@ -129,9 +150,12 @@ export const SettingsOverlayContent = memo(function SettingsOverlayContent({
       subtitle={t('settings.subtitle')}
       layout="panel"
       footer={footer}
+      visualTheme={visualTheme}
     >
-      <View style={phosphorOverlay.divider} />
-      <Text style={phosphorOverlay.sectionLabel}>{t('settings.section.sound')}</Text>
+      <View style={isTactical ? section.divider : phosphorOverlay.divider} />
+      <Text style={isTactical ? section.sectionLabel : phosphorOverlay.sectionLabel}>
+        {t('settings.section.sound')}
+      </Text>
       <AudioRow
         label={t('settings.bgm')}
         mutedLabel={t('settings.muted')}
@@ -139,6 +163,7 @@ export const SettingsOverlayContent = memo(function SettingsOverlayContent({
         muted={bgmMuted}
         onToggleMute={() => setBgmMuted(!bgmMuted)}
         onStep={(d) => setBgmVolume(bgmVolume + d)}
+        isTactical={isTactical}
       />
       <AudioRow
         label={t('settings.sfx')}
@@ -147,27 +172,39 @@ export const SettingsOverlayContent = memo(function SettingsOverlayContent({
         muted={sfxMuted}
         onToggleMute={() => setSfxMuted(!sfxMuted)}
         onStep={(d) => setSfxVolume(sfxVolume + d)}
+        isTactical={isTactical}
       />
-      <View style={phosphorOverlay.divider} />
-      <Text style={phosphorOverlay.sectionLabel}>{t('settings.section.language')}</Text>
+      <View style={isTactical ? section.divider : phosphorOverlay.divider} />
+      <Text style={isTactical ? section.sectionLabel : phosphorOverlay.sectionLabel}>
+        {t('settings.section.language')}
+      </Text>
       {SUPPORTED_LOCALES.map((l) => {
         const selected = l === locale;
         const ready = FULLY_TRANSLATED_LOCALES.includes(l);
         return (
           <Pressable
             key={l}
-            style={[styles.langRow, selected && styles.langRowSel]}
+            style={[
+              styles.langRow,
+              selected && (isTactical ? styles.langRowSelTactical : styles.langRowSel),
+            ]}
             onPress={() => onSelectLocale(l)}
           >
-            <Text style={[styles.langCheck, selected && styles.langCheckSel]}>{selected ? '◉' : '○'}</Text>
-            <Text style={[styles.langLabel, selected && styles.langLabelSel]}>{LOCALE_LABELS[l]}</Text>
+            <Text style={[styles.langCheck, { color: isTactical ? TACTICAL_OVERLAY.labelInk : PHOSPHOR_MUTED }, selected && (isTactical ? styles.langCheckSelTactical : styles.langCheckSel)]}>
+              {selected ? '◉' : '○'}
+            </Text>
+            <Text style={[styles.langLabel, isTactical && styles.langLabelTactical, selected && (isTactical ? styles.langLabelSelTactical : styles.langLabelSel)]}>
+              {LOCALE_LABELS[l]}
+            </Text>
             {!ready ? <Text style={styles.langPending}>{t('settings.language.pending')}</Text> : null}
           </Pressable>
         );
       })}
-      <View style={phosphorOverlay.divider} />
-      <Text style={phosphorOverlay.sectionLabel}>{t('settings.section.account')}</Text>
-      <Text style={styles.resetHint}>{t('settings.reset.hint')}</Text>
+      <View style={isTactical ? section.divider : phosphorOverlay.divider} />
+      <Text style={isTactical ? section.sectionLabel : phosphorOverlay.sectionLabel}>
+        {t('settings.section.account')}
+      </Text>
+      <Text style={[styles.resetHint, isTactical && styles.resetHintTactical]}>{t('settings.reset.hint')}</Text>
       <ArcButton label={t('settings.reset.button')} variant="destructive" onPress={onResetAccount} style={styles.resetBtn} />
     </ArcOverlayCard>
   );
@@ -238,6 +275,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: OVERLAY_TOKENS.phosphorBorder,
   },
+  langRowSelTactical: {
+    backgroundColor: TACTICAL_OVERLAY.insetBg,
+    borderWidth: 1,
+    borderColor: TACTICAL_OVERLAY.insetBorder,
+  },
   langCheck: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.md,
@@ -245,13 +287,18 @@ const styles = StyleSheet.create({
     marginRight: SPACING.sm,
   },
   langCheckSel: { color: OVERLAY_TOKENS.phosphorAccent },
+  langCheckSelTactical: { color: TACTICAL_OVERLAY.valueInk },
   langLabel: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.md,
     color: 'rgba(230, 238, 255, 0.8)',
     flex: 1,
   },
+  langLabelTactical: {
+    color: TACTICAL_OVERLAY.labelInk,
+  },
   langLabelSel: { color: OVERLAY_TOKENS.phosphorAccent, fontWeight: FONTS.weight.bold },
+  langLabelSelTactical: { color: TACTICAL_OVERLAY.valueInk, fontWeight: FONTS.weight.bold },
   langPending: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
@@ -262,8 +309,10 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
     color: PHOSPHOR_MUTED,
-    textAlign: 'center',
     marginBottom: SPACING.sm,
+  },
+  resetHintTactical: {
+    color: TACTICAL_OVERLAY.labelInk,
   },
   resetBtn: { alignSelf: 'stretch' },
 });

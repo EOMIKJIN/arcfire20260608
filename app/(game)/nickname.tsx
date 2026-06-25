@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
+import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
 import { useT } from '../../src/i18n';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { getCurrentUser } from '../../src/firebase/auth';
@@ -134,27 +135,27 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xxl,
     fontWeight: FONTS.weight.bold,
-    color: COLORS.ink_dark,
+    color: TF.titleInk,
     letterSpacing: 4,
     marginBottom: SPACING.md,
   },
   subtitle: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.md,
-    color: COLORS.ink_mid,
+    color: TF.midInk,
     textAlign: 'center',
     lineHeight: 22,
   },
   divider: {
     width: '100%',
     height: 1,
-    backgroundColor: COLORS.border,
+    backgroundColor: TF.panelBorder,
     marginVertical: SPACING.xl,
   },
   label: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
-    color: COLORS.ink_light,
+    color: TF.mutedInk,
     alignSelf: 'flex-start',
     marginBottom: SPACING.xs,
     letterSpacing: 1,
@@ -162,21 +163,21 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     borderWidth: 1.5,
-    borderColor: COLORS.border_dark,
+    borderColor: TF.panelBorder,
     borderRadius: 4,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.md,
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.lg,
-    color: COLORS.ink_dark,
-    backgroundColor: COLORS.bg_input,
+    color: TF.titleInk,
+    backgroundColor: TF.inputBg,
     textAlign: 'center',
     letterSpacing: 2,
   },
   hint: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
+    color: TF.mutedInk,
     alignSelf: 'flex-end',
     marginTop: SPACING.xs,
     marginBottom: SPACING.lg,
@@ -184,25 +185,25 @@ const styles = StyleSheet.create({
   btn: {
     width: '100%',
     borderWidth: 1.5,
-    borderColor: COLORS.ink_dark,
+    borderColor: TF.ctaBg,
     borderRadius: 4,
     paddingVertical: SPACING.md,
     alignItems: 'center',
-    backgroundColor: COLORS.ink_dark,
+    backgroundColor: TF.ctaBg,
     marginBottom: SPACING.md,
   },
   btnDisabled: { opacity: 0.3 },
   btnText: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.md,
-    color: COLORS.bg_primary,
+    color: TF.ctaInk,
     fontWeight: FONTS.weight.bold,
     letterSpacing: 2,
   },
   warning: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
+    color: TF.mutedInk,
     textAlign: 'center',
     marginTop: SPACING.md,
   },

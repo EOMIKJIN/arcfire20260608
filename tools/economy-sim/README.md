@@ -35,8 +35,8 @@ Metro reload 또는 재빌드 후 테스트. 동일 `deltaId`는 재ingest하지
 
 ## 스케줄
 
-- GitHub: `.github/workflows/daily-economy-sim.yml` (UTC 06:00 ≈ KST 15:00)
-- 로컬: 작업 스케줄러에서 `npm run sim:economy` (daily-perf-audit README 패턴)
+- GitHub Actions: **자동 cron 없음** (실패 알림 메일 방지). 필요 시 Actions에서 `Daily economy sim` 수동 실행.
+- 로컬: `npm run sim:economy` (김경제 handoff · 일일 배치 전)
 
 ## 전투 layer
 

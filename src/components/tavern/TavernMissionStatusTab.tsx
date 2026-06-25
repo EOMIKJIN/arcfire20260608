@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { COLORS, FONTS, SPACING } from '../../utils/theme';
+import { FONTS, SPACING } from '../../utils/theme';
+import { TACTICAL_FACILITY as TF } from '../../ui/tactical/tacticalFacilityScreenTokens';
 import { useT } from '../../i18n';
 import { useAppSettingsStore } from '../../store/appSettingsStore';
 import { useMissionStore } from '../../store/missionStore';
@@ -14,6 +15,12 @@ import {
   listActiveMissionStatusRows,
   listCompletedMissionStatusRows,
 } from '../../missions/tavernMissionBoard';
+import {
+  PlanetFacilityCardTitleBlock,
+  PlanetFacilitySectionHeader,
+  PlanetFacilityStatusPill,
+  planetFacilityScreenStyles as fs,
+} from '../../ui/planetFacility/PlanetFacilityTitleHeader';
 import type { Mission, MissionProgress } from '../../types';
 
 function resolveMissionTitleText(
@@ -68,27 +75,29 @@ function MissionStatusCard({
     exp: mission.rewards.exp,
   });
 
+  const isComplete = progress.status === 'complete';
+  const badgeLabel = isComplete
+    ? t('tavern.mission.badgeComplete')
+    : isPrimaryActive
+      ? t('tavern.mission.badgeActivePrimary')
+      : t('tavern.mission.badgeActive');
+  const badgeTone = !isComplete && isPrimaryActive ? 'primary' : 'neutral';
+
   return (
-    <View style={styles.card}>
-      <View style={styles.cardTopRow}>
-        <Text style={styles.badge}>
-          {progress.status === 'complete'
-            ? t('tavern.mission.badgeComplete')
-            : isPrimaryActive
-              ? t('tavern.mission.badgeActivePrimary')
-              : t('tavern.mission.badgeActive')}
-        </Text>
+    <View style={fs.stackCard}>
+      <View style={fs.cardTopRow}>
+        <PlanetFacilityStatusPill label={badgeLabel} tone={badgeTone} />
         {progress.completedAt ? (
-          <Text style={styles.timeMeta}>
+          <Text style={fs.cardMeta}>
             {t('tavern.mission.completedAt', {
               date: new Date(progress.completedAt).toLocaleDateString(),
             })}
           </Text>
         ) : null}
       </View>
-      <Text style={styles.cardTitle}>{title}</Text>
-      <Text style={styles.cardBody}>{description}</Text>
-      <Text style={styles.rewardMeta}>{rewardLine}</Text>
+      <PlanetFacilityCardTitleBlock title={title} titleNumberOfLines={2} />
+      <Text style={[fs.cardBody, styles.cardBodyGap]}>{description}</Text>
+      <Text style={[fs.cardMeta, styles.rewardGap]}>{rewardLine}</Text>
       <View style={styles.objectiveList}>
         {mission.objectives.map((objective) => {
           const done = progress.objectives[objective.id] === true;
@@ -124,21 +133,20 @@ export function TavernMissionStatusTab() {
   if (isEmpty) {
     return (
       <View style={styles.emptyWrap}>
-        <Text style={styles.emptyText}>{t('tavern.missionStatus.empty')}</Text>
+        <Text style={fs.empty}>{t('tavern.missionStatus.empty')}</Text>
       </View>
     );
   }
 
   return (
     <View>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{t('tavern.missionStatus.sectionActive')}</Text>
-        <Text style={styles.sectionMeta}>
-          {t('tavern.missionStatus.activeMeta', { count: activeRows.length })}
-        </Text>
-      </View>
+      <PlanetFacilitySectionHeader
+        first
+        title={t('tavern.missionStatus.sectionActive')}
+        meta={t('tavern.missionStatus.activeMeta', { count: activeRows.length })}
+      />
       {activeRows.length === 0 ? (
-        <Text style={styles.sectionEmpty}>{t('tavern.missionStatus.noActive')}</Text>
+        <Text style={fs.sectionEmpty}>{t('tavern.missionStatus.noActive')}</Text>
       ) : (
         activeRows.map((row) => (
           <MissionStatusCard
@@ -150,14 +158,12 @@ export function TavernMissionStatusTab() {
         ))
       )}
 
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{t('tavern.missionStatus.sectionComplete')}</Text>
-        <Text style={styles.sectionMeta}>
-          {t('tavern.missionStatus.completeMeta', { count: completedRows.length })}
-        </Text>
-      </View>
+      <PlanetFacilitySectionHeader
+        title={t('tavern.missionStatus.sectionComplete')}
+        meta={t('tavern.missionStatus.completeMeta', { count: completedRows.length })}
+      />
       {completedRows.length === 0 ? (
-        <Text style={styles.sectionEmpty}>{t('tavern.missionStatus.noComplete')}</Text>
+        <Text style={fs.sectionEmpty}>{t('tavern.missionStatus.noComplete')}</Text>
       ) : (
         completedRows.map((row) => (
           <MissionStatusCard
@@ -173,82 +179,14 @@ export function TavernMissionStatusTab() {
 }
 
 const styles = StyleSheet.create({
-  sectionHeader: {
-    marginBottom: SPACING.sm,
-    marginTop: SPACING.xs,
-    paddingHorizontal: SPACING.xs,
-  },
-  sectionTitle: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_mid,
-  },
-  sectionMeta: {
-    marginTop: 3,
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
-  },
-  sectionEmpty: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_faint,
-    paddingHorizontal: SPACING.xs,
-    marginBottom: SPACING.sm,
-  },
   emptyWrap: {
     paddingVertical: SPACING.lg,
     paddingHorizontal: SPACING.xs,
   },
-  emptyText: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_light,
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: COLORS.bg_panel,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 4,
-    padding: SPACING.md,
-    marginBottom: SPACING.sm,
-  },
-  cardTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  badge: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.info,
-    fontWeight: FONTS.weight.bold,
-  },
-  timeMeta: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_faint,
-  },
-  cardTitle: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_dark,
-    fontWeight: FONTS.weight.bold,
-    marginBottom: 4,
-  },
-  cardBody: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_mid,
-    lineHeight: 18,
+  cardBodyGap: {
     marginBottom: 6,
   },
-  rewardMeta: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
+  rewardGap: {
     marginBottom: 6,
   },
   objectiveList: {
@@ -260,9 +198,9 @@ const styles = StyleSheet.create({
     lineHeight: 17,
   },
   objectiveDone: {
-    color: COLORS.info,
+    color: TF.info,
   },
   objectivePending: {
-    color: COLORS.ink_mid,
+    color: TF.bodyInk,
   },
 });

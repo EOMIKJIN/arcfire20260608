@@ -1,37 +1,56 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, type StyleProp, type ViewStyle } from 'react-native';
 import { COLORS, FONTS, SPACING } from '../../utils/theme';
 import { OVERLAY_TOKENS } from '../../utils/theme';
+import { resolveOverlayVisualTokens } from './overlayVisualTokens';
+import type { ArcOverlayVisualTheme } from './tacticalOverlayRollout';
 import { TACTICAL_OVERLAY } from './tacticalOverlayStyles';
+import { formatArcUniversalButtonLabel } from './arcUniversalButtonLabel';
 
 export type ArcButtonVariant = 'primary' | 'secondary' | 'destructive' | 'panel' | 'cta' | 'tacticalPrimary' | 'tacticalSecondary';
+export type ArcButtonIntent = 'primary' | 'secondary' | 'cta';
 
 type Props = {
   label: string;
   onPress?: () => void;
   variant?: ArcButtonVariant;
+  /** variant 미지정 시 visualTheme + intent 로 자동 결정 */
+  visualTheme?: ArcOverlayVisualTheme;
+  intent?: ArcButtonIntent;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
+  /** 시설 탭 등 좁은 슬롯 — `[라벨]`·패딩 축소·중앙 정렬 */
+  compact?: boolean;
 };
 
 export const ArcButton = memo(function ArcButton({
   label,
   onPress,
-  variant = 'primary',
+  variant,
+  visualTheme,
+  intent = 'primary',
   disabled = false,
   style,
+  compact = false,
 }: Props) {
+  const resolvedVariant = useMemo(() => {
+    if (variant) return variant;
+    if (visualTheme) return resolveOverlayVisualTokens(visualTheme).buttons[intent];
+    return 'primary';
+  }, [variant, visualTheme, intent]);
+
   return (
     <Pressable
       style={({ pressed }) => [
         styles.base,
-        variant === 'primary' && styles.primary,
-        variant === 'secondary' && styles.secondary,
-        variant === 'destructive' && styles.destructive,
-        variant === 'panel' && styles.panel,
-        variant === 'cta' && styles.cta,
-        variant === 'tacticalPrimary' && styles.tacticalPrimary,
-        variant === 'tacticalSecondary' && styles.tacticalSecondary,
+        resolvedVariant === 'primary' && styles.primary,
+        resolvedVariant === 'secondary' && styles.secondary,
+        resolvedVariant === 'destructive' && styles.destructive,
+        resolvedVariant === 'panel' && styles.panel,
+        resolvedVariant === 'cta' && styles.cta,
+        resolvedVariant === 'tacticalPrimary' && styles.tacticalPrimary,
+        resolvedVariant === 'tacticalSecondary' && styles.tacticalSecondary,
+        compact && styles.baseCompact,
         pressed && !disabled && styles.pressed,
         disabled && styles.disabled,
         style,
@@ -43,17 +62,21 @@ export const ArcButton = memo(function ArcButton({
       <Text
         style={[
           styles.textBase,
-          variant === 'primary' && styles.textPrimary,
-          variant === 'secondary' && styles.textSecondary,
-          variant === 'destructive' && styles.textDestructive,
-          variant === 'panel' && styles.textPanel,
-          variant === 'cta' && styles.textCta,
-          variant === 'tacticalPrimary' && styles.textTacticalPrimary,
-          variant === 'tacticalSecondary' && styles.textTacticalSecondary,
+          resolvedVariant === 'primary' && styles.textPrimary,
+          resolvedVariant === 'secondary' && styles.textSecondary,
+          resolvedVariant === 'destructive' && styles.textDestructive,
+          resolvedVariant === 'panel' && styles.textPanel,
+          resolvedVariant === 'cta' && styles.textCta,
+          resolvedVariant === 'tacticalPrimary' && styles.textTacticalPrimary,
+          resolvedVariant === 'tacticalSecondary' && styles.textTacticalSecondary,
+          compact && styles.textCompact,
           disabled && styles.textDisabled,
         ]}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={compact ? 0.72 : 0.85}
       >
-        {label}
+        {formatArcUniversalButtonLabel(label, { compact })}
       </Text>
     </Pressable>
   );
@@ -69,6 +92,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.md,
     minWidth: 72,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  baseCompact: {
+    paddingVertical: SPACING.xs,
+    paddingHorizontal: 4,
+    minWidth: 0,
+    borderWidth: 1,
   },
   primary: {
     borderColor: OVERLAY_TOKENS.phosphorBorder,
@@ -148,5 +178,11 @@ const styles = StyleSheet.create({
   },
   textDisabled: {
     textShadowRadius: 0,
+  },
+  textCompact: {
+    letterSpacing: 0,
+    textAlign: 'center',
+    alignSelf: 'stretch',
+    fontSize: FONTS.size.xs,
   },
 });

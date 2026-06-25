@@ -28,6 +28,7 @@ import {
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
 import { COLORS, FONTS, SPACING, LAYOUT, ZONE_COLORS } from '../../src/utils/theme';
+import { TACTICAL_HUB as TH } from '../../src/ui/tactical/tacticalHubTokens';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { isPlayerShipCombatCapable, resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 import { ArcButton } from '../../src/ui/overlay/ArcButton';
@@ -36,6 +37,7 @@ import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { StageShell } from '../../src/stages/StageShell';
 import {
   PLANET_MAIN_TOPBAR_BORDER_BOTTOM_PX,
+  PLANET_MAIN_TOPBAR_ICON_BORDER_RADIUS,
   PLANET_MAIN_TOPBAR_PADDING_HORIZONTAL,
   PLANET_MAIN_TOPBAR_PADDING_VERTICAL,
 } from '../../src/stages/planetMainStageLayout';
@@ -206,13 +208,6 @@ export default function WorldMapScreen() {
   /** combat/planet replace 시 blur finalize 오작동 방지 */
   const worldmapInternalNavRef = useRef(false);
 
-  const handleReturnToLastHub = useCallback(() => {
-    worldmapInternalNavRef.current = true;
-    markPlanetHubIngressReclaim({ invalidateMemoCaches: true });
-    finalizeGalaxyMapSessionForExit({ persist: true });
-    router.replace('/(game)/planet');
-  }, []);
-
   const handleExitToTitle = useCallback(() => {
     showArcAlert(
       t('planet.exitGameTitle'),
@@ -289,6 +284,31 @@ export default function WorldMapScreen() {
     settleTransitWait(false);
     teardownGalaxyMapScrollFromJs({ scrollX, scrollY, scrollAliveSv });
   }, [scrollX, scrollY, scrollAliveSv, settleTransitWait]);
+
+  /**
+   * worldmap → planet replace 직렬화 — scroll/worklet teardown 후 2×rAF 뒤 navigate.
+   * 즉시 replace 시 freezeOnBlur worldmap의 ShareableWorklet triggerUI SIGSEGV (2026-06-25 vega→arcadia 착륙).
+   */
+  const navigateToPlanetHubAfterTeardown = useCallback((anchorPlanetId: string | null) => {
+    worldmapInternalNavRef.current = true;
+    markPlanetHubIngressReclaim({ invalidateMemoCaches: true });
+    stopGalaxyMapInteractionLoops();
+    releaseWorldmapSessionFloor({ reason: 'route_blur', anchorPlanetId });
+    InteractionManager.runAfterInteractions(() => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (!isMountedRef.current) return;
+          router.replace('/(game)/planet');
+        });
+      });
+    });
+  }, [stopGalaxyMapInteractionLoops]);
+
+  const handleReturnToLastHub = useCallback(() => {
+    finalizeGalaxyMapSessionForExit({ persist: true });
+    const anchor = usePlayerStore.getState().player?.currentPlanetId ?? null;
+    navigateToPlanetHubAfterTeardown(anchor);
+  }, [navigateToPlanetHubAfterTeardown]);
 
   const runScrollTargetOnUi = useCallback((targetX: number, targetY: number) => {
     runOnUI(() => {
@@ -377,13 +397,23 @@ export default function WorldMapScreen() {
           armGalaxyMapScrollGestures();
         });
       });
+      /** combat/planet 복귀 직후 scroll gate 유실 시 1회 재-arm (Heavy UI warm 유지 전제) */
+      const scrollRecoveryTimer = setTimeout(() => {
+        if (!isFocusedRef.current || scrollGesturesArmedRef.current) return;
+        armGalaxyMapScrollGestures();
+      }, 900);
       return () => {
+        clearTimeout(scrollRecoveryTimer);
         enableScrollTask.cancel();
         isFocusedRef.current = false;
         scrollGesturesArmedRef.current = false;
         setMapInteractionReady(false);
         stopGalaxyMapInteractionLoops();
-        releaseWorldmapSessionFloor();
+        // combat/planet replace — route_blur release 시 Heavy UI abort·presentation reset →
+        // 복귀 후 loading…/패널 고착(P1-2, 2026-06-23 감사). navigate 측에서 이미 teardown 한 경우도 skip.
+        if (!worldmapInternalNavRef.current) {
+          releaseWorldmapSessionFloor();
+        }
         if (transitAnimRef.current) {
           transitAnimRef.current.stop();
           transitAnimRef.current = null;
@@ -440,14 +470,15 @@ export default function WorldMapScreen() {
   /** scrollAlive=1 + runOnUI scroll 적용 후에만 SVG·gesture mount — STAGE 겹침 views 폭주 방지 */
   const [mapInteractionReady, setMapInteractionReady] = useState(false);
   const clanWarHydrated = useClanWarFoundationStore((s) => s.hydrated);
-  /** moveToSystem은 currentPlanetId를 null로 두므로, 성계 첫 행성·홈 행성으로 세션 앵커 폴백 */
+  /**
+   * moveToSystem은 currentPlanetId=null — 성계 첫 행성으로 키를 바꾸면
+   * 아르카디아↔베가 이동마다 heavyUi 재로딩·mapInteraction gate 고착(검은 화면).
+   * lastHubPlanetId 앵커로 세션 키를 고정한다 (galaxyMapSessionResume·singlePlanetSessionKeep 정본).
+   */
   const worldmapSessionPlanetId = useMemo(() => {
     if (!player) return null;
-    if (player.currentPlanetId) return player.currentPlanetId;
-    const sysPlanetId = systems[player.currentSystemId]?.planets[0]?.id;
-    if (sysPlanetId) return sysPlanetId;
-    return player.homePlanetId;
-  }, [player?.currentPlanetId, player?.currentSystemId, player?.homePlanetId, systems]);
+    return resolveActivePlanetSessionAnchorId();
+  }, [player?.currentPlanetId, player?.lastHubPlanetId, player?.homePlanetId]);
   const worldmapSessionConfig = useMemo(
     () => (worldmapSessionPlanetId ? createWorldmapScreenSession(worldmapSessionPlanetId) : null),
     [worldmapSessionPlanetId],
@@ -605,9 +636,13 @@ export default function WorldMapScreen() {
         reason: 'system_change',
         previousSystemId: prev,
       });
+      // 성계 전환 직후 스크롤·제스처 gate 복구 — presentation reset 없이 gate만 빠진 경우 대비
+      if (isFocusedRef.current && !scrollGesturesArmedRef.current) {
+        armGalaxyMapScrollGestures();
+      }
     }
     if (cur) prevWorldmapSystemIdRef.current = cur;
-  }, [player?.currentSystemId]);
+  }, [player?.currentSystemId, armGalaxyMapScrollGestures]);
   useEffect(() => {
     setLoadedDeferredTileCount(1);
   }, [deferredTileCount, hiddenUndiscoveredSystems.length]);
@@ -1085,10 +1120,7 @@ export default function WorldMapScreen() {
         landOnPlanet(planet.id);
         await persist();
       }
-      worldmapInternalNavRef.current = true;
-      markPlanetHubIngressReclaim({ invalidateMemoCaches: true });
-      releaseWorldmapSessionFloor({ reason: 'route_blur', anchorPlanetId: planet?.id ?? null });
-      router.replace('/(game)/planet');
+      navigateToPlanetHubAfterTeardown(planet?.id ?? null);
       return;
     }
 
@@ -1109,12 +1141,18 @@ export default function WorldMapScreen() {
     } else {
       doMove(selectedSystem);
     }
-  }, [selectedSystem, player, reachableIds, doMove, landOnPlanet, persist, isMoving, t]);
+  }, [selectedSystem, player, reachableIds, doMove, landOnPlanet, persist, isMoving, t, navigateToPlanetHubAfterTeardown]);
 
   if (!player) return null;
 
   return (
-    <StageShell routeName="worldmap" background="none" edges={['bottom']} key={localeRenderKey}>
+    <StageShell
+      routeName="worldmap"
+      background="none"
+      edges={['bottom']}
+      safeAreaBackgroundColor={COLORS.bg_primary}
+      key={localeRenderKey}
+    >
       <View style={styles.rootColumn}>
       <View style={styles.header}>
         <TouchableOpacity
@@ -1284,7 +1322,7 @@ export default function WorldMapScreen() {
                     ? t('worldmap.btn.land')
                     : t('worldmap.btn.move')
               }
-              variant="cta"
+              variant="tacticalPrimary"
               onPress={handleMove}
               disabled={
                 isMoving ||
@@ -1496,23 +1534,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: PLANET_MAIN_TOPBAR_PADDING_HORIZONTAL,
     paddingVertical: PLANET_MAIN_TOPBAR_PADDING_VERTICAL,
     borderBottomWidth: PLANET_MAIN_TOPBAR_BORDER_BOTTOM_PX,
-    borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.bg_panel,
+    borderBottomColor: TH.chromeBorder,
+    backgroundColor: TH.chromeBg,
   },
-  menuBtn: { padding: SPACING.xs },
-  menuText: { fontFamily: FONTS.mono, fontSize: FONTS.size.sm, color: COLORS.ink_mid },
+  menuBtn: {
+    borderWidth: 1,
+    borderColor: TH.controlBtnBorder,
+    backgroundColor: TH.controlBtnBg,
+    borderRadius: PLANET_MAIN_TOPBAR_ICON_BORDER_RADIUS,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+  },
+  menuText: { fontFamily: FONTS.mono, fontSize: FONTS.size.sm, color: TH.chromeInk },
   headerTitle: {
     flex: 1,
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.md,
     fontWeight: FONTS.weight.bold,
-    color: COLORS.ink_dark,
+    color: TH.chromeInk,
+    letterSpacing: 1.2,
     textAlign: 'center',
   },
   headerSub: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
+    color: TH.miningSummaryInk,
     minWidth: 60,
     textAlign: 'right',
   },
@@ -1528,12 +1574,12 @@ const styles = StyleSheet.create({
   shipTransitIcon: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.lg,
-    color: COLORS.info,
+    color: TH.topBarCurrencyInk,
   },
   panel: {
-    backgroundColor: COLORS.bg_panel,
-    borderTopWidth: 1.5,
-    borderTopColor: COLORS.border_dark,
+    backgroundColor: TH.pilotExpandBg,
+    borderTopWidth: 1,
+    borderTopColor: TH.pilotExpandBorder,
     paddingHorizontal: SPACING.lg,
     paddingVertical: SPACING.md,
   },
@@ -1547,14 +1593,19 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.lg,
     fontWeight: FONTS.weight.bold,
-    color: COLORS.ink_dark,
+    color: TH.pilotValueInk,
   },
   panelZone: { fontFamily: FONTS.mono, fontSize: FONTS.size.xs, marginTop: 2 },
-  panelClose: { fontFamily: FONTS.mono, fontSize: FONTS.size.md, color: COLORS.ink_light, padding: SPACING.xs },
+  panelClose: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.md,
+    color: TH.miningSummaryInk,
+    padding: SPACING.xs,
+  },
   panelDesc: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
-    color: COLORS.ink_mid,
+    color: TH.pilotLabelInk,
     lineHeight: 18,
     marginBottom: SPACING.xs,
   },
@@ -1562,30 +1613,17 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
     fontWeight: FONTS.weight.bold,
-    color: COLORS.gold,
+    color: TH.topBarCurrencyInk,
     marginBottom: SPACING.xs,
   },
   panelClanLine: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: COLORS.ink_mid,
+    color: TH.pilotLabelInk,
     lineHeight: 16,
     marginBottom: SPACING.sm,
   },
   panelActions: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  panelReachable: { fontFamily: FONTS.mono, fontSize: FONTS.size.sm, color: COLORS.ink_mid },
-  moveBtn: {
-    backgroundColor: COLORS.ink_dark,
-    borderRadius: 4,
-    paddingVertical: SPACING.sm,
-    paddingHorizontal: SPACING.lg,
-  },
-  moveBtnDisabled: { backgroundColor: COLORS.border },
-  moveBtnText: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    fontWeight: FONTS.weight.bold,
-    color: COLORS.bg_primary,
-  },
-  panelHint: { fontFamily: FONTS.mono, fontSize: FONTS.size.sm, color: COLORS.ink_faint },
+  panelReachable: { fontFamily: FONTS.mono, fontSize: FONTS.size.sm, color: TH.pilotLabelInk },
+  panelHint: { fontFamily: FONTS.mono, fontSize: FONTS.size.sm, color: TH.miningSummaryInk },
 });

@@ -1,5 +1,11 @@
 import { StyleSheet } from 'react-native';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
+import { TACTICAL_OVERLAY } from '../tacticalOverlayStyles';
+import {
+  PLANET_INFO_DESCRIPTION_BLOCK_HEIGHT_PX,
+  PLANET_INFO_DESCRIPTION_LINE_HEIGHT_PX,
+  OVERLAY_PANEL_LIST_ITEM_GAP_PX,
+} from '../overlayPanelLayout';
 
 export const planetDevelopmentOverlayStyles = StyleSheet.create({
   hint: {
@@ -8,6 +14,10 @@ export const planetDevelopmentOverlayStyles = StyleSheet.create({
     fontSize: FONTS.size.xs,
     textAlign: 'center',
     opacity: 0.8,
+  },
+  /** 목록 상단 — bodyPanel paddingTop 과 중복 제거 */
+  hintListLead: {
+    marginTop: 0,
   },
   section: {
     marginTop: SPACING.sm,
@@ -37,11 +47,22 @@ export const planetDevelopmentOverlayStyles = StyleSheet.create({
     color: OVERLAY_TOKENS.valueContentColor,
   },
   listItem: {
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.md,
+    marginBottom: OVERLAY_PANEL_LIST_ITEM_GAP_PX,
+  },
+  /** 항목 카드 외곽 — 구분선 뚜렷 (본문 텍스트 박스와 별도) */
+  listItemTactical: {
+    borderWidth: 1,
+    borderColor: TACTICAL_OVERLAY.cardBorder,
+    borderRadius: 6,
+    backgroundColor: TACTICAL_OVERLAY.cardBg,
+  },
+  listItemPhosphor: {
     borderWidth: 1,
     borderColor: OVERLAY_TOKENS.phosphorBorder,
     borderRadius: 4,
-    padding: SPACING.md,
-    marginBottom: SPACING.sm,
+    backgroundColor: 'transparent',
   },
   listItemPressed: {
     opacity: 0.85,
@@ -72,12 +93,18 @@ export const planetDevelopmentOverlayStyles = StyleSheet.create({
     width: 72,
     height: 72,
     borderWidth: 1,
-    borderColor: OVERLAY_TOKENS.phosphorBorder,
     borderRadius: 4,
-    backgroundColor: 'rgba(8, 18, 32, 0.55)',
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
+  },
+  listItemImageSlotTactical: {
+    borderColor: TACTICAL_OVERLAY.cardBorder,
+    backgroundColor: TACTICAL_OVERLAY.insetBg,
+  },
+  listItemImageSlotPhosphor: {
+    borderColor: OVERLAY_TOKENS.phosphorBorder,
+    backgroundColor: 'rgba(8, 18, 32, 0.55)',
   },
   listItemImagePlaceholder: {
     fontSize: 28,
@@ -88,25 +115,22 @@ export const planetDevelopmentOverlayStyles = StyleSheet.create({
     minWidth: 0,
   },
   listItemSummary: {
-    marginTop: 4,
-    minHeight: 48,
+    marginTop: SPACING.sm,
+    minHeight: PLANET_INFO_DESCRIPTION_BLOCK_HEIGHT_PX - SPACING.sm,
+    maxHeight: PLANET_INFO_DESCRIPTION_BLOCK_HEIGHT_PX - SPACING.sm,
     fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    lineHeight: 16,
+    fontSize: FONTS.size.sm,
+    lineHeight: PLANET_INFO_DESCRIPTION_LINE_HEIGHT_PX,
     opacity: 0.88,
   },
   listItemComingSoonBadge: {
     opacity: 0.72,
   },
   listItemStatusComplete: {
-    marginTop: SPACING.xs,
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
     fontWeight: FONTS.weight.bold,
     opacity: 0.95,
-  },
-  listItemProgressBlock: {
-    marginTop: SPACING.xs,
   },
   listItemProgressLabel: {
     marginBottom: 4,
@@ -122,6 +146,23 @@ export const planetDevelopmentOverlayStyles = StyleSheet.create({
   },
   levelRowActive: {
     backgroundColor: 'rgba(53,208,255,0.08)',
+  },
+  levelRowActiveTactical: {
+    backgroundColor: TACTICAL_OVERLAY.insetBg,
+  },
+  levelRowTactical: {
+    borderBottomColor: TACTICAL_OVERLAY.rowDivider,
+  },
+  levelRowTitleTactical: {
+    color: TACTICAL_OVERLAY.valueInk,
+  },
+  levelRowMetaTactical: {
+    color: TACTICAL_OVERLAY.labelInk,
+    opacity: 1,
+  },
+  hintTactical: {
+    color: TACTICAL_OVERLAY.labelInk,
+    opacity: 0.9,
   },
   levelRowTitle: {
     fontFamily: FONTS.mono,

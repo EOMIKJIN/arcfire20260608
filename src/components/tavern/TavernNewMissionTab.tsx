@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { COLORS, FONTS, SPACING } from '../../utils/theme';
+import { StyleSheet, Text, View } from 'react-native';
+import { FONTS, SPACING } from '../../utils/theme';
 import { useT } from '../../i18n';
 import { useAppSettingsStore } from '../../store/appSettingsStore';
 import { useMissionStore, type AcceptInstanceMissionResult } from '../../store/missionStore';
@@ -15,6 +15,12 @@ import {
   listTavernInstanceMissionOffers,
   type InstanceMissionOfferState,
 } from '../../missions/tavernMissionBoard';
+import {
+  PlanetFacilityCardTitleBlock,
+  PlanetFacilitySectionHeader,
+  planetFacilityScreenStyles as fs,
+} from '../../ui/planetFacility/PlanetFacilityTitleHeader';
+import { ArcButton } from '../../ui/overlay/ArcButton';
 import type { Mission } from '../../types';
 
 type TavernNewMissionTabProps = {
@@ -103,36 +109,33 @@ function InstanceMissionCard({
   }, [acceptInstanceMission, mission.id, planetId, playerLevel, t, title]);
 
   return (
-    <View style={styles.card}>
-      <View style={styles.cardTopRow}>
-        <Text style={styles.badge}>{stateBadgeLabel(state, t)}</Text>
-        <Text style={styles.levelMeta}>
+    <View style={fs.stackCard}>
+      <View style={fs.cardTopRow}>
+        <Text style={fs.cardBadge}>{stateBadgeLabel(state, t)}</Text>
+        <Text style={fs.cardMeta}>
           {t('tavern.newMissions.levelRequired', { level: mission.levelRequired ?? 1 })}
         </Text>
       </View>
-      <Text style={styles.cardTitle}>{title}</Text>
+      <PlanetFacilityCardTitleBlock title={title} titleNumberOfLines={2} />
       {captain ? (
-        <Text style={styles.clientMeta}>
+        <Text style={[fs.cardMeta, styles.clientMeta]}>
           {t('tavern.newMissions.client', { name: captain.displayName, rank: captain.rank })}
         </Text>
       ) : null}
-      <Text style={styles.cardBody}>{description}</Text>
-      <Text style={styles.rewardMeta}>
+      <Text style={[fs.cardBody, styles.cardBodyGap]}>{description}</Text>
+      <Text style={[fs.cardMeta, styles.rewardGap]}>
         {t('tavern.mission.rewardLine', {
           credits: formatCredits(mission.rewards.credits, { suffix: true }),
           exp: mission.rewards.exp,
         })}
       </Text>
-      <TouchableOpacity
-        style={[styles.acceptBtn, !canAccept && styles.acceptBtnDisabled]}
+      <ArcButton
+        label={canAccept ? t('tavern.newMissions.accept') : t('tavern.newMissions.acceptUnavailable')}
+        variant={canAccept ? 'tacticalPrimary' : 'tacticalSecondary'}
         disabled={!canAccept}
-        activeOpacity={0.75}
         onPress={handleAccept}
-      >
-        <Text style={[styles.acceptBtnText, !canAccept && styles.acceptBtnTextDisabled]}>
-          {canAccept ? t('tavern.newMissions.accept') : t('tavern.newMissions.acceptUnavailable')}
-        </Text>
-      </TouchableOpacity>
+        style={styles.acceptBtn}
+      />
     </View>
   );
 }
@@ -149,19 +152,16 @@ export function TavernNewMissionTab({ planetId, playerLevel }: TavernNewMissionT
   if (!planetId) {
     return (
       <View style={styles.emptyWrap}>
-        <Text style={styles.emptyText}>{t('tavern.newMissions.noPlanet')}</Text>
+        <Text style={fs.empty}>{t('tavern.newMissions.noPlanet')}</Text>
       </View>
     );
   }
 
   return (
     <View>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{t('tavern.newMissions.sectionTitle')}</Text>
-        <Text style={styles.sectionMeta}>{meta}</Text>
-      </View>
+      <PlanetFacilitySectionHeader first title={t('tavern.newMissions.sectionTitle')} meta={meta} />
       {offers.length === 0 ? (
-        <Text style={styles.emptyText}>{t('tavern.newMissions.empty')}</Text>
+        <Text style={fs.sectionEmpty}>{t('tavern.newMissions.empty')}</Text>
       ) : (
         offers.map((row) => (
           <InstanceMissionCard
@@ -178,103 +178,22 @@ export function TavernNewMissionTab({ planetId, playerLevel }: TavernNewMissionT
 }
 
 const styles = StyleSheet.create({
-  sectionHeader: {
-    marginBottom: SPACING.sm,
-    paddingHorizontal: SPACING.xs,
-  },
-  sectionTitle: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_mid,
-  },
-  sectionMeta: {
-    marginTop: 3,
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
-  },
   emptyWrap: {
     paddingVertical: SPACING.lg,
     paddingHorizontal: SPACING.xs,
   },
-  emptyText: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_light,
-    textAlign: 'center',
-    paddingHorizontal: SPACING.xs,
-  },
-  card: {
-    backgroundColor: COLORS.bg_panel,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 4,
-    padding: SPACING.md,
-    marginBottom: SPACING.sm,
-  },
-  cardTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  badge: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.info,
-    fontWeight: FONTS.weight.bold,
-  },
-  levelMeta: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_faint,
-  },
-  cardTitle: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_dark,
-    fontWeight: FONTS.weight.bold,
-    marginBottom: 4,
-  },
   clientMeta: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
     marginBottom: 4,
   },
-  cardBody: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_mid,
-    lineHeight: 18,
+  cardBodyGap: {
     marginBottom: 6,
   },
-  rewardMeta: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
+  rewardGap: {
     marginBottom: SPACING.sm,
   },
   acceptBtn: {
     alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: COLORS.border_dark,
-    borderRadius: 4,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 6,
-    backgroundColor: COLORS.bg_secondary,
-  },
-  acceptBtnDisabled: {
-    opacity: 0.45,
-    backgroundColor: COLORS.bg_panel,
-  },
-  acceptBtnText: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_dark,
-    fontWeight: FONTS.weight.bold,
-  },
-  acceptBtnTextDisabled: {
-    color: COLORS.ink_light,
+    minHeight: 36,
+    paddingVertical: SPACING.xs,
   },
 });

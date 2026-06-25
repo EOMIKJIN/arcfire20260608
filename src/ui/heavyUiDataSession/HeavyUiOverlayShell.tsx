@@ -1,11 +1,12 @@
 import React, { memo, type ReactNode } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useT } from '../../i18n';
-import { FONTS, OVERLAY_TOKENS, SPACING } from '../../utils/theme';
+import { FONTS, SPACING } from '../../utils/theme';
 import { ArcOverlayCard, type ArcOverlayCardLayout } from '../overlay/ArcOverlayCard';
 import { ArcOverlayFooterActions } from '../overlay/ArcOverlayFooterActions';
 import { ArcButton } from '../overlay/ArcButton';
 import type { ArcOverlayVisualTheme } from '../overlay/tacticalOverlayPreview';
+import { resolveOverlayVisualTokens } from '../overlay/overlayVisualTokens';
 import type { HeavyUiLoadPhase, HeavyUiPreflightCode } from './types';
 
 type Props = {
@@ -46,8 +47,7 @@ export const HeavyUiOverlayShell = memo(function HeavyUiOverlayShell({
   bodyStyle,
 }: Props) {
   const t = useT();
-  const PH = OVERLAY_TOKENS.phosphorAccent;
-  const isTactical = visualTheme === 'tactical';
+  const tokens = resolveOverlayVisualTokens(visualTheme);
 
   const defaultFooter = (
     <ArcOverlayFooterActions
@@ -63,12 +63,14 @@ export const HeavyUiOverlayShell = memo(function HeavyUiOverlayShell({
       phase === 'error' ? (
         <View style={styles.errorFooter}>
           <ArcButton
-            variant={isTactical ? 'tacticalPrimary' : 'primary'}
+            visualTheme={visualTheme}
+            intent="primary"
             label={t('heavyUi.retry')}
             onPress={onRetry}
           />
           <ArcButton
-            variant={isTactical ? 'tacticalSecondary' : 'secondary'}
+            visualTheme={visualTheme}
+            intent="secondary"
             label={t('heavyUi.close')}
             onPress={onClose}
           />
@@ -100,8 +102,8 @@ export const HeavyUiOverlayShell = memo(function HeavyUiOverlayShell({
         }
       >
         <View style={styles.center}>
-          <ActivityIndicator color={PH} size="small" />
-          <Text style={[styles.status, { color: PH }]}>{t('heavyUi.loading')}</Text>
+          <ActivityIndicator color={tokens.spinnerInk} size="small" />
+          <Text style={[styles.status, { color: tokens.spinnerInk }]}>{t('heavyUi.loading')}</Text>
         </View>
       </ArcOverlayCard>
     );
@@ -124,8 +126,8 @@ export const HeavyUiOverlayShell = memo(function HeavyUiOverlayShell({
         footer={resolvedFooter}
       >
         <View style={styles.center}>
-          <Text style={[styles.errorTitle, { color: PH }]}>{t('heavyUi.errorTitle')}</Text>
-          <Text style={[styles.errorBody, { color: PH }]}>{detail}</Text>
+          <Text style={[styles.errorTitle, { color: tokens.spinnerInk }]}>{t('heavyUi.errorTitle')}</Text>
+          <Text style={[styles.errorBody, { color: tokens.spinnerInk }]}>{detail}</Text>
         </View>
       </ArcOverlayCard>
     );

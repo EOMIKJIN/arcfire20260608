@@ -4,7 +4,7 @@
 // ============================================================
 
 import React, { memo, useCallback, useEffect } from 'react';
-import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SPACING, OVERLAY_TOKENS } from '../../utils/theme';
 import { useArcOverlayStore } from './arcOverlayStore';
@@ -24,9 +24,9 @@ import { PlanetDevelopmentOverlayContent } from './content/PlanetDevelopmentOver
 import { WaveResultOverlayContent } from './content/WaveResultOverlayContent';
 import { SettingsOverlayContent } from './content/SettingsOverlayContent';
 import { BmShopOverlayContent } from './content/BmShopOverlayContent';
+import { NearbyPresenceInfoOverlayContent } from './content/NearbyPresenceInfoOverlayContent';
 
 export const ArcOverlayHost = memo(function ArcOverlayHost() {
-  const { width: winW, height: winH } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const edges = resolveOverlayEdgeInsets(insets);
   const entry = useArcOverlayStore((s) => {
@@ -122,9 +122,12 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
   const isNarrative = entry.kind === 'narrative';
   const isBottomNarrative = isNarrative && entry.anchor === 'bottom';
   const isBlocking = entry.kind === 'blocking';
-  const isTopAnchoredPanel = entry.kind === 'planetEconomyInfo';
+  const isTopAnchoredPanel = chrome.hostAnchor === 'top';
+  const backdropClear = chrome.backdrop === 'transparent';
+  /** 인게임 대사 — 전체 딤·backdrop 터치·elevation 없음 (시설 화면 그대로 노출) */
+  const isPassthroughNarrative = isNarrative && backdropClear;
   const bottomPad = isBottomNarrative ? resolveOverlayBottomAnchorPad(insets, SPACING.md) : 0;
-  const overlayHorizontalPad = isBottomNarrative
+  const overlayHorizontalPad = isNarrative
     ? NARRATIVE_DIALOG_LAYOUT.hostHorizontalPadPx
     : SPACING.lg;
   const contentSlotStyle = isBottomNarrative
@@ -133,28 +136,66 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
       ? styles.narrativeCenterSlot
       : styles.centerSlot;
 
+  const narrativeContent =
+    entry.kind === 'narrative' ? (
+      <View pointerEvents="auto" style={isPassthroughNarrative ? styles.passthroughNarrativeTouch : undefined}>
+        <NarrativeOverlayContent entry={entry} onPressNext={handleNarrativeNext} />
+      </View>
+    ) : null;
+
+  if (isPassthroughNarrative) {
+    const passthroughWrapStyle = isBottomNarrative ? styles.bottomWrap : styles.centerWrap;
+    return (
+      <View
+        style={[styles.passthroughOverlay, { zIndex: chrome.zIndex }]}
+        pointerEvents="box-none"
+        collapsable={false}
+      >
+        <View
+          style={[
+            styles.overlayContentFrame,
+            {
+              paddingBottom: bottomPad,
+              paddingLeft: overlayHorizontalPad + edges.left,
+              paddingRight: overlayHorizontalPad + edges.right,
+            },
+          ]}
+          pointerEvents="box-none"
+        >
+          <View style={passthroughWrapStyle} pointerEvents="box-none">
+            <View style={contentSlotStyle} pointerEvents="box-none">
+              {narrativeContent}
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  const contentFramePad = {
+    paddingTop: isPassthroughNarrative ? 0 : SPACING.sm + edges.top,
+    paddingBottom: isBottomNarrative ? bottomPad : SPACING.sm + edges.bottom,
+    paddingLeft: overlayHorizontalPad + edges.left,
+    paddingRight: overlayHorizontalPad + edges.right,
+  };
+
   return (
     <View
       style={[
-        styles.overlay,
-        {
-          width: winW,
-          height: winH,
-          backgroundColor: chrome.backdrop,
-          zIndex: chrome.zIndex,
-          paddingTop: SPACING.sm + edges.top,
-          paddingBottom: isBottomNarrative ? bottomPad : SPACING.sm + edges.bottom,
-          paddingLeft: overlayHorizontalPad + edges.left,
-          paddingRight: overlayHorizontalPad + edges.right,
-        },
+        styles.overlayRoot,
+        { zIndex: chrome.zIndex },
+        isPassthroughNarrative ? { elevation: 0 } : null,
       ]}
       pointerEvents={isBlocking ? 'auto' : 'box-none'}
       collapsable={false}
     >
-      <Pressable
-        style={styles.backdropTouch}
-        onPress={isBlocking ? undefined : handleBackdrop}
-      />
+      {!isPassthroughNarrative ? (
+        <Pressable
+          style={[styles.backdropFill, { backgroundColor: chrome.backdrop }]}
+          onPress={isBlocking ? undefined : handleBackdrop}
+        />
+      ) : null}
+      <View style={[styles.overlayContentFrame, contentFramePad]} pointerEvents="box-none">
       <View
         style={[
           isBottomNarrative ? styles.bottomWrap : styles.centerWrap,
@@ -173,9 +214,7 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
         {entry.kind === 'reward' ? (
           <RewardOverlayContent entry={entry} onClose={handleRewardClose} />
         ) : null}
-        {entry.kind === 'narrative' ? (
-          <NarrativeOverlayContent entry={entry} onPressNext={handleNarrativeNext} />
-        ) : null}
+        {narrativeContent}
         {entry.kind === 'blocking' ? <BlockingOverlayContent entry={entry} /> : null}
         {entry.kind === 'tradeQuantity' ? (
           <TradeQuantityOverlayContent
@@ -199,19 +238,37 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
         {entry.kind === 'bmShop' ? (
           <BmShopOverlayContent entry={entry} onClose={dismiss} />
         ) : null}
+        {entry.kind === 'nearbyPresenceInfo' ? (
+          <NearbyPresenceInfoOverlayContent entry={entry} onClose={dismiss} />
+        ) : null}
         </View>
+      </View>
       </View>
     </View>
   );
 });
 
 const styles = StyleSheet.create({
-  overlay: {
+  /** 전체 화면 루트 — winH 고정 금지(하단 딤 누락 방지) */
+  overlayRoot: {
     ...StyleSheet.absoluteFillObject,
     elevation: 50,
   },
-  backdropTouch: {
+  /** 패널·알림 딤 — padding과 분리해 화면 전체 채움 */
+  backdropFill: {
     ...StyleSheet.absoluteFillObject,
+  },
+  overlayContentFrame: {
+    flex: 1,
+  },
+  /** narrative transparent — 전체 딤·그림자 없음 */
+  passthroughOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    elevation: 0,
+    backgroundColor: 'transparent',
+  },
+  passthroughNarrativeTouch: {
+    alignSelf: 'stretch',
   },
   centerWrap: {
     flex: 1,
@@ -244,7 +301,8 @@ const styles = StyleSheet.create({
   },
   narrativeCenterSlot: {
     width: '100%',
-    alignSelf: 'stretch',
+    maxWidth: '100%',
+    alignSelf: 'center',
     flexShrink: 0,
   },
   narrativeCenterWrap: {

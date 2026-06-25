@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import {
   Image,
   Platform,
@@ -10,6 +10,9 @@ import {
 import { TypewriterText } from '../../components/TypewriterText';
 import { COLORS, FONTS, OVERLAY_TOKENS, SPACING } from '../../utils/theme';
 import { ArcButton } from './ArcButton';
+import type { ArcOverlayVisualTheme } from './tacticalOverlayRollout';
+import { resolveOverlayVisualTokens } from './overlayVisualTokens';
+import { TACTICAL_OVERLAY } from './tacticalOverlayStyles';
 import {
   NARRATIVE_DIALOG_LAYOUT,
   narrativeDialogTextBlockHeight,
@@ -30,6 +33,7 @@ export type NarrativeDialogRowProps = {
   onPressNext?: () => void;
   /** false — intro 등 화면 하단 버튼이 진행을 담당할 때 */
   showActionButton?: boolean;
+  visualTheme?: ArcOverlayVisualTheme;
 };
 
 const androidTextFix = Platform.OS === 'android' ? { includeFontPadding: false } : null;
@@ -47,21 +51,42 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
   nextDisabled = false,
   onPressNext,
   showActionButton = true,
+  visualTheme = 'phosphor',
 }: NarrativeDialogRowProps) {
+  const ink = useMemo(() => resolveOverlayVisualTokens(visualTheme), [visualTheme]);
+  const isTactical = visualTheme === 'tactical';
   const portraitTransform = portraitScale !== 1 ? [{ scale: portraitScale }] : undefined;
   const textBlockHeight = narrativeDialogTextBlockHeight(maxLines);
 
   return (
-    <View style={styles.row}>
+    <View
+      style={[
+        styles.row,
+        isTactical
+          ? { borderColor: TACTICAL_OVERLAY.cardBorder, backgroundColor: TACTICAL_OVERLAY.cardBg }
+          : null,
+      ]}
+    >
       {imageSource ? (
-        <View style={[styles.portraitCard, portraitTransform ? { transform: portraitTransform } : null]}>
+        <View
+          style={[
+            styles.portraitCard,
+            isTactical ? { backgroundColor: TACTICAL_OVERLAY.insetBg } : null,
+            portraitTransform ? { transform: portraitTransform } : null,
+          ]}
+        >
           <Image source={imageSource} style={styles.portrait} resizeMode="contain" />
         </View>
       ) : (
-        <View style={styles.portraitPlaceholder} />
+        <View
+          style={[
+            styles.portraitPlaceholder,
+            isTactical ? { backgroundColor: TACTICAL_OVERLAY.insetBg } : null,
+          ]}
+        />
       )}
       <View style={styles.hud}>
-        <Text style={styles.label} numberOfLines={1}>
+        <Text style={[styles.label, { color: ink.accentInk }]} numberOfLines={1}>
           {label}
         </Text>
         <View style={[styles.textSlot, { minHeight: textBlockHeight }]}>
@@ -70,14 +95,15 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
             text={text}
             speed={Math.max(1, typewriterSpeedMs)}
             onComplete={onTextComplete}
-            style={styles.text}
+            style={{ ...styles.text, color: isTactical ? ink.valueInk : COLORS.ink_dark }}
           />
         </View>
         {showActionButton ? (
           <View style={styles.footer}>
             <ArcButton
               label={buttonText}
-              variant="primary"
+              visualTheme={visualTheme}
+              intent="primary"
               disabled={nextDisabled}
               onPress={onPressNext}
               style={styles.nextBtn}
@@ -135,6 +161,7 @@ const styles = StyleSheet.create({
     lineHeight: labelLineHeight,
     color: OVERLAY_TOKENS.phosphorAccent,
     marginBottom: SPACING.xs,
+    textAlign: NARRATIVE_DIALOG_LAYOUT.textAlign,
     ...androidTextFix,
   },
   textSlot: {
@@ -151,6 +178,7 @@ const styles = StyleSheet.create({
     fontSize: FONTS.size.md,
     color: COLORS.ink_dark,
     lineHeight,
+    textAlign: NARRATIVE_DIALOG_LAYOUT.textAlign,
     ...androidTextFix,
   },
   footer: {

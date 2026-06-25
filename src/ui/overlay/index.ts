@@ -4,9 +4,17 @@ export { ArcOverlayFooterActions } from './ArcOverlayFooterActions';
 export { ArcOverlayHost } from './ArcOverlayHost';
 export { LevelUpOverlayBridge } from './LevelUpOverlayBridge';
 export { ArcButton } from './ArcButton';
-export type { ArcButtonVariant } from './ArcButton';
+export type { ArcButtonVariant, ArcButtonIntent } from './ArcButton';
+export {
+  resolveOverlayVisualTokens,
+  resolveOverlayArcButtonVariants,
+  overlayInkColor,
+} from './overlayVisualTokens';
+export { resolveOverlayPanelTitles } from './overlayPanelTitles';
 export { resolveOverlayEdgeInsets, resolveOverlayBottomAnchorPad } from './overlayInsets';
 export { getOverlayChrome, OVERLAY_Z, OVERLAY_BACKDROP } from './overlayChrome';
+export type { OverlayHostAnchor } from './overlayChrome';
+export { useOverlayPanelChrome } from './useOverlayPanelChrome';
 export {
   showArcOverlayAlert,
   showArcOverlayReward,

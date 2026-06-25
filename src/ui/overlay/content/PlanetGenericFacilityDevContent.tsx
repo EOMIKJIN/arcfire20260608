@@ -6,11 +6,13 @@ import { PlanetHubDigitalGauge } from '../../../components/planet/PlanetHubActio
 import { formatCredits } from '../../../utils/formatCredits';
 import { showArcAlert } from '../../../utils/showArcAlert';
 import { useT } from '../../../i18n';
-import { OVERLAY_TOKENS } from '../../../utils/theme';
 import { ArcButton } from '../ArcButton';
 import { ArcOverlayCard } from '../ArcOverlayCard';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
+import { overlayInkColor } from '../overlayVisualTokens';
+import { resolveArcOverlayVisualTheme, type ArcOverlayVisualTheme } from '../tacticalOverlayRollout';
+import { PlanetDevHintText, PlanetDevSectionBar, PlanetDevSummaryInset } from './PlanetDevOverlayChrome';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
 import {
   HeavyUiOverlayShell,
@@ -42,7 +44,11 @@ type Props = PlanetDevelopmentModuleContext & {
   moduleId: string;
   i18nPrefix: string;
   api: FacilityDevApi;
-  renderExtraStats?: (snapshot: GenericFacilityDevSnapshot, currentRow: LevelRow | null) => React.ReactNode;
+  renderExtraStats?: (
+    snapshot: GenericFacilityDevSnapshot,
+    currentRow: LevelRow | null,
+    visualTheme: ArcOverlayVisualTheme,
+  ) => React.ReactNode;
   renderLevelMeta?: (row: LevelRow) => string;
 };
 
@@ -51,6 +57,7 @@ type ReadyProps = Props & { data: FacilityDevSessionData };
 const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevReady({
   planetId,
   planetName,
+  moduleId,
   canManageDevelopment,
   onBack,
   onClose,
@@ -61,7 +68,11 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
   data,
 }: ReadyProps) {
   const t = useT();
-  const PH = OVERLAY_TOKENS.phosphorAccent;
+  const visualTheme = resolveArcOverlayVisualTheme('planetDevelopment');
+  const isTactical = visualTheme === 'tactical';
+  const moduleSummaryKey = `planetDev.summary.${moduleId}`;
+  const moduleSummaryRaw = t(moduleSummaryKey);
+  const moduleSummary = moduleSummaryRaw === moduleSummaryKey ? '' : moduleSummaryRaw;
   const { snapshot, currentRow, levelRows } = data;
   const nextDurationLabel = snapshot.nextUpgradeDurationSec != null
     ? api.formatDurationLabel(snapshot.nextUpgradeDurationSec)
@@ -134,7 +145,8 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
         {!snapshot.installed && !snapshot.isInstalling ? (
           <ArcButton
             label={t(`${i18nPrefix}.installBtn`, { cost: formatCredits(snapshot.installCost, { suffix: true }) })}
-            variant="cta"
+            visualTheme={visualTheme}
+            intent="cta"
             disabled={!canManageDevelopment || !snapshot.canInstall}
             onPress={handlePressInstall}
           />
@@ -148,7 +160,8 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
                 cost: formatCredits(snapshot.nextUpgradeCost ?? 0, { suffix: true }),
                 duration: nextDurationLabel,
               })}
-              variant="primary"
+              visualTheme={visualTheme}
+              intent="primary"
               disabled={!canManageDevelopment || !snapshot.canStartUpgrade}
               onPress={handleStartUpgrade}
             />
@@ -157,7 +170,8 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
                 to: snapshot.nextTargetLevel,
                 cost: formatCredits((snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0), { suffix: true }),
               })}
-              variant="secondary"
+              visualTheme={visualTheme}
+              intent="secondary"
               disabled={!canManageDevelopment || !snapshot.canInstantUpgradeNext}
               onPress={handleInstantNext}
             />
@@ -168,7 +182,8 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
             label={t(`${i18nPrefix}.instantCompleteBtn`, {
               cost: formatCredits(snapshot.nextInstantCost ?? 0, { suffix: true }),
             })}
-            variant="cta"
+            visualTheme={visualTheme}
+            intent="cta"
             disabled={!snapshot.canInstantComplete}
             onPress={handleInstantComplete}
           />
@@ -179,13 +194,25 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
         onConfirm={onClose}
         cancelLabel={t(`${i18nPrefix}.backToList`)}
         confirmLabel={t(`${i18nPrefix}.close`)}
+        visualTheme={visualTheme}
       />
     </View>
   );
 
   return (
-    <ArcOverlayCard title={t(`${i18nPrefix}.title`)} subtitle={planetName} layout="panel" footer={footer}>
-      <Text style={[styles.section, { color: PH }]}>{t(`${i18nPrefix}.status`)}</Text>
+    <ArcOverlayCard
+      title={t(`${i18nPrefix}.title`)}
+      subtitle={planetName}
+      layout="panel"
+      panelPrefix={moduleSummary ? <PlanetDevSummaryInset text={moduleSummary} visualTheme={visualTheme} /> : undefined}
+      footer={footer}
+      visualTheme={visualTheme}
+    >
+      <PlanetDevSectionBar
+        label={t(`${i18nPrefix}.status`)}
+        visualTheme={visualTheme}
+        leadSection={!moduleSummary}
+      />
       <ArcOverlayInfoRow
         label={t(`${i18nPrefix}.stateLabel`)}
         value={
@@ -195,25 +222,27 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
               : t(`${i18nPrefix}.stateInstalled`, { level: snapshot.level }))
             : t(`${i18nPrefix}.stateNotInstalled`)
         }
+        visualTheme={visualTheme}
       />
       {snapshot.isCsvWorldBaseline ? (
-        <Text style={[styles.hint, { color: PH }]}>{t('planetDev.worldBuiltHint')}</Text>
+        <PlanetDevHintText visualTheme={visualTheme}>{t('planetDev.worldBuiltHint')}</PlanetDevHintText>
       ) : null}
       {!snapshot.installed && snapshot.requiresInstallVictory && !snapshot.hasInstallVictory ? (
         <ArcOverlayInfoRow
           label={t('planetDev.victoryPrereqLabel')}
           value={t('planetDev.installCombatVictoryRequired')}
+          visualTheme={visualTheme}
         />
       ) : null}
-      {renderExtraStats?.(snapshot, currentRow)}
+      {renderExtraStats?.(snapshot, currentRow, visualTheme)}
       {snapshot.isInstalling ? (
         <View style={styles.gaugeBlock}>
-          <Text style={[styles.section, { color: PH }]}>{t('planetDev.installProgress')}</Text>
-          <Text style={[styles.hint, { color: OVERLAY_TOKENS.valueContentColor }]}>
+          <PlanetDevSectionBar label={t('planetDev.installProgress')} visualTheme={visualTheme} />
+          <PlanetDevHintText visualTheme={visualTheme} variant="body">
             {snapshot.installDurationSec != null
               ? api.formatDurationLabel(snapshot.installDurationSec)
               : '—'}
-          </Text>
+          </PlanetDevHintText>
           <PlanetHubDigitalGauge
             progressPct={snapshot.upgradeProgressPct}
             accessibilityLabel={t('planetDev.installProgressA11y', { pct: snapshot.upgradeProgressPct })}
@@ -222,28 +251,41 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
       ) : null}
       {snapshot.isUpgrading ? (
         <View style={styles.gaugeBlock}>
-          <Text style={[styles.section, { color: PH }]}>{t(`${i18nPrefix}.upgradeProgress`)}</Text>
-          <Text style={[styles.hint, { color: OVERLAY_TOKENS.valueContentColor }]}>
+          <PlanetDevSectionBar label={t(`${i18nPrefix}.upgradeProgress`)} visualTheme={visualTheme} />
+          <PlanetDevHintText visualTheme={visualTheme} variant="body">
             Lv.{snapshot.level} → Lv.{snapshot.upgradeJob?.targetLevel ?? '?'}
-          </Text>
+          </PlanetDevHintText>
           <PlanetHubDigitalGauge
             progressPct={snapshot.upgradeProgressPct}
             accessibilityLabel={t(`${i18nPrefix}.upgradeProgressA11y`, { pct: snapshot.upgradeProgressPct })}
           />
         </View>
       ) : null}
-      <Text style={[styles.section, { color: PH }]}>{t(`${i18nPrefix}.levelStats`)}</Text>
+      <PlanetDevSectionBar label={t(`${i18nPrefix}.levelStats`)} visualTheme={visualTheme} />
       {levelRows.map((row) => (
         <View
           key={row.level}
-          style={[styles.levelRow, row.level === snapshot.level ? styles.levelRowActive : null]}
+          style={[
+            styles.levelRow,
+            isTactical && styles.levelRowTactical,
+            row.level === snapshot.level
+              ? (isTactical ? styles.levelRowActiveTactical : styles.levelRowActive)
+              : null,
+          ]}
         >
-          <Text style={[styles.levelRowTitle, { color: PH }]}>
+          <Text
+            style={[
+              styles.levelRowTitle,
+              { color: overlayInkColor(visualTheme, isTactical ? 'value' : 'accent') },
+            ]}
+          >
             Lv.{row.level} {row.displayNameKr}
             {row.level === snapshot.level ? ' ◀' : ''}
           </Text>
           {renderLevelMeta ? (
-            <Text style={styles.levelRowMeta}>{renderLevelMeta(row)}</Text>
+            <Text style={[styles.levelRowMeta, { color: overlayInkColor(visualTheme, isTactical ? 'label' : 'value') }]}>
+              {renderLevelMeta(row)}
+            </Text>
           ) : null}
         </View>
       ))}
@@ -254,6 +296,7 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
 export const PlanetGenericFacilityDevContent = memo(function PlanetGenericFacilityDevContent(props: Props) {
   const { planetId, planetName, moduleId, api, i18nPrefix, onBack, onClose } = props;
   const t = useT();
+  const visualTheme = resolveArcOverlayVisualTheme('planetDevelopment');
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -289,12 +332,14 @@ export const PlanetGenericFacilityDevContent = memo(function PlanetGenericFacili
         preflightCode={session.preflightCode}
         onClose={onClose}
         onRetry={session.retry}
+        visualTheme={visualTheme}
         footer={
           <ArcOverlayFooterActions
             onCancel={onBack}
             onConfirm={onClose}
             cancelLabel={t(`${i18nPrefix}.backToList`)}
             confirmLabel={t(`${i18nPrefix}.close`)}
+            visualTheme={visualTheme}
           />
         }
       >

@@ -1,11 +1,8 @@
 // ============================================================
-// 조선소 > 현황 탭 — 광물 기반 전함 강화 (기존 테이블 정본 + 기획안 v1 참고)
-// 정본: src/game/shipyardMineralUpgrade/mineralUpgradeModel.ts
-// 스탯 적용: ShipPerformanceCalculator.applyMineralUpgradeToShipPerformance (플레이어 전투 반영)
-// 소비: usePlayerStore.applyMineralUpgrade (ore 차감·레벨+1·저장)
+// 조선소 > 현황 탭 — 광물 기반 전함 강화 (G-ARCHIVE infoPanel · stackCard)
 // ============================================================
 import React, { memo, useMemo } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { usePlayerStore } from '../../store/playerStore';
 import { countGoodInInventory, normalizeInventorySlots } from '../../game/playerInventory';
 import { normalizePlayerCombatProficiency } from '../../combat/playerCombatProficiency';
@@ -19,7 +16,10 @@ import {
 import { resolvePlanetShipyardLevelForMineralCap } from '../../game/planetDevelopment/planetOrbitShipyardMineralCap';
 import { showArcAlert } from '../../utils/showArcAlert';
 import { useT } from '../../i18n';
-import { COLORS, FONTS, SPACING } from '../../utils/theme';
+import { FONTS, SPACING } from '../../utils/theme';
+import { TACTICAL_FACILITY as TF } from '../../ui/tactical/tacticalFacilityScreenTokens';
+import { planetFacilityScreenStyles as fs, PlanetFacilityCardTitleBlock } from '../../ui/planetFacility/PlanetFacilityTitleHeader';
+import { ArcButton } from '../../ui/overlay/ArcButton';
 
 export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab() {
   const t = useT();
@@ -55,7 +55,7 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
 
   return (
     <View style={styles.root}>
-      <Text style={styles.capLine}>
+      <Text style={fs.sectionMeta}>
         {t('shipyard.up.capLine', {
           lv: combatProficiency?.combatLevel ?? 1,
           cap,
@@ -63,14 +63,16 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
           combatCap,
         })}
       </Text>
-      <Text style={styles.intro}>{t('shipyard.up.intro')}</Text>
+      <Text style={[fs.sectionMeta, styles.introGap]}>{t('shipyard.up.intro')}</Text>
 
       {groups.map((group) => (
-        <View key={group} style={styles.groupBox}>
-          <Text style={styles.groupTitle}>— {t(`shipyard.up.group.${group}`)} —</Text>
+        <View key={group} style={fs.stackCard}>
+          <Text style={[fs.sectionBar, fs.sectionBarFirst]}>
+            {t(`shipyard.up.group.${group}`)}
+          </Text>
           {stats
             .filter((s) => s.upgradeGroup === group)
-            .map((stat) => {
+            .map((stat, statIdx) => {
               const lv = Math.max(0, Math.floor(upgrades[stat.statId] ?? 0));
               const atCap = lv >= cap;
               const nextLv = lv + 1;
@@ -78,47 +80,62 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
               const affordable = !atCap && cost.every((c) => countGoodInInventory(slots, c.oreId) >= c.qty);
 
               return (
-                <View key={stat.statId} style={styles.statRow}>
-                  <View style={styles.statHead}>
-                    <Text style={styles.statLabel}>{t(`mineralStat.label.${stat.statId}`)}</Text>
-                    <Text style={[styles.statLevel, lv > 0 && styles.statLevelOn]}>
-                      {lv > 0 ? t('shipyard.up.level', { lv }) : t('shipyard.up.unupgraded')}{atCap ? t('shipyard.up.maxSuffix') : ''}
-                    </Text>
-                  </View>
-                  <Text style={styles.statHint}>
-                    {t(`mineralStat.hint.${stat.statId}`)}{atCap ? '' : t('shipyard.up.nextHint', { lv, next: nextLv })}
-                  </Text>
-
-                  {!atCap ? (
-                    <View style={styles.costRow}>
-                      {cost.map((c) => {
-                        const own = countGoodInInventory(slots, c.oreId);
-                        const ok = own >= c.qty;
-                        return (
-                          <Text
-                            key={c.oreId}
-                            style={[styles.costChip, ok ? styles.costOk : styles.costBad]}
-                          >
-                            {t('shipyard.up.cost', { ore: t(`shipyard.up.ore.${c.oreId}`), own, qty: c.qty, mark: ok ? ' ✓' : ' ✗' })}
-                          </Text>
-                        );
-                      })}
-                    </View>
-                  ) : null}
-
-                  <TouchableOpacity
-                    style={[styles.upgBtn, (atCap || !affordable) && styles.upgBtnDisabled]}
-                    onPress={() => handleUpgrade(stat.statId)}
-                    disabled={atCap || !affordable}
+                <View key={stat.statId} style={[styles.statRow, statIdx === 0 && styles.statRowFirst]}>
+                  <PlanetFacilityCardTitleBlock
+                    title={t(`mineralStat.label.${stat.statId}`)}
+                    meta={
+                      <>
+                        {lv > 0 ? t('shipyard.up.level', { lv }) : t('shipyard.up.unupgraded')}
+                        {atCap ? t('shipyard.up.maxSuffix') : ''}
+                      </>
+                    }
+                    metaStyle={lv > 0 ? styles.levelOn : undefined}
+                    description={
+                      <>
+                        {t(`mineralStat.hint.${stat.statId}`)}
+                        {atCap ? '' : t('shipyard.up.nextHint', { lv, next: nextLv })}
+                      </>
+                    }
+                    descriptionLines={0}
                   >
-                    <Text style={[styles.upgBtnText, (atCap || !affordable) && styles.upgBtnTextDisabled]}>
-                      {atCap
-                        ? t('shipyard.up.btnMax')
-                        : affordable
-                          ? t('shipyard.up.btnDo', { lv, next: nextLv })
-                          : t('shipyard.up.btnPoor')}
-                    </Text>
-                  </TouchableOpacity>
+                    {!atCap ? (
+                      <View style={styles.costRow}>
+                        {cost.map((c) => {
+                          const own = countGoodInInventory(slots, c.oreId);
+                          const ok = own >= c.qty;
+                          return (
+                            <View
+                              key={c.oreId}
+                              style={[fs.insetSlot, styles.costChip, !ok && styles.costChipBad]}
+                            >
+                              <Text style={[styles.costChipText, ok ? styles.costOk : styles.costBad]}>
+                                {t('shipyard.up.cost', {
+                                  ore: t(`shipyard.up.ore.${c.oreId}`),
+                                  own,
+                                  qty: c.qty,
+                                  mark: ok ? ' ✓' : ' ✗',
+                                })}
+                              </Text>
+                            </View>
+                          );
+                        })}
+                      </View>
+                    ) : null}
+
+                    <ArcButton
+                      label={
+                        atCap
+                          ? t('shipyard.up.btnMax')
+                          : affordable
+                            ? t('shipyard.up.btnDo', { lv, next: nextLv })
+                            : t('shipyard.up.btnPoor')
+                      }
+                      variant={affordable && !atCap ? 'tacticalPrimary' : 'tacticalSecondary'}
+                      disabled={atCap || !affordable}
+                      onPress={() => handleUpgrade(stat.statId)}
+                      style={styles.upgBtn}
+                    />
+                  </PlanetFacilityCardTitleBlock>
                 </View>
               );
             })}
@@ -129,75 +146,43 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
 });
 
 const styles = StyleSheet.create({
-  root: { paddingBottom: SPACING.lg },
-  capLine: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.gold,
+  root: { paddingBottom: SPACING.xs },
+  introGap: { marginBottom: SPACING.sm },
+  statRow: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: TF.divider,
+    paddingTop: SPACING.sm,
+    marginTop: SPACING.sm,
+  },
+  statRowFirst: {
+    borderTopWidth: 0,
+    paddingTop: 0,
+    marginTop: 0,
+  },
+  levelOn: { color: TF.goldInk, fontWeight: FONTS.weight.bold },
+  costRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: SPACING.xs,
     marginBottom: SPACING.xs,
   },
-  intro: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
-    marginBottom: SPACING.md,
-  },
-  groupBox: {
-    marginBottom: SPACING.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 4,
-    padding: SPACING.sm,
-    backgroundColor: COLORS.bg_secondary,
-  },
-  groupTitle: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_light,
-    marginBottom: SPACING.sm,
-    textAlign: 'center',
-  },
-  statRow: {
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-    paddingVertical: SPACING.sm,
-  },
-  statHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  statLabel: { fontFamily: FONTS.mono, fontSize: FONTS.size.md, color: COLORS.ink_dark },
-  statLevel: { fontFamily: FONTS.mono, fontSize: FONTS.size.sm, color: COLORS.ink_light },
-  statLevelOn: { color: COLORS.gold, fontWeight: FONTS.weight.bold },
-  statHint: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
-    marginTop: 2,
-  },
-  costRow: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACING.xs, marginTop: SPACING.xs },
   costChip: {
+    marginBottom: 0,
+    paddingVertical: SPACING.xs,
+    paddingHorizontal: SPACING.sm,
+  },
+  costChipBad: {
+    borderColor: TF.danger,
+  },
+  costChipText: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 2,
-    borderRadius: 3,
-    overflow: 'hidden',
   },
-  costOk: { color: '#9AE6B4', backgroundColor: 'rgba(72,187,120,0.14)' },
-  costBad: { color: COLORS.danger, backgroundColor: 'rgba(227,107,107,0.14)' },
+  costOk: { color: TF.safeInk },
+  costBad: { color: TF.danger },
   upgBtn: {
-    marginTop: SPACING.sm,
-    borderWidth: 1.5,
-    borderColor: COLORS.border_dark,
-    backgroundColor: COLORS.bg_panel,
-    borderRadius: 4,
-    paddingVertical: SPACING.sm,
-    alignItems: 'center',
+    alignSelf: 'stretch',
+    minHeight: 36,
+    marginTop: SPACING.xs,
   },
-  upgBtnDisabled: { opacity: 0.5 },
-  upgBtnText: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    fontWeight: FONTS.weight.bold,
-    color: COLORS.ink_dark,
-  },
-  upgBtnTextDisabled: { color: COLORS.ink_light },
 });

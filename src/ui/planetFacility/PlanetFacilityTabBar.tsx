@@ -1,12 +1,15 @@
 // ============================================================
-// 행성 시설 공통 상단 탭 — 무역소·조선소·선술집·연구소 일관 UI
+// 행성 시설 공통 탭 — ArcButton tactical 과 동일 `[ ]`·테두리·mono
+// (탭 전환 기능만 다름, 표기·디자인은 범용 버튼 정본)
 // ============================================================
 
 import React, { memo } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { COLORS, FONTS } from '../../utils/theme';
+import { StyleSheet, View } from 'react-native';
+import { SPACING } from '../../utils/theme';
+import { TACTICAL_FACILITY as TF } from '../tactical/tacticalFacilityScreenTokens';
+import { ArcButton } from '../overlay/ArcButton';
 
-export const PLANET_FACILITY_TAB_BAR_HEIGHT = 48;
+export const PLANET_FACILITY_TAB_BAR_HEIGHT = 52;
 
 export type PlanetFacilityTabItem = {
   id: string;
@@ -31,19 +34,14 @@ export const PlanetFacilityTabBar = memo(function PlanetFacilityTabBar({
       {tabs.map((tab) => {
         const active = tab.id === activeId;
         return (
-          <TouchableOpacity
+          <ArcButton
             key={tab.id}
-            style={[styles.tab, active && styles.tabActive]}
+            label={tab.label}
+            variant={active ? 'tacticalPrimary' : 'tacticalSecondary'}
             onPress={() => onSelect(tab.id)}
-            activeOpacity={0.85}
-            accessibilityRole="tab"
-            accessibilityState={{ selected: active }}
-            accessibilityLabel={tab.label}
-          >
-            <Text style={[styles.tabText, active && styles.tabTextActive]} numberOfLines={1}>
-              [{` ${tab.label} `}]
-            </Text>
-          </TouchableOpacity>
+            compact
+            style={styles.tabBtn}
+          />
         );
       })}
     </View>
@@ -54,33 +52,20 @@ export const planetFacilityTabBarStyles = StyleSheet.create({
   bar: {
     flexDirection: 'row',
     alignItems: 'stretch',
+    gap: 4,
     minHeight: PLANET_FACILITY_TAB_BAR_HEIGHT,
-    backgroundColor: COLORS.bg_secondary,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    paddingHorizontal: SPACING.xs,
+    paddingVertical: SPACING.xs,
+    backgroundColor: TF.tabBarBg,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: TF.tabBarBorder,
   },
-  tab: {
+  tabBtn: {
     flex: 1,
-    minHeight: PLANET_FACILITY_TAB_BAR_HEIGHT,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 6,
-    paddingVertical: 12,
-  },
-  tabActive: {
-    borderBottomWidth: 3,
-    borderBottomColor: COLORS.info,
-    backgroundColor: COLORS.bg_panel,
-  },
-  tabText: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.md,
-    color: COLORS.ink_light,
-    textAlign: 'center',
-  },
-  tabTextActive: {
-    color: COLORS.ink_dark,
-    fontWeight: FONTS.weight.bold,
+    minWidth: 0,
+    minHeight: 36,
+    paddingVertical: 2,
+    borderRadius: 4,
   },
 });
 

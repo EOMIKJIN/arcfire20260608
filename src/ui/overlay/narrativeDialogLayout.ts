@@ -6,11 +6,12 @@ import { FONTS, SPACING } from '../../utils/theme';
  * ## 기본 UI 계약 (추가 구현 시 반드시 준수)
  * - **컴포넌트**: `NarrativeDialogRow` 단일 — 커스텀 Modal·별도 TextBox 금지
  * - **레이아웃**: 가로 100% · 고정 높이 `height` · 초상 `portraitWidth` + hud `flex:1`
- * - **본문**: 최대 `maxLinesDefault` 줄 · 초과는 `splitNarrativeDialogSegments` + `[ 다음 ]`
+ * - **본문**: 최대 `maxLinesDefault` 줄 · **좌측 정렬** · 초과는 `splitNarrativeDialogSegments` + `[ 다음 ]`
  * - **분할**: `resolveNarrativeDialogCharsPerLine` — hud 물리 너비 기준, 임의 글자 cap 금지
  * - **초상**: `resolveIngameDialogPortraitSource` — speakerNpcCaptainId → CSV portraitImageAssetKey
- * - **오버레이**: `ArcOverlayHost` bottom narrative · `hostHorizontalPadPx` 와 split insets 동기
- * - **진행**: `[ 다음 ]` / `[ 확인 ]` only — 스크롤·가변 높이 금지
+ * - **팝업 위치**: 화면 **좌우·세로 중앙** (`anchor: 'center'`) · dim 없음
+ * - **오버레이**: `hostHorizontalPadPx` 와 split insets 동기
+ * - **진행**: `[ 다음 ]` / `[ 확인 ]` hud 하단 우측 — 스크롤·가변 높이 금지
  *
  * 규칙: `.cursor/rules/arcfire-ingame-dialog-ui-default.mdc`
  */
@@ -22,7 +23,7 @@ export const NARRATIVE_DIALOG_LAYOUT = {
   fontSizeMd: FONTS.size.md,
   /** soft-wrap 분할 — mono md(14) 한글 ~0.91em (줄 끝 우측 공백 최소화) */
   charWidthPx: 12.7,
-  /** ArcOverlayHost bottom narrative · intro ingame 슬롯 좌우 */
+  /** ArcOverlayHost · intro ingame 슬롯 좌우 */
   hostHorizontalPadPx: SPACING.xs,
   /** NarrativeDialogRow hud 내부 좌우 */
   hudHorizontalPadPx: SPACING.sm,
@@ -31,6 +32,10 @@ export const NARRATIVE_DIALOG_LAYOUT = {
   labelLineHeight: 18,
   textBlockTailPadPx: 6,
   maxLinesDefault: 3,
+  /** hud 본문·화자명 — 좌측 정렬 (팝업 위치와 별개) */
+  textAlign: 'left' as const,
+  /** IngameDialogHost · ArcOverlayHost narrative 앵커 */
+  popupAnchor: 'center' as const,
   /** 물리 한도까지 채움 — 보수적 cap 없음 */
   splitSafetyChars: 0,
 } as const;

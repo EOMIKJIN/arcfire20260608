@@ -33,7 +33,7 @@ export const PLAYER_PROFESSIONS_FROM_CSV: Record<string, PlayerProfessionCsvRow>
     personalityKo: "과묵하고 단호한 돌파형",
     personalityEn: "Stoic and decisive breakthrough specialist",
     traitIds: ["trait_aggressive","trait_shield_breaker"],
-    portraitImageAssetKey: "assets/images/npc/stella_aris_char001.png",
+    portraitImageAssetKey: "assets/images/npc/noname_char007.png",
     combatArchetype: "fighter",
     socialStats: {
       wisdom: 8,
@@ -53,7 +53,7 @@ export const PLAYER_PROFESSIONS_FROM_CSV: Record<string, PlayerProfessionCsvRow>
     personalityKo: "침착하고 관찰력이 뛰어남",
     personalityEn: "Calm with exceptional observational skill",
     traitIds: ["trait_evasive","trait_scout_sense"],
-    portraitImageAssetKey: "assets/images/npc/mia_bello_char002.png",
+    portraitImageAssetKey: "assets/images/npc/noname_char008.png",
     combatArchetype: "ranger",
     socialStats: {
       wisdom: 10,
@@ -73,7 +73,7 @@ export const PLAYER_PROFESSIONS_FROM_CSV: Record<string, PlayerProfessionCsvRow>
     personalityKo: "냉철하고 분석적인 지휘관",
     personalityEn: "Cool-headed and analytical commander",
     traitIds: ["trait_tactical","trait_fleet_command"],
-    portraitImageAssetKey: "assets/images/stella_aris_char001.png",
+    portraitImageAssetKey: "assets/images/npc/noname_char010.png",
     combatArchetype: "neutral",
     socialStats: {
       wisdom: 12,

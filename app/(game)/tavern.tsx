@@ -5,7 +5,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
-import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
+import { FONTS, SPACING } from '../../src/utils/theme';
+import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
 import { useT, t as tStatic } from '../../src/i18n';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import {
@@ -23,11 +24,15 @@ import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMa
 import { useTavernBoardStore } from '../../src/store/tavernBoardStore';
 import { usePlayerStore } from '../../src/store/playerStore';
 import { listNpcCaptains } from '../../src/npc/npcFleetRegistry';
-import { ArcStageBackButton } from '../../src/ui/overlay/ArcStageBackButton';
 import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacilityTabBar';
 import {
-  presentIngameDialogScene,
-} from '../../src/game/ingameDialog';
+  PlanetFacilityCardTitleBlock,
+  PlanetFacilityListingTextBlock,
+  PlanetFacilitySectionHeader,
+  PlanetFacilityTitleHeader,
+  planetFacilityScreenStyles as fs,
+} from '../../src/ui/planetFacility/PlanetFacilityTitleHeader';
+import { presentIngameDialogScene } from '../../src/game/ingameDialog';
 import { resolveTavernHostDialogSceneId } from '../../src/game/ingameDialog/resolveTavernHostDialogSceneId';
 import { formatCredits } from '../../src/utils/formatCredits';
 import { readPlanetPopulationDomeDetail } from '../../src/game/planetDevelopment/planetPopulationDomeListing';
@@ -83,6 +88,16 @@ export default function TavernScreen() {
     }
     return retiredPool[0] ?? null;
   }, [currentPlanetId]);
+  const headerSubtitle = useMemo(() => {
+    if (tavernHostCaptain) {
+      return t('tavern.hostMeta', {
+        name: tavernHostCaptain.displayName,
+        rank: tavernHostCaptain.rank,
+      });
+    }
+    return boardMeta;
+  }, [tavernHostCaptain, boardMeta, t]);
+
   useEffect(() => {
     if (!hostDialogVisible || !tavernHostCaptain) return;
     const sceneId = resolveTavernHostDialogSceneId(tavernHostCaptain.id);
@@ -97,7 +112,6 @@ export default function TavernScreen() {
     setHostDialogVisible(true);
   }, [tavernHostCaptain]);
 
-  // 같은 행성에서 선술집을 다시 열어도 주인장 인게임 대화창을 재표시한다.
   useFocusEffect(
     useCallback(() => {
       if (!tavernHostCaptain) return;
@@ -120,191 +134,139 @@ export default function TavernScreen() {
   usePlanetHubFacilityAccessGate('tavern');
 
   return (
-    <StageShell key={localeRenderKey} routeName="tavern" background="none" edges={['bottom']}>
-      <View style={{ flex: 1 }}>
-      <View style={styles.header}>
-        <ArcStageBackButton onPress={safeBack} style={styles.backBtn} />
-        <Text style={styles.headerTitle}>{t('tavern.title')}</Text>
-      </View>
-
-      <PlanetFacilityTabBar
-        tabs={[
-          { id: 'board', label: t('tavern.tab.board') },
-          { id: 'mission_status', label: t('tavern.tab.missionStatus') },
-          { id: 'new_missions', label: t('tavern.tab.newMissions') },
-        ]}
-        activeId={activeTab}
-        onSelect={(id) => setActiveTab(id as TavernBoardTab)}
-      />
-
-      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        {activeTab === 'board' ? (
-          <>
-        {tavernHostCaptain ? (
-          <View style={styles.hostCard}>
-            <Text style={styles.hostCardTitle}>{t('tavern.hostCardTitle')}</Text>
-            <Text style={styles.hostMeta}>
-              {t('tavern.hostMeta', { name: tavernHostCaptain.displayName, rank: tavernHostCaptain.rank })}
-            </Text>
-          </View>
-        ) : null}
-
-        <View style={styles.boardHeader}>
-          <Text style={styles.boardTitle}>{t('tavern.bountySectionTitle')}</Text>
-          <Text style={styles.boardSub}>{bountyMeta}</Text>
-        </View>
-
-        {tavernBounties.map((bounty) => (
-          <View key={bounty.id} style={styles.noticeCard}>
-            <View style={styles.noticeTopRow}>
-              <Text style={styles.noticeTag}>{t('tavern.bountyMercTier', { tier: bounty.mercTier })}</Text>
-              <Text style={styles.noticeTime}>{formatPostedAt(bounty.postedAtMs)}</Text>
-            </View>
-            <Text style={styles.noticeTitle}>{t(bounty.titleKey)}</Text>
-            <Text style={styles.noticeBody}>
-              {t('tavern.bountyReward', { credits: formatCredits(bounty.rewardCredits, { suffix: true }) })}
-            </Text>
-          </View>
-        ))}
-
-        <View style={styles.boardHeader}>
-          <Text style={styles.boardTitle}>{t('tavern.boardTitle')}</Text>
-          <Text style={styles.boardSub}>{boardMeta}</Text>
-        </View>
-
-        {notices.map((notice) => (
-          <View key={notice.id} style={styles.noticeCard}>
-            <View style={styles.noticeTopRow}>
-              <Text style={styles.noticeTag}>[{t(`noticeTag.${notice.tag}`)}]</Text>
-              <Text style={styles.noticeTime}>{formatPostedAt(notice.postedAtMs)}</Text>
-            </View>
-            <Text style={styles.noticeTitle}>{resolveNoticeTitle(notice, t)}</Text>
-            <Text style={styles.noticeBody}>{resolveNoticeBody(notice, t)}</Text>
-          </View>
-        ))}
-          </>
-        ) : null}
-
-        {activeTab === 'mission_status' ? <TavernMissionStatusTab /> : null}
-        {activeTab === 'new_missions' ? (
-          <TavernNewMissionTab
-            planetId={currentPlanetId}
-            playerLevel={player?.level ?? 1}
-          />
-        ) : null}
-
-        <View style={{ height: TAVERN_BOTTOM_STAGE_RESERVE_PX }} />
-      </ScrollView>
-
-      <StageLoadingOverlay visible={!screenReady && tavernSession.phase !== 'error'} overlayId="stage-loading-tavern" />
-      {tavernSession.phase === 'error' ? (
-        <HeavyUiStageErrorPanel
-          preflightCode={tavernSession.preflightCode}
-          error={tavernSession.error}
-          facilityKind="tavern"
-          onRetry={tavernSession.retry}
+    <StageShell
+      key={localeRenderKey}
+      routeName="tavern"
+      background="none"
+      edges={['bottom']}
+      safeAreaBackgroundColor={TF.headerBg}
+    >
+      <View style={fs.root}>
+        <PlanetFacilityTitleHeader
+          title={t('tavern.title')}
+          subtitle={headerSubtitle}
           onBack={safeBack}
+          backLabel="◀ 나가기"
         />
-      ) : null}
+
+        <View style={fs.bodyPanel}>
+          <PlanetFacilityTabBar
+            tabs={[
+              { id: 'board', label: t('tavern.tab.board') },
+              { id: 'mission_status', label: t('tavern.tab.missionStatus') },
+              { id: 'new_missions', label: t('tavern.tab.newMissions') },
+            ]}
+            activeId={activeTab}
+            onSelect={(id) => setActiveTab(id as TavernBoardTab)}
+          />
+
+          <ScrollView
+            style={fs.scroll}
+            contentContainerStyle={fs.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            {activeTab === 'board' ? (
+              <>
+                {tavernHostCaptain ? (
+                  <View style={fs.stackCard}>
+                    <PlanetFacilitySectionHeader inCard first title={t('tavern.hostCardTitle')} />
+                    <Text style={styles.hostMeta}>
+                      {t('tavern.hostMeta', {
+                        name: tavernHostCaptain.displayName,
+                        rank: tavernHostCaptain.rank,
+                      })}
+                    </Text>
+                  </View>
+                ) : null}
+
+                <View style={fs.stackCard}>
+                  <PlanetFacilitySectionHeader
+                    inCard
+                    first
+                    title={t('tavern.bountySectionTitle')}
+                    meta={bountyMeta}
+                  />
+                  {tavernBounties.map((bounty, idx) => (
+                    <View key={bounty.id} style={[fs.insetSlot, idx > 0 && styles.insetEntryGap]}>
+                      <View style={fs.cardTopRow}>
+                        <Text style={fs.cardBadge}>
+                          {t('tavern.bountyMercTier', { tier: bounty.mercTier })}
+                        </Text>
+                        <Text style={fs.cardMeta}>{formatPostedAt(bounty.postedAtMs)}</Text>
+                      </View>
+                      <PlanetFacilityCardTitleBlock
+                        title={t(bounty.titleKey)}
+                        description={t('tavern.bountyReward', {
+                          credits: formatCredits(bounty.rewardCredits, { suffix: true }),
+                        })}
+                        descriptionLines={0}
+                      />
+                    </View>
+                  ))}
+                </View>
+
+                <View style={fs.stackCard}>
+                  <PlanetFacilitySectionHeader
+                    inCard
+                    first
+                    title={t('tavern.boardTitle')}
+                    meta={boardMeta}
+                  />
+                  {notices.map((notice, idx) => (
+                    <View key={notice.id} style={[fs.listingEntryCard, idx > 0 && styles.insetEntryGap]}>
+                      <View style={fs.cardTopRow}>
+                        <Text style={fs.cardBadge}>[{t(`noticeTag.${notice.tag}`)}]</Text>
+                        <Text style={fs.cardMeta}>{formatPostedAt(notice.postedAtMs)}</Text>
+                      </View>
+                      <PlanetFacilityListingTextBlock
+                        title={resolveNoticeTitle(notice, t)}
+                        description={resolveNoticeBody(notice, t)}
+                        descriptionLines={0}
+                      />
+                    </View>
+                  ))}
+                </View>
+              </>
+            ) : null}
+
+            {activeTab === 'mission_status' ? <TavernMissionStatusTab /> : null}
+            {activeTab === 'new_missions' ? (
+              <TavernNewMissionTab
+                planetId={currentPlanetId}
+                playerLevel={player?.level ?? 1}
+              />
+            ) : null}
+
+            <View style={{ height: TAVERN_BOTTOM_STAGE_RESERVE_PX }} />
+          </ScrollView>
+
+          <StageLoadingOverlay
+            visible={!screenReady && tavernSession.phase !== 'error'}
+            overlayId="stage-loading-tavern"
+          />
+          {tavernSession.phase === 'error' ? (
+            <HeavyUiStageErrorPanel
+              preflightCode={tavernSession.preflightCode}
+              error={tavernSession.error}
+              facilityKind="tavern"
+              onRetry={tavernSession.retry}
+              onBack={safeBack}
+            />
+          ) : null}
+        </View>
       </View>
     </StageShell>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.bg_panel,
-  },
-  backBtn: { marginRight: SPACING.sm },
-  headerTitle: {
-    flex: 1,
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.md,
-    fontWeight: FONTS.weight.bold,
-    color: COLORS.ink_dark,
-  },
-  scroll: {
-    flex: 1,
-    paddingHorizontal: SPACING.md,
-    paddingTop: SPACING.sm,
-  },
-  boardHeader: {
-    marginBottom: SPACING.sm,
-    paddingHorizontal: SPACING.xs,
-  },
-  hostCard: {
-    backgroundColor: COLORS.bg_panel,
-    borderWidth: 1,
-    borderColor: COLORS.border_dark,
-    borderRadius: 4,
-    padding: SPACING.md,
-    marginBottom: SPACING.sm,
-  },
-  hostCardTitle: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.info,
-    marginBottom: 3,
-  },
   hostMeta: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
-    color: COLORS.ink_dark,
+    color: TF.titleInk,
+    textAlign: 'center',
   },
-  boardTitle: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_mid,
-  },
-  boardSub: {
-    marginTop: 3,
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
-  },
-  noticeCard: {
-    backgroundColor: COLORS.bg_panel,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 4,
-    padding: SPACING.md,
-    marginBottom: SPACING.sm,
-  },
-  noticeTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  noticeTag: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.info,
-    fontWeight: FONTS.weight.bold,
-  },
-  noticeTime: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: COLORS.ink_faint,
-  },
-  noticeTitle: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_dark,
-    fontWeight: FONTS.weight.bold,
-    marginBottom: 4,
-  },
-  noticeBody: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_mid,
-    lineHeight: 18,
+  insetEntryGap: {
+    marginTop: SPACING.xs,
   },
 });
-

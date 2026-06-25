@@ -1,31 +1,31 @@
 // ============================================================
 // 아크파이어 온라인 - 인트로 스토리 화면
+// cinematic(프롤로그) · ingame_dialog(범용 대사) 분기
 // ============================================================
 
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
-import { TypewriterText } from '../../src/components/TypewriterText';
+import { SPACING } from '../../src/utils/theme';
 import { usePlayerStore } from '../../src/store/playerStore';
 import { runIntroSeenAndStartFirstMissionPolicy } from '../../src/game/ingameDialog';
 import { StageShell } from '../../src/stages/StageShell';
 import { STORY_SCENES_FROM_CSV } from '../../src/data/generated';
 import { NarrativeDialogRow } from '../../src/ui/overlay/NarrativeDialogRow';
-import { resolveOverlayBottomAnchorPad } from '../../src/ui/overlay/overlayInsets';
-import { ArcButton } from '../../src/ui/overlay/ArcButton';
 import { resolveStoryPageText, resolveStoryPageLabel } from '../../src/i18n/storyText';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { splitNarrativeDialogSegments } from '../../src/ui/overlay/splitNarrativeDialogSegments';
 import { NARRATIVE_DIALOG_LAYOUT } from '../../src/ui/overlay/narrativeDialogLayout';
 import { resolveIngameDialogPortraitSource } from '../../src/game/ingameDialog/resolveIngameDialogPortraitSource';
 import { useT } from '../../src/i18n';
+import { CinematicPrologueScene } from '../../src/ui/onboarding/CinematicPrologueScene';
+import { CinematicPrologueFooter } from '../../src/ui/onboarding/CinematicPrologueFooter';
+import { CINEMATIC_PROLOGUE } from '../../src/ui/onboarding/cinematicPrologueTokens';
+import { ArcButton } from '../../src/ui/overlay/ArcButton';
 
 export default function IntroScreen() {
   const t = useT();
   const { width, height } = useWindowDimensions();
-  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ sceneId?: string | string[]; flow?: string | string[] }>();
   const paramSceneId = Array.isArray(params.sceneId) ? params.sceneId[0] : params.sceneId;
   const paramFlow = Array.isArray(params.flow) ? params.flow[0] : params.flow;
@@ -41,13 +41,11 @@ export default function IntroScreen() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const appLocale = useAppSettingsStore(s => s.locale);
   const player = usePlayerStore(s => s.player);
-  const setPlayer = usePlayerStore(s => s.setPlayer);
-  const persist = usePlayerStore(s => s.persist);
 
   const isLast = page === pages.length - 1;
   const current = pages[page];
   const currentViewMode = current?.viewMode ?? 'cinematic';
-  const currentTextBoxPreset = current?.textBoxPreset ?? 'default';
+  const isCinematicPage = currentViewMode === 'cinematic';
   const popupImageScale = Math.max(40, Math.min(140, current?.imageScalePct ?? 100)) / 100;
   const renderedText = current
     ? resolveStoryPageText(current, appLocale, player?.nickname)
@@ -72,10 +70,10 @@ export default function IntroScreen() {
     setSegmentIndex(0);
     setPageComplete(false);
   }, [page]);
+
   const currentDialogImageSource = current
     ? resolveIngameDialogPortraitSource(current)
     : undefined;
-  const ingameDialogBottomPad = resolveOverlayBottomAnchorPad(insets, SPACING.md);
 
   const handleNext = useCallback(async () => {
     if (isTransitioning) return;
@@ -117,7 +115,22 @@ export default function IntroScreen() {
       setPage(p => p + 1);
       setPageComplete(false);
     }
-  }, [isTransitioning, pageComplete, isLast, isLastIngameSegment, currentViewMode, isPreNicknameFlow, player, scene, pages.length, setPlayer, persist]);
+  }, [
+    isTransitioning,
+    pageComplete,
+    isLast,
+    isLastIngameSegment,
+    currentViewMode,
+    isPreNicknameFlow,
+    player,
+    scene,
+    pages.length,
+  ]);
+
+  const handleSkipScene = useCallback(() => {
+    setPage(Math.max(0, pages.length - 1));
+    setPageComplete(false);
+  }, [pages.length]);
 
   const nextLabel = !pageComplete
     ? t('intro.btn.skipTyping')
@@ -130,68 +143,82 @@ export default function IntroScreen() {
         : t('intro.btn.next');
 
   return (
-    <StageShell routeName="intro" background="stars">
-      <View style={[styles.container, { width, height }]}>
-        <View style={styles.pageIndicator}>
-          {pages.map((_, i) => (
-            <View key={i} style={[styles.dot, i === page && styles.dotActive]} />
-          ))}
-        </View>
-
-        <View style={styles.storyArea}>
-          {currentViewMode === 'ingame_dialog' ? (
-            <View style={[styles.ingameDialogSlot, { paddingBottom: ingameDialogBottomPad }]}>
-              <NarrativeDialogRow
-                label={renderedLabel || t('intro.commLabel')}
-                text={ingameSegmentText}
-                typewriterKey={`intro-dialog-${page}-${segmentIndex}`}
-                typewriterSpeedMs={scene?.typewriterSpeedMs ?? 40}
-                onTextComplete={() => setPageComplete(true)}
-                imageSource={currentDialogImageSource}
-                portraitScale={popupImageScale}
-                maxLines={ingameMaxLines}
-                showActionButton={false}
-              />
-            </View>
-          ) : (
-            <>
-              <Text style={styles.sceneLabel}>{renderedLabel}</Text>
-              <View style={[styles.textBox, currentTextBoxPreset === 'compact' && styles.textBoxCompact]}>
-                <TypewriterText
-                  key={page}
-                  text={renderedText}
-                  speed={Math.max(1, scene?.typewriterSpeedMs ?? 40)}
-                  onComplete={() => setPageComplete(true)}
-                  style={styles.storyText}
+    <StageShell
+      routeName="intro"
+      background={isCinematicPage ? 'none' : 'stars'}
+      safeAreaBackgroundColor={isCinematicPage ? CINEMATIC_PROLOGUE.screenBg : undefined}
+      topInset={!isCinematicPage}
+    >
+      <View
+        style={[
+          styles.container,
+          { width, height },
+          isCinematicPage && styles.containerCinematic,
+        ]}
+      >
+        {isCinematicPage ? (
+          <>
+            <CinematicPrologueScene
+              pageKey={page}
+              label={renderedLabel}
+              text={renderedText}
+              typewriterSpeedMs={scene?.typewriterSpeedMs ?? 40}
+              fadeInEnabled={scene?.fadeInEnabled ?? true}
+              fadeInDurationMs={scene?.fadeInDurationMs ?? CINEMATIC_PROLOGUE.fadeDefaultMs}
+              onTextComplete={() => setPageComplete(true)}
+              onPressAdvance={handleNext}
+            />
+            <CinematicPrologueFooter
+              pageCount={pages.length}
+              pageIndex={page}
+              skipLabel={t('intro.btn.skipScene')}
+              nextLabel={nextLabel}
+              showSkip={Boolean(scene?.skippable)}
+              disabled={isTransitioning}
+              onSkip={handleSkipScene}
+              onNext={handleNext}
+            />
+          </>
+        ) : (
+          <>
+            <View style={styles.storyArea}>
+              <View style={styles.ingameDialogSlot}>
+                <NarrativeDialogRow
+                  label={renderedLabel || t('intro.commLabel')}
+                  text={ingameSegmentText}
+                  typewriterKey={`intro-dialog-${page}-${segmentIndex}`}
+                  typewriterSpeedMs={scene?.typewriterSpeedMs ?? 40}
+                  onTextComplete={() => setPageComplete(true)}
+                  imageSource={currentDialogImageSource}
+                  portraitScale={popupImageScale}
+                  maxLines={ingameMaxLines}
+                  showActionButton={false}
                 />
               </View>
-            </>
-          )}
-        </View>
+            </View>
 
-        <View style={styles.footer}>
-          {scene?.skippable ? (
-            <ArcButton
-              label={t('intro.btn.skipScene')}
-              variant="secondary"
-              disabled={isTransitioning}
-              onPress={() => {
-                setPage(Math.max(0, pages.length - 1));
-                setPageComplete(false);
-              }}
-              style={styles.skipBtn}
-            />
-          ) : (
-            <View style={styles.skipBtn} />
-          )}
-          <ArcButton
-            label={nextLabel}
-            variant="panel"
-            disabled={isTransitioning}
-            onPress={handleNext}
-            style={styles.nextBtn}
-          />
-        </View>
+            <View style={styles.footer}>
+              {scene?.skippable ? (
+                <ArcButton
+                  label={t('intro.btn.skipScene')}
+                  variant="secondary"
+                  disabled={isTransitioning}
+                  onPress={handleSkipScene}
+                  style={styles.skipBtn}
+                />
+              ) : (
+                <View style={styles.skipBtn} />
+              )}
+              <ArcButton
+                label={nextLabel}
+                variant="panel"
+                disabled={isTransitioning}
+                onPress={handleNext}
+                style={styles.nextBtn}
+              />
+            </View>
+          </>
+        )}
       </View>
     </StageShell>
   );
@@ -204,21 +231,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: SPACING.xl,
   },
-  pageIndicator: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    rowGap: SPACING.sm,
-    columnGap: SPACING.sm,
-    paddingTop: SPACING.md,
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: COLORS.border,
-  },
-  dotActive: {
-    backgroundColor: COLORS.ink_dark,
+  containerCinematic: {
+    backgroundColor: CINEMATIC_PROLOGUE.screenBg,
+    paddingVertical: 0,
   },
   storyArea: {
     flex: 1,
@@ -227,39 +242,12 @@ const styles = StyleSheet.create({
   },
   ingameDialogSlot: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
     alignSelf: 'stretch',
     width: '100%',
     marginHorizontal: -SPACING.xl,
     paddingHorizontal: NARRATIVE_DIALOG_LAYOUT.hostHorizontalPadPx,
-  },
-  sceneLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: COLORS.ink_light,
-    letterSpacing: 2,
-    marginBottom: SPACING.lg,
-    textAlign: 'center',
-  },
-  textBox: {
-    backgroundColor: COLORS.bg_panel,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 4,
-    padding: SPACING.xl,
-    minHeight: 200,
-    justifyContent: 'center',
-  },
-  textBoxCompact: {
-    minHeight: 148,
-    padding: SPACING.lg,
-  },
-  storyText: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.md,
-    color: COLORS.ink_dark,
-    lineHeight: 26,
-    textAlign: 'left',
   },
   footer: {
     flexDirection: 'row',

@@ -12,6 +12,7 @@ import {
 import { router, useFocusEffect, useNavigation } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
+import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
 import { useT } from '../../src/i18n';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { runTransitCombatPostFlow } from '../../src/game/transitCombat/transitCombatPostFlow';
@@ -351,35 +352,35 @@ const styles = StyleSheet.create({
     paddingHorizontal: PLANET_MAIN_TOPBAR_PADDING_HORIZONTAL,
     paddingVertical: PLANET_MAIN_TOPBAR_PADDING_VERTICAL,
     borderBottomWidth: PLANET_MAIN_TOPBAR_BORDER_BOTTOM_PX,
-    borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.bg_panel,
+    borderBottomColor: TF.panelBorder,
+    backgroundColor: TF.panelBg,
   },
   headerTitle: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.md,
     fontWeight: FONTS.weight.bold,
-    color: COLORS.ink_dark,
+    color: TF.titleInk,
   },
   headerSub: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: COLORS.ink_light,
+    color: TF.mutedInk,
     marginTop: 2,
   },
   fleeBtn: {
     borderWidth: 1,
-    borderColor: COLORS.pvp_zone,
+    borderColor: TF.danger,
     borderRadius: 4,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.xs,
-    backgroundColor: COLORS.bg_panel,
+    backgroundColor: TF.panelBg,
   },
   fleeBtnDisabled: {
     opacity: 0.45,
   },
   fleeBtnText: {
     fontFamily: FONTS.mono,
-    color: COLORS.pvp_zone,
+    color: TF.danger,
     fontSize: FONTS.size.sm,
     fontWeight: FONTS.weight.bold,
   },
@@ -394,7 +395,7 @@ const styles = StyleSheet.create({
   orbitWrap: {
     width: '100%',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: TF.panelBorder,
     borderRadius: 8,
     overflow: 'hidden',
     backgroundColor: 'rgba(8,12,22,0.55)',
@@ -415,13 +416,13 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.lg,
-    color: COLORS.danger,
+    color: TF.danger,
     fontWeight: FONTS.weight.bold,
   },
   errorBody: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
-    color: COLORS.ink_mid,
+    color: TF.midInk,
     textAlign: 'center',
   },
 });

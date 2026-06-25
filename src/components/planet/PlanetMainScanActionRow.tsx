@@ -12,6 +12,7 @@ import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { PlanetHubActionTile } from './PlanetHubActionTile';
 import { PlanetHubActionGaugeSlot } from './PlanetHubActionGaugeSlot';
 import { PLANET_MAIN_SCAN_MENU_GAP_PX } from '../../stages/planetMainStageLayout';
+import { PLANET_MAIN_SCAN_ROW_PLANET_INFO_TILE_ENABLED } from '../../game/planetHub/planetHubConstants';
 import { useT } from '../../i18n';
 import { SPACING } from '../../utils/theme';
 
@@ -207,12 +208,14 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
       />
       <View style={styles.row}>
         <View style={styles.leftColumn}>
-          <PlanetHubActionTile
-            label={t('scanRow.planetInfo')}
-            icon="⟦◎⟧"
-            onPress={handlePressPlanetInfo}
-            disabled={!planetId || gaugeActive}
-          />
+          {PLANET_MAIN_SCAN_ROW_PLANET_INFO_TILE_ENABLED ? (
+            <PlanetHubActionTile
+              label={t('scanRow.planetInfo')}
+              icon="⟦◎⟧"
+              onPress={handlePressPlanetInfo}
+              disabled={!planetId || gaugeActive}
+            />
+          ) : null}
           <PlanetHubActionTile
             label={t('scanRow.planetDev')}
             icon={planetDevelopmentIcon}

@@ -1,6 +1,6 @@
 # Arcfire 범용 오버레이 UI — 작업 현황 · 안정성 · 로드맵
 
-> **최종 갱신**: 2026-06-18  
+> **최종 갱신**: 2026-06-25  
 > **정본 코드**: `src/ui/overlay/` · **감사**: `npm run audit:ui-overlay`  
 > **Tactical(G-ARCHIVE) 기준·전면 교체 준비**: `docs/TACTICAL_UI_BASELINE_AND_ROLLOUT_READINESS.md` · `npm run audit:ui-overlay:tactical-readiness`  
 > **헌법 교차참조**: v4.0 §15(RN Modal/Alert 금지) · `AGENTS.md` UI 오버레이 절
@@ -12,12 +12,14 @@
 모든 게임 팝업을 **단일 호스트 + 조립형 카드 셸**로 수렴한다.
 
 ```text
-ArcOverlayHost (centerSlot · 세로 bias)
- └─ ArcOverlayCard
-      ├─ ArcOverlayTitleHeader   ← 제목·부제·trailing만
-      ├─ body (compact | panel + ScrollView)
-      │    └─ panelPrefix?       ← 메타(단가/재고) 등 헤더 직하 고정
-      └─ footerDock              ← ArcOverlayFooterActions [취소][확인]
+ArcOverlayHost
+ ├─ hostAnchor (overlayChrome.ts) — panel=상단 · compact=중앙 bias
+ └─ centerSlot
+      └─ ArcOverlayCard (layout=panel → min/max 높이 자동)
+           ├─ ArcOverlayTitleHeader   ← 제목·부제·trailing만
+           ├─ body (compact | panel + ScrollView)
+           │    └─ panelPrefix?       ← 메타(단가/재고) 등 헤더 직하 고정
+           └─ footerDock              ← ArcOverlayFooterActions [취소][확인]
 ```
 
 신규 팝업은 **로컬 `View` card + `flex:1` body** 를 만들지 않고 위 조립만 확장한다.
@@ -47,11 +49,12 @@ ArcOverlayHost (centerSlot · 세로 bias)
 
 | 모듈 | 역할 |
 |------|------|
-| `ArcOverlayHost` | 단일 루트 · `centerSlot`(max 300px) · `OVERLAY_CENTER_VERTICAL_BIAS_PX`(36) |
-| `ArcOverlayCard` | `compact` / `panel` · `footerDock` 카드 직속 · bounded flex 스크롤 |
+| `ArcOverlayHost` | 단일 루트 · `getOverlayChrome().hostAnchor` · `centerSlot` |
+| `overlayChrome.ts` | kind별 `zIndex` · `cardVariant` · **`hostAnchor`** (정렬 정본) |
+| `ArcOverlayCard` | `compact` / `panel` · panel 시 `resolveOverlayPanel*Height` 자동 · `footerDock` |
 | `ArcOverlayTitleHeader` | 탭형 네이vy 헤더 + SVG 대각 패턴 |
 | `ArcOverlayFooterActions` | 범용 [취소][확인] — `common.cancel` / `common.confirm` |
-| `overlayPanelLayout.ts` | `OVERLAY_PANEL_CARD_MIN_HEIGHT_PCT` **85%** · MAX **96%** |
+| `overlayPanelLayout.ts` | `resolveOverlayPanelMinHeight/MaxHeight` · `OVERLAY_PANEL_TOP_ANCHOR_PX` |
 | `phosphorOverlayStyles.ts` | 본문 타이포·divider·버튼 row (카드 외곽은 Card가 담당) |
 
 ### 3-2. `ArcOverlayCard` 마이그레이션 완료
@@ -119,12 +122,13 @@ ArcOverlayHost (centerSlot · 세로 bias)
 
 ## 6. 신규 오버레이 kind 추가 체크리스트
 
-1. `arcOverlayStore.ts` — kind·entry 타입 · `overlayChrome.ts` z-index/backdrop
-2. `ArcOverlayHost.tsx` — switch 분기 + handler
-3. Content — **`ArcOverlayCard` + `ArcOverlayFooterActions`** (panel 기본)
-4. `presentArc*` 또는 `showArc*` imperative API
-5. `tsc` + `npm run audit:ui-overlay`
-6. 실기: 카드 세로·footer 가림·세로 위치(center bias)
+1. `arcOverlayStore.ts` — kind·entry 타입
+2. **`overlayChrome.ts`** — `zIndex` · `backdrop` · **`hostAnchor`** · `cardVariant`
+3. `ArcOverlayHost.tsx` — Content switch만 (**Host 정렬 kind 하드코딩 금지**)
+4. Content — **`ArcOverlayCard` + `ArcOverlayFooterActions`** (`layout="panel"` 기본, 높이 수동 전달 불필요)
+5. `presentArc*` 또는 `showArc*` imperative API
+6. `tsc` + `npm run audit:ui-overlay`
+7. 실기: panel 계열 헤더 상단 정렬·footer 가림·세로 높이 일치
 
 ---
 
@@ -132,9 +136,11 @@ ArcOverlayHost (centerSlot · 세로 bias)
 
 | 상수 | 파일 | 용도 |
 |------|------|------|
-| `OVERLAY_PANEL_CARD_MIN_HEIGHT_PCT` | `overlayPanelLayout.ts` | 패널 최소 세로 (현재 85%) |
-| `OVERLAY_PANEL_CARD_MAX_HEIGHT_PCT` | idem | 패널 최대 세로 (96%) |
-| `OVERLAY_CENTER_VERTICAL_BIAS_PX` | idem | 중앙보다 아래 offset (36) |
+| `OVERLAY_PANEL_CARD_MIN_HEIGHT_PCT` | `overlayPanelLayout.ts` | compact+footer 폴백 (panel은 px 자동) |
+| `resolveOverlayPanelMinHeight` | idem | panel 최소 세로 (85% + 설명블록 보정) |
+| `resolveOverlayPanelMaxHeight` | idem | panel 최대 세로 (96%) |
+| `OVERLAY_CENTER_VERTICAL_BIAS_PX` | idem | compact 중앙 offset (36) |
+| `OVERLAY_PANEL_TOP_ANCHOR_PX` | idem | panel Host 상단 앵커 (28) |
 | `OVERLAY_FOOTER_DOCK_MIN_HEIGHT` | idem | 하단 버튼 영역 (76) |
 | `OVERLAY_TOKENS.cardMaxWidth` | `theme.ts` | 카드 가로 (300) |
 

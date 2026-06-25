@@ -1,32 +1,30 @@
-# Release soak watch until 14:00 KST - 10min samples + final report
+# Release soak watch until target local time — 10min samples + final report
 param(
-  [string]$EndLocal,
-  [string]$TimelineMarker,
-  [string]$Package
+  [string]$EndLocal = '2026-06-25 18:00:00',
+  [string]$TimelineMarker = 'RELEASE_SOAK_UNTIL_18H_20260625',
+  [string]$Package = 'com.arcfire.online'
 )
 
 $ErrorActionPreference = 'Continue'
-if (-not $EndLocal) { $EndLocal = '2026-06-25 14:00:00' }
-if (-not $TimelineMarker) { $TimelineMarker = 'RELEASE_SOAK_UNTIL_14H_20260625' }
-if (-not $Package) { $Package = 'com.arcfire.online' }
 
 $ScriptRoot = $PSScriptRoot
 $logDir = Join-Path $ScriptRoot 'logs'
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 
 $endAt = Get-Date $EndLocal
-$reportPath = Join-Path $logDir 'release-soak-final-report-2026-06-25-1400.md'
-$samplerPath = Join-Path $logDir 'release-soak-until-14h-samples.csv'
+$endTag = $endAt.ToString('yyyy-MM-dd-HHmm')
+$reportPath = Join-Path $logDir "release-soak-final-report-$endTag.md"
+$samplerPath = Join-Path $logDir 'release-soak-until-18h-samples.csv'
 
 if (-not (Test-Path $samplerPath)) {
   'ts_local,pid,pss_mb,gl_mb,views,note' | Set-Content -Path $samplerPath -Encoding utf8
 }
 
 $stamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
-Add-Content -Path (Join-Path $logDir 'incidents.log') -Value "[$stamp] PLAYTEST_MILESTONE release_soak_watch_until_14h marker=$TimelineMarker"
+Add-Content -Path (Join-Path $logDir 'incidents.log') -Value "[$stamp] PLAYTEST_MILESTONE release_soak_watch_until marker=$TimelineMarker end=$EndLocal"
 Add-Content -Path (Join-Path $logDir 'mem-timeline.csv') -Value "$stamp,,,,,,,,,,,,$TimelineMarker" -Encoding utf8
 
-Write-Output "release-soak-until-14h: sample every 10m until $EndLocal"
+Write-Output "release-soak-watch: sample every 10m until $EndLocal"
 
 while ((Get-Date) -lt $endAt) {
   $pidApp = (adb shell "pidof $Package" 2>$null).ToString().Trim()
@@ -52,6 +50,6 @@ while ((Get-Date) -lt $endAt) {
 & (Join-Path $ScriptRoot 'run-overnight-final-report.ps1') `
   -ReportPath $reportPath `
   -TimelineMarker $TimelineMarker `
-  -ReportTitle 'Arcfire release soak final report until 14:00 KST'
+  -ReportTitle "Arcfire release soak final report until $EndLocal"
 
 Write-Output "DONE report=$reportPath samples=$samplerPath"

@@ -3,25 +3,37 @@ import { Pressable, Text, View } from 'react-native';
 import { PlanetHubDigitalGauge } from '../../../components/planet/PlanetHubActionGaugeSlot';
 import type { PlanetDevListRowView } from '../../../game/planetDevelopment/planetDevelopmentListRowModel';
 import { useT } from '../../../i18n';
-import { OVERLAY_TOKENS } from '../../../utils/theme';
+import { overlayInkColor } from '../overlayVisualTokens';
+import type { ArcOverlayVisualTheme } from '../tacticalOverlayRollout';
+import { PlanetDevListItemHeader, PlanetDevListMetaSection } from './PlanetDevOverlayChrome';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
 
 type Props = {
   row: PlanetDevListRowView;
+  visualTheme?: ArcOverlayVisualTheme;
   onPress: () => void;
 };
 
 export const PlanetDevelopmentListRow = memo(function PlanetDevelopmentListRow({
   row,
+  visualTheme = 'phosphor',
   onPress,
 }: Props) {
   const t = useT();
-  const PH = OVERLAY_TOKENS.phosphorAccent;
+  const isTactical = visualTheme === 'tactical';
+  const labelInk = overlayInkColor(visualTheme, 'label');
+  const valueInk = overlayInkColor(visualTheme, 'value');
+  const listItemStyle = isTactical
+    ? [styles.listItem, styles.listItemTactical]
+    : [styles.listItem, styles.listItemPhosphor];
+  const imageSlotStyle = isTactical
+    ? [styles.listItemImageSlot, styles.listItemImageSlotTactical]
+    : [styles.listItemImageSlot, styles.listItemImageSlotPhosphor];
 
   return (
     <Pressable
       style={({ pressed }) => [
-        styles.listItem,
+        listItemStyle,
         !row.enabled && styles.listItemDisabled,
         pressed && styles.listItemPressed,
       ]}
@@ -31,45 +43,42 @@ export const PlanetDevelopmentListRow = memo(function PlanetDevelopmentListRow({
     >
       <View style={styles.listItemRow}>
         <View
-          style={styles.listItemImageSlot}
+          style={imageSlotStyle}
           accessibilityLabel={t('planetDev.listImagePlaceholderA11y', { label: row.label })}
         >
           <Text style={styles.listItemImagePlaceholder}>{row.placeholderGlyph}</Text>
         </View>
         <View style={styles.listItemBody}>
-          <Text
-            style={[
-              styles.listItemTitle,
-              !row.enabled && styles.listItemTitleDisabled,
-              { color: PH },
-            ]}
-            numberOfLines={1}
-          >
-            {row.label}
-            {!row.enabled ? (
-              <Text style={styles.listItemComingSoonBadge}> · {t('planetDev.listComingSoonBadge')}</Text>
-            ) : null}
-          </Text>
-          <Text
-            style={[styles.listItemSummary, { color: PH }]}
-            numberOfLines={3}
-          >
-            {row.summary}
-          </Text>
+          <PlanetDevListItemHeader
+            title={row.label}
+            summary={row.summary}
+            visualTheme={visualTheme}
+            disabled={!row.enabled}
+            titleSuffix={
+              !row.enabled ? (
+                <Text style={[styles.listItemComingSoonBadge, { color: labelInk }]}>
+                  {' '}
+                  · {t('planetDev.listComingSoonBadge')}
+                </Text>
+              ) : null
+            }
+          />
           {row.progress ? (
-            <View style={styles.listItemProgressBlock}>
-              <Text style={[styles.listItemProgressLabel, { color: PH }]}>
+            <PlanetDevListMetaSection visualTheme={visualTheme}>
+              <Text style={[styles.listItemProgressLabel, { color: labelInk }]}>
                 {row.progress.label}
               </Text>
               <PlanetHubDigitalGauge
                 progressPct={row.progress.progressPct}
                 accessibilityLabel={row.progress.a11yLabel}
               />
-            </View>
+            </PlanetDevListMetaSection>
           ) : row.completeStatus ? (
-            <Text style={[styles.listItemStatusComplete, { color: PH }]}>
-              {row.completeStatus}
-            </Text>
+            <PlanetDevListMetaSection visualTheme={visualTheme}>
+              <Text style={[styles.listItemStatusComplete, { color: valueInk }]}>
+                {row.completeStatus}
+              </Text>
+            </PlanetDevListMetaSection>
           ) : null}
         </View>
       </View>

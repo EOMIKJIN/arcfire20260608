@@ -3,7 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { getItemDef } from '../../data/goods';
 import type { TradeGoodCategory } from '../../types';
 import type { TradeBuySubTabId } from '../../game/tradeBuySubTab';
-import { COLORS, FONTS } from '../../utils/theme';
+import { FONTS } from '../../utils/theme';
+import { TACTICAL_FACILITY as TF } from '../tactical/tacticalFacilityScreenTokens';
 
 export const TRADE_LISTING_ICON_SIZE_PX = 44;
 
@@ -74,12 +75,12 @@ const styles = StyleSheet.create({
   slot: {
     width: TRADE_LISTING_ICON_SIZE_PX,
     height: TRADE_LISTING_ICON_SIZE_PX,
-    borderWidth: 1.5,
-    borderColor: COLORS.border,
+    borderWidth: 1,
+    borderColor: TF.insetBorder,
     borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(12, 20, 36, 0.55)',
+    backgroundColor: TF.insetBg,
     flexShrink: 0,
   },
   glyph: {
