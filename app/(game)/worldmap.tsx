@@ -5,7 +5,7 @@
 import React, { useState, useCallback, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet,
-  useWindowDimensions, Animated as RNAnimated, Easing, AppState, InteractionManager,
+  useWindowDimensions, Animated as RNAnimated, Easing, AppState,
 } from 'react-native';
 import Svg, { Line, Circle, G, Text as SvgText } from 'react-native-svg';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -61,6 +61,8 @@ import { StarSystem } from '../../src/types';
 import type { AppLocale } from '../../src/i18n/types';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
+import { runStageUiAfterIdle } from '../../src/navigation/stageNavGate';
+import { useStageTransitionStuckWatchdog } from '../../src/navigation/stageTransitionStuckWatchdog';
 import {
   registerGalaxyMapDeferredTileReset,
   registerGalaxyMapPresentationReset,
@@ -90,6 +92,13 @@ import {
 } from '../../src/ui/heavyUiDataSession';
 import { buildCsvStaticIndexesFull } from '../../src/game/buildCsvStaticIndexes';
 import { GalaxyMapTerritoryVoronoiSvg } from '../../src/galaxyMap/GalaxyMapTerritoryVoronoiSvg';
+import { GalaxyMapContestedZoneRingOverlay } from '../../src/galaxyMap/GalaxyMapContestedZoneRingOverlay';
+import { listContestedZoneSystemIds } from '../../src/arcCore/territorial/arcCoreTerritorialCombatPolicy';
+import {
+  DEFAULT_STAGE_NAV_DRAIN_MS,
+  runStageNavAfterTeardown,
+  useStageNavGate,
+} from '../../src/navigation/stageNavGate';
 
 const NODE_R = LAYOUT.map_node_radius;
 const NODE_R_CURRENT = LAYOUT.map_node_radius_start;
@@ -98,11 +107,15 @@ const MAP_PAD_PX = 44;
 const NODE_HIT_R = 28;
 const MAP_PAN_MIN_DISTANCE_PX = 8;
 const MAP_PAN_DECELERATION = 0.992;
+/** Table-First — territorial `contestedZone=true` 성계 (부트 1회) */
+const CONTESTED_ZONE_SYSTEM_ID_SET = new Set(listContestedZoneSystemIds());
 /** 루트 간 이동 시간(임시 고정) */
 const SHIP_TRANSIT_DURATION_MS = 3000;
 const DEFERRED_TILE_STEP_MS = 120;
 /** 출발 직후 replace — 맵 onLayout·첫 rAF 전까지 LOADING 유지(시설 서브스테이지와 동일 패턴) */
 const GALAXY_MAP_LOADING_MIN_MS = 520;
+/** worldmap → planet/combat replace 전 Reanimated performOperations drain */
+const HUB_NAV_POST_TEARDOWN_DELAY_MS = DEFAULT_STAGE_NAV_DRAIN_MS;
 type DeferredDirection = 'north' | 'east' | 'south' | 'west';
 const ROUTE_LABEL_META: Record<DeferredDirection, { textKey: string; color: string }> = {
   north: { textKey: 'worldmap.route.north', color: '#7CC7FF' },
@@ -207,40 +220,9 @@ export default function WorldMapScreen() {
   const isFocusedRef = useRef(false);
   /** combat/planet replace 시 blur finalize 오작동 방지 */
   const worldmapInternalNavRef = useRef(false);
+  /** 착륙·전투 진입 — GestureDetector unmount + 버튼 연타 차단 */
+  const hubNavGate = useStageNavGate();
 
-  const handleExitToTitle = useCallback(() => {
-    showArcAlert(
-      t('planet.exitGameTitle'),
-      t('planet.exitGameBody'),
-      [
-        { text: t('planet.cancel'), style: 'cancel' },
-        {
-          text: t('planet.exit'),
-          style: 'destructive',
-          onPress: () => {
-            finalizeGalaxyMapSessionForExit({ persist: true });
-            router.replace('/?forceTitle=1');
-          },
-        },
-      ],
-    );
-  }, [t]);
-
-  const handleOpenWorldmapMenu = useCallback(() => {
-    if (isMoving) return;
-    showArcAlert(
-      t('worldmap.menu.modalTitle'),
-      t('worldmap.menu.modalBody'),
-      [
-        { text: t('worldmap.menu.close'), style: 'cancel' },
-        {
-          text: t('worldmap.menu.exitGame'),
-          style: 'destructive',
-          onPress: handleExitToTitle,
-        },
-      ],
-    );
-  }, [handleExitToTitle, isMoving, t]);
   const moveProgress = React.useRef(new RNAnimated.Value(0)).current;
   const transitAnimRef = useRef<RNAnimated.CompositeAnimation | null>(null);
   const transitFallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -282,33 +264,115 @@ export default function WorldMapScreen() {
     scrollGesturesArmedRef.current = false;
     setMapInteractionReady(false);
     settleTransitWait(false);
+    isMovingSv.value = 0;
     teardownGalaxyMapScrollFromJs({ scrollX, scrollY, scrollAliveSv });
-  }, [scrollX, scrollY, scrollAliveSv, settleTransitWait]);
+    runOnUI(() => {
+      'worklet';
+      isMovingSv.value = 0;
+      cancelAnimation(isMovingSv);
+    })();
+  }, [scrollX, scrollY, scrollAliveSv, isMovingSv, settleTransitWait]);
+
+  const handleExitToTitle = useCallback(() => {
+    showArcAlert(
+      t('planet.exitGameTitle'),
+      t('planet.exitGameBody'),
+      [
+        { text: t('planet.cancel'), style: 'cancel' },
+        {
+          text: t('planet.exit'),
+          style: 'destructive',
+          onPress: () => {
+            if (!hubNavGate.tryBegin()) return;
+            stopGalaxyMapInteractionLoops();
+            runStageNavAfterTeardown({
+              teardown: () => finalizeGalaxyMapSessionForExit({ persist: true }),
+              navigate: () => router.replace('/?forceTitle=1'),
+              isMounted: () => isMountedRef.current,
+            });
+          },
+        },
+      ],
+    );
+  }, [hubNavGate, stopGalaxyMapInteractionLoops, t]);
+
+  const handleOpenWorldmapMenu = useCallback(() => {
+    if (isMoving || hubNavGate.isLocked()) return;
+    showArcAlert(
+      t('worldmap.menu.modalTitle'),
+      t('worldmap.menu.modalBody'),
+      [
+        { text: t('worldmap.menu.close'), style: 'cancel' },
+        {
+          text: t('worldmap.menu.exitGame'),
+          style: 'destructive',
+          onPress: handleExitToTitle,
+        },
+      ],
+    );
+  }, [handleExitToTitle, hubNavGate, isMoving, t]);
 
   /**
-   * worldmap → planet replace 직렬화 — scroll/worklet teardown 후 2×rAF 뒤 navigate.
-   * 즉시 replace 시 freezeOnBlur worldmap의 ShareableWorklet triggerUI SIGSEGV (2026-06-25 vega→arcadia 착륙).
+   * worldmap → planet/combat replace — gesture unmount → memory release → drain → navigate.
    */
   const navigateToPlanetHubAfterTeardown = useCallback((anchorPlanetId: string | null) => {
+    if (!hubNavGate.tryScheduleNavigate()) return;
     worldmapInternalNavRef.current = true;
+    if (!hubNavGate.isLocked()) hubNavGate.tryBegin();
+
     markPlanetHubIngressReclaim({ invalidateMemoCaches: true });
     stopGalaxyMapInteractionLoops();
-    releaseWorldmapSessionFloor({ reason: 'route_blur', anchorPlanetId });
-    InteractionManager.runAfterInteractions(() => {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          if (!isMountedRef.current) return;
-          router.replace('/(game)/planet');
-        });
-      });
+    if (transitAnimRef.current) {
+      transitAnimRef.current.stop();
+      transitAnimRef.current = null;
+    }
+    moveProgress.stopAnimation();
+    moveProgress.setValue(0);
+    setIsMoving(false);
+    setShipTransit(null);
+    setShowPanel(false);
+
+    runStageNavAfterTeardown({
+      teardown: () => releaseWorldmapSessionFloor({ reason: 'route_blur', anchorPlanetId }),
+      navigate: () => router.replace('/(game)/planet'),
+      isMounted: () => isMountedRef.current,
+      drainMs: HUB_NAV_POST_TEARDOWN_DELAY_MS,
     });
-  }, [stopGalaxyMapInteractionLoops]);
+  }, [hubNavGate, stopGalaxyMapInteractionLoops, moveProgress]);
+
+  const navigateToCombatAfterTeardown = useCallback(() => {
+    if (!hubNavGate.tryScheduleNavigate()) return;
+    worldmapInternalNavRef.current = true;
+    if (!hubNavGate.isLocked()) hubNavGate.tryBegin();
+
+    stopGalaxyMapInteractionLoops();
+    if (transitAnimRef.current) {
+      transitAnimRef.current.stop();
+      transitAnimRef.current = null;
+    }
+    moveProgress.stopAnimation();
+    moveProgress.setValue(0);
+    setIsMoving(false);
+    setShipTransit(null);
+    setShowPanel(false);
+
+    runStageNavAfterTeardown({
+      teardown: () => releaseWorldmapSessionFloor({
+        reason: 'route_blur',
+        anchorPlanetId: resolveWorldmapReleaseAnchorPlanetId(),
+      }),
+      navigate: () => router.replace('/(game)/combat'),
+      isMounted: () => isMountedRef.current,
+      drainMs: HUB_NAV_POST_TEARDOWN_DELAY_MS,
+    });
+  }, [hubNavGate, stopGalaxyMapInteractionLoops, moveProgress]);
 
   const handleReturnToLastHub = useCallback(() => {
+    if (!hubNavGate.tryBegin()) return;
     finalizeGalaxyMapSessionForExit({ persist: true });
     const anchor = usePlayerStore.getState().player?.currentPlanetId ?? null;
     navigateToPlanetHubAfterTeardown(anchor);
-  }, [navigateToPlanetHubAfterTeardown]);
+  }, [hubNavGate, navigateToPlanetHubAfterTeardown]);
 
   const runScrollTargetOnUi = useCallback((targetX: number, targetY: number) => {
     runOnUI(() => {
@@ -388,11 +452,12 @@ export default function WorldMapScreen() {
   useFocusEffect(
     useCallback(() => {
       worldmapInternalNavRef.current = false;
+      hubNavGate.reset();
       isFocusedRef.current = true;
       consumeGalaxyMapIngressReclaim();
       emitMemProfileMarker({ stage: 'galaxy_map', event: 'route_focus' });
       // Reanimated Pan worklet — scrollAlive=1 은 runOnUI 스크롤 적용·2×rAF 이후에만 (SIGSEGV 방지)
-      const enableScrollTask = InteractionManager.runAfterInteractions(() => {
+      const enableScrollTask = runStageUiAfterIdle(() => {
         requestAnimationFrame(() => {
           armGalaxyMapScrollGestures();
         });
@@ -533,6 +598,10 @@ export default function WorldMapScreen() {
       return unlockedSystemIds.includes(s.id);
     }),
     [systemsList, isLegacyVisibleSynth, isExpansionGatewaySynth, unlockedSystemIds],
+  );
+  const contestedVisibleSystems = useMemo(
+    () => visibleSystemsList.filter((s) => CONTESTED_ZONE_SYSTEM_ID_SET.has(s.id)),
+    [visibleSystemsList],
   );
   const hiddenUndiscoveredSystems = useMemo(
     () => systemsList.filter((s) =>
@@ -736,8 +805,23 @@ export default function WorldMapScreen() {
     mapMetricsReady
     && stageFrameReady
     && galaxyLoadingMinHold
+    && !hubNavGate.pending
     && mapInteractionReady
     && (worldmapSessionConfig == null || worldmapSession.phase === 'ready');
+
+  const worldmapLoadingGateActive =
+    hubNavGate.pending
+    || (!galaxyMapStageReady && worldmapSession.phase !== 'error');
+
+  useStageTransitionStuckWatchdog(worldmapLoadingGateActive, () => {
+    hubNavGate.reset();
+    if (worldmapSession.phase === 'loading') {
+      worldmapSession.retry();
+    }
+    if (!scrollGesturesArmedRef.current && isFocusedRef.current) {
+      armGalaxyMapScrollGestures();
+    }
+  });
 
   const computeScrollTargetForSystem = useCallback(
     (systemId: string): { x: number; y: number } | null => {
@@ -1060,9 +1144,7 @@ export default function WorldMapScreen() {
           destinationSystemId: targetSystem.id,
         });
         selectSystem(targetSystem.id);
-        worldmapInternalNavRef.current = true;
-        stopGalaxyMapInteractionLoops();
-        router.replace('/(game)/combat');
+        navigateToCombatAfterTeardown();
         return;
       }
 
@@ -1097,13 +1179,14 @@ export default function WorldMapScreen() {
       galaxyBounds.minY,
       settleTransitWait,
       stopGalaxyMapInteractionLoops,
+      navigateToCombatAfterTeardown,
       t,
     ],
   );
 
   const handleMove = useCallback(async () => {
     if (!selectedSystem || !player) return;
-    if (isMoving) return;
+    if (isMoving || hubNavGate.isLocked()) return;
 
     const travelBlock = resolvePlayerTravelBlock(player);
     if (travelBlock) {
@@ -1115,12 +1198,18 @@ export default function WorldMapScreen() {
     }
 
     if (selectedSystem.id === player.currentSystemId) {
+      if (!hubNavGate.tryBegin()) return;
       const planet = selectedSystem.planets[0];
-      if (planet) {
-        landOnPlanet(planet.id);
-        await persist();
+      try {
+        if (planet) {
+          landOnPlanet(planet.id);
+          await persist();
+        }
+        if (!isMountedRef.current) return;
+        navigateToPlanetHubAfterTeardown(planet?.id ?? null);
+      } catch {
+        hubNavGate.reset();
       }
-      navigateToPlanetHubAfterTeardown(planet?.id ?? null);
       return;
     }
 
@@ -1141,7 +1230,7 @@ export default function WorldMapScreen() {
     } else {
       doMove(selectedSystem);
     }
-  }, [selectedSystem, player, reachableIds, doMove, landOnPlanet, persist, isMoving, t, navigateToPlanetHubAfterTeardown]);
+  }, [selectedSystem, player, reachableIds, doMove, landOnPlanet, persist, isMoving, t, navigateToPlanetHubAfterTeardown, hubNavGate]);
 
   if (!player) return null;
 
@@ -1214,6 +1303,12 @@ export default function WorldMapScreen() {
                     locale={locale}
                   />
                 </Svg>
+                <GalaxyMapContestedZoneRingOverlay
+                  systems={contestedVisibleSystems}
+                  currentSystemId={player.currentSystemId}
+                  toScreen={toScreen}
+                  animActive={galaxyMapStageReady}
+                />
                 <View style={[StyleSheet.absoluteFillObject, styles.routeLabelOverlay]} pointerEvents="none">
                   {routeLabelAnchors.map((label) => (
                     <Text
@@ -1265,7 +1360,7 @@ export default function WorldMapScreen() {
           </GestureDetector>
         ) : null}
         <StageLoadingOverlay
-          visible={!galaxyMapStageReady && worldmapSession.phase !== 'error'}
+          visible={worldmapLoadingGateActive}
           overlayId="stage-loading-worldmap"
         />
         {worldmapSession.phase === 'error' ? (
@@ -1316,17 +1411,20 @@ export default function WorldMapScreen() {
             </Text>
             <ArcButton
               label={
-                isMoving
-                  ? t('worldmap.btn.moving')
-                  : selectedSystem.id === player.currentSystemId
-                    ? t('worldmap.btn.land')
-                    : t('worldmap.btn.move')
+                hubNavGate.pending
+                  ? t('worldmap.btn.landing')
+                  : isMoving
+                    ? t('worldmap.btn.moving')
+                    : selectedSystem.id === player.currentSystemId
+                      ? t('worldmap.btn.land')
+                      : t('worldmap.btn.move')
               }
               variant="tacticalPrimary"
               onPress={handleMove}
               disabled={
-                isMoving ||
-                (!reachableIds.includes(selectedSystem.id) &&
+                hubNavGate.pending
+                || isMoving
+                || (!reachableIds.includes(selectedSystem.id) &&
                   selectedSystem.id !== player.currentSystemId)
               }
             />

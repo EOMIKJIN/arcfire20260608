@@ -132,6 +132,9 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
           {infoRow(t('econInfo.convoyFeeToday'), formatCredits(snapshot.convoyTradeFeeTodayCredits, { suffix: true }))}
           {infoRow(t('econInfo.playerFeeToday'), formatCredits(snapshot.playerTradeFeeTodayCredits, { suffix: true }))}
           {infoRow(t('econInfo.monthlyEst'), formatCredits(snapshot.tradeFeeMonthlyEstCredits, { suffix: true }))}
+          {section(t('econInfo.fabricEcology'))}
+          {infoRow(t('econSnap.supplyVitality'), snapshot.supplyVitalityLabel)}
+          {infoRow(t('econInfo.fabricOpsToday'), snapshot.fabricOpsSummary)}
           {section(t('econInfo.coreMetrics'))}
           {infoRow(t('econInfo.resource'), `${snapshot.resourcePct}%`)}
           {infoRow(t('econInfo.population'), `${snapshot.populationStatPct}%`)}

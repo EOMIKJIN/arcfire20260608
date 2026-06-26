@@ -3,10 +3,13 @@ import { BaseArcSubCore } from './BaseArcSubCore';
 import { shouldRunArcCoreDailyBatch } from '../schedule/arcCoreDailyOpsPolicy';
 import {
   getArcCoreDailyOpsLastBatchDayKey,
+  getArcCoreDailyOpsLastBatchAtMs,
   hydrateArcCoreDailyOpsState,
   markArcCoreDailyBatchCompleted,
 } from '../schedule/arcCoreDailyOpsState';
 import { runArcCoreDailyOpsBatch } from '../schedule/runArcCoreDailyOpsBatch';
+import { formatArcCoreOpsDayKey, resolveArcCoreDailyOpsPolicy } from '../schedule/arcCoreDailyOpsPolicy';
+import { setArcCoreDailyOpsSummaryPending } from '../schedule/arcCoreDailyOpsSummaryPending';
 import { usePlayerStore } from '../../store/playerStore';
 
 /**
@@ -54,7 +57,21 @@ export class ArcCoreDailyOpsSubCore extends BaseArcSubCore {
 
     this.batchRunning = true;
     try {
-      await runArcCoreDailyOpsBatch();
+      const lastBatchAt = getArcCoreDailyOpsLastBatchAtMs();
+      const batchResult = await runArcCoreDailyOpsBatch();
+      const policy = resolveArcCoreDailyOpsPolicy();
+      const dayKey = formatArcCoreOpsDayKey(now, policy.timeZone);
+      const hoursSinceLastBatch =
+        lastBatchAt != null && lastBatchAt > 0
+          ? Math.max(0, (now - lastBatchAt) / (60 * 60 * 1000))
+          : 0;
+      await setArcCoreDailyOpsSummaryPending({
+        dayKey,
+        hoursSinceLastBatch,
+        economyFabric: batchResult.economyFabric,
+        simOverlayIngest: batchResult.simOverlayIngest,
+        economyLearning: batchResult.economyLearning,
+      });
       await markArcCoreDailyBatchCompleted(now);
     } finally {
       this.batchRunning = false;

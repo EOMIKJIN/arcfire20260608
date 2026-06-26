@@ -1,7 +1,8 @@
 /**
  * 계정 신규·초기화 시 아크코어가 즉시 개방하는 첫 미개척 성계(synth_073).
- * 일일 개방(`tryArcCoreWorldDailyUnlock`)과 별도 — `lastExpansionAtMs`는 건드리지 않는다.
+ * @deprecated 전역 일정(`globalScheduleEnabled`) 활성 시 no-op — `syncArcCoreGlobalWorldExpansion` 사용.
  */
+import { isArcCoreGlobalWorldExpansionEnabled } from './worldExpansionGlobalPolicy';
 import { GAMEPLAY_SYSTEM_IDS } from '../data/galaxy100';
 import { useWorldStore } from '../store/worldStore';
 import { finalizeArcCoreSynthFrontierUnlock } from './worldExpansionSynthColonization';
@@ -25,6 +26,7 @@ export function shouldApplyArcCoreAccountFreshStartSeed(): boolean {
  * @returns 실제 해금 수행 여부
  */
 export function applyArcCoreAccountFreshStartSeedUnlock(): boolean {
+  if (isArcCoreGlobalWorldExpansionEnabled()) return false;
   if (!shouldApplyArcCoreAccountFreshStartSeed()) return false;
 
   const systemId = ARC_CORE_ACCOUNT_FRESH_START_SEED_SYSTEM_ID;

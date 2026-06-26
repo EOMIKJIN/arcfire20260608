@@ -20,6 +20,10 @@ const FABRIC_PLAYER_SELL_UNITS_PER_R = 40;
 const FABRIC_PLAYER_TRADES_PER_P = 4;
 const FABRIC_CONVOY_TRIPS_PER_P = 2;
 const FABRIC_PLAYER_BUY_UNITS_PER_P = 30;
+/** 생산지 재고 합 → R nudge (일 1회 스냅샷) */
+const FABRIC_SUPPLY_STOCK_UNITS_PER_R = 250;
+
+export type PlanetFabricVitalityTier = 'slump' | 'normal' | 'boom' | 'super_boom';
 
 export type PlanetEconomyOperationalSnapshot = {
   planetId: string;
@@ -223,6 +227,15 @@ export function resolvePlanetSupplyStockScale(planetId: string): number {
   return 1;
 }
 
+/** supplyStockScale → 4단 활력 등급 (허브 overlay read-only) */
+export function resolvePlanetSupplyVitalityTier(scale: number): PlanetFabricVitalityTier {
+  const s = Number.isFinite(scale) ? scale : 1;
+  if (s < 0.65) return 'slump';
+  if (s < 0.95) return 'normal';
+  if (s < 1.35) return 'boom';
+  return 'super_boom';
+}
+
 export function capturePlanetEconomyOperationalSnapshot(planetId: string): PlanetEconomyOperationalSnapshot | null {
   const core = usePlanetCoreRuntimeStore.getState();
   if (!core.hydrated) return null;
@@ -295,6 +308,21 @@ export function runPlanetEconomyFabricDailyPass(): PlanetEconomyFabricDailyPassR
         operationalBase * 0.85 + convoyBoost + playerTradeBoost + 0.25 - defensePenalty - populationPenalty,
       ),
     );
+    let supplyStockUnitsSnapshot = 0;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const tradeListing = require('../../game/planetDevelopment/planetTradePortListing') as typeof import('../../game/planetDevelopment/planetTradePortListing');
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const tradeMarket = require('../../world/planetTradeMarketStore') as typeof import('../../world/planetTradeMarketStore');
+      if (tradeListing.isPlanetTradePortInstalled(planetId)) {
+        supplyStockUnitsSnapshot = tradeMarket.sumPlanetSupplyStockUnits(planetId, {
+          allowLazyRebuild: true,
+        });
+      }
+    } catch {
+      /* optional */
+    }
+
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const tradeListing = require('../../game/planetDevelopment/planetTradePortListing') as typeof import('../../game/planetDevelopment/planetTradePortListing');
@@ -309,10 +337,15 @@ export function runPlanetEconomyFabricDailyPass(): PlanetEconomyFabricDailyPassR
       /* optional */
     }
 
+    const stockResourceHint = Math.min(
+      FABRIC_GAUGE_NUDGE_CAP,
+      Math.floor(supplyStockUnitsSnapshot / FABRIC_SUPPLY_STOCK_UNITS_PER_R),
+    );
     const resourceNudge = Math.min(
       FABRIC_GAUGE_NUDGE_CAP,
       Math.floor(fabric.window.supplyUnitsDelivered / FABRIC_SUPPLY_UNITS_PER_R) +
-        Math.floor(fabric.window.playerSellUnits / FABRIC_PLAYER_SELL_UNITS_PER_R),
+        Math.floor(fabric.window.playerSellUnits / FABRIC_PLAYER_SELL_UNITS_PER_R) +
+        stockResourceHint,
     );
     const populationNudge = Math.min(
       FABRIC_GAUGE_NUDGE_CAP,
@@ -337,6 +370,10 @@ export function runPlanetEconomyFabricDailyPass(): PlanetEconomyFabricDailyPassR
         operationalBase,
         resourceNudge,
         populationNudge,
+        supplyStockUnitsSnapshot,
+        windowConvoyProfit: fabric.window.convoyProfitCredits,
+        windowConvoyTrips: fabric.window.convoyTrips,
+        windowPlayerTradeGross: fabric.window.playerTradeGrossCredits,
         windowSummary: { ...fabric.window },
       },
       window: emptyFabricDetail(kstDayKey).window,

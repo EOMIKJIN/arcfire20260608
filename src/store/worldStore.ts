@@ -36,8 +36,18 @@ interface WorldState {
   isSystemUnlocked: (id: string) => boolean;
   unlockSystem: (
     id: string,
-    source?: 'arc_core_daily' | 'arc_core_legacy_seed' | 'arc_core_fresh_start_seed' | 'manual',
+    source?:
+      | 'arc_core_daily'
+      | 'arc_core_legacy_seed'
+      | 'arc_core_fresh_start_seed'
+      | 'arc_core_global_schedule'
+      | 'manual',
   ) => void;
+  /** 전역 epoch 일정 — target synth 집합에 맞춰 추가·잠금(reconcile) */
+  reconcileGlobalSynthUnlocks: (targetSynthIds: readonly string[]) => {
+    added: string[];
+    removed: string[];
+  };
   pickNextUnlockCandidateNearCurrent: (currentSystemId: string | null | undefined) => string | null;
   /** 아크코어 마스터 일일 개방: 잠금 synth만, 개방 성계와 연결선이 있는 프론티어만 (후보 없으면 null). */
   pickArcCoreDailyUnlockCandidate: (currentSystemId: string | null | undefined) => string | null;
@@ -341,7 +351,8 @@ export const useWorldStore = create<WorldState>((set, get) => ({
     const isArcCoreUnlock =
       source === 'arc_core_daily'
       || source === 'arc_core_legacy_seed'
-      || source === 'arc_core_fresh_start_seed';
+      || source === 'arc_core_fresh_start_seed'
+      || source === 'arc_core_global_schedule';
     const initialPhase = isArcCoreUnlock ? 0 : SYNTH_COLONIZATION_MAX_PHASE;
     const planetId = target.planets[0]?.id;
     const nextPhaseMap = { ...state.synthColonizationPhaseByPlanetId };
@@ -387,6 +398,61 @@ export const useWorldStore = create<WorldState>((set, get) => ({
       },
     });
     void get().persistWorld();
+  },
+
+  reconcileGlobalSynthUnlocks: (targetSynthIds) => {
+    const state = get();
+    const baseline = new Set(DEFAULT_UNLOCKED_SYSTEM_IDS);
+    const targetSet = new Set(
+      targetSynthIds.map((id) => normalizeSynthSystemId(id)).filter((id) => id.startsWith('synth_')),
+    );
+
+    const currentSynthUnlocked = state.unlockedSystemIds.filter(
+      (id) => id.startsWith('synth_') && !baseline.has(id),
+    );
+    const toRemove = currentSynthUnlocked.filter((id) => !targetSet.has(normalizeSynthSystemId(id)));
+    const toAdd = [...targetSet].filter((id) => !state.unlockedSystemIds.includes(id));
+
+    if (toRemove.length === 0 && toAdd.length === 0) {
+      return { added: [], removed: [] };
+    }
+
+    let unlockedSystemIds = [...state.unlockedSystemIds];
+    let nextSystems = { ...state.systems };
+    let nextPhaseMap = { ...state.synthColonizationPhaseByPlanetId };
+    let visitedSystemIds = [...state.visitedSystemIds];
+
+    for (const rawId of toRemove) {
+      const id = normalizeSynthSystemId(rawId);
+      unlockedSystemIds = unlockedSystemIds.filter((x) => x !== id);
+      visitedSystemIds = visitedSystemIds.filter((x) => x !== id);
+      const base = GALAXY_SYSTEMS[id];
+      if (base) nextSystems[id] = { ...base };
+      const planetId = base?.planets[0]?.id;
+      if (planetId) delete nextPhaseMap[planetId];
+    }
+
+    const added: string[] = [];
+    for (const rawId of toAdd) {
+      const id = normalizeSynthSystemId(rawId);
+      const target = nextSystems[id];
+      if (!target) continue;
+      if (unlockedSystemIds.includes(id)) continue;
+      unlockedSystemIds.push(id);
+      const planetId = target.planets[0]?.id;
+      if (planetId) nextPhaseMap[planetId] = 0;
+      nextSystems[id] = applySynthSystemAutogen(target, 0);
+      added.push(id);
+    }
+
+    set({
+      systems: nextSystems,
+      unlockedSystemIds,
+      visitedSystemIds,
+      synthColonizationPhaseByPlanetId: nextPhaseMap,
+    });
+    void get().persistWorld();
+    return { added, removed: toRemove };
   },
 
   pickNextUnlockCandidateNearCurrent: (currentSystemId) => {

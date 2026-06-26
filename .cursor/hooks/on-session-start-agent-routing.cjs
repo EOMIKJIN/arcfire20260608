@@ -11,6 +11,7 @@ const ROUTING_CONTEXT = [
   '★ 사용자 작업 지시: **김팀장 세션(본 대화)만**. 김경제 대화창에 코드·기능 지시 금지(충돌 방지).',
   '김팀장 (@김팀장): 개발·경제·UI·Skia·버그 **전 코드** + 김경제 관측·**retention 프로파일** 검토→조치.',
   '김경제 (@김경제): **김팀장이 별도 세션/Task로만 배정** — 감시·audit:balance-ops 점검·리포트. **코드 수정 금지.**',
+  '  **개발 업데이트 시 무조건**: mem-timeline·crash·retention **즉각 재검수** → handoff `mem-post-dev-recheck` 보고(같은 턴).',
   '페르소나: 김팀장→Opus(경제 코드 포함) | 김경제→감시만 | Fable→tables | Sonnet→logcat/tsc.',
   '',
   '※ 김경제 주업무 — [기본 장기앱 실행 테스트]:',

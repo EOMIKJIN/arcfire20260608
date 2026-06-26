@@ -177,6 +177,42 @@ _(김팀장 검수 코멘트·반려 사유는 아래에 기록)_
 
 > status: **ready-for-team-lead-action** · 감시 **2026-06-25 11:00 KST**까지 유지
 
+## [관측] 2026-06-26 12:30 KST — 오후 감시 **재가동** (17:00 자동보고 예약)
+
+- **김경제 감시**: `restart-afternoon-watch.ps1` 실행 · watch-30m + report-watch **재기동**
+- **monitor-paused**: **ON** (기록만 · 플레이 중 force-stop 없음)
+- **adb**: 192.168.45.197:37573 · 앱 PID **30549** (12:23 기준)
+- **mem-monitor**: **WARN** (최근 PSS **588–928MB** · GL spike 141MB @11:53 · 12:01 PROCESS_NOT_RUNNING 후 재기동)
+- **ArcCore learning**: `arc-core:learning:verify` PASS · RTDB policy `2026-06-26-1782444492960` 배포
+- **17:00 KST**: `schedule-5pm-kim-auto-report.ps1` 백그라운드 예약 → `kim-economy-handoff.md` + `afternoon-watch-report-*.md`
+- **권장(김팀장 1안)**: 오전 PSS 900+ soft-ceiling 반복 — 오후 soak에서 floor 추이만 관측(record-only). CRITICAL(PSS≥950) 시 P0.
+
+## [관측] 2026-06-26 03:34 KST — 오후 감시 · 17:00 자동보고
+
+- **김경제 감시**: watch-30m PID **30408** · report-watch PID **13748** · auto-fix=OFF(record-only)
+- **mem-monitor**: **OK** (PSS 590.1MB · GL 23.0MB · Views 311 · pid=30549)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260626-1700.md
+- **timeline marker**: AFTERNOON_WATCH_START
+- **incidents (actionable tail)**: 1
+  - [2026-06-26 12:31:05] AFTERNOON_WATCH_START 2026-06-26 12:31:05 KST
+- **ArcCore learning**: arc-core:learning:verify PASS · RTDB policy 2026-06-26
+- **권장(김팀장 1안)**: afternoon soak OK — check RTDB dailyKpi
+
+> status: monitor-ok · 감시 유지
+
+## [관측] 2026-06-26 08:00 KST — 오후 감시 · 17:00 자동보고
+
+- **김경제 감시**: watch-30m PID **30408** · report-watch PID **26380** · auto-fix=OFF(record-only)
+- **mem-monitor**: **OK** (PSS 594.7MB · GL 25.9MB · Views 287 · pid=30549)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260626-1700.md
+- **timeline marker**: AFTERNOON_WATCH_START
+- **incidents (actionable tail)**: 0
+  - (none)
+- **ArcCore learning**: arc-core:learning:verify PASS · RTDB policy 2026-06-26
+- **권장(김팀장 1안)**: afternoon soak OK — check RTDB dailyKpi
+
+> status: monitor-ok · 감시 유지
+
 ## [관측] _(김경제 갱신 템플릿 — 최신 항목을 위에 추가)_
 
 - **일자**:

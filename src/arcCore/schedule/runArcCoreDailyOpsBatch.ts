@@ -22,6 +22,10 @@ import { runPlanetPgpDailyPass } from '../economy/runPlanetPgpDailyPass';
 import { runFacilityStatNudgePass } from '../planetFacility/runFacilityStatNudgePass';
 import { runLaboratoryRdSpeedPass } from '../planetFacility/runLaboratoryRdSpeedPass';
 import { runTavernBountyRefreshPass } from '../planetFacility/runTavernBountyRefreshPass';
+import { runArcCoreEconomyLearningDailyPass } from '../learning/runArcCoreEconomyLearningDailyPass';
+import { pushArcCoreDailyKpiToRtdbIfDue } from '../learning/pushArcCoreDailyKpiToRtdb';
+import { isArcCoreRtdbAvailableForSession } from '../../firebase/rtdbRefs';
+import { getCurrentUser } from '../../firebase/auth';
 import { resolveArcCoreDailyOpsPolicy } from './arcCoreDailyOpsPolicy';
 
 export type ArcCoreDailyOpsBatchResult = {
@@ -44,6 +48,7 @@ export type ArcCoreDailyOpsBatchResult = {
   tavernBountyRefresh: boolean;
   planetPgp: boolean;
   synthColonizationAdvance: boolean;
+  economyLearning: boolean;
 };
 
 /**
@@ -72,6 +77,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     tavernBountyRefresh: false,
     planetPgp: false,
     synthColonizationAdvance: false,
+    economyLearning: false,
   };
 
   if (!usePlanetCoreRuntimeStore.getState().hydrated) {
@@ -135,6 +141,18 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
 
   const pgpPass = runPlanetPgpDailyPass();
   result.planetPgp = pgpPass.ran;
+
+  try {
+    const learningResult = await runArcCoreEconomyLearningDailyPass(result);
+    result.economyLearning = true;
+    await pushArcCoreDailyKpiToRtdbIfDue({
+      localDeviceId: getCurrentUser().uid,
+      learningResult,
+      rtdbAvailable: isArcCoreRtdbAvailableForSession(),
+    });
+  } catch {
+    /* learning KPI·RTDB push는 비차단 */
+  }
 
   return result;
 }

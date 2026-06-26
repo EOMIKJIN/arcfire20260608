@@ -22,6 +22,8 @@ const RETENTION_MD = path.join(ROOT, 'tools/memory-profiler/reports/latest-reten
 const BALANCE_OPS_LATEST = path.join(ROOT, 'tools/balance-ops-audit/reports/latest.md');
 const LEARNING_JSON = path.join(ROOT, 'tools/balance-ops-audit/reports/learning-state.json');
 const ECONOMY_SIM_LATEST = path.join(ROOT, 'tools/economy-sim/reports/latest.md');
+const LEARNING_SEED_JSON = path.join(ROOT, 'tools/arc-core-learning/reports/learning-store-seed.json');
+const BUNDLE_DELTA_TS = path.join(ROOT, 'src/data/balance/generated/economySimOverlayDelta.ts');
 
 const ECONOMY_PATH_PREFIXES = [
   'src/arcCore/economy/',
@@ -97,6 +99,28 @@ function gitEconomyDirtyFiles() {
     .filter((f) => ECONOMY_PATH_PREFIXES.some((p) => f.replace(/\\/g, '/').startsWith(p)));
 }
 
+function readBundleSimDeltaId() {
+  const raw = readText(BUNDLE_DELTA_TS);
+  const m = raw.match(/"deltaId"\s*:\s*"([^"]+)"/);
+  return m ? m[1] : null;
+}
+
+function crossCheckLearningKpiSources(lastAuditSnap) {
+  const bundleDeltaId = readBundleSimDeltaId();
+  const seed = readJson(LEARNING_SEED_JSON, null);
+  const seedTail = seed?.kpiTimeline?.[seed.kpiTimeline.length - 1];
+  const seedDeltaId =
+    seed?.policyHistory?.[seed.policyHistory.length - 1]?.packId ??
+    seedTail?.economy?.deltaId ??
+    null;
+  const auditDeltaId = lastAuditSnap?.deltaId ?? null;
+  const aligned =
+    Boolean(bundleDeltaId) &&
+    (seedDeltaId == null || seedDeltaId === bundleDeltaId) &&
+    (auditDeltaId == null || auditDeltaId === bundleDeltaId);
+  return { bundleDeltaId, seedDeltaId, auditDeltaId, aligned };
+}
+
 function extractHandoffPending(handoff) {
   const stripped = handoff.replace(/<!--[\s\S]*?-->/g, '');
   const lines = stripped.split('\n');
@@ -136,10 +160,19 @@ function loadRetentionAudit() {
   };
 }
 
-function buildIntegrationChecklist({ tscOk, balanceOpsOk, handoffPending, economyDirty, retention }) {
+function buildIntegrationChecklist({ tscOk, balanceOpsOk, handoffPending, economyDirty, retention, learningKpiAligned }) {
   const items = [];
   items.push({ ok: balanceOpsOk, text: '김경제 산출물 `audit:balance-ops` PASS' });
   items.push({ ok: tscOk, text: 'TypeScript `tsc --noEmit` 통과 (연동 전 타입 검증)' });
+  items.push({
+    ok: learningKpiAligned !== false,
+    text:
+      learningKpiAligned === true
+        ? 'Learning KPI deltaId — bundle·seed·audit 정렬 OK (C-4)'
+        : learningKpiAligned === false
+          ? 'Learning KPI deltaId 불일치 — sim:economy · learning-merge · audit 동기화 필요'
+          : 'Learning KPI deltaId — bundle deltaId 없음 (sim:economy 미실행?)',
+  });
   items.push({
     ok: handoffPending.length === 0,
     text:
@@ -198,6 +231,7 @@ function main() {
 
   const learning = readJson(LEARNING_JSON, {});
   const lastSnap = learning.snapshots?.[learning.snapshots.length - 1] ?? null;
+  const kpiCross = crossCheckLearningKpiSources(lastSnap);
   const handoff = readText(HANDOFF_MD);
   const handoffPending = handoff ? extractHandoffPending(handoff) : [];
   const economyDirty = gitEconomyDirtyFiles();
@@ -215,6 +249,7 @@ function main() {
     handoffPending,
     economyDirty,
     retention,
+    learningKpiAligned: kpiCross.aligned,
   });
   const allCheckOk = checklist.every((c) => c.ok);
   const overall = balanceOpsOk && tscOk && allCheckOk ? 'PASS' : 'FAIL';
@@ -239,6 +274,7 @@ Generated: ${ts} (KST ${dateKey})
 |------|------|
 | \`audit:balance-ops\` | ${balanceOpsOverall} (exit ${balanceOpsExit}) |
 | Whale/F2P KPI | ${lastSnap?.kpiStatus ?? '—'} (ratio ${lastSnap?.whaleF2pRatio?.toFixed?.(2) ?? '—'}) |
+| Learning deltaId (C-4) | bundle \`${kpiCross.bundleDeltaId ?? '—'}\` · seed \`${kpiCross.seedDeltaId ?? '—'}\` · audit \`${kpiCross.auditDeltaId ?? '—'}\` → **${kpiCross.aligned ? 'OK' : 'MISMATCH'}** |
 | 일일 배치 계약 | ${lastSnap?.dailyPolicyOk ? 'OK' : 'CHECK'} |
 | 고빈도 호출 위반 | ${(lastSnap?.dailyViolations?.length ?? 0) === 0 ? '없음' : `${lastSnap.dailyViolations.length}건`} |
 | \`tsc --noEmit\` | ${tscOk ? 'PASS' : 'FAIL'} |

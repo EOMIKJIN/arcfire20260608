@@ -1,0 +1,19 @@
+﻿[2026-06-26 23:11:48] SOAK_1H_START tag=idle_post_restart-20260626-231148 duration=60m interval=3m
+[2026-06-26 23:11:49] OK pid=13686 pss=675.1MB gl=30.4MB(?0) nat=327.1MB views=303
+[2026-06-26 23:14:51] OK pid=13686 pss=649.7MB gl=30.3MB(?-0.1) nat=321.2MB views=294
+[2026-06-26 23:17:52] OK pid=13686 pss=655MB gl=30.3MB(?-0.1) nat=327.2MB views=293
+[2026-06-26 23:20:54] OK pid=13686 pss=694.1MB gl=34.9MB(?4.5) nat=358.4MB views=293
+[2026-06-26 23:23:54] OK pid=13686 pss=689.1MB gl=35MB(?4.6) nat=353.8MB views=289
+[2026-06-26 23:26:55] OK pid=13686 pss=655.9MB gl=11.5MB(?-18.9) nat=350.9MB views=107
+[2026-06-26 23:29:56] OK pid=13686 pss=660MB gl=11.5MB(?-18.9) nat=351MB views=107
+[2026-06-26 23:32:58] OK pid=13686 pss=661MB gl=11.5MB(?-18.9) nat=351.1MB views=107
+[2026-06-26 23:35:59] OK pid=13686 pss=653.5MB gl=11.5MB(?-18.9) nat=349.7MB views=107
+[2026-06-26 23:39:01] OK pid=13686 pss=648.7MB gl=11.5MB(?-18.9) nat=348.9MB views=107
+[2026-06-26 23:42:02] OK pid=13686 pss=688.6MB gl=15.7MB(?-14.7) nat=355.4MB views=57
+[2026-06-26 23:45:03] OK pid=13686 pss=672.4MB gl=15.7MB(?-14.7) nat=350.8MB views=57
+[2026-06-26 23:48:05] OK pid=13686 pss=677.1MB gl=15.7MB(?-14.7) nat=350.5MB views=57
+[2026-06-26 23:51:06] OK pid=13686 pss=677.4MB gl=15.7MB(?-14.7) nat=350.6MB views=57
+[2026-06-26 23:54:06] OK pid=13686 pss=671.6MB gl=15.7MB(?-14.7) nat=350.6MB views=57
+[2026-06-26 23:57:07] OK pid=13686 pss=676.2MB gl=15.7MB(?-14.7) nat=350.6MB views=57
+[2026-06-27 00:00:07] !! PID_CHANGE was=13686 now=16272
+[2026-06-27 00:00:07] OK pid=16272 pss=628.3MB gl=30.1MB(?-0.3) nat=307.4MB views=287

@@ -1,6 +1,44 @@
 {
   "rules": {
-    ".read": false,
-    ".write": false
+    "arccore": {
+      ".read": false,
+      ".write": false,
+
+      "worldExpansion": {
+        "master": {
+          "state": {
+            ".read": true,
+            ".write": false
+          }
+        }
+      },
+
+      "config": {
+        ".read": true,
+        ".write": false
+      },
+
+      "policy_packs": {
+        "$packId": {
+          ".read": "data.child('status').val() === 'approved'",
+          ".write": false
+        }
+      },
+
+      "learning": {
+        "global": {
+          ".read": true,
+          ".write": false
+        },
+        "devices": {
+          "$uid": {
+            "dailyKpi": {
+              ".read": false,
+              ".write": "auth != null && auth.uid === $uid && newData.hasChildren(['schemaVersion','dayKey','updatedAt']) && newData.child('schemaVersion').val() === 1 && newData.child('dayKey').isString() && newData.child('updatedAt').isNumber()"
+            }
+          }
+        }
+      }
+    }
   }
 }

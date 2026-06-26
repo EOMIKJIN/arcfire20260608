@@ -1,0 +1,69 @@
+﻿Applications Memory Usage (in Kilobytes):
+Uptime: 1599223734 Realtime: 1689340000
+
+** MEMINFO in pid 23962 [com.arcfire.online] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   572229   572196       16    83054   572908   807084   717005    74840
+  Dalvik Heap    36297    34632       24      161    40740    40954    20477    20477
+ Dalvik Other    17160     8420        0      364    26196                           
+        Stack     4116     4116        0      768     4124                           
+       Ashmem       15        0        0        0      544                           
+    Other dev       22        0       20        0      548                           
+     .so mmap     8405      196     6008       80    34304                           
+    .jar mmap     3460        0     1380        0    30516                           
+    .apk mmap    31134      584    27180      936    45524                           
+    .ttf mmap     4353        0     4212        0     4612                           
+    .dex mmap    14166     3040    10888    20840    15804                           
+    .oat mmap       31        0        0        0     1048                           
+    .art mmap     5752     4132      132     4298    17188                           
+   Other mmap    38837       52    33508        0    44960                           
+   EGL mtrack    41631    41631        0        0    41631                           
+    GL mtrack    42960    42960        0        0    42960                           
+      Unknown    83069    82600      460    53710    83572                           
+        TOTAL  1067848   794559    83828   164211  1007179   848038   737482    95317
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    38896                          57928
+         Native Heap:   572196                         572908
+                Code:    53516                         149284
+               Stack:     4116                           4124
+            Graphics:    84591                          84591
+       Private Other:   125072
+              System:   189461
+             Unknown:                                  138344
+ 
+           TOTAL PSS:  1067848            TOTAL RSS:  1007179       TOTAL SWAP PSS:   164211
+ 
+ Objects
+               Views:      314         ViewRootImpl:        1
+         AppContexts:       16           Activities:        1
+              Assets:       41        AssetManagers:        0
+       Local Binders:       25        Proxy Binders:       69
+       Parcel memory:       32         Parcel count:      110
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2337                            222
+ Other (nonmalloced):      109                             77
+   Bitmap (malloced):        4                           5569
+ 
+ SQL
+         MEMORY_USED:     1646
+  PAGECACHE_OVERFLOW:     1474          MALLOC_SIZE:     4106
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4     1216             41  3411  2534     4  /data/user/0/com.arcfire.online/databases/RKStorage
+         4      192             92  2774  1988    25  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+           3411          2535          5946  /data/user/0/com.arcfire.online/databases/RKStorage
+           2774          1989          4763  /data/user/0/com.arcfire.online/databases/firestore.%5BDEFAULT%5D.arcfire-49d69.%28default%29
+

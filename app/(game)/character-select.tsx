@@ -3,9 +3,10 @@
 // 스토리 → character-select → nickname
 // ============================================================
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useRef } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
+import type { Href } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
@@ -15,6 +16,7 @@ import { CharacterSelectOptionRow } from '../../src/ui/onboarding/CharacterSelec
 import { listPlayerProfessions, getPlayerProfessionById } from '../../src/game/playerPilotProfessionModel';
 import { resolveNpcCaptainPortraitSource } from '../../src/game/npcCaptainPortraitAssets';
 import { setOnboardingProfessionId } from '../../src/game/onboardingDraftStorage';
+import { runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { useT } from '../../src/i18n';
 import type { PlayerProfessionCsvRow } from '../../src/data/generated';
@@ -29,9 +31,10 @@ export default function CharacterSelectScreen() {
   const professions = useMemo(() => [...listPlayerProfessions()], []);
   const [selectedId, setSelectedId] = useState(professions[0]?.id ?? '');
   const [submitting, setSubmitting] = useState(false);
+  const navScheduledRef = useRef(false);
 
   const handleConfirm = useCallback(async () => {
-    if (!selectedId || submitting) return;
+    if (!selectedId || submitting || navScheduledRef.current) return;
     if (!getPlayerProfessionById(selectedId)) {
       showArcAlert(t('charSelect.errorTitle'), t('charSelect.notFound'));
       return;
@@ -39,7 +42,11 @@ export default function CharacterSelectScreen() {
     setSubmitting(true);
     try {
       await setOnboardingProfessionId(selectedId);
-      router.replace('/(game)/nickname');
+      navScheduledRef.current = true;
+      runStageNavAfterTeardown({
+        teardown: () => {},
+        navigate: () => router.replace('/(game)/nickname' as Href),
+      });
     } finally {
       setSubmitting(false);
     }

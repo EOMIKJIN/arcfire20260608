@@ -19,8 +19,8 @@
 //   }, [lifecycle, ...]);
 // ============================================================
 
-import { useCallback, useEffect, useMemo } from 'react';
-import { InteractionManager } from 'react-native';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { DEFAULT_STAGE_NAV_DRAIN_MS, runStageUiAfterIdle } from '../navigation/stageNavGate';
 import {
   usePlanetStageLifecycleStore,
   selectPlanetStageLifecycle,
@@ -42,6 +42,11 @@ export function usePlanetStageSession(): PlanetStageSession {
   const consumePendingNavigation = usePlanetStageLifecycleStore((s) => s.consumePendingNavigation);
   const beginResume = usePlanetStageLifecycleStore((s) => s.beginResume);
   const finalizeResume = usePlanetStageLifecycleStore((s) => s.finalizeResume);
+  const departureTapLockRef = useRef(false);
+
+  useEffect(() => {
+    if (lifecycle === 'active') departureTapLockRef.current = false;
+  }, [lifecycle]);
 
   /** suspending → frozen — 1 macrotask 대기로 React effect cleanup(자원 stop) 완료를 보장. */
   useEffect(() => {
@@ -57,23 +62,36 @@ export function usePlanetStageSession(): PlanetStageSession {
   useEffect(() => {
     if (lifecycle !== 'frozen') return;
     let cancelled = false;
-    const task = InteractionManager.runAfterInteractions(() => {
+    let navigated = false;
+    const runNavigate = () => {
+      if (cancelled || navigated) return;
+      navigated = true;
+      const cb = consumePendingNavigation();
+      if (!cb) {
+        usePlanetStageLifecycleStore.getState().forceActive();
+        return;
+      }
+      try {
+        cb();
+      } catch {
+        /* navigate 실패 — forceActive 로 LOADING 해제 */
+      } finally {
+        usePlanetStageLifecycleStore.getState().forceActive();
+      }
+    };
+    const task = runStageUiAfterIdle(() => {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          if (cancelled) return;
-          const cb = consumePendingNavigation();
-          if (!cb) return;
-          try {
-            cb();
-          } catch {
-            /* navigate 실패는 흡수 — lifecycle 안전망 timeout 이 active 로 복귀시킨다. */
-          }
+          setTimeout(runNavigate, DEFAULT_STAGE_NAV_DRAIN_MS);
         });
       });
     });
+    /** frozen 에서 navigate 콜백이 영구 대기할 때 — LOADING 고착 방지 */
+    const frozenFallback = setTimeout(runNavigate, 10000);
     return () => {
       cancelled = true;
       task.cancel();
+      clearTimeout(frozenFallback);
     };
   }, [lifecycle, consumePendingNavigation]);
 
@@ -86,7 +104,13 @@ export function usePlanetStageSession(): PlanetStageSession {
 
   const beginDeparture = useCallback(
     (navigate: () => void) => {
+      if (departureTapLockRef.current) return;
+      if (usePlanetStageLifecycleStore.getState().lifecycle !== 'active') return;
+      departureTapLockRef.current = true;
       beginSuspend(navigate);
+      if (usePlanetStageLifecycleStore.getState().lifecycle === 'active') {
+        departureTapLockRef.current = false;
+      }
     },
     [beginSuspend],
   );

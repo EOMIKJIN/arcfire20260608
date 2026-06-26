@@ -1,0 +1,4 @@
+﻿--------- beginning of system
+06-26 23:02:42.953  1909  3050 I ActivityManager: Killing 10160:com.google.android.rkpdapp/u0a348 (adj 905): empty #25
+06-26 23:02:48.665  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-26 23:02:48.674  1909  3434 I ActivityManager: Changes in 10096 11 to 19, 128 to 0

@@ -84,6 +84,12 @@ export type PlanetEconomyFabricDetail = {
     operationalBase: number;
     resourceNudge: number;
     populationNudge: number;
+    /** 일 1회 생산지 재고 합 스냅샷 — R 힌트 산출용 */
+    supplyStockUnitsSnapshot?: number;
+    /** reconcile 직전 윈도우 KPI (학습·오버레이 read-only) */
+    windowConvoyProfit?: number;
+    windowConvoyTrips?: number;
+    windowPlayerTradeGross?: number;
     windowSummary: PlanetEconomyFabricDetail['window'];
   };
   recentEvents: PlanetEconomyFabricEvent[];

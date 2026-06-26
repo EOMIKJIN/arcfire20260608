@@ -8,6 +8,14 @@ export const EN_DICTIONARY: I18nDictionary = {
   'common.confirm': '[ OK ]',
   'common.cancel': '[ Cancel ]',
 
+  'stageTransition.stuck.title': 'Screen Transition Stalled',
+  'stageTransition.stuck.body':
+    'Loading did not finish. Please fully close the app and launch it again.',
+
+  'idleSession.restart.title': 'Session Restart',
+  'idleSession.restart.body':
+    'No input for 1 hour. The app will restart and relaunch shortly.',
+
   'intro.btn.skipTyping': '[ SKIP ]',
   'intro.btn.skipScene': '[ Skip ]',
   'intro.btn.next': '[ Next ▶ ]',
@@ -298,6 +306,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'worldmap.panel.reachable': '✓ Reachable',
   'worldmap.panel.unreachable': '✗ Not Directly Reachable',
   'worldmap.btn.moving': '[ Moving... ]',
+  'worldmap.btn.landing': '[ Landing... ]',
   'worldmap.btn.land': '[ Land ]',
   'worldmap.btn.move': '[ Travel ]',
   'worldmap.panel.hint': 'Tap a system to view its info',
@@ -584,6 +593,8 @@ export const EN_DICTIONARY: I18nDictionary = {
   'econInfo.daily': 'Daily',
   'econInfo.monthlyEst': 'Monthly Est.',
   'econInfo.tradeFee': 'Trade Port Fee Income',
+  'econInfo.fabricEcology': 'Economy Ecology (Daily Ops)',
+  'econInfo.fabricOpsToday': "Today's Operations",
   'econInfo.factionShareToday': "Faction Share (Today)",
   'econInfo.convoyFeeToday': 'Convoy Trade Income (Today)',
   'econInfo.playerFeeToday': 'Player Trade Income (Today)',
@@ -810,9 +821,21 @@ export const EN_DICTIONARY: I18nDictionary = {
   'econSnap.blueVault': 'Blue Team Shared Vault',
   'econSnap.fleetVault': 'Convoy Fleet Vault',
   'econSnap.supplyScale': 'Production Stock Multiplier',
+  'econSnap.supplyVitality': 'Ecology Vitality',
+  'econSnap.vitalitySlump': 'Slump',
+  'econSnap.vitalityNormal': 'Normal',
+  'econSnap.vitalityBoom': 'Boom',
+  'econSnap.vitalitySuperBoom': 'Super Boom',
+  'econSnap.fabricOpsLine': 'Convoy {trips} · Trade {gross} · Stock {scalePct}%',
   'econSnap.devCostEfficiency': 'Dev cost efficiency',
   'econSnap.devTdiScore': 'Development TDI',
   'econSnap.playerFeePool': 'Player Fee Pool (Today)',
+
+  'dailyOpsSummary.title': "Today's ArcCore Operations",
+  'dailyOpsSummary.body':
+    'KST {dayKey} · World reconciled after ~{hours}h.\nEconomy fabric: {fabric} · SIM ingest: {ingest}',
+  'dailyOpsSummary.on': 'Done',
+  'dailyOpsSummary.off': '—',
 
   // ── Mineral Upgrade Stats (mineralStat) ──
   'mineralStat.label.ship_hull_hp': 'Hull Durability (HP)',

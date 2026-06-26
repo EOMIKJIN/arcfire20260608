@@ -1,0 +1,57 @@
+---
+description: "[절대 1순위] 모든 기능 — 메모리 누수 위험 전수조사 후 개발"
+alwaysApply: true
+---
+
+# 🚨 개발규칙 1순위 (무조건 · 다른 모든 규칙보다 우선)
+
+> **모든 기능은 메모리 누수 위험에 대한 전수조사 후 개발을 진행한다.**  
+> 기능 구현·UI·경제·밸런스·CSV·리팩터 **어떤 작업이든** 본 조항이 **최우선**이다. 예외·우회·「나중에 검증」 **금지**.
+
+## 0. 적용 범위
+
+- **에이전트·인간 개발자 공통** — PR·커밋·완료 선언 전 필수
+- **김팀장·김경제·Fable·Sonnet** 페르소나·라우팅과 **무관하게** 항상 선행
+- Skia만이 아님: **STAGE 전환 · tick/루프 · persist · 부트 · Modal · store · arcCore 배치** 전부 포함
+
+## 1. 전수조사 체크 (코딩 **전** · 설계 단계)
+
+| # | 조사 항목 | 참조 |
+|---|-----------|------|
+| 1 | STAGE 진입/이탈 `dispose` · `Navigation.replace()` · `planetSessionRegistry` | v4.0 §5·§8 |
+| 2 | Skia/Reanimated **Zero-Allocation** · Canvas 해제 · Worklet dispose 금지 | `arcfire-skia-memory-lifecycle.mdc` |
+| 3 | **틱·루프·고빈도 경로** 객체/배열/`JSON.stringify`/persist 금지 | `arcfire-main-lead-agent.mdc` §주기·틱 GC 규율 |
+| 4 | **부트 동기 경로** 무거운 패스(O(N) 행성·카탈로그 재빌드) 금지 | 김팀장 §경제 부트경로 게이트 |
+| 5 | `setInterval`/화면 전용 rAF · `onSnapshot` · 스택 `navigate` | v4.0 §14 |
+| 6 | Animated `new Animated.Value` 렌더 내부 · layout top/left | v4.0 §8-2 |
+| 7 | 신규 영속 store → purge/생성 연동 · bounded 히스토리 | 김팀장 §플레이어 계정 최상위 |
+
+**조사 미완 상태에서 코드 작성 시작 = 규칙 위반.**
+
+## 2. 개발 중·완료 게이트
+
+| 변경 종류 | 최소 게이트 |
+|-----------|-------------|
+| Skia·Reanimated·고프레임 Canvas | `npm run audit:skia-memory` PASS + GL mtrack Δ ±15MB |
+| STAGE·허브·전투·store | `npm run audit:memory:all` + `npx tsc --noEmit -p tsconfig.client.json` |
+| arcCore·경제·배치 | 부트 동기 실행 없음 · 일 1회 배치 한정 · `audit:balance-ops` |
+| 버그·크래시 | `arcfire-bug-debug-workflow.mdc` — logcat 근거 |
+
+**게이트 미충족 시 완료·머지·「적용됨」 선언 금지.**
+
+## 3. 에이전트 행동 (매 작업)
+
+1. 요청 수신 → **먼저** 위 §1 해당 항목 전수조사(코드·호출 경로·빈도)
+2. 리스크 있으면 **설계 수정 또는 범위 축소** 후 구현 — hot path persist·debounce flush 등 **선 구현 후 감사 금지**
+3. 완료 보고에 **조사 요약 1~3줄** + 통과 게이트 명시
+4. 김경제 retention/soak FAIL → 김팀장 **코드 조치 우선** (기능 추가보다 누수 차단)
+5. **개발 업데이트 후**: 김경제 **즉각 메모리 재검수·보고** (`mem-post-dev-recheck`) — `.cursor/rules/arcfire-economy-specialist-agent.mdc`
+
+## 4. 교차 참조 (본 1순위를 구체화)
+
+- `.cursor/rules/arcfire-skia-memory-lifecycle.mdc`
+- `.cursor/rules/arcfire-main-lead-agent.mdc` — §주기·틱 · §경제 부트경로
+- `.cursor/rules/Arcfire_Master_Spec_v4.0-*.mdc` — §8·§9·§14
+- `AGENTS.md` — Skia·memory audit · long-run-monitor
+
+**충돌 시**: 본 **「메모리 누수 전수조사 1순위」** > 기능 일정 > 기타 편의.

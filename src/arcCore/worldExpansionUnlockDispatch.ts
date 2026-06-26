@@ -2,7 +2,7 @@ import { useWorldStore } from '../store/worldStore';
 import { dispatchArcCoreCommand } from './ArcCoreCommandBus';
 import { GAMEPLAY_SYSTEM_IDS, LEGACY_VISIBLE_TOTAL_SYSTEMS, parseSynthOrdinal } from '../data/galaxy100';
 
-export type ArcCoreSystemUnlockKind = 'daily' | 'legacy_seed' | 'fresh_start_seed';
+export type ArcCoreSystemUnlockKind = 'daily' | 'legacy_seed' | 'fresh_start_seed' | 'global_schedule';
 
 function resolveUnlockTierForSystem(candidateId: string): 'base' | 'legacy_unexplored' | 'expansion_undiscovered' {
   const ord = parseSynthOrdinal(candidateId);
@@ -25,13 +25,17 @@ export function dispatchArcCoreSystemUnlockNotice(
       ? 'arc_core_legacy_seed'
       : kind === 'fresh_start_seed'
         ? 'arc_core_fresh_start_seed'
-        : 'arc_core_daily';
+        : kind === 'global_schedule'
+          ? 'arc_core_global_schedule'
+          : 'arc_core_daily';
   const reason =
     kind === 'legacy_seed'
       ? 'legacy_guaranteed_seed_unlock'
       : kind === 'fresh_start_seed'
         ? 'account_fresh_start_seed_unlock'
-        : 'daily_system_unlock';
+        : kind === 'global_schedule'
+          ? 'global_schedule_unlock'
+          : 'daily_system_unlock';
 
   dispatchArcCoreCommand({
     type: 'world_system_unlocked',

@@ -1,2 +1,2 @@
-﻿minUnlockIntervalDays,maxUnlockIntervalDays,legacySynthColonizationCount
-1,1,79
+﻿minUnlockIntervalDays,maxUnlockIntervalDays,legacySynthColonizationCount,globalScheduleEnabled,epochDayKey,timeZone,resetGeneration,systemsPerDay
+1,1,79,true,2026-06-26,Asia/Seoul,2,1

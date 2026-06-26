@@ -36,6 +36,7 @@ import {
   runContinueSessionPrewarm,
 } from '../src/game/continueSessionPrewarm';
 import { resumePlayerToLastHubPlanet } from '../src/game/galaxyMapSessionResume';
+import { runStageNavAfterTeardown } from '../src/navigation/stageNavGate';
 
 /** 타이틀·네이티브 스플래시와 로고 톤 맞춤 */
 const TITLE_SCREEN_BG = '#000000';
@@ -100,6 +101,16 @@ export default function TitleScreen() {
   const flowCancelledRef = useRef(false);
   const prewarmPromiseRef = useRef<Promise<void> | null>(null);
   const continueMinHoldTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const titleNavLockRef = useRef(false);
+  const titleNavScheduledRef = useRef(false);
+  const titleMountedRef = useRef(true);
+
+  useEffect(() => {
+    titleMountedRef.current = true;
+    return () => {
+      titleMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -174,10 +185,11 @@ export default function TitleScreen() {
   const handleStart = () => {
     const p = usePlayerStore.getState().player;
     if (p?.flags.introSeen) {
-      if (continueFlowActive) return;
+      if (continueFlowActive || titleNavLockRef.current) return;
       if (!getActiveMission()) initMissions();
 
       flowCancelledRef.current = false;
+      titleNavLockRef.current = true;
       prewarmPromiseRef.current = runContinueSessionPrewarm().catch(() => {
         /* 프리로드 실패해도 진입은 허용 */
       });
@@ -192,16 +204,34 @@ export default function TitleScreen() {
           }, CONTINUE_SESSION_MIN_LOADING_MS);
         });
         await Promise.all([prewarmPromiseRef.current ?? Promise.resolve(), minHold]);
-        if (flowCancelledRef.current) return;
+        if (flowCancelledRef.current || titleNavScheduledRef.current) return;
+        titleNavScheduledRef.current = true;
         resumePlayerToLastHubPlanet();
         await usePlayerStore.getState().persist();
-        router.replace('/(game)/planet');
+        runStageNavAfterTeardown({
+          teardown: () => {},
+          navigate: () => router.replace('/(game)/planet'),
+          isMounted: () => titleMountedRef.current && !flowCancelledRef.current,
+        });
       })();
 
       return;
     }
-    else if (p) router.replace('/(game)/intro?sceneId=intro01');
-    else router.replace(NEW_ACCOUNT_INTRO_ROUTE);
+    if (titleNavLockRef.current) return;
+    titleNavLockRef.current = true;
+    if (p) {
+      runStageNavAfterTeardown({
+        teardown: () => {},
+        navigate: () => router.replace('/(game)/intro?sceneId=intro01'),
+        isMounted: () => titleMountedRef.current,
+      });
+    } else {
+      runStageNavAfterTeardown({
+        teardown: () => {},
+        navigate: () => router.replace(NEW_ACCOUNT_INTRO_ROUTE),
+        isMounted: () => titleMountedRef.current,
+      });
+    }
   };
 
   if (continueFlowActive) {

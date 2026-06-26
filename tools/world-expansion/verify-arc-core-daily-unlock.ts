@@ -14,6 +14,11 @@ import {
   ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS,
 } from '../../src/arcCore/worldExpansionConstants';
 import { isArcCoreLegacyGuaranteedUnlockEnabled } from '../../src/arcCore/arcCoreExpansionTestFlags';
+import {
+  buildDeterministicGlobalSynthUnlockSchedule,
+  computeGlobalSynthUnlockTargetCount,
+} from '../../src/arcCore/worldExpansionGlobalSchedule';
+import { resolveArcCoreWorldExpansionGlobalPolicy } from '../../src/arcCore/worldExpansionGlobalPolicy';
 
 function normalizeSynthSystemId(id: string): string {
   if (!id.startsWith('synth_')) return id;
@@ -153,6 +158,23 @@ function main(): void {
   } else if (!ok) {
     console.error('\n[오류] 후보는 있으나 행성 데이터가 비었습니다.');
     process.exitCode = 1;
+  }
+
+  const globalPolicy = resolveArcCoreWorldExpansionGlobalPolicy();
+  const nowMs = Date.now();
+  const targetCount = computeGlobalSynthUnlockTargetCount(globalPolicy, nowMs);
+  const schedule = buildDeterministicGlobalSynthUnlockSchedule(
+    systems,
+    targetCount,
+    Array.from(GAMEPLAY_SYSTEM_IDS),
+  );
+  console.log('');
+  console.log('--- 전역 epoch 일정 (RTDB/CSV) ---');
+  console.log('enabled:', globalPolicy.globalScheduleEnabled, 'source:', globalPolicy.source);
+  console.log('epoch:', globalPolicy.epochDayKey, 'gen:', globalPolicy.resetGeneration);
+  console.log('오늘 목표 synth 개수:', targetCount);
+  if (schedule.length) {
+    console.log('  결정적 순서(처음 12):', schedule.slice(0, 12).join(', '), schedule.length > 12 ? '...' : '');
   }
 }
 

@@ -36,10 +36,12 @@ export type InboundDroneTrailSlice = {
 
 export function packInboundDroneTrailFlat(
   drones: ArcInboundDrone[],
-  startOrbitMsById: ReadonlyMap<string, number>,
-  endOrbitMsById: ReadonlyMap<string, number>,
+  startOrbitMsById: ReadonlyMap<string, number> | null | undefined,
+  endOrbitMsById: ReadonlyMap<string, number> | null | undefined,
   orbitMsNow: number,
 ): number[] {
+  const startMap = startOrbitMsById ?? new Map<string, number>();
+  const endMap = endOrbitMsById ?? new Map<string, number>();
   const out = new Array<number>(drones.length * INBOUND_DRONE_TRAIL_PACK_STRIDE).fill(0);
   for (let i = 0; i < drones.length; i += 1) {
     const d = drones[i]!;
@@ -49,11 +51,11 @@ export function packInboundDroneTrailFlat(
     out[b + 2] = Math.max(0.001, Number.isFinite(d.inboundDurationSec) ? d.inboundDurationSec : 0.001);
     out[b + 3] = Number.isFinite(d.approachAngleRad) ? d.approachAngleRad : 0;
     if (flying) {
-      out[b + 1] = startOrbitMsById.get(d.id) ?? orbitMsNow;
+      out[b + 1] = startMap.get(d.id) ?? orbitMsNow;
       out[b + 4] = 0;
     } else {
       out[b + 1] = Number.isFinite(d.inboundElapsedSec) ? d.inboundElapsedSec : 0;
-      const cached = endOrbitMsById.get(d.id);
+      const cached = endMap.get(d.id);
       out[b + 4] = cached ?? orbitMsNow;
     }
   }

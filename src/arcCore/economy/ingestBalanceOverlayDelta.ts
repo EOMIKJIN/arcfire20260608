@@ -14,6 +14,11 @@ import {
   useEconomyPriceOverlayStore,
 } from './economyPriceOverlayStore';
 import { EconomySimOverlayDelta_FROM_SIM } from '../../data/balance/generated/economySimOverlayDelta';
+import { appendPolicyHistoryEntry } from '../learning/arcCoreLearningStore';
+import {
+  clearPendingRtdbPolicyPack,
+  loadPendingRtdbPolicyPack,
+} from '../learning/arcCoreRtdbPendingPolicyLoader';
 
 const INGEST_STORAGE_KEY = 'arcfire_balance_overlay_delta_ingest_v1';
 
@@ -73,18 +78,24 @@ async function saveIngestState(state: IngestState): Promise<void> {
 export async function ingestBalanceOverlayDeltaIfPending(
   delta: BalanceOverlayDelta = EconomySimOverlayDelta_FROM_SIM,
 ): Promise<BalanceOverlayIngestResult> {
-  if (!isValidDelta(delta)) {
+  const pendingPack = await loadPendingRtdbPolicyPack();
+  const effectiveDelta = pendingPack?.balanceOverlay ?? delta;
+  const policySource = pendingPack ? ('rtdb' as const) : ('local_sim' as const);
+
+  if (!isValidDelta(effectiveDelta)) {
     return { ran: false, deltaId: null, skippedReason: 'invalid_schema' };
   }
 
   const prior = await loadIngestState();
-  if (prior.lastDeltaId === delta.deltaId) {
-    return { ran: false, deltaId: delta.deltaId, skippedReason: 'same_delta' };
+  if (prior.lastDeltaId === effectiveDelta.deltaId) {
+    if (pendingPack) await clearPendingRtdbPolicyPack();
+    return { ran: false, deltaId: effectiveDelta.deltaId, skippedReason: 'same_delta' };
   }
 
-  if (!hasActionableTargets(delta)) {
-    await saveIngestState({ lastDeltaId: delta.deltaId, ingestedAt: Date.now() });
-    return { ran: false, deltaId: delta.deltaId, skippedReason: 'empty' };
+  if (!hasActionableTargets(effectiveDelta)) {
+    await saveIngestState({ lastDeltaId: effectiveDelta.deltaId, ingestedAt: Date.now() });
+    if (pendingPack) await clearPendingRtdbPolicyPack();
+    return { ran: false, deltaId: effectiveDelta.deltaId, skippedReason: 'empty' };
   }
 
   const priceStore = useEconomyPriceOverlayStore.getState();
@@ -94,11 +105,11 @@ export async function ingestBalanceOverlayDeltaIfPending(
 
   const maxStep = getEconomyPriceMicroPolicyNum('max_daily_price_step_pct', 2) / 100;
   const maxDrift = getEconomyPriceMicroPolicyNum('max_cumulative_price_drift_pct', 10) / 100;
-  const combatWeight = Math.max(0, Math.min(1, Number(delta.combatWeight) || 0));
+  const combatWeight = Math.max(0, Math.min(1, Number(effectiveDelta.combatWeight) || 0));
   const macroWeight = 1;
 
   for (const key of ECONOMY_CATEGORY_KEYS) {
-    const targetRaw = parseTargetMul(delta.categoryTargetMul?.[key]);
+    const targetRaw = parseTargetMul(effectiveDelta.categoryTargetMul?.[key]);
     if (targetRaw == null) continue;
     const blended = 1 + (targetRaw - 1) * macroWeight;
     priceStore.applyCategoryStep(key, blended, maxStep, maxDrift);
@@ -106,23 +117,31 @@ export async function ingestBalanceOverlayDeltaIfPending(
 
   for (const key of AABS_MULTIPLIER_KEYS) {
     if (key === 'combatDifficulty' && combatWeight <= 0) continue;
-    const targetRaw = parseTargetMul(delta.aabsTargetMul?.[key as AabsMultiplierKey]);
+    const targetRaw = parseTargetMul(effectiveDelta.aabsTargetMul?.[key as AabsMultiplierKey]);
     if (targetRaw == null) continue;
     const weight = key === 'combatDifficulty' ? combatWeight : macroWeight;
     const blended = 1 + (targetRaw - 1) * weight;
     aabsStore.applyStepToward(key, blended);
   }
 
-  priceStore.markAdjust(delta.virtualPopulation ?? 0);
+  priceStore.markAdjust(effectiveDelta.virtualPopulation ?? 0);
   await priceStore.persistAsync();
   await aabsStore.persistAsync();
-  await saveIngestState({ lastDeltaId: delta.deltaId, ingestedAt: Date.now() });
+  await saveIngestState({ lastDeltaId: effectiveDelta.deltaId, ingestedAt: Date.now() });
+
+  await appendPolicyHistoryEntry({
+    packId: effectiveDelta.deltaId,
+    ingestedAt: Date.now(),
+    source: policySource,
+  });
+
+  if (pendingPack) await clearPendingRtdbPolicyPack();
 
   if (__DEV__) {
     console.log(
-      `[ArcCore/Economy] overlay delta ingest id=${delta.deltaId} kpi=${delta.kpi?.status ?? 'n/a'}`,
+      `[ArcCore/Economy] overlay delta ingest id=${effectiveDelta.deltaId} source=${policySource} kpi=${effectiveDelta.kpi?.status ?? 'n/a'}`,
     );
   }
 
-  return { ran: true, deltaId: delta.deltaId };
+  return { ran: true, deltaId: effectiveDelta.deltaId };
 }

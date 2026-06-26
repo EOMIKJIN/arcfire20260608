@@ -2,6 +2,8 @@ import { InteractionManager } from 'react-native';
 import { clearCombatResumeSnapshot } from '../combat/combatResumeStore';
 import { deleteUserCloudSave } from '../firebase/firestore';
 import { getCurrentUser, markFreshStartAfterReset } from '../firebase/auth';
+import { resetFirebaseAnonymousAuthForAccountPurge } from '../firebase/firebaseAnonymousAuth';
+import { clearArcCoreRtdbDailyKpiPushState } from '../arcCore/learning/pushArcCoreDailyKpiToRtdb';
 import { cancelScheduledUserCloudSync } from '../firebase/userCloudSyncSchedule';
 import { usePlanetStageLifecycleStore } from '../game/planetStageLifecycle';
 import { clearMiningResumeSnapshot } from '../systems/mining/miningResumeStore';
@@ -11,7 +13,7 @@ import { useNpcCaptainProgressStore } from '../store/npcCaptainProgressStore';
 import { usePlanetCoreRuntimeStore } from '../store/planetCoreRuntimeStore';
 import { usePlayerStore } from '../store/playerStore';
 import { useUserSessionStore } from '../store/userSessionStore';
-import { applyArcCoreAccountFreshStartSeedUnlock } from '../arcCore/worldExpansionFreshStartSeed';
+import { syncArcCoreGlobalWorldExpansionSync } from '../arcCore/syncArcCoreGlobalWorldExpansion';
 import { useWorldStore } from '../store/worldStore';
 import { useWorldObjectRuntimeStore } from '../store/worldObjectRuntimeStore';
 import { useTavernBoardStore } from '../store/tavernBoardStore';
@@ -90,7 +92,7 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await usePlanetCoreRuntimeStore.getState().resetLocalPlanetCoreRuntime();
   // 갤럭시 개방·항행 기록(방문/개방 성계) — worldStore (초기 시드 galaxy로 복귀)
   await useWorldStore.getState().resetLocalWorld();
-  applyArcCoreAccountFreshStartSeedUnlock();
+  syncArcCoreGlobalWorldExpansionSync();
   // 행성 월드오브젝트 인스턴스 상태(방위위성 HP·고갈 노드 등) — worldObjectRuntimeStore
   await useWorldObjectRuntimeStore.getState().resetRuntime();
   // 전투 텔레메트리(교전 기록) — combatMatchTelemetry
@@ -104,6 +106,9 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await clearOnboardingProfessionId();
   // 행성별 inbound 드론 벽시계 캠페인 — SubCore Map + UI store
   resetArcInboundDroneCampaigns();
+
+  await clearArcCoreRtdbDailyKpiPushState();
+  await resetFirebaseAnonymousAuthForAccountPurge();
 
   await markFreshStartAfterReset();
 }

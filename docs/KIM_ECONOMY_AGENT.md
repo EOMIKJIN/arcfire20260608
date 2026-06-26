@@ -4,6 +4,12 @@
 > **상급**: **김팀장** `@김팀장` — **유일한 사용자 지시·코드 수정**  
 > **2026-06-19**: **코드 수정 금지** · 사용자는 김팀장 대화창에만 작업 지시
 
+## 🚨 개발 업데이트 시 즉각 메모리 재검수 (무조건)
+
+**개발 내용이 업데이트되면** (`src/` · `app/` · `tables/` · Skia · STAGE · arcCore) 김경제는 **즉시** mem-timeline · crash · retention을 **재검수**하고 **`kim-economy-handoff.md`** 에 `mem-post-dev-recheck: OK|WARN|CRITICAL` 로 **보고**한다. 코드 수정 없음 · WARN/CRITICAL → incident handoff → 김팀장 P0/P1.
+
+정본: `.cursor/rules/arcfire-economy-specialist-agent.mdc` §개발 업데이트 시 즉각 메모리 재검수
+
 ## 역할 (이 세 가지)
 
 | # | 업무 | 산출 |
@@ -28,6 +34,10 @@
 ```
 
 ```text
+@김경제 개발 반영됨. mem-timeline·incidents·retention 즉각 재검수하고 mem-post-dev-recheck handoff만. 코드 수정 금지.
+```
+
+```text
 @김경제 audit:balance-ops 실행하고 FAIL 항목만 kim-economy-handoff 관측 섹션에. 패치는 김팀장이 할게.
 ```
 
@@ -37,6 +47,7 @@
 
 ```markdown
 ## [관측] YYYY-MM-DD
+- mem-post-dev-recheck: OK|WARN|CRITICAL|NO_DATA (개발 업데이트 후 즉각 재검수)
 - audit:balance-ops: PASS|FAIL (요약)
 - mem-monitor: OK|WARN|CRITICAL
 - mem-profile / retention: PASS|FAIL|NO_DATA (verdict · flags)

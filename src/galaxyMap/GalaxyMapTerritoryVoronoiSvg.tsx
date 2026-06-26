@@ -1,10 +1,15 @@
 import React, { memo, useMemo } from 'react';
-import { G, Path } from 'react-native-svg';
+import { G, Path, Polygon } from 'react-native-svg';
 import type { StarSystem } from '../types';
+import { resolveClanMapDisplayColor } from '../arcCore/balance/clanMapFactionColorPolicy';
 import {
   buildGalaxyBlueRedVoronoiBorderSegments,
   type GalaxyVoronoiSite,
 } from './buildGalaxyBlueRedVoronoiBorders';
+import {
+  buildGalaxyTerritoryVoronoiLayers,
+  type GalaxyTerritorySite,
+} from './buildGalaxyTerritoryVoronoi';
 import { chainAndChamferGalaxyBorders } from './chainAndChamferGalaxyBorders';
 import { resolveMapFactionSideFromClanId } from './resolveMapFactionSide';
 
@@ -39,6 +44,16 @@ function lightenHex(hex: string, mix: number): string {
   return `#${lr.toString(16).padStart(2, '0')}${lg.toString(16).padStart(2, '0')}${lb.toString(16).padStart(2, '0')}`;
 }
 
+/** Voronoi 셀 영역 채움 — hex 알파(RN SVG 호환) · 초기 1A(≈10%)보다 연하게 */
+const TERRITORY_CELL_FILL_ALPHA = 0.08;
+
+function withFillAlphaHex(hex: string, alpha: number): string {
+  const raw = String(hex ?? '').replace('#', '').trim();
+  if (raw.length !== 6) return hex;
+  const a = Math.round(Math.max(0, Math.min(1, alpha)) * 255);
+  return `#${raw}${a.toString(16).padStart(2, '0').toUpperCase()}`;
+}
+
 /** 네온 글로우 레이어 — 넓고 흐린 헤일로 → 본체 → 밝은 코어 */
 const NEON_GLOW_LAYERS: { width: number; opacity: number }[] = [
   { width: 18, opacity: 0.05 },
@@ -53,22 +68,37 @@ export const GalaxyMapTerritoryVoronoiSvg = memo(function GalaxyMapTerritoryVoro
   mapBounds,
   toScreen,
 }: Props) {
-  const paths = useMemo(() => {
-    const sites: GalaxyVoronoiSite[] = [];
+  const { fills, paths } = useMemo(() => {
+    const voronoiSites: GalaxyVoronoiSite[] = [];
+    const territorySites: GalaxyTerritorySite[] = [];
     for (const sys of systems) {
       /**
        * 모든 표시 성계를 site로 — 중립·미개척은 side=neutral 로 격자 계산에만 참여(국경선 owner 아님).
        * 블루·레드 셀이 직접 붙지 않게 완충 셀을 만들어 국경선을 구분한다.
        */
-      const side = resolveMapFactionSideFromClanId(occupierClanIdBySystemId[sys.id]);
+      const clanId = occupierClanIdBySystemId[sys.id];
+      const side = resolveMapFactionSideFromClanId(clanId);
       const pos = toScreen(sys.position);
       if (!Number.isFinite(pos.x) || !Number.isFinite(pos.y)) continue;
-      sites.push({ systemId: sys.id, x: pos.x, y: pos.y, side });
+      voronoiSites.push({ systemId: sys.id, x: pos.x, y: pos.y, side });
+      territorySites.push({
+        systemId: sys.id,
+        x: pos.x,
+        y: pos.y,
+        factionSide: side,
+        displayColor: clanId ? resolveClanMapDisplayColor(clanId) : '#9AA8C4',
+      });
     }
-    if (sites.length < 2) return [];
-    const segments = buildGalaxyBlueRedVoronoiBorderSegments({ sites, bounds: mapBounds });
+    if (voronoiSites.length < 2) return { fills: [], paths: [] };
+
+    const layers = buildGalaxyTerritoryVoronoiLayers({
+      sites: territorySites,
+      bounds: mapBounds,
+    });
+
+    const segments = buildGalaxyBlueRedVoronoiBorderSegments({ sites: voronoiSites, bounds: mapBounds });
     const polylines = chainAndChamferGalaxyBorders(segments);
-    return polylines
+    const paths = polylines
       .map((pl, idx) => ({
         key: `${pl.kind}-${idx}`,
         color: pl.color,
@@ -76,12 +106,22 @@ export const GalaxyMapTerritoryVoronoiSvg = memo(function GalaxyMapTerritoryVoro
         d: polylineToPath(pl.points, pl.closed),
       }))
       .filter((p) => p.d.length > 0 && !p.d.includes('NaN'));
+
+    return { fills: layers.fills, paths };
   }, [systems, occupierClanIdBySystemId, mapBounds, toScreen]);
 
-  if (paths.length === 0) return null;
+  if (fills.length === 0 && paths.length === 0) return null;
 
   return (
     <G pointerEvents="none">
+      {fills.map((fill) => (
+        <Polygon
+          key={`fill-${fill.key}`}
+          points={fill.points}
+          fill={withFillAlphaHex(fill.fillColor, TERRITORY_CELL_FILL_ALPHA)}
+          stroke="transparent"
+        />
+      ))}
       {/* 글로우 헤일로 → 본체 (넓은 것부터) */}
       {NEON_GLOW_LAYERS.map((layer, li) =>
         paths.map((p) => (

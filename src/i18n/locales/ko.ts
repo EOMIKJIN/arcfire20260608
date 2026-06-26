@@ -7,6 +7,14 @@ export const KO_DICTIONARY: I18nDictionary = {
   'common.confirm': '[ 확인 ]',
   'common.cancel': '[ 취소 ]',
 
+  'stageTransition.stuck.title': '화면 전환 지연',
+  'stageTransition.stuck.body':
+    '로딩이 끝나지 않았습니다. 앱을 완전히 종료한 뒤 다시 실행해 주세요.',
+
+  'idleSession.restart.title': '세션 재시작',
+  'idleSession.restart.body':
+    '1시간 동안 조작이 없어 앱을 재시작합니다. 잠시 후 자동으로 다시 실행됩니다.',
+
   'intro.btn.skipTyping': '[ 스킵 ]',
   'intro.btn.skipScene': '[ 건너뛰기 ]',
   'intro.btn.next': '[ 다음 ▶ ]',
@@ -297,6 +305,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'worldmap.panel.reachable': '✓ 이동 가능',
   'worldmap.panel.unreachable': '✗ 직접 이동 불가',
   'worldmap.btn.moving': '[ 이동중... ]',
+  'worldmap.btn.landing': '[ 착륙중... ]',
   'worldmap.btn.land': '[ 행성 착륙 ]',
   'worldmap.btn.move': '[ 이동 ]',
   'worldmap.panel.hint': '성계를 탭하여 정보를 확인하세요',
@@ -583,6 +592,8 @@ export const KO_DICTIONARY: I18nDictionary = {
   'econInfo.daily': '일간',
   'econInfo.monthlyEst': '월간 추정',
   'econInfo.tradeFee': '무역소 수수료 수익',
+  'econInfo.fabricEcology': '경제 생태 (일일 운영)',
+  'econInfo.fabricOpsToday': '오늘의 운영',
   'econInfo.factionShareToday': '금일 팩션 몫',
   'econInfo.convoyFeeToday': '수송선단 거래수익(금일)',
   'econInfo.playerFeeToday': '플레이어 거래수익(금일)',
@@ -809,11 +820,22 @@ export const KO_DICTIONARY: I18nDictionary = {
   'econSnap.blueVault': '블루팀 공용 금고',
   'econSnap.fleetVault': '수송선단 금고',
   'econSnap.supplyScale': '생산 재고 배율',
+  'econSnap.supplyVitality': '생태 활력',
+  'econSnap.vitalitySlump': '침체',
+  'econSnap.vitalityNormal': '보통',
+  'econSnap.vitalityBoom': '활황',
+  'econSnap.vitalitySuperBoom': '대호황',
+  'econSnap.fabricOpsLine': '수송 {trips}회 · 거래 {gross} · 재고배율 {scalePct}%',
   'econSnap.devCostEfficiency': '개발 비용 효율',
   'econSnap.devTdiScore': '개발 TDI',
   'econSnap.playerFeePool': '플레이어 수수료 풀(금일)',
 
-  // ── 광물 강화 스탯 (mineralStat) ──
+  // ── 일일 배치 요약 (dailyOpsSummary) ──
+  'dailyOpsSummary.title': '오늘의 아크코어 운영',
+  'dailyOpsSummary.body':
+    'KST {dayKey} · 약 {hours}시간 경과 후 세계가 정리되었습니다.\n경제 fabric: {fabric} · SIM 반영: {ingest}',
+  'dailyOpsSummary.on': '완료',
+  'dailyOpsSummary.off': '—',
   'mineralStat.label.ship_hull_hp': '선체 내구도 (HP)',
   'mineralStat.label.ship_shield': '실드 (Shield)',
   'mineralStat.label.ship_turn_speed': '선회 속도',

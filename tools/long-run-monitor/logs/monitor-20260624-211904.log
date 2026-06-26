@@ -62,3 +62,6 @@
 [2026-06-25 22:54:42] snap PSS=929.6MB GL=226.8MB views=932 dPSS=-11.6 dGL=0 
 [2026-06-25 23:24:48] snap PSS=911.6MB GL=41.2MB views=294 dPSS=4.2 dGL=-3 
 [2026-06-25 23:54:54] snap PSS=675.3MB GL=50.9MB views=304 dPSS=-25.2 dGL=-0.3 
+[2026-06-26 00:25:00] snap PSS=708.8MB GL=40.1MB views=303 dPSS=10.4 dGL=0 
+[2026-06-26 00:55:05] WARN: com.arcfire.online not running
+[2026-06-26 01:25:08] snap PSS=704.6MB GL=42.7MB views=397 dPSS= dGL= 

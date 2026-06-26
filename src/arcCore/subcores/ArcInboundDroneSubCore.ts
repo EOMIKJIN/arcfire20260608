@@ -7,7 +7,6 @@ import {
 } from '../inboundDrone/arcInboundDroneHubBridge';
 import { runInboundDroneInterceptPass } from '../inboundDrone/runInboundDroneInterceptPass';
 import { readPlanetOrbitClockMs } from '../orbitClockMsBridge';
-import { resolveInboundDroneElapsedSecAtOrbitMs } from '../inboundDrone/inboundDroneKinematics';
 import { resolveArcInboundDroneStrikeLeakMul } from '../inboundDrone/resolveInboundDroneStrikeLeak';
 import { applyPlanetAttackCoreDamage } from '../planetAttack/applyPlanetAttackCoreDamage';
 import { PLANET_ATTACK_KIND } from '../planetAttack/planetAttackKind';
@@ -174,8 +173,11 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
 
     for (const d of campaign.drones) {
       if (d.phase !== 'inbound') continue;
-      const orbitMs = readPlanetOrbitClockMs();
-      const elapsed = resolveInboundDroneElapsedSecAtOrbitMs(d, orbitMs);
+      const startWall = d.inboundStartWallSec ?? elapsedWallSec;
+      const elapsed = Math.min(
+        d.inboundDurationSec,
+        Math.max(0, elapsedWallSec - startWall),
+      );
       d.inboundElapsedSec = elapsed;
       if (elapsed >= d.inboundDurationSec) {
         d.phase = 'impacted';
@@ -240,7 +242,7 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
         kept.push(job);
         continue;
       }
-      this.spawnDrone(campaign, planetId, policy);
+      this.spawnDrone(campaign, planetId, policy, elapsedWallSec);
     }
     campaign.pendingSpawns = kept;
   }
@@ -249,6 +251,7 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
     campaign: PlanetInboundDroneCampaign,
     planetId: string,
     policy: ReturnType<typeof getArcCoreInboundDronePolicy>,
+    elapsedWallSec: number,
   ): void {
     campaign.droneSeq += 1;
     const drone: ArcInboundDrone = {
@@ -256,6 +259,7 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
       planetId,
       approachAngleRad: Math.random() * Math.PI * 2,
       inboundStartOrbitMs: readPlanetOrbitClockMs(),
+      inboundStartWallSec: elapsedWallSec,
       inboundElapsedSec: 0,
       inboundDurationSec: policy.inboundDurationSec,
       hp: policy.droneHp,
@@ -280,7 +284,7 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
     let key = `${campaign.planetId}:${campaign.drones.length}`;
     for (const d of campaign.drones) {
       if (d.phase === 'inbound') {
-        key += `|${d.id}:${d.phase}:${d.hp}`;
+        key += `|${d.id}:${d.phase}:${Math.floor(d.inboundElapsedSec * 4)}:${d.hp}`;
       } else {
         key += `|${d.id}:${d.phase}:${Math.round(d.inboundElapsedSec * 10)}:${d.hp}`;
       }

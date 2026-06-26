@@ -15,7 +15,7 @@ import {
 } from '../../arcCore/economy/resolveFactionVault';
 import { findPlanetById } from '../../arcCore/planetEnvironment/resolvePlanetAsteroidVisualPolicy';
 import { planetAttackKstDayKey } from '../../arcCore/planetAttack/planetAttackKstDayKey';
-import { resolvePlanetSupplyStockScale } from '../../arcCore/economy/planetEconomyFabric';
+import { resolvePlanetSupplyStockScale, resolvePlanetSupplyVitalityTier } from '../../arcCore/economy/planetEconomyFabric';
 import { computePlanetDevelopmentDailyUpkeepCredits } from '../../arcCore/economy/planetDevelopmentUpkeep';
 import {
   applyPlanetDevUpkeepEfficiency,
@@ -68,8 +68,27 @@ export type PlanetEconomyInfoSnapshot = {
   occupierFactionLabel: string;
   factionVaultLabel: string | null;
   factionVaultBalanceCredits: number | null;
+  /** 생산 재고 활력 4단 (침체/보통/활황/대호황) */
+  supplyVitalityLabel: string;
+  /** 금일 fabric 윈도우 운영 1줄 요약 */
+  fabricOpsSummary: string;
   extras: PlanetEconomyInfoExtraRow[];
 };
+
+function vitalityLabelKo(tier: ReturnType<typeof resolvePlanetSupplyVitalityTier>): string {
+  switch (tier) {
+    case 'slump':
+      return t('econSnap.vitalitySlump');
+    case 'normal':
+      return t('econSnap.vitalityNormal');
+    case 'boom':
+      return t('econSnap.vitalityBoom');
+    case 'super_boom':
+      return t('econSnap.vitalitySuperBoom');
+    default:
+      return t('econSnap.vitalityNormal');
+  }
+}
 
 function occupierFactionLabelKo(
   faction: ReturnType<typeof resolveOccupierFactionKindForHold>,
@@ -164,8 +183,18 @@ export function buildPlanetEconomyInfoSnapshot(
   }
 
   const fleetBalance = finiteCredits(useArcCoreTransportFleetBankStore.getState().getBalance());
+  const runtimeRec = usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId);
   const supplyScale = resolvePlanetSupplyStockScale(planetId);
   const supplyScalePct = Number.isFinite(supplyScale) ? supplyScale * 100 : 0;
+  const supplyVitalityLabel = vitalityLabelKo(resolvePlanetSupplyVitalityTier(supplyScale));
+  const fabricWindow = runtimeRec?.detail?.economyFabric?.window;
+  const fabricTrips = fabricWindow?.convoyTrips ?? 0;
+  const fabricTradeGross = fabricWindow?.playerTradeGrossCredits ?? 0;
+  const fabricOpsSummary = t('econSnap.fabricOpsLine', {
+    trips: String(fabricTrips),
+    gross: formatCredits(fabricTradeGross, { suffix: true }),
+    scalePct: supplyScalePct.toFixed(0),
+  });
   const convoyLabel = resolvePlanetTradeConvoyMonopolyLabel(planetId);
   const locale = useAppSettingsStore.getState().locale;
   const planetDescription = resolvePlanetInfoPanelDescription(planetId, locale);
@@ -193,7 +222,6 @@ export function buildPlanetEconomyInfoSnapshot(
     },
   ];
 
-  const runtimeRec = usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId);
   // [보완 #4] 배치 갱신 PGP 우선 — 없으면 레거시 즉시 계산 폴백
   const pgpBmu =
     typeof runtimeRec?.pgp === 'number' && Number.isFinite(runtimeRec.pgp)
@@ -229,6 +257,8 @@ export function buildPlanetEconomyInfoSnapshot(
     occupierFactionLabel: occupierFactionLabelKo(faction),
     factionVaultLabel,
     factionVaultBalanceCredits: factionVaultBalance,
+    supplyVitalityLabel,
+    fabricOpsSummary,
     extras,
   };
 }

@@ -12,7 +12,7 @@ import {
   resolveDefenseSatelliteOrbitXY,
 } from '../../worldObjects/planetWorldObjectOrbit';
 import type { ArcInboundDrone } from '../../store/arcInboundDroneStore';
-import { resolveInboundDroneElapsedSecAtOrbitMs, resolveInboundDroneScreenXY } from './inboundDroneKinematics';
+import { resolveInboundDroneScreenXY } from './inboundDroneKinematics';
 import { leakFractionFromInterceptHitPct } from './resolveInboundDroneStrikeLeak';
 import type { WorldObject } from '../../worldObjects';
 
@@ -102,7 +102,6 @@ export function runInboundDroneInterceptPass(
 
     const roll = Math.random() * 100;
     if (roll < zone.hitPct) {
-      drone.inboundElapsedSec = resolveInboundDroneElapsedSecAtOrbitMs(drone, orbitClockMs);
       drone.phase = 'destroyed';
     }
     drone.defenseZoneDwellSec = 0;

@@ -51,6 +51,8 @@ import { releaseCombatStageMemory } from '../../src/game/stageMemoryRelease';
 import { markGalaxyMapIngressFromPlanetHub } from '../../src/game/nativeReclaim/galaxyMapIngressReclaim';
 import { markPlanetHubIngressReclaim } from '../../src/game/nativeReclaim/planetHubIngressReclaim';
 import { isPlayerShipCombatCapable, resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
+import { useStageNavGate, runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
+import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 
 /** 성운 Skia 백드롭 — colorDodge 닷지는 성운 픽셀과 동일 캔버스에 그린다 */
 function CombatOrbitNebulaBackdrop({
@@ -89,6 +91,8 @@ export default function CombatScreen() {
 
   const [resolving, setResolving] = useState(false);
   const resolvedRef = useRef(false);
+  const isMountedRef = useRef(true);
+  const exitNavGate = useStageNavGate();
   const [isCombatRouteFocused, setIsCombatRouteFocused] = useState(() => navigation.isFocused());
   const windowOrbitSize = useMemo(() => Math.max(220, Math.floor(width)), [width]);
   const [battleStageWidth, setBattleStageWidth] = useState(windowOrbitSize);
@@ -110,6 +114,23 @@ export default function CombatScreen() {
       return () => setIsCombatRouteFocused(false);
     }, []),
   );
+
+  React.useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const scheduleCombatExitNavigate = useCallback((navigate: () => void) => {
+    if (!exitNavGate.tryScheduleNavigate()) return;
+    if (!exitNavGate.isLocked()) exitNavGate.tryBegin();
+    runStageNavAfterTeardown({
+      teardown: () => releaseCombatStageMemory(),
+      navigate,
+      isMounted: () => isMountedRef.current,
+    });
+  }, [exitNavGate]);
 
   React.useEffect(() => {
     if (!nebulaPlanetId) return;
@@ -163,10 +184,12 @@ export default function CombatScreen() {
     const completed = await runTransitCombatPostFlow(postFlow);
     if (completed) {
       markGalaxyMapIngressFromPlanetHub();
-      router.replace('/(game)/worldmap');
+      scheduleCombatExitNavigate(() => router.replace('/(game)/worldmap'));
+    } else {
+      exitNavGate.reset();
+      setResolving(false);
     }
-    setResolving(false);
-  }, []);
+  }, [exitNavGate, scheduleCombatExitNavigate]);
 
   const handleVictory = useCallback(async () => {
     if (resolvedRef.current) return;
@@ -211,11 +234,11 @@ export default function CombatScreen() {
       t('combat.shipDestroyedBody'),
       [{ text: t('combat.confirm'), onPress: () => {
         markPlanetHubIngressReclaim({ invalidateMemoCaches: true });
-        router.replace('/(game)/planet');
+        scheduleCombatExitNavigate(() => router.replace('/(game)/planet'));
       } }],
     );
     setResolving(false);
-  }, [player, t]);
+  }, [player, scheduleCombatExitNavigate, t]);
 
   const handleFlee = useCallback(async () => {
     if (resolving || resolvedRef.current) return;
@@ -246,6 +269,7 @@ export default function CombatScreen() {
   }, [finishTransitCombatAndNavigate, persist, resolving, t]);
 
   if (!player) return null;
+  const exitPending = resolving || exitNavGate.pending;
   if (!isPlayerShipCombatCapable(player.ship)) {
     const travelBlock = resolvePlayerTravelBlock(player);
     return (
@@ -258,11 +282,13 @@ export default function CombatScreen() {
             {travelBlock === 'durability' ? t('combat.durabilityDepletedBody') : t('combat.cannotFightBody')}
           </Text>
           <TouchableOpacity
-            style={styles.fleeBtn}
+            style={[styles.fleeBtn, exitPending && styles.fleeBtnDisabled]}
             onPress={() => {
+              if (exitPending || exitNavGate.isLocked()) return;
               markPlanetHubIngressReclaim({ invalidateMemoCaches: true });
-              router.replace('/(game)/planet');
+              scheduleCombatExitNavigate(() => router.replace('/(game)/planet'));
             }}
+            disabled={exitPending}
           >
             <Text style={styles.fleeBtnText}>{t('combat.backToPlanet')}</Text>
           </TouchableOpacity>
@@ -279,11 +305,13 @@ export default function CombatScreen() {
             {t('combat.missingDataBody')}
           </Text>
           <TouchableOpacity
-            style={styles.fleeBtn}
+            style={[styles.fleeBtn, exitPending && styles.fleeBtnDisabled]}
             onPress={() => {
+              if (exitPending || exitNavGate.isLocked()) return;
               markGalaxyMapIngressFromPlanetHub();
-              router.replace('/(game)/worldmap');
+              scheduleCombatExitNavigate(() => router.replace('/(game)/worldmap'));
             }}
+            disabled={exitPending}
           >
             <Text style={styles.fleeBtnText}>{t('combat.backToPlanet')}</Text>
           </TouchableOpacity>
@@ -295,9 +323,9 @@ export default function CombatScreen() {
   return (
     <CapitalRealtimeCombatSimBinder
       orbitSize={orbitSize}
-      active={isCombatRouteFocused && !resolving}
-      combatPlanetId={isCombatRouteFocused && !resolving ? CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID : null}
-      combatSystemId={isCombatRouteFocused && !resolving ? player.currentSystemId : null}
+      active={isCombatRouteFocused && !exitPending}
+      combatPlanetId={isCombatRouteFocused && !exitPending ? CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID : null}
+      combatSystemId={isCombatRouteFocused && !exitPending ? player.currentSystemId : null}
     >
       <StageShell routeName="combat" background="none" edges={['bottom']}>
         <View style={styles.header}>
@@ -306,9 +334,9 @@ export default function CombatScreen() {
             <Text style={styles.headerSub}>{pirateLabel}</Text>
           </View>
           <TouchableOpacity
-            style={[styles.fleeBtn, resolving && styles.fleeBtnDisabled]}
+            style={[styles.fleeBtn, exitPending && styles.fleeBtnDisabled]}
             onPress={handleFlee}
-            disabled={resolving}
+            disabled={exitPending}
           >
             <Text style={styles.fleeBtnText}>{t('combat.flee')}</Text>
           </TouchableOpacity>
@@ -330,6 +358,7 @@ export default function CombatScreen() {
         </View>
 
         <CombatRealtimeBindings onEnemyDefeated={handleVictory} onPlayerDefeated={handleDefeat} />
+        <StageLoadingOverlay visible={exitPending} label={t('worldmap.btn.landing')} />
       </StageShell>
     </CapitalRealtimeCombatSimBinder>
   );

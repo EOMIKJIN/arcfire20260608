@@ -1,0 +1,5 @@
+﻿--------- beginning of system
+06-26 00:52:24.392  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 26724
+06-26 00:52:24.478  1909  4338 W ActivityManager: pid 1909 system sent binder code 7 with flags 1 to frozen apps and got error -32
+06-26 00:52:30.227  1909  1971 I ActivityManager: PendingStartActivityUids startActivity to updateOomAdj delay:5658ms, uid:10147
+06-26 00:52:39.986  1909  9411 I ActivityManager: Changes in 10107 19 to 5, 0 to 144

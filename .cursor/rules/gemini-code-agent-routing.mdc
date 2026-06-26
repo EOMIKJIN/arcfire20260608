@@ -9,6 +9,12 @@ alwaysApply: true
 메인 개발: **김팀장 에이전트** — `.cursor/rules/arcfire-main-lead-agent.mdc` · `docs/KIM_TEAM_LEAD_AGENT.md`  
 스택: **React Native · Expo · Firebase** · 프로젝트 헌법: `Arcfire_Master_Spec_v4.0` · `arcfire-online.mdc`
 
+## 🚨 개발규칙 1순위 (무조건 · 최우선)
+
+**모든 기능은 메모리 누수 위험에 대한 전수조사 후 개발을 진행한다.**  
+다른 규칙·페르소나·일정·기능 우선순위보다 **항상 앞선다**. 조사·게이트 미충족 시 구현 시작·완료 선언 **금지**.  
+정본: `.cursor/rules/arcfire-memory-leak-audit-first.mdc`
+
 ## 0-A. 메인 개발·총괄 (@김팀장 · **유일한 사용자 지시 세션**)
 
 **김팀장** = 개발 **총괄** + **모든 코드 수정**(경제·UI·Skia·arcCore 포함) + 김경제 **관측 리포트 검토·조치**.  
@@ -38,6 +44,7 @@ alwaysApply: true
 ### 김경제 에이전트 (@김경제 · **김팀장 배정·감시 전용**)
 - **표시명**: 김경제 — **실시간 감시·경제 밸런스 주기 점검** (코드 수정 **금지**).
 - **전담 규칙**: `.cursor/rules/arcfire-economy-specialist-agent.mdc` — `long-run-monitor` · `audit:balance-ops` **실행·리포트만**.
+- **무조건**: **개발 내용 업데이트 시** mem·crash·retention **즉각 재검수 → handoff `mem-post-dev-recheck` 보고** (같은 세션 턴).
 - **금지**: `src/`·`app/`·`tables/` 수정 · SIM overlay 반영 · 자동조치 실행.
 - 사용자가 김경제 세션에 코드 지시 → **거부** · 김팀장 세션으로 안내.
 
@@ -76,6 +83,8 @@ alwaysApply: true
 **병렬**: 독립 조사(예: logcat + 코드 grep)는 **한 턴에 Task 병렬** 호출.
 
 ## 3. 프로젝트 고정 게이트 (페르소나와 무관)
+
+> **개발규칙 1순위 (무조건)**: **모든 기능은 메모리 누수 위험에 대한 전수조사 후 개발을 진행한다.** — `.cursor/rules/arcfire-memory-leak-audit-first.mdc`
 
 - **Skia·Reanimated·고프레임 Canvas (2026-06-14~ 필수)**: `.cursor/rules/arcfire-skia-memory-lifecycle.mdc` 100% 준수. 작업 **완료 전** `npm run audit:skia-memory` PASS + `tsc` + GL mtrack 안내(미충족 시 완료 선언 금지).
 - 스테이지/PR → `npm run audit:memory:all` + tsc

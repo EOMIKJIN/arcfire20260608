@@ -14,7 +14,7 @@ const PERSONAS = {
     id: 'economy',
     label: '김경제',
     emoji: '💹',
-    scope: '실시간 감시(long-run-monitor) · mem/crash 탐지 · audit:balance-ops 실행·리포트',
+    scope: '실시간 감시 · mem/crash 탐지 · audit:balance-ops · **개발 업데이트 시 메모리 즉각 재검수·handoff 보고**',
     avoid: '코드·CSV·SIM 수정 금지 — 김팀장 세션에서만 개발',
   },
   teamlead: {

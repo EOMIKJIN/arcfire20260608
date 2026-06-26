@@ -1,0 +1,11 @@
+{
+  "worldExpansion/master/state": {
+    "schemaVersion": 1,
+    "epochDayKey": "2026-06-26",
+    "timeZone": "Asia/Seoul",
+    "resetGeneration": 2,
+    "systemsPerDay": 1,
+    "globalScheduleEnabled": true,
+    "updatedAt": 1782478180133
+  }
+}

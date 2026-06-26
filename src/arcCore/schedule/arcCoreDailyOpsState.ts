@@ -42,6 +42,10 @@ export function getArcCoreDailyOpsLastBatchDayKey(): string | null {
   return mem.lastBatchDayKey;
 }
 
+export function getArcCoreDailyOpsLastBatchAtMs(): number | null {
+  return mem.lastBatchAtMs;
+}
+
 export async function markArcCoreDailyBatchCompleted(nowMs: number): Promise<void> {
   const policy = resolveArcCoreDailyOpsPolicy();
   const lastBatchDate = formatArcCoreOpsDayKey(nowMs, policy.timeZone);

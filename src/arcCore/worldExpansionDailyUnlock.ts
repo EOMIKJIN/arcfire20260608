@@ -1,17 +1,19 @@
-import { usePlayerStore } from '../store/playerStore';
-import { useWorldStore } from '../store/worldStore';
 import { useTavernBoardStore } from '../store/tavernBoardStore';
-import { finalizeArcCoreSynthFrontierUnlock } from './worldExpansionSynthColonization';
+import { useWorldStore } from '../store/worldStore';
 import {
   getExpansionUnlockIntervalSec,
   isArcExpansionTestOneShotConsumed,
   isArcExpansionTestOneShotEnvOn,
   markArcExpansionTestOneShotDoneAsync,
 } from './arcCoreExpansionTestFlags';
+import { isArcCoreGlobalWorldExpansionEnabled } from './worldExpansionGlobalPolicy';
+import { syncArcCoreGlobalWorldExpansionSync } from './syncArcCoreGlobalWorldExpansion';
+import { usePlayerStore } from '../store/playerStore';
+import { finalizeArcCoreSynthFrontierUnlock } from './worldExpansionSynthColonization';
 import { persistArcCoreDailyUnlockRecord } from './arcCoreDailyUnlockVerification';
 
-/** 월드 확장 일일 개방 — `WorldExpansionSubCore`·일일 운영 배치 공용 */
-export function tryArcCoreWorldDailyUnlock(): boolean {
+/** 레거시 per-user 일일 1성계 (globalScheduleEnabled=false 일 때만) */
+function tryLegacyPerUserArcCoreWorldDailyUnlock(): boolean {
   const world = useWorldStore.getState();
   if (!world.loaded) return false;
   const now = Date.now();
@@ -42,4 +44,16 @@ export function tryArcCoreWorldDailyUnlock(): boolean {
     });
   }
   return true;
+}
+
+/**
+ * 월드 확장 — `WorldExpansionSubCore`·일일 운영 배치 공용.
+ * 기본: RTDB/CSV epoch 전역 일정(`syncArcCoreGlobalWorldExpansionSync`).
+ */
+export function tryArcCoreWorldDailyUnlock(): boolean {
+  if (isArcCoreGlobalWorldExpansionEnabled()) {
+    const result = syncArcCoreGlobalWorldExpansionSync();
+    return result.added.length > 0;
+  }
+  return tryLegacyPerUserArcCoreWorldDailyUnlock();
 }

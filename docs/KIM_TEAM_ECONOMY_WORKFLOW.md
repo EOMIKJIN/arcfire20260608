@@ -9,7 +9,7 @@
 |------|------------------|------------------|
 | 사용자 지시 | **유일한 수신** | **받지 않음** (김팀장 배정만) |
 | 코드 | **전부** (경제·UI·Skia·arcCore) | **금지** |
-| 감시 | 김경제 리포트 검토 → **본 세션에서 조치** | mem·crash **탐지·보고** |
+| 감시 | 김경제 리포트 검토 → **본 세션에서 조치** | mem·crash **탐지·보고** · **개발 업데이트 시 즉각 메모리 재검수** |
 | 경제 감사 | FAIL 항목 **본 세션에서 수정** | `audit:balance-ops` **실행·리포트** |
 | Handoff | 관측·**retention audit** **검토·코드 반영** | `kim-economy-handoff.md` **`## [관측]`** · `latest-retention-audit.md` |
 
@@ -19,7 +19,8 @@
 graph TD
   U[사용자] -->|작업 지시| TL[김팀장 세션]
   TL -->|코드 구현| CODE[src/app/tables]
-  TL -->|감시·점검 배정| E[김경제 세션/Task]
+  CODE -->|개발 반영| E
+  TL -->|감시·점검·메모리 재검수 배정| E[김경제 세션/Task]
   E -->|관측·audit 리포트| R[kim-economy-handoff / incident]
   R --> TL
   TL -->|FAIL·incident 조치| CODE
@@ -31,6 +32,7 @@ graph TD
 |------|------|------|
 | 상시 | 김경제 (배정) | `start-watch-30m.ps1` · `profile:mem:watch` · retention audit |
 | 수시 | 김팀장 | 기능·경제 **코드** · 사용자 지시 처리 |
+| **개발 반영 직후** | 김경제 (배정·자동) | **mem-post-dev-recheck** — timeline · crash · retention **즉각 재검수·handoff** |
 | 수시 | 김경제 (배정) | `audit:balance-ops` 실행 → 리포트 |
 | **09:00** | 김팀장 | `npm run audit:team-lead:daily` · 관측 교차 확인 · **코드 정리** |
 | 12:00 | 앱 | `runArcCoreDailyOpsBatch` |

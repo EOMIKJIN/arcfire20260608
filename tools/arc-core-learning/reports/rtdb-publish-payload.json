@@ -1,0 +1,186 @@
+{
+  "config": {
+    "schemaVersion": 1,
+    "activePolicyPackId": "2026-06-26-1782444492960",
+    "learningSyncEnabled": true,
+    "safeMode": false,
+    "updatedAt": 1782444493329
+  },
+  "policy_packs": {
+    "2026-06-26-1782444492960": {
+      "schemaVersion": 1,
+      "packId": "2026-06-26-1782444492960",
+      "status": "approved",
+      "balanceOverlay": {
+        "schemaVersion": 1,
+        "deltaId": "2026-06-26-1782444492960",
+        "generatedAt": "2026-06-26T03:28:12.960Z",
+        "simDays": 30,
+        "virtualPopulation": 1000,
+        "combatWeight": 0,
+        "kpi": {
+          "f2pAvgPower": 11.63215673406882,
+          "dolphinAvgPower": 14.878122530600004,
+          "whaleAvgPower": 40.50087252841611,
+          "whaleToF2pPowerRatio": 3.4818025112914106,
+          "status": "ok"
+        },
+        "categoryTargetMul": {
+          "weapon": 1.2499994668423215,
+          "mineral": 0.8839693598772964,
+          "food": 1.004935639878698,
+          "tech": 1.249998063990159,
+          "luxury": 1.2499980869483431,
+          "contraband": 1.2499970915550322,
+          "trade_route": 1.2499993109673377,
+          "capital_ship": 1.2499960022310748
+        },
+        "aabsTargetMul": {
+          "creditReward": 0.9502720973466283,
+          "tradeIncome": 0.9627040730099713
+        }
+      },
+      "issuedAt": "2026-06-26T03:28:12.960Z",
+      "issuedBy": "sim",
+      "approvedAt": 1782444493329
+    }
+  },
+  "learning": {
+    "global": {
+      "schemaVersion": 1,
+      "dayKey": "2026-06-26",
+      "activePolicyPackId": "2026-06-26-1782444492960",
+      "kpiTimelineTail": [
+        {
+          "dayKey": "2026-06-16",
+          "economy": {
+            "f2pWhaleRatio": 3.476036662892076,
+            "simKpiStatus": "ok",
+            "deltaId": "2026-06-14-1781435091651",
+            "bandDrift": 10
+          }
+        },
+        {
+          "dayKey": "2026-06-17",
+          "economy": {
+            "f2pWhaleRatio": 3.476036662892076,
+            "simKpiStatus": "ok",
+            "deltaId": "2026-06-14-1781435091651",
+            "bandDrift": 10
+          }
+        },
+        {
+          "dayKey": "2026-06-17",
+          "economy": {
+            "f2pWhaleRatio": 3.476036662892076,
+            "simKpiStatus": "ok",
+            "deltaId": "2026-06-14-1781435091651",
+            "bandDrift": 10
+          }
+        },
+        {
+          "dayKey": "2026-06-18",
+          "economy": {
+            "f2pWhaleRatio": 3.476036662892076,
+            "simKpiStatus": "ok",
+            "deltaId": "2026-06-14-1781435091651",
+            "bandDrift": 10
+          }
+        },
+        {
+          "dayKey": "2026-06-18",
+          "economy": {
+            "f2pWhaleRatio": 3.476036662892076,
+            "simKpiStatus": "ok",
+            "deltaId": "2026-06-14-1781435091651",
+            "bandDrift": 10
+          }
+        },
+        {
+          "dayKey": "2026-06-19",
+          "economy": {
+            "f2pWhaleRatio": 3.476036662892076,
+            "simKpiStatus": "ok",
+            "deltaId": "2026-06-14-1781435091651",
+            "bandDrift": 10
+          }
+        },
+        {
+          "dayKey": "2026-06-19",
+          "economy": {
+            "f2pWhaleRatio": 3.476036662892076,
+            "simKpiStatus": "ok",
+            "deltaId": "2026-06-14-1781435091651",
+            "bandDrift": 10
+          }
+        },
+        {
+          "dayKey": "2026-06-19",
+          "economy": {
+            "f2pWhaleRatio": 3.476036662892076,
+            "simKpiStatus": "ok",
+            "deltaId": "2026-06-14-1781435091651",
+            "bandDrift": 10
+          }
+        },
+        {
+          "dayKey": "2026-06-20",
+          "economy": {
+            "f2pWhaleRatio": 3.476036662892076,
+            "simKpiStatus": "ok",
+            "deltaId": "2026-06-14-1781435091651",
+            "bandDrift": 10
+          }
+        },
+        {
+          "dayKey": "2026-06-24",
+          "economy": {
+            "f2pWhaleRatio": 3.476036662892076,
+            "simKpiStatus": "ok",
+            "deltaId": "2026-06-14-1781435091651",
+            "bandDrift": 10
+          }
+        },
+        {
+          "dayKey": "2026-06-24",
+          "economy": {
+            "f2pWhaleRatio": 3.476036662892076,
+            "simKpiStatus": "ok",
+            "deltaId": "2026-06-14-1781435091651",
+            "bandDrift": 10
+          }
+        },
+        {
+          "dayKey": "2026-06-26",
+          "economy": {
+            "f2pWhaleRatio": 3.476036662892076,
+            "simKpiStatus": "ok",
+            "deltaId": "2026-06-14-1781435091651",
+            "bandDrift": 10
+          }
+        },
+        {
+          "dayKey": "2026-06-26",
+          "economy": {
+            "f2pWhaleRatio": 3.476036662892076,
+            "simKpiStatus": "ok",
+            "deltaId": "2026-06-14-1781435091651",
+            "bandDrift": 10
+          }
+        },
+        {
+          "dayKey": "2026-06-26",
+          "economy": {
+            "source": "rtdb_devices",
+            "deviceCount": 0,
+            "windowTradeGross": 0,
+            "windowConvoyTrips": 0,
+            "planetsReconciled": 0,
+            "aggregatedAt": 1782444476992
+          }
+        }
+      ],
+      "updatedAt": 1782444493329
+    }
+  }
+}

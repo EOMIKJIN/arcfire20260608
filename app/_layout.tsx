@@ -33,6 +33,7 @@ import { useTavernBoardStore } from '../src/store/tavernBoardStore';
 import { hydrateCombatMatchTelemetryCache } from '../src/store/combatMatchTelemetryStore';
 import { useWorldObjectRuntimeStore } from '../src/store/worldObjectRuntimeStore';
 import { initGuestAuth } from '../src/firebase/auth';
+import { scheduleFirebaseAnonymousAuthWarmup } from '../src/firebase/firebaseAnonymousAuth';
 import { arcCoreHub } from '../src/arcCore/ArcCoreHub';
 import { attachArcCoreRuntimeCommandBridge } from '../src/arcCore/ArcCoreRuntimeBridge';
 import { ArcOverlayHost } from '../src/ui/overlay/ArcOverlayHost';
@@ -43,6 +44,7 @@ import { initializeFirebase, logAppOpen } from '../utils/logger';
 import { cancelScheduledUserCloudSync, scheduleUserCloudSync } from '../src/firebase/userCloudSyncSchedule';
 import { resolveAppVersion, syncUserDataWithServer } from '../src/firebase/userDataSync';
 import { ensureArcCoreCollectionSeeded } from '../src/firebase/arccoreFirestoreBootstrap';
+import { fetchArcCoreRtdbBootSyncOnce } from '../src/firebase/fetchArcCoreRtdbOnce';
 import {
   applyArcCoreWallClockCatchUpFromPersistedGap,
   persistArcCoreWallClockLeftActiveNow,
@@ -67,6 +69,7 @@ import { useAabsPolicyStore } from '../src/arcCore/aabs/aabsPolicyStore';
 import { useAppBootStore } from '../src/store/appBootStore';
 import { installDevMetroReloadGuard } from '../src/game/devMetroReloadGuard';
 import { resumePlayerToLastHubPlanet } from '../src/game/galaxyMapSessionResume';
+import { IdleSessionRestartGuard } from '../src/components/IdleSessionRestartGuard';
 
 type UpdateGateState = {
   visible: boolean;
@@ -183,6 +186,7 @@ export default function RootLayout() {
         useAppBootStore.getState().setBootReady(true);
         InteractionManager.runAfterInteractions(() => {
           installNativeReclaimBootstrap();
+          scheduleFirebaseAnonymousAuthWarmup();
         });
         void Promise.all([
           persistUserSession(),
@@ -205,6 +209,9 @@ export default function RootLayout() {
           () => ensureArcCoreCollectionSeeded({ uid: authUser!.uid }),
           undefined,
         );
+        void fetchArcCoreRtdbBootSyncOnce({ uid: authUser!.uid }).catch(() => {
+          /* RTDB 미배포·오프라인 — 번들 SIM 정본, [boot] 경고 없음 */
+        });
         const currentVersion = resolveAppVersion();
         const emptyPolicy: AppUpdatePolicy = {
           latestVersion: null,
@@ -398,6 +405,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={styles.root}>
+      <IdleSessionRestartGuard>
       <StatusBar style="light" backgroundColor="#060A14" />
       <Stack
         screenOptions={{
@@ -412,6 +420,7 @@ export default function RootLayout() {
       <ArcOverlayHost />
       <IngameDialogHost />
       <LevelUpOverlayBridge />
+      </IdleSessionRestartGuard>
     </GestureHandlerRootView>
   );
 }

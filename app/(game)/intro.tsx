@@ -3,7 +3,7 @@
 // cinematic(프롤로그) · ingame_dialog(범용 대사) 분기
 // ============================================================
 
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SPACING } from '../../src/utils/theme';
@@ -21,6 +21,8 @@ import { useT } from '../../src/i18n';
 import { CinematicPrologueScene } from '../../src/ui/onboarding/CinematicPrologueScene';
 import { CinematicPrologueFooter } from '../../src/ui/onboarding/CinematicPrologueFooter';
 import { CINEMATIC_PROLOGUE } from '../../src/ui/onboarding/cinematicPrologueTokens';
+import type { Href } from 'expo-router';
+import { runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
 import { ArcButton } from '../../src/ui/overlay/ArcButton';
 
 export default function IntroScreen() {
@@ -39,6 +41,7 @@ export default function IntroScreen() {
   const [segmentIndex, setSegmentIndex] = useState(0);
   const [pageComplete, setPageComplete] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const introNavScheduledRef = useRef(false);
   const appLocale = useAppSettingsStore(s => s.locale);
   const player = usePlayerStore(s => s.player);
 
@@ -75,10 +78,19 @@ export default function IntroScreen() {
     ? resolveIngameDialogPortraitSource(current)
     : undefined;
 
+  const scheduleIntroNavigate = useCallback((href: Href) => {
+    if (introNavScheduledRef.current) return;
+    introNavScheduledRef.current = true;
+    runStageNavAfterTeardown({
+      teardown: () => {},
+      navigate: () => router.replace(href),
+    });
+  }, []);
+
   const handleNext = useCallback(async () => {
     if (isTransitioning) return;
     if (!scene || pages.length === 0) {
-      router.replace('/(game)/continue-warp?target=planet');
+      scheduleIntroNavigate('/(game)/continue-warp?target=planet');
       return;
     }
     if (!pageComplete) {
@@ -96,7 +108,7 @@ export default function IntroScreen() {
       setIsTransitioning(true);
       try {
         if (isPreNicknameFlow && !player) {
-          router.replace('/(game)/character-select');
+          scheduleIntroNavigate('/(game)/character-select');
           return;
         }
         if (scene.completionPolicy === 'mark_intro_seen_and_start_first_mission') {
@@ -104,9 +116,9 @@ export default function IntroScreen() {
         }
         const nextRoute = (scene.nextRoute as '/(game)/planet') || '/(game)/planet';
         if (nextRoute === '/(game)/planet') {
-          router.replace('/(game)/continue-warp?target=planet');
+          scheduleIntroNavigate('/(game)/continue-warp?target=planet');
         } else {
-          router.replace(nextRoute);
+          scheduleIntroNavigate(nextRoute);
         }
       } catch {
         setIsTransitioning(false);
@@ -125,6 +137,7 @@ export default function IntroScreen() {
     player,
     scene,
     pages.length,
+    scheduleIntroNavigate,
   ]);
 
   const handleSkipScene = useCallback(() => {

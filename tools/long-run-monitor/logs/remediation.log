@@ -707,3 +707,372 @@
 [2026-06-25 23:27:16] INVESTIGATION audit:skia-memory completed (paused mode static gate)
 [2026-06-25 23:27:16] INVESTIGATION done reason=arcfire_crash_playtest
 [2026-06-25 23:34:17] INVESTIGATION throttled reason=arcfire_crash_playtest (duplicate within window)
+[2026-06-26 00:52:42] INVESTIGATION start reason=arcfire_crash_playtest
+[2026-06-26 00:52:42] INVESTIGATION alert=[2026-06-26 00:52:42] [ARCFIRE_CRASH age=0.3m] 06-26 00:52:23.176 26724 26724 F libc    : Fatal signal 11 (SIGSEGV), cod
+[2026-06-26 00:52:44] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-005243.log
+[2026-06-26 00:52:44] INVESTIGATION mem snapshot gl=MB pss=MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-005243.log
+[2026-06-26 00:52:44] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 00:52:44] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 00:52:44] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 00:52:47] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 00:52:47] INVESTIGATION done reason=arcfire_crash_playtest
+[2026-06-26 00:52:47] INVESTIGATION throttled reason=arcfire_crash_playtest (duplicate within window)
+[2026-06-26 01:44:19] INFO PSS_SOFT_CEILING pss=901 gl=67.1 views=282 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 01:46:00] INFO PSS_SOFT_CEILING pss=898.4 gl=65.2 views=282 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 01:54:40] INFO PSS_SOFT_CEILING pss=899.1 gl=65.3 views=282 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 01:56:20] INFO PSS_SOFT_CEILING pss=872.2 gl=56.8 views=315 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 02:04:59] INFO PSS_SOFT_CEILING pss=892.5 gl=43 views=293 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 02:06:39] INFO PSS_SOFT_CEILING pss=880.4 gl=42.4 views=292 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 02:15:16] INFO PSS_SOFT_CEILING pss=932.3 gl=55.4 views=288 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 02:16:56] INFO PSS_SOFT_CEILING pss=919.1 gl=53.4 views=288 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 02:25:34] INFO PSS_SOFT_CEILING pss=935 gl=53.8 views=317 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 02:27:13] INFO PSS_SOFT_CEILING pss=918.7 gl=55.5 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 02:35:51] INFO PSS_SOFT_CEILING pss=916.6 gl=53.6 views=292 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 02:37:31] INFO PSS_SOFT_CEILING pss=946.9 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 02:46:07] INFO PSS_SOFT_CEILING pss=924.7 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 02:47:48] INFO PSS_SOFT_CEILING pss=923.6 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 02:56:23] INFO PSS_SOFT_CEILING pss=917.9 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 02:58:04] INFO PSS_SOFT_CEILING pss=945.2 gl=56.3 views=315 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 03:06:39] INFO PSS_SOFT_CEILING pss=913.4 gl=53.6 views=300 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 03:08:20] INFO PSS_SOFT_CEILING pss=911.7 gl=53.6 views=293 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 03:16:54] INFO PSS_SOFT_CEILING pss=938.2 gl=55.9 views=315 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 03:18:36] INFO PSS_SOFT_CEILING pss=939.2 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 03:27:11] INFO PSS_SOFT_CEILING pss=929 gl=55.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 03:28:52] INFO PSS_SOFT_CEILING pss=932.1 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 03:37:28] INFO PSS_SOFT_CEILING pss=922.4 gl=53.6 views=300 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 03:39:09] INFO PSS_SOFT_CEILING pss=917.1 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 03:47:44] INFO PSS_SOFT_CEILING pss=923.9 gl=53.6 views=300 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 03:49:25] INFO PSS_SOFT_CEILING pss=922.1 gl=55.8 views=313 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 03:58:01] INFO PSS_SOFT_CEILING pss=920.1 gl=54.1 views=304 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 03:59:43] INFO PSS_SOFT_CEILING pss=909.8 gl=53.6 views=292 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 04:08:16] INFO PSS_SOFT_CEILING pss=943.5 gl=53.8 views=319 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 04:10:00] INFO PSS_SOFT_CEILING pss=917 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 04:18:34] INFO PSS_SOFT_CEILING pss=914.8 gl=53.6 views=304 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 04:20:17] INFO PSS_SOFT_CEILING pss=922.5 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 04:28:49] INFO PSS_SOFT_CEILING pss=921.3 gl=53.6 views=304 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 04:30:33] INFO PSS_SOFT_CEILING pss=923.6 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 04:39:07] INFO PSS_SOFT_CEILING pss=925.3 gl=53.6 views=308 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 04:40:53] INFO GL_HARD_CEILING_RECORD_ONLY gl=56.2 pss=952.8 views=311 (monitor-paused ??no incident/refix spam)
+[2026-06-26 04:41:05] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 04:41:05] INVESTIGATION alert=[2026-06-26 04:41:05] [MEM_HARD_CEILING] pss=952.8MB gl=56.2MB
+[2026-06-26 04:41:06] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-044105.log
+[2026-06-26 04:41:07] INVESTIGATION mem snapshot gl=53.6MB pss=936.1MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-044105.log
+[2026-06-26 04:41:08] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 04:41:08] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 04:41:08] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 04:41:11] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 04:41:11] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 04:49:23] INFO PSS_SOFT_CEILING pss=932.1 gl=53.6 views=308 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 04:51:08] INFO PSS_SOFT_CEILING pss=947.7 gl=53.6 views=292 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 04:59:52] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 04:59:52] INVESTIGATION alert=[2026-06-26 04:59:52] [MEM_HARD_CEILING] pss=958.5MB gl=57.9MB
+[2026-06-26 04:59:53] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-045952.log
+[2026-06-26 04:59:53] INVESTIGATION mem snapshot gl=53.6MB pss=931.7MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-045952.log
+[2026-06-26 04:59:54] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 04:59:54] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 04:59:54] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 04:59:56] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 04:59:56] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 05:01:25] INFO PSS_SOFT_CEILING pss=931.6 gl=53.6 views=292 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 05:09:56] INFO PSS_SOFT_CEILING pss=948.2 gl=53.6 views=308 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 05:11:42] INFO PSS_SOFT_CEILING pss=946.4 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 05:20:12] INFO PSS_SOFT_CEILING pss=947.1 gl=55.6 views=308 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 05:22:01] INFO PSS_SOFT_CEILING pss=941.9 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 05:30:29] INFO PSS_SOFT_CEILING pss=941.9 gl=53.6 views=312 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 05:32:17] INFO GL_HARD_CEILING_RECORD_ONLY gl=56.2 pss=968.4 views=299 (monitor-paused ??no incident/refix spam)
+[2026-06-26 05:32:18] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 05:32:18] INVESTIGATION alert=[2026-06-26 05:32:18] [MEM_HARD_CEILING] pss=968.4MB gl=56.2MB
+[2026-06-26 05:32:19] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-053218.log
+[2026-06-26 05:32:19] INVESTIGATION mem snapshot gl=53.6MB pss=944.8MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-053218.log
+[2026-06-26 05:32:20] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 05:32:20] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 05:32:20] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 05:32:22] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 05:32:22] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 05:40:46] INFO PSS_SOFT_CEILING pss=935.4 gl=53.6 views=312 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 05:42:42] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 05:42:42] INVESTIGATION alert=[2026-06-26 05:42:42] [MEM_HARD_CEILING] pss=968MB gl=53.8MB
+[2026-06-26 05:42:44] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-054242.log
+[2026-06-26 05:42:44] INVESTIGATION mem snapshot gl=53.6MB pss=953.9MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-054242.log
+[2026-06-26 05:42:44] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 05:42:44] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 05:42:44] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 05:42:46] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 05:42:46] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 05:51:07] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 05:51:07] INVESTIGATION alert=[2026-06-26 05:51:07] [MEM_HARD_CEILING] pss=978.2MB gl=56.2MB
+[2026-06-26 05:51:09] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-055107.log
+[2026-06-26 05:51:09] INVESTIGATION mem snapshot gl=53.6MB pss=951.3MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-055107.log
+[2026-06-26 05:51:10] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 05:51:10] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 05:51:10] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 05:51:12] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 05:51:12] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 05:52:52] INVESTIGATION throttled reason=mem_hard_ceiling_playtest (duplicate within window)
+[2026-06-26 06:01:33] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 06:01:33] INVESTIGATION alert=[2026-06-26 06:01:33] [MEM_HARD_CEILING] pss=951.9MB gl=53.6MB
+[2026-06-26 06:01:33] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-060133.log
+[2026-06-26 06:01:34] INVESTIGATION mem snapshot gl=54.2MB pss=969.4MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-060133.log
+[2026-06-26 06:01:34] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 06:01:34] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 06:01:34] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 06:01:36] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 06:01:36] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 06:03:08] INFO PSS_SOFT_CEILING pss=945.2 gl=55.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 06:11:37] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 06:11:37] INVESTIGATION alert=[2026-06-26 06:11:36] [MEM_HARD_CEILING] pss=956.9MB gl=53.6MB
+[2026-06-26 06:11:37] INFO GL_HARD_CEILING_RECORD_ONLY gl=53.6 pss=956.9 views=312 (monitor-paused ??no incident/refix spam)
+[2026-06-26 06:11:38] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-061137.log
+[2026-06-26 06:11:38] INVESTIGATION mem snapshot gl=53.6MB pss=956.5MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-061137.log
+[2026-06-26 06:11:38] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 06:11:38] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 06:11:38] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 06:11:40] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 06:11:40] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 06:13:40] INVESTIGATION throttled reason=mem_hard_ceiling_playtest (duplicate within window)
+[2026-06-26 06:22:01] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 06:22:01] INVESTIGATION alert=[2026-06-26 06:22:01] [MEM_HARD_CEILING] pss=957.6MB gl=55.6MB
+[2026-06-26 06:22:02] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-062201.log
+[2026-06-26 06:22:02] INVESTIGATION mem snapshot gl=53.6MB pss=960.8MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-062201.log
+[2026-06-26 06:22:02] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 06:22:02] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 06:22:02] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 06:22:04] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 06:22:04] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 06:23:45] INVESTIGATION throttled reason=mem_hard_ceiling_playtest (duplicate within window)
+[2026-06-26 06:32:12] INFO PSS_SOFT_CEILING pss=938.1 gl=55.6 views=316 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 06:34:00] INFO PSS_SOFT_CEILING pss=946.6 gl=53.9 views=317 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 06:42:28] INFO GL_HARD_CEILING_RECORD_ONLY gl=54.2 pss=970.9 views=325 (monitor-paused ??no incident/refix spam)
+[2026-06-26 06:42:46] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 06:42:46] INVESTIGATION alert=[2026-06-26 06:42:46] [MEM_HARD_CEILING] pss=970.9MB gl=54.2MB
+[2026-06-26 06:42:46] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-064246.log
+[2026-06-26 06:42:47] INVESTIGATION mem snapshot gl=53.6MB pss=953MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-064246.log
+[2026-06-26 06:42:47] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 06:42:47] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 06:42:47] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 06:42:49] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 06:42:49] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 06:44:19] INFO PSS_SOFT_CEILING pss=937.9 gl=55.6 views=290 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 06:52:50] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 06:52:50] INVESTIGATION alert=[2026-06-26 06:52:50] [MEM_HARD_CEILING] pss=954.8MB gl=55.7MB
+[2026-06-26 06:52:50] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-065250.log
+[2026-06-26 06:52:51] INVESTIGATION mem snapshot gl=54.2MB pss=960.9MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-065250.log
+[2026-06-26 06:52:51] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 06:52:51] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 06:52:51] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 06:52:53] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 06:52:53] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 06:54:36] INFO PSS_SOFT_CEILING pss=940.9 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 07:03:02] INFO PSS_SOFT_CEILING pss=938.7 gl=53.6 views=320 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 07:04:53] INFO PSS_SOFT_CEILING pss=934.7 gl=55.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 07:13:18] INFO PSS_SOFT_CEILING pss=937 gl=53.6 views=320 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 07:15:11] INFO GL_HARD_CEILING_RECORD_ONLY gl=53.6 pss=950 views=292 (monitor-paused ??no incident/refix spam)
+[2026-06-26 07:15:15] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 07:15:15] INVESTIGATION alert=[2026-06-26 07:15:15] [MEM_HARD_CEILING] pss=950MB gl=53.6MB
+[2026-06-26 07:15:15] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-071515.log
+[2026-06-26 07:15:16] INVESTIGATION mem snapshot gl=53.6MB pss=929.4MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-071515.log
+[2026-06-26 07:15:16] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 07:15:16] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 07:15:16] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 07:15:18] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 07:15:18] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 07:23:39] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 07:23:39] INVESTIGATION alert=[2026-06-26 07:23:39] [MEM_HARD_CEILING] pss=955.7MB gl=53.6MB
+[2026-06-26 07:23:40] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-072339.log
+[2026-06-26 07:23:41] INVESTIGATION mem snapshot gl=53.6MB pss=939.8MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-072339.log
+[2026-06-26 07:23:41] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 07:23:41] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 07:23:41] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 07:23:43] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 07:23:43] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 07:25:43] INVESTIGATION throttled reason=mem_hard_ceiling_playtest (duplicate within window)
+[2026-06-26 07:33:53] INFO PSS_SOFT_CEILING pss=944.6 gl=53.8 views=324 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 07:35:44] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 07:35:44] INVESTIGATION alert=[2026-06-26 07:35:44] [MEM_HARD_CEILING] pss=977.6MB gl=53.8MB
+[2026-06-26 07:35:47] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-073544.log
+[2026-06-26 07:35:48] INVESTIGATION mem snapshot gl=53.9MB pss=969.9MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-073544.log
+[2026-06-26 07:35:48] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 07:35:48] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 07:35:48] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 07:35:50] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 07:35:50] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 07:44:10] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 07:44:10] INVESTIGATION alert=[2026-06-26 07:44:10] [MEM_HARD_CEILING] pss=975.6MB gl=57.8MB
+[2026-06-26 07:44:12] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-074410.log
+[2026-06-26 07:44:12] INVESTIGATION mem snapshot gl=58.2MB pss=988.8MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-074410.log
+[2026-06-26 07:44:12] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 07:44:12] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 07:44:12] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 07:44:14] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 07:44:14] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 07:46:02] INFO PSS_SOFT_CEILING pss=943.1 gl=53.6 views=292 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 07:54:25] INFO PSS_SOFT_CEILING pss=948 gl=53.6 views=320 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 07:56:18] INFO PSS_SOFT_CEILING pss=947.5 gl=53.6 views=292 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 08:04:42] INFO GL_HARD_CEILING_RECORD_ONLY gl=53.6 pss=954.5 views=318 (monitor-paused ??no incident/refix spam)
+[2026-06-26 08:04:56] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 08:04:56] INVESTIGATION alert=[2026-06-26 08:04:56] [MEM_HARD_CEILING] pss=954.5MB gl=53.6MB
+[2026-06-26 08:04:56] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-080456.log
+[2026-06-26 08:04:57] INVESTIGATION mem snapshot gl=53.6MB pss=950.2MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-080456.log
+[2026-06-26 08:04:57] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 08:04:58] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 08:04:58] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 08:04:59] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 08:04:59] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 08:06:39] INVESTIGATION throttled reason=mem_hard_ceiling_playtest (duplicate within window)
+[2026-06-26 08:15:00] INFO PSS_SOFT_CEILING pss=947.5 gl=53.6 views=320 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 08:17:00] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 08:17:00] INVESTIGATION alert=[2026-06-26 08:17:00] [MEM_HARD_CEILING] pss=988.6MB gl=56.2MB
+[2026-06-26 08:17:01] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-081700.log
+[2026-06-26 08:17:02] INVESTIGATION mem snapshot gl=53.6MB pss=962.1MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-081700.log
+[2026-06-26 08:17:02] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 08:17:02] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 08:17:02] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 08:17:04] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 08:17:04] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 08:25:25] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 08:25:25] INVESTIGATION alert=[2026-06-26 08:25:25] [MEM_HARD_CEILING] pss=954.8MB gl=53.9MB
+[2026-06-26 08:25:25] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-082525.log
+[2026-06-26 08:25:26] INVESTIGATION mem snapshot gl=53.6MB pss=966.1MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-082525.log
+[2026-06-26 08:25:26] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 08:25:26] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 08:25:26] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 08:25:28] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 08:25:28] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 08:27:08] INVESTIGATION throttled reason=mem_hard_ceiling_playtest (duplicate within window)
+[2026-06-26 08:35:33] INFO GL_HARD_CEILING_RECORD_ONLY gl=53.8 pss=981.8 views=307 (monitor-paused ??no incident/refix spam)
+[2026-06-26 08:35:49] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 08:35:49] INVESTIGATION alert=[2026-06-26 08:35:49] [MEM_HARD_CEILING] pss=981.8MB gl=53.8MB
+[2026-06-26 08:35:50] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-083549.log
+[2026-06-26 08:35:50] INVESTIGATION mem snapshot gl=53.6MB pss=972.1MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-083549.log
+[2026-06-26 08:35:50] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 08:35:50] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 08:35:50] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 08:35:52] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 08:35:52] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 08:37:32] INVESTIGATION throttled reason=mem_hard_ceiling_playtest (duplicate within window)
+[2026-06-26 08:45:53] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 08:45:53] INVESTIGATION alert=[2026-06-26 08:45:53] [MEM_HARD_CEILING] pss=969.3MB gl=53.6MB
+[2026-06-26 08:46:02] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-084553.log
+[2026-06-26 08:46:02] INVESTIGATION mem snapshot gl=53.9MB pss=969.5MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-084553.log
+[2026-06-26 08:46:02] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 08:46:02] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 08:46:02] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 08:46:04] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 08:46:04] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 08:47:40] INFO PSS_SOFT_CEILING pss=928 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 08:56:06] INFO PSS_SOFT_CEILING pss=915.7 gl=53.6 views=292 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 08:57:57] INFO PSS_SOFT_CEILING pss=912.5 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 09:06:22] INFO PSS_SOFT_CEILING pss=904.4 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 09:08:13] INFO PSS_SOFT_CEILING pss=939.7 gl=54.2 views=311 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 09:16:38] INFO PSS_SOFT_CEILING pss=928.3 gl=54.2 views=310 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 09:18:30] INFO PSS_SOFT_CEILING pss=912.2 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 09:26:55] INFO PSS_SOFT_CEILING pss=927 gl=53.6 views=295 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 09:28:46] INFO PSS_SOFT_CEILING pss=923.4 gl=53.6 views=297 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 09:37:11] INFO PSS_SOFT_CEILING pss=933.2 gl=53.6 views=296 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 09:39:05] INFO GL_HARD_CEILING_RECORD_ONLY gl=237.6 pss=1134.9 views=923 (monitor-paused ??no incident/refix spam)
+[2026-06-26 09:39:08] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 09:39:08] INVESTIGATION alert=[2026-06-26 09:39:08] [MEM_HARD_CEILING] pss=1134.9MB gl=237.6MB
+[2026-06-26 09:39:08] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-093908.log
+[2026-06-26 09:39:09] INVESTIGATION mem snapshot gl=130.6MB pss=1046.8MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-093908.log
+[2026-06-26 09:39:09] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 09:39:09] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 09:39:09] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 09:39:12] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 09:39:12] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 11:22:11] INFO PSS_SOFT_CEILING pss=928 gl=144.7 views=311 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 11:40:41] INFO PSS_SOFT_CEILING pss=873.5 gl=126.5 views=928 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 11:42:48] INFO PSS_SOFT_CEILING pss=877.9 gl=126.5 views=928 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 11:51:01] INFO PSS_SOFT_CEILING pss=871.5 gl=127.4 views=928 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 11:53:06] INFO PSS_SOFT_CEILING pss=928.3 gl=141.2 views=317 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 13:01:30] INFO GL_ELEVATED mounting_or_insufficient_samples gl=122.4 pss=720 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 13:05:20] INFO GL_ELEVATED mounting_or_insufficient_samples gl=122.4 pss=716 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 13:15:35] INFO GL_ELEVATED mounting_or_insufficient_samples gl=122.4 pss=715.7 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 13:25:51] INFO GL_ELEVATED mounting_or_insufficient_samples gl=122.4 pss=723.2 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 13:31:47] INFO GL_ELEVATED mounting_or_insufficient_samples gl=122.4 pss=703.2 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 13:36:08] INFO GL_ELEVATED mounting_or_insufficient_samples gl=122.4 pss=715.5 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 13:46:26] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=727.9 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 13:56:42] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=727.1 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 14:02:10] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=707.4 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 14:06:58] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=721.3 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 14:17:16] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=728.1 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 14:27:33] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=729.2 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 14:32:25] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=709.4 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 14:37:50] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=722.5 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 14:48:07] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=720.1 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 14:58:24] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=738.8 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 15:02:42] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=715.8 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 15:08:41] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=721.6 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 15:19:03] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=718.3 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 15:29:20] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=719.9 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 15:32:57] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=717.6 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 15:39:36] INFO GL_ELEVATED mounting_or_insufficient_samples gl=124 pss=736.1 views=922 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 15:49:55] INFO GL_ELEVATED mounting_or_insufficient_samples gl=131 pss=793.5 views=313 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 17:02:04] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 17:02:04] INVESTIGATION alert=[2026-06-26 17:02:04] [MEM_HARD_CEILING] pss=834.7MB gl=225.4MB
+[2026-06-26 17:02:05] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-170204.log
+[2026-06-26 17:02:05] INVESTIGATION mem snapshot gl=225.4MB pss=827.9MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-170204.log
+[2026-06-26 17:02:05] INFO GL_HARD_CEILING_RECORD_ONLY gl=225.4 pss=834.7 views=928 (monitor-paused ??no incident/refix spam)
+[2026-06-26 17:02:05] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 17:02:05] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 17:02:05] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 17:02:07] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 17:02:07] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 17:03:47] INVESTIGATION throttled reason=mem_hard_ceiling_playtest (duplicate within window)
+[2026-06-26 17:12:22] INFO GL_ELEVATED mounting_or_insufficient_samples gl=126.8 pss=727.4 views=928 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 17:40:30] INVESTIGATION start reason=arcfire_crash_playtest
+[2026-06-26 17:40:30] INVESTIGATION alert=[2026-06-26 17:40:30] [ARCFIRE_CRASH age=0.1m] 06-26 17:40:26.100 30549 22489 F libc    : Fatal signal 11 (SIGSEGV), cod
+[2026-06-26 17:40:31] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-174030.log
+[2026-06-26 17:40:32] INVESTIGATION mem snapshot gl=MB pss=MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-174030.log
+[2026-06-26 17:40:32] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 17:40:32] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 17:40:32] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 17:40:34] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 17:40:34] INVESTIGATION done reason=arcfire_crash_playtest
+[2026-06-26 17:40:34] INVESTIGATION throttled reason=arcfire_crash_playtest (duplicate within window)
+[2026-06-26 20:58:35] INFO GL_ELEVATED mounting_or_insufficient_samples gl=125.4 pss=786.5 views=928 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 21:06:09] INFO PSS_SOFT_CEILING pss=806.2 gl=125.3 views=928 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 21:09:02] INFO GL_ELEVATED mounting_or_insufficient_samples gl=125.3 pss=792.2 views=928 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-26 21:29:52] INFO PSS_SOFT_CEILING pss=942.5 gl=138.8 views=948 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 21:36:30] INFO PSS_SOFT_CEILING pss=944 gl=138.9 views=964 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-26 21:40:09] INFO GL_HARD_CEILING_RECORD_ONLY gl=145.1 pss=1075.7 views=972 (monitor-paused ??no incident/refix spam)
+[2026-06-26 21:40:11] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 21:40:11] INVESTIGATION alert=[2026-06-26 21:40:11] [MEM_HARD_CEILING] pss=1075.7MB gl=145.1MB
+[2026-06-26 21:40:12] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-214011.log
+[2026-06-26 21:40:12] INVESTIGATION mem snapshot gl=147.2MB pss=1068MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-214011.log
+[2026-06-26 21:40:13] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 21:40:13] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 21:40:13] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 21:40:16] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 21:40:16] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 22:37:06] INFO GL_HARD_CEILING_RECORD_ONLY gl=149.6 pss=1030.9 views=963 (monitor-paused ??no incident/refix spam)
+[2026-06-26 22:37:20] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 22:37:20] INVESTIGATION alert=[2026-06-26 22:37:20] [MEM_HARD_CEILING] pss=1030.9MB gl=149.6MB
+[2026-06-26 22:37:21] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-223720.log
+[2026-06-26 22:37:22] INVESTIGATION mem snapshot gl=145.6MB pss=1035.8MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-223720.log
+[2026-06-26 22:37:22] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 22:37:22] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 22:37:22] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 22:37:24] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 22:37:24] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 22:42:02] INFO GL_HARD_CEILING_RECORD_ONLY gl=158.8 pss=1120.1 views=963 (monitor-paused ??no incident/refix spam)
+[2026-06-26 22:42:04] INVESTIGATION throttled reason=mem_hard_ceiling_playtest (duplicate within window)
+[2026-06-26 22:52:21] INFO GL_HARD_CEILING_RECORD_ONLY gl=37.3 pss=1008.8 views=313 (monitor-paused ??no incident/refix spam)
+[2026-06-26 22:52:25] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 22:52:25] INVESTIGATION alert=[2026-06-26 22:52:25] [MEM_HARD_CEILING] pss=1008.8MB gl=37.3MB
+[2026-06-26 22:52:26] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-225225.log
+[2026-06-26 22:52:26] INVESTIGATION mem snapshot gl=37.5MB pss=1025.1MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-225225.log
+[2026-06-26 22:52:27] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 22:52:27] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 22:52:27] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 22:52:29] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 22:52:29] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 23:02:50] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-26 23:02:50] INVESTIGATION alert=[2026-06-26 23:02:50] [MEM_HARD_CEILING] pss=1023.8MB gl=41.3MB
+[2026-06-26 23:02:51] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-230250.log
+[2026-06-26 23:02:52] INVESTIGATION mem snapshot gl=42MB pss=1042.8MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-230250.log
+[2026-06-26 23:02:52] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-26 23:02:52] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-26 23:02:52] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-26 23:02:54] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-26 23:02:54] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-26 23:07:35] INVESTIGATION throttled reason=mem_hard_ceiling_playtest (duplicate within window)

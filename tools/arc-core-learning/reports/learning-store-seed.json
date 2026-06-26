@@ -1,0 +1,452 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-06-26T03:27:57.214Z",
+  "source": "tools/balance-ops-audit/reports/learning-state.json",
+  "observations": {
+    "tail": [],
+    "lastFlushDayKey": null
+  },
+  "simRuns": [],
+  "kpiTimeline": [
+    {
+      "dayKey": "2026-06-15",
+      "economy": {
+        "f2pWhaleRatio": 3.48,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-15T00:22:34.229Z",
+        "overall": "FAIL"
+      }
+    },
+    {
+      "dayKey": "2026-06-15",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-15T00:23:10.272Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-15",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-15T08:33:25.694Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-16",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-16T06:17:28.199Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-16",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-16T06:19:16.213Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-16",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-16T06:49:56.849Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-16",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-16T07:20:36.409Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-16",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-16T07:51:14.448Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-16",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-16T08:21:51.199Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-16",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-16T08:52:28.590Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-16",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-16T09:23:04.965Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-16",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-16T09:53:44.793Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-16",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-16T10:24:33.620Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-16",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-16T10:55:11.427Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-16",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-16T11:17:59.771Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-16",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-16T11:19:52.242Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-16",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-16T11:20:29.565Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-17",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-17T05:44:19.162Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-17",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-17T06:26:32.154Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-18",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-18T05:24:33.069Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-18",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-18T05:55:43.865Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-19",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-19T11:47:57.398Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-19",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-19T12:06:37.495Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-19",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-19T13:48:21.022Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-20",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-20T01:25:03.173Z",
+        "overall": "FAIL"
+      }
+    },
+    {
+      "dayKey": "2026-06-24",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-24T02:52:05.688Z",
+        "overall": "FAIL"
+      }
+    },
+    {
+      "dayKey": "2026-06-24",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-24T02:55:59.041Z",
+        "overall": "PASS"
+      }
+    },
+    {
+      "dayKey": "2026-06-26",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-26T00:48:58.499Z",
+        "overall": "FAIL"
+      }
+    },
+    {
+      "dayKey": "2026-06-26",
+      "economy": {
+        "f2pWhaleRatio": 3.476036662892076,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-14-1781435091651",
+        "bandDrift": 10
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-06-26T03:26:14.920Z",
+        "overall": "FAIL"
+      }
+    },
+    {
+      "dayKey": "2026-06-26",
+      "economy": {
+        "source": "rtdb_devices",
+        "deviceCount": 0,
+        "windowTradeGross": 0,
+        "windowConvoyTrips": 0,
+        "planetsReconciled": 0,
+        "aggregatedAt": 1782444476992
+      },
+      "combat": {}
+    }
+  ],
+  "policyHistory": [
+    {
+      "packId": "2026-06-14-1781435091651",
+      "ingestedAt": 1782444477218,
+      "source": "ci"
+    }
+  ],
+  "lastInsights": [
+    {
+      "kind": "stable",
+      "severity": "ok",
+      "message": "No actionable drift or contract violations detected",
+      "action": "continue_3h_monitor"
+    }
+  ],
+  "lastUpdatedAt": 1782444477512,
+  "deviceKpiAggregate": {
+    "dayKey": "2026-06-26",
+    "deviceCount": 0,
+    "totals": {},
+    "pulledAt": 1782444476992
+  }
+}

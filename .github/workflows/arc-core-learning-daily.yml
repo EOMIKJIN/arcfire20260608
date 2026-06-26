@@ -1,0 +1,73 @@
+# ArcCore 학습 일일 파이프라인 — RTDB KPI → SIM → policy publish
+#
+# 수동 실행: Actions → ArcCore learning daily → Run workflow
+# Secrets (선택):
+#   FIREBASE_TOKEN — firebase login:ci 토큰 (pull + publish)
+#   없으면 sim + merge만 실행, RTDB 단계 skip
+
+name: ArcCore learning daily
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: arc-core-learning-daily
+  cancel-in-progress: true
+
+jobs:
+  learning-daily:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Firebase CI login
+        if: ${{ secrets.FIREBASE_TOKEN != '' }}
+        run: firebase login:ci --token "${{ secrets.FIREBASE_TOKEN }}"
+
+      - name: Stability verify (offline gates)
+        run: npm run arc-core:learning:verify
+
+      - name: Balance ops audit (learning-state input)
+        env:
+          ARC_BALANCE_OPS_CI: '1'
+        run: npm run audit:balance-ops
+
+      - name: Run learning daily pipeline
+        env:
+          FIREBASE_DATABASE_URL: https://arcfire-49d69-default-rtdb.firebaseio.com
+        run: |
+          EXTRA=""
+          if [ -z "${{ secrets.FIREBASE_TOKEN }}" ]; then
+            EXTRA="--skip-pull --skip-publish"
+            echo "FIREBASE_TOKEN unset — RTDB pull/publish skipped"
+          fi
+          npm run arc-core:learning:daily -- $EXTRA --allow-pull-fail
+
+      - name: Commit learning artifacts if changed
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/balance/generated/economySimOverlayDelta.ts
+          git add tools/economy-sim/outbox/ tools/economy-sim/reports/
+          git add tools/arc-core-learning/reports/
+          if git diff --cached --quiet; then
+            echo "No learning pipeline output changes"
+            exit 0
+          fi
+          DAY=$(TZ=Asia/Seoul date +%Y-%m-%d)
+          git commit -m "chore(learning): arc-core daily pipeline ${DAY} (KST)"
+          git push

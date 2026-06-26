@@ -338,12 +338,26 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
 
   useLayoutEffect(() => {
     const nowMs = readPlanetOrbitClockMs();
+    if (!startOrbitMsByIdRef.current) startOrbitMsByIdRef.current = new Map();
+    if (!endOrbitMsByIdRef.current) endOrbitMsByIdRef.current = new Map();
+    if (!prevPhaseByIdRef.current) prevPhaseByIdRef.current = new Map();
+    if (!spawnedHitFxIdsRef.current) spawnedHitFxIdsRef.current = new Set();
+
     const startOrbitMsById = startOrbitMsByIdRef.current;
     const endOrbitMsById = endOrbitMsByIdRef.current;
     const prevPhaseById = prevPhaseByIdRef.current;
     const spawnedHitFxIds = spawnedHitFxIdsRef.current;
     const activeTrailIds = new Set<string>();
+    const activeInboundIds = new Set<string>();
     let spawnedHit = false;
+
+    // inbound 마크용 startOrbitMs — trail 슬라이스(24) 밖 드론도 등록 (pack 전 필수)
+    for (const d of inboundDrones) {
+      activeInboundIds.add(d.id);
+      if (d.phase === 'inbound' && !startOrbitMsById.has(d.id)) {
+        startOrbitMsById.set(d.id, resolveInboundDroneStartOrbitMs(d, nowMs));
+      }
+    }
 
     for (const d of trailDrones) {
       activeTrailIds.add(d.id);
@@ -373,24 +387,10 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
       prevPhaseById.set(d.id, d.phase);
     }
 
-    for (const id of startOrbitMsById.keys()) {
-      if (!activeTrailIds.has(id)) startOrbitMsById.delete(id);
-    }
-    for (const id of endOrbitMsById.keys()) {
-      if (!activeTrailIds.has(id)) endOrbitMsById.delete(id);
-    }
-    for (const id of prevPhaseById.keys()) {
-      if (!activeTrailIds.has(id)) prevPhaseById.delete(id);
-    }
-    for (const key of spawnedHitFxIds.keys()) {
-      const droneId = key.split(':')[0];
-      if (droneId && !activeTrailIds.has(droneId)) spawnedHitFxIds.delete(key);
-    }
-
     if (inboundPackSigRef.current !== inboundPackSig) {
       inboundPackSigRef.current = inboundPackSig;
       droneCountSv.value = inboundDrones.length;
-      flatSv.value = packInboundDronesToFloat32(inboundDrones, startOrbitMsById);
+      flatSv.value = packInboundDronesToFloat32(inboundDrones, startOrbitMsById, nowMs);
     }
     if (trailPackSigRef.current !== trailPackSig) {
       trailPackSigRef.current = trailPackSig;
@@ -405,6 +405,20 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
         trailFlatSv.value = v;
       });
       trailCountSv.value = trailDrones.length;
+    }
+
+    for (const id of startOrbitMsById.keys()) {
+      if (!activeTrailIds.has(id) && !activeInboundIds.has(id)) startOrbitMsById.delete(id);
+    }
+    for (const id of endOrbitMsById.keys()) {
+      if (!activeTrailIds.has(id)) endOrbitMsById.delete(id);
+    }
+    for (const id of prevPhaseById.keys()) {
+      if (!activeTrailIds.has(id)) prevPhaseById.delete(id);
+    }
+    for (const key of spawnedHitFxIds.keys()) {
+      const droneId = key.split(':')[0];
+      if (droneId && !activeTrailIds.has(droneId)) spawnedHitFxIds.delete(key);
     }
 
     compactInboundDroneHitFxInPlace(hitFxRef.current, nowMs);
@@ -427,6 +441,8 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
   }, [
     inboundPackSig,
     trailPackSig,
+    inboundDrones,
+    trailDrones,
     flatSv,
     trailFlatSv,
     droneCountSv,

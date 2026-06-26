@@ -12,6 +12,7 @@ import {
   runContinueSessionPrewarm,
 } from '../../src/game/continueSessionPrewarm';
 import { ContinueSessionLoadingView } from '../../src/game/continueSessionLoadingView';
+import { runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
 
 export default function ContinueWarpScreen() {
   const { width, height } = useWindowDimensions();
@@ -25,6 +26,15 @@ export default function ContinueWarpScreen() {
     return '/(game)/planet' as const;
   }, [target]);
   const minHoldTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navScheduledRef = useRef(false);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -41,8 +51,13 @@ export default function ContinueWarpScreen() {
         /* 프리로드 실패해도 진입은 허용 */
         await minHold;
       }
-      if (cancelled) return;
-      router.replace(nextRoute);
+      if (cancelled || navScheduledRef.current) return;
+      navScheduledRef.current = true;
+      runStageNavAfterTeardown({
+        teardown: () => {},
+        navigate: () => router.replace(nextRoute),
+        isMounted: () => isMountedRef.current && !cancelled,
+      });
     })();
     return () => {
       cancelled = true;

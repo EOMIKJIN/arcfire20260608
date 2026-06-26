@@ -1,0 +1,15 @@
+﻿{
+    "phase2Focus":  [
+                        "planet_hub_departure_worldmap",
+                        "worldmap_transit_combat",
+                        "worldmap_landing_planet",
+                        "rapid_nav_tap_race"
+                    ],
+    "timelineLineCount":  14444,
+    "startKst":  "2026-06-26 01:44:16",
+    "endKst":  "2026-06-26 06:44:16",
+    "incidentLineCount":  2018,
+    "package":  "com.arcfire.online",
+    "marker":  "STATE_WATCH_5H_START 2026-06-26 01:44:16 KST",
+    "appPid":  "31346"
+}

@@ -5,8 +5,14 @@ export type TrimBitmapCachesResult = {
   frescoCleared?: boolean;
 };
 
+export type RestartAppResult = {
+  ok: boolean;
+  reason?: string;
+};
+
 type ArcfireNativeMemoryNative = {
   trimBitmapMemoryCachesAsync: () => Promise<TrimBitmapCachesResult>;
+  restartAppAsync: () => Promise<RestartAppResult>;
 };
 
 let nativeModule: ArcfireNativeMemoryNative | null = null;
@@ -36,4 +42,17 @@ export async function trimNativeBitmapCachesAsync(): Promise<TrimBitmapCachesRes
 
 export function isNativeBitmapTrimAvailable(): boolean {
   return getNativeModule() != null;
+}
+
+/** Android — 런처 액티비티 재시작. iOS·미지원 환경은 ok:false */
+export async function restartNativeAppAsync(): Promise<RestartAppResult> {
+  const mod = getNativeModule();
+  if (!mod?.restartAppAsync) {
+    return { ok: false, reason: 'module_unavailable' };
+  }
+  try {
+    return await mod.restartAppAsync();
+  } catch {
+    return { ok: false, reason: 'native_error' };
+  }
 }

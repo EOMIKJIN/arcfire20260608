@@ -281,6 +281,26 @@ export function getPlanetTradeMarketListings(planetId: string): PlanetTradeMarke
   return [...map.values()];
 }
 
+/** 생산지(supply role) 재고 합 — 일 1회 fabric reconcile 전용. tick·렌더 경로 금지. */
+export function sumPlanetSupplyStockUnits(
+  planetId: string,
+  options?: { allowLazyRebuild?: boolean },
+): number {
+  let map = byPlanet.get(planetId);
+  if ((!map || map.size === 0) && options?.allowLazyRebuild) {
+    rebuildPlanetTradeMarket(planetId);
+    map = byPlanet.get(planetId);
+  }
+  if (!map) return 0;
+  let total = 0;
+  for (const entry of map.values()) {
+    if (entry.role === 'supply') {
+      total += Math.max(0, Math.floor(entry.stock));
+    }
+  }
+  return total;
+}
+
 function applyStockDelta(
   entry: PlanetTradeMarketEntry,
   delta: number,

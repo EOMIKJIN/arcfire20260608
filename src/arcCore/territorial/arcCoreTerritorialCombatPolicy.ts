@@ -102,6 +102,27 @@ export function listTerritorialCombatPolicies(): TerritorialCombatPolicy[] {
   return Array.from(policyByPlanetId.values());
 }
 
+let contestedZoneSystemIdSet: Set<string> | null = null;
+
+/** 1h 순환 점유(`contestedZone=true`·enabled) 성계 id — 은하 지도 분쟁 표기용 */
+export function listContestedZoneSystemIds(): readonly string[] {
+  if (!contestedZoneSystemIdSet) {
+    contestedZoneSystemIdSet = new Set(
+      listTerritorialCombatPolicies()
+        .filter((p) => p.enabled && p.contestedZone)
+        .map((p) => p.systemId),
+    );
+  }
+  return Array.from(contestedZoneSystemIdSet);
+}
+
+export function isContestedZoneSystemId(systemId: string): boolean {
+  if (!contestedZoneSystemIdSet) {
+    listContestedZoneSystemIds();
+  }
+  return contestedZoneSystemIdSet?.has(systemId) ?? false;
+}
+
 export function listTerritorialCombatPoliciesForCampaign(
   campaignGroup: string,
 ): TerritorialCombatPolicy[] {
@@ -127,4 +148,5 @@ export function listTerritorialFleetShipIds(
 export function invalidateTerritorialCombatPolicyCache(): void {
   policyByPlanetId = null;
   fleetByPlanetSide = null;
+  contestedZoneSystemIdSet = null;
 }

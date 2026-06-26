@@ -26,13 +26,17 @@ export function resolveInboundDroneStartOrbitMs(
   return orbitMsNow - elapsed * 1000;
 }
 
-/** 0..1 — impacted는 1, 그 외 orbit 시계 기준 */
+/** 0..1 — impacted는 1, inbound는 wall/저장 elapsed 우선 */
 export function resolveInboundDroneProgressAtOrbitMs(
   drone: ArcInboundDrone,
   orbitMs: number,
 ): number {
   if (drone.phase === 'impacted') return 1;
   const dur = Math.max(0.001, finiteOr(drone.inboundDurationSec, 0.001));
+  const storedElapsed = finiteOr(drone.inboundElapsedSec, 0);
+  if (storedElapsed > 0 || drone.inboundStartWallSec != null) {
+    return Math.min(1, storedElapsed / dur);
+  }
   const startMs = resolveInboundDroneStartOrbitMs(drone, orbitMs);
   const elapsed = Math.max(0, (orbitMs - startMs) * 0.001);
   return Math.min(1, elapsed / dur);

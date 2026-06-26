@@ -1,4 +1,4 @@
-Daily audit — 2026-06-25T15:00:06.624Z
+Daily audit — 2026-06-26T15:00:08.650Z
 
 TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -37,11 +37,11 @@ Largest TS/TSX under `src/` + `app/` (bytes)
 - 75,917 — `src/data/generated/csvStoryScenes.ts`
 - 71,055 — `src/data/generated/csvWeapons.ts`
 - 70,149 — `src/data/balance/generated/csvSynthSystemColonization.ts`
-- 67,436 — `src/i18n/locales/ko.ts`
+- 68,571 — `src/i18n/locales/ko.ts`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
-- 61,393 — `src/i18n/locales/en.ts`
-- 58,582 — `app/(game)/worldmap.tsx`
-- 57,892 — `app/(game)/planet.tsx`
+- 62,418 — `src/i18n/locales/en.ts`
+- 62,290 — `app/(game)/worldmap.tsx`
+- 58,261 — `app/(game)/planet.tsx`
 - 46,036 — `app/(game)/shipyard.tsx`
 - 42,880 — `app/(game)/trade.tsx`
 - 42,572 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
@@ -53,6 +53,7 @@ Planet hub eager `src/combat` import (should be absent)
 - OK — no eager combat barrel in `planet.tsx`
 
 - `src/combat/useCapitalRealtimeDuelOutcome.ts`
+- `src/components/IdleSessionRestartGuard.tsx`
 - `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - `src/components/planet/PlanetMainScanActionRow.tsx`
 - `src/components/planet/SkiaPlanetNebulaShaderBackdrop.tsx`
@@ -73,6 +74,7 @@ Planet hub eager `src/combat` import (should be absent)
 
 **addEventListener**
 - `src/arcCore/ArcCoreHub.ts`
+- `src/components/IdleSessionRestartGuard.tsx`
 - `src/game/nativeReclaim/nativeReclaimBootstrap.ts`
 - `app/(game)/planet.tsx`
 - `app/(game)/worldmap.tsx`

@@ -7,8 +7,10 @@ export interface ArcInboundDrone {
   planetId: string;
   /** 전방향 접근 — 0..2π 랜덤 */
   approachAngleRad: number;
-  /** 스폰 시점 orbitClockMs — 연출·요격·충돌 판정 단일 시계 앵커 */
+  /** 스폰 시점 orbitClockMs — 트레일·FX 앵커(연출 보조) */
   inboundStartOrbitMs?: number;
+  /** 스폰 시점 ArcCore 벽시계(sec) — inbound 진행 정본 */
+  inboundStartWallSec?: number;
   inboundElapsedSec: number;
   inboundDurationSec: number;
   hp: number;

@@ -9,6 +9,8 @@ import {
   KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
+import type { Href } from 'expo-router';
+import { runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
 import { useT } from '../../src/i18n';
@@ -26,6 +28,7 @@ export default function NicknameScreen() {
   const t = useT();
   const [nickname, setNickname] = useState('');
   const [checking, setChecking] = useState(false);
+  const navScheduledRef = useRef(false);
   const inputRef = useRef<TextInput>(null);
 
   const validate = (text: string) => NICKNAME_REGEX.test(text);
@@ -39,6 +42,7 @@ export default function NicknameScreen() {
   );
 
   const handleConfirm = async () => {
+    if (checking) return;
     if (!validate(nickname)) {
       showArcAlert(t('nickname.errTitle'), t('nickname.errBody'));
       return;
@@ -47,14 +51,25 @@ export default function NicknameScreen() {
     const user = getCurrentUser();
     if (!user) {
       showArcAlert(t('nickname.genericErrTitle'), t('nickname.authErr'));
-      router.replace('/');
+      if (!navScheduledRef.current) {
+        navScheduledRef.current = true;
+        runStageNavAfterTeardown({
+          teardown: () => {},
+          navigate: () => router.replace('/' as Href),
+        });
+      }
       return;
     }
 
     try {
       setChecking(true);
       await completePilotRegistration(user.uid, nickname);
-      router.replace('/(game)/continue-warp?target=planet');
+      if (navScheduledRef.current) return;
+      navScheduledRef.current = true;
+      runStageNavAfterTeardown({
+        teardown: () => {},
+        navigate: () => router.replace('/(game)/continue-warp?target=planet' as Href),
+      });
     } catch (e: unknown) {
       const message =
         e instanceof PilotRegistrationError

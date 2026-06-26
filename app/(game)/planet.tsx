@@ -60,6 +60,7 @@ import { emitMemProfileMarker } from '../../src/game/devMemoryProfileBridge';
 import { teardownPlanetHubCombatForGalaxyDeparture } from '../../src/game/teardownPlanetHubCombatForGalaxyDeparture';
 import { resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 import { usePlanetStageSession } from '../../src/game/usePlanetStageSession';
+import { useStageTransitionStuckWatchdog } from '../../src/navigation/stageTransitionStuckWatchdog';
 import { buildCsvStaticIndexesFull } from '../../src/game/buildCsvStaticIndexes';
 import { markBootPerf } from '../../src/game/bootPerformance';
 import {
@@ -193,7 +194,7 @@ import {
   isPlanetHubTavernEnabled,
   isPlanetHubTradePortEnabled,
 } from '../../src/game/planetDevelopment/planetHubFacilityGates';
-
+import { useArcCoreDailyOpsSummaryOnce } from '../../src/game/planetHub/useArcCoreDailyOpsSummaryOnce';
 
 export default function PlanetScreen() {
   const player = usePlayerStore(s => s.player);
@@ -229,6 +230,7 @@ export default function PlanetScreen() {
   const navigation = useNavigation();
   const [isPlanetRouteFocused, setIsPlanetRouteFocused] = useState(() => navigation.isFocused());
   const [appStateActive, setAppStateActive] = useState(() => AppState.currentState === 'active');
+  useArcCoreDailyOpsSummaryOnce(playerHydrated && isPlanetRouteFocused);
   const [miningSession, setMiningSession] = useState<MiningSessionState>(() => createInitialMiningSessionState());
   const miningSessionRef = useRef<MiningSessionState>(createInitialMiningSessionState());
   const [miningUiNowMs, setMiningUiNowMs] = useState(() => Date.now());
@@ -254,6 +256,7 @@ export default function PlanetScreen() {
 
   /** Phase 2: 메인스테이지 라이프사이클(Active/Suspending/Frozen/Resuming) 단일 진입점. */
   const stageSession = usePlanetStageSession();
+  useStageTransitionStuckWatchdog(stageSession.isTransiting);
   /**
    * 성운 셰이더·허브 궤도 Skia·Reanimated 궤도 시계 공통 게이트.
    * 출발 직후 lifecycle≠active 동안 Skia만 계속 돌면 전투 dispose 와 레이스(SIGSEGV).
@@ -357,12 +360,8 @@ export default function PlanetScreen() {
       });
     }
 
-    /**
-     * 의존성 [] 고정용 — store action 은 stable. lifecycle 이 'active' 가 아니면 beginSuspend 가
-     * 자동 무시(idempotent), 5초 안전망이 반드시 active 로 복귀시키므로 영구 lock 없음.
-     */
-    usePlanetStageLifecycleStore.getState().beginSuspend(navigate);
-  }, []);
+    stageSession.beginDeparture(navigate);
+  }, [stageSession.beginDeparture]);
 
   /**
    * 출발(은하계 지도) — `Navigation.replace()`로 스택 누적 방지 (`1.arcfire_flowchart.md` §4-1)
@@ -629,6 +628,12 @@ export default function PlanetScreen() {
   }, [player?.currentPlanetId]);
   const handlePlanetScanComplete = useCallback(() => {
     setPlanetScanActionsUnlocked(true);
+  }, []);
+  const handlePlanetScanReset = useCallback(() => {
+    setPlanetScanActionsUnlocked(false);
+    if (miningSessionRef.current.status === 'running') {
+      applyMiningTeardownRef.current('manual_stop');
+    }
   }, []);
   const salvageAttemptRef = useRef(0);
   useEffect(() => {
@@ -1365,6 +1370,7 @@ export default function PlanetScreen() {
               dialogDisabled={false}
               searchDisabled={!activeSalvageWreck}
               onScanComplete={handlePlanetScanComplete}
+              onScanReset={handlePlanetScanReset}
               onPressMining={handleToggleMining}
               onPressDialog={openPlanetHubNpcDialog}
               onSearchComplete={handlePlanetSalvageSearch}

@@ -11,6 +11,12 @@ alwaysApply: true
 
 > **2026-06-19 — 단일 지휘**: 사용자 작업 지시는 **본 세션(김팀장)만**. 김경제에게 할 일은 **김팀장이 별도 세션/Task로 배정**. 병렬 대화창에서 동시 코드 작업 **금지**(충돌 방지).
 
+## 🚨 개발규칙 1순위 (무조건)
+
+**모든 기능은 메모리 누수 위험에 대한 전수조사 후 개발을 진행한다.**  
+기능·경제·UI·Skia·CSV **무엇이든** 코드 작성 **전** STAGE·틱·persist·부트·dispose 리스크를 전수조사한다.  
+정본: `.cursor/rules/arcfire-memory-leak-audit-first.mdc` — **다른 모든 김팀장 지침보다 우선**.
+
 운영: `docs/KIM_TEAM_LEAD_AGENT.md` · 협업: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md` · 감시: `docs/KIM_ECONOMY_AGENT.md`
 
 ## 팀 구조
@@ -32,9 +38,11 @@ alwaysApply: true
 
 김팀장이 필요 시 아래만 김경제 세션에 지시한다. **사용자가 김경제 세션에 직접 코드 지시하지 않음.**
 
+> **개발 반영 후 필수**: `src/`·`app/`·`tables/`·Skia·STAGE·arcCore **코드가 업데이트되면** 김팀장은 김경제에 **「메모리 즉각 재검수·보고」** 를 배정한다(또는 김경제 세션이 handoff·git 변경으로 **자동 트리거**). 김경제는 **같은 턴** 내 `mem-post-dev-recheck` handoff 갱신 — `.cursor/rules/arcfire-economy-specialist-agent.mdc` §개발 업데이트 시 즉각 메모리 재검수.
+
 | 배정 업무 | 산출 |
 |-----------|------|
-| `start-watch-30m.ps1` · `profile:mem:watch` | mem-timeline · retention audit · incident handoff |
+| **개발 반영 후 즉각 재검수** | mem-timeline · retention · incident **`mem-post-dev-recheck`** handoff |
 | `audit:memory:retention` (FAIL·주기) | `latest-retention-audit.md` → handoff **관측 섹션** |
 | `audit:balance-ops` / `audit:balance` 주기 실행 | PASS/FAIL 리포트 · KPI 요약 · **코드 없음** |
 | 3h economy watch (`balance-ops-audit`) | 추이 관측·학습 state 메모 |

@@ -47,14 +47,21 @@ export function computeInboundDroneScreenPacked(
 
 export function packInboundDronesToFloat32(
   drones: ArcInboundDrone[],
-  startOrbitMsById: ReadonlyMap<string, number>,
+  startOrbitMsById?: ReadonlyMap<string, number> | null,
+  orbitMsNow = 0,
 ): number[] {
+  const startMap = startOrbitMsById ?? new Map<string, number>();
   const out = new Array<number>(drones.length * INBOUND_DRONE_PACK_STRIDE).fill(0);
   for (let i = 0; i < drones.length; i++) {
     const d = drones[i]!;
     const b = i * INBOUND_DRONE_PACK_STRIDE;
     out[b] = d.phase === 'inbound' ? 0 : 1;
-    out[b + 1] = startOrbitMsById.get(d.id) ?? 0;
+    const cached = startMap.get(d.id);
+    out[b + 1] =
+      cached ??
+      (orbitMsNow > 0
+        ? orbitMsNow - (Number.isFinite(d.inboundElapsedSec) ? d.inboundElapsedSec : 0) * 1000
+        : 0);
     out[b + 2] = Math.max(0.001, Number.isFinite(d.inboundDurationSec) ? d.inboundDurationSec : 0.001);
     out[b + 3] = Number.isFinite(d.approachAngleRad) ? d.approachAngleRad : 0;
     out[b + 4] = 0;
