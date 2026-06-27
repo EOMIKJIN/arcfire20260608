@@ -85,6 +85,7 @@ export const PlanetDevListItemHeader = memo(function PlanetDevListItemHeader({
         <PlanetInfoDescriptionBlock
           description={summaryTrimmed}
           visualTheme={visualTheme}
+          variant="devList"
         />
       ) : null}
     </>

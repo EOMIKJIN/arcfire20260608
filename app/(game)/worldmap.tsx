@@ -7,7 +7,7 @@ import {
   View, Text, TouchableOpacity, StyleSheet,
   useWindowDimensions, Animated as RNAnimated, Easing, AppState,
 } from 'react-native';
-import Svg, { Line, Circle, G, Text as SvgText } from 'react-native-svg';
+import Svg from 'react-native-svg';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -27,7 +27,7 @@ import {
 } from '../../src/i18n/systemText';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
-import { COLORS, FONTS, SPACING, LAYOUT, ZONE_COLORS } from '../../src/utils/theme';
+import { COLORS, FONTS, SPACING, ZONE_COLORS } from '../../src/utils/theme';
 import { TACTICAL_HUB as TH } from '../../src/ui/tactical/tacticalHubTokens';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { isPlayerShipCombatCapable, resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
@@ -58,7 +58,6 @@ import {
   parseSynthOrdinal,
 } from '../../src/data/galaxy100';
 import { StarSystem } from '../../src/types';
-import type { AppLocale } from '../../src/i18n/types';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
 import { runStageUiAfterIdle } from '../../src/navigation/stageNavGate';
@@ -91,7 +90,10 @@ import {
   useHeavyUiDataSession,
 } from '../../src/ui/heavyUiDataSession';
 import { buildCsvStaticIndexesFull } from '../../src/game/buildCsvStaticIndexes';
+import { computeGalaxyMapTerritoryVoronoiModel } from '../../src/galaxyMap/computeGalaxyMapTerritoryVoronoiModel';
+import { GalaxyMapTerritoryOccupationLabelsSvg } from '../../src/galaxyMap/GalaxyMapTerritoryOccupationLabelsSvg';
 import { GalaxyMapTerritoryVoronoiSvg } from '../../src/galaxyMap/GalaxyMapTerritoryVoronoiSvg';
+import { GalaxyMapSystemsSvg } from '../../src/galaxyMap/GalaxyMapSystemsSvg';
 import { GalaxyMapContestedZoneRingOverlay } from '../../src/galaxyMap/GalaxyMapContestedZoneRingOverlay';
 import { listContestedZoneSystemIds } from '../../src/arcCore/territorial/arcCoreTerritorialCombatPolicy';
 import {
@@ -100,8 +102,6 @@ import {
   useStageNavGate,
 } from '../../src/navigation/stageNavGate';
 
-const NODE_R = LAYOUT.map_node_radius;
-const NODE_R_CURRENT = LAYOUT.map_node_radius_start;
 /** 은하 좌표 1단위 = 뷰포트 한 변 픽셀(기존 맵과 동일 스케일). 라벨/노드 여백만 픽셀로 추가 */
 const MAP_PAD_PX = 44;
 const NODE_HIT_R = 28;
@@ -956,6 +956,25 @@ export default function WorldMapScreen() {
     y1: Math.max(MAP_PAD_PX + 1, mapContentSize.ch - MAP_PAD_PX),
   }), [mapContentSize.cw, mapContentSize.ch]);
 
+  const territoryNationLabels = useMemo(
+    () => ({
+      blue: t('worldmap.territory.nation.blue'),
+      red: t('worldmap.territory.nation.red'),
+    }),
+    [t, locale],
+  );
+
+  const territoryVoronoiModel = useMemo(
+    () =>
+      computeGalaxyMapTerritoryVoronoiModel({
+        systems: visibleSystemsList,
+        occupierClanIdBySystemId,
+        mapBounds: territoryMapBounds,
+        toScreen,
+      }),
+    [visibleSystemsList, occupierClanIdBySystemId, territoryMapBounds, toScreen],
+  );
+
   const panelPrimaryPlanetClanLine = useClanWarFoundationStore(
     useCallback(
       (s) => {
@@ -1285,12 +1304,10 @@ export default function WorldMapScreen() {
                   pointerEvents="none"
                 >
                   <GalaxyMapTerritoryVoronoiSvg
-                    systems={visibleSystemsList}
-                    occupierClanIdBySystemId={occupierClanIdBySystemId}
-                    mapBounds={territoryMapBounds}
-                    toScreen={toScreen}
+                    fills={territoryVoronoiModel.fills}
+                    paths={territoryVoronoiModel.paths}
                   />
-                  <MemoGalaxyMapSvg
+                  <GalaxyMapSystemsSvg
                     systems={visibleSystemsList}
                     systemById={systems}
                     currentId={player.currentSystemId}
@@ -1301,6 +1318,10 @@ export default function WorldMapScreen() {
                     clanOwnerColorBySystemId={clanOwnerColorBySystemId}
                     toScreen={toScreen}
                     locale={locale}
+                  />
+                  <GalaxyMapTerritoryOccupationLabelsSvg
+                    labels={territoryVoronoiModel.occupationLabels}
+                    nationLabelBySide={territoryNationLabels}
                   />
                 </Svg>
                 <GalaxyMapContestedZoneRingOverlay
@@ -1439,176 +1460,6 @@ export default function WorldMapScreen() {
     </StageShell>
   );
 }
-
-interface GalaxyMapSvgProps {
-  systems: StarSystem[];
-  systemById: Record<string, StarSystem>;
-  currentId: string;
-  selectedId: string;
-  visitedIds: string[];
-  reachableIds: string[];
-  unlockedIds: string[];
-  clanOwnerColorBySystemId: Record<string, string | undefined>;
-  toScreen: (pos: { x: number; y: number }) => { x: number; y: number };
-  locale: AppLocale;
-}
-
-function GalaxyMapSvg({
-  systems,
-  systemById,
-  currentId,
-  selectedId,
-  visitedIds,
-  reachableIds,
-  unlockedIds,
-  clanOwnerColorBySystemId,
-  toScreen,
-  locale,
-}: GalaxyMapSvgProps) {
-  const unlockedSet = new Set(unlockedIds);
-  const LOCK_LINE = '#526483';
-  const GAME_LINE_DIM = 'rgba(255,255,255,0.22)';
-  const GAME_LINE_HI = 'rgba(255,255,255,0.85)';
-
-  const renderedLines = new Set<string>();
-  const lines: React.ReactElement[] = [];
-
-  systems.forEach((sys) => {
-    const posA = toScreen(sys.position);
-    sys.connections.forEach((connId) => {
-      const key = [sys.id, connId].sort().join('--');
-      if (renderedLines.has(key)) return;
-      renderedLines.add(key);
-
-      const connSys = systemById[connId];
-      if (!connSys) return;
-      const posB = toScreen(connSys.position);
-
-      const aPlay = unlockedSet.has(sys.id);
-      const bPlay = unlockedSet.has(connId);
-      const isGameplayEdge = aPlay && bPlay;
-
-      const isReachable =
-        (sys.id === currentId && reachableIds.includes(connId)) ||
-        (connId === currentId && reachableIds.includes(sys.id));
-
-      const stroke = isGameplayEdge
-        ? (isReachable ? GAME_LINE_HI : GAME_LINE_DIM)
-        : LOCK_LINE;
-      const strokeWidth = isGameplayEdge
-        ? (isReachable ? 1.75 : 1)
-        : 0.9;
-      const opacity = isGameplayEdge ? 1 : 0.35;
-
-      lines.push(
-        <Line
-          key={key}
-          x1={posA.x}
-          y1={posA.y}
-          x2={posB.x}
-          y2={posB.y}
-          stroke={stroke}
-          strokeWidth={strokeWidth}
-          opacity={opacity}
-        />,
-      );
-    });
-  });
-
-  const shortName = (name: string) => (name.length > 10 ? `${name.slice(0, 9)}…` : name);
-
-  const nodes: React.ReactElement[] = systems.map((sys) => {
-    const pos = toScreen(sys.position);
-    const isCurrent = sys.id === currentId;
-    const isSelected = sys.id === selectedId;
-    const isVisited = visitedIds.includes(sys.id);
-    const isReachable = reachableIds.includes(sys.id);
-    const isGameplay = unlockedSet.has(sys.id);
-    const zoneColor = ZONE_COLORS[sys.zone] ?? COLORS.info;
-    const clanOwnerColor = clanOwnerColorBySystemId[sys.id];
-    const r = isCurrent ? NODE_R_CURRENT : NODE_R;
-    const opacity = isGameplay ? (isVisited || isCurrent || isReachable ? 1 : 0.75) : 0.55;
-
-    const label = shortName(resolveStarSystemDisplayName(sys, locale));
-    const labelFill = isGameplay ? '#FFFFFF' : '#7F93B8';
-
-    return (
-      <G key={sys.id} opacity={opacity}>
-        {isSelected && (
-          <Circle
-            cx={pos.x}
-            cy={pos.y}
-            r={r + 5}
-            stroke={isGameplay ? 'rgba(255,255,255,0.85)' : 'rgba(127,147,184,0.75)'}
-            strokeWidth={1}
-            fill="transparent"
-          />
-        )}
-        {isGameplay ? (
-          isCurrent || isVisited ? (
-            <Circle cx={pos.x} cy={pos.y} r={r} fill={clanOwnerColor ?? '#FFFFFF'} />
-          ) : isReachable ? (
-            <G>
-              <Circle
-                cx={pos.x}
-                cy={pos.y}
-                r={r + 3}
-                fill={`${(clanOwnerColor ?? zoneColor)}40`}
-              />
-              <Circle
-                cx={pos.x}
-                cy={pos.y}
-                r={r}
-                fill={`${(clanOwnerColor ?? zoneColor)}33`}
-                stroke={clanOwnerColor ? `${clanOwnerColor}DD` : GAME_LINE_HI}
-                strokeWidth={1.5}
-              />
-            </G>
-          ) : (
-            <G>
-              <Circle cx={pos.x} cy={pos.y} r={r} fill={clanOwnerColor ? `${clanOwnerColor}22` : 'rgba(255,255,255,0.10)'} />
-              <Circle
-                cx={pos.x}
-                cy={pos.y}
-                r={r}
-                stroke={clanOwnerColor ? `${clanOwnerColor}CC` : 'rgba(255,255,255,0.55)'}
-                strokeWidth={1.25}
-                fill="transparent"
-              />
-            </G>
-          )
-        ) : (
-          <G>
-            <Circle cx={pos.x} cy={pos.y} r={r} fill="#2B3547" />
-            <Circle cx={pos.x} cy={pos.y} r={r} stroke="#526483" strokeWidth={1} fill="transparent" />
-          </G>
-        )}
-        {isCurrent && <Circle cx={pos.x} cy={pos.y} r={3} fill={COLORS.bg_primary} />}
-
-        <SvgText
-          x={pos.x}
-          y={pos.y + r + 10}
-          fill={labelFill}
-          fontSize={8}
-          fontFamily={FONTS.mono}
-          textAnchor="middle"
-          opacity={isGameplay ? 0.95 : 0.75}
-        >
-          {label}
-        </SvgText>
-      </G>
-    );
-  });
-
-  return (
-    <G>
-      {lines}
-      {nodes}
-    </G>
-  );
-}
-
-const MemoGalaxyMapSvg = React.memo(GalaxyMapSvg);
 
 const styles = StyleSheet.create({
   rootColumn: { flex: 1 },

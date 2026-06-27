@@ -2,6 +2,7 @@ import type { Href } from 'expo-router';
 import { runThrottledPlanetHubNavigation } from '../../navigation/safePlanetHubNavigate';
 import type { I18nParams } from '../../i18n/types';
 import { runPlanetHubSubmenuPreflight } from '../../ui/heavyUiDataSession/preflightPlanetHubFacility';
+import { PLANET_HUB_ACTION_ICONS, type PlanetHubActionIconSpec } from '../../ui/tactical/planetHubActionIcons';
 
 type TranslateFn = (key: string, params?: I18nParams) => string;
 
@@ -15,8 +16,8 @@ type PlanetHubMenuPlanet = {
 export type PlanetHubFeatureMenuItem = {
   id: string;
   label: string;
-  /** 스캔 행과 동일한 유니코드·심볼 아이콘 슬롯 */
-  icon: string;
+  /** Sci-Fi MDI 심볼 */
+  icon: PlanetHubActionIconSpec;
   disabled?: boolean;
   showBadge?: boolean;
   primary?: boolean;
@@ -62,7 +63,7 @@ export function buildPlanetHubFeatureMenuItems(
     {
       id: 'trade',
       label: tr('hubMenu.trade'),
-      icon: '🏪',
+      icon: PLANET_HUB_ACTION_ICONS.trade,
       disabled: !hasTradePort,
       showBadge: ctx.hasTradeBadge,
       onPress: () => {
@@ -77,7 +78,7 @@ export function buildPlanetHubFeatureMenuItems(
     {
       id: 'shipyard',
       label: tr('hubMenu.shipyard'),
-      icon: '⚓',
+      icon: PLANET_HUB_ACTION_ICONS.shipyard,
       disabled: !hasShipyard,
       onPress: () => {
         if (!hasShipyard) return;
@@ -88,7 +89,7 @@ export function buildPlanetHubFeatureMenuItems(
     {
       id: 'tavern',
       label: tr('hubMenu.tavern'),
-      icon: '🍺',
+      icon: PLANET_HUB_ACTION_ICONS.tavern,
       disabled: !hasTavern,
       onPress: () => {
         if (!hasTavern) return;
@@ -99,7 +100,7 @@ export function buildPlanetHubFeatureMenuItems(
     {
       id: 'skilltree',
       label: tr('hubMenu.skilltree'),
-      icon: '⚗',
+      icon: PLANET_HUB_ACTION_ICONS.skilltree,
       disabled: !hasResearchLab,
       onPress: () => {
         if (!hasResearchLab) return;
@@ -110,7 +111,7 @@ export function buildPlanetHubFeatureMenuItems(
     {
       id: 'departure',
       label: tr('hubMenu.departure'),
-      icon: '🚀',
+      icon: PLANET_HUB_ACTION_ICONS.departure,
       primary: true,
       onPress: () => {
         if (!runPlanetHubSubmenuPreflight('departure', ctx.planetId)) return;

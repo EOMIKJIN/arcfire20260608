@@ -17,8 +17,11 @@
                          "abnormalRestartWithin25m":  0,
                          "glFloorDriftMbMax":  25
                      },
+    "autoRemediationPaused":  true,
     "milestones":  [
-
-                   ],
-    "autoRemediationPaused":  true
+                       {
+                           "atKst":  "2026-06-27 09:25:33",
+                           "label":  "mem_fix_3h_soak_start_20260627"
+                       }
+                   ]
 }

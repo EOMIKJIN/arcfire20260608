@@ -35,6 +35,7 @@ import {
 import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
 import { SkillTreeBoard } from '../../src/components/skillTree/SkillTreeBoard';
+import { SkillTreeBlueprintBackdrop } from '../../src/components/skillTree/SkillTreeBlueprintBackdrop';
 
 /** 메인스테이지 기준 하단 공백과 동기 */
 const SKILLTREE_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
@@ -139,8 +140,12 @@ export default function SkillTreeScreen() {
         <PlanetFacilityTitleHeader
           title={t('skilltree.title')}
           onBack={safeBack}
-          backLabel="◀ 나가기"
-          trailing={<Text style={fs.headerTrailingInk}>SP {player.skillPoints}</Text>}
+          backLabel={t('skilltree.back')}
+          trailing={
+            <Text style={fs.headerTrailingInk}>
+              {t('skilltree.spHeader', { sp: player.skillPoints })}
+            </Text>
+          }
         />
 
         <View style={fs.bodyPanel}>
@@ -166,7 +171,8 @@ export default function SkillTreeScreen() {
                 ) : null}
               </View>
             ) : null}
-            <View style={fs.infoPanel}>
+            <View style={[fs.infoPanel, styles.skillInfoPanel]}>
+              <SkillTreeBlueprintBackdrop />
               <SkillTreeBoard
                 category={selectedCategory}
                 player={player}
@@ -196,6 +202,10 @@ export default function SkillTreeScreen() {
 }
 
 const styles = StyleSheet.create({
+  skillInfoPanel: {
+    position: 'relative',
+    overflow: 'hidden',
+  },
   labBannerText: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,

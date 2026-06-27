@@ -1,16 +1,19 @@
 // ============================================================
-// 연구소 — 티어·직각 연결선 스킬 트리 보드
+// 연구소 — 티어·직각 연결선 스킬 트리 보드 (다크 카드 · 밝은 잉크)
 // ============================================================
 
 import React, { memo, useMemo } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
 import Svg, { Polyline } from 'react-native-svg';
 import type { Player, Skill, SkillCategory } from '../../types';
 import { SKILLS } from '../../data/skills';
 import { canLearnSkill } from '../../engine/SkillEngine';
-import { COLORS, FONTS, SPACING } from '../../utils/theme';
+import { FONTS, SPACING } from '../../utils/theme';
 import { useT } from '../../i18n';
 import { resolveSkillName } from '../../i18n/skillText';
+import { resolveSkillTreeIconSpec } from '../../game/skillTree/skillTreeIcons';
+import { PlanetHubActionIcon } from '../../ui/tactical/PlanetHubActionIcon';
+import { TACTICAL_HUB as TH } from '../../ui/tactical/tacticalHubTokens';
 import {
   getMaxSkillTreeTier,
   listSkillTreeEdgesForCategory,
@@ -28,6 +31,27 @@ const BOARD_PAD_TOP = 8;
 /** 노드 테두리와 연결선 사이 여백 */
 const LINE_NODE_PAD = 4;
 
+const SKILL_LED_ACTIVE = TH.tileIconLedActive;
+
+/** 스킬 노드 — 허브 다크 타일 톤 + 밝은 잉크 */
+const SKILL_CARD = {
+  bg: TH.tileGradBottom,
+  bgLearned: '#1A2332',
+  bgAvailable: '#181E28',
+  border: TH.tileBorder,
+  borderActive: SKILL_LED_ACTIVE,
+  nameInk: TH.topBarCurrencyInk,
+  nameLearnedInk: SKILL_LED_ACTIVE,
+  levelInk: TH.tileIconInk,
+  iconDefault: TH.tileIconInk,
+  iconAvailable: SKILL_LED_ACTIVE,
+  iconLearned: SKILL_LED_ACTIVE,
+  iconLocked: 'rgba(184, 190, 201, 0.40)',
+  tierInk: TH.tileLabelInk,
+  edgeActive: SKILL_LED_ACTIVE,
+  edgeIdle: 'rgba(110, 128, 160, 0.38)',
+} as const;
+
 type Pt = { x: number; y: number };
 
 type Props = {
@@ -43,6 +67,8 @@ type TierGeometry = {
   gapTop: number;
   gapBottom: number;
 };
+
+const androidTextFix = Platform.OS === 'android' ? { includeFontPadding: false as const } : null;
 
 function tierBlockHeight(): number {
   return TIER_LABEL_H + NODE_H + TIER_GAP;
@@ -93,9 +119,7 @@ function buildOrthogonalEdgePoints(
   if (yEnd <= yStart) return [];
 
   const adjacentTier = to.tier === from.tier + 1;
-  const routeY = gapMidY(to.tier - 1);
 
-  // 인접 티어 + 동일 열: 갭 사이 수직선만
   if (adjacentTier && px === cx) {
     return [
       { x: px, y: yStart },
@@ -103,7 +127,6 @@ function buildOrthogonalEdgePoints(
     ];
   }
 
-  // 인접 티어 + 다른 열: 부모 티어 갭에서 수평 분기
   if (adjacentTier && px !== cx) {
     const hopY = gapMidY(from.tier);
     return [
@@ -114,8 +137,8 @@ function buildOrthogonalEdgePoints(
     ];
   }
 
-  // 다중 티어 점프: 좌측 우회 채널로 중간 노드 행을 피함
   const channelX = Math.max(4, Math.min(px, cx) - NODE_W * 0.55 - 6);
+  const routeY = gapMidY(to.tier - 1);
   const departY = gapMidY(from.tier);
   return [
     { x: px, y: yStart },
@@ -138,6 +161,13 @@ function resolveNodeVisualState(skill: Skill, player: Player) {
   return { learned, prereqLearned, canLearn };
 }
 
+function resolveIconColor(learned: boolean, canLearn: boolean, locked: boolean): string {
+  if (learned) return SKILL_CARD.iconLearned;
+  if (canLearn) return SKILL_CARD.iconAvailable;
+  if (locked) return SKILL_CARD.iconLocked;
+  return SKILL_CARD.iconDefault;
+}
+
 const SkillTreeNode = memo(function SkillTreeNode({
   skill,
   layout,
@@ -153,6 +183,8 @@ const SkillTreeNode = memo(function SkillTreeNode({
   const { learned, prereqLearned, canLearn } = resolveNodeVisualState(skill, player);
   const { left, top } = nodeTopLeft(layout.tier, layout.column);
   const locked = !learned && !prereqLearned;
+  const iconSpec = resolveSkillTreeIconSpec(skill.id, skill.category);
+  const iconColor = resolveIconColor(learned, canLearn && !learned, locked);
 
   return (
     <Pressable
@@ -164,18 +196,22 @@ const SkillTreeNode = memo(function SkillTreeNode({
           top,
           width: NODE_W,
           height: NODE_H,
-          opacity: locked ? 0.42 : pressed ? 0.88 : 1,
+          opacity: locked ? 0.62 : pressed ? 0.88 : 1,
         },
         learned && styles.nodeLearned,
         canLearn && !learned && styles.nodeAvailable,
         !learned && !canLearn && !locked && styles.nodeLockedSoft,
       ]}
     >
-      <Text style={styles.nodeIcon}>{skill.icon}</Text>
-      <Text style={styles.nodeName} numberOfLines={1}>
+      <View style={styles.iconSlot}>
+        <PlanetHubActionIcon spec={iconSpec} size={22} color={iconColor} />
+      </View>
+      <Text style={[styles.nodeName, learned && styles.nodeNameLearned]} numberOfLines={1}>
         {resolveSkillName(skill, t)}
       </Text>
-      <Text style={styles.nodeLevel}>Lv.{skill.levelRequired}</Text>
+      <Text style={[styles.nodeLevel, locked && styles.nodeLevelLocked]}>
+        {t('skilltree.nodeLevel', { level: skill.levelRequired })}
+      </Text>
     </Pressable>
   );
 });
@@ -185,6 +221,7 @@ export const SkillTreeBoard = memo(function SkillTreeBoard({
   player,
   onSkillPress,
 }: Props) {
+  const t = useT();
   const nodes = useMemo(() => listSkillTreeNodesForCategory(category), [category]);
   const edges = useMemo(() => listSkillTreeEdgesForCategory(category), [category]);
   const maxTier = useMemo(() => getMaxSkillTreeTier(category), [category]);
@@ -234,7 +271,7 @@ export const SkillTreeBoard = memo(function SkillTreeBoard({
             key={line.key}
             points={line.points}
             fill="none"
-            stroke={line.active ? COLORS.skill : 'rgba(148, 163, 184, 0.38)'}
+            stroke={line.active ? SKILL_CARD.edgeActive : SKILL_CARD.edgeIdle}
             strokeWidth={line.active ? 2 : 1.5}
             strokeLinejoin="round"
             strokeLinecap="round"
@@ -253,7 +290,7 @@ export const SkillTreeBoard = memo(function SkillTreeBoard({
             },
           ]}
         >
-          {`— Tier ${tier} —`}
+          {t('skilltree.tierLabel', { tier })}
         </Text>
       ))}
 
@@ -280,6 +317,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginTop: SPACING.sm,
     marginBottom: SPACING.lg,
+    zIndex: 1,
   },
   edgeLayer: {
     position: 'absolute',
@@ -294,54 +332,62 @@ const styles = StyleSheet.create({
     lineHeight: TIER_LABEL_H,
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
-    color: 'rgba(199, 210, 234, 0.72)',
+    color: SKILL_CARD.tierInk,
     textAlign: 'center',
     zIndex: 1,
+    ...androidTextFix,
   },
   node: {
     position: 'absolute',
     zIndex: 2,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: 'rgba(148, 163, 184, 0.45)',
-    backgroundColor: 'rgba(15, 23, 42, 0.92)',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: SKILL_CARD.border,
+    backgroundColor: SKILL_CARD.bg,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 4,
     paddingVertical: 6,
   },
   nodeLearned: {
-    borderColor: COLORS.skill,
-    backgroundColor: 'rgba(159, 123, 255, 0.18)',
-    shadowColor: COLORS.skill,
-    shadowOpacity: 0.35,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 0 },
-    elevation: 3,
+    borderColor: SKILL_CARD.borderActive,
+    backgroundColor: SKILL_CARD.bgLearned,
+    borderWidth: 1.5,
   },
   nodeAvailable: {
-    borderColor: COLORS.skill,
-    backgroundColor: 'rgba(159, 123, 255, 0.1)',
+    borderColor: SKILL_CARD.borderActive,
+    backgroundColor: SKILL_CARD.bgAvailable,
   },
   nodeLockedSoft: {
-    borderColor: 'rgba(148, 163, 184, 0.55)',
+    borderColor: SKILL_CARD.border,
+    backgroundColor: SKILL_CARD.bg,
   },
-  nodeIcon: {
-    fontSize: 22,
-    lineHeight: 26,
+  iconSlot: {
+    height: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 2,
   },
   nodeName: {
     fontFamily: FONTS.mono,
     fontSize: 10,
-    color: '#E8EDF8',
+    color: SKILL_CARD.nameInk,
     textAlign: 'center',
     maxWidth: NODE_W - 8,
+    ...androidTextFix,
+  },
+  nodeNameLearned: {
+    color: SKILL_CARD.nameLearnedInk,
+    fontWeight: FONTS.weight.bold,
   },
   nodeLevel: {
     fontFamily: FONTS.mono,
     fontSize: 10,
-    color: 'rgba(199, 210, 234, 0.85)',
+    color: SKILL_CARD.levelInk,
     marginTop: 2,
+    ...androidTextFix,
+  },
+  nodeLevelLocked: {
+    color: SKILL_CARD.iconLocked,
   },
 });

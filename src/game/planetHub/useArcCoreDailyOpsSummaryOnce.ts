@@ -4,7 +4,8 @@
 
 import { useEffect, useRef } from 'react';
 import { consumeArcCoreDailyOpsSummaryPending } from '../../arcCore/schedule/arcCoreDailyOpsSummaryPending';
-import { showArcAlert } from '../../utils/showArcAlert';
+import { showArcNotificationAlert } from '../../utils/showArcAlert';
+import { ARC_DAILY_OPS_SUMMARY_ALERT_ID } from '../../ui/overlay/overlayAlertContract';
 import { useT } from '../../i18n';
 
 /** planet hub mount — pending summary 있으면 Modal 1회 */
@@ -31,7 +32,9 @@ export function useArcCoreDailyOpsSummaryOnce(enabled: boolean): void {
         ingest: summary.simOverlayIngest ? t('dailyOpsSummary.on') : t('dailyOpsSummary.off'),
       });
 
-      showArcAlert(t('dailyOpsSummary.title'), body);
+      showArcNotificationAlert(t('dailyOpsSummary.title'), body, {
+        id: ARC_DAILY_OPS_SUMMARY_ALERT_ID,
+      });
     })();
   }, [enabled, t]);
 }

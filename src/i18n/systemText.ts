@@ -10,6 +10,17 @@ function pickEn(primary: string | undefined, fallbackKo: string): string {
   return String(fallbackKo ?? '').trim();
 }
 
+/** 레거시 PvP 팀 라벨 — 성계·행성 설명(UI)에서 제거 */
+function stripLegacyTeamFactionLabels(text: string): string {
+  return text
+    .replace(/레드팀\s*/g, '')
+    .replace(/블루팀\s*/g, '')
+    .replace(/\bRed Team\s*/gi, '')
+    .replace(/\bBlue Team\s*/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
 function resolveSynthProceduralName(nameKo: string, locale: AppLocale): string | null {
   if (locale === 'ko') return null;
   const unexploredDash = nameKo.match(/^미개척-(\d+)$/);
@@ -64,20 +75,24 @@ export function resolveStarSystemDescription(
   system: Pick<StarSystem, 'id' | 'description' | 'descriptionEn'>,
   locale: AppLocale,
 ): string {
-  if (locale === 'ko') return String(system.description ?? '').trim();
+  if (locale === 'ko') {
+    return stripLegacyTeamFactionLabels(String(system.description ?? '').trim());
+  }
   const direct = pickEn(system.descriptionEn, system.description);
-  if (direct !== String(system.description ?? '').trim()) return direct;
+  if (direct !== String(system.description ?? '').trim()) {
+    return stripLegacyTeamFactionLabels(direct);
+  }
 
   const procedural = resolveSynthProceduralDescription(String(system.description ?? ''), locale);
-  if (procedural) return procedural;
+  if (procedural) return stripLegacyTeamFactionLabels(procedural);
 
   if (system.id.startsWith('synth_')) {
     const row = getSynthSystemColonizationRow(system.id);
     const fromCsv = String(row?.systemDescriptionEn ?? '').trim();
-    if (fromCsv) return fromCsv;
+    if (fromCsv) return stripLegacyTeamFactionLabels(fromCsv);
   }
 
-  return String(system.description ?? '').trim();
+  return stripLegacyTeamFactionLabels(String(system.description ?? '').trim());
 }
 
 export function resolvePlanetDisplayName(
@@ -96,18 +111,22 @@ export function resolvePlanetDescription(
   locale: AppLocale,
   systemId?: string,
 ): string {
-  if (locale === 'ko') return String(planet.description ?? '').trim();
+  if (locale === 'ko') {
+    return stripLegacyTeamFactionLabels(String(planet.description ?? '').trim());
+  }
   const direct = pickEn(planet.descriptionEn, planet.description);
-  if (direct !== String(planet.description ?? '').trim()) return direct;
+  if (direct !== String(planet.description ?? '').trim()) {
+    return stripLegacyTeamFactionLabels(direct);
+  }
   if (planet.description === '탐사 불가 구역.') {
     return translate(locale, 'system.synth.unsurveyedPlanetDesc');
   }
   if (systemId?.startsWith('synth_')) {
     const row = getSynthSystemColonizationRow(systemId);
     const fromCsv = String(row?.planetDescriptionEn ?? '').trim();
-    if (fromCsv) return fromCsv;
+    if (fromCsv) return stripLegacyTeamFactionLabels(fromCsv);
   }
-  return String(planet.description ?? '').trim();
+  return stripLegacyTeamFactionLabels(String(planet.description ?? '').trim());
 }
 
 export function resolveStarSystemDisplayNameNow(

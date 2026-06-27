@@ -10,6 +10,7 @@ import { presentPlanetEconomyInfoOverlay, presentPlanetDevelopmentOverlay } from
 import { useHeavyUiPlanetHubAction } from '../../ui/heavyUiDataSession';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { PlanetHubActionTile } from './PlanetHubActionTile';
+import { PLANET_HUB_ACTION_ICONS } from '../../ui/tactical/planetHubActionIcons';
 import { PlanetHubScanActionRevealSlot } from './PlanetHubScanActionRevealSlot';
 import { PlanetHubActionGaugeSlot } from './PlanetHubActionGaugeSlot';
 import { PLANET_MAIN_SCAN_MENU_GAP_PX } from '../../stages/planetMainStageLayout';
@@ -161,7 +162,9 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
     return isDefenseSatelliteInstalledDetail(detail?.defenseSatellite);
   });
 
-  const planetDevelopmentIcon = defenseSatelliteInstalled ? '🛰' : '⟦⚙⟧';
+  const planetDevelopmentIcon = defenseSatelliteInstalled
+    ? PLANET_HUB_ACTION_ICONS.planetDevSatellite
+    : PLANET_HUB_ACTION_ICONS.planetDev;
 
   const handlePressPlanetInfo = useHeavyUiPlanetHubAction(planetId, () => {
     if (gaugeActive) return;
@@ -228,7 +231,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
           {PLANET_MAIN_SCAN_ROW_PLANET_INFO_TILE_ENABLED ? (
             <PlanetHubActionTile
               label={t('scanRow.planetInfo')}
-              icon="⟦◎⟧"
+              icon={PLANET_HUB_ACTION_ICONS.planetInfo}
               onPress={handlePressPlanetInfo}
               disabled={!planetId || gaugeActive}
             />
@@ -253,7 +256,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
         <View style={styles.tileSlot}>
           <PlanetHubActionTile
             label={gaugeKind === 'scan' ? t('scanRow.scanning') : t('scanRow.scan')}
-            icon={gaugeKind === 'scan' ? '⟦═⟧' : '⟦ ◇ ⟧'}
+            icon={PLANET_HUB_ACTION_ICONS.scan}
             onPress={handlePressScan}
             disabled={!scanEnabled || gaugeActive}
             active={gaugeKind === 'scan' || actionsUnlocked}
@@ -270,7 +273,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
           >
             <PlanetHubActionTile
               label={miningLabel}
-              icon="⛏"
+              icon={PLANET_HUB_ACTION_ICONS.mining}
               onPress={handlePressMining}
               disabled={secondaryDisabled || miningDisabled}
               primary={miningPrimary}
@@ -286,7 +289,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
           >
             <PlanetHubActionTile
               label={t('scanRow.dialog')}
-              icon="💬"
+              icon={PLANET_HUB_ACTION_ICONS.dialog}
               onPress={handlePressDialog}
               disabled={secondaryDisabled || dialogDisabled}
             />
@@ -301,7 +304,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
           >
             <PlanetHubActionTile
               label={gaugeKind === 'search' ? t('scanRow.searching') : t('scanRow.search')}
-              icon="🔍"
+              icon={PLANET_HUB_ACTION_ICONS.search}
               onPress={handlePressSearch}
               disabled={secondaryDisabled || searchDisabled}
               active={gaugeKind === 'search'}

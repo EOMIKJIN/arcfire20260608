@@ -1,6 +1,6 @@
 # Arcfire long-run incident — Kim Team Lead auto-triage
 
-packedAt: 2026-06-26T14:02:52.533Z
+packedAt: 2026-06-27T11:14:32.556Z
 triggerReason: mem_hard_ceiling_playtest
 refixPayload: (none)
 
@@ -15,36 +15,34 @@ refixPayload: (none)
 ## Recent remediation
 
 ```
-[2026-06-26 22:52:25] INVESTIGATION alert=[2026-06-26 22:52:25] [MEM_HARD_CEILING] pss=1008.8MB gl=37.3MB
-[2026-06-26 22:52:26] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-225225.log
-[2026-06-26 22:52:26] INVESTIGATION mem snapshot gl=37.5MB pss=1025.1MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-225225.log
-[2026-06-26 22:52:27] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
-[2026-06-26 22:52:27] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
-[2026-06-26 22:52:27] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
-[2026-06-26 22:52:29] INVESTIGATION audit:skia-memory completed (paused mode static gate)
-[2026-06-26 22:52:29] INVESTIGATION done reason=mem_hard_ceiling_playtest
-[2026-06-26 23:02:50] INVESTIGATION start reason=mem_hard_ceiling_playtest
-[2026-06-26 23:02:50] INVESTIGATION alert=[2026-06-26 23:02:50] [MEM_HARD_CEILING] pss=1023.8MB gl=41.3MB
-[2026-06-26 23:02:51] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260626-230250.log
-[2026-06-26 23:02:52] INVESTIGATION mem snapshot gl=42MB pss=1042.8MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260626-230250.log
+[2026-06-27 20:04:07] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260627-200407.log
+[2026-06-27 20:04:08] INVESTIGATION mem snapshot gl=143.4MB pss=1013.6MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260627-200407.log
+[2026-06-27 20:04:08] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-27 20:04:08] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-27 20:04:08] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-27 20:04:10] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-27 20:04:10] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-27 20:14:17] INFO GL_HARD_CEILING_RECORD_ONLY gl=141.5 pss=1003.9 views=559 (monitor-paused ??no incident/refix spam)
+[2026-06-27 20:14:31] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-27 20:14:31] INVESTIGATION alert=[2026-06-27 20:14:31] [MEM_HARD_CEILING] pss=1003.9MB gl=141.5MB
+[2026-06-27 20:14:31] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260627-201431.log
+[2026-06-27 20:14:32] INVESTIGATION mem snapshot gl=141.5MB pss=1014.5MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260627-201431.log
 ```
 
 ## Recent incidents
 
 ```
-[2026-06-26 21:09:02] GL_ELEVATED mounting_or_insufficient_samples gl=125.3 pss=792.2 views=928 restart_held
-[2026-06-26 21:29:52] PSS_SOFT_CEILING pss=942.5 gl=138.8 views=948 native_reclaim_advisory
-[2026-06-26 21:36:30] PSS_SOFT_CEILING pss=944 gl=138.9 views=964 native_reclaim_advisory
-[2026-06-26 21:40:13] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
-[2026-06-26 22:37:22] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
-[2026-06-26 22:52:27] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 19:22:38] PSS_SOFT_CEILING pss=830.4 gl=49.6 views=470 native_reclaim_advisory
+[2026-06-27 19:33:00] PSS_SOFT_CEILING pss=849.6 gl=39.7 views=382 native_reclaim_advisory
+[2026-06-27 19:43:21] PSS_SOFT_CEILING pss=923.9 gl=62.2 views=483 native_reclaim_advisory
+[2026-06-27 19:51:37] PSS_SOFT_CEILING pss=910.2 gl=51.4 views=504 native_reclaim_advisory
+[2026-06-27 19:53:39] PSS_SOFT_CEILING pss=887.7 gl=51.2 views=475 native_reclaim_advisory
+[2026-06-27 20:04:08] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
 ```
 
 ## Crash signature (tail)
 
 ```
-06-24 21:56:27.616 30966 30966 F DEBUG   :       #21 pc 000000000061eb5c  /data/app/~~gTjyQhScJaRgI3Ks0cjwVg==/com.arcfire.online-yw82bpuEz5A7u7FxIfivKA==/base.apk!librnskia.so (offset 0x414b000) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-06-24 21:56:27.616 30966 30966 F DEBUG   :       #22 pc 000000000061eb00  /data/app/~~gTjyQhScJaRgI3Ks0cjwVg==/com.arcfire.online-yw82bpuEz5A7u7FxIfivKA==/base.apk!librnskia.so (offset 0x414b000) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
 06-24 21:56:27.616 30966 30966 F DEBUG   :       #23 pc 0000000000619fcc  /data/app/~~gTjyQhScJaRgI3Ks0cjwVg==/com.arcfire.online-yw82bpuEz5A7u7FxIfivKA==/base.apk!librnskia.so (offset 0x414b000) (std::__ndk1::shared_ptr<RNSkia::RNSkRenderer>::~shared_ptr()+44) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
 06-24 21:56:27.616 30966 30966 F DEBUG   :       #24 pc 000000000061f3e0  /data/app/~~gTjyQhScJaRgI3Ks0cjwVg==/com.arcfire.online-yw82bpuEz5A7u7FxIfivKA==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::RNSkView::~RNSkView()+56) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
 06-24 21:56:27.616 30966 30966 F DEBUG   :       #25 pc 000000000063054c  /data/app/~~gTjyQhScJaRgI3Ks0cjwVg==/com.arcfire.online-yw82bpuEz5A7u7FxIfivKA==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::RNSkDomView::~RNSkDomView()+20) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
@@ -68,22 +66,24 @@ refixPayload: (none)
 06-26 00:52:24.007 29766 29766 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000400000001
 06-26 17:40:26.100 30549 22489 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x8e758000000100 in tid 22489 (hades), pid 30549 (.arcfire.online)
 06-26 17:40:28.302 22743 22743 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x008e758000000100
+06-27 11:57:53.268  9967 16572 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 16572 (hades), pid 9967 (.arcfire.online)
+06-27 11:57:54.641 19090 19090 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
 ```
 
 ## mem-timeline (tail)
 
 ```csv
 ﻿iso_time,pid,pss_mb,rss_mb,gl_mb,egl_mb,graphics_mb,native_heap_mb,java_heap_mb,threads,views,delta_pss_mb,delta_gl_mb,note
-2026-06-26 21:36:24,23962,944,974.4,138.9,19.8,158.7,477.2,37.8,,964,1.5,0.1,
-2026-06-26 21:40:04,23962,1075.7,1106.4,145.1,19.8,164.9,567.6,45.3,,972,131.7,6.2,PSS_SPIKE review=graphics+native
-2026-06-26 21:50:25,23962,922.7,954.3,21.7,19.8,41.5,543,61,,111,-153,-123.4,GL_RECOVERED idle_ok
-2026-06-26 22:00:50,23962,908.9,940.5,21.6,19.8,41.4,555.1,34.9,,111,-13.8,-0.1,
-2026-06-26 22:06:47,23962,893.2,660.1,21.6,19.8,41.4,347.9,47.8,,111,-15.7,0,
-2026-06-26 22:11:06,23962,871.9,637.8,21.6,19.8,41.4,334.7,39,,111,-21.3,0,
-2026-06-26 22:21:24,23962,874.5,643.8,21.6,19.8,41.4,340.9,37.3,,111,2.6,0,
-2026-06-26 22:31:41,23962,862.1,631.4,21.6,19.8,41.4,339.1,30.3,,111,-12.4,0,
-2026-06-26 22:37:02,23962,1030.9,888.8,149.6,19.8,169.4,452.3,30.5,,963,168.8,128,HUB_ACTIVATION gl_mount_ok
-2026-06-26 22:41:57,23962,1120.1,1066.1,158.8,19.8,178.6,562.2,44,,963,89.2,9.2,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
-2026-06-26 22:52:17,23962,1008.8,949.5,37.3,19.8,57.1,556.5,37.9,,313,-111.3,-121.5,GL_RECOVERED idle_ok
-2026-06-26 23:02:35,23962,1023.8,964.6,41.3,19.8,61.2,556.3,43.2,,313,15,4,
+2026-06-27 18:50:52,20481,788.8,589.6,41.5,19.8,61.4,281.3,22.8,,390,-19.6,7.3,
+2026-06-27 18:51:31,20481,782.9,583.7,39.5,19.8,59.4,274.7,25.2,,370,-5.9,-2,
+2026-06-27 19:01:50,20481,805,603.9,40,34.3,74.3,280.6,29.8,,410,22.1,0.5,
+2026-06-27 19:12:12,20481,733.2,677.7,28,19.8,47.9,385.3,31.4,,99,-71.8,-12,GL_RECOVERED idle_ok
+2026-06-27 19:21:10,20481,832.5,783.3,51.4,19.8,71.3,429.3,31.9,,486,99.3,23.4,HUB_ACTIVATION gl_mount_ok
+2026-06-27 19:22:33,20481,830.4,781.9,49.6,19.8,69.4,427.3,33.8,,470,-2.1,-1.8,
+2026-06-27 19:32:56,20481,849.6,805.5,39.7,19.8,59.6,448.2,38.5,,382,19.2,-9.9,GL_RECOVERED idle_ok
+2026-06-27 19:43:13,20481,923.9,883,62.2,19.8,82,495.5,43.9,,483,74.3,22.5,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+2026-06-27 19:51:32,20481,910.2,869.4,51.4,34.3,85.7,480.3,38.8,,504,-13.7,-10.8,GL_RECOVERED idle_ok
+2026-06-27 19:53:34,20481,887.7,847,51.2,19.8,71,479.1,31.3,,475,-22.5,-0.2,
+2026-06-27 20:03:55,20481,1047.6,1006.2,165.8,19.8,185.6,513.4,37,,551,159.9,114.6,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+2026-06-27 20:14:12,20481,1003.9,962.3,141.5,19.8,161.3,511.3,26.8,,559,-43.7,-24.3,GL_RECOVERED idle_ok
 ```

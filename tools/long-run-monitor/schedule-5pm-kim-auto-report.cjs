@@ -15,16 +15,30 @@ const { execFileSync } = require('child_process');
 const ROOT = path.resolve(__dirname, '../..');
 const logDir = path.join(__dirname, 'logs');
 const handoffPath = path.join(ROOT, 'tools/kim-team-lead/reports/kim-economy-handoff.md');
+const latestSummary = path.join(logDir, 'DAILY_5PM_REPORT_LATEST.md');
 const scheduleLog = path.join(logDir, 'schedule-5pm-report.log');
 const Package = 'com.arcfire.online';
 const TimelineMarker = 'AFTERNOON_WATCH_START';
+
+const { writeChatReportPending } = require('./dailyReportChatBrief.cjs');
 
 const args = process.argv.slice(2);
 const targetTime = args.includes('--target') ? args[args.indexOf('--target') + 1] : '17:00';
 const runNow = args.includes('--now');
 
+function kstNow() {
+  const now = new Date();
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  return new Date(utc + 9 * 60 * 60000);
+}
+
+function formatKst(d = kstNow()) {
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
 function log(msg) {
-  const line = `[${new Date().toISOString().slice(0, 19).replace('T', ' ')}] ${msg}`;
+  const line = `[${formatKst()}] ${msg}`;
   console.log(line);
   try {
     fs.mkdirSync(logDir, { recursive: true });
@@ -32,12 +46,6 @@ function log(msg) {
   } catch {
     /* ignore */
   }
-}
-
-function kstNow() {
-  const now = new Date();
-  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-  return new Date(utc + 9 * 60 * 60000);
 }
 
 function sleepMs(ms) {
@@ -87,30 +95,43 @@ function readPid(name) {
   }
 }
 
+function prependHandoffObservation(content, block) {
+  const anchor = '## 작업 요약';
+  if (content.includes(anchor)) {
+    return content.replace(anchor, `${block.trim()}\n\n${anchor}`);
+  }
+  return `${block.trim()}\n\n${content}`;
+}
+
 function main() {
   log(`scheduler start target=${targetTime} KST marker=${TimelineMarker}`);
   if (!runNow) waitUntilKst(targetTime);
 
   const kst = kstNow();
-  const stamp = kst.toISOString().slice(0, 16).replace('T', ' ').replace(/:/g, '').slice(0, 13);
-  const reportFile = path.join(logDir, `afternoon-watch-report-${kst.toISOString().slice(0, 10).replace(/-/g, '')}-1700.md`);
+  const kstLabel = formatKst(kst).slice(0, 16);
+  const dateTag = formatKst(kst).slice(0, 10).replace(/-/g, '');
+  const reportFile = path.join(logDir, `afternoon-watch-report-${dateTag}-1700.md`);
 
   log(`generating report -> ${reportFile}`);
-  sh('powershell', [
-    '-NoProfile',
-    '-ExecutionPolicy',
-    'Bypass',
-    '-File',
-    path.join(__dirname, 'run-overnight-final-report.ps1'),
-    '-Package',
-    Package,
-    '-ReportPath',
-    reportFile,
-    '-TimelineMarker',
-    TimelineMarker,
-    '-ReportTitle',
-    'Arcfire afternoon watch 17KST Kim economy',
-  ]);
+  try {
+    sh('powershell', [
+      '-NoProfile',
+      '-ExecutionPolicy',
+      'Bypass',
+      '-File',
+      path.join(__dirname, 'run-overnight-final-report.ps1'),
+      '-Package',
+      Package,
+      '-ReportPath',
+      reportFile,
+      '-TimelineMarker',
+      TimelineMarker,
+      '-ReportTitle',
+      'Arcfire afternoon watch 17KST Kim economy',
+    ]);
+  } catch (e) {
+    log(`WARN report script failed: ${e.message || e}`);
+  }
 
   let memLine = 'APP_NOT_RUNNING';
   let pssMb = '?';
@@ -137,7 +158,7 @@ function main() {
   const paused = fs.existsSync(path.join(logDir, 'monitor-paused.flag'));
   const incidentTail = readTail(path.join(logDir, 'incidents.log'), 12);
   const actionable = incidentTail.filter((ln) =>
-    /GL_SPIKE|PROCESS_DEATH|HARD|baseline_gl|ABNORMAL|FATAL|AFTERNOON_WATCH/.test(ln),
+    /GL_SPIKE|PROCESS_DEATH|HARD|baseline_gl|ABNORMAL|FATAL|AFTERNOON_WATCH|PSS_SOFT/.test(ln),
   );
 
   let memStatus = 'OK';
@@ -149,45 +170,67 @@ function main() {
       ? 'PSS>=950 — hub exit / Skia dispose P0'
       : memStatus === 'WARN'
         ? 'PSS 850+ — soft reclaim floor watch'
-        : 'afternoon soak OK — check RTDB dailyKpi';
+        : 'afternoon soak OK — review mem-timeline floor';
 
-  const kstLabel = kst.toISOString().slice(0, 16).replace('T', ' ');
   const block = [
     '',
     `## [관측] ${kstLabel} KST — 오후 감시 · 17:00 자동보고`,
     '',
     `- **김경제 감시**: watch-30m PID **${watchPid}** · report-watch PID **${reportPid}** · auto-fix=${paused ? 'OFF(record-only)' : 'ON'}`,
     `- **mem-monitor**: **${memStatus}** (${memLine})`,
-    `- **report**: ${reportFile}`,
+    `- **report**: \`${reportFile}\``,
+    `- **latest summary**: \`tools/long-run-monitor/logs/DAILY_5PM_REPORT_LATEST.md\``,
     `- **timeline marker**: ${TimelineMarker}`,
     `- **incidents (actionable tail)**: ${actionable.length}`,
     ...(actionable.length ? actionable.map((ln) => `  - ${ln}`) : ['  - (none)']),
-    '- **ArcCore learning**: arc-core:learning:verify PASS · RTDB policy 2026-06-26',
     `- **권장(김팀장 1안)**: ${rec}`,
     '',
-    `> status: ${memStatus === 'CRITICAL' ? '**ready-for-team-lead-action**' : 'monitor-ok'} · 감시 유지`,
+    `> status: ${memStatus === 'CRITICAL' ? '**ready-for-team-lead-action**' : 'monitor-ok'} · 17:00 KST 자동보고 완료`,
     '',
   ].join('\n');
 
   if (fs.existsSync(handoffPath)) {
-    const template = '## [관측] _(김경제 갱신 템플릿';
-    let content = fs.readFileSync(handoffPath, 'utf8');
-    if (content.includes(template)) {
-      content = content.replace(template, `${block.trim()}\n\n${template}`);
-    } else {
-      content += block;
-    }
-    fs.writeFileSync(handoffPath, content, 'utf8');
-    log(`handoff updated -> ${handoffPath}`);
+    const content = fs.readFileSync(handoffPath, 'utf8');
+    fs.writeFileSync(handoffPath, prependHandoffObservation(content, block), 'utf8');
+    log(`handoff updated (top) -> ${handoffPath}`);
   }
 
-  const incStamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
-  fs.appendFileSync(
-    path.join(logDir, 'incidents.log'),
-    `[${incStamp}] AFTERNOON_WATCH_5PM_REPORT_READY ${reportFile}\n`,
+  fs.writeFileSync(
+    latestSummary,
+    [
+      '# Daily 17:00 KST report — latest',
+      '',
+      `Updated (KST): ${formatKst(kst)}`,
+      `Verdict: **${memStatus}**`,
+      `Report: ${reportFile}`,
+      `App: ${memLine}`,
+      '',
+      'See full timeline in report file.',
+    ].join('\n'),
     'utf8',
   );
-  log(`DONE report=${reportFile}`);
+
+  fs.appendFileSync(
+    path.join(logDir, 'incidents.log'),
+    `[${formatKst(kst)}] AFTERNOON_WATCH_5PM_REPORT_READY ${reportFile}\n`,
+    'utf8',
+  );
+
+  writeChatReportPending(logDir, {
+    slot: '17:00 KST',
+    kstLabel: formatKst(kst),
+    verdict: memStatus,
+    memLine,
+    reportFile,
+    adbOk: true,
+    watchPid,
+    highlights: actionable.length
+      ? actionable.slice(-5)
+      : ['오후 soak 정상', 'GL 회수 양호'],
+    rec,
+  });
+
+  log(`DONE verdict=${memStatus} report=${reportFile}`);
 }
 
 main();

@@ -12,6 +12,66 @@
 import fs from 'fs';
 import path from 'path';
 
+function parseCsv(text) {
+  const rows = [];
+  let i = 0;
+  let field = '';
+  let row = [];
+  let inQuotes = false;
+  while (i < text.length) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') {
+          field += '"';
+          i += 2;
+          continue;
+        }
+        inQuotes = false;
+      } else field += ch;
+      i += 1;
+      continue;
+    }
+    if (ch === '"') {
+      inQuotes = true;
+      i += 1;
+      continue;
+    }
+    if (ch === ',') {
+      row.push(field);
+      field = '';
+      i += 1;
+      continue;
+    }
+    if (ch === '\n' || ch === '\r') {
+      if (ch === '\r' && text[i + 1] === '\n') i += 1;
+      row.push(field);
+      field = '';
+      rows.push(row);
+      row = [];
+      i += 1;
+      continue;
+    }
+    field += ch;
+    i += 1;
+  }
+  if (field.length > 0 || row.length > 0) {
+    row.push(field);
+    rows.push(row);
+  }
+  return rows;
+}
+
+function escCsvField(value) {
+  const s = String(value ?? '');
+  if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+  return s;
+}
+
+function serializeCsvRows(rows) {
+  return `${rows.map((row) => row.map(escCsvField).join(',')).join('\n')}\n`;
+}
+
 const ROOT = path.resolve(import.meta.dirname, '../..');
 const BALANCE = path.join(ROOT, 'tables/balance');
 
@@ -172,9 +232,8 @@ patchCsvNumericColumns(path.join(BALANCE, 'planet_defense_satellite_level_policy
 });
 
 const catalogPath = path.join(BALANCE, 'planet_development_catalog.csv');
-const catalogRaw = fs.readFileSync(catalogPath, 'utf8').trimEnd();
-const catalogLines = catalogRaw.split(/\r?\n/);
-const catHeader = catalogLines[0].split(',');
+const catalogParsed = parseCsv(fs.readFileSync(catalogPath, 'utf8').trimEnd());
+const catHeader = catalogParsed[0].map((h) => String(h).replace(/^\uFEFF/, ''));
 const idIdx = catHeader.indexOf('id');
 const costIdx = catHeader.indexOf('installCostCredits');
 const catalogCostById = {
@@ -183,14 +242,12 @@ const catalogCostById = {
   dev_population_dome: L1_ANCHOR.tavern,
   dev_research_lab: L1_ANCHOR.laboratory,
 };
-const catOut = [catalogLines[0]];
-for (let i = 1; i < catalogLines.length; i += 1) {
-  const cols = catalogLines[i].split(',');
+for (let i = 1; i < catalogParsed.length; i += 1) {
+  const cols = catalogParsed[i];
   const id = cols[idIdx];
   if (catalogCostById[id] != null) cols[costIdx] = String(catalogCostById[id]);
-  catOut.push(cols.join(','));
 }
-fs.writeFileSync(catalogPath, `${catOut.join('\n')}\n`, 'utf8');
+fs.writeFileSync(catalogPath, serializeCsvRows(catalogParsed), 'utf8');
 
 function sumPath(rows) {
   return rows.reduce((s, r) => s + r.installCostCredits + r.upgradeCostCredits, 0);

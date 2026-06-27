@@ -707,6 +707,7 @@ function buildSystems() {
           // 행성 거래 품목은 planets.csv의 tradeGoodsPipe를 단일 진입점으로 관리
           const goods = splitPipe(p.tradeGoodsPipe);
           const backdropImageAssetKey = nullable(p.backdropImageAssetKey);
+          const infoPanelPortraitAssetKey = nullable(p.infoPanelPortraitAssetKey);
           const defaultBackdropImageLayer = Boolean(backdropImageAssetKey);
           const mainStageSkiaNebulaEnabled = toLayerBoolWithDefault(
             p.mainStageSkiaNebulaLayer,
@@ -736,6 +737,7 @@ function buildSystems() {
         coreTechnology: ${Math.min(100, Math.max(0, toInt(p.coreTechnology, 50)))},
         coreEnvironment: ${Math.min(100, Math.max(0, toInt(p.coreEnvironment, 50)))},
         backdropImageAssetKey: ${q(backdropImageAssetKey)},
+        infoPanelPortraitAssetKey: ${q(infoPanelPortraitAssetKey)},
         mainStageSkiaNebulaEnabled: ${mainStageSkiaNebulaEnabled},
         mainStageBackdropImageEnabled: ${mainStageBackdropImageEnabled},
       }`;

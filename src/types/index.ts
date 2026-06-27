@@ -656,6 +656,8 @@ export interface Planet {
   descriptionEn?: string;
   /** 행성 배경 이미지 에셋 키(미할당 시 null — `planetBackdropAssets`에 매핑 필요) */
   backdropImageAssetKey?: string | null;
+  /** 행성 정보창 상단 포트rait — `planetInfoPortraitAssets`에 매핑 필요 */
+  infoPanelPortraitAssetKey?: string | null;
   /** 메인 스테이지 Skia 성운 셰이더 레이어 (CSV `mainStageSkiaNebulaLayer`, 기본 true) */
   mainStageSkiaNebulaEnabled?: boolean;
   /** 메인 스테이지 배경 이미지 레이어 (CSV `mainStageBackdropImageLayer`; 에셋 키가 있을 때 기본 true) */

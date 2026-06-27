@@ -2,6 +2,8 @@ import { clearCapitalRealtimeCombatPresentationCaches } from '../combat/clearCap
 import { releaseAllPlanetSessionResources } from './planetSessionRegistry';
 import { invalidatePlanetMemoCachesForPlanet, invalidateAllPlanetMemoCaches } from './planetMemoCache';
 import { resetHubInboundDroneDodgeBridge } from '../arcCore/inboundDrone/hubInboundDroneDodgeBridge';
+import { trimArcInboundDroneCampaignsForStageExit } from '../arcCore/inboundDrone/trimArcInboundDroneCampaignsForStageExit';
+import { trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
 import { runStageNativeReclaimPass } from './nativeReclaim/runStageNativeReclaimPass';
 import { runPlanetChangeNativeReclaimLight } from './nativeReclaim/runPlanetChangeNativeReclaimLight';
 import { emitMemProfileMarker } from './devMemoryProfileBridge';
@@ -75,6 +77,8 @@ export function releasePlanetMainStageSession(opts: {
     ? [opts.previousPlanetId.trim()]
     : [];
 
+  trimArcInboundDroneCampaignsForStageExit(keepPlanetIds[0] ?? null);
+
   runStageNativeReclaimPass({
     stage: 'planet_hub',
     reason: opts.reason,
@@ -82,6 +86,7 @@ export function releasePlanetMainStageSession(opts: {
     reclaimHubSkia: true,
     releaseGpuLayers: true,
   });
+  void trimNativeBitmapCachesAsync();
   emitMemProfileMarker({
     stage: 'planet_hub',
     event: opts.reason === 'route_blur' ? 'route_blur' : 'manual',

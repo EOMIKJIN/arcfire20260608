@@ -42,6 +42,13 @@ export function consumeGalaxyMapIngressReclaim(): void {
     });
     runGalaxyMapSoftNativeReclaimPass('ingress_after_hub_combat', keep);
   } else {
+    runStageNativeReclaimPass({
+      stage: 'galaxy_map',
+      reason: 'ingress_from_planet_hub',
+      keepPlanetIds: keep,
+      reclaimHubSkia: false,
+      releaseGpuLayers: false,
+    });
     runGalaxyMapSoftNativeReclaimPass('ingress_from_planet_hub', keep);
   }
 

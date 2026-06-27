@@ -79,18 +79,21 @@ export function runStageNavAfterTeardown(opts: {
   isMounted?: () => boolean;
   drainMs?: number;
 }): void {
-  opts.teardown();
+  // SVG/Skia gate-off 직후 React unmount 2프레임 대기 — teardown 선행 시 Native heap 잔류(worldmap 6/25~26)
   requestAnimationFrame(() => {
-    const task = runStageUiAfterIdle(() => {
-      requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      opts.teardown();
+      const task = runStageUiAfterIdle(() => {
         requestAnimationFrame(() => {
-          setTimeout(() => {
-            if (opts.isMounted && !opts.isMounted()) return;
-            opts.navigate();
-          }, opts.drainMs ?? DEFAULT_STAGE_NAV_DRAIN_MS);
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              if (opts.isMounted && !opts.isMounted()) return;
+              opts.navigate();
+            }, opts.drainMs ?? DEFAULT_STAGE_NAV_DRAIN_MS);
+          });
         });
       });
+      void task;
     });
-    void task;
   });
 }

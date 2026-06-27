@@ -61,3 +61,52 @@
 [2026-06-26 08:00:01] generating report -> D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260626-1700.md
 [2026-06-26 08:00:06] handoff updated -> D:\arcfire20260607\tools\kim-team-lead\reports\kim-economy-handoff.md
 [2026-06-26 08:00:06] DONE report=D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260626-1700.md
+[2026-06-27 04:50:02] scheduler start target=17:00 KST marker=AFTERNOON_WATCH_START
+[2026-06-27 04:50:03] wait until 17:00 KST (~300s)
+[2026-06-27 13:50:04] ENSURE_STARTED pid=27916 target=17:00 KST date=2026-06-27 user-request
+[2026-06-27 04:55:03] wait until 17:00 KST (~300s)
+[2026-06-27 05:00:04] wait until 17:00 KST (~300s)
+[2026-06-27 05:05:05] wait until 17:00 KST (~300s)
+[2026-06-27 05:10:06] wait until 17:00 KST (~300s)
+[2026-06-27 05:15:07] wait until 17:00 KST (~300s)
+[2026-06-27 05:20:07] wait until 17:00 KST (~300s)
+[2026-06-27 05:25:08] wait until 17:00 KST (~300s)
+[2026-06-27 05:30:09] wait until 17:00 KST (~300s)
+[2026-06-27 05:35:10] wait until 17:00 KST (~300s)
+[2026-06-27 05:40:10] wait until 17:00 KST (~300s)
+[2026-06-27 05:45:11] wait until 17:00 KST (~300s)
+[2026-06-27 05:50:12] wait until 17:00 KST (~300s)
+[2026-06-27 05:55:13] wait until 17:00 KST (~300s)
+[2026-06-27 06:00:14] wait until 17:00 KST (~300s)
+[2026-06-27 06:05:14] wait until 17:00 KST (~300s)
+[2026-06-27 06:10:15] wait until 17:00 KST (~300s)
+[2026-06-27 06:15:16] wait until 17:00 KST (~300s)
+[2026-06-27 06:20:17] wait until 17:00 KST (~300s)
+[2026-06-27 06:25:17] wait until 17:00 KST (~300s)
+[2026-06-27 06:30:18] wait until 17:00 KST (~300s)
+[2026-06-27 06:35:19] wait until 17:00 KST (~300s)
+[2026-06-27 06:40:20] wait until 17:00 KST (~300s)
+[2026-06-27 06:45:21] wait until 17:00 KST (~300s)
+[2026-06-27 06:50:21] wait until 17:00 KST (~300s)
+[2026-06-27 06:55:22] wait until 17:00 KST (~300s)
+[2026-06-27 07:00:23] wait until 17:00 KST (~300s)
+[2026-06-27 07:05:24] wait until 17:00 KST (~300s)
+[2026-06-27 07:10:24] wait until 17:00 KST (~300s)
+[2026-06-27 07:15:25] wait until 17:00 KST (~300s)
+[2026-06-27 07:20:26] wait until 17:00 KST (~300s)
+[2026-06-27 07:25:27] wait until 17:00 KST (~300s)
+[2026-06-27 07:30:28] wait until 17:00 KST (~300s)
+[2026-06-27 07:35:28] wait until 17:00 KST (~300s)
+[2026-06-27 07:40:29] wait until 17:00 KST (~300s)
+[2026-06-27 07:45:30] wait until 17:00 KST (~300s)
+[2026-06-27 07:50:31] wait until 17:00 KST (~300s)
+[2026-06-27 07:55:31] wait until 17:00 KST (~268s)
+[2026-06-27 08:00:01] generating report -> D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260627-1700.md
+[2026-06-27 08:00:05] handoff updated -> D:\arcfire20260607\tools\kim-team-lead\reports\kim-economy-handoff.md
+[2026-06-27 08:00:05] DONE report=D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260627-1700.md
+[2026-06-27 17:04:05] scheduler start target=17:00 KST marker=AFTERNOON_WATCH_START
+[2026-06-27 17:04:05] generating report -> D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260627-1700.md
+[2026-06-27 17:04:27] scheduler start target=17:00 KST marker=AFTERNOON_WATCH_START
+[2026-06-27 17:04:27] generating report -> D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260627-1700.md
+[2026-06-27 17:04:31] handoff updated (top) -> D:\arcfire20260607\tools\kim-team-lead\reports\kim-economy-handoff.md
+[2026-06-27 17:04:31] DONE verdict=OK report=D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260627-1700.md

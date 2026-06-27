@@ -1,56 +1,12 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { getItemDef } from '../../data/goods';
 import type { TradeGoodCategory } from '../../types';
 import type { TradeBuySubTabId } from '../../game/tradeBuySubTab';
-import { FONTS } from '../../utils/theme';
 import { TACTICAL_FACILITY as TF } from '../tactical/tacticalFacilityScreenTokens';
+import { PlanetHubActionIcon } from '../tactical/PlanetHubActionIcon';
+import { resolveTradeListingIconSpec } from '../tactical/listingIconSpecs';
 
 export const TRADE_LISTING_ICON_SIZE_PX = 44;
-
-const CATEGORY_ICONS: Record<TradeGoodCategory | string, string> = {
-  food: '🌾',
-  mineral: '⛏',
-  tech: '⚙',
-  weapon: '⚔',
-  luxury: '💎',
-  contraband: '🚫',
-};
-
-const EQUIPMENT_CATEGORY_ICONS: Record<string, string> = {
-  propulsion: '⚡',
-  defense: '🛡',
-  sensor: '📡',
-  ew: '📶',
-  support: '🔧',
-  navigation: '🧭',
-  mining: '⛏',
-};
-
-function resolveEquipmentCategoryIcon(attrs: Record<string, unknown> | undefined): string | null {
-  const raw = attrs?.equipmentCategory;
-  if (typeof raw !== 'string') return null;
-  return EQUIPMENT_CATEGORY_ICONS[raw.trim().toLowerCase()] ?? null;
-}
-
-export function resolveTradeListingIconGlyph(
-  goodId: string,
-  category: string,
-  buySubTab?: TradeBuySubTabId,
-): string {
-  const def = getItemDef(goodId);
-  if (def?.type === 'capital_ship') return '🚀';
-  if (def?.type === 'weapon_module' || buySubTab === 'weapon') return '⚔';
-  if (def?.kind === 'equipment' && def.type !== 'weapon_module') {
-    const eqIcon = resolveEquipmentCategoryIcon(def.attrs as Record<string, unknown> | undefined);
-    if (eqIcon) return eqIcon;
-    return '⚙';
-  }
-  if (def?.type === 'galactic_pool' || def?.type === 'orbital_mining') return '⛏';
-  if (def?.type === 'planet_ownership') return '🪪';
-  if (def?.type === 'clan_disband') return '📜';
-  return CATEGORY_ICONS[category] ?? '📦';
-}
 
 type Props = {
   goodId: string;
@@ -63,10 +19,27 @@ export const TradeListingIcon = memo(function TradeListingIcon({
   category,
   buySubTab,
 }: Props) {
-  const glyph = resolveTradeListingIconGlyph(goodId, category, buySubTab);
+  const spec = useMemo(
+    () => resolveTradeListingIconSpec(goodId, category as TradeGoodCategory | string, buySubTab),
+    [buySubTab, category, goodId],
+  );
+
   return (
     <View style={styles.slot} accessibilityRole="image" accessibilityLabel="아이템 아이콘">
-      <Text style={styles.glyph}>{glyph}</Text>
+      <PlanetHubActionIcon spec={spec} size={22} color={TF.labelInk} />
+    </View>
+  );
+});
+
+type EmptySlotProps = {
+  label?: string;
+};
+
+/** 인벤토리 빈 슬롯 — 중립 dot */
+export const TradeListingEmptySlot = memo(function TradeListingEmptySlot({ label = '·' }: EmptySlotProps) {
+  return (
+    <View style={styles.slot} accessibilityRole="image" accessibilityLabel="빈 슬롯">
+      <Text style={styles.emptyDot}>{label}</Text>
     </View>
   );
 });
@@ -83,10 +56,9 @@ const styles = StyleSheet.create({
     backgroundColor: TF.insetBg,
     flexShrink: 0,
   },
-  glyph: {
-    fontSize: 22,
-    lineHeight: 26,
-    textAlign: 'center',
-    fontFamily: FONTS.mono,
+  emptyDot: {
+    fontSize: 18,
+    color: TF.mutedInk,
+    opacity: 0.65,
   },
 });

@@ -17,3 +17,6 @@
 [2026-06-24 12:40:02] WARN app not running (was pid=12104) -> remediate
 [2026-06-24 13:00:07] GENERATING report -> D:\arcfire20260607\tools\long-run-monitor\logs\state-watch-3h-report-20260624-0958.md
 [2026-06-24 13:00:09] DONE endKst=2026-06-24 12:58:43
+[2026-06-27 09:25:59] START marker=STATE_WATCH_3H_START 2026-06-27 09:25:58 KST pid=20142 report=D:\arcfire20260607\tools\long-run-monitor\logs\state-watch-3h-report-20260627-0925.md
+[2026-06-27 12:26:19] GENERATING report -> D:\arcfire20260607\tools\long-run-monitor\logs\state-watch-3h-report-20260627-0925.md
+[2026-06-27 12:26:21] DONE endKst=2026-06-27 12:25:58

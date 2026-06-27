@@ -26,9 +26,17 @@ export type GalaxyTerritoryBorderPath = {
   coreColor: string;
 };
 
+export type GalaxyTerritoryOccupationLabel = {
+  key: string;
+  factionSide: 'blue' | 'red';
+  x: number;
+  y: number;
+};
+
 export type GalaxyTerritoryLayers = {
   fills: GalaxyTerritoryFill[];
   borders: GalaxyTerritoryBorderPath[];
+  occupationLabels: GalaxyTerritoryOccupationLabel[];
 };
 
 type Bounds = { x0: number; y0: number; x1: number; y1: number };
@@ -95,23 +103,11 @@ function resolveBorderStyle(sideA: MapFactionSide, sideB: MapFactionSide): { glo
   const activeSides = new Set([sideA, sideB].filter((s) => s !== 'neutral'));
   if (activeSides.has('blue') && activeSides.has('red')) {
     const c = MAP_FACTION_CONTEST_BORDER_COLOR;
-    return { glowColor: c, coreColor: lightenHex(c, 0.55) };
+    return { glowColor: c, coreColor: c };
   }
   const side = sideA !== 'neutral' ? sideA : sideB;
   const glowColor = resolveMapFactionBorderColor(side);
-  return { glowColor, coreColor: lightenHex(glowColor, 0.55) };
-}
-
-function lightenHex(hex: string, mix: number): string {
-  const raw = hex.replace('#', '').trim();
-  if (raw.length !== 6) return hex;
-  const r = parseInt(raw.slice(0, 2), 16);
-  const g = parseInt(raw.slice(2, 4), 16);
-  const b = parseInt(raw.slice(4, 6), 16);
-  const lr = Math.round(r + (255 - r) * mix);
-  const lg = Math.round(g + (255 - g) * mix);
-  const lb = Math.round(b + (255 - b) * mix);
-  return `#${lr.toString(16).padStart(2, '0')}${lg.toString(16).padStart(2, '0')}${lb.toString(16).padStart(2, '0')}`;
+  return { glowColor, coreColor: glowColor };
 }
 
 function polylineToSvgPath(points: Point[]): string {
@@ -167,13 +163,126 @@ function chainBorderSegments(segments: BorderSegment[]): Point[][] {
   return chains;
 }
 
+/** 다각형 면적·무게중심 — Voronoi 셀 라벨 앵커 */
+function polygonAreaCentroid(poly: Point[]): { x: number; y: number; area: number } {
+  if (poly.length < 3) {
+    const p = poly[0] ?? [0, 0];
+    return { x: p[0], y: p[1], area: 0 };
+  }
+  let twiceArea = 0;
+  let cx = 0;
+  let cy = 0;
+  for (let i = 0; i < poly.length; i += 1) {
+    const [x0, y0] = poly[i];
+    const [x1, y1] = poly[(i + 1) % poly.length];
+    const cross = x0 * y1 - x1 * y0;
+    twiceArea += cross;
+    cx += (x0 + x1) * cross;
+    cy += (y0 + y1) * cross;
+  }
+  if (Math.abs(twiceArea) < 1e-4) {
+    let sx = 0;
+    let sy = 0;
+    for (const [x, y] of poly) {
+      sx += x;
+      sy += y;
+    }
+    return { x: sx / poly.length, y: sy / poly.length, area: 0 };
+  }
+  const area = Math.abs(twiceArea) * 0.5;
+  return { x: cx / (3 * twiceArea), y: cy / (3 * twiceArea), area };
+}
+
+class UnionFind {
+  private parent: number[];
+
+  constructor(size: number) {
+    this.parent = Array.from({ length: size }, (_, i) => i);
+  }
+
+  find(i: number): number {
+    let root = i;
+    while (this.parent[root] !== root) root = this.parent[root];
+    let cur = i;
+    while (this.parent[cur] !== cur) {
+      const next = this.parent[cur];
+      this.parent[cur] = root;
+      cur = next;
+    }
+    return root;
+  }
+
+  union(a: number, b: number): void {
+    const ra = this.find(a);
+    const rb = this.find(b);
+    if (ra !== rb) this.parent[rb] = ra;
+  }
+}
+
+const MIN_LABEL_COMPONENT_AREA_PX2 = 12_000;
+
+function buildOccupationLabels(
+  sites: GalaxyTerritorySite[],
+  n: number,
+  edgeOwners: Map<string, { a: Point; b: Point; sites: number[] }>,
+  cellMetrics: Array<{ side: 'blue' | 'red'; x: number; y: number; area: number } | null>,
+): GalaxyTerritoryOccupationLabel[] {
+  const uf = new UnionFind(n);
+  for (const { sites: owners } of edgeOwners.values()) {
+    if (owners.length !== 2) continue;
+    const i = owners[0];
+    const j = owners[1];
+    const sideA = sites[i]?.factionSide;
+    const sideB = sites[j]?.factionSide;
+    if (sideA !== 'neutral' && sideA === sideB) uf.union(i, j);
+  }
+
+  const groups = new Map<number, { side: 'blue' | 'red'; sumX: number; sumY: number; sumArea: number }>();
+  for (let i = 0; i < n; i += 1) {
+    const m = cellMetrics[i];
+    if (!m || m.area <= 0) continue;
+    const root = uf.find(i);
+    const cur = groups.get(root);
+    if (cur) {
+      cur.sumX += m.x * m.area;
+      cur.sumY += m.y * m.area;
+      cur.sumArea += m.area;
+    } else {
+      groups.set(root, {
+        side: m.side,
+        sumX: m.x * m.area,
+        sumY: m.y * m.area,
+        sumArea: m.area,
+      });
+    }
+  }
+
+  const labels: GalaxyTerritoryOccupationLabel[] = [];
+  let blueIdx = 0;
+  let redIdx = 0;
+  for (const g of groups.values()) {
+    if (g.sumArea < MIN_LABEL_COMPONENT_AREA_PX2) continue;
+    const x = g.sumX / g.sumArea;
+    const y = g.sumY / g.sumArea;
+    if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+    if (g.side === 'blue') {
+      labels.push({ key: `blue-${blueIdx}`, factionSide: 'blue', x, y });
+      blueIdx += 1;
+    } else {
+      labels.push({ key: `red-${redIdx}`, factionSide: 'red', x, y });
+      redIdx += 1;
+    }
+  }
+  return labels;
+}
+
 export function buildGalaxyTerritoryVoronoiLayers(input: {
   sites: GalaxyTerritorySite[];
   bounds: Bounds;
 }): GalaxyTerritoryLayers {
   const { sites, bounds: mapBounds } = input;
   const n = sites.length;
-  if (n < 2) return { fills: [], borders: [] };
+  if (n < 2) return { fills: [], borders: [], occupationLabels: [] };
 
   const clipBounds = computeClipBounds(sites, mapBounds);
   const delaunay = Delaunay.from(sites, (d) => d.x, (d) => d.y);
@@ -182,11 +291,18 @@ export function buildGalaxyTerritoryVoronoiLayers(input: {
   const fills: GalaxyTerritoryFill[] = [];
   const borderSegments: BorderSegment[] = [];
   const edgeOwners = new Map<string, { a: Point; b: Point; sites: number[] }>();
+  const cellMetrics: Array<{ side: 'blue' | 'red'; x: number; y: number; area: number } | null> =
+    Array.from({ length: n }, () => null);
 
   for (let i = 0; i < n; i += 1) {
     const site = sites[i];
     const poly = voronoi.cellPolygon(i);
     if (!poly || poly.length < 3) continue;
+
+    if (site.factionSide === 'blue' || site.factionSide === 'red') {
+      const { x, y, area } = polygonAreaCentroid(poly);
+      cellMetrics[i] = { side: site.factionSide, x, y, area };
+    }
 
     if (site.factionSide !== 'neutral') {
       fills.push({
@@ -243,5 +359,7 @@ export function buildGalaxyTerritoryVoronoiLayers(input: {
     }
   }
 
-  return { fills, borders };
+  const occupationLabels = buildOccupationLabels(sites, n, edgeOwners, cellMetrics);
+
+  return { fills, borders, occupationLabels };
 }

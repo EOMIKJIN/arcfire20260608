@@ -61,6 +61,7 @@
 ## 백그라운드
 
 - **30m**: `tools/long-run-monitor/start-watch-30m.ps1` (김경제 감시)
+- **08:00 데일리 (필수)**: `npm run monitor:ensure-daily-8am` — 매일 08:00 KST **무조건 보고** · FAIL=adb 끊김/데이터없음 · 중단=`schedule-8am-report-DISABLED.flag` 만
 - **프로파일러**: `npm run profile:mem:watch` — 스냅샷 + retention audit (`tools/memory-profiler/README.md`)
 - **3h**: `tools/balance-ops-audit/start-watch-3h.ps1` (경제 KPI 관측)
 - **1d**: `npm run audit:team-lead:daily` (**김팀장** 검수·코드 조치)

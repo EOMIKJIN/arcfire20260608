@@ -62,6 +62,8 @@
     "arc-core:learning:daily": "node tools/arc-core-learning/run-arc-core-learning-daily.cjs",
     "arc-core:learning:verify": "node tools/arc-core-learning/verify-arc-core-learning-pipeline.cjs",
     "monitor:restart-afternoon": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/long-run-monitor/restart-afternoon-watch.ps1",
+    "monitor:ensure-daily-8am": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/long-run-monitor/ensure-daily-8am-report.ps1",
+    "monitor:schedule-8am-report": "node tools/long-run-monitor/schedule-8am-kim-daily-auto-report.cjs",
     "monitor:schedule-5pm-report": "node tools/long-run-monitor/schedule-5pm-kim-auto-report.cjs",
     "verify:economy-sim-cohort": "npx tsx tools/verify-economy-sim-cohort.ts",
     "export:galaxy-map:image": "tsx tools/galaxy-map/export-galaxy-map-image.ts"

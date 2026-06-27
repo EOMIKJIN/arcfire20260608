@@ -3,6 +3,28 @@
 > **작성**: 김경제 에이전트 (`@김경제`) — 작업 완료·테스트 후 갱신  
 > **검수**: 김팀장 에이전트 (`@김팀장`) — `npm run audit:team-lead:daily`
 
+## [관측] 2026-06-27 17:04 KST — 오후 감시 · 17:00 자동보고
+
+- **김경제 감시**: watch-30m PID **30408** · report-watch PID **26380** · auto-fix=OFF(record-only)
+- **mem-monitor**: **OK** (PSS 788.3MB · GL 34.2MB · Views 368 · pid=20481)
+- **report**: `D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260627-1700.md`
+- **latest summary**: `tools/long-run-monitor/logs/DAILY_5PM_REPORT_LATEST.md`
+- **timeline marker**: AFTERNOON_WATCH_START
+- **incidents (actionable tail)**: 10
+  - [2026-06-27 10:34:58] PSS_SOFT_CEILING pss=930.9 gl=152.7 views=553 native_reclaim_advisory
+  - [2026-06-27 10:55:45] PSS_SOFT_CEILING pss=934.7 gl=156.7 views=575 native_reclaim_advisory
+  - [2026-06-27 11:15:33] PSS_SOFT_CEILING pss=807.7 gl=40.1 views=388 native_reclaim_advisory
+  - [2026-06-27 11:16:32] PSS_SOFT_CEILING pss=811.8 gl=42.1 views=388 native_reclaim_advisory
+  - [2026-06-27 11:26:56] PSS_SOFT_CEILING pss=852.5 gl=46.5 views=403 native_reclaim_advisory
+  - [2026-06-27 11:37:16] PSS_SOFT_CEILING pss=840 gl=46.3 views=389 native_reclaim_advisory
+  - [2026-06-27 11:45:58] PSS_SOFT_CEILING pss=873.1 gl=47.2 views=392 native_reclaim_advisory
+  - [2026-06-27 11:47:36] PSS_SOFT_CEILING pss=849 gl=49 views=393 native_reclaim_advisory
+  - [2026-06-27 13:21:22] PSS_SOFT_CEILING pss=883.5 gl=90.2 views=465 native_reclaim_advisory
+  - [2026-06-27 08:00:05] AFTERNOON_WATCH_5PM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260627-1700.md
+- **권장(김팀장 1안)**: afternoon soak OK — review mem-timeline floor
+
+> status: monitor-ok · 17:00 KST 자동보고 완료
+
 ## 작업 요약
 
 - **일자 (KST)**: 2026-06-18
@@ -205,6 +227,19 @@ _(김팀장 검수 코멘트·반려 사유는 아래에 기록)_
 - **김경제 감시**: watch-30m PID **30408** · report-watch PID **26380** · auto-fix=OFF(record-only)
 - **mem-monitor**: **OK** (PSS 594.7MB · GL 25.9MB · Views 287 · pid=30549)
 - **report**: D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260626-1700.md
+- **timeline marker**: AFTERNOON_WATCH_START
+- **incidents (actionable tail)**: 0
+  - (none)
+- **ArcCore learning**: arc-core:learning:verify PASS · RTDB policy 2026-06-26
+- **권장(김팀장 1안)**: afternoon soak OK — check RTDB dailyKpi
+
+> status: monitor-ok · 감시 유지
+
+## [관측] 2026-06-27 08:00 KST — 오후 감시 · 17:00 자동보고
+
+- **김경제 감시**: watch-30m PID **30408** · report-watch PID **26380** · auto-fix=OFF(record-only)
+- **mem-monitor**: **OK** (PSS 789.7MB · GL 36.2MB · Views 368 · pid=20481)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260627-1700.md
 - **timeline marker**: AFTERNOON_WATCH_START
 - **incidents (actionable tail)**: 0
   - (none)

@@ -1,21 +1,27 @@
 import type { Skill } from '../types';
 import type { I18nParams } from './types';
+import { getLocale } from './index';
+import { EN_DICTIONARY } from './locales/en';
+import { KO_DICTIONARY } from './locales/ko';
+import type { AppLocale } from './types';
 
 type TFn = (key: string, params?: I18nParams) => string;
 
-function pick(key: string, fallback: string, t: TFn): string {
-  const val = t(key);
-  return val !== key ? val : fallback;
+/** skill.* — locale 사전만 사용(ko→en 글로벌 폴백 금지, CSV 한글 유지) */
+function pickSkillField(key: string, csvFallback: string, locale: AppLocale): string {
+  const dict = locale === 'en' ? EN_DICTIONARY : KO_DICTIONARY;
+  const val = dict[key];
+  return val ?? csvFallback;
 }
 
 export function resolveSkillName(skill: Skill, t: TFn): string {
-  return pick(`skill.${skill.id}.name`, skill.name, t);
+  return pickSkillField(`skill.${skill.id}.name`, skill.name, getLocale());
 }
 
 export function resolveSkillDescription(skill: Skill, t: TFn): string {
-  return pick(`skill.${skill.id}.desc`, skill.description, t);
+  return pickSkillField(`skill.${skill.id}.desc`, skill.description, getLocale());
 }
 
 export function resolveSkillEffectDescription(skill: Skill, t: TFn): string {
-  return pick(`skill.${skill.id}.effect`, skill.effect.description, t);
+  return pickSkillField(`skill.${skill.id}.effect`, skill.effect.description, getLocale());
 }

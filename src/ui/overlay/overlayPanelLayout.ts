@@ -27,11 +27,40 @@ export const OVERLAY_PANEL_BODY_PADDING_TOP_PX = OVERLAY_PANEL_LIST_ITEM_GAP_PX;
 /** @deprecated `OVERLAY_PANEL_BODY_PADDING_TOP_PX` */
 export const PLANET_ECONOMY_PANEL_BODY_PADDING_TOP_PX = OVERLAY_PANEL_BODY_PADDING_TOP_PX;
 
+/** panel Host — 상단 고정·아래로 확장 (`getOverlayChrome().hostAnchor === 'top'`) */
+export const OVERLAY_PANEL_TOP_ANCHOR_PX = 28;
+
 /** 행성정보 bleed — 이미지 아래 설명 4줄 고정 높이 (총사령관 1줄 포함) */
 export const PLANET_INFO_DESCRIPTION_LINES = 4;
 export const PLANET_INFO_DESCRIPTION_LINE_HEIGHT_PX = 18;
 export const PLANET_INFO_DESCRIPTION_BLOCK_HEIGHT_PX =
   PLANET_INFO_DESCRIPTION_LINES * PLANET_INFO_DESCRIPTION_LINE_HEIGHT_PX + 8;
+
+/** 행성개발 목록 카드 — summary 3줄 · descender 여유(+2px/줄) */
+export const PLANET_DEV_LIST_DESCRIPTION_LINES = 3;
+export const PLANET_DEV_LIST_DESCRIPTION_LINE_HEIGHT_PX = 18;
+/** Android mono 한글 descender — 줄당 +2px */
+export const PLANET_DEV_LIST_DESCRIPTION_LINE_SLACK_PX = 2;
+export const PLANET_DEV_LIST_DESCRIPTION_BLOCK_HEIGHT_PX =
+  PLANET_DEV_LIST_DESCRIPTION_LINES * (PLANET_DEV_LIST_DESCRIPTION_LINE_HEIGHT_PX
+    + PLANET_DEV_LIST_DESCRIPTION_LINE_SLACK_PX);
+/** 3줄 summary ↔ 게이지 사이 간격 */
+export const PLANET_DEV_LIST_SUMMARY_GAUGE_GAP_PX = 8;
+/** @deprecated `PLANET_DEV_LIST_SUMMARY_GAUGE_GAP_PX` */
+export const PLANET_DEV_LIST_SUMMARY_BLANK_LINE_PX = PLANET_DEV_LIST_SUMMARY_GAUGE_GAP_PX;
+/** @deprecated 설명+공백 고정 블록 — gauge gap은 슬롯 marginTop */
+export const PLANET_DEV_LIST_SUMMARY_BLOCK_HEIGHT_PX = PLANET_DEV_LIST_DESCRIPTION_BLOCK_HEIGHT_PX;
+/** 디지털 게이지 행 높이(세그먼트+%) */
+export const PLANET_DEV_LIST_GAUGE_ROW_HEIGHT_PX = 20;
+export const PLANET_DEV_LIST_GAUGE_LABEL_LINE_HEIGHT_PX = 18;
+export const PLANET_DEV_LIST_GAUGE_LABEL_MAX_LINES = 2;
+/** 진행 중(라벨 2줄+게이지) 최대 높이 — idle minHeight 용 아님 */
+export const PLANET_DEV_LIST_GAUGE_PROGRESS_MAX_HEIGHT_PX =
+  PLANET_DEV_LIST_GAUGE_LABEL_LINE_HEIGHT_PX * PLANET_DEV_LIST_GAUGE_LABEL_MAX_LINES
+  + 4
+  + PLANET_DEV_LIST_GAUGE_ROW_HEIGHT_PX;
+/** @deprecated `PLANET_DEV_LIST_GAUGE_PROGRESS_MAX_HEIGHT_PX` */
+export const PLANET_DEV_LIST_GAUGE_RESERVE_HEIGHT_PX = PLANET_DEV_LIST_GAUGE_PROGRESS_MAX_HEIGHT_PX;
 
 /**
  * 범용 panel 카드 minHeight(px) — 85% + 설명 블록 보정(행성정보 bleed와 동일 창 높이).
@@ -75,6 +104,3 @@ export const OVERLAY_CARD_LAYOUT = {
 
 /** 중앙 정렬 팝업(compact) — 화면 정중앙보다 약간 아래 */
 export const OVERLAY_CENTER_VERTICAL_BIAS_PX = 36;
-
-/** panel Host — 상단 고정·아래로 확장 (`getOverlayChrome().hostAnchor === 'top'`) */
-export const OVERLAY_PANEL_TOP_ANCHOR_PX = 28;

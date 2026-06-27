@@ -72,6 +72,35 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
     this.syncRenderSnapshot(null, true);
   }
 
+  /** STAGE blur — 앵커 1행성만 유지, 활성 드론·pending 비움(캠페인 wave 누적은 유지) */
+  trimCampaignsForStageExit(keepPlanetId: string | null): void {
+    this.publishAccSec = 0;
+    this.lastPublishedKey = null;
+    this.lastRenderEligible = false;
+    this.lastPublishedPlanetId = null;
+
+    if (!keepPlanetId?.trim()) {
+      this.campaigns.clear();
+      this.syncRenderSnapshot(null, true);
+      return;
+    }
+
+    const keep = keepPlanetId.trim();
+    for (const pid of [...this.campaigns.keys()]) {
+      if (pid !== keep) {
+        this.campaigns.delete(pid);
+      }
+    }
+
+    const campaign = this.campaigns.get(keep);
+    if (campaign) {
+      campaign.drones = [];
+      campaign.pendingSpawns = [];
+    }
+
+    this.syncRenderSnapshot(null, true);
+  }
+
   private getOrCreateCampaign(planetId: string): PlanetInboundDroneCampaign {
     let campaign = this.campaigns.get(planetId);
     if (!campaign) {

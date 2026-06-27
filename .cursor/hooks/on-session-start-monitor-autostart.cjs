@@ -1,11 +1,10 @@
 'use strict';
 /**
- * sessionStart — [기본 장기앱 실행 테스트] 모니터 자동 가동 (멱등)
- *   start-watch-30m.ps1 만 detached 가동. 부가 soak/floor 테스트는 실행하지 않음.
- *   - watch-30m.pid 의 프로세스가 살아있으면 아무것도 하지 않음(중복 가동 방지).
- *   - 죽었거나 없으면 start-watch-30m.ps1 을 detached 로 띄움(Cursor 종료와 무관하게 생존).
- *   - 어떤 경우에도 세션 시작을 막지 않는다(fail-open). 게임/빌드 코드와 무관한 데브옵스 훅.
- * 정본: tools/long-run-monitor/logs/WATCH_README.md · arcfire-economy-specialist-agent.mdc
+ * sessionStart — [기본 장기앱 실행 테스트] 모니터 + **데일리 08:00 KST 상시 보고** 자동 가동 (멱등)
+ *   - start-watch-30m.ps1 — 30분 meminfo + crash logcat
+ *   - ensure-daily-8am-report.ps1 — 매일 08:00 무조건 보고 (FAIL 포함 · DISABLED flag 제외 영구)
+ *   - 어떤 경우에도 세션 시작을 막지 않는다(fail-open).
+ * 정본: tools/long-run-monitor/logs/DAILY_8AM_REPORT_POLICY.md · WATCH_README.md
  */
 const fs = require('fs');
 const path = require('path');
@@ -16,6 +15,7 @@ const ROOT = process.cwd();
 const MONITOR_DIR = path.join(ROOT, 'tools', 'long-run-monitor');
 const PID_FILE = path.join(MONITOR_DIR, 'logs', 'watch-30m.pid');
 const START_SCRIPT = path.join(MONITOR_DIR, 'start-watch-30m.ps1');
+const ENSURE_8AM_SCRIPT = path.join(MONITOR_DIR, 'ensure-daily-8am-report.ps1');
 
 function readPid() {
   try {
@@ -42,13 +42,22 @@ function isPidAlive(pid) {
   }
 }
 
-function startMonitorDetached() {
+function startDetachedPs1(scriptPath) {
   const child = spawn(
     'powershell',
-    ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', START_SCRIPT],
+    ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', scriptPath],
     { detached: true, stdio: 'ignore', windowsHide: true, cwd: MONITOR_DIR },
   );
   child.unref();
+}
+
+function startMonitorDetached() {
+  startDetachedPs1(START_SCRIPT);
+}
+
+function ensureDaily8amReport() {
+  if (!fs.existsSync(ENSURE_8AM_SCRIPT)) return;
+  startDetachedPs1(ENSURE_8AM_SCRIPT);
 }
 
 function main() {
@@ -60,17 +69,21 @@ function main() {
   }
 
   let note = '';
+  const notes = [];
   try {
     if (!fs.existsSync(START_SCRIPT)) {
       note = '';
     } else {
       const pid = readPid();
       if (isPidAlive(pid)) {
-        note = `[메모리 모니터] 이미 가동 중 (PID ${pid}) — 자동 가동 생략.`;
+        notes.push(`[메모리 모니터] 이미 가동 중 (PID ${pid})`);
       } else {
         startMonitorDetached();
-        note = '[메모리 모니터] 세션 시작 시 자동 재가동함 (start-watch-30m.ps1, Cursor와 독립 생존).';
+        notes.push('[메모리 모니터] 세션 시작 시 자동 재가동 (start-watch-30m.ps1)');
       }
+      ensureDaily8amReport();
+      notes.push('[데일리 08:00 보고] 상시 스케줄러 ensure-daily-8am-report.ps1 가동 확인');
+      note = notes.join(' · ');
     }
   } catch (e) {
     // fail-open: 세션 시작을 절대 막지 않는다.

@@ -55,6 +55,25 @@ powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.
 
 규칙 변경 후 **기존 monitor PID 종료 후 재시작** 필요.
 
+## 데일리 08:00 KST 상시 보고 (필수 · 2026-06-27~)
+
+> **무조건 매일 08:00 KST 보고** — 김팀장·김경제 동일. 앱 on/off 무관. adb 미연결·데이터 없음 → **FAIL** 기록.  
+> **중단**은 `logs/schedule-8am-report-DISABLED.flag` 생성 시에만 (명시적 지시).
+
+| 산출물 | 경로 |
+|--------|------|
+| 일일 보고서 | `logs/overnight-final-report-YYYYMMDD-0800.md` |
+| 최신 요약 | `logs/DAILY_8AM_REPORT_LATEST.md` |
+| PASS/FAIL 원장 | `logs/daily-8am-report-ledger.csv` |
+| 정책 | `logs/DAILY_8AM_REPORT_POLICY.md` |
+
+```powershell
+npm run monitor:ensure-daily-8am
+# 영구 루프: node tools/long-run-monitor/schedule-8am-kim-daily-auto-report.cjs
+```
+
+Cursor `sessionStart` 훅이 `ensure-daily-8am-report.ps1` 을 **멱등 자동 가동**. 스케줄러 죽으면 김경제 세션에서 재가동.
+
 ## incident → 자동조치 + 점검 + 김팀장 코드 수정 (v2.5 · 2026-06-19)
 
 **유지 범위:** `start-watch-30m.ps1` **기본 장기앱 실행 테스트만** (30분 meminfo + crash logcat).  

@@ -3,6 +3,8 @@
 // ============================================================
 
 import type { PlanetDevelopmentCatalogRow } from './planetDevelopmentCatalog';
+import type { PlanetHubActionIconSpec } from '../../ui/tactical/planetHubActionIcons';
+import { resolvePlanetDevModuleIcon } from '../../ui/tactical/listingIconSpecs';
 import { t } from '../../i18n';
 import { tryCompleteLaboratoryUpgrade } from './planetLaboratoryDevelopment';
 import { tryCompleteOrbitShipyardUpgrade } from './planetOrbitShipyardDevelopment';
@@ -30,25 +32,11 @@ export type PlanetDevListRowProgress = {
 export type PlanetDevListRowView = {
   catalogId: string;
   enabled: boolean;
-  placeholderGlyph: string;
+  placeholderIcon: PlanetHubActionIconSpec;
   label: string;
   summary: string;
   completeStatus: string | null;
   progress: PlanetDevListRowProgress | null;
-};
-
-const PLACEHOLDER_GLYPH: Record<string, string> = {
-  defense_satellite: '🛰',
-  dev_orbit_shipyard: '⚓',
-  dev_trade_port: '🏪',
-  dev_research_lab: '⚗',
-  dev_population_dome: '🍺',
-  dev_energy_plant: '⚡',
-  dev_mineral_refinery: '⛏',
-  dev_trade_route: '🛸',
-  dev_smart_farm: '🌾',
-  dev_eco_restore: '🌿',
-  dev_fleet_support: '🛡',
 };
 
 function resolveLabel(row: PlanetDevelopmentCatalogRow): string {
@@ -63,8 +51,8 @@ function resolveSummary(row: PlanetDevelopmentCatalogRow): string {
   return val === key ? row.summaryKo : val;
 }
 
-export function resolvePlanetDevListPlaceholderGlyph(catalogId: string): string {
-  return PLACEHOLDER_GLYPH[catalogId] ?? '◫';
+export function resolvePlanetDevListPlaceholderIcon(catalogId: string): PlanetHubActionIconSpec {
+  return resolvePlanetDevModuleIcon(catalogId);
 }
 
 function resolveCompleteStatus(
@@ -129,13 +117,13 @@ export function buildPlanetDevListRowView(
 ): PlanetDevListRowView {
   const label = resolveLabel(row);
   const summary = resolveSummary(row);
-  const placeholderGlyph = resolvePlanetDevListPlaceholderGlyph(row.id);
+  const placeholderIcon = resolvePlanetDevListPlaceholderIcon(row.id);
 
   if (!row.enabled || !snapshot) {
     return {
       catalogId: row.id,
       enabled: row.enabled,
-      placeholderGlyph,
+      placeholderIcon,
       label,
       summary,
       completeStatus: null,
@@ -146,7 +134,7 @@ export function buildPlanetDevListRowView(
   return {
     catalogId: row.id,
     enabled: row.enabled,
-    placeholderGlyph,
+    placeholderIcon,
     label,
     summary,
     completeStatus: resolveCompleteStatus(row.id, snapshot),

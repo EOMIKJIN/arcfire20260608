@@ -1,11 +1,7 @@
+import { trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
+
 import { invalidateAllPlanetMemoCaches } from '../planetMemoCache';
-import {
-  prunePlanetNebulaProfilesExceptPlanetIds,
-  prunePlanetNebulaProfilesLru,
-} from '../../store/planetNebulaStore';
-import { runCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
-import { NEBULA_PROFILE_KEEP_ON_HUB_BLUR } from './processMemoryBudgetPolicy';
-import { scheduleDeferredNativeReclaimPass } from './deferredNativeReclaimScheduler';
+import { runStageNativeReclaimPass } from './runStageNativeReclaimPass';
 import { resolveSinglePlanetSessionKeepIds } from './singlePlanetSessionKeep';
 
 export type PlanetHubIngressReclaimOptions = {
@@ -23,23 +19,20 @@ export function runPlanetHubIngressReclaimPass(
   opts?: PlanetHubIngressReclaimOptions,
 ): void {
   const keep = resolveSinglePlanetSessionKeepIds(planetId);
-  if (keep.length > 0) {
-    prunePlanetNebulaProfilesExceptPlanetIds(keep);
-  } else {
-    prunePlanetNebulaProfilesLru(NEBULA_PROFILE_KEEP_ON_HUB_BLUR);
-  }
 
   if (opts?.invalidateMemoCaches) {
     invalidateAllPlanetMemoCaches();
   }
 
-  runCombatSkiaPresentationReclaim();
-
-  scheduleDeferredNativeReclaimPass({
+  runStageNativeReclaimPass({
     stage: 'planet_hub',
     reason,
     keepPlanetIds: keep,
+    reclaimHubSkia: false,
+    releaseGpuLayers: false,
   });
+
+  void trimNativeBitmapCachesAsync();
 
   if (typeof __DEV__ !== 'undefined' && __DEV__) {
     // eslint-disable-next-line no-console

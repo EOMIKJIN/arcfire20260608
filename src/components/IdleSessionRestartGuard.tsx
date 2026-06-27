@@ -5,6 +5,7 @@ import { showStageTransitionRestartAlert } from '../navigation/stageTransitionSt
 import { t } from '../i18n';
 import {
   IDLE_SESSION_CHECK_INTERVAL_MS,
+  IDLE_SESSION_RESTART_ENABLED,
   IDLE_SESSION_RESTART_GRACE_MS,
   IDLE_SESSION_RESTART_MS,
 } from '../game/idleSessionRestartPolicy';
@@ -53,7 +54,7 @@ export const IdleSessionRestartGuard = memo(function IdleSessionRestartGuard({
   );
 
   useEffect(() => {
-    if (!bootReady) return;
+    if (!bootReady || !IDLE_SESSION_RESTART_ENABLED) return;
 
     const onAppState = (next: AppStateStatus) => {
       appStateRef.current = next;

@@ -17,3 +17,7 @@
 [2026-06-26 23:57:07] OK pid=13686 pss=676.2MB gl=15.7MB(?-14.7) nat=350.6MB views=57
 [2026-06-27 00:00:07] !! PID_CHANGE was=13686 now=16272
 [2026-06-27 00:00:07] OK pid=16272 pss=628.3MB gl=30.1MB(?-0.3) nat=307.4MB views=287
+[2026-06-27 00:03:08] OK pid=16272 pss=675.4MB gl=36.2MB(?5.8) nat=337.7MB views=293
+[2026-06-27 00:06:09] OK pid=16272 pss=671MB gl=36.2MB(?5.8) nat=335MB views=293
+[2026-06-27 00:09:09] OK pid=16272 pss=709.6MB gl=38.8MB(?8.4) nat=355.1MB views=296
+[2026-06-27 00:12:09] SOAK_1H_END report=D:\arcfire20260607\tools\long-run-monitor\logs\soak-1h-report-idle_post_restart-20260626-231148.md

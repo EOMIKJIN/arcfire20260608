@@ -1,11 +1,14 @@
 import React, { memo, useMemo } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { findPlanetById } from '../../../arcCore/planetEnvironment/resolvePlanetAsteroidVisualPolicy';
-import { resolvePlanetBackdropSource } from '../../../game/planetBackdropAssets';
+import {
+  resolvePlanetInfoPortraitAspectRatio,
+  resolvePlanetInfoPortraitSource,
+} from '../../../game/planetInfoPortraitAssets';
 import { useT } from '../../../i18n';
 import { OVERLAY_TOKENS } from '../../../utils/theme';
 
-/** 행성 정보창 — 추후 행성 비주얼 PNG/Image 연동용 고정 슬롯 높이 */
+/** 행성 정보창 — 이미지 미할당 placeholder 높이 */
 export const PLANET_INFO_PORTRAIT_SLOT_HEIGHT_PX = 132;
 
 type Props = {
@@ -13,24 +16,29 @@ type Props = {
 };
 
 /**
- * 행성 정보 오버레이 — 헤더 바로 아래 카드 전폭 이미지.
- * `ArcOverlayCard.panelBleedPrefix` 슬롯에 배치 (bodyPanel padding 밖).
+ * 행성 정보 오버레이 — 헤더 바로 아래 카드 **가로 100%** 맞춤.
+ * 세로는 번들 PNG 원본 width/height(`resolvePlanetInfoPortraitAspectRatio`)만 사용.
+ * @2x 제작 가로 660px · 세로는 원본 비율 유지 — UI 고정 높이 없음.
  */
 export const PlanetInfoPortraitSlot = memo(function PlanetInfoPortraitSlot({ planetId }: Props) {
   const t = useT();
   const a11yLabel = t('econInfo.portraitSlotA11y');
   const imageSource = useMemo(() => {
     const planet = findPlanetById(planetId);
-    return resolvePlanetBackdropSource(planet?.backdropImageAssetKey);
+    return resolvePlanetInfoPortraitSource(planet?.infoPanelPortraitAssetKey);
   }, [planetId]);
+  const aspectRatio = useMemo(
+    () => resolvePlanetInfoPortraitAspectRatio(imageSource),
+    [imageSource],
+  );
 
-  if (imageSource) {
+  if (imageSource && aspectRatio != null) {
     return (
       <View style={[styles.frame, styles.frameFilled]}>
         <Image
           source={imageSource}
-          style={styles.image}
-          resizeMode="cover"
+          style={[styles.image, { aspectRatio }]}
+          resizeMode="contain"
           accessibilityRole="image"
           accessibilityLabel={a11yLabel}
         />
@@ -51,10 +59,10 @@ const styles = StyleSheet.create({
   frame: {
     alignSelf: 'stretch',
     width: '100%',
-    height: PLANET_INFO_PORTRAIT_SLOT_HEIGHT_PX,
     overflow: 'hidden',
   },
   frameEmpty: {
+    height: PLANET_INFO_PORTRAIT_SLOT_HEIGHT_PX,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: 'rgba(107, 212, 255, 0.22)',
@@ -67,8 +75,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(8, 18, 28, 0.72)',
   },
   image: {
-    ...StyleSheet.absoluteFillObject,
-    width: undefined,
+    width: '100%',
     height: undefined,
   },
 });

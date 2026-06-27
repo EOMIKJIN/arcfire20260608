@@ -1,6 +1,16 @@
 id,labelKo,summaryKo,enabled,detailModuleKey,installCostCredits,notesKo
-defense_satellite,방위위성,궤도 방어·inbound 드론 요격,true,defense_satellite,0,v2.0 · 허브 방위위성 — Lv1 비용은 planet_defense_satellite_level_policy
-dev_orbit_shipyard,궤도 조선소,함선 건조·광물 강화,true,dev_orbit_shipyard,800,v2.0 §8 조선소 Lv1 800 Cr (초기자금 500×곡선 0.01)
-dev_trade_port,무역소,SKU·수수료·재고·convoy,true,dev_trade_port,500,v2.0 §8 무역소 Lv1 500 Cr · 신규 계정 시작 자금과 동일
-dev_research_lab,과학 연구소,R&D·T/E 스탯·장비 분석,true,dev_research_lab,2000,v2.0 §8 연구소 Lv1 2000 Cr
-dev_population_dome,인구 거주 돔,P(인구)·바운티·선술집,true,dev_population_dome,800,v2.0 §8 선술집 Lv1 800 Cr
+defense_satellite,방위위성,"inbound 드론 궤도 자동 요격
+Lv10 위성 2기·요격 92%·범위 200
+동시 요격 미사일 5발",true,defense_satellite,0,v2.0 · 허브 방위위성 — Lv1 비용은 planet_defense_satellite_level_policy
+dev_orbit_shipyard,궤도 조선소,"함선 건조·정비·광물 강화
+Lv10 전 함급·광물 +15
+건조 시간 50% 단축",true,dev_orbit_shipyard,800,v2.0 §8 조선소 Lv1 800 Cr (초기자금 500×곡선 0.01)
+dev_trade_port,무역소,"SKU·convoy 보급 무역소
+Lv10 수수료 5%·재고 5천
+고급무기 +45·보급 1.4배",true,dev_trade_port,500,v2.0 §8 무역소 Lv1 500 Cr · 신규 계정 시작 자금과 동일
+dev_research_lab,과학 연구소,"R&D·장비분석·E 회복
+Lv10 연구 50% 단축·전 티어
+일일 E +5%",true,dev_research_lab,2000,v2.0 §8 연구소 Lv1 2000 Cr
+dev_population_dome,인구 거주 돔,"바운티·용병 선술집
+Lv10 슬롯 25·평판 +35%
+전설 용병·8시간 갱신",true,dev_population_dome,800,v2.0 §8 선술집 Lv1 800 Cr

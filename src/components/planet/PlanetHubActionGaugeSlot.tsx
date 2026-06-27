@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
     fontWeight: FONTS.weight.bold,
-    color: '#7BE8FF',
+    color: 'rgba(110, 128, 160, 0.92)',
     textAlign: 'right',
   },
 });

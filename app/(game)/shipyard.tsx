@@ -72,6 +72,7 @@ import {
 } from '../../src/arcCore/balance/capitalShipClassification';
 import { resolveShipFinalStatResult } from '../../src/ship/shipStatPipeline';
 import { ShipyardMineralUpgradeTab } from '../../src/components/shipyard/ShipyardMineralUpgradeTab';
+import { TradeListingEmptySlot, TradeListingIcon } from '../../src/ui/trade/TradeListingIcon';
 import { normalizePlayerCombatProficiency } from '../../src/combat/playerCombatProficiency';
 import {
   normalizeInventorySlots,
@@ -294,52 +295,53 @@ export default function ShipyardScreen() {
 
   const renderShipOverview = (showEquipScaffold = false) => (
     <>
-      <View style={[fs.stackCard, styles.shipDisplay]}>
-        <View style={styles.shipVisualDeck}>
-          {showEquipScaffold ? (
-            <View style={styles.sideSlotCol}>
-              {[1, 2, 3].map((n) => (
-                <View key={`left-slot-${n}`} style={styles.sideEquipSlot}>
-                  <Text style={styles.sideEquipSlotText}>{`L${n}`}</Text>
-                </View>
-              ))}
-            </View>
-          ) : null}
-          <View style={styles.shipPortraitWrap}>
-            {shipPortraitSource ? (
-              <Image
-                source={shipPortraitSource}
-                style={styles.shipPortrait}
-                resizeMode="contain"
-                accessibilityLabel={displayShipName}
-              />
-            ) : (
+      <View style={[fs.stackCard, styles.shipHeroCard]}>
+        <View style={styles.shipHeroImageStage}>
+          {shipPortraitSource ? (
+            <Image
+              source={shipPortraitSource}
+              style={styles.shipHeroImage}
+              resizeMode="cover"
+              accessibilityLabel={displayShipName}
+            />
+          ) : (
+            <View style={styles.shipHeroPlaceholder}>
               <ShipGridPlaceholder cellSize={10} tone="player" />
-            )}
-          </View>
+            </View>
+          )}
           {showEquipScaffold ? (
-            <View style={styles.sideSlotCol}>
-              {[1, 2, 3].map((n) => (
-                <View key={`right-slot-${n}`} style={styles.sideEquipSlot}>
-                  <Text style={styles.sideEquipSlotText}>{`R${n}`}</Text>
+            <View style={styles.shipEquipOverlay} pointerEvents="none">
+              <View style={styles.shipEquipOverlayMidRow}>
+                <View style={styles.sideSlotCol}>
+                  {[1, 2, 3].map((n) => (
+                    <View key={`left-slot-${n}`} style={styles.sideEquipSlot}>
+                      <Text style={styles.sideEquipSlotText}>{`L${n}`}</Text>
+                    </View>
+                  ))}
                 </View>
-              ))}
+                <View style={styles.shipEquipOverlayCenterSpacer} />
+                <View style={styles.sideSlotCol}>
+                  {[1, 2, 3].map((n) => (
+                    <View key={`right-slot-${n}`} style={styles.sideEquipSlot}>
+                      <Text style={styles.sideEquipSlotText}>{`R${n}`}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+              <View style={styles.bottomEquipSlotRow}>
+                {[1, 2, 3, 4].map((n) => (
+                  <View key={`bottom-slot-${n}`} style={styles.bottomEquipSlot}>
+                    <Text style={styles.bottomEquipSlotText}>{`S${n}`}</Text>
+                  </View>
+                ))}
+              </View>
             </View>
           ) : null}
         </View>
-        {showEquipScaffold ? (
-          <View style={styles.shipEquipBottomZone}>
-            <View style={styles.bottomEquipSlotRow}>
-              {[1, 2, 3, 4].map((n) => (
-                <View key={`bottom-slot-${n}`} style={styles.bottomEquipSlot}>
-                  <Text style={styles.bottomEquipSlotText}>{`S${n}`}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
-        ) : null}
-        <Text style={styles.shipName}>{displayShipName}</Text>
-        <Text style={styles.shipClass}>{shipSubtitle}</Text>
+        <View style={styles.shipHeroBody}>
+          <Text style={styles.shipName}>{displayShipName}</Text>
+          <Text style={styles.shipClass}>{shipSubtitle}</Text>
+        </View>
       </View>
 
       <View style={fs.infoPanel}>
@@ -497,58 +499,64 @@ export default function ShipyardScreen() {
                     : resolveDurabilityPct(entry.durabilityPct),
                 );
                 return (
-                  <View key={entry.id} style={[fs.stackCard, styles.hangarRowLayout]}>
-                    {thumbSrc ? (
-                      <Image
-                        source={thumbSrc}
-                        style={styles.hangarThumb}
-                        resizeMode="contain"
-                        accessibilityLabel={hangarShipName}
-                      />
-                    ) : (
-                      <View style={styles.hangarThumbPlaceholder} accessibilityLabel={t('shipyard.hangar.noImage')}>
-                        <Text style={styles.hangarThumbPhText}>⋯</Text>
+                  <View key={entry.id} style={[fs.stackCard, styles.hangarRowCard]}>
+                    <View style={styles.hangarRowLayout}>
+                      {thumbSrc ? (
+                        <View style={styles.hangarThumbFrame}>
+                          <Image
+                            source={thumbSrc}
+                            style={styles.hangarThumbImage}
+                            resizeMode="cover"
+                            accessibilityLabel={hangarShipName}
+                          />
+                        </View>
+                      ) : (
+                        <View style={styles.hangarThumbPlaceholder} accessibilityLabel={t('shipyard.hangar.noImage')}>
+                          <Text style={styles.hangarThumbPhText}>⋯</Text>
+                        </View>
+                      )}
+                      <View style={styles.hangarRowContent}>
+                        <View style={styles.hangarMeta}>
+                          <PlanetFacilityCardTitleBlock title={hangarShipName} titleNumberOfLines={1}>
+                            {isSurvivalPodEntry ? (
+                              <Text style={fs.cardBadge}>{t('shipyard.hangar.badgePod')}</Text>
+                            ) : null}
+                            {isCurrentShip ? (
+                              <Text style={fs.cardBadge}>{t('shipyard.hangar.badgeCurrent')}</Text>
+                            ) : null}
+                            {!isSurvivalPodEntry ? (
+                              <Text style={fs.cardMeta} numberOfLines={1}>
+                                {t('shipyard.hangar.hullDurability', { pct: hullDurabilityPct })}
+                              </Text>
+                            ) : null}
+                            <Text style={fs.cardBody} numberOfLines={2}>
+                              {t('shipyard.hangar.delivered', { date: new Date(entry.acquiredAt).toLocaleString(intlTag()) })}
+                            </Text>
+                          </PlanetFacilityCardTitleBlock>
+                        </View>
+                        <View style={styles.hangarActions}>
+                          <ArcButton
+                            label={t('shipyard.btn.select')}
+                            variant="tacticalPrimary"
+                            disabled={isSurvivalPodEntry}
+                            onPress={() => {
+                              if (isSurvivalPodEntry) return;
+                              void handleSelectHangarShip(entry.npcCapitalShipId);
+                            }}
+                            style={styles.hangarActionBtn}
+                          />
+                          <ArcButton
+                            label={t('shipyard.btn.release')}
+                            variant="tacticalSecondary"
+                            disabled={isSurvivalPodEntry || !isCurrentShip}
+                            onPress={() => {
+                              if (isSurvivalPodEntry || !isCurrentShip) return;
+                              void handleReleaseCurrentShip();
+                            }}
+                            style={styles.hangarActionBtn}
+                          />
+                        </View>
                       </View>
-                    )}
-                    <View style={styles.hangarMeta}>
-                      <PlanetFacilityCardTitleBlock title={hangarShipName} titleNumberOfLines={1}>
-                        {isSurvivalPodEntry ? (
-                          <Text style={fs.cardBadge}>{t('shipyard.hangar.badgePod')}</Text>
-                        ) : null}
-                        {isCurrentShip ? (
-                          <Text style={fs.cardBadge}>{t('shipyard.hangar.badgeCurrent')}</Text>
-                        ) : null}
-                        {!isSurvivalPodEntry ? (
-                          <Text style={fs.cardMeta} numberOfLines={1}>
-                            {t('shipyard.hangar.hullDurability', { pct: hullDurabilityPct })}
-                          </Text>
-                        ) : null}
-                        <Text style={fs.cardBody} numberOfLines={2}>
-                          {t('shipyard.hangar.delivered', { date: new Date(entry.acquiredAt).toLocaleString(intlTag()) })}
-                        </Text>
-                      </PlanetFacilityCardTitleBlock>
-                    </View>
-                    <View style={styles.hangarActions}>
-                      <ArcButton
-                        label={t('shipyard.btn.select')}
-                        variant="tacticalPrimary"
-                        disabled={isSurvivalPodEntry}
-                        onPress={() => {
-                          if (isSurvivalPodEntry) return;
-                          void handleSelectHangarShip(entry.npcCapitalShipId);
-                        }}
-                        style={styles.hangarActionBtn}
-                      />
-                      <ArcButton
-                        label={t('shipyard.btn.release')}
-                        variant="tacticalSecondary"
-                        disabled={isSurvivalPodEntry || !isCurrentShip}
-                        onPress={() => {
-                          if (isSurvivalPodEntry || !isCurrentShip) return;
-                          void handleReleaseCurrentShip();
-                        }}
-                        style={styles.hangarActionBtn}
-                      />
                     </View>
                   </View>
                 );
@@ -748,9 +756,14 @@ function ShipyardInventoryGrid({
               accessibilityLabel={`${i + 1} ${cell ? cell.goodId : ''}`}
             >
               <View style={fs.listingLeft}>
-                <View style={styles.inventoryThumbPlaceholder}>
-                  <Text style={styles.inventoryThumbIcon}>{cell ? '📦' : '·'}</Text>
-                </View>
+                {cell ? (
+                  <TradeListingIcon
+                    goodId={cell.goodId}
+                    category={good?.category ?? 'tech'}
+                  />
+                ) : (
+                  <TradeListingEmptySlot />
+                )}
                 {cell ? (
                   <PlanetFacilityCardTitleBlock
                     title={itemName}
@@ -772,14 +785,14 @@ function ShipyardInventoryGrid({
                 )}
               </View>
               {cell && isWeaponModule ? (
-                <View style={styles.hangarActions}>
+                <View style={styles.inventoryItemActions}>
                   <ArcButton
                     label={t('shipyard.btn.equip')}
                     variant="tacticalPrimary"
                     onPress={() => {
                       void equipWeaponFromInventory(cell.goodId, i);
                     }}
-                    style={styles.hangarActionBtn}
+                    style={styles.inventoryActionBtn}
                   />
                   <ArcButton
                     label={t('shipyard.btn.unequip')}
@@ -788,19 +801,19 @@ function ShipyardInventoryGrid({
                     onPress={() => {
                       void unequipWeaponToInventory(cell.goodId);
                     }}
-                    style={styles.hangarActionBtn}
+                    style={styles.inventoryActionBtn}
                   />
                 </View>
               ) : null}
               {cell && isEquipmentModule ? (
-                <View style={styles.hangarActions}>
+                <View style={styles.inventoryItemActions}>
                   <ArcButton
                     label={t('shipyard.btn.equip')}
                     variant="tacticalPrimary"
                     onPress={() => {
                       void equipEquipmentFromInventory(cell.goodId, i);
                     }}
-                    style={styles.hangarActionBtn}
+                    style={styles.inventoryActionBtn}
                   />
                   <ArcButton
                     label={t('shipyard.btn.unequip')}
@@ -809,7 +822,7 @@ function ShipyardInventoryGrid({
                     onPress={() => {
                       void unequipEquipmentFromInventory(cell.goodId);
                     }}
-                    style={styles.hangarActionBtn}
+                    style={styles.inventoryActionBtn}
                   />
                 </View>
               ) : null}
@@ -921,29 +934,48 @@ function ShipyardEquipSlotsBlock({
 }
 
 const styles = StyleSheet.create({
-  shipDisplay: {
-    alignItems: 'center',
-    paddingVertical: SPACING.xl,
-    rowGap: SPACING.sm,
-    columnGap: SPACING.sm,
+  shipHeroCard: {
+    padding: 0,
+    overflow: 'hidden',
     marginBottom: SPACING.md,
   },
-  shipVisualDeck: {
+  shipHeroImageStage: {
     width: '100%',
-    maxWidth: 360,
+    aspectRatio: 1,
+    overflow: 'hidden',
+    backgroundColor: TF.insetBg,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: TF.insetBorder,
+  },
+  shipHeroImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: undefined,
+    height: undefined,
+  },
+  shipHeroPlaceholder: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  shipEquipOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'space-between',
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.lg,
+  },
+  shipEquipOverlayMidRow: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     columnGap: SPACING.sm,
-    marginBottom: SPACING.sm,
   },
-  shipEquipBottomZone: {
-    width: '100%',
-    maxWidth: 360,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.md,
+  shipEquipOverlayCenterSpacer: {
+    flex: 1,
+  },
+  shipHeroBody: {
+    padding: SPACING.md,
     alignItems: 'center',
-    justifyContent: 'center',
+    rowGap: SPACING.xs,
   },
   bottomEquipSlotRow: {
     flexDirection: 'row',
@@ -967,17 +999,12 @@ const styles = StyleSheet.create({
     color: TF.mutedInk,
     fontWeight: FONTS.weight.bold,
   },
-  shipPortraitWrap: {
-    flex: 1,
-    minHeight: 120,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   sideSlotCol: {
     width: 44,
     rowGap: SPACING.xs,
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 0,
   },
   sideEquipSlot: {
     width: 36,
@@ -994,11 +1021,6 @@ const styles = StyleSheet.create({
     fontSize: 9,
     color: TF.slotInk,
     fontWeight: FONTS.weight.bold,
-  },
-  shipPortrait: {
-    width: 220,
-    height: 120,
-    marginBottom: SPACING.xs,
   },
   shipName: {
     fontFamily: FONTS.mono,
@@ -1103,26 +1125,36 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.sm,
     paddingHorizontal: SPACING.xs,
   },
-  hangarRowLayout: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    columnGap: SPACING.md,
+  hangarRowCard: {
+    padding: 0,
+    overflow: 'hidden',
   },
-  hangarThumb: {
-    width: 104,
-    height: 56,
-    borderRadius: 2,
+  hangarRowLayout: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+  },
+  hangarRowContent: {
+    padding: SPACING.md,
+    rowGap: SPACING.sm,
+  },
+  hangarThumbFrame: {
+    width: '100%',
+    aspectRatio: 1,
+    overflow: 'hidden',
     backgroundColor: TF.insetBg,
-    borderWidth: 1,
-    borderColor: TF.insetBorder,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: TF.insetBorder,
+  },
+  hangarThumbImage: {
+    width: '100%',
+    height: '100%',
   },
   hangarThumbPlaceholder: {
-    width: 104,
-    height: 56,
-    borderRadius: 2,
+    width: '100%',
+    aspectRatio: 1,
     backgroundColor: TF.insetBg,
-    borderWidth: 1,
-    borderColor: TF.insetBorder,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: TF.insetBorder,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1131,13 +1163,27 @@ const styles = StyleSheet.create({
     fontSize: FONTS.size.lg,
     color: TF.mutedInk,
   },
-  hangarMeta: { flex: 1, minWidth: 0, alignSelf: 'stretch' },
+  hangarMeta: { width: '100%' },
   hangarActions: {
+    flexDirection: 'row',
+    columnGap: SPACING.sm,
+    width: '100%',
+  },
+  hangarActionBtn: {
+    flex: 1,
+    minHeight: 34,
+    paddingVertical: 4,
+    paddingHorizontal: SPACING.xs,
+  },
+
+  inventoryItemActions: {
     rowGap: 6,
     marginLeft: SPACING.sm,
     minWidth: 72,
+    justifyContent: 'center',
+    flexShrink: 0,
   },
-  hangarActionBtn: {
+  inventoryActionBtn: {
     minHeight: 34,
     paddingVertical: 4,
     paddingHorizontal: SPACING.xs,
@@ -1194,21 +1240,6 @@ const styles = StyleSheet.create({
   },
   inventoryRowEmpty: {
     opacity: 0.6,
-  },
-  inventoryThumbPlaceholder: {
-    width: 56,
-    height: 56,
-    borderRadius: 2,
-    backgroundColor: TF.insetBg,
-    borderWidth: 1,
-    borderColor: TF.insetBorder,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inventoryThumbIcon: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.lg,
-    color: TF.mutedInk,
   },
   inventoryWeaponHeader: {
     flexDirection: 'row',

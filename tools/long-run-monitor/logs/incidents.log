@@ -2149,3 +2149,89 @@ ref=tools/long-run-monitor/logs/soak-worklet-mirror-20260621.json
 [2026-06-26 22:52:27] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
 [2026-06-26 23:02:52] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
 [2026-06-26 23:11:48] SOAK_1H_START idle_post_restart-20260626-231148 duration=60m interval=3m
+[2026-06-27 00:12:09] SOAK_1H_END idle_post_restart-20260626-231148 pid_changes=1 crashes=0 peak_gl=38.8 peak_pss=709.6
+[2026-06-27 00:15:25] PSS_SOFT_CEILING pss=816.4 gl=144 views=951 native_reclaim_advisory
+[2026-06-27 00:36:03] PSS_SOFT_CEILING pss=933.6 gl=146.7 views=950 native_reclaim_advisory
+[2026-06-27 00:38:22] PSS_SOFT_CEILING pss=934.4 gl=146.7 views=950 native_reclaim_advisory
+[2026-06-27 00:46:22] PSS_SOFT_CEILING pss=946.3 gl=154.9 views=950 native_reclaim_advisory
+[2026-06-27 00:56:45] PSS_SOFT_CEILING pss=946.5 gl=154.9 views=950 native_reclaim_advisory
+[2026-06-27 01:07:26] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 01:15:38] OVERNIGHT_WATCH_UNTIL_8AM 2026-06-27 01:15:38 KST until=2026-06-28 08:00:00
+[2026-06-27 01:17:41] GL_ELEVATED mounting_or_insufficient_samples gl=136.2 pss=760.2 views=545 restart_held
+[2026-06-27 01:28:03] GL_ELEVATED mounting_or_insufficient_samples gl=130.9 pss=767.5 views=544 restart_held
+[2026-06-27 01:38:25] PSS_SOFT_CEILING pss=829.3 gl=143.2 views=301 native_reclaim_advisory
+[2026-06-27 02:09:38] PSS_SOFT_CEILING pss=828.6 gl=43.7 views=377 native_reclaim_advisory
+[2026-06-27 02:09:45] PSS_SOFT_CEILING pss=831.7 gl=43.7 views=369 native_reclaim_advisory
+[2026-06-27 02:20:20] PSS_SOFT_CEILING pss=884.3 gl=46.4 views=465 native_reclaim_advisory
+[2026-06-27 02:30:58] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 02:40:23] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 02:51:27] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 03:01:52] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 03:10:36] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 03:22:20] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 03:32:44] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 03:41:09] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 03:53:13] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 04:03:38] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 04:14:04] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 04:24:10] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 04:34:19] PSS_SOFT_CEILING pss=943.7 gl=51.2 views=368 native_reclaim_advisory
+[2026-06-27 04:41:36] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 04:55:00] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 05:05:25] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 05:15:49] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 05:25:54] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 05:36:18] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 05:46:43] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 05:56:47] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 06:07:12] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 06:17:36] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 06:27:40] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 06:38:05] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 06:48:29] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 06:58:33] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 07:08:58] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 07:19:22] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 07:29:26] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 07:39:51] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 07:50:15] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 08:00:19] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 08:10:43] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 08:21:08] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 08:31:12] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 08:41:36] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 08:51:48] PSS_SOFT_CEILING pss=923.1 gl=44.1 views=392 native_reclaim_advisory
+[2026-06-27 09:02:06] PSS_SOFT_CEILING pss=946.4 gl=42.8 views=397 native_reclaim_advisory
+[2026-06-27 09:12:24] PSS_SOFT_CEILING pss=933.6 gl=42.1 views=377 native_reclaim_advisory
+[2026-06-27 09:14:06] PSS_SOFT_CEILING pss=922.6 gl=42.1 views=373 native_reclaim_advisory
+[2026-06-27 09:23:03] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 09:25:33] PLAYTEST_MILESTONE mem_fix_3h_soak_start_20260627
+[2026-06-27 09:25:59] STATE_WATCH_3H_START 2026-06-27 09:25:58 KST
+[2026-06-27 09:33:28] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 10:34:58] PSS_SOFT_CEILING pss=930.9 gl=152.7 views=553 native_reclaim_advisory
+[2026-06-27 10:55:45] PSS_SOFT_CEILING pss=934.7 gl=156.7 views=575 native_reclaim_advisory
+[2026-06-27 11:06:20] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 11:15:33] PSS_SOFT_CEILING pss=807.7 gl=40.1 views=388 native_reclaim_advisory
+[2026-06-27 11:16:32] PSS_SOFT_CEILING pss=811.8 gl=42.1 views=388 native_reclaim_advisory
+[2026-06-27 11:26:56] PSS_SOFT_CEILING pss=852.5 gl=46.5 views=403 native_reclaim_advisory
+[2026-06-27 11:37:16] PSS_SOFT_CEILING pss=840 gl=46.3 views=389 native_reclaim_advisory
+[2026-06-27 11:45:58] PSS_SOFT_CEILING pss=873.1 gl=47.2 views=392 native_reclaim_advisory
+[2026-06-27 11:47:36] PSS_SOFT_CEILING pss=849 gl=49 views=393 native_reclaim_advisory
+[2026-06-27 11:58:09] INVESTIGATION_TRIGGERED arcfire_crash_playtest
+[2026-06-27 13:21:22] PSS_SOFT_CEILING pss=883.5 gl=90.2 views=465 native_reclaim_advisory
+[2026-06-27 08:00:05] AFTERNOON_WATCH_5PM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260627-1700.md
+[2026-06-27 17:04:27] AFTERNOON_WATCH_5PM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\afternoon-watch-report-20260627-1700.md
+[2026-06-27 17:08:04] PSS_SOFT_CEILING pss=805.1 gl=34.4 views=391 native_reclaim_advisory
+[2026-06-27 17:49:39] PSS_SOFT_CEILING pss=928.7 gl=165.7 views=551 native_reclaim_advisory
+[2026-06-27 17:50:09] PSS_SOFT_CEILING pss=926.5 gl=165.7 views=551 native_reclaim_advisory
+[2026-06-27 18:00:03] PSS_SOFT_CEILING pss=947.6 gl=169.7 views=551 native_reclaim_advisory
+[2026-06-27 18:41:17] PSS_SOFT_CEILING pss=808.4 gl=34.2 views=406 native_reclaim_advisory
+[2026-06-27 19:01:56] PSS_SOFT_CEILING pss=805 gl=40 views=410 native_reclaim_advisory
+[2026-06-27 19:21:16] PSS_SOFT_CEILING pss=832.5 gl=51.4 views=486 native_reclaim_advisory
+[2026-06-27 19:22:38] PSS_SOFT_CEILING pss=830.4 gl=49.6 views=470 native_reclaim_advisory
+[2026-06-27 19:33:00] PSS_SOFT_CEILING pss=849.6 gl=39.7 views=382 native_reclaim_advisory
+[2026-06-27 19:43:21] PSS_SOFT_CEILING pss=923.9 gl=62.2 views=483 native_reclaim_advisory
+[2026-06-27 19:51:37] PSS_SOFT_CEILING pss=910.2 gl=51.4 views=504 native_reclaim_advisory
+[2026-06-27 19:53:39] PSS_SOFT_CEILING pss=887.7 gl=51.2 views=475 native_reclaim_advisory
+[2026-06-27 20:04:08] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 20:14:32] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest

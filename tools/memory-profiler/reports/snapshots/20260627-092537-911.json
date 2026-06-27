@@ -1,0 +1,20 @@
+﻿{
+    "snapshotId":  "20260627-092537-911",
+    "isoTime":  "2026-06-27 09:25:37",
+    "pid":  "20142",
+    "package":  "com.arcfire.online",
+    "stage":  "unknown",
+    "event":  "manual",
+    "detail":  "mem_fix_3h_soak_start_20260627",
+    "metrics":  {
+                    "RssMb":  879.7,
+                    "PssMb":  951.7,
+                    "GfxMb":  62.8,
+                    "EglMb":  19.8,
+                    "JavaMb":  28.1,
+                    "Views":  347,
+                    "GlMb":  43,
+                    "NativeMb":  491.8,
+                    "Threads":  null
+                }
+}

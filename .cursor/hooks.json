@@ -10,6 +10,10 @@
         "timeout": 20
       },
       {
+        "command": ".cursor/hooks/on-session-start-daily-report-chat.cjs",
+        "timeout": 10
+      },
+      {
         "command": ".cursor/hooks/on-session-start-incident-triage.cjs",
         "timeout": 15
       }

@@ -1,1 +1,1 @@
-﻿{"logcatCapture":"D:\\arcfire20260607\\tools\\long-run-monitor\\logs\\incident-logcat-20260626-230250.log","requestedAt":"2026-06-26 23:02:52","reason":"mem_hard_ceiling_playtest","alertLine":"[2026-06-26 23:02:50] [MEM_HARD_CEILING] pss=1023.8MB gl=41.3MB"}
+﻿{"logcatCapture":"D:\\arcfire20260607\\tools\\long-run-monitor\\logs\\incident-logcat-20260627-201431.log","requestedAt":"2026-06-27 20:14:32","reason":"mem_hard_ceiling_playtest","alertLine":"[2026-06-27 20:14:31] [MEM_HARD_CEILING] pss=1003.9MB gl=141.5MB"}

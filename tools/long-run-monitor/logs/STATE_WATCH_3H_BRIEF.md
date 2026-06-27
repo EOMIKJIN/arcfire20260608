@@ -1,8 +1,8 @@
 ﻿# 3-hour state watch brief
 
-Start (KST): 2026-06-24 09:58:43
-End (KST): 2026-06-24 12:58:43
-App PID at start: 12104
+Start (KST): 2026-06-27 09:25:58
+End (KST): 2026-06-27 12:25:58
+App PID at start: 20142
 
 ## Report inputs
 - mem-timeline.csv

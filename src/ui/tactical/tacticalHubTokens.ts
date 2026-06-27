@@ -6,13 +6,28 @@ import { TACTICAL_OVERLAY } from '../overlay/tacticalOverlayStyles';
 
 export const TACTICAL_HUB = {
   tileBg: 'rgba(37, 41, 48, 0.52)',
-  tileBorder: 'rgba(255, 255, 255, 0.12)',
-  tileIconInk: 'rgba(184, 190, 201, 0.9)',
-  tileLabelInk: 'rgba(184, 190, 201, 0.9)',
+  tileBorder: 'rgba(255, 255, 255, 0.22)',
+  /** 상단 광원 그라데이션 — default 타일 */
+  tileGradTop: '#343A44',
+  tileGradMid: '#252930',
+  tileGradBottom: '#14181E',
+  /** 상단 광원 그라데이션 — primary(출발 등) */
+  tilePrimaryGradTop: '#363C48',
+  tilePrimaryGradMid: '#22262E',
+  tilePrimaryGradBottom: '#101418',
+  tileTopSheen: 'rgba(255, 255, 255, 0.14)',
+  tileIconInk: 'rgba(184, 190, 201, 0.90)',
+  /** 스캔·수색 게이지 LED와 동일 — 활성·프레스 아이콘 */
+  tileIconLedActive: '#35D0FF',
+  /** 아이콘 대비 한 단계 어두운 라벨 */
+  tileLabelInk: 'rgba(148, 156, 170, 0.92)',
+  tileLabelPrimaryInk: 'rgba(172, 180, 194, 0.92)',
+  tileLabelLedActive: '#229ECC',
+  tileLabelDisabledInk: TACTICAL_OVERLAY.btnSecondaryInk,
   tilePrimaryBg: TACTICAL_OVERLAY.btnPrimaryBg,
-  tilePrimaryBorder: TACTICAL_OVERLAY.btnPrimaryBorder,
-  tilePrimaryInk: TACTICAL_OVERLAY.btnPrimaryInk,
-  tileActiveInk: 'rgba(232, 235, 240, 0.98)',
+  tilePrimaryBorder: 'rgba(255, 255, 255, 0.26)',
+  tilePrimaryInk: 'rgba(210, 216, 224, 0.92)',
+  tileActiveInk: 'rgba(210, 216, 224, 0.94)',
   tileDisabledInk: TACTICAL_OVERLAY.btnSecondaryInk,
   panelBorder: 'rgba(120, 132, 160, 0.32)',
   panelBg: 'rgba(14, 18, 26, 0.44)',

@@ -39,8 +39,9 @@ alwaysApply: false
 | # | 영역 | 내용 |
 |---|------|------|
 | 1 | **실시간 감시** | `tools/long-run-monitor/` — 메모리 누수·비정상 종료·크래시 logcat **탐지·기록·보고** |
-| 1b | **상시 메모리 프로파일링** | `tools/memory-profiler/` — PSS/GL 스냅샷·`[MEM_PROFILE]`·**retention diff** (`npm run audit:memory:retention`) |
-| 2 | **경제·밸런스 주기 점검** | `npm run audit:balance-ops` · `npm run audit:balance` · `learning-state.json` · KPI 추이 **실행·리포트** (판정·권장안만, **코드 반영 없음**) |
+| 1b | **데일리 08:00 KST 상시 보고** | `ensure-daily-8am-report.ps1` 멱등 가동 · 매일 08:00 **무조건** 보고(FAIL 포함) · `DAILY_8AM_REPORT_LATEST.md` |
+| 2 | **상시 메모리 프로파일링** | `tools/memory-profiler/` — PSS/GL 스냅샷·`[MEM_PROFILE]`·**retention diff** (`npm run audit:memory:retention`) |
+| 3 | **경제·밸런스 주기 점검** | `npm run audit:balance-ops` · `npm run audit:balance` · `learning-state.json` · KPI 추이 **실행·리포트** (판정·권장안만, **코드 반영 없음**) |
 
 ## 절대 금지 (위반 = 즉시 중단·김팀장 인계)
 
@@ -59,6 +60,7 @@ powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.
 | 김경제 | 내용 |
 |--------|------|
 | 모니터 가동 | `start-watch-30m.ps1` 멱등 가동 · PID(`logs/watch-30m.pid`) 확인 · 중단 시 재가동 |
+| **08:00 데일리 보고** | `npm run monitor:ensure-daily-8am` — **매일 08:00 KST 무조건** · adb 끊김=FAIL · `schedule-8am-report-DISABLED.flag` 없으면 **영구 유지** |
 | 관측 | `mem-timeline.csv` · `mem-alerts.log` · `incidents.log` · crash logcat |
 | 탐지 | 계단식 GL 누수 · 반복 크래시 · 비정상 재시작 |
 | 보고 | `tools/long-run-monitor/outbox/cursor-incident-handoff.md` 또는 `tools/kim-team-lead/reports/kim-economy-handoff.md` **관측 섹션만** 갱신 → **김팀장 인계** |

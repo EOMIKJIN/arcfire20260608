@@ -27,6 +27,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: "assets/images/planet/pip_001.png",
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -61,6 +62,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -95,6 +97,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -129,6 +132,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -163,6 +167,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -197,6 +202,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -231,6 +237,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -265,6 +272,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -299,6 +307,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -333,6 +342,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -367,6 +377,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -401,6 +412,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -435,6 +447,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -469,6 +482,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -503,6 +517,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -537,6 +552,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -571,6 +587,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -605,6 +622,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -626,8 +644,8 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         systemId: "arcfire_core",
         name: "아크파이어 코어 프라임",
         nameEn: "Arcfire Core Prime",
-        description: "[국가: 크림슨 레기온] 레드팀 수도 행성. 은하 에너지가 모이는 동부 최종 거점.",
-        descriptionEn: "[Nation: Crimson Legion] Red Team capital. Final eastern stronghold where galactic energy converges.",
+        description: "[국가: 크림슨 레기온] 수도 행성. 은하 에너지가 모이는 동부 최종 거점.",
+        descriptionEn: "[Nation: Crimson Legion] Capital planet. Final eastern stronghold where galactic energy converges.",
         hasTradePort: true,
         hasShipyard: true,
         hasTavern: true,
@@ -639,14 +657,15 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
     ],
     connections: ["abyss","eternity"],
     enemyLevel: 30,
-    description: "★ 레드팀 수도 성계. 아크파이어 은하 동쪽의 심장부·최종 거점.",
-    descriptionEn: "★ Red Team capital system. Eastern heart of the galaxy.",
+    description: "★ 크림슨 레기온 수도 성계. 아크파이어 은하 동쪽의 심장부·최종 거점.",
+    descriptionEn: "★ Crimson Legion capital system. Eastern heart of the galaxy.",
   },
   "eternity": {
     id: "eternity",
@@ -673,6 +692,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }
@@ -707,6 +727,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         coreTechnology: 50,
         coreEnvironment: 50,
         backdropImageAssetKey: null,
+        infoPanelPortraitAssetKey: null,
         mainStageSkiaNebulaEnabled: true,
         mainStageBackdropImageEnabled: false,
       }

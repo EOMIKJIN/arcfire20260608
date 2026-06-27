@@ -1,7 +1,7 @@
 ﻿{
     "reason":  "mem_hard_ceiling_playtest",
     "handoff":  "tools/long-run-monitor/outbox/cursor-incident-handoff.md",
-    "triggeredAt":  "2026-06-26T14:02:52.5787134Z",
+    "triggeredAt":  "2026-06-27T11:14:32.5941793Z",
     "action":  "P0: logcat root cause -\u003e code fix -\u003e tsc -\u003e ack-incident-handoff.cjs",
-    "alertLine":  "[2026-06-26 23:02:50] [MEM_HARD_CEILING] pss=1023.8MB gl=41.3MB"
+    "alertLine":  "[2026-06-27 20:14:31] [MEM_HARD_CEILING] pss=1003.9MB gl=141.5MB"
 }

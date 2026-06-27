@@ -30,7 +30,16 @@
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.ps1
+npm run monitor:ensure-daily-8am   # 데일리 08:00 KST 상시 보고 (필수)
 ```
+
+### 데일리 08:00 KST 상시 보고 (필수 · 2026-06-27~)
+
+- **매일 08:00 KST 무조건 보고** — 김팀장·김경제 동일 · 앱 on/off 무관
+- **adb 미연결·데이터 없음 → FAIL** 기록 · 변경 없어도 보고서·ledger 생성
+- **중단**은 `tools/long-run-monitor/logs/schedule-8am-report-DISABLED.flag` **명시 시에만**
+- 산출: `overnight-final-report-YYYYMMDD-0800.md` · `DAILY_8AM_REPORT_LATEST.md` · `daily-8am-report-ledger.csv`
+- Cursor `sessionStart` 훅 + `ensure-daily-8am-report.ps1` 멱등 자동 가동
 
 - **30분** `mem-timeline.csv` · crash logcat · v2 계단식 GL 누수 판정 · **VERIFY** after auto-fix
 - **김경제(감시)**: 모니터·**profile:mem:watch**·retention audit·incident **탐지·보고만** (코드 수정 없음)

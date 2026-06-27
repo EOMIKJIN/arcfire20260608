@@ -11,7 +11,7 @@ import { useT } from '../../../i18n';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { overlayInkColor } from '../overlayVisualTokens';
 import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
-import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
+import { planetDevelopmentOverlayStyles as styles, PLANET_DEV_LIST_BODY_PANEL_STYLE } from './planetDevelopmentOverlayStyles';
 import { PlanetDevelopmentListRow } from './PlanetDevelopmentListRow';
 import {
   HeavyUiOverlayShell,
@@ -86,6 +86,7 @@ export const PlanetDevelopmentListContent = memo(function PlanetDevelopmentListC
       onClose={onClose}
       onRetry={session.retry}
       visualTheme={visualTheme}
+      bodyStyle={PLANET_DEV_LIST_BODY_PANEL_STYLE}
       footer={
         session.phase === 'ready' ? (
           <ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} visualTheme={visualTheme} />
