@@ -38,6 +38,13 @@ export const NARRATIVE_DIALOG_LAYOUT = {
   popupAnchor: 'center' as const,
   /** 물리 한도까지 채움 — 보수적 cap 없음 */
   splitSafetyChars: 0,
+  /** CSV typewriterSpeedMs 기본 · scale 적용 후 ms/char */
+  typewriterSpeedMsDefault: 22,
+  typewriterSpeedScale: 0.52,
+  typewriterSpeedMsMin: 10,
+  typewriterSpeedMsMax: 44,
+  /** 타이핑 완료 → [ 다음 ] 등장 전 짧은 여백(ms) */
+  nextButtonRevealDelayMs: 320,
 } as const;
 
 export type NarrativeDialogWidthInsets = {
@@ -86,4 +93,12 @@ export function resolveNarrativeDialogCharsPerLine(
   const textWidth = resolveNarrativeDialogTextWidthPx(windowWidth, insets);
   const physicalMax = Math.floor(textWidth / L.charWidthPx);
   return Math.max(10, physicalMax - L.splitSafetyChars);
+}
+
+/** scene CSV ms/char → 인게임 체감 속도 (2026-06-27: 더 빠르고 rAF 기반 출력) */
+export function resolveNarrativeTypewriterSpeedMs(raw?: number | null): number {
+  const L = NARRATIVE_DIALOG_LAYOUT;
+  const base = raw ?? L.typewriterSpeedMsDefault;
+  const scaled = Math.round(base * L.typewriterSpeedScale);
+  return Math.min(L.typewriterSpeedMsMax, Math.max(L.typewriterSpeedMsMin, scaled));
 }

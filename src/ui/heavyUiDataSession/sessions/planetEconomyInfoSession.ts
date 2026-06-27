@@ -32,10 +32,17 @@ export function readPlanetEconomyInfoRevision(planetId: string): string {
   const fleet = useArcCoreTransportFleetBankStore.getState().balanceCredits;
   const arcVault = useArcCoreVaultStore.getState().balanceCredits;
   const blueVault = useBlueTeamSharedVaultStore.getState().balanceCredits;
+  const trend = core?.detail?.statOpsTrend;
   return [
     core?.population ?? '',
     core?.resource ?? '',
     core?.pgp ?? '',
+    trend?.kstDayKey ?? '',
+    trend?.delta?.resource ?? '',
+    trend?.delta?.population ?? '',
+    trend?.delta?.defense ?? '',
+    trend?.delta?.technology ?? '',
+    trend?.delta?.environment ?? '',
     bucket.arcFeeCredits,
     bucket.playerWalletPending,
     hold?.occupierClanId ?? '',

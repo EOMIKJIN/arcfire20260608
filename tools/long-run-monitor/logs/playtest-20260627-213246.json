@@ -1,0 +1,24 @@
+﻿{
+    "buildNote":  "memory-refactor post-dev playtest until 23:30 KST 2026-06-27",
+    "sessionId":  "playtest-20260627-213246",
+    "headCommit":  "",
+    "focusAreas":  [
+                       "long_idle_hub",
+                       "planet_worldmap_cycle",
+                       "galaxy_transit_combat",
+                       "wave_combat_skia",
+                       "facility_substage"
+                   ],
+    "intervalMin":  10,
+    "startedAtKst":  "2026-06-27 21:32:46",
+    "passCriteria":  {
+                         "workletExecuteSyncCrash":  0,
+                         "fatalSignalAfterStart":  0,
+                         "abnormalRestartWithin25m":  0,
+                         "glFloorDriftMbMax":  25
+                     },
+    "milestones":  [
+
+                   ],
+    "autoRemediationPaused":  true
+}

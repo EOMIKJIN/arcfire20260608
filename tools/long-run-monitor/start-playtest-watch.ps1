@@ -143,9 +143,9 @@ $scan = Start-Process -WindowStyle Hidden -PassThru -FilePath 'powershell' -Argu
 )
 Set-Content -Path (Join-Path $logDir 'playtest-scan.pid') -Value $scan.Id -Encoding ascii
 
-# --- user heartbeat console (optional visible) ---
-$report = Start-Process -WindowStyle Minimized -PassThru -FilePath 'powershell' -ArgumentList @(
-  '-NoProfile', '-ExecutionPolicy', 'Bypass',
+# --- user heartbeat console (visible PowerShell window) ---
+$report = Start-Process -WindowStyle Normal -PassThru -FilePath 'powershell' -ArgumentList @(
+  '-NoExit', '-NoProfile', '-ExecutionPolicy', 'Bypass',
   '-File', (Join-Path $ScriptRoot 'report-watch.ps1'),
   '-Package', $Package,
   '-IntervalMin', "$IntervalMin"

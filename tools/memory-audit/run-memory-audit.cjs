@@ -42,9 +42,9 @@ checks.push(
 const simLayer = read('src/components/planet/PlanetEdenRaidTestLayer.tsx');
 checks.push(
   check(
-    'combatOrbitPostStepRef cleared when active=false',
-    /if \(active\) return;\s*\n\s*combatOrbitPostStepRef\.current = null/.test(simLayer),
-    'Sim hook must null postStepRef on deactivate',
+    'combatOrbitPostStepRef cleared on hub departure halt',
+    /haltForGalaxyDeparture[\s\S]{0,200}?combatOrbitPostStepRef\.current = null/.test(simLayer),
+    'PlanetEdenRaidTestLayer haltForGalaxyDeparture',
   ),
 );
 
@@ -158,8 +158,8 @@ checks.push(
 
 checks.push(
   check(
-    'planet departure navigate uses InteractionManager barrier',
-    /InteractionManager\.runAfterInteractions/.test(read('src/game/usePlanetStageSession.ts')),
+    'planet departure navigate uses stage UI idle barrier',
+    /scheduleStageNavigateAfterDrain|runStageUiAfterIdle/.test(read('src/game/usePlanetStageSession.ts')),
     'usePlanetStageSession.ts frozen→navigate',
   ),
 );
@@ -210,6 +210,46 @@ checks.push(
     'planet does not push worldmap (replace only)',
     !pushWorldmap,
     pushWorldmap ? 'Found router.push worldmap — use replace' : 'ok',
+  ),
+);
+
+checks.push(
+  check(
+    'ArcMemoryGovernor warmPlanetHubResidentSet',
+    /warmPlanetHubResidentSet/.test(planet),
+    'lazy resident set on hub',
+  ),
+);
+
+checks.push(
+  check(
+    'hub Skia 2-stage arm (hubSkiaArmReady)',
+    /hubSkiaArmReady/.test(planet),
+    'ingress native step mitigation',
+  ),
+);
+
+checks.push(
+  check(
+    'stageTransitionPhaseGate module',
+    fs.existsSync(path.join(ROOT, 'src/game/stageTransitionPhaseGate.ts')),
+    'stageTransitionPhaseGate.ts',
+  ),
+);
+
+checks.push(
+  check(
+    'planet stage session uses phase gate navigate drain',
+    /scheduleStageNavigateAfterDrain/.test(read('src/game/usePlanetStageSession.ts')),
+    'usePlanetStageSession frozen effect',
+  ),
+);
+
+checks.push(
+  check(
+    'MEM_PROFILE release build flag',
+    /EXPO_PUBLIC_ARCFIRE_MEM_PROFILE/.test(read('src/game/devMemoryProfileBridge.ts')),
+    'retention soak on release',
   ),
 );
 

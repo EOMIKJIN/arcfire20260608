@@ -75,3 +75,6 @@
 [2026-06-27 19:21:14] INFO hub activation GL 28->51.4MB views 99->486 (no restart)
 [2026-06-27 19:21:14] snap PSS=832.5MB GL=51.4MB views=486 dPSS=99.3 dGL=23.4 HUB_ACTIVATION gl_mount_ok
 [2026-06-27 19:51:35] snap PSS=910.2MB GL=51.4MB views=504 dPSS=-13.7 dGL=-10.8 GL_RECOVERED idle_ok
+[2026-06-27 20:27:22] WARN: com.arcfire.online not running
+[2026-06-27 20:57:25] snap PSS=536.7MB GL=8.4MB views=99 dPSS= dGL= 
+[2026-06-27 21:27:46] snap PSS=530.1MB GL=10.1MB views=99 dPSS=0.5 dGL=1.7 

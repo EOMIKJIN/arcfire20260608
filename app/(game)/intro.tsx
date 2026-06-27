@@ -16,6 +16,7 @@ import { resolveStoryPageText, resolveStoryPageLabel } from '../../src/i18n/stor
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { splitNarrativeDialogSegments } from '../../src/ui/overlay/splitNarrativeDialogSegments';
 import { NARRATIVE_DIALOG_LAYOUT } from '../../src/ui/overlay/narrativeDialogLayout';
+import { useNarrativeDialogNextReveal } from '../../src/ui/overlay/useNarrativeDialogNextReveal';
 import { resolveIngameDialogPortraitSource } from '../../src/game/ingameDialog/resolveIngameDialogPortraitSource';
 import { useT } from '../../src/i18n';
 import { CinematicPrologueScene } from '../../src/ui/onboarding/CinematicPrologueScene';
@@ -69,6 +70,12 @@ export default function IntroScreen() {
   const ingameSegmentText = ingameTextSegments[segmentIndex] ?? '';
   const isLastIngameSegment = segmentIndex >= Math.max(0, ingameTextSegments.length - 1);
 
+  const typingRevealKey = isCinematicPage
+    ? `intro-cinematic-${page}`
+    : `intro-ingame-${page}-${segmentIndex}`;
+  const { revealReady: typingRevealReady, awaitingReveal, onTypingComplete, skipToReady } =
+    useNarrativeDialogNextReveal(typingRevealKey, () => setPageComplete(true));
+
   useEffect(() => {
     setSegmentIndex(0);
     setPageComplete(false);
@@ -94,7 +101,7 @@ export default function IntroScreen() {
       return;
     }
     if (!pageComplete) {
-      setPageComplete(true);
+      skipToReady();
       return;
     }
 
@@ -130,6 +137,7 @@ export default function IntroScreen() {
   }, [
     isTransitioning,
     pageComplete,
+    skipToReady,
     isLast,
     isLastIngameSegment,
     currentViewMode,
@@ -145,7 +153,7 @@ export default function IntroScreen() {
     setPageComplete(false);
   }, [pages.length]);
 
-  const nextLabel = !pageComplete
+  const nextLabel = !typingRevealReady
     ? t('intro.btn.skipTyping')
     : currentViewMode === 'ingame_dialog' && !isLastIngameSegment
       ? t('intro.btn.next')
@@ -178,7 +186,7 @@ export default function IntroScreen() {
               typewriterSpeedMs={scene?.typewriterSpeedMs ?? 40}
               fadeInEnabled={scene?.fadeInEnabled ?? true}
               fadeInDurationMs={scene?.fadeInDurationMs ?? CINEMATIC_PROLOGUE.fadeDefaultMs}
-              onTextComplete={() => setPageComplete(true)}
+              onTextComplete={onTypingComplete}
               onPressAdvance={handleNext}
             />
             <CinematicPrologueFooter
@@ -187,7 +195,7 @@ export default function IntroScreen() {
               skipLabel={t('intro.btn.skipScene')}
               nextLabel={nextLabel}
               showSkip={Boolean(scene?.skippable)}
-              disabled={isTransitioning}
+              disabled={isTransitioning || awaitingReveal}
               onSkip={handleSkipScene}
               onNext={handleNext}
             />
@@ -201,7 +209,7 @@ export default function IntroScreen() {
                   text={ingameSegmentText}
                   typewriterKey={`intro-dialog-${page}-${segmentIndex}`}
                   typewriterSpeedMs={scene?.typewriterSpeedMs ?? 40}
-                  onTextComplete={() => setPageComplete(true)}
+                  onTextComplete={onTypingComplete}
                   imageSource={currentDialogImageSource}
                   portraitScale={popupImageScale}
                   maxLines={ingameMaxLines}
@@ -225,7 +233,7 @@ export default function IntroScreen() {
               <ArcButton
                 label={nextLabel}
                 variant="panel"
-                disabled={isTransitioning}
+                disabled={isTransitioning || awaitingReveal}
                 onPress={handleNext}
                 style={styles.nextBtn}
               />

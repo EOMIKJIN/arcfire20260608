@@ -34,6 +34,8 @@ import {
   resolveMapFactionSideFromClanIdPure,
   type MapFactionSide,
 } from '../galaxyMap/mapFactionSideCore';
+import { reassignPlanetGovernorForOccupationSync } from '../game/planetGovernor/reassignPlanetGovernorForOccupation';
+import { hydratePlanetGovernorAssignmentStore } from '../game/planetGovernor/planetGovernorAssignmentStore';
 
 interface ClanWarFoundationState {
   hydrated: boolean;
@@ -141,6 +143,7 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
           operations: loaded.operations,
         });
       }
+      await hydratePlanetGovernorAssignmentStore();
     } finally {
       set({ hydrated: true });
     }
@@ -497,6 +500,10 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     set({
       planetHolds: { ...state.planetHolds, [planetId]: nextHold },
       operations: [op, ...state.operations],
+    });
+    reassignPlanetGovernorForOccupationSync({
+      planetId,
+      newFactionSide: factionSide,
     });
     void get().persistClanWarFoundation();
     return { changed: true, previousSide, newSide, operationId };

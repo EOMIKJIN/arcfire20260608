@@ -4,7 +4,7 @@ import { create } from 'zustand';
 import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
 import type { Planet, StarSystem } from '../types';
 import { useWorldStore } from './worldStore';
-import type { PlanetCoreMetricsDetail, PlanetMasterBalanceDetail } from './planetCoreMetricTypes';
+import type { PlanetCoreMetricsDetail, PlanetMasterBalanceDetail, PlanetCoreStatOpsTrendDetail } from './planetCoreMetricTypes';
 import { planetPgpStorageKey } from '../world/planetPgpModel';
 
 const STORAGE_KEY = 'arcfire_planet_core_runtime_v1';
@@ -329,6 +329,10 @@ interface PlanetCoreRuntimeState {
   patchPlanetMasterBalanceBulk: (
     updates: Record<string, { gauge: PlanetCoreGaugeView; masterBalance: PlanetMasterBalanceDetail }>,
   ) => void;
+  /** 일일 배치 statOpsTrend Δ 일괄 갱신 */
+  patchPlanetCoreStatOpsTrendBulk: (
+    updates: Record<string, PlanetCoreStatOpsTrendDetail>,
+  ) => void;
   getGlobalEngageHpMul: () => number;
   setGlobalEngageHpMul: (mul: number) => Promise<void>;
 }
@@ -476,6 +480,31 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
           detail: {
             ...prev.detail,
             masterBalance: patch.masterBalance,
+          },
+        },
+      };
+    }
+    set({ byPlanetId: next });
+    markPlanetCorePersistDirty();
+    scheduleCoalescedPlanetCorePersist(get);
+  },
+
+  patchPlanetCoreStatOpsTrendBulk: (updates) => {
+    const keys = Object.keys(updates);
+    if (keys.length === 0) return;
+    let next = { ...get().byPlanetId };
+    for (const planetId of keys) {
+      const trend = updates[planetId];
+      if (!planetId || !trend) continue;
+      const prev = next[planetId];
+      if (!prev) continue;
+      next = {
+        ...next,
+        [planetId]: {
+          ...prev,
+          detail: {
+            ...prev.detail,
+            statOpsTrend: trend,
           },
         },
       };

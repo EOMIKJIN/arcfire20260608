@@ -93,7 +93,13 @@ $idleHubLikely = $viewSpread -le $MaxViewsSpread
 $nativeLeakSuspect = $idleHubLikely -and $natFloorDrift -ge $NativeFloorDriftWarnMb
 $pssLeakSuspect = $idleHubLikely -and $pssFloorDrift -ge $PssFloorDriftWarnMb
 
-$verdict = if ($nativeLeakSuspect -or $pssLeakSuspect) { 'FAIL_IDLE_FLOOR_DRIFT' } else { 'PASS' }
+if (-not $idleHubLikely) {
+  $verdict = 'SKIP_NOT_IDLE_HUB'
+} elseif ($nativeLeakSuspect -or $pssLeakSuspect) {
+  $verdict = 'FAIL_IDLE_FLOOR_DRIFT'
+} else {
+  $verdict = 'PASS'
+}
 
 $md = @"
 # Idle hub floor audit — $verdict
@@ -112,12 +118,17 @@ views spread: $viewSpread (max $MaxViewsSpread for idle hub)
 
 interpretation:
 - PASS: GC sawtooth only (floor stable ± thresholds)
+- SKIP_NOT_IDLE_HUB: views spread > $MaxViewsSpread — STAGE 전환·플레이 혼재 (idle 판정 불가)
 - FAIL_IDLE_FLOOR_DRIFT: idle hub code path leak (not user action)
 
 "@
 
 Set-Content -Path $reportOut -Value $md -Encoding utf8
 Write-Host $verdict "pssDrift=$pssFloorDrift nativeDrift=$natFloorDrift viewsSpread=$viewSpread"
+
+if ($verdict -eq 'SKIP_NOT_IDLE_HUB') {
+  exit 0
+}
 
 if ($verdict -eq 'FAIL_IDLE_FLOOR_DRIFT') {
   $line = "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] [IDLE_FLOOR_DRIFT] pid=$targetPid pssDrift=${pssFloorDrift}MB nativeDrift=${natFloorDrift}MB viewsSpread=$viewSpread milestone=$milestoneLabel"

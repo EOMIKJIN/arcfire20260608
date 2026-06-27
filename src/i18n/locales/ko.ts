@@ -340,7 +340,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'tavern.today': '오늘 {hm}',
   'tavern.yesterday': '어제 {hm}',
   'tavern.date': '{month}/{day} {hm}',
-  'tavern.boardMeta': '자동 갱신 · 공지 {count}건',
+  'tavern.boardMeta': '자동 갱신 · 최근 공지 {count}건',
   'tavern.defaultPilot': '파일럿',
   'tavern.greeting': '어서오세요! {name} 함장님',
   'tavern.hostLabel': '[ 선술집 주인 · {name} ]',

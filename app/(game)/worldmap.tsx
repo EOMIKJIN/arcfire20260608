@@ -77,6 +77,7 @@ import {
   runGalaxyMapSoftNativeReclaimPass,
 } from '../../src/game/nativeReclaim';
 import { consumeGalaxyMapIngressReclaim } from '../../src/game/nativeReclaim/galaxyMapIngressReclaim';
+import { markGalaxyMapResidentActive } from '../../src/arcCore/memory';
 import { markPlanetHubIngressReclaim } from '../../src/game/nativeReclaim/planetHubIngressReclaim';
 import { emitMemProfileMarker } from '../../src/game/devMemoryProfileBridge';
 import {
@@ -95,7 +96,7 @@ import { GalaxyMapTerritoryOccupationLabelsSvg } from '../../src/galaxyMap/Galax
 import { GalaxyMapTerritoryVoronoiSvg } from '../../src/galaxyMap/GalaxyMapTerritoryVoronoiSvg';
 import { GalaxyMapSystemsSvg } from '../../src/galaxyMap/GalaxyMapSystemsSvg';
 import { GalaxyMapContestedZoneRingOverlay } from '../../src/galaxyMap/GalaxyMapContestedZoneRingOverlay';
-import { listContestedZoneSystemIds } from '../../src/arcCore/territorial/arcCoreTerritorialCombatPolicy';
+import { useContestedZonePreviewSystemIds } from '../../src/galaxyMap/useContestedZonePreviewSystemIds';
 import {
   DEFAULT_STAGE_NAV_DRAIN_MS,
   runStageNavAfterTeardown,
@@ -107,8 +108,6 @@ const MAP_PAD_PX = 44;
 const NODE_HIT_R = 28;
 const MAP_PAN_MIN_DISTANCE_PX = 8;
 const MAP_PAN_DECELERATION = 0.992;
-/** Table-First — territorial `contestedZone=true` 성계 (부트 1회) */
-const CONTESTED_ZONE_SYSTEM_ID_SET = new Set(listContestedZoneSystemIds());
 /** 루트 간 이동 시간(임시 고정) */
 const SHIP_TRANSIT_DURATION_MS = 3000;
 const DEFERRED_TILE_STEP_MS = 120;
@@ -455,6 +454,7 @@ export default function WorldMapScreen() {
       hubNavGate.reset();
       isFocusedRef.current = true;
       consumeGalaxyMapIngressReclaim();
+      markGalaxyMapResidentActive();
       emitMemProfileMarker({ stage: 'galaxy_map', event: 'route_focus' });
       // Reanimated Pan worklet — scrollAlive=1 은 runOnUI 스크롤 적용·2×rAF 이후에만 (SIGSEGV 방지)
       const enableScrollTask = runStageUiAfterIdle(() => {
@@ -599,9 +599,10 @@ export default function WorldMapScreen() {
     }),
     [systemsList, isLegacyVisibleSynth, isExpansionGatewaySynth, unlockedSystemIds],
   );
+  const contestedPreviewSystemIds = useContestedZonePreviewSystemIds(true);
   const contestedVisibleSystems = useMemo(
-    () => visibleSystemsList.filter((s) => CONTESTED_ZONE_SYSTEM_ID_SET.has(s.id)),
-    [visibleSystemsList],
+    () => visibleSystemsList.filter((s) => contestedPreviewSystemIds.has(s.id)),
+    [visibleSystemsList, contestedPreviewSystemIds],
   );
   const hiddenUndiscoveredSystems = useMemo(
     () => systemsList.filter((s) =>

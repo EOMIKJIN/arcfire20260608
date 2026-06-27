@@ -101,6 +101,8 @@ function scanFile(absPath) {
     if (/\.value\s*=/.test(line)) continue; // JS write OK
 
     if (/\w+\.value/.test(line)) {
+      const window = lines.slice(Math.max(0, i - 3), i + 4).join('\n');
+      if (/'worklet'|"worklet"/.test(window)) continue;
       if (
         /useEffect|useLayoutEffect|useCallback|useMemo/.test(lines.slice(Math.max(0, i - 8), i + 1).join('\n'))
         && !trimmed.includes("'worklet'")

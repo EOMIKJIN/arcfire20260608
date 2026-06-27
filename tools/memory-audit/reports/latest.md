@@ -1,13 +1,13 @@
 # Memory / Stage Contract Audit
 
-Generated: 2026-06-24T03:08:44.518Z
+Generated: 2026-06-27T11:33:11.931Z
 
-**Result:** PASS (28/28 checks)
+**Result:** PASS (33/33 checks)
 
 ## Passed
 - [x] worldmap → combat uses replace (full path)
 - [x] planet departure uses replace → worldmap
-- [x] combatOrbitPostStepRef cleared when active=false
+- [x] combatOrbitPostStepRef cleared on hub departure halt
 - [x] Skia combat unmount clears postStepRef
 - [x] combat sim loop cancelAnimationFrame
 - [x] planet.tsx has useStageMemory
@@ -24,7 +24,7 @@ Generated: 2026-06-24T03:08:44.518Z
 - [x] hub Skia native reclaim signal subscribed
 - [x] planet_change light reclaim (content-safe)
 - [x] clearCapital combat-only (no full reclaim on planet_change)
-- [x] planet departure navigate uses InteractionManager barrier
+- [x] planet departure navigate uses stage UI idle barrier
 - [x] INFO_DISTANCE_SORT_INTERVAL_MS = 5000
 - [x] buildCsvStaticIndexes at app boot
 - [x] planet core persist dirty-skip
@@ -33,6 +33,11 @@ Generated: 2026-06-24T03:08:44.518Z
 - [x] file exists: src/hooks/usePlanetSubStageMemory.ts
 - [x] file exists: src/game/stageMemoryRelease.ts
 - [x] planet does not push worldmap (replace only)
+- [x] ArcMemoryGovernor warmPlanetHubResidentSet
+- [x] hub Skia 2-stage arm (hubSkiaArmReady)
+- [x] stageTransitionPhaseGate module
+- [x] planet stage session uses phase gate navigate drain
+- [x] MEM_PROFILE release build flag
 
 ## Reference
 - `docs/2.1.memory.md`

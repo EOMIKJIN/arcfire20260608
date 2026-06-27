@@ -1,4 +1,4 @@
-﻿# Idle hub floor audit ??PASS
+﻿# Idle hub floor audit ??SKIP_NOT_IDLE_HUB
 
 milestone: 
 since: 
@@ -14,5 +14,6 @@ views spread: 925 (max 80 for idle hub)
 
 interpretation:
 - PASS: GC sawtooth only (floor stable 짹 thresholds)
+- SKIP_NOT_IDLE_HUB: views spread > 80 ??STAGE ?꾪솚쨌?뚮젅???쇱옱 (idle ?먯젙 遺덇?)
 - FAIL_IDLE_FLOOR_DRIFT: idle hub code path leak (not user action)
 

@@ -1,0 +1,20 @@
+﻿{
+    "snapshotId":  "20260627-213314-157",
+    "isoTime":  "2026-06-27 21:33:14",
+    "pid":  "21383",
+    "package":  "com.arcfire.online",
+    "stage":  "unknown",
+    "event":  "manual",
+    "detail":  "session_start_memory_refactor",
+    "metrics":  {
+                    "RssMb":  673.8,
+                    "PssMb":  562.6,
+                    "GfxMb":  35,
+                    "EglMb":  19.9,
+                    "JavaMb":  20.6,
+                    "Views":  13,
+                    "GlMb":  15.1,
+                    "NativeMb":  257.5,
+                    "Threads":  null
+                }
+}

@@ -1,0 +1,7 @@
+[2026-06-27 23:44:20] monitor start package=com.arcfire.online interval=10m rules=v2(hub_activation_excluded)
+[2026-06-27 23:44:20] meminfo -> D:\arcfire20260607\tools\long-run-monitor\logs\meminfo-20260627-234420.log
+[2026-06-27 23:44:20] timeline -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-timeline.csv
+[2026-06-27 23:44:20] alerts -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-alerts.log
+[2026-06-27 23:44:20] FOCUS: hub Skia orbit + nebula + combat ??restart only active hub GL>=80MB or 3x dGL>=8MB
+[2026-06-27 23:44:23] snap PSS=353.1MB GL=5.9MB views=13 dPSS= dGL= 
+[2026-06-27 23:54:45] WARN: com.arcfire.online not running

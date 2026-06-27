@@ -1,7 +1,8 @@
 import { InteractionManager } from 'react-native';
 import { BaseArcSubCore } from './BaseArcSubCore';
 import { runTerritorialCombatPass } from '../territorial/runTerritorialCombatPass';
-import { hydrateArcCoreTerritorialCombatState } from '../territorial/arcCoreTerritorialCombatState';
+import { hydrateArcCoreTerritorialCombatState, ensureTerritorialCampaignPreviewSchedules } from '../territorial/arcCoreTerritorialCombatState';
+import { hydratePlanetGovernorAssignmentStore } from '../../game/planetGovernor/planetGovernorAssignmentStore';
 import { TERRITORIAL_PASS_PROBE_INTERVAL_MS } from '../territorial/territorialCombatCampaign';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
 
@@ -43,6 +44,8 @@ export class ArcCoreTerritorialCombatSubCore extends BaseArcSubCore {
     this.passRunning = true;
     try {
       await hydrateArcCoreTerritorialCombatState();
+      await ensureTerritorialCampaignPreviewSchedules();
+      await hydratePlanetGovernorAssignmentStore();
       if (!useClanWarFoundationStore.getState().hydrated) {
         await useClanWarFoundationStore.getState().loadLocalClanWarFoundation();
       }

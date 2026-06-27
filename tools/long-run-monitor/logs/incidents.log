@@ -2235,3 +2235,23 @@ ref=tools/long-run-monitor/logs/soak-worklet-mirror-20260621.json
 [2026-06-27 19:53:39] PSS_SOFT_CEILING pss=887.7 gl=51.2 views=475 native_reclaim_advisory
 [2026-06-27 20:04:08] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
 [2026-06-27 20:14:32] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-27 21:32:46] PLAYTEST_START playtest-20260627-213246 interval=10m paused=True
+[2026-06-27 21:33:11] PLAYTEST_MILESTONE session_start_memory_refactor
+[2026-06-27 21:38:55] PSS_SOFT_CEILING pss=874.3 gl=59.4 views=322 native_reclaim_advisory
+[2026-06-27 21:43:18] PSS_SOFT_CEILING pss=843.2 gl=50.7 views=322 native_reclaim_advisory
+[2026-06-27 21:49:15] PSS_SOFT_CEILING pss=815.9 gl=42.5 views=366 native_reclaim_advisory
+[2026-06-27 21:53:37] PSS_SOFT_CEILING pss=865.3 gl=51.3 views=385 native_reclaim_advisory
+[2026-06-27 21:59:37] PSS_SOFT_CEILING pss=876.3 gl=62.8 views=367 native_reclaim_advisory
+[2026-06-27 22:03:58] PSS_SOFT_CEILING pss=878.5 gl=61.2 views=385 native_reclaim_advisory
+[2026-06-27 22:09:59] PSS_SOFT_CEILING pss=875.5 gl=50.2 views=393 native_reclaim_advisory
+[2026-06-27 22:14:19] PSS_SOFT_CEILING pss=872.1 gl=50.2 views=367 native_reclaim_advisory
+[2026-06-27 22:20:21] PSS_SOFT_CEILING pss=871.6 gl=50.2 views=390 native_reclaim_advisory
+[2026-06-27 22:24:40] PSS_SOFT_CEILING pss=877.9 gl=50.2 views=370 native_reclaim_advisory
+[2026-06-27 22:30:44] PSS_SOFT_CEILING pss=879 gl=54.3 views=374 native_reclaim_advisory
+[2026-06-27 22:35:04] PSS_SOFT_CEILING pss=890.7 gl=60.8 views=601 native_reclaim_advisory
+[2026-06-27 22:56:02] PSS_SOFT_CEILING pss=842.3 gl=146.4 views=555 native_reclaim_advisory
+[2026-06-27 23:16:24] PSS_SOFT_CEILING pss=836.7 gl=122.2 views=547 native_reclaim_advisory
+[2026-06-27 23:22:42] PSS_SOFT_CEILING pss=802.6 gl=46.7 views=473 native_reclaim_advisory
+[2026-06-27 23:30:00] PLAYTEST_END
+[2026-06-27 23:32:58] PSS_SOFT_CEILING pss=936 gl=142.7 views=548 native_reclaim_advisory
+[2026-06-27 23:44:16] PLAYTEST_START playtest-20260627-234416 interval=10m paused=True

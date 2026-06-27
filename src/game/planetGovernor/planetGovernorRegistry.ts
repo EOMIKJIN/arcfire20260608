@@ -1,5 +1,5 @@
 // ============================================================
-// 행성 점령지 총사령관 — CSV O(1) 조회 (Table-First · 부트 1회)
+// 행성 점령지 총사령관 — CSV O(1) + 런타임 예비 배정 병합
 // ============================================================
 
 import {
@@ -7,6 +7,8 @@ import {
   type PlanetGovernorCommanderRow,
 } from '../../data/generated';
 import { getIngameDialogSceneById } from '../ingameDialog/ingameDialogSceneIndex';
+import { getPlanetGovernorAssignment } from './planetGovernorAssignmentStore';
+import { getGovernorReserveCommanderById } from './planetGovernorReservePool';
 
 const GOVERNOR_BY_PLANET_ID: ReadonlyMap<string, PlanetGovernorCommanderRow> = (() => {
   const map = new Map<string, PlanetGovernorCommanderRow>();
@@ -22,14 +24,41 @@ const GOVERNOR_BY_PLANET_ID: ReadonlyMap<string, PlanetGovernorCommanderRow> = (
   return map;
 })();
 
+function mergeRuntimeGovernorAssignment(
+  baseline: PlanetGovernorCommanderRow,
+): PlanetGovernorCommanderRow {
+  const assignment = getPlanetGovernorAssignment(baseline.planetId);
+  if (!assignment) return baseline;
+
+  const reserve = getGovernorReserveCommanderById(assignment.captainId);
+  if (!reserve) return baseline;
+
+  const side = assignment.occupationSide;
+  const isRed = side === 'RED';
+  const hostileEntry =
+    isRed || (side === 'NEUTRAL' && baseline.hostileEntryCombatEnabled);
+
+  return {
+    ...baseline,
+    occupationSide: side,
+    governorCaptainId: reserve.captainId,
+    governorTitleKo: reserve.governorTitleKo,
+    dialogSceneId: reserve.dialogSceneId,
+    hostileToPlayerBlue: isRed,
+    hostileEntryCombatEnabled: hostileEntry,
+  };
+}
+
 export function getPlanetGovernorCommander(
   planetId: string,
 ): PlanetGovernorCommanderRow | null {
-  return GOVERNOR_BY_PLANET_ID.get(planetId) ?? null;
+  const baseline = GOVERNOR_BY_PLANET_ID.get(planetId);
+  if (!baseline) return null;
+  return mergeRuntimeGovernorAssignment(baseline);
 }
 
 export function listPlanetGovernorCommanders(): readonly PlanetGovernorCommanderRow[] {
-  return PLANET_GOVERNOR_COMMANDERS_FROM_CSV;
+  return PLANET_GOVERNOR_COMMANDERS_FROM_CSV.map((row) => mergeRuntimeGovernorAssignment(row));
 }
 
 /** 행성 체류 대화 — governor 테이블 talkEnabled + 유효 dialogSceneId */

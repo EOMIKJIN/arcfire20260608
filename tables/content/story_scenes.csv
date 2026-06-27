@@ -70,3 +70,5 @@ npc_dialog_gov_minerva,니카 스톤 광산총감독 대화,manual,,repeat,4,non
 npc_dialog_gov_iron,오렌 피스 잔해수호 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_gov_helios,솔라 핀 태양권 관리 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_gov_genesis,아르카노 원 기원수문 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_gov_blue_reserve,블루 총사령관 예비,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_gov_neutral_reserve,중립 총사령관 예비,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0

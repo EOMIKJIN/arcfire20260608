@@ -180,6 +180,26 @@ export type PlanetMasterBalanceDetail = {
   scenarioBountyMinutes?: number;
 };
 
+/** 5대 스탯 키 — UI·일일 배치 추세 공용 */
+export type PlanetCoreStatKey =
+  | 'resource'
+  | 'population'
+  | 'defense'
+  | 'technology'
+  | 'environment';
+
+/** 아크코어 일일 운영 배치(arc_core_daily_ops) 직후 Δ — 행성정보 시세 화살표 */
+export type PlanetCoreStatOpsTrendDetail = {
+  version: 1;
+  /** `planetAttackKstDayKey()` — 배치 완료 KST 일자 */
+  kstDayKey: string;
+  /** `arc_core_daily_ops_policy.observationWindowHours` */
+  observationWindowHours: number;
+  batchCompletedAtMs: number;
+  /** 일일 배치 전후 Δ — 0.1 단위 */
+  delta: Record<PlanetCoreStatKey, number>;
+};
+
 /** v2.0 §5-3 — 행성 코어 스탯 15단계 R&D */
 export type PlanetCoreStatRdJob = {
   statType: 'resource' | 'population' | 'defense' | 'technology' | 'environment';
@@ -210,4 +230,6 @@ export type PlanetCoreMetricsDetail = {
   economyFabric?: PlanetEconomyFabricDetail;
   /** 연구소 R&D 15단계 진행 */
   coreStatRd?: PlanetCoreStatRdDetail;
+  /** 일 1회 아크코어 스탯 운영 배치 Δ — 행성정보 추세 표시 */
+  statOpsTrend?: PlanetCoreStatOpsTrendDetail;
 };

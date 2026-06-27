@@ -4,7 +4,11 @@ import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
 import type { I18nParams } from '../i18n/types';
 
 const STORAGE_KEY = 'arcfire_tavern_board_v1';
-const MAX_NOTICE_COUNT = 80;
+
+/** 공지판 UI — 최신 N건만 표시 */
+export const TAVERN_BOARD_MAX_VISIBLE_NOTICES = 20;
+/** 표시에서 밀려난 공지 — 시스템 아카이브(상한) */
+export const TAVERN_BOARD_MAX_HISTORY_NOTICES = 200;
 
 export type TavernNoticeTag = '작전' | '경제' | '외교' | '소문' | '아크코어';
 
@@ -21,10 +25,12 @@ export type TavernNotice = {
 
 type TavernBoardState = {
   notices: TavernNotice[];
+  history: TavernNotice[];
   loaded: boolean;
   loadLocalBoard: () => Promise<void>;
   persistBoard: () => Promise<void>;
   resetLocalBoard: () => Promise<void>;
+  listNoticeHistory: () => readonly TavernNotice[];
   pushNotice: (notice: Omit<TavernNotice, 'id' | 'postedAtMs'> & { postedAtMs?: number }) => void;
   /** dedupeKey 일치 공지를 최신 내용으로 교체(행성별 점령 갱신) */
   pushOrRefreshNotice: (
@@ -122,6 +128,56 @@ function migrateLegacyNoticeI18n(notice: TavernNotice): TavernNotice {
   return notice;
 }
 
+function normalizeNoticeRow(raw: Partial<TavernNotice>): TavernNotice | null {
+  if (!raw || typeof raw.title !== 'string' || typeof raw.body !== 'string') return null;
+  return migrateLegacyNoticeI18n({
+    id: typeof raw.id === 'string' ? raw.id : formatId(),
+    title: raw.title,
+    body: raw.body,
+    tag: (raw.tag ?? '소문') as TavernNoticeTag,
+    postedAtMs: Number.isFinite(Number(raw.postedAtMs)) ? Number(raw.postedAtMs) : Date.now(),
+    dedupeKey: typeof raw.dedupeKey === 'string' ? raw.dedupeKey : undefined,
+    i18nKey: typeof raw.i18nKey === 'string' ? raw.i18nKey : undefined,
+    i18nParams:
+      raw.i18nParams && typeof raw.i18nParams === 'object' ? (raw.i18nParams as I18nParams) : undefined,
+  });
+}
+
+function dedupeNoticesById(notices: readonly TavernNotice[]): TavernNotice[] {
+  const byId = new Map<string, TavernNotice>();
+  for (const notice of notices) {
+    if (!byId.has(notice.id)) byId.set(notice.id, notice);
+  }
+  return Array.from(byId.values()).sort((a, b) => b.postedAtMs - a.postedAtMs);
+}
+
+function splitVisibleAndHistory(
+  allNotices: readonly TavernNotice[],
+  seedHistory: readonly TavernNotice[] = [],
+): { notices: TavernNotice[]; history: TavernNotice[] } {
+  const merged = dedupeNoticesById([
+    ...stripLegacyArcCoreMissileNotices([...allNotices]),
+    ...stripLegacyArcCoreMissileNotices([...seedHistory]),
+  ]);
+  const notices = merged.slice(0, TAVERN_BOARD_MAX_VISIBLE_NOTICES);
+  const visibleIds = new Set(notices.map((n) => n.id));
+  const history = merged
+    .filter((n) => !visibleIds.has(n.id))
+    .slice(0, TAVERN_BOARD_MAX_HISTORY_NOTICES);
+  return { notices, history };
+}
+
+function removeDedupeKey(
+  notices: TavernNotice[],
+  history: TavernNotice[],
+  dedupeKey: string,
+): { notices: TavernNotice[]; history: TavernNotice[] } {
+  return {
+    notices: notices.filter((n) => n.dedupeKey !== dedupeKey),
+    history: history.filter((n) => n.dedupeKey !== dedupeKey),
+  };
+}
+
 function getDefaultNotices(): TavernNotice[] {
   const now = Date.now();
   return [
@@ -148,6 +204,7 @@ function getDefaultNotices(): TavernNotice[] {
 
 export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
   notices: getDefaultNotices(),
+  history: [],
   loaded: false,
 
   loadLocalBoard: async () => {
@@ -157,35 +214,31 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
         set({ loaded: true });
         return;
       }
-      const parsed = JSON.parse(raw) as { notices?: TavernNotice[] };
-      if (!Array.isArray(parsed.notices)) {
-        set({ loaded: true });
-        return;
-      }
-      const mapped = parsed.notices
-        .filter((n) => n && typeof n.title === 'string' && typeof n.body === 'string')
-        .map((n) => ({
-          id: typeof n.id === 'string' ? n.id : formatId(),
-          title: n.title,
-          body: n.body,
-          tag: (n.tag ?? '소문') as TavernNoticeTag,
-          postedAtMs: Number.isFinite(Number(n.postedAtMs)) ? Number(n.postedAtMs) : Date.now(),
-          dedupeKey: typeof n.dedupeKey === 'string' ? n.dedupeKey : undefined,
-          i18nKey: typeof n.i18nKey === 'string' ? n.i18nKey : undefined,
-          i18nParams:
-            n.i18nParams && typeof n.i18nParams === 'object' ? (n.i18nParams as I18nParams) : undefined,
-        }));
-      const migrated = mapped.map(migrateLegacyNoticeI18n);
-      const safe = stripLegacyArcCoreMissileNotices(migrated)
-        .sort((a, b) => b.postedAtMs - a.postedAtMs)
-        .slice(0, MAX_NOTICE_COUNT);
-      const nextNotices = safe.length > 0 ? safe : getDefaultNotices();
+      const parsed = JSON.parse(raw) as { notices?: Partial<TavernNotice>[]; history?: Partial<TavernNotice>[] };
+      const loadedNotices = (parsed.notices ?? [])
+        .map(normalizeNoticeRow)
+        .filter((n): n is TavernNotice => n != null);
+      const loadedHistory = (parsed.history ?? [])
+        .map(normalizeNoticeRow)
+        .filter((n): n is TavernNotice => n != null);
+      const split = splitVisibleAndHistory(loadedNotices, loadedHistory);
+      const nextNotices = split.notices.length > 0 ? split.notices : getDefaultNotices();
+      const nextHistory = split.notices.length > 0 ? split.history : [];
       const needsPersist =
-        safe.length !== mapped.length ||
-        migrated.some((n, i) => n.i18nKey !== mapped[i]?.i18nKey);
-      set({ notices: nextNotices, loaded: true });
+        !Array.isArray(parsed.history)
+        || loadedNotices.length > TAVERN_BOARD_MAX_VISIBLE_NOTICES
+        || split.notices.length !== loadedNotices.length
+        || split.history.length !== loadedHistory.length
+        || loadedNotices.some((n, i) => {
+          const raw = parsed.notices?.[i] as Partial<TavernNotice> | undefined;
+          return raw?.i18nKey !== n.i18nKey;
+        });
+      set({ notices: nextNotices, history: nextHistory, loaded: true });
       if (needsPersist) {
-        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ notices: nextNotices }));
+        await AsyncStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ notices: nextNotices, history: nextHistory }),
+        );
       }
     } catch {
       set({ loaded: true });
@@ -193,8 +246,12 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
   },
 
   persistBoard: async () => {
-    const notices = get().notices.slice(0, MAX_NOTICE_COUNT);
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ notices }));
+    const { notices, history } = get();
+    const payload = {
+      notices: notices.slice(0, TAVERN_BOARD_MAX_VISIBLE_NOTICES),
+      history: history.slice(0, TAVERN_BOARD_MAX_HISTORY_NOTICES),
+    };
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     scheduleUserCloudSync();
   },
 
@@ -204,15 +261,18 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
     } catch {
       /* ignore */
     }
-    set({ notices: getDefaultNotices(), loaded: true });
+    set({ notices: getDefaultNotices(), history: [], loaded: true });
   },
+
+  listNoticeHistory: () => get().history,
 
   pushNotice: (notice) => {
     if (isLegacyArcCoreMissileNotice(notice)) return;
     const nextPostedAtMs = notice.postedAtMs ?? Date.now();
     set((state) => {
-      if (notice.dedupeKey && state.notices.some((n) => n.dedupeKey === notice.dedupeKey)) {
-        return state;
+      if (notice.dedupeKey) {
+        const onBoard = state.notices.some((n) => n.dedupeKey === notice.dedupeKey);
+        if (onBoard) return state;
       }
       const next: TavernNotice = {
         id: formatId(),
@@ -224,7 +284,8 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
         i18nKey: notice.i18nKey,
         i18nParams: notice.i18nParams,
       };
-      return { notices: [next, ...state.notices].slice(0, MAX_NOTICE_COUNT) };
+      const split = splitVisibleAndHistory([next, ...state.notices], state.history);
+      return { notices: split.notices, history: split.history };
     });
     void get().persistBoard();
   },
@@ -233,7 +294,7 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
     if (isLegacyArcCoreMissileNotice(notice)) return;
     const nextPostedAtMs = notice.postedAtMs ?? Date.now();
     set((state) => {
-      const rest = state.notices.filter((n) => n.dedupeKey !== dedupeKey);
+      const stripped = removeDedupeKey(state.notices, state.history, dedupeKey);
       const next: TavernNotice = {
         id: formatId(),
         title: notice.title,
@@ -244,9 +305,9 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
         i18nKey: notice.i18nKey,
         i18nParams: notice.i18nParams,
       };
-      return { notices: [next, ...rest].slice(0, MAX_NOTICE_COUNT) };
+      const split = splitVisibleAndHistory([next, ...stripped.notices], stripped.history);
+      return { notices: split.notices, history: split.history };
     });
     void get().persistBoard();
   },
 }));
-

@@ -1,6 +1,4 @@
 import { BaseArcSubCore } from './BaseArcSubCore';
-import { syncTradePortCatalogFromBalance } from '../balance/tradePortCatalogPolicy';
-
 /**
  * 무역소 진열 정책 — `01_레벨업구조` · planet_leveling_progression 단일 채널.
  * 주기 동기는 `AiEconomySubCore.runPlayScenarioEconomyPass`에 위임.
@@ -11,6 +9,7 @@ export class AiTradePortLevelPolicySubCore extends BaseArcSubCore {
   }
 
   override onBoot(): void {
-    syncTradePortCatalogFromBalance(true);
+    // 카탈로그 동기는 ArcMemoryGovernor.warmPlanetHubResidentSet / warmGalaxyDeparturePreflight ·
+    // 일일 배치 runPlayScenarioEconomyPass(true) 로만 수행 (부트 전행성 sync 금지).
   }
 }

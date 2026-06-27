@@ -20,7 +20,7 @@
 // ============================================================
 
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { DEFAULT_STAGE_NAV_DRAIN_MS, runStageUiAfterIdle } from '../navigation/stageNavGate';
+import { scheduleStageNavigateAfterDrain } from './stageTransitionPhaseGate';
 import {
   usePlanetStageLifecycleStore,
   selectPlanetStageLifecycle,
@@ -79,19 +79,12 @@ export function usePlanetStageSession(): PlanetStageSession {
         usePlanetStageLifecycleStore.getState().forceActive();
       }
     };
-    const task = runStageUiAfterIdle(() => {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setTimeout(runNavigate, DEFAULT_STAGE_NAV_DRAIN_MS);
-        });
-      });
+    const task = scheduleStageNavigateAfterDrain(runNavigate, {
+      isMounted: () => !cancelled,
     });
-    /** frozen 에서 navigate 콜백이 영구 대기할 때 — LOADING 고착 방지 */
-    const frozenFallback = setTimeout(runNavigate, 10000);
     return () => {
       cancelled = true;
       task.cancel();
-      clearTimeout(frozenFallback);
     };
   }, [lifecycle, consumePendingNavigation]);
 

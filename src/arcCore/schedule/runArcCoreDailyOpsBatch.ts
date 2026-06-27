@@ -27,6 +27,10 @@ import { pushArcCoreDailyKpiToRtdbIfDue } from '../learning/pushArcCoreDailyKpiT
 import { isArcCoreRtdbAvailableForSession } from '../../firebase/rtdbRefs';
 import { getCurrentUser } from '../../firebase/auth';
 import { resolveArcCoreDailyOpsPolicy } from './arcCoreDailyOpsPolicy';
+import {
+  beginPlanetCoreStatOpsTrendSnapshot,
+  commitPlanetCoreStatOpsTrendAfterBatch,
+} from '../planetCore/planetCoreStatOpsTrend';
 
 export type ArcCoreDailyOpsBatchResult = {
   ran: boolean;
@@ -83,6 +87,8 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   if (!usePlanetCoreRuntimeStore.getState().hydrated) {
     await usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync();
   }
+
+  beginPlanetCoreStatOpsTrendSnapshot();
 
   if (policy.runPlanetEnergyPass) {
     runPlanetEnergyCorePass();
@@ -153,6 +159,8 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   } catch {
     /* learning KPI·RTDB push는 비차단 */
   }
+
+  commitPlanetCoreStatOpsTrendAfterBatch();
 
   return result;
 }

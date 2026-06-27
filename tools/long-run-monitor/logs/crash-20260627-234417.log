@@ -1,0 +1,418 @@
+--------- beginning of main
+06-27 23:44:40.477  3904  3997 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:44:40.492  3904  3997 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:44:40.509  3904  3997 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:44:40.529  3904  3997 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:44:40.541  3904  3997 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+--------- beginning of system
+06-27 23:44:40.672  1909  4340 I ActivityManager: Changes in 99252 19 to 3, 0 to 184
+06-27 23:44:40.858  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:44:40.858  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-27 23:44:40.859  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:44:40.859  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-27 23:44:40.886  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+06-27 23:44:40.965  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+06-27 23:44:40.965  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+06-27 23:44:40.965  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `signInAnonymously`. Please use `signInAnonymously()` instead.
+06-27 23:44:41.427  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+06-27 23:44:41.428  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `ref`. Please use `ref()` instead.
+06-27 23:44:41.433  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `once`. Please use `get()` instead.
+06-27 23:44:44.223  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:44:44.224  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-27 23:44:44.224  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:44:44.224  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-27 23:44:50.809  1909  2870 I ActivityManager: Changes in 99252 3 to 10, 184 to 0
+06-27 23:44:54.769  1909  2870 I ActivityManager: Changes in 99258 17 to 8, 0 to 128
+06-27 23:44:54.770  1909  2870 I ActivityManager: Changes in 10275 16 to 8, 0 to 128
+06-27 23:44:54.821  1909  3434 I ActivityManager: Changes in 99258 6 to 6, 128 to 0
+06-27 23:44:54.821  1909  3434 I ActivityManager: Changes in 10275 6 to 6, 128 to 0
+06-27 23:46:37.974  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-27 23:46:37.976  1909  3434 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-27 23:48:40.353  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:48:40.353  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-27 23:48:40.354  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:48:40.354  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-27 23:49:00.424  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-27 23:49:00.434  1909  4340 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+06-27 23:49:00.457  1909  1973 I ActivityManager: Start proc 4346:com.samsung.android.game.gos/u0a76 for service {com.samsung.android.game.gos/com.samsung.android.game.gos.service.MainIntentService}
+06-27 23:49:00.457  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-27 23:49:00.802  1909  1935 I ActivityManager: Killing 31984:com.sec.android.app.shealth:remote/u0a328 (adj 975): empty #25
+06-27 23:50:28.864  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+06-27 23:50:28.868  1909  3434 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+06-27 23:50:28.870  1909  2065 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
+06-27 23:50:28.885  1909  2867 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+06-27 23:51:24.728  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:51:24.730  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-27 23:51:24.731  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:51:24.733  3904  3997 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-27 23:53:05.531  1909  9411 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+06-27 23:53:11.599  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+06-27 23:53:26.350  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.350  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.350  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.350  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.350  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.350  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.350  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.350  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.350  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.358  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.358  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.358  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.358  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.358  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.358  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.358  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.358  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.358  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.361  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.361  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.361  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.361  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.361  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.361  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.361  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.361  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.361  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.362  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.362  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.362  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.362  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.362  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.362  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.362  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.362  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.362  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.364  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.364  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.364  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.364  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.364  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.364  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.364  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.364  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.364  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.366  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.366  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.366  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.366  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.366  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.366  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.366  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.366  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.366  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.367  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.367  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.367  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.367  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.367  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.367  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.367  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.367  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.367  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.368  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.368  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.368  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.368  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.368  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.368  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.368  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.368  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.368  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.370  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.370  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.370  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.370  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.370  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.370  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.370  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.370  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.370  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.371  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.371  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.371  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.371  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.371  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.371  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.371  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.371  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.371  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.373  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.373  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.373  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.373  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.373  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.373  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.373  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.373  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.373  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.374  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.374  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.374  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.374  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.374  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.374  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.374  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.374  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.374  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.376  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.376  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.376  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.376  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.376  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.376  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.376  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.376  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.376  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.378  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.378  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.378  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.378  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.378  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.378  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.378  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.378  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.378  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.380  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.380  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.380  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.380  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.380  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.380  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.380  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.380  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.380  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:53:26.381  3904  4507 E ReactNativeJS: { [Error: TransformError SyntaxError: D:\arcfire20260607\src\arcCore\schedule\runArcCoreDailyOpsBatch.ts: Identifier 'usePlanetCoreRuntimeStore' has already been declared. (29:9)
+06-27 23:53:26.381  3904  4507 E ReactNativeJS: 
+06-27 23:53:26.381  3904  4507 E ReactNativeJS: [0m [90m 27 |[39m [36mimport[39m { isArcCoreRtdbAvailableForSession } [36mfrom[39m [32m'../../firebase/rtdbRefs'[39m[33m;[39m
+06-27 23:53:26.381  3904  4507 E ReactNativeJS:  [90m 28 |[39m [36mimport[39m { getCurrentUser } [36mfrom[39m [32m'../../firebase/auth'[39m[33m;[39m
+06-27 23:53:26.381  3904  4507 E ReactNativeJS: [31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { usePlanetCoreRuntimeStore } [36mfrom[39m [32m'../../store/planetCoreRuntimeStore'[39m[33m;[39m
+06-27 23:53:26.381  3904  4507 E ReactNativeJS:  [90m    |[39m          [31m[1m^[22m[39m
+06-27 23:53:26.381  3904  4507 E ReactNativeJS:  [90m 30 |[39m [36mimport[39m { resolveArcCoreDailyOpsPolicy } [36mfrom[39m [32m'./arcCoreDailyOpsPolicy'[39m[33m;[39m
+06-27 23:53:26.381  3904  4507 E ReactNativeJS:  [90m 31 |[39m [36mimport[39m {
+06-27 23:53:26.381  3904  4507 E ReactNativeJS:  [90m 32 |[39m   beginPlanetCoreStatOpsTrendSnapshot[33m,[39m[0m] preventSymbolication: true }
+06-27 23:54:09.718  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+06-27 23:54:09.720  1909  1965 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+06-27 23:54:10.320  1909  1965 I ActivityManager: Changes in 11070 2 to 15, 255 to 128
+06-27 23:54:10.397  1909  2867 I ActivityManager: Changes in 11070 15 to 15, 128 to 0
+06-27 23:54:11.775  1909  1965 I ActivityManager: Killing 3904:com.arcfire.online/u0a1070 (adj 900): remove task
+06-27 23:54:11.963  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 3904
+06-27 23:54:13.443  1909  3301 I ActivityManager: Changes in 99252 19 to 3, 0 to 184
+06-27 23:54:47.244  1909  1973 I ActivityManager: Start proc 4624:com.arcfire.online/u0a1070 for activelaunch {com.arcfire.online/com.arcfire.online.MainActivity}
+06-27 23:54:47.244  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-27 23:54:48.288  1909  3050 I ActivityManager: Changes in 11070 19 to 2, 0 to 255
+06-27 23:54:48.547  1909  1965 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+06-27 23:54:58.638  1909  4341 I ActivityManager: Changes in 99252 3 to 10, 184 to 128
+06-27 23:55:03.593  1909  4341 I ActivityManager: Changes in 99252 19 to 10, 128 to 0
+06-27 23:55:31.087  4624  4714 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:55:31.103  4624  4714 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:55:31.121  4624  4714 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:55:31.142  4624  4714 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:55:31.155  4624  4714 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:55:31.284  1909  2057 I ActivityManager: Changes in 99252 19 to 3, 0 to 184
+06-27 23:55:31.523  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:55:31.523  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-27 23:55:31.524  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:55:31.524  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-27 23:55:31.555  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+06-27 23:55:31.638  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+06-27 23:55:31.639  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+06-27 23:55:31.639  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `signInAnonymously`. Please use `signInAnonymously()` instead.
+06-27 23:55:32.094  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+06-27 23:55:32.100  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `ref`. Please use `ref()` instead.
+06-27 23:55:32.108  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `once`. Please use `get()` instead.
+06-27 23:55:34.538  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:55:34.538  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-27 23:55:34.538  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:55:34.539  4624  4714 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-27 23:55:41.457  1909  4341 I ActivityManager: Changes in 99252 3 to 10, 184 to 0
+06-27 23:56:52.394  4624  4852 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:56:52.413  4624  4852 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:56:52.434  4624  4852 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:56:52.456  4624  4852 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:56:52.472  4624  4852 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:56:52.503  1909  2057 I ActivityManager: Changes in 99252 19 to 3, 0 to 184
+06-27 23:56:52.802  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:56:52.802  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-27 23:56:52.803  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:56:52.804  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-27 23:56:52.832  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+06-27 23:56:52.841  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+06-27 23:56:52.841  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+06-27 23:56:52.842  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `signInAnonymously`. Please use `signInAnonymously()` instead.
+06-27 23:56:53.010  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+06-27 23:56:53.012  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `ref`. Please use `ref()` instead.
+06-27 23:56:53.015  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `once`. Please use `get()` instead.
+06-27 23:56:56.842  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:56:56.842  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-27 23:56:56.842  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:56:56.842  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-27 23:57:02.632  1909  4356 I ActivityManager: Changes in 99252 3 to 10, 184 to 0
+06-27 23:57:44.167  1909  2065 I ActivityManager: Changes in 10248 19 to 8, 0 to 128
+06-27 23:57:44.178  1909  2065 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+06-27 23:57:44.185  1909  2065 I ActivityManager: Changes in 10099 19 to 8, 0 to 128
+06-27 23:57:44.220  1909  4341 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+06-27 23:57:44.233  1909  4206 I ActivityManager: Changes in 10099 8 to 10, 128 to 0
+06-27 23:57:44.271  1909  2057 I ActivityManager: Changes in 10248 8 to 10, 128 to 0
+06-27 23:57:52.940  4624  4852 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:57:52.955  4624  4852 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:57:52.974  4624  4852 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:57:53.006  1909  2057 I ActivityManager: Changes in 99252 19 to 3, 0 to 184
+06-27 23:57:54.670  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:57:54.671  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-27 23:57:54.671  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:57:54.671  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-27 23:57:54.980  4624  4852 E ReactNativeJS: ReferenceError: Property 'resolvePlanetInfoPanelDescription' doesn't exist
+06-27 23:57:54.980  4624  4852 E ReactNativeJS: 
+06-27 23:57:54.980  4624  4852 E ReactNativeJS: This error is located at:
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in PlanetEconomyInfoOverlayContent (created by ArcOverlayHost)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in RCTView (created by View)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in View (created by ArcOverlayHost)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in RCTView (created by View)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in View (created by ArcOverlayHost)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in RCTView (created by View)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in View (created by ArcOverlayHost)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in RCTView (created by View)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in View (created by ArcOverlayHost)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in ArcOverlayHost (created by RootLayout)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in RCTView (created by View)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in View (created by IdleSessionRestartGuard)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in IdleSessionRestartGuard (created by RootLayout)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in RNGestureHandlerRootView (created by GestureHandlerRootView)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in GestureHandlerRootView (created by RootLayout)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in RootLayout
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in Unknown (created by Route())
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in Suspense (created by Route())
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in Route (created by Route())
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in Route() (created by ContextNavigator)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in RNCSafeAreaProvider (created by SafeAreaProvider)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in SafeAreaProvider (created by wrapper)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in wrapper (created by ContextNavigator)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in EnsureSingleNavigator
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in BaseNavigationContainer
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in ThemeProvider
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in NavigationContainerInner (created by ContextNavigator)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in ContextNavigator (created by ExpoRoot)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in ExpoRoot (created by App)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in App (created by ErrorOverlay)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in ErrorToastContainer (created by ErrorOverlay)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in ErrorOverlay (created by withDevTools(ErrorOverlay))
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in withDevTools(ErrorOverlay)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in RCTView (created by View)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in View (created by AppContainer)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in RCTView (created by View)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in View (created by AppContainer)
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in AppContainer
+06-27 23:57:54.980  4624  4852 E ReactNativeJS:     in main(RootComponent)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS: ReferenceError: Property 'resolvePlanetInfoPanelDescription' doesn't exist
+06-27 23:57:54.993  4624  4852 E ReactNativeJS: 
+06-27 23:57:54.993  4624  4852 E ReactNativeJS: This error is located at:
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in PlanetEconomyInfoOverlayContent (created by ArcOverlayHost)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in RCTView (created by View)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in View (created by ArcOverlayHost)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in RCTView (created by View)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in View (created by ArcOverlayHost)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in RCTView (created by View)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in View (created by ArcOverlayHost)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in RCTView (created by View)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in View (created by ArcOverlayHost)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in ArcOverlayHost (created by RootLayout)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in RCTView (created by View)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in View (created by IdleSessionRestartGuard)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in IdleSessionRestartGuard (created by RootLayout)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in RNGestureHandlerRootView (created by GestureHandlerRootView)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in GestureHandlerRootView (created by RootLayout)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in RootLayout
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in Unknown (created by Route())
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in Suspense (created by Route())
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in Route (created by Route())
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in Route() (created by ContextNavigator)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in RNCSafeAreaProvider (created by SafeAreaProvider)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in SafeAreaProvider (created by wrapper)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in wrapper (created by ContextNavigator)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in EnsureSingleNavigator
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in BaseNavigationContainer
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in ThemeProvider
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in NavigationContainerInner (created by ContextNavigator)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in ContextNavigator (created by ExpoRoot)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in ExpoRoot (created by App)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in App (created by ErrorOverlay)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in ErrorToastContainer (created by ErrorOverlay)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in ErrorOverlay (created by withDevTools(ErrorOverlay))
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in withDevTools(ErrorOverlay)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in RCTView (created by View)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in View (created by AppContainer)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in RCTView (created by View)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in View (created by AppContainer)
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in AppContainer
+06-27 23:57:54.993  4624  4852 E ReactNativeJS:     in main(RootComponent)
+06-27 23:57:58.732  4624  4852 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:57:58.750  4624  4852 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:57:58.762  4624  4852 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+06-27 23:57:58.900  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:57:58.901  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-27 23:57:58.901  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-27 23:57:58.901  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-27 23:58:08.916  1909  2720 I ActivityManager: Changes in 99252 3 to 10, 184 to 0
+06-27 23:59:27.317  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+06-27 23:59:27.329  1909  2057 I ActivityManager: Changes in 99252 19 to 3, 0 to 184
+06-27 23:59:37.342  1909  2065 I ActivityManager: Changes in 10096 19 to 19, 128 to 0
+06-27 23:59:42.384  1909  3174 I ActivityManager: Changes in 99252 3 to 10, 184 to 0
+06-27 23:59:54.832  1909  1972 I ActivityManager: Changes in 99258 6 to 6, 0 to 128
+06-27 23:59:54.833  1909  1972 I ActivityManager: Changes in 10275 6 to 6, 0 to 128
+06-27 23:59:54.835  1909  4341 I ActivityManager: Changes in 99258 6 to 6, 128 to 0
+06-27 23:59:54.835  1909  4341 I ActivityManager: Changes in 10275 6 to 6, 128 to 0
+06-28 00:00:00.023  1909  2359 I ActivityManager: Changes in 10108 10 to 5, 0 to 144
+06-28 00:00:00.148  1909  3174 E ActivityManager: Sending non-protected broadcast com.samsung.android.app.aodservice.LOCK_WIDGET_REQUEST from system 2640:com.android.systemui/u0a53 pkg com.android.systemui
+06-28 00:00:00.148  1909  3174 E ActivityManager: java.lang.Throwable
+06-28 00:00:00.148  1909  3174 E ActivityManager: 	at com.android.server.am.BroadcastController.checkBroadcastFromSystem(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:252)
+06-28 00:00:00.148  1909  3174 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLockedTraced(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:344)
+06-28 00:00:00.148  1909  3174 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:18)
+06-28 00:00:00.148  1909  3174 E ActivityManager: 	at com.android.server.am.ActivityManagerService.broadcastIntentWithFeature(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:149)
+06-28 00:00:00.148  1909  3174 E ActivityManager: 	at android.app.IActivityManager$Stub.onTransact$broadcastIntentWithFeature$(IActivityManager.java:12412)
+06-28 00:00:00.148  1909  3174 E ActivityManager: 	at android.app.IActivityManager$Stub.onTransact(IActivityManager.java:3205)
+06-28 00:00:00.148  1909  3174 E ActivityManager: 	at com.android.server.am.ActivityManagerService.onTransact(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:425)
+06-28 00:00:00.148  1909  3174 E ActivityManager: 	at android.os.Binder.execTransactInternal(Binder.java:1462)
+06-28 00:00:00.148  1909  3174 E ActivityManager: 	at android.os.Binder.execTransact(Binder.java:1401)
+06-28 00:00:00.178  1909  1973 I ActivityManager: Start proc 5075:com.samsung.android.calendar/u0a222 for broadcast {com.samsung.android.calendar/com.samsung.android.app.calendar.widget.AodCalendarReceiver}
+06-28 00:00:00.178  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-28 00:00:00.180  1909  1972 I ActivityManager: Changes in 10056 19 to 11, 0 to 128
+06-28 00:00:00.192  1909  2720 I ActivityManager: Changes in 10056 11 to 19, 128 to 0
+06-28 00:00:00.199  1909  1973 I ActivityManager: Start proc 5078:com.samsung.android.app.routines/u0a53 for service {com.samsung.android.app.routines/com.samsung.android.app.routines.domainmodel.service.RoutineService}
+06-28 00:00:00.199  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-28 00:00:00.655  1909  2057 I ActivityManager: Changes in 10222 19 to 11, 0 to 128
+06-28 00:00:00.663  1909  1973 I ActivityManager: Start proc 5111:com.android.providers.calendar/u0a115 for content provider {com.android.providers.calendar/com.android.providers.calendar.CalendarProvider2}
+06-28 00:00:00.664  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-28 00:00:00.686  1909  1973 I ActivityManager: Start proc 5112:com.samsung.android.app.reminder/u0a224 for content provider {com.samsung.android.app.reminder/com.samsung.android.app.reminder.data.provider.ReminderProvider}
+06-28 00:00:00.687  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-28 00:00:00.724  1909  4341 I ActivityManager: Changes in 10222 11 to 19, 128 to 0
+06-28 00:00:00.904  1909  1973 I ActivityManager: Start proc 5165:com.samsung.android.app.aodservice:provider/u0a53 for content provider {com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.provider.AODContentProvider}
+06-28 00:00:00.904  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-28 00:00:01.171  1909  4226 I ActivityManager: Changes in 10115 19 to 5, 0 to 144
+06-28 00:00:01.191  1909  4226 I ActivityManager: Changes in 10222 19 to 5, 0 to 144
+06-28 00:00:01.267  1909  4226 I ActivityManager: Changes in 10224 19 to 5, 0 to 144
+06-28 00:00:02.911  1909  4226 I ActivityManager: Changes in 10056 19 to 5, 0 to 144
+06-28 00:00:05.097  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-28 00:00:05.097  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+06-28 00:00:05.098  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+06-28 00:00:05.098  4624  4852 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+06-28 00:00:06.198  1909  1971 I ActivityManager: Changes in 10108 5 to 10, 144 to 0
+06-28 00:00:07.089  1909  4226 I ActivityManager: Killing 31262:com.sec.android.provider.badge/u0a55 (adj 975): empty #25
+06-28 00:00:07.206  1909  1971 I ActivityManager: Changes in 10224 5 to 15, 144 to 0
+06-28 00:00:07.206  1909  1971 I ActivityManager: Changes in 10222 5 to 15, 144 to 0
+06-28 00:00:07.212  1909  1971 I ActivityManager: Changes in 10115 5 to 15, 144 to 0
+06-28 00:00:07.212  1909  1971 I ActivityManager: Changes in 10056 5 to 15, 144 to 0
+06-28 00:00:07.288  1909  1971 I ActivityManager: Killing 422:com.google.android.apps.tachyon/u0a254 (adj 975): empty #25
+06-28 00:00:07.430  1909  1971 I ActivityManager: Killing 1238:com.samsung.android.kmxservice:AiPrivacy/u0a89 (adj 965): empty #25
+06-28 00:00:10.016  1909  1973 I ActivityManager: Start proc 5245:com.samsung.android.forest/1000 for service {com.samsung.android.forest/com.samsung.android.forest.service.WAlarmIntentService}
+06-28 00:00:10.016  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-28 00:00:10.369  1909  3301 I ActivityManager: Killing 1805:com.samsung.sait.sohservice/1000 (adj 965): empty #25
+06-28 00:00:10.513  1909  3301 I ActivityManager: Changes in 10108 10 to 8, 0 to 128
+06-28 00:00:10.796  1909  1973 I ActivityManager: Start proc 5297:com.sec.android.app.volumemonitorprovider/u0a145 for content provider {com.sec.android.app.volumemonitorprovider/com.sec.android.app.volumemonitorprovider.VolumeMonitorProvider}
+06-28 00:00:10.796  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+06-28 00:00:10.955  1909  3301 I ActivityManager: Changes in 10145 19 to 8, 0 to 128
+06-28 00:00:11.031  1909  3174 I ActivityManager: Changes in 10145 8 to 10, 128 to 0
+06-28 00:00:11.032  1909  3174 I ActivityManager: Changes in 10108 8 to 10, 128 to 0
+06-28 00:00:11.040  1909  3301 I ActivityManager: Killing 32110:com.osp.app.signin/u0a117 (adj 965): empty #25
+06-28 00:00:27.212  1909  1972 I ActivityManager: Killing 1861:com.samsung.android.mobileservice/u0a119 (adj 955): empty #25
+06-28 00:00:28.209  1909  1972 I ActivityManager: Killing 1090:com.google.android.apps.turbo:aab/u0a250 (adj 955): empty #25

@@ -16,7 +16,9 @@ import { TACTICAL_OVERLAY } from './tacticalOverlayStyles';
 import {
   NARRATIVE_DIALOG_LAYOUT,
   narrativeDialogTextBlockHeight,
+  resolveNarrativeTypewriterSpeedMs,
 } from './narrativeDialogLayout';
+import { useNarrativeDialogNextReveal } from './useNarrativeDialogNextReveal';
 
 export type NarrativeDialogRowProps = {
   label: string;
@@ -42,7 +44,7 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
   label,
   text,
   typewriterKey,
-  typewriterSpeedMs = 28,
+  typewriterSpeedMs,
   onTextComplete,
   imageSource,
   portraitScale = 1,
@@ -57,6 +59,11 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
   const isTactical = visualTheme === 'tactical';
   const portraitTransform = portraitScale !== 1 ? [{ scale: portraitScale }] : undefined;
   const textBlockHeight = narrativeDialogTextBlockHeight(maxLines);
+  const resolvedSpeedMs = resolveNarrativeTypewriterSpeedMs(typewriterSpeedMs);
+  const { revealReady, onTypingComplete } = useNarrativeDialogNextReveal(
+    typewriterKey,
+    onTextComplete,
+  );
 
   return (
     <View
@@ -93,12 +100,12 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
           <TypewriterText
             key={typewriterKey}
             text={text}
-            speed={Math.max(1, typewriterSpeedMs)}
-            onComplete={onTextComplete}
+            speed={resolvedSpeedMs}
+            onComplete={showActionButton ? onTypingComplete : onTextComplete}
             style={{ ...styles.text, color: isTactical ? ink.valueInk : COLORS.ink_dark }}
           />
         </View>
-        {showActionButton ? (
+        {showActionButton && revealReady ? (
           <View style={styles.footer}>
             <ArcButton
               label={buttonText}

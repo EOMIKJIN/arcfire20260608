@@ -670,6 +670,43 @@ ${body}
 `;
 }
 
+function buildPlanetGovernorReserveCommanders() {
+  const rows = loadCsv('planet_governor_reserve_commanders.csv').filter((r) =>
+    String(r.captainId ?? '').trim(),
+  );
+  const body = rows
+    .map((row) => {
+      return `  {
+    captainId: ${q(row.captainId)},
+    occupationSide: ${q(String(row.occupationSide ?? 'NEUTRAL').trim().toUpperCase())},
+    rankKo: ${q(row.rankKo ?? '')},
+    governorTitleKo: ${q(row.governorTitleKo ?? '')},
+    dialogSceneId: ${q(row.dialogSceneId ?? '')},
+    assignedShipId: ${q(row.assignedShipId ?? '')},
+    reserveOrder: ${toInt(row.reserveOrder, 0)},
+    enabled: ${toBool(row.enabled)},
+    notesKo: ${q(row.notesKo ?? '')},
+  }`;
+    })
+    .join(',\n');
+  return `export type PlanetGovernorReserveCommanderRow = {
+  captainId: string;
+  occupationSide: 'BLUE' | 'RED' | 'NEUTRAL';
+  rankKo: string;
+  governorTitleKo: string;
+  dialogSceneId: string;
+  assignedShipId: string;
+  reserveOrder: number;
+  enabled: boolean;
+  notesKo: string;
+};
+
+export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveCommanderRow[] = [
+${body}
+];
+`;
+}
+
 function buildSystems() {
   const planets = loadCsv('planets.csv');
   const systemConnections = loadCsvOptional('star_system_connections.csv');
@@ -1223,6 +1260,7 @@ function main() {
   writeOut('csvMissions.ts', buildMissions());
   writeOut('csvMissionCombatCaptains.ts', buildMissionCombatCaptains());
   writeOut('csvPlanetGovernorCommanders.ts', buildPlanetGovernorCommanders());
+  writeOut('csvPlanetGovernorReserveCommanders.ts', buildPlanetGovernorReserveCommanders());
   writeOut('csvSystems.ts', buildSystems());
   writeOut('csvMineralEconomy.ts', buildMineralEconomy());
   writeOut('csvPlayerLevelExp.ts', buildPlayerLevelExp());
@@ -1254,6 +1292,10 @@ export {
   PLANET_GOVERNOR_COMMANDERS_FROM_CSV,
   type PlanetGovernorCommanderRow,
 } from './csvPlanetGovernorCommanders';
+export {
+  PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV,
+  type PlanetGovernorReserveCommanderRow,
+} from './csvPlanetGovernorReserveCommanders';
 export { STAR_SYSTEMS_FROM_CSV } from './csvSystems';
 export {
   GALACTIC_MINERAL_POOL_FROM_CSV,

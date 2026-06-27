@@ -16,8 +16,10 @@ import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
 import { useAppSettingsStore } from '../../../store/appSettingsStore';
 import { resolvePlanetInfoPanelDescription } from '../../../game/planetHub/resolvePlanetTableDescription';
+import { createEmptyPlanetCoreStatTrendSnapshot } from '../../../game/planetHub/planetEconomyInfoSnapshot';
 import { PlanetInfoDescriptionBlock } from './PlanetInfoDescriptionBlock';
 import { PlanetInfoPortraitSlot } from './PlanetInfoPortraitSlot';
+import { PlanetCoreStatInfoRow } from './PlanetCoreStatTrendRow';
 import {
   HeavyUiOverlayShell,
   createPlanetEconomyInfoSession,
@@ -85,6 +87,7 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
   );
 
   const snapshot = session.data;
+  const statTrends = snapshot?.statTrends ?? createEmptyPlanetCoreStatTrendSnapshot();
   const subtitleRaw = snapshot
     ? `${snapshot.planetName} · KST ${snapshot.kstDayKey}`
     : planetName;
@@ -136,11 +139,36 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
           {infoRow(t('econSnap.supplyVitality'), snapshot.supplyVitalityLabel)}
           {infoRow(t('econInfo.fabricOpsToday'), snapshot.fabricOpsSummary)}
           {section(t('econInfo.coreMetrics'))}
-          {infoRow(t('econInfo.resource'), `${snapshot.resourcePct}%`)}
-          {infoRow(t('econInfo.population'), `${snapshot.populationStatPct}%`)}
-          {infoRow(t('econInfo.defense'), `${snapshot.defensePct}%`)}
-          {infoRow(t('econInfo.technology'), `${snapshot.technologyPct}%`)}
-          {infoRow(t('econInfo.environment'), `${snapshot.environmentPct}%`)}
+          <PlanetCoreStatInfoRow
+            label={t('econInfo.resource')}
+            pct={snapshot.resourcePct}
+            trend={statTrends.resource}
+            visualTheme={visualTheme}
+          />
+          <PlanetCoreStatInfoRow
+            label={t('econInfo.population')}
+            pct={snapshot.populationStatPct}
+            trend={statTrends.population}
+            visualTheme={visualTheme}
+          />
+          <PlanetCoreStatInfoRow
+            label={t('econInfo.defense')}
+            pct={snapshot.defensePct}
+            trend={statTrends.defense}
+            visualTheme={visualTheme}
+          />
+          <PlanetCoreStatInfoRow
+            label={t('econInfo.technology')}
+            pct={snapshot.technologyPct}
+            trend={statTrends.technology}
+            visualTheme={visualTheme}
+          />
+          <PlanetCoreStatInfoRow
+            label={t('econInfo.environment')}
+            pct={snapshot.environmentPct}
+            trend={statTrends.environment}
+            visualTheme={visualTheme}
+          />
           {section(t('econInfo.tradeOccupy'))}
           {infoRow(t('econInfo.convoyMonopoly'), snapshot.convoyMonopolyLabel)}
           {infoRow(t('econInfo.occupierFaction'), snapshot.occupierFactionLabel)}

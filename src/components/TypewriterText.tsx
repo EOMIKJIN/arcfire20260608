@@ -29,8 +29,14 @@ export function TypewriterText({
   const [displayed, setDisplayed] = useState('');
   const [done, setDone] = useState(false);
   const indexRef = useRef(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const carryMsRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
   const mountedRef = useRef(true);
+  const onCompleteRef = useRef(onComplete);
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -43,23 +49,42 @@ export function TypewriterText({
     setDisplayed('');
     setDone(false);
     indexRef.current = 0;
+    carryMsRef.current = 0;
 
-    timerRef.current = setInterval(() => {
+    const perCharMs = Math.max(1, speed);
+    let lastTs = 0;
+
+    const tick = (ts: number) => {
       if (!mountedRef.current) return;
-      if (indexRef.current < text.length) {
-        const next = text.slice(0, indexRef.current + 1);
-        setDisplayed(next);
-        indexRef.current++;
-      } else {
-        if (timerRef.current) clearInterval(timerRef.current);
-        if (!mountedRef.current) return;
-        setDone(true);
-        onComplete?.();
+      if (lastTs === 0) lastTs = ts;
+      carryMsRef.current += ts - lastTs;
+      lastTs = ts;
+
+      let advanced = false;
+      while (carryMsRef.current >= perCharMs && indexRef.current < text.length) {
+        carryMsRef.current -= perCharMs;
+        indexRef.current += 1;
+        advanced = true;
       }
-    }, speed);
+
+      if (advanced) {
+        setDisplayed(text.slice(0, indexRef.current));
+      }
+
+      if (indexRef.current >= text.length) {
+        setDone(true);
+        onCompleteRef.current?.();
+        return;
+      }
+
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
 
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
     };
   }, [text, speed]);
 

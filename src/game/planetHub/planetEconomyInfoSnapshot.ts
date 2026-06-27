@@ -34,11 +34,27 @@ import { usePlanetTradeFeeLedgerStore, type PlanetTradeFeeBucket } from '../../s
 import { useAppSettingsStore } from '../../store/appSettingsStore';
 import { t } from '../../i18n';
 import { formatCredits } from '../../utils/formatCredits';
+import {
+  readPlanetCoreStatOpsTrend,
+  resolvePlanetCoreStatTrendView,
+} from '../../arcCore/planetCore/planetCoreStatOpsTrend';
+import type { PlanetCoreStatKey } from '../../store/planetCoreMetricTypes';
 import { resolvePlanetInfoPanelDescription } from './resolvePlanetTableDescription';
 
 export type PlanetEconomyInfoExtraRow = {
   label: string;
   value: string;
+};
+
+export type PlanetCoreStatTrendSnapshot = {
+  resource: ReturnType<typeof resolvePlanetCoreStatTrendView>;
+  population: ReturnType<typeof resolvePlanetCoreStatTrendView>;
+  defense: ReturnType<typeof resolvePlanetCoreStatTrendView>;
+  technology: ReturnType<typeof resolvePlanetCoreStatTrendView>;
+  environment: ReturnType<typeof resolvePlanetCoreStatTrendView>;
+  /** arc_core_daily_ops 배치 KST 일자 — 없으면 아직 배치 Δ 없음 */
+  trendKstDayKey: string | null;
+  observationWindowHours: number | null;
 };
 
 export type PlanetEconomyInfoSnapshot = {
@@ -62,6 +78,8 @@ export type PlanetEconomyInfoSnapshot = {
   defensePct: number;
   technologyPct: number;
   environmentPct: number;
+  /** 5대 스탯 일일 배치 추세(시세) */
+  statTrends: PlanetCoreStatTrendSnapshot;
   /** 5대 스탯 기반 행성 총생산(PGP, BMU) */
   pgpBmu: number;
   convoyMonopolyLabel: string;
@@ -151,6 +169,39 @@ function resolveCoreRuntime(planetId: string) {
     defense: base.defense,
     technology: base.technology,
     environment: base.environment,
+  };
+}
+
+function buildStatTrendSnapshot(planetId: string): PlanetCoreStatTrendSnapshot {
+  const trend = readPlanetCoreStatOpsTrend(planetId);
+  const statKeys: PlanetCoreStatKey[] = [
+    'resource',
+    'population',
+    'defense',
+    'technology',
+    'environment',
+  ];
+  const views = {} as Omit<PlanetCoreStatTrendSnapshot, 'trendKstDayKey' | 'observationWindowHours'>;
+  for (const key of statKeys) {
+    views[key] = resolvePlanetCoreStatTrendView(trend, key);
+  }
+  return {
+    ...views,
+    trendKstDayKey: trend?.kstDayKey ?? null,
+    observationWindowHours: trend?.observationWindowHours ?? null,
+  };
+}
+
+/** 세션 캐시·구버전 스냅샷 폴백 */
+export function createEmptyPlanetCoreStatTrendSnapshot(): PlanetCoreStatTrendSnapshot {
+  return {
+    resource: resolvePlanetCoreStatTrendView(null, 'resource'),
+    population: resolvePlanetCoreStatTrendView(null, 'population'),
+    defense: resolvePlanetCoreStatTrendView(null, 'defense'),
+    technology: resolvePlanetCoreStatTrendView(null, 'technology'),
+    environment: resolvePlanetCoreStatTrendView(null, 'environment'),
+    trendKstDayKey: null,
+    observationWindowHours: null,
   };
 }
 
@@ -252,6 +303,7 @@ export function buildPlanetEconomyInfoSnapshot(
     defensePct: core.defense,
     technologyPct: core.technology,
     environmentPct: core.environment,
+    statTrends: buildStatTrendSnapshot(planetId),
     pgpBmu,
     convoyMonopolyLabel: convoyLabel || getTransportFleetDisplayNameKo(),
     occupierFactionLabel: occupierFactionLabelKo(faction),

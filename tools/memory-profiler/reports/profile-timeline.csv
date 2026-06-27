@@ -1,3 +1,4 @@
 ﻿iso_time,snapshot_id,pid,stage,event,pss_mb,gl_mb,native_mb,java_mb,views,detail
 2026-06-24 20:40:47,20260624-204047-609,20679,unknown,manual,816.7,25,469.3,28.9,298,arcadia_idle_watch_until_11am_20260625
 2026-06-27 09:25:37,20260627-092537-911,20142,unknown,manual,951.7,43,491.8,28.1,347,mem_fix_3h_soak_start_20260627
+2026-06-27 21:33:14,20260627-213314-157,21383,unknown,manual,562.6,15.1,257.5,20.6,13,session_start_memory_refactor

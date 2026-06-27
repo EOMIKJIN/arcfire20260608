@@ -1,11 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  listTerritorialCombatPolicies,
+  listTerritorialCombatPoliciesForCampaign,
+} from './arcCoreTerritorialCombatPolicy';
 import { TERRITORIAL_CAMPAIGN_PASS_INTERVAL_SEC } from './territorialCombatCampaign';
 
 const STORAGE_KEY = 'arcfire_arc_core_territorial_combat_v1';
 
-type CampaignGroupState = {
+export type CampaignGroupState = {
   lastPassAtMs: number;
   lastOrderIndex: number;
+  /** 미리 고정된 다음 판정·맵 링 예고 순번 (0..N-1) — 판정 완료 시에만 전진 */
+  nextPreviewOrderIndex: number;
 };
 
 type Persisted = {
@@ -15,6 +21,68 @@ type Persisted = {
 
 let mem: Persisted = { byPlanetId: {}, campaignGroups: {} };
 let hydrated = false;
+let previewScheduleRevision = 0;
+const previewScheduleListeners = new Set<() => void>();
+
+function notifyTerritorialPreviewScheduleChanged(): void {
+  previewScheduleRevision += 1;
+  for (const listener of previewScheduleListeners) {
+    listener();
+  }
+}
+
+export function subscribeTerritorialPreviewSchedule(listener: () => void): () => void {
+  previewScheduleListeners.add(listener);
+  return () => {
+    previewScheduleListeners.delete(listener);
+  };
+}
+
+export function getTerritorialPreviewScheduleRevision(): number {
+  return previewScheduleRevision;
+}
+
+function normalizePreviewOrderIndex(index: number, campaignLength: number): number {
+  if (campaignLength <= 0) return 0;
+  return ((index % campaignLength) + campaignLength) % campaignLength;
+}
+
+function migrateCampaignGroupStates(): boolean {
+  let mutated = false;
+  const policies = listTerritorialCombatPolicies();
+  for (const group of listTerritorialCampaignGroups(policies)) {
+    const groupPolicies = listTerritorialCombatPoliciesForCampaign(group);
+    const n = groupPolicies.length;
+    if (n === 0) continue;
+
+    const raw = mem.campaignGroups[group];
+    const lastPassAtMs = typeof raw?.lastPassAtMs === 'number' ? raw.lastPassAtMs : 0;
+    const lastOrderIndex = typeof raw?.lastOrderIndex === 'number' ? raw.lastOrderIndex : -1;
+    let nextPreviewOrderIndex =
+      typeof raw?.nextPreviewOrderIndex === 'number' && Number.isFinite(raw.nextPreviewOrderIndex)
+        ? raw.nextPreviewOrderIndex
+        : lastOrderIndex < 0
+          ? 0
+          : normalizePreviewOrderIndex(lastOrderIndex + 1, n);
+    nextPreviewOrderIndex = normalizePreviewOrderIndex(nextPreviewOrderIndex, n);
+
+    const next: CampaignGroupState = {
+      lastPassAtMs,
+      lastOrderIndex,
+      nextPreviewOrderIndex,
+    };
+    if (
+      !raw
+      || raw.lastPassAtMs !== next.lastPassAtMs
+      || raw.lastOrderIndex !== next.lastOrderIndex
+      || raw.nextPreviewOrderIndex !== next.nextPreviewOrderIndex
+    ) {
+      mem.campaignGroups[group] = next;
+      mutated = true;
+    }
+  }
+  return mutated;
+}
 
 export async function hydrateArcCoreTerritorialCombatState(): Promise<void> {
   if (hydrated) return;
@@ -29,14 +97,25 @@ export async function hydrateArcCoreTerritorialCombatState(): Promise<void> {
             : {},
         campaignGroups:
           parsed.campaignGroups && typeof parsed.campaignGroups === 'object'
-            ? parsed.campaignGroups
+            ? (parsed.campaignGroups as Record<string, CampaignGroupState>)
             : {},
       };
+    }
+    if (migrateCampaignGroupStates()) {
+      await persistTerritorialCombatState();
     }
   } catch {
     /* ignore */
   } finally {
     hydrated = true;
+  }
+}
+
+/** 부트 시 캠페인별 nextPreviewOrderIndex 미리 확정(저장) */
+export async function ensureTerritorialCampaignPreviewSchedules(): Promise<void> {
+  await hydrateArcCoreTerritorialCombatState();
+  if (migrateCampaignGroupStates()) {
+    await persistTerritorialCombatState();
   }
 }
 
@@ -53,7 +132,18 @@ export function getTerritorialCampaignGroupState(
   return {
     lastPassAtMs: row.lastPassAtMs,
     lastOrderIndex: row.lastOrderIndex,
+    nextPreviewOrderIndex: row.nextPreviewOrderIndex,
   };
+}
+
+/** 미리 고정된 다음 판정·맵 링 예고 순번 */
+export function resolveScheduledPreviewOrderIndex(
+  campaignGroup: string,
+  campaignLength: number,
+): number {
+  const row = mem.campaignGroups[campaignGroup];
+  const idx = typeof row?.nextPreviewOrderIndex === 'number' ? row.nextPreviewOrderIndex : 0;
+  return normalizePreviewOrderIndex(idx, campaignLength);
 }
 
 async function persistTerritorialCombatState(): Promise<void> {
@@ -69,26 +159,36 @@ export async function markTerritorialCombatPassCompleted(
   nowMs: number,
   campaign?: { group: string; orderIndex: number },
 ): Promise<void> {
+  let previewAdvanced = false;
   mem = {
     ...mem,
     byPlanetId: {
       ...mem.byPlanetId,
       [planetId]: { lastPassAtMs: nowMs },
     },
-    campaignGroups: campaign
-      ? {
-          ...mem.campaignGroups,
-          [campaign.group]: {
-            lastPassAtMs: nowMs,
-            lastOrderIndex: campaign.orderIndex,
-          },
-        }
-      : mem.campaignGroups,
+    campaignGroups: { ...mem.campaignGroups },
   };
+
+  if (campaign) {
+    const groupPolicies = listTerritorialCombatPoliciesForCampaign(campaign.group);
+    const n = groupPolicies.length;
+    const nextPreviewOrderIndex =
+      n > 0 ? normalizePreviewOrderIndex(campaign.orderIndex + 1, n) : 0;
+    mem.campaignGroups[campaign.group] = {
+      lastPassAtMs: nowMs,
+      lastOrderIndex: campaign.orderIndex,
+      nextPreviewOrderIndex,
+    };
+    previewAdvanced = true;
+  }
+
   await persistTerritorialCombatState();
+  if (previewAdvanced) {
+    notifyTerritorialPreviewScheduleChanged();
+  }
 }
 
-/** 캠페인 그룹 — passInterval(초)당 1행성만 순차 판정 */
+/** 캠페인 그룹 — passInterval(초)당 1행성만 순차 판정 (예고 순번 = nextPreviewOrderIndex) */
 export function resolveTerritorialCampaignPlanetDue(
   campaignGroup: string,
   policies: Array<{ planetId: string; campaignOrder: number }>,
@@ -101,11 +201,10 @@ export function resolveTerritorialCampaignPlanetDue(
   if (state != null && nowMs - state.lastPassAtMs < intervalMs) {
     return null;
   }
-  const nextOrderIndex =
-    state == null ? 0 : (state.lastOrderIndex + 1) % sorted.length;
-  const target = sorted[nextOrderIndex];
+  const orderIndex = resolveScheduledPreviewOrderIndex(campaignGroup, sorted.length);
+  const target = sorted[orderIndex];
   if (!target) return null;
-  return { planetId: target.planetId, orderIndex: nextOrderIndex };
+  return { planetId: target.planetId, orderIndex };
 }
 
 export function listTerritorialCampaignGroups(

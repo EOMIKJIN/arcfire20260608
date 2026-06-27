@@ -62,6 +62,10 @@ import { resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 import { usePlanetStageSession } from '../../src/game/usePlanetStageSession';
 import { useStageTransitionStuckWatchdog } from '../../src/navigation/stageTransitionStuckWatchdog';
 import { buildCsvStaticIndexesFull } from '../../src/game/buildCsvStaticIndexes';
+import {
+  warmGalaxyDeparturePreflight,
+  warmPlanetHubResidentSet,
+} from '../../src/arcCore/memory';
 import { markBootPerf } from '../../src/game/bootPerformance';
 import {
   PlanetCapitalCombatRoot,
@@ -320,12 +324,19 @@ export default function PlanetScreen() {
     'planet_main_stage_hub',
     () => {
       buildCsvStaticIndexesFull();
+      const pid = usePlayerStore.getState().player?.currentPlanetId ?? null;
+      warmPlanetHubResidentSet(pid);
     },
     () => {
       const pid = usePlayerStore.getState().player?.currentPlanetId ?? null;
       releasePlanetHubStageMemory(pid);
     },
   );
+
+  useEffect(() => {
+    if (!isPlanetRouteFocused || !player?.currentPlanetId) return;
+    warmPlanetHubResidentSet(player.currentPlanetId);
+  }, [isPlanetRouteFocused, player?.currentPlanetId]);
 
   const prevMainStagePlanetIdRef = useRef<string | null>(null);
   useEffect(() => {
@@ -377,6 +388,7 @@ export default function PlanetScreen() {
       return;
     }
     recordHubDeparturePlanet(currentPlayer?.currentPlanetId);
+    warmGalaxyDeparturePreflight(currentPlayer?.currentPlanetId ?? null);
     markGalaxyMapIngressFromPlanetHub();
     beginPlanetHubSuspendingNavigation(() => router.replace('/(game)/worldmap'), {
       preserveCombatSnapshot: false,
@@ -559,7 +571,29 @@ export default function PlanetScreen() {
   }, [planet?.id, isPlanetRouteFocused, appStateActive, stageSession.isActive]);
 
   const capitalCombatOrbitActiveRef = useRef(capitalCombatOrbitActive);
-  capitalCombatOrbitActiveRef.current = capitalCombatOrbitActive;
+  useLayoutEffect(() => {
+    capitalCombatOrbitActiveRef.current = capitalCombatOrbitActive;
+  }, [capitalCombatOrbitActive]);
+
+  /** Skia arm — route_blur teardown 2×rAF 후 mount (ingress Native step 완화) */
+  const [hubSkiaArmReady, setHubSkiaArmReady] = useState(false);
+  useEffect(() => {
+    if (!planetStageSkiaActive) {
+      setHubSkiaArmReady(false);
+      return undefined;
+    }
+    let cancelled = false;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!cancelled) setHubSkiaArmReady(true);
+      });
+    });
+    return () => {
+      cancelled = true;
+      setHubSkiaArmReady(false);
+    };
+  }, [planetStageSkiaActive]);
+  const hubStageSkiaActive = planetStageSkiaActive && hubSkiaArmReady;
 
   /** 허브 체류 PSS/Native floor — 5분 soft + deferred Fresco (전투 orbit 활성 시 skip) */
   useEffect(() => {
@@ -1234,7 +1268,7 @@ export default function PlanetScreen() {
           backgroundChrome={mainStageVertical.backgroundChrome}
           planetStageScale={planetStageScale}
           combatSimRef={combatSimRef}
-          hubStageSkiaActive={planetStageSkiaActive}
+          hubStageSkiaActive={hubStageSkiaActive}
         />
       }
       absoluteOverlay={

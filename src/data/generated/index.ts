@@ -20,6 +20,10 @@ export {
   PLANET_GOVERNOR_COMMANDERS_FROM_CSV,
   type PlanetGovernorCommanderRow,
 } from './csvPlanetGovernorCommanders';
+export {
+  PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV,
+  type PlanetGovernorReserveCommanderRow,
+} from './csvPlanetGovernorReserveCommanders';
 export { STAR_SYSTEMS_FROM_CSV } from './csvSystems';
 export {
   GALACTIC_MINERAL_POOL_FROM_CSV,

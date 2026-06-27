@@ -45,7 +45,7 @@ export class AiEconomySubCore extends BaseArcSubCore {
             void useBlueTeamSharedVaultStore.getState().hydrate().then(() => {
               void usePlanetTradeFeeLedgerStore.getState().hydrate().then(() => {
                 void useEconomyPriceOverlayStore.getState().loadAsync().then(() => {
-                  runPlayScenarioEconomyPass(true);
+                  runPlayScenarioEconomyPass(false, { skipCatalog: true });
                 });
               });
             });

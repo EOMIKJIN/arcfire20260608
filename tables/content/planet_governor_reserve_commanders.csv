@@ -1,0 +1,46 @@
+captainId,occupationSide,rankKo,governorTitleKo,dialogSceneId,assignedShipId,reserveOrder,enabled,notesKo
+npc_cpt_gov_reserve_blue_01,BLUE,제독,서부전선 제독,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_01,1,true,스텔리움 예비 총사령관 01
+npc_cpt_gov_reserve_blue_02,BLUE,대장,연합기동군단장,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_02,2,true,스텔리움 예비 총사령관 02
+npc_cpt_gov_reserve_blue_03,BLUE,군단장,항로방위사령,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_03,3,true,스텔리움 예비 총사령관 03
+npc_cpt_gov_reserve_blue_04,BLUE,함대장,궤도방어사령,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_04,4,true,스텔리움 예비 총사령관 04
+npc_cpt_gov_reserve_blue_05,BLUE,전략장,작전기획국장,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_05,5,true,스텔리움 예비 총사령관 05
+npc_cpt_gov_reserve_blue_06,BLUE,순항사령,원정순항본부장,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_06,6,true,스텔리움 예비 총사령관 06
+npc_cpt_gov_reserve_blue_07,BLUE,방어사령,요새방어사령관,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_07,7,true,스텔리움 예비 총사령관 07
+npc_cpt_gov_reserve_blue_08,BLUE,초계장,변경초계총감,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_08,8,true,스텔리움 예비 총사령관 08
+npc_cpt_gov_reserve_blue_09,BLUE,호위사령,무역호위총감,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_09,9,true,스텔리움 예비 총사령관 09
+npc_cpt_gov_reserve_blue_10,BLUE,특임장,특수작전장,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_10,10,true,스텔리움 예비 총사령관 10
+npc_cpt_gov_reserve_blue_11,BLUE,전선장,서부전선총감,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_11,11,true,스텔리움 예비 총사령관 11
+npc_cpt_gov_reserve_blue_12,BLUE,기동장,기동함대사령,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_12,12,true,스텔리움 예비 총사령관 12
+npc_cpt_gov_reserve_blue_13,BLUE,정찰장,정찰전단장,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_13,13,true,스텔리움 예비 총사령관 13
+npc_cpt_gov_reserve_blue_14,BLUE,지원장,전략지원사령,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_14,14,true,스텔리움 예비 총사령관 14
+npc_cpt_gov_reserve_blue_15,BLUE,연합장,스텔리움 연합장,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_15,15,true,스텔리움 예비 총사령관 15
+npc_cpt_gov_reserve_blue_16,BLUE,성계장,성계방위사령,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_16,16,true,스텔리움 예비 총사령관 16
+npc_cpt_gov_reserve_blue_17,BLUE,수비장,거점수비사령,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_17,17,true,스텔리움 예비 총사령관 17
+npc_cpt_gov_reserve_blue_18,BLUE,교전장,교전지휘관,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_18,18,true,스텔리움 예비 총사령관 18
+npc_cpt_gov_reserve_blue_19,BLUE,태양장,태양권 파견장,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_19,19,true,스텔리움 예비 총사령관 19
+npc_cpt_gov_reserve_blue_20,BLUE,방위장,방위연합총감,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_20,20,true,스텔리움 예비 총사령관 20
+npc_cpt_gov_reserve_red_01,RED,군주,크림슨 군단장,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_01,1,true,크림슨 예비 총사령관 01
+npc_cpt_gov_reserve_red_02,RED,전대장,붉은 전대사령,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_02,2,true,크림슨 예비 총사령관 02
+npc_cpt_gov_reserve_red_03,RED,약탈장,약탈전단장,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_03,3,true,크림슨 예비 총사령관 03
+npc_cpt_gov_reserve_red_04,RED,혈전장,혈전사령관,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_04,4,true,크림슨 예비 총사령관 04
+npc_cpt_gov_reserve_red_05,RED,암흑장,암시장 군벌,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_05,5,true,크림슨 예비 총사령관 05
+npc_cpt_gov_reserve_red_06,RED,문지기,심연 문지기,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_06,6,true,크림슨 예비 총사령관 06
+npc_cpt_gov_reserve_red_07,RED,야습장,나이트폴 군주,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_07,7,true,크림슨 예비 총사령관 07
+npc_cpt_gov_reserve_red_08,RED,수문장,코어 수문장,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_08,8,true,크림슨 예비 총사령관 08
+npc_cpt_gov_reserve_red_09,RED,영원장,영원 군단장,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_09,9,true,크림슨 예비 총사령관 09
+npc_cpt_gov_reserve_red_10,RED,차단장,항로 차단장,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_10,10,true,크림슨 예비 총사령관 10
+npc_cpt_gov_reserve_red_11,RED,침투장,변경 침투장,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_11,11,true,크림슨 예비 총사령관 11
+npc_cpt_gov_reserve_red_12,RED,습격장,회항로 습격장,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_12,12,true,크림슨 예비 총사령관 12
+npc_cpt_gov_reserve_red_13,RED,강습장,태양권 강습장,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_13,13,true,크림슨 예비 총사령관 13
+npc_cpt_gov_reserve_red_14,RED,왜곡장,공간 왜곡장,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_14,14,true,크림슨 예비 총사령관 14
+npc_cpt_gov_reserve_red_15,RED,전리장,전리품 감독,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_15,15,true,크림슨 예비 총사령관 15
+npc_cpt_gov_reserve_red_16,RED,포위장,포위전사령,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_16,16,true,크림슨 예비 총사령관 16
+npc_cpt_gov_reserve_red_17,RED,사냥장,교차점 사냥꾼,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_17,17,true,크림슨 예비 총사령관 17
+npc_cpt_gov_reserve_red_18,RED,봉쇄장,관문 봉쇄장,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_18,18,true,크림슨 예비 총사령관 18
+npc_cpt_gov_reserve_red_19,RED,감시장,고대 감시자,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_19,19,true,크림슨 예비 총사령관 19
+npc_cpt_gov_reserve_red_20,RED,왕좌장,왕좌 요격장,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_20,20,true,크림슨 예비 총사령관 20
+npc_cpt_gov_reserve_neutral_01,NEUTRAL,관리인,중립 행정장,npc_dialog_gov_neutral_reserve,npc_ship_gov_reserve_neutral_01,1,true,중립 예비 총사령관 01
+npc_cpt_gov_reserve_neutral_02,NEUTRAL,중재장,중립 중재관,npc_dialog_gov_neutral_reserve,npc_ship_gov_reserve_neutral_02,2,true,중립 예비 총사령관 02
+npc_cpt_gov_reserve_neutral_03,NEUTRAL,유적장,유적 수호장,npc_dialog_gov_neutral_reserve,npc_ship_gov_reserve_neutral_03,3,true,중립 예비 총사령관 03
+npc_cpt_gov_reserve_neutral_04,NEUTRAL,수문장,기원 수문장,npc_dialog_gov_neutral_reserve,npc_ship_gov_reserve_neutral_04,4,true,중립 예비 총사령관 04
+npc_cpt_gov_reserve_neutral_05,NEUTRAL,감시장,중립 감시장,npc_dialog_gov_neutral_reserve,npc_ship_gov_reserve_neutral_05,5,true,중립 예비 총사령관 05

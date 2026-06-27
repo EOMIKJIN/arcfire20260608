@@ -341,7 +341,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'tavern.today': 'Today {hm}',
   'tavern.yesterday': 'Yesterday {hm}',
   'tavern.date': '{month}/{day} {hm}',
-  'tavern.boardMeta': 'Auto-updated · {count} notices',
+  'tavern.boardMeta': 'Auto-updated · {count} recent notices',
   'tavern.defaultPilot': 'Pilot',
   'tavern.greeting': 'Welcome, Captain {name}!',
   'tavern.hostLabel': '[ Tavern Host · {name} ]',

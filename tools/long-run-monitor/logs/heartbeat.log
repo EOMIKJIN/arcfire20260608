@@ -712,3 +712,34 @@
 [19:56] OK · PID 20481 · PSS 900.7MB / GL 57.2MB / views 479
 [20:06] OK · PID 20481 · PSS 1020.8MB / GL 145.5MB / views 559
 [20:16] OK · PID 20481 · PSS 1002.2MB / GL 141.5MB / views 559
+[20:26] .. 앱 미실행(대기중)
+[20:37] .. 앱 미실행(대기중)
+[20:47] OK · PID 21383 · PSS 528MB / GL 8.4MB / views 99
+[20:57] OK · PID 21383 · PSS 526.2MB / GL 8.4MB / views 99
+[21:07] OK · PID 21383 · PSS 529.2MB / GL 8.4MB / views 99
+[21:17] OK · PID 21383 · PSS 533.2MB / GL 8.4MB / views 99
+[21:27] OK · PID 21383 · PSS 537.3MB / GL 10.1MB / views 99
+[2026-06-27 21:32:52] === report-watch v2.7 (pkg=com.arcfire.online · 10m · 신선 크래시만) · auto-fix=OFF ===
+[2026-06-27 21:32:50] MANUAL OK PSS 405MB / GL 25.3MB / views 15 (PLAYTEST_START_playtest-20260627-213246)
+[21:32] OK · PID 21383 · PSS 385.4MB / GL 25.3MB / views 15
+[2026-06-27 21:33:11] MANUAL OK PSS 602.7MB / GL 15.1MB / views 15 (PLAYTEST_MILESTONE:session_start_memory_refactor)
+[2026-06-27 21:33:14] MANUAL OK PSS 562.4MB / GL 15.1MB / views 13 (PROFILE_SNAP stage=unknown event=manual id=20260627-213314-157)
+[2026-06-27 21:34:02] === report-watch v2.7 (pkg=com.arcfire.online · 10m · 신선 크래시만) · auto-fix=OFF ===
+[21:34] OK · PID 21383 · PSS 806.6MB / GL 44.4MB / views 380
+[21:44] OK · PID 21383 · PSS 834.6MB / GL 50.7MB / views 322
+[21:54] OK · PID 21383 · PSS 890.3MB / GL 51.9MB / views 385
+[22:04] OK · PID 21383 · PSS 894.3MB / GL 61.4MB / views 380
+[22:14] OK · PID 21383 · PSS 870.4MB / GL 50.2MB / views 385
+[22:24] OK · PID 21383 · PSS 877.5MB / GL 50.2MB / views 386
+[22:34] OK · PID 21383 · PSS 886.7MB / GL 54.3MB / views 381
+[22:44] !! PID_CHANGE session=21383 -> 30118 (크래시·재시작 의심)
+[22:54] OK · PID 30118 · PSS 866MB / GL 146.5MB / views 555
+[23:04] .. 앱 미실행(대기중)
+[23:14] OK · PID 32559 · PSS 716.8MB / GL 40.7MB / views 603
+[23:24] OK · PID 32559 · PSS 795.1MB / GL 46.8MB / views 381
+[2026-06-27 23:41:56] === report-watch v2.7 (pkg=com.arcfire.online · 10m · 신선 크래시만) · auto-fix=OFF ===
+[23:41] OK · PID 32559 · PSS 1024.8MB / GL 142.8MB / views 547
+[2026-06-27 23:44:21] === report-watch v2.7 (pkg=com.arcfire.online · 10m · 신선 크래시만) · auto-fix=OFF ===
+[2026-06-27 23:44:19] MANUAL OK PSS 349.9MB / GL 5.9MB / views 13 (PLAYTEST_START_playtest-20260627-234416)
+[23:44] OK · PID 3904 · PSS 353.2MB / GL 5.9MB / views 13
+[23:54] .. 앱 미실행(대기중)

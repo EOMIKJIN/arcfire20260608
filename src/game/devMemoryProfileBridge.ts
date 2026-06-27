@@ -1,6 +1,9 @@
 /**
- * __DEV__ — Instruments/Profiler 유사 마커 (logcat `[MEM_PROFILE]`).
- * 김경제 memory-profiler 가 logcat·스냅샷 diff 로 retention 누수 탐지.
+ * Instruments/Profiler 유사 마커 (logcat `[MEM_PROFILE]`).
+ * 김경제 memory-profiler · retention audit 입력.
+ *
+ * - __DEV__: 항상 출력
+ * - release soak: EXPO_PUBLIC_ARCFIRE_MEM_PROFILE=1 빌드 시 출력
  */
 
 export type MemProfileStage =
@@ -24,6 +27,15 @@ type EmitOpts = {
   detail?: string;
 };
 
+function isMemProfileLogEnabled(): boolean {
+  if (typeof __DEV__ !== 'undefined' && __DEV__) return true;
+  try {
+    return process.env.EXPO_PUBLIC_ARCFIRE_MEM_PROFILE === '1';
+  } catch {
+    return false;
+  }
+}
+
 function readHermesHeapMb(): number | null {
   if (typeof globalThis === 'undefined') return null;
   const hermes = (globalThis as { HermesInternal?: { getInstrumentedStats?: () => Record<string, number> } })
@@ -41,7 +53,7 @@ function readHermesHeapMb(): number | null {
 
 /** Metro logcat — `pull-mem-profile-logcat.ps1` / retention audit 입력 */
 export function emitMemProfileMarker(opts: EmitOpts): void {
-  if (typeof __DEV__ === 'undefined' || !__DEV__) return;
+  if (!isMemProfileLogEnabled()) return;
   const hermesMb = readHermesHeapMb();
   const hermesPart = hermesMb != null ? ` hermes_mb=${hermesMb}` : '';
   const detail = opts.detail?.trim() ? ` detail=${opts.detail.trim().replace(/\s+/g, '_')}` : '';

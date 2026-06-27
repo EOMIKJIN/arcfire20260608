@@ -11,12 +11,22 @@ import { getPlanetMasterBalanceDetailForPlanet } from '../planetBalance/planetZo
 import { syncTradePortCatalogFromBalance } from './tradePortCatalogPolicy';
 import { runTradeRouteMarketPass } from '../economy/runTradeRouteMarketPass';
 
+export type PlayScenarioEconomyPassOpts = {
+  /** 부트·행성 lazy warm — 전 무역소 카탈로그 dispatch 생략 */
+  skipCatalog?: boolean;
+};
+
 /**
  * 플레이 시나리오 — 무역소 카탈로그 + 행성 masterBalance 경제 메타 동기.
  */
-export function runPlayScenarioEconomyPass(forceCatalog = false): void {
-  syncTradePortCatalogFromBalance(forceCatalog);
-  runTradeRouteMarketPass(forceCatalog);
+export function runPlayScenarioEconomyPass(
+  forceCatalog = false,
+  opts?: PlayScenarioEconomyPassOpts,
+): void {
+  if (!opts?.skipCatalog) {
+    syncTradePortCatalogFromBalance(forceCatalog);
+    runTradeRouteMarketPass(forceCatalog);
+  }
 
   const coreStore = usePlanetCoreRuntimeStore.getState();
   if (!coreStore.hydrated) return;
