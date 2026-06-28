@@ -110,6 +110,13 @@ export function resolveDefenseSatelliteDailyUpkeepCredits(level: number): number
   return getPlanetDefenseSatelliteLevelRow(level)?.dailyUpkeepCredits ?? 0;
 }
 
+/** 방어 영역 반경(px) — 위성 중심 · 전투·허브 링 공통 (지름 ÷ 2) */
+export function resolveDefenseSatelliteZoneRadiusPx(level: number): number {
+  const row = getPlanetDefenseSatelliteLevelRow(level);
+  if (!row) return 60;
+  return Math.max(1, Math.floor(row.defenseZoneDiameterPx / 2));
+}
+
 /** 레벨 기준 가동 위성 수 — Lv10+ 2기, 그 외 1기 */
 export function resolveDefenseSatelliteActiveCountForLevel(level: number): number {
   const row = getPlanetDefenseSatelliteLevelRow(level);

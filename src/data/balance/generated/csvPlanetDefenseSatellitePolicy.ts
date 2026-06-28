@@ -10,6 +10,6 @@ export const PlanetDefenseSatellitePolicy_FROM_BALANCE_CSV = [
   { "key": "phase_bias_step", "value": "0.5", "notesKo": "짝 위성 정반대(+180°) 위상·추가 쌍 간격" },
   { "key": "radius_scale_step", "value": "0", "notesKo": "동일 궤도 반경(동일 회전 속도)" },
   { "key": "default_level", "value": "1", "notesKo": "방위위성 디폴트 레벨" },
-  { "key": "max_level", "value": "10", "notesKo": "방위위성 최대 레벨" },
+  { "key": "max_level", "value": "15", "notesKo": "방위위성 최대 레벨(v3.2 L1~15)" },
 ] as const;
 export type PlanetDefenseSatellitePolicyRow = (typeof PlanetDefenseSatellitePolicy_FROM_BALANCE_CSV)[number];

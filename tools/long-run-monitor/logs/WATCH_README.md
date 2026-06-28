@@ -47,10 +47,57 @@ Remove-Item tools/long-run-monitor/logs/monitor-paused.flag   # 검증 종료 �
 - **알림:** `tools/long-run-monitor/logs/mem-alerts.log`
 - **incident / remediation:** `incidents.log`, `remediation.log`
 
+## 영구 실시간 탐지 → 김팀장 handoff (2026-06-28 · P0)
+
+> **앱 무영향 헌법**: `MONITOR_APP_ZERO_IMPACT.md` — 감시는 PC(adb) 전용 · 앱 번들 루프 금지 · dumpsys ≥15m
+
+**목표**: 이상 자동탐지 · `cursor-incident-handoff.md` · `CHAT_REPORT_PENDING.md` → 김팀장 P0.  
+**PC 재부팅·게임 재시작·Cursor 종료**와 무관하게 체계 **자동 재가동**.
+
+| 계층 | 구성 | 주기 |
+|------|------|------|
+| **워치독** | `run-perpetual-detection-watchdog.ps1` | 5m ensure · status JSON · HTML dashboard |
+| **mem + remediate** | `start-watch-30m` (IntervalMin=15) | 15m meminfo · handoff |
+| **heartbeat** | `report-watch` hidden | 15m 크래시·incident |
+| **incident poll** | `poll-realtime-incident-handoff.ps1` | 5m 신규 incident→investigation |
+| **외부 알림** | `notify-incident-external.cjs` | handoff 시 webhook (선택) |
+| **Windows** | 작업 `ArcfirePerpetualDetection` | 로그온 + 5m 백업 |
+
+```powershell
+# 1회 등록 (PC 로그온마다 자동 재가동)
+npm run monitor:register-perpetual
+
+# 수동 즉시 기동 · 파라미터 반영 시 restart
+npm run monitor:ensure-perpetual
+npm run monitor:ensure-perpetual:restart
+npm run monitor:status
+npm run monitor:dashboard
+```
+
+**운영 정본**: `MONITOR_OPS_REALTIME.md` · **CI**: `.github/workflows/memory-monitor-pr-gate.yml`
+
+**중단**: `logs/perpetual-detection-DISABLED.flag` 생성  
+**앱 force-stop**: `monitor-paused.flag` — 코드 handoff만 · relaunch OFF
+
+## 상시 가동 (2026-06-28 · 메모리 코드 자동픽스 효율 세트)
+
+Cursor `sessionStart` · `npm run monitor:ensure-always-on` — **멱등**:
+
+| 구성 | 스크립트 | 비고 |
+|------|----------|------|
+| mem-timeline + crash + remediate | `start-watch-30m.ps1` | 30m · incident handoff |
+| MEM_PROFILE + retention | `ensure-profiler-extras.ps1` | 60m · `latest-retention-audit.md` |
+| 08:00 데일리 | `ensure-daily-8am-report.ps1` | DISABLED flag 없으면 영구 |
+| Cursor P0 코드 수정 | incident triage 훅 2종 | handoff 대기 시 |
+
+**상시 제외**: `balance-ops-audit` 3h · `report-watch` 콘솔 · soak/floor 샘플러  
+**앱 force-stop**: `monitor-paused.flag` 있으면 **코드 핸드오프만** · relaunch OFF
+
 ## 감시 시작
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.ps1
+npm run monitor:ensure-always-on
+# 또는 npm run profile:mem:watch (동일 스택 멱등)
 ```
 
 규칙 변경 후 **기존 monitor PID 종료 후 재시작** 필요.

@@ -10,6 +10,8 @@ import { isPlanetOrbitShipyardInstalled } from './planetOrbitShipyardListing';
 import { isPlanetTradePortInstalled } from './planetTradePortListing';
 import { isPlanetResearchLabInstalled } from './planetResearchLabListing';
 import { isPlanetPopulationDomeInstalled } from './planetPopulationDomeListing';
+import { hasActiveQuestBuyPlacementAtPlanet } from '../../missions/questItemOpsRegistry';
+import { useMissionStore } from '../../store/missionStore';
 import {
   isPlanetCsvShipyardWorldEnabled,
   isPlanetCsvTavernWorldEnabled,
@@ -33,9 +35,13 @@ export function isPlanetHubShipyardEnabled(planetId: string): boolean {
   return planetHasCsvShipyard(planetId) || isPlanetOrbitShipyardInstalled(planetId);
 }
 
-/** 허브 🏪 무역소 SUB-STAGE — CSV 무역소 보유 또는 dev 설치 */
+/** 허브 🏪 무역소 SUB-STAGE — CSV·dev 무역소 또는 활성 퀘스트 구매 배치 */
 export function isPlanetHubTradePortEnabled(planetId: string): boolean {
-  return planetHasCsvTradePort(planetId) || isPlanetTradePortInstalled(planetId);
+  if (planetHasCsvTradePort(planetId) || isPlanetTradePortInstalled(planetId)) return true;
+  return hasActiveQuestBuyPlacementAtPlanet(
+    planetId,
+    useMissionStore.getState().progresses,
+  );
 }
 
 /** 허브 ⚗ 연구소(skilltree) — dev 연구소 설치만 (CSV 플래그 없음) */

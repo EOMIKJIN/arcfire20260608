@@ -56,3 +56,18 @@ export function hasAnyActiveCombatMission(
     ),
   );
 }
+
+/** 월드맵 transit — QuestHUD 주 미션(`activeMissionId`) 전투만 확률 보정 */
+export function hasPrimaryActiveCombatMission(
+  progresses: Record<string, MissionProgress>,
+  activeMissionId: string | null | undefined,
+): boolean {
+  if (!activeMissionId) return false;
+  const progress = progresses[activeMissionId];
+  if (!progress || progress.status !== 'active') return false;
+  const mission = getMissionById(activeMissionId);
+  if (!mission) return false;
+  return mission.objectives.some(
+    (obj) => obj.type === 'defeat_enemy' && progress.objectives[obj.id] !== true,
+  );
+}

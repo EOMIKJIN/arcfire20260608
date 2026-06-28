@@ -11,6 +11,11 @@ import {
   resolveCombatEnemyCaptain,
   type MissionCombatCaptainResolveInput,
 } from '../missions/resolveMissionCombatCaptain';
+import { buildTransitCombatInstanceKey } from '../arcCore/captainPresence/buildCombatInstanceKey';
+import {
+  buildMissionCombatSeedMeta,
+  isCaptainAvailableForMissionCombatAtPlanet,
+} from '../arcCore/captainPresence/resolveMissionCaptainPresence';
 
 export function resolveTransitPirateShipIdFromTables(
   systemId?: string | null,
@@ -32,6 +37,7 @@ export type TransitCombatSeedSlot = {
   team: 'red' | 'blue' | 'orange';
   npcShipId: string | null;
   captainId: string | null;
+  combatInstanceKey?: string | null;
 };
 
 /** `resolveCurrentPlayerFlagshipNpcShipId`는 sim 모듈에 유지 — 시드만 registry 경유 */
@@ -47,11 +53,34 @@ export function buildTransitCombatSeedSlots(
         systemId,
       })
     : resolveTransitPirateCaptainForSystem(systemId);
-  const redShipId = redCaptain?.assignedShipId?.trim() ?? null;
+
+  const missionMeta = missionContext?.enemyTemplateId
+    ? buildMissionCombatSeedMeta(
+        missionContext.enemyTemplateId,
+        missionContext.planetId ?? null,
+        redCaptain,
+      )
+    : null;
+
+  const redAvailable =
+    redCaptain && isCaptainAvailableForMissionCombatAtPlanet(redCaptain, missionContext?.planetId ?? null);
+  const redShipId =
+    redAvailable && redCaptain?.assignedShipId?.trim()
+      ? redCaptain.assignedShipId.trim()
+      : null;
   const blueShipId = hasNpcCapitalShipId(currentFlagshipNpcId) ? currentFlagshipNpcId : null;
+  const redInstanceKey =
+    missionMeta?.combatInstanceKey ??
+    buildTransitCombatInstanceKey(systemId, redCaptain?.id ?? null);
+
   return [
-    { team: 'red', npcShipId: redShipId, captainId: redCaptain?.id ?? null },
-    { team: 'blue', npcShipId: blueShipId, captainId: null },
+    {
+      team: 'red',
+      npcShipId: redShipId,
+      captainId: redAvailable ? redCaptain?.id ?? null : null,
+      combatInstanceKey: redInstanceKey,
+    },
+    { team: 'blue', npcShipId: blueShipId, captainId: null, combatInstanceKey: 'transit_player_flagship' },
   ];
 }
 

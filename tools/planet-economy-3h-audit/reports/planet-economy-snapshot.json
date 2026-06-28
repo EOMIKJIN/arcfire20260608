@@ -1,373 +1,524 @@
 {
-  "timestamp": "2026-06-19T13:48:20.130Z",
-  "kstDayKey": "2026-06-19",
-  "overall": "PASS",
+  "timestamp": "2026-06-28T13:28:26.413Z",
+  "kstDayKey": "2026-06-28",
+  "overall": "WARN",
   "convoyDaily": {
     "ran": true,
-    "kstDayKey": "2026-06-19",
-    "supplyRoundTripsOk": 17,
+    "kstDayKey": "2026-06-28",
+    "supplyRoundTripsOk": 19,
     "supplyRoundTripsFailed": 0,
-    "demandPlanetsCovered": 17,
+    "demandPlanetsCovered": 19,
     "failedPlanetIds": []
   },
-  "fleetBankBalance": 1106949,
-  "arcVaultDelta": 889839,
+  "fleetBankBalance": -978850,
+  "arcVaultDelta": 225348,
   "blueVaultDelta": 0,
-  "arcVaultBalance": 989839,
+  "arcVaultBalance": 325348,
   "blueVaultBalance": 100000,
   "upkeepProjection": {
-    "base": 200,
-    "perPop": 12,
+    "fixedPerPlanet": 800,
+    "feeSharePct": 18,
     "tradePlanetCount": 17,
     "upkeepByPlanet": {
       "arcadia_prime": {
         "owner": "BLUE",
-        "population": 50,
         "upkeepDaily": 800
       },
       "solar_station": {
         "owner": "BLUE",
-        "population": 50,
         "upkeepDaily": 800
       },
       "minerva_deep": {
         "owner": "BLUE",
-        "population": 50,
         "upkeepDaily": 800
       },
       "vega_base": {
         "owner": "BLUE",
-        "population": 50,
         "upkeepDaily": 800
       },
       "eden_city": {
         "owner": "BLUE",
-        "population": 50,
         "upkeepDaily": 800
       },
       "iron_remnant": {
         "owner": "BLUE",
-        "population": 50,
         "upkeepDaily": 800
       },
       "draco_haven": {
         "owner": "BLUE",
-        "population": 50,
         "upkeepDaily": 800
       },
       "omega_hub": {
         "owner": "BLUE",
-        "population": 50,
         "upkeepDaily": 800
       },
       "helios_core": {
         "owner": "NEUTRAL",
-        "population": 50,
         "upkeepDaily": 800
       },
       "sirius_border": {
         "owner": "RED",
-        "population": 50,
         "upkeepDaily": 800
       },
       "titan_ruins": {
         "owner": "NEUTRAL",
-        "population": 50,
         "upkeepDaily": 800
       },
       "perseus_memorial": {
         "owner": "RED",
-        "population": 50,
         "upkeepDaily": 800
       },
       "crimson_base": {
         "owner": "RED",
-        "population": 50,
         "upkeepDaily": 800
       },
       "dark_haven": {
         "owner": "RED",
-        "population": 50,
         "upkeepDaily": 800
       },
       "blood_station": {
         "owner": "RED",
-        "population": 50,
         "upkeepDaily": 800
       },
       "shadow_market": {
         "owner": "NEUTRAL",
-        "population": 50,
         "upkeepDaily": 800
       },
       "abyss_gate": {
         "owner": "RED",
-        "population": 50,
         "upkeepDaily": 800
       },
       "nightfall_citadel": {
         "owner": "RED",
-        "population": 50,
         "upkeepDaily": 800
       },
       "core_prime": {
-        "owner": "NEUTRAL",
-        "population": 50,
+        "owner": "RED",
         "upkeepDaily": 800
       },
       "eternal_throne": {
         "owner": "NEUTRAL",
-        "population": 50,
         "upkeepDaily": 800
       },
       "genesis_origin": {
         "owner": "NEUTRAL",
-        "population": 50,
         "upkeepDaily": 800
       }
     },
-    "redDailyTotal": 5600,
+    "redDailyTotal": 6400,
     "blueDailyTotal": 6400,
     "occupiedPlanetCount": 21
   },
-  "tradePlanetsWithRevenue": 17,
+  "tradePlanetsWithRevenue": 19,
   "tradePlanetsZeroRevenue": 0,
+  "fiscal": {
+    "rows": [
+      {
+        "planetId": "arcadia_prime",
+        "dailyArcFeeCredits": 867,
+        "dailyUpkeepCredits": 956,
+        "feeUpkeepRatio": 0.91,
+        "status": "deficit"
+      },
+      {
+        "planetId": "solar_station",
+        "dailyArcFeeCredits": 376,
+        "dailyUpkeepCredits": 867,
+        "feeUpkeepRatio": 0.43,
+        "status": "deficit"
+      },
+      {
+        "planetId": "minerva_deep",
+        "dailyArcFeeCredits": 3302,
+        "dailyUpkeepCredits": 1394,
+        "feeUpkeepRatio": 2.37,
+        "status": "ok"
+      },
+      {
+        "planetId": "eden_city",
+        "dailyArcFeeCredits": 2379,
+        "dailyUpkeepCredits": 1228,
+        "feeUpkeepRatio": 1.94,
+        "status": "ok"
+      },
+      {
+        "planetId": "iron_remnant",
+        "dailyArcFeeCredits": 1542,
+        "dailyUpkeepCredits": 1077,
+        "feeUpkeepRatio": 1.43,
+        "status": "ok"
+      },
+      {
+        "planetId": "draco_haven",
+        "dailyArcFeeCredits": 6207,
+        "dailyUpkeepCredits": 1917,
+        "feeUpkeepRatio": 3.24,
+        "status": "ok"
+      },
+      {
+        "planetId": "omega_hub",
+        "dailyArcFeeCredits": 7390,
+        "dailyUpkeepCredits": 2130,
+        "feeUpkeepRatio": 3.47,
+        "status": "ok"
+      },
+      {
+        "planetId": "helios_core",
+        "dailyArcFeeCredits": 5631,
+        "dailyUpkeepCredits": 1813,
+        "feeUpkeepRatio": 3.11,
+        "status": "ok"
+      },
+      {
+        "planetId": "sirius_border",
+        "dailyArcFeeCredits": 6733,
+        "dailyUpkeepCredits": 2011,
+        "feeUpkeepRatio": 3.35,
+        "status": "ok"
+      },
+      {
+        "planetId": "perseus_memorial",
+        "dailyArcFeeCredits": 2065,
+        "dailyUpkeepCredits": 1171,
+        "feeUpkeepRatio": 1.76,
+        "status": "ok"
+      },
+      {
+        "planetId": "crimson_base",
+        "dailyArcFeeCredits": 19030,
+        "dailyUpkeepCredits": 4225,
+        "feeUpkeepRatio": 4.5,
+        "status": "ok"
+      },
+      {
+        "planetId": "dark_haven",
+        "dailyArcFeeCredits": 27858,
+        "dailyUpkeepCredits": 5814,
+        "feeUpkeepRatio": 4.79,
+        "status": "ok"
+      },
+      {
+        "planetId": "blood_station",
+        "dailyArcFeeCredits": 17833,
+        "dailyUpkeepCredits": 4009,
+        "feeUpkeepRatio": 4.45,
+        "status": "ok"
+      },
+      {
+        "planetId": "shadow_market",
+        "dailyArcFeeCredits": 22954,
+        "dailyUpkeepCredits": 4931,
+        "feeUpkeepRatio": 4.66,
+        "status": "ok"
+      },
+      {
+        "planetId": "nightfall_citadel",
+        "dailyArcFeeCredits": 5085,
+        "dailyUpkeepCredits": 1715,
+        "feeUpkeepRatio": 2.97,
+        "status": "ok"
+      },
+      {
+        "planetId": "core_prime",
+        "dailyArcFeeCredits": 82637,
+        "dailyUpkeepCredits": 15674,
+        "feeUpkeepRatio": 5.27,
+        "status": "ok"
+      },
+      {
+        "planetId": "genesis_origin",
+        "dailyArcFeeCredits": 4988,
+        "dailyUpkeepCredits": 1697,
+        "feeUpkeepRatio": 2.94,
+        "status": "ok"
+      },
+      {
+        "planetId": "synth_002_p",
+        "dailyArcFeeCredits": 915,
+        "dailyUpkeepCredits": 964,
+        "feeUpkeepRatio": 0.95,
+        "status": "deficit"
+      },
+      {
+        "planetId": "synth_003_p",
+        "dailyArcFeeCredits": 7556,
+        "dailyUpkeepCredits": 2160,
+        "feeUpkeepRatio": 3.5,
+        "status": "ok"
+      }
+    ],
+    "maxFeeUpkeepRatio": 5.27,
+    "minFeeUpkeepRatio": 0.43,
+    "gini": 0.269,
+    "warnCount": 0,
+    "failCount": 0,
+    "deficitCount": 3,
+    "overall": "warn"
+  },
   "planets": [
     {
       "planetId": "arcadia_prime",
-      "arcFeeCredits": 643,
-      "convoyGrossCredits": 6430,
-      "convoyFeeCredits": 643,
+      "arcFeeCredits": 867,
+      "convoyGrossCredits": 8670,
+      "convoyFeeCredits": 867,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 6430,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 8670,
+      "upkeepExpectedDaily": 956,
       "occupierSeed": "BLUE",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "solar_station",
-      "arcFeeCredits": 451,
-      "convoyGrossCredits": 4512,
-      "convoyFeeCredits": 451,
+      "arcFeeCredits": 376,
+      "convoyGrossCredits": 3760,
+      "convoyFeeCredits": 376,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 4512,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 3760,
+      "upkeepExpectedDaily": 867,
       "occupierSeed": "BLUE",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "minerva_deep",
-      "arcFeeCredits": 3852,
-      "convoyGrossCredits": 38528,
-      "convoyFeeCredits": 3852,
+      "arcFeeCredits": 3302,
+      "convoyGrossCredits": 33024,
+      "convoyFeeCredits": 3302,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 38528,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 33024,
+      "upkeepExpectedDaily": 1394,
       "occupierSeed": "BLUE",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "eden_city",
-      "arcFeeCredits": 173358,
-      "convoyGrossCredits": 1733590,
-      "convoyFeeCredits": 173358,
+      "arcFeeCredits": 2379,
+      "convoyGrossCredits": 23795,
+      "convoyFeeCredits": 2379,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 1733590,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 23795,
+      "upkeepExpectedDaily": 1228,
       "occupierSeed": "BLUE",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "iron_remnant",
-      "arcFeeCredits": 4041,
-      "convoyGrossCredits": 40422,
-      "convoyFeeCredits": 4041,
+      "arcFeeCredits": 1542,
+      "convoyGrossCredits": 15426,
+      "convoyFeeCredits": 1542,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 40422,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 15426,
+      "upkeepExpectedDaily": 1077,
       "occupierSeed": "BLUE",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "draco_haven",
-      "arcFeeCredits": 9935,
-      "convoyGrossCredits": 99362,
-      "convoyFeeCredits": 9935,
+      "arcFeeCredits": 6207,
+      "convoyGrossCredits": 62078,
+      "convoyFeeCredits": 6207,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 99362,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 62078,
+      "upkeepExpectedDaily": 1917,
       "occupierSeed": "BLUE",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "omega_hub",
-      "arcFeeCredits": 227831,
-      "convoyGrossCredits": 2278322,
-      "convoyFeeCredits": 227831,
+      "arcFeeCredits": 7390,
+      "convoyGrossCredits": 73900,
+      "convoyFeeCredits": 7390,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 2278322,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 73900,
+      "upkeepExpectedDaily": 2130,
       "occupierSeed": "BLUE",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "helios_core",
-      "arcFeeCredits": 36543,
-      "convoyGrossCredits": 365441,
-      "convoyFeeCredits": 36543,
+      "arcFeeCredits": 5631,
+      "convoyGrossCredits": 56314,
+      "convoyFeeCredits": 5631,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 365441,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 56314,
+      "upkeepExpectedDaily": 1813,
       "occupierSeed": "NEUTRAL",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "sirius_border",
-      "arcFeeCredits": 6153,
-      "convoyGrossCredits": 61537,
-      "convoyFeeCredits": 6153,
+      "arcFeeCredits": 6733,
+      "convoyGrossCredits": 67334,
+      "convoyFeeCredits": 6733,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 61537,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 67334,
+      "upkeepExpectedDaily": 2011,
       "occupierSeed": "RED",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "perseus_memorial",
-      "arcFeeCredits": 2478,
-      "convoyGrossCredits": 24786,
-      "convoyFeeCredits": 2478,
+      "arcFeeCredits": 2065,
+      "convoyGrossCredits": 20655,
+      "convoyFeeCredits": 2065,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 24786,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 20655,
+      "upkeepExpectedDaily": 1171,
       "occupierSeed": "RED",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "crimson_base",
-      "arcFeeCredits": 66756,
-      "convoyGrossCredits": 667571,
-      "convoyFeeCredits": 66756,
+      "arcFeeCredits": 19030,
+      "convoyGrossCredits": 190302,
+      "convoyFeeCredits": 19030,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 667571,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 190302,
+      "upkeepExpectedDaily": 4225,
       "occupierSeed": "RED",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "dark_haven",
-      "arcFeeCredits": 37144,
-      "convoyGrossCredits": 371448,
-      "convoyFeeCredits": 37144,
+      "arcFeeCredits": 27858,
+      "convoyGrossCredits": 278586,
+      "convoyFeeCredits": 27858,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 371448,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 278586,
+      "upkeepExpectedDaily": 5814,
       "occupierSeed": "RED",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "blood_station",
-      "arcFeeCredits": 20805,
-      "convoyGrossCredits": 208054,
-      "convoyFeeCredits": 20805,
+      "arcFeeCredits": 17833,
+      "convoyGrossCredits": 178339,
+      "convoyFeeCredits": 17833,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 208054,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 178339,
+      "upkeepExpectedDaily": 4009,
       "occupierSeed": "RED",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "shadow_market",
-      "arcFeeCredits": 162375,
-      "convoyGrossCredits": 1623756,
-      "convoyFeeCredits": 162375,
+      "arcFeeCredits": 22954,
+      "convoyGrossCredits": 229545,
+      "convoyFeeCredits": 22954,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 1623756,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 229545,
+      "upkeepExpectedDaily": 4931,
       "occupierSeed": "NEUTRAL",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "nightfall_citadel",
-      "arcFeeCredits": 11853,
-      "convoyGrossCredits": 118539,
-      "convoyFeeCredits": 11853,
+      "arcFeeCredits": 5085,
+      "convoyGrossCredits": 50860,
+      "convoyFeeCredits": 5085,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 118539,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 50860,
+      "upkeepExpectedDaily": 1715,
       "occupierSeed": "RED",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "core_prime",
-      "arcFeeCredits": 95470,
-      "convoyGrossCredits": 954712,
-      "convoyFeeCredits": 95470,
+      "arcFeeCredits": 82637,
+      "convoyGrossCredits": 826374,
+      "convoyFeeCredits": 82637,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 954712,
-      "upkeepExpectedDaily": 800,
-      "occupierSeed": "NEUTRAL",
+      "grossCredits": 826374,
+      "upkeepExpectedDaily": 15674,
+      "occupierSeed": "RED",
       "revenueOk": true,
       "zeroReason": ""
     },
     {
       "planetId": "genesis_origin",
-      "arcFeeCredits": 30151,
-      "convoyGrossCredits": 301518,
-      "convoyFeeCredits": 30151,
+      "arcFeeCredits": 4988,
+      "convoyGrossCredits": 49885,
+      "convoyFeeCredits": 4988,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 301518,
-      "upkeepExpectedDaily": 800,
+      "grossCredits": 49885,
+      "upkeepExpectedDaily": 1697,
       "occupierSeed": "NEUTRAL",
+      "revenueOk": true,
+      "zeroReason": ""
+    },
+    {
+      "planetId": "synth_002_p",
+      "arcFeeCredits": 915,
+      "convoyGrossCredits": 9152,
+      "convoyFeeCredits": 915,
+      "playerTradeGrossCredits": 0,
+      "playerTradeFeeCredits": 0,
+      "playerWalletPending": 0,
+      "grossCredits": 9152,
+      "upkeepExpectedDaily": 964,
+      "occupierSeed": "—",
+      "revenueOk": true,
+      "zeroReason": ""
+    },
+    {
+      "planetId": "synth_003_p",
+      "arcFeeCredits": 7556,
+      "convoyGrossCredits": 75570,
+      "convoyFeeCredits": 7556,
+      "playerTradeGrossCredits": 0,
+      "playerTradeFeeCredits": 0,
+      "playerWalletPending": 0,
+      "grossCredits": 75570,
+      "upkeepExpectedDaily": 2160,
+      "occupierSeed": "—",
       "revenueOk": true,
       "zeroReason": ""
     }

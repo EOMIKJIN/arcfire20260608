@@ -44,7 +44,7 @@ import {
 import { usePlayerStore } from '../../src/store/playerStore';
 import { useWorldStore } from '../../src/store/worldStore';
 import { useMissionStore } from '../../src/store/missionStore';
-import { hasAnyActiveCombatMission } from '../../src/missions/missionActiveBundles';
+import { hasPrimaryActiveCombatMission } from '../../src/missions/missionActiveBundles';
 import { applyReachSystemMissionObjectives } from '../../src/missions/applyReachSystemMissionObjectives';
 import { resolveTransitEncounterChance } from '../../src/missions/missionCombatEncounter';
 import { useTransitCombatSessionStore } from '../../src/game/transitCombat/transitCombatSession';
@@ -1153,9 +1153,13 @@ export default function WorldMapScreen() {
 
       if (!finished || !isMountedRef.current || !isFocusedRef.current) return;
 
+      const missionState = useMissionStore.getState();
+      const missionProgresses = missionState.progresses;
       const encounterChance = resolveTransitEncounterChance(
         targetSystem.zone,
-        hasAnyActiveCombatMission(useMissionStore.getState().progresses),
+        hasPrimaryActiveCombatMission(missionProgresses, missionState.activeMissionId),
+        missionProgresses,
+        missionState.activeMissionId,
       );
 
       if (Math.random() < encounterChance && isPlayerShipCombatCapable(player.ship)) {

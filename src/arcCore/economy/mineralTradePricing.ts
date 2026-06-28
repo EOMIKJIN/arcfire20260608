@@ -5,7 +5,7 @@
 
 import { MiningSellPricePolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
 import { getItemDef } from '../../data/itemRegistry';
-import { STAR_SYSTEMS } from '../../data/systems';
+import { resolveStarSystemForPlanetId } from '../../world/resolvePlanetSystemPosition';
 import { getPlayScenarioEconomyRow } from '../balance/playScenarioRegistry';
 import { resolvePlanetZoneIndex } from '../planetBalance/planetZoneIndexRegistry';
 import {
@@ -27,7 +27,7 @@ function clampZone(n: number): number {
 }
 
 function resolveZoneIndexForPlanet(planetId: string): number {
-  const system = Object.values(STAR_SYSTEMS).find((s) => s.planets.some((p) => p.id === planetId));
+  const system = resolveStarSystemForPlanetId(planetId);
   return clampZone(resolvePlanetZoneIndex(planetId, system ?? null));
 }
 

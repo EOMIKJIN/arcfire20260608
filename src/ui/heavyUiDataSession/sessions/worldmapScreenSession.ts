@@ -1,7 +1,8 @@
 import { buildCsvStaticIndexesFull } from '../../../game/buildCsvStaticIndexes';
 import { useClanWarFoundationStore } from '../../../store/clanWarFoundationStore';
 import { createClanWarFoundationStep } from '../hydrateRecipes';
-import { preflightPlanetHubSession } from '../preflightPlanetHub';
+import { resolvePlanetHubPreflightId } from '../../../world/resolvePlanetById';
+import { preflightPlanetHubDepartureSession } from '../preflightPlanetHub';
 import type { HeavyUiSessionConfig } from '../types';
 
 export type WorldmapScreenSessionData = {
@@ -9,9 +10,10 @@ export type WorldmapScreenSessionData = {
 };
 
 export function createWorldmapScreenSession(planetId: string): HeavyUiSessionConfig<WorldmapScreenSessionData> {
+  const anchorPlanetId = resolvePlanetHubPreflightId(planetId) ?? planetId;
   return {
-    sessionKey: `worldmap-screen:${planetId}`,
-    preflight: () => preflightPlanetHubSession(planetId),
+    sessionKey: `worldmap-screen:${anchorPlanetId}`,
+    preflight: () => preflightPlanetHubDepartureSession(anchorPlanetId),
     hydrateSteps: [
       createClanWarFoundationStep(),
       {

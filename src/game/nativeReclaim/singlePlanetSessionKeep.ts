@@ -1,4 +1,5 @@
 import { usePlayerStore } from '../../store/playerStore';
+import { resolvePlanetHubPreflightId } from '../../world/resolvePlanetById';
 
 /**
  * Tier B(프레젠테이션·nebula·memo) — RAM에 상주할 행성 id 최소 집합.
@@ -9,9 +10,11 @@ export function resolveSinglePlanetSessionKeepIds(activePlanetId?: string | null
   return id ? [id] : [];
 }
 
-/** worldmap transit — currentPlanetId 가 null 일 때 앵커 */
+/** worldmap transit — currentPlanetId 가 null 일 때 앵커 (synth·worldStore 폴백) */
 export function resolveActivePlanetSessionAnchorId(): string | null {
   const p = usePlayerStore.getState().player;
   if (!p) return null;
-  return p.currentPlanetId ?? p.lastHubPlanetId ?? p.homePlanetId ?? null;
+  return resolvePlanetHubPreflightId(
+    p.currentPlanetId ?? p.lastHubPlanetId ?? p.homePlanetId ?? null,
+  );
 }

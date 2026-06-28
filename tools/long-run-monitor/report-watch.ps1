@@ -9,6 +9,9 @@ $ErrorActionPreference = 'Continue'
 
 . (Join-Path $PSScriptRoot 'mem-gl-leak-rules.ps1')
 . (Join-Path $PSScriptRoot 'watch-alert-filters.ps1')
+. (Join-Path $PSScriptRoot 'monitor-host-budget.ps1')
+
+$IntervalMin = Enforce-MonitorIntervalFloor -IntervalMin $IntervalMin -FloorMin $script:MONITOR_MIN_REPORT_INTERVAL_MIN
 
 $logDir       = Join-Path $PSScriptRoot 'logs'
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
@@ -98,14 +101,41 @@ while ($true) {
   if ($appPid) {
     $pss = ''; $gl = ''; $views = ''
     $measOk = $false
-    try {
-      $raw = (adb shell dumpsys meminfo $Package 2>&1 | Out-String)
-      $met = Parse-Meminfo $raw
-      if ($met.PssKb) { $pss = [math]::Round($met.PssKb / 1024, 1) }
-      if ($null -ne $met.GlKb) { $gl = [math]::Round($met.GlKb / 1024, 1) }
-      if ($null -ne $met.Views) { $views = [int]$met.Views }
-      if ($pss -ne '') { $measOk = $true }
-    } catch { $measOk = $false }
+    $timelineSnap = Get-TimelineHeartbeatMetrics -LogDir $logDir -MaxAgeMin ($IntervalMin + 5)
+    $useTimeline = $timelineSnap -and $timelineSnap.pid -eq $appPid
+
+    if ($pidChanged -or $hasCrash -or $actionIncidents.Count -gt 0) {
+      # 이상 시에만 adb meminfo (budget gate)
+      if (Test-CanInvokeAdbMeminfo -LogDir $logDir -Force:$hasCrash) {
+        try {
+          $raw = (adb shell dumpsys meminfo $Package 2>&1 | Out-String)
+          Register-AdbMeminfoInvocation -LogDir $logDir
+          $met = Parse-Meminfo $raw
+          if ($met.PssKb) { $pss = [math]::Round($met.PssKb / 1024, 1) }
+          if ($null -ne $met.GlKb) { $gl = [math]::Round($met.GlKb / 1024, 1) }
+          if ($null -ne $met.Views) { $views = [int]$met.Views }
+          if ($pss -ne '') { $measOk = $true }
+        } catch { $measOk = $false }
+      }
+    } elseif ($useTimeline) {
+      $pss = $timelineSnap.pssMb
+      $gl = $timelineSnap.glMb
+      $views = $timelineSnap.views
+      $measOk = $true
+    } else {
+      # timeline stale — budget 허용 시에만 1회 meminfo
+      if (Test-CanInvokeAdbMeminfo -LogDir $logDir) {
+        try {
+          $raw = (adb shell dumpsys meminfo $Package 2>&1 | Out-String)
+          Register-AdbMeminfoInvocation -LogDir $logDir
+          $met = Parse-Meminfo $raw
+          if ($met.PssKb) { $pss = [math]::Round($met.PssKb / 1024, 1) }
+          if ($null -ne $met.GlKb) { $gl = [math]::Round($met.GlKb / 1024, 1) }
+          if ($null -ne $met.Views) { $views = [int]$met.Views }
+          if ($pss -ne '') { $measOk = $true }
+        } catch { $measOk = $false }
+      }
+    }
 
     if ($pidChanged) {
       Emit "[$hhmm] !! PID_CHANGE session=$sessionPid -> $appPid (크래시·재시작 의심)" 'Red'
@@ -115,6 +145,11 @@ while ($true) {
     } elseif ($actionIncidents.Count -gt 0) {
       $summary = ($actionIncidents | Select-Object -Last 1)
       Emit "[$hhmm] !! 이상감지: $summary" 'Yellow'
+    } elseif (-not $measOk -and $useTimeline) {
+      $pss = $timelineSnap.pssMb
+      $gl = $timelineSnap.glMb
+      $views = $timelineSnap.views
+      $measOk = $true
     } elseif (-not $measOk) {
       Emit "[$hhmm] ?? 측정 실패 — PID=$appPid" 'Magenta'
     } else {

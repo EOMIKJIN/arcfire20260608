@@ -1,0 +1,2 @@
+kst_date,status,report_path,fail_reason,adb_connected,app_running,pss_mb,watch_pid
+"2026-06-28","CRITICAL","D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260628-0800.md","","yes","yes","1015.7","33096"

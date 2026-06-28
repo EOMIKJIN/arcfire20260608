@@ -3,7 +3,10 @@
 // ============================================================
 
 import { TradeRouteTransportPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
-import { STAR_SYSTEMS } from '../../data/systems';
+import {
+  resolveGalaxySystemHopDistance,
+  resolveSystemIdForPlanetIdFromGalaxy,
+} from '../../world/resolvePlanetSystemPosition';
 import type { TradeRouteAttrs } from './tradeRouteRegistry';
 import { resolvePlanetSystemMapDistance } from './tradeRouteTransportCost';
 
@@ -49,28 +52,14 @@ function clamp(n: number, lo: number, hi: number): number {
 }
 
 function resolveSystemIdForPlanet(planetId: string): string | null {
-  for (const system of Object.values(STAR_SYSTEMS)) {
-    if (system.planets.some((p) => p.id === planetId)) return system.id;
-  }
-  return null;
+  return resolveSystemIdForPlanetIdFromGalaxy(planetId);
 }
 
 function resolveSystemHopDistance(systemIdA: string, systemIdB: string): number {
   if (!systemIdA || !systemIdB) return 0;
   if (systemIdA === systemIdB) return 0;
-  const visited = new Set<string>([systemIdA]);
-  const queue: Array<{ id: string; hops: number }> = [{ id: systemIdA, hops: 0 }];
-  while (queue.length > 0) {
-    const cur = queue.shift()!;
-    if (cur.id === systemIdB) return cur.hops;
-    const sys = STAR_SYSTEMS[cur.id];
-    if (!sys) continue;
-    for (const next of sys.connections) {
-      if (visited.has(next)) continue;
-      visited.add(next);
-      queue.push({ id: next, hops: cur.hops + 1 });
-    }
-  }
+  const hops = resolveGalaxySystemHopDistance(systemIdA, systemIdB);
+  if (hops > 0) return hops;
   return getTradeRouteReferenceRouteHops();
 }
 

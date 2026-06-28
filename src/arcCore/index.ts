@@ -52,6 +52,19 @@ export {
   runPlanetEnvironmentDiversityPass,
   type PlanetInteractionSignals,
 } from './planetEnvironment';
+export * from './captainPresence';
+export {
+  arcSeedTransportCaptainIdForSystem,
+  arcSeedTransportShipIdForSystem,
+  invalidateArcSeedTransportTemplateCache,
+  resolveArcSeedTransportCaptainForSystem,
+  resolveArcSeedTransportShipForSystem,
+} from './arcSeedTransportRegistry';
+export {
+  publishPlanetHubCoPresenceObservationIfChanged,
+  resetPlanetHubCoPresenceObservationThrottle,
+} from './observation/publishPlanetHubCoPresenceObservation';
+export { resolvePlanetHubCoPresenceInteractionHints } from './observation/resolvePlanetHubCoPresenceInteractionHints';
 
 /** 제품·UI 표기명 */
 export const ARC_CORE_DISPLAY_NAME = '아크코어' as const;

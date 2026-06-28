@@ -9,6 +9,7 @@ import type {
   PlanetFacilityModuleDetail,
 } from '../../store/planetCoreMetricTypes';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
+import { useWorldStore } from '../../store/worldStore';
 
 function emptyFacilityModuleDetail(): PlanetFacilityModuleDetail {
   return { version: 1, installed: false, level: 1, upgradeJob: null };
@@ -54,6 +55,21 @@ export function writeFacilityModuleDetail(
     },
   });
   return true;
+}
+
+/** 행성개발 설치 전 — worldStore 행성 기준 코어 런타임 시드(없을 때만) */
+export function ensurePlanetCoreRuntimeForDev(planetId: string): boolean {
+  if (hasPlanetCoreRuntimeEntry(planetId)) return true;
+  const id = planetId?.trim();
+  if (!id) return false;
+  const systems = useWorldStore.getState().systems;
+  for (const sys of Object.values(systems)) {
+    const planet = sys.planets.find((p) => p.id === id);
+    if (!planet) continue;
+    usePlanetCoreRuntimeStore.getState().patchPlanetCore(id, {});
+    return hasPlanetCoreRuntimeEntry(id);
+  }
+  return false;
 }
 
 /** 행성 런타임 엔트리 존재 여부 — 설치 등 쓰기 전 사전 확인용 */

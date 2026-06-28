@@ -14,6 +14,7 @@ const REPORT_DIR = path.join(__dirname, 'reports');
 const SNAPSHOT_JSON = path.join(REPORT_DIR, 'planet-economy-snapshot.json');
 const TIMELINE_CSV = path.join(REPORT_DIR, 'planet-economy-timeline.csv');
 const LATEST_MD = path.join(REPORT_DIR, 'latest.md');
+const { loadFiscalPolicy, buildPlanetFiscalSnapshot } = require('./planetFiscalKpi.cjs');
 
 function readText(p) {
   try {
@@ -93,7 +94,15 @@ function loadCsv(rel) {
 }
 
 function runConvoyHeadlessSim() {
-  const proc = spawnSync('npx', ['tsx', 'tools/planet-economy-3h-audit/convoy-headless-sim.ts'], {
+  const proc = spawnSync(
+    'npx',
+    [
+      'tsx',
+      '--tsconfig',
+      'tools/headless/tsconfig.headless.json',
+      'tools/planet-economy-3h-audit/convoy-headless-sim.ts',
+    ],
+    {
     cwd: ROOT,
     encoding: 'utf8',
     shell: process.platform === 'win32',
@@ -115,18 +124,10 @@ function computeUpkeepProjection() {
   const policyRows = loadCsv('tables/balance/arc_core_planet_upkeep_policy.csv');
   const kv = {};
   for (const row of policyRows) kv[row.key] = row.value;
-  const base = Number(kv.upkeep_base_credits) || 200;
-  const perPop = Number(kv.upkeep_per_population_credit) || 12;
+  const fixedPerPlanet = Number(kv.upkeep_fixed_credits_per_planet) || 800;
+  const feeSharePct = Number(kv.upkeep_daily_faction_fee_share_pct) || 18;
   const occupation = loadCsv('tables/balance/planet_occupation_seeds.csv');
   const tradeProfiles = loadCsv('tables/balance/planet_trade_route_profile.csv');
-  const planetsCsv = loadCsv('tables/content/planets.csv');
-
-  const popByPlanet = new Map();
-  for (const p of planetsCsv) {
-    const pop = Number(p.corePopulation);
-    popByPlanet.set(p.id, Number.isFinite(pop) ? pop : 50);
-  }
-
   const upkeepByPlanet = {};
   let redDailyTotal = 0;
   let blueDailyTotal = 0;
@@ -135,16 +136,15 @@ function computeUpkeepProjection() {
   for (const row of occupation) {
     const owner = String(row.initialOwner || '').trim().toUpperCase();
     ownerByPlanet[row.planetId] = owner;
-    const pop = popByPlanet.get(row.planetId) ?? 50;
-    const daily = base + perPop * pop;
-    upkeepByPlanet[row.planetId] = { owner, population: pop, upkeepDaily: daily };
+    const daily = fixedPerPlanet;
+    upkeepByPlanet[row.planetId] = { owner, upkeepDaily: daily };
     if (owner === 'RED') redDailyTotal += daily;
     if (owner === 'BLUE') blueDailyTotal += daily;
   }
 
   return {
-    base,
-    perPop,
+    fixedPerPlanet,
+    feeSharePct,
     tradePlanetCount: tradeProfiles.length,
     upkeepByPlanet,
     redDailyTotal,
@@ -168,11 +168,15 @@ function buildReport(sim, upkeep, prev) {
   const timestamp = new Date().toISOString();
   const planets = sim.planets.map((p) => {
     const up = upkeep.upkeepByPlanet[p.planetId];
+    const feeSharePct = upkeep.feeSharePct ?? 18;
+    const baseUpkeep = up?.upkeepDaily ?? upkeep.fixedPerPlanet;
+    const tradeSink = Math.floor(p.arcFeeCredits * (feeSharePct / 100));
+    const upkeepExpectedDaily = baseUpkeep + tradeSink;
     const revenueOk =
       p.arcFeeCredits > 0 || p.convoyFeeCredits > 0 || p.playerTradeFeeCredits > 0;
     return {
       ...p,
-      upkeepExpectedDaily: up?.upkeepDaily ?? null,
+      upkeepExpectedDaily,
       occupierSeed: up?.owner ?? '—',
       revenueOk,
       zeroReason: revenueOk ? '' : diagnoseZero(p.planetId, p, sim.convoyDaily.ran, sim.kstDayKey),
@@ -181,9 +185,22 @@ function buildReport(sim, upkeep, prev) {
 
   const withRevenue = planets.filter((p) => p.revenueOk).length;
   const zeroRevenue = planets.length - withRevenue;
+
+  const fiscalPolicy = loadFiscalPolicy(loadCsv);
+  const fiscalInputs = planets
+    .filter((p) => p.upkeepExpectedDaily != null && p.upkeepExpectedDaily > 0)
+    .map((p) => ({
+      planetId: p.planetId,
+      dailyArcFeeCredits: p.arcFeeCredits,
+      dailyUpkeepCredits: p.upkeepExpectedDaily,
+    }));
+  const fiscal = buildPlanetFiscalSnapshot(fiscalInputs, fiscalPolicy);
+
   let overall = 'PASS';
   if (!sim.convoyDaily.ran || sim.convoyDaily.supplyRoundTripsFailed > 0) overall = 'WARN';
   if (withRevenue === 0) overall = 'FAIL';
+  if (fiscal.overall === 'fail') overall = 'FAIL';
+  else if (fiscal.overall === 'warn' && overall === 'PASS') overall = 'WARN';
 
   const snapshot = {
     timestamp,
@@ -198,6 +215,7 @@ function buildReport(sim, upkeep, prev) {
     upkeepProjection: upkeep,
     tradePlanetsWithRevenue: withRevenue,
     tradePlanetsZeroRevenue: zeroRevenue,
+    fiscal,
     planets,
   };
 
@@ -223,16 +241,43 @@ function buildReport(sim, upkeep, prev) {
     `- 유지비 예측(점유 시드): RED 일합 ${upkeep.redDailyTotal} cr · BLUE 일합 ${upkeep.blueDailyTotal} cr · 점유 ${upkeep.occupiedPlanetCount}행성`,
     `- 교역 행성 수익 발생: ${withRevenue}/${planets.length}`,
     '',
+    '## 행성 재정 KPI',
+    '',
+    `- **Overall (fiscal):** ${fiscal.overall.toUpperCase()}`,
+    `- max fee/upkeep: **${fiscal.maxFeeUpkeepRatio}×** · min: ${fiscal.minFeeUpkeepRatio}× · Gini: ${fiscal.gini}`,
+    `- WARN ${fiscal.warnCount} · FAIL ${fiscal.failCount} · deficit ${fiscal.deficitCount}`,
+    `- policy: warn≥${fiscalPolicy.warnRatio}× fail≥${fiscalPolicy.failRatio}×`,
+    '',
     '## 행성별 (교역 17)',
     '',
-    '| 행성 | 점유시드 | 유지비(일) | 팩션수수료 | convoy수수료 | 플레이어수수료 | 상태 |',
-    '|------|---------|-----------|----------|-------------|--------------|------|',
+    '| 행성 | 점유시드 | 유지비(일) | 팩션수수료 | fee/upkeep | 상태 |',
+    '|------|---------|-----------|----------|-----------|------|',
   );
 
   for (const p of planets) {
+    const fr = fiscal.rows.find((r) => r.planetId === p.planetId);
+    const ratioLabel = fr?.feeUpkeepRatio != null ? `${fr.feeUpkeepRatio}×` : '—';
+    const statusLabel =
+      fr?.status === 'fail'
+        ? '**FAIL**'
+        : fr?.status === 'warn'
+          ? 'WARN'
+          : fr?.status === 'deficit'
+            ? 'deficit'
+            : p.revenueOk
+              ? 'OK'
+              : '**0**';
     lines.push(
-      `| ${p.planetId} | ${p.occupierSeed} | ${p.upkeepExpectedDaily ?? '—'} | ${p.arcFeeCredits} | ${p.convoyFeeCredits ?? 0} | ${p.playerTradeFeeCredits ?? 0} | ${p.revenueOk ? 'OK' : '**0**'} |`,
+      `| ${p.planetId} | ${p.occupierSeed} | ${p.upkeepExpectedDaily ?? '—'} | ${p.arcFeeCredits} | ${ratioLabel} | ${statusLabel} |`,
     );
+  }
+
+  const fiscalFails = fiscal.rows.filter((r) => r.status === 'fail' || r.status === 'warn');
+  if (fiscalFails.length) {
+    lines.push('', '## 재정 이상 행성', '');
+    for (const r of fiscalFails.sort((a, b) => (b.feeUpkeepRatio ?? 0) - (a.feeUpkeepRatio ?? 0))) {
+      lines.push(`- **${r.planetId}**: ${r.feeUpkeepRatio ?? '—'}× (${r.status})`);
+    }
   }
 
   const zeros = planets.filter((p) => !p.revenueOk);
@@ -315,6 +360,7 @@ function main() {
   appendTimeline(snapshot);
   console.log(md.split('\n').slice(0, 22).join('\n'));
   if (snapshot.overall === 'FAIL') process.exitCode = 1;
+  else if (snapshot.fiscal?.overall === 'fail') process.exitCode = 1;
 }
 
 main();

@@ -91,7 +91,7 @@ export default function TitleScreen() {
   // 로컬 하이드레이션·월드/코어 부트스트랩이 전부 끝난 뒤에만 버튼을 활성화한다.
   const bootReady = useAppBootStore((s) => s.bootReady);
   const getActiveMission = useMissionStore((s) => s.getActiveMission);
-  const initMissions = useMissionStore((s) => s.initMissions);
+  const initTutorialStory = useMissionStore((s) => s.initTutorialStory);
 
   const [continueFlowActive, setContinueFlowActive] = useState(false);
   const [cloudRestorePending, setCloudRestorePending] = useState(false);
@@ -186,7 +186,7 @@ export default function TitleScreen() {
     const p = usePlayerStore.getState().player;
     if (p?.flags.introSeen) {
       if (continueFlowActive || titleNavLockRef.current) return;
-      if (!getActiveMission()) initMissions();
+      if (!getActiveMission()) initTutorialStory();
 
       flowCancelledRef.current = false;
       titleNavLockRef.current = true;

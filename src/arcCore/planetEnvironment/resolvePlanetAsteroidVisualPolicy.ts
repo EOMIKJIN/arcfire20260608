@@ -4,7 +4,9 @@
 // - 비주얼 슬롯 1~3, 표시 광물은 존 풀 1~3종 중 슬롯별 결정론적 선택
 // ============================================================
 
-import { STAR_SYSTEMS } from '../../data/systems';
+import { resolvePlanetById } from '../../world/resolvePlanetById';
+import { resolveSystemIdForPlanetId } from '../../world/resolvePlanetSystemId';
+import { useWorldStore } from '../../store/worldStore';
 import type { Planet } from '../../types';
 import { resolvePlanetZoneIndex } from '../planetBalance/planetZoneIndexRegistry';
 import {
@@ -29,11 +31,7 @@ function planetIdSeed(planetId: string): number {
 }
 
 export function findPlanetById(planetId: string): Planet | null {
-  for (const system of Object.values(STAR_SYSTEMS)) {
-    const planet = system.planets.find((p) => p.id === planetId);
-    if (planet) return planet;
-  }
-  return null;
+  return resolvePlanetById(planetId);
 }
 
 /** 환경·자원·기술 지표(0..100) → 0..1 */
@@ -64,7 +62,8 @@ export function resolvePlanetAsteroidOrbitCountFromEnvironment(planetId: string)
 }
 
 function resolveZoneIndexForPlanet(planetId: string): number {
-  const system = Object.values(STAR_SYSTEMS).find((s) => s.planets.some((p) => p.id === planetId));
+  const systemId = resolveSystemIdForPlanetId(planetId);
+  const system = systemId ? useWorldStore.getState().getSystem(systemId) : null;
   return Math.max(1, Math.min(21, Math.round(resolvePlanetZoneIndex(planetId, system ?? null))));
 }
 

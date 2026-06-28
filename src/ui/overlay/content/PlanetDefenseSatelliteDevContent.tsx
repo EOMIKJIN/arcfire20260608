@@ -12,7 +12,6 @@ import {
   instantCompleteDefenseSatelliteUpgrade,
   instantUpgradeDefenseSatelliteNext,
   startPlanetDefenseSatelliteUpgrade,
-  tryCompleteDefenseSatelliteUpgrade,
 } from '../../../systems/planetaryDefense/planetDefenseSatelliteDevelopment';
 import { formatCredits } from '../../../utils/formatCredits';
 import { showArcAlert } from '../../../utils/showArcAlert';
@@ -25,6 +24,12 @@ import { overlayInkColor } from '../overlayVisualTokens';
 import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
 import { PlanetDevHintText, PlanetDevSectionBar, PlanetDevSummaryInset } from './PlanetDevOverlayChrome';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
+import {
+  formatPlanetDevLevelLabel,
+  formatPlanetDevLevelUpgradeArrow,
+  planetDevLevelI18nParams,
+  planetDevUpgradeI18nParams,
+} from '../../../game/planetDevelopment/planetFacilityDevLevelDisplay';
 
 export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatelliteDevContent({
   planetId,
@@ -48,7 +53,6 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
 
   useEffect(() => {
     const id = setInterval(() => {
-      tryCompleteDefenseSatelliteUpgrade(planetId);
       setTick((t) => t + 1);
     }, 500);
     return () => clearInterval(id);
@@ -139,14 +143,22 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
         {snapshot.installed && !snapshot.isUpgrading && snapshot.nextTargetLevel != null ? (
           <>
             <ArcButton
-              label={t('defenseSat.upgradeBtn', { from: snapshot.level, to: snapshot.nextTargetLevel, cost: formatCredits(snapshot.nextUpgradeCost ?? 0, { suffix: true }), duration: nextDurationLabel })}
+              label={t('defenseSat.upgradeBtn', {
+                ...planetDevUpgradeI18nParams(snapshot.level, snapshot.nextTargetLevel, t),
+                cost: formatCredits(snapshot.nextUpgradeCost ?? 0, { suffix: true }),
+                duration: nextDurationLabel,
+              })}
               visualTheme={visualTheme}
               intent="primary"
               disabled={!canManageDevelopment || !snapshot.canStartUpgrade}
               onPress={handleStartUpgrade}
             />
             <ArcButton
-              label={t('defenseSat.instantUpgradeBtn', { to: snapshot.nextTargetLevel, cost: formatCredits((snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0), { suffix: true }) })}
+              label={t('defenseSat.instantUpgradeBtn', {
+                to: snapshot.nextTargetLevel,
+                toEpic: planetDevLevelI18nParams(snapshot.nextTargetLevel, t).epicBadge,
+                cost: formatCredits((snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0), { suffix: true }),
+              })}
               visualTheme={visualTheme}
               intent="secondary"
               disabled={!canManageDevelopment || !snapshot.canInstantUpgradeNext}
@@ -195,7 +207,10 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
           label={t('defenseSat.stateLabel')}
           value={
             snapshot.installed
-              ? t('defenseSat.stateInstalled', { level: snapshot.level, count: snapshot.activeSatelliteCount })
+              ? t('defenseSat.stateInstalled', {
+                  ...planetDevLevelI18nParams(snapshot.level, t),
+                  count: snapshot.activeSatelliteCount,
+                })
               : t('defenseSat.stateNotInstalled')
           }
           visualTheme={visualTheme}
@@ -228,7 +243,9 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
           <View style={styles.gaugeBlock}>
             <PlanetDevSectionBar label={t('defenseSat.upgradeProgress')} visualTheme={visualTheme} />
             <PlanetDevHintText visualTheme={visualTheme} variant="body">
-              Lv.{snapshot.level} → Lv.{snapshot.upgradeJob?.targetLevel ?? '?'}
+              {snapshot.upgradeJob?.targetLevel != null
+                ? formatPlanetDevLevelUpgradeArrow(snapshot.level, snapshot.upgradeJob.targetLevel, t)
+                : `${formatPlanetDevLevelLabel(snapshot.level, t)} → ?`}
             </PlanetDevHintText>
             <PlanetHubDigitalGauge
               progressPct={snapshot.upgradeProgressPct}
@@ -250,12 +267,17 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
             ]}
           >
             <Text style={[styles.levelRowTitle, { color: levelRowTitleColor }]}>
-              Lv.{row.level}
+              {formatPlanetDevLevelLabel(row.level, t)}
               {row.grantsSecondSatellite ? t('defenseSat.twoSats') : ''}
               {row.level === snapshot.level ? ' ◀' : ''}
             </Text>
             <Text style={[styles.levelRowMeta, { color: levelRowMetaColor }]}>
-              {t('defenseSat.levelMeta', { hp: row.hpMax, zone: row.defenseZoneDiameterPx, hit: row.interceptHitPct, dwell: row.interceptDwellSec })}
+              {t('defenseSat.levelMeta', {
+                hp: row.hpMax,
+                zone: row.defenseZoneDiameterPx,
+                hit: row.interceptHitPct,
+                dwell: row.interceptDwellSec,
+              })}
             </Text>
           </View>
         ))}

@@ -123,7 +123,7 @@ export async function completePilotRegistration(uid: string, nickname: string): 
     player.political.megaFactionId,
   );
 
-  useMissionStore.getState().initMissions();
+  useMissionStore.getState().initTutorialStory();
 
   await runRemoteRegistrationStep('create_user_doc', () =>
     createUserDocOnNicknameConfirm(player.uid, player.nickname, {

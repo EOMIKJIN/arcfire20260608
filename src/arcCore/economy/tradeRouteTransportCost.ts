@@ -4,7 +4,7 @@
 
 import { TradeRouteTransportPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
 import { getItemDef } from '../../data/itemRegistry';
-import { STAR_SYSTEMS } from '../../data/systems';
+import { resolveSystemPositionForPlanetId } from '../../world/resolvePlanetSystemPosition';
 
 let policyKv: Map<string, string> | null = null;
 
@@ -22,20 +22,11 @@ function parseNum(raw: string | undefined, fallback: number): number {
   return Number.isFinite(n) ? n : fallback;
 }
 
-function findSystemPosition(planetId: string): { x: number; y: number } | null {
-  for (const system of Object.values(STAR_SYSTEMS)) {
-    if (system.planets.some((p) => p.id === planetId)) {
-      return system.position;
-    }
-  }
-  return null;
-}
-
 /** 성계 좌표 기준 두 행성 간 유클리드 거리(맵 단위) */
 export function resolvePlanetSystemMapDistance(planetIdA: string, planetIdB: string): number {
   if (!planetIdA || !planetIdB || planetIdA === planetIdB) return 0;
-  const posA = findSystemPosition(planetIdA);
-  const posB = findSystemPosition(planetIdB);
+  const posA = resolveSystemPositionForPlanetId(planetIdA);
+  const posB = resolveSystemPositionForPlanetId(planetIdB);
   if (!posA || !posB) return 0;
   return Math.hypot(posA.x - posB.x, posA.y - posB.y);
 }

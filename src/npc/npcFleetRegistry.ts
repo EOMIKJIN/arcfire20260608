@@ -68,11 +68,9 @@ function validateNpcFleetMasterData(): void {
     }
     const priorOwner = assignedOwnerByShipId.get(sid);
     if (priorOwner) {
-      // 런타임은 첫 번째 captain을 우선 사용하고 중복은 경고로만 남긴다.
-      console.warn(
-        `npcFleetRegistry: duplicate assignedShipId ${sid} in npc_ai_captains.csv (keep=${priorOwner}, ignore=${captain.id})`,
+      throw new Error(
+        `npcFleetRegistry: duplicate assignedShipId ${sid} in npc_ai_captains.csv (keep=${priorOwner}, dup=${captain.id})`,
       );
-      continue;
     }
     assignedOwnerByShipId.set(sid, captain.id);
   }

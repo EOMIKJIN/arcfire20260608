@@ -11,6 +11,12 @@ import { tryCompleteOrbitShipyardUpgrade } from './planetOrbitShipyardDevelopmen
 import { tryCompleteTavernFacilityUpgrade } from './planetTavernFacilityDevelopment';
 import { tryCompleteTradePortUpgrade } from './planetTradePortDevelopment';
 import { tryCompleteDefenseSatelliteUpgrade } from '../../systems/planetaryDefense/planetDefenseSatelliteDevelopment';
+import {
+  planetDevLevelI18nParams,
+  planetDevUpgradeI18nParams,
+  formatPlanetDevLevelLabel,
+  formatPlanetDevLevelUpgradeArrow,
+} from './planetFacilityDevLevelDisplay';
 
 export type PlanetDevFacilitySnapshotSlice = {
   installed: boolean;
@@ -64,25 +70,25 @@ function resolveCompleteStatus(
   switch (catalogId) {
     case 'defense_satellite':
       return t('planetDev.defenseInstalled', {
-        level: snap.level,
+        ...planetDevLevelI18nParams(snap.level, t),
         count: snap.activeSatelliteCount ?? 0,
       });
     case 'dev_orbit_shipyard':
       return snap.isCsvWorldBaseline
-        ? t('planetDev.worldBuiltInstalled', { level: snap.level })
-        : t('planetDev.shipyardInstalled', { level: snap.level });
+        ? t('planetDev.worldBuiltInstalled', planetDevLevelI18nParams(snap.level, t))
+        : t('planetDev.shipyardInstalled', planetDevLevelI18nParams(snap.level, t));
     case 'dev_trade_port':
       return snap.isCsvWorldBaseline
-        ? t('planetDev.worldBuiltInstalled', { level: snap.level })
-        : t('planetDev.tradePortInstalled', { level: snap.level });
+        ? t('planetDev.worldBuiltInstalled', planetDevLevelI18nParams(snap.level, t))
+        : t('planetDev.tradePortInstalled', planetDevLevelI18nParams(snap.level, t));
     case 'dev_research_lab':
-      return t('planetDev.researchLabInstalled', { level: snap.level });
+      return t('planetDev.researchLabInstalled', planetDevLevelI18nParams(snap.level, t));
     case 'dev_population_dome':
       return snap.isCsvWorldBaseline
-        ? t('planetDev.worldBuiltInstalled', { level: snap.level })
-        : t('planetDev.populationDomeInstalled', { level: snap.level });
+        ? t('planetDev.worldBuiltInstalled', planetDevLevelI18nParams(snap.level, t))
+        : t('planetDev.populationDomeInstalled', planetDevLevelI18nParams(snap.level, t));
     default:
-      return t('planetDev.listStatusCompleteGeneric', { level: snap.level });
+      return t('planetDev.listStatusCompleteGeneric', planetDevLevelI18nParams(snap.level, t));
   }
 }
 
@@ -100,7 +106,7 @@ function resolveProgress(snap: PlanetDevFacilitySnapshotSlice): PlanetDevListRow
     const target = snap.upgradeJob?.targetLevel;
     const from = snap.level;
     const label = target != null && from > 0
-      ? t('planetDev.listUpgradeProgress', { from, to: target })
+      ? t('planetDev.listUpgradeProgress', planetDevUpgradeI18nParams(from, target, t))
       : t('planetDev.upgradeProgress');
     return {
       label,

@@ -4,16 +4,13 @@
 
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
 import { useWorldStore } from '../store/worldStore';
-import {
-  getSynthColonizationPhaseRow,
-  SYNTH_COLONIZATION_MAX_PHASE,
-} from './synthColonizationPhasePolicy';
+import { SYNTH_COLONIZATION_MAX_PHASE } from './synthColonizationPhasePolicy';
 import { dispatchArcCoreSeedTransportForSystem, dispatchArcCoreSystemUnlockNotice } from './worldExpansionUnlockDispatch';
 import type { ArcCoreSystemUnlockKind } from './worldExpansionUnlockDispatch';
 
 export { SYNTH_COLONIZATION_MAX_PHASE, SYNTH_FRONTIER_FACTION_ID } from './synthColonizationPhasePolicy';
 
-/** 개방 직후 — 중립 hold + 공지(수송 없음) */
+/** 개방 직후 — phase 1(초기화 완료) · 궤도 수송 시드 · 중립 hold + 공지 */
 export function finalizeArcCoreSynthFrontierUnlock(
   systemId: string,
   kind: ArcCoreSystemUnlockKind,
@@ -23,11 +20,16 @@ export function finalizeArcCoreSynthFrontierUnlock(
   const planetId = system?.planets[0]?.id;
   if (!planetId) return;
 
+  if (world.getSynthColonizationPhase(planetId) < 1) {
+    world.applySynthColonizationPhase(systemId, 1);
+  }
+
   useClanWarFoundationStore.getState().seedSynthFrontierNeutralHold(planetId, systemId);
+  dispatchArcCoreSeedTransportForSystem(systemId, 'frontier_system_unlock_orbit_seed');
   dispatchArcCoreSystemUnlockNotice(systemId, kind);
 }
 
-/** 일 1회 — 잠금 해제된 synth 중 phase < 3 행성 1단계 진행 */
+/** 일 1회 — 잠금 해제된 synth 중 phase < 3 행성 1단계 진행(phase 3 useQuadrantFaction) */
 export function runSynthColonizationAdvancePass(): { advanced: number } {
   const world = useWorldStore.getState();
   if (!world.loaded) return { advanced: 0 };
@@ -42,13 +44,7 @@ export function runSynthColonizationAdvancePass(): { advanced: number } {
     const phase = world.getSynthColonizationPhase(planetId);
     if (phase >= SYNTH_COLONIZATION_MAX_PHASE) continue;
 
-    const nextPhase = phase + 1;
-    world.applySynthColonizationPhase(systemId, nextPhase);
-
-    const row = getSynthColonizationPhaseRow(nextPhase);
-    if (row.seedTransport) {
-      dispatchArcCoreSeedTransportForSystem(systemId, 'daily_colonization_advance_transport');
-    }
+    world.applySynthColonizationPhase(systemId, phase + 1);
     advanced += 1;
   }
   return { advanced };

@@ -1,0 +1,13 @@
+planetId,stageTier,synthPhaseMin,devModulesMin,descriptionKo,descriptionEn,infoPanelPortraitAssetKey,backdropImageAssetKey,notesKo
+_synth_default,0,0,0,아크코어가 항로만 개방한 미개척 프론티어. 아직 어느 세력의 점유 기록도 없다.,ArcCore has opened the route only. No faction occupation record yet.,,,synth 공통 · phase0
+_synth_default,1,1,0,개척 초기 거점 — 소규모 전초와 궤도 수송만 가동 중이다.,Early colonization outpost — a small forward base and orbit transport only.,assets/images/planet/pip_001.png,,synth 공통 · phase1 unlock
+_synth_default,2,2,0,개발 진행 중 — 거점 인프라와 궤도 시설이 확장되고 있다.,Development in progress — outpost infrastructure and orbital facilities expanding.,assets/images/planet/pip_002.png,,synth 공통 · phase2 daily
+_synth_default,3,3,0,정착 단계 — 사분면 세력의 영향권 아래 안정 거점으로 성장 중이다.,Settlement phase — growing into a stable outpost under quadrant faction influence.,assets/images/planet/pip_003.png,,synth 공통 · phase3
+_synth_default,10,1,1,행성개발 1개 모듈 가동 — 거점 기능이 본격적으로 열렸다.,First development module online — outpost capabilities now active.,assets/images/planet/pip_002.png,,synth · dev 1+
+_synth_default,11,1,2,행성개발 2개 모듈 — 무역·조선·연구 중 하나 이상이 가동 중이다.,Two development modules — trade shipyard or research now operating.,assets/images/planet/pip_003.png,,synth · dev 2+
+_synth_default,12,1,3,행성개발 3개 이상 — 다목적 거점으로 전환되었다.,Three or more modules — multi-purpose hub conversion.,assets/images/planet/pip_003.png,,synth · dev 3+
+synth_002_p,1,1,0,[오로라 허브] 동쪽 관측국 개방 직후. 얇은 대기와 빙하 반사광이 궤도를 비춘다.,[Aurora Hub] Just after eastern observatory unlock. Thin atmosphere and ice glare fill the orbit.,assets/images/planet/pip_001.png,,오로라 · phase1
+synth_002_p,2,2,0,[오로라 허브] 아크코어 개발 패스 진행 — 관측 돔과 에너지 링이 연결되고 있다.,[Aurora Hub] ArcCore dev pass — observatory domes and energy rings linking up.,assets/images/planet/pip_002.png,,오로라 · phase2
+synth_002_p,3,3,0,[오로라 허브] 정착 완료 — 오로라 관측국 동쪽 거점 허브로 등록되었다.,[Aurora Hub] Settlement complete — registered as the eastern Aurora observatory hub.,assets/images/planet/pip_003.png,,오로라 · phase3
+synth_002_p,10,1,1,[오로라 허브] 플레이어 행성개발 1모듈 — 거점 시설이 가동을 시작했다.,[Aurora Hub] First player dev module online.,assets/images/planet/pip_002.png,,오로라 · dev1
+synth_002_p,11,1,2,[오로라 허브] 복수 시설 가동 — 관측·무역·조선 중 일부가 연결되었다.,[Aurora Hub] Multiple facilities — observation trade or shipyard linked.,assets/images/planet/pip_003.png,,오로라 · dev2+

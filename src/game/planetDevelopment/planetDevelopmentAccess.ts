@@ -10,6 +10,8 @@ import {
 } from '../../galaxyMap/mapFactionSideCore';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
 import { usePlayerStore } from '../../store/playerStore';
+import { isSynthFrontierPlanetId } from '../../world/isSynthFrontierPlanetId';
+import { resolveSystemIdForPlanetId } from '../../world/resolvePlanetSystemId';
 
 function resolvePlayerFactionSide(megaFactionId: string | undefined): MapFactionSide {
   const mega = megaFactionId?.trim();
@@ -37,6 +39,14 @@ export function canManagePlanetDevelopment(planetId: string): boolean {
   if (!player) return false;
 
   if (id === resolvePlayerHomePlanetId(player)) return true;
+
+  const currentPlanetId = player.currentPlanetId?.trim() || null;
+  if (currentPlanetId === id) return true;
+
+  if (isSynthFrontierPlanetId(id)) {
+    const systemId = resolveSystemIdForPlanetId(id);
+    if (systemId && player.currentSystemId === systemId) return true;
+  }
 
   const playerSide = resolvePlayerFactionSide(player.political?.megaFactionId);
   const foundation = useClanWarFoundationStore.getState();

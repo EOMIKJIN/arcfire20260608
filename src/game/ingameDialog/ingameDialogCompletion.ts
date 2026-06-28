@@ -6,6 +6,8 @@ import { useMissionStore } from '../../store/missionStore';
 import { usePlayerStore } from '../../store/playerStore';
 import type { StorySceneCompletionPolicy } from '../../types';
 import type { IngameDialogCompletionAction } from './ingameDialogTypes';
+import { tryAcceptQuestMissionWithFeedback } from '../../missions/instanceMissionAcceptFeedback';
+import { t } from '../../i18n';
 
 const callbackRegistry = new Map<string, () => void | Promise<void>>();
 
@@ -47,7 +49,7 @@ export function runIntroSeenAndStartFirstMissionPolicy(): void {
     });
     void usePlayerStore.getState().persist();
   }
-  useMissionStore.getState().initMissions();
+  useMissionStore.getState().initTutorialStory();
 }
 
 export async function runIngameDialogCompletionAction(
@@ -61,8 +63,23 @@ export async function runIngameDialogCompletionAction(
       useMissionStore.getState().finalizeMissionCompletion(action.missionId);
       break;
     case 'start_mission':
-      useMissionStore.getState().initMissions();
+      useMissionStore.getState().initTutorialStory();
       break;
+    case 'accept_quest_mission':
+    case 'accept_instance_mission': {
+      const player = usePlayerStore.getState().player;
+      const level = player?.level ?? 1;
+      tryAcceptQuestMissionWithFeedback(
+        action.missionId,
+        {
+          planetId: action.planetId,
+          playerLevel: level,
+          expectCaptainId: action.expectCaptainId,
+        },
+        t,
+      );
+      break;
+    }
     case 'mark_intro_seen_and_start_first_mission':
       runIntroSeenAndStartFirstMissionPolicy();
       break;

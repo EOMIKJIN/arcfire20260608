@@ -111,6 +111,8 @@ export interface PlayerFlags {
   firstMissionStarted: boolean;
   pendingArcadiaDialog01: boolean;
   seenStorySceneIds: string[];
+  /** 행성 허브 대화·co-presence·퀘스트 제안 배지 — 확인(대화 종료) 후 키 누적 */
+  acknowledgedHubDialogKeys: string[];
 }
 
 /**

@@ -115,17 +115,20 @@ import {
   PLANET_MAIN_TOPBAR_PADDING_HORIZONTAL,
   PLANET_MAIN_TOPBAR_PADDING_VERTICAL,
 } from '../../src/stages/planetMainStageLayout';
+import { resolvePlanetNearbyPresence } from '../../src/npc';
+import { getCaptainOrbitAssignmentEpochBucket } from '../../src/arcCore/orbitPresence/captainOrbitPlanetAssignment';
+import { listCaptainCoPresencePairsAtPlanet } from '../../src/arcCore/captainPresence';
 import {
-  mergeArcShipsIntoNearbyHubPresence,
-  resolvePlanetNearbyPresence,
-} from '../../src/npc';
+  publishPlanetHubCoPresenceObservationIfChanged,
+  resetPlanetHubCoPresenceObservationThrottle,
+} from '../../src/arcCore/observation/publishPlanetHubCoPresenceObservation';
+import { resolvePlanetHubCoPresenceInteractionHints } from '../../src/arcCore/observation/resolvePlanetHubCoPresenceInteractionHints';
 import { isArcCorePricedMineral } from '../../src/arcCore/economy/mineralTradePricing';
 import { resolvePlanetDisplayPrimaryMineralId } from '../../src/arcCore/economy/mineralMiningDropPolicy';
 import { ORBIT_MINING_CYCLE_MS, ORBIT_MINING_REWARD_GOOD_ID } from '../../src/game/miningConfig';
 import { planetHasMineableOrbitalDeposits } from '../../src/world/mineralDepositModel';
 import { listPlanetWorldObjects } from '../../src/worldObjects';
-import { tryCompleteDefenseSatelliteUpgrade } from '../../src/systems/planetaryDefense/planetDefenseSatelliteDevelopment';
-import { tryCompleteOrbitShipyardUpgrade } from '../../src/game/planetDevelopment/planetOrbitShipyardDevelopment';
+import { tryCompleteAllPlanetDevJobs } from '../../src/game/planetDevelopment/planetDevelopmentListRowModel';
 import {
   createInitialMiningSessionState,
   flushMiningPlayerPersist,
@@ -149,8 +152,12 @@ import { PlanetHubFeatureMenuRow } from '../../src/components/planet/PlanetHubFe
 import { PlanetMainScanActionRow } from '../../src/components/planet/PlanetMainScanActionRow';
 import { PlanetMainPilotInfoPanel } from '../../src/components/planet/PlanetMainPilotInfoPanel';
 import {
+  collectHubDialogBadgeAckKeysForTalk,
   collectPlanetHubCaptainIds,
+  markHubDialogBadgeAcknowledged,
   resolvePlanetHubNpcDialogSceneId,
+  resolvePlanetHubNpcDialogTarget,
+  resolvePlanetHubNpcTalkCompletionActions,
 } from '../../src/game/planetHubNpcDialog';
 import { formatSalvageLootLabel, pickSalvageLootItemId } from '../../src/game/planetSalvageSearch';
 import { NearbyShipInfoPanel, PlanetStageBackground } from '../../src/components/planet/planetHub/planetHubSubcomponents';
@@ -179,18 +186,9 @@ import { presentWaveResultOverlay, presentSettingsOverlay, presentBmShopOverlay 
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { useT } from '../../src/i18n';
 import { usePlanetHubInfoDistanceSort } from '../../src/game/planetHub/usePlanetHubInfoDistanceSort';
-import { usePlanetHubInterval } from '../../src/game/planetHub/usePlanetHubInterval';
-import {
-  buildHubTrafficPresenceRows,
-  HUB_ORBIT_TRAFFIC_CYCLE_MS,
-  HUB_ORBIT_TRAFFIC_MAX_ACTIVE,
-  seedHubOrbitTraffic,
-  startHubOrbitTrafficSession,
-  tickHubOrbitTraffic,
-} from '../../src/game/hubOrbitTrafficSession';
 import {
   applyPlanetHubOrbitRenderBudget,
-  capHubOrbitPresenceByRenderPriority,
+  buildPlanetHubOrbitInfoRows,
 } from '../../src/game/planetHubOrbitRenderBudget';
 import {
   isPlanetHubResearchLabEnabled,
@@ -216,6 +214,12 @@ export default function PlanetScreen() {
   const clearMenuBadge = useMenuNotificationStore(s => s.clearBadge);
   const hasTradeMenuBadge = useMenuNotificationStore(s => Boolean(s.badges.trade));
   const hasQuestHud = useMissionStore(s => !!s.getActiveMission());
+  const missionProgressRev = useMissionStore((s) => JSON.stringify(s.progresses));
+  const hubDialogBadgeRev = usePlayerStore((s) => {
+    const seen = s.player?.flags.seenStorySceneIds ?? [];
+    const ack = s.player?.flags.acknowledgedHubDialogKeys ?? [];
+    return `${seen.length}|${ack.length}|${ack[ack.length - 1] ?? ''}`;
+  });
   const mainStageVertical = useMemo(
     () =>
       getPlanetMainStageVerticalMetrics({
@@ -418,7 +422,7 @@ export default function PlanetScreen() {
       hasResearchLab: isPlanetHubResearchLabEnabled(pid),
       hasTavern: isPlanetHubTavernEnabled(pid),
     };
-  }, [planet, resolvedPlanetId, hubFacilityDevRev]);
+  }, [planet, resolvedPlanetId, hubFacilityDevRev, missionProgressRev]);
 
   const featureMenuItems = useMemo(
     () => buildPlanetHubFeatureMenuItems({
@@ -458,16 +462,6 @@ export default function PlanetScreen() {
     }
     return out;
   }, [arcInboundDronesSnap, planet?.id]);
-
-  /** 허브 트래픽 exclude — arc NPC publish 참조 변경만으로 session re-seed 방지 */
-  const arcNpcHubExcludeSig = useMemo(() => {
-    const parts: string[] = [];
-    for (const ship of arcNpcShipsAtPlanet) {
-      parts.push(`${ship.id}:${ship.captainId}`);
-    }
-    parts.sort();
-    return parts.join('|');
-  }, [arcNpcShipsAtPlanet]);
 
   /** AiNpc publish와 동일 키 — 궤도 예산 useMemo 불필요 재계산 억제 */
   const arcNpcAtPlanetRenderSig = useMemo(() => {
@@ -556,8 +550,7 @@ export default function PlanetScreen() {
     const pid = planet?.id;
     if (!pid || !isPlanetRouteFocused || !appStateActive || !stageSession.isActive) return undefined;
     const intervalId = setInterval(() => {
-      tryCompleteDefenseSatelliteUpgrade(pid);
-      tryCompleteOrbitShipyardUpgrade(pid);
+      tryCompleteAllPlanetDevJobs(pid);
     }, 2000);
     const token = registerPlanetSessionResource({
       ownerId: 'planet_defense_satellite_upgrade_tick',
@@ -795,30 +788,29 @@ export default function PlanetScreen() {
   }, [player?.currentPlanetId, playerHydrated, isPlanetRouteFocused]);
 
   const [nearbyPresence, setNearbyPresence] = useState<ReturnType<typeof resolvePlanetNearbyPresence>>([]);
+  const captainOrbitEpochRef = useRef(getCaptainOrbitAssignmentEpochBucket());
   useEffect(() => {
     if (!isPlanetRouteFocused || !planet || !system) {
       setNearbyPresence([]);
       return;
     }
-    // 스테이지(행성) 진입 시에만 테이블 기반 배치 스냅샷 로드
-    setNearbyPresence(resolvePlanetNearbyPresence(planet.id, system.id));
+    const refreshTablePresence = () => {
+      captainOrbitEpochRef.current = getCaptainOrbitAssignmentEpochBucket();
+      setNearbyPresence(resolvePlanetNearbyPresence(planet.id, system.id));
+    };
+    refreshTablePresence();
+    const epochPollId = setInterval(() => {
+      const nextEpoch = getCaptainOrbitAssignmentEpochBucket();
+      if (nextEpoch === captainOrbitEpochRef.current) return;
+      refreshTablePresence();
+    }, 60_000);
     return () => {
-      // 스테이지 이탈 시 즉시 해제
+      clearInterval(epochPollId);
       setNearbyPresence([]);
     };
   }, [isPlanetRouteFocused, planet?.id, system?.id]);
 
   const nearbyPresenceRef = useRef(nearbyPresence);
-
-  const nearbyHubExcludeSig = useMemo(() => {
-    const parts: string[] = [];
-    for (const row of nearbyPresence) {
-      const sid = row.linkedCapitalShipId;
-      if (sid) parts.push(sid);
-    }
-    parts.sort();
-    return parts.join('|');
-  }, [nearbyPresence]);
 
   /** 궤도 Skia·마크 렌더 — 테이블+아크 합산 상한 (아르카디아 17척 등 GL·뷰 폭주 방지) */
   const orbitRenderBudget = useMemo(
@@ -832,105 +824,68 @@ export default function PlanetScreen() {
     return orbitArcShipsAtPlanet.map((s) => orbitLabelHead3(m.get(s.captainId) ?? s.captainId));
   }, [orbitArcShipsAtPlanet, arcNpcCaptainsSnap]);
 
-  /** 테이블 근접 + 현재 행성에 머문 아크 수송선 + 허브 트래픽(‹AI›) — INFO·궤도 공통 · v4.0 최대 5척 */
-  const [hubTrafficTick, setHubTrafficTick] = useState(0);
-  const hubTrafficSigRef = useRef('');
-  const hubMergedNearbyPresence = useMemo(() => {
+  /** 궤도에 표시 중인 전함 = INFO 단일 소스 (중복 출연 금지) */
+  const planetHubOrbitInfoRows = useMemo(() => {
     if (!planet || !system) return [];
-    const arcInfoRows = mergeArcShipsIntoNearbyHubPresence(
-      [],
+    return buildPlanetHubOrbitInfoRows(
+      orbitTablePresence,
       orbitArcShipsAtPlanet,
       arcNpcCaptainsSnap,
       planet.id,
       system.id,
     );
-    const hubTrafficRows = buildHubTrafficPresenceRows(planet.id, system.id);
-    void hubTrafficTick;
-    return capHubOrbitPresenceByRenderPriority(
-      arcInfoRows,
-      hubTrafficRows,
-      orbitTablePresence,
-      HUB_ORBIT_TRAFFIC_MAX_ACTIVE,
-    );
-  }, [
-    orbitTablePresence,
-    orbitArcShipsAtPlanet,
-    arcNpcCaptainsSnap,
-    planet,
-    system,
-    hubTrafficTick,
-  ]);
+  }, [orbitTablePresence, orbitArcShipsAtPlanet, arcNpcCaptainsSnap, planet, system]);
 
-  useEffect(() => {
-    if (!isPlanetRouteFocused || !planet || !system) return;
-    const stopSession = startHubOrbitTrafficSession(planet.id, system.id);
-    const excludeCaptains = new Set<string>();
-    const excludeShips = new Set<string>();
-    for (const row of nearbyPresenceRef.current) {
-      const sid = row.linkedCapitalShipId;
-      if (sid) excludeShips.add(sid);
-    }
-    for (const ship of arcNpcShipsAtPlanetRef.current) {
-      excludeCaptains.add(ship.captainId);
-      excludeShips.add(ship.id);
-    }
-    seedHubOrbitTraffic(planet.id, system.id, excludeCaptains, excludeShips);
-    hubTrafficSigRef.current = buildHubTrafficPresenceRows(planet.id, system.id)
-      .map((r) => `${r.slotIndex}:${r.linkedCapitalShipId ?? ''}`)
-      .join('|');
-    setHubTrafficTick((v) => v + 1);
-    const token = registerPlanetSessionResource({
-      ownerId: 'hub_orbit_traffic_session',
-      planetId: planet.id,
-      dispose: stopSession,
-    });
-    return () => token.release();
-  }, [isPlanetRouteFocused, planet?.id, system?.id, nearbyHubExcludeSig, arcNpcHubExcludeSig]);
-
-  const tickHubTraffic = useCallback(() => {
-    if (!planet || !system) return;
-    const excludeCaptains = new Set<string>();
-    const excludeShips = new Set<string>();
-    for (const row of nearbyPresenceRef.current) {
-      const sid = row.linkedCapitalShipId;
-      if (sid) excludeShips.add(sid);
-    }
-    for (const ship of arcNpcShipsAtPlanetRef.current) {
-      excludeCaptains.add(ship.captainId);
-      excludeShips.add(ship.id);
-    }
-    tickHubOrbitTraffic(planet.id, system.id, excludeCaptains, excludeShips);
-    const sig = buildHubTrafficPresenceRows(planet.id, system.id)
-      .map((r) => `${r.slotIndex}:${r.linkedCapitalShipId ?? ''}`)
-      .join('|');
-    if (sig === hubTrafficSigRef.current) return;
-    hubTrafficSigRef.current = sig;
-    setHubTrafficTick((v) => v + 1);
-  }, [planet?.id, system?.id]);
-
-  usePlanetHubInterval(
-    'planet_hub_orbit_traffic',
-    planet?.id ?? null,
-    isPlanetRouteFocused && Boolean(planet && system),
-    HUB_ORBIT_TRAFFIC_CYCLE_MS,
-    tickHubTraffic,
+  const hubMergedRowsRef = useRef(planetHubOrbitInfoRows);
+  const planetHubCaptainIds = useMemo(
+    () => collectPlanetHubCaptainIds(planetHubOrbitInfoRows),
+    [planetHubOrbitInfoRows],
   );
-
-  const hubMergedRowsRef = useRef(hubMergedNearbyPresence);
-  const planetHubCaptainIds = useMemo(() => {
-    if (!planet || !system) return [];
-    return collectPlanetHubCaptainIds(
+  /** 동일 행성 co-presence — 팩션 rival/hostile 쌍 (향후 교전·대화 이벤트 훅) */
+  const planetHubCoPresencePairs = useMemo(() => {
+    if (!planet?.id) return [];
+    return listCaptainCoPresencePairsAtPlanet(planet.id, planetHubCaptainIds);
+  }, [planet?.id, planetHubCaptainIds]);
+  const planetHubCoPresenceHints = useMemo(
+    () => resolvePlanetHubCoPresenceInteractionHints(planetHubCoPresencePairs),
+    [planetHubCoPresencePairs],
+  );
+  useEffect(() => {
+    if (!planet?.id) return;
+    publishPlanetHubCoPresenceObservationIfChanged(
       planet.id,
-      system.id,
-      arcNpcShipsAtPlanet,
-      hubMergedNearbyPresence,
+      system?.id ?? null,
+      planetHubCoPresencePairs,
     );
-  }, [planet, system, arcNpcShipsAtPlanet, hubMergedNearbyPresence]);
+  }, [planet?.id, system?.id, planetHubCoPresencePairs]);
+  useEffect(() => () => resetPlanetHubCoPresenceObservationThrottle(), []);
+  const planetHubNpcDialogTarget = useMemo(() => {
+    if (!planet?.id) return null;
+    return resolvePlanetHubNpcDialogTarget(planet.id, planetHubCaptainIds, planetHubCoPresenceHints);
+  }, [planet?.id, planetHubCaptainIds, planetHubCoPresenceHints, hubDialogBadgeRev, missionProgressRev]);
   const openPlanetHubNpcDialog = useCallback(() => {
     if (isIngameDialogActive() || !planet) return;
-    const sceneId = resolvePlanetHubNpcDialogSceneId(planet.id, planetHubCaptainIds);
-    presentIngameDialogScene(sceneId);
-  }, [planet, planetHubCaptainIds]);
+    const target = planetHubNpcDialogTarget;
+    const sceneId = target?.sceneId
+      ?? resolvePlanetHubNpcDialogSceneId(planet.id, planetHubCaptainIds);
+    const completionActions = target
+      ? resolvePlanetHubNpcTalkCompletionActions(target.captainId, planet.id)
+      : [];
+    presentIngameDialogScene(sceneId, {
+      completionActions,
+      onDismiss: () => {
+        if (!target) return;
+        markHubDialogBadgeAcknowledged(
+          collectHubDialogBadgeAckKeysForTalk({
+            planetId: planet.id,
+            captainId: target.captainId,
+            sceneId,
+            coPresenceHints: planetHubCoPresenceHints,
+          }),
+        );
+      },
+    });
+  }, [planet, planetHubCaptainIds, planetHubCoPresenceHints, planetHubNpcDialogTarget]);
   const handlePlanetSalvageSearch = useCallback(() => {
     if (!planet || !activeSalvageWreck) {
       showArcAlert(t('planet.searchTitle'), t('planet.searchNone'));
@@ -983,7 +938,7 @@ export default function PlanetScreen() {
   useLayoutEffect(() => {
     arcNpcShipsAtPlanetRef.current = arcNpcShipsAtPlanet;
     nearbyPresenceRef.current = nearbyPresence;
-    hubMergedRowsRef.current = hubMergedNearbyPresence;
+    hubMergedRowsRef.current = planetHubOrbitInfoRows;
     tableOrbitSlotCountRef.current = orbitTablePresence.length;
     const shipIndex = new Map<string, number>();
     for (let i = 0; i < arcNpcShipsAtPlanet.length; i++) {
@@ -994,7 +949,7 @@ export default function PlanetScreen() {
   }, [
     arcNpcShipsAtPlanet,
     nearbyPresence,
-    hubMergedNearbyPresence,
+    planetHubOrbitInfoRows,
     orbitTablePresence.length,
     orbitFlatParams,
   ]);
@@ -1087,13 +1042,13 @@ export default function PlanetScreen() {
 
   const [infoLineOrder, setInfoLineOrder] = useState<number[]>([]);
   useEffect(() => {
-    const len = hubMergedNearbyPresence.length;
+    const len = planetHubOrbitInfoRows.length;
     if (len === 0) {
       setInfoLineOrder([]);
       return;
     }
     setInfoLineOrder(prev => (prev.length === len ? prev : Array.from({ length: len }, (_, i) => i)));
-  }, [hubMergedNearbyPresence.length]);
+  }, [planetHubOrbitInfoRows.length]);
 
   const applyInfoDistanceSort = useCallback(() => {
     const merged = hubMergedRowsRef.current;
@@ -1131,21 +1086,21 @@ export default function PlanetScreen() {
     resolvedPlanetId,
     planetStageSkiaActive,
     applyInfoDistanceSort,
-    hubMergedNearbyPresence.length,
+    planetHubOrbitInfoRows.length,
   );
 
   const sortedShipInfoRows = useMemo(() => {
-    const len = hubMergedNearbyPresence.length;
+    const len = planetHubOrbitInfoRows.length;
     if (len === 0) return [];
     const order =
       infoLineOrder.length === len ? infoLineOrder : Array.from({ length: len }, (_, i) => i);
     return order.map(i => {
-      const slot = hubMergedNearbyPresence[i]!;
+      const slot = planetHubOrbitInfoRows[i]!;
       return normalizeNearbyInfoDetailRow(
         buildNearbyInfoDetailRow(slot.slotIndex, slot.displayLine),
       );
     });
-  }, [infoLineOrder, hubMergedNearbyPresence]);
+  }, [infoLineOrder, planetHubOrbitInfoRows]);
   const orbitCaptionsBySlot = useMemo(
     () => orbitTablePresence.map(r => orbitCaptainCaptionFromLine(r.displayLine)),
     [orbitTablePresence],
@@ -1401,7 +1356,7 @@ export default function PlanetScreen() {
               miningLabel={miningSession.status === 'running' ? t('planet.miningStop') : t('planet.mining')}
               miningDisabled={!canOrbitalMine}
               miningPrimary={miningSession.status === 'running'}
-              dialogDisabled={false}
+              dialogShowBadge={Boolean(planetHubNpcDialogTarget?.showInitiatedBadge)}
               searchDisabled={!activeSalvageWreck}
               onScanComplete={handlePlanetScanComplete}
               onScanReset={handlePlanetScanReset}

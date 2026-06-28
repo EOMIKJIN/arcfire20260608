@@ -3,7 +3,7 @@
 // dev_trade_port Lv2+ → 고급 무기 가중 배분(tradePortDevWeaponListing)
 // ============================================================
 
-import { STAR_SYSTEMS } from '../../data/systems';
+import { resolveStarSystemForPlanetId } from '../../world/resolvePlanetSystemPosition';
 import { resolvePlanetZoneIndex } from '../planetBalance/planetZoneIndexRegistry';
 import { resolveTradePortWeaponIdsForPlanetDev } from './tradePortDevWeaponListing';
 import {
@@ -16,10 +16,7 @@ import {
 export { isPinnedTradePortWeapon } from './weaponTradeListingPolicy';
 
 function findSystemForPlanetId(planetId: string) {
-  for (const system of Object.values(STAR_SYSTEMS)) {
-    if (system.planets.some((p) => p.id === planetId)) return system;
-  }
-  return undefined;
+  return resolveStarSystemForPlanetId(planetId);
 }
 
 function resolveInstalledTradePortLevel(planetId: string): number | null {

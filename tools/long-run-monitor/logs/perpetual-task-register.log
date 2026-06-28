@@ -1,0 +1,6 @@
+﻿[2026-06-28 21:14:37] REGISTERED ArcfirePerpetualDetection logon+5m backup -> D:\arcfire20260607\tools\long-run-monitor\ensure-perpetual-watchdog.ps1
+[2026-06-28 21:14:39] ENSURE immediate after register
+[2026-06-28 22:23:11] REGISTERED ArcfirePerpetualDetection logon+5m backup -> D:\arcfire20260607\tools\long-run-monitor\ensure-perpetual-watchdog.cjs
+[2026-06-28 22:23:11] ENSURE immediate after register
+[2026-06-28 23:10:11] REGISTERED ArcfirePerpetualDetection logon-only hidden -> D:\arcfire20260607\tools\long-run-monitor\ensure-perpetual-watchdog.cjs
+[2026-06-28 23:10:11] ENSURE immediate after register (hidden)

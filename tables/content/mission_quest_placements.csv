@@ -1,0 +1,17 @@
+id,objectiveId,planetId,itemId,stockQty,unitPriceOverride,questTag,notesKo
+qq_obj_003_a,obj_003_a,solar_station,food,99,42,quest,튜토리얼 — 솔라 항구 식량 팩
+qq_obj_s002_a,obj_s002_a,arcadia_prime,food,99,42,quest,샌드박스 — 아르카디아 식량
+qq_obj_s004_a,obj_s004_a,solar_station,tech,99,420,quest,샌드박스 — 솔라 기술 부품
+qq_obj_s006_a,obj_s006_a,minerva_deep,minerals,99,95,quest,샌드박스 — 미네르바 원자재
+qq_obj_s008_a,obj_s008_a,vega_base,food,99,42,quest,샌드박스 — 베가 식량
+qq_obj_s010_a,obj_s010_a,eden_city,tech,99,420,quest,샌드박스 — 뉴에덴 기술
+qq_obj_s012_a,obj_s012_a,iron_remnant,minerals,99,95,quest,샌드박스 — 아이언 원자재
+qq_obj_s014_a,obj_s014_a,draco_haven,luxury,99,1400,quest,샌드박스 — 드라코 사치품
+qq_obj_s016_a,obj_s016_a,omega_hub,food,99,42,quest,샌드박스 — 오메가 식량
+qq_obj_s018_a,obj_s018_a,solar_station,tech,99,420,quest,샌드박스 — 솔라 에너지 코일 부품
+qq_obj_s020_a,obj_s020_a,titan_ruins,luxury,99,1400,quest,샌드박스 — 타이탄 사치품
+qq_obj_s022_a,obj_s022_a,sirius_border,weapon,99,720,quest,샌드박스 — 시리우스 무기
+qq_obj_s024_a,obj_s024_a,crimson_base,contraband,99,3200,quest,샌드박스 — 크림슨 금지물
+qq_obj_s026_a,obj_s026_a,blood_station,food,99,42,quest,샌드박스 — 블러드 식량/의료
+qq_obj_s028_a,obj_s028_a,omega_hub,tech,99,420,quest,샌드박스 — 오메가 기술
+qq_obj_s030_a,obj_s030_a,solar_station,tech,99,420,quest,샌드박스 — 솔라 고급 기술

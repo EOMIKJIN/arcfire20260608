@@ -1,38 +1,42 @@
 {
-  "generatedAt": "2026-06-26T03:26:05.635Z",
+  "generatedAt": "2026-06-28T13:27:57.525Z",
   "policySource": "level_band_targets.csv",
   "drifts": [
     {
       "key": "band_early",
       "target": 15,
-      "observed": 16.5,
-      "gapPercent": 10,
-      "severity": "warn",
-      "decision": "adjust_multiplier"
+      "observed": 157.5,
+      "gapPercent": 950,
+      "observeMethod": "weapon_median_vs_band_cph_window",
+      "severity": "critical",
+      "decision": "code_change"
     },
     {
       "key": "band_mid_early",
       "target": 60,
-      "observed": 66,
-      "gapPercent": 10,
-      "severity": "warn",
-      "decision": "adjust_multiplier"
+      "observed": 3562.5,
+      "gapPercent": 5837.5,
+      "observeMethod": "weapon_median_vs_band_cph_window",
+      "severity": "critical",
+      "decision": "code_change"
     },
     {
       "key": "band_mid",
       "target": 90,
-      "observed": 99.00000000000001,
-      "gapPercent": 10,
-      "severity": "warn",
-      "decision": "adjust_multiplier"
+      "observed": 6842.5,
+      "gapPercent": 7502.8,
+      "observeMethod": "weapon_median_vs_band_cph_window",
+      "severity": "critical",
+      "decision": "code_change"
     },
     {
       "key": "band_late",
       "target": 120,
-      "observed": 132,
-      "gapPercent": 10,
-      "severity": "warn",
-      "decision": "adjust_multiplier"
+      "observed": 25408.75,
+      "gapPercent": 21074,
+      "observeMethod": "weapon_median_vs_band_cph_window",
+      "severity": "critical",
+      "decision": "code_change"
     }
   ],
   "bands": [

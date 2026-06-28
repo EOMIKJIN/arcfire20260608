@@ -1,5 +1,5 @@
 key,value,notesKo
-policy_version,3,행성 유지비·거래수수료 정본 (v3: 개발도 비례 유지비)
+policy_version,4,행성 유지비·거래수수료 정본 (v4: 교역량 비례 유지비)
 enabled,true,일 1회 배치에서 유지비·수수료 정산
 upkeep_fixed_credits_per_planet,800,[보완 #2] 행성 1개당 일 유지비 고정 베이스(P=50% 기준 800cr)
 upkeep_development_scaling_enabled,true,[v3] 개발 엔티티(방위위성 등) 레벨별 1일 유지비를 베이스에 가산 — planet_defense_satellite_level_policy.dailyUpkeepCredits 정본
@@ -13,3 +13,11 @@ allow_negative_vault_balance,true,금고 잔고 마이너스 허용(경제 시�
 convoy_daily_coverage_enabled,true,교역 행성 일 1회 수송선단 정산
 convoy_daily_min_trade_qty,2,일일 정산 최소 교역 수량
 transport_fleet_display_name_ko,아크코어 수송선단,거래 독점 선단 표시명
+fiscal_fee_upkeep_warn_ratio,20,일 수수료/유지비 WARN (배 이상)
+fiscal_fee_upkeep_fail_ratio,50,일 수수료/유지비 FAIL (배 이상)
+convoy_progressive_fee_threshold_ratio,15,수송 progressive fee — fee/upkeep 이 비율 초과 시 감쇠
+convoy_progressive_fee_dampen_max_pct,40,수송 progressive fee — 최대 수수료 감쇠(%)
+fiscal_closed_loop_warn_streak_days,3,연속 WARN/FAIL 일수 → trade_route 일 1회 step
+fiscal_closed_loop_trade_route_step_pct,2,closed loop trade_route 가격 step(%)
+upkeep_trade_volume_share_enabled,true,[v4] 당일 팩션 수수료 일부를 유지비 sink로 환류
+upkeep_daily_faction_fee_share_pct,18,[v4] 일 유지비 += arcFeeCredits×이 비율(%)

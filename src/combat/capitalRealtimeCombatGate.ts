@@ -6,6 +6,7 @@ import { resolvePlanetHostileShipCount } from '../arcCore/balance/balanceTableRe
 import { NPC_CAPTAINS_FROM_CSV, NPC_CAPITAL_SHIPS_FROM_CSV } from '../data/generated';
 import { resolvePlanetGovernorHostileCombatCaptainId } from '../game/planetGovernor/planetGovernorRegistry';
 import { captainMatchesPlanetOrbitTable } from '../npc/captainOrbitTableMatch';
+import { getCaptainPrimaryPresence } from '../arcCore/captainPresence/buildCaptainPresenceWorldIndex';
 import { getNpcCaptain } from '../npc/npcFleetRegistry';
 
 export const CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID = '__transit__';
@@ -14,6 +15,8 @@ export type CombatFleetSeedSlot = {
   team: 'red' | 'blue' | 'orange';
   npcShipId: string | null;
   captainId: string | null;
+  /** 전투 인스턴스 구분(웨이브 등) — CSV 함장 id 중복 spawn 시 world presence 제외 */
+  combatInstanceKey?: string | null;
 };
 
 function resolveCombatTeamFromCaptain(
@@ -59,6 +62,15 @@ export function resolveCombatFleetSlotsFromCaptains(
       ? captainMatchesPlanetOrbitTable(captain, planetId, systemId)
       : captain.basePlanetId === planetId || captain.activityPlanetIds.includes(planetId);
     if (!planetMatch || captain.operationalState !== 'combat') continue;
+    const primary = getCaptainPrimaryPresence(captain.id);
+    if (
+      primary
+      && primary.activity === 'combat_orbit_posture'
+      && primary.planetId
+      && primary.planetId !== planetId
+    ) {
+      continue;
+    }
     const assignedShipId = captain.assignedShipId || '';
     rows.push({
       team: resolveCombatTeamFromCaptain(captain.combatTeam),

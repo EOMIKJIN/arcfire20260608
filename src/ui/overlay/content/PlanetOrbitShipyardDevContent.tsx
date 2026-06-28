@@ -11,7 +11,6 @@ import {
   listFacilityShipyardLevelRows,
   PLANET_DEV_MODULE_ORBIT_SHIPYARD,
   startPlanetOrbitShipyardUpgrade,
-  tryCompleteOrbitShipyardUpgrade,
 } from '../../../game/planetDevelopment/planetOrbitShipyardDevelopment';
 import { PlanetHubDigitalGauge } from '../../../components/planet/PlanetHubActionGaugeSlot';
 import { usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore';
@@ -26,6 +25,12 @@ import { overlayInkColor } from '../overlayVisualTokens';
 import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
 import { PlanetDevHintText, PlanetDevSectionBar, PlanetDevSummaryInset } from './PlanetDevOverlayChrome';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
+import {
+  formatPlanetDevLevelLabel,
+  formatPlanetDevLevelUpgradeArrow,
+  planetDevLevelI18nParams,
+  planetDevUpgradeI18nParams,
+} from '../../../game/planetDevelopment/planetFacilityDevLevelDisplay';
 
 export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDevContent({
   planetId,
@@ -48,7 +53,6 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
 
   useEffect(() => {
     const id = setInterval(() => {
-      tryCompleteOrbitShipyardUpgrade(planetId);
       setTick((v) => v + 1);
     }, 500);
     return () => clearInterval(id);
@@ -144,8 +148,7 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
           <>
             <ArcButton
               label={t('orbitShipyard.upgradeBtn', {
-                from: snapshot.level,
-                to: snapshot.nextTargetLevel,
+                ...planetDevUpgradeI18nParams(snapshot.level, snapshot.nextTargetLevel, t),
                 cost: formatCredits(snapshot.nextUpgradeCost ?? 0, { suffix: true }),
                 duration: nextDurationLabel,
               })}
@@ -157,6 +160,7 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
             <ArcButton
               label={t('orbitShipyard.instantUpgradeBtn', {
                 to: snapshot.nextTargetLevel,
+                toEpic: planetDevLevelI18nParams(snapshot.nextTargetLevel, t).epicBadge,
                 cost: formatCredits((snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0), { suffix: true }),
               })}
               visualTheme={visualTheme}
@@ -210,14 +214,24 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
           value={
             snapshot.installed
               ? (snapshot.isCsvWorldBaseline
-                ? t('orbitShipyard.stateBase', { level: snapshot.level })
-                : t('orbitShipyard.stateInstalled', { level: snapshot.level }))
+                ? t('orbitShipyard.stateBase', planetDevLevelI18nParams(snapshot.level, t))
+                : t('orbitShipyard.stateInstalled', planetDevLevelI18nParams(snapshot.level, t)))
               : t('orbitShipyard.stateNotInstalled')
           }
           visualTheme={visualTheme}
         />
         {snapshot.isCsvWorldBaseline ? (
           <PlanetDevHintText visualTheme={visualTheme}>{t('planetDev.worldBuiltHint')}</PlanetDevHintText>
+        ) : null}
+        {!canManageDevelopment ? (
+          <PlanetDevHintText visualTheme={visualTheme}>{t('planetDev.manageDeniedHint')}</PlanetDevHintText>
+        ) : null}
+        {!snapshot.installed && snapshot.installBlockReason ? (
+          <ArcOverlayInfoRow
+            label={t('planetDev.installBlockLabel')}
+            value={snapshot.installBlockReason}
+            visualTheme={visualTheme}
+          />
         ) : null}
         {snapshot.installed ? (
           <>
@@ -260,7 +274,9 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
           <View style={styles.gaugeBlock}>
             <PlanetDevSectionBar label={t('orbitShipyard.upgradeProgress')} visualTheme={visualTheme} />
             <PlanetDevHintText visualTheme={visualTheme} variant="body">
-              Lv.{snapshot.level} → Lv.{snapshot.upgradeJob?.targetLevel ?? '?'}
+              {snapshot.upgradeJob?.targetLevel != null
+                ? formatPlanetDevLevelUpgradeArrow(snapshot.level, snapshot.upgradeJob.targetLevel, t)
+                : `${formatPlanetDevLevelLabel(snapshot.level, t)} → ?`}
             </PlanetDevHintText>
             <PlanetHubDigitalGauge
               progressPct={snapshot.upgradeProgressPct}
@@ -282,7 +298,7 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
             ]}
           >
             <Text style={[styles.levelRowTitle, { color: levelRowTitleColor }]}>
-              Lv.{row.level} {row.displayNameKr}
+              {formatPlanetDevLevelLabel(row.level, t)} {row.displayNameKr}
               {row.level === snapshot.level ? ' ◀' : ''}
             </Text>
             <Text style={[styles.levelRowMeta, { color: levelRowMetaColor }]}>

@@ -1,7 +1,7 @@
 // ============================================================
 // 행성 궤도 근접 NPC — 표시(info) · 궤도 · NPC AI DB 연동 (단일 시스템)
 // - planetId + systemId 로 결정론적 변형 (행성마다 이름·궤도 다름)
-// - 주둔 기함: CSV 함장·아크코어 단일행성 배정(`captainOrbitPlanetAssignment`) — 수송 8척은 AiNpcSubCore만
+// - 주둔 기함: `captainPresence` 전역 primary 인덱스(3h·팩션·총사령관 배타) — arc 수송은 AiNpcSubCore
 // - 함급(hull class) 레지스트리에서 궤도·이름 패턴을 읽음
 // - 전함 DB(CSV 함장의 assignedShipId) + 함장의 base/activity **행성** 또는 **성계** 매칭으로 슬롯 구성
 // ============================================================
@@ -15,9 +15,10 @@ import { NPC_CAPITAL_SHIPS_FROM_CSV, NPC_CAPTAINS_FROM_CSV } from '../data/gener
 import { getNpcCapitalAiContext } from './npcFleetRegistry';
 import { getNpcCapitalHullClassDef, resolveNpcCapitalOrbitKinematic } from './npcCapitalClassRegistry';
 import { npcDeterministicHash32 } from './npcDeterministicHash';
-import { captainMatchesPlanetOrbitTable } from './captainOrbitTableMatch';
-import { isCaptainTableOrbitAssignedToPlanet } from '../arcCore/orbitPresence/captainOrbitPlanetAssignment';
+import { isCaptainHubOrbitPrimaryAtPlanet } from '../arcCore/captainPresence/buildCaptainPresenceWorldIndex';
+import { syncCaptainOrbitAssignmentEpochMemo } from '../arcCore/orbitPresence/captainOrbitPlanetAssignment';
 import { memoizePerPlanetSystem } from '../game/planetMemoCache';
+import { useArcNpcTrafficStore } from '../store/arcNpcTrafficStore';
 
 type CaptainShipRow = { captain: (typeof NPC_CAPTAINS_FROM_CSV)[number]; ship: NpcCapitalShip };
 
@@ -91,11 +92,11 @@ function buildPlanetNearbyPresence(
   systemId: string,
 ): NearbyOrbitPresenceRow[] {
   const shipById = getShipByIdIndex();
+  const arcShips = useArcNpcTrafficStore.getState().ships;
   const tableDrivenPairs = NPC_CAPTAINS_FROM_CSV.flatMap(captain => {
     const state = captain.operationalState;
     if (captain.arcOrbitPresenceFill) return [];
-    if (!captainMatchesPlanetOrbitTable(captain, planetId, systemId)) return [];
-    if (!isCaptainTableOrbitAssignedToPlanet(captain, planetId)) return [];
+    if (!isCaptainHubOrbitPrimaryAtPlanet(captain, planetId, arcShips)) return [];
     const assignedShip = captain.assignedShipId ? shipById.get(captain.assignedShipId) : undefined;
     if (!assignedShip) return [];
     return [{ captain, ship: assignedShip, state }];
@@ -142,7 +143,15 @@ function buildPlanetNearbyPresence(
  * 행성 단위 캐시. 행성 변경/메인스테이지 이탈 시 `releasePlanetMainStageSession`이
  * 자동으로 캐시를 무효화한다.
  */
-export const resolvePlanetNearbyPresence = memoizePerPlanetSystem(
+export const resolvePlanetNearbyPresence = (
+  planetId: string,
+  systemId: string,
+): NearbyOrbitPresenceRow[] => {
+  syncCaptainOrbitAssignmentEpochMemo();
+  return resolvePlanetNearbyPresenceCached(planetId, systemId);
+};
+
+const resolvePlanetNearbyPresenceCached = memoizePerPlanetSystem(
   'nearbyOrbitPresenceSystem.resolvePlanetNearbyPresence',
   buildPlanetNearbyPresence,
 );

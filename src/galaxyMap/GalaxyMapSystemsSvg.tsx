@@ -33,6 +33,11 @@ function shortName(name: string): string {
   return name.length > 10 ? `${name.slice(0, 9)}…` : name;
 }
 
+/** 점유 확정(블루/레드) vs 미결정 — 방문 노드 안쪽 점 색 */
+function resolveOccupiedNodeInnerFill(clanOwnerColor: string | undefined): string {
+  return clanOwnerColor ?? '#FFFFFF';
+}
+
 export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
   systems,
   systemById,
@@ -109,8 +114,31 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
         body = (
           <Circle cx={pos.x} cy={pos.y} r={r} fill="#2B3547" stroke="#526483" strokeWidth={1} />
         );
-      } else if (isCurrent || isVisited) {
-        body = <Circle cx={pos.x} cy={pos.y} r={r} fill={clanOwnerColor ?? '#FFFFFF'} />;
+      } else if (isCurrent) {
+        body = (
+          <Circle
+            cx={pos.x}
+            cy={pos.y}
+            r={r}
+            fill={resolveOccupiedNodeInnerFill(clanOwnerColor)}
+          />
+        );
+      } else if (isVisited) {
+        const innerR = Math.max(2.5, r * 0.42) + 1;
+        const innerFill = resolveOccupiedNodeInnerFill(clanOwnerColor);
+        body = (
+          <>
+            <Circle
+              cx={pos.x}
+              cy={pos.y}
+              r={r}
+              fill="rgba(255,255,255,0.10)"
+              stroke="rgba(255,255,255,0.55)"
+              strokeWidth={1.25}
+            />
+            <Circle cx={pos.x} cy={pos.y} r={innerR} fill={innerFill} />
+          </>
+        );
       } else if (isReachable) {
         body = (
           <Circle

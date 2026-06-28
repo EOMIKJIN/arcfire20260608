@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "../..",
+    "paths": {
+      "react-native": ["tools/headless/react-native-stub.ts"],
+      "@react-native-async-storage/async-storage": ["tools/headless/async-storage-stub.ts"]
+    }
+  },
+  "include": ["../../src/**/*.ts", "../../src/**/*.tsx", "../**/*.ts"]
+}

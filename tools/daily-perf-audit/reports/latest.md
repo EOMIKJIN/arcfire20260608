@@ -1,4 +1,4 @@
-# Daily audit — 2026-06-27T15:00:07.492Z
+# Daily audit — 2026-06-28T15:00:08.428Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -12,7 +12,7 @@
 
 ```
 > arcfire-online@0.1.1 build:content-tables
-> node tools/gen-mineral-region-members.mjs && node tools/balance-tables/rebalance-weapon-ttk.mjs && node tools/content-tables/gen-weapon-trade-listing-policy.mjs && node tools/content-tables/sync-weapon-trade-listing.mjs && node tools/content-tables/patch-item-defs-en.mjs && node tools/content-tables/patch-missions-en.mjs && node tools/content-tables/patch-npc-ships-en.mjs && node tools/content-tables/patch-planets-en.mjs && node tools/content-tables/build-content-from-csv.mjs
+> node tools/gen-mineral-region-members.mjs && node tools/balance-tables/rebalance-weapon-ttk.mjs && node tools/content-tables/gen-weapon-trade-listing-policy.mjs && node tools/content-tables/sync-weapon-trade-listing.mjs && node tools/content-tables/patch-item-defs-en.mjs && node tools/content-tables/patch-missions-en.mjs && node tools/content-tables/patch-npc-ships-en.mjs && node tools/content-tables/patch-planets-en.mjs && node tools/content-tables/generate-arc-seed-transport-rows.mjs && node tools/content-tables/build-content-from-csv.mjs && node tools/content-tables/audit-npc-fleet-master.mjs && node tools/content-tables/audit-mission-quest-placements.mjs
 
 [gen-mineral-region-members] 100 rows
 [rebalance-weapon-ttk] updated 0 weapons in weapon_list.csv
@@ -22,28 +22,38 @@ patched D:\arcfire20260607\tables\content\item_defs.csv (196 data rows)
 patched missions.csv + mission_objectives.csv
 patched 0 npc ship name_en rows
 patched planets.csv
+[generate-arc-seed-transport-rows] nothing to add — all systems present
 Generated CSV-driven content TS files at src/data/generated
+[audit:npc-fleet] PASS
+  [info] obj_s008_a: vega_base — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
+  [info] obj_s020_a: titan_ruins — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
+=== audit:mission-quest-placements ===
+buy_goods objectives: 16
+defeat_enemy objectives: 16
+placements: 16 · combat_ops: 16
+
+PASS — 모든 buy_goods/defeat_enemy 목표에 퀘스트 배치·전투 운영 행 존재
 ```
 
 **exit:** 0
 
 ## Largest TS/TSX under `src/` + `app/` (bytes)
 
-- 443,266 — `src/data/generated/csvNpcCapitalShips.ts`
-- 290,046 — `src/data/generated/csvItemDefs.ts`
-- 249,427 — `src/data/generated/csvNpcCaptains.ts`
+- 477,992 — `src/data/generated/csvNpcCapitalShips.ts`
+- 289,936 — `src/data/generated/csvItemDefs.ts`
+- 272,565 — `src/data/generated/csvNpcCaptains.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
 - 148,235 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
-- 78,193 — `src/data/generated/csvStoryScenes.ts`
+- 113,890 — `src/data/generated/csvStoryScenes.ts`
+- 71,812 — `src/i18n/locales/ko.ts`
 - 71,055 — `src/data/generated/csvWeapons.ts`
 - 70,149 — `src/data/balance/generated/csvSynthSystemColonization.ts`
-- 69,723 — `src/i18n/locales/ko.ts`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
-- 63,392 — `src/i18n/locales/en.ts`
-- 59,430 — `app/(game)/planet.tsx`
-- 58,040 — `app/(game)/worldmap.tsx`
+- 65,372 — `src/i18n/locales/en.ts`
+- 58,627 — `app/(game)/planet.tsx`
+- 58,235 — `app/(game)/worldmap.tsx`
 - 47,321 — `app/(game)/shipyard.tsx`
-- 42,880 — `app/(game)/trade.tsx`
+- 43,374 — `app/(game)/trade.tsx`
 - 42,572 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
 - 36,821 — `src/data/generated/csvMissions.ts`
 - 36,229 — `src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx`

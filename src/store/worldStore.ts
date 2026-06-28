@@ -15,6 +15,8 @@ import {
 import { GALAXY_ROUTE_POLICIES, GalaxyRouteDirection } from '../world/galaxyRouteFactionPolicy';
 import { isDevHarnessAllowed } from '../game/gameplayModeContract';
 import { ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS } from '../arcCore/worldExpansionConstants';
+import { isSynthFrontierPlanetId } from '../world/isSynthFrontierPlanetId';
+import { resolveBestPlanetInfoPanelStageRow } from '../arcCore/balance/planetInfoPanelStageRegistry';
 
 const STORAGE_KEY = 'arcfire_world_v1';
 
@@ -133,6 +135,17 @@ function resolveQuadrantFromTradeProfile(profile: string | undefined, fallback: 
 /** synth 행성 5대 코어 — CSV·galaxy100 시드와 동일(개척 직후·첫 실행 50 고정). 일일 배치에서만 변동. */
 export const SYNTH_PLANET_CORE_SEED = 50;
 
+function readInstalledDevModuleCount(planetId: string): number {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { countPlanetInstalledDevModules } =
+      require('../game/planetHub/resolvePlanetInfoPanelStage') as typeof import('../game/planetHub/resolvePlanetInfoPanelStage');
+    return countPlanetInstalledDevModules(planetId);
+  } catch {
+    return 0;
+  }
+}
+
 function resolveFrontierPlanetDescription(
   phase: number,
   csvDescription: string | undefined,
@@ -153,7 +166,7 @@ function resolveFrontierPlanetDescription(
 }
 
 /** synth 행성 autogen — colonizationPhase(0~3)에 따라 시설·팩션 단계 적용 */
-export function applySynthSystemAutogen(base: StarSystem, colonizationPhase = SYNTH_COLONIZATION_MAX_PHASE): StarSystem {
+export function applySynthSystemAutogen(base: StarSystem, colonizationPhase = 0): StarSystem {
   if (!base.id.startsWith('synth_')) return base;
   const phase = Math.max(0, Math.min(SYNTH_COLONIZATION_MAX_PHASE, Math.floor(colonizationPhase)));
   const phaseRow = getSynthColonizationPhaseRow(phase);
@@ -174,9 +187,13 @@ export function applySynthSystemAutogen(base: StarSystem, colonizationPhase = SY
     ? String(suffixNum).padStart(3, '0')
     : rawSuffix;
   const coreSeed = SYNTH_PLANET_CORE_SEED;
-  const csvHasTrade = csvRow ? parseCsvBool(csvRow.hasTradePort) : zone !== 'pvp';
-  const csvHasShipyard = csvRow ? parseCsvBool(csvRow.hasShipyard) : zone !== 'pvp';
-  const csvHasTavern = csvRow ? parseCsvBool(csvRow.hasTavern) : true;
+  // 미개척(synth) 행성 — 월드 CSV 시설(hasTradePort 등)은 21행성 전용.
+  // 무역·조선·선술집은 행성개발(dev) 설치로만 허용; colonization phase와 무관하게 false.
+  const worldFacilityFlags = {
+    hasTradePort: false,
+    hasShipyard: false,
+    hasTavern: false,
+  };
 
   return {
     ...base,
@@ -186,25 +203,38 @@ export function applySynthSystemAutogen(base: StarSystem, colonizationPhase = SY
       ? (csvRow?.systemDescriptionKo ?? '최초 발견 이후 아직 본격 개발되지 않은 미개척 성계.')
       : (csvRow?.systemDescriptionKo ?? '최초 발견 이후 아직 본격 개발되지 않은 미개척 성계.'),
     enemyLevel: targetCombatLevel,
-    planets: base.planets.map((p, i) => ({
+    planets: base.planets.map((p, i) => {
+      const planetId = p.id;
+      const devModules = readInstalledDevModuleCount(planetId);
+      const stageRow = resolveBestPlanetInfoPanelStageRow(planetId, phase, devModules);
+      const stagedDesc = stageRow?.descriptionKo?.trim();
+      const stagedDescEn = stageRow?.descriptionEn?.trim();
+      return {
       ...p,
       name: i === 0 ? (csvRow?.planetNameKo ?? `미개척 행성-${nameSuffix}`) : p.name,
-      description: resolveFrontierPlanetDescription(
-        phase,
-        csvRow?.planetDescriptionKo,
-        factionId,
-        nameSuffix,
-      ),
+      description: stagedDesc
+        || resolveFrontierPlanetDescription(
+          phase,
+          csvRow?.planetDescriptionKo,
+          factionId,
+          nameSuffix,
+        ),
+      descriptionEn: stagedDescEn || p.descriptionEn,
       factionId,
-      hasTradePort: phaseRow.hasTradePort && csvHasTrade,
-      hasShipyard: phaseRow.hasShipyard && csvHasShipyard,
-      hasTavern: phaseRow.hasTavern && csvHasTavern,
+      ...worldFacilityFlags,
+      infoPanelPortraitAssetKey: stageRow?.infoPanelPortraitAssetKey?.trim()
+        || p.infoPanelPortraitAssetKey
+        || null,
+      backdropImageAssetKey: stageRow?.backdropImageAssetKey?.trim()
+        || p.backdropImageAssetKey
+        || null,
       coreResource: coreSeed,
       corePopulation: coreSeed,
       coreDefense: coreSeed,
       coreTechnology: coreSeed,
       coreEnvironment: coreSeed,
-    })),
+    };
+    }),
   };
 }
 
@@ -224,11 +254,27 @@ function rehydrateUnlockedSynthSystems(
     const planetId = src.planets[0]?.id;
     const phase = planetId
       ? (phaseByPlanetId[planetId] ?? getPhase(planetId))
-      : SYNTH_COLONIZATION_MAX_PHASE;
+      : 0;
     if (!next) next = { ...systems };
     next[normalizedId] = applySynthSystemAutogen(src, phase);
   }
   return next ?? systems;
+}
+
+/** 잠금 해제 synth — phase 0 잔존 정리(개방=초기화 완료). bridge import 없음(순환 방지). */
+function reconcileUnlockedSynthPhaseOnWorldLoad(
+  getState: () => Pick<WorldState, 'unlockedSystemIds' | 'getSystem' | 'getSynthColonizationPhase' | 'applySynthColonizationPhase'>,
+): void {
+  const world = getState();
+  for (const systemId of world.unlockedSystemIds) {
+    if (!systemId.startsWith('synth_')) continue;
+    const system = world.getSystem(systemId);
+    const planetId = system?.planets[0]?.id;
+    if (!planetId) continue;
+    if (world.getSynthColonizationPhase(planetId) < 1) {
+      world.applySynthColonizationPhase(systemId, 1);
+    }
+  }
 }
 
 export const useWorldStore = create<WorldState>((set, get) => ({
@@ -291,6 +337,7 @@ export const useWorldStore = create<WorldState>((set, get) => ({
       if (systems !== state.systems) {
         set({ systems });
       }
+      reconcileUnlockedSynthPhaseOnWorldLoad(get);
       set({ loaded: true });
     }
   },
@@ -311,13 +358,25 @@ export const useWorldStore = create<WorldState>((set, get) => ({
 
   resetLocalWorld: async () => {
     await AsyncStorage.removeItem(STORAGE_KEY);
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { clearRuntimePlanetTradeRouteProfiles } =
+      require('../arcCore/economy/tradeRouteRegistry') as typeof import('../arcCore/economy/tradeRouteRegistry');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { clearRuntimeTradeRouteAssignments } =
+      require('../arcCore/economy/tradeRoutePlanetAssignmentRegistry') as typeof import('../arcCore/economy/tradeRoutePlanetAssignmentRegistry');
+    clearRuntimePlanetTradeRouteProfiles();
+    clearRuntimeTradeRouteAssignments();
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { resetAllTradePortItemOverrides } =
+      require('../world/planetTradePortDb') as typeof import('../world/planetTradePortDb');
+    resetAllTradePortItemOverrides();
     const unlockedSystemIds = Array.from(new Set([...DEFAULT_UNLOCKED_SYSTEM_IDS]));
     set({
       systems: rehydrateUnlockedSynthSystems(
         { ...GALAXY_SYSTEMS },
         unlockedSystemIds,
         {},
-        () => SYNTH_COLONIZATION_MAX_PHASE,
+        () => 0,
       ),
       loaded: true,
       selectedSystemId: null,
@@ -348,15 +407,10 @@ export const useWorldStore = create<WorldState>((set, get) => ({
     if (!target) return;
     if (state.unlockedSystemIds.includes(normalizedId)) return;
 
-    const isArcCoreUnlock =
-      source === 'arc_core_daily'
-      || source === 'arc_core_legacy_seed'
-      || source === 'arc_core_fresh_start_seed'
-      || source === 'arc_core_global_schedule';
-    const initialPhase = isArcCoreUnlock ? 0 : SYNTH_COLONIZATION_MAX_PHASE;
+    const initialPhase = normalizedId.startsWith('synth_') ? 1 : 0;
     const planetId = target.planets[0]?.id;
     const nextPhaseMap = { ...state.synthColonizationPhaseByPlanetId };
-    if (planetId && isArcCoreUnlock) {
+    if (planetId) {
       nextPhaseMap[planetId] = 0;
     }
 
@@ -370,6 +424,10 @@ export const useWorldStore = create<WorldState>((set, get) => ({
       lastExpansionAtMs:
         source === 'arc_core_daily' ? Date.now() : state.lastExpansionAtMs,
     });
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { invalidateOrbitPresenceCachesOnWorldExpansion } =
+      require('../arcCore/orbitPresence/captainOrbitPlanetAssignment') as typeof import('../arcCore/orbitPresence/captainOrbitPlanetAssignment');
+    invalidateOrbitPresenceCachesOnWorldExpansion();
     void get().persistWorld();
   },
 
@@ -378,6 +436,7 @@ export const useWorldStore = create<WorldState>((set, get) => ({
     if (stored !== undefined) {
       return Math.max(0, Math.min(SYNTH_COLONIZATION_MAX_PHASE, Math.floor(stored)));
     }
+    if (isSynthFrontierPlanetId(planetId)) return 0;
     return SYNTH_COLONIZATION_MAX_PHASE;
   },
 
@@ -397,6 +456,14 @@ export const useWorldStore = create<WorldState>((set, get) => ({
         [planetId]: clamped,
       },
     });
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { syncPlanetWorldInfoPresentation } =
+        require('../game/planetHub/syncPlanetWorldInfoPresentation') as typeof import('../game/planetHub/syncPlanetWorldInfoPresentation');
+      syncPlanetWorldInfoPresentation(planetId);
+    } catch {
+      /* dev module lazy path */
+    }
     void get().persistWorld();
   },
 
@@ -429,7 +496,9 @@ export const useWorldStore = create<WorldState>((set, get) => ({
       const base = GALAXY_SYSTEMS[id];
       if (base) nextSystems[id] = { ...base };
       const planetId = base?.planets[0]?.id;
-      if (planetId) delete nextPhaseMap[planetId];
+      if (planetId) {
+        delete nextPhaseMap[planetId];
+      }
     }
 
     const added: string[] = [];
@@ -451,6 +520,10 @@ export const useWorldStore = create<WorldState>((set, get) => ({
       visitedSystemIds,
       synthColonizationPhaseByPlanetId: nextPhaseMap,
     });
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { invalidateOrbitPresenceCachesOnWorldExpansion } =
+      require('../arcCore/orbitPresence/captainOrbitPlanetAssignment') as typeof import('../arcCore/orbitPresence/captainOrbitPlanetAssignment');
+    invalidateOrbitPresenceCachesOnWorldExpansion();
     void get().persistWorld();
     return { added, removed: toRemove };
   },

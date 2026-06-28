@@ -54,13 +54,16 @@ alwaysApply: false
 ## 감시 절차 (상시)
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.ps1
+npm run monitor:ensure-always-on
+# 또는 profile:mem:watch (동일 스택 멱등 위임)
 ```
 
 | 김경제 | 내용 |
 |--------|------|
-| 모니터 가동 | `start-watch-30m.ps1` 멱등 가동 · PID(`logs/watch-30m.pid`) 확인 · 중단 시 재가동 |
-| **08:00 데일리 보고** | `npm run monitor:ensure-daily-8am` — **매일 08:00 KST 무조건** · adb 끊김=FAIL · `schedule-8am-report-DISABLED.flag` 없으면 **영구 유지** |
+| 상시 스택 | `ensure-always-on-watch-stack.ps1` — watch-30m + retention(60m) + 08:00 보고 |
+| **08:00 데일리 보고** | `npm run monitor:ensure-daily-8am` — **매일 08:00 KST 무조건** |
+| 코드 자동픽스 | incident handoff · retention FAIL → 김팀장 P0 (앱 relaunch는 monitor-paused 없을 때만) |
+| **상시 제외** | balance-ops 3h · report-watch 콘솔 · economy SIM |
 | 관측 | `mem-timeline.csv` · `mem-alerts.log` · `incidents.log` · crash logcat |
 | 탐지 | 계단식 GL 누수 · 반복 크래시 · 비정상 재시작 |
 | 보고 | `tools/long-run-monitor/outbox/cursor-incident-handoff.md` 또는 `tools/kim-team-lead/reports/kim-economy-handoff.md` **관측 섹션만** 갱신 → **김팀장 인계** |

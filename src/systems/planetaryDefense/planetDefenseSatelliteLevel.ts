@@ -10,7 +10,7 @@ import { patchPlanetDefenseSatelliteInstanceState } from './planetDefenseSatelli
 
 export { isPlanetDefenseSatelliteInstalled } from '../../game/planetDevelopment/planetDefenseSatelliteRuntime';
 
-/** 행성 방위위성 현재 레벨 — 미설치 0, 설치 후 1..10 */
+/** 행성 방위위성 현재 레벨 — 미설치 0, 설치 후 1..max(CSV) */
 export function resolvePlanetDefenseSatelliteLevel(planetId: string): number {
   if (!isPlanetDefenseSatelliteInstalled(planetId)) return 0;
   const stored = readDefenseSatelliteDetailFromPlanet(planetId).level;

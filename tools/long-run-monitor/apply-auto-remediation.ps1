@@ -9,6 +9,7 @@ param(
 )
 
 . (Join-Path $PSScriptRoot 'mem-gl-leak-rules.ps1')
+. (Join-Path $PSScriptRoot 'invoke-node-hidden.ps1')
 
 function Invoke-PostRemediationVerify {
   param([string]$VerifyReason)
@@ -51,7 +52,7 @@ function Invoke-PostRemediationVerify {
 
 function Invoke-IncidentHandoff([string]$HandoffReason) {
   try {
-    & node (Join-Path $PSScriptRoot 'pack-incident-handoff.cjs') $HandoffReason 2>&1 | Out-Null
+    Invoke-NodeHidden -ScriptPath (Join-Path $PSScriptRoot 'pack-incident-handoff.cjs') -NodeArgs @($HandoffReason) -CaptureOutput | Out-Null
     Write-Remediation "HANDOFF packed -> outbox/cursor-incident-handoff.md ($HandoffReason)"
   } catch {
     Write-Remediation "WARN handoff pack skipped: $($_.Exception.Message)"

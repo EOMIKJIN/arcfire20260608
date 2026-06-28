@@ -1,6 +1,7 @@
 import React, { memo, useMemo } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
-import { findPlanetById } from '../../../arcCore/planetEnvironment/resolvePlanetAsteroidVisualPolicy';
+import { useAppSettingsStore } from '../../../store/appSettingsStore';
+import { resolvePlanetInfoPanelPresentation } from '../../../game/planetHub/resolvePlanetInfoPanelStage';
 import {
   resolvePlanetInfoPortraitAspectRatio,
   resolvePlanetInfoPortraitSource,
@@ -22,11 +23,12 @@ type Props = {
  */
 export const PlanetInfoPortraitSlot = memo(function PlanetInfoPortraitSlot({ planetId }: Props) {
   const t = useT();
+  const locale = useAppSettingsStore((s) => s.locale);
   const a11yLabel = t('econInfo.portraitSlotA11y');
-  const imageSource = useMemo(() => {
-    const planet = findPlanetById(planetId);
-    return resolvePlanetInfoPortraitSource(planet?.infoPanelPortraitAssetKey);
-  }, [planetId]);
+  const portraitKey = useMemo(() => {
+    return resolvePlanetInfoPanelPresentation(planetId, locale).infoPanelPortraitAssetKey;
+  }, [planetId, locale]);
+  const imageSource = useMemo(() => resolvePlanetInfoPortraitSource(portraitKey), [portraitKey]);
   const aspectRatio = useMemo(
     () => resolvePlanetInfoPortraitAspectRatio(imageSource),
     [imageSource],

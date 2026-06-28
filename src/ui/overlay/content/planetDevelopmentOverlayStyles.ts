@@ -191,6 +191,8 @@ export const planetDevelopmentOverlayStyles = StyleSheet.create({
   levelRowMeta: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
+    lineHeight: 14,
+    letterSpacing: -0.2,
     color: OVERLAY_TOKENS.valueContentColor,
     opacity: 0.92,
   },

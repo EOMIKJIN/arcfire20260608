@@ -289,6 +289,13 @@ function normalizePlayerPolitical(raw: PlayerPersistenceShape): Player {
       }
       return base;
     })(),
+    acknowledgedHubDialogKeys: Array.isArray(
+      (f as { acknowledgedHubDialogKeys?: string[] }).acknowledgedHubDialogKeys,
+    )
+      ? (f as { acknowledgedHubDialogKeys?: string[] }).acknowledgedHubDialogKeys!.filter(
+          (v) => typeof v === 'string' && v.length > 0,
+        )
+      : [],
   };
   const tid = typeof raw.shipId === 'string' && raw.shipId ? raw.shipId : 'starter_fighter';
   const base: Player = {
@@ -540,6 +547,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
         firstMissionStarted: false,
         pendingArcadiaDialog01: false,
         seenStorySceneIds: [],
+        acknowledgedHubDialogKeys: [],
       },
       political: { ...DEFAULT_PLAYER_POLITICAL },
       homePlanetId: null,

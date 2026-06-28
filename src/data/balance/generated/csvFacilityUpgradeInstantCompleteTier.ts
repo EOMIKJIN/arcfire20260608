@@ -10,7 +10,12 @@ export const FacilityUpgradeInstantCompleteTier_FROM_BALANCE_CSV = [
   { "duration_tier": "standard", "target_level": "8", "per_hour_multiplier": "3.70", "min_credits": "12000", "notesKo": "v3.1 L7→8 · 7d" },
   { "duration_tier": "standard", "target_level": "9", "per_hour_multiplier": "4.05", "min_credits": "30000", "notesKo": "v3.1 L8→9 · 14d" },
   { "duration_tier": "standard", "target_level": "10", "per_hour_multiplier": "4.35", "min_credits": "80000", "notesKo": "v3.1 L9→10 · 30d" },
-  { "duration_tier": "epic", "target_level": "11", "per_hour_multiplier": "5.50", "min_credits": "150000", "notesKo": "v3.1 예약 L10→11 · 미활성" },
-  { "duration_tier": "epic", "target_level": "12", "per_hour_multiplier": "6.50", "min_credits": "250000", "notesKo": "v3.1 예약 L11→12 · 미활성" },
+  { "duration_tier": "standard", "target_level": "11", "per_hour_multiplier": "4.70", "min_credits": "120000", "notesKo": "v3.2 L10→11 · 36d" },
+  { "duration_tier": "standard", "target_level": "12", "per_hour_multiplier": "5.05", "min_credits": "180000", "notesKo": "v3.2 L11→12 · 42d" },
+  { "duration_tier": "standard", "target_level": "13", "per_hour_multiplier": "5.40", "min_credits": "260000", "notesKo": "v3.2 L12→13 · 48d" },
+  { "duration_tier": "standard", "target_level": "14", "per_hour_multiplier": "5.75", "min_credits": "380000", "notesKo": "v3.2 L13→14 · 54d" },
+  { "duration_tier": "standard", "target_level": "15", "per_hour_multiplier": "6.10", "min_credits": "550000", "notesKo": "v3.2 L14→15 · 60d" },
+  { "duration_tier": "epic", "target_level": "11", "per_hour_multiplier": "5.50", "min_credits": "150000", "notesKo": "v3.1 레거시 · standard 11 사용" },
+  { "duration_tier": "epic", "target_level": "12", "per_hour_multiplier": "6.50", "min_credits": "250000", "notesKo": "v3.1 레거시 · standard 12 사용" },
 ] as const;
 export type FacilityUpgradeInstantCompleteTierRow = (typeof FacilityUpgradeInstantCompleteTier_FROM_BALANCE_CSV)[number];

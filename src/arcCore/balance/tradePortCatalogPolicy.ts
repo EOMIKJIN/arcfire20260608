@@ -14,7 +14,7 @@ import {
   resolveZonePrimaryMineralId,
 } from '../economy/mineralTradePricing';
 import { getItemDef, listItemDefs } from '../../data/itemRegistry';
-import { STAR_SYSTEMS } from '../../data/systems';
+import { resolveStarSystemForPlanetId } from '../../world/resolvePlanetSystemPosition';
 import { dispatchEconomyTradePortBulk } from '../ArcCoreCommandBus';
 import {
   getPlanetLevelingRowForZone,
@@ -40,10 +40,7 @@ function parseNum(raw: string | number | undefined, fallback = 0): number {
 }
 
 function findSystemForPlanetId(planetId: string) {
-  for (const system of Object.values(STAR_SYSTEMS)) {
-    if (system.planets.some((p) => p.id === planetId)) return system;
-  }
-  return undefined;
+  return resolveStarSystemForPlanetId(planetId);
 }
 
 const weaponTierByKey = new Map(

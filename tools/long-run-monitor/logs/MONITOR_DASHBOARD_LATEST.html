@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"/><title>Arcfire Monitor</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#0f1419;color:#e6edf3;margin:16px;max-width:960px}
+h1{font-size:1.25rem} .ok{color:#3fb950}.warn{color:#d29922}.bad{color:#f85149}
+table{border-collapse:collapse;width:100%;margin:12px 0} td,th{border:1px solid #30363d;padding:6px 8px;text-align:left}
+pre{background:#161b22;padding:10px;overflow:auto;font-size:12px;border-radius:6px}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:6px}
+.b-on{background:#238636}.b-off{background:#6e7681}
+</style></head><body>
+<h1>Arcfire 실시간 감시 · 2026-06-28 23:57:10 KST</h1>
+<p>
+<span class="badge b-off">watchdog</span>
+<span class="badge b-off">mem-watch</span>
+<span class="badge b-off">report-watch</span>
+<span class="badge bad">handoff PENDING</span>
+<span class="badge warn">chat PENDING</span>
+</p>
+<h2>Latest mem-timeline</h2>
+<table><tr><th>time</th><th>pid</th><th>pss_mb</th><th>gl_mb</th><th>views</th><th>note</th></tr>
+<tr><td></td><td>23252</td><td>840.7</td><td>134.7</td><td>385</td><td>GL_SPIKE suspect=hub_skia_orbit_nebula_combat</td></tr>
+</table>
+<h2>Processes</h2>
+<pre>{}</pre>
+<h2>Recent incidents</h2>
+<pre>[2026-06-28 15:00:56] PSS_SOFT_CEILING pss=836 gl=39.4 views=326 native_reclaim_advisory
+[2026-06-28 15:52:02] PSS_SOFT_CEILING pss=913 gl=59.2 views=332 native_reclaim_advisory
+[2026-06-28 16:44:18] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-28 17:47:03] EVENING_WATCH_START user-request until-22:00-KST report-scheduled
+[2026-06-28 19:33:38] PSS_SOFT_CEILING pss=845.8 gl=114.4 views=632 native_reclaim_advisory
+[2026-06-28 19:39:36] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-28 19:50:02] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
+[2026-06-28 21:14:43] INVESTIGATION_TRIGGERED mem_anomaly
+[2026-06-28 21:22:44] GL_ELEVATED mounting_or_insufficient_samples gl=108.8 pss=784.7 views=567 restart_held
+[2026-06-28 22:00:01] EVENING_WATCH_2200_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\evening-watch-report-20260628-2200.md
+[2026-06-28 22:14:28] GL_ELEVATED mounting_or_insufficient_samples gl=126 pss=752.6 views=558 restart_held
+[2026-06-28 23:44:18] PSS_SOFT_CEILING pss=840.7 gl=134.7 views=385 native_reclaim_advisory</pre>
+<h2>Heartbeat</h2>
+<pre>[2026-06-28 22:47:39] === report-watch v2.7 (pkg=com.arcfire.online · 15m · 신선 크래시만) · auto-fix=OFF ===
+[22:47] .. 앱 미실행(대기중)
+[23:02] OK · PID 23252 · PSS 729.8MB / GL 48.2MB / views 361
+[23:17] OK · PID 23252 · PSS 743.8MB / GL 48.2MB / views 382
+[23:32] OK · PID 23252 · PSS 749.1MB / GL 48.2MB / views 379
+[23:47] OK · PID 23252 · PSS 840.7MB / GL 134.7MB / views 385</pre>
+<p style="color:#8b949e;font-size:12px">Auto-refresh: watchdog 5m · file://D:\arcfire20260607\tools\long-run-monitor\logs\MONITOR_DASHBOARD_LATEST.html</p>
+</body></html>

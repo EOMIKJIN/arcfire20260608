@@ -10,6 +10,9 @@ if ($IntervalMin -lt 1) {
 }
 
 . (Join-Path $PSScriptRoot 'mem-gl-leak-rules.ps1')
+. (Join-Path $PSScriptRoot 'monitor-host-budget.ps1')
+
+$IntervalMin = Enforce-MonitorIntervalFloor -IntervalMin $IntervalMin -FloorMin $script:MONITOR_MIN_MEMINFO_INTERVAL_MIN
 
 $logDir = Join-Path $PSScriptRoot 'logs'
 $ts = Get-Date -Format 'yyyyMMdd-HHmmss'
@@ -86,6 +89,7 @@ while ($true) {
   }
 
   $raw = (adb shell dumpsys meminfo $Package 2>&1 | Out-String)
+  Register-AdbMeminfoInvocation -LogDir $logDir
   $raw | Out-File -Append -FilePath $memLog -Encoding utf8
   $status = adb shell "cat /proc/$appPid/status 2>/dev/null | grep -E 'VmRSS|VmSwap|Threads'" 2>&1
   Add-Content -Path $memLog -Value $status

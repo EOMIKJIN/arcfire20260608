@@ -1,0 +1,145 @@
+[2026-06-28 23:16:53] [watchdog pid=11004] START ensure_every=5m mem=15m report=15m
+[2026-06-28 23:16:53] [watchdog pid=11004] stack watch-30m=already pid=23520
+[2026-06-28 23:16:53] [watchdog pid=11004] stack profiler_extras=already audit_pid=22672 logcat=shared_crash_log
+[2026-06-28 23:16:54] [watchdog pid=11004] stack report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:16:54] [watchdog pid=11004] stack [2026-06-28 23:16:54] ENSURE_OK pid=26052 (already running)
+[2026-06-28 23:16:54] [watchdog pid=11004] stack code_auto_fix=handoff+retention+incident-triage (app_relaunch=OFF(monitor-paused))
+[2026-06-28 23:16:54] [watchdog pid=11004] report report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:16:54] [watchdog pid=11004] poll poll_ok actionable=0
+[2026-06-28 23:16:55] [watchdog pid=11004] status status_kst=2026-06-28 23:16:54
+[2026-06-28 23:16:55] [watchdog pid=11004] status watchdog=True pid=11004
+[2026-06-28 23:16:55] [watchdog pid=11004] status watch-30m=True pid=23520
+[2026-06-28 23:16:55] [watchdog pid=11004] status report-watch=True pid=26564 mode=visible
+[2026-06-28 23:16:55] [watchdog pid=11004] status handoff_pending=True chat_pending=True
+[2026-06-28 23:16:55] [watchdog pid=11004] status mem pss=743.8 gl=48.2 views=382 @ 2026-06-28 23:13:16
+[2026-06-28 23:16:55] [watchdog pid=11004] status json=D:\arcfire20260607\tools\long-run-monitor\logs\MONITOR_STATUS_LATEST.json
+[2026-06-28 23:16:55] [watchdog pid=11004] dash ok path=D:\arcfire20260607\tools\long-run-monitor\generate-monitor-dashboard.cjs
+[2026-06-28 23:16:55] [watchdog pid=11004] econ daily_balance_ops=skip day=2026-06-28
+[2026-06-28 23:21:56] [watchdog pid=11004] stack watch-30m=already pid=23520
+[2026-06-28 23:21:56] [watchdog pid=11004] stack profiler_extras=already audit_pid=22672 logcat=shared_crash_log
+[2026-06-28 23:21:56] [watchdog pid=11004] stack report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:21:56] [watchdog pid=11004] stack [2026-06-28 23:21:56] ENSURE_OK pid=26052 (already running)
+[2026-06-28 23:21:56] [watchdog pid=11004] stack code_auto_fix=handoff+retention+incident-triage (app_relaunch=OFF(monitor-paused))
+[2026-06-28 23:21:56] [watchdog pid=11004] report report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:21:56] [watchdog pid=11004] poll poll_ok actionable=0
+[2026-06-28 23:21:57] [watchdog pid=11004] status status_kst=2026-06-28 23:21:56
+[2026-06-28 23:21:57] [watchdog pid=11004] status watchdog=True pid=11004
+[2026-06-28 23:21:57] [watchdog pid=11004] status watch-30m=True pid=23520
+[2026-06-28 23:21:57] [watchdog pid=11004] status report-watch=True pid=26564 mode=visible
+[2026-06-28 23:21:57] [watchdog pid=11004] status handoff_pending=True chat_pending=True
+[2026-06-28 23:21:57] [watchdog pid=11004] status mem pss=743.8 gl=48.2 views=382 @ 2026-06-28 23:13:16
+[2026-06-28 23:21:57] [watchdog pid=11004] status json=D:\arcfire20260607\tools\long-run-monitor\logs\MONITOR_STATUS_LATEST.json
+[2026-06-28 23:21:57] [watchdog pid=11004] dash ok path=D:\arcfire20260607\tools\long-run-monitor\generate-monitor-dashboard.cjs
+[2026-06-28 23:21:57] [watchdog pid=11004] econ daily_balance_ops=skip day=2026-06-28
+[2026-06-28 23:26:57] [watchdog pid=11004] stack watch-30m=already pid=23520
+[2026-06-28 23:26:57] [watchdog pid=11004] stack profiler_extras=already audit_pid=22672 logcat=shared_crash_log
+[2026-06-28 23:26:57] [watchdog pid=11004] stack report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:26:57] [watchdog pid=11004] stack [2026-06-28 23:26:57] ENSURE_OK pid=26052 (already running)
+[2026-06-28 23:26:57] [watchdog pid=11004] stack code_auto_fix=handoff+retention+incident-triage (app_relaunch=OFF(monitor-paused))
+[2026-06-28 23:26:57] [watchdog pid=11004] report report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:26:57] [watchdog pid=11004] poll poll_ok actionable=0
+[2026-06-28 23:26:59] [watchdog pid=11004] status status_kst=2026-06-28 23:26:58
+[2026-06-28 23:26:59] [watchdog pid=11004] status watchdog=True pid=11004
+[2026-06-28 23:26:59] [watchdog pid=11004] status watch-30m=True pid=23520
+[2026-06-28 23:26:59] [watchdog pid=11004] status report-watch=True pid=26564 mode=visible
+[2026-06-28 23:26:59] [watchdog pid=11004] status handoff_pending=True chat_pending=True
+[2026-06-28 23:26:59] [watchdog pid=11004] status mem pss=743.8 gl=48.2 views=382 @ 2026-06-28 23:13:16
+[2026-06-28 23:26:59] [watchdog pid=11004] status json=D:\arcfire20260607\tools\long-run-monitor\logs\MONITOR_STATUS_LATEST.json
+[2026-06-28 23:26:59] [watchdog pid=11004] dash ok path=D:\arcfire20260607\tools\long-run-monitor\generate-monitor-dashboard.cjs
+[2026-06-28 23:26:59] [watchdog pid=11004] econ daily_balance_ops=skip day=2026-06-28
+[2026-06-28 23:31:59] [watchdog pid=11004] stack watch-30m=already pid=23520
+[2026-06-28 23:31:59] [watchdog pid=11004] stack profiler_extras=already audit_pid=22672 logcat=shared_crash_log
+[2026-06-28 23:31:59] [watchdog pid=11004] stack report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:31:59] [watchdog pid=11004] stack [2026-06-28 23:31:59] ENSURE_OK pid=26052 (already running)
+[2026-06-28 23:31:59] [watchdog pid=11004] stack code_auto_fix=handoff+retention+incident-triage (app_relaunch=OFF(monitor-paused))
+[2026-06-28 23:31:59] [watchdog pid=11004] report report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:31:59] [watchdog pid=11004] poll poll_ok actionable=0
+[2026-06-28 23:32:00] [watchdog pid=11004] status status_kst=2026-06-28 23:31:59
+[2026-06-28 23:32:00] [watchdog pid=11004] status watchdog=True pid=11004
+[2026-06-28 23:32:00] [watchdog pid=11004] status watch-30m=True pid=23520
+[2026-06-28 23:32:00] [watchdog pid=11004] status report-watch=True pid=26564 mode=visible
+[2026-06-28 23:32:00] [watchdog pid=11004] status handoff_pending=True chat_pending=True
+[2026-06-28 23:32:00] [watchdog pid=11004] status mem pss=749.1 gl=48.2 views=379 @ 2026-06-28 23:28:44
+[2026-06-28 23:32:00] [watchdog pid=11004] status json=D:\arcfire20260607\tools\long-run-monitor\logs\MONITOR_STATUS_LATEST.json
+[2026-06-28 23:32:00] [watchdog pid=11004] dash ok path=D:\arcfire20260607\tools\long-run-monitor\generate-monitor-dashboard.cjs
+[2026-06-28 23:32:00] [watchdog pid=11004] econ daily_balance_ops=skip day=2026-06-28
+[2026-06-28 23:37:00] [watchdog pid=11004] stack watch-30m=already pid=23520
+[2026-06-28 23:37:01] [watchdog pid=11004] stack profiler_extras=already audit_pid=22672 logcat=shared_crash_log
+[2026-06-28 23:37:01] [watchdog pid=11004] stack report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:37:01] [watchdog pid=11004] stack [2026-06-28 23:37:01] ENSURE_OK pid=26052 (already running)
+[2026-06-28 23:37:01] [watchdog pid=11004] stack code_auto_fix=handoff+retention+incident-triage (app_relaunch=OFF(monitor-paused))
+[2026-06-28 23:37:01] [watchdog pid=11004] report report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:37:01] [watchdog pid=11004] poll poll_ok actionable=0
+[2026-06-28 23:37:02] [watchdog pid=11004] status status_kst=2026-06-28 23:37:01
+[2026-06-28 23:37:02] [watchdog pid=11004] status watchdog=True pid=11004
+[2026-06-28 23:37:02] [watchdog pid=11004] status watch-30m=True pid=23520
+[2026-06-28 23:37:02] [watchdog pid=11004] status report-watch=True pid=26564 mode=visible
+[2026-06-28 23:37:02] [watchdog pid=11004] status handoff_pending=True chat_pending=True
+[2026-06-28 23:37:02] [watchdog pid=11004] status mem pss=749.1 gl=48.2 views=379 @ 2026-06-28 23:28:44
+[2026-06-28 23:37:02] [watchdog pid=11004] status json=D:\arcfire20260607\tools\long-run-monitor\logs\MONITOR_STATUS_LATEST.json
+[2026-06-28 23:37:02] [watchdog pid=11004] dash ok path=D:\arcfire20260607\tools\long-run-monitor\generate-monitor-dashboard.cjs
+[2026-06-28 23:37:02] [watchdog pid=11004] econ daily_balance_ops=skip day=2026-06-28
+[2026-06-28 23:42:03] [watchdog pid=11004] stack watch-30m=already pid=23520
+[2026-06-28 23:42:03] [watchdog pid=11004] stack profiler_extras=already audit_pid=22672 logcat=shared_crash_log
+[2026-06-28 23:42:03] [watchdog pid=11004] stack report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:42:03] [watchdog pid=11004] stack [2026-06-28 23:42:03] ENSURE_OK pid=26052 (already running)
+[2026-06-28 23:42:03] [watchdog pid=11004] stack code_auto_fix=handoff+retention+incident-triage (app_relaunch=OFF(monitor-paused))
+[2026-06-28 23:42:03] [watchdog pid=11004] report report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:42:03] [watchdog pid=11004] poll poll_ok actionable=0
+[2026-06-28 23:42:04] [watchdog pid=11004] status status_kst=2026-06-28 23:42:03
+[2026-06-28 23:42:04] [watchdog pid=11004] status watchdog=True pid=11004
+[2026-06-28 23:42:04] [watchdog pid=11004] status watch-30m=True pid=23520
+[2026-06-28 23:42:04] [watchdog pid=11004] status report-watch=True pid=26564 mode=visible
+[2026-06-28 23:42:04] [watchdog pid=11004] status handoff_pending=True chat_pending=True
+[2026-06-28 23:42:04] [watchdog pid=11004] status mem pss=749.1 gl=48.2 views=379 @ 2026-06-28 23:28:44
+[2026-06-28 23:42:04] [watchdog pid=11004] status json=D:\arcfire20260607\tools\long-run-monitor\logs\MONITOR_STATUS_LATEST.json
+[2026-06-28 23:42:04] [watchdog pid=11004] dash ok path=D:\arcfire20260607\tools\long-run-monitor\generate-monitor-dashboard.cjs
+[2026-06-28 23:42:04] [watchdog pid=11004] econ daily_balance_ops=skip day=2026-06-28
+[2026-06-28 23:47:04] [watchdog pid=11004] stack watch-30m=already pid=23520
+[2026-06-28 23:47:04] [watchdog pid=11004] stack profiler_extras=already audit_pid=22672 logcat=shared_crash_log
+[2026-06-28 23:47:04] [watchdog pid=11004] stack report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:47:04] [watchdog pid=11004] stack [2026-06-28 23:47:04] ENSURE_OK pid=26052 (already running)
+[2026-06-28 23:47:04] [watchdog pid=11004] stack code_auto_fix=handoff+retention+incident-triage (app_relaunch=OFF(monitor-paused))
+[2026-06-28 23:47:04] [watchdog pid=11004] report report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:47:04] [watchdog pid=11004] poll poll_ok actionable=0
+[2026-06-28 23:47:05] [watchdog pid=11004] status status_kst=2026-06-28 23:47:04
+[2026-06-28 23:47:05] [watchdog pid=11004] status watchdog=True pid=11004
+[2026-06-28 23:47:05] [watchdog pid=11004] status watch-30m=True pid=23520
+[2026-06-28 23:47:05] [watchdog pid=11004] status report-watch=True pid=26564 mode=visible
+[2026-06-28 23:47:05] [watchdog pid=11004] status handoff_pending=True chat_pending=True
+[2026-06-28 23:47:05] [watchdog pid=11004] status mem pss=840.7 gl=134.7 views=385 @ 2026-06-28 23:44:14
+[2026-06-28 23:47:05] [watchdog pid=11004] status json=D:\arcfire20260607\tools\long-run-monitor\logs\MONITOR_STATUS_LATEST.json
+[2026-06-28 23:47:05] [watchdog pid=11004] dash ok path=D:\arcfire20260607\tools\long-run-monitor\generate-monitor-dashboard.cjs
+[2026-06-28 23:47:05] [watchdog pid=11004] econ daily_balance_ops=skip day=2026-06-28
+[2026-06-28 23:52:05] [watchdog pid=11004] stack watch-30m=already pid=23520
+[2026-06-28 23:52:05] [watchdog pid=11004] stack profiler_extras=already audit_pid=22672 logcat=shared_crash_log
+[2026-06-28 23:52:05] [watchdog pid=11004] stack report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:52:05] [watchdog pid=11004] stack [2026-06-28 23:52:05] ENSURE_OK pid=26052 (already running)
+[2026-06-28 23:52:06] [watchdog pid=11004] stack code_auto_fix=handoff+retention+incident-triage (app_relaunch=OFF(monitor-paused))
+[2026-06-28 23:52:06] [watchdog pid=11004] report report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:52:06] [watchdog pid=11004] poll poll_ok actionable=0
+[2026-06-28 23:52:07] [watchdog pid=11004] status status_kst=2026-06-28 23:52:06
+[2026-06-28 23:52:07] [watchdog pid=11004] status watchdog=True pid=11004
+[2026-06-28 23:52:07] [watchdog pid=11004] status watch-30m=True pid=23520
+[2026-06-28 23:52:07] [watchdog pid=11004] status report-watch=True pid=26564 mode=visible
+[2026-06-28 23:52:07] [watchdog pid=11004] status handoff_pending=True chat_pending=True
+[2026-06-28 23:52:07] [watchdog pid=11004] status mem pss=840.7 gl=134.7 views=385 @ 2026-06-28 23:44:14
+[2026-06-28 23:52:07] [watchdog pid=11004] status json=D:\arcfire20260607\tools\long-run-monitor\logs\MONITOR_STATUS_LATEST.json
+[2026-06-28 23:52:07] [watchdog pid=11004] dash ok path=D:\arcfire20260607\tools\long-run-monitor\generate-monitor-dashboard.cjs
+[2026-06-28 23:52:07] [watchdog pid=11004] econ daily_balance_ops=skip day=2026-06-28
+[2026-06-28 23:57:07] [watchdog pid=11004] stack watch-30m=already pid=23520
+[2026-06-28 23:57:07] [watchdog pid=11004] stack profiler_extras=already audit_pid=22672 logcat=shared_crash_log
+[2026-06-28 23:57:08] [watchdog pid=11004] stack report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:57:08] [watchdog pid=11004] stack [2026-06-28 23:57:08] ENSURE_OK pid=26052 (already running)
+[2026-06-28 23:57:08] [watchdog pid=11004] stack code_auto_fix=handoff+retention+incident-triage (app_relaunch=OFF(monitor-paused))
+[2026-06-28 23:57:08] [watchdog pid=11004] report report-watch=visible-console pid=26564 interval=15m
+[2026-06-28 23:57:08] [watchdog pid=11004] poll poll_ok actionable=0
+[2026-06-28 23:57:09] [watchdog pid=11004] status status_kst=2026-06-28 23:57:08
+[2026-06-28 23:57:09] [watchdog pid=11004] status watchdog=True pid=11004
+[2026-06-28 23:57:09] [watchdog pid=11004] status watch-30m=True pid=23520
+[2026-06-28 23:57:09] [watchdog pid=11004] status report-watch=True pid=26564 mode=visible
+[2026-06-28 23:57:09] [watchdog pid=11004] status handoff_pending=True chat_pending=True
+[2026-06-28 23:57:09] [watchdog pid=11004] status mem pss=840.7 gl=134.7 views=385 @ 2026-06-28 23:44:14
+[2026-06-28 23:57:09] [watchdog pid=11004] status json=D:\arcfire20260607\tools\long-run-monitor\logs\MONITOR_STATUS_LATEST.json
+[2026-06-28 23:57:09] [watchdog pid=11004] dash ok path=D:\arcfire20260607\tools\long-run-monitor\generate-monitor-dashboard.cjs
+[2026-06-28 23:57:09] [watchdog pid=11004] econ daily_balance_ops=skip day=2026-06-28

@@ -1,0 +1,56 @@
+# 메모리·Skia·STAGE 계약 — PR 정적 게이트 (adb/실기기 불필요 · 앱 무영향)
+name: Memory monitor PR gate
+
+on:
+  pull_request:
+    paths:
+      - 'app/**'
+      - 'src/**'
+      - 'tools/long-run-monitor/**'
+      - 'tools/memory-audit/**'
+      - 'tools/memory-profiler/**'
+      - 'package.json'
+      - 'tsconfig*.json'
+  push:
+    branches: [main, master]
+    paths:
+      - 'app/**'
+      - 'src/**'
+      - 'tools/long-run-monitor/**'
+      - 'tools/memory-audit/**'
+
+concurrency:
+  group: memory-monitor-pr-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  memory-static-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npx tsc --noEmit -p tsconfig.client.json
+
+      - name: Skia memory audit
+        run: npm run audit:skia-memory
+
+      - name: Worklet contract
+        run: npm run audit:worklet-contract
+
+      - name: Memory stage contract
+        run: npm run audit:memory
+
+      - name: Note retention (device-only)
+        run: |
+          echo "retention audit requires local adb soak — run npm run audit:memory:retention on dev PC"
+          if [ -f tools/memory-profiler/reports/latest-retention-audit.md ]; then
+            head -n 20 tools/memory-profiler/reports/latest-retention-audit.md
+          fi

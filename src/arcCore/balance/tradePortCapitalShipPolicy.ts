@@ -4,7 +4,7 @@
 
 import { CapitalHullPurchasePolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
 import { getNpcCapitalShip } from '../../npc/npcFleetRegistry';
-import { STAR_SYSTEMS } from '../../data/systems';
+import { resolveStarSystemForPlanetId } from '../../world/resolvePlanetSystemPosition';
 import { resolvePlanetZoneIndex } from '../planetBalance/planetZoneIndexRegistry';
 import { getCapitalHullPurchaseRow } from './balanceTableRegistry';
 import { resolveCapitalShipPerformanceBasePrice } from './capitalShipPerformancePricing';
@@ -35,10 +35,7 @@ function parseNum(raw: string | number | undefined, fallback = 0): number {
 }
 
 function findSystemForPlanetId(planetId: string) {
-  for (const system of Object.values(STAR_SYSTEMS)) {
-    if (system.planets.some((p) => p.id === planetId)) return system;
-  }
-  return undefined;
+  return resolveStarSystemForPlanetId(planetId);
 }
 
 function hullTierRank(tierKey: string): number {

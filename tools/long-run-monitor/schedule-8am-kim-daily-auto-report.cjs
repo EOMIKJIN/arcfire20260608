@@ -18,6 +18,8 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync, spawn } = require('child_process');
 
+const SH_TIMEOUT_MS = 90_000;
+
 const ROOT = path.resolve(__dirname, '../..');
 const logDir = path.join(__dirname, 'logs');
 const handoffPath = path.join(ROOT, 'tools/kim-team-lead/reports/kim-economy-handoff.md');
@@ -35,6 +37,8 @@ const TargetTime = '08:00';
 const { writeChatReportPending } = require('./dailyReportChatBrief.cjs');
 
 const runNow = process.argv.includes('--now');
+/** handoff·CHAT·LATEST만 — watch 재시작·md 재생성 생략(멈춤 회귀 방지) */
+const publishOnly = process.argv.includes('--publish-only');
 
 function kstNow() {
   const now = new Date();
@@ -65,6 +69,16 @@ function hasReportForToday() {
   }
 }
 
+function hasPublishedForToday() {
+  try {
+    if (!fs.existsSync(latestSummary)) return false;
+    const body = fs.readFileSync(latestSummary, 'utf8');
+    return body.includes(kstDateKey()) && body.includes('Verdict:');
+  } catch {
+    return false;
+  }
+}
+
 function log(msg) {
   const line = `[${formatKst()}] ${msg}`;
   console.log(line);
@@ -81,19 +95,49 @@ function kstStamp(d = kstNow()) {
 }
 
 function sleepMs(ms) {
-  const sec = Math.max(1, Math.ceil(ms / 1000));
-  execFileSync(
-    'powershell',
-    ['-NoProfile', '-Command', `Start-Sleep -Seconds ${sec}`],
-    { stdio: 'ignore', shell: true },
-  );
+  if (ms <= 0) return;
+  try {
+    execFileSync(
+      process.execPath,
+      [
+        '-e',
+        `Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,${Math.max(1, Math.floor(ms))})`,
+      ],
+      { stdio: 'ignore', windowsHide: true, timeout: ms + 10_000 },
+    );
+  } catch {
+    const end = Date.now() + ms;
+    while (Date.now() < end) {
+      /* fallback */
+    }
+  }
 }
 
+function isProcessAlive(pid) {
+  const n = Number.parseInt(String(pid), 10);
+  if (!Number.isFinite(n) || n <= 0) return false;
+  try {
+    process.kill(n, 0);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+const PS_HIDDEN = ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden'];
+
 function sh(cmd, cmdArgs, opts = {}) {
-  return execFileSync(cmd, cmdArgs, {
+  const args =
+    cmd === 'powershell' || cmd === 'powershell.exe'
+      ? [...PS_HIDDEN, ...cmdArgs.filter((a) => a !== '-NoProfile' && a !== '-ExecutionPolicy' && a !== 'Bypass')]
+      : cmdArgs;
+  return execFileSync(cmd, args, {
     cwd: ROOT,
     encoding: 'utf8',
-    shell: process.platform === 'win32',
+    shell: false,
+    windowsHide: true,
+    timeout: SH_TIMEOUT_MS,
+    killSignal: 'SIGTERM',
     ...opts,
   });
 }
@@ -189,9 +233,15 @@ function waitUntilNext8am() {
     if (now.getHours() === 8 && now.getMinutes() < 15) {
       return now;
     }
-    // catch-up: 08:00~11:59 사이 오늘 보고서 없으면 즉시 보충
-    if (!hasReportForToday() && now.getHours() >= 8 && now.getHours() < 12) {
-      log(`CATCH_UP missing report for ${kstDateKey(now)} — running now`);
+    // catch-up: 08:00~11:59 — md·LATEST·CHAT 중 하나라도 없으면 즉시 보충
+    if (
+      now.getHours() >= 8 &&
+      now.getHours() < 12 &&
+      (!hasReportForToday() || !hasPublishedForToday())
+    ) {
+      log(
+        `CATCH_UP missing publish for ${kstDateKey(now)} (report=${hasReportForToday()} latest=${hasPublishedForToday()}) — running now`,
+      );
       return now;
     }
     const sec = Math.min(300, Math.max(5, (target - now) / 1000));
@@ -202,34 +252,29 @@ function waitUntilNext8am() {
 
 function ensureWatchStack() {
   const watchPid = readPid('watch-30m.pid');
-  let alive = false;
-  if (watchPid && watchPid !== '?') {
-    try {
-      sh('powershell', [
-        '-NoProfile',
-        '-Command',
-        `exit ([bool](Get-Process -Id ${watchPid} -ErrorAction SilentlyContinue))`,
-      ]);
-      alive = true;
-    } catch {
-      alive = false;
-    }
-  }
+  const alive = watchPid && watchPid !== '?' && isProcessAlive(watchPid);
   if (alive) {
     log(`WATCH_OK pid=${watchPid}`);
     return;
   }
-  log('WATCH_RESTART — ensure-daily-8am calling restart-afternoon-watch');
+  log('WATCH_RESTART — spawn restart-afternoon-watch (non-blocking)');
   try {
-    sh('powershell', [
-      '-NoProfile',
-      '-ExecutionPolicy',
-      'Bypass',
-      '-File',
-      path.join(__dirname, 'restart-afternoon-watch.ps1'),
-    ]);
+    const child = spawn(
+      'powershell.exe',
+      [
+        '-NoProfile',
+        '-ExecutionPolicy',
+        'Bypass',
+        '-WindowStyle',
+        'Hidden',
+        '-File',
+        path.join(__dirname, 'restart-afternoon-watch.ps1'),
+      ],
+      { cwd: ROOT, detached: true, stdio: 'ignore', windowsHide: true },
+    );
+    child.unref();
   } catch (e) {
-    log(`WARN watch restart failed: ${e.message || e}`);
+    log(`WARN watch restart spawn failed: ${e.message || e}`);
   }
 }
 
@@ -301,7 +346,7 @@ function runDailyReport() {
   const failReasons = [];
   if (!adbOk) failReasons.push('ADB_NO_DEVICE — 기기 미연결');
 
-  if (adbOk) {
+  if (adbOk && !publishOnly) {
     ensureWatchStack();
   }
 
@@ -332,8 +377,10 @@ function runDailyReport() {
     }
   }
 
-  let reportOk = false;
-  if (adbOk) {
+  let reportOk = hasReportForToday() && fs.existsSync(reportFile);
+  if (reportOk && publishOnly) {
+    log(`PUBLISH_ONLY reuse report ${reportFile}`);
+  } else if (adbOk && !reportOk) {
     try {
       sh('powershell', [
         '-NoProfile',
@@ -355,10 +402,12 @@ function runDailyReport() {
     } catch (e) {
       failReasons.push(`REPORT_GEN_ERROR — ${e.message || e}`);
     }
+  } else if (reportOk) {
+    log(`REUSE existing report ${reportFile}`);
   }
 
   const timelineRows = countTimelineSinceMarker();
-  if (adbOk && timelineRows < 2) {
+  if (adbOk && timelineRows < 2 && !reportOk) {
     failReasons.push(`TIMELINE_STALE — mem-timeline 신규 샘플 부족 (rows~${timelineRows})`);
   }
 
@@ -511,6 +560,30 @@ Session hook \`on-session-start-monitor-autostart.cjs\` ensures this is running.
 function main() {
   writePolicyOnce();
   fs.mkdirSync(logDir, { recursive: true });
+
+  if (publishOnly) {
+    log(`PUBLISH_ONLY pid=${process.pid}`);
+    try {
+      runDailyReport();
+    } catch (e) {
+      log(`FATAL publish-only: ${e.message || e}`);
+      process.exit(1);
+    }
+    process.exit(0);
+  }
+
+  if (runNow) {
+    log(`RUN_NOW pid=${process.pid}`);
+    fs.writeFileSync(pidFile, String(process.pid), 'utf8');
+    try {
+      runDailyReport();
+    } catch (e) {
+      log(`FATAL run-now: ${e.message || e}`);
+      process.exit(1);
+    }
+    process.exit(0);
+  }
+
   fs.writeFileSync(pidFile, String(process.pid), 'utf8');
 
   log(`PERPETUAL_START pid=${process.pid} target=${TargetTime} KST policy=${policyFile}`);

@@ -8,6 +8,7 @@ param(
 
 . (Join-Path $PSScriptRoot 'mem-gl-leak-rules.ps1')
 . (Join-Path $PSScriptRoot 'watch-alert-filters.ps1')
+. (Join-Path $PSScriptRoot 'invoke-node-hidden.ps1')
 
 if (-not $TimelineCsv) {
   $TimelineCsv = Join-Path $LogDir 'mem-timeline.csv'
@@ -73,7 +74,7 @@ function Invoke-BestRefix {
   Write-Remediation "REFIX_REQUESTED $($best.reason) -> gl-leak-refix-requested.flag"
   & (Join-Path $PSScriptRoot 'apply-auto-remediation.ps1') -LogDir $LogDir -Package $Package -Reason $best.reason -Ctx $best.ctx -MinIntervalMin 45
   try {
-    & node (Join-Path $PSScriptRoot 'pack-incident-handoff.cjs') $best.reason 2>&1 | Out-Null
+    Invoke-NodeHidden -ScriptPath (Join-Path $PSScriptRoot 'pack-incident-handoff.cjs') -NodeArgs @($best.reason) -CaptureOutput | Out-Null
     Write-Remediation 'HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)'
   } catch {
     Write-Remediation "WARN handoff pack skipped: $($_.Exception.Message)"
@@ -130,7 +131,7 @@ if ($crashFiles) {
           Set-Content -Path $lastEventFile -Value $eventKey -NoNewline -Encoding utf8
           if (-not $monitorPaused) {
             try {
-              & node (Join-Path $PSScriptRoot 'pack-incident-handoff.cjs') 'real_crash_signature' 2>&1 | Out-Null
+              Invoke-NodeHidden -ScriptPath (Join-Path $PSScriptRoot 'pack-incident-handoff.cjs') -NodeArgs @('real_crash_signature') -CaptureOutput | Out-Null
               Write-Remediation 'HANDOFF packed -> outbox/cursor-incident-handoff.md (crash)'
             } catch { }
           } else {
@@ -259,7 +260,7 @@ if ($rows[-1] -match 'PROCESS_NOT_RUNNING') {
     $remReason = if ($abnormalRestart) { 'abnormal_restart_after_remediation' } else { 'process_death' }
     & (Join-Path $PSScriptRoot 'apply-auto-remediation.ps1') -LogDir $LogDir -Package $Package -Reason $remReason -Ctx @{ lastGlMb = $lastGl; pssMb = $lastPss; remAgeMin = $remAgeMin } -MinIntervalMin $(if ($abnormalRestart) { 10 } else { 20 })
     try {
-      & node (Join-Path $PSScriptRoot 'pack-incident-handoff.cjs') $remReason 2>&1 | Out-Null
+      Invoke-NodeHidden -ScriptPath (Join-Path $PSScriptRoot 'pack-incident-handoff.cjs') -NodeArgs @($remReason) -CaptureOutput | Out-Null
     } catch { }
   } else {
     Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] PROCESS_EXIT clean (no recent crash signature) — relaunch skipped"

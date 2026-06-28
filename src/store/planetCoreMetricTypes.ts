@@ -215,6 +215,14 @@ export type PlanetCoreStatRdDetail = {
   activeJob?: PlanetCoreStatRdJob | null;
 };
 
+/** 일 1회 유지비 정산 — runArcCorePlanetUpkeepDailyPass */
+export type PlanetDailyUpkeepDetail = {
+  kstDayKey: string;
+  paid: boolean;
+  creditsDue: number;
+  creditsPaid: number;
+};
+
 /**
  * 런타임 `PlanetCoreRuntime.detail` — 직렬화 가능한 얕은 JSON 위주.
  * 필드는 필요할 때만 채운다.
@@ -232,4 +240,6 @@ export type PlanetCoreMetricsDetail = {
   coreStatRd?: PlanetCoreStatRdDetail;
   /** 일 1회 아크코어 스탯 운영 배치 Δ — 행성정보 추세 표시 */
   statOpsTrend?: PlanetCoreStatOpsTrendDetail;
+  /** 플레이어 행성 일 유지비 납부 결과 — stat equilibrium 입력 */
+  lastDailyUpkeep?: PlanetDailyUpkeepDetail;
 };

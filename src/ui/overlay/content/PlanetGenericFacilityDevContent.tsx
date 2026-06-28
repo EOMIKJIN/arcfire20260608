@@ -15,6 +15,12 @@ import { resolveArcOverlayVisualTheme, type ArcOverlayVisualTheme } from '../tac
 import { PlanetDevHintText, PlanetDevSectionBar, PlanetDevSummaryInset } from './PlanetDevOverlayChrome';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
 import {
+  formatPlanetDevLevelLabel,
+  formatPlanetDevLevelUpgradeArrow,
+  planetDevLevelI18nParams,
+  planetDevUpgradeI18nParams,
+} from '../../../game/planetDevelopment/planetFacilityDevLevelDisplay';
+import {
   HeavyUiOverlayShell,
   createPlanetDevDetailSession,
   useHeavyUiDataSession,
@@ -155,8 +161,7 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
           <>
             <ArcButton
               label={t(`${i18nPrefix}.upgradeBtn`, {
-                from: snapshot.level,
-                to: snapshot.nextTargetLevel,
+                ...planetDevUpgradeI18nParams(snapshot.level, snapshot.nextTargetLevel, t),
                 cost: formatCredits(snapshot.nextUpgradeCost ?? 0, { suffix: true }),
                 duration: nextDurationLabel,
               })}
@@ -168,6 +173,7 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
             <ArcButton
               label={t(`${i18nPrefix}.instantUpgradeBtn`, {
                 to: snapshot.nextTargetLevel,
+                toEpic: planetDevLevelI18nParams(snapshot.nextTargetLevel, t).epicBadge,
                 cost: formatCredits((snapshot.nextUpgradeCost ?? 0) + (snapshot.nextInstantCost ?? 0), { suffix: true }),
               })}
               visualTheme={visualTheme}
@@ -218,8 +224,8 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
         value={
           snapshot.installed
             ? (snapshot.isCsvWorldBaseline
-              ? t('planetDev.worldBuiltState', { level: snapshot.level })
-              : t(`${i18nPrefix}.stateInstalled`, { level: snapshot.level }))
+              ? t('planetDev.worldBuiltState', planetDevLevelI18nParams(snapshot.level, t))
+              : t(`${i18nPrefix}.stateInstalled`, planetDevLevelI18nParams(snapshot.level, t)))
             : t(`${i18nPrefix}.stateNotInstalled`)
         }
         visualTheme={visualTheme}
@@ -231,6 +237,16 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
         <ArcOverlayInfoRow
           label={t('planetDev.victoryPrereqLabel')}
           value={t('planetDev.installCombatVictoryRequired')}
+          visualTheme={visualTheme}
+        />
+      ) : null}
+      {!canManageDevelopment ? (
+        <PlanetDevHintText visualTheme={visualTheme}>{t('planetDev.manageDeniedHint')}</PlanetDevHintText>
+      ) : null}
+      {!snapshot.installed && snapshot.installBlockReason ? (
+        <ArcOverlayInfoRow
+          label={t('planetDev.installBlockLabel')}
+          value={snapshot.installBlockReason}
           visualTheme={visualTheme}
         />
       ) : null}
@@ -253,7 +269,9 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
         <View style={styles.gaugeBlock}>
           <PlanetDevSectionBar label={t(`${i18nPrefix}.upgradeProgress`)} visualTheme={visualTheme} />
           <PlanetDevHintText visualTheme={visualTheme} variant="body">
-            Lv.{snapshot.level} → Lv.{snapshot.upgradeJob?.targetLevel ?? '?'}
+            {snapshot.upgradeJob?.targetLevel != null
+              ? formatPlanetDevLevelUpgradeArrow(snapshot.level, snapshot.upgradeJob.targetLevel, t)
+              : `${formatPlanetDevLevelLabel(snapshot.level, t)} → ?`}
           </PlanetDevHintText>
           <PlanetHubDigitalGauge
             progressPct={snapshot.upgradeProgressPct}
@@ -279,7 +297,7 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
               { color: overlayInkColor(visualTheme, isTactical ? 'value' : 'accent') },
             ]}
           >
-            Lv.{row.level} {row.displayNameKr}
+            {formatPlanetDevLevelLabel(row.level, t)} {row.displayNameKr}
             {row.level === snapshot.level ? ' ◀' : ''}
           </Text>
           {renderLevelMeta ? (

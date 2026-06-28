@@ -53,3 +53,24 @@
 [2026-06-27 22:45:42] WATCH_OK watch=28060 report=31740
 [2026-06-27 23:15:42] WATCH_OK watch=28060 report=31740
 [2026-06-27 23:45:42] WATCH_OK watch=1632 report=10296
+[2026-06-28 00:15:42] WATCH_OK watch=1632 report=10296
+[2026-06-28 00:45:42] WATCH_OK watch=1632 report=10296
+[2026-06-28 01:15:42] WATCH_OK watch=1632 report=10296
+[2026-06-28 01:45:42] WATCH_OK watch=1632 report=10296
+[2026-06-28 02:15:42] WATCH_OK watch=1632 report=10296
+[2026-06-28 02:45:42] WATCH_OK watch=1632 report=10296
+[2026-06-28 03:15:42] WATCH_OK watch=1632 report=10296
+[2026-06-28 03:45:42] WATCH_OK watch=1632 report=10296
+[2026-06-28 04:15:42] WATCH_OK watch=1632 report=10296
+[2026-06-28 04:45:42] WATCH_OK watch=1632 report=10296
+[2026-06-28 05:15:42] WATCH_OK watch=1632 report=10296
+[2026-06-28 05:45:43] WATCH_OK watch=1632 report=10296
+[2026-06-28 06:15:43] WATCH_OK watch=1632 report=10296
+[2026-06-28 06:45:43] WATCH_OK watch=1632 report=10296
+[2026-06-28 07:15:43] WATCH_OK watch=1632 report=10296
+[2026-06-28 07:45:43] WATCH_OK watch=1632 report=10296
+[2026-06-28 08:00:00] WATCH_OK watch=1632 report=10296
+[2026-06-28 08:00:00] GENERATING report -> D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260628-0800.md
+[2026-06-28 08:00:03] HANDOFF updated -> D:\arcfire20260607\tools\kim-team-lead\reports\kim-economy-handoff.md
+[2026-06-28 08:00:04] STOP report-watch pid=10296
+[2026-06-28 08:00:04] SCHEDULE_DONE until=2026-06-28 08:00:00 report=D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260628-0800.md

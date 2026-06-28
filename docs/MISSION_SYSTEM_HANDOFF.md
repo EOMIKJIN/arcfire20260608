@@ -1,8 +1,36 @@
 # 미션 시스템 작업 인수인계 (2026-06-18)
 
-> **정본 데이터**: `tables/content/missions.csv` · `mission_objectives.csv` · `mission_combat_captains.csv`  
+> **정본 데이터**: `tables/content/missions.csv` · `mission_objectives.csv` · `mission_combat_captains.csv` · **`mission_quest_placements.csv`** · **`mission_quest_combat_ops.csv`**  
 > **빌드**: `npm run build:content-tables` → `src/data/generated/csvMissions.ts` 등  
-> **런타임 진입점**: `src/missions/missionCatalog.ts` · `src/store/missionStore.ts`
+> **감사**: `npm run audit:mission-quest-placements` — buy_goods/defeat_enemy 전수 검증  
+> **런타임 진입점**: `src/missions/missionTrack.ts` · `missionCatalog.ts` · **`questItemOpsRegistry.ts`** · `missionStore.ts`
+
+---
+
+## 퀘스트 아이템·전투 운영 (2026-06-27)
+
+경제 밸런싱(`tradePortCatalogPolicy`)과 **분리** — 활성 미션 동안만 무역소·transit에 오버레이.
+
+| 축 | CSV | 런타임 |
+|---|---|---|
+| **퀘스트 구매 배치** | `mission_quest_placements.csv` — objectiveId·planetId·itemId·stock·단가·`questTag` | `mergeQuestTradePortItemIds` · `applyQuestMarketListingOverrides` (`trade.tsx`) |
+| **퀘스트 전투 보장** | `mission_quest_combat_ops.csv` — `transit_guaranteed` · `anchorPlanetId` | `resolveTransitEncounterChance` · `resolveQuestCombatAnchorPlanetId` (`worldmap`·`combat`) |
+| **아이템 태그** | `item_defs.csv` `tagsPipe` — `quest\|cargo_*` (food·tech·minerals 등) | Table-First 식별; 진열은 배치 CSV가 정본 |
+
+- `mission_003` 식량 팩: `solar_station` + `food` — 경제 카탈로그 없어도 튜토리얼 활성 시 무역소 구매 탭 노출.
+- 신규 `buy_goods`/`defeat_enemy` 추가 시 **반드시** 배치 CSV + `npm run audit:mission-quest-placements` PASS.
+
+---
+
+## 트랙 분류 (2026-06-27 · 명칭 정본)
+
+| 트랙 | id 접두사 | 진입 API | UI |
+|---|---|---|---|
+| **튜토리얼 스토리** | `mission_*` | `initTutorialStory()` (온보딩·인트로) | QuestHUD 📖 · 선술집 「튜토리얼 스토리」 |
+| **수락 의뢰(퀘스트)** | `sandbox_*` | `acceptQuestMission()` (선술집·NPC 대화) | QuestHUD 📋 · 선술집 「수락 의뢰」 |
+
+- 분류 정본: `src/missions/missionTrack.ts` — `resolveMissionTrack()`
+- 구 명칭 alias: `initMissions` · `acceptInstanceMission` · `isStoryMissionId` · `isInstanceMissionId` (deprecated)
 
 ---
 
@@ -32,11 +60,11 @@
 ### 선술집 UI
 - [x] 탭 3개: 공지판 · 미션현황 · 신규미션
 - [x] `TavernMissionStatusTab` — 진행/완료 목록
-- [x] `TavernNewMissionTab` — 행성별 sandbox 목록 + **수락**
-- [x] `missionStore.acceptInstanceMission()` — 레벨·행성·선행·중복 검증
+- [x] `TavernNewMissionTab` — 행성별 sandbox(퀘스트) 목록 + **수락**
+- [x] `missionStore.acceptQuestMission()` — 레벨·행성·선행·중복 검증
 
-### 스토리 미션
-- [x] `initMissions()` → `mission_001` 자동 시작
+### 튜토리얼 스토리 (구 스토리 체인)
+- [x] `initTutorialStory()` → `mission_001` 자동 시작
 - [x] 체인 `nextMissionId` · 클리어 대화(`mission_clear_*`) · 행성 허브에서만 clear dialog
 
 ---
@@ -51,7 +79,7 @@
 
 ### P2 — 전투 확장
 - [ ] 행성 궤도 전투(`planet.tsx`) 승리 → `defeat_enemy` 완료 연동
-- [ ] 미션별 **강제 인카운터** (현재는 확률 보정만)
+- [x] 미션별 **강제 인카운터** — `mission_quest_combat_ops.csv` + `transit_guaranteed` (2026-06-27)
 - [ ] `defeat_enemy.quantity` 다수 격파 (v1: 1체 고정)
 
 ### P2 — 정리·품질

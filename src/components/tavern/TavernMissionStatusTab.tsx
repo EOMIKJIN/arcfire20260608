@@ -12,9 +12,12 @@ import {
 } from '../../i18n/missionText';
 import { formatCredits } from '../../utils/formatCredits';
 import {
-  listActiveMissionStatusRows,
-  listCompletedMissionStatusRows,
+  listActiveTutorialStatusRows,
+  listActiveQuestStatusRows,
+  listCompletedTutorialStatusRows,
+  listCompletedQuestStatusRows,
 } from '../../missions/tavernMissionBoard';
+import { resolveMissionTrack } from '../../missions/missionTrack';
 import {
   PlanetFacilityCardTitleBlock,
   PlanetFacilitySectionHeader,
@@ -76,11 +79,18 @@ function MissionStatusCard({
   });
 
   const isComplete = progress.status === 'complete';
+  const track = resolveMissionTrack(mission.id);
+  const trackLabel =
+    track === 'tutorial'
+      ? t('mission.track.tutorialShort')
+      : track === 'quest'
+        ? t('mission.track.questShort')
+        : t('tavern.mission.badgeActive');
   const badgeLabel = isComplete
     ? t('tavern.mission.badgeComplete')
     : isPrimaryActive
       ? t('tavern.mission.badgeActivePrimary')
-      : t('tavern.mission.badgeActive');
+      : trackLabel;
   const badgeTone = !isComplete && isPrimaryActive ? 'primary' : 'neutral';
 
   return (
@@ -120,15 +130,27 @@ export function TavernMissionStatusTab() {
   const t = useT();
   const progresses = useMissionStore((s) => s.progresses);
   const activeMissionId = useMissionStore((s) => s.activeMissionId);
-  const activeRows = useMemo(
-    () => listActiveMissionStatusRows(progresses, activeMissionId),
+  const activeTutorial = useMemo(
+    () => listActiveTutorialStatusRows(progresses, activeMissionId),
     [progresses, activeMissionId],
   );
-  const completedRows = useMemo(
-    () => listCompletedMissionStatusRows(progresses),
+  const activeQuest = useMemo(
+    () => listActiveQuestStatusRows(progresses, activeMissionId),
+    [progresses, activeMissionId],
+  );
+  const completedTutorial = useMemo(
+    () => listCompletedTutorialStatusRows(progresses),
     [progresses],
   );
-  const isEmpty = activeRows.length === 0 && completedRows.length === 0;
+  const completedQuest = useMemo(
+    () => listCompletedQuestStatusRows(progresses),
+    [progresses],
+  );
+  const isEmpty =
+    activeTutorial.length === 0
+    && activeQuest.length === 0
+    && completedTutorial.length === 0
+    && completedQuest.length === 0;
 
   if (isEmpty) {
     return (
@@ -138,17 +160,23 @@ export function TavernMissionStatusTab() {
     );
   }
 
-  return (
-    <View>
+  const renderActiveSection = (
+    title: string,
+    metaKey: string,
+    rows: typeof activeTutorial,
+    emptyKey: string,
+    first?: boolean,
+  ) => (
+    <>
       <PlanetFacilitySectionHeader
-        first
-        title={t('tavern.missionStatus.sectionActive')}
-        meta={t('tavern.missionStatus.activeMeta', { count: activeRows.length })}
+        first={first}
+        title={title}
+        meta={t(metaKey, { count: rows.length })}
       />
-      {activeRows.length === 0 ? (
-        <Text style={fs.sectionEmpty}>{t('tavern.missionStatus.noActive')}</Text>
+      {rows.length === 0 ? (
+        <Text style={fs.sectionEmpty}>{t(emptyKey)}</Text>
       ) : (
-        activeRows.map((row) => (
+        rows.map((row) => (
           <MissionStatusCard
             key={row.mission.id}
             mission={row.mission}
@@ -157,15 +185,24 @@ export function TavernMissionStatusTab() {
           />
         ))
       )}
+    </>
+  );
 
+  const renderCompleteSection = (
+    title: string,
+    metaKey: string,
+    rows: typeof completedTutorial,
+    emptyKey: string,
+  ) => (
+    <>
       <PlanetFacilitySectionHeader
-        title={t('tavern.missionStatus.sectionComplete')}
-        meta={t('tavern.missionStatus.completeMeta', { count: completedRows.length })}
+        title={title}
+        meta={t(metaKey, { count: rows.length })}
       />
-      {completedRows.length === 0 ? (
-        <Text style={fs.sectionEmpty}>{t('tavern.missionStatus.noComplete')}</Text>
+      {rows.length === 0 ? (
+        <Text style={fs.sectionEmpty}>{t(emptyKey)}</Text>
       ) : (
-        completedRows.map((row) => (
+        rows.map((row) => (
           <MissionStatusCard
             key={row.mission.id}
             mission={row.mission}
@@ -173,6 +210,36 @@ export function TavernMissionStatusTab() {
             isPrimaryActive={false}
           />
         ))
+      )}
+    </>
+  );
+
+  return (
+    <View>
+      {renderActiveSection(
+        t('tavern.missionStatus.sectionTutorialActive'),
+        'tavern.missionStatus.activeMeta',
+        activeTutorial,
+        'tavern.missionStatus.noTutorialActive',
+        true,
+      )}
+      {renderActiveSection(
+        t('tavern.missionStatus.sectionQuestActive'),
+        'tavern.missionStatus.activeMeta',
+        activeQuest,
+        'tavern.missionStatus.noQuestActive',
+      )}
+      {renderCompleteSection(
+        t('tavern.missionStatus.sectionTutorialComplete'),
+        'tavern.missionStatus.completeMeta',
+        completedTutorial,
+        'tavern.missionStatus.noTutorialComplete',
+      )}
+      {renderCompleteSection(
+        t('tavern.missionStatus.sectionQuestComplete'),
+        'tavern.missionStatus.completeMeta',
+        completedQuest,
+        'tavern.missionStatus.noQuestComplete',
       )}
     </View>
   );

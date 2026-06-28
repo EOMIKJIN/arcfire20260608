@@ -6,6 +6,11 @@
 에이전트·인간 개발자 공통 · Skia/STAGE/틱/persist/부트 전부 해당 · 조사·게이트 없이 구현·완료 선언 금지.  
 정본: `.cursor/rules/arcfire-memory-leak-audit-first.mdc`
 
+## 기존값 변경 — 사전 재확인 (상시 · 사용자 지시)
+
+**확정 CSV·밸런스·UI/i18n 등 기존값**을 바꿀 때는 **수정 전 사용자에게 한 번 더 질문·승인** 후 작업. 신규 추가만(L11~15 행 추가 등)이고 L1~N 기존 행을 건드리지 않으면 생략.  
+정본: `.cursor/rules/arcfire-existing-value-change-confirm.mdc`
+
 ## 메인 개발 · 팀 구조 (2026-06-19 단일 지휘)
 
 | 에이전트 | 호출 | 역할 | 코드 |
@@ -24,14 +29,37 @@
 
 ## 장기 메모리·안정화 감시 (상시 · 개발과 독립) — **기본 장기앱 실행 테스트 (2026-06-19)**
 
-> **`start-watch-30m.ps1` 만** 멱등 가동 — 30분 meminfo + crash logcat. 부가 soak/floor 테스트는 기본 미실행.
-> 이상(비정상종료·ABNORMAL_RESTART·메모리) 시 **자동조치 + 사후 VERIFY** → 실패 시 김팀장 P0 코드 수정.
+> **`ensure-always-on-watch-stack.ps1`** 멱등 가동 — **앱 무영향**: PC(adb) 전용 · `MONITOR_APP_ZERO_IMPACT.md`
+> 이상 시 **코드 자동픽스 핸드오프**(incident·retention) → 김팀장 P0 · 앱 force-stop은 `monitor-paused.flag` 없을 때만(throttle)
 > 정본: `tools/long-run-monitor/logs/WATCH_README.md` · `docs/KIM_ECONOMY_AGENT.md`
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File tools/long-run-monitor/start-watch-30m.ps1
-npm run monitor:ensure-daily-8am   # 데일리 08:00 KST 상시 보고 (필수)
+npm run monitor:ensure-always-on   # watch-30m + retention(60m) + 08:00 보고 (멱등)
+npm run monitor:ensure-daily-8am   # 08:00 스케줄러만 확인
 ```
+
+### 상시 가동 — **이상탐지 → 김팀장 handoff (P0)**
+
+| # | 구성 | 주기 | 역할 |
+|---|------|------|------|
+| 0 | **perpetual watchdog** | 5m ensure | PC/게임/Cursor 재시작 후 **자동 재가동** · status·HTML 대시보드 |
+| 1 | **mem watch** | 15m | mem-timeline · remediate · handoff (adb budget) |
+| 2 | **report-watch** | 15m | 실시간 크래시·incident heartbeat |
+| 3 | **incident poll** | 5m | 신규 incident → `CHAT_REPORT_PENDING` · optional webhook |
+| 4 | **profiler extras** | 60m | retention audit |
+| 5 | **08:00 · Cursor 훅** | — | 데일리 보고 · incident triage |
+| 6 | **PR gate (CI)** | PR/push | tsc · skia · worklet · memory 정적 |
+
+```powershell
+npm run monitor:register-perpetual   # Windows 로그온·5m 백업 (1회)
+npm run monitor:ensure-perpetual
+npm run monitor:status              # PID · handoff · mem 한 줄
+npm run monitor:dashboard           # logs/MONITOR_DASHBOARD_LATEST.html
+```
+
+**운영 정본**: `tools/long-run-monitor/logs/MONITOR_OPS_REALTIME.md`
+
+**Windows 작업**: `ArcfirePerpetualDetection` · **중단**: `perpetual-detection-DISABLED.flag`
 
 ### 데일리 08:00 KST 상시 보고 (필수 · 2026-06-27~)
 
@@ -41,8 +69,10 @@ npm run monitor:ensure-daily-8am   # 데일리 08:00 KST 상시 보고 (필수)
 - 산출: `overnight-final-report-YYYYMMDD-0800.md` · `DAILY_8AM_REPORT_LATEST.md` · `daily-8am-report-ledger.csv`
 - Cursor `sessionStart` 훅 + `ensure-daily-8am-report.ps1` 멱등 자동 가동
 
-- **30분** `mem-timeline.csv` · crash logcat · v2 계단식 GL 누수 판정 · **VERIFY** after auto-fix
-- **김경제(감시)**: 모니터·**profile:mem:watch**·retention audit·incident **탐지·보고만** (코드 수정 없음)
+- **30분** `mem-timeline.csv` · crash logcat · v2 계단식 GL 누수 판정
+- **60분** retention audit · `[MEM_PROFILE]` logcat (`ensure-profiler-extras.ps1`)
+- **코드 자동픽스**: incident handoff + Cursor triage 훅 · 앱 재시작은 `monitor-paused` 없을 때만
+- **김경제(감시)**: 상시 스택 · retention · incident **탐지·보고만** (코드 수정 없음)
 - **김팀장**: handoff·`latest-retention-audit.md` FAIL → STAGE·Skia·reclaim **코드 수정**
 - **김팀장**: incident·audit FAIL **코드 조치** · 자동조치 정책 · Skia/허브/STAGE 패치
 - **P0 집중(2026-06-23~):** release **5h+ soak** · GL/PSS floor 계단식 상승 후 **은하계 지도(worldmap) 진입·전투 복귀** 크래시 — `PLAYTEST_WATCH.md` · `WATCH_README.md` §집중 검사 항목

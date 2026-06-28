@@ -1,60 +1,17 @@
 /**
- * 헤드리스 convoy·ledger 시뮬 — dynamic import after AsyncStorage patch
+ * 헤드리스 convoy·ledger 시뮬 — tsconfig.headless.json 경로 치환(RN·AsyncStorage stub)
  */
 import { createRequire } from 'node:module';
 
-const nodeRequire = createRequire(import.meta.url);
-
-function createMemoryAsyncStorage() {
-  const map = new Map<string, string>();
-  return {
-    getItem: async (key: string) => (map.has(key) ? map.get(key)! : null),
-    setItem: async (key: string, value: string) => {
-      map.set(key, value);
-    },
-    removeItem: async (key: string) => {
-      map.delete(key);
-    },
-    multiGet: async (keys: string[]) => keys.map((k) => [k, map.get(k) ?? null] as [string, string | null]),
-    multiSet: async (pairs: [string, string][]) => {
-      for (const [k, v] of pairs) map.set(k, v);
-    },
-    multiRemove: async (keys: string[]) => {
-      for (const k of keys) map.delete(k);
-    },
-    getAllKeys: async () => [...map.keys()],
-    clear: async () => map.clear(),
+const headlessRequire = createRequire(import.meta.url);
+for (const ext of ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.ttf', '.otf']) {
+  (headlessRequire.extensions as NodeJS.Dict<(m: NodeModule, filename: string) => void>)[ext] = (
+    m: NodeModule,
+  ) => {
+    m.exports = 0;
   };
 }
 
-function patchAsyncStorageModule(): void {
-  const mock = createMemoryAsyncStorage();
-  const exportBag = { default: mock, ...mock };
-  for (const id of [
-    '@react-native-async-storage/async-storage',
-    '@react-native-async-storage/async-storage/lib/commonjs/AsyncStorage.js',
-  ]) {
-    try {
-      const storagePath = nodeRequire.resolve(id);
-      nodeRequire.cache[storagePath] = {
-        id: storagePath,
-        filename: storagePath,
-        loaded: true,
-        exports: exportBag,
-        children: [],
-        paths: [],
-        parent: null,
-        path: storagePath,
-        isPreloading: false,
-        require: nodeRequire,
-      } as NodeModule;
-    } catch {
-      /* optional path */
-    }
-  }
-}
-
-patchAsyncStorageModule();
 process.env.ARCFIRE_HEADLESS_ECONOMY_AUDIT = '1';
 
 async function main(): Promise<void> {
@@ -76,6 +33,12 @@ async function main(): Promise<void> {
   await useArcCoreVaultStore.getState().hydrate();
   await useBlueTeamSharedVaultStore.getState().hydrate();
   await usePlanetTradeFeeLedgerStore.getState().hydrate();
+
+  const { seedSynthConvoyAuditFixtures } = await import(
+    '../../src/arcCore/economy/synthFrontierConvoyTradeBridge'
+  );
+  const synthFixtureCount = seedSynthConvoyAuditFixtures(['synth_002_p', 'synth_003_p']);
+
   rebuildAllPlanetTradeMarkets(listAllTradeRoutePlanetIds(), true);
 
   const arcBefore = useArcCoreVaultStore.getState().getBalance();
@@ -101,6 +64,7 @@ async function main(): Promise<void> {
 
   console.log(
     JSON.stringify({
+      synthFixtureCount,
       convoyDaily,
       fleetBankBalance: useArcCoreTransportFleetBankStore.getState().getBalance(),
       arcVaultDelta: arcAfter - arcBefore,

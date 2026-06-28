@@ -7,13 +7,13 @@ import {
 } from '../ArcCoreCommandBus';
 import {
   addTradePortItem,
-  getPlanetRecord,
   listPlanetIdsWithTradePort,
   removeTradePortItem,
   replaceTradePortCatalog,
   resetTradePortItemOverrides,
 } from '../../world/planetTradePortDb';
 import { runPlayScenarioEconomyPass } from '../balance/runPlayScenarioEconomyPass';
+import { rehydrateSynthFrontierConvoyTradeFromInstalledPorts } from '../economy/synthFrontierConvoyTradeBridge';
 import { settleArcTransportDwellTrade } from '../economy/runArcTransportTradePass';
 import { useEconomyPriceOverlayStore } from '../economy/economyPriceOverlayStore';
 import { migrateLegacyArcCoreTempBankOnce } from '../economy/migrateLegacyTempBank';
@@ -45,6 +45,7 @@ export class AiEconomySubCore extends BaseArcSubCore {
             void useBlueTeamSharedVaultStore.getState().hydrate().then(() => {
               void usePlanetTradeFeeLedgerStore.getState().hydrate().then(() => {
                 void useEconomyPriceOverlayStore.getState().loadAsync().then(() => {
+                  rehydrateSynthFrontierConvoyTradeFromInstalledPorts();
                   runPlayScenarioEconomyPass(false, { skipCatalog: true });
                 });
               });
@@ -107,10 +108,10 @@ export class AiEconomySubCore extends BaseArcSubCore {
     if (scope.kind === 'all_trade_ports') {
       return listPlanetIdsWithTradePort();
     }
+    const active = new Set(listPlanetIdsWithTradePort());
     const out: string[] = [];
     for (const id of scope.planetIds) {
-      const p = getPlanetRecord(id);
-      if (p?.hasTradePort) out.push(id);
+      if (active.has(id)) out.push(id);
     }
     return out;
   }

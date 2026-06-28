@@ -1,7 +1,7 @@
 key,value_num,value_str,notesKo
 active_duration_tier,,standard,v3.1 현재 활성 티어 — standard | epic
-standard_max_target_level,10,,Lv9→10 표준 최고 업그레이드 목표
-epic_max_target_level,12,,향후 에픽 L11~12 예약 상한
+standard_max_target_level,15,,Lv14→15 표준 최고 업그레이드 목표(v3.2)
+epic_max_target_level,15,,v3.2 L11~15 표준 티어와 동일 상한
 min_install_duration_sec,900,,Lv1 설치 하한 15분
 max_install_duration_sec,1800,,Lv1 설치 상한 30분
 standard_max_upgrade_duration_sec,2592000,,표준 티어 최고 업그레이드 상한 30일

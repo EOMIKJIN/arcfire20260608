@@ -10,7 +10,8 @@
  *
  * **UI** (`QuestHUD`)
  * - 주 표시: `getActiveMission()` (`activeMissionId` 1건) → title + 첫 미완료 objective.
- * - 인스턴스 병행 시 objective 완료는 `listActiveMissionBundles()` 전체를 순회(허브·월드맵·무역·전투).
+ * - 트랙: `mission_*` = 튜토리얼 스토리 · `sandbox_*` = 수락 의뢰(퀘스트).
+ * - 병행 objective 완료는 `listActiveMissionBundles()` 전체를 순회(허브·월드맵·무역·전투).
  *
  * ---
  * ### `reach_system`

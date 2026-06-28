@@ -13,6 +13,8 @@ if (-not $Package) { $Package = 'com.arcfire.online' }
 
 $ErrorActionPreference = 'Continue'
 . (Join-Path $PSScriptRoot 'mem-gl-leak-rules.ps1')
+. (Join-Path $PSScriptRoot 'monitor-host-budget.ps1')
+. (Join-Path $PSScriptRoot 'invoke-node-hidden.ps1')
 
 $remediationLog = Join-Path $LogDir 'remediation.log'
 $incidentLog = Join-Path $LogDir 'incidents.log'
@@ -74,14 +76,28 @@ try {
 }
 
 try {
-  $memRaw = adb shell dumpsys meminfo $Package 2>&1 | Out-String
-  $memOut = Join-Path $LogDir "incident-meminfo-$ts.log"
-  $memRaw | Set-Content -Path $memOut -Encoding utf8
-  $gl = $null
-  $pss = $null
-  if ($memRaw -match 'TOTAL PSS:\s+(\d+)') { $pss = [math]::Round([int]$Matches[1] / 1024, 1) }
-  if ($memRaw -match '(?m)^\s*GL mtrack\s+(\d+)') { $gl = [math]::Round([int]$Matches[1] / 1024, 1) }
-  Write-Remediation "INVESTIGATION mem snapshot gl=${gl}MB pss=${pss}MB -> $memOut"
+  $snap = Get-TimelineHeartbeatMetrics -LogDir $LogDir -MaxAgeMin 20
+  $forceMem = $Reason -match 'crash|death|FATAL|SIGSEGV|hard_ceiling|mem_hard'
+  if ($snap -and -not $forceMem) {
+    $memOut = Join-Path $LogDir "incident-meminfo-$ts.log"
+    @(
+      "source=mem-timeline (no adb dumpsys — app impact guard)",
+      "pid=$($snap.pid) pss_mb=$($snap.pssMb) gl_mb=$($snap.glMb) views=$($snap.views) age_min=$($snap.ageMin)"
+    ) | Set-Content -Path $memOut -Encoding utf8
+    Write-Remediation "INVESTIGATION mem from timeline gl=$($snap.glMb)MB pss=$($snap.pssMb)MB -> $memOut"
+  } elseif (Test-CanInvokeAdbMeminfo -LogDir $LogDir -Force:$forceMem) {
+    $memRaw = adb shell dumpsys meminfo $Package 2>&1 | Out-String
+    Register-AdbMeminfoInvocation -LogDir $LogDir
+    $memOut = Join-Path $LogDir "incident-meminfo-$ts.log"
+    $memRaw | Set-Content -Path $memOut -Encoding utf8
+    $gl = $null
+    $pss = $null
+    if ($memRaw -match 'TOTAL PSS:\s+(\d+)') { $pss = [math]::Round([int]$Matches[1] / 1024, 1) }
+    if ($memRaw -match '(?m)^\s*GL mtrack\s+(\d+)') { $gl = [math]::Round([int]$Matches[1] / 1024, 1) }
+    Write-Remediation "INVESTIGATION mem snapshot gl=${gl}MB pss=${pss}MB -> $memOut"
+  } else {
+    Write-Remediation 'INVESTIGATION meminfo SKIPPED (host budget — timeline/handoff only)'
+  }
 } catch {
   Write-Remediation "INVESTIGATION meminfo WARN $($_.Exception.Message)"
 }
@@ -95,7 +111,8 @@ $payload = @{
 Set-Content -Path $refixFlag -Value $payload -Encoding utf8
 
 try {
-  & node (Join-Path $PSScriptRoot 'pack-incident-handoff.cjs') $Reason 2>&1 | ForEach-Object { Write-Remediation $_ }
+  Invoke-NodeHidden -ScriptPath (Join-Path $PSScriptRoot 'pack-incident-handoff.cjs') -NodeArgs @($Reason) -CaptureOutput |
+    ForEach-Object { Write-Remediation $_ }
 } catch {
   Write-Remediation "INVESTIGATION handoff pack ERROR $($_.Exception.Message)"
 }

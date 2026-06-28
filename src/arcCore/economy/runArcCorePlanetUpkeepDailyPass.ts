@@ -119,12 +119,28 @@ export async function runArcCorePlanetUpkeepDailyPass(): Promise<ArcCorePlanetUp
       planetId,
       computePlanetDevelopmentDailyUpkeepCredits(planetId),
     );
-    const upkeep = computePlanetDailyUpkeepCredits(devUpkeep, policy);
+    const arcFees =
+      usePlanetTradeFeeLedgerStore.getState().byPlanetId[planetId]?.arcFeeCredits ?? 0;
+    const upkeep = computePlanetDailyUpkeepCredits(devUpkeep, policy, arcFees);
     if (upkeep <= 0) continue;
     planetsProcessed += 1;
 
     if (isPlayerOwnedHold(hold, playerUid)) {
       const spent = usePlayerStore.getState().spendCredits(upkeep);
+      const coreRuntime = usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId);
+      if (coreRuntime) {
+        usePlanetCoreRuntimeStore.getState().patchPlanetCore(planetId, {
+          detail: {
+            ...coreRuntime.detail,
+            lastDailyUpkeep: {
+              kstDayKey,
+              paid: spent,
+              creditsDue: upkeep,
+              creditsPaid: spent ? upkeep : 0,
+            },
+          },
+        });
+      }
       if (spent) {
         playerUpkeepChargedCredits += upkeep;
       } else {

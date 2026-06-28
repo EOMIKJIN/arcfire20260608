@@ -1,4 +1,4 @@
-# 김경제 → 김팀장 Handoff
+﻿# 김경제 → 김팀장 Handoff
 
 > **작성**: 김경제 에이전트 (`@김경제`) — 작업 완료·테스트 후 갱신  
 > **검수**: 김팀장 에이전트 (`@김팀장`) — `npm run audit:team-lead:daily`
@@ -24,6 +24,41 @@
 - **권장(김팀장 1안)**: afternoon soak OK — review mem-timeline floor
 
 > status: monitor-ok · 17:00 KST 자동보고 완료
+
+## [관측] 2026-06-28 09:02:56 KST — **데일리 08:00 상시 자동보고** (CRITICAL)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **33096** · auto-fix=OFF(record-only)
+- **adb**: OK (192.168.45.197:37573)
+- **앱**: RUNNING
+- **mem-monitor**: **CRITICAL** (PSS 1015.7MB · GL 141.5MB · Views 555 · pid=4624)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260628-0800.md
+- **verdict**: **CRITICAL**
+- **incidents (actionable tail)**: 3
+  - [2026-06-28 08:00:01] DAILY_8AM_REPORT 2026-06-28 08:00:01 KST
+  - [2026-06-28 08:57:10] DAILY_8AM_REPORT 2026-06-28 08:57:10 KST
+  - [2026-06-28 09:02:56] DAILY_8AM_REPORT 2026-06-28 09:02:56 KST
+- **권장(김팀장 1안)**: PSS>=950 — hub exit / Skia dispose P0
+
+> status: **ready-for-team-lead-action** · **08:00 보고체 유지**
+
+## [관측] 2026-06-28 22:00 KST — 저녁 감시 · 22:00 자동보고
+
+- **김경제 감시**: watch-30m PID **33096** · report-watch PID **3976** · auto-fix=OFF(record-only)
+- **mem-monitor**: **OK** (PSS 559.9MB · GL 12.2MB · Views 99 · pid=15084)
+- **report**: `D:\arcfire20260607\tools\long-run-monitor\logs\evening-watch-report-20260628-2200.md`
+- **latest summary**: `tools/long-run-monitor/logs/DAILY_5PM_REPORT_LATEST.md`
+- **timeline marker**: EVENING_WATCH_START
+- **incidents (actionable tail)**: 6
+  - [2026-06-28 14:18:55] PSS_SOFT_CEILING pss=876.5 gl=36 views=328 native_reclaim_advisory
+  - [2026-06-28 14:29:14] PSS_SOFT_CEILING pss=939 gl=54.7 views=420 native_reclaim_advisory
+  - [2026-06-28 15:00:19] PSS_SOFT_CEILING pss=870.6 gl=40 views=352 native_reclaim_advisory
+  - [2026-06-28 15:00:56] PSS_SOFT_CEILING pss=836 gl=39.4 views=326 native_reclaim_advisory
+  - [2026-06-28 15:52:02] PSS_SOFT_CEILING pss=913 gl=59.2 views=332 native_reclaim_advisory
+  - [2026-06-28 19:33:38] PSS_SOFT_CEILING pss=845.8 gl=114.4 views=632 native_reclaim_advisory
+- **권장(김팀장 1안)**: afternoon soak OK — review mem-timeline floor
+
+> status: monitor-ok · 22:00 KST 자동보고 완료
 
 ## 작업 요약
 
@@ -257,4 +292,17 @@ _(김팀장 검수 코멘트·반려 사유는 아래에 기록)_
 - **권장(김팀장 1안)**:
 
 > retention **FAIL** → `status: ready-for-team-lead-action` · 김팀장 본 세션 P1 수정 · 수정 후 `[mem-profile-fix]` 기록
+
+
+## [watch] 2026-06-28 08:00:03 KST - overnight until 08:00 auto report
+
+- Kim-economy watch: watch PID **1632** / report PID **10296** / auto-fix=OFF record-only
+- mem-monitor: **OK** (PSS 837.3MB GL 36.6MB Views 377 pid=4624)
+- report: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260628-0800.md
+- timeline marker: OVERNIGHT_WATCH_UNTIL_8AM
+- incidents actionable tail: 0
+  - (none)
+- Kim team lead: overnight soak OK - review final report
+
+> status: monitor-ok
 

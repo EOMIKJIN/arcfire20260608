@@ -9,21 +9,21 @@ import { usePlayerStore } from '../../store/playerStore';
 import type { PlanetCoreGaugeView } from '../../store/planetCoreRuntimeStore';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import type { PlanetFacilityModuleDetail } from '../../store/planetCoreMetricTypes';
+import { resolvePlanetFacilityInstallGate } from './planetFacilityInstallGate';
 import {
-  requiresInstallVictoryOnPlanet,
-  resolvePlanetInstallVictoryBlock,
-} from './planetDevelopmentInstallCombatPolicy';
-import { hasPlanetCombatVictorySync } from '../../store/combatMatchTelemetryStore';
-import { getPlanetDevelopmentCatalogRow } from './planetDevelopmentCatalog';
-import {
-  applyPlanetFacilityLevelUpBenefits,
-  resolvePlanetDevDiscountedCredits,
-} from '../../arcCore/planetDevelopment/planetDevelopmentLevelBenefits';
-import {
+  ensurePlanetCoreRuntimeForDev,
   hasPlanetCoreRuntimeEntry,
   readFacilityModuleDetail,
   writeFacilityModuleDetail,
 } from './planetFacilityModuleRuntime';
+import { getPlanetDevelopmentCatalogRow } from './planetDevelopmentCatalog';
+import {
+  finalizePlanetFacilityLevelApplied,
+} from './planetFacilityLevelApplied';
+import {
+  resolvePlanetDevDiscountedCredits,
+  applyPlanetFacilityLevelUpBenefits,
+} from '../../arcCore/planetDevelopment/planetDevelopmentLevelBenefits';
 import {
   buildInstallUpgradeJob,
   buildUpgradeJob,
@@ -124,14 +124,14 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
   function applyLevel(planetId: string, targetLevel: number): void {
     patchDetail(planetId, { level: targetLevel, upgradeJob: null });
     invalidatePlanetMemoCachesForPlanet(planetId);
-    applyPlanetFacilityLevelUpBenefits(planetId, facilityType, targetLevel);
+    finalizePlanetFacilityLevelApplied(planetId, facilityType, targetLevel);
     onLevelApplied?.(planetId, targetLevel);
   }
 
   function completeInstall(planetId: string): void {
     patchDetail(planetId, { installed: true, level: 1, upgradeJob: null });
     invalidatePlanetMemoCachesForPlanet(planetId);
-    applyPlanetFacilityLevelUpBenefits(planetId, facilityType, 1);
+    finalizePlanetFacilityLevelApplied(planetId, facilityType, 1);
     onLevelApplied?.(planetId, 1);
   }
 
@@ -169,11 +169,6 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
   function resolveInstallCostCredits(planetId: string): number {
     const base = getPlanetDevelopmentCatalogRow(moduleId)?.installCostCredits ?? 0;
     return resolvePlanetDevDiscountedCredits(planetId, base);
-  }
-
-  /** v2.0 §8 — 설치 선행: 영역별 승리 1회 (시설 체인·승리 N회 CSV 폐기) */
-  function resolveInstallPrerequisiteBlock(planetId: string): string | null {
-    return resolvePlanetInstallVictoryBlock(planetId);
   }
 
   function tryCompleteUpgrade(planetId: string): boolean {
@@ -222,16 +217,20 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
     const statOk = reqStat.value <= 0 || reqStat.type === ''
       || resolvePlanetStatForPrereq(planetId, reqStat.type) >= reqStat.value;
 
-    const installPrereqBlock = !installed && !detail.upgradeJob
-      ? resolveInstallPrerequisiteBlock(planetId)
+    const installGate = !installed && !isCsvWorldBaseline
+      ? resolvePlanetFacilityInstallGate({
+        planetId,
+        installed,
+        isCsvWorldBaseline,
+        hasActiveJob: Boolean(detail.upgradeJob),
+        playerCredits,
+        installCost,
+        notEnoughCreditsMessage: t(`${i18nPrefix}.notEnoughCredits`),
+      })
       : null;
-    const requiresInstallVictory = requiresInstallVictoryOnPlanet(planetId);
-    const hasInstallVictory = hasPlanetCombatVictorySync(planetId);
-    const canInstall = !installed
-      && !isCsvWorldBaseline
-      && !detail.upgradeJob
-      && playerCredits >= installCost
-      && installPrereqBlock == null;
+    const requiresInstallVictory = false;
+    const hasInstallVictory = true;
+    const canInstall = installGate?.canInstall ?? false;
     const canStartUpgrade = installed
       && !isUpgrading
       && !isInstalling
@@ -275,8 +274,7 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
       nextInstantCost: detail.upgradeJob ? activeInstantCost : (isInstalling ? previewInstallInstantCost : previewUpgradeInstantCost),
       nextUpgradeDurationSec,
       nextTargetLevel,
-      installBlockReason: installPrereqBlock
-        ?? (playerCredits < installCost ? t(`${i18nPrefix}.notEnoughCredits`) : null),
+      installBlockReason: installGate?.installBlockReason ?? null,
       requiresInstallVictory,
       hasInstallVictory,
       isCsvWorldBaseline,
@@ -289,9 +287,21 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
       return { ok: false, reason: t(`${i18nPrefix}.alreadyInstalled`) };
     }
     if (detail.upgradeJob) return { ok: false, reason: t(`${i18nPrefix}.upgradeInProgress`) };
-    if (!hasPlanetCoreRuntimeEntry(planetId)) return { ok: false, reason: t(`${i18nPrefix}.notReady`) };
-    const prereqBlock = resolveInstallPrerequisiteBlock(planetId);
-    if (prereqBlock) return { ok: false, reason: prereqBlock };
+    if (!hasPlanetCoreRuntimeEntry(planetId) && !ensurePlanetCoreRuntimeForDev(planetId)) {
+      return { ok: false, reason: t(`${i18nPrefix}.notReady`) };
+    }
+    const installGate = resolvePlanetFacilityInstallGate({
+      planetId,
+      installed: isInstalled(planetId),
+      isCsvWorldBaseline: isPlanetCsvWorldDevModuleBaseline(planetId, moduleId),
+      hasActiveJob: Boolean(detail.upgradeJob),
+      playerCredits: usePlayerStore.getState().player?.credits ?? 0,
+      installCost: resolveInstallCostCredits(planetId),
+      notEnoughCreditsMessage: t(`${i18nPrefix}.notEnoughCredits`),
+    });
+    if (installGate.installBlockReason) {
+      return { ok: false, reason: installGate.installBlockReason };
+    }
     const cost = resolveInstallCostCredits(planetId);
     if (!spendPlayerCredits(cost)) return { ok: false, reason: t(`${i18nPrefix}.notEnoughCredits`) };
     const durationSec = resolveFacilityInstallDurationSec(facilityType);
@@ -309,7 +319,7 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
         return { ok: false, reason: t(`${i18nPrefix}.recordFailed`) };
       }
       invalidatePlanetMemoCachesForPlanet(planetId);
-      applyPlanetFacilityLevelUpBenefits(planetId, facilityType, 1);
+      finalizePlanetFacilityLevelApplied(planetId, facilityType, 1);
       onLevelApplied?.(planetId, 1);
       return { ok: true };
     }

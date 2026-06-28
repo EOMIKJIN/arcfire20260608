@@ -76,6 +76,17 @@ export function getPlanetGovernorAssignment(planetId: string): PlanetGovernorAss
   return mem.byPlanetId[planetId] ?? null;
 }
 
+/** 총사령관 reserve captainId → 주둔 planetId (primary presence · 전역 배타) */
+export function listGovernorCaptainPrimaryPlanets(): ReadonlyMap<string, string> {
+  const out = new Map<string, string>();
+  for (const [planetId, assignment] of Object.entries(mem.byPlanetId)) {
+    const captainId = String(assignment.captainId ?? '').trim();
+    if (!captainId) continue;
+    out.set(captainId, planetId);
+  }
+  return out;
+}
+
 export function assignPlanetGovernorFromReserve(params: {
   planetId: string;
   occupationSide: GovernorOccupationSide;

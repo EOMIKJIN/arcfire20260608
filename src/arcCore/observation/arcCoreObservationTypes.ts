@@ -12,6 +12,7 @@ export type ArcCoreObservationKind =
   | 'combat.tactics_trial'
   | 'territorial.pass_result'
   | 'npc.traffic_snapshot'
+  | 'npc.co_presence'
   | 'scenario.step'
   | 'scenario.verdict'
   | 'daily_ops.batch_complete'

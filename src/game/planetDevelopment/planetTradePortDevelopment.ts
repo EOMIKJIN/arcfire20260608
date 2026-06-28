@@ -18,6 +18,8 @@ import {
 } from '../../arcCore/balance/facilityTradePortLevelPolicy';
 import { createGenericFacilityDevelopment } from './planetGenericFacilityDevelopment';
 import { PLANET_DEV_MODULE_TRADE_PORT, isPlanetTradePortInstalled, readPlanetTradePortDetail } from './planetTradePortListing';
+import { activateSynthFrontierConvoyTrade } from '../../arcCore/economy/synthFrontierConvoyTradeBridge';
+import { isSynthFrontierPlanetId } from '../../world/isSynthFrontierPlanetId';
 
 const tradePortPolicy = {
   getMaxLevel: getFacilityTradePortMaxLevel,
@@ -30,13 +32,16 @@ const tradePortPolicy = {
   resolveUpgradeRequiredStat: resolveTradePortUpgradeRequiredStat,
 };
 
-function syncTradeAfterChange(planetId: string): void {
+function syncTradeAfterChange(planetId: string, level: number): void {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { syncTradePortCatalogForPlanet } = require('../../arcCore/balance/tradePortCatalogPolicy') as typeof import('../../arcCore/balance/tradePortCatalogPolicy');
     syncTradePortCatalogForPlanet(planetId);
   } catch {
     /* optional */
+  }
+  if (level >= 1 && isSynthFrontierPlanetId(planetId)) {
+    activateSynthFrontierConvoyTrade(planetId);
   }
 }
 

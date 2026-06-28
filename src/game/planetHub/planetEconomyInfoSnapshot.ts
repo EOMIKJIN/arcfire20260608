@@ -214,14 +214,14 @@ export function buildPlanetEconomyInfoSnapshot(
   const population = resolvePopulation(planetId);
   const devUpkeepRaw = computePlanetDevelopmentDailyUpkeepCredits(planetId);
   const devUpkeep = applyPlanetDevUpkeepEfficiency(planetId, devUpkeepRaw);
-  const upkeepDaily = computePlanetDailyUpkeepCredits(devUpkeep, policy);
-  const core = resolveCoreRuntime(planetId);
-  const hold = useClanWarFoundationStore.getState().getHold(planetId);
-  const faction = resolveOccupierFactionKindForHold(hold);
   const bucket = normalizeTradeFeeBucket(
     usePlanetTradeFeeLedgerStore.getState().getBucket(planetId),
   );
   const tradeFeeToday = bucket.arcFeeCredits;
+  const upkeepDaily = computePlanetDailyUpkeepCredits(devUpkeep, policy, tradeFeeToday);
+  const core = resolveCoreRuntime(planetId);
+  const hold = useClanWarFoundationStore.getState().getHold(planetId);
+  const faction = resolveOccupierFactionKindForHold(hold);
   const vault = hold ? resolveFactionVaultForOccupierClanId(hold.occupierClanId) : null;
   let factionVaultLabel: string | null = null;
   let factionVaultBalance: number | null = null;

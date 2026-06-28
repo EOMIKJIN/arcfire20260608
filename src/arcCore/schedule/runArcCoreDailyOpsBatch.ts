@@ -19,10 +19,11 @@ import { runPlanetEconomyFabricDailyPass } from '../economy/planetEconomyFabric'
 import { runArcCoreConvoyDailySettlementPass } from '../economy/runArcCoreConvoyDailySettlementPass';
 import { runArcCorePlanetUpkeepDailyPass } from '../economy/runArcCorePlanetUpkeepDailyPass';
 import { runPlanetPgpDailyPass } from '../economy/runPlanetPgpDailyPass';
-import { runFacilityStatNudgePass } from '../planetFacility/runFacilityStatNudgePass';
+import { runPlanetCoreStatEquilibriumPass } from '../planetCore/runPlanetCoreStatEquilibriumPass';
 import { runLaboratoryRdSpeedPass } from '../planetFacility/runLaboratoryRdSpeedPass';
 import { runTavernBountyRefreshPass } from '../planetFacility/runTavernBountyRefreshPass';
 import { runArcCoreEconomyLearningDailyPass } from '../learning/runArcCoreEconomyLearningDailyPass';
+import { runPlanetFiscalBalanceClosedLoopPass } from '../economy/runPlanetFiscalBalanceClosedLoopPass';
 import { pushArcCoreDailyKpiToRtdbIfDue } from '../learning/pushArcCoreDailyKpiToRtdb';
 import { isArcCoreRtdbAvailableForSession } from '../../firebase/rtdbRefs';
 import { getCurrentUser } from '../../firebase/auth';
@@ -53,6 +54,7 @@ export type ArcCoreDailyOpsBatchResult = {
   planetPgp: boolean;
   synthColonizationAdvance: boolean;
   economyLearning: boolean;
+  planetFiscalClosedLoop: boolean;
 };
 
 /**
@@ -82,6 +84,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     planetPgp: false,
     synthColonizationAdvance: false,
     economyLearning: false,
+    planetFiscalClosedLoop: false,
   };
 
   if (!usePlanetCoreRuntimeStore.getState().hydrated) {
@@ -138,8 +141,11 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   const upkeep = await runArcCorePlanetUpkeepDailyPass();
   result.planetUpkeep = upkeep.ran;
 
-  const facilityNudge = runFacilityStatNudgePass();
-  result.facilityStatNudge = facilityNudge.ran;
+  const fiscalLoop = await runPlanetFiscalBalanceClosedLoopPass();
+  result.planetFiscalClosedLoop = fiscalLoop.ran;
+
+  const statEquilibrium = runPlanetCoreStatEquilibriumPass();
+  result.facilityStatNudge = statEquilibrium.ran;
   const labRd = runLaboratoryRdSpeedPass();
   result.laboratoryRdSpeed = labRd.ran;
   const tavernRefresh = runTavernBountyRefreshPass();

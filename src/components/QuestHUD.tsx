@@ -9,6 +9,7 @@ import {
   resolveMissionObjectiveDescription,
   resolveMissionTitle,
 } from '../i18n/missionText';
+import { resolveMissionTrack } from '../missions/missionTrack';
 
 export function QuestHUD() {
   const t = useT();
@@ -37,11 +38,24 @@ export function QuestHUD() {
         ? resolveMissionObjectiveDescription(incompleteObj, locale)
         : '';
 
+  const track = resolveMissionTrack(mission.id);
+  const trackLabel =
+    track === 'tutorial'
+      ? t('mission.track.tutorial')
+      : track === 'quest'
+        ? t('mission.track.quest')
+        : null;
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.icon}>📋</Text>
-        <Text style={styles.title} numberOfLines={1}>{titleText}</Text>
+        <Text style={styles.icon}>{track === 'tutorial' ? '📖' : '📋'}</Text>
+        <View style={styles.titleCol}>
+          {trackLabel ? (
+            <Text style={styles.trackLabel} numberOfLines={1}>{trackLabel}</Text>
+          ) : null}
+          <Text style={styles.title} numberOfLines={1}>{titleText}</Text>
+        </View>
       </View>
       {incompleteObj && (
         <Text style={styles.objective} numberOfLines={2}>
@@ -67,8 +81,18 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   icon: { fontSize: 14 },
-  title: {
+  titleCol: {
     flex: 1,
+    minWidth: 0,
+  },
+  trackLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    color: TACTICAL_HUB.topBarIconInk,
+    letterSpacing: 0.3,
+    marginBottom: 2,
+  },
+  title: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
     color: TACTICAL_HUB.chromeInk,

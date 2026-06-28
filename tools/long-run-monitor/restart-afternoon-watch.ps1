@@ -53,14 +53,7 @@ Add-Content -Path (Join-Path $logDir 'incidents.log') -Value "[$(Get-Date -Forma
 
 & (Join-Path $ScriptRoot 'start-watch-30m.ps1') -Package $Package -IntervalMin $WatchIntervalMin
 
-$report = Start-Process -WindowStyle Hidden -PassThru -FilePath 'powershell' -ArgumentList @(
-  '-NoProfile', '-ExecutionPolicy', 'Bypass',
-  '-File', (Join-Path $ScriptRoot 'report-watch.ps1'),
-  '-Package', $Package,
-  '-IntervalMin', "$ReportIntervalMin"
-)
-Set-Content -Path (Join-Path $logDir 'report-watch.pid') -Value $report.Id -Encoding ascii
-
-Write-Output "report-watch_pid=$($report.Id)"
+& (Join-Path $ScriptRoot 'ensure-report-watch-realtime.ps1') -Package $Package -IntervalMin $ReportIntervalMin |
+  ForEach-Object { Write-Output $_ }
 Write-Output "marker=$marker"
 Write-Output "adb=$($dev.Line.Trim())"

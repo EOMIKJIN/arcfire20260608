@@ -89,6 +89,14 @@ export function memoizePerPlanetSystem<TValue>(
   };
 }
 
+/** 특정 memo 네임스페이스만 비움 (epoch 갱신 등) */
+export function invalidatePlanetMemoCacheNamespace(name: string): void {
+  const entry = registry.get(name);
+  if (!entry) return;
+  entry.byKey.clear();
+  entry.keysByPlanetId.clear();
+}
+
 /**
  * 특정 행성의 모든 메모 캐시 항목 무효화.
  * `releasePlanetMainStageSession({ reason: 'planet_change', previousPlanetId })`에서 호출.

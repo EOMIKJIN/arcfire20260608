@@ -1,96 +1,146 @@
 'use strict';
+
 /**
- * sessionStart — [기본 장기앱 실행 테스트] 모니터 + **데일리 08:00 KST 상시 보고** 자동 가동 (멱등)
- *   - start-watch-30m.ps1 — 30분 meminfo + crash logcat
- *   - ensure-daily-8am-report.ps1 — 매일 08:00 무조건 보고 (FAIL 포함 · DISABLED flag 제외 영구)
- *   - 어떤 경우에도 세션 시작을 막지 않는다(fail-open).
- * 정본: tools/long-run-monitor/logs/DAILY_8AM_REPORT_POLICY.md · WATCH_README.md
+
+ * sessionStart — 영구 실시간 이상탐지 (PowerShell 창 없음)
+
+ *   ensure-perpetual-watchdog.cjs — 워치독 살아 있으면 spawn 자체 생략
+
+ * fail-open
+
  */
+
 const fs = require('fs');
+
 const path = require('path');
-const { spawn, execSync } = require('child_process');
 
-// 프로젝트 훅은 프로젝트 루트에서 실행된다.
-const ROOT = process.cwd();
-const MONITOR_DIR = path.join(ROOT, 'tools', 'long-run-monitor');
-const PID_FILE = path.join(MONITOR_DIR, 'logs', 'watch-30m.pid');
-const START_SCRIPT = path.join(MONITOR_DIR, 'start-watch-30m.ps1');
-const ENSURE_8AM_SCRIPT = path.join(MONITOR_DIR, 'ensure-daily-8am-report.ps1');
+const { spawn } = require('child_process');
 
-function readPid() {
+
+
+const MONITOR_DIR = path.join(process.cwd(), 'tools', 'long-run-monitor');
+
+const ENSURE_CJS = path.join(MONITOR_DIR, 'ensure-perpetual-watchdog.cjs');
+
+const DISABLE_FLAG = path.join(MONITOR_DIR, 'logs', 'perpetual-detection-DISABLED.flag');
+
+const PID_FILE = path.join(MONITOR_DIR, 'logs', 'perpetual-watchdog.pid');
+
+
+
+function isAlive(pid) {
+
+  const n = Number.parseInt(String(pid), 10);
+
+  if (!Number.isFinite(n) || n <= 0) return false;
+
   try {
-    const raw = fs.readFileSync(PID_FILE, 'utf8').trim();
-    const pid = parseInt(raw, 10);
-    return Number.isFinite(pid) && pid > 0 ? pid : null;
-  } catch {
-    return null;
-  }
-}
 
-/** Windows tasklist 로 해당 PID 가 살아있는지 확인(없으면 false). */
-function isPidAlive(pid) {
-  if (!pid) return false;
-  try {
-    const out = execSync(`tasklist /FI "PID eq ${pid}" /NH`, {
-      encoding: 'utf8',
-      windowsHide: true,
-      stdio: ['ignore', 'pipe', 'ignore'],
-    });
-    return new RegExp(`\\b${pid}\\b`).test(out);
+    process.kill(n, 0);
+
+    return true;
+
   } catch {
+
     return false;
+
   }
+
 }
 
-function startDetachedPs1(scriptPath) {
-  const child = spawn(
-    'powershell',
-    ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', scriptPath],
-    { detached: true, stdio: 'ignore', windowsHide: true, cwd: MONITOR_DIR },
-  );
-  child.unref();
+
+
+function readWatchdogPid() {
+
+  try {
+
+    return Number.parseInt(fs.readFileSync(PID_FILE, 'utf8').trim(), 10) || 0;
+
+  } catch {
+
+    return 0;
+
+  }
+
 }
 
-function startMonitorDetached() {
-  startDetachedPs1(START_SCRIPT);
-}
 
-function ensureDaily8amReport() {
-  if (!fs.existsSync(ENSURE_8AM_SCRIPT)) return;
-  startDetachedPs1(ENSURE_8AM_SCRIPT);
-}
 
 function main() {
-  // stdin 소비(훅 계약)
+
   try {
+
     fs.readFileSync(0, 'utf8');
+
   } catch {
+
     /* ignore */
+
   }
 
-  let note = '';
-  const notes = [];
+
+
+  const noteBase =
+
+    '[영구 실시간 탐지] ensure-perpetual-watchdog — 5분 주기 스택·incident→김팀장 handoff · PC 재부팅=monitor:register-perpetual';
+
+
+
+  if (fs.existsSync(DISABLE_FLAG)) {
+
+    process.stdout.write(JSON.stringify({}));
+
+    return;
+
+  }
+
+
+
+  const existing = readWatchdogPid();
+
+  if (isAlive(existing)) {
+
+    process.stdout.write(JSON.stringify({ additional_context: `${noteBase} (pid=${existing} OK)` }));
+
+    return;
+
+  }
+
+
+
   try {
-    if (!fs.existsSync(START_SCRIPT)) {
-      note = '';
-    } else {
-      const pid = readPid();
-      if (isPidAlive(pid)) {
-        notes.push(`[메모리 모니터] 이미 가동 중 (PID ${pid})`);
-      } else {
-        startMonitorDetached();
-        notes.push('[메모리 모니터] 세션 시작 시 자동 재가동 (start-watch-30m.ps1)');
-      }
-      ensureDaily8amReport();
-      notes.push('[데일리 08:00 보고] 상시 스케줄러 ensure-daily-8am-report.ps1 가동 확인');
-      note = notes.join(' · ');
+
+    if (fs.existsSync(ENSURE_CJS)) {
+
+      spawn(process.execPath, [ENSURE_CJS], {
+
+        detached: true,
+
+        stdio: 'ignore',
+
+        windowsHide: true,
+
+        cwd: process.cwd(),
+
+      }).unref();
+
     }
-  } catch (e) {
-    // fail-open: 세션 시작을 절대 막지 않는다.
-    note = '';
+
+  } catch {
+
+    process.stdout.write(JSON.stringify({}));
+
+    return;
+
   }
 
-  process.stdout.write(JSON.stringify(note ? { additional_context: note } : {}));
+
+
+  process.stdout.write(JSON.stringify({ additional_context: noteBase }));
+
 }
 
+
+
 main();
+

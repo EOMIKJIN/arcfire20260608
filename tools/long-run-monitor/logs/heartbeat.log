@@ -743,3 +743,151 @@
 [2026-06-27 23:44:19] MANUAL OK PSS 349.9MB / GL 5.9MB / views 13 (PLAYTEST_START_playtest-20260627-234416)
 [23:44] OK · PID 3904 · PSS 353.2MB / GL 5.9MB / views 13
 [23:54] .. 앱 미실행(대기중)
+[00:04] OK · PID 4624 · PSS 807.8MB / GL 46.3MB / views 400
+[00:14] OK · PID 4624 · PSS 793.2MB / GL 34.7MB / views 380
+[00:24] OK · PID 4624 · PSS 780.3MB / GL 34.8MB / views 376
+[00:34] OK · PID 4624 · PSS 799MB / GL 32.3MB / views 381
+[00:44] OK · PID 4624 · PSS 809MB / GL 36.9MB / views 386
+[00:54] OK · PID 4624 · PSS 801.5MB / GL 36.6MB / views 414
+[01:04] OK · PID 4624 · PSS 792.3MB / GL 38.3MB / views 381
+[01:14] OK · PID 4624 · PSS 786.6MB / GL 36.3MB / views 405
+[01:24] OK · PID 4624 · PSS 791.4MB / GL 38.3MB / views 381
+[01:34] OK · PID 4624 · PSS 805.1MB / GL 36.9MB / views 424
+[01:44] OK · PID 4624 · PSS 793.2MB / GL 36.3MB / views 405
+[01:54] OK · PID 4624 · PSS 780.6MB / GL 36.3MB / views 402
+[02:04] OK · PID 4624 · PSS 784.1MB / GL 36.3MB / views 401
+[02:14] OK · PID 4624 · PSS 820.8MB / GL 36.5MB / views 424
+[02:24] OK · PID 4624 · PSS 787.2MB / GL 36.3MB / views 401
+[02:34] OK · PID 4624 · PSS 796.7MB / GL 36.3MB / views 397
+[02:44] OK · PID 4624 · PSS 798.8MB / GL 36.3MB / views 397
+[02:54] OK · PID 4624 · PSS 815.9MB / GL 36.9MB / views 414
+[03:04] OK · PID 4624 · PSS 809.4MB / GL 36.3MB / views 397
+[03:14] OK · PID 4624 · PSS 813.3MB / GL 36.4MB / views 393
+[03:24] OK · PID 4624 · PSS 805.9MB / GL 36.4MB / views 393
+[03:34] OK · PID 4624 · PSS 833.9MB / GL 37.3MB / views 402
+[03:44] OK · PID 4624 · PSS 809.7MB / GL 36.6MB / views 393
+[03:54] OK · PID 4624 · PSS 807.6MB / GL 36.6MB / views 389
+[04:04] OK · PID 4624 · PSS 823.3MB / GL 36.6MB / views 389
+[04:14] OK · PID 4624 · PSS 849.8MB / GL 37.3MB / views 397
+[04:24] OK · PID 4624 · PSS 786.5MB / GL 36.6MB / views 390
+[04:34] OK · PID 4624 · PSS 797.2MB / GL 36.6MB / views 385
+[04:44] OK · PID 4624 · PSS 817MB / GL 38.6MB / views 390
+[04:54] OK · PID 4624 · PSS 826.6MB / GL 39.3MB / views 388
+[05:04] OK · PID 4624 · PSS 814.1MB / GL 36.6MB / views 385
+[05:14] OK · PID 4624 · PSS 800.6MB / GL 36.6MB / views 382
+[05:24] OK · PID 4624 · PSS 808.6MB / GL 36.6MB / views 381
+[05:34] OK · PID 4624 · PSS 817.5MB / GL 36.8MB / views 390
+[05:45] OK · PID 4624 · PSS 833.5MB / GL 37.3MB / views 382
+[05:55] OK · PID 4624 · PSS 816.4MB / GL 38.6MB / views 378
+[06:05] OK · PID 4624 · PSS 830.7MB / GL 36.6MB / views 381
+[06:15] OK · PID 4624 · PSS 824.2MB / GL 36.6MB / views 377
+[06:25] OK · PID 4624 · PSS 839.9MB / GL 37.3MB / views 396
+[06:35] OK · PID 4624 · PSS 831.1MB / GL 36.6MB / views 413
+[06:45] OK · PID 4624 · PSS 828MB / GL 36.6MB / views 409
+[06:55] OK · PID 4624 · PSS 843MB / GL 36.6MB / views 409
+[07:05] OK · PID 4624 · PSS 853.8MB / GL 37.3MB / views 426
+[07:15] OK · PID 4624 · PSS 834.7MB / GL 38.6MB / views 409
+[07:25] OK · PID 4624 · PSS 838.8MB / GL 36.6MB / views 405
+[07:35] OK · PID 4624 · PSS 829.3MB / GL 36.6MB / views 405
+[07:45] OK · PID 4624 · PSS 851.4MB / GL 36.9MB / views 426
+[07:55] OK · PID 4624 · PSS 854.6MB / GL 36.6MB / views 405
+[2026-06-28 08:00:07] === report-watch v2.7 (pkg=com.arcfire.online · 10m · 신선 크래시만) · auto-fix=OFF ===
+[08:00] OK · PID 4624 · PSS 818.4MB / GL 36.6MB / views 377
+[08:10] OK · PID 4624 · PSS 864.5MB / GL 37.3MB / views 410
+[08:20] OK · PID 4624 · PSS 846.9MB / GL 36.6MB / views 385
+[08:30] OK · PID 4624 · PSS 810MB / GL 38.6MB / views 386
+[08:40] OK · PID 4624 · PSS 787.1MB / GL 36.6MB / views 385
+[08:50] OK · PID 4624 · PSS 807.8MB / GL 38.6MB / views 388
+[2026-06-28 08:57:20] === report-watch v2.7 (pkg=com.arcfire.online · 10m · 신선 크래시만) · auto-fix=OFF ===
+[08:57] OK · PID 4624 · PSS 794.5MB / GL 36.6MB / views 377
+[2026-06-28 09:06:26] === report-watch v2.7 (pkg=com.arcfire.online · 10m · 신선 크래시만) · auto-fix=OFF ===
+[09:06] OK · PID 4624 · PSS 904.5MB / GL 141.5MB / views 555
+[09:16] OK · PID 4624 · PSS 914.4MB / GL 145.6MB / views 555
+[09:26] OK · PID 4624 · PSS 875.2MB / GL 145.6MB / views 555
+[09:36] OK · PID 4624 · PSS 940.6MB / GL 139.5MB / views 414
+[09:46] !! PID_CHANGE session=4624 -> 29655 (크래시·재시작 의심)
+[09:56] OK · PID 29655 · PSS 657MB / GL 48.3MB / views 15
+[10:06] OK · PID 29655 · PSS 805.1MB / GL 36.5MB / views 388
+[10:16] OK · PID 29655 · PSS 667.8MB / GL 12.4MB / views 17
+[10:26] OK · PID 29655 · PSS 826.4MB / GL 50.1MB / views 464
+[10:36] OK · PID 29655 · PSS 855MB / GL 40.6MB / views 373
+[10:46] OK · PID 29655 · PSS 812.8MB / GL 24.7MB / views 35
+[10:56] OK · PID 29655 · PSS 773.8MB / GL 24.7MB / views 23
+[11:06] !! PID_CHANGE session=29655 -> 5449 (크래시·재시작 의심)
+[11:16] .. 앱 미실행(대기중)
+[11:26] OK · PID 8527 · PSS 541.8MB / GL 8.4MB / views 109
+[11:36] OK · PID 8527 · PSS 641.3MB / GL 17.2MB / views 115
+[11:46] OK · PID 8527 · PSS 621.5MB / GL 17.2MB / views 107
+[11:56] OK · PID 8527 · PSS 624.1MB / GL 17.2MB / views 107
+[12:06] OK · PID 8527 · PSS 616.6MB / GL 17.2MB / views 107
+[12:16] OK · PID 8527 · PSS 615.4MB / GL 17.2MB / views 107
+[12:26] OK · PID 8527 · PSS 585.9MB / GL 12.1MB / views 107
+[12:36] OK · PID 8527 · PSS 542.1MB / GL 12.2MB / views 107
+[12:46] OK · PID 8527 · PSS 596.8MB / GL 11.8MB / views 25
+[12:56] OK · PID 8527 · PSS 709.4MB / GL 13.4MB / views 107
+[13:06] OK · PID 8527 · PSS 683.9MB / GL 13.4MB / views 107
+[13:16] OK · PID 8527 · PSS 671.9MB / GL 13.4MB / views 107
+[13:26] OK · PID 8527 · PSS 663.8MB / GL 13.4MB / views 107
+[13:36] OK · PID 8527 · PSS 674.3MB / GL 14.5MB / views 107
+[13:46] OK · PID 8527 · PSS 673.8MB / GL 14.5MB / views 107
+[13:56] OK · PID 8527 · PSS 669.6MB / GL 14.5MB / views 107
+[14:07] OK · PID 8527 · PSS 779.2MB / GL 45.4MB / views 382
+[14:17] OK · PID 8527 · PSS 878.7MB / GL 36MB / views 328
+[14:27] OK · PID 8527 · PSS 905.4MB / GL 36.1MB / views 419
+[14:37] !! PID_CHANGE session=8527 -> 21070 (크래시·재시작 의심)
+[14:47] OK · PID 21070 · PSS 503.8MB / GL 24.2MB / views 15
+[14:57] OK · PID 21070 · PSS 565MB / GL 28.9MB / views 15
+[15:07] OK · PID 21070 · PSS 853.5MB / GL 39.4MB / views 458
+[15:17] OK · PID 21070 · PSS 815.2MB / GL 33.3MB / views 99
+[15:27] OK · PID 21070 · PSS 856.2MB / GL 33.3MB / views 99
+[15:37] OK · PID 21070 · PSS 825.9MB / GL 33.3MB / views 99
+[15:47] OK · PID 21070 · PSS 888.8MB / GL 58.6MB / views 334
+[15:57] OK · PID 21070 · PSS 893.8MB / GL 58.5MB / views 330
+[16:07] OK · PID 21070 · PSS 718.6MB / GL 33.2MB / views 15
+[16:17] OK · PID 21070 · PSS 756.9MB / GL 28.3MB / views 15
+[16:27] OK · PID 21070 · PSS 821.3MB / GL 22.2MB / views 109
+[16:37] OK · PID 21070 · PSS 1053.5MB / GL 46.2MB / views 334
+[16:47] OK · PID 21070 · PSS 895.7MB / GL 22.3MB / views 196
+[16:57] .. 앱 미실행(대기중)
+[17:07] .. 앱 미실행(대기중)
+[17:17] OK · PID 30973 · PSS 524.4MB / GL 8.4MB / views 99
+[17:27] OK · PID 30973 · PSS 522.8MB / GL 8.4MB / views 99
+[17:37] OK · PID 30973 · PSS 524.4MB / GL 10.1MB / views 99
+[17:47] OK · PID 30973 · PSS 697.1MB / GL 37.4MB / views 368
+[17:57] OK · PID 30973 · PSS 722.4MB / GL 41.6MB / views 384
+[18:07] OK · PID 30973 · PSS 711.4MB / GL 34.5MB / views 374
+[18:17] OK · PID 30973 · PSS 709.4MB / GL 34.5MB / views 374
+[18:27] OK · PID 30973 · PSS 694.7MB / GL 34.5MB / views 375
+[18:37] OK · PID 30973 · PSS 716.3MB / GL 34.5MB / views 371
+[18:47] OK · PID 30973 · PSS 713MB / GL 48.3MB / views 375
+[18:57] OK · PID 30973 · PSS 738.9MB / GL 49.1MB / views 400
+[19:07] OK · PID 30973 · PSS 723.6MB / GL 48.6MB / views 400
+[19:17] OK · PID 30973 · PSS 813.2MB / GL 120.4MB / views 559
+[19:27] OK · PID 30973 · PSS 764.3MB / GL 49.5MB / views 547
+[19:37] OK · PID 30973 · PSS 986.9MB / GL 159.5MB / views 632
+[19:47] OK · PID 30973 · PSS 985MB / GL 159.5MB / views 632
+[19:57] !! PID_CHANGE session=30973 -> 10107 (크래시·재시작 의심)
+[20:07] OK · PID 10107 · PSS 677.4MB / GL 45.3MB / views 379
+[20:17] OK · PID 10107 · PSS 670.4MB / GL 32.3MB / views 374
+[20:27] OK · PID 10107 · PSS 695.4MB / GL 32.9MB / views 380
+[20:37] OK · PID 10107 · PSS 700.5MB / GL 35MB / views 405
+[20:47] OK · PID 10107 · PSS 711.2MB / GL 35.4MB / views 394
+[20:57] OK · PID 10107 · PSS 708.1MB / GL 35.3MB / views 404
+[21:07] OK · PID 10107 · PSS 695MB / GL 34.9MB / views 383
+[21:17] OK · PID 10107 · PSS 683.3MB / GL 35.9MB / views 483
+[21:27] !! PID_CHANGE session=10107 -> 15084 (크래시·재시작 의심)
+[21:37] OK · PID 15084 · PSS 667.1MB / GL 47.7MB / views 378
+[21:47] OK · PID 15084 · PSS 523.7MB / GL 16.7MB / views 99
+[21:57] OK · PID 15084 · PSS 574.7MB / GL 12.2MB / views 99
+[22:07] OK · PID 15084 · PSS 646.5MB / GL 43MB / views 519
+[2026-06-28 22:27:48] === report-watch v2.7 (pkg=com.arcfire.online · 15m · 신선 크래시만) · auto-fix=OFF ===
+[22:27] .. 앱 미실행(대기중)
+[2026-06-28 22:40:37] === report-watch v2.7 (pkg=com.arcfire.online · 15m · 신선 크래시만) · auto-fix=OFF ===
+[22:40] .. 앱 미실행(대기중)
+[22:42] .. 앱 미실행(대기중)
+[2026-06-28 22:47:39] === report-watch v2.7 (pkg=com.arcfire.online · 15m · 신선 크래시만) · auto-fix=OFF ===
+[22:47] .. 앱 미실행(대기중)
+[23:02] OK · PID 23252 · PSS 729.8MB / GL 48.2MB / views 361
+[23:17] OK · PID 23252 · PSS 743.8MB / GL 48.2MB / views 382
+[23:32] OK · PID 23252 · PSS 749.1MB / GL 48.2MB / views 379
+[23:47] OK · PID 23252 · PSS 840.7MB / GL 134.7MB / views 385

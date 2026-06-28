@@ -13,6 +13,14 @@ export {
 export { CAPITAL_WEAPON_LIST_FROM_CSV, type CapitalWeaponCsvRow } from './csvWeapons';
 export { MISSIONS_FROM_CSV } from './csvMissions';
 export {
+  MISSION_QUEST_PLACEMENTS_FROM_CSV,
+  type MissionQuestPlacementRow,
+} from './csvMissionQuestPlacements';
+export {
+  MISSION_QUEST_COMBAT_OPS_FROM_CSV,
+  type MissionQuestCombatOpRow,
+} from './csvMissionQuestCombatOps';
+export {
   MISSION_COMBAT_CAPTAINS_FROM_CSV,
   type MissionCombatCaptainRow,
 } from './csvMissionCombatCaptains';

@@ -50,7 +50,7 @@ export function dispatchArcCoreSystemUnlockNotice(
   });
 }
 
-/** 정착 단계(phase 3) 도달 시 NPC 수송 시드 */
+/** 성계 개방 시 궤도 수송 시드 — `finalizeArcCoreSynthFrontierUnlock` */
 export function dispatchArcCoreSeedTransportForSystem(
   candidateId: string,
   transportReason: string,

@@ -24,6 +24,7 @@ import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMa
 import { useTavernBoardStore } from '../../src/store/tavernBoardStore';
 import { usePlayerStore } from '../../src/store/playerStore';
 import { listNpcCaptains } from '../../src/npc/npcFleetRegistry';
+import { resolveTavernHostCaptainAtPlanet } from '../../src/arcCore/captainPresence';
 import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacilityTabBar';
 import {
   PlanetFacilityCardTitleBlock,
@@ -78,6 +79,10 @@ export default function TavernScreen() {
     });
   }, [tavernBounties, t]);
   const tavernHostCaptain = useMemo(() => {
+    if (currentPlanetId) {
+      const fromPresence = resolveTavernHostCaptainAtPlanet(currentPlanetId);
+      if (fromPresence) return fromPresence;
+    }
     const retiredPool = listNpcCaptains().filter((captain) => captain.tavernPlanetIds.length > 0);
     if (retiredPool.length === 0) return null;
     if (currentPlanetId) {

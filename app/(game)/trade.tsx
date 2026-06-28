@@ -23,6 +23,10 @@ import { usePlayerStore } from '../../src/store/playerStore';
 import { useWorldStore } from '../../src/store/worldStore';
 import { useMissionStore } from '../../src/store/missionStore';
 import { listActiveMissionBundles } from '../../src/missions/missionActiveBundles';
+import {
+  applyQuestMarketListingOverrides,
+  mergeQuestTradePortItemIds,
+} from '../../src/missions/questItemOpsRegistry';
 import { useItemLedgerStore } from '../../src/store/itemLedgerStore';
 import { useClanWarFoundationStore } from '../../src/store/clanWarFoundationStore';
 import { generateMarketByItemIds, getBuyPrice, getSellPrice } from '../../src/engine/TradeEngine';
@@ -44,7 +48,7 @@ import {
   normalizeInventorySlots,
   removeGoodFromInventorySlots,
 } from '../../src/game/playerInventory';
-import { MarketListing, CargoItem, ItemDef, Player } from '../../src/types';
+import { MarketListing, CargoItem, ItemDef, Player, MissionProgress } from '../../src/types';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
 import { usePlanetHubFacilityAccessGate } from '../../src/hooks/usePlanetHubFacilityAccessGate';
@@ -130,8 +134,13 @@ function resolveItemDefById(goodId: string) {
 
 type TradeBuyBlock = { title: string; message: string };
 
-function resolveTradePortListedItemIds(planetId: string, playerLevel: number): string[] {
-  return filterTradePortCatalogForBuyMarket(getPlanetTradePortItemIds(planetId), playerLevel);
+function resolveTradePortListedItemIds(
+  planetId: string,
+  playerLevel: number,
+  progresses: Record<string, MissionProgress>,
+): string[] {
+  const base = filterTradePortCatalogForBuyMarket(getPlanetTradePortItemIds(planetId), playerLevel);
+  return mergeQuestTradePortItemIds(planetId, base, progresses);
 }
 
 function resolveTradeBuyBlock(input: {
@@ -252,7 +261,7 @@ function resolveFreshTradeBuyUnitPrice(
   player: Player,
 ): number {
   const freshListing = generateMarketByItemIds(
-    resolveTradePortListedItemIds(planetId, player.level),
+    resolveTradePortListedItemIds(planetId, player.level, useMissionStore.getState().progresses),
     planetId.length * 37,
     resolvePlayerLifetimeCredits(player),
     planetId,
@@ -296,6 +305,7 @@ export default function TradeScreen() {
   const setPlayer = usePlayerStore(s => s.setPlayer);
   const getSystem = useWorldStore(s => s.getSystem);
   const completeObjective = useMissionStore(s => s.completeObjective);
+  const missionProgresses = useMissionStore(s => s.progresses);
   const appendItemTxn = useItemLedgerStore(s => s.appendTxn);
   const hasEverPurchasedItem = useItemLedgerStore(s => s.hasEverPurchasedItem);
   const persistItemLedger = useItemLedgerStore(s => s.persistItemLedger);
@@ -342,16 +352,17 @@ export default function TradeScreen() {
   );
 
   const market = useMemo(
-    () =>
-      planet && player
-        ? generateMarketByItemIds(
-            resolveTradePortListedItemIds(planet.id, player.level),
-            planet.id.length * 37,
-            resolvePlayerLifetimeCredits(player),
-            planet.id,
-          )
-        : [],
-    [planet?.id, player?.level, player?.lifetimeCreditsEarned, player?.credits, marketTick, shipyardCatalogRev, tradePortDevRev],
+    () => {
+      if (!planet || !player) return [];
+      const base = generateMarketByItemIds(
+        resolveTradePortListedItemIds(planet.id, player.level, missionProgresses),
+        planet.id.length * 37,
+        resolvePlayerLifetimeCredits(player),
+        planet.id,
+      );
+      return applyQuestMarketListingOverrides(base, planet.id, missionProgresses);
+    },
+    [planet?.id, player?.level, player?.lifetimeCreditsEarned, player?.credits, marketTick, shipyardCatalogRev, tradePortDevRev, missionProgresses],
   );
   const inventorySellAgg = useMemo(() => {
     if (!player) return [];

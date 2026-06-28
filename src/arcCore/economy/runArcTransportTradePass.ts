@@ -5,7 +5,10 @@
 import { applyAabsTradeIncomeMultiplier } from '../aabs/aabsPolicyStore';
 import { vaultAllowsNegativeBalance } from './planetUpkeepPolicy';
 import { applyPlanetTradeTransactionFee } from './applyPlanetTradeTransactionFee';
+import { isPlanetConvoyTradeEnabled } from './synthFrontierConvoyTradeBridge';
+import { getConvoyDemandDailyGrossCapCredits } from '../balance/balanceTableRegistry';
 import { useArcCoreTransportFleetBankStore } from '../../store/factionVault/arcCoreTransportFleetBankStore';
+import { usePlanetTradeFeeLedgerStore } from '../../store/planetTradeFeeLedgerStore';
 import { adjustPlanetTradeMarketStock } from '../../world/planetTradeMarketStore';
 import {
   planArcConvoyRouteAtSupply,
@@ -51,6 +54,8 @@ export function getConvoyShipCargoDestination(shipId: string): string | null {
  */
 export function settleArcTransportDwellTrade(shipId: string, planetId: string): void {
   if (!shipId || !planetId) return;
+  if (!isPlanetConvoyTradeEnabled(planetId)) return;
+  if (!getPlanetTradeRouteProfile(planetId)) return;
 
   const bank = useArcCoreTransportFleetBankStore.getState();
   if (!bank.hydrated) return;
@@ -66,10 +71,29 @@ export function settleArcTransportDwellTrade(shipId: string, planetId: string): 
         existing.qty,
         existing.unitBuyPrice,
       );
-      const sellGross = settlement.unitSellPrice * existing.qty;
+      let unloadQty = existing.qty;
+      let sellGross = settlement.unitSellPrice * unloadQty;
+      const grossCap = getConvoyDemandDailyGrossCapCredits();
+      if (grossCap > 0 && usePlanetTradeFeeLedgerStore.getState().hydrated) {
+        const priorGross =
+          usePlanetTradeFeeLedgerStore.getState().byPlanetId[planetId]?.convoyGrossCredits ?? 0;
+        const room = Math.max(0, grossCap - priorGross);
+        if (room <= 0) {
+          shipCargoById.delete(shipId);
+          return;
+        }
+        if (sellGross > room) {
+          const scale = room / sellGross;
+          unloadQty = Math.max(1, Math.min(existing.qty, Math.ceil(existing.qty * scale)));
+          sellGross = settlement.unitSellPrice * unloadQty;
+        }
+      }
       applyPlanetTradeTransactionFee(planetId, sellGross, 'convoy');
 
-      const profit = applyAabsTradeIncomeMultiplier(settlement.netProfitTotal);
+      const profitScale = existing.qty > 0 ? unloadQty / existing.qty : 1;
+      const profit = applyAabsTradeIncomeMultiplier(
+        Math.floor(settlement.netProfitTotal * profitScale),
+      );
       if (profit > 0) {
         bank.appendInflow(profit, {
           kind: 'convoy_profit',
@@ -78,7 +102,7 @@ export function settleArcTransportDwellTrade(shipId: string, planetId: string): 
           planetId,
           note: [
             `${existing.srcPlanetId}→${planetId}`,
-            `qty=${existing.qty}`,
+            `qty=${unloadQty}`,
             `buy@${existing.unitBuyPrice}`,
             `sell@${settlement.unitSellPrice}`,
             `ship@${settlement.transportCostPerUnit}/u`,
@@ -94,8 +118,8 @@ export function settleArcTransportDwellTrade(shipId: string, planetId: string): 
           note: `convoy_loss net=${profit}`,
         });
       }
-      adjustPlanetTradeMarketStock(planetId, existing.tgId, existing.qty, 'convoy');
-      recordPlanetEconomyConvoySettlement(planetId, existing.qty, profit);
+      adjustPlanetTradeMarketStock(planetId, existing.tgId, unloadQty, 'convoy');
+      recordPlanetEconomyConvoySettlement(planetId, unloadQty, profit);
       shipCargoById.delete(shipId);
     }
     return;

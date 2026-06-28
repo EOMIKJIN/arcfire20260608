@@ -1,23 +1,18 @@
 // ============================================================
-// 행성 허브 궤도 전함 — 렌더·INFO 동시 예산 (GL·뷰·Reanimated 부하)
-// 표기 우선순위: ① 아크 수송선(보라 ◇) → ② ‹AI› 허브 트래픽 → ③ 행성 체류 전함(테이블)
+// 행성 허브 궤도 전함 — Skia·INFO 단일 소스 (중복 출연 금지 1순위)
+// ① 아크 수송선(실제 planetId 체류) → ② 테이블 주둔 전함(3h·팩션 순환)
 // ============================================================
 
-import type { ArcNpcTrafficShip } from '../store/arcNpcTrafficStore';
+import type { ArcNpcTrafficCaptain, ArcNpcTrafficShip } from '../store/arcNpcTrafficStore';
 import type { NearbyOrbitPresenceRow } from '../npc/nearbyOrbitPresenceSystem';
+import { mergeArcShipsIntoNearbyHubPresence } from '../npc/mergeArcTrafficIntoNearbyPresence';
 
-/** Skia·궤도 마크 동시 렌더 상한 (아크 + 테이블 체류 전함) */
+/** Skia·궤도 마크·INFO 공통 상한 */
 export const PLANET_HUB_ORBIT_CAPITAL_RENDER_MAX = 8;
 
-/** 궤도·INFO 마크 표기 우선순위 (숫자 작을수록 높음) */
-export const HUB_ORBIT_MARK_PRIORITY = {
-  arcTransport: 1,
-  hubTraffic: 2,
-  tableStationed: 3,
-} as const;
-
 /**
- * 궤도 렌더 예산 — 아크 수송선 전량 우선, 행성 체류 전함(테이블)은 남는 슬롯만.
+ * 궤도 렌더 예산 — 아크 수송선 우선, 테이블 주둔은 남는 슬롯만.
+ * (INFO는 `buildPlanetHubOrbitInfoRows`가 동일 예산 결과를 사용)
  */
 export function applyPlanetHubOrbitRenderBudget(
   tableRows: NearbyOrbitPresenceRow[],
@@ -33,16 +28,21 @@ export function applyPlanetHubOrbitRenderBudget(
 }
 
 /**
- * INFO·근접 목록 cap — `capHubOrbitPresenceToBudget`와 동일 slice이지만
- * 입력 순서가 우선순위(아크 → 허브 트래픽 → 체류 전함)를 반영해야 한다.
+ * 궤도에 실제 표시 중인 전함만 INFO 행으로 합침.
+ * 전함 id · 함장 id · 표시명 중복은 merge 측에서 1순위 차단.
  */
-export function capHubOrbitPresenceByRenderPriority(
-  arcRows: NearbyOrbitPresenceRow[],
-  hubTrafficRows: NearbyOrbitPresenceRow[],
-  tableRows: NearbyOrbitPresenceRow[],
-  maxActive: number,
+export function buildPlanetHubOrbitInfoRows(
+  tableRowsOnOrbit: NearbyOrbitPresenceRow[],
+  arcShipsOnOrbit: ArcNpcTrafficShip[],
+  captains: ArcNpcTrafficCaptain[],
+  planetId: string,
+  systemId: string,
 ): NearbyOrbitPresenceRow[] {
-  const merged = [...arcRows, ...hubTrafficRows, ...tableRows];
-  if (merged.length <= maxActive) return merged;
-  return merged.slice(0, maxActive);
+  return mergeArcShipsIntoNearbyHubPresence(
+    tableRowsOnOrbit,
+    arcShipsOnOrbit,
+    captains,
+    planetId,
+    systemId,
+  );
 }

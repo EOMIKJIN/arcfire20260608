@@ -35,6 +35,7 @@ import {
   listActiveMissionBundles,
 } from '../../src/missions/missionActiveBundles';
 import { resolveCombatEnemyCaptain } from '../../src/missions/resolveMissionCombatCaptain';
+import { resolveQuestCombatAnchorPlanetId } from '../../src/missions/questItemOpsRegistry';
 import {
   CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID,
   CapitalRealtimeCombatHudOverlay,
@@ -144,10 +145,14 @@ export default function CombatScreen() {
 
   const [combatSetup] = useState(() => {
     const bundles = listActiveMissionBundles(useMissionStore.getState().progresses);
+    const progresses = useMissionStore.getState().progresses;
     const defeatCtx = findFirstIncompleteObjective(bundles, 'defeat_enemy');
     const playerState = usePlayerStore.getState().player;
     const systemId = playerState?.currentSystemId ?? null;
-    const planetId = defeatCtx?.bundle.mission.offerPlanetId ?? playerState?.currentPlanetId ?? null;
+    const planetId = resolveQuestCombatAnchorPlanetId(
+      progresses,
+      defeatCtx?.bundle.mission.offerPlanetId ?? playerState?.currentPlanetId ?? null,
+    );
     const templateId = defeatCtx?.objective.targetId;
     const templates = Object.values(ENEMY_TEMPLATES);
     const enemyTemplate = templateId && ENEMY_TEMPLATES[templateId]

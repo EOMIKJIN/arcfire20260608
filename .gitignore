@@ -17,6 +17,7 @@ ios/
 .env.development.local
 .env.test.local
 .env.production.local
+tools/long-run-monitor/monitor-webhook.local.env
 
 # --- 생성물(은하 그래프 스냅샷; npm run build:world-expansion-graph) ---
 tools/world-expansion/master-graph.json

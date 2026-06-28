@@ -13,6 +13,10 @@ export type IngameDialogCompletionAction =
   | { type: 'mark_scene_seen'; sceneId: string }
   | { type: 'grant_mission_rewards'; missionId: string }
   | { type: 'start_mission'; missionId: string }
+  /** 수락형 퀘스트(sandbox_*) — 선술집·허브 NPC */
+  | { type: 'accept_quest_mission'; missionId: string; planetId: string; expectCaptainId?: string }
+  /** @deprecated `accept_quest_mission` */
+  | { type: 'accept_instance_mission'; missionId: string; planetId: string; expectCaptainId?: string }
   | { type: 'mark_intro_seen_and_start_first_mission' }
   | { type: 'run_callback'; callbackId: string };
 

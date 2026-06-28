@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "deltaId": "2026-06-26-1782444492960",
-  "generatedAt": "2026-06-26T03:28:12.960Z",
+  "deltaId": "2026-06-28-1782651358132",
+  "generatedAt": "2026-06-28T12:55:58.132Z",
   "simDays": 30,
   "virtualPopulation": 1000,
   "combatWeight": 0,
   "kpi": {
-    "f2pAvgPower": 11.63215673406882,
-    "dolphinAvgPower": 14.878122530600004,
-    "whaleAvgPower": 40.50087252841611,
-    "whaleToF2pPowerRatio": 3.4818025112914106,
+    "f2pAvgPower": 11.587657659756294,
+    "dolphinAvgPower": 15.332400755837561,
+    "whaleAvgPower": 34.381783010300474,
+    "whaleToF2pPowerRatio": 2.967103794385273,
     "status": "ok"
   },
   "categoryTargetMul": {

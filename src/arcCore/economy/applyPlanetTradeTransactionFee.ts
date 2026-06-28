@@ -6,22 +6,44 @@ import { usePlanetTradeFeeLedgerStore } from '../../store/planetTradeFeeLedgerSt
 import { resolveTradeFeeFactionVault } from './resolveFactionVault';
 import {
   computeConvoyTradeFeeBreakdown,
+  computePlanetDailyUpkeepCredits,
   computePlanetTradeFeeBreakdown,
+  resolvePlanetUpkeepPolicy,
   type PlanetTradeFeeBreakdown,
 } from './planetUpkeepPolicy';
+import { computePlanetDevelopmentUpkeepBreakdown } from './planetDevelopmentUpkeep';
 
 export type TradeFeeSource = 'player' | 'convoy';
 
 export function computeTradeFeeForGross(
   grossCredits: number,
   source: TradeFeeSource = 'player',
+  planetId?: string,
 ): PlanetTradeFeeBreakdown {
-  if (source === 'convoy') return computeConvoyTradeFeeBreakdown(grossCredits);
+  if (source === 'convoy') {
+    const policy = resolvePlanetUpkeepPolicy();
+    let dailyArc = 0;
+    let dailyUpkeep = policy.upkeepFixedCreditsPerPlanet;
+    if (planetId && usePlanetTradeFeeLedgerStore.getState().hydrated) {
+      const bucket = usePlanetTradeFeeLedgerStore.getState().byPlanetId[planetId];
+      dailyArc = bucket?.arcFeeCredits ?? 0;
+      const dev = computePlanetDevelopmentUpkeepBreakdown(planetId).totalCredits;
+      dailyUpkeep = computePlanetDailyUpkeepCredits(dev, policy, dailyArc);
+    }
+    return computeConvoyTradeFeeBreakdown(grossCredits, {
+      dailyArcFeeCredits: dailyArc,
+      dailyUpkeepCredits: dailyUpkeep,
+    });
+  }
   return computePlanetTradeFeeBreakdown(grossCredits);
 }
 
-function resolveFeeBreakdown(grossCredits: number, source: TradeFeeSource): PlanetTradeFeeBreakdown {
-  return computeTradeFeeForGross(grossCredits, source);
+function resolveFeeBreakdown(
+  grossCredits: number,
+  source: TradeFeeSource,
+  planetId?: string,
+): PlanetTradeFeeBreakdown {
+  return computeTradeFeeForGross(grossCredits, source, planetId);
 }
 
 /** 거래 성공 후 호출 — ledger·팩션 금고에 수수료를 기록한다. */
@@ -30,7 +52,7 @@ export function applyPlanetTradeTransactionFee(
   grossCredits: number,
   source: TradeFeeSource = 'player',
 ): PlanetTradeFeeBreakdown {
-  const breakdown = resolveFeeBreakdown(grossCredits, source);
+  const breakdown = resolveFeeBreakdown(grossCredits, source, planetId);
   if (!planetId || breakdown.grossCredits <= 0) return breakdown;
 
   if (!usePlanetTradeFeeLedgerStore.getState().hydrated) {

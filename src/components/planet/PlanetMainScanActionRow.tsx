@@ -43,6 +43,7 @@ type Props = {
   miningDisabled?: boolean;
   miningPrimary?: boolean;
   dialogDisabled?: boolean;
+  dialogShowBadge?: boolean;
   searchDisabled?: boolean;
   onScanComplete?: () => void;
   /** 스캔 재누름 — 액션 접힘·잠금(채굴 등 부모 정리) */
@@ -63,6 +64,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
   miningDisabled = false,
   miningPrimary = false,
   dialogDisabled = false,
+  dialogShowBadge = false,
   searchDisabled = false,
   onScanComplete,
   onScanReset,
@@ -292,6 +294,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
               icon={PLANET_HUB_ACTION_ICONS.dialog}
               onPress={handlePressDialog}
               disabled={secondaryDisabled || dialogDisabled}
+              showBadge={dialogShowBadge && actionsUnlocked && !dialogDisabled}
             />
           </PlanetHubScanActionRevealSlot>
           <PlanetHubScanActionRevealSlot

@@ -4,13 +4,16 @@
 
 import { findPlanetById } from '../../arcCore/planetEnvironment/resolvePlanetAsteroidVisualPolicy';
 import { resolvePlanetDescription } from '../../i18n/systemText';
-import { translate } from '../../i18n';
-import type { AppLocale } from '../../i18n/types';
 import { getNpcCaptain } from '../../npc/npcFleetRegistry';
 import { getPlanetGovernorCommander } from '../planetGovernor/planetGovernorRegistry';
+import { resolvePlanetInfoPanelPresentation } from './resolvePlanetInfoPanelStage';
+import { translate } from '../../i18n';
+import type { AppLocale } from '../../i18n/types';
 
-/** `tables/content/planets.csv` → `description` / `descriptionEn` */
+/** `planets.csv` + `planet_info_panel_stage.csv` 단계 설명 */
 export function resolvePlanetTableDescription(planetId: string, locale: AppLocale): string {
+  const pres = resolvePlanetInfoPanelPresentation(planetId, locale);
+  if (pres.description.trim()) return pres.description.trim();
   const planet = findPlanetById(planetId);
   if (!planet) return '';
   return resolvePlanetDescription(planet, locale, planet.systemId);

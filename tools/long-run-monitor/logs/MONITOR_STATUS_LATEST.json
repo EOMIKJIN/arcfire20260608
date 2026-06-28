@@ -1,0 +1,50 @@
+﻿{
+    "lastTimeline":  {
+                         "pss_mb":  "840.7",
+                         "gl_mb":  "134.7",
+                         "pid":  "23252",
+                         "note":  "GL_SPIKE suspect=hub_skia_orbit_nebula_combat",
+                         "iso_time":  "2026-06-28 23:44:14",
+                         "views":  "385"
+                     },
+    "processes":  {
+                      "reportWatch":  {
+                                          "id":  26564,
+                                          "alive":  true
+                                      },
+                      "schedule8am":  {
+                                          "id":  26052,
+                                          "alive":  true
+                                      },
+                      "watchdog":  {
+                                       "id":  11004,
+                                       "alive":  true
+                                   },
+                      "watch30m":  {
+                                       "id":  23520,
+                                       "alive":  true
+                                   }
+                  },
+    "monitorPaused":  true,
+    "perpetualDisabled":  false,
+    "chatPending":  true,
+    "reportWatchMode":  "visible",
+    "watchdog":  {
+                     "id":  11004,
+                     "alive":  true
+                 },
+    "reportWatch":  {
+                        "id":  26564,
+                        "alive":  true
+                    },
+    "handoffPending":  true,
+    "watch30m":  {
+                     "id":  23520,
+                     "alive":  true
+                 },
+    "schedule8am":  {
+                        "id":  26052,
+                        "alive":  true
+                    },
+    "updatedAtKst":  "2026-06-28 23:57:08"
+}

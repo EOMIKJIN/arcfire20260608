@@ -1,5 +1,6 @@
 import type { Planet } from '../types';
 import { STAR_SYSTEMS } from '../data/systems';
+import { resolvePlanetById } from './resolvePlanetById';
 import { getItemDef } from '../data/goods';
 import { listItemDefs } from '../data/itemRegistry';
 
@@ -33,11 +34,7 @@ function isTradeableItemId(itemId: string): boolean {
 }
 
 function findPlanet(planetId: string): Planet | undefined {
-  for (const system of Object.values(STAR_SYSTEMS)) {
-    const p = system.planets.find(pl => pl.id === planetId);
-    if (p) return p;
-  }
-  return undefined;
+  return resolvePlanetById(planetId) ?? undefined;
 }
 
 /** 아크코어·경제 서브코어 등 — 행성 레코드 조회 */
@@ -45,7 +42,7 @@ export function getPlanetRecord(planetId: string): Planet | undefined {
   return findPlanet(planetId);
 }
 
-/** 무역소가 있는 행성 id — CSV 정본(17/21) ∪ dev_trade_port 설치 */
+/** 무역소가 있는 행성 id — CSV 정본(17/21) ∪ dev_trade_port 설치(synth·worldStore 포함) */
 export function listPlanetIdsWithTradePort(): string[] {
   const ids = new Set<string>();
   for (const system of Object.values(STAR_SYSTEMS)) {
@@ -56,7 +53,9 @@ export function listPlanetIdsWithTradePort(): string[] {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { isPlanetTradePortInstalled } = require('../game/planetDevelopment/planetTradePortListing') as typeof import('../game/planetDevelopment/planetTradePortListing');
-    for (const system of Object.values(STAR_SYSTEMS)) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { useWorldStore } = require('../store/worldStore') as typeof import('../store/worldStore');
+    for (const system of Object.values(useWorldStore.getState().systems)) {
       for (const planet of system.planets) {
         if (isPlanetTradePortInstalled(planet.id)) ids.add(planet.id);
       }
@@ -151,4 +150,11 @@ export function removeTradePortItem(planetId: string, itemId: string): void {
 /** 운영 툴/디버그용 리셋 */
 export function resetTradePortItemOverrides(planetId: string): void {
   delete PLANET_TRADE_PORT_MUTABLE_STATE[planetId];
+}
+
+/** 계정·월드 초기화 — synth 포함 전 행성 무역소 런타임 오버라이드 제거 */
+export function resetAllTradePortItemOverrides(): void {
+  for (const key of Object.keys(PLANET_TRADE_PORT_MUTABLE_STATE)) {
+    delete PLANET_TRADE_PORT_MUTABLE_STATE[key];
+  }
 }

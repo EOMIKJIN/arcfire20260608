@@ -15,8 +15,12 @@ import {
 import { getNpcCapitalShip } from '../../npc/npcFleetRegistry';
 import { readPlanetOrbitClockMs } from '../orbitClockMsBridge';
 import { usePlanetDevelopmentAccStore } from '../../store/planetDevelopmentAccStore';
-import { listNpcCapitalShips } from '../../npc/npcFleetRegistry';
 import { getConvoyShipCargoDestination } from '../economy/runArcTransportTradePass';
+import {
+  arcSeedTransportShipIdForSystem,
+  resolveArcSeedTransportCaptainForSystem,
+  resolveArcSeedTransportShipForSystem,
+} from '../arcSeedTransportRegistry';
 
 /**
  * AI NPC 서브코어
@@ -67,6 +71,7 @@ export class AiNpcSubCore extends BaseArcSubCore {
   override onBoot(): void {
     this.bootstrapCaptainsAndShips();
     this.unsubCommands = subscribeArcCoreCommands((cmd) => this.onArcCoreCommand(cmd));
+    this.reconcileUnlockedSynthOrbitSeeds();
     this.publishSnapshot();
     /**
      * 첫번째 임무: 테이블 기반 함장·배정 전함을 궤도 교통에 편성
@@ -109,19 +114,24 @@ export class AiNpcSubCore extends BaseArcSubCore {
   private seedTransportForUnlockedSystem(systemId: string, sourcePlanetId: string, factionId: string): void {
     if (!systemId || !sourcePlanetId) return;
     if (this.seededSystemIds.has(systemId)) return;
-    const idx = this.captains.length + 1;
-    const captainId = `arc_seed_cpt_${systemId}`;
-    const captainName = `ARC-${String(idx).padStart(2, '0')} ${factionId}`;
-    const shipId = this.pickSeedShipId(idx);
+
+    const tableCaptain = resolveArcSeedTransportCaptainForSystem(systemId);
+    if (!tableCaptain) return;
+
+    const captainId = tableCaptain.id;
+    const captainName = tableCaptain.displayName;
+    const { shipId, hullFromRegistry } = resolveArcSeedTransportShipForSystem(systemId);
+    const simShipId = hullFromRegistry ? shipId : arcSeedTransportShipIdForSystem(systemId);
+
     const ship: ArcNpcTrafficShip = {
-      id: `arc_seed_ship_${systemId}`,
+      id: simShipId,
       captainId,
       planetId: sourcePlanetId,
       phase: 'entering',
       phaseElapsedSec: 0,
       phaseDurationSec: 4.8,
       orbitAngleRad: Math.random() * Math.PI * 2,
-      orbitRadiusPx: 110 + (idx % 3) * 10,
+      orbitRadiusPx: 110 + (this.captains.length % 3) * 10,
       edgeAngleRad: Math.random() * Math.PI * 2,
       arcTrafficDwellRadPerSec: 0.44,
       arcTrafficPhaseDurationMul: 1.8,
@@ -139,12 +149,6 @@ export class AiNpcSubCore extends BaseArcSubCore {
     this.ships.push(ship);
     this.seededSystemIds.add(systemId);
     this.publishSnapshot();
-  }
-
-  private pickSeedShipId(seedIndex: number): string {
-    const pool = listNpcCapitalShips();
-    if (pool.length === 0) return `arc_seed_hull_${seedIndex}`;
-    return pool[seedIndex % pool.length]!.id;
   }
 
   private bootstrapCaptainsAndShips(): void {
@@ -265,8 +269,30 @@ export class AiNpcSubCore extends BaseArcSubCore {
   }
 
   private listAllPlanetIds(): string[] {
-    const world = useWorldStore.getState().systems;
-    return Object.values(world).flatMap((s) => s.planets.map((p) => p.id));
+    const world = useWorldStore.getState();
+    const unlocked = new Set(world.unlockedSystemIds);
+    const out: string[] = [];
+    for (const system of Object.values(world.systems)) {
+      if (system.id.startsWith('synth_') && !unlocked.has(system.id)) continue;
+      for (const planet of system.planets) {
+        out.push(planet.id);
+      }
+    }
+    return out;
+  }
+
+  /** 앱 재기동 — 잠금 해제 synth에 궤도 수송 1척(idempotent) */
+  private reconcileUnlockedSynthOrbitSeeds(): void {
+    const world = useWorldStore.getState();
+    for (const systemId of world.unlockedSystemIds) {
+      if (!systemId.startsWith('synth_')) continue;
+      if (this.seededSystemIds.has(systemId)) continue;
+      const system = world.getSystem(systemId);
+      const planetId = system?.planets[0]?.id;
+      if (!planetId) continue;
+      const factionId = system.planets[0]?.factionId ?? 'independent';
+      this.seedTransportForUnlockedSystem(systemId, planetId, factionId);
+    }
   }
 
   private pickNextPlanetId(shipId?: string): string {

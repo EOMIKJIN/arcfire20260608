@@ -1,12 +1,12 @@
 /**
  * 미션 진행 저장: `progresses[missionId].objectives[objectiveId]` boolean.
- * 목표 타입 계약·완료 조건: `src/missions/missionObjectiveDsl.ts`.
- */
-import AsyncStorage from '@react-native-async-storage/async-storage';
+ * 트랙: `mission_*` 튜토리얼 스토리 · `sandbox_*` 수락 의뢰 — `missionTrack.ts`
+ * 목표 타입 계약: `src/missions/missionObjectiveDsl.ts`.
+ */import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
 import { Mission, MissionProgress } from '../types';
-import { FIRST_MISSION_ID, getMissionById, isInstanceMissionId } from '../missions/missionCatalog';
+import { FIRST_TUTORIAL_MISSION_ID, getMissionById, isQuestMissionId } from '../missions/missionCatalog';
 import { isMissionAvailable } from '../engine/MissionEngine';
 import { usePlayerStore } from './playerStore';
 import { resolveMissionClearDialogSceneId } from '../game/ingameDialog/ingameDialogSceneIndex';
@@ -76,15 +76,19 @@ function advanceMissionChainAfterComplete(
   return { progresses: nextProgresses, activeMissionId: nextActiveId };
 }
 
-export type AcceptInstanceMissionResult =
+export type AcceptQuestMissionResult =
   | 'accepted'
   | 'not_found'
-  | 'not_instance'
+  | 'not_quest'
   | 'wrong_planet'
   | 'level_locked'
   | 'already_active'
   | 'already_complete'
-  | 'prereq_missing';
+  | 'prereq_missing'
+  | 'wrong_captain';
+
+/** @deprecated `AcceptQuestMissionResult` */
+export type AcceptInstanceMissionResult = AcceptQuestMissionResult;
 
 interface MissionState {
   progresses: Record<string, MissionProgress>;
@@ -95,12 +99,21 @@ interface MissionState {
   loadLocalMissions: () => Promise<void>;
   persistMissions: () => Promise<void>;
   resetLocalMissions: () => Promise<void>;
+  /** 튜토리얼 스토리(mission_*) 체인 시작 — 온보딩·인트로 전용 */
+  initTutorialStory: () => void;
+  /** @deprecated `initTutorialStory` */
   initMissions: () => void;
   getActiveMission: () => ActiveBundle | null;
+  /** 수락형 퀘스트(sandbox_*) — 선술집·허브 NPC 대화 */
+  acceptQuestMission: (
+    missionId: string,
+    context: { planetId: string; playerLevel: number; expectCaptainId?: string },
+  ) => AcceptQuestMissionResult;
+  /** @deprecated `acceptQuestMission` */
   acceptInstanceMission: (
     missionId: string,
-    context: { planetId: string; playerLevel: number },
-  ) => AcceptInstanceMissionResult;
+    context: { planetId: string; playerLevel: number; expectCaptainId?: string },
+  ) => AcceptQuestMissionResult;
   completeObjective: (missionId: string, objectiveId: string) => void;
   /** 인게임 미션 완료 대화 종료 후 호출 */
   finalizeMissionCompletion: (missionId: string) => void;
@@ -138,9 +151,9 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     set({ progresses: {}, activeMissionId: null, pendingMissionDialogId: null, pendingMissionClearDialog: null });
   },
 
-  initMissions: () => {
+  initTutorialStory: () => {
     if (get().activeMissionId) return;
-    const m = getMissionById(FIRST_MISSION_ID);
+    const m = getMissionById(FIRST_TUTORIAL_MISSION_ID);
     if (!m) return;
     const progress: MissionProgress = {
       missionId: m.id,
@@ -155,6 +168,10 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     void get().persistMissions();
   },
 
+  initMissions: () => {
+    get().initTutorialStory();
+  },
+
   getActiveMission: () => {
     const { activeMissionId, progresses } = get();
     if (!activeMissionId) return null;
@@ -164,11 +181,18 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     return { mission, progress };
   },
 
-  acceptInstanceMission: (missionId, context) => {
+  acceptQuestMission: (missionId, context) => {
     const mission = getMissionById(missionId);
     if (!mission) return 'not_found';
-    if (!isInstanceMissionId(missionId)) return 'not_instance';
+    if (!isQuestMissionId(missionId)) return 'not_quest';
     if (mission.offerPlanetId && mission.offerPlanetId !== context.planetId) return 'wrong_planet';
+    if (
+      context.expectCaptainId &&
+      mission.offerCaptainId &&
+      mission.offerCaptainId !== context.expectCaptainId
+    ) {
+      return 'wrong_captain';
+    }
 
     const state = get();
     const existing = state.progresses[missionId];
@@ -191,8 +215,9 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     };
 
     const currentActive = state.activeMissionId;
+    // QuestHUD 주 표시: 튜토리얼 진행 중이면 activeMissionId 유지, 없으면 수락 의뢰
     const nextActiveId =
-      !currentActive || isInstanceMissionId(currentActive) ? missionId : currentActive;
+      !currentActive || isQuestMissionId(currentActive) ? missionId : currentActive;
 
     set({
       progresses: { ...state.progresses, [missionId]: progress },
@@ -201,6 +226,8 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     void get().persistMissions();
     return 'accepted';
   },
+
+  acceptInstanceMission: (missionId, context) => get().acceptQuestMission(missionId, context),
 
   completeObjective: (missionId, objectiveId) => {
     const mission = getMissionById(missionId);

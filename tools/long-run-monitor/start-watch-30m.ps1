@@ -12,15 +12,16 @@ $pidFile = Join-Path $logDir 'watch-30m.pid'
 
 adb logcat -c 2>$null | Out-Null
 
+# 단일 logcat (앱 부하 최소): crash + MEM_PROFILE(I) 통합 — 2중 adb logcat 금지
 Start-Process -WindowStyle Hidden -FilePath 'adb' -ArgumentList @(
   'logcat', '-v', 'threadtime',
-  'AndroidRuntime:E', 'ReactNativeJS:E', 'ReactNativeJS:W',
+  'AndroidRuntime:E', 'ReactNativeJS:E', 'ReactNativeJS:W', 'ReactNativeJS:I',
   'libc:E', 'DEBUG:E', 'ActivityManager:I',
   '*:S'
 ) -RedirectStandardOutput $crashLog
 
-$mon = Start-Process -WindowStyle Hidden -PassThru -FilePath 'powershell' -ArgumentList @(
-  '-NoProfile', '-ExecutionPolicy', 'Bypass',
+$mon = Start-Process -WindowStyle Hidden -PassThru -FilePath 'powershell.exe' -ArgumentList @(
+  '-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden',
   '-File', (Join-Path $PSScriptRoot 'run-monitor.ps1'),
   '-Package', $Package,
   '-IntervalMin', "$IntervalMin"

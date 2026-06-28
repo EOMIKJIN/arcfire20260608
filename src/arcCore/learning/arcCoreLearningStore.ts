@@ -25,6 +25,12 @@ export type ArcCoreLearningKpiTimelineEntry = {
     windowConvoyTrips?: number;
     simKpiStatus?: string;
     deltaId?: string | null;
+    fiscalMaxFeeUpkeepRatio?: number;
+    fiscalGini?: number;
+    fiscalOverall?: 'ok' | 'warn' | 'fail';
+    fiscalWarnStreak?: number;
+    fiscalFailPlanets?: number;
+    fiscalTradeRouteAdjusted?: boolean;
   };
   combat: {
     avgEngageSec?: number;

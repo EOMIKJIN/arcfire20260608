@@ -25,6 +25,9 @@ const { writeChatReportPending } = require('./dailyReportChatBrief.cjs');
 const args = process.argv.slice(2);
 const targetTime = args.includes('--target') ? args[args.indexOf('--target') + 1] : '17:00';
 const runNow = args.includes('--now');
+const timelineMarker =
+  args.includes('--marker') ? args[args.indexOf('--marker') + 1] : TimelineMarker;
+const targetTag = targetTime.replace(':', '');
 
 function kstNow() {
   const now = new Date();
@@ -49,13 +52,25 @@ function log(msg) {
 }
 
 function sleepMs(ms) {
-  const sec = Math.max(1, Math.ceil(ms / 1000));
-  execFileSync(
-    'powershell',
-    ['-NoProfile', '-Command', `Start-Sleep -Seconds ${sec}`],
-    { stdio: 'ignore', shell: true },
-  );
+  if (ms <= 0) return;
+  try {
+    execFileSync(
+      process.execPath,
+      [
+        '-e',
+        `Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,${Math.max(1, Math.floor(ms))})`,
+      ],
+      { stdio: 'ignore', windowsHide: true, timeout: ms + 10_000 },
+    );
+  } catch {
+    const end = Date.now() + ms;
+    while (Date.now() < end) {
+      /* fallback */
+    }
+  }
 }
+
+const PS_HIDDEN = ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden'];
 
 function waitUntilKst(hhmm) {
   const [h, m] = hhmm.split(':').map((x) => parseInt(x, 10));
@@ -71,10 +86,15 @@ function waitUntilKst(hhmm) {
 }
 
 function sh(cmd, cmdArgs) {
-  return execFileSync(cmd, cmdArgs, {
+  const args =
+    cmd === 'powershell' || cmd === 'powershell.exe'
+      ? [...PS_HIDDEN, ...cmdArgs.filter((a) => a !== '-NoProfile' && a !== '-ExecutionPolicy' && a !== 'Bypass')]
+      : cmdArgs;
+  return execFileSync(cmd, args, {
     cwd: ROOT,
     encoding: 'utf8',
-    shell: process.platform === 'win32',
+    shell: false,
+    windowsHide: true,
   });
 }
 
@@ -104,13 +124,13 @@ function prependHandoffObservation(content, block) {
 }
 
 function main() {
-  log(`scheduler start target=${targetTime} KST marker=${TimelineMarker}`);
+  log(`scheduler start target=${targetTime} KST marker=${timelineMarker}`);
   if (!runNow) waitUntilKst(targetTime);
 
   const kst = kstNow();
   const kstLabel = formatKst(kst).slice(0, 16);
   const dateTag = formatKst(kst).slice(0, 10).replace(/-/g, '');
-  const reportFile = path.join(logDir, `afternoon-watch-report-${dateTag}-1700.md`);
+  const reportFile = path.join(logDir, `evening-watch-report-${dateTag}-${targetTag}.md`);
 
   log(`generating report -> ${reportFile}`);
   try {
@@ -125,9 +145,9 @@ function main() {
       '-ReportPath',
       reportFile,
       '-TimelineMarker',
-      TimelineMarker,
+      timelineMarker,
       '-ReportTitle',
-      'Arcfire afternoon watch 17KST Kim economy',
+      `Arcfire evening watch ${targetTime} KST Kim economy`,
     ]);
   } catch (e) {
     log(`WARN report script failed: ${e.message || e}`);
@@ -174,18 +194,18 @@ function main() {
 
   const block = [
     '',
-    `## [관측] ${kstLabel} KST — 오후 감시 · 17:00 자동보고`,
+    `## [관측] ${kstLabel} KST — 저녁 감시 · ${targetTime} 자동보고`,
     '',
     `- **김경제 감시**: watch-30m PID **${watchPid}** · report-watch PID **${reportPid}** · auto-fix=${paused ? 'OFF(record-only)' : 'ON'}`,
     `- **mem-monitor**: **${memStatus}** (${memLine})`,
     `- **report**: \`${reportFile}\``,
     `- **latest summary**: \`tools/long-run-monitor/logs/DAILY_5PM_REPORT_LATEST.md\``,
-    `- **timeline marker**: ${TimelineMarker}`,
+    `- **timeline marker**: ${timelineMarker}`,
     `- **incidents (actionable tail)**: ${actionable.length}`,
     ...(actionable.length ? actionable.map((ln) => `  - ${ln}`) : ['  - (none)']),
     `- **권장(김팀장 1안)**: ${rec}`,
     '',
-    `> status: ${memStatus === 'CRITICAL' ? '**ready-for-team-lead-action**' : 'monitor-ok'} · 17:00 KST 자동보고 완료`,
+    `> status: ${memStatus === 'CRITICAL' ? '**ready-for-team-lead-action**' : 'monitor-ok'} · ${targetTime} KST 자동보고 완료`,
     '',
   ].join('\n');
 
@@ -198,7 +218,7 @@ function main() {
   fs.writeFileSync(
     latestSummary,
     [
-      '# Daily 17:00 KST report — latest',
+      '# Daily evening KST report — latest',
       '',
       `Updated (KST): ${formatKst(kst)}`,
       `Verdict: **${memStatus}**`,
@@ -212,12 +232,12 @@ function main() {
 
   fs.appendFileSync(
     path.join(logDir, 'incidents.log'),
-    `[${formatKst(kst)}] AFTERNOON_WATCH_5PM_REPORT_READY ${reportFile}\n`,
+    `[${formatKst(kst)}] EVENING_WATCH_${targetTag}_REPORT_READY ${reportFile}\n`,
     'utf8',
   );
 
   writeChatReportPending(logDir, {
-    slot: '17:00 KST',
+    slot: `${targetTime} KST`,
     kstLabel: formatKst(kst),
     verdict: memStatus,
     memLine,

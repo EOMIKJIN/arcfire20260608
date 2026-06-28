@@ -127,9 +127,16 @@ if (novaRow && stdRow) {
 }
 
 for (const w of weapons.slice(0, 200)) {
-  const req = Number(w.requiredLevel);
+  const req = Number(w.requiredLevel ?? w['요구레벨']);
   if (!Number.isFinite(req)) continue;
   if (req > 60) check(`weapon ${w.id} requiredLevel <= 60`, false, `requiredLevel=${req}`);
+}
+
+function median(nums) {
+  if (!nums.length) return null;
+  const s = [...nums].sort((a, b) => a - b);
+  const mid = Math.floor(s.length / 2);
+  return s.length % 2 === 1 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
 }
 
 const drifts = [];
@@ -137,17 +144,32 @@ for (const band of levelBands) {
   const minL = Number(band.minLevel);
   const maxL = Number(band.maxLevel);
   const targetMin = Number(band.targetMinutesPerLevel);
-  const inBandWeapons = weapons.filter((w) => {
-    const rl = Number(w.requiredLevel);
-    return rl >= minL && rl <= maxL;
-  });
-  const observed = inBandWeapons.length > 0 ? targetMin * 0.95 : targetMin * 1.1;
-  const gapRatio = targetMin > 0 ? (observed - targetMin) / targetMin : 0;
+  const targetCph = Number(band.targetCreditsPerHour);
+  const prices = weapons
+    .map((w) => {
+      const rl = Number(w.requiredLevel ?? w['요구레벨']);
+      const price = Number(w.purchasePrice ?? w['구매가']);
+      if (!Number.isFinite(rl) || !Number.isFinite(price) || price <= 0) return null;
+      if (rl < minL || rl > maxL) return null;
+      return price;
+    })
+    .filter((n) => n != null);
+  let observedAffordableGap = 0;
+  let observeMethod = 'fallback_no_weapons';
+  if (prices.length > 0 && targetCph > 0 && targetMin > 0) {
+    const med = median(prices);
+    const affordableInBandWindow = targetCph * (targetMin / 60);
+    observedAffordableGap = affordableInBandWindow > 0 ? med / affordableInBandWindow : 1;
+    observeMethod = 'weapon_median_vs_band_cph_window';
+  }
+  const gapRatio = observedAffordableGap > 0 ? observedAffordableGap - 1 : 0;
+  const observed = Math.round((targetMin * observedAffordableGap) * 100) / 100;
   drifts.push({
     key: `band_${band.bandId}`,
     target: targetMin,
     observed,
     gapPercent: Math.round(gapRatio * 1000) / 10,
+    observeMethod,
     severity: Math.abs(gapRatio) >= 0.2 ? 'critical' : Math.abs(gapRatio) >= 0.1 ? 'warn' : 'ok',
     decision:
       Math.abs(gapRatio) <= 0.15

@@ -7,6 +7,11 @@ standard,6,172800,true,v3.1 L5→6 · 2일
 standard,7,345600,true,v3.1 L6→7 · 4일
 standard,8,604800,true,v3.1 L7→8 · 7일
 standard,9,1209600,true,v3.1 L8→9 · 14일
-standard,10,2592000,true,v3.1 L9→10 · 30일(표준 상한)
-epic,11,3888000,false,v3.1 예약 L10→11 · 45일(미활성)
-epic,12,5184000,false,v3.1 예약 L11→12 · 60일(미활성)
+standard,10,2592000,true,v3.1 L9→10 · 30일
+standard,11,3110400,true,v3.2 L10→11 · 36일
+standard,12,3628800,true,v3.2 L11→12 · 42일
+standard,13,4147200,true,v3.2 L12→13 · 48일
+standard,14,4665600,true,v3.2 L13→14 · 54일
+standard,15,5184000,true,v3.2 L14→15 · 60일
+epic,11,3888000,false,v3.1 레거시 · standard 11 사용
+epic,12,5184000,false,v3.1 레거시 · standard 12 사용

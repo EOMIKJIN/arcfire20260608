@@ -178,6 +178,22 @@ function readPriceElasticity() {
   return { priceElasticity: elasticity, realtimeDisabled: elasticity === 0 };
 }
 
+function readPlanetFiscalKpi() {
+  const snap = readJson(
+    path.join(ROOT, 'tools/planet-economy-3h-audit/reports/planet-economy-snapshot.json'),
+    null,
+  );
+  const fiscal = snap?.fiscal;
+  if (!fiscal) return null;
+  return {
+    overall: fiscal.overall,
+    maxFeeUpkeepRatio: fiscal.maxFeeUpkeepRatio,
+    gini: fiscal.gini,
+    failCount: fiscal.failCount,
+    warnCount: fiscal.warnCount,
+  };
+}
+
 function computeLearningInsights(snapshot, prev) {
   const insights = [];
   if (prev?.whaleF2pRatio != null && snapshot.whaleF2pRatio != null) {
@@ -239,6 +255,21 @@ function computeLearningInsights(snapshot, prev) {
       severity: 'critical',
       message: 'balance audit failed — table linkage or weapon economy drift',
       action: 'npm_run_audit_balance',
+    });
+  }
+  if (snapshot.fiscalOverall === 'fail') {
+    insights.push({
+      kind: 'planet_fiscal',
+      severity: 'critical',
+      message: `Planet fiscal FAIL — max fee/upkeep ${snapshot.fiscalMaxRatio}× gini=${snapshot.fiscalGini}`,
+      action: 'review_convoy_routes_and_upkeep_policy',
+    });
+  } else if (snapshot.fiscalOverall === 'warn') {
+    insights.push({
+      kind: 'planet_fiscal',
+      severity: 'warn',
+      message: `Planet fiscal WARN — max fee/upkeep ${snapshot.fiscalMaxRatio}× gini=${snapshot.fiscalGini}`,
+      action: 'monitor_fiscal_closed_loop',
     });
   }
   if (insights.length === 0) {
@@ -333,6 +364,7 @@ function main() {
   const economyKpi = readEconomySimKpi();
   const drift = readBalanceDrift();
   const elasticity = readPriceElasticity();
+  const fiscalKpi = readPlanetFiscalKpi();
 
   const timestamp = new Date().toISOString();
   const snapshot = {
@@ -349,6 +381,9 @@ function main() {
     balanceAuditExit: balanceAudit.status ?? 1,
     planetEconomyExit,
     planetEconomyOverall: planetEconomyMd.match(/\*\*Overall:\*\* (\w+)/)?.[1] ?? 'unknown',
+    fiscalOverall: fiscalKpi?.overall ?? null,
+    fiscalMaxRatio: fiscalKpi?.maxFeeUpkeepRatio ?? null,
+    fiscalGini: fiscalKpi?.gini ?? null,
     priceElasticity: elasticity.priceElasticity,
     realtimePriceDisabled: elasticity.realtimeDisabled,
   };
@@ -363,14 +398,25 @@ function main() {
     !dailyPolicy.ok ||
     balanceAudit.status !== 0 ||
     planetEconomyExit !== 0 ||
+    snapshot.fiscalOverall === 'fail' ||
     criticalInsights.length > 0
       ? 'FAIL'
-      : warnInsights.length > 0
+      : warnInsights.length > 0 || snapshot.fiscalOverall === 'warn'
         ? 'WARN'
         : 'PASS';
 
   const learning = updateLearningState(snapshot, insights);
   appendTimeline(snapshot);
+
+  const mergeLearning = spawnSync('node', ['tools/arc-core-learning/merge-learning-state.cjs'], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    shell: process.platform === 'win32',
+    maxBuffer: 4 * 1024 * 1024,
+  });
+  if (mergeLearning.status !== 0) {
+    console.error('[balance-ops] learning-store-seed merge failed:', mergeLearning.stderr || mergeLearning.stdout);
+  }
 
   const lines = [
     '# ArcCore Balance Ops Audit',
@@ -408,7 +454,8 @@ function main() {
   if (drift.drifts.length) {
     lines.push('', '## Level-band drift', '');
     for (const d of drift.drifts) {
-      lines.push(`- ${d.key}: gap ${d.gapPercent}% (${d.severity}) → ${d.decision}`);
+      const method = d.observeMethod ? ` · ${d.observeMethod}` : '';
+      lines.push(`- ${d.key}: gap ${d.gapPercent}% (${d.severity}) → ${d.decision}${method}`);
     }
   }
 

@@ -599,3 +599,29 @@
 [2026-06-27 23:41:57] PSS +77.5MB GL 142.8MB views=547
 [2026-06-27 23:43:14] CRITICAL process not running ??check crash-*.log
 [2026-06-27 23:54:43] CRITICAL process not running ??check crash-*.log
+[2026-06-28 05:02:28] PSS +42.4MB GL 37.3MB views=428
+[2026-06-28 09:09:29] GL +8.5MB views=385 (PSS -43.1MB) ??active hub
+[2026-06-28 09:19:49] GL +103.8MB views=555 (PSS 118.3MB) ??active hub
+[2026-06-28 10:01:18] GL +14.4MB views=466 (PSS 28.7MB) ??active hub
+[2026-06-28 10:21:54] PSS +45.5MB GL 38.2MB views=460
+[2026-06-28 11:13:41] CRITICAL process not running ??check crash-*.log
+[2026-06-28 11:23:42] CRITICAL process not running ??check crash-*.log
+[2026-06-28 12:56:10] PSS +266.9MB GL 13.4MB views=107
+[2026-06-28 14:29:08] GL +18.7MB views=420 (PSS 62.5MB) ??active hub
+[2026-06-28 14:30:51] CRITICAL process not running ??check crash-*.log
+[2026-06-28 15:00:12] GL +17.5MB views=352 (PSS 82.5MB) ??active hub
+[2026-06-28 15:21:00] PSS +108.3MB GL 33.3MB views=99
+[2026-06-28 16:31:50] PSS +152.1MB GL 22.3MB views=235
+[2026-06-28 16:54:32] CRITICAL process not running ??check crash-*.log
+[2026-06-28 17:02:17] CRITICAL process not running ??check crash-*.log
+[2026-06-28 17:04:34] CRITICAL process not running ??check crash-*.log
+[2026-06-28 17:55:56] PSS +131.6MB GL 41.4MB views=379
+[2026-06-28 18:47:31] GL +14.4MB views=380 (PSS 33MB) ??active hub
+[2026-06-28 19:18:37] PSS +45.9MB GL 51MB views=150
+[2026-06-28 19:33:34] GL +62.1MB views=632 (PSS 54MB) ??active hub
+[2026-06-28 19:39:23] GL +45.1MB views=632 (PSS 130.5MB) ??active hub
+[2026-06-28 21:22:36] GL +74.1MB views=567 (PSS 107.1MB) ??active hub
+[2026-06-28 22:04:05] PSS +124.8MB GL 12.2MB views=99
+[2026-06-28 22:27:46] CRITICAL process not running ??check crash-*.log
+[2026-06-28 22:42:54] CRITICAL process not running ??check crash-*.log
+[2026-06-28 23:44:14] GL +86.5MB views=385 (PSS 91.6MB) ??active hub

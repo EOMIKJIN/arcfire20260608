@@ -4,7 +4,7 @@
 
 import { PlanetTradeRouteProfile_FROM_BALANCE_CSV } from '../../data/balance/generated';
 import { getItemDef, listItemDefs } from '../../data/itemRegistry';
-import { STAR_SYSTEMS } from '../../data/systems';
+import { resolveStarSystemForPlanetId } from '../../world/resolvePlanetSystemPosition';
 import {
   getPlanetLevelingRowForZone,
   resolvePlanetZoneIndex,
@@ -14,6 +14,7 @@ import {
   listTradeRouteSupplyAssignedItemIdsForPlanet,
   resolveTradeRouteAssignedDemandPlanetId,
   resolveTradeRouteAssignedSupplyPlanetId,
+  listRuntimeDemandPlanetsForTradeGood,
 } from './tradeRoutePlanetAssignmentRegistry';
 import { splitPipeCategoriesFromSectorBand } from './tradeRouteSectorCategories';
 
@@ -50,6 +51,21 @@ const profileByPlanetId = new Map(
   ),
 );
 
+/** synth 프론티어 — dev_trade_port 설치 후 런타임 교역 프로필 */
+const runtimeProfileByPlanetId = new Map<string, PlanetTradeRouteProfile>();
+
+export function registerRuntimePlanetTradeRouteProfile(profile: PlanetTradeRouteProfile): void {
+  runtimeProfileByPlanetId.set(profile.planetId, profile);
+}
+
+export function unregisterRuntimePlanetTradeRouteProfile(planetId: string): void {
+  runtimeProfileByPlanetId.delete(planetId);
+}
+
+export function clearRuntimePlanetTradeRouteProfiles(): void {
+  runtimeProfileByPlanetId.clear();
+}
+
 let tradeRouteItemCache: Array<{ id: string; category: string; attrs: TradeRouteAttrs }> | null =
   null;
 
@@ -59,10 +75,7 @@ function parseNum(raw: unknown, fallback = 0): number {
 }
 
 function findSystemForPlanetId(planetId: string) {
-  for (const system of Object.values(STAR_SYSTEMS)) {
-    if (system.planets.some((p) => p.id === planetId)) return system;
-  }
-  return undefined;
+  return resolveStarSystemForPlanetId(planetId);
 }
 
 export function parseTradeRouteAttrs(def: ReturnType<typeof getItemDef>): TradeRouteAttrs | null {
@@ -100,7 +113,7 @@ export function listTradeRouteItems(): Array<{
 }
 
 export function getPlanetTradeRouteProfile(planetId: string): PlanetTradeRouteProfile | null {
-  return profileByPlanetId.get(planetId) ?? null;
+  return runtimeProfileByPlanetId.get(planetId) ?? profileByPlanetId.get(planetId) ?? null;
 }
 
 export function resolveTradeRouteRole(
@@ -215,15 +228,24 @@ export function listConvoySourceRoutesAtPlanet(planetId: string): Array<{
     .sort((a, b) => b.baseProfit - a.baseProfit);
 }
 
-/** 수송선 — 목적지 팩션에 대응하는 무역소 행성 id (프로필 정본) */
+/** 수송선 — 목적지 팩션에 대응하는 무역소 행성 id (CSV + synth 런타임) */
 export function pickTradePortPlanetForDstFaction(dstFactionCode: string, seed: string): string | null {
-  const candidates = PlanetTradeRouteProfile_FROM_BALANCE_CSV.filter(
-    (row) => String(row.tradeFactionCode).trim() === dstFactionCode,
-  ).map((row) => String(row.planetId).trim());
-  if (candidates.length === 0) return null;
+  const candidates: string[] = [];
+  for (const row of PlanetTradeRouteProfile_FROM_BALANCE_CSV) {
+    if (String(row.tradeFactionCode).trim() === dstFactionCode) {
+      candidates.push(String(row.planetId).trim());
+    }
+  }
+  for (const profile of runtimeProfileByPlanetId.values()) {
+    if (profile.tradeFactionCode === dstFactionCode) {
+      candidates.push(profile.planetId);
+    }
+  }
+  const unique = [...new Set(candidates.filter(Boolean))];
+  if (unique.length === 0) return null;
   let hash = 0;
   for (let i = 0; i < seed.length; i += 1) hash = (hash * 31 + seed.charCodeAt(i)) | 0;
-  return candidates[Math.abs(hash) % candidates.length] ?? null;
+  return unique[Math.abs(hash) % unique.length] ?? null;
 }
 
 /** 공급(src) 팩션 무역소 행성 id */
@@ -231,10 +253,15 @@ export function pickTradePortPlanetForSrcFaction(srcFactionCode: string, seed: s
   return pickTradePortPlanetForDstFaction(srcFactionCode, seed);
 }
 
-/** 교역품 수요지 행성 id 목록(배정 정본 1건) */
+/** 교역품 수요지 행성 id 목록(CSV 1건 + synth 런타임 수요지) */
 export function listDemandPlanetIdsForTradeGood(goodId: string): string[] {
-  const planetId = resolveTradeRouteAssignedDemandPlanetId(goodId);
-  return planetId ? [planetId] : [];
+  const ids = new Set<string>();
+  const canonical = resolveTradeRouteAssignedDemandPlanetId(goodId);
+  if (canonical) ids.add(canonical);
+  for (const pid of listRuntimeDemandPlanetsForTradeGood(goodId)) {
+    ids.add(pid);
+  }
+  return [...ids];
 }
 
 export function isTradeRouteDestinationPlanet(planetId: string, attrs: TradeRouteAttrs): boolean {
@@ -243,9 +270,15 @@ export function isTradeRouteDestinationPlanet(planetId: string, attrs: TradeRout
   return attrs.dstFactionCode === profile.tradeFactionCode;
 }
 
-/** 교역 프로필이 있는 모든 무역소 행성 id */
+/** 교역 프로필이 있는 모든 무역소 행성 id (CSV + synth 런타임) */
 export function listAllTradeRoutePlanetIds(): string[] {
-  return PlanetTradeRouteProfile_FROM_BALANCE_CSV.map((row) => String(row.planetId).trim());
+  const ids = new Set<string>(
+    PlanetTradeRouteProfile_FROM_BALANCE_CSV.map((row) => String(row.planetId).trim()),
+  );
+  for (const pid of runtimeProfileByPlanetId.keys()) {
+    ids.add(pid);
+  }
+  return [...ids];
 }
 
 /** 수송선이 생산지에서 출발 가능한 행성 id */

@@ -1,0 +1,17 @@
+key,value,notesKo
+enabled,true,일 1회 runPlanetCoreStatEquilibriumPass
+baseline_stat_pct,50,미개발 CSV 시드·균형 기준(%)
+full_dev_target_pct,87,5시설 L15 풀개발 시 5대 스탯 목표 상한(%)
+dev_drift_rate_per_day,0.14,개발 목표치로 일일 수렴 비율(0~1)
+natural_decay_per_day,0.4,개발 미진·자연 도태 — baseline 초과분 일일 감소(pt)
+natural_decay_min_dev_level_sum,10,시설 레벨 합 이하이면 자연쇠퇴 적용
+fiscal_deficit_population_decay,0.9,수익/유지비 deficit — 인구 일일 감소(pt)
+fiscal_deficit_resource_decay,0.55,deficit — 자원 감소(pt)
+fiscal_deficit_environment_decay,0.45,deficit — 환경 감소(pt)
+fiscal_deficit_technology_decay,0.25,deficit — 기술 미세 감소(pt)
+fiscal_surplus_population_nudge,0.35,수익/유지비 >= warn — 인구 일일 가산(pt)
+fiscal_surplus_resource_nudge,0.3,수익 surplus — 자원 가산(pt)
+player_upkeep_fail_extra_decay,1.0,플레이어 유지비 미납 시 추가 쇠퇴(pt)
+player_upkeep_fail_population_decay,0.6,유지비 미납 — 인구 추가 감소(pt)
+max_daily_stat_drop_per_metric,3,지표당 일일 최대 하락(pt)
+max_daily_stat_gain_per_metric,4,지표당 일일 최대 상승(pt)

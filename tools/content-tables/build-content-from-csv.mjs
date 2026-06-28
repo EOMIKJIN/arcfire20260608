@@ -286,9 +286,25 @@ function assertUniqueNpcCaptainDisplayNames(rows) {
   }
 }
 
+function assertUniqueNpcCaptainAssignedShipIds(rows) {
+  const ownerByShipId = new Map();
+  for (const r of rows) {
+    const sid = String(r.assignedShipId ?? '').trim();
+    if (!sid) continue;
+    const prior = ownerByShipId.get(sid);
+    if (prior) {
+      throw new Error(
+        `[npc_ai_captains] assignedShipId 중복(1함선=1함장): ship=${sid} keep=${prior} dup=${r.id}`,
+      );
+    }
+    ownerByShipId.set(sid, r.id);
+  }
+}
+
 function buildNpcCaptains() {
   const rows = loadCsv('npc_ai_captains.csv');
   assertUniqueNpcCaptainDisplayNames(rows);
+  assertUniqueNpcCaptainAssignedShipIds(rows);
   const body = rows
     .map(r => `  {
     id: ${q(r.id)},
@@ -596,6 +612,61 @@ ${objs}
 export const MISSIONS_FROM_CSV: Record<string, Mission> = {
 ${body}
 };
+`;
+}
+
+function buildMissionQuestPlacements() {
+  const rows = loadCsvOptional('mission_quest_placements.csv');
+  const body = rows
+    .map((row) => `  {
+    id: ${q(row.id)},
+    objectiveId: ${q(row.objectiveId)},
+    planetId: ${q(row.planetId)},
+    itemId: ${q(row.itemId)},
+    stockQty: ${toInt(row.stockQty)},
+    unitPriceOverride: ${toInt(row.unitPriceOverride)},
+    questTag: ${q(String(row.questTag ?? 'quest').trim() || 'quest')},
+  }`)
+    .join(',\n');
+  return `export type MissionQuestPlacementRow = {
+  id: string;
+  objectiveId: string;
+  planetId: string;
+  itemId: string;
+  stockQty: number;
+  unitPriceOverride: number;
+  questTag: string;
+};
+
+export const MISSION_QUEST_PLACEMENTS_FROM_CSV: MissionQuestPlacementRow[] = [
+${body}
+];
+`;
+}
+
+function buildMissionQuestCombatOps() {
+  const rows = loadCsvOptional('mission_quest_combat_ops.csv');
+  const body = rows
+    .map((row) => {
+      const anchorPlanetId = nullable(row.anchorPlanetId);
+      return `  {
+    id: ${q(row.id)},
+    objectiveId: ${q(row.objectiveId)},
+    encounterPolicy: ${q(String(row.encounterPolicy ?? 'transit_guaranteed').trim())},
+    anchorPlanetId: ${anchorPlanetId ? q(anchorPlanetId) : 'null'},
+  }`;
+    })
+    .join(',\n');
+  return `export type MissionQuestCombatOpRow = {
+  id: string;
+  objectiveId: string;
+  encounterPolicy: string;
+  anchorPlanetId: string | null;
+};
+
+export const MISSION_QUEST_COMBAT_OPS_FROM_CSV: MissionQuestCombatOpRow[] = [
+${body}
+];
 `;
 }
 
@@ -1258,6 +1329,8 @@ function main() {
   writeOut('csvNpcCapitalShipEquipSlots.ts', buildNpcCapitalShipEquipSlots());
   writeOut('csvWeapons.ts', buildWeapons());
   writeOut('csvMissions.ts', buildMissions());
+  writeOut('csvMissionQuestPlacements.ts', buildMissionQuestPlacements());
+  writeOut('csvMissionQuestCombatOps.ts', buildMissionQuestCombatOps());
   writeOut('csvMissionCombatCaptains.ts', buildMissionCombatCaptains());
   writeOut('csvPlanetGovernorCommanders.ts', buildPlanetGovernorCommanders());
   writeOut('csvPlanetGovernorReserveCommanders.ts', buildPlanetGovernorReserveCommanders());
@@ -1284,6 +1357,14 @@ export {
 } from './csvNpcCapitalShipEquipSlots';
 export { CAPITAL_WEAPON_LIST_FROM_CSV, type CapitalWeaponCsvRow } from './csvWeapons';
 export { MISSIONS_FROM_CSV } from './csvMissions';
+export {
+  MISSION_QUEST_PLACEMENTS_FROM_CSV,
+  type MissionQuestPlacementRow,
+} from './csvMissionQuestPlacements';
+export {
+  MISSION_QUEST_COMBAT_OPS_FROM_CSV,
+  type MissionQuestCombatOpRow,
+} from './csvMissionQuestCombatOps';
 export {
   MISSION_COMBAT_CAPTAINS_FROM_CSV,
   type MissionCombatCaptainRow,

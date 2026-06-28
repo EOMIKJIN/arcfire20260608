@@ -1,0 +1,17 @@
+id,objectiveId,encounterPolicy,anchorPlanetId,notesKo
+qco_obj_002_a,obj_002_a,transit_guaranteed,arcadia_prime,튜토리얼 — 아르카디아 주변 해적
+qco_obj_s001_a,obj_s001_a,transit_guaranteed,arcadia_prime,샌드박스 — 아르카디아 해적
+qco_obj_s003_a,obj_s003_a,transit_guaranteed,solar_station,샌드박스 — 솔라 밀수 호위
+qco_obj_s005_a,obj_s005_a,transit_guaranteed,minerva_deep,샌드박스 — 미네르바 광산 해적
+qco_obj_s007_a,obj_s007_a,transit_guaranteed,vega_base,샌드박스 — 베가 급습
+qco_obj_s009_a,obj_s009_a,transit_guaranteed,eden_city,샌드박스 — 뉴에덴 순양함
+qco_obj_s011_a,obj_s011_a,transit_guaranteed,eden_city,샌드박스 — 아이언 잔해 순양함
+qco_obj_s013_a,obj_s013_a,transit_guaranteed,draco_haven,샌드박스 — 드라코 관측
+qco_obj_s015_a,obj_s015_a,transit_guaranteed,omega_hub,샌드박스 — 오메가 순양함
+qco_obj_s017_a,obj_s017_a,transit_guaranteed,helios_core,샌드박스 — 헬리오스 태양권
+qco_obj_s019_a,obj_s019_a,transit_guaranteed,sirius_border,샌드박스 — 시리우스 현상금
+qco_obj_s021_a,obj_s021_a,transit_guaranteed,perseus_memorial,샌드박스 — 페르세우스 현상금
+qco_obj_s023_a,obj_s023_a,transit_guaranteed,crimson_base,샌드박스 — 크림슨 현상금
+qco_obj_s025_a,obj_s025_a,transit_guaranteed,dark_haven,샌드박스 — 다크 현상금
+qco_obj_s027_a,obj_s027_a,transit_guaranteed,shadow_market,샌드박스 — 섀도우 추적자
+qco_obj_s029_a,obj_s029_a,transit_guaranteed,nightfall_citadel,샌드박스 — 나이트폴 현상금

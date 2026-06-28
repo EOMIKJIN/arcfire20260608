@@ -58,7 +58,12 @@ export function buildWaveDefenseEnemyFleet(waveIndex: number): CombatFleetSeedSl
   const shipId = waveDefenseEnemyShipId(waveIndex);
   const slots: CombatFleetSeedSlot[] = [];
   for (let i = 0; i < count; i += 1) {
-    slots.push({ team: 'red', npcShipId: shipId, captainId: WAVE_ENEMY_CAPTAIN_ID });
+    slots.push({
+      team: 'red',
+      npcShipId: shipId,
+      captainId: WAVE_ENEMY_CAPTAIN_ID,
+      combatInstanceKey: `wave_defense_w${waveIndex}_s${i}`,
+    });
   }
   return slots;
 }

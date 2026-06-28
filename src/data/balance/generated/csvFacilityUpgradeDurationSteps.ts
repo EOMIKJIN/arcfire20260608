@@ -8,8 +8,13 @@ export const FacilityUpgradeDurationSteps_FROM_BALANCE_CSV = [
   { "duration_tier": "standard", "target_level": "7", "base_duration_sec": "345600", "enabled": "true", "notesKo": "v3.1 L6→7 · 4일" },
   { "duration_tier": "standard", "target_level": "8", "base_duration_sec": "604800", "enabled": "true", "notesKo": "v3.1 L7→8 · 7일" },
   { "duration_tier": "standard", "target_level": "9", "base_duration_sec": "1209600", "enabled": "true", "notesKo": "v3.1 L8→9 · 14일" },
-  { "duration_tier": "standard", "target_level": "10", "base_duration_sec": "2592000", "enabled": "true", "notesKo": "v3.1 L9→10 · 30일(표준 상한)" },
-  { "duration_tier": "epic", "target_level": "11", "base_duration_sec": "3888000", "enabled": "false", "notesKo": "v3.1 예약 L10→11 · 45일(미활성)" },
-  { "duration_tier": "epic", "target_level": "12", "base_duration_sec": "5184000", "enabled": "false", "notesKo": "v3.1 예약 L11→12 · 60일(미활성)" },
+  { "duration_tier": "standard", "target_level": "10", "base_duration_sec": "2592000", "enabled": "true", "notesKo": "v3.1 L9→10 · 30일" },
+  { "duration_tier": "standard", "target_level": "11", "base_duration_sec": "3110400", "enabled": "true", "notesKo": "v3.2 L10→11 · 36일" },
+  { "duration_tier": "standard", "target_level": "12", "base_duration_sec": "3628800", "enabled": "true", "notesKo": "v3.2 L11→12 · 42일" },
+  { "duration_tier": "standard", "target_level": "13", "base_duration_sec": "4147200", "enabled": "true", "notesKo": "v3.2 L12→13 · 48일" },
+  { "duration_tier": "standard", "target_level": "14", "base_duration_sec": "4665600", "enabled": "true", "notesKo": "v3.2 L13→14 · 54일" },
+  { "duration_tier": "standard", "target_level": "15", "base_duration_sec": "5184000", "enabled": "true", "notesKo": "v3.2 L14→15 · 60일" },
+  { "duration_tier": "epic", "target_level": "11", "base_duration_sec": "3888000", "enabled": "false", "notesKo": "v3.1 레거시 · standard 11 사용" },
+  { "duration_tier": "epic", "target_level": "12", "base_duration_sec": "5184000", "enabled": "false", "notesKo": "v3.1 레거시 · standard 12 사용" },
 ] as const;
 export type FacilityUpgradeDurationStepsRow = (typeof FacilityUpgradeDurationSteps_FROM_BALANCE_CSV)[number];

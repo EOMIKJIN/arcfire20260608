@@ -214,5 +214,17 @@ Add-Content -Path $incidentsPath -Value $readyLine
 Log "SCHEDULE_DONE until=$UntilLocal report=$reportFile"
 Remove-Item $schedulerPidFile -Force -ErrorAction SilentlyContinue
 
-# Re-ensure perpetual daily 8am scheduler
+# Re-ensure perpetual daily 8am scheduler + 채팅·LATEST·ledger (레거시 md만 생성 회귀 방지)
 & (Join-Path $ScriptRoot 'ensure-daily-8am-report.ps1') 2>&1 | ForEach-Object { Log "ensure-8am $_" }
+try {
+  $node = (Get-Command node -ErrorAction SilentlyContinue).Source
+  if ($node) {
+    Log 'PUBLISH spawn schedule-8am --publish-only'
+    Start-Process -WindowStyle Hidden -FilePath $node -ArgumentList @(
+      (Join-Path $ScriptRoot 'schedule-8am-kim-daily-auto-report.cjs'),
+      '--publish-only'
+    ) | Out-Null
+  }
+} catch {
+  Log "WARN publish-only spawn failed: $_"
+}

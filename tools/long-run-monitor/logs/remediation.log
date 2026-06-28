@@ -1550,3 +1550,137 @@
 [2026-06-27 23:22:42] INFO PSS_SOFT_CEILING pss=802.6 gl=46.7 views=473 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
 [2026-06-27 23:32:58] INFO PSS_SOFT_CEILING pss=936 gl=142.7 views=548 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
 [2026-06-27 23:42:04] INFO GL_HARD_CEILING_RECORD_ONLY gl=142.8 pss=1013.5 views=547 (monitor-paused ??no incident/refix spam)
+[2026-06-28 00:14:09] INFO PSS_SOFT_CEILING pss=805.5 gl=38.9 views=405 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 01:05:53] INFO PSS_SOFT_CEILING pss=800.7 gl=38.6 views=406 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 01:16:10] INFO PSS_SOFT_CEILING pss=802.9 gl=36.9 views=398 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 01:17:03] INFO PSS_SOFT_CEILING pss=800.9 gl=36.4 views=388 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 01:36:44] INFO PSS_SOFT_CEILING pss=810.4 gl=36.6 views=410 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 01:57:17] INFO PSS_SOFT_CEILING pss=804.5 gl=36.5 views=411 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 02:17:51] INFO PSS_SOFT_CEILING pss=820 gl=38.5 views=414 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 02:18:50] INFO PSS_SOFT_CEILING pss=802.9 gl=38.3 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 02:29:09] INFO PSS_SOFT_CEILING pss=801 gl=36.3 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 02:38:25] INFO PSS_SOFT_CEILING pss=802.2 gl=36.6 views=414 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 02:39:25] INFO PSS_SOFT_CEILING pss=811.6 gl=36.5 views=402 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 02:48:43] INFO PSS_SOFT_CEILING pss=803.4 gl=36.3 views=393 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 02:59:01] INFO PSS_SOFT_CEILING pss=822.7 gl=36.9 views=418 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 02:59:59] INFO PSS_SOFT_CEILING pss=816.8 gl=36.5 views=396 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 03:09:18] INFO PSS_SOFT_CEILING pss=811.5 gl=36.3 views=393 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 03:10:16] INFO PSS_SOFT_CEILING pss=803 gl=38.3 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 03:19:35] INFO PSS_SOFT_CEILING pss=838.4 gl=37 views=418 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 03:20:33] INFO PSS_SOFT_CEILING pss=832.1 gl=36.6 views=398 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 03:29:53] INFO PSS_SOFT_CEILING pss=816.3 gl=36.6 views=397 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 03:40:09] INFO PSS_SOFT_CEILING pss=827.7 gl=36.9 views=422 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 03:41:08] INFO PSS_SOFT_CEILING pss=820.5 gl=36.8 views=396 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 03:50:28] INFO PSS_SOFT_CEILING pss=826.8 gl=36.6 views=397 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 03:51:26] INFO PSS_SOFT_CEILING pss=810.8 gl=36.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 04:00:44] INFO PSS_SOFT_CEILING pss=835.3 gl=37.3 views=422 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 04:01:46] INFO PSS_SOFT_CEILING pss=842.7 gl=36.9 views=406 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 04:11:01] INFO PSS_SOFT_CEILING pss=822.7 gl=36.6 views=401 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 04:12:03] INFO PSS_SOFT_CEILING pss=827.9 gl=36.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 04:21:18] INFO PSS_SOFT_CEILING pss=824.6 gl=36.9 views=427 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 04:22:21] INFO PSS_SOFT_CEILING pss=816.4 gl=36.9 views=407 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 04:31:37] INFO PSS_SOFT_CEILING pss=801 gl=36.6 views=401 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 04:32:41] INFO PSS_SOFT_CEILING pss=815.6 gl=36.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 04:41:54] INFO PSS_SOFT_CEILING pss=824.6 gl=36.9 views=426 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 04:42:59] INFO PSS_SOFT_CEILING pss=828.3 gl=43.3 views=406 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 04:52:12] INFO PSS_SOFT_CEILING pss=807.2 gl=36.6 views=405 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 05:02:32] INFO PSS_SOFT_CEILING pss=837.4 gl=37.3 views=428 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 05:03:33] INFO PSS_SOFT_CEILING pss=818.6 gl=36.9 views=406 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 05:13:51] INFO PSS_SOFT_CEILING pss=818.4 gl=38.6 views=382 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 05:23:09] INFO PSS_SOFT_CEILING pss=834.5 gl=38.9 views=430 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 05:24:09] INFO PSS_SOFT_CEILING pss=823.7 gl=36.8 views=392 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 05:33:26] INFO PSS_SOFT_CEILING pss=817.3 gl=36.6 views=407 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 05:34:27] INFO PSS_SOFT_CEILING pss=813.5 gl=36.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 05:43:43] INFO PSS_SOFT_CEILING pss=825.8 gl=36.8 views=422 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 05:44:46] INFO PSS_SOFT_CEILING pss=833.4 gl=38.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 05:54:00] INFO PSS_SOFT_CEILING pss=826.7 gl=36.6 views=414 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 05:55:04] INFO PSS_SOFT_CEILING pss=825.9 gl=36.6 views=382 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 06:04:17] INFO PSS_SOFT_CEILING pss=816.8 gl=36.6 views=416 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 06:05:21] INFO PSS_SOFT_CEILING pss=816.1 gl=36.6 views=377 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 06:14:35] INFO PSS_SOFT_CEILING pss=822.8 gl=36.6 views=413 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 06:15:38] INFO PSS_SOFT_CEILING pss=819.7 gl=36.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 06:24:52] INFO PSS_SOFT_CEILING pss=826.9 gl=38.6 views=409 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 06:25:57] INFO PSS_SOFT_CEILING pss=809.2 gl=36.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 06:35:11] INFO PSS_SOFT_CEILING pss=818.9 gl=36.6 views=377 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 06:36:16] INFO PSS_SOFT_CEILING pss=845.9 gl=38.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 06:45:28] INFO PSS_SOFT_CEILING pss=833.6 gl=36.6 views=377 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 06:46:33] INFO PSS_SOFT_CEILING pss=832.9 gl=36.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 06:55:45] INFO PSS_SOFT_CEILING pss=831.3 gl=36.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 06:56:50] INFO PSS_SOFT_CEILING pss=825.3 gl=36.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 07:06:02] INFO PSS_SOFT_CEILING pss=825.6 gl=36.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 07:07:08] INFO PSS_SOFT_CEILING pss=822.8 gl=38.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 07:16:19] INFO PSS_SOFT_CEILING pss=848.5 gl=38.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 07:17:25] INFO PSS_SOFT_CEILING pss=843.4 gl=36.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 07:26:36] INFO PSS_SOFT_CEILING pss=849.5 gl=36.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 07:27:44] INFO PSS_SOFT_CEILING pss=840.1 gl=38.6 views=398 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 07:36:54] INFO PSS_SOFT_CEILING pss=836.5 gl=36.6 views=385 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 07:38:02] INFO PSS_SOFT_CEILING pss=839.6 gl=38.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 07:47:11] INFO PSS_SOFT_CEILING pss=833.1 gl=36.6 views=385 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 07:48:19] INFO PSS_SOFT_CEILING pss=841 gl=38.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 07:57:28] INFO PSS_SOFT_CEILING pss=838.6 gl=36.6 views=385 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 07:58:38] INFO PSS_SOFT_CEILING pss=843.7 gl=38.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 08:00:12] INFO PSS_SOFT_CEILING pss=846.3 gl=36.6 views=377 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 08:07:45] INFO PSS_SOFT_CEILING pss=847.6 gl=38.6 views=405 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 08:18:03] INFO PSS_SOFT_CEILING pss=851.4 gl=36.6 views=409 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 08:28:22] INFO PSS_SOFT_CEILING pss=817.4 gl=36.6 views=406 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 08:30:30] INFO PSS_SOFT_CEILING pss=806.9 gl=36.6 views=378 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 08:38:40] INFO PSS_SOFT_CEILING pss=831.7 gl=37.3 views=412 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 08:48:57] INFO PSS_SOFT_CEILING pss=813.2 gl=36.6 views=409 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 08:57:26] INFO PSS_SOFT_CEILING pss=814.4 gl=36.6 views=405 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 08:59:15] INFO PSS_SOFT_CEILING pss=834.1 gl=37.3 views=400 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 09:19:54] INFO PSS_SOFT_CEILING pss=909.3 gl=149.6 views=555 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 09:27:45] INFO PSS_SOFT_CEILING pss=877.1 gl=127.5 views=574 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 09:30:17] INFO PSS_SOFT_CEILING pss=884.6 gl=127.5 views=555 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 10:01:22] INFO PSS_SOFT_CEILING pss=812.5 gl=47.4 views=466 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 10:11:41] INFO PSS_SOFT_CEILING pss=814.9 gl=36.5 views=372 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 10:22:00] INFO PSS_SOFT_CEILING pss=860.4 gl=38.2 views=460 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 10:32:20] INFO PSS_SOFT_CEILING pss=852.2 gl=44.1 views=493 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 10:42:43] INFO PSS_SOFT_CEILING pss=817 gl=42.7 views=432 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 14:18:55] INFO PSS_SOFT_CEILING pss=876.5 gl=36 views=328 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 14:29:14] INFO PSS_SOFT_CEILING pss=939 gl=54.7 views=420 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 15:00:19] INFO PSS_SOFT_CEILING pss=870.6 gl=40 views=352 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 15:00:56] INFO PSS_SOFT_CEILING pss=836 gl=39.4 views=326 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 15:52:02] INFO PSS_SOFT_CEILING pss=913 gl=59.2 views=332 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 16:44:16] INFO GL_HARD_CEILING_RECORD_ONLY gl=47 pss=1029.2 views=344 (monitor-paused ??no incident/refix spam)
+[2026-06-28 16:44:16] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-28 16:44:16] INVESTIGATION alert=[2026-06-28 16:44:15] [MEM_HARD_CEILING] pss=1029.2MB gl=47MB
+[2026-06-28 16:44:17] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260628-164416.log
+[2026-06-28 16:44:17] INVESTIGATION mem snapshot gl=46.4MB pss=993.9MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260628-164416.log
+[2026-06-28 16:44:18] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-28 16:44:18] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-28 16:44:18] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-28 16:44:20] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-28 16:44:20] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-28 19:33:38] INFO PSS_SOFT_CEILING pss=845.8 gl=114.4 views=632 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 19:39:30] INFO GL_HARD_CEILING_RECORD_ONLY gl=159.5 pss=976.3 views=632 (monitor-paused ??no incident/refix spam)
+[2026-06-28 19:39:34] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-28 19:39:34] INVESTIGATION alert=[2026-06-28 19:39:34] [MEM_HARD_CEILING] pss=976.3MB gl=159.5MB
+[2026-06-28 19:39:35] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260628-193934.log
+[2026-06-28 19:39:35] INVESTIGATION mem snapshot gl=161.5MB pss=980.7MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260628-193934.log
+[2026-06-28 19:39:35] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-28 19:39:36] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-28 19:39:36] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-28 19:39:38] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-28 19:39:38] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-28 19:49:59] INVESTIGATION start reason=mem_hard_ceiling_playtest
+[2026-06-28 19:49:59] INVESTIGATION alert=[2026-06-28 19:49:59] [MEM_HARD_CEILING] pss=984MB gl=159.5MB
+[2026-06-28 19:50:01] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260628-194959.log
+[2026-06-28 19:50:01] INVESTIGATION mem snapshot gl=159.5MB pss=980.6MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260628-194959.log
+[2026-06-28 19:50:02] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-28 19:50:02] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-28 19:50:02] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-28 19:50:04] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-28 19:50:04] INVESTIGATION done reason=mem_hard_ceiling_playtest
+[2026-06-28 21:14:40] INVESTIGATION start reason=mem_anomaly
+[2026-06-28 21:14:41] INVESTIGATION alert=[2026-06-25 08:51:20] GL_HARD_CEILING gl=228.9 pss=991.1 views=947
+[2026-06-28 21:14:41] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260628-211441.log
+[2026-06-28 21:14:42] INVESTIGATION mem snapshot gl=35.3MB pss=704.8MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260628-211441.log
+[2026-06-28 21:14:43] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-06-28 21:14:43] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-06-28 21:14:43] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
+[2026-06-28 21:14:47] INVESTIGATION audit:skia-memory completed (paused mode static gate)
+[2026-06-28 21:14:47] INVESTIGATION done reason=mem_anomaly
+[2026-06-28 21:22:44] INFO GL_ELEVATED mounting_or_insufficient_samples gl=108.8 pss=784.7 views=567 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-28 22:14:28] INFO GL_ELEVATED mounting_or_insufficient_samples gl=126 pss=752.6 views=558 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-06-28 23:44:18] INFO PSS_SOFT_CEILING pss=840.7 gl=134.7 views=385 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-06-28 23:59:38] INFO PSS_SOFT_CEILING pss=839.4 gl=116.3 views=377 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)

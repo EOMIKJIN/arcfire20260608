@@ -3,14 +3,14 @@ import { StyleSheet, Text, View } from 'react-native';
 import { FONTS, SPACING } from '../../utils/theme';
 import { useT } from '../../i18n';
 import { useAppSettingsStore } from '../../store/appSettingsStore';
-import { useMissionStore, type AcceptInstanceMissionResult } from '../../store/missionStore';
+import { useMissionStore } from '../../store/missionStore';
 import {
   resolveMissionDescription,
   resolveMissionTitle,
 } from '../../i18n/missionText';
 import { formatCredits } from '../../utils/formatCredits';
 import { getNpcCaptain } from '../../npc/npcFleetRegistry';
-import { showArcAlert } from '../../utils/showArcAlert';
+import { tryAcceptInstanceMissionWithFeedback } from '../../missions/instanceMissionAcceptFeedback';
 import {
   listTavernInstanceMissionOffers,
   type InstanceMissionOfferState,
@@ -63,22 +63,6 @@ function stateBadgeLabel(state: InstanceMissionOfferState, t: (key: string) => s
   }
 }
 
-function acceptFailMessage(result: AcceptInstanceMissionResult, t: (key: string) => string): string {
-  switch (result) {
-    case 'level_locked':
-      return t('tavern.newMissions.acceptFailLevel');
-    case 'already_active':
-      return t('tavern.newMissions.acceptFailActive');
-    case 'already_complete':
-      return t('tavern.newMissions.acceptFailComplete');
-    case 'wrong_planet':
-      return t('tavern.newMissions.acceptFailPlanet');
-    case 'prereq_missing':
-      return t('tavern.newMissions.acceptFailPrereq');
-    default:
-      return t('tavern.newMissions.acceptFailGeneric');
-  }
-}
 
 function InstanceMissionCard({
   mission,
@@ -93,20 +77,14 @@ function InstanceMissionCard({
 }) {
   const t = useT();
   const locale = useAppSettingsStore((s) => s.locale);
-  const acceptInstanceMission = useMissionStore((s) => s.acceptInstanceMission);
   const captain = mission.offerCaptainId ? getNpcCaptain(mission.offerCaptainId) : undefined;
   const title = resolveMissionTitleText(mission, t, locale);
   const description = resolveMissionDescText(mission, t, locale);
   const canAccept = state === 'available';
 
   const handleAccept = useCallback(() => {
-    const result = acceptInstanceMission(mission.id, { planetId, playerLevel });
-    if (result === 'accepted') {
-      showArcAlert(t('tavern.newMissions.acceptSuccessTitle'), t('tavern.newMissions.acceptSuccessBody', { title }));
-      return;
-    }
-    showArcAlert(t('tavern.newMissions.acceptFailTitle'), acceptFailMessage(result, t));
-  }, [acceptInstanceMission, mission.id, planetId, playerLevel, t, title]);
+    tryAcceptInstanceMissionWithFeedback(mission.id, { planetId, playerLevel }, t);
+  }, [mission.id, planetId, playerLevel, t]);
 
   return (
     <View style={fs.stackCard}>

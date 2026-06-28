@@ -7,7 +7,7 @@ import {
 } from '../../game/planetDevelopment/planetHubFacilityGates';
 import { t } from '../../i18n';
 import { showArcAlert } from '../../utils/showArcAlert';
-import { preflightPlanetHubSession } from './preflightPlanetHub';
+import { preflightPlanetHubDepartureSession, preflightPlanetHubSession } from './preflightPlanetHub';
 import type { HeavyUiPreflightResult } from './types';
 
 const FACILITY_ENABLED: Record<PlanetHubFacilityGateKind, (planetId: string) => boolean> = {
@@ -38,7 +38,7 @@ export function runPlanetHubSubmenuPreflight(
   planetId: string | null | undefined,
 ): boolean {
   if (kind === 'departure') {
-    const result = preflightPlanetHubSession(planetId);
+    const result = preflightPlanetHubDepartureSession(planetId);
     if (result.ok) return true;
     showArcAlert(t('heavyUi.errorTitle'), t(`heavyUi.preflight.${result.code}`));
     return false;

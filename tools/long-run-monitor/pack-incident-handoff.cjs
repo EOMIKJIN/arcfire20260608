@@ -112,6 +112,24 @@ function main() {
   ].join('\n');
 
   fs.writeFileSync(HANDOFF, md, 'utf8');
+  try {
+    require('child_process').execSync(`node "${path.join(__dirname, 'write-incident-chat-pending.cjs')}" ${reason}`, {
+      cwd: ROOT,
+      stdio: 'pipe',
+    });
+  } catch {
+    /* fail-open */
+  }
+  try {
+    const summary = `${reason} · ${incidents.slice(-1)[0] || 'incident'}`.slice(0, 200);
+    require('child_process').spawnSync(
+      process.execPath,
+      [path.join(__dirname, 'notify-incident-external.cjs'), reason, summary],
+      { cwd: ROOT, stdio: 'pipe' },
+    );
+  } catch {
+    /* fail-open — webhook optional */
+  }
   process.stdout.write(`packed ${HANDOFF}\n`);
 }
 

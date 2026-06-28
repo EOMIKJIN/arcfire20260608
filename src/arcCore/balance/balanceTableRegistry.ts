@@ -299,8 +299,13 @@ export function getTradeRouteConvoyCargoBounds(): { min: number; max: number } {
   const kv = getTradeRouteEconomyPolicyKv();
   return {
     min: parseNum(kv.get('convoy_cargo_units_min'), 2),
-    max: parseNum(kv.get('convoy_cargo_units_max'), 8),
+    max: parseNum(kv.get('convoy_cargo_units_max'), 6),
   };
+}
+
+export function getConvoyDemandDailyGrossCapCredits(): number {
+  const kv = getTradeRouteEconomyPolicyKv();
+  return Math.max(5000, parseNum(kv.get('convoy_demand_daily_gross_cap_credits'), 45_000));
 }
 
 export function getTradeRouteStockBounds(): { min: number; max: number } {
