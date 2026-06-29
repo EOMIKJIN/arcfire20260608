@@ -15,7 +15,7 @@ import {
   resolveQuestMissionOfferState,
 } from '../missions/tavernMissionBoard';
 
-export type PlanetHubDialogCandidateSource = 'governor' | 'orbit_captain' | 'copresence';
+export type PlanetHubDialogCandidateSource = 'governor' | 'orbit_captain' | 'copresence' | 'spy_intel';
 
 export type PlanetHubDialogCandidate = {
   sceneId: string;

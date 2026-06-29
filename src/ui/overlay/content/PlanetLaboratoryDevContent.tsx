@@ -13,6 +13,9 @@ import {
   resolveLaboratoryEnvRegenPctDaily,
   resolveLaboratoryEquipmentTierUnlock,
   resolveLaboratoryRdSpeedReductionPct,
+  resolveLaboratorySpyDetectBonusPct,
+  resolveLaboratoryAntiTerrorMitigationPct,
+  resolveLaboratoryDroneInterceptBonusPct,
   startPlanetLaboratoryUpgrade,
   tryCompleteLaboratoryUpgrade,
 } from '../../../game/planetDevelopment/planetLaboratoryDevelopment';
@@ -68,6 +71,21 @@ export const PlanetLaboratoryDevContent = memo(function PlanetLaboratoryDevConte
             <ArcOverlayInfoRow
               label={t('researchLabDev.envRegenLabel')}
               value={t('researchLabDev.envRegenValue', { pct: resolveLaboratoryEnvRegenPctDaily(snapshot.level) })}
+              visualTheme={visualTheme}
+            />
+            <ArcOverlayInfoRow
+              label={t('researchLabDev.counterIntelSpyLabel')}
+              value={t('researchLabDev.counterIntelSpyValue', { pct: resolveLaboratorySpyDetectBonusPct(snapshot.level) })}
+              visualTheme={visualTheme}
+            />
+            <ArcOverlayInfoRow
+              label={t('researchLabDev.counterIntelAntiTerrorLabel')}
+              value={t('researchLabDev.counterIntelAntiTerrorValue', { pct: resolveLaboratoryAntiTerrorMitigationPct(snapshot.level) })}
+              visualTheme={visualTheme}
+            />
+            <ArcOverlayInfoRow
+              label={t('researchLabDev.counterIntelInterceptLabel')}
+              value={t('researchLabDev.counterIntelInterceptValue', { pct: resolveLaboratoryDroneInterceptBonusPct(snapshot.level) })}
               visualTheme={visualTheme}
             />
           </>

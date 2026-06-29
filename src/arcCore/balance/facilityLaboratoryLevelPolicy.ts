@@ -29,6 +29,21 @@ export function resolveLaboratoryEnvRegenPctDaily(level: number): number {
   return Math.max(0, Number(n) || 0);
 }
 
+export function resolveLaboratorySpyDetectBonusPct(level: number): number {
+  const n = policy.getLevelRow(level)?.extras.labSpyDetectBonusPct;
+  return Math.max(0, Math.min(100, Number(n) || 0));
+}
+
+export function resolveLaboratoryAntiTerrorMitigationPct(level: number): number {
+  const n = policy.getLevelRow(level)?.extras.labAntiTerrorMitigationPct;
+  return Math.max(0, Math.min(75, Number(n) || 0));
+}
+
+export function resolveLaboratoryDroneInterceptBonusPct(level: number): number {
+  const n = policy.getLevelRow(level)?.extras.labDroneInterceptBonusPct;
+  return Math.max(0, Math.min(40, Number(n) || 0));
+}
+
 /** v2.0 §5-3 — R&D 기본 시간에 연구소 레벨 보정 곱적용 */
 export function getEffectiveRdTimeHours(baseHours: number, laboratoryLevel: number): number {
   const bonus = resolveLaboratoryRdSpeedReductionPct(laboratoryLevel) / 100;

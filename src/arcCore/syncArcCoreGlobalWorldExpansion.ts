@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { usePlayerStore } from '../store/playerStore';
 import { useWorldStore } from '../store/worldStore';
+import { deactivateRemovedSynthFrontierEconomies } from './economy/synthFrontierConvoyTradeBridge';
 import { finalizeArcCoreSynthFrontierUnlock } from './worldExpansionSynthColonization';
 import { persistArcCoreDailyUnlockRecord } from './arcCoreDailyUnlockVerification';
 import {
@@ -89,6 +90,9 @@ export async function syncArcCoreGlobalWorldExpansion(
 
   const { added, removed } = world.reconcileGlobalSynthUnlocks(targetSynthIds);
   ensurePlayerNotOnRemovedSystems(removed);
+  if (removed.length > 0) {
+    deactivateRemovedSynthFrontierEconomies(removed);
+  }
 
   for (const systemId of added) {
     finalizeArcCoreSynthFrontierUnlock(systemId, 'global_schedule');
@@ -156,6 +160,9 @@ export function syncArcCoreGlobalWorldExpansionSync(
   );
   const { added, removed } = world.reconcileGlobalSynthUnlocks(targetSynthIds);
   ensurePlayerNotOnRemovedSystems(removed);
+  if (removed.length > 0) {
+    deactivateRemovedSynthFrontierEconomies(removed);
+  }
   for (const systemId of added) {
     finalizeArcCoreSynthFrontierUnlock(systemId, 'global_schedule');
     void persistArcCoreDailyUnlockRecord(systemId);

@@ -67,6 +67,12 @@ export type ArcCoreCommand =
       shipId: string;
       planetId: string;
       meta?: ArcCoreCommandMeta;
+    }
+  | {
+      type: 'npc_eject_captain_orbit';
+      captainId: string;
+      planetId: string;
+      meta?: ArcCoreCommandMeta;
     };
 
 /**

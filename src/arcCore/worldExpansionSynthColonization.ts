@@ -5,6 +5,7 @@
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
 import { useWorldStore } from '../store/worldStore';
 import { SYNTH_COLONIZATION_MAX_PHASE } from './synthColonizationPhasePolicy';
+import { integrateUnlockedSynthFrontierStatEconomy } from './planetCore/integrateUnlockedSynthFrontierStatEconomy';
 import { dispatchArcCoreSeedTransportForSystem, dispatchArcCoreSystemUnlockNotice } from './worldExpansionUnlockDispatch';
 import type { ArcCoreSystemUnlockKind } from './worldExpansionUnlockDispatch';
 
@@ -25,6 +26,7 @@ export function finalizeArcCoreSynthFrontierUnlock(
   }
 
   useClanWarFoundationStore.getState().seedSynthFrontierNeutralHold(planetId, systemId);
+  integrateUnlockedSynthFrontierStatEconomy();
   dispatchArcCoreSeedTransportForSystem(systemId, 'frontier_system_unlock_orbit_seed');
   dispatchArcCoreSystemUnlockNotice(systemId, kind);
 }

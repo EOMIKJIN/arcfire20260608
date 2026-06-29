@@ -6,6 +6,10 @@ import type { Planet, StarSystem } from '../types';
 import { useWorldStore } from './worldStore';
 import type { PlanetCoreMetricsDetail, PlanetMasterBalanceDetail, PlanetCoreStatOpsTrendDetail } from './planetCoreMetricTypes';
 import { planetPgpStorageKey } from '../world/planetPgpModel';
+import {
+  isLegacyFlatCoreSeed,
+  resolvePlanetGenesisCoreGauge,
+} from '../arcCore/planetResource/planetResourceEcosystemPolicy';
 
 const STORAGE_KEY = 'arcfire_planet_core_runtime_v1';
 
@@ -235,6 +239,31 @@ async function persistStoragePayload(state: {
   }
 }
 
+function applyGenesisCoreSeed(
+  planetId: string,
+  runtime: PlanetCoreRuntime,
+  stored: PlanetCoreRuntime | undefined,
+): PlanetCoreRuntime {
+  if (stored && !isLegacyFlatCoreSeed(stored)) {
+    return runtime;
+  }
+  const genesis = resolvePlanetGenesisCoreGauge(planetId);
+  if (
+    runtime.resource === genesis.resource
+    && runtime.population === genesis.population
+    && runtime.defense === genesis.defense
+    && runtime.technology === genesis.technology
+    && runtime.environment === genesis.environment
+  ) {
+    return runtime;
+  }
+  return {
+    ...runtime,
+    ...genesis,
+    updatedAt: Date.now(),
+  };
+}
+
 function mergeWorldWithDisk(
   systems: Record<string, StarSystem>,
   fromDisk: Record<string, PlanetCoreRuntime>,
@@ -245,17 +274,20 @@ function mergeWorldWithDisk(
       const stored = fromDisk[planet.id];
       const baseline = planetCsvBaselineToRuntime(planet);
       if (/^synth_\d{3}_p$/.test(planet.id)) {
-        next[planet.id] = stored
+        const merged = stored
           ? {
               ...baseline,
+              ...stored,
               pgp: stored.pgp,
               detail: stored.detail,
               updatedAt: stored.updatedAt,
             }
           : baseline;
+        next[planet.id] = applyGenesisCoreSeed(planet.id, merged, stored);
         continue;
       }
-      next[planet.id] = stored ?? baseline;
+      const merged = stored ?? baseline;
+      next[planet.id] = applyGenesisCoreSeed(planet.id, merged, stored);
     }
   }
   return realignStarterPlanetDefenseTechnology(systems, next);
@@ -316,6 +348,8 @@ interface PlanetCoreRuntimeState {
    * 이미 `hydrated`이면 신규 행성 id만 추가한다.
    */
   bootstrapFromWorldAsync: () => Promise<void>;
+  /** 개방 synth·월드 갱신 후 코어 5지표 런타임 동기(일 1회 배치·개방 직후) */
+  ensureUnlockedWorldPlanetsInCoreRuntime: () => number;
   persistPlanetCoreRuntime: () => Promise<void>;
   resetLocalPlanetCoreRuntime: () => Promise<void>;
   getPlanetCoreRuntime: (planetId: string) => PlanetCoreRuntime | undefined;
@@ -378,6 +412,52 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
       markPlanetCorePersistDirty();
       scheduleDeferredLegacyPlanetDevMigration(true, get);
     }
+  },
+
+  ensureUnlockedWorldPlanetsInCoreRuntime: () => {
+    if (!get().hydrated) return 0;
+    const world = useWorldStore.getState();
+    const unlockedSynthSystems = new Set(
+      world.unlockedSystemIds.filter((id) => id.startsWith('synth_')),
+    );
+    const prev = get().byPlanetId;
+    const next = { ...prev };
+    let touched = 0;
+    const t = Date.now();
+
+    for (const sys of Object.values(world.systems)) {
+      const isSynthSystem = sys.id.startsWith('synth_');
+      if (isSynthSystem && !unlockedSynthSystems.has(sys.id)) continue;
+
+      for (const planet of sys.planets) {
+        const baseline = planetCsvBaselineToRuntime(planet);
+        const stored = next[planet.id];
+        if (!stored) {
+          next[planet.id] = baseline;
+          touched += 1;
+          continue;
+        }
+        if (
+          isSynthSystem
+          && planet.id.startsWith('synth_')
+          && !stored.detail?.masterBalance
+        ) {
+          next[planet.id] = {
+            ...baseline,
+            pgp: stored.pgp,
+            detail: stored.detail,
+            updatedAt: t,
+          };
+          touched += 1;
+        }
+      }
+    }
+
+    if (touched > 0) {
+      set({ byPlanetId: next });
+      markPlanetCorePersistDirty();
+    }
+    return touched;
   },
 
   persistPlanetCoreRuntime: async () => {

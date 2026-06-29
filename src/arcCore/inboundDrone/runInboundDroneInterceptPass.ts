@@ -12,6 +12,9 @@ import {
   resolveDefenseSatelliteOrbitXY,
 } from '../../worldObjects/planetWorldObjectOrbit';
 import type { ArcInboundDrone } from '../../store/arcInboundDroneStore';
+import { useArcNpcTrafficStore } from '../../store/arcNpcTrafficStore';
+import { resolveArcCoreSpyTacticalBundleAtPlanet } from '../spy/resolveArcCoreSpyTacticalBundleAtPlanet';
+import { resolvePlanetCounterIntelBonuses } from '../../game/resolvePlanetCounterIntelBonuses';
 import { resolveInboundDroneScreenXY } from './inboundDroneKinematics';
 import { leakFractionFromInterceptHitPct } from './resolveInboundDroneStrikeLeak';
 import type { WorldObject } from '../../worldObjects';
@@ -81,6 +84,11 @@ export function runInboundDroneInterceptPass(
   const satellites = listPlanetDefenseSatellites(planetId);
   if (satellites.length === 0) return;
 
+  const counterIntel = resolvePlanetCounterIntelBonuses(planetId);
+  const spyBundle = resolveArcCoreSpyTacticalBundleAtPlanet(
+    planetId,
+    useArcNpcTrafficStore.getState().ships,
+  );
   const orbitClockMs = readPlanetOrbitClockMs();
 
   for (const drone of drones) {
@@ -94,14 +102,24 @@ export function runInboundDroneInterceptPass(
       continue;
     }
 
-    const leak = leakFractionFromInterceptHitPct(zone.hitPct);
+    const effectiveHitPct = Math.max(
+      5,
+      Math.min(
+        99,
+        zone.hitPct
+          + counterIntel.droneInterceptBonusPct
+          - spyBundle.droneGuidanceAccuracyPenaltyPct,
+      ),
+    );
+
+    const leak = leakFractionFromInterceptHitPct(effectiveHitPct);
     drone.strikeLeakMul = Math.min(drone.strikeLeakMul ?? 1, leak);
 
     drone.defenseZoneDwellSec = (drone.defenseZoneDwellSec ?? 0) + wallDeltaSec;
     if (drone.defenseZoneDwellSec < zone.requiredDwellSec) continue;
 
     const roll = Math.random() * 100;
-    if (roll < zone.hitPct) {
+    if (roll < effectiveHitPct) {
       drone.phase = 'destroyed';
     }
     drone.defenseZoneDwellSec = 0;

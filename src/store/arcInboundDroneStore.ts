@@ -20,6 +20,10 @@ export interface ArcInboundDrone {
   defenseZoneDwellSec?: number;
   /** 방어구 통과 중 최소 누수율(0.05..1) — impact 시 스탯 intensityMul */
   strikeLeakMul?: number;
+  /** 스파이 유도 — impact intensity 배율 (spawn 시 스냅샷) */
+  spyStrikeDamageMul?: number;
+  /** 스파이 유도 — 요격 전 최소 누수율 하한 */
+  spyMinStrikeLeakMul?: number;
   /** 요격/충돌 시점(벽시계 sec) — 트레일 페이드 동안 스냅샷 유지 */
   trailEndWallSec?: number;
 }

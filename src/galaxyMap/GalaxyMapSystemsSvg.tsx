@@ -15,12 +15,16 @@ const NODE_R_CURRENT = LAYOUT.map_node_radius_start;
 const LOCK_LINE = '#526483';
 const GAME_LINE_DIM = 'rgba(255,255,255,0.22)';
 const GAME_LINE_HI = 'rgba(255,255,255,0.85)';
+/** 선택 성계까지 최단 이동 경로 미리보기 */
+const ROUTE_PREVIEW_ORANGE = '#FF9A3C';
 
 export type GalaxyMapSystemsSvgProps = {
   systems: StarSystem[];
   systemById: Record<string, StarSystem>;
   currentId: string;
   selectedId: string;
+  /** current→selected BFS 최단 경로(성계 id). 2개 미만이면 미표시 */
+  routePreviewSystemIds?: readonly string[];
   visitedIds: string[];
   reachableIds: string[];
   unlockedIds: string[];
@@ -43,6 +47,7 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
   systemById,
   currentId,
   selectedId,
+  routePreviewSystemIds = [],
   visitedIds,
   reachableIds,
   unlockedIds,
@@ -90,6 +95,28 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
 
     return batchGalaxyMapConnectionPaths(segments);
   }, [systems, systemById, currentId, unlockedSet, reachableSet, toScreen]);
+
+  const routePreviewLines = useMemo(() => {
+    if (routePreviewSystemIds.length < 2) return [];
+    const segments: GalaxyMapEdgeSegment[] = [];
+    for (let i = 0; i < routePreviewSystemIds.length - 1; i += 1) {
+      const a = systemById[routePreviewSystemIds[i]!];
+      const b = systemById[routePreviewSystemIds[i + 1]!];
+      if (!a || !b) continue;
+      const posA = toScreen(a.position);
+      const posB = toScreen(b.position);
+      segments.push({
+        x1: posA.x,
+        y1: posA.y,
+        x2: posB.x,
+        y2: posB.y,
+        stroke: ROUTE_PREVIEW_ORANGE,
+        strokeWidth: 2.75,
+        opacity: 1,
+      });
+    }
+    return batchGalaxyMapConnectionPaths(segments);
+  }, [routePreviewSystemIds, systemById, toScreen]);
 
   const nodes = useMemo(() => {
     return systems.map((sys) => {
@@ -213,6 +240,18 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
           strokeWidth={line.strokeWidth}
           opacity={line.opacity}
           fill="none"
+        />
+      ))}
+      {routePreviewLines.map((line) => (
+        <Path
+          key={line.key}
+          d={line.d}
+          stroke={line.stroke}
+          strokeWidth={line.strokeWidth}
+          opacity={line.opacity}
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       ))}
       {nodes}

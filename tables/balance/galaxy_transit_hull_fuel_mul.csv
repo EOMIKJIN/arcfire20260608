@@ -1,0 +1,12 @@
+hullTierKey,fuelCostMul,notesKo
+frigate_default,1.00,기본 지급 프리깃·레인저
+frigate_upgraded,1.08,프리깃 Mk.II
+destroyer,1.28,구축함
+destroyer_upgraded,1.38,구축함 Mk.II
+cruiser,1.58,순양함
+cruiser_upgraded,1.68,순양함 Mk.II
+battlecruiser,1.88,순양전함
+battlecruiser_max,2.02,순양전함 완성형
+dreadnought,2.28,드레드노트
+super_capital,2.55,슈퍼캐피털
+apex_legend,2.85,아펙스 레전드

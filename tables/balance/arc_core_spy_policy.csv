@@ -1,0 +1,12 @@
+key,value,notesKo
+enabled,1,아크코어 스파이 백엔드 전술 활성
+spy_pool_fraction_pct,1,전투 비참여 NPC 함장 중 스파이 태그 비율(%)
+spy_pulse_interval_sec,8,스파이 1명 체류 시 T 피해 펄스 주기(초) — 드론 impact 주기 대응
+spy_pulse_intensity_per_spy,1,펄스당 intensityMul × 활성 스파이 수
+player_planet_only,1,1=플레이어 currentPlanetId 에만 백엔드 피해
+informant_captain_id,npc_cpt_tavern_ret_01,행성 허브 정보원 함장(한로 크레인)
+informant_dialog_scene_id,arc_core_spy_intel_alert,스파이 감지 인게임 대화 씬 id
+spy_intel_notify_pct,100,스파이 활동 시작 시 정보원 알림 확률(%). 향후 감지 스킬 가산
+spy_intel_auto_open_dialog,1,1=허브 체류 중 활동 시작 시 대화 자동 오픈
+spy_drone_role_fraction_pct,40,스파이 풀 중 드론 유도 전문 비율(%). 나머지=백도어 테러
+spy_drone_link_enabled,1,1=활성 드론 유도 스파이 → inbound 드론 정확도·피해 연동

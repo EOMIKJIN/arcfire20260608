@@ -9,8 +9,9 @@ dev_trade_port,무역소,"SKU·convoy 보급 무역소
 Lv15 수수료 3%·재고 1.5만
 고급무기 +55·보급 1.65배",true,dev_trade_port,500,v3.2 §8 무역소 L1~15
 dev_research_lab,과학 연구소,"R&D·장비분석·E 회복
-Lv15 연구 60% 단축·전 티어
-일일 E +6%",true,dev_research_lab,2000,v3.2 §8 연구소 L1~15
+Lv10 연구 50% 단축·전 티어
+스파이·테러 탐지·대테러 연구(Lv↑)
+일일 E +5%",true,dev_research_lab,2000,v3.2 §8 연구소 L1~15 · counter-intel
 dev_population_dome,인구 거주 돔,"바운티·용병 선술집
 Lv15 슬롯 35·평판 +45%
 전설 용병·4시간 갱신",true,dev_population_dome,800,v3.2 §8 선술집 L1~15

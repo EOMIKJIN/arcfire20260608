@@ -13,6 +13,8 @@ import type { PlanetCoreGaugeView } from '../../store/planetCoreRuntimeStore';
 import { usePlanetDevelopmentAccStore } from '../../store/planetDevelopmentAccStore';
 import { rebalanceFromRuntimeRecord } from './planetDiversityRebalance';
 import { collectPlanetInteractionSignals, type PlanetInteractionSignals } from './planetInteractionSignals';
+import { resolvePlanetCoreStatAuthority } from '../balance/planetCoreStatAuthorityPolicy';
+import { resolvePlanetCoreStatAuthorityContext } from '../planetCore/resolvePlanetCoreStatContext';
 
 /** 현재 성계·연결 성계에서 채울 행성 수 상한 */
 const SURROUNDING_PLANET_REBALANCE_MAX = 20;
@@ -107,6 +109,10 @@ export function runPlanetEnvironmentDiversityPass(): void {
   const devStore = usePlanetDevelopmentAccStore.getState();
   const updates: Record<string, PlanetCoreGaugeView> = {};
   for (const planetId of planetIds) {
+    const authority = resolvePlanetCoreStatAuthority(
+      resolvePlanetCoreStatAuthorityContext(planetId),
+    );
+    if (!authority.environmentDiversity) continue;
     const hit = findPlanetAndSystem(systems, planetId);
     if (!hit) continue;
     const runtime = coreStore.getPlanetCoreRuntime(planetId);

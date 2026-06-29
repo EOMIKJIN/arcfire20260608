@@ -1,3 +1,4 @@
 attack_kind,resource_delta,population_delta,defense_delta,technology_delta,environment_delta,daily_event_cap,enabled,impact_scale,defense_impact_scale,population_impact_scale,technology_impact_scale,notesKo
 arc_inbound_drone_impact,0,-1,-2,-1,0,120,1,0.12,0.012,0.012,0.012,아크코어 드론 외곽 충돌 — D/P/T 미세 반영 · 위성 요격 후 누수분만 intensityMul
+arc_core_spy_infiltration,0,0,0,-1,0,120,1,0.12,,,0.012,아크코어 스파이 백엔드 — T만 미세 반영(드론 technology 스케일 동형)
 planetary_bombardment_stub,0,-3,-4,0,-2,24,0,1,,,,향후 전투/공성 타격(미연동 스텁)

@@ -19,6 +19,8 @@ import {
   resolveEarlyZoneMasterBalanceAdjust,
 } from './resolveEarlyZoneMasterBalanceTarget';
 import { runPlayScenarioEconomyPass } from '../balance/runPlayScenarioEconomyPass';
+import { resolvePlanetCoreStatAuthority } from '../balance/planetCoreStatAuthorityPolicy';
+import { resolvePlanetCoreStatAuthorityContext } from '../planetCore/resolvePlanetCoreStatContext';
 
 export type GlobalPlanetMasterBalancePassOptions = {
   /** 지표당 최대 변화량(0..100). 부트스트랩은 크게, 주기 패스는 작게 */
@@ -46,23 +48,44 @@ type PlanetBalancePatch = {
   masterBalance: PlanetMasterBalanceDetail;
 };
 
+export type GlobalPlanetMasterBalancePassResult = {
+  planetsGaugeUpdated: number;
+  planetsMetaOnly: number;
+  planetsSkippedPlayerAuthority: number;
+};
+
 /**
  * 월드 **전 행성** 마스터 밸런스 동기. `hydrated` 전이면 noop.
+ * Player/Home context — gauge authority는 equilibrium 전용(meta만 갱신).
  */
 export function runGlobalPlanetMasterBalancePass(
   options?: GlobalPlanetMasterBalancePassOptions,
-): void {
+): GlobalPlanetMasterBalancePassResult {
+  const empty: GlobalPlanetMasterBalancePassResult = {
+    planetsGaugeUpdated: 0,
+    planetsMetaOnly: 0,
+    planetsSkippedPlayerAuthority: 0,
+  };
   const coreStore = usePlanetCoreRuntimeStore.getState();
-  if (!coreStore.hydrated) return;
+  if (!coreStore.hydrated) return empty;
 
   const defaultMaxDelta = options?.maxDeltaPerStat;
   const systems = useWorldStore.getState().systems;
   const updates: Record<string, PlanetBalancePatch> = {};
+  let planetsGaugeUpdated = 0;
+  let planetsMetaOnly = 0;
+  let planetsSkippedPlayerAuthority = 0;
 
   for (const sys of Object.values(systems)) {
     for (const planet of sys.planets) {
       const runtime = coreStore.getPlanetCoreRuntime(planet.id);
       if (!runtime) continue;
+
+      const authorityContext = resolvePlanetCoreStatAuthorityContext(planet.id);
+      const authority = resolvePlanetCoreStatAuthority(authorityContext);
+      if (!authority.masterBalanceGauge) {
+        planetsSkippedPlayerAuthority += 1;
+      }
 
       const baseDetail = getPlanetMasterBalanceDetailForPlanet(planet.id, sys);
       const masterBalance = {
@@ -77,20 +100,23 @@ export function runGlobalPlanetMasterBalancePass(
       );
       const current = planetCoreRuntimeToGaugeView(runtime);
       const effectiveMaxDelta = defaultMaxDelta ?? maxDelta;
-      const gauge = nudgeGaugeTowardTargetWithOptionalFloor(
-        current,
-        target,
-        effectiveMaxDelta,
-        gaugeFloorPct,
-      );
+      const gauge = authority.masterBalanceGauge
+        ? nudgeGaugeTowardTargetWithOptionalFloor(
+            current,
+            target,
+            effectiveMaxDelta,
+            gaugeFloorPct,
+          )
+        : current;
 
       const prevBal = runtime.detail?.masterBalance;
       const gaugeChanged =
-        gauge.resource !== current.resource ||
-        gauge.population !== current.population ||
-        gauge.defense !== current.defense ||
-        gauge.technology !== current.technology ||
-        gauge.environment !== current.environment;
+        authority.masterBalanceGauge &&
+        (gauge.resource !== current.resource ||
+          gauge.population !== current.population ||
+          gauge.defense !== current.defense ||
+          gauge.technology !== current.technology ||
+          gauge.environment !== current.environment);
       const metaChanged =
         !prevBal ||
         prevBal.zoneIndex !== masterBalance.zoneIndex ||
@@ -98,6 +124,8 @@ export function runGlobalPlanetMasterBalancePass(
 
       if (gaugeChanged || metaChanged) {
         updates[planet.id] = { gauge, masterBalance };
+        if (gaugeChanged) planetsGaugeUpdated += 1;
+        else if (metaChanged) planetsMetaOnly += 1;
       }
     }
   }
@@ -106,4 +134,9 @@ export function runGlobalPlanetMasterBalancePass(
     coreStore.patchPlanetMasterBalanceBulk(updates);
   }
   runPlayScenarioEconomyPass(false);
+  return {
+    planetsGaugeUpdated,
+    planetsMetaOnly,
+    planetsSkippedPlayerAuthority,
+  };
 }

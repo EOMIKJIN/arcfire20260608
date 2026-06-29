@@ -1,0 +1,7 @@
+key,value,notesKo
+base_credits_per_hop,50,인접 1홉 기준 연료비(초기 함선·reference 거리)
+min_credits_per_hop,50,홉당 최소 연료비(CR)
+reference_hop_distance,0.18,맵 좌표(0~1) 기준 1홉 거리 정규화
+distance_mul_min,0.85,짧은 간선 거리 배율 하한
+distance_mul_max,2.25,긴 간선 거리 배율 상한
+fuel_efficiency_stat_cap_pct,50,스킬 fuel_efficiency 합산 상한(향후)

@@ -24,6 +24,8 @@ import { runLaboratoryRdSpeedPass } from '../planetFacility/runLaboratoryRdSpeed
 import { runTavernBountyRefreshPass } from '../planetFacility/runTavernBountyRefreshPass';
 import { runArcCoreEconomyLearningDailyPass } from '../learning/runArcCoreEconomyLearningDailyPass';
 import { runPlanetFiscalBalanceClosedLoopPass } from '../economy/runPlanetFiscalBalanceClosedLoopPass';
+import { runPlanetMineralLedgerDailyPass } from '../planetResource/runPlanetMineralLedgerDailyPass';
+import { integrateUnlockedSynthFrontierStatEconomyAsync } from '../planetCore/integrateUnlockedSynthFrontierStatEconomy';
 import { pushArcCoreDailyKpiToRtdbIfDue } from '../learning/pushArcCoreDailyKpiToRtdb';
 import { isArcCoreRtdbAvailableForSession } from '../../firebase/rtdbRefs';
 import { getCurrentUser } from '../../firebase/auth';
@@ -55,6 +57,7 @@ export type ArcCoreDailyOpsBatchResult = {
   synthColonizationAdvance: boolean;
   economyLearning: boolean;
   planetFiscalClosedLoop: boolean;
+  planetMineralLedger: boolean;
 };
 
 /**
@@ -85,6 +88,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     synthColonizationAdvance: false,
     economyLearning: false,
     planetFiscalClosedLoop: false,
+    planetMineralLedger: false,
   };
 
   if (!usePlanetCoreRuntimeStore.getState().hydrated) {
@@ -93,10 +97,19 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
 
   beginPlanetCoreStatOpsTrendSnapshot();
 
+  const colonizationEarly = runSynthColonizationAdvancePass();
+  result.synthColonizationAdvance = colonizationEarly.advanced > 0;
+  if (policy.runWorldExpansionUnlock) {
+    result.worldExpansionUnlock = tryArcCoreWorldDailyUnlock();
+  }
+  await integrateUnlockedSynthFrontierStatEconomyAsync();
+
   if (policy.runPlanetEnergyPass) {
     runPlanetEnergyCorePass();
     result.planetEnergy = true;
   }
+  const mineralLedger = runPlanetMineralLedgerDailyPass();
+  result.planetMineralLedger = mineralLedger.ran;
   if (policy.runPlanetEnvironmentPass) {
     runPlanetEnvironmentDiversityPass();
     result.planetEnvironment = true;
@@ -126,15 +139,6 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     const engageAdjust = await runIntegratedEngageHpAdjustPass();
     result.integratedEngageHpAdjust = engageAdjust.ran;
   }
-  if (policy.runWorldExpansionUnlock) {
-    const colonization = runSynthColonizationAdvancePass();
-    result.synthColonizationAdvance = colonization.advanced > 0;
-    result.worldExpansionUnlock = tryArcCoreWorldDailyUnlock();
-  } else {
-    const colonization = runSynthColonizationAdvancePass();
-    result.synthColonizationAdvance = colonization.advanced > 0;
-  }
-
   const convoyDaily = await runArcCoreConvoyDailySettlementPass();
   result.convoyDailySettlement = convoyDaily.ran;
 

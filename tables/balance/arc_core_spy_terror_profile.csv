@@ -1,0 +1,5 @@
+profile_id,role_id,enabled,weight_pct,intel_notify_weight,backdoor_pulse_mul,drone_guidance_accuracy_pct,drone_strike_damage_mul,drone_leak_boost_pct,label_ko,notesKo
+terror_backdoor_standard,backdoor_tech_terror,1,70,1.0,1.0,0,1.0,0,표준 백도어 침투,기본 T 침식 프로필
+terror_backdoor_deep,backdoor_tech_terror,1,30,1.2,1.35,0,1.0,0,심층 백도어 침투,강화 T 펄스 · 감지 가중
+terror_drone_mark_standard,drone_guidance_specialist,1,75,0.9,0,12,1.25,10,드론 유도 표준,요격 -12%p · 피해 ×1.25
+terror_drone_mark_elite,drone_guidance_specialist,1,25,1.0,0,18,1.4,14,드론 유도 정예,요격 -18%p · 피해 ×1.4

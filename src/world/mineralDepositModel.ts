@@ -6,6 +6,7 @@
  * - 지역에 속한 행성(`mineral_region_members`)에 **균등 분배**한다.
  *
  * 추후: 행성 타입·군집 속성별 가중(`planetMineralWeight` 등)을 곱해 같은 테이블 파이프라인에서 확장.
+ * 행성별 `depositWeightMul` — `planet_resource_genesis.csv` + 런타임 R (`resolvePlanetDepositWeightMul`).
  * 전 프로필 집계·지표 반영: `computeGalaxyMineralUniverseStats` + 아크코어 `runPlanetEnergyCorePass`.
  *
  * 로드맵(광물 생성·관리): 현재는 CSV→생성 TS가 정본. 이후에는 **아크코어가 DB(행성 광물 레저)** 를
@@ -32,6 +33,8 @@ import {
   MINERAL_REGIONS_FROM_CSV,
 } from '../data/generated/csvMineralEconomy';
 import { STAR_SYSTEMS } from '../data/systems';
+import { resolvePlanetDepositWeightMul } from '../arcCore/planetResource/planetResourceEcosystemPolicy';
+import { usePlanetCoreRuntimeStore } from '../store/planetCoreRuntimeStore';
 import { getPlanetRecord } from './planetTradePortDb';
 
 const KNOWN_PLANET_IDS = new Set<string>();
@@ -129,9 +132,11 @@ export function buildPlanetMineralDepositIndex(): MineralDepositBuildResult {
 
     const n = planetIds.length;
     for (const planetId of planetIds) {
+      const runtimeR = usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId)?.resource;
+      const depositMul = resolvePlanetDepositWeightMul(planetId, runtimeR);
       const shareOfGalaxyByMineral: Record<string, number> = {};
       for (const m of mineralIds) {
-        shareOfGalaxyByMineral[m] = (share * (mix[m] ?? 0)) / n;
+        shareOfGalaxyByMineral[m] = ((share * (mix[m] ?? 0)) / n) * depositMul;
       }
       profiles.set(planetId, {
         planetId,

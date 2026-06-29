@@ -6,6 +6,10 @@ import { resolveFacilityStatNudgesForLevel } from '../balance/facilityUpgradeLev
 import type { PlanetCoreGaugeView } from '../../store/planetCoreRuntimeStore';
 import { listInstalledFacilityLevels } from '../../game/planetDevelopment/planetFacilityLevelResolver';
 import { resolvePlanetCoreStatEquilibriumPolicy } from '../balance/planetCoreStatEquilibriumPolicy';
+import {
+  resolvePlanetGenesisResourcePct,
+  resolvePlanetResourceEcosystemPolicy,
+} from '../planetResource/planetResourceEcosystemPolicy';
 
 const STAT_KEYS = ['resource', 'population', 'defense', 'technology', 'environment'] as const;
 const MAX_DEV_LEVEL = 15;
@@ -33,6 +37,10 @@ function addGauge(a: PlanetDevStatWeightGauge, b: PlanetDevStatWeightGauge): Pla
     technology: a.technology + b.technology,
     environment: a.environment + b.environment,
   };
+}
+
+function clamp100(n: number): number {
+  return Math.max(0, Math.min(100, Math.round(Number.isFinite(n) ? n : 0)));
 }
 
 /** facility_upgrade_levels.csv L15 × 5시설 — 스탯별 최대 기여 가중치 */
@@ -72,12 +80,16 @@ export function computePlanetDevelopmentStatTargets(
   baseline?: Partial<PlanetCoreGaugeView>,
 ): PlanetCoreGaugeView {
   const policy = resolvePlanetCoreStatEquilibriumPolicy();
+  const eco = resolvePlanetResourceEcosystemPolicy();
   const base = policy.baselineStatPct;
   const targetMax = policy.fullDevTargetPct;
   const span = Math.max(0, targetMax - base);
+  const genesisResource = clamp100(baseline?.resource ?? resolvePlanetGenesisResourcePct(planetId));
+  const resourceTargetMax = eco.resourceFullDevTargetPct;
+  const resourceSpan = Math.max(0, resourceTargetMax - genesisResource);
 
   const b: PlanetCoreGaugeView = {
-    resource: baseline?.resource ?? base,
+    resource: genesisResource,
     population: baseline?.population ?? base,
     defense: baseline?.defense ?? base,
     technology: baseline?.technology ?? base,
@@ -88,7 +100,9 @@ export function computePlanetDevelopmentStatTargets(
   const maxW = resolveMaxPlanetDevelopmentStatWeights();
 
   return {
-    resource: Math.round(b.resource + span * ratio(weights.resource, maxW.resource)),
+    resource: Math.round(
+      Math.min(resourceTargetMax, genesisResource + resourceSpan * ratio(weights.resource, maxW.resource)),
+    ),
     population: Math.round(b.population + span * ratio(weights.population, maxW.population)),
     defense: Math.round(b.defense + span * ratio(weights.defense, maxW.defense)),
     technology: Math.round(b.technology + span * ratio(weights.technology, maxW.technology)),

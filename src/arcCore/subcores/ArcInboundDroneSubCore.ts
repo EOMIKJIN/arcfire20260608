@@ -7,14 +7,17 @@ import {
 } from '../inboundDrone/arcInboundDroneHubBridge';
 import { runInboundDroneInterceptPass } from '../inboundDrone/runInboundDroneInterceptPass';
 import { readPlanetOrbitClockMs } from '../orbitClockMsBridge';
-import { resolveArcInboundDroneStrikeLeakMul } from '../inboundDrone/resolveInboundDroneStrikeLeak';
+import { resolveArcInboundDroneImpactIntensityMul } from '../inboundDrone/resolveArcInboundDroneImpactIntensityMul';
+import { leakFractionFromInterceptHitPct } from '../inboundDrone/resolveInboundDroneStrikeLeak';
+import { resolveArcCoreSpyTacticalBundleAtPlanet } from '../spy/resolveArcCoreSpyTacticalBundleAtPlanet';
+import { resolveArcCoreSpyPolicy } from '../spy/arcCoreSpyPolicy';
 import { applyPlanetAttackCoreDamage } from '../planetAttack/applyPlanetAttackCoreDamage';
 import { PLANET_ATTACK_KIND } from '../planetAttack/planetAttackKind';
 import { usePlayerStore } from '../../store/playerStore';
-import {
-  useArcInboundDroneStore,
+import { useArcInboundDroneStore,
   type ArcInboundDrone,
 } from '../../store/arcInboundDroneStore';
+import { useArcNpcTrafficStore } from '../../store/arcNpcTrafficStore';
 
 type PendingSpawn = {
   dueSec: number;
@@ -214,7 +217,7 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
           planetId: d.planetId,
           attackKind: PLANET_ATTACK_KIND.ARC_INBOUND_DRONE_IMPACT,
           sourceId: d.id,
-          intensityMul: resolveArcInboundDroneStrikeLeakMul(d),
+          intensityMul: resolveArcInboundDroneImpactIntensityMul(d, d.planetId),
         });
       }
     }
@@ -283,6 +286,18 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
     elapsedWallSec: number,
   ): void {
     campaign.droneSeq += 1;
+    const arcShips = useArcNpcTrafficStore.getState().ships;
+    const spyBundle = resolveArcCoreSpyTacticalBundleAtPlanet(planetId, arcShips);
+    let spyMinStrikeLeakMul: number | undefined;
+    let spyStrikeDamageMul: number | undefined;
+    const spyPolicy = resolveArcCoreSpyPolicy();
+    if (spyPolicy.spyDroneLinkEnabled && spyBundle.droneGuidanceSpyCount > 0) {
+      spyStrikeDamageMul = spyBundle.droneStrikeDamageMul;
+      if (spyBundle.droneLeakBoostPct > 0) {
+        const baselineHit = Math.max(5, 55 - spyBundle.droneGuidanceAccuracyPenaltyPct);
+        spyMinStrikeLeakMul = leakFractionFromInterceptHitPct(baselineHit);
+      }
+    }
     const drone: ArcInboundDrone = {
       id: `arc_inbound_drone_${planetId}_${campaign.droneSeq}`,
       planetId,
@@ -295,6 +310,8 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
       maxHp: policy.droneHp,
       phase: 'inbound',
       defenseZoneDwellSec: 0,
+      spyStrikeDamageMul,
+      spyMinStrikeLeakMul,
     };
     campaign.drones.push(drone);
   }

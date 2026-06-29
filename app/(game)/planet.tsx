@@ -2,7 +2,7 @@
 // 아크파이어 온라인 - 행성 허브 화면
 // ============================================================
 
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import {
   View, Text, TouchableOpacity,
   ScrollView, useWindowDimensions,
@@ -125,6 +125,7 @@ import {
 import { resolvePlanetHubCoPresenceInteractionHints } from '../../src/arcCore/observation/resolvePlanetHubCoPresenceInteractionHints';
 import { isArcCorePricedMineral } from '../../src/arcCore/economy/mineralTradePricing';
 import { resolvePlanetDisplayPrimaryMineralId } from '../../src/arcCore/economy/mineralMiningDropPolicy';
+import { resolveOrbitMiningSessionMaxForPlanet } from '../../src/arcCore/planetResource/planetResourceEcosystemPolicy';
 import { ORBIT_MINING_CYCLE_MS, ORBIT_MINING_REWARD_GOOD_ID } from '../../src/game/miningConfig';
 import { planetHasMineableOrbitalDeposits } from '../../src/world/mineralDepositModel';
 import { listPlanetWorldObjects } from '../../src/worldObjects';
@@ -159,6 +160,16 @@ import {
   resolvePlanetHubNpcDialogTarget,
   resolvePlanetHubNpcTalkCompletionActions,
 } from '../../src/game/planetHubNpcDialog';
+import {
+  getArcCoreSpyIntelAlertRevision,
+  subscribeArcCoreSpyIntelAlert,
+} from '../../src/arcCore/spy/arcCoreSpyIntelAlertStore';
+import { resolveArcCoreSpyPolicy } from '../../src/arcCore/spy/arcCoreSpyPolicy';
+import {
+  hasUnacknowledgedPlanetHubSpyIntelAlert,
+  presentPlanetHubSpyIntelDialog,
+  resolvePlanetHubSpyIntelDialogTarget,
+} from '../../src/game/planetHubSpyIntelDialog';
 import { formatSalvageLootLabel, pickSalvageLootItemId } from '../../src/game/planetSalvageSearch';
 import { NearbyShipInfoPanel, PlanetStageBackground } from '../../src/components/planet/planetHub/planetHubSubcomponents';
 import { PlanetMainPlanetInfoTapOverlay } from '../../src/components/planet/PlanetMainPlanetInfoTapOverlay';
@@ -220,6 +231,11 @@ export default function PlanetScreen() {
     const ack = s.player?.flags.acknowledgedHubDialogKeys ?? [];
     return `${seen.length}|${ack.length}|${ack[ack.length - 1] ?? ''}`;
   });
+  const spyIntelAlertRev = useSyncExternalStore(
+    subscribeArcCoreSpyIntelAlert,
+    getArcCoreSpyIntelAlertRevision,
+    getArcCoreSpyIntelAlertRevision,
+  );
   const mainStageVertical = useMemo(
     () =>
       getPlanetMainStageVerticalMetrics({
@@ -635,10 +651,6 @@ export default function PlanetScreen() {
       && planetWorldObjects.some((object) => object.kind === 'asteroid')),
     [planet, planetWorldObjects],
   );
-  const activeMineableAsteroid = useMemo(
-    () => planetWorldObjects.find((object) => object.kind === 'asteroid') ?? null,
-    [planetWorldObjects],
-  );
   const miningCycleProgressPct = useMemo(() => {
     if (miningSession.status !== 'running' || !miningSession.lastTickAtMs) return 0;
     const elapsed = Math.max(0, miningUiNowMs - miningSession.lastTickAtMs);
@@ -724,9 +736,14 @@ export default function PlanetScreen() {
     },
     [addInventoryItem, recordOrbitalMiningDelivery, setMenuBadge],
   );
+  const resolveMiningSessionMaxUnits = useCallback((planetId: string) => {
+    const runtime = usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId);
+    return resolveOrbitMiningSessionMaxForPlanet(planetId, runtime?.resource);
+  }, []);
   useMiningDriver({
     enabled: miningDriverEnabled,
     sessionRef: miningSessionRef,
+    resolveSessionMaxUnits: resolveMiningSessionMaxUnits,
     applySession: setMiningSession,
     applyUiNowMs: setMiningUiNowMs,
     onGrant: handleMiningGrant,
@@ -861,10 +878,23 @@ export default function PlanetScreen() {
   useEffect(() => () => resetPlanetHubCoPresenceObservationThrottle(), []);
   const planetHubNpcDialogTarget = useMemo(() => {
     if (!planet?.id) return null;
+    const spyIntel = resolvePlanetHubSpyIntelDialogTarget(planet.id);
+    if (spyIntel) return spyIntel;
     return resolvePlanetHubNpcDialogTarget(planet.id, planetHubCaptainIds, planetHubCoPresenceHints);
-  }, [planet?.id, planetHubCaptainIds, planetHubCoPresenceHints, hubDialogBadgeRev, missionProgressRev]);
+  }, [planet?.id, planetHubCaptainIds, planetHubCoPresenceHints, hubDialogBadgeRev, missionProgressRev, spyIntelAlertRev]);
+  useEffect(() => {
+    if (!planet?.id) return;
+    if (!resolveArcCoreSpyPolicy().spyIntelAutoOpenDialog) return;
+    if (isIngameDialogActive()) return;
+    if (!hasUnacknowledgedPlanetHubSpyIntelAlert(planet.id)) return;
+    presentPlanetHubSpyIntelDialog(planet.id);
+  }, [planet?.id, spyIntelAlertRev, hubDialogBadgeRev]);
   const openPlanetHubNpcDialog = useCallback(() => {
     if (isIngameDialogActive() || !planet) return;
+    if (hasUnacknowledgedPlanetHubSpyIntelAlert(planet.id)) {
+      presentPlanetHubSpyIntelDialog(planet.id);
+      return;
+    }
     const target = planetHubNpcDialogTarget;
     const sceneId = target?.sceneId
       ?? resolvePlanetHubNpcDialogSceneId(planet.id, planetHubCaptainIds);

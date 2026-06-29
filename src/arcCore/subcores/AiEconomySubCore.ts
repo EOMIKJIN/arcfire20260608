@@ -13,10 +13,12 @@ import {
   resetTradePortItemOverrides,
 } from '../../world/planetTradePortDb';
 import { runPlayScenarioEconomyPass } from '../balance/runPlayScenarioEconomyPass';
+import { integrateUnlockedSynthFrontierStatEconomyAsync } from '../planetCore/integrateUnlockedSynthFrontierStatEconomy';
 import { rehydrateSynthFrontierConvoyTradeFromInstalledPorts } from '../economy/synthFrontierConvoyTradeBridge';
 import { settleArcTransportDwellTrade } from '../economy/runArcTransportTradePass';
 import { useEconomyPriceOverlayStore } from '../economy/economyPriceOverlayStore';
 import { migrateLegacyArcCoreTempBankOnce } from '../economy/migrateLegacyTempBank';
+import { reseedCorruptConvoyFleetEconomyOnce } from '../economy/reseedArcCoreConvoyFleetBank';
 import { useArcCoreTransportFleetBankStore } from '../../store/factionVault/arcCoreTransportFleetBankStore';
 import { useArcCoreVaultStore } from '../../store/factionVault/arcCoreVaultStore';
 import { useBlueTeamSharedVaultStore } from '../../store/factionVault/blueTeamSharedVaultStore';
@@ -44,9 +46,13 @@ export class AiEconomySubCore extends BaseArcSubCore {
           void useArcCoreVaultStore.getState().hydrate().then(() => {
             void useBlueTeamSharedVaultStore.getState().hydrate().then(() => {
               void usePlanetTradeFeeLedgerStore.getState().hydrate().then(() => {
-                void useEconomyPriceOverlayStore.getState().loadAsync().then(() => {
-                  rehydrateSynthFrontierConvoyTradeFromInstalledPorts();
-                  runPlayScenarioEconomyPass(false, { skipCatalog: true });
+                void reseedCorruptConvoyFleetEconomyOnce().then(() => {
+                  void useEconomyPriceOverlayStore.getState().loadAsync().then(() => {
+                    void integrateUnlockedSynthFrontierStatEconomyAsync().then(() => {
+                      rehydrateSynthFrontierConvoyTradeFromInstalledPorts();
+                      runPlayScenarioEconomyPass(false, { skipCatalog: true });
+                    });
+                  });
                 });
               });
             });

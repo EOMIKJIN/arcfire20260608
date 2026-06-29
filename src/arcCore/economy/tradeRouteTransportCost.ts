@@ -39,6 +39,29 @@ export function getTradeRouteMinNetProfitPerUnit(): number {
   return Math.max(0, parseNum(getPolicyKv().get('min_net_profit_per_unit'), 1));
 }
 
+/** 하역 순마진 중 아크코어 금고 귀속 비율(%) — CSV 정본 */
+export function getConvoyNetMarginArcCoreSharePct(): number {
+  return Math.max(0, Math.min(50, parseNum(getPolicyKv().get('convoy_net_margin_arc_core_share_pct'), 10)));
+}
+
+export function getConvoyTransportFuelSharePct(): number {
+  return Math.max(0, Math.min(100, parseNum(getPolicyKv().get('convoy_transport_fuel_share_pct'), 85)));
+}
+
+export function getConvoyTransportOpsSharePct(): number {
+  return Math.max(0, Math.min(100, parseNum(getPolicyKv().get('convoy_transport_ops_share_pct'), 15)));
+}
+
+/** 운송비 지출 txn note — 연료·기타 비용 분해(표시용) */
+export function formatConvoyTransportSpendNote(totalCredits: number): string {
+  const total = Math.max(0, Math.floor(totalCredits));
+  if (total <= 0) return '운송비 0';
+  const fuelPct = getConvoyTransportFuelSharePct();
+  const fuel = Math.floor((total * fuelPct) / 100);
+  const ops = total - fuel;
+  return `연료 ${fuel}·기타 ${ops} cr (합 ${total})`;
+}
+
 /** 공급→수요 1개당 운송비(CR) */
 export function computeTradeRouteTransportCostPerUnit(
   supplyPlanetId: string,

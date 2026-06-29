@@ -24,6 +24,7 @@ import { usePlayerStore } from '../../../store/playerStore';
 import type { ArcNpcTrafficShip } from '../../../store/arcNpcTrafficStore';
 import type { ArcInboundDrone } from '../../../store/arcInboundDroneStore';
 import { PlanetCorePortraitWithTempAdminOverride } from '../PlanetCorePortraitWithTempAdminOverride';
+import { PlanetAtmosphereBoundaryRing } from '../PlanetAtmosphereBoundaryRing';
 import { PlanetHubOrbitSkiaLayer } from '../PlanetHubOrbitSkiaLayer';
 import { PlanetHubInboundDroneLayer } from '../PlanetHubInboundDroneLayer';
 import { hubInboundDroneDodgeHitFxRef } from '../../../arcCore/inboundDrone/hubInboundDroneDodgeBridge';
@@ -54,7 +55,6 @@ import {
   INFO_LOG_VIEWPORT_ROWS,
   MAX_WORLD_OBJECT_MARKS,
   MINING_GUIDE_LINE_RUN_PX,
-  NPC_ORBIT_CYCLE_MS,
   PLANET_CORE_GAUGE_SPEC,
   PLANET_HUB_CAPITAL_COMBAT_GRAY,
   PLANET_MAIN_COMBAT_LAYER_HEIGHT_SCALE_Y,
@@ -184,7 +184,12 @@ export function PlanetDot({
   const innerSize = size * 0.7;
 
   return (
-    <View style={[styles.planetOuter, { width: size, height: size, borderRadius: size / 2, borderColor: color }]}>
+    <View
+      style={[
+        styles.planetOuter,
+        { width: size, height: size, borderRadius: size / 2 },
+      ]}
+    >
       {coreGauges ? (
         <View style={styles.planetPortraitInnerWrap} pointerEvents="none">
           <View
@@ -230,6 +235,7 @@ export function PlanetDot({
           ))}
         </View>
       ) : null}
+      <PlanetAtmosphereBoundaryRing size={size} borderColor={color} borderWidth={2} />
     </View>
   );
 }
@@ -777,7 +783,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                   ]}
                   pointerEvents="none"
                 >
-                  <PlanetPlayerBlueOrbitMark orbitClockMs={orbitClockMs} />
+                  <PlanetPlayerBlueOrbitMark orbitClockMs={orbitClockMs} npcOrbitCycleMs={npcOrbitCycleMs} />
                 </View>
               ) : null}
             </View>
@@ -1052,8 +1058,10 @@ const PlanetTableOrbitMarks = memo(function PlanetTableOrbitMarks({
 
 const PlanetPlayerBlueOrbitMark = memo(function PlanetPlayerBlueOrbitMark({
   orbitClockMs,
+  npcOrbitCycleMs,
 }: {
   orbitClockMs: SharedValue<number>;
+  npcOrbitCycleMs: number;
 }) {
   const playerNick = usePlayerStore((s) => s.player?.nickname ?? '');
   const playerNickLabel = useMemo(() => {
@@ -1062,9 +1070,9 @@ const PlanetPlayerBlueOrbitMark = memo(function PlanetPlayerBlueOrbitMark({
   }, [playerNick]);
   const animated = useAnimatedStyle(() => {
     'worklet';
+    const cycleMs = Math.max(1, npcOrbitCycleMs);
     const t01 =
-      (((orbitClockMs.value % NPC_ORBIT_CYCLE_MS) + NPC_ORBIT_CYCLE_MS) % NPC_ORBIT_CYCLE_MS)
-      / NPC_ORBIT_CYCLE_MS;
+      (((orbitClockMs.value % cycleMs) + cycleMs) % cycleMs) / cycleMs;
     const ang = -Math.PI / 2 + t01 * Math.PI * 2;
     const r = ORBIT_SCENE_SIZE * 0.43;
     const x = ORBIT_CENTER + Math.cos(ang) * r;
@@ -1073,7 +1081,7 @@ const PlanetPlayerBlueOrbitMark = memo(function PlanetPlayerBlueOrbitMark({
       opacity: 0.98,
       transform: [{ translateX: x - 7 }, { translateY: y - 7 }],
     };
-  }, [orbitClockMs]);
+  }, [orbitClockMs, npcOrbitCycleMs]);
 
   return (
     <Animated.View style={[bgStyles.orbitMarkWrap, bgStyles.orbitPlayerMarkWrap, animated]} pointerEvents="none">

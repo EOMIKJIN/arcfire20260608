@@ -1,5 +1,6 @@
 import { BaseArcSubCore } from './BaseArcSubCore';
 import { applyArcCoreLegacyGuaranteedUnlocks } from '../worldExpansionGuaranteedUnlocks';
+import { integrateUnlockedSynthFrontierStatEconomyAsync } from '../planetCore/integrateUnlockedSynthFrontierStatEconomy';
 import { syncArcCoreGlobalWorldExpansionSync } from '../syncArcCoreGlobalWorldExpansion';
 import { isArcCoreGlobalWorldExpansionEnabled } from '../worldExpansionGlobalPolicy';
 
@@ -19,5 +20,6 @@ export class WorldExpansionSubCore extends BaseArcSubCore {
       syncArcCoreGlobalWorldExpansionSync();
     }
     applyArcCoreLegacyGuaranteedUnlocks();
+    void integrateUnlockedSynthFrontierStatEconomyAsync();
   }
 }

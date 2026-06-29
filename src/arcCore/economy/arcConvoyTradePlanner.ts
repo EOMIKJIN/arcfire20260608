@@ -21,6 +21,7 @@ import {
   resolveTradeRouteRole,
   type TradeRouteAttrs,
 } from './tradeRouteRegistry';
+import { resolveConvoyDemandGrossRoomCredits } from './convoyDemandGrossRoom';
 
 export type ArcConvoyRoutePlan = {
   tgId: string;
@@ -103,6 +104,17 @@ export function planArcConvoyRouteAtSupply(
       );
       if (netProfitPerUnit <= 0) continue;
 
+      const demandRoom = resolveConvoyDemandGrossRoomCredits(destPlanetId);
+      if (demandRoom <= 0) continue;
+
+      let qty = maxQty;
+      const estSellGross = unitSellPrice * qty;
+      if (estSellGross > demandRoom) {
+        qty = Math.max(0, Math.floor(demandRoom / unitSellPrice));
+      }
+      const minQty = opts?.minQty ?? 1;
+      if (qty < minQty) continue;
+
       candidates.push({
         tgId: route.tgId,
         attrs: route.attrs,
@@ -112,7 +124,7 @@ export function planArcConvoyRouteAtSupply(
         unitSellPrice,
         transportCostPerUnit,
         netProfitPerUnit,
-        qty: maxQty,
+        qty,
       });
     }
   }

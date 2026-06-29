@@ -6,6 +6,8 @@
 export const PLANET_ATTACK_KIND = {
   /** 아크코어 inbound 드론 — 행성 외곽 충돌(phase=impacted) */
   ARC_INBOUND_DRONE_IMPACT: 'arc_inbound_drone_impact',
+  /** 아크코어 스파이 — 궤도/수송 체류 중 T(기술) 백엔드 침식 */
+  ARC_CORE_SPY_INFILTRATION: 'arc_core_spy_infiltration',
   /** 향후: 전투 승리 후 행성 타격 등 */
   PLANETARY_BOMBARDMENT_STUB: 'planetary_bombardment_stub',
 } as const;

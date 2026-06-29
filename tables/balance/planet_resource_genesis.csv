@@ -1,0 +1,101 @@
+planetId,genesisResourcePct,genesisPopulationPct,genesisDefensePct,genesisTechnologyPct,genesisEnvironmentPct,depositWeightMul,notesKo
+arcadia_prime,18,48,42,44,52,0.36,scenario
+vega_base,14,46,55,48,40,0.28,scenario
+solar_station,22,52,44,50,46,0.44,scenario
+minerva_deep,52,44,48,46,38,1.04,scenario
+draco_haven,28,46,42,54,50,0.56,scenario
+eden_city,24,58,46,52,48,0.48,scenario
+iron_remnant,20,40,52,44,36,0.4,scenario
+sirius_border,26,44,50,46,42,0.52,scenario
+perseus_memorial,24,42,54,48,44,0.48,scenario
+crimson_base,32,38,56,42,34,0.64,scenario
+blood_station,30,36,58,40,32,0.6,scenario
+helios_core,48,44,42,56,50,0.96,scenario
+titan_ruins,22,40,44,52,48,0.44,scenario
+omega_hub,28,54,46,50,44,0.56,scenario
+nightfall_citadel,34,36,52,48,38,0.68,scenario
+shadow_market,36,42,46,50,40,0.72,scenario
+dark_haven,38,38,48,52,42,0.76,scenario
+abyss_gate,42,34,56,54,36,0.84,scenario
+core_prime,55,46,58,56,48,1.1,scenario
+eternal_throne,58,42,60,58,46,1.16,scenario
+genesis_origin,65,44,62,60,52,1.3,scenario
+synth_001_p,35,46,43,50,46,0.7,synth zone 8
+synth_002_p,15,41,38,37,39,0.3,synth zone 2
+synth_003_p,26,50,47,43,46,0.52,synth zone 7
+synth_004_p,46,57,54,58,49,0.92,synth zone 13
+synth_005_p,12,45,37,43,49,0.24,synth zone 3
+synth_006_p,27,48,43,46,50,0.54,synth zone 6
+synth_007_p,55,53,53,55,52,1.1,synth zone 16
+synth_008_p,34,49,47,49,54,0.68,synth zone 10
+synth_009_p,32,54,51,47,54,0.64,synth zone 9
+synth_010_p,23,41,41,41,42,0.46,synth zone 5
+synth_011_p,28,52,42,47,50,0.56,synth zone 8
+synth_012_p,58,58,53,54,60,1.16,synth zone 16
+synth_013_p,19,48,40,45,42,0.38,synth zone 4
+synth_014_p,21,43,42,48,50,0.42,synth zone 5
+synth_015_p,26,47,46,41,42,0.52,synth zone 6
+synth_016_p,24,50,43,46,51,0.48,synth zone 6
+synth_017_p,26,49,45,48,42,0.52,synth zone 6
+synth_018_p,42,47,49,54,54,0.84,synth zone 11
+synth_019_p,42,47,50,56,46,0.84,synth zone 11
+synth_020_p,39,54,49,47,47,0.78,synth zone 10
+synth_021_p,33,46,48,50,55,0.66,synth zone 10
+synth_022_p,31,52,49,46,53,0.62,synth zone 9
+synth_023_p,16,44,41,47,45,0.32,synth zone 4
+synth_024_p,27,53,47,47,48,0.54,synth zone 8
+synth_025_p,38,49,50,47,51,0.76,synth zone 9
+synth_026_p,21,47,39,42,47,0.42,synth zone 4
+synth_027_p,47,57,51,59,53,0.94,synth zone 14
+synth_028_p,28,52,42,44,46,0.56,synth zone 8
+synth_029_p,38,54,51,49,46,0.76,synth zone 10
+synth_030_p,46,52,54,56,55,0.92,synth zone 14
+synth_031_p,16,43,40,43,40,0.32,synth zone 2
+synth_032_p,47,47,52,56,55,0.94,synth zone 12
+synth_033_p,12,44,41,39,41,0.24,synth zone 1
+synth_034_p,21,45,38,42,49,0.42,synth zone 4
+synth_035_p,48,51,50,61,59,0.96,synth zone 15
+synth_036_p,11,40,39,41,42,0.22,synth zone 2
+synth_037_p,27,51,41,48,52,0.54,synth zone 6
+synth_038_p,57,59,57,60,56,1.14,synth zone 16
+synth_039_p,20,44,37,46,47,0.4,synth zone 4
+synth_040_p,54,54,57,61,57,1.08,synth zone 15
+synth_041_p,17,43,41,38,46,0.34,synth zone 3
+synth_042_p,35,51,48,49,47,0.7,synth zone 9
+synth_043_p,45,51,48,52,54,0.9,synth zone 12
+synth_044_p,18,45,40,41,51,0.36,synth zone 3
+synth_045_p,46,54,54,58,50,0.92,synth zone 12
+synth_046_p,24,49,39,46,51,0.48,synth zone 5
+synth_047_p,43,55,50,59,50,0.86,synth zone 13
+synth_048_p,49,54,50,57,51,0.98,synth zone 15
+synth_049_p,15,44,42,38,48,0.3,synth zone 2
+synth_050_p,39,47,47,52,52,0.78,synth zone 11
+synth_051_p,28,43,45,50,47,0.56,synth zone 7
+synth_052_p,14,46,41,39,43,0.28,synth zone 1
+synth_053_p,44,55,52,55,51,0.88,synth zone 12
+synth_054_p,11,40,36,41,48,0.22,synth zone 2
+synth_055_p,43,49,48,56,51,0.86,synth zone 13
+synth_056_p,47,55,56,56,58,0.94,synth zone 14
+synth_057_p,17,48,45,48,49,0.34,synth zone 4
+synth_058_p,44,48,48,55,53,0.88,synth zone 12
+synth_059_p,37,48,50,55,49,0.74,synth zone 11
+synth_060_p,36,52,50,52,54,0.72,synth zone 9
+synth_061_p,53,57,53,61,61,1.06,synth zone 15
+synth_062_p,13,39,42,39,42,0.26,synth zone 3
+synth_063_p,54,52,56,55,56,1.08,synth zone 15
+synth_064_p,51,56,55,51,49,1.02,synth zone 14
+synth_065_p,35,51,50,54,54,0.7,synth zone 9
+synth_066_p,19,47,46,48,50,0.38,synth zone 5
+synth_067_p,28,44,43,47,46,0.56,synth zone 7
+synth_068_p,34,44,43,49,47,0.68,synth zone 8
+synth_069_p,28,52,48,43,54,0.56,synth zone 7
+synth_070_p,18,48,42,41,47,0.36,synth zone 5
+synth_071_p,48,55,48,50,53,0.96,synth zone 13
+synth_072_p,24,51,42,47,44,0.48,synth zone 7
+synth_073_p,12,44,42,37,41,0.24,synth zone 1
+synth_074_p,45,49,55,59,57,0.9,synth zone 14
+synth_075_p,38,47,49,47,55,0.76,synth zone 11
+synth_076_p,36,53,44,48,52,0.72,synth zone 10
+synth_077_p,49,51,50,52,52,0.98,synth zone 14
+synth_078_p,15,43,40,40,40,0.3,synth zone 3
+synth_079_p,45,57,48,56,59,0.9,synth zone 13

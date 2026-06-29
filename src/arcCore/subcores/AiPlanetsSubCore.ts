@@ -1,5 +1,6 @@
 import { BaseArcSubCore } from './BaseArcSubCore';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
+import { usePlanetMineralLedgerStore } from '../../store/planetMineralLedgerStore';
 
 /**
  * AI Planets 서브코어
@@ -16,5 +17,6 @@ export class AiPlanetsSubCore extends BaseArcSubCore {
 
   override onBoot(): void {
     void usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync();
+    void usePlanetMineralLedgerStore.getState().loadLocal();
   }
 }

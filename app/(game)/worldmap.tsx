@@ -95,6 +95,7 @@ import { computeGalaxyMapTerritoryVoronoiModel } from '../../src/galaxyMap/compu
 import { GalaxyMapTerritoryOccupationLabelsSvg } from '../../src/galaxyMap/GalaxyMapTerritoryOccupationLabelsSvg';
 import { GalaxyMapTerritoryVoronoiSvg } from '../../src/galaxyMap/GalaxyMapTerritoryVoronoiSvg';
 import { GalaxyMapSystemsSvg } from '../../src/galaxyMap/GalaxyMapSystemsSvg';
+import { findShortestUnlockedSystemPath } from '../../src/galaxyMap/findShortestUnlockedSystemPath';
 import { GalaxyMapContestedZoneRingOverlay } from '../../src/galaxyMap/GalaxyMapContestedZoneRingOverlay';
 import { useContestedZonePreviewSystemIds } from '../../src/galaxyMap/useContestedZonePreviewSystemIds';
 import {
@@ -102,6 +103,10 @@ import {
   runStageNavAfterTeardown,
   useStageNavGate,
 } from '../../src/navigation/stageNavGate';
+import {
+  canAffordGalaxyTransitFuel,
+  computeGalaxyTransitFuelQuote,
+} from '../../src/game/galaxyTransit/computeGalaxyTransitFuelQuote';
 
 /** 은하 좌표 1단위 = 뷰포트 한 변 픽셀(기존 맵과 동일 스케일). 라벨/노드 여백만 픽셀로 추가 */
 const MAP_PAD_PX = 44;
@@ -205,6 +210,7 @@ export default function WorldMapScreen() {
   const moveToSystem = usePlayerStore((s) => s.moveToSystem);
   const landOnPlanet = usePlayerStore((s) => s.landOnPlanet);
   const persist = usePlayerStore((s) => s.persist);
+  const spendCredits = usePlayerStore((s) => s.spendCredits);
   const { systems, selectedSystemId, selectSystem, markVisited, visitedSystemIds } = useWorldStore();
   const unlockedSystemIds = useWorldStore((s) => s.unlockedSystemIds);
 
@@ -996,6 +1002,44 @@ export default function WorldMapScreen() {
   const reachableIds =
     galaxyCurrent?.connections.filter((id) => unlockedSet.has(id)) ?? [];
 
+  const routePreviewSystemIds = useMemo(() => {
+    if (!player?.currentSystemId || !selectedSystemId) return [];
+    if (selectedSystemId === player.currentSystemId) return [];
+    return (
+      findShortestUnlockedSystemPath(
+        systems,
+        player.currentSystemId,
+        selectedSystemId,
+        unlockedSystemIds,
+      ) ?? []
+    );
+  }, [player?.currentSystemId, selectedSystemId, systems, unlockedSystemIds]);
+
+  /** 인접 1-hop 또는 BFS 다중 홉 경로 */
+  const selectedMovePath = useMemo((): string[] | null => {
+    if (!player?.currentSystemId || !selectedSystemId) return null;
+    if (selectedSystemId === player.currentSystemId) return [player.currentSystemId];
+    if (reachableIds.includes(selectedSystemId)) {
+      return [player.currentSystemId, selectedSystemId];
+    }
+    if (routePreviewSystemIds.length >= 2) return routePreviewSystemIds;
+    return null;
+  }, [player?.currentSystemId, selectedSystemId, reachableIds, routePreviewSystemIds]);
+
+  const selectedFuelQuote = useMemo(() => {
+    if (!player?.ship || !selectedMovePath || selectedMovePath.length < 2) return null;
+    return computeGalaxyTransitFuelQuote({
+      systems,
+      pathSystemIds: selectedMovePath,
+      ship: player.ship,
+    });
+  }, [player?.ship, selectedMovePath, systems]);
+
+  const canAffordSelectedFuel = canAffordGalaxyTransitFuel(
+    player?.credits ?? 0,
+    selectedFuelQuote,
+  );
+
   const handleNodeTap = useCallback((systemId: string) => {
     if (isMoving) return;
     selectSystem(systemId);
@@ -1088,9 +1132,9 @@ export default function WorldMapScreen() {
     return Gesture.Exclusive(tap, pan);
   }, [scrollX, scrollY, savedScrollX, savedScrollY, maxScrollX, maxScrollY, scrollAliveSv, isMovingSv, dispatchMapTapAt]);
 
-  const doMove = useCallback(
-    async (targetSystem: StarSystem) => {
-      if (!player) return;
+  const doMoveAlongPath = useCallback(
+    async (pathSystemIds: string[]) => {
+      if (!player || pathSystemIds.length < 2) return;
       const travelBlock = resolvePlayerTravelBlock(player);
       if (travelBlock) {
         showArcAlert(
@@ -1100,58 +1144,102 @@ export default function WorldMapScreen() {
         return;
       }
       if (!mapMetricsReady) return;
-      const fromSystem = systems[player.currentSystemId];
-      if (!fromSystem) return;
 
-      const from = toScreen(fromSystem.position);
-      const to = toScreen(targetSystem.position);
-
-      setIsMoving(true);
-      setShipTransit({ from, to });
-      moveProgress.stopAnimation();
-      moveProgress.setValue(0);
-      setShowPanel(false);
-      selectSystem(null);
-
-      let finished = false;
-      const transitToken = ++transitWaitTokenRef.current;
-      try {
-        const anim = RNAnimated.timing(moveProgress, {
-          toValue: 1,
-          duration: SHIP_TRANSIT_DURATION_MS,
-          easing: Easing.linear,
-          useNativeDriver: false,
-        });
-        transitAnimRef.current = anim;
-        anim.start();
-        // 콜백 누락 환경 대응: 고정 시간만큼 애니메이션을 유지한 뒤 완료 처리
-        finished = await new Promise<boolean>((resolve) => {
-          abortTransitWaitRef.current = { token: transitToken, resolve };
-          transitFallbackTimerRef.current = setTimeout(() => {
-            const pending = abortTransitWaitRef.current;
-            if (pending?.token !== transitToken) return;
-            settleTransitWait(true);
-          }, SHIP_TRANSIT_DURATION_MS + 40);
-        });
-      } finally {
-        transitAnimRef.current = null;
-        if (transitFallbackTimerRef.current) {
-          clearTimeout(transitFallbackTimerRef.current);
-          transitFallbackTimerRef.current = null;
+      const fuelQuote = computeGalaxyTransitFuelQuote({
+        systems,
+        pathSystemIds,
+        ship: player.ship,
+      });
+      if (fuelQuote && fuelQuote.totalCredits > 0) {
+        if (!canAffordGalaxyTransitFuel(player.credits, fuelQuote)) {
+          showArcAlert(
+            t('worldmap.fuelInsufficientTitle'),
+            t('worldmap.fuelInsufficientBody', {
+              cost: fuelQuote.totalCredits,
+              balance: player.credits,
+            }),
+          );
+          return;
         }
-        const pending = abortTransitWaitRef.current;
-        if (pending?.token === transitToken) {
-          abortTransitWaitRef.current = null;
-          pending.resolve(false);
-        }
-        // 어떤 경로로든 이동 잠금이 남지 않게 항상 해제
-        if (isMountedRef.current) {
-          setShipTransit(null);
-          setIsMoving(false);
+        if (!spendCredits(fuelQuote.totalCredits)) {
+          showArcAlert(
+            t('worldmap.fuelInsufficientTitle'),
+            t('worldmap.fuelInsufficientBody', {
+              cost: fuelQuote.totalCredits,
+              balance: usePlayerStore.getState().player?.credits ?? 0,
+            }),
+          );
+          return;
         }
       }
 
-      if (!finished || !isMountedRef.current || !isFocusedRef.current) return;
+      const finalSystemId = pathSystemIds[pathSystemIds.length - 1]!;
+      const targetSystem = systems[finalSystemId];
+      if (!targetSystem) return;
+
+      setIsMoving(true);
+      setShowPanel(false);
+      selectSystem(null);
+
+      let allFinished = true;
+      for (let hop = 0; hop < pathSystemIds.length - 1; hop += 1) {
+        const fromSystem = systems[pathSystemIds[hop]!];
+        const hopTarget = systems[pathSystemIds[hop + 1]!];
+        if (!fromSystem || !hopTarget) {
+          allFinished = false;
+          break;
+        }
+
+        const from = toScreen(fromSystem.position);
+        const to = toScreen(hopTarget.position);
+        setShipTransit({ from, to });
+        moveProgress.stopAnimation();
+        moveProgress.setValue(0);
+
+        let finished = false;
+        const transitToken = ++transitWaitTokenRef.current;
+        try {
+          const anim = RNAnimated.timing(moveProgress, {
+            toValue: 1,
+            duration: SHIP_TRANSIT_DURATION_MS,
+            easing: Easing.linear,
+            useNativeDriver: false,
+          });
+          transitAnimRef.current = anim;
+          anim.start();
+          finished = await new Promise<boolean>((resolve) => {
+            abortTransitWaitRef.current = { token: transitToken, resolve };
+            transitFallbackTimerRef.current = setTimeout(() => {
+              const pending = abortTransitWaitRef.current;
+              if (pending?.token !== transitToken) return;
+              settleTransitWait(true);
+            }, SHIP_TRANSIT_DURATION_MS + 40);
+          });
+        } finally {
+          transitAnimRef.current = null;
+          if (transitFallbackTimerRef.current) {
+            clearTimeout(transitFallbackTimerRef.current);
+            transitFallbackTimerRef.current = null;
+          }
+          const pending = abortTransitWaitRef.current;
+          if (pending?.token === transitToken) {
+            abortTransitWaitRef.current = null;
+            pending.resolve(false);
+          }
+        }
+
+        if (!finished || !isMountedRef.current || !isFocusedRef.current) {
+          allFinished = false;
+          break;
+        }
+      }
+
+      if (isMountedRef.current) {
+        setShipTransit(null);
+        setIsMoving(false);
+      }
+
+      if (!allFinished || !isMountedRef.current || !isFocusedRef.current) return;
 
       const missionState = useMissionStore.getState();
       const missionProgresses = missionState.progresses;
@@ -1164,7 +1252,7 @@ export default function WorldMapScreen() {
 
       if (Math.random() < encounterChance && isPlayerShipCombatCapable(player.ship)) {
         useTransitCombatSessionStore.getState().begin({
-          originSystemId: fromSystem.id,
+          originSystemId: pathSystemIds[0]!,
           destinationSystemId: targetSystem.id,
         });
         selectSystem(targetSystem.id);
@@ -1173,7 +1261,9 @@ export default function WorldMapScreen() {
       }
 
       moveToSystem(targetSystem.id);
-      markVisited(targetSystem.id);
+      for (let i = 1; i < pathSystemIds.length; i += 1) {
+        markVisited(pathSystemIds[i]!);
+      }
 
       const playerAfterMove = usePlayerStore.getState().player;
       if (playerAfterMove) {
@@ -1186,7 +1276,6 @@ export default function WorldMapScreen() {
       await persist();
       selectSystem(targetSystem.id);
       setShowPanel(true);
-      // 도착 후 자동 착륙/행성 화면 이동 없음 — [행성 착륙]으로만 행성 화면 진입
     },
     [
       player,
@@ -1199,13 +1288,19 @@ export default function WorldMapScreen() {
       selectSystem,
       setShowPanel,
       mapMetricsReady,
-      galaxyBounds.minX,
-      galaxyBounds.minY,
       settleTransitWait,
-      stopGalaxyMapInteractionLoops,
       navigateToCombatAfterTeardown,
+      spendCredits,
       t,
     ],
+  );
+
+  const doMove = useCallback(
+    (targetSystem: StarSystem) => {
+      if (!player) return;
+      void doMoveAlongPath([player.currentSystemId, targetSystem.id]);
+    },
+    [player, doMoveAlongPath],
   );
 
   const handleMove = useCallback(async () => {
@@ -1237,8 +1332,24 @@ export default function WorldMapScreen() {
       return;
     }
 
-    if (!reachableIds.includes(selectedSystem.id)) {
+    if (!selectedMovePath || selectedMovePath.length < 2) {
       showArcAlert(t('worldmap.moveBlockedTitle'), t('worldmap.moveBlockedBody'));
+      return;
+    }
+
+    const moveFuelQuote = computeGalaxyTransitFuelQuote({
+      systems,
+      pathSystemIds: selectedMovePath,
+      ship: player.ship,
+    });
+    if (moveFuelQuote && !canAffordGalaxyTransitFuel(player.credits, moveFuelQuote)) {
+      showArcAlert(
+        t('worldmap.fuelInsufficientTitle'),
+        t('worldmap.fuelInsufficientBody', {
+          cost: moveFuelQuote.totalCredits,
+          balance: player.credits,
+        }),
+      );
       return;
     }
 
@@ -1248,13 +1359,13 @@ export default function WorldMapScreen() {
         t('worldmap.pvpBody'),
         [
           { text: t('worldmap.btn.cancel'), style: 'cancel' },
-          { text: t('worldmap.btn.enter'), onPress: () => doMove(selectedSystem) },
+          { text: t('worldmap.btn.enter'), onPress: () => void doMoveAlongPath(selectedMovePath) },
         ],
       );
     } else {
-      doMove(selectedSystem);
+      void doMoveAlongPath(selectedMovePath);
     }
-  }, [selectedSystem, player, reachableIds, doMove, landOnPlanet, persist, isMoving, t, navigateToPlanetHubAfterTeardown, hubNavGate]);
+  }, [selectedSystem, player, selectedMovePath, systems, doMoveAlongPath, landOnPlanet, persist, isMoving, t, navigateToPlanetHubAfterTeardown, hubNavGate]);
 
   if (!player) return null;
 
@@ -1317,6 +1428,7 @@ export default function WorldMapScreen() {
                     systemById={systems}
                     currentId={player.currentSystemId}
                     selectedId={selectedSystemId ?? ''}
+                    routePreviewSystemIds={routePreviewSystemIds}
                     visitedIds={visitedSystemIds}
                     reachableIds={reachableIds}
                     unlockedIds={unlockedSystemIds}
@@ -1431,9 +1543,25 @@ export default function WorldMapScreen() {
             <Text style={styles.panelReachable}>
               {selectedSystem.id === player.currentSystemId
                 ? t('worldmap.panel.here')
-                : reachableIds.includes(selectedSystem.id)
-                  ? t('worldmap.panel.reachable')
-                  : t('worldmap.panel.unreachable')}
+                : selectedMovePath && selectedMovePath.length >= 2 && selectedFuelQuote
+                  ? (() => {
+                      const hops = selectedMovePath.length - 1;
+                      const costLine =
+                        hops <= 1
+                          ? t('worldmap.panel.reachableWithCost', {
+                              cost: selectedFuelQuote.totalCredits,
+                            })
+                          : t('worldmap.panel.routeReachableWithCost', {
+                              hops,
+                              cost: selectedFuelQuote.totalCredits,
+                            });
+                      return canAffordSelectedFuel
+                        ? costLine
+                        : `${costLine}${t('worldmap.panel.insufficientCredits')}`;
+                    })()
+                  : selectedMovePath && selectedMovePath.length >= 2
+                    ? t('worldmap.panel.routeReachable', { hops: selectedMovePath.length - 1 })
+                    : t('worldmap.panel.unreachable')}
             </Text>
             <ArcButton
               label={
@@ -1450,8 +1578,10 @@ export default function WorldMapScreen() {
               disabled={
                 hubNavGate.pending
                 || isMoving
-                || (!reachableIds.includes(selectedSystem.id) &&
-                  selectedSystem.id !== player.currentSystemId)
+                || (selectedSystem.id !== player.currentSystemId
+                  && (!selectedMovePath
+                    || selectedMovePath.length < 2
+                    || !canAffordSelectedFuel))
               }
             />
           </View>

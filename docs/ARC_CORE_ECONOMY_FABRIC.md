@@ -207,6 +207,80 @@ BLUE 행성 유지비·무역 수수료(5%) → blueTeamSharedVault
 | `runArcCoreDailyOpsBatch.ts` | 배치 말미 연동 |
 | `trade.tsx` | 매수/매도 시 수수료 적용 |
 
+### 9-3. 수송선단 convoy 버그·회계 (2026-06-29 수정 · 학습 기록)
+
+**확인된 버그 (실측·코드)**
+
+| # | 증상 | 원인 | 수정 |
+|---|------|------|------|
+| B1 | ledger `convoyGrossCredits`가 일 cap(45k) **수백~수천 배** 초과 | `planetTradeFeeLedger` **미 hydrate** 상태에서 하역 정산 → cap 검사 **스킵** + fee·gross **무제한 누적** | `canRunConvoyTradeSettlement()` — fleet bank **· ledger 둘 다 hydrate 후**만 정산 |
+| B2 | txn 최근 120건 **전부 `convoy_buy`**, 하역 0 | cap 포화(`room≤0`) 후 **매입은 계속**·하역은 **화물 폐기**(환불·profit 없음) | **적재 게이트**: 수요지 `resolveConvoyDemandGrossRoomCredits` ≤0 이면 **route·적재 스킵** |
+| B3 | cap 초과 ledger 잔존 시 **당일 영구 하역 불가** | B1로 쌓인 gross가 cap 대비 비정상 | hydrate 시 `healConvoyGrossLedgerBucketsOverDailyCap` — cap 초과 convoy gross **당일 0으로 복구** |
+
+**의도적 설계 (버그 아님 · 2026-06-29 갱신)**
+
+- 수송선단 금고: **매입 전액 출금(`convoy_buy`)** · 하역 **`convoy_trade_margin` 입금 → `convoy_transport`(연료·기타) 출금 → `convoy_arc_core_share` 출금** · fleet 순유지 = **순마진의 (100−arc_share)%** (기본 90%).
+- **순마진 arc_share%**(기본 10%) → **`useArcCoreVaultStore`** (`convoy_net_margin_share`).
+- 운송비 = `computeTradeRouteTransportCostPerUnit` × 하역 qty · note에 연료/기타 비율(`convoy_transport_fuel_share_pct` / `ops_share_pct`) 표시.
+- `price_elasticity=0` · 일 1회 배치 · 순마진 플래너(손실 경로 제외) 유지.
+
+**선택한 안정화 (1안 B+α, 회계 2안 미적용)**
+
+- cap·ledger 정합 + **못 팔 수요지에는 사지 않음** — 기존 순마진·수수료·일 cap 정책 **유지**.
+- `convoy_demand_daily_gross_cap_credits`·cargo bounds **CSV 변경 없음** (필요 시 Kim balance-ops 후속).
+
+**정본 모듈**: `convoyDemandGrossRoom.ts` · `convoyGrossLedgerHeal.ts` · `runArcTransportTradePass.ts` · `arcConvoyTradePlanner.ts` · `planetTradeFeeLedgerStore.ts`(hydrate heal).
+
+**재발 방지 체크리스트**
+
+1. convoy 정산 경로 추가 시 **ledger hydrate 게이트** 필수.
+2. **적재 전** 목적지 `demandRoom` 확인.
+3. UI/감사: `convoy_cap_reject` audit·`totalInflow/outflow` vs txn 120 한도 교차.
+4. **store ↔ economy 순환 import 금지** — heal은 `convoyGrossLedgerHeal.ts` 분리.
+
+**1회 reseed (2026-06-29)**: `reseedArcCoreConvoyFleetBank.ts` — B1~B3 이전 **−2천만대 fleet bank** → 시드 500k · convoy ledger·RAM 화물 클리어 · 플래그 `arcfire_convoy_fleet_economy_reseed_20260629_v1` (기기당 1회). **계정 초기화와 무관.**
+
+### 9-4. 수송선단 전수 재점검 (2026-06-29 · B1~B3 수정 후)
+
+**점검 범위**: `runArcTransportTradePass` · `arcConvoyTradePlanner` · `convoyDemandGrossRoom` · `runArcCoreConvoyDailySettlementPass` · `planetTradeFeeLedgerStore` · `applyPlanetTradeTransactionFee` · `AiNpcSubCore`(dwell) · `AiEconomySubCore`(hydrate) · `synthFrontierConvoyTradeBridge` · `planetEconomyFabric` · CSV 정책.
+
+**B1~B3 수정 검증 — PASS**
+
+| 항목 | 상태 |
+|------|------|
+| ledger 미 hydrate 정산 차단 | `canRunConvoyTradeSettlement()` 적용 |
+| 적재 전 수요 room 게이트 | `planArcConvoyRouteAtSupply` |
+| cap 초과 ledger heal | `healConvoyGrossLedgerBucketsOverDailyCap` on hydrate |
+| cap 거절 audit | `convoy_cap_reject` |
+
+**추가 이슈 (수정 전 · 우선순위)**
+
+| ID | 등급 | 문제 | 영향 |
+|----|------|------|------|
+| R1 | **P1** | `AiNpcSubCore.pickNextPlanetId` — `gatherDirectivePlanetId`가 **화물 목적지(`cargoDest`)보다 우선** | gather 중 적재 화물 **하역 불가·체류 반복** |
+| R2 | **P1** | `shipCargoById` **RAM 전용** — 앱 종료·크래시 후 `convoy_buy`만 잔존 | **매입원금 영구 손실**(profit 없음) |
+| R3 | **P2** | 하역 시 cap으로 `unloadQty` 축소 시 **매입은 전량·profit만 비율** | plan 시점 room과 **레이스** 시 원금 일부 손실 |
+| S1 | **P2** | `convoy_demand_daily_gross_cap_credits=45000` vs **17 공급지 + 궤도 dwell** | cap 포화 시 **일일 정산·backfill 실패** (`no_route`/`load_failed`) — 설계 긴장 |
+| S2 | **P2** | UI `fleetVault` = **raw balance** (조정 잔액·순마진 누적 미표시) | −2천만 **오해** (회계 설계와 UI 불일치) |
+| S3 | **P2** | `txn_history_limit=120` — 최근 txn만 | 감사는 **`totalInflow/outflow` 정본** |
+| S4 | **P2** | convoy 수수료 10% → **팩션 금고 적립**, fleet bank **미차감** | 의도적 SIM(거래량 기반 fiscal) — 문서화됨 |
+| S5 | **P3** | `convoy_daily_min_trade_qty=2` — room 1개분만 남으면 route **스킵** | 당일 minQty 미달 |
+
+**의도적 설계 (변경 불필요)**
+
+- 순마진-only 금고 회계 · 3금고 분리 · fleet→팩션 자동 이전 없음 · `price_elasticity=0` · 손실 route 플래너 제외.
+
+**다음 개선 권장 (안정·최소 diff)**
+
+1. **R1** — `cargoDest` 있으면 gather보다 **목적지 우선** (`pickNextPlanetId` 1줄 순서).
+2. **R2** — in-flight cargo **경량 persist** 또는 부트 시 orphan buy **audit** (대규모 회계 변경 없음).
+3. **S2** — 경제 UI에 **조정 잔액·당일 순마진** 보조 표기 (선택).
+4. **S1** — Kim `audit:balance-ops` 후 cap CSV 조정 **또는** daily pass만 cap 완화 (정책).
+
+**재발 방지**
+
+- convoy 경로 PR → hydrate 게이트 · demand room · `npm run audit:balance-ops` · headless convoy sim 복구(`tools/audit-convoy-coverage.mjs` TS import 깨짐).
+
 ### 9-3. 되는 것 / 안 되는 것
 
 | ✅ 구현됨 | ❌ 아직 없음 |

@@ -9,6 +9,7 @@ import {
   computeConvoyTradeFeeBreakdown,
   computePlanetTradeFeeBreakdown,
 } from '../arcCore/economy/planetUpkeepPolicy';
+import { healConvoyGrossLedgerBucketsOverDailyCap } from '../arcCore/economy/convoyGrossLedgerHeal';
 
 const STORAGE_KEY = 'arcfire_planet_trade_fee_ledger_v1';
 
@@ -118,11 +119,15 @@ export const usePlanetTradeFeeLedgerStore = create<PlanetTradeFeeLedgerState>((s
       for (const [planetId, bucket] of Object.entries(bag)) {
         byPlanetId[planetId] = parseBucket(bucket);
       }
+      const healedByPlanetId = healConvoyGrossLedgerBucketsOverDailyCap(byPlanetId);
       set({
         hydrated: true,
         kstDayKey: parsed.kstDayKey ?? planetAttackKstDayKey(),
-        byPlanetId,
+        byPlanetId: healedByPlanetId,
       });
+      if (healedByPlanetId !== byPlanetId) {
+        void get().persist();
+      }
     } catch {
       set({ hydrated: true, kstDayKey: planetAttackKstDayKey(), byPlanetId: {} });
     }

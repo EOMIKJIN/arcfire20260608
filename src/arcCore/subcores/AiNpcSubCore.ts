@@ -108,7 +108,29 @@ export class AiNpcSubCore extends BaseArcSubCore {
     }
     if (cmd.type === 'npc_seed_transport_for_system') {
       this.seedTransportForUnlockedSystem(cmd.systemId, cmd.sourcePlanetId, cmd.factionId);
+      return;
     }
+    if (cmd.type === 'npc_eject_captain_orbit') {
+      this.ejectCaptainFromPlanet(cmd.captainId, cmd.planetId);
+    }
+  }
+
+  /** 스파이 색출 등 — 해당 행성 궤도 체류 수송선을 즉시 이탈 phase 로 전환 */
+  private ejectCaptainFromPlanet(captainId: string, planetId: string): void {
+    const cid = String(captainId ?? '').trim();
+    const pid = String(planetId ?? '').trim();
+    if (!cid || !pid) return;
+    let changed = false;
+    for (const ship of this.ships) {
+      if (ship.captainId !== cid || ship.planetId !== pid) continue;
+      if (ship.phase !== 'entering' && ship.phase !== 'dwelling') continue;
+      ship.phase = 'departing';
+      ship.phaseElapsedSec = 0;
+      ship.phaseDurationSec = (4 + Math.random() * 1.6) * ship.arcTrafficPhaseDurationMul;
+      ship.edgeAngleRad = Math.random() * Math.PI * 2;
+      changed = true;
+    }
+    if (changed) this.publishSnapshot();
   }
 
   private seedTransportForUnlockedSystem(systemId: string, sourcePlanetId: string, factionId: string): void {

@@ -1,0 +1,7 @@
+key,value,notesKo
+enabled,true,일 1회 runPlanetMineralLedgerDailyPass
+reserve_base_units,80,R=50 기준 기본 매장 단위
+reserve_r_scale,220,R 0~100 → 추가 매장 (reserve_base + R/100*scale)
+daily_regen_pct,0.18,일 1회 max 대비 재생 비율
+mining_reserve_floor_units,5,이하 시 채굴 tick 중단(고갈)
+persist_coalesce_ms,1500,AsyncStorage 코얼레싱

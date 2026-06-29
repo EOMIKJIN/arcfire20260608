@@ -11,6 +11,7 @@ import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
 import { useMissionStore } from '../store/missionStore';
 import { useNpcCaptainProgressStore } from '../store/npcCaptainProgressStore';
 import { usePlanetCoreRuntimeStore } from '../store/planetCoreRuntimeStore';
+import { usePlanetMineralLedgerStore } from '../store/planetMineralLedgerStore';
 import { usePlayerStore } from '../store/playerStore';
 import { useUserSessionStore } from '../store/userSessionStore';
 import { syncArcCoreGlobalWorldExpansionSync } from '../arcCore/syncArcCoreGlobalWorldExpansion';
@@ -23,6 +24,7 @@ import { showArcAlert } from '../utils/showArcAlert';
 import { clearOnboardingProfessionId } from '../game/onboardingDraftStorage';
 import { purgeAccountLedgerProfileSkillByUid } from './accountLifecycle';
 import { resetArcInboundDroneCampaigns } from '../arcCore/inboundDrone/resetArcInboundDroneCampaigns';
+import { useArcCoreSpyExpelledStore } from '../store/arcCoreSpyExpelledStore';
 
 export type LocalAccountResetParams = {
   uid: string | null | undefined;
@@ -90,6 +92,7 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   // (ArcCore 환경·자율 경제 시스템은 제외: faction vault·trade fee ledger·galaxy 확장)
   // 행성개발(R/P/D/T/E·방위위성·개발 모듈) — planetCoreRuntimeStore
   await usePlanetCoreRuntimeStore.getState().resetLocalPlanetCoreRuntime();
+  await usePlanetMineralLedgerStore.getState().resetLocal();
   // 갤럭시 개방·항행 기록(방문/개방 성계) — worldStore (초기 시드 galaxy로 복귀)
   await useWorldStore.getState().resetLocalWorld();
   syncArcCoreGlobalWorldExpansionSync();
@@ -106,6 +109,7 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await clearOnboardingProfessionId();
   // 행성별 inbound 드론 벽시계 캠페인 — SubCore Map + UI store
   resetArcInboundDroneCampaigns();
+  await useArcCoreSpyExpelledStore.getState().resetLocal();
 
   await clearArcCoreRtdbDailyKpiPushState();
   await resetFirebaseAnonymousAuthForAccountPurge();

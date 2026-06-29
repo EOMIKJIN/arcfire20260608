@@ -276,7 +276,6 @@ export const planetHubStyles = StyleSheet.create({
   planetOuter: {
     position: 'relative',
     overflow: 'hidden',
-    borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: COLORS.bg_secondary,

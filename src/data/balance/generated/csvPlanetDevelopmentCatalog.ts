@@ -3,7 +3,7 @@ export const PlanetDevelopmentCatalog_FROM_BALANCE_CSV = [
   { "id": "defense_satellite", "labelKo": "방위위성", "summaryKo": "inbound 드론 궤도 자동 요격\nLv10 위성 2기·요격 92%·범위 200\nLv15 영역 320px·명중 98%", "enabled": "true", "detailModuleKey": "defense_satellite", "installCostCredits": "0", "notesKo": "v3.2 · 허브 방위위성 L1~15" },
   { "id": "dev_orbit_shipyard", "labelKo": "궤도 조선소", "summaryKo": "함선 건조·정비·광물 강화\nLv15 전 함급·광물 +20\n건조 시간 60% 단축", "enabled": "true", "detailModuleKey": "dev_orbit_shipyard", "installCostCredits": "800", "notesKo": "v3.2 §8 조선소 L1~15" },
   { "id": "dev_trade_port", "labelKo": "무역소", "summaryKo": "SKU·convoy 보급 무역소\nLv15 수수료 3%·재고 1.5만\n고급무기 +55·보급 1.65배", "enabled": "true", "detailModuleKey": "dev_trade_port", "installCostCredits": "500", "notesKo": "v3.2 §8 무역소 L1~15" },
-  { "id": "dev_research_lab", "labelKo": "과학 연구소", "summaryKo": "R&D·장비분석·E 회복\nLv15 연구 60% 단축·전 티어\n일일 E +6%", "enabled": "true", "detailModuleKey": "dev_research_lab", "installCostCredits": "2000", "notesKo": "v3.2 §8 연구소 L1~15" },
+  { "id": "dev_research_lab", "labelKo": "과학 연구소", "summaryKo": "R&D·장비분석·E 회복\nLv10 연구 50% 단축·전 티어\n스파이·테러 탐지·대테러 연구(Lv↑)\n일일 E +5%", "enabled": "true", "detailModuleKey": "dev_research_lab", "installCostCredits": "2000", "notesKo": "v3.2 §8 연구소 L1~15 · counter-intel" },
   { "id": "dev_population_dome", "labelKo": "인구 거주 돔", "summaryKo": "바운티·용병 선술집\nLv15 슬롯 35·평판 +45%\n전설 용병·4시간 갱신", "enabled": "true", "detailModuleKey": "dev_population_dome", "installCostCredits": "800", "notesKo": "v3.2 §8 선술집 L1~15" },
 ] as const;
 export type PlanetDevelopmentCatalogRow = (typeof PlanetDevelopmentCatalog_FROM_BALANCE_CSV)[number];

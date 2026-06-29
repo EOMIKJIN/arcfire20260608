@@ -1,4 +1,4 @@
-﻿id,name,description,category,tier,prerequisiteIdsPipe,levelRequired,effectType,effectStat,effectValue,effectDescription,icon
+id,name,description,category,tier,prerequisiteIdsPipe,levelRequired,effectType,effectStat,effectValue,effectDescription,icon
 double_shot,이중 사격,전투 자동 사격 루틴을 가속하고 미사일 살보를 1발 늘린다.,combat,1,,2,active,,,자동 전투: 무기 쿨다운 -12% / 미사일 살보 +1,⚡
 shield_overload,실드 과부하,전투 시작 시 실드 출력 한계를 높인다.,combat,1,,3,active,,,자동 전투: 최대 실드 +20%,🛡
 emp_blast,EMP 폭발,명중 시 적 실드를 추가로 붕괴시킨다.,combat,2,double_shot,5,active,,,자동 전투: 명중 시 적 최대 실드의 25% 방전,💥
@@ -13,6 +13,8 @@ singularity_cannon,싱귤래리티 포,적 함선을 한 점으로 끌어모으�
 perfect_defense,절대 방어 체계,모든 피해를 1로 고정하는 절대 장벽을 생성한다.,combat,5,hull_regeneration,55,active,invincibility,1,1턴 동안 모든 피해 무효화,🛡
 jump_boost,점프 가속,하이퍼점프 속도 30% 향상.,navigation,1,,2,passive,jump_speed,30,이동 속도 +30%,🚀
 sensor_array,정찰 센서,광범위 스캔을 통해 성계 내 위협을 먼저 식별한다.,navigation,1,,2,passive,sensor_range,20,탐지 범위 +20%,📡
+counterintel_array,대테러 스캐너,궤도·체류 인원에서 스파이·침투 신호를 선제 탐지한다.,navigation,2,sensor_array,8,passive,spy_detect,15,스파이·테러 감지 +15%,🔍
+arc_threat_analyzer,Arc 위협 분석,아크코어 드론·백도어 테러 피해를 완화하고 요격 보조를 강화한다.,navigation,3,counterintel_array,18,passive,anti_terror,12,테러 피해 완화 +12%,🛡
 stealth_drive,스텔스 드라이브,3턴 동안 적에게 감지되지 않는다.,navigation,2,jump_boost,5,active,,,3턴 스텔스,👁
 warp_stabilizer,워프 안정기,차원 도약 시 발생하는 에너지 손실을 최소화한다.,navigation,2,sensor_array,6,passive,fuel_efficiency,20,이동 시 연료 소모 -20%,🌀
 ghost_vessel,유령선,완벽한 저소음 기동으로 기습 우위를 점한다.,navigation,3,stealth_drive,11,passive,sneak_attack,100,은신 후 첫 공격 대미지 +100%,👻

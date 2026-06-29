@@ -1,0 +1,10 @@
+key,value,notesKo
+genesis_r_min,10,태초 행성 자원(R) 하한(%)
+genesis_r_max,70,태초 행성 자원(R) 상한(%)
+player_r_operating_min,30,플레이어 관여·개발 후 R 운영 하한(%)
+player_r_operating_max,70,플레이어 관여·개발 후 R 운영 상한(%)
+mining_session_cap_at_r_min,30,R=genesis_r_min 일 때 궤도 채굴 세션 상한(단위)
+mining_session_cap_at_r_max,100,R=player_r_operating_max 일 때 궤도 채굴 세션 상한(단위)
+deposit_weight_baseline_r,50,depositWeightMul=1.0 기준 R(%)
+resource_full_dev_target_pct,70,풀개발 시 R 목표 상한(% — 다른 4스탯은 full_dev_target_pct 유지)
+deposit_runtime_r_blend,0.6,매장 가중 — runtime R 블렌드(나머지 genesis)

@@ -84,3 +84,4 @@ early_route_draco_hub,드라코 궤도 Lv7-9,manual,,once,4,none,/(game)/planet,
 early_route_draco_tavern,드라코 선술집 Lv7-9,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 early_route_eden_hub,뉴에덴 궤도 Lv10,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 early_route_eden_tavern,뉴에덴 선술집 Lv10,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+arc_core_spy_intel_alert,스파이 수상 감지(정보원),manual,,repeat,4,none,/(game)/planet,TRUE,70,FALSE,0,FALSE,0

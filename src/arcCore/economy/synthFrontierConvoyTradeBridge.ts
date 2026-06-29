@@ -86,10 +86,25 @@ function readPlanetTradePortInstalled(planetId: string): boolean {
   }
 }
 
-/** 무역소(월드·dev) 보유 시에만 convoy 실거래 허용 */
+function isUnlockedSynthFrontierPlanet(planetId: string): boolean {
+  if (!isSynthFrontierPlanetId(planetId)) return false;
+  const systemId = resolveSystemIdForPlanetId(planetId);
+  if (!systemId || !systemId.startsWith('synth_')) return false;
+  const world = useWorldStore.getState();
+  if (!world.loaded) return false;
+  return world.unlockedSystemIds.includes(systemId);
+}
+
+/** 무역소(월드·dev) 또는 ArcCore 개방 synth(교역 프로필 등록) — convoy·재정 생태계 */
 export function isPlanetConvoyTradeEnabled(planetId: string): boolean {
   if (!planetId) return false;
   if (readPlanetTradePortInstalled(planetId) || isPlanetCsvTradePortWorldEnabled(planetId)) {
+    return true;
+  }
+  if (
+    isUnlockedSynthFrontierPlanet(planetId)
+    && getPlanetTradeRouteProfile(planetId)
+  ) {
     return true;
   }
   // headless audit — dev 무역소 mock 없이 runtime synth 프로필 fixture
@@ -139,6 +154,45 @@ function applySynthFrontierConvoyTradeProfile(planetId: string): boolean {
 }
 
 /**
+ * ArcCore 개방 synth — 교역 프로필·SKU·시장 등록(플레이어 무역소 dev 불필요).
+ * idempotent — 재호출 안전.
+ */
+export function enrollSynthFrontierPlanetInArcEconomy(planetId: string): boolean {
+  if (!isUnlockedSynthFrontierPlanet(planetId)) return false;
+  return applySynthFrontierConvoyTradeProfile(planetId);
+}
+
+/** 잠금(reconcile)된 synth — 런타임 교역·SKU 해제 */
+export function deactivateRemovedSynthFrontierEconomies(systemIds: readonly string[]): void {
+  const world = useWorldStore.getState();
+  for (const rawId of systemIds) {
+    const systemId = String(rawId ?? '').trim();
+    if (!systemId.startsWith('synth_')) continue;
+    const system = world.getSystem(systemId);
+    for (const planet of system?.planets ?? []) {
+      deactivateSynthFrontierConvoyTrade(planet.id);
+    }
+  }
+}
+
+/**
+ * 부트·일일 배치 — 개방된 synth 전원 경제 생태계 등록(순차 개방 포함).
+ */
+export function ensureUnlockedSynthFrontierEconomyEnrollment(): number {
+  let enrolled = 0;
+  const world = useWorldStore.getState();
+  if (!world.loaded) return 0;
+  const unlocked = new Set(world.unlockedSystemIds);
+  for (const system of Object.values(world.systems)) {
+    if (!system.id.startsWith('synth_') || !unlocked.has(system.id)) continue;
+    for (const planet of system.planets) {
+      if (enrollSynthFrontierPlanetInArcEconomy(planet.id)) enrolled += 1;
+    }
+  }
+  return enrolled;
+}
+
+/**
  * synth 행성 dev_trade_port 설치 완료 — 교역 프로필·SKU·시장·수송선단 경로 등록.
  * idempotent — 재호출 안전.
  */
@@ -168,7 +222,7 @@ export function clearSynthFrontierConvoyTradeRuntime(): void {
   clearRuntimeTradeRouteAssignments();
 }
 
-/** 부트·세션 — dev_trade_port 설치된 synth 행성 convoy 재등록 */
+/** 부트·세션 — dev_trade_port 설치분 convoy 재등록(개방 synth 연동은 integrate* 사용) */
 export function rehydrateSynthFrontierConvoyTradeFromInstalledPorts(): number {
   let activated = 0;
   const world = useWorldStore.getState();

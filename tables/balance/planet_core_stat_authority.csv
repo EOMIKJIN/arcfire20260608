@@ -1,0 +1,4 @@
+context_key,master_balance_gauge,energy_r_blend,equilibrium_dev,economy_decay,npc_economy_decay_mul,environment_diversity,notesKo
+world_default,true,1.0,false,true,0.55,true,ArcCore World층 — zone·광물 R·MasterBalance·Environment
+player_owned,false,0.35,true,true,0,false,ArcCore Player층 — equilibrium 단일 gauge authority
+player_home,false,0.25,true,true,0,false,플레이어 홈 — Energy R 블렌드 추가 완화

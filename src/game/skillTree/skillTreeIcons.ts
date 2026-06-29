@@ -19,6 +19,8 @@ const SKILL_ICONS: Record<string, PlanetHubActionIconSpec> = {
   // navigation
   jump_boost: { family: 'material-community', name: 'rocket-launch-outline' },
   sensor_array: { family: 'material-community', name: 'radar' },
+  counterintel_array: { family: 'material-community', name: 'shield-search' },
+  arc_threat_analyzer: { family: 'material-community', name: 'shield-bug-outline' },
   stealth_drive: { family: 'material-community', name: 'eye-off-outline' },
   warp_stabilizer: { family: 'material-community', name: 'compass-rose' },
   ghost_vessel: { family: 'material-community', name: 'ghost-outline' },

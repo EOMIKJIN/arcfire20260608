@@ -12,7 +12,7 @@ import {
 } from '../../store/planetCoreRuntimeStore';
 import { usePlanetTradeFeeLedgerStore } from '../../store/planetTradeFeeLedgerStore';
 import { useWorldStore } from '../../store/worldStore';
-import type { Planet, PlanetClanHold, StarSystem } from '../../types';
+import type { Planet, StarSystem } from '../../types';
 import { usePlayerStore } from '../../store/playerStore';
 import { resolvePlanetCoreStatEquilibriumPolicy } from '../balance/planetCoreStatEquilibriumPolicy';
 import {
@@ -35,12 +35,19 @@ import {
 } from '../economy/planetUpkeepPolicy';
 import { buildPlanetFiscalSnapshot } from '../economy/planetFiscalKpi';
 import { listConvoyDemandPlanetIds } from '../economy/tradeRouteRegistry';
+import { resolvePlanetCoreStatAuthority } from '../balance/planetCoreStatAuthorityPolicy';
+import {
+  isPlayerOwnedHold,
+  resolvePlanetCoreStatAuthorityContext,
+} from './resolvePlanetCoreStatContext';
+import { clampResourceToOperatingBand } from '../planetResource/planetResourceEcosystemPolicy';
 
 export type PlanetCoreStatEquilibriumPassResult = {
   ran: boolean;
   planetsProcessed: number;
   planetsDrifted: number;
   planetsDecayed: number;
+  npcEconomyDecayed: number;
 };
 
 const GAUGE_KEYS = ['resource', 'population', 'defense', 'technology', 'environment'] as const;
@@ -53,13 +60,6 @@ function clampGauge(g: PlanetCoreGaugeView): PlanetCoreGaugeView {
     technology: Math.max(0, Math.min(100, Math.round(g.technology))),
     environment: Math.max(0, Math.min(100, Math.round(g.environment))),
   };
-}
-
-function isPlayerOwnedHold(hold: PlanetClanHold, playerUid: string | null | undefined): boolean {
-  if (!playerUid) return false;
-  if (hold.homePlayerUid === playerUid) return true;
-  if (hold.kind === 'player_home' && hold.homePlayerUid === playerUid) return true;
-  return false;
 }
 
 function findPlanetInWorld(planetId: string): Planet | undefined {
@@ -151,6 +151,25 @@ function buildFiscalStatusMap(): FiscalStatusByPlanet {
   return map;
 }
 
+function isFiscalDeficitForPlanet(
+  planetId: string,
+  fiscalByPlanet: FiscalStatusByPlanet,
+): boolean {
+  const fiscalStatus = fiscalByPlanet.get(planetId);
+  if (fiscalStatus === 'deficit') return true;
+  const fees = usePlanetTradeFeeLedgerStore.getState().byPlanetId[planetId]?.arcFeeCredits ?? 0;
+  const devUpkeep = applyPlanetDevUpkeepEfficiency(
+    planetId,
+    computePlanetDevelopmentDailyUpkeepCredits(planetId),
+  );
+  const upkeep = computePlanetDailyUpkeepCredits(
+    devUpkeep,
+    resolvePlanetUpkeepPolicy(),
+    fees,
+  );
+  return upkeep > 0 && fees < upkeep;
+}
+
 /**
  * 일 1회 — upkeep·fiscal 직후 호출.
  * 개발 → 목표(50→87) 수렴, deficit/미납 → P·R·E 하락, 미개발 → 자연 도태.
@@ -162,6 +181,7 @@ export function runPlanetCoreStatEquilibriumPass(): PlanetCoreStatEquilibriumPas
     planetsProcessed: 0,
     planetsDrifted: 0,
     planetsDecayed: 0,
+    npcEconomyDecayed: 0,
   };
   if (!policy.enabled) return empty;
 
@@ -182,6 +202,7 @@ export function runPlanetCoreStatEquilibriumPass(): PlanetCoreStatEquilibriumPas
   let planetsProcessed = 0;
   let planetsDrifted = 0;
   let planetsDecayed = 0;
+  let npcEconomyDecayed = 0;
 
   for (const planetId of planetIds) {
     const planet = findPlanetInWorld(planetId);
@@ -204,10 +225,13 @@ export function runPlanetCoreStatEquilibriumPass(): PlanetCoreStatEquilibriumPas
     const target = computePlanetDevelopmentStatTargets(planetId, baseline);
     const hold = holds[planetId];
     const playerOwned = hold ? isPlayerOwnedHold(hold, playerUid) : false;
+    const authority = resolvePlanetCoreStatAuthority(
+      resolvePlanetCoreStatAuthorityContext(planetId),
+    );
 
     const before = { ...gauge };
 
-    if (devWeightTotal > 0) {
+    if (authority.equilibriumDev && devWeightTotal > 0) {
       gauge = applyDriftTowardTarget(
         gauge,
         target,
@@ -233,7 +257,7 @@ export function runPlanetCoreStatEquilibriumPass(): PlanetCoreStatEquilibriumPas
       planetsDecayed += 1;
     }
 
-    if (playerOwned) {
+    if (playerOwned && authority.economyDecay) {
       const fiscalStatus = fiscalByPlanet.get(planetId) ?? 'ok';
       const upkeepDetail = runtime.detail?.lastDailyUpkeep;
       const upkeepFailed = upkeepDetail?.paid === false;
@@ -287,15 +311,38 @@ export function runPlanetCoreStatEquilibriumPass(): PlanetCoreStatEquilibriumPas
         );
         planetsDecayed += 1;
       }
+    } else if (
+      authority.economyDecay &&
+      authority.npcEconomyDecayMul > 0 &&
+      isFiscalDeficitForPlanet(planetId, fiscalByPlanet)
+    ) {
+      const mul = authority.npcEconomyDecayMul;
+      gauge = applyDecayAboveBaseline(
+        gauge,
+        baseline,
+        {
+          population: policy.fiscalDeficitPopulationDecay * mul,
+          resource: policy.fiscalDeficitResourceDecay * mul,
+          environment: policy.fiscalDeficitEnvironmentDecay * mul,
+          technology: policy.fiscalDeficitTechnologyDecay * mul,
+        },
+        policy.maxDailyStatDropPerMetric,
+      );
+      planetsDecayed += 1;
+      npcEconomyDecayed += 1;
     }
 
     gauge = clampGauge(gauge);
+
+    if (playerOwned) {
+      gauge = { ...gauge, resource: clampResourceToOperatingBand(gauge.resource) };
+    }
 
     const changed = GAUGE_KEYS.some((k) => gauge[k] !== before[k]);
     if (!changed) continue;
 
     planetsProcessed += 1;
-    if (devWeightTotal > 0) planetsDrifted += 1;
+    if (devWeightTotal > 0 && authority.equilibriumDev) planetsDrifted += 1;
 
     coreStore.patchPlanetCore(planetId, gauge);
   }
@@ -305,5 +352,6 @@ export function runPlanetCoreStatEquilibriumPass(): PlanetCoreStatEquilibriumPas
     planetsProcessed,
     planetsDrifted,
     planetsDecayed,
+    npcEconomyDecayed,
   };
 }

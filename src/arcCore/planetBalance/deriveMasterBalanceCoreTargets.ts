@@ -5,6 +5,7 @@
 
 import type { PlanetCoreGaugeView } from '../../store/planetCoreRuntimeStore';
 import type { PlanetMasterBalanceDetail } from '../../store/planetCoreMetricTypes';
+import { resolvePlanetResourceEcosystemPolicy } from '../planetResource/planetResourceEcosystemPolicy';
 
 function clamp100(n: number): number {
   return Math.max(0, Math.min(100, Math.round(Number.isFinite(n) ? n : 0)));
@@ -35,6 +36,8 @@ export function deriveMasterBalanceCoreTargets(
 
   const aff = affinityNudge(balance.enemyAffinityKind);
   resource = clamp100(resource + (aff.resource ?? 0));
+  const resourceCap = resolvePlanetResourceEcosystemPolicy().playerROperatingMax;
+  resource = clamp100(Math.min(resourceCap, resource));
   population = clamp100(population + (aff.population ?? 0));
   defense = clamp100(defense + (aff.defense ?? 0));
   technology = clamp100(technology + (aff.technology ?? 0));

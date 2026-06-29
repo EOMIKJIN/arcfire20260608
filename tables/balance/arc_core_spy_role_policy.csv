@@ -1,0 +1,3 @@
+role_id,enabled,weight_pct_in_pool,backdoor_tech_pulse_mul,drone_guidance_accuracy_pct,drone_strike_damage_mul,drone_leak_boost_pct,notesKo
+backdoor_tech_terror,1,60,1.0,0,1.0,0,백도어 기술(T) 침식 전문 — 비물리 테러
+drone_guidance_specialist,1,40,0,12,1.25,10,드론 유도 스파이 — 요격 회피·피해 증폭

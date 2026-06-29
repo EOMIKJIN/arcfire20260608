@@ -12,6 +12,8 @@ export const ARC_ATTACK_CATEGORY = {
   ORBIT_RAID: 'orbit_raid',
   /** 행성간 이동중 인스턴스 전투 (worldmap transit) */
   TRANSIT: 'transit',
+  /** 백엔드 비물리 — 궤도/수송 체류 스파이 함장의 T(기술) 지표 침식 */
+  SPY_INFILTRATION: 'spy_infiltration',
 } as const;
 
 export type ArcAttackCategory = (typeof ARC_ATTACK_CATEGORY)[keyof typeof ARC_ATTACK_CATEGORY];

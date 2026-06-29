@@ -33,6 +33,12 @@ import {
   resolvePlanetAsteroidOrbitCount,
 } from '../../world/mineralDepositModel';
 import { useWorldObjectRuntimeStore } from '../../store/worldObjectRuntimeStore';
+import { resolvePlanetCoreStatAuthority } from '../balance/planetCoreStatAuthorityPolicy';
+import { resolvePlanetCoreStatAuthorityContext } from '../planetCore/resolvePlanetCoreStatContext';
+import {
+  resolvePlanetGenesisResourcePct,
+  resolvePlanetResourceEcosystemPolicy,
+} from '../planetResource/planetResourceEcosystemPolicy';
 
 function clamp100(n: number): number {
   return Math.max(0, Math.min(100, Math.round(Number.isFinite(n) ? n : 0)));
@@ -50,17 +56,26 @@ function targetResourceFromMineralAndOrbit(input: {
   profile: PlanetMineralDepositProfile | undefined;
   universe: ReturnType<typeof computeGalaxyMineralUniverseStats>;
 }): number {
-  const { planet, planetId, profile, universe } = input;
+  const { planetId, profile, universe } = input;
+  const policy = resolvePlanetResourceEcosystemPolicy();
+  const genesisR = resolvePlanetGenesisResourcePct(planetId);
   const orbitPart = orbit01ForPlanet(planetId);
+  const span = Math.max(1, policy.genesisRMax - policy.genesisRMin);
 
   if (profile && universe.profilePlanetCount > 0) {
     const pct = universe.planetRichnessPercentile[planetId] ?? 0.5;
     const align = planetMineralAlignmentWithGalaxy(profile, universe.mineralPrevalence);
-    return clamp100(16 + pct * 46 + align * 32 + orbitPart * 18);
+    const mineralNudge = pct * 0.55 + align * 0.45;
+    const blended = genesisR + mineralNudge * span * 0.35 + orbitPart * 6;
+    return clamp100(
+      Math.max(policy.genesisRMin, Math.min(policy.genesisRMax, blended)),
+    );
   }
 
-  const seed = (planet.coreResource + planet.coreTechnology + planet.coreEnvironment) / 150;
-  return clamp100(26 + Math.min(1, seed) * 36 + orbitPart * 16);
+  const orbitNudge = orbitPart * 8;
+  return clamp100(
+    Math.max(policy.genesisRMin, Math.min(policy.genesisRMax, genesisR + orbitNudge)),
+  );
 }
 
 /**
@@ -97,7 +112,9 @@ export function runPlanetEnergyCorePass(): void {
       orbitCountPatch[planetId] = orbitCount;
       orbitMineralPatch[planetId] = resolvePlanetAsteroidAssignedMineralIds(planetId, orbitCount);
       const cur = runtime.resource;
-      const step = Math.max(-maxDelta, Math.min(maxDelta, target - cur));
+      const authority = resolvePlanetCoreStatAuthority(resolvePlanetCoreStatAuthorityContext(planetId));
+      const rawStep = Math.max(-maxDelta, Math.min(maxDelta, target - cur));
+      const step = rawStep * authority.energyRBlend;
       const nextResource = clamp100(cur + step);
       const g = planetCoreRuntimeToGaugeView(runtime);
       if (nextResource !== g.resource) {

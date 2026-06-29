@@ -8,6 +8,7 @@ import { ArcPlanetNebulaSubCore } from './ArcPlanetNebulaSubCore';
 import { WorldExpansionSubCore } from './WorldExpansionSubCore';
 import { AiAabsSubCore } from './AiAabsSubCore';
 import { ArcInboundDroneSubCore } from './ArcInboundDroneSubCore';
+import { ArcCoreSpySubCore } from './ArcCoreSpySubCore';
 import { ArcCoreDailyOpsSubCore } from './ArcCoreDailyOpsSubCore';
 import { ArcCoreTerritorialCombatSubCore } from './ArcCoreTerritorialCombatSubCore';
 /**
@@ -20,6 +21,7 @@ export function registerDefaultArcSubCores(hub: ArcCoreHub): void {
   hub.registerSubCore(new AiAabsSubCore());
   hub.registerSubCore(new AiNpcSubCore());
   hub.registerSubCore(new ArcInboundDroneSubCore());
+  hub.registerSubCore(new ArcCoreSpySubCore());
   hub.registerSubCore(new AiPlanetsSubCore());
   hub.registerSubCore(new AiEconomySubCore());
   hub.registerSubCore(new AiTradePortLevelPolicySubCore());
