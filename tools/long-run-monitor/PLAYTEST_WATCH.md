@@ -53,6 +53,8 @@ adb logcat -d -t 3000 | findstr /i "FATAL SIGSEGV ShareableWorklet librnskia Rea
 | **출발 → 은하맵** | 허브 출발 직후 | `mqt_v_js` SIGSEGV · `executeSync` · `ShareableWorklet` |
 | **은하맵 ↔ 행성 반복** | 이동·착륙 20회+ · **5h+ soak 후 worldmap** | `playtest-alerts.log` · `ShareableWorklet` · GL_SPIKE 3연속 · **floor drift** |
 | **은하 이동 중 이탈** | 이동 중 뒤로/착륙 · **이동중 전투→은하 복귀** | `isMoving` 잠금 · **transit post-flow** · 크래시 없이 멈춤/연출 순서 |
+| **허브 SUB-STAGE 왕복** | 허브 → 무역소/조선소 → back **5회** | PSS·GL idle 회복 · Views <450 · **route_blur 미발화**(MEM_PROFILE) |
+| **허브 스캔→채굴 UI** | 스캔 완료 후 채굴·중지 10회+ | 서브메뉴(채굴·대화·수색) **깜박임·재등장 애니 없음** · 무역소 행 동시 깜박 없음 |
 | **웨이브 전투** | 전투 진입·종료 반복 | GL peak ~110–140MB 정상 · **이탈 후 floor +25MB** = 누수 |
 | **장기 체류** | 30분+ 허브 방치 | `mem-timeline.csv` floor drift · FinalizerDaemon SIGSEGV |
 

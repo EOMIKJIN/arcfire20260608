@@ -8,15 +8,20 @@
  * JS: DevSettings.reload 래핑 + Skia Canvas mount gate.
  */
 import { DeviceEventEmitter, DevSettings, InteractionManager } from 'react-native';
-import { releasePlanetHubStageMemory } from './stageMemoryRelease';
+import { releaseCombatStageMemory, releaseGalaxyMapStageMemory, releasePlanetHubStageMemory } from './stageMemoryRelease';
 import { installDevLoadingViewSuppress } from './devLoadingViewSuppress';
 
 const PREPARE_EVENT = 'ArcfirePrepareMetroReload';
 const PREPARE_DELAY_MS = 350;
+/** Fast Refresh 직후 useFocusEffect blur/route_blur 연쇄 억제 (logcat 22:19:50~22:20:01) */
+const FAST_REFRESH_ROUTE_BLUR_SKIP_MS = 20_000;
 
 let skiaMountBlocked = false;
 let prepareInFlight = false;
+let routeBlurSkipUntilMs = 0;
 const gateListeners = new Set<() => void>();
+
+type HotDisposeModule = { hot?: { dispose: (cb: () => void) => void } };
 
 function notifyGateListeners(): void {
   gateListeners.forEach((fn) => {
@@ -34,10 +39,13 @@ export function prepareDevMetroReload(reason = 'metro_reload'): void {
   if (prepareInFlight) return;
   prepareInFlight = true;
   skiaMountBlocked = true;
+  routeBlurSkipUntilMs = Date.now() + FAST_REFRESH_ROUTE_BLUR_SKIP_MS;
   notifyGateListeners();
 
   try {
     releasePlanetHubStageMemory(null);
+    releaseGalaxyMapStageMemory({ reason: 'route_blur' });
+    releaseCombatStageMemory();
   } catch (e) {
     // eslint-disable-next-line no-console
     console.warn(`[devMetroReloadGuard] cleanup (${reason})`, e);
@@ -45,6 +53,21 @@ export function prepareDevMetroReload(reason = 'metro_reload'): void {
 
   // eslint-disable-next-line no-console
   console.log(`[devMetroReloadGuard] prepared for reload (${reason})`);
+}
+
+export function isDevMetroReloadPrepareInFlight(): boolean {
+  if (typeof __DEV__ === 'undefined' || !__DEV__) return false;
+  return prepareInFlight || skiaMountBlocked || Date.now() < routeBlurSkipUntilMs;
+}
+
+/** Fast Refresh — module 교체 직전 dispose 에서 prepare (DevSettings.reload 미경유 HMR) */
+export function registerDevHotModuleDisposeGuard(owner: string): void {
+  if (typeof __DEV__ === 'undefined' || !__DEV__) return;
+  const hot = (module as HotDisposeModule).hot;
+  if (!hot?.dispose) return;
+  hot.dispose(() => {
+    prepareDevMetroReload(`hmr_dispose:${owner}`);
+  });
 }
 
 /** reload 후 허브 재진입 시 Skia mount 재허용 */

@@ -1,12 +1,12 @@
 import type { ArcAlertButton } from '../ui/overlay/arcOverlayStore';
 import type { ArcAlertPresentOptions } from '../ui/overlay/arcOverlayStore';
-import {
-  ARC_NOTIFICATION_ALERT_AUTO_DISMISS_MS,
-} from '../ui/overlay/overlayAlertContract';
 
 export type { ArcAlertPresentOptions };
 
-/** 시스템 `Alert.alert` 대체 — ArcOverlayHost alert kind */
+/**
+ * 시스템 `Alert.alert` 대체 — ArcOverlayHost alert kind.
+ * 기본 **30초 자동 닫힘** (`overlayAlertContract`). 수동만: `{ autoDismissMs: 0 }`.
+ */
 export function showArcAlert(
   title: string,
   message?: string,
@@ -18,16 +18,13 @@ export function showArcAlert(
   presentArcOverlayAlert(title, message ?? '', buttons, options);
 }
 
-/** 접전·아크코어 정보 알림 — 30초 후 자동 닫힘 */
+/** 접전·ArcCore 정보 알림 — showArcAlert 동일(30s 자동 닫힘). 의미적 별칭. */
 export function showArcNotificationAlert(
   title: string,
   message?: string,
-  options?: Omit<ArcAlertPresentOptions, 'autoDismissMs'>,
+  options?: ArcAlertPresentOptions,
 ) {
-  showArcAlert(title, message, undefined, {
-    ...options,
-    autoDismissMs: ARC_NOTIFICATION_ALERT_AUTO_DISMISS_MS,
-  });
+  showArcAlert(title, message, undefined, options);
 }
 
 export type { ArcAlertButton } from '../ui/overlay/arcOverlayStore';

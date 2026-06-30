@@ -67,7 +67,7 @@ import { installNativeReclaimBootstrap } from '../src/game/nativeReclaim/nativeR
 import { markBootPerf, logBootPerfSummary } from '../src/game/bootPerformance';
 import { useAabsPolicyStore } from '../src/arcCore/aabs/aabsPolicyStore';
 import { useAppBootStore } from '../src/store/appBootStore';
-import { installDevMetroReloadGuard } from '../src/game/devMetroReloadGuard';
+import { installDevMetroReloadGuard, registerDevHotModuleDisposeGuard } from '../src/game/devMetroReloadGuard';
 import { resumePlayerToLastHubPlanet } from '../src/game/galaxyMapSessionResume';
 import { IdleSessionRestartGuard } from '../src/components/IdleSessionRestartGuard';
 
@@ -429,3 +429,5 @@ const styles = StyleSheet.create({
   /** 전환 중 스택 뒤가 비지 않도록 루트도 게임 배경색 */
   root: { flex: 1, backgroundColor: COLORS.bg_primary },
 });
+
+registerDevHotModuleDisposeGuard('root_layout');

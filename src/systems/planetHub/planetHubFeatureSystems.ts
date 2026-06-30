@@ -29,6 +29,8 @@ type PlanetHubFeatureContext = {
   planet: PlanetHubMenuPlanet | null | undefined;
   hasTradeBadge: boolean;
   clearTradeBadge: () => void;
+  hasTavernBadge: boolean;
+  clearTavernBadge: () => void;
   /** 시설 4곳 — 출발과 동일하게 메인스테이지 suspend·스냅샷 후 `router.push`. */
   onFacilityNavigate: (href: Href) => void;
   /** 출발 폴백 전용 (`onDeparture` 미지정 시). */
@@ -91,10 +93,14 @@ export function buildPlanetHubFeatureMenuItems(
       label: tr('hubMenu.tavern'),
       icon: PLANET_HUB_ACTION_ICONS.tavern,
       disabled: !hasTavern,
+      showBadge: ctx.hasTavernBadge,
       onPress: () => {
         if (!hasTavern) return;
         if (!runPlanetHubSubmenuPreflight('tavern', ctx.planetId)) return;
-        runThrottledPlanetHubNavigation(() => ctx.onFacilityNavigate('/(game)/tavern'));
+        runThrottledPlanetHubNavigation(() => {
+          ctx.clearTavernBadge();
+          ctx.onFacilityNavigate('/(game)/tavern');
+        });
       },
     },
     {

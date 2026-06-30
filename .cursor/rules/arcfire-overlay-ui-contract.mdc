@@ -25,6 +25,13 @@ alwaysApply: false
 - **신규 panel kind** → `overlayChrome.ts`에 `hostAnchor: 'top'` 등록 (ArcOverlayHost에 `kind === '...'` 분기 추가 **금지**)
 - **신규 compact kind** → `hostAnchor: 'center'`
 
+## alert kind(compact 팝업) — 30초 자동 닫힘 (필수 · 2026-06-30~)
+
+- **일일 채굴 한도·에러·안내·향후 모든 `showArcAlert` / `presentArcOverlayAlert`** → 기본 **30초 자동 닫힘**
+- 정본: `overlayAlertContract.ts` · `resolveArcAlertAutoDismissMs()` · `ArcOverlayHost` timer
+- **수동만 유지**가 필요할 때만 `autoDismissMs: 0` (파괴적 2단 확인 등) — 사유 주석 필수
+- `Alert.alert` / RN `Modal` / 로컬 alert View **금지** — Host 경유만
+
 ## 금지
 
 - `phosphorOverlay.card` / `planetDevelopmentOverlayStyles.card` 등 **로컬 card shell** 신규 추가

@@ -1,8 +1,8 @@
 # Memory / Stage Contract Audit
 
-Generated: 2026-06-29T06:18:51.671Z
+Generated: 2026-06-30T12:34:43.460Z
 
-**Result:** PASS (33/33 checks)
+**Result:** PASS (37/37 checks)
 
 ## Passed
 - [x] worldmap → combat uses replace (full path)
@@ -38,6 +38,10 @@ Generated: 2026-06-29T06:18:51.671Z
 - [x] stageTransitionPhaseGate module
 - [x] planet stage session uses phase gate navigate drain
 - [x] MEM_PROFILE release build flag
+- [x] planet hub SUB-STAGE blur skips full route_blur
+- [x] hub soft reclaim Fresco trim deferred-only (no immediate+deferred double trim)
+- [x] planet hub store selectors avoid JSON.stringify hot path
+- [x] dev Metro reload guard releases all STAGE + blur skip
 
 ## Reference
 - `docs/2.1.memory.md`

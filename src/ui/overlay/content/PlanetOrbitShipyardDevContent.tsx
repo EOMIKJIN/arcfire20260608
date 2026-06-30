@@ -203,6 +203,7 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
       panelPrefix={moduleSummary ? <PlanetDevSummaryInset text={moduleSummary} visualTheme={visualTheme} /> : undefined}
       footer={footer}
       visualTheme={visualTheme}
+      onClose={onClose}
     >
         <PlanetDevSectionBar
           label={t('orbitShipyard.status')}

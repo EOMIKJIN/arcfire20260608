@@ -245,6 +245,13 @@ export function isLegacyFlatCoreSeed(runtime: {
   );
 }
 
+/** `planet_resource_genesis.csv` 정본 행 존재 — genesis realign·Table-First 대상 판별 */
+export function hasPlanetResourceGenesisCsvRow(planetId: string): boolean {
+  const id = planetId.trim();
+  if (!id) return false;
+  return getGenesisIndex().has(id);
+}
+
 export function invalidatePlanetResourceGenesisCache(): void {
   kv = null;
   genesisByPlanetId = null;

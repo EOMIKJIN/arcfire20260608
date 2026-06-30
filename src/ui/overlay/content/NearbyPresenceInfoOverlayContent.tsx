@@ -31,6 +31,7 @@ export const NearbyPresenceInfoOverlayContent = memo(function NearbyPresenceInfo
       visualTheme={visualTheme}
       title={t('nearbyPresence.overlayTitle')}
       subtitle={t('nearbyPresence.overlaySubtitle', { count: rows.length })}
+      onClose={onClose}
       footer={
         <ArcOverlayFooterActions
           visualTheme={visualTheme}

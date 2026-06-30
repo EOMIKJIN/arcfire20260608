@@ -4,6 +4,7 @@ import type { LevelUpSummary, MissionReward } from '../../types';
 import type { TradeProfitTip } from '../../game/tradeProfitTips';
 import type { ImageSourcePropType } from 'react-native';
 import { t } from '../../i18n';
+import { resolveArcAlertAutoDismissMs } from './overlayAlertContract';
 import { preflightPlanetHubSession } from '../heavyUiDataSession/preflightPlanetHub';
 import type { NearbyInfoDetailRow } from '../../game/planetHub/nearbyPresenceDisplay';
 
@@ -43,7 +44,7 @@ export type ArcOverlayAlertEntry = ArcOverlayBase & {
   title: string;
   message: string;
   buttons: ArcAlertButton[];
-  /** 정보성 알림 — ms 후 자동 닫힘 (미설정 시 수동 확인) */
+  /** ms 후 자동 닫힘 — presentArcOverlayAlert 기본 30s (0=비활성) */
   autoDismissMs?: number;
 };
 
@@ -227,7 +228,10 @@ export const useArcOverlayStore = create<ArcOverlayState>((set, get) => ({
   },
 }));
 
-/** alert — 연속 호출 시 최상단 alert 만 교체 (또는 options.id 고정 교체) */
+/**
+ * alert — 연속 호출 시 최상단 alert 만 교체 (또는 options.id 고정 교체)
+ * autoDismissMs: 생략=30초 자동 닫힘 · 0=수동만 · 양수=해당 ms
+ */
 export type ArcAlertPresentOptions = {
   id?: string;
   autoDismissMs?: number;
@@ -250,7 +254,7 @@ export function presentArcOverlayAlert(
     message,
     buttons: list,
     dismissOnBackdrop: true,
-    autoDismissMs: options?.autoDismissMs,
+    autoDismissMs: resolveArcAlertAutoDismissMs(options?.autoDismissMs),
     ...(alertId ? { id: alertId } : {}),
   };
   const store = useArcOverlayStore.getState();

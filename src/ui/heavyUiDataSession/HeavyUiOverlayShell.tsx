@@ -92,6 +92,7 @@ export const HeavyUiOverlayShell = memo(function HeavyUiOverlayShell({
         minHeight={minHeight}
         maxHeight={maxHeight}
         bodyStyle={bodyStyle}
+        onClose={onClose}
         footer={
           <ArcOverlayFooterActions
             onCancel={onClose}
@@ -123,6 +124,7 @@ export const HeavyUiOverlayShell = memo(function HeavyUiOverlayShell({
         minHeight={minHeight}
         maxHeight={maxHeight}
         bodyStyle={bodyStyle}
+        onClose={onClose}
         footer={resolvedFooter}
       >
         <View style={styles.center}>
@@ -144,6 +146,7 @@ export const HeavyUiOverlayShell = memo(function HeavyUiOverlayShell({
       minHeight={minHeight}
       maxHeight={maxHeight}
       bodyStyle={bodyStyle}
+      onClose={onClose}
       footer={resolvedFooter}
     >
       {children}

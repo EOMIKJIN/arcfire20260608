@@ -22,6 +22,7 @@ import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
 import { useTavernBoardStore } from '../../src/store/tavernBoardStore';
+import { useMenuNotificationStore } from '../../src/store/menuNotificationStore';
 import { usePlayerStore } from '../../src/store/playerStore';
 import { listNpcCaptains } from '../../src/npc/npcFleetRegistry';
 import { resolveTavernHostCaptainAtPlanet } from '../../src/arcCore/captainPresence';
@@ -119,6 +120,7 @@ export default function TavernScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      useMenuNotificationStore.getState().clearBadge('tavern');
       if (!tavernHostCaptain) return;
       setHostDialogVisible(true);
     }, [tavernHostCaptain]),

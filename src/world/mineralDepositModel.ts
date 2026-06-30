@@ -34,7 +34,6 @@ import {
 } from '../data/generated/csvMineralEconomy';
 import { STAR_SYSTEMS } from '../data/systems';
 import { resolvePlanetDepositWeightMul } from '../arcCore/planetResource/planetResourceEcosystemPolicy';
-import { usePlanetCoreRuntimeStore } from '../store/planetCoreRuntimeStore';
 import { getPlanetRecord } from './planetTradePortDb';
 
 const KNOWN_PLANET_IDS = new Set<string>();
@@ -132,8 +131,9 @@ export function buildPlanetMineralDepositIndex(): MineralDepositBuildResult {
 
     const n = planetIds.length;
     for (const planetId of planetIds) {
-      const runtimeR = usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId)?.resource;
-      const depositMul = resolvePlanetDepositWeightMul(planetId, runtimeR);
+      // 캐시 빌드는 genesis R만 — 런타임 store 순회·일일 invalidate 시 Hermes/GC 압력 완화.
+      // 일일 배치 후 `invalidateMineralDepositProfileCache` 로 갱신.
+      const depositMul = resolvePlanetDepositWeightMul(planetId, undefined);
       const shareOfGalaxyByMineral: Record<string, number> = {};
       for (const m of mineralIds) {
         shareOfGalaxyByMineral[m] = ((share * (mix[m] ?? 0)) / n) * depositMul;

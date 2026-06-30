@@ -4,7 +4,7 @@
 //   exchange: 보석 → 크레딧 단방향 교환
 // ============================================================
 import React, { memo, useCallback, useEffect } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import type { ArcOverlayBmShopEntry } from '../arcOverlayStore';
 import type { BmShopProduct, BmShopProductVisual } from '../../../bm/bmShopCatalog';
 import {
@@ -195,12 +195,8 @@ export const BmShopOverlayContent = memo(function BmShopOverlayContent({
       layout="panel"
       panelPrefix={panelPrefix}
       visualTheme={visualTheme}
+      onClose={onClose}
       footer={<ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} visualTheme={visualTheme} />}
-      trailing={(
-        <Pressable style={styles.closeBtn} onPress={onClose} hitSlop={8}>
-          <Text style={styles.closeBtnText}>✕</Text>
-        </Pressable>
-      )}
     >
       {products.map((product) => (
         <ProductRow

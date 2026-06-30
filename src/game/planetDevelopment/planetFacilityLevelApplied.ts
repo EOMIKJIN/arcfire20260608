@@ -3,6 +3,7 @@
 // ============================================================
 
 import { applyPlanetFacilityLevelUpBenefits } from '../../arcCore/planetDevelopment/planetDevelopmentLevelBenefits';
+import { flushPlanetCoreRuntimePersist } from '../../store/planetCoreRuntimeStore';
 import { showPlanetFacilityLevelUpNotification } from './showPlanetFacilityLevelUpNotification';
 
 function syncPlanetInfoAfterDevChange(planetId: string): void {
@@ -26,4 +27,5 @@ export function finalizePlanetFacilityLevelApplied(
   applyPlanetFacilityLevelUpBenefits(planetId, facilityType, newLevel);
   syncPlanetInfoAfterDevChange(planetId);
   showPlanetFacilityLevelUpNotification(planetId, facilityType, newLevel);
+  void flushPlanetCoreRuntimePersist();
 }

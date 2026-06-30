@@ -18,6 +18,15 @@ export const HUB_DEEP_NATIVE_RECLAIM_INTERVAL_MS = 15 * 60 * 1000;
 /** deep reclaim — Skia dodge 해제 후 RN Image remount (FinalizerDaemon race 회피) */
 export const HUB_BACKDROP_NATIVE_REMOUNT_DEFER_MS = 64;
 
+/** 동일 hub에서 RN 백드롭 remount 최소 간격 — trim 전 remount 시 native floor 계단 방지 */
+export const HUB_BACKDROP_REMOUNT_COOLDOWN_MS = 30 * 60 * 1000;
+
+/** soft(5m)·deep(15m) reclaim 최소 간격 — 이중 Fresco trim·remount race 방지 */
+export const HUB_NATIVE_RECLAIM_MIN_GAP_MS = 45 * 1000;
+
+/** remount 후 2차 Fresco trim — FinalizerDaemon 회수 대기 */
+export const HUB_POST_REMOUNT_TRIM_DELAY_MS = HUB_BACKDROP_NATIVE_REMOUNT_DEFER_MS + 256;
+
 /** worldmap 체류 — soft + deferred Fresco (transit 중 skip) */
 export const GALAXY_MAP_SOFT_RECLAIM_INTERVAL_MS = 5 * 60 * 1000;
 

@@ -135,7 +135,7 @@ export const PlanetHubActionTile = memo(function PlanetHubActionTile({
 const styles = StyleSheet.create({
   tile: {
     width: '100%',
-    minHeight: PLANET_HUB_ACTION_TILE_MIN_HEIGHT_PX,
+    height: PLANET_HUB_ACTION_TILE_MIN_HEIGHT_PX,
     borderWidth: 1,
     borderColor: TACTICAL_HUB.tileBorder,
     borderRadius: TILE_RADIUS,

@@ -213,6 +213,7 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
       panelPrefix={moduleSummary ? <PlanetDevSummaryInset text={moduleSummary} visualTheme={visualTheme} /> : undefined}
       footer={footer}
       visualTheme={visualTheme}
+      onClose={onClose}
     >
       <PlanetDevSectionBar
         label={t(`${i18nPrefix}.status`)}

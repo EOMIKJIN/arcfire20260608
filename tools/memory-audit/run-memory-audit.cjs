@@ -253,6 +253,44 @@ checks.push(
   ),
 );
 
+checks.push(
+  check(
+    'planet hub SUB-STAGE blur skips full route_blur',
+    /hubSubStageNavRef/.test(planet)
+      && /hubSubStageNavRef\.current/.test(planet)
+      && /if \(hubSubStageNavRef\.current\)[\s\S]{0,120}return/.test(planet),
+    'usePlanetSubStageMemory — hub stays mounted on facility push',
+  ),
+);
+
+checks.push(
+  check(
+    'hub soft reclaim Fresco trim deferred-only (no immediate+deferred double trim)',
+    !read('src/game/nativeReclaim/runPlanetHubSoftNativeReclaimPass.ts').includes('trimNativeBitmapCachesAsync'),
+    'runPlanetHubSoftNativeReclaimPass.ts — align with runGalaxyMapSoftNativeReclaimPass',
+  ),
+);
+
+checks.push(
+  check(
+    'planet hub store selectors avoid JSON.stringify hot path',
+    !/JSON\.stringify\(s\.progresses\)/.test(planet)
+      && !/JSON\.stringify\(s\.byPlanetId\[pid\]\?\.detail\?\.development/.test(planet),
+    'planet.tsx — use planetHubStoreMemoRevisions',
+  ),
+);
+
+checks.push(
+  check(
+    'dev Metro reload guard releases all STAGE + blur skip',
+    /releaseGalaxyMapStageMemory/.test(read('src/game/devMetroReloadGuard.ts'))
+      && /isDevMetroReloadPrepareInFlight/.test(read('src/game/devMetroReloadGuard.ts'))
+      && /isDevMetroReloadPrepareInFlight/.test(planet)
+      && /isDevMetroReloadPrepareInFlight/.test(read('app/(game)/worldmap.tsx')),
+    'devMetroReloadGuard.ts + planet/worldmap focus blur',
+  ),
+);
+
 const failed = checks.filter((c) => !c.ok);
 const passed = checks.filter((c) => c.ok);
 

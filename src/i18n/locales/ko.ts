@@ -558,6 +558,12 @@ export const KO_DICTIONARY: I18nDictionary = {
 
   'planet.miningStop': '채굴 중단',
   'planet.mining': '채굴',
+  'planet.miningNeedScanTitle': '스캔 필요',
+  'planet.miningNeedScanBody': '궤도 스캔을 완료한 뒤 채굴할 수 있습니다.',
+  'planet.miningUnavailableTitle': '채굴 불가',
+  'planet.miningUnavailableBody': '이 행성 궤도에는 채굴 가능한 소행성이 없습니다.',
+  'planet.miningDailyLimitTitle': '광물 채굴 한도',
+  'planet.miningDailyLimitBody': '이 행성 광맥(기초 재화) 일일 채굴 한도에 도달했습니다. 행성 R 자원 전체와는 별도이며, 일일 배치 후 일부 회복됩니다.',
 
   // ── 근접 INFO 패널 (nearbyPresence) ──
   'nearbyPresence.overlayTitle': '근접 함선 정보',

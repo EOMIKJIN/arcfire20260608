@@ -1,7 +1,8 @@
 key,value,notesKo
 enabled,true,일 1회 runPlanetMineralLedgerDailyPass
-reserve_base_units,80,R=50 기준 기본 매장 단위
-reserve_r_scale,220,R 0~100 → 추가 매장 (reserve_base + R/100*scale)
-daily_regen_pct,0.18,일 1회 max 대비 재생 비율
+mineral_pool_base_units,400,광물 전용 기초 풀(R 5대 지표와 병렬·R≠광물 100%)
+mineral_r_influence_pct,0.50,R 중 광물 allowance 에만 반영하는 비율(부분 대응)
+mineral_r_scale_units,2200,R 영향분 스케일(구 R=단순치환 대비 ~5× 광역)
+daily_regen_pct,0.18,일 1회 max 대비 재생 비율(전량 리셋 아님)
 mining_reserve_floor_units,5,이하 시 채굴 tick 중단(고갈)
 persist_coalesce_ms,1500,AsyncStorage 코얼레싱

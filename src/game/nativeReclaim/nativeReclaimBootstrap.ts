@@ -52,10 +52,16 @@ export function installNativeReclaimBootstrap(): void {
   });
 
   AppState.addEventListener('change', (next) => {
+    if (next === 'background' || next === 'inactive') {
+      runSoftNativeReclaimPass('app_background');
+      void trimNativeBitmapCachesAsync();
+      return;
+    }
     if (next !== 'active') return;
     const profileCount = Object.keys(usePlanetNebulaStore.getState().profilesByPlanetId).length;
     if (profileCount > NEBULA_PROFILE_KEEP_ON_GALAXY_BLUR + 1) {
       runSoftNativeReclaimPass('app_foreground');
+      void trimNativeBitmapCachesAsync();
     }
   });
 }

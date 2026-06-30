@@ -7,6 +7,7 @@ import { useWorldStore } from './worldStore';
 import type { PlanetCoreMetricsDetail, PlanetMasterBalanceDetail, PlanetCoreStatOpsTrendDetail } from './planetCoreMetricTypes';
 import { planetPgpStorageKey } from '../world/planetPgpModel';
 import {
+  hasPlanetResourceGenesisCsvRow,
   isLegacyFlatCoreSeed,
   resolvePlanetGenesisCoreGauge,
 } from '../arcCore/planetResource/planetResourceEcosystemPolicy';
@@ -290,12 +291,20 @@ function mergeWorldWithDisk(
       next[planet.id] = applyGenesisCoreSeed(planet.id, merged, stored);
     }
   }
-  return realignStarterPlanetDefenseTechnology(systems, next);
+  const dtRealigned = realignStarterPlanetDefenseTechnology(systems, next);
+  return realignPlanetGenesisEcosystemFromTable(dtRealigned);
 }
 
 /** 아르카디아 등 스타터 행성 — CSV 경제 생태계 기본 D/T로 1회 재정렬 */
 const PLANET_DT_REALIGN_REV = 1;
 const PLANET_DT_REALIGN_IDS = new Set(['arcadia_prime']);
+
+/** 구 genesis zone=저R 곡선 오적용 → lore·planets.csv 정본 1회 보정 (planet_resource_genesis.csv 행 전체) */
+const PLANET_GENESIS_ECOLOGY_REALIGN_REV = 2;
+
+function isGenesisEcosystemRealignTarget(planetId: string): boolean {
+  return hasPlanetResourceGenesisCsvRow(planetId);
+}
 
 function realignStarterPlanetDefenseTechnology(
   systems: Record<string, StarSystem>,
@@ -332,6 +341,39 @@ function realignStarterPlanetDefenseTechnology(
               totalEvents: 0,
               realignRev: PLANET_DT_REALIGN_REV,
             },
+      },
+    };
+  }
+  return out;
+}
+
+function realignPlanetGenesisEcosystemFromTable(
+  byPlanetId: Record<string, PlanetCoreRuntime>,
+): Record<string, PlanetCoreRuntime> {
+  const out = { ...byPlanetId };
+  for (const planetId of Object.keys(out)) {
+    if (!isGenesisEcosystemRealignTarget(planetId)) continue;
+    const stored = out[planetId];
+    if (!stored) continue;
+    const rev = stored.detail?.resource?.genesisRealignRev ?? 0;
+    if (rev >= PLANET_GENESIS_ECOLOGY_REALIGN_REV) continue;
+
+    const genesis = resolvePlanetGenesisCoreGauge(planetId);
+    out[planetId] = {
+      ...stored,
+      resource: genesis.resource,
+      population: genesis.population,
+      defense: genesis.defense,
+      technology: genesis.technology,
+      environment: genesis.environment,
+      updatedAt: Date.now(),
+      detail: {
+        ...stored.detail,
+        resource: {
+          ...stored.detail?.resource,
+          version: stored.detail?.resource?.version ?? 1,
+          genesisRealignRev: PLANET_GENESIS_ECOLOGY_REALIGN_REV,
+        },
       },
     };
   }
@@ -608,3 +650,13 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
     await get().persistPlanetCoreRuntime();
   },
 }));
+
+/** 행성개발 레벨업 등 — coalesce 대기 없이 디스크 flush (앱 종료·부트 마이그레이션 race 방지) */
+export async function flushPlanetCoreRuntimePersist(): Promise<void> {
+  if (planetCorePersistCoalesceTimer) {
+    clearTimeout(planetCorePersistCoalesceTimer);
+    planetCorePersistCoalesceTimer = null;
+  }
+  markPlanetCorePersistDirty();
+  await usePlanetCoreRuntimeStore.getState().persistPlanetCoreRuntime();
+}

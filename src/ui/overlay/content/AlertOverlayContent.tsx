@@ -11,9 +11,10 @@ import { resolveOverlayCompactBodyStyles } from '../overlayCompactBodyStyles';
 type Props = {
   entry: ArcOverlayAlertEntry;
   onButton: (onPress?: () => void | Promise<void>) => void;
+  onClose: () => void;
 };
 
-export const AlertOverlayContent = memo(function AlertOverlayContent({ entry, onButton }: Props) {
+export const AlertOverlayContent = memo(function AlertOverlayContent({ entry, onButton, onClose }: Props) {
   const visualTheme = resolveArcOverlayVisualTheme('alert');
   const body = resolveOverlayCompactBodyStyles(visualTheme);
   const hasCancel = entry.buttons.some((b) => b.style === 'cancel');
@@ -21,7 +22,7 @@ export const AlertOverlayContent = memo(function AlertOverlayContent({ entry, on
   const btnRowStyle = isAckOnly ? body.btnRowAckOnly : body.btnRowCancelConfirm;
 
   return (
-    <ArcOverlayCard title={entry.title} layout="compact" visualTheme={visualTheme}>
+    <ArcOverlayCard title={entry.title} layout="compact" visualTheme={visualTheme} onClose={onClose}>
       {entry.message.length > 0 ? (
         <Text style={[styles.body, { color: overlayInkColor(visualTheme, 'value') }]}>
           {entry.message}

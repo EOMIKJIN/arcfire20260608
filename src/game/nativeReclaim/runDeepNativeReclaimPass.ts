@@ -6,23 +6,54 @@ import { compactPlanetMemoRegistryShells } from '../planetMemoCache';
 import { prunePlanetNebulaProfilesExceptPlanetIds } from '../../store/planetNebulaStore';
 import { signalHubBackdropNativeRemount } from './hubBackdropNativeRemountSignal';
 import { signalHubSkiaNativeReclaim } from './hubSkiaNativeReclaimSignal';
-import { HUB_BACKDROP_NATIVE_REMOUNT_DEFER_MS } from './processMemoryBudgetPolicy';
+import { tryBeginHubNativeReclaim } from './hubNativeReclaimCoalesce';
+import {
+  HUB_BACKDROP_NATIVE_REMOUNT_DEFER_MS,
+  HUB_BACKDROP_REMOUNT_COOLDOWN_MS,
+  HUB_POST_REMOUNT_TRIM_DELAY_MS,
+} from './processMemoryBudgetPolicy';
 import { runSoftNativeReclaimPass } from './runSoftNativeReclaimPass';
 
 export type DeepNativeReclaimPassOptions = {
   planetId: string;
   reason: string;
+  /** true — Fresco trim 완료 후에도 RN Image key remount 생략 (백그라운드 등) */
+  skipBackdropRemount?: boolean;
 };
 
 let backdropRemountTimer: ReturnType<typeof setTimeout> | null = null;
 let backdropRemountRaf1 = 0;
 let backdropRemountRaf2 = 0;
+let postRemountTrimTimer: ReturnType<typeof setTimeout> | null = null;
+let lastBackdropRemountAtMs = 0;
+
+function schedulePostRemountTrim(reason: string): void {
+  if (postRemountTrimTimer) clearTimeout(postRemountTrimTimer);
+  postRemountTrimTimer = setTimeout(() => {
+    postRemountTrimTimer = null;
+    void trimNativeBitmapCachesAsync().then((result) => {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        // eslint-disable-next-line no-console
+        console.log(`[MEM] postRemountTrim reason=${reason} fresco=${result.frescoCleared ?? false}`);
+      }
+    });
+  }, HUB_POST_REMOUNT_TRIM_DELAY_MS);
+}
 
 /**
- * SkiaDomView finalize race 방지 — dodge overlay 해제 → 2×rAF → RN Image remount만.
- * Skia Canvas key remount는 planetHubSubcomponents에서 금지(sticky dodge).
+ * RN Image remount — 1차 Fresco trim **이후**만 실행 (native floor 계단 방지).
  */
-function scheduleHubBackdropNativeRemount(reason: string): void {
+function scheduleHubBackdropNativeRemountAfterTrim(reason: string): void {
+  const now = Date.now();
+  if (now - lastBackdropRemountAtMs < HUB_BACKDROP_REMOUNT_COOLDOWN_MS) {
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.log(`[MEM] backdropRemount cooldown skip reason=${reason}`);
+    }
+    return;
+  }
+  lastBackdropRemountAtMs = now;
+
   if (backdropRemountTimer) {
     clearTimeout(backdropRemountTimer);
     backdropRemountTimer = null;
@@ -40,6 +71,7 @@ function scheduleHubBackdropNativeRemount(reason: string): void {
         backdropRemountTimer = setTimeout(() => {
           backdropRemountTimer = null;
           signalHubBackdropNativeRemount(reason);
+          schedulePostRemountTrim(reason);
         }, HUB_BACKDROP_NATIVE_REMOUNT_DEFER_MS);
       });
     });
@@ -47,11 +79,12 @@ function scheduleHubBackdropNativeRemount(reason: string): void {
 }
 
 /**
- * PID 유지 중 Native(PSS) floor 2차 회수 — Fresco trim + RN Image 백드롭 remount.
+ * PID 유지 중 Native(PSS) floor 2차 회수 — Fresco trim 선행 → (쿨다운 OK 시) RN 백드롭 remount.
  * 전투·route_blur full reclaim 과 별도. hub 체류 ~15분 주기.
  */
 export function runDeepNativeReclaimPass(opts: DeepNativeReclaimPassOptions): void {
-  scheduleHubBackdropNativeRemount(opts.reason);
+  if (!tryBeginHubNativeReclaim(opts.reason)) return;
+
   runSoftNativeReclaimPass(opts.reason);
   prunePlanetNebulaProfilesExceptPlanetIds([opts.planetId]);
   compactPlanetMemoRegistryShells();
@@ -63,5 +96,21 @@ export function runDeepNativeReclaimPass(opts: DeepNativeReclaimPassOptions): vo
         `[MEM] runDeepNativeReclaimPass reason=${opts.reason} fresco=${result.frescoCleared ?? false}`,
       );
     }
+    if (!opts.skipBackdropRemount) {
+      scheduleHubBackdropNativeRemountAfterTrim(opts.reason);
+    }
   });
+}
+
+/** 테스트 전용 */
+export function resetDeepNativeReclaimStateForTests(): void {
+  if (backdropRemountTimer) clearTimeout(backdropRemountTimer);
+  if (postRemountTrimTimer) clearTimeout(postRemountTrimTimer);
+  backdropRemountTimer = null;
+  postRemountTrimTimer = null;
+  if (backdropRemountRaf1) cancelAnimationFrame(backdropRemountRaf1);
+  if (backdropRemountRaf2) cancelAnimationFrame(backdropRemountRaf2);
+  backdropRemountRaf1 = 0;
+  backdropRemountRaf2 = 0;
+  lastBackdropRemountAtMs = 0;
 }

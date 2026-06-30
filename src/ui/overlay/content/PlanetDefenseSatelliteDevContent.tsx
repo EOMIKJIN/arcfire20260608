@@ -197,6 +197,7 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
       panelPrefix={moduleSummary ? <PlanetDevSummaryInset text={moduleSummary} visualTheme={visualTheme} /> : undefined}
       footer={footer}
       visualTheme={visualTheme}
+      onClose={onClose}
     >
         <PlanetDevSectionBar
           label={t('defenseSat.status')}

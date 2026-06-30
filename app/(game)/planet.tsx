@@ -75,7 +75,7 @@ import {
 import type { CapitalRealtimeCombatSim } from '../../src/combat/capitalRealtimeTypes';
 import { isPlayerShipCombatCapable } from '../../src/game/playerSurvivalPod';
 import { releasePlanetHubStageMemory } from '../../src/game/stageMemoryRelease';
-import { ackDevMetroReloadMount } from '../../src/game/devMetroReloadGuard';
+import { ackDevMetroReloadMount, isDevMetroReloadPrepareInFlight, registerDevHotModuleDisposeGuard } from '../../src/game/devMetroReloadGuard';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { usePlanetStageLifecycleStore } from '../../src/game/planetStageLifecycle';
 import { resetPlanetHubNavigationThrottle } from '../../src/navigation/safePlanetHubNavigate';
@@ -126,6 +126,17 @@ import { resolvePlanetHubCoPresenceInteractionHints } from '../../src/arcCore/ob
 import { isArcCorePricedMineral } from '../../src/arcCore/economy/mineralTradePricing';
 import { resolvePlanetDisplayPrimaryMineralId } from '../../src/arcCore/economy/mineralMiningDropPolicy';
 import { resolveOrbitMiningSessionMaxForPlanet } from '../../src/arcCore/planetResource/planetResourceEcosystemPolicy';
+import { isOrbitMiningDailyAllowanceExhausted } from '../../src/game/mining/orbitMiningPlayerLimitPolicy';
+import {
+  clearPlanetHubScanUnlockOnDeparture,
+  setPlanetHubScanUnlocked,
+} from '../../src/game/planetHub/planetHubScanUnlockState';
+import {
+  missionProgressMemoRev,
+  planetHubDefenseSatelliteMemoRev,
+  planetHubFacilityDevMemoRev,
+} from '../../src/game/planetHub/planetHubStoreMemoRevisions';
+import { usePlanetHubScanUnlocked } from '../../src/game/planetHub/usePlanetHubScanUnlocked';
 import { ORBIT_MINING_CYCLE_MS, ORBIT_MINING_REWARD_GOOD_ID } from '../../src/game/miningConfig';
 import { planetHasMineableOrbitalDeposits } from '../../src/world/mineralDepositModel';
 import { listPlanetWorldObjects } from '../../src/worldObjects';
@@ -224,8 +235,9 @@ export default function PlanetScreen() {
   const setMenuBadge = useMenuNotificationStore(s => s.setBadge);
   const clearMenuBadge = useMenuNotificationStore(s => s.clearBadge);
   const hasTradeMenuBadge = useMenuNotificationStore(s => Boolean(s.badges.trade));
+  const hasTavernMenuBadge = useMenuNotificationStore(s => Boolean(s.badges.tavern));
   const hasQuestHud = useMissionStore(s => !!s.getActiveMission());
-  const missionProgressRev = useMissionStore((s) => JSON.stringify(s.progresses));
+  const missionProgressRev = useMissionStore((s) => missionProgressMemoRev(s.progresses));
   const hubDialogBadgeRev = usePlayerStore((s) => {
     const seen = s.player?.flags.seenStorySceneIds ?? [];
     const ack = s.player?.flags.acknowledgedHubDialogKeys ?? [];
@@ -252,6 +264,11 @@ export default function PlanetScreen() {
     [windowWidth, windowHeight],
   );
   const navigation = useNavigation();
+  /**
+   * SUB-STAGE(무역소·조선소) push — 허브는 스택에 유지.
+   * blur 시 full `route_blur` release 금지(usePlanetSubStageMemory 계약 · 6/30 Native/GL 회귀).
+   */
+  const hubSubStageNavRef = useRef(false);
   const [isPlanetRouteFocused, setIsPlanetRouteFocused] = useState(() => navigation.isFocused());
   const [appStateActive, setAppStateActive] = useState(() => AppState.currentState === 'active');
   useArcCoreDailyOpsSummaryOnce(playerHydrated && isPlanetRouteFocused);
@@ -273,10 +290,18 @@ export default function PlanetScreen() {
       setAppStateActive(active);
       if (!active) {
         flushMiningPlayerPersist();
+        const pid = usePlayerStore.getState().player?.currentPlanetId ?? null;
+        if (pid && navigation.isFocused()) {
+          runDeepNativeReclaimPass({
+            planetId: pid,
+            reason: 'hub_background',
+            skipBackdropRemount: true,
+          });
+        }
       }
     });
     return () => sub.remove();
-  }, []);
+  }, [navigation]);
 
   /** Phase 2: 메인스테이지 라이프사이클(Active/Suspending/Frozen/Resuming) 단일 진입점. */
   const stageSession = usePlanetStageSession();
@@ -314,6 +339,13 @@ export default function PlanetScreen() {
       return () => {
         setIsPlanetRouteFocused(false);
         flushMiningPlayerPersist();
+        if (hubSubStageNavRef.current) {
+          hubSubStageNavRef.current = false;
+          return;
+        }
+        if (isDevMetroReloadPrepareInFlight()) {
+          return;
+        }
         const blurPid = usePlayerStore.getState().player?.currentPlanetId ?? null;
         releasePlanetMainStageSession({ reason: 'route_blur', previousPlanetId: blurPid });
       };
@@ -407,8 +439,10 @@ export default function PlanetScreen() {
       );
       return;
     }
-    recordHubDeparturePlanet(currentPlayer?.currentPlanetId);
-    warmGalaxyDeparturePreflight(currentPlayer?.currentPlanetId ?? null);
+    const departPlanetId = currentPlayer?.currentPlanetId ?? null;
+    clearPlanetHubScanUnlockOnDeparture(departPlanetId);
+    recordHubDeparturePlanet(departPlanetId);
+    warmGalaxyDeparturePreflight(departPlanetId);
     markGalaxyMapIngressFromPlanetHub();
     beginPlanetHubSuspendingNavigation(() => router.replace('/(game)/worldmap'), {
       preserveCombatSnapshot: false,
@@ -417,6 +451,7 @@ export default function PlanetScreen() {
 
   const onFacilityNavigate = useCallback(
     (href: Href) => {
+      hubSubStageNavRef.current = true;
       beginPlanetHubSuspendingNavigation(() => router.push(href));
     },
     [beginPlanetHubSuspendingNavigation],
@@ -426,7 +461,7 @@ export default function PlanetScreen() {
   const hubFacilityDevRev = usePlanetCoreRuntimeStore((s) => {
     const pid = resolvedPlanetId;
     if (!pid) return '';
-    return JSON.stringify(s.byPlanetId[pid]?.detail?.development?.byModuleId ?? null);
+    return planetHubFacilityDevMemoRev(s.byPlanetId[pid]?.detail);
   });
   const featureMenuPlanet = useMemo(() => {
     if (!planet) return planet;
@@ -446,11 +481,18 @@ export default function PlanetScreen() {
       planet: featureMenuPlanet,
       hasTradeBadge: hasTradeMenuBadge,
       clearTradeBadge: () => clearMenuBadge('trade'),
+      hasTavernBadge: hasTavernMenuBadge,
+      clearTavernBadge: () => clearMenuBadge('tavern'),
       push: router.push,
       onFacilityNavigate,
       onDeparture: handleDeparture,
     }, t),
-    [featureMenuPlanet, hasTradeMenuBadge, clearMenuBadge, handleDeparture, onFacilityNavigate, resolvedPlanetId, t],
+    [featureMenuPlanet, hasTradeMenuBadge, hasTavernMenuBadge, clearMenuBadge, handleDeparture, onFacilityNavigate, resolvedPlanetId, t],
+  );
+  /** menuSlot JSX 안정화 — 채굴 등 상태 갱신 시 무역소 행 불필요 repaint·깜박임 방지 */
+  const featureMenuRow = useMemo(
+    () => <PlanetHubFeatureMenuRow key={appLocale} items={featureMenuItems} />,
+    [appLocale, featureMenuItems],
   );
   const arcNpcCaptainsSnap = useArcNpcTrafficStore((s) => s.captains);
   const arcNpcShipsSnap = useArcNpcTrafficStore((s) => s.ships);
@@ -556,9 +598,7 @@ export default function PlanetScreen() {
   const defenseSatelliteRuntimeKey = usePlanetCoreRuntimeStore((s) => {
     const pid = planet?.id;
     if (!pid) return '';
-    const detail = s.byPlanetId[pid]?.detail;
-    const dev = detail?.development?.byModuleId?.defense_satellite ?? detail?.defenseSatellite;
-    return JSON.stringify(dev ?? null);
+    return planetHubDefenseSatelliteMemoRev(s.byPlanetId[pid]?.detail);
   });
 
   /** 방위위성 업그레이드 — 오버레이 닫혀도 허브 체류 중 wall-clock 완료 */
@@ -629,7 +669,12 @@ export default function PlanetScreen() {
     if (!pid || !isPlanetRouteFocused || !appStateActive || !stageSession.isActive) return undefined;
     const intervalId = setInterval(() => {
       if (capitalCombatOrbitActiveRef.current) return;
-      runDeepNativeReclaimPass({ planetId: pid, reason: 'hub_periodic' });
+      runDeepNativeReclaimPass({
+        planetId: pid,
+        reason: 'hub_periodic',
+        /** idle 15m — Fresco trim만. RN 백드롭 remount는 native_heap floor 계단 유발(6/30 22:52·23:22) */
+        skipBackdropRemount: true,
+      });
     }, HUB_DEEP_NATIVE_RECLAIM_INTERVAL_MS);
     const token = registerPlanetSessionResource({
       ownerId: 'planet_hub_deep_native_reclaim',
@@ -657,23 +702,18 @@ export default function PlanetScreen() {
     const ratio = Math.max(0, Math.min(1, elapsed / ORBIT_MINING_CYCLE_MS));
     return Math.round(ratio * 100);
   }, [miningSession.lastTickAtMs, miningSession.status, miningUiNowMs]);
-  const [planetScanActionsUnlocked, setPlanetScanActionsUnlocked] = useState(false);
-  const prevScanPlanetIdRef = useRef<string | null>(null);
-  useEffect(() => {
-    const cur = player?.currentPlanetId ?? null;
-    if (!cur || prevScanPlanetIdRef.current === cur) return;
-    prevScanPlanetIdRef.current = cur;
-    setPlanetScanActionsUnlocked(false);
-  }, [player?.currentPlanetId]);
+  const planetScanActionsUnlocked = usePlanetHubScanUnlocked(resolvedPlanetId);
   const handlePlanetScanComplete = useCallback(() => {
-    setPlanetScanActionsUnlocked(true);
-  }, []);
+    const pid = resolvedPlanetId ?? usePlayerStore.getState().player?.currentPlanetId ?? null;
+    if (pid) setPlanetHubScanUnlocked(pid, true);
+  }, [resolvedPlanetId]);
   const handlePlanetScanReset = useCallback(() => {
-    setPlanetScanActionsUnlocked(false);
+    const pid = resolvedPlanetId ?? usePlayerStore.getState().player?.currentPlanetId ?? null;
+    if (pid) setPlanetHubScanUnlocked(pid, false);
     if (miningSessionRef.current.status === 'running') {
       applyMiningTeardownRef.current('manual_stop');
     }
-  }, []);
+  }, [resolvedPlanetId]);
   const salvageAttemptRef = useRef(0);
   useEffect(() => {
     salvageAttemptRef.current = 0;
@@ -683,9 +723,21 @@ export default function PlanetScreen() {
     [planetWorldObjects],
   );
   const handleToggleMining = useCallback(() => {
-    if (!planet || !canOrbitalMine || !planetScanActionsUnlocked) return;
+    if (!planet) return;
+    if (!planetScanActionsUnlocked) {
+      showArcAlert(t('planet.miningNeedScanTitle'), t('planet.miningNeedScanBody'));
+      return;
+    }
+    if (!canOrbitalMine) {
+      showArcAlert(t('planet.miningUnavailableTitle'), t('planet.miningUnavailableBody'));
+      return;
+    }
     if (miningSessionRef.current.status === 'running') {
       applyMiningTeardownRef.current('manual_stop');
+      return;
+    }
+    if (isOrbitMiningDailyAllowanceExhausted(planet.id)) {
+      showArcAlert(t('planet.miningDailyLimitTitle'), t('planet.miningDailyLimitBody'));
       return;
     }
     const miningGoodId = resolvePlanetDisplayPrimaryMineralId(planet.id);
@@ -694,7 +746,7 @@ export default function PlanetScreen() {
     miningSessionRef.current = next;
     setMiningSession(next);
     setMiningUiNowMs(now);
-  }, [planet, canOrbitalMine, planetScanActionsUnlocked]);
+  }, [planet, canOrbitalMine, planetScanActionsUnlocked, t]);
   useEffect(() => {
     const pid = player?.currentPlanetId;
     if (!pid) return undefined;
@@ -709,11 +761,12 @@ export default function PlanetScreen() {
    * Phase 3: 채굴 tick 인터벌·분배 알고리즘은 `useMiningDriver` 로 추출.
    * `enabled` 신호 한 곳에 정책을 모아두면 lifecycle/포커스/앱 상태 변경 시 즉시 정지.
    */
+  const miningScanReady = Boolean(planet) && planetScanActionsUnlocked;
   const miningDriverEnabled =
     miningSession.status === 'running' &&
     Boolean(planet) &&
     canOrbitalMine &&
-    planetScanActionsUnlocked &&
+    miningScanReady &&
     isPlanetRouteFocused &&
     appStateActive &&
     stageSession.isActive;
@@ -736,6 +789,9 @@ export default function PlanetScreen() {
     },
     [addInventoryItem, recordOrbitalMiningDelivery, setMenuBadge],
   );
+  const handleMiningDailyAllowanceExhausted = useCallback(() => {
+    showArcAlert(t('planet.miningDailyLimitTitle'), t('planet.miningDailyLimitBody'));
+  }, [t]);
   const resolveMiningSessionMaxUnits = useCallback((planetId: string) => {
     const runtime = usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId);
     return resolveOrbitMiningSessionMaxForPlanet(planetId, runtime?.resource);
@@ -747,6 +803,7 @@ export default function PlanetScreen() {
     applySession: setMiningSession,
     applyUiNowMs: setMiningUiNowMs,
     onGrant: handleMiningGrant,
+    onDailyAllowanceExhausted: handleMiningDailyAllowanceExhausted,
   });
   const ingameDialogActive = useIngameDialogStore((s) => s.session != null);
 
@@ -821,8 +878,14 @@ export default function PlanetScreen() {
       if (nextEpoch === captainOrbitEpochRef.current) return;
       refreshTablePresence();
     }, 60_000);
+    const token = registerPlanetSessionResource({
+      ownerId: 'planet_hub_captain_orbit_epoch_poll',
+      planetId: planet.id,
+      dispose: () => clearInterval(epochPollId),
+    });
     return () => {
       clearInterval(epochPollId);
+      token.release();
       setNearbyPresence([]);
     };
   }, [isPlanetRouteFocused, planet?.id, system?.id]);
@@ -1403,7 +1466,7 @@ export default function PlanetScreen() {
             shipName={player.ship.name}
             skillPoints={player.skillPoints}
             clanName={currentPilotClanName}
-            menuSlot={<PlanetHubFeatureMenuRow key={appLocale} items={featureMenuItems} />}
+            menuSlot={featureMenuRow}
           />
         </View>
 
@@ -1453,3 +1516,5 @@ export default function PlanetScreen() {
     </PlanetCapitalCombatRoot>
   );
 }
+
+registerDevHotModuleDisposeGuard('planet_hub');

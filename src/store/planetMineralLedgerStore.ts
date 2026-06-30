@@ -6,8 +6,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import {
   resolvePlanetMineralLedgerPolicy,
-  resolvePlanetMineralReserveMaxUnits,
 } from '../arcCore/planetResource/planetMineralLedgerPolicy';
+import { resolveOrbitMiningDailyAllowanceCapUnits } from '../game/mining/orbitMiningDailyAllowanceCap';
 import { usePlanetCoreRuntimeStore } from './planetCoreRuntimeStore';
 
 const STORAGE_KEY = 'arcfire_planet_mineral_ledger_v1';
@@ -48,6 +48,29 @@ function readRuntimeResource(planetId: string, override?: number): number {
   return usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId)?.resource ?? 50;
 }
 
+/** 정책 cap 확대·R≠광물 재반영 — 구 ledger max 로 고갈 잠금 유지 방지 */
+function reconcilePlanetMineralLedgerRows(
+  rows: Record<string, PlanetMineralLedgerRow>,
+): Record<string, PlanetMineralLedgerRow> {
+  const policy = resolvePlanetMineralLedgerPolicy();
+  const floor = policy.miningReserveFloorUnits;
+  const out: Record<string, PlanetMineralLedgerRow> = {};
+  for (const [planetId, row] of Object.entries(rows)) {
+    const r = readRuntimeResource(planetId);
+    const maxUnits = resolveOrbitMiningDailyAllowanceCapUnits(planetId, r);
+    let reserveUnits = Math.max(0, row.reserveUnits ?? 0);
+    const prevMax = row.maxUnits ?? maxUnits;
+    if (maxUnits > prevMax && reserveUnits <= floor) {
+      const regen = Math.max(1, Math.floor(maxUnits * policy.dailyRegenPct));
+      reserveUnits = Math.min(maxUnits, reserveUnits + regen);
+    } else {
+      reserveUnits = Math.min(maxUnits, reserveUnits);
+    }
+    out[planetId] = { reserveUnits, maxUnits, updatedAt: Date.now() };
+  }
+  return out;
+}
+
 export const usePlanetMineralLedgerStore = create<PlanetMineralLedgerState>((set, get) => ({
   loaded: false,
   byPlanetId: {},
@@ -60,7 +83,9 @@ export const usePlanetMineralLedgerStore = create<PlanetMineralLedgerState>((set
         return;
       }
       const parsed = JSON.parse(raw) as Record<string, PlanetMineralLedgerRow>;
-      set({ loaded: true, byPlanetId: parsed ?? {} });
+      const reconciled = reconcilePlanetMineralLedgerRows(parsed ?? {});
+      persistDirty = Object.keys(reconciled).length > 0;
+      set({ loaded: true, byPlanetId: reconciled });
     } catch {
       set({ loaded: true, byPlanetId: {} });
     }
@@ -89,7 +114,7 @@ export const usePlanetMineralLedgerStore = create<PlanetMineralLedgerState>((set
   bootstrapPlanetIfMissing: (planetId, runtimeResource) => {
     if (!planetId || !get().loaded) return;
     const prev = get().byPlanetId[planetId];
-    const maxUnits = resolvePlanetMineralReserveMaxUnits(runtimeResource);
+    const maxUnits = resolveOrbitMiningDailyAllowanceCapUnits(planetId, runtimeResource);
     if (prev) return;
     const next = {
       ...get().byPlanetId,
@@ -104,18 +129,14 @@ export const usePlanetMineralLedgerStore = create<PlanetMineralLedgerState>((set
     schedulePersist(get);
   },
 
-  getMaxUnits: (planetId, runtimeResource) => {
-    const r = readRuntimeResource(planetId, runtimeResource);
-    const row = get().byPlanetId[planetId];
-    if (row?.maxUnits) return row.maxUnits;
-    return resolvePlanetMineralReserveMaxUnits(r);
-  },
+  getMaxUnits: (planetId, runtimeResource) =>
+    resolveOrbitMiningDailyAllowanceCapUnits(planetId, runtimeResource),
 
   getReserveUnits: (planetId, runtimeResource) => {
     if (!planetId) return 0;
     const r = readRuntimeResource(planetId, runtimeResource);
     if (!get().loaded) {
-      return resolvePlanetMineralReserveMaxUnits(r);
+      return resolveOrbitMiningDailyAllowanceCapUnits(planetId, runtimeResource);
     }
     get().bootstrapPlanetIfMissing(planetId, r);
     return Math.max(0, get().byPlanetId[planetId]?.reserveUnits ?? 0);
@@ -130,7 +151,7 @@ export const usePlanetMineralLedgerStore = create<PlanetMineralLedgerState>((set
     const r = readRuntimeResource(planetId, runtimeResource);
     get().bootstrapPlanetIfMissing(planetId, r);
     const prev = get().byPlanetId[planetId]!;
-    const maxUnits = resolvePlanetMineralReserveMaxUnits(r);
+    const maxUnits = resolveOrbitMiningDailyAllowanceCapUnits(planetId, runtimeResource);
     const take = Math.min(Math.floor(quantity), prev.reserveUnits);
     if (take <= 0) return 0;
     const next = {
@@ -150,7 +171,7 @@ export const usePlanetMineralLedgerStore = create<PlanetMineralLedgerState>((set
   applyDailyRegenForPlanet: (planetId, runtimeResource) => {
     if (!planetId) return;
     const policy = resolvePlanetMineralLedgerPolicy();
-    const maxUnits = resolvePlanetMineralReserveMaxUnits(runtimeResource);
+    const maxUnits = resolveOrbitMiningDailyAllowanceCapUnits(planetId, runtimeResource);
     const prev = get().byPlanetId[planetId];
     const cur = prev?.reserveUnits ?? maxUnits;
     const regen = Math.floor(maxUnits * policy.dailyRegenPct);

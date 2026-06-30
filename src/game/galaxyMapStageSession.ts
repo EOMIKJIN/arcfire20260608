@@ -24,7 +24,7 @@ import { resolveSinglePlanetSessionKeepIds } from './nativeReclaim/singlePlanetS
 import { runStageNativeReclaimPass } from './nativeReclaim/runStageNativeReclaimPass';
 import { emitMemProfileMarker } from './devMemoryProfileBridge';
 
-export type GalaxyMapStageReleaseReason = 'route_blur' | 'system_change';
+export type GalaxyMapStageReleaseReason = 'route_blur' | 'system_change' | 'transit_combat_nav';
 
 export type GalaxyMapStageReleaseOptions = {
   reason?: GalaxyMapStageReleaseReason;
@@ -97,6 +97,16 @@ function resolveKeepPlanetIds(opts: GalaxyMapStageReleaseOptions): string[] {
 
 function runGalaxyMapReleaseCore(reason: GalaxyMapStageReleaseReason, opts: GalaxyMapStageReleaseOptions): void {
   clearCapitalRealtimeCombatPresentationCaches();
+
+  /** worldmap → transit combat → worldmap — scroll·presentation만 정리, heavyUi·memo 전량 abort 금지(복귀 loading 고착) */
+  if (reason === 'transit_combat_nav') {
+    resetGalaxyMapDeferredTiles();
+    resetGalaxyMapPresentationState();
+    releaseGalaxyMapScrollIfRegistered();
+    resetHubInboundDroneDodgeBridge();
+    emitMemProfileMarker({ stage: 'galaxy_map', event: 'transit_combat_nav' });
+    return;
+  }
 
   if (reason === 'route_blur') {
     resetGalaxyMapDeferredTiles();

@@ -15,7 +15,7 @@ export const LevelUpOverlayContent = memo(function LevelUpOverlayContent({ entry
   const visualTheme = resolveArcOverlayVisualTheme('levelUp');
   const body = resolveOverlayCompactBodyStyles(visualTheme);
   return (
-    <ArcOverlayCard title="LEVEL UP" layout="compact" visualTheme={visualTheme}>
+    <ArcOverlayCard title="LEVEL UP" layout="compact" visualTheme={visualTheme} onClose={onClose}>
       <LevelUpDetailPanel summary={entry.summary} visualTheme={visualTheme} />
       <ArcButton
         label="[ 확인 ]"

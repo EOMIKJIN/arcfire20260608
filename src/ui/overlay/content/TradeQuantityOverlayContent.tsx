@@ -92,6 +92,7 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
       layout="panel"
       panelPrefix={metaPrefix}
       visualTheme={visualTheme}
+      onClose={onCancel}
       footer={(
         <ArcOverlayFooterActions
           onCancel={onCancel}

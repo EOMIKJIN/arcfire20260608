@@ -25,6 +25,7 @@ export const RewardOverlayContent = memo(function RewardOverlayContent({ entry, 
       subtitle={missionTitle}
       layout="compact"
       visualTheme={visualTheme}
+      onClose={onClose}
     >
       <View style={body.divider} />
       <Text style={body.sectionLabel}>{t('reward.gained')}</Text>

@@ -80,6 +80,7 @@ import { consumeGalaxyMapIngressReclaim } from '../../src/game/nativeReclaim/gal
 import { markGalaxyMapResidentActive } from '../../src/arcCore/memory';
 import { markPlanetHubIngressReclaim } from '../../src/game/nativeReclaim/planetHubIngressReclaim';
 import { emitMemProfileMarker } from '../../src/game/devMemoryProfileBridge';
+import { ackDevMetroReloadMount, isDevMetroReloadPrepareInFlight, registerDevHotModuleDisposeGuard } from '../../src/game/devMetroReloadGuard';
 import {
   resolveActivePlanetSessionAnchorId,
   resolveSinglePlanetSessionKeepIds,
@@ -188,7 +189,7 @@ function resolveWorldmapKeepPlanetIds(anchorPlanetId: string | null): string[] {
 }
 
 function releaseWorldmapSessionFloor(opts?: {
-  reason?: 'route_blur' | 'system_change';
+  reason?: 'route_blur' | 'system_change' | 'transit_combat_nav';
   previousSystemId?: string | null;
   anchorPlanetId?: string | null;
 }): void {
@@ -363,7 +364,7 @@ export default function WorldMapScreen() {
 
     runStageNavAfterTeardown({
       teardown: () => releaseWorldmapSessionFloor({
-        reason: 'route_blur',
+        reason: 'transit_combat_nav',
         anchorPlanetId: resolveWorldmapReleaseAnchorPlanetId(),
       }),
       navigate: () => router.replace('/(game)/combat'),
@@ -439,7 +440,14 @@ export default function WorldMapScreen() {
         transitAnimRef.current = null;
       }
       stopGalaxyMapInteractionLoops();
-      releaseWorldmapSessionFloor();
+      if (worldmapInternalNavRef.current) {
+        releaseWorldmapSessionFloor({
+          reason: 'transit_combat_nav',
+          anchorPlanetId: resolveWorldmapReleaseAnchorPlanetId(),
+        });
+      } else {
+        releaseWorldmapSessionFloor();
+      }
     },
   );
 
@@ -462,6 +470,7 @@ export default function WorldMapScreen() {
       consumeGalaxyMapIngressReclaim();
       markGalaxyMapResidentActive();
       emitMemProfileMarker({ stage: 'galaxy_map', event: 'route_focus' });
+      ackDevMetroReloadMount();
       // Reanimated Pan worklet — scrollAlive=1 은 runOnUI 스크롤 적용·2×rAF 이후에만 (SIGSEGV 방지)
       const enableScrollTask = runStageUiAfterIdle(() => {
         requestAnimationFrame(() => {
@@ -482,7 +491,7 @@ export default function WorldMapScreen() {
         stopGalaxyMapInteractionLoops();
         // combat/planet replace — route_blur release 시 Heavy UI abort·presentation reset →
         // 복귀 후 loading…/패널 고착(P1-2, 2026-06-23 감사). navigate 측에서 이미 teardown 한 경우도 skip.
-        if (!worldmapInternalNavRef.current) {
+        if (!worldmapInternalNavRef.current && !isDevMetroReloadPrepareInFlight()) {
           releaseWorldmapSessionFloor();
         }
         if (transitAnimRef.current) {
@@ -571,11 +580,31 @@ export default function WorldMapScreen() {
   useFocusEffect(
     useCallback(() => {
       if (!useTransitCombatSessionStore.getState().consumeWorldmapArrivalUi()) return;
+      hubNavGate.reset();
+      setIsMoving(false);
+      setShipTransit(null);
+      moveProgress.setValue(0);
+      isMovingSv.value = 0;
       const sysId = usePlayerStore.getState().player?.currentSystemId;
       if (!sysId) return;
       selectSystem(sysId);
       setShowPanel(true);
-    }, [selectSystem, setShowPanel]),
+      if (worldmapSession.phase !== 'ready') {
+        worldmapSession.retry();
+      }
+      requestAnimationFrame(() => {
+        armGalaxyMapScrollGestures();
+      });
+    }, [
+      armGalaxyMapScrollGestures,
+      hubNavGate,
+      isMovingSv,
+      moveProgress,
+      selectSystem,
+      setShowPanel,
+      worldmapSession.phase,
+      worldmapSession.retry,
+    ]),
   );
 
   const mapAnimatedStyle = useAnimatedStyle(() => ({
@@ -1711,3 +1740,5 @@ const styles = StyleSheet.create({
   panelReachable: { fontFamily: FONTS.mono, fontSize: FONTS.size.sm, color: TH.pilotLabelInk },
   panelHint: { fontFamily: FONTS.mono, fontSize: FONTS.size.sm, color: TH.miningSummaryInk },
 });
+
+registerDevHotModuleDisposeGuard('galaxy_map');

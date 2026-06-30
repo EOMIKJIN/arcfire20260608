@@ -28,6 +28,7 @@ export const WaveResultOverlayContent = memo(function WaveResultOverlayContent({
       titleColor={isWin ? undefined : COLORS.danger}
       layout="compact"
       visualTheme={visualTheme}
+      onClose={onClose}
       footer={(
         <ArcButton
           label={t('waveResult.confirm')}

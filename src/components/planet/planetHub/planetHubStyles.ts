@@ -244,10 +244,11 @@ export const planetHubStyles = StyleSheet.create({
   currencyChip: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     columnGap: 3,
+    height: PLANET_MAIN_TOPBAR_ICON_BUTTON_PX,
     maxWidth: 88,
     paddingHorizontal: 6,
-    paddingVertical: 4,
     borderRadius: PLANET_MAIN_TOPBAR_ICON_BORDER_RADIUS,
     borderWidth: 1,
     borderColor: TACTICAL_HUB.tileBorder,

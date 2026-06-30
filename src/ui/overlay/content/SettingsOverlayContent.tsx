@@ -151,6 +151,7 @@ export const SettingsOverlayContent = memo(function SettingsOverlayContent({
       layout="panel"
       footer={footer}
       visualTheme={visualTheme}
+      onClose={handleCancel}
     >
       <View style={isTactical ? section.divider : phosphorOverlay.divider} />
       <Text style={isTactical ? section.sectionLabel : phosphorOverlay.sectionLabel}>

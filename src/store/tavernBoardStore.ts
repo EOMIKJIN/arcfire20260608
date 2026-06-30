@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
 import type { I18nParams } from '../i18n/types';
+import { useMenuNotificationStore } from './menuNotificationStore';
 
 const STORAGE_KEY = 'arcfire_tavern_board_v1';
 
@@ -269,11 +270,13 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
   pushNotice: (notice) => {
     if (isLegacyArcCoreMissileNotice(notice)) return;
     const nextPostedAtMs = notice.postedAtMs ?? Date.now();
+    let didChange = false;
     set((state) => {
       if (notice.dedupeKey) {
         const onBoard = state.notices.some((n) => n.dedupeKey === notice.dedupeKey);
         if (onBoard) return state;
       }
+      didChange = true;
       const next: TavernNotice = {
         id: formatId(),
         title: notice.title,
@@ -287,7 +290,10 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
       const split = splitVisibleAndHistory([next, ...state.notices], state.history);
       return { notices: split.notices, history: split.history };
     });
-    void get().persistBoard();
+    if (didChange) {
+      useMenuNotificationStore.getState().setBadge('tavern', true);
+      void get().persistBoard();
+    }
   },
 
   pushOrRefreshNotice: (notice, dedupeKey) => {
@@ -308,6 +314,7 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
       const split = splitVisibleAndHistory([next, ...stripped.notices], stripped.history);
       return { notices: split.notices, history: split.history };
     });
+    useMenuNotificationStore.getState().setBadge('tavern', true);
     void get().persistBoard();
   },
 }));

@@ -1,5 +1,5 @@
-import React, { memo, useEffect, useRef } from 'react';
-import { Animated, type StyleProp, type ViewStyle } from 'react-native';
+import React, { memo, useEffect, useRef, useState } from 'react';
+import { Animated, View, type StyleProp, type ViewStyle } from 'react-native';
 
 const REVEAL_STAGGER_MS = 68;
 const HIDE_STAGGER_MS = 42;
@@ -35,13 +35,21 @@ export const PlanetHubScanActionRevealSlot = memo(function PlanetHubScanActionRe
 }: Props) {
   const progress = useRef(new Animated.Value(instant && revealed ? 1 : 0)).current;
   const hideDelayIndex = hideStaggerIndex ?? staggerIndex;
+  const revealedStableRef = useRef(instant && revealed);
+  /** 등장 완료 후 Plain View — 채굴 primary 등 자식 re-render 시 Animated opacity 깜박임 방지 */
+  const [revealedSettled, setRevealedSettled] = useState(instant && revealed);
 
   useEffect(() => {
     if (instant && revealed) {
       progress.setValue(1);
+      revealedStableRef.current = true;
+      setRevealedSettled(true);
       return;
     }
     if (!revealed) {
+      if (!revealedStableRef.current) return;
+      revealedStableRef.current = false;
+      setRevealedSettled(false);
       Animated.timing(progress, {
         toValue: 0,
         duration: HIDE_DURATION_MS,
@@ -50,6 +58,14 @@ export const PlanetHubScanActionRevealSlot = memo(function PlanetHubScanActionRe
       }).start();
       return;
     }
+    /** 이미 표시 완료 — 부모 re-render·instant 토글 시 progress 0 리셋 깜박임 방지 */
+    if (revealedStableRef.current) {
+      progress.setValue(1);
+      setRevealedSettled(true);
+      return;
+    }
+    revealedStableRef.current = true;
+    setRevealedSettled(false);
     progress.setValue(0);
     Animated.spring(progress, {
       toValue: 1,
@@ -58,10 +74,20 @@ export const PlanetHubScanActionRevealSlot = memo(function PlanetHubScanActionRe
       tension: 340,
       friction: 15,
       velocity: 3,
-    }).start();
+    }).start(({ finished }) => {
+      if (finished) setRevealedSettled(true);
+    });
   }, [hideDelayIndex, instant, progress, revealed, staggerIndex]);
 
   const translateFrom = axis === 'vertical' ? 18 : -22;
+
+  if (revealedSettled && revealed) {
+    return (
+      <View pointerEvents="auto" style={style}>
+        {children}
+      </View>
+    );
+  }
 
   return (
     <Animated.View

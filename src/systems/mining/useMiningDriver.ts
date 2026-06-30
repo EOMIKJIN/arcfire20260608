@@ -25,6 +25,7 @@ import {
 import { runMiningTick, stopMiningSession } from './service';
 import type { MiningSessionState } from './types';
 import { resolvePlanetMineralLedgerPolicy } from '../../arcCore/planetResource/planetMineralLedgerPolicy';
+import { isOrbitMiningDailyAllowanceExhausted } from '../../game/mining/orbitMiningPlayerLimitPolicy';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { usePlanetMineralLedgerStore } from '../../store/planetMineralLedgerStore';
 
@@ -50,15 +51,26 @@ export interface UseMiningDriverOptions {
   applyUiNowMs: (nowMs: number) => void;
   /** tick 보상 적재 콜백 — 인벤토리·뱃지·persist 는 호출자 책임. */
   onGrant: (grants: MiningGrant[]) => void;
+  /** 일일 allowance 소진으로 tick 중단 시(1회) — 플레이어 알림은 호출자. */
+  onDailyAllowanceExhausted?: () => void;
 }
 
 export function useMiningDriver(opts: UseMiningDriverOptions): void {
-  const { enabled, sessionRef, resolveSessionMaxUnits, applySession, applyUiNowMs, onGrant } = opts;
+  const {
+    enabled,
+    sessionRef,
+    resolveSessionMaxUnits,
+    applySession,
+    applyUiNowMs,
+    onGrant,
+    onDailyAllowanceExhausted,
+  } = opts;
 
   /** 콜백을 ref 로 잡아두면 호출자 콜백 변경 시 인터벌 재생성을 피할 수 있다(틱 누락 방지). */
   const applySessionRef = useRef(applySession);
   const applyUiNowMsRef = useRef(applyUiNowMs);
   const onGrantRef = useRef(onGrant);
+  const onDailyAllowanceExhaustedRef = useRef(onDailyAllowanceExhausted);
   const resolveSessionMaxUnitsRef = useRef(resolveSessionMaxUnits);
   const lastGaugeUiAtRef = useRef(0);
 
@@ -71,6 +83,9 @@ export function useMiningDriver(opts: UseMiningDriverOptions): void {
   useEffect(() => {
     onGrantRef.current = onGrant;
   }, [onGrant]);
+  useEffect(() => {
+    onDailyAllowanceExhaustedRef.current = onDailyAllowanceExhausted;
+  }, [onDailyAllowanceExhausted]);
   useEffect(() => {
     resolveSessionMaxUnitsRef.current = resolveSessionMaxUnits;
   }, [resolveSessionMaxUnits]);
@@ -89,14 +104,12 @@ export function useMiningDriver(opts: UseMiningDriverOptions): void {
       const runtimeR =
         usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId)?.resource;
       const ledgerPolicy = resolvePlanetMineralLedgerPolicy();
-      if (ledgerPolicy.enabled) {
-        const reserve = usePlanetMineralLedgerStore.getState().getReserveUnits(planetId, runtimeR);
-        if (reserve <= ledgerPolicy.miningReserveFloorUnits) {
-          const stopped = stopMiningSession();
-          sessionRef.current = stopped;
-          applySessionRef.current(stopped);
-          return;
-        }
+      if (ledgerPolicy.enabled && isOrbitMiningDailyAllowanceExhausted(planetId, runtimeR)) {
+        const stopped = stopMiningSession();
+        sessionRef.current = stopped;
+        applySessionRef.current(stopped);
+        onDailyAllowanceExhaustedRef.current?.();
+        return;
       }
       const last = prev.lastTickAtMs ?? now;
       const elapsed = now - last;
@@ -173,6 +186,7 @@ export function useMiningDriver(opts: UseMiningDriverOptions): void {
             const stopped = stopMiningSession();
             sessionRef.current = stopped;
             applySessionRef.current(stopped);
+            onDailyAllowanceExhaustedRef.current?.();
             return;
           }
           if (consumed < totalQty) {
@@ -190,6 +204,7 @@ export function useMiningDriver(opts: UseMiningDriverOptions): void {
               const stopped = stopMiningSession();
               sessionRef.current = stopped;
               applySessionRef.current(stopped);
+              onDailyAllowanceExhaustedRef.current?.();
             }
             return;
           }

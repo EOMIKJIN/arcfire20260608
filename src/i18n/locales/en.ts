@@ -559,6 +559,12 @@ export const EN_DICTIONARY: I18nDictionary = {
 
   'planet.miningStop': 'Stop Mining',
   'planet.mining': 'Mining',
+  'planet.miningNeedScanTitle': 'Scan Required',
+  'planet.miningNeedScanBody': 'Complete an orbit scan before mining.',
+  'planet.miningUnavailableTitle': 'Mining Unavailable',
+  'planet.miningUnavailableBody': 'No mineable asteroids in this planet\'s orbit.',
+  'planet.miningDailyLimitTitle': 'Mineral Mining Allowance',
+  'planet.miningDailyLimitBody': 'Daily orbit mineral vein allowance reached. Separate from full planet R resource; partial recovery after the daily batch.',
 
   // ── Nearby INFO panel (nearbyPresence) ──
   'nearbyPresence.overlayTitle': 'Nearby Ship Info',

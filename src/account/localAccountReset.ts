@@ -24,6 +24,7 @@ import { showArcAlert } from '../utils/showArcAlert';
 import { clearOnboardingProfessionId } from '../game/onboardingDraftStorage';
 import { purgeAccountLedgerProfileSkillByUid } from './accountLifecycle';
 import { resetArcInboundDroneCampaigns } from '../arcCore/inboundDrone/resetArcInboundDroneCampaigns';
+import { purgeAllPlanetHubScanUnlockState } from '../game/planetHub/planetHubScanUnlockState';
 import { useArcCoreSpyExpelledStore } from '../store/arcCoreSpyExpelledStore';
 
 export type LocalAccountResetParams = {
@@ -109,6 +110,7 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await clearOnboardingProfessionId();
   // 행성별 inbound 드론 벽시계 캠페인 — SubCore Map + UI store
   resetArcInboundDroneCampaigns();
+  purgeAllPlanetHubScanUnlockState();
   await useArcCoreSpyExpelledStore.getState().resetLocal();
 
   await clearArcCoreRtdbDailyKpiPushState();

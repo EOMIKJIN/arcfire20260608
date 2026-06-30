@@ -6,6 +6,8 @@
 /** Resource(자원·에너지 통합 스칼라) 하위 속성 자리 — 차후 광물·궤도 기여 등 */
 export type PlanetResourceDetail = {
   version?: number;
+  /** 스타터 genesis 표 정정 — 1회 런타임 재정렬 rev */
+  genesisRealignRev?: number;
 };
 
 /** PlanetDevelopment — 모듈별 런타임 슬롯 (방위위성·향후 9개) */

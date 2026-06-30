@@ -6,6 +6,7 @@ import React, { memo, useMemo, type ReactNode } from 'react';
 import { ScrollView, StyleSheet, View, useWindowDimensions, type StyleProp, type ViewStyle } from 'react-native';
 import { OVERLAY_TOKENS, SPACING } from '../../utils/theme';
 import { ArcOverlayTitleHeader } from './ArcOverlayTitleHeader';
+import { ArcOverlayCloseButton } from './ArcOverlayCloseButton';
 import type { ArcOverlayVisualTheme } from './tacticalOverlayPreview';
 import { tacticalOverlayCardStyles } from './tacticalOverlayStyles';
 import { resolveOverlayPanelTitles } from './overlayPanelTitles';
@@ -25,6 +26,10 @@ type Props = {
   title: string;
   subtitle?: string;
   titleColor?: string;
+  /** 우상단 ✕ — 미전달 시 trailing 만 사용 */
+  onClose?: () => void;
+  /** false면 onClose 있어도 ✕ 숨김(특수 케이스) */
+  showCloseButton?: boolean;
   trailing?: ReactNode;
   /** panel 전용 — ScrollView 위 고정 블록(초상화·배너 등) */
   panelPrefix?: ReactNode;
@@ -47,6 +52,8 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
   title,
   subtitle,
   titleColor,
+  onClose,
+  showCloseButton = true,
   trailing,
   panelPrefix,
   panelBleedPrefix,
@@ -80,6 +87,20 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
     () => resolveOverlayPanelTitles(visualTheme, title, subtitle),
     [visualTheme, title, subtitle],
   );
+  const headerTrailing = useMemo(() => {
+    const closeBtn = onClose && showCloseButton ? (
+      <ArcOverlayCloseButton onPress={onClose} visualTheme={visualTheme} />
+    ) : null;
+    if (closeBtn && trailing) {
+      return (
+        <View style={styles.trailingRow}>
+          {trailing}
+          {closeBtn}
+        </View>
+      );
+    }
+    return trailing ?? closeBtn ?? undefined;
+  }, [onClose, showCloseButton, trailing, visualTheme]);
 
   return (
     <View
@@ -97,7 +118,7 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
           title={resolvedTitles.title}
           subtitle={resolvedTitles.subtitle}
           titleColor={titleColor}
-          trailing={trailing}
+          trailing={headerTrailing}
           visualTheme={visualTheme}
         />
       </View>
@@ -174,6 +195,11 @@ const styles = StyleSheet.create({
   },
   headerWrap: {
     flexShrink: 0,
+  },
+  trailingRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: SPACING.sm,
   },
   panelBleedWrap: {
     alignSelf: 'stretch',

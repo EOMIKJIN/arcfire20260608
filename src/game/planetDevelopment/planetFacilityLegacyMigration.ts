@@ -114,7 +114,11 @@ export function normalizePlanetDevModulesToBaselineLevel(planetId: string): bool
     const detail = raw as PlanetFacilityModuleDetail;
     if (!detail.installed) continue;
     const level = Math.max(1, Math.floor(Number(detail.level) || 1));
-    if (level <= 1 && !detail.upgradeJob) continue;
+    // 진행 중 install/upgrade job — 레거시 클램프 대상 아님
+    if (detail.upgradeJob) continue;
+    if (level <= 1) continue;
+    // 플레이어 install/upgrade 경로(updatedAtMs) — Lv2+ 누적 유지 (부트마다 Lv1 클램프 회귀 방지)
+    if (typeof detail.updatedAtMs === 'number' && Number.isFinite(detail.updatedAtMs)) continue;
     nextByModuleId[moduleId] = {
       ...detail,
       level: 1,

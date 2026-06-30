@@ -3,6 +3,62 @@
 > **작성**: 김경제 에이전트 (`@김경제`) — 작업 완료·테스트 후 갱신  
 > **검수**: 김팀장 에이전트 (`@김팀장`) — `npm run audit:team-lead:daily`
 
+## [관측] 2026-06-30 23:28 KST — PSS 계단 787→864 (pid=17958) 전수조사
+
+- **샘플(15m)**: 22:28 PSS **787** GL **32** views **367** → 23:28 PSS **864** (+77) GL **38** (±) views **369** (±)
+- **판정**: **PSS_FLOOR_UP** — native_heap **444→485MB** (+41). GL·Views 누수 아님.
+- **22:39 +44MB**: 22:34~22:37 **galaxy 왕복**(departure→transit_combat_nav→hub ingress) 직후. STAGE2 ingress Native 할당.
+- **22:52·23:22**: `hub_periodic` deep + **hubBackdropNativeRemount** epoch=1·2 — remount 후 native_heap **469→478→485** 계단 (postRemountTrim 미회수).
+- **22:19 Fast Refresh**: `route_blur`×3·`boot-perf root_layout` 재실행 — **devMetroReloadGuard 미경유**(Dependency-cycle HMR).
+- **조치(김팀장)**: `hub_periodic` **skipBackdropRemount** · HMR `module.hot.dispose` guard · route_blur 20s skip window
+- **게이트**: `tsc` · 허브 60m soak native_heap floor · ⚠️ 앱 완전 재시작 후 측정(Metro r floor 잔류)
+
+## [관측] 2026-06-30 20:xx KST — mem 19:43 이후 +218MB 스파이크 전수조사
+
+- **19:43 baseline**: PSS **706** · GL **35** · Native **258** · Views **392** (heartbeat·mem-timeline 일치)
+- **19:51 spike**: PSS **924** (+218) · GL **125** (+90) · Native **417** (+159) · Views **558** (+166)
+- **직접 트리거(logcat 19:49:23~)**: Metro **Fast Refresh** — `boot-perf root_layout` 재부트·`planet_first_render` 다중·**galaxy_map dispose→mount 2회/초** · `trade_port_planet_resync`×3
+- **19:43 이후 코드(미커밋·HEAD=00:01)**: SUB-STAGE blur 버그(**기기 미반영 시** shipyard→route_blur) · genesis hydrate · mining/scan · transit_combat_nav · **19:49 전후 Metro r 리로드**가 주원인
+- **현재(~21:xx)**: PSS **~1018** · GL **~224** · Views **558** — 19:51 duplicate tree **미회수** 상태 지속
+- **조치(김팀장)**: hubSubStageNavRef(이미) · Metro reload guard **galaxy+combat release** · focus blur `isDevMetroReloadPrepareInFlight` skip · soft Fresco deferred-only
+- **필수**: ⚠️ **앱 완전 재시작**(Metro r만으로는 Views 558 잔류) → SUB-STAGE 왕복·mem snapshot
+- **예약**: 2h delayed recheck **21:39→23:39 KST** · `run-delayed-mem-recheck.ps1` · 산출 `MEM_RECHECK_DELAYED_LATEST.md`
+
+## [관측] 2026-06-30 — mem-contract-fix (SUB-STAGE blur · soft Fresco · selector)
+
+- **근본 원인**: Phase 2 lifecycle(`beginPlanetHubSuspendingNavigation`) 도입 시 SUB-STAGE push와 STAGE replace가 동일 suspend 경로를 쓰지만, `useFocusEffect` blur는 **무조건** `releasePlanetMainStageSession(route_blur)` 호출 → 허브 마운트 유지 중 Skia/memo/Fresco 전량 teardown → 복귀 re-arm 시 GL spike·Native floor·Views 558
+- **감사 공백**: `audit:memory:all` 33/33 PASS였으나 SUB-STAGE blur 게이트 **미검** → 정적 PASS·런타임 FAIL 공존
+- **조치(김팀장)**: `hubSubStageNavRef` blur 게이트 · hub soft Fresco **deferred-only** · `planetHubStoreMemoRevisions` · epoch poll session registry · scan unlock account purge · 감사 3건 추가
+- **재발 방지**: `usePlanetSubStageMemory` 주석 + `run-memory-audit.cjs` SUB-STAGE/Fresco/selector 체크 · SUB-STAGE 왕복 5회 playtest 필수
+- **게이트**: `tsc` · `audit:memory:all` — 런타임: 무역소 왕복 후 GL idle ±15MB · PSS floor
+
+## [관측] 2026-06-30 — mem-post-dev-recheck (스캔·채굴 UI · transit worldmap · genesis)
+
+- **개발 반영**: `planetHubScanUnlockState` session Map · 채굴 일일한도·알림 · `transit_combat_nav` worldmap 복귀 · genesis CSV realign · RevealSlot settled latch · `featureMenuRow` useMemo
+- **메모리 조사**: Skia/Canvas 신규 없음 · scan unlock Map 휘발(session·출발 clear) · mining driver 500ms tick·2s UI 스로틀 유지 · transit_combat_nav는 heavyUi abort 생략(의도)
+- **정적 게이트**: `tsc` PASS · `audit:memory:all` PASS · `audit:transit-combat-flow` PASS
+- **런타임 권장**: 스캔→채굴 탭 10회 서브메뉴 깜박 없음 · 이동중 전투 도주→worldmap 지도 표시 · genesis realign 후 Arcadia R floor
+
+> status: mem-post-dev-recheck · 김경제 retention/GL 실측 대기
+
+## [관측] 2026-06-30 09:38 KST — **정오(12:00) 감시 시작** · 자동보고 예약
+
+- **김경제 감시**: watch-30m PID **21300** · report-watch PID **13188** · auto-fix=OFF(record-only)
+- **adb**: OK (192.168.45.197:37573)
+- **baseline**: PSS **721.8MB** · GL **27.3MB** · Views **381** · pid=1094
+- **간격**: mem 15m · incident 10m · **12:00 KST** 자동보고(`NOON_WATCH_START` marker)
+- **brief**: `tools/long-run-monitor/logs/NOON_WATCH_BRIEF.md`
+- **P0**: mem-profile-fix soak — native_heap floor 계단 재발 여부
+
+> status: monitor-ok · 정오 보고 대기
+
+## [관측] 2026-06-30 — mem-profile-fix (PSS≥950 · native floor 계단)
+
+- **근본**: 6/30 02:00 KST `PSS_SPIKE +214MB` — GL ~26MB 유지, **native_heap 314→483MB** (graphics 아님). 01:45 idle(views=21) → 02:00 hub 재활성(views=371)과 15분 `runDeepNativeReclaimPass` 겹침.
+- **원인**: deep reclaim이 **Fresco trim 전 RN 백드롭 remount** → 구 bitmap 해제 전 신규 Image 할당(native floor 계단). soft(5m)·deep(15m) 동시 발화 race. PSS_SOFT_CEILING은 monitor만 기록·앱 측 trim 미약.
+- **조치(김팀장)**: trim 선행 → cooldown(30m) 후 remount · post-remount 2차 trim · hub reclaim 45s coalesce · 백그라운드 trim+deep(skip remount) · mineral deposit 캐시 genesis-only 빌드
+- **게이트**: `tsc` · `audit:memory:all` — 런타임: 허브 30m soak native_heap floor · route_blur PSS 회복
+
 ## [관측] 2026-06-29 — mem-post-dev-recheck (자원 생태계 Phase2)
 
 - **개발 반영**: 광물 레저·5스탯 genesis·채굴 소행성 부착(RN) · worldmap 다중홉 · stat authority environment gate
@@ -242,6 +298,199 @@
 - **권장(김팀장 1안)**: daily 08:00 soak OK — review report
 
 > status: monitor-ok · **08:00 보고체 유지**
+
+## [관측] 2026-06-30 08:00:00 KST — **데일리 08:00 상시 자동보고** (CRITICAL)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **23520** · auto-fix=OFF(record-only)
+- **adb**: OK (192.168.45.197:37573)
+- **앱**: RUNNING
+- **mem-monitor**: **CRITICAL** (PSS 971.1MB · GL 30.4MB · Views 387 · pid=23098)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md
+- **verdict**: **CRITICAL**
+- **incidents (actionable tail)**: 1
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT 2026-06-30 08:00:00 KST
+- **권장(김팀장 1안)**: PSS>=950 — hub exit / Skia dispose P0
+
+> status: **ready-for-team-lead-action** · **08:00 보고체 유지**
+
+## [관측] 2026-06-30 08:02:04 KST — **데일리 08:00 상시 자동보고** (CRITICAL)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **23520** · auto-fix=OFF(record-only)
+- **adb**: OK (192.168.45.197:37573)
+- **앱**: RUNNING
+- **mem-monitor**: **CRITICAL** (PSS 953.5MB · GL 30.2MB · Views 382 · pid=23098)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md
+- **verdict**: **CRITICAL**
+- **incidents (actionable tail)**: 3
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT 2026-06-30 08:00:00 KST
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:02:04] DAILY_8AM_REPORT 2026-06-30 08:02:04 KST
+- **권장(김팀장 1안)**: PSS>=950 — hub exit / Skia dispose P0
+
+> status: **ready-for-team-lead-action** · **08:00 보고체 유지**
+
+## [관측] 2026-06-30 08:04:06 KST — **데일리 08:00 상시 자동보고** (CRITICAL)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **23520** · auto-fix=OFF(record-only)
+- **adb**: OK (192.168.45.197:37573)
+- **앱**: RUNNING
+- **mem-monitor**: **CRITICAL** (PSS 957.4MB · GL 32.2MB · Views 384 · pid=23098)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md
+- **verdict**: **CRITICAL**
+- **incidents (actionable tail)**: 5
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT 2026-06-30 08:00:00 KST
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:02:04] DAILY_8AM_REPORT 2026-06-30 08:02:04 KST
+  - [2026-06-30 08:02:04] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:04:06] DAILY_8AM_REPORT 2026-06-30 08:04:06 KST
+- **권장(김팀장 1안)**: PSS>=950 — hub exit / Skia dispose P0
+
+> status: **ready-for-team-lead-action** · **08:00 보고체 유지**
+
+## [관측] 2026-06-30 08:06:07 KST — **데일리 08:00 상시 자동보고** (CRITICAL)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **23520** · auto-fix=OFF(record-only)
+- **adb**: OK (192.168.45.197:37573)
+- **앱**: RUNNING
+- **mem-monitor**: **CRITICAL** (PSS 958.8MB · GL 30.2MB · Views 384 · pid=23098)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md
+- **verdict**: **CRITICAL**
+- **incidents (actionable tail)**: 7
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT 2026-06-30 08:00:00 KST
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:02:04] DAILY_8AM_REPORT 2026-06-30 08:02:04 KST
+  - [2026-06-30 08:02:04] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:04:06] DAILY_8AM_REPORT 2026-06-30 08:04:06 KST
+  - [2026-06-30 08:04:06] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:06:07] DAILY_8AM_REPORT 2026-06-30 08:06:07 KST
+- **권장(김팀장 1안)**: PSS>=950 — hub exit / Skia dispose P0
+
+> status: **ready-for-team-lead-action** · **08:00 보고체 유지**
+
+## [관측] 2026-06-30 08:08:10 KST — **데일리 08:00 상시 자동보고** (CRITICAL)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **23520** · auto-fix=OFF(record-only)
+- **adb**: OK (192.168.45.197:37573)
+- **앱**: RUNNING
+- **mem-monitor**: **CRITICAL** (PSS 960.9MB · GL 30.2MB · Views 384 · pid=23098)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md
+- **verdict**: **CRITICAL**
+- **incidents (actionable tail)**: 9
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT 2026-06-30 08:00:00 KST
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:02:04] DAILY_8AM_REPORT 2026-06-30 08:02:04 KST
+  - [2026-06-30 08:02:04] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:04:06] DAILY_8AM_REPORT 2026-06-30 08:04:06 KST
+  - [2026-06-30 08:04:06] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:06:07] DAILY_8AM_REPORT 2026-06-30 08:06:07 KST
+  - [2026-06-30 08:06:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:08:10] DAILY_8AM_REPORT 2026-06-30 08:08:10 KST
+- **권장(김팀장 1안)**: PSS>=950 — hub exit / Skia dispose P0
+
+> status: **ready-for-team-lead-action** · **08:00 보고체 유지**
+
+## [관측] 2026-06-30 08:10:11 KST — **데일리 08:00 상시 자동보고** (CRITICAL)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **23520** · auto-fix=OFF(record-only)
+- **adb**: OK (192.168.45.197:37573)
+- **앱**: RUNNING
+- **mem-monitor**: **CRITICAL** (PSS 985.8MB · GL 30.9MB · Views 385 · pid=23098)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md
+- **verdict**: **CRITICAL**
+- **incidents (actionable tail)**: 11
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT 2026-06-30 08:00:00 KST
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:02:04] DAILY_8AM_REPORT 2026-06-30 08:02:04 KST
+  - [2026-06-30 08:02:04] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:04:06] DAILY_8AM_REPORT 2026-06-30 08:04:06 KST
+  - [2026-06-30 08:04:06] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:06:07] DAILY_8AM_REPORT 2026-06-30 08:06:07 KST
+  - [2026-06-30 08:06:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:08:10] DAILY_8AM_REPORT 2026-06-30 08:08:10 KST
+  - [2026-06-30 08:08:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:10:11] DAILY_8AM_REPORT 2026-06-30 08:10:11 KST
+- **권장(김팀장 1안)**: PSS>=950 — hub exit / Skia dispose P0
+
+> status: **ready-for-team-lead-action** · **08:00 보고체 유지**
+
+## [관측] 2026-06-30 08:12:13 KST — **데일리 08:00 상시 자동보고** (CRITICAL)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **23520** · auto-fix=OFF(record-only)
+- **adb**: OK (192.168.45.197:37573)
+- **앱**: RUNNING
+- **mem-monitor**: **CRITICAL** (PSS 979.9MB · GL 32.5MB · Views 409 · pid=23098)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md
+- **verdict**: **CRITICAL**
+- **incidents (actionable tail)**: 13
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT 2026-06-30 08:00:00 KST
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:02:04] DAILY_8AM_REPORT 2026-06-30 08:02:04 KST
+  - [2026-06-30 08:02:04] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:04:06] DAILY_8AM_REPORT 2026-06-30 08:04:06 KST
+  - [2026-06-30 08:04:06] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:06:07] DAILY_8AM_REPORT 2026-06-30 08:06:07 KST
+  - [2026-06-30 08:06:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:08:10] DAILY_8AM_REPORT 2026-06-30 08:08:10 KST
+  - [2026-06-30 08:08:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:10:11] DAILY_8AM_REPORT 2026-06-30 08:10:11 KST
+  - [2026-06-30 08:10:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:12:13] DAILY_8AM_REPORT 2026-06-30 08:12:13 KST
+- **권장(김팀장 1안)**: PSS>=950 — hub exit / Skia dispose P0
+
+> status: **ready-for-team-lead-action** · **08:00 보고체 유지**
+
+## [관측] 2026-06-30 08:14:15 KST — **데일리 08:00 상시 자동보고** (CRITICAL)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **23520** · auto-fix=OFF(record-only)
+- **adb**: OK (192.168.45.197:37573)
+- **앱**: RUNNING
+- **mem-monitor**: **CRITICAL** (PSS 972.7MB · GL 30.2MB · Views 384 · pid=23098)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md
+- **verdict**: **CRITICAL**
+- **incidents (actionable tail)**: 15
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT 2026-06-30 08:00:00 KST
+  - [2026-06-30 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:02:04] DAILY_8AM_REPORT 2026-06-30 08:02:04 KST
+  - [2026-06-30 08:02:04] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:04:06] DAILY_8AM_REPORT 2026-06-30 08:04:06 KST
+  - [2026-06-30 08:04:06] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:06:07] DAILY_8AM_REPORT 2026-06-30 08:06:07 KST
+  - [2026-06-30 08:06:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:08:10] DAILY_8AM_REPORT 2026-06-30 08:08:10 KST
+  - [2026-06-30 08:08:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:10:11] DAILY_8AM_REPORT 2026-06-30 08:10:11 KST
+  - [2026-06-30 08:10:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:12:13] DAILY_8AM_REPORT 2026-06-30 08:12:13 KST
+  - [2026-06-30 08:12:13] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260630-0800.md verdict=CRITICAL
+  - [2026-06-30 08:14:15] DAILY_8AM_REPORT 2026-06-30 08:14:15 KST
+- **권장(김팀장 1안)**: PSS>=950 — hub exit / Skia dispose P0
+
+> status: **ready-for-team-lead-action** · **08:00 보고체 유지**
+
+## [관측] 2026-06-30 12:00 KST — 저녁 감시 · 12:00 자동보고
+
+- **김경제 감시**: watch-30m PID **21300** · report-watch PID **16916** · auto-fix=OFF(record-only)
+- **mem-monitor**: **OK** (PSS 742.7MB · GL 36.9MB · Views 375 · pid=8290)
+- **report**: `d:\arcfire20260607\tools\long-run-monitor\logs\evening-watch-report-20260630-1200.md`
+- **latest summary**: `tools/long-run-monitor/logs/DAILY_5PM_REPORT_LATEST.md`
+- **timeline marker**: NOON_WATCH_START
+- **incidents (actionable tail)**: 5
+  - [2026-06-30 09:37:56] AFTERNOON_WATCH_START 2026-06-30 09:37:56 KST
+  - [2026-06-30 09:53:32] PSS_SOFT_CEILING pss=801.2 gl=35.5 views=392 native_reclaim_advisory
+  - [2026-06-30 10:08:53] PSS_SOFT_CEILING pss=800.1 gl=37.3 views=372 native_reclaim_advisory
+  - [2026-06-30 10:24:14] PSS_SOFT_CEILING pss=843.4 gl=39.5 views=375 native_reclaim_advisory
+  - [2026-06-30 10:39:34] PSS_SOFT_CEILING pss=912.9 gl=149.3 views=371 native_reclaim_advisory
+- **권장(김팀장 1안)**: afternoon soak OK — review mem-timeline floor
+
+> status: monitor-ok · 12:00 KST 자동보고 완료
 
 ## 작업 요약
 

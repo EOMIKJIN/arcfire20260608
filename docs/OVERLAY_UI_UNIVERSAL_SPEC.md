@@ -75,6 +75,17 @@ ArcOverlayHost
 3. **footer는 스크롤 밖**: `footerDock`이 `overflow:hidden` 카드에서 클리핑되지 않도록 Card 직속 자식.
 4. **제목 영역**: `ArcOverlayTitleHeader`에 단가·재고 등 데이터 금지 → `panelPrefix` 또는 scroll body.
 
+### 3-4. alert kind — 30초 자동 닫힘 (필수 · 2026-06-30~)
+
+| 항목 | 정본 |
+|------|------|
+| 기본 동작 | `showArcAlert` · `presentArcOverlayAlert` → **30초 후 자동 dismiss** |
+| 상수 | `ARC_ALERT_DEFAULT_AUTO_DISMISS_MS` (`overlayAlertContract.ts`) |
+| Host | `ArcOverlayHost` — `entry.autoDismissMs` timer |
+| 예외 | `autoDismissMs: 0` — 수동 확인만 (파괴적 2단 등, 주석 필수) |
+
+일일 채굴 한도·Heavy UI preflight·시설 거부 등 **향후 alert 추가 시 별도 타이머 코드 불필요** — `showArcAlert` 호출만.
+
 ---
 
 ## 4. 미완 / 레거시 (다음 마이그레이션 대상)

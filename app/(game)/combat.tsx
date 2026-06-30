@@ -49,7 +49,7 @@ import { usePlanetNebulaStore } from '../../src/store/planetNebulaStore';
 import { resolvePlanetNebulaBakedSource } from '../../src/game/planetNebulaBakedAssets';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { releaseCombatStageMemory } from '../../src/game/stageMemoryRelease';
-import { markGalaxyMapIngressFromPlanetHub } from '../../src/game/nativeReclaim/galaxyMapIngressReclaim';
+import { markPostHubCombatWorldmapIngressReclaim } from '../../src/game/nativeReclaim/galaxyMapIngressReclaim';
 import { markPlanetHubIngressReclaim } from '../../src/game/nativeReclaim/planetHubIngressReclaim';
 import { isPlayerShipCombatCapable, resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 import { useStageNavGate, runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
@@ -188,7 +188,7 @@ export default function CombatScreen() {
   ) => {
     const completed = await runTransitCombatPostFlow(postFlow);
     if (completed) {
-      markGalaxyMapIngressFromPlanetHub();
+      markPostHubCombatWorldmapIngressReclaim();
       scheduleCombatExitNavigate(() => router.replace('/(game)/worldmap'));
     } else {
       exitNavGate.reset();
@@ -313,7 +313,7 @@ export default function CombatScreen() {
             style={[styles.fleeBtn, exitPending && styles.fleeBtnDisabled]}
             onPress={() => {
               if (exitPending || exitNavGate.isLocked()) return;
-              markGalaxyMapIngressFromPlanetHub();
+              markPostHubCombatWorldmapIngressReclaim();
               scheduleCombatExitNavigate(() => router.replace('/(game)/worldmap'));
             }}
             disabled={exitPending}

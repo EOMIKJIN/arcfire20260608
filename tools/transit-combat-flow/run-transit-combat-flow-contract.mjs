@@ -19,6 +19,9 @@ const failures = [];
 const combat = read('app/(game)/combat.tsx');
 const postFlow = read('src/game/transitCombat/transitCombatPostFlow.ts');
 const worldmap = read('app/(game)/worldmap.tsx');
+const galaxySession = read('src/game/galaxyMapStageSession.ts');
+const coreRuntime = read('src/store/planetCoreRuntimeStore.ts');
+const genesisPolicy = read('src/arcCore/planetResource/planetResourceEcosystemPolicy.ts');
 
 if (!combat.includes('await runTransitCombatPostFlow')) {
   failures.push('combat.tsx: runTransitCombatPostFlow await 누락');
@@ -56,6 +59,39 @@ if (
 }
 if (!worldmap.includes('consumeWorldmapArrivalUi')) {
   failures.push('worldmap.tsx: 도착 UI consume 누락');
+}
+if (!combat.includes('markPostHubCombatWorldmapIngressReclaim')) {
+  failures.push('combat.tsx: worldmap 복귀 ingress reclaim 마커 누락');
+}
+if (combat.includes('markGalaxyMapIngressFromPlanetHub')) {
+  failures.push('combat.tsx: transit 복귀에 허브 ingress 마커 사용 금지');
+}
+if (!worldmap.includes("reason: 'transit_combat_nav'")) {
+  failures.push('worldmap.tsx: 전투 진입 teardown transit_combat_nav 누락');
+}
+if (!worldmap.includes('worldmapInternalNavRef')) {
+  failures.push('worldmap.tsx: internalNav guard 누락');
+}
+if (!worldmap.includes('worldmapSession.retry')) {
+  failures.push('worldmap.tsx: transit 복귀 세션 retry 누락');
+}
+if (!worldmap.includes('armGalaxyMapScrollGestures')) {
+  failures.push('worldmap.tsx: transit 복귀 scroll re-arm 누락');
+}
+if (!galaxySession.includes("'transit_combat_nav'")) {
+  failures.push('galaxyMapStageSession.ts: transit_combat_nav release reason 누락');
+}
+if (!galaxySession.includes('abortHeavyUiSessions') || !galaxySession.match(/transit_combat_nav[\s\S]*?return;/)) {
+  failures.push('galaxyMapStageSession.ts: transit_combat_nav early-return(heavyUi abort 생략) 누락');
+}
+if (coreRuntime.includes('SCENARIO_GENESIS_PLANET_IDS')) {
+  failures.push('planetCoreRuntimeStore.ts: genesis planet ID 하드코드 Set 잔존');
+}
+if (!coreRuntime.includes('hasPlanetResourceGenesisCsvRow')) {
+  failures.push('planetCoreRuntimeStore.ts: genesis realign Table-First(hasPlanetResourceGenesisCsvRow) 누락');
+}
+if (!genesisPolicy.includes('hasPlanetResourceGenesisCsvRow')) {
+  failures.push('planetResourceEcosystemPolicy.ts: hasPlanetResourceGenesisCsvRow 누락');
 }
 
 if (failures.length > 0) {

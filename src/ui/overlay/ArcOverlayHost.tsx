@@ -206,7 +206,7 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
       >
         <View style={contentSlotStyle} pointerEvents="box-none">
         {entry.kind === 'alert' ? (
-          <AlertOverlayContent entry={entry} onButton={handleAlertButton} />
+          <AlertOverlayContent entry={entry} onButton={handleAlertButton} onClose={dismiss} />
         ) : null}
         {entry.kind === 'levelUp' ? (
           <LevelUpOverlayContent entry={entry} onClose={handleLevelUpClose} />

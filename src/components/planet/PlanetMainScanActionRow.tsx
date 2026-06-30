@@ -23,8 +23,6 @@ const SCAN_DURATION_MAX_MS = 10000;
 const SEARCH_DURATION_MIN_MS = 5000;
 const SEARCH_DURATION_MAX_MS = 9000;
 
-export type PlanetScanPhase = 'idle' | 'complete';
-
 /** 게이지 슬롯에 표시되는 진행 종류 — 추후 채굴·대화 등 확장 */
 export type PlanetHubGaugeActivityKind = 'scan' | 'search';
 
@@ -38,6 +36,7 @@ type Props = {
   planetId: string | null;
   planetName?: string | null;
   scanEnabled?: boolean;
+  /** session Map 정본 — 잠금 해제 여부만 반영(자동 초기화 없음) */
   actionsUnlocked?: boolean;
   miningLabel: string;
   miningDisabled?: boolean;
@@ -59,7 +58,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
   planetId,
   planetName,
   scanEnabled = true,
-  actionsUnlocked: actionsUnlockedProp = false,
+  actionsUnlocked = false,
   miningLabel,
   miningDisabled = false,
   miningPrimary = false,
@@ -73,11 +72,11 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
   onPressDialog,
 }: Props) {
   const t = useT();
-  const [scanPhase, setScanPhase] = useState<PlanetScanPhase>(actionsUnlockedProp ? 'complete' : 'idle');
   const [gaugeKind, setGaugeKind] = useState<PlanetHubGaugeActivityKind | null>(null);
   const [progressPct, setProgressPct] = useState(0);
   const prevPlanetIdRef = useRef<string | null>(null);
-  const revealViaScanRef = useRef(false);
+  /** 이번 마운트에서 게이지로 스캔 완료 — pop 애니메이션용(재마운트·이미 해제 시 instant) */
+  const scanGaugeCompletedRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const completeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -92,26 +91,17 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
     }
   }, []);
 
-  const actionsUnlocked = actionsUnlockedProp || scanPhase === 'complete';
-  /** 행성 재진입(이미 스캔됨)만 즉시 표시 — 이번 세션 스캔 완료는 pop 애니메이션 */
-  const revealInstant = actionsUnlockedProp && !revealViaScanRef.current;
   const gaugeActive = gaugeKind !== null;
+  /** 이미 해제(시설 복귀·전투 후) — spring 생략 / 이번 게이지 완료 — stagger pop */
+  const revealInstant = actionsUnlocked && !scanGaugeCompletedRef.current;
 
-  useEffect(() => {
-    setScanPhase(actionsUnlockedProp ? 'complete' : 'idle');
-    if (!actionsUnlockedProp) {
-      revealViaScanRef.current = false;
-    }
-  }, [actionsUnlockedProp]);
-
-  /** 최초 마운트가 아닌 행성 전환 시에만 잠금으로 초기화 */
+  /** 행성 전환 — 게이지만 정리(잠금은 session Map·부모 prop) */
   useEffect(() => {
     if (prevPlanetIdRef.current === planetId) return;
     const isPlanetChange = prevPlanetIdRef.current !== null;
     prevPlanetIdRef.current = planetId;
     if (!isPlanetChange) return;
-    revealViaScanRef.current = false;
-    setScanPhase('idle');
+    scanGaugeCompletedRef.current = false;
     setGaugeKind(null);
     setProgressPct(0);
     clearGaugeTimers();
@@ -176,14 +166,12 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
   const handlePressScan = useCallback(() => {
     if (!scanEnabled || gaugeActive) return;
     if (actionsUnlocked) {
-      revealViaScanRef.current = false;
-      setScanPhase('idle');
+      scanGaugeCompletedRef.current = false;
       onScanReset?.();
       return;
     }
     startGaugeActivity('scan', randomDurationMs(SCAN_DURATION_MIN_MS, SCAN_DURATION_MAX_MS), () => {
-      revealViaScanRef.current = true;
-      setScanPhase('complete');
+      scanGaugeCompletedRef.current = true;
       onScanComplete?.();
     });
   }, [
@@ -229,7 +217,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
         accessibilityLabel={gaugeAccessibilityLabel}
       />
       <View style={styles.row}>
-        <View style={styles.leftColumn}>
+        <View style={styles.tileSlotColumn}>
           {PLANET_MAIN_SCAN_ROW_PLANET_INFO_TILE_ENABLED ? (
             <PlanetHubActionTile
               label={t('scanRow.planetInfo')}
@@ -243,6 +231,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
             instant={revealInstant}
             axis="vertical"
             staggerIndex={0}
+            style={styles.tileSlotRevealFill}
           >
             <PlanetHubActionTile
               label={t('scanRow.planetDev')}
@@ -252,7 +241,9 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
             />
           </PlanetHubScanActionRevealSlot>
         </View>
-        <View style={styles.topRightSpacer} />
+        <View style={styles.tileSlotSpacer} />
+        <View style={styles.tileSlotSpacer} />
+        <View style={styles.tileSlotSpacer} />
       </View>
       <View style={styles.row}>
         <View style={styles.tileSlot}>
@@ -264,14 +255,14 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
             active={gaugeKind === 'scan' || actionsUnlocked}
           />
         </View>
-        <View style={styles.secondaryGroup}>
+        <View style={styles.tileSlot}>
           <PlanetHubScanActionRevealSlot
             revealed={actionsUnlocked}
             instant={revealInstant}
             axis="horizontal"
             staggerIndex={0}
             hideStaggerIndex={2}
-            style={styles.tileSlot}
+            style={styles.tileSlotRevealFill}
           >
             <PlanetHubActionTile
               label={miningLabel}
@@ -281,13 +272,15 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
               primary={miningPrimary}
             />
           </PlanetHubScanActionRevealSlot>
+        </View>
+        <View style={styles.tileSlot}>
           <PlanetHubScanActionRevealSlot
             revealed={actionsUnlocked}
             instant={revealInstant}
             axis="horizontal"
             staggerIndex={1}
             hideStaggerIndex={1}
-            style={styles.tileSlot}
+            style={styles.tileSlotRevealFill}
           >
             <PlanetHubActionTile
               label={t('scanRow.dialog')}
@@ -297,13 +290,15 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
               showBadge={dialogShowBadge && actionsUnlocked && !dialogDisabled}
             />
           </PlanetHubScanActionRevealSlot>
+        </View>
+        <View style={styles.tileSlot}>
           <PlanetHubScanActionRevealSlot
             revealed={actionsUnlocked}
             instant={revealInstant}
             axis="horizontal"
             staggerIndex={2}
             hideStaggerIndex={0}
-            style={styles.tileSlot}
+            style={styles.tileSlotRevealFill}
           >
             <PlanetHubActionTile
               label={gaugeKind === 'search' ? t('scanRow.searching') : t('scanRow.search')}
@@ -337,21 +332,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'stretch',
     columnGap: SPACING.sm,
+    overflow: 'visible',
   },
-  leftColumn: {
-    flex: 1,
-    rowGap: 4,
-  },
-  topRightSpacer: {
-    flex: 3,
-  },
-  secondaryGroup: {
-    flex: 3,
-    flexDirection: 'row',
-    columnGap: SPACING.sm,
-    alignItems: 'stretch',
-  },
+  /** 행성개발·스캔·채굴·대화·수색 — 4열 균등(채굴 열 기준) */
   tileSlot: {
     flex: 1,
+    overflow: 'visible',
+    paddingTop: 2,
+  },
+  tileSlotColumn: {
+    flex: 1,
+    overflow: 'visible',
+    rowGap: 4,
+    paddingTop: 2,
+  },
+  tileSlotSpacer: {
+    flex: 1,
+  },
+  tileSlotRevealFill: {
+    alignSelf: 'stretch',
+    width: '100%',
   },
 });
