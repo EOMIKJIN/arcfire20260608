@@ -41,7 +41,7 @@ export function getTradeRouteMinNetProfitPerUnit(): number {
 
 /** 하역 순마진 중 아크코어 금고 귀속 비율(%) — CSV 정본 */
 export function getConvoyNetMarginArcCoreSharePct(): number {
-  return Math.max(0, Math.min(50, parseNum(getPolicyKv().get('convoy_net_margin_arc_core_share_pct'), 10)));
+  return Math.max(0, Math.min(100, parseNum(getPolicyKv().get('convoy_net_margin_arc_core_share_pct'), 30)));
 }
 
 export function getConvoyTransportFuelSharePct(): number {

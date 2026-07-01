@@ -2,8 +2,17 @@
 // 은하 지도 — 다음 분쟁 판정 예고(1h 순환) 노드 링 오버레이
 // ============================================================
 
-import React, { memo, useEffect, useMemo, useRef } from 'react';
-import { View, StyleSheet, Animated, Easing } from 'react-native';
+import React, { memo, useCallback, useEffect, useMemo } from 'react';
+import { View, StyleSheet, AppState } from 'react-native';
+import Animated, {
+  cancelAnimation,
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+  type SharedValue,
+} from 'react-native-reanimated';
 import { LAYOUT } from '../utils/theme';
 import type { StarSystem } from '../types';
 
@@ -34,15 +43,29 @@ type RingAnchor = {
   nodeR: number;
 };
 
+function startContestedRingSpin(rotation: SharedValue<number>): void {
+  cancelAnimation(rotation);
+  rotation.value = 0;
+  rotation.value = withRepeat(
+    withTiming(360, { duration: RING_SPIN_MS, easing: Easing.linear }),
+    -1,
+    false,
+  );
+}
+
 const ContestedZoneRingMark = memo(function ContestedZoneRingMark({
   anchor,
-  spin,
+  rotation,
 }: {
   anchor: RingAnchor;
-  spin: Animated.AnimatedInterpolation<string>;
+  rotation: SharedValue<number>;
 }) {
   const ringSize = (anchor.nodeR + RING_PAD) * 2;
   const half = ringSize / 2;
+
+  const ringStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
 
   return (
     <View
@@ -65,8 +88,8 @@ const ContestedZoneRingMark = memo(function ContestedZoneRingMark({
             height: ringSize,
             borderRadius: half,
             borderColor: RING_COLOR,
-            transform: [{ rotate: spin }],
           },
+          ringStyle,
         ]}
       />
     </View>
@@ -79,31 +102,30 @@ export const GalaxyMapContestedZoneRingOverlay = memo(function GalaxyMapConteste
   toScreen,
   animActive,
 }: GalaxyMapContestedZoneRingOverlayProps) {
-  const spinAnim = useRef(new Animated.Value(0)).current;
+  const rotation = useSharedValue(0);
+  const restartSpin = useCallback(() => {
+    startContestedRingSpin(rotation);
+  }, [rotation]);
 
   useEffect(() => {
     if (!animActive) {
-      spinAnim.stopAnimation();
-      return;
+      cancelAnimation(rotation);
+      return undefined;
     }
-    const loop = Animated.loop(
-      Animated.timing(spinAnim, {
-        toValue: 1,
-        duration: RING_SPIN_MS,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    );
-    loop.start();
+    restartSpin();
     return () => {
-      loop.stop();
+      cancelAnimation(rotation);
     };
-  }, [animActive, spinAnim]);
+  }, [animActive, rotation, restartSpin]);
 
-  const spin = spinAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
+  /** RN Animated.loop는 JS 스레드·백그라운드 복귀 후 멈춤 — 포그라운드 재시작 */
+  useEffect(() => {
+    if (!animActive) return undefined;
+    const sub = AppState.addEventListener('change', (next) => {
+      if (next === 'active') restartSpin();
+    });
+    return () => sub.remove();
+  }, [animActive, restartSpin]);
 
   const anchors = useMemo((): RingAnchor[] => {
     return systems.map((sys) => {
@@ -123,7 +145,7 @@ export const GalaxyMapContestedZoneRingOverlay = memo(function GalaxyMapConteste
   return (
     <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
       {anchors.map((anchor) => (
-        <ContestedZoneRingMark key={anchor.systemId} anchor={anchor} spin={spin} />
+        <ContestedZoneRingMark key={anchor.systemId} anchor={anchor} rotation={rotation} />
       ))}
     </View>
   );

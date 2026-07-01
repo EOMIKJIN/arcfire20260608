@@ -1,0 +1,6 @@
+key,value,notesKo
+policy_version,1,아크코어 중앙은행 — 발행·소각·적립금 지출(회계)
+expenditure_pass_enabled,true,일 1회 배치 — 시드 초과 잔액 전액 지출 항목 배분
+expenditure_fleet_military_share_pct,34,적립금 지출 — 함대생성·군사비(회계)
+expenditure_planet_opening_share_pct,33,적립금 지출 — 행성개방(회계)
+expenditure_planet_development_share_pct,33,적립금 지출 — 행성개발(회계)

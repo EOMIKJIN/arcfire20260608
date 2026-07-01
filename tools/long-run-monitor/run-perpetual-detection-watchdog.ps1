@@ -11,6 +11,7 @@ $ErrorActionPreference = 'Continue'
 $ScriptRoot = $PSScriptRoot
 $logDir = Join-Path $ScriptRoot 'logs'
 $disableFlag = Join-Path $logDir 'perpetual-detection-DISABLED.flag'
+$overnightFlag = Join-Path $logDir 'overnight-exception-shutdown.flag'
 $watchdogLog = Join-Path $logDir 'perpetual-watchdog.log'
 $pidFile = Join-Path $logDir 'perpetual-watchdog.pid'
 
@@ -28,6 +29,11 @@ if (Test-Path $disableFlag) {
   exit 0
 }
 
+if (Test-Path $overnightFlag) {
+  Log 'OVERNIGHT exception shutdown — exiting (resume ~08:00 KST)'
+  exit 0
+}
+
 Log "START ensure_every=${EnsureEveryMin}m mem=${MemIntervalMin}m report=${ReportWatchMin}m"
 
 $ensureStack = Join-Path $ScriptRoot 'ensure-always-on-watch-stack.ps1'
@@ -42,6 +48,10 @@ while ($true) {
   . $invokeNodeHidden
   if (Test-Path $disableFlag) {
     Log 'DISABLED flag detected — stop'
+    break
+  }
+  if (Test-Path $overnightFlag) {
+    Log 'OVERNIGHT exception shutdown — stop'
     break
   }
   try {

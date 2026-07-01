@@ -20,11 +20,13 @@ export function healConvoyGrossLedgerBucketsOverDailyCap<
   if (grossCap <= 0) return byPlanetId;
 
   let changed = false;
+  let healedPlanetCount = 0;
   const next = { ...byPlanetId };
   for (const [planetId, bucket] of Object.entries(next)) {
     const convoyGross = bucket.convoyGrossCredits ?? 0;
     if (convoyGross <= grossCap) continue;
     changed = true;
+    healedPlanetCount += 1;
     const convoyFee = bucket.convoyFeeCredits ?? 0;
     next[planetId] = {
       ...bucket,
@@ -33,11 +35,12 @@ export function healConvoyGrossLedgerBucketsOverDailyCap<
       convoyFeeCredits: 0,
       arcFeeCredits: Math.max(0, bucket.arcFeeCredits - convoyFee),
     };
-    if (__DEV__) {
-      console.warn(
-        `[ArcCore/Convoy] heal convoy gross over cap planet=${planetId} was=${convoyGross} cap=${grossCap}`,
-      );
-    }
+  }
+  if (__DEV__ && healedPlanetCount > 0) {
+    // console.warn → dev LogBox 노란 토스트(화면 "[ArcCore/Convoy]…" 깜빡임). 부트 heal은 log만.
+    console.log(
+      `[ArcCore/Convoy] heal convoy gross over cap planets=${healedPlanetCount} cap=${grossCap}`,
+    );
   }
   return changed ? next : byPlanetId;
 }

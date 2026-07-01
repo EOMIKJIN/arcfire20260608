@@ -9,10 +9,10 @@ alwaysApply: true
 메인 개발: **김팀장 에이전트** — `.cursor/rules/arcfire-main-lead-agent.mdc` · `docs/KIM_TEAM_LEAD_AGENT.md`  
 스택: **React Native · Expo · Firebase** · 프로젝트 헌법: `Arcfire_Master_Spec_v4.0` · `arcfire-online.mdc`
 
-## 🚨 개발규칙 1순위 (무조건 · 최우선)
+## 🚨 개발규칙 1순위 (무조건 · 최우선 · 2026-07-01~)
 
-**모든 기능은 메모리 누수 위험에 대한 전수조사 후 개발을 진행한다.**  
-다른 규칙·페르소나·일정·기능 우선순위보다 **항상 앞선다**. 조사·게이트 미충족 시 구현 시작·완료 선언 **금지**.  
+**모든 기능은 「1차 메모리·PSS 검수 PASS」 후 개발한다.** 다른 규칙·페르소나·일정·기능 우선순위보다 **항상 앞선다**.  
+**PSS 누적 floor 특별조치(§0-A)** · `[pss-pre-dev]` 코딩 전 3줄 · 완료 전 floor/retention 게이트 — 예외 없음.  
 정본: `.cursor/rules/arcfire-memory-leak-audit-first.mdc`
 
 ## 0-A. 메인 개발·총괄 (@김팀장 · **유일한 사용자 지시 세션**)

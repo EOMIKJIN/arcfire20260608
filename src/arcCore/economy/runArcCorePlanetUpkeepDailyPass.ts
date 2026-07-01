@@ -8,7 +8,7 @@ import {
 } from '../../store/planetCoreRuntimeStore';
 import { usePlanetTradeFeeLedgerStore } from '../../store/planetTradeFeeLedgerStore';
 import { usePlayerStore } from '../../store/playerStore';
-import type { PlanetClanHold } from '../../types';
+import { isPlayerOwnedHold } from '../planetCore/resolvePlanetCoreStatContext';
 import {
   computePlanetDailyUpkeepCredits,
   resolvePlanetUpkeepPolicy,
@@ -37,13 +37,6 @@ export type ArcCorePlanetUpkeepDailyPassResult = {
   playerWalletPayoutCredits: number;
   planetsProcessed: number;
 };
-
-function isPlayerOwnedHold(hold: PlanetClanHold, playerUid: string | null | undefined): boolean {
-  if (!playerUid) return false;
-  if (hold.homePlayerUid === playerUid) return true;
-  if (hold.kind === 'player_home' && hold.homePlayerUid === playerUid) return true;
-  return false;
-}
 
 function listPlayerOwnedPlanetIds(playerUid: string): string[] {
   const holds = useClanWarFoundationStore.getState().planetHolds;

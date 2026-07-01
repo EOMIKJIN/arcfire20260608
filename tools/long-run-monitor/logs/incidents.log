@@ -2466,3 +2466,40 @@ ref=tools/long-run-monitor/logs/soak-worklet-mirror-20260621.json
 [2026-06-30 23:10:46] PSS_SOFT_CEILING pss=852.9 gl=37.9 views=370 native_reclaim_advisory
 [2026-06-30 23:26:03] PSS_SOFT_CEILING pss=863.7 gl=37.9 views=369 native_reclaim_advisory
 [2026-06-30 23:56:43] PSS_SOFT_CEILING pss=880.8 gl=148.8 views=374 native_reclaim_advisory
+[2026-07-01 08:00:00] DAILY_8AM_REPORT 2026-07-01 08:00:00 KST
+[2026-07-01 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260701-0800.md verdict=OK
+[2026-07-01 08:02:05] DAILY_8AM_REPORT 2026-07-01 08:02:05 KST
+[2026-07-01 08:02:05] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260701-0800.md verdict=OK
+[2026-07-01 08:04:06] DAILY_8AM_REPORT 2026-07-01 08:04:06 KST
+[2026-07-01 08:04:06] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260701-0800.md verdict=OK
+[2026-07-01 08:06:07] DAILY_8AM_REPORT 2026-07-01 08:06:07 KST
+[2026-07-01 08:06:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260701-0800.md verdict=OK
+[2026-07-01 08:08:08] DAILY_8AM_REPORT 2026-07-01 08:08:08 KST
+[2026-07-01 08:08:08] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260701-0800.md verdict=OK
+[2026-07-01 08:10:11] DAILY_8AM_REPORT 2026-07-01 08:10:11 KST
+[2026-07-01 08:10:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260701-0800.md verdict=OK
+[2026-07-01 08:12:12] DAILY_8AM_REPORT 2026-07-01 08:12:12 KST
+[2026-07-01 08:12:12] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260701-0800.md verdict=OK
+[2026-07-01 08:14:14] DAILY_8AM_REPORT 2026-07-01 08:14:14 KST
+[2026-07-01 08:14:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260701-0800.md verdict=OK
+[2026-07-01 08:20:23] DAILY_8AM_REPORT 2026-07-01 08:20:23 KST
+[2026-07-01 08:20:23] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260701-0800.md verdict=OK
+[2026-07-01 08:22:10] GL_ELEVATED mounting_or_insufficient_samples gl=127 pss=742.9 views=558 restart_held
+[2026-07-01 12:27:12] GL_ELEVATED mounting_or_insufficient_samples gl=145.4 pss=751.9 views=555 restart_held
+[2026-07-01 13:13:12] GL_ELEVATED mounting_or_insufficient_samples gl=145.4 pss=764.6 views=556 restart_held
+[2026-07-01 14:40:24] EVENING_WATCH_6PM_START 2026-07-01 14:40 KST ? watch until 18:00 comprehensive report
+[2026-07-01 18:00:07] EVENING_WATCH_6PM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\evening-watch-report-20260701-1800.md
+[2026-07-01 20:38:00] PSS_SOFT_CEILING pss=804 gl=31.2 views=390 native_reclaim_advisory
+[2026-07-01 20:42:23] PSS_SOFT_CEILING pss=805.2 gl=31.4 views=387 native_reclaim_advisory
+[2026-07-01 21:08:43] PSS_SOFT_CEILING pss=805.3 gl=42.6 views=379 native_reclaim_advisory
+[2026-07-01 21:54:43] PSS_SOFT_CEILING pss=835.1 gl=149.5 views=362 native_reclaim_advisory
+[2026-07-01 22:10:04] PSS_SOFT_CEILING pss=862.4 gl=148.8 views=369 native_reclaim_advisory
+[2026-07-01 22:13:23] PSS_SOFT_CEILING pss=863.5 gl=148.8 views=370 native_reclaim_advisory
+[2026-07-01 22:25:24] PSS_SOFT_CEILING pss=865.3 gl=148.8 views=369 native_reclaim_advisory
+[2026-07-01 22:40:44] PSS_SOFT_CEILING pss=879 gl=151 views=382 native_reclaim_advisory
+[2026-07-01 22:43:44] PSS_SOFT_CEILING pss=852.5 gl=148.8 views=373 native_reclaim_advisory
+[2026-07-01 22:56:11] GL_ELEVATED mounting_or_insufficient_samples gl=116.5 pss=771 views=367 restart_held
+[2026-07-01 23:11:31] GL_ELEVATED mounting_or_insufficient_samples gl=114.8 pss=763.9 views=366 restart_held
+[2026-07-01 23:14:06] GL_ELEVATED mounting_or_insufficient_samples gl=115.4 pss=789.4 views=389 restart_held
+[2026-07-01 23:26:54] GL_ELEVATED mounting_or_insufficient_samples gl=115 pss=783.6 views=387 restart_held
+[2026-07-01 23:37:55] OVERNIGHT_EXCEPTION_SHUTDOWN resume_at_kst=2026-07-02 08:00:00 stopped=4 reason=user 2026-07-01 overnight exception - resume 08:00 KST

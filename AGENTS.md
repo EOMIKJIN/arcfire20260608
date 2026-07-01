@@ -1,10 +1,13 @@
 # 에이전트 안내 (Arcfire Online)
 
-## 🚨 개발규칙 1순위 (무조건)
+## 🚨 개발규칙 1순위 (무조건 · 2026-07-01~)
 
-**모든 기능은 메모리 누수 위험에 대한 전수조사 후 개발을 진행한다.**  
-에이전트·인간 개발자 공통 · Skia/STAGE/틱/persist/부트 전부 해당 · 조사·게이트 없이 구현·완료 선언 금지.  
-정본: `.cursor/rules/arcfire-memory-leak-audit-first.mdc`
+**모든 작업은 「1차 메모리·PSS 검수」 후에만 개발을 진행한다.**  
+Skia/STAGE/틱/persist/부트/**memo·cache·store 순환** 전부 해당 · **1차 검수·게이트 없이 구현·완료 선언 금지**.
+
+**PSS 누적식 floor 상승(native_heap·Views)** 은 GL과 별도 **특별조치(§0-A)** — 개발 전 `[pss-pre-dev]` 3줄 필수 · idle floor **+40MB↑ = FAIL**.
+
+정본: `.cursor/rules/arcfire-memory-leak-audit-first.mdc` (§0-A PSS 특별조치)
 
 ## 기존값 변경 — 사전 재확인 (상시 · 사용자 지시)
 

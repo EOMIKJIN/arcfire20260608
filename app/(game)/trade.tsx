@@ -623,7 +623,13 @@ export default function TradeScreen() {
           planetId: player.currentPlanetId,
           grossCredits: gross,
         });
-        showArcAlert(t('trade.own.claimFailTitle'), t('trade.own.claimFailMsg'));
+        const failMsgKey =
+          claim.reason === 'faction_mismatch' || claim.reason === 'neutral_territory' || claim.reason === 'neutral_planet'
+            ? 'trade.own.claimFailFaction'
+            : claim.reason === 'already_owner'
+              ? 'trade.own.claimFailAlready'
+              : 'trade.own.claimFailMsg';
+        showArcAlert(t('trade.own.claimFailTitle'), t(failMsgKey));
         return;
       }
       if (player.uid) {

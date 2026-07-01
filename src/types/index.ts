@@ -145,7 +145,13 @@ export type PlanetHoldKind = 'neutral' | 'clan_hold' | 'player_home';
 export interface PlanetClanHold {
   planetId: string;
   systemId: string;
+  /** 영토·국경·팩션 금고 — 국가 시드·AI 클랜·중립 */
   occupierClanId: string;
+  /**
+   * 소유권 증서 보유 클랜.
+   * null/미설정 = 영토 국가(occupier) 디폴트 소유 — 플레이어 구매 시 solo/클랜 id.
+   */
+  deedOwnerClanId?: string | null;
   /** 거점으로 선언한 플레이어 uid(클랜장 또는 본인 거점) */
   homePlayerUid: string | null;
   kind: PlanetHoldKind;

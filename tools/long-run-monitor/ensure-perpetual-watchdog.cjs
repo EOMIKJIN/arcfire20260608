@@ -11,6 +11,7 @@ const { spawn } = require('child_process');
 const SCRIPT_ROOT = __dirname;
 const logDir = path.join(SCRIPT_ROOT, 'logs');
 const disableFlag = path.join(logDir, 'perpetual-detection-DISABLED.flag');
+const overnightFlag = path.join(logDir, 'overnight-exception-shutdown.flag');
 const pidFile = path.join(logDir, 'perpetual-watchdog.pid');
 const runner = path.join(SCRIPT_ROOT, 'run-perpetual-detection-watchdog.ps1');
 const ensureLog = path.join(logDir, 'perpetual-watchdog-ensure.log');
@@ -91,9 +92,28 @@ function spawnHiddenWatchdog() {
   );
 }
 
+function isOvernightShutdownActive() {
+  try {
+    if (!fs.existsSync(overnightFlag)) return false;
+    const raw = fs.readFileSync(overnightFlag, 'utf8');
+    const m = raw.match(/resume_at_kst=(.+)/);
+    if (!m) return true;
+    const resume = new Date(m[1].trim().replace(' ', 'T') + '+09:00');
+    if (Number.isNaN(resume.getTime())) return true;
+    return Date.now() < resume.getTime();
+  } catch {
+    return false;
+  }
+}
+
 function main() {
   if (fs.existsSync(disableFlag)) {
     log('ENSURE_SKIP perpetual-detection-DISABLED.flag');
+    process.exit(0);
+  }
+
+  if (isOvernightShutdownActive()) {
+    log('ENSURE_SKIP overnight-exception-shutdown.flag (resume ~08:00 KST)');
     process.exit(0);
   }
 

@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { InteractionManager } from 'react-native';
 import { create } from 'zustand';
 import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
+import { invalidatePlanetWorldObjectsListCache } from '../worldObjects/planetWorldObjectsListCacheRegistry';
 import type { Planet, StarSystem } from '../types';
 import { useWorldStore } from './worldStore';
 import type { PlanetCoreMetricsDetail, PlanetMasterBalanceDetail, PlanetCoreStatOpsTrendDetail } from './planetCoreMetricTypes';
@@ -541,6 +542,9 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
       detail: patch.detail ?? prev.detail,
     };
     set({ byPlanetId: { ...get().byPlanetId, [planetId]: merged } });
+    if (patch.detail !== undefined) {
+      invalidatePlanetWorldObjectsListCache(planetId);
+    }
     markPlanetCorePersistDirty();
     scheduleCoalescedPlanetCorePersist(get);
   },

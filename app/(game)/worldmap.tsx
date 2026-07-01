@@ -50,6 +50,7 @@ import { resolveTransitEncounterChance } from '../../src/missions/missionCombatE
 import { useTransitCombatSessionStore } from '../../src/game/transitCombat/transitCombatSession';
 import { useClanWarFoundationStore } from '../../src/store/clanWarFoundationStore';
 import { resolveTempClanColor } from '../../src/clanWar/tempClanColors';
+import { resolvePlanetHubOwnershipPlate } from '../../src/clanWar/planetOwnershipModel';
 import {
   EXPANSION_GATEWAYS_PER_DIRECTION,
   GAMEPLAY_SYSTEM_IDS,
@@ -1017,13 +1018,17 @@ export default function WorldMapScreen() {
         const p0 = selectedSystem?.planets[0];
         if (!p0) return null;
         const h = s.planetHolds[p0.id];
-        if (!h || h.kind === 'neutral') return null;
-        const nm = s.clans[h.occupierClanId]?.displayName ?? h.occupierClanId;
+        if (!h) return null;
+        const plate = resolvePlanetHubOwnershipPlate(h, s.clans, locale);
+        if (!plate) return null;
+        const nm = plate.clanName;
         if (h.kind === 'player_home') return t('worldmap.panel.homeBase', { name: nm });
-        if (h.occupierClanId.startsWith('ai_clan_')) return t('worldmap.panel.aiClan', { name: nm });
+        if (h.occupierClanId.startsWith('ai_clan_') && plate.isNationDefault) {
+          return t('worldmap.panel.aiClan', { name: nm });
+        }
         return t('worldmap.panel.clan', { name: nm });
       },
-      [selectedSystem?.planets[0]?.id, t],
+      [selectedSystem?.planets[0]?.id, locale, t],
     ),
   );
   const currentSystem = player ? systems[player.currentSystemId] : null;

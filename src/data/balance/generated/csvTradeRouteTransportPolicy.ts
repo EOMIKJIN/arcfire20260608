@@ -10,7 +10,7 @@ export const TradeRouteTransportPolicy_FROM_BALANCE_CSV = [
   { "key": "short_route_max_profit_margin_pct", "value": "30", "notesKo": "근거리 최대 차익률(생산지 매입가 대비 %)" },
   { "key": "reference_route_hops", "value": "6", "notesKo": "이 홉 이상 테이블 baseSell−생산매입 차익 100%" },
   { "key": "profit_distance_scale_axis", "value": "hops", "notesKo": "차익 가중 축(hops|map)" },
-  { "key": "convoy_net_margin_arc_core_share_pct", "value": "10", "notesKo": "하역 순마진 아크코어 금고 귀속(%)" },
+  { "key": "convoy_net_margin_arc_core_share_pct", "value": "30", "notesKo": "하역 순마진 아크코어 금고 귀속(%)" },
   { "key": "convoy_transport_fuel_share_pct", "value": "85", "notesKo": "운송비 지출 — 연료비 비중(감사·표시)" },
   { "key": "convoy_transport_ops_share_pct", "value": "15", "notesKo": "운송비 지출 — 기타(승무·정비·항로) 비중" },
 ] as const;

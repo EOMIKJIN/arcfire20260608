@@ -2,6 +2,7 @@
 // 행성개발 설치·업그레이드 권한 — 거점 + 블루팩션 영역·동맹 점유
 // ============================================================
 
+import { resolveDeedOwnerClanId } from '../../clanWar/planetOwnershipModel';
 import { getPlanetOccupationSeedRow } from '../../arcCore/balance/balanceTableRegistry';
 import { resolvePlayerHomePlanetId } from '../playerSurvivalPod';
 import {
@@ -54,7 +55,7 @@ export function canManagePlanetDevelopment(planetId: string): boolean {
 
   if (hold) {
     const playerClanId = player.political?.clanId?.trim();
-    if (playerClanId && hold.occupierClanId === playerClanId) return true;
+    if (playerClanId && resolveDeedOwnerClanId(hold) === playerClanId) return true;
 
     const occupierSide = resolveMapFactionSideFromClanIdPure(
       hold.occupierClanId,

@@ -21,17 +21,10 @@ import { listInstalledFacilityLevels } from '../../game/planetDevelopment/planet
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
 import type { PlanetCoreGaugeView } from '../../store/planetCoreRuntimeStore';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
-import type { PlanetClanHold } from '../../types';
+import { isPlayerOwnedHold } from '../planetCore/resolvePlanetCoreStatContext';
 import { usePlayerStore } from '../../store/playerStore';
 
 const STAT_CAP = 100;
-
-function isPlayerOwnedHold(hold: PlanetClanHold, playerUid: string | null | undefined): boolean {
-  if (!playerUid) return false;
-  if (hold.homePlayerUid === playerUid) return true;
-  if (hold.kind === 'player_home' && hold.homePlayerUid === playerUid) return true;
-  return false;
-}
 
 function isPlayerOwnedPlanet(planetId: string): boolean {
   const playerUid = usePlayerStore.getState().player?.uid ?? null;

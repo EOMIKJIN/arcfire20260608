@@ -8,4 +8,16 @@ export {
 } from './clanWarRules';
 
 export { resolveGameplayZoneHubPlanet, type ClanWarHubZone } from './resolveZoneHubPlanet';
-export { AI_NPC_CAPTAIN_LEADER_UID_PREFIX, aiClanIdForNpcCaptain, npcCaptainLeaderUid } from './aiNpcClanIds';
+export { formatClanPlateDisplayName } from './formatClanPlateDisplayName';
+export {
+  canPurchasePlanetOwnershipDeed,
+  isNationDefaultDeedOwnership,
+  isNationSeedClanId,
+  isPlayerOriginatedClanId,
+  isPlayerPlanetDeedOwner,
+  migratePlanetHoldOwnershipSplit,
+  migratePlanetHoldsOwnershipSplit,
+  resolveDeedOwnerClanId,
+  resolvePlanetHubOwnershipPlate,
+  resolveTerritorialOccupierClanId,
+} from './planetOwnershipModel';

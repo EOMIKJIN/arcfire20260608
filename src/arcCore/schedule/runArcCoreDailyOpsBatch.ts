@@ -17,6 +17,7 @@ import { flushDailyOpsObservationsToAabs } from '../userMod/dailyOpsObservationQ
 import { runIntegratedEngageHpAdjustPass } from '../balance/runIntegratedEngageHpAdjustPass';
 import { runPlanetEconomyFabricDailyPass } from '../economy/planetEconomyFabric';
 import { runArcCoreConvoyDailySettlementPass } from '../economy/runArcCoreConvoyDailySettlementPass';
+import { runArcCoreCentralBankExpenditurePass } from '../economy/runArcCoreCentralBankExpenditurePass';
 import { runArcCorePlanetUpkeepDailyPass } from '../economy/runArcCorePlanetUpkeepDailyPass';
 import { runPlanetPgpDailyPass } from '../economy/runPlanetPgpDailyPass';
 import { runPlanetCoreStatEquilibriumPass } from '../planetCore/runPlanetCoreStatEquilibriumPass';
@@ -50,6 +51,7 @@ export type ArcCoreDailyOpsBatchResult = {
   integratedEngageHpAdjust: boolean;
   planetUpkeep: boolean;
   convoyDailySettlement: boolean;
+  centralBankExpenditure: boolean;
   facilityStatNudge: boolean;
   laboratoryRdSpeed: boolean;
   tavernBountyRefresh: boolean;
@@ -81,6 +83,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     integratedEngageHpAdjust: false,
     planetUpkeep: false,
     convoyDailySettlement: false,
+    centralBankExpenditure: false,
     facilityStatNudge: false,
     laboratoryRdSpeed: false,
     tavernBountyRefresh: false,
@@ -144,6 +147,9 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
 
   const upkeep = await runArcCorePlanetUpkeepDailyPass();
   result.planetUpkeep = upkeep.ran;
+
+  const centralBank = await runArcCoreCentralBankExpenditurePass();
+  result.centralBankExpenditure = centralBank.ran;
 
   const fiscalLoop = await runPlanetFiscalBalanceClosedLoopPass();
   result.planetFiscalClosedLoop = fiscalLoop.ran;

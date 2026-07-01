@@ -13,9 +13,9 @@ alwaysApply: true
 
 ## 🚨 개발규칙 1순위 (무조건)
 
-**모든 기능은 메모리 누수 위험에 대한 전수조사 후 개발을 진행한다.**  
-기능·경제·UI·Skia·CSV **무엇이든** 코드 작성 **전** STAGE·틱·persist·부트·dispose 리스크를 전수조사한다.  
-정본: `.cursor/rules/arcfire-memory-leak-audit-first.mdc` — **다른 모든 김팀장 지침보다 우선**.
+**모든 기능은 「1차 메모리·PSS 검수 PASS」 후 개발한다.**  
+기능·경제·UI·Skia·CSV **무엇이든** 코드 작성 **전** §0-A PSS 특별조치 + STAGE·틱·cache 리스크 전수조사.  
+정본: `.cursor/rules/arcfire-memory-leak-audit-first.mdc` — **다른 모든 김팀장 지침보다 우선** (2026-07-01~).
 
 운영: `docs/KIM_TEAM_LEAD_AGENT.md` · 협업: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md` · 감시: `docs/KIM_ECONOMY_AGENT.md`
 

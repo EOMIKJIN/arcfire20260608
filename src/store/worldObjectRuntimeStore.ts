@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { invalidatePlanetMemoCachesForPlanet } from '../game/planetMemoCache';
+import { invalidatePlanetWorldObjectsListCache } from '../worldObjects/planetWorldObjectsListCacheRegistry';
 import type { StarSystem } from '../types';
 import type { WorldObjectRuntimeState } from '../worldObjects/types';
 import {
@@ -211,7 +211,7 @@ export const useWorldObjectRuntimeStore = create<WorldObjectRuntimeStoreState>((
     });
     void get().persistRuntime();
     const planetId = parseWorldObjectPlanetId(objectId);
-    if (planetId) invalidatePlanetMemoCachesForPlanet(planetId);
+    if (planetId) invalidatePlanetWorldObjectsListCache(planetId);
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
       // eslint-disable-next-line no-console
       console.log(`[WorldObjectRuntime] instance state patched (${source})`, objectId);
@@ -233,7 +233,7 @@ export const useWorldObjectRuntimeStore = create<WorldObjectRuntimeStoreState>((
     set({ asteroidOrbitCountByPlanetId: next });
     void get().persistRuntime();
     for (const planetId of Object.keys(normalized)) {
-      invalidatePlanetMemoCachesForPlanet(planetId);
+      invalidatePlanetWorldObjectsListCache(planetId);
     }
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
       // eslint-disable-next-line no-console
@@ -257,7 +257,7 @@ export const useWorldObjectRuntimeStore = create<WorldObjectRuntimeStoreState>((
     set({ asteroidMineralItemIdsByPlanetId: next });
     void get().persistRuntime();
     for (const planetId of Object.keys(normalized)) {
-      invalidatePlanetMemoCachesForPlanet(planetId);
+      invalidatePlanetWorldObjectsListCache(planetId);
     }
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
       // eslint-disable-next-line no-console

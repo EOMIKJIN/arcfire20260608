@@ -161,7 +161,7 @@ function buildPlanetCoreRuntimeSyncBundle(uid: string): {
   const currentClanId = player?.political?.clanId ?? null;
   for (const hold of Object.values(cw.planetHolds)) {
     if (!hold) continue;
-    if (hold.homePlayerUid === uid || (currentClanId && hold.occupierClanId === currentClanId)) {
+    if (hold.homePlayerUid === uid || (currentClanId && hold.deedOwnerClanId === currentClanId)) {
       addId(hold.planetId);
     }
   }

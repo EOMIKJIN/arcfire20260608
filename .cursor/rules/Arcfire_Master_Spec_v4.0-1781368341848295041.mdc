@@ -13,11 +13,10 @@ alwaysApply: true
 
 ---
 
-## 🚨 개발규칙 1순위 (무조건 · 본 헌법·Table-First보다 선행)
+## 🚨 개발규칙 1순위 (무조건 · 2026-07-01~ · 본 헌법·Table-First보다 선행)
 
-**모든 기능은 메모리 누수 위험에 대한 전수조사 후 개발을 진행한다.**  
-STAGE·Skia·틱·persist·부트·dispose — **기능 구현 전** 조사 · **완료 전** audit 게이트. 예외 없음.  
-정본: `.cursor/rules/arcfire-memory-leak-audit-first.mdc`
+**모든 기능은 「1차 메모리·PSS 검수」 후 개발한다.** STAGE·Skia·틱·persist·부트·**PSS floor·memo/cache** — 기능 구현 **전** §0-A 1차 검수 · **완료 전** audit 게이트. 예외 없음.  
+정본: `.cursor/rules/arcfire-memory-leak-audit-first.mdc` (§0-A PSS 누적식 점유 특별조치)
 
 ---
 

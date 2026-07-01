@@ -24,6 +24,10 @@
         "timeout": 5
       },
       {
+        "command": ".cursor/hooks/on-before-submit-prompt-daily-report-chat.cjs",
+        "timeout": 8
+      },
+      {
         "command": ".cursor/hooks/on-before-submit-prompt-incident-auto-fix.cjs",
         "timeout": 8
       }

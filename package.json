@@ -84,6 +84,9 @@
     "monitor:register-perpetual": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/long-run-monitor/register-perpetual-detection-task.ps1",
     "monitor:schedule-8am-report": "node tools/long-run-monitor/schedule-8am-kim-daily-auto-report.cjs",
     "monitor:schedule-5pm-report": "node tools/long-run-monitor/schedule-5pm-kim-auto-report.cjs",
+    "monitor:schedule-6pm-report": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/long-run-monitor/schedule-6pm-evening-watch-report.ps1",
+    "monitor:stop-overnight-exception": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/long-run-monitor/stop-overnight-exception-shutdown.ps1",
+    "monitor:resume-overnight-exception": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/long-run-monitor/resume-after-overnight-exception.ps1",
     "verify:economy-sim-cohort": "npx tsx tools/verify-economy-sim-cohort.ts",
     "export:galaxy-map:image": "tsx tools/galaxy-map/export-galaxy-map-image.ts"
   },

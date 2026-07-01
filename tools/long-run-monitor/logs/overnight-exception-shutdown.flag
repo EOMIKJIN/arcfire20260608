@@ -1,0 +1,6 @@
+﻿kind=overnight-exception-shutdown
+created=2026-07-01 23:37:55
+resume_at_kst=2026-07-02 08:00:00
+reason=user 2026-07-01 overnight exception - resume 08:00 KST
+daily_schedule=unchanged
+note=Remove flag or run resume-after-overnight-exception.ps1 at resume time

@@ -13,17 +13,12 @@ import {
 } from '../../game/planetDevelopment/planetPopulationDomeListing';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
 import { usePlayerStore } from '../../store/playerStore';
-import type { PlanetClanHold } from '../../types';
+import { isPlayerOwnedHold } from '../planetCore/resolvePlanetCoreStatContext';
 
 export type TavernBountyRefreshPassResult = {
   ran: boolean;
   planetsRefreshed: number;
 };
-
-function isPlayerOwnedHold(hold: PlanetClanHold, playerUid: string | null | undefined): boolean {
-  if (!playerUid) return false;
-  return hold.homePlayerUid === playerUid || (hold.kind === 'player_home' && hold.homePlayerUid === playerUid);
-}
 
 export function runTavernBountyRefreshPass(nowMs = Date.now()): TavernBountyRefreshPassResult {
   const playerUid = usePlayerStore.getState().player?.uid ?? null;

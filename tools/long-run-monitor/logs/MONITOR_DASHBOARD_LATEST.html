@@ -8,7 +8,7 @@ pre{background:#161b22;padding:10px;overflow:auto;font-size:12px;border-radius:6
 .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:6px}
 .b-on{background:#238636}.b-off{background:#6e7681}
 </style></head><body>
-<h1>Arcfire 실시간 감시 · 2026-06-30 23:57:22 KST</h1>
+<h1>Arcfire 실시간 감시 · 2026-07-01 23:35:01 KST</h1>
 <p>
 <span class="badge b-off">watchdog</span>
 <span class="badge b-off">mem-watch</span>
@@ -18,29 +18,29 @@ pre{background:#161b22;padding:10px;overflow:auto;font-size:12px;border-radius:6
 </p>
 <h2>Latest mem-timeline</h2>
 <table><tr><th>time</th><th>pid</th><th>pss_mb</th><th>gl_mb</th><th>views</th><th>note</th></tr>
-<tr><td></td><td>21817</td><td>880.8</td><td>148.8</td><td>374</td><td>HUB_ACTIVATION gl_mount_ok</td></tr>
+<tr><td></td><td>28942</td><td>775.3</td><td>117</td><td>381</td><td>PSS_MGMT_RECHECK_WARN</td></tr>
 </table>
 <h2>Processes</h2>
 <pre>{}</pre>
 <h2>Recent incidents</h2>
-<pre>[2026-06-30 18:34:33] GL_ELEVATED mounting_or_insufficient_samples gl=111.5 pss=750.2 views=381 restart_held
-[2026-06-30 18:49:51] GL_ELEVATED mounting_or_insufficient_samples gl=111 pss=731.7 views=373 restart_held
-[2026-06-30 19:05:10] GL_ELEVATED mounting_or_insufficient_samples gl=113 pss=746.3 views=374 restart_held
-[2026-06-30 19:20:28] GL_ELEVATED mounting_or_insufficient_samples gl=111.1 pss=751.3 views=369 restart_held
-[2026-06-30 19:51:11] PSS_SOFT_CEILING pss=924.1 gl=124.8 views=558 native_reclaim_advisory
-[2026-06-30 20:06:39] PSS_SOFT_CEILING pss=803.1 gl=139.7 views=365 native_reclaim_advisory
-[2026-06-30 21:23:29] PSS_SOFT_CEILING pss=913.8 gl=147.7 views=383 native_reclaim_advisory
-[2026-06-30 22:40:00] PSS_SOFT_CEILING pss=831.2 gl=39.7 views=369 native_reclaim_advisory
-[2026-06-30 22:55:20] PSS_SOFT_CEILING pss=847.9 gl=37.8 views=369 native_reclaim_advisory
-[2026-06-30 23:10:46] PSS_SOFT_CEILING pss=852.9 gl=37.9 views=370 native_reclaim_advisory
-[2026-06-30 23:26:03] PSS_SOFT_CEILING pss=863.7 gl=37.9 views=369 native_reclaim_advisory
-[2026-06-30 23:56:43] PSS_SOFT_CEILING pss=880.8 gl=148.8 views=374 native_reclaim_advisory</pre>
+<pre>[2026-07-01 20:42:23] PSS_SOFT_CEILING pss=805.2 gl=31.4 views=387 native_reclaim_advisory
+[2026-07-01 21:08:43] PSS_SOFT_CEILING pss=805.3 gl=42.6 views=379 native_reclaim_advisory
+[2026-07-01 21:54:43] PSS_SOFT_CEILING pss=835.1 gl=149.5 views=362 native_reclaim_advisory
+[2026-07-01 22:10:04] PSS_SOFT_CEILING pss=862.4 gl=148.8 views=369 native_reclaim_advisory
+[2026-07-01 22:13:23] PSS_SOFT_CEILING pss=863.5 gl=148.8 views=370 native_reclaim_advisory
+[2026-07-01 22:25:24] PSS_SOFT_CEILING pss=865.3 gl=148.8 views=369 native_reclaim_advisory
+[2026-07-01 22:40:44] PSS_SOFT_CEILING pss=879 gl=151 views=382 native_reclaim_advisory
+[2026-07-01 22:43:44] PSS_SOFT_CEILING pss=852.5 gl=148.8 views=373 native_reclaim_advisory
+[2026-07-01 22:56:11] GL_ELEVATED mounting_or_insufficient_samples gl=116.5 pss=771 views=367 restart_held
+[2026-07-01 23:11:31] GL_ELEVATED mounting_or_insufficient_samples gl=114.8 pss=763.9 views=366 restart_held
+[2026-07-01 23:14:06] GL_ELEVATED mounting_or_insufficient_samples gl=115.4 pss=789.4 views=389 restart_held
+[2026-07-01 23:26:54] GL_ELEVATED mounting_or_insufficient_samples gl=115 pss=783.6 views=387 restart_held</pre>
 <h2>Heartbeat</h2>
-<pre>[22:43] OK · PID 17958 · PSS 831.2MB / GL 39.7MB / views 369
-[22:58] OK · PID 17958 · PSS 847.9MB / GL 37.8MB / views 369
-[23:13] OK · PID 17958 · PSS 852.9MB / GL 37.9MB / views 370
-[23:28] OK · PID 17958 · PSS 863.7MB / GL 37.9MB / views 369
-[2026-06-30 23:40:17] MANUAL OK PSS 319MB / GL 4.4MB / views 15 (DELAYED_RECHECK_OK)
-[23:43] !! PID_CHANGE session=17958 -&gt; 21817 (크래시·재시작 의심)</pre>
+<pre>[22:31] OK · PID 28942 · PSS 862.5MB / GL 148.8MB / views 369
+[22:46] OK · PID 28942 · PSS 852.5MB / GL 148.8MB / views 373
+[23:01] OK · PID 28942 · PSS 771MB / GL 116.5MB / views 367
+[23:16] OK · PID 28942 · PSS 789.4MB / GL 115.4MB / views 389
+[2026-07-01 23:30:02] MANUAL OK PSS 775.3MB / GL 117MB / views 381 (PSS_MGMT_RECHECK_WARN)
+[23:31] OK · PID 28942 · PSS 775.3MB / GL 117MB / views 381</pre>
 <p style="color:#8b949e;font-size:12px">Auto-refresh: watchdog 5m · file://D:\arcfire20260607\tools\long-run-monitor\logs\MONITOR_DASHBOARD_LATEST.html</p>
 </body></html>

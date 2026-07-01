@@ -8,6 +8,10 @@ import {
   BLUE_COMMERCIAL_CAPITAL_PLANET_ID,
   RED_FACTION_CAPITAL_PLANET_ID,
 } from '../../world/galaxyRouteFactionBridge';
+import {
+  MEGA_FACTION_BLUE_NATION,
+  MEGA_FACTION_RED_NATION,
+} from '../../world/megaFactionNationPolicy';
 
 const SEED_BLUE_CLAN_ID = 'balance_seed_faction_blue';
 export const ARC_CORE_SEED_BLUE_CLAN_ID = SEED_BLUE_CLAN_ID;
@@ -30,7 +34,7 @@ function buildSeedClans(now: number): Record<string, ClanBasicsRecord> {
   return {
     [SEED_BLUE_CLAN_ID]: {
       id: SEED_BLUE_CLAN_ID,
-      displayName: '스텔리움 연합 (블루)',
+      displayName: MEGA_FACTION_BLUE_NATION.displayNameKo,
       leaderUid: 'balance_seed_blue',
       megaFactionId: 'mega_stellium_alliance',
       createdAt: now,
@@ -42,7 +46,7 @@ function buildSeedClans(now: number): Record<string, ClanBasicsRecord> {
     },
     [SEED_RED_CLAN_ID]: {
       id: SEED_RED_CLAN_ID,
-      displayName: '크림슨 레기온 (레드)',
+      displayName: MEGA_FACTION_RED_NATION.displayNameKo,
       leaderUid: 'balance_seed_red',
       megaFactionId: 'mega_crimson_legion',
       createdAt: now,

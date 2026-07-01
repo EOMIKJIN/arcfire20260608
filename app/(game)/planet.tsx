@@ -141,6 +141,7 @@ import { ORBIT_MINING_CYCLE_MS, ORBIT_MINING_REWARD_GOOD_ID } from '../../src/ga
 import { planetHasMineableOrbitalDeposits } from '../../src/world/mineralDepositModel';
 import { listPlanetWorldObjects } from '../../src/worldObjects';
 import { tryCompleteAllPlanetDevJobs } from '../../src/game/planetDevelopment/planetDevelopmentListRowModel';
+import { syncPlanetHubDevelopmentOnLanding } from '../../src/game/planetDevelopment/syncPlanetHubDevelopmentOnLanding';
 import {
   createInitialMiningSessionState,
   flushMiningPlayerPersist,
@@ -153,6 +154,7 @@ import {
 } from '../../src/systems/mining';
 import { getCurrentUser } from '../../src/firebase/auth';
 import { resolveTempClanColor } from '../../src/clanWar/tempClanColors';
+import { resolvePlanetHubOwnershipPlate } from '../../src/clanWar/planetOwnershipModel';
 import { requestLocalAccountResetFromPlanetHub, isAccountResetInProgress } from '../../src/account/localAccountReset';
 import { countGoodInInventory } from '../../src/game/playerInventory';
 import {
@@ -600,6 +602,10 @@ export default function PlanetScreen() {
     if (!pid) return '';
     return planetHubDefenseSatelliteMemoRev(s.byPlanetId[pid]?.detail);
   });
+  const planetWorldObjects = useMemo(
+    () => (planet && system ? listPlanetWorldObjects({ planet, system }) : []),
+    [planet?.id, system?.id, defenseSatelliteRuntimeKey, hubFacilityDevRev],
+  );
 
   /** 방위위성 업그레이드 — 오버레이 닫혀도 허브 체류 중 wall-clock 완료 */
   useEffect(() => {
@@ -687,10 +693,6 @@ export default function PlanetScreen() {
     };
   }, [planet?.id, isPlanetRouteFocused, appStateActive, stageSession.isActive]);
 
-  const planetWorldObjects = useMemo(
-    () => (planet && system ? listPlanetWorldObjects({ planet, system }) : []),
-    [planet, system, defenseSatelliteRuntimeKey],
-  );
   const canOrbitalMine = useMemo(
     () => Boolean(planet && planetHasMineableOrbitalDeposits(planet.id)
       && planetWorldObjects.some((object) => object.kind === 'asteroid')),
@@ -859,6 +861,18 @@ export default function PlanetScreen() {
       return;
     }
     syncPlanetHubMissionAndDialog(landedPlanetId);
+  }, [player?.currentPlanetId, playerHydrated, isPlanetRouteFocused]);
+
+  /** 착륙·행성 이동·재접속 — 플레이어 행성개발(방위위성 등) 런타임 재동기화 */
+  useEffect(() => {
+    if (!playerHydrated || !isPlanetRouteFocused) return;
+    const landedPlanetId = player?.currentPlanetId ?? null;
+    if (!landedPlanetId) return;
+    let cancelled = false;
+    void syncPlanetHubDevelopmentOnLanding(landedPlanetId);
+    return () => {
+      cancelled = true;
+    };
   }, [player?.currentPlanetId, playerHydrated, isPlanetRouteFocused]);
 
   const [nearbyPresence, setNearbyPresence] = useState<ReturnType<typeof resolvePlanetNearbyPresence>>([]);
@@ -1254,12 +1268,14 @@ export default function PlanetScreen() {
       const pid = planet?.id;
       if (!pid) return null;
       const h = s.planetHolds[pid];
-      if (!h || h.kind === 'neutral') return null;
-      const clan = s.clans[h.occupierClanId];
-      const clanName = (clan?.displayName ?? '').trim() || h.occupierClanId;
-      const clanColor = resolveTempClanColor(h.occupierClanId);
-      return { clanName, clanColor };
-    }, [planet?.id]),
+      if (!h) return null;
+      const plate = resolvePlanetHubOwnershipPlate(h, s.clans, appLocale);
+      if (!plate) return null;
+      return {
+        clanName: plate.clanName,
+        clanColor: resolveTempClanColor(plate.clanColorClanId),
+      };
+    }, [planet?.id, appLocale]),
   );
 
   /** 수도 거점 부제 — 행성 정보 오버레이(PGP 상단)로 이전, 허브 중앙 배지에는 미표시 */

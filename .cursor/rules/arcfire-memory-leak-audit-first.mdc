@@ -1,18 +1,83 @@
 ---
-description: "[절대 1순위] 모든 기능 — 메모리 누수 위험 전수조사 후 개발"
+description: "[절대 1순위] PSS 누적·메모리 — 1차 검수 후 개발 (2026-07-01~ 무조건)"
 alwaysApply: true
 ---
 
-# 🚨 개발규칙 1순위 (무조건 · 다른 모든 규칙보다 우선)
+# 🚨 개발규칙 1순위 (무조건 · 다른 모든 규칙·일정·기능보다 우선)
 
-> **모든 기능은 메모리 누수 위험에 대한 전수조사 후 개발을 진행한다.**  
-> 기능 구현·UI·경제·밸런스·CSV·리팩터 **어떤 작업이든** 본 조항이 **최우선**이다. 예외·우회·「나중에 검증」 **금지**.
+> **2026-07-01~ 무조건 적용.**  
+> **모든 기능·버그·리팩터·CSV·경제·UI는 「1차 메모리 검수 PASS」 없이 코드 작성·완료 선언을 시작할 수 없다.**  
+> 예외·우회·「나중에 soak」·「일단 merge 후 감시」 **전면 금지**.
+
+정본: 본 문서 · `AGENTS.md` §개발규칙 1순위 · v4.0 헌법 선행 조항
+
+---
+
+## 0-A. PSS 누적식 메모리 점유 — **특별조치 (최고 수준 · 1차 검토 의무)**
+
+> **배경**: GL mtrack 정상·idle에서도 **PSS floor가 시간에 따라 계단식 상승**(native_heap·Views 잔류·GC 톱니)이 반복 관측됨.  
+> Skia GL만 막아서는 **PSS_FLOOR_UP**을 막을 수 없다. **누수·누적·할당 hot path**를 개발 **전**에 반드시 1차 검수한다.
+
+### 0-A-1. 1차 검수(코딩 전) — 미충족 시 **구현 착수 금지**
+
+에이전트·인간 개발자는 **첫 code diff 전** 아래를 턴·handoff·PR 요약(3~8줄)으로 남긴다.
+
+| # | 1차 검수 항목 | 불합격 신호 |
+|---|---------------|-------------|
+| P1 | **호출 빈도** — tick/루프/렌더/`setInterval`/focus effect | 매 프레임·매 2초 이하 신규 할당·전량 rebuild |
+| P2 | **PSS 축** — native_heap · Hermes · Views · Fresco/Skia | STAGE/sub-stage 후 floor 미복구 · Views ≥450 |
+| P3 | **캐시** — `planetMemoCache`·WO cache·store selector | 런타임 store 의존 결과를 planet\|system 키만으로 memo |
+| P4 | **순환 참조** — store ↔ feature module | Metro require cycle · lazy 없는 상호 import |
+| P5 | **착륙·이동·재접속** — `Navigation.replace` · ingress reclaim | 행성개발·WO·facility가 **착륙 sync 없이** stale |
+| P6 | **persist** — `JSON.stringify`+`AsyncStorage` 고빈도 | patch 1건당 즉시 persist · unbounded 배열 직렬화 |
+| P7 | **최적화 역효과** — memo 제거·invalidate 과다 | «정확성» 위해 cache 전면 폐기 → GC/PSS floor 악화 |
+
+**1차 검수 산출(필수 3줄)** — 턴·handoff·PR 설명에 포함:
+
+```text
+[pss-pre-dev] hot_path=<빈도> alloc=<틱당 신규 객체> cache=<키·invalidate>
+[pss-pre-dev] stage=<진입/이탈 dispose> risk=<P1~P7 해당 번호>
+[pss-pre-dev] verdict=PASS|REDESIGN — REDESIGN이면 구현 보류
+```
+
+`verdict=REDESIGN` → 범위 축소·revision cache·coalesce persist·착륙 sync 등 **설계 수정 후**에만 구현.
+
+### 0-A-2. 개발 중 금지 (PSS floor 악화 패턴)
+
+| 금지 | 대안 |
+|------|------|
+| memo 전면 제거로 «항상 fresh» | **revision-keyed bounded cache** + landing invalidate |
+| `patch*`마다 전 행성 memo purge | **namespace·행성·WO cache**만 타깃 invalidate |
+| store ↔ UI module **정적 import 순환** | Registry/lazy/require · store는 invalidate만 |
+| useMemo deps에 **불안정 object ref** (`planet` 전체) | `planet?.id` · revision token |
+| 기능 완료 후 soak만 약속 | **1차 검수 + 완료 게이트** 동시 충족 |
+
+### 0-A-3. 완료 게이트 (PSS · 무조건)
+
+| 게이트 | 기준 |
+|--------|------|
+| 정적 | `npm run audit:memory:all` · `tsc` · (Skia) `audit:skia-memory` · (Reanimated) `audit:worklet-contract` |
+| **PSS floor** | 동일 pid **30m+ idle** 또는 허브 왕복 후 mem-timeline **floor Δ ≤ +25MB** (soft) · **+40MB↑ = FAIL** |
+| **Views** | idle **≤380** · **≥450 = VIEWS_RETAINED FAIL** (cold restart 후 재측) |
+| retention | `npm run audit:memory:retention` — `NO_DATA`만으로 PASS 선언 **금지** |
+| 개발 후 | 김경제 **`mem-post-dev-recheck`** handoff (같은 배포 주기) |
+
+**PSS_FLOOR_UP FAIL 또는 retention FAIL** → 기능 추가보다 **김팀장 P0 코드 조치** (김경제는 탐지·리포트만).
+
+### 0-A-4. 감시·근거 (1차 검수·완료 판정)
+
+- `tools/long-run-monitor/logs/mem-timeline.csv` · `MONITOR_OPS_REALTIME.md`
+- `tools/memory-profiler/reports/latest-retention-audit.md`
+- `tools/kim-team-lead/reports/kim-economy-handoff.md` — `## [관측]`
+- adb: `dumpsys meminfo com.arcfire.online` — **TOTAL PSS · GL mtrack · Views**
+
+---
 
 ## 0. 적용 범위
 
 - **에이전트·인간 개발자 공통** — PR·커밋·완료 선언 전 필수
 - **김팀장·김경제·Fable·Sonnet** 페르소나·라우팅과 **무관하게** 항상 선행
-- Skia만이 아님: **STAGE 전환 · tick/루프 · persist · 부트 · Modal · store · arcCore 배치** 전부 포함
+- Skia만이 아님: **STAGE · tick · persist · 부트 · Modal · store · arcCore · memo/cache** 전부 포함
 
 ## 1. 전수조사 체크 (코딩 **전** · 설계 단계)
 
@@ -25,33 +90,34 @@ alwaysApply: true
 | 5 | `setInterval`/화면 전용 rAF · `onSnapshot` · 스택 `navigate` | v4.0 §14 |
 | 6 | Animated `new Animated.Value` 렌더 내부 · layout top/left | v4.0 §8-2 |
 | 7 | 신규 영속 store → purge/생성 연동 · bounded 히스토리 | 김팀장 §플레이어 계정 최상위 |
+| 8 | **PSS 누적·floor·Views** — **§0-A 1차 검수** | 본 문서 §0-A |
 
-**조사 미완 상태에서 코드 작성 시작 = 규칙 위반.**
+**조사 미완·`[pss-pre-dev]` 미기록 상태에서 코드 작성 시작 = 규칙 위반.**
 
 ## 2. 개발 중·완료 게이트
 
 | 변경 종류 | 최소 게이트 |
 |-----------|-------------|
 | Skia·Reanimated·고프레임 Canvas | `npm run audit:skia-memory` PASS + GL mtrack Δ ±15MB |
-| STAGE·허브·전투·store | `npm run audit:memory:all` + `npx tsc --noEmit -p tsconfig.client.json` |
-| arcCore·경제·배치 | 부트 동기 실행 없음 · 일 1회 배치 한정 · `audit:balance-ops` |
+| STAGE·허브·전투·store·cache | `audit:memory:all` + **§0-A-3 PSS floor** + `tsc` |
+| arcCore·경제·배치 | onBoot 동기 패스 금지 · `audit:balance-ops` |
 | 버그·크래시 | `arcfire-bug-debug-workflow.mdc` — logcat 근거 |
 
 **게이트 미충족 시 완료·머지·「적용됨」 선언 금지.**
 
-## 3. 에이전트 행동 (매 작업)
+## 3. 에이전트 행동 (매 작업 · 무조건)
 
-1. 요청 수신 → **먼저** 위 §1 해당 항목 전수조사(코드·호출 경로·빈도)
-2. 리스크 있으면 **설계 수정 또는 범위 축소** 후 구현 — hot path persist·debounce flush 등 **선 구현 후 감사 금지**
-3. 완료 보고에 **조사 요약 1~3줄** + 통과 게이트 명시
-4. 김경제 retention/soak FAIL → 김팀장 **코드 조치 우선** (기능 추가보다 누수 차단)
-5. **개발 업데이트 후**: 김경제 **즉각 메모리 재검수·보고** (`mem-post-dev-recheck`) — `.cursor/rules/arcfire-economy-specialist-agent.mdc`
+1. 요청 수신 → **§0-A 1차 검수** + §1 해당 항목 **코딩 전** 전수조사
+2. `verdict=REDESIGN` → 설계 수정·범위 축소 — **hot path 선구현 금지**
+3. 완료 보고: **`[pss-pre-dev]` 3줄** + 게이트 PASS 명시
+4. 김경제 retention/PSS FAIL → 김팀장 **P0** (기능 추가 중단)
+5. **개발 반영 후**: `mem-post-dev-recheck` handoff (김경제) — `.cursor/rules/arcfire-economy-specialist-agent.mdc`
 
-## 4. 교차 참조 (본 1순위를 구체화)
+## 4. 교차 참조
 
 - `.cursor/rules/arcfire-skia-memory-lifecycle.mdc`
-- `.cursor/rules/arcfire-main-lead-agent.mdc` — §주기·틱 · §경제 부트경로
+- `.cursor/rules/arcfire-main-lead-agent.mdc` — §주기·틱 · §경제 부트경로 · PSS_FLOOR_UP
 - `.cursor/rules/Arcfire_Master_Spec_v4.0-*.mdc` — §8·§9·§14
-- `AGENTS.md` — Skia·memory audit · long-run-monitor
+- `AGENTS.md` · `tools/long-run-monitor/logs/WATCH_README.md`
 
-**충돌 시**: 본 **「메모리 누수 전수조사 1순위」** > 기능 일정 > 기타 편의.
+**충돌 시 우선순위**: **본 「1순위 + PSS 특별조치 §0-A」** > v4.0 Table-First > 기능 일정 > 페르소나·편의.

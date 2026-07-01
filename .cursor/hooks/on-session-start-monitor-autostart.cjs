@@ -24,7 +24,37 @@ const ENSURE_CJS = path.join(MONITOR_DIR, 'ensure-perpetual-watchdog.cjs');
 
 const DISABLE_FLAG = path.join(MONITOR_DIR, 'logs', 'perpetual-detection-DISABLED.flag');
 
+const OVERNIGHT_FLAG = path.join(MONITOR_DIR, 'logs', 'overnight-exception-shutdown.flag');
+
 const PID_FILE = path.join(MONITOR_DIR, 'logs', 'perpetual-watchdog.pid');
+
+
+
+function isOvernightShutdownActive() {
+
+  try {
+
+    if (!fs.existsSync(OVERNIGHT_FLAG)) return false;
+
+    const raw = fs.readFileSync(OVERNIGHT_FLAG, 'utf8');
+
+    const m = raw.match(/resume_at_kst=(.+)/);
+
+    if (!m) return true;
+
+    const resume = new Date(m[1].trim().replace(' ', 'T') + '+09:00');
+
+    if (Number.isNaN(resume.getTime())) return true;
+
+    return Date.now() < resume.getTime();
+
+  } catch {
+
+    return false;
+
+  }
+
+}
 
 
 
@@ -89,6 +119,16 @@ function main() {
   if (fs.existsSync(DISABLE_FLAG)) {
 
     process.stdout.write(JSON.stringify({}));
+
+    return;
+
+  }
+
+
+
+  if (isOvernightShutdownActive()) {
+
+    process.stdout.write(JSON.stringify({ additional_context: '[영구 실시간 탐지] overnight exception shutdown — resume ~08:00 KST' }));
 
     return;
 
