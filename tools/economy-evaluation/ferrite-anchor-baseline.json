@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetId": "ore_ferrite",
+  "displayNameKo": "페라이트",
+  "role": "galaxy_base_currency_mineral",
+  "anchorPriceCr": 10,
+  "anchorSource": "tables/balance/mining_mineral_catalog.csv",
+  "analysisPlan": "docs/economy-evaluation/2026-07-02-ferrite-anchor-3stage-plan.md",
+  "finalReport": "docs/economy-evaluation/2026-07-02-ferrite-FINAL-REPORT.md",
+  "updatedAtKst": "2026-07-02T17:00:00+09:00",
+  "stageProgress": {
+    "stage1": { "status": "complete", "report": "docs/economy-evaluation/2026-07-02-ferrite-stage1-report.md" },
+    "review1": { "status": "complete", "owner": "kim-team-lead", "verdict": "PASS" },
+    "stage2": { "status": "complete", "report": "docs/economy-evaluation/2026-07-02-ferrite-stage2-report.md" },
+    "review2": { "status": "complete", "owner": "kim-team-lead", "verdict": "PASS" },
+    "stage3": { "status": "complete", "report": "docs/economy-evaluation/2026-07-02-ferrite-stage3-verdict.md" },
+    "finalVerdict": { "status": "complete", "verdict": "CONDITIONAL_KEEP_10CR" }
+  },
+  "miningPhysics": {
+    "cycleSec": 30,
+    "unitsPerMin": 2,
+    "sessionMaxUnits": 100,
+    "zone1PrimaryPct": 100,
+    "codeRefs": [
+      "src/game/miningConfig.ts",
+      "src/systems/mining/service.ts",
+      "src/arcCore/economy/mineralMiningDropPolicy.ts",
+      "src/arcCore/economy/mineralTradePricing.ts"
+    ]
+  },
+  "lowLevelUserSample": {
+    "planetId": "arcadia_prime",
+    "systemId": "arcadia",
+    "zoneIndex": 1,
+    "genesisResourcePct": 50,
+    "dailyAllowanceUnitsAtR50": 950
+  },
+  "incomeAtAnchorPrice10Cr": {
+    "crPerMin": 20,
+    "crPerHour": 1200,
+    "crPerDayMaxAllowance": 9500,
+    "crPerSession100Units": 1000,
+    "f2p5hPureMiningCr": 6000
+  },
+  "economyAnchors": {
+    "playScenarioCreditPerHourCr": 10000,
+    "bruGPerMin": 1.67,
+    "bruCrPerG": 100,
+    "bruCrPerHour": 10020,
+    "t0BaseGPer10Min": 16.7,
+    "f2pOptimalDailyCrBm": 50000,
+    "playScenarioPattern": {
+      "impliedMixedEvCrPerHour": 10000,
+      "pureFerriteSellCrPerHour": 1000,
+      "ratioMixedToSell": 10
+    }
+  },
+  "sinkAnalysis": {
+    "ferritePerStatLevelMin": 7,
+    "ferritePerStatLevelMax": 12,
+    "nineStatsToLevel5TotalOre": 425,
+    "nineStatsToLevel5CrAt10": 4250,
+    "miningHoursAt2PerMin": 3.54
+  },
+  "activityEvCrPerHour": {
+    "pureMiningSell": 1200,
+    "bruT0": 10020,
+    "deliveryT2_2": 24000,
+    "combatT3_1": 34800
+  },
+  "stage3Verdict": {
+    "code": "CONDITIONAL_KEEP_10CR",
+    "summaryKo": "tier1·sink에는 적정. BM 10k/h 순수채굴 앵커와는 8.3x 불일치. 혼합EV vs 순수판매 이중축으로 해석.",
+    "recommendedScenario": "R0",
+    "recommendedScenarioKo": "10CR 유지 + BM/play_scenario를 혼합 EV로 공식 재정의",
+    "notRecommended": ["R3_solo", "R1_plus_R2"]
+  },
+  "adjustmentScenarios": {
+    "R0": { "priceCr": 10, "cycleSec": 30, "bmAnchorCrPerHour": 10000, "action": "KEEP_DOCUMENT_DUAL_AXIS", "priority": 1 },
+    "R1": { "priceCr": "83-100", "cycleSec": 30, "bmAnchorCrPerHour": 10000, "action": "PRICE_ALIGN", "priority": 2, "risk": "tier_cascade" },
+    "R2": { "priceCr": 10, "cycleSec": 3, "bmAnchorCrPerHour": 10000, "action": "SPEED_ALIGN", "priority": 2, "risk": "allowance_session" },
+    "R3": { "priceCr": 10, "cycleSec": 30, "bmAnchorCrPerHour": 1000, "action": "ANCHOR_DOWN", "priority": 0, "risk": "bm_collapse" }
+  },
+  "macroSimSnapshot": {
+    "date": "2026-07-02",
+    "kpi": "ok",
+    "whaleToF2pRatio": 3.12,
+    "f2pPower": 11.64,
+    "dolphinPower": 15.42,
+    "whalePower": 36.3,
+    "mineralIncomePerHourNote": "abstract macro power — not linked to 1200 CR/h sell"
+  },
+  "adjustmentLevers": {
+    "priceCr": { "current": 10, "stage3Recommended": 10, "futureBandIfAlign": "83-100" },
+    "cycleSec": { "current": 30, "stage3Recommended": 30, "futureIfAlign": 3 },
+    "bmAnchorCrPerHour": { "current": 10000, "stage3Recommended": "10000_mixed_ev_only" },
+    "dailyAllowanceScale": { "current": "planet_mineral_ledger_policy", "stage3Recommended": "unchanged" }
+  }
+}

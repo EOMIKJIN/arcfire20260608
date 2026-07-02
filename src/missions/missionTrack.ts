@@ -31,6 +31,10 @@ export function isQuestMissionId(missionId: string): boolean {
   return missionId.startsWith('sandbox_');
 }
 
+export function isArcCoreAutoInstanceMissionId(missionId: string): boolean {
+  return missionId.startsWith('arc_inst_');
+}
+
 /** @deprecated `isTutorialMissionId` — 구 스토리 체인 명칭 */
 export function isStoryMissionId(missionId: string): boolean {
   return isTutorialMissionId(missionId);

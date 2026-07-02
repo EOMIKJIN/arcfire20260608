@@ -4,4 +4,8 @@ min_credits_per_hop,50,홉당 최소 연료비(CR)
 reference_hop_distance,0.18,맵 좌표(0~1) 기준 1홉 거리 정규화
 distance_mul_min,0.85,짧은 간선 거리 배율 하한
 distance_mul_max,2.25,긴 간선 거리 배율 상한
+distance_curve_exponent,1.45,간선 거리 배율 = (거리/ref)^exp — 1 초과 시 장거리 간선 가파르게
+hop_progression_rate,0.12,경로 N번째 홉 배율 = (1+rate)^(N-1) — 멀수록 다음 홉 비용 급증
+route_length_exponent,1.18,전체 홉 수 보정 = (hopCount/refHops)^exp (hopCount>1) — 장거리 경로 추가 surcharge
+reference_route_hop_count,3,경로 길이 보정 기준 홉 수(3홉 이하 ≈ 기존 체감)
 fuel_efficiency_stat_cap_pct,50,스킬 fuel_efficiency 합산 상한(향후)

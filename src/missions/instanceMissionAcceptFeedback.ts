@@ -37,8 +37,8 @@ export function questMissionAcceptFailMessage(
       return t('tavern.newMissions.acceptFailPrereq');
     case 'wrong_captain':
       return t('tavern.newMissions.acceptFailCaptain');
-    case 'not_quest':
-      return t('tavern.newMissions.acceptFailNotQuest');
+    case 'not_on_board':
+      return t('tavern.newMissions.acceptFailNotOnBoard');
     default:
       return t('tavern.newMissions.acceptFailGeneric');
   }

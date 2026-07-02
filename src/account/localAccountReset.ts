@@ -9,6 +9,7 @@ import { usePlanetStageLifecycleStore } from '../game/planetStageLifecycle';
 import { clearMiningResumeSnapshot } from '../systems/mining/miningResumeStore';
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
 import { useMissionStore } from '../store/missionStore';
+import { useArcCoreInstanceMissionBoardStore } from '../store/arcCoreInstanceMissionBoardStore';
 import { useNpcCaptainProgressStore } from '../store/npcCaptainProgressStore';
 import { usePlanetCoreRuntimeStore } from '../store/planetCoreRuntimeStore';
 import { usePlanetMineralLedgerStore } from '../store/planetMineralLedgerStore';
@@ -88,6 +89,7 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
 
   await usePlayerStore.getState().resetLocalPlayer();
   await useMissionStore.getState().resetLocalMissions();
+  await useArcCoreInstanceMissionBoardStore.getState().resetLocalArcCoreInstanceMissionBoard();
   await useNpcCaptainProgressStore.getState().resetLocalNpcCaptainProgress();
   // ── 플레이어 계정 귀속 — 인터랙티브로 누적된 모든 진행을 함께 초기화한다. ──
   // (ArcCore 환경·자율 경제 시스템은 제외: faction vault·trade fee ledger·galaxy 확장)

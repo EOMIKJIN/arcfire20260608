@@ -13,6 +13,10 @@ export type GalaxyTransitFuelPolicy = {
   referenceHopDistance: number;
   distanceMulMin: number;
   distanceMulMax: number;
+  distanceCurveExponent: number;
+  hopProgressionRate: number;
+  routeLengthExponent: number;
+  referenceRouteHopCount: number;
   fuelEfficiencyStatCapPct: number;
 };
 
@@ -53,6 +57,10 @@ export function resolveGalaxyTransitFuelPolicy(): GalaxyTransitFuelPolicy {
     referenceHopDistance: Math.max(0.01, num(kv.get('reference_hop_distance'), 0.18)),
     distanceMulMin: Math.max(0.1, num(kv.get('distance_mul_min'), 0.85)),
     distanceMulMax: Math.max(0.1, num(kv.get('distance_mul_max'), 2.25)),
+    distanceCurveExponent: Math.max(1, num(kv.get('distance_curve_exponent'), 1.45)),
+    hopProgressionRate: Math.max(0, num(kv.get('hop_progression_rate'), 0.12)),
+    routeLengthExponent: Math.max(1, num(kv.get('route_length_exponent'), 1.18)),
+    referenceRouteHopCount: Math.max(1, num(kv.get('reference_route_hop_count'), 3)),
     fuelEfficiencyStatCapPct: Math.max(0, num(kv.get('fuel_efficiency_stat_cap_pct'), 50)),
   };
 }

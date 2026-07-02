@@ -23,6 +23,7 @@ import { runPlanetPgpDailyPass } from '../economy/runPlanetPgpDailyPass';
 import { runPlanetCoreStatEquilibriumPass } from '../planetCore/runPlanetCoreStatEquilibriumPass';
 import { runLaboratoryRdSpeedPass } from '../planetFacility/runLaboratoryRdSpeedPass';
 import { runTavernBountyRefreshPass } from '../planetFacility/runTavernBountyRefreshPass';
+import { runArcCoreInstanceMissionDailyPass } from '../missions/runArcCoreInstanceMissionDailyPass';
 import { runArcCoreEconomyLearningDailyPass } from '../learning/runArcCoreEconomyLearningDailyPass';
 import { runPlanetFiscalBalanceClosedLoopPass } from '../economy/runPlanetFiscalBalanceClosedLoopPass';
 import { runPlanetMineralLedgerDailyPass } from '../planetResource/runPlanetMineralLedgerDailyPass';
@@ -55,6 +56,7 @@ export type ArcCoreDailyOpsBatchResult = {
   facilityStatNudge: boolean;
   laboratoryRdSpeed: boolean;
   tavernBountyRefresh: boolean;
+  arcCoreInstanceMissionDaily: boolean;
   planetPgp: boolean;
   synthColonizationAdvance: boolean;
   economyLearning: boolean;
@@ -87,6 +89,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     facilityStatNudge: false,
     laboratoryRdSpeed: false,
     tavernBountyRefresh: false,
+    arcCoreInstanceMissionDaily: false,
     planetPgp: false,
     synthColonizationAdvance: false,
     economyLearning: false,
@@ -160,6 +163,9 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   result.laboratoryRdSpeed = labRd.ran;
   const tavernRefresh = runTavernBountyRefreshPass();
   result.tavernBountyRefresh = tavernRefresh.ran;
+
+  const instanceMissionPass = runArcCoreInstanceMissionDailyPass();
+  result.arcCoreInstanceMissionDaily = instanceMissionPass.ran;
 
   const pgpPass = runPlanetPgpDailyPass();
   result.planetPgp = pgpPass.ran;

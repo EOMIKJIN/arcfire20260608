@@ -5,6 +5,10 @@ export const GalaxyTransitFuelPolicy_FROM_BALANCE_CSV = [
   { "key": "reference_hop_distance", "value": "0.18", "notesKo": "맵 좌표(0~1) 기준 1홉 거리 정규화" },
   { "key": "distance_mul_min", "value": "0.85", "notesKo": "짧은 간선 거리 배율 하한" },
   { "key": "distance_mul_max", "value": "2.25", "notesKo": "긴 간선 거리 배율 상한" },
+  { "key": "distance_curve_exponent", "value": "1.45", "notesKo": "간선 거리 배율 = (거리/ref)^exp — 1 초과 시 장거리 간선 가파르게" },
+  { "key": "hop_progression_rate", "value": "0.12", "notesKo": "경로 N번째 홉 배율 = (1+rate)^(N-1) — 멀수록 다음 홉 비용 급증" },
+  { "key": "route_length_exponent", "value": "1.18", "notesKo": "전체 홉 수 보정 = (hopCount/refHops)^exp (hopCount>1) — 장거리 경로 추가 surcharge" },
+  { "key": "reference_route_hop_count", "value": "3", "notesKo": "경로 길이 보정 기준 홉 수(3홉 이하 ≈ 기존 체감)" },
   { "key": "fuel_efficiency_stat_cap_pct", "value": "50", "notesKo": "스킬 fuel_efficiency 합산 상한(향후)" },
 ] as const;
 export type GalaxyTransitFuelPolicyRow = (typeof GalaxyTransitFuelPolicy_FROM_BALANCE_CSV)[number];

@@ -12,6 +12,7 @@ import {
   replaceTradePortCatalog,
   resetTradePortItemOverrides,
 } from '../../world/planetTradePortDb';
+import type { EconomyTradePortBulkAction } from '../ArcCoreCommandBus';
 import { runPlayScenarioEconomyPass } from '../balance/runPlayScenarioEconomyPass';
 import { integrateUnlockedSynthFrontierStatEconomyAsync } from '../planetCore/integrateUnlockedSynthFrontierStatEconomy';
 import { rehydrateSynthFrontierConvoyTradeFromInstalledPorts } from '../economy/synthFrontierConvoyTradeBridge';
@@ -41,24 +42,24 @@ export class AiEconomySubCore extends BaseArcSubCore {
     this.unsubCommands = subscribeArcCoreCommands((cmd) => this.onArcCoreCommand(cmd));
     // 무역소 카탈로그 강제 재빌드 등 무거운 경제 부팅 패스는 첫 렌더 이후로 분리한다.
     InteractionManager.runAfterInteractions(() => {
-      void migrateLegacyArcCoreTempBankOnce().then(() => {
-        void useArcCoreTransportFleetBankStore.getState().hydrate().then(() => {
-          void useArcCoreVaultStore.getState().hydrate().then(() => {
-            void useBlueTeamSharedVaultStore.getState().hydrate().then(() => {
-              void usePlanetTradeFeeLedgerStore.getState().hydrate().then(() => {
-                void reseedCorruptConvoyFleetEconomyOnce().then(() => {
-                  void useEconomyPriceOverlayStore.getState().loadAsync().then(() => {
-                    void integrateUnlockedSynthFrontierStatEconomyAsync().then(() => {
-                      rehydrateSynthFrontierConvoyTradeFromInstalledPorts();
-                      runPlayScenarioEconomyPass(false, { skipCatalog: true });
-                    });
-                  });
-                });
-              });
-            });
-          });
-        });
-      });
+      void (async () => {
+        try {
+          await migrateLegacyArcCoreTempBankOnce();
+          await useArcCoreTransportFleetBankStore.getState().hydrate();
+          await useArcCoreVaultStore.getState().hydrate();
+          await useBlueTeamSharedVaultStore.getState().hydrate();
+          await usePlanetTradeFeeLedgerStore.getState().hydrate();
+          await reseedCorruptConvoyFleetEconomyOnce();
+          await useEconomyPriceOverlayStore.getState().loadAsync();
+          await integrateUnlockedSynthFrontierStatEconomyAsync();
+          rehydrateSynthFrontierConvoyTradeFromInstalledPorts();
+          runPlayScenarioEconomyPass(false, { skipCatalog: true });
+        } catch (err) {
+          if (__DEV__) {
+            console.warn('[ArcCore/Economy] deferred boot chain failed', err);
+          }
+        }
+      })();
     });
   }
 
@@ -73,7 +74,7 @@ export class AiEconomySubCore extends BaseArcSubCore {
       return;
     }
     if (cmd.type !== 'economy_trade_port_bulk') return;
-    const planetIds = this.resolveTargetPlanetIds(cmd.scope);
+    const planetIds = this.resolveTargetPlanetIds(cmd.scope, cmd.action);
     if (planetIds.length === 0) return;
 
     if (__DEV__) {
@@ -110,9 +111,17 @@ export class AiEconomySubCore extends BaseArcSubCore {
     }
   }
 
-  private resolveTargetPlanetIds(scope: EconomyTradePortBulkScope): string[] {
+  private resolveTargetPlanetIds(
+    scope: EconomyTradePortBulkScope,
+    action?: EconomyTradePortBulkAction,
+  ): string[] {
     if (scope.kind === 'all_trade_ports') {
       return listPlanetIdsWithTradePort();
+    }
+    if (scope.kind === 'planet_ids' && action === 'set_catalog') {
+      // 정책·개방 연동이 명시한 행성 — listPlanetIdsWithTradePort 선행 필터로 synth 카탈로그가
+      // 조용히 drop 되는 회귀 방지(B→A 코어개방 synth 포함).
+      return scope.planetIds.map((id) => String(id ?? '').trim()).filter(Boolean);
     }
     const active = new Set(listPlanetIdsWithTradePort());
     const out: string[] = [];

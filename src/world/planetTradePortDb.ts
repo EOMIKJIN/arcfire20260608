@@ -1,8 +1,20 @@
 import type { Planet } from '../types';
-import { STAR_SYSTEMS } from '../data/systems';
 import { resolvePlanetById } from './resolvePlanetById';
-import { getItemDef } from '../data/goods';
-import { listItemDefs } from '../data/itemRegistry';
+import { listCoreOpenGameplayPlanetIds } from './coreOpenGameplayPlanets';
+import { isPlanetCsvTradePortWorldEnabled } from '../game/planetDevelopment/planetCsvWorldFlags';
+
+type ItemDefLike = {
+  tradeable?: boolean;
+  type?: string;
+  kind?: string;
+  attrs?: Record<string, unknown>;
+};
+
+function readItemDef(itemId: string): ItemDefLike | undefined {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { getItemDef } = require('../data/goods') as typeof import('../data/goods');
+  return getItemDef(itemId);
+}
 
 type PlanetTradePortMutableState = {
   catalogItemIds: Set<string>;
@@ -30,7 +42,7 @@ function getOrCreateMutableState(planetId: string): PlanetTradePortMutableState 
 }
 
 function isTradeableItemId(itemId: string): boolean {
-  return Boolean(getItemDef(itemId)?.tradeable);
+  return Boolean(readItemDef(itemId)?.tradeable);
 }
 
 function findPlanet(planetId: string): Planet | undefined {
@@ -42,33 +54,27 @@ export function getPlanetRecord(planetId: string): Planet | undefined {
   return findPlanet(planetId);
 }
 
-/** 무역소가 있는 행성 id — CSV 정본(17/21) ∪ dev_trade_port 설치(synth·worldStore 포함) */
+/** 무역소가 있는 행성 id — 코어 개방(A+B) CSV·colonization·runtime hasTradePort ∪ dev_trade_port */
 export function listPlanetIdsWithTradePort(): string[] {
   const ids = new Set<string>();
-  for (const system of Object.values(STAR_SYSTEMS)) {
-    for (const planet of system.planets) {
-      if (planet.hasTradePort) ids.add(planet.id);
-    }
+  for (const planetId of listCoreOpenGameplayPlanetIds()) {
+    if (isPlanetCsvTradePortWorldEnabled(planetId)) ids.add(planetId);
   }
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { isPlanetTradePortInstalled } = require('../game/planetDevelopment/planetTradePortListing') as typeof import('../game/planetDevelopment/planetTradePortListing');
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { useWorldStore } = require('../store/worldStore') as typeof import('../store/worldStore');
-    for (const system of Object.values(useWorldStore.getState().systems)) {
-      for (const planet of system.planets) {
-        if (isPlanetTradePortInstalled(planet.id)) ids.add(planet.id);
-      }
+    for (const planetId of listCoreOpenGameplayPlanetIds()) {
+      if (isPlanetTradePortInstalled(planetId)) ids.add(planetId);
     }
   } catch {
-    /* dev module 미로드 — CSV만 */
+    /* dev module 미로드 */
   }
   return [...ids];
 }
 
-function weaponModuleRequiredLevelFromDef(def: ReturnType<typeof getItemDef>): number {
+function weaponModuleRequiredLevelFromDef(def: ItemDefLike | undefined): number {
   if (!def || def.type !== 'weapon_module') return Number.POSITIVE_INFINITY;
-  const raw = def.attrs.weaponRequiredLevel;
+  const raw = def.attrs?.weaponRequiredLevel;
   if (typeof raw === 'number' && Number.isFinite(raw)) return Math.max(1, Math.floor(raw));
   if (typeof raw === 'string') {
     const parsed = Number.parseInt(raw, 10);
@@ -79,12 +85,12 @@ function weaponModuleRequiredLevelFromDef(def: ReturnType<typeof getItemDef>): n
 
 /** `weapon_list.csv` 요구레벨 — UI·정책 연동용 */
 export function getTradePortWeaponModuleRequiredLevel(itemId: string): number | null {
-  const def = getItemDef(itemId);
+  const def = readItemDef(itemId);
   if (!def || def.type !== 'weapon_module') return null;
   return weaponModuleRequiredLevelFromDef(def);
 }
 
-function equipmentRequiredLevelFromDef(def: NonNullable<ReturnType<typeof getItemDef>>): number {
+function equipmentRequiredLevelFromDef(def: ItemDefLike): number {
   const raw = def.attrs?.equipmentRequiredLevel;
   if (typeof raw === 'number' && Number.isFinite(raw)) return Math.max(1, Math.floor(raw));
   if (typeof raw === 'string') {
@@ -96,7 +102,7 @@ function equipmentRequiredLevelFromDef(def: NonNullable<ReturnType<typeof getIte
 
 /** 함선 장비 `equipmentRequiredLevel` — UI·정책 연동용 */
 export function getTradePortEquipmentRequiredLevel(itemId: string): number | null {
-  const def = getItemDef(itemId);
+  const def = readItemDef(itemId);
   if (!def || def.kind !== 'equipment' || def.type === 'weapon_module') return null;
   if (def.type !== 'ship_equipment') return null;
   return equipmentRequiredLevelFromDef(def);

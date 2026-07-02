@@ -14,12 +14,18 @@ import {
   resolveZonePrimaryMineralId,
 } from '../economy/mineralTradePricing';
 import { getItemDef, listItemDefs } from '../../data/itemRegistry';
+import { resolveSyntheticPlanetOwnershipItemDef, invalidateSyntheticPlanetOwnershipItemDefCache } from './planetOwnershipDeedItemDef';
+import { isPlanetOwnershipDeedCatalogEligible } from './planetOwnershipDeedCatalog';
 import { resolveStarSystemForPlanetId } from '../../world/resolvePlanetSystemPosition';
 import { dispatchEconomyTradePortBulk } from '../ArcCoreCommandBus';
 import {
   getPlanetLevelingRowForZone,
   resolvePlanetZoneIndex,
 } from '../planetBalance/planetZoneIndexRegistry';
+import {
+  clearPlanetCatalogWarm,
+  markPlanetCatalogWarmed,
+} from '../memory/residentSetRegistry';
 import { listPlanetIdsWithTradePort } from '../../world/planetTradePortDb';
 import {
   getTradePortEquipmentRequiredLevel,
@@ -117,8 +123,9 @@ function resolveEquipmentTierKeyFromWeaponTier(recommendedWeaponTierKey: string)
 }
 
 function resolvePlanetOwnershipItemId(planetId: string): string | null {
-  const id = `ownership_${planetId}`;
-  const def = getItemDef(id);
+  if (!isPlanetOwnershipDeedCatalogEligible(planetId)) return null;
+  const id = `ownership_${planetId.trim()}`;
+  const def = getItemDef(id) ?? resolveSyntheticPlanetOwnershipItemDef(id);
   return def?.tradeable ? id : null;
 }
 
@@ -220,8 +227,11 @@ export function resolveTradePortCatalogItemIds(planetId: string): string[] {
   const ownershipId = resolvePlanetOwnershipItemId(planetId);
   if (ownershipId) parts.push(ownershipId);
 
-  const unique = [...new Set(parts)].filter((id) => Boolean(getItemDef(id)?.tradeable));
-  return unique;
+  const unique = [...new Set(parts)];
+  return unique.filter((id) => {
+    if (ownershipId && id === ownershipId) return true;
+    return Boolean(getItemDef(id)?.tradeable);
+  });
 }
 
 /** 플레이어 레벨 — 구매 가능 여부(진열은 행성 zone, 구매는 성장 레벨) */
@@ -306,6 +316,15 @@ export function syncTradePortCatalogForPlanet(planetId: string): void {
       reason: 'trade_port_planet_resync',
     },
   });
+}
+
+/** warm 캐시·합성 deed 캐시 무효화 후 강제 재동기 — B→A 개방·무역 진입 */
+export function forceResyncPlanetTradePortCatalog(planetId: string): void {
+  if (!planetId) return;
+  clearPlanetCatalogWarm(planetId);
+  invalidateSyntheticPlanetOwnershipItemDefCache();
+  syncTradePortCatalogForPlanet(planetId);
+  markPlanetCatalogWarmed(planetId);
 }
 
 /** 아크코어 — 전 무역소 진열 재동기(단일 채널) */

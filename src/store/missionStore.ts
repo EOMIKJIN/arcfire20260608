@@ -7,6 +7,8 @@ import { create } from 'zustand';
 import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
 import { Mission, MissionProgress } from '../types';
 import { FIRST_TUTORIAL_MISSION_ID, getMissionById, isQuestMissionId } from '../missions/missionCatalog';
+import { isArcCoreInstanceMissionId } from '../missions/arcCoreInstanceMissionResolver';
+import { useArcCoreInstanceMissionBoardStore } from './arcCoreInstanceMissionBoardStore';
 import { isMissionAvailable } from '../engine/MissionEngine';
 import { usePlayerStore } from './playerStore';
 import { resolveMissionClearDialogSceneId } from '../game/ingameDialog/ingameDialogSceneIndex';
@@ -85,7 +87,8 @@ export type AcceptQuestMissionResult =
   | 'already_active'
   | 'already_complete'
   | 'prereq_missing'
-  | 'wrong_captain';
+  | 'wrong_captain'
+  | 'not_on_board';
 
 /** @deprecated `AcceptQuestMissionResult` */
 export type AcceptInstanceMissionResult = AcceptQuestMissionResult;
@@ -184,6 +187,49 @@ export const useMissionStore = create<MissionState>((set, get) => ({
   acceptQuestMission: (missionId, context) => {
     const mission = getMissionById(missionId);
     if (!mission) return 'not_found';
+
+    if (isArcCoreInstanceMissionId(missionId)) {
+      const boardEntry = useArcCoreInstanceMissionBoardStore.getState().findBoardEntry(missionId);
+      if (!boardEntry || boardEntry.boardStatus !== 'listed') return 'not_on_board';
+      if (boardEntry.offerPlanetId !== context.planetId) return 'wrong_planet';
+      if (
+        context.expectCaptainId &&
+        boardEntry.offerCaptainId &&
+        boardEntry.offerCaptainId !== context.expectCaptainId
+      ) {
+        return 'wrong_captain';
+      }
+
+      const state = get();
+      const existing = state.progresses[missionId];
+      if (existing?.status === 'active') return 'already_active';
+      if (existing?.status === 'complete') return 'already_complete';
+
+      const requiredLevel = mission.levelRequired ?? 1;
+      if (context.playerLevel < requiredLevel) return 'level_locked';
+
+      const progress: MissionProgress = {
+        missionId,
+        status: 'active',
+        objectives: emptyObjectives(mission),
+        startedAt: Date.now(),
+      };
+
+      const currentActive = state.activeMissionId;
+      const nextActiveId =
+        !currentActive || isQuestMissionId(currentActive) || isArcCoreInstanceMissionId(currentActive)
+          ? missionId
+          : currentActive;
+
+      set({
+        progresses: { ...state.progresses, [missionId]: progress },
+        activeMissionId: nextActiveId,
+      });
+      useArcCoreInstanceMissionBoardStore.getState().markBoardEntryAccepted(missionId);
+      void get().persistMissions();
+      return 'accepted';
+    }
+
     if (!isQuestMissionId(missionId)) return 'not_quest';
     if (mission.offerPlanetId && mission.offerPlanetId !== context.planetId) return 'wrong_planet';
     if (
@@ -286,6 +332,9 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     );
     set({ ...chain, pendingMissionDialogId: null, pendingMissionClearDialog: null });
     applyMissionCompletionRewards(missionId);
+    if (isArcCoreInstanceMissionId(missionId)) {
+      useArcCoreInstanceMissionBoardStore.getState().markBoardEntryCleared(missionId);
+    }
     void get().persistMissions();
   },
 
@@ -308,6 +357,9 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     );
     set({ ...chain, pendingMissionDialogId: null, pendingMissionClearDialog: null });
     applyMissionCompletionRewards(missionId);
+    if (isArcCoreInstanceMissionId(missionId)) {
+      useArcCoreInstanceMissionBoardStore.getState().markBoardEntryCleared(missionId);
+    }
     void get().persistMissions();
   },
 }));

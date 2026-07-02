@@ -25,3 +25,8 @@ kst_date,status,report_path,fail_reason,adb_connected,app_running,pss_mb,watch_p
 "2026-07-01","OK","D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260701-0800.md","","yes","yes","711.6","21300"
 "2026-07-01","OK","D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260701-0800.md","","yes","yes","684.2","21300"
 "2026-07-01","OK","D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260701-0800.md","","yes","yes","811.8","21300"
+"2026-07-02","OK","D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260702-0800.md","","yes","yes","660.2","24156"
+"2026-07-02","OK","D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260702-0800.md","","yes","yes","643.5","24156"
+"2026-07-02","OK","D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260702-0800.md","","yes","yes","632.1","24156"
+"2026-07-02","OK","D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260702-0800.md","","yes","yes","635.0","24156"
+"2026-07-02","OK","D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260702-0800.md","","yes","yes","638.3","24156"

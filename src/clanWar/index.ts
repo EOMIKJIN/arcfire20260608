@@ -17,7 +17,12 @@ export {
   isPlayerPlanetDeedOwner,
   migratePlanetHoldOwnershipSplit,
   migratePlanetHoldsOwnershipSplit,
+  previewPlanetOwnershipDeedPurchase,
   resolveDeedOwnerClanId,
+  resolveNationSeedClanIdForMegaFaction,
+  resolvePlanetHoldForOwnershipCheck,
   resolvePlanetHubOwnershipPlate,
+  resolveSeedOccupierClanForPlanet,
   resolveTerritorialOccupierClanId,
+  resolveTerritorialSideForHold,
 } from './planetOwnershipModel';

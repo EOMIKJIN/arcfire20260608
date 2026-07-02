@@ -187,13 +187,20 @@ export function applySynthSystemAutogen(base: StarSystem, colonizationPhase = 0)
     ? String(suffixNum).padStart(3, '0')
     : rawSuffix;
   const coreSeed = SYNTH_PLANET_CORE_SEED;
-  // 미개척(synth) 행성 — 월드 CSV 시설(hasTradePort 등)은 21행성 전용.
-  // 무역·조선·선술집은 행성개발(dev) 설치로만 허용; colonization phase와 무관하게 false.
-  const worldFacilityFlags = {
-    hasTradePort: false,
-    hasShipyard: false,
-    hasTavern: false,
-  };
+  // B→A 편입(phase≥1): synth_system_colonization.csv 시설 = 21행성과 동일 월드 레이어
+  // C(phase 0·잠금): 시설 없음 — 지도 표시만, 이동·허브 기능 미개척
+  const worldFacilityFlags =
+    phase >= 1 && csvRow
+      ? {
+          hasTradePort: parseCsvBool(String(csvRow.hasTradePort)),
+          hasShipyard: parseCsvBool(String(csvRow.hasShipyard)),
+          hasTavern: parseCsvBool(String(csvRow.hasTavern)),
+        }
+      : {
+          hasTradePort: false,
+          hasShipyard: false,
+          hasTavern: false,
+        };
 
   return {
     ...base,
@@ -411,7 +418,7 @@ export const useWorldStore = create<WorldState>((set, get) => ({
     const planetId = target.planets[0]?.id;
     const nextPhaseMap = { ...state.synthColonizationPhaseByPlanetId };
     if (planetId) {
-      nextPhaseMap[planetId] = 0;
+      nextPhaseMap[planetId] = initialPhase;
     }
 
     const unlockedSystemIds = [...state.unlockedSystemIds, normalizedId];
@@ -428,6 +435,22 @@ export const useWorldStore = create<WorldState>((set, get) => ({
     const { invalidateOrbitPresenceCachesOnWorldExpansion } =
       require('../arcCore/orbitPresence/captainOrbitPlanetAssignment') as typeof import('../arcCore/orbitPresence/captainOrbitPlanetAssignment');
     invalidateOrbitPresenceCachesOnWorldExpansion();
+    if (normalizedId.startsWith('synth_')) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { integrateUnlockedSynthFrontierStatEconomy } =
+          require('../arcCore/planetCore/integrateUnlockedSynthFrontierStatEconomy') as typeof import('../arcCore/planetCore/integrateUnlockedSynthFrontierStatEconomy');
+        integrateUnlockedSynthFrontierStatEconomy();
+        if (planetId) {
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          const { forceResyncPlanetTradePortCatalog } =
+            require('../arcCore/balance/tradePortCatalogPolicy') as typeof import('../arcCore/balance/tradePortCatalogPolicy');
+          forceResyncPlanetTradePortCatalog(planetId);
+        }
+      } catch {
+        /* arcCore lazy */
+      }
+    }
     void get().persistWorld();
   },
 
@@ -463,6 +486,16 @@ export const useWorldStore = create<WorldState>((set, get) => ({
       syncPlanetWorldInfoPresentation(planetId);
     } catch {
       /* dev module lazy path */
+    }
+    if (clamped >= 1) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { forceResyncPlanetTradePortCatalog } =
+          require('../arcCore/balance/tradePortCatalogPolicy') as typeof import('../arcCore/balance/tradePortCatalogPolicy');
+        forceResyncPlanetTradePortCatalog(planetId);
+      } catch {
+        /* arcCore lazy */
+      }
     }
     void get().persistWorld();
   },
@@ -509,8 +542,8 @@ export const useWorldStore = create<WorldState>((set, get) => ({
       if (unlockedSystemIds.includes(id)) continue;
       unlockedSystemIds.push(id);
       const planetId = target.planets[0]?.id;
-      if (planetId) nextPhaseMap[planetId] = 0;
-      nextSystems[id] = applySynthSystemAutogen(target, 0);
+      if (planetId) nextPhaseMap[planetId] = 1;
+      nextSystems[id] = applySynthSystemAutogen(target, 1);
       added.push(id);
     }
 
@@ -524,6 +557,23 @@ export const useWorldStore = create<WorldState>((set, get) => ({
     const { invalidateOrbitPresenceCachesOnWorldExpansion } =
       require('../arcCore/orbitPresence/captainOrbitPlanetAssignment') as typeof import('../arcCore/orbitPresence/captainOrbitPlanetAssignment');
     invalidateOrbitPresenceCachesOnWorldExpansion();
+    if (added.length > 0) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { integrateUnlockedSynthFrontierStatEconomy } =
+          require('../arcCore/planetCore/integrateUnlockedSynthFrontierStatEconomy') as typeof import('../arcCore/planetCore/integrateUnlockedSynthFrontierStatEconomy');
+        integrateUnlockedSynthFrontierStatEconomy();
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { forceResyncPlanetTradePortCatalog } =
+          require('../arcCore/balance/tradePortCatalogPolicy') as typeof import('../arcCore/balance/tradePortCatalogPolicy');
+        for (const systemId of added) {
+          const planetId = nextSystems[systemId]?.planets[0]?.id;
+          if (planetId) forceResyncPlanetTradePortCatalog(planetId);
+        }
+      } catch {
+        /* arcCore lazy */
+      }
+    }
     void get().persistWorld();
     return { added, removed: toRemove };
   },

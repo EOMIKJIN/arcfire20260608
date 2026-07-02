@@ -1,0 +1,75 @@
+[2026-07-02 08:05:18] monitor start package=com.arcfire.online interval=15m rules=v2(hub_activation_excluded)
+[2026-07-02 08:05:19] meminfo -> D:\arcfire20260607\tools\long-run-monitor\logs\meminfo-20260702-080518.log
+[2026-07-02 08:05:19] timeline -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-timeline.csv
+[2026-07-02 08:05:19] alerts -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-alerts.log
+[2026-07-02 08:05:19] FOCUS: hub Skia orbit + nebula + combat ??restart only active hub GL>=80MB or 3x dGL>=8MB
+[2026-07-02 08:05:22] snap PSS=647.1MB GL=37.8MB views=368 dPSS= dGL= 
+[2026-07-02 08:20:46] snap PSS=671.7MB GL=42.1MB views=367 dPSS= dGL= 
+[2026-07-02 08:36:10] snap PSS=675.5MB GL=42.4MB views=358 dPSS=3.8 dGL=0.3 
+[2026-07-02 08:51:35] snap PSS=669MB GL=42.4MB views=366 dPSS=-6.5 dGL=0 
+[2026-07-02 09:06:52] snap PSS=668.4MB GL=42.4MB views=364 dPSS=-0.6 dGL=0 
+[2026-07-02 09:22:10] snap PSS=665.7MB GL=42.4MB views=359 dPSS=-2.7 dGL=0 
+[2026-07-02 09:37:28] snap PSS=666.8MB GL=42.4MB views=360 dPSS=1.1 dGL=0 
+[2026-07-02 09:52:47] snap PSS=652.7MB GL=44.4MB views=359 dPSS=-14.1 dGL=2 
+[2026-07-02 10:08:04] snap PSS=655.9MB GL=44.4MB views=359 dPSS=3.2 dGL=0 
+[2026-07-02 10:23:24] snap PSS=656.3MB GL=46.7MB views=360 dPSS=0.4 dGL=2.3 
+[2026-07-02 10:38:43] snap PSS=673.1MB GL=47MB views=376 dPSS=16.8 dGL=0.3 
+[2026-07-02 10:54:05] snap PSS=662.8MB GL=46.7MB views=364 dPSS=-10.3 dGL=-0.3 
+[2026-07-02 11:09:25] snap PSS=676.3MB GL=47MB views=380 dPSS=13.5 dGL=0.3 
+[2026-07-02 11:24:45] snap PSS=674.5MB GL=46.9MB views=373 dPSS=-1.8 dGL=-0.1 
+[2026-07-02 11:40:04] snap PSS=658.1MB GL=48.7MB views=355 dPSS=-16.4 dGL=1.8 
+[2026-07-02 11:55:23] snap PSS=666.6MB GL=46.7MB views=360 dPSS=8.5 dGL=-2 
+[2026-07-02 12:10:43] snap PSS=663.6MB GL=46.7MB views=366 dPSS=-3 dGL=0 
+[2026-07-02 12:26:05] snap PSS=673.5MB GL=48.7MB views=370 dPSS=9.9 dGL=2 
+[2026-07-02 12:41:24] snap PSS=669.1MB GL=46.7MB views=366 dPSS=-4.4 dGL=-2 
+[2026-07-02 12:56:44] snap PSS=676.1MB GL=46.7MB views=362 dPSS=7 dGL=0 
+[2026-07-02 13:12:07] snap PSS=705.4MB GL=47.4MB views=385 dPSS=29.3 dGL=0.7 
+[2026-07-02 13:27:32] snap PSS=678.1MB GL=46.7MB views=366 dPSS=-27.3 dGL=-0.7 
+[2026-07-02 13:42:57] snap PSS=673.3MB GL=46.7MB views=366 dPSS=-4.8 dGL=0 
+[2026-07-02 13:58:18] snap PSS=564.5MB GL=21.5MB views=15 dPSS=-108.8 dGL=-25.2 GL_RECOVERED idle_ok
+[2026-07-02 14:13:38] ALERT PSS +100.7MB
+[2026-07-02 14:13:38] snap PSS=665.2MB GL=19.5MB views=103 dPSS=100.7 dGL=-2 PSS_SPIKE review=graphics+native
+[2026-07-02 14:28:58] INFO hub activation GL 19.5->43.9MB views 103->378 (no restart)
+[2026-07-02 14:28:58] snap PSS=792.4MB GL=43.9MB views=378 dPSS=127.2 dGL=24.4 HUB_ACTIVATION gl_mount_ok
+[2026-07-02 14:44:16] snap PSS=818.8MB GL=44.3MB views=396 dPSS=26.4 dGL=0.4 
+[2026-07-02 14:59:37] snap PSS=794.1MB GL=44.1MB views=374 dPSS=-24.7 dGL=-0.2 
+[2026-07-02 15:14:54] snap PSS=829.5MB GL=48.2MB views=392 dPSS=35.4 dGL=4.1 
+[2026-07-02 15:30:17] ALERT GL +78.7MB active hub views=358
+[2026-07-02 15:30:17] snap PSS=896.6MB GL=126.9MB views=358 dPSS=67.1 dGL=78.7 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-07-02 15:45:37] snap PSS=890.3MB GL=127.2MB views=358 dPSS=-6.3 dGL=0.3 
+[2026-07-02 16:00:54] snap PSS=912MB GL=127.8MB views=367 dPSS=21.7 dGL=0.6 
+[2026-07-02 16:16:12] snap PSS=874MB GL=109.5MB views=540 dPSS=-38 dGL=-18.3 GL_RECOVERED idle_ok
+[2026-07-02 16:31:32] snap PSS=900.2MB GL=115.1MB views=435 dPSS=26.2 dGL=5.6 
+[2026-07-02 16:46:54] snap PSS=898.5MB GL=117.1MB views=365 dPSS=-1.7 dGL=2 
+[2026-07-02 17:02:21] snap PSS=917.4MB GL=115.3MB views=387 dPSS=18.9 dGL=-1.8 
+[2026-07-02 17:17:40] snap PSS=893.8MB GL=117.1MB views=367 dPSS=-23.6 dGL=1.8 
+[2026-07-02 17:32:58] snap PSS=927.3MB GL=115.7MB views=364 dPSS=33.5 dGL=-1.4 
+[2026-07-02 17:48:17] snap PSS=919.9MB GL=117.1MB views=367 dPSS=-7.4 dGL=1.4 
+[2026-07-02 18:03:36] snap PSS=921.3MB GL=125MB views=571 dPSS=1.4 dGL=7.9 
+[2026-07-02 18:18:56] snap PSS=815.5MB GL=41.5MB views=375 dPSS=-105.8 dGL=-83.5 GL_RECOVERED idle_ok
+[2026-07-02 18:34:14] ALERT PSS +40.6MB
+[2026-07-02 18:34:14] snap PSS=856.1MB GL=34.6MB views=387 dPSS=40.6 dGL=-6.9 PSS_SPIKE review=graphics+native
+[2026-07-02 18:49:33] snap PSS=836.5MB GL=36MB views=378 dPSS=-19.6 dGL=1.4 
+[2026-07-02 19:04:55] ALERT GL +88.7MB active hub views=564
+[2026-07-02 19:04:55] ALERT GL/PSS hard-ceiling breach gl=124.7MB pss=970.4MB ??defer remediation to check-and-remediate
+[2026-07-02 19:04:55] snap PSS=970.4MB GL=124.7MB views=564 dPSS=133.9 dGL=88.7 GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+[2026-07-02 19:20:25] snap PSS=829.6MB GL=20.3MB views=103 dPSS=-140.8 dGL=-104.4 GL_RECOVERED idle_ok
+[2026-07-02 19:35:45] snap PSS=858.3MB GL=20.3MB views=103 dPSS=28.7 dGL=0 
+[2026-07-02 19:51:05] snap PSS=821.7MB GL=20.2MB views=103 dPSS=-36.6 dGL=-0.1 
+[2026-07-02 20:06:28] INFO hub activation GL 20.2->37MB views 103->392 (no restart)
+[2026-07-02 20:06:28] snap PSS=885.5MB GL=37MB views=392 dPSS=63.8 dGL=16.8 HUB_ACTIVATION gl_mount_ok
+[2026-07-02 20:21:48] snap PSS=886.4MB GL=37MB views=375 dPSS=0.9 dGL=0 
+[2026-07-02 20:37:11] snap PSS=915MB GL=35.2MB views=390 dPSS=28.6 dGL=-1.8 
+[2026-07-02 20:52:31] snap PSS=660.6MB GL=23MB views=366 dPSS= dGL= 
+[2026-07-02 21:07:55] snap PSS=664.4MB GL=24.8MB views=373 dPSS= dGL= 
+[2026-07-02 21:23:13] WARN: com.arcfire.online not running
+[2026-07-02 21:38:14] WARN: com.arcfire.online not running
+[2026-07-02 21:53:15] WARN: com.arcfire.online not running
+[2026-07-02 22:08:19] snap PSS=710.4MB GL=34.1MB views=351 dPSS= dGL= 
+[2026-07-02 22:23:42] snap PSS=625.7MB GL=52.7MB views=471 dPSS= dGL= 
+[2026-07-02 22:39:04] snap PSS=506.2MB GL=15.2MB views=60 dPSS= dGL= 
+[2026-07-02 22:54:25] snap PSS=444.2MB GL=5.3MB views=15 dPSS= dGL= 
+[2026-07-02 23:09:54] snap PSS=658.7MB GL=17.1MB views=23 dPSS= dGL= 
+[2026-07-02 23:25:13] WARN: com.arcfire.online not running
+[2026-07-02 23:40:15] WARN: com.arcfire.online not running
+[2026-07-02 23:55:22] snap PSS=535.4MB GL=13.2MB views=15 dPSS=36.1 dGL=-49.3 GL_RECOVERED idle_ok

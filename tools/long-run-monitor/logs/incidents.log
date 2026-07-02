@@ -2503,3 +2503,33 @@ ref=tools/long-run-monitor/logs/soak-worklet-mirror-20260621.json
 [2026-07-01 23:14:06] GL_ELEVATED mounting_or_insufficient_samples gl=115.4 pss=789.4 views=389 restart_held
 [2026-07-01 23:26:54] GL_ELEVATED mounting_or_insufficient_samples gl=115 pss=783.6 views=387 restart_held
 [2026-07-01 23:37:55] OVERNIGHT_EXCEPTION_SHUTDOWN resume_at_kst=2026-07-02 08:00:00 stopped=4 reason=user 2026-07-01 overnight exception - resume 08:00 KST
+[2026-07-02 08:05:16] OVERNIGHT_EXCEPTION_RESUME full stack restart
+[2026-07-02 08:05:18] DAILY_8AM_REPORT 2026-07-02 08:05:18 KST
+[2026-07-02 08:05:18] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260702-0800.md verdict=OK
+[2026-07-02 08:07:22] DAILY_8AM_REPORT 2026-07-02 08:07:22 KST
+[2026-07-02 08:07:22] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260702-0800.md verdict=OK
+[2026-07-02 08:09:23] DAILY_8AM_REPORT 2026-07-02 08:09:23 KST
+[2026-07-02 08:09:23] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260702-0800.md verdict=OK
+[2026-07-02 08:11:25] DAILY_8AM_REPORT 2026-07-02 08:11:25 KST
+[2026-07-02 08:11:25] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260702-0800.md verdict=OK
+[2026-07-02 08:13:27] DAILY_8AM_REPORT 2026-07-02 08:13:27 KST
+[2026-07-02 08:13:27] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260702-0800.md verdict=OK
+[2026-07-02 14:44:18] PSS_SOFT_CEILING pss=818.8 gl=44.3 views=396 native_reclaim_advisory
+[2026-07-02 15:14:57] PSS_SOFT_CEILING pss=829.5 gl=48.2 views=392 native_reclaim_advisory
+[2026-07-02 15:30:19] PSS_SOFT_CEILING pss=896.6 gl=126.9 views=358 native_reclaim_advisory
+[2026-07-02 15:45:39] PSS_SOFT_CEILING pss=890.3 gl=127.2 views=358 native_reclaim_advisory
+[2026-07-02 16:00:56] PSS_SOFT_CEILING pss=912 gl=127.8 views=367 native_reclaim_advisory
+[2026-07-02 16:16:14] PSS_SOFT_CEILING pss=874 gl=109.5 views=540 native_reclaim_advisory
+[2026-07-02 16:31:34] PSS_SOFT_CEILING pss=900.2 gl=115.1 views=435 native_reclaim_advisory
+[2026-07-02 16:46:57] PSS_SOFT_CEILING pss=898.5 gl=117.1 views=365 native_reclaim_advisory
+[2026-07-02 17:02:23] PSS_SOFT_CEILING pss=917.4 gl=115.3 views=387 native_reclaim_advisory
+[2026-07-02 17:17:42] PSS_SOFT_CEILING pss=893.8 gl=117.1 views=367 native_reclaim_advisory
+[2026-07-02 17:33:00] PSS_SOFT_CEILING pss=927.3 gl=115.7 views=364 native_reclaim_advisory
+[2026-07-02 17:48:19] PSS_SOFT_CEILING pss=919.9 gl=117.1 views=367 native_reclaim_advisory
+[2026-07-02 18:03:38] PSS_SOFT_CEILING pss=921.3 gl=125 views=571 native_reclaim_advisory
+[2026-07-02 18:18:58] PSS_SOFT_CEILING pss=815.5 gl=41.5 views=375 native_reclaim_advisory
+[2026-07-02 18:34:17] PSS_SOFT_CEILING pss=856.1 gl=34.6 views=387 native_reclaim_advisory
+[2026-07-02 18:49:35] PSS_SOFT_CEILING pss=836.5 gl=36 views=378 native_reclaim_advisory
+[2026-07-02 20:06:30] PSS_SOFT_CEILING pss=885.5 gl=37 views=392 native_reclaim_advisory
+[2026-07-02 20:21:51] PSS_SOFT_CEILING pss=886.4 gl=37 views=375 native_reclaim_advisory
+[2026-07-02 20:37:13] PSS_SOFT_CEILING pss=915 gl=35.2 views=390 native_reclaim_advisory

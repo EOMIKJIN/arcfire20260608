@@ -3,7 +3,7 @@
 // ============================================================
 
 import { getSynthSystemColonizationRow } from '../balance/balanceTableRegistry';
-import { syncTradePortCatalogForPlanet } from '../balance/tradePortCatalogPolicy';
+import { forceResyncPlanetTradePortCatalog } from '../balance/tradePortCatalogPolicy';
 import { getPlanetLevelingRowForZone } from '../planetBalance/planetZoneIndexRegistry';
 import { isPlanetCsvTradePortWorldEnabled } from '../../game/planetDevelopment/planetCsvWorldFlags';
 import { isSynthFrontierPlanetId } from '../../world/isSynthFrontierPlanetId';
@@ -149,7 +149,7 @@ function applySynthFrontierConvoyTradeProfile(planetId: string): boolean {
   registerRuntimeTradeRouteAssignments(planetId, supplyTgIds, demandTgIds);
 
   rebuildPlanetTradeMarket(planetId, planetId.length * 37, true);
-  syncTradePortCatalogForPlanet(planetId);
+  forceResyncPlanetTradePortCatalog(planetId);
   return true;
 }
 

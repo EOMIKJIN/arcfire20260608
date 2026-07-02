@@ -5,13 +5,12 @@
 
 import { buildCsvStaticIndexesFull } from '../../game/buildCsvStaticIndexes';
 import { emitMemProfileMarker } from '../../game/devMemoryProfileBridge';
-import { syncTradePortCatalogForPlanet } from '../balance/tradePortCatalogPolicy';
+import { forceResyncPlanetTradePortCatalog } from '../balance/tradePortCatalogPolicy';
 import { runTradeRouteMarketPass } from '../economy/runTradeRouteMarketPass';
-import { getPlanetRecord } from '../../world/planetTradePortDb';
+import { isPlanetCsvTradePortWorldEnabled } from '../../game/planetDevelopment/planetCsvWorldFlags';
 import {
   getResidentSetTier,
   isPlanetCatalogWarmed,
-  markPlanetCatalogWarmed,
   setResidentSetTier,
 } from './residentSetRegistry';
 
@@ -19,7 +18,7 @@ let galaxyPreflightDone = false;
 
 function planetHasTradePort(planetId: string): boolean {
   try {
-    return Boolean(getPlanetRecord(planetId)?.hasTradePort);
+    return isPlanetCsvTradePortWorldEnabled(planetId);
   } catch {
     return false;
   }
@@ -32,8 +31,7 @@ export function warmPlanetHubResidentSet(planetId: string | null | undefined): v
   setResidentSetTier('T1_planet_hub');
   buildCsvStaticIndexesFull();
   if (planetHasTradePort(pid) && !isPlanetCatalogWarmed(pid)) {
-    syncTradePortCatalogForPlanet(pid);
-    markPlanetCatalogWarmed(pid);
+    forceResyncPlanetTradePortCatalog(pid);
   }
   emitMemProfileMarker({ stage: 'planet_hub', event: 'route_focus', detail: pid });
 }
@@ -44,8 +42,7 @@ export function warmGalaxyDeparturePreflight(planetId: string | null | undefined
   if (planetId?.trim()) {
     const pid = planetId.trim();
     if (planetHasTradePort(pid)) {
-      syncTradePortCatalogForPlanet(pid);
-      markPlanetCatalogWarmed(pid);
+      forceResyncPlanetTradePortCatalog(pid);
     }
   }
   if (!galaxyPreflightDone) {

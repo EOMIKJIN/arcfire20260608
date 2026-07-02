@@ -1,5 +1,8 @@
 import type { Mission, MissionProgress } from '../types';
 import { getMissionById, isQuestMissionId, isTutorialMissionId, listQuestMissions } from './missionCatalog';
+import { isArcCoreInstanceMissionId } from './arcCoreInstanceMissionResolver';
+import { useArcCoreInstanceMissionBoardStore } from '../store/arcCoreInstanceMissionBoardStore';
+import type { ArcCoreInstanceMissionCategoryTag } from './arcCoreInstanceMissionTypes';
 
 export type TavernBoardTab = 'board' | 'mission_status' | 'new_missions';
 
@@ -18,6 +21,12 @@ export type InstanceMissionOfferState = QuestMissionOfferState;
 export type QuestMissionOfferRow = {
   mission: Mission;
   state: QuestMissionOfferState;
+  /** ArcCore AI 자동 등록 의뢰 메타 (신규 의뢰 탭). */
+  arcCoreAuto?: {
+    instanceId: string;
+    categoryTag: ArcCoreInstanceMissionCategoryTag;
+    templateMissionId: string;
+  };
 };
 
 /** @deprecated `QuestMissionOfferRow` */
@@ -63,7 +72,7 @@ export function listActiveQuestStatusRows(
   activeMissionId: string | null,
 ): MissionStatusRow[] {
   return listActiveMissionStatusRows(progresses, activeMissionId).filter(
-    (row) => isQuestMissionId(row.mission.id),
+    (row) => isQuestMissionId(row.mission.id) || isArcCoreInstanceMissionId(row.mission.id),
   );
 }
 
@@ -78,8 +87,8 @@ export function listCompletedTutorialStatusRows(
 export function listCompletedQuestStatusRows(
   progresses: Record<string, MissionProgress>,
 ): MissionStatusRow[] {
-  return listCompletedMissionStatusRows(progresses).filter((row) =>
-    isQuestMissionId(row.mission.id),
+  return listCompletedMissionStatusRows(progresses).filter(
+    (row) => isQuestMissionId(row.mission.id) || isArcCoreInstanceMissionId(row.mission.id),
   );
 }
 
@@ -168,7 +177,28 @@ export function listTavernQuestOffers(
       state: resolveQuestOfferState(mission, playerLevel, progresses[mission.id]),
     });
   }
+
+  const boardEntries = useArcCoreInstanceMissionBoardStore.getState().entries;
+  for (const entry of boardEntries) {
+    if (entry.offerPlanetId !== planetId) continue;
+    if (entry.boardStatus !== 'listed') continue;
+    const mission = getMissionById(entry.instanceId);
+    if (!mission) continue;
+    rows.push({
+      mission,
+      state: resolveQuestOfferState(mission, playerLevel, progresses[entry.instanceId]),
+      arcCoreAuto: {
+        instanceId: entry.instanceId,
+        categoryTag: entry.categoryTag,
+        templateMissionId: entry.templateMissionId,
+      },
+    });
+  }
+
   rows.sort((a, b) => {
+    const arcA = a.arcCoreAuto ? 1 : 0;
+    const arcB = b.arcCoreAuto ? 1 : 0;
+    if (arcA !== arcB) return arcB - arcA;
     const levelA = a.mission.levelRequired ?? 1;
     const levelB = b.mission.levelRequired ?? 1;
     if (levelA !== levelB) return levelA - levelB;

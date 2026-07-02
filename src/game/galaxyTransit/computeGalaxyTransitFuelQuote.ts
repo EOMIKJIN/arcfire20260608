@@ -30,8 +30,21 @@ function mapEdgeDistance(a: StarSystem, b: StarSystem): number {
 }
 
 function resolveDistanceMul(edgeDistance: number, policy: ReturnType<typeof resolveGalaxyTransitFuelPolicy>): number {
-  const raw = edgeDistance / policy.referenceHopDistance;
+  const ratio = Math.max(0.01, edgeDistance / policy.referenceHopDistance);
+  const raw = Math.pow(ratio, policy.distanceCurveExponent);
   return clamp(raw, policy.distanceMulMin, policy.distanceMulMax);
+}
+
+function resolveHopProgressionMul(hopIndex: number, policy: ReturnType<typeof resolveGalaxyTransitFuelPolicy>): number {
+  if (hopIndex <= 0 || policy.hopProgressionRate <= 0) return 1;
+  return Math.pow(1 + policy.hopProgressionRate, hopIndex);
+}
+
+function resolveRouteLengthMul(hopCount: number, policy: ReturnType<typeof resolveGalaxyTransitFuelPolicy>): number {
+  if (hopCount <= 1 || policy.routeLengthExponent <= 1) return 1;
+  const ref = Math.max(1, policy.referenceRouteHopCount);
+  if (hopCount <= ref) return 1;
+  return Math.pow(hopCount / ref, policy.routeLengthExponent);
 }
 
 export function resolvePlayerFlagshipNpcShipId(ship: PlayerShip | null | undefined): string {
@@ -73,11 +86,14 @@ export function computeGalaxyTransitFuelQuote(input: {
     const to = systems[pathSystemIds[i + 1]!];
     if (!from || !to) return null;
     const distanceMul = resolveDistanceMul(mapEdgeDistance(from, to), policy);
-    const raw = policy.baseCreditsPerHop * distanceMul * hullFuelCostMul;
+    const hopProgressionMul = resolveHopProgressionMul(i, policy);
+    const raw = policy.baseCreditsPerHop * distanceMul * hullFuelCostMul * hopProgressionMul;
     perHopCredits.push(Math.max(policy.minCreditsPerHop, Math.round(raw)));
   }
 
-  const subtotal = perHopCredits.reduce((sum, n) => sum + n, 0);
+  const hopCount = perHopCredits.length;
+  const routeLengthMul = resolveRouteLengthMul(hopCount, policy);
+  const subtotal = Math.round(perHopCredits.reduce((sum, n) => sum + n, 0) * routeLengthMul);
   const totalCredits = applyFuelEfficiency(subtotal, fuelEfficiencyPct, policy.fuelEfficiencyStatCapPct);
 
   return {

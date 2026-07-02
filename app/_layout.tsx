@@ -19,6 +19,7 @@ import { COLORS } from '../src/utils/theme';
 import { t as tStatic } from '../src/i18n';
 import { usePlayerStore } from '../src/store/playerStore';
 import { useMissionStore } from '../src/store/missionStore';
+import { useArcCoreInstanceMissionBoardStore } from '../src/store/arcCoreInstanceMissionBoardStore';
 import { useWorldStore } from '../src/store/worldStore';
 import { useNpcCaptainProgressStore } from '../src/store/npcCaptainProgressStore';
 import { NPC_CAPTAINS_FROM_CSV } from '../src/data/generated';
@@ -83,6 +84,9 @@ export default function RootLayout() {
   const [updateGate, setUpdateGate] = useState<UpdateGateState | null>(null);
   const loadLocalPlayer = usePlayerStore((s) => s.loadLocalPlayer);
   const loadLocalMissions = useMissionStore((s) => s.loadLocalMissions);
+  const loadLocalArcCoreInstanceMissionBoard = useArcCoreInstanceMissionBoardStore(
+    (s) => s.loadLocalArcCoreInstanceMissionBoard,
+  );
   const loadLocalWorld = useWorldStore((s) => s.loadLocalWorld);
   const loadLocalNpcCaptainProgress = useNpcCaptainProgressStore((s) => s.loadLocalNpcCaptainProgress);
   const ensureCaptainsRegistered = useNpcCaptainProgressStore((s) => s.ensureCaptainsRegistered);
@@ -142,6 +146,7 @@ export default function RootLayout() {
           loadLocalPlayer(),
           loadLocalClanWarFoundation(),
           loadLocalMissions(),
+          loadLocalArcCoreInstanceMissionBoard(),
           loadLocalWorld(),
           loadLocalUserSession(),
           loadLocalItemLedger(),
@@ -251,6 +256,7 @@ export default function RootLayout() {
     loadLocalClanWarFoundation,
     loadLocalItemLedger,
     loadLocalMissions,
+    loadLocalArcCoreInstanceMissionBoard,
     loadLocalNpcCaptainProgress,
     loadLocalPlanetNebulaProfiles,
     loadLocalBoard,

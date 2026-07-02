@@ -53,8 +53,11 @@ export function listIngameDialogScenesForTrigger(
   return [];
 }
 
+import { resolveArcCoreInstanceTemplateMissionId } from '../../missions/arcCoreInstanceMissionResolver';
+
 export function resolveMissionClearDialogSceneId(missionId: string): string | null {
-  const specific = `mission_clear_${missionId}`;
+  const templateId = resolveArcCoreInstanceTemplateMissionId(missionId) ?? missionId;
+  const specific = `mission_clear_${templateId}`;
   if (INGAME_SCENE_BY_ID.has(specific)) return specific;
   if (INGAME_SCENE_BY_ID.has('mission_clear_default')) return 'mission_clear_default';
   return null;

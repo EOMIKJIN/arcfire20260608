@@ -30,11 +30,15 @@ export async function runHeavyUiDataSession<TData>(
   const steps = config.hydrateSteps ?? [];
   const pending = steps.filter((step) => !(step.isReady?.() ?? false));
   if (pending.length > 0) {
-    await Promise.all(
-      pending.map(async (step) => {
-        await step.run();
-      }),
-    );
+    try {
+      await Promise.all(
+        pending.map(async (step) => {
+          await step.run();
+        }),
+      );
+    } catch (err) {
+      return { kind: 'build_failed', error: normalizeBuildError(err) };
+    }
   }
   if (signal.cancelled) return { kind: 'cancelled' };
 

@@ -64,6 +64,7 @@ export { PlanetLevelingProgression_FROM_BALANCE_CSV } from './csvPlanetLevelingP
 export { PlanetMasterBalanceEarlyZonePolicy_FROM_BALANCE_CSV } from './csvPlanetMasterBalanceEarlyZonePolicy';
 export { PlanetMineralLedgerPolicy_FROM_BALANCE_CSV } from './csvPlanetMineralLedgerPolicy';
 export { PlanetOccupationSeeds_FROM_BALANCE_CSV } from './csvPlanetOccupationSeeds';
+export { PlanetOwnershipDeedPolicy_FROM_BALANCE_CSV } from './csvPlanetOwnershipDeedPolicy';
 export { PlanetResourceEcosystemPolicy_FROM_BALANCE_CSV } from './csvPlanetResourceEcosystemPolicy';
 export { PlanetResourceGenesis_FROM_BALANCE_CSV } from './csvPlanetResourceGenesis';
 export { PlanetTradeRouteProfile_FROM_BALANCE_CSV } from './csvPlanetTradeRouteProfile';

@@ -15040,3 +15040,180 @@
 07-01 23:54:38.113  1909  4343 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
 07-01 23:54:44.199  1909  1971 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
 07-01 23:55:04.206  1909  1972 I ActivityManager: Killing 5561:com.samsung.android.intellivoiceservice/u0a121 (adj 935): empty #25
+07-01 23:57:13.897  1909  1973 I ActivityManager: Start proc 6909:com.samsung.cmh/5004 for service {com.samsung.cmh/com.samsung.cmh.core.cmhjobservice.CMHJobService}
+07-01 23:57:13.898  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-01 23:57:14.003  1909  3434 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+07-01 23:57:14.012  1909  2057 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+07-01 23:57:14.015  1909  2057 I ActivityManager: Killing 4943:com.google.android.partnersetup/u0a243 (adj 935): empty #25
+07-01 23:57:14.038  1909  3434 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+07-01 23:57:14.047  1909  4343 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+07-01 23:57:14.155  1909  1973 I ActivityManager: Start proc 6971:com.samsung.faceservice/5004 for content provider {com.samsung.faceservice/com.samsung.faceservice.provider.FaceServiceProvider}
+07-01 23:57:14.155  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-01 23:57:14.267  1909  4227 W ActivityManager: Receiver with filter android.content.IntentFilter@25ecee5 already registered for pid 6971, callerPackage is com.samsung.faceservice
+07-01 23:57:14.268  1909  4343 W ActivityManager: Receiver with filter android.content.IntentFilter@c1eb46b already registered for pid 6971, callerPackage is com.samsung.faceservice
+07-01 23:57:14.271  1909  4343 I ActivityManager: Killing 5545:com.samsung.android.networkdiagnostic/5023 (adj 925): empty #25
+07-01 23:58:49.398  1909  1972 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+07-01 23:58:49.405  1909  2769 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+07-01 23:58:49.409  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+07-01 23:58:49.415  1909  2769 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+07-02 00:00:00.047  1909  2359 I ActivityManager: Changes in 10108 10 to 5, 0 to 144
+07-02 00:00:00.122  1909  2749 E ActivityManager: Sending non-protected broadcast com.samsung.android.app.aodservice.LOCK_WIDGET_REQUEST from system 2640:com.android.systemui/u0a53 pkg com.android.systemui
+07-02 00:00:00.122  1909  2749 E ActivityManager: java.lang.Throwable
+07-02 00:00:00.122  1909  2749 E ActivityManager: 	at com.android.server.am.BroadcastController.checkBroadcastFromSystem(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:252)
+07-02 00:00:00.122  1909  2749 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLockedTraced(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:344)
+07-02 00:00:00.122  1909  2749 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:18)
+07-02 00:00:00.122  1909  2749 E ActivityManager: 	at com.android.server.am.ActivityManagerService.broadcastIntentWithFeature(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:149)
+07-02 00:00:00.122  1909  2749 E ActivityManager: 	at android.app.IActivityManager$Stub.onTransact$broadcastIntentWithFeature$(IActivityManager.java:12412)
+07-02 00:00:00.122  1909  2749 E ActivityManager: 	at android.app.IActivityManager$Stub.onTransact(IActivityManager.java:3205)
+07-02 00:00:00.122  1909  2749 E ActivityManager: 	at com.android.server.am.ActivityManagerService.onTransact(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:425)
+07-02 00:00:00.122  1909  2749 E ActivityManager: 	at android.os.Binder.execTransactInternal(Binder.java:1462)
+07-02 00:00:00.122  1909  2749 E ActivityManager: 	at android.os.Binder.execTransact(Binder.java:1401)
+07-02 00:00:00.138  1909  1972 I ActivityManager: Changes in 10056 19 to 11, 0 to 128
+07-02 00:00:00.138  1909  1973 I ActivityManager: Start proc 7077:com.samsung.android.calendar/u0a222 for broadcast {com.samsung.android.calendar/com.samsung.android.app.calendar.widget.AodCalendarReceiver}
+07-02 00:00:00.138  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:00:00.145  1909  2749 I ActivityManager: Changes in 10056 11 to 19, 128 to 0
+07-02 00:00:00.154  1909  1973 I ActivityManager: Start proc 7082:com.samsung.android.app.routines/u0a53 for service {com.samsung.android.app.routines/com.samsung.android.app.routines.domainmodel.service.RoutineService}
+07-02 00:00:00.154  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:00:00.463  1909  4174 I ActivityManager: Changes in 10222 19 to 11, 0 to 128
+07-02 00:00:00.467  1909  1973 I ActivityManager: Start proc 7125:com.android.providers.calendar/u0a115 for content provider {com.android.providers.calendar/com.android.providers.calendar.CalendarProvider2}
+07-02 00:00:00.467  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:00:00.483  1909  1973 I ActivityManager: Start proc 7127:com.samsung.android.app.reminder/u0a224 for content provider {com.samsung.android.app.reminder/com.samsung.android.app.reminder.data.provider.ReminderProvider}
+07-02 00:00:00.484  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:00:00.527  1909  2749 I ActivityManager: Killing 5782:com.samsung.android.sm.devicesecurity/u0a214 (adj 905): empty #25
+07-02 00:00:00.532  1909  2749 I ActivityManager: Changes in 10222 11 to 19, 128 to 0
+07-02 00:00:00.602  1909  4341 I ActivityManager: Killing 5854:com.samsung.android.lool/1000 (adj 925): empty #25
+07-02 00:00:00.689  1909  1973 I ActivityManager: Start proc 7186:com.samsung.android.app.aodservice:provider/u0a53 for content provider {com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.provider.AODContentProvider}
+07-02 00:00:00.689  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:00:00.701  1909  4356 I ActivityManager: Killing 5814:com.samsung.android.oneconnect:Core/u0a332 (adj 905): empty #25
+07-02 00:00:00.775  1909  4341 I ActivityManager: Killing 5426:com.samsung.android.oneconnect/u0a332 (adj 915): empty #25
+07-02 00:00:00.946  1909  3698 I ActivityManager: Killing 4911:com.samsung.android.privateaccesstokens/u0a198 (adj 915): empty #25
+07-02 00:00:01.134  1909  3698 I ActivityManager: Changes in 10115 19 to 5, 0 to 144
+07-02 00:00:01.143  1909  4342 I ActivityManager: Changes in 10224 19 to 5, 0 to 144
+07-02 00:00:01.144  1909  4342 I ActivityManager: Changes in 10222 19 to 5, 0 to 144
+07-02 00:00:02.603  1909  4342 I ActivityManager: Changes in 10056 19 to 5, 0 to 144
+07-02 00:00:06.115  1909  1971 I ActivityManager: Changes in 10108 5 to 10, 144 to 0
+07-02 00:00:06.821  1909  1971 I ActivityManager: Changes in 10224 5 to 15, 144 to 0
+07-02 00:00:07.152  1909  1971 I ActivityManager: Changes in 10222 5 to 15, 144 to 0
+07-02 00:00:07.157  1909  1971 I ActivityManager: Changes in 10115 5 to 15, 144 to 0
+07-02 00:00:07.158  1909  1971 I ActivityManager: Changes in 10056 5 to 15, 144 to 0
+07-02 00:00:10.044  1909  1973 I ActivityManager: Start proc 7246:com.samsung.android.forest/1000 for service {com.samsung.android.forest/com.samsung.android.forest.service.WAlarmIntentService}
+07-02 00:00:10.044  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:00:28.131  1909  1972 I ActivityManager: Killing 5530:com.skt.skaf.OA00018282/u0a104 (adj 905): empty #25
+07-02 00:00:56.397  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+07-02 00:01:06.414  1909  2065 I ActivityManager: Changes in 10096 19 to 19, 128 to 0
+07-02 00:06:08.472  1909  2094 E ActivityManager: Sending non-protected broadcast com.sec.android.intent.action.BIGDATA_EVERY_WEEK_CLEANUP from system 1909:system/1000 pkg android
+07-02 00:06:08.472  1909  2094 E ActivityManager: java.lang.Throwable
+07-02 00:06:08.472  1909  2094 E ActivityManager: 	at com.android.server.am.BroadcastController.checkBroadcastFromSystem(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:252)
+07-02 00:06:08.472  1909  2094 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLockedTraced(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:344)
+07-02 00:06:08.472  1909  2094 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:18)
+07-02 00:06:08.472  1909  2094 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentInPackage(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:86)
+07-02 00:06:08.472  1909  2094 E ActivityManager: 	at com.android.server.am.ActivityManagerService$LocalService.broadcastIntentInPackage(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:59)
+07-02 00:06:08.472  1909  2094 E ActivityManager: 	at com.android.server.am.PendingIntentRecord.sendInner(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:133)
+07-02 00:06:08.472  1909  2094 E ActivityManager: 	at com.android.server.am.ActivityManagerService.sendIntentSender(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:17)
+07-02 00:06:08.472  1909  2094 E ActivityManager: 	at com.android.server.am.ActivityManagerService.sendIntentSender(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:1)
+07-02 00:06:08.472  1909  2094 E ActivityManager: 	at android.app.PendingIntent.sendAndReturnResult(PendingIntent.java:1133)
+07-02 00:06:08.472  1909  2094 E ActivityManager: 	at android.app.PendingIntent.send(PendingIntent.java:1099)
+07-02 00:06:08.472  1909  2094 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:112)
+07-02 00:06:08.472  1909  2094 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:75)
+07-02 00:06:08.472  1909  2094 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:720)
+07-02 00:06:08.491  1909  2065 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
+07-02 00:06:08.524  1909  4342 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+07-02 00:06:08.846  1909  1973 I ActivityManager: Start proc 7371:com.samsung.android.dqagent/1000 for broadcast {com.samsung.android.dqagent/com.samsung.android.dqagent.receiver.DQADataReceiver}
+07-02 00:06:08.846  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:06:09.107  1909  3698 I ActivityManager: Killing 5177:com.lguplus.appstore/u0a99 (adj 905): empty #25
+07-02 00:06:48.145  1909  1973 I ActivityManager: Start proc 7411:com.google.android.googlequicksearchbox:search/u0a253 for broadcast {com.google.android.googlequicksearchbox/com.google.android.libraries.search.gcm.search.SearchProcessGcmBroadcastReceiver_Receiver}
+07-02 00:06:48.145  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:06:48.434  1909  3606 I ActivityManager: Killing 5992:com.sec.android.app.shealth:remote/u0a328 (adj 905): empty #25
+07-02 00:09:33.864  1909  1972 I ActivityManager: Changes in 10096 19 to 11, 0 to 128
+07-02 00:09:33.868  1909  3698 I ActivityManager: Changes in 10096 11 to 19, 128 to 0
+07-02 00:09:33.882  1909  2065 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+07-02 00:09:33.895  1909  2065 I ActivityManager: Changes in 10248 19 to 8, 0 to 128
+07-02 00:09:33.904  1909  1973 I ActivityManager: Start proc 7476:com.lguplus.appstore/u0a99 for service {com.lguplus.appstore/androidx.work.impl.background.systemjob.SystemJobService}
+07-02 00:09:33.904  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:09:33.945  1909  3698 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+07-02 00:09:33.954  1909  3434 I ActivityManager: Changes in 10248 8 to 10, 128 to 0
+07-02 00:09:34.146  1909  1973 I ActivityManager: Start proc 7523:com.sec.android.provider.badge/u0a55 for broadcast {com.sec.android.provider.badge/com.sec.android.provider.badge.BadgeCountReceiver}
+07-02 00:09:34.146  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:09:34.192  1909  3434 I ActivityManager: Changes in 10099 19 to 8, 0 to 128
+07-02 00:09:34.231  1909  3698 I ActivityManager: Changes in 10055 19 to 11, 0 to 128
+07-02 00:09:34.263  1909  3606 I ActivityManager: Changes in 10055 11 to 3, 128 to 144
+07-02 00:09:34.270  1909  3698 I ActivityManager: Changes in 10099 8 to 10, 128 to 0
+07-02 00:09:34.272  1909  3434 I ActivityManager: Killing 5137:com.osp.app.signin/u0a117 (adj 905): empty #25
+07-02 00:09:40.294  1909  1971 I ActivityManager: Changes in 10055 3 to 15, 144 to 0
+07-02 00:10:00.300  1909  1972 I ActivityManager: Killing 6216:com.google.android.rkpdapp/u0a348 (adj 905): empty #25
+07-02 00:14:14.187  1909  2065 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+07-02 00:14:14.209  1909  3606 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+07-02 00:15:37.032  1909  1965 I ActivityManager: Killing 6100:com.google.android.youtube/u0a271 (adj 985): empty #25
+07-02 00:15:37.440  1909  2776 I ActivityManager: Killing 5219:com.google.android.gms.unstable/u0a252 (adj 985): empty #25
+07-02 00:15:47.032  1909  1973 I ActivityManager: Start proc 7802:com.samsung.android.sm.devicesecurity/u0a214 for broadcast {com.samsung.android.sm.devicesecurity/com.samsung.android.sm.devicesecurity.StatusReceiver}
+07-02 00:15:47.032  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:15:47.248  1909  4356 I ActivityManager: Changes in 10214 19 to 11, 0 to 128
+07-02 00:15:47.304  1909  4356 I ActivityManager: Changes in 10214 11 to 19, 128 to 0
+07-02 00:15:47.308  1909  1973 I ActivityManager: Start proc 7824:com.google.android.apps.turbo/u0a250 for broadcast {com.google.android.apps.turbo/com.google.android.apps.turbo.nudges.broadcasts.BatteryStatusChangedReceiver}
+07-02 00:15:47.310  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:15:47.351  1909  4356 I ActivityManager: Changes in 10214 19 to 8, 0 to 128
+07-02 00:15:47.454  1909  4356 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+07-02 00:15:47.482  1909  1933 I ActivityManager: Changes in 10214 8 to 10, 128 to 0
+07-02 00:15:47.487  1909  3050 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+07-02 00:15:47.506  1909  1973 I ActivityManager: Start proc 7846:com.samsung.android.lool/1000 for broadcast {com.samsung.android.lool/com.samsung.android.sm.security.model.trigger.SecurityBridgeReceiver}
+07-02 00:15:47.506  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:15:47.776  1909  3050 I ActivityManager: Killing 5405:com.android.vending:quick_launch/u0a251 (adj 975): empty #25
+07-02 00:15:48.584  1909  1973 I ActivityManager: Start proc 7892:com.google.android.gms.unstable/u0a252 for service {com.google.android.gms/com.google.android.gms.droidguard.DroidGuardService}
+07-02 00:15:48.584  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:15:48.715  1909  1933 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+07-02 00:15:49.617  1909  1965 I ActivityManager: Changes in 10209 7 to 5, 128 to 255
+07-02 00:15:49.711  1909  1965 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+07-02 00:15:50.031  1909  1973 I ActivityManager: Start proc 7974:com.osp.app.signin/u0a117 for content provider {com.osp.app.signin/com.samsung.android.samsungaccount.utils.accounts.AccountManagerProvider}
+07-02 00:15:50.032  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:15:50.280  1909  1965 I ActivityManager: Changes in 10209 5 to 7, 255 to 128
+07-02 00:15:50.692  1909  1933 I ActivityManager: Changes in 10117 19 to 7, 0 to 128
+07-02 00:15:51.047  1909  1973 I ActivityManager: Start proc 8066:com.samsung.android.samsungpassautofill/u0a207 for service {com.samsung.android.samsungpassautofill/com.samsung.android.samsungpassautofill.AutofillServiceMain}
+07-02 00:15:51.047  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:15:51.255  1909  3301 I ActivityManager: Changes in 10207 19 to 6, 0 to 128
+07-02 00:15:51.280  1909  1973 I ActivityManager: Start proc 8084:com.samsung.android.samsungpass/u0a127 for content provider {com.samsung.android.samsungpass/com.samsung.android.samsungpass.passservice.provider.SamsungPassProvider}
+07-02 00:15:51.280  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:15:51.538  1909  3050 I ActivityManager: Changes in 10127 19 to 6, 0 to 128
+07-02 00:15:51.549  1909  1973 I ActivityManager: Start proc 8138:com.samsung.android.authfw/5278 for service {com.samsung.android.authfw/com.samsung.android.authfw.pass.PassService}
+07-02 00:15:51.549  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:15:51.651  1909  3301 I ActivityManager: Changes in 5278 19 to 6, 0 to 128
+07-02 00:15:55.348  1909  2867 I ActivityManager: Killing 4885:com.sec.android.app.samsungapps/u0a86 (adj 985): empty #25
+07-02 00:15:56.614  1909  1909 I ActivityManager: Changes in 10207 6 to 10, 128 to 0
+07-02 00:15:56.615  1909  1909 I ActivityManager: Changes in 10127 6 to 10, 128 to 0
+07-02 00:15:56.615  1909  1909 I ActivityManager: Changes in 5278 6 to 10, 128 to 0
+07-02 00:15:56.620  1909  4343 I ActivityManager: Killing 6472:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a266i-8996 (adj 975): empty #25
+07-02 00:15:56.623  1909  4343 I ActivityManager: Killing 6414:com.android.chrome:privileged_process0/u0a266 (adj 975): empty #26
+07-02 00:15:56.625  1909  4343 I ActivityManager: Killing 6373:com.android.chrome/u0a266 (adj 985): empty #27
+07-02 00:15:56.660  1909  1971 I ActivityManager: Changes in 10117 7 to 15, 128 to 0
+07-02 00:15:56.666  1909  3301 W ActivityManager: Scheduling restart of crashed service com.android.chrome/org.chromium.content.app.SandboxedProcessService0:0 in 1000ms for connection
+07-02 00:15:56.671  1909  4343 W ActivityManager: Scheduling restart of crashed service com.android.chrome/org.chromium.content.app.PrivilegedProcessService0 in 10995ms for connection
+07-02 00:15:56.694  1909  4343 W ActivityManager: Scheduling restart of crashed service com.android.chrome/org.chromium.chrome.browser.customtabs.CustomTabsConnectionService in 1000ms for connection
+07-02 00:15:57.712  1909  1973 I ActivityManager: Start proc 8186:com.android.chrome/u0a266 for service {com.android.chrome/org.chromium.chrome.browser.customtabs.CustomTabsConnectionService}
+07-02 00:15:57.713  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:15:57.861  1909  4343 I ActivityManager: Changes in 10266 19 to 10, 0 to 128
+07-02 00:15:57.877  1909  4343 I ActivityManager: Killing 6676:com.samsung.android.game.gos/u0a76 (adj 975): empty #25
+07-02 00:15:58.077  1909  1973 I ActivityManager: Start proc 8228:com.android.chrome:privileged_process0/u0a266 for service {com.android.chrome/org.chromium.content.app.PrivilegedProcessService0}
+07-02 00:15:58.078  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:15:58.142  1909  3301 I ActivityManager: Killing 6677:com.google.android.apps.turbo:aab/u0a250 (adj 965): empty #25
+07-02 00:15:58.387  1909  1973 I ActivityManager: Start proc 8291:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0ai5 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:0}
+07-02 00:15:58.387  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:15:58.389  8291  8291 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+07-02 00:15:58.441  1909  4343 I ActivityManager: Changes in 90005 19 to 10, 0 to 128
+07-02 00:15:58.452  1909  4343 I ActivityManager: Killing 6839:com.samsung.android.privacydashboard/u0a107 (adj 965): empty #25
+07-02 00:16:11.677  1909  1972 I ActivityManager: Changes in 5025 8 to 8, 0 to 128
+07-02 00:16:11.707  1909  4227 I ActivityManager: Changes in 5025 8 to 8, 128 to 0
+07-02 00:16:11.984  1909  8382 I ActivityManager: !@AMS down AtmInternal...
+07-02 00:16:12.027  1909  2776 I ActivityManager: Killing 28686:com.google.android.googlequicksearchbox:googleapp/u0a253 (adj 900): remove task
+07-02 00:16:12.047  1909  8382 I ActivityManager: !@AMS down AppOpsService...
+07-02 00:16:12.072  1909  8382 I ActivityManager: !@AMS down UsageStatsService...
+07-02 00:16:12.074  1909  1973 I ActivityManager: Start proc 8419:com.samsung.android.privacydashboard/u0a107 for content provider {com.samsung.android.privacydashboard/com.samsung.android.privacydashboard.provider.PermissionAccessInformationContentProvider}
+07-02 00:16:12.074  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:16:12.127  1909  8382 I ActivityManager: !@AMS down BatteryStatsService...
+07-02 00:16:12.153  1909  2870 W ActivityManager: Not scheduling restart of crashed service com.google.android.googlequicksearchbox/com.google.android.apps.gsa.nowoverlayservice.DrawerOverlayService - system is shutting down
+07-02 00:16:12.154  1909  1965 W ActivityManager: setHasOverlayUi called on unknown pid: 28686
+07-02 00:16:12.190  1909  3698 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+07-02 00:16:12.215  1909  8382 I ActivityManager: !@AMS down ProcessStats...
+07-02 00:16:12.370  1909  1973 I ActivityManager: Start proc 8443:com.google.android.cellbroadcastreceiver/u0a296 for broadcast {com.google.android.cellbroadcastreceiver/com.android.cellbroadcastreceiver.CellBroadcastReceiver}
+07-02 00:16:12.370  1909  1973 I ActivityManager: ProcessObserver broadcast disabled
+07-02 00:16:12.474  1909  2776 I ActivityManager: Changes in 10296 19 to 11, 0 to 128
+07-02 00:16:12.492  1909  2776 I ActivityManager: Killing 7082:com.samsung.android.app.routines/u0a53 (adj 985): empty #25
+07-02 00:16:12.494  1909  2776 I ActivityManager: Changes in 10296 11 to 19, 128 to 0

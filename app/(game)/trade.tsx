@@ -29,6 +29,8 @@ import {
 } from '../../src/missions/questItemOpsRegistry';
 import { useItemLedgerStore } from '../../src/store/itemLedgerStore';
 import { useClanWarFoundationStore } from '../../src/store/clanWarFoundationStore';
+import { previewPlanetOwnershipDeedPurchase } from '../../src/clanWar/planetOwnershipModel';
+import { soloClanIdForUid } from '../../src/clanWar/clanWarRules';
 import { generateMarketByItemIds, getBuyPrice, getSellPrice } from '../../src/engine/TradeEngine';
 import { TRADE_GOODS, getItemDef } from '../../src/data/goods';
 import {
@@ -175,6 +177,36 @@ function resolveTradeBuyBlock(input: {
   if ((isCapitalShipItemType && alreadyOwnsCapitalShip) || (!isCapitalShipItemType && blockedByHistory)) {
     return { title: tStatic('trade.block.norepurchaseTitle'), message: tStatic('trade.block.norepurchaseMsg') };
   }
+
+  if (isPlanetOwnershipItemType) {
+    const deedPlanetId = typeof itemDef?.attrs?.planetId === 'string'
+      ? String(itemDef.attrs.planetId).trim()
+      : null;
+    if (deedPlanetId && player.uid) {
+      const clanWar = useClanWarFoundationStore.getState();
+      const purchasePreview = previewPlanetOwnershipDeedPurchase(
+        deedPlanetId,
+        clanWar.planetHolds[deedPlanetId],
+        soloClanIdForUid(player.uid),
+        player.political.megaFactionId,
+        clanWar.clans,
+      );
+      if (!purchasePreview.ok) {
+        const failMsgKey =
+          purchasePreview.reason === 'red_territory'
+            ? 'trade.own.claimFailRedTerritory'
+            : purchasePreview.reason === 'already_owner'
+              ? 'trade.own.claimFailAlready'
+              : purchasePreview.reason === 'owned_by_other_clan'
+                ? 'trade.own.claimFailMsg'
+                : purchasePreview.reason === 'faction_mismatch' || purchasePreview.reason === 'neutral_territory'
+                  ? 'trade.own.claimFailFaction'
+                  : 'trade.own.claimFailMsg';
+        return { title: tStatic('trade.own.claimFailTitle'), message: tStatic(failMsgKey) };
+      }
+    }
+  }
+
   if (!filterTradePortCatalogForPlayer([listing.goodId], player.level).includes(listing.goodId)) {
     return { title: tStatic('trade.block.cannotBuyTitle'), message: tStatic('trade.block.level') };
   }
@@ -353,7 +385,7 @@ export default function TradeScreen() {
 
   const market = useMemo(
     () => {
-      if (!planet || !player) return [];
+      if (!planet || !player || tradeSession.phase !== 'ready') return [];
       const base = generateMarketByItemIds(
         resolveTradePortListedItemIds(planet.id, player.level, missionProgresses),
         planet.id.length * 37,
@@ -362,7 +394,7 @@ export default function TradeScreen() {
       );
       return applyQuestMarketListingOverrides(base, planet.id, missionProgresses);
     },
-    [planet?.id, player?.level, player?.lifetimeCreditsEarned, player?.credits, marketTick, shipyardCatalogRev, tradePortDevRev, missionProgresses],
+    [planet?.id, player?.level, player?.lifetimeCreditsEarned, player?.credits, marketTick, shipyardCatalogRev, tradePortDevRev, missionProgresses, tradeSession.phase],
   );
   const inventorySellAgg = useMemo(() => {
     if (!player) return [];
@@ -467,9 +499,17 @@ export default function TradeScreen() {
 
   useEffect(() => {
     if (!player || !planet) return;
+    if (tradeSession.phase !== 'ready') return;
     if (tradePlanetIdRef.current === planet.id) return;
     tradePlanetIdRef.current = planet.id;
     if (market.length === 0) return;
+
+    const ownershipId = `ownership_${planet.id}`;
+    if (market.some((m) => m.goodId === ownershipId)) {
+      setBuySubTab('item');
+      return;
+    }
+
     const counts = TRADE_BUY_SUB_TAB_ORDER.map((id) => ({
       id,
       n: market.filter((m) => inferTradeBuySubTabFromGoodId(m.goodId) === id).length,
@@ -479,7 +519,7 @@ export default function TradeScreen() {
       { id: 'item' as TradeBuySubTabId, n: 0 },
     );
     if (best.n > 0) setBuySubTab(best.id);
-  }, [player, planet, market]);
+  }, [player, planet, market, tradeSession.phase]);
 
   if (!player || !planet) return null;
 
@@ -624,11 +664,13 @@ export default function TradeScreen() {
           grossCredits: gross,
         });
         const failMsgKey =
-          claim.reason === 'faction_mismatch' || claim.reason === 'neutral_territory' || claim.reason === 'neutral_planet'
-            ? 'trade.own.claimFailFaction'
-            : claim.reason === 'already_owner'
-              ? 'trade.own.claimFailAlready'
-              : 'trade.own.claimFailMsg';
+          claim.reason === 'red_territory'
+            ? 'trade.own.claimFailRedTerritory'
+            : claim.reason === 'faction_mismatch' || claim.reason === 'neutral_territory' || claim.reason === 'neutral_planet'
+              ? 'trade.own.claimFailFaction'
+              : claim.reason === 'already_owner'
+                ? 'trade.own.claimFailAlready'
+                : 'trade.own.claimFailMsg';
         showArcAlert(t('trade.own.claimFailTitle'), t(failMsgKey));
         return;
       }

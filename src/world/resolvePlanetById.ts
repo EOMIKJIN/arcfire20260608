@@ -34,10 +34,16 @@ function findInGalaxySystems(planetId: string): Planet | null {
   return null;
 }
 
-/** STAR_SYSTEMS(21) 우선, 없으면 worldStore.systems(synth·개척 autogen) */
+/** synth — worldStore autogen(B→A) 우선. GALAXY 정적 템플릿은 hasTradePort=false 잔재 */
 export function resolvePlanetById(planetId: string): Planet | null {
   const id = planetId.trim();
   if (!id) return null;
+
+  if (id.startsWith('synth_')) {
+    const runtime = findInWorldStoreSystems(id);
+    if (runtime) return runtime;
+    return findInGalaxySystems(id);
+  }
 
   const staticPlanet = findInGalaxySystems(id);
   if (staticPlanet) {

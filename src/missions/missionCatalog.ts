@@ -1,5 +1,6 @@
 import { Mission } from '../types';
 import { MISSIONS_FROM_CSV } from '../data/generated';
+import { getArcCoreInstanceMaterializedMission, isArcCoreInstanceMissionId } from './arcCoreInstanceMissionResolver';
 
 export {
   FIRST_TUTORIAL_MISSION_ID,
@@ -16,8 +17,11 @@ export {
   type MissionTrack,
 } from './missionTrack';
 
-/** Table-First 정본: `missions.csv` → `MISSIONS_FROM_CSV` 단일 소스. */
+/** Table-First 정본: `missions.csv` → `MISSIONS_FROM_CSV` + ArcCore 인스턴스 clone. */
 export function getMissionById(missionId: string): Mission | undefined {
+  if (isArcCoreInstanceMissionId(missionId)) {
+    return getArcCoreInstanceMaterializedMission(missionId);
+  }
   return MISSIONS_FROM_CSV[missionId];
 }
 

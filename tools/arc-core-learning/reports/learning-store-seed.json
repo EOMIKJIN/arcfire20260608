@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-30T15:03:00.645Z",
+  "generatedAt": "2026-07-02T07:20:55.399Z",
   "source": "tools/balance-ops-audit/reports/learning-state.json",
   "observations": {
     "tail": [],
@@ -8,34 +8,6 @@
   },
   "simRuns": [],
   "kpiTimeline": [
-    {
-      "dayKey": "2026-06-16",
-      "economy": {
-        "f2pWhaleRatio": 3.476036662892076,
-        "simKpiStatus": "ok",
-        "deltaId": "2026-06-14-1781435091651",
-        "bandDrift": 10
-      },
-      "combat": {},
-      "_source": {
-        "timestamp": "2026-06-16T06:17:28.199Z",
-        "overall": "PASS"
-      }
-    },
-    {
-      "dayKey": "2026-06-16",
-      "economy": {
-        "f2pWhaleRatio": 3.476036662892076,
-        "simKpiStatus": "ok",
-        "deltaId": "2026-06-14-1781435091651",
-        "bandDrift": 10
-      },
-      "combat": {},
-      "_source": {
-        "timestamp": "2026-06-16T06:19:16.213Z",
-        "overall": "PASS"
-      }
-    },
     {
       "dayKey": "2026-06-16",
       "economy": {
@@ -679,12 +651,40 @@
         "timestamp": "2026-06-30T15:03:00.402Z",
         "overall": "WARN"
       }
+    },
+    {
+      "dayKey": "2026-07-01",
+      "economy": {
+        "f2pWhaleRatio": 2.967103794385273,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-06-28-1782651358132",
+        "bandDrift": 21074
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-07-01T23:08:08.939Z",
+        "overall": "WARN"
+      }
+    },
+    {
+      "dayKey": "2026-07-02",
+      "economy": {
+        "f2pWhaleRatio": 3.119195108748942,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-07-02-1782976813591",
+        "bandDrift": 21074
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-07-02T07:20:55.150Z",
+        "overall": "WARN"
+      }
     }
   ],
   "policyHistory": [
     {
-      "packId": "2026-06-28-1782651358132",
-      "ingestedAt": 1782831780652,
+      "packId": "2026-07-02-1782976813591",
+      "ingestedAt": 1782976855403,
       "source": "ci"
     }
   ],
@@ -692,9 +692,9 @@
     {
       "kind": "planet_fiscal",
       "severity": "warn",
-      "message": "Planet fiscal WARN — max fee/upkeep 3× gini=0.288",
+      "message": "Planet fiscal WARN — max fee/upkeep 3.06× gini=0.292",
       "action": "monitor_fiscal_closed_loop"
     }
   ],
-  "lastUpdatedAt": 1782831780652
+  "lastUpdatedAt": 1782976855403
 }

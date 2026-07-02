@@ -3,7 +3,7 @@
 // ============================================================
 
 import { TradeGood, MarketListing, Planet } from '../types';
-import { TRADE_GOODS, getItemDef } from '../data/goods';
+import { getItemDef, getTradeGood } from '../data/goods';
 import {
   getCapitalShipTradeStockBounds,
   getWeaponCatalogStockBounds,
@@ -18,6 +18,7 @@ import {
 import { resolveItemCategoryPriceMul } from '../arcCore/economy/economyPriceOverlayStore';
 import { estimateTradeRouteProfitPerUnit } from '../arcCore/economy/tradeRouteMarketQuotes';
 import { resolveTradeRouteMarketListing } from '../world/planetTradeMarketStore';
+import { resolvePlanetOwnershipDeedTradePriceCredits } from '../arcCore/balance/planetOwnershipDeedPricing';
 import { getBuyPrice, getSellPrice } from './marketListingPrices';
 
 export { getBuyPrice, getSellPrice } from './marketListingPrices';
@@ -37,12 +38,13 @@ export function generateMarketByItemIds(
   const weaponStockBounds = getWeaponCatalogStockBounds();
   const capitalStockBounds = getCapitalShipTradeStockBounds();
   const listings = goodIds.map(goodId => {
-    const good = TRADE_GOODS[goodId];
-    if (!good) return null;
     const itemDef = getItemDef(goodId);
+    const good = getTradeGood(goodId);
+    if (!good) return null;
     const isWeaponModule = itemDef?.type === 'weapon_module';
     const isCapitalShip = itemDef?.type === 'capital_ship';
     const isTradeRoute = itemDef?.type === 'trade_route';
+    const isPlanetOwnership = itemDef?.type === 'planet_ownership';
 
     if (isTradeRoute && planetId) {
       const managed = resolveTradeRouteMarketListing(planetId, goodId);
@@ -51,11 +53,16 @@ export function generateMarketByItemIds(
       }
     }
 
-    const variance = isWeaponModule || isCapitalShip ? 0 : good.priceVariance / 100;
+    const variance = isWeaponModule || isCapitalShip || isPlanetOwnership ? 0 : good.priceVariance / 100;
     const rng = pseudoRandom(seed + goodId.charCodeAt(0));
     const priceMod = 1 + (rng - 0.5) * variance * 2;
     let price = Math.max(1, Math.floor(good.basePrice * priceMod));
-    if (planetId && isArcCorePricedMineral(goodId)) {
+    if (isPlanetOwnership) {
+      const deedPlanetId = typeof itemDef?.attrs?.planetId === 'string'
+        ? String(itemDef.attrs.planetId).trim()
+        : goodId.replace(/^ownership_/, '');
+      price = resolvePlanetOwnershipDeedTradePriceCredits(deedPlanetId);
+    } else if (planetId && isArcCorePricedMineral(goodId)) {
       price = Math.max(
         1,
         Math.floor(resolveMineralListingBuyPrice(planetId, goodId) * resolveItemCategoryPriceMul('mineral', itemDef?.type)),
@@ -84,7 +91,9 @@ export function generateMarketByItemIds(
 
     const weaponStockSpan = weaponStockBounds.max - weaponStockBounds.min;
     const capitalStockSpan = capitalStockBounds.max - capitalStockBounds.min;
-    const stock = isWeaponModule
+    const stock = isPlanetOwnership
+      ? 1
+      : isWeaponModule
       ? weaponStockBounds.min
         + Math.floor(pseudoRandom(seed + goodId.length) * (weaponStockSpan + 1))
       : isCapitalShip

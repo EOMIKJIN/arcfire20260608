@@ -4,6 +4,8 @@
 
 | 날짜 | 문서 | 요약 |
 |------|------|------|
+| 2026-07-02 | [2026-07-02-ferrite-FINAL-REPORT.md](./2026-07-02-ferrite-FINAL-REPORT.md) | **페라이트 10CR** 3단계 분석 **완료** · CONDITIONAL_KEEP |
+| 2026-07-02 | [2026-07-02-ferrite-anchor-3stage-plan.md](./2026-07-02-ferrite-anchor-3stage-plan.md) | 3단계 계획 |
 | 2026-06-15 | [2026-06-15-arccore-economy-evaluation.md](./2026-06-15-arccore-economy-evaluation.md) | 1차 종합 평가 — 엔진 PASS, 모바일 적합 9/10, EVE/X4 대비 깊이 4~5/10 |
 
 ## 관련 정본

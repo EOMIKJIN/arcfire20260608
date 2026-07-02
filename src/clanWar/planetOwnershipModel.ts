@@ -78,6 +78,44 @@ export function resolveTerritorialNationClanIdForPlanet(planetId: string): strin
   return null;
 }
 
+/** CSV 시드 기준 영토 occupier·kind (증서 해제·중립 복원) */
+export function resolveSeedOccupierClanForPlanet(planetId: string): {
+  occupierClanId: string;
+  kind: PlanetClanHold['kind'];
+} {
+  const row = getPlanetOccupationSeedRow(planetId);
+  if (!row) {
+    return { occupierClanId: 'neutral', kind: 'neutral' };
+  }
+  const owner = String(row.initialOwner ?? '').trim().toUpperCase();
+  if (owner === 'BLUE') {
+    return { occupierClanId: ARC_CORE_SEED_BLUE_CLAN_ID, kind: 'clan_hold' };
+  }
+  if (owner === 'RED') {
+    return { occupierClanId: ARC_CORE_SEED_RED_CLAN_ID, kind: 'clan_hold' };
+  }
+  return { occupierClanId: 'neutral', kind: 'neutral' };
+}
+
+/** 구매자 거대 세력 → 국경선(Voronoi)용 국가 시드 클랜 id */
+export function resolveNationSeedClanIdForMegaFaction(
+  megaFactionId: string | null | undefined,
+): string | null {
+  const side = resolveMegaFactionSide(megaFactionId);
+  if (side === 'blue') return ARC_CORE_SEED_BLUE_CLAN_ID;
+  if (side === 'red') return ARC_CORE_SEED_RED_CLAN_ID;
+  return null;
+}
+
+/** 영토 국경 side — 중립 hold·occupier neutral 포함 */
+export function resolveTerritorialSideForHold(
+  hold: PlanetClanHold,
+  clans: Record<string, ClanBasicsRecord>,
+): MapFactionSide {
+  if (hold.kind === 'neutral' || hold.occupierClanId === 'neutral') return 'neutral';
+  return resolveMapFactionSideFromClanIdPure(hold.occupierClanId, clans);
+}
+
 /** v1→v2 마이그레이션: 구매 시 occupierClanId만 바꾸던 저장을 영토/증서 분리 */
 export function migratePlanetHoldOwnershipSplit(
   hold: PlanetClanHold,
@@ -116,23 +154,73 @@ export function migratePlanetHoldsOwnershipSplit(
 
 export type PlanetOwnershipDeedPurchaseCheck =
   | { ok: true }
-  | { ok: false; reason: 'neutral_planet' | 'neutral_territory' | 'faction_mismatch' | 'already_owner' | 'owned_by_other_clan' };
+  | {
+      ok: false;
+      reason:
+        | 'neutral_planet'
+        | 'neutral_territory'
+        | 'red_territory'
+        | 'faction_mismatch'
+        | 'already_owner'
+        | 'owned_by_other_clan';
+    };
 
-/** 무역소 소유권 증서 구매 가능 여부 */
-export function canPurchasePlanetOwnershipDeed(
+/** hold 미시드 시 CSV occupation 시드로 합성 */
+export function resolvePlanetHoldForOwnershipCheck(
+  planetId: string,
+  hold: PlanetClanHold | undefined,
+): PlanetClanHold {
+  if (hold) return hold;
+  const seed = resolveSeedOccupierClanForPlanet(planetId);
+  const systemId = getPlanetOccupationSeedRow(planetId)?.systemId?.trim() ?? '';
+  return {
+    planetId,
+    systemId,
+    occupierClanId: seed.occupierClanId,
+    deedOwnerClanId: null,
+    homePlayerUid: null,
+    kind: seed.kind,
+    capturedAt: 0,
+  };
+}
+
+/** 무역소 구매 UI — 구매 차단 사유(범용 Alert) */
+export function previewPlanetOwnershipDeedPurchase(
+  planetId: string,
   hold: PlanetClanHold | undefined,
   buyerClanId: string,
   buyerMegaFactionId: string,
   clans: Record<string, ClanBasicsRecord>,
 ): PlanetOwnershipDeedPurchaseCheck {
-  if (!hold || hold.kind === 'neutral') return { ok: false, reason: 'neutral_planet' };
+  return canPurchasePlanetOwnershipDeed(planetId, hold, buyerClanId, buyerMegaFactionId, clans);
+}
 
-  const territorialSide = resolveMapFactionSideFromClanIdPure(hold.occupierClanId, clans);
-  const buyerSide = resolveMegaFactionSide(buyerMegaFactionId);
-  if (territorialSide === 'neutral') return { ok: false, reason: 'neutral_territory' };
-  if (buyerSide !== territorialSide) return { ok: false, reason: 'faction_mismatch' };
+/**
+ * 무역소 소유권 증서 구매 가능 여부.
+ * - 허용: 블루·중립 영토 (CSV NEUTRAL / occupier neutral 포함)
+ * - 거부: 레드 영토 · 구매자 국가 시드 미지원 · 타 클랜 증서
+ */
+export function canPurchasePlanetOwnershipDeed(
+  planetId: string,
+  hold: PlanetClanHold | undefined,
+  buyerClanId: string,
+  buyerMegaFactionId: string,
+  clans: Record<string, ClanBasicsRecord>,
+): PlanetOwnershipDeedPurchaseCheck {
+  const resolvedHold = resolvePlanetHoldForOwnershipCheck(planetId, hold);
 
-  const deedOwner = resolveDeedOwnerClanId(hold);
+  const territorialSide = resolveTerritorialSideForHold(resolvedHold, clans);
+  if (territorialSide === 'red') {
+    return { ok: false, reason: 'red_territory' };
+  }
+  if (territorialSide !== 'blue' && territorialSide !== 'neutral') {
+    return { ok: false, reason: 'neutral_territory' };
+  }
+  if (!resolveNationSeedClanIdForMegaFaction(buyerMegaFactionId)) {
+    return { ok: false, reason: 'faction_mismatch' };
+  }
+
+  const deedOwner = resolveDeedOwnerClanId(resolvedHold);
   if (deedOwner === buyerClanId) return { ok: false, reason: 'already_owner' };
   if (isPlayerOriginatedClanId(deedOwner) && deedOwner !== buyerClanId) {
     return { ok: false, reason: 'owned_by_other_clan' };

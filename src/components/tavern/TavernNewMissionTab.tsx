@@ -14,6 +14,7 @@ import { tryAcceptInstanceMissionWithFeedback } from '../../missions/instanceMis
 import {
   listTavernInstanceMissionOffers,
   type InstanceMissionOfferState,
+  type QuestMissionOfferRow,
 } from '../../missions/tavernMissionBoard';
 import {
   PlanetFacilityCardTitleBlock,
@@ -69,11 +70,13 @@ function InstanceMissionCard({
   state,
   planetId,
   playerLevel,
+  arcCoreAuto,
 }: {
   mission: Mission;
   state: InstanceMissionOfferState;
   planetId: string;
   playerLevel: number;
+  arcCoreAuto?: QuestMissionOfferRow['arcCoreAuto'];
 }) {
   const t = useT();
   const locale = useAppSettingsStore((s) => s.locale);
@@ -81,6 +84,10 @@ function InstanceMissionCard({
   const title = resolveMissionTitleText(mission, t, locale);
   const description = resolveMissionDescText(mission, t, locale);
   const canAccept = state === 'available';
+
+  const categoryLabel = arcCoreAuto
+    ? t(`tavern.newMissions.category.${arcCoreAuto.categoryTag}`)
+    : null;
 
   const handleAccept = useCallback(() => {
     tryAcceptInstanceMissionWithFeedback(mission.id, { planetId, playerLevel }, t);
@@ -90,6 +97,11 @@ function InstanceMissionCard({
     <View style={fs.stackCard}>
       <View style={fs.cardTopRow}>
         <Text style={fs.cardBadge}>{stateBadgeLabel(state, t)}</Text>
+        {arcCoreAuto ? (
+          <Text style={[fs.cardMeta, styles.arcCoreBadge]}>
+            {t('tavern.newMissions.arcCoreAuto')} · {categoryLabel}
+          </Text>
+        ) : null}
         <Text style={fs.cardMeta}>
           {t('tavern.newMissions.levelRequired', { level: mission.levelRequired ?? 1 })}
         </Text>
@@ -148,6 +160,7 @@ export function TavernNewMissionTab({ planetId, playerLevel }: TavernNewMissionT
             state={row.state}
             planetId={planetId}
             playerLevel={playerLevel}
+            arcCoreAuto={row.arcCoreAuto}
           />
         ))
       )}
@@ -173,5 +186,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     minHeight: 36,
     paddingVertical: SPACING.xs,
+  },
+  arcCoreBadge: {
+    marginRight: SPACING.xs,
   },
 });

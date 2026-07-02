@@ -54,25 +54,32 @@ export function useHeavyUiDataSession<TData>(
     setPreflightCode(null);
     setData(null);
 
-    void runHeavyUiDataSession(config, signal).then((result) => {
-      if (signal.cancelled) return;
-      if (result.kind === 'preflight_failed') {
+    void runHeavyUiDataSession(config, signal)
+      .then((result) => {
+        if (signal.cancelled) return;
+        if (result.kind === 'preflight_failed') {
+          pipelineDoneRef.current = false;
+          setPreflightCode(result.code);
+          setPhase('error');
+          return;
+        }
+        if (result.kind === 'build_failed') {
+          pipelineDoneRef.current = false;
+          setError(result.error);
+          setPhase('error');
+          return;
+        }
+        if (result.kind === 'cancelled') return;
+        pipelineDoneRef.current = true;
+        setData(result.data);
+        setPhase('ready');
+      })
+      .catch((err) => {
+        if (signal.cancelled) return;
         pipelineDoneRef.current = false;
-        setPreflightCode(result.code);
+        setError(err instanceof Error ? err.message : 'session_failed');
         setPhase('error');
-        return;
-      }
-      if (result.kind === 'build_failed') {
-        pipelineDoneRef.current = false;
-        setError(result.error);
-        setPhase('error');
-        return;
-      }
-      if (result.kind === 'cancelled') return;
-      pipelineDoneRef.current = true;
-      setData(result.data);
-      setPhase('ready');
-    });
+      });
 
     return () => {
       signal.cancelled = true;

@@ -20,6 +20,10 @@ export class WorldExpansionSubCore extends BaseArcSubCore {
       syncArcCoreGlobalWorldExpansionSync();
     }
     applyArcCoreLegacyGuaranteedUnlocks();
-    void integrateUnlockedSynthFrontierStatEconomyAsync();
+    void integrateUnlockedSynthFrontierStatEconomyAsync().catch((err) => {
+      if (__DEV__) {
+        console.warn('[ArcCore/WorldExpansion] synth stat/economy integrate failed', err);
+      }
+    });
   }
 }

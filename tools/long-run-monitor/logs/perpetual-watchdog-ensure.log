@@ -38,3 +38,11 @@
 [2026-06-28 14:16:37] ENSURE_FAIL watchdog died immediately
 [2026-06-28 14:17:10] ENSURE_OK watchdog pid=11004
 [2026-06-30 00:57:10] ENSURE_OK watchdog pid=11004
+[2026-07-01 22:42:45] ENSURE_SKIP overnight-exception-shutdown.flag (resume ~08:00 KST)
+[2026-07-01 23:05:26] ENSURE_FAIL watchdog died immediately
+[2026-07-01 23:05:44] ENSURE_FAIL watchdog died immediately
+[2026-07-01 23:05:51] ENSURE_FAIL watchdog died immediately
+[2026-07-01 23:06:06] ENSURE_FAIL watchdog died immediately
+[2026-07-01 23:06:37] ENSURE_FAIL watchdog died immediately
+[2026-07-01 23:07:18] ENSURE_FAIL watchdog died immediately
+[2026-07-01 23:07:34] ENSURE_FAIL watchdog died immediately

@@ -18,6 +18,9 @@ import {
 } from '../clanWar/clanWarRules';
 import {
   canPurchasePlanetOwnershipDeed,
+  resolveNationSeedClanIdForMegaFaction,
+  resolvePlanetHoldForOwnershipCheck,
+  resolveSeedOccupierClanForPlanet,
   migratePlanetHoldsOwnershipSplit,
   resolveTerritorialNationClanIdForPlanet,
   isPlayerOriginatedClanId,
@@ -56,7 +59,7 @@ interface ClanWarFoundationState {
   ensureSoloClan: (uid: string, nickname: string, megaFactionId: string) => string;
   /** 1) 거점 행성 점유 + 플레이어 homePlanetId / political.clanId 반영 */
   claimHomePlanet: (params: { uid: string; planetId: string; systemId: string; nickname: string; megaFactionId: string }) => { ok: boolean; reason?: string };
-  /** 무역소 소유권 증서 구매 — 영토(occupier) 유지 · deedOwnerClanId만 갱신 */
+  /** 무역소 소유권 증서 구매 — deedOwner + 구매자 국가 occupier(국경선) 갱신 */
   claimPlanetOwnershipByPurchase: (params: {
     uid: string;
     planetId: string;
@@ -221,7 +224,9 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
   claimPlanetOwnershipByPurchase: ({ uid, planetId, systemId, nickname, megaFactionId }) => {
     const clanId = get().ensureSoloClan(uid, nickname, megaFactionId);
     const hold = get().planetHolds[planetId];
+    const resolvedHold = resolvePlanetHoldForOwnershipCheck(planetId, hold);
     const purchaseCheck = canPurchasePlanetOwnershipDeed(
+      planetId,
       hold,
       clanId,
       megaFactionId,
@@ -230,14 +235,20 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     if (!purchaseCheck.ok) {
       return { ok: false, reason: purchaseCheck.reason };
     }
+    const nationOccupierId = resolveNationSeedClanIdForMegaFaction(megaFactionId);
+    if (!nationOccupierId) {
+      return { ok: false, reason: 'faction_mismatch' };
+    }
     const now = Date.now();
     const nextHold: PlanetClanHold = {
-      ...hold!,
+      ...resolvedHold,
       planetId,
-      systemId: hold!.systemId || systemId,
+      systemId: resolvedHold.systemId || systemId,
+      occupierClanId: nationOccupierId,
       deedOwnerClanId: clanId,
       homePlayerUid: uid,
-      capturedAt: hold!.capturedAt ?? now,
+      kind: resolvedHold.kind === 'neutral' ? 'clan_hold' : resolvedHold.kind,
+      capturedAt: resolvedHold.capturedAt > 0 ? resolvedHold.capturedAt : now,
     };
     set({ planetHolds: { ...get().planetHolds, [planetId]: nextHold } });
     const p = usePlayerStore.getState().player;
@@ -272,13 +283,13 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
         continue;
       }
       if (ownsDeed || (legacyOccupier && isPlayerOriginatedClanId(hold.occupierClanId))) {
-        const nationClanId = resolveTerritorialNationClanIdForPlanet(planetId);
+        const seedOccupier = resolveSeedOccupierClanForPlanet(planetId);
         nextPlanetHolds[planetId] = {
           ...hold,
-          occupierClanId: nationClanId ?? hold.occupierClanId,
+          occupierClanId: seedOccupier.occupierClanId,
           deedOwnerClanId: null,
           homePlayerUid: hold.homePlayerUid === uid ? null : hold.homePlayerUid,
-          kind: nationClanId ? 'clan_hold' : hold.kind,
+          kind: seedOccupier.kind,
         };
         releasedPlanetCount += 1;
         continue;

@@ -1,10 +1,10 @@
 // ============================================================
 // 구역(안전/중립/PvP)별 **플레이 성계** 기하학적 중심에 가장 가까운 허브 행성
-// — 합성(synth_*) 노드는 제외(GAMEPLAY_SYSTEM_IDS).
+// — 코어 개방(A+B) 성계만 — 합성 미개척(C) 제외
 // ============================================================
 
 import type { StarSystem, ZoneType } from '../types';
-import { GAMEPLAY_SYSTEM_IDS } from '../data/galaxy100';
+import { isCoreOpenSystemId } from '../world/coreOpenGameplayPlanets';
 
 /** 클랜전 AI 거점에 쓰는 구역(엔드게임은 별도 콘텐츠로 미포함) */
 export type ClanWarHubZone = Extract<ZoneType, 'safe' | 'neutral' | 'pvp'>;
@@ -34,7 +34,7 @@ export function resolveGameplayZoneHubPlanet(
   systems: Record<string, StarSystem>,
   zone: ClanWarHubZone,
 ): { systemId: string; planetId: string } | null {
-  const list = Object.values(systems).filter((s) => GAMEPLAY_SYSTEM_IDS.has(s.id) && s.zone === zone);
+  const list = Object.values(systems).filter((s) => isCoreOpenSystemId(s.id) && s.zone === zone);
   if (!list.length) return null;
   const c = centroid2(list.map((s) => s.position));
   let best: StarSystem | null = null;

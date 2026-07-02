@@ -1,0 +1,12 @@
+key,value,notesKo
+test_planet_ids,arcadia_prime,테스트용 1CR 고정 행성(쉼표 구분)
+test_price_credits,1,테스트 행성 소유권 고정가(CR)
+base_credits,12000,기존 정액 12000CR 앵커 — PGP 가산 기준
+pgp_bmu_to_credits_mul,0.085,PGP(BMU) 1당 CR 가산(avg PGP ~84k → +7140)
+future_value_mul,2.15,향후 수익권·무역소 수수료 등 프리미ум
+zone_safe_mul,1.00,안전(safe) 구역 배율
+zone_neutral_mul,1.12,중립(neutral) 구역 배율
+zone_pvp_mul,1.28,PvP 구역 배율
+zone_endgame_mul,1.55,엔드게임 구역 배율
+min_credits,38000,최저가(CR)
+max_credits,4200000,최고가 상한(CR)
