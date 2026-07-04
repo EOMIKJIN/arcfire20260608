@@ -38,6 +38,18 @@ function resolveSynthProceduralName(nameKo: string, locale: AppLocale): string |
   return null;
 }
 
+/** synth B→A 코어 개방 전 — colonization CSV 실명·설명 노출 금지(은하 지도 하단 패널) */
+function isSynthCoreOpenForDisplay(systemId: string): boolean {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { isCoreOpenSystemId } =
+      require('../world/coreOpenGameplayPlanets') as typeof import('../world/coreOpenGameplayPlanets');
+    return isCoreOpenSystemId(systemId);
+  } catch {
+    return false;
+  }
+}
+
 function resolveSynthProceduralDescription(descKo: string, locale: AppLocale): string | null {
   if (locale === 'ko') return null;
   const legacy =
@@ -62,7 +74,7 @@ export function resolveStarSystemDisplayName(
   const procedural = resolveSynthProceduralName(String(system.name ?? ''), locale);
   if (procedural) return procedural;
 
-  if (system.id.startsWith('synth_')) {
+  if (system.id.startsWith('synth_') && isSynthCoreOpenForDisplay(system.id)) {
     const row = getSynthSystemColonizationRow(system.id);
     const fromCsv = String(row?.systemNameEn ?? '').trim();
     if (fromCsv) return fromCsv;
@@ -86,7 +98,7 @@ export function resolveStarSystemDescription(
   const procedural = resolveSynthProceduralDescription(String(system.description ?? ''), locale);
   if (procedural) return stripLegacyTeamFactionLabels(procedural);
 
-  if (system.id.startsWith('synth_')) {
+  if (system.id.startsWith('synth_') && isSynthCoreOpenForDisplay(system.id)) {
     const row = getSynthSystemColonizationRow(system.id);
     const fromCsv = String(row?.systemDescriptionEn ?? '').trim();
     if (fromCsv) return stripLegacyTeamFactionLabels(fromCsv);
@@ -121,7 +133,7 @@ export function resolvePlanetDescription(
   if (planet.description === '탐사 불가 구역.') {
     return translate(locale, 'system.synth.unsurveyedPlanetDesc');
   }
-  if (systemId?.startsWith('synth_')) {
+  if (systemId?.startsWith('synth_') && isSynthCoreOpenForDisplay(systemId)) {
     const row = getSynthSystemColonizationRow(systemId);
     const fromCsv = String(row?.planetDescriptionEn ?? '').trim();
     if (fromCsv) return stripLegacyTeamFactionLabels(fromCsv);

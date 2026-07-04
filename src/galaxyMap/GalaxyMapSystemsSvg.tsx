@@ -4,10 +4,65 @@ import type { StarSystem } from '../types';
 import type { AppLocale } from '../i18n/types';
 import { resolveStarSystemDisplayName } from '../i18n/systemText';
 import { COLORS, FONTS, LAYOUT, ZONE_COLORS } from '../utils/theme';
-import {
-  batchGalaxyMapConnectionPaths,
-  type GalaxyMapEdgeSegment,
-} from './batchGalaxyMapConnectionPaths';
+/** Hermes — named import from sibling module can throw at runtime after HMR; keep local. */
+type GalaxyMapEdgeSegment = {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  stroke: string;
+  strokeWidth: number;
+  opacity: number;
+};
+
+type BatchedGalaxyMapPath = {
+  key: string;
+  d: string;
+  stroke: string;
+  strokeWidth: number;
+  opacity: number;
+};
+
+function segmentToConnectionPathD(x1: number, y1: number, x2: number, y2: number): string {
+  return `M${x1.toFixed(1)} ${y1.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}`;
+}
+
+function batchGalaxyMapConnectionPaths(segments: readonly GalaxyMapEdgeSegment[]): BatchedGalaxyMapPath[] {
+  const groups = new Map<
+    string,
+    { stroke: string; strokeWidth: number; opacity: number; parts: string[] }
+  >();
+
+  for (const s of segments) {
+    const styleKey = `${s.stroke}|${s.strokeWidth}|${s.opacity}`;
+    let group = groups.get(styleKey);
+    if (!group) {
+      group = {
+        stroke: s.stroke,
+        strokeWidth: s.strokeWidth,
+        opacity: s.opacity,
+        parts: [],
+      };
+      groups.set(styleKey, group);
+    }
+    group.parts.push(segmentToConnectionPathD(s.x1, s.y1, s.x2, s.y2));
+  }
+
+  let idx = 0;
+  const out: BatchedGalaxyMapPath[] = [];
+  for (const [styleKey, group] of groups) {
+    if (group.parts.length === 0) continue;
+    out.push({
+      key: `galaxy-edges-${idx}-${styleKey}`,
+      d: group.parts.join(''),
+      stroke: group.stroke,
+      strokeWidth: group.strokeWidth,
+      opacity: group.opacity,
+    });
+    idx += 1;
+  }
+  return out;
+}
 
 const NODE_R = LAYOUT.map_node_radius;
 const NODE_R_CURRENT = LAYOUT.map_node_radius_start;

@@ -5,7 +5,7 @@
 // ============================================================
 
 import { LevelBandTargets_FROM_BALANCE_CSV } from '../../data/balance/generated';
-import { useWorldStore } from '../../store/worldStore';
+import { forEachCoreOpenGameplayPlanet } from '../../world/coreOpenGameplayPlanets';
 import {
   planetCoreRuntimeToGaugeView,
   usePlanetCoreRuntimeStore,
@@ -70,24 +70,22 @@ export function runGlobalPlanetMasterBalancePass(
   if (!coreStore.hydrated) return empty;
 
   const defaultMaxDelta = options?.maxDeltaPerStat;
-  const systems = useWorldStore.getState().systems;
   const updates: Record<string, PlanetBalancePatch> = {};
   let planetsGaugeUpdated = 0;
   let planetsMetaOnly = 0;
   let planetsSkippedPlayerAuthority = 0;
 
-  for (const sys of Object.values(systems)) {
-    for (const planet of sys.planets) {
-      const runtime = coreStore.getPlanetCoreRuntime(planet.id);
-      if (!runtime) continue;
+  forEachCoreOpenGameplayPlanet(({ planetId, planet, system: sys }) => {
+      const runtime = coreStore.getPlanetCoreRuntime(planetId);
+      if (!runtime) return;
 
-      const authorityContext = resolvePlanetCoreStatAuthorityContext(planet.id);
+      const authorityContext = resolvePlanetCoreStatAuthorityContext(planetId);
       const authority = resolvePlanetCoreStatAuthority(authorityContext);
       if (!authority.masterBalanceGauge) {
         planetsSkippedPlayerAuthority += 1;
       }
 
-      const baseDetail = getPlanetMasterBalanceDetailForPlanet(planet.id, sys);
+      const baseDetail = getPlanetMasterBalanceDetailForPlanet(planetId, sys);
       const masterBalance = {
         ...baseDetail,
         runtimeCpmMul: resolveRuntimeCpmMul(baseDetail.recommendedPilotLevel),
@@ -123,12 +121,11 @@ export function runGlobalPlanetMasterBalancePass(
         prevBal.requiredFleetMinDps !== masterBalance.requiredFleetMinDps;
 
       if (gaugeChanged || metaChanged) {
-        updates[planet.id] = { gauge, masterBalance };
+        updates[planetId] = { gauge, masterBalance };
         if (gaugeChanged) planetsGaugeUpdated += 1;
         else if (metaChanged) planetsMetaOnly += 1;
       }
-    }
-  }
+  });
 
   if (Object.keys(updates).length > 0) {
     coreStore.patchPlanetMasterBalanceBulk(updates);

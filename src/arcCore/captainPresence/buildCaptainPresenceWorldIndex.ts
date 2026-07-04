@@ -4,8 +4,8 @@
 // ============================================================
 
 import { NPC_CAPTAINS_FROM_CSV } from '../../data/generated';
-import { STAR_SYSTEMS } from '../../data/systems';
 import type { NpcCaptain } from '../../types';
+import { resolveCoreOpenStarSystem } from '../../world/coreOpenGameplayPlanets';
 import { npcDeterministicHash32 } from '../../npc/npcDeterministicHash';
 import type { ArcNpcTrafficShip } from '../../store/arcNpcTrafficStore';
 import { listGovernorCaptainPrimaryPlanets } from '../../game/planetGovernor/planetGovernorAssignmentStore';
@@ -53,7 +53,7 @@ function resolveCombatCaptainAnchorPlanetId(captain: NpcCaptain): string | null 
   for (const pid of captain.activityPlanetIds) add(pid);
   for (const sid of [captain.baseSystemId, ...captain.activitySystemIds]) {
     if (!sid) continue;
-    const sys = STAR_SYSTEMS[sid];
+    const sys = resolveCoreOpenStarSystem(sid);
     if (!sys) continue;
     for (const p of sys.planets) add(p.id);
   }

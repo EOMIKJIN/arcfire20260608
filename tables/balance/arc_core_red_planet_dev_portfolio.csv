@@ -1,0 +1,10 @@
+planetId,priorityRank,primaryModuleId,secondaryModuleId,notesKo
+core_prime,1,dev_research_lab,dev_trade_port,수도·연구 우선
+omega_hub,2,defense_satellite,dev_orbit_shipyard,접전 허브·방어
+crimson_base,3,dev_trade_port,dev_population_dome,군단 거점·무역
+sirius_border,4,dev_orbit_shipyard,defense_satellite,국경 조선
+dark_haven,5,dev_population_dome,dev_research_lab,은신 거점·인구
+abyss_gate,6,defense_satellite,dev_research_lab,관문 방어
+nightfall_citadel,7,dev_trade_port,dev_orbit_shipyard,요새 무역
+perseus_memorial,8,dev_research_lab,dev_population_dome,기념 연구
+blood_station,9,dev_orbit_shipyard,dev_trade_port,전초 조선

@@ -6,10 +6,10 @@ alwaysApply: true
 # 김팀장 에이전트 (@김팀장 · @TeamLead)
 
 **표시명**: **김팀장 에이전트** — Arcfire **전체 개발 메인·총괄**.  
-**팀원**: **김경제 에이전트** — **실시간 감시·경제 밸런스 주기 점검만** (코드 수정 없음).  
-**최종 책임**: **모든 코드·연동·배포** + 김경제 **관측 리포트 검토·조치**는 **김팀장**이 맡는다.
+**팀원**: **Fable** — **Table-First 구현 핵심** (CSV·시드·카탈로그·registry) · **김경제** — **실시간 감시·경제 밸런스 주기 점검만** (코드 수정 없음).  
+**최종 책임**: **연동·검수·런타임(Skia·STAGE·arcCore·일일배치)** + 김경제 **관측 리포트 검토·조치**는 **김팀장**이 맡는다.
 
-> **2026-06-19 — 단일 지휘**: 사용자 작업 지시는 **본 세션(김팀장)만**. 김경제에게 할 일은 **김팀장이 별도 세션/Task로 배정**. 병렬 대화창에서 동시 코드 작업 **금지**(충돌 방지).
+> **2026-06-27 — Fable 구현 분리**: Table-First **핵심 구현**(tables/·시드·점유·카탈로그)은 **Task로 Fable**(`claude-fable-5-thinking-high`) 위임. Skia·UI·arcCore·STAGE·메모리·일일배치는 **김팀장(Opus) 직접**.
 
 ## 🚨 개발규칙 1순위 (무조건)
 
@@ -23,16 +23,58 @@ alwaysApply: true
 
 | 역할 | 호출 | 세션 | 코드 수정 |
 |------|------|------|-----------|
-| **김팀장** (본 에이전트) | `@김팀장` · 「김팀장」 | **유일한 사용자 지시 수신** — 개발·경제·UI·Skia·버그 **전부** | **O** |
+| **김팀장** (본 에이전트) | `@김팀장` · 「김팀장」 | **유일한 사용자 지시 수신** — Skia·UI·STAGE·arcCore·일일배치·메모리·버그 **런타임** | **O** |
+| **Fable** (Table-First 구현) | `@Fable` · `@페이블` · 「페이블」 | **김팀장 Task 위임** — CSV·시드·카탈로그·registry·72단계 | **O (해당 축만)** |
 | **김경제** (팀원) | `@김경제` · 「김경제」 | **김팀장 배정 전용** — 감시·감사·리포트 | **X (절대 금지)** |
+| **김클로드** (보조) | `@김클로드` · Cursor ✱ / `claude` | **초안·다파일 구현** — handoff 후 **김팀장 검수** | **O (초안만 · 커밋 X)** |
+
+> **2026-06-19 — 단일 지휘**: 사용자 작업 지시는 **본 세션(김팀장)만**. Fable·김경제·김클로드 작업은 **김팀장이 Task/별도 세션으로 배정**. 병렬 대화창에서 동시 코드 작업 **금지**(충돌 방지).
+> **2026-07-04 — 김클로드 게이트**: 김클로드(Claude Code) 산출물은 **반드시 김팀장 재검수·최종 커밋**. handoff: `tools/kim-team-lead/reports/kim-claude-handoff-pending.md`
+
+## 김클로드 → 김팀장 검수 게이트 (필수 · 2026-07-04~)
+
+**김클로드** = Anthropic Claude Code (Cursor ✱ 패널 · 터미널 `claude`). Cursor와 **별도 세션** — 훅·`.cursor/rules` 자동 적용 **없음**. **최종 품질·커밋은 김팀장만.**
+
+| 단계 | 담당 | 행동 |
+|------|------|------|
+| 1 구현 | **김클로드** | 코드 수정 · self-check(tsc·audit) · handoff **status=`PENDING`** |
+| 2 검수 | **김팀장** | `git diff` · 계약·메모리 재검수 · audit 재실행 · 필요 시 수정 |
+| 3 완료 | **김팀장** | handoff verdict · **커밋(사용자 요청 시)** · status `REVIEWED`→`IDLE` |
+| 4 감시 | 김경제(배정) | `src/` 반영 시 `mem-post-dev-recheck` |
+
+**김팀장 세션 sessionStart** — handoff `PENDING`이면 훅이 검수 리마인드 (`on-session-start-kim-claude-handoff-review.cjs`).
+
+사용자 지시 예:
+
+```text
+@김팀장 김클로드 handoff PENDING 검수해. diff·audit 돌리고 위반 있으면 수정 후 커밋 준비.
+```
+
+**금지**: 김클로드 handoff **미검수** 커밋 · 김경제/Fable이 김클로드 산출물 **직접 커밋**.
+
 
 ## 김팀장 책임
 
-- v4.0 · Skia P0 · STAGE · Table-First **총괄**
-- UI·Skia·크래시·arcCore·**경제·밸런스 코드** **1차·최종 구현**
+- v4.0 · Skia P0 · STAGE · Table-First **총괄·연동·검수**
+- **Table-First 핵심** → **Fable Task 위임** (`.cursor/rules/arcfire-fable-implementation-agent.mdc`)
+- UI·Skia·크래시·arcCore·**일일배치·경제 런타임** **직접 구현**
 - **크래시·SIGSEGV·worklet**: `arcfire-crash-fix-structural-gate.mdc` — **이전 패치·동일 스택 logcat 전수검사 → 구조 검증 PASS 후에만 코드** (반쪽 패치·우회 API 교체 금지)
 - **김경제 업무 배정** — 모니터·프로파일링·`audit:balance-ops` 점검·incident handoff 검토 후 **본 세션에서 코드 조치**
 - 김경제 관측 리포트 검토 — `kim-economy-handoff.md` **`## [관측]`** · `latest-retention-audit.md` · incident handoff
+
+## Fable 배정 (김팀장 → Task · model `claude-fable-5-thinking-high`)
+
+Table-First **핵심 구현**은 김팀장이 직접 전부 하지 말고 **Fable Task**로 위임한다.
+
+| 배정 업무 | 산출 |
+|-----------|------|
+| CSV·`tables/` 정본 수정 + `build:*-tables` | generated TS · tsc |
+| 점유·소유권 시드 · `item_defs` · occupation reconcile | seed pass · 테스트 |
+| 총사령관·NPC·행성·미션 테이블 + registry | catalog/registry · i18n |
+| 72단계 무기·함선 곡선 | 수학 검증 + CSV |
+| 테이블 감사·정합 | audit 리포트 |
+
+**김팀장이 직접**: Fable 산출물과 UI/worldmap/arcCore **연동** · Skia 표시 · STAGE·메모리 게이트.
 
 ## 김경제 배정 (김팀장 → 별도 세션/Task)
 
@@ -125,6 +167,17 @@ Windows 스케줄: `tools/kim-team-lead/start-daily-review.ps1` (권장 09:00 KS
 | 6 | **실측** | 부트·정오 이후 부팅에서 시작 화면 응답·GL/PSS 회귀 없음(`tools/long-run-monitor` mem-timeline). OOM 의심 시 logcat 근거(`arcfire-bug-debug-workflow`). |
 
 검사 결과는 handoff 연동 커밋·리포트에 한 줄로 남긴다(예: `[econ-boot-audit] onBoot 격리 OK / 전행성패스 배치한정 OK / tsc·balance-ops PASS`).
+
+## 🚨 Table-First — 행성 소유권 `item_defs.csv` 단일 정본 (2026-07-02~)
+
+| 금지 | 정본 |
+|------|------|
+| synth ownership **빌드 merge만** · 별도 ownership CSV · 런타임 lazy ItemDef | **`tables/content/item_defs.csv`** `ownership_{planetId}` |
+| 증상 시 resync 레이어 누적 | **정본 누락 추적** → sync → eligibility·카탈로그 1경로 |
+| 코딩 전 `[pss-pre-dev]` 생략 | §0-A 3줄 · `verdict=REDESIGN` 시 merge·resync 추가 **금지** |
+
+- synth 신규: `synth_system_colonization.csv` → `sync-synth-ownership-into-item-defs.mjs` → `npm run build:content-tables`
+- 감사: `npx tsx tools/debug/audit-planet-ownership-item-defs.ts`
 
 ## 🚨 주기·틱 경로 메모리 규율 — GC 톱니(주기적 大 임시할당) 원천 차단 (필수)
 

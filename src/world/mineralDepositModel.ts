@@ -32,12 +32,12 @@ import {
   MINERAL_REGION_MEMBERS_FROM_CSV,
   MINERAL_REGIONS_FROM_CSV,
 } from '../data/generated/csvMineralEconomy';
-import { STAR_SYSTEMS } from '../data/systems';
+import { GALAXY_SYSTEMS } from '../data/galaxy100';
 import { resolvePlanetDepositWeightMul } from '../arcCore/planetResource/planetResourceEcosystemPolicy';
-import { getPlanetRecord } from './planetTradePortDb';
+import { resolveStarSystemForPlanetId } from './resolvePlanetSystemPosition';
 
 const KNOWN_PLANET_IDS = new Set<string>();
-for (const sys of Object.values(STAR_SYSTEMS)) {
+for (const sys of Object.values(GALAXY_SYSTEMS)) {
   for (const p of sys.planets) {
     KNOWN_PLANET_IDS.add(p.id);
   }
@@ -101,7 +101,7 @@ export function buildPlanetMineralDepositIndex(): MineralDepositBuildResult {
     }
     if (!KNOWN_PLANET_IDS.has(pid)) {
       warnings.push(
-        `mineral_region_members: 행성 "${pid}"가 현재 STAR_SYSTEMS에 없음 — 추후 CSV/은하 확장 시 정합 확인.`,
+        `mineral_region_members: 행성 "${pid}"가 현재 은하 그래프에 없음 — 추후 CSV/은하 확장 시 정합 확인.`,
       );
     }
     planetToRegion.set(pid, rid);
@@ -162,10 +162,7 @@ export function invalidateMineralDepositProfileCache(): void {
 }
 
 function resolveZoneIndexForPlanetId(planetId: string): number {
-  const planet = getPlanetRecord(planetId);
-  const system = planet
-    ? Object.values(STAR_SYSTEMS).find((s) => s.planets.some((p) => p.id === planetId))
-    : undefined;
+  const system = resolveStarSystemForPlanetId(planetId);
   return resolvePlanetZoneIndex(planetId, system ?? null);
 }
 

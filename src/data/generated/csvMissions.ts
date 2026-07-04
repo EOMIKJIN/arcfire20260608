@@ -1265,5 +1265,77 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     offerPlanetId: "solar_station",
     levelRequired: 15,
     clearDialogSceneId: undefined,
+  },
+  "sandbox_031": {
+    id: "sandbox_031",
+    title: "연방 순항단 호송",
+    titleEn: "Federation Convoy Escort",
+    description: "미레유 보스(연방 순항대)가 솔라 항구로 군수 물자 호송을 의뢰했다.",
+    descriptionEn: "Boss Mireille (Federation Patrol) requested a military supply run to Sola Port.",
+    type: "delivery",
+    objectives: [
+
+    ],
+    rewards: {
+      credits: 2900,
+      exp: 780,
+      items: ["weapon"],
+      skillPointBonus: 0,
+    },
+    prerequisiteIds: [],
+    nextMissionId: null,
+    dc: 13,
+    offerCaptainId: "npc_cpt_mireille",
+    offerPlanetId: "solar_station",
+    levelRequired: 6,
+    clearDialogSceneId: undefined,
+  },
+  "sandbox_032": {
+    id: "sandbox_032",
+    title: "광물 호송단 경비",
+    titleEn: "Mineral Convoy Guard",
+    description: "셀라 모른(미네르바 광물 호송단)이 채굴 통로의 해적 전투기 제거를 요청했다.",
+    descriptionEn: "Cela Morn (Minerva Mineral Convoy) asked you to clear pirates on the mining corridor.",
+    type: "combat",
+    objectives: [
+
+    ],
+    rewards: {
+      credits: 1900,
+      exp: 480,
+      items: ["minerals"],
+      skillPointBonus: 0,
+    },
+    prerequisiteIds: [],
+    nextMissionId: null,
+    dc: 12,
+    offerCaptainId: "npc_cpt_sela",
+    offerPlanetId: "minerva_deep",
+    levelRequired: 4,
+    clearDialogSceneId: undefined,
+  },
+  "sandbox_033": {
+    id: "sandbox_033",
+    title: "회항단 중계 물자",
+    titleEn: "Convoy Relay Supply",
+    description: "타드 레인(오메가 중립 회항단)이 교차항로 예비 식량을 오메가 허브로 운반해 달라고 했다.",
+    descriptionEn: "Tad Rain (Omega Neutral Circuit) asked you to haul reserve food to Omega Hub.",
+    type: "delivery",
+    objectives: [
+
+    ],
+    rewards: {
+      credits: 3400,
+      exp: 920,
+      items: ["food"],
+      skillPointBonus: 0,
+    },
+    prerequisiteIds: [],
+    nextMissionId: null,
+    dc: 12,
+    offerCaptainId: "npc_cpt_tavern_ret_03",
+    offerPlanetId: "omega_hub",
+    levelRequired: 7,
+    clearDialogSceneId: undefined,
   }
 };

@@ -20,13 +20,17 @@ import {
   canPurchasePlanetOwnershipDeed,
   resolveNationSeedClanIdForMegaFaction,
   resolvePlanetHoldForOwnershipCheck,
-  resolveSeedOccupierClanForPlanet,
-  migratePlanetHoldsOwnershipSplit,
   resolveTerritorialNationClanIdForPlanet,
-  isPlayerOriginatedClanId,
 } from '../clanWar/planetOwnershipModel';
+import { releasePlayerPlanetHolds } from '../clanWar/planetHoldReleasePolicy';
 import { resolveGameplayZoneHubPlanet } from '../clanWar/resolveZoneHubPlanet';
-import { aiClanIdForNpcCaptain, npcCaptainLeaderUid } from '../clanWar/aiNpcClanIds';
+import { npcCaptainLeaderUid, normalizeAiClanId } from '../clanWar/aiNpcClanIds';
+import { listAiClanTerritoryHubClans } from '../clanWar/aiClanRegistry';
+import { applyPlanetOccupationSeedPipeline } from '../clanWar/planetOccupationSeedPipeline';
+import {
+  ARC_CORE_SEED_BLUE_CLAN_ID,
+  ARC_CORE_SEED_RED_CLAN_ID,
+} from '../arcCore/balance/seedPlanetOccupationFromBalance';
 import { NPC_CAPTAINS_FROM_CSV } from '../data/generated';
 import { usePlayerStore } from './playerStore';
 import {
@@ -34,11 +38,6 @@ import {
   resetClanWarFoundationDb,
   saveClanWarFoundationDb,
 } from '../world/clanWarFoundationDb';
-import {
-  seedPlanetOccupationHoldsFromBalance,
-  ARC_CORE_SEED_BLUE_CLAN_ID,
-  ARC_CORE_SEED_RED_CLAN_ID,
-} from '../arcCore/balance/seedPlanetOccupationFromBalance';
 import {
   resolveMapFactionSideFromClanIdPure,
   type MapFactionSide,
@@ -112,13 +111,63 @@ interface ClanWarFoundationState {
    * NPC AI 클랜장 3인(구역별) — 플레이 성계 구역의 기하학적 중심에 가까운 허브 행성에 클랜·점유·기함 1척 시드.
    * 플레이어 `player_home`이 이미 있으면 해당 행성은 건너뜀.
    */
-  syncNpcAiClanTerritoryFromGalaxy: (systems: Record<string, StarSystem>) => void;
+  syncNpcAiClanTerritoryFromGalaxy: (
+    systems: Record<string, StarSystem>,
+    options?: { skipOccupationSeedPipeline?: boolean },
+  ) => void;
   /** synth 아크코어 개방 직후 — 블루/레드·플레이어 home 은 덮어쓰지 않음 */
   seedSynthFrontierNeutralHold: (planetId: string, systemId: string) => void;
 }
 
 function makeId(prefix: string): string {
   return `${prefix}_${Date.now()}_${Math.floor(Math.random() * 1e9)}`;
+}
+
+function mapOccupierToGovernorSide(
+  occupierClanId: string,
+  clans: Record<string, ClanBasicsRecord>,
+): 'BLUE' | 'RED' | 'NEUTRAL' {
+  if (occupierClanId === 'neutral') return 'NEUTRAL';
+  const side = resolveMapFactionSideFromClanIdPure(occupierClanId, clans);
+  if (side === 'red') return 'RED';
+  if (side === 'blue') return 'BLUE';
+  return 'NEUTRAL';
+}
+
+function reassignGovernorsAfterOccupierChanges(
+  beforeHolds: Record<string, PlanetClanHold>,
+  afterHolds: Record<string, PlanetClanHold>,
+  clans: Record<string, ClanBasicsRecord>,
+  planetIds: readonly string[],
+): void {
+  for (const planetId of planetIds) {
+    if (beforeHolds[planetId]?.occupierClanId === afterHolds[planetId]?.occupierClanId) continue;
+    const hold = afterHolds[planetId];
+    if (!hold) continue;
+    reassignPlanetGovernorForOccupationSync({
+      planetId,
+      newFactionSide: mapOccupierToGovernorSide(hold.occupierClanId, clans),
+    });
+  }
+}
+
+function finalizeClanHoldRelease(
+  get: () => ClanWarFoundationState,
+  set: (partial: Partial<ClanWarFoundationState>) => void,
+  releasedHolds: Record<string, PlanetClanHold>,
+  clans: Record<string, ClanBasicsRecord>,
+): Record<string, PlanetClanHold> {
+  const piped = applyPlanetOccupationSeedPipeline(releasedHolds, clans);
+  set({ clans: piped.clans, planetHolds: piped.holds });
+  if (piped.occupierChangedPlanetIds.length > 0) {
+    reassignGovernorsAfterOccupierChanges(
+      releasedHolds,
+      piped.holds,
+      piped.clans,
+      piped.occupierChangedPlanetIds,
+    );
+  }
+  return piped.holds;
 }
 
 export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, get) => ({
@@ -131,24 +180,25 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
   loadLocalClanWarFoundation: async () => {
     try {
       const loaded = await loadClanWarFoundationDb();
-      const seeded = seedPlanetOccupationHoldsFromBalance(loaded.planetHolds);
-      const migrated = migratePlanetHoldsOwnershipSplit(seeded.holds);
-      const nextClans = { ...loaded.clans, ...seeded.clans };
-      const clansChanged =
-        nextClans[ARC_CORE_SEED_BLUE_CLAN_ID]?.displayName !==
-          loaded.clans[ARC_CORE_SEED_BLUE_CLAN_ID]?.displayName
-        || nextClans[ARC_CORE_SEED_RED_CLAN_ID]?.displayName !==
-          loaded.clans[ARC_CORE_SEED_RED_CLAN_ID]?.displayName;
+      const piped = applyPlanetOccupationSeedPipeline(loaded.planetHolds, loaded.clans);
       set({
-        clans: nextClans,
-        planetHolds: migrated.holds,
+        clans: piped.clans,
+        planetHolds: piped.holds,
         deployments: loaded.deployments,
         operations: loaded.operations,
       });
-      if (seeded.holdsMutated || migrated.changed || clansChanged) {
+      if (piped.occupierChangedPlanetIds.length > 0) {
+        reassignGovernorsAfterOccupierChanges(
+          loaded.planetHolds,
+          piped.holds,
+          piped.clans,
+          piped.occupierChangedPlanetIds,
+        );
+      }
+      if (piped.mutated) {
         await saveClanWarFoundationDb({
-          clans: nextClans,
-          planetHolds: migrated.holds,
+          clans: piped.clans,
+          planetHolds: piped.holds,
           deployments: loaded.deployments,
           operations: loaded.operations,
         });
@@ -272,30 +322,14 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     const state = get();
     const nextClans = { ...state.clans };
     delete nextClans[clanId];
-
-    let releasedPlanetCount = 0;
-    const nextPlanetHolds: Record<string, PlanetClanHold> = {};
-    for (const [planetId, hold] of Object.entries(state.planetHolds)) {
-      const ownsDeed = hold.deedOwnerClanId === clanId;
-      const legacyOccupier = hold.occupierClanId === clanId;
-      if (hold.kind === 'player_home' && legacyOccupier) {
-        releasedPlanetCount += 1;
-        continue;
-      }
-      if (ownsDeed || (legacyOccupier && isPlayerOriginatedClanId(hold.occupierClanId))) {
-        const seedOccupier = resolveSeedOccupierClanForPlanet(planetId);
-        nextPlanetHolds[planetId] = {
-          ...hold,
-          occupierClanId: seedOccupier.occupierClanId,
-          deedOwnerClanId: null,
-          homePlayerUid: hold.homePlayerUid === uid ? null : hold.homePlayerUid,
-          kind: seedOccupier.kind,
-        };
-        releasedPlanetCount += 1;
-        continue;
-      }
-      nextPlanetHolds[planetId] = hold;
-    }
+    const removedClanIds = new Set([clanId]);
+    const released = releasePlayerPlanetHolds({
+      holds: state.planetHolds,
+      removedClanIds,
+      remainingClanIds: new Set(Object.keys(nextClans)),
+      uid,
+      mode: 'dissolve_clan',
+    });
 
     const nextDeployments = state.deployments.filter((d) => d.clanId !== clanId);
     const nextOperations = state.operations.filter(
@@ -304,10 +338,10 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
 
     set({
       clans: nextClans,
-      planetHolds: nextPlanetHolds,
       deployments: nextDeployments,
       operations: nextOperations,
     });
+    finalizeClanHoldRelease(get, set, released.holds, nextClans);
 
     usePlayerStore.getState().setPlayer({
       ...p,
@@ -317,7 +351,7 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     void usePlayerStore.getState().persist();
     void get().persistClanWarFoundation();
 
-    return { ok: true, dissolvedClanId: clanId, releasedPlanetCount };
+    return { ok: true, dissolvedClanId: clanId, releasedPlanetCount: released.releasedPlanetCount };
   },
 
   purgePlayerAccountWorldState: async ({ uid, currentClanId }) => {
@@ -337,62 +371,43 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     const removedClanIdSet = new Set(removedClanIds);
     const nextClans = { ...state.clans };
     removedClanIds.forEach((id) => delete nextClans[id]);
+    const remainingClanIds = new Set(Object.keys(nextClans));
 
-    let releasedPlanetCount = 0;
-    const nextPlanetHolds: Record<string, PlanetClanHold> = {};
-    const nextClanIdSet = new Set(Object.keys(nextClans));
-    for (const [planetId, hold] of Object.entries(state.planetHolds)) {
-      const deedOwned = hold.deedOwnerClanId && removedClanIdSet.has(hold.deedOwnerClanId);
-      const legacyOccupierOwned = removedClanIdSet.has(hold.occupierClanId);
-      const isTargetPlayerHold =
-        hold.homePlayerUid === uid || deedOwned || legacyOccupierOwned;
-      // orphan hold 방어: 클랜 레코드가 사라졌는데 점유만 남은 비정상 상태 제거
-      const isOrphanNonAiHold =
-        !hold.occupierClanId.startsWith('ai_clan_') && !nextClanIdSet.has(hold.occupierClanId);
-      if (isTargetPlayerHold || isOrphanNonAiHold) {
-        releasedPlanetCount += 1;
-        const nationClanId = resolveTerritorialNationClanIdForPlanet(planetId);
-        if (nationClanId && hold.kind !== 'neutral') {
-          nextPlanetHolds[planetId] = {
-            ...hold,
-            occupierClanId: nationClanId,
-            deedOwnerClanId: null,
-            homePlayerUid: null,
-            kind: 'clan_hold',
-          };
-        }
-        continue;
-      }
-      nextPlanetHolds[planetId] = hold;
-    }
+    const released = releasePlayerPlanetHolds({
+      holds: state.planetHolds,
+      removedClanIds: removedClanIdSet,
+      remainingClanIds,
+      uid,
+      mode: 'purge_account',
+    });
 
     const nextDeployments = state.deployments.filter(
       (d) =>
         d.deployedByUid !== uid
         && !removedClanIdSet.has(d.clanId)
-        && (d.clanId.startsWith('ai_clan_') || nextClanIdSet.has(d.clanId)),
+        && (d.clanId.startsWith('ai_clan_') || remainingClanIds.has(d.clanId)),
     );
     const nextOperations = state.operations.filter(
       (op) => {
         if (removedClanIdSet.has(op.attackerClanId)) return false;
         if (op.defenderClanId != null && removedClanIdSet.has(op.defenderClanId)) return false;
-        const attackerValid = op.attackerClanId.startsWith('ai_clan_') || nextClanIdSet.has(op.attackerClanId);
+        const attackerValid = op.attackerClanId.startsWith('ai_clan_') || remainingClanIds.has(op.attackerClanId);
         const defenderValid =
           op.defenderClanId == null
           || op.defenderClanId.startsWith('ai_clan_')
-          || nextClanIdSet.has(op.defenderClanId);
+          || remainingClanIds.has(op.defenderClanId);
         return attackerValid && defenderValid;
       },
     );
 
     set({
       clans: nextClans,
-      planetHolds: nextPlanetHolds,
       deployments: nextDeployments,
       operations: nextOperations,
     });
+    finalizeClanHoldRelease(get, set, released.holds, nextClans);
     await get().persistClanWarFoundation();
-    return { ok: true, removedClanIds, releasedPlanetCount };
+    return { ok: true, removedClanIds, releasedPlanetCount: released.releasedPlanetCount };
   },
 
   purgeAllNonAiClanWorldState: async () => {
@@ -404,25 +419,13 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
       if (!id.startsWith('ai_clan_')) return;
       nextClans[id] = clan;
     });
+    const remainingClanIds = new Set(Object.keys(nextClans));
 
-    let releasedPlanetCount = 0;
-    const nextPlanetHolds: Record<string, PlanetClanHold> = {};
-    Object.entries(state.planetHolds).forEach(([planetId, hold]) => {
-      if (hold.occupierClanId.startsWith('ai_clan_')) {
-        nextPlanetHolds[planetId] = hold;
-        return;
-      }
-      releasedPlanetCount += 1;
-      const nationClanId = resolveTerritorialNationClanIdForPlanet(planetId);
-      if (nationClanId) {
-        nextPlanetHolds[planetId] = {
-          ...hold,
-          occupierClanId: nationClanId,
-          deedOwnerClanId: null,
-          homePlayerUid: null,
-          kind: 'clan_hold',
-        };
-      }
+    const released = releasePlayerPlanetHolds({
+      holds: state.planetHolds,
+      removedClanIds: nonAiClanIdSet,
+      remainingClanIds,
+      mode: 'purge_all_non_ai',
     });
 
     const nextDeployments = state.deployments.filter((d) => d.clanId.startsWith('ai_clan_'));
@@ -436,7 +439,7 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
 
     if (
       nonAiClanIds.length === 0
-      && releasedPlanetCount === 0
+      && released.releasedPlanetCount === 0
       && removedDeploymentCount === 0
       && removedOperationCount === 0
     ) {
@@ -451,15 +454,15 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
 
     set({
       clans: nextClans,
-      planetHolds: nextPlanetHolds,
       deployments: nextDeployments,
       operations: nextOperations,
     });
+    finalizeClanHoldRelease(get, set, released.holds, nextClans);
     await get().persistClanWarFoundation();
     return {
       ok: true,
       removedClanCount: nonAiClanIdSet.size,
-      releasedPlanetCount,
+      releasedPlanetCount: released.releasedPlanetCount,
       removedDeploymentCount,
       removedOperationCount,
     };
@@ -605,20 +608,28 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
 
   getClanBasics: (clanId) => get().clans[clanId],
 
-  syncNpcAiClanTerritoryFromGalaxy: (systems) => {
+  syncNpcAiClanTerritoryFromGalaxy: (systems, options) => {
     const state = get();
     const hubPlanetIds = new Set<string>();
-    for (const cap of NPC_CAPTAINS_FROM_CSV) {
-      if (!cap.isAiClanLeader || !cap.aiClanZone || !cap.aiClanName.trim()) continue;
-      const hub0 = resolveGameplayZoneHubPlanet(systems, cap.aiClanZone);
+    const territoryClans = listAiClanTerritoryHubClans();
+    const captainById = new Map(NPC_CAPTAINS_FROM_CSV.map((c) => [c.id, c]));
+
+    for (const clan of territoryClans) {
+      const zone = clan.territoryHubZone;
+      if (!zone) continue;
+      const hub0 = resolveGameplayZoneHubPlanet(systems, zone);
       if (hub0) hubPlanetIds.add(hub0.planetId);
     }
+
     let nextHolds: Record<string, PlanetClanHold> = { ...state.planetHolds };
     for (const pid of Object.keys(nextHolds)) {
       const h = nextHolds[pid];
-      if (h.occupierClanId.startsWith('ai_clan_') && !hubPlanetIds.has(pid)) {
+      const occupier = normalizeAiClanId(h.occupierClanId);
+      if (occupier.startsWith('ai_clan_') && !hubPlanetIds.has(pid)) {
         const { [pid]: _, ...rest } = nextHolds;
         nextHolds = rest;
+      } else if (occupier !== h.occupierClanId && occupier.startsWith('ai_clan_')) {
+        nextHolds[pid] = { ...h, occupierClanId: occupier };
       }
     }
 
@@ -626,25 +637,32 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     let nextDep = state.deployments.filter((d) => !d.id.startsWith('ai_dep_'));
     const now = Date.now();
 
-    for (const cap of NPC_CAPTAINS_FROM_CSV) {
-      if (!cap.isAiClanLeader || !cap.aiClanZone || !cap.aiClanName.trim()) continue;
-      const hub = resolveGameplayZoneHubPlanet(systems, cap.aiClanZone);
+    for (const clan of territoryClans) {
+      const zone = clan.territoryHubZone;
+      if (!zone) continue;
+      const cap = captainById.get(clan.leaderCaptainId);
+      if (!cap) continue;
+
+      const hub = resolveGameplayZoneHubPlanet(systems, zone);
       if (!hub) continue;
+
+      // CSV 국가(BLUE/RED) 시드 행성 — AI 클랜 허브가 영토 occupier 를 덮어쓰지 않음
+      if (resolveTerritorialNationClanIdForPlanet(hub.planetId)) continue;
 
       const cur = nextHolds[hub.planetId];
       if (cur?.kind === 'player_home') continue;
 
-      const clanId = aiClanIdForNpcCaptain(cap.id);
+      const clanId = clan.id;
       const leaderUid = npcCaptainLeaderUid(cap.id);
-      const mega = cap.factionId ?? 'mega_stellium_alliance';
-      const prev = state.clans[clanId];
+      const mega = clan.megaFactionId || cap.factionId || 'mega_stellium_alliance';
+      const prev = state.clans[clanId] ?? state.clans[normalizeAiClanId(clanId)];
       nextClans[clanId] = {
         id: clanId,
-        displayName: cap.aiClanName.trim(),
+        displayName: clan.displayNameKo.trim(),
         leaderUid,
         megaFactionId: mega,
         createdAt: prev?.createdAt ?? now,
-        ext: { source: 'ai_npc_captain', captainId: cap.id },
+        ext: { source: 'ai_npc_captain', captainId: cap.id, registryClanId: clanId },
       };
 
       nextHolds[hub.planetId] = {
@@ -672,7 +690,22 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
       }
     }
 
-    set({ clans: nextClans, planetHolds: nextHolds, deployments: nextDep });
+    const piped = options?.skipOccupationSeedPipeline
+      ? { clans: nextClans, holds: nextHolds, occupierChangedPlanetIds: [] as string[], mutated: false }
+      : applyPlanetOccupationSeedPipeline(nextHolds, nextClans);
+    set({
+      clans: piped.clans,
+      planetHolds: piped.holds,
+      deployments: nextDep,
+    });
+    if (piped.occupierChangedPlanetIds.length > 0) {
+      reassignGovernorsAfterOccupierChanges(
+        nextHolds,
+        piped.holds,
+        piped.clans,
+        piped.occupierChangedPlanetIds,
+      );
+    }
     void get().persistClanWarFoundation();
   },
 }));

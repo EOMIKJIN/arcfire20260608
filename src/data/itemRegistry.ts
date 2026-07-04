@@ -6,13 +6,7 @@ import type { ItemDef, TradeGood } from '../types';
 import { ITEM_DEFS_FROM_CSV } from './generated/csvItemDefs';
 
 export function getItemDef(id: string): ItemDef | undefined {
-  const csv = ITEM_DEFS_FROM_CSV[id];
-  if (csv) return csv;
-  // lazy — planetOwnershipDeedItemDef ↔ goods ↔ planetTradePortDb 순환 방지
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { resolveSyntheticPlanetOwnershipItemDef } =
-    require('../arcCore/balance/planetOwnershipDeedItemDef') as typeof import('../arcCore/balance/planetOwnershipDeedItemDef');
-  return resolveSyntheticPlanetOwnershipItemDef(id);
+  return ITEM_DEFS_FROM_CSV[id];
 }
 
 export function listItemDefIds(): string[] {

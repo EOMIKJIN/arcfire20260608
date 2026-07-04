@@ -1,7 +1,11 @@
-import Constants from 'expo-constants';
-import * as Application from 'expo-application';
 import firestore from '@react-native-firebase/firestore';
 import { setDoc, userDocRef } from './firestoreRefs';
+import {
+  configureFirestorePersistence,
+  resolveAppVersion,
+  resolveRegionCode,
+  resolveUserType,
+} from './firestoreClientConfig';
 import { NPC_CAPTAINS_FROM_CSV } from '../data/generated';
 import { useAccountProfileStore } from '../store/accountProfileStore';
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
@@ -14,60 +18,12 @@ import { useUserSessionStore } from '../store/userSessionStore';
 import { useWorldStore } from '../store/worldStore';
 import { countGoodInInventory, normalizeInventorySlots } from '../game/playerInventory';
 
-const ADMIN_NICKNAME = 'Representative';
-const ADMIN_UID_ALLOWLIST = new Set(
-  (process.env.EXPO_PUBLIC_ADMIN_UIDS ?? '')
-    .split(',')
-    .map(v => v.trim())
-    .filter(Boolean),
-);
-
-let firestoreConfigured = false;
-
-/** 네이티브 Firestore는 기본적으로 오프라인 캐시·대기 쓰기를 지원한다. 가능한 경우 설정을 한 번만 적용한다. */
-export function configureFirestorePersistence(): void {
-  if (firestoreConfigured) return;
-  firestoreConfigured = true;
-  try {
-    const fs = firestore();
-    if (typeof (fs as { settings?: (o: Record<string, unknown>) => void }).settings === 'function') {
-      (fs as { settings: (o: Record<string, unknown>) => void }).settings({
-        ignoreUndefinedProperties: true,
-      });
-    }
-  } catch (e) {
-    console.warn('[userDataSync] Firestore settings skipped:', e);
-  }
-}
-
-export function resolveAppVersion(): string {
-  const nativeVersion = Application.nativeApplicationVersion;
-  if (typeof nativeVersion === 'string' && nativeVersion.trim()) return nativeVersion.trim();
-  const v = Constants.expoConfig?.version ?? Constants.manifest2?.extra?.expoClient?.version;
-  if (typeof v === 'string' && v.trim()) return v.trim();
-  return '0.0.0';
-}
-
-export function resolveRegionCode(): string {
-  try {
-    const loc = Intl.DateTimeFormat().resolvedOptions().locale ?? 'und';
-    const region = new Intl.Locale(loc).maximize().region;
-    if (region && /^[A-Z]{2}$/.test(region)) return region;
-  } catch {
-    /* ignore */
-  }
-  return 'ZZ';
-}
-
-export function resolveUserType(uid: string, nickname: string | null | undefined): 'admin' | 'user' {
-  if (!uid) return 'user';
-  if (ADMIN_UID_ALLOWLIST.has(uid)) return 'admin';
-  const nick = (nickname ?? '').trim();
-  if (nick === ADMIN_NICKNAME) return 'admin';
-  if (uid === 'local-guest' || uid.toLowerCase() === 'local-guest') return 'admin';
-  if (uid.startsWith('local-') && uid.toLowerCase().includes('guest')) return 'admin';
-  return 'user';
-}
+export {
+  configureFirestorePersistence,
+  resolveAppVersion,
+  resolveRegionCode,
+  resolveUserType,
+} from './firestoreClientConfig';
 
 function stripUndefinedDeep(value: unknown): unknown {
   if (value === undefined) return undefined;
@@ -252,6 +208,9 @@ export async function syncUserDataWithServer(): Promise<void> {
 
   try {
     await setDoc(userDocRef(uid), payload as Record<string, unknown>, { merge: true });
+    void import('./gameSaveBackup/scheduleGameSaveBackup').then((m) => {
+      m.scheduleGameSaveBackupAfterCloudSync(uid);
+    });
   } catch (e) {
     console.warn('[userDataSync] syncUserDataWithServer failed (queued offline if persistence enabled):', e);
   }

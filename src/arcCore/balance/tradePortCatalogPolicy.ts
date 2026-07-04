@@ -14,8 +14,10 @@ import {
   resolveZonePrimaryMineralId,
 } from '../economy/mineralTradePricing';
 import { getItemDef, listItemDefs } from '../../data/itemRegistry';
-import { resolveSyntheticPlanetOwnershipItemDef, invalidateSyntheticPlanetOwnershipItemDefCache } from './planetOwnershipDeedItemDef';
-import { isPlanetOwnershipDeedCatalogEligible } from './planetOwnershipDeedCatalog';
+import {
+  isPlanetOwnershipItemId,
+} from './planetOwnershipDeedItemDef';
+import { isPlanetOwnershipDeedCatalogEligible, resolvePlanetOwnershipDeedItemId } from './planetOwnershipDeedCatalog';
 import { resolveStarSystemForPlanetId } from '../../world/resolvePlanetSystemPosition';
 import { dispatchEconomyTradePortBulk } from '../ArcCoreCommandBus';
 import {
@@ -124,8 +126,8 @@ function resolveEquipmentTierKeyFromWeaponTier(recommendedWeaponTierKey: string)
 
 function resolvePlanetOwnershipItemId(planetId: string): string | null {
   if (!isPlanetOwnershipDeedCatalogEligible(planetId)) return null;
-  const id = `ownership_${planetId.trim()}`;
-  const def = getItemDef(id) ?? resolveSyntheticPlanetOwnershipItemDef(id);
+  const id = resolvePlanetOwnershipDeedItemId(planetId);
+  const def = getItemDef(id);
   return def?.tradeable ? id : null;
 }
 
@@ -266,6 +268,13 @@ export function isTradePortItemPurchasableByPlayer(itemId: string, playerLevel: 
 
 /** 무역소 구매 탭 — 행성 카탈로그 진열(플레이어 Lv 무관). 구매 차단은 isTradePortItemPurchasableByPlayer */
 export function isTradePortBuyMarketListedItem(itemId: string): boolean {
+  if (isPlanetOwnershipItemId(itemId)) {
+    const planetId = itemId.slice('ownership_'.length).trim();
+    if (!planetId || !isPlanetOwnershipDeedCatalogEligible(planetId)) return false;
+    const def = getItemDef(itemId);
+    return Boolean(def?.tradeable);
+  }
+
   const def = getItemDef(itemId);
   if (!def?.tradeable) return false;
 
@@ -322,9 +331,18 @@ export function syncTradePortCatalogForPlanet(planetId: string): void {
 export function forceResyncPlanetTradePortCatalog(planetId: string): void {
   if (!planetId) return;
   clearPlanetCatalogWarm(planetId);
-  invalidateSyntheticPlanetOwnershipItemDefCache();
   syncTradePortCatalogForPlanet(planetId);
   markPlanetCatalogWarmed(planetId);
+}
+
+/**
+ * arcCore 부트 직후 — worldStore.loadLocalWorld가 economy 구독 전에 set_catalog를
+ * 발행했을 수 있으므로, 코어 개방 무역소 전체 카탈로그를 1회 재적재한다.
+ */
+export function resyncAllCoreOpenTradePortCatalogs(): void {
+  for (const planetId of listPlanetIdsWithTradePort()) {
+    forceResyncPlanetTradePortCatalog(planetId);
+  }
 }
 
 /** 아크코어 — 전 무역소 진열 재동기(단일 채널) */

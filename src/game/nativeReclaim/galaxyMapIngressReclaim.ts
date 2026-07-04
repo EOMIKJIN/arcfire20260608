@@ -1,6 +1,6 @@
 import { trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
 
-import { runGalaxyMapSoftNativeReclaimPass } from './runGalaxyMapSoftNativeReclaimPass';
+import { runSoftNativeReclaimPass } from './runSoftNativeReclaimPass';
 import { runStageNativeReclaimPass } from './runStageNativeReclaimPass';
 import {
   resolveActivePlanetSessionAnchorId,
@@ -32,25 +32,15 @@ export function consumeGalaxyMapIngressReclaim(): void {
   const anchor = resolveActivePlanetSessionAnchorId();
   const keep = resolveSinglePlanetSessionKeepIds(anchor);
 
-  if (kind === 'after_hub_combat') {
-    runStageNativeReclaimPass({
-      stage: 'galaxy_map',
-      reason: 'ingress_after_hub_combat',
-      keepPlanetIds: keep,
-      reclaimHubSkia: false,
-      releaseGpuLayers: false,
-    });
-    runGalaxyMapSoftNativeReclaimPass('ingress_after_hub_combat', keep);
-  } else {
-    runStageNativeReclaimPass({
-      stage: 'galaxy_map',
-      reason: 'ingress_from_planet_hub',
-      keepPlanetIds: keep,
-      reclaimHubSkia: false,
-      releaseGpuLayers: false,
-    });
-    runGalaxyMapSoftNativeReclaimPass('ingress_from_planet_hub', keep);
-  }
+  const reason = kind === 'after_hub_combat' ? 'ingress_after_hub_combat' : 'ingress_from_planet_hub';
+  runStageNativeReclaimPass({
+    stage: 'galaxy_map',
+    reason,
+    keepPlanetIds: keep,
+    reclaimHubSkia: false,
+    releaseGpuLayers: false,
+  });
+  runSoftNativeReclaimPass(reason);
 
   void trimNativeBitmapCachesAsync().then((result) => {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {

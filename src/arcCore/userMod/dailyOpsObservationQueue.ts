@@ -47,6 +47,17 @@ const POLICY_SHIFTS: Record<GovernorPolicyChoice, Partial<Record<AabsMultiplierK
 
 let memoryQueue: DailyOpsObservation[] = [];
 let hydratePromise: Promise<void> | null = null;
+const MAX_DAILY_OPS_QUEUE = 200;
+let persistQueueTimer: ReturnType<typeof setTimeout> | null = null;
+const DAILY_OPS_PERSIST_COALESCE_MS = 1500;
+
+function schedulePersistQueue(): void {
+  if (persistQueueTimer) clearTimeout(persistQueueTimer);
+  persistQueueTimer = setTimeout(() => {
+    persistQueueTimer = null;
+    void persistQueue();
+  }, DAILY_OPS_PERSIST_COALESCE_MS);
+}
 
 async function ensureHydrated(): Promise<void> {
   if (hydratePromise) return hydratePromise;
@@ -74,7 +85,10 @@ async function persistQueue(): Promise<void> {
 export async function enqueueDailyOpsObservation(entry: DailyOpsObservation): Promise<void> {
   await ensureHydrated();
   memoryQueue.push(entry);
-  await persistQueue();
+  if (memoryQueue.length > MAX_DAILY_OPS_QUEUE) {
+    memoryQueue = memoryQueue.slice(-MAX_DAILY_OPS_QUEUE);
+  }
+  schedulePersistQueue();
 }
 
 export async function flushDailyOpsObservationsToAabs(): Promise<number> {

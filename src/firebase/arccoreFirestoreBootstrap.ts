@@ -1,10 +1,19 @@
 import firestore from '@react-native-firebase/firestore';
-import { arccoreDocRef, getDoc, setDoc } from './firestoreRefs';
+import { arccoreDocRef, getDoc, getDocFromCache, setDoc } from './firestoreRefs';
+import { configureFirestorePersistence } from './firestoreClientConfig';
+
+/** Firestore server probe 상한 — 오프라인·지연 시 조용히 skip */
+const ARCORE_SEED_PROBE_MS = 4_000;
+
+function snapExists(snap: { exists: boolean | (() => boolean) }): boolean {
+  return typeof snap.exists === 'function' ? snap.exists() : !!snap.exists;
+}
 
 /**
  * 아크코어 제어 컬렉션 기본 문서를 시드한다.
  * - 기존 users 컬렉션은 절대 건드리지 않는다.
  * - merge 저장으로 반복 실행해도 안전하다.
+ * - 캐시 우선 · server probe 타임아웃 — 부트 [boot] 경고 없음.
  */
 export async function ensureArcCoreCollectionSeeded(input: {
   uid: string;
@@ -13,10 +22,24 @@ export async function ensureArcCoreCollectionSeeded(input: {
   if (!uid) return;
 
   try {
+    configureFirestorePersistence();
     const configRef = arccoreDocRef('config');
-    const existingConfig = await getDoc(configRef);
-    // 관리자가 이미 만든 arccore를 사용: 앱 실행마다 재시드하지 않는다.
-    if (existingConfig.exists()) return;
+
+    try {
+      const cached = await getDocFromCache(configRef);
+      if (snapExists(cached)) return;
+    } catch {
+      /* 캐시 없음 */
+    }
+
+    const serverSnap = await Promise.race([
+      getDoc(configRef),
+      new Promise<null>((resolve) => {
+        setTimeout(() => resolve(null), ARCORE_SEED_PROBE_MS);
+      }),
+    ]);
+    if (serverSnap && snapExists(serverSnap)) return;
+    if (!serverSnap) return;
 
     const now = firestore.FieldValue.serverTimestamp();
     await Promise.all([
@@ -56,7 +79,8 @@ export async function ensureArcCoreCollectionSeeded(input: {
       ),
     ]);
   } catch (e) {
-    console.warn('[arccore] ensureArcCoreCollectionSeeded skipped:', e);
+    if (__DEV__) {
+      console.warn('[arccore] ensureArcCoreCollectionSeeded skipped:', e);
+    }
   }
 }
-

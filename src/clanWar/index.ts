@@ -10,6 +10,15 @@ export {
 export { resolveGameplayZoneHubPlanet, type ClanWarHubZone } from './resolveZoneHubPlanet';
 export { formatClanPlateDisplayName } from './formatClanPlateDisplayName';
 export {
+  getAiClanRegistryRow,
+  isCaptainAiClanAffiliated,
+  listAiClanTerritoryHubClans,
+  resolveAiClanDisplayName,
+  resolveCaptainAiClanDisplayName,
+  resolveCaptainAiClanId,
+} from './aiClanRegistry';
+export { normalizeAiClanId, aiClanIdForCaptainRecord } from './aiNpcClanIds';
+export {
   canPurchasePlanetOwnershipDeed,
   isNationDefaultDeedOwnership,
   isNationSeedClanId,

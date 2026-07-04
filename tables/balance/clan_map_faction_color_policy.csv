@@ -2,6 +2,7 @@ matchType,matchValue,displayColorHex,priority,notesKo
 clan_id,balance_seed_faction_blue,#4EA3FF,100,시드 블루 — 수도 뉴 에덴(eden_city)
 clan_id,balance_seed_faction_red,#E36B6B,100,시드 레드 — 수도 아크파이어 코어(core_prime)
 clan_prefix,ai_clan_safe,#4EA3FF,90,AI 블루팀 거점
+clan_prefix,ai_clan_neutral,#9AA8C4,85,AI 중립권 클랜
 clan_prefix,ai_clan_pvp,#E36B6B,90,AI 레드·PvP 팀
 clan_substr,_safe_,#4EA3FF,80,안전권 클랜 접미
 clan_substr,_pvp_,#E36B6B,80,적대 PvP 접미

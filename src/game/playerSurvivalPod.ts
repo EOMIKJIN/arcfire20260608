@@ -2,7 +2,8 @@
 // 전함 격침 → 생존포드 · 거점 귀환
 // ============================================================
 
-import { STAR_SYSTEMS, STARTING_PLANET_ID, STARTING_SYSTEM_ID } from '../data/systems';
+import { STARTING_PLANET_ID, STARTING_SYSTEM_ID } from '../data/systems';
+import { resolveSystemIdForPlanetIdFromGalaxy } from '../world/resolvePlanetSystemPosition';
 import type { Player, PlayerHangarShip, PlayerShip } from '../types';
 import { applyNpcCapitalShipToPlayerShip } from './applyNpcCapitalShipPurchase';
 import {
@@ -65,9 +66,8 @@ export function resolvePlayerHomePlanetId(player: Pick<Player, 'homePlanetId'>):
 }
 
 export function resolvePlayerHomeSystemId(planetId: string): string {
-  for (const system of Object.values(STAR_SYSTEMS)) {
-    if (system.planets.some((p) => p.id === planetId)) return system.id;
-  }
+  const systemId = resolveSystemIdForPlanetIdFromGalaxy(planetId.trim());
+  if (systemId) return systemId;
   return STARTING_SYSTEM_ID;
 }
 

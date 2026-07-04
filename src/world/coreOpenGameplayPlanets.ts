@@ -8,6 +8,7 @@
 // ============================================================
 
 import { GAMEPLAY_SYSTEM_IDS } from '../data/galaxy100';
+import type { Planet, StarSystem } from '../types';
 import {
   isSynthFrontierPlanetId,
   isSynthFrontierSystemId,
@@ -16,6 +17,57 @@ import { resolveSystemIdForPlanetIdFromGalaxy } from './resolvePlanetSystemPosit
 
 /** 정적 21성계 — A tier baseline */
 export const BASELINE_CORE_OPEN_SYSTEM_IDS = GAMEPLAY_SYSTEM_IDS;
+
+/** 코어 개방 행성 + 소속 성계 (A + B→A) */
+export type CoreOpenGameplayPlanetRef = {
+  planetId: string;
+  planet: Planet;
+  system: StarSystem;
+};
+
+function readStaticStarSystem(systemId: string): StarSystem | undefined {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { GALAXY_SYSTEMS } = require('../data/galaxy100') as typeof import('../data/galaxy100');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { STAR_SYSTEMS } = require('../data/systems') as typeof import('../data/systems');
+  return GALAXY_SYSTEMS[systemId] ?? STAR_SYSTEMS[systemId];
+}
+
+/** runtime worldStore 우선 — synth autogen(B→A) 반영 */
+export function resolveCoreOpenStarSystem(systemId: string): StarSystem | undefined {
+  const id = systemId?.trim();
+  if (!id) return undefined;
+  const world = readWorldStoreState();
+  if (world?.loaded) {
+    const runtime = world.getSystem(id);
+    if (runtime) return runtime;
+  }
+  return readStaticStarSystem(id);
+}
+
+/** 코어 개방 행성 레코드 — zone·시설·팩션 등 gameplay 단일 조회 */
+export function resolveCoreOpenGameplayPlanetRef(
+  planetId: string,
+): CoreOpenGameplayPlanetRef | null {
+  const id = planetId?.trim();
+  if (!id || !isCoreOpenPlanetId(id)) return null;
+  const systemId = resolveSystemIdForPlanetIdFromGalaxy(id);
+  if (!systemId) return null;
+  const system = resolveCoreOpenStarSystem(systemId);
+  const planet = system?.planets.find((p) => p.id === id);
+  if (!system || !planet) return null;
+  return { planetId: id, planet, system };
+}
+
+/** ArcCore daily batch · 경제 · UI — 코어 개방 행성 순회 (C-tier synth 제외) */
+export function forEachCoreOpenGameplayPlanet(
+  fn: (ref: CoreOpenGameplayPlanetRef) => void,
+): void {
+  for (const planetId of listCoreOpenGameplayPlanetIds()) {
+    const ref = resolveCoreOpenGameplayPlanetRef(planetId);
+    if (ref) fn(ref);
+  }
+}
 
 export function isBaselineCoreOpenSystemId(systemId: string): boolean {
   return BASELINE_CORE_OPEN_SYSTEM_IDS.has(systemId.trim());

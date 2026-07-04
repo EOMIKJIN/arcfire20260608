@@ -102,7 +102,7 @@ function runGalaxyMapReleaseCore(reason: GalaxyMapStageReleaseReason, opts: Gala
   if (reason === 'transit_combat_nav') {
     resetGalaxyMapDeferredTiles();
     resetGalaxyMapPresentationState();
-    releaseGalaxyMapScrollIfRegistered();
+    /** scroll teardown은 navigateToCombatAfterTeardown → stopGalaxyMapInteractionLoops 에서 이미 수행. global unregister 재호출 시 freezeOnBlur 복귀 scroll re-arm 실패. */
     resetHubInboundDroneDodgeBridge();
     emitMemProfileMarker({ stage: 'galaxy_map', event: 'transit_combat_nav' });
     return;

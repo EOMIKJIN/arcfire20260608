@@ -6,6 +6,18 @@
         "command": ".cursor/hooks/on-session-start-agent-routing.cjs"
       },
       {
+        "command": ".cursor/hooks/on-session-start-pss-pre-dev-brief.cjs",
+        "timeout": 5
+      },
+      {
+        "command": ".cursor/hooks/on-session-start-kim-claude-handoff-review.cjs",
+        "timeout": 5
+      },
+      {
+        "command": ".cursor/hooks/on-session-start-mem-post-dev-trigger.cjs",
+        "timeout": 8
+      },
+      {
         "command": ".cursor/hooks/on-session-start-monitor-autostart.cjs",
         "timeout": 20
       },
@@ -21,6 +33,10 @@
     "beforeSubmitPrompt": [
       {
         "command": ".cursor/hooks/on-before-submit-prompt-agent-routing.cjs",
+        "timeout": 5
+      },
+      {
+        "command": ".cursor/hooks/on-before-submit-prompt-pss-pre-dev-gate.cjs",
         "timeout": 5
       },
       {

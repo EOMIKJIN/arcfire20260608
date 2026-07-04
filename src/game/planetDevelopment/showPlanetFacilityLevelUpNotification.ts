@@ -7,7 +7,10 @@ import { t, getLocale } from '../../i18n';
 import { resolvePlanetDisplayName } from '../../i18n/systemText';
 import { resolvePlanetById } from '../../world/resolvePlanetById';
 import { showArcNotificationAlert } from '../../utils/showArcAlert';
-import { PLANET_DEV_LEVEL_UP_ALERT_ID_PREFIX } from '../../ui/overlay/overlayAlertContract';
+import {
+  ARC_ALERT_DEFAULT_AUTO_DISMISS_MS,
+  PLANET_DEV_LEVEL_UP_ALERT_ID,
+} from '../../ui/overlay/overlayAlertContract';
 import { getPlanetDevelopmentCatalogRow } from './planetDevelopmentCatalog';
 import { resolveModuleIdFromFacilityType } from './planetFacilityLevelResolver';
 
@@ -35,7 +38,6 @@ export function showPlanetFacilityLevelUpNotification(
   const planetLabel = planet ? resolvePlanetDisplayName(planet, getLocale()) : planetId;
   const facilityLabel = resolveFacilityLabel(moduleId, facilityType);
   const isInstall = newLevel === 1;
-  const alertId = `${PLANET_DEV_LEVEL_UP_ALERT_ID_PREFIX}-${planetId}-${moduleId ?? facilityType}-${newLevel}`;
 
   InteractionManager.runAfterInteractions(() => {
     showArcNotificationAlert(
@@ -51,7 +53,10 @@ export function showPlanetFacilityLevelUpNotification(
           facility: facilityLabel,
           level: newLevel,
         }),
-      { id: alertId },
+      {
+        id: PLANET_DEV_LEVEL_UP_ALERT_ID,
+        autoDismissMs: ARC_ALERT_DEFAULT_AUTO_DISMISS_MS,
+      },
     );
   });
 }

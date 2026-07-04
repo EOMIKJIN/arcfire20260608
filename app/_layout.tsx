@@ -57,12 +57,9 @@ import {
   runProductionBootBootstrap,
 } from '../src/game/productionBootBootstrap';
 import {
-  compareSemver,
-  fetchAppUpdatePolicyFromArcCore,
-  type AppUpdatePolicy,
+  resolveAppUpdateGateAfterBoot,
 } from '../src/firebase/appUpdatePolicy';
 import { runCriticalSessionAssetPrewarm } from '../src/assetPipeline/runCriticalSessionAssetPrewarm';
-import { withBootTimeout } from '../src/utils/withBootTimeout';
 import { buildCsvStaticIndexesMinimal } from '../src/game/buildCsvStaticIndexes';
 import { installNativeReclaimBootstrap } from '../src/game/nativeReclaim/nativeReclaimBootstrap';
 import { markBootPerf, logBootPerfSummary } from '../src/game/bootPerformance';
@@ -71,6 +68,7 @@ import { useAppBootStore } from '../src/store/appBootStore';
 import { installDevMetroReloadGuard, registerDevHotModuleDisposeGuard } from '../src/game/devMetroReloadGuard';
 import { resumePlayerToLastHubPlanet } from '../src/game/galaxyMapSessionResume';
 import { IdleSessionRestartGuard } from '../src/components/IdleSessionRestartGuard';
+import { GameSaveRestorePendingConsumer } from '../src/firebase/gameSaveBackup/GameSaveRestorePendingConsumer';
 
 type UpdateGateState = {
   visible: boolean;
@@ -162,7 +160,9 @@ export default function RootLayout() {
         markBootPerf('storage_load_end');
         useClanWarFoundationStore
           .getState()
-          .syncNpcAiClanTerritoryFromGalaxy(useWorldStore.getState().systems);
+          .syncNpcAiClanTerritoryFromGalaxy(useWorldStore.getState().systems, {
+            skipOccupationSeedPipeline: true,
+          });
         ensureCaptainsRegistered(NPC_CAPTAINS_FROM_CSV.map(c => c.id));
         resumePlayerToLastHubPlanet();
         const p = usePlayerStore.getState().player;
@@ -208,41 +208,19 @@ export default function RootLayout() {
       void syncUserDataWithServer();
       try {
         if (!authUser) return;
-        await withBootTimeout(
-          'ensureArcCoreCollectionSeeded',
-          12_000,
-          () => ensureArcCoreCollectionSeeded({ uid: authUser!.uid }),
-          undefined,
-        );
+        void ensureArcCoreCollectionSeeded({ uid: authUser.uid }).catch(() => {
+          /* 오프라인 — arccore 시드 생략 */
+        });
         void fetchArcCoreRtdbBootSyncOnce({ uid: authUser!.uid }).catch(() => {
           /* RTDB 미배포·오프라인 — 번들 SIM 정본, [boot] 경고 없음 */
         });
-        const currentVersion = resolveAppVersion();
-        const emptyPolicy: AppUpdatePolicy = {
-          latestVersion: null,
-          minSupportedVersion: null,
-          playStoreUrl: null,
-        };
-        const updatePolicy = await withBootTimeout(
-          'fetchAppUpdatePolicyFromArcCore',
-          10_000,
-          fetchAppUpdatePolicyFromArcCore,
-          emptyPolicy,
-        );
-        const latestVersion = updatePolicy.latestVersion;
-        const minSupportedVersion = updatePolicy.minSupportedVersion;
-        const latestAhead = latestVersion ? compareSemver(currentVersion, latestVersion) < 0 : false;
-        const belowMinimum = minSupportedVersion
-          ? compareSemver(currentVersion, minSupportedVersion) < 0
-          : false;
-        if (latestAhead || belowMinimum) {
-          setUpdateGate({
-            visible: true,
-            required: belowMinimum,
-            latestVersion: latestVersion ?? minSupportedVersion ?? currentVersion,
-            playStoreUrl: updatePolicy.playStoreUrl,
+        void resolveAppUpdateGateAfterBoot(resolveAppVersion())
+          .then((gate) => {
+            if (gate) setUpdateGate(gate);
+          })
+          .catch(() => {
+            /* 오프라인 — 업데이트 안내 생략 */
           });
-        }
       } catch {
         /* 부팅 후 백그라운드 — 실패해도 로컬 플레이 진행 */
       }
@@ -412,20 +390,21 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={styles.root}>
       <IdleSessionRestartGuard>
-      <StatusBar style="light" backgroundColor="#060A14" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          animation: 'fade',
-          contentStyle: { backgroundColor: COLORS.bg_primary },
-        }}
-      >
-        <Stack.Screen name="index" />
-        <Stack.Screen name="(game)" />
-      </Stack>
-      <ArcOverlayHost />
-      <IngameDialogHost />
-      <LevelUpOverlayBridge />
+        <GameSaveRestorePendingConsumer />
+        <StatusBar style="light" backgroundColor="#060A14" />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            animation: 'fade',
+            contentStyle: { backgroundColor: COLORS.bg_primary },
+          }}
+        >
+          <Stack.Screen name="index" />
+          <Stack.Screen name="(game)" />
+        </Stack>
+        <ArcOverlayHost />
+        <IngameDialogHost />
+        <LevelUpOverlayBridge />
       </IdleSessionRestartGuard>
     </GestureHandlerRootView>
   );

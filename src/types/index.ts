@@ -402,6 +402,19 @@ export type NpcCaptainOperationalState = 'combat' | 'general' | 'neutral' | 'hos
 /** 전투 진입 시 함장 소속 팀 (`orange` = 자유교전/FFA) */
 export type NpcCaptainCombatTeam = 'red' | 'blue' | 'orange' | 'none';
 
+/** AI 클랜 레지스트리 (`tables/content/ai_clan_registry.csv`) */
+export interface AiClanRegistryRow {
+  id: string;
+  displayNameKo: string;
+  displayNameEn: string;
+  zoneAffinity: 'safe' | 'neutral' | 'pvp' | null;
+  megaFactionId: string;
+  leaderCaptainId: string;
+  /** territory hub가 있는 구역 클랜만 safe/neutral/pvp */
+  territoryHubZone: 'safe' | 'neutral' | 'pvp' | null;
+  notesKo: string;
+}
+
 /** NPC 함장 DB 레코드 (탑승·임관은 전함 레코드의 captainId로 연결) */
 export interface NpcCaptain {
   id: string;
@@ -437,6 +450,10 @@ export interface NpcCaptain {
   aiClanName: string;
   /** 거점을 둘 구역(safe/neutral/pvp). 비리더는 null */
   aiClanZone: 'safe' | 'neutral' | 'pvp' | null;
+  /** AI 클랜 레지스트리 id (`ai_clan_registry.csv`). 비소속은 빈 문자열 */
+  aiClanId: string;
+  /** none | leader | member | officer */
+  aiClanRole: 'none' | 'leader' | 'member' | 'officer';
   /**
    * 아크 궤도 **수송선** 풀(등록 전함·함장) — `npc_arc_presence_ship_*` 등.
    * `listArcNpcTrafficRowsFromTables`·`nearbyOrbitPresenceSystem` 보충 슬롯이 동일 CSV 행을 참조한다.

@@ -17,8 +17,9 @@ export const TERRITORIAL_OCCUPATION_ALERT_ID = 'territorial-occupation-alert';
 /** 일일 배치 요약 팝업 — 허브 1회 표시 */
 export const ARC_DAILY_OPS_SUMMARY_ALERT_ID = 'arc-daily-ops-summary-alert';
 
-/** 행성개발 설치·레벨업 완료 — 30초 자동 닫힘(항목별 id) */
+/** 행성개발 설치·레벨업 완료 — 30초 자동 닫힘 · 동일 id 교체(스택 누적 방지) */
 export const PLANET_DEV_LEVEL_UP_ALERT_ID_PREFIX = 'planet-dev-level-up';
+export const PLANET_DEV_LEVEL_UP_ALERT_ID = `${PLANET_DEV_LEVEL_UP_ALERT_ID_PREFIX}-alert`;
 
 /**
  * alert autoDismissMs 해석 — undefined → 30s, 0 → 비활성, 양수 → 해당 ms

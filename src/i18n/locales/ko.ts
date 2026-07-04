@@ -289,6 +289,8 @@ export const KO_DICTIONARY: I18nDictionary = {
   'worldmap.deliverFailBody': '도착했지만 배달 화물이 부족합니다. 화물을 다시 준비하세요.',
   'worldmap.moveBlockedTitle': '이동 불가',
   'worldmap.moveBlockedBody': '인접한 성계로만 이동할 수 있습니다.',
+  'worldmap.redTerritoryTitle': '레드 점령지 진입 불가',
+  'worldmap.redTerritoryBody': '레드 점령 행성에는 체류할 수 없습니다. 전투 후 중립화·소유권 확보가 필요합니다.',
   'worldmap.pvpTitle': '⚠ PvP 구역',
   'worldmap.pvpBody': '이 구역에서는 다른 파일럿의 공격을 받을 수 있습니다.\n계속하시겠습니까?',
   'worldmap.btn.cancel': '취소',
@@ -418,6 +420,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'tavern.newMissions.noPlanet': '행성 정보를 확인할 수 없습니다.',
   'tavern.newMissions.levelRequired': '요구 Lv.{level}',
   'tavern.newMissions.client': '의뢰인 {name} · {rank}',
+  'tavern.newMissions.clientClan': '의뢰인 {name} · {rank} · {clan}',
   'tavern.newMissions.stateAvailable': '수락 가능',
   'tavern.newMissions.stateLevelLocked': '레벨 부족',
   'tavern.newMissions.stateInProgress': '수행 중',
@@ -1206,6 +1209,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   // ── 구역 라벨 (zone) ──
   'zone.safe': '안전 구역',
   'zone.neutral': '중립 구역',
+  'zone.occupied': '점유지역',
   'zone.pvp': 'PvP 구역',
   'zone.endgame': '심층 구역',
 

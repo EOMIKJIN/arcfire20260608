@@ -163,3 +163,11 @@
 - `effectValue` number nullable (passive 권장)
 - `effectDescription` string
 - `icon` string
+
+## 8) 아이템 정의 (`item_defs.csv`) — 행성 소유권 (2026-07-02~)
+
+- **단일 정본**: `tables/content/item_defs.csv` only — `id=ownership_{planetId}` · `type=planet_ownership` · `tradeable=true`
+- A(21): 수동 행 · synth(79): `synth_system_colonization.csv` → `sync-synth-ownership-into-item-defs.mjs` append
+- **금지**: 별도 ownership CSV · 빌드 merge-only · 런타임 lazy ItemDef
+- 무역 진열: item_defs 등록 ≠ 진열 — synth는 unlock+phase≥1 eligibility · 카탈로그 resync는 hydrate/unlock 이벤트만
+- 감사: `npx tsx tools/debug/audit-planet-ownership-item-defs.ts`

@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-07-02T07:20:53.774Z",
-  "kstDayKey": "2026-07-02",
+  "timestamp": "2026-07-03T15:01:22.981Z",
+  "kstDayKey": "2026-07-04",
   "overall": "WARN",
   "convoyDaily": {
     "ran": true,
-    "kstDayKey": "2026-07-02",
+    "kstDayKey": "2026-07-04",
     "supplyRoundTripsOk": 18,
     "supplyRoundTripsFailed": 1,
     "demandPlanetsCovered": 19,
@@ -51,7 +51,7 @@
         "upkeepDaily": 800
       },
       "omega_hub": {
-        "owner": "BLUE",
+        "owner": "RED",
         "upkeepDaily": 800
       },
       "helios_core": {
@@ -107,8 +107,8 @@
         "upkeepDaily": 800
       }
     },
-    "redDailyTotal": 6400,
-    "blueDailyTotal": 6400,
+    "redDailyTotal": 7200,
+    "blueDailyTotal": 5600,
     "occupiedPlanetCount": 21
   },
   "tradePlanetsWithRevenue": 19,
@@ -352,7 +352,7 @@
       "playerWalletPending": 0,
       "grossCredits": 38526,
       "upkeepExpectedDaily": 1493,
-      "occupierSeed": "BLUE",
+      "occupierSeed": "RED",
       "revenueOk": true,
       "zeroReason": ""
     },

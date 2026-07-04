@@ -44,15 +44,22 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
     return () => clearTimeout(t);
   }, [entry?.id]);
 
+  const alertAutoDismissKey =
+    entry?.kind === 'alert'
+      ? `${entry.id}|${entry.autoDismissMs ?? 0}|${entry.title}|${entry.message}`
+      : null;
+
   useEffect(() => {
-    if (entry?.kind !== 'alert') return;
-    const autoMs = entry.autoDismissMs;
+    if (!alertAutoDismissKey) return;
+    const top = useArcOverlayStore.getState().top();
+    if (top?.kind !== 'alert') return;
+    const autoMs = top.autoDismissMs;
     if (!autoMs || autoMs <= 0) return;
     const timer = setTimeout(() => {
       dismiss();
     }, autoMs);
     return () => clearTimeout(timer);
-  }, [dismiss, entry]);
+  }, [dismiss, alertAutoDismissKey]);
 
   const handleBackdrop = useCallback(() => {
     if (!entry || entry.dismissOnBackdrop === false) return;

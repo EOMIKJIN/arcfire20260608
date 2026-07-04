@@ -1,5 +1,6 @@
 import { BaseArcSubCore } from './BaseArcSubCore';
 import { dispatchArcCoreCommand, subscribeArcCoreCommands, type ArcCoreCommand } from '../ArcCoreCommandBus';
+import { listCoreOpenGameplayPlanetIds } from '../../world/coreOpenGameplayPlanets';
 import { useWorldStore } from '../../store/worldStore';
 import {
   useArcNpcTrafficStore,
@@ -291,16 +292,7 @@ export class AiNpcSubCore extends BaseArcSubCore {
   }
 
   private listAllPlanetIds(): string[] {
-    const world = useWorldStore.getState();
-    const unlocked = new Set(world.unlockedSystemIds);
-    const out: string[] = [];
-    for (const system of Object.values(world.systems)) {
-      if (system.id.startsWith('synth_') && !unlocked.has(system.id)) continue;
-      for (const planet of system.planets) {
-        out.push(planet.id);
-      }
-    }
-    return out;
+    return listCoreOpenGameplayPlanetIds();
   }
 
   /** 앱 재기동 — 잠금 해제 synth에 궤도 수송 1척(idempotent) */

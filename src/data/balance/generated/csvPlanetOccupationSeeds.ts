@@ -7,7 +7,7 @@ export const PlanetOccupationSeeds_FROM_BALANCE_CSV = [
   { "planetId": "eden_city", "systemId": "new_eden", "initialOwner": "BLUE", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "뉴에덴 프라임" },
   { "planetId": "iron_remnant", "systemId": "iron_cross", "initialOwner": "BLUE", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "아이언 크로스" },
   { "planetId": "draco_haven", "systemId": "draco_nebula", "initialOwner": "BLUE", "occupationCombatEnabled": "true", "contestedZone": "true", "alertLabelKo": "드라코 성운" },
-  { "planetId": "omega_hub", "systemId": "omega_station", "initialOwner": "BLUE", "occupationCombatEnabled": "true", "contestedZone": "true", "alertLabelKo": "오메가 스테이션" },
+  { "planetId": "omega_hub", "systemId": "omega_station", "initialOwner": "RED", "occupationCombatEnabled": "true", "contestedZone": "true", "alertLabelKo": "오메가 스테이션" },
   { "planetId": "helios_core", "systemId": "helios", "initialOwner": "NEUTRAL", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "헬리오스" },
   { "planetId": "sirius_border", "systemId": "sirius", "initialOwner": "RED", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "시리우스 변경" },
   { "planetId": "titan_ruins", "systemId": "titan_gate", "initialOwner": "NEUTRAL", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "타이탄 게이트" },

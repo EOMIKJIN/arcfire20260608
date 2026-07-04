@@ -5,7 +5,7 @@
 import { invalidateMineralDepositProfileCache } from '../../world/mineralDepositModel';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { usePlanetMineralLedgerStore } from '../../store/planetMineralLedgerStore';
-import { useWorldStore } from '../../store/worldStore';
+import { forEachCoreOpenGameplayPlanet } from '../../world/coreOpenGameplayPlanets';
 import { resolvePlanetMineralLedgerPolicy } from './planetMineralLedgerPolicy';
 
 export type PlanetMineralLedgerDailyPassResult = {
@@ -24,14 +24,12 @@ export function runPlanetMineralLedgerDailyPass(): PlanetMineralLedgerDailyPassR
   if (!ledger.loaded) return { ran: false, planetsTouched: 0 };
 
   let planetsTouched = 0;
-  for (const sys of Object.values(useWorldStore.getState().systems)) {
-    for (const planet of sys.planets) {
-      const runtime = core.getPlanetCoreRuntime(planet.id);
-      if (!runtime) continue;
-      ledger.applyDailyRegenForPlanet(planet.id, runtime.resource);
-      planetsTouched += 1;
-    }
-  }
+  forEachCoreOpenGameplayPlanet(({ planetId }) => {
+    const runtime = core.getPlanetCoreRuntime(planetId);
+    if (!runtime) return;
+    ledger.applyDailyRegenForPlanet(planetId, runtime.resource);
+    planetsTouched += 1;
+  });
 
   invalidateMineralDepositProfileCache();
   void ledger.persistLocal();

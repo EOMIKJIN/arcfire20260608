@@ -76,6 +76,10 @@ import {
   filterTradePortCatalogForBuyMarket,
   filterTradePortCatalogForPlayer,
 } from '../../src/arcCore/balance/tradePortCatalogPolicy';
+import {
+  isPlanetOwnershipDeedCatalogEligible,
+  resolvePlanetOwnershipDeedItemId,
+} from '../../src/arcCore/balance/planetOwnershipDeedCatalog';
 import { isSurvivalPodCapitalShipItemId, isSurvivalPodNpcShipId } from '../../src/game/playerSurvivalPod';
 import { resolvePlayerLifetimeCredits } from '../../src/game/resolvePlayerLifetimeCredits';
 import {
@@ -141,7 +145,9 @@ function resolveTradePortListedItemIds(
   playerLevel: number,
   progresses: Record<string, MissionProgress>,
 ): string[] {
-  const base = filterTradePortCatalogForBuyMarket(getPlanetTradePortItemIds(planetId), playerLevel);
+  let catalogIds = getPlanetTradePortItemIds(planetId);
+  // 카탈로그 resync는 tradeScreenSession·arcMemoryGovernor warm 에서만 — 렌더 dispatch 금지
+  const base = filterTradePortCatalogForBuyMarket(catalogIds, playerLevel);
   return mergeQuestTradePortItemIds(planetId, base, progresses);
 }
 
@@ -504,7 +510,7 @@ export default function TradeScreen() {
     tradePlanetIdRef.current = planet.id;
     if (market.length === 0) return;
 
-    const ownershipId = `ownership_${planet.id}`;
+    const ownershipId = resolvePlanetOwnershipDeedItemId(planet.id);
     if (market.some((m) => m.goodId === ownershipId)) {
       setBuySubTab('item');
       return;

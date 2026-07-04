@@ -20,7 +20,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { router, useFocusEffect } from 'expo-router';
 import { useT } from '../../src/i18n';
-import { resolveZoneLabel } from '../../src/i18n/zoneText';
+import { resolvePlanetZoneDisplayLabel } from '../../src/i18n/zoneText';
+import { resolveCoreOpenStarSystem } from '../../src/world/coreOpenGameplayPlanets';
 import {
   resolveStarSystemDescription,
   resolveStarSystemDisplayName,
@@ -50,7 +51,11 @@ import { resolveTransitEncounterChance } from '../../src/missions/missionCombatE
 import { useTransitCombatSessionStore } from '../../src/game/transitCombat/transitCombatSession';
 import { useClanWarFoundationStore } from '../../src/store/clanWarFoundationStore';
 import { resolveTempClanColor } from '../../src/clanWar/tempClanColors';
-import { resolvePlanetHubOwnershipPlate } from '../../src/clanWar/planetOwnershipModel';
+import {
+  resolveEffectiveMapOccupierClanId,
+  resolvePlanetHubOwnershipPlate,
+} from '../../src/clanWar/planetOwnershipModel';
+import { resolvePlayerPlanetStayBlock } from '../../src/clanWar/planetTerritoryPlayerAccess';
 import {
   EXPANSION_GATEWAYS_PER_DIRECTION,
   GAMEPLAY_SYSTEM_IDS,
@@ -215,6 +220,7 @@ export default function WorldMapScreen() {
   const spendCredits = usePlayerStore((s) => s.spendCredits);
   const { systems, selectedSystemId, selectSystem, markVisited, visitedSystemIds } = useWorldStore();
   const unlockedSystemIds = useWorldStore((s) => s.unlockedSystemIds);
+  const synthColonizationPhaseByPlanetId = useWorldStore((s) => s.synthColonizationPhaseByPlanetId);
 
   const [showPanel, setShowPanel] = useState(false);
   const [shipTransit, setShipTransit] = useState<{
@@ -256,6 +262,8 @@ export default function WorldMapScreen() {
   /** runOnUI 스크롤 — scrollAlive=1 이전에 실행하면 executeSync SIGSEGV (장기 idle 후 출발) */
   const pendingScrollTargetRef = useRef<{ x: number; y: number } | null>(null);
   const scrollGesturesArmedRef = useRef(false);
+  /** 이동중 전투 복귀 — arrival UI 1회 + scroll gate 재-arm */
+  const pendingTransitCombatReturnRef = useRef(false);
 
   const settleTransitWait = useCallback((finished: boolean) => {
     if (transitFallbackTimerRef.current) {
@@ -423,9 +431,11 @@ export default function WorldMapScreen() {
     isMovingSv.value = isMoving ? 1 : 0;
   }, [isMoving, isMovingSv]);
 
-  useEffect(() => {
-    return registerGalaxyMapScrollHandles({ scrollX, scrollY, scrollAliveSv });
-  }, [scrollX, scrollY, scrollAliveSv]);
+  useFocusEffect(
+    useCallback(() => {
+      return registerGalaxyMapScrollHandles({ scrollX, scrollY, scrollAliveSv });
+    }, [scrollX, scrollY, scrollAliveSv]),
+  );
 
   /** 진입·currentSystemId·뷰포트 크기 변경 시 1회만 중앙 정렬 — 노드 탭·패널과 무관 */
   const autoScrollKeyRef = useRef('');
@@ -551,6 +561,7 @@ export default function WorldMapScreen() {
   /** scrollAlive=1 + runOnUI scroll 적용 후에만 SVG·gesture mount — STAGE 겹침 views 폭주 방지 */
   const [mapInteractionReady, setMapInteractionReady] = useState(false);
   const clanWarHydrated = useClanWarFoundationStore((s) => s.hydrated);
+  const clanWarClans = useClanWarFoundationStore((s) => s.clans);
   /**
    * moveToSystem은 currentPlanetId=null — 성계 첫 행성으로 키를 바꾸면
    * 아르카디아↔베가 이동마다 heavyUi 재로딩·mapInteraction gate 고착(검은 화면).
@@ -569,10 +580,17 @@ export default function WorldMapScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      setGalaxyLoadingMinHold(false);
-      const t = setTimeout(() => setGalaxyLoadingMinHold(true), GALAXY_MAP_LOADING_MIN_MS);
+      const transitReturn = pendingTransitCombatReturnRef.current;
+      if (transitReturn) {
+        setGalaxyLoadingMinHold(true);
+      } else {
+        setGalaxyLoadingMinHold(false);
+      }
+      const t = transitReturn
+        ? null
+        : setTimeout(() => setGalaxyLoadingMinHold(true), GALAXY_MAP_LOADING_MIN_MS);
       return () => {
-        clearTimeout(t);
+        if (t) clearTimeout(t);
         setGalaxyLoadingMinHold(false);
       };
     }, []),
@@ -581,6 +599,7 @@ export default function WorldMapScreen() {
   useFocusEffect(
     useCallback(() => {
       if (!useTransitCombatSessionStore.getState().consumeWorldmapArrivalUi()) return;
+      pendingTransitCombatReturnRef.current = true;
       hubNavGate.reset();
       setIsMoving(false);
       setShipTransit(null);
@@ -602,11 +621,28 @@ export default function WorldMapScreen() {
       isMovingSv,
       moveProgress,
       selectSystem,
-      setShowPanel,
       worldmapSession.phase,
       worldmapSession.retry,
     ]),
   );
+
+  useEffect(() => {
+    if (!pendingTransitCombatReturnRef.current) return;
+    if (!isFocusedRef.current) return;
+    if (worldmapSession.phase !== 'ready') return;
+    if (scrollGesturesArmedRef.current && mapInteractionReady) {
+      pendingTransitCombatReturnRef.current = false;
+      return;
+    }
+    hubNavGate.reset();
+    armGalaxyMapScrollGestures();
+    pendingTransitCombatReturnRef.current = false;
+  }, [
+    worldmapSession.phase,
+    mapInteractionReady,
+    armGalaxyMapScrollGestures,
+    hubNavGate,
+  ]);
 
   const mapAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: -scrollX.value }, { translateY: -scrollY.value }],
@@ -959,32 +995,30 @@ export default function WorldMapScreen() {
     }
   }, [hiddenUndiscoveredSystems, hiddenUndiscoveredByDirection, deferredTileCount, loadedDeferredTileCount, activeDeferredDirections]);
 
-  const selectedSystem = selectedSystemId ? systems[selectedSystemId] : null;
+  const selectedSystem = useMemo(() => {
+    if (!selectedSystemId) return null;
+    return resolveCoreOpenStarSystem(selectedSystemId) ?? systems[selectedSystemId] ?? null;
+  }, [selectedSystemId, systems, unlockedSystemIds, synthColonizationPhaseByPlanetId]);
   const planetHolds = useClanWarFoundationStore((s) => s.planetHolds);
-  const clanOwnerColorBySystemId = useMemo(() => {
-    const out: Record<string, string | undefined> = {};
-    for (const sys of visibleSystemsList) {
-      const p0 = sys.planets[0];
-      if (!p0) continue;
-      const hold = planetHolds[p0.id];
-      if (!hold || hold.kind === 'neutral') continue;
-      out[sys.id] = resolveTempClanColor(hold.occupierClanId);
-    }
-    return out;
-  }, [visibleSystemsList, planetHolds]);
-
-  /** 보로노이 국경선 — 성계별 점유 클랜 id */
   const occupierClanIdBySystemId = useMemo(() => {
     const out: Record<string, string | undefined> = {};
     for (const sys of visibleSystemsList) {
       const p0 = sys.planets[0];
       if (!p0) continue;
-      const hold = planetHolds[p0.id];
-      if (!hold || hold.kind === 'neutral') continue;
-      out[sys.id] = hold.occupierClanId;
+      const occupier = resolveEffectiveMapOccupierClanId(p0.id, planetHolds[p0.id]);
+      if (!occupier) continue;
+      out[sys.id] = occupier;
     }
     return out;
   }, [visibleSystemsList, planetHolds]);
+
+  const clanOwnerColorBySystemId = useMemo(() => {
+    const out: Record<string, string | undefined> = {};
+    for (const [sysId, occupier] of Object.entries(occupierClanIdBySystemId)) {
+      if (occupier) out[sysId] = resolveTempClanColor(occupier);
+    }
+    return out;
+  }, [occupierClanIdBySystemId]);
 
   const territoryMapBounds = useMemo(() => ({
     x0: MAP_PAD_PX,
@@ -1018,7 +1052,7 @@ export default function WorldMapScreen() {
         const p0 = selectedSystem?.planets[0];
         if (!p0) return null;
         const h = s.planetHolds[p0.id];
-        if (!h) return null;
+        if (!h || h.kind === 'neutral' || h.occupierClanId === 'neutral') return null;
         const plate = resolvePlanetHubOwnershipPlate(h, s.clans, locale);
         if (!plate) return null;
         const nm = plate.clanName;
@@ -1355,6 +1389,12 @@ export default function WorldMapScreen() {
       const planet = selectedSystem.planets[0];
       try {
         if (planet) {
+          const stayBlock = resolvePlayerPlanetStayBlock(planet.id);
+          if (stayBlock) {
+            hubNavGate.reset();
+            showArcAlert(t('worldmap.redTerritoryTitle'), t('worldmap.redTerritoryBody'));
+            return;
+          }
           landOnPlanet(planet.id);
           await persist();
         }
@@ -1553,7 +1593,15 @@ export default function WorldMapScreen() {
                 {resolveStarSystemDisplayName(selectedSystem, locale)}
               </Text>
               <Text style={[styles.panelZone, { color: ZONE_COLORS[selectedSystem.zone] ?? COLORS.ink_mid }]}>
-                {t('worldmap.panel.zoneLine', { zone: resolveZoneLabel(selectedSystem.zone, t), level: selectedSystem.enemyLevel })}
+                {t('worldmap.panel.zoneLine', {
+                  zone: resolvePlanetZoneDisplayLabel(
+                    selectedSystem.planets[0]?.id ?? '',
+                    selectedSystem.zone,
+                    t,
+                    clanWarClans,
+                  ),
+                  level: selectedSystem.enemyLevel,
+                })}
               </Text>
             </View>
             <TouchableOpacity

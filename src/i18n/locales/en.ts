@@ -290,6 +290,8 @@ export const EN_DICTIONARY: I18nDictionary = {
   'worldmap.deliverFailBody': 'You arrived but lack the delivery cargo. Prepare the cargo again.',
   'worldmap.moveBlockedTitle': 'Cannot Travel',
   'worldmap.moveBlockedBody': 'You can only travel to adjacent systems.',
+  'worldmap.redTerritoryTitle': 'Red Territory Blocked',
+  'worldmap.redTerritoryBody': 'You cannot stay on Red-occupied planets. Neutralization and ownership are required first.',
   'worldmap.pvpTitle': '⚠ PvP Zone',
   'worldmap.pvpBody': 'You may be attacked by other pilots in this zone.\nContinue?',
   'worldmap.btn.cancel': 'Cancel',
@@ -419,6 +421,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'tavern.newMissions.noPlanet': 'Planet context unavailable.',
   'tavern.newMissions.levelRequired': 'Req. Lv.{level}',
   'tavern.newMissions.client': 'Client {name} · {rank}',
+  'tavern.newMissions.clientClan': 'Client {name} · {rank} · {clan}',
   'tavern.newMissions.stateAvailable': 'Available',
   'tavern.newMissions.stateLevelLocked': 'Level locked',
   'tavern.newMissions.stateInProgress': 'In progress',
@@ -1204,6 +1207,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   // ── Zone labels (zone) ──
   'zone.safe': 'Safe Zone',
   'zone.neutral': 'Neutral Zone',
+  'zone.occupied': 'Occupied Territory',
   'zone.pvp': 'PvP Zone',
   'zone.endgame': 'Deep Zone',
 

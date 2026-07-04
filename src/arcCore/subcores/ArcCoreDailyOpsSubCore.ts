@@ -10,6 +10,7 @@ import {
 import { runArcCoreDailyOpsBatch } from '../schedule/runArcCoreDailyOpsBatch';
 import { formatArcCoreOpsDayKey, resolveArcCoreDailyOpsPolicy } from '../schedule/arcCoreDailyOpsPolicy';
 import { setArcCoreDailyOpsSummaryPending } from '../schedule/arcCoreDailyOpsSummaryPending';
+import { runArcCorePlanetDevWallTick } from '../planetDevelopment/runArcCorePlanetDevWallTick';
 import { usePlayerStore } from '../../store/playerStore';
 
 /**
@@ -38,6 +39,7 @@ export class ArcCoreDailyOpsSubCore extends BaseArcSubCore {
     const now = Date.now();
     if (now - this.lastProbeMs < 60_000) return;
     this.lastProbeMs = now;
+    void runArcCorePlanetDevWallTick(now);
     void this.probeDailyBatch('tick');
   }
 

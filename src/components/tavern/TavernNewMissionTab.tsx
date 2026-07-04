@@ -10,6 +10,7 @@ import {
 } from '../../i18n/missionText';
 import { formatCredits } from '../../utils/formatCredits';
 import { getNpcCaptain } from '../../npc/npcFleetRegistry';
+import { resolveCaptainAiClanDisplayName } from '../../clanWar/aiClanRegistry';
 import { tryAcceptInstanceMissionWithFeedback } from '../../missions/instanceMissionAcceptFeedback';
 import {
   listTavernInstanceMissionOffers,
@@ -81,6 +82,7 @@ function InstanceMissionCard({
   const t = useT();
   const locale = useAppSettingsStore((s) => s.locale);
   const captain = mission.offerCaptainId ? getNpcCaptain(mission.offerCaptainId) : undefined;
+  const captainClanName = captain ? resolveCaptainAiClanDisplayName(captain, locale) : null;
   const title = resolveMissionTitleText(mission, t, locale);
   const description = resolveMissionDescText(mission, t, locale);
   const canAccept = state === 'available';
@@ -109,7 +111,13 @@ function InstanceMissionCard({
       <PlanetFacilityCardTitleBlock title={title} titleNumberOfLines={2} />
       {captain ? (
         <Text style={[fs.cardMeta, styles.clientMeta]}>
-          {t('tavern.newMissions.client', { name: captain.displayName, rank: captain.rank })}
+          {captainClanName
+            ? t('tavern.newMissions.clientClan', {
+                name: captain.displayName,
+                rank: captain.rank,
+                clan: captainClanName,
+              })
+            : t('tavern.newMissions.client', { name: captain.displayName, rank: captain.rank })}
         </Text>
       ) : null}
       <Text style={[fs.cardBody, styles.cardBodyGap]}>{description}</Text>

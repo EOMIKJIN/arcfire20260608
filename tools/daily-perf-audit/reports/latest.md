@@ -1,4 +1,4 @@
-# Daily audit — 2026-07-02T15:00:09.423Z
+# Daily audit — 2026-07-04T15:00:08.037Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -12,17 +12,18 @@
 
 ```
 > arcfire-online@0.1.1 build:content-tables
-> node tools/gen-mineral-region-members.mjs && node tools/balance-tables/rebalance-weapon-ttk.mjs && node tools/content-tables/gen-weapon-trade-listing-policy.mjs && node tools/content-tables/sync-weapon-trade-listing.mjs && node tools/content-tables/patch-item-defs-en.mjs && node tools/content-tables/patch-missions-en.mjs && node tools/content-tables/patch-npc-ships-en.mjs && node tools/content-tables/patch-planets-en.mjs && node tools/content-tables/generate-arc-seed-transport-rows.mjs && node tools/content-tables/build-content-from-csv.mjs && node tools/content-tables/audit-npc-fleet-master.mjs && node tools/content-tables/audit-mission-quest-placements.mjs
+> node tools/gen-mineral-region-members.mjs && node tools/balance-tables/rebalance-weapon-ttk.mjs && node tools/content-tables/gen-weapon-trade-listing-policy.mjs && node tools/content-tables/sync-weapon-trade-listing.mjs && node tools/content-tables/patch-item-defs-en.mjs && node tools/content-tables/patch-missions-en.mjs && node tools/content-tables/patch-npc-ships-en.mjs && node tools/content-tables/patch-planets-en.mjs && node tools/content-tables/generate-arc-seed-transport-rows.mjs && node tools/content-tables/sync-synth-ownership-into-item-defs.mjs && node tools/content-tables/build-content-from-csv.mjs && node tools/content-tables/audit-npc-fleet-master.mjs && node tools/content-tables/audit-mission-quest-placements.mjs
 
 [gen-mineral-region-members] 100 rows
 [rebalance-weapon-ttk] updated 0 weapons in weapon_list.csv
 weapon_trade_listing_policy: shop=83 excluded_npc_clone=20
 tradePortListed sync: canonical=83 TRUE=83 demoted=0
-patched D:\arcfire20260607\tables\content\item_defs.csv (196 data rows)
+patched D:\arcfire20260607\tables\content\item_defs.csv (275 data rows)
 patched missions.csv + mission_objectives.csv
 patched 0 npc ship name_en rows
 patched planets.csv
 [generate-arc-seed-transport-rows] nothing to add — all systems present
+[sync-synth-ownership] item_defs.csv — synth ownership up to date
 Generated CSV-driven content TS files at src/data/generated
 [audit:npc-fleet] PASS
   [info] obj_s008_a: vega_base — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
@@ -40,22 +41,22 @@ PASS — 모든 buy_goods/defeat_enemy 목표에 퀘스트 배치·전투 운영
 ## Largest TS/TSX under `src/` + `app/` (bytes)
 
 - 477,992 — `src/data/generated/csvNpcCapitalShips.ts`
-- 289,936 — `src/data/generated/csvItemDefs.ts`
-- 272,565 — `src/data/generated/csvNpcCaptains.ts`
+- 365,768 — `src/data/generated/csvItemDefs.ts`
+- 285,280 — `src/data/generated/csvNpcCaptains.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
 - 148,235 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
-- 115,883 — `src/data/generated/csvStoryScenes.ts`
-- 74,136 — `src/i18n/locales/ko.ts`
+- 115,935 — `src/data/generated/csvStoryScenes.ts`
+- 74,460 — `src/i18n/locales/ko.ts`
 - 71,055 — `src/data/generated/csvWeapons.ts`
 - 70,149 — `src/data/balance/generated/csvSynthSystemColonization.ts`
-- 67,537 — `src/i18n/locales/en.ts`
+- 67,831 — `src/i18n/locales/en.ts`
+- 65,965 — `app/(game)/worldmap.tsx`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
-- 64,102 — `app/(game)/worldmap.tsx`
-- 63,564 — `app/(game)/planet.tsx`
+- 65,351 — `app/(game)/planet.tsx`
 - 47,321 — `app/(game)/shipyard.tsx`
-- 45,425 — `app/(game)/trade.tsx`
-- 42,830 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
-- 36,821 — `src/data/generated/csvMissions.ts`
+- 45,731 — `app/(game)/trade.tsx`
+- 43,029 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
+- 38,935 — `src/data/generated/csvMissions.ts`
 - 36,229 — `src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx`
 
 ## Planet hub eager `src/combat` import (should be absent)

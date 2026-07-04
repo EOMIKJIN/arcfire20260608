@@ -52,6 +52,7 @@ import {
   HUB_SOFT_NATIVE_RECLAIM_INTERVAL_MS,
   runDeepNativeReclaimPass,
   runPlanetHubSoftNativeReclaimPass,
+  schedulePlanetHubPostSkiaPeakReclaim,
 } from '../../src/game/nativeReclaim';
 import { recordHubDeparturePlanet } from '../../src/game/galaxyMapSessionResume';
 import { markGalaxyMapIngressFromPlanetHub } from '../../src/game/nativeReclaim/galaxyMapIngressReclaim';
@@ -59,6 +60,7 @@ import { consumePlanetHubIngressReclaim } from '../../src/game/nativeReclaim/pla
 import { emitMemProfileMarker } from '../../src/game/devMemoryProfileBridge';
 import { teardownPlanetHubCombatForGalaxyDeparture } from '../../src/game/teardownPlanetHubCombatForGalaxyDeparture';
 import { resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
+import { resolvePlayerPlanetStayBlock } from '../../src/clanWar/planetTerritoryPlayerAccess';
 import { usePlanetStageSession } from '../../src/game/usePlanetStageSession';
 import { useStageTransitionStuckWatchdog } from '../../src/navigation/stageTransitionStuckWatchdog';
 import { buildCsvStaticIndexesFull } from '../../src/game/buildCsvStaticIndexes';
@@ -387,11 +389,6 @@ export default function PlanetScreen() {
     },
   );
 
-  useEffect(() => {
-    if (!isPlanetRouteFocused || !player?.currentPlanetId) return;
-    warmPlanetHubResidentSet(player.currentPlanetId);
-  }, [isPlanetRouteFocused, player?.currentPlanetId]);
-
   const prevMainStagePlanetIdRef = useRef<string | null>(null);
   useEffect(() => {
     const cur = player?.currentPlanetId ?? null;
@@ -403,6 +400,7 @@ export default function PlanetScreen() {
       prevMainStagePlanetIdRef.current = cur;
     }
   }, [player?.currentPlanetId]);
+
   /**
    * 출발·시설 공통 — 진행 중인 채굴·전투 스냅샷 후 lifecycle suspend → frozen 뒤 navigate.
    * 무역소·조선소 등 즉시 push 만 하면 메인스테이지 Skia·sim 과 신규 화면 첫 mount 가 겹쳐 크래시가 날 수 있어
@@ -450,6 +448,17 @@ export default function PlanetScreen() {
       preserveCombatSnapshot: false,
     });
   }, [beginPlanetHubSuspendingNavigation, t]);
+
+  /** RED 점령지 — 저장 상태로 허브 진입 시 즉시 퇴거 */
+  useEffect(() => {
+    const pid = resolvedPlanetId?.trim();
+    if (!pid || !isPlanetRouteFocused) return;
+    if (!resolvePlayerPlanetStayBlock(pid)) return;
+    showArcAlert(t('worldmap.redTerritoryTitle'), t('worldmap.redTerritoryBody'));
+    beginPlanetHubSuspendingNavigation(() => router.replace('/(game)/worldmap'), {
+      preserveCombatSnapshot: false,
+    });
+  }, [resolvedPlanetId, isPlanetRouteFocused, beginPlanetHubSuspendingNavigation, t]);
 
   const onFacilityNavigate = useCallback(
     (href: Href) => {
@@ -629,6 +638,33 @@ export default function PlanetScreen() {
   useLayoutEffect(() => {
     capitalCombatOrbitActiveRef.current = capitalCombatOrbitActive;
   }, [capitalCombatOrbitActive]);
+
+  /** heavy Skia spike(허브 전투 orbit) 종료 — GL floor 즉시 회수 (route_blur 없이) */
+  const prevCapitalCombatOrbitActiveRef = useRef(capitalCombatOrbitActive);
+  useEffect(() => {
+    const wasActive = prevCapitalCombatOrbitActiveRef.current;
+    prevCapitalCombatOrbitActiveRef.current = capitalCombatOrbitActive;
+    const pid = planet?.id;
+    if (!pid || !isPlanetRouteFocused || !wasActive || capitalCombatOrbitActive) return undefined;
+    return schedulePlanetHubPostSkiaPeakReclaim(pid, 'hub_combat_orbit_end');
+  }, [capitalCombatOrbitActive, planet?.id, isPlanetRouteFocused]);
+
+  /** 인바운드 드론 dodge Skia overlay 종료 — 동일 GL reclaim */
+  const prevInboundDroneCountRef = useRef(arcInboundDronesAtPlanet.length);
+  useEffect(() => {
+    const prevCount = prevInboundDroneCountRef.current;
+    const curCount = arcInboundDronesAtPlanet.length;
+    prevInboundDroneCountRef.current = curCount;
+    const pid = planet?.id;
+    if (!pid || !isPlanetRouteFocused || capitalCombatOrbitActive) return undefined;
+    if (prevCount <= 0 || curCount !== 0) return undefined;
+    return schedulePlanetHubPostSkiaPeakReclaim(pid, 'hub_inbound_drone_end');
+  }, [
+    arcInboundDronesAtPlanet.length,
+    capitalCombatOrbitActive,
+    planet?.id,
+    isPlanetRouteFocused,
+  ]);
 
   /** Skia arm — route_blur teardown 2×rAF 후 mount (ingress Native step 완화) */
   const [hubSkiaArmReady, setHubSkiaArmReady] = useState(false);

@@ -1,4 +1,9 @@
 import type { Planet } from '../types';
+import { isPlanetOwnershipDeedCatalogEligible } from '../arcCore/balance/planetOwnershipDeedCatalog';
+import {
+  isPlanetOwnershipItemId,
+  resolvePlanetIdFromOwnershipItemId,
+} from '../arcCore/balance/planetOwnershipDeedItemDef';
 import { resolvePlanetById } from './resolvePlanetById';
 import { listCoreOpenGameplayPlanetIds } from './coreOpenGameplayPlanets';
 import { isPlanetCsvTradePortWorldEnabled } from '../game/planetDevelopment/planetCsvWorldFlags';
@@ -41,7 +46,12 @@ function getOrCreateMutableState(planetId: string): PlanetTradePortMutableState 
   return created;
 }
 
-function isTradeableItemId(itemId: string): boolean {
+/** 정책 카탈로그 persist — CSV 21 + synth ownership 합성 SKU drop 방지 */
+function isCatalogPersistableItemId(itemId: string): boolean {
+  if (isPlanetOwnershipItemId(itemId)) {
+    const planetId = resolvePlanetIdFromOwnershipItemId(itemId);
+    return Boolean(planetId && isPlanetOwnershipDeedCatalogEligible(planetId));
+  }
   return Boolean(readItemDef(itemId)?.tradeable);
 }
 
@@ -113,7 +123,7 @@ export function replaceTradePortCatalog(planetId: string, itemIds: readonly stri
   const mutable = getOrCreateMutableState(planetId);
   mutable.catalogItemIds.clear();
   for (const itemId of itemIds) {
-    if (isTradeableItemId(itemId)) mutable.catalogItemIds.add(itemId);
+    if (isCatalogPersistableItemId(itemId)) mutable.catalogItemIds.add(itemId);
   }
   mutable.addedItemIds.clear();
   mutable.removedItemIds.clear();
@@ -131,7 +141,7 @@ export function getPlanetTradePortItemIds(planetId: string): string[] {
 
   const merged = new Set(mutable.catalogItemIds);
   for (const itemId of mutable.addedItemIds) {
-    if (isTradeableItemId(itemId)) merged.add(itemId);
+    if (isCatalogPersistableItemId(itemId)) merged.add(itemId);
   }
   for (const itemId of mutable.removedItemIds) {
     merged.delete(itemId);
@@ -141,7 +151,7 @@ export function getPlanetTradePortItemIds(planetId: string): string[] {
 
 /** 추후 드랍/이벤트/중개소 연동 시 사용 */
 export function addTradePortItem(planetId: string, itemId: string): void {
-  if (!isTradeableItemId(itemId)) return;
+  if (!isCatalogPersistableItemId(itemId)) return;
   const mutable = getOrCreateMutableState(planetId);
   mutable.removedItemIds.delete(itemId);
   mutable.addedItemIds.add(itemId);

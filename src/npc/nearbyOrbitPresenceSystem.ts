@@ -19,6 +19,7 @@ import { isCaptainHubOrbitPrimaryAtPlanet } from '../arcCore/captainPresence/bui
 import { syncCaptainOrbitAssignmentEpochMemo } from '../arcCore/orbitPresence/captainOrbitPlanetAssignment';
 import { memoizePerPlanetSystem } from '../game/planetMemoCache';
 import { useArcNpcTrafficStore } from '../store/arcNpcTrafficStore';
+import { resolveCaptainAiClanDisplayName } from '../clanWar/aiClanRegistry';
 
 type CaptainShipRow = { captain: (typeof NPC_CAPTAINS_FROM_CSV)[number]; ship: NpcCapitalShip };
 
@@ -124,10 +125,12 @@ function buildPlanetNearbyPresence(
     const infoRight = classification
       ? formatCapitalShipInfoPanelBadge(classification)
       : (generalShip.ship.infoLineSuffix && generalShip.ship.infoLineSuffix.trim()) || mk;
+    const clanLabel = resolveCaptainAiClanDisplayName(generalShip.captain, 'ko');
+    const clanPrefix = clanLabel ? `‹${clanLabel}› ` : '';
     rows.push({
       slotIndex: slot,
       hullClassId: hullClass.id,
-      displayLine: `${generalShip.captain.displayName} · ${generalShip.ship.name}${sep}${infoRight}`,
+      displayLine: `${clanPrefix}${generalShip.captain.displayName} · ${generalShip.ship.name}${sep}${infoRight}`,
       orbit,
       linkedCapitalShipId: generalShip.ship.id,
     });

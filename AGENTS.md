@@ -9,6 +9,21 @@ Skia/STAGE/틱/persist/부트/**memo·cache·store 순환** 전부 해당 · **1
 
 정본: `.cursor/rules/arcfire-memory-leak-audit-first.mdc` (§0-A PSS 특별조치)
 
+### Cursor 훅 — 개발 프로세스 상시 강제 (2026-07-04~)
+
+| 시점 | 훅 | 역할 |
+|------|-----|------|
+| **sessionStart** | `on-session-start-pss-pre-dev-brief.cjs` | [pss-pre-dev] · 완료 게이트 상시 리마인드 |
+| **sessionStart** | `on-session-start-mem-post-dev-trigger.cjs` | `src/app/tables` dirty → mem-post-dev-recheck P0 |
+| **beforeSubmitPrompt** | `on-before-submit-prompt-pss-pre-dev-gate.cjs` | 기능·버그 요청 시 1차 검수 3줄 의무 주입 |
+
+```bash
+npm run audit:dev-process-gate      # 훅·규칙 무결성
+npm run audit:mem-post-dev-recheck    # 개발 반영 후 handoff·status 갱신
+```
+
+상태: `tools/kim-team-lead/reports/DEV_PROCESS_GATE_STATUS.md`
+
 ## 기존값 변경 — 사전 재확인 (상시 · 사용자 지시)
 
 **확정 CSV·밸런스·UI/i18n 등 기존값**을 바꿀 때는 **수정 전 사용자에게 한 번 더 질문·승인** 후 작업. 신규 추가만(L11~15 행 추가 등)이고 L1~N 기존 행을 건드리지 않으면 생략.  
@@ -18,10 +33,22 @@ Skia/STAGE/틱/persist/부트/**memo·cache·store 순환** 전부 해당 · **1
 
 | 에이전트 | 호출 | 역할 | 코드 |
 |---------|------|------|------|
-| **김팀장** | `@김팀장` · 「김팀장」 | **유일한 사용자 지시** — UI·Skia·arcCore·**경제·밸런스**·버그 **전부** | **O** |
+| **김팀장** | `@김팀장` · 「김팀장」 | **유일한 사용자 지시** — Skia·UI·STAGE·arcCore·일일배치·메모리·버그 **런타임** | **O** |
+| **Fable** | `@Fable` · `@페이블` | **Table-First 구현 핵심** — CSV·시드·점유·카탈로그·registry·72단계 (김팀장 Task 위임) | **O (해당 축)** |
 | **김경제** (팀원) | `@김경제` · 「김경제」 | **김팀장 배정만** — 감시·**메모리 프로파일링**·`audit:balance-ops` **점검·리포트** · **개발 업데이트 시 메모리 즉각 재검수·보고** | **X** |
+| **김클로드** (보조) | `@김클로드` · Cursor ✱ / `claude` | **초안 구현** — handoff 후 **김팀장 검수·커밋** | **초안만 (커밋 X)** |
 
 > 사용자는 **김팀장 대화창 하나**에만 작업 지시. 김경제 별도 창 = 감시·점검 전용(충돌 방지).
+> **김클로드** 산출물은 `tools/kim-team-lead/reports/kim-claude-handoff-pending.md` → **김팀장 재검수·최종 커밋** 필수 (`CLAUDE.md` · `.cursor/rules/arcfire-main-lead-agent.mdc`).
+
+### 김클로드 → 김팀장 검수 (2026-07-04~)
+
+```text
+[김클로드] 구현 → handoff PENDING
+[김팀장 Cursor] diff·audit·수정 → verdict → 커밋(사용자 요청 시) → mem-post-dev-recheck
+```
+
+handoff `PENDING` 시 김팀장 sessionStart 훅이 검수 리마인드.
 
 - **협업 워크플로**: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
 - **김팀장 일일 검수**: `npm run audit:team-lead:daily` → `tools/kim-team-lead/reports/daily-review-latest.md`
@@ -85,7 +112,8 @@ npm run monitor:dashboard           # logs/MONITOR_DASHBOARD_LATEST.html
 - **정본**: `.cursor/rules/gemini-code-agent-routing.mdc` — `alwaysApply`, 매 턴 @김팀장/@김경제/@Fable/@Opus/@Sonnet **없이** 자동 선별 (김팀장 세션 내부 라우팅).
 - **원본 기획**: `.cursor/rules/gemini-code-1781406772084.md`
 - **세션 훅**: `.cursor/hooks/on-session-start-agent-routing.cjs` (`sessionStart`)
-- **Task 위임 model**: 김경제(감시만) `claude-fable-5-thinking-high` · Opus(코드·경제 포함) `claude-opus-4-8-thinking-high` · Sonnet `claude-4.6-sonnet-medium-thinking`
+- **Task 위임 model**: **Fable(Table-First 구현)** `claude-fable-5-thinking-high` · 김경제(감시만) `claude-fable-5-thinking-high` · 김팀장(런타임·Skia·STAGE) `claude-opus-4-8-thinking-high` · Sonnet `claude-4.6-sonnet-medium-thinking`
+- **Fable 규칙**: `.cursor/rules/arcfire-fable-implementation-agent.mdc`
 
 Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc`** (프로젝트 헌법 v4.0)를 따릅니다. 구현·운영 세부 요약은 아래와 `AGENTS.md`에 둡니다.
 
@@ -96,6 +124,7 @@ Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4
 - **경제·밸런스 운영 감사**: `npm run audit:balance-ops` (3h 로컬·CI) · `tools/balance-ops-audit/README.md` · 학습 상태 `reports/learning-state.json`.
 - **경제 시스템 종합 평가 히스토리**: `docs/economy-evaluation/README.md` (타이틀 비교·효율성 스냅샷).
 - **테이블 우선**: 환경 부트스트랩·NPC 함장·전함은 **`tables/content` CSV → `npm run build:content-tables`** 가 정본이다. 아크코어가 스스로 환경을 깔 때도 **코드에 임의 엔티티·이름 풀을 두지 말고** CSV·레지스트리(`npcFleetRegistry`, `arcNpcTrafficTableRegistry`, `nearbyOrbitPresenceSystem`) 패턴을 따른다. 헌법: `.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc` §1·§6.
+- **행성 소유권 증서(Table-First · 2026-07-02~ · 단일 정본)**: **`tables/content/item_defs.csv`만** — `ownership_{planetId}` · `type=planet_ownership`. A(21)+synth **별도 CSV·빌드 merge·런타임 lazy 합성 금지**. synth 신규: `synth_system_colonization.csv` → `sync-synth-ownership-into-item-defs.mjs` → item_defs append → `build:content-tables`. 무역 진열=eligibility+카탈로그 resync(**렌더/useMemo dispatch 금지**). 감사: `npx tsx tools/debug/audit-planet-ownership-item-defs.ts`.
 - **미션 시스템(Table-First)**: 정본 `missions.csv` + `mission_objectives.csv` + `mission_combat_captains.csv` → `missionCatalog.ts` · 진행 `missionStore.ts`. 작업 인수인계·다음 스프린트: **`docs/MISSION_SYSTEM_HANDOFF.md`**
 - **전략·전술 자동화(아크코어 자동전투 · 노드/라인 1홉)**: 성계 그래프 공격 가시성·접전 전선 확장 설계 정본 — **`docs/strategy/README.md`** · **`docs/strategy/ARC_CORE_TACTICAL_AUTOMATION_AND_GALAXY_STRATEGY.md`** (v0.1 분석·Phase 0~6 · 코드 미착수)
 - **허브 궤도 트래픽(v4.0 §6-2)**: STAGE 1 동시 최대 **5척**, **15초** spawn/despawn — `src/game/hubOrbitTrafficSession.ts` + `planetMemoCache/hub_traffic` 풀. info 패널 `‹AI›` 접두. `onSnapshot`·`hub_peers`·`aiVirtualPlayerStore` 금지.

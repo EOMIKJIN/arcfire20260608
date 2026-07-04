@@ -30,3 +30,14 @@ npm run audit:team-lead:daily
 ## Handoff (관측)
 
 김경제 **관측** 리포트: `reports/kim-economy-handoff.md` **`## [관측]`** · `tools/memory-profiler/reports/latest-retention-audit.md` → 김팀장 **본 세션에서 코드 반영**
+
+## 개발 프로세스 게이트 (2026-07-04~ · 무조건)
+
+```bash
+npm run audit:dev-process-gate       # Cursor 훅·규칙 무결성
+npm run audit:mem-post-dev-recheck   # 개발 반영 후 handoff 자동 갱신
+```
+
+- 상태: `reports/DEV_PROCESS_GATE_STATUS.md`
+- Cursor: `.cursor/hooks/on-session-start-pss-pre-dev-brief.cjs` · `on-before-submit-prompt-pss-pre-dev-gate.cjs`
+- 정본: `.cursor/rules/arcfire-memory-leak-audit-first.mdc` §0-A

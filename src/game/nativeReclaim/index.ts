@@ -13,6 +13,10 @@ export { runSoftNativeReclaimPass } from './runSoftNativeReclaimPass';
 export { runGalaxyMapSoftNativeReclaimPass } from './runGalaxyMapSoftNativeReclaimPass';
 export { runPlanetHubSoftNativeReclaimPass } from './runPlanetHubSoftNativeReclaimPass';
 export {
+  runPlanetHubPostSkiaPeakReclaimPass,
+  schedulePlanetHubPostSkiaPeakReclaim,
+} from './runPlanetHubPostSkiaPeakReclaimPass';
+export {
   resolveActivePlanetSessionAnchorId,
   resolveSinglePlanetSessionKeepIds,
 } from './singlePlanetSessionKeep';

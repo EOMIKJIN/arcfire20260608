@@ -5,6 +5,10 @@ import { getCurrentUser, markFreshStartAfterReset } from '../firebase/auth';
 import { resetFirebaseAnonymousAuthForAccountPurge } from '../firebase/firebaseAnonymousAuth';
 import { clearArcCoreRtdbDailyKpiPushState } from '../arcCore/learning/pushArcCoreDailyKpiToRtdb';
 import { cancelScheduledUserCloudSync } from '../firebase/userCloudSyncSchedule';
+import {
+  cancelScheduledGameSaveBackup,
+  uploadPrePurgeGameSaveBackup,
+} from '../firebase/gameSaveBackup/scheduleGameSaveBackup';
 import { usePlanetStageLifecycleStore } from '../game/planetStageLifecycle';
 import { clearMiningResumeSnapshot } from '../systems/mining/miningResumeStore';
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
@@ -59,10 +63,21 @@ function resolveResetUids(playerUid: string | null | undefined): string[] {
 /** 행성 허브 Skia·sim 정지(lifecycle frozen) 이후 — 로컬·클라우드 계정 데이터 삭제 */
 export async function purgeLocalAccountData(params: LocalAccountResetParams): Promise<void> {
   cancelScheduledUserCloudSync();
+  cancelScheduledGameSaveBackup();
 
   const resetUids = resolveResetUids(params.uid);
   const primaryUid = resetUids[0] ?? null;
   const { currentClanId } = params;
+
+  for (const uid of resetUids) {
+    try {
+      await uploadPrePurgeGameSaveBackup(uid);
+    } catch (e) {
+      if (__DEV__) {
+        console.warn('[localAccountReset] pre-purge game save backup failed', uid, e);
+      }
+    }
+  }
 
   clearCombatResumeSnapshot();
   clearMiningResumeSnapshot();
@@ -92,9 +107,9 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await useArcCoreInstanceMissionBoardStore.getState().resetLocalArcCoreInstanceMissionBoard();
   await useNpcCaptainProgressStore.getState().resetLocalNpcCaptainProgress();
   // ── 플레이어 계정 귀속 — 인터랙티브로 누적된 모든 진행을 함께 초기화한다. ──
-  // (ArcCore 환경·자율 경제 시스템은 제외: faction vault·trade fee ledger·galaxy 확장)
-  // 행성개발(R/P/D/T/E·방위위성·개발 모듈) — planetCoreRuntimeStore
-  await usePlanetCoreRuntimeStore.getState().resetLocalPlanetCoreRuntime();
+  // (ArcCore 환경·자율 경제·RED 월드 행성개발은 제외: faction vault·trade fee·RED planetCore 슬롯)
+  // 행성개발(BLUE·증서) — purge 시 baseline · RED ArcCore 슬롯만 유지
+  await usePlanetCoreRuntimeStore.getState().resetLocalPlanetCoreRuntimeForAccountPurge();
   await usePlanetMineralLedgerStore.getState().resetLocal();
   // 갤럭시 개방·항행 기록(방문/개방 성계) — worldStore (초기 시드 galaxy로 복귀)
   await useWorldStore.getState().resetLocalWorld();

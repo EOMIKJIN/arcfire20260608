@@ -11,8 +11,8 @@ import {
   type PlanetCoreGaugeView,
 } from '../../store/planetCoreRuntimeStore';
 import { usePlanetTradeFeeLedgerStore } from '../../store/planetTradeFeeLedgerStore';
-import { useWorldStore } from '../../store/worldStore';
-import type { Planet, StarSystem } from '../../types';
+import { listCoreOpenGameplayPlanetIds, resolveCoreOpenGameplayPlanetRef } from '../../world/coreOpenGameplayPlanets';
+import type { Planet } from '../../types';
 import { usePlayerStore } from '../../store/playerStore';
 import { resolvePlanetCoreStatEquilibriumPolicy } from '../balance/planetCoreStatEquilibriumPolicy';
 import {
@@ -63,11 +63,7 @@ function clampGauge(g: PlanetCoreGaugeView): PlanetCoreGaugeView {
 }
 
 function findPlanetInWorld(planetId: string): Planet | undefined {
-  for (const sys of Object.values(useWorldStore.getState().systems)) {
-    const p = sys.planets.find((x) => x.id === planetId);
-    if (p) return p;
-  }
-  return undefined;
+  return resolveCoreOpenGameplayPlanetRef(planetId)?.planet;
 }
 
 function csvBaselineGauge(planet: Planet): PlanetCoreGaugeView {
@@ -191,13 +187,7 @@ export function runPlanetCoreStatEquilibriumPass(): PlanetCoreStatEquilibriumPas
   const playerUid = usePlayerStore.getState().player?.uid ?? null;
   const holds = useClanWarFoundationStore.getState().planetHolds;
   const fiscalByPlanet = buildFiscalStatusMap();
-  const systems = useWorldStore.getState().systems;
-  const planetIds = new Set<string>();
-
-  for (const sys of Object.values(systems) as StarSystem[]) {
-    for (const p of sys.planets) planetIds.add(p.id);
-  }
-  for (const id of Object.keys(coreStore.byPlanetId)) planetIds.add(id);
+  const planetIds = new Set(listCoreOpenGameplayPlanetIds());
 
   let planetsProcessed = 0;
   let planetsDrifted = 0;

@@ -9,6 +9,7 @@ import { isPlanetCsvTradePortWorldEnabled } from '../../game/planetDevelopment/p
 import { isSynthFrontierPlanetId } from '../../world/isSynthFrontierPlanetId';
 import { resolveSystemIdForPlanetId } from '../../world/resolvePlanetSystemId';
 import { rebuildPlanetTradeMarket } from '../../world/planetTradeMarketStore';
+import { isCoreOpenPlanetId, listCoreOpenGameplayPlanetIds } from '../../world/coreOpenGameplayPlanets';
 import { useWorldStore } from '../../store/worldStore';
 import {
   listTradeRouteItems,
@@ -87,12 +88,7 @@ function readPlanetTradePortInstalled(planetId: string): boolean {
 }
 
 function isUnlockedSynthFrontierPlanet(planetId: string): boolean {
-  if (!isSynthFrontierPlanetId(planetId)) return false;
-  const systemId = resolveSystemIdForPlanetId(planetId);
-  if (!systemId || !systemId.startsWith('synth_')) return false;
-  const world = useWorldStore.getState();
-  if (!world.loaded) return false;
-  return world.unlockedSystemIds.includes(systemId);
+  return isSynthFrontierPlanetId(planetId) && isCoreOpenPlanetId(planetId);
 }
 
 /** 무역소(월드·dev) 또는 ArcCore 개방 synth(교역 프로필 등록) — convoy·재정 생태계 */
@@ -182,12 +178,9 @@ export function ensureUnlockedSynthFrontierEconomyEnrollment(): number {
   let enrolled = 0;
   const world = useWorldStore.getState();
   if (!world.loaded) return 0;
-  const unlocked = new Set(world.unlockedSystemIds);
-  for (const system of Object.values(world.systems)) {
-    if (!system.id.startsWith('synth_') || !unlocked.has(system.id)) continue;
-    for (const planet of system.planets) {
-      if (enrollSynthFrontierPlanetInArcEconomy(planet.id)) enrolled += 1;
-    }
+  for (const planetId of listCoreOpenGameplayPlanetIds()) {
+    if (!isSynthFrontierPlanetId(planetId)) continue;
+    if (enrollSynthFrontierPlanetInArcEconomy(planetId)) enrolled += 1;
   }
   return enrolled;
 }

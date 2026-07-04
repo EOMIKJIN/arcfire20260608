@@ -18,10 +18,9 @@ export const ARC_CORE_SEED_BLUE_CLAN_ID = SEED_BLUE_CLAN_ID;
 export const ARC_CORE_SEED_RED_CLAN_ID = 'balance_seed_faction_red';
 const SEED_RED_CLAN_ID = ARC_CORE_SEED_RED_CLAN_ID;
 
-const MEGA_FACTION_CAPITAL_PLANETS: readonly { planetId: string; owner: 'BLUE' | 'RED' }[] = [
-  { planetId: BLUE_COMMERCIAL_CAPITAL_PLANET_ID, owner: 'BLUE' },
-  { planetId: RED_FACTION_CAPITAL_PLANET_ID, owner: 'RED' },
-] as const;
+function parseBool(raw: string | undefined): boolean {
+  return String(raw ?? '').trim().toLowerCase() === 'true';
+}
 
 function parseOwner(owner: string): 'BLUE' | 'RED' | 'NEUTRAL' {
   const o = owner.trim().toUpperCase();
@@ -59,30 +58,74 @@ function buildSeedClans(now: number): Record<string, ClanBasicsRecord> {
   };
 }
 
-/** 기존 중립 시드 → 수도 행성은 occupation CSV 소유(블루/레드)로 정렬 */
-function reconcileMegaFactionCapitalHolds(
+function shouldSkipOccupationSeedReconcile(hold: PlanetClanHold): boolean {
+  if (hold.kind === 'player_home') return true;
+  // 플레이어 uid 거점만 보호 — AI 클랜장 homePlayerUid 는 국가 시드 복구 허용
+  if (hold.homePlayerUid && !isAiClanOccupier(hold.occupierClanId)) return true;
+  return false;
+}
+
+/** AI 클랜 occupier — 국가 CSV 시드 복구 대상 */
+function isAiClanOccupier(clanId: string | null | undefined): boolean {
+  return Boolean(clanId?.startsWith('ai_clan_'));
+}
+
+function shouldRestoreNationSeedOccupier(input: {
+  contestedZone: boolean;
+  nationClanId: string;
+  cur: PlanetClanHold;
+}): boolean {
+  const { contestedZone, nationClanId, cur } = input;
+  if (isAiClanOccupier(cur.occupierClanId)) return true;
+  if (contestedZone) return false;
+  if (cur.kind === 'neutral' || cur.occupierClanId === 'neutral') return true;
+  if (cur.occupierClanId !== nationClanId) return true;
+  return false;
+}
+
+function buildNationSeedHold(
+  row: (typeof PlanetOccupationSeeds_FROM_BALANCE_CSV)[number],
+  nationClanId: string,
+  cur: PlanetClanHold | undefined,
+  now: number,
+): PlanetClanHold {
+  return {
+    planetId: row.planetId,
+    systemId: row.systemId,
+    occupierClanId: nationClanId,
+    deedOwnerClanId: cur?.deedOwnerClanId ?? null,
+    homePlayerUid: null,
+    kind: 'clan_hold',
+    capturedAt: cur && cur.capturedAt > 0 ? cur.capturedAt : now,
+  };
+}
+
+/**
+ * CSV BLUE/RED 국가 시드 행성 — neutral·AI클랜 오점유 복구.
+ * contestedZone=true 는 ArcCore neutral/blue/red 판정만 유지(AI클랜 덮어쓰기는 항상 제거).
+ */
+function reconcileCsvSeedFactionOccupationHolds(
   holds: Record<string, PlanetClanHold>,
   now: number,
 ): boolean {
   let mutated = false;
-  for (const cap of MEGA_FACTION_CAPITAL_PLANETS) {
-    const row = PlanetOccupationSeeds_FROM_BALANCE_CSV.find((r) => r.planetId === cap.planetId);
-    if (!row) continue;
+  for (const row of PlanetOccupationSeeds_FROM_BALANCE_CSV) {
+    const owner = parseOwner(row.initialOwner);
+    if (owner === 'NEUTRAL') continue;
 
-    const cur = holds[cap.planetId];
-    if (!cur) continue;
-    if (cur.kind === 'player_home' || cur.homePlayerUid) continue;
-    if (cur.occupierClanId !== 'neutral') continue;
+    const contestedZone = parseBool(row.contestedZone);
+    const nationClanId = owner === 'RED' ? SEED_RED_CLAN_ID : SEED_BLUE_CLAN_ID;
+    const cur = holds[row.planetId];
 
-    const clanId = cap.owner === 'RED' ? SEED_RED_CLAN_ID : SEED_BLUE_CLAN_ID;
-    holds[cap.planetId] = {
-      planetId: cap.planetId,
-      systemId: row.systemId,
-      occupierClanId: clanId,
-      homePlayerUid: null,
-      kind: 'clan_hold',
-      capturedAt: now,
-    };
+    if (!cur) {
+      holds[row.planetId] = buildNationSeedHold(row, nationClanId, undefined, now);
+      mutated = true;
+      continue;
+    }
+    if (shouldSkipOccupationSeedReconcile(cur)) continue;
+    if (!shouldRestoreNationSeedOccupier({ contestedZone, nationClanId, cur })) continue;
+
+    holds[row.planetId] = buildNationSeedHold(row, nationClanId, cur, now);
     mutated = true;
   }
   return mutated;
@@ -130,7 +173,7 @@ export function seedPlanetOccupationHoldsFromBalance(
     };
   }
 
-  if (reconcileMegaFactionCapitalHolds(holds, now)) holdsMutated = true;
+  if (reconcileCsvSeedFactionOccupationHolds(holds, now)) holdsMutated = true;
 
   return { holds, clans, holdsMutated };
 }

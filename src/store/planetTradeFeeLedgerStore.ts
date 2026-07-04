@@ -12,6 +12,8 @@ import {
 import { healConvoyGrossLedgerBucketsOverDailyCap } from '../arcCore/economy/convoyGrossLedgerHeal';
 
 const STORAGE_KEY = 'arcfire_planet_trade_fee_ledger_v1';
+const FEE_LEDGER_PERSIST_COALESCE_MS = 1500;
+let feeLedgerPersistTimer: ReturnType<typeof setTimeout> | null = null;
 
 export type PlanetTradeFeeBucket = {
   grossCredits: number;
@@ -52,6 +54,14 @@ type PlanetTradeFeeLedgerState = {
   snapshotBuckets: () => Record<string, PlanetTradeFeeBucket>;
   getBucket: (planetId: string) => PlanetTradeFeeBucket;
 };
+
+function scheduleFeeLedgerPersist(getState: () => PlanetTradeFeeLedgerState): void {
+  if (feeLedgerPersistTimer) clearTimeout(feeLedgerPersistTimer);
+  feeLedgerPersistTimer = setTimeout(() => {
+    feeLedgerPersistTimer = null;
+    void getState().persist();
+  }, FEE_LEDGER_PERSIST_COALESCE_MS);
+}
 
 function emptyBucket(): PlanetTradeFeeBucket {
   return {
@@ -169,7 +179,7 @@ export const usePlanetTradeFeeLedgerStore = create<PlanetTradeFeeLedgerState>((s
       },
     };
     set({ byPlanetId: next });
-    void get().persist();
+    scheduleFeeLedgerPersist(get);
   },
 
   reverseAccumulate: (planetId, grossCredits, playerPoolShare, arcShare, source = 'player') => {
@@ -196,7 +206,7 @@ export const usePlanetTradeFeeLedgerStore = create<PlanetTradeFeeLedgerState>((s
     };
     const next = { ...get().byPlanetId, [planetId]: nextBucket };
     set({ byPlanetId: next });
-    void get().persist();
+    scheduleFeeLedgerPersist(get);
   },
 
   takePlayerWalletPendingForPlanets: (planetIds) => {

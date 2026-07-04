@@ -39,6 +39,13 @@ import {
   materializeCsvWorldBaselineDevModule,
   resolveEffectiveFacilityDevView,
 } from './planetCsvWorldFacilityBaseline';
+import type { PlanetDevActionOpts } from './planetDevelopmentActionOptions';
+import { isArcCorePlanetDevAction, resolvePlanetDevFundingSource } from './planetDevelopmentActionOptions';
+import {
+  refundPlanetDevelopmentCredits,
+  resolvePlanetDevFundingBalance,
+  spendPlanetDevelopmentCredits,
+} from '../../arcCore/planetDevelopment/planetDevelopmentFunding';
 
 export type GenericFacilityDevSnapshot = {
   installed: boolean;
@@ -84,13 +91,6 @@ type CreateGenericFacilityDevOptions = {
   onLevelApplied?: (planetId: string, level: number) => void;
 };
 
-function spendPlayerCredits(amount: number): boolean {
-  if (amount <= 0) return true;
-  const ok = usePlayerStore.getState().spendCredits(amount);
-  if (ok) void usePlayerStore.getState().persist();
-  return ok;
-}
-
 function resolvePlanetStatForPrereq(planetId: string, statType: string): number {
   const core = usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId);
   if (!core) return 0;
@@ -106,6 +106,31 @@ function resolvePlanetStatForPrereq(planetId: string, statType: string): number 
 
 export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevOptions) {
   const { moduleId, facilityType, policy, i18nPrefix, onLevelApplied } = opts;
+
+  function spendDevCredits(
+    amount: number,
+    planetId: string,
+    actionOpts?: PlanetDevActionOpts,
+  ): boolean {
+    const source = resolvePlanetDevFundingSource(actionOpts);
+    return spendPlanetDevelopmentCredits(amount, source, {
+      planetId,
+      moduleId,
+      note: source === 'arc_core_vault' ? 'arc_core_planet_dev' : undefined,
+    });
+  }
+
+  function refundDevCredits(amount: number, actionOpts?: PlanetDevActionOpts): void {
+    refundPlanetDevelopmentCredits(amount, resolvePlanetDevFundingSource(actionOpts));
+  }
+
+  function resolveGateCredits(actionOpts?: PlanetDevActionOpts): number {
+    return resolvePlanetDevFundingBalance(resolvePlanetDevFundingSource(actionOpts));
+  }
+
+  function spendPlayerCredits(amount: number): boolean {
+    return spendDevCredits(amount, '', { fundingSource: 'player' });
+  }
 
   function readDetail(planetId: string): PlanetFacilityModuleDetail {
     return readFacilityModuleDetail(planetId, moduleId);
@@ -281,7 +306,10 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
     };
   }
 
-  function install(planetId: string): { ok: true } | { ok: false; reason: string } {
+  function install(
+    planetId: string,
+    opts?: PlanetDevActionOpts,
+  ): { ok: true } | { ok: false; reason: string } {
     const detail = readDetail(planetId);
     if (isInstalled(planetId) || isPlanetCsvWorldDevModuleBaseline(planetId, moduleId)) {
       return { ok: false, reason: t(`${i18nPrefix}.alreadyInstalled`) };
@@ -295,7 +323,7 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
       installed: isInstalled(planetId),
       isCsvWorldBaseline: isPlanetCsvWorldDevModuleBaseline(planetId, moduleId),
       hasActiveJob: Boolean(detail.upgradeJob),
-      playerCredits: usePlayerStore.getState().player?.credits ?? 0,
+      playerCredits: resolveGateCredits(opts),
       installCost: resolveInstallCostCredits(planetId),
       notEnoughCreditsMessage: t(`${i18nPrefix}.notEnoughCredits`),
     });
@@ -303,7 +331,7 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
       return { ok: false, reason: installGate.installBlockReason };
     }
     const cost = resolveInstallCostCredits(planetId);
-    if (!spendPlayerCredits(cost)) return { ok: false, reason: t(`${i18nPrefix}.notEnoughCredits`) };
+    if (!spendDevCredits(cost, planetId, opts)) return { ok: false, reason: t(`${i18nPrefix}.notEnoughCredits`) };
     const durationSec = resolveFacilityInstallDurationSec(facilityType);
     if (durationSec <= 0) {
       const written = writeFacilityModuleDetail(planetId, moduleId, {
@@ -314,8 +342,7 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
         updatedAtMs: Date.now(),
       });
       if (!written) {
-        usePlayerStore.getState().addCredits(cost);
-        void usePlayerStore.getState().persist();
+        refundDevCredits(cost, opts);
         return { ok: false, reason: t(`${i18nPrefix}.recordFailed`) };
       }
       invalidatePlanetMemoCachesForPlanet(planetId);
@@ -331,15 +358,17 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
       updatedAtMs: Date.now(),
     });
     if (!written) {
-      usePlayerStore.getState().addCredits(cost);
-      void usePlayerStore.getState().persist();
+      refundDevCredits(cost, opts);
       return { ok: false, reason: t(`${i18nPrefix}.recordFailed`) };
     }
     invalidatePlanetMemoCachesForPlanet(planetId);
     return { ok: true };
   }
 
-  function startUpgrade(planetId: string): { ok: true } | { ok: false; reason: string } {
+  function startUpgrade(
+    planetId: string,
+    opts?: PlanetDevActionOpts,
+  ): { ok: true } | { ok: false; reason: string } {
     let detail = readDetail(planetId);
     if (!detail.installed) {
       if (!isPlanetCsvWorldDevModuleBaseline(planetId, moduleId)) {
@@ -358,7 +387,7 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
     if (level >= policy.getMaxLevel()) return { ok: false, reason: t(`${i18nPrefix}.maxLevel`) };
     const reqPilot = policy.resolveUpgradeRequiredPlayerLevel(level);
     const playerLevel = usePlayerStore.getState().player?.level ?? 1;
-    if (reqPilot > 0 && playerLevel < reqPilot) {
+    if (!isArcCorePlanetDevAction(opts) && reqPilot > 0 && playerLevel < reqPilot) {
       return { ok: false, reason: t(`${i18nPrefix}.pilotLevelRequired`, { level: reqPilot }) };
     }
     const reqStat = policy.resolveUpgradeRequiredStat(level);
@@ -371,7 +400,7 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
     const rawUpgradeCost = policy.resolveUpgradeCostCredits(level);
     if (rawUpgradeCost == null) return { ok: false, reason: t(`${i18nPrefix}.cannotUpgrade`) };
     const cost = resolvePlanetDevDiscountedCredits(planetId, rawUpgradeCost);
-    if (!spendPlayerCredits(cost)) return { ok: false, reason: t(`${i18nPrefix}.notEnoughCredits`) };
+    if (!spendDevCredits(cost, planetId, opts)) return { ok: false, reason: t(`${i18nPrefix}.notEnoughCredits`) };
     const durationSec = policy.resolveUpgradeDurationSec(level) ?? 0;
     const targetLevel = level + 1;
     if (durationSec <= 0) {

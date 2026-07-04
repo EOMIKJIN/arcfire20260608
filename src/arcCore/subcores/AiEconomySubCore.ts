@@ -14,6 +14,7 @@ import {
 } from '../../world/planetTradePortDb';
 import type { EconomyTradePortBulkAction } from '../ArcCoreCommandBus';
 import { runPlayScenarioEconomyPass } from '../balance/runPlayScenarioEconomyPass';
+import { resyncAllCoreOpenTradePortCatalogs } from '../balance/tradePortCatalogPolicy';
 import { integrateUnlockedSynthFrontierStatEconomyAsync } from '../planetCore/integrateUnlockedSynthFrontierStatEconomy';
 import { rehydrateSynthFrontierConvoyTradeFromInstalledPorts } from '../economy/synthFrontierConvoyTradeBridge';
 import { settleArcTransportDwellTrade } from '../economy/runArcTransportTradePass';
@@ -24,6 +25,7 @@ import { useArcCoreTransportFleetBankStore } from '../../store/factionVault/arcC
 import { useArcCoreVaultStore } from '../../store/factionVault/arcCoreVaultStore';
 import { useBlueTeamSharedVaultStore } from '../../store/factionVault/blueTeamSharedVaultStore';
 import { usePlanetTradeFeeLedgerStore } from '../../store/planetTradeFeeLedgerStore';
+import { useWorldStore } from '../../store/worldStore';
 
 /**
  * 경제 서브코어 — 무역소 런타임 진열·오버레이의 단일 실행 주체.
@@ -53,6 +55,9 @@ export class AiEconomySubCore extends BaseArcSubCore {
           await useEconomyPriceOverlayStore.getState().loadAsync();
           await integrateUnlockedSynthFrontierStatEconomyAsync();
           rehydrateSynthFrontierConvoyTradeFromInstalledPorts();
+          if (useWorldStore.getState().loaded) {
+            resyncAllCoreOpenTradePortCatalogs();
+          }
           runPlayScenarioEconomyPass(false, { skipCatalog: true });
         } catch (err) {
           if (__DEV__) {

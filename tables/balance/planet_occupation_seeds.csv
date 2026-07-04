@@ -6,7 +6,7 @@ vega_base,vega_outpost,BLUE,true,false,베가 전초기지
 eden_city,new_eden,BLUE,true,false,뉴에덴 프라임
 iron_remnant,iron_cross,BLUE,true,false,아이언 크로스
 draco_haven,draco_nebula,BLUE,true,true,드라코 성운
-omega_hub,omega_station,BLUE,true,true,오메가 스테이션
+omega_hub,omega_station,RED,true,true,오메가 스테이션
 helios_core,helios,NEUTRAL,true,false,헬리오스
 sirius_border,sirius,RED,true,false,시리우스 변경
 titan_ruins,titan_gate,NEUTRAL,true,false,타이탄 게이트

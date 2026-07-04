@@ -450,6 +450,17 @@ function ensurePlayerHasDefaultShip(player: Player): Player {
   };
 }
 
+const PLAYER_PERSIST_COALESCE_MS = 1500;
+let playerPersistTimer: ReturnType<typeof setTimeout> | null = null;
+
+function schedulePlayerPersist(run: () => Promise<void>): void {
+  if (playerPersistTimer) clearTimeout(playerPersistTimer);
+  playerPersistTimer = setTimeout(() => {
+    playerPersistTimer = null;
+    void run();
+  }, PLAYER_PERSIST_COALESCE_MS);
+}
+
 interface PlayerState {
   player: Player | null;
   levelUpPending: boolean;
@@ -460,6 +471,8 @@ interface PlayerState {
   loadLocalPlayer: () => Promise<void>;
   resetLocalPlayer: () => Promise<void>;
   persist: () => Promise<void>;
+  /** 고빈도 경로 — 1.5s coalesce 후 persist */
+  schedulePersist: () => void;
   moveToSystem: (systemId: string) => void;
   landOnPlanet: (planetId: string) => void;
   spendCredits: (amount: number) => boolean;
@@ -605,6 +618,10 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     } else {
       await AsyncStorage.removeItem(STORAGE_KEY);
     }
+  },
+
+  schedulePersist: () => {
+    schedulePlayerPersist(() => get().persist());
   },
 
   moveToSystem: (systemId) => {
@@ -787,7 +804,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     }
     const mineralUpgrades = { ...(player.mineralUpgrades ?? {}), [statId]: targetLevel };
     set({ player: { ...player, inventorySlots: slots, mineralUpgrades } });
-    void get().persist();
+    get().schedulePersist();
     return { ok: true };
   },
 
@@ -856,7 +873,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       levelUpSummary,
     });
     if (levelsGained > 0) {
-      void get().persist();
+      get().schedulePersist();
     }
   },
 

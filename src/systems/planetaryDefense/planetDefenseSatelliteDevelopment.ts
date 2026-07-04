@@ -31,6 +31,13 @@ import {
 import { resolvePlanetFacilityInstallGate } from '../../game/planetDevelopment/planetFacilityInstallGate';
 import { ensurePlanetCoreRuntimeForDev } from '../../game/planetDevelopment/planetFacilityModuleRuntime';
 import { usePlayerStore } from '../../store/playerStore';
+import type { PlanetDevActionOpts } from '../../game/planetDevelopment/planetDevelopmentActionOptions';
+import { isArcCorePlanetDevAction, resolvePlanetDevFundingSource } from '../../game/planetDevelopment/planetDevelopmentActionOptions';
+import {
+  refundPlanetDevelopmentCredits,
+  resolvePlanetDevFundingBalance,
+  spendPlanetDevelopmentCredits,
+} from '../../arcCore/planetDevelopment/planetDevelopmentFunding';
 import type { PlanetDefenseSatelliteDetail } from '../../store/planetCoreMetricTypes';
 import {
   patchPlanetDefenseSatelliteInstanceLevel,
@@ -112,6 +119,22 @@ function syncDefenseSatelliteInstances(planetId: string, level: number): void {
   for (let i = 1; i <= count; i += 1) {
     patchPlanetDefenseSatelliteInstanceLevel(planetId, String(i), level);
   }
+}
+
+function spendDevCredits(amount: number, planetId: string, opts?: PlanetDevActionOpts): boolean {
+  return spendPlanetDevelopmentCredits(amount, resolvePlanetDevFundingSource(opts), {
+    planetId,
+    moduleId: 'defense_satellite',
+    note: resolvePlanetDevFundingSource(opts) === 'arc_core_vault' ? 'arc_core_planet_dev' : undefined,
+  });
+}
+
+function refundDevCredits(amount: number, opts?: PlanetDevActionOpts): void {
+  refundPlanetDevelopmentCredits(amount, resolvePlanetDevFundingSource(opts));
+}
+
+function resolveGateCredits(opts?: PlanetDevActionOpts): number {
+  return resolvePlanetDevFundingBalance(resolvePlanetDevFundingSource(opts));
 }
 
 function spendPlayerCredits(amount: number): boolean {
@@ -247,7 +270,10 @@ export function buildDefenseSatelliteDevSnapshot(planetId: string): DefenseSatel
   };
 }
 
-export function installPlanetDefenseSatellite(planetId: string): { ok: true } | { ok: false; reason: string } {
+export function installPlanetDefenseSatellite(
+  planetId: string,
+  opts?: PlanetDevActionOpts,
+): { ok: true } | { ok: false; reason: string } {
   const detail = readPlanetDefenseSatelliteDetail(planetId);
   if (detail.installed) return { ok: false, reason: t('defenseSatDev.alreadyInstalled') };
   if (detail.upgradeJob) return { ok: false, reason: t('defenseSatDev.upgradeInProgress') };
@@ -256,7 +282,7 @@ export function installPlanetDefenseSatellite(planetId: string): { ok: true } | 
     installed: detail.installed,
     isCsvWorldBaseline: false,
     hasActiveJob: Boolean(detail.upgradeJob),
-    playerCredits: usePlayerStore.getState().player?.credits ?? 0,
+    playerCredits: resolveGateCredits(opts),
     installCost: resolvePlanetDevDiscountedCredits(planetId, resolveDefenseSatelliteInstallCostCredits()),
     notEnoughCreditsMessage: t('defenseSatDev.notEnoughCredits'),
   });
@@ -264,7 +290,7 @@ export function installPlanetDefenseSatellite(planetId: string): { ok: true } | 
     return { ok: false, reason: installGate.installBlockReason };
   }
   const cost = resolvePlanetDevDiscountedCredits(planetId, resolveDefenseSatelliteInstallCostCredits());
-  if (!spendPlayerCredits(cost)) return { ok: false, reason: t('defenseSatDev.notEnoughCredits') };
+  if (!spendDevCredits(cost, planetId, opts)) return { ok: false, reason: t('defenseSatDev.notEnoughCredits') };
   const durationSec = resolveFacilityInstallDurationSec('defense_satellite');
   if (durationSec <= 0) {
     patchDefenseSatelliteDetail(planetId, {
@@ -298,6 +324,7 @@ function applyDefenseSatelliteLevel(planetId: string, targetLevel: number): void
 
 export function startPlanetDefenseSatelliteUpgrade(
   planetId: string,
+  opts?: PlanetDevActionOpts,
 ): { ok: true } | { ok: false; reason: string } {
   const detail = readPlanetDefenseSatelliteDetail(planetId);
   if (!detail.installed) return { ok: false, reason: t('defenseSatDev.installFirst') };
@@ -308,7 +335,7 @@ export function startPlanetDefenseSatelliteUpgrade(
   const rawCost = resolveDefenseSatelliteUpgradeCostCredits(level);
   if (rawCost == null) return { ok: false, reason: t('defenseSatDev.cannotUpgrade') };
   const cost = resolvePlanetDevDiscountedCredits(planetId, rawCost);
-  if (!spendPlayerCredits(cost)) return { ok: false, reason: t('defenseSatDev.notEnoughCredits') };
+  if (!spendDevCredits(cost, planetId, opts)) return { ok: false, reason: t('defenseSatDev.notEnoughCredits') };
   const durationSec = resolveDefenseSatelliteUpgradeDurationSec(level) ?? 0;
   const targetLevel = level + 1;
   if (durationSec <= 0) {

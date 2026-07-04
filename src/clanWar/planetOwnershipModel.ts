@@ -10,7 +10,10 @@ import {
   ARC_CORE_SEED_BLUE_CLAN_ID,
   ARC_CORE_SEED_RED_CLAN_ID,
 } from '../arcCore/balance/seedPlanetOccupationFromBalance';
-import { getPlanetOccupationSeedRow } from '../arcCore/balance/balanceTableRegistry';
+import {
+  getPlanetOccupationSeedRow,
+  isPlanetContestedZone,
+} from '../arcCore/balance/balanceTableRegistry';
 import {
   resolveMapFactionSideFromClanIdPure,
   type MapFactionSide,
@@ -164,6 +167,34 @@ export type PlanetOwnershipDeedPurchaseCheck =
         | 'already_owner'
         | 'owned_by_other_clan';
     };
+
+/**
+ * 은하 지도 Voronoi·패널 — store hold 기준 occupier.
+ * hold 미시드·비 contested neutral 은 CSV 시드 합성. 접전지역 neutral 은 ArcCore 판정 대기(undefined).
+ */
+export function resolveEffectiveMapOccupierClanId(
+  planetId: string,
+  hold: PlanetClanHold | undefined,
+): string | undefined {
+  if (isPlanetContestedZone(planetId)) {
+    const occupier = hold?.occupierClanId?.trim();
+    if (!occupier || occupier === 'neutral' || hold?.kind === 'neutral') return undefined;
+    return occupier;
+  }
+
+  if (hold) {
+    const occupier = hold.occupierClanId?.trim();
+    if (hold.kind !== 'neutral' && occupier && occupier !== 'neutral') {
+      return occupier;
+    }
+  }
+
+  const seed = resolveSeedOccupierClanForPlanet(planetId);
+  if (seed.kind === 'neutral' || seed.occupierClanId === 'neutral') {
+    return undefined;
+  }
+  return seed.occupierClanId;
+}
 
 /** hold 미시드 시 CSV occupation 시드로 합성 */
 export function resolvePlanetHoldForOwnershipCheck(

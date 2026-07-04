@@ -15,12 +15,13 @@ import { COLORS, FONTS, SPACING, ZONE_COLORS } from '../../../utils/theme';
 import { useT } from '../../../i18n';
 import { useAppSettingsStore } from '../../../store/appSettingsStore';
 import { resolveStarSystemDisplayName } from '../../../i18n/systemText';
-import { resolveZoneLabel } from '../../../i18n/zoneText';
+import { resolvePlanetZoneDisplayLabel } from '../../../i18n/zoneText';
 import type { StarSystem, ZoneType } from '../../../types';
 import type { PlanetCoreGaugeView } from '../../../store/planetCoreRuntimeStore';
 import { planetCoreRuntimeToGaugeView, planetCsvBaselineToRuntime, usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore';
 import { usePlanetNebulaStore } from '../../../store/planetNebulaStore';
 import { usePlayerStore } from '../../../store/playerStore';
+import { useClanWarFoundationStore } from '../../../store/clanWarFoundationStore';
 import type { ArcNpcTrafficShip } from '../../../store/arcNpcTrafficStore';
 import type { ArcInboundDrone } from '../../../store/arcInboundDroneStore';
 import { PlanetCorePortraitWithTempAdminOverride } from '../PlanetCorePortraitWithTempAdminOverride';
@@ -295,6 +296,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
 }) {
   const t = useT();
   const locale = useAppSettingsStore((s) => s.locale);
+  const clanWarClans = useClanWarFoundationStore((s) => s.clans);
   const devSkiaMountAllowed = useDevSkiaMountAllowed();
   const { width: bgWindowWidth, height: bgWindowHeight } = useWindowDimensions();
   const nebulaBackdropRef = useRef<View | null>(null);
@@ -629,7 +631,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                   : { color: zoneColor, borderColor: zoneColor },
             ]}
           >
-            {resolveZoneLabel(system.zone, t)}
+            {resolvePlanetZoneDisplayLabel(planetId, system.zone, t, clanWarClans)}
           </Text>
           <View
             style={[

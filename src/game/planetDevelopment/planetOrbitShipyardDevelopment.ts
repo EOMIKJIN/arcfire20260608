@@ -40,6 +40,13 @@ import {
 import { invalidatePlanetMemoCachesForPlanet } from '../planetMemoCache';
 import { t } from '../../i18n';
 import { usePlayerStore } from '../../store/playerStore';
+import type { PlanetDevActionOpts } from './planetDevelopmentActionOptions';
+import { isArcCorePlanetDevAction, resolvePlanetDevFundingSource } from './planetDevelopmentActionOptions';
+import {
+  refundPlanetDevelopmentCredits,
+  resolvePlanetDevFundingBalance,
+  spendPlanetDevelopmentCredits,
+} from '../../arcCore/planetDevelopment/planetDevelopmentFunding';
 import type { PlanetFacilityModuleDetail } from '../../store/planetCoreMetricTypes';
 import {
   PLANET_DEV_MODULE_ORBIT_SHIPYARD,
@@ -109,6 +116,22 @@ function syncTradeCatalogAfterShipyardChange(planetId: string): void {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { syncTradePortCatalogForPlanet } = require('../../arcCore/balance/tradePortCatalogPolicy') as typeof import('../../arcCore/balance/tradePortCatalogPolicy');
   syncTradePortCatalogForPlanet(planetId);
+}
+
+function spendDevCredits(amount: number, planetId: string, opts?: PlanetDevActionOpts): boolean {
+  return spendPlanetDevelopmentCredits(amount, resolvePlanetDevFundingSource(opts), {
+    planetId,
+    moduleId: PLANET_DEV_MODULE_ORBIT_SHIPYARD,
+    note: resolvePlanetDevFundingSource(opts) === 'arc_core_vault' ? 'arc_core_planet_dev' : undefined,
+  });
+}
+
+function refundDevCredits(amount: number, opts?: PlanetDevActionOpts): void {
+  refundPlanetDevelopmentCredits(amount, resolvePlanetDevFundingSource(opts));
+}
+
+function resolveGateCredits(opts?: PlanetDevActionOpts): number {
+  return resolvePlanetDevFundingBalance(resolvePlanetDevFundingSource(opts));
 }
 
 function spendPlayerCredits(amount: number): boolean {
@@ -279,6 +302,7 @@ export function buildOrbitShipyardDevSnapshot(planetId: string): OrbitShipyardDe
 
 export function installPlanetOrbitShipyard(
   planetId: string,
+  opts?: PlanetDevActionOpts,
 ): { ok: true } | { ok: false; reason: string } {
   const detail = readPlanetOrbitShipyardDetail(planetId);
   if (isPlanetOrbitShipyardInstalled(planetId) || isPlanetCsvWorldDevModuleBaseline(planetId, PLANET_DEV_MODULE_ORBIT_SHIPYARD)) {
@@ -295,7 +319,7 @@ export function installPlanetOrbitShipyard(
     installed: isPlanetOrbitShipyardInstalled(planetId),
     isCsvWorldBaseline: isPlanetCsvWorldDevModuleBaseline(planetId, PLANET_DEV_MODULE_ORBIT_SHIPYARD),
     hasActiveJob: Boolean(detail.upgradeJob),
-    playerCredits: usePlayerStore.getState().player?.credits ?? 0,
+    playerCredits: resolveGateCredits(opts),
     installCost: resolveOrbitShipyardInstallCostCredits(planetId),
     notEnoughCreditsMessage: t('orbitShipyardDev.notEnoughCredits'),
   });
@@ -303,7 +327,7 @@ export function installPlanetOrbitShipyard(
     return { ok: false, reason: installGate.installBlockReason };
   }
   const cost = resolveOrbitShipyardInstallCostCredits(planetId);
-  if (!spendPlayerCredits(cost)) {
+  if (!spendDevCredits(cost, planetId, opts)) {
     return { ok: false, reason: t('orbitShipyardDev.notEnoughCredits') };
   }
   const durationSec = resolveFacilityInstallDurationSec('shipyard');
@@ -317,8 +341,7 @@ export function installPlanetOrbitShipyard(
       updatedAtMs: Date.now(),
     });
     if (!written) {
-      usePlayerStore.getState().addCredits(cost);
-      void usePlayerStore.getState().persist();
+      refundDevCredits(cost, opts);
       return { ok: false, reason: t('orbitShipyardDev.recordFailed') };
     }
     invalidatePlanetMemoCachesForPlanet(planetId);
@@ -334,8 +357,7 @@ export function installPlanetOrbitShipyard(
     updatedAtMs: Date.now(),
   });
   if (!written) {
-    usePlayerStore.getState().addCredits(cost);
-    void usePlayerStore.getState().persist();
+    refundDevCredits(cost, opts);
     return { ok: false, reason: t('orbitShipyardDev.recordFailed') };
   }
   invalidatePlanetMemoCachesForPlanet(planetId);
@@ -344,6 +366,7 @@ export function installPlanetOrbitShipyard(
 
 export function startPlanetOrbitShipyardUpgrade(
   planetId: string,
+  opts?: PlanetDevActionOpts,
 ): { ok: true } | { ok: false; reason: string } {
   let detail = readPlanetOrbitShipyardDetail(planetId);
   if (!detail.installed) {
@@ -366,13 +389,13 @@ export function startPlanetOrbitShipyardUpgrade(
   if (level >= maxLevel) return { ok: false, reason: t('orbitShipyardDev.maxLevel') };
   const reqPilot = resolveShipyardUpgradeRequiredPlayerLevel(level);
   const playerLevel = usePlayerStore.getState().player?.level ?? 1;
-  if (reqPilot > 0 && playerLevel < reqPilot) {
+  if (!isArcCorePlanetDevAction(opts) && reqPilot > 0 && playerLevel < reqPilot) {
     return { ok: false, reason: t('orbitShipyardDev.pilotLevelRequired', { level: reqPilot }) };
   }
   const rawCost = resolveShipyardUpgradeCostCredits(level);
   if (rawCost == null) return { ok: false, reason: t('orbitShipyardDev.cannotUpgrade') };
   const cost = resolvePlanetDevDiscountedCredits(planetId, rawCost);
-  if (!spendPlayerCredits(cost)) return { ok: false, reason: t('orbitShipyardDev.notEnoughCredits') };
+  if (!spendDevCredits(cost, planetId, opts)) return { ok: false, reason: t('orbitShipyardDev.notEnoughCredits') };
   const durationSec = resolveShipyardUpgradeDurationSec(level) ?? 0;
   const targetLevel = level + 1;
   if (durationSec <= 0) {

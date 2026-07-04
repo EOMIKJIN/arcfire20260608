@@ -1,0 +1,17 @@
+key,value,notesKo
+investment_tick_enabled,false,60s ArcCore RED 행성개발 투자 tick (임시 잠금 — 김팀장 검수 대기)
+max_starts_per_tick,2,틱당 신규 install/upgrade 상한
+module_weight_defense_satellite,100,방위위성 기본 가중치
+module_weight_dev_orbit_shipyard,70,궤도 조선소
+module_weight_dev_trade_port,75,무역소
+module_weight_dev_research_lab,60,연구소
+module_weight_dev_population_dome,50,선술집
+contested_defense_bonus,40,접전지 방위위성 가산
+capital_prime_bonus,30,core_prime 행성 가산
+min_first_wave_planets,3,1차 우선선행 개발 행성 최소 수
+min_first_wave_module_types,3,1차 선행 개발항목(모듈) 최소 종류
+max_concurrent_same_module,1,동시 진행 동일 모듈 상한(1차 다양성)
+portfolio_primary_affinity_bonus,50,행성별 primary 모듈 가산
+portfolio_secondary_affinity_bonus,25,행성별 secondary 모듈 가산
+same_module_in_flight_penalty,80,동일 모듈 in-flight 1건당 감점
+first_wave_planet_priority_cap,3,1차 웨이브 미충족 시 우선순위 rank 상한

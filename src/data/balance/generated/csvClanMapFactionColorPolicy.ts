@@ -3,6 +3,7 @@ export const ClanMapFactionColorPolicy_FROM_BALANCE_CSV = [
   { "matchType": "clan_id", "matchValue": "balance_seed_faction_blue", "displayColorHex": "#4EA3FF", "priority": "100", "notesKo": "시드 블루 — 수도 뉴 에덴(eden_city)" },
   { "matchType": "clan_id", "matchValue": "balance_seed_faction_red", "displayColorHex": "#E36B6B", "priority": "100", "notesKo": "시드 레드 — 수도 아크파이어 코어(core_prime)" },
   { "matchType": "clan_prefix", "matchValue": "ai_clan_safe", "displayColorHex": "#4EA3FF", "priority": "90", "notesKo": "AI 블루팀 거점" },
+  { "matchType": "clan_prefix", "matchValue": "ai_clan_neutral", "displayColorHex": "#9AA8C4", "priority": "85", "notesKo": "AI 중립권 클랜" },
   { "matchType": "clan_prefix", "matchValue": "ai_clan_pvp", "displayColorHex": "#E36B6B", "priority": "90", "notesKo": "AI 레드·PvP 팀" },
   { "matchType": "clan_substr", "matchValue": "_safe_", "displayColorHex": "#4EA3FF", "priority": "80", "notesKo": "안전권 클랜 접미" },
   { "matchType": "clan_substr", "matchValue": "_pvp_", "displayColorHex": "#E36B6B", "priority": "80", "notesKo": "적대 PvP 접미" },

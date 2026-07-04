@@ -2,6 +2,7 @@ import { scheduleDeferredNativeReclaimPass } from './deferredNativeReclaimSchedu
 import { tryBeginHubNativeReclaim } from './hubNativeReclaimCoalesce';
 import { runSoftNativeReclaimPass } from './runSoftNativeReclaimPass';
 import { resolveSinglePlanetSessionKeepIds } from './singlePlanetSessionKeep';
+import { runCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
 
 /**
  * planet hub 체류 — PSS/Native floor 완화 (Skia tear-down 없음).
@@ -10,6 +11,9 @@ import { resolveSinglePlanetSessionKeepIds } from './singlePlanetSessionKeep';
  */
 export function runPlanetHubSoftNativeReclaimPass(planetId: string, reason: string): void {
   if (!tryBeginHubNativeReclaim(reason)) return;
+
+  /** 전투 orbit 비활성 주기 reclaim — module Path/Paint 캐시만 (overlay signal 없음) */
+  runCombatSkiaPresentationReclaim();
 
   const keep = resolveSinglePlanetSessionKeepIds(planetId);
   runSoftNativeReclaimPass(reason);

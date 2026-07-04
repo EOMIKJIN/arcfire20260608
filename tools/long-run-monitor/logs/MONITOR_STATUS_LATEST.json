@@ -1,15 +1,15 @@
 ﻿{
     "lastTimeline":  {
-                         "pss_mb":  "535.4",
-                         "gl_mb":  "13.2",
-                         "pid":  "30675",
-                         "note":  "GL_RECOVERED idle_ok",
-                         "iso_time":  "2026-07-02 23:55:15",
-                         "views":  "15"
+                         "pss_mb":  "730",
+                         "gl_mb":  "44.1",
+                         "pid":  "29883",
+                         "note":  "",
+                         "iso_time":  "2026-07-04 23:57:53",
+                         "views":  "385"
                      },
     "processes":  {
                       "reportWatch":  {
-                                          "id":  19228,
+                                          "id":  19896,
                                           "alive":  true
                                       },
                       "schedule8am":  {
@@ -21,30 +21,30 @@
                                        "alive":  true
                                    },
                       "watch30m":  {
-                                       "id":  24156,
+                                       "id":  25024,
                                        "alive":  true
                                    }
                   },
-    "monitorPaused":  true,
+    "monitorPaused":  false,
     "perpetualDisabled":  false,
     "chatPending":  true,
-    "reportWatchMode":  "visible",
+    "reportWatchMode":  "hidden",
     "watchdog":  {
                      "id":  4844,
                      "alive":  true
                  },
     "reportWatch":  {
-                        "id":  19228,
+                        "id":  19896,
                         "alive":  true
                     },
     "handoffPending":  true,
     "watch30m":  {
-                     "id":  24156,
+                     "id":  25024,
                      "alive":  true
                  },
     "schedule8am":  {
                         "id":  9156,
                         "alive":  true
                     },
-    "updatedAtKst":  "2026-07-02 23:58:07"
+    "updatedAtKst":  "2026-07-04 23:58:44"
 }

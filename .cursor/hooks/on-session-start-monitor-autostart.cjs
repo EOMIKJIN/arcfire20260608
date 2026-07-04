@@ -21,6 +21,7 @@ const { spawn } = require('child_process');
 const MONITOR_DIR = path.join(process.cwd(), 'tools', 'long-run-monitor');
 
 const ENSURE_CJS = path.join(MONITOR_DIR, 'ensure-perpetual-watchdog.cjs');
+const ENSURE_8AM_PS1 = path.join(MONITOR_DIR, 'ensure-daily-8am-report.ps1');
 
 const DISABLE_FLAG = path.join(MONITOR_DIR, 'logs', 'perpetual-detection-DISABLED.flag');
 
@@ -96,6 +97,23 @@ function readWatchdogPid() {
 
 
 
+function spawnHidden8amEnsure() {
+  try {
+    if (!fs.existsSync(ENSURE_8AM_PS1)) return;
+    const ps =
+      process.env.SystemRoot != null
+        ? path.join(process.env.SystemRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe')
+        : 'powershell.exe';
+    spawn(
+      ps,
+      ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden', '-File', ENSURE_8AM_PS1],
+      { detached: true, stdio: 'ignore', windowsHide: true, cwd: process.cwd() },
+    ).unref();
+  } catch {
+    /* fail-open */
+  }
+}
+
 function main() {
 
   try {
@@ -139,33 +157,21 @@ function main() {
   const existing = readWatchdogPid();
 
   if (isAlive(existing)) {
-
+    spawnHidden8amEnsure();
     process.stdout.write(JSON.stringify({ additional_context: `${noteBase} (pid=${existing} OK)` }));
-
     return;
-
   }
 
-
-
   try {
-
     if (fs.existsSync(ENSURE_CJS)) {
-
       spawn(process.execPath, [ENSURE_CJS], {
-
         detached: true,
-
         stdio: 'ignore',
-
         windowsHide: true,
-
         cwd: process.cwd(),
-
       }).unref();
-
     }
-
+    spawnHidden8amEnsure();
   } catch {
 
     process.stdout.write(JSON.stringify({}));

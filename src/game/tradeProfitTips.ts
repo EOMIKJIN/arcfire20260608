@@ -6,9 +6,10 @@ import { applyTradeRouteNetProfitPerUnit } from '../arcCore/economy/tradeRouteTr
 import { resolveDemandPlanetSellUnit } from '../arcCore/economy/tradeRouteMarketQuotes';
 import { resolveTradeRouteRole } from '../arcCore/economy/tradeRouteRegistry';
 import { getItemDef } from '../data/itemRegistry';
-import { STAR_SYSTEMS } from '../data/systems';
 import { generateMarketByItemIds } from '../engine/TradeEngine';
 import { getSellPrice } from '../engine/marketListingPrices';
+import { isPlanetCsvTradePortWorldEnabled } from './planetDevelopment/planetCsvWorldFlags';
+import { forEachCoreOpenGameplayPlanet } from '../world/coreOpenGameplayPlanets';
 import { getPlanetTradePortItemIds } from '../world/planetTradePortDb';
 
 export type TradeProfitTip = {
@@ -73,24 +74,23 @@ export function listTradeResellProfitTips(
   const isTg = isTradeRouteGood(goodId, def);
   const tips: TradeProfitTip[] = [];
 
-  for (const system of Object.values(STAR_SYSTEMS)) {
-    for (const planet of system.planets) {
-      if (!planet.hasTradePort || planet.id === buyPlanetId) continue;
-      if (!canResellAtPlanet(planet.id, goodId, isTg)) continue;
-      const sellUnit = resolveSellUnitAtPlanet(planet.id, goodId, isTg, cumulativeCredits);
-      const profitPerUnit = computeResellProfitPerUnit(
-        buyPlanetId,
-        planet.id,
-        goodId,
-        buyUnitPrice,
-        sellUnit,
-        isTg,
-      );
-      if (profitPerUnit > 0) {
-        tips.push({ planetId: planet.id, planetName: planet.name, profitPerUnit });
-      }
+  forEachCoreOpenGameplayPlanet(({ planetId, planet }) => {
+    if (planetId === buyPlanetId) return;
+    if (!isPlanetCsvTradePortWorldEnabled(planetId)) return;
+    if (!canResellAtPlanet(planetId, goodId, isTg)) return;
+    const sellUnit = resolveSellUnitAtPlanet(planetId, goodId, isTg, cumulativeCredits);
+    const profitPerUnit = computeResellProfitPerUnit(
+      buyPlanetId,
+      planetId,
+      goodId,
+      buyUnitPrice,
+      sellUnit,
+      isTg,
+    );
+    if (profitPerUnit > 0) {
+      tips.push({ planetId, planetName: planet.name, profitPerUnit });
     }
-  }
+  });
 
   if (tips.length === 0) return [];
   tips.sort((a, b) => b.profitPerUnit - a.profitPerUnit);

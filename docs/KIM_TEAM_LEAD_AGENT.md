@@ -18,6 +18,26 @@
 
 협업: **`docs/KIM_TEAM_ECONOMY_WORKFLOW.md`**
 
+## 김클로드 → 김팀장 검수 게이트 (2026-07-04~)
+
+**김클로드** = Anthropic Claude Code (IDE ✱ 패널·터미널). **초안 구현 보조**. **git commit·완료 선언은 김팀장(Cursor 본창)만.**
+
+| 단계 | 담당 |
+|------|------|
+| 구현 + self-check | **김클로드** (`@김클로드`) |
+| handoff `PENDING` | `tools/kim-team-lead/reports/kim-claude-handoff-pending.md` |
+| diff·audit·수정·커밋 | **김팀장** |
+| mem-post-dev-recheck | 김팀장 → 김경제 배정 |
+
+김클로드 규칙: **`CLAUDE.md`** (커밋 금지 · handoff 의무)  
+김팀장 규칙: **`.cursor/rules/arcfire-main-lead-agent.mdc` §김클로드 게이트**  
+훅: `.cursor/hooks/on-session-start-kim-claude-handoff-review.cjs` (handoff PENDING 시 검수 리마인드)
+
+```text
+@김팀장 김클로드 handoff PENDING 검수해. diff·tsc·audit 확인 후 필요하면 수정.
+```
+
+
 ## 일 1회 검수
 
 ```bash
@@ -59,10 +79,15 @@ npm run audit:team-lead:daily
 
 | 영역 | 명령 |
 |------|------|
+| **개발 프로세스** | `npm run audit:dev-process-gate` · `npm run audit:mem-post-dev-recheck` |
+| **코드 diff 전** | `[pss-pre-dev]` 3줄 (훅·규칙 §0-A) |
 | 경제 | `audit:balance-ops` + `tsc` (김팀장이 수정 후) |
 | Skia | `audit:skia-memory` + `tsc` |
 | STAGE·PR | `audit:memory:all` + `tsc` |
 | 크래시 | `arcfire-bug-debug-workflow.mdc` |
+
+개발 반영 후 **반드시** `npm run audit:mem-post-dev-recheck` → handoff `mem-post-dev-recheck` 갱신.  
+상태: `tools/kim-team-lead/reports/DEV_PROCESS_GATE_STATUS.md`
 
 ## 정본
 

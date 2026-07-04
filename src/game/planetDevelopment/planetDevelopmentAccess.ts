@@ -2,6 +2,7 @@
 // 행성개발 설치·업그레이드 권한 — 거점 + 블루팩션 영역·동맹 점유
 // ============================================================
 
+import { isRedOccupiedPlanet } from '../../clanWar/planetTerritoryPlayerAccess';
 import { resolveDeedOwnerClanId } from '../../clanWar/planetOwnershipModel';
 import { getPlanetOccupationSeedRow } from '../../arcCore/balance/balanceTableRegistry';
 import { resolvePlayerHomePlanetId } from '../playerSurvivalPod';
@@ -35,6 +36,9 @@ function resolveSeedOwnerSide(planetId: string): MapFactionSide | null {
 export function canManagePlanetDevelopment(planetId: string): boolean {
   const id = planetId?.trim();
   if (!id) return false;
+
+  /** RED 점령지 — ArcCore 전용, 플레이어 개발 불가 */
+  if (isRedOccupiedPlanet(id)) return false;
 
   const player = usePlayerStore.getState().player;
   if (!player) return false;

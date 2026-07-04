@@ -45,9 +45,10 @@ export async function runContinueSessionPrewarm(): Promise<void> {
       useNpcCaptainProgressStore.getState().loadLocalNpcCaptainProgress(),
     ]);
 
-    useClanWarFoundationStore
-      .getState()
-      .syncNpcAiClanTerritoryFromGalaxy(useWorldStore.getState().systems);
+    const clanWar = useClanWarFoundationStore.getState();
+    clanWar.syncNpcAiClanTerritoryFromGalaxy(useWorldStore.getState().systems, {
+      skipOccupationSeedPipeline: true,
+    });
     useNpcCaptainProgressStore.getState().ensureCaptainsRegistered(NPC_CAPTAINS_FROM_CSV.map((c) => c.id));
 
     void resolvePlanetNearbyPresence(planetId, systemId);

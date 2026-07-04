@@ -2533,3 +2533,66 @@ ref=tools/long-run-monitor/logs/soak-worklet-mirror-20260621.json
 [2026-07-02 20:06:30] PSS_SOFT_CEILING pss=885.5 gl=37 views=392 native_reclaim_advisory
 [2026-07-02 20:21:51] PSS_SOFT_CEILING pss=886.4 gl=37 views=375 native_reclaim_advisory
 [2026-07-02 20:37:13] PSS_SOFT_CEILING pss=915 gl=35.2 views=390 native_reclaim_advisory
+[2026-07-03 02:10:57] GL_ELEVATED mounting_or_insufficient_samples gl=136.4 pss=792.9 views=451 restart_held
+[2026-07-03 03:12:38] PSS_SOFT_CEILING pss=892.4 gl=136.2 views=570 native_reclaim_advisory
+[2026-07-03 08:00:00] DAILY_8AM_REPORT 2026-07-03 08:00:00 KST
+[2026-07-03 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260703-0800.md verdict=OK
+[2026-07-03 08:02:04] DAILY_8AM_REPORT 2026-07-03 08:02:04 KST
+[2026-07-03 08:02:04] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260703-0800.md verdict=OK
+[2026-07-03 08:04:05] DAILY_8AM_REPORT 2026-07-03 08:04:05 KST
+[2026-07-03 08:04:05] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260703-0800.md verdict=OK
+[2026-07-03 08:06:06] DAILY_8AM_REPORT 2026-07-03 08:06:06 KST
+[2026-07-03 08:06:06] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260703-0800.md verdict=OK
+[2026-07-03 08:08:07] DAILY_8AM_REPORT 2026-07-03 08:08:07 KST
+[2026-07-03 08:08:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260703-0800.md verdict=OK
+[2026-07-03 08:10:09] DAILY_8AM_REPORT 2026-07-03 08:10:09 KST
+[2026-07-03 08:10:09] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260703-0800.md verdict=OK
+[2026-07-03 08:12:11] DAILY_8AM_REPORT 2026-07-03 08:12:11 KST
+[2026-07-03 08:12:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260703-0800.md verdict=OK
+[2026-07-03 08:14:12] DAILY_8AM_REPORT 2026-07-03 08:14:12 KST
+[2026-07-03 08:14:12] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260703-0800.md verdict=OK
+[2026-07-03 09:51:12] PSS_SOFT_CEILING pss=852.1 gl=133.2 views=564 native_reclaim_advisory
+[2026-07-03 11:32:39] EVENING_WATCH_6PM_START 2026-07-03 11:32 KST watch until 18:00 integrated report + ArcCore balance-ops
+[2026-07-03 14:27:12] GL_ELEVATED mounting_or_insufficient_samples gl=137.8 pss=726.8 views=557 restart_held
+[2026-07-03 14:42:40] GL_ELEVATED mounting_or_insufficient_samples gl=139.8 pss=734.3 views=557 restart_held
+[2026-07-03 14:57:59] GL_ELEVATED mounting_or_insufficient_samples gl=141.8 pss=707.7 views=557 restart_held
+[2026-07-03 16:04:03] INTENSIVE_WATCH_1600_START KST intensive watch 16:00-22:00
+[2026-07-03 16:04:08] AFTERNOON_WATCH_START 2026-07-03 16:04:08 KST
+[2026-07-03 18:00:02] EVENING_WATCH_6PM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\evening-watch-report-20260703-1800.md
+[2026-07-03 18:07:35] BALANCE_OPS_6PM D:\arcfire20260607\tools\long-run-monitor\logs\balance-ops-20260703-1800.log
+[2026-07-03 22:00:06] EVENING_WATCH_10PM_INTENSIVE_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\evening-watch-report-20260703-2200.md
+[2026-07-04 00:11:24] GL_ELEVATED mounting_or_insufficient_samples gl=145.5 pss=795.9 views=557 restart_held
+[2026-07-04 08:00:00] DAILY_8AM_REPORT 2026-07-04 08:00:00 KST
+[2026-07-04 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260704-0800.md verdict=OK
+[2026-07-04 08:02:08] DAILY_8AM_REPORT 2026-07-04 08:02:08 KST
+[2026-07-04 08:02:08] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260704-0800.md verdict=OK
+[2026-07-04 08:04:10] DAILY_8AM_REPORT 2026-07-04 08:04:10 KST
+[2026-07-04 08:04:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260704-0800.md verdict=OK
+[2026-07-04 08:06:11] DAILY_8AM_REPORT 2026-07-04 08:06:11 KST
+[2026-07-04 08:06:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260704-0800.md verdict=OK
+[2026-07-04 08:08:12] DAILY_8AM_REPORT 2026-07-04 08:08:12 KST
+[2026-07-04 08:08:12] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260704-0800.md verdict=OK
+[2026-07-04 08:10:14] DAILY_8AM_REPORT 2026-07-04 08:10:14 KST
+[2026-07-04 08:10:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260704-0800.md verdict=OK
+[2026-07-04 08:12:15] DAILY_8AM_REPORT 2026-07-04 08:12:15 KST
+[2026-07-04 08:12:15] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260704-0800.md verdict=OK
+[2026-07-04 08:14:17] DAILY_8AM_REPORT 2026-07-04 08:14:17 KST
+[2026-07-04 08:14:17] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260704-0800.md verdict=OK
+[2026-07-04 10:39:35] PSS_SOFT_CEILING pss=853.6 gl=145.4 views=557 native_reclaim_advisory
+[2026-07-04 10:54:54] PSS_SOFT_CEILING pss=849 gl=145.4 views=557 native_reclaim_advisory
+[2026-07-04 11:10:15] PSS_SOFT_CEILING pss=864 gl=137 views=565 native_reclaim_advisory
+[2026-07-04 11:40:57] GL_ELEVATED mounting_or_insufficient_samples gl=134.2 pss=772.4 views=566 restart_held
+[2026-07-04 11:56:19] GL_ELEVATED mounting_or_insufficient_samples gl=131 pss=776.8 views=374 restart_held
+[2026-07-04 12:11:38] GL_ELEVATED mounting_or_insufficient_samples gl=131.2 pss=785.7 views=370 restart_held
+[2026-07-04 12:26:56] GL_ELEVATED mounting_or_insufficient_samples gl=131.2 pss=791.6 views=371 restart_held
+[2026-07-04 13:43:24] GL_ELEVATED mounting_or_insufficient_samples gl=127.9 pss=765.2 views=346 restart_held
+[2026-07-04 16:01:17] PSS_SOFT_CEILING pss=843.4 gl=150 views=365 native_reclaim_advisory
+[2026-07-04 16:16:35] PSS_SOFT_CEILING pss=815.7 gl=152 views=368 native_reclaim_advisory
+[2026-07-04 17:18:20] PSS_SOFT_CEILING pss=864.2 gl=45.4 views=376 native_reclaim_advisory
+[2026-07-04 17:33:47] PSS_SOFT_CEILING pss=911.6 gl=51.2 views=398 native_reclaim_advisory
+[2026-07-04 17:49:06] PSS_SOFT_CEILING pss=888.5 gl=44.6 views=382 native_reclaim_advisory
+[2026-07-04 18:04:25] PSS_SOFT_CEILING pss=918.2 gl=46.6 views=385 native_reclaim_advisory
+[2026-07-04 18:19:45] PSS_SOFT_CEILING pss=945.7 gl=50.9 views=400 native_reclaim_advisory
+[2026-07-04 18:35:03] PSS_SOFT_CEILING pss=943 gl=44.6 views=377 native_reclaim_advisory
+[2026-07-04 18:50:22] PSS_SOFT_CEILING pss=925.2 gl=44.6 views=377 native_reclaim_advisory
+[2026-07-04 19:05:42] PSS_SOFT_CEILING pss=900.5 gl=27.5 views=378 native_reclaim_advisory

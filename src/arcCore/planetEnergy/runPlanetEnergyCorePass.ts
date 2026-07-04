@@ -14,7 +14,6 @@
 // 안 되는: 실채굴 DB 재집계 없음, mineral_region 비멤버 행성은 우주통계 미참여·폴백 R, 광물 스폰/가격은 미구현.
 // ============================================================
 
-import { useWorldStore } from '../../store/worldStore';
 import {
   usePlanetCoreRuntimeStore,
   planetCoreRuntimeToGaugeView,
@@ -32,6 +31,7 @@ import {
   resolvePlanetAsteroidAssignedMineralIds,
   resolvePlanetAsteroidOrbitCount,
 } from '../../world/mineralDepositModel';
+import { forEachCoreOpenGameplayPlanet } from '../../world/coreOpenGameplayPlanets';
 import { useWorldObjectRuntimeStore } from '../../store/worldObjectRuntimeStore';
 import { resolvePlanetCoreStatAuthority } from '../balance/planetCoreStatAuthorityPolicy';
 import { resolvePlanetCoreStatAuthorityContext } from '../planetCore/resolvePlanetCoreStatContext';
@@ -86,7 +86,6 @@ export function runPlanetEnergyCorePass(): void {
   const coreStore = usePlanetCoreRuntimeStore.getState();
   if (!coreStore.hydrated) return;
 
-  const systems = useWorldStore.getState().systems;
   const worldObjectRuntime = useWorldObjectRuntimeStore.getState();
   const { profilesByPlanetId } = buildPlanetMineralDepositIndex();
   const universe = computeGalaxyMineralUniverseStats(profilesByPlanetId);
@@ -96,11 +95,9 @@ export function runPlanetEnergyCorePass(): void {
   const orbitMineralPatch: Record<string, string[]> = {};
   const maxDelta = 7;
 
-  for (const sys of Object.values(systems)) {
-    for (const planet of sys.planets) {
-      const planetId = planet.id;
+  forEachCoreOpenGameplayPlanet(({ planetId, planet }) => {
       const runtime = coreStore.getPlanetCoreRuntime(planetId);
-      if (!runtime) continue;
+      if (!runtime) return;
 
       const target = targetResourceFromMineralAndOrbit({
         planet,
@@ -120,8 +117,7 @@ export function runPlanetEnergyCorePass(): void {
       if (nextResource !== g.resource) {
         updates[planetId] = { ...g, resource: nextResource };
       }
-    }
-  }
+  });
 
   if (Object.keys(updates).length > 0) {
     coreStore.patchPlanetCoresBulk(updates);

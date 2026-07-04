@@ -1,27 +1,34 @@
-# 저녁 감시 체제 — 22:00 KST 보고 예약
+﻿# Arcfire intensive watch ??2026-07-03 16:04:03 KST ??22:00 report
 
-**가동 시각 (KST)**: 2026-06-28 ~17:46  
-**보고 예정**: **22:00 KST** (저녁 10시)  
-**종료**: 22:00 보고 생성 후 감시 유지(record-only)
+Request: 16:00-22:00 focus ??ArcCore economy, RED planet dev automation, memory leak/abnormal occupation. Auto report 22:00. Serious issues: auto-fix ON.
 
-## 프로세스
+## Stack
 
-| 역할 | PID / 상태 |
-|------|------------|
-| watch-30m (30분 meminfo) | PID 33096 · alive |
-| report-watch (10분 콘솔) | PID 3976 · alive |
-| 22:00 스케줄러 | `schedule-5pm-kim-auto-report.cjs --target 22:00` |
+| Item | Value |
+|------|-------|
+| marker | INTENSIVE_WATCH_1600_START @ 2026-07-03 16:04:03 |
+| watch-30m | 15m PID 25024 |
+| auto-fix | ON |
+| 22:00 scheduler | PID 11784 |
+| runtime | pid=16676 PSS=657.8MB GL=44MB Views=361 |
 
-## 산출물 (22:00)
+## 22:00 outputs
 
-- `evening-watch-report-YYYYMMDD-2200.md`
-- `DAILY_5PM_REPORT_LATEST.md` (최신 요약)
-- `CHAT_REPORT_PENDING.md` → Cursor 채팅 게시용
-- `kim-economy-handoff.md` [관측] 갱신
+- evening-watch-report-YYYYMMDD-2200.md
+- DAILY_10PM_REPORT_LATEST.md
+- CHAT_REPORT_PENDING.md
+- kim-economy-handoff.md [obs]
 
-## 정책
+## KPI
 
-- **auto-fix**: OFF (`monitor-paused.flag` — 기록만, force-stop 없음)
-- **adb**: 192.168.45.197:37573 연결됨
+| Area | Target |
+|------|--------|
+| PSS idle floor | le 750MB, drift under +40MB |
+| GL after GL_RECOVERED | le 55MB |
+| GL 3x SPIKE | 0 |
+| PROCESS_DEATH+crash | 0 |
+| ArcCore batch | 12:00 only |
+| RED planet dev | 60s tick, vault spend |
 
-> **22:00에 이 세션 또는 김경제 세션에서 CHAT_REPORT_PENDING 내용을 사용자에게 게시.**
+> status: intensive-watch-ACTIVE 쨌 22:00 auto-report scheduled 쨌 auto-fix=ON
+

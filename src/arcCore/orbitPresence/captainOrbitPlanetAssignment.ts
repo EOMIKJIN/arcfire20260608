@@ -6,7 +6,11 @@
 // ============================================================
 
 import type { NpcCaptain } from '../../types';
-import { STAR_SYSTEMS } from '../../data/systems';
+import { resolvePlanetById } from '../../world/resolvePlanetById';
+import {
+  listCoreOpenGameplayPlanetIds,
+  resolveCoreOpenStarSystem,
+} from '../../world/coreOpenGameplayPlanets';
 import { npcDeterministicHash32 } from '../../npc/npcDeterministicHash';
 import { invalidatePlanetMemoCacheNamespace } from '../../game/planetMemoCache';
 import { invalidateCaptainPresenceWorldIndexCache } from '../captainPresence/captainPresenceWorldIndexCache';
@@ -35,22 +39,8 @@ let lastMemoEpochBucket = -1;
 function getPlanetFactionByIdIndex(): Map<string, string | null> {
   if (!planetFactionById) {
     planetFactionById = new Map<string, string | null>();
-    for (const sys of Object.values(STAR_SYSTEMS)) {
-      for (const planet of sys.planets) {
-        planetFactionById.set(planet.id, planet.factionId ?? null);
-      }
-    }
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { useWorldStore } = require('../../store/worldStore') as typeof import('../../store/worldStore');
-    const world = useWorldStore.getState();
-    for (const systemId of world.unlockedSystemIds) {
-      const sys = world.systems[systemId];
-      if (!sys) continue;
-      for (const planet of sys.planets) {
-        if (!planetFactionById.has(planet.id)) {
-          planetFactionById.set(planet.id, planet.factionId ?? null);
-        }
-      }
+    for (const pid of listCoreOpenGameplayPlanetIds()) {
+      planetFactionById.set(pid, resolvePlanetById(pid)?.factionId ?? null);
     }
   }
   return planetFactionById;
@@ -92,7 +82,7 @@ function listCaptainOrbitPlanetCandidates(captain: NpcCaptain): string[] {
     if (sid) systemIds.add(sid);
   }
   for (const sid of systemIds) {
-    const sys = STAR_SYSTEMS[sid];
+    const sys = resolveCoreOpenStarSystem(sid);
     if (!sys) continue;
     for (const planet of sys.planets) add(planet.id);
   }

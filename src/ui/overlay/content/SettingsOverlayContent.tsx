@@ -16,6 +16,7 @@ import {
 } from '../../../store/appSettingsStore';
 import type { AppLocale } from '../../../i18n/types';
 import { useT } from '../../../i18n';
+import { GameSaveBackupSection } from './GameSaveBackupSection';
 
 type Props = {
   entry: ArcOverlaySettingsEntry;
@@ -207,6 +208,7 @@ export const SettingsOverlayContent = memo(function SettingsOverlayContent({
       </Text>
       <Text style={[styles.resetHint, isTactical && styles.resetHintTactical]}>{t('settings.reset.hint')}</Text>
       <ArcButton label={t('settings.reset.button')} variant="destructive" onPress={onResetAccount} style={styles.resetBtn} />
+      <GameSaveBackupSection isTactical={isTactical} />
     </ArcOverlayCard>
   );
 });

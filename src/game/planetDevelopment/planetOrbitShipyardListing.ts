@@ -6,7 +6,7 @@
 
 import { resolveShipyardBuiltHullTierKeysForLevel } from '../../arcCore/balance/facilityShipyardLevelPolicy';
 import { resolveTradePortNpcShipIdsForZone } from '../../arcCore/balance/capitalShipTradeListingPolicy';
-import { STAR_SYSTEMS } from '../../data/systems';
+import { resolveStarSystemForPlanetId } from '../../world/resolvePlanetSystemPosition';
 import { resolvePlanetZoneIndex } from '../../arcCore/planetBalance/planetZoneIndexRegistry';
 import { isPlanetCsvShipyardWorldEnabled } from './planetCsvWorldFlags';
 import {
@@ -18,10 +18,7 @@ import type { PlanetFacilityModuleDetail } from '../../store/planetCoreMetricTyp
 export const PLANET_DEV_MODULE_ORBIT_SHIPYARD = 'dev_orbit_shipyard';
 
 function findSystemForPlanetId(planetId: string) {
-  for (const system of Object.values(STAR_SYSTEMS)) {
-    if (system.planets.some((p) => p.id === planetId)) return system;
-  }
-  return undefined;
+  return resolveStarSystemForPlanetId(planetId);
 }
 
 function normalizeOrbitShipyardDetail(

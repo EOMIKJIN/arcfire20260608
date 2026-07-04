@@ -6166,3 +6166,210 @@
 07-02 23:00:28.030  1822  2705 I ActivityManager: Changes in 99003 3 to 10, 184 to 0
 07-02 23:00:58.445  1822  2051 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
 07-02 23:00:58.462  1822  4222 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+07-02 23:05:30.852 25633 26657 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-02 23:05:30.853 25633 26657 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-02 23:05:30.853 25633 26657 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-02 23:05:30.854 25633 26657 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-02 23:06:13.435 25633 26657 I ReactNativeJS: [MEM] planet_main_stage_hub mount
+07-02 23:06:13.475 25633 26657 E ReactNativeJS: ReferenceError: Property 'isPlanetCsvTradePortWorldEnabled' doesn't exist
+07-02 23:06:13.475 25633 26657 E ReactNativeJS: 
+07-02 23:06:13.475 25633 26657 E ReactNativeJS: This error is located at:
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in PlanetScreen
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Unknown (created by Route(planet))
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Suspense (created by Route(planet))
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Route (created by Route(planet))
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Route(planet) (created by SceneView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in StaticContainer
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in EnsureSingleNavigator (created by SceneView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in SceneView (created by SceneView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in RCTView (created by View)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in View (created by DebugContainer)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in DebugContainer (created by MaybeNestedStack)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in MaybeNestedStack (created by SceneView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in RCTView (created by View)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in View (created by SceneView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in RNSScreen (created by Animated(Anonymous))
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Animated(Anonymous) (created by InnerScreen)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Suspender (created by Freeze)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Suspense (created by Freeze)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in DelayedFreeze (created by InnerScreen)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in InnerScreen (created by Screen)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Screen (created by SceneView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in SceneView (created by NativeStackViewInner)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Suspender (created by Freeze)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Suspense (created by Freeze)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in DelayedFreeze (created by ScreenStack)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in RNSScreenStack (created by ScreenStack)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in ScreenStack (created by NativeStackViewInner)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in NativeStackViewInner (created by NativeStackView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in RCTView (created by View)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in View (created by SafeAreaProviderCompat)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in SafeAreaProviderCompat (created by NativeStackView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in NativeStackView (created by NativeStackNavigator)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in PreventRemoveProvider (created by NavigationContent)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in NavigationContent
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Unknown (created by NativeStackNavigator)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in NativeStackNavigator
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Unknown (created by GameLayout)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in GameLayout
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Unknown (created by Route((game)))
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Suspense (created by Route((game)))
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Route (created by Route((game)))
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Route((game)) (created by SceneView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in StaticContainer
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in EnsureSingleNavigator (created by SceneView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in SceneView (created by SceneView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in RCTView (created by View)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in View (created by DebugContainer)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in DebugContainer (created by MaybeNestedStack)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in MaybeNestedStack (created by SceneView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in RCTView (created by View)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in View (created by SceneView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in RNSScreen (created by Animated(Anonymous))
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Animated(Anonymous) (created by InnerScreen)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Suspender (created by Freeze)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Suspense (created by Freeze)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in DelayedFreeze (created by InnerScreen)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in InnerScreen (created by Screen)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Screen (created by SceneView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in SceneView (created by NativeStackViewInner)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Suspender (created by Freeze)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Suspense (created by Freeze)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in DelayedFreeze (created by ScreenStack)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in RNSScreenStack (created by ScreenStack)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in ScreenStack (created by NativeStackViewInner)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in NativeStackViewInner (created by NativeStackView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in RCTView (created by View)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in View (created by SafeAreaProviderCompat)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in SafeAreaProviderCompat (created by NativeStackView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in NativeStackView (created by NativeStackNavigator)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in PreventRemoveProvider (created by NavigationContent)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in NavigationContent
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Unknown (created by NativeStackNavigator)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in NativeStackNavigator
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Unknown (created by RootLayout)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in RCTView (created by View)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in View (created by IdleSessionRestartGuard)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in IdleSessionRestartGuard (created by RootLayout)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in RNGestureHandlerRootView (created by GestureHandlerRootView)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in GestureHandlerRootView (created by RootLayout)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in RootLayout
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Unknown (created by Route())
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Suspense (created by Route())
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Route (created by Route())
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in Route() (created by ContextNavigator)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in RNCSafeAreaProvider (created by SafeAreaProvider)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in SafeAreaProvider (created by wrapper)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in wrapper (created by ContextNavigator)
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in EnsureSingleNavigator
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in BaseNavigationContainer
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in ThemeProvider
+07-02 23:06:13.475 25633 26657 E ReactNativeJS:     in NavigationContainerInner (created by
+07-02 23:06:13.484 25633 26657 E ReactNativeJS: ReferenceError: Property 'isPlanetCsvTradePortWorldEnabled' doesn't exist
+07-02 23:06:13.484 25633 26657 E ReactNativeJS: 
+07-02 23:06:13.484 25633 26657 E ReactNativeJS: This error is located at:
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in PlanetScreen
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Unknown (created by Route(planet))
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Suspense (created by Route(planet))
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Route (created by Route(planet))
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Route(planet) (created by SceneView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in StaticContainer
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in EnsureSingleNavigator (created by SceneView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in SceneView (created by SceneView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in RCTView (created by View)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in View (created by DebugContainer)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in DebugContainer (created by MaybeNestedStack)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in MaybeNestedStack (created by SceneView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in RCTView (created by View)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in View (created by SceneView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in RNSScreen (created by Animated(Anonymous))
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Animated(Anonymous) (created by InnerScreen)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Suspender (created by Freeze)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Suspense (created by Freeze)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in DelayedFreeze (created by InnerScreen)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in InnerScreen (created by Screen)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Screen (created by SceneView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in SceneView (created by NativeStackViewInner)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Suspender (created by Freeze)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Suspense (created by Freeze)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in DelayedFreeze (created by ScreenStack)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in RNSScreenStack (created by ScreenStack)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in ScreenStack (created by NativeStackViewInner)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in NativeStackViewInner (created by NativeStackView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in RCTView (created by View)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in View (created by SafeAreaProviderCompat)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in SafeAreaProviderCompat (created by NativeStackView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in NativeStackView (created by NativeStackNavigator)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in PreventRemoveProvider (created by NavigationContent)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in NavigationContent
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Unknown (created by NativeStackNavigator)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in NativeStackNavigator
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Unknown (created by GameLayout)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in GameLayout
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Unknown (created by Route((game)))
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Suspense (created by Route((game)))
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Route (created by Route((game)))
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Route((game)) (created by SceneView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in StaticContainer
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in EnsureSingleNavigator (created by SceneView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in SceneView (created by SceneView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in RCTView (created by View)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in View (created by DebugContainer)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in DebugContainer (created by MaybeNestedStack)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in MaybeNestedStack (created by SceneView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in RCTView (created by View)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in View (created by SceneView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in RNSScreen (created by Animated(Anonymous))
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Animated(Anonymous) (created by InnerScreen)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Suspender (created by Freeze)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Suspense (created by Freeze)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in DelayedFreeze (created by InnerScreen)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in InnerScreen (created by Screen)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Screen (created by SceneView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in SceneView (created by NativeStackViewInner)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Suspender (created by Freeze)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Suspense (created by Freeze)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Freeze (created by DelayedFreeze)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in DelayedFreeze (created by ScreenStack)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in RNSScreenStack (created by ScreenStack)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in ScreenStack (created by NativeStackViewInner)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in NativeStackViewInner (created by NativeStackView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in RCTView (created by View)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in View (created by SafeAreaProviderCompat)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in SafeAreaProviderCompat (created by NativeStackView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in NativeStackView (created by NativeStackNavigator)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in PreventRemoveProvider (created by NavigationContent)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in NavigationContent
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Unknown (created by NativeStackNavigator)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in NativeStackNavigator
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Unknown (created by RootLayout)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in RCTView (created by View)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in View (created by IdleSessionRestartGuard)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in IdleSessionRestartGuard (created by RootLayout)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in RNGestureHandlerRootView (created by GestureHandlerRootView)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in GestureHandlerRootView (created by RootLayout)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in RootLayout
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Unknown (created by Route())
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Suspense (created by Route())
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Route (created by Route())
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in Route() (created by ContextNavigator)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in RNCSafeAreaProvider (created by SafeAreaProvider)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in SafeAreaProvider (created by wrapper)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in wrapper (created by ContextNavigator)
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in EnsureSingleNavigator
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in BaseNavigationContainer
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in ThemeProvider
+07-02 23:06:13.484 25633 26657 E ReactNativeJS:     in NavigationContainerInner (created by
+07-02 23:09:22.093  1822  2705 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-02 23:09:37.157  1822  4319 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-02 23:09:52.861  1822  1840 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-02 23:10:07.972  1822  2748 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-02 23:13:01.994 25633 26657 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=app_background nebulaBefore=28
+07-02 23:13:25.265 25633 26922 I ReactNativeJS: Bridgeless mode is enabled

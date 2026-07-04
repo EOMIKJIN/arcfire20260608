@@ -1,6 +1,6 @@
 // ============================================================
-// 일 1회 — 아크코어 중앙은행 적립금(시드 초과) 전액 회계 지출
-// 함대·행성개방·행성개발 — 게임 적용은 추후, 금고 소각+원장만.
+// 일 1회 — 아크코어 중앙은행 적립금(시드 초과) 지출
+// 함대·행성개방 — 회계 소각 · 행성개발 — RED ArcCore 실투자 예산 적립
 // ============================================================
 
 import { planetAttackKstDayKey } from '../planetAttack/planetAttackKstDayKey';
@@ -12,6 +12,7 @@ import {
   spendArcCoreCentralBankAccounting,
 } from './arcCoreCentralBank';
 import { accumulateArcCoreCentralBankExpenditure } from './arcCoreCentralBankExpenditureLedger';
+import { creditArcCorePlanetDevDailyBudget } from '../planetDevelopment/arcCorePlanetDevBudgetState';
 
 export type ArcCoreCentralBankExpenditurePassResult = {
   ran: boolean;
@@ -78,24 +79,21 @@ export async function runArcCoreCentralBankExpenditurePass(): Promise<ArcCoreCen
       note: `planet_opening_accounting kst=${kstDayKey} amt=${split.opening}`,
     },
   );
-  const devOk = spendArcCoreCentralBankAccounting(
-    split.development,
-    ARC_CORE_CENTRAL_BANK_TXN_KIND.spendPlanetDevelopment,
-    {
-      note: `planet_development_accounting kst=${kstDayKey} amt=${split.development}`,
-    },
-  );
+  const devBudgetAllocated = split.development;
+  if (devBudgetAllocated > 0) {
+    await creditArcCorePlanetDevDailyBudget(kstDayKey, devBudgetAllocated);
+  }
 
   const fleetMilitarySpent = fleetOk ? split.fleet : 0;
   const planetOpeningSpent = openingOk ? split.opening : 0;
-  const planetDevelopmentSpent = devOk ? split.development : 0;
+  const planetDevelopmentSpent = devBudgetAllocated;
 
-  if (fleetMilitarySpent + planetOpeningSpent + planetDevelopmentSpent > 0) {
+  if (fleetMilitarySpent + planetOpeningSpent > 0) {
     await accumulateArcCoreCentralBankExpenditure({
       kstDayKey,
       fleetMilitaryCredits: fleetMilitarySpent,
       planetOpeningCredits: planetOpeningSpent,
-      planetDevelopmentCredits: planetDevelopmentSpent,
+      planetDevelopmentCredits: 0,
     });
   }
 

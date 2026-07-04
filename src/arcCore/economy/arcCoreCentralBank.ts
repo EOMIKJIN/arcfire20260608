@@ -1,6 +1,6 @@
 // ============================================================
 // 아크코어 중앙은행 — 발행(mint)·소각(burn)·지출 txn kind 정본
-// 실제 함대·행성개발 게임 적용은 추후; 현재는 금고·원장 회계만.
+// 행성개발 RED ArcCore 실지출은 vault trySpend + 일일 예산 풀 연동
 // ============================================================
 
 import { useArcCoreVaultStore } from '../../store/factionVault/arcCoreVaultStore';

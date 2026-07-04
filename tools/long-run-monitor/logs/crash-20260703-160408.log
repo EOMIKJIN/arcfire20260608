@@ -1,0 +1,565 @@
+--------- beginning of system
+07-03 16:04:46.665  1822  2051 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+07-03 16:04:46.676  1822  4230 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+--------- beginning of main
+07-03 16:05:29.707 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 16:05:29.708 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 16:05:31.259 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 16:05:42.207 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:05:42.208 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:05:42.208 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:05:42.208 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:09:07.692 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:09:07.693 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:09:07.693 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:09:07.693 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:09:26.766  1822  4135 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 16:09:41.840  1822  2741 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 16:10:29.706 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 16:10:29.707 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 16:10:31.256 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 16:10:56.478  1822  1949 I ActivityManager: Start proc 18002:com.sec.android.app.samsungapps/u0a86 for service {com.sec.android.app.samsungapps/com.sec.android.app.samsungapps.jobscheduling.PollJobService}
+07-03 16:10:56.479  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 16:10:57.188  1822  1949 I ActivityManager: Start proc 18046:com.osp.app.signin/u0a117 for content provider {com.osp.app.signin/com.samsung.android.samsungaccount.setting.data.family.group.FamilyGroupProvider}
+07-03 16:10:57.188  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 16:10:57.491  1822  2986 I ActivityManager: Changes in 99003 19 to 8, 0 to 128
+07-03 16:10:57.492  1822  2986 I ActivityManager: Changes in 10086 19 to 8, 0 to 128
+07-03 16:10:57.504  1822  2986 I ActivityManager: Changes in 99003 8 to 10, 128 to 0
+07-03 16:10:57.553  1822  2741 I ActivityManager: Changes in 99003 19 to 8, 0 to 128
+07-03 16:10:57.554  1822  2741 I ActivityManager: Changes in 10117 19 to 8, 0 to 128
+07-03 16:11:03.461  1822  1947 I ActivityManager: Changes in 99003 8 to 15, 128 to 0
+07-03 16:11:03.462  1822  1947 I ActivityManager: Changes in 10117 8 to 15, 128 to 0
+07-03 16:11:08.341 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:11:08.341 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:11:08.341 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:11:08.341 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:11:12.780  1822  3015 I ActivityManager: Changes in 10086 8 to 10, 128 to 0
+07-03 16:11:12.784  1822  2741 I ActivityManager: Killing 15006:com.google.android.gms.unstable/u0a252 (adj 965): empty #25
+07-03 16:11:24.434  1822  1948 I ActivityManager: Killing 16508:com.android.keychain/1000 (adj 955): empty #25
+07-03 16:12:31.863 16676 17289 I ReactNativeJS: [territorial] pass shadow_market decision=battle holdChanged=false red->red
+07-03 16:13:09.414 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:13:09.414 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:13:09.414 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:13:09.415 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:15:10.639 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:15:10.640 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:15:10.641 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:15:10.641 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:15:29.710 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 16:15:29.713 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=3
+07-03 16:15:29.714 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 16:15:54.623  1822  2051 I ActivityManager: Changes in 10248 19 to 8, 0 to 128
+07-03 16:15:54.662  1822  4349 I ActivityManager: Changes in 10099 19 to 8, 0 to 128
+07-03 16:15:54.675  1822  2203 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
+07-03 16:15:54.685  1822  3015 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+07-03 16:15:54.704  1822  2738 I ActivityManager: Changes in 10248 8 to 10, 128 to 0
+07-03 16:15:54.723  1822  2738 I ActivityManager: Changes in 10099 8 to 10, 128 to 0
+07-03 16:16:28.364  1822  1949 I ActivityManager: Start proc 18263:com.samsung.android.privacydashboard/u0a107 for content provider {com.samsung.android.privacydashboard/com.samsung.android.privacydashboard.provider.PermissionAccessInformationContentProvider}
+07-03 16:16:28.364  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 16:16:28.482  1822  4135 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+07-03 16:16:34.588  1822  1947 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+07-03 16:16:54.590  1822  1948 I ActivityManager: Killing 16610:com.samsung.android.provider.filterprovider/1000 (adj 955): empty #25
+07-03 16:17:10.923 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:17:10.924 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:17:10.924 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:17:10.924 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:18:49.659  1822  2203 I ActivityManager: Changes in 99003 19 to 8, 0 to 128
+07-03 16:18:49.705  1822  2738 I ActivityManager: Changes in 99003 8 to 5, 128 to 184
+07-03 16:18:49.929  1822  1949 I ActivityManager: Start proc 18369:com.google.android.googlequicksearchbox:search/u0a253 for broadcast {com.google.android.googlequicksearchbox/com.google.android.libraries.search.gcm.search.SearchProcessGcmBroadcastReceiver_Receiver}
+07-03 16:18:49.929  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 16:19:04.720  1822  4349 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 16:19:04.724  1822  3015 I ActivityManager: Killing 15666:com.samsung.android.game.gos/u0a76 (adj 945): empty #25
+07-03 16:19:11.356 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:19:11.357 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:19:11.357 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:19:11.357 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:19:26.761  1822  4135 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 16:19:41.832  1822  4135 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 16:20:29.711 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 16:20:29.711 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 16:20:31.286 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 16:21:12.064 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:21:12.064 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:21:12.065 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:21:12.065 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:23:12.774 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:23:12.774 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:23:12.775 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:23:12.777 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:23:47.004  1822  1948 I ActivityManager: Changes in 10099 19 to 11, 0 to 128
+07-03 16:23:47.095  1822  1949 I ActivityManager: Start proc 18550:com.skt.skaf.OA00018282/u0a104 for content provider {com.skt.skaf.OA00018282/com.onestore.utils.ApiContentProvider}
+07-03 16:23:47.095  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 16:23:48.278  1822  4349 I ActivityManager: Changes in 99003 19 to 10, 0 to 128
+07-03 16:23:48.279  1822  4349 I ActivityManager: Changes in 10104 19 to 10, 0 to 128
+07-03 16:23:48.359  1822  4349 I ActivityManager: Killing 16244:com.samsung.android.sm.devicesecurity/u0a214 (adj 945): empty #25
+07-03 16:23:53.285  1822  1947 I ActivityManager: Changes in 99003 19 to 19, 128 to 0
+07-03 16:23:53.286  1822  1947 I ActivityManager: Changes in 10104 19 to 19, 128 to 0
+07-03 16:23:57.008  1822  2051 I ActivityManager: Changes in 10099 19 to 19, 128 to 0
+07-03 16:24:19.524  1822  1949 I ActivityManager: Start proc 18625:com.google.android.gms.unstable/u0a252 for service {com.google.android.gms/com.google.android.gms.droidguard.DroidGuardService}
+07-03 16:24:19.524  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 16:24:19.916  1822  3015 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 16:24:25.644  1822  2738 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 16:24:25.649  1822  3015 I ActivityManager: Killing 16270:com.samsung.android.lool/1000 (adj 945): empty #25
+07-03 16:25:14.056 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:25:14.057 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:25:14.057 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:25:14.058 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:25:29.714 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 16:25:29.715 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 16:25:31.258 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 16:27:15.004 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:27:15.004 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:27:15.006 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:27:15.007 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:28:26.470  1822  1948 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+07-03 16:28:26.474  1822  2738 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+07-03 16:28:26.521  1822  2738 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 16:28:41.575  1822  3015 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 16:29:16.028 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:29:16.029 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:29:16.031 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:29:16.032 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:29:26.767  1822  2738 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 16:29:41.828  1822  2738 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 16:30:29.715 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 16:30:29.719 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 16:30:29.727 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=12
+07-03 16:31:16.881 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:31:16.881 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:31:16.881 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:31:16.882 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:33:18.922 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:33:18.922 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:33:18.923 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:33:18.923 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:34:27.944  1822  1949 I ActivityManager: Start proc 18991:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0i12 for  {com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:0}
+07-03 16:34:27.944  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 16:34:27.946 18991 18991 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+07-03 16:34:28.002  1822  4135 I ActivityManager: Killing 16530:com.samsung.android.app.routines/u0a53 (adj 935): empty #25
+07-03 16:35:19.148 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:35:19.149 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:35:19.150 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:35:19.160 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:35:29.742 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 16:35:29.742 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 16:35:31.304 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 16:37:19.624 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:37:19.625 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:37:19.625 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:37:19.626 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:39:20.088 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:39:20.088 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:39:20.089 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:39:20.089 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:39:26.760  1822  4230 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 16:39:41.823  1822  2738 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 16:40:29.759 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 16:40:29.760 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 16:40:31.543 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 16:41:20.418 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:41:20.419 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:41:20.419 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:41:20.419 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:42:42.149  1822  3071 I ActivityManager: Changes in 99012 19 to 19, 0 to 128
+07-03 16:43:20.944 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:43:20.946 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:43:20.948 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:43:20.949 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:43:32.074  1822  4222 I ActivityManager: Changes in 99012 19 to 19, 128 to 0
+07-03 16:44:28.762  1822  1949 I ActivityManager: Start proc 19351:com.sec.android.app.shealth:remote/u0a328 for service {com.sec.android.app.shealth/com.samsung.android.service.health.data.phd.PrivilegedHealthService}
+07-03 16:44:28.762  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 16:44:29.099  1822  4230 I ActivityManager: Killing 16491:com.google.android.permissioncontroller/u0a302 (adj 935): empty #25
+07-03 16:44:29.152  1822  1941 W ActivityManager: setHasOverlayUi called on unknown pid: 16491
+07-03 16:45:21.480 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:45:21.482 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:45:21.483 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:45:21.484 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:45:29.717 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 16:45:29.720 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 16:45:29.741 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=25
+07-03 16:45:56.511  1822  1948 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+07-03 16:45:56.523  1822  4230 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+07-03 16:45:56.535  1822  1949 I ActivityManager: Start proc 19545:com.samsung.android.game.gos/u0a76 for service {com.samsung.android.game.gos/com.samsung.android.game.gos.service.MainIntentService}
+07-03 16:45:56.536  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 16:45:56.912  1822  4192 I ActivityManager: Killing 17155:com.android.chrome:privileged_process0/u0a266 (adj 905): empty #25
+07-03 16:45:56.965  1822  4231 W ActivityManager: Scheduling restart of crashed service com.android.chrome/org.chromium.content.app.PrivilegedProcessService0 in 1000ms for connection
+07-03 16:46:28.547  1822 19353 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+07-03 16:46:34.617  1822  1947 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+07-03 16:46:59.430  1822  4231 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 16:47:14.450  1822  3015 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 16:47:21.791 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:47:21.792 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:47:21.792 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:47:21.793 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:49:11.963  1822  1949 I ActivityManager: Start proc 19790:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/u0i13 for  {com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:1}
+07-03 16:49:11.963  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 16:49:11.967 19790 19790 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+07-03 16:49:12.041  1822  3015 I ActivityManager: Changes in 99013 19 to 10, 0 to 128
+07-03 16:49:12.051  1822  2738 I ActivityManager: Killing 17225:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a266i-9000 (adj 905): empty #25
+07-03 16:49:12.098  1822  2738 W ActivityManager: Scheduling restart of crashed service com.android.chrome/org.chromium.content.app.SandboxedProcessService0:0 in 1000ms for connection
+07-03 16:49:26.768  1822  3071 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 16:49:41.837  1822  3071 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 16:50:03.588 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:50:03.588 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:50:03.589 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:50:03.589 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:50:29.763 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 16:50:29.763 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 16:50:31.334 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 16:53:10.388 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:53:10.389 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:53:10.390 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:53:10.392 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:54:49.036  1822  1948 I ActivityManager: Changes in 99012 19 to 19, 0 to 128
+07-03 16:54:49.046  1822  3071 I ActivityManager: Changes in 99012 19 to 19, 128 to 0
+07-03 16:55:29.790 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 16:55:29.790 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 16:55:31.337 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 16:55:59.252 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:55:59.253 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:55:59.253 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:55:59.254 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:58:11.184 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:58:11.184 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-03 16:58:11.185 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-03 16:58:11.185 16676 17289 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-03 16:59:26.770  1822  4230 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 16:59:41.841  1822  2738 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 17:00:29.717 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 17:00:29.722 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 17:00:29.750 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=34
+07-03 17:05:29.779 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 17:05:29.780 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 17:05:31.385 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 17:09:26.763  1822  3071 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 17:09:41.826  1822  3071 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 17:10:29.779 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 17:10:29.779 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 17:10:31.353 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 17:12:33.232 16676 17289 I ReactNativeJS: [territorial] pass draco_haven decision=battle holdChanged=false red->red
+07-03 17:13:37.055  1822  4230 I ActivityManager: com.samsung.android.app.telephonyui is exempt from freezer by list
+07-03 17:13:37.070  1822  1949 I ActivityManager: Start proc 20480:com.samsung.android.app.telephonyui/1001 for content provider {com.samsung.android.app.telephonyui/com.samsung.android.app.telephonyui.provider.InternalContentProvider}
+07-03 17:13:37.070  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:14:03.402  1822  1948 I ActivityManager: Killing 11135:com.android.vending:background/u0a251 (adj 905): empty #25
+07-03 17:14:28.750  1822  4347 I ActivityManager: Changes in 99003 19 to 8, 0 to 128
+07-03 17:14:29.083  1822  4230 I ActivityManager: Changes in 99003 8 to 10, 128 to 0
+07-03 17:14:29.160  1822  4230 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 17:14:44.177  1822  4230 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 17:15:29.808 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 17:15:29.809 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=1
+07-03 17:15:29.810 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 17:15:53.359  1822  1948 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+07-03 17:15:53.361  1822  2705 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+07-03 17:15:53.389  1822  3513 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 17:16:08.461  1822  4230 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 17:16:28.883  1822 19353 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+07-03 17:16:34.941  1822  1947 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+07-03 17:19:26.769  1822  4135 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 17:19:41.836  1822  4230 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 17:20:29.791 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 17:20:29.792 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 17:20:31.348 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 17:22:11.274  1822  3325 W ActivityManager: pid 3309 com.google.android.gms.persistent sent binder code 2 with flags 1 to frozen apps and got error -32
+07-03 17:22:11.304  1822  1949 I ActivityManager: Start proc 20769:com.google.android.apps.maps:server_recovery_process/u0a270 for broadcast {com.google.android.apps.maps/com.google.android.apps.gmm.plugins.serverrecovery.PhenotypeServerRecoveryHandlerImpl}
+07-03 17:22:11.304  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:22:11.673  1822  4135 I ActivityManager: Changes in 10270 19 to 11, 0 to 128
+07-03 17:22:11.698  1822  1949 I ActivityManager: Start proc 20794:com.google.android.apps.maps/u0a270 for broadcast {com.google.android.apps.maps/com.google.android.libraries.phenotype.client.stable.PhenotypeUpdateBackgroundBroadcastReceiver}
+07-03 17:22:11.699  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:22:11.741  1822  4135 I ActivityManager: Process com.google.android.apps.maps:server_recovery_process (pid 20769) has died: fg  RCVR(212,1516)
+07-03 17:22:11.779  1822  2705 I ActivityManager: Changes in 10270 11 to 19, 128 to 0
+07-03 17:22:11.882  1822  1948 I ActivityManager: Changes in 99012 19 to 19, 0 to 128
+07-03 17:22:11.898  1822  3513 I ActivityManager: Changes in 99012 19 to 19, 128 to 0
+07-03 17:22:11.907  1822  1948 I ActivityManager: Changes in 99012 19 to 19, 0 to 128
+07-03 17:22:12.000  1822  4135 I ActivityManager: Changes in 99012 19 to 19, 128 to 0
+07-03 17:22:12.010  1822  1948 I ActivityManager: Changes in 99012 19 to 19, 0 to 128
+07-03 17:22:12.021  1822  4135 I ActivityManager: Changes in 99012 19 to 19, 128 to 0
+07-03 17:22:12.201  1822  4319 I ActivityManager: Changes in 10270 19 to 11, 0 to 128
+07-03 17:22:12.231  1822  4135 I ActivityManager: Changes in 10270 11 to 19, 128 to 0
+07-03 17:22:12.238  1822  1949 I ActivityManager: Start proc 20826:com.google.android.apps.maps:server_recovery_process/u0a270 for broadcast {com.google.android.apps.maps/com.google.android.apps.gmm.plugins.serverrecovery.PhenotypeServerRecoveryHandlerImpl}
+07-03 17:22:12.238  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:22:12.336  1822  1949 I ActivityManager: Start proc 20859:com.google.android.projection.gearhead:car/u0a242 for service {com.google.android.projection.gearhead/com.google.android.apps.auto.carservice.service.impl.GearheadCarStartupService}
+07-03 17:22:12.336  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:22:12.363  1822  4319 I ActivityManager: Changes in 10270 19 to 11, 0 to 128
+07-03 17:22:12.389  1822  1949 I ActivityManager: Start proc 20875:com.google.android.apps.tachyon/u0a254 for broadcast {com.google.android.apps.tachyon/com.google.android.apps.tachyon.phenotype.PhenotypeBroadcastReceiver}
+07-03 17:22:12.389  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:22:12.430  1822  2738 I ActivityManager: Process com.google.android.apps.maps:server_recovery_process (pid 20826) has died: fg  RCVR(250,1481)
+07-03 17:22:13.096  1822  2738 I ActivityManager: Changes in 10254 11 to 11, 0 to 128
+07-03 17:22:13.101  1822  4230 I ActivityManager: Changes in 99003 10 to 10, 0 to 128
+07-03 17:22:13.112  1822  3513 I ActivityManager: Changes in 99003 10 to 10, 128 to 0
+07-03 17:22:13.112  1822  1949 I ActivityManager: Start proc 20953:com.google.android.apps.maps:server_recovery_process/u0a270 for broadcast {com.google.android.apps.maps/com.google.android.apps.gmm.plugins.serverrecovery.PhenotypeServerRecoveryHandlerImpl}
+07-03 17:22:13.112  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:22:13.113  1822  3513 I ActivityManager: Changes in 99003 10 to 10, 0 to 128
+07-03 17:22:13.151  1822  4135 I ActivityManager: Changes in 10270 11 to 19, 128 to 0
+07-03 17:22:13.164  1822  4135 I ActivityManager: Killing 17565:com.google.android.tts/u0a260 (adj 905): empty #25
+07-03 17:22:13.168  1822  4135 I ActivityManager: Changes in 99003 10 to 10, 128 to 0
+07-03 17:22:13.168  1822  4135 I ActivityManager: Changes in 10254 11 to 19, 128 to 0
+07-03 17:22:13.212  1822  2738 I ActivityManager: Changes in 10270 19 to 11, 0 to 128
+07-03 17:22:13.230  1822  1949 I ActivityManager: Start proc 20972:com.google.android.setupwizard/u0a279 for broadcast {com.google.android.setupwizard/com.google.android.libraries.phenotype.client.stable.PhenotypeUpdateBackgroundBroadcastReceiver}
+07-03 17:22:13.231  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:22:13.253  1822  2738 I ActivityManager: Process com.google.android.apps.maps:server_recovery_process (pid 20953) has died: fg  RCVR(265,1470)
+07-03 17:22:13.500  1822  4319 I ActivityManager: Changes in 10279 19 to 11, 0 to 128
+07-03 17:22:13.515  1822  4319 I ActivityManager: Killing 16209:com.android.vending/u0a251 (adj 905): empty #25
+07-03 17:22:13.517  1822  4319 I ActivityManager: Changes in 10279 11 to 19, 128 to 0
+07-03 17:22:13.524  1822  1949 I ActivityManager: Start proc 20990:com.google.ar.core/u0a152 for broadcast {com.google.ar.core/com.google.android.libraries.phenotype.client.stable.PhenotypeUpdateBackgroundBroadcastReceiver}
+07-03 17:22:13.524  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:22:14.007  1822  4135 I ActivityManager: Changes in 10152 19 to 11, 0 to 128
+07-03 17:22:14.020  1822  4135 I ActivityManager: Killing 18002:com.sec.android.app.samsungapps/u0a86 (adj 905): empty #25
+07-03 17:22:14.021  1822  4135 I ActivityManager: Changes in 10152 11 to 19, 128 to 0
+07-03 17:22:14.036  1822  1949 I ActivityManager: Start proc 21011:com.google.android.apps.restore/u0a249 for broadcast {com.google.android.apps.restore/com.google.android.libraries.phenotype.client.stable.PhenotypeUpdateBackgroundBroadcastReceiver}
+07-03 17:22:14.036  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:22:14.291  1822  2705 I ActivityManager: Changes in 10249 19 to 11, 0 to 128
+07-03 17:22:14.311  1822  1949 I ActivityManager: Start proc 21034:com.google.android.partnersetup/u0a243 for broadcast {com.google.android.partnersetup/com.google.android.partnersetup.PhenotypeBroadcastReceiver}
+07-03 17:22:14.311  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:22:14.335  1822  3071 I ActivityManager: Killing 17567:com.samsung.mfcontents/u0a95 (adj 905): empty #25
+07-03 17:22:14.337  1822  3071 I ActivityManager: Changes in 10249 11 to 19, 128 to 0
+07-03 17:22:14.397  1822  4135 I ActivityManager: Changes in 10243 19 to 11, 0 to 128
+07-03 17:22:14.419  1822  1949 I ActivityManager: Start proc 21048:com.google.android.apps.photos/u0a313 for broadcast {com.google.android.apps.photos/com.google.android.apps.photos.experiments.phenotype.full.PhenotypeUpdateBroadcastReceiver}
+07-03 17:22:14.419  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:22:14.422  1822  4135 I ActivityManager: Killing 13471:com.google.android.as.oss/u0a248 (adj 905): empty #25
+07-03 17:22:14.423  1822  4135 I ActivityManager: Changes in 10243 11 to 19, 128 to 0
+07-03 17:22:14.831  1822  2986 I ActivityManager: Changes in 10313 19 to 11, 0 to 128
+07-03 17:22:14.850  1822  1949 I ActivityManager: Start proc 21068:com.google.android.youtube/u0a271 for broadcast {com.google.android.youtube/com.google.android.libraries.phenotype.client.stable.PhenotypeUpdateBackgroundBroadcastReceiver}
+07-03 17:22:14.851  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:22:14.870  1822  2986 I ActivityManager: Killing 27552:com.samsung.android.scs/u0a116 (adj 905): empty #25
+07-03 17:22:14.877  1822  2986 I ActivityManager: Changes in 10313 11 to 19, 128 to 0
+07-03 17:22:15.265  1822  4319 I ActivityManager: Changes in 10271 19 to 11, 0 to 128
+07-03 17:22:15.270  1822  1842 I ActivityManager: Changes in 99003 10 to 10, 0 to 128
+07-03 17:22:15.302  1822  1842 I ActivityManager: Killing 13506:com.lguplus.appstore/u0a99 (adj 905): empty #25
+07-03 17:22:15.304  1822  1842 I ActivityManager: Changes in 99003 10 to 10, 128 to 0
+07-03 17:22:15.305  1822  1842 I ActivityManager: Changes in 10271 11 to 19, 128 to 0
+07-03 17:22:18.861  1822  4135 I ActivityManager: Killing 18550:com.skt.skaf.OA00018282/u0a104 (adj 905): empty #25
+07-03 17:22:18.862  1822  4135 I ActivityManager: Killing 18625:com.google.android.gms.unstable/u0a252 (adj 905): empty #26
+07-03 17:24:25.673  1822  1949 I ActivityManager: Start proc 21300:com.google.android.gms.unstable/u0a252 for service {com.google.android.gms/com.google.android.gms.droidguard.DroidGuardService}
+07-03 17:24:25.673  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:24:26.024  1822  4135 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 17:24:31.639  1822  2741 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 17:24:31.646  1822  2986 I ActivityManager: Killing 18991:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a253i12 (adj 905): empty #25
+07-03 17:24:31.696  1822  2986 W ActivityManager: Scheduling restart of crashed service com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:0 in 1000ms for connection
+07-03 17:25:29.791 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 17:25:29.791 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 17:25:31.345 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 17:29:26.768  1822  2986 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 17:29:41.837  1822  3328 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 17:30:29.802 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 17:30:29.840 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 17:30:29.841 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=40
+07-03 17:35:29.805 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 17:35:29.805 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 17:35:31.352 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 17:39:26.772  1822  4135 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 17:39:41.839  1822  1842 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 17:40:29.818 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 17:40:29.819 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 17:40:31.458 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 17:45:29.747 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 17:45:29.751 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 17:45:29.815 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=67
+07-03 17:46:29.176  1822 19353 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+07-03 17:46:35.240  1822  1947 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+07-03 17:49:26.782  1822  2986 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 17:49:29.980  1822  4135 I ActivityManager: Changes in 10117 19 to 19, 0 to 128
+07-03 17:49:36.104  1822  1947 I ActivityManager: Changes in 10117 19 to 19, 128 to 0
+07-03 17:49:41.848  1822  1842 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 17:50:29.813 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 17:50:29.813 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 17:50:29.945  1822  4135 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 17:50:31.289  1822  1949 I ActivityManager: Start proc 22065:com.google.android.rkpdapp/u0a348 for service {com.google.android.rkpdapp/com.android.rkpdapp.service.RemoteProvisioningService}
+07-03 17:50:31.290  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:50:31.364 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 17:50:31.389  1822  4319 I ActivityManager: Changes in 10348 19 to 6, 0 to 128
+07-03 17:50:31.404  1822  4135 I ActivityManager: Changes in 10348 6 to 10, 128 to 0
+07-03 17:50:44.985  1822  2727 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 17:50:44.990  1822  4135 I ActivityManager: Killing 17091:com.google.android.webview:webview_service/u0a263 (adj 905): empty #25
+07-03 17:50:53.397  1822  1948 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+07-03 17:50:53.400  1822  2986 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+07-03 17:50:54.415  1822  1949 I ActivityManager: Start proc 22101:com.samsung.android.dqagent/1000 for broadcast {com.samsung.android.dqagent/com.samsung.android.dqagent.receiver.DQADataReceiver}
+07-03 17:50:54.415  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:50:54.738  1822  2986 I ActivityManager: Killing 17566:com.samsung.faceservice/5004 (adj 905): empty #25
+07-03 17:50:59.476  1822  1949 I ActivityManager: Start proc 22124:com.samsung.android.app.aodservice/u0a53 for broadcast {com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.AODBroadcastReceiver}
+07-03 17:50:59.476  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:50:59.564  1822  1949 I ActivityManager: Start proc 22139:com.sec.android.daemonapp:weather_content_provider/u0a215 for content provider {com.sec.android.daemonapp/com.sec.android.daemonapp.provider.SystemLevelContentProvider}
+07-03 17:50:59.567  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:51:00.011  1822  1949 I ActivityManager: Start proc 22177:com.samsung.android.lool/1000 for broadcast {com.samsung.android.lool/com.samsung.android.sm.external.receiver.HqmReceiver}
+07-03 17:51:00.012  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:51:00.072  1822  3328 I ActivityManager: Killing 12812:com.samsung.cmh/5004 (adj 905): empty #25
+07-03 17:51:00.162  1822  1949 I ActivityManager: Start proc 22191:com.sec.android.daemonapp/u0a215 for service {com.sec.android.daemonapp/androidx.room.MultiInstanceInvalidationService}
+07-03 17:51:00.162  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:51:00.194  1822  3328 I ActivityManager: Changes in 10215 19 to 5, 0 to 144
+07-03 17:51:00.370  1822  3328 I ActivityManager: Killing 19351:com.sec.android.app.shealth:remote/u0a328 (adj 905): empty #25
+07-03 17:51:00.575  1822  1949 I ActivityManager: Start proc 22242:com.samsung.android.sm.provider/1000 for content provider {com.samsung.android.lool/com.samsung.android.sm.database.SmProvider}
+07-03 17:51:00.575  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 17:51:00.632  1822  2744 I ActivityManager: Changes in 10215 5 to 5, 144 to 184
+07-03 17:51:00.696  1822  4135 I ActivityManager: Changes in 10108 10 to 5, 0 to 144
+07-03 17:51:00.744  1822  4233 I ActivityManager: Killing 18046:com.osp.app.signin/u0a117 (adj 905): empty #25
+07-03 17:51:06.238  1822  1947 I ActivityManager: Changes in 10215 5 to 15, 184 to 0
+07-03 17:51:06.239  1822  1947 I ActivityManager: Changes in 10108 5 to 10, 144 to 0
+07-03 17:51:26.241  1822  1948 I ActivityManager: Killing 20480:com.samsung.android.app.telephonyui/1001 (adj 905): empty #25
+07-03 17:51:26.247  1822  1948 I ActivityManager: Killing 19790:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/u0a253i13 (adj 905): empty #26
+07-03 17:51:26.285  1822  4233 W ActivityManager: Scheduling restart of crashed service com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:1 in 1000ms for connection
+07-03 17:55:29.855 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 17:55:29.855 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 17:55:31.459 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 17:59:26.774  1822  4267 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 17:59:41.833  1822  4267 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 18:00:29.749 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 18:00:29.752 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 18:00:29.825 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=75
+07-03 18:05:29.833 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 18:05:29.833 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 18:05:31.387 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 18:09:26.776  1822  4267 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 18:09:41.840  1822  2744 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 18:10:29.833 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 18:10:29.833 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 18:10:31.381 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 18:12:34.429 16676 17289 I ReactNativeJS: [territorial] pass omega_hub decision=battle holdChanged=false red->red
+07-03 18:15:29.751 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 18:15:29.755 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 18:15:29.835 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=83
+07-03 18:16:29.486  1822 19353 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+07-03 18:16:35.542  1822  1947 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+07-03 18:16:38.161  1822  3328 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 18:16:53.185  1822  3328 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 18:19:26.784  1822  4135 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 18:19:41.855  1822  2744 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 18:20:29.857 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 18:20:29.858 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 18:20:31.504 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 18:25:29.852 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 18:25:29.852 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 18:25:31.419 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 18:25:53.424  1822  1948 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+07-03 18:25:53.432  1822  3015 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+07-03 18:25:53.462  1822  1949 I ActivityManager: Start proc 23319:com.sec.android.app.shealth/u0a328 for service {com.sec.android.app.shealth/com.samsung.android.app.shealth.message.MessageRemoveService}
+07-03 18:25:53.462  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 18:25:53.776  1822  1949 I ActivityManager: Start proc 23353:com.sec.android.app.shealth:remote/u0a328 for content provider {com.sec.android.app.shealth/com.samsung.android.sdk.healthdata.privileged.util.RemotePreferenceProvider}
+07-03 18:25:53.776  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 18:25:54.014  1822  4267 I ActivityManager: Killing 20794:com.google.android.apps.maps/u0a270 (adj 905): empty #25
+07-03 18:25:54.209  1822  3328 I ActivityManager: Killing 20875:com.google.android.apps.tachyon/u0a254 (adj 905): empty #25
+07-03 18:25:55.142  1822  1949 I ActivityManager: Start proc 23471:com.osp.app.signin/u0a117 for service {com.osp.app.signin/com.msc.sa.service.RequestService}
+07-03 18:25:55.142  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 18:25:55.575  1822  3015 I ActivityManager: Killing 20972:com.google.android.setupwizard/u0a279 (adj 905): empty #25
+07-03 18:29:26.785  1822  3015 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 18:29:41.851  1822  3015 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 18:30:29.761 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 18:30:29.764 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 18:30:29.955 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=194
+07-03 18:31:17.472  1822  2640 W ActivityManager: pid 4049 com.google.android.googlequicksearchbox:interactor sent binder code 2 with flags 1 to frozen apps and got error -32
+07-03 18:31:17.475  1822  3015 I ActivityManager: Process com.google.android.googlequicksearchbox:search (pid 18369) has died: cch+5 CEM (368,1479)
+07-03 18:34:28.594  1822  1948 I ActivityManager: Changes in 10328 19 to 11, 0 to 128
+07-03 18:34:28.614  1822  2640 I ActivityManager: Changes in 10328 11 to 19, 128 to 0
+07-03 18:34:39.346  1822  1948 I ActivityManager: Changes in 10328 19 to 11, 0 to 128
+07-03 18:34:39.349  1822  4347 I ActivityManager: Changes in 10328 11 to 19, 128 to 0
+07-03 18:34:41.290  1822  1948 I ActivityManager: Changes in 10328 19 to 11, 0 to 128
+07-03 18:34:41.294  1822  4347 I ActivityManager: Changes in 10328 11 to 19, 128 to 0
+07-03 18:35:29.876 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 18:35:29.876 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 18:35:31.443 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 18:39:26.775  1822  4347 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 18:39:41.837  1822  2640 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 18:40:29.875 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 18:40:29.875 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 18:40:31.426 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 18:42:47.192  1822  1949 I ActivityManager: Start proc 24023:com.google.android.googlequicksearchbox:search/u0a253 for broadcast {com.google.android.googlequicksearchbox/com.google.android.libraries.search.gcm.search.SearchProcessGcmBroadcastReceiver_Receiver}
+07-03 18:42:47.192  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 18:45:29.954 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 18:45:29.959 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=5
+07-03 18:45:29.960 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 18:46:29.801  1822 19353 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+07-03 18:46:35.857  1822  1947 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+07-03 18:49:26.777  1822  4347 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 18:49:41.849  1822  4319 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 18:50:29.887 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 18:50:29.887 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 18:50:31.441 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 18:52:37.228  1822  4347 I ActivityManager: Changes in 99003 19 to 8, 0 to 128
+07-03 18:52:37.275  1822  2705 I ActivityManager: Changes in 99003 8 to 10, 128 to 0
+07-03 18:52:37.334  1822  2705 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 18:52:52.381  1822  2640 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 18:55:29.905 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 18:55:29.905 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 18:55:31.496 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 18:59:26.779  1822  2705 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 18:59:41.842  1822  3071 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 19:00:29.771 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 19:00:29.774 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 19:00:29.910 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=140
+07-03 19:00:53.467  1822  1948 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+07-03 19:00:53.482  1822  2640 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+07-03 19:05:29.905 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 19:05:29.905 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 19:05:31.450 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 19:09:26.781  1822  3015 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 19:09:41.846  1822  4347 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 19:10:29.911 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 19:10:29.912 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 19:10:31.493 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 19:12:35.682 16676 17289 I ReactNativeJS: [territorial] pass shadow_market decision=battle holdChanged=false red->red
+07-03 19:15:29.771 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 19:15:29.776 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 19:15:29.912 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=141
+07-03 19:16:30.112  1822 19353 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+07-03 19:16:36.161  1822  1947 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+07-03 19:18:23.509  1822  1948 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+07-03 19:18:23.511  1822  4319 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+07-03 19:18:23.537  1822  4347 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 19:18:38.604  1822  3015 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 19:18:47.142  1822  3071 I ActivityManager: Changes in 99003 19 to 8, 0 to 128
+07-03 19:18:47.752  1822  3015 I ActivityManager: Changes in 99003 8 to 10, 128 to 0
+07-03 19:18:47.830  1822  2640 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 19:19:02.849  1822  4347 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 19:19:26.787  1822  2640 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 19:19:41.849  1822  4347 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 19:20:29.935 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 19:20:29.935 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 19:20:31.633 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 19:25:29.922 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 19:25:29.923 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 19:25:31.483 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 19:29:26.793  1822  3071 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 19:29:41.858  1822  2705 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 19:30:29.782 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 19:30:29.786 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 19:30:29.930 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=148
+07-03 19:35:29.932 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 19:35:29.933 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 19:35:31.500 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 19:38:43.394  1822  1949 I ActivityManager: Start proc 25668:com.samsung.aasaservice/1000 for broadcast {com.samsung.aasaservice/com.samsung.aasaservice.AASAUpdateReceiver}
+07-03 19:38:43.394  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 19:38:43.580  1822  1949 I ActivityManager: Start proc 25688:com.samsung.android.privateaccesstokens/u0a198 for service {com.samsung.android.privateaccesstokens/com.samsung.android.privateaccesstokens.components.services.PATService}
+07-03 19:38:43.580  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 19:38:43.636  1822  2705 I ActivityManager: Killing 20990:com.google.ar.core/u0a152 (adj 905): empty #25
+07-03 19:38:43.736  1822  2640 I ActivityManager: Killing 21011:com.google.android.apps.restore/u0a249 (adj 905): empty #25
+07-03 19:39:26.782  1822  2640 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 19:39:41.843  1822  2705 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 19:40:29.935 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 19:40:29.936 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 19:40:31.486 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 19:44:32.401  1822  2640 I ActivityManager: Changes in 10096 6 to 5, 128 to 184
+07-03 19:44:42.473  1822  2705 I ActivityManager: Changes in 10096 5 to 6, 184 to 128
+07-03 19:45:29.809 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-03 19:45:29.849 16676 17289 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-03 19:45:29.946 16676 17289 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=137
+07-03 19:46:30.411  1822 19353 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+07-03 19:46:36.034  1822  2299 I ActivityManager: Changes in 5009 19 to 5, 0 to 144
+07-03 19:46:36.460  1822  1947 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+07-03 19:46:43.889  1822  1948 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+07-03 19:46:43.899  1822  2705 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+07-03 19:46:43.923  1822  1949 I ActivityManager: Start proc 25967:com.android.providers.calendar/u0a115 for broadcast {com.android.providers.calendar/com.android.providers.calendar.CalendarProviderBroadcastReceiver}
+07-03 19:46:43.924  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 19:46:43.992  1822  4347 I ActivityManager: Changes in 99003 19 to 8, 0 to 128
+07-03 19:46:44.010  1822  4231 I ActivityManager: Changes in 99003 8 to 10, 128 to 0
+07-03 19:46:44.057  1822  3326 I ActivityManager: Changes in 10115 19 to 11, 0 to 128
+07-03 19:46:44.138  1822  2741 I ActivityManager: Changes in 10115 11 to 19, 128 to 0
+07-03 19:46:44.157  1822  4347 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 19:46:50.208  1822  1947 I ActivityManager: Changes in 5009 5 to 15, 144 to 0
+07-03 19:46:59.221  1822  2705 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 19:47:10.209  1822  1948 I ActivityManager: Killing 21034:com.google.android.partnersetup/u0a243 (adj 905): empty #25
+07-03 19:49:26.795  1822  4319 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 19:49:41.843  1822  4319 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 19:50:29.948 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 19:50:29.951 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 19:50:31.497 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 19:55:29.956 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 19:55:29.956 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 19:55:31.501 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2

@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 
 const ROOT = resolve(process.cwd());
 const TABLE_DIR = resolve(ROOT, 'tables', 'content');
+const BALANCE_DIR = resolve(ROOT, 'tables', 'balance');
 const OUT_DIR = resolve(ROOT, 'src', 'data', 'generated');
 const DEFAULT_NPC_SHIP_CAPTAIN_ID = 'npc_cpt_ai_robot_default';
 
@@ -87,6 +88,26 @@ function loadCsvOptional(name) {
   const header = [...rows[0]];
   if (header.length > 0 && typeof header[0] === 'string') {
     // Excel UTF-8 BOM 파일의 첫 컬럼명(\uFEFFid) 정규화
+    header[0] = header[0].replace(/^\uFEFF/, '');
+  }
+  return rows.slice(1).map(cols => {
+    const out = {};
+    for (let i = 0; i < header.length; i += 1) {
+      out[header[i]] = cols[i] ?? '';
+    }
+    return out;
+  });
+}
+
+function loadBalanceCsv(name) {
+  const p = resolve(BALANCE_DIR, name);
+  if (!existsSync(p)) return [];
+  const raw = readFileSync(p, 'utf8').trim();
+  if (!raw) return [];
+  const rows = parseCsv(raw);
+  if (rows.length < 2) return [];
+  const header = [...rows[0]];
+  if (header.length > 0 && typeof header[0] === 'string') {
     header[0] = header[0].replace(/^\uFEFF/, '');
   }
   return rows.slice(1).map(cols => {
@@ -301,6 +322,30 @@ function assertUniqueNpcCaptainAssignedShipIds(rows) {
   }
 }
 
+function buildAiClanRegistry() {
+  const rows = loadCsvOptional('ai_clan_registry.csv');
+  const body = rows
+    .map(
+      (r) => `  {
+    id: ${q(r.clanId)},
+    displayNameKo: ${q(String(r.displayNameKo ?? '').trim())},
+    displayNameEn: ${q(String(r.displayNameEn ?? '').trim())},
+    zoneAffinity: ${['safe', 'neutral', 'pvp'].includes(String(r.zoneAffinity ?? '').trim()) ? q(String(r.zoneAffinity).trim()) : 'null'},
+    megaFactionId: ${q(String(r.megaFactionId ?? '').trim())},
+    leaderCaptainId: ${q(String(r.leaderCaptainId ?? '').trim())},
+    territoryHubZone: ${['safe', 'neutral', 'pvp'].includes(String(r.territoryHubZone ?? '').trim()) ? q(String(r.territoryHubZone).trim()) : 'null'},
+    notesKo: ${q(String(r.notesKo ?? '').trim())},
+  }`,
+    )
+    .join(',\n');
+  return `import type { AiClanRegistryRow } from '../../types';
+
+export const AI_CLAN_REGISTRY_FROM_CSV: readonly AiClanRegistryRow[] = [
+${body}
+];
+`;
+}
+
 function buildNpcCaptains() {
   const rows = loadCsv('npc_ai_captains.csv');
   assertUniqueNpcCaptainDisplayNames(rows);
@@ -326,6 +371,8 @@ function buildNpcCaptains() {
     isAiClanLeader: ${toBool(r.aiClanLeader)},
     aiClanName: ${q(String(r.aiClanName ?? '').trim())},
     aiClanZone: ${['safe', 'neutral', 'pvp'].includes(String(r.aiClanZone ?? '').trim()) ? q(String(r.aiClanZone).trim()) : 'null'},
+    aiClanId: ${q(String(r.aiClanId ?? '').trim())},
+    aiClanRole: ${q(['none', 'leader', 'member', 'officer'].includes(String(r.aiClanRole ?? '').trim()) ? String(r.aiClanRole).trim() : 'none')},
     arcOrbitPresenceFill: ${toBool(r.arcOrbitPresenceFill)},
     mainStageTalkEnabled: ${toBool(r.mainStageTalkEnabled)},
     mainStageTalkPriority: ${toInt(r.mainStageTalkPriority || 5, 5)},
@@ -1324,6 +1371,7 @@ function writeOut(fileName, content) {
 function main() {
   mkdirSync(OUT_DIR, { recursive: true });
   writeOut('csvShipTemplates.ts', buildShips());
+  writeOut('csvAiClanRegistry.ts', buildAiClanRegistry());
   writeOut('csvNpcCaptains.ts', buildNpcCaptains());
   writeOut('csvNpcCapitalShips.ts', buildNpcShips());
   writeOut('csvNpcCapitalShipEquipSlots.ts', buildNpcCapitalShipEquipSlots());
@@ -1346,6 +1394,7 @@ function main() {
     'index.ts',
     `export { SHIP_TEMPLATES_FROM_CSV } from './csvShipTemplates';
 export { NPC_CAPTAINS_FROM_CSV } from './csvNpcCaptains';
+export { AI_CLAN_REGISTRY_FROM_CSV } from './csvAiClanRegistry';
 export {
   NPC_CAPITAL_SHIPS_FROM_CSV,
   NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV,

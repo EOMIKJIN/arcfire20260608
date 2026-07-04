@@ -51,6 +51,8 @@ alwaysApply: true
 | store ↔ UI module **정적 import 순환** | Registry/lazy/require · store는 invalidate만 |
 | useMemo deps에 **불안정 object ref** (`planet` 전체) | `planet?.id` · revision token |
 | 기능 완료 후 soak만 약속 | **1차 검수 + 완료 게이트** 동시 충족 |
+| **Table-First 이중 정본**(CSV + build merge + 별도 generated only) | **편집 CSV 단일 정본** · sync 스크립트 append · `getItemDef`는 generated만 읽어도 CSV와 1:1 |
+| **useMemo/렌더 경로** economy dispatch·resync | hydrate·unlock·arcCore 이벤트 **1회** resync만 |
 
 ### 0-A-3. 완료 게이트 (PSS · 무조건)
 

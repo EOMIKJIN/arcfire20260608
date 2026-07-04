@@ -5,6 +5,10 @@ import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
 import { invalidatePlanetWorldObjectsListCache } from '../worldObjects/planetWorldObjectsListCacheRegistry';
 import type { Planet, StarSystem } from '../types';
 import { useWorldStore } from './worldStore';
+import {
+  listCoreOpenGameplayPlanetIds,
+  resolveCoreOpenGameplayPlanetRef,
+} from '../world/coreOpenGameplayPlanets';
 import type { PlanetCoreMetricsDetail, PlanetMasterBalanceDetail, PlanetCoreStatOpsTrendDetail } from './planetCoreMetricTypes';
 import { planetPgpStorageKey } from '../world/planetPgpModel';
 import {
@@ -12,6 +16,10 @@ import {
   isLegacyFlatCoreSeed,
   resolvePlanetGenesisCoreGauge,
 } from '../arcCore/planetResource/planetResourceEcosystemPolicy';
+import {
+  mergeArcCoreRedWorldPlanetRuntime,
+  snapshotArcCoreRedWorldPlanetRuntime,
+} from '../arcCore/planetDevelopment/arcCoreWorldPlanetRuntimePreservation';
 
 const STORAGE_KEY = 'arcfire_planet_core_runtime_v1';
 
@@ -394,7 +402,13 @@ interface PlanetCoreRuntimeState {
   /** 개방 synth·월드 갱신 후 코어 5지표 런타임 동기(일 1회 배치·개방 직후) */
   ensureUnlockedWorldPlanetsInCoreRuntime: () => number;
   persistPlanetCoreRuntime: () => Promise<void>;
+  /** 전 행성 CSV baseline — dev·운영툴 전용 */
   resetLocalPlanetCoreRuntime: () => Promise<void>;
+  /**
+   * 계정 purge — 플레이어 귀속(BLUE·증서·홈) 행성은 baseline,
+   * ArcCore RED 점령 월드 축(개발·5지표)은 기기 공유 상태로 유지.
+   */
+  resetLocalPlanetCoreRuntimeForAccountPurge: () => Promise<void>;
   getPlanetCoreRuntime: (planetId: string) => PlanetCoreRuntime | undefined;
   patchPlanetCore: (
     planetId: string,
@@ -459,40 +473,35 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
 
   ensureUnlockedWorldPlanetsInCoreRuntime: () => {
     if (!get().hydrated) return 0;
-    const world = useWorldStore.getState();
-    const unlockedSynthSystems = new Set(
-      world.unlockedSystemIds.filter((id) => id.startsWith('synth_')),
-    );
     const prev = get().byPlanetId;
     const next = { ...prev };
     let touched = 0;
     const t = Date.now();
 
-    for (const sys of Object.values(world.systems)) {
-      const isSynthSystem = sys.id.startsWith('synth_');
-      if (isSynthSystem && !unlockedSynthSystems.has(sys.id)) continue;
-
-      for (const planet of sys.planets) {
-        const baseline = planetCsvBaselineToRuntime(planet);
-        const stored = next[planet.id];
-        if (!stored) {
-          next[planet.id] = baseline;
-          touched += 1;
-          continue;
-        }
-        if (
-          isSynthSystem
-          && planet.id.startsWith('synth_')
-          && !stored.detail?.masterBalance
-        ) {
-          next[planet.id] = {
-            ...baseline,
-            pgp: stored.pgp,
-            detail: stored.detail,
-            updatedAt: t,
-          };
-          touched += 1;
-        }
+    for (const planetId of listCoreOpenGameplayPlanetIds()) {
+      const ref = resolveCoreOpenGameplayPlanetRef(planetId);
+      if (!ref) continue;
+      const { planet, system } = ref;
+      const isSynthSystem = system.id.startsWith('synth_');
+      const baseline = planetCsvBaselineToRuntime(planet);
+      const stored = next[planetId];
+      if (!stored) {
+        next[planetId] = baseline;
+        touched += 1;
+        continue;
+      }
+      if (
+        isSynthSystem
+        && planetId.startsWith('synth_')
+        && !stored.detail?.masterBalance
+      ) {
+        next[planetId] = {
+          ...baseline,
+          pgp: stored.pgp,
+          detail: stored.detail,
+          updatedAt: t,
+        };
+        touched += 1;
       }
     }
 
@@ -516,6 +525,19 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
     await AsyncStorage.removeItem(STORAGE_KEY);
     const systems = useWorldStore.getState().systems;
     const next = mergeWorldWithDisk(systems, {});
+    const globalMultipliers = { ...DEFAULT_GLOBAL_MULTIPLIERS };
+    set({ byPlanetId: next, globalMultipliers, hydrated: true });
+    markPlanetCorePersistDirty();
+    await persistStoragePayload({ byPlanetId: next, globalMultipliers });
+    planetCorePersistDirty = false;
+  },
+
+  resetLocalPlanetCoreRuntimeForAccountPurge: async () => {
+    const redWorldSnap = snapshotArcCoreRedWorldPlanetRuntime(get().byPlanetId);
+    await AsyncStorage.removeItem(STORAGE_KEY);
+    const systems = useWorldStore.getState().systems;
+    const baseline = mergeWorldWithDisk(systems, {});
+    const next = mergeArcCoreRedWorldPlanetRuntime(baseline, redWorldSnap);
     const globalMultipliers = { ...DEFAULT_GLOBAL_MULTIPLIERS };
     set({ byPlanetId: next, globalMultipliers, hydrated: true });
     markPlanetCorePersistDirty();

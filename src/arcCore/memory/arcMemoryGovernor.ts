@@ -41,7 +41,7 @@ export function warmGalaxyDeparturePreflight(planetId: string | null | undefined
   setResidentSetTier('T3_galaxy_preflight');
   if (planetId?.trim()) {
     const pid = planetId.trim();
-    if (planetHasTradePort(pid)) {
+    if (planetHasTradePort(pid) && !isPlanetCatalogWarmed(pid)) {
       forceResyncPlanetTradePortCatalog(pid);
     }
   }

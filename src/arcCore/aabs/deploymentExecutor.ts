@@ -2,13 +2,18 @@
 // NPC 배치 정책 집행 — AABS §2-C
 // ============================================================
 
-import { STAR_SYSTEMS_FROM_CSV } from '../../data/generated';
+import { listCoreOpenGameplaySystemIds, resolveCoreOpenStarSystem } from '../../world/coreOpenGameplayPlanets';
 import { listNpcCaptains } from '../../npc/npcFleetRegistry';
 import { dispatchArcCoreCommand } from '../ArcCoreCommandBus';
+import type { StarSystem } from '../../types';
 
 export function enforceNpcDeploymentPolicy(maxMoves = 3): number {
   let moves = 0;
-  const systems = Object.values(STAR_SYSTEMS_FROM_CSV);
+  const systems: StarSystem[] = [];
+  for (const systemId of listCoreOpenGameplaySystemIds()) {
+    const sys = resolveCoreOpenStarSystem(systemId);
+    if (sys) systems.push(sys);
+  }
   const systemsById = new Map(systems.map((s) => [s.id, s]));
   const lowLevelSystems = systems.filter((s) => s.enemyLevel <= 5);
 

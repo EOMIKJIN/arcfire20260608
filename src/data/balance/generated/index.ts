@@ -4,7 +4,9 @@ export { ArcCoreCentralBankPolicy_FROM_BALANCE_CSV } from './csvArcCoreCentralBa
 export { ArcCoreDailyOpsPolicy_FROM_BALANCE_CSV } from './csvArcCoreDailyOpsPolicy';
 export { ArcCoreInboundDronePolicy_FROM_BALANCE_CSV } from './csvArcCoreInboundDronePolicy';
 export { ArcCorePlanetAttackLevelPolicy_FROM_BALANCE_CSV } from './csvArcCorePlanetAttackLevelPolicy';
+export { ArcCorePlanetDevInvestmentPolicy_FROM_BALANCE_CSV } from './csvArcCorePlanetDevInvestmentPolicy';
 export { ArcCorePlanetUpkeepPolicy_FROM_BALANCE_CSV } from './csvArcCorePlanetUpkeepPolicy';
+export { ArcCoreRedPlanetDevPortfolio_FROM_BALANCE_CSV } from './csvArcCoreRedPlanetDevPortfolio';
 export { ArcCoreSpyPolicy_FROM_BALANCE_CSV } from './csvArcCoreSpyPolicy';
 export { ArcCoreSpyRolePolicy_FROM_BALANCE_CSV } from './csvArcCoreSpyRolePolicy';
 export { ArcCoreSpyTerrorProfile_FROM_BALANCE_CSV } from './csvArcCoreSpyTerrorProfile';
