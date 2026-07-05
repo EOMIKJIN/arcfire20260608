@@ -4,6 +4,10 @@
 
 React Native · Expo · Firebase **싱글플레이** 우주 전략. 상세 헌법은 필요할 때 `@AGENTS.md` · `@.cursor/rules/Arcfire_Master_Spec_v4.0-*.mdc` 참조.
 
+## 사용자 호칭 (2026-07-05~)
+
+**사용자 = 「대표님」** — handoff·작업 요약·안내 시 **대표님**으로 호칭. 정본: `@.cursor/rules/arcfire-user-addressing.mdc`
+
 ## 🚨 김팀장 최종 승인 (필수 · 2026-07-04~)
 
 **김클로드는 초안·구현 보조만.** **git commit · merge · 「완료」 선언 금지.**

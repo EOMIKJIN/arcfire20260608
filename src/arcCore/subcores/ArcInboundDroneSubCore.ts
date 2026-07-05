@@ -326,14 +326,16 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
     });
   }
 
+  /**
+   * 위치(approachAngleRad)는 worklet이 `startOrbitMs`+orbit clock으로 시간 적분하므로
+   * (`planetOrbitInboundDroneWorklets.ts` `buildInboundDronePackSig`와 동일 계약)
+   * elapsed/dwell 이 바뀌었다고 매번 publish할 필요가 없다.
+   * elapsed 포함 시 250ms~1s마다 key가 바뀌어 zustand publish → `planet.tsx` 리렌더 폭주.
+   */
   private publishCampaignSnapshot(campaign: PlanetInboundDroneCampaign, force: boolean): void {
     let key = `${campaign.planetId}:${campaign.drones.length}`;
     for (const d of campaign.drones) {
-      if (d.phase === 'inbound') {
-        key += `|${d.id}:${d.phase}:${Math.floor(d.inboundElapsedSec * 4)}:${d.hp}`;
-      } else {
-        key += `|${d.id}:${d.phase}:${Math.round(d.inboundElapsedSec * 10)}:${d.hp}`;
-      }
+      key += `|${d.id}:${d.phase}:${d.inboundDurationSec.toFixed(3)}:${d.approachAngleRad.toFixed(4)}:${d.hp}`;
     }
     if (!force && key === this.lastPublishedKey) return;
     this.lastPublishedKey = key;

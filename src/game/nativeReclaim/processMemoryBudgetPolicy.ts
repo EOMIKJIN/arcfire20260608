@@ -32,3 +32,14 @@ export const GALAXY_MAP_SOFT_RECLAIM_INTERVAL_MS = 5 * 60 * 1000;
 
 /** 허브 체류 — soft + deferred Fresco (전투 orbit 활성 시 skip) */
 export const HUB_SOFT_NATIVE_RECLAIM_INTERVAL_MS = 5 * 60 * 1000;
+
+/** heavy Skia peak 종료 1차 reclaim 후 GL floor 2차 회수 (Worklet·Fresco lag) */
+export const POST_SKIA_PEAK_FOLLOWUP_MS = 90 * 1000;
+
+/**
+ * 전투 orbit 활성 "중"(soft 5분·deep 15분 전면 skip 구간) 안전판 — module Path/Paint/maskfilter
+ * 캐시만 주기적으로 trim. dodge overlay 해제·Fresco trim·RN remount는 안 건드려 mid-frame
+ * Canvas/worklet 레이스 위험 없음(기존 idle soft pass와 동일 함수 재사용).
+ * 인카운터가 길게 이어져도 GL이 무한정 쌓이지 않도록 하는 최소 안전장치.
+ */
+export const HUB_COMBAT_SAFE_RECLAIM_INTERVAL_MS = 3 * 60 * 1000;

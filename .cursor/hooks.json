@@ -40,6 +40,10 @@
         "timeout": 5
       },
       {
+        "command": ".cursor/hooks/on-before-submit-prompt-kim-claude-handoff-review.cjs",
+        "timeout": 5
+      },
+      {
         "command": ".cursor/hooks/on-before-submit-prompt-daily-report-chat.cjs",
         "timeout": 8
       },

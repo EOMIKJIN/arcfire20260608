@@ -42,8 +42,9 @@ function schedulePostRemountTrim(reason: string): void {
 
 /**
  * RN Image remount — 1차 Fresco trim **이후**만 실행 (native floor 계단 방지).
+ * post-Skia-peak GL floor 회수에서도 재사용 (15m deep pass와 동일 경로).
  */
-function scheduleHubBackdropNativeRemountAfterTrim(reason: string): void {
+export function scheduleHubBackdropNativeRemountAfterTrim(reason: string): void {
   const now = Date.now();
   if (now - lastBackdropRemountAtMs < HUB_BACKDROP_REMOUNT_COOLDOWN_MS) {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {

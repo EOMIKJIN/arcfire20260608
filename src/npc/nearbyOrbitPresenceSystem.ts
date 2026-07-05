@@ -20,6 +20,7 @@ import { syncCaptainOrbitAssignmentEpochMemo } from '../arcCore/orbitPresence/ca
 import { memoizePerPlanetSystem } from '../game/planetMemoCache';
 import { useArcNpcTrafficStore } from '../store/arcNpcTrafficStore';
 import { resolveCaptainAiClanDisplayName } from '../clanWar/aiClanRegistry';
+import { PLAYER_BENCH_CAPTAIN_ID, NEARBY_PRESENCE_DISPLAY_SEP } from '../game/planetHub/nearbyPresenceContract';
 
 type CaptainShipRow = { captain: (typeof NPC_CAPTAINS_FROM_CSV)[number]; ship: NpcCapitalShip };
 
@@ -68,7 +69,7 @@ export const nearbyPresenceHash32 = npcDeterministicHash32;
 export type NearbyOrbitMotion = NpcCapitalOrbitKinematic;
 
 /** info 패널: 함장·함선명과 우측 요약(박스 그림 세로선) — 우측은 전함 CSV `infoLineSuffix`, 없으면 결정론 MK */
-export const NEARBY_PRESENCE_DISPLAY_SEP = ' \u2502 ';
+export { NEARBY_PRESENCE_DISPLAY_SEP } from '../game/planetHub/nearbyPresenceContract';
 
 export type NearbyOrbitPresenceRow = {
   /** 궤도·info 행 슬롯 (0..주둔수-1) — UI 키·애니메이션 안정용 */
@@ -96,6 +97,7 @@ function buildPlanetNearbyPresence(
   const arcShips = useArcNpcTrafficStore.getState().ships;
   const tableDrivenPairs = NPC_CAPTAINS_FROM_CSV.flatMap(captain => {
     const state = captain.operationalState;
+    if (captain.id === PLAYER_BENCH_CAPTAIN_ID) return [];
     if (captain.arcOrbitPresenceFill) return [];
     if (!isCaptainHubOrbitPrimaryAtPlanet(captain, planetId, arcShips)) return [];
     const assignedShip = captain.assignedShipId ? shipById.get(captain.assignedShipId) : undefined;

@@ -2,11 +2,13 @@
 // 플레이어 함장(프로페션) — Table-First 온보딩 (전투 수치는 전함 CSV 단일 정본)
 // ============================================================
 
+import type { ImageSourcePropType } from 'react-native';
 import {
   PLAYER_PROFESSIONS_FROM_CSV,
   type PlayerProfessionCsvRow,
 } from '../data/generated';
 import type { PlayerPilotGender, PlayerPilotProfile, PlayerStats } from '../types';
+import { resolveNpcCaptainPortraitSource } from './npcCaptainPortraitAssets';
 
 const DEFAULT_PROFESSION_ID = 'prof_striker';
 
@@ -76,6 +78,14 @@ export function normalizePlayerPilotProfile(
 
 export function formatPlayerProfessionStatLine(stats: PlayerStats): string {
   return `WIS ${stats.wisdom}  CHA ${stats.charisma}`;
+}
+
+/** 파일럿 정보 패널·UI — `player_professions.csv` portraitImageAssetKey */
+export function resolvePlayerPilotPortraitSource(
+  professionId: string | null | undefined,
+): ImageSourcePropType | null {
+  const row = getPlayerProfessionById(professionId) ?? getDefaultPlayerProfession();
+  return resolveNpcCaptainPortraitSource(row.portraitImageAssetKey);
 }
 
 export function formatPlayerProfessionTraitLine(traitIds: readonly string[]): string {

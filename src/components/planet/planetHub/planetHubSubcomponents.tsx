@@ -64,6 +64,7 @@ import {
   WORLD_OBJECT_ANCHOR_PX,
 } from '../../../game/planetHub/planetHubConstants';
 import { planetHubStyles as styles, planetHubBgStyles as bgStyles } from './planetHubStyles';
+import { resolveNearbyInfoPanelPrimaryLabel } from '../../../game/planetHub/nearbyPresenceDisplay';
 import type { NearbyInfoDetailRow } from '../../../game/planetHub/nearbyPresenceDisplay';
 import { presentNearbyPresenceInfoOverlay } from '../../../ui/overlay/arcOverlayStore';
 import { NearbyPresenceRowActionButton } from '../NearbyPresenceRowActionButton';
@@ -112,7 +113,7 @@ export function NearbyShipInfoPanel({
               style={[styles.infoTableCaptain, mutedForCapitalCombat && styles.infoInkCapitalCombatMuted]}
               numberOfLines={1}
             >
-              {row.captainName || row.line}
+              {resolveNearbyInfoPanelPrimaryLabel(row)}
             </Text>
             <NearbyPresenceRowActionButton action={row.action} variant="compact" />
           </View>

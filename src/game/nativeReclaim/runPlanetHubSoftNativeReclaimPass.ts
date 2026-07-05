@@ -1,18 +1,21 @@
 import { scheduleDeferredNativeReclaimPass } from './deferredNativeReclaimScheduler';
 import { tryBeginHubNativeReclaim } from './hubNativeReclaimCoalesce';
+import { signalHubSkiaNativeReclaim } from './hubSkiaNativeReclaimSignal';
 import { runSoftNativeReclaimPass } from './runSoftNativeReclaimPass';
 import { resolveSinglePlanetSessionKeepIds } from './singlePlanetSessionKeep';
 import { runCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
 
 /**
- * planet hub 체류 — PSS/Native floor 완화 (Skia tear-down 없음).
+ * planet hub 체류 — PSS/Native floor 완화 + idle sticky Skia dodge 해제.
  * worldmap `runGalaxyMapSoftNativeReclaimPass` 와 대칭.
  * Fresco trim은 deferred 1회만 — 즉시+deferred 이중 trim 시 Native floor 톱니(6/30 handoff).
  */
 export function runPlanetHubSoftNativeReclaimPass(planetId: string, reason: string): void {
   if (!tryBeginHubNativeReclaim(reason)) return;
 
-  /** 전투 orbit 비활성 주기 reclaim — module Path/Paint 캐시만 (overlay signal 없음) */
+  /** sticky dodge overlay·useImage 상주 해제 — 전투/드론 종료 후 GL ~150MB floor 방지 */
+  signalHubSkiaNativeReclaim(reason);
+  /** 전투 orbit 비활성 주기 reclaim — module Path/Paint 캐시 */
   runCombatSkiaPresentationReclaim();
 
   const keep = resolveSinglePlanetSessionKeepIds(planetId);

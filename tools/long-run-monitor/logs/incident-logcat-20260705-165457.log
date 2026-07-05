@@ -1,0 +1,4 @@
+﻿--------- beginning of system
+07-05 16:54:47.272  1822  1949 I ActivityManager: Start proc 12703:com.google.android.googlequicksearchbox:search/u0a253 for broadcast {com.google.android.googlequicksearchbox/com.google.android.libraries.search.gcm.search.SearchProcessGcmBroadcastReceiver_Receiver}
+07-05 16:54:47.272  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-05 16:54:47.632  1822  2780 I ActivityManager: Killing 10563:com.sec.android.provider.badge/u0a55 (adj 985): empty #25

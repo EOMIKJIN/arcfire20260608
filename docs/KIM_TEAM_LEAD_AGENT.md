@@ -1,7 +1,8 @@
 # 김팀장 에이전트 — Arcfire 메인 개발·총괄
 
 > **호출**: `@김팀장` · `@TeamLead` · 채팅 제목 **「김팀장」**  
-> **2026-06-19**: **유일한 사용자 작업 지시 세션** · 모든 코드 수정 책임
+> **2026-06-19**: **유일한 사용자 작업 지시 세션** · 모든 코드 수정 책임  
+> **2026-07-05**: 사용자 호칭 **「대표님」** (전체 팀 공통 · `.cursor/rules/arcfire-user-addressing.mdc`)
 
 ## 역할
 
@@ -31,14 +32,35 @@
 
 김클로드 규칙: **`CLAUDE.md`** (커밋 금지 · handoff 의무)  
 김팀장 규칙: **`.cursor/rules/arcfire-main-lead-agent.mdc` §김클로드 게이트**  
-훅: `.cursor/hooks/on-session-start-kim-claude-handoff-review.cjs` (handoff PENDING 시 검수 리마인드)
+훅: `.cursor/hooks/on-session-start-kim-claude-handoff-review.cjs` (handoff PENDING 시 검수 리마인드)  
+훅: `.cursor/hooks/on-before-submit-prompt-kim-claude-handoff-review.cjs` (**PENDING 감지 → 기존 대화창에서도 검수 P0 자동 시작** · 2026-07-05~)
 
 ```text
 @김팀장 김클로드 handoff PENDING 검수해. diff·tsc·audit 확인 후 필요하면 수정.
 ```
 
+**완료 감지**: 김클로드가 handoff `status` → `PENDING` 으로 바꾸는 순간 트리거. 대표님이 본창에 **아무 메시지나** 보내면 검수가 자동으로 시작된다(완전 무인 실행은 Cursor 훅 한계상 불가 — 아래 참고).
 
-## 일 1회 검수
+## 대규모 메모리·로딩 리팩터 검수 (2026-07-05~ · 대표님 지시)
+
+김클로드 **전면 메모리·로딩 최적화 리팩터**(`memory-loading-optimization-refactor-*`) 완료 시, 일반 handoff 검수보다 **한 단계 깊은** 김팀장 검수를 수행한다. (전체 STAGE·부트·store·Skia·arcCore 구조를 김팀장이 총괄하므로 **연관 축 교차 검증**이 필수.)
+
+| # | 검수 축 | 확인 |
+|---|---------|------|
+| 1 | **범위·연관 diff** | `git diff --stat` 전체 · handoff 변경 목록과 **누락/과다** 없음 · 오늘 P0 감사(`galaxy100`·`planetCoreRuntimeStore`·`navigateToTitle`)와 **충돌·중복** |
+| 2 | **부트·로딩** | sync 부트 경로 O(N) 제거 · lazy/defer · `boot-perf` 마커 · Table-First 인덱스 1회 |
+| 3 | **STAGE·dispose** | `Navigation.replace()` · `planetSessionRegistry` · Skia dispose 순서 · overlay `dismissAll` |
+| 4 | **계정 라이프사이클** | `purgeLocalAccountData` / `bootstrapAccountData` 연동 · governor/nebula 등 **분류 불일치** 해소 여부 |
+| 5 | **Skia·native** | Zero-Allocation · PictureRecorder 재사용 · reclaim 3계층(soft/deep/combat-safe) 상호배제 |
+| 6 | **arcCore·경제** | `onBoot` 동기 무거운 패스 없음 · 일 1회 배치 한정 |
+| 7 | **이중구현·죽은 코드** | 감사 P2 항목 실제 제거 vs 잔존 · deprecated shim |
+| 8 | **정적 게이트** | `tsc` · `audit:memory:all` · `audit:skia-memory`(Skia 변경 시) · `audit:dev-process-gate` |
+| 9 | **런타임** | 부팅 체감 · STAGE1→2→3→1 · 계정 초기화 · (해당 시) 베가 웨이브 GL/native_heap |
+| 10 | **감시 연동** | 김경제 **`mem-post-dev-recheck`** 배정 · handoff verdict + 연관 태스크 표 |
+
+**완료 선언**: 위 1~8 PASS + 9 실측 안내(또는 대표님 확인) + 10 배정 후에만 `REVIEWED`→`IDLE`. **부분 PASS·「나중에」 금지.**
+
+---
 
 ```bash
 npm run audit:team-lead:daily

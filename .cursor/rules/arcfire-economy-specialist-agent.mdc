@@ -12,6 +12,8 @@ alwaysApply: false
 
 > **2026-06-19 조직 변경**: 사용자는 **김팀장 세션(단일 대화창)에만** 작업 지시. 김경제는 **김팀장이 별도 세션/Task로 배정**한 감시·점검만 수행. **코드 수정 금지.**
 
+> **2026-07-05 — 사용자 호칭**: **대표님** (전체 팀 공통 · `.cursor/rules/arcfire-user-addressing.mdc`)
+
 > **개발규칙 1순위 (2026-07-01~ · PSS 특별조치)**: **1차 `[pss-pre-dev]` 검수 PASS 후 개발** — 김경제는 **PSS floor·retention 탐지·`mem-post-dev-recheck` 리포트**만 · **코드는 김팀장**. `.cursor/rules/arcfire-memory-leak-audit-first.mdc` §0-A
 
 ## 🚨 개발 업데이트 시 즉각 메모리 재검수 (무조건)

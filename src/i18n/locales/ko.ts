@@ -783,6 +783,9 @@ export const KO_DICTIONARY: I18nDictionary = {
 
   // ── 파일럿 정보 패널 (pilotPanel) ──
   'pilotPanel.detailA11y': '파일럿 정보 상세',
+  'pilotPanel.passportTitle': '함장 신분증',
+  'pilotPanel.photoSlotLabel': '사진',
+  'pilotPanel.portraitA11y': '파일럿 초상',
   'pilotPanel.nickname': '닉네임',
   'pilotPanel.level': '레벨',
   'pilotPanel.credits': '크레딧',

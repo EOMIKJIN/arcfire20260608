@@ -1,7 +1,7 @@
 # Arcfire long-run incident — Kim Team Lead auto-triage
 
-packedAt: 2026-06-28T14:17:10.718Z
-triggerReason: test_flash
+packedAt: 2026-07-05T09:30:31.808Z
+triggerReason: mem_anomaly
 refixPayload: (none)
 
 ## Mandatory agent action (P0)
@@ -15,51 +15,70 @@ refixPayload: (none)
 ## Recent remediation
 
 ```
-[2026-06-28 19:50:04] INVESTIGATION done reason=mem_hard_ceiling_playtest
-[2026-06-28 21:14:40] INVESTIGATION start reason=mem_anomaly
-[2026-06-28 21:14:41] INVESTIGATION alert=[2026-06-25 08:51:20] GL_HARD_CEILING gl=228.9 pss=991.1 views=947
-[2026-06-28 21:14:41] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260628-211441.log
-[2026-06-28 21:14:42] INVESTIGATION mem snapshot gl=35.3MB pss=704.8MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260628-211441.log
-[2026-06-28 21:14:43] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
-[2026-06-28 21:14:43] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
-[2026-06-28 21:14:43] INVESTIGATION code-fix handoff only (monitor-paused ??no app relaunch)
-[2026-06-28 21:14:47] INVESTIGATION audit:skia-memory completed (paused mode static gate)
-[2026-06-28 21:14:47] INVESTIGATION done reason=mem_anomaly
-[2026-06-28 21:22:44] INFO GL_ELEVATED mounting_or_insufficient_samples gl=108.8 pss=784.7 views=567 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
-[2026-06-28 22:14:28] INFO GL_ELEVATED mounting_or_insufficient_samples gl=126 pss=752.6 views=558 -> restart held (leak detected only via spikes/drift; OOM via hard-ceiling)
+[2026-07-05 18:25:32] AUTO_FIX static audit:skia-memory start
+[2026-07-05 18:25:34] AUTO_FIX audit:skia-memory PASS
+[2026-07-05 18:25:34] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-07-05 18:25:51] AUTO_FIX baseline reset pid=15875 gl=6MB pss=202.7MB
+[2026-07-05 18:25:51] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-07-05 18:26:12] VERIFY PASS pid=15875 gl=4.4MB pss=390.9MB views=15
+[2026-07-05 18:26:12] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":1074.1,"views":559,"lastGlMb":154.2,"hardCeiling":true}
+[2026-07-05 18:26:13] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-07-05 18:30:29] INVESTIGATION start reason=mem_anomaly
+[2026-07-05 18:30:29] INVESTIGATION alert=[2026-07-05 18:25:31] GL_HARD_CEILING gl=154.2 pss=1074.1 views=559
+[2026-07-05 18:30:30] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260705-183029.log
+[2026-07-05 18:30:31] INVESTIGATION mem from timeline gl=4.4MB pss=390.9MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260705-183029.log
 ```
 
 ## Recent incidents
 
 ```
-[2026-06-28 19:39:36] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
-[2026-06-28 19:50:02] INVESTIGATION_TRIGGERED mem_hard_ceiling_playtest
-[2026-06-28 21:14:43] INVESTIGATION_TRIGGERED mem_anomaly
-[2026-06-28 21:22:44] GL_ELEVATED mounting_or_insufficient_samples gl=108.8 pss=784.7 views=567 restart_held
-[2026-06-28 22:00:01] EVENING_WATCH_2200_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\evening-watch-report-20260628-2200.md
-[2026-06-28 22:14:28] GL_ELEVATED mounting_or_insufficient_samples gl=126 pss=752.6 views=558 restart_held
+[2026-07-05 16:55:00] INVESTIGATION_TRIGGERED mem_anomaly
+[2026-07-05 17:39:23] PSS_SOFT_CEILING pss=864.6 gl=48.8 views=296 native_reclaim_advisory
+[2026-07-05 17:54:46] PSS_SOFT_CEILING pss=883.1 gl=50 views=344 native_reclaim_advisory
+[2026-07-05 18:10:10] PSS_SOFT_CEILING pss=905.8 gl=50.3 views=394 native_reclaim_advisory
+[2026-07-05 18:25:31] GL_HARD_CEILING gl=154.2 pss=1074.1 views=559
+[2026-07-05 18:25:31] REFIX_REQUESTED gl_critical_active_hub
 ```
 
 ## Crash signature (tail)
 
 ```
-(no crash snippet)
+07-03 19:46:43.899  1822  2705 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+07-03 19:46:43.923  1822  1949 I ActivityManager: Start proc 25967:com.android.providers.calendar/u0a115 for broadcast {com.android.providers.calendar/com.android.providers.calendar.CalendarProviderBroadcastReceiver}
+07-03 19:46:43.924  1822  1949 I ActivityManager: ProcessObserver broadcast disabled
+07-03 19:46:43.992  1822  4347 I ActivityManager: Changes in 99003 19 to 8, 0 to 128
+07-03 19:46:44.010  1822  4231 I ActivityManager: Changes in 99003 8 to 10, 128 to 0
+07-03 19:46:44.057  1822  3326 I ActivityManager: Changes in 10115 19 to 11, 0 to 128
+07-03 19:46:44.138  1822  2741 I ActivityManager: Changes in 10115 11 to 19, 128 to 0
+07-03 19:46:44.157  1822  4347 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 19:46:50.208  1822  1947 I ActivityManager: Changes in 5009 5 to 15, 144 to 0
+07-03 19:46:59.221  1822  2705 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 19:47:10.209  1822  1948 I ActivityManager: Killing 21034:com.google.android.partnersetup/u0a243 (adj 905): empty #25
+07-03 19:49:26.795  1822  4319 I ActivityManager: Changes in 99003 19 to 5, 0 to 184
+07-03 19:49:41.843  1822  4319 I ActivityManager: Changes in 99003 5 to 10, 184 to 0
+07-03 19:50:29.948 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 19:50:29.951 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 19:50:31.497 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-03 19:55:29.956 16676 17289 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-03 19:55:29.956 16676 17289 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=synth_002_p
+07-03 19:55:31.501 16676 17289 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+
 ```
 
 ## mem-timeline (tail)
 
 ```csv
 ﻿iso_time,pid,pss_mb,rss_mb,gl_mb,egl_mb,graphics_mb,native_heap_mb,java_heap_mb,threads,views,delta_pss_mb,delta_gl_mb,note
-2026-06-28 21:22:36,10107,784.7,900.6,108.8,19.8,128.6,389,31.1,,567,107.1,74.1,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
-2026-06-28 21:33:00,15084,666.6,796.4,43.9,40.7,84.5,339.8,23.6,,383,,,
-2026-06-28 21:34:52,15084,643.3,773.1,43.3,19.8,63.1,333.8,26.8,,374,,,
-2026-06-28 21:43:18,15084,599.8,730.1,16.9,19.8,36.7,330.4,25,,99,-43.5,-26.4,GL_RECOVERED idle_ok
-2026-06-28 21:53:43,15084,441.2,486.1,11.2,19.8,31,206.1,16.5,,13,-158.6,-5.7,GL_RECOVERED idle_ok
-2026-06-28 22:04:05,15084,566,611.7,12.2,19.8,32.1,324.3,24.8,,99,124.8,1,PSS_SPIKE review=graphics+native
-2026-06-28 22:05:09,15084,564.3,609.9,12.2,19.8,32.1,324.2,23.1,,99,-1.7,0,
-2026-06-28 22:14:23,15084,752.6,789.2,126,19.8,145.8,364.9,27.8,,558,188.3,113.8,HUB_ACTIVATION gl_mount_ok
-2026-06-28 22:27:46,,,,,,,,,,,PROCESS_NOT_RUNNING
-2026-06-28 22:42:54,,,,,,,,,,,PROCESS_NOT_RUNNING
-2026-06-28 22:57:55,23252,729.8,785.6,48.2,19.8,68.1,370.1,25.9,,361,,,
-2026-06-28 23:13:16,23252,743.8,689.8,48.2,19.8,68.1,275.2,27,,382,,,
+2026-07-05 16:06:24,30836,882.9,930,141.4,40.7,182,360.5,48.8,,394,3.6,0,
+2026-07-05 16:21:45,30836,658.5,723,30.4,19.8,50.3,316.5,65.3,,15,-224.4,-111,GL_RECOVERED idle_ok
+2026-07-05 16:37:07,30836,858,925.8,52.6,19.8,72.5,497.7,42.5,,342,199.5,22.2,HUB_ACTIVATION gl_mount_ok
+2026-07-05 16:52:27,30836,972.1,1037.4,160.2,19.8,180,505.6,35.7,,371,114.1,107.6,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+2026-07-05 16:53:15,12437,380.7,,5.9,,,,,,15,,,POST_REMEDIATION_VERIFY_OK
+2026-07-05 17:08:37,12437,768.8,907,47.9,40.7,88.6,408.5,33.1,,296,,,
+2026-07-05 17:23:57,12437,780.6,918.8,47.9,19.8,67.8,428.4,41.9,,349,11.8,0,
+2026-07-05 17:39:18,12437,864.6,1002.2,48.8,40.7,89.5,468.8,37.9,,296,84,0.9,PSS_SPIKE review=graphics+native
+2026-07-05 17:54:38,12437,883.1,1021.1,50,20,70,494.9,41.8,,344,18.5,1.2,
+2026-07-05 18:10:05,12437,905.8,1042.6,50.3,34.3,84.6,491,43.5,,394,22.7,0.3,
+2026-07-05 18:25:27,12437,1074.1,1209.1,154.2,19.8,174,568.1,39.7,,559,168.3,103.9,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+2026-07-05 18:26:12,15875,390.9,,4.4,,,,,,15,,,POST_REMEDIATION_VERIFY_OK
 ```

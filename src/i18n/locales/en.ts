@@ -784,6 +784,9 @@ export const EN_DICTIONARY: I18nDictionary = {
 
   // ── Pilot Info Panel (pilotPanel) ──
   'pilotPanel.detailA11y': 'Pilot info detail',
+  'pilotPanel.passportTitle': 'PILOT CREDENTIAL',
+  'pilotPanel.photoSlotLabel': 'PHOTO',
+  'pilotPanel.portraitA11y': 'Pilot portrait',
   'pilotPanel.nickname': 'Name',
   'pilotPanel.level': 'Level',
   'pilotPanel.credits': 'Credits',

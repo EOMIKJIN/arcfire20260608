@@ -1,0 +1,2 @@
+﻿source=mem-timeline (no adb dumpsys ??app impact guard)
+pid=12437 pss_mb=380.7 gl_mb=5.9 views=15 age_min=1.7

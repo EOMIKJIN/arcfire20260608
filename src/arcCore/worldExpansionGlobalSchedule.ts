@@ -29,15 +29,26 @@ export function computeGlobalSynthUnlockTargetCount(
   return Math.max(0, elapsedDays * policy.systemsPerDay);
 }
 
-/** 전역 결정적 순서 — 모든 클라이언트 동일 */
+/**
+ * 전역 결정적 순서 — 모든 클라이언트 동일.
+ * `alreadyUnlockedSynthIds`(현재 실제로 열려있는 synth) 는 그대로 schedule 앞부분에 고정하고,
+ * 부족한 만큼만 새로 뽑는다 — baseline부터 매번 전체를 다시 계산하지 않으므로
+ * 이미 개방된 성계가 재계산으로 목표 집합에서 빠져 되돌아가는 일이 없다.
+ */
 export function buildDeterministicGlobalSynthUnlockSchedule(
   systems: Record<string, StarSystem>,
   maxSynthUnlockCount: number,
   baselineUnlocked: readonly string[] = BASELINE_GAMEPLAY_SYSTEM_IDS,
+  alreadyUnlockedSynthIds: readonly string[] = [],
 ): string[] {
   if (maxSynthUnlockCount <= 0) return [];
   const unlocked = new Set(baselineUnlocked);
   const schedule: string[] = [];
+  for (const id of alreadyUnlockedSynthIds) {
+    if (unlocked.has(id)) continue;
+    unlocked.add(id);
+    schedule.push(id);
+  }
   while (schedule.length < maxSynthUnlockCount) {
     const pick = pickDeterministicSynthFrontierCandidate(systems, [...unlocked]);
     if (!pick) break;
@@ -51,8 +62,14 @@ export function buildGlobalSynthUnlockTargetIds(
   systems: Record<string, StarSystem>,
   policy: ArcCoreWorldExpansionGlobalPolicy,
   nowMs: number,
+  alreadyUnlockedSynthIds: readonly string[] = [],
 ): { targetCount: number; targetSynthIds: string[] } {
   const targetCount = computeGlobalSynthUnlockTargetCount(policy, nowMs);
-  const targetSynthIds = buildDeterministicGlobalSynthUnlockSchedule(systems, targetCount);
+  const targetSynthIds = buildDeterministicGlobalSynthUnlockSchedule(
+    systems,
+    targetCount,
+    undefined,
+    alreadyUnlockedSynthIds,
+  );
   return { targetCount, targetSynthIds };
 }

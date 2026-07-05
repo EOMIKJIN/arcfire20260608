@@ -1,14 +1,17 @@
-import React, { memo, useEffect, useRef, useState, type ReactNode } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   Animated,
   Easing,
+  Image,
   Pressable,
   StyleSheet,
   Text,
   View,
+  type ImageSourcePropType,
 } from 'react-native';
 import { FONTS, SPACING } from '../../utils/theme';
 import { TACTICAL_HUB } from '../../ui/tactical/tacticalHubTokens';
+import { resolveNpcCaptainPortraitAspectRatio } from '../../game/npcCaptainPortraitAssets';
 import { useT } from '../../i18n';
 
 /** 하단 고정 헤더 높이 — `planetMainStageLayout` 도크 추정과 동기 */
@@ -19,26 +22,45 @@ export const PLANET_MAIN_PILOT_MENU_HEADER_GAP_PX = 5;
 
 /**
  * 펼침 스탯 영역 높이(헤더 제외).
- * 기존 112px 대비 +10 — 뒤 스캔 버튼이 비치지 않도록 불투명 영역을 확보한다.
+ * 여권형 — 문서 헤더 + 사진 열 + 정보 열.
  */
-export const PLANET_MAIN_PILOT_STATS_EXPANDED_HEIGHT_PX = 122;
-
-/** 마지막 스탯 줄(함선·SP·클랜) ↔ 패널 하단(헤더 상단 경계) 여백 */
-const PILOT_STATS_BOTTOM_INSET_PX = 12;
+export const PLANET_MAIN_PILOT_STATS_EXPANDED_HEIGHT_PX = 156;
 
 const EXPAND_ANIM_MS = 280;
 
-type StatItemProps = {
+const PASSPORT_DOC_HEADER_PX = 22;
+const PASSPORT_BODY_HEIGHT_PX =
+  PLANET_MAIN_PILOT_STATS_EXPANDED_HEIGHT_PX - PASSPORT_DOC_HEADER_PX;
+
+/** 포트레이트 미로드 시 사진 열 폴백 */
+const PASSPORT_PHOTO_COLUMN_FALLBACK_WIDTH_PX = 90;
+
+const PASSPORT = {
+  docHeaderBg: 'rgba(24, 28, 36, 0.98)',
+  photoColumnBg: 'rgba(16, 20, 28, 0.92)',
+  fieldLine: 'rgba(255, 255, 255, 0.1)',
+  docTitleInk: 'rgba(148, 156, 170, 0.92)',
+} as const;
+
+type PassportFieldProps = {
   label: string;
   value: string;
   highlight?: boolean;
 };
 
-function StatItem({ label, value, highlight }: StatItemProps) {
+function PassportField({ label, value, highlight }: PassportFieldProps) {
   return (
-    <View style={styles.statItem}>
-      <Text style={styles.statLabel}>{label}</Text>
-      <Text style={[styles.statValue, highlight && styles.statValueHighlight]}>{value}</Text>
+    <View style={styles.passportField}>
+      <Text style={styles.passportFieldLabel} numberOfLines={1}>
+        {label}
+      </Text>
+      <Text
+        style={[styles.passportFieldValue, highlight && styles.passportFieldValueHighlight]}
+        numberOfLines={1}
+      >
+        {value}
+      </Text>
+      <View style={styles.passportFieldLine} />
     </View>
   );
 }
@@ -46,31 +68,39 @@ function StatItem({ label, value, highlight }: StatItemProps) {
 type Props = {
   nickname: string;
   level: number;
-  expLabel: string;
   creditsLabel: string;
   shipName: string;
   skillPoints: number;
   clanName: string;
+  portraitSource?: ImageSourcePropType | null;
   menuSlot?: ReactNode;
 };
 
 /**
  * 하단 도크 전용 — 무역소 메뉴 + 파일럿 헤더(최하단 고정).
- * 펼침 시 스탯만 헤더 위로 올라가며, 헤더 Y는 변하지 않는다.
+ * 펼침 시 여권형 신분증 카드가 헤더 위로 올라간다.
  */
 export const PlanetMainPilotInfoPanel = memo(function PlanetMainPilotInfoPanel({
   nickname,
   level,
-  expLabel,
   creditsLabel,
   shipName,
   skillPoints,
   clanName,
+  portraitSource,
   menuSlot,
 }: Props) {
   const t = useT();
   const [expanded, setExpanded] = useState(false);
   const expandAnim = useRef(new Animated.Value(0)).current;
+
+  const photoColumnWidthPx = useMemo(() => {
+    const aspect = resolveNpcCaptainPortraitAspectRatio(portraitSource);
+    if (aspect != null) {
+      return Math.round(PASSPORT_BODY_HEIGHT_PX * aspect);
+    }
+    return PASSPORT_PHOTO_COLUMN_FALLBACK_WIDTH_PX;
+  }, [portraitSource]);
 
   useEffect(() => {
     Animated.timing(expandAnim, {
@@ -110,21 +140,40 @@ export const PlanetMainPilotInfoPanel = memo(function PlanetMainPilotInfoPanel({
             },
           ]}
         >
-          <View style={styles.statsPanel} accessibilityLabel={t('pilotPanel.detailA11y')}>
-            <View style={styles.statsBody}>
-              <View style={styles.statsRow}>
-                <StatItem label={t('pilotPanel.nickname')} value={nickname} />
-                <StatItem label={t('pilotPanel.level')} value={`Lv.${level} (${expLabel})`} />
-                <StatItem label={t('pilotPanel.credits')} value={creditsLabel} />
+          <View style={styles.passportCard} accessibilityLabel={t('pilotPanel.detailA11y')}>
+            <View style={styles.passportDocHeader}>
+              <Text style={styles.passportDocTitle}>{t('pilotPanel.passportTitle')}</Text>
+            </View>
+            <View style={styles.passportBody}>
+              <View
+                style={[styles.photoColumn, { width: photoColumnWidthPx }]}
+                accessibilityLabel={t('pilotPanel.portraitA11y')}
+                accessibilityRole="image"
+              >
+                {portraitSource ? (
+                  <Image source={portraitSource} style={styles.photoImage} resizeMode="cover" />
+                ) : (
+                  <View style={styles.photoPlaceholder} />
+                )}
               </View>
-              <View style={styles.statsRow}>
-                <StatItem label={t('pilotPanel.ship')} value={shipName} />
-                <StatItem
-                  label={t('pilotPanel.skillPoints')}
-                  value={`${skillPoints}P`}
-                  highlight={skillPoints > 0}
-                />
-                <StatItem label={t('pilotPanel.clan')} value={clanName} />
+              <View style={styles.photoDivider} />
+              <View style={styles.infoColumn}>
+                <View style={styles.infoRow}>
+                  <PassportField label={t('pilotPanel.nickname')} value={nickname} />
+                  <PassportField label={t('pilotPanel.level')} value={`Lv.${level}`} />
+                </View>
+                <View style={styles.infoRow}>
+                  <PassportField label={t('pilotPanel.credits')} value={creditsLabel} />
+                  <PassportField
+                    label={t('pilotPanel.skillPoints')}
+                    value={`${skillPoints}P`}
+                    highlight={skillPoints > 0}
+                  />
+                </View>
+                <View style={[styles.infoRow, styles.infoRowLast]}>
+                  <PassportField label={t('pilotPanel.ship')} value={shipName} />
+                  <PassportField label={t('pilotPanel.clan')} value={clanName} />
+                </View>
               </View>
             </View>
           </View>
@@ -175,7 +224,7 @@ const styles = StyleSheet.create({
     zIndex: 3,
     backgroundColor: TACTICAL_HUB.pilotExpandBg,
   },
-  statsPanel: {
+  passportCard: {
     flex: 1,
     minHeight: PLANET_MAIN_PILOT_STATS_EXPANDED_HEIGHT_PX,
     borderWidth: 1,
@@ -184,13 +233,88 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 6,
     borderBottomWidth: 0,
     backgroundColor: TACTICAL_HUB.pilotExpandBg,
-    paddingTop: SPACING.md,
-    paddingHorizontal: SPACING.md,
-    paddingBottom: PILOT_STATS_BOTTOM_INSET_PX,
-    justifyContent: 'flex-start',
+    overflow: 'hidden',
   },
-  statsBody: {
-    flexGrow: 0,
+  passportDocHeader: {
+    minHeight: PASSPORT_DOC_HEADER_PX,
+    justifyContent: 'center',
+    paddingHorizontal: SPACING.md,
+    paddingVertical: 4,
+    backgroundColor: PASSPORT.docHeaderBg,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: TACTICAL_HUB.pilotExpandBorder,
+  },
+  passportDocTitle: {
+    fontFamily: FONTS.mono,
+    fontSize: 10,
+    letterSpacing: 1.2,
+    color: PASSPORT.docTitleInk,
+    textTransform: 'uppercase',
+  },
+  passportBody: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  photoColumn: {
+    flexShrink: 0,
+    alignSelf: 'stretch',
+    overflow: 'hidden',
+    backgroundColor: PASSPORT.photoColumnBg,
+  },
+  photoImage: {
+    flex: 1,
+    width: '100%',
+  },
+  photoPlaceholder: {
+    flex: 1,
+    backgroundColor: TACTICAL_HUB.chromeBg,
+  },
+  photoDivider: {
+    width: StyleSheet.hairlineWidth,
+    alignSelf: 'stretch',
+    backgroundColor: TACTICAL_HUB.pilotExpandBorder,
+  },
+  infoColumn: {
+    flex: 1,
+    minWidth: 0,
+    paddingLeft: SPACING.sm,
+    paddingRight: SPACING.sm,
+    paddingVertical: SPACING.sm,
+    justifyContent: 'space-between',
+  },
+  infoRow: {
+    flexDirection: 'row',
+    columnGap: SPACING.sm,
+    marginBottom: 6,
+  },
+  infoRowLast: {
+    marginBottom: 0,
+  },
+  passportField: {
+    flex: 1,
+    minWidth: 0,
+  },
+  passportFieldLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: 9,
+    letterSpacing: 0.4,
+    color: TACTICAL_HUB.pilotLabelInk,
+    marginBottom: 2,
+  },
+  passportFieldValue: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    color: TACTICAL_HUB.pilotValueInk,
+    paddingBottom: 3,
+  },
+  passportFieldValueHighlight: {
+    color: TACTICAL_HUB.pilotValueHighlightInk,
+    fontWeight: FONTS.weight.bold,
+  },
+  passportFieldLine: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: PASSPORT.fieldLine,
   },
   headerBtn: {
     flexDirection: 'row',
@@ -225,25 +349,5 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xs,
     color: TACTICAL_HUB.chromeInk,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: SPACING.xs,
-  },
-  statItem: { flex: 1 },
-  statLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.xs,
-    color: TACTICAL_HUB.pilotLabelInk,
-  },
-  statValue: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    color: TACTICAL_HUB.pilotValueInk,
-  },
-  statValueHighlight: {
-    color: TACTICAL_HUB.pilotValueHighlightInk,
-    fontWeight: FONTS.weight.bold,
   },
 });

@@ -48,9 +48,11 @@ import { resolveMainStageCombatEnabled } from '../../src/arcCore/planetBalance/p
 import { releasePlanetMainStageSession } from '../../src/game/planetMainStageSession';
 import { registerPlanetSessionResource } from '../../src/game/planetSessionRegistry';
 import {
+  HUB_COMBAT_SAFE_RECLAIM_INTERVAL_MS,
   HUB_DEEP_NATIVE_RECLAIM_INTERVAL_MS,
   HUB_SOFT_NATIVE_RECLAIM_INTERVAL_MS,
   runDeepNativeReclaimPass,
+  runPlanetHubCombatSafeReclaimPass,
   runPlanetHubSoftNativeReclaimPass,
   schedulePlanetHubPostSkiaPeakReclaim,
 } from '../../src/game/nativeReclaim';
@@ -161,12 +163,15 @@ import { requestLocalAccountResetFromPlanetHub, isAccountResetInProgress } from 
 import { countGoodInInventory } from '../../src/game/playerInventory';
 import {
   buildNearbyInfoDetailRow,
+  mergePlayerFlagshipHubInfoRows,
   normalizeNearbyInfoDetailRow,
 } from '../../src/game/planetHub/nearbyPresenceDisplay';
+import { resolvePlayerFlagshipNpcShipId } from '../../src/game/galaxyTransit/computeGalaxyTransitFuelQuote';
 import { buildPlanetHubFeatureMenuItems } from '../../src/systems/planetHub/planetHubFeatureSystems';
 import { PlanetHubFeatureMenuRow } from '../../src/components/planet/PlanetHubFeatureMenuRow';
 import { PlanetMainScanActionRow } from '../../src/components/planet/PlanetMainScanActionRow';
 import { PlanetMainPilotInfoPanel } from '../../src/components/planet/PlanetMainPilotInfoPanel';
+import { resolvePlayerPilotPortraitSource } from '../../src/game/playerPilotProfessionModel';
 import {
   collectHubDialogBadgeAckKeysForTalk,
   collectPlanetHubCaptainIds,
@@ -194,7 +199,6 @@ import { useHeavyUiPlanetHubAction } from '../../src/ui/heavyUiDataSession';
 import { TACTICAL_HUB } from '../../src/ui/tactical/tacticalHubTokens';
 import {
   EDEN_COMBAT_HUD_BLOCK_PX,
-  formatPilotExp8,
   hasEnemyFleetEnteredPlanetOrbit,
   NPC_ORBIT_CYCLE_MS,
   ORBIT_FLAT_STRIDE,
@@ -532,6 +536,15 @@ export default function PlanetScreen() {
     return out;
   }, [arcInboundDronesSnap, planet?.id]);
 
+  /** Skia dodge·inbound 마크 — trail(destroyed/impacted) 잔존과 분리 (reclaim 게이트) */
+  const arcInboundFlyingDroneCount = useMemo(() => {
+    let n = 0;
+    for (const d of arcInboundDronesAtPlanet) {
+      if (d.phase === 'inbound') n += 1;
+    }
+    return n;
+  }, [arcInboundDronesAtPlanet]);
+
   /** AiNpc publish와 동일 키 — 궤도 예산 useMemo 불필요 재계산 억제 */
   const arcNpcAtPlanetRenderSig = useMemo(() => {
     const parts: string[] = [];
@@ -549,6 +562,8 @@ export default function PlanetScreen() {
     (s) => s.active && s.planetId === (planet?.id ?? null),
   );
   const waveDefenseWaveIndex = useWaveDefenseStore((s) => s.waveIndex);
+  /** 웨이브 간(cleared) reclaim 훅·주기 reclaim skip 정밀화용 — 이 행성 활성 아니면 무관 */
+  const waveDefensePhase = useWaveDefenseStore((s) => s.phase);
   /** 적팀(red/orange) 진입 + balance CSV `mainStageCombatEnabled` 게이트, 또는 웨이브 디펜스 활성 */
   const enemyFleetEntered = Boolean(
     player
@@ -639,6 +654,35 @@ export default function PlanetScreen() {
     capitalCombatOrbitActiveRef.current = capitalCombatOrbitActive;
   }, [capitalCombatOrbitActive]);
 
+  /**
+   * 5분 soft·15분 deep 주기 reclaim skip 게이트 — 웨이브 디펜스 런 중에는
+   * capitalCombatOrbitActive가 9웨이브 내내 true로 고정되어 주기 reclaim이 통째로 막힌다.
+   * 웨이브 모드일 때는 phase==='combat'(실제 교전 스텝) 동안만 skip하고
+   * cleared·countdown·ended 구간은 주기 reclaim을 허용한다. 비웨이브 전투는 기존 동작 유지.
+   */
+  const periodicReclaimSuppressedRef = useRef(capitalCombatOrbitActive);
+  useLayoutEffect(() => {
+    periodicReclaimSuppressedRef.current = waveDefenseActiveHere
+      ? waveDefensePhase === 'combat'
+      : capitalCombatOrbitActive;
+  }, [waveDefenseActiveHere, waveDefensePhase, capitalCombatOrbitActive]);
+
+  /** 웨이브 간(cleared) — Skia peak 종료로 간주해 GL floor 회수(연속 웨이브 누적 방지) */
+  const prevWaveDefensePhaseRef = useRef(waveDefensePhase);
+  useEffect(() => {
+    const prevPhase = prevWaveDefensePhaseRef.current;
+    prevWaveDefensePhaseRef.current = waveDefensePhase;
+    const pid = planet?.id;
+    if (!pid || !isPlanetRouteFocused || !waveDefenseActiveHere) return undefined;
+    if (prevPhase === waveDefensePhase || waveDefensePhase !== 'cleared') return undefined;
+    return schedulePlanetHubPostSkiaPeakReclaim(pid, 'hub_wave_inter_wave');
+  }, [waveDefensePhase, waveDefenseActiveHere, planet?.id, isPlanetRouteFocused]);
+
+  const arcInboundFlyingDroneCountRef = useRef(arcInboundFlyingDroneCount);
+  useLayoutEffect(() => {
+    arcInboundFlyingDroneCountRef.current = arcInboundFlyingDroneCount;
+  }, [arcInboundFlyingDroneCount]);
+
   /** heavy Skia spike(허브 전투 orbit) 종료 — GL floor 즉시 회수 (route_blur 없이) */
   const prevCapitalCombatOrbitActiveRef = useRef(capitalCombatOrbitActive);
   useEffect(() => {
@@ -649,18 +693,18 @@ export default function PlanetScreen() {
     return schedulePlanetHubPostSkiaPeakReclaim(pid, 'hub_combat_orbit_end');
   }, [capitalCombatOrbitActive, planet?.id, isPlanetRouteFocused]);
 
-  /** 인바운드 드론 dodge Skia overlay 종료 — 동일 GL reclaim */
-  const prevInboundDroneCountRef = useRef(arcInboundDronesAtPlanet.length);
+  /** 인바운드 드론 dodge Skia overlay 종료 — inbound 0 전환 시 (trail 잔존과 무관) */
+  const prevInboundFlyingDroneCountRef = useRef(arcInboundFlyingDroneCount);
   useEffect(() => {
-    const prevCount = prevInboundDroneCountRef.current;
-    const curCount = arcInboundDronesAtPlanet.length;
-    prevInboundDroneCountRef.current = curCount;
+    const prevCount = prevInboundFlyingDroneCountRef.current;
+    const curCount = arcInboundFlyingDroneCount;
+    prevInboundFlyingDroneCountRef.current = curCount;
     const pid = planet?.id;
     if (!pid || !isPlanetRouteFocused || capitalCombatOrbitActive) return undefined;
     if (prevCount <= 0 || curCount !== 0) return undefined;
     return schedulePlanetHubPostSkiaPeakReclaim(pid, 'hub_inbound_drone_end');
   }, [
-    arcInboundDronesAtPlanet.length,
+    arcInboundFlyingDroneCount,
     capitalCombatOrbitActive,
     planet?.id,
     isPlanetRouteFocused,
@@ -691,7 +735,8 @@ export default function PlanetScreen() {
     const pid = planet?.id;
     if (!pid || !isPlanetRouteFocused || !appStateActive || !stageSession.isActive) return undefined;
     const intervalId = setInterval(() => {
-      if (capitalCombatOrbitActiveRef.current) return;
+      if (periodicReclaimSuppressedRef.current) return;
+      if (arcInboundFlyingDroneCountRef.current > 0) return;
       runPlanetHubSoftNativeReclaimPass(pid, 'hub_periodic_soft');
     }, HUB_SOFT_NATIVE_RECLAIM_INTERVAL_MS);
     const token = registerPlanetSessionResource({
@@ -710,7 +755,8 @@ export default function PlanetScreen() {
     const pid = planet?.id;
     if (!pid || !isPlanetRouteFocused || !appStateActive || !stageSession.isActive) return undefined;
     const intervalId = setInterval(() => {
-      if (capitalCombatOrbitActiveRef.current) return;
+      if (periodicReclaimSuppressedRef.current) return;
+      if (arcInboundFlyingDroneCountRef.current > 0) return;
       runDeepNativeReclaimPass({
         planetId: pid,
         reason: 'hub_periodic',
@@ -720,6 +766,29 @@ export default function PlanetScreen() {
     }, HUB_DEEP_NATIVE_RECLAIM_INTERVAL_MS);
     const token = registerPlanetSessionResource({
       ownerId: 'planet_hub_deep_native_reclaim',
+      planetId: pid,
+      dispose: () => clearInterval(intervalId),
+    });
+    return () => {
+      clearInterval(intervalId);
+      token.release();
+    };
+  }, [planet?.id, isPlanetRouteFocused, appStateActive, stageSession.isActive]);
+
+  /**
+   * 전투 orbit "진행 중" 안전판 — 위 두 주기(5분 soft·15분 deep)는 전투 중 전면 skip되므로,
+   * 인카운터가 길게 이어지면 그 사이 module Path/Paint/maskfilter 캐시가 계속 상주할 수 있다.
+   * dodge overlay 해제·Fresco trim·RN remount 없이 안전한 캐시 trim만 도는 별도 3분 주기.
+   */
+  useEffect(() => {
+    const pid = planet?.id;
+    if (!pid || !isPlanetRouteFocused || !appStateActive || !stageSession.isActive) return undefined;
+    const intervalId = setInterval(() => {
+      if (!periodicReclaimSuppressedRef.current) return;
+      runPlanetHubCombatSafeReclaimPass('hub_combat_in_progress');
+    }, HUB_COMBAT_SAFE_RECLAIM_INTERVAL_MS);
+    const token = registerPlanetSessionResource({
+      ownerId: 'planet_hub_combat_safe_reclaim',
       planetId: pid,
       dispose: () => clearInterval(intervalId),
     });
@@ -1234,16 +1303,31 @@ export default function PlanetScreen() {
 
   const sortedShipInfoRows = useMemo(() => {
     const len = planetHubOrbitInfoRows.length;
-    if (len === 0) return [];
     const order =
-      infoLineOrder.length === len ? infoLineOrder : Array.from({ length: len }, (_, i) => i);
-    return order.map(i => {
+      len === 0
+        ? []
+        : infoLineOrder.length === len
+          ? infoLineOrder
+          : Array.from({ length: len }, (_, i) => i);
+    const npcRows = order.map((i) => {
       const slot = planetHubOrbitInfoRows[i]!;
       return normalizeNearbyInfoDetailRow(
         buildNearbyInfoDetailRow(slot.slotIndex, slot.displayLine),
       );
     });
-  }, [infoLineOrder, planetHubOrbitInfoRows]);
+    if (!player) return npcRows;
+    return mergePlayerFlagshipHubInfoRows(npcRows, {
+      shipName: player.ship.name,
+      nickname: player.nickname,
+      playerNpcShipId: resolvePlayerFlagshipNpcShipId(player.ship),
+    });
+  }, [
+    infoLineOrder,
+    planetHubOrbitInfoRows,
+    player?.nickname,
+    player?.ship.name,
+    player?.ship.portraitNpcCapitalShipId,
+  ]);
   const orbitCaptionsBySlot = useMemo(
     () => orbitTablePresence.map(r => orbitCaptainCaptionFromLine(r.displayLine)),
     [orbitTablePresence],
@@ -1323,6 +1407,10 @@ export default function PlanetScreen() {
       const displayName = (s.clans[clanId]?.displayName ?? '').trim();
       return displayName.length > 0 ? displayName : clanId;
     }, [player?.political.clanId, t]),
+  );
+  const pilotPortraitSource = useMemo(
+    () => resolvePlayerPilotPortraitSource(player?.pilotProfile?.professionId),
+    [player?.pilotProfile?.professionId],
   );
   if (!player || !system || !planet) return null;
 
@@ -1513,11 +1601,11 @@ export default function PlanetScreen() {
           <PlanetMainPilotInfoPanel
             nickname={player.nickname}
             level={player.level}
-            expLabel={formatPilotExp8(player.exp)}
             creditsLabel={formatCredits(player.credits, { suffix: false })}
             shipName={player.ship.name}
             skillPoints={player.skillPoints}
             clanName={currentPilotClanName}
+            portraitSource={pilotPortraitSource}
             menuSlot={featureMenuRow}
           />
         </View>

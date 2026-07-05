@@ -33,6 +33,7 @@ export {
 export { runPostHubCombatWorldmapIngressReclaim } from './runPostHubCombatWorldmapIngressReclaim';
 export { runDeepNativeReclaimPass } from './runDeepNativeReclaimPass';
 export type { DeepNativeReclaimPassOptions } from './runDeepNativeReclaimPass';
+export { runPlanetHubCombatSafeReclaimPass } from './runPlanetHubCombatSafeReclaimPass';
 export {
   getHubBackdropNativeRemountEpoch,
   signalHubBackdropNativeRemount,
@@ -40,6 +41,7 @@ export {
 } from './hubBackdropNativeRemountSignal';
 export {
   DEFERRED_NATIVE_RECLAIM_DELAY_MS,
+  HUB_COMBAT_SAFE_RECLAIM_INTERVAL_MS,
   HUB_DEEP_NATIVE_RECLAIM_INTERVAL_MS,
   HUB_SOFT_NATIVE_RECLAIM_INTERVAL_MS,
   GALAXY_MAP_SOFT_RECLAIM_INTERVAL_MS,

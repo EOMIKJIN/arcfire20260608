@@ -1,15 +1,15 @@
 ﻿{
     "lastTimeline":  {
-                         "pss_mb":  "730",
-                         "gl_mb":  "44.1",
-                         "pid":  "29883",
+                         "pss_mb":  "638.7",
+                         "gl_mb":  "43.9",
+                         "pid":  "24957",
                          "note":  "",
-                         "iso_time":  "2026-07-04 23:57:53",
-                         "views":  "385"
+                         "iso_time":  "2026-07-05 23:49:31",
+                         "views":  "369"
                      },
     "processes":  {
                       "reportWatch":  {
-                                          "id":  19896,
+                                          "id":  20788,
                                           "alive":  true
                                       },
                       "schedule8am":  {
@@ -28,13 +28,13 @@
     "monitorPaused":  false,
     "perpetualDisabled":  false,
     "chatPending":  true,
-    "reportWatchMode":  "hidden",
+    "reportWatchMode":  "visible",
     "watchdog":  {
                      "id":  4844,
                      "alive":  true
                  },
     "reportWatch":  {
-                        "id":  19896,
+                        "id":  20788,
                         "alive":  true
                     },
     "handoffPending":  true,
@@ -46,5 +46,5 @@
                         "id":  9156,
                         "alive":  true
                     },
-    "updatedAtKst":  "2026-07-04 23:58:44"
+    "updatedAtKst":  "2026-07-05 23:57:20"
 }

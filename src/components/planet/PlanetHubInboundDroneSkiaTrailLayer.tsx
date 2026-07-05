@@ -56,10 +56,13 @@ function recordInboundDroneVfxPicture(input: {
   flameImage: SkImage | null;
   pathPool: SkPath[];
   trailPaint: SkPaint;
+  recorder: ReturnType<typeof Skia.PictureRecorder>;
 }): SkPicture | null {
-  const { orbitMs, flat, droneCount, center, edgeR, impactR, hitFxList, flameImage, pathPool, trailPaint } = input;
+  const { orbitMs, flat, droneCount, center, edgeR, impactR, hitFxList, flameImage, pathPool, trailPaint, recorder } = input;
 
-  const recorder = Skia.PictureRecorder();
+  // recorder는 컴포넌트 수명 동안 재사용(호출부에서 lazy 생성·전달) — 매 flush마다 새로
+  // Skia.PictureRecorder()를 만들면 dispose() 메서드가 없어 JS GC finalizer가 지연 회수할
+  // 때까지 native(JSI) 쪽에 계속 쌓인다(장시간 드론 교전에서 native_heap 누적 원인).
   const canvas = recorder.beginRecording(Skia.XYWHRect(0, 0, SCENE_SIZE, SCENE_SIZE));
   let drewAny = false;
 
@@ -138,9 +141,10 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
   const trailBridgeAliveSv = useSharedValue(1);
   const hitFxActiveSv = useSharedValue(0);
 
-  // ── 사전 할당 Path 풀 + trail scratch Paint (컴포넌트 수명)
+  // ── 사전 할당 Path 풀 + trail scratch Paint + PictureRecorder (컴포넌트 수명)
   const pathPoolRef = useRef<SkPath[]>([]);
   const trailPaintRef = useRef<SkPaint | null>(null);
+  const recorderRef = useRef<ReturnType<typeof Skia.PictureRecorder> | null>(null);
 
   const flameImage = useImage(require('../../../assets/images/effects/tail_fire_02.png'));
   const flameImageRef = useRef<SkImage | null>(null);
@@ -180,6 +184,10 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
       p.setAntiAlias(true);
       trailPaintRef.current = p;
     }
+    // PictureRecorder 지연 초기화 — 컴포넌트 수명 동안 1개만 만들어 매 flush마다 재사용
+    if (!recorderRef.current) {
+      recorderRef.current = Skia.PictureRecorder();
+    }
 
     const next = recordInboundDroneVfxPicture({
       orbitMs: pendingOrbitMsRef.current,
@@ -192,6 +200,7 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
       flameImage: flameImageRef.current,
       pathPool: pathPoolRef.current,
       trailPaint: trailPaintRef.current,
+      recorder: recorderRef.current,
     });
 
     if (!next) {
@@ -278,6 +287,8 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
       pathPoolRef.current = [];
       safeSkiaDispose(trailPaintRef.current);
       trailPaintRef.current = null;
+      safeSkiaDispose(recorderRef.current as unknown as { dispose?: () => void });
+      recorderRef.current = null;
       const live = liveFrameRef.current;
       liveFrameRef.current = null;
       scheduleSkPictureDispose(live);

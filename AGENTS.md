@@ -1,5 +1,10 @@
 # 에이전트 안내 (Arcfire Online)
 
+## 사용자 호칭 (전체 팀 · 2026-07-05~)
+
+**사용자 = 「대표님」** — 김팀장 · Fable · 김경제 · 김클로드 · Auto/Sonnet **전원** 한국어 응답·handoff·리포트에서 동일 적용.  
+정본: `.cursor/rules/arcfire-user-addressing.mdc`
+
 ## 🚨 개발규칙 1순위 (무조건 · 2026-07-01~)
 
 **모든 작업은 「1차 메모리·PSS 검수」 후에만 개발을 진행한다.**  
@@ -15,6 +20,7 @@ Skia/STAGE/틱/persist/부트/**memo·cache·store 순환** 전부 해당 · **1
 |------|-----|------|
 | **sessionStart** | `on-session-start-pss-pre-dev-brief.cjs` | [pss-pre-dev] · 완료 게이트 상시 리마인드 |
 | **sessionStart** | `on-session-start-mem-post-dev-trigger.cjs` | `src/app/tables` dirty → mem-post-dev-recheck P0 |
+| **beforeSubmitPrompt** | `on-before-submit-prompt-kim-claude-handoff-review.cjs` | handoff `PENDING` → **검수 P0 자동 시작** (기존 대화창 포함) |
 | **beforeSubmitPrompt** | `on-before-submit-prompt-pss-pre-dev-gate.cjs` | 기능·버그 요청 시 1차 검수 3줄 의무 주입 |
 
 ```bash

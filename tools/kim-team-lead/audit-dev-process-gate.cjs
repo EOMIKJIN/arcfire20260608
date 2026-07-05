@@ -14,6 +14,7 @@ const REQUIRED_HOOKS = [
   '.cursor/hooks/on-session-start-pss-pre-dev-brief.cjs',
   '.cursor/hooks/on-session-start-mem-post-dev-trigger.cjs',
   '.cursor/hooks/on-session-start-kim-claude-handoff-review.cjs',
+  '.cursor/hooks/on-before-submit-prompt-kim-claude-handoff-review.cjs',
   '.cursor/hooks/on-before-submit-prompt-agent-routing.cjs',
   '.cursor/hooks/on-before-submit-prompt-incident-auto-fix.cjs',
 ];
@@ -55,6 +56,9 @@ function main() {
     }
     if (!before.some((c) => String(c).includes('pss-pre-dev-gate'))) {
       failures.push('hooks.json: beforeSubmitPrompt missing pss-pre-dev-gate');
+    }
+    if (!before.some((c) => String(c).includes('kim-claude-handoff-review'))) {
+      failures.push('hooks.json: beforeSubmitPrompt missing kim-claude-handoff-review');
     }
   }
 

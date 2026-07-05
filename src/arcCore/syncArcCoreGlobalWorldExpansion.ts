@@ -82,10 +82,12 @@ export async function syncArcCoreGlobalWorldExpansion(
   const world = useWorldStore.getState();
   if (!world.loaded) return empty;
 
+  const currentSynthUnlocked = world.unlockedSystemIds.filter((id) => id.startsWith('synth_'));
   const { targetCount, targetSynthIds } = buildGlobalSynthUnlockTargetIds(
     world.systems,
     policy,
     nowMs,
+    currentSynthUnlocked,
   );
 
   const { added, removed } = world.reconcileGlobalSynthUnlocks(targetSynthIds);
@@ -153,10 +155,12 @@ export function syncArcCoreGlobalWorldExpansionSync(
     };
   }
   const policy = resolveArcCoreWorldExpansionGlobalPolicy();
+  const currentSynthUnlocked = world.unlockedSystemIds.filter((id) => id.startsWith('synth_'));
   const { targetCount, targetSynthIds } = buildGlobalSynthUnlockTargetIds(
     world.systems,
     policy,
     nowMs,
+    currentSynthUnlocked,
   );
   const { added, removed } = world.reconcileGlobalSynthUnlocks(targetSynthIds);
   ensurePlayerNotOnRemovedSystems(removed);

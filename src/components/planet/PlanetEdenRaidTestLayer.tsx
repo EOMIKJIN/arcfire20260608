@@ -2654,6 +2654,8 @@ export function usePlanetEdenRaidSim(
       return;
     }
     lastWaveGenKeyRef.current = waveGenKey;
+    /** 웨이브 전환(재시드)마다 module Path/Paint·hit-fx 캐시 회수 — 연속 웨이브 GL 누적 방지 */
+    if (waveReseed) clearCapitalRealtimeCombatPresentationCaches();
     simLoopHaltedRef.current = false;
     sessionCombatKeyRef.current = sessionKey;
     /** 메인스테이지 출발(은하지도)로 안전 종료된 직후라면 같은 sessionKey 의 스냅샷이 있을 수 있다 — 1회 소비. */

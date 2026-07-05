@@ -5,19 +5,21 @@
 
 type CombatSkiaReclaimFn = () => void;
 
-let reclaimFn: CombatSkiaReclaimFn | null = null;
+const reclaimFns = new Set<CombatSkiaReclaimFn>();
 
 export function registerCombatSkiaPresentationReclaim(fn: CombatSkiaReclaimFn): () => void {
-  reclaimFn = fn;
+  reclaimFns.add(fn);
   return () => {
-    if (reclaimFn === fn) reclaimFn = null;
+    reclaimFns.delete(fn);
   };
 }
 
 export function runCombatSkiaPresentationReclaim(): void {
-  try {
-    reclaimFn?.();
-  } catch {
-    /* idempotent */
+  for (const fn of reclaimFns) {
+    try {
+      fn();
+    } catch {
+      /* idempotent */
+    }
   }
 }

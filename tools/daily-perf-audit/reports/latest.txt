@@ -1,4 +1,4 @@
-Daily audit — 2026-07-04T15:00:08.037Z
+Daily audit — 2026-07-05T15:00:07.301Z
 
 TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -40,24 +40,24 @@ PASS — 모든 buy_goods/defeat_enemy 목표에 퀘스트 배치·전투 운영
 
 Largest TS/TSX under `src/` + `app/` (bytes)
 
+- 662,116 — `src/data/generated/galaxySystems100.generated.ts`
 - 477,992 — `src/data/generated/csvNpcCapitalShips.ts`
 - 365,768 — `src/data/generated/csvItemDefs.ts`
 - 285,280 — `src/data/generated/csvNpcCaptains.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
-- 148,235 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 148,428 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 115,935 — `src/data/generated/csvStoryScenes.ts`
-- 74,460 — `src/i18n/locales/ko.ts`
+- 74,600 — `src/i18n/locales/ko.ts`
 - 71,055 — `src/data/generated/csvWeapons.ts`
 - 70,149 — `src/data/balance/generated/csvSynthSystemColonization.ts`
-- 67,831 — `src/i18n/locales/en.ts`
+- 69,507 — `app/(game)/planet.tsx`
+- 67,968 — `src/i18n/locales/en.ts`
 - 65,965 — `app/(game)/worldmap.tsx`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
-- 65,351 — `app/(game)/planet.tsx`
 - 47,321 — `app/(game)/shipyard.tsx`
 - 45,731 — `app/(game)/trade.tsx`
-- 43,029 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
+- 43,141 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
 - 38,935 — `src/data/generated/csvMissions.ts`
-- 36,229 — `src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx`
 
 Planet hub eager `src/combat` import (should be absent)
 

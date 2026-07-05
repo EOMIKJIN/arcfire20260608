@@ -1,4 +1,16 @@
 import { splitNearbyInfoLine } from './planetHubConstants';
+import {
+  formatCapitalShipInfoPanelBadge,
+  resolveCapitalShipClassification,
+} from '../../arcCore/balance/capitalShipClassification';
+import {
+  NEARBY_PRESENCE_DISPLAY_SEP,
+  PLAYER_BENCH_CAPTAIN_ID,
+  PLAYER_FLAGSHIP_HUB_INFO_SLOT,
+} from './nearbyPresenceContract';
+import { getNpcCapitalShip } from '../../npc/npcFleetRegistry';
+
+export { PLAYER_BENCH_CAPTAIN_ID, PLAYER_FLAGSHIP_HUB_INFO_SLOT } from './nearbyPresenceContract';
 
 /** 행 끝 액션 — null · 대화 · 미션 · 기타(확장) */
 export type NearbyPresenceRowActionKind = 'none' | 'dialog' | 'mission' | 'custom';
@@ -69,4 +81,52 @@ export function normalizeNearbyInfoDetailRow(
     return row as NearbyInfoDetailRow;
   }
   return buildNearbyInfoDetailRow(row.keySlot, row.line);
+}
+
+/** INFO 컴팩트 패널 — NPC·아크 함장명, 플레이어 기함만 계정 닉네임 */
+export function resolveNearbyInfoPanelPrimaryLabel(row: NearbyInfoDetailRow): string {
+  if (row.keySlot === PLAYER_FLAGSHIP_HUB_INFO_SLOT) {
+    const nick = row.captainName.trim();
+    if (nick) return nick;
+  }
+  const captain = row.captainName.trim();
+  if (captain) return captain;
+  const ship = row.shipLabel.trim();
+  if (ship) return ship;
+  return row.line;
+}
+
+export function buildPlayerFlagshipHubInfoDetailRow(
+  shipName: string,
+  nickname: string,
+  playerNpcShipId: string,
+): NearbyInfoDetailRow {
+  const trimmedShip = shipName.trim() || '—';
+  const trimmedNick = nickname.trim() || '—';
+  const classification = resolveCapitalShipClassification(playerNpcShipId);
+  const infoRight = classification ? formatCapitalShipInfoPanelBadge(classification) : '';
+  const sep = NEARBY_PRESENCE_DISPLAY_SEP;
+  const line = infoRight
+    ? `${trimmedNick} · ${trimmedShip}${sep}${infoRight}`
+    : `${trimmedNick} · ${trimmedShip}`;
+  return buildNearbyInfoDetailRow(PLAYER_FLAGSHIP_HUB_INFO_SLOT, line);
+}
+
+/** 벤치마크 `Player_pilot`·동일 CSV 기함 NPC 행 제거 후 플레이어 기함 행을 맨 앞에 삽입 */
+export function mergePlayerFlagshipHubInfoRows(
+  rows: NearbyInfoDetailRow[],
+  input: { shipName: string; nickname: string; playerNpcShipId: string },
+): NearbyInfoDetailRow[] {
+  const benchHullLabel = getNpcCapitalShip(input.playerNpcShipId)?.name?.trim() ?? '';
+  const filtered = rows.filter((row) => {
+    if (row.captainName.trim() === '플레이어 함선') return false;
+    if (benchHullLabel && row.shipLabel.trim() === benchHullLabel) return false;
+    return true;
+  });
+  const playerRow = buildPlayerFlagshipHubInfoDetailRow(
+    input.shipName,
+    input.nickname,
+    input.playerNpcShipId,
+  );
+  return [playerRow, ...filtered];
 }
