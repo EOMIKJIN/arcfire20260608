@@ -2680,3 +2680,30 @@ ref=tools/long-run-monitor/logs/soak-worklet-mirror-20260621.json
 [2026-07-05 20:29:20] PSS_SOFT_CEILING pss=859.3 gl=124.9 views=396 native_reclaim_advisory
 [2026-07-05 20:44:49] PSS_SOFT_CEILING pss=834.6 gl=124.7 views=375 native_reclaim_advisory
 [2026-07-05 21:31:01] PSS_SOFT_CEILING pss=907.2 gl=159.2 views=388 native_reclaim_advisory
+[2026-07-06 01:21:58] PSS_SOFT_CEILING pss=892.6 gl=152.6 views=334 native_reclaim_advisory
+[2026-07-06 01:37:23] PSS_SOFT_CEILING pss=856.3 gl=146.6 views=388 native_reclaim_advisory
+[2026-07-06 01:52:43] PSS_SOFT_CEILING pss=845.3 gl=146.6 views=388 native_reclaim_advisory
+[2026-07-06 02:08:03] PSS_SOFT_CEILING pss=847.4 gl=144.6 views=380 native_reclaim_advisory
+[2026-07-06 02:23:23] PSS_SOFT_CEILING pss=835.6 gl=144.6 views=392 native_reclaim_advisory
+[2026-07-06 02:38:46] PSS_SOFT_CEILING pss=832.5 gl=146.6 views=388 native_reclaim_advisory
+[2026-07-06 02:54:07] PSS_SOFT_CEILING pss=832.6 gl=146.6 views=384 native_reclaim_advisory
+[2026-07-06 03:09:29] PSS_SOFT_CEILING pss=826.5 gl=144.6 views=381 native_reclaim_advisory
+[2026-07-06 03:24:51] GL_HARD_CEILING gl=218.4 pss=914.2 views=558
+[2026-07-06 03:24:51] REFIX_REQUESTED gl_critical_active_hub
+[2026-07-06 03:28:58] INVESTIGATION_TRIGGERED mem_anomaly
+[2026-07-06 08:00:00] DAILY_8AM_REPORT 2026-07-06 08:00:00 KST
+[2026-07-06 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260706-0800.md verdict=OK
+[2026-07-06 08:02:04] DAILY_8AM_REPORT 2026-07-06 08:02:04 KST
+[2026-07-06 08:02:04] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260706-0800.md verdict=OK
+[2026-07-06 08:04:06] DAILY_8AM_REPORT 2026-07-06 08:04:06 KST
+[2026-07-06 08:04:06] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260706-0800.md verdict=OK
+[2026-07-06 08:06:07] DAILY_8AM_REPORT 2026-07-06 08:06:07 KST
+[2026-07-06 08:06:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260706-0800.md verdict=OK
+[2026-07-06 08:08:08] DAILY_8AM_REPORT 2026-07-06 08:08:08 KST
+[2026-07-06 08:08:08] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260706-0800.md verdict=OK
+[2026-07-06 08:10:10] DAILY_8AM_REPORT 2026-07-06 08:10:10 KST
+[2026-07-06 08:10:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260706-0800.md verdict=OK
+[2026-07-06 08:12:11] DAILY_8AM_REPORT 2026-07-06 08:12:11 KST
+[2026-07-06 08:12:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260706-0800.md verdict=OK
+[2026-07-06 08:14:12] DAILY_8AM_REPORT 2026-07-06 08:14:12 KST
+[2026-07-06 08:14:12] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260706-0800.md verdict=OK

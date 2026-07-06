@@ -36,6 +36,8 @@ import {
   beginPlanetCoreStatOpsTrendSnapshot,
   commitPlanetCoreStatOpsTrendAfterBatch,
 } from '../planetCore/planetCoreStatOpsTrend';
+import { beginPlanetCoreGaugeIntentBatch } from '../planetCore/planetCoreGaugeIntent';
+import { runPlanetCoreGaugeCompositionApplyPass } from '../planetCore/runPlanetCoreGaugeCompositionApplyPass';
 
 export type ArcCoreDailyOpsBatchResult = {
   ran: boolean;
@@ -54,6 +56,7 @@ export type ArcCoreDailyOpsBatchResult = {
   convoyDailySettlement: boolean;
   centralBankExpenditure: boolean;
   facilityStatNudge: boolean;
+  planetCoreGaugeComposition: boolean;
   laboratoryRdSpeed: boolean;
   tavernBountyRefresh: boolean;
   arcCoreInstanceMissionDaily: boolean;
@@ -87,6 +90,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     convoyDailySettlement: false,
     centralBankExpenditure: false,
     facilityStatNudge: false,
+    planetCoreGaugeComposition: false,
     laboratoryRdSpeed: false,
     tavernBountyRefresh: false,
     arcCoreInstanceMissionDaily: false,
@@ -102,6 +106,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   }
 
   beginPlanetCoreStatOpsTrendSnapshot();
+  beginPlanetCoreGaugeIntentBatch();
 
   const colonizationEarly = runSynthColonizationAdvancePass();
   result.synthColonizationAdvance = colonizationEarly.advanced > 0;
@@ -181,6 +186,9 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   } catch {
     /* learning KPI·RTDB push는 비차단 */
   }
+
+  const gaugeComposition = runPlanetCoreGaugeCompositionApplyPass();
+  result.planetCoreGaugeComposition = gaugeComposition.ran;
 
   commitPlanetCoreStatOpsTrendAfterBatch();
 

@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-07-04T15:04:25.995Z",
-  "kstDayKey": "2026-07-05",
+  "timestamp": "2026-07-06T15:00:44.139Z",
+  "kstDayKey": "2026-07-07",
   "overall": "WARN",
   "convoyDaily": {
     "ran": true,
-    "kstDayKey": "2026-07-05",
+    "kstDayKey": "2026-07-07",
     "supplyRoundTripsOk": 18,
     "supplyRoundTripsFailed": 1,
     "demandPlanetsCovered": 19,

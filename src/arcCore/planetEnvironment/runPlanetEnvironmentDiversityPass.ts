@@ -15,6 +15,10 @@ import { rebalanceFromRuntimeRecord } from './planetDiversityRebalance';
 import { collectPlanetInteractionSignals, type PlanetInteractionSignals } from './planetInteractionSignals';
 import { resolvePlanetCoreStatAuthority } from '../balance/planetCoreStatAuthorityPolicy';
 import { resolvePlanetCoreStatAuthorityContext } from '../planetCore/resolvePlanetCoreStatContext';
+import {
+  applyPlanetCoreGaugeChangeOrIntent,
+  isPlanetCoreGaugeIntentBatchActive,
+} from '../planetCore/planetCoreGaugeIntent';
 
 /** 현재 성계·연결 성계에서 채울 행성 수 상한 */
 const SURROUNDING_PLANET_REBALANCE_MAX = 20;
@@ -120,9 +124,27 @@ export function runPlanetEnvironmentDiversityPass(): void {
     const interaction = planetId === landedId ? landedInteraction : undefined;
     const rebalanced = rebalanceFromRuntimeRecord(hit.planet, hit.system, runtime, interaction);
     const fromTransport = devStore.consumeIntegerDeltas(planetId, DEVELOPMENT_APPLY_MAX_PER_STAT);
-    updates[planetId] = mergeGauge(rebalanced, fromTransport);
+    const before = {
+      resource: runtime.resource,
+      population: runtime.population,
+      defense: runtime.defense,
+      technology: runtime.technology,
+      environment: runtime.environment,
+    };
+    const after = mergeGauge(rebalanced, fromTransport);
+    const changed = before.resource !== after.resource
+      || before.population !== after.population
+      || before.defense !== after.defense
+      || before.technology !== after.technology
+      || before.environment !== after.environment;
+    if (!changed) continue;
+    applyPlanetCoreGaugeChangeOrIntent(planetId, before, after, 'arc_core', () => {
+      updates[planetId] = after;
+    });
   }
 
-  if (Object.keys(updates).length === 0) return;
-  coreStore.patchPlanetCoresBulk(updates);
+  if (!isPlanetCoreGaugeIntentBatchActive() && Object.keys(updates).length === 0) return;
+  if (!isPlanetCoreGaugeIntentBatchActive()) {
+    coreStore.patchPlanetCoresBulk(updates);
+  }
 }

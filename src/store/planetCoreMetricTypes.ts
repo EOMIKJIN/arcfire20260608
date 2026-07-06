@@ -190,6 +190,14 @@ export type PlanetCoreStatKey =
   | 'technology'
   | 'environment';
 
+/** ArcCore base + player dev share — 0~100 gauge 분해 (Table-First genesis base) */
+export type PlanetCoreGaugeCompositionDetail = {
+  version: 1;
+  arcCoreBase: Record<PlanetCoreStatKey, number>;
+  playerDevShare: Record<PlanetCoreStatKey, number>;
+  lastAppliedKstDayKey?: string;
+};
+
 /** 아크코어 일일 운영 배치(arc_core_daily_ops) 직후 Δ — 행성정보 시세 화살표 */
 export type PlanetCoreStatOpsTrendDetail = {
   version: 1;
@@ -244,4 +252,6 @@ export type PlanetCoreMetricsDetail = {
   statOpsTrend?: PlanetCoreStatOpsTrendDetail;
   /** 플레이어 행성 일 유지비 납부 결과 — stat equilibrium 입력 */
   lastDailyUpkeep?: PlanetDailyUpkeepDetail;
+  /** gauge = arcCoreBase + playerDevShare — 일일 composition apply 정본 */
+  gaugeComposition?: PlanetCoreGaugeCompositionDetail;
 };

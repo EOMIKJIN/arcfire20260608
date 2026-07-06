@@ -21,6 +21,10 @@ import {
 import { runPlayScenarioEconomyPass } from '../balance/runPlayScenarioEconomyPass';
 import { resolvePlanetCoreStatAuthority } from '../balance/planetCoreStatAuthorityPolicy';
 import { resolvePlanetCoreStatAuthorityContext } from '../planetCore/resolvePlanetCoreStatContext';
+import {
+  pushPlanetCoreGaugeIntent,
+  isPlanetCoreGaugeIntentBatchActive,
+} from '../planetCore/planetCoreGaugeIntent';
 
 export type GlobalPlanetMasterBalancePassOptions = {
   /** 지표당 최대 변화량(0..100). 부트스트랩은 크게, 주기 패스는 작게 */
@@ -121,8 +125,20 @@ export function runGlobalPlanetMasterBalancePass(
         prevBal.requiredFleetMinDps !== masterBalance.requiredFleetMinDps;
 
       if (gaugeChanged || metaChanged) {
-        updates[planetId] = { gauge, masterBalance };
-        if (gaugeChanged) planetsGaugeUpdated += 1;
+        if (gaugeChanged && isPlanetCoreGaugeIntentBatchActive()) {
+          const delta: Partial<PlanetCoreGaugeView> = {};
+          for (const k of ['resource', 'population', 'defense', 'technology', 'environment'] as const) {
+            const d = gauge[k] - current[k];
+            if (d !== 0) delta[k] = d;
+          }
+          if (Object.keys(delta).length > 0) {
+            pushPlanetCoreGaugeIntent(planetId, delta, 'arc_core');
+          }
+        }
+        const patchGauge =
+          gaugeChanged && isPlanetCoreGaugeIntentBatchActive() ? current : gauge;
+        updates[planetId] = { gauge: patchGauge, masterBalance };
+        if (gaugeChanged && !isPlanetCoreGaugeIntentBatchActive()) planetsGaugeUpdated += 1;
         else if (metaChanged) planetsMetaOnly += 1;
       }
   });

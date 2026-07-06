@@ -1,4 +1,4 @@
-# Daily audit — 2026-07-05T15:00:07.301Z
+# Daily audit — 2026-07-06T15:00:09.146Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -49,8 +49,8 @@ PASS — 모든 buy_goods/defeat_enemy 목표에 퀘스트 배치·전투 운영
 - 115,935 — `src/data/generated/csvStoryScenes.ts`
 - 74,600 — `src/i18n/locales/ko.ts`
 - 71,055 — `src/data/generated/csvWeapons.ts`
+- 70,177 — `app/(game)/planet.tsx`
 - 70,149 — `src/data/balance/generated/csvSynthSystemColonization.ts`
-- 69,507 — `app/(game)/planet.tsx`
 - 67,968 — `src/i18n/locales/en.ts`
 - 65,965 — `app/(game)/worldmap.tsx`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`

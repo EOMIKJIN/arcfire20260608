@@ -279,6 +279,27 @@ export function dismissAllArcOverlays(): void {
   useArcOverlayStore.getState().dismissAll();
 }
 
+/**
+ * STAGE 이탈 시 — 보상 지급 등 `onClose` 부수효과가 있는 오버레이(levelUp/reward/waveResult)는
+ * 사용자가 직접 닫지 않았어도 그 효과를 먼저 실행한 뒤 스택을 비운다.
+ * 그냥 dismissAll()만 하면 onClose가 안 불려 보상이 유실되고, 아무것도 안 하면
+ * 루트 레벨 ArcOverlayHost가 다음 STAGE 위에 그대로 남아 화면을 가릴 수 있다.
+ */
+export function resolvePendingArcOverlaysForStageExit(): void {
+  const { stack } = useArcOverlayStore.getState();
+  if (stack.length === 0) return;
+  for (const entry of stack) {
+    if (entry.kind === 'levelUp' || entry.kind === 'reward' || entry.kind === 'waveResult') {
+      try {
+        entry.onClose();
+      } catch {
+        /* idempotent */
+      }
+    }
+  }
+  useArcOverlayStore.getState().dismissAll();
+}
+
 const PLANET_ECONOMY_INFO_OVERLAY_ID = 'planet-economy-info';
 const PLANET_DEVELOPMENT_OVERLAY_ID = 'planet-development';
 

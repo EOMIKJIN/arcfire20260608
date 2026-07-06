@@ -39,6 +39,10 @@ import {
   resolvePlanetGenesisResourcePct,
   resolvePlanetResourceEcosystemPolicy,
 } from '../planetResource/planetResourceEcosystemPolicy';
+import {
+  applyPlanetCoreGaugeChangeOrIntent,
+  isPlanetCoreGaugeIntentBatchActive,
+} from '../planetCore/planetCoreGaugeIntent';
 
 function clamp100(n: number): number {
   return Math.max(0, Math.min(100, Math.round(Number.isFinite(n) ? n : 0)));
@@ -115,11 +119,14 @@ export function runPlanetEnergyCorePass(): void {
       const nextResource = clamp100(cur + step);
       const g = planetCoreRuntimeToGaugeView(runtime);
       if (nextResource !== g.resource) {
-        updates[planetId] = { ...g, resource: nextResource };
+        const after = { ...g, resource: nextResource };
+        applyPlanetCoreGaugeChangeOrIntent(planetId, g, after, 'arc_core', () => {
+          updates[planetId] = after;
+        });
       }
   });
 
-  if (Object.keys(updates).length > 0) {
+  if (!isPlanetCoreGaugeIntentBatchActive() && Object.keys(updates).length > 0) {
     coreStore.patchPlanetCoresBulk(updates);
   }
   worldObjectRuntime.patchAsteroidOrbitCounts(orbitCountPatch, 'arc_core_cycle');

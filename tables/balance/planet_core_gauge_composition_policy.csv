@@ -1,0 +1,5 @@
+key,value,notesKo
+max_daily_change_pct_per_metric,1.5,표시 gauge 합산(ArcCore+dev) 일일 cap (%)
+min_daily_change_abs_per_metric,0.05,저수치 행성 pct cap 하한(pt)
+arc_core_intent_without_dev,true,dev 0이어도 ArcCore intent 필수
+player_dev_intent_enabled,true,시설 dev intent 활성

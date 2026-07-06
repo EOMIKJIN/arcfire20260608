@@ -17,6 +17,7 @@ import { isDevHarnessAllowed } from '../game/gameplayModeContract';
 import { ARC_CORE_LEGACY_GUARANTEED_SYSTEM_IDS } from '../arcCore/worldExpansionConstants';
 import { isSynthFrontierPlanetId } from '../world/isSynthFrontierPlanetId';
 import { resolveBestPlanetInfoPanelStageRow } from '../arcCore/balance/planetInfoPanelStageRegistry';
+import { resolvePlanetGenesisCoreGauge } from '../arcCore/planetResource/planetResourceEcosystemPolicy';
 
 const STORAGE_KEY = 'arcfire_world_v1';
 
@@ -132,7 +133,7 @@ function resolveQuadrantFromTradeProfile(profile: string | undefined, fallback: 
   return fallback;
 }
 
-/** synth 행성 5대 코어 — CSV·galaxy100 시드와 동일(개척 직후·첫 실행 50 고정). 일일 배치에서만 변동. */
+/** @deprecated flat-50 제거 — `resolvePlanetGenesisCoreGauge(planetId)` per-planet 정본 */
 export const SYNTH_PLANET_CORE_SEED = 50;
 
 function readInstalledDevModuleCount(planetId: string): number {
@@ -186,7 +187,6 @@ export function applySynthSystemAutogen(base: StarSystem, colonizationPhase = 0)
   const nameSuffix = Number.isFinite(suffixNum)
     ? String(suffixNum).padStart(3, '0')
     : rawSuffix;
-  const coreSeed = SYNTH_PLANET_CORE_SEED;
   // B→A 편입(phase≥1): synth_system_colonization.csv 시설 = 21행성과 동일 월드 레이어
   // C(phase 0·잠금): 시설 없음 — 지도 표시만, 이동·허브 기능 미개척
   const worldFacilityFlags =
@@ -235,11 +235,16 @@ export function applySynthSystemAutogen(base: StarSystem, colonizationPhase = 0)
       backdropImageAssetKey: stageRow?.backdropImageAssetKey?.trim()
         || p.backdropImageAssetKey
         || null,
-      coreResource: coreSeed,
-      corePopulation: coreSeed,
-      coreDefense: coreSeed,
-      coreTechnology: coreSeed,
-      coreEnvironment: coreSeed,
+      ...(() => {
+        const genesis = resolvePlanetGenesisCoreGauge(planetId);
+        return {
+          coreResource: genesis.resource,
+          corePopulation: genesis.population,
+          coreDefense: genesis.defense,
+          coreTechnology: genesis.technology,
+          coreEnvironment: genesis.environment,
+        };
+      })(),
     };
     }),
   };

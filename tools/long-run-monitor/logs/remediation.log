@@ -1952,3 +1952,28 @@
 [2026-07-05 20:29:20] INFO PSS_SOFT_CEILING pss=859.3 gl=124.9 views=396 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
 [2026-07-05 20:44:49] INFO PSS_SOFT_CEILING pss=834.6 gl=124.7 views=375 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
 [2026-07-05 21:31:01] INFO PSS_SOFT_CEILING pss=907.2 gl=159.2 views=388 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-06 01:21:58] INFO PSS_SOFT_CEILING pss=892.6 gl=152.6 views=334 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-06 01:37:23] INFO PSS_SOFT_CEILING pss=856.3 gl=146.6 views=388 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-06 01:52:43] INFO PSS_SOFT_CEILING pss=845.3 gl=146.6 views=388 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-06 02:08:03] INFO PSS_SOFT_CEILING pss=847.4 gl=144.6 views=380 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-06 02:23:23] INFO PSS_SOFT_CEILING pss=835.6 gl=144.6 views=392 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-06 02:38:46] INFO PSS_SOFT_CEILING pss=832.5 gl=146.6 views=388 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-06 02:54:07] INFO PSS_SOFT_CEILING pss=832.6 gl=146.6 views=384 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-06 03:09:29] INFO PSS_SOFT_CEILING pss=826.5 gl=144.6 views=381 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-06 03:24:51] INCIDENT GL_HARD_CEILING gl=218.4 pss=914.2 views=558 -> immediate remediation (OOM imminent)
+[2026-07-06 03:24:51] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-07-06 03:24:51] AUTO_FIX static audit:skia-memory start
+[2026-07-06 03:24:54] AUTO_FIX audit:skia-memory PASS
+[2026-07-06 03:24:54] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-07-06 03:25:11] AUTO_FIX baseline reset pid=12334 gl=6MB pss=187.8MB
+[2026-07-06 03:25:11] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-07-06 03:25:33] VERIFY PASS pid=12334 gl=8.5MB pss=629MB views=99
+[2026-07-06 03:25:33] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":914.2,"views":558,"lastGlMb":218.4,"hardCeiling":true}
+[2026-07-06 03:25:34] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-07-06 03:28:54] INVESTIGATION start reason=mem_anomaly
+[2026-07-06 03:28:54] INVESTIGATION alert=[2026-07-06 03:24:51] GL_HARD_CEILING gl=218.4 pss=914.2 views=558
+[2026-07-06 03:28:55] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260706-032854.log
+[2026-07-06 03:28:57] INVESTIGATION mem from timeline gl=8.5MB pss=629MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260706-032854.log
+[2026-07-06 03:28:57] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-07-06 03:28:58] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-07-06 03:28:58] INVESTIGATION done reason=mem_anomaly

@@ -486,21 +486,15 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
       const baseline = planetCsvBaselineToRuntime(planet);
       const stored = next[planetId];
       if (!stored) {
-        next[planetId] = baseline;
-        touched += 1;
-        continue;
-      }
-      if (
-        isSynthSystem
-        && planetId.startsWith('synth_')
-        && !stored.detail?.masterBalance
-      ) {
-        next[planetId] = {
-          ...baseline,
-          pgp: stored.pgp,
-          detail: stored.detail,
-          updatedAt: t,
-        };
+        if (isSynthSystem && planetId.startsWith('synth_')) {
+          const genesis = resolvePlanetGenesisCoreGauge(planetId);
+          next[planetId] = {
+            ...genesis,
+            updatedAt: t,
+          };
+        } else {
+          next[planetId] = baseline;
+        }
         touched += 1;
       }
     }

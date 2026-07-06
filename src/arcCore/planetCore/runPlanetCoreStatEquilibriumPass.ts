@@ -41,6 +41,10 @@ import {
   resolvePlanetCoreStatAuthorityContext,
 } from './resolvePlanetCoreStatContext';
 import { clampResourceToOperatingBand } from '../planetResource/planetResourceEcosystemPolicy';
+import {
+  isPlanetCoreGaugeIntentBatchActive,
+  pushPlanetCoreGaugeIntent,
+} from './planetCoreGaugeIntent';
 
 export type PlanetCoreStatEquilibriumPassResult = {
   ran: boolean;
@@ -220,14 +224,16 @@ export function runPlanetCoreStatEquilibriumPass(): PlanetCoreStatEquilibriumPas
     );
 
     const before = { ...gauge };
+    let devEnd = before;
 
     if (authority.equilibriumDev && devWeightTotal > 0) {
-      gauge = applyDriftTowardTarget(
+      devEnd = applyDriftTowardTarget(
         gauge,
         target,
         policy.devDriftRatePerDay,
         policy.maxDailyStatGainPerMetric,
       );
+      gauge = devEnd;
     }
 
     const lowDevelopment =
@@ -334,7 +340,26 @@ export function runPlanetCoreStatEquilibriumPass(): PlanetCoreStatEquilibriumPas
     planetsProcessed += 1;
     if (devWeightTotal > 0 && authority.equilibriumDev) planetsDrifted += 1;
 
-    coreStore.patchPlanetCore(planetId, gauge);
+    if (isPlanetCoreGaugeIntentBatchActive()) {
+      const devDelta: Partial<PlanetCoreGaugeView> = {};
+      for (const k of GAUGE_KEYS) {
+        const d = devEnd[k] - before[k];
+        if (d !== 0) devDelta[k] = d;
+      }
+      if (Object.keys(devDelta).length > 0) {
+        pushPlanetCoreGaugeIntent(planetId, devDelta, 'player_dev');
+      }
+      const arcDelta: Partial<PlanetCoreGaugeView> = {};
+      for (const k of GAUGE_KEYS) {
+        const d = gauge[k] - devEnd[k];
+        if (d !== 0) arcDelta[k] = d;
+      }
+      if (Object.keys(arcDelta).length > 0) {
+        pushPlanetCoreGaugeIntent(planetId, arcDelta, 'arc_core');
+      }
+    } else {
+      coreStore.patchPlanetCore(planetId, gauge);
+    }
   }
 
   return {

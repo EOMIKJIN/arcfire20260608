@@ -194,7 +194,7 @@ import { formatSalvageLootLabel, pickSalvageLootItemId } from '../../src/game/pl
 import { NearbyShipInfoPanel, PlanetStageBackground } from '../../src/components/planet/planetHub/planetHubSubcomponents';
 import { PlanetMainPlanetInfoTapOverlay } from '../../src/components/planet/PlanetMainPlanetInfoTapOverlay';
 import { planetHubStyles as styles } from '../../src/components/planet/planetHub/planetHubStyles';
-import { presentPlanetEconomyInfoOverlay } from '../../src/ui/overlay/arcOverlayStore';
+import { presentPlanetEconomyInfoOverlay, resolvePendingArcOverlaysForStageExit } from '../../src/ui/overlay/arcOverlayStore';
 import { useHeavyUiPlanetHubAction } from '../../src/ui/heavyUiDataSession';
 import { TACTICAL_HUB } from '../../src/ui/tactical/tacticalHubTokens';
 import {
@@ -416,6 +416,17 @@ export default function PlanetScreen() {
   ) => {
     const now = Date.now();
     applyMiningTeardownRef.current('hub_navigation');
+
+    /**
+     * STAGE 이탈 시 오버레이/다이얼로그 잔존 방지 — 대사창을 오래 방치하다 닫고 바로
+     * 출발하면(웨이브 종료 대화·결과창 등) 루트 레벨 ArcOverlayHost/IngameDialogHost가
+     * 다음 STAGE 위에 그대로 남아 화면이 안 보일 수 있음(7/6 은하지도 검은화면).
+     * 오버레이는 onClose 부수효과(보상 지급 등)를 먼저 실행한 뒤 비움 — 보상 유실 방지.
+     */
+    resolvePendingArcOverlaysForStageExit();
+    if (useIngameDialogStore.getState().session != null) {
+      useIngameDialogStore.getState().dismiss();
+    }
 
     const sim = combatSimRef.current;
     const preserveCombat = opts?.preserveCombatSnapshot !== false;

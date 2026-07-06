@@ -5,14 +5,102 @@
 
 | 필드 | 값 |
 |------|-----|
-| **status** | `IDLE` |
-| **updated** | 2026-07-05 20:15 KST |
+| **status** | `REVIEWED` |
+| **updated** | 2026-07-06 04:05 KST |
 | **kim_claude_session** | Claude Code (VSCode) |
-| **assigned_by** | 사용자 직접 지시 — 라이프사이클 감사(이전 사이클) P0#1 구조개선 검토 후 안전한 부분 진행 지시 |
-| **task_id** | `memory-loading-optimization-refactor-20260705` |
+| **assigned_by** | 사용자 직접 지시 — 실시간 라이브 버그(웨이브 종료 후 은하지도 검은화면) 신고, 원인분석·수정 |
+| **task_id** | `worldmap-black-screen-post-wave-defense-20260706` |
 
-> **대표님 지시 (2026-07-05)**: 김클로드 **전면 메모리·로딩 최적화 리팩터** 완료 시, 전체 구조를 아는 **김팀장**이 연관 작업을 **철저히 분석·검수·확인**.  
-> 검수 체크리스트: `docs/KIM_TEAM_LEAD_AGENT.md` §대규모 메모리·로딩 리팩터 검수 · 완료 후 `npm run audit:memory:all` + `audit:dev-process-gate` + 김경제 `mem-post-dev-recheck` 배정.
+## 김팀장 검수 (본창 Cursor · worldmap-black-screen-post-wave-defense-20260706)
+
+| 항목 | 결과 |
+|------|------|
+| diff·계약 위반 | **PASS** — `ArcOverlayHost` 루트 잔존 P1과 일치 · `onClose` 선행 후 `dismissAll` · STAGE 이탈 공통 경로 1곳 |
+| gauge composition 교차 | **충돌 없음** — overlay 정리는 `planet.tsx` navigation 경로만 · gauge intent/batch는 `runArcCoreDailyOpsBatch` 축 |
+| audit 재실행 | **tsc PASS** · **audit:memory:all PASS** (37/37 · hot-path 0) |
+| **커밋** | **김팀장만** (대표님 명시 요청 시) |
+| mem-post-dev-recheck | **배정** — 김경제 handoff 갱신 |
+
+**verdict**: `PASS`
+
+**검수 메모**:
+1. **근본원인 타당** — 웨이브 결과 오버레이 미닫힘 + 루트 `ArcOverlayHost`가 STAGE 전환 후에도 스택 유지 → worldmap 가림. `resolvePendingArcOverlaysForStageExit`가 reward/waveResult `onClose` 선행으로 보상 유실 방지.
+2. **호출 위치** — `beginPlanetHubSuspendingNavigation` 최상단(출발·시설·타이틀 공통) + ingame dialog `dismiss()` — 배정 diff와 일치.
+3. **잔여** — 대화 `onDismiss` 비동기 엣지케이스는 handoff대로 범위外 · **실기 재현**(결과창 안 닫고 출발 → worldmap 정상) 권장.
+
+**[kim-claude-review] 2026-07-06 worldmap-black-screen-post-wave-defense PASS — resolvePendingArcOverlaysForStageExit · tsc+audit PASS · 실기 재현 대기**
+
+---
+
+## 김팀장 검수 (본창 Cursor · planet-core-gauge-composition-20260706)
+
+| 필드 | 값 |
+|------|-----|
+| **task_id** | `planet-core-gauge-composition-20260706` |
+| **verdict** | `PASS` |
+
+### 작업 요약 (김팀장 구현 완료)
+Aurora(`synth_002_p`) 등 synth 행성 **>10% 일일 스탯 급등** 원인 — `ensureUnlockedWorldPlanetsInCoreRuntime`의 flat-50 baseline **덮어쓰기** + `SYNTH_PLANET_CORE_SEED=50` autogen. **단일 gauge composition** 아키텍처로 수렴:
+
+- **genesis per-planet** — `planet_resource_genesis.csv` 정본 (`resolvePlanetGenesisCoreGauge`)
+- **일일 배치 intent** — Energy / Environment / MasterBalance / Equilibrium → `pushPlanetCoreGaugeIntent`
+- **단일 apply** — `runPlanetCoreGaugeCompositionApplyPass` — ArcCore+dev 합산 **1.5%/metric cap** (`planet_core_gauge_composition_policy.csv`)
+- **P0 제거** — synth ensureUnlocked gauge replace 삭제 · autogen flat-50 → genesis per planet
+
+### 변경 파일 (핵심)
+| 파일 | 내용 |
+|------|------|
+| `tables/balance/planet_core_gauge_composition_policy.csv` | pct cap 1.5% |
+| `src/arcCore/planetCore/planetCoreGaugeIntent.ts` | 배치 intent 누적 |
+| `src/arcCore/planetCore/planetCoreGaugeCompositionModel.ts` | base/share 분해·cap apply |
+| `src/arcCore/planetCore/runPlanetCoreGaugeCompositionApplyPass.ts` | 일 1회 단일 patch |
+| `src/store/planetCoreRuntimeStore.ts` | ensureUnlocked synth replace 제거 · genesis seed |
+| `src/store/worldStore.ts` | synth autogen genesis per planet |
+| `runPlanetEnergyCorePass` / `runPlanetEnvironmentDiversityPass` / `runGlobalPlanetMasterBalancePass` / `runPlanetCoreStatEquilibriumPass` | intent 연동 |
+| `runArcCoreDailyOpsBatch.ts` | `beginPlanetCoreGaugeIntentBatch` → passes → composition apply → statOpsTrend commit |
+
+### audit
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — PASS
+- [x] `npm run audit:memory:all` — 37/37 · skia 20/20 · worklet · native-reclaim · hot-path 0
+
+### 리스크·주의
+- **legacy flat-50 세이브** — `mergeWorldWithDisk`의 `applyGenesisCoreSeed` + genesis realign rev가 1회 보정 · 이미 진행 중 gauge는 composition 초기 분해(`resolveInitialGaugeComposition`)로 점진 수렴.
+- **Equilibrium `max_daily_stat_gain_per_metric=4`** — 배치 중에는 intent만 push · **최종 cap은 composition 1.5%**가 우선.
+- **런타임** — Aurora 등 synth 1일 배치 후 Δ ≤1.5%/metric 실측 권장(대표님/김경제).
+
+**[kim-team-lead] 2026-07-06 planet-core-gauge-composition PASS — genesis 단일원 · intent batch · pct cap apply · ensureUnlocked flat-50 제거 · tsc+audit PASS**
+
+---
+
+베가 전초기지 웨이브 전투 종료 → 인게임 대화창을 한동안(수 분) 방치 → 확인 버튼을 누르고 출발 → **은하계 지도가 검은 화면으로 뜸(당시 실시간 재현 중)**.
+
+### 조사 (Explore 에이전트 1개 + 라이브 로그·모니터 대조)
+- **오늘 오전의 `galaxy100.ts` 프리컴파일 변경은 원인 아님** — 생성 파일 757개 성계 전부 무결성 확인(끊긴 connections·빈 planets 없음), `vega_outpost`(vega_base의 소속 성계) 정상. 디스크 영속 상태도 `systems` 그래프 자체는 안 건드리고 `unlockedSystemIds` 등만 필터링 — 손상 경로 아님.
+- **라이브 모니터 로그에서 결정적 단서 확보**: 신고 시점 직후 03:24:51 `GL_HARD_CEILING`(gl=218.4, pss=914.2, **views=558**) → 자동 relaunch로 이미 복구됨(pid 12334). 재현 당시 사용자가 "은하지도"에 있다고 했는데 views가 허브 전투급으로 높았던 점이 단서.
+- **근본원인(가장 유력)**: `ArcOverlayHost`/`IngameDialogHost`(`app/_layout.tsx`)는 **루트 레이아웃 레벨의 전역 싱글턴**이라 STAGE(`Stack.Screen`) 전환과 무관하게 계속 마운트 상태 유지. 웨이브 종료 대화(`ingame_dialog_wave_defense_end`) 확인 후 뜨는 **`presentWaveResultOverlay`(웨이브 결과창)를 사용자가 직접 닫지 않고 바로 "출발"을 누르면**, 이 오버레이가 `arcOverlayStore` 스택에 그대로 남은 채 STAGE가 은하지도로 전환됨 — 오늘 앞선 라이프사이클 감사에서 이미 짚었던 "STAGE 이탈 시 오버레이 강제 정리 경로 없음"(P1) 항목이 실제로 터진 사례로 판단.
+- `dismissAllArcOverlays()`가 이미 존재했지만 **어떤 STAGE 이탈 핸들러에서도 호출되지 않고 있었음**(감사 리포트 기존 지적과 일치).
+
+### 작업 요약
+STAGE 1(행성 허브) 이탈 공통 지점(`beginPlanetHubSuspendingNavigation` — 출발·시설 이동·타이틀 복귀 전부 경유)에서 오버레이·인게임 대화 강제 정리를 추가. 단, 그냥 `dismissAll()`만 하면 `waveResult`/`reward`/`levelUp` 오버레이의 `onClose`(경험치 지급·웨이브 스토어 reset 등)가 안 불려 **보상이 유실**되는 걸 발견해서, 새 함수로 그 부수효과를 먼저 실행한 뒤 스택을 비우도록 구현.
+
+### 변경 파일
+- `src/ui/overlay/arcOverlayStore.ts` — `resolvePendingArcOverlaysForStageExit()` 신설. 스택의 `levelUp`/`reward`/`waveResult` 항목은 `onClose()`를 먼저 호출(보상 지급 등 부수효과 보존)한 뒤 `dismissAll()`로 스택을 비움. `alert`/`narrative`/`tradeQuantity` 등 나머지 종류는 onClose 없이 그냥 제거(사용자 선택 없는 상태라 안전).
+- `app/(game)/planet.tsx` — `beginPlanetHubSuspendingNavigation`(출발·시설 이동·타이틀 복귀 공통 경로) 최상단에서 `resolvePendingArcOverlaysForStageExit()` + (열려있으면) `useIngameDialogStore.getState().dismiss()` 호출.
+
+### self-check (김클로드가 실행한 것)
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — clean
+- [x] `npm run audit:memory:all` — memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path 0 hits
+
+### 리스크·주의 (3줄 이내)
+- **잔여 엣지케이스**: 인게임 대화(`IngameDialogHost`)가 아직 열려있는 상태에서 강제 `dismiss()`하면 `onDismiss` 콜백이 비동기(await 포함)라, 그 콜백이 **새 오버레이를 여는 경우**(예: 이 웨이브 종료 대화 자체) STAGE 전환 이후에 새로 뜰 여지가 이론상 남음 — 이번 신고 시나리오(대화는 이미 확인 완료 후 출발)에는 해당 안 되지만, 완전히 막으려면 다이얼로그 스토어 자체를 동기화하는 별도 작업 필요(이번 범위 밖).
+- 자동 모니터가 이미 앱을 강제 재시작해 사용자의 즉시 증상은 해소됐을 가능성 높음 — 재현 재확인 필요.
+- git commit 안 함.
+
+### 미완·보류
+- 실기기 재현 확인(리로드 후 동일 시나리오 — 웨이브 종료 → 결과창 안 닫고 바로 출발 → 은하지도 정상 렌더 확인) 필요.
+- 위 "다이얼로그 아직 열림" 엣지케이스는 재발 시 별도 작업.
+
+---
 
 ## 사용자 지시 배경 (2026-07-05 · 부팅 시 은하지도 로딩 구조개선)
 
