@@ -102,5 +102,53 @@ export const MISSION_QUEST_COMBAT_OPS_FROM_CSV: MissionQuestCombatOpRow[] = [
     objectiveId: "obj_s029_a",
     encounterPolicy: "transit_guaranteed",
     anchorPlanetId: "nightfall_citadel",
+  },
+  {
+    id: "qco_obj_tq_c01_a",
+    objectiveId: "obj_tq_c01_a",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: null,
+  },
+  {
+    id: "qco_obj_tq_c02_a",
+    objectiveId: "obj_tq_c02_a",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: null,
+  },
+  {
+    id: "qco_obj_tq_c03_a",
+    objectiveId: "obj_tq_c03_a",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: null,
+  },
+  {
+    id: "qco_obj_tq_c04_a",
+    objectiveId: "obj_tq_c04_a",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: null,
+  },
+  {
+    id: "qco_obj_tq_b01_a",
+    objectiveId: "obj_tq_b01_a",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: null,
+  },
+  {
+    id: "qco_obj_tq_b02_a",
+    objectiveId: "obj_tq_b02_a",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: null,
+  },
+  {
+    id: "qco_obj_tq_b03_a",
+    objectiveId: "obj_tq_b03_a",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: null,
+  },
+  {
+    id: "qco_obj_tq_b04_a",
+    objectiveId: "obj_tq_b04_a",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: null,
   }
 ];

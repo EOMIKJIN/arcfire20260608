@@ -3,13 +3,186 @@
 > **정본 프로세스**: `docs/KIM_TEAM_LEAD_AGENT.md` §김클로드 검수 게이트 · `CLAUDE.md` §김팀장 최종 승인  
 > **김클로드** = Anthropic Claude Code (Cursor ✱ 패널 · 터미널 `claude`)
 
+---
+
+## 🟢 READY — 플레이어 독립국가(녹색 국경) · 김클로드 착수 대기
+
 | 필드 | 값 |
 |------|-----|
-| **status** | `REVIEWED` |
-| **updated** | 2026-07-06 04:05 KST |
+| **status** | **`READY`** (구현 대기 — 대표님 지시 시 김클로드 착수) |
+| **updated** | 2026-07-07 18:10 KST |
+| **task_id** | `player-independent-nation-m1-m2-20260707` |
+| **assigned_by** | 김팀장 (Cursor 본창) — 분석·명세 패키징 완료 |
+
+### 착수 문서 (필독 순서)
+
+1. **`tools/kim-team-lead/reports/kim-claude-ready-player-independent-nation.md`** — 작업 요약·복사용 지시문
+2. **`docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md`** — M1~M3 상세 명세·파일 체크리스트·테스트
+
+### 대표님 → 김클로드 복사 지시
+
+```text
+@김클로드 docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md 와 tools/kim-team-lead/reports/kim-claude-ready-player-independent-nation.md 를 읽고 M1+M2 구현해. 완료 후 kim-claude-handoff-pending.md status=PENDING. 커밋 금지.
+```
+
+### 범위
+
+- **M1+M2**: independent side · 구매 occupier 전환 · reconcile 보호 · 녹색 Voronoi·허브 플레이트
+- **M3 보류**: faction_diplomacy CSV · ArcCore 접전 (2차 task)
+
+김클로드 완료 시 본 파일 상단 **READY** 블록 아래에 **PENDING** handoff 추가 · 김팀장 검수.
+
+---
+
+## 🟡 PENDING — 오로라 관측국 재시작 인시던트(native_heap 주도) · 김클로드
+
+| 필드 | 값 |
+|------|-----|
+| **status** | `PENDING` |
+| **updated** | 2026-07-07 21:55 KST |
 | **kim_claude_session** | Claude Code (VSCode) |
-| **assigned_by** | 사용자 직접 지시 — 실시간 라이브 버그(웨이브 종료 후 은하지도 검은화면) 신고, 원인분석·수정 |
-| **task_id** | `worldmap-black-screen-post-wave-defense-20260706` |
+| **assigned_by** | 사용자 직접 지시 — 방금 발생한 재시작(오로라/synth_002_p 허브) 원인 확인 요청 |
+| **task_id** | `aurora-hub-native-heap-hard-ceiling-20260707` |
+
+### 사용자 지시 배경
+
+"오로라 관측국"(=`synth_002_p`, phase3 정착완료 명칭) 허브 체류 중 앱이 자동 재시작됨. 재시작 직전 상태·이상 유무 확인 요청.
+
+### 조사 결과 — 모니터 로그 대조
+
+- 21:43:25 `GL_HARD_CEILING gl=110.4 pss=993.5 views=464` → 자동 relaunch, 21:44:07 정상 복구 검증됨(pid 27487, gl=8.6MB·pss=505.2MB·views=99).
+- **이번 인시던트는 오늘까지의 GL 전용 수정(콤뱃-세이프 reclaim 등)과 다른 축**: `mem-timeline.csv` 대조 결과 21:27:48(views=19) → 21:43:16(views=464, `PSS_SPIKE review=graphics+native`) 15분 사이 **GL은 110.4→110.4로 거의 그대로**인데 **native_heap_mb가 259.8→503.1(+243)·views가 19→464(+445)** 로 급증 — GL 축은 기존 fix가 억제 중임을 재확인, 이번엔 native_heap/views 축이 하드실링을 유발.
+- 실기 logcat은 이번에도 프로덕션 빌드라 `[MEM]` JS 로그 없음(206바이트, ActivityManager 노이즈뿐) — 원인은 코드 레벨 추론으로 접근.
+
+### 작업 요약
+
+`runPlanetHubCombatSafeReclaimPass`(전투 중에도 도는 3분 안전판, 어제 신설)에 **Fresco 비트맵 캐시 트림**(`trimNativeBitmapCachesAsync`)을 추가. 이 함수는 현재 마운트된 Image가 참조 중인 비트맵은 안 건드리고 "안 쓰는 재사용 풀"만 비우는 것으로 판단(RN Image key 리마운트가 아님) — dodge overlay 강제 해제·RN 백드롭 remount처럼 전투 중 화면 끊김 위험이 있는 나머지는 여전히 제외.
+
+**중요 — 완전한 원인 규명은 아님**: 이 fix는 native_heap 증가분 중 Fresco 비트맵 캐시가 원인인 부분만 겨냥한다. **views가 19→464로 급증한 부분**(순수 네이티브 View 개수)은 비트맵 캐시 트림과는 별개 축이라 이 fix로 해결된다는 보장이 없음 — 어떤 컴포넌트가 그렇게 많은 뷰를 마운트하는지는 프로덕션 빌드 로그 부재로 특정 못함. 실측(다음 유사 상황에서 views 추이) 필요.
+
+### 변경 파일
+- `src/game/nativeReclaim/runPlanetHubCombatSafeReclaimPass.ts` — `trimNativeBitmapCachesAsync()` 호출 추가.
+
+### self-check
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — clean
+- [x] `npm run audit:memory:all` — memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path 0 hits
+
+### 리스크·주의
+- Fresco "안 쓰는 캐시만 비운다"는 판단은 TS 브릿지 시그니처 기반 추론이고 네이티브(Android) 쪽 실제 구현은 직접 못 봤음 — 실기 확인 시 화면 끊김 없는지 같이 봐야 함.
+- **views 급증 원인 미규명** — 별도 조사 필요(어떤 화면/리스트가 그렇게 많은 뷰를 마운트하는지).
+- git commit 안 함.
+
+### 미완·보류
+- views 19→464 급증의 정확한 소스 특정 — 이번 범위 밖(로그 부재로 코드 리뷰만으로는 확정 어려움).
+- 위 대표님 지시 대기 중인 `player-independent-nation-m1-m2-20260707`(READY)는 이번 작업과 무관 — 아직 미착수.
+
+---
+
+## ✅ REVIEWED — timer-optimization-p1 (이전 사이클)
+
+| 필드 | 값 |
+|------|-----|
+| **status** | `REVIEWED` · **verdict PASS** (김팀장 2026-07-07) |
+| **updated** | 2026-07-07 11:20 KST |
+| **kim_claude_session** | Claude Code (VSCode) |
+| **assigned_by** | 사용자 직접 지시 — 타이머 검수(이전 사이클)에서 나온 P1 최적화 진행 지시 |
+| **task_id** | `timer-optimization-p1-20260707` |
+
+## 사용자 지시 배경 (2026-07-07 · 타이머 P1 최적화 진행)
+
+이전 사이클(`drone-fx-timer-memory-regression-audit-20260707`, 분석 전용)에서 찾은 P1 2건 중 실행 지시.
+
+### 작업 요약
+
+**1) 행성개발 오버레이 3곳 — 활성 작업 없을 때도 500ms 타이머가 무조건 돌던 것 게이트 추가**
+`PlanetDevelopmentListContent.tsx`(정답 패턴, `hasActiveJob` 게이트 기존 보유)와 동일하게 나머지 3곳도 `snapshot.isInstalling || snapshot.isUpgrading`(또는 세션 데이터 기반 동등 조건)일 때만 500ms 폴링이 돌도록 수정:
+- `src/ui/overlay/content/PlanetOrbitShipyardDevContent.tsx` — `buildOrbitShipyardDevSnapshot` 결과로 게이트, `useEffect` 순서를 스냅샷 계산 이후로 재배치.
+- `src/ui/overlay/content/PlanetDefenseSatelliteDevContent.tsx` — 동일 패턴(`buildDefenseSatelliteDevSnapshot`).
+- `src/ui/overlay/content/PlanetGenericFacilityDevContent.tsx` — `session.data` 로딩이 `tick` 부트스트랩과 얽혀있어, `sessionConfig`/`session` 선언을 effect보다 앞으로 옮기고 `session.data.snapshot.isInstalling/isUpgrading`로 게이트.
+
+**2) 허브 전투 중 서브초 타이머 통합 — battle-ready tick(100ms)+blink(180ms)를 setInterval 1개로**
+`src/game/planetHub/usePlanetHubBattleReady.ts` — 두 타이머가 이미 동일 활성조건(`intervalActive`)을 쓰고 있어서, 100ms tick 콜백 안에 blink용 누적 경과(`blinkAccumMsRef`, ms 단위)를 같이 세서 180ms 도달 시 자체적으로 토글하도록 통합. tick·blink 각각의 실제 주기(100ms/180ms)는 그대로 유지 — 등록되는 `setInterval` 개수만 2→1로 축소.
+
+**보류(이번엔 손 안 댐)**: 전투 engagement poll(250ms, `planetCapitalCombatHeavyUi.tsx`)까지 합치는 건 서로 다른 파일·다른 활성조건(`sim` 존재 여부 vs `msLeft>0`)이라 공유 티커를 새로 만들어야 하는 더 큰 구조변경 — 이번 P1 범위에서 제외, 필요시 별도 진행.
+
+### 변경 파일
+- `src/ui/overlay/content/PlanetOrbitShipyardDevContent.tsx`
+- `src/ui/overlay/content/PlanetDefenseSatelliteDevContent.tsx`
+- `src/ui/overlay/content/PlanetGenericFacilityDevContent.tsx`
+- `src/game/planetHub/usePlanetHubBattleReady.ts`
+
+### self-check (김클로드가 실행한 것)
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — clean
+- [x] `npm run audit:memory:all` — memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path 0 hits
+
+### 리스크·주의 (3줄 이내)
+- 세 오버레이 모두 "게이트 추가"만 했고 타이머가 하는 일(진행률 재계산·재렌더) 자체는 안 건드림 — 활성 작업 없을 때 폴링을 멈추는 것뿐이라 회귀 위험 낮음.
+- `PlanetGenericFacilityDevContent.tsx`는 `session.data`가 아직 null인 초기 로딩 구간엔 `hasActiveJob=false`라 인터벌이 안 도는데, 최초 로딩 자체는 `useHeavyUiDataSession`이 `tick`과 무관하게 자체 처리하므로 문제 없음(같은 패턴의 `PlanetDevelopmentListContent.tsx`가 이미 이렇게 동작 중).
+- git commit 안 함.
+
+### 미완·보류
+- engagement poll(250ms) 통합은 범위 밖 — 필요 시 별도 태스크.
+- P2 항목(worldmap 5분 reclaim 중복, `IdleSessionRestartGuard` 60s)은 미착수.
+
+---
+
+## 김팀장 검수 (본창 Cursor · timer-optimization-p1-20260707)
+
+| 항목 | 결과 |
+|------|------|
+| diff·계약 | **PASS** — 시설 3곳 `hasActiveJob` 게이트 = `PlanetDevelopmentListContent` 동일 · `useEffect` cleanup `clearInterval` · battle-ready `usePlanetHubInterval`+`registerPlanetSessionResource` 유지 |
+| tick·blink 통합 | **PASS** — setInterval 2→1 · blink 180ms는 100ms tick 누적(±20ms 시각 drift, 허용) · `intervalActive` 게이트·planetId dispose unchanged |
+| 메모리 회귀 | **PASS** — hot-path 0 · reclaim·드론 publish key·PictureRecorder 등 기존 최적화 diff 범위 밖 |
+| audit 재실행 | **tsc PASS** · **audit:memory:all PASS** (37/37 · skia 20/20 · worklet · native-reclaim · resident-set · hot-path 0) |
+| **커밋** | 미실행 (김클로드·김팀장 공통 정책 — 대표님 지시 시) |
+| mem-post-dev-recheck | **배정** — 김경제 handoff 갱신 권장 |
+
+**verdict**: `PASS`
+
+**검수 메모**:
+1. P1 두 건 범위 내 구현 확인 — engagement 250ms는 handoff대로 보류 OK.
+2. `PlanetGenericFacilityDevContent` — `session.data` null 구간 폴링 off는 list 패턴과 동일, `useHeavyUiDataSession` 부트스트랩과 충돌 없음.
+3. **실기 smoke** — (a) 시설 업그레이드 중 진행률 갱신 (b) 웨이브 battle-ready 카운트·blink — 각 1회 권장.
+
+**[kim-claude-review] 2026-07-07 timer-optimization-p1 PASS — facility hasActiveJob×3 · battle-ready tick+blink merge · tsc+audit PASS**
+
+---
+
+## 사용자 지시 배경 (2026-07-07 · 3종 검수, 이전 사이클)
+
+(1) 직전 작업(드론 폭발 이펙트·파괴시점 관련, `inboundEndOrbitMs` 도입) 검수, (2) 게임 내 작동 중인 타이머 일괄 검수 + 비효율 최적화 가능성 분석, (3) 어제까지의 메모리 최적화 작업에 변경사항(회귀)이 생겼는지 검수. 전부 read-only 분석 요청 — 코드 수정 없음.
+
+### (1) 드론 폭발/파괴시점 작업 검수 — **문제 없음**
+
+`git diff` 대조 확인(`inboundDroneKinematics.ts`·`runInboundDroneInterceptPass.ts`·`ArcInboundDroneSubCore.ts`·`PlanetHubInboundDroneLayer.tsx`·`inboundDroneSkiaTrail.ts`): 신규 `ArcInboundDrone.inboundEndOrbitMs` 필드로 드론이 파괴/충돌된 정확한 orbit 시각에 위치를 고정 → FX 스폰 좌표·트레일 패킹·kinematics 진행률 계산이 전부 이 값을 일관되게 참조하도록 정리됨. 기존 fallback 경로(저장된 elapsed·start 역산) 유지돼 하위호환. `tsc` clean·`audit:memory:all` 전체 PASS 재확인 — 문제 없음.
+
+**참고(범위 밖 발견)**: 같은 diff 범위에 무관해 보이는 변경 3건도 같이 포함돼 있었음 — `runArcCoreInstanceMissionDailyPass.ts`(선술집 보드 동기화 함수 추가), `planetHubFacilityGates.ts`(`missionStore` 정적 import를 순환참조 회피용 `require()`로 변경 — 구조적으론 순환참조 자체를 없애는 게 더 정공법이나 급한 건 아님), `transitCombatSession.ts`(미션 클리어 대화 트리거 추가). 드론 작업과 무관해 보여 검수 범위 밖으로 두고 목록만 남김.
+
+### (2) 게임 내 타이머 일괄 검수 (Explore 에이전트 1개)
+
+기존에 이미 파악·조치된 것(허브 5분/15분/3분 reclaim, 2s 시설개발 완료 폴, battle-ready tick/blink, 일일배치 60s 게이트, 영토전투 60s 게이트, 뉴스보드·성운생태 24h 미션)은 재조사 안 하고 **그 외 전부**를 새로 훑음.
+
+**P1 — 최적화 가치 있음**
+- `PlanetOrbitShipyardDevContent.tsx:55` · `PlanetGenericFacilityDevContent.tsx:322` · `PlanetDefenseSatelliteDevContent.tsx:55` — 500ms 폴링 타이머 3개가 **활성 작업 여부 게이트 없이** 오버레이 열려있는 내내 무조건 도는 중. 같은 계열의 `PlanetDevelopmentListContent.tsx:57`은 이미 `hasActiveJob` 게이트가 있어 정답 패턴이 바로 옆에 있음 — 3곳에 그대로 복사 적용 가능한 낮은 리스크 수정.
+- 허브에서 전투 진행 중일 때 **100ms(battle-ready tick)·180ms(blink)·250ms(engagement poll)** 서브초 타이머 3개가 동시에 개별 `setInterval`로 돎 — 하나의 공유 티커로 합치면 전투 중 JS 스레드 wake-up이 대략 1/3로 줄어듦.
+
+**P2 — 경미**
+- `worldmap.tsx`의 5분 soft reclaim이 `planet.tsx`의 5분 soft reclaim과 **같은 주기·같은 패턴을 화면별로 중복 구현** — 개념적으로 하나의 "포커스된 화면의 주기 reclaim"으로 공유 가능.
+- `IdleSessionRestartGuard.tsx:92` — 60초 유휴 체크 타이머가 **앱 전체 수명 동안** 정지 조건 없이 계속 돎(콜백 자체는 가벼움) — AppState 이벤트 기반으로 바꾸면 완전히 없앨 수 있는 종류.
+
+**확인됨(문제 없음)**: 미사일/드론 dodge FX(50ms)·전투 HUD(120ms)·듀얼 전멸판정(90ms)·채굴 드라이버(500ms, elapsed 기반 캐치업+2s UI 스로틀) — 전부 이미 적절히 게이트·스코프됨.
+
+**사소한 발견**: `AiNpcSubCore.ts:81`의 `registerTimedMission`(`npc_birth_and_transport_build`)은 주석은 "상시 순찰"처럼 읽히지만 실제로는 `repeat` 플래그가 없는 **1회성** 미션 — 실제 순찰 유지는 서브코어의 `onWallTick`이 담당. 기능 버그는 아니고 주석·네이밍 혼동.
+
+### (3) 메모리 최적화 작업 회귀 여부 검수 — **회귀 없음**
+
+어제까지 적용한 6건(은하그래프 빌드타임 프리컴파일 `GALAXY_SYSTEMS_PRECOMPUTED`·드론 trail `PictureRecorder` 재사용 `recorderRef`·`combatSkiaPresentationReclaim` Set 다중구독·월드확장 방향균형+증분 스케줄·오버레이 STAGE-이탈 정리 `resolvePendingArcOverlaysForStageExit`·허브 3분 combat-safe reclaim) 전부 grep으로 현재 파일에 그대로 남아있음을 확인 — 최근 드론/미션 작업과 겹치는 파일이 없어 충돌·되돌림 없음. `tsc` clean·`audit:memory:all` PASS 재확인.
+
+### 리스크·주의
+- 이번 턴은 전부 분석만 — 코드 수정 없음. P1 두 건은 위험도 낮은 수정 후보로 판단되나 실행은 지시 대기.
+- git commit 안 함.
+
+---
 
 ## 김팀장 검수 (본창 Cursor · worldmap-black-screen-post-wave-defense-20260706)
 

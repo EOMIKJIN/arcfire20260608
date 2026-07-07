@@ -20,6 +20,7 @@ import { runArcCoreConvoyDailySettlementPass } from '../economy/runArcCoreConvoy
 import { runArcCoreCentralBankExpenditurePass } from '../economy/runArcCoreCentralBankExpenditurePass';
 import { runArcCorePlanetUpkeepDailyPass } from '../economy/runArcCorePlanetUpkeepDailyPass';
 import { runPlanetPgpDailyPass } from '../economy/runPlanetPgpDailyPass';
+import { runPlanetOwnershipDeedPricingDailyPass } from '../economy/runPlanetOwnershipDeedPricingDailyPass';
 import { runPlanetCoreStatEquilibriumPass } from '../planetCore/runPlanetCoreStatEquilibriumPass';
 import { runLaboratoryRdSpeedPass } from '../planetFacility/runLaboratoryRdSpeedPass';
 import { runTavernBountyRefreshPass } from '../planetFacility/runTavernBountyRefreshPass';
@@ -65,6 +66,7 @@ export type ArcCoreDailyOpsBatchResult = {
   economyLearning: boolean;
   planetFiscalClosedLoop: boolean;
   planetMineralLedger: boolean;
+  planetOwnershipDeedPricing: boolean;
 };
 
 /**
@@ -99,6 +101,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     economyLearning: false,
     planetFiscalClosedLoop: false,
     planetMineralLedger: false,
+    planetOwnershipDeedPricing: false,
   };
 
   if (!usePlanetCoreRuntimeStore.getState().hydrated) {
@@ -174,6 +177,9 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
 
   const pgpPass = runPlanetPgpDailyPass();
   result.planetPgp = pgpPass.ran;
+
+  const ownershipPricingPass = runPlanetOwnershipDeedPricingDailyPass();
+  result.planetOwnershipDeedPricing = ownershipPricingPass.ran;
 
   try {
     const learningResult = await runArcCoreEconomyLearningDailyPass(result);

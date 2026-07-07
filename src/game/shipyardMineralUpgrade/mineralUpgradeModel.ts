@@ -99,6 +99,35 @@ export function getFinalMineralUpgradeCap(combatLevel: number, shipyardLevel: nu
   return Math.min(combatCap, shipyardCap);
 }
 
+/**
+ * 강화 소요시간 기본값(초) — 행성개발 게이지와 동일한 진행 표시를 위한 디폴트.
+ * 조건·수치(스탯·목표레벨별 차등, 조선소 레벨 단축 등)는 향후 조절 예정.
+ */
+export const MINERAL_UPGRADE_DEFAULT_DURATION_SEC = 60;
+
+/**
+ * statId·목표레벨 기준 강화 소요시간(초). 현재는 기본 디폴트만 반환하며,
+ * 향후 스탯 그룹·레벨·조선소 등급에 따른 차등을 이 함수에 확장한다.
+ */
+export function resolveMineralUpgradeDurationSec(
+  _statId: string,
+  _targetLevel: number,
+): number {
+  return MINERAL_UPGRADE_DEFAULT_DURATION_SEC;
+}
+
+/** job 진행률(0~100) — 시작·완료 시각 기반. 게이지 표시에 사용. */
+export function resolveMineralUpgradeJobProgressPct(
+  job: { startedAtMs: number; completeAtMs: number } | null | undefined,
+  nowMs: number = Date.now(),
+): number {
+  if (!job) return 0;
+  const total = job.completeAtMs - job.startedAtMs;
+  if (total <= 0) return 100;
+  const elapsed = nowMs - job.startedAtMs;
+  return Math.max(0, Math.min(100, Math.round((elapsed / total) * 100)));
+}
+
 const STAT_BY_ID = new Map(MINERAL_UPGRADE_STATS.map((s) => [s.statId, s]));
 
 export function listMineralUpgradeStats(): readonly MineralUpgradeStatDef[] {

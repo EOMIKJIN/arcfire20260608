@@ -51,17 +51,19 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
     }, [planetId]),
   );
 
+  const snapshot = buildDefenseSatelliteDevSnapshot(planetId);
+  const hasActiveJob = snapshot.isInstalling || snapshot.isUpgrading;
+
   useEffect(() => {
+    if (!hasActiveJob) return undefined;
     const id = setInterval(() => {
       setTick((t) => t + 1);
     }, 500);
     return () => clearInterval(id);
-  }, [planetId, defenseRev]);
+  }, [hasActiveJob, planetId, defenseRev]);
 
   void tick;
   void defenseRev;
-
-  const snapshot = buildDefenseSatelliteDevSnapshot(planetId);
   const currentRow = snapshot.level > 0 ? getDefenseSatelliteLevelStatRow(snapshot.level) : null;
   const moduleSummaryKey = 'planetDev.summary.defense_satellite';
   const moduleSummaryRaw = t(moduleSummaryKey);

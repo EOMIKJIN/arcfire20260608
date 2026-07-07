@@ -47,6 +47,7 @@ import { useWorldStore } from '../../src/store/worldStore';
 import { useMissionStore } from '../../src/store/missionStore';
 import { hasPrimaryActiveCombatMission } from '../../src/missions/missionActiveBundles';
 import { applyReachSystemMissionObjectives } from '../../src/missions/applyReachSystemMissionObjectives';
+import { tryPresentPendingMissionClearDialog } from '../../src/missions/missionPlanetHubSync';
 import { resolveTransitEncounterChance } from '../../src/missions/missionCombatEncounter';
 import { useTransitCombatSessionStore } from '../../src/game/transitCombat/transitCombatSession';
 import { useClanWarFoundationStore } from '../../src/store/clanWarFoundationStore';
@@ -1339,6 +1340,7 @@ export default function WorldMapScreen() {
           deliverFailTitle: t('worldmap.deliverFailTitle'),
           deliverFailBody: t('worldmap.deliverFailBody'),
         });
+        tryPresentPendingMissionClearDialog();
       }
 
       await persist();

@@ -1,11 +1,11 @@
 ﻿{
     "lastTimeline":  {
-                         "pss_mb":  "754.8",
-                         "gl_mb":  "49.9",
-                         "pid":  "12334",
-                         "note":  "PSS_SPIKE review=graphics+native",
-                         "iso_time":  "2026-07-06 23:54:32",
-                         "views":  "399"
+                         "pss_mb":  "665.9",
+                         "gl_mb":  "18.4",
+                         "pid":  "27487",
+                         "note":  "GL_RECOVERED idle_ok",
+                         "iso_time":  "2026-07-07 23:47:30",
+                         "views":  "99"
                      },
     "processes":  {
                       "reportWatch":  {
@@ -46,5 +46,5 @@
                         "id":  9156,
                         "alive":  true
                     },
-    "updatedAtKst":  "2026-07-07 00:00:12"
+    "updatedAtKst":  "2026-07-07 23:58:45"
 }

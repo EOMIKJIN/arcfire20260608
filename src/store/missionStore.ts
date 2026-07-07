@@ -8,7 +8,6 @@ import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
 import { Mission, MissionProgress } from '../types';
 import { FIRST_TUTORIAL_MISSION_ID, getMissionById, isQuestMissionId } from '../missions/missionCatalog';
 import { isArcCoreInstanceMissionId } from '../missions/arcCoreInstanceMissionResolver';
-import { useArcCoreInstanceMissionBoardStore } from './arcCoreInstanceMissionBoardStore';
 import { isMissionAvailable } from '../engine/MissionEngine';
 import { usePlayerStore } from './playerStore';
 import { resolveMissionClearDialogSceneId } from '../game/ingameDialog/ingameDialogSceneIndex';
@@ -21,6 +20,11 @@ export type PendingMissionClearDialog = {
 };
 
 const STORAGE_KEY = 'arcfire_missions_v1';
+
+/** arcCoreInstanceMissionBoardStore 정적 import 금지 — applyLocalGameSaveSnapshot ↔ missionStore 순환 방지 */
+function arcCoreInstanceMissionBoardStore() {
+  return require('./arcCoreInstanceMissionBoardStore').useArcCoreInstanceMissionBoardStore as typeof import('./arcCoreInstanceMissionBoardStore').useArcCoreInstanceMissionBoardStore;
+}
 
 type ActiveBundle = { mission: Mission; progress: MissionProgress };
 
@@ -40,6 +44,12 @@ function applyMissionCompletionRewards(missionId: string): void {
     if (r.skillPointBonus) {
       const p = usePlayerStore.getState().player!;
       ps.setPlayer({ ...p, skillPoints: p.skillPoints + r.skillPointBonus });
+    }
+    if (r.items?.length) {
+      for (const itemId of r.items) {
+        const goodId = itemId?.trim();
+        if (goodId) ps.addInventoryItem(goodId, 1);
+      }
     }
     void ps.persist();
   }
@@ -97,7 +107,7 @@ interface MissionState {
   progresses: Record<string, MissionProgress>;
   activeMissionId: string | null;
   pendingMissionDialogId: string | null;
-  /** 미션 클리어 대화 — planet 허브 진입 시에만 present (월드맵 overlay 크래시 방지) */
+  /** 미션 클리어 대화 — 허브·무역·은하도착·이동전투 postFlow에서 present */
   pendingMissionClearDialog: PendingMissionClearDialog | null;
   loadLocalMissions: () => Promise<void>;
   persistMissions: () => Promise<void>;
@@ -189,7 +199,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     if (!mission) return 'not_found';
 
     if (isArcCoreInstanceMissionId(missionId)) {
-      const boardEntry = useArcCoreInstanceMissionBoardStore.getState().findBoardEntry(missionId);
+      const boardEntry = arcCoreInstanceMissionBoardStore().getState().findBoardEntry(missionId);
       if (!boardEntry || boardEntry.boardStatus !== 'listed') return 'not_on_board';
       if (boardEntry.offerPlanetId !== context.planetId) return 'wrong_planet';
       if (
@@ -225,7 +235,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
         progresses: { ...state.progresses, [missionId]: progress },
         activeMissionId: nextActiveId,
       });
-      useArcCoreInstanceMissionBoardStore.getState().markBoardEntryAccepted(missionId);
+      arcCoreInstanceMissionBoardStore().getState().markBoardEntryAccepted(missionId);
       void get().persistMissions();
       return 'accepted';
     }
@@ -333,7 +343,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     set({ ...chain, pendingMissionDialogId: null, pendingMissionClearDialog: null });
     applyMissionCompletionRewards(missionId);
     if (isArcCoreInstanceMissionId(missionId)) {
-      useArcCoreInstanceMissionBoardStore.getState().markBoardEntryCleared(missionId);
+      arcCoreInstanceMissionBoardStore().getState().markBoardEntryCleared(missionId);
     }
     void get().persistMissions();
   },
@@ -358,7 +368,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     set({ ...chain, pendingMissionDialogId: null, pendingMissionClearDialog: null });
     applyMissionCompletionRewards(missionId);
     if (isArcCoreInstanceMissionId(missionId)) {
-      useArcCoreInstanceMissionBoardStore.getState().markBoardEntryCleared(missionId);
+      arcCoreInstanceMissionBoardStore().getState().markBoardEntryCleared(missionId);
     }
     void get().persistMissions();
   },

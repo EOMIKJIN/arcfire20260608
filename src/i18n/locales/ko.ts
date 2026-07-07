@@ -184,6 +184,9 @@ export const KO_DICTIONARY: I18nDictionary = {
   'shipyard.up.btnMax': '최대 강화 완료',
   'shipyard.up.btnDo': '강화 실행 — {lv}강 → {next}강',
   'shipyard.up.btnPoor': '광물 부족',
+  'shipyard.up.btnUpgrading': '{next}강 강화 중…',
+  'shipyard.up.upgradingLabel': '{next}강 강화 진행',
+  'shipyard.up.fail.in_progress': '이미 강화가 진행 중입니다.',
 
   // ── 무역소 (trade) ──
   'trade.title': '무역소',
@@ -385,6 +388,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'tavern.missionStatus.noQuestActive': '진행 중인 수락 의뢰가 없습니다.',
   'tavern.missionStatus.noTutorialComplete': '완료한 튜토리얼 스토리가 없습니다.',
   'tavern.missionStatus.noQuestComplete': '완료한 수락 의뢰가 없습니다.',
+  'tavern.missionStatus.moreCompleted': '···외 {count}건 완료 (최근 항목만 표시)',
   'tavern.missionStatus.noActive': '진행 중인 미션이 없습니다.',
   'tavern.missionStatus.noComplete': '완료한 미션이 없습니다.',
   'tavern.mission.badgeActivePrimary': '주 미션',

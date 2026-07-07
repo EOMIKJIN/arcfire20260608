@@ -51,17 +51,19 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
     }, [planetId]),
   );
 
+  const snapshot = buildOrbitShipyardDevSnapshot(planetId);
+  const hasActiveJob = snapshot.isInstalling || snapshot.isUpgrading;
+
   useEffect(() => {
+    if (!hasActiveJob) return undefined;
     const id = setInterval(() => {
       setTick((v) => v + 1);
     }, 500);
     return () => clearInterval(id);
-  }, [planetId, shipyardRev]);
+  }, [hasActiveJob, planetId, shipyardRev]);
 
   void tick;
   void shipyardRev;
-
-  const snapshot = buildOrbitShipyardDevSnapshot(planetId);
   const currentRow = snapshot.level > 0 ? getOrbitShipyardLevelStatRow(snapshot.level) : null;
   const moduleSummaryKey = 'planetDev.summary.dev_orbit_shipyard';
   const moduleSummaryRaw = t(moduleSummaryKey);

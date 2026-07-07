@@ -6,6 +6,7 @@ import { create } from 'zustand';
 import { usePlayerStore } from '../../store/playerStore';
 import { useWorldStore } from '../../store/worldStore';
 import { applyReachSystemMissionObjectives } from '../../missions/applyReachSystemMissionObjectives';
+import { tryPresentPendingMissionClearDialog } from '../../missions/missionPlanetHubSync';
 
 export type TransitCombatSession = {
   originSystemId: string;
@@ -58,6 +59,7 @@ export const useTransitCombatSessionStore = create<TransitCombatSessionState>((s
     const playerAfterMove = usePlayerStore.getState().player;
     if (playerAfterMove) {
       applyReachSystemMissionObjectives(session.destinationSystemId, playerAfterMove, opts);
+      tryPresentPendingMissionClearDialog();
     }
 
     void persist();

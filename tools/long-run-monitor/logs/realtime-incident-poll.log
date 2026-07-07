@@ -4,3 +4,5 @@
 [2026-07-05 16:54:57] TRIGGER reason=mem_anomaly alert=[2026-07-05 16:52:34] GL_HARD_CEILING gl=160.2 pss=972.1 views=371
 [2026-07-05 18:30:29] TRIGGER reason=mem_anomaly alert=[2026-07-05 18:25:31] GL_HARD_CEILING gl=154.2 pss=1074.1 views=559
 [2026-07-06 03:28:54] TRIGGER reason=mem_anomaly alert=[2026-07-06 03:24:51] GL_HARD_CEILING gl=218.4 pss=914.2 views=558
+[2026-07-07 11:44:35] TRIGGER reason=mem_anomaly alert=[2026-07-07 11:42:08] GL_HARD_CEILING gl=142 pss=1005.7 views=558
+[2026-07-07 21:47:56] TRIGGER reason=mem_anomaly alert=[2026-07-07 21:43:25] GL_HARD_CEILING gl=110.4 pss=993.5 views=464

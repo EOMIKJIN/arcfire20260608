@@ -5,7 +5,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet,
-  ScrollView,
+  ScrollView, FlatList,
 } from 'react-native';
 import { FONTS, SPACING } from '../../src/utils/theme';
 import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
@@ -23,6 +23,7 @@ import { usePlayerStore } from '../../src/store/playerStore';
 import { useWorldStore } from '../../src/store/worldStore';
 import { useMissionStore } from '../../src/store/missionStore';
 import { listActiveMissionBundles } from '../../src/missions/missionActiveBundles';
+import { tryPresentPendingMissionClearDialog } from '../../src/missions/missionPlanetHubSync';
 import {
   applyQuestMarketListingOverrides,
   mergeQuestTradePortItemIds,
@@ -298,12 +299,16 @@ function resolveFreshTradeBuyUnitPrice(
   planetId: string,
   player: Player,
 ): number {
-  const freshListing = generateMarketByItemIds(
-    resolveTradePortListedItemIds(planetId, player.level, useMissionStore.getState().progresses),
+  const progresses = useMissionStore.getState().progresses;
+  const base = generateMarketByItemIds(
+    resolveTradePortListedItemIds(planetId, player.level, progresses),
     planetId.length * 37,
     resolvePlayerLifetimeCredits(player),
     planetId,
-  ).find((m) => m.goodId === listing.goodId);
+  );
+  // 화면 진열과 동일한 퀘스트 배치 단가 오버라이드를 적용해야 표시가와 일치한다.
+  const freshListing = applyQuestMarketListingOverrides(base, planetId, progresses)
+    .find((m) => m.goodId === listing.goodId);
   return getBuyPrice(freshListing ?? listing);
 }
 
@@ -819,6 +824,7 @@ export default function TradeScreen() {
         }
       });
     }
+    tryPresentPendingMissionClearDialog();
     if (itemDef?.type === 'trade_route' && player.currentPlanetId && inventoryAdded) {
       adjustPlanetTradeMarketStock(player.currentPlanetId, listing.goodId, -invTry.added);
       setMarketTick((tick) => tick + 1);
@@ -1030,16 +1036,26 @@ export default function TradeScreen() {
         />
       ) : null}
 
-      <ScrollView style={fs.scroll} contentContainerStyle={fs.scrollContent} showsVerticalScrollIndicator>
-        {tab === 'buy' ? (
-          market.length === 0 ? (
+      {tab === 'buy' ? (
+        market.length === 0 ? (
+          <ScrollView style={fs.scroll} contentContainerStyle={fs.scrollContent} showsVerticalScrollIndicator>
             <Text style={fs.empty}>{t('trade.empty.noGoods')}</Text>
-          ) : (
-            <>
-              {filteredBuyMarket.length === 0 ? (
-                <Text style={fs.empty}>{t('trade.empty.noSubGoods')}</Text>
-              ) : null}
-              {filteredBuyMarket.map(listing => {
+            <View style={{ height: TRADE_BOTTOM_STAGE_RESERVE_PX }} />
+          </ScrollView>
+        ) : (
+          <FlatList
+            style={fs.scroll}
+            contentContainerStyle={fs.scrollContent}
+            showsVerticalScrollIndicator
+            data={filteredBuyMarket}
+            keyExtractor={(listing) => listing.goodId}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={7}
+            removeClippedSubviews
+            ListEmptyComponent={<Text style={fs.empty}>{t('trade.empty.noSubGoods')}</Text>}
+            ListFooterComponent={<View style={{ height: TRADE_BOTTOM_STAGE_RESERVE_PX }} />}
+            renderItem={({ item: listing }) => {
               const good = resolveTradeGoodById(listing.goodId);
               if (!good) return null;
               const rowItemDef = resolveItemDefById(listing.goodId);
@@ -1050,10 +1066,8 @@ export default function TradeScreen() {
               const equipStatSummary = rowItemDef
                 ? formatShipEquipmentStatSummary(rowItemDef, locale === 'en' ? 'en' : 'ko')
                 : null;
-
               return (
                 <TouchableOpacity
-                  key={listing.goodId}
                   style={fs.listingCard}
                   onPress={() => handleBuy(listing)}
                 >
@@ -1077,15 +1091,28 @@ export default function TradeScreen() {
                   </View>
                 </TouchableOpacity>
               );
-            })}
-            </>
-          )
-        ) : inventorySellAgg.length === 0 ? (
+            }}
+          />
+        )
+      ) : inventorySellAgg.length === 0 ? (
+        <ScrollView style={fs.scroll} contentContainerStyle={fs.scrollContent} showsVerticalScrollIndicator>
           <Text style={fs.empty}>{t('trade.empty.inventory')}</Text>
-        ) : (
-          <>
-            <Text style={fs.sectionBar}>{t('trade.sell.section')}</Text>
-            {sortedInventorySellAgg.map(item => {
+          <View style={{ height: TRADE_BOTTOM_STAGE_RESERVE_PX }} />
+        </ScrollView>
+      ) : (
+        <FlatList
+          style={fs.scroll}
+          contentContainerStyle={fs.scrollContent}
+          showsVerticalScrollIndicator
+          data={sortedInventorySellAgg}
+          keyExtractor={(item) => `sell-${item.goodId}`}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={7}
+          removeClippedSubviews
+          ListHeaderComponent={<Text style={fs.sectionBar}>{t('trade.sell.section')}</Text>}
+          ListFooterComponent={<View style={{ height: TRADE_BOTTOM_STAGE_RESERVE_PX }} />}
+          renderItem={({ item }) => {
               const rowItemDef = resolveItemDefById(item.goodId);
               const good = resolveTradeGoodById(item.goodId) ?? (
                 rowItemDef
@@ -1113,7 +1140,6 @@ export default function TradeScreen() {
               const profit = (sellPrice - item.buyPrice) * item.quantity;
               return (
                 <TouchableOpacity
-                  key={`sell-${item.goodId}`}
                   style={fs.listingCard}
                   onPress={() => handleSell(item)}
                 >
@@ -1142,11 +1168,9 @@ export default function TradeScreen() {
                   </View>
                 </TouchableOpacity>
               );
-            })}
-          </>
-        )}
-        <View style={{ height: TRADE_BOTTOM_STAGE_RESERVE_PX }} />
-      </ScrollView>
+          }}
+        />
+      )}
       <StageLoadingOverlay visible={!screenReady && tradeSession.phase !== 'error'} overlayId="stage-loading-trade" />
       {tradeSession.phase === 'error' ? (
         <HeavyUiStageErrorPanel

@@ -318,14 +318,6 @@ export const PlanetGenericFacilityDevContent = memo(function PlanetGenericFacili
   const visualTheme = resolveArcOverlayVisualTheme('planetDevelopment');
   const [tick, setTick] = useState(0);
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      api.tryCompleteUpgrade(planetId);
-      setTick((v) => v + 1);
-    }, 500);
-    return () => clearInterval(id);
-  }, [api, planetId, moduleId]);
-
   const sessionConfig = useMemo(
     () =>
       createPlanetDevDetailSession(planetId, moduleId, (): FacilityDevSessionData => {
@@ -339,6 +331,18 @@ export const PlanetGenericFacilityDevContent = memo(function PlanetGenericFacili
     [api, moduleId, planetId],
   );
   const session = useHeavyUiDataSession(sessionConfig, tick);
+  const hasActiveJob = Boolean(
+    session.data && (session.data.snapshot.isInstalling || session.data.snapshot.isUpgrading),
+  );
+
+  useEffect(() => {
+    if (!hasActiveJob) return undefined;
+    const id = setInterval(() => {
+      api.tryCompleteUpgrade(planetId);
+      setTick((v) => v + 1);
+    }, 500);
+    return () => clearInterval(id);
+  }, [hasActiveJob, api, planetId, moduleId]);
 
   if (session.phase !== 'ready' || !session.data) {
     return (

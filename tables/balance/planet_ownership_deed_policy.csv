@@ -1,12 +1,20 @@
 key,value,notesKo
 test_planet_ids,arcadia_prime,테스트용 1CR 고정 행성(쉼표 구분)
 test_price_credits,1,테스트 행성 소유권 고정가(CR)
-base_credits,12000,기존 정액 12000CR 앵커 — PGP 가산 기준
-pgp_bmu_to_credits_mul,0.085,PGP(BMU) 1당 CR 가산(avg PGP ~84k → +7140)
-future_value_mul,2.15,향후 수익권·무역소 수수료 등 프리미ум
-zone_safe_mul,1.00,안전(safe) 구역 배율
-zone_neutral_mul,1.12,중립(neutral) 구역 배율
-zone_pvp_mul,1.28,PvP 구역 배율
-zone_endgame_mul,1.55,엔드게임 구역 배율
-min_credits,38000,최저가(CR)
+annual_days,365,연간 실물수익 = max(관측 일×365 · 구역 target×ratio)
+zone_annual_earn_ratio,0.55,구역 targetCreditsEarned → 연간 실물수익 추정 비율(주식 CF)
+observed_fee_weight,1.00,당일 ledger·fabric 관측 — max(관측연간 · 구역모델)
+sovereign_pgp_bmu_to_credits_mul,0.038,정성·영토가치 — PGP(BMU) 1당 CR (성주·국가 자산)
+zone_safe_mul,1.00,안전(safe) 구역 정성 배율
+zone_neutral_mul,1.12,중립(neutral) 구역 정성 배율
+zone_pvp_mul,1.28,PvP 구역 정성 배율
+zone_endgame_mul,1.55,엔드게임 구역 정성 배율
+facility_trade_port_mul,1.12,무역소 보유 정성 배율
+facility_shipyard_mul,1.06,조선소 보유 정성 배율
+facility_tavern_mul,1.04,선술집 보유 정성 배율
+supply_vitality_min,0.55,생산 활력 하한 — 연간 수익 추정
+supply_vitality_max,1.35,생산 활력 상한 — 연간 수익 추정
+population_revenue_floor,0.72,인구(R/P) 기반 수익 바닥 계수
+population_revenue_span,0.56,인구(R/P) 기반 수익 가산 span
+min_credits,25000,최저가(CR)
 max_credits,4200000,최고가 상한(CR)

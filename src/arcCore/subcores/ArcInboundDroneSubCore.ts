@@ -213,6 +213,8 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
       d.inboundElapsedSec = elapsed;
       if (elapsed >= d.inboundDurationSec) {
         d.phase = 'impacted';
+        d.inboundEndOrbitMs = readPlanetOrbitClockMs();
+        d.inboundElapsedSec = d.inboundDurationSec;
         applyPlanetAttackCoreDamage({
           planetId: d.planetId,
           attackKind: PLANET_ATTACK_KIND.ARC_INBOUND_DRONE_IMPACT,

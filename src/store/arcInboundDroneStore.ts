@@ -26,6 +26,8 @@ export interface ArcInboundDrone {
   spyMinStrikeLeakMul?: number;
   /** 요격/충돌 시점(벽시계 sec) — 트레일 페이드 동안 스냅샷 유지 */
   trailEndWallSec?: number;
+  /** 요격/충돌 시점 orbitClockMs — FX·트레일 머리와 마크 동기 */
+  inboundEndOrbitMs?: number;
 }
 
 interface ArcInboundDroneState {

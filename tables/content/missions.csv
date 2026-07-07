@@ -37,3 +37,25 @@ sandbox_030,코어 전초 보급,아델린 루크가 아크파이어 코어 진�
 sandbox_031,연방 순항단 호송,미레유 보스(연방 순항대)가 솔라 항구로 군수 물자 호송을 의뢰했다.,delivery,npc_cpt_mireille,solar_station,6,2900,780,weapon,0,,,13,,Federation Convoy Escort,Boss Mireille (Federation Patrol) requested a military supply run to Sola Port.
 sandbox_032,광물 호송단 경비,셀라 모른(미네르바 광물 호송단)이 채굴 통로의 해적 전투기 제거를 요청했다.,combat,npc_cpt_sela,minerva_deep,4,1900,480,minerals,0,,,12,,Mineral Convoy Guard,Cela Morn (Minerva Mineral Convoy) asked you to clear pirates on the mining corridor.
 sandbox_033,회항단 중계 물자,타드 레인(오메가 중립 회항단)이 교차항로 예비 식량을 오메가 허브로 운반해 달라고 했다.,delivery,npc_cpt_tavern_ret_03,omega_hub,7,3400,920,food,0,,,12,,Convoy Relay Supply,Tad Rain (Omega Neutral Circuit) asked you to haul reserve food to Omega Hub.
+tq_del_01,긴급 식량 배달,선술집 게시판 — 인근 거점으로 식량을 운반하라.,delivery,,,1,900,220,food,0,,,8,,Urgent Food Run,Tavern board — haul food packs to a nearby hub.
+tq_del_02,기술 부품 특송,선술집 게시판 — 기술 부품을 인접 성계로 배달하라.,delivery,,,1,950,240,tech,0,,,8,,Tech Courier Run,Tavern board — deliver tech parts to a linked system.
+tq_del_03,광물 샘플 운송,선술집 게시판 — 원자재 광물 샘플을 인계하라.,delivery,,,1,1000,260,minerals,0,,,9,,Mineral Sample Haul,Tavern board — hand off raw mineral samples.
+tq_del_04,무기 물자 호송,선술집 게시판 — 무기 물자를 인근 전초로 보내라.,delivery,,,2,1100,280,weapon,0,,,9,,Arms Shipment,Tavern board — send weapons to a nearby outpost.
+tq_del_05,민간 보급 계약,선술집 게시판 — 식량 예비분을 연결 항로로 운반하라.,delivery,,,2,1150,300,food,0,,,9,,Civilian Supply Contract,Tavern board — move reserve food along a linked route.
+tq_del_06,정비 부품 배송,선술집 게시판 — 기술 정비 키트를 인접 기지로 전달하라.,delivery,,,3,1250,320,tech,0,,,10,,Maintenance Kit Delivery,Tavern board — deliver maintenance kits to a linked base.
+tq_del_07,채굴 회수물 운송,선술집 게시판 — 채굴 회수 광물을 검사소로 보내라.,delivery,,,3,1300,340,minerals,0,,,10,,Mining Recovery Haul,Tavern board — send recovered ore to inspection.
+tq_del_08,고급 물자 특급,선술집 게시판 — 고급 물자를 연결 거점으로 특송하라.,delivery,,,4,1400,360,luxury,0,,,10,,Premium Express Lot,Tavern board — express premium goods to a linked hub.
+tq_cbt_01,해적 전투기 퇴치,선술집 게시판 — 항로를 어지른 해적 전투기를 격파하라.,combat,,,1,850,210,,0,,,8,,Fighter Sweep,Tavern board — destroy a pirate fighter harassing the route.
+tq_cbt_02,경비 순찰 교전,선술집 게시판 — 순찰 구역의 해적 전투기를 처리하라.,combat,,,2,1050,270,,0,,,9,,Patrol Engagement,Tavern board — clear a pirate fighter in the patrol lane.
+tq_cbt_03,순양함 격퇴,선술집 게시판 — 접근 중인 해적 순양함을 격퇴하라.,combat,,,3,1350,350,,0,,,10,,Cruiser Repulsion,Tavern board — repel an approaching pirate cruiser.
+tq_cbt_04,호송로 클리어,선술집 게시판 — 호송로를 막은 순양함을 제거하라.,combat,,,4,1500,390,,0,,,11,,Convoy Lane Clear,Tavern board — remove a cruiser blocking the convoy lane.
+tq_bty_01,현상금 — 도주자 A,선술집 게시판 — 현상금 사냥꾼을 추적해 제거하라.,combat,,,2,1200,320,,0,,,9,,Bounty — Fugitive A,Tavern board — track and eliminate a bounty hunter.
+tq_bty_02,현상금 — 도주자 B,선술집 게시판 — 현상금 대상을 항로에서 처리하라.,combat,,,3,1400,370,,0,,,10,,Bounty — Fugitive B,Tavern board — handle a bounty target on the route.
+tq_bty_03,적색 수배자,선술집 게시판 — 수배된 현상금 사냥꾼을 격파하라.,combat,,,4,1600,420,,0,,,11,,Red Warrant Hunt,Tavern board — defeat a wanted bounty hunter.
+tq_bty_04,암시장 현상금,선술집 게시판 — 암시장에 출몰한 현상금 사냥꾼을 처리하라.,combat,,,5,1750,460,,0,,,12,,Black Market Bounty,Tavern board — clear a bounty hunter at the grey market.
+tq_oth_01,인접 성계 정찰,선술집 게시판 — 연결된 성계로 이동해 항로 상태를 확인하라.,travel,,,1,800,200,,0,,,7,,Linked System Recon,Tavern board — travel to a linked system and check the lane.
+tq_oth_02,미확인 거점 방문,선술집 게시판 — 인근 거점 행성에 착륙해 상황을 파악하라.,explore,,,1,820,210,,0,,,7,,Unknown Outpost Visit,Tavern board — land at a nearby outpost and assess conditions.
+tq_oth_03,함선 정비 부품,선술집 게시판 — 정비용 기술 부품을 현재 거점에서 확보하라.,trade,,,1,780,190,tech,0,,,7,,Hull Repair Parts,Tavern board — procure maintenance tech parts at this hub.
+tq_oth_04,좌표 탐사,선술집 게시판 — 전달받은 좌표의 행성을 확인하라.,explore,,,2,980,250,,0,,,8,,Coordinate Survey,Tavern board — verify the planet at the given coordinates.
+tq_oth_05,선주 접선,선술집 게시판 — 인근 거점에서 선주와 접선하라.,travel,,,2,900,230,,0,,,8,,Client Rendezvous,Tavern board — meet the client captain at a nearby outpost.
+tq_oth_06,항로 보수 점검,선술집 게시판 — 연결 항로의 보수 상태를 점검하라.,explore,,,3,1050,280,,0,,,9,,Route Maintenance Check,Tavern board — inspect maintenance status on a linked route.

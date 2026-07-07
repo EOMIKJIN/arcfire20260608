@@ -26,6 +26,13 @@ import {
 } from '../../ui/planetFacility/PlanetFacilityTitleHeader';
 import type { Mission, MissionProgress } from '../../types';
 
+/**
+ * 완료 미션은 플레이 누적으로 무제한 증가할 수 있어, 상위 ScrollView 안에서 전량 `.map()`하면
+ * 네이티브 View/Text 노드 수가 계단식으로 쌓여 views/native_heap 급증(하드실링 유발)을 낳는다.
+ * 최근 N개만 렌더하고 나머지는 카운트 요약으로 대체해 마운트 노드 수에 상한을 둔다.
+ */
+const COMPLETED_MISSION_RENDER_CAP = 20;
+
 function resolveMissionTitleText(
   mission: Mission,
   t: (key: string) => string,
@@ -193,26 +200,37 @@ export function TavernMissionStatusTab() {
     metaKey: string,
     rows: typeof completedTutorial,
     emptyKey: string,
-  ) => (
-    <>
-      <PlanetFacilitySectionHeader
-        title={title}
-        meta={t(metaKey, { count: rows.length })}
-      />
-      {rows.length === 0 ? (
-        <Text style={fs.sectionEmpty}>{t(emptyKey)}</Text>
-      ) : (
-        rows.map((row) => (
-          <MissionStatusCard
-            key={row.mission.id}
-            mission={row.mission}
-            progress={row.progress}
-            isPrimaryActive={false}
-          />
-        ))
-      )}
-    </>
-  );
+  ) => {
+    const shownRows = rows.slice(0, COMPLETED_MISSION_RENDER_CAP);
+    const hiddenCount = rows.length - shownRows.length;
+    return (
+      <>
+        <PlanetFacilitySectionHeader
+          title={title}
+          meta={t(metaKey, { count: rows.length })}
+        />
+        {rows.length === 0 ? (
+          <Text style={fs.sectionEmpty}>{t(emptyKey)}</Text>
+        ) : (
+          <>
+            {shownRows.map((row) => (
+              <MissionStatusCard
+                key={row.mission.id}
+                mission={row.mission}
+                progress={row.progress}
+                isPrimaryActive={false}
+              />
+            ))}
+            {hiddenCount > 0 ? (
+              <Text style={fs.sectionEmpty}>
+                {t('tavern.missionStatus.moreCompleted', { count: hiddenCount })}
+              </Text>
+            ) : null}
+          </>
+        )}
+      </>
+    );
+  };
 
   return (
     <View>

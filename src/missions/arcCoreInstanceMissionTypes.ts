@@ -1,7 +1,8 @@
-/** ArcCore AI 자동 생성 인스턴스 미션 — 선술집 신규 의뢰 보드 (Table-First 템플릿 clone). */
+/** ArcCore AI 자동 생성 인스턴스 미션 — 선술집 신규 의뢰 보드 (Table-First tq_* 템플릿 clone). */
 
 export const ARC_CORE_INSTANCE_MISSION_ID_PREFIX = 'arc_inst_';
 
+/** @deprecated 행성당 listed 상한 — `tavernInstanceBoardPolicy` 참조 */
 export const ARC_CORE_INSTANCE_BOARD_MAX = 7;
 
 /** 상위 카테고리 태그 — 향후 타입 확장 시 CSV/정책과 동기화. */

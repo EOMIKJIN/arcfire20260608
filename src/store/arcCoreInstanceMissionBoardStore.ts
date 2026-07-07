@@ -1,12 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import {
-  buildArcCoreInstanceMissionEntry,
-  countListedArcCoreInstanceMissions,
   createEmptyArcCoreInstanceMissionBoard,
-  pickArcCoreInstanceMissionTemplate,
+  ensurePlanetTavernInstanceBoard,
   refreshArcCoreInstanceMissionBoardState,
   resolveArcCoreInstanceDayKeyKst,
+  runArcCoreTavernInstanceBoardReplenishPass,
   shouldRefreshArcCoreInstanceMissionBoard,
 } from '../missions/arcCoreInstanceMissionGenerator';
 import { syncArcCoreInstanceMissionMaterializedCache } from '../missions/arcCoreInstanceMissionResolver';
@@ -15,7 +14,6 @@ import type {
   ArcCoreInstanceMissionBoardState,
   ArcCoreInstanceMissionDailyPassResult,
 } from '../missions/arcCoreInstanceMissionTypes';
-import { ARC_CORE_INSTANCE_BOARD_MAX } from '../missions/arcCoreInstanceMissionTypes';
 
 const STORAGE_KEY = 'arcfire_arc_core_instance_missions_v1';
 
@@ -117,59 +115,44 @@ export const useArcCoreInstanceMissionBoardStore = create<ArcCoreInstanceMission
     }
 
     const dayKey = resolveArcCoreInstanceDayKeyKst(nowMs);
-    if (state.lastRegistrationDayKeyKst === dayKey) {
-      applyBoardState(set, state);
-      void get().persistArcCoreInstanceMissionBoard();
-      return {
-        ran: refreshed,
-        registered: false,
-        refreshed,
-        instanceId: null,
-        reason: 'already_registered_today',
-      };
-    }
-
-    const listedCount = countListedArcCoreInstanceMissions(state.entries);
-    if (listedCount >= ARC_CORE_INSTANCE_BOARD_MAX) {
-      applyBoardState(set, state);
-      void get().persistArcCoreInstanceMissionBoard();
-      return {
-        ran: refreshed,
-        registered: false,
-        refreshed,
-        instanceId: null,
-        reason: 'board_full',
-      };
-    }
-
-    const template = pickArcCoreInstanceMissionTemplate(state, dayKey);
-    if (!template) {
-      applyBoardState(set, state);
-      void get().persistArcCoreInstanceMissionBoard();
-      return {
-        ran: refreshed,
-        registered: false,
-        refreshed,
-        instanceId: null,
-        reason: 'no_eligible_template',
-      };
-    }
-
-    const entry = buildArcCoreInstanceMissionEntry(template, dayKey, nowMs, listedCount);
+    const replenish = runArcCoreTavernInstanceBoardReplenishPass(state, nowMs);
     const next: ArcCoreInstanceMissionBoardState = {
-      entries: [...state.entries, entry],
+      ...replenish.next,
       lastRegistrationDayKeyKst: dayKey,
-      cycleStartedAtMs: state.cycleStartedAtMs || nowMs,
     };
+
     applyBoardState(set, next);
     void get().persistArcCoreInstanceMissionBoard();
 
     return {
-      ran: true,
-      registered: true,
+      ran: refreshed || replenish.added > 0,
+      registered: replenish.added > 0,
       refreshed,
-      instanceId: entry.instanceId,
-      reason: 'registered',
+      instanceId: replenish.lastInstanceId,
+      reason: replenish.added > 0 ? 'registered' : refreshed ? 'refreshed' : 'noop',
     };
   },
 }));
+
+/** ArcCore 경유 — 단일 행성 보드 보충(일일 배치·부트 동기화와 동일 로직). */
+export function replenishArcCoreInstanceMissionBoardForPlanet(
+  planetId: string,
+  nowMs = Date.now(),
+): number {
+  const state = useArcCoreInstanceMissionBoardStore.getState();
+  const { next, added } = ensurePlanetTavernInstanceBoard(
+    {
+      entries: state.entries,
+      lastRegistrationDayKeyKst: state.lastRegistrationDayKeyKst,
+      cycleStartedAtMs: state.cycleStartedAtMs,
+    },
+    planetId,
+    nowMs,
+  );
+  if (added > 0) {
+    syncArcCoreInstanceMissionMaterializedCache(next.entries);
+    useArcCoreInstanceMissionBoardStore.setState(next);
+    void state.persistArcCoreInstanceMissionBoard();
+  }
+  return added;
+}

@@ -38,6 +38,33 @@ export function resolveStarSystemForPlanetId(planetId: string): StarSystem | und
 }
 
 /** 성계 연결 그래프 BFS 홉 거리 — GALAXY_SYSTEMS 정본 */
+/** 성계 그래프 1-hop 이웃 — connections·역방향·폴백 순. */
+export function resolveFirstGalaxyNeighborSystemId(systemId: string): string | null {
+  const origin = systemId.trim();
+  if (!origin) return null;
+  const sys = readGalaxySystem(origin);
+  if (sys?.connections?.length) {
+    for (const raw of sys.connections) {
+      const candidate = raw?.trim();
+      if (candidate && candidate !== origin) return candidate;
+    }
+    const first = sys.connections[0]?.trim();
+    if (first) return first;
+  }
+  for (const candidate of [...Object.values(STAR_SYSTEMS), ...Object.values(GALAXY_SYSTEMS)]) {
+    if (candidate.id === origin) continue;
+    if (candidate.connections?.includes(origin)) return candidate.id;
+  }
+  for (const candidate of [...Object.values(STAR_SYSTEMS), ...Object.values(GALAXY_SYSTEMS)]) {
+    if (candidate.id === origin) continue;
+    if (candidate.connections?.length) {
+      const hop = candidate.connections.find((c) => c?.trim() && c.trim() !== origin);
+      if (hop?.trim()) return hop.trim();
+    }
+  }
+  return null;
+}
+
 export function resolveGalaxySystemHopDistance(systemIdA: string, systemIdB: string): number {
   if (!systemIdA || !systemIdB || systemIdA === systemIdB) return 0;
   const visited = new Set<string>([systemIdA]);

@@ -11,7 +11,6 @@ import { isPlanetTradePortInstalled } from './planetTradePortListing';
 import { isPlanetResearchLabInstalled } from './planetResearchLabListing';
 import { isPlanetPopulationDomeInstalled } from './planetPopulationDomeListing';
 import { hasActiveQuestBuyPlacementAtPlanet } from '../../missions/questItemOpsRegistry';
-import { useMissionStore } from '../../store/missionStore';
 import {
   isPlanetCsvShipyardWorldEnabled,
   isPlanetCsvTavernWorldEnabled,
@@ -38,6 +37,8 @@ export function isPlanetHubShipyardEnabled(planetId: string): boolean {
 /** 허브 🏪 무역소 SUB-STAGE — CSV·dev 무역소 또는 활성 퀘스트 구매 배치 */
 export function isPlanetHubTradePortEnabled(planetId: string): boolean {
   if (planetHasCsvTradePort(planetId) || isPlanetTradePortInstalled(planetId)) return true;
+  // missionStore 정적 import 금지 — arcCoreInstanceMissionBoardStore ↔ missionStore 순환 방지
+  const { useMissionStore } = require('../../store/missionStore') as typeof import('../../store/missionStore');
   return hasActiveQuestBuyPlacementAtPlanet(
     planetId,
     useMissionStore.getState().progresses,

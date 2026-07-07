@@ -50,3 +50,33 @@ sandbox_028,obj_s028_b,어비스로 이동,reach_system,abyss,,Travel to Abyss
 sandbox_029,obj_s029_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter
 sandbox_030,obj_s030_a,기술 부품 6개 구매,buy_goods,tech,6,Buy 6 tech components
 sandbox_030,obj_s030_b,아크파이어 코어로 이동,reach_system,arcfire_core,,Travel to Arcfire Core
+tq_del_01,obj_tq_d01_a,식량 팩 3개 구매,buy_goods,food,3,Buy 3 food packs
+tq_del_01,obj_tq_d01_b,인접 성계로 배달,reach_system,__neighbor_system__,,Deliver to linked system
+tq_del_02,obj_tq_d02_a,기술 부품 2개 구매,buy_goods,tech,2,Buy 2 tech components
+tq_del_02,obj_tq_d02_b,인접 성계로 배달,reach_system,__neighbor_system__,,Deliver to linked system
+tq_del_03,obj_tq_d03_a,원자재 광물 3개 구매,buy_goods,minerals,3,Buy 3 raw minerals
+tq_del_03,obj_tq_d03_b,인접 성계로 배달,reach_system,__neighbor_system__,,Deliver to linked system
+tq_del_04,obj_tq_d04_a,무기류 2개 구매,buy_goods,weapon,2,Buy 2 weapons
+tq_del_04,obj_tq_d04_b,인접 성계로 배달,reach_system,__neighbor_system__,,Deliver to linked system
+tq_del_05,obj_tq_d05_a,식량 팩 4개 구매,buy_goods,food,4,Buy 4 food packs
+tq_del_05,obj_tq_d05_b,인접 성계로 배달,reach_system,__neighbor_system__,,Deliver to linked system
+tq_del_06,obj_tq_d06_a,기술 부품 3개 구매,buy_goods,tech,3,Buy 3 tech components
+tq_del_06,obj_tq_d06_b,인접 성계로 배달,reach_system,__neighbor_system__,,Deliver to linked system
+tq_del_07,obj_tq_d07_a,원자재 광물 4개 구매,buy_goods,minerals,4,Buy 4 raw minerals
+tq_del_07,obj_tq_d07_b,인접 성계로 배달,reach_system,__neighbor_system__,,Deliver to linked system
+tq_del_08,obj_tq_d08_a,사치품 2개 구매,buy_goods,luxury,2,Buy 2 luxury goods
+tq_del_08,obj_tq_d08_b,인접 성계로 배달,reach_system,__neighbor_system__,,Deliver to linked system
+tq_cbt_01,obj_tq_c01_a,해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter
+tq_cbt_02,obj_tq_c02_a,해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter
+tq_cbt_03,obj_tq_c03_a,해적 순양함 격파,defeat_enemy,pirate_cruiser,1,Destroy pirate cruiser
+tq_cbt_04,obj_tq_c04_a,해적 순양함 격파,defeat_enemy,pirate_cruiser,1,Destroy pirate cruiser
+tq_bty_01,obj_tq_b01_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter
+tq_bty_02,obj_tq_b02_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter
+tq_bty_03,obj_tq_b03_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter
+tq_bty_04,obj_tq_b04_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter
+tq_oth_01,obj_tq_o01_a,연결 성계 도착,reach_system,__neighbor_system__,,Arrive at linked system
+tq_oth_02,obj_tq_o02_a,인근 거점 착륙,reach_planet,__discovery_planet__,,Land at nearby outpost
+tq_oth_03,obj_tq_o03_a,정비 부품 2개 구매,buy_goods,tech,2,Buy 2 maintenance tech parts
+tq_oth_04,obj_tq_o04_a,탐사 좌표 행성 진입,reach_planet,__discovery_planet__,,Enter survey planet
+tq_oth_05,obj_tq_o05_a,선주 접선 지점 착륙,reach_planet,__discovery_planet__,,Land at rendezvous outpost
+tq_oth_06,obj_tq_o06_a,항로 점검 성계 도착,reach_system,__neighbor_system__,,Arrive at route inspection system

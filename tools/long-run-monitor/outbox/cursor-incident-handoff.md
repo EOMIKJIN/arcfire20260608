@@ -1,6 +1,6 @@
 # Arcfire long-run incident — Kim Team Lead auto-triage
 
-packedAt: 2026-07-05T18:28:57.397Z
+packedAt: 2026-07-07T12:48:00.031Z
 triggerReason: mem_anomaly
 refixPayload: (none)
 
@@ -15,29 +15,29 @@ refixPayload: (none)
 ## Recent remediation
 
 ```
-[2026-07-06 03:24:51] AUTO_FIX static audit:skia-memory start
-[2026-07-06 03:24:54] AUTO_FIX audit:skia-memory PASS
-[2026-07-06 03:24:54] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
-[2026-07-06 03:25:11] AUTO_FIX baseline reset pid=12334 gl=6MB pss=187.8MB
-[2026-07-06 03:25:11] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
-[2026-07-06 03:25:33] VERIFY PASS pid=12334 gl=8.5MB pss=629MB views=99
-[2026-07-06 03:25:33] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":914.2,"views":558,"lastGlMb":218.4,"hardCeiling":true}
-[2026-07-06 03:25:34] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
-[2026-07-06 03:28:54] INVESTIGATION start reason=mem_anomaly
-[2026-07-06 03:28:54] INVESTIGATION alert=[2026-07-06 03:24:51] GL_HARD_CEILING gl=218.4 pss=914.2 views=558
-[2026-07-06 03:28:55] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260706-032854.log
-[2026-07-06 03:28:57] INVESTIGATION mem from timeline gl=8.5MB pss=629MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260706-032854.log
+[2026-07-07 21:43:26] AUTO_FIX static audit:skia-memory start
+[2026-07-07 21:43:28] AUTO_FIX audit:skia-memory PASS
+[2026-07-07 21:43:28] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-07-07 21:43:46] AUTO_FIX baseline reset pid=27487 gl=6MB pss=193.6MB
+[2026-07-07 21:43:46] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-07-07 21:44:07] VERIFY PASS pid=27487 gl=8.6MB pss=505.2MB views=99
+[2026-07-07 21:44:07] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":993.5,"views":464,"lastGlMb":110.4,"hardCeiling":true}
+[2026-07-07 21:44:08] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-07-07 21:47:56] INVESTIGATION start reason=mem_anomaly
+[2026-07-07 21:47:56] INVESTIGATION alert=[2026-07-07 21:43:25] GL_HARD_CEILING gl=110.4 pss=993.5 views=464
+[2026-07-07 21:47:58] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260707-214756.log
+[2026-07-07 21:47:59] INVESTIGATION mem from timeline gl=8.6MB pss=505.2MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260707-214756.log
 ```
 
 ## Recent incidents
 
 ```
-[2026-07-06 02:23:23] PSS_SOFT_CEILING pss=835.6 gl=144.6 views=392 native_reclaim_advisory
-[2026-07-06 02:38:46] PSS_SOFT_CEILING pss=832.5 gl=146.6 views=388 native_reclaim_advisory
-[2026-07-06 02:54:07] PSS_SOFT_CEILING pss=832.6 gl=146.6 views=384 native_reclaim_advisory
-[2026-07-06 03:09:29] PSS_SOFT_CEILING pss=826.5 gl=144.6 views=381 native_reclaim_advisory
-[2026-07-06 03:24:51] GL_HARD_CEILING gl=218.4 pss=914.2 views=558
-[2026-07-06 03:24:51] REFIX_REQUESTED gl_critical_active_hub
+[2026-07-07 20:26:12] PSS_SOFT_CEILING pss=802.4 gl=129.3 views=363 native_reclaim_advisory
+[2026-07-07 20:41:36] PSS_SOFT_CEILING pss=803.1 gl=123.3 views=367 native_reclaim_advisory
+[2026-07-07 20:56:59] GL_ELEVATED mounting_or_insufficient_samples gl=110.5 pss=784.6 views=371 restart_held
+[2026-07-07 21:12:30] PSS_SOFT_CEILING pss=845.2 gl=113.1 views=383 native_reclaim_advisory
+[2026-07-07 21:43:25] GL_HARD_CEILING gl=110.4 pss=993.5 views=464
+[2026-07-07 21:43:25] REFIX_REQUESTED gl_critical_active_hub
 ```
 
 ## Crash signature (tail)
@@ -69,16 +69,16 @@ refixPayload: (none)
 
 ```csv
 ﻿iso_time,pid,pss_mb,rss_mb,gl_mb,egl_mb,graphics_mb,native_heap_mb,java_heap_mb,threads,views,delta_pss_mb,delta_gl_mb,note
-2026-07-06 00:51:00,24957,623.5,552.6,42.5,34.3,76.8,211.7,33.4,,394,7.4,0.2,
-2026-07-06 01:06:26,24957,608.5,538.2,42.3,19.8,62.1,214.9,30.5,,368,-15,-0.2,
-2026-07-06 01:21:51,24957,892.6,846.5,152.6,40.7,193.3,328.2,48,,334,284.1,110.3,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
-2026-07-06 01:37:18,24957,856.3,811,146.6,19.8,166.4,341.1,65.7,,388,-36.3,-6,GL_RECOVERED idle_ok
-2026-07-06 01:52:38,24957,845.3,800.2,146.6,19.8,166.4,342.3,49,,388,-11,0,
-2026-07-06 02:07:58,24957,847.4,802.5,144.6,19.8,164.4,333.4,61.8,,380,2.1,-2,
-2026-07-06 02:23:19,24957,835.6,790.8,144.6,19.8,164.4,336.2,46.8,,392,-11.8,0,
-2026-07-06 02:38:39,24957,832.5,787.9,146.6,19.8,166.4,335,43,,388,-3.1,2,
-2026-07-06 02:54:01,24957,832.6,789.1,146.6,19.8,166.4,341.2,37.5,,384,0.1,0,
-2026-07-06 03:09:23,24957,826.5,782.9,144.6,19.8,164.4,343,30.9,,381,-6.1,-2,
-2026-07-06 03:24:44,24957,914.2,864.7,218.4,19.8,238.2,355.8,33.3,,558,87.7,73.8,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
-2026-07-06 03:25:33,12334,629,,8.5,,,,,,99,,,POST_REMEDIATION_VERIFY_OK
+2026-07-07 19:09:12,395,798.2,781.2,127.3,19.8,147.2,329.1,36.4,,367,-13.7,-0.1,
+2026-07-07 19:24:34,395,799.9,769.6,129.5,20,149.4,323.8,32.5,,373,1.7,2.2,
+2026-07-07 19:39:57,395,809.1,778.9,123.3,19.8,143.1,318,52.5,,371,9.2,-6.2,GL_RECOVERED idle_ok
+2026-07-07 19:55:19,395,844.5,813.9,128,40.7,168.6,326.8,51,,390,35.4,4.7,
+2026-07-07 20:10:43,395,787.6,757.1,123.3,19.8,143.1,316.8,30.1,,365,-56.9,-4.7,
+2026-07-07 20:26:06,395,802.4,771.8,129.3,19.8,149.2,322.6,32.9,,363,14.8,6,
+2026-07-07 20:41:29,395,803.1,770.2,123.3,19.8,143.1,323.8,38.4,,367,0.7,-6,GL_RECOVERED idle_ok
+2026-07-07 20:56:53,395,784.6,616.1,110.5,19.8,130.3,216.3,37.6,,371,-18.5,-12.8,GL_RECOVERED idle_ok
+2026-07-07 21:12:25,395,845.2,677,113.1,40.7,153.8,247.1,36.5,,383,60.6,2.6,PSS_SPIKE review=graphics+native
+2026-07-07 21:27:48,395,719.3,626.7,109.3,22,131.3,259.8,39.5,,19,-125.9,-3.8,
+2026-07-07 21:43:16,395,993.5,982.8,110.4,19.8,130.2,503.1,43.4,,464,274.2,1.1,PSS_SPIKE review=graphics+native
+2026-07-07 21:44:07,27487,505.2,,8.6,,,,,,99,,,POST_REMEDIATION_VERIFY_OK
 ```

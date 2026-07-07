@@ -54,9 +54,16 @@ export function packInboundDroneTrailFlat(
       out[b + 1] = startMap.get(d.id) ?? orbitMsNow;
       out[b + 4] = 0;
     } else {
-      out[b + 1] = Number.isFinite(d.inboundElapsedSec) ? d.inboundElapsedSec : 0;
-      const cached = endMap.get(d.id);
-      out[b + 4] = cached ?? orbitMsNow;
+      const startMs =
+        startMap.get(d.id)
+        ?? (typeof d.inboundStartOrbitMs === 'number' ? d.inboundStartOrbitMs : undefined);
+      const endMs = d.inboundEndOrbitMs ?? endMap.get(d.id) ?? orbitMsNow;
+      let elapsedAtEnd = Number.isFinite(d.inboundElapsedSec) ? d.inboundElapsedSec : 0;
+      if (startMs != null && Number.isFinite(startMs)) {
+        elapsedAtEnd = Math.max(0, (endMs - startMs) * 0.001);
+      }
+      out[b + 1] = Math.min(out[b + 2]!, elapsedAtEnd);
+      out[b + 4] = endMs;
     }
   }
   return out;

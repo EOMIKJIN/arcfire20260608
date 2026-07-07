@@ -12,6 +12,7 @@ import {
   type MissionQuestPlacementRow,
 } from '../data/generated';
 import { getMissionById } from './missionCatalog';
+import { isArcCoreInstanceMissionId } from './arcCoreInstanceMissionResolver';
 import { findFirstIncompleteObjective, listActiveMissionBundles, type MissionActiveBundle } from './missionActiveBundles';
 import { sortMarketListingsByBuyPrice } from '../engine/TradeEngine';
 
@@ -46,10 +47,26 @@ export function listActiveQuestBuyPlacementsForPlanet(
       if (objective.type !== 'buy_goods') continue;
       if (bundle.progress.objectives[objective.id] === true) continue;
       const placement = placementByObjectiveId.get(objective.id);
-      if (!placement || placement.planetId !== planetId) continue;
-      if (placement.itemId !== objective.targetId) continue;
+      if (placement && placement.planetId === planetId && placement.itemId === objective.targetId) {
+        rows.push({
+          ...placement,
+          missionId: bundle.mission.id,
+          requiredQty: objective.quantity ?? 1,
+        });
+        continue;
+      }
+      if (!isArcCoreInstanceMissionId(bundle.mission.id)) continue;
+      if (bundle.mission.offerPlanetId !== planetId) continue;
+      const def = getItemDef(objective.targetId);
+      if (!def?.tradeable) continue;
       rows.push({
-        ...placement,
+        id: `arcinst_${bundle.mission.id}_${objective.id}`,
+        objectiveId: objective.id,
+        planetId,
+        itemId: objective.targetId,
+        stockQty: 99,
+        unitPriceOverride: Math.max(1, def.basePrice),
+        questTag: 'quest',
         missionId: bundle.mission.id,
         requiredQty: objective.quantity ?? 1,
       });

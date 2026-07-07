@@ -80,21 +80,20 @@ function spawnDroneEndHitFx(input: {
           inboundElapsedSec: drone.inboundDurationSec,
         }
       : drone;
+  const fxOrbitMs = drone.inboundEndOrbitMs ?? nowMs;
   const hit = resolveInboundDroneHitXY(
     posDrone,
     center,
     edgeR,
     impactR,
-    variant === 'impact'
-      ? nowMs
-      : resolveInboundDroneStartOrbitMs(drone, nowMs) + drone.inboundElapsedSec * 1000,
+    fxOrbitMs,
   );
   const fxId = fxKey;
   pushInboundDroneHitFx(hitFxRef.current, {
     id: fxId,
     x: hit.x,
     y: hit.y,
-    startOrbitMs: nowMs,
+    startOrbitMs: fxOrbitMs,
     variant,
   });
   pushHubInboundDroneDodgeFx(
@@ -102,7 +101,7 @@ function spawnDroneEndHitFx(input: {
       id: fxId,
       x: hit.x,
       y: hit.y,
-      startOrbitMs: nowMs,
+      startOrbitMs: fxOrbitMs,
       variant,
     }),
   );
@@ -365,7 +364,7 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
       if (d.phase === 'inbound' && !startOrbitMsById.has(d.id)) {
         startOrbitMsById.set(d.id, resolveInboundDroneStartOrbitMs(d, nowMs));
       } else if (d.phase !== 'inbound' && !endOrbitMsById.has(d.id)) {
-        endOrbitMsById.set(d.id, nowMs);
+        endOrbitMsById.set(d.id, d.inboundEndOrbitMs ?? nowMs);
       }
 
       if (shouldSpawnEndHitFx(prevPhase, d.phase)) {

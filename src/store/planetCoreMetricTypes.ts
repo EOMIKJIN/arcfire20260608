@@ -233,6 +233,21 @@ export type PlanetDailyUpkeepDetail = {
   creditsPaid: number;
 };
 
+/** 일 1회 소유권 증서 가격 — runPlanetOwnershipDeedPricingDailyPass */
+export type PlanetOwnershipDeedPricingDetail = {
+  version: 1;
+  kstDayKey: string;
+  priceCredits: number;
+  /** 연간 실물 수익(일 순·총 gross × annual_days) */
+  annualTangibleCredits: number;
+  /** PGP·구역·시설 기반 정성·영토가치 */
+  qualitativeCredits: number;
+  dailyGrossCredits: number;
+  dailyNetCredits: number;
+  pgpBmu: number;
+  updatedAtMs: number;
+};
+
 /**
  * 런타임 `PlanetCoreRuntime.detail` — 직렬화 가능한 얕은 JSON 위주.
  * 필드는 필요할 때만 채운다.
@@ -254,4 +269,6 @@ export type PlanetCoreMetricsDetail = {
   lastDailyUpkeep?: PlanetDailyUpkeepDetail;
   /** gauge = arcCoreBase + playerDevShare — 일일 composition apply 정본 */
   gaugeComposition?: PlanetCoreGaugeCompositionDetail;
+  /** 일 1회 배치 산출 소유권 증서 가격 — 무역소 listing 정본 */
+  ownershipDeedPricing?: PlanetOwnershipDeedPricingDetail;
 };

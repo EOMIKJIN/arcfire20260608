@@ -26,6 +26,7 @@ export type QuestMissionOfferRow = {
     instanceId: string;
     categoryTag: ArcCoreInstanceMissionCategoryTag;
     templateMissionId: string;
+    registeredAtMs: number;
   };
 };
 
@@ -191,14 +192,17 @@ export function listTavernQuestOffers(
         instanceId: entry.instanceId,
         categoryTag: entry.categoryTag,
         templateMissionId: entry.templateMissionId,
+        registeredAtMs: entry.registeredAtMs,
       },
     });
   }
 
   rows.sort((a, b) => {
-    const arcA = a.arcCoreAuto ? 1 : 0;
-    const arcB = b.arcCoreAuto ? 1 : 0;
-    if (arcA !== arcB) return arcB - arcA;
+    const tsA = a.arcCoreAuto?.registeredAtMs ?? 0;
+    const tsB = b.arcCoreAuto?.registeredAtMs ?? 0;
+    if (tsA !== tsB) return tsB - tsA;
+    if (a.arcCoreAuto && !b.arcCoreAuto) return -1;
+    if (!a.arcCoreAuto && b.arcCoreAuto) return 1;
     const levelA = a.mission.levelRequired ?? 1;
     const levelB = b.mission.levelRequired ?? 1;
     if (levelA !== levelB) return levelA - levelB;

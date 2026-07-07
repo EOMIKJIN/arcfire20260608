@@ -15,3 +15,11 @@ qco_obj_s023_a,obj_s023_a,transit_guaranteed,crimson_base,샌드박스 — 크�
 qco_obj_s025_a,obj_s025_a,transit_guaranteed,dark_haven,샌드박스 — 다크 현상금
 qco_obj_s027_a,obj_s027_a,transit_guaranteed,shadow_market,샌드박스 — 섀도우 추적자
 qco_obj_s029_a,obj_s029_a,transit_guaranteed,nightfall_citadel,샌드박스 — 나이트폴 현상금
+qco_obj_tq_c01_a,obj_tq_c01_a,transit_guaranteed,,ArcCore tq fighter
+qco_obj_tq_c02_a,obj_tq_c02_a,transit_guaranteed,,ArcCore tq fighter 2
+qco_obj_tq_c03_a,obj_tq_c03_a,transit_guaranteed,,ArcCore tq cruiser
+qco_obj_tq_c04_a,obj_tq_c04_a,transit_guaranteed,,ArcCore tq cruiser 2
+qco_obj_tq_b01_a,obj_tq_b01_a,transit_guaranteed,,ArcCore tq bounty
+qco_obj_tq_b02_a,obj_tq_b02_a,transit_guaranteed,,ArcCore tq bounty 2
+qco_obj_tq_b03_a,obj_tq_b03_a,transit_guaranteed,,ArcCore tq bounty 3
+qco_obj_tq_b04_a,obj_tq_b04_a,transit_guaranteed,,ArcCore tq bounty 4

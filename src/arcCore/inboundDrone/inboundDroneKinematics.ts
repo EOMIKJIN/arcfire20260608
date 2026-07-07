@@ -15,6 +15,18 @@ function finiteOr(v: number, fallback: number): number {
   return Number.isFinite(v) ? v : fallback;
 }
 
+/** FX·트레일 — 종료된 드론은 파괴/충돌 orbit 시각에 위치 고정 */
+export function resolveInboundDroneKinematicOrbitMs(
+  drone: ArcInboundDrone,
+  orbitMs: number,
+): number {
+  const end = drone.inboundEndOrbitMs;
+  if (drone.phase !== 'inbound' && typeof end === 'number' && Number.isFinite(end)) {
+    return end;
+  }
+  return orbitMs;
+}
+
 /** orbitClockMs 앵커 — 스폰 시 저장값 우선, 없으면 elapsed 역산 */
 export function resolveInboundDroneStartOrbitMs(
   drone: ArcInboundDrone,
@@ -26,19 +38,25 @@ export function resolveInboundDroneStartOrbitMs(
   return orbitMsNow - elapsed * 1000;
 }
 
-/** 0..1 — impacted는 1, inbound는 wall/저장 elapsed 우선 */
+/** 0..1 — impacted는 1; orbit 앵커 우선(연출·요격·FX와 마크 동기) */
 export function resolveInboundDroneProgressAtOrbitMs(
   drone: ArcInboundDrone,
   orbitMs: number,
 ): number {
   if (drone.phase === 'impacted') return 1;
   const dur = Math.max(0.001, finiteOr(drone.inboundDurationSec, 0.001));
+  const sampleMs = resolveInboundDroneKinematicOrbitMs(drone, orbitMs);
+  const orbitStart = drone.inboundStartOrbitMs;
+  if (typeof orbitStart === 'number' && Number.isFinite(orbitStart)) {
+    const elapsed = Math.max(0, (sampleMs - orbitStart) * 0.001);
+    return Math.min(1, elapsed / dur);
+  }
   const storedElapsed = finiteOr(drone.inboundElapsedSec, 0);
   if (storedElapsed > 0 || drone.inboundStartWallSec != null) {
     return Math.min(1, storedElapsed / dur);
   }
-  const startMs = resolveInboundDroneStartOrbitMs(drone, orbitMs);
-  const elapsed = Math.max(0, (orbitMs - startMs) * 0.001);
+  const startMs = resolveInboundDroneStartOrbitMs(drone, sampleMs);
+  const elapsed = Math.max(0, (sampleMs - startMs) * 0.001);
   return Math.min(1, elapsed / dur);
 }
 

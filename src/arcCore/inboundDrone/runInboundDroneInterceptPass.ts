@@ -72,6 +72,17 @@ function resolveStrongestInterceptZone(
   return best;
 }
 
+function syncDroneEndOrbitSnapshot(drone: ArcInboundDrone, orbitClockMs: number): void {
+  drone.inboundEndOrbitMs = orbitClockMs;
+  const start = drone.inboundStartOrbitMs;
+  if (typeof start === 'number' && Number.isFinite(start)) {
+    drone.inboundElapsedSec = Math.min(
+      drone.inboundDurationSec,
+      Math.max(0, (orbitClockMs - start) * 0.001),
+    );
+  }
+}
+
 /**
  * inbound 드론 — 레벨별 방어구 체류 누적 → 명중 판정 후 파괴.
  */
@@ -121,6 +132,7 @@ export function runInboundDroneInterceptPass(
     const roll = Math.random() * 100;
     if (roll < effectiveHitPct) {
       drone.phase = 'destroyed';
+      syncDroneEndOrbitSnapshot(drone, orbitClockMs);
     }
     drone.defenseZoneDwellSec = 0;
   }

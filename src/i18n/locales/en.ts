@@ -185,6 +185,9 @@ export const EN_DICTIONARY: I18nDictionary = {
   'shipyard.up.btnMax': 'Fully Upgraded',
   'shipyard.up.btnDo': 'Upgrade — +{lv} → +{next}',
   'shipyard.up.btnPoor': 'Not Enough Minerals',
+  'shipyard.up.btnUpgrading': 'Upgrading to +{next}…',
+  'shipyard.up.upgradingLabel': 'Upgrading to +{next}',
+  'shipyard.up.fail.in_progress': 'An upgrade is already in progress.',
 
   // ── Trade Port ──
   'trade.title': 'Trade Port',
@@ -386,6 +389,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'tavern.missionStatus.noQuestActive': 'No active accepted quests.',
   'tavern.missionStatus.noTutorialComplete': 'No completed tutorial story.',
   'tavern.missionStatus.noQuestComplete': 'No completed accepted quests.',
+  'tavern.missionStatus.moreCompleted': '···and {count} more completed (recent only)',
   'tavern.missionStatus.noActive': 'No active missions.',
   'tavern.missionStatus.noComplete': 'No completed missions yet.',
   'tavern.mission.badgeActivePrimary': 'Primary',

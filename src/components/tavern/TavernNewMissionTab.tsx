@@ -17,6 +17,7 @@ import {
   type InstanceMissionOfferState,
   type QuestMissionOfferRow,
 } from '../../missions/tavernMissionBoard';
+import { useArcCoreInstanceMissionBoardStore } from '../../store/arcCoreInstanceMissionBoardStore';
 import {
   PlanetFacilityCardTitleBlock,
   PlanetFacilitySectionHeader,
@@ -141,10 +142,18 @@ function InstanceMissionCard({
 export function TavernNewMissionTab({ planetId, playerLevel }: TavernNewMissionTabProps) {
   const t = useT();
   const progresses = useMissionStore((s) => s.progresses);
+  const listedCountForPlanet = useArcCoreInstanceMissionBoardStore((s) => {
+    if (!planetId) return 0;
+    let count = 0;
+    for (const entry of s.entries) {
+      if (entry.offerPlanetId === planetId && entry.boardStatus === 'listed') count += 1;
+    }
+    return count;
+  });
   const offers = useMemo(() => {
     if (!planetId) return [];
     return listTavernInstanceMissionOffers(planetId, playerLevel, progresses);
-  }, [planetId, playerLevel, progresses]);
+  }, [planetId, playerLevel, progresses, listedCountForPlanet]);
   const meta = t('tavern.newMissions.meta', { count: offers.length });
 
   if (!planetId) {

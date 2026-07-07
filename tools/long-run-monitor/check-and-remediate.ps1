@@ -93,8 +93,10 @@ $lastPid = $last[1]
 $lastGl = 0.0
 $lastPss = 0.0
 $lastViews = 0
+$lastNative = 0.0
 [void][double]::TryParse($last[4], [ref]$lastGl)
 [void][double]::TryParse($last[2], [ref]$lastPss)
+if ($last.Count -ge 8) { [void][double]::TryParse($last[7], [ref]$lastNative) }
 if ($last.Count -ge 11 -and $last[10] -match '^\d+') { $lastViews = [int]$last[10] }
 
 # --- Crash log tail (진짜 FATAL/SIGSEGV만 — W ReactNativeJS deprecation 제외) ---
@@ -207,6 +209,9 @@ if ($hubActiveNow -and $hardCeilingNow) {
 } elseif ($hubActiveNow -and (Test-MemPssSoftCeilingBreach -PssMb $lastPss)) {
   Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] PSS_SOFT_CEILING pss=$lastPss gl=$lastGl views=$lastViews native_reclaim_advisory"
   Write-Remediation "INFO PSS_SOFT_CEILING pss=$lastPss gl=$lastGl views=$lastViews -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)"
+} elseif ($hubActiveNow -and (Test-MemViewsNativeAdvisory -Views $lastViews -NativeHeapMb $lastNative -PssMb $lastPss)) {
+  Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] VIEWS_NATIVE_ADVISORY views=$lastViews native_heap=$lastNative pss=$lastPss gl=$lastGl (node/list retention — pre-hardceiling early warn)"
+  Write-Remediation "INFO VIEWS_NATIVE_ADVISORY views=$lastViews native_heap=$lastNative pss=$lastPss gl=$lastGl -> no restart (native_heap/views 축 조기 경보; 리스트 가상화 회귀 추적)"
 } elseif ($hubActiveNow -and $spikeCount -ge $MEM_CONSECUTIVE_SPIKE_LIMIT -and -not $monitorPaused) {
   Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] GL_LEAK_SUSPECT consecutive_spikes=$spikeCount views=$lastViews active_hub_only"
   Write-Remediation "INCIDENT GL_LEAK_SUSPECT spikes=$spikeCount views=$lastViews (interval=${IntervalMin}m)"

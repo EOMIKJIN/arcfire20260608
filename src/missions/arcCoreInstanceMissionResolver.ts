@@ -2,6 +2,10 @@ import type { Mission } from '../types';
 import { MISSIONS_FROM_CSV } from '../data/generated';
 import type { ArcCoreInstanceMissionBoardEntry } from './arcCoreInstanceMissionTypes';
 import { ARC_CORE_INSTANCE_MISSION_ID_PREFIX } from './arcCoreInstanceMissionTypes';
+import {
+  patchTavernInstanceObjectiveTargetId,
+  resolveTavernInstancePlanetContext,
+} from './arcCoreInstanceMissionPlanetContext';
 
 const materializedByInstanceId = new Map<string, Mission>();
 const templateByInstanceId = new Map<string, string>();
@@ -18,10 +22,14 @@ export function resolveArcCoreInstanceTemplateMissionId(missionId: string): stri
 function cloneMissionFromTemplate(entry: ArcCoreInstanceMissionBoardEntry): Mission | undefined {
   const template = MISSIONS_FROM_CSV[entry.templateMissionId];
   if (!template) return undefined;
+  const ctx = resolveTavernInstancePlanetContext(entry.offerPlanetId);
   return {
     ...template,
     id: entry.instanceId,
-    objectives: template.objectives.map((obj) => ({ ...obj })),
+    objectives: template.objectives.map((obj) => ({
+      ...obj,
+      targetId: patchTavernInstanceObjectiveTargetId(obj.type, obj.targetId, ctx),
+    })),
     prerequisiteIds: [...template.prerequisiteIds],
     rewards: { ...template.rewards, items: template.rewards.items ? [...template.rewards.items] : undefined },
     offerPlanetId: entry.offerPlanetId,

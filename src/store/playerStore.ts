@@ -67,6 +67,7 @@ import {
   getMineralUpgradeOreCost,
   getFinalMineralUpgradeCap,
   isMineralUpgradeStatId,
+  resolveMineralUpgradeDurationSec,
 } from '../game/shipyardMineralUpgrade/mineralUpgradeModel';
 import { useAccountProfileStore } from './accountProfileStore';
 import { useUserSessionStore } from './userSessionStore';
@@ -496,8 +497,10 @@ interface PlayerState {
   removeHangarShipByNpcId: (npcCapitalShipId: string) => boolean;
   /** 아이템 획득은 인벤토리 슬롯 단일 체계로 누적 */
   addInventoryItem: (goodId: string, quantity: number) => void;
-  /** 조선소 광물 업그레이드 — ore 차감·레벨+1. shipyardLevel은 UI(조선소)에서 전달(순환 import 방지). */
+  /** 조선소 광물 업그레이드 — ore 차감 후 강화 job 시작(행성개발 게이지 진행). shipyardLevel은 UI(조선소)에서 전달(순환 import 방지). */
   applyMineralUpgrade: (statId: string, shipyardLevel?: number) => { ok: boolean; reason?: string };
+  /** 완료 시각이 지난 광물 강화 job을 정산(레벨 반영·job 제거). 변경이 있으면 true. */
+  settleMineralUpgradeJobs: (nowMs?: number) => boolean;
   /** @deprecated — `recordOrbitalMiningDelivery` 사용 */
   recordOrbitalMiningOre1Delivery: (planetId: string, quantity: number) => void;
   /** 궤도 채굴 무역소 입고 실적(행성·광물 id별 누적) */
@@ -785,6 +788,8 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     const { player } = get();
     if (!player) return { ok: false, reason: 'no_player' };
     if (!isMineralUpgradeStatId(statId)) return { ok: false, reason: 'bad_stat' };
+    // 진행 중 job이 있으면 중복 강화 금지(게이지 진행 중)
+    if (player.mineralUpgradeJobs?.[statId]) return { ok: false, reason: 'in_progress' };
     const current = Math.max(0, Math.floor(player.mineralUpgrades?.[statId] ?? 0));
     const combatLevel = player.combatProficiency?.combatLevel ?? player.level ?? 1;
     const cap = getFinalMineralUpgradeCap(combatLevel, shipyardLevel ?? 0);
@@ -796,16 +801,58 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     for (const c of cost) {
       if (countGoodInInventory(slots, c.oreId) < c.qty) return { ok: false, reason: 'insufficient' };
     }
-    // 2) ore 차감(트랜잭션)
+    // 2) ore 차감(트랜잭션) — 착수 시점에 소비(행성개발 설치 job과 동일)
     for (const c of cost) {
       const next = removeGoodFromInventorySlots(slots, c.oreId, c.qty);
       if (!next) return { ok: false, reason: 'deduct_failed' };
       slots = next;
     }
-    const mineralUpgrades = { ...(player.mineralUpgrades ?? {}), [statId]: targetLevel };
-    set({ player: { ...player, inventorySlots: slots, mineralUpgrades } });
+    // 3) 즉시 완료가 아니라 강화 job 시작(레벨은 완료 시 반영)
+    const nowMs = Date.now();
+    const durationSec = resolveMineralUpgradeDurationSec(statId, targetLevel);
+    const mineralUpgradeJobs = {
+      ...(player.mineralUpgradeJobs ?? {}),
+      [statId]: {
+        targetLevel,
+        startedAtMs: nowMs,
+        completeAtMs: nowMs + Math.max(0, durationSec) * 1000,
+      },
+    };
+    set({ player: { ...player, inventorySlots: slots, mineralUpgradeJobs } });
     get().schedulePersist();
     return { ok: true };
+  },
+
+  settleMineralUpgradeJobs: (nowMs = Date.now()) => {
+    const { player } = get();
+    if (!player) return false;
+    const jobs = player.mineralUpgradeJobs;
+    if (!jobs) return false;
+    const statIds = Object.keys(jobs);
+    if (statIds.length === 0) return false;
+    let changed = false;
+    const nextJobs: Record<string, NonNullable<typeof jobs>[string]> = {};
+    const nextUpgrades = { ...(player.mineralUpgrades ?? {}) };
+    for (const statId of statIds) {
+      const job = jobs[statId]!;
+      if (nowMs >= job.completeAtMs) {
+        const prevLv = Math.max(0, Math.floor(nextUpgrades[statId] ?? 0));
+        nextUpgrades[statId] = Math.max(prevLv, job.targetLevel);
+        changed = true;
+      } else {
+        nextJobs[statId] = job;
+      }
+    }
+    if (!changed) return false;
+    set({
+      player: {
+        ...player,
+        mineralUpgrades: nextUpgrades,
+        mineralUpgradeJobs: Object.keys(nextJobs).length > 0 ? nextJobs : undefined,
+      },
+    });
+    get().schedulePersist();
+    return true;
   },
 
   recordOrbitalMiningOre1Delivery: (planetId, quantity) => {

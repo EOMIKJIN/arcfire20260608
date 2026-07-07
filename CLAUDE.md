@@ -40,6 +40,14 @@ self-check: `npx tsc --noEmit -p tsconfig.client.json` · Skia 변경 시 `npm r
 4. 경제/AABS **고빈도** 실행 — **일 1회** `runArcCoreDailyOpsBatch()` (12:00 KST)
 5. Stage 1 레이아웃 상수 임의 변경 (`planetMainStageLayout.ts`)
 
+## 착수 대기 작업 (READY)
+
+| task | handoff | 명세 |
+|------|---------|------|
+| 플레이어 독립국가(녹색 국경) | `tools/kim-team-lead/reports/kim-claude-ready-player-independent-nation.md` | `docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md` |
+
+대표님 지시 시 위 두 파일부터 읽고 M1+M2 구현 → `kim-claude-handoff-pending.md` **PENDING**.
+
 ## 어디를 보면 되는지
 
 | 영역 | 경로 |

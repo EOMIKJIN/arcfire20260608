@@ -2707,3 +2707,52 @@ ref=tools/long-run-monitor/logs/soak-worklet-mirror-20260621.json
 [2026-07-06 08:12:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260706-0800.md verdict=OK
 [2026-07-06 08:14:12] DAILY_8AM_REPORT 2026-07-06 08:14:12 KST
 [2026-07-06 08:14:12] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260706-0800.md verdict=OK
+[2026-07-07 05:48:26] PSS_SOFT_CEILING pss=807.4 gl=66.7 views=372 native_reclaim_advisory
+[2026-07-07 06:03:48] PSS_SOFT_CEILING pss=805.6 gl=66.3 views=389 native_reclaim_advisory
+[2026-07-07 07:20:24] PSS_SOFT_CEILING pss=811.8 gl=66.3 views=381 native_reclaim_advisory
+[2026-07-07 08:00:00] DAILY_8AM_REPORT 2026-07-07 08:00:00 KST
+[2026-07-07 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260707-0800.md verdict=OK
+[2026-07-07 08:02:05] DAILY_8AM_REPORT 2026-07-07 08:02:05 KST
+[2026-07-07 08:02:05] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260707-0800.md verdict=OK
+[2026-07-07 08:04:07] DAILY_8AM_REPORT 2026-07-07 08:04:07 KST
+[2026-07-07 08:04:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260707-0800.md verdict=OK
+[2026-07-07 08:06:09] DAILY_8AM_REPORT 2026-07-07 08:06:09 KST
+[2026-07-07 08:06:09] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260707-0800.md verdict=OK
+[2026-07-07 08:06:24] PSS_SOFT_CEILING pss=800.1 gl=66.1 views=360 native_reclaim_advisory
+[2026-07-07 08:08:10] DAILY_8AM_REPORT 2026-07-07 08:08:10 KST
+[2026-07-07 08:08:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260707-0800.md verdict=OK
+[2026-07-07 08:10:12] DAILY_8AM_REPORT 2026-07-07 08:10:12 KST
+[2026-07-07 08:10:12] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260707-0800.md verdict=OK
+[2026-07-07 08:12:13] DAILY_8AM_REPORT 2026-07-07 08:12:13 KST
+[2026-07-07 08:12:13] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260707-0800.md verdict=OK
+[2026-07-07 08:14:14] DAILY_8AM_REPORT 2026-07-07 08:14:14 KST
+[2026-07-07 08:14:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260707-0800.md verdict=OK
+[2026-07-07 08:21:44] PSS_SOFT_CEILING pss=801.9 gl=68.3 views=388 native_reclaim_advisory
+[2026-07-07 08:37:11] PSS_SOFT_CEILING pss=805.9 gl=64.3 views=383 native_reclaim_advisory
+[2026-07-07 09:08:14] PSS_SOFT_CEILING pss=802.3 gl=63.1 views=360 native_reclaim_advisory
+[2026-07-07 10:25:08] PSS_SOFT_CEILING pss=814.9 gl=37.3 views=386 native_reclaim_advisory
+[2026-07-07 10:40:29] PSS_SOFT_CEILING pss=804.7 gl=34.3 views=349 native_reclaim_advisory
+[2026-07-07 10:55:55] PSS_SOFT_CEILING pss=821.4 gl=38.5 views=354 native_reclaim_advisory
+[2026-07-07 11:11:19] PSS_SOFT_CEILING pss=816.2 gl=31.4 views=353 native_reclaim_advisory
+[2026-07-07 11:26:43] PSS_SOFT_CEILING pss=848.7 gl=34.5 views=499 native_reclaim_advisory
+[2026-07-07 11:42:08] GL_HARD_CEILING gl=142 pss=1005.7 views=558
+[2026-07-07 11:42:08] REFIX_REQUESTED gl_critical_active_hub
+[2026-07-07 11:44:38] INVESTIGATION_TRIGGERED mem_anomaly
+[2026-07-07 13:30:39] PSS_SOFT_CEILING pss=871.9 gl=137.1 views=558 native_reclaim_advisory
+[2026-07-07 17:52:12] PSS_SOFT_CEILING pss=853.6 gl=147 views=559 native_reclaim_advisory
+[2026-07-07 18:07:45] PSS_SOFT_CEILING pss=823.1 gl=147.1 views=559 native_reclaim_advisory
+[2026-07-07 18:23:09] PSS_SOFT_CEILING pss=812.2 gl=129.4 views=372 native_reclaim_advisory
+[2026-07-07 18:38:32] PSS_SOFT_CEILING pss=826.6 gl=127.6 views=395 native_reclaim_advisory
+[2026-07-07 18:53:55] PSS_SOFT_CEILING pss=811.9 gl=127.4 views=372 native_reclaim_advisory
+[2026-07-07 19:09:17] GL_ELEVATED mounting_or_insufficient_samples gl=127.3 pss=798.2 views=367 restart_held
+[2026-07-07 19:24:39] GL_ELEVATED mounting_or_insufficient_samples gl=129.5 pss=799.9 views=373 restart_held
+[2026-07-07 19:40:01] PSS_SOFT_CEILING pss=809.1 gl=123.3 views=371 native_reclaim_advisory
+[2026-07-07 19:55:25] PSS_SOFT_CEILING pss=844.5 gl=128 views=390 native_reclaim_advisory
+[2026-07-07 20:10:49] GL_ELEVATED mounting_or_insufficient_samples gl=123.3 pss=787.6 views=365 restart_held
+[2026-07-07 20:26:12] PSS_SOFT_CEILING pss=802.4 gl=129.3 views=363 native_reclaim_advisory
+[2026-07-07 20:41:36] PSS_SOFT_CEILING pss=803.1 gl=123.3 views=367 native_reclaim_advisory
+[2026-07-07 20:56:59] GL_ELEVATED mounting_or_insufficient_samples gl=110.5 pss=784.6 views=371 restart_held
+[2026-07-07 21:12:30] PSS_SOFT_CEILING pss=845.2 gl=113.1 views=383 native_reclaim_advisory
+[2026-07-07 21:43:25] GL_HARD_CEILING gl=110.4 pss=993.5 views=464
+[2026-07-07 21:43:25] REFIX_REQUESTED gl_critical_active_hub
+[2026-07-07 21:48:00] INVESTIGATION_TRIGGERED mem_anomaly

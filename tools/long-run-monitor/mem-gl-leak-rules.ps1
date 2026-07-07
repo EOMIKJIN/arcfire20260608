@@ -15,6 +15,10 @@ $script:MEM_GL_HARD_CEILING_MB = 200
 $script:MEM_PSS_HARD_CEILING_MB = 950
 # Native Reclaim Tier soft zone — 기록·앱 soft pass 권고, force-stop 없음
 $script:MEM_PSS_SOFT_CEILING_MB = 800
+# views/native_heap 단독 급증 조기 경보 — PSS 하드실링(950) 전에 먼저 감지·기록만(force-stop 없음).
+# 2026-07-07 native_heap 주도 하드실링(views 19→464·native_heap +243MB, GL 정상) 재발 감지용.
+$script:MEM_VIEWS_RETENTION_WARN = 450
+$script:MEM_NATIVE_HEAP_WARN_MB = 420
 
 function Test-MemHubActivationTransition {
   param(
@@ -89,6 +93,22 @@ function Test-MemHardCeilingBreach {
 function Test-MemPssSoftCeilingBreach {
   param([double]$PssMb)
   return ($PssMb -ge $script:MEM_PSS_SOFT_CEILING_MB) -and ($PssMb -lt $script:MEM_PSS_HARD_CEILING_MB)
+}
+
+# views/native_heap 단독 급증 조기 경보 — PSS 하드실링(950) 도달 전에 감지.
+# GL은 정상이라 GL 계열 판정에 안 걸리고 PSS도 아직 soft 미만일 수 있는 native_heap/views 축을 잡는다.
+# 기록·advisory 전용(강제 재시작 없음) — force-stop 확대로 인한 false-positive 재기동을 피한다.
+function Test-MemViewsNativeAdvisory {
+  param(
+    [int]$Views,
+    [double]$NativeHeapMb,
+    [double]$PssMb
+  )
+  # 이미 soft/hard 실링에서 다뤄지는 구간은 중복 기록하지 않는다.
+  if ($PssMb -ge $script:MEM_PSS_SOFT_CEILING_MB) { return $false }
+  if ($Views -ge $script:MEM_VIEWS_RETENTION_WARN) { return $true }
+  if ($NativeHeapMb -ge $script:MEM_NATIVE_HEAP_WARN_MB) { return $true }
+  return $false
 }
 
 # logcat tail — Firebase deprecation(W ReactNativeJS) · 타앱 crashed service · 자동조치 force-stop 제외.

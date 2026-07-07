@@ -35,6 +35,17 @@ export interface LevelUpSummary {
   proficiencyAfter: PlayerCombatProficiency;
 }
 
+/**
+ * 조선소 광물 업그레이드 진행 작업 — 행성개발 시설 job과 동일 구조(시작·완료 시각 기반 진행률).
+ * 강화가 즉시 완료가 아니라 시간이 걸리는 작업이 되어 디지털 게이지로 진행을 표시한다.
+ */
+export interface MineralUpgradeJob {
+  /** 완료 시 도달할 강화 레벨 */
+  targetLevel: number;
+  startedAtMs: number;
+  completeAtMs: number;
+}
+
 export interface Player {
   uid: string;
   nickname: string;
@@ -82,6 +93,8 @@ export interface Player {
   combatProficiency: PlayerCombatProficiency;
   /** 조선소 광물 업그레이드 — statId(mineralUpgradeModel) → 강화 레벨. 계정 귀속 진행 데이터. */
   mineralUpgrades?: Record<string, number>;
+  /** 조선소 광물 업그레이드 진행 중 작업 — statId → 강화 job(행성개발 게이지와 동일 진행 표시). */
+  mineralUpgradeJobs?: Record<string, MineralUpgradeJob>;
   createdAt: number;
 }
 

@@ -1,4 +1,4 @@
-# Daily audit — 2026-07-06T15:00:09.146Z
+# Daily audit — 2026-07-07T15:00:07.030Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -29,11 +29,12 @@ Generated CSV-driven content TS files at src/data/generated
   [info] obj_s008_a: vega_base — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
   [info] obj_s020_a: titan_ruins — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
 === audit:mission-quest-placements ===
-buy_goods objectives: 16
-defeat_enemy objectives: 16
-placements: 16 · combat_ops: 16
+buy_goods objectives: 25
+defeat_enemy objectives: 24
+placements: 16 · combat_ops: 24
+tq_* tavern templates: 22 · tavern planets: 18
 
-PASS — 모든 buy_goods/defeat_enemy 목표에 퀘스트 배치·전투 운영 행 존재
+PASS — buy_goods/defeat_enemy 배치·tq_* materialize·보상 item 정적 검증 OK
 ```
 
 **exit:** 0
@@ -47,17 +48,17 @@ PASS — 모든 buy_goods/defeat_enemy 목표에 퀘스트 배치·전투 운영
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
 - 148,428 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 115,935 — `src/data/generated/csvStoryScenes.ts`
-- 74,600 — `src/i18n/locales/ko.ts`
+- 74,888 — `src/i18n/locales/ko.ts`
 - 71,055 — `src/data/generated/csvWeapons.ts`
 - 70,177 — `app/(game)/planet.tsx`
 - 70,149 — `src/data/balance/generated/csvSynthSystemColonization.ts`
-- 67,968 — `src/i18n/locales/en.ts`
-- 65,965 — `app/(game)/worldmap.tsx`
+- 68,243 — `src/i18n/locales/en.ts`
+- 66,107 — `app/(game)/worldmap.tsx`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
+- 60,176 — `src/data/generated/csvMissions.ts`
 - 47,321 — `app/(game)/shipyard.tsx`
-- 45,731 — `app/(game)/trade.tsx`
+- 47,046 — `app/(game)/trade.tsx`
 - 43,141 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
-- 38,935 — `src/data/generated/csvMissions.ts`
 
 ## Planet hub eager `src/combat` import (should be absent)
 
@@ -68,6 +69,7 @@ PASS — 모든 buy_goods/defeat_enemy 목표에 퀘스트 배치·전투 운영
 - `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - `src/components/planet/PlanetMainScanActionRow.tsx`
 - `src/components/planet/SkiaPlanetNebulaShaderBackdrop.tsx`
+- `src/components/shipyard/ShipyardMineralUpgradeTab.tsx`
 - `src/game/planetHub/usePlanetHubInterval.ts`
 - `src/systems/mining/useMiningDriver.ts`
 - `src/ui/overlay/content/PlanetDefenseSatelliteDevContent.tsx`
