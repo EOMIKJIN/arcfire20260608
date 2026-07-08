@@ -160,7 +160,10 @@ export function tryCompleteDefenseSatelliteUpgrade(planetId: string): boolean {
   if (!detail.upgradeJob) return false;
   const now = Date.now();
   if (now < detail.upgradeJob.completeAtMs) return false;
-  if (isFacilityInstallJob(detail)) {
+  const installJobComplete =
+    isFacilityInstallJob(detail)
+    || (!detail.installed && detail.upgradeJob.targetLevel === 1);
+  if (installJobComplete) {
     patchDefenseSatelliteDetail(planetId, {
       installed: true,
       level: 1,

@@ -43,16 +43,18 @@ export const PlanetNebulaImageBackdrop = memo(function PlanetNebulaImageBackdrop
       {showBackdrop ? (
         <Image
           source={backgroundImageSource}
-          style={[styles.layer, styles.backdropImage]}
+          style={[styles.layer, styles.backdropImage, { width: size, height: size }]}
           resizeMode="cover"
+          resizeMethod="resize"
           accessibilityIgnoresInvertColors
         />
       ) : null}
       {showNebula ? (
         <Image
           source={nebulaBakedImageSource}
-          style={styles.layer}
+          style={[styles.layer, { width: size, height: size }]}
           resizeMode="cover"
+          resizeMethod="resize"
           accessibilityIgnoresInvertColors
         />
       ) : null}

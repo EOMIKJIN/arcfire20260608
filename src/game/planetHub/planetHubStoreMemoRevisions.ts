@@ -1,4 +1,5 @@
 import type { PlanetCoreMetricsDetail } from '../../store/planetCoreMetricTypes';
+import { readDefenseSatelliteDetailFromCoreDetail } from '../planetDevelopment/planetDefenseSatelliteRuntime';
 
 /** Zustand selector — `JSON.stringify` 대신 bounded revision key (허브 re-render·GC 톱니 완화) */
 export function missionProgressMemoRev(progresses: Record<string, { objectives?: Record<string, boolean> }>): string {
@@ -37,12 +38,13 @@ export function planetHubFacilityDevMemoRev(
   return ids.map((id) => facilityModuleMemoToken(id, byModule[id] as Parameters<typeof facilityModuleMemoToken>[1])).join(';');
 }
 
-/** 방위위성·궤도 월드오브젝트 — defense_satellite 모듈/legacy 필드만 */
+/** 방위위성·궤도 월드오브젝트 — defense_satellite 모듈/legacy 병합(byModuleId·legacy 분기 무시 방지) */
 export function planetHubDefenseSatelliteMemoRev(
   detail: PlanetCoreMetricsDetail | undefined,
 ): string {
-  const fromModule = detail?.development?.byModuleId?.defense_satellite;
-  const fromLegacy = detail?.defenseSatellite;
-  const mod = (fromModule ?? fromLegacy) as Parameters<typeof facilityModuleMemoToken>[1];
-  return facilityModuleMemoToken('defense_satellite', mod);
+  const merged = readDefenseSatelliteDetailFromCoreDetail(detail);
+  return facilityModuleMemoToken(
+    'defense_satellite',
+    merged as Parameters<typeof facilityModuleMemoToken>[1],
+  );
 }

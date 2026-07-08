@@ -1,4 +1,4 @@
-# Daily audit — 2026-07-07T15:00:07.030Z
+# Daily audit — 2026-07-08T15:00:09.571Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -58,7 +58,7 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·보상 item 정적 검
 - 60,176 — `src/data/generated/csvMissions.ts`
 - 47,321 — `app/(game)/shipyard.tsx`
 - 47,046 — `app/(game)/trade.tsx`
-- 43,141 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
+- 43,388 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
 
 ## Planet hub eager `src/combat` import (should be absent)
 

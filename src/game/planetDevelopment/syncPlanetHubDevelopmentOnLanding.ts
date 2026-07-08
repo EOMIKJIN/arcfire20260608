@@ -1,4 +1,5 @@
 import { migrateLegacyPlanetDevModulesForPlanet } from './planetFacilityLegacyMigration';
+import { reconcileDefenseSatelliteDevRecordOnLanding } from './planetDefenseSatelliteRuntime';
 import { tryCompleteAllPlanetDevJobs } from './planetDevelopmentListRowModel';
 import { invalidatePlanetWorldObjectsListCache } from '../../worldObjects/planetWorldObjectsListCacheRegistry';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
@@ -19,6 +20,7 @@ export async function syncPlanetHubDevelopmentOnLanding(planetId: string): Promi
   }
 
   migrateLegacyPlanetDevModulesForPlanet(planetId);
+  reconcileDefenseSatelliteDevRecordOnLanding(planetId);
   tryCompleteAllPlanetDevJobs(planetId);
   invalidatePlanetWorldObjectsListCache(planetId);
 }

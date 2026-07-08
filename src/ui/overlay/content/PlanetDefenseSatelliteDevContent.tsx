@@ -4,6 +4,7 @@ import { listPlanetDefenseSatelliteLevelRows } from '../../../arcCore/balance/pl
 import { PlanetHubDigitalGauge } from '../../../components/planet/PlanetHubActionGaugeSlot';
 import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';
 import { usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore';
+import { readDefenseSatelliteDetailFromCoreDetail } from '../../../game/planetDevelopment/planetDefenseSatelliteRuntime';
 import {
   buildDefenseSatelliteDevSnapshot,
   formatDefenseSatelliteDurationLabel,
@@ -46,8 +47,7 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
   const defenseRev = usePlanetCoreRuntimeStore(
     useCallback((s) => {
       const detail = s.byPlanetId[planetId]?.detail;
-      const dev = detail?.development?.byModuleId?.defense_satellite ?? detail?.defenseSatellite;
-      return JSON.stringify(dev ?? null);
+      return JSON.stringify(readDefenseSatelliteDetailFromCoreDetail(detail));
     }, [planetId]),
   );
 

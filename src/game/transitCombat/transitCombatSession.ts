@@ -6,7 +6,6 @@ import { create } from 'zustand';
 import { usePlayerStore } from '../../store/playerStore';
 import { useWorldStore } from '../../store/worldStore';
 import { applyReachSystemMissionObjectives } from '../../missions/applyReachSystemMissionObjectives';
-import { tryPresentPendingMissionClearDialog } from '../../missions/missionPlanetHubSync';
 
 export type TransitCombatSession = {
   originSystemId: string;
@@ -59,7 +58,8 @@ export const useTransitCombatSessionStore = create<TransitCombatSessionState>((s
     const playerAfterMove = usePlayerStore.getState().player;
     if (playerAfterMove) {
       applyReachSystemMissionObjectives(session.destinationSystemId, playerAfterMove, opts);
-      tryPresentPendingMissionClearDialog();
+      // 미션 클리어 대화는 transitCombatPostFlow.presentMissionClearWhenReady 에서만 연출.
+      // commitArrival 에서 즉시 present 하면 combat 의 LOADING blocking 과 겹쳐 멈춤(해적소탕 등).
     }
 
     void persist();

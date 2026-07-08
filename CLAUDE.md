@@ -42,8 +42,9 @@ self-check: `npx tsc --noEmit -p tsconfig.client.json` · Skia 변경 시 `npm r
 
 ## 착수 대기 작업 (READY)
 
-| task | handoff | 명세 |
+| 착수 대기 작업 | handoff | 명세 |
 |------|---------|------|
+| **허브 순회 native_heap (A안)** | `tools/kim-team-lead/reports/kim-claude-ready-hub-hop-native-heap-fix.md` | A1 Image 다운샘플 + A2 planet_change Fresco trim |
 | 플레이어 독립국가(녹색 국경) | `tools/kim-team-lead/reports/kim-claude-ready-player-independent-nation.md` | `docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md` |
 
 대표님 지시 시 위 두 파일부터 읽고 M1+M2 구현 → `kim-claude-handoff-pending.md` **PENDING**.

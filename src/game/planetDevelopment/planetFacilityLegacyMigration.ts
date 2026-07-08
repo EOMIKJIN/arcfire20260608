@@ -185,6 +185,10 @@ export function migrateLegacyPlanetDevModulesForPlanet(planetId: string): boolea
   if (seedCsvLegacyPlanetDevModulesForPlanet(planetId)) migrated = true;
   if (normalizePlanetDevModulesToBaselineLevel(planetId)) migrated = true;
   if (uninstallCsvWorldLegacyDevModules(planetId)) migrated = true;
+  // byModuleId/legacy defenseSatellite 분기 복구 — 착륙 대기 없이 전 행성 일괄 복구(부트마다 실행)
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { reconcileDefenseSatelliteDevRecordOnLanding } = require('./planetDefenseSatelliteRuntime') as typeof import('./planetDefenseSatelliteRuntime');
+  if (reconcileDefenseSatelliteDevRecordOnLanding(planetId)) migrated = true;
   return migrated;
 }
 

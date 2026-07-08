@@ -5,7 +5,7 @@ export const GAME_SAVE_BACKUP_SCHEMA_VERSION = 2;
 /** 복구 가능 기간 (7일) */
 export const GAME_SAVE_BACKUP_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
 
-/** 자동 백업 최소 간격 — Firestore 쓰기·페이로드 폭주 방지 */
+/** 자동 백업 최소 간격 — Firestore 쓰기·페이로드 폭주 방지. 7일 보관(MAX_PER_UID=28)과 정합되는 6h로 통일 */
 export const GAME_SAVE_BACKUP_MIN_INTERVAL_MS = 6 * 60 * 60 * 1000;
 
 /** uid당 최대 스냅샷 수 (초과 시 오래된 것부터 삭제) */

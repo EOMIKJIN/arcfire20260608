@@ -1,3 +1,4 @@
+import { trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
 import { compactPlanetMemoRegistryShells } from '../planetMemoCache';
 import { prunePlanetNebulaProfilesForPlanets } from '../../store/planetNebulaStore';
 import { runCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
@@ -10,8 +11,12 @@ export function runPlanetChangeNativeReclaimLight(previousPlanetId: string): voi
   runCombatSkiaPresentationReclaim();
   prunePlanetNebulaProfilesForPlanets([previousPlanetId]);
   compactPlanetMemoRegistryShells();
-  if (typeof __DEV__ !== 'undefined' && __DEV__) {
-    // eslint-disable-next-line no-console
-    console.log(`[MEM] runPlanetChangeNativeReclaimLight prev=${previousPlanetId}`);
-  }
+  void trimNativeBitmapCachesAsync().then((result) => {
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `[MEM] runPlanetChangeNativeReclaimLight prev=${previousPlanetId} fresco=${result.frescoCleared ?? false}`,
+      );
+    }
+  });
 }

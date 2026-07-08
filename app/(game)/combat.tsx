@@ -188,6 +188,7 @@ export default function CombatScreen() {
   ) => {
     const completed = await runTransitCombatPostFlow(postFlow);
     if (completed) {
+      setResolving(true);
       markPostHubCombatWorldmapIngressReclaim();
       scheduleCombatExitNavigate(() => router.replace('/(game)/worldmap'));
     } else {
@@ -199,7 +200,6 @@ export default function CombatScreen() {
   const handleVictory = useCallback(async () => {
     if (resolvedRef.current) return;
     resolvedRef.current = true;
-    setResolving(true);
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     const destroyedLabels = await usePlayerStore.getState().applyPostCombatDurabilityWear(Date.now());
     const expGain = enemyTemplate.expReward;
@@ -259,7 +259,6 @@ export default function CombatScreen() {
             void (async () => {
               if (resolvedRef.current) return;
               resolvedRef.current = true;
-              setResolving(true);
               useTransitCombatSessionStore.getState().commitArrival({
                 deliverFailTitle: t('worldmap.deliverFailTitle'),
                 deliverFailBody: t('worldmap.deliverFailBody'),

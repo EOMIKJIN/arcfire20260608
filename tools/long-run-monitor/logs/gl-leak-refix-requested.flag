@@ -1,1 +1,1 @@
-﻿{"logcatCapture":"D:\\arcfire20260607\\tools\\long-run-monitor\\logs\\incident-logcat-20260707-214756.log","requestedAt":"2026-07-07 21:47:59","reason":"mem_anomaly","alertLine":"[2026-07-07 21:43:25] GL_HARD_CEILING gl=110.4 pss=993.5 views=464"}
+﻿{"logcatCapture":"D:\\arcfire20260607\\tools\\long-run-monitor\\logs\\incident-logcat-20260708-203530.log","requestedAt":"2026-07-08 20:35:32","reason":"mem_anomaly","alertLine":"[2026-07-08 20:33:43] GL_HARD_CEILING gl=118.1 pss=962.9 views=559"}

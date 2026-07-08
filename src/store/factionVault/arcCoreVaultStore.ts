@@ -19,6 +19,3 @@ export const useArcCoreVaultStore = createFactionVaultStore({
   txnHistoryLimit: getTradeRouteTxnHistoryLimit,
   allowNegativeBalance: vaultAllowsNegativeBalance,
 });
-
-/** @deprecated 수송선단·아크코어 금고 분리 — convoy는 transport fleet, RED 행성은 arc vault */
-export const useArcCoreTempBankStore = useArcCoreVaultStore;

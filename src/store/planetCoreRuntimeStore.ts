@@ -185,9 +185,11 @@ function normalizeGlobalMultipliers(raw: unknown): PlanetCoreGlobalMultipliers {
 function parseStoragePayload(raw: string | null): {
   byPlanetId: Record<string, PlanetCoreRuntime>;
   globalMultipliers: PlanetCoreGlobalMultipliers;
+  /** true — raw가 존재했는데 JSON.parse 자체가 실패(손상). 최초무데이터(raw=null)와 구분 */
+  corrupted: boolean;
 } {
   if (!raw) {
-    return { byPlanetId: {}, globalMultipliers: { ...DEFAULT_GLOBAL_MULTIPLIERS } };
+    return { byPlanetId: {}, globalMultipliers: { ...DEFAULT_GLOBAL_MULTIPLIERS }, corrupted: false };
   }
   try {
     const parsed = JSON.parse(raw) as Record<string, unknown>;
@@ -214,9 +216,55 @@ function parseStoragePayload(raw: string | null): {
     return {
       byPlanetId: fromDisk,
       globalMultipliers: normalizeGlobalMultipliers(parsed.globalMultipliers),
+      corrupted: false,
     };
   } catch {
-    return { byPlanetId: {}, globalMultipliers: { ...DEFAULT_GLOBAL_MULTIPLIERS } };
+    return { byPlanetId: {}, globalMultipliers: { ...DEFAULT_GLOBAL_MULTIPLIERS }, corrupted: true };
+  }
+}
+
+const CORRUPT_STASH_KEY = 'arcfire_planet_core_runtime_corrupt_stash_v1';
+
+/** 손상된 원본 raw를 포렌식용으로 별도 키에 보관(최선노력, 실패해도 무시) */
+async function stashCorruptedPlanetCoreRuntimePayload(raw: string): Promise<void> {
+  try {
+    await AsyncStorage.setItem(
+      CORRUPT_STASH_KEY,
+      JSON.stringify({ atMs: Date.now(), raw }),
+    );
+  } catch {
+    /* forensics only — 실패해도 부팅에 영향 없음 */
+  }
+}
+
+/**
+ * 로컬 파싱 실패(손상) 시에만 호출 — 최신 Firestore 백업의 이 키만 단건 복구 시도.
+ * 매 부팅 조회가 아니라 손상이 실제로 감지된 드문 경우에만 실행되므로 리스크 낮음.
+ * 실패(오프라인·백업 없음 등) 시 null 반환 — 호출부가 기존 빈 기본값으로 계속 진행.
+ */
+async function tryRecoverPlanetCoreRuntimeFromCloudBackup(): Promise<{
+  byPlanetId: Record<string, PlanetCoreRuntime>;
+  globalMultipliers: PlanetCoreGlobalMultipliers;
+} | null> {
+  try {
+    const {
+      resolveGameSaveBackupUid,
+      listGameSaveBackupsForUid,
+      fetchGameSaveBackupDoc,
+    } = await import('../firebase/gameSaveBackup/gameSaveBackupService');
+    const uid = await resolveGameSaveBackupUid();
+    if (!uid) return null;
+    const list = await listGameSaveBackupsForUid(uid, 1);
+    const latest = list.items[0];
+    if (!latest) return null;
+    const doc = await fetchGameSaveBackupDoc(uid, latest.backupId);
+    const snapshotRaw = doc?.snapshot?.[STORAGE_KEY];
+    if (!snapshotRaw) return null;
+    const recovered = parseStoragePayload(snapshotRaw);
+    if (recovered.corrupted) return null;
+    return { byPlanetId: recovered.byPlanetId, globalMultipliers: recovered.globalMultipliers };
+  } catch {
+    return null;
   }
 }
 
@@ -439,16 +487,34 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
     if (!get().hydrated) {
       let fromDisk: Record<string, PlanetCoreRuntime> = {};
       let globalMultipliers = { ...DEFAULT_GLOBAL_MULTIPLIERS };
+      let recoveredFromCloud = false;
       try {
         const raw = await AsyncStorage.getItem(STORAGE_KEY);
         const payload = parseStoragePayload(raw);
         fromDisk = payload.byPlanetId;
         globalMultipliers = payload.globalMultipliers;
+        if (payload.corrupted && raw) {
+          if (typeof __DEV__ !== 'undefined' && __DEV__) {
+            // eslint-disable-next-line no-console
+            console.warn('[MEM] planetCoreRuntime local payload corrupted(parse fail) — attempting cloud recovery');
+          }
+          void stashCorruptedPlanetCoreRuntimePayload(raw);
+          const recovered = await tryRecoverPlanetCoreRuntimeFromCloudBackup();
+          if (recovered) {
+            fromDisk = recovered.byPlanetId;
+            globalMultipliers = recovered.globalMultipliers;
+            recoveredFromCloud = true;
+          }
+        }
       } catch {
         /* ignore */
       }
       const next = mergeWorldWithDisk(systems, fromDisk);
       set({ byPlanetId: next, globalMultipliers, hydrated: true });
+      if (recoveredFromCloud) {
+        markPlanetCorePersistDirty();
+        await persistStoragePayload({ byPlanetId: next, globalMultipliers });
+      }
       scheduleDeferredLegacyPlanetDevMigration(true, get);
       return;
     }

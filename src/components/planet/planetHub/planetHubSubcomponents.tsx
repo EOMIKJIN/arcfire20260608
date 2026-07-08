@@ -952,7 +952,11 @@ const PlanetWorldObjectOrbitMarks = memo(function PlanetWorldObjectOrbitMarks({
   miningPathActive: boolean;
   miningProgressPct: number;
 }) {
-  const renderTargets = worldObjects.slice(0, MAX_WORLD_OBJECT_MARKS);
+  const renderTargets = useMemo(() => {
+    const defenseSats = worldObjects.filter((object) => object.kind === 'defense_satellite');
+    const others = worldObjects.filter((object) => object.kind !== 'defense_satellite');
+    return [...defenseSats, ...others].slice(0, MAX_WORLD_OBJECT_MARKS);
+  }, [worldObjects]);
   const activeMineableAsteroidId = useMemo(
     () => renderTargets.find((object) => object.kind === 'asteroid')?.id ?? null,
     [renderTargets],

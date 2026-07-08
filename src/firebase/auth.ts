@@ -87,11 +87,6 @@ export async function markFreshStartAfterReset(): Promise<void> {
   await AsyncStorage.setItem(AUTH_FRESH_START_ONCE_KEY, '1');
 }
 
-/** 앱 부트 시 1회성 fresh-start 플래그를 소비한다. @deprecated 타이틀 `consumeFreshStartForTitle` 사용 */
-export async function consumeFreshStartFlag(): Promise<boolean> {
-  return consumeFreshStartForTitle();
-}
-
 /** 타이틀 진입 시 1회 — AsyncStorage 플래그를 소비하고 클라우드 복원을 건너뛴다. */
 export async function consumeFreshStartForTitle(): Promise<boolean> {
   if (freshStartConsumedThisBoot) return true;
@@ -119,7 +114,7 @@ export async function hasPendingFreshStartAfterReset(): Promise<boolean> {
   }
 }
 
-/** `consumeFreshStartFlag()`가 이번 부팅에서 true였는지(메모리만, 1회) */
+/** `consumeFreshStartForTitle()`가 이번 부팅에서 true였는지(메모리만, 1회) */
 export function wasFreshStartThisBoot(): boolean {
   return freshStartConsumedThisBoot;
 }

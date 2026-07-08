@@ -5,6 +5,379 @@
 
 ---
 
+## ✅ REVIEWED — 저장구조 심층 재검수 + 쓰레기 코드 정리 · 김클로드
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** · **verdict PASS** (김팀장 2026-07-08 22:43 KST) |
+| **updated** | 2026-07-08 22:43 KST |
+| **task_id** | `save-structure-deep-audit-cleanup-20260708` |
+| **요청자** | 대표님 — "플레이어 계정 정보와 파이어스토어 DB, 로컬스마트폰의 저장데이터등을 심층분석해서 설계와 구조에 리스크가 없는지, 또한 쓰레기 파일이나 코드 DB들이 남아있는지 재확인 검수하라" |
+
+### 조사 방법
+
+Explore 에이전트 3개를 병렬로 돌려 확인: ① AsyncStorage 54개 키 전수(플레이어 백업 목록 20개 vs 나머지 34개) 커버리지 대조, ② 마이그레이션·레거시 잔재 실사용 여부, ③ Firestore 백업 정리(prune) 로직의 orphan 데이터 리스크. 각 에이전트 보고 중 핵심 주장(죽은 코드 grep 결과, 총사령관 스토어 헤더 주석 등)은 제가 직접 재검증 완료.
+
+### 1) Firestore 백업 주기 — 6시간으로 재통일 (되돌림)
+
+지난 조치로 30분 주기로 줄였었는데, 대표님 최종 지침("파이어스토어 주기를 6시간으로 통일하라")에 따라 원복. 계기: Explore 조사에서 30분 주기가 `GAME_SAVE_BACKUP_MAX_PER_UID=28`과 어긋나 **실질 보관기간이 7일→약 14시간으로 줄고, 쓰기/읽기량이 약 12배 늘어나는** 비용 문제를 확인했음 — 대표님이 강조하신 "효율적 통일" 원칙과 정면으로 배치되는 부작용이었음. `gameSaveBackupContract.ts` 1줄만 원복.
+
+### 2) AsyncStorage 54개 키 커버리지 — 갭 없음, 모순 1건 해소
+
+플레이어 백업 대상 20개 키 전부 실사용 확인(죽은 참조 없음), 누락된 플레이어 데이터도 없음. 유일한 모순 — **`arcfire_planet_governor_assignments_v1`**(행성 총사령관 배정)이 파일 헤더 주석("ArcCore 영토 상태, 계정 purge 제외")과 달리 백업/복원 대상 목록에 포함되어 있었음. 대표님 확인: **"현재는 아크코어가 자동 배정, 플레이어는 배정 불가 — 향후 소유권 기능확장으로 플레이어가 총사령관(행성소유자)이 될 수 있음"** → 현재 시점 기준 ArcCore 자율 상태가 맞으므로 `gameSaveBackupKeys.ts`의 `PLAYER_GAME_SAVE_BACKUP_KEYS`에서 **제거**(purge 제외와 일치시킴). **주의**: 향후 소유권 기능 구현 시 이 판단을 재검토해야 함 — 플레이어가 총사령관이 되는 시점부터는 해당 행성 배정은 다시 플레이어 귀속으로 바뀌어야 할 수 있음.
+
+### 3) 마이그레이션/레거시 잔재 — 확정 죽은 코드 2건 삭제
+
+대표님 정의("중복구현이거나 완전히 사용될 가능성조차 없는 코드")에 맞춰 즉시 삭제 처리(grep으로 호출부 0건 직접 재검증 완료):
+- `useArcCoreTempBankStore`(`src/store/factionVault/arcCoreVaultStore.ts`) — deprecated alias, 사용처 0
+- `consumeFreshStartFlag()`(`src/firebase/auth.ts`) — deprecated 함수, 실호출 0(참조하던 주석 1곳도 `consumeFreshStartForTitle()`로 정정)
+
+**삭제 보류(미구현과 구분)** — 아래는 "아직 사용될 가능성이 있는" 코드라 대표님 기준상 쓰레기가 아님, 그대로 유지:
+- `LEGACY_MODULE_PAIRS`(dev_laboratory→dev_research_lab 등)·`reconcileDefenseSatelliteDevRecordOnLanding`·`migrateLegacyArcCoreTempBankOnce`·`reseedCorruptConvoyFleetEconomyOnce` — 전부 "매 부팅 실행되지만 조건 안 맞으면 스스로 스킵"하는 자체-스로틀 방식. 아직 마이그레이션 안 된 구세이브가 이론상 존재할 수 있어(2~3주 전 코드) 완전히 쓰일 가능성이 없다고 단정 불가.
+- `isLegacyArcCoreMissileNotice`(tavernBoardStore) — 오래된 공지 필터링, 자연 소멸(20개 캡) 예정이라 마찬가지로 보류.
+
+### 4) Firestore 백업 prune — orphan 리스크 1건 확인(수정 안 함, 보고만)
+
+정상 만료/초과삭제 경로는 청크 서브컬렉션도 같이 지워지도록 이미 정상 구현됨(문제없음). 다만 **"청크 쓰기 성공 직후, 메타데이터 문서 쓰기 전에 앱이 죽는" 좁은 케이스**에서 생기는 고아 청크는 이를 나중에 찾아 지우는 스윕 로직이 전무해 영구 방치됨(발생 확률 낮음, 발생 시 복구 불가). 이번 범위에서는 수정하지 않음 — 필요시 별도 orphan-sweep 작업으로 다룰 것을 제안.
+
+### self-check
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS** (매 변경 후 재확인)
+- [x] `npm run audit:memory:all` — **PASS**(죽은 코드 삭제분까지 전부 포함해 재실행 완료 — memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
+- [x] diff 범위: `gameSaveBackupContract.ts`(1줄), `gameSaveBackupKeys.ts`(1줄 제거), `arcCoreVaultStore.ts`(3줄 제거), `firebase/auth.ts`(deprecated 함수+주석 정리)
+- [x] git commit **안 함**
+
+---
+
+## ✅ REVIEWED — planetCoreRuntime 파싱 실패 시 조용한 전체 리셋 수정(근본 버그) · 김클로드
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** · **verdict PASS** (김팀장 2026-07-08 22:17 KST) |
+| **updated** | 2026-07-08 22:17 KST |
+| **task_id** | `planet-core-runtime-corrupt-parse-cloud-recover-20260708` |
+| **요청자** | 대표님 — "재설치하기 전에 근본 버그(파싱 실패 시 조용히 전체 리셋되는 부분) 이 부분을 집중적으로 수정하라" |
+
+### 배경 — 왜 위성이 "전부" 사라졌는지의 최종 원인
+
+지난 대화에서 확인: 방위위성뿐 아니라 757개 행성 전체의 `detail.development`가 로컬에 통째로 없었던 이유는 개별 유실이 아니라 **`planetCoreRuntimeStore`의 로컬 파싱 로직이 JSON.parse 실패 시 경고 하나 없이 전체를 CSV 기본값으로 되돌리는 구조**였기 때문. 이 앱이 메모리압으로 하루 여러 번 강제종료(`am force-stop`)되는 것을 이번 세션 내내 확인했으므로, 저장 파일 쓰기 도중 강제종료 → 파일 손상 → 다음 부팅 파싱 실패 → 전체 리셋, 이 흐름이 가장 유력.
+
+### 구현 내용 — `src/store/planetCoreRuntimeStore.ts` (단일 파일, +68/-2줄)
+
+1. **`parseStoragePayload`가 `corrupted: boolean` 플래그를 추가로 반환** — `raw === null`(최초무데이터, 정상)과 `raw`는 있는데 `JSON.parse` 자체가 실패(손상)를 구분. 기존엔 두 경우 모두 조용히 같은 빈 기본값을 반환해 구분이 불가능했음.
+2. **손상 감지 시 손상된 원본을 별도 키(`arcfire_planet_core_runtime_corrupt_stash_v1`)에 보관**(`stashCorruptedPlanetCoreRuntimePayload`) — 포렌식·수동복구 여지를 남김. 실패해도 부팅에 영향 없는 best-effort.
+3. **손상 감지 시에만(=드문 경우에만) 최신 Firestore 백업에서 이 키(`arcfire_planet_core_runtime_v1`) 단건만 복구 시도**(`tryRecoverPlanetCoreRuntimeFromCloudBackup`) — 계정 전체 스냅샷 복원이 아니라 **이 한 스토어만** 선별 복구. `resolveGameSaveBackupUid`(클라이언트 자기 uid, admin 자격증명 불필요) → `listGameSaveBackupsForUid(uid, 1)`(최신 1건만) → `fetchGameSaveBackupDoc` → 그 안의 `snapshot['arcfire_planet_core_runtime_v1']`만 재파싱해서 사용.
+4. 복구 성공 시 즉시 로컬에도 다시 저장(`persistStoragePayload`)해서 다음 부팅부터는 클라우드 조회 없이 정상 동작 — 자가치유.
+5. 복구 실패(오프라인·백업 없음·타임아웃 등) 시 기존 동작(빈 기본값)으로 그대로 진행 — **부팅을 막거나 지연시키지 않음**.
+
+### 왜 이전에 보류했던 "③ 부팅 시 Firestore 대조"와 다른가
+
+③은 **매 부팅마다** 클라우드와 대조하는 설계라 리스크가 커서 보류했었음. 이번 것은 **로컬 파싱이 실제로 실패했을 때만**(정상 부팅에서는 100% 발동 안 함) 발동하는 훨씬 좁은 범위라, 정상 케이스에는 코드 경로 자체가 실행되지 않아 리스크가 낮음. 대표님이 요청하신 "이 부분을 집중적으로"에 정확히 맞춘 좁은 수정.
+
+### 순환참조 회피
+
+`planetCoreRuntimeStore.ts` → `gameSaveBackupService.ts` → `applyLocalGameSaveSnapshot.ts` → `planetCoreRuntimeStore.ts`로 되돌아오는 순환참조가 있어, 정적 import 대신 **동적 `await import()`** 사용(이 파일에 이미 있던 `runLegacyPlanetDevModuleMigrationAll`의 기존 패턴과 동일한 방식으로 회피).
+
+### self-check
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
+- [x] `npm run audit:memory:all` — **PASS** (memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
+- [x] diff 범위: `git diff HEAD --stat` 확인 결과 `src/store/planetCoreRuntimeStore.ts` **1개 파일**만(+68/-2)
+- [x] git commit **안 함**
+
+### 리스크·주의 (김팀장 검수 시 반드시 확인)
+
+- **부팅 경로(`bootstrapFromWorldAsync`) 변경 포함** — 이 프로젝트에서 반복적으로 "민감 구간"으로 지적된 영역이라, 대표님께도 "부팅 시퀀스는 별도 신중 검토 필요"라고 안내했던 부분. 다만 정상(비손상) 케이스는 분기 자체를 안 타므로 기존 동작과 100% 동일 — **정상 부팅 성능/동작 변화 없음**은 코드상 확인됨.
+- 실기 시뮬레이션(의도적으로 로컬 JSON을 손상시켜 실제 복구 동작 확인)은 **미실시** — 정적 검증만 완료. 실제 손상 재현 테스트는 QA 환경에서 한 번 검증 권장.
+- `listGameSaveBackupsForUid`/`fetchGameSaveBackupDoc`는 각각 6초/12초 자체 타임아웃 내장(기존 서비스 코드) — 손상 감지 시 최악의 경우 부팅이 최대 ~18초 지연될 수 있음(드문 케이스에 한함, 정상 부팅엔 영향 없음).
+- 대표님이 이전에 "재설치해서 테스트"하겠다고 하신 방위위성 재설치는 **이 수정이 검수·배포된 이후에** 진행하시는 걸 권장(안 그러면 같은 이유로 또 사라질 위험이 있었던 부분을 이번에 막은 것이므로).
+
+### 김팀장 검수 (2026-07-08 22:17 KST)
+
+| 항목 | 결과 |
+|------|------|
+| 근본 원인 | **PASS** — `parseStoragePayload` catch 시 `corrupted` 미구분·빈 baseline → `mergeWorldWithDisk` 전체 CSV 리셋. force-stop 중 coalesce persist와 정합 |
+| 수정 범위 | **PASS** — `planetCoreRuntimeStore.ts` 단일 파일(+68/-2). 정상 부팅(`corrupted:false`)은 기존 경로 100% 동일 |
+| 손상 분기 | **PASS** — stash → cloud 단건 복구 → `mergeWorldWithDisk` → 성공 시 `persistStoragePayload` 자가치유 |
+| 순환참조 | **PASS** — `gameSaveBackupService` 동적 import, 기존 migration 패턴과 동일 |
+| 부트 지연 | **PASS(조건부)** — 손상 시에만 Firestore 6s+12s 타임아웃 가능. 정상 부팅 무영향 |
+| tsc | **PASS** |
+| audit:memory:all | **PASS** (37/37 · skia 20/20 · worklet · native-reclaim 20/20 · resident-set 7/7 · hot-path 0) |
+
+**잔여 리스크(완료 선언 아님 · 후속):**
+- JSON.parse는 성공했지만 `byPlanetId`가 비어 있는 **부분 손상**은 `corrupted:false` → 복구 분기 미진입(기존과 동일한 silent reset). 후속: `raw` 존재 + `byPlanetId` 비어 있음 + 이전 stash/백업 대조 검토.
+- **이미 리셋된 데이터**는 본 패치로 소급 복구 불가(대표님 「예」 확인). 앞으로만 방어.
+- 손상 재현 QA(의도적 truncate → cloud recover) **미실시** — 배포 전 1회 권장.
+
+**verdict: PASS** — 근본 버그(조용한 전체 리셋) 대응으로 승인. ② 백업 30분과 함께 Metro `r` 후 방위위성 재설치 권장.
+
+---
+
+## ✅ REVIEWED — 게임 저장 Firestore 백업 강화(② 단일 주기) · 김클로드 · ③ 설계안 보류
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** · **verdict PASS(②)** / **③ HOLD** (김팀장 2026-07-08 22:17 KST) |
+| **updated** | 2026-07-08 22:17 KST |
+| **task_id** | `game-save-backup-hardening-20260708` |
+| **요청자** | 대표님 — 방위위성 전체 소실 사후 "플레이어의 모든 게임 저장기록이 파이어스토어에 저장되어 안전하게 유지되는게 맞다..." → 이후 "데이터를 자주 백업하지 않아도 모든 데이터가 같은 주기에 같은 시점에 100% 완전 복구가 되면 된다... 더 중요한 데이터와 덜 중요한 데이터 구분없이 파이어베이스를 절약하는 차원에서 효율적으로 통일하라"(최종 지침으로 ① 되돌림) |
+
+**⚠️ 설계 변경 이력 — ①(시설완료 즉시 백업)은 구현 후 대표님 지침으로 되돌림.** 최초 ①+②로 구현했으나, 대표님이 "중요도 구분 없이 통일 + Firestore 비용 절약"을 최종 지침으로 주셔서 ①(방위위성 등 완료 이벤트만 즉시 백업하는 특수경로)을 제거하고 **② 단일 주기(30분)만 전 데이터에 동일 적용**하는 구조로 최종 확정. 아래 "구현 완료" 섹션은 이 최종 상태 기준.
+
+### 배경 — 실기 조사로 확인된 근본 갭 (방위위성 소실 건과 직결)
+
+adb로 기기 AsyncStorage(`RKStorage`)를 직접 pull해 확인한 결과, 757개 행성 전체에서 `detail.development`(byModuleId)가 **완전히 부재** — 로컬에도 소실 흔적조차 없었음. 코드 추적 결과 다음 구조적 갭 확인:
+
+1. `GAME_SAVE_BACKUP_MIN_INTERVAL_MS`가 **6시간**이었음 — 이 세션 내내 확인된 하루 여러 번의 강제 재시동(GL_HARD_CEILING 등) 빈도를 감안하면, 로컬 설치 후 6시간 내 재시동되면 Firestore에 한 번도 반영 안 된 채 유실 가능.
+2. Firestore 백업은 `scheduled`(6h 간격) 외에는 **admin이 명시적으로 트리거하는 복구 경로**로만 읽힘 — 정상 부팅에서는 Firestore를 전혀 조회하지 않아, 클라우드에 최신 데이터가 있어도 로컬이 비었으면 그냥 빈 채로 시작됨.
+3. 업로드 실패는 `catch(() => {/* offline — Firestore queue */})`로 조용히 삼켜짐 — 실패가 반복돼도 드러나지 않음.
+
+대표님께 3개 조치(①즉시 백업 트리거 ②주기 단축 ③부팅 시 Firestore 대조)를 제안드렸고, ③은 부팅 시퀀스(이 프로젝트에서 반복적으로 "민감 구간"으로 확인된 영역)를 건드리는 리스크가 있어 **①+②만 우선 구현**, ③은 설계안만 정리하기로 확정.
+
+### 구현 완료 (② 단일 주기 — 최종)
+
+**② 예약 백업 간격 단축** — `gameSaveBackupContract.ts`
+- `GAME_SAVE_BACKUP_MIN_INTERVAL_MS`: 6시간 → **30분**
+- 이 하나의 주기가 `PLAYER_GAME_SAVE_BACKUP_KEYS`(인벤토리·미션·계정정보·행성개발·방위위성 등 20개 키) **전체를 한 스냅샷으로 묶어서** 업로드(`collectLocalGameSaveSnapshot`) — 항목별 중요도 구분 없이 동일 주기·동일 시점에 전량 백업되므로, 복구 시 그 시점 기준 100% 일관된 전체 복구가 됨.
+
+**되돌린 것 (① 폐기)** — 방위위성 등 "완료" 이벤트에만 별도 즉시-백업 경로를 추가했던 `triggerFacilityCompleteGameSaveBackup`/`scheduleUrgentGameSaveBackupAfterFacilityComplete`/`GameSaveBackupReason.facility_complete`를 전부 제거. 대표님 지침("중요도 구분 없이 통일해서 Firestore 절약")에 따라 이벤트별 특수 트리거 없이 **하나의 예약 주기로만** 처리.
+
+CLAUDE.md 절대금지(`onSnapshot`/실시간 동기화 없음, 경제/AABS 고빈도 실행 금지)에 저촉되지 않음 — 여전히 단발·예약 Firestore write일 뿐, push 기반 realtime이나 게임 루프 고빈도 처리가 아님.
+
+**잔여 리스크(대표님께 명시적으로 공유 완료)**: 예약 주기(30분) 이전에 강제 재시동이 발생하면 그 사이의 변경분은 유실 가능 — 대표님도 "그전에 유실되지 않아야 하는 건 당연하다"고 하셨으나 이는 로컬 저장 자체의 신뢰성(coalesce 즉시 flush 등, 이번 change 범위 밖) 영역이라 별개로 관리 필요. 30분 간격은 과거 6시간 대비 유실 가능 구간을 12배 줄인 것이지 완전히 없앤 것은 아님.
+
+### 설계안 — ③ 부팅 시 Firestore 대조 (구현 보류, 승인 필요)
+
+**목표**: 로컬 `arcfire_planet_core_runtime_v1`이 비정상적으로 비어있거나(이번 사건처럼) 오래됐을 때, 매 부팅마다 최신 Firestore 백업과 대조해 안전망 역할.
+
+**제안 설계 (초안)**:
+1. `bootstrapFromWorldAsync`(또는 그 이후 별도 단계)에서 로컬 하이드레이션 완료 후, `fetchGameSaveBackupDoc`으로 **최신 백업 1건만** 조회(목록 전체 조회 아님 — 비용 최소화).
+2. **전체 스냅샷 덮어쓰기 금지** — `arcfire_planet_core_runtime_v1` 키만 선별 비교: 백업의 `byPlanetId[planetId].detail.development`가 존재하는데 로컬은 없는 행성만 골라 그 부분만 병합 적용(현재 확인된 정확한 실패 패턴을 정조준).
+3. 병합 판단 기준은 `updatedAtMs`/`detail.development` 존재 여부 우선 — "최신"을 시간 비교만으로 판단하면 로컬이 실제로 더 최신인데 클라우드가 오래된 스냅샷을 덮어쓸 위험이 있어, **"로컬에 아예 없는데 클라우드엔 있다"는 경우만** 채워 넣는 보수적 병합으로 제한.
+4. 실패해도 부팅을 막지 않음(best-effort, timeout 후 로컬만으로 진행) — 부팅 지연·행 방지가 최우선.
+
+**리스크**: 부팅 시퀀스는 이 프로젝트에서 여러 차례 "민감 구간"으로 지적된 영역(초기화 지연·행 이슈 이력)이라, 병합 로직 버그 시 오히려 새로운 부팅 문제를 만들 수 있음 — 별도 세션에서 충분한 시간을 두고 김팀장 리뷰 후 구현 권장.
+
+### self-check (② 최종 — ① 되돌린 이후 재검증)
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
+- [x] `npm run audit:memory:all` — **PASS** (memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
+- [x] diff 범위: `git diff HEAD` 확인 결과 **`gameSaveBackupContract.ts` 1개 파일, 1줄**(간격 상수)만 최종 남음 — `scheduleGameSaveBackup.ts`·`planetFacilityLevelApplied.ts`는 ① 되돌리면서 원본과 완전히 동일한 상태로 복귀 확인
+- [x] git commit **안 함**
+
+### 별개 확인 요청 (이전 handoff 항목 관련)
+
+방위위성 소실의 실제 트리거(김팀장 작업 중 admin 복원 실행 여부)는 여전히 미확인 — `npm run admin:game-save:list -- --uid 519f756a7517ac11`로 백업 이력 확인 부탁드립니다(Firebase Admin 자격증명 필요해 김클로드 쪽에서 직접 조회 불가).
+
+### 별도 요청 사항 (금번 대화에서 대표님이 언급, 미착수)
+
+- "블루팀(스텔리움연합) 점유지역 행성은 아크코어 자동개발 대상에서 제외, 데이터 삭제 금지" — 기존 `player-independent-nation-m1-m2` 스펙과의 관계 확인 필요(중복/누락 점검 후 반영 여부 판단 요망).
+
+### 추가 — 전체 저장구조 재검토 (대표님 요청, 코드 변경 없음 · 결론만)
+
+대표님이 "플레이 기록·미션·행성개발(방위위성)·레벨업·보유아이템 등 모든 데이터가 안전하게 지속되는 구조인지 재확인" 요청 → 백업 대상 키(`gameSaveBackupKeys.ts` `PLAYER_GAME_SAVE_BACKUP_KEYS` 20개) 전수 대조 + `localAccountReset.ts` 계정 완전삭제 로직까지 확인 완료.
+
+**결론: 분류 경계 자체는 이미 정확했다.** 미션·행성개발(방위위성 포함)·레벨업·아이템·스킬·함장 등 플레이어 직접 액션 항목은 전부 백업 대상에 이미 포함되어 있었고, ArcCore RED 금고·수송선단 금고·중앙은행·일일배치 상태 등 "아크코어가 주체인" 항목은 이미 전부 제외되어 있었다(`resetLocalPlanetCoreRuntimeForAccountPurge`가 RED 슬롯 스냅샷→복원 방식으로 완전삭제 시에도 RED 쪽을 보존하는 것까지 코드 레벨로 확인). 오늘 위성이 사라진 근본 원인은 분류 오류가 아니라 위 ①+②로 고친 **백업 반영 타이밍(6시간 지연 + 정상 부팅 시 미조회)** 문제였고, 같은 취약점을 미션·레벨업·아이템 등 다른 모든 항목도 공유하고 있었으므로 ①+② 수정으로 전체가 함께 보강됨.
+
+**경계 판단 보류했던 2건 → 대표님 확인으로 해소:**
+- `arcfire_blue_team_shared_vault_v1`(블루팀 공용 금고) — "블루팀도 플레이어 금고가 아닌 이상 종속될 필요 없고 아크코어 종속 관리로 둬도 된다"(대표님) → **백업 대상 추가 불필요, 현행(제외) 유지 확정.**
+- `arcfire_planet_trade_fee_ledger_v1`(일일 수수료 정산 풀) — 플레이어 직접 액션이 아닌 시스템 정산 버킷 → 마찬가지로 **현행(제외) 유지.**
+
+**핵심 원칙 확정(향후 신규 스토어 추가 시 적용)**: "플레이어가 직접 액션한 진행 내용"만 계정 귀속·백업 대상. 이름에 "블루팀"이 들어가도 플레이어 개인 지갑이 아니면(공용/시스템 관리 buckets) 계정 귀속 불필요.
+
+---
+
+- [x] git commit **안 함**
+
+### 김팀장 검수 (2026-07-08 22:43 KST)
+
+| 항목 | 결과 |
+|------|------|
+| ① 백업 6h 재통일 | **PASS** — `6h × MAX_PER_UID(28) = 7일` 보관과 정합. 30분이면 ~14시간만 보관·쓰기 12배 증가 — 대표님 「6시간 통일」 지침과 일치 |
+| ② 총사령관 키 제거 | **PASS** — `arcfire_planet_governor_assignments_v1`는 ArcCore 자율 배정·purge 제외와 일치. 향후 플레이어 소유권 확장 시 재검토 필요(김클로드 주석 동의) |
+| ③ 죽은 코드 삭제 | **PASS** — `useArcCoreTempBankStore`·`consumeFreshStartFlag` grep 0건. `auth.ts` 주석 `consumeFreshStartForTitle`로 정정 |
+| ④ orphan 청크 | **HOLD(보고만)** — 청크 성공 후 메타 쓰기 전 crash 시 고아 가능. 별도 sweep 과제 |
+| tsc | **PASS** |
+| audit:memory:all | **PASS** (37/37 · skia 20/20 · worklet · native-reclaim 20/20 · resident-set 7/7 · hot-path 0) |
+
+**verdict: PASS** — 저장 분류·비용 정합 수정만. P0 `planetCoreRuntimeStore` 손상 복구와 병행 적용 권장.
+
+---
+
+## ✅ REVIEWED — 방위위성 전체 소실(byModuleId/legacy 분기) · 김클로드
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** · **verdict PASS(조건부)** (김팀장 2026-07-08 22:43 KST) |
+| **updated** | 2026-07-08 22:43 KST |
+| **task_id** | `defense-satellite-vanish-byModuleId-legacy-fix-20260708` |
+| **요청자** | 대표님 — "최근 김팀장 작업이 원인인지, 아크코어 주기설정변경이 원인인지 몰라도 방위위성들이 갑자기 모두 사라졌다. 원인을 철저하게 분석해 복구하고 수정하라" |
+
+### 근본 원인 (확정)
+
+`src/game/planetDevelopment/planetDefenseSatelliteRuntime.ts`의 (수정 전) `readDefenseSatelliteDetailFromPlanet`가 **`development.byModuleId.defense_satellite`가 존재하기만 하면(설치값 무관) 그대로 신뢰**하고, legacy `detail.defenseSatellite`는 byModuleId가 아예 없을 때만 참조하는 구조였음:
+
+```ts
+// 수정 전 (요약)
+if (fromModule && fromModule.version === 1) return fromModule;   // installed:false 여도 그대로 반환
+const legacy = runtime?.detail?.defenseSatellite;
+if (legacy?.version === 1) return legacy;
+```
+
+→ **byModuleId 쪽이 `{installed:false}`(빈 기본값)로 존재하는데 legacy 쪽에 실제 설치 이력(`installed:true`)이 남아있는 행성**은 무조건 "미설치"로 읽힘 — 게임 내 모든 방위위성 표시·전투 판정·궤도 월드오브젝트가 이 단일 함수를 거치므로, 이 분기가 한번 어긋나면 **모든 행성의 방위위성이 동시에 사라진 것처럼 보임**(대표님이 보고한 증상과 정확히 일치).
+
+byModuleId가 이렇게 "존재하지만 빈 값"이 되는 경로는 여러 곳에서 가능함(`ensurePlanetCoreRuntimeForDev`의 기본 초기화, 스토어 재부트 시 기본값 채움 등) — 즉 **트리거는 김팀장의 최근 작업일 수도, 재부팅(이번 세션에서 반복 확인된 GL_HARD_CEILING 강제 재시동 포함)일 수도 있으나, 실제로 증상을 유발한 코드는 이 읽기 함수의 설계 결함**이라는 결론. `아크코어 주기설정변경`(예: `planet_defense_satellite_policy.csv` policy_version 1→2, 2026-06-29 커밋) 자체는 min/max 위성 수를 바꾼 의도된 밸런스 변경이며 이번 소실 증상의 직접 원인은 아님(확인 완료 — CSV는 현재 uncommitted diff 없음, 9일 전 커밋).
+
+### 확인 — 김팀장 최근 작업(uncommitted)이 이미 이 문제를 겨냥한 수정 중이었음
+
+`planetDefenseSatelliteRuntime.ts`·`planetDefenseSatelliteDevelopment.ts`·`syncPlanetHubDevelopmentOnLanding.ts` 3개 파일이 이미 **uncommitted 상태로 병합 로직 수정 중**이었음(주석: "byModuleId만 installed:false인데 legacy installed:true → 궤도 위성 0기 회귀 방지"). 로직 검증 결과 **OR 병합(`installed = moduleDetail.installed || legacyDetail.installed`) 자체는 정확** — 김클로드가 이어받아 아래 갭 2곳을 마저 메우고 self-check까지 완료.
+
+### 김클로드 추가 조치 (이번 작업)
+
+1. **복구 범위 확대** (`planetFacilityLegacyMigration.ts` `migrateLegacyPlanetDevModulesForPlanet`) — 기존에는 `reconcileDefenseSatelliteDevRecordOnLanding`이 **착륙한 행성 1곳만** 복구했음(플레이어가 재방문해야만 복구). 부트마다 전 행성을 순회하는 기존 `migrateLegacyPlanetDevModulesAll()` 파이프라인 안에 이 reconcile을 편입 — **다음 앱 부팅 시 방문 여부와 무관하게 전 행성 일괄 복구**되도록 확장.
+2. **동일 버그의 중복 구현 2곳 발견 및 수정** — 공유 병합 함수(`readDefenseSatelliteDetailFromCoreDetail`)를 거치지 않고 **같은 `byModule ?? legacy` 버그 패턴을 각자 복제**하고 있던 코드:
+   - `src/ui/overlay/content/PlanetDefenseSatelliteDevContent.tsx:49` — 방위위성 개발 오버레이의 재렌더 트리거 키(`defenseRev`). 실제 표시 데이터는 `buildDefenseSatelliteDevSnapshot`(정상 경로)라 화면 자체는 안전했으나, 이 revision key가 legacy만 바뀐 변경을 놓쳐 재렌더/틱 갱신이 씹힐 수 있었음.
+   - `src/game/planetHub/planetHubStoreMemoRevisions.ts` `planetHubDefenseSatelliteMemoRev` — **더 중대**: 이 함수가 `src/worldObjects/planetWorldObjectsListCache.ts`의 월드오브젝트(궤도 위성 오브젝트 포함) 캐시 무효화 키로 직접 쓰임. byModuleId만 보고 legacy 변화를 놓치면, 착륙 시 강제 invalidate(`syncPlanetHubDevelopmentOnLanding`)가 없는 경로(허브 체류 중 실시간 갱신 등)에서는 캐시가 갱신되지 않아 위성이 화면에 반영 안 될 여지가 있었음.
+   둘 다 공유 함수 `readDefenseSatelliteDetailFromCoreDetail` 호출로 교체 — 향후 병합 로직이 또 갈라질 여지 자체를 제거.
+
+### 최종 수정 파일 (6개)
+
+- `src/game/planetDevelopment/planetDefenseSatelliteRuntime.ts` (김팀장 기존 작업 — 검증만)
+- `src/systems/planetaryDefense/planetDefenseSatelliteDevelopment.ts` (김팀장 기존 작업 — 검증만)
+- `src/game/planetDevelopment/syncPlanetHubDevelopmentOnLanding.ts` (김팀장 기존 작업 — 검증만)
+- `src/game/planetDevelopment/planetFacilityLegacyMigration.ts` (김클로드 추가 — 전 행성 복구 편입)
+- `src/game/planetHub/planetHubStoreMemoRevisions.ts` (김클로드 추가 — 중복 로직 제거)
+- `src/ui/overlay/content/PlanetDefenseSatelliteDevContent.tsx` (김클로드 추가 — 중복 로직 제거)
+
+### self-check
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS** (에러 없음)
+- [x] `npm run audit:memory:all` — **PASS** (memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
+- [x] git commit **안 함**
+
+### 복구 관련 안내 (중요 — 대표님 확인 필요)
+
+- 이 수정은 **읽기·캐시 로직 복구**다 — byModuleId/legacy 중 "true"가 하나라도 있으면 즉시 정상 표시된다. 즉, **legacy 필드에 실제 설치 이력이 남아있는 행성은 다음 부팅(또는 재착륙) 즉시 위성이 재표시**된다.
+- 단, **만약 특정 행성이 byModuleId·legacy 양쪽 모두 `installed:false`로 이미 덮어써진 상태라면(진짜 데이터 유실)** 이번 수정으로는 복구 불가 — 그 경우 Firebase 세이브 백업(`src/firebase/gameSaveBackup/`) 스냅샷에서 해당 시점 이전 데이터 확인이 필요할 수 있음(대표님 실기 확인 후 필요 시 별도 요청 바람).
+- **런타임 검증 미완료** — 정적 분석·self-check 게이트만 통과했고, 실기(다음 부팅 후 방위위성 재표시 여부)는 대표님 확인이 필요.
+
+### 김팀장 검수 (2026-07-08 22:43 KST)
+
+| 항목 | 결과 |
+|------|------|
+| 근본 원인 | **PASS** — byModuleId `installed:false` 우선 → legacy `installed:true` 무시. 증상(전 행성 동시 소실)과 정합 |
+| 병합 읽기 | **PASS** — `readDefenseSatelliteDetailFromCoreDetail` 단일 경로로 memo rev·오버레이·월드오브젝트 캐시 통일 |
+| 부트 일괄 복구 | **PASS** — `migrateLegacyPlanetDevModulesForPlanet`에 reconcile 편입 → 착륙 없이 전 행성(legacy 잔존 시) |
+| planetCore 손상 | **별도 P0** — JSON.parse 실패 전체 리셋은 본 handoff와 별개. P0 패치와 함께 배포 필수 |
+| 데이터 복구 한계 | **확인** — 양쪽 `installed:false`면 복구 불가(대표님 「예」). legacy 잔존 행성만 자동 복구 |
+| tsc · audit:memory:all | **PASS** |
+
+**verdict: PASS(조건부)** — 코드·원인 분석 승인. **실기 1회**(부팅 후 legacy 잔존 행성 위성 재표시) + P0 planetCore 패치 Metro `r` 동시 반영 권장.
+
+---
+
+## ✅ REVIEWED — 허브 순회 native_heap 누적 · 권장 A안(A1+A2) · 김클로드
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** · **verdict PASS** (김팀장 2026-07-08) |
+| **updated** | 2026-07-08 10:47 KST |
+| **task_id** | `hub-hop-native-heap-fix-a-plan-20260708` |
+| **assigned_by** | 김팀장 — 전반 분석 완료 후 대표님 지시(권장 A안) |
+| **명세** | `tools/kim-team-lead/reports/kim-claude-ready-hub-hop-native-heap-fix.md` |
+
+### 구현 내역
+
+**A1 — `src/components/planet/PlanetNebulaImageBackdrop.tsx`**
+- `backgroundImageSource`·`nebulaBakedImageSource` 두 `<Image>` 모두에 `resizeMethod="resize"` 추가
+- 각 `style`에 명시적 `{ width: size, height: size }` 추가(기존 `styles.layer`의 `width/height:'100%'` 위에 덮어써 우선 적용) — Android 디코드 시 1024×1024 풀 디코드 대신 뷰포트 `size` 기준 다운샘플 유도
+- `resizeMode="cover"`·크로스페이드 시각은 변경 없음(레이아웃/opacity 로직 불변)
+
+**A2 — `src/game/nativeReclaim/runPlanetChangeNativeReclaimLight.ts`**
+- `arcfire-native-memory`의 `trimNativeBitmapCachesAsync` import 추가
+- 기존 3단계(combat skia reclaim·nebula profile prune·memo compact) 뒤에 `void trimNativeBitmapCachesAsync().then(...)` 추가 — ingress 정본 패턴(`runPlanetHubIngressReclaimPass.ts`)과 동일하게 비동기·non-blocking
+- DEV 로그에 `fresco=${result.frescoCleared}` 반영(기존 로그를 `.then()` 안으로 통합, 별도 로그 중복 없음)
+
+### self-check (김클로드)
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
+- [x] `npm run audit:memory:all` — **PASS** (memory 37/37 · skia 20/20 · worklet · native-reclaim 20/20 · resident-set 7/7 · hot-path 0)
+
+### 김팀장 검수 (본창 Cursor)
+
+| 항목 | 결과 |
+|------|------|
+| diff·계약 | **PASS** — A1/A2 명세 2파일만 · Skia/worklet/STAGE 계약 위반 없음 |
+| A1 호출 경로 | **PASS** — `planetHubSubcomponents.tsx` `size={nebulaBackdropSize}` (뷰포트 크기) 전달 확인 |
+| A2 호출 경로 | **PASS** — `planetMainStageSession.ts` `planet_change` → `runPlanetChangeNativeReclaimLight` 배선 유지 |
+| audit 재실행 | **tsc PASS** · **audit:memory:all PASS** (37/37 · skia 20/20 · worklet · native-reclaim 20/20 · hot-path 0) |
+| **커밋** | 미실행 (대표님 지시 시) |
+| mem-post-dev-recheck | **배정** — 김경제 handoff 갱신 권장 |
+
+**verdict**: `PASS`
+
+**검수 메모**:
+1. **A1** — 1024 풀 디코드 → `nebulaBackdropSize` 기준 다운샘플. worldmap↔hub 왕복(대표님 재현 경로)에 직접 효과 — **가장 큰 레버**.
+2. **A2** — in-hub `planet_change` Fresco trim 공백 메움. ingress 정본과 동일 `void trim...then()` 패턴.
+3. **한계** — Skia `useImage` 성운 사본·Fresco 캐시 상한 plateau는 A안 범위外(명세대로). **실기**: 은하계 3+ 행성 순회 후 native_heap floor +40MB 이내 확인 권장.
+4. **반영** — Metro **`r` 리로드**만으로 충분(네이티브 재빌드 불요).
+
+**[kim-claude-review] 2026-07-08 hub-hop-native-heap-fix-a-plan PASS — A1 resizeMethod+size · A2 planet_change fresco trim · tsc+audit PASS · 실기 native_heap 재측정 대기**
+
+---
+
+## 🔴 PENDING — 행성허브 3곳+ 순회 시 재시동(하드실링 실시간 재현) · 김클로드 (진단 완료 → **A안 READY로 이관**)
+
+| 필드 | 값 |
+|------|-----|
+| **status** | `PENDING` (실시간 인시던트로 확증 — 코드 수정은 승인 후) |
+| **updated** | 2026-07-08 10:10 KST |
+| **task_id** | `multi-hub-hop-gl-hard-ceiling-restart-20260708` |
+| **요청자** | 대표님 — "은하계 지도상에서 여러 행성 허브 3개 이상을 돌아다니면 결국 재시동되는(메모리 위험) 상태" |
+| **관련** | 직전 항목 `galaxy-map-gl-residual-on-hub-reentry-20260708`(은하계 지도 체류 GL 잔류)와 같은 계열 — 부분적으로 원인 중첩 |
+
+### 실시간 확증 — 조사 도중 정확히 재현됨
+
+```
+09:46:15  pss=920.7  gl=122.9  native_heap=424.2  views=377
+10:01:40  pss=959.9  gl=45.3   native_heap=494.3  views=404   ← GL_HARD_CEILING 발동
+10:01:48  [INCIDENT] GL_HARD_CEILING gl=45.3 pss=959.9 views=404 → 즉시 remediation(OOM 임박 판단)
+10:01:50  [AUTO_FIX] app relaunch reason=gl_critical_active_hub
+10:02:09  baseline reset pid=23222 gl=6MB pss=190.8MB
+10:02:30  VERIFY PASS pid=23222 gl=5.1MB pss=458MB views=82
+```
+
+대표님이 보고한 증상이 조사 도중 **실제로 자동 재시동을 유발**했다(모니터가 950MB 하드 예산 초과로 판단, 자동 relaunch 완료 — 현재 앱은 정상 기동 상태, pid 23222).
+
+**중요 — 이번 트리거는 GL 자체가 아니라 native_heap 급등**: 같은 구간에서 `gl_mb`는 오히려 122.9→45.3으로 **하락**했는데(모니터가 `GL_RECOVERED idle_ok`로 오라벨링) `native_heap_mb`는 424.2→494.3으로 **15분 새 +70MB 급증**하며 pss가 950MB 하드 예산을 넘음. 즉 "GL_HARD_CEILING"이라는 인시던트명과 달리 실제 주범은 native_heap 쪽.
+
+### 코드 추적 — native_heap 급증 후보
+
+1. **행성 허브 배경 성운("베이크 PNG")이 이중 디코드 경로를 가짐**:
+   - `SkiaPlanetNebulaShaderBackdrop.tsx:134-135` — `useImage()`(Skia GL 텍스처 관리, `nebulaBakedImageSource`/`backgroundImageSource` 둘 다)
+   - `PlanetNebulaImageBackdrop.tsx:44-57` — 동일 소스를 RN `<Image>`(Fresco/native_heap)로 **별도 디코드**(크로스페이드용, `planetHubSubcomponents.tsx:586,610` 두 곳에서 마운트)
+   - 즉 허브 진입마다 같은 성운 아트가 **Skia 텍스처 + Fresco 비트맵** 두 벌로 메모리에 올라갈 수 있는 구조.
+2. **베이크 PNG 실측 용량** — `assets/images/nebula/baked/*.png` 21개, 파일당 **820KB~980KB**(압축). 디코드 시 raw bitmap은 통상 5~15배 팽창 — 장당 수 MB~10MB+ 예상(정본 실측은 기기 프로파일러 필요).
+3. **`resolvePlanetNebulaBakedSource`**(`src/game/planetNebulaBakedAssets.ts`) — 정본 21행성은 전용 PNG, synth/미개척 행성은 zone별 폴백 풀(안전 4장/중립 8장/pvp 6장/엔드게임 3장)에서 **행성 id 해시로 결정론적 선택**. 폴백이라도 zone 내 여러 장 중 하나이므로, 서로 다른 행성 3곳을 순회하면 서로 다른 이미지 2~3장이 동시에 디코드될 가능성이 높음(모두 같은 이미지로 수렴할 보장 없음).
+4. **인그레스 측 회수 설계가 "이전 허브 정리"를 하지 않음** — `runPlanetHubIngressReclaimPass`(`src/game/nativeReclaim/runPlanetHubIngressReclaimPass.ts:27-33`)는 새 허브 마운트를 방해하지 않으려고 **의도적으로** `reclaimHubSkia: false, releaseGpuLayers: false`를 넘김(직전 handoff 항목에서도 지적한 지점). 결과적으로 "떠나온 이전 행성의 배경 텍스처/비트맵을 강제로 내리는 지점"이 STAGE1↔STAGE2 전환 어디에도 없고, 오직 Skia/Fresco 자체의 소스-키 기반 캐시 재사용·GC 타이밍에만 의존 — 방문한 행성이 다양할수록(=서로 다른 소스 캐시 엔트리가 늘어날수록) 이 의존이 깨지고 상주량이 쌓일 여지가 커짐.
+5. `hubRnBackdropRemountGen`(`planetHubSubcomponents.tsx:393-407`) 기반 강제 리마운트는 **"주기 deep reclaim"** 시점에만 발동 — 행성→행성 이동(허브 진입) 시점에는 발동 안 함.
+
+### 결론 (진단 한정, 수정 없음)
+
+- 직전 항목(은하계 지도 GL 잔류, +87MB 정체)과 이번 항목(다중 허브 순회 native_heap 급증)은 **같은 구조적 원인**을 공유: STAGE2→STAGE1 전환 시 "새 STAGE 마운트를 방해하지 않기 위해 이전 STAGE 자원 강제회수를 의도적으로 생략"하는 설계가, 정작 "여러 개의 서로 다른 콘텐츠(여러 성계 GL / 여러 행성 배경 이미지)를 반복 방문"하는 시나리오에서는 각 방문분이 회수 없이 누적되는 역효과를 냄.
+- 이번 native_heap +70MB의 **정확한 단일 원인(이중 디코드 vs 폴백 풀 다양성 vs 다른 native 할당)은 기기 프로파일러 없이 코드 추적만으로 100% 특정 불가** — 위 1~5번은 확인된 구조적 후보이며 확률 순으로 나열한 것.
+- **코드 수정 미착수**(대표님 요청이 "추가 검토"였으므로 진단에 한정). 수정 시 승인 필요 후보:
+  (a) 허브 진입 시 "이전 planetId의 성운 배경 텍스처/비트맵" 명시적 언마운트·trim 스텝 추가(`runPlanetHubIngressReclaimPass`에 keep=[신규 planetId]로 이전 소스 evict),
+  (b) Skia/RN 이중 디코드 중 하나로 단일화(크로스페이드 필요 없는 경로에서),
+  (c) 폴백 풀 다양성 축소 또는 zone당 1장으로 통일(방문 성계 다양성과 무관하게 캐시 재사용률 100% 보장).
+
+### 참고
+
+- 대응 relaunch는 모니터 자동 remediation이 정상 수행 완료(정상 기동 확인, VERIFY PASS). 사용자 조치 불필요.
+- 직전 handoff 항목 `galaxy-map-gl-residual-on-hub-reentry-20260708`과 함께 김팀장 검토 시 묶어서 판단 권장(원인 계열 동일).
+
+---
+
 ## 🟢 READY — 플레이어 독립국가(녹색 국경) · 김클로드 착수 대기
 
 | 필드 | 값 |
@@ -31,6 +404,51 @@
 - **M3 보류**: faction_diplomacy CSV · ArcCore 접전 (2차 task)
 
 김클로드 완료 시 본 파일 상단 **READY** 블록 아래에 **PENDING** handoff 추가 · 김팀장 검수.
+
+---
+
+## 🟡 PENDING — 은하계 지도맵 GL 잔류(worldmap→hub 회수 누락) · 김클로드 (분석 완료, 수정 미착수)
+
+| 필드 | 값 |
+|------|-----|
+| **status** | `PENDING` (진단 완료 — 코드 수정은 승인 후 진행) |
+| **updated** | 2026-07-08 09:52 KST |
+| **task_id** | `galaxy-map-gl-residual-on-hub-reentry-20260708` |
+| **요청자** | 대표님 — "은하계 지도맵에서 머무르다 행성허브로 들어가면 메모리가 해제되어야 하는데 여전히 높게 유지된다" |
+
+### 실측 근거 (`tools/long-run-monitor/logs/mem-timeline.csv`, `incidents.log`)
+
+```
+08:14:02  gl=35.8MB  pss=837.0  views=399   (베이스라인)
+08:29:23  gl=135.8MB pss=935.2  views=581   GL_SPIKE (+100MB, +182 views)
+08:44:43  gl=147.9MB pss=941.5  views=560
+09:00:06  gl=147.9MB pss=941.1  views=560   (변화없음 — 정체)
+09:15:31  gl=122.8MB pss=916.9  views=375   GL_RECOVERED(모니터 라벨) — views는 베이스라인 근접 회복하지만 GL은 아님
+09:30:51  gl=122.9MB pss=906.0  views=373
+09:46:15  gl=122.9MB pss=920.7  views=377   (09:15 이후 30분간 122.8~122.9MB 고정 — 추가 회수 없음)
+```
+
+**모니터의 `GL_RECOVERED idle_ok` 라벨은 오판정** — 추세가 하락했다는 것만 보고 베이스라인 복귀 여부는 안 봄. 실제로는 148MB → 123MB로 부분 회수(views는 거의 완전 회복) 후 **베이스라인(35.8MB) 대비 +87MB가 30분 이상 고정 잔류** — 대표님이 보고한 "은하계 지도 체류 중 GL+100MB → 행성허브 재착륙 후 미해제" 증상과 정확히 일치. views 폭증분(+182)이 GL 스파이크와 동시에 뜨고 동시에 대부분 빠진 패턴은 Skia/전투(`hub_skia_orbit_nebula_combat`, 모니터 자동 추정 태그)보다는 **네이티브 View 개수 자체가 늘어나는 렌더 소스**(= 은하계 지도의 `react-native-svg` 노드)에 더 부합.
+
+### 코드 추적 결과 (처리과정 확인)
+
+1. **`app/(game)/worldmap.tsx` `navigateToPlanetHubAfterTeardown`** — `router.replace('/(game)/planet')` 직전 `releaseWorldmapSessionFloor({reason:'route_blur'})` → `releaseGalaxyMapStageMemoryFull` 호출 확인(정상 배선).
+2. **`src/game/galaxyMapStageSession.ts` `runGalaxyMapReleaseCore(route_blur)`** — nebula prune·heavyUi abort·memo invalidate·drone campaign trim·Fresco bitmap trim(`trimNativeBitmapCachesAsync`)·`runStageNativeReclaimPass({stage:'galaxy_map'})`까지는 수행.
+3. **그러나 `runStageNativeReclaimPass`(`src/game/nativeReclaim/runStageNativeReclaimPass.ts:47`)의 `signalHubSkiaNativeReclaim(...)`는 `opts.stage === 'planet_hub'`일 때만 호출** — `stage: 'galaxy_map'`으로 부르는 worldmap 이탈 경로에서는 애초에 대상 밖. (그리고 이 함수 자체도 이름 그대로 "허브 Skia" 전용이라 은하계 지도 자체 렌더 소스와는 무관.)
+4. **허브 재착륙측 `runPlanetHubIngressReclaimPass`(`src/game/nativeReclaim/runPlanetHubIngressReclaimPass.ts:27-33`)는 명시적으로 `reclaimHubSkia: false, releaseGpuLayers: false`를 넘김** — 주석 그대로 "hub Skia mount 전/직후 PSS floor 정리; hub Skia tear-down 은 하지 않는다"로, **허브 자신의 Skia를 보존하기 위한 의도된 설계**. 즉 STAGE2→STAGE1 전환 양쪽 모두에서 "은하계 지도 자체가 렌더한 네이티브 뷰/그래픽 메모리를 강제로 회수하는 지점"이 구조적으로 존재하지 않음.
+5. **은하계 지도의 실제 렌더 소스**: `worldmap.tsx`는 Skia Canvas가 아니라 `react-native-svg`(`<Svg>` + `GalaxyMapSystemsSvg`/`GalaxyMapTerritoryVoronoiSvg`/`GalaxyMapTerritoryOccupationLabelsSvg`)를 사용. `GalaxyMapSystemsSvg.tsx:177` `systems.map(...)` — **비가상화 렌더**로 unlock된 성계 수만큼 SVG 노드(원+라벨+아이콘)가 그대로 생성됨. "1일 1성계개방" 설계상 unlock 성계 수는 시간이 갈수록 단조 증가하므로, 지도 체류 시 생성되는 네이티브 뷰 총량도 게임 진행에 따라 계속 늘어나는 구조.
+6. `releaseAllPlanetGpuLayers`(worldmap 이탈 시 호출됨)는 이름과 달리 `planetStageGpuSupervisor.ts`의 **"허브측" GPU 레이어 레지스트리** 전용(`registerGpuLayer(onRelease) → releaseAllPlanetGpuLayers`) — 은하계 지도 SVG 트리와 무관.
+
+### 결론
+
+- STAGE1↔STAGE2 dispose 레지스트리(이전 라이프사이클 감사에서 "정상"으로 확인됐던 3계층: `registerPlanetSessionResource`/`galaxyMapStageSession`/`nativeReclaimRegistry`)는 모두 **Skia(@shopify/react-native-skia) + Fresco 비트맵 캐시**를 대상으로 설계된 것이고, `react-native-svg` 기반 은하계 지도 자체의 네이티브 View/그래픽 메모리는 이 계약 범위 밖 — 감사 사각지대.
+- 실측상 GL은 스파이크 후 부분 회수(148→123MB)만 되고 이후 30분+ 고정 잔류 — "완전 미해제"는 아니고 "불완전 회수 후 정체"가 정확한 표현.
+- **코드 수정은 진행하지 않음** — 진단 요청("처리과정을 확인하라")에 한정. 수정 방향 후보(승인 필요): (a) `runStageNativeReclaimPass(stage:'galaxy_map')`에 SVG 트리 전용 회수 스텝 추가, (b) `GalaxyMapSystemsSvg`에 화면 밖/미선택 성계 가상화 적용, (c) worldmap route_blur 시 지도 언마운트 후 명시적 GC/trimMemory 유도. 어느 쪽이든 "1일 1성계개방"으로 unlock 수가 계속 느는 구조라 (b)가 근본 해결에 가장 가까움.
+
+### 미완/보류
+
+- 위 3안 중 실제 수정 미착수 — 대표님/김팀장 우선순위 지시 대기.
+- `hub_skia_orbit_nebula_combat`(모니터 자동 추정 태그)가 실제로 오귀속인지, 아니면 08:29 시점에 실제로 허브+전투 동시 활성이었는지는 로그캣 원본까지는 대조 안 함(현재 timeline/incidents만 근거).
 
 ---
 
