@@ -5,6 +5,120 @@
 
 ---
 
+## 🟡 PENDING — 플레이어 독립국가(녹색 국경) M1+M2 구현 완료 · 김클로드
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** · **verdict PASS** (김팀장 2026-07-09 21:50 KST) |
+| **updated** | 2026-07-09 12:42 KST |
+| **task_id** | `player-independent-nation-m1-m2-20260707` |
+| **명세** | `docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md` · `tools/kim-team-lead/reports/kim-claude-ready-player-independent-nation.md` |
+
+### 추가 보완 — 독립국 표기 형식 (대표님 요청, 명세 이후 추가)
+
+패널 라인이 처음엔 `독립국 · {클랜명}`(예: "독립국 · 엄스 함대")이었는데, 대표님이 `{닉네임} 독립국`(예: "엄스 독립국") 형식을 요청 → 반영 완료.
+- `formatClanPlateDisplayName.ts`에 `stripSoloClanFleetSuffix` 신설 — 솔로 클랜명("{닉네임} 함대")에서 "함대" 접미어만 제거해 순수 닉네임 추출.
+- `resolvePlanetHubOwnershipPlate`(`planetOwnershipModel.ts`) — `isIndependent`일 때만 `clanName`에 이 strip을 적용(다른 kind는 기존 클랜명 그대로 유지).
+- i18n `worldmap.panel.independent`: `'독립국 · {name}'` → `'{name} 독립국'`(ko), `'Independent Nation · {name}'` → `'{name} Independent Nation'`(en).
+- self-check: `tsc` PASS · `audit:memory:all` PASS(재실행 완료).
+
+**추가 반영(지도 라벨까지 확장)**: 위 "범위 한정"에서 지적했던 지도 위 성계 라벨 문제 — 대표님이 "싱글플레이 게임이라 유저들의 국가가 공유되지 않는다"고 확인해주셔서, 여러 플레이어의 독립국이 한 지도에 동시에 뜨는 시나리오 자체가 없다는 게 확정됨(세이브당 독립국 소유자는 항상 본인 1명뿐). 그래서 라벨 파이프라인 구조 변경 없이 **`territoryNationLabels.independent`를 정적 문자열 대신 `player.nickname`으로 채워** 지도 라벨도 "{닉네임} 독립국"으로 통일(`worldmap.tsx`, `worldmap.territory.nation.independent` i18n 키를 `{name}` 파라미터 받도록 수정). self-check 재실행 PASS.
+| **요청자** | 대표님 지시 — 명세 정본 그대로 M1+M2 구현 |
+
+### 구현 요약
+
+소유권 증서 구매 시 행성이 블루/레드 국가 occupier로 강제되던 것을 **플레이어(솔로 클랜) 자신이 occupier**가 되도록 변경 — 녹색 국경·채움의 **독립국(`independent`)** side 신설. M1(코어: side·kind·구매·reconcile 보호) + M2(지도 Voronoi 국경·채움·라벨·허브 플레이트) 전부 구현.
+
+### M1 — 코어
+
+- **M1-A** `src/galaxyMap/mapFactionSideCore.ts`: `MapFactionSide`에 `'independent'` 추가. `resolveMapFactionSideFromClanIdPure`에 "플레이어 유래 clanId → independent" 판정을 **megaFactionId 체크보다 먼저** 삽입(솔로 클랜이 출신국 megaFactionId를 유지해도 블루로 오판정되지 않도록). `isPlayerOriginatedClanId`를 그대로 import하면 `planetOwnershipModel.ts`와 순환참조가 생겨(그쪽이 이 파일을 import) **인라인 재구현**(`isPlayerOriginatedClanIdInline`)으로 회피. `resolveMapFactionBorderColor`에 `#3FBF6B` 녹색 추가.
+- **M1-B** `tables/balance/clan_map_faction_color_policy.csv`: **신규 행만 추가**(`clan_prefix,solo_clan_,#3FBF6B,95,...`) — priority 95로 mega_faction(70) 행보다 우선시켜, 솔로 클랜의 **채움색**(`resolveClanMapDisplayColor`, 국경색과 별도 시스템)도 megaFactionId와 무관하게 녹색이 되도록 함. 이거 없으면 국경선은 녹색인데 영역 채움은 블루로 보이는 불일치 발생 — 실제 테스트해보지 않았다면 놓치기 쉬운 지점이라 특히 확인 권장.
+- **M1-C** `src/types/index.ts`: `PlanetHoldKind`에 `'player_independent'` 추가.
+- **M1-D** `src/store/clanWarFoundationStore.ts` `claimPlanetOwnershipByPurchase`: `occupierClanId: nationOccupierId` → `occupierClanId: clanId`, `kind` → 무조건 `'player_independent'`. `deedOwnerClanId: clanId`는 기존값 유지(역마이그레이션 함정 회피 조건 그대로 충족).
+- **M1-E** `src/arcCore/balance/seedPlanetOccupationFromBalance.ts`: `shouldSkipOccupationSeedReconcile`에 `kind === 'player_independent'` 보호 추가(1차 방어) + `shouldRestoreNationSeedOccupier`에도 동일 보호 추가(2차 방어, 이중 안전장치) — 명세에서 지목한 두 지점 모두 반영.
+- **M1-F** `resolveTerritorialSideForHold`는 M1-A 반영만으로 자동 동작 확인(occupier 경유) — 코드 수정 불요.
+
+### M2 — 지도·UI
+
+- **M2-A/B** `buildGalaxyBlueRedVoronoiBorders.ts`: `VoronoiSiteSide`·`GalaxyVoronoiBorderSegment.kind`에 `'independent'` 추가. 국경 분기 — **independent가 걸리면 상대(블루/레드/중립) 무관 항상 녹색 우선**(명세 1차 구현 지침 그대로: "independent가 포함된 모든 국경 = 녹색"). `chainAndChamferGalaxyBorders.ts`의 타입 플러밍도 동반 수정.
+- **M2-C** `buildGalaxyTerritoryVoronoi.ts`: 채움(fill)은 기존 `factionSide !== 'neutral'` 조건이 이미 범용이라 자동 커버됨. **라벨**(`buildOccupationLabels`)은 기존에 blue/red만 집계하던 `cellMetrics`가 independent를 누락하고 있어서(라벨이 전혀 안 뜸) 별도 반영 필요했음 — `cellMetrics` 타입·집계 조건·라벨 push 3곳 모두 수정. `resolveBorderStyle`(이 파일 자체의 별도 국경 스타일 함수, M2-B의 것과 다른 함수)도 **sideA/sideB 순서에 따라 색이 뒤바뀌는 버그**가 있어(예: red+independent 순서면 red색 반환) independent 우선 분기를 맨 앞에 추가해 순서 무관하게 고정.
+- **M2-D** 허브 플레이트: `PlanetHubOwnershipPlate`에 `isIndependent` 필드 추가(`resolvePlanetHubOwnershipPlate`). `worldmap.tsx`의 패널 라인에 `독립국 · {name}` 분기 추가, 지도 위 성계 라벨(`territoryNationLabels`)에도 independent 항목 추가. i18n(ko/en) `worldmap.panel.independent` · `worldmap.territory.nation.independent` 신규 키. `megaFactionNationPolicy.ts`의 `resolveNationDisplayNameForMapSide`도 independent 대응 확장(향후 재사용 대비).
+- **M2-E(선택, 구현함)** 기존에 이미 구매됐던 hold(occupier=국가 시드, deedOwner=플레이어 — 현재까지의 "블루 소유" 표현 방식)를 독립국으로 **1회성·idempotent 전환**하는 패스(`migrateExistingPlayerDeedHoldsToIndependentAll`) 신설, `planetOccupationSeedPipeline.ts`(부팅·AI 동기화 후처리 공용 파이프라인)에 편입 — 대표님이 이미 구매해둔 행성이 있어도 다음 부팅 시 자동으로 녹색 전환됨.
+
+### 명세에 없었지만 빌드 중 발견해 수정한 것 (1건)
+
+`src/clanWar/planetTerritoryPlayerAccess.ts`(RED 점령지 체류·개발 차단 — "플레이어 영토 접근" 게이트)의 `resolveTerritorialSideForPlanet` 반환 타입이 `'blue'|'red'|'neutral'`로 좁게 하드코딩되어 있어 `tsc`에서 컴파일 에러 발생 — `MapFactionSide`로 타입만 넓힘(로직 변경 없음, `=== 'red'` 체크라 independent는 자동으로 차단 안 됨 — 정상).
+
+### self-check
+
+- [x] `npm run build:balance-tables` — **PASS**(101 tables 생성, CSV 신규 행 반영 확인)
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**(위 1건 수정 후)
+- [x] `npm run audit:memory:all` — **PASS**(memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
+- [x] git commit **안 함**
+
+### diff 범위 (17개 파일 + build 산출물)
+
+```
+src/types/index.ts
+src/galaxyMap/mapFactionSideCore.ts
+src/galaxyMap/buildGalaxyBlueRedVoronoiBorders.ts
+src/galaxyMap/buildGalaxyTerritoryVoronoi.ts
+src/galaxyMap/chainAndChamferGalaxyBorders.ts
+src/galaxyMap/GalaxyMapTerritoryOccupationLabelsSvg.tsx
+src/clanWar/planetOwnershipModel.ts
+src/clanWar/planetOccupationSeedPipeline.ts
+src/clanWar/planetTerritoryPlayerAccess.ts   (명세外, tsc 에러로 발견해 수정)
+src/store/clanWarFoundationStore.ts
+src/arcCore/balance/seedPlanetOccupationFromBalance.ts
+src/world/megaFactionNationPolicy.ts
+src/i18n/locales/ko.ts
+src/i18n/locales/en.ts
+app/(game)/worldmap.tsx
+tables/balance/clan_map_faction_color_policy.csv
+src/data/balance/generated/**                 (build:balance-tables 산출물 — 직접 수정 안 함)
+```
+
+**참고**: `build:balance-tables` 실행 중 이번 작업과 무관한 신규 CSV 5개(`csvArcCoreContestedZoneAftermathPolicy` 등)의 generated 산출물도 함께 생성됨(untracked였던 CSV들이 이번에 처음 빌드됨) — 제가 만든 CSV 아님, 기존 저장소에 있던 미빌드 상태였던 것으로 보임. 김팀장 diff 검수 시 이 부분은 이번 작업과 분리해서 봐주시면 됩니다.
+
+### 미착수·건드리지 않음 (명세 준수)
+
+- **M3(외교·전투)**: `faction_diplomacy_policy.csv`·`resolveTerritorialDiplomacyRelation`·ArcCore 접전 연동 — 전혀 착수 안 함(명세 지시대로 2차 task).
+- `planetOwnershipDeedPricing`/v5 가격 곡선, Skia 전투·STAGE dispose, `planet_occupation_seeds.csv` 기존 행 — 전부 미변경.
+- `src/arcCore/rebellion/applyRebellionOverthrowHold.ts`(반란 전복 — 모든 점유 kind를 중립화하는 별도 메커닉)는 `player_home`도 동일하게 무방비로 전복 대상이라, `player_independent`도 같은 취급을 받도록 **의도적으로 손대지 않음**(기존 설계와의 일관성 — 대칭 취급이 오히려 맞다고 판단, 다른 의견 있으면 알려주세요).
+
+### 수동 smoke 체크리스트 (명세 §6, 대표님 확인 필요 — 코드 검증만으론 확정 불가)
+
+1. 블루 영토 행성 무역소에서 소유권 구매 → worldmap 해당 성계 **녹색 채움·녹색 국경**
+2. 허브 진입 시 클랜 플레이트 **독립국** 표기 확인
+3. 앱 재시작·12:00 KST 배치 후에도 **블루로 복구되지 않음** 확인(M1-E 검증)
+4. 이미 구매해둔 기존 행성이 있다면, 재시작 후 자동으로 녹색 전환되는지 확인(M2-E 검증)
+
+### 김팀장 검수 (2026-07-09 21:50 KST)
+
+| 항목 | 결과 |
+|------|------|
+| M1 코어 | **PASS** — `independent` side · `#3FBF6B` · `player_independent` kind · 구매 occupier=clanId · reconcile 이중 보호 |
+| M1-B CSV | **PASS** — `solo_clan_` 신규 행만 추가(priority 95) · blue/red 기존 행 미변경 |
+| M2 지도·UI | **PASS** — Voronoi 국경 independent 우선 녹색 · 채움·라벨 · `{name} 독립국` i18n · M2-E 부팅 마이그레이션 |
+| 역마이그레이션 | **PASS** — occupier·deedOwner 둘 다 player clanId · `migratePlanetHoldOwnershipSplit` 분기 회피 |
+| M3·금지 범위 | **PASS** — 외교 CSV·Skia·`planet_occupation_seeds` 기존 행 미착수 |
+| tsc | **PASS** |
+| audit:memory:all | **PASS** (37/37 · skia 20/20 · worklet · native-reclaim 20/20 · resident-set 7/7 · hot-path 0) |
+| **커밋** | 미실행 (대표님 지시 시) |
+| mem-post-dev-recheck | **배정** — 김경제 handoff 갱신 권장 |
+
+**verdict: PASS**
+
+**검수 메모**:
+1. **채움색 일치** — `clan_prefix,solo_clan_,#3FBF6B,95`로 megaFactionId(블루)와 무관하게 영역 채움 녹색 — 국경만 녹색인 불일치 방지 OK.
+2. **파이프라인 순서** — `seed` → `ownershipSplit` → `migrateExistingPlayerDeedHoldsToIndependentAll` — 기존 구매 hold(occupier=국가·deed=플레이어) 전환 경로 정합.
+3. **총사령관 side** — `mapOccupierToGovernorSide`가 independent→`NEUTRAL` 반환(의도 미명시). M1/M2 범위外 · M3 또는 별도 과제로 검토 가능.
+4. **실기 smoke** — handoff §6 4항(구매→녹색·플레이트·배치 후 유지·기존 hold 전환) 대표님 1회 확인 권장.
+
+**[kim-claude-review] 2026-07-09 player-independent-nation-m1-m2 PASS — M1+M2+표기 · tsc+audit PASS · smoke 4항 대기**
+
+---
+
 ## ✅ REVIEWED — 저장구조 심층 재검수 + 쓰레기 코드 정리 · 김클로드
 
 | 필드 | 값 |

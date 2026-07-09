@@ -41,12 +41,15 @@ export function resolveNationDisplayNameForOccupationOwner(
   return null;
 }
 
+const INDEPENDENT_NATION_LABEL = { ko: '독립국', en: 'Independent Nation' } as const;
+
 export function resolveNationDisplayNameForMapSide(
   side: MapFactionSide,
   locale: 'ko' | 'en' = 'ko',
 ): string | null {
   if (side === 'blue') return resolveMegaFactionNationDisplayName('blue', locale);
   if (side === 'red') return resolveMegaFactionNationDisplayName('red', locale);
+  if (side === 'independent') return INDEPENDENT_NATION_LABEL[locale];
   return null;
 }
 

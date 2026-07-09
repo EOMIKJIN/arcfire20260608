@@ -233,6 +233,35 @@ export type PlanetDailyUpkeepDetail = {
   creditsPaid: number;
 };
 
+/** 빈부격차·반란지수 — runPlanetWealthDisparityDailyPass (Phase 1+) */
+export type PlanetWealthDisparityDetail = {
+  version: 1;
+  /** Wealth Disparity Index 0~100 */
+  wdi: number;
+  tier: 'stable' | 'unrest' | 'danger';
+  rebellionPhase: 'none' | 'simmering' | 'overthrow';
+  kstDayKey?: string;
+  updatedAtMs?: number;
+};
+
+/** 접전지(분쟁지역) — runContestedZoneAftermathDailyPass */
+export type ContestedZoneAftermathDetail = {
+  version: 1;
+  kstDayKey: string;
+  /** 비분쟁 코어 개방 행성 CSV 시드 평균 */
+  galaxyAvgGauge: Record<PlanetCoreStatKey, number>;
+  galaxySampleCount: number;
+  csvBaselineGauge: Record<PlanetCoreStatKey, number>;
+  /** CSV 시드 + contested_zone_stat_aftermath offset */
+  equilibriumTarget: Record<PlanetCoreStatKey, number>;
+  appliedDelta: Partial<Record<PlanetCoreStatKey, number>>;
+  /** 수렴 후 전역 평균 대비 Δ */
+  gapVsGalaxyAvg: Partial<Record<PlanetCoreStatKey, number>>;
+  /** CSV baseline 대비 PGP(BMU) 순효과 */
+  netPgpDeltaVsCsvBaseline: number;
+  updatedAtMs: number;
+};
+
 /** 일 1회 소유권 증서 가격 — runPlanetOwnershipDeedPricingDailyPass */
 export type PlanetOwnershipDeedPricingDetail = {
   version: 1;
@@ -271,4 +300,8 @@ export type PlanetCoreMetricsDetail = {
   gaugeComposition?: PlanetCoreGaugeCompositionDetail;
   /** 일 1회 배치 산출 소유권 증서 가격 — 무역소 listing 정본 */
   ownershipDeedPricing?: PlanetOwnershipDeedPricingDetail;
+  /** 접전지 전쟁 여파 스탯 수렴 — runContestedZoneAftermathDailyPass */
+  contestedAftermath?: ContestedZoneAftermathDetail;
+  /** 빈부격차·반란지수 — ArcCore 일 1회 배치 */
+  wealthDisparity?: PlanetWealthDisparityDetail;
 };

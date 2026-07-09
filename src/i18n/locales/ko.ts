@@ -309,8 +309,10 @@ export const KO_DICTIONARY: I18nDictionary = {
   'worldmap.panel.homeBase': '주 행성 거점 · {name}',
   'worldmap.panel.aiClan': 'AI 클랜 기지 · {name}',
   'worldmap.panel.clan': '점유 클랜 · {name}',
+  'worldmap.panel.independent': '{name} 독립국',
   'worldmap.territory.nation.blue': '스텔리움 연합',
   'worldmap.territory.nation.red': '크림슨 레기온',
+  'worldmap.territory.nation.independent': '{name} 독립국',
   'worldmap.panel.here': '[ 현재 위치 ]',
   'worldmap.panel.reachable': '✓ 이동 가능',
   'worldmap.panel.routeReachable': '✓ 경로 이동 가능 ({hops}홉)',
@@ -635,6 +637,13 @@ export const KO_DICTIONARY: I18nDictionary = {
   'econInfo.planetGovernor': '행성총사령관 {name}',
   'econInfo.portraitSlotA11y': '행성 이미지 영역',
   'econInfo.pgpTotal': 'PGP 총생산',
+  'planetStability.title': '행성안정도',
+  'planetStability.wdiValue': 'WDI {wdi}',
+  'planetStability.contestedHeld': '접전지역 — 내정·반란 지표 보류',
+  'planetStability.tier.stable': '안정',
+  'planetStability.tier.unrest': '불안',
+  'planetStability.tier.danger': '위험',
+  'planetStability.tier.rebellion': '반란',
   'econInfo.upkeep': '유지비 (인구 {pct}%)',
   'econInfo.daily': '일간',
   'econInfo.monthlyEst': '월간 추정',
@@ -1201,6 +1210,26 @@ export const KO_DICTIONARY: I18nDictionary = {
   'news.territorialHold.decision.battle': '자동 전투',
   'news.territorialHold.decision.neutral_declare': '중립 선포',
   'news.territorialHold.decision.status_quo': '현상 유지',
+  'news.rebellionOverthrow.title': '행성 반란 — 정부 전복',
+  'news.rebellionOverthrow.body': '{planet} — {prevSide} 정권 전복 · 중립화',
+  'news.rebellionSimmering.title': '행성 내전 — 불안 지속',
+  'news.rebellionSimmering.body': '{planet} — 전복 시도 실패 · 내전(simmering)',
+
+  // ── 오퍼레이터 — 빈부격차·반란 인게임 대화 (operatorRebellion) ──
+  'operatorRebellion.wdiUnrest.label': '[ 안내 오퍼레이터 ]',
+  'operatorRebellion.wdiUnrest.text':
+    '[닉네임]님, 아크코어 경제 감시 채널입니다.\n\n{planet} 행성의 빈부격차 지수(WDI)가 불안 구간({wdi})에 진입했습니다.\n인구·재정·치안 지표를 점검하고, 인구 거주 돔 등 안정화 시설을 검토해 주세요.',
+  'operatorRebellion.wdiDanger.label': '[ 안내 오퍼레이터 ]',
+  'operatorRebellion.wdiDanger.text':
+    '[닉네임]님, 긴급 통보입니다.\n\n{planet} WDI가 위험 구간({wdi})에 도달했습니다.\n정부 전복 시도가 임박할 수 있으니 행성 안정도·점유·증서 상태를 즉시 확인하십시오.',
+  'operatorRebellion.simmering.label': '[ 안내 오퍼레이터 ]',
+  'operatorRebellion.simmering.text':
+    '[닉네임]님, {planet}에서 전복 시도가 격화됐으나 아직 성공하지 못했습니다.\n내전(simmering) 상태 — WDI {wdi}.\n경제·인구 패널티가 누적 중이니 안정화 조치를 권고합니다.',
+  'operatorRebellion.overthrow.label': '[ 안내 오퍼레이터 ]',
+  'operatorRebellion.overthrow.text':
+    '[닉네임]님, {planet}에서 정부 전복이 발생했습니다.\n{prevSide} 정권이 붕괴·중립화되었고, 소유권 증서는 무효화되었습니다.\nWDI {wdi} — 무역소에서 증서 재구매가 필요할 수 있습니다.',
+  'operatorRebellion.fallback.label': '[ 안내 오퍼레이터 ]',
+  'operatorRebellion.fallback.text': '[닉네임]님, {planet} 행성 안정도 이상 보고(WDI {wdi})를 확인해 주세요.',
   'news.scope.allTradePorts': '전체 무역소',
   'news.scope.planetTradePorts': '{count}개 행성 무역소',
 

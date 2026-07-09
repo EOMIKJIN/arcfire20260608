@@ -1,0 +1,16 @@
+key,value,notesKo
+enabled,true,일 1회 runPlanetWealthDisparityDailyPass — 12:00 KST 배치
+wdi_unrest_min,35,불안 tier 하한(행성안정도 UI와 동기)
+wdi_danger_min,70,위험 tier 하한 · 전복 시도 구간
+natural_decay_per_day,1.5,압력 없을 때 WDI 일일 자연 하락
+max_daily_wdi_rise,8,일일 WDI 최대 상승
+max_daily_wdi_fall,6,일일 WDI 최대 하락(안정화·돔 포함)
+p_decline_vs_baseline_weight,0.55,CSV baseline P 대비 저하 1pt당 WDI 가중
+attack_event_weight,0.35,공격 byKind 1건당 WDI 가중(스파이 제외)
+spy_event_weight,0.9,arc_core_spy_infiltration 1건당 WDI 가중
+contested_aftermath_pop_gap_weight,0.08,분쟁 여파 detail population gap pt당(비접전만)
+fiscal_deficit_weight,0.25,일 유지비 대비 수수료 부족 시 WDI 가중
+post_overthrow_decay_per_day,4,전복 후 WDI 일일 하락
+simmering_recovery_wdi_max,34,simmering 해제 WDI 상한(안정 tier)
+operator_captain_id,npc_cpt_operator_stella,인게임 대화 화자 — 안내 오퍼레이터
+operator_civil_war_realtime_auto_open,true,내전(simmering) 발생 시 착륙 없이 즉시 오퍼레이터 대화

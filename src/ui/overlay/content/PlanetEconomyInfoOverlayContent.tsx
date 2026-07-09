@@ -20,6 +20,7 @@ import { createEmptyPlanetCoreStatTrendSnapshot } from '../../../game/planetHub/
 import { PlanetInfoDescriptionBlock } from './PlanetInfoDescriptionBlock';
 import { PlanetInfoPortraitSlot } from './PlanetInfoPortraitSlot';
 import { PlanetCoreStatInfoRow } from './PlanetCoreStatTrendRow';
+import { PlanetStabilityInfoPanel } from './PlanetStabilityInfoPanel';
 import {
   HeavyUiOverlayShell,
   createPlanetEconomyInfoSession,
@@ -127,6 +128,10 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
             </Text>
             <Text style={themeStyles.pgpValue}>{formatPlanetPgpBmu(snapshot.pgpBmu)}</Text>
           </View>
+          <PlanetStabilityInfoPanel
+            stability={snapshot.stability}
+            visualTheme={isTactical ? 'tactical' : 'default'}
+          />
           {section(t('econInfo.upkeep', { pct: snapshot.populationPct }))}
           {infoRow(t('econInfo.daily'), formatCredits(snapshot.upkeepDailyCredits, { suffix: true }))}
           {infoRow(t('econInfo.monthlyEst'), formatCredits(snapshot.upkeepMonthlyCredits, { suffix: true }))}

@@ -1,0 +1,10 @@
+key,value,notesKo
+overthrow_base_prob_at_danger,0.12,WDI=위험(70) 구간 일 1회 전복 기본 확률
+overthrow_prob_span_to_max,0.22,WDI 70→100 구간 추가 확률 span
+overthrow_prob_mul_blue,1,BLUE 팩션 전복 확률 배율
+overthrow_prob_mul_red,0.33,RED 팩션 전복 확률 배율(≈1/3)
+overthrow_prob_mul_neutral,1,중립 행성 전복 확률 배율
+simmering_pop_penalty_per_day,1,내전(simmering) 일일 P intent 패널티
+simmering_resource_penalty_per_day,1,내전(simmering) 일일 R intent 패널티
+overthrow_wdi_on_success,100,전복 성공 시 WDI 고정값
+enabled,true,일 1회 runPlanetRebellionResolutionDailyPass

@@ -28,7 +28,7 @@ export type GalaxyTerritoryBorderPath = {
 
 export type GalaxyTerritoryOccupationLabel = {
   key: string;
-  factionSide: 'blue' | 'red';
+  factionSide: 'blue' | 'red' | 'independent';
   x: number;
   y: number;
 };
@@ -101,6 +101,11 @@ function computeClipBounds(sites: GalaxyTerritorySite[], mapBounds: Bounds, padd
 
 function resolveBorderStyle(sideA: MapFactionSide, sideB: MapFactionSide): { glowColor: string; coreColor: string } {
   const activeSides = new Set([sideA, sideB].filter((s) => s !== 'neutral'));
+  // independent 걸린 변은 상대·순서 무관하게 녹색 우선(1차 구현 — 단순·안전)
+  if (activeSides.has('independent')) {
+    const c = resolveMapFactionBorderColor('independent');
+    return { glowColor: c, coreColor: c };
+  }
   if (activeSides.has('blue') && activeSides.has('red')) {
     const c = MAP_FACTION_CONTEST_BORDER_COLOR;
     return { glowColor: c, coreColor: c };
@@ -225,7 +230,7 @@ function buildOccupationLabels(
   sites: GalaxyTerritorySite[],
   n: number,
   edgeOwners: Map<string, { a: Point; b: Point; sites: number[] }>,
-  cellMetrics: Array<{ side: 'blue' | 'red'; x: number; y: number; area: number } | null>,
+  cellMetrics: Array<{ side: 'blue' | 'red' | 'independent'; x: number; y: number; area: number } | null>,
 ): GalaxyTerritoryOccupationLabel[] {
   const uf = new UnionFind(n);
   for (const { sites: owners } of edgeOwners.values()) {
@@ -237,7 +242,7 @@ function buildOccupationLabels(
     if (sideA !== 'neutral' && sideA === sideB) uf.union(i, j);
   }
 
-  const groups = new Map<number, { side: 'blue' | 'red'; sumX: number; sumY: number; sumArea: number }>();
+  const groups = new Map<number, { side: 'blue' | 'red' | 'independent'; sumX: number; sumY: number; sumArea: number }>();
   for (let i = 0; i < n; i += 1) {
     const m = cellMetrics[i];
     if (!m || m.area <= 0) continue;
@@ -260,6 +265,7 @@ function buildOccupationLabels(
   const labels: GalaxyTerritoryOccupationLabel[] = [];
   let blueIdx = 0;
   let redIdx = 0;
+  let independentIdx = 0;
   for (const g of groups.values()) {
     if (g.sumArea < MIN_LABEL_COMPONENT_AREA_PX2) continue;
     const x = g.sumX / g.sumArea;
@@ -268,6 +274,9 @@ function buildOccupationLabels(
     if (g.side === 'blue') {
       labels.push({ key: `blue-${blueIdx}`, factionSide: 'blue', x, y });
       blueIdx += 1;
+    } else if (g.side === 'independent') {
+      labels.push({ key: `independent-${independentIdx}`, factionSide: 'independent', x, y });
+      independentIdx += 1;
     } else {
       labels.push({ key: `red-${redIdx}`, factionSide: 'red', x, y });
       redIdx += 1;
@@ -291,7 +300,7 @@ export function buildGalaxyTerritoryVoronoiLayers(input: {
   const fills: GalaxyTerritoryFill[] = [];
   const borderSegments: BorderSegment[] = [];
   const edgeOwners = new Map<string, { a: Point; b: Point; sites: number[] }>();
-  const cellMetrics: Array<{ side: 'blue' | 'red'; x: number; y: number; area: number } | null> =
+  const cellMetrics: Array<{ side: 'blue' | 'red' | 'independent'; x: number; y: number; area: number } | null> =
     Array.from({ length: n }, () => null);
 
   for (let i = 0; i < n; i += 1) {
@@ -299,7 +308,7 @@ export function buildGalaxyTerritoryVoronoiLayers(input: {
     const poly = voronoi.cellPolygon(i);
     if (!poly || poly.length < 3) continue;
 
-    if (site.factionSide === 'blue' || site.factionSide === 'red') {
+    if (site.factionSide === 'blue' || site.factionSide === 'red' || site.factionSide === 'independent') {
       const { x, y, area } = polygonAreaCentroid(poly);
       cellMetrics[i] = { side: site.factionSide, x, y, area };
     }

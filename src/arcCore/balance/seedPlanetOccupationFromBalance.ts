@@ -60,6 +60,8 @@ function buildSeedClans(now: number): Record<string, ClanBasicsRecord> {
 
 function shouldSkipOccupationSeedReconcile(hold: PlanetClanHold): boolean {
   if (hold.kind === 'player_home') return true;
+  // 플레이어 독립국(소유권 증서 구매) — 국가 시드 복구 대상 아님, 녹색 상태 영구 보호
+  if (hold.kind === 'player_independent') return true;
   // 플레이어 uid 거점만 보호 — AI 클랜장 homePlayerUid 는 국가 시드 복구 허용
   if (hold.homePlayerUid && !isAiClanOccupier(hold.occupierClanId)) return true;
   return false;
@@ -76,6 +78,8 @@ function shouldRestoreNationSeedOccupier(input: {
   cur: PlanetClanHold;
 }): boolean {
   const { contestedZone, nationClanId, cur } = input;
+  // 플레이어 독립국 — 국가 시드 복구 금지(shouldSkipOccupationSeedReconcile와 이중 방어)
+  if (cur.kind === 'player_independent') return false;
   if (isAiClanOccupier(cur.occupierClanId)) return true;
   if (contestedZone) return false;
   if (cur.kind === 'neutral' || cur.occupierClanId === 'neutral') return true;

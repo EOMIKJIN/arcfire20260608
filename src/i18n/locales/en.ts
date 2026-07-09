@@ -310,8 +310,10 @@ export const EN_DICTIONARY: I18nDictionary = {
   'worldmap.panel.homeBase': 'Home Base · {name}',
   'worldmap.panel.aiClan': 'AI Clan Base · {name}',
   'worldmap.panel.clan': 'Held by Clan · {name}',
+  'worldmap.panel.independent': '{name} Independent Nation',
   'worldmap.territory.nation.blue': 'Stellium Alliance',
   'worldmap.territory.nation.red': 'Crimson Legion',
+  'worldmap.territory.nation.independent': '{name} Independent Nation',
   'worldmap.panel.here': '[ Current Location ]',
   'worldmap.panel.reachable': '✓ Reachable',
   'worldmap.panel.routeReachable': '✓ Route available ({hops} hops)',
@@ -636,6 +638,13 @@ export const EN_DICTIONARY: I18nDictionary = {
   'econInfo.planetGovernor': 'Planet Commander {name}',
   'econInfo.portraitSlotA11y': 'Planet image area',
   'econInfo.pgpTotal': 'PGP Total Output',
+  'planetStability.title': 'Planet Stability',
+  'planetStability.wdiValue': 'WDI {wdi}',
+  'planetStability.contestedHeld': 'Contested zone — internal stability metrics held',
+  'planetStability.tier.stable': 'Stable',
+  'planetStability.tier.unrest': 'Unrest',
+  'planetStability.tier.danger': 'Danger',
+  'planetStability.tier.rebellion': 'Rebellion',
   'econInfo.upkeep': 'Upkeep (Pop {pct}%)',
   'econInfo.daily': 'Daily',
   'econInfo.monthlyEst': 'Monthly Est.',
@@ -1199,6 +1208,26 @@ export const EN_DICTIONARY: I18nDictionary = {
   'news.territorialHold.decision.battle': 'Auto battle',
   'news.territorialHold.decision.neutral_declare': 'Neutral declared',
   'news.territorialHold.decision.status_quo': 'Status quo',
+  'news.rebellionOverthrow.title': 'Planetary rebellion — government overthrown',
+  'news.rebellionOverthrow.body': '{planet} — {prevSide} regime overthrown · neutralized',
+  'news.rebellionSimmering.title': 'Civil unrest — simmering conflict',
+  'news.rebellionSimmering.body': '{planet} — overthrow attempt failed · simmering',
+
+  // ── Operator — wealth disparity & rebellion ingame dialog ──
+  'operatorRebellion.wdiUnrest.label': '[ Guide Operator ]',
+  'operatorRebellion.wdiUnrest.text':
+    '[Pilot], ArcCore economy watch channel.\n\n{planet} WDI has entered unrest band ({wdi}).\nReview population, fiscal, and security metrics; consider stabilization facilities such as the Population Dome.',
+  'operatorRebellion.wdiDanger.label': '[ Guide Operator ]',
+  'operatorRebellion.wdiDanger.text':
+    '[Pilot], urgent notice.\n\n{planet} WDI reached danger band ({wdi}).\nGovernment overthrow may be imminent — verify stability, occupation, and deed status immediately.',
+  'operatorRebellion.simmering.label': '[ Guide Operator ]',
+  'operatorRebellion.simmering.text':
+    '[Pilot], an overthrow attempt on {planet} intensified but has not succeeded yet.\nCivil war (simmering) — WDI {wdi}.\nEconomic and population penalties are accumulating; stabilization is advised.',
+  'operatorRebellion.overthrow.label': '[ Guide Operator ]',
+  'operatorRebellion.overthrow.text':
+    '[Pilot], government overthrow occurred on {planet}.\nThe {prevSide} regime collapsed and was neutralized; ownership deeds were voided.\nWDI {wdi} — you may need to repurchase deeds at the trade port.',
+  'operatorRebellion.fallback.label': '[ Guide Operator ]',
+  'operatorRebellion.fallback.text': '[Pilot], please review the stability report for {planet} (WDI {wdi}).',
   'news.scope.allTradePorts': 'All trade ports',
   'news.scope.planetTradePorts': '{count} planet trade ports',
 

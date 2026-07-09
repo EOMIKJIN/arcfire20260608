@@ -4,16 +4,16 @@ import {
   resolveMapFactionBorderColor,
 } from './resolveMapFactionSide';
 
-export type VoronoiSiteSide = 'blue' | 'red' | 'neutral';
+export type VoronoiSiteSide = 'blue' | 'red' | 'neutral' | 'independent';
 
 export type GalaxyVoronoiSite = {
   systemId: string;
   x: number;
   y: number;
   /**
-   * blue/red = 소유 팀. neutral = 중립·미개척.
+   * blue/red/independent = 소유 팀. neutral = 중립·미개척.
    * 중립·미개척은 국경선 owner가 아니지만, 위치는 격자 계산에 포함되어
-   * 블루·레드 셀이 직접 붙지 않게 완충 셀을 만든다.
+   * 블루·레드·독립 셀이 직접 붙지 않게 완충 셀을 만든다.
    */
   side: VoronoiSiteSide;
 };
@@ -23,8 +23,8 @@ export type GalaxyVoronoiBorderSegment = {
   y1: number;
   x2: number;
   y2: number;
-  /** 'blue' | 'red' | 'contest'(블루-레드 접경, 노랑) */
-  kind: 'blue' | 'red' | 'contest';
+  /** 'blue' | 'red' | 'contest'(블루-레드 접경, 노랑) | 'independent'(녹색, 최우선) */
+  kind: 'blue' | 'red' | 'contest' | 'independent';
   color: string;
 };
 
@@ -94,6 +94,7 @@ export function buildGalaxyBlueRedVoronoiBorderSegments(input: {
 
   const blueColor = resolveMapFactionBorderColor('blue');
   const redColor = resolveMapFactionBorderColor('red');
+  const independentColor = resolveMapFactionBorderColor('independent');
   const contestColor = MAP_FACTION_CONTEST_BORDER_COLOR;
 
   const segments: GalaxyVoronoiBorderSegment[] = [];
@@ -105,13 +106,18 @@ export function buildGalaxyBlueRedVoronoiBorderSegments(input: {
 
     const hasBlue = sideA === 'blue' || sideB === 'blue';
     const hasRed = sideA === 'red' || sideB === 'red';
-    if (!hasBlue && !hasRed) continue; // neutral↔neutral
+    const hasIndependent = sideA === 'independent' || sideB === 'independent';
+    if (!hasBlue && !hasRed && !hasIndependent) continue; // neutral↔neutral
 
     if (isClipHullEdge(a, b, bounds)) continue;
 
-    let kind: 'blue' | 'red' | 'contest';
+    let kind: 'blue' | 'red' | 'contest' | 'independent';
     let color: string;
-    if (hasBlue && hasRed) {
+    // 1차 구현: independent가 걸린 국경은 상대(블루/레드/중립) 무관하게 녹색 우선(단순·안전)
+    if (hasIndependent) {
+      kind = 'independent';
+      color = independentColor;
+    } else if (hasBlue && hasRed) {
       kind = 'contest';
       color = contestColor;
     } else if (hasBlue) {

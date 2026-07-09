@@ -1,4 +1,4 @@
-# Daily audit — 2026-07-08T15:00:09.571Z
+# Daily audit — 2026-07-09T15:00:10.286Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -48,12 +48,12 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·보상 item 정적 검
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
 - 148,428 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 115,935 — `src/data/generated/csvStoryScenes.ts`
-- 74,888 — `src/i18n/locales/ko.ts`
+- 77,379 — `src/i18n/locales/ko.ts`
 - 71,055 — `src/data/generated/csvWeapons.ts`
+- 70,515 — `src/i18n/locales/en.ts`
 - 70,177 — `app/(game)/planet.tsx`
 - 70,149 — `src/data/balance/generated/csvSynthSystemColonization.ts`
-- 68,243 — `src/i18n/locales/en.ts`
-- 66,107 — `app/(game)/worldmap.tsx`
+- 66,420 — `app/(game)/worldmap.tsx`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
 - 60,176 — `src/data/generated/csvMissions.ts`
 - 47,321 — `app/(game)/shipyard.tsx`

@@ -1032,8 +1032,10 @@ export default function WorldMapScreen() {
     () => ({
       blue: t('worldmap.territory.nation.blue'),
       red: t('worldmap.territory.nation.red'),
+      // 싱글플레이 — 독립국 소유자는 항상 본인 1명뿐이라 닉네임 고정 표기 가능
+      independent: t('worldmap.territory.nation.independent', { name: player?.nickname ?? '' }),
     }),
-    [t, locale],
+    [t, locale, player?.nickname],
   );
 
   const territoryVoronoiModel = useMemo(
@@ -1058,6 +1060,7 @@ export default function WorldMapScreen() {
         if (!plate) return null;
         const nm = plate.clanName;
         if (h.kind === 'player_home') return t('worldmap.panel.homeBase', { name: nm });
+        if (plate.isIndependent) return t('worldmap.panel.independent', { name: nm });
         if (h.occupierClanId.startsWith('ai_clan_') && plate.isNationDefault) {
           return t('worldmap.panel.aiClan', { name: nm });
         }

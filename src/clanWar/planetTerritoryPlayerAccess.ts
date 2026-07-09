@@ -4,10 +4,11 @@
 
 import { resolvePlanetHoldForOwnershipCheck, resolveTerritorialSideForHold } from './planetOwnershipModel';
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
+import type { MapFactionSide } from '../galaxyMap/mapFactionSideCore';
 
 export type PlayerRedTerritoryBlockReason = 'red_territory';
 
-export function resolveTerritorialSideForPlanet(planetId: string): 'blue' | 'red' | 'neutral' {
+export function resolveTerritorialSideForPlanet(planetId: string): MapFactionSide {
   const id = planetId?.trim();
   if (!id) return 'neutral';
   const foundation = useClanWarFoundationStore.getState();

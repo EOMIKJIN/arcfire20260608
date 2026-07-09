@@ -4,7 +4,7 @@ import type { GalaxyTerritoryOccupationLabel } from './buildGalaxyTerritoryVoron
 
 type Props = {
   labels: GalaxyTerritoryOccupationLabel[];
-  nationLabelBySide: Record<'blue' | 'red', string>;
+  nationLabelBySide: Record<'blue' | 'red' | 'independent', string>;
 };
 
 /** 점령 국가명 — 성계 노드 위 레이어 · 흰색 70% */

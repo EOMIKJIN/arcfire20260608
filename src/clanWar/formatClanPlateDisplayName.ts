@@ -5,3 +5,8 @@ export function formatClanPlateDisplayName(displayName: string): string {
     .replace(/\s*\((소유권|Owned)\)\s*$/iu, '')
     .trim();
 }
+
+/** 독립국 플레이트 — 솔로 클랜명("{닉네임} 함대")에서 닉네임만 추출 */
+export function stripSoloClanFleetSuffix(displayName: string): string {
+  return displayName.replace(/\s*(함대|Fleet)\s*$/iu, '').trim() || displayName;
+}

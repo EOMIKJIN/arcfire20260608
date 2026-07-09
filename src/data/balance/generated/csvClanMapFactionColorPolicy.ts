@@ -9,6 +9,7 @@ export const ClanMapFactionColorPolicy_FROM_BALANCE_CSV = [
   { "matchType": "clan_substr", "matchValue": "_pvp_", "displayColorHex": "#E36B6B", "priority": "80", "notesKo": "적대 PvP 접미" },
   { "matchType": "mega_faction", "matchValue": "mega_stellium_alliance", "displayColorHex": "#4EA3FF", "priority": "70", "notesKo": "플레이어·유저 연합(블루)" },
   { "matchType": "mega_faction", "matchValue": "mega_crimson_legion", "displayColorHex": "#E36B6B", "priority": "70", "notesKo": "크림슨 레드 팩션" },
+  { "matchType": "clan_prefix", "matchValue": "solo_clan_", "displayColorHex": "#3FBF6B", "priority": "95", "notesKo": "플레이어 독립국(솔로 클랜) — 녹색·megaFactionId 무관 우선" },
   { "matchType": "default", "matchValue": "*", "displayColorHex": "#9AA8C4", "priority": "0", "notesKo": "중립·미매칭(국경선 등 추후 확장)" },
 ] as const;
 export type ClanMapFactionColorPolicyRow = (typeof ClanMapFactionColorPolicy_FROM_BALANCE_CSV)[number];

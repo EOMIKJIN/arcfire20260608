@@ -153,7 +153,7 @@ export interface ClanBasicsRecord {
 }
 
 /** 행성 점유 — 한 행성에 하나의 점유 클랜(기반 v1) */
-export type PlanetHoldKind = 'neutral' | 'clan_hold' | 'player_home';
+export type PlanetHoldKind = 'neutral' | 'clan_hold' | 'player_home' | 'player_independent';
 
 export interface PlanetClanHold {
   planetId: string;

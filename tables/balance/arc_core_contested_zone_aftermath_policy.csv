@@ -1,0 +1,7 @@
+key,value,notesKo
+enabled,true,일 1회 runContestedZoneAftermathDailyPass — 12:00 KST 배치
+drift_rate_per_day,0.16,분쟁 여파 목표치로 일일 수렴 비율(0~1)
+max_daily_stat_gain_per_metric,3,지표당 일일 최대 상승(pt)
+max_daily_stat_drop_per_metric,3,지표당 일일 최대 하락(pt)
+galaxy_reference_enabled,true,비분쟁 21성계 CSV 시드 평균을 비교 기준으로 detail 기록
+min_dev_level_sum_bypass,0,개발 레벨 합 하한 — 0=분쟁지역 항상 적용

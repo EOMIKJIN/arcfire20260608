@@ -1,7 +1,7 @@
 import type { GalaxyVoronoiBorderSegment } from './buildGalaxyBlueRedVoronoiBorders';
 
 export type BorderPolyline = {
-  kind: 'blue' | 'red' | 'contest';
+  kind: 'blue' | 'red' | 'contest' | 'independent';
   color: string;
   points: [number, number][];
   closed: boolean;
@@ -138,7 +138,7 @@ function chamferPolyline(points: Pt[], closed: boolean): Pt[] {
 export function chainAndChamferGalaxyBorders(
   segments: GalaxyVoronoiBorderSegment[],
 ): BorderPolyline[] {
-  const byKind = new Map<'blue' | 'red' | 'contest', GalaxyVoronoiBorderSegment[]>();
+  const byKind = new Map<'blue' | 'red' | 'contest' | 'independent', GalaxyVoronoiBorderSegment[]>();
   for (const seg of segments) {
     const list = byKind.get(seg.kind);
     if (list) list.push(seg);

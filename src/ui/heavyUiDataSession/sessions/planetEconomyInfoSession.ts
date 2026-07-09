@@ -45,6 +45,8 @@ export function readPlanetEconomyInfoRevision(planetId: string): string {
     trend?.delta?.defense ?? '',
     trend?.delta?.technology ?? '',
     trend?.delta?.environment ?? '',
+    core?.detail?.wealthDisparity?.wdi ?? '',
+    core?.detail?.wealthDisparity?.rebellionPhase ?? '',
     bucket.arcFeeCredits,
     bucket.playerWalletPending,
     hold?.occupierClanId ?? '',

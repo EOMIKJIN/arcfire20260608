@@ -40,6 +40,10 @@ import {
 } from '../../arcCore/planetCore/planetCoreStatOpsTrend';
 import type { PlanetCoreStatKey } from '../../store/planetCoreMetricTypes';
 import { resolvePlanetInfoPanelDescription } from './resolvePlanetTableDescription';
+import {
+  resolvePlanetStabilityDisplay,
+  type PlanetStabilityDisplay,
+} from '../../world/planetStabilityModel';
 
 export type PlanetEconomyInfoExtraRow = {
   label: string;
@@ -82,6 +86,8 @@ export type PlanetEconomyInfoSnapshot = {
   statTrends: PlanetCoreStatTrendSnapshot;
   /** 5대 스탯 기반 행성 총생산(PGP, BMU) */
   pgpBmu: number;
+  /** 빈부격차·반란지수 4단 (행성정보 UI) */
+  stability: PlanetStabilityDisplay;
   convoyMonopolyLabel: string;
   occupierFactionLabel: string;
   factionVaultLabel: string | null;
@@ -285,6 +291,8 @@ export function buildPlanetEconomyInfoSnapshot(
           environment: core.environment,
         }) + resolvePlanetDevelopmentTdiPgpBonusBmu(planetId);
 
+  const stability = resolvePlanetStabilityDisplay(planetId);
+
   return {
     planetId,
     planetName,
@@ -305,6 +313,7 @@ export function buildPlanetEconomyInfoSnapshot(
     environmentPct: core.environment,
     statTrends: buildStatTrendSnapshot(planetId),
     pgpBmu,
+    stability,
     convoyMonopolyLabel: convoyLabel || getTransportFleetDisplayNameKo(),
     occupierFactionLabel: occupierFactionLabelKo(faction),
     factionVaultLabel,

@@ -294,10 +294,12 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
       ...resolvedHold,
       planetId,
       systemId: resolvedHold.systemId || systemId,
-      occupierClanId: nationOccupierId,
+      // 구매 시 블루·중립 영토 모두 플레이어(솔로 클랜) occupier → 녹색 독립국
+      // (migratePlanetHoldOwnershipSplit 역마이그레이션 함정 회피: occupier·deedOwner 둘 다 player clanId)
+      occupierClanId: clanId,
       deedOwnerClanId: clanId,
       homePlayerUid: uid,
-      kind: resolvedHold.kind === 'neutral' ? 'clan_hold' : resolvedHold.kind,
+      kind: 'player_independent',
       capturedAt: resolvedHold.capturedAt > 0 ? resolvedHold.capturedAt : now,
     };
     set({ planetHolds: { ...get().planetHolds, [planetId]: nextHold } });

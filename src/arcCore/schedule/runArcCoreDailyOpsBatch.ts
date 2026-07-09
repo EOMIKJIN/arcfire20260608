@@ -39,6 +39,9 @@ import {
 } from '../planetCore/planetCoreStatOpsTrend';
 import { beginPlanetCoreGaugeIntentBatch } from '../planetCore/planetCoreGaugeIntent';
 import { runPlanetCoreGaugeCompositionApplyPass } from '../planetCore/runPlanetCoreGaugeCompositionApplyPass';
+import { runContestedZoneAftermathDailyPass } from '../planetCore/runContestedZoneAftermathDailyPass';
+import { runPlanetWealthDisparityDailyPass } from '../planetCore/runPlanetWealthDisparityDailyPass';
+import { runPlanetRebellionResolutionDailyPass } from '../planetCore/runPlanetRebellionResolutionDailyPass';
 
 export type ArcCoreDailyOpsBatchResult = {
   ran: boolean;
@@ -57,6 +60,9 @@ export type ArcCoreDailyOpsBatchResult = {
   convoyDailySettlement: boolean;
   centralBankExpenditure: boolean;
   facilityStatNudge: boolean;
+  contestedZoneAftermath: boolean;
+  wealthDisparity: boolean;
+  rebellionResolution: boolean;
   planetCoreGaugeComposition: boolean;
   laboratoryRdSpeed: boolean;
   tavernBountyRefresh: boolean;
@@ -92,6 +98,9 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     convoyDailySettlement: false,
     centralBankExpenditure: false,
     facilityStatNudge: false,
+    contestedZoneAftermath: false,
+    wealthDisparity: false,
+    rebellionResolution: false,
     planetCoreGaugeComposition: false,
     laboratoryRdSpeed: false,
     tavernBountyRefresh: false,
@@ -128,6 +137,15 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     runPlanetEnvironmentDiversityPass();
     result.planetEnvironment = true;
   }
+  const contestedAftermath = runContestedZoneAftermathDailyPass();
+  result.contestedZoneAftermath = contestedAftermath.ran;
+
+  const wealthDisparity = runPlanetWealthDisparityDailyPass();
+  result.wealthDisparity = wealthDisparity.ran;
+
+  const rebellionResolution = runPlanetRebellionResolutionDailyPass();
+  result.rebellionResolution = rebellionResolution.ran;
+
   if (policy.runPlanetMasterBalancePass) {
     runGlobalPlanetMasterBalancePass();
     result.planetMasterBalance = true;

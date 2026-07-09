@@ -22,7 +22,7 @@ import type { ClanBasicsRecord, PlanetClanHold } from '../types';
 import {
   resolveNationDisplayNameForMapSide,
 } from '../world/megaFactionNationPolicy';
-import { formatClanPlateDisplayName } from './formatClanPlateDisplayName';
+import { formatClanPlateDisplayName, stripSoloClanFleetSuffix } from './formatClanPlateDisplayName';
 import type { AppLocale } from '../i18n/types';
 
 function resolveOwnershipDisplayLocale(locale: AppLocale = 'ko'): 'ko' | 'en' {
@@ -110,11 +110,35 @@ export function resolveNationSeedClanIdForMegaFaction(
   return null;
 }
 
-/** 영토 국경 side — 중립 hold·occupier neutral 포함 */
+/** 플레이어 독립국 hold — `player_independent` 또는 중립/국가 occupier + 플레이어 증서(legacy) */
+export function isPlayerIndependentNationHold(hold: PlanetClanHold): boolean {
+  if (hold.kind === 'player_independent') return true;
+  const deedOwner = hold.deedOwnerClanId?.trim();
+  if (!deedOwner || !isPlayerOriginatedClanId(deedOwner)) return false;
+  if (isNationSeedClanId(hold.occupierClanId)) return true;
+  if (hold.occupierClanId === 'neutral' || hold.kind === 'neutral') return true;
+  return hold.occupierClanId === deedOwner;
+}
+
+/** Voronoi·지도 occupier — legacy 중립 영토 소유권 구매 포함 */
+export function resolvePlayerIndependentOccupierClanId(hold: PlanetClanHold): string | null {
+  if (!isPlayerIndependentNationHold(hold)) return null;
+  const occupier = hold.occupierClanId?.trim();
+  if (occupier && occupier !== 'neutral' && isPlayerOriginatedClanId(occupier)) return occupier;
+  const deedOwner = hold.deedOwnerClanId?.trim();
+  if (deedOwner && isPlayerOriginatedClanId(deedOwner)) return deedOwner;
+  return null;
+}
+
+/** 영토 국경 side — 중립 hold·occupier 포함 */
 export function resolveTerritorialSideForHold(
   hold: PlanetClanHold,
   clans: Record<string, ClanBasicsRecord>,
 ): MapFactionSide {
+  const independentOccupier = resolvePlayerIndependentOccupierClanId(hold);
+  if (independentOccupier) {
+    return resolveMapFactionSideFromClanIdPure(independentOccupier, clans);
+  }
   if (hold.kind === 'neutral' || hold.occupierClanId === 'neutral') return 'neutral';
   return resolveMapFactionSideFromClanIdPure(hold.occupierClanId, clans);
 }
@@ -155,6 +179,46 @@ export function migratePlanetHoldsOwnershipSplit(
   return { holds: next, changed };
 }
 
+/**
+ * M2-E(선택) — 기존 구매 hold → 독립국 전환.
+ * - occupier=국가 시드 + deedOwner=플레이어 (블루/레드 영토 legacy)
+ * - occupier=neutral + deedOwner=플레이어 (중립 영토 legacy)
+ * idempotent — 매 부팅 안전 재실행.
+ */
+export function migrateExistingPlayerDeedHoldToIndependent(
+  hold: PlanetClanHold,
+): { hold: PlanetClanHold; changed: boolean } {
+  if (hold.kind === 'player_independent') {
+    const deedOwner = hold.deedOwnerClanId?.trim();
+    if (deedOwner && hold.occupierClanId !== deedOwner) {
+      return { hold: { ...hold, occupierClanId: deedOwner }, changed: true };
+    }
+    return { hold, changed: false };
+  }
+  const deedOwner = hold.deedOwnerClanId?.trim();
+  if (!deedOwner || !isPlayerOriginatedClanId(deedOwner)) return { hold, changed: false };
+  const fromNationSeed = isNationSeedClanId(hold.occupierClanId);
+  const fromNeutral = hold.occupierClanId === 'neutral' || hold.kind === 'neutral';
+  if (!fromNationSeed && !fromNeutral) return { hold, changed: false };
+  return {
+    hold: { ...hold, occupierClanId: deedOwner, kind: 'player_independent' },
+    changed: true,
+  };
+}
+
+export function migrateExistingPlayerDeedHoldsToIndependentAll(
+  holds: Record<string, PlanetClanHold>,
+): { holds: Record<string, PlanetClanHold>; changed: boolean } {
+  let changed = false;
+  const next: Record<string, PlanetClanHold> = {};
+  for (const [planetId, hold] of Object.entries(holds)) {
+    const migrated = migrateExistingPlayerDeedHoldToIndependent(hold);
+    next[planetId] = migrated.hold;
+    if (migrated.changed) changed = true;
+  }
+  return { holds: next, changed };
+}
+
 export type PlanetOwnershipDeedPurchaseCheck =
   | { ok: true }
   | {
@@ -177,12 +241,18 @@ export function resolveEffectiveMapOccupierClanId(
   hold: PlanetClanHold | undefined,
 ): string | undefined {
   if (isPlanetContestedZone(planetId)) {
+    if (hold) {
+      const independentOccupier = resolvePlayerIndependentOccupierClanId(hold);
+      if (independentOccupier) return independentOccupier;
+    }
     const occupier = hold?.occupierClanId?.trim();
     if (!occupier || occupier === 'neutral' || hold?.kind === 'neutral') return undefined;
     return occupier;
   }
 
   if (hold) {
+    const independentOccupier = resolvePlayerIndependentOccupierClanId(hold);
+    if (independentOccupier) return independentOccupier;
     const occupier = hold.occupierClanId?.trim();
     if (hold.kind !== 'neutral' && occupier && occupier !== 'neutral') {
       return occupier;
@@ -228,7 +298,7 @@ export function previewPlanetOwnershipDeedPurchase(
 
 /**
  * 무역소 소유권 증서 구매 가능 여부.
- * - 허용: 블루·중립 영토 (CSV NEUTRAL / occupier neutral 포함)
+ * - 허용: 블루·중립 영토 (구매 후 모두 player_independent 독립국)
  * - 거부: 레드 영토 · 구매자 국가 시드 미지원 · 타 클랜 증서
  */
 export function canPurchasePlanetOwnershipDeed(
@@ -244,7 +314,9 @@ export function canPurchasePlanetOwnershipDeed(
   if (territorialSide === 'red') {
     return { ok: false, reason: 'red_territory' };
   }
-  if (territorialSide !== 'blue' && territorialSide !== 'neutral') {
+  // independent(플레이어 소유)는 여기서 막지 않고 아래 deedOwner 체크로 넘겨
+  // already_owner/owned_by_other_clan 등 더 정확한 사유를 반환하게 한다.
+  if (territorialSide !== 'blue' && territorialSide !== 'neutral' && territorialSide !== 'independent') {
     return { ok: false, reason: 'neutral_territory' };
   }
   if (!resolveNationSeedClanIdForMegaFaction(buyerMegaFactionId)) {
@@ -264,6 +336,8 @@ export type PlanetHubOwnershipPlate = {
   clanColorClanId: string;
   deedOwnerClanId: string;
   isNationDefault: boolean;
+  /** 플레이어 독립국(녹색 국경) — 소유권 증서 구매로 국가 영토에서 독립 */
+  isIndependent: boolean;
 };
 
 /** 행성 허브·지도 — 소유권 증서 기준 표시명 (국가 디폴트 = 스텔리움 연합 등) */
@@ -273,10 +347,11 @@ export function resolvePlanetHubOwnershipPlate(
   locale: AppLocale = 'ko',
 ): PlanetHubOwnershipPlate | null {
   const displayLocale = resolveOwnershipDisplayLocale(locale);
-  if (hold.kind === 'neutral') return null;
+  if (hold.kind === 'neutral' && !isPlayerIndependentNationHold(hold)) return null;
 
   const deedOwnerClanId = resolveDeedOwnerClanId(hold);
   const nationDefault = isNationDefaultDeedOwnership(hold) && isNationSeedClanId(deedOwnerClanId);
+  const isIndependent = isPlayerIndependentNationHold(hold);
 
   let rawName: string;
   if (nationDefault) {
@@ -289,11 +364,17 @@ export function resolvePlanetHubOwnershipPlate(
     rawName = (clans[deedOwnerClanId]?.displayName ?? '').trim() || deedOwnerClanId;
   }
 
+  // 독립국 — "{닉네임} 함대" 클랜명에서 닉네임만 추출("{닉네임} 독립국" 표기용, worldmap.panel.independent)
+  const clanName = isIndependent
+    ? stripSoloClanFleetSuffix(formatClanPlateDisplayName(rawName) || rawName)
+    : formatClanPlateDisplayName(rawName) || rawName;
+
   return {
-    clanName: formatClanPlateDisplayName(rawName) || rawName,
+    clanName,
     clanColorClanId: nationDefault ? hold.occupierClanId : deedOwnerClanId,
     deedOwnerClanId,
     isNationDefault: nationDefault,
+    isIndependent,
   };
 }
 
