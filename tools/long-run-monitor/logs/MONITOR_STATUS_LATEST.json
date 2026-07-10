@@ -1,50 +1,50 @@
 ﻿{
     "lastTimeline":  {
-                         "pss_mb":  "704.2",
-                         "gl_mb":  "34.4",
-                         "pid":  "15478",
-                         "note":  "GL_RECOVERED idle_ok",
-                         "iso_time":  "2026-07-09 23:46:26",
-                         "views":  "358"
+                         "pss_mb":  "377.8",
+                         "gl_mb":  "16.1",
+                         "pid":  "27872",
+                         "note":  "",
+                         "iso_time":  "2026-07-10 17:39:02",
+                         "views":  "57"
                      },
     "processes":  {
                       "reportWatch":  {
-                                          "id":  13076,
+                                          "id":  11768,
                                           "alive":  true
                                       },
                       "schedule8am":  {
-                                          "id":  9156,
+                                          "id":  13764,
                                           "alive":  true
                                       },
                       "watchdog":  {
-                                       "id":  4844,
-                                       "alive":  true
+                                       "id":  0,
+                                       "alive":  false
                                    },
                       "watch30m":  {
-                                       "id":  25024,
+                                       "id":  26948,
                                        "alive":  true
                                    }
                   },
     "monitorPaused":  false,
     "perpetualDisabled":  false,
     "chatPending":  true,
-    "reportWatchMode":  "hidden",
+    "reportWatchMode":  "visible",
     "watchdog":  {
-                     "id":  4844,
-                     "alive":  true
+                     "id":  0,
+                     "alive":  false
                  },
     "reportWatch":  {
-                        "id":  13076,
+                        "id":  11768,
                         "alive":  true
                     },
     "handoffPending":  true,
     "watch30m":  {
-                     "id":  25024,
+                     "id":  26948,
                      "alive":  true
                  },
     "schedule8am":  {
-                        "id":  9156,
+                        "id":  13764,
                         "alive":  true
                     },
-    "updatedAtKst":  "2026-07-09 23:59:58"
+    "updatedAtKst":  "2026-07-10 17:43:41"
 }

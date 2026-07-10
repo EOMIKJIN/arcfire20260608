@@ -12,9 +12,11 @@ import type { SkImage, SkPicture } from '@shopify/react-native-skia';
 import { registerPlanetSessionResource } from '../../game/planetSessionRegistry';
 import { registerGpuLayer, unregisterGpuLayer } from '../../game/planetStageGpuSupervisor';
 import {
-  scheduleSkPictureDispose,
+  commitSkPictureReactFrame,
+  dropSkPictureReactFrame,
   safeSkiaDispose,
 } from '../../game/skia/skiaMemoryLifecycle';
+import { registerSkPictureFrameInvalidate } from '../../game/skia/skiaPictureFrameRegistry';
 import type { MissileHitFx } from './PlanetEdenRaidTestLayer';
 import { INBOUND_DRONE_FX_ORBIT_AGE_SLOP_MS } from './planetSkiaHitFxContract';
 import {
@@ -154,12 +156,7 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
     const fxList = dodgeHitFxRef?.current ?? [];
     const tMs = dodgeTimeMsRef?.current ?? 0;
     if (!img || dodgeOrbitSize <= 0 || fxList.length === 0) {
-      const live = dodgePictureLiveRef.current;
-      if (live != null) {
-        dodgePictureLiveRef.current = null;
-        setDodgePicture(null);
-        scheduleSkPictureDispose(live);
-      }
+      dropSkPictureReactFrame({ liveRef: dodgePictureLiveRef, setPicture: setDodgePicture });
       return;
     }
     if (!nebulaDodgeFxNeedsRedraw(fxList, tMs)) {
@@ -177,12 +174,11 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
       dodgeOrbitOffsetY,
     });
     if (!next) return;
-    const prev = dodgePictureLiveRef.current;
-    dodgePictureLiveRef.current = next;
-    setDodgePicture(next);
-    if (prev != null && prev !== next) {
-      scheduleSkPictureDispose(prev);
-    }
+    commitSkPictureReactFrame({
+      liveRef: dodgePictureLiveRef,
+      setPicture: setDodgePicture,
+      next,
+    });
   }, [
     dodgeHitFxRef,
     dodgeTimeMsRef,
@@ -251,15 +247,23 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   }, [dodgeFxOnlyOverlay, imagesReady, onNebulaImagesReady, onNebulaImagesLost]);
 
   useEffect(() => {
+    return registerSkPictureFrameInvalidate(() => {
+      dropSkPictureReactFrame({ liveRef: dodgePictureLiveRef, setPicture: setDodgePicture });
+      if (_nebulaDodgeRecorder) {
+        safeSkiaDispose(_nebulaDodgeRecorder as unknown as { dispose?: () => void });
+        _nebulaDodgeRecorder = null;
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     mountedRef.current = true;
     skiaLoopsActiveRef.current = true;
     return () => {
       skiaLoopsActiveRef.current = false;
       mountedRef.current = false;
       setTimeout(() => {
-        const live = dodgePictureLiveRef.current;
-        dodgePictureLiveRef.current = null;
-        scheduleSkPictureDispose(live);
+        dropSkPictureReactFrame({ liveRef: dodgePictureLiveRef, setPicture: setDodgePicture });
         if (_nebulaDodgeRecorder) {
           safeSkiaDispose(_nebulaDodgeRecorder as unknown as { dispose?: () => void });
           _nebulaDodgeRecorder = null;

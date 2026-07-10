@@ -37,10 +37,13 @@ import {
   writeInboundDroneTaperedTrailFillPath,
 } from './inboundDroneSkiaTrail';
 import {
+  commitSkPictureReactFrame,
+  dropSkPictureReactFrame,
   resetSkPath,
-  scheduleSkPictureDispose,
   safeSkiaDispose,
 } from '../../game/skia/skiaMemoryLifecycle';
+import { registerSkPictureFrameInvalidate } from '../../game/skia/skiaPictureFrameRegistry';
+import { registerGpuLayer, unregisterGpuLayer } from '../../game/planetStageGpuSupervisor';
 
 const SCENE_SIZE = PLANET_MAIN_ORBIT_SCENE_SIZE;
 const TRAIL_BRIDGE_INTERVAL_MS = HUB_WORKLET_JS_BRIDGE_INTERVAL_MS;
@@ -166,11 +169,8 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
     // 허브 상시 누수 방지: 드론·히트FX 가 전혀 없으면 PictureRecorder 를 만들지 않는다.
     // (orbit clock 틱마다 빈 recorder 생성/finish/dispose → 장시간 네이티브(JSI finalizer 지연) 누적 원인)
     if (droneCount <= 0 && hitFxRef.current.length === 0) {
-      const liveIdle = liveFrameRef.current;
-      if (liveIdle != null) {
-        liveFrameRef.current = null;
-        setPicture(null);
-        scheduleSkPictureDispose(liveIdle);
+      if (liveFrameRef.current != null) {
+        dropSkPictureReactFrame({ liveRef: liveFrameRef, setPicture });
       }
       onVfxIdleRef.current?.();
       return;
@@ -205,17 +205,13 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
 
     if (!next) {
       if (droneCount <= 0 && hitFxRef.current.length === 0) {
+        dropSkPictureReactFrame({ liveRef: liveFrameRef, setPicture });
         onVfxIdleRef.current?.();
       }
       return;
     }
 
-    const prev = liveFrameRef.current;
-    liveFrameRef.current = next;
-    setPicture(next);
-    if (prev != null && prev !== next) {
-      scheduleSkPictureDispose(prev);
-    }
+    commitSkPictureReactFrame({ liveRef: liveFrameRef, setPicture, next });
 
     if (droneCount <= 0 && hitFxRef.current.length === 0) {
       onVfxIdleRef.current?.();
@@ -269,6 +265,25 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
     },
   );
 
+  useEffect(() => {
+    return registerSkPictureFrameInvalidate(() => {
+      if (rafIdRef.current != null) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+      dropSkPictureReactFrame({ liveRef: liveFrameRef, setPicture });
+    });
+  }, []);
+
+  // GPU 레이어 진단 계측 — 허브 리클레임 로그의 debugPlanetGpuLayerSnapshot()에서
+  // 이 Canvas의 동시 마운트 여부를 확인하기 위함(동작 변경 없음, 카운트 전용 — 2026-07-10).
+  useEffect(() => {
+    registerGpuLayer('skia_inbound_drone_trail', 'T0');
+    return () => {
+      unregisterGpuLayer('skia_inbound_drone_trail');
+    };
+  }, []);
+
   useLayoutEffect(() => {
     mountedRef.current = true;
     trailBridgeAliveSv.value = 1;
@@ -289,9 +304,7 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
       trailPaintRef.current = null;
       safeSkiaDispose(recorderRef.current as unknown as { dispose?: () => void });
       recorderRef.current = null;
-      const live = liveFrameRef.current;
-      liveFrameRef.current = null;
-      scheduleSkPictureDispose(live);
+      dropSkPictureReactFrame({ liveRef: liveFrameRef, setPicture });
     };
   }, [trailBridgeAliveSv]);
 

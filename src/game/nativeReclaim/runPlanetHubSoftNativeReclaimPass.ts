@@ -4,6 +4,7 @@ import { signalHubSkiaNativeReclaim } from './hubSkiaNativeReclaimSignal';
 import { runSoftNativeReclaimPass } from './runSoftNativeReclaimPass';
 import { resolveSinglePlanetSessionKeepIds } from './singlePlanetSessionKeep';
 import { runCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
+import { debugPlanetGpuLayerSnapshot } from '../planetStageGpuSupervisor';
 
 /**
  * planet hub 체류 — PSS/Native floor 완화 + idle sticky Skia dodge 해제.
@@ -26,7 +27,8 @@ export function runPlanetHubSoftNativeReclaimPass(planetId: string, reason: stri
     keepPlanetIds: keep,
   });
   if (typeof __DEV__ !== 'undefined' && __DEV__) {
+    const gpuLayers = debugPlanetGpuLayerSnapshot().map((l) => l.id).join(',') || '-';
     // eslint-disable-next-line no-console
-    console.log(`[MEM] runPlanetHubSoftNativeReclaimPass reason=${reason} keep=${keep.join(',') || '-'}`);
+    console.log(`[MEM] runPlanetHubSoftNativeReclaimPass reason=${reason} keep=${keep.join(',') || '-'} gpuLayers=${gpuLayers}`);
   }
 }

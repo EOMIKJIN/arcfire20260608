@@ -32,7 +32,7 @@ import { COLORS, FONTS, SPACING, ZONE_COLORS } from '../../src/utils/theme';
 import { TACTICAL_HUB as TH } from '../../src/ui/tactical/tacticalHubTokens';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { isPlayerShipCombatCapable, resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
-import { ArcButton } from '../../src/ui/overlay/ArcButton';
+import { presentPlanetEconomyInfoOverlay } from '../../src/ui/overlay/arcOverlayStore';
 import { QuestHUD } from '../../src/components/QuestHUD';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { StageShell } from '../../src/stages/StageShell';
@@ -56,7 +56,7 @@ import {
   resolveEffectiveMapOccupierClanId,
   resolvePlanetHubOwnershipPlate,
 } from '../../src/clanWar/planetOwnershipModel';
-import { resolvePlayerPlanetStayBlock } from '../../src/clanWar/planetTerritoryPlayerAccess';
+import { resolvePlayerPlanetStayBlock, isRedOccupiedPlanet } from '../../src/clanWar/planetTerritoryPlayerAccess';
 import {
   EXPANSION_GATEWAYS_PER_DIRECTION,
   GAMEPLAY_SYSTEM_IDS,
@@ -105,6 +105,14 @@ import { GalaxyMapTerritoryVoronoiSvg } from '../../src/galaxyMap/GalaxyMapTerri
 import { GalaxyMapSystemsSvg } from '../../src/galaxyMap/GalaxyMapSystemsSvg';
 import { findShortestUnlockedSystemPath } from '../../src/galaxyMap/findShortestUnlockedSystemPath';
 import { GalaxyMapContestedZoneRingOverlay } from '../../src/galaxyMap/GalaxyMapContestedZoneRingOverlay';
+import {
+  GalaxyMapSystemActionMenu,
+  MENU_ITEM_HEIGHT,
+  MENU_WIDTH,
+  resolveMenuTopLeft,
+  type GalaxyMapSystemActionMenuItem,
+  type GalaxyMapSystemActionMenuSide,
+} from '../../src/galaxyMap/GalaxyMapSystemActionMenu';
 import { useContestedZonePreviewSystemIds } from '../../src/galaxyMap/useContestedZonePreviewSystemIds';
 import {
   DEFAULT_STAGE_NAV_DRAIN_MS,
@@ -119,6 +127,7 @@ import {
 /** 은하 좌표 1단위 = 뷰포트 한 변 픽셀(기존 맵과 동일 스케일). 라벨/노드 여백만 픽셀로 추가 */
 const MAP_PAD_PX = 44;
 const NODE_HIT_R = 28;
+
 const MAP_PAN_MIN_DISTANCE_PX = 8;
 const MAP_PAN_DECELERATION = 0.992;
 /** 루트 간 이동 시간(임시 고정) */
@@ -256,6 +265,9 @@ export default function WorldMapScreen() {
   /** Pan/Tap worklet → runOnJS — 렌더 중 .current 할당 금지 (read-only ref 크래시) */
   const isMovingRef = useRef(false);
   const touchTargetsRef = useRef<{ id: string; x: number; y: number }[]>([]);
+  /** 드롭다운 메뉴가 화면에 떠 있는 동안의 사각형(맵 콘텐츠 좌표) — 그 아래 성계 노드는 탭 판정에서 제외 */
+  const activeMenuRectRef = useRef<{ left: number; top: number; right: number; bottom: number } | null>(null);
+  const systemActionMenuItemsRef = useRef<GalaxyMapSystemActionMenuItem[]>([]);
   const handleNodeTapRef = useRef<(systemId: string) => void>(() => {});
   const handleMapTapAtRef = useRef(
     (_viewportX: number, _viewportY: number, _sx: number, _sy: number) => {},
@@ -1131,9 +1143,41 @@ export default function WorldMapScreen() {
     if (isMovingRef.current) return;
     const cx = viewportX + sx;
     const cy = viewportY + sy;
+    const menuRect = activeMenuRectRef.current;
+    // 메뉴 영역 탭 — Gesture.Tap이 RN TouchableOpacity보다 먼저 승리하므로 여기서 행 dispatch
+    if (
+      menuRect
+      && cx >= menuRect.left
+      && cx <= menuRect.right
+      && cy >= menuRect.top
+      && cy <= menuRect.bottom
+    ) {
+      const localY = cy - menuRect.top;
+      const index = Math.floor(localY / MENU_ITEM_HEIGHT);
+      const items = systemActionMenuItemsRef.current;
+      if (index >= 0 && index < items.length) {
+        const item = items[index];
+        if (!item.disabled) {
+          item.onPress();
+        }
+      }
+      return;
+    }
     let bestId: string | null = null;
     let bestDist = NODE_HIT_R + 1;
     for (const t of touchTargetsRef.current) {
+      // 드롭다운 메뉴가 떠 있는 영역에 걸친 노드는 탭 판정에서 제외 —
+      // 메뉴 버튼이 이미 그 자리의 터치를 가로채므로, 지도 쪽 판정도 명시적으로 비활성화해
+      // 제스처핸들러 Tap과 TouchableOpacity가 같은 터치에 동시 반응하는 걸 원천 차단.
+      if (
+        menuRect
+        && t.x >= menuRect.left
+        && t.x <= menuRect.right
+        && t.y >= menuRect.top
+        && t.y <= menuRect.bottom
+      ) {
+        continue;
+      }
       const dist = Math.hypot(t.x - cx, t.y - cy);
       if (dist <= NODE_HIT_R && dist < bestDist) {
         bestDist = dist;
@@ -1216,7 +1260,21 @@ export default function WorldMapScreen() {
         return;
       }
       if (!mapMetricsReady) return;
+      if (isMovingRef.current) return;
 
+      const finalSystemId = pathSystemIds[pathSystemIds.length - 1]!;
+      const targetSystem = systems[finalSystemId];
+      if (!targetSystem) return;
+
+      isMovingRef.current = true;
+      setIsMoving(true);
+      setShowPanel(false);
+      selectSystem(null);
+
+      // 이동 잠금(isMoving)은 이 try 블록 전체(비동기 정착·연료 차감까지) 동안 유지 — finally에서만 해제.
+      // 조기에 풀리면 정착 전(moveToSystem/persist/selectSystem 사이) 지도가 다시 탭 가능해져,
+      // 사용자가 재선택한 목적지를 아래 selectSystem(targetSystem.id)가 되돌려버리는 레이스가 있었음.
+      try {
       const fuelQuote = computeGalaxyTransitFuelQuote({
         systems,
         pathSystemIds,
@@ -1245,110 +1303,111 @@ export default function WorldMapScreen() {
         }
       }
 
-      const finalSystemId = pathSystemIds[pathSystemIds.length - 1]!;
-      const targetSystem = systems[finalSystemId];
-      if (!targetSystem) return;
-
-      setIsMoving(true);
-      setShowPanel(false);
-      selectSystem(null);
-
-      let allFinished = true;
-      for (let hop = 0; hop < pathSystemIds.length - 1; hop += 1) {
-        const fromSystem = systems[pathSystemIds[hop]!];
-        const hopTarget = systems[pathSystemIds[hop + 1]!];
-        if (!fromSystem || !hopTarget) {
-          allFinished = false;
-          break;
-        }
-
-        const from = toScreen(fromSystem.position);
-        const to = toScreen(hopTarget.position);
-        setShipTransit({ from, to });
-        moveProgress.stopAnimation();
-        moveProgress.setValue(0);
-
-        let finished = false;
-        const transitToken = ++transitWaitTokenRef.current;
-        try {
-          const anim = RNAnimated.timing(moveProgress, {
-            toValue: 1,
-            duration: SHIP_TRANSIT_DURATION_MS,
-            easing: Easing.linear,
-            useNativeDriver: false,
-          });
-          transitAnimRef.current = anim;
-          anim.start();
-          finished = await new Promise<boolean>((resolve) => {
-            abortTransitWaitRef.current = { token: transitToken, resolve };
-            transitFallbackTimerRef.current = setTimeout(() => {
-              const pending = abortTransitWaitRef.current;
-              if (pending?.token !== transitToken) return;
-              settleTransitWait(true);
-            }, SHIP_TRANSIT_DURATION_MS + 40);
-          });
-        } finally {
-          transitAnimRef.current = null;
-          if (transitFallbackTimerRef.current) {
-            clearTimeout(transitFallbackTimerRef.current);
-            transitFallbackTimerRef.current = null;
+        let allFinished = true;
+        for (let hop = 0; hop < pathSystemIds.length - 1; hop += 1) {
+          const fromSystem = systems[pathSystemIds[hop]!];
+          const hopTarget = systems[pathSystemIds[hop + 1]!];
+          if (!fromSystem || !hopTarget) {
+            allFinished = false;
+            break;
           }
-          const pending = abortTransitWaitRef.current;
-          if (pending?.token === transitToken) {
-            abortTransitWaitRef.current = null;
-            pending.resolve(false);
+
+          const from = toScreen(fromSystem.position);
+          const to = toScreen(hopTarget.position);
+          setShipTransit({ from, to });
+          moveProgress.stopAnimation();
+          moveProgress.setValue(0);
+
+          let finished = false;
+          const transitToken = ++transitWaitTokenRef.current;
+          try {
+            const anim = RNAnimated.timing(moveProgress, {
+              toValue: 1,
+              duration: SHIP_TRANSIT_DURATION_MS,
+              easing: Easing.linear,
+              useNativeDriver: false,
+            });
+            transitAnimRef.current = anim;
+            anim.start();
+            finished = await new Promise<boolean>((resolve) => {
+              abortTransitWaitRef.current = { token: transitToken, resolve };
+              transitFallbackTimerRef.current = setTimeout(() => {
+                const pending = abortTransitWaitRef.current;
+                if (pending?.token !== transitToken) return;
+                settleTransitWait(true);
+              }, SHIP_TRANSIT_DURATION_MS + 40);
+            });
+          } finally {
+            transitAnimRef.current = null;
+            if (transitFallbackTimerRef.current) {
+              clearTimeout(transitFallbackTimerRef.current);
+              transitFallbackTimerRef.current = null;
+            }
+            const pending = abortTransitWaitRef.current;
+            if (pending?.token === transitToken) {
+              abortTransitWaitRef.current = null;
+              pending.resolve(false);
+            }
+          }
+
+          if (!finished || !isMountedRef.current || !isFocusedRef.current) {
+            allFinished = false;
+            break;
           }
         }
 
-        if (!finished || !isMountedRef.current || !isFocusedRef.current) {
-          allFinished = false;
-          break;
+        if (isMountedRef.current) {
+          setShipTransit(null);
         }
+
+        if (!allFinished || !isMountedRef.current || !isFocusedRef.current) return;
+
+        const missionState = useMissionStore.getState();
+        const missionProgresses = missionState.progresses;
+        const encounterChance = resolveTransitEncounterChance(
+          targetSystem.zone,
+          hasPrimaryActiveCombatMission(missionProgresses, missionState.activeMissionId),
+          missionProgresses,
+          missionState.activeMissionId,
+        );
+
+        if (Math.random() < encounterChance && isPlayerShipCombatCapable(player.ship)) {
+          useTransitCombatSessionStore.getState().begin({
+            originSystemId: pathSystemIds[0]!,
+            destinationSystemId: targetSystem.id,
+          });
+          selectSystem(targetSystem.id);
+          navigateToCombatAfterTeardown();
+          return;
+        }
+
+        moveToSystem(targetSystem.id);
+        for (let i = 1; i < pathSystemIds.length; i += 1) {
+          markVisited(pathSystemIds[i]!);
+        }
+
+        const playerAfterMove = usePlayerStore.getState().player;
+        if (playerAfterMove) {
+          applyReachSystemMissionObjectives(targetSystem.id, playerAfterMove, {
+            deliverFailTitle: t('worldmap.deliverFailTitle'),
+            deliverFailBody: t('worldmap.deliverFailBody'),
+          });
+          tryPresentPendingMissionClearDialog();
+        }
+
+        await persist();
+        if (isMountedRef.current) {
+          // 방어적 가드 — 잠금이 꼬리 전체를 덮으므로 사실상 항상 null이지만,
+          // 향후 다른 경로가 isMoving 게이트 밖에서 selectSystem을 건드릴 경우를 대비한 이중 방어.
+          if (useWorldStore.getState().selectedSystemId === null) {
+            selectSystem(targetSystem.id);
+          }
+          setShowPanel(true);
+        }
+      } finally {
+        isMovingRef.current = false;
+        if (isMountedRef.current) setIsMoving(false);
       }
-
-      if (isMountedRef.current) {
-        setShipTransit(null);
-        setIsMoving(false);
-      }
-
-      if (!allFinished || !isMountedRef.current || !isFocusedRef.current) return;
-
-      const missionState = useMissionStore.getState();
-      const missionProgresses = missionState.progresses;
-      const encounterChance = resolveTransitEncounterChance(
-        targetSystem.zone,
-        hasPrimaryActiveCombatMission(missionProgresses, missionState.activeMissionId),
-        missionProgresses,
-        missionState.activeMissionId,
-      );
-
-      if (Math.random() < encounterChance && isPlayerShipCombatCapable(player.ship)) {
-        useTransitCombatSessionStore.getState().begin({
-          originSystemId: pathSystemIds[0]!,
-          destinationSystemId: targetSystem.id,
-        });
-        selectSystem(targetSystem.id);
-        navigateToCombatAfterTeardown();
-        return;
-      }
-
-      moveToSystem(targetSystem.id);
-      for (let i = 1; i < pathSystemIds.length; i += 1) {
-        markVisited(pathSystemIds[i]!);
-      }
-
-      const playerAfterMove = usePlayerStore.getState().player;
-      if (playerAfterMove) {
-        applyReachSystemMissionObjectives(targetSystem.id, playerAfterMove, {
-          deliverFailTitle: t('worldmap.deliverFailTitle'),
-          deliverFailBody: t('worldmap.deliverFailBody'),
-        });
-        tryPresentPendingMissionClearDialog();
-      }
-
-      await persist();
-      selectSystem(targetSystem.id);
-      setShowPanel(true);
     },
     [
       player,
@@ -1378,7 +1437,7 @@ export default function WorldMapScreen() {
 
   const handleMove = useCallback(async () => {
     if (!selectedSystem || !player) return;
-    if (isMoving || hubNavGate.isLocked()) return;
+    if (isMovingRef.current || isMoving || hubNavGate.isLocked()) return;
 
     const travelBlock = resolvePlayerTravelBlock(player);
     if (travelBlock) {
@@ -1445,6 +1504,139 @@ export default function WorldMapScreen() {
       void doMoveAlongPath(selectedMovePath);
     }
   }, [selectedSystem, player, selectedMovePath, systems, doMoveAlongPath, landOnPlanet, persist, isMoving, t, navigateToPlanetHubAfterTeardown, hubNavGate]);
+
+  const handlePlanetInfo = useCallback((): void => {
+    if (!selectedSystem) return;
+    const planet = selectedSystem.planets[0];
+    if (!planet) return;
+    presentPlanetEconomyInfoOverlay(planet.id, planet.name?.trim() || planet.id);
+  }, [selectedSystem]);
+
+  const handleCombat = useCallback(async (): Promise<void> => {
+    if (!selectedSystem || !player) return;
+    if (isMoving || hubNavGate.isLocked()) return;
+    if (selectedSystem.id !== player.currentSystemId) return;
+    const planet = selectedSystem.planets[0];
+    if (!planet || !isRedOccupiedPlanet(planet.id)) return;
+
+    if (!hubNavGate.tryBegin()) return;
+    try {
+      landOnPlanet(planet.id);
+      await persist();
+      if (!isMountedRef.current) return;
+      navigateToCombatAfterTeardown();
+    } catch {
+      hubNavGate.reset();
+    }
+  }, [
+    selectedSystem,
+    player,
+    isMoving,
+    hubNavGate,
+    landOnPlanet,
+    persist,
+    navigateToCombatAfterTeardown,
+  ]);
+
+  const selectedPrimaryPlanet = selectedSystem?.planets[0] ?? null;
+  const isAtSelectedSystem = Boolean(
+    selectedSystem && player && selectedSystem.id === player.currentSystemId,
+  );
+  const selectedPlanetStayBlock = selectedPrimaryPlanet
+    ? resolvePlayerPlanetStayBlock(selectedPrimaryPlanet.id)
+    : null;
+  const combatAvailable = isAtSelectedSystem
+    && !!selectedPrimaryPlanet
+    && isRedOccupiedPlanet(selectedPrimaryPlanet.id);
+
+  const primaryNavDisabled =
+    hubNavGate.pending
+    || isMoving
+    || (isAtSelectedSystem && !!selectedPlanetStayBlock)
+    || (!isAtSelectedSystem
+      && (!selectedMovePath || selectedMovePath.length < 2 || !canAffordSelectedFuel));
+
+  const primaryNavLabel = hubNavGate.pending
+    ? t('worldmap.btn.landing')
+    : isMoving
+      ? t('worldmap.btn.moving')
+      : isAtSelectedSystem
+        ? t('worldmap.dropdown.land')
+        : t('worldmap.dropdown.move');
+
+  const systemActionMenuItems = useMemo((): GalaxyMapSystemActionMenuItem[] => [
+      {
+        key: 'nav',
+        label: primaryNavLabel,
+        disabled: primaryNavDisabled,
+        onPress: () => {
+          void handleMove();
+        },
+      },
+      {
+        key: 'planetInfo',
+        label: t('worldmap.dropdown.planetInfo'),
+        disabled: !selectedPrimaryPlanet,
+        onPress: handlePlanetInfo,
+      },
+      {
+        key: 'combat',
+        label: t('worldmap.dropdown.combat'),
+        disabled: !combatAvailable,
+        onPress: () => {
+          void handleCombat();
+        },
+      },
+    ],
+    [
+      primaryNavLabel,
+      primaryNavDisabled,
+      handleMove,
+      t,
+      selectedPrimaryPlanet,
+      handlePlanetInfo,
+      combatAvailable,
+      handleCombat,
+    ],
+  );
+
+  /**
+   * 드롭다운 위치 — 항상 성계 노드 오른쪽(김팀장 원안 "원래 위치" 그대로, 고정).
+   * 좌/하/상 반전은 쓰지 않음(대표님 지시 — 오른쪽 고정, 다른 방향으로 옮기지 말 것).
+   */
+  const selectedSystemMenuPlacement = useMemo((): {
+    x: number;
+    y: number;
+    side: GalaxyMapSystemActionMenuSide;
+  } | null => {
+    if (!selectedSystem) return null;
+    const anchor = toScreen(selectedSystem.position);
+    return { x: anchor.x, y: anchor.y, side: 'right' };
+  }, [selectedSystem, toScreen]);
+
+  /**
+   * 메뉴가 실제로 화면에 떠 있을 때만 activeMenuRectRef를 채운다(handleMapTapAt이 이 사각형에
+   * 걸친 노드를 탭 판정에서 제외 — 메뉴 버튼 아래 인터랙션 요소 비활성화, 겹침 회피 대신).
+   */
+  useLayoutEffect(() => {
+    if (!showPanel || !selectedSystem || !selectedSystemMenuPlacement) {
+      activeMenuRectRef.current = null;
+      return;
+    }
+    const { x, y, side } = selectedSystemMenuPlacement;
+    const itemCount = systemActionMenuItems.length;
+    const { left, top } = resolveMenuTopLeft(side, x, y, itemCount);
+    activeMenuRectRef.current = {
+      left,
+      top,
+      right: left + MENU_WIDTH,
+      bottom: top + itemCount * MENU_ITEM_HEIGHT,
+    };
+  }, [showPanel, selectedSystem, selectedSystemMenuPlacement, systemActionMenuItems.length]);
+
+  useLayoutEffect(() => {
+    systemActionMenuItemsRef.current = systemActionMenuItems;
+  }, [systemActionMenuItems]);
 
   if (!player) return null;
 
@@ -1572,6 +1764,14 @@ export default function WorldMapScreen() {
                     <Text style={styles.shipTransitIcon}>▼</Text>
                   </RNAnimated.View>
                 )}
+                {showPanel && selectedSystem && selectedSystemMenuPlacement ? (
+                  <GalaxyMapSystemActionMenu
+                    anchorX={selectedSystemMenuPlacement.x}
+                    anchorY={selectedSystemMenuPlacement.y}
+                    side={selectedSystemMenuPlacement.side}
+                    items={systemActionMenuItems}
+                  />
+                ) : null}
               </Animated.View>
             </View>
           </GestureDetector>
@@ -1650,27 +1850,6 @@ export default function WorldMapScreen() {
                     ? t('worldmap.panel.routeReachable', { hops: selectedMovePath.length - 1 })
                     : t('worldmap.panel.unreachable')}
             </Text>
-            <ArcButton
-              label={
-                hubNavGate.pending
-                  ? t('worldmap.btn.landing')
-                  : isMoving
-                    ? t('worldmap.btn.moving')
-                    : selectedSystem.id === player.currentSystemId
-                      ? t('worldmap.btn.land')
-                      : t('worldmap.btn.move')
-              }
-              variant="tacticalPrimary"
-              onPress={handleMove}
-              disabled={
-                hubNavGate.pending
-                || isMoving
-                || (selectedSystem.id !== player.currentSystemId
-                  && (!selectedMovePath
-                    || selectedMovePath.length < 2
-                    || !canAffordSelectedFuel))
-              }
-            />
           </View>
         </View>
       ) : (
@@ -1794,7 +1973,7 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     marginBottom: SPACING.sm,
   },
-  panelActions: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  panelActions: { marginTop: SPACING.xs },
   panelReachable: { fontFamily: FONTS.mono, fontSize: FONTS.size.sm, color: TH.pilotLabelInk },
   panelHint: { fontFamily: FONTS.mono, fontSize: FONTS.size.sm, color: TH.miningSummaryInk },
 });

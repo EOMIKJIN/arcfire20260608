@@ -11,6 +11,7 @@ import { scheduleHubBackdropNativeRemountAfterTrim } from './runDeepNativeReclai
 import { signalHubSkiaNativeReclaim } from './hubSkiaNativeReclaimSignal';
 import { resolveSinglePlanetSessionKeepIds } from './singlePlanetSessionKeep';
 import { POST_SKIA_PEAK_FOLLOWUP_MS } from './processMemoryBudgetPolicy';
+import { debugPlanetGpuLayerSnapshot } from '../planetStageGpuSupervisor';
 
 const POST_SKIA_PEAK_DEFER_MS = 32;
 
@@ -44,8 +45,9 @@ export function runPlanetHubPostSkiaPeakReclaimPass(planetId: string, reason: st
   });
 
   if (typeof __DEV__ !== 'undefined' && __DEV__) {
+    const gpuLayers = debugPlanetGpuLayerSnapshot().map((l) => l.id).join(',') || '-';
     // eslint-disable-next-line no-console
-    console.log(`[MEM] runPlanetHubPostSkiaPeakReclaimPass reason=${reason} keep=${keep.join(',') || '-'}`);
+    console.log(`[MEM] runPlanetHubPostSkiaPeakReclaimPass reason=${reason} keep=${keep.join(',') || '-'} gpuLayers=${gpuLayers}`);
   }
 }
 

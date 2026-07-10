@@ -32,12 +32,15 @@ import { registerCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPr
 import { disposePlanetSkiaHitFxModuleCaches } from './planetSkiaHitFxContract';
 import {
   acquireSkPathFromPool,
+  commitSkPictureReactFrame,
   drainSkPathPool,
+  dropSkPictureReactFrame,
   releaseSkPathToSpare,
   resetSkPath,
-  scheduleSkPictureDispose,
   safeSkiaDispose,
 } from '../../game/skia/skiaMemoryLifecycle';
+import { registerSkPictureFrameInvalidate } from '../../game/skia/skiaPictureFrameRegistry';
+import { registerGpuLayer, unregisterGpuLayer } from '../../game/planetStageGpuSupervisor';
 import type { Agent, Missile, PlanetEdenRaidSim } from './PlanetEdenRaidTestLayer';
 import { drawMissileHitFxOnSkCanvas } from './planetNebulaMissileHitFxDraw';
 import {
@@ -884,6 +887,27 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
   orbitSizeRef.current = orbitSize;
 
   useEffect(() => {
+    return registerSkPictureFrameInvalidate(() => {
+      if (pictureFlushRafRef.current !== 0) {
+        cancelAnimationFrame(pictureFlushRafRef.current);
+        pictureFlushRafRef.current = 0;
+      }
+      pendingPictureRef.current = null;
+      dropSkPictureReactFrame({ liveRef: picLiveRef, setPicture });
+    });
+  }, []);
+
+  // GPU 레이어 진단 계측 — 허브 리클레임 로그(runPlanetHub*ReclaimPass)의
+  // debugPlanetGpuLayerSnapshot()에서 이 Canvas의 동시 마운트 여부를 확인하기 위함
+  // (동작 변경 없음, 카운트 전용 — 콤뱃 GL 급증 원인 조사, 2026-07-10).
+  useEffect(() => {
+    registerGpuLayer('skia_combat_orbit', 'T0');
+    return () => {
+      unregisterGpuLayer('skia_combat_orbit');
+    };
+  }, []);
+
+  useEffect(() => {
     mountedRef.current = true;
     combatSkiaLoopsActiveRef.current = true;
     const flushPictureToReact = () => {
@@ -891,12 +915,7 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
       if (!mountedRef.current || !combatSkiaLoopsActiveRef.current) return;
       const next = pendingPictureRef.current;
       if (!next) return;
-      const prev = picLiveRef.current;
-      picLiveRef.current = next;
-      setPicture(next);
-      if (prev != null && prev !== next) {
-        scheduleSkPictureDispose(prev);
-      }
+      commitSkPictureReactFrame({ liveRef: picLiveRef, setPicture, next });
     };
     const pushFrame = () => {
       if (!mountedRef.current || !combatSkiaLoopsActiveRef.current) return;
@@ -933,9 +952,7 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
         drainSkPathPool(pools.diamond, pools.diamondSpare);
         pools.novaTangentStable.clear();
         pools.thrusterLenSmooth.clear();
-        const live = picLiveRef.current;
-        picLiveRef.current = null;
-        scheduleSkPictureDispose(live);
+        dropSkPictureReactFrame({ liveRef: picLiveRef, setPicture });
         reclaimCombatSkiaModuleCaches();
       }, 16);
     };

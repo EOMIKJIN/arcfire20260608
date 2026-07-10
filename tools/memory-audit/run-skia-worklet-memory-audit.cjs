@@ -133,12 +133,21 @@ checks.push(
   ),
 );
 
+// scheduleSkPictureDispose 직접 호출 또는 그걸 내부에서 호출하는 공용 래퍼
+// (commitSkPictureReactFrame/dropSkPictureReactFrame, skiaMemoryLifecycle.ts) 사용 둘 다 인정.
+function usesSkPictureDispose(src) {
+  return (
+    src.includes('scheduleSkPictureDispose')
+    || (src.includes('commitSkPictureReactFrame') && src.includes('dropSkPictureReactFrame'))
+  );
+}
+
 checks.push(
   check(
     'combat: rAF-coalesced Picture + loop stop on unmount',
     combat.includes('pictureFlushRafRef')
       && combat.includes('combatSkiaLoopsActiveRef')
-      && combat.includes('scheduleSkPictureDispose'),
+      && usesSkPictureDispose(combat),
     'PlanetEdenRaidOrbitSkiaCombat.tsx',
   ),
 );
@@ -166,7 +175,7 @@ checks.push(
   check(
     'nebula: skiaLoopsActive + delayed Picture dispose',
     nebulaBackdrop.includes('skiaLoopsActiveRef')
-      && nebulaBackdrop.includes('scheduleSkPictureDispose'),
+      && usesSkPictureDispose(nebulaBackdrop),
     'SkiaPlanetNebulaShaderBackdrop.tsx',
   ),
 );

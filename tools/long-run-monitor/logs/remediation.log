@@ -2152,3 +2152,46 @@
 [2026-07-09 15:48:31] INFO VIEWS_NATIVE_ADVISORY views=382 native_heap=424.9 pss=765 gl=42.3 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
 [2026-07-09 17:21:00] INFO PSS_SOFT_CEILING pss=894.8 gl=39.7 views=514 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
 [2026-07-09 21:58:38] INFO VIEWS_NATIVE_ADVISORY views=558 native_heap=399.7 pss=797.8 gl=132.8 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-10 00:02:04] INFO VIEWS_NATIVE_ADVISORY views=464 native_heap=360.9 pss=728.5 gl=45.5 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-10 19:27:05] INFO VIEWS_NATIVE_ADVISORY views=567 native_heap=367.5 pss=785.1 gl=124.1 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-10 19:57:54] INCIDENT GL_HARD_CEILING gl=120.7 pss=971 views=568 -> immediate remediation (OOM imminent)
+[2026-07-10 19:57:55] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-07-10 19:57:55] AUTO_FIX static audit:skia-memory start
+[2026-07-10 19:57:56] AUTO_FIX audit:skia-memory FAIL exit=1
+> arcfire-online@0.1.1 audit:skia-memory
+> node tools/memory-audit/run-skia-worklet-memory-audit.cjs
+
+skia-worklet audit: 18/20 -> D:\arcfire20260607\tools\memory-audit\reports\skia-worklet-latest.md
+[2026-07-10 19:57:57] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-07-10 19:58:15] AUTO_FIX baseline reset pid=10538 gl=3.7MB pss=436.1MB
+[2026-07-10 19:58:16] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-07-10 19:58:36] VERIFY PASS pid=10538 gl=8.4MB pss=570.6MB views=99
+[2026-07-10 19:58:36] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":971,"views":568,"lastGlMb":120.7,"hardCeiling":true}
+[2026-07-10 19:58:37] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-07-10 20:29:31] INFO VIEWS_NATIVE_ADVISORY views=577 native_heap=316.7 pss=692 gl=97.9 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-10 20:44:58] INCIDENT GL_HARD_CEILING gl=130.3 pss=973.2 views=561 -> immediate remediation (OOM imminent)
+[2026-07-10 20:44:58] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-07-10 20:44:58] AUTO_FIX static audit:skia-memory start
+[2026-07-10 20:45:00] AUTO_FIX audit:skia-memory PASS
+[2026-07-10 20:45:00] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-07-10 20:45:19] AUTO_FIX baseline reset pid=12074 gl=5.9MB pss=465.1MB
+[2026-07-10 20:45:19] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-07-10 20:45:40] VERIFY PASS pid=12074 gl=8.5MB pss=594.3MB views=99
+[2026-07-10 20:45:40] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":973.2,"views":561,"lastGlMb":130.3,"hardCeiling":true}
+[2026-07-10 20:45:41] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-07-10 21:01:05] INCIDENT GL_HARD_CEILING gl=120.9 pss=1075.4 views=561 -> immediate remediation (OOM imminent)
+[2026-07-10 21:01:05] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-07-10 21:01:05] AUTO_FIX static audit:skia-memory start
+[2026-07-10 21:01:07] AUTO_FIX audit:skia-memory PASS
+[2026-07-10 21:01:07] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-07-10 21:01:25] AUTO_FIX baseline reset pid=12768 gl=4.4MB pss=367.2MB
+[2026-07-10 21:01:25] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-07-10 21:01:48] VERIFY PASS pid=12768 gl=8.5MB pss=554.8MB views=99
+[2026-07-10 21:01:48] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":1075.4,"views":561,"lastGlMb":120.9,"hardCeiling":true}
+[2026-07-10 21:01:48] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-07-10 22:34:16] INFO PSS_SOFT_CEILING pss=845.5 gl=40 views=380 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-10 22:49:41] INFO PSS_SOFT_CEILING pss=823.9 gl=36.1 views=382 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-10 23:05:06] INFO PSS_SOFT_CEILING pss=844.5 gl=42.8 views=379 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-10 23:20:31] INFO PSS_SOFT_CEILING pss=845.4 gl=32.4 views=391 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-10 23:35:59] INFO PSS_SOFT_CEILING pss=821.2 gl=31.8 views=379 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-10 23:51:26] INFO PSS_SOFT_CEILING pss=809.9 gl=27.7 views=379 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)

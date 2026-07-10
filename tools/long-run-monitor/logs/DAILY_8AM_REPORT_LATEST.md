@@ -1,8 +1,8 @@
 # Daily 08:00 KST report — latest
 
-Updated (KST): 2026-07-09 08:14:12
+Updated (KST): 2026-07-10 08:14:12
 Verdict: **OK**
-Report: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260709-0800.md
+Report: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260710-0800.md
 ADB: connected
 App: running
 - (none)

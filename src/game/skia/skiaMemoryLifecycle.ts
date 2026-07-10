@@ -3,6 +3,7 @@
  * Worklet 내부 dispose 금지 — JS 클린업 + 지연만 허용.
  */
 
+import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import type { SkPath, SkPicture } from '@shopify/react-native-skia';
 import { Skia } from '@shopify/react-native-skia';
 
@@ -25,6 +26,32 @@ export function scheduleSkPictureDispose(pic: SkPicture | null | undefined): voi
       safeSkiaDispose(pic);
     }, SK_PICTURE_DISPOSE_DELAY_MS);
   });
+}
+
+/** React Picture 노드 제거 → 이후 native dispose (reclaim·언마운트 공용) */
+export function dropSkPictureReactFrame(input: {
+  liveRef: MutableRefObject<SkPicture | null>;
+  setPicture: Dispatch<SetStateAction<SkPicture | null>>;
+}): void {
+  const live = input.liveRef.current;
+  input.liveRef.current = null;
+  input.setPicture(null);
+  if (live != null) {
+    scheduleSkPictureDispose(live);
+  }
+}
+
+export function commitSkPictureReactFrame(input: {
+  liveRef: MutableRefObject<SkPicture | null>;
+  setPicture: Dispatch<SetStateAction<SkPicture | null>>;
+  next: SkPicture;
+}): void {
+  const prev = input.liveRef.current;
+  input.liveRef.current = input.next;
+  input.setPicture(input.next);
+  if (prev != null && prev !== input.next) {
+    scheduleSkPictureDispose(prev);
+  }
 }
 
 export function resetSkPath(path: SkPath): void {

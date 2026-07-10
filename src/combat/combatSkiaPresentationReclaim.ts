@@ -3,6 +3,8 @@
  * 여기서는 process-lifetime Map(color/tint) 만 STAGE exit 시 비운다.
  */
 
+import { invalidateAllSkPictureFrames } from '../game/skia/skiaPictureFrameRegistry';
+
 type CombatSkiaReclaimFn = () => void;
 
 const reclaimFns = new Set<CombatSkiaReclaimFn>();
@@ -15,6 +17,7 @@ export function registerCombatSkiaPresentationReclaim(fn: CombatSkiaReclaimFn): 
 }
 
 export function runCombatSkiaPresentationReclaim(): void {
+  invalidateAllSkPictureFrames();
   for (const fn of reclaimFns) {
     try {
       fn();

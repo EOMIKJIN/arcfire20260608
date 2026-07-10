@@ -4482,3 +4482,397 @@
 07-10 23:19:21.929 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
 07-10 23:19:21.929 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
 07-10 23:19:23.561 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:20:07.945  1875  2706 I ActivityManager: Changes in 99002 19 to 5, 0 to 184
+07-10 23:20:23.008  1875  3888 I ActivityManager: Changes in 99002 5 to 10, 184 to 0
+07-10 23:20:28.473 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=98 reason=hub_inbound_drone_end
+07-10 23:20:28.475 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:20:28.475 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:20:28.476 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:20:30.202 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:21:35.775 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=99 reason=hub_inbound_drone_end
+07-10 23:21:35.777 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:21:35.777 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:21:35.777 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:21:37.441 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:22:45.498 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=100 reason=hub_inbound_drone_end
+07-10 23:22:45.499 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:22:45.500 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:22:45.500 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:22:47.137 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:23:53.653 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=101 reason=hub_inbound_drone_end
+07-10 23:23:53.655 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:23:53.655 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:23:53.656 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:23:55.336 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:24:21.046 12768 12871 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-10 23:24:21.051 12768 12871 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-10 23:24:21.075 12768 12871 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=29
+07-10 23:24:59.600 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=102 reason=hub_inbound_drone_end
+07-10 23:24:59.602 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:24:59.602 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:24:59.602 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:25:01.341 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:26:08.682 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=103 reason=hub_inbound_drone_end
+07-10 23:26:08.684 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:26:08.685 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:26:08.685 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:26:10.364 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:27:15.271 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=104 reason=hub_inbound_drone_end
+07-10 23:27:15.272 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:27:15.273 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:27:15.273 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:27:16.930 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:28:23.077 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=105 reason=hub_inbound_drone_end
+07-10 23:28:23.079 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:28:23.079 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:28:23.079 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:28:24.819 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:29:32.217 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=106 reason=hub_inbound_drone_end
+07-10 23:29:32.221 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:29:32.221 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:29:32.221 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:29:34.046 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:30:07.945  1875  4108 I ActivityManager: Changes in 99002 19 to 5, 0 to 184
+07-10 23:30:23.009  1875  4108 I ActivityManager: Changes in 99002 5 to 10, 184 to 0
+07-10 23:30:38.789 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=107 reason=hub_inbound_drone_end
+07-10 23:30:38.791 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:30:38.791 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:30:38.791 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:30:40.419 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:30:47.809  1875  2706 I ActivityManager: Changes in 99002 19 to 5, 0 to 184
+07-10 23:31:02.835  1875  4108 I ActivityManager: Changes in 99002 5 to 10, 184 to 0
+07-10 23:31:46.335 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=108 reason=hub_inbound_drone_end
+07-10 23:31:46.337 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:31:46.337 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:31:46.337 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:31:48.071 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:32:54.320 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=109 reason=hub_inbound_drone_end
+07-10 23:32:54.322 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:32:54.323 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:32:54.323 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:32:56.008 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:33:53.300  1875  1924 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+07-10 23:33:53.303  1875  4108 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+07-10 23:34:00.607 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=110 reason=hub_inbound_drone_end
+07-10 23:34:00.609 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:34:00.609 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:34:00.610 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:34:02.282 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:34:21.101 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=111 reason=hub_periodic_soft
+07-10 23:34:21.103 12768 12871 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-10 23:34:21.103 12768 12871 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=arcadia_prime gpuLayers=-
+07-10 23:34:22.717 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:35:08.014 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=112 reason=hub_inbound_drone_end
+07-10 23:35:08.016 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:35:08.016 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:35:08.016 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:35:09.689 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:36:16.042 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=113 reason=hub_inbound_drone_end
+07-10 23:36:16.044 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:36:16.044 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:36:16.045 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:36:17.774 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:37:23.331 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=114 reason=hub_inbound_drone_end
+07-10 23:37:23.333 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:37:23.333 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:37:23.333 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:37:25.098 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:38:31.816 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=115 reason=hub_inbound_drone_end
+07-10 23:38:31.817 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:38:31.818 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:38:31.818 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:38:33.455 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:39:21.050 12768 12871 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic nebulaBefore=1
+07-10 23:39:21.061 12768 12871 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_periodic fresco=true
+07-10 23:39:21.116 12768 12871 I ReactNativeJS: [MEM] hubNativeReclaim skip reason=hub_periodic_soft gap_ms=65
+07-10 23:39:38.947 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=116 reason=hub_inbound_drone_end
+07-10 23:39:38.949 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:39:38.949 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:39:38.949 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:39:40.713 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:40:07.944  1875  4091 I ActivityManager: Changes in 99002 19 to 5, 0 to 184
+07-10 23:40:23.013  1875  4111 I ActivityManager: Changes in 99002 5 to 10, 184 to 0
+07-10 23:40:47.827 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=117 reason=hub_inbound_drone_end
+07-10 23:40:47.829 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:40:47.830 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:40:47.830 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:40:49.469 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:41:52.189  1875 26416 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+07-10 23:41:54.504 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=118 reason=hub_inbound_drone_end
+07-10 23:41:54.506 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:41:54.506 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:41:54.506 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:41:56.281 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:41:58.246  1875  1923 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+07-10 23:43:02.433 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=119 reason=hub_inbound_drone_end
+07-10 23:43:02.435 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:43:02.435 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:43:02.435 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:43:04.115 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:44:09.826 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=120 reason=hub_inbound_drone_end
+07-10 23:44:09.828 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:44:09.828 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:44:09.829 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:44:11.492 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:44:21.125 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=121 reason=hub_periodic_soft
+07-10 23:44:21.127 12768 12871 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-10 23:44:21.127 12768 12871 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=arcadia_prime gpuLayers=-
+07-10 23:44:22.735 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:45:18.686 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=122 reason=hub_inbound_drone_end
+07-10 23:45:18.688 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:45:18.688 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:45:18.689 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:45:20.442 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:46:26.732 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=123 reason=hub_inbound_drone_end
+07-10 23:46:26.734 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:46:26.734 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:46:26.734 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:46:28.473 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:47:34.683 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=124 reason=hub_inbound_drone_end
+07-10 23:47:34.684 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=125 reason=hub_inbound_drone_end:post_skia_peak:pre_backdrop
+07-10 23:47:34.685 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:47:34.686 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:47:34.975 12768 12871 I ReactNativeJS: [MEM] hubBackdropNativeRemount epoch=5 reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:47:35.344 12768 12871 I ReactNativeJS: [MEM] postRemountTrim reason=hub_inbound_drone_end:post_skia_peak fresco=true
+07-10 23:47:36.347 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:48:41.326 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=126 reason=hub_inbound_drone_end
+07-10 23:48:41.327 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:48:41.327 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:48:41.328 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:48:43.259 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:49:21.131 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=127 reason=hub_periodic_soft
+07-10 23:49:21.133 12768 12871 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+07-10 23:49:21.133 12768 12871 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=arcadia_prime gpuLayers=-
+07-10 23:49:22.742 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:49:50.671 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=128 reason=hub_inbound_drone_end
+07-10 23:49:50.673 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:49:50.674 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:49:50.674 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:49:52.336 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:50:07.953  1875  4094 I ActivityManager: Changes in 99002 19 to 5, 0 to 184
+07-10 23:50:23.015  1875  3973 I ActivityManager: Changes in 99002 5 to 10, 184 to 0
+07-10 23:50:58.077 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=129 reason=hub_inbound_drone_end
+07-10 23:50:58.078 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:50:58.079 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:50:58.079 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:50:59.845 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:52:07.286 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=130 reason=hub_inbound_drone_end
+07-10 23:52:07.293 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:52:07.293 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:52:07.293 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:52:08.956 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:53:15.350 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=131 reason=hub_inbound_drone_end
+07-10 23:53:15.354 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:53:15.354 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:53:15.354 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:53:17.001 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:54:25.217 12768 12871 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=132 reason=hub_inbound_drone_end
+07-10 23:54:25.219 12768 12871 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:54:25.219 12768 12871 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+07-10 23:54:25.219 12768 12871 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:54:26.952 12768 12871 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:54:40.606 12768 12871 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-10 23:54:40.607 12768 12871 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-10 23:54:40.607 12768 12871 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-10 23:54:40.607 12768 12871 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-10 23:54:48.257  1875  1917 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+07-10 23:54:48.258  1875  1917 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+07-10 23:54:48.462  1875  1917 I ActivityManager: Killing 9157:com.google.android.projection.gearhead:car/u0a242 (adj 995): empty #25
+07-10 23:54:48.465  1875  1917 I ActivityManager: Changes in 10117 11 to 19, 128 to 0
+07-10 23:54:48.958  1875  1917 I ActivityManager: Changes in 11070 2 to 15, 255 to 128
+07-10 23:54:49.012 12768 12871 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=app_background nebulaBefore=1
+07-10 23:54:49.028 12768 12871 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_background nebulaBefore=1
+07-10 23:54:49.054  1875  3973 I ActivityManager: Changes in 99002 19 to 10, 0 to 128
+07-10 23:54:49.111  1875  3888 I ActivityManager: Changes in 99002 15 to 15, 128 to 0
+07-10 23:54:49.111  1875  3888 I ActivityManager: Changes in 11070 15 to 15, 128 to 0
+07-10 23:54:49.364 12768 12871 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_background fresco=true
+07-10 23:54:49.801  1875  1917 I ActivityManager: Killing 9270:com.google.android.setupwizard/u0a279 (adj 985): empty #25
+07-10 23:54:49.804  1875  1917 I ActivityManager: Killing 12768:com.arcfire.online/u0a1070 (adj 905): remove task
+07-10 23:54:49.965  1875  1917 I ActivityManager: Changes in 99001 6 to 3, 0 to 184
+07-10 23:54:49.966  1875  1917 I ActivityManager: Changes in 10275 6 to 2, 0 to 255
+07-10 23:54:49.966  1875  1917 I ActivityManager: Changes in 10266 19 to 19, 0 to 128
+07-10 23:54:49.967  1875  1917 I ActivityManager: Changes in 10251 6 to 3, 0 to 184
+07-10 23:54:50.328  1875  1917 W ActivityManager: setHasOverlayUi called on unknown pid: 12768
+07-10 23:54:50.460  1875  1917 I ActivityManager: Changes in 99001 3 to 6, 184 to 128
+07-10 23:54:50.461  1875  1917 I ActivityManager: Changes in 10275 2 to 6, 255 to 128
+07-10 23:54:50.462  1875  1917 I ActivityManager: Changes in 10251 3 to 6, 184 to 128
+07-10 23:54:50.491  1875  2199 I ActivityManager: Changes in 99001 6 to 6, 128 to 0
+07-10 23:54:50.492  1875  2199 I ActivityManager: Changes in 10275 6 to 6, 128 to 0
+07-10 23:54:50.492  1875  2199 I ActivityManager: Changes in 10266 17 to 17, 128 to 0
+07-10 23:54:50.492  1875  2199 I ActivityManager: Changes in 10251 6 to 6, 128 to 0
+07-10 23:54:54.702  1875  1925 I ActivityManager: Start proc 18506:com.arcfire.online/u0a1070 for activelaunch {com.arcfire.online/com.arcfire.online.MainActivity}
+07-10 23:54:54.704  1875  1925 I ActivityManager: ProcessObserver broadcast disabled
+07-10 23:54:55.729  1875  2014 I ActivityManager: Changes in 99002 6 to 3, 0 to 184
+07-10 23:54:55.729  1875  2014 I ActivityManager: Changes in 11070 19 to 2, 0 to 255
+07-10 23:54:55.984  1875  1917 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+07-10 23:55:06.044  1875  4089 I ActivityManager: Changes in 99002 3 to 6, 184 to 0
+07-10 23:55:07.479 18506 18624 I ReactNativeJS: Bridgeless mode is enabled
+07-10 23:55:07.778 18506 18624 I ReactNativeJS: Running "main" with {"rootTag":11,"initialProps":{},"fabric":true}
+07-10 23:55:11.022 18506 18624 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+07-10 23:55:11.042 18506 18624 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+07-10 23:55:11.063 18506 18624 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+07-10 23:55:11.084 18506 18624 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+07-10 23:55:11.099 18506 18624 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+07-10 23:55:11.213  1875  4089 I ActivityManager: Changes in 99002 6 to 3, 0 to 184
+07-10 23:55:11.763 18506 18624 I ReactNativeJS: [boot-perf] root_layout total=1833ms | layout_effect_start+1180ms → csv_indexes_start(minimal)+0ms → csv_indexes_end(minimal)+8ms → storage_load_start+95ms → storage_load_end+520ms → boot_ready+30ms
+07-10 23:55:11.777 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-10 23:55:11.777 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-10 23:55:11.778 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-10 23:55:11.779 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-10 23:55:11.810 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+07-10 23:55:11.812 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `ref`. Please use `ref()` instead.
+07-10 23:55:11.815 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `once`. Please use `get()` instead.
+07-10 23:55:11.825 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+07-10 23:55:11.905 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+07-10 23:55:11.905 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+07-10 23:55:11.906 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `signInAnonymously`. Please use `signInAnonymously()` instead.
+07-10 23:55:12.153 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.182 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=49 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.211 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.246 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=49 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.277 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.309 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.361 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=66 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.380 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.402 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.421 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.444 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.469 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=49 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.486 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.509 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.527 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.690 18506 18624 I ReactNativeJS: [Firebase/Auth] anonymous sign-in skipped
+07-10 23:55:12.868 18506 18624 I ReactNativeJS: [ArcCore/Convoy] heal convoy gross over cap planets=27 cap=45000
+07-10 23:55:12.907 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.928 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=49 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.946 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.963 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=49 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:12.983 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.002 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.023 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=66 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.041 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.058 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.077 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.095 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.112 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=49 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.131 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.159 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.193 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.212 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=42 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.224 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.236 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=87 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.252 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=63 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.276 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=87 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.287 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=62 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.297 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=45 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.310 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=35 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.319 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=85 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.330 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=64 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.340 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=43 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.353 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=87 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.363 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=87 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.374 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=64 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.384 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=85 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.398 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=64 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.408 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=42 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.419 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.431 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=49 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.442 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.455 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=49 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.467 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.479 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.490 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=66 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.503 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.514 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.525 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.535 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.548 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=49 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.559 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.571 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.582 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.887 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=42 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.901 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=42 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.912 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=43 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.922 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=45 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.958 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=64 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.969 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=62 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.979 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=87 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.989 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=85 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:13.999 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=64 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.032 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=64 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.045 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=63 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.065 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=87 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.080 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.091 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=85 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.101 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=87 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.113 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=87 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.125 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=35 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.136 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.147 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=49 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.158 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.171 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=49 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.183 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.195 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.207 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=66 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.219 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.229 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.240 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.252 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.266 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=49 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.276 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.287 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:14.298 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:17.479 18506 18624 I ReactNativeJS: [ArcCore/RTDB] boot sync skip (offline)
+07-10 23:55:17.802 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-10 23:55:17.803 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-10 23:55:17.803 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-10 23:55:17.803 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-10 23:55:19.420 18506 18624 I ReactNativeJS: [MEM] planet_main_stage_hub mount
+07-10 23:55:19.422 18506 18624 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=24 detail=arcadia_prime
+07-10 23:55:19.449 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=42 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:55:19.578 18506 18624 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=24
+07-10 23:55:21.324  1875  3099 I ActivityManager: Changes in 99002 3 to 6, 184 to 0
+07-10 23:55:40.419 18506 18624 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=manual hermes_mb=28 detail=departure_preflight_arcadia_prime
+07-10 23:55:40.425 18506 18624 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=1 reason=galaxy_departure_after_combat
+07-10 23:55:40.428 18506 18624 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=planet_hub reason=galaxy_departure_after_combat immediate=0
+07-10 23:55:40.429 18506 18624 I ReactNativeJS: [MEM] teardownPlanetHubCombatForGalaxyDeparture planet=arcadia_prime
+07-10 23:55:41.068 18506 18624 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=2 reason=route_blur
+07-10 23:55:41.070 18506 18624 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=planet_hub reason=route_blur immediate=0
+07-10 23:55:41.074 18506 18624 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=28 detail=arcadia_prime
+07-10 23:55:41.075 18506 18624 I ReactNativeJS: [MEM] releasePlanetMainStageSession dedupe route_blur:arcadia_prime
+07-10 23:55:41.075 18506 18624 I ReactNativeJS: [MEM] planet_main_stage_hub disposed
+07-10 23:55:41.115 18506 18624 I ReactNativeJS: [MEM] galaxy_map mount
+07-10 23:55:41.156 18506 18624 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=ingress_after_hub_combat immediate=0
+07-10 23:55:41.156 18506 18624 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=ingress_after_hub_combat nebulaBefore=1
+07-10 23:55:41.157 18506 18624 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=ingress_reclaim hermes_mb=28 detail=after_hub_combat
+07-10 23:55:41.157 18506 18624 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_focus hermes_mb=28
+07-10 23:55:41.234 18506 18624 I ReactNativeJS: [MEM] consumeGalaxyMapIngressReclaim kind=after_hub_combat fresco=true
+07-10 23:55:43.738 18506 18624 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+07-10 23:55:43.739 18506 18624 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:55:56.379 18506 18624 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=galaxy_system_change nebulaBefore=0
+07-10 23:55:56.379 18506 18624 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=system_change hermes_mb=36 detail=arcadia
+07-10 23:55:58.360 18506 18624 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+07-10 23:55:59.569 18506 18624 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=route_blur immediate=0
+07-10 23:55:59.570 18506 18624 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=36
+07-10 23:56:00.086 18506 18624 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=transit_combat_nav hermes_mb=36
+07-10 23:56:00.086 18506 18624 I ReactNativeJS: [MEM] galaxy_map disposed
+07-10 23:56:00.114 18506 18624 I ReactNativeJS: [MEM] planet_main_stage_hub mount
+07-10 23:56:00.115 18506 18624 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=36 detail=synth_002_p
+07-10 23:56:00.134 18506 18624 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=49 origin=arc_core_policy', 'trade_port_planet_resync'
+07-10 23:56:01.230 18506 18624 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=planet_hub reason=ingress_to_planet_hub immediate=0
+07-10 23:56:01.231 18506 18624 I ReactNativeJS: [MEM] runPlanetHubIngressReclaimPass reason=ingress_to_planet_hub keep=synth_002_p
+07-10 23:56:01.231 18506 18624 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=ingress_reclaim hermes_mb=40 detail=synth_002_p
+07-10 23:56:01.231 18506 18624 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=40
+07-10 23:56:01.333 18506 18624 I ReactNativeJS: [MEM] consumePlanetHubIngressReclaim fresco=true
+07-10 23:56:03.126 18506 18624 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-10 23:57:19.274 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-10 23:57:19.275 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `delete`. Please use `deleteField()` instead.
+07-10 23:57:19.275 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `FieldValue`. Please use `FieldValue` instead.
+07-10 23:57:19.275 18506 18624 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `serverTimestamp`. Please use `serverTimestamp()` instead.
+07-10 23:57:32.266 18506 18624 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=3 reason=hub_inbound_drone_end
+07-10 23:57:32.270 18506 18624 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=4 reason=hub_inbound_drone_end:post_skia_peak:pre_backdrop
+07-10 23:57:32.272 18506 18624 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=48 detail=hub_inbound_drone_end
+07-10 23:57:32.272 18506 18624 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=synth_002_p gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+07-10 23:57:32.588 18506 18624 I ReactNativeJS: [MEM] hubBackdropNativeRemount epoch=1 reason=hub_inbound_drone_end:post_skia_peak
+07-10 23:57:32.998 18506 18624 I ReactNativeJS: [MEM] postRemountTrim reason=hub_inbound_drone_end:post_skia_peak fresco=true
+07-10 23:57:34.069 18506 18624 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2

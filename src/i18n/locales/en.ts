@@ -327,6 +327,10 @@ export const EN_DICTIONARY: I18nDictionary = {
   'worldmap.btn.landing': '[ Landing... ]',
   'worldmap.btn.land': '[ Land ]',
   'worldmap.btn.move': '[ Travel ]',
+  'worldmap.dropdown.land': 'Land',
+  'worldmap.dropdown.move': 'Travel',
+  'worldmap.dropdown.planetInfo': 'Planet Info',
+  'worldmap.dropdown.combat': 'Combat',
   'worldmap.panel.hint': 'Tap a system to view its info',
 
   // ── Star systems · synth frontier (systemText) ──

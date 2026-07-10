@@ -326,6 +326,10 @@ export const KO_DICTIONARY: I18nDictionary = {
   'worldmap.btn.landing': '[ 착륙중... ]',
   'worldmap.btn.land': '[ 행성 착륙 ]',
   'worldmap.btn.move': '[ 이동 ]',
+  'worldmap.dropdown.land': '착륙',
+  'worldmap.dropdown.move': '이동',
+  'worldmap.dropdown.planetInfo': '행성정보',
+  'worldmap.dropdown.combat': '전투',
   'worldmap.panel.hint': '성계를 탭하여 정보를 확인하세요',
 
   // ── 성계·미개척 synth (systemText) ──

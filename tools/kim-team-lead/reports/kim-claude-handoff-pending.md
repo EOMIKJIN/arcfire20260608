@@ -5,6 +5,188 @@
 
 ---
 
+## 🟡 PENDING(분석+계측만, 코드 로직 변경 없음) — HUB_ACTIVATION GL/Views 급증 근본원인 + GPU 레이어 계측 추가 · 김클로드
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** · **verdict PASS** (김팀장 2026-07-10 21:55 KST) |
+| **updated** | 2026-07-10 21:15 KST |
+| **task_id** | `hub-activation-gl-views-spike-rootcause-20260710` |
+| **요청자** | 대표님 — "메모리 관련된 비정상적 오류(김팀장 개발분량)는 완전히 수정되었나?" → "오늘 발생한 문제인가?" → "결론적으로 메모리 관련된 문제는 시기와 발생건수 기타 작업에 최우선으로 수정한다" → "집중 분석하라" |
+| **트리거** | `tools/long-run-monitor` 실측: 오늘(2026-07-10) `GL_HARD_CEILING` 강제재시동 2회(19:57:54, 20:44:58) — `outbox/cursor-incident-handoff.md`에 3번째(21:01:05) 추가 발생 확인 |
+
+### 근본원인 (Explore 에이전트 2개 병렬 + 직접 코드 재검증으로 확정)
+
+**vega_base(웨이브 디펜스 테스트베드) 자동전투 트리거가 원인 체인의 시작점** — `app/(game)/planet.tsx:954` `isTestBed: planet?.id === 'vega_base'` → `src/game/waveDefense/useWaveDefenseController.ts:53-73`: 착륙 후 **플레이어 입력 없이 10초 뒤 자동으로** `startRun()` + 9웨이브(`WAVE_DEFENSE_MAX_WAVES=9`, 웨이브당 최대 동시 적 12기) 전투 시작. 이게 `capitalCombatOrbitActive`를 true로 바꾸며 평소 전투 중에만 마운트되는 Skia 캔버스 스택(`PlanetEdenRaidOrbitSkiaCombat`·전투용 `SkiaPlanetNebulaShaderBackdrop`·드론 웨이브 겹치면 `PlanetHubInboundDroneSkiaTrailLayer`까지 최대 3개 동시)이 실제로 마운트되고, 9웨이브가 자동으로 이어지며 모니터 폴링 간격(~15분) 내내 지속 — `mem-timeline.csv`의 `HUB_ACTIVATION gl_mount_ok`(19:57:49, 20:29:23) 패턴과 정확히 일치.
+
+**대표님 확인 완료**: vega_base 자동전투 트리거 자체는 **의도된 QA/테스트 기능으로 유지** — "자동시작은 유지, GL 원인만 우선 수정"으로 스코프 확정. 따라서 이번 작업은 **트리거·전투 로직은 건드리지 않고**, 왜 그 상태에서 GL이 80~130MB나 튀는지 원인만 좁혀서 파는 것으로 한정.
+
+**2건의 강제재시동은 서로 다른 성격**(로그 델타 재검증):
+- **#1(19:57:54)**: GL 19.9→120.7MB, views 99→568 — 모니터 자체 룰(허브 활성 중 GL≥80MB면 무조건 강제재시동)에 걸림. 콤뱃 Skia 마운트 비용이 그대로 원인.
+- **#2(20:44:58)**: 같은 창에서 GL은 +32.4MB뿐인데 PSS는 +281.2MB — GL/텍스처가 아니라 **native_heap 쪽 누적**(9웨이브 동안 적 함대 spawn/teardown 반복, 혹은 기존 07-08 문서화된 잔여 native_heap 이슈)이 주범으로 추정 — **별개 원인, 이번 계측 범위 밖**.
+
+### 코드로 배제 확인한 것 (80~130MB GL의 원인이 아님)
+
+- 콤뱃/드론트레일 Canvas 크기는 `PLANET_MAIN_ORBIT_SCENE_SIZE = 320`(320×320px) — 픽셀 버퍼 자체는 수백KB급, 80~130MB를 설명 못함.
+- 콤뱃에서 `useImage`로 로드하는 이펙트 이미지 2개(`color_dodge_02.png`, `tail_fire_02.png`)는 소형 스프라이트 — 대형 텍스처 아님.
+- `_combatPictureRecorder`는 모듈 전역 싱글턴으로 이미 재사용 중(`PlanetEdenRaidOrbitSkiaCombat.tsx:281-285`) — "매 프레임 PictureRecorder 신규 생성" 패턴의 누수 아님.
+- `commitSkPictureReactFrame`은 커밋마다 직전 프레임 1장만 dispose 예약 — 무한 누적 큐가 아님(정상 동작).
+
+### 남은 가설 (코드로 확정 못 함 — 런타임 계측 필요, 이번 작업의 이유)
+
+콤뱃 활성 시 최대 3개의 **독립된** `<Canvas>`(콤뱃 궤도·전투용 성운 백드롭·드론 트레일)가 동시 마운트될 수 있음. react-native-skia는 `<Canvas>`마다 별도 GPU 리소스 컨텍스트(Ganesh GrContext)를 잡는 경우가 흔하고, 이 컨텍스트당 고정 오버헤드(셰이더 캐시·리소스 캐시 예산 등)가 픽셀 데이터와 무관하게 수십MB 단위일 수 있음 — 3개 동시 마운트 시 관측된 100~130MB 범위와 맞아떨어짐. **단, 이건 코드 정적분석만으로 확정할 수 없는 가설**이라 실기 계측이 필요.
+
+### 이번에 한 것 — 계측 추가만 (렌더링/디스포즈 로직 변경 없음)
+
+기존에 `SkiaPlanetNebulaShaderBackdrop.tsx`만 `registerGpuLayer`/`unregisterGpuLayer`(`src/game/planetStageGpuSupervisor.ts`)에 등록하고 있었고 콤뱃·드론트레일은 등록 안 하고 있어 `debugPlanetGpuLayerSnapshot()`으로 "지금 몇 개의 Canvas가 동시에 떠 있는지" 확인이 불가능했음. 아래 4개 파일에 **카운트 전용, 부작용 없는** 계측만 추가:
+
+- `PlanetEdenRaidOrbitSkiaCombat.tsx`: mount/unmount에 `registerGpuLayer('skia_combat_orbit','T0')`/`unregisterGpuLayer` 추가.
+- `PlanetHubInboundDroneSkiaTrailLayer.tsx`: 동일하게 `'skia_inbound_drone_trail'` 등록.
+- `runPlanetHubSoftNativeReclaimPass.ts`·`runPlanetHubPostSkiaPeakReclaimPass.ts`: 기존 `[MEM]` 로그 라인에 `gpuLayers=...` 필드 추가 — `debugPlanetGpuLayerSnapshot()` 결과를 그대로 찍음.
+
+다음에 vega_base에서 자동전투가 다시 발생하면, logcat의 `[MEM] runPlanetHub*ReclaimPass ... gpuLayers=skia_nebula_backdrop,skia_combat_orbit,skia_inbound_drone_trail` 같은 라인으로 **동시 마운트된 Canvas 개수를 실측**할 수 있음 — 이게 3개 동시 마운트로 확인되면 "Canvas 통합(여러 `<Canvas>`를 하나로 합치기)"이 다음 단계의 구체적 수정안이 되고, 1개뿐인데도 GL이 크면 다른 원인(예: Android GL 드라이버 측 별도 요인)을 다시 찾아야 함 — 즉 다음 조치를 코드가 아니라 **데이터로 결정**하기 위한 계측.
+
+### self-check
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
+- [x] `npm run audit:memory:all` — **전부 PASS**(memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
+- [x] git commit **안 함**
+
+### 리스크·주의
+
+- 이번 변경은 `registerGpuLayer`/`unregisterGpuLayer`(이미 존재하는 기존 API) 호출 추가와 `console.log` 필드 추가뿐 — 렌더링·디스포즈 타이밍·전투 로직에는 손 안 댐. `__DEV__` 가드 안에서만 로그가 찍히므로 릴리스 빌드 영향 없음.
+- **아직 실제 GL 원인 수정은 안 됨** — 이번 건은 원인을 좁히기 위한 계측 1단계. Canvas 통합 등 실제 구조 변경은 계측 데이터 확보 후 별도 작업으로 진행 예정(대표님 재확인 필요할 가능성 높음 — 콤뱃 렌더링 코드라 리스크 있는 변경).
+- 재시동 #2(native_heap 급등, GL 평탄)는 이번 계측 범위 밖 — 07-08 문서화된 잔여 이슈와 겹칠 가능성, 별도로 다뤄야 함.
+- `outbox/cursor-incident-handoff.md`에 21:01:05 세 번째 `GL_HARD_CEILING`(gl=120.9, pss=1075.4)이 추가로 찍혀 있음 — 김팀장 쪽에서 진행 중인 `skiaPictureFrameRegistry.ts`(우연히도 이번 조사와 같은 파일들을 건드리는 별도 diff, 미커밋) 관련 회귀인지 무관한 재발인지는 미확인 — 검수 시 확인 부탁.
+
+### 확인해야 할 것 (김팀장)
+
+1. 이 계측 diff 자체(`registerGpuLayer` 호출 위치·로그 필드) 검토.
+2. 다음 vega_base 자동전투 사이클에서 `gpuLayers=` 로그 실측 → Canvas 동시 마운트 개수 확인.
+3. 진행 중이신 `skiaPictureFrameRegistry.ts` 관련 diff와 이번 계측 diff가 충돌 없이 공존하는지 확인(현재 둘 다 워킹트리에 공존, self-check 전부 PASS 확인함).
+
+### 김팀장 검수 (2026-07-10 21:55 KST)
+
+| 항목 | 결과 |
+|------|------|
+| **근본원인 분석** | **PASS(타당)** — vega_base 자동 웨이브 → combat Skia 3 Canvas 동시 마운트 → GL 80~130MB spike. #2 재시동(native_heap)은 별개 축으로 분리 OK. |
+| **계측 `registerGpuLayer`** | **PASS** — combat·drone mount/unmount 쌍 대칭 · nebula와 동일 패턴 · Map만 유지(onRelease 없음=카운트 전용) · **누수 없음** |
+| **reclaim 로그 `gpuLayers=`** | **PASS** — soft/postSkiaPeak `__DEV__` 한정 · `debugPlanetGpuLayerSnapshot()` 정본 |
+| **SkPicture registry 공존** | **PASS** — `runCombatSkiaPresentationReclaim` → `invalidateAllSkPictureFrames()` 선행 · combat/drone `dropSkPictureReactFrame`+registry 등록 · reclaim과 계측 충돌 없음 |
+| **실제 GL 수정** | **미착수(의도)** — 계측 1단계만 · Canvas 통합은 `gpuLayers=` 실측 후 별도 task |
+| **tsc · audit:memory:all** | **PASS** (김팀장 재실행 21:55 KST) |
+| **검수 중 정리** | drone `flushPicture` 중복 `if` 1건 merge 잔재 → 김팀장 정리 |
+
+**verdict: PASS(조건부)** — 계측·분석 OK · GL 구조 수정은 실측 데이터 후 2단계.
+
+**[kim-claude-review] 2026-07-10 hub-activation-gl-views-spike PASS(조건부) — GPU layer 계측 · vega_base 원인분석 · skiaPicture registry 공존 OK · Canvas 통합 대기**
+
+---
+
+## 🟡 PENDING(3차 재구현 — 재검수 필요) — 은하계 지도 드롭다운 재이동 오작동 + GL/Views 급증 원인 수정 · 김클로드
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** · **verdict PASS** (김팀장 2026-07-10 21:55 KST) |
+| **updated** | 2026-07-10 21:05 KST |
+| **task_id** | `worldmap-dropdown-move-relock-hitarea-fix-20260710` |
+| **요청자** | 대표님 — 최초 보고 → "드롭다운으로 해결할 수 없나?" → "겹침 회피 로직으로 다시 구현하라" + "메뉴영역만 하위 클릭 안 되게" → (2차 결과물에 "성계 왼쪽이 아니라 오른쪽이라니까!!") → "겹침 회피 로직은 쓰지 말고, 메뉴 버튼 아래 인터랙션 되는 요소를 비활성 시키는 작업으로" |
+| **진행방식** | plan mode(1차) → 대표님 승인 → 구현·김팀장 REVIEWED(PASS, 1차) → 대표님 재검토 요청 → 겹침 회피 4방향 반전(2차) → 대표님이 좌측 반전에 반대 → **오른쪽 고정 + 하부 노드 탭 비활성화(3차, 최종)** |
+
+### ⚠️ 버그 B 수정 방식이 세 번 바뀌었습니다 — 최종은 3차입니다 (김팀장 재검수는 3차 기준으로)
+
+- **1차(김팀장 REVIEWED·PASS 처리됨)**: 메뉴를 지도 레이어에서 완전히 빼서 하단 고정 패널로 이동. 겹침은 구조적으로 불가능해지지만 "노드 옆에 뜨는 드롭다운" UX 포기 — 대표님이 이 트레이드오프에 재검토 요청.
+- **2차(폐기)**: 드롭다운(노드 앵커)을 유지하되 right→left→below→above 순으로 안 겹치는 방향을 자동 탐색해 반전. 대표님이 "왼쪽으로 가면 안 된다, 오른쪽 기준"이라고 명확히 반대 — 폐기.
+- **3차(최종, 이번 갱신)**: **위치는 항상 성계 노드 오른쪽으로 고정**(반전 없음, 김팀장 원안과 동일). 대신 메뉴가 떠 있는 동안 그 사각형에 걸치는 성계 노드는 지도 쪽 탭 판정(`handleMapTapAt`)에서 아예 제외 — "메뉴 버튼 아래 인터랙션 요소를 비활성화"하는 대표님 지시를 그대로 구현.
+
+### 확정된 두 근본 원인 (코드로 직접 검증)
+
+**버그 A — `doMoveAlongPath` 레이스 컨디션**(`app/(game)/worldmap.tsx`): 이동 애니메이션 종료 시 `setIsMoving(false)`가 `moveToSystem`/`persist()`/`selectSystem(targetSystem.id)` 처리보다 **먼저** 실행되던 구조. 그 사이 창구에 지도가 다시 탭 가능해져, 사용자가 새 목적지를 탭해도 나중에 실행되는 `selectSystem(targetSystem.id)`가 그 선택을 도착지점으로 조용히 되돌림 → `selectedSystem.id === player.currentSystemId`가 다시 참이 되어 "이미 도착" 분기가 실행되고 현재 지점에 착륙 — 정확히 보고된 증상.
+
+**버그 B — 드롭다운 메뉴가 인접 성계 노드의 탭 영역을 가림**(`src/galaxyMap/GalaxyMapSystemActionMenu.tsx`): 메뉴가 지도의 팬 가능한 콘텐츠 좌표 레이어 **안에** 렌더링되어(`toScreen(selectedSystem.position)` 앵커), 도착 즉시 자동으로 다시 뜨는 이 불투명 메뉴(약 124×138px, 여백 없이 3버튼이 전체를 채움)가 현재 위치 바로 옆 인접 노드를 물리적으로 덮어버림. 사용자가 다음 목적지를 탭해도 지도 제스처가 아니라 메뉴의 "이동/착륙" 버튼이 먼저 잡아서 또 현재 지점 착륙 실행. 이 메뉴가 대체한 기존 `ArcButton`은 지도 하단 고정 패널 안에 있어 이런 겹침이 원천적으로 없었음 — 신규 회귀.
+
+**GL·Views 급증**: `handleMove`/`handleCombat` 모두 기존 STAGE2 dispose 경로(`navigateToPlanetHubAfterTeardown`)를 그대로 호출 — dispose 우회·신규 누수는 발견 안 됨(`galaxyMapStageSession.ts` 미변경 확인). 다만 이 세션에서 이미 문서화된 두 미해결 잔여 비용(`galaxy-map-gl-residual-on-hub-reentry-20260708`, `multi-hub-hop-gl-hard-ceiling-restart-20260708`)이 버그 A·B 때문에 "의도한 이동 1회"가 실제로는 잘못된 착륙→재시도의 추가 STAGE 전환을 여러 번 유발해 훨씬 자주 누적되는 것으로 추정 — 새 누수가 아니라 기존 잔여 비용의 증폭. 이건 합리적 추론이며 재측정으로 별도 검증한 건 아님(수정 후 실기 확인 필요).
+
+### 수정 내용 (최종, 3차)
+
+**① `app/(game)/worldmap.tsx` `doMoveAlongPath`** — (1~3차 공통, 변경 없음) 홉 애니메이션 루프부터 마지막 `selectSystem`/`setShowPanel`까지 전체를 `try { ... } finally { if (isMountedRef.current) setIsMoving(false); }`로 감싸, 중단/전투조우/정상완료 세 종료 경로 전부에서 잠금이 정확히 한 번만·비동기 꼬리까지 유지된 뒤 해제되도록 함. 마지막 `selectSystem(targetSystem.id)`에 `useWorldStore.getState().selectedSystemId === null` 방어 가드.
+
+**② 메뉴 배치 — 오른쪽 고정 + 하부 노드 탭 명시적 비활성화 (최종)**
+- `GalaxyMapSystemActionMenu.tsx`: 좌표 앵커 절대배치(세로 3행 드롭다운, 김팀장 원안)를 그대로 유지. `side` prop(`'right'|'left'|'below'|'above'`)과 위치 계산 공식(`resolveMenuTopLeft`)·크기 상수(`MENU_WIDTH`·`MENU_ITEM_HEIGHT`·`MENU_ANCHOR_OFFSET_X/Y`)는 export 상태로 남겨둠(범용 유틸이라 삭제 안 함) — 단 `worldmap.tsx`에서는 이제 `side: 'right'` **고정값만** 사용, 반전 로직 전부 제거.
+- `worldmap.tsx`: `activeMenuRectRef`(맵 콘텐츠 좌표계 사각형) 신설 — 메뉴가 실제로 화면에 떠 있는 동안(`showPanel && selectedSystem`)만 `resolveMenuTopLeft('right', ...)` 기준 사각형을 채우고, 안 떠 있으면 `null`. `handleMapTapAt`(지도 자체 수동 히트테스트, `touchTargetsRef` 순회)에서 **이 사각형에 걸치는 성계 노드는 후보에서 아예 제외** — 메뉴 버튼이 이미 그 자리 터치를 가로채는 것과 별개로, 지도 쪽 판정 자체도 명시적으로 비활성화해 GestureDetector Tap과 TouchableOpacity가 같은 터치에 동시 반응할 여지를 원천 차단. 대표님이 지시하신 "메뉴 버튼 아래 인터랙션 요소 비활성화" 요구사항을 문자 그대로 구현 — 겹침 회피(위치 반전)는 사용하지 않음.
+- 하단 고정 패널(`panelActions`)·`PANEL_H`는 148 유지(1차의 196 확장은 이미 되돌려짐).
+- 앞서 2차에서 추가했던 `rectOverlapsCircle`(겹침 판정용)은 더 이상 안 쓰여 삭제.
+
+**건드리지 않음**: `galaxyMapStageSession.ts`·`combatSkiaPresentationReclaim.ts` 등 STAGE dispose 내부 — 원인 아님 확인. `systemActionMenuItems`/`handleMove`/`handlePlanetInfo`/`handleCombat` 로직은 전부 그대로.
+
+### self-check (3차, 최종)
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
+- [x] `npm run audit:memory:all` — **전부 PASS**(memory 37/37 · **skia-worklet 20/20**(아래 참고) · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
+- [x] git commit **안 함**
+
+### ⚠️ 별개 발견(제 작업과 무관, 사전 존재) — `audit:skia-memory` FAIL 2건
+
+`PlanetEdenRaidOrbitSkiaCombat.tsx`·`SkiaPlanetNebulaShaderBackdrop.tsx` 둘 다 최종 수정시각이 제 작업 시작보다 **2시간 이상 이전**(제가 이번 세션에서 손댄 적 없음, 확인 완료)인데, `audit:skia-memory`가 18/20으로 실패 중임을 이번 self-check 도중 우연히 발견. 원인: 두 파일 모두 `scheduleSkPictureDispose` 식별자가 사라짐(다른 필수 식별자 `pictureFlushRafRef`·`combatSkiaLoopsActiveRef`·`skiaLoopsActiveRef`는 존재) — `skiaMemoryLifecycle.ts`(공용 헬퍼)엔 이 함수가 여전히 있는데 두 소비 파일에서 호출부만 없어진 상태. 진행 중인 별도 작업(김팀장 측?)의 중간 상태로 추정 — 제가 임의로 손대지 않았습니다. 검수 시 확인 부탁드립니다.
+
+### 수동 smoke 체크리스트 (대표님 실기 확인 필요, 3차 기준)
+
+1. 인접 성계로 이동 → 도착 → 1초 이내 다른 성계 탭 → 실제로 그 방향 이동 시작하는지(현재/도착 지점 재착륙 안 하는지) 8~10회 반복
+2. "이동중..." 라벨이 도착 직후 정착까지 끊김 없이 유지되는지
+3. 메뉴가 항상 성계 노드 **오른쪽**에 뜨는지(왼쪽·위·아래로 안 옮겨지는지)
+4. 메뉴가 우연히 다른 성계 노드 위를 덮는 상황을 재현해서, 그 아래 노드를 탭했을 때 **메뉴 버튼이 반응하거나(의도한 동작) 아무 반응도 없어야** 하고, **가려진 노드가 선택되면 안 됨**(activeMenuRectRef 비활성화 확인)
+5. 이동→착륙→이동 15~20회 빠르게 반복 — 고착·오작동 없는지
+6. (선택) 반복 중 `tools/long-run-monitor` gl_mb·views 급증 빈도가 수정 전 대비 줄었는지 비교
+
+### ⚠️ 아래 김팀장 검수는 1차(패널 이동안) 기준 — 3차(오른쪽 고정+탭 비활성화)로 재검수 필요
+
+버그 A·`scheduleSkPictureDispose` 오탐 관련 판정은 여전히 유효(변경 없음). **"버그 B — 메뉴 hit-area 겹침" 행과 "검수 메모 1"만 3차 최종 구현 기준으로 다시 봐주세요** — 지금은 하단 패널이 아니라 지도 위 오른쪽 고정 드롭다운 + `activeMenuRectRef` 기반 하부 노드 탭 비활성화 방식입니다.
+
+### 김팀장 검수 (2026-07-10 21:55 KST · 3차 최종)
+
+| 항목 | 결과 |
+|------|------|
+| **버그 A — isMoving 레이스** | **PASS** — `try/finally` + `isMovingRef` 선점(연료 차감 전) · Kim Team Lead 보완 포함 |
+| **버그 B — hit-area (3차)** | **PASS** — 노드 **오른쪽 고정** 드롭다운 · `activeMenuRectRef` + 메뉴 rect 내 탭 early-return · 노드 중심 in-rect 제외 |
+| **중복 클릭** | **PASS** — [착륙/전투] `hubNavGate` · [이동] `isMovingRef` 동기 잠금 |
+| **메모리** | **PASS** — RN View만 · 패널/이동 시 언마운트 · Skia/타이머 추가 없음 |
+| **STAGE dispose** | **PASS** — 기존 teardown 경로 유지 |
+| **tsc · audit:memory:all** | **PASS** (21:55 KST 재실행) |
+| **실기 smoke** | handoff §6항 — 대표님 확인 권장 |
+
+**verdict: PASS**
+
+**[kim-claude-review] 2026-07-10 worldmap-dropdown-3rd PASS — 오른쪽 고정+activeMenuRectRef · isMovingRef 연타방지 · tsc+audit PASS · smoke 대기**
+
+### 김팀장 검수 (2026-07-10 20:31 KST, 1차 기준 — 위 참고)
+
+| 항목 | 결과 |
+|------|------|
+| **버그 A — isMoving 레이스** | **PASS** — `doMoveAlongPath` 전체를 `try/finally`로 감싸 `persist`·`selectSystem`·미션 처리까지 잠금 유지. 조기 `setIsMoving(false)` 제거 확인. `selectedSystemId === null`일 때만 `selectSystem(target)` 이중 방어 OK. |
+| **버그 B — 메뉴 hit-area 겹침** | **PASS** — 지도 팬 레이어 내 `selectedSystemMenuAnchor`/좌표 앵커 드롭다운 **완전 제거**. `GalaxyMapSystemActionMenu` → 하단 고정 `panelActions` flex 가로 3버튼(`PANEL_H` 196). 인접 노드 탭 물리적 차단 구조적으로 해소. |
+| **핸들러·분기** | **PASS** — `handleMove`/`handlePlanetInfo`/`handleCombat` · 레드 영토 `resolvePlayerPlanetStayBlock` · `isRedOccupiedPlanet` 전투 게이트 · `hubNavGate`/`isMoving` 차단 유지. |
+| **STAGE dispose** | **PASS** — `galaxyMapStageSession.ts` 미변경 · 기존 `navigateToPlanetHubAfterTeardown`/`navigateToCombatAfterTeardown` 경로 그대로. |
+| **tsc** | **PASS** |
+| **audit:memory** | **PASS** (37/37) |
+| **audit:worklet-contract** | **PASS** |
+| **audit:native-reclaim** | **PASS** (20/20) |
+| **audit:resident-set** | **PASS** (7/7) |
+| **audit:hot-path** | **PASS** (hits=0) |
+| **audit:skia-memory** | **PASS** (20/20) — 런타임 dispose는 `dropSkPictureReactFrame`/`commitSkPictureReactFrame`(내부 `scheduleSkPictureDispose`)로 **이미 구현됨**. Kim Claude self-check 시점 audit가 직접 문자열만 검사해 18/20 **오탐** → `run-skia-worklet-memory-audit.cjs` `usesSkPictureDispose()` 래퍼 인정 규칙 반영 후 **20/20 PASS** (2026-07-10 20:39 KST 재실행). |
+| **커밋** | 미실행 (대표님 지시 시) |
+| **실기 smoke** | handoff §5항 — 대표님 1회 확인 권장(재이동 오작동·15~20회 왕복) |
+
+**검수 메모**:
+1. **UI 형태 변경** — 성계 옆 세로 드롭다운 → 하단 패널 가로 3버튼. 겹침 방지 trade-off로 타당; 대표님 선호(노드 높이 정렬)와 다르면 smoke 후 재조정 가능.
+2. **GL/Views** — 코드상 신규 누수 없음. 오작동→잘못된 착륙 반복이 줄면 기존 잔여 floor 비용 **증폭**만 완화될 가능성(실측 대기).
+3. **Skia audit** — 런타임 버그 아님 · audit 규칙 갱신으로 **20/20 PASS** 확인.
+
+**verdict: PASS** — 코드·정적 게이트 전부 OK · smoke 5항만 대기.
+
+**[kim-claude-review] 2026-07-10 worldmap-dropdown-move-relock-hitarea-fix PASS — try/finally isMoving · 패널 메뉴 재배치 · tsc+audit:memory:all(20/20 skia) PASS · smoke 대기**
+
+---
+
 ## 🟡 PENDING — 플레이어 독립국가(녹색 국경) M1+M2 구현 완료 · 김클로드
 
 | 필드 | 값 |
