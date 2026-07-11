@@ -1,0 +1,24 @@
+{
+  "schema": "arcfire-subscription-renewal-v1",
+  "timezone": "Asia/Seoul",
+  "renewalDayOfMonth": 10,
+  "lastRenewalDate": "2026-07-10",
+  "nextRenewalDate": "2026-08-10",
+  "paidModelCycleNote": "갱신일(매월 10일 KST)부터 다음 갱신 전일까지 유료 Claude 전용. 갱신일 변경 시 본 파일만 수정.",
+  "allowedPaidModels": [
+    "claude-opus-4-8-thinking-high",
+    "claude-sonnet-5-thinking-high",
+    "claude-fable-5-thinking-high",
+    "claude-4.6-sonnet-medium-thinking",
+    "claude-sonnet-4.6-thinking-medium"
+  ],
+  "forbiddenFallbackAgents": [
+    "composer",
+    "composer-2.5",
+    "composer-2.5-fast",
+    "cursor-auto",
+    "cursor-glock",
+    "glock",
+    "default"
+  ]
+}

@@ -3,6 +3,10 @@
   "hooks": {
     "sessionStart": [
       {
+        "command": ".cursor/hooks/on-session-start-paid-model-gate.cjs",
+        "timeout": 5
+      },
+      {
         "command": ".cursor/hooks/on-session-start-agent-routing.cjs"
       },
       {
@@ -31,6 +35,10 @@
       }
     ],
     "beforeSubmitPrompt": [
+      {
+        "command": ".cursor/hooks/on-before-submit-prompt-paid-model-gate.cjs",
+        "timeout": 5
+      },
       {
         "command": ".cursor/hooks/on-before-submit-prompt-agent-routing.cjs",
         "timeout": 5

@@ -268,6 +268,10 @@ export default function WorldMapScreen() {
   /** 드롭다운 메뉴가 화면에 떠 있는 동안의 사각형(맵 콘텐츠 좌표) — 그 아래 성계 노드는 탭 판정에서 제외 */
   const activeMenuRectRef = useRef<{ left: number; top: number; right: number; bottom: number } | null>(null);
   const systemActionMenuItemsRef = useRef<GalaxyMapSystemActionMenuItem[]>([]);
+  const lastMenuTapRef = useRef<{ ms: number; key: string } | null>(null);
+  const handleMoveRef = useRef<() => void>(() => {});
+  const handlePlanetInfoRef = useRef<() => void>(() => {});
+  const handleCombatRef = useRef<() => void>(() => {});
   const handleNodeTapRef = useRef<(systemId: string) => void>(() => {});
   const handleMapTapAtRef = useRef(
     (_viewportX: number, _viewportY: number, _sx: number, _sy: number) => {},
@@ -1154,13 +1158,7 @@ export default function WorldMapScreen() {
     ) {
       const localY = cy - menuRect.top;
       const index = Math.floor(localY / MENU_ITEM_HEIGHT);
-      const items = systemActionMenuItemsRef.current;
-      if (index >= 0 && index < items.length) {
-        const item = items[index];
-        if (!item.disabled) {
-          item.onPress();
-        }
-      }
+      dispatchMenuItemByIndexRef.current(index);
       return;
     }
     let bestId: string | null = null;
@@ -1538,6 +1536,29 @@ export default function WorldMapScreen() {
     navigateToCombatAfterTeardown,
   ]);
 
+  const dispatchMenuItemByIndex = useCallback((index: number) => {
+    const items = systemActionMenuItemsRef.current;
+    if (index < 0 || index >= items.length) return;
+    const item = items[index]!;
+    const key = item.key;
+    if (item.disabled) return;
+    const now = Date.now();
+    const last = lastMenuTapRef.current;
+    if (last && last.key === key && now - last.ms < 320) return;
+    lastMenuTapRef.current = { ms: now, key };
+    if (key === 'nav') {
+      void handleMoveRef.current();
+      return;
+    }
+    if (key === 'planetInfo') {
+      handlePlanetInfoRef.current();
+      return;
+    }
+    void handleCombatRef.current();
+  }, []);
+
+  const dispatchMenuItemByIndexRef = useRef<(index: number) => void>(() => {});
+
   const selectedPrimaryPlanet = selectedSystem?.planets[0] ?? null;
   const isAtSelectedSystem = Boolean(
     selectedSystem && player && selectedSystem.id === player.currentSystemId,
@@ -1569,34 +1590,27 @@ export default function WorldMapScreen() {
         key: 'nav',
         label: primaryNavLabel,
         disabled: primaryNavDisabled,
-        onPress: () => {
-          void handleMove();
-        },
+        onPress: () => dispatchMenuItemByIndexRef.current(0),
       },
       {
         key: 'planetInfo',
         label: t('worldmap.dropdown.planetInfo'),
         disabled: !selectedPrimaryPlanet,
-        onPress: handlePlanetInfo,
+        onPress: () => dispatchMenuItemByIndexRef.current(1),
       },
       {
         key: 'combat',
         label: t('worldmap.dropdown.combat'),
         disabled: !combatAvailable,
-        onPress: () => {
-          void handleCombat();
-        },
+        onPress: () => dispatchMenuItemByIndexRef.current(2),
       },
     ],
     [
       primaryNavLabel,
       primaryNavDisabled,
-      handleMove,
       t,
       selectedPrimaryPlanet,
-      handlePlanetInfo,
       combatAvailable,
-      handleCombat,
     ],
   );
 
@@ -1636,7 +1650,11 @@ export default function WorldMapScreen() {
 
   useLayoutEffect(() => {
     systemActionMenuItemsRef.current = systemActionMenuItems;
-  }, [systemActionMenuItems]);
+    handleMoveRef.current = handleMove;
+    handlePlanetInfoRef.current = handlePlanetInfo;
+    handleCombatRef.current = handleCombat;
+    dispatchMenuItemByIndexRef.current = dispatchMenuItemByIndex;
+  }, [systemActionMenuItems, handleMove, handlePlanetInfo, handleCombat, dispatchMenuItemByIndex]);
 
   if (!player) return null;
 

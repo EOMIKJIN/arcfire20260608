@@ -5,6 +5,48 @@
 
 ---
 
+## 🟡 PENDING(1줄 실질 수정 + 전면 재검수) — 웨이브전투 진입/웨이브전환/종료 메모리 할당·해제 전수 재검수 · 김클로드
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`PENDING`** |
+| **updated** | 2026-07-11 02:40 KST |
+| **task_id** | `wave-defense-combat-entry-exit-memory-audit-20260711` |
+| **요청자** | 대표님 — "전투 전환 상황에 대해 모두 재검수하고, 일괄적인 전투 진입과 해제에 대한 메모리 할당및 해제 부분도 집중검사하라... 웨이브전투 중심으로 집중 검수하라... 수정사항이 있다면 수정작업도 바로 진행하라" |
+| **선행작업** | 바로 위 `hub-activation-gl-views-spike-rootcause-20260710`(REVIEWED PASS) — vega_base 자동전투가 GL 급증의 트리거임을 확인한 작업의 후속. 이번엔 그 전투 자체의 진입→웨이브전환(9회)→종료 전 구간 메모리 수명을 전수 검사 |
+
+### 검사 범위·방법
+
+Explore 에이전트 2개(①웨이브디펜스 상태기계 entry→9웨이브→exit 추적 ②Skia/GPU 리소스 할당·해제 대칭성 감사)를 병렬로 돌렸으나 **세션 한도로 둘 다 중도 실패** — 이후 전부 직접 코드로 재확인하며 진행. 아래는 전부 파일:라인 직접 대조 완료.
+
+### 확인 결과 — 정상 동작 중인 것 (버그 아님, 이미 잘 구현돼 있음)
+
+1. **런 전체 종료(9웨이브 완주/패배)**: `useWaveDefenseController.ts` `endRun()` → `active=false` → `app/(game)/planet.tsx`의 `capitalCombatOrbitActive`가 false로 → `PlanetCapitalCombatRoot`(`src/game/planetCapitalCombatIntegration.tsx:60-62`)가 `<Binder>` 서브트리 전체를 실제로 **React 언마운트**시킴 → `PlanetEdenRaidOrbitSkiaCombat.tsx`의 언마운트 cleanup(950줄 파일 전수 확인)이 정확히 실행됨: `missileTrail`·`novaHead`·`diamond` 3개 Path 풀 전부 `drainSkPathPool` (라인 950-952, 최초 훑어봤을 때 앞 2줄을 놓쳐 "누락 아닌가" 의심했다가 재확인해서 배제), `novaTangentStable`·`thrusterLenSmooth` clear, `dropSkPictureReactFrame`, `reclaimCombatSkiaModuleCaches()`(모듈 전역 Paint·SkColor 캐시·PictureRecorder까지) 순서대로 실행. **완전함.**
+2. **웨이브 전환(9회, 런 안에서는 Canvas 리마운트 없음)**: `waveDefenseStore.ts`의 `waveGenKey`가 `setWave()`마다 증가 → `PlanetEdenRaidTestLayer.tsx:2649-2704`의 reseed effect가 `waveGenKey` 변화를 감지해 매 웨이브 `missilesRef`·missileHitFxRef·respawn 상태 등을 명시적으로 리셋하고, `clearCapitalRealtimeCombatPresentationCaches()`(= `runCombatSkiaPresentationReclaim()`)를 호출해 Skia 모듈 캐시·live picture frame을 회수함. **완전함.**
+3. **전투 중(9웨이브 내내) 주기적 안전판**: `app/(game)/planet.tsx:794-810`에 `HUB_COMBAT_SAFE_RECLAIM_INTERVAL_MS`(3분) 간격 `setInterval`이 이미 존재 — 처음엔 `runPlanetHubCombatSafeReclaimPass` 호출부를 못 찾아 "죽은 코드(orphaned)"로 오판했으나, `app/(game)/planet.tsx`가 `src/` 밖(Expo Router `app/` 디렉토리)이라 제 첫 grep 범위가 놓친 것 — 재검색으로 정상 존재·정상 배선 확인. 가드 조건(`periodicReclaimSuppressedRef`, 라인 671-678·797-800)도 이중부정이라 처음엔 반대로 읽었으나, "웨이브 모드에서는 phase==='combat'(실제 교전 프레임) 동안만 다른 5분/15분 reclaim을 skip하고, 그 skip 구간에서만 combat-safe reclaim이 대신 돈다"는 의도와 정확히 일치함(오독 정정 완료).
+
+### 확인 결과 — 실제 수정한 것 (1건)
+
+**`runPlanetHubCombatSafeReclaimPass`(`src/game/nativeReclaim/runPlanetHubCombatSafeReclaimPass.ts`)의 회수 범위가 좁았음.** 이 함수 자체는 정상 배선돼 있었지만(위 3번), 내부적으로는 `runCombatSkiaPresentationReclaim()`(Skia 캐시)과 `trimNativeBitmapCachesAsync()`(Fresco)만 호출 — 함수 docblock이 명시한 "mid-frame에 안전한 것만 골랐다"는 설계 의도 자체는 맞지만, **정작 `nativeReclaimBootstrap.ts`에 stage='combat' 리스너로 이미 등록돼 있던 `prunePlanetNebulaProfilesLru`/`compactPlanetMemoRegistryShells`(둘 다 순수 JS, Skia/GPU 호출 없음 — mid-frame 안전 기준에 부합)는 빠져 있었음**. 이 두 함수는 `runStageNativeReclaimPass`(스테이지 **이탈** 시점)를 통해서만 실제로 호출되고 있었고, 전투 중에는 한 번도 안 불림.
+
+**실제 발생 가능한 문제**: 허브를 여러 번 순회(허브 순회, 이미 CLAUDE.md에 READY 항목으로 등록된 이슈)하다가 vega_base 같은 곳에서 장시간(9웨이브) 자동전투에 들어가면, 이전에 들렀던 다른 행성들의 nebula profile이 route_blur 없이 전투 내내(15분+) 계속 상주 — 오늘(2026-07-10) 재시동 #2의 시그니처(GL은 평탄인데 PSS/native_heap만 +281MB 급등, 07-07 인시던트와 동일 패턴)와 부합하는 후보.
+
+**수정**: `runPlanetHubCombatSafeReclaimPass()`에 `prunePlanetNebulaProfilesLru(NEBULA_PROFILE_KEEP_ON_HUB_BLUR)` + `compactPlanetMemoRegistryShells()` 2줄 추가. 둘 다 이미 다른 곳(`runStageNativeReclaimPass.ts`)에서 검증된 함수 재사용 — 새 로직 없음, mid-frame 안전 기준(Skia/GPU 미호출)에 부합.
+
+### self-check
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
+- [x] `npm run audit:memory:all` — **전부 PASS**(memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
+- [x] git commit **안 함**
+
+### 리스크·주의
+
+- 이번 변경 1줄 추가는 이미 검증된 함수(`prunePlanetNebulaProfilesLru`·`compactPlanetMemoRegistryShells`) 재사용이라 신규 로직 리스크는 낮음. 다만 **실기(디바이스) 검증은 아직 안 함** — 다음 vega_base 장시간 전투 재현 때 `mem-timeline.csv`에서 restart #2류 패턴(GL 평탄, PSS/native_heap만 급등)이 줄어드는지 확인 필요.
+- 이번 조사에서 새로운 코드 버그는 이 1건 외에 발견 못 함 — 나머지(런 종료 언마운트, 웨이브 전환 리셋, 3분 주기 안전판)는 전부 이미 올바르게 구현돼 있었음. 두 Explore 에이전트가 세션 한도로 중도 실패해 제가 직접 대체 검증했는데, 시간 관계상 `CapitalRealtimeCombatOrbitView.tsx`/`capitalRealtimeBridge.ts`/`planetCapitalCombatHeavyUi.tsx`(전투 HUD·오버레이 쪽) 세 파일은 이번 패스에서 깊이 못 봄 — 필요시 후속 조사 대상.
+- 제가 조사 중 스스로 두 번 오판했다가 재확인 후 정정한 부분을 위에 그대로 남겨뒀습니다(①풀 드레인 누락 오판 ②`runPlanetHubCombatSafeReclaimPass` orphaned 오판) — 검수 시 제 최종 결론(둘 다 정상이었음)만 보시면 됩니다.
+
+---
+
 ## 🟡 PENDING(분석+계측만, 코드 로직 변경 없음) — HUB_ACTIVATION GL/Views 급증 근본원인 + GPU 레이어 계측 추가 · 김클로드
 
 | 필드 | 값 |

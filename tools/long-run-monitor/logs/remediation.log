@@ -2195,3 +2195,6 @@ skia-worklet audit: 18/20 -> D:\arcfire20260607\tools\memory-audit\reports\skia-
 [2026-07-10 23:20:31] INFO PSS_SOFT_CEILING pss=845.4 gl=32.4 views=391 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
 [2026-07-10 23:35:59] INFO PSS_SOFT_CEILING pss=821.2 gl=31.8 views=379 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
 [2026-07-10 23:51:26] INFO PSS_SOFT_CEILING pss=809.9 gl=27.7 views=379 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-11 10:51:51] INFO PSS_SOFT_CEILING pss=813.8 gl=120.3 views=579 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-11 11:07:15] INFO VIEWS_NATIVE_ADVISORY views=562 native_heap=314.4 pss=737 gl=137.9 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-11 11:53:33] INFO VIEWS_NATIVE_ADVISORY views=512 native_heap=358.5 pss=716.4 gl=44.5 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)

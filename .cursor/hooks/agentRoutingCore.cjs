@@ -213,6 +213,7 @@ function buildAgentContext(active) {
   if (p.id === 'teamlead' || p.id === 'fable') {
     lines.push(
       '개발규칙1순위(무조건): 코드 diff 전 [pss-pre-dev] 3줄 · 완료 전 audit:memory:all+tsc · 개발 후 mem-post-dev-recheck.',
+      '유료모델게이트: Composer·Cursor폴백 개발금지 — Task model Opus/Fable/Sonnet slug 필수.',
     );
   }
   if (p.id === 'economy') {

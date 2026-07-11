@@ -30,6 +30,20 @@ npm run audit:mem-post-dev-recheck    # 개발 반영 후 handoff·status 갱신
 
 상태: `tools/kim-team-lead/reports/DEV_PROCESS_GATE_STATUS.md`
 
+## 유료 모델 전용 — Composer·Cursor 폴백 개발 배제 (2026-07-11~)
+
+> **대표님 지시**: API 소진으로 Composer·글록(내장 Auto/폴백)이 **강제**될 때만 예외. 그 외 **코드 개발 금지**.
+
+| 항목 | 경로 |
+|------|------|
+| 정본 규칙 | `.cursor/rules/arcfire-paid-model-exclusion-gate.mdc` |
+| 구독 갱신일 | `tools/kim-team-lead/reports/SUBSCRIPTION_RENEWAL_ANCHOR.json` |
+| API 소진 예외 | `tools/kim-team-lead/reports/API_EXHAUST_FALLBACK_ACTIVE.flag` (없으면 폴백 **금지**) |
+
+- **허용 개발 모델**: Opus(김팀장) · Fable · Sonnet — Task 위임 시 slug **필수**
+- **금지**: Composer · `composer-2.5*` · Cursor Auto/폴백/글록 · Task `model` 생략
+- **훅**: `on-session-start-paid-model-gate.cjs` · `on-before-submit-prompt-paid-model-gate.cjs`
+
 ## 기존값 변경 — 사전 재확인 (상시 · 사용자 지시)
 
 **확정 CSV·밸런스·UI/i18n 등 기존값**을 바꿀 때는 **수정 전 사용자에게 한 번 더 질문·승인** 후 작업. 신규 추가만(L11~15 행 추가 등)이고 L1~N 기존 행을 건드리지 않으면 생략.  

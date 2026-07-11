@@ -10,6 +10,9 @@ const ROOT = process.cwd();
 const HOOKS_JSON = path.join(ROOT, '.cursor', 'hooks.json');
 
 const REQUIRED_HOOKS = [
+  '.cursor/hooks/on-before-submit-prompt-paid-model-gate.cjs',
+  '.cursor/hooks/on-session-start-paid-model-gate.cjs',
+  '.cursor/hooks/paidModelGateCore.cjs',
   '.cursor/hooks/on-before-submit-prompt-pss-pre-dev-gate.cjs',
   '.cursor/hooks/on-session-start-pss-pre-dev-brief.cjs',
   '.cursor/hooks/on-session-start-mem-post-dev-trigger.cjs',
@@ -22,6 +25,7 @@ const REQUIRED_HOOKS = [
 const REQUIRED_RULES = [
   '.cursor/rules/arcfire-memory-leak-audit-first.mdc',
   '.cursor/rules/arcfire-main-lead-agent.mdc',
+  '.cursor/rules/arcfire-paid-model-exclusion-gate.mdc',
 ];
 
 function main() {
@@ -54,6 +58,12 @@ function main() {
     if (!session.some((c) => String(c).includes('kim-claude-handoff-review'))) {
       failures.push('hooks.json: sessionStart missing kim-claude-handoff-review');
     }
+    if (!before.some((c) => String(c).includes('paid-model-gate'))) {
+      failures.push('hooks.json: beforeSubmitPrompt missing paid-model-gate');
+    }
+    if (!session.some((c) => String(c).includes('paid-model-gate'))) {
+      failures.push('hooks.json: sessionStart missing paid-model-gate');
+    }
     if (!before.some((c) => String(c).includes('pss-pre-dev-gate'))) {
       failures.push('hooks.json: beforeSubmitPrompt missing pss-pre-dev-gate');
     }
@@ -62,6 +72,9 @@ function main() {
     }
   }
 
+  if (!fs.existsSync(path.join(ROOT, 'tools/kim-team-lead/reports/SUBSCRIPTION_RENEWAL_ANCHOR.json'))) {
+    failures.push('missing SUBSCRIPTION_RENEWAL_ANCHOR.json');
+  }
   if (!fs.existsSync(path.join(ROOT, 'tools/kim-team-lead/run-mem-post-dev-recheck.cjs'))) {
     failures.push('missing run-mem-post-dev-recheck.cjs');
   }

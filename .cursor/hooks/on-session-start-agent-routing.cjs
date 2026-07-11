@@ -6,8 +6,11 @@
 const fs = require('fs');
 const { resolveActivePersona, writeBadge, buildAgentContext } = require('./agentRoutingCore.cjs');
 
+const { buildPaidModelGateContext } = require('./paidModelGateCore.cjs');
+
 const ROUTING_CONTEXT = [
   '[Arcfire Agent Team — 2026-06-19 단일 지휘]',
+  buildPaidModelGateContext(),
   '★ **사용자 호칭(2026-07-05~ 전체 팀 공지)**: 사용자 = **「대표님」** — 한국어 응답·handoff·리포트 전원 동일. 정본: arcfire-user-addressing.mdc',
   '★ 사용자 작업 지시: **김팀장 세션(본 대화)만**. 김경제 대화창에 코드·기능 지시 금지(충돌 방지).',
   '김팀장 (@김팀장): Skia·UI·STAGE·arcCore·일일배치·메모리 **런타임** + 김경제 관측·**retention** 검토→조치.',

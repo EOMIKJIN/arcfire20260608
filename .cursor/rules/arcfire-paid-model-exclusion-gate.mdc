@@ -1,0 +1,86 @@
+---
+description: Composer·Cursor 내장 폴백(글록/Auto) 개발 참여 금지 — 구독 갱신일 기준 유료 Claude 전용
+alwaysApply: true
+---
+
+# 유료 모델 전용 게이트 — Composer·Cursor 폴백 개발 배제 (2026-07-11~)
+
+> **대표님 지시**: API 소진으로 Cursor가 **Composer·글록(내장 Auto/폴백)** 을 강제할 때를 제외하고, **절대 개발에 참여시키지 않는다.**
+
+## 0. 구독 갱신일 앵커 (정본)
+
+| 항목 | 경로 |
+|------|------|
+| 갱신일·허용 모델 | `tools/kim-team-lead/reports/SUBSCRIPTION_RENEWAL_ANCHOR.json` |
+| API 소진 폴백 허용 플래그 | `tools/kim-team-lead/reports/API_EXHAUST_FALLBACK_ACTIVE.flag` (없으면 **금지**) |
+
+**주기**: `lastRenewalDate` ~ `nextRenewalDate` 전일(KST) = **유료 Claude 전용 개발 구간**.  
+갱신일 변경 시 **JSON만** 수정 — 규칙 문구 일괄 덮어쓰기 금지.
+
+## 1. 개발 참여 **금지** 대상 (기본 · 무조건)
+
+다음은 Arcfire **`src/` · `app/` · `tables/` · Skia · STAGE · arcCore · 경제 런타임** 코드·CSV·기능 개발에 **참여 금지**:
+
+| 금지 에이전트 | 식별 |
+|---------------|------|
+| **Composer** | `composer` · `composer-2.5` · `composer-2.5-fast` · Cursor Composer 패널 |
+| **Cursor 내장 Auto/폴백(글록)** | API 소진 시 강제 전환되는 Cursor 기본·Auto·미지정 모델 |
+| **허용 목록 밖 임의 slug** | `SUBSCRIPTION_RENEWAL_ANCHOR.json` `allowedPaidModels` 외 |
+
+**금지 행위**: diff 작성 · 파일 생성·삭제 · `Task` 위임 · handoff **완료·커밋 선언** · audit PASS 선언.
+
+## 2. 개발 참여 **허용** 대상 (유료 Claude만)
+
+| 역할 | 모델 slug (Task 위임 시) |
+|------|--------------------------|
+| 김팀장 (런타임·Skia·STAGE·arcCore) | `claude-opus-4-8-thinking-high` |
+| Fable (Table-First) | `claude-fable-5-thinking-high` |
+| Sonnet (logcat·tsc·adb) | `claude-4.6-sonnet-medium-thinking` |
+| (보조) | `claude-sonnet-5-thinking-high` — 김팀장이 명시 시만 |
+
+**본 프로젝트 「Auto 라우팅」** (`gemini-code-agent-routing.mdc`) = **페르소나 분류**이지 Cursor Composer/폴백 사용 허가가 **아님**.
+
+## 3. API 소진 폴백 — **유일한 예외** (100% 완료 필수)
+
+`API_EXHAUST_FALLBACK_ACTIVE.flag` 가 **존재할 때만** Composer·Cursor 폴백이 **제한적으로** 동작할 수 있다.
+
+### 3-1. 플래그 생성 조건 (대표님·수동)
+
+- Cursor/Anthropic **유료 API 한도 소진**으로 **유료 Claude 선택 불가**가 **확정**된 경우
+- 플래그 본문 1줄 이상: 소진 시각·남은 작업(예: `handoff PENDING 검수만`)
+
+```text
+# tools/kim-team-lead/reports/API_EXHAUST_FALLBACK_ACTIVE.flag 예시
+2026-07-11T11:00 KST API exhausted — worldmap dropdown handoff 검수 잔여
+```
+
+### 3-2. 폴백 허용 시에도 **금지**
+
+- 신규 기능·대규모 리팩터·CSV 밸런스 변경
+- `audit:*` PASS / 「완료」 / git commit **선언**
+- 김경제 역할 대신 코드 수정
+- 메모리·Skia·STAGE 계약 우회
+
+### 3-3. 폴백 허용 시 **허용** (잔여 100% 마감만)
+
+- 진행 중 handoff **초안 마무리** · 대화 요약 · 사용자 안내
+- **단일 파일·단일 원인** 버그 패치 초안 (김팀장 Opus 재검수 **필수**)
+- API 복구 또는 **구독 갱신 후** → 플래그 **삭제** · 유료 Claude로 **즉시 복귀**
+
+## 4. 에이전트·훅·Task 의무 (매 세션·매 턴)
+
+1. 세션 시작·프롬프트 전송 시 훅이 본 게이트를 **주입** — Composer/폴백이면 **코드 diff 전 중단** 안내
+2. `Task` `model` = **반드시** `allowedPaidModels` 중 하나 — `(기본)`·생략·Composer **금지**
+3. 폴백 세션 응답 **첫 줄**: `【폴백·검수대기】 Composer/Auto — 코드는 김팀장 Opus 재검수 필수`
+4. 플래그 없는데 Composer/폴백으로 개발 시도 → **거부** · 「모델을 Opus/Fable/Sonnet으로 전환」 안내
+
+## 5. 우선순위
+
+**본 게이트(유료 전용)** > Cursor UI 강제 폴백 회피 안내 > `gemini-code-agent-routing` 페르소나 > 기능 일정.
+
+## 6. 교차 참조
+
+- `.cursor/rules/gemini-code-agent-routing.mdc` §0-C
+- `.cursor/rules/arcfire-main-lead-agent.mdc` §유료 모델 게이트
+- `AGENTS.md` §유료 모델 전용
+- 훅: `on-session-start-paid-model-gate.cjs` · `on-before-submit-prompt-paid-model-gate.cjs`

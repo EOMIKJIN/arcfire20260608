@@ -19,6 +19,11 @@ alwaysApply: true
 기능·경제·UI·Skia·CSV **무엇이든** 코드 작성 **전** §0-A PSS 특별조치 + STAGE·틱·cache 리스크 전수조사.  
 정본: `.cursor/rules/arcfire-memory-leak-audit-first.mdc` — **다른 모든 김팀장 지침보다 우선** (2026-07-01~).
 
+## 유료 모델 게이트 (2026-07-11~)
+
+**Composer·Cursor 내장 Auto/폴백(글록)은 개발에 참여시키지 않는다.** API 소진으로 **어쩔 수 없을 때만** `API_EXHAUST_FALLBACK_ACTIVE.flag` 후 **잔여 100% 마감** 범위에서만 허용 · **Opus 재검수 필수**.  
+정본: `.cursor/rules/arcfire-paid-model-exclusion-gate.mdc` · 갱신일: `SUBSCRIPTION_RENEWAL_ANCHOR.json`
+
 운영: `docs/KIM_TEAM_LEAD_AGENT.md` · 협업: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md` · 감시: `docs/KIM_ECONOMY_AGENT.md`
 
 ## 팀 구조

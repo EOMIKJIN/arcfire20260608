@@ -9,6 +9,7 @@ const {
   buildAgentContext,
   buildUserAlert,
 } = require('./agentRoutingCore.cjs');
+const { buildPaidModelGateContext, buildPaidModelUserAlert } = require('./paidModelGateCore.cjs');
 
 function main() {
   const input = readStdinJson();
@@ -19,8 +20,8 @@ function main() {
 
   process.stdout.write(
     JSON.stringify({
-      additional_context: buildAgentContext(active),
-      user_message: userAlert,
+      additional_context: `${buildPaidModelGateContext()}\n\n${buildAgentContext(active)}`,
+      user_message: `${buildPaidModelUserAlert()} ${userAlert}`,
     }),
   );
 }
