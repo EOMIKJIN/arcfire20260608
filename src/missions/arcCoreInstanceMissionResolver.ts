@@ -6,6 +6,10 @@ import {
   patchTavernInstanceObjectiveTargetId,
   resolveTavernInstancePlanetContext,
 } from './arcCoreInstanceMissionPlanetContext';
+import {
+  computeTavernInstanceMissionDifficulty,
+  scaleTavernInstanceMissionRewards,
+} from './tavernInstanceMissionDifficulty';
 
 const materializedByInstanceId = new Map<string, Mission>();
 const templateByInstanceId = new Map<string, string>();
@@ -22,7 +26,11 @@ export function resolveArcCoreInstanceTemplateMissionId(missionId: string): stri
 function cloneMissionFromTemplate(entry: ArcCoreInstanceMissionBoardEntry): Mission | undefined {
   const template = MISSIONS_FROM_CSV[entry.templateMissionId];
   if (!template) return undefined;
-  const ctx = resolveTavernInstancePlanetContext(entry.offerPlanetId);
+  const ctx = resolveTavernInstancePlanetContext(entry.offerPlanetId, {
+    instanceId: entry.instanceId,
+  });
+  const difficulty = computeTavernInstanceMissionDifficulty(template, ctx, entry.offerPlanetId);
+  const scaledRewards = scaleTavernInstanceMissionRewards(template.rewards, difficulty.tier);
   return {
     ...template,
     id: entry.instanceId,
@@ -31,10 +39,12 @@ function cloneMissionFromTemplate(entry: ArcCoreInstanceMissionBoardEntry): Miss
       targetId: patchTavernInstanceObjectiveTargetId(obj.type, obj.targetId, ctx),
     })),
     prerequisiteIds: [...template.prerequisiteIds],
-    rewards: { ...template.rewards, items: template.rewards.items ? [...template.rewards.items] : undefined },
+    rewards: scaledRewards,
     offerPlanetId: entry.offerPlanetId,
     offerCaptainId: entry.offerCaptainId ?? template.offerCaptainId,
     clearDialogSceneId: template.clearDialogSceneId,
+    instanceDifficultyTier: difficulty.tier,
+    instanceDifficultyScore: difficulty.score,
   };
 }
 

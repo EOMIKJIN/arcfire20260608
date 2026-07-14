@@ -60,7 +60,13 @@ function resolveResetUids(playerUid: string | null | undefined): string[] {
   return [...ids];
 }
 
-/** 행성 허브 Skia·sim 정지(lifecycle frozen) 이후 — 로컬·클라우드 계정 데이터 삭제 */
+/**
+ * 행성 허브 Skia·sim 정지(lifecycle frozen) 이후 — 로컬·클라우드 계정 데이터 삭제
+ *
+ * 의도적 purge 제외(ArcCore 세계 축 · 헌법 수정안 §16-A):
+ *   `arcCoreShadowIdentityStore` — 섀도우 페어 관계는 기기(uid) 기반으로 계정 초기화
+ *   후에도 유지한다 (대표님 결정 2026-07-13).
+ */
 export async function purgeLocalAccountData(params: LocalAccountResetParams): Promise<void> {
   cancelScheduledUserCloudSync();
   cancelScheduledGameSaveBackup();

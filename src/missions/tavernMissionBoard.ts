@@ -3,6 +3,7 @@ import { getMissionById, isQuestMissionId, isTutorialMissionId, listQuestMission
 import { isArcCoreInstanceMissionId } from './arcCoreInstanceMissionResolver';
 import { useArcCoreInstanceMissionBoardStore } from '../store/arcCoreInstanceMissionBoardStore';
 import type { ArcCoreInstanceMissionCategoryTag } from './arcCoreInstanceMissionTypes';
+import type { TavernInstanceMissionDifficultyTier } from './tavernInstanceMissionDifficulty';
 
 export type TavernBoardTab = 'board' | 'mission_status' | 'new_missions';
 
@@ -27,6 +28,8 @@ export type QuestMissionOfferRow = {
     categoryTag: ArcCoreInstanceMissionCategoryTag;
     templateMissionId: string;
     registeredAtMs: number;
+    difficultyTier?: TavernInstanceMissionDifficultyTier;
+    difficultyScore?: number;
   };
 };
 
@@ -193,6 +196,8 @@ export function listTavernQuestOffers(
         categoryTag: entry.categoryTag,
         templateMissionId: entry.templateMissionId,
         registeredAtMs: entry.registeredAtMs,
+        difficultyTier: mission.instanceDifficultyTier,
+        difficultyScore: mission.instanceDifficultyScore,
       },
     });
   }

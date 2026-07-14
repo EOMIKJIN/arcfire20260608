@@ -3,6 +3,7 @@
 // ============================================================
 
 import { bootstrapAccountData, persistAccountDataBundle } from '../account/accountLifecycle';
+import { runArcCoreShadowPairingPass } from '../arcCore/shadow/runArcCoreShadowPairingPass';
 import { checkNicknameAvailable, createUserDocOnNicknameConfirm } from '../firebase/firestore';
 import { syncUserDataWithServer } from '../firebase/userDataSync';
 import {
@@ -135,4 +136,7 @@ export async function completePilotRegistration(uid: string, nickname: string): 
   await useClanWarFoundationStore.getState().persistClanWarFoundation();
   await runRemoteRegistrationStep('sync_user_data', () => syncUserDataWithServer());
   await clearOnboardingProfessionId();
+
+  // 아크코어 섀도우 페어링 — 온보딩 성공 직후 1회 (실패 시 부트 소급 패스가 재시도)
+  void runArcCoreShadowPairingPass();
 }

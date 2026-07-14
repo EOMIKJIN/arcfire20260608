@@ -102,6 +102,8 @@ export type ArcOverlayTradeQuantityEntry = ArcOverlayBase & {
   playerCredits?: number;
   /** 전함·무기 구매 모달 — 테이블 기반 간단 설명(최대 3줄 UI) */
   itemDescription?: string;
+  /** 전함 구매 모달 전용 — 설정 시 헤더 아래 정사각형 이미지 슬롯 표시(`npc_ai_ships.csv` 기준) */
+  npcCapitalShipId?: string | null;
   tips?: TradeProfitTip[];
   onConfirm: (qty: number) => void | Promise<void>;
 };

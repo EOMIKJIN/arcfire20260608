@@ -66,6 +66,7 @@
     "audit:memory:retention": "npm run profile:mem:pull-logcat && npm run profile:mem:retention",
     "test:planet-pgp": "npx tsx src/world/planetPgpModel.test.ts",
     "test:territorial-graph": "npx tsx src/arcCore/territorial/territorialCombatGraph.test.ts",
+    "test:tavern-instance-difficulty": "npx tsx src/missions/tavernInstanceMissionDifficulty.test.ts",
     "audit:ui-overlay": "node tools/ui-overlay-audit/run-ui-overlay-audit.cjs",
     "audit:ui-overlay:tactical-readiness": "node tools/ui-overlay-audit/run-tactical-ui-rollout-readiness.cjs",
     "audit:transit-combat-flow": "node tools/transit-combat-flow/run-transit-combat-flow-contract.mjs",

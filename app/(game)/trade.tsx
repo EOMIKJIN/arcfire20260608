@@ -550,6 +550,10 @@ export default function TradeScreen() {
     const itemDef = resolveItemDefById(listing.goodId);
     const price = getBuyPrice(listing);
     const playerCredits = player.credits;
+    const capitalShipNpcId = itemDef?.type === 'capital_ship'
+      && typeof itemDef?.attrs?.npcCapitalShipId === 'string'
+      ? String(itemDef.attrs.npcCapitalShipId)
+      : null;
 
     presentArcOverlayTradeQuantity({
       mode: 'buy',
@@ -558,6 +562,7 @@ export default function TradeScreen() {
       maxQty: resolveTradeBuyPickerMaxQty(listing),
       playerCredits,
       itemDescription: resolveTradePortPurchaseDescription(itemDef, locale) ?? undefined,
+      npcCapitalShipId: capitalShipNpcId,
       stock: listing.stock,
       demandLabel: demandLabel(listing.demand),
       tips: listTradeResellProfitTips(
@@ -593,10 +598,6 @@ export default function TradeScreen() {
           showArcAlert(block.title, block.message, arcTradeDialogButtons());
           return;
         }
-        const capitalShipNpcId = itemDef?.type === 'capital_ship'
-          && typeof itemDef?.attrs?.npcCapitalShipId === 'string'
-          ? String(itemDef.attrs.npcCapitalShipId)
-          : null;
         showArcAlert(t('trade.buy.confirmAsk'), undefined, [
           { text: t('trade.btn.cancel'), style: 'cancel' },
           {

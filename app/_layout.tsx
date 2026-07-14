@@ -51,6 +51,7 @@ import {
   persistArcCoreWallClockLeftActiveNow,
 } from '../src/arcCore/arcCoreWallClockSessionPersistence';
 import { requestTerritorialCombatProbeAfterCatchUp } from '../src/arcCore/territorial/requestTerritorialCombatProbe';
+import { scheduleArcCoreShadowPairingPassAfterBoot } from '../src/arcCore/shadow/runArcCoreShadowPairingPass';
 import { loadArcExpansionTestOneShotDoneFromStorage } from '../src/arcCore/arcCoreExpansionTestFlags';
 import {
   getLastProductionBootResult,
@@ -214,6 +215,8 @@ export default function RootLayout() {
         void fetchArcCoreRtdbBootSyncOnce({ uid: authUser!.uid }).catch(() => {
           /* RTDB 미배포·오프라인 — 번들 SIM 정본, [boot] 경고 없음 */
         });
+        // 아크코어 섀도우 페어링 소급 패스 — 기존 유저 포함 전 유저 동일, 부트당 1회 지연 실행
+        scheduleArcCoreShadowPairingPassAfterBoot();
         void resolveAppUpdateGateAfterBoot(resolveAppVersion())
           .then((gate) => {
             if (gate) setUpdateGate(gate);

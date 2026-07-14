@@ -279,6 +279,8 @@ export const EN_DICTIONARY: I18nDictionary = {
   'tradeQty.cancel': 'Cancel',
   'tradeQty.buy': 'Buy {qty}',
   'tradeQty.sell': 'Sell {qty}',
+  'tradeQty.shipImagePending': 'Image coming soon',
+  'tradeQty.shipImageA11y': 'Ship image',
 
   // ── Galaxy Map ──
   'worldmap.route.north': 'North Route',
@@ -438,6 +440,18 @@ export const EN_DICTIONARY: I18nDictionary = {
   'tavern.newMissions.stateCompleted': 'Completed',
   'tavern.newMissions.acceptComingSoon': 'Accept (coming soon)',
   'tavern.newMissions.acceptUnavailable': 'Unavailable',
+  'tavern.newMissions.difficulty.easy': 'EASY',
+  'tavern.newMissions.difficulty.normal': 'NORMAL',
+  'tavern.newMissions.difficulty.hard': 'HARD',
+  'tavern.newMissions.difficulty.expert': 'EXPERT',
+
+  // ── ArcCore Shadow (parallel-universe identity reveal) ──
+  'arcCoreShadow.reveal.title': 'ArcCore Core Signal Decoded',
+  'arcCoreShadow.reveal.message':
+    'As the home base defenses collapse, the hidden origin signal of the ArcCore is decoded.\n\nBeyond the parallel universe, the true nature of this ArcCore is another pilot…\n\n"{nickname}"',
+  'arcCoreShadow.boss.concealedName': 'ArcCore Origin Entity',
+  'arcCoreShadow.reveal.unobserved':
+    'The home base defenses have collapsed, but the origin signal of the ArcCore remains unobserved.\nOnce your parallel-universe counterpart is determined, it can be decoded here again.',
 
   // ── Research Lab (skilltree) ──
   'skilltree.learnedTitle': '{name} ✓',

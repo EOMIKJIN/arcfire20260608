@@ -780,6 +780,10 @@ export interface Mission {
   levelRequired?: number;
   /** 미션 클리어 인게임 대화 scene id. */
   clearDialogSceneId?: string;
+  /** ArcCore 선술집 인스턴스 — 측정 난이도 등급 (EASY~EXPERT). */
+  instanceDifficultyTier?: 'easy' | 'normal' | 'hard' | 'expert';
+  /** ArcCore 선술집 인스턴스 — 난이도 점수(감사·디버그). */
+  instanceDifficultyScore?: number;
 }
 
 /**

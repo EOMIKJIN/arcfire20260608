@@ -84,6 +84,8 @@ import { useNpcCaptainProgressStore, NPC_CAPTAIN_PROGRESS_EXP } from '../../stor
 import { usePlayerStore } from '../../store/playerStore';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { recordMatchSummary } from '../../store/combatMatchTelemetryStore';
+import { maybeTriggerArcCoreShadowRevealOnCombatVictory } from '../../arcCore/shadow/arcCoreShadowReveal';
+import { resolveArcCoreShadowBossOverride } from '../../arcCore/shadow/arcCoreShadowBossClone';
 import { isSurvivalPodNpcShipId } from '../../game/playerSurvivalPod';
 import { showArcAlert } from '../../utils/showArcAlert';
 import { useOrbitCapitalCombatUiStore } from '../../store/orbitCapitalCombatUiStore';
@@ -2344,10 +2346,22 @@ function initAgents(
     });
     let appliedCombatStats = agentBinding.combatStats;
     let appliedRuntimeConfig = agentBinding.runtimeConfig;
-    const appliedName = isPlayerSlot ? (playerBinding?.displayName ?? nameplate) : nameplate;
-    const appliedCaptainLabel = isPlayerSlot ? (resolveLinkedAccountNicknameForFlagship() ?? '—') : nameplate;
+    let appliedName = isPlayerSlot ? (playerBinding?.displayName ?? nameplate) : nameplate;
+    let appliedCaptainLabel = isPlayerSlot ? (resolveLinkedAccountNicknameForFlagship() ?? '—') : nameplate;
+    let appliedEquipmentKnobs = agentBinding.equipmentAgentKnobs;
     const planetAffinity = resolvePlanetEnemyAffinityKind(combatPlanetId);
-    if (!isPlayerSlot) {
+    // 아크코어 본진(endgame_boss) — 짝 유저의 복제 전함이 보스 리드 슬롯을 차지 (§16-A)
+    const shadowBoss = !isPlayerSlot ? resolveArcCoreShadowBossOverride(combatPlanetId, r) : null;
+    if (shadowBoss) {
+      appliedCombatStats = shadowBoss.combatStats;
+      appliedRuntimeConfig = {
+        ...(appliedRuntimeConfig ?? {}),
+        ...shadowBoss.runtimeOverride,
+      } as typeof appliedRuntimeConfig;
+      appliedEquipmentKnobs = shadowBoss.equipmentAgentKnobs;
+      appliedName = shadowBoss.shipDisplayName;
+      appliedCaptainLabel = shadowBoss.nameplateLabel;
+    } else if (!isPlayerSlot) {
       const hostileLoadout = resolveHostileEnemyWeaponLoadout(
         r,
         resolvePlanetTargetCombatLevel(combatPlanetId),
@@ -2373,7 +2387,7 @@ function initAgents(
         appliedCombatStats,
         appliedRuntimeConfig,
         planetAffinity,
-        agentBinding.equipmentAgentKnobs,
+        appliedEquipmentKnobs,
       ),
     );
   }
@@ -2938,6 +2952,11 @@ export function usePlanetEdenRaidSim(
               engageSec: Math.max(1, (elapsed - startMs) / 1000),
               playerWon: winnerTeam === 'blue',
             });
+            // 아크코어 본진(endgame_boss) 격파 — 섀도우 정체 공개 (전투당 1회 · 본진 외 즉시 return)
+            maybeTriggerArcCoreShadowRevealOnCombatVictory(
+              combatPlanetId,
+              winnerTeam === 'blue',
+            );
           }
         }
         waveOutcomeAwardedRef.current = true;

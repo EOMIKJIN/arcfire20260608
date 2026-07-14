@@ -1,0 +1,40 @@
+---
+description: 헌법 수정안 — 아크코어 섀도우 페어링(평행우주 1:1 유저 매칭) 단발 트랜잭션 예외
+alwaysApply: true
+---
+
+# 헌법 수정안 §16-A — 아크코어 섀도우 페어링 (2026-07-13 · 대표님 승인)
+
+> **설정**: 아크코어의 숨겨진 본질 = **다른 실제 유저 1명** (평행우주 이론).
+> 모든 플레이어는 온보딩 시 타 유저와 **상호 1:1 매칭**되며, 아크코어 본진
+> (`eternal_throne` · endgame_boss) 공격 승리 시 짝 유저의 닉네임이 공개된다.
+
+## 1. 예외 승인 내용 (v4.0 §14-16 관련)
+
+| 항목 | 내용 |
+|---|---|
+| **허용** | `arc_core_shadow_pool/waiting` + `arc_core_shadow_pairs/{uid}` 에 대한 **온보딩·소급 1회 한정** Firestore `runTransaction` |
+| **성격** | 실시간 분쟁·경쟁 입찰이 아닌 **일회성 상호 매칭 합의** — §14-16이 금지한 `ownership_claim` 류 실시간 분쟁 트랜잭션과 구분 |
+| **금지 유지** | `onSnapshot` · 실시간 좌표 동기화 · 고빈도 트랜잭션 · 페어링 재실행 루프 — 전부 계속 금지 |
+| **읽기** | 짝 유저 데이터는 **단발 `getDoc`만** (닉네임 등 공개 안전 필드). 주기 폴링 금지 |
+
+## 2. 시스템 계약
+
+- **매칭**: 대기열 방식 — 대기자 있으면 상호 페어 확정, 없으면 자신을 대기 등록. 홀수 인원 마지막 1명은 "미관측" 상태로 폴백(다음 신규 유저와 매칭).
+- **유지**: 계정 초기화(purge) 후에도 페어 관계 **유지** (uid=기기 기반 · 대표님 결정 2026-07-13). `arcCoreShadowIdentityStore`는 **ArcCore 세계 축**으로 분류 — `purgeLocalAccountData` 대상 **아님**.
+- **소급**: 기존 유저도 부트 후 백그라운드 1회 페어링 패스 수행 (전 유저 동일 시스템).
+- **본진**: `eternal_throne` (zoneIndex 20 · `mainStageCombatVariant=endgame_boss`) — 승리 시 1회 공개.
+- **확장**: 짝 유저 데이터 노출은 `arc_core_shadow_profiles/{uid}` **공개 안전 미러 문서**를 통해서만 확장한다(전체 프로필 직접 참조 금지).
+- **복제 전함 보스 (핵심 플레이)**: 본진 endgame_boss 레드 리드 슬롯에 **짝 유저 기함의 실제 최종 전투 스펙**(스냅샷)이 주입된다. 각 클라이언트는 자기 기함 스냅샷을 부트당 1회 미러에 publish, 짝 스냅샷은 단발 fetch → 로컬 캐시. 전투 경로에서는 zustand 동기 read만(네트워크 금지). 스냅샷 미보유 시 CSV 보스 폴백. 공개 전 네임플레이트는 위장명(`아크코어 근원체`), 공개 후 닉네임.
+- **배정규칙 로드맵**: 현재 1:1 페어 고정. 추후 **토너먼트 규칙**(유저 전함이 아크코어 보스 자리를 랭킹으로 차지)으로 업그레이드 — 상세 시스템 별도 개발.
+
+## 3. 정본 코드
+
+| 축 | 경로 |
+|---|---|
+| 페어링·미러 (Firestore) | `src/firebase/arcCoreShadowPairing.ts` |
+| 로컬 캐시 | `src/store/arcCoreShadowIdentityStore.ts` |
+| 전함 스냅샷 (publish·parse) | `src/arcCore/shadow/arcCoreShadowShipSnapshot.ts` — 스탯 파이프라인은 `PlanetEdenRaidTestLayer.resolvePlayerFlagshipCombatBinding` 과 동기 유지 필수 |
+| 보스 복제 주입 | `src/arcCore/shadow/arcCoreShadowBossClone.ts` → `initAgents` red slot 0 |
+| 패스·공개 | `src/arcCore/shadow/runArcCoreShadowPairingPass.ts` · `arcCoreShadowReveal.ts` |
+| 본진 상수 | `ARC_CORE_SHADOW_HOME_BASE_PLANET_ID = 'eternal_throne'` |

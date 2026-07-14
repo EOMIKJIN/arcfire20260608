@@ -47,7 +47,8 @@
 - `arcTrafficDwellRadPerSec` number — 아크코어 행성 궤도 수송선 체류 각속도(rad/s)
 - `arcTrafficPhaseDurationMul` number — 접근·체류·이탈 위상 지속시간 랜덤에 곱함(예: 2 ≈ 2배 길이)
 - `arcTrafficPlanetDwellSecMin`, `arcTrafficPlanetDwellSecMax` number — 행성 **체류(dwell)** 지속(초) 균등 샘플 구간; 엔진 상한 **600초(10분)**
-- `portraitImageAssetKey` string (선택) — 전함 실사 이미지 경로(예: 플레이어 `assets/images/ship/ship_001.png`, NPC 임시 `assets/images/ship/npc_test_ship_001.png`). 번들에 포함하려면 `src/game/npcCapitalShipPortraitAssets.ts` 정적 맵에 동일 키를 등록한다.
+- `portraitImageAssetKey` string (선택) — 전함 실사 이미지 경로(레거시·조선소 등). 번들: `src/game/npcCapitalShipPortraitAssets.ts`.
+- `tradePortPortraitUniqueId` int (선택) — **무역소 BUY 구매정보창** 전용. 고유숫자 N → `assets/images/ship/trade_ship_{N}.png` (`trade_` 접두사 필수). N은 전함 영구 식별 번호(예: **100** = 기본전함 Mk.I). 번들: `src/game/tradePortShipPortraitAssets.ts`. 미설정 시 코드 레지스트리·`portraitImageAssetKey` 순 폴백. 기존 `ship_*` 네이밍은 추후 이전.
 - `topViewImageAssetKey` string (선택) — 전투 탑뷰 스프라이트(예: `assets/images/ship/ship_top_001.png`). `build-content-from-csv`·궤도 전투 렌더가 우선 참조한다.
 - `tradePortListed` bool — `true`이면 `item_defs`에 `capital_ship_<id>`가 병합되고, 무역소(`hasTradePort`) 진열에 포함된다. 플레이어 기함(`Player_` id) 등 무역 비노출은 `false`.
 - `strStat`, `dexStat`, `sizeClass`, `expReward` — 전투 스탯·보상
@@ -84,16 +85,23 @@
 
 ## 3) 미션
 ### `missions.csv`
-- `id` string PK (`mission_*` 스토리 체인 · `sandbox_*` 선술집 인스턴스)
+- `id` string PK (`mission_*` 스토리 체인 · `sandbox_*` 행성 퀘스트 · **`tq_*` 선술집 인스턴스 템플릿**)
 - `title,description,type` string (`type`은 메타; 런타임은 `mission_objectives` 조합이 근거)
 - `offerCaptainId` string|null — 인스턴스 의뢰 NPC (`npc_ai_captains.id`)
-- `offerPlanetId` string|null — 선술집 게시 행성 (`planets.id`)
+- `offerPlanetId` string|null — 선술집 게시 행성 (`planets.id`); **`tq_*`는 비움**(행성별 ArcCore clone)
 - `levelRequired` int — 수락 최소 파일럿 레벨
-- `rewardCredits,rewardExp,rewardSkillPointBonus,dc` int
+- `rewardCredits,rewardExp,rewardSkillPointBonus,dc` int — **`tq_*`의 CR/EXP = NORMAL 등급 기준선**; 런타임 `tavernInstanceMissionDifficulty.ts`가 측정 등급(EASY~EXPERT)에 따라 배율 적용
+- `dc` int — 템플릿 난이도 앵커(인스턴스 점수 산출에 사용; 구 스토리 체크용 잔존)
 - `nextMissionId` string|null — 스토리 체인만 사용
 - `clearDialogSceneId` string|null — 클리어 인게임 대화 scene id (선택)
 - `title_en`, `description_en` string (i18n)
 - 레거시 호환: `rewardItemsPipe`, `prerequisiteIdsPipe`
+
+**선술집 ArcCore 인스턴스 (`tq_*` → `arc_inst_*`)**
+- 생성: `arcCoreInstanceMissionGenerator.ts` — 코어 개방·선술집 행성당 listed 10건 · 40/40/20(배달/전투·현상금/기타)
+- 목표 패치: `__neighbor_system__` / `__discovery_planet__` — BFS 1~3홉 가변 배달 거리(`arcCoreInstanceMissionPlanetContext.ts`)
+- **난이도 등급**: 배송 홉·구역(safe/neutral/pvp) transit 위험·전투 적 템플릿·dc·levelRequired → EASY/NORMAL/HARD/EXPERT
+- **보상**: CSV NORMAL 기준 × 등급 배율(EASY 0.8 · NORMAL 1.0 · HARD 1.3 · EXPERT 1.65) — `arcCoreInstanceMissionResolver.ts`
 
 ### `mission_objectives.csv`
 - `missionId` FK -> missions.id

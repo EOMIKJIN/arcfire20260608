@@ -2910,3 +2910,67 @@ ref=tools/long-run-monitor/logs/soak-worklet-mirror-20260621.json
 [2026-07-11 10:51:51] PSS_SOFT_CEILING pss=813.8 gl=120.3 views=579 native_reclaim_advisory
 [2026-07-11 11:07:15] VIEWS_NATIVE_ADVISORY views=562 native_heap=314.4 pss=737 gl=137.9 (node/list retention ??pre-hardceiling early warn)
 [2026-07-11 11:53:33] VIEWS_NATIVE_ADVISORY views=512 native_heap=358.5 pss=716.4 gl=44.5 (node/list retention ??pre-hardceiling early warn)
+[2026-07-12 08:00:00] DAILY_8AM_REPORT 2026-07-12 08:00:00 KST
+[2026-07-12 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260712-0800.md verdict=OK
+[2026-07-12 08:02:04] DAILY_8AM_REPORT 2026-07-12 08:02:04 KST
+[2026-07-12 08:02:04] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260712-0800.md verdict=OK
+[2026-07-12 08:04:06] DAILY_8AM_REPORT 2026-07-12 08:04:06 KST
+[2026-07-12 08:04:06] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260712-0800.md verdict=OK
+[2026-07-12 08:06:07] DAILY_8AM_REPORT 2026-07-12 08:06:07 KST
+[2026-07-12 08:06:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260712-0800.md verdict=OK
+[2026-07-12 08:08:08] DAILY_8AM_REPORT 2026-07-12 08:08:08 KST
+[2026-07-12 08:08:08] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260712-0800.md verdict=OK
+[2026-07-12 08:10:10] DAILY_8AM_REPORT 2026-07-12 08:10:10 KST
+[2026-07-12 08:10:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260712-0800.md verdict=OK
+[2026-07-12 08:12:11] DAILY_8AM_REPORT 2026-07-12 08:12:11 KST
+[2026-07-12 08:12:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260712-0800.md verdict=OK
+[2026-07-12 08:14:14] DAILY_8AM_REPORT 2026-07-12 08:14:14 KST
+[2026-07-12 08:14:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260712-0800.md verdict=OK
+[2026-07-12 12:15:12] PSS_SOFT_CEILING pss=804.6 gl=46.4 views=403 native_reclaim_advisory
+[2026-07-12 12:30:33] PSS_SOFT_CEILING pss=811.7 gl=46.7 views=383 native_reclaim_advisory
+[2026-07-12 14:48:41] PSS_SOFT_CEILING pss=811.3 gl=55.3 views=392 native_reclaim_advisory
+[2026-07-12 17:53:15] PSS_SOFT_CEILING pss=823.5 gl=59 views=391 native_reclaim_advisory
+[2026-07-12 18:08:35] PSS_SOFT_CEILING pss=800.2 gl=58.3 views=373 native_reclaim_advisory
+[2026-07-12 18:39:18] PSS_SOFT_CEILING pss=804 gl=58.3 views=377 native_reclaim_advisory
+[2026-07-12 18:54:43] PSS_SOFT_CEILING pss=819.5 gl=58.3 views=377 native_reclaim_advisory
+[2026-07-12 19:10:08] PSS_SOFT_CEILING pss=802.1 gl=58.5 views=380 native_reclaim_advisory
+[2026-07-12 19:25:35] PSS_SOFT_CEILING pss=806.6 gl=58.5 views=377 native_reclaim_advisory
+[2026-07-12 19:56:24] PSS_SOFT_CEILING pss=817.4 gl=63.1 views=384 native_reclaim_advisory
+[2026-07-12 21:14:08] VIEWS_NATIVE_ADVISORY views=452 native_heap=389 pss=738.8 gl=33.4 (node/list retention ??pre-hardceiling early warn)
+[2026-07-12 23:01:58] VIEWS_NATIVE_ADVISORY views=453 native_heap=381.4 pss=729.7 gl=57.6 (node/list retention ??pre-hardceiling early warn)
+[2026-07-12 23:48:11] VIEWS_NATIVE_ADVISORY views=367 native_heap=423.2 pss=729.8 gl=44.9 (node/list retention ??pre-hardceiling early warn)
+[2026-07-13 00:19:14] VIEWS_NATIVE_ADVISORY views=351 native_heap=446.1 pss=795.2 gl=46.4 (node/list retention ??pre-hardceiling early warn)
+[2026-07-13 00:34:40] PSS_SOFT_CEILING pss=880.1 gl=129.8 views=559 native_reclaim_advisory
+[2026-07-13 00:50:12] PSS_SOFT_CEILING pss=896.5 gl=129.8 views=559 native_reclaim_advisory
+[2026-07-13 01:05:44] PSS_SOFT_CEILING pss=888.6 gl=139.4 views=577 native_reclaim_advisory
+[2026-07-13 01:21:14] VIEWS_NATIVE_ADVISORY views=351 native_heap=472.8 pss=784.4 gl=38.6 (node/list retention ??pre-hardceiling early warn)
+[2026-07-13 01:36:40] VIEWS_NATIVE_ADVISORY views=358 native_heap=476.2 pss=796.9 gl=38.8 (node/list retention ??pre-hardceiling early warn)
+[2026-07-13 01:52:10] PSS_SOFT_CEILING pss=825.7 gl=40.8 views=358 native_reclaim_advisory
+[2026-07-13 08:00:00] DAILY_8AM_REPORT 2026-07-13 08:00:00 KST
+[2026-07-13 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260713-0800.md verdict=OK
+[2026-07-13 08:02:04] DAILY_8AM_REPORT 2026-07-13 08:02:04 KST
+[2026-07-13 08:02:04] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260713-0800.md verdict=OK
+[2026-07-13 08:04:05] DAILY_8AM_REPORT 2026-07-13 08:04:05 KST
+[2026-07-13 08:04:05] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260713-0800.md verdict=OK
+[2026-07-13 08:06:06] DAILY_8AM_REPORT 2026-07-13 08:06:06 KST
+[2026-07-13 08:06:06] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260713-0800.md verdict=OK
+[2026-07-13 08:08:07] DAILY_8AM_REPORT 2026-07-13 08:08:07 KST
+[2026-07-13 08:08:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260713-0800.md verdict=OK
+[2026-07-13 08:10:11] DAILY_8AM_REPORT 2026-07-13 08:10:11 KST
+[2026-07-13 08:10:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260713-0800.md verdict=OK
+[2026-07-13 08:12:13] DAILY_8AM_REPORT 2026-07-13 08:12:13 KST
+[2026-07-13 08:12:13] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260713-0800.md verdict=OK
+[2026-07-13 08:14:15] DAILY_8AM_REPORT 2026-07-13 08:14:15 KST
+[2026-07-13 08:14:15] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260713-0800.md verdict=OK
+[2026-07-13 09:48:35] PSS_SOFT_CEILING pss=802.4 gl=44.7 views=371 native_reclaim_advisory
+[2026-07-13 10:03:59] PSS_SOFT_CEILING pss=819.6 gl=42.8 views=371 native_reclaim_advisory
+[2026-07-13 10:19:22] PSS_SOFT_CEILING pss=813.3 gl=42.8 views=371 native_reclaim_advisory
+[2026-07-13 10:34:44] PSS_SOFT_CEILING pss=807.1 gl=44.8 views=371 native_reclaim_advisory
+[2026-07-13 10:50:06] PSS_SOFT_CEILING pss=821.6 gl=43.1 views=380 native_reclaim_advisory
+[2026-07-13 11:05:28] PSS_SOFT_CEILING pss=814.4 gl=43.4 views=380 native_reclaim_advisory
+[2026-07-13 11:20:50] PSS_SOFT_CEILING pss=806.8 gl=43.4 views=396 native_reclaim_advisory
+[2026-07-13 11:36:12] PSS_SOFT_CEILING pss=929.7 gl=145.9 views=560 native_reclaim_advisory
+[2026-07-13 11:51:37] PSS_SOFT_CEILING pss=943.9 gl=145.9 views=560 native_reclaim_advisory
+[2026-07-13 12:07:01] PSS_SOFT_CEILING pss=943.7 gl=145.9 views=560 native_reclaim_advisory
+[2026-07-13 12:22:23] PSS_SOFT_CEILING pss=934.1 gl=145.9 views=560 native_reclaim_advisory
+[2026-07-13 12:37:44] PSS_SOFT_CEILING pss=935.7 gl=147.9 views=560 native_reclaim_advisory

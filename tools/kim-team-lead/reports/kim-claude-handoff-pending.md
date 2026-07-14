@@ -5,6 +5,122 @@
 
 ---
 
+## 🔵 REVIEW ONLY(코드 변경 없음) — 아크코어 섀도우 페어링 2차 검수(확장분 포함) · 김클로드
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEW`** — 코드 변경 없음, 검수 의견만 |
+| **updated** | 2026-07-13(2차) |
+| **task_id** | `review-arccore-shadow-pairing-20260713-r2` |
+| **요청자** | 대표님 — "김팀장이 구현 내용 재검토 실시" |
+| **전제** | 1차 검수(아래 `review-arccore-shadow-pairing-20260713`) 이후 김팀장이 **"복제 전함 보스" 기능을 크게 확장**함(전함 스냅샷 publish/fetch, `arc_core_shadow_profiles/{uid}` 미러, 본진 red 리드 슬롯 주입) — amendment §16-A도 이 내용으로 갱신됨. 1차 지적 3건 중 어디까지 해소됐는지 재확인. |
+
+### 1차 지적 재확인
+
+**① Firestore 쓰기 권한 무방비 — 미해결, 오히려 심각도 상승.** `firestore.rules`는 여전히 그대로(`arc_core_shadow_*` 전부 `allow read, write: if true`, auth 조건도 없음). 1차 때는 "페어링 장부 조작" 정도였는데, 이번 확장으로 **`arc_core_shadow_profiles/{uid}`에 전투 스탯 스냅샷(`maxHp`·`attackBonus`·`damageDiceBonus`·이동속도 등)을 아무나 직접 덮어쓸 수 있게** 됐습니다. `parseArcCoreShadowShipSnapshot`(`arcCoreShadowShipSnapshot.ts:176-235`)이 타입 체크·일부 `Math.max` 하한은 두지만 **상한 클램프가 전혀 없어서**, 변조 클라이언트가 예컨대 `combat.maxHp: 999999999` 나 `combat.attackBonus: 999999`를 남의 uid 문서에 심으면 그 사람이 겪는 "핵심 플레이"(본진 보스전)가 즉시 무적이거나 즉사시키는 보스로 바뀝니다. 즉 1차의 "장부 조작" 리스크가 이번 확장으로 "**다른 실제 유저의 엔드게임 전투를 직접 망가뜨릴 수 있는**" 리스크로 격상됐습니다. `game_save_backups`에 이미 있는 `request.auth.uid == uid` 패턴을 `arc_core_shadow_pairs`·`arc_core_shadow_profiles`·`arc_core_shadow_pool`에도 적용하는 걸 강하게 권합니다(최소한 각자 자기 uid 문서만 쓰게).
+
+**② 짝 유저 데이터 미러 우회 — 부분 해소.** 새 스냅샷(전함 스펙) 쪽은 스펙대로 `arc_core_shadow_profiles/{uid}` 미러를 통해서만 오갑니다(`publishArcCoreShadowShipProfile`/`fetchArcCoreShadowShipProfile`) — 잘 지켜졌습니다. 다만 `fetchArcCoreShadowNickname()`은 여전히 `users/{uid}` 전체 문서를 직접 `getDoc`합니다(변경 없음). §1의 "닉네임 등 공개 안전 필드는 단발 getDoc 허용"과 §2의 "확장 데이터는 미러로만, 전체 프로필 직접 참조 금지"를 같이 읽으면 — 닉네임 자체는 v1 허용 범위로 봐도 되겠지만, 굳이 전체 문서를 당겨올 필요 없이 이제 존재하는 `arc_core_shadow_profiles`에 닉네임도 같이 넣어서 그쪽만 읽으면 되므로, 기왕 미러가 생긴 김에 통일하는 걸 권합니다(우선순위는 낮음).
+
+**③ 리빌·보스 진입 트리거 도달 불가능 — 미해결, 이번 확장으로 비중이 커짐.** 코드 배선(`resolveArcCoreShadowBossOverride`가 `initAgents`의 red 슬롯0 생성 경로(`PlanetEdenRaidTestLayer.tsx:2354`)에 정확히 연결됨)은 확인했고 잘 만들어져 있습니다. 그런데 `eternal_throne`에 배치된 함장 3명(`npc_ai_captains.csv` 100-102행, `npc_cpt_enemy_eternity_01/02/03`)이 **여전히 `operationalState=general`**이고(테이블 자체는 이번에도 안 바뀜), `app/(game)/planet.tsx`·`src/game/planetHub/` 어디에도 `eternal_throne` 언급이 없습니다 — `vega_base`류 강제 테스트베드 트리거도 없습니다. 표준 전투 진입 판정(`hasEnemyFleetEnteredPlanetOrbit`)은 `operationalState==='combat'`만 인정하므로, **지금 게임 상태로는 플레이어가 본진에서 전투를 시작할 방법이 여전히 안 보입니다.** amendment 자체가 이 기능을 "핵심 실제 플레이(핵심 플레이)"라고 부르는데, 그 핵심이 아직 발동 지점이 없는 셈이라 — 이번 확장분(스냅샷 시스템 전체)이 지금은 도달 불가능한 코드입니다. 있다면 제가 못 찾은 것이니 확인 부탁드립니다.
+
+### 신규 확인 사항 (확장분 자체 품질)
+
+- `buildLocalArcCoreShadowShipSnapshot`(자기 기함 스냅샷 빌드) → `publishArcCoreShadowShipProfile`(publish) → `fetchArcCoreShadowShipProfile`(짝 유저 fetch, 부트당 1회, `runArcCoreShadowPairingPass.ts`의 `syncShadowShipProfilesOnce`) → `resolveArcCoreShadowBossOverride`(전투 스폰 시 zustand 동기 read만, 네트워크 없음) → `initAgents` red 슬롯0 주입까지 **엔드투엔드로 실제 연결돼 있음을 코드로 확인**. 전투 경로 자체에는 네트워크 호출이 없다는 설계 의도(§16-A)도 지켜짐.
+- 스냅샷 미보유(미페어·오프라인·fetch 실패) 시 `resolveArcCoreShadowBossOverride`가 `null`을 반환해 기존 CSV 보스로 자연 폴백 — 안전.
+- i18n 신규 키(`arcCoreShadow.boss.concealedName`) ko/en 둘 다 존재.
+- `npx tsc --noEmit -p tsconfig.client.json` 전체 PASS(확장분 포함, 에러 없음).
+
+### 결론
+
+코드 완성도 자체는 높습니다(파이프라인 연결, 폴백, 타입 안전 전부 확인). 다만 **①(쓰기 권한)과 ③(진입 트리거 부재)는 여전히 미해결**이고, 특히 ①은 이번 확장으로 "다른 실유저 엔드게임 전투 결과를 원격으로 조작 가능"이라는 더 구체적이고 심각한 형태가 됐습니다. 실서비스 노출 전에 최소 ①(자기 uid만 쓰기 허용 규칙)과 ③(본진 전투 진입 경로) 둘 다 확정 필요.
+
+---
+
+## 🔵 REVIEW ONLY(코드 변경 없음) — 아크코어 섀도우 페어링(김팀장 구현) 검수 의견 · 김클로드
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEW`** — 이 항목은 제가 코드를 고친 게 아니라 **김팀장 작업물을 검수한 의견**입니다 |
+| **updated** | 2026-07-13 |
+| **task_id** | `review-arccore-shadow-pairing-20260713` |
+| **요청자** | 대표님 — "현재 김팀장 쪽에서 아크코어 섀도우 페어링 구현 작업이 진행되었다. 전체 작업에 대해 철저하게 검수하라. (코드 보완부분 중점)" |
+| **범위** | `.cursor/rules/arcfire-shadow-pairing-amendment.mdc`, `src/firebase/arcCoreShadowPairing.ts`, `src/store/arcCoreShadowIdentityStore.ts`, `src/arcCore/shadow/*.ts`, 연동부(`app/_layout.tsx`·`onboardingPilotRegistration.ts`·`PlanetEdenRaidTestLayer.tsx`·`localAccountReset.ts`), i18n 2개 키. 전부 **미커밋 상태**(git status 미추적/수정) — 아직 handoff 기록도 없었음. |
+
+### 결론 요약
+
+핵심 매칭 로직(대기열 트랜잭션)·boot 비동기 규율·계정초기화 제외 처리는 잘 만들어졌습니다. 다만 **③이 가장 심각**하고, 나머지는 "완성 전 스텁/설계 의도와 실제 구현의 괴리" 성격입니다.
+
+### ① [높음] `arc_core_shadow_pairs/{uid}` · `arc_core_shadow_pool/waiting` — Firestore 쓰기 권한 무방비
+
+`firestore.rules`를 직접 확인한 결과, 이 두 컬렉션은 프로젝트 공통 와일드카드 `allow read, write: if true`(그나마 `request.auth != null` 조건도 없음) 하나로만 걸려 있습니다. 반면 이미 존재하는 `users/{uid}/game_save_backups/**` 규칙은 `request.auth.uid == uid`로 **본인 문서만** 쓰게 막아뒀습니다 — 즉 "본인 uid만 쓰기 허용" 패턴이 이 프로젝트에 이미 있는데 섀도우 페어링에는 적용 안 됨.
+
+`ensureArcCoreShadowPairing(uid)`가 `uid`를 내부에서 `getCurrentUser()`로 강제하지 않고 인자로 받기 때문에, 그리고 규칙상 아무나 아무 uid 문서에 쓸 수 있기 때문에 — 변조 클라이언트가 `arc_core_shadow_pairs/{다른유저uid}`에 직접 `setDoc`으로 임의 `shadowUid`를 덮어써서 **타 유저의 페어 관계를 조작/훼손**할 수 있습니다(트랜잭션 로직 자체를 완전히 우회 가능). 대기열 문서(`arc_core_shadow_pool/waiting`)도 마찬가지로 스팸/오염이 가능합니다. 헌법 수정안 §16-A가 "공개 안전 필드만", "일회성 상호 매칭"이라고 신중하게 스코프를 좁혀놨는데, 정작 쓰기 자체엔 그 신중함에 걸맞은 서버측 강제가 전혀 없습니다.
+
+**제안**: `game_save_backups`와 동일한 패턴으로 `arc_core_shadow_pairs/{uid}`에 `request.auth.uid == uid` 규칙 추가(자기 자신의 페어 문서만 쓰기 허용 — 상대방 페어 문서는 트랜잭션 안에서 같이 쓰는 구조라 규칙 설계를 조금 더 고민 필요할 수 있음, 예: Cloud Function 경유 또는 "상대 문서엔 자기 uid를 shadowUid로 넣는 것만" 허용하는 조건식).
+
+### ② [중간] 짝 유저 닉네임 읽기가 수정안 자기 조항(§2)을 벗어남
+
+`fetchArcCoreShadowNickname()`(`src/firebase/arcCoreShadowPairing.ts:117-129`)이 `users/{uid}` **전체 문서**를 `getDoc`으로 읽습니다. 그런데 수정안 §2 "확장" 조항은 "짝 유저 데이터 노출은 `arc_core_shadow_profiles/{uid}` 공개 안전 미러 문서를 통해서만 확장한다(**전체 프로필 직접 참조 금지**)"라고 명시돼 있습니다 — 지금 코드는 정확히 그 금지된 방식(전체 프로필 직접 참조)으로 닉네임만 골라 씁니다. UI엔 닉네임만 노출되지만, 네트워크 상으로는 상대방 `users/{uid}` 문서 전체(`isAdmin` 포함)가 클라이언트에 도달합니다. `arc_core_shadow_profiles/{uid}` 미러 문서 자체가 아직 존재하지 않는 것으로 보아, 이건 "1차 스코프 축소"였을 가능성이 있지만 — 수정안 문구와 명백히 어긋나므로 김팀장·대표님 확인 필요.
+
+### ③ [중간, 미완성 가능성] 리빌 트리거 자체가 현재 도달 불가능할 수 있음
+
+`eternal_throne`에 배치된 NPC 함장 3명(`npc_cpt_enemy_eternity_01/02/03`, `npc_ai_captains.csv` 100-102행)을 확인했는데 **`operationalState = general`**입니다(`combat`이 아님). 기존 전투 트리거 판정 `hasEnemyFleetEnteredPlanetOrbit()`(`planetHubConstants.ts`)은 `operationalState !== 'combat'`이면 무시하도록 돼 있어서, 이 함장들은 지금 상태로는 궤도 진입 판정에 안 걸립니다. `eternal_throne`은 `vega_base` 같은 웨이브디펜스 테스트베드 플래그도 없습니다. 즉 **현재 게임 상태로는 플레이어가 `eternal_throne`에서 전투에 진입할 방법 자체가 안 보입니다** — 있다면 제가 못 찾은 것이니 확인 부탁드리고, 없다면 `maybeTriggerArcCoreShadowRevealOnCombatVictory` 배선 자체는 맞게 돼 있어도 실제로는 아직 발동 불가능한 "완성 전" 상태입니다(엔드게임 보스전 콘텐츠가 별도로 더 필요).
+
+### 잘 되어 있는 부분 (참고용)
+
+- 트랜잭션 매칭 로직(대기열 확인→상호 페어 원자적 기록→자기자신 페어링 방지 가드)은 Firestore 트랜잭션 재시도 의미론에 맞게 정확히 짜여 있음.
+- boot·온보딩 연동 전부 `void`/`setTimeout` 기반 fire-and-forget — CLAUDE.md 부트 동기 실행 금지 규칙 위반 없음. `onSnapshot`·주기 폴링도 없음(수정안 §1 준수).
+- `arcCoreShadowIdentityStore`가 `purgeLocalAccountData`에서 의도적으로 제외됐다는 주석·실제 코드 둘 다 확인 — 계정초기화 후에도 유지된다는 설계와 일치.
+- i18n 키(`arcCoreShadow.reveal.*`) ko/en 둘 다 존재, `npx tsc --noEmit -p tsconfig.client.json` 전체 PASS(신규 파일 포함 타입 에러 없음).
+
+### 확인 안 한 것 (제 검수 범위 밖)
+
+- `arc_core_shadow_profiles/{uid}` 미러 문서 스키마·구현 여부(존재 자체를 못 찾음 — ②와 연결).
+- 실기(디바이스) 상에서 실제 페어링 완료·리빌 알럿 동작은 미확인(정적 코드 검토만 수행).
+- 테스트 코드 없음(신규 기능 전체) — 필요 여부는 팀 판단.
+
+---
+
+## 🟡 PENDING(신규 기능, UI만·테이블 재사용) — 무역소 전함 구매창 상단 이미지 슬롯 추가 · 김클로드
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`PENDING`** |
+| **updated** | 2026-07-12 |
+| **task_id** | `trade-ship-purchase-portrait-slot-20260712` |
+| **요청자** | 대표님 — "무역소 Buy 탭 > Ships 탭에서 전함 카드 클릭 시 뜨는 구매 정보창 최상단에 정사각형(현재 레이아웃 최대) 이미지 영역을 확보하고, 이미지 준비중 텍스트만 표시... 기존 상품 테이블에서 호출하는 테이블 기반 작업이어야 함(하드코딩·신규 테이블 생성 금지). Starter Fighter Mk.I는 이미 에셋 있음 — 연결" |
+
+### 구현 내용
+
+기존에 이미 존재하던 "전함 id → `npc_ai_ships.csv`의 `portraitImageAssetKey` → asset require()" 체인(조선소 화면 `app/(game)/shipyard.tsx`에서 이미 쓰던 것과 완전히 동일한 테이블·리졸버)을 무역소 구매창에도 그대로 연결. **신규 테이블·신규 CSV 컬럼·이미지 매핑 하드코딩 전부 없음** — 기존 `src/game/npcCapitalShipPortraitAssets.ts`(전함 id→require 맵, `ship_001.png` 등 이미 등록돼 있던 것 그대로)를 재사용만 함.
+
+- `src/ui/overlay/content/ShipPurchasePortraitSlot.tsx`(신규) — 헤더 바로 아래 카드 전폭 정사각형(`aspectRatio: 1`) 슬롯. `getNpcCapitalShip(npcCapitalShipId)?.portraitImageAssetKey` → `resolveNpcCapitalShipPortraitSource()`로 이미지 있으면 `resizeMode="contain"`으로 표시, 없으면 "이미지 준비중" 텍스트만 표시(`PlanetInfoPortraitSlot.tsx`의 filled/empty 이중 상태 패턴 그대로 재사용, 정사각형만 다름).
+- `src/ui/overlay/arcOverlayStore.ts` — `ArcOverlayTradeQuantityEntry`에 `npcCapitalShipId?: string | null` 필드 추가(전함 구매일 때만 채워짐 → 무기/장비/일반 아이템 구매창은 기존과 완전히 동일, 이미지 슬롯 자체가 안 뜸).
+- `src/ui/overlay/content/TradeQuantityOverlayContent.tsx` — `ArcOverlayCard`의 기존 `panelBleedPrefix` 슬롯(행성정보창에서 이미 쓰던 것과 동일 메커니즘)에 `entry.npcCapitalShipId`가 있을 때만 `ShipPurchasePortraitSlot` 연결.
+- `app/(game)/trade.tsx` `handleBuy` — 기존에 `onConfirm` 안에서만 계산하던 `capitalShipNpcId`(`itemDef.attrs.npcCapitalShipId`, `type==='capital_ship'`일 때만)를 함수 상단으로 끌어올려 `presentArcOverlayTradeQuantity` 호출 시 `npcCapitalShipId`로 같이 전달 — 중복 계산 제거, 로직 변경 없음.
+- `src/i18n/locales/ko.ts`·`en.ts` — `tradeQty.shipImagePending`("이미지 준비중"/"Image coming soon")·`tradeQty.shipImageA11y` 2개 키 추가.
+
+**Starter Fighter Mk.I 확인**: `capital_ship_Player_npc_red_fleet_1` → `attrs.npcCapitalShipId = "Player_npc_red_fleet_1"` → `npc_ai_ships.csv` 해당 행 `portraitImageAssetKey = "assets/images/ship/ship_001.png"` → 이미 `npcCapitalShipPortraitAssets.ts`에 등록돼 있어 실제 이미지로 표시됨. 그 외 전함(맵에 미등록된 `portraitImageAssetKey`)은 "이미지 준비중"으로 표시 — 이후 이미지 추가 시 `npcCapitalShipPortraitAssets.ts`의 맵에 한 줄만 추가하면 자동 반영(테이블 값은 이미 대부분 채워져 있어 별도 CSV 작업 불필요).
+
+### ⚠️ 후속 수정(같은 턴) — 스크롤 레이아웃 버그
+
+최초 구현은 이미지 슬롯을 `ArcOverlayCard`의 `panelBleedPrefix`(스크롤 밖 고정 영역, 행성정보창과 동일 메커니즘)로 붙였는데, 대표님이 즉시 "Description 영역만 스크롤되어 화면 아래에 너무 작게 표시된다"고 지적. 원인: 정사각형 이미지(카드 폭만큼 높이도 큼)가 헤더·메타 정보·푸터와 함께 카드의 **고정** 영역을 차지해버려서, bounded 카드 높이 안에서 ScrollView(설명·Tips·수량)에 남는 공간이 거의 없어짐 — 행성정보창 이미지(가로가 세로보다 훨씬 긴 배너형)에서는 안 생기던 문제가 정사각형이라 크게 불거짐.
+
+**수정**: `panelBleedPrefix` 사용을 제거하고, 이미지 슬롯을 `children`(=ScrollView 내부)의 **첫 항목**으로 이동 — 이미지·설명·Tips·수량이 전부 하나의 스크롤 영역 안에서 함께 움직임(`TradeQuantityOverlayContent.tsx` `styles.shipPortraitSection` 신설). `panelPrefix`(단가·재고·수요·보유 메타 행)는 그대로 고정 유지 — 크기가 작아 원인이 아니었음, 다른 구매창(무기/장비/아이템) 동작에 영향 없도록 최소 변경. 이미지는 이제 카드 좌우 패딩만큼 안쪽으로 들어가지만(기존 bleed는 카드 폭 끝까지) 여전히 정사각형·최상단·스크롤 가능.
+
+### self-check
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**(두 차례 모두)
+- [ ] `npm run audit:memory:all` — 해당 없음(Skia/STAGE dispose 무관, 순수 RN Image/View UI 추가)
+- [x] git commit **안 함**
+
+### 리스크·주의
+
+- 실기 미확인 — 무역소 Buy > Ships 탭에서 실제로 카드 눌러서 정사각형 슬롯·"이미지 준비중" 텍스트·Starter Fighter Mk.I 실제 이미지 표시·전체 스크롤 동작을 눈으로 확인 필요.
+- 무기/장비/일반 아이템 구매창·판매(sell) 모달은 `npcCapitalShipId`가 항상 null이라 기존 레이아웃과 100% 동일 — 회귀 리스크 낮음.
+
+---
+
 ## 🟡 PENDING(1줄 실질 수정 + 전면 재검수) — 웨이브전투 진입/웨이브전환/종료 메모리 할당·해제 전수 재검수 · 김클로드
 
 | 필드 | 값 |

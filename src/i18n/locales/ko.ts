@@ -278,6 +278,8 @@ export const KO_DICTIONARY: I18nDictionary = {
   'tradeQty.cancel': '취소',
   'tradeQty.buy': '{qty}개 구매',
   'tradeQty.sell': '{qty}개 판매',
+  'tradeQty.shipImagePending': '이미지 준비중',
+  'tradeQty.shipImageA11y': '구매할 전함 이미지',
 
   // ── 은하계 지도 (worldmap) ──
   'worldmap.route.north': '북부항로',
@@ -437,6 +439,18 @@ export const KO_DICTIONARY: I18nDictionary = {
   'tavern.newMissions.stateCompleted': '완료됨',
   'tavern.newMissions.acceptComingSoon': '수락 (추후 제공)',
   'tavern.newMissions.acceptUnavailable': '수락 불가',
+  'tavern.newMissions.difficulty.easy': 'EASY',
+  'tavern.newMissions.difficulty.normal': 'NORMAL',
+  'tavern.newMissions.difficulty.hard': 'HARD',
+  'tavern.newMissions.difficulty.expert': 'EXPERT',
+
+  // ── 아크코어 섀도우 (평행우주 정체 공개) ──
+  'arcCoreShadow.reveal.title': '아크코어 코어 신호 해독',
+  'arcCoreShadow.reveal.message':
+    '본진 방어망이 붕괴되며 아크코어의 숨겨진 근원 신호가 해독되었다.\n\n평행우주 저편, 이 아크코어의 본질은 또 다른 파일럿…\n\n「{nickname}」',
+  'arcCoreShadow.boss.concealedName': '아크코어 근원체',
+  'arcCoreShadow.reveal.unobserved':
+    '본진 방어망이 붕괴되었지만, 아크코어의 근원 신호는 아직 관측되지 않았다.\n평행우주의 짝이 정해지는 순간, 다시 이곳에서 해독할 수 있다.',
 
   // ── 연구소 (skilltree) ──
   'skilltree.learnedTitle': '{name} ✓',

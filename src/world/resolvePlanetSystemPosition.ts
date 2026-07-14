@@ -83,6 +83,43 @@ export function resolveGalaxySystemHopDistance(systemIdA: string, systemIdB: str
   return 0;
 }
 
+/** BFS — origin에서 maxHops 이내 성계 id (홉 거리별 그룹). */
+export function listGalaxySystemIdsByHopDistance(
+  originSystemId: string,
+  maxHops: number,
+): Map<number, string[]> {
+  const byHop = new Map<number, string[]>();
+  const origin = originSystemId.trim();
+  if (!origin || maxHops <= 0) return byHop;
+
+  const visited = new Set<string>([origin]);
+  const queue: Array<{ id: string; hops: number }> = [{ id: origin, hops: 0 }];
+
+  while (queue.length > 0) {
+    const cur = queue.shift()!;
+    if (cur.hops > 0 && cur.hops <= maxHops) {
+      const bucket = byHop.get(cur.hops) ?? [];
+      bucket.push(cur.id);
+      byHop.set(cur.hops, bucket);
+    }
+    if (cur.hops >= maxHops) continue;
+    const sys = readGalaxySystem(cur.id);
+    if (!sys) continue;
+    for (const raw of sys.connections) {
+      const next = raw?.trim();
+      if (!next || visited.has(next)) continue;
+      visited.add(next);
+      queue.push({ id: next, hops: cur.hops + 1 });
+    }
+  }
+
+  return byHop;
+}
+
+export function readGalaxySystemRecord(systemId: string): StarSystem | undefined {
+  return readGalaxySystem(systemId);
+}
+
 export function resolveSystemIdForPlanetIdFromGalaxy(planetId: string): string | null {
   return resolveSystemIdFromGalaxy(planetId);
 }

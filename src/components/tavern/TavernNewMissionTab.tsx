@@ -91,6 +91,9 @@ function InstanceMissionCard({
   const categoryLabel = arcCoreAuto
     ? t(`tavern.newMissions.category.${arcCoreAuto.categoryTag}`)
     : null;
+  const difficultyLabel = mission.instanceDifficultyTier
+    ? t(`tavern.newMissions.difficulty.${mission.instanceDifficultyTier}`)
+    : null;
 
   const handleAccept = useCallback(() => {
     tryAcceptInstanceMissionWithFeedback(mission.id, { planetId, playerLevel }, t);
@@ -103,6 +106,7 @@ function InstanceMissionCard({
         {arcCoreAuto ? (
           <Text style={[fs.cardMeta, styles.arcCoreBadge]}>
             {t('tavern.newMissions.arcCoreAuto')} · {categoryLabel}
+            {difficultyLabel ? ` · ${difficultyLabel}` : ''}
           </Text>
         ) : null}
         <Text style={fs.cardMeta}>

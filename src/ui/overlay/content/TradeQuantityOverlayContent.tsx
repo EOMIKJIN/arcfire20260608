@@ -8,6 +8,7 @@ import { ArcOverlayCard } from '../ArcOverlayCard';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
 import { ArcButton } from '../ArcButton';
+import { ShipPurchasePortraitSlot } from './ShipPurchasePortraitSlot';
 import { resolveOverlayVisualTokens } from '../overlayVisualTokens';
 import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
 import {
@@ -85,6 +86,10 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
     </View>
   );
 
+  const shipPortraitPrefix = entry.npcCapitalShipId ? (
+    <ShipPurchasePortraitSlot npcCapitalShipId={entry.npcCapitalShipId} />
+  ) : undefined;
+
   return (
     <ArcOverlayCard
       title={entry.title}
@@ -102,6 +107,10 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
         />
       )}
     >
+      {shipPortraitPrefix ? (
+        <View style={styles.shipPortraitSection}>{shipPortraitPrefix}</View>
+      ) : null}
+
       {entry.mode === 'buy' && entry.itemDescription ? (
         <View style={styles.descSection}>
           <Text style={sectionBarStyle}>{t('tradeQty.descSection')}</Text>
@@ -185,6 +194,11 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
 });
 
 const styles = StyleSheet.create({
+  shipPortraitSection: {
+    alignSelf: 'stretch',
+    width: '100%',
+    marginBottom: SPACING.sm,
+  },
   metaSection: {
     alignSelf: 'stretch',
     width: '100%',
