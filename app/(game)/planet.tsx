@@ -208,6 +208,7 @@ import {
   PLANET_MAIN_STANCE_ROW_HEIGHT_EST_PX,
   resolvePlanetBattleReadyDurationMs,
 } from '../../src/game/planetHub/planetHubConstants';
+import { resolvePlanetMainStageCombatVariant } from '../../src/arcCore/balance/balanceTableRegistry';
 import { usePlanetHubBattleReady } from '../../src/game/planetHub/usePlanetHubBattleReady';
 import { useWaveDefenseStore } from '../../src/game/waveDefense/waveDefenseStore';
 import { useWaveDefenseController } from '../../src/game/waveDefense/useWaveDefenseController';
@@ -948,10 +949,14 @@ export default function PlanetScreen() {
       },
     });
   }, []);
+  const mainStageCombatVariant = planet?.id
+    ? resolvePlanetMainStageCombatVariant(planet.id)
+    : 'default';
   useWaveDefenseController({
     planetId: planet?.id ?? null,
     systemId: system?.id ?? null,
-    isTestBed: planet?.id === 'vega_base',
+    waveDefenseEnabled:
+      mainStageCombatVariant === 'draco_wave' || mainStageCombatVariant === 'endgame_boss',
     introDone: !ingameDialogActive,
     routeFocused: isPlanetRouteFocused,
     appActive: appStateActive,

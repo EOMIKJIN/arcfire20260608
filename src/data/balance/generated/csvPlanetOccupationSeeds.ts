@@ -21,5 +21,6 @@ export const PlanetOccupationSeeds_FROM_BALANCE_CSV = [
   { "planetId": "core_prime", "systemId": "arcfire_core", "initialOwner": "RED", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "아크파이어 코어 프라임" },
   { "planetId": "eternal_throne", "systemId": "eternity", "initialOwner": "NEUTRAL", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "이터니티" },
   { "planetId": "genesis_origin", "systemId": "genesis", "initialOwner": "NEUTRAL", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "제네시스" },
+  { "planetId": "synth_011_p", "systemId": "synth_011", "initialOwner": "RED", "occupationCombatEnabled": "true", "contestedZone": "false", "alertLabelKo": "프로스트 성채" },
 ] as const;
 export type PlanetOccupationSeedsRow = (typeof PlanetOccupationSeeds_FROM_BALANCE_CSV)[number];

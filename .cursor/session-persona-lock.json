@@ -1,6 +1,6 @@
 {
   "persona": "teamlead",
   "label": "김팀장",
-  "reason": "team_lead_governance_remediation",
-  "lockedAt": "2026-06-24T00:00:00.000Z"
+  "reason": "user_explicit_switch",
+  "lockedAt": "2026-07-17T01:57:00.000Z"
 }

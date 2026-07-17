@@ -151,8 +151,14 @@ export default function TitleScreen() {
       );
 
       if (!hadLocalAccountMeta) {
+        // 로컬 계정 메타 없음(신규 설치·재설치 등) — 클라우드에 기존 진행분이 있을 수 있으므로
+        // 판정 끝날 때까지 타이틀 버튼을 잠가야 한다. 이게 빠지면 판정 중 [게임 시작]을 눌러
+        // player=null 스냅샷으로 신규 인트로 라우팅이 확정된 뒤, 뒤늦게 setPlayer()가 인트로
+        // 화면 마운트 중에 끼어들어 화면이 한 번 깜빡였다가 재시작되는 버그로 이어졌다.
+        setCloudRestorePending(true);
         const result = await tryRestorePlayerFromCloud(uid, { hadLocalAccountMeta: false });
         if (cancelled) return;
+        setCloudRestorePending(false);
         if (result.kind === 'restored') {
           usePlayerStore.getState().setPlayer(result.player);
           bootstrapPlayerAfterCloudRestore(result.player);

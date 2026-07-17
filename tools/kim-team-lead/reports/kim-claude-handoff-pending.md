@@ -5,6 +5,113 @@
 
 ---
 
+## ✅ REVIEWED — 최초 게임시작 인트로 "화면 한번 나왔다 스킵/재시작" 버그 수정 · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-17)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS — 승인 (수정 없음)** |
+| 근본원인 검증 | `!hadLocalAccountMeta` 분기만 `setCloudRestorePending(true/false)` 누락 — 바로 아래 `hadLocalAccountMeta:true` 분기와 비대칭이었음을 코드로 재확인. `titleInteractive`가 이 값으로 버튼을 잠그므로 stale `player=null` 라우팅 → 뒤늦은 `setPlayer()` 개입 시나리오와 증상 일치 |
+| 예외 안전성 | `tryRestorePlayerFromCloud`는 내부 try/catch로 **절대 throw하지 않음**(`firestore.ts:159-162`) → pending=true로 영구 잠기는 경로 없음. 신규 계정(캐시·클라우드 모두 없음)은 서버 왕복 없이 즉시 `no_cloud_account` 반환이라 버튼 잠금 체감 지연도 거의 없음 |
+| cancelled 경로 | `if (cancelled) return`으로 pending이 남는 케이스는 기존 true-분기와 동일 패턴(언마운트/deps 재실행 시 자연 해소) — 신규 리스크 아님 |
+| 메모리 | 부트 1회 경로 상태 2회 갱신뿐 — 틱/루프 할당 없음 |
+| tsc | `npx tsc --noEmit -p tsconfig.client.json` PASS (재실행 확인) |
+| 실기 검증 | 미실시 — 완전초기화 재테스트 사이클의 재설치 시나리오에서 확인 예정 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-17 (김팀장 검수) · 2026-07-17 (김클로드 작성) |
+| **task_id** | `title-cloud-restore-intro-flash-race-20260717` |
+| **요청자** | 대표님 — "최초 게임시작시 스토리 진행시 인류는 인공지능... 으로 시작되는 화면이 한번 나오다가 스킵되고 정상적으로 다시 시작되는 버그" |
+
+### 근본원인 (코드로 확인)
+
+`app/index.tsx`의 타이틀 화면 클라우드 복원 판정 로직(125-183행)에서, 로컬 계정 메타가 없는 경우(`!hadLocalAccountMeta` — 신규 설치·재설치 등) 분기(153-164행, 수정 전)만 유독 `setCloudRestorePending(true)`를 안 부르고 있었습니다. 같은 함수의 `hadLocalAccountMeta: true` 분기(166행)는 정상적으로 `true`→(대기)→`false`로 감싸는데, 이 분기만 비대칭이었습니다.
+
+`titleInteractive = bootReady && hydrated && !cloudRestorePending`(99행)이 이 값으로 [게임 시작] 버튼 활성화를 결정하므로, 이 분기에서는 **Firestore `tryRestorePlayerFromCloud` 판정이 끝나기 전에도 버튼이 눌립니다.** 이때:
+
+1. `handleStart`(185행)가 `player` 스냅샷을 읽는데, 판정이 아직 안 끝나 `player`가 `null`인 상태라 "신규 계정" 분기로 확정 — `NEW_ACCOUNT_INTRO_ROUTE`(`/intro?sceneId=intro01&flow=preNickname`)로 라우팅해 인트로 1페이지("인류는 인공지능...")를 띄웁니다.
+2. 잠시 후 백그라운드에서 돌던 클라우드 복원이 완료되면 `usePlayerStore.getState().setPlayer(result.player)` + `bootstrapPlayerAfterCloudRestore(...)`가 **인트로 화면이 이미 마운트된 상태에서** 전역 player/world 상태를 큼직하게 갈아치웁니다.
+3. 이 타이밍(재설치·클라우드에 기존 진행분이 있는 계정 등)에서 "인트로 1페이지가 잠깐 보였다가, 뭔가에 끊기고, 다시 처음부터 정상적으로 재생"되는 게 보고된 증상과 일치합니다.
+
+### 수정
+
+`app/index.tsx`의 `!hadLocalAccountMeta` 분기에 `setCloudRestorePending(true)`(호출 전)·`setCloudRestorePending(false)`(호출 후) 2줄 추가 — 바로 아래 `hadLocalAccountMeta: true` 분기와 완전히 대칭되도록 맞췄습니다. 이제 두 분기 모두 클라우드 판정이 끝날 때까지 [게임 시작] 버튼이 잠기므로, `handleStart`가 stale `player=null` 스냅샷으로 라우팅을 확정한 뒤 뒤늦게 진짜 player가 끼어드는 창구 자체가 사라집니다.
+
+### self-check
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
+- [x] git commit **안 함**
+
+### 리스크·주의
+
+- **실기 미확인** — 재설치(로컬 데이터 삭제 후 같은 계정으로 재접속) 시나리오로 재현·검증 필요(에뮬레이터/디바이스 미보유). 진짜 신규 계정(클라우드에도 데이터 없음)은 버튼이 잠깐 더 길게 비활성 상태로 보일 수 있으나(Firestore 왕복 1회), 신규 계정은 원래도 `tryRestorePlayerFromCloud`가 즉시 `not_found`류로 끝나 체감 지연은 거의 없을 것으로 예상됩니다.
+- 이 수정은 레이스 윈도우를 없애는 것 — 정확히 어떤 리렌더/리마운트 경로로 "화면이 끊겼다 재시작"되는 시각효과가 나오는지까지는 재현 없이 100% 특정하지 못했지만, 원인이 되는 stale-snapshot 라우팅 자체는 확실히 막힙니다.
+
+---
+
+## ✅ REVIEWED — eternal_throne 웨이브 디펜스 진입 트리거 + 마지막 웨이브 보스 게이트 · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-17)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS — 승인 (수정 없음)** |
+| diff 전수 확인 | `planet.tsx`(하드코딩 `isTestBed`→CSV `mainStageCombatVariant` 기반 `waveDefenseEnabled`) · `useWaveDefenseController.ts`(rename만, 로직 동일) · `arcCoreShadowBossClone.ts`(최종 웨이브 게이트, `getState()` 동기 read만) · `PlanetEdenRaidTestLayer.tsx`(리빌 최종 웨이브 게이트 + endgame_boss 스폰 레이아웃) · amendment §2·§3 — 전부 handoff 기술과 일치 |
+| 메모리·핫패스 | `resolvePlanetMainStageCombatVariant`는 모듈 Map O(1) 조회(렌더당 할당 없음) · 전투 경로 네트워크 호출 없음 · `npm run audit:memory:all` 전부 PASS (재실행 확인) |
+| tsc | `npx tsc --noEmit -p tsconfig.client.json` PASS (재실행 확인) |
+| vega_base 회귀 | `arcCoreShadowBossClone` 본진 행성 가드로 무영향 · draco_wave 트리거 동작 동일 (정적 확인) |
+| 잔여 과제 | ①(Firestore `arc_core_shadow_*` 쓰기 권한 — 자기 uid만 허용 규칙) **미해결·별도 P1** · ②(닉네임 미러 통일) 저우선 · ③(진입 트리거 부재)은 **본 작업으로 해소** |
+| 실기 검증 | 미실시 — 대표님 완전초기화 후 재테스트 사이클에서 handoff 기재 시나리오 1~6 확인 예정 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-17 (김팀장 검수) · 2026-07-13 (김클로드 작성) |
+| **task_id** | `arccore-shadow-eternal-throne-wave-trigger-20260713` |
+| **요청자** | 대표님 — 2차 검수 지적 ③(진입 트리거 부재)에 "웨이브 전투룰로 전투를 시작하는 것은? 전 행성의 기본 전투룰은 웨이브 전투룰이다"로 재검토 지시 → plan mode 승인 → "웨이브 전투룰 그대로 재사용, 마지막 웨이브만 보스 적용" 확정 |
+| **선행** | 위 2차 검수(`review-arccore-shadow-pairing-20260713-r2`) 지적 ③에 대한 실제 코드 수정. ①(Firestore 쓰기 권한)·②(닉네임 미러 우회)는 이번 범위 밖, 여전히 미해결로 남아있음 |
+
+### 검토 결과 — 재확인한 사실관계
+
+`tables/balance/planet_hostile_red_progression.csv`에 `mainStageCombatVariant` 컬럼이 이미 있고 `vega_base=draco_wave`, `eternal_throne=endgame_boss`(zoneIndex=20, amendment 문구와 일치)로 **서로 다른 값**이 이미 채워져 있었음. 그런데 `useWaveDefenseController`를 트리거하는 `isTestBed: planet?.id === 'vega_base'`(`planet.tsx:954`)는 이 컬럼을 안 읽고 행성 id 문자열을 하드코딩한 것이었음 — eternal_throne이 전투 진입 자체가 안 되던 근본 원인. 대표님이 "웨이브 전투룰이 기본"이라고 하셔서, `draco_wave`뿐 아니라 `endgame_boss`도 같은 웨이브 디펜스 엔진을 타도록 하는 것으로 확정.
+
+**로직상 문제 2건 확인**(둘 다 이번에 같이 수정, 대표님 "그대로 재사용" 지시의 자연스러운 연장으로 판단):
+1. `resolveArcCoreShadowBossOverride`가 웨이브 번호를 안 봐서, 그대로 뒀으면 9웨이브 전부의 red 슬롯0에 복제 보스가 반복 등장했을 것(1웨이브부터 범용 침입자 대신 보스 등장 — "최종 보스전" 서사와 안 맞음).
+2. 리빌(닉네임 공개) 트리거도 웨이브 번호를 안 봐서, 그대로 뒀으면 **1웨이브만 이겨도 짝 유저 닉네임이 공개**됐을 것.
+
+### 수정 내용
+
+- **`app/(game)/planet.tsx`**: `resolvePlanetMainStageCombatVariant`(기존 함수, `PlanetEdenRaidTestLayer.tsx`에서 이미 쓰던 것 재사용) import 추가. `useWaveDefenseController`의 `isTestBed: planet?.id === 'vega_base'`(문자열 하드코딩) → `waveDefenseEnabled: variant === 'draco_wave' || variant === 'endgame_boss'`(테이블 기반)로 교체.
+- **`src/game/waveDefense/useWaveDefenseController.ts`**: prop `isTestBed` → `waveDefenseEnabled`로 rename(eternal_throne은 QA 테스트베드가 아니라 실제 엔드게임 콘텐츠라 이름이 오해 소지 있었음). 로직(10초 지연 트리거·9웨이브 루프·`endRun`)은 완전히 그대로, 이름·주석만 갱신.
+- **`src/arcCore/shadow/arcCoreShadowBossClone.ts`**: `resolveArcCoreShadowBossOverride`에 게이트 추가 — 웨이브 디펜스가 해당 행성에서 `active`하면 `waveIndex >= WAVE_DEFENSE_MAX_WAVES`(9)일 때만 통과, 그 전 웨이브는 `null` 반환(기존 CSV 범용 침입자 그대로 스폰). 기존 게이트(본진 행성·슬롯0·스냅샷 보유)는 안 건드림.
+- **`src/components/planet/PlanetEdenRaidTestLayer.tsx`**:
+  - `maybeTriggerArcCoreShadowRevealOnCombatVictory` 호출부에 동일한 "마지막 웨이브 또는 비-웨이브전투"게이트 추가(`useWaveDefenseStore`/`WAVE_DEFENSE_MAX_WAVES` 신규 import 1개만 추가, `useWaveDefenseStore`는 이미 이 파일에서 쓰던 것).
+  - `resolveDuelSpawnVariantForPlanet`의 `draco_wave` 전용 고정 스폰 레이아웃 분기에 `endgame_boss`도 포함(스폰 방식 일관성).
+- **`.cursor/rules/arcfire-shadow-pairing-amendment.mdc`**: §2·§3에 웨이브 디펜스 재사용·마지막 웨이브 게이트 내용 반영(정본 문서-구현 동기화).
+
+### self-check
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
+- [x] `npm run audit:memory:all` — **전부 PASS**(memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
+- [x] git commit **안 함**
+
+### 리스크·주의 — combat 핵심 로직 변경이라 실기 검증 중요
+
+- **실기 미확인**(에뮬레이터/디바이스 미보유) — 아래 시나리오 전부 대표님 확인 필요:
+  1. `eternal_throne` 착륙 → 10초 후 웨이브1 자동 시작(vega_base와 동일 패턴인지)
+  2. 웨이브 1~8: 복제 보스 안 나오고 범용 침입자만, 리빌 알럿 안 뜨는지
+  3. 웨이브 9: 슬롯0에 짝 유저 기함 스펙 적용 + 위장명(`아크코어 근원체`) 표시
+  4. 웨이브 9 승리 시점에만 닉네임 공개 알럿 1회
+  5. **`vega_base` 회귀 없는지** — `arcCoreShadowBossClone.ts` 게이트가 `combatPlanetId !== ARC_CORE_SHADOW_HOME_BASE_PLANET_ID`에서 이미 걸러지므로 vega_base엔 영향 없어야 함(정적 코드로는 확인, 실기 재확인 권장)
+  6. 스냅샷 미보유(미페어·오프라인) 상태로 웨이브9 도달 시 CSV 폴백 정상 동작
+- **①(Firestore 쓰기 권한)·②(닉네임 전체프로필 읽기)는 이번 작업 범위 밖** — 2차 검수 기록 그대로 유효, 별도 조치 필요.
+- `buildWaveDefenseEnemyFleet`(범용 침입자 생성 로직) 자체는 미변경 — 웨이브 1-8 난이도·구성은 vega_base와 동일 공식.
+
+---
+
 ## 🔵 REVIEW ONLY(코드 변경 없음) — 아크코어 섀도우 페어링 2차 검수(확장분 포함) · 김클로드
 
 | 필드 | 값 |

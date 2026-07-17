@@ -43,12 +43,18 @@ export const CinematicPrologueScene = memo(function CinematicPrologueScene({
       return;
     }
     fadeAnim.setValue(0);
+    // useNativeDriver 금지(본 페이드 한정) — 네이티브 드라이버는 애니메이션 종료 후 JS 값이 0에
+    // 머물러, 타이핑 완료 등 리렌더 커밋 시 opacity가 0으로 덮여 "검은 화면 후 전체 텍스트"
+    // 깜빡임이 발생했다(2026-07-17 intro 재시작 증상 근본 원인). 700ms 단발 텍스트 페이드라
+    // JS 드라이버 성능 부담 없음.
     const anim = Animated.timing(fadeAnim, {
       toValue: 1,
       duration: Math.max(200, fadeInDurationMs),
-      useNativeDriver: true,
+      useNativeDriver: false,
     });
-    anim.start();
+    anim.start(({ finished }) => {
+      if (finished) fadeAnim.setValue(1);
+    });
     return () => anim.stop();
   }, [pageKey, fadeInEnabled, fadeInDurationMs, fadeAnim]);
 

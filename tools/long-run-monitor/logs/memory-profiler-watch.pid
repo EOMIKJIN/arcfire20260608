@@ -1,8 +1,8 @@
 ﻿{
-    "profileLogcat":  "D:\\arcfire20260607\\tools\\long-run-monitor\\logs\\crash-20260710-141921.log",
-    "auditPid":  26212,
+    "profileLogcat":  "D:\\arcfire20260607\\tools\\long-run-monitor\\logs\\crash-20260717-113112.log",
+    "auditPid":  21768,
     "logcatPid":  0,
-    "startedAt":  "2026-07-10 14:19:24",
+    "startedAt":  "2026-07-17 11:31:14",
     "role":  "retention-audit-only-no-extra-logcat",
     "retentionEveryMin":  60
 }

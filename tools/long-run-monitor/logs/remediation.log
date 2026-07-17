@@ -2230,3 +2230,12 @@ skia-worklet audit: 18/20 -> D:\arcfire20260607\tools\memory-audit\reports\skia-
 [2026-07-13 12:07:01] INFO PSS_SOFT_CEILING pss=943.7 gl=145.9 views=560 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
 [2026-07-13 12:22:23] INFO PSS_SOFT_CEILING pss=934.1 gl=145.9 views=560 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
 [2026-07-13 12:37:44] INFO PSS_SOFT_CEILING pss=935.7 gl=147.9 views=560 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-17 11:31:25] INFO VIEWS_NATIVE_ADVISORY views=556 native_heap=98.3 pss=433.2 gl=135.2 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-17 11:32:12] INVESTIGATION start reason=mem_anomaly
+[2026-07-17 11:32:12] INVESTIGATION alert=[2026-07-10 21:01:05] GL_HARD_CEILING gl=120.9 pss=1075.4 views=561
+[2026-07-17 11:32:12] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260717-113212.log
+[2026-07-17 11:32:14] INVESTIGATION mem from timeline gl=135.2MB pss=433.2MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260717-113212.log
+[2026-07-17 11:32:15] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-07-17 11:32:15] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-07-17 11:32:15] INVESTIGATION done reason=mem_anomaly
+[2026-07-17 11:46:59] INFO VIEWS_NATIVE_ADVISORY views=556 native_heap=125.4 pss=507.2 gl=195.7 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)

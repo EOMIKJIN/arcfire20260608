@@ -14,6 +14,8 @@ import { useArcCoreShadowIdentityStore } from '../../store/arcCoreShadowIdentity
 import { t } from '../../i18n';
 import { ARC_CORE_SHADOW_HOME_BASE_PLANET_ID } from './arcCoreShadowReveal';
 import { shadowSnapshotToCombatStats } from './arcCoreShadowShipSnapshot';
+import { useWaveDefenseStore } from '../../game/waveDefense/waveDefenseStore';
+import { WAVE_DEFENSE_MAX_WAVES } from '../../game/waveDefense/waveDefenseFleet';
 
 export type ArcCoreShadowBossOverride = {
   combatStats: NpcCapitalCombatStats;
@@ -41,6 +43,13 @@ export function resolveArcCoreShadowBossOverride(
 ): ArcCoreShadowBossOverride | null {
   if (combatPlanetId !== ARC_CORE_SHADOW_HOME_BASE_PLANET_ID) return null;
   if (redSlotIndex !== 0) return null;
+
+  // 웨이브 디펜스로 진행 중이면 마지막 웨이브에서만 복제 보스 등장(그 전 웨이브는 범용 침입자) —
+  // 대표님 결정 2026-07-13: 웨이브 전투룰 그대로 재사용, 보스는 최종 웨이브 한정.
+  const wd = useWaveDefenseStore.getState();
+  if (wd.active && wd.planetId === combatPlanetId && wd.waveIndex < WAVE_DEFENSE_MAX_WAVES) {
+    return null;
+  }
 
   const s = useArcCoreShadowIdentityStore.getState();
   const snap = s.shadowShipSnapshot;

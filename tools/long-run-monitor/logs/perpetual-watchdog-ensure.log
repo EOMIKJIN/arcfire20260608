@@ -53,3 +53,9 @@
 [2026-07-10 05:19:21] ENSURE_FAIL watchdog died immediately
 [2026-07-13 08:50:54] ENSURE_FAIL watchdog died immediately
 [2026-07-14 07:48:42] ENSURE_FAIL watchdog died immediately
+[2026-07-17 01:15:13] ENSURE_FAIL watchdog died immediately
+[2026-07-17 02:31:39] ENSURE_FAIL watchdog died immediately
+[2026-07-17 02:32:59] ENSURE_OK watchdog pid=18752
+[2026-07-17 02:40:08] ENSURE_RETRY direct spawn died — trying WMI fallback
+[2026-07-17 02:40:11] ENSURE_FALLBACK_WMI WMI_PID=17668
+[2026-07-17 02:40:12] ENSURE_STARTED watchdog pid=17668 (via WMI)

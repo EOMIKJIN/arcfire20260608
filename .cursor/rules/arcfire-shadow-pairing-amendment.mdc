@@ -24,8 +24,9 @@ alwaysApply: true
 - **유지**: 계정 초기화(purge) 후에도 페어 관계 **유지** (uid=기기 기반 · 대표님 결정 2026-07-13). `arcCoreShadowIdentityStore`는 **ArcCore 세계 축**으로 분류 — `purgeLocalAccountData` 대상 **아님**.
 - **소급**: 기존 유저도 부트 후 백그라운드 1회 페어링 패스 수행 (전 유저 동일 시스템).
 - **본진**: `eternal_throne` (zoneIndex 20 · `mainStageCombatVariant=endgame_boss`) — 승리 시 1회 공개.
+- **진입**: 웨이브 디펜스 엔진(9웨이브, `useWaveDefenseController`)을 그대로 재사용(대표님 결정 2026-07-13). 진입 트리거는 `mainStageCombatVariant`가 `draco_wave`(vega_base) 또는 `endgame_boss`(eternal_throne)인 행성에서 도착+10초 후 자동 시작 — 행성 id 하드코딩 대신 CSV 컬럼 기반. 웨이브 1-8은 기존과 동일한 범용 침입자 함대, **복제 보스·닉네임 공개는 마지막 웨이브(9)에서만** 발동한다.
 - **확장**: 짝 유저 데이터 노출은 `arc_core_shadow_profiles/{uid}` **공개 안전 미러 문서**를 통해서만 확장한다(전체 프로필 직접 참조 금지).
-- **복제 전함 보스 (핵심 플레이)**: 본진 endgame_boss 레드 리드 슬롯에 **짝 유저 기함의 실제 최종 전투 스펙**(스냅샷)이 주입된다. 각 클라이언트는 자기 기함 스냅샷을 부트당 1회 미러에 publish, 짝 스냅샷은 단발 fetch → 로컬 캐시. 전투 경로에서는 zustand 동기 read만(네트워크 금지). 스냅샷 미보유 시 CSV 보스 폴백. 공개 전 네임플레이트는 위장명(`아크코어 근원체`), 공개 후 닉네임.
+- **복제 전함 보스 (핵심 플레이)**: 본진 endgame_boss **마지막 웨이브**의 레드 리드 슬롯에 **짝 유저 기함의 실제 최종 전투 스펙**(스냅샷)이 주입된다. 각 클라이언트는 자기 기함 스냅샷을 부트당 1회 미러에 publish, 짝 스냅샷은 단발 fetch → 로컬 캐시. 전투 경로에서는 zustand 동기 read만(네트워크 금지). 스냅샷 미보유 시 CSV 보스 폴백. 공개 전 네임플레이트는 위장명(`아크코어 근원체`), 공개 후 닉네임.
 - **배정규칙 로드맵**: 현재 1:1 페어 고정. 추후 **토너먼트 규칙**(유저 전함이 아크코어 보스 자리를 랭킹으로 차지)으로 업그레이드 — 상세 시스템 별도 개발.
 
 ## 3. 정본 코드
@@ -35,6 +36,7 @@ alwaysApply: true
 | 페어링·미러 (Firestore) | `src/firebase/arcCoreShadowPairing.ts` |
 | 로컬 캐시 | `src/store/arcCoreShadowIdentityStore.ts` |
 | 전함 스냅샷 (publish·parse) | `src/arcCore/shadow/arcCoreShadowShipSnapshot.ts` — 스탯 파이프라인은 `PlanetEdenRaidTestLayer.resolvePlayerFlagshipCombatBinding` 과 동기 유지 필수 |
-| 보스 복제 주입 | `src/arcCore/shadow/arcCoreShadowBossClone.ts` → `initAgents` red slot 0 |
-| 패스·공개 | `src/arcCore/shadow/runArcCoreShadowPairingPass.ts` · `arcCoreShadowReveal.ts` |
+| 보스 복제 주입 | `src/arcCore/shadow/arcCoreShadowBossClone.ts` → `initAgents` red slot 0(마지막 웨이브 전용 게이트 포함) |
+| 패스·공개 | `src/arcCore/shadow/runArcCoreShadowPairingPass.ts` · `arcCoreShadowReveal.ts`(리빌도 마지막 웨이브 승리 게이트) |
+| 웨이브 디펜스 진입 트리거 | `app/(game)/planet.tsx`(`mainStageCombatVariant` 판정) → `src/game/waveDefense/useWaveDefenseController.ts` |
 | 본진 상수 | `ARC_CORE_SHADOW_HOME_BASE_PLANET_ID = 'eternal_throne'` |

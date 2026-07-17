@@ -112,6 +112,7 @@ export {
   isCapitalRealtimeCombatOrbitPlanet,
 } from '../../combat/capitalRealtimeCombatGate';
 import { getWaveFleetSeedOverride, useWaveDefenseStore } from '../../game/waveDefense/waveDefenseStore';
+import { WAVE_DEFENSE_MAX_WAVES } from '../../game/waveDefense/waveDefenseFleet';
 
 type StageFleetSeedSlot = {
   team: 'red' | 'blue' | 'orange';
@@ -1693,7 +1694,7 @@ function randomDuelSpawnVariant(): DuelSpawnVariant {
 
 function resolveDuelSpawnVariantForPlanet(planetId: string): DuelSpawnVariant {
   const variantKey = resolvePlanetMainStageCombatVariant(planetId);
-  if (variantKey === 'draco_wave') return 0;
+  if (variantKey === 'draco_wave' || variantKey === 'endgame_boss') return 0;
   return randomDuelSpawnVariant();
 }
 
@@ -2953,10 +2954,18 @@ export function usePlanetEdenRaidSim(
               playerWon: winnerTeam === 'blue',
             });
             // 아크코어 본진(endgame_boss) 격파 — 섀도우 정체 공개 (전투당 1회 · 본진 외 즉시 return)
-            maybeTriggerArcCoreShadowRevealOnCombatVictory(
-              combatPlanetId,
-              winnerTeam === 'blue',
-            );
+            // 웨이브 디펜스 진행 중이면 마지막 웨이브 승리 시에만 공개(중간 웨이브 클리어로 조기 공개 방지)
+            const wdForReveal = useWaveDefenseStore.getState();
+            const isFinalWaveOrNonWave =
+              !wdForReveal.active
+              || wdForReveal.planetId !== combatPlanetId
+              || wdForReveal.waveIndex >= WAVE_DEFENSE_MAX_WAVES;
+            if (isFinalWaveOrNonWave) {
+              maybeTriggerArcCoreShadowRevealOnCombatVictory(
+                combatPlanetId,
+                winnerTeam === 'blue',
+              );
+            }
           }
         }
         waveOutcomeAwardedRef.current = true;

@@ -1,6 +1,6 @@
 // ============================================================
 // 웨이브 디펜스 오케스트레이터 훅 — planet.tsx(허브)에서 사용.
-// 트리거(테스트베드 도착+10초) → 웨이브1 → (red 전멸=cleared) → 다음 웨이브
+// 트리거(웨이브 디펜스 행성 도착+10초) → 웨이브1 → (red 전멸=cleared) → 다음 웨이브
 //   → 9웨이브 클리어/플레이어 격파(ended) → 오퍼레이터 종료 대사.
 // sim 루프는 전멸/격파 시 store.phase 만 갱신; 실제 진행 결정은 본 컨트롤러가 담당.
 // ============================================================
@@ -9,7 +9,7 @@ import { useEffect, useRef } from 'react';
 import { buildWaveDefenseEnemyFleet, WAVE_DEFENSE_MAX_WAVES } from './waveDefenseFleet';
 import { useWaveDefenseStore } from './waveDefenseStore';
 
-/** 테스트: 도착(인트로 종료) 후 침공 시작까지 지연 */
+/** 도착(인트로 종료) 후 침공 시작까지 지연 */
 const WAVE_DEFENSE_TRIGGER_DELAY_MS = 10_000;
 /** 웨이브 전환(전멸 후 다음 웨이브 준비) 간격 */
 const WAVE_DEFENSE_BETWEEN_WAVE_MS = 2600;
@@ -17,8 +17,8 @@ const WAVE_DEFENSE_BETWEEN_WAVE_MS = 2600;
 type WaveDefenseControllerArgs = {
   planetId: string | null;
   systemId: string | null;
-  /** 웨이브 테스트 베드 행성 여부(예: vega_base) */
-  isTestBed: boolean;
+  /** 웨이브 디펜스 활성 행성 여부(CSV `mainStageCombatVariant` 기준 — 예: vega_base=draco_wave, eternal_throne=endgame_boss) */
+  waveDefenseEnabled: boolean;
   /** 인트로/착륙 대사 종료 여부(대사 표시 중이면 false) */
   introDone: boolean;
   routeFocused: boolean;
@@ -28,7 +28,7 @@ type WaveDefenseControllerArgs = {
 };
 
 export function useWaveDefenseController(args: WaveDefenseControllerArgs): void {
-  const { planetId, systemId, isTestBed, introDone, routeFocused, appActive, onRunEnded } = args;
+  const { planetId, systemId, waveDefenseEnabled, introDone, routeFocused, appActive, onRunEnded } = args;
   const active = useWaveDefenseStore((s) => s.active);
   const phase = useWaveDefenseStore((s) => s.phase);
   const waveIndex = useWaveDefenseStore((s) => s.waveIndex);
@@ -50,9 +50,9 @@ export function useWaveDefenseController(args: WaveDefenseControllerArgs): void 
     };
   }, [planetId]);
 
-  // 트리거: 테스트베드 도착 + 인트로 종료 → 10초 후 웨이브1 시작 (방문당 1회)
+  // 트리거: 웨이브 디펜스 행성 도착 + 인트로 종료 → 10초 후 웨이브1 시작 (방문당 1회)
   useEffect(() => {
-    if (!isTestBed || !planetId || active || ranThisVisitRef.current) return;
+    if (!waveDefenseEnabled || !planetId || active || ranThisVisitRef.current) return;
     if (!routeFocused || !appActive || !introDone) return;
     if (triggerTimerRef.current) return;
     triggerTimerRef.current = setTimeout(() => {
@@ -70,7 +70,7 @@ export function useWaveDefenseController(args: WaveDefenseControllerArgs): void 
         triggerTimerRef.current = null;
       }
     };
-  }, [isTestBed, planetId, systemId, active, routeFocused, appActive, introDone]);
+  }, [waveDefenseEnabled, planetId, systemId, active, routeFocused, appActive, introDone]);
 
   // 웨이브 클리어(red 전멸) → 다음 웨이브 또는 전체 종료
   useEffect(() => {

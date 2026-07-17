@@ -1,0 +1,54 @@
+[2026-07-17 11:31:15] monitor start package=com.arcfire.online interval=15m rules=v2(hub_activation_excluded)
+[2026-07-17 11:31:15] meminfo -> D:\arcfire20260607\tools\long-run-monitor\logs\meminfo-20260717-113115.log
+[2026-07-17 11:31:15] timeline -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-timeline.csv
+[2026-07-17 11:31:15] alerts -> D:\arcfire20260607\tools\long-run-monitor\logs\mem-alerts.log
+[2026-07-17 11:31:15] FOCUS: hub Skia orbit + nebula + combat ??restart only active hub GL>=80MB or 3x dGL>=8MB
+[2026-07-17 11:31:21] snap PSS=433.2MB GL=135.2MB views=556 dPSS= dGL= 
+[2026-07-17 11:46:56] snap PSS=507.2MB GL=195.7MB views=556 dPSS= dGL= 
+[2026-07-17 12:02:20] WARN: com.arcfire.online not running
+[2026-07-17 12:17:23] snap PSS=726.3MB GL=106.1MB views=47 dPSS= dGL= 
+[2026-07-17 12:32:50] snap PSS=668.2MB GL=30.4MB views=369 dPSS= dGL= 
+[2026-07-17 12:48:22] snap PSS=686.7MB GL=30.4MB views=369 dPSS=18.5 dGL=0 
+[2026-07-17 13:03:45] snap PSS=703.8MB GL=31MB views=394 dPSS=17.1 dGL=0.6 
+[2026-07-17 13:19:08] snap PSS=685.8MB GL=32.1MB views=369 dPSS=-18 dGL=1.1 
+[2026-07-17 13:34:31] snap PSS=678.8MB GL=34.4MB views=370 dPSS=-7 dGL=2.3 
+[2026-07-17 13:49:57] snap PSS=700.4MB GL=33MB views=381 dPSS=21.6 dGL=-1.4 
+[2026-07-17 14:05:21] snap PSS=674.9MB GL=32.4MB views=370 dPSS=-25.5 dGL=-0.6 
+[2026-07-17 14:20:46] snap PSS=615.8MB GL=34.5MB views=370 dPSS=-59.1 dGL=2.1 
+[2026-07-17 14:36:12] snap PSS=625MB GL=34.5MB views=366 dPSS=9.2 dGL=0 
+[2026-07-17 14:51:37] snap PSS=614.6MB GL=32.5MB views=370 dPSS=-10.4 dGL=-2 
+[2026-07-17 15:07:01] snap PSS=610.2MB GL=28.4MB views=364 dPSS=-4.4 dGL=-4.1 
+[2026-07-17 15:22:25] snap PSS=617.3MB GL=32.5MB views=362 dPSS=7.1 dGL=4.1 
+[2026-07-17 15:37:48] snap PSS=611.5MB GL=34.5MB views=364 dPSS=-5.8 dGL=2 
+[2026-07-17 15:53:12] snap PSS=623.2MB GL=32.5MB views=364 dPSS=11.7 dGL=-2 
+[2026-07-17 16:08:36] snap PSS=637.5MB GL=34.5MB views=364 dPSS=14.3 dGL=2 
+[2026-07-17 16:24:03] snap PSS=643.7MB GL=32.9MB views=389 dPSS=6.2 dGL=-1.6 
+[2026-07-17 16:39:26] snap PSS=634.8MB GL=34.7MB views=357 dPSS=-8.9 dGL=1.8 
+[2026-07-17 16:54:50] snap PSS=638.2MB GL=32.7MB views=364 dPSS=3.4 dGL=-2 
+[2026-07-17 17:10:15] snap PSS=630MB GL=32.7MB views=364 dPSS=-8.2 dGL=0 
+[2026-07-17 17:25:40] snap PSS=633.2MB GL=32.7MB views=357 dPSS=3.2 dGL=0 
+[2026-07-17 17:41:01] snap PSS=648.5MB GL=35.3MB views=389 dPSS=15.3 dGL=2.6 
+[2026-07-17 17:56:25] snap PSS=621.6MB GL=32.7MB views=364 dPSS=-26.9 dGL=-2.6 
+[2026-07-17 18:11:49] snap PSS=650.7MB GL=34.8MB views=376 dPSS=29.1 dGL=2.1 
+[2026-07-17 18:27:12] snap PSS=641MB GL=34.7MB views=366 dPSS=-9.7 dGL=-0.1 
+[2026-07-17 18:42:36] snap PSS=652.9MB GL=37.3MB views=395 dPSS=11.9 dGL=2.6 
+[2026-07-17 18:58:01] snap PSS=649.9MB GL=32.8MB views=373 dPSS=-3 dGL=-4.5 
+[2026-07-17 19:13:26] snap PSS=623.7MB GL=32.7MB views=370 dPSS=-26.2 dGL=-0.1 
+[2026-07-17 19:28:51] snap PSS=619MB GL=32.7MB views=370 dPSS=-4.7 dGL=0 
+[2026-07-17 19:44:16] snap PSS=622.1MB GL=34.7MB views=366 dPSS=3.1 dGL=2 
+[2026-07-17 19:59:42] snap PSS=644.9MB GL=34.9MB views=391 dPSS=22.8 dGL=0.2 
+[2026-07-17 20:15:07] snap PSS=541MB GL=8.4MB views=99 dPSS= dGL= 
+[2026-07-17 20:30:37] snap PSS=556.3MB GL=30.4MB views=53 dPSS= dGL= 
+[2026-07-17 20:46:06] snap PSS=518.4MB GL=30.4MB views=56 dPSS= dGL= 
+[2026-07-17 21:01:32] snap PSS=551.9MB GL=36.2MB views=133 dPSS= dGL= 
+[2026-07-17 21:16:58] snap PSS=493.6MB GL=8.3MB views=99 dPSS= dGL= 
+[2026-07-17 21:32:22] snap PSS=497.2MB GL=28.9MB views=53 dPSS= dGL= 
+[2026-07-17 21:47:47] snap PSS=491.1MB GL=28.9MB views=53 dPSS=-6.1 dGL=0 
+[2026-07-17 22:03:11] snap PSS=488.3MB GL=28.9MB views=53 dPSS=-2.8 dGL=0 
+[2026-07-17 22:18:36] snap PSS=500.8MB GL=30.8MB views=53 dPSS=12.5 dGL=1.9 
+[2026-07-17 22:34:00] snap PSS=493MB GL=30.8MB views=53 dPSS=-7.8 dGL=0 
+[2026-07-17 22:49:24] snap PSS=495MB GL=30.8MB views=53 dPSS=2 dGL=0 
+[2026-07-17 23:04:47] snap PSS=492MB GL=30.8MB views=53 dPSS=-3 dGL=0 
+[2026-07-17 23:20:11] snap PSS=469.4MB GL=30.8MB views=53 dPSS=-22.6 dGL=0 
+[2026-07-17 23:35:36] snap PSS=472.4MB GL=30.8MB views=53 dPSS=3 dGL=0 
+[2026-07-17 23:51:02] snap PSS=464.5MB GL=30.8MB views=53 dPSS=-7.9 dGL=0 
