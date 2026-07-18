@@ -5,6 +5,7 @@
 import { bootstrapAccountData, persistAccountDataBundle } from '../account/accountLifecycle';
 import { runArcCoreShadowPairingPass } from '../arcCore/shadow/runArcCoreShadowPairingPass';
 import { checkNicknameAvailable, createUserDocOnNicknameConfirm } from '../firebase/firestore';
+import { checkNicknameRegistry, reserveNickname } from '../firebase/nicknameRegistry';
 import { syncUserDataWithServer } from '../firebase/userDataSync';
 import {
   isRemoteNetworkTimeoutError,
@@ -87,6 +88,18 @@ export async function completePilotRegistration(uid: string, nickname: string): 
   );
   if (!available) {
     throw new PilotRegistrationError('nickname_taken');
+  }
+
+  // 닉네임 예약 확정(create-only 문서) — 동시 가입 레이스 최종 차단.
+  // 오프라인이면 예약을 미루고 진행(정기 동기화의 소급 예약이 재시도).
+  const reserved = await runRemoteRegistrationStep('reserve_nickname', () =>
+    reserveNickname(trimmedNick, uid),
+  );
+  if (!reserved) {
+    const state = await checkNicknameRegistry(trimmedNick, { excludeUid: uid });
+    if (state === 'taken') {
+      throw new PilotRegistrationError('nickname_taken');
+    }
   }
 
   const professionId = await resolveOnboardingProfessionId();

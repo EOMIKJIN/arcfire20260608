@@ -2979,3 +2979,23 @@ ref=tools/long-run-monitor/logs/soak-worklet-mirror-20260621.json
 [2026-07-17 11:31:25] VIEWS_NATIVE_ADVISORY views=556 native_heap=98.3 pss=433.2 gl=135.2 (node/list retention ??pre-hardceiling early warn)
 [2026-07-17 11:32:15] INVESTIGATION_TRIGGERED mem_anomaly
 [2026-07-17 11:46:59] VIEWS_NATIVE_ADVISORY views=556 native_heap=125.4 pss=507.2 gl=195.7 (node/list retention ??pre-hardceiling early warn)
+[2026-07-18 08:00:00] DAILY_8AM_REPORT 2026-07-18 08:00:00 KST
+[2026-07-18 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260718-0800.md verdict=OK
+[2026-07-18 08:02:04] DAILY_8AM_REPORT 2026-07-18 08:02:04 KST
+[2026-07-18 08:02:04] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260718-0800.md verdict=OK
+[2026-07-18 08:04:05] DAILY_8AM_REPORT 2026-07-18 08:04:05 KST
+[2026-07-18 08:04:05] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260718-0800.md verdict=OK
+[2026-07-18 08:06:06] DAILY_8AM_REPORT 2026-07-18 08:06:06 KST
+[2026-07-18 08:06:06] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260718-0800.md verdict=OK
+[2026-07-18 08:08:07] DAILY_8AM_REPORT 2026-07-18 08:08:07 KST
+[2026-07-18 08:08:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260718-0800.md verdict=OK
+[2026-07-18 08:10:08] DAILY_8AM_REPORT 2026-07-18 08:10:08 KST
+[2026-07-18 08:10:08] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260718-0800.md verdict=OK
+[2026-07-18 08:12:10] DAILY_8AM_REPORT 2026-07-18 08:12:10 KST
+[2026-07-18 08:12:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260718-0800.md verdict=OK
+[2026-07-18 08:14:10] DAILY_8AM_REPORT 2026-07-18 08:14:10 KST
+[2026-07-18 08:14:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260718-0800.md verdict=OK
+[2026-07-18 12:41:38] VIEWS_NATIVE_ADVISORY views=549 native_heap=259.5 pss=764.6 gl=163.6 (node/list retention ??pre-hardceiling early warn)
+[2026-07-18 12:57:04] VIEWS_NATIVE_ADVISORY views=549 native_heap=268 pss=778.8 gl=163.6 (node/list retention ??pre-hardceiling early warn)
+[2026-07-18 13:12:29] VIEWS_NATIVE_ADVISORY views=549 native_heap=261.2 pss=775.4 gl=163.6 (node/list retention ??pre-hardceiling early warn)
+[2026-07-19 00:00:21] PSS_SOFT_CEILING pss=824 gl=133.7 views=550 native_reclaim_advisory

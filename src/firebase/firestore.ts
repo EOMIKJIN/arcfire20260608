@@ -1,19 +1,14 @@
 import firestore from '@react-native-firebase/firestore';
 import { Player } from '../types';
 import {
-  addDoc,
-  battlesCollectionRef,
   deleteDoc,
   getDocFromCache,
   getDocFromServer,
-  getDocs,
-  limit,
-  query,
   setDoc,
   userDocRef,
-  usersCollectionRef,
-  where,
 } from './firestoreRefs';
+import { ensureFirebaseAnonymousAuth } from './firebaseAnonymousAuth';
+import { checkNicknameRegistry } from './nicknameRegistry';
 
 /** 재설치 등 — 로컬·캐시 힌트 있을 때 서버 복구 상한(ms) */
 const CLOUD_PLAYER_RESTORE_MS = 2_000;
@@ -23,65 +18,6 @@ const ADMIN_UID_ALLOWLIST = new Set(
     .map((v) => v.trim())
     .filter(Boolean),
 );
-
-export interface FirestoreUserProfileUpsert {
-  uid: string;
-  nickname: string;
-  createdAt: number;
-  lastLogin: number;
-  deviceModel: string;
-  role?: 'admin' | 'user';
-}
-
-export interface FirestoreBattleResultInput {
-  uid: string;
-  nickname: string;
-  win: boolean;
-  enemyType: string;
-  durationSec: number;
-  participantCount: number;
-  finishedAt: number;
-}
-
-export async function upsertUserProfileToFirestore(payload: FirestoreUserProfileUpsert): Promise<void> {
-  if (!payload.uid) return;
-  const safeNickname = payload.nickname.trim() || 'Unknown';
-  try {
-    await setDoc(
-      userDocRef(payload.uid),
-      {
-        uid: payload.uid,
-        nickname: safeNickname,
-        role: payload.role ?? 'user',
-        createdAt: payload.createdAt,
-        lastLogin: payload.lastLogin,
-        deviceModel: payload.deviceModel,
-        updatedAt: Date.now(),
-      },
-      { merge: true },
-    );
-  } catch (e) {
-    console.warn('[firestore] upsertUserProfileToFirestore skipped (offline/queued):', e);
-  }
-}
-
-export async function createBattleResultLogToFirestore(input: FirestoreBattleResultInput): Promise<void> {
-  if (!input.uid) return;
-  try {
-    await addDoc(battlesCollectionRef(), {
-      uid: input.uid,
-      nickname: input.nickname.trim() || 'Unknown',
-      win: input.win,
-      enemyType: input.enemyType,
-      durationSec: input.durationSec,
-      participantCount: input.participantCount,
-      finishedAt: input.finishedAt,
-      createdAt: Date.now(),
-    });
-  } catch (e) {
-    console.warn('[firestore] createBattleResultLogToFirestore skipped (offline/queued):', e);
-  }
-}
 
 function snapExists(snap: { exists: boolean | (() => boolean) }): boolean {
   return typeof snap.exists === 'function' ? snap.exists() : !!snap.exists;
@@ -151,6 +87,9 @@ export async function tryRestorePlayerFromCloud(
       return { kind: 'no_cloud_account' };
     }
 
+    // 서버 read 전 Anonymous Auth 확보 — rules(request.auth != null) 통과 필수.
+    // 재부팅 이후에는 세션이 영속되어 즉시 반환된다(최초 1회만 sign-in 지연).
+    await ensureFirebaseAnonymousAuth();
     const serverSnap = await getServerSnapWithTimeout(ref, CLOUD_PLAYER_RESTORE_MS);
     if (!serverSnap || !snapExists(serverSnap)) return { kind: 'no_cloud_account' };
     const fromServer = parsePlayerFromSnap(serverSnap);
@@ -176,26 +115,19 @@ export type CheckNicknameAvailableOptions = {
   excludeUid?: string;
 };
 
+/**
+ * 닉네임 사용 가능 확인 — nicknames 예약 레지스트리 단발 get.
+ * (종전 users 컬렉션 query 방식은 rules 열거 차단·레이스 문제로 폐기 · 10만 유저 대비)
+ * 오프라인에서는 로컬 플레이를 막지 않는다(예약은 온라인 복귀 시 최종 반영).
+ */
 export async function checkNicknameAvailable(
   nickname: string,
   opts?: CheckNicknameAvailableOptions,
 ): Promise<boolean> {
   const n = nickname.trim();
   if (!n) return false;
-  const excludeUid = opts?.excludeUid?.trim() || '';
-  try {
-    const snap = await getDocs(
-      query(usersCollectionRef(), where('nickname', '==', n), limit(1)),
-    );
-    if (snap.empty) return true;
-    if (!excludeUid) return false;
-    // 본인 uid 문서만 매칭(초기화 직후 캐시 잔존·deleteDoc 대기)이면 재사용 허용.
-    return snap.docs.every((docSnap) => docSnap.id === excludeUid);
-  } catch (e) {
-    // 오프라인에서는 로컬 플레이를 막지 않는다(중복 검증은 온라인 복귀 시 최종 반영).
-    console.warn('[firestore] checkNicknameAvailable failed (offline fallback allow):', e);
-    return true;
-  }
+  const state = await checkNicknameRegistry(n, { excludeUid: opts?.excludeUid });
+  return state !== 'taken';
 }
 
 export async function registerNickname(_nickname: string): Promise<void> {
@@ -204,13 +136,14 @@ export async function registerNickname(_nickname: string): Promise<void> {
 
 export function isAdminDeviceUid(uid: string): boolean {
   if (!uid) return false;
-  if (uid === 'local-guest') return true;
+  // 정식 출시: 'local-guest' 폴백 uid 자동 admin 금지 — env allowlist만
   return ADMIN_UID_ALLOWLIST.has(uid);
 }
 
 export async function deleteUserCloudSave(uid: string): Promise<void> {
   if (!uid) return;
   try {
+    await ensureFirebaseAnonymousAuth();
     await deleteDoc(userDocRef(uid));
   } catch (e) {
     console.warn('[firestore] deleteUserCloudSave failed (offline/queued):', e);
@@ -226,6 +159,7 @@ export async function createUserDocOnNicknameConfirm(
   const safeNickname = nickname.trim() || 'Unknown';
   const professionId = options?.professionId?.trim();
   try {
+    await ensureFirebaseAnonymousAuth();
     await setDoc(
       userDocRef(uid),
       {

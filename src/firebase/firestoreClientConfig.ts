@@ -52,7 +52,6 @@ export function resolveUserType(uid: string, nickname: string | null | undefined
   if (ADMIN_UID_ALLOWLIST.has(uid)) return 'admin';
   const nick = (nickname ?? '').trim();
   if (nick === ADMIN_NICKNAME) return 'admin';
-  if (uid === 'local-guest' || uid.toLowerCase() === 'local-guest') return 'admin';
-  if (uid.startsWith('local-') && uid.toLowerCase().includes('guest')) return 'admin';
+  // 정식 출시: 'local-guest' 등 폴백 uid 자동 admin 판정 금지 (allowlist·관리자 닉네임만)
   return 'user';
 }

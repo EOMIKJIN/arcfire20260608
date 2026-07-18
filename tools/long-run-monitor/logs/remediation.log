@@ -2239,3 +2239,7 @@ skia-worklet audit: 18/20 -> D:\arcfire20260607\tools\memory-audit\reports\skia-
 [2026-07-17 11:32:15] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
 [2026-07-17 11:32:15] INVESTIGATION done reason=mem_anomaly
 [2026-07-17 11:46:59] INFO VIEWS_NATIVE_ADVISORY views=556 native_heap=125.4 pss=507.2 gl=195.7 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-18 12:41:38] INFO VIEWS_NATIVE_ADVISORY views=549 native_heap=259.5 pss=764.6 gl=163.6 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-18 12:57:04] INFO VIEWS_NATIVE_ADVISORY views=549 native_heap=268 pss=778.8 gl=163.6 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-18 13:12:29] INFO VIEWS_NATIVE_ADVISORY views=549 native_heap=261.2 pss=775.4 gl=163.6 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-19 00:00:21] INFO PSS_SOFT_CEILING pss=824 gl=133.7 views=550 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)

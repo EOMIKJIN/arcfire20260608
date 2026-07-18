@@ -41,7 +41,7 @@ import { ArcOverlayHost } from '../src/ui/overlay/ArcOverlayHost';
 import { IngameDialogHost } from '../src/game/ingameDialog/IngameDialogHost';
 import { LevelUpOverlayBridge } from '../src/ui/overlay/LevelUpOverlayBridge';
 import { useArcOverlayStore } from '../src/ui/overlay/arcOverlayStore';
-import { initializeFirebase, logAppOpen } from '../utils/logger';
+import { initializeFirebase, logAppOpen } from '../src/utils/logger';
 import { cancelScheduledUserCloudSync, scheduleUserCloudSync } from '../src/firebase/userCloudSyncSchedule';
 import { resolveAppVersion, syncUserDataWithServer } from '../src/firebase/userDataSync';
 import { ensureArcCoreCollectionSeeded } from '../src/firebase/arccoreFirestoreBootstrap';

@@ -1,19 +1,91 @@
 rules_version = '2';
 
+// ============================================================
+// Arcfire — 정식 출시 rules (2026-07-18 전면 교체)
+//
+// 인증 모델: Firebase Anonymous Auth 필수(request.auth != null).
+//   게임 uid = 기기 스코프 비공개 식별자(64bit 기기 id · 추측 불가).
+//   서버리스 헌법(Cloud Functions 없음)에서의 보호 축:
+//     1) 미인증 요청 전면 거부 (봇·REST 무단 접근 차단)
+//     2) 컬렉션 list(열거) 전면 차단 — uid를 모르면 문서에 도달 불가
+//     3) 미사용 경로 default deny
+//   관리자 CLI는 Admin SDK(서비스 계정)로 rules를 우회한다.
+//
+// ⚠️ 배포: firebase deploy --only firestore:rules
+// ⚠️ 배포 전 클라이언트에 Anonymous Auth 게이팅이 포함된 빌드가 먼저 배포되어야 한다.
+// ============================================================
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // 게임 저장 백업 — 본인 uid만 (Admin SDK CLI는 rules 우회)
-    match /users/{uid}/game_save_backups/{backupId} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+    function authed() {
+      return request.auth != null;
+    }
 
-      match /payload_chunks/{chunkId} {
-        allow read, write: if request.auth != null && request.auth.uid == uid;
+    // 플레이어 정본 프로필 — get만 허용(list 차단 = uid 열거 불가)
+    match /users/{uid} {
+      allow get: if authed();
+      allow list: if false;
+      allow create, update, delete: if authed();
+
+      // 게임 저장 백업 — 부모 uid 경로를 알아야만 접근 가능
+      match /game_save_backups/{backupId} {
+        allow get, list: if authed();
+        allow create, update, delete: if authed();
+
+        match /payload_chunks/{chunkId} {
+          allow get, list: if authed();
+          allow create, update, delete: if authed();
+        }
       }
     }
 
-    // 기존 Console 정책 유지 — RTDB database.rules.json 과 별도
-    match /{document=**} {
-      allow read, write: if true;
+    // 닉네임 예약 — docId = sha256(정규화 닉네임), 본문 uidHash만(평문 없음)
+    // create-only: 동시 가입 레이스에서도 중복 확정 차단. delete 금지(선점 해제 공격 차단).
+    match /nicknames/{nicknameKey} {
+      allow get: if authed();
+      allow list: if false;
+      allow create: if authed()
+        && request.resource.data.keys().hasOnly(['uidHash', 'reservedAt'])
+        && request.resource.data.uidHash is string;
+      allow update: if authed()
+        && request.resource.data.uidHash == resource.data.uidHash;
+      allow delete: if false;
     }
+
+    // 아크코어 전역 제어(3문서 고정) — 시드는 클라이언트 최초 1회 merge
+    match /arccore/{docId} {
+      allow get: if authed();
+      allow list: if false;
+      allow create, update: if authed();
+      allow delete: if false;
+    }
+
+    // 섀도우 페어링 — 페어 문서는 생성 후 불변(변조·해제 공격 차단)
+    match /arc_core_shadow_pairs/{uid} {
+      allow get: if authed();
+      allow list: if false;
+      allow create: if authed()
+        && request.resource.data.keys().hasOnly(['uid', 'shadowUid', 'pairedAt'])
+        && request.resource.data.uid == uid
+        && request.resource.data.shadowUid is string;
+      allow update, delete: if false;
+    }
+
+    // 섀도우 대기열 — 샤딩 슬롯(waiting_0..7 + 레거시 waiting)
+    match /arc_core_shadow_pool/{slotId} {
+      allow get: if authed();
+      allow list: if false;
+      allow create, update, delete: if authed();
+    }
+
+    // 섀도우 공개 미러 — 전함 스냅샷·공개 안전 필드만
+    match /arc_core_shadow_profiles/{uid} {
+      allow get: if authed();
+      allow list: if false;
+      allow create, update: if authed();
+      allow delete: if false;
+    }
+
+    // 그 외 모든 경로(battles 등 폐기 컬렉션 포함) — default deny
   }
 }

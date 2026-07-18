@@ -1,5 +1,7 @@
 // ============================================================
-// Firebase Anonymous Auth — RTDB dailyKpi write 전용 (세션 1회)
+// Firebase Anonymous Auth — Firestore(rules request.auth) · RTDB 공용 (세션 1회)
+// 정식 출시 rules는 인증 없는 요청을 전면 거부하므로, 모든 클라우드 read/write 전에
+// ensureFirebaseAnonymousAuth()를 통과시킨다(세션 영속 — 최초 1회만 sign-in 비용).
 // tick·렌더·거래 hot path 금지 · InteractionManager 지연 warm-up
 // ============================================================
 

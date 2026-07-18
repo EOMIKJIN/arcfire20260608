@@ -1,9 +1,6 @@
 import analytics from '@react-native-firebase/analytics';
 import firebaseApp from '@react-native-firebase/app';
-import { createBattleResultLogToFirestore } from '../src/firebase/firestore';
-import { scheduleUserCloudSync } from '../src/firebase/userCloudSyncSchedule';
-import { configureFirestorePersistence } from '../src/firebase/userDataSync';
-import { usePlayerStore } from '../src/store/playerStore';
+import { configureFirestorePersistence } from '../firebase/userDataSync';
 
 type AnalyticsValue = string | number | boolean | null | undefined;
 
@@ -44,28 +41,19 @@ export async function logAppOpen(): Promise<void> {
   await logEvent('app_open');
 }
 
+/**
+ * 전투 결과 Analytics 이벤트 — Firestore `battles` 로그 체인은 정식 출시 정리에서 폐기
+ * (호출부 없는 데드 코드 + rules default deny 대상).
+ */
 export async function logBattleResult(
   win: boolean,
   enemyType: string,
   duration: number,
 ): Promise<void> {
   const durationSec = Math.max(0, Math.round(duration));
-  await logEvent('pvp_battle_result', {
+  await logEvent('battle_result', {
     win,
     enemy_type: enemyType,
     duration_sec: durationSec,
   });
-
-  const player = usePlayerStore.getState().player;
-  if (!player?.uid) return;
-  await createBattleResultLogToFirestore({
-    uid: player.uid,
-    nickname: player.nickname?.trim() || 'Unknown',
-    win,
-    enemyType,
-    durationSec,
-    participantCount: 20,
-    finishedAt: Date.now(),
-  });
-  scheduleUserCloudSync();
 }

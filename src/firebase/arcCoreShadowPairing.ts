@@ -7,8 +7,9 @@
 //   - 짝 유저 데이터 읽기는 단발 getDoc(공개 안전 필드)만
 //
 // 구조:
-//   arc_core_shadow_pool/waiting        — 대기 유저 1명 {uid, enqueuedAt}
-//   arc_core_shadow_pairs/{uid}         — {uid, shadowUid, pairedAt}
+//   arc_core_shadow_pool/waiting_{0..7} — 샤딩 대기 슬롯 {uid, enqueuedAt} (경합 분산)
+//   arc_core_shadow_pool/waiting        — 레거시 단일 슬롯(스캔·소진 전용, 신규 등록 금지)
+//   arc_core_shadow_pairs/{uid}         — {uid, shadowUid, pairedAt} · rules상 생성 후 불변
 //   (양방향: A→B 페어 확정 시 B→A 문서도 동시 기록)
 // ============================================================
 
@@ -19,6 +20,7 @@ import {
   runTransaction,
   setDoc,
 } from '@react-native-firebase/firestore';
+import { ensureFirebaseAnonymousAuth } from './firebaseAnonymousAuth';
 import { USERS_COLLECTION } from './firestoreRefs';
 import type { ArcCoreShadowShipSnapshot } from '../arcCore/shadow/arcCoreShadowShipSnapshot';
 
@@ -26,7 +28,22 @@ export const ARC_CORE_SHADOW_PAIRS_COLLECTION = 'arc_core_shadow_pairs';
 export const ARC_CORE_SHADOW_POOL_COLLECTION = 'arc_core_shadow_pool';
 /** 공개 안전 미러 — 짝 유저 전함 스냅샷·닉네임만 (전체 프로필 직접 참조 금지 · §16-A) */
 export const ARC_CORE_SHADOW_PROFILES_COLLECTION = 'arc_core_shadow_profiles';
-const SHADOW_POOL_WAITING_DOC_ID = 'waiting';
+/** 레거시 단일 대기 문서 — 마이그레이션 스캔 전용(신규 등록 금지) */
+const SHADOW_POOL_LEGACY_WAITING_DOC_ID = 'waiting';
+/**
+ * 대기열 샤딩 — 단일 문서(waiting) 트랜잭션 경합 제거 (10만 유저·출시 스파이크 대비).
+ * Firestore 단일 문서 지속 쓰기 한계(~1/s)를 8개 슬롯으로 분산한다.
+ */
+const SHADOW_POOL_SHARD_COUNT = 8;
+
+function shadowPoolShardIndexForUid(uid: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < uid.length; i += 1) {
+    h ^= uid.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return Math.abs(h) % SHADOW_POOL_SHARD_COUNT;
+}
 
 export type ArcCoreShadowPairingResult =
   | { status: 'paired'; shadowUid: string; pairedAtMs: number }
@@ -36,8 +53,12 @@ function pairDocRef(uid: string) {
   return doc(getFirestore(), ARC_CORE_SHADOW_PAIRS_COLLECTION, uid);
 }
 
-function waitingDocRef() {
-  return doc(getFirestore(), ARC_CORE_SHADOW_POOL_COLLECTION, SHADOW_POOL_WAITING_DOC_ID);
+function waitingShardDocRef(shardIndex: number) {
+  return doc(getFirestore(), ARC_CORE_SHADOW_POOL_COLLECTION, `waiting_${shardIndex}`);
+}
+
+function legacyWaitingDocRef() {
+  return doc(getFirestore(), ARC_CORE_SHADOW_POOL_COLLECTION, SHADOW_POOL_LEGACY_WAITING_DOC_ID);
 }
 
 function parsePairSnap(data: Record<string, unknown> | undefined): {
@@ -59,6 +80,7 @@ export async function fetchExistingArcCoreShadowPair(
 ): Promise<{ shadowUid: string; pairedAtMs: number } | null> {
   const trimmed = uid.trim();
   if (!trimmed) return null;
+  await ensureFirebaseAnonymousAuth();
   const snap = await getDoc(pairDocRef(trimmed));
   if (!snap.exists()) return null;
   return parsePairSnap(snap.data() as Record<string, unknown> | undefined);
@@ -94,22 +116,43 @@ export async function ensureArcCoreShadowPairing(
       }
     }
 
-    const waitingSnap = await tx.get(waitingDocRef());
-    const waitingData = waitingSnap.exists()
-      ? (waitingSnap.data() as Record<string, unknown> | undefined)
-      : undefined;
-    const waitingUid = typeof waitingData?.uid === 'string' ? waitingData.uid.trim() : '';
-
-    if (waitingUid && waitingUid !== selfUid) {
-      const pairedAt = Date.now();
-      tx.set(pairDocRef(selfUid), { uid: selfUid, shadowUid: waitingUid, pairedAt });
-      tx.set(pairDocRef(waitingUid), { uid: waitingUid, shadowUid: selfUid, pairedAt });
-      tx.delete(waitingDocRef());
-      return { status: 'paired', shadowUid: waitingUid, pairedAtMs: pairedAt } as const;
+    // 대기 슬롯 스캔 — 레거시 waiting 문서 포함(마이그레이션), 자기 uid 기준 샤드부터 순회
+    const startShard = shadowPoolShardIndexForUid(selfUid);
+    const slotRefs = [legacyWaitingDocRef()];
+    for (let i = 0; i < SHADOW_POOL_SHARD_COUNT; i += 1) {
+      slotRefs.push(waitingShardDocRef((startShard + i) % SHADOW_POOL_SHARD_COUNT));
     }
 
-    // 대기자 없음(또는 자기 자신) — 자신을 대기 등록
-    tx.set(waitingDocRef(), { uid: selfUid, enqueuedAt: Date.now() });
+    let selfAlreadyWaiting = false;
+    let emptySlotRef: ReturnType<typeof waitingShardDocRef> | null = null;
+    for (const slotRef of slotRefs) {
+      const slotSnap = await tx.get(slotRef);
+      const slotData = slotSnap.exists()
+        ? (slotSnap.data() as Record<string, unknown> | undefined)
+        : undefined;
+      const waitingUid = typeof slotData?.uid === 'string' ? slotData.uid.trim() : '';
+
+      if (waitingUid && waitingUid !== selfUid) {
+        const pairedAt = Date.now();
+        tx.set(pairDocRef(selfUid), { uid: selfUid, shadowUid: waitingUid, pairedAt });
+        tx.set(pairDocRef(waitingUid), { uid: waitingUid, shadowUid: selfUid, pairedAt });
+        tx.delete(slotRef);
+        return { status: 'paired', shadowUid: waitingUid, pairedAtMs: pairedAt } as const;
+      }
+      if (waitingUid === selfUid) selfAlreadyWaiting = true;
+      if (!waitingUid && !emptySlotRef && slotRef !== slotRefs[0]) {
+        // 레거시 슬롯에는 신규 등록하지 않는다
+        emptySlotRef = slotRef;
+      }
+    }
+
+    // 대기자 없음 — 자신을 대기 등록(이미 대기 중이면 no-op)
+    if (!selfAlreadyWaiting) {
+      tx.set(emptySlotRef ?? waitingShardDocRef(startShard), {
+        uid: selfUid,
+        enqueuedAt: Date.now(),
+      });
+    }
     return { status: 'waiting' } as const;
   });
 }
@@ -125,6 +168,7 @@ export async function publishArcCoreShadowShipProfile(
   const trimmed = uid.trim();
   if (!trimmed) return;
   try {
+    await ensureFirebaseAnonymousAuth();
     await setDoc(
       doc(getFirestore(), ARC_CORE_SHADOW_PROFILES_COLLECTION, trimmed),
       { uid: trimmed, ...snapshot },
@@ -142,6 +186,7 @@ export async function fetchArcCoreShadowShipProfile(
   const trimmed = shadowUid.trim();
   if (!trimmed) return null;
   try {
+    await ensureFirebaseAnonymousAuth();
     const snap = await getDoc(
       doc(getFirestore(), ARC_CORE_SHADOW_PROFILES_COLLECTION, trimmed),
     );
@@ -163,6 +208,7 @@ export async function fetchArcCoreShadowNickname(shadowUid: string): Promise<str
   const trimmed = shadowUid.trim();
   if (!trimmed) return null;
   try {
+    await ensureFirebaseAnonymousAuth();
     const snap = await getDoc(doc(getFirestore(), USERS_COLLECTION, trimmed));
     if (!snap.exists()) return null;
     const data = snap.data() as Record<string, unknown> | undefined;

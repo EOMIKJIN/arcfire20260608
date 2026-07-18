@@ -1,6 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import { arccoreDocRef, getDoc, getDocFromCache, setDoc } from './firestoreRefs';
 import { configureFirestorePersistence } from './firestoreClientConfig';
+import { ensureFirebaseAnonymousAuth } from './firebaseAnonymousAuth';
 
 /** Firestore server probe 상한 — 오프라인·지연 시 조용히 skip */
 const ARCORE_SEED_PROBE_MS = 4_000;
@@ -32,6 +33,7 @@ export async function ensureArcCoreCollectionSeeded(input: {
       /* 캐시 없음 */
     }
 
+    await ensureFirebaseAnonymousAuth();
     const serverSnap = await Promise.race([
       getDoc(configRef),
       new Promise<null>((resolve) => {

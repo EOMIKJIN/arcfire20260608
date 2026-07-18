@@ -1,4 +1,4 @@
-Daily audit — 2026-07-17T15:00:06.511Z
+Daily audit — 2026-07-18T15:00:08.885Z
 
 TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -57,8 +57,8 @@ Largest TS/TSX under `src/` + `app/` (bytes)
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
 - 60,176 — `src/data/generated/csvMissions.ts`
 - 47,321 — `app/(game)/shipyard.tsx`
-- 47,072 — `app/(game)/trade.tsx`
 - 43,388 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
+- 38,452 — `app/(game)/trade.tsx`
 
 Planet hub eager `src/combat` import (should be absent)
 

@@ -16,6 +16,7 @@ import {
 } from '../firestoreRefs';
 import { configureFirestorePersistence } from '../firestoreClientConfig';
 import { getCurrentUserEnsured } from '../auth';
+import { ensureFirebaseAnonymousAuth } from '../firebaseAnonymousAuth';
 import { applyLocalGameSaveSnapshot } from './applyLocalGameSaveSnapshot';
 import { collectLocalGameSaveSnapshot } from './collectLocalGameSaveSnapshot';
 import type {
@@ -332,6 +333,7 @@ export async function uploadGameSaveBackup(
   if (!uid?.trim()) return { ok: false, skipped: 'missing_uid' };
 
   configureFirestorePersistence();
+  await ensureFirebaseAnonymousAuth();
   const docBody = await collectLocalGameSaveSnapshot(uid, reason, nowMs);
   if (Object.keys(docBody.snapshot).length === 0) {
     return { ok: false, skipped: 'empty_snapshot' };
@@ -374,6 +376,8 @@ export async function uploadGameSaveBackup(
     }
     const metaOk = await setFirestoreBackupDoc(gameSaveBackupDocRef(uid, backupId), {
       ...chunkedMeta,
+      // Firestore TTL 정책용 Timestamp — 콘솔에서 expiresAt TTL 활성화 시 이탈 유저 백업 자동 삭제
+      expiresAt: firestore.Timestamp.fromMillis(chunkedMeta.expiresAtMs),
       server_savedAt: firestore.FieldValue.serverTimestamp(),
     });
     if (!metaOk) {
@@ -395,6 +399,8 @@ export async function uploadGameSaveBackup(
   const backupId = buildBackupId(reason, nowMs);
   const inlineOk = await setFirestoreBackupDoc(gameSaveBackupDocRef(uid, backupId), {
     ...inlineDoc,
+    // Firestore TTL 정책용 Timestamp — 콘솔에서 expiresAt TTL 활성화 시 이탈 유저 백업 자동 삭제
+    expiresAt: firestore.Timestamp.fromMillis(inlineDoc.expiresAtMs),
     server_savedAt: firestore.FieldValue.serverTimestamp(),
   });
   if (!inlineOk) {
@@ -428,6 +434,7 @@ export async function fetchGameSaveBackupDoc(
   backupId: string,
 ): Promise<GameSaveBackupDoc | null> {
   configureFirestorePersistence();
+  await ensureFirebaseAnonymousAuth();
   const snap = await readFirestoreBackupDoc(gameSaveBackupDocRef(uid, backupId));
   if (!snap) return null;
   const exists = typeof snap.exists === 'function' ? snap.exists() : !!snap.exists;
@@ -455,6 +462,7 @@ export async function listGameSaveBackupsForUid(
   maxItems: number = 20,
 ): Promise<ListGameSaveBackupsResult> {
   configureFirestorePersistence();
+  await ensureFirebaseAnonymousAuth();
   const col = gameSaveBackupsCollectionRef(uid);
   return readFirestoreBackupList(col, maxItems);
 }
@@ -526,6 +534,7 @@ export async function consumePendingAdminGameSaveRestore(uid: string): Promise<C
   if (!uid?.trim()) return { kind: 'none' };
   try {
     configureFirestorePersistence();
+    await ensureFirebaseAnonymousAuth();
     const userSnap = await readFirestoreBackupDoc(userDocRef(uid));
     if (!userSnap) return { kind: 'failed', error: 'user_read_timeout' };
     const userExists = typeof userSnap.exists === 'function' ? userSnap.exists() : !!userSnap.exists;

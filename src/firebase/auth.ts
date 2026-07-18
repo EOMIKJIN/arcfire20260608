@@ -1,6 +1,10 @@
-/** 로컬 APK 전용 — 클라우드 인증 없음 */
+/**
+ * 기기 스코프 게임 uid — Firestore 문서 키(비공개 식별자).
+ * 클라우드 요청 인증은 Firebase Anonymous Auth(firebaseAnonymousAuth.ts)가 별도로 담당한다.
+ */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Application from 'expo-application';
+import { Platform } from 'react-native';
 
 export interface LocalUser {
   uid: string;
@@ -17,19 +21,27 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function resolveDeviceScopedUid(): Promise<string> {
+function readPlatformDeviceId(): Promise<string | null> {
+  if (Platform.OS === 'ios') {
+    // iOS — identifierForVendor (Android ID 없음: 종전에는 전 iOS 기기가 'local-guest'로 수렴하는 결함)
+    return Application.getIosIdForVendorAsync();
+  }
+  return Promise.resolve(Application.getAndroidId());
+}
+
+async function resolveDeviceScopedUid(): Promise<string | null> {
   for (let i = 0; i < 5; i += 1) {
     try {
-      // cold 부팅에서 getAndroidId() 지연 시 1회당 대기 상한 — 과하면 첫 화면 진입이 수초 늘어남
-      const androidId = await Promise.race<string | null>([
-        Application.getAndroidId(),
+      // cold 부팅에서 기기 id 조회 지연 시 1회당 대기 상한 — 과하면 첫 화면 진입이 수초 늘어남
+      const deviceId = await Promise.race<string | null>([
+        readPlatformDeviceId(),
         (async () => {
           await sleep(550);
           return null;
         })(),
       ]);
-      if (typeof androidId === 'string' && androidId.trim().length > 0) {
-        return androidId.trim();
+      if (typeof deviceId === 'string' && deviceId.trim().length > 0) {
+        return deviceId.trim();
       }
     } catch {
       /* ignore */
@@ -38,7 +50,19 @@ async function resolveDeviceScopedUid(): Promise<string> {
       await sleep(120);
     }
   }
-  return 'local-guest';
+  return null;
+}
+
+/**
+ * 기기 id 조회 실패 폴백 — 공유 'local-guest' 대신 기기 로컬 랜덤 uid를 1회 생성·영속.
+ * ('local-guest' 공유 uid는 전 기기 세이브 충돌을 일으키므로 정식 출시 금지)
+ */
+function generateLocalFallbackUid(): string {
+  let hex = '';
+  for (let i = 0; i < 16; i += 1) {
+    hex += Math.floor(Math.random() * 16).toString(16);
+  }
+  return `localdev_${hex}`;
 }
 
 async function writeGuest(user: LocalUser): Promise<void> {
@@ -47,7 +71,8 @@ async function writeGuest(user: LocalUser): Promise<void> {
 }
 
 export async function initGuestAuth(): Promise<LocalUser> {
-  if (currentGuest?.uid) return currentGuest;
+  // sync fallback('local-guest')은 임시값 — 정식 해석 전이면 무시하고 재해석
+  if (currentGuest?.uid && currentGuest.uid !== 'local-guest') return currentGuest;
   if (!authInitPromise) {
     authInitPromise = (async () => {
       const deviceUid = await resolveDeviceScopedUid();
@@ -57,18 +82,22 @@ export async function initGuestAuth(): Promise<LocalUser> {
           const parsed = JSON.parse(raw) as Partial<LocalUser>;
           if (typeof parsed.uid === 'string' && parsed.uid.trim().length > 0) {
             const persisted = parsed.uid.trim();
-            currentGuest = { uid: persisted || deviceUid };
-            if (persisted !== deviceUid) {
-              await writeGuest({ uid: deviceUid });
+            // 레거시 'local-guest' 영속값은 기기 id(또는 랜덤 uid)로 승격
+            if (persisted !== 'local-guest') {
+              currentGuest = { uid: persisted };
+              if (deviceUid && persisted !== deviceUid) {
+                await writeGuest({ uid: deviceUid });
+              }
+              return currentGuest;
             }
-            return currentGuest;
           }
         }
       } catch {
         /* ignore */
       }
-      await writeGuest({ uid: deviceUid });
-      return { uid: deviceUid };
+      const resolved = deviceUid ?? generateLocalFallbackUid();
+      await writeGuest({ uid: resolved });
+      return { uid: resolved };
     })().finally(() => {
       authInitPromise = null;
     });
@@ -77,7 +106,8 @@ export async function initGuestAuth(): Promise<LocalUser> {
 }
 
 export async function rotateGuestAuthIdentity(): Promise<LocalUser> {
-  const next = { uid: await resolveDeviceScopedUid() };
+  const deviceUid = await resolveDeviceScopedUid();
+  const next = { uid: deviceUid ?? currentGuest?.uid ?? generateLocalFallbackUid() };
   await writeGuest(next);
   return next;
 }
@@ -126,10 +156,11 @@ export async function getCurrentUserEnsured(): Promise<LocalUser> {
 
 export function getCurrentUser(): LocalUser {
   if (currentGuest) return currentGuest;
-  // initGuestAuth 호출 이전 fallback(동기 경로 보호)
+  // initGuestAuth 호출 이전 fallback(동기 경로 보호) — 영속하지 않음(임시 메모리 값).
+  // 'local-guest'를 AsyncStorage에 쓰면 공유 uid로 고착되므로 금지.
   const fallback = { uid: 'local-guest' };
   currentGuest = fallback;
-  void AsyncStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(fallback));
+  void initGuestAuth();
   return fallback;
 }
 

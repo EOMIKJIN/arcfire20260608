@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { FONTS, SPACING } from '../../src/utils/theme';
 import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
-import { useT, t as tStatic } from '../../src/i18n';
+import { useT } from '../../src/i18n';
 import {
   resolveItemDescription,
   resolveItemName,
@@ -24,34 +24,22 @@ import { useWorldStore } from '../../src/store/worldStore';
 import { useMissionStore } from '../../src/store/missionStore';
 import { listActiveMissionBundles } from '../../src/missions/missionActiveBundles';
 import { tryPresentPendingMissionClearDialog } from '../../src/missions/missionPlanetHubSync';
-import {
-  applyQuestMarketListingOverrides,
-  mergeQuestTradePortItemIds,
-} from '../../src/missions/questItemOpsRegistry';
+import { applyQuestMarketListingOverrides } from '../../src/missions/questItemOpsRegistry';
 import { useItemLedgerStore } from '../../src/store/itemLedgerStore';
 import { useClanWarFoundationStore } from '../../src/store/clanWarFoundationStore';
-import { previewPlanetOwnershipDeedPurchase } from '../../src/clanWar/planetOwnershipModel';
-import { soloClanIdForUid } from '../../src/clanWar/clanWarRules';
-import { generateMarketByItemIds, getBuyPrice, getSellPrice } from '../../src/engine/TradeEngine';
-import { TRADE_GOODS, getItemDef } from '../../src/data/goods';
-import {
-  applyPlanetTradeTransactionFee,
-  reversePlanetTradeTransactionFee,
-} from '../../src/arcCore/economy/applyPlanetTradeTransactionFee';
+import { generateMarketByItemIds, getBuyPrice } from '../../src/engine/TradeEngine';
+import { TRADE_GOODS } from '../../src/data/goods';
+import { applyPlanetTradeTransactionFee } from '../../src/arcCore/economy/applyPlanetTradeTransactionFee';
 import { recordPlanetEconomyPlayerTrade } from '../../src/arcCore/economy/planetEconomyFabric';
-import {
-  listArcCoreGalacticMineralItemIds,
-  resolveMineralCatalogSellPrice,
-} from '../../src/arcCore/economy/mineralTradePricing';
+import { listArcCoreGalacticMineralItemIds } from '../../src/arcCore/economy/mineralTradePricing';
 import {
   addToInventorySlotsMax,
   aggregateInventoryForTrade,
   countGoodInInventory,
-  maxAddableToInventory,
   normalizeInventorySlots,
   removeGoodFromInventorySlots,
 } from '../../src/game/playerInventory';
-import { MarketListing, CargoItem, ItemDef, Player, MissionProgress } from '../../src/types';
+import { MarketListing, CargoItem, ItemDef, Player } from '../../src/types';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
 import { usePlanetHubFacilityAccessGate } from '../../src/hooks/usePlanetHubFacilityAccessGate';
@@ -69,14 +57,8 @@ import {
 } from '../../src/ui/planetFacility/PlanetFacilityTitleHeader';
 import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
-import { getPlanetTradePortItemIds } from '../../src/world/planetTradePortDb';
 import { adjustPlanetTradeMarketStock } from '../../src/world/planetTradeMarketStore';
-import { resolveTradeRoutePlayerSellUnit } from '../../src/arcCore/economy/tradeRouteCommercePolicy';
 import { resolveTradeMineralSinkTotalQty } from '../../src/arcCore/economy/tradeMineralSinkPolicy';
-import {
-  filterTradePortCatalogForBuyMarket,
-  filterTradePortCatalogForPlayer,
-} from '../../src/arcCore/balance/tradePortCatalogPolicy';
 import {
   isPlanetOwnershipDeedCatalogEligible,
   resolvePlanetOwnershipDeedItemId,
@@ -104,13 +86,20 @@ import {
   HeavyUiStageErrorPanel,
   useHeavyUiDataSession,
 } from '../../src/ui/heavyUiDataSession';
-
-const DEMAND_LABEL_KEYS: Record<string, string> = {
-  low: 'trade.demand.low', normal: 'trade.demand.normal', high: 'trade.demand.high',
-};
-function demandLabel(demand: string): string {
-  return tStatic(DEMAND_LABEL_KEYS[demand] ?? 'trade.demand.normal');
-}
+import {
+  arcTradeDialogButtons,
+  demandLabel,
+  isSellableByTable,
+  refundTradeMineralSink,
+  resolveFreshTradeBuyUnitPrice,
+  resolveInventorySellPrice,
+  resolveItemDefById,
+  resolveTradeBuyBlock,
+  resolveTradeBuyPickerMaxQty,
+  resolveTradeGoodById,
+  resolveTradePortListedItemIds,
+  rollbackTradeBuyFailure,
+} from '../../src/game/tradeScreenPolicy';
 
 const DEMAND_COLORS: Record<string, string> = {
   low: TF.mutedInk,
@@ -119,221 +108,6 @@ const DEMAND_COLORS: Record<string, string> = {
 };
 /** 메인스테이지 기준 하단 공백과 동기 */
 const TRADE_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
-
-const arcTradeDialogButtons = () => [
-  { text: tStatic('trade.btn.cancel'), style: 'cancel' as const },
-  { text: tStatic('trade.btn.confirm') },
-];
-
-function isSellableByTable(itemDef: ItemDef | null | undefined): boolean {
-  if (!itemDef) return false;
-  if (!itemDef.tradeable) return false;
-  return itemDef.sellable === true;
-}
-
-function resolveTradeGoodById(goodId: string) {
-  return TRADE_GOODS[goodId];
-}
-
-function resolveItemDefById(goodId: string) {
-  return getItemDef(goodId);
-}
-
-type TradeBuyBlock = { title: string; message: string };
-
-function resolveTradePortListedItemIds(
-  planetId: string,
-  playerLevel: number,
-  progresses: Record<string, MissionProgress>,
-): string[] {
-  let catalogIds = getPlanetTradePortItemIds(planetId);
-  // 카탈로그 resync는 tradeScreenSession·arcMemoryGovernor warm 에서만 — 렌더 dispatch 금지
-  const base = filterTradePortCatalogForBuyMarket(catalogIds, playerLevel);
-  return mergeQuestTradePortItemIds(planetId, base, progresses);
-}
-
-function resolveTradeBuyBlock(input: {
-  listing: MarketListing;
-  qty: number;
-  itemDef: ItemDef | null | undefined;
-  player: Player;
-  unitPrice: number;
-  hasEverPurchasedItem: (uid: string, itemId: string) => boolean;
-  planetId?: string | null;
-}): TradeBuyBlock | null {
-  const { listing, qty, itemDef, player, unitPrice, hasEverPurchasedItem, planetId } = input;
-  const buyQty = Math.max(1, Math.floor(qty));
-  const isPlanetOwnershipItemType = itemDef?.type === 'planet_ownership';
-  const isCapitalShipItemType = itemDef?.type === 'capital_ship';
-  const capitalShipNpcId = isCapitalShipItemType && typeof itemDef?.attrs?.npcCapitalShipId === 'string'
-    ? String(itemDef.attrs.npcCapitalShipId)
-    : null;
-  const alreadyOwnsCapitalShip = isCapitalShipItemType && capitalShipNpcId
-    ? (
-        countGoodInInventory(normalizeInventorySlots(player.inventorySlots), listing.goodId) > 0
-        || player.shipHangar.some((h) => h.npcCapitalShipId === capitalShipNpcId)
-      )
-    : false;
-  const blockedByHistory = Boolean(
-    (itemDef?.nonRepurchase || isCapitalShipItemType)
-    && !isPlanetOwnershipItemType
-    && player.uid
-    && hasEverPurchasedItem(player.uid, listing.goodId),
-  );
-
-  if ((isCapitalShipItemType && alreadyOwnsCapitalShip) || (!isCapitalShipItemType && blockedByHistory)) {
-    return { title: tStatic('trade.block.norepurchaseTitle'), message: tStatic('trade.block.norepurchaseMsg') };
-  }
-
-  if (isPlanetOwnershipItemType) {
-    const deedPlanetId = typeof itemDef?.attrs?.planetId === 'string'
-      ? String(itemDef.attrs.planetId).trim()
-      : null;
-    if (deedPlanetId && player.uid) {
-      const clanWar = useClanWarFoundationStore.getState();
-      const purchasePreview = previewPlanetOwnershipDeedPurchase(
-        deedPlanetId,
-        clanWar.planetHolds[deedPlanetId],
-        soloClanIdForUid(player.uid),
-        player.political.megaFactionId,
-        clanWar.clans,
-      );
-      if (!purchasePreview.ok) {
-        const failMsgKey =
-          purchasePreview.reason === 'red_territory'
-            ? 'trade.own.claimFailRedTerritory'
-            : purchasePreview.reason === 'already_owner'
-              ? 'trade.own.claimFailAlready'
-              : purchasePreview.reason === 'owned_by_other_clan'
-                ? 'trade.own.claimFailMsg'
-                : purchasePreview.reason === 'faction_mismatch' || purchasePreview.reason === 'neutral_territory'
-                  ? 'trade.own.claimFailFaction'
-                  : 'trade.own.claimFailMsg';
-        return { title: tStatic('trade.own.claimFailTitle'), message: tStatic(failMsgKey) };
-      }
-    }
-  }
-
-  if (!filterTradePortCatalogForPlayer([listing.goodId], player.level).includes(listing.goodId)) {
-    return { title: tStatic('trade.block.cannotBuyTitle'), message: tStatic('trade.block.level') };
-  }
-  if (listing.stock <= 0 || buyQty > listing.stock) {
-    return { title: tStatic('trade.block.cannotBuyTitle'), message: tStatic('trade.block.stock') };
-  }
-
-  const isNoInventoryPurchase =
-    itemDef?.type === 'planet_ownership'
-    || itemDef?.type === 'clan_disband'
-    || itemDef?.type === 'capital_ship';
-  if (!isNoInventoryPurchase) {
-    const invSlotsNow = normalizeInventorySlots(player.inventorySlots);
-    const maxInv = maxAddableToInventory(invSlotsNow, listing.goodId, listing.stock);
-    if (maxInv < buyQty) {
-      return { title: tStatic('trade.block.cannotBuyTitle'), message: tStatic('trade.block.invSpace') };
-    }
-  }
-
-  const grossPreview = unitPrice * buyQty;
-  const feePreview = computeTradeFeeForPlanetGross(planetId ?? player.currentPlanetId, grossPreview);
-  const totalChargedPreview = grossPreview + feePreview.totalFee;
-  if (player.credits < totalChargedPreview) {
-    return { title: tStatic('trade.block.cannotBuyTitle'), message: tStatic('trade.block.credits') };
-  }
-
-  const mineralSink = resolveTradeMineralSinkTotalQty(itemDef, buyQty);
-  if (mineralSink) {
-    const ownedMineral = countGoodInInventory(
-      normalizeInventorySlots(player.inventorySlots),
-      mineralSink.mineralItemId,
-    );
-    if (ownedMineral < mineralSink.totalQty) {
-      return {
-        title: tStatic('trade.block.cannotBuyTitle'),
-        message: tStatic('trade.block.mineral', { need: mineralSink.totalQty, owned: ownedMineral }),
-      };
-    }
-  }
-
-  return null;
-}
-
-function refundTradeMineralSink(
-  player: Player,
-  itemDef: ItemDef | null | undefined,
-  buyQty: number,
-): Player {
-  const mineralSink = resolveTradeMineralSinkTotalQty(itemDef, buyQty);
-  if (!mineralSink) return player;
-  const restored = addToInventorySlotsMax(
-    normalizeInventorySlots(player.inventorySlots),
-    mineralSink.mineralItemId,
-    mineralSink.totalQty,
-    0,
-  );
-  return { ...player, inventorySlots: restored.slots };
-}
-
-function rollbackTradeBuyFailure(input: {
-  itemDef: ItemDef | null | undefined;
-  buyQty: number;
-  totalCharged: number;
-  planetId?: string | null;
-  grossCredits?: number;
-  capitalShipNpcId?: string | null;
-}): void {
-  const store = usePlayerStore.getState();
-  const current = store.player;
-  if (current) {
-    const restored = refundTradeMineralSink(current, input.itemDef, input.buyQty);
-    if (restored !== current) store.setPlayer(restored);
-  }
-  store.addCredits(input.totalCharged);
-  if (input.planetId && input.grossCredits != null && input.grossCredits > 0) {
-    reversePlanetTradeTransactionFee(input.planetId, input.grossCredits);
-  }
-  if (input.capitalShipNpcId) store.removeHangarShipByNpcId(input.capitalShipNpcId);
-}
-
-function resolveFreshTradeBuyUnitPrice(
-  listing: MarketListing,
-  planetId: string,
-  player: Player,
-): number {
-  const progresses = useMissionStore.getState().progresses;
-  const base = generateMarketByItemIds(
-    resolveTradePortListedItemIds(planetId, player.level, progresses),
-    planetId.length * 37,
-    resolvePlayerLifetimeCredits(player),
-    planetId,
-  );
-  // 화면 진열과 동일한 퀘스트 배치 단가 오버라이드를 적용해야 표시가와 일치한다.
-  const freshListing = applyQuestMarketListingOverrides(base, planetId, progresses)
-    .find((m) => m.goodId === listing.goodId);
-  return getBuyPrice(freshListing ?? listing);
-}
-
-/** 수량 선택 UI 상한 — 진열 재고 기준(0이면 1). 구매 가능 여부는 구매 버튼에서 검증 */
-function resolveTradeBuyPickerMaxQty(listing: MarketListing): number {
-  return Math.max(1, listing.stock);
-}
-
-function resolveInventorySellPrice(
-  planetId: string,
-  goodId: string,
-  basePrice: number,
-  listing: MarketListing | undefined,
-  inventoryBuyUnitPrice = 0,
-): number {
-  const itemDef = resolveItemDefById(goodId);
-  if (itemDef?.type === 'trade_route') {
-    const tgSell = resolveTradeRoutePlayerSellUnit(planetId, goodId, inventoryBuyUnitPrice);
-    if (tgSell > 0) return tgSell;
-  }
-  if (listing) return getSellPrice(listing, { planetId, goodId });
-  const mineralPolicy = resolveMineralCatalogSellPrice(goodId);
-  if (mineralPolicy != null) return mineralPolicy;
-  return Math.floor(basePrice * 0.7);
-}
 
 export default function TradeScreen() {
   const t = useT();

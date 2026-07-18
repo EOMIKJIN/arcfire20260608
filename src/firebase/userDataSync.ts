@@ -25,6 +25,10 @@ export {
   resolveUserType,
 } from './firestoreClientConfig';
 
+/** 클라우드 페이로드 상한 — 로컬 스토어는 무손실 유지, users 문서만 캡 (1MB 한계·인덱스 팬아웃 방지) */
+const CLOUD_SYNC_OPERATIONS_CAP = 40;
+const CLOUD_SYNC_DEPLOYMENTS_CAP = 60;
+
 function stripUndefinedDeep(value: unknown): unknown {
   if (value === undefined) return undefined;
   if (value === null || typeof value !== 'object') return value;
@@ -142,11 +146,13 @@ export function buildUnifiedLocalUserObject(uid: string): Record<string, unknown
   const world = { visitedSystemIds: useWorldStore.getState().visitedSystemIds };
   const planetCoreRuntime = buildPlanetCoreRuntimeSyncBundle(uid);
   const cw = useClanWarFoundationStore.getState();
+  // 문서 크기·인덱스 팬아웃 통제(1MB 한계 대비 · 10만 유저):
+  //  - planetHolds는 top-level `planet_holds` 단일 사본만 전송(종전 clanWarFoundation 내 중복 제거)
+  //  - operations(최신 우선 prepend)·deployments는 상한 캡 — 로컬 정본은 무손실, 클라우드는 요약본
   const clanWarFoundation = {
     clans: cw.clans,
-    planetHolds: cw.planetHolds,
-    deployments: cw.deployments,
-    operations: cw.operations,
+    deployments: cw.deployments.slice(-CLOUD_SYNC_DEPLOYMENTS_CAP),
+    operations: cw.operations.slice(0, CLOUD_SYNC_OPERATIONS_CAP),
   };
   const planet_holds = cw.planetHolds;
 
@@ -190,11 +196,22 @@ export async function syncUserDataWithServer(): Promise<void> {
       ? (existingPc as Record<string, unknown>)
       : {};
 
+  const existingCw = localBundle.clanWarFoundation;
+  const clanWarBase =
+    existingCw && typeof existingCw === 'object' && !Array.isArray(existingCw)
+      ? (existingCw as Record<string, unknown>)
+      : {};
+
   const payload: Record<string, unknown> = {
     ...localBundle,
     planetCoreRuntime: {
       ...planetCoreBase,
       byPlanetId: firestore.FieldValue.delete(),
+    },
+    clanWarFoundation: {
+      ...clanWarBase,
+      // 구형 중복 사본 제거 — planet_holds top-level 단일 사본만 유지
+      planetHolds: firestore.FieldValue.delete(),
     },
     // merge 저장에서는 누락 필드가 삭제되지 않으므로, 구형 대용량 행성 맵은 명시적으로 제거
     server_updatedAt: firestore.FieldValue.serverTimestamp(),
@@ -207,9 +224,16 @@ export async function syncUserDataWithServer(): Promise<void> {
   };
 
   try {
+    // rules 통과용 Anonymous Auth 확보(세션 영속 — 최초 1회만 sign-in)
+    const { ensureFirebaseAnonymousAuth } = await import('./firebaseAnonymousAuth');
+    await ensureFirebaseAnonymousAuth();
     await setDoc(userDocRef(uid), payload as Record<string, unknown>, { merge: true });
     void import('./gameSaveBackup/scheduleGameSaveBackup').then((m) => {
       m.scheduleGameSaveBackupAfterCloudSync(uid);
+    });
+    // 기존 계정 닉네임 소급 예약 — uid당 1회(내부 플래그로 no-op 보장)
+    void import('./nicknameRegistry').then((m) => {
+      m.ensureNicknameReservedRetro(uid, nickname);
     });
   } catch (e) {
     console.warn('[userDataSync] syncUserDataWithServer failed (queued offline if persistence enabled):', e);
