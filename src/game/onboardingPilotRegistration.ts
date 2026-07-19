@@ -5,6 +5,7 @@
 import { bootstrapAccountData, persistAccountDataBundle } from '../account/accountLifecycle';
 import { runArcCoreShadowPairingPass } from '../arcCore/shadow/runArcCoreShadowPairingPass';
 import { checkNicknameAvailable, createUserDocOnNicknameConfirm } from '../firebase/firestore';
+import { clearFreshStartAfterAccountCreated } from '../firebase/auth';
 import { checkNicknameRegistry, reserveNickname } from '../firebase/nicknameRegistry';
 import { syncUserDataWithServer } from '../firebase/userDataSync';
 import {
@@ -139,16 +140,31 @@ export async function completePilotRegistration(uid: string, nickname: string): 
 
   useMissionStore.getState().initTutorialStory();
 
-  await runRemoteRegistrationStep('create_user_doc', () =>
-    createUserDocOnNicknameConfirm(player.uid, player.nickname, {
-      professionId: player.pilotProfile?.professionId,
-    }),
-  );
+  // ⚠️ 여기서부터는 로컬 플레이어가 이미 생성된 상태 — 원격 쓰기(create_user_doc·sync)가
+  // 타임아웃/실패해도 등록을 실패로 올리지 않는다. 실패를 throw하면 절반 생성된
+  // player(introSeen=true)가 남은 채 에러 창이 떠서 타이틀이 「이어하기」로 바뀌는
+  // 회귀(2026-07-19)가 있었다. Firestore SDK가 쓰기를 큐잉해 온라인 복귀 시 자동
+  // 반영하고, 정기 동기화(syncUserDataWithServer)가 소급 재시도한다.
+  try {
+    await runRemoteRegistrationStep('create_user_doc', () =>
+      createUserDocOnNicknameConfirm(player.uid, player.nickname, {
+        professionId: player.pilotProfile?.professionId,
+      }),
+    );
+  } catch (e) {
+    if (__DEV__) console.warn('[pilotReg] create_user_doc deferred (offline/timeout)', e);
+  }
   await usePlayerStore.getState().persist();
   await persistAccountDataBundle();
   await useClanWarFoundationStore.getState().persistClanWarFoundation();
-  await runRemoteRegistrationStep('sync_user_data', () => syncUserDataWithServer());
+  try {
+    await runRemoteRegistrationStep('sync_user_data', () => syncUserDataWithServer());
+  } catch (e) {
+    if (__DEV__) console.warn('[pilotReg] sync_user_data deferred (offline/timeout)', e);
+  }
   await clearOnboardingProfessionId();
+  // 새 계정 생성 완료 — 초기화 후 클라우드 자동 복원 차단(fresh-start)을 해제한다.
+  await clearFreshStartAfterAccountCreated();
 
   // 아크코어 섀도우 페어링 — 온보딩 성공 직후 1회 (실패 시 부트 소급 패스가 재시도)
   void runArcCoreShadowPairingPass();

@@ -51,6 +51,7 @@ import {
   persistArcCoreWallClockLeftActiveNow,
 } from '../src/arcCore/arcCoreWallClockSessionPersistence';
 import { requestTerritorialCombatProbeAfterCatchUp } from '../src/arcCore/territorial/requestTerritorialCombatProbe';
+import { waitForArcCoreDailyBatchIdle } from '../src/arcCore/schedule/arcCoreDailyBatchGate';
 import { scheduleArcCoreShadowPairingPassAfterBoot } from '../src/arcCore/shadow/runArcCoreShadowPairingPass';
 import { loadArcExpansionTestOneShotDoneFromStorage } from '../src/arcCore/arcCoreExpansionTestFlags';
 import {
@@ -77,6 +78,12 @@ type UpdateGateState = {
   latestVersion: string;
   playStoreUrl: string | null;
 };
+
+/**
+ * 아크코어 벽시계 catch-up·territorial probe 시작 지연 — 타이틀 화면 자체 네비게이션이
+ * 쓰는 InteractionManager 대기열과 분리하기 위해 setTimeout으로 둔다(2026-07-19).
+ */
+const ARC_CORE_CATCH_UP_DEFER_MS = 400;
 
 export default function RootLayout() {
   const [bootReady, setBootReady] = useState(false);
@@ -261,12 +268,50 @@ export default function RootLayout() {
     markBootPerf('arc_core_start');
     arcCoreHub.bootstrapDefaultSubCores();
     arcCoreHub.start();
-    void (async () => {
-      await applyArcCoreWallClockCatchUpFromPersistedGap(arcCoreHub);
-      await requestTerritorialCombatProbeAfterCatchUp();
-    })();
+    // 벽시계 catch-up(장시간 미접속 시 일괄 진행)·territorial probe가 끝난 뒤에야
+    // 타이틀 버튼을 연다(postBootSettled). 버튼 로딩 게이지 = 실제 작동 가능 타이밍과 일치.
+    // (2026-07-19: 과거엔 이 작업을 버튼 활성화 뒤 백그라운드로 미뤘는데, 동기 구간이
+    //  탭 직후 2~3초 UI를 막아 「버튼은 켜졌는데 로딩화면이 안 뜨는」 불일치가 재발했음.
+    //  지금은 catch-up·일일배치·territorial 패스가 전부 yieldJsThread로 청크화되어 있어
+    //  스피너가 도는 동안 타이틀 렌더·터치가 굶지 않고, 완료 후엔 잔여 블로킹이 없다.)
+    let settled = false;
+    const settlePostBoot = () => {
+      if (settled) return;
+      settled = true;
+      markBootPerf('post_boot_settled');
+      useAppBootStore.getState().setPostBootSettled(true);
+    };
+    // 안전 데드라인: catch-up이 비정상적으로 오래 걸려도 버튼이 영구 잠기지 않게 한다.
+    // (잔여 작업은 청크화되어 있어 데드라인 후 열려도 탭이 막히지 않는다.)
+    const settleDeadlineTimer = setTimeout(settlePostBoot, 12_000);
+    const catchUpTimer = setTimeout(() => {
+      void (async () => {
+        try {
+          const t0 = Date.now();
+          await applyArcCoreWallClockCatchUpFromPersistedGap(arcCoreHub);
+          const t1 = Date.now();
+          await requestTerritorialCombatProbeAfterCatchUp();
+          const t2 = Date.now();
+          // catch-up 도중 void로 발화된 일일 배치가 아직 돌고 있으면 종료까지 합류 —
+          // 버튼이 열린 직후 탭이 배치 청크와 경합해 수 초 멈추는 재발(17:51 logcat) 방지.
+          await waitForArcCoreDailyBatchIdle();
+          // eslint-disable-next-line no-console
+          if (__DEV__)
+            console.log(
+              `[title-diag] catchUp=${t1 - t0}ms probe=${t2 - t1}ms dailyBatchJoin=${Date.now() - t2}ms`,
+            );
+        } catch {
+          /* catch-up 실패해도 게임 진행은 막지 않는다 */
+        } finally {
+          settlePostBoot();
+        }
+      })();
+    }, ARC_CORE_CATCH_UP_DEFER_MS);
     const detachArcCoreBridge = attachArcCoreRuntimeCommandBridge();
     return () => {
+      clearTimeout(settleDeadlineTimer);
+      clearTimeout(catchUpTimer);
+      settlePostBoot();
       detachArcCoreBridge();
       arcCoreHub.stop();
     };
@@ -276,10 +321,18 @@ export default function RootLayout() {
     const sub = AppState.addEventListener('change', (next) => {
       if (next === 'active') {
         if (useWorldStore.getState().loaded) {
-          void (async () => {
-            await applyArcCoreWallClockCatchUpFromPersistedGap(arcCoreHub);
-            await requestTerritorialCombatProbeAfterCatchUp();
-          })();
+          // 백그라운드 장기 체류 후 복귀 catch-up — 부트 경로와 동일하게 setTimeout으로 분리해
+          // InteractionManager 대기열(화면 자체 네비게이션도 쓰는)과 경합하지 않게 한다.
+          setTimeout(() => {
+            void (async () => {
+              try {
+                await applyArcCoreWallClockCatchUpFromPersistedGap(arcCoreHub);
+                await requestTerritorialCombatProbeAfterCatchUp();
+              } catch {
+                /* catch-up 실패해도 게임 진행은 막지 않는다 */
+              }
+            })();
+          }, ARC_CORE_CATCH_UP_DEFER_MS);
         }
         resumeForegroundSession();
         void persistUserSession();

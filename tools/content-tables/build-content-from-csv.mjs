@@ -804,6 +804,7 @@ function buildPlanetGovernorReserveCommanders() {
     reserveOrder: ${toInt(row.reserveOrder, 0)},
     enabled: ${toBool(row.enabled)},
     notesKo: ${q(row.notesKo ?? '')},
+    combatTacticsGrade: ${Math.max(-5, Math.min(5, toInt(row.combatTacticsGrade, 0)))},
   }`;
     })
     .join(',\n');
@@ -817,6 +818,8 @@ function buildPlanetGovernorReserveCommanders() {
   reserveOrder: number;
   enabled: boolean;
   notesKo: string;
+  /** 총사령관 전용 [전투전술영향] 등급 (-5..+5) — 분쟁지역 역전 판정 가중치 */
+  combatTacticsGrade: number;
 };
 
 export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveCommanderRow[] = [

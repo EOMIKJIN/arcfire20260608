@@ -1,0 +1,129 @@
+﻿diff --git a/app/_layout.tsx b/app/_layout.tsx
+index b5ccce1..5b4ea42 100644
+--- a/app/_layout.tsx
++++ b/app/_layout.tsx
+@@ -78,6 +78,12 @@ type UpdateGateState = {
+   playStoreUrl: string | null;
+ };
+ 
++/**
++ * ?꾪겕肄붿뼱 踰쎌떆怨?catch-up쨌territorial probe ?쒖옉 吏??????댄? ?붾㈃ ?먯껜 ?ㅻ퉬寃뚯씠?섏씠
++ * ?곕뒗 InteractionManager ?湲곗뿴怨?遺꾨━?섍린 ?꾪빐 setTimeout?쇰줈 ?붾떎(2026-07-19).
++ */
++const ARC_CORE_CATCH_UP_DEFER_MS = 400;
++
+ export default function RootLayout() {
+   const [bootReady, setBootReady] = useState(false);
+   const [updateGate, setUpdateGate] = useState<UpdateGateState | null>(null);
+@@ -261,12 +267,32 @@ export default function RootLayout() {
+     markBootPerf('arc_core_start');
+     arcCoreHub.bootstrapDefaultSubCores();
+     arcCoreHub.start();
+-    void (async () => {
+-      await applyArcCoreWallClockCatchUpFromPersistedGap(arcCoreHub);
+-      await requestTerritorialCombatProbeAfterCatchUp();
+-    })();
++    // 踰쎌떆怨?catch-up(?μ떆媛?誘몄젒?????쇨큵 吏꾪뻾)쨌territorial probe??臾닿굅?????덉뼱
++    // (理쒕? 48h遺? ??댄? 踰꾪듉??留됱? ?딅뒗??
++    // (2026-07-19: ?댁쟾?????묒뾽???앸굹??踰꾪듉???대━寃??덈떎媛 濡쒕뵫??紐?諛곕줈 ?섍퀬, 洹몃옒??+    //  Promise.race ??꾩븘????諛깃렇?쇱슫?쒖뿉??怨꾩냽 ?뚮뜕 ?묒뾽怨???씠 寃쏀빀??臾대컲?묒씠 ?щ컻?덉쓬.
++    //  洹??ㅼ쓬??InteractionManager.runAfterInteractions濡???꼈?붾뜲, ??댄? 踰꾪듉???먯껜
++    //  ?ㅻ퉬寃뚯씠?섎룄 媛숈? InteractionManager ?湲곗뿴?????runStageNavAfterTeardown) ?ъ쟾??+    //  ??吏곹썑 寃쏀빀???ъ?媛 ?⑥븘 ?덉뿀????setTimeout?쇰줈 ?꾩쟾??遺꾨━???湲곗뿴 ?먯껜瑜????대떎.)
++    markBootPerf('post_boot_settled');
++    useAppBootStore.getState().setPostBootSettled(true);
++    const catchUpTimer = setTimeout(() => {
++      void (async () => {
++        try {
++          const t0 = Date.now();
++          await applyArcCoreWallClockCatchUpFromPersistedGap(arcCoreHub);
++          const t1 = Date.now();
++          await requestTerritorialCombatProbeAfterCatchUp();
++          // eslint-disable-next-line no-console
++          if (__DEV__) console.log(`[title-diag] catchUp=${t1 - t0}ms probe=${Date.now() - t1}ms`);
++        } catch {
++          /* catch-up ?ㅽ뙣?대룄 寃뚯엫 吏꾪뻾? 留됱? ?딅뒗??*/
++        }
++      })();
++    }, ARC_CORE_CATCH_UP_DEFER_MS);
+     const detachArcCoreBridge = attachArcCoreRuntimeCommandBridge();
+     return () => {
++      clearTimeout(catchUpTimer);
+       detachArcCoreBridge();
+       arcCoreHub.stop();
+     };
+@@ -276,10 +302,18 @@ export default function RootLayout() {
+     const sub = AppState.addEventListener('change', (next) => {
+       if (next === 'active') {
+         if (useWorldStore.getState().loaded) {
+-          void (async () => {
+-            await applyArcCoreWallClockCatchUpFromPersistedGap(arcCoreHub);
+-            await requestTerritorialCombatProbeAfterCatchUp();
+-          })();
++          // 諛깃렇?쇱슫???κ린 泥대쪟 ??蹂듦? catch-up ??遺??寃쎈줈? ?숈씪?섍쾶 setTimeout?쇰줈 遺꾨━??+          // InteractionManager ?湲곗뿴(?붾㈃ ?먯껜 ?ㅻ퉬寃뚯씠?섎룄 ?곕뒗)怨?寃쏀빀?섏? ?딄쾶 ?쒕떎.
++          setTimeout(() => {
++            void (async () => {
++              try {
++                await applyArcCoreWallClockCatchUpFromPersistedGap(arcCoreHub);
++                await requestTerritorialCombatProbeAfterCatchUp();
++              } catch {
++                /* catch-up ?ㅽ뙣?대룄 寃뚯엫 吏꾪뻾? 留됱? ?딅뒗??*/
++              }
++            })();
++          }, ARC_CORE_CATCH_UP_DEFER_MS);
+         }
+         resumeForegroundSession();
+         void persistUserSession();
+diff --git a/app/index.tsx b/app/index.tsx
+index e4b4321..7a38c16 100644
+--- a/app/index.tsx
++++ b/app/index.tsx
+@@ -90,13 +90,20 @@ export default function TitleScreen() {
+   const player = usePlayerStore((s) => s.player);
+   // 濡쒖뺄 ?섏씠?쒕젅?댁뀡쨌?붾뱶/肄붿뼱 遺?몄뒪?몃옪???꾨? ?앸궃 ?ㅼ뿉留?踰꾪듉???쒖꽦?뷀븳??
+   const bootReady = useAppBootStore((s) => s.bootReady);
++  // bootReady 吏곹썑???꾪겕肄붿뼱 catch-up쨌probe(JS ?먯쑀)源뚯? ?앸굹???ㅼ젣 ?낅젰??媛????+  // ?꾨즺 ?꾩뿉??踰꾪듉 濡쒕뵫 ?쒖떆瑜??좎????뚰몴??= ?낅젰 媛?γ???대컢???쇱튂?쒗궓??
++  const postBootSettled = useAppBootStore((s) => s.postBootSettled);
+   const getActiveMission = useMissionStore((s) => s.getActiveMission);
+   const initTutorialStory = useMissionStore((s) => s.initTutorialStory);
+ 
+   const [continueFlowActive, setContinueFlowActive] = useState(false);
+   const [cloudRestorePending, setCloudRestorePending] = useState(false);
+-  /** ??댄? ?낅젰 以鍮??꾨즺 ??RN 遺?맞룻븯?대뱶?덉씠?샕??덈떎硫??대씪?곕뱶 蹂듭썝 ?먯젙源뚯? 醫낅즺 */
+-  const titleInteractive = bootReady && hydrated && !cloudRestorePending;
++  /** ?명듃濡??좉퇋怨꾩젙쨌鍮?introSeen) 寃쎈줈 ??吏곹썑 利됱떆 ?쒖떆 ??runStageNavAfterTeardown ?먯껜媛
++   * rAF+idle-wait+drain?쇰줈 理쒕? 2.5珥? 嫄몃┫ ???덈뒗?? 洹몃룞??踰꾪듉???꾨Т ?쒓컖??蹂?붽?
++   * ?놁뼱??"?뚮윭??諛섏쓳 ?놁쓬"?쇰줈 蹂댁씠怨??ы꺆源뚯? ?좊컻?덈떎(?ы꺆? titleNavLockRef??留됲? 臾댁떆??. */
++  const [navPending, setNavPending] = useState(false);
++  /** ??댄? ?낅젰 以鍮??꾨즺 ??RN 遺?맞룻븯?대뱶?덉씠?샕톍atch-up쨌(?덈떎硫??대씪?곕뱶 蹂듭썝 ?먯젙源뚯? 醫낅즺 */
++  const titleInteractive = bootReady && postBootSettled && hydrated && !cloudRestorePending;
+   const cloudCheckStartedRef = useRef(false);
+   const flowCancelledRef = useRef(false);
+   const prewarmPromiseRef = useRef<Promise<void> | null>(null);
+@@ -189,6 +196,8 @@ export default function TitleScreen() {
+   }, [bootReady, hydrated, player]);
+ 
+   const handleStart = () => {
++    // eslint-disable-next-line no-console
++    if (__DEV__) console.log('[title-diag] handleStart pressed');
+     const p = usePlayerStore.getState().player;
+     if (p?.flags.introSeen) {
+       if (continueFlowActive || titleNavLockRef.current) return;
+@@ -225,6 +234,7 @@ export default function TitleScreen() {
+     }
+     if (titleNavLockRef.current) return;
+     titleNavLockRef.current = true;
++    setNavPending(true);
+     if (p) {
+       runStageNavAfterTeardown({
+         teardown: () => {},
+@@ -310,9 +320,9 @@ export default function TitleScreen() {
+                 style={[styles.btnStart, player ? styles.btnStartWithSave : null]}
+                 onPress={handleStart}
+                 activeOpacity={0.82}
+-                disabled={!titleInteractive}
++                disabled={!titleInteractive || navPending}
+               >
+-                {!titleInteractive ? (
++                {!titleInteractive || navPending ? (
+                   <ActivityIndicator color={COLORS.ink_dark} />
+                 ) : (
+                   <Text style={[styles.btnText, player ? styles.btnTextContinue : null]}>

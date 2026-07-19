@@ -40,6 +40,7 @@ import {
 import { beginPlanetCoreGaugeIntentBatch } from '../planetCore/planetCoreGaugeIntent';
 import { runPlanetCoreGaugeCompositionApplyPass } from '../planetCore/runPlanetCoreGaugeCompositionApplyPass';
 import { runContestedZoneAftermathDailyPass } from '../planetCore/runContestedZoneAftermathDailyPass';
+import { yieldJsThread } from './yieldJsThread';
 import { runPlanetWealthDisparityDailyPass } from '../planetCore/runPlanetWealthDisparityDailyPass';
 import { runPlanetRebellionResolutionDailyPass } from '../planetCore/runPlanetRebellionResolutionDailyPass';
 
@@ -120,22 +121,28 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   beginPlanetCoreStatOpsTrendSnapshot();
   beginPlanetCoreGaugeIntentBatch();
 
+  // 각 전-행성 동기 패스 사이에 매크로태스크 yield — 정오 이후 첫 부팅에서 이 배치가
+  // 타이틀 버튼 활성화 직후 실행될 때, 탭 등 사용자 입력이 수 초간 막히지 않게 한다(2026-07-19).
   const colonizationEarly = runSynthColonizationAdvancePass();
   result.synthColonizationAdvance = colonizationEarly.advanced > 0;
   if (policy.runWorldExpansionUnlock) {
     result.worldExpansionUnlock = tryArcCoreWorldDailyUnlock();
   }
   await integrateUnlockedSynthFrontierStatEconomyAsync();
+  await yieldJsThread();
 
   if (policy.runPlanetEnergyPass) {
     runPlanetEnergyCorePass();
     result.planetEnergy = true;
+    await yieldJsThread();
   }
   const mineralLedger = runPlanetMineralLedgerDailyPass();
   result.planetMineralLedger = mineralLedger.ran;
+  await yieldJsThread();
   if (policy.runPlanetEnvironmentPass) {
     runPlanetEnvironmentDiversityPass();
     result.planetEnvironment = true;
+    await yieldJsThread();
   }
   const contestedAftermath = runContestedZoneAftermathDailyPass();
   result.contestedZoneAftermath = contestedAftermath.ran;
@@ -145,16 +152,20 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
 
   const rebellionResolution = runPlanetRebellionResolutionDailyPass();
   result.rebellionResolution = rebellionResolution.ran;
+  await yieldJsThread();
 
   if (policy.runPlanetMasterBalancePass) {
     runGlobalPlanetMasterBalancePass();
     result.planetMasterBalance = true;
+    await yieldJsThread();
   }
   if (policy.runScenarioEconomyPass) {
     const fabric = runPlanetEconomyFabricDailyPass();
     result.economyFabric = fabric.ran;
+    await yieldJsThread();
     runPlayScenarioEconomyPass(true);
     result.scenarioEconomy = true;
+    await yieldJsThread();
   }
   if (policy.runMarketPricePass) {
     const ingest = await ingestBalanceOverlayDeltaIfPending();
@@ -163,6 +174,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     result.marketPriceAdjust = true;
     const tradeRouteDaily = runTradeRouteDailyMarketPass();
     result.tradeRouteDailyMarket = tradeRouteDaily.ran;
+    await yieldJsThread();
   }
   if (policy.runAabsAlignmentPass) {
     await flushDailyOpsObservationsToAabs();
@@ -170,18 +182,22 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     result.aabsAlignment = true;
     const engageAdjust = await runIntegratedEngageHpAdjustPass();
     result.integratedEngageHpAdjust = engageAdjust.ran;
+    await yieldJsThread();
   }
   const convoyDaily = await runArcCoreConvoyDailySettlementPass();
   result.convoyDailySettlement = convoyDaily.ran;
+  await yieldJsThread();
 
   const upkeep = await runArcCorePlanetUpkeepDailyPass();
   result.planetUpkeep = upkeep.ran;
+  await yieldJsThread();
 
   const centralBank = await runArcCoreCentralBankExpenditurePass();
   result.centralBankExpenditure = centralBank.ran;
 
   const fiscalLoop = await runPlanetFiscalBalanceClosedLoopPass();
   result.planetFiscalClosedLoop = fiscalLoop.ran;
+  await yieldJsThread();
 
   const statEquilibrium = runPlanetCoreStatEquilibriumPass();
   result.facilityStatNudge = statEquilibrium.ran;
@@ -189,6 +205,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   result.laboratoryRdSpeed = labRd.ran;
   const tavernRefresh = runTavernBountyRefreshPass();
   result.tavernBountyRefresh = tavernRefresh.ran;
+  await yieldJsThread();
 
   const instanceMissionPass = runArcCoreInstanceMissionDailyPass();
   result.arcCoreInstanceMissionDaily = instanceMissionPass.ran;
@@ -198,6 +215,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
 
   const ownershipPricingPass = runPlanetOwnershipDeedPricingDailyPass();
   result.planetOwnershipDeedPricing = ownershipPricingPass.ran;
+  await yieldJsThread();
 
   try {
     const learningResult = await runArcCoreEconomyLearningDailyPass(result);

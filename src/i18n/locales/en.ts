@@ -653,8 +653,14 @@ export const EN_DICTIONARY: I18nDictionary = {
 
   // ── Planet Economy Info (econInfo) ──
   'econInfo.title': 'Planet Info',
-  'econInfo.planetGovernor': 'Planet Commander {name}',
   'econInfo.portraitSlotA11y': 'Planet image area',
+  'econInfo.governorCardHeader': 'Planet Commander / Captain',
+  'econInfo.governorCardA11y': 'Planet commander info card',
+  'econInfo.governorPortraitA11y': 'Commander portrait',
+  'econInfo.governorField.name': 'Name',
+  'econInfo.governorField.level': 'Level',
+  'econInfo.governorField.rank': 'Rank',
+  'econInfo.governorField.title': 'Title',
   'econInfo.pgpTotal': 'PGP Total Output',
   'planetStability.title': 'Planet Stability',
   'planetStability.wdiValue': 'WDI {wdi}',

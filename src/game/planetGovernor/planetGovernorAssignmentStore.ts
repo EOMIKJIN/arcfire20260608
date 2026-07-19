@@ -17,9 +17,17 @@ export type PlanetGovernorAssignment = {
   assignedAtMs: number;
 };
 
+/**
+ * 성계(행성) 상주 총사령관 슬롯 — RED/BLUE 각 1명 영구 배정 (대표님 결정 2026-07-19).
+ * 최초 분쟁·점령 시점에 reserve 풀에서 할당되며, 점령이 바뀌어도 슬롯은 유지되어
+ * 같은 두 함장이 그 성계의 공격자/방어자를 교대로 맡는다(함장 사망 개념 없음).
+ */
+type PlanetGovernorSideSlots = Partial<Record<'BLUE' | 'RED', string>>;
+
 type Persisted = {
   byPlanetId: Record<string, PlanetGovernorAssignment>;
   sideNextIndex: Record<GovernorOccupationSide, number>;
+  sideSlotsByPlanetId: Record<string, PlanetGovernorSideSlots>;
 };
 
 const EMPTY_SIDE_INDEX: Record<GovernorOccupationSide, number> = {
@@ -28,7 +36,11 @@ const EMPTY_SIDE_INDEX: Record<GovernorOccupationSide, number> = {
   NEUTRAL: 0,
 };
 
-let mem: Persisted = { byPlanetId: {}, sideNextIndex: { ...EMPTY_SIDE_INDEX } };
+let mem: Persisted = {
+  byPlanetId: {},
+  sideNextIndex: { ...EMPTY_SIDE_INDEX },
+  sideSlotsByPlanetId: {},
+};
 let hydrated = false;
 let persistTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -59,7 +71,25 @@ export async function hydratePlanetGovernorAssignmentStore(): Promise<void> {
             ? parsed.sideNextIndex
             : {}),
         },
+        sideSlotsByPlanetId:
+          parsed.sideSlotsByPlanetId && typeof parsed.sideSlotsByPlanetId === 'object'
+            ? parsed.sideSlotsByPlanetId
+            : {},
       };
+      // 마이그레이션: 기존 단일 배정을 해당 진영 슬롯으로 승격 (v1 → 슬롯 도입)
+      let migrated = false;
+      for (const [planetId, assignment] of Object.entries(mem.byPlanetId)) {
+        const side = assignment.occupationSide;
+        if (side !== 'BLUE' && side !== 'RED') continue;
+        const slots = mem.sideSlotsByPlanetId[planetId];
+        if (slots?.[side]) continue;
+        mem.sideSlotsByPlanetId = {
+          ...mem.sideSlotsByPlanetId,
+          [planetId]: { ...slots, [side]: assignment.captainId },
+        };
+        migrated = true;
+      }
+      if (migrated) schedulePersist();
     }
   } catch {
     /* ignore */
@@ -87,11 +117,60 @@ export function listGovernorCaptainPrimaryPlanets(): ReadonlyMap<string, string>
   return out;
 }
 
+/**
+ * 성계 진영 슬롯 총사령관 확보 — 이미 배정돼 있으면 그대로, 없으면 reserve 풀에서
+ * 최초 1회 배정 후 영구 유지. (분쟁지역 공격/방어 총사령관 판정의 정본 조회 경로)
+ */
+export function ensurePlanetGovernorSideSlotCaptain(
+  planetId: string,
+  side: 'BLUE' | 'RED',
+): string | null {
+  const existing = mem.sideSlotsByPlanetId[planetId]?.[side];
+  if (existing) return existing;
+
+  const index = mem.sideNextIndex[side] ?? 0;
+  const reserve = pickGovernorReserveCommanderAtIndex(side, index);
+  if (!reserve) return null;
+
+  mem = {
+    ...mem,
+    sideNextIndex: { ...mem.sideNextIndex, [side]: index + 1 },
+    sideSlotsByPlanetId: {
+      ...mem.sideSlotsByPlanetId,
+      [planetId]: { ...mem.sideSlotsByPlanetId[planetId], [side]: reserve.captainId },
+    },
+  };
+  schedulePersist();
+  return reserve.captainId;
+}
+
+export function getPlanetGovernorSideSlotCaptain(
+  planetId: string,
+  side: 'BLUE' | 'RED',
+): string | null {
+  return mem.sideSlotsByPlanetId[planetId]?.[side] ?? null;
+}
+
 export function assignPlanetGovernorFromReserve(params: {
   planetId: string;
   occupationSide: GovernorOccupationSide;
 }): PlanetGovernorAssignment | null {
   const { planetId, occupationSide } = params;
+
+  // RED/BLUE는 성계 상주 슬롯 함장을 재사용 — 점령이 오가도 같은 함장이 복귀한다.
+  if (occupationSide === 'BLUE' || occupationSide === 'RED') {
+    const slotCaptainId = ensurePlanetGovernorSideSlotCaptain(planetId, occupationSide);
+    if (!slotCaptainId) return null;
+    const assignment: PlanetGovernorAssignment = {
+      captainId: slotCaptainId,
+      occupationSide,
+      assignedAtMs: Date.now(),
+    };
+    mem = { ...mem, byPlanetId: { ...mem.byPlanetId, [planetId]: assignment } };
+    schedulePersist();
+    return assignment;
+  }
+
   const index = mem.sideNextIndex[occupationSide] ?? 0;
   const reserve = pickGovernorReserveCommanderAtIndex(occupationSide, index);
   if (!reserve) return null;
@@ -103,6 +182,7 @@ export function assignPlanetGovernorFromReserve(params: {
   };
 
   mem = {
+    ...mem,
     byPlanetId: { ...mem.byPlanetId, [planetId]: assignment },
     sideNextIndex: {
       ...mem.sideNextIndex,

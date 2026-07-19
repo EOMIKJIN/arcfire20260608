@@ -71,7 +71,7 @@ export interface ArcCoreHub {
    * 앱이 비활성·종료된 동안 멈춘 벽시계를 실경과 시간만큼 한 번 보정한다(미션·일일 개방 등).
    * gameLoop 델타와 별개로 호출; 상한은 허브 구현이 캡한다.
    */
-  applyOfflineCatchUpWallClock(deltaSec: number): void;
+  applyOfflineCatchUpWallClockChunked(deltaSec: number): Promise<void>;
 }
 
 /*

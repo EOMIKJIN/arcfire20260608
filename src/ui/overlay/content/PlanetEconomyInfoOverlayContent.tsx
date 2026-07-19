@@ -15,9 +15,10 @@ import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
 import { useAppSettingsStore } from '../../../store/appSettingsStore';
-import { resolvePlanetInfoPanelDescription } from '../../../game/planetHub/resolvePlanetTableDescription';
+import { resolvePlanetTableDescription } from '../../../game/planetHub/resolvePlanetTableDescription';
 import { createEmptyPlanetCoreStatTrendSnapshot } from '../../../game/planetHub/planetEconomyInfoSnapshot';
 import { PlanetInfoDescriptionBlock } from './PlanetInfoDescriptionBlock';
+import { PlanetInfoGovernorCard } from './PlanetInfoGovernorCard';
 import { PlanetInfoPortraitSlot } from './PlanetInfoPortraitSlot';
 import { PlanetCoreStatInfoRow } from './PlanetCoreStatTrendRow';
 import { PlanetStabilityInfoPanel } from './PlanetStabilityInfoPanel';
@@ -72,19 +73,8 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
 
   const themeStyles = isTactical ? tacticalPlanetEconomyOverlayStyles : styles;
   const planetDescription = useMemo(
-    () => session.data?.planetDescription ?? resolvePlanetInfoPanelDescription(planetId, locale),
+    () => session.data?.planetDescription ?? resolvePlanetTableDescription(planetId, locale),
     [session.data?.planetDescription, planetId, locale],
-  );
-
-  const panelBleedPrefix = <PlanetInfoPortraitSlot planetId={planetId} />;
-
-  const panelPrefix = (
-    <>
-      <PlanetInfoDescriptionBlock description={planetDescription} visualTheme={visualTheme} />
-      {capitalSubtitle ? (
-        <Text style={themeStyles.capitalSubtitle}>{capitalSubtitle}</Text>
-      ) : null}
-    </>
   );
 
   const snapshot = session.data;
@@ -106,8 +96,6 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
       title={t('econInfo.title')}
       subtitle={subtitleRaw}
       layout="panel"
-      panelPrefix={panelPrefix}
-      panelBleedPrefix={panelBleedPrefix}
       phase={session.phase}
       error={session.error}
       preflightCode={session.preflightCode}
@@ -120,6 +108,16 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
         ) : undefined
       }
     >
+      {/* 헤더 아래 모든 정보(행성 이미지·설명·총사령관 카드 포함)는 스크롤 영역 안에 둔다
+          — 고정 prefix로 빼면 스크롤 가용 높이가 줄어드는 회귀(2026-07-19). */}
+      <View style={styles.scrollBleedTop}>
+        <PlanetInfoPortraitSlot planetId={planetId} />
+      </View>
+      <PlanetInfoDescriptionBlock description={planetDescription} visualTheme={visualTheme} />
+      <PlanetInfoGovernorCard planetId={planetId} visualTheme={visualTheme} />
+      {capitalSubtitle ? (
+        <Text style={themeStyles.capitalSubtitle}>{capitalSubtitle}</Text>
+      ) : null}
       {snapshot ? (
         <>
           <View style={themeStyles.pgpBanner}>
@@ -201,6 +199,11 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
 });
 
 const styles = StyleSheet.create({
+  /** bodyPanel padding(lg)을 상쇄해 행성 이미지를 스크롤 안에서도 카드 전폭으로 표시 */
+  scrollBleedTop: {
+    marginHorizontal: -SPACING.lg,
+    marginTop: -SPACING.lg,
+  },
   capitalSubtitle: {
     marginTop: SPACING.sm,
     fontFamily: FONTS.mono,

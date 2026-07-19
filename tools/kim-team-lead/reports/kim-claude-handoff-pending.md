@@ -5,6 +5,168 @@
 
 ---
 
+## ✅ REVIEWED(진짜 원인) — "이어하기" 버튼 탭 직후 2~3초 완전 정지 — 근본원인 특정·수정 · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-19)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS — 승인 + 김팀장 보완 조치 추가** |
+| r3 검증 | `handleStart` 이어하기 분기의 `buildCsvStaticIndexesFull()` 동기 선실행 → `setContinueFlowActive(true)` 선반전 + 2프레임 yield — 김팀장 독립 분석과 동일 결론, diff 일치 |
+| r2 검증 | `navPending` 즉시 스피너 + catch-up `setTimeout(400)` InteractionManager 대기열 분리 — 승인 |
+| **김팀장 보완(같은 턴)** | 탭 이벤트 자체가 부트 직후 catch-up 체인에 막히는 잔여 원인 제거 — ① `applyOfflineCatchUpWallClockChunked`(서브코어별 매크로태스크 yield) 신설·적용 ② `runArcCoreDailyOpsBatch` 패스 그룹 사이 `yieldJsThread()` 삽입(정오 이후 첫 부팅 수 초 블록 해소) ③ `runTerritorialCombatPass` 행성별 yield. 신규: `src/arcCore/schedule/yieldJsThread.ts` |
+| [pss-pre-dev] | hot_path=부트 1회·일 1회 배치 alloc=틱당 신규 객체 없음(스케줄링만 변경) cache=변경 없음 · stage=해당 없음 risk=P1 해당 없음 · verdict=PASS |
+| 게이트 | tsc PASS · `audit:memory:all` 전부 PASS(37/37·20/20·worklet·reclaim 20/20·resident 7/7·hot-path 0) · `audit:balance-ops` 배치 계약 OK(WARN=기존 fiscal 모니터 항목) |
+| tools/debug 잔여물 | `_layout_0715.tsx`·`_layout_0719.tsx`(김팀장 디버그 스냅샷, 전체 tsc 깨뜨림) 삭제 완료 |
+| 실기 검증 | 대표님 확인 대기 — 이어하기 탭 즉시 로딩화면·타이틀 탭 무반응 소멸 여부 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-19 (김팀장 검수·보완) · 2026-07-19(3차 김클로드) |
+| **task_id** | `title-continue-button-synchronous-freeze-20260719-r3` |
+| **요청자** | 대표님 — "이어하기 버튼이 클릭시 바로 반응하지않고 2~3초간 멈춰있다고 몇번 이야기하는데 그부분에 대해 왜 분석을 진행하지 않나?? 재 분석후 수정하라" |
+| **정정** | 1·2차는 **신규 계정** 경로(타이틀→인트로)와 부트 타이밍을 다뤘음. 이번에 지적하신 **"이어하기"(기존 계정, `introSeen=true`) 버튼**은 이번에 처음으로 전용 분석함 — 별개의 진짜 원인이 있었음. |
+
+### 근본원인 (코드로 확정 — 이번엔 추측 아님)
+
+`app/index.tsx`의 `handleStart`(이어하기 분기)가 호출 순서상 **무거운 동기 작업을 화면 갱신보다 먼저** 실행하고 있었음:
+
+```js
+if (!getActiveMission()) initTutorialStory();          // 1) 동기, 가벼움
+prewarmPromiseRef.current = runContinueSessionPrewarm() // 2) 호출 즉시 내부 동기부가 실행됨
+  .catch(() => {});
+setContinueFlowActive(true);                             // 3) 로딩화면 표시 — 이게 제일 늦게 실행됨
+```
+
+`runContinueSessionPrewarm()`(`src/game/continueSessionPrewarm.ts`)은 `async` 함수라 `await`하지 않고 호출만 해도, **첫 `await` 지점 전까지는 그 자리에서 그대로 동기 실행**됩니다. 그 함수의 첫 줄이 바로:
+
+```js
+export async function runContinueSessionPrewarm() {
+  await measureBootPhase('continue_prewarm_start', 'continue_prewarm_end', async () => {
+    buildCsvStaticIndexesFull();   // ← 첫 await 전, 완전 동기. 여기서 멈춤.
+    await yieldToUi();             // 첫 yield 지점
+    ...
+```
+
+`buildCsvStaticIndexesFull()`(`src/game/buildCsvStaticIndexes.ts`)은 세션당 1회, **아이템 카탈로그 로드 + 광물 매장지 인덱스 + 밸런스 오버레이 재로드**를 전부 동기로 수행합니다(주석에도 "이어하기·행성 허브 등 — full tier"로 명시돼 있어 가벼운 작업이 아님을 이미 알고 있었음). 이게 `setContinueFlowActive(true)`보다 **먼저** 실행되니, 탭한 순간부터 이 함수가 끝날 때까지 리액트가 로딩화면조차 못 그리고 **화면이 완전히 멈춥니다** — 정확히 "탭해도 2~3초 멈춰있다"는 증상 그 자체입니다. 1·2차에서 고친 것(부트 타이밍·InteractionManager 경합·신규계정 시각피드백)과는 완전히 다른, 이 분기 고유의 원인이었습니다.
+
+### 수정 내용
+
+`app/index.tsx` — 순서를 뒤집었습니다: `setContinueFlowActive(true)`를 **제일 먼저** 실행해 로딩화면을 즉시 그리고, 프레임을 2번 넘겨(`yieldToUi()` — 기존 `continueSessionPrewarm.ts`에 있던 헬퍼를 export해서 재사용) 리액트가 실제로 페인트를 마친 뒤에야 `initTutorialStory()`·`runContinueSessionPrewarm()`(그리고 그 안의 `buildCsvStaticIndexesFull()`)을 실행하도록 재배치했습니다. 무거운 작업 자체는 그대로 — **실행 순서만 "화면 갱신 → 무거운 작업"으로 뒤집은 것**이라 로직 변경 리스크는 낮습니다.
+
+- `src/game/continueSessionPrewarm.ts`: 내부 전용이던 `yieldToUi()`를 `export`로 변경(신규 로직 없음).
+- `app/index.tsx`: `yieldToUi` import 추가, `handleStart`의 이어하기 분기 순서 재배치.
+
+### self-check
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — 내가 수정한 파일(`app/index.tsx`·`src/game/continueSessionPrewarm.ts`) 기준 **에러 없음**(grep으로 파일명 필터링 확인). 다만 프로젝트 전체 tsc는 현재 **`tools/debug/_layout_0715.tsx`·`_layout_0719.tsx`**(미추적 파일, 상대경로가 깨진 `_layout.tsx` 스냅샷 — `tools/debug/_title_stall_capture.txt` 등 정황상 김팀장이 이 버그를 실기로 디버깅하며 남긴 캡처로 보임) 때문에 전체 실행은 실패 상태입니다. 제 변경과 무관하고, 진행 중인 작업물일 수 있어 임의로 건드리지 않았습니다 — 검수 시 확인 부탁드립니다.
+- [x] `npm run audit:memory:all` — **전부 PASS**(37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0) — tsc와 달리 프로젝트 전체를 컴파일하지 않아 영향 없음.
+- [x] git commit **안 함**
+
+### 리스크·주의
+
+- 실기 미확인 — "이어하기" 탭 즉시 로딩화면이 뜨고, 그 뒤로 진행되는지 확인 필요.
+- `tools/debug/_layout_07*.tsx` 정리(또는 tsconfig exclude에 `tools/debug/` 추가)는 이번 범위 밖 — 김팀장 작업물일 가능성이 있어 별도 확인 필요.
+
+---
+
+## ✅ REVIEWED(후속 수정) — 타이틀 버튼 "탭해도 무반응" 잔여 원인 추가 조치 · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-19)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS — 승인 (수정 없음)** · 잔여 JS 점유 원인은 위 3차 항목의 김팀장 보완(청크화)으로 마감 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-19 (김팀장 검수) · 2026-07-19(2차 김클로드) |
+| **task_id** | `title-postbootsettled-catchup-block-regression-20260719-r2` |
+| **요청자** | 대표님 — 1차 수정(아래, REVIEWED PASS) 이후 "버튼이 반응을 안한다... 이전과 다른 버그이다. 이부분이 문제가 된 것이다"로 별도 재지적 |
+
+### 1차 수정 이후에도 남아있던 것
+
+1차는 "버튼이 활성화되기까지 오래 걸림"은 확실히 고쳤지만(`postBootSettled` 즉시 true), 대표님이 지적하신 "탭해도 무반응"은 **1차가 다루던 것과 별개로 두 가지가 더 있었음**:
+
+1. **탭 직후 시각적 피드백이 원래 없었음(기존부터)**: `handleStart`의 신규계정·`introSeen` 안 된 계정 분기(`app/index.tsx`)는 `titleNavLockRef.current=true`만 세팅하고 `runStageNavAfterTeardown`을 호출하는데, 이 함수 자체가 rAF 2회+idle-wait(`InteractionManager` 또는 최대 2.5초 상한)+rAF 2회+64ms 순서로 **버튼 모양이 그대로인 채** 최대 2.5초+ 걸려서야 실제 화면 전환이 일어남. 그 사이 유저가 "안 눌렸나?" 하고 재탭하면 `titleNavLockRef` 때문에 조용히 무시됨 — 이게 "탭해도 무반응"으로 보였을 가능성이 큼. (`continueFlowActive` 분기는 이미 즉시 로딩화면으로 바뀌어서 이 문제가 없었음 — 신규계정 분기만 빠져있었음.)
+2. **1차 수정 자체가 만든 잔여 경합 가능성**: 1차에서 catch-up을 `InteractionManager.runAfterInteractions`로 옮겼는데, 타이틀 버튼의 `runStageNavAfterTeardown`도 내부적으로 **같은 `InteractionManager` 대기열**을 씀(`stageNavGate.ts`의 `runStageUiAfterIdle`). 버튼이 빨리 활성화되도록 고친 만큼 유저가 더 빨리 탭하게 됐고, 그 타이밍에 catch-up 콜백도 막 대기열에서 실행될 수 있어 여전히 경합 여지가 남아있었음.
+
+### 수정 내용
+
+- **`app/index.tsx`**: `navPending` state 신설 — `handleStart`의 신규계정/미완료계정 분기에서 `titleNavLockRef.current=true` 직후 `setNavPending(true)`로 **탭 즉시** 버튼을 로딩 스피너로 전환(`continueFlowActive` 분기와 동일한 즉각 피드백을 이 분기에도 적용). 버튼 `disabled`·스피너 조건에 `navPending` 추가.
+- **`app/_layout.tsx`**: catch-up 지연 방식을 `InteractionManager.runAfterInteractions` → **`setTimeout(fn, 400)`**로 교체(부트 효과·포그라운드 복귀 효과 둘 다) — 타이틀 화면 자체 네비게이션이 쓰는 `InteractionManager` 대기열과 완전히 분리해 경합 가능성 자체를 없앰. 서브코어 자체 `onBoot()` 프로브(`ArcCoreDailyOpsSubCore`·`ArcCoreTerritorialCombatSubCore`)는 원래대로 `InteractionManager` 유지(이번 변경과 무관, 재진입 가드(`passRunning`)로 중복 실행도 안전).
+
+### self-check
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
+- [x] `npm run audit:memory:all` — **전부 PASS**(memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
+- [x] git commit **안 함**
+
+### 리스크·주의
+
+- 실기 미확인 — 특히 **신규 계정(최초 실행) 탭 직후 즉시 스피너로 바뀌는지**, 그리고 **버튼 활성화 직후 바로 연타해도 두 번째 탭이 무시만 되고 화면이 이상해지지 않는지** 확인 필요.
+- `ARC_CORE_CATCH_UP_DEFER_MS=400`은 임의값 — 실기에서 여전히 탭과 경합하면 늘리는 방향으로 조정.
+
+---
+
+## ✅ REVIEWED — 타이틀 화면 로딩 몇배 증가·버튼 무반응 회귀 수정 · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-19)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS — 승인 (수정 없음)** |
+| 근본원인 검증 | 김팀장이 당일 추가한 `postBootSettled` await 게이트가 ①로딩 수 배 증가 ②`Promise.race` 12초 상한 후에도 백그라운드 catch-up이 JS 스레드 점유 → 탭 무반응 재발 — diff·코드로 재확인. 서브코어 `onBoot()`의 검증된 `InteractionManager.runAfterInteractions` 패턴으로 통일한 것이 타당 |
+| diff 전수 확인 | `app/_layout.tsx` 2곳(부트·포그라운드 복귀) InteractionManager 이관 + `catchUpTask.cancel()` 클린업 · `appBootStore`/`index.tsx`/`localAccountReset.ts`의 `postBootSettled` 용례 유지 — handoff 기술과 일치 |
+| 잔여 리스크 | catch-up 실행 도중 탭이 들어오면 해당 sync 패스 길이만큼 지연 가능(기존 서브코어 프로브와 동일 수준) — 실기에서 `[title-diag] catchUp=..ms` 로그로 확인 예정 |
+| 게이트 재실행 | `npx tsc --noEmit -p tsconfig.client.json` PASS · `npm run audit:memory:all` 전부 PASS(37/37 · skia 20/20 · worklet PASS · reclaim 20/20 · resident 7/7 · hot-path 0) |
+| 실기 검증 | 미실시 — 대표님 실기에서 ①버튼 활성화 속도 복원 ②활성화 직후 탭 반응 ③백그라운드 복귀 ④`[title-diag]` 로그로 catch-up 실행 확인 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-19 (김팀장 검수) · 2026-07-19 (김클로드 작성) |
+| **task_id** | `title-postbootsettled-catchup-block-regression-20260719` |
+| **요청자** | 대표님 — "현재 시작화면 로딩(시작버튼)이 이전보다 몇배 늘어나고 버튼 활성화시 바로 클릭이 안되는 오류가 발생중이다. 현재 김팀장이 수정중인데 바로 수정이 안되고 있다... 완전히 수정하라" |
+| **선행 분석** | 같은 대화에서 먼저 "분석만" 진행 — git diff로 원인 확정 후 이번에 실제 수정. 분석 결과를 그대로 handoff에 남김(아래) |
+
+### 근본원인 (git diff로 확정)
+
+오늘(2026-07-19) 김팀장이 **다른** 버그("버튼 보이는데 탭해도 무반응")를 고치려고 `app/_layout.tsx`·`src/store/appBootStore.ts`에 `postBootSettled` 게이트를 추가했는데, 이게 두 증상을 **동시에** 유발했음:
+
+1. **로딩 몇 배 증가**: 타이틀 버튼이 `bootReady` 하나만 보던 걸(이전 정상 동작), 오늘부터 `bootReady && postBootSettled`로 바뀌었고 `postBootSettled`는 아크코어 벽시계 catch-up(`applyArcCoreWallClockCatchUpFromPersistedGap` — 최대 48시간분 오프라인 경과를 일괄 반영)과 영토전 probe(`requestTerritorialCombatProbeAfterCatchUp` — 5단계 hydrate+combat pass)를 **`await`로 다 기다린 뒤에야** true가 되도록 바뀌었음(`Promise.race`로 12초 상한은 있었지만, 정상 케이스에서도 이전엔 없던 대기가 새로 생김).
+2. **버튼 활성화돼도 클릭 무반응(재발)**: 애초에 고치려던 증상 그 자체 — `Promise.race([작업, 12초 타임아웃])`은 진 쪽 프라미스를 취소하지 않아서, 12초 상한에 걸리면 `postBootSettled=true`(버튼 활성화)로 바뀌어도 무거운 catch-up 작업이 백그라운드에서 계속 JS 스레드를 점유 중이라 그 순간 탭하면 그대로 무반응 — 고치려던 버그가 형태만 바뀌어 남아있었음.
+
+**중요 발견**: 이 프로젝트에는 이미 정확히 같은 문제(무거운 부트 후속 작업이 JS 스레드를 점유해 화면이 멈추는 것)를 해결한 **검증된 패턴**이 있었음 — `ArcCoreDailyOpsSubCore.onBoot()`·`ArcCoreTerritorialCombatSubCore.onBoot()`가 이미 `InteractionManager.runAfterInteractions()`로 무거운 프로브를 감싸서 "현재 인터랙션과 경합 안 할 때만" 실행하고 있음(주석: "부트 프레임 차단 금지... 정오 이후 부팅 시 무거운 경제·코어 배치가 JS 스레드를 점유해 시작 화면이 멈추는 회귀 방지"). 오늘 추가된 코드만 이 패턴을 안 쓰고 `await`+`Promise.race`로 직접 막았던 게 회귀 원인.
+
+### 수정 내용
+
+`app/_layout.tsx` 2곳(①`bootReady` 효과, ②`AppState` 포그라운드 복귀 효과) — 기존 검증된 패턴과 동일하게 통일:
+
+- `postBootSettled`를 catch-up 완료 대기 없이 **`bootReady`와 거의 동시에 즉시 `true`**로 설정(이전 정상 동작과 동일 타이밍으로 복원).
+- 벽시계 catch-up + territorial probe는 `InteractionManager.runAfterInteractions(...)`로 넘겨, 현재 진행 중인 탭/인터랙션이 없을 때만 백그라운드로 실행 — 서브코어 자체 `onBoot()`와 동일한 방어 패턴.
+- `Promise.race`+12초 타임아웃 제거(더 이상 버튼을 막지 않으므로 상한 자체가 불필요 — 실패해도 `try/catch`로 무시하고 다음 기회에 재시도되는 건 기존과 동일).
+- `postBootSettled` 자체는 **삭제하지 않고 유지** — `src/account/localAccountReset.ts`(계정 초기화 후 타이틀 복귀 시 `InteractionManager.runAfterInteractions`로 올바르게 쓰고 있음)의 기존 용례는 이번 수정과 무관하게 그대로 둠.
+
+### self-check
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
+- [x] `npm run audit:memory:all` — **전부 PASS**(memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
+- [x] git commit **안 함**
+
+### 리스크·주의
+
+- **실기 미확인**(에뮬레이터/디바이스 없음) — 아래 확인 필요:
+  1. 타이틀 화면 진입 시 버튼이 예전(오늘 이전) 속도로 빠르게 활성화되는지
+  2. 활성화 직후 즉시 탭해도 정상 반응하는지(오래 앱을 안 켰던 계정 포함 — catch-up 대상량이 큰 케이스가 재현 조건에 더 유리)
+  3. 앱을 백그라운드로 오래 뒀다가 복귀할 때도 동일하게 정상인지(②구간)
+  4. 벽시계 catch-up·영토전 probe 자체가 어쨌든 실행은 되는지(`__DEV__`일 때 `[title-diag] catchUp=...ms probe=...ms` 로그로 확인 가능 — 실행 시점만 늦춰졌을 뿐 스킵되면 안 됨)
+- `postBootSettled=true`를 즉시 세팅하는 방식이 "실제 입력 가능=버튼 표시" 원칙(주석 의도)에서 살짝 벗어난 것처럼 보일 수 있으나, `InteractionManager.runAfterInteractions`가 정확히 "탭 등 진행 중인 인터랙션이 없을 때만" 실행을 보장하므로 실질적으로는 동일한 보호를 더 가벼운 방식(캐치업 자체를 안 막고 경합만 피함)으로 달성한 것.
+
+---
+
 ## ✅ REVIEWED — 최초 게임시작 인트로 "화면 한번 나왔다 스킵/재시작" 버그 수정 · 김클로드
 
 ### 김팀장 검수 (본창 Cursor · 2026-07-17)

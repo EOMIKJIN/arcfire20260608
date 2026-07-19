@@ -791,3 +791,26 @@
 [2026-07-18 06:31:47] CRITICAL process not running ??check crash-*.log
 [2026-07-18 12:41:32] GL +125.9MB views=549 (PSS 166.7MB) ??active hub
 [2026-07-19 00:00:15] GL +96.3MB views=550 (PSS 143.6MB) ??active hub
+[2026-07-19 09:00:14] CRITICAL process not running ??check crash-*.log
+[2026-07-19 09:15:15] CRITICAL process not running ??check crash-*.log
+[2026-07-19 09:30:16] CRITICAL process not running ??check crash-*.log
+[2026-07-19 09:45:17] CRITICAL process not running ??check crash-*.log
+[2026-07-19 10:00:17] CRITICAL process not running ??check crash-*.log
+[2026-07-19 10:15:17] CRITICAL process not running ??check crash-*.log
+[2026-07-19 10:30:17] CRITICAL process not running ??check crash-*.log
+[2026-07-19 10:45:17] CRITICAL process not running ??check crash-*.log
+[2026-07-19 11:00:18] CRITICAL process not running ??check crash-*.log
+[2026-07-19 11:15:18] CRITICAL process not running ??check crash-*.log
+[2026-07-19 11:30:19] CRITICAL process not running ??check crash-*.log
+[2026-07-19 11:45:19] CRITICAL process not running ??check crash-*.log
+[2026-07-19 12:00:19] CRITICAL process not running ??check crash-*.log
+[2026-07-19 12:15:20] CRITICAL process not running ??check crash-*.log
+[2026-07-19 12:30:20] CRITICAL process not running ??check crash-*.log
+[2026-07-19 15:04:08] GL +87.4MB views=569 (PSS 119.6MB) ??active hub
+[2026-07-19 15:35:09] CRITICAL process not running ??check crash-*.log
+[2026-07-19 16:05:42] CRITICAL process not running ??check crash-*.log
+[2026-07-19 16:20:43] CRITICAL process not running ??check crash-*.log
+[2026-07-19 17:22:19] CRITICAL process not running ??check crash-*.log
+[2026-07-19 20:57:58] PSS +88.6MB GL 40.5MB views=365
+[2026-07-19 22:45:59] GL +86.2MB views=549 (PSS 67.2MB) ??active hub
+[2026-07-19 23:47:51] PSS +54.6MB GL 42.6MB views=535

@@ -6,7 +6,9 @@ import {
   getArcCoreDailyOpsLastBatchAtMs,
   hydrateArcCoreDailyOpsState,
   markArcCoreDailyBatchCompleted,
+  markArcCoreDailyBatchStarted,
 } from '../schedule/arcCoreDailyOpsState';
+import { registerRunningArcCoreDailyBatch } from '../schedule/arcCoreDailyBatchGate';
 import { runArcCoreDailyOpsBatch } from '../schedule/runArcCoreDailyOpsBatch';
 import { formatArcCoreOpsDayKey, resolveArcCoreDailyOpsPolicy } from '../schedule/arcCoreDailyOpsPolicy';
 import { setArcCoreDailyOpsSummaryPending } from '../schedule/arcCoreDailyOpsSummaryPending';
@@ -58,25 +60,32 @@ export class ArcCoreDailyOpsSubCore extends BaseArcSubCore {
     }
 
     this.batchRunning = true;
-    try {
-      const lastBatchAt = getArcCoreDailyOpsLastBatchAtMs();
-      const batchResult = await runArcCoreDailyOpsBatch();
-      const policy = resolveArcCoreDailyOpsPolicy();
-      const dayKey = formatArcCoreOpsDayKey(now, policy.timeZone);
-      const hoursSinceLastBatch =
-        lastBatchAt != null && lastBatchAt > 0
-          ? Math.max(0, (now - lastBatchAt) / (60 * 60 * 1000))
-          : 0;
-      await setArcCoreDailyOpsSummaryPending({
-        dayKey,
-        hoursSinceLastBatch,
-        economyFabric: batchResult.economyFabric,
-        simOverlayIngest: batchResult.simOverlayIngest,
-        economyLearning: batchResult.economyLearning,
-      });
-      await markArcCoreDailyBatchCompleted(now);
-    } finally {
-      this.batchRunning = false;
-    }
+    const batchWork = (async () => {
+      try {
+        // 시작 선기록 — 배치 도중 강제종료돼도 같은 날 전체 재실행을 막는다.
+        await markArcCoreDailyBatchStarted(now);
+        const lastBatchAt = getArcCoreDailyOpsLastBatchAtMs();
+        const batchResult = await runArcCoreDailyOpsBatch();
+        const policy = resolveArcCoreDailyOpsPolicy();
+        const dayKey = formatArcCoreOpsDayKey(now, policy.timeZone);
+        const hoursSinceLastBatch =
+          lastBatchAt != null && lastBatchAt > 0
+            ? Math.max(0, (now - lastBatchAt) / (60 * 60 * 1000))
+            : 0;
+        await setArcCoreDailyOpsSummaryPending({
+          dayKey,
+          hoursSinceLastBatch,
+          economyFabric: batchResult.economyFabric,
+          simOverlayIngest: batchResult.simOverlayIngest,
+          economyLearning: batchResult.economyLearning,
+        });
+        await markArcCoreDailyBatchCompleted(now);
+      } finally {
+        this.batchRunning = false;
+      }
+    })();
+    // 부트 settle 체인(타이틀 버튼 게이트)이 배치 종료를 기다릴 수 있게 등록
+    registerRunningArcCoreDailyBatch(batchWork);
+    await batchWork;
   }
 }

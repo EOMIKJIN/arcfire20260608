@@ -112,18 +112,25 @@ export async function rotateGuestAuthIdentity(): Promise<LocalUser> {
   return next;
 }
 
-/** 계정 초기화 직후 1회: 타이틀에서 클라우드 복원을 건너뛰도록 표시 */
+/** 계정 초기화 직후: 새 계정이 생성될 때까지 클라우드 자동 복원을 건너뛰도록 표시 */
 export async function markFreshStartAfterReset(): Promise<void> {
   await AsyncStorage.setItem(AUTH_FRESH_START_ONCE_KEY, '1');
 }
 
-/** 타이틀 진입 시 1회 — AsyncStorage 플래그를 소비하고 클라우드 복원을 건너뛴다. */
+/**
+ * 타이틀 진입 시 — fresh-start 플래그가 있으면 클라우드 자동 복원을 건너뛴다.
+ *
+ * ⚠️ 플래그를 여기서 지우지 않는다(읽기만). 과거에는 첫 타이틀 방문에서 플래그를
+ * 삭제했는데, 클라우드 세이브 삭제가 서버에 커밋되기 전에 앱을 강제종료→재시작하면
+ * 플래그는 이미 소비되고 users 문서는 남아 있어 **초기화한 옛 계정이 클라우드 복원으로
+ * 되살아나는 회귀**(2026-07-19)가 있었다. 플래그는 새 계정 생성이 실제로 완료될 때
+ * (`clearFreshStartAfterAccountCreated`) 또는 수동 백업 복구 시에만 지운다.
+ */
 export async function consumeFreshStartForTitle(): Promise<boolean> {
   if (freshStartConsumedThisBoot) return true;
   try {
     const raw = await AsyncStorage.getItem(AUTH_FRESH_START_ONCE_KEY);
     if (raw === '1') {
-      await AsyncStorage.removeItem(AUTH_FRESH_START_ONCE_KEY);
       freshStartConsumedThisBoot = true;
       return true;
     }
@@ -131,6 +138,16 @@ export async function consumeFreshStartForTitle(): Promise<boolean> {
     /* ignore */
   }
   return false;
+}
+
+/** 새 계정 생성 완료·수동 백업 복구 — fresh-start 보호를 해제한다. */
+export async function clearFreshStartAfterAccountCreated(): Promise<void> {
+  freshStartConsumedThisBoot = false;
+  try {
+    await AsyncStorage.removeItem(AUTH_FRESH_START_ONCE_KEY);
+  } catch {
+    /* ignore */
+  }
 }
 
 /** purge 직후·타이틀 마운트 전 — 플래그가 아직 남아 있는지(소비 전). */

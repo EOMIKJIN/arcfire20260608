@@ -10,6 +10,7 @@ export type BootPerfMark =
   | 'storage_load_end'
   | 'boot_ready'
   | 'arc_core_start'
+  | 'post_boot_settled'
   | 'continue_prewarm_start'
   | 'continue_prewarm_end'
   | 'planet_first_render';

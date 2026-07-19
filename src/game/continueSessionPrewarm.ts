@@ -14,7 +14,7 @@ import { resumePlayerToLastHubPlanet, resolveResumeHubPlanetId } from './galaxyM
 /** 이어하기 로딩 UI 최소 유지 시간(ms) — prewarm 완료 후에도 짧게 유지 */
 export const CONTINUE_SESSION_MIN_LOADING_MS = 1200;
 
-function yieldToUi(): Promise<void> {
+export function yieldToUi(): Promise<void> {
   return new Promise((resolve) => {
     requestAnimationFrame(() => resolve());
   });

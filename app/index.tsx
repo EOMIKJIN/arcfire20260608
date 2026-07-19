@@ -34,6 +34,7 @@ import { ContinueSessionLoadingView } from '../src/game/continueSessionLoadingVi
 import {
   CONTINUE_SESSION_MIN_LOADING_MS,
   runContinueSessionPrewarm,
+  yieldToUi,
 } from '../src/game/continueSessionPrewarm';
 import { resumePlayerToLastHubPlanet } from '../src/game/galaxyMapSessionResume';
 import { runStageNavAfterTeardown } from '../src/navigation/stageNavGate';
@@ -90,13 +91,20 @@ export default function TitleScreen() {
   const player = usePlayerStore((s) => s.player);
   // 로컬 하이드레이션·월드/코어 부트스트랩이 전부 끝난 뒤에만 버튼을 활성화한다.
   const bootReady = useAppBootStore((s) => s.bootReady);
+  // bootReady 직후의 아크코어 catch-up·probe(JS 점유)까지 끝나야 실제 입력이 가능 —
+  // 완료 전에는 버튼 로딩 표시를 유지해 「표시 = 입력 가능」 타이밍을 일치시킨다.
+  const postBootSettled = useAppBootStore((s) => s.postBootSettled);
   const getActiveMission = useMissionStore((s) => s.getActiveMission);
   const initTutorialStory = useMissionStore((s) => s.initTutorialStory);
 
   const [continueFlowActive, setContinueFlowActive] = useState(false);
   const [cloudRestorePending, setCloudRestorePending] = useState(false);
-  /** 타이틀 입력 준비 완료 — RN 부트·하이드레이션·(있다면)클라우드 복원 판정까지 종료 */
-  const titleInteractive = bootReady && hydrated && !cloudRestorePending;
+  /** 인트로(신규계정·비-introSeen) 경로 탭 직후 즉시 표시 — runStageNavAfterTeardown 자체가
+   * rAF+idle-wait+drain으로 최대 2.5초+ 걸릴 수 있는데, 그동안 버튼에 아무 시각적 변화가
+   * 없어서 "눌러도 반응 없음"으로 보이고 재탭까지 유발했다(재탭은 titleNavLockRef에 막혀 무시됨). */
+  const [navPending, setNavPending] = useState(false);
+  /** 타이틀 입력 준비 완료 — RN 부트·하이드레이션·catch-up·(있다면)클라우드 복원 판정까지 종료 */
+  const titleInteractive = bootReady && postBootSettled && hydrated && !cloudRestorePending;
   const cloudCheckStartedRef = useRef(false);
   const flowCancelledRef = useRef(false);
   const prewarmPromiseRef = useRef<Promise<void> | null>(null);
@@ -192,17 +200,24 @@ export default function TitleScreen() {
     const p = usePlayerStore.getState().player;
     if (p?.flags.introSeen) {
       if (continueFlowActive || titleNavLockRef.current) return;
-      if (!getActiveMission()) initTutorialStory();
 
       flowCancelledRef.current = false;
       titleNavLockRef.current = true;
-      prewarmPromiseRef.current = runContinueSessionPrewarm().catch(() => {
-        /* 프리로드 실패해도 진입은 허용 */
-      });
-
+      // 로딩화면부터 먼저 그린다 — runContinueSessionPrewarm()이 내부적으로 부르는
+      // buildCsvStaticIndexesFull()(아이템·광물·밸런스 오버레이 인덱스)이 첫 await 전까지
+      // 동기로 도는데, 이걸 setContinueFlowActive보다 먼저 호출하면 그 동안 화면이 전혀
+      // 안 바뀌어서 "탭해도 2~3초 멈춰있다"로 보였다. 프레임을 한 번 넘겨 로딩화면이 실제로
+      // 페인트된 뒤에야 무거운 동기 작업을 시작한다.
       setContinueFlowActive(true);
 
       void (async () => {
+        await yieldToUi();
+        await yieldToUi();
+        if (flowCancelledRef.current) return;
+        if (!getActiveMission()) initTutorialStory();
+        prewarmPromiseRef.current = runContinueSessionPrewarm().catch(() => {
+          /* 프리로드 실패해도 진입은 허용 */
+        });
         const minHold = new Promise<void>((r) => {
           continueMinHoldTimerRef.current = setTimeout(() => {
             continueMinHoldTimerRef.current = null;
@@ -225,6 +240,7 @@ export default function TitleScreen() {
     }
     if (titleNavLockRef.current) return;
     titleNavLockRef.current = true;
+    setNavPending(true);
     if (p) {
       runStageNavAfterTeardown({
         teardown: () => {},
@@ -310,9 +326,9 @@ export default function TitleScreen() {
                 style={[styles.btnStart, player ? styles.btnStartWithSave : null]}
                 onPress={handleStart}
                 activeOpacity={0.82}
-                disabled={!titleInteractive}
+                disabled={!titleInteractive || navPending}
               >
-                {!titleInteractive ? (
+                {!titleInteractive || navPending ? (
                   <ActivityIndicator color={COLORS.ink_dark} />
                 ) : (
                   <Text style={[styles.btnText, player ? styles.btnTextContinue : null]}>

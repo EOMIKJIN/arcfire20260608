@@ -10,9 +10,18 @@ type AppBootState = {
   /** 로컬 하이드레이션·월드/코어 부트스트랩 완료(네트워크·프리웜 제외) */
   bootReady: boolean;
   setBootReady: (ready: boolean) => void;
+  /**
+   * bootReady 이후 실행되는 아크코어 벽시계 catch-up·territorial probe 등
+   * JS 스레드 점유 후처리까지 끝난 시점. 타이틀 버튼은 이 신호까지 로딩 표시를 유지해
+   * 「버튼 표시 = 실제 입력 가능」 타이밍을 일치시킨다 (대표님 지시 2026-07-19).
+   */
+  postBootSettled: boolean;
+  setPostBootSettled: (settled: boolean) => void;
 };
 
 export const useAppBootStore = create<AppBootState>((set) => ({
   bootReady: false,
   setBootReady: (ready) => set({ bootReady: ready }),
+  postBootSettled: false,
+  setPostBootSettled: (settled) => set({ postBootSettled: settled }),
 }));

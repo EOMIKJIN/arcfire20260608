@@ -31,6 +31,9 @@ import { purgeAccountLedgerProfileSkillByUid } from './accountLifecycle';
 import { resetArcInboundDroneCampaigns } from '../arcCore/inboundDrone/resetArcInboundDroneCampaigns';
 import { purgeAllPlanetHubScanUnlockState } from '../game/planetHub/planetHubScanUnlockState';
 import { useArcCoreSpyExpelledStore } from '../store/arcCoreSpyExpelledStore';
+import { useAppBootStore } from '../store/appBootStore';
+import { runStageUiAfterIdle } from '../navigation/stageNavGate';
+import { useArcOverlayStore } from '../ui/overlay/arcOverlayStore';
 
 export type LocalAccountResetParams = {
   uid: string | null | undefined;
@@ -49,6 +52,40 @@ let accountResetInProgress = false;
 /** 계정 초기화(purge) 진행 중 여부 — 화면 측 자동 타이틀 리다이렉트 보류용. */
 export function isAccountResetInProgress(): boolean {
   return accountResetInProgress;
+}
+
+/**
+ * 클라우드 단계(pre-purge 백업 + 클라우드 세이브 삭제) 전체 상한.
+ * 오프라인이면 개별 상한(백업 12s + 삭제 10s×N)이 직렬로 누적돼 40~60초 동안
+ * 메인스테이지가 아무 피드백 없이 떠 있는 회귀(2026-07-19)가 있었다 —
+ * 백업/삭제를 병렬로 돌리고 단계 전체를 한 번에 상한 처리한다.
+ * (타임아웃돼도 Firestore SDK가 큐잉해 온라인 복귀 시 자동 반영)
+ */
+const CLOUD_PURGE_PHASE_MAX_WAIT_MS = 15_000;
+
+const ACCOUNT_RESET_OVERLAY_ID = 'account-reset-blocking';
+
+function presentAccountResetBlockingOverlay(): void {
+  try {
+    const store = useArcOverlayStore.getState();
+    store.dismissWhere((e) => e.id === ACCOUNT_RESET_OVERLAY_ID);
+    store.present({
+      id: ACCOUNT_RESET_OVERLAY_ID,
+      kind: 'blocking',
+      message: '계정 초기화 중…',
+      dismissOnBackdrop: false,
+    });
+  } catch {
+    /* overlay 실패해도 purge는 진행 */
+  }
+}
+
+function dismissAccountResetBlockingOverlay(): void {
+  try {
+    useArcOverlayStore.getState().dismissWhere((e) => e.id === ACCOUNT_RESET_OVERLAY_ID);
+  } catch {
+    /* ignore */
+  }
 }
 
 function resolveResetUids(playerUid: string | null | undefined): string[] {
@@ -71,31 +108,52 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   cancelScheduledUserCloudSync();
   cancelScheduledGameSaveBackup();
 
+  // fresh-start 보호를 **purge 시작 즉시** 기록한다 — 마지막에 기록하면 purge 도중
+  // (클라우드 단계 최대 15s) 강제종료 시 플래그 없이 남아, 재시작 부트에서 클라우드
+  // 자동 복원이 초기화한 옛 계정을 되살리는 구멍이 생긴다(2026-07-19 전수검사).
+  // 플래그는 새 계정 생성 완료·수동 백업 복구 시에만 해제되므로 선기록해도 무해하다.
+  await markFreshStartAfterReset();
+
   const resetUids = resolveResetUids(params.uid);
   const primaryUid = resetUids[0] ?? null;
   const { currentClanId } = params;
 
-  for (const uid of resetUids) {
-    try {
-      await uploadPrePurgeGameSaveBackup(uid);
-    } catch (e) {
-      if (__DEV__) {
-        console.warn('[localAccountReset] pre-purge game save backup failed', uid, e);
-      }
-    }
-  }
-
   clearCombatResumeSnapshot();
   clearMiningResumeSnapshot();
 
-  for (const uid of resetUids) {
-    await deleteUserCloudSave(uid);
-  }
+  // 클라우드 단계 — 백업·삭제를 병렬로 돌리고 단계 전체를 15s 한 번으로 상한.
   // 릴리즈 부팅 지연 시 `local-guest`로 등록된 고아 users 문서가 남으면
-  // 이후 deviceUid 재등록에서 동일 닉네임이 '이미 사용 중'으로 오판된다.
+  // 이후 deviceUid 재등록에서 동일 닉네임이 '이미 사용 중'으로 오판되므로 함께 삭제한다.
+  const deleteUids = [...resetUids];
   if (primaryUid && primaryUid !== 'local-guest' && !resetUids.includes('local-guest')) {
-    await deleteUserCloudSave('local-guest');
+    deleteUids.push('local-guest');
   }
+  // 삭제는 즉시 발행한다 — deleteDoc은 호출 즉시 Firestore 로컬 캐시·영속 mutation 큐에
+  // 반영되므로(오프라인 포함), 서버 ack를 기다리다 강제종료돼도 재시작 시 SDK가 이어서
+  // 커밋하고, 캐시 읽기에서도 문서는 이미 삭제로 보인다. (백업은 users/{uid} 하위
+  // 서브컬렉션에만 쓰므로 부모 문서 삭제와 병렬로 돌려도 안전하다.)
+  const cloudPhase = Promise.all([
+    ...deleteUids.map((uid) =>
+      deleteUserCloudSave(uid).catch(() => {
+        /* offline — Firestore queue */
+      }),
+    ),
+    ...resetUids.map(async (uid) => {
+      try {
+        await uploadPrePurgeGameSaveBackup(uid);
+      } catch (e) {
+        if (__DEV__) {
+          console.warn('[localAccountReset] pre-purge game save backup failed', uid, e);
+        }
+      }
+    }),
+  ]).then(() => undefined);
+  await Promise.race([
+    cloudPhase,
+    new Promise<void>((resolve) => {
+      setTimeout(resolve, CLOUD_PURGE_PHASE_MAX_WAIT_MS);
+    }),
+  ]);
 
   if (primaryUid) {
     await useClanWarFoundationStore.getState().purgePlayerAccountWorldState({
@@ -138,8 +196,7 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
 
   await clearArcCoreRtdbDailyKpiPushState();
   await resetFirebaseAnonymousAuthForAccountPurge();
-
-  await markFreshStartAfterReset();
+  // fresh-start 플래그는 purge **시작부**에서 이미 기록됨(강제종료 대비 선기록).
 }
 
 /**
@@ -152,6 +209,10 @@ export async function finalizeLocalAccountResetNavigation(
 ): Promise<void> {
   let purgeError: unknown = null;
   accountResetInProgress = true;
+  // purge 동안(오프라인 클라우드 상한 포함 수 초~15초) 메인스테이지가 그대로 떠 있어
+  // 「초기화가 안 된다」로 보이던 회귀 방지 — 루트 blocking 오버레이로 진행 상태를 표시한다.
+  presentAccountResetBlockingOverlay();
+  const purgeStartedAtMs = Date.now();
   try {
     await purgeLocalAccountData(params);
   } catch (e) {
@@ -170,8 +231,20 @@ export async function finalizeLocalAccountResetNavigation(
     }
 
     // 완전한 purge 완료 후에만 타이틀 이동(여기까지 화면 측 리다이렉트는 보류됨).
+    // 같은 JS 세션 복귀라 bootReady·postBootSettled가 true로 남아 버튼이 즉시 활성되는데,
+    // 잔여 정리·전환 인터랙션이 끝날 때까지 로딩 표시를 유지해 입력 가능 시점과 일치시킨다.
+    // ⚠️ InteractionManager 단독 의존 금지 — 전환·Reanimated 인터랙션이 안 풀리면 영구 대기해
+    //    postBootSettled=false로 타이틀 버튼이 영원히 잠기는 회귀(2026-07-19 계정 초기화 먹통).
+    //    runStageUiAfterIdle = IM idle 또는 2.5s 데드라인 중 먼저 오는 쪽에서 반드시 1회 실행.
+    useAppBootStore.getState().setPostBootSettled(false);
     accountResetInProgress = false;
+    dismissAccountResetBlockingOverlay();
+    // eslint-disable-next-line no-console
+    if (__DEV__) console.log(`[reset-diag] purge=${Date.now() - purgeStartedAtMs}ms`);
     navigateToTitle();
+    runStageUiAfterIdle(() => {
+      useAppBootStore.getState().setPostBootSettled(true);
+    });
 
     if (purgeError || usePlayerStore.getState().player) {
       scheduleAccountResetFailedTip();

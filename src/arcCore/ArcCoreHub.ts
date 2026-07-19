@@ -12,6 +12,7 @@ import { gameLoop } from '../engine/GameLoop';
 import type { ArcCoreHub, ArcCoreProcess, ArcCoreWallTickFn, ArcSubCore } from './types';
 import { dispatchArcCoreCommand, type ArcCoreCommand } from './ArcCoreCommandBus';
 import { registerDefaultArcSubCores } from './subcores/registerDefaultArcSubCores';
+import { yieldJsThread } from './schedule/yieldJsThread';
 
 class ProcessImpl implements ArcCoreProcess {
   timeScale = 1;
@@ -100,15 +101,23 @@ class ArcCoreHubImpl implements ArcCoreHub {
   /** 백그라운드·종료 구간을 벽시계에 반영할 때 상한(48h) — 과도한 일괄 진행 방지 */
   private static readonly MAX_OFFLINE_CATCH_UP_SEC = 48 * 60 * 60;
 
-  applyOfflineCatchUpWallClock(deltaSec: number): void {
+  /**
+   * 오프라인 catch-up — 서브코어/프로세스 하나 처리할 때마다 매크로태스크 경계로
+   * 이벤트 루프를 비워, 타이틀 버튼 탭 등 사용자 입력이 한 덩어리 동기 fan-out
+   * (최대 48h분 onWallTick 연쇄)에 막히지 않게 한다.
+   * (2026-07-19 타이틀 「버튼 활성화 후 탭 2~3초 무반응」 근본 조치 — 동기판 폐기)
+   */
+  async applyOfflineCatchUpWallClockChunked(deltaSec: number): Promise<void> {
     const raw = Number.isFinite(deltaSec) ? deltaSec : 0;
     const capped = Math.min(Math.max(raw, 0), ArcCoreHubImpl.MAX_OFFLINE_CATCH_UP_SEC);
     if (capped <= 0) return;
     for (const subCore of this.subCores.values()) {
       subCore._advanceWallClock(capped);
+      await yieldJsThread();
     }
     for (const p of this.processes.values()) {
       p._advanceWallClock(capped);
+      await yieldJsThread();
     }
   }
 

@@ -15,7 +15,7 @@ import {
   userDocRef,
 } from '../firestoreRefs';
 import { configureFirestorePersistence } from '../firestoreClientConfig';
-import { getCurrentUserEnsured } from '../auth';
+import { clearFreshStartAfterAccountCreated, getCurrentUserEnsured } from '../auth';
 import { ensureFirebaseAnonymousAuth } from '../firebaseAnonymousAuth';
 import { applyLocalGameSaveSnapshot } from './applyLocalGameSaveSnapshot';
 import { collectLocalGameSaveSnapshot } from './collectLocalGameSaveSnapshot';
@@ -479,6 +479,9 @@ export async function restoreGameSaveBackupToLocal(
   }
   try {
     const result = await applyLocalGameSaveSnapshot(backupDoc.snapshot);
+    // 수동 복구 = 사용자가 계정 데이터를 명시적으로 되살림 — 계정 초기화 직후의
+    // 클라우드 자동 복원 차단(fresh-start)을 해제해 상태를 일관되게 유지한다.
+    await clearFreshStartAfterAccountCreated();
     return { ok: true, appliedKeyCount: result.appliedKeyCount };
   } catch {
     return { ok: false, error: 'apply_failed' };

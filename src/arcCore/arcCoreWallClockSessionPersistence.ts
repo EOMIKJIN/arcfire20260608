@@ -31,6 +31,7 @@ export async function applyArcCoreWallClockCatchUpFromPersistedGap(hub: ArcCoreH
   if (!Number.isFinite(lastMs) || lastMs <= 0) return;
   const deltaSec = (Date.now() - lastMs) / 1000;
   if (deltaSec < 1) return;
-  hub.applyOfflineCatchUpWallClock(deltaSec);
+  // 청크판 — 한 덩어리 동기 fan-out이 타이틀 버튼 탭을 수 초간 막던 회귀 방지(2026-07-19)
+  await hub.applyOfflineCatchUpWallClockChunked(deltaSec);
   await persistArcCoreWallClockLeftActiveNow();
 }

@@ -39,7 +39,7 @@ import {
   resolvePlanetCoreStatTrendView,
 } from '../../arcCore/planetCore/planetCoreStatOpsTrend';
 import type { PlanetCoreStatKey } from '../../store/planetCoreMetricTypes';
-import { resolvePlanetInfoPanelDescription } from './resolvePlanetTableDescription';
+import { resolvePlanetTableDescription } from './resolvePlanetTableDescription';
 import {
   resolvePlanetStabilityDisplay,
   type PlanetStabilityDisplay,
@@ -254,7 +254,8 @@ export function buildPlanetEconomyInfoSnapshot(
   });
   const convoyLabel = resolvePlanetTradeConvoyMonopolyLabel(planetId);
   const locale = useAppSettingsStore.getState().locale;
-  const planetDescription = resolvePlanetInfoPanelDescription(planetId, locale);
+  // 총사령관 이름 줄은 붙이지 않는다 — 정보창의 총사령관 포트레이트 카드와 중복(2026-07-19)
+  const planetDescription = resolvePlanetTableDescription(planetId, locale);
 
   const extras: PlanetEconomyInfoExtraRow[] = [
     {

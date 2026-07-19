@@ -26,10 +26,16 @@ import {
   showTerritorialStatusQuoAlert,
 } from './showTerritorialOccupationChangeAlert';
 import { publishTerritorialHoldChangeNotice } from './publishTerritorialHoldChangeNotice';
+import {
+  resolveGovernorTacticsReversal,
+  type TacticsReversalOutcome,
+} from './resolveGovernorTacticsReversal';
+import { hydratePlanetGovernorAssignmentStore } from '../../game/planetGovernor/planetGovernorAssignmentStore';
 import { validateTerritorialCombatModeForSystem } from './territorialCombatGraph';
 import { resolveMapFactionSideFromClanId } from '../../galaxyMap/resolveMapFactionSide';
 import type { MapFactionSide } from '../../galaxyMap/resolveMapFactionSide';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
+import { yieldJsThread } from '../schedule/yieldJsThread';
 import type { PlanetClanHold } from '../../types';
 
 export type TerritorialPassDecision = 'battle' | 'neutral_declare' | 'status_quo';
@@ -220,6 +226,8 @@ export async function runTerritorialCombatPassForPlanet(
   if (!warStore.hydrated) {
     await warStore.loadLocalClanWarFoundation();
   }
+  // 총사령관 슬롯 판정(전술 역전) 전 배정 스토어 hydrate 보장 — 멱등·부트 후 즉시 반환
+  await hydratePlanetGovernorAssignmentStore();
 
   const hold = warStore.getHold(planetId);
   const holdSide = resolveHoldFactionSide(hold?.occupierClanId);
@@ -313,6 +321,25 @@ export async function runTerritorialCombatPassForPlanet(
     });
     attackerWon = combat.winner === 'attacker';
 
+    // 총사령관 [전투전술영향] 역전 재판정 — 분쟁지역 한정, 전투당 1회
+    let tacticsReversal: TacticsReversalOutcome | null = null;
+    if (policy.contestedZone) {
+      tacticsReversal = resolveGovernorTacticsReversal({
+        planetId,
+        winnerSide: attackerWon ? attacker : defender,
+        loserSide: attackerWon ? defender : attacker,
+      });
+      if (tacticsReversal.reversed) {
+        attackerWon = !attackerWon;
+        if (__DEV__) {
+          console.log(
+            `[territorial] ${planetId} 전술 역전! chance=${tacticsReversal.reversalChancePct}% ` +
+              `loser=${tacticsReversal.loserCaptainId}(${tacticsReversal.loserGrade}) → 승리 탈환`,
+          );
+        }
+      }
+    }
+
     const applied = warStore.applyArcCoreTerritorialHold({
       planetId,
       systemId: policy.systemId,
@@ -331,6 +358,18 @@ export async function runTerritorialCombatPassForPlanet(
         defenderSide: defender,
         attackerWon,
         combat,
+        ...(tacticsReversal
+          ? {
+              tacticsReversal: {
+                reversed: tacticsReversal.reversed,
+                reversalChancePct: tacticsReversal.reversalChancePct,
+                winnerCaptainId: tacticsReversal.winnerCaptainId,
+                loserCaptainId: tacticsReversal.loserCaptainId,
+                winnerGrade: tacticsReversal.winnerGrade,
+                loserGrade: tacticsReversal.loserGrade,
+              },
+            }
+          : {}),
       },
     });
     holdChanged = applied.changed;
@@ -349,7 +388,7 @@ export async function runTerritorialCombatPassForPlanet(
     return { planetId, decision, holdChanged, previousSide, newSide, operationId };
   }
 
-  const targetFaction = resolveBattleHoldTarget({
+  let targetFaction = resolveBattleHoldTarget({
     combatMode: policy.combatMode,
     policy,
     holdSide,
@@ -357,6 +396,32 @@ export async function runTerritorialCombatPassForPlanet(
     defender,
     attackerWon: false,
   });
+
+  // 총사령관 [전투전술영향] 역전 재판정 — 2자 접전(blue_neutral·red_neutral)도 분쟁지역이면 1회 적용.
+  // 승자 = 판정된 target 측 참가자(제3측 유지면 방어 성공으로 간주), 패자 = 반대 참가자.
+  let tacticsReversal: TacticsReversalOutcome | null = null;
+  if (policy.contestedZone) {
+    const winnerParticipant: TerritorialCombatParticipant =
+      targetFaction === participantToHoldTarget(attacker)
+        ? attacker
+        : defender;
+    const loserParticipant: TerritorialCombatParticipant =
+      winnerParticipant === attacker ? defender : attacker;
+    tacticsReversal = resolveGovernorTacticsReversal({
+      planetId,
+      winnerSide: participantToHoldTarget(winnerParticipant),
+      loserSide: participantToHoldTarget(loserParticipant),
+    });
+    if (tacticsReversal.reversed) {
+      targetFaction = participantToHoldTarget(loserParticipant);
+      if (__DEV__) {
+        console.log(
+          `[territorial] ${planetId} 전술 역전(2자 접전)! chance=${tacticsReversal.reversalChancePct}% ` +
+            `→ target=${targetFaction}`,
+        );
+      }
+    }
+  }
 
   const applied = warStore.applyArcCoreTerritorialHold({
     planetId,
@@ -371,6 +436,18 @@ export async function runTerritorialCombatPassForPlanet(
       dominantSideWeightPct: policy.dominantSideWeightPct,
       dominantFaction: resolveDominantFaction(policy.combatMode),
       targetFaction,
+      ...(tacticsReversal
+        ? {
+            tacticsReversal: {
+              reversed: tacticsReversal.reversed,
+              reversalChancePct: tacticsReversal.reversalChancePct,
+              winnerCaptainId: tacticsReversal.winnerCaptainId,
+              loserCaptainId: tacticsReversal.loserCaptainId,
+              winnerGrade: tacticsReversal.winnerGrade,
+              loserGrade: tacticsReversal.loserGrade,
+            },
+          }
+        : {}),
     },
   });
   holdChanged = applied.changed;
@@ -408,6 +485,8 @@ export async function runTerritorialCombatPass(nowMs = Date.now()): Promise<Terr
       orderIndex: due.orderIndex,
     });
     if (row) results.push(row);
+    // 행성 1곳 처리마다 이벤트 루프 양보 — 부트 직후 probe가 타이틀 탭을 막지 않게(2026-07-19)
+    await yieldJsThread();
   }
 
   for (const policy of policies) {
@@ -416,6 +495,7 @@ export async function runTerritorialCombatPass(nowMs = Date.now()): Promise<Terr
     if (policy.campaignGroup) continue;
     const row = await runTerritorialCombatPassForPlanet(policy.planetId, nowMs);
     if (row) results.push(row);
+    await yieldJsThread();
   }
 
   if (__DEV__ && results.length > 0) {

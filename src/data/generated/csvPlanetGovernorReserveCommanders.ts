@@ -9,6 +9,8 @@ export type PlanetGovernorReserveCommanderRow = {
   reserveOrder: number;
   enabled: boolean;
   notesKo: string;
+  /** 총사령관 전용 [전투전술영향] 등급 (-5..+5) — 분쟁지역 역전 판정 가중치 */
+  combatTacticsGrade: number;
 };
 
 export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveCommanderRow[] = [
@@ -22,6 +24,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 1,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 01",
+    combatTacticsGrade: 3,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_02",
@@ -33,6 +36,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 2,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 02",
+    combatTacticsGrade: 2,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_03",
@@ -44,6 +48,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 3,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 03",
+    combatTacticsGrade: 2,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_04",
@@ -55,6 +60,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 4,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 04",
+    combatTacticsGrade: 1,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_05",
@@ -66,6 +72,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 5,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 05",
+    combatTacticsGrade: 3,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_06",
@@ -77,6 +84,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 6,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 06",
+    combatTacticsGrade: 1,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_07",
@@ -88,6 +96,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 7,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 07",
+    combatTacticsGrade: 2,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_08",
@@ -99,6 +108,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 8,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 08",
+    combatTacticsGrade: 0,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_09",
@@ -110,6 +120,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 9,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 09",
+    combatTacticsGrade: 0,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_10",
@@ -121,6 +132,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 10,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 10",
+    combatTacticsGrade: 1,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_11",
@@ -132,6 +144,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 11,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 11",
+    combatTacticsGrade: -1,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_12",
@@ -143,6 +156,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 12,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 12",
+    combatTacticsGrade: 0,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_13",
@@ -154,6 +168,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 13,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 13",
+    combatTacticsGrade: -2,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_14",
@@ -165,6 +180,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 14,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 14",
+    combatTacticsGrade: -1,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_15",
@@ -176,6 +192,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 15,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 15",
+    combatTacticsGrade: 1,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_16",
@@ -187,6 +204,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 16,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 16",
+    combatTacticsGrade: -2,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_17",
@@ -198,6 +216,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 17,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 17",
+    combatTacticsGrade: 0,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_18",
@@ -209,6 +228,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 18,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 18",
+    combatTacticsGrade: -3,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_19",
@@ -220,6 +240,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 19,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 19",
+    combatTacticsGrade: -1,
   },
   {
     captainId: "npc_cpt_gov_reserve_blue_20",
@@ -231,6 +252,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 20,
     enabled: true,
     notesKo: "스텔리움 예비 총사령관 20",
+    combatTacticsGrade: 0,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_01",
@@ -242,6 +264,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 1,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 01",
+    combatTacticsGrade: 3,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_02",
@@ -253,6 +276,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 2,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 02",
+    combatTacticsGrade: 2,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_03",
@@ -264,6 +288,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 3,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 03",
+    combatTacticsGrade: 1,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_04",
@@ -275,6 +300,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 4,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 04",
+    combatTacticsGrade: 1,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_05",
@@ -286,6 +312,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 5,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 05",
+    combatTacticsGrade: 2,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_06",
@@ -297,6 +324,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 6,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 06",
+    combatTacticsGrade: 1,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_07",
@@ -308,6 +336,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 7,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 07",
+    combatTacticsGrade: 1,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_08",
@@ -319,6 +348,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 8,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 08",
+    combatTacticsGrade: 1,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_09",
@@ -330,6 +360,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 9,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 09",
+    combatTacticsGrade: 0,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_10",
@@ -341,6 +372,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 10,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 10",
+    combatTacticsGrade: 0,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_11",
@@ -352,6 +384,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 11,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 11",
+    combatTacticsGrade: 0,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_12",
@@ -363,6 +396,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 12,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 12",
+    combatTacticsGrade: -1,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_13",
@@ -374,6 +408,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 13,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 13",
+    combatTacticsGrade: -1,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_14",
@@ -385,6 +420,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 14,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 14",
+    combatTacticsGrade: -2,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_15",
@@ -396,6 +432,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 15,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 15",
+    combatTacticsGrade: 0,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_16",
@@ -407,6 +444,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 16,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 16",
+    combatTacticsGrade: -3,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_17",
@@ -418,6 +456,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 17,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 17",
+    combatTacticsGrade: -1,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_18",
@@ -429,6 +468,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 18,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 18",
+    combatTacticsGrade: -2,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_19",
@@ -440,6 +480,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 19,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 19",
+    combatTacticsGrade: -3,
   },
   {
     captainId: "npc_cpt_gov_reserve_red_20",
@@ -451,6 +492,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 20,
     enabled: true,
     notesKo: "크림슨 예비 총사령관 20",
+    combatTacticsGrade: -1,
   },
   {
     captainId: "npc_cpt_gov_reserve_neutral_01",
@@ -462,6 +504,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 1,
     enabled: true,
     notesKo: "중립 예비 총사령관 01",
+    combatTacticsGrade: 0,
   },
   {
     captainId: "npc_cpt_gov_reserve_neutral_02",
@@ -473,6 +516,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 2,
     enabled: true,
     notesKo: "중립 예비 총사령관 02",
+    combatTacticsGrade: 0,
   },
   {
     captainId: "npc_cpt_gov_reserve_neutral_03",
@@ -484,6 +528,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 3,
     enabled: true,
     notesKo: "중립 예비 총사령관 03",
+    combatTacticsGrade: 0,
   },
   {
     captainId: "npc_cpt_gov_reserve_neutral_04",
@@ -495,6 +540,7 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 4,
     enabled: true,
     notesKo: "중립 예비 총사령관 04",
+    combatTacticsGrade: 0,
   },
   {
     captainId: "npc_cpt_gov_reserve_neutral_05",
@@ -506,5 +552,6 @@ export const PLANET_GOVERNOR_RESERVE_COMMANDERS_FROM_CSV: PlanetGovernorReserveC
     reserveOrder: 5,
     enabled: true,
     notesKo: "중립 예비 총사령관 05",
+    combatTacticsGrade: 0,
   }
 ];

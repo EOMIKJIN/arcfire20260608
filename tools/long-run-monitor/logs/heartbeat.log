@@ -2594,3 +2594,99 @@
 [23:20] OK · PID 8697 · PSS 672.9MB / GL 35.6MB / views 393
 [23:35] OK · PID 8697 · PSS 677.2MB / GL 35.4MB / views 376
 [23:50] OK · PID 8697 · PSS 680.4MB / GL 37.4MB / views 375
+[00:05] OK · PID 8697 · PSS 824MB / GL 133.7MB / views 550
+[00:20] OK · PID 8697 · PSS 812.4MB / GL 113.5MB / views 550
+[00:35] OK · PID 8697 · PSS 780MB / GL 115.2MB / views 550
+[00:50] OK · PID 8697 · PSS 785MB / GL 115.2MB / views 550
+[01:05] OK · PID 8697 · PSS 780.8MB / GL 115.2MB / views 550
+[01:21] OK · PID 8697 · PSS 786.1MB / GL 115.2MB / views 550
+[01:36] OK · PID 8697 · PSS 813.1MB / GL 115.2MB / views 550
+[01:51] OK · PID 8697 · PSS 802.2MB / GL 115.2MB / views 550
+[02:06] OK · PID 8697 · PSS 802.2MB / GL 115.2MB / views 550
+[02:21] OK · PID 8697 · PSS 790.3MB / GL 115.2MB / views 550
+[02:36] OK · PID 8697 · PSS 797.4MB / GL 115.2MB / views 550
+[02:51] OK · PID 8697 · PSS 783.1MB / GL 119.3MB / views 550
+[03:06] OK · PID 8697 · PSS 789.3MB / GL 115.2MB / views 550
+[03:21] OK · PID 8697 · PSS 781.7MB / GL 115.2MB / views 550
+[03:36] OK · PID 8697 · PSS 773.1MB / GL 115.2MB / views 550
+[03:51] OK · PID 8697 · PSS 773.1MB / GL 115.2MB / views 550
+[04:06] OK · PID 8697 · PSS 773.7MB / GL 115.2MB / views 550
+[04:21] OK · PID 8697 · PSS 773.5MB / GL 115.2MB / views 550
+[04:36] OK · PID 8697 · PSS 774.6MB / GL 115.2MB / views 550
+[04:51] OK · PID 8697 · PSS 789.4MB / GL 117.4MB / views 550
+[05:06] OK · PID 8697 · PSS 783MB / GL 115.4MB / views 550
+[05:21] OK · PID 8697 · PSS 789.5MB / GL 115.4MB / views 550
+[05:36] OK · PID 8697 · PSS 781.6MB / GL 115.2MB / views 551
+[05:51] OK · PID 8697 · PSS 790MB / GL 117.4MB / views 551
+[06:06] OK · PID 8697 · PSS 780.2MB / GL 115.4MB / views 551
+[06:21] OK · PID 8697 · PSS 777.1MB / GL 115.4MB / views 551
+[06:36] OK · PID 8697 · PSS 787.8MB / GL 115.2MB / views 550
+[06:51] OK · PID 8697 · PSS 774.6MB / GL 115.2MB / views 550
+[07:06] OK · PID 8697 · PSS 779.2MB / GL 115.2MB / views 550
+[07:21] OK · PID 8697 · PSS 795.5MB / GL 115.2MB / views 550
+[07:36] OK · PID 8697 · PSS 773.7MB / GL 115.2MB / views 550
+[07:51] OK · PID 8697 · PSS 771.2MB / GL 115.2MB / views 550
+[08:06] OK · PID 8697 · PSS 792.9MB / GL 115.2MB / views 550
+[08:21] OK · PID 8697 · PSS 779.9MB / GL 115.2MB / views 550
+[08:36] OK · PID 8697 · PSS 785.2MB / GL 117.2MB / views 550
+[08:51] OK · PID 8697 · PSS 781.2MB / GL 115.4MB / views 550
+[09:06] .. 앱 미실행(대기중)
+[09:21] .. 앱 미실행(대기중)
+[09:36] .. 앱 미실행(대기중)
+[09:51] .. 앱 미실행(대기중)
+[10:06] .. 앱 미실행(대기중)
+[10:21] .. 앱 미실행(대기중)
+[10:36] .. 앱 미실행(대기중)
+[10:51] .. 앱 미실행(대기중)
+[11:07] .. 앱 미실행(대기중)
+[11:22] .. 앱 미실행(대기중)
+[11:37] .. 앱 미실행(대기중)
+[11:52] .. 앱 미실행(대기중)
+[12:07] .. 앱 미실행(대기중)
+[12:22] .. 앱 미실행(대기중)
+[12:37] .. 앱 미실행(대기중)
+[12:52] OK · PID 22807 · PSS 670.2MB / GL 121.7MB / views 333
+[13:07] OK · PID 22807 · PSS 695MB / GL 38.9MB / views 366
+[13:22] OK · PID 22807 · PSS 693.3MB / GL 38.9MB / views 366
+[13:37] OK · PID 22807 · PSS 606.9MB / GL 7.7MB / views 366
+[13:52] OK · PID 22807 · PSS 613.3MB / GL 7.7MB / views 366
+[14:07] OK · PID 22807 · PSS 592.4MB / GL 7.7MB / views 366
+[14:22] OK · PID 22807 · PSS 630.3MB / GL 37.8MB / views 366
+[14:37] OK · PID 22807 · PSS 595.6MB / GL 35.8MB / views 364
+[14:52] OK · PID 22807 · PSS 609.1MB / GL 35.8MB / views 366
+[15:07] OK · PID 22807 · PSS 728.7MB / GL 123.2MB / views 569
+[15:22] OK · PID 22807 · PSS 401.4MB / GL 15.2MB / views 15
+[15:37] .. 앱 미실행(대기중)
+[15:52] ?? 측정 실패 — PID=4343
+[16:07] .. 앱 미실행(대기중)
+[16:22] .. 앱 미실행(대기중)
+[16:37] OK · PID 6215 · PSS 643.4MB / GL 36.1MB / views 369
+[16:52] !! PID_CHANGE session=6215 -> 7042 (크래시·재시작 의심)
+[17:07] .. 앱 미실행(대기중)
+[17:22] .. 앱 미실행(대기중)
+[17:37] OK · PID 10558 · PSS 524.2MB / GL 8.5MB / views 99
+[17:52] !! PID_CHANGE session=10558 -> 11451 (크래시·재시작 의심)
+[18:07] !! PID_CHANGE session=11451 -> 12520 (크래시·재시작 의심)
+[18:22] OK · PID 12520 · PSS 654.4MB / GL 41.7MB / views 390
+[18:37] OK · PID 12520 · PSS 650.8MB / GL 37.4MB / views 380
+[18:52] OK · PID 12520 · PSS 676.2MB / GL 37.4MB / views 389
+[19:07] OK · PID 12520 · PSS 671.5MB / GL 37.4MB / views 386
+[19:22] OK · PID 12520 · PSS 664.8MB / GL 37.7MB / views 380
+[19:37] OK · PID 12520 · PSS 675.8MB / GL 37.9MB / views 394
+[19:52] OK · PID 12520 · PSS 686.3MB / GL 37.9MB / views 402
+[20:07] OK · PID 12520 · PSS 692.5MB / GL 40.3MB / views 388
+[20:22] OK · PID 12520 · PSS 691.2MB / GL 39.9MB / views 384
+[20:38] OK · PID 12520 · PSS 665.6MB / GL 33.6MB / views 377
+[20:53] OK · PID 12520 · PSS 652.7MB / GL 37.7MB / views 375
+[21:08] OK · PID 12520 · PSS 741.3MB / GL 40.5MB / views 365
+[21:23] OK · PID 12520 · PSS 764.1MB / GL 41.1MB / views 390
+[21:38] OK · PID 12520 · PSS 753.4MB / GL 40.5MB / views 365
+[21:53] OK · PID 12520 · PSS 760.8MB / GL 40.5MB / views 369
+[22:08] OK · PID 12520 · PSS 793.2MB / GL 41MB / views 374
+[22:23] OK · PID 12520 · PSS 792.2MB / GL 43.1MB / views 394
+[22:38] OK · PID 12520 · PSS 791MB / GL 45.3MB / views 372
+[22:53] OK · PID 12520 · PSS 858.2MB / GL 131.5MB / views 549
+[23:08] OK · PID 12520 · PSS 780.1MB / GL 42MB / views 512
+[23:23] !! PID_CHANGE session=12520 -> 25277 (크래시·재시작 의심)
+[23:38] OK · PID 25277 · PSS 673.5MB / GL 41.9MB / views 513
+[23:53] OK · PID 25277 · PSS 728.1MB / GL 42.6MB / views 535
