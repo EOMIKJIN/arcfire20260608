@@ -28,6 +28,14 @@ const EMPTY_STATE: ClanWarFoundationDbState = {
   operations: [],
 };
 
+/**
+ * 작전 로그 상한 — 접전지 일일 전투·반란·레이드가 매일 쌓이므로 unbounded 직렬화 금지
+ * (헌법 §주기·틱 GC 규율 #3). 로그는 newest-first prepend라 slice가 최신 유지.
+ * 소급 수리(repairRuntimeNeutralizedHoldsFromOperations)는 「최신」 중립화 작전만 쓰므로
+ * 상한 내에서 안전하다(복원 후에는 hold 마커가 정본이라 로그 불필요).
+ */
+const OPERATIONS_HISTORY_CAP = 300;
+
 function normalize(raw: unknown): ClanWarFoundationDbState {
   if (!raw || typeof raw !== 'object') return { ...EMPTY_STATE };
   const src = raw as Partial<ClanWarFoundationDbState>;
@@ -35,7 +43,7 @@ function normalize(raw: unknown): ClanWarFoundationDbState {
     clans: src.clans ?? {},
     planetHolds: src.planetHolds ?? {},
     deployments: src.deployments ?? [],
-    operations: src.operations ?? [],
+    operations: (src.operations ?? []).slice(0, OPERATIONS_HISTORY_CAP),
   };
 }
 

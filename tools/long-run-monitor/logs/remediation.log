@@ -2285,3 +2285,49 @@ skia-worklet audit: 18/20 -> D:\arcfire20260607\tools\memory-audit\reports\skia-
 [2026-07-19 23:17:06] INFO VIEWS_NATIVE_ADVISORY views=513 native_heap=348.6 pss=677.7 gl=39.9 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
 [2026-07-19 23:32:31] INFO VIEWS_NATIVE_ADVISORY views=513 native_heap=345.7 pss=673.5 gl=41.9 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
 [2026-07-19 23:47:58] INFO VIEWS_NATIVE_ADVISORY views=535 native_heap=364.5 pss=728.1 gl=42.6 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-20 00:03:23] INFO VIEWS_NATIVE_ADVISORY views=533 native_heap=373.4 pss=733.7 gl=42.4 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-20 00:18:53] INFO PSS_SOFT_CEILING pss=821 gl=131.3 views=567 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 13:40:58] INFO PSS_SOFT_CEILING pss=817.5 gl=115.6 views=712 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 13:56:25] INFO PSS_SOFT_CEILING pss=814.7 gl=115.8 views=569 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 16:46:14] INFO PSS_SOFT_CEILING pss=845.2 gl=50.2 views=312 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 17:01:38] INFO PSS_SOFT_CEILING pss=854.2 gl=59.8 views=494 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 17:17:03] INFO PSS_SOFT_CEILING pss=849.9 gl=59.8 views=361 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 17:32:29] INCIDENT GL_HARD_CEILING gl=137.4 pss=983.2 views=571 -> immediate remediation (OOM imminent)
+[2026-07-20 17:32:29] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-07-20 17:32:29] AUTO_FIX static audit:skia-memory start
+[2026-07-20 17:32:32] AUTO_FIX audit:skia-memory PASS
+[2026-07-20 17:32:32] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-07-20 17:32:49] AUTO_FIX baseline reset pid=7743 gl=5.9MB pss=325.3MB
+[2026-07-20 17:32:49] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-07-20 17:33:10] VERIFY PASS pid=7743 gl=8.7MB pss=635.9MB views=99
+[2026-07-20 17:33:10] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":983.2,"views":571,"lastGlMb":137.4,"hardCeiling":true}
+[2026-07-20 17:33:11] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-07-20 17:37:06] INVESTIGATION start reason=mem_anomaly
+[2026-07-20 17:37:06] INVESTIGATION alert=[2026-07-20 17:32:29] GL_HARD_CEILING gl=137.4 pss=983.2 views=571
+[2026-07-20 17:37:07] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260720-173706.log
+[2026-07-20 17:37:09] INVESTIGATION mem from timeline gl=8.7MB pss=635.9MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260720-173706.log
+[2026-07-20 17:37:10] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-07-20 17:37:10] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-07-20 17:37:10] INVESTIGATION done reason=mem_anomaly
+[2026-07-20 17:48:40] INFO VIEWS_NATIVE_ADVISORY views=315 native_heap=424.9 pss=795.4 gl=39.5 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-20 18:19:38] INFO PSS_SOFT_CEILING pss=851.3 gl=44.5 views=298 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 18:35:06] INFO PSS_SOFT_CEILING pss=880.8 gl=42 views=303 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 19:21:34] INFO PSS_SOFT_CEILING pss=920.5 gl=168.9 views=559 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 19:37:00] INFO VIEWS_NATIVE_ADVISORY views=402 native_heap=474.4 pss=789.2 gl=53.2 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-20 19:52:25] INFO VIEWS_NATIVE_ADVISORY views=373 native_heap=475.9 pss=778.4 gl=53 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-20 20:07:52] INFO PSS_SOFT_CEILING pss=808.1 gl=51.7 views=402 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 20:23:18] INFO PSS_SOFT_CEILING pss=898.4 gl=147.5 views=560 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 20:38:47] INFO PSS_SOFT_CEILING pss=809.5 gl=55.4 views=402 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 20:54:13] INFO VIEWS_NATIVE_ADVISORY views=377 native_heap=459.2 pss=793.1 gl=52.8 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-20 21:09:39] INFO VIEWS_NATIVE_ADVISORY views=386 native_heap=451.5 pss=774.6 gl=41.8 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-20 21:25:04] INFO PSS_SOFT_CEILING pss=800.2 gl=55.9 views=386 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 21:40:30] INFO VIEWS_NATIVE_ADVISORY views=386 native_heap=470.6 pss=780.5 gl=43 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-20 21:55:56] INFO VIEWS_NATIVE_ADVISORY views=386 native_heap=470.1 pss=775.7 gl=43 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-20 22:11:22] INFO PSS_SOFT_CEILING pss=906.3 gl=140.3 views=560 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 22:26:52] INFO PSS_SOFT_CEILING pss=928.4 gl=130.4 views=567 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 22:42:18] INFO PSS_SOFT_CEILING pss=940.4 gl=132.4 views=567 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 22:57:44] INFO PSS_SOFT_CEILING pss=931.8 gl=132.4 views=567 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 23:13:08] INFO PSS_SOFT_CEILING pss=931.5 gl=130.4 views=567 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 23:28:34] INFO PSS_SOFT_CEILING pss=934.5 gl=130.4 views=567 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 23:44:01] INFO PSS_SOFT_CEILING pss=930.7 gl=130.4 views=567 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-20 23:59:27] INFO PSS_SOFT_CEILING pss=926.7 gl=130.5 views=567 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)

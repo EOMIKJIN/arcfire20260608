@@ -8,10 +8,12 @@ import {
   ARC_CORE_SEED_RED_CLAN_ID,
 } from '../arcCore/balance/seedPlanetOccupationFromBalance';
 import {
+  isNationSeedClanId,
   migrateExistingPlayerDeedHoldsToIndependentAll,
   migratePlanetHoldsOwnershipSplit,
 } from './planetOwnershipModel';
-import type { ClanBasicsRecord, PlanetClanHold } from '../types';
+import { isPlanetContestedZone } from '../arcCore/balance/balanceTableRegistry';
+import type { ClanBasicsRecord, ClanWarOperation, PlanetClanHold } from '../types';
 
 export type PlanetOccupationSeedPipelineResult = {
   holds: Record<string, PlanetClanHold>;
@@ -32,6 +34,58 @@ function collectOccupierChanges(
     }
   }
   return changed;
+}
+
+/** 런타임 중립화 작전 기록 — 시드 복구로 되돌려진 hold 소급 수리 대상 소스 */
+const RUNTIME_NEUTRALIZE_OP_SOURCES: readonly string[] = [
+  'player_wave_defense_win',
+  'rebellion_overthrow',
+];
+
+/**
+ * 소급 수리 — `neutralizedAt` 마커 도입(2026-07-20) 이전에 전투 승리·반란으로 중립화됐다가
+ * 부트 시드 복구에 RED/BLUE로 되돌려진 hold를 작전 기록(operations)으로 복원한다.
+ * 비접전 행성 + 국가 시드 occupier + 증서·거점 없음 + 해당 행성의 최신 중립화 작전 존재 시에만.
+ * idempotent — 복원 후에는 마커가 있어 시드 복구·재수리 모두 skip.
+ */
+export function repairRuntimeNeutralizedHoldsFromOperations(
+  holds: Record<string, PlanetClanHold>,
+  operations: readonly ClanWarOperation[],
+): { holds: Record<string, PlanetClanHold>; changed: boolean } {
+  let changed = false;
+  const next = { ...holds };
+
+  const neutralizeOpAtByPlanetId = new Map<string, number>();
+  for (const op of operations) {
+    if (op.phase !== 'resolved') continue;
+    const source = String((op.ext as Record<string, unknown> | undefined)?.source ?? '');
+    if (!RUNTIME_NEUTRALIZE_OP_SOURCES.includes(source)) continue;
+    const cur = neutralizeOpAtByPlanetId.get(op.targetPlanetId) ?? 0;
+    if (op.startedAt > cur) neutralizeOpAtByPlanetId.set(op.targetPlanetId, op.startedAt);
+  }
+  if (neutralizeOpAtByPlanetId.size === 0) return { holds, changed: false };
+
+  for (const [planetId, neutralizedOpAt] of neutralizeOpAtByPlanetId) {
+    const cur = next[planetId];
+    if (!cur) continue;
+    if (cur.neutralizedAt) continue;
+    if (isPlanetContestedZone(planetId)) continue;
+    // 시드 복구가 만든 국가 디폴트 hold만 수리 — 증서·거점·AI클랜·플레이어 상태는 보존
+    if (cur.kind !== 'clan_hold' || !isNationSeedClanId(cur.occupierClanId)) continue;
+    if (cur.deedOwnerClanId?.trim() || cur.homePlayerUid?.trim()) continue;
+    // 중립화 이후 새로 점유된 hold(capturedAt가 더 최신)는 수리 대상 아님
+    if (cur.capturedAt > neutralizedOpAt) continue;
+
+    next[planetId] = {
+      ...cur,
+      occupierClanId: 'neutral',
+      kind: 'neutral',
+      capturedAt: neutralizedOpAt,
+      neutralizedAt: neutralizedOpAt,
+    };
+    changed = true;
+  }
+  return { holds: next, changed };
 }
 
 /** loadLocalClanWarFoundation · syncNpcAiClanTerritory 후처리 공용 — idempotent */

@@ -40,6 +40,16 @@ export function applyRebellionOverthrowHold(planetId: string, systemId: string):
     && !prevHold?.homePlayerUid;
 
   if (unchanged) {
+    // 이미 중립 hold인데 중립화 마커만 없는 경우 — 소급 부여(부트 시드 복구 보호)
+    if (prevHold && !prevHold.neutralizedAt) {
+      useClanWarFoundationStore.setState((state) => ({
+        planetHolds: {
+          ...state.planetHolds,
+          [planetId]: { ...prevHold, neutralizedAt: Date.now() },
+        },
+      }));
+      void useClanWarFoundationStore.getState().persistClanWarFoundation();
+    }
     return {
       applied: false,
       previousSide,
@@ -58,6 +68,8 @@ export function applyRebellionOverthrowHold(planetId: string, systemId: string):
     homePlayerUid: null,
     kind: 'neutral',
     capturedAt: prevHold?.capturedAt ?? now,
+    // 반란 전복 중립화 — CSV 국가 시드 복구·지도 시드 폴백에서 보호 (전투 승리 중립화와 동일 계약)
+    neutralizedAt: now,
   };
 
   const op = {

@@ -58,6 +58,10 @@ import {
 } from '../../src/clanWar/planetOwnershipModel';
 import { resolvePlayerPlanetStayBlock, isRedOccupiedPlanet } from '../../src/clanWar/planetTerritoryPlayerAccess';
 import {
+  clearPlanetAssaultIntent,
+  markPlanetAssaultIntent,
+} from '../../src/game/waveDefense/planetAssaultIntent';
+import {
   EXPANSION_GATEWAYS_PER_DIRECTION,
   GAMEPLAY_SYSTEM_IDS,
   LEGACY_VISIBLE_TOTAL_SYSTEMS,
@@ -424,6 +428,9 @@ export default function WorldMapScreen() {
     if (!isFocusedRef.current) return;
     const pending = pendingScrollTargetRef.current;
     if (pending) {
+      // 1회 소비 — 유지하면 이후 re-arm(전투 복귀·watchdog)마다 사용자가 이동해 둔
+      // 스크롤이 과거 타깃으로 되돌아간다
+      pendingScrollTargetRef.current = null;
       runScrollTargetOnUi(pending.x, pending.y);
     }
     runGalaxyMapScrollClampOnUi(scrollX, scrollY, savedScrollX, savedScrollY, maxScrollX, maxScrollY);
@@ -437,6 +444,9 @@ export default function WorldMapScreen() {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (!isFocusedRef.current) return;
+        // arm 도중(onLayout 자동 중앙정렬이 flush~armed 사이에 실행) 도착한 pending 타깃
+        // 재flush — 미적용 시 스크롤 (0,0) 좌상단 고정(빈 검은 지도) 회귀 (2026-07-20)
+        flushDeferredScrollUiOps();
         scrollAliveSv.value = 1;
         scrollGesturesArmedRef.current = true;
         setMapInteractionReady(true);
@@ -945,7 +955,6 @@ export default function WorldMapScreen() {
     const systemId = player.currentSystemId;
     const key = `${systemId}|${mapLayout.w}|${mapLayout.h}|${mapContentSize.cw}|${mapContentSize.ch}`;
     if (autoScrollKeyRef.current === key) return;
-    autoScrollKeyRef.current = key;
 
     const maxSX = Math.max(0, mapContentSize.cw - mapLayout.w);
     const maxSY = Math.max(0, mapContentSize.ch - mapLayout.h);
@@ -953,11 +962,16 @@ export default function WorldMapScreen() {
     maxScrollY.value = maxSY;
 
     const target = computeScrollTargetForSystem(systemId);
-    if (target) {
-      pendingScrollTargetRef.current = { x: target.x, y: target.y };
-      if (scrollGesturesArmedRef.current && isFocusedRef.current) {
-        runScrollTargetOnUi(target.x, target.y);
-      }
+    if (!target) {
+      // 현재 성계가 아직 systems 인덱스에 없음(분할 로딩·hydrate 경합) — key를 소비하지
+      // 않아야 systems 갱신 시 재시도된다. 소비하면 (0,0) 좌상단 고정(검은 지도) 회귀.
+      return;
+    }
+    autoScrollKeyRef.current = key;
+    pendingScrollTargetRef.current = { x: target.x, y: target.y };
+    if (scrollGesturesArmedRef.current && isFocusedRef.current) {
+      pendingScrollTargetRef.current = null;
+      runScrollTargetOnUi(target.x, target.y);
     }
   }, [
     mapMetricsReady,
@@ -1510,20 +1524,31 @@ export default function WorldMapScreen() {
     presentPlanetEconomyInfoOverlay(planet.id, planet.name?.trim() || planet.id);
   }, [selectedSystem]);
 
+  /**
+   * [전투] — RED 점유 성계 공격 진입. 이동중 인스턴스 전투(/combat)가 아니라
+   * 착륙과 동일한 순서로 행성 허브에 진입한 뒤, 웨이브 전투(카운트다운 →
+   * 9웨이브 · vega_base 룰)로 이어진다. 승리 시 중립화. (대표님 지시 2026-07-20)
+   */
   const handleCombat = useCallback(async (): Promise<void> => {
     if (!selectedSystem || !player) return;
     if (isMoving || hubNavGate.isLocked()) return;
     if (selectedSystem.id !== player.currentSystemId) return;
     const planet = selectedSystem.planets[0];
     if (!planet || !isRedOccupiedPlanet(planet.id)) return;
+    if (!isPlayerShipCombatCapable(player.ship)) {
+      showArcAlert(t('worldmap.podTitle'), t('worldmap.podBody'));
+      return;
+    }
 
     if (!hubNavGate.tryBegin()) return;
     try {
+      markPlanetAssaultIntent(planet.id);
       landOnPlanet(planet.id);
       await persist();
       if (!isMountedRef.current) return;
-      navigateToCombatAfterTeardown();
+      navigateToPlanetHubAfterTeardown(planet.id);
     } catch {
+      clearPlanetAssaultIntent();
       hubNavGate.reset();
     }
   }, [
@@ -1533,7 +1558,8 @@ export default function WorldMapScreen() {
     hubNavGate,
     landOnPlanet,
     persist,
-    navigateToCombatAfterTeardown,
+    navigateToPlanetHubAfterTeardown,
+    t,
   ]);
 
   const dispatchMenuItemByIndex = useCallback((index: number) => {

@@ -26,7 +26,10 @@ import { releasePlayerPlanetHolds } from '../clanWar/planetHoldReleasePolicy';
 import { resolveGameplayZoneHubPlanet } from '../clanWar/resolveZoneHubPlanet';
 import { npcCaptainLeaderUid, normalizeAiClanId } from '../clanWar/aiNpcClanIds';
 import { listAiClanTerritoryHubClans } from '../clanWar/aiClanRegistry';
-import { applyPlanetOccupationSeedPipeline } from '../clanWar/planetOccupationSeedPipeline';
+import {
+  applyPlanetOccupationSeedPipeline,
+  repairRuntimeNeutralizedHoldsFromOperations,
+} from '../clanWar/planetOccupationSeedPipeline';
 import {
   ARC_CORE_SEED_BLUE_CLAN_ID,
   ARC_CORE_SEED_RED_CLAN_ID,
@@ -103,6 +106,8 @@ interface ClanWarFoundationState {
     systemId: string;
     factionSide: 'BLUE' | 'RED' | 'NEUTRAL';
     operationMeta: Record<string, unknown>;
+    /** 플레이어 전투 승리 중립화 — CSV 국가 시드 복구·지도 시드 폴백에서 보호(neutralizedAt) */
+    neutralizedByPlayer?: boolean;
   }) => { changed: boolean; previousSide: MapFactionSide; newSide: MapFactionSide; operationId: string };
   getHold: (planetId: string) => PlanetClanHold | undefined;
   listDeploymentsForPlanet: (planetId: string) => PlanetCapitalDeployment[];
@@ -180,22 +185,37 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
   loadLocalClanWarFoundation: async () => {
     try {
       const loaded = await loadClanWarFoundationDb();
-      const piped = applyPlanetOccupationSeedPipeline(loaded.planetHolds, loaded.clans);
+      // 소급 수리 — 마커 도입 전 전투 승리·반란 중립화가 시드 복구로 되돌려진 hold 복원
+      const repaired = repairRuntimeNeutralizedHoldsFromOperations(
+        loaded.planetHolds,
+        loaded.operations,
+      );
+      const piped = applyPlanetOccupationSeedPipeline(repaired.holds, loaded.clans);
       set({
         clans: piped.clans,
         planetHolds: piped.holds,
         deployments: loaded.deployments,
         operations: loaded.operations,
       });
-      if (piped.occupierChangedPlanetIds.length > 0) {
+      const governorReassignPlanetIds = repaired.changed
+        ? Array.from(
+            new Set([
+              ...piped.occupierChangedPlanetIds,
+              ...Object.keys(repaired.holds).filter(
+                (pid) => repaired.holds[pid] !== loaded.planetHolds[pid],
+              ),
+            ]),
+          )
+        : piped.occupierChangedPlanetIds;
+      if (governorReassignPlanetIds.length > 0) {
         reassignGovernorsAfterOccupierChanges(
           loaded.planetHolds,
           piped.holds,
           piped.clans,
-          piped.occupierChangedPlanetIds,
+          governorReassignPlanetIds,
         );
       }
-      if (piped.mutated) {
+      if (piped.mutated || repaired.changed) {
         await saveClanWarFoundationDb({
           clans: piped.clans,
           planetHolds: piped.holds,
@@ -509,7 +529,7 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     return id;
   },
 
-  applyArcCoreTerritorialHold: ({ planetId, systemId, factionSide, operationMeta }) => {
+  applyArcCoreTerritorialHold: ({ planetId, systemId, factionSide, operationMeta, neutralizedByPlayer }) => {
     const state = get();
     const prevHold = state.planetHolds[planetId];
     const previousSide = resolveMapFactionSideFromClanIdPure(
@@ -525,9 +545,20 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
           : ARC_CORE_SEED_BLUE_CLAN_ID;
     const kind: PlanetClanHold['kind'] = factionSide === 'NEUTRAL' ? 'neutral' : 'clan_hold';
     const newSide = resolveMapFactionSideFromClanIdPure(occupierClanId, state.clans);
+    const markPlayerNeutralized = Boolean(neutralizedByPlayer) && factionSide === 'NEUTRAL';
     const unchanged =
       prevHold?.occupierClanId === occupierClanId && prevHold?.kind === kind;
     if (unchanged) {
+      // 이미 중립 hold인데 플레이어 승리 마커만 없는 경우 — 마커 소급 부여(시드 복구 보호)
+      if (markPlayerNeutralized && prevHold && !prevHold.neutralizedAt) {
+        set({
+          planetHolds: {
+            ...state.planetHolds,
+            [planetId]: { ...prevHold, neutralizedAt: Date.now() },
+          },
+        });
+        void get().persistClanWarFoundation();
+      }
       return { changed: false, previousSide, newSide, operationId: makeId('op_skip') };
     }
 
@@ -540,6 +571,7 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
       homePlayerUid: null,
       kind,
       capturedAt: now,
+      neutralizedAt: markPlayerNeutralized ? now : null,
     };
 
     const attackerClanId =

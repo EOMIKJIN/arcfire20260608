@@ -1,5 +1,5 @@
 // ============================================================
-// planet_occupation_seeds.csv — 초기 행성 점유·점령전 플래그 시드
+// planet_occupation_seeds.csv ??초기 ?�성 ?�유·?�령???�래�??�드
 // ============================================================
 
 import { PlanetOccupationSeeds_FROM_BALANCE_CSV } from '../../data/balance/generated';
@@ -60,14 +60,14 @@ function buildSeedClans(now: number): Record<string, ClanBasicsRecord> {
 
 function shouldSkipOccupationSeedReconcile(hold: PlanetClanHold): boolean {
   if (hold.kind === 'player_home') return true;
-  // 플레이어 독립국(소유권 증서 구매) — 국가 시드 복구 대상 아님, 녹색 상태 영구 보호
+  // ?�레?�어 ?�립�??�유�?증서 구매) ??�?? ?�드 복구 ?�???�님, ?�색 ?�태 ?�구 보호
   if (hold.kind === 'player_independent') return true;
-  // 플레이어 uid 거점만 보호 — AI 클랜장 homePlayerUid 는 국가 시드 복구 허용
+  // ?�레?�어 uid 거점�?보호 ??AI ?�랜??homePlayerUid ??�?? ?�드 복구 ?�용
   if (hold.homePlayerUid && !isAiClanOccupier(hold.occupierClanId)) return true;
   return false;
 }
 
-/** AI 클랜 occupier — 국가 CSV 시드 복구 대상 */
+/** AI ?�랜 occupier ??�?? CSV ?�드 복구 ?�??*/
 function isAiClanOccupier(clanId: string | null | undefined): boolean {
   return Boolean(clanId?.startsWith('ai_clan_'));
 }
@@ -78,10 +78,17 @@ function shouldRestoreNationSeedOccupier(input: {
   cur: PlanetClanHold;
 }): boolean {
   const { contestedZone, nationClanId, cur } = input;
-  // 플레이어 독립국 — 국가 시드 복구 금지(shouldSkipOccupationSeedReconcile와 이중 방어)
+  // ?�레?�어 ?�립�???�?? ?�드 복구 금�?(shouldSkipOccupationSeedReconcile?� ?�중 방어)
   if (cur.kind === 'player_independent') return false;
   if (isAiClanOccupier(cur.occupierClanId)) return true;
   if (contestedZone) return false;
+  // ?�레?�어 ?�투 ?�리�?중립?�된 ?�성 ??부???�드 복구�?RED/BLUE ?�점??금�?
+  if (
+    cur.neutralizedAt
+    && (cur.kind === 'neutral' || cur.occupierClanId === 'neutral')
+  ) {
+    return false;
+  }
   if (cur.kind === 'neutral' || cur.occupierClanId === 'neutral') return true;
   if (cur.occupierClanId !== nationClanId) return true;
   return false;
@@ -105,8 +112,8 @@ function buildNationSeedHold(
 }
 
 /**
- * CSV BLUE/RED 국가 시드 행성 — neutral·AI클랜 오점유 복구.
- * contestedZone=true 는 ArcCore neutral/blue/red 판정만 유지(AI클랜 덮어쓰기는 항상 제거).
+ * CSV BLUE/RED �?? ?�드 ?�성 ??neutral·AI?�랜 ?�점??복구.
+ * contestedZone=true ??ArcCore neutral/blue/red ?�정�??��?(AI?�랜 ??��?�기????�� ?�거).
  */
 function reconcileCsvSeedFactionOccupationHolds(
   holds: Record<string, PlanetClanHold>,
@@ -135,7 +142,7 @@ function reconcileCsvSeedFactionOccupationHolds(
   return mutated;
 }
 
-/** 기존 hold·player_home 을 덮어쓰지 않고 빈 행성만 시드 */
+/** 기존 hold·player_home ????��?��? ?�고 �??�성�??�드 */
 export function seedPlanetOccupationHoldsFromBalance(
   existingHolds: Record<string, PlanetClanHold>,
 ): {

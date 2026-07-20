@@ -63,6 +63,11 @@ import { emitMemProfileMarker } from '../../src/game/devMemoryProfileBridge';
 import { teardownPlanetHubCombatForGalaxyDeparture } from '../../src/game/teardownPlanetHubCombatForGalaxyDeparture';
 import { resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 import { resolvePlayerPlanetStayBlock } from '../../src/clanWar/planetTerritoryPlayerAccess';
+import {
+  clearPlanetAssaultIntent,
+  isPlanetAssaultIntentActive,
+} from '../../src/game/waveDefense/planetAssaultIntent';
+import { showTerritorialOccupationChangeAlert } from '../../src/arcCore/territorial/showTerritorialOccupationChangeAlert';
 import { usePlanetStageSession } from '../../src/game/usePlanetStageSession';
 import { useStageTransitionStuckWatchdog } from '../../src/navigation/stageTransitionStuckWatchdog';
 import { buildCsvStaticIndexesFull } from '../../src/game/buildCsvStaticIndexes';
@@ -208,7 +213,7 @@ import {
   PLANET_MAIN_STANCE_ROW_HEIGHT_EST_PX,
   resolvePlanetBattleReadyDurationMs,
 } from '../../src/game/planetHub/planetHubConstants';
-import { resolvePlanetMainStageCombatVariant } from '../../src/arcCore/balance/balanceTableRegistry';
+import { resolvePlanetWaveCombatTrigger } from '../../src/game/waveDefense/resolvePlanetWaveCombatTrigger';
 import { usePlanetHubBattleReady } from '../../src/game/planetHub/usePlanetHubBattleReady';
 import { useWaveDefenseStore } from '../../src/game/waveDefense/waveDefenseStore';
 import { useWaveDefenseController } from '../../src/game/waveDefense/useWaveDefenseController';
@@ -456,6 +461,7 @@ export default function PlanetScreen() {
       return;
     }
     const departPlanetId = currentPlayer?.currentPlanetId ?? null;
+    clearPlanetAssaultIntent();
     clearPlanetHubScanUnlockOnDeparture(departPlanetId);
     recordHubDeparturePlanet(departPlanetId);
     warmGalaxyDeparturePreflight(departPlanetId);
@@ -465,11 +471,14 @@ export default function PlanetScreen() {
     });
   }, [beginPlanetHubSuspendingNavigation, t]);
 
-  /** RED 점령지 — 저장 상태로 허브 진입 시 즉시 퇴거 */
+  /** RED 점령지 — 저장 상태로 허브 진입 시 즉시 퇴거 (공격 진입([전투])은 예외 — 웨이브 전투로 판가름) */
   useEffect(() => {
     const pid = resolvedPlanetId?.trim();
     if (!pid || !isPlanetRouteFocused) return;
     if (!resolvePlayerPlanetStayBlock(pid)) return;
+    if (isPlanetAssaultIntentActive(pid)) return;
+    // 웨이브 판가름 진행 중 — intent TTL이 장기 런 도중 만료돼도 퇴거하지 않는다(종료 시 승패로 처리)
+    if (useWaveDefenseStore.getState().active) return;
     showArcAlert(t('worldmap.redTerritoryTitle'), t('worldmap.redTerritoryBody'));
     beginPlanetHubSuspendingNavigation(() => router.replace('/(game)/worldmap'), {
       preserveCombatSnapshot: false,
@@ -926,9 +935,34 @@ export default function PlanetScreen() {
   });
   const ingameDialogActive = useIngameDialogStore((s) => s.session != null);
 
-  /** 웨이브 디펜스 전체 종료 → 오퍼레이터 종료 대사 1회 */
+  /** 웨이브 디펜스 전체 종료 → 오퍼레이터 종료 대사 1회 · RED 점유 행성이면 승리=중립화 / 패배=퇴거 */
   const waveEndDialogShownRef = useRef(false);
   const handleWaveDefenseRunEnded = useCallback(() => {
+    const ended = useWaveDefenseStore.getState();
+    const endedPlanetId = (ended.planetId ?? '').trim();
+    const endedSystemId = (ended.systemId ?? '').trim();
+    const endedOutcome = ended.outcome ?? 'win';
+    // RED 점유 행성 웨이브 승리 → 즉시 중립화 (대표님 지시 — [전투] 진입 · vega_base 룰 공통)
+    const wasRedOccupied = Boolean(endedPlanetId) && resolvePlayerPlanetStayBlock(endedPlanetId) != null;
+    if (wasRedOccupied && endedOutcome === 'win' && endedSystemId) {
+      const result = useClanWarFoundationStore.getState().applyArcCoreTerritorialHold({
+        planetId: endedPlanetId,
+        systemId: endedSystemId,
+        factionSide: 'NEUTRAL',
+        operationMeta: { source: 'player_wave_defense_win' },
+        neutralizedByPlayer: true,
+      });
+      clearPlanetAssaultIntent();
+      if (result.changed) {
+        showTerritorialOccupationChangeAlert({
+          planetLabelKo: planet?.name?.trim() || endedPlanetId,
+          previousSide: result.previousSide,
+          newSide: result.newSide,
+          decision: 'battle',
+          attackerWon: true,
+        });
+      }
+    }
     waveEndDialogShownRef.current = true;
     presentIngameDialogScene('ingame_dialog_wave_defense_end', {
       onDismiss: () => {
@@ -944,19 +978,26 @@ export default function PlanetScreen() {
           onClose: () => {
             if (expEarned > 0) usePlayerStore.getState().addExp(expEarned);
             useWaveDefenseStore.getState().reset();
+            // 패배 — 행성이 여전히 RED 점유면 체류 불가, 은하 지도로 퇴거
+            const pid = usePlayerStore.getState().player?.currentPlanetId?.trim() ?? '';
+            if (pid && resolvePlayerPlanetStayBlock(pid)) {
+              clearPlanetAssaultIntent();
+              showArcAlert(t('worldmap.redTerritoryTitle'), t('worldmap.redTerritoryBody'));
+              beginPlanetHubSuspendingNavigation(() => router.replace('/(game)/worldmap'), {
+                preserveCombatSnapshot: false,
+              });
+            }
           },
         });
       },
     });
-  }, []);
-  const mainStageCombatVariant = planet?.id
-    ? resolvePlanetMainStageCombatVariant(planet.id)
-    : 'default';
+  }, [planet?.name, beginPlanetHubSuspendingNavigation, t]);
+  /** 웨이브 전투 발생조건 — 단일 정본 resolver (규칙 조율은 resolvePlanetWaveCombatTrigger에서만) */
+  const waveCombatTrigger = resolvePlanetWaveCombatTrigger(planet?.id);
   useWaveDefenseController({
     planetId: planet?.id ?? null,
     systemId: system?.id ?? null,
-    waveDefenseEnabled:
-      mainStageCombatVariant === 'draco_wave' || mainStageCombatVariant === 'endgame_boss',
+    waveDefenseEnabled: waveCombatTrigger.enabled,
     introDone: !ingameDialogActive,
     routeFocused: isPlanetRouteFocused,
     appActive: appStateActive,

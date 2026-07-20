@@ -90,6 +90,7 @@ export async function hydratePlanetGovernorAssignmentStore(): Promise<void> {
         migrated = true;
       }
       if (migrated) schedulePersist();
+      dedupeNeutralGovernorAssignments();
     }
   } catch {
     /* ignore */
@@ -171,24 +172,101 @@ export function assignPlanetGovernorFromReserve(params: {
     return assignment;
   }
 
-  const index = mem.sideNextIndex[occupationSide] ?? 0;
-  const reserve = pickGovernorReserveCommanderAtIndex(occupationSide, index);
-  if (!reserve) return null;
+  // NEUTRAL — 이미 이 행성에 중립 총사령관이 있으면 유지(반복 중립 선언 시 index 낭비 방지),
+  // 신규 배정은 다른 행성에 임명되지 않은 함장만 고르는 **배타 배정**.
+  // (round-robin wrap으로 태온 스틸이 여러 중립 행성에 중첩 임명되던 회귀 — 2026-07-19)
+  const existing = mem.byPlanetId[planetId];
+  if (existing && existing.occupationSide === occupationSide) {
+    return existing;
+  }
+  const captainId = pickExclusiveNeutralReserveCaptainId(planetId);
+  if (!captainId) return null;
 
   const assignment: PlanetGovernorAssignment = {
-    captainId: reserve.captainId,
+    captainId,
     occupationSide,
     assignedAtMs: Date.now(),
   };
 
-  mem = {
-    ...mem,
-    byPlanetId: { ...mem.byPlanetId, [planetId]: assignment },
-    sideNextIndex: {
-      ...mem.sideNextIndex,
-      [occupationSide]: index + 1,
-    },
-  };
+  mem = { ...mem, byPlanetId: { ...mem.byPlanetId, [planetId]: assignment } };
   schedulePersist();
   return assignment;
+}
+
+/**
+ * 중립 예비 풀에서 **다른 행성에 임명되지 않은** 함장을 sideNextIndex부터 순환 탐색.
+ * 전원 사용 중이면(풀 5명 초과 중립 행성) 기존 round-robin으로 폴백 — 중첩 허용은 최후 수단.
+ */
+function pickExclusiveNeutralReserveCaptainId(planetId: string): string | null {
+  const inUse = new Set<string>();
+  for (const [assignedPlanetId, assignment] of Object.entries(mem.byPlanetId)) {
+    if (assignedPlanetId === planetId) continue;
+    const id = String(assignment.captainId ?? '').trim();
+    if (id) inUse.add(id);
+  }
+
+  const startIndex = mem.sideNextIndex.NEUTRAL ?? 0;
+  const firstPick = pickGovernorReserveCommanderAtIndex('NEUTRAL', startIndex);
+  if (!firstPick) return null;
+
+  // 풀 크기만큼만 순회 — pickGovernorReserveCommanderAtIndex가 내부에서 wrap 처리
+  for (let offset = 0; offset < 64; offset++) {
+    const candidate = pickGovernorReserveCommanderAtIndex('NEUTRAL', startIndex + offset);
+    if (!candidate) return null;
+    if (offset > 0 && candidate.captainId === firstPick.captainId) break; // 한 바퀴 순회 완료
+    if (!inUse.has(candidate.captainId)) {
+      mem = {
+        ...mem,
+        sideNextIndex: { ...mem.sideNextIndex, NEUTRAL: startIndex + offset + 1 },
+      };
+      return candidate.captainId;
+    }
+  }
+
+  // 전원 사용 중 — round-robin 폴백
+  mem = {
+    ...mem,
+    sideNextIndex: { ...mem.sideNextIndex, NEUTRAL: startIndex + 1 },
+  };
+  return firstPick.captainId;
+}
+
+/**
+ * hydrate 시 1회 — 이미 persist된 중립 총사령관 중첩 임명을 해소한다.
+ * 같은 함장이 여러 행성에 배정돼 있으면 가장 이른 배정만 남기고 나머지는
+ * 배타 풀에서 재배정. (2026-07-19 태온 스틸 중첩 회귀 소급 정리)
+ */
+function dedupeNeutralGovernorAssignments(): void {
+  const neutralEntries = Object.entries(mem.byPlanetId)
+    .filter(([, a]) => a.occupationSide === 'NEUTRAL')
+    .sort(([, a], [, b]) => a.assignedAtMs - b.assignedAtMs);
+
+  const seen = new Set<string>();
+  const duplicatePlanetIds: string[] = [];
+  for (const [planetId, assignment] of neutralEntries) {
+    const captainId = String(assignment.captainId ?? '').trim();
+    if (captainId && !seen.has(captainId)) {
+      seen.add(captainId);
+      continue;
+    }
+    duplicatePlanetIds.push(planetId);
+  }
+  if (duplicatePlanetIds.length === 0) return;
+
+  for (const planetId of duplicatePlanetIds) {
+    const replacement = pickExclusiveNeutralReserveCaptainId(planetId);
+    if (!replacement) continue;
+    mem = {
+      ...mem,
+      byPlanetId: {
+        ...mem.byPlanetId,
+        [planetId]: {
+          ...mem.byPlanetId[planetId],
+          captainId: replacement,
+          assignedAtMs: Date.now(),
+        },
+      },
+    };
+  }
+  schedulePersist();
 }

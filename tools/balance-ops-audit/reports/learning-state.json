@@ -1,32 +1,6 @@
 {
-  "lastUpdated": "2026-07-19T07:43:29.456Z",
+  "lastUpdated": "2026-07-19T15:01:19.750Z",
   "snapshots": [
-    {
-      "timestamp": "2026-06-19T11:47:57.398Z",
-      "dailyPolicyOk": true,
-      "dailyPolicy": {
-        "ok": true,
-        "enabled": true,
-        "timeZone": "Asia/Seoul",
-        "batchRunHour": 12,
-        "batchRunMinute": 0,
-        "observationWindowHours": 24,
-        "allPasses": true,
-        "notesKo": "벽시계 24h 관측·수집 후 정오 1회 일괄 분석·재배치·밸런스·가격미세조정"
-      },
-      "dailyViolations": [],
-      "whaleF2pRatio": 3.476036662892076,
-      "kpiStatus": "ok",
-      "deltaId": "2026-06-14-1781435091651",
-      "maxGapPercent": 10,
-      "warnBandCount": 4,
-      "balanceAuditExit": 0,
-      "planetEconomyExit": 0,
-      "planetEconomyOverall": "PASS",
-      "priceElasticity": 0,
-      "realtimePriceDisabled": true,
-      "overall": "PASS"
-    },
     {
       "timestamp": "2026-06-19T12:06:37.495Z",
       "dailyPolicyOk": true,
@@ -1354,6 +1328,36 @@
     },
     {
       "timestamp": "2026-07-19T07:43:29.456Z",
+      "ciContractOnly": false,
+      "dailyPolicyOk": true,
+      "dailyPolicy": {
+        "ok": true,
+        "enabled": true,
+        "timeZone": "Asia/Seoul",
+        "batchRunHour": 12,
+        "batchRunMinute": 0,
+        "observationWindowHours": 24,
+        "allPasses": true,
+        "notesKo": "벽시계 24h 관측·수집 후 정오 1회 일괄 분석·재배치·밸런스·가격미세조정"
+      },
+      "dailyViolations": [],
+      "whaleF2pRatio": 3.119195108748942,
+      "kpiStatus": "ok",
+      "deltaId": "2026-07-02-1782976813591",
+      "maxGapPercent": 21074,
+      "warnBandCount": 4,
+      "balanceAuditExit": 0,
+      "planetEconomyExit": 0,
+      "planetEconomyOverall": "WARN",
+      "fiscalOverall": "warn",
+      "fiscalMaxRatio": 3.06,
+      "fiscalGini": 0.292,
+      "priceElasticity": 0,
+      "realtimePriceDisabled": true,
+      "overall": "WARN"
+    },
+    {
+      "timestamp": "2026-07-19T15:01:19.750Z",
       "ciContractOnly": false,
       "dailyPolicyOk": true,
       "dailyPolicy": {

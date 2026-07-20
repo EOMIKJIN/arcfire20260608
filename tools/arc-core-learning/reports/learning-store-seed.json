@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-19T07:43:29.669Z",
+  "generatedAt": "2026-07-19T15:01:19.933Z",
   "source": "tools/balance-ops-audit/reports/learning-state.json",
   "observations": {
     "tail": [],
@@ -8,20 +8,6 @@
   },
   "simRuns": [],
   "kpiTimeline": [
-    {
-      "dayKey": "2026-06-19",
-      "economy": {
-        "f2pWhaleRatio": 3.476036662892076,
-        "simKpiStatus": "ok",
-        "deltaId": "2026-06-14-1781435091651",
-        "bandDrift": 10
-      },
-      "combat": {},
-      "_source": {
-        "timestamp": "2026-06-19T11:47:57.398Z",
-        "overall": "PASS"
-      }
-    },
     {
       "dayKey": "2026-06-19",
       "economy": {
@@ -679,12 +665,26 @@
         "timestamp": "2026-07-19T07:43:29.456Z",
         "overall": "WARN"
       }
+    },
+    {
+      "dayKey": "2026-07-19",
+      "economy": {
+        "f2pWhaleRatio": 3.119195108748942,
+        "simKpiStatus": "ok",
+        "deltaId": "2026-07-02-1782976813591",
+        "bandDrift": 21074
+      },
+      "combat": {},
+      "_source": {
+        "timestamp": "2026-07-19T15:01:19.750Z",
+        "overall": "WARN"
+      }
     }
   ],
   "policyHistory": [
     {
       "packId": "2026-07-02-1782976813591",
-      "ingestedAt": 1784447009674,
+      "ingestedAt": 1784473279937,
       "source": "ci"
     }
   ],
@@ -696,5 +696,5 @@
       "action": "monitor_fiscal_closed_loop"
     }
   ],
-  "lastUpdatedAt": 1784447009674
+  "lastUpdatedAt": 1784473279937
 }

@@ -169,6 +169,11 @@ export interface PlanetClanHold {
   homePlayerUid: string | null;
   kind: PlanetHoldKind;
   capturedAt: number;
+  /**
+   * 런타임 이벤트로 중립화된 시각(ms) — 플레이어 전투([전투] 웨이브) 승리·반란(정부 전복) 공통.
+   * 설정 시 CSV 국가 시드 복구·지도 시드 폴백에서 제외되어 국경이 중립으로 유지된다. (2026-07-20)
+   */
+  neutralizedAt?: number | null;
 }
 
 /** 행성 주둔/공격 편대로 배치된 전함(테이블 asset id 또는 추후 플레이어 거대함 id) */
