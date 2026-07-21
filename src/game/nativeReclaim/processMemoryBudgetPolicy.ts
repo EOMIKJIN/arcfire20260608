@@ -33,6 +33,12 @@ export const GALAXY_MAP_SOFT_RECLAIM_INTERVAL_MS = 5 * 60 * 1000;
 /** 허브 체류 — soft + deferred Fresco (전투 orbit 활성 시 skip) */
 export const HUB_SOFT_NATIVE_RECLAIM_INTERVAL_MS = 5 * 60 * 1000;
 
+/** worldmap 체류 — soft 틱 N회마다 1회 deep(GPU layer release + Fresco trim) 승격 (N×5분=15분) */
+export const GALAXY_MAP_DEEP_RECLAIM_EVERY_N_SOFT_TICKS = 3;
+
+/** 허브 전투 후 worldmap 진입 — GL 잔존 후속 deep pass 지연(체류·비이동 확인 후 1회) */
+export const GALAXY_MAP_POST_HUB_COMBAT_FOLLOWUP_MS = 90 * 1000;
+
 /** heavy Skia peak 종료 1차 reclaim 후 GL floor 2차 회수 (Worklet·Fresco lag) */
 export const POST_SKIA_PEAK_FOLLOWUP_MS = 90 * 1000;
 

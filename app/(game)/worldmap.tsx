@@ -84,7 +84,10 @@ import {
 } from '../../src/game/galaxyMapScrollLifecycle';
 import { finalizeGalaxyMapSessionForExit } from '../../src/game/galaxyMapSessionResume';
 import {
+  GALAXY_MAP_DEEP_RECLAIM_EVERY_N_SOFT_TICKS,
+  GALAXY_MAP_POST_HUB_COMBAT_FOLLOWUP_MS,
   GALAXY_MAP_SOFT_RECLAIM_INTERVAL_MS,
+  runGalaxyMapResidentDeepReclaimPass,
   runGalaxyMapSoftNativeReclaimPass,
 } from '../../src/game/nativeReclaim';
 import { consumeGalaxyMapIngressReclaim } from '../../src/game/nativeReclaim/galaxyMapIngressReclaim';
@@ -544,18 +547,38 @@ export default function WorldMapScreen() {
     }, [moveProgress, armGalaxyMapScrollGestures, stopGalaxyMapInteractionLoops]),
   );
 
-  /** worldmap 체류 PSS floor — 5분 주기 soft + deferred Fresco (transit 중 skip) */
+  /**
+   * worldmap 체류 PSS floor — 5분 주기 soft + N회(15분)마다 deep(GPU layer·Fresco) 승격.
+   * soft만으로는 허브 전투 GL 잔존(출발 teardown 미회수분)이 안 풀려 체류 중 900MB대가
+   * 유지되던 회귀 보완(2026-07-21 07:42 GL 157 미회수 실측). transit(isMoving) 중 skip.
+   */
   useFocusEffect(
     useCallback(() => {
+      let softTick = 0;
       const intervalId = setInterval(() => {
         if (isMovingRef.current) return;
+        softTick += 1;
         const anchor = resolveWorldmapReleaseAnchorPlanetId();
-        runGalaxyMapSoftNativeReclaimPass(
-          'galaxy_map_periodic',
+        const keepIds = resolveWorldmapKeepPlanetIds(anchor);
+        if (softTick % GALAXY_MAP_DEEP_RECLAIM_EVERY_N_SOFT_TICKS === 0) {
+          runGalaxyMapResidentDeepReclaimPass('galaxy_map_periodic_deep', keepIds);
+          return;
+        }
+        runGalaxyMapSoftNativeReclaimPass('galaxy_map_periodic', keepIds);
+      }, GALAXY_MAP_SOFT_RECLAIM_INTERVAL_MS);
+      /** 허브(전투) → 지도 진입 GL 잔존 후속 — focus 후 90s 1회 (이동 중이면 주기 deep이 승계) */
+      const postIngressFollowupTimer = setTimeout(() => {
+        if (isMovingRef.current || !isFocusedRef.current) return;
+        const anchor = resolveWorldmapReleaseAnchorPlanetId();
+        runGalaxyMapResidentDeepReclaimPass(
+          'galaxy_map_post_ingress_followup',
           resolveWorldmapKeepPlanetIds(anchor),
         );
-      }, GALAXY_MAP_SOFT_RECLAIM_INTERVAL_MS);
-      return () => clearInterval(intervalId);
+      }, GALAXY_MAP_POST_HUB_COMBAT_FOLLOWUP_MS);
+      return () => {
+        clearInterval(intervalId);
+        clearTimeout(postIngressFollowupTimer);
+      };
     }, []),
   );
 

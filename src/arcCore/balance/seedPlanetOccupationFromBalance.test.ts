@@ -177,4 +177,96 @@ test('소급 수리 — 마커 이전 전투 승리 중립화가 시드 복구�
   assert.equal(laterRed.changed, false);
 });
 
-console.log('seedPlanetOccupationFromBalance.test.ts — all PASS');
+async function asyncTests(): Promise<void> {
+  const {
+    promoteDynamicContestedZone,
+    isDynamicContestedZonePlanet,
+    resetDynamicContestedZonesForAccountPurge,
+  } = await import('../territorial/dynamicContestedZoneStore');
+  const {
+    getTerritorialCombatPolicy,
+    listTerritorialCombatPoliciesForCampaign,
+    isContestedZoneSystemId,
+  } = await import('../territorial/arcCoreTerritorialCombatPolicy');
+
+  await resetDynamicContestedZonesForAccountPurge();
+
+  // 동적 분쟁 편입 — 시드 복구가 ArcCore 판정 결과(BLUE 등)를 되돌리지 않아야 함
+  const promoted = await promoteDynamicContestedZone({
+    planetId: 'sirius_border',
+    systemId: 'sirius',
+    source: 'player_wave_defense',
+  });
+  assert.equal(promoted, true);
+  assert.equal(isDynamicContestedZonePlanet('sirius_border'), true);
+
+  // idempotent + CSV 정적 분쟁 3곳은 편입 제외
+  assert.equal(
+    await promoteDynamicContestedZone({
+      planetId: 'sirius_border',
+      systemId: 'sirius',
+      source: 'x',
+    }),
+    false,
+  );
+  assert.equal(
+    await promoteDynamicContestedZone({
+      planetId: 'draco_haven',
+      systemId: 'draco_nebula',
+      source: 'x',
+    }),
+    false,
+  );
+
+  // 합성 정책 — CSV `__dynamic_default__` 템플릿 기반 · 순차 캠페인(draco_front) 4번째 합류
+  const policy = getTerritorialCombatPolicy('sirius_border');
+  assert.ok(policy);
+  assert.equal(policy!.enabled, true);
+  assert.equal(policy!.contestedZone, true);
+  assert.equal(policy!.planetId, 'sirius_border');
+  assert.equal(policy!.systemId, 'sirius');
+  assert.equal(policy!.campaignGroup, 'draco_front');
+  assert.equal(policy!.campaignOrder, 4);
+  // 캠페인 로테이션 3곳 → 4곳 (순차 1곳 판정·분쟁 링도 캠페인 예고 1곳만 표시)
+  const campaign = listTerritorialCombatPoliciesForCampaign('draco_front');
+  assert.equal(campaign.length, 4);
+  assert.equal(campaign[3]?.planetId, 'sirius_border');
+  assert.equal(isContestedZoneSystemId('sirius'), true);
+
+  // ArcCore 판정이 BLUE로 뒤집은 hold — 시드 reconcile이 RED로 되돌리지 않아야 함
+  const { holds } = seedPlanetOccupationHoldsFromBalance({
+    sirius_border: {
+      planetId: 'sirius_border',
+      systemId: 'sirius',
+      occupierClanId: ARC_CORE_SEED_BLUE_CLAN_ID,
+      deedOwnerClanId: null,
+      homePlayerUid: null,
+      kind: 'clan_hold',
+      capturedAt: 2000,
+    },
+  });
+  assert.equal(holds.sirius_border?.occupierClanId, ARC_CORE_SEED_BLUE_CLAN_ID);
+
+  // neutral_declare(마커 없는 중립)도 유지
+  const { holds: neutralHolds } = seedPlanetOccupationHoldsFromBalance({
+    sirius_border: {
+      planetId: 'sirius_border',
+      systemId: 'sirius',
+      occupierClanId: 'neutral',
+      homePlayerUid: null,
+      kind: 'neutral',
+      capturedAt: 2000,
+    },
+  });
+  assert.equal(neutralHolds.sirius_border?.occupierClanId, 'neutral');
+
+  await resetDynamicContestedZonesForAccountPurge();
+  assert.equal(isDynamicContestedZonePlanet('sirius_border'), false);
+  assert.equal(getTerritorialCombatPolicy('sirius_border'), null);
+  assert.equal(listTerritorialCombatPoliciesForCampaign('draco_front').length, 3);
+  console.log('PASS 동적 분쟁지역 — 캠페인 순차 합류·시드 reconcile 보호·초기화 복귀');
+}
+
+void asyncTests().then(() => {
+  console.log('seedPlanetOccupationFromBalance.test.ts — all PASS');
+});

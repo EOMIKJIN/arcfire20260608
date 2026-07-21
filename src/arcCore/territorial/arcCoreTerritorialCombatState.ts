@@ -4,6 +4,7 @@ import {
   listTerritorialCombatPoliciesForCampaign,
 } from './arcCoreTerritorialCombatPolicy';
 import { TERRITORIAL_CAMPAIGN_PASS_INTERVAL_SEC } from './territorialCombatCampaign';
+import { hydrateDynamicContestedZones } from './dynamicContestedZoneStore';
 
 const STORAGE_KEY = 'arcfire_arc_core_territorial_combat_v1';
 
@@ -86,6 +87,8 @@ function migrateCampaignGroupStates(): boolean {
 
 export async function hydrateArcCoreTerritorialCombatState(): Promise<void> {
   if (hydrated) return;
+  // 동적 분쟁지역이 캠페인 순번(길이)에 합류하므로 마이그레이션 전에 hydrate
+  await hydrateDynamicContestedZones();
   try {
     const raw = await AsyncStorage.getItem(STORAGE_KEY);
     if (raw) {
@@ -114,6 +117,7 @@ export async function hydrateArcCoreTerritorialCombatState(): Promise<void> {
 /** 부트 시 캠페인별 nextPreviewOrderIndex 미리 확정(저장) */
 export async function ensureTerritorialCampaignPreviewSchedules(): Promise<void> {
   await hydrateArcCoreTerritorialCombatState();
+  await hydrateDynamicContestedZones();
   if (migrateCampaignGroupStates()) {
     await persistTerritorialCombatState();
   }

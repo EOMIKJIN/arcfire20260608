@@ -18,5 +18,14 @@ export const ArcCoreTerritorialFleetComposition_FROM_BALANCE_CSV = [
   { "planetId": "shadow_market", "factionSide": "NEUTRAL", "shipAssetId": "npc_ai_clan_neutral_flagship", "sortOrder": "1", "notesKo": "섀도우 중립 1" },
   { "planetId": "shadow_market", "factionSide": "NEUTRAL", "shipAssetId": "npc_ai_clan_neutral_flagship", "sortOrder": "2", "notesKo": "섀도우 중립 2" },
   { "planetId": "shadow_market", "factionSide": "NEUTRAL", "shipAssetId": "npc_ai_clan_neutral_flagship", "sortOrder": "3", "notesKo": "섀도우 중립 3" },
+  { "planetId": "__dynamic_default__", "factionSide": "BLUE", "shipAssetId": "npc_draco_patrol_01", "sortOrder": "1", "notesKo": "동적 분쟁 블루 1" },
+  { "planetId": "__dynamic_default__", "factionSide": "BLUE", "shipAssetId": "npc_draco_escort_01", "sortOrder": "2", "notesKo": "동적 분쟁 블루 2" },
+  { "planetId": "__dynamic_default__", "factionSide": "BLUE", "shipAssetId": "npc_draco_patrol_01", "sortOrder": "3", "notesKo": "동적 분쟁 블루 3" },
+  { "planetId": "__dynamic_default__", "factionSide": "RED", "shipAssetId": "npc_enemy_draco_01", "sortOrder": "1", "notesKo": "동적 분쟁 레드 1" },
+  { "planetId": "__dynamic_default__", "factionSide": "RED", "shipAssetId": "npc_enemy_draco_02", "sortOrder": "2", "notesKo": "동적 분쟁 레드 2" },
+  { "planetId": "__dynamic_default__", "factionSide": "RED", "shipAssetId": "npc_enemy_draco_03", "sortOrder": "3", "notesKo": "동적 분쟁 레드 3" },
+  { "planetId": "__dynamic_default__", "factionSide": "INDEPENDENT", "shipAssetId": "npc_ai_clan_neutral_flagship", "sortOrder": "1", "notesKo": "독립국 주둔군 1(추후 병력배치 시스템이 행성별 함대로 대체)" },
+  { "planetId": "__dynamic_default__", "factionSide": "INDEPENDENT", "shipAssetId": "npc_ai_clan_neutral_flagship", "sortOrder": "2", "notesKo": "독립국 주둔군 2" },
+  { "planetId": "__dynamic_default__", "factionSide": "INDEPENDENT", "shipAssetId": "npc_draco_patrol_01", "sortOrder": "3", "notesKo": "독립국 주둔군 3" },
 ] as const;
 export type ArcCoreTerritorialFleetCompositionRow = (typeof ArcCoreTerritorialFleetComposition_FROM_BALANCE_CSV)[number];

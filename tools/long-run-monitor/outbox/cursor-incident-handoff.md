@@ -1,6 +1,6 @@
 # Arcfire long-run incident — Kim Team Lead auto-triage
 
-packedAt: 2026-07-20T08:37:09.489Z
+packedAt: 2026-07-20T23:32:33.458Z
 triggerReason: mem_anomaly
 refixPayload: (none)
 
@@ -15,29 +15,29 @@ refixPayload: (none)
 ## Recent remediation
 
 ```
-[2026-07-20 17:32:29] AUTO_FIX static audit:skia-memory start
-[2026-07-20 17:32:32] AUTO_FIX audit:skia-memory PASS
-[2026-07-20 17:32:32] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
-[2026-07-20 17:32:49] AUTO_FIX baseline reset pid=7743 gl=5.9MB pss=325.3MB
-[2026-07-20 17:32:49] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
-[2026-07-20 17:33:10] VERIFY PASS pid=7743 gl=8.7MB pss=635.9MB views=99
-[2026-07-20 17:33:10] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":983.2,"views":571,"lastGlMb":137.4,"hardCeiling":true}
-[2026-07-20 17:33:11] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
-[2026-07-20 17:37:06] INVESTIGATION start reason=mem_anomaly
-[2026-07-20 17:37:06] INVESTIGATION alert=[2026-07-20 17:32:29] GL_HARD_CEILING gl=137.4 pss=983.2 views=571
-[2026-07-20 17:37:07] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260720-173706.log
-[2026-07-20 17:37:09] INVESTIGATION mem from timeline gl=8.7MB pss=635.9MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260720-173706.log
+[2026-07-21 08:29:29] AUTO_FIX static audit:skia-memory start
+[2026-07-21 08:29:31] AUTO_FIX audit:skia-memory PASS
+[2026-07-21 08:29:31] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-07-21 08:29:47] AUTO_FIX baseline reset pid=17868 gl=5.9MB pss=395.4MB
+[2026-07-21 08:29:47] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-07-21 08:30:08] VERIFY PASS pid=17868 gl=27.8MB pss=604.6MB views=345
+[2026-07-21 08:30:08] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":1025.5,"views":559,"lastGlMb":142,"hardCeiling":true}
+[2026-07-21 08:30:08] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-07-21 08:32:31] INVESTIGATION start reason=mem_anomaly
+[2026-07-21 08:32:31] INVESTIGATION alert=[2026-07-21 08:29:29] GL_HARD_CEILING gl=142 pss=1025.5 views=559
+[2026-07-21 08:32:32] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260721-083231.log
+[2026-07-21 08:32:33] INVESTIGATION mem from timeline gl=27.8MB pss=604.6MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260721-083231.log
 ```
 
 ## Recent incidents
 
 ```
-[2026-07-20 13:56:25] PSS_SOFT_CEILING pss=814.7 gl=115.8 views=569 native_reclaim_advisory
-[2026-07-20 16:46:14] PSS_SOFT_CEILING pss=845.2 gl=50.2 views=312 native_reclaim_advisory
-[2026-07-20 17:01:38] PSS_SOFT_CEILING pss=854.2 gl=59.8 views=494 native_reclaim_advisory
-[2026-07-20 17:17:03] PSS_SOFT_CEILING pss=849.9 gl=59.8 views=361 native_reclaim_advisory
-[2026-07-20 17:32:29] GL_HARD_CEILING gl=137.4 pss=983.2 views=571
-[2026-07-20 17:32:29] REFIX_REQUESTED gl_critical_active_hub
+[2026-07-21 08:12:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260721-0800.md verdict=WARN
+[2026-07-21 08:14:00] PSS_SOFT_CEILING pss=945.8 gl=152.9 views=559 native_reclaim_advisory
+[2026-07-21 08:14:15] DAILY_8AM_REPORT 2026-07-21 08:14:15 KST
+[2026-07-21 08:14:15] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260721-0800.md verdict=WARN
+[2026-07-21 08:29:29] GL_HARD_CEILING gl=142 pss=1025.5 views=559
+[2026-07-21 08:29:29] REFIX_REQUESTED gl_critical_active_hub
 ```
 
 ## Crash signature (tail)
@@ -69,16 +69,16 @@ refixPayload: (none)
 
 ```csv
 ﻿iso_time,pid,pss_mb,rss_mb,gl_mb,egl_mb,graphics_mb,native_heap_mb,java_heap_mb,threads,views,delta_pss_mb,delta_gl_mb,note
-2026-07-20 14:58:08,25277,715.6,726.8,31.5,19.8,51.4,338.5,33.8,,361,9.4,6.1,
-2026-07-20 15:13:33,25277,712.9,724.2,29.5,19.8,49.4,334,37.5,,354,-2.7,-2,
-2026-07-20 15:29:00,25277,719.9,731,31.5,19.8,51.4,339.8,36.3,,354,7,2,
-2026-07-20 15:44:25,25277,723.7,734.9,29.5,19.8,49.4,345.5,36.4,,361,3.8,-2,
-2026-07-20 15:59:52,25277,748.2,759.3,30.2,40.7,70.8,343.8,40.6,,384,24.5,0.7,
-2026-07-20 16:15:17,25277,726.3,735.9,29.5,19.8,49.4,340.2,42.3,,361,-21.9,-0.7,
-2026-07-20 16:30:42,25277,727.8,738.4,29.5,19.8,49.4,346.8,37.9,,354,1.5,0,
-2026-07-20 16:46:08,25277,845.2,860,50.2,40.7,90.8,399.9,30.6,,312,117.4,20.7,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
-2026-07-20 17:01:33,25277,854.2,869.4,59.8,19.8,79.7,418.8,41.5,,494,9,9.6,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
-2026-07-20 17:16:58,25277,849.9,865.2,59.8,19.8,79.7,410.1,48.6,,361,-4.3,0,
-2026-07-20 17:32:21,25277,983.2,486.9,137.4,19.8,157.2,154.1,15.7,,571,133.3,77.6,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
-2026-07-20 17:33:10,7743,635.9,,8.7,,,,,,99,,,POST_REMEDIATION_VERIFY_OK
+2026-07-21 05:54:51,29524,715.8,695.7,52.7,34.3,87,302.5,39.5,,403,20.9,0.3,
+2026-07-21 06:10:15,29524,700.3,679.8,50.4,19.8,70.3,297.6,44,,378,-15.5,-2.3,
+2026-07-21 06:25:41,29524,710.6,690.1,50.7,34.3,85,301.9,35.2,,403,10.3,0.3,
+2026-07-21 06:41:07,29524,695,674.3,50.4,19.8,70.3,306.4,37.8,,378,-15.6,-0.3,
+2026-07-21 06:56:35,29524,716.4,695.7,54.7,34.3,89,301.6,44.8,,395,21.4,4.3,
+2026-07-21 07:12:01,29524,828.5,819.8,150,19.8,169.9,351.2,32.9,,560,112.1,95.3,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+2026-07-21 07:27:27,29524,743.1,742.3,52.5,40.7,93.2,340.9,33.4,,307,-85.4,-97.5,GL_RECOVERED idle_ok
+2026-07-21 07:42:59,29524,863.3,938.8,157,19.9,176.9,412.1,46.9,,561,120.2,104.5,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+2026-07-21 07:58:28,29524,949.5,1025.3,152.9,19.8,172.7,495.8,46.6,,559,86.2,-4.1,PSS_SPIKE review=graphics+native
+2026-07-21 08:13:54,29524,945.8,1020,152.9,19.8,172.7,494.6,45.2,,559,-3.7,0,
+2026-07-21 08:29:24,29524,1025.5,1098.5,142,19.8,161.8,584.6,43.3,,559,79.7,-10.9,PSS_SPIKE review=graphics+native
+2026-07-21 08:30:08,17868,604.6,,27.8,,,,,,345,,,POST_REMEDIATION_VERIFY_OK
 ```

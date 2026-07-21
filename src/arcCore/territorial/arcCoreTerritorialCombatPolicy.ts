@@ -2,9 +2,15 @@ import {
   ArcCoreTerritorialCombatPolicy_FROM_BALANCE_CSV,
   ArcCoreTerritorialFleetComposition_FROM_BALANCE_CSV,
 } from '../../data/balance/generated';
+import {
+  DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID,
+  listDynamicContestedZoneEntries,
+  listDynamicContestedZoneSystemIds,
+} from './dynamicContestedZoneStore';
+import { getPlanetOccupationSeedRow } from '../balance/balanceTableRegistry';
 
 export type TerritorialFactionSide = 'BLUE' | 'RED';
-export type TerritorialCombatParticipant = TerritorialFactionSide | 'NEUTRAL';
+export type TerritorialCombatParticipant = TerritorialFactionSide | 'NEUTRAL' | 'INDEPENDENT';
 export type TerritorialCombatMode = 'blue_red' | 'blue_neutral' | 'red_neutral';
 
 export type TerritorialCombatPolicy = {
@@ -23,6 +29,12 @@ export type TerritorialCombatPolicy = {
   campaignOrder: number;
   /** blue_neutral → BLUE, red_neutral → RED 우세 확률(%) */
   dominantSideWeightPct: number;
+  /** 보급선 — 인접 아군 성계 0개(고립) 측 전투력 페널티(%) */
+  supplyIsolatedPenaltyPct: number;
+  /** 보급선 — 인접 아군 성계 1개당 전투력 가산(%) */
+  supplyBonusPctPerNode: number;
+  /** 보급선 — 인접 가산 상한(%) */
+  supplyBonusCapPct: number;
   alertLabelKo: string;
 };
 
@@ -74,6 +86,12 @@ function buildPolicyIndex(): Map<string, TerritorialCombatPolicy> {
       campaignGroup: campaignGroupRaw.length > 0 ? campaignGroupRaw : null,
       campaignOrder: Math.max(0, parseNum(row.campaignOrder, 0)),
       dominantSideWeightPct,
+      supplyIsolatedPenaltyPct: Math.min(
+        90,
+        Math.max(0, parseNum(row.supplyIsolatedPenaltyPct, 35)),
+      ),
+      supplyBonusPctPerNode: Math.max(0, parseNum(row.supplyBonusPctPerNode, 6)),
+      supplyBonusCapPct: Math.max(0, parseNum(row.supplyBonusCapPct, 18)),
       alertLabelKo: row.alertLabelKo?.trim() || row.planetId,
     });
   }
@@ -87,7 +105,7 @@ function buildFleetIndex(): Map<string, string[]> {
   );
   for (const row of sorted) {
     const side = row.factionSide.trim().toUpperCase() as TerritorialCombatParticipant;
-    if (side !== 'BLUE' && side !== 'RED' && side !== 'NEUTRAL') continue;
+    if (side !== 'BLUE' && side !== 'RED' && side !== 'NEUTRAL' && side !== 'INDEPENDENT') continue;
     const key = fleetKey(row.planetId, side);
     const list = m.get(key) ?? [];
     const shipId = row.shipAssetId.trim();
@@ -97,30 +115,78 @@ function buildFleetIndex(): Map<string, string[]> {
   return m;
 }
 
-export function listTerritorialCombatPolicies(): TerritorialCombatPolicy[] {
+function getPolicyMap(): Map<string, TerritorialCombatPolicy> {
   if (!policyByPlanetId) policyByPlanetId = buildPolicyIndex();
-  return Array.from(policyByPlanetId.values());
+  return policyByPlanetId;
+}
+
+/**
+ * 동적 분쟁지역(플레이어 전투 편입) 합성 정책 — CSV `__dynamic_default__` 템플릿 행의
+ * 수학(가중치·주기·모드)과 campaignGroup을 그대로 상속하고 행성 축만 치환한다.
+ * campaignOrder는 CSV 정적 멤버 뒤에 승격 시각 순으로 이어 붙여 **순차 1곳 판정 규칙**에 합류.
+ */
+function listDynamicContestedPolicies(): TerritorialCombatPolicy[] {
+  const map = getPolicyMap();
+  const template = map.get(DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID);
+  if (!template) return [];
+  const entries = [...listDynamicContestedZoneEntries()].sort(
+    (a, b) => a.promotedAtMs - b.promotedAtMs || a.planetId.localeCompare(b.planetId),
+  );
+  if (entries.length === 0) return [];
+
+  let baseOrder = 0;
+  if (template.campaignGroup) {
+    for (const p of map.values()) {
+      if (p.planetId === DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID) continue;
+      if (p.campaignGroup === template.campaignGroup && p.campaignOrder > baseOrder) {
+        baseOrder = p.campaignOrder;
+      }
+    }
+  }
+
+  return entries.map((entry, i) => ({
+    ...template,
+    planetId: entry.planetId,
+    systemId: entry.systemId,
+    enabled: true,
+    contestedZone: true,
+    campaignOrder: template.campaignGroup ? baseOrder + 1 + i : 0,
+    alertLabelKo:
+      getPlanetOccupationSeedRow(entry.planetId)?.alertLabelKo?.trim() || entry.planetId,
+  }));
+}
+
+export function listTerritorialCombatPolicies(): TerritorialCombatPolicy[] {
+  const csv = Array.from(getPolicyMap().values()).filter(
+    (p) => p.planetId !== DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID,
+  );
+  return [...csv, ...listDynamicContestedPolicies()];
 }
 
 let contestedZoneSystemIdSet: Set<string> | null = null;
 
-/** 1h 순환 점유(`contestedZone=true`·enabled) 성계 id — 은하 지도 분쟁 표기용 */
-export function listContestedZoneSystemIds(): readonly string[] {
+function getCsvContestedZoneSystemIdSet(): Set<string> {
   if (!contestedZoneSystemIdSet) {
     contestedZoneSystemIdSet = new Set(
-      listTerritorialCombatPolicies()
+      Array.from(getPolicyMap().values())
         .filter((p) => p.enabled && p.contestedZone)
         .map((p) => p.systemId),
     );
   }
-  return Array.from(contestedZoneSystemIdSet);
+  return contestedZoneSystemIdSet;
+}
+
+/** 1h 순환 점유(`contestedZone=true`·enabled) 성계 id — 은하 지도 분쟁 표기용 (동적 편입 포함) */
+export function listContestedZoneSystemIds(): readonly string[] {
+  const csv = getCsvContestedZoneSystemIdSet();
+  const dyn = listDynamicContestedZoneSystemIds();
+  if (dyn.length === 0) return Array.from(csv);
+  return Array.from(new Set([...csv, ...dyn]));
 }
 
 export function isContestedZoneSystemId(systemId: string): boolean {
-  if (!contestedZoneSystemIdSet) {
-    listContestedZoneSystemIds();
-  }
-  return contestedZoneSystemIdSet?.has(systemId) ?? false;
+  if (getCsvContestedZoneSystemIdSet().has(systemId)) return true;
+  return listDynamicContestedZoneSystemIds().includes(systemId);
 }
 
 export function listTerritorialCombatPoliciesForCampaign(
@@ -132,8 +198,13 @@ export function listTerritorialCombatPoliciesForCampaign(
 }
 
 export function getTerritorialCombatPolicy(planetId: string): TerritorialCombatPolicy | null {
-  if (!policyByPlanetId) policyByPlanetId = buildPolicyIndex();
-  return policyByPlanetId.get(planetId) ?? null;
+  const csv = getPolicyMap().get(planetId);
+  if (csv) return csv;
+  // 동적 분쟁지역(플레이어 전투 편입) — 캠페인 순번 포함 합성 정책
+  for (const p of listDynamicContestedPolicies()) {
+    if (p.planetId === planetId) return p;
+  }
+  return null;
 }
 
 export function listTerritorialFleetShipIds(

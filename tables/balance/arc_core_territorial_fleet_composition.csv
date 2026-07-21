@@ -17,3 +17,12 @@ shadow_market,RED,npc_enemy_draco_03,3,섀도우 레드 3
 shadow_market,NEUTRAL,npc_ai_clan_neutral_flagship,1,섀도우 중립 1
 shadow_market,NEUTRAL,npc_ai_clan_neutral_flagship,2,섀도우 중립 2
 shadow_market,NEUTRAL,npc_ai_clan_neutral_flagship,3,섀도우 중립 3
+__dynamic_default__,BLUE,npc_draco_patrol_01,1,동적 분쟁 블루 1
+__dynamic_default__,BLUE,npc_draco_escort_01,2,동적 분쟁 블루 2
+__dynamic_default__,BLUE,npc_draco_patrol_01,3,동적 분쟁 블루 3
+__dynamic_default__,RED,npc_enemy_draco_01,1,동적 분쟁 레드 1
+__dynamic_default__,RED,npc_enemy_draco_02,2,동적 분쟁 레드 2
+__dynamic_default__,RED,npc_enemy_draco_03,3,동적 분쟁 레드 3
+__dynamic_default__,INDEPENDENT,npc_ai_clan_neutral_flagship,1,독립국 주둔군 1(추후 병력배치 시스템이 행성별 함대로 대체)
+__dynamic_default__,INDEPENDENT,npc_ai_clan_neutral_flagship,2,독립국 주둔군 2
+__dynamic_default__,INDEPENDENT,npc_draco_patrol_01,3,독립국 주둔군 3

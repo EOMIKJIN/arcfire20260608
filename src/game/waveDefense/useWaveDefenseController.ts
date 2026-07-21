@@ -13,6 +13,14 @@ import { useWaveDefenseStore } from './waveDefenseStore';
 const WAVE_DEFENSE_TRIGGER_DELAY_MS = 10_000;
 /** 웨이브 전환(전멸 후 다음 웨이브 준비) 간격 */
 const WAVE_DEFENSE_BETWEEN_WAVE_MS = 2600;
+/**
+ * 정체(stall) failsafe — 같은 웨이브·위상에서 진행 없이 이 시간이 지나면 패배 종료(퇴각).
+ * 런이 ended에 도달하지 못하면 전투 Skia 레이어·함대 뷰가 무기한 잔류하고
+ * phase='combat' 동안 주기 reclaim까지 억제되어 PSS 900MB+ 고착이 발생한다
+ * (2026-07-20 22:11~00:30 GL 130MB·Views 567 2h 잔류 → 모니터 강제 재기동 실측).
+ * 최장 웨이브(eternal_throne targetEngageSec 240s)의 2.5배 여유.
+ */
+const WAVE_DEFENSE_STALL_FAILSAFE_MS = 10 * 60_000;
 
 type WaveDefenseControllerArgs = {
   planetId: string | null;
@@ -71,6 +79,23 @@ export function useWaveDefenseController(args: WaveDefenseControllerArgs): void 
       }
     };
   }, [waveDefenseEnabled, planetId, systemId, active, routeFocused, appActive, introDone]);
+
+  // 정체 failsafe — 같은 (웨이브, 위상)에서 진행 없이 10분 경과 시 패배 종료(퇴각 판정).
+  // 교전 sim 정체·대사/오버레이 경합 등으로 ended에 도달하지 못한 채 전투 레이어가
+  // 무기한 상주(GL·Views 잔류 + 주기 reclaim 억제)하는 것을 차단한다.
+  useEffect(() => {
+    if (!active) return;
+    const stallTimer = setTimeout(() => {
+      const s = useWaveDefenseStore.getState();
+      if (!s.active) return;
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.warn(`[wave-defense] stall failsafe — wave=${s.waveIndex} phase=${s.phase} → endRun(lose)`);
+      }
+      s.endRun('lose');
+    }, WAVE_DEFENSE_STALL_FAILSAFE_MS);
+    return () => clearTimeout(stallTimer);
+  }, [active, phase, waveIndex]);
 
   // 웨이브 클리어(red 전멸) → 다음 웨이브 또는 전체 종료
   useEffect(() => {

@@ -42,6 +42,7 @@ export { FacilityUpgradeDurationGlobal_FROM_BALANCE_CSV } from './csvFacilityUpg
 export { FacilityUpgradeDurationSteps_FROM_BALANCE_CSV } from './csvFacilityUpgradeDurationSteps';
 export { FacilityUpgradeInstantCompleteTier_FROM_BALANCE_CSV } from './csvFacilityUpgradeInstantCompleteTier';
 export { FacilityUpgradeLevels_FROM_BALANCE_CSV } from './csvFacilityUpgradeLevels';
+export { FactionPoliticalRelations_FROM_BALANCE_CSV } from './csvFactionPoliticalRelations';
 export { GalaxyTransitFuelPolicy_FROM_BALANCE_CSV } from './csvGalaxyTransitFuelPolicy';
 export { GalaxyTransitHullFuelMul_FROM_BALANCE_CSV } from './csvGalaxyTransitHullFuelMul';
 export { GemExchangeCatalog_FROM_BALANCE_CSV } from './csvGemExchangeCatalog';

@@ -45,6 +45,12 @@ import {
   resolveMapFactionSideFromClanIdPure,
   type MapFactionSide,
 } from '../galaxyMap/mapFactionSideCore';
+import {
+  hydrateDynamicContestedZones,
+  promoteDynamicContestedZone,
+  promoteDynamicContestedZonesFromOperations,
+} from '../arcCore/territorial/dynamicContestedZoneStore';
+import { hasAdjacentHostileFactionSystem } from '../arcCore/territorial/territorialSupplyLine';
 import { reassignPlanetGovernorForOccupationSync } from '../game/planetGovernor/reassignPlanetGovernorForOccupation';
 import { hydratePlanetGovernorAssignmentStore } from '../game/planetGovernor/planetGovernorAssignmentStore';
 
@@ -184,6 +190,8 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
 
   loadLocalClanWarFoundation: async () => {
     try {
+      // 동적 분쟁지역(플레이어 전투 편입) 판정이 시드 reconcile·소급 수리보다 먼저 준비돼야 함
+      await hydrateDynamicContestedZones();
       const loaded = await loadClanWarFoundationDb();
       // 소급 수리 — 마커 도입 전 전투 승리·반란 중립화가 시드 복구로 되돌려진 hold 복원
       const repaired = repairRuntimeNeutralizedHoldsFromOperations(
@@ -224,6 +232,31 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
         });
       }
       await hydratePlanetGovernorAssignmentStore();
+      // 소급 편입 — 이미 플레이어 전투가 벌어진 행성(작전 기록)을 동적 분쟁지역에 합류.
+      // 수리·시드 파이프라인 이후 실행: 이번 부트의 hold 복원에는 영향 없고 다음 판정부터 적용.
+      await promoteDynamicContestedZonesFromOperations(
+        loaded.operations,
+        (pid) => piped.holds[pid]?.systemId ?? null,
+      );
+      // 소급 편입 — 이미 구매된 독립국(녹색) 행성 중 인접 적대 팩션이 있는 곳도 순환고리 합류
+      // (구매 시점 트리거 도입 2026-07-21 이전 구매분 · player_home 거점은 제외)
+      for (const pid of Object.keys(piped.holds)) {
+        const h = piped.holds[pid];
+        if (!h || h.kind !== 'player_independent' || !h.systemId) continue;
+        if (
+          hasAdjacentHostileFactionSystem({
+            systemId: h.systemId,
+            side: 'INDEPENDENT',
+            holds: piped.holds,
+          })
+        ) {
+          await promoteDynamicContestedZone({
+            planetId: pid,
+            systemId: h.systemId,
+            source: 'retro:player_ownership_purchase',
+          });
+        }
+      }
     } finally {
       set({ hydrated: true });
     }
@@ -332,6 +365,23 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
       void usePlayerStore.getState().persist();
     }
     void get().persistClanWarFoundation();
+    // 독립국 편입 — 인접 성계에 적대 팩션(정치관계 CSV) 점유가 있으면 분쟁 순환고리 자동 합류
+    // (거점(player_home)은 구매 경로가 아니므로 해당 없음 · idempotent)
+    const holdsAfter = get().planetHolds;
+    if (
+      nextHold.systemId &&
+      hasAdjacentHostileFactionSystem({
+        systemId: nextHold.systemId,
+        side: 'INDEPENDENT',
+        holds: holdsAfter,
+      })
+    ) {
+      void promoteDynamicContestedZone({
+        planetId,
+        systemId: nextHold.systemId,
+        source: 'player_ownership_purchase',
+      });
+    }
     return { ok: true, clanId };
   },
 

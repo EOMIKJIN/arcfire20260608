@@ -7,6 +7,7 @@ import type { MapFactionSide } from '../../galaxyMap/resolveMapFactionSide';
 function sideLabelKo(side: MapFactionSide): string {
   if (side === 'blue') return t('territorial.side.blue');
   if (side === 'red') return t('territorial.side.red');
+  if (side === 'independent') return t('territorial.side.independent');
   return t('territorial.side.neutral');
 }
 

@@ -1283,6 +1283,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'territorial.side.blue': '블루팀',
   'territorial.side.red': '레드팀',
   'territorial.side.neutral': '중립',
+  'territorial.side.independent': '독립국',
   'territorial.alert.neutralTitle': '접전지역 — 중립 선포',
   'territorial.alert.neutralBody': '{planet} 점유 상태가 변경되었습니다.\n{prev} → {next}',
   'territorial.alert.battleTitle': '접전지역 — 자동 전투 결과',

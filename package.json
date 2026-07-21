@@ -97,7 +97,8 @@
     "monitor:stop-overnight-exception": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/long-run-monitor/stop-overnight-exception-shutdown.ps1",
     "monitor:resume-overnight-exception": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/long-run-monitor/resume-after-overnight-exception.ps1",
     "verify:economy-sim-cohort": "npx tsx tools/verify-economy-sim-cohort.ts",
-    "export:galaxy-map:image": "tsx tools/galaxy-map/export-galaxy-map-image.ts"
+    "export:galaxy-map:image": "tsx tools/galaxy-map/export-galaxy-map-image.ts",
+    "test:territorial-supply": "npx tsx src/arcCore/territorial/territorialSupplyLine.test.ts"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",

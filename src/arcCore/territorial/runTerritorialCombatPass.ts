@@ -32,10 +32,20 @@ import {
 } from './resolveGovernorTacticsReversal';
 import { hydratePlanetGovernorAssignmentStore } from '../../game/planetGovernor/planetGovernorAssignmentStore';
 import { validateTerritorialCombatModeForSystem } from './territorialCombatGraph';
+import {
+  countAdjacentFriendlySystems,
+  listHostileFactions,
+  resolveTerritorialSupplyContext,
+} from './territorialSupplyLine';
+import { usePlayerStore } from '../../store/playerStore';
 import { resolveMapFactionSideFromClanId } from '../../galaxyMap/resolveMapFactionSide';
 import type { MapFactionSide } from '../../galaxyMap/resolveMapFactionSide';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
 import { yieldJsThread } from '../schedule/yieldJsThread';
+import {
+  DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID,
+  isDynamicContestedZonePlanet,
+} from './dynamicContestedZoneStore';
 import type { PlanetClanHold } from '../../types';
 
 export type TerritorialPassDecision = 'battle' | 'neutral_declare' | 'status_quo';
@@ -63,7 +73,13 @@ function rollDecision(policy: TerritorialCombatPolicy): TerritorialPassDecision 
 function resolveAttackerDefenderSides(
   holdSide: TerritorialFactionSide | 'NEUTRAL',
   combatMode: TerritorialCombatMode,
-): { attacker: TerritorialCombatParticipant; defender: TerritorialCombatParticipant } {
+  /** 보급선 — 중립 blue_red 공격자 선정 시 인접 아군 성계 수(무보급 팩션은 원정 불가) */
+  supplyAdjacency?: { blue: number; red: number },
+): {
+  // INDEPENDENT는 이 함수에 진입하지 않음(별도 침공 판정 분기) — 반환 타입에서 제외
+  attacker: TerritorialFactionSide | 'NEUTRAL';
+  defender: TerritorialFactionSide | 'NEUTRAL';
+} {
   if (combatMode === 'blue_neutral') {
     if (holdSide === 'BLUE') {
       return { attacker: 'NEUTRAL', defender: 'BLUE' };
@@ -81,6 +97,15 @@ function resolveAttackerDefenderSides(
   }
   if (holdSide === 'RED') {
     return { attacker: 'BLUE', defender: 'RED' };
+  }
+  // 중립 행성 — 보급선(인접 아군 성계) 있는 팩션만 공격자 후보. 한쪽만 보급 확보 시 그쪽 확정.
+  if (supplyAdjacency) {
+    const blueCan = supplyAdjacency.blue > 0;
+    const redCan = supplyAdjacency.red > 0;
+    if (blueCan !== redCan) {
+      const attacker: TerritorialFactionSide = blueCan ? 'BLUE' : 'RED';
+      return { attacker, defender: opposingTerritorialSide(attacker) };
+    }
   }
   const attacker: TerritorialFactionSide = Math.random() < 0.5 ? 'BLUE' : 'RED';
   return { attacker, defender: opposingTerritorialSide(attacker) };
@@ -109,8 +134,9 @@ function resolveBinaryDominantHoldTarget(
 function participantToHoldTarget(
   participant: TerritorialCombatParticipant,
 ): TerritorialFactionSide | 'NEUTRAL' {
-  if (participant === 'NEUTRAL') return 'NEUTRAL';
-  return participant;
+  // INDEPENDENT는 별도 침공 판정(runIndependentHoldInvasionJudgment)에서만 참여 — 일반 hold 타깃 아님
+  if (participant === 'BLUE' || participant === 'RED') return participant;
+  return 'NEUTRAL';
 }
 
 function notifyHoldChange(input: {
@@ -168,9 +194,10 @@ function notifyTerritorialPassOutcome(input: {
   });
 }
 
-function sideToMapFaction(side: TerritorialFactionSide | 'NEUTRAL'): MapFactionSide {
+function sideToMapFaction(side: TerritorialFactionSide | 'NEUTRAL' | 'INDEPENDENT'): MapFactionSide {
   if (side === 'BLUE') return 'blue';
   if (side === 'RED') return 'red';
+  if (side === 'INDEPENDENT') return 'independent';
   return 'neutral';
 }
 
@@ -195,6 +222,179 @@ function resolveBattleHoldTarget(input: {
     return participantToHoldTarget(defender);
   }
   return holdSide;
+}
+
+/** 함대 CSV — 동적 편입 행성은 `__dynamic_default__` 템플릿 편성 폴백 */
+function resolveTerritorialFleetShipIds(
+  planetId: string,
+  side: TerritorialCombatParticipant,
+): readonly string[] {
+  const rows = listTerritorialFleetShipIds(planetId, side);
+  if (rows.length > 0) return rows;
+  if (!isDynamicContestedZonePlanet(planetId)) return rows;
+  return listTerritorialFleetShipIds(DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID, side);
+}
+
+/**
+ * 독립국(플레이어 국가·녹색) 행성 침공 판정 — 정식 팩션 규칙 (2026-07-21 대표님 확정 설계).
+ * - 공격자: 정치관계 CSV상 적대 팩션 중 보급선(인접 아군 성계 ≥1) 보유 측만 (동맹 블루는 침공 불가)
+ * - 주둔 억지: 플레이어가 해당 행성 체류 중이면 주력전투병력 주둔으로 침공 보류 (자리를 뜨면 함락이 정론)
+ * - 소유권 파괴: 함락 시 점유 전환 + 증서 소멸(applyArcCoreTerritorialHold 덮어쓰기 정본) → 재중립화 후 재구매
+ * - neutral_declare는 미적용 — 소유권은 전투 함락으로만 소멸
+ * - 총사령관 전술 역전 미적용 — NPC 국가 총독 체계 밖 (추후 병력배치 시스템에서 대체)
+ */
+async function runIndependentHoldInvasionJudgment(input: {
+  planetId: string;
+  policy: TerritorialCombatPolicy;
+  warStore: ReturnType<typeof useClanWarFoundationStore.getState>;
+  nowMs: number;
+  campaignMeta?: { group: string; orderIndex: number };
+}): Promise<TerritorialPassResult> {
+  const { planetId, policy, warStore, nowMs, campaignMeta } = input;
+  const previousSide: MapFactionSide = 'independent';
+
+  const completePass = async () => {
+    await markTerritorialCombatPassCompleted(
+      planetId,
+      nowMs,
+      campaignMeta ? { group: campaignMeta.group, orderIndex: campaignMeta.orderIndex } : undefined,
+    );
+  };
+
+  const statusQuoResult = async (): Promise<TerritorialPassResult> => {
+    await completePass();
+    showTerritorialStatusQuoAlert({
+      planetLabelKo: policy.alertLabelKo,
+      side: previousSide,
+    });
+    return {
+      planetId,
+      decision: 'status_quo',
+      holdChanged: false,
+      previousSide,
+      newSide: previousSide,
+    };
+  };
+
+  // 1. 주둔 억지 — 플레이어(주력전투병력)가 해당 행성에 체류 중이면 침공 보류
+  const player = usePlayerStore.getState().player;
+  if (player?.currentPlanetId === planetId) {
+    if (__DEV__) {
+      console.log(`[territorial] ${planetId} 독립국 침공 보류 — 플레이어 주둔(주력병력) 억지`);
+    }
+    return statusQuoResult();
+  }
+
+  const holds = warStore.planetHolds;
+
+  // 2. 공격자 선정 — 적대 팩션 중 보급선 보유 측(인접 아군 성계 최다)만 침공 가능
+  let attacker: TerritorialFactionSide | null = null;
+  let attackerAdjacent = 0;
+  for (const hostile of listHostileFactions('INDEPENDENT')) {
+    if (hostile !== 'BLUE' && hostile !== 'RED') continue;
+    const adj = countAdjacentFriendlySystems({
+      systemId: policy.systemId,
+      side: hostile,
+      holds,
+    });
+    if (adj > attackerAdjacent) {
+      attacker = hostile;
+      attackerAdjacent = adj;
+    }
+  }
+  if (!attacker) {
+    return statusQuoResult();
+  }
+
+  // 3. 판정 롤 — battle 외에는 현상 유지(독립국에 중립선포 없음)
+  const decision = rollDecision(policy);
+  if (decision !== 'battle') {
+    return statusQuoResult();
+  }
+
+  // 4. 전투 — 침공 함대 vs 독립국 주둔군 (보급 배율 동일 물리학)
+  const attackerShipIds = resolveTerritorialFleetShipIds(planetId, attacker);
+  const defenderShipIds = resolveTerritorialFleetShipIds(planetId, 'INDEPENDENT');
+  if (attackerShipIds.length === 0 || defenderShipIds.length === 0) {
+    if (__DEV__) {
+      console.warn(
+        `[territorial] ${planetId} 독립국 침공 skip — 함대 없음 atk=${attackerShipIds.length} def=${defenderShipIds.length}`,
+      );
+    }
+    return statusQuoResult();
+  }
+
+  const supply = resolveTerritorialSupplyContext({
+    policy,
+    attacker,
+    defender: 'INDEPENDENT',
+    holds,
+  });
+  const combat = resolveTerritorialQuickCombat({
+    attackerShipIds,
+    defenderShipIds,
+    defenderAdvantagePct: policy.defenderAdvantagePct,
+    combatNoisePct: policy.combatNoisePct,
+    attackerSupplyMul: supply.attacker.powerMul,
+    defenderSupplyMul: supply.defender.powerMul,
+  });
+  const attackerWon = combat.winner === 'attacker';
+
+  if (!attackerWon) {
+    await completePass();
+    showTerritorialOccupationMaintainedAlert({
+      planetLabelKo: policy.alertLabelKo,
+      side: previousSide,
+      decision: 'battle',
+      attackerWon: false,
+    });
+    return {
+      planetId,
+      decision: 'battle',
+      holdChanged: false,
+      previousSide,
+      newSide: previousSide,
+    };
+  }
+
+  // 5. 함락 — 점유 전환 + 소유권 증서 파괴(덮어쓰기) → 플레이어는 재중립화 후 재구매
+  const applied = warStore.applyArcCoreTerritorialHold({
+    planetId,
+    systemId: policy.systemId,
+    factionSide: attacker,
+    operationMeta: {
+      source: 'arc_core_territorial',
+      decision: 'battle',
+      combatMode: 'independent_invasion',
+      attackerSide: attacker,
+      defenderSide: 'INDEPENDENT',
+      attackerWon: true,
+      combat,
+      supply: {
+        attackerAdjacentFriendly: supply.attacker.adjacentFriendlySystems,
+        defenderAdjacentFriendly: supply.defender.adjacentFriendlySystems,
+        attackerMul: supply.attacker.powerMul,
+        defenderMul: supply.defender.powerMul,
+      },
+    },
+  });
+  await completePass();
+  notifyHoldChange({
+    planetId,
+    planetLabelKo: policy.alertLabelKo,
+    previousSide,
+    newSide: applied.newSide,
+    decision: 'battle',
+    attackerWon: true,
+  });
+  return {
+    planetId,
+    decision: 'battle',
+    holdChanged: applied.changed,
+    previousSide,
+    newSide: applied.newSide,
+    operationId: applied.operationId,
+  };
 }
 
 export async function runTerritorialCombatPassForPlanet(
@@ -231,6 +431,12 @@ export async function runTerritorialCombatPassForPlanet(
 
   const hold = warStore.getHold(planetId);
   const holdSide = resolveHoldFactionSide(hold?.occupierClanId);
+
+  // 독립국(플레이어 국가) 점유 — 정식 팩션 침공 판정으로 분기
+  if (holdSide === 'INDEPENDENT') {
+    return runIndependentHoldInvasionJudgment({ planetId, policy, warStore, nowMs, campaignMeta });
+  }
+
   const previousSide = sideToMapFaction(holdSide);
   const decision = rollDecision(policy);
 
@@ -284,9 +490,35 @@ export async function runTerritorialCombatPassForPlanet(
     return { planetId, decision, holdChanged, previousSide, newSide, operationId };
   }
 
-  const { attacker, defender } = resolveAttackerDefenderSides(holdSide, policy.combatMode);
-  const attackerShipIds = listTerritorialFleetShipIds(planetId, attacker);
-  const defenderShipIds = listTerritorialFleetShipIds(planetId, defender);
+  // 보급선(런타임 holds 1홉 인접) — 공격자 선정·전투력 배율에 반영
+  const holdsSnapshot = warStore.planetHolds;
+  const supplyAdjacency = {
+    blue: countAdjacentFriendlySystems({
+      systemId: policy.systemId,
+      side: 'BLUE',
+      holds: holdsSnapshot,
+    }),
+    red: countAdjacentFriendlySystems({
+      systemId: policy.systemId,
+      side: 'RED',
+      holds: holdsSnapshot,
+    }),
+  };
+
+  const { attacker, defender } = resolveAttackerDefenderSides(
+    holdSide,
+    policy.combatMode,
+    supplyAdjacency,
+  );
+  const attackerShipIds = resolveTerritorialFleetShipIds(planetId, attacker);
+  const defenderShipIds = resolveTerritorialFleetShipIds(planetId, defender);
+
+  const supply = resolveTerritorialSupplyContext({
+    policy,
+    attacker,
+    defender,
+    holds: holdsSnapshot,
+  });
 
   const usesBinaryDominance =
     policy.combatMode === 'blue_neutral' || policy.combatMode === 'red_neutral';
@@ -318,6 +550,8 @@ export async function runTerritorialCombatPassForPlanet(
       defenderShipIds,
       defenderAdvantagePct: policy.defenderAdvantagePct,
       combatNoisePct: policy.combatNoisePct,
+      attackerSupplyMul: supply.attacker.powerMul,
+      defenderSupplyMul: supply.defender.powerMul,
     });
     attackerWon = combat.winner === 'attacker';
 
@@ -358,6 +592,12 @@ export async function runTerritorialCombatPassForPlanet(
         defenderSide: defender,
         attackerWon,
         combat,
+        supply: {
+          attackerAdjacentFriendly: supply.attacker.adjacentFriendlySystems,
+          defenderAdjacentFriendly: supply.defender.adjacentFriendlySystems,
+          attackerMul: supply.attacker.powerMul,
+          defenderMul: supply.defender.powerMul,
+        },
         ...(tacticsReversal
           ? {
               tacticsReversal: {
@@ -469,6 +709,7 @@ export async function runTerritorialCombatPassForPlanet(
 }
 
 export async function runTerritorialCombatPass(nowMs = Date.now()): Promise<TerritorialPassResult[]> {
+  // 동적 분쟁지역 hydrate 포함 — listTerritorialCombatPolicies가 편입 행성을 캠페인 순번으로 합산
   await hydrateArcCoreTerritorialCombatState();
   const policies = listTerritorialCombatPolicies();
   const results: TerritorialPassResult[] = [];

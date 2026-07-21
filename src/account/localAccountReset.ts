@@ -12,6 +12,7 @@ import {
 import { usePlanetStageLifecycleStore } from '../game/planetStageLifecycle';
 import { clearMiningResumeSnapshot } from '../systems/mining/miningResumeStore';
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
+import { resetDynamicContestedZonesForAccountPurge } from '../arcCore/territorial/dynamicContestedZoneStore';
 import { useMissionStore } from '../store/missionStore';
 import { useArcCoreInstanceMissionBoardStore } from '../store/arcCoreInstanceMissionBoardStore';
 import { useNpcCaptainProgressStore } from '../store/npcCaptainProgressStore';
@@ -165,6 +166,8 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
     await purgeAccountLedgerProfileSkillByUid(uid);
   }
   await useClanWarFoundationStore.getState().purgeAllNonAiClanWorldState();
+  // 플레이어 전투로 편입된 동적 분쟁지역 — 계정 초기화 시 정적 3곳으로 복귀
+  await resetDynamicContestedZonesForAccountPurge();
 
   await usePlayerStore.getState().resetLocalPlayer();
   await useMissionStore.getState().resetLocalMissions();

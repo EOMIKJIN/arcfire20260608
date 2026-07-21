@@ -13,6 +13,7 @@ import {
   migratePlanetHoldsOwnershipSplit,
 } from './planetOwnershipModel';
 import { isPlanetContestedZone } from '../arcCore/balance/balanceTableRegistry';
+import { isDynamicContestedZonePlanet } from '../arcCore/territorial/dynamicContestedZoneStore';
 import type { ClanBasicsRecord, ClanWarOperation, PlanetClanHold } from '../types';
 
 export type PlanetOccupationSeedPipelineResult = {
@@ -69,7 +70,7 @@ export function repairRuntimeNeutralizedHoldsFromOperations(
     const cur = next[planetId];
     if (!cur) continue;
     if (cur.neutralizedAt) continue;
-    if (isPlanetContestedZone(planetId)) continue;
+    if (isPlanetContestedZone(planetId) || isDynamicContestedZonePlanet(planetId)) continue;
     // 시드 복구가 만든 국가 디폴트 hold만 수리 — 증서·거점·AI클랜·플레이어 상태는 보존
     if (cur.kind !== 'clan_hold' || !isNationSeedClanId(cur.occupierClanId)) continue;
     if (cur.deedOwnerClanId?.trim() || cur.homePlayerUid?.trim()) continue;

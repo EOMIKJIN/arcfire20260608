@@ -214,6 +214,7 @@ import {
   resolvePlanetBattleReadyDurationMs,
 } from '../../src/game/planetHub/planetHubConstants';
 import { resolvePlanetWaveCombatTrigger } from '../../src/game/waveDefense/resolvePlanetWaveCombatTrigger';
+import { promoteDynamicContestedZone } from '../../src/arcCore/territorial/dynamicContestedZoneStore';
 import { usePlanetHubBattleReady } from '../../src/game/planetHub/usePlanetHubBattleReady';
 import { useWaveDefenseStore } from '../../src/game/waveDefense/waveDefenseStore';
 import { useWaveDefenseController } from '../../src/game/waveDefense/useWaveDefenseController';
@@ -944,6 +945,14 @@ export default function PlanetScreen() {
     const endedOutcome = ended.outcome ?? 'win';
     // RED 점유 행성 웨이브 승리 → 즉시 중립화 (대표님 지시 — [전투] 진입 · vega_base 룰 공통)
     const wasRedOccupied = Boolean(endedPlanetId) && resolvePlayerPlanetStayBlock(endedPlanetId) != null;
+    // 한 번이라도 전투가 벌어진 국가 시드 행성 → 분쟁지역 자동 편입 (승패 무관 · idempotent · 대표님 지시 2026-07-21)
+    if (wasRedOccupied && endedSystemId) {
+      void promoteDynamicContestedZone({
+        planetId: endedPlanetId,
+        systemId: endedSystemId,
+        source: 'player_wave_defense',
+      });
+    }
     if (wasRedOccupied && endedOutcome === 'win' && endedSystemId) {
       const result = useClanWarFoundationStore.getState().applyArcCoreTerritorialHold({
         planetId: endedPlanetId,

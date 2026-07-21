@@ -1281,6 +1281,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'territorial.side.blue': 'Blue Team',
   'territorial.side.red': 'Red Team',
   'territorial.side.neutral': 'Neutral',
+  'territorial.side.independent': 'Independent Nation',
   'territorial.alert.neutralTitle': 'Contested Zone — Neutral Declared',
   'territorial.alert.neutralBody': '{planet} occupation changed.\n{prev} → {next}',
   'territorial.alert.battleTitle': 'Contested Zone — Auto Battle Result',

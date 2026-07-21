@@ -1,0 +1,4 @@
+factionA,factionB,relation,allySupplyEnabled,notesKo
+BLUE,RED,hostile,false,스텔리움 연합 ↔ 크림슨 레기온 — 전면 적대
+INDEPENDENT,RED,hostile,false,플레이어 독립국 ↔ 크림슨 레기온 — 적대(분쟁 편입 사유)
+INDEPENDENT,BLUE,ally,false,플레이어 독립국 ↔ 스텔리움 연합 — 동맹 · 동맹 보급(allySupplyEnabled)은 기반만·기본 OFF(대표님 결정 2026-07-21)

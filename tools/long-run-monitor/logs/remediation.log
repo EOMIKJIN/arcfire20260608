@@ -2331,3 +2331,85 @@ skia-worklet audit: 18/20 -> D:\arcfire20260607\tools\memory-audit\reports\skia-
 [2026-07-20 23:28:34] INFO PSS_SOFT_CEILING pss=934.5 gl=130.4 views=567 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
 [2026-07-20 23:44:01] INFO PSS_SOFT_CEILING pss=930.7 gl=130.4 views=567 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
 [2026-07-20 23:59:27] INFO PSS_SOFT_CEILING pss=926.7 gl=130.5 views=567 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 00:14:53] INFO PSS_SOFT_CEILING pss=938.1 gl=131.4 views=567 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 00:30:19] INCIDENT GL_HARD_CEILING gl=132.4 pss=953.6 views=567 -> immediate remediation (OOM imminent)
+[2026-07-21 00:30:19] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-07-21 00:30:19] AUTO_FIX static audit:skia-memory start
+[2026-07-21 00:30:20] AUTO_FIX audit:skia-memory PASS
+[2026-07-21 00:30:20] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-07-21 00:30:39] AUTO_FIX baseline reset pid=29524 gl=5.9MB pss=473.6MB
+[2026-07-21 00:30:39] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-07-21 00:31:00] VERIFY PASS pid=29524 gl=8.5MB pss=583.4MB views=99
+[2026-07-21 00:31:00] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":953.6,"views":567,"lastGlMb":132.4,"hardCeiling":true}
+[2026-07-21 00:31:01] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-07-21 00:34:47] INVESTIGATION start reason=mem_anomaly
+[2026-07-21 00:34:47] INVESTIGATION alert=[2026-07-21 00:30:19] GL_HARD_CEILING gl=132.4 pss=953.6 views=567
+[2026-07-21 00:34:48] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260721-003447.log
+[2026-07-21 00:34:49] INVESTIGATION mem from timeline gl=8.5MB pss=583.4MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260721-003447.log
+[2026-07-21 00:34:49] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-07-21 00:34:49] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-07-21 00:34:49] INVESTIGATION done reason=mem_anomaly
+[2026-07-21 07:12:07] INFO PSS_SOFT_CEILING pss=828.5 gl=150 views=560 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 07:43:05] INFO PSS_SOFT_CEILING pss=863.3 gl=157 views=561 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 07:58:34] INFO PSS_SOFT_CEILING pss=949.5 gl=152.9 views=559 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 08:14:00] INFO PSS_SOFT_CEILING pss=945.8 gl=152.9 views=559 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 08:29:29] INCIDENT GL_HARD_CEILING gl=142 pss=1025.5 views=559 -> immediate remediation (OOM imminent)
+[2026-07-21 08:29:29] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
+[2026-07-21 08:29:29] AUTO_FIX static audit:skia-memory start
+[2026-07-21 08:29:31] AUTO_FIX audit:skia-memory PASS
+[2026-07-21 08:29:31] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-07-21 08:29:47] AUTO_FIX baseline reset pid=17868 gl=5.9MB pss=395.4MB
+[2026-07-21 08:29:47] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-07-21 08:30:08] VERIFY PASS pid=17868 gl=27.8MB pss=604.6MB views=345
+[2026-07-21 08:30:08] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":1025.5,"views":559,"lastGlMb":142,"hardCeiling":true}
+[2026-07-21 08:30:08] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-07-21 08:32:31] INVESTIGATION start reason=mem_anomaly
+[2026-07-21 08:32:31] INVESTIGATION alert=[2026-07-21 08:29:29] GL_HARD_CEILING gl=142 pss=1025.5 views=559
+[2026-07-21 08:32:32] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260721-083231.log
+[2026-07-21 08:32:33] INVESTIGATION mem from timeline gl=27.8MB pss=604.6MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260721-083231.log
+[2026-07-21 08:32:33] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-07-21 08:32:33] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-07-21 08:32:33] INVESTIGATION done reason=mem_anomaly
+[2026-07-21 08:45:34] INFO PSS_SOFT_CEILING pss=831.2 gl=135.9 views=558 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 09:01:00] INFO PSS_SOFT_CEILING pss=819.2 gl=135.9 views=558 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 09:16:25] INFO PSS_SOFT_CEILING pss=823.3 gl=135.9 views=558 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 09:31:50] INFO PSS_SOFT_CEILING pss=816.8 gl=137.6 views=558 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 09:47:15] INFO PSS_SOFT_CEILING pss=817.5 gl=137.6 views=558 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 11:19:49] INFO PSS_SOFT_CEILING pss=868.9 gl=131.5 views=559 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 11:35:14] INFO PSS_SOFT_CEILING pss=847 gl=131.5 views=559 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 11:50:40] INFO VIEWS_NATIVE_ADVISORY views=559 native_heap=127.9 pss=751.6 gl=133.5 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 12:21:37] INFO VIEWS_NATIVE_ADVISORY views=558 native_heap=336.8 pss=791.5 gl=132.5 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 12:37:04] INFO VIEWS_NATIVE_ADVISORY views=558 native_heap=330.9 pss=790.3 gl=132.5 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 12:52:30] INFO VIEWS_NATIVE_ADVISORY views=558 native_heap=331.6 pss=791.4 gl=132.5 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 13:07:55] INFO PSS_SOFT_CEILING pss=801.6 gl=132.5 views=558 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 13:23:21] INFO VIEWS_NATIVE_ADVISORY views=558 native_heap=332.2 pss=797.8 gl=132.5 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 13:38:47] INFO VIEWS_NATIVE_ADVISORY views=558 native_heap=332.7 pss=784.3 gl=132.5 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 13:54:12] INFO VIEWS_NATIVE_ADVISORY views=558 native_heap=312.8 pss=724.3 gl=122.4 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 15:57:45] INFO VIEWS_NATIVE_ADVISORY views=559 native_heap=386.1 pss=767.1 gl=130.1 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 16:13:09] INFO VIEWS_NATIVE_ADVISORY views=559 native_heap=276.5 pss=755.6 gl=132.1 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 16:28:37] INFO VIEWS_NATIVE_ADVISORY views=559 native_heap=275.3 pss=749.7 gl=131.9 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 16:44:02] INFO VIEWS_NATIVE_ADVISORY views=559 native_heap=274.8 pss=751.1 gl=131.9 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 16:59:28] INFO VIEWS_NATIVE_ADVISORY views=559 native_heap=274.4 pss=748.3 gl=131.9 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 17:14:55] INFO VIEWS_NATIVE_ADVISORY views=559 native_heap=275.2 pss=759.3 gl=133.9 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 17:30:25] INFO VIEWS_NATIVE_ADVISORY views=559 native_heap=275 pss=761.4 gl=132 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 17:45:52] INFO VIEWS_NATIVE_ADVISORY views=559 native_heap=215 pss=737.8 gl=132 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 18:01:17] INFO VIEWS_NATIVE_ADVISORY views=559 native_heap=214.9 pss=744.9 gl=132 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 18:16:43] INFO VIEWS_NATIVE_ADVISORY views=559 native_heap=215.2 pss=738.9 gl=134 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 18:47:35] INFO VIEWS_NATIVE_ADVISORY views=554 native_heap=260.5 pss=764.7 gl=130.2 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 19:03:00] INFO VIEWS_NATIVE_ADVISORY views=554 native_heap=260.7 pss=762.2 gl=130.2 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 20:04:51] INFO PSS_SOFT_CEILING pss=934.4 gl=132.2 views=553 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 20:20:16] INFO PSS_SOFT_CEILING pss=946.6 gl=132.3 views=553 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 20:35:42] INFO PSS_SOFT_CEILING pss=944.4 gl=137.3 views=553 -> no restart (Native Reclaim Tier soft zone; app STAGE reclaim)
+[2026-07-21 20:51:07] INFO VIEWS_NATIVE_ADVISORY views=553 native_heap=316.4 pss=739.7 gl=123 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 21:06:34] INFO VIEWS_NATIVE_ADVISORY views=553 native_heap=314.9 pss=738 gl=127 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 21:22:00] INFO VIEWS_NATIVE_ADVISORY views=553 native_heap=310.9 pss=738.7 gl=128.8 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 21:37:25] INFO VIEWS_NATIVE_ADVISORY views=553 native_heap=312 pss=734.9 gl=124.8 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 21:52:51] INFO VIEWS_NATIVE_ADVISORY views=553 native_heap=330.8 pss=789.8 gl=126.8 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 22:08:17] INFO VIEWS_NATIVE_ADVISORY views=553 native_heap=312 pss=744.6 gl=126.8 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 22:23:38] INFO VIEWS_NATIVE_ADVISORY views=553 native_heap=311 pss=742.6 gl=126.8 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 22:39:04] INFO VIEWS_NATIVE_ADVISORY views=553 native_heap=311.9 pss=739.4 gl=124.8 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 22:54:36] INFO VIEWS_NATIVE_ADVISORY views=553 native_heap=312.2 pss=737.2 gl=124.8 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 23:10:04] INFO VIEWS_NATIVE_ADVISORY views=553 native_heap=312.3 pss=738 gl=124.8 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 23:25:33] INFO VIEWS_NATIVE_ADVISORY views=553 native_heap=311.6 pss=722.1 gl=124.8 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 23:40:58] INFO VIEWS_NATIVE_ADVISORY views=553 native_heap=312.5 pss=728.5 gl=124.8 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
+[2026-07-21 23:56:23] INFO VIEWS_NATIVE_ADVISORY views=553 native_heap=312.4 pss=639.9 gl=124.8 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)

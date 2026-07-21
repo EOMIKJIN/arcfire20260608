@@ -1,6 +1,6 @@
 # [실시간 이상] Arcfire 자동탐지 → 김팀장 P0
 
-**시각 (KST)**: 2026-07-20 17:37:11
+**시각 (KST)**: 2026-07-21 08:32:34
 **사유**: `mem_anomaly`
 
 | 항목 | 경로 |
@@ -10,20 +10,20 @@
 
 ## 최근 incidents
 ```
-[2026-07-20 16:46:14] PSS_SOFT_CEILING pss=845.2 gl=50.2 views=312 native_reclaim_advisory
-[2026-07-20 17:01:38] PSS_SOFT_CEILING pss=854.2 gl=59.8 views=494 native_reclaim_advisory
-[2026-07-20 17:17:03] PSS_SOFT_CEILING pss=849.9 gl=59.8 views=361 native_reclaim_advisory
-[2026-07-20 17:32:29] GL_HARD_CEILING gl=137.4 pss=983.2 views=571
-[2026-07-20 17:32:29] REFIX_REQUESTED gl_critical_active_hub
-[2026-07-20 17:37:10] INVESTIGATION_TRIGGERED mem_anomaly
+[2026-07-21 08:14:00] PSS_SOFT_CEILING pss=945.8 gl=152.9 views=559 native_reclaim_advisory
+[2026-07-21 08:14:15] DAILY_8AM_REPORT 2026-07-21 08:14:15 KST
+[2026-07-21 08:14:15] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260721-0800.md verdict=WARN
+[2026-07-21 08:29:29] GL_HARD_CEILING gl=142 pss=1025.5 views=559
+[2026-07-21 08:29:29] REFIX_REQUESTED gl_critical_active_hub
+[2026-07-21 08:32:33] INVESTIGATION_TRIGGERED mem_anomaly
 ```
 
 ## 최근 remediation
 ```
-[2026-07-20 17:37:09] INVESTIGATION mem from timeline gl=8.7MB pss=635.9MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260720-173706.log
-[2026-07-20 17:37:10] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
-[2026-07-20 17:37:10] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
-[2026-07-20 17:37:10] INVESTIGATION done reason=mem_anomaly
+[2026-07-21 08:32:33] INVESTIGATION mem from timeline gl=27.8MB pss=604.6MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260721-083231.log
+[2026-07-21 08:32:33] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
+[2026-07-21 08:32:33] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
+[2026-07-21 08:32:33] INVESTIGATION done reason=mem_anomaly
 ```
 
 ## 권장 (김팀장 즉시)
@@ -36,7 +36,7 @@
 --- handoff excerpt ---
 # Arcfire long-run incident — Kim Team Lead auto-triage
 
-packedAt: 2026-07-20T08:37:09.489Z
+packedAt: 2026-07-20T23:32:33.458Z
 triggerReason: mem_anomaly
 refixPayload: (none)
 
@@ -51,34 +51,33 @@ refixPayload: (none)
 ## Recent remediation
 
 ```
-[2026-07-20 17:32:29] AUTO_FIX static audit:skia-memory start
-[2026-07-20 17:32:32] AUTO_FIX audit:skia-memory PASS
-[2026-07-20 17:32:32] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
-[2026-07-20 17:32:49] AUTO_FIX baseline reset pid=7743 gl=5.9MB pss=325.3MB
-[2026-07-20 17:32:49] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
-[2026-07-20 17:33:10] VERIFY PASS pid=7743 gl=8.7MB pss=635.9MB views=99
-[2026-07-20 17:33:10] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":983.2,"views":571,"lastGlMb":137.4,"hardCeiling":true}
-[2026-07-20 17:33:11] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
-[2026-07-20 17:37:06] INVESTIGATION start reason=mem_anomaly
-[2026-07-20 17:37:06] INVESTIGATION alert=[2026-07-20 17:32:29] GL_HARD_CEILING gl=137.4 pss=983.2 views=571
-[2026-07-20 17:37:07] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260720-173706.log
-[2026-07-20 17:37:09] INVESTIGATION mem from timeline gl=8.7MB pss=635.9MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260720-173706.log
+[2026-07-21 08:29:29] AUTO_FIX static audit:skia-memory start
+[2026-07-21 08:29:31] AUTO_FIX audit:skia-memory PASS
+[2026-07-21 08:29:31] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-07-21 08:29:47] AUTO_FIX baseline reset pid=17868 gl=5.9MB pss=395.4MB
+[2026-07-21 08:29:47] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-07-21 08:30:08] VERIFY PASS pid=17868 gl=27.8MB pss=604.6MB views=345
+[2026-07-21 08:30:08] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":1025.5,"views":559,"lastGlMb":142,"hardCeiling":true}
+[2026-07-21 08:30:08] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-07-21 08:32:31] INVESTIGATION start reason=mem_anomaly
+[2026-07-21 08:32:31] INVESTIGATION alert=[2026-07-21 08:29:29] GL_HARD_CEILING gl=142 pss=1025.5 views=559
+[2026-07-21 08:32:32] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260721-083231.log
+[2026-07-21 08:32:33] INVESTIGATION mem from timeline gl=27.8MB pss=604.6MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260721-083231.log
 ```
 
 ## Recent incidents
 
 ```
-[2026-07-20 13:56:25] PSS_SOFT_CEILING pss=814.7 gl=115.8 views=569 native_reclaim_advisory
-[2026-07-20 16:46:14] PSS_SOFT_CEILING pss=845.2 gl=50.2 views=312 native_reclaim_advisory
-[2026-07-20 17:01:38] PSS_SOFT_CEILING pss=854.2 gl=59.8 views=494 native_reclaim_advisory
-[2026-07-20 17:17:03] PSS_SOFT_CEILING pss=849.9 gl=59.8 views=361 native_reclaim_advisory
-[2026-07-20 17:32:29] GL_HARD_CEILING gl=137.4 pss=983.2 views=571
-[2026-07-20 17:32:29] REFIX_REQUESTED gl_critical_active_hub
+[2026-07-21 08:12:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260721-0800.md verdict=WARN
+[2026-07-21 08:14:00] PSS_SOFT_CEILING pss=945.8 gl=152.9 views=559 native_reclaim_advisory
+[2026-07-21 08:14:15] DAILY_8AM_REPORT 2026-07-21 08:14:15 KST
+[2026-07-21 08:14:15] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260721-0800.md verdict=WARN
+[2026-07-21 08:29:29] GL_HARD_CEILING gl=142 pss=1025.5 views=559
+[2026-07-21 08:29:29] REFIX_REQUESTED gl_critical_active_hub
 ```
 
 ## Crash signature (tail)
 
 ```
 07-17 20:53:26.468 16902 17002 I ReactNativeJS: [intro-diag] MOUNT scene=intro01 flow=preNickname
-07-17 20:53:26.468 16902 17002 I ReactNativeJS: [intro-diag] page=0 seg=0
-07-17 20:53:26.468 16902 17
+07-17 20:53:26.468 
