@@ -13,6 +13,7 @@ import { usePlanetStageLifecycleStore } from '../game/planetStageLifecycle';
 import { clearMiningResumeSnapshot } from '../systems/mining/miningResumeStore';
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
 import { resetDynamicContestedZonesForAccountPurge } from '../arcCore/territorial/dynamicContestedZoneStore';
+import { resetWaveCombatCooldownsForAccountPurge } from '../game/waveDefense/waveCombatCooldownStore';
 import { useMissionStore } from '../store/missionStore';
 import { useArcCoreInstanceMissionBoardStore } from '../store/arcCoreInstanceMissionBoardStore';
 import { useNpcCaptainProgressStore } from '../store/npcCaptainProgressStore';
@@ -168,6 +169,8 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await useClanWarFoundationStore.getState().purgeAllNonAiClanWorldState();
   // 플레이어 전투로 편입된 동적 분쟁지역 — 계정 초기화 시 정적 3곳으로 복귀
   await resetDynamicContestedZonesForAccountPurge();
+  // 웨이브 전투 승리 재개 대기(30분) — 플레이어 전투 진행 데이터, 함께 리셋
+  await resetWaveCombatCooldownsForAccountPurge();
 
   await usePlayerStore.getState().resetLocalPlayer();
   await useMissionStore.getState().resetLocalMissions();

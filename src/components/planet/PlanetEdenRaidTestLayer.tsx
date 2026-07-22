@@ -46,6 +46,7 @@ import { getNpcCapitalShip, hasNpcCapitalShipId, listAllNpcCapitalShipRows, list
 import type { NpcCapitalShip } from '../../types';
 import {
   getCapitalWeaponRow,
+  getRocketBurstPolicy,
   isKnownCapitalWeaponId,
   resolveMissileSalvoCount,
   resolveMissileSalvoIntervalMs,
@@ -53,6 +54,7 @@ import {
 import {
   buildCapitalProjectileSpawn,
   isNovaAoeWeapon,
+  isRocketFamilyWeapon,
   resolveCapitalLaserBeamPresentation,
   resolveCapitalWeaponImpact,
 } from '../../combat/capitalWeaponPipeline';
@@ -80,6 +82,24 @@ import {
   resolveCapitalWeaponRangePx,
   type CapitalCombatRangeBands,
 } from '../../game/capitalWeaponRange';
+import {
+  applyTempoJudge,
+  combatMotionStageFromDist,
+  createCapitalManeuverDecision,
+  resolveCapitalManeuverDecision,
+  type CapitalManeuverInput,
+  type CombatMotionStage,
+  type KiteEvasionMode,
+  type TempoRole,
+} from '../../combat/maneuver/capitalManeuverDecision';
+import {
+  resolveDoctrineForCaptain,
+  type CaptainTacticDoctrine,
+} from '../../combat/maneuver/captainTacticDoctrine';
+import {
+  createFormationAnchorPose,
+  resolveLineFormationAnchor,
+} from '../../combat/maneuver/capitalFormation';
 import { useNpcCaptainProgressStore, NPC_CAPTAIN_PROGRESS_EXP } from '../../store/npcCaptainProgressStore';
 import { usePlayerStore } from '../../store/playerStore';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
@@ -213,22 +233,13 @@ const CAPITAL_CLOSING_ORBIT_DRIFT_OMEGA_PER_MS = 0.00112;
 const NAVAL_BRAWL_ORBIT_OMEGA = 0.00036;
 /** 근접에서 목표 지점 추격(chase) 상한 — 링·접선 기동이 우선 */
 const BRAWL_CHASE_WEIGHT_CAP = 0.26;
-/** 기세 우세 시 추격 강화(근접 강요) */
-const TEMPO_PRESS_CHASE_WEIGHT = 0.9;
-/** 기세 열세 시 추격 약화(거리 벌리기) */
-const TEMPO_KITE_CHASE_WEIGHT = 0.24;
 /** 경계 도달 시 정지하지 않도록 접선 회피 이동량 */
 const EDGE_EVADE_STEP_PX = 22;
 /** 코너 체류 방지: 중앙 복귀 이동량 */
 const EDGE_CENTER_ESCAPE_STEP_PX = 30;
 /** 경계 정체 판정(목표-현재 오차) */
 const EDGE_STALL_EPS_PX = 1.2;
-type CombatMotionStage = 'closing' | 'missile_pattern' | 'missile_reposition' | 'brawl';
-
 type MovementPhase = 'approach' | 'ellipse' | 'orbit';
-type TempoRole = 'press' | 'kite';
-type RpsHand = 0 | 1 | 2; // 0:가위, 1:바위, 2:보
-type KiteEvasionMode = 'standoff' | 'planet_orbit';
 
 /** 근접 패턴: 서로 거리 호흡(레이저 사거리 근처) */
 const DUEL_SEP_CENTER = 118;
@@ -269,12 +280,6 @@ const CAPITAL_STOP_SURGE_FOR_REVERSE_PX_PER_MS = 0.0015;
 const KITE_CURVED_REVERSE_LATERAL_MIX = 1.08;
 /** 경계 근처 곡선 후진 시 맵 안쪽으로 살짝 당김(벽 정체 완화) */
 const KITE_CURVED_REVERSE_BOUNDARY_NUDGE = 0.38;
-/** 거리벌림(kite·재배치) 중 정지에 가까운 선속(px/ms) */
-const KITE_DIST_STALL_SPEED_PX_PER_MS = 0.0055;
-/** 위 저속이 이 시간(ms) 유지되면 적 방향 전진 회복 구간 진입 */
-const KITE_DIST_STALL_HOLD_MS = 1900;
-/** 회복 구간: 적함 방향으로 일반 항법·전진(ms) */
-const KITE_DIST_RESUME_ADVANCE_MS = 2600;
 /** 적분기 요조종: 목표 헤딩(주로 대적) 우선 — 항로 접선보다 선수 정렬 */
 const KINEMATICS_BOW_HEADING_BLEND = 0.86;
 /** 항법 최종 헤딩: 적 방향(선수 정렬) 1순위 */
@@ -385,6 +390,8 @@ export type Agent = {
   kiteDistStallSinceMs: number | null;
   /** 0 초과이면 이 시각까지 적·전진 회복 항법(거리벌림 정체 보완) */
   kiteDistResumeAdvanceUntilMs: number;
+  /** 함장 전투 전술 독트린(Table-First) — 스폰 시 1회 바인딩(카탈로그 불변 참조) */
+  doctrine: CaptainTacticDoctrine;
   /** 현재 주력 교전 상대(적 팀 함선 id). 격침 시 `resolveCombatOpponent`가 다음 표적으로 갱신 */
   currentTargetAgentId: number | null;
   /** 편대 테이블에서 지정된 NPC 전함 id (없으면 null) */
@@ -476,6 +483,11 @@ export type Missile = {
   missileWeaponId: string;
   /** true면 발사 시점 공간 좌표에 고정 탄착(유도 갱신 없음) */
   lockImpactPoint: boolean;
+  /** 탄착분포상 미스 확정 — 표적을 그대로 통과(피해·폭발 FX 없음). 로켓 발칸 연사 전용 */
+  missPassThrough: boolean;
+  /** 스폰 시 1회 확정 — 렌더 틱마다 runtimeSpec 재해석·할당 방지 */
+  isRocketProjectile: boolean;
+  isNovaProjectile: boolean;
 };
 
 export type MissileHitFx = {
@@ -518,6 +530,25 @@ function laserMuzzleFromAgent(ag: { x: number; y: number; headingRad: number }):
   return {
     x: ag.x + u.x * LASER_MUZZLE_FORWARD_PX,
     y: ag.y + u.y * LASER_MUZZLE_FORWARD_PX,
+  };
+}
+
+/**
+ * 로켓탄 발사구 — 선수(레이저 전용) 좌우 측면에서 발수 인덱스로 교대 발사.
+ * 오프셋은 weapon_rocket_burst_policy.csv(전함 공통 장착 위치).
+ * 향후 함선별 사이드 무기(드론·함재기 사출 등) 장착위치 테이블로 확장 예정.
+ */
+function rocketSideMuzzleFromAgent(
+  ag: { x: number; y: number; headingRad: number },
+  shotIdx: number,
+): Pt {
+  const p = getRocketBurstPolicy();
+  const u = laserHeadingUnit(ag.headingRad);
+  const side = shotIdx % 2 === 0 ? 1 : -1;
+  /** 좌현/우현 수직 벡터 n = (-u.y, u.x) */
+  return {
+    x: ag.x + u.x * p.muzzleForwardOffsetPx - u.y * side * p.muzzleLateralOffsetPx,
+    y: ag.y + u.y * p.muzzleForwardOffsetPx + u.x * side * p.muzzleLateralOffsetPx,
   };
 }
 
@@ -625,9 +656,36 @@ const CAPITAL_TARGET_RING_WINDOW = 14;
 /** 몇 시뮬 틱마다 한 번 전수 재스캔(표적 품질 복구) */
 const CAPITAL_TARGET_FULL_SCAN_INTERVAL = 5;
 
+/**
+ * 독트린 표적 우선순위 점수(낮을수록 우선) — 신규 표적 선택 시에만 호출(저빈도).
+ * nearest: 거리(현행) · lowest_hull: 선체 우선(거리 타이브레이크) · focus_fire: 팀 리드 표적 최우선.
+ */
+function doctrineTargetScore(
+  self: Agent,
+  cand: Agent,
+  dist: number,
+  focusTargetId: number | null,
+): number {
+  const pr = self.doctrine.targetPriority;
+  if (pr === 'lowest_hull') return cand.hullHp * 1e6 + dist;
+  if (pr === 'focus_fire') {
+    return (focusTargetId !== null && cand.id === focusTargetId ? 0 : 1e9) + dist;
+  }
+  return dist;
+}
+
+/** focus_fire: 팀 리드(최소 id 생존)의 현재 표적 id — 리드 자신·비배정 시 null(→ nearest 폴백) */
+function resolveFocusFireTargetId(self: Agent, agents: Agent[]): number | null {
+  if (self.doctrine.targetPriority !== 'focus_fire') return null;
+  const lead = firstAliveLeadByTeam(agents, self.team);
+  if (!lead || lead.id === self.id) return null;
+  return typeof lead.currentTargetAgentId === 'number' ? lead.currentTargetAgentId : null;
+}
+
 function pickNextAliveEnemyTargetFull(self: Agent, agents: Agent[]): void {
+  const focusTargetId = resolveFocusFireTargetId(self, agents);
   let best: Agent | null = null;
-  let bestD = Infinity;
+  let bestScore = Infinity;
   const selfTeam = self.team;
   const selfId = self.id;
   for (let i = 0; i < agents.length; i++) {
@@ -639,8 +697,9 @@ function pickNextAliveEnemyTargetFull(self: Agent, agents: Agent[]): void {
       continue;
     }
     const d = Math.hypot(a.x - self.x, a.y - self.y);
-    if (d < bestD) {
-      bestD = d;
+    const score = doctrineTargetScore(self, a, d, focusTargetId);
+    if (score < bestScore) {
+      bestScore = score;
       best = a;
     }
   }
@@ -653,8 +712,9 @@ function pickNextAliveEnemyTarget(self: Agent, agents: Agent[], ringTick: number
     pickNextAliveEnemyTargetFull(self, agents);
     return;
   }
+  const focusTargetId = resolveFocusFireTargetId(self, agents);
   let best: Agent | null = null;
-  let bestD = Infinity;
+  let bestScore = Infinity;
   const selfTeam = self.team;
   const selfId = self.id;
   const start = (self.id * 31 + ringTick * 17) % Math.max(1, n);
@@ -668,8 +728,9 @@ function pickNextAliveEnemyTarget(self: Agent, agents: Agent[], ringTick: number
       continue;
     }
     const d = Math.hypot(a.x - self.x, a.y - self.y);
-    if (d < bestD) {
-      bestD = d;
+    const score = doctrineTargetScore(self, a, d, focusTargetId);
+    if (score < bestScore) {
+      bestScore = score;
       best = a;
     }
   }
@@ -738,41 +799,6 @@ function fleetWideBlendAnchorPose(
   return { x: c.x, y: c.y, headingRad: duelWide.h1 };
 }
 
-function rollRpsHand(): RpsHand {
-  return Math.floor(Math.random() * 3) as RpsHand;
-}
-
-function rpsOutcome(a: RpsHand, b: RpsHand): 1 | -1 | 0 {
-  if (a === b) return 0;
-  if ((a + 1) % 3 === b) return -1;
-  return 1;
-}
-
-function applyTempoJudge(a: Agent, b: Agent): void {
-  let ah = rollRpsHand();
-  let bh = rollRpsHand();
-  let out = rpsOutcome(ah, bh);
-  for (let i = 0; i < 5 && out === 0; i++) {
-    ah = rollRpsHand();
-    bh = rollRpsHand();
-    out = rpsOutcome(ah, bh);
-  }
-  if (out === 0) {
-    out = a.id < b.id ? 1 : -1;
-  }
-  if (out > 0) {
-    a.tempoRole = 'press';
-    b.tempoRole = 'kite';
-    /** 열세 측 거리벌림: 스탠드오프 후진 이격 OR 적 중심 광궤도 */
-    b.kiteEvasionMode = Math.random() < 0.5 ? 'standoff' : 'planet_orbit';
-  } else {
-    a.tempoRole = 'kite';
-    b.tempoRole = 'press';
-    /** 열세 측 거리벌림: 스탠드오프 후진 이격 OR 적 중심 광궤도 */
-    a.kiteEvasionMode = Math.random() < 0.5 ? 'standoff' : 'planet_orbit';
-  }
-}
-
 /**
  * 기세 `planet_orbit`: 행성 중심이 아니라 **적 함선 중심**·가능한 한 큰 반경 광궤도.
  * `pairDist`에 비례해 반경을 키우고 맵·미사일 사거리 안에서 클램프.
@@ -825,12 +851,19 @@ function compactMissilesInPlace(arr: Missile[], elapsed: number): void {
   arr.length = w;
 }
 
+/** 닷지 시각보다 긴 920ms 잔류를 막기 — 로켓/레이저는 짧은 수명으로 조기 compact (PSS) */
+function hitFxRetainMs(fx: MissileHitFx): number {
+  if (fx.effectKind === 'rocket_spread') return 140;
+  if (fx.effectKind === 'laser_dodge') return 140;
+  return MISSILE_HIT_FX_DURATION_MS;
+}
+
 function compactHitFxInPlace(arr: MissileHitFx[], elapsed: number): void {
   let w = 0;
   for (let r = 0; r < arr.length; r++) {
     const fx = arr[r];
     if (!fx) continue;
-    if (elapsed - fx.startMs >= MISSILE_HIT_FX_DURATION_MS) continue;
+    if (elapsed - fx.startMs >= hitFxRetainMs(fx)) continue;
     arr[w++] = fx;
   }
   arr.length = w;
@@ -1287,25 +1320,18 @@ function combatDetectionRangePx(orbitSize: number, margin: number): number {
   return maxHorizontalPairSeparationPx(orbitSize, margin);
 }
 
-function combatMotionStageFromDist(
-  dist: number,
-  detectR: number,
-  bands: CapitalCombatRangeBands,
-): CombatMotionStage {
-  if (dist > detectR + 6) return 'closing';
-  if (dist > bands.missileMaxRangePx + CAPITAL_MISSILE_RANGE_LOOSEN_PX) return 'closing';
-  if (dist > bands.laserBrawlOuterPx) return 'missile_pattern';
-  if (dist > bands.laserBrawlInnerPx + 0.5) return 'missile_reposition';
-  return 'brawl';
-}
-
-function chaseWeightForCombatStage(stage: CombatMotionStage): number {
-  if (stage === 'closing') return 1;
-  if (stage === 'missile_pattern') return 0.42;
-  if (stage === 'missile_reposition') return 0.16;
-  /** 브롤: 링 선회 비중↑ (`BRAWL_CHASE_WEIGHT_CAP`과 함께 직추격 억제) */
-  return 0.3;
-}
+/** 판단 계층(순수 모듈) 재사용 버퍼 — 결과는 같은 반복(iteration) 내에서만 소비(zero-allocation) */
+const maneuverDecisionBuf = createCapitalManeuverDecision();
+const maneuverInputBuf: CapitalManeuverInput = {
+  elapsedMs: 0,
+  pairDist: 0,
+  detectRangePx: 0,
+  bands: deriveCapitalCombatRangeBands(0, 0),
+  speedPxPerMs: 0,
+  teamSlot: 0,
+};
+/** 진형 앵커 재사용 버퍼(zero-allocation) — 같은 반복 내에서만 소비 */
+const formationAnchorBuf = createFormationAnchorPose();
 
 /** 미사일 사거리 링 유지(거리띄우기) — 단계·현재 거리에 따른 블렌드 가중 */
 function standoffWeightForDistAndStage(
@@ -1463,6 +1489,8 @@ function compositeNavigatePose(
   tempoRole: TempoRole,
   kiteEvasionMode: KiteEvasionMode,
   bands: CapitalCombatRangeBands,
+  /** 독트린 스탠드오프 링 오프셋(px) — 0이면 현행과 완전 동일 */
+  standoffRingOffsetPx = 0,
 ): AgentPose {
   let wc = Math.min(1, Math.max(0, chaseWeight));
   if (combatStage === 'brawl') {
@@ -1493,13 +1521,20 @@ function compositeNavigatePose(
   }
   let headingBlend = lerpAngleRad(pat.headingRad, cha.headingRad, wc);
   if (ws > 1e-6) {
-    const ringDist =
+    let ringDist =
       tempoRole === 'press'
         ? Math.max(bands.laserBrawlOuterPx + 8, bands.missileIdealPairDistPx - 26)
         : Math.min(
             bands.missileMaxRangePx + CAPITAL_MISSILE_RANGE_LOOSEN_PX - 2,
             bands.missileIdealPairDistPx + 28,
           );
+    if (standoffRingOffsetPx !== 0) {
+      // 독트린 오프셋(장거리 유지형 등): 브롤 외곽~미사일 사거리 내로 클램프해 적용
+      ringDist = Math.min(
+        bands.missileMaxRangePx + CAPITAL_MISSILE_RANGE_LOOSEN_PX - 2,
+        Math.max(bands.laserBrawlOuterPx + 4, ringDist + standoffRingOffsetPx),
+      );
+    }
     const st = standoffTargetPose(selfPrev, otherPrev, ringDist, margin, orbitSize);
     mx = mx * (1 - ws) + st.x * ws;
     my = my * (1 - ws) + st.y * ws;
@@ -2213,6 +2248,7 @@ function createCapitalAgentBase(
     kiteEvasionMode: 'standoff',
     kiteDistStallSinceMs: null,
     kiteDistResumeAdvanceUntilMs: 0,
+    doctrine: resolveDoctrineForCaptain(captainId),
     currentTargetAgentId: null,
     npcShipId,
     captainId,
@@ -2759,9 +2795,13 @@ export function usePlanetEdenRaidSim(
       if (hasActive) return;
     }
     const curveSign: 1 | -1 = ((owner.id + targetAgentId + spreadIdx) & 1) === 0 ? 1 : -1;
+    /** 발사구 — 선수는 레이저 전용, 로켓탄은 좌우 측면 교대(전함 공통 장착 위치) */
+    const muzzle = isRocketFamilyWeapon(weaponId)
+      ? rocketSideMuzzleFromAgent(owner, spreadIdx)
+      : laserMuzzleFromAgent(owner);
     const spawn = buildCapitalProjectileSpawn({
       weaponId,
-      p0: laserMuzzleFromAgent(owner),
+      p0: muzzle,
       aimCenter: { x: target.x, y: target.y },
       spreadIdx,
       salvoCount,
@@ -2784,6 +2824,9 @@ export function usePlanetEdenRaidSim(
       curveSign: spawn.curveSign,
       missileWeaponId: weaponId,
       lockImpactPoint: spawn.lockImpactPoint,
+      missPassThrough: spawn.missPassThrough,
+      isRocketProjectile: isRocketFamilyWeapon(weaponId),
+      isNovaProjectile: isNovaAoeWeapon(weaponId),
     });
   }, []);
 
@@ -3038,32 +3081,19 @@ export function usePlanetEdenRaidSim(
         if (!other) continue;
         const selfPrev = prevPts[ag.id] ?? { x: ag.x, y: ag.y };
         const otherPrev = prevPts[other.id] ?? { x: other.x, y: other.y };
-        const pairDist = Math.hypot(selfPrev.x - otherPrev.x, selfPrev.y - otherPrev.y);
-        const detectR = combatDetectionRangePx(orbitSize, margin) * ag.detectRangeScale;
-        const combatStage = combatMotionStageFromDist(pairDist, detectR, ag.rangeBands);
-        // 우선순위 강제: 거리 판단보다 기세 판정 우선.
-        // 기세 열세(kite)는 항상 거리벌리기 단계로 취급한다.
-        let navStage: CombatMotionStage =
-          ag.tempoRole === 'kite' ? 'missile_reposition' : combatStage;
-        const engageReady = elapsed >= ag.engageStartDelayMs;
-        let chaseW = chaseWeightForCombatStage(navStage);
-        if (ag.tempoRole === 'press') {
-          chaseW = Math.max(chaseW, TEMPO_PRESS_CHASE_WEIGHT);
-        } else {
-          chaseW = Math.min(chaseW, TEMPO_KITE_CHASE_WEIGHT);
-        }
-        if (!engageReady) {
-          // 시작 지연 중에는 즉시 교전으로 붙지 않도록 추격 강도 제한
-          chaseW = Math.min(chaseW, 0.28);
-        }
-        if (elapsed < ag.stallChaseBoostUntilMs) {
-          if (ag.tempoRole === 'press') {
-            chaseW = Math.max(chaseW, 0.88);
-          } else {
-            // 기세 열세(kite)는 정체 복구 중에도 거리벌리기 성향 유지
-            chaseW = Math.min(chaseW, 0.32);
-          }
-        }
+        // 판단 계층(순수 모듈): 교전 단계 FSM·기세 우선 navStage·추격 가중·kite 정체
+        // 상태기계를 일괄 판정. `ag.kiteDist*` 상태는 모듈이 in-place 갱신한다.
+        maneuverInputBuf.elapsedMs = elapsed;
+        maneuverInputBuf.pairDist = Math.hypot(
+          selfPrev.x - otherPrev.x,
+          selfPrev.y - otherPrev.y,
+        );
+        maneuverInputBuf.detectRangePx =
+          combatDetectionRangePx(orbitSize, margin) * ag.detectRangeScale;
+        maneuverInputBuf.bands = ag.rangeBands;
+        maneuverInputBuf.speedPxPerMs = Math.hypot(ag.vx, ag.vy);
+        maneuverInputBuf.teamSlot = teamSlotByAgentIdRef.current[ag.id] ?? 0;
+        const decision = resolveCapitalManeuverDecision(ag, maneuverInputBuf, maneuverDecisionBuf);
         let P = compositeNavigatePose(
           ag.id,
           Math.max(0, elapsed - ag.engageStartDelayMs) + ag.behaviorTimeOffsetMs,
@@ -3073,11 +3103,12 @@ export function usePlanetEdenRaidSim(
           cy,
           margin,
           orbitSize,
-          chaseW,
-          navStage,
+          decision.chaseWeight,
+          decision.navStage,
           ag.tempoRole,
           ag.kiteEvasionMode,
           ag.rangeBands,
+          decision.standoffRingOffsetPx,
         );
         if (
           activeBattle &&
@@ -3107,52 +3138,39 @@ export function usePlanetEdenRaidSim(
             CAPITAL_SCENE_ORBIT_ELLIPSE_Y_MUL,
           );
         }
-        const inKiteDistancing =
-          ag.tempoRole === 'kite' && navStage === 'missile_reposition';
-        const spd = Math.hypot(ag.vx, ag.vy);
-        if (ag.kiteDistResumeAdvanceUntilMs > 0 && elapsed >= ag.kiteDistResumeAdvanceUntilMs) {
-          ag.kiteDistResumeAdvanceUntilMs = 0;
-        }
-        if (!inKiteDistancing) {
-          ag.kiteDistStallSinceMs = null;
-          ag.kiteDistResumeAdvanceUntilMs = 0;
-        } else if (engageReady) {
-          const recovering =
-            ag.kiteDistResumeAdvanceUntilMs > 0 && elapsed < ag.kiteDistResumeAdvanceUntilMs;
-          if (recovering) {
-            ag.kiteDistStallSinceMs = null;
-          } else if (spd < KITE_DIST_STALL_SPEED_PX_PER_MS) {
-            if (ag.kiteDistStallSinceMs === null) {
-              ag.kiteDistStallSinceMs = elapsed;
-            } else if (elapsed - ag.kiteDistStallSinceMs >= KITE_DIST_STALL_HOLD_MS) {
-              ag.kiteDistResumeAdvanceUntilMs = elapsed + KITE_DIST_RESUME_ADVANCE_MS;
-              ag.kiteDistStallSinceMs = null;
-            }
-          } else {
-            ag.kiteDistStallSinceMs = null;
+        // 진형 공급자(독트린 formationType) — 리드 기준 슬롯 앵커로 목표 포즈를 응집 블렌드.
+        // default 독트린은 cohesion=0 이라 현행과 완전 동일. 리드 자신·kite 후진 중엔 미적용.
+        if (
+          ag.doctrine.formationType === 'line' &&
+          ag.doctrine.formationCohesion > 0 &&
+          !decision.openingReverseOnly
+        ) {
+          const lead = firstAliveLeadByTeam(agents, ag.team);
+          const slotForFormation = teamSlotByAgentIdRef.current[ag.id] ?? 0;
+          if (lead && lead.id !== ag.id && slotForFormation > 0) {
+            const anchor = resolveLineFormationAnchor(
+              formationAnchorBuf,
+              lead,
+              slotForFormation,
+              ag.doctrine.formationSpacingPx,
+              margin,
+              orbitSize,
+            );
+            const w = ag.doctrine.formationCohesion;
+            P.x = P.x * (1 - w) + anchor.x * w;
+            P.y = P.y * (1 - w) + anchor.y * w;
+            P.headingRad = lerpAngleRad(P.headingRad, anchor.headingRad, w * 0.5);
           }
         }
-
-        const kiteDistResumeAdvance =
-          engageReady &&
-          inKiteDistancing &&
-          ag.kiteDistResumeAdvanceUntilMs > 0 &&
-          elapsed < ag.kiteDistResumeAdvanceUntilMs;
-
-        const openingReverseOnly =
-          inKiteDistancing &&
-          ag.kiteEvasionMode === 'standoff' &&
-          !kiteDistResumeAdvance;
-        const slotForTurn = Math.max(0, teamSlotByAgentIdRef.current[ag.id] ?? 0);
-        const kiteReverseCurve: KiteStandoffReverseCurve | null = openingReverseOnly
+        const kiteReverseCurve: KiteStandoffReverseCurve | null = decision.openingReverseOnly
           ? {
               enemyX: other.x,
               enemyY: other.y,
-              turnSign: slotForTurn % 2 === 0 ? 1 : -1,
+              turnSign: decision.kiteReverseTurnSign,
             }
           : null;
 
-        if (kiteDistResumeAdvance) {
+        if (decision.kiteDistResumeAdvance) {
           const hChase =
             Math.hypot(other.x - ag.x, other.y - ag.y) < 1e-8
               ? ag.headingRad
@@ -3180,7 +3198,7 @@ export function usePlanetEdenRaidSim(
             elapsed,
             margin,
             orbitSize,
-            openingReverseOnly,
+            decision.openingReverseOnly,
             kiteReverseCurve,
             resolvePlayerStanceMoveSpeedMult(ag),
           );
@@ -3340,9 +3358,11 @@ export function usePlanetEdenRaidSim(
         if (m.hitApplied) continue;
         if (elapsed - m.startMs < m.travelMs) continue;
         m.hitApplied = true;
+        /** 탄착분포 미스탄 — 표적 뒤로 통과 완료. 피해·폭발 FX 없이 소멸 */
+        if (m.missPassThrough) continue;
         const owner = idBuf[m.ownerAgentId];
         const victim = idBuf[m.targetAgentId];
-        const isNova = isNovaAoeWeapon(m.missileWeaponId);
+        const isNova = m.isNovaProjectile;
         const impactPoint: Pt =
           isNova || m.lockImpactPoint
             ? { x: m.p2.x, y: m.p2.y }

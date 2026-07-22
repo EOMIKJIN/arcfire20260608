@@ -18,6 +18,8 @@ export type CapitalProjectilePresentation = {
   trailGlowColor: string;
   headColor: string;
   headRadiusMul: number;
+  /** false면 궤적(트레일) 미표시 — 탄두 점만 렌더(로켓탄 발칸 연출) */
+  trailEnabled: boolean;
 };
 
 const DEFAULT_LASER: CapitalLaserBeamPresentation = {
@@ -27,7 +29,10 @@ const DEFAULT_LASER: CapitalLaserBeamPresentation = {
   tierLabelKo: 'T1',
 };
 
-const FAMILY_PROJECTILE_DEFAULTS: Record<string, Omit<CapitalProjectilePresentation, 'headRadiusMul'>> = {
+const FAMILY_PROJECTILE_DEFAULTS: Record<
+  string,
+  Omit<CapitalProjectilePresentation, 'headRadiusMul' | 'trailEnabled'>
+> = {
   missile: {
     trailColor: 'rgba(139,149,168,0.9)',
     trailGlowColor: 'rgba(156,170,194,0.7)',
@@ -107,10 +112,21 @@ export function resolveCapitalLaserBeamPresentation(weaponId: string): CapitalLa
   };
 }
 
+/** 로켓탄 테스트 기간 통일 연출 — 궤적 없음 · 기본 흰색 최소 타원 탄두 (대표님 지시 2026-07-22) */
+export const ROCKET_TEST_PRESENTATION: CapitalProjectilePresentation = Object.freeze({
+  trailColor: 'rgba(255,255,255,0.9)',
+  trailGlowColor: 'rgba(255,255,255,0.4)',
+  headColor: 'rgba(255,255,255,0.98)',
+  headRadiusMul: 1,
+  trailEnabled: false,
+});
+
 /** 발사체 궤적·탄두 — CSV projectileColor 우선, 없으면 familyKind 기본 팔레트 */
 export function resolveCapitalProjectilePresentation(weaponId: string): CapitalProjectilePresentation {
   const spec = resolveCapitalWeaponRuntimeSpec(weaponId);
   const family = spec?.familyKind ?? 'missile';
+  /** 로켓 family는 테스트 기간 동안 CSV 색상보다 우선해 흰색·무궤적으로 통일 */
+  if (family === 'rocket') return ROCKET_TEST_PRESENTATION;
   const base = FAMILY_PROJECTILE_DEFAULTS[family] ?? FAMILY_PROJECTILE_DEFAULTS.missile;
   const row = spec?.row;
   const csvColor = normalizeHexColor(row?.projectileColor ?? '');
@@ -119,11 +135,13 @@ export function resolveCapitalProjectilePresentation(weaponId: string): CapitalP
       trailColor: hexToRgba(csvColor, 0.88),
       trailGlowColor: hexToRgba(csvColor, 0.45),
       headColor: hexToRgba(csvColor, 0.98),
-      headRadiusMul: family === 'rocket' ? 1.15 : 1,
+      headRadiusMul: 1,
+      trailEnabled: true,
     };
   }
   return {
     ...base,
-    headRadiusMul: family === 'rocket' ? 1.15 : 1,
+    headRadiusMul: 1,
+    trailEnabled: true,
   };
 }

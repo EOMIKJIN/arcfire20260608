@@ -11,10 +11,12 @@
 import { resolvePlanetMainStageCombatVariant } from '../../arcCore/balance/balanceTableRegistry';
 import { resolvePlayerPlanetStayBlock } from '../../clanWar/planetTerritoryPlayerAccess';
 import { isPlanetAssaultIntentActive } from './planetAssaultIntent';
+import { isWaveCombatCooldownActive } from './waveCombatCooldownStore';
 
 export type PlanetWaveCombatTriggerRule =
   | 'csv_variant' // planet_hostile_red_progression.csv mainStageCombatVariant
   | 'planet_assault' // worldmap [전투] 공격 진입(RED 점유 행성)
+  | 'victory_cooldown' // 승리 후 재개 대기(30분) — 향후 전투 재개 전술화의 기반 규칙
   | 'none';
 
 export type PlanetWaveCombatTrigger = {
@@ -37,6 +39,13 @@ export function resolvePlanetWaveCombatTrigger(
   if (!id) return { enabled: false, rule: 'none', variant: 'default' };
 
   const variant = resolvePlanetMainStageCombatVariant(id);
+
+  // 승리 후 재개 대기(30분) — 모든 트리거 규칙에 선행 (대표님 지시 2026-07-22).
+  // 승리 결과창 표시 중 즉시 재기동(중복 처리) 차단 + 30분 내 재방문/재진입도 전투 없음.
+  // 향후 「전투 재개 전술화」 고도화 시 waveCombatCooldownStore의 시간·조건만 확장한다.
+  if (isWaveCombatCooldownActive(id)) {
+    return { enabled: false, rule: 'victory_cooldown', variant };
+  }
 
   // [전투] 공격 진입 — RED 점유 행성이면 variant와 무관하게 웨이브 전투(vega_base 룰)
   if (isPlanetAssaultIntentActive(id) && resolvePlayerPlanetStayBlock(id)) {

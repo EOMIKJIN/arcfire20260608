@@ -1,32 +1,6 @@
 {
-  "lastUpdated": "2026-07-20T15:04:38.499Z",
+  "lastUpdated": "2026-07-21T15:03:04.810Z",
   "snapshots": [
-    {
-      "timestamp": "2026-06-19T13:48:21.022Z",
-      "dailyPolicyOk": true,
-      "dailyPolicy": {
-        "ok": true,
-        "enabled": true,
-        "timeZone": "Asia/Seoul",
-        "batchRunHour": 12,
-        "batchRunMinute": 0,
-        "observationWindowHours": 24,
-        "allPasses": true,
-        "notesKo": "벽시계 24h 관측·수집 후 정오 1회 일괄 분석·재배치·밸런스·가격미세조정"
-      },
-      "dailyViolations": [],
-      "whaleF2pRatio": 3.476036662892076,
-      "kpiStatus": "ok",
-      "deltaId": "2026-06-14-1781435091651",
-      "maxGapPercent": 10,
-      "warnBandCount": 4,
-      "balanceAuditExit": 0,
-      "planetEconomyExit": 0,
-      "planetEconomyOverall": "PASS",
-      "priceElasticity": 0,
-      "realtimePriceDisabled": true,
-      "overall": "PASS"
-    },
     {
       "timestamp": "2026-06-20T01:25:03.173Z",
       "dailyPolicyOk": true,
@@ -1389,13 +1363,43 @@
       "priceElasticity": 0,
       "realtimePriceDisabled": true,
       "overall": "WARN"
+    },
+    {
+      "timestamp": "2026-07-21T15:03:04.810Z",
+      "ciContractOnly": false,
+      "dailyPolicyOk": true,
+      "dailyPolicy": {
+        "ok": true,
+        "enabled": true,
+        "timeZone": "Asia/Seoul",
+        "batchRunHour": 12,
+        "batchRunMinute": 0,
+        "observationWindowHours": 24,
+        "allPasses": true,
+        "notesKo": "벽시계 24h 관측·수집 후 정오 1회 일괄 분석·재배치·밸런스·가격미세조정"
+      },
+      "dailyViolations": [],
+      "whaleF2pRatio": 3.119195108748942,
+      "kpiStatus": "ok",
+      "deltaId": "2026-07-02-1782976813591",
+      "maxGapPercent": 21074,
+      "warnBandCount": 4,
+      "balanceAuditExit": 0,
+      "planetEconomyExit": 0,
+      "planetEconomyOverall": "WARN",
+      "fiscalOverall": "warn",
+      "fiscalMaxRatio": 3.06,
+      "fiscalGini": 0.292,
+      "priceElasticity": 0,
+      "realtimePriceDisabled": true,
+      "overall": "WARN"
     }
   ],
   "lastInsights": [
     {
       "kind": "planet_fiscal",
       "severity": "warn",
-      "message": "Planet fiscal WARN — max fee/upkeep 3× gini=0.288",
+      "message": "Planet fiscal WARN — max fee/upkeep 3.06× gini=0.292",
       "action": "monitor_fiscal_closed_loop"
     }
   ],
@@ -1403,7 +1407,7 @@
     {
       "kind": "planet_fiscal",
       "severity": "warn",
-      "message": "Planet fiscal WARN — max fee/upkeep 3× gini=0.288",
+      "message": "Planet fiscal WARN — max fee/upkeep 3.06× gini=0.292",
       "action": "monitor_fiscal_closed_loop"
     }
   ],

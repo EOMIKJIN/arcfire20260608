@@ -26,6 +26,8 @@ export { CapitalShipMaxUpgradeValue_FROM_BALANCE_CSV } from './csvCapitalShipMax
 export { CapitalShipTradeListingPolicy_FROM_BALANCE_CSV } from './csvCapitalShipTradeListingPolicy';
 export { CapitalShipTradePricePolicy_FROM_BALANCE_CSV } from './csvCapitalShipTradePricePolicy';
 export { CapitalShipWaveTierClass_FROM_BALANCE_CSV } from './csvCapitalShipWaveTierClass';
+export { CaptainTacticAssignment_FROM_BALANCE_CSV } from './csvCaptainTacticAssignment';
+export { CaptainTacticDoctrine_FROM_BALANCE_CSV } from './csvCaptainTacticDoctrine';
 export { ClanMapFactionColorPolicy_FROM_BALANCE_CSV } from './csvClanMapFactionColorPolicy';
 export { ContestedZoneStatAftermath_FROM_BALANCE_CSV } from './csvContestedZoneStatAftermath';
 export { DynamicOverlay_FROM_BALANCE_CSV } from './csvDynamicOverlay';
@@ -97,6 +99,7 @@ export { WeaponCombatReferencePolicy_FROM_BALANCE_CSV } from './csvWeaponCombatR
 export { WeaponFamilyRuntimePolicy_FROM_BALANCE_CSV } from './csvWeaponFamilyRuntimePolicy';
 export { WeaponFamilyTtkBalancePolicy_FROM_BALANCE_CSV } from './csvWeaponFamilyTtkBalancePolicy';
 export { WeaponLaserTierColorPolicy_FROM_BALANCE_CSV } from './csvWeaponLaserTierColorPolicy';
+export { WeaponRocketBurstPolicy_FROM_BALANCE_CSV } from './csvWeaponRocketBurstPolicy';
 export { WeaponSpecialCombatBalancePolicy_FROM_BALANCE_CSV } from './csvWeaponSpecialCombatBalancePolicy';
 export { WeaponTradeBasePricePolicy_FROM_BALANCE_CSV } from './csvWeaponTradeBasePricePolicy';
 export { WeaponTradeListingPolicy_FROM_BALANCE_CSV } from './csvWeaponTradeListingPolicy';

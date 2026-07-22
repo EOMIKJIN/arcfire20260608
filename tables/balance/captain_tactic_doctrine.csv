@@ -1,0 +1,7 @@
+tacticId,chaseClosing,chaseMissilePattern,chaseReposition,chaseBrawl,pressChaseFloor,kiteChaseCap,preEngageChaseCap,stallBoostPressFloor,stallBoostKiteCap,pressRingOffsetPx,kiteRingOffsetPx,targetPriority,formationType,formationCohesion,formationSpacingPx,tempoWinBiasPct,tacticLabelKo,notesKo
+default,1,0.42,0.16,0.3,0.9,0.24,0.28,0.88,0.32,0,0,nearest,none,0,0,0,표준 교전,현행 기본 동작과 100% 동일 — 미배정 함장 전원 적용
+long_range_hold,1,0.34,0.12,0.3,0.82,0.2,0.28,0.88,0.28,14,26,nearest,none,0,0,-8,장거리 유지형,미사일 사거리 외곽 링 유지 후 중단거리로 단계 진입
+close_assault,1,0.52,0.24,0.3,0.95,0.3,0.28,0.9,0.36,-14,-18,nearest,none,0,0,8,근접 강습형,빠른 접근·근접 브롤 강요·기세 우세 선호
+skirmish_focus,1,0.42,0.16,0.3,0.9,0.22,0.28,0.88,0.3,6,12,focus_fire,none,0,0,0,집중사격 유격형,팀 리드 표적에 화력 집중·거리 유지 우선
+hunter_finisher,1,0.46,0.18,0.3,0.92,0.26,0.28,0.88,0.32,-6,0,lowest_hull,none,0,0,4,마무리 사냥형,선체 손상 큰 적 우선 격침
+escort_line,1,0.42,0.16,0.3,0.9,0.24,0.28,0.88,0.32,0,0,focus_fire,line,0.35,64,0,호위 라인형,리드 기준 라인 진형 유지·집중 사격

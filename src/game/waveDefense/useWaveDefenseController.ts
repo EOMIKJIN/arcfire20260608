@@ -7,6 +7,7 @@
 
 import { useEffect, useRef } from 'react';
 import { buildWaveDefenseEnemyFleet, WAVE_DEFENSE_MAX_WAVES } from './waveDefenseFleet';
+import { resolvePlanetWaveCombatTrigger } from './resolvePlanetWaveCombatTrigger';
 import { useWaveDefenseStore } from './waveDefenseStore';
 
 /** 도착(인트로 종료) 후 침공 시작까지 지연 */
@@ -67,6 +68,8 @@ export function useWaveDefenseController(args: WaveDefenseControllerArgs): void 
       triggerTimerRef.current = null;
       const s = useWaveDefenseStore.getState();
       if (s.active) return;
+      // 발화 시점 재판정 — 예약 후 10초 사이 상태 변화(승리 쿨다운·중립화 등) 시 stale 시작 차단
+      if (!resolvePlanetWaveCombatTrigger(planetId).enabled) return;
       ranThisVisitRef.current = true;
       lastExpAwardedWaveRef.current = 0;
       s.startRun(planetId, systemId);

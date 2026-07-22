@@ -6342,8 +6342,8 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     id: "weapon_item_w_missile_arc_005",
     name: "고정밀 장거리 로켓탄",
     nameEn: "High-Precision Long-Range Round",
-    description: "ROCKET · DMG 3 · RANGE 93",
-    descriptionEn: "ROCKET · DMG 3 · RANGE 93",
+    description: "ROCKET · DMG 1 · RANGE 93",
+    descriptionEn: "ROCKET · DMG 1 · RANGE 93",
     featureDescription: "보이지 않을 정도의 고속 소형로켓탄이 적 장갑판에 정밀한 구멍을 냄.",
     featureDescriptionEn: undefined,
     basePrice: 1680,
@@ -6358,7 +6358,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_missile_arc_005","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":2,"weaponTierLabel":"신규","damage":3,"rangePx":93,"projectileSpeedPxPerSec":315,"salvoCount":1,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_missile_arc_005","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":2,"weaponTierLabel":"신규","damage":1,"rangePx":93,"projectileSpeedPxPerSec":315,"salvoCount":8,"lockImpactPoint":false},
   },
   "weapon_item_w_missile_arc_006": {
     id: "weapon_item_w_missile_arc_006",
@@ -6402,7 +6402,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_laser_arc_007","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":4,"weaponTierLabel":"숙련","damage":1,"rangePx":98,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_laser_arc_007","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":4,"weaponTierLabel":"숙련","damage":1,"rangePx":98,"projectileSpeedPxPerSec":450,"salvoCount":10,"lockImpactPoint":false},
   },
   "weapon_item_w_missile_arc_008": {
     id: "weapon_item_w_missile_arc_008",
@@ -6512,7 +6512,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_laser_arc_012","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":6,"weaponTierLabel":"숙련","damage":1,"rangePx":100,"projectileSpeedPxPerSec":450,"salvoCount":8,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_laser_arc_012","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":6,"weaponTierLabel":"숙련","damage":1,"rangePx":100,"projectileSpeedPxPerSec":450,"salvoCount":12,"lockImpactPoint":false},
   },
   "weapon_item_w_missile_arc_013": {
     id: "weapon_item_w_missile_arc_013",
@@ -6534,7 +6534,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_missile_arc_013","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":7,"weaponTierLabel":"숙련","damage":1,"rangePx":103,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_missile_arc_013","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":7,"weaponTierLabel":"숙련","damage":1,"rangePx":103,"projectileSpeedPxPerSec":450,"salvoCount":10,"lockImpactPoint":false},
   },
   "weapon_item_w_missile_arc_014": {
     id: "weapon_item_w_missile_arc_014",
@@ -6578,7 +6578,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_missile_arc_015","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":9,"weaponTierLabel":"숙련","damage":1,"rangePx":105,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_missile_arc_015","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":9,"weaponTierLabel":"숙련","damage":1,"rangePx":105,"projectileSpeedPxPerSec":450,"salvoCount":10,"lockImpactPoint":false},
   },
   "weapon_item_w_missile_arc_016": {
     id: "weapon_item_w_missile_arc_016",
@@ -6710,7 +6710,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_laser_arc_021","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":12,"weaponTierLabel":"정예","damage":1,"rangePx":108,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_laser_arc_021","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":12,"weaponTierLabel":"정예","damage":1,"rangePx":108,"projectileSpeedPxPerSec":450,"salvoCount":12,"lockImpactPoint":false},
   },
   "weapon_item_w_missile_arc_022": {
     id: "weapon_item_w_missile_arc_022",
@@ -6754,7 +6754,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_missile_arc_023","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":14,"weaponTierLabel":"정예","damage":1,"rangePx":110,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_missile_arc_023","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":14,"weaponTierLabel":"정예","damage":1,"rangePx":110,"projectileSpeedPxPerSec":450,"salvoCount":8,"lockImpactPoint":false},
   },
   "weapon_item_w_missile_arc_024": {
     id: "weapon_item_w_missile_arc_024",
@@ -6776,7 +6776,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_missile_arc_024","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":15,"weaponTierLabel":"정예","damage":1,"rangePx":113,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_missile_arc_024","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":15,"weaponTierLabel":"정예","damage":1,"rangePx":113,"projectileSpeedPxPerSec":450,"salvoCount":12,"lockImpactPoint":false},
   },
   "weapon_item_w_missile_arc_025": {
     id: "weapon_item_w_missile_arc_025",
@@ -6864,7 +6864,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_laser_arc_028","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":16,"weaponTierLabel":"전설","damage":1,"rangePx":115,"projectileSpeedPxPerSec":450,"salvoCount":10,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_laser_arc_028","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":16,"weaponTierLabel":"전설","damage":1,"rangePx":115,"projectileSpeedPxPerSec":450,"salvoCount":12,"lockImpactPoint":false},
   },
   "weapon_item_w_laser_arc_029": {
     id: "weapon_item_w_laser_arc_029",
@@ -6974,7 +6974,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_missile_arc_033","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":20,"weaponTierLabel":"전설","damage":1,"rangePx":118,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_missile_arc_033","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":20,"weaponTierLabel":"전설","damage":1,"rangePx":118,"projectileSpeedPxPerSec":450,"salvoCount":12,"lockImpactPoint":false},
   },
   "weapon_item_w_missile_arc_034": {
     id: "weapon_item_w_missile_arc_034",
@@ -7084,7 +7084,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_laser_arc_038","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":22,"weaponTierLabel":"에픽","damage":1,"rangePx":120,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_laser_arc_038","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":22,"weaponTierLabel":"에픽","damage":1,"rangePx":120,"projectileSpeedPxPerSec":450,"salvoCount":10,"lockImpactPoint":false},
   },
   "weapon_item_w_laser_arc_039": {
     id: "weapon_item_w_laser_arc_039",
@@ -7106,7 +7106,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_laser_arc_039","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":23,"weaponTierLabel":"에픽","damage":1,"rangePx":123,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_laser_arc_039","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":23,"weaponTierLabel":"에픽","damage":1,"rangePx":123,"projectileSpeedPxPerSec":450,"salvoCount":12,"lockImpactPoint":false},
   },
   "weapon_item_w_missile_arc_040": {
     id: "weapon_item_w_missile_arc_040",
@@ -7172,7 +7172,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_missile_arc_042","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":26,"weaponTierLabel":"에픽","damage":1,"rangePx":125,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_missile_arc_042","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":26,"weaponTierLabel":"에픽","damage":1,"rangePx":125,"projectileSpeedPxPerSec":450,"salvoCount":8,"lockImpactPoint":false},
   },
   "weapon_item_w_missile_arc_043": {
     id: "weapon_item_w_missile_arc_043",
@@ -7282,7 +7282,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_laser_arc_047","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":31,"weaponTierLabel":"초월","damage":1,"rangePx":128,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_laser_arc_047","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":31,"weaponTierLabel":"초월","damage":1,"rangePx":128,"projectileSpeedPxPerSec":450,"salvoCount":12,"lockImpactPoint":false},
   },
   "weapon_item_w_laser_arc_048": {
     id: "weapon_item_w_laser_arc_048",
@@ -7304,7 +7304,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_laser_arc_048","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":33,"weaponTierLabel":"초월","damage":1,"rangePx":130,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_laser_arc_048","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":33,"weaponTierLabel":"초월","damage":1,"rangePx":130,"projectileSpeedPxPerSec":450,"salvoCount":10,"lockImpactPoint":false},
   },
   "weapon_item_w_missile_arc_049": {
     id: "weapon_item_w_missile_arc_049",
@@ -7348,7 +7348,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_missile_arc_050","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":37,"weaponTierLabel":"초월","damage":1,"rangePx":133,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_missile_arc_050","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":37,"weaponTierLabel":"초월","damage":1,"rangePx":133,"projectileSpeedPxPerSec":450,"salvoCount":8,"lockImpactPoint":false},
   },
   "weapon_item_w_missile_arc_051": {
     id: "weapon_item_w_missile_arc_051",
@@ -7458,7 +7458,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_laser_arc_055","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":41,"weaponTierLabel":"신격","damage":1,"rangePx":135,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_laser_arc_055","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":41,"weaponTierLabel":"신격","damage":1,"rangePx":135,"projectileSpeedPxPerSec":450,"salvoCount":10,"lockImpactPoint":false},
   },
   "weapon_item_w_laser_arc_056": {
     id: "weapon_item_w_laser_arc_056",
@@ -7678,7 +7678,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_laser_arc_065","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":53,"weaponTierLabel":"코스믹","damage":1,"rangePx":138,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_laser_arc_065","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":53,"weaponTierLabel":"코스믹","damage":1,"rangePx":138,"projectileSpeedPxPerSec":450,"salvoCount":12,"lockImpactPoint":false},
   },
   "weapon_item_w_laser_arc_066": {
     id: "weapon_item_w_laser_arc_066",
@@ -7722,7 +7722,7 @@ export const ITEM_DEFS_FROM_CSV: Record<string, ItemDef> = {
     capitalShipMountable: true,
     nonRepurchase: false,
     tags: ["weapon_module"],
-    attrs: {"weaponId":"w_missile_arc_067","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":57,"weaponTierLabel":"코스믹","damage":1,"rangePx":140,"projectileSpeedPxPerSec":450,"salvoCount":6,"lockImpactPoint":false},
+    attrs: {"weaponId":"w_missile_arc_067","weaponKind":"missile","weaponFamilyKind":"rocket","weaponRequiredLevel":57,"weaponTierLabel":"코스믹","damage":1,"rangePx":140,"projectileSpeedPxPerSec":450,"salvoCount":12,"lockImpactPoint":false},
   },
   "weapon_item_w_missile_arc_068": {
     id: "weapon_item_w_missile_arc_068",

@@ -214,6 +214,7 @@ import {
   resolvePlanetBattleReadyDurationMs,
 } from '../../src/game/planetHub/planetHubConstants';
 import { resolvePlanetWaveCombatTrigger } from '../../src/game/waveDefense/resolvePlanetWaveCombatTrigger';
+import { markWaveCombatVictoryCooldown } from '../../src/game/waveDefense/waveCombatCooldownStore';
 import { promoteDynamicContestedZone } from '../../src/arcCore/territorial/dynamicContestedZoneStore';
 import { usePlanetHubBattleReady } from '../../src/game/planetHub/usePlanetHubBattleReady';
 import { useWaveDefenseStore } from '../../src/game/waveDefense/waveDefenseStore';
@@ -943,6 +944,10 @@ export default function PlanetScreen() {
     const endedPlanetId = (ended.planetId ?? '').trim();
     const endedSystemId = (ended.systemId ?? '').trim();
     const endedOutcome = ended.outcome ?? 'win';
+    // 승리 → 30분 재개 대기 마킹 (결과창 중 즉시 재트리거 차단 · 대표님 지시 2026-07-22)
+    if (endedOutcome === 'win' && endedPlanetId) {
+      markWaveCombatVictoryCooldown(endedPlanetId);
+    }
     // RED 점유 행성 웨이브 승리 → 즉시 중립화 (대표님 지시 — [전투] 진입 · vega_base 룰 공통)
     const wasRedOccupied = Boolean(endedPlanetId) && resolvePlayerPlanetStayBlock(endedPlanetId) != null;
     // 한 번이라도 전투가 벌어진 국가 시드 행성 → 분쟁지역 자동 편입 (승패 무관 · idempotent · 대표님 지시 2026-07-21)

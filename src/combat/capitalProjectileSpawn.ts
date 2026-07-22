@@ -3,7 +3,10 @@
 // ============================================================
 
 import type { CapitalWeaponCsvRow } from '../data/generated';
-import { resolveRocketImpactSpreadRadiusPx } from '../game/capitalWeaponRegistry';
+import {
+  getRocketBurstPolicy,
+  resolveRocketImpactSpreadRadiusPx,
+} from '../game/capitalWeaponRegistry';
 import { resolveCapitalWeaponRuntimeSpec } from './capitalWeaponRuntimeSpec';
 
 export type ProjectileSpawnPoint = { x: number; y: number };
@@ -27,6 +30,8 @@ export type CapitalProjectileSpawnResult = {
   spreadLane: number;
   salvoCount: number;
   curveSign: 1 | -1;
+  /** true면 탄착분포상 미스 확정 — 적함을 그대로 통과(피해·폭발 FX 없음) */
+  missPassThrough: boolean;
 };
 
 function missileSpreadLane(spreadIdx: number, salvoCount: number): number {
@@ -86,16 +91,36 @@ function buildBezierGuidedSpawn(
     spreadLane: spreadIdx % Math.max(1, salvoCount),
     salvoCount: Math.max(1, salvoCount),
     curveSign,
+    missPassThrough: false,
   };
 }
 
+/**
+ * 발칸식 직선탄 — 탄착점을 분산 원판에 뿌리고, 유효(명중) 반경을 벗어난 탄은
+ * 스폰 시점에 미스 확정 + 표적 후방으로 오버슈트(그대로 통과).
+ * 발당 명중률 ≈ (hitRadius/dispersionRadius)² — weapon_rocket_burst_policy.csv.
+ */
 function buildStraightFixedSpawn(
   params: CapitalProjectileSpawnParams,
   spreadRadiusPx: number,
 ): CapitalProjectileSpawnResult {
   const { p0, aimCenter, spreadIdx, salvoCount, flightSpeedPxPerMs } = params;
+  const policy = getRocketBurstPolicy();
+  const hitRadiusPx = Math.max(6, spreadRadiusPx * policy.hitRadiusMulOfDispersion);
   const offset = randomSpreadOffset(spreadRadiusPx);
+  const missPassThrough = Math.hypot(offset.x, offset.y) > hitRadiusPx;
   const aim = { x: aimCenter.x + offset.x, y: aimCenter.y + offset.y };
+  if (missPassThrough) {
+    /** 미스탄은 탄착점 방향 그대로 표적 뒤까지 연장 — 통과 연출 */
+    const dx = aim.x - p0.x;
+    const dy = aim.y - p0.y;
+    const d = Math.hypot(dx, dy) || 1e-4;
+    const overshoot =
+      policy.missOvershootMinPx
+      + Math.random() * Math.max(0, policy.missOvershootMaxPx - policy.missOvershootMinPx);
+    aim.x += (dx / d) * overshoot;
+    aim.y += (dy / d) * overshoot;
+  }
   const chord = Math.hypot(aim.x - p0.x, aim.y - p0.y) || 1e-4;
   const travelMs = computeCapitalProjectileTravelMs(chord, flightSpeedPxPerMs, { maxMs: 6000 });
   return {
@@ -107,6 +132,7 @@ function buildStraightFixedSpawn(
     spreadLane: spreadIdx % Math.max(1, salvoCount),
     salvoCount: Math.max(1, salvoCount),
     curveSign: 1,
+    missPassThrough,
   };
 }
 

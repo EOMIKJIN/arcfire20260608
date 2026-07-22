@@ -150,3 +150,11 @@ Generated: 2026-07-20T15:04:38.499Z
 - Policy CSV: OK — Asia/Seoul 12:00, window 24h
 - 벽시계 24h 관측·수집 후 정오 1회 일괄 분석·재배치·밸런스·가격미세조정
 - SubCore probe: `ArcCoreDailyOpsSubCore` 60s tick → `shouldRunArcCoreDailyBatch` → `runArcCoreDailyOpsBatch`
+[2026-07-22 00:03:05] exit=0 kstDay=2026-07-22
+# ArcCore Balance Ops Audit
+Generated: 2026-07-21T15:03:04.810Z
+**Overall:** WARN
+## 일 1회 배치 계약 (v4.0 §10)
+- Policy CSV: OK — Asia/Seoul 12:00, window 24h
+- 벽시계 24h 관측·수집 후 정오 1회 일괄 분석·재배치·밸런스·가격미세조정
+- SubCore probe: `ArcCoreDailyOpsSubCore` 60s tick → `shouldRunArcCoreDailyBatch` → `runArcCoreDailyOpsBatch`

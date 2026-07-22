@@ -3,7 +3,7 @@
 // ============================================================
 
 import type { Agent, Missile, MissileHitFx } from '../components/planet/PlanetEdenRaidTestLayer';
-import { resolveRocketImpactSpreadRadiusPx } from '../game/capitalWeaponRegistry';
+import { resolveRocketImpactHitRadiusPx } from '../game/capitalWeaponRegistry';
 import {
   isNovaAoeWeapon,
   resolveCapitalWeaponRuntimeSpec,
@@ -81,7 +81,8 @@ export function applyNovaAoeOnImpact(ctx: CapitalWeaponImpactContext): void {
 function applySpreadCircleDamage(ctx: CapitalWeaponImpactContext, weaponId: string): void {
   const { owner, impactPoint, agents, elapsedMs, margin, orbitSize } = ctx;
   if (!owner) return;
-  const spreadR = resolveRocketImpactSpreadRadiusPx(weaponId);
+  /** 피해 판정은 유효(명중) 반경 — 분산 반경보다 작아 미스탄이 자연 발생 */
+  const spreadR = resolveRocketImpactHitRadiusPx(weaponId);
   const dmgSlot = resolveWeaponDamageSlot(weaponId, owner.closeRangeWeaponId);
   for (const victim of agents) {
     if (!victim.alive) continue;

@@ -34,6 +34,7 @@ export {
 export {
   resolveCapitalLaserBeamPresentation,
   resolveCapitalProjectilePresentation,
+  ROCKET_TEST_PRESENTATION,
   type CapitalLaserBeamPresentation,
   type CapitalProjectilePresentation,
 } from './capitalWeaponPresentation';

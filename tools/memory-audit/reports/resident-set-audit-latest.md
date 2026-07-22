@@ -1,6 +1,6 @@
 # Resident Set / Lazy Boot Audit
 
-Generated: 2026-07-21T10:46:18.383Z
+Generated: 2026-07-22T11:15:52.819Z
 
 **Result:** PASS (7/7)
 

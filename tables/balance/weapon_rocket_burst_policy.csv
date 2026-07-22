@@ -1,0 +1,2 @@
+familyKind,dispersionRadiusMulOfRange,dispersionRadiusMinPx,dispersionRadiusMaxPx,hitRadiusMulOfDispersion,missOvershootMinPx,missOvershootMaxPx,salvoIntervalFloorMs,muzzleLateralOffsetPx,muzzleForwardOffsetPx,notesKo
+rocket,0.10,8,12,0.84,44,84,45,6,4,발칸식 연사 — 8~12발(기존 4~6의 2배) · 전함 정면폭 기준 탄착군 · 발사구 선수 좌우 ±6px 교대 · 연사 하한 45ms

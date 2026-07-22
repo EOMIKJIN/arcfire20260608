@@ -23,10 +23,9 @@ import type { SkImage } from '@shopify/react-native-skia';
 import type { SkColor } from '@shopify/react-native-skia';
 import { FONTS } from '../../utils/theme';
 import {
-  isNovaAoeWeapon,
-  isRocketFamilyWeapon,
   resolveCapitalLaserBeamPresentation,
   resolveCapitalProjectilePresentation,
+  ROCKET_TEST_PRESENTATION,
 } from '../../combat/capitalWeaponPipeline';
 import { registerCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
 import { disposePlanetSkiaHitFxModuleCaches } from './planetSkiaHitFxContract';
@@ -65,6 +64,9 @@ const MISSILE_TRAIL_MAIN_PASS_ENABLED = false; // 임시 시각 확인용
 const MISSILE_HEAD_DOT_RADIUS = 1.15;
 const NOVA_HEAD_MAJOR_RADIUS = MISSILE_HEAD_DOT_RADIUS * 2;
 const NOVA_HEAD_MINOR_RADIUS = MISSILE_HEAD_DOT_RADIUS * 1.35;
+/** 로켓탄 탄두 — 표시 최소 타원(비행방향 major · 횡방향 minor). 원보다 얇게 보여 발칸 탄두 느낌 */
+const ROCKET_HEAD_MAJOR_RADIUS = 1.0;
+const ROCKET_HEAD_MINOR_RADIUS = 0.42;
 const BEZIER_SAMPLES = 16;
 const MISSILE_MAX_TRAIL_SEGMENTS = 10;
 // 전함 폭발 FX — 아크코어 드론 미사일 폭발과 동일한 화염 폭발 FX(planetSkiaHitFxContract) 재사용.
@@ -710,9 +712,12 @@ function recordCombatOrbitPicture(
     if (!trail.visible) continue;
 
     const tSince = tMs - m.startMs;
-    const isRocket = isRocketFamilyWeapon(m.missileWeaponId);
-    const isNovaLocked = isNovaAoeWeapon(m.missileWeaponId);
-    const projectileVis = resolveCapitalProjectilePresentation(m.missileWeaponId);
+    /** 스폰 시 확정 플래그 — 틱마다 runtimeSpec 객체 재생성 금지(GC·Finalizer 압력) */
+    const isRocket = m.isRocketProjectile;
+    const isNovaLocked = m.isNovaProjectile;
+    const projectileVis = isRocket
+      ? ROCKET_TEST_PRESENTATION
+      : resolveCapitalProjectilePresentation(m.missileWeaponId);
     const showNovaTelegraph =
       isNovaLocked &&
       tSince >= 0 &&
@@ -726,19 +731,22 @@ function recordCombatOrbitPicture(
       draw.circle(m.p2.x, m.p2.y, novaRadius, 'rgba(239,68,68,0.88)', 'stroke', 1.35, 1);
     }
 
-    draw.pathStroke(
-      trail.path,
-      projectileVis.trailGlowColor,
-      1 * MISSILE_TRAIL_GLOW_STROKE_MUL,
-      trail.trailOpacity * MISSILE_TRAIL_GLOW_OPACITY_MUL,
-    );
-    if (MISSILE_TRAIL_MAIN_PASS_ENABLED) {
+    /** 로켓탄(발칸) 등 trailEnabled=false — 궤적 생략, 탄두 점만 표시 */
+    if (projectileVis.trailEnabled) {
       draw.pathStroke(
         trail.path,
-        projectileVis.trailColor,
-        isRocket ? 1.35 : 1,
-        trail.trailOpacity,
+        projectileVis.trailGlowColor,
+        1 * MISSILE_TRAIL_GLOW_STROKE_MUL,
+        trail.trailOpacity * MISSILE_TRAIL_GLOW_OPACITY_MUL,
       );
+      if (MISSILE_TRAIL_MAIN_PASS_ENABLED) {
+        draw.pathStroke(
+          trail.path,
+          projectileVis.trailColor,
+          isRocket ? 1.35 : 1,
+          trail.trailOpacity,
+        );
+      }
     }
 
     const drawNovaHead =
@@ -767,6 +775,26 @@ function recordCombatOrbitPicture(
         NOVA_HEAD_MINOR_RADIUS,
       );
       canvas.drawPath(ovalPath, fillPaint('rgba(255,158,72,0.98)', trail.headOpacity));
+    } else if (
+      /** 로켓탄 — 무궤적·최소 타원 탄두(비행방향). VFX 예산과 무관하게 표시 */
+      isRocket &&
+      trail.headVisible &&
+      finiteNum(trail.head.x) &&
+      finiteNum(trail.head.y)
+    ) {
+      /** 직선 탄도 — p0→p2 방향이 곧 발사(비행) 방향 */
+      const flightTan = Math.atan2(m.p2.y - m.p0.y, m.p2.x - m.p0.x);
+      const rocketHeadPool = pools.novaHead;
+      const ovalPath = acquireSkPathFromPool(rocketHeadPool, pools.novaHeadSpare, m.id);
+      writeNovaHeadOvalAlongTangent(
+        ovalPath,
+        trail.head.x,
+        trail.head.y,
+        flightTan,
+        ROCKET_HEAD_MAJOR_RADIUS,
+        ROCKET_HEAD_MINOR_RADIUS,
+      );
+      canvas.drawPath(ovalPath, fillPaint(projectileVis.headColor, trail.headOpacity));
     } else if (
       vfx.missileHeadDotEnabled &&
       trail.headVisible &&
@@ -876,9 +904,9 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
   useEffect(() => {
     flameImageRef.current = flameImage ?? null;
   }, [flameImage]);
-  // SkImage(useImage 반환) 수동 dispose 금지 — 훅이 수명을 자체 관리한다.
-  // 수동 해제는 SkPicture/JsiImageNode 가 아직 참조 중인 이미지를 조기 해제해
-  // use-after-free → GC FinalizerDaemon 파괴 시 SIGSEGV 를 유발한다(2026-06-17 크래시).
+  // SkImage(useImage) · React `<Picture>` 에 넘긴 SkPicture 수동 dispose 금지.
+  // 수동 해제 + FinalizerDaemon(PictureProp) 이중 dispose → SIGSEGV
+  // (2026-06-17 SkImage · 2026-07-22 22:50 PictureProp FinalizerDaemon).
 
   const [picture, setPicture] = useState<SkPicture | null>(null);
 

@@ -1,11 +1,11 @@
 ﻿{
     "lastTimeline":  {
-                         "pss_mb":  "639.9",
-                         "gl_mb":  "124.8",
-                         "pid":  "20407",
+                         "pss_mb":  "724",
+                         "gl_mb":  "49.6",
+                         "pid":  "29361",
                          "note":  "",
-                         "iso_time":  "2026-07-21 23:56:18",
-                         "views":  "553"
+                         "iso_time":  "2026-07-22 23:53:42",
+                         "views":  "349"
                      },
     "processes":  {
                       "reportWatch":  {
@@ -46,5 +46,5 @@
                         "id":  27360,
                         "alive":  true
                     },
-    "updatedAtKst":  "2026-07-21 23:57:44"
+    "updatedAtKst":  "2026-07-22 23:56:22"
 }

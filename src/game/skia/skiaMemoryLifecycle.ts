@@ -7,6 +7,10 @@ import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import type { SkPath, SkPicture } from '@shopify/react-native-skia';
 import { Skia } from '@shopify/react-native-skia';
 
+/**
+ * @deprecated 수동 Picture dispose 지연값 — 더 이상 dispose 하지 않음.
+ * 호환용으로만 유지(호출부/감사 스크립트).
+ */
 export const SK_PICTURE_DISPOSE_DELAY_MS = 48;
 
 export function safeSkiaDispose(obj: { dispose?: () => void } | null | undefined): void {
@@ -18,40 +22,41 @@ export function safeSkiaDispose(obj: { dispose?: () => void } | null | undefined
   }
 }
 
-/** UI 스레드·Picture 렌더 레이스 회피 — 이중 rAF + 짧은 지연 */
+/**
+ * React `<Picture picture={skPicture}>` 에 넘긴 SkPicture 수동 dispose **금지**.
+ *
+ * 원인(logcat 2026-07-22 22:50:06):
+ *   Fatal signal 11 SIGSEGV · tid=FinalizerDaemon
+ *   SkiaDomView.finalize → PictureProp::~ → JsiSkPicture::~ → jsi::Pointer::~ (NPE)
+ *
+ * JS에서 `picture.dispose()` 후 HybridData Finalizer가 동일 native를 재해제하면
+ * null deref. SkImage(useImage) 와 동일 — 참조만 끊고 native 수명은 RN Skia finalizer에 위임.
+ * (이전 48ms 지연 dispose는 반쪽 패치 — Finalizer 경로를 막지 못함)
+ */
 export function scheduleSkPictureDispose(pic: SkPicture | null | undefined): void {
-  if (!pic) return;
-  requestAnimationFrame(() => {
-    setTimeout(() => {
-      safeSkiaDispose(pic);
-    }, SK_PICTURE_DISPOSE_DELAY_MS);
-  });
+  void pic;
 }
 
-/** React Picture 노드 제거 → 이후 native dispose (reclaim·언마운트 공용) */
+/** React Picture 노드에서 제거 — native dispose 는 finalizer에만 위임 */
 export function dropSkPictureReactFrame(input: {
   liveRef: MutableRefObject<SkPicture | null>;
   setPicture: Dispatch<SetStateAction<SkPicture | null>>;
 }): void {
-  const live = input.liveRef.current;
   input.liveRef.current = null;
   input.setPicture(null);
-  if (live != null) {
-    scheduleSkPictureDispose(live);
-  }
 }
 
+/**
+ * 새 프레임 Picture 커밋.
+ * 이전 프레임 참조는 React state 교체로만 끊는다(수동 dispose 없음).
+ */
 export function commitSkPictureReactFrame(input: {
   liveRef: MutableRefObject<SkPicture | null>;
   setPicture: Dispatch<SetStateAction<SkPicture | null>>;
   next: SkPicture;
 }): void {
-  const prev = input.liveRef.current;
   input.liveRef.current = input.next;
   input.setPicture(input.next);
-  if (prev != null && prev !== input.next) {
-    scheduleSkPictureDispose(prev);
-  }
 }
 
 export function resetSkPath(path: SkPath): void {

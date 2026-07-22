@@ -179,12 +179,21 @@ export function resolveNebulaDodgeFxDurationMs(fx: MissileHitFx): number {
   if (fx.effectKind === 'laser_dodge') {
     return Math.max(1, Math.round(NEBULA_DODGE_FX_DURATION_MS * 0.5));
   }
+  /** 로켓 발칸 연사 — 다발 피격이 겹치므로 짧은 섬광으로 정리 */
+  if (fx.effectKind === 'rocket_spread') {
+    return Math.max(1, Math.round(NEBULA_DODGE_FX_DURATION_MS * 0.45));
+  }
   return NEBULA_DODGE_FX_DURATION_MS;
 }
 
 export function resolveNebulaDodgeFxSizeScale(fx: MissileHitFx): number {
   if (fx.effectKind === 'laser_dodge') return 0.5;
   if (fx.effectKind === 'drone_burst') return 0.59;
+  /**
+   * 로켓탄 탄두(major≈1.0 · minor≈0.42)에 맞춘 소형 닷지.
+   * 기본 pulse 60px × 0.22 ≈ 13px — 발칸 탄착 섬광이 함체를 덮지 않도록.
+   */
+  if (fx.effectKind === 'rocket_spread') return 0.22;
   return 1;
 }
 
