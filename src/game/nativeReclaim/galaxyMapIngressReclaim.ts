@@ -1,12 +1,11 @@
 import { trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
 
-import { runSoftNativeReclaimPass } from './runSoftNativeReclaimPass';
-import { runStageNativeReclaimPass } from './runStageNativeReclaimPass';
+import { emitMemProfileMarker } from '../devMemoryProfileBridge';
+import { runGalaxyMapResidentDeepReclaimPass } from './runGalaxyMapResidentDeepReclaimPass';
 import {
   resolveActivePlanetSessionAnchorId,
   resolveSinglePlanetSessionKeepIds,
 } from './singlePlanetSessionKeep';
-import { emitMemProfileMarker } from '../devMemoryProfileBridge';
 
 type GalaxyIngressKind = 'from_planet_hub' | 'after_hub_combat';
 
@@ -22,7 +21,10 @@ export function markPostHubCombatWorldmapIngressReclaim(): void {
 }
 
 /**
- * worldmap focus 1회 — planet blur reclaim 보완(Fresco·soft floor).
+ * worldmap focus 1회 — 허브(전투) 잔존 GL/Views 회수.
+ *
+ * 이전: soft + `releaseGpuLayers:false` 만 → 지도 idle에서 GL~140·Views 555 고착
+ * (2026-07-23 06:50~). 지금은 **deep(GPU+Fresco)** + 전투 ingress 시 hub Skia signal.
  */
 export function consumeGalaxyMapIngressReclaim(): void {
   const kind = pendingKind;
@@ -33,14 +35,10 @@ export function consumeGalaxyMapIngressReclaim(): void {
   const keep = resolveSinglePlanetSessionKeepIds(anchor);
 
   const reason = kind === 'after_hub_combat' ? 'ingress_after_hub_combat' : 'ingress_from_planet_hub';
-  runStageNativeReclaimPass({
-    stage: 'galaxy_map',
-    reason,
-    keepPlanetIds: keep,
-    reclaimHubSkia: false,
-    releaseGpuLayers: false,
+  runGalaxyMapResidentDeepReclaimPass(reason, keep, {
+    // 전투 출발·허브 출발 모두 — freeze 잔존 핸들러까지 한 번 더 내린다.
+    reclaimHubSkia: true,
   });
-  runSoftNativeReclaimPass(reason);
 
   void trimNativeBitmapCachesAsync().then((result) => {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {

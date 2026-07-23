@@ -5,6 +5,85 @@
 
 ---
 
+## ✅ REVIEWED — (1) FinalizerDaemon SIGSEGV 검증 + (2) GL_HARD_CEILING 재조사 · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-23 08:19 KST)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **① PASS · ② PASS(조건부)** — 코드 변경 없음, handoff 진단 수용. 다음 구현은 아래 P0 |
+| ① SIGSEGV | `scheduleSkPictureDispose` no-op · Picture React-frame만 교체 · 크래시 로그(`225007`) 스택 일치 — **추가 조치 불필요** |
+| ② 가설 기각 | 웨이브마다 remount / 회수 트리거 부재 / presentation Set 덮어쓰기 — 코드 대조 **기각 타당** (`Set<fn>` · `hub_combat_orbit_end` · 세션 단위 orbit active) |
+| ② 보완(김팀장) | 「배선 완전·네이티브만」은 **조기 단정**. 07-23 08시 실측: 지도 idle에서 soft만 돌고 **`galaxy_map_post_ingress`/`periodic_deep` 로그 미관측**, ingress는 **`releaseGpuLayers: false`**, Views **555·GL~147** 고착(지도 baseline Views~350·GL~49). soft 무력 + deep 미실행이 **관리 갭**으로 남음 |
+| **다음 P0(구현)** | (a) deep 미실행 원인(`isMoving` skip·focus reset) 수정 (b) `after_hub_combat`/`from_planet_hub` ingress에서 GPU release 또는 settle 직후 deep 1회 (c) Views 555 허브 트리 잔존 여부 — **김클로드 또는 김팀장 Opus 구현 후 재 PENDING** |
+| 게이트 | 본 항목 코드 diff 없음 · 김클로드 self-check(tsc·audit:memory:all) 수용 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-23 (김팀장 검수) · 2026-07-23(김클로드) |
+| **task_id** | `memory-handling-verify-and-gl-leak-reinvestigate-20260723` |
+| **요청자** | 대표님 — "현재 김팀장이 분석한 메모리 처리문제를 확인하고 지금 수정작업진행하라" → 두 갈래 확인 후 "GL 리텐션 누수(미해결) 쪽으로 진행"으로 답변 |
+
+### (1) FinalizerDaemon SIGSEGV 크래시 수정 — 검증 결과: **완료·정상**
+
+- 근거 로그 직접 대조: `tools/long-run-monitor/logs/crash-20260722-225007-capture.log`(SIGSEGV tid=FinalizerDaemon, `SkiaDomView.finalize→PictureProp::~→JsiSkPicture::~`) — 김팀장 commit `300de54`(2026-07-23 00:01 KST) 코드 주석의 timestamp·스택과 정확히 일치.
+- `src/game/skia/skiaMemoryLifecycle.ts` 전체 재확인 — `scheduleSkPictureDispose`는 no-op, `dropSkPictureReactFrame`/`commitSkPictureReactFrame` 모두 React state 교체만 하고 수동 dispose 없음. 2026-06-17 SkImage 크래시 때 확립된 "manual dispose 금지, native finalizer에 수명 위임" 규칙을 SkPicture로 정확히 확장한 것.
+- `PlanetEdenRaidOrbitSkiaCombat.tsx` 동일 커밋 diff도 함께 확인 — 주석·근거 일치, 로직 충돌 없음.
+- **우회 경로 전수 검색**(`safeSkiaDispose`/`.dispose()` 전체 grep) — 남아있는 모든 수동 dispose 호출은 `<Picture>`에 넘겨진 적 없는 객체(draw 실패로 즉시 버려지는 picture, pooled `SkPath`, `PictureRecorder`)뿐 — 크래시 경로(JsiDomNode에 바인딩된 SkPicture)를 우회하는 곳 없음.
+- 게이트 재실행: `npx tsc --noEmit -p tsconfig.client.json` PASS · `npm run audit:memory:all` 전부 PASS(37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0).
+- **결론**: 이 항목은 이미 완료된 수정이며 제 검증 결과 추가 조치 불필요.
+
+### (2) GL_HARD_CEILING 잔류 누수 — 재조사 결과: **근본원인 미확정, 기존 결론과 동일**
+
+`tools/long-run-monitor/logs/gl-leak-refix-requested.flag`(07-22 23:37:37 발생, `suspect=hub_skia_orbit_nebula_combat`, gl=203.4MB·pss=1028.5MB·views=553)가 (1)의 크래시 수정 커밋(00:01 KST) **이후**에도 오늘 아침 06:50~07:52 동일 패턴(`GL_SPIKE suspect=hub_skia_orbit_nebula_combat`, GL +92.9MB, 이후 미회복)으로 재발 — `tools/long-run-monitor/logs/overnight-final-report-20260723-0800.md` 확인. 즉 **크래시 수정과 GL 누수는 서로 다른 문제**이며, 크래시 수정이 GL 누수를 해결하지 못했음을 실측으로 확인.
+
+**이번에 새로 확인/기각한 가설**:
+1. ~~"vega_base 자동전투 루프가 웨이브마다(~10초) `PlanetEdenRaidOrbitSkiaCombat`를 마운트/언마운트 반복 → GC-finalizer-only 수명주기(위 크래시 수정으로 manual dispose 폴백까지 사라짐)와 겹쳐 회수가 GC 타이밍에 못 따라간다"~~ — **기각**: `app/(game)/planet.tsx:682-684` 주석으로 `capitalCombatOrbitActive`가 웨이브 디펜스 런 9웨이브 내내 `true`로 고정됨을 코드로 확인 — 웨이브마다 마운트/언마운트가 아니라 **세션(런) 단위 1회**만 마운트/언마운트. 마운트 빈도는 처음 가정보다 훨씬 낮음.
+2. ~~"전투 종료 후 회수 트리거 자체가 없다(route_blur/planet_change에만 걸려있다)"~~ — **기각**: `planet.tsx:710-717`에 이미 `capitalCombatOrbitActive: true→false` 전이를 감지해 `schedulePlanetHubPostSkiaPeakReclaim(pid, 'hub_combat_orbit_end')`를 호출하는 전용 effect가 존재. 이 함수(`runPlanetHubPostSkiaPeakReclaimPass.ts`)는 2×rAF+32ms+`InteractionManager` 지연 후 `runCombatSkiaPresentationReclaim`+`signalHubSkiaNativeReclaim`+성운 프로필 prune+memo 캐시 compact+Fresco bitmap trim+백드롭 remount를 실행하고 **90초 뒤 동일 패스를 한 번 더**(`followup_90s`) 돈다 — 이미 상당히 정교한 다층 회수 체계.
+3. ~~"`combatSkiaPresentationReclaim`의 Set 등록이 덮어써져 일부 콜백이 누락된다"~~(과거 handoff 기록상 한때 실제 버그였던 항목) — **기각**: `src/combat/combatSkiaPresentationReclaim.ts` 현재 코드는 `Set<fn>` 기반 다중 등록으로 정상 구현돼 있음(과거 버그는 이미 수정된 상태).
+
+**남은 상태**: JS/TS 레벨의 등록·트리거·캐시 정리 체계는 세 가설을 기각하고도 남을 만큼 이미 촘촘하게 구현돼 있음 — 이번 재조사로 "명백한 배선 누락형 버그"는 찾지 못했습니다. 이 이슈는 2026-07-10부터 최소 3차례(`aurora-hub-native-heap-hard-ceiling-20260707`, `galaxy-map-gl-residual-on-hub-reentry-20260708`, 그리고 오늘 이 항목) 반복 조사됐고 매번 "방어적 안전판만 추가, 근본 leak 미확정"으로 마무리됐습니다. 남은 가능성은 JS 코드 리뷰로는 확인 불가능한 네이티브 레벨(RN-Skia Android `GrContext`/EGL 리소스 캐시가 JS 참조 해제 이후에도 즉시 GPU 드라이버 메모리를 반납하지 않는 것 등)일 가능성이 높다고 판단합니다.
+
+### 코드 변경
+
+**없음** — 이번 세션은 (1) 검증 (2) 재조사 모두 read-only. 리스크 있는 아키텍처 변경(예: combat-orbit을 nebula backdrop처럼 상시 마운트+상태만 토글하는 방식으로 바꾸는 것)은 실기 검증 없이 이 반복적으로 실패해온 이슈에 또 하나의 미확정 "반쪽 패치"를 얹는 것이라 판단해 진행하지 않았습니다.
+
+### self-check
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — PASS (변경 없음)
+- [x] `npm run audit:memory:all` — 전부 PASS(37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
+- [x] git commit **안 함**
+
+### 리스크·주의
+
+- GL 누수는 여전히 미해결 — 다음 재발 시에도 자동 재시작(모니터 remediation)으로 서비스 영향은 제한적이나, 재시작 빈도 자체가 사용자 경험 저하.
+- 다음 단계로 제안: (a) 실기(Android Studio GPU/Memory Profiler)로 vega_base 웨이브런 종료 전후 실제 GL 텍스처/서페이스 반납 여부 직접 관찰, 또는 (b) `runPlanetHubPostSkiaPeakReclaimPass` 실행 전후 `[MEM]` 로그에 실측 GL MB(현재는 `gpuLayers` id 목록만 찍음, 바이트 수치 없음)를 추가해 다음 재발 로그캣에서 "회수 패스가 돌긴 도는데 효과가 없다" vs "애초에 패스 자체가 트리거 안 됐다"를 구분 — 우선순위는 대표님/김팀장 판단 필요.
+
+### 정정 (2026-07-23, 대표님 확인) — `suspect=hub_skia_orbit_nebula_combat` 태그는 이번 건 오귀속
+
+07-23 06:50~08:23 구간(views=555 완전 고정, gl/pss만 완만히 우상향) 관련해 대표님께 실기 상태를 여쭤본 결과 — **디바이스는 이 시간 내내 전투 없이 은하계 지도맵 화면에서 액션 없이 대기 중**이었음. 즉 모니터의 `hub_skia_orbit_nebula_combat` 자동 추정 태그는 이번 재발엔 틀렸고, 실제로는 위 `galaxy-map-gl-residual-on-hub-reentry-20260708`(PENDING, 미착수) 항목과 같은 계열(worldmap 화면 자체 체류 중 축적) 가능성이 높음 — 다만 이번엔 "허브 재진입 후 잔류"가 아니라 **worldmap 화면에 계속 머무르는 동안** gl/pss가 완만히 우상향한 것이라 07-08 진단(재진입 시 회수 누락)과도 정확히 같은 패턴은 아님. 위 (2) 섹션의 combat-orbit 관련 가설(마운트 빈도·회수 트리거·pool 정리)은 **이번 재발과는 무관한 것으로 정정** — combat 관련 코드 경로는 이번 재발에 관여하지 않았을 가능성이 높음.
+
+**대표님 안내**: 현재 김팀장이 이 건을 직접 수정 중 — 김클로드는 추가 조사·구현 중단하고 김팀장 수정 완료 후 검수만 진행.
+
+### 김클로드 검수 (2026-07-23) — 김팀장 구현(작업트리, 미커밋) 대상
+
+**verdict: PASS**
+
+- **대상 파일**: `app/(game)/worldmap.tsx` · `src/game/nativeReclaim/{galaxyMapIngressReclaim,index,processMemoryBudgetPolicy,runGalaxyMapResidentDeepReclaimPass}.ts` · `src/game/devMemoryProfileBridge.ts`(신규 이벤트 타입 `deep_reclaim`만 추가). `src/arcCore/{syncArcCoreGlobalWorldExpansion,worldExpansionGlobalSchedule}.ts`는 `git diff`로 실제 내용 변경 0바이트 확인(CRLF 개행 메타데이터 경고만) — 이번 fix와 무관.
+- **근본원인 대응 확인**: 김팀장이 08:19 검수에서 지적한 관리 갭(① ingress가 `releaseGpuLayers:false`로 호출돼 허브 GPU layer 레지스트리 잔존분을 안 걷음 ② 90초 단일 followup이 `isMoving`이면 그 자리에서 통째로 증발 — 재시도 없음)을 정확히 그 두 지점에서 수정:
+  - `consumeGalaxyMapIngressReclaim`: soft-only(`releaseGpuLayers:false`) → `runGalaxyMapResidentDeepReclaimPass(..., {reclaimHubSkia:true})`(deep=GPU layer 해제+Fresco trim) 전환.
+  - `worldmap.tsx` focus effect: 90초 단일 followup → 4초 settle + 45초 followup 2단, 각각 `scheduleDeepWhenIdle`로 `isMoving` 시 15초 간격 최대 4회 재시도 후 강제 1회 실행(`_forced`) — 무한 증발 경로 차단.
+- **`stage==='planet_hub'`에서만 `signalHubSkiaNativeReclaim`을 호출하는 `runStageNativeReclaimPass`의 기존 게이트**(07-08 진단에서 이미 지적됐던 지점)를 건드리지 않고, `runGalaxyMapResidentDeepReclaimPass`에서 `stage:'galaxy_map'`이어도 별도로 직접 `signalHubSkiaNativeReclaim`을 호출하도록 우회 — 공유 함수의 다른 호출부(허브 자체 blur 등)에 영향 없는 수술적 수정. `signalHubSkiaNativeReclaim`은 Set 기반 pub-sub+try/catch라 구독자 없을 때도 안전한 no-op임을 코드로 확인.
+- **호출부 3곳**(`worldmap.tsx` ×2, `galaxyMapIngressReclaim.ts` ×1) 전부 신규 3번째 `opts` 파라미터로 정확히 갱신됨 — 시그니처 불일치 없음.
+- **타이머 누수 없음**: `pendingDeepRetryTimers` 배열에 전부 push 후 effect cleanup에서 일괄 clear, `isFocusedRef.current` 가드로 unfocus 후 재귀 재시도 안 함.
+- **게이트**: `npx tsc --noEmit -p tsconfig.client.json` PASS · `npm run audit:memory:all` 전부 PASS(37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0).
+- **리스크**: 낮음 — 전부 기존에 검증된 reclaim 프리미티브(`runGalaxyMapResidentDeepReclaimPass`/`signalHubSkiaNativeReclaim`/`trimNativeBitmapCachesAsync`) 재사용, 신규 Skia/GPU 로직 없음. `isMoving` 중엔 deep을 계속 미루므로 이동 중 프레임 드랍 유발 가능성도 낮음.
+- **미확인(실기 필요)**: 다음 vega_base/전투→지도 진입 또는 장시간 지도 체류 시나리오에서 `mem-timeline.csv` GL/Views가 baseline(~49MB/~350)까지 실제로 떨어지는지 — 코드 리뷰로는 "의도한 대로 실행될 것"까지만 확인 가능, 실측 확인은 김경제 모니터 다음 주기 관측 권장.
+- 커밋 여부는 기존 프로토콜대로 김팀장 판단.
+
+---
+
 ## ✅ REVIEWED(진짜 원인) — "이어하기" 버튼 탭 직후 2~3초 완전 정지 — 근본원인 특정·수정 · 김클로드
 
 ### 김팀장 검수 (본창 Cursor · 2026-07-19)

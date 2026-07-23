@@ -1,4 +1,4 @@
-import firestore from '@react-native-firebase/firestore';
+import { serverTimestamp } from '@react-native-firebase/firestore';
 import { arccoreDocRef, getDoc, getDocFromCache, setDoc } from './firestoreRefs';
 import { configureFirestorePersistence } from './firestoreClientConfig';
 import { ensureFirebaseAnonymousAuth } from './firebaseAnonymousAuth';
@@ -43,7 +43,7 @@ export async function ensureArcCoreCollectionSeeded(input: {
     if (serverSnap && snapExists(serverSnap)) return;
     if (!serverSnap) return;
 
-    const now = firestore.FieldValue.serverTimestamp();
+    const now = serverTimestamp();
     await Promise.all([
       setDoc(
         configRef,

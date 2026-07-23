@@ -3266,3 +3266,73 @@ ref=tools/long-run-monitor/logs/soak-worklet-mirror-20260621.json
 [2026-07-22 23:37:37] GL_HARD_CEILING gl=203.4 pss=1028.5 views=553
 [2026-07-22 23:37:37] REFIX_REQUESTED gl_critical_active_hub
 [2026-07-22 23:41:17] INVESTIGATION_TRIGGERED mem_anomaly
+[2026-07-23 06:50:33] VIEWS_NATIVE_ADVISORY views=555 native_heap=279.4 pss=793.4 gl=142.3 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 07:06:01] VIEWS_NATIVE_ADVISORY views=555 native_heap=279.8 pss=799.3 gl=142.3 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 07:21:28] PSS_SOFT_CEILING pss=814.4 gl=144.3 views=555 native_reclaim_advisory
+[2026-07-23 07:36:56] PSS_SOFT_CEILING pss=805.1 gl=144.1 views=555 native_reclaim_advisory
+[2026-07-23 07:52:29] PSS_SOFT_CEILING pss=807.1 gl=146.1 views=555 native_reclaim_advisory
+[2026-07-23 08:00:00] DAILY_8AM_REPORT 2026-07-23 08:00:00 KST
+[2026-07-23 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260723-0800.md verdict=OK
+[2026-07-23 08:02:05] DAILY_8AM_REPORT 2026-07-23 08:02:05 KST
+[2026-07-23 08:02:05] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260723-0800.md verdict=OK
+[2026-07-23 08:04:07] DAILY_8AM_REPORT 2026-07-23 08:04:07 KST
+[2026-07-23 08:04:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260723-0800.md verdict=OK
+[2026-07-23 08:06:09] DAILY_8AM_REPORT 2026-07-23 08:06:09 KST
+[2026-07-23 08:06:09] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260723-0800.md verdict=OK
+[2026-07-23 08:07:58] PSS_SOFT_CEILING pss=802.7 gl=131.3 views=555 native_reclaim_advisory
+[2026-07-23 08:08:10] DAILY_8AM_REPORT 2026-07-23 08:08:10 KST
+[2026-07-23 08:08:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260723-0800.md verdict=OK
+[2026-07-23 08:10:11] DAILY_8AM_REPORT 2026-07-23 08:10:11 KST
+[2026-07-23 08:10:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260723-0800.md verdict=OK
+[2026-07-23 08:12:12] DAILY_8AM_REPORT 2026-07-23 08:12:12 KST
+[2026-07-23 08:12:12] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260723-0800.md verdict=OK
+[2026-07-23 08:14:13] DAILY_8AM_REPORT 2026-07-23 08:14:13 KST
+[2026-07-23 08:14:13] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260723-0800.md verdict=OK
+[2026-07-23 08:23:30] PSS_SOFT_CEILING pss=830.7 gl=151.5 views=555 native_reclaim_advisory
+[2026-07-23 08:38:57] VIEWS_NATIVE_ADVISORY views=555 native_heap=305.5 pss=688.8 gl=116.3 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 08:54:24] VIEWS_NATIVE_ADVISORY views=555 native_heap=315.1 pss=715 gl=116.3 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 09:09:51] VIEWS_NATIVE_ADVISORY views=555 native_heap=347.2 pss=762.7 gl=135.4 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 09:25:18] VIEWS_NATIVE_ADVISORY views=555 native_heap=352.4 pss=768.7 gl=137.4 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 09:40:44] VIEWS_NATIVE_ADVISORY views=555 native_heap=352.7 pss=768.5 gl=137.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 09:56:10] VIEWS_NATIVE_ADVISORY views=555 native_heap=363.9 pss=796.6 gl=137.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 10:11:35] VIEWS_NATIVE_ADVISORY views=555 native_heap=351.1 pss=793 gl=137.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 10:27:01] VIEWS_NATIVE_ADVISORY views=555 native_heap=357.9 pss=782.6 gl=137.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 10:42:27] VIEWS_NATIVE_ADVISORY views=555 native_heap=351.6 pss=790.1 gl=137.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 10:57:54] VIEWS_NATIVE_ADVISORY views=555 native_heap=352.1 pss=789.1 gl=137.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 11:13:21] VIEWS_NATIVE_ADVISORY views=555 native_heap=351.7 pss=785.4 gl=137.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 11:28:47] VIEWS_NATIVE_ADVISORY views=555 native_heap=351.2 pss=773 gl=137.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 11:44:14] VIEWS_NATIVE_ADVISORY views=555 native_heap=352.5 pss=772.2 gl=137.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 11:59:39] VIEWS_NATIVE_ADVISORY views=555 native_heap=352.8 pss=783.7 gl=137.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 12:15:06] VIEWS_NATIVE_ADVISORY views=555 native_heap=352.8 pss=778.6 gl=139.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 12:30:32] VIEWS_NATIVE_ADVISORY views=555 native_heap=352.3 pss=777.1 gl=137.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 12:45:58] VIEWS_NATIVE_ADVISORY views=555 native_heap=352.8 pss=770.4 gl=137.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 13:01:25] VIEWS_NATIVE_ADVISORY views=555 native_heap=352.2 pss=776.6 gl=139.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 13:16:51] VIEWS_NATIVE_ADVISORY views=555 native_heap=352.3 pss=771.8 gl=137.2 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 13:32:17] VIEWS_NATIVE_ADVISORY views=554 native_heap=352.8 pss=750 gl=107.9 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 13:47:43] VIEWS_NATIVE_ADVISORY views=554 native_heap=353 pss=746.8 gl=107.9 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 14:03:10] VIEWS_NATIVE_ADVISORY views=554 native_heap=352.8 pss=757.1 gl=107.9 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 14:18:37] VIEWS_NATIVE_ADVISORY views=554 native_heap=188.3 pss=676.9 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 14:34:03] VIEWS_NATIVE_ADVISORY views=554 native_heap=162.6 pss=681.6 gl=109.9 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 14:49:29] VIEWS_NATIVE_ADVISORY views=554 native_heap=163.8 pss=680.4 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 15:04:56] VIEWS_NATIVE_ADVISORY views=554 native_heap=164.6 pss=677.7 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 15:20:22] VIEWS_NATIVE_ADVISORY views=554 native_heap=164.5 pss=675 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 15:35:48] VIEWS_NATIVE_ADVISORY views=554 native_heap=164.9 pss=676.6 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-07-23 15:51:15] PSS_SOFT_CEILING pss=808.8 gl=125.2 views=390 native_reclaim_advisory
+[2026-07-23 16:06:42] GL_ELEVATED mounting_or_insufficient_samples gl=124.9 pss=763.3 views=369 restart_held
+[2026-07-23 16:22:08] GL_ELEVATED mounting_or_insufficient_samples gl=125.1 pss=785 views=386 restart_held
+[2026-07-23 16:37:35] GL_ELEVATED mounting_or_insufficient_samples gl=124.9 pss=771.3 views=369 restart_held
+[2026-07-23 16:53:01] GL_ELEVATED mounting_or_insufficient_samples gl=125.1 pss=776.1 views=390 restart_held
+[2026-07-23 17:08:28] GL_ELEVATED mounting_or_insufficient_samples gl=124.9 pss=751.6 views=369 restart_held
+[2026-07-23 17:23:55] GL_ELEVATED mounting_or_insufficient_samples gl=124.9 pss=746.8 views=371 restart_held
+[2026-07-23 17:39:21] GL_ELEVATED mounting_or_insufficient_samples gl=125.2 pss=767.3 views=398 restart_held
+[2026-07-23 17:54:47] GL_ELEVATED mounting_or_insufficient_samples gl=125.1 pss=743.7 views=373 restart_held
+[2026-07-23 18:10:15] GL_ELEVATED mounting_or_insufficient_samples gl=125.4 pss=756.5 views=375 restart_held
+[2026-07-23 18:25:40] GL_ELEVATED mounting_or_insufficient_samples gl=125.8 pss=771.3 views=391 restart_held
+[2026-07-23 18:41:06] GL_ELEVATED mounting_or_insufficient_samples gl=125.2 pss=749.1 views=366 restart_held
+[2026-07-23 18:56:32] GL_ELEVATED mounting_or_insufficient_samples gl=125.2 pss=743.8 views=370 restart_held
+[2026-07-23 19:11:59] GL_ELEVATED mounting_or_insufficient_samples gl=125.2 pss=750.6 views=370 restart_held
+[2026-07-23 19:27:26] GL_ELEVATED mounting_or_insufficient_samples gl=127.2 pss=752.3 views=391 restart_held
+[2026-07-23 19:42:52] GL_ELEVATED mounting_or_insufficient_samples gl=127.4 pss=766.7 views=379 restart_held
+[2026-07-23 19:58:21] GL_ELEVATED mounting_or_insufficient_samples gl=125.2 pss=749.1 views=370 restart_held
+[2026-07-23 20:13:48] GL_ELEVATED mounting_or_insufficient_samples gl=127.2 pss=757.8 views=370 restart_held
+[2026-07-23 20:29:16] PSS_SOFT_CEILING pss=865.2 gl=193.9 views=553 native_reclaim_advisory

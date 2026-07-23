@@ -1,4 +1,4 @@
-import firestore from '@react-native-firebase/firestore';
+import { increment, serverTimestamp } from '@react-native-firebase/firestore';
 import { Player } from '../types';
 import {
   deleteDoc,
@@ -167,8 +167,8 @@ export async function createUserDocOnNicknameConfirm(
         nickname: safeNickname,
         ...(professionId ? { professionId } : {}),
         isAdmin: isAdminDeviceUid(uid),
-        createdAt: firestore.FieldValue.serverTimestamp(),
-        server_updatedAt: firestore.FieldValue.serverTimestamp(),
+        createdAt: serverTimestamp(),
+        server_updatedAt: serverTimestamp(),
       },
       { merge: true },
     );
@@ -190,9 +190,9 @@ export async function incrementInventoryItemOnServer(
       userDocRef(uid),
       {
         uid,
-        [itemField]: firestore.FieldValue.increment(deltaQty),
+        [itemField]: increment(deltaQty),
         [txnsField]: [],
-        server_updatedAt: firestore.FieldValue.serverTimestamp(),
+        server_updatedAt: serverTimestamp(),
       },
       { merge: true },
     );

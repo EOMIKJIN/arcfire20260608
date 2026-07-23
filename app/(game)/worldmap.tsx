@@ -85,7 +85,10 @@ import {
 import { finalizeGalaxyMapSessionForExit } from '../../src/game/galaxyMapSessionResume';
 import {
   GALAXY_MAP_DEEP_RECLAIM_EVERY_N_SOFT_TICKS,
+  GALAXY_MAP_DEEP_RECLAIM_RETRY_MAX,
+  GALAXY_MAP_DEEP_RECLAIM_RETRY_MS,
   GALAXY_MAP_POST_HUB_COMBAT_FOLLOWUP_MS,
+  GALAXY_MAP_POST_HUB_COMBAT_SETTLE_MS,
   GALAXY_MAP_SOFT_RECLAIM_INTERVAL_MS,
   runGalaxyMapResidentDeepReclaimPass,
   runGalaxyMapSoftNativeReclaimPass,
@@ -548,36 +551,77 @@ export default function WorldMapScreen() {
   );
 
   /**
-   * worldmap 체류 PSS floor — 5분 주기 soft + N회(15분)마다 deep(GPU layer·Fresco) 승격.
-   * soft만으로는 허브 전투 GL 잔존(출발 teardown 미회수분)이 안 풀려 체류 중 900MB대가
-   * 유지되던 회귀 보완(2026-07-21 07:42 GL 157 미회수 실측). transit(isMoving) 중 skip.
+   * worldmap 체류 PSS floor — 5분 soft + N회(15분) deep + 진입 settle/followup deep.
+   * soft만으로는 허브 전투 GL 잔존이 안 풀림(2026-07-21·07-23 실측 GL~140·Views 555).
+   * transit(isMoving) 중이면 deep을 skip하지 않고 재시도(영구 누락 방지).
    */
   useFocusEffect(
     useCallback(() => {
       let softTick = 0;
+      const pendingDeepRetryTimers: ReturnType<typeof setTimeout>[] = [];
+
+      const runDeepNow = (reason: string, reclaimHubSkia: boolean) => {
+        const anchor = resolveWorldmapReleaseAnchorPlanetId();
+        runGalaxyMapResidentDeepReclaimPass(
+          reason,
+          resolveWorldmapKeepPlanetIds(anchor),
+          { reclaimHubSkia },
+        );
+      };
+
+      /** isMoving이면 최대 N회 재시도 — 90s 단일 skip으로 deep이 증발하던 회귀 차단 */
+      const scheduleDeepWhenIdle = (
+        reason: string,
+        reclaimHubSkia: boolean,
+        attempt = 0,
+      ) => {
+        if (!isFocusedRef.current) return;
+        if (!isMovingRef.current) {
+          runDeepNow(reason, reclaimHubSkia);
+          return;
+        }
+        if (attempt >= GALAXY_MAP_DEEP_RECLAIM_RETRY_MAX) {
+          // 이동이 길어도 1회는 강제 — GPU layer·Fresco만이라도 걷음
+          runDeepNow(`${reason}_forced`, reclaimHubSkia);
+          return;
+        }
+        const t = setTimeout(() => {
+          scheduleDeepWhenIdle(reason, reclaimHubSkia, attempt + 1);
+        }, GALAXY_MAP_DEEP_RECLAIM_RETRY_MS);
+        pendingDeepRetryTimers.push(t);
+      };
+
       const intervalId = setInterval(() => {
         if (isMovingRef.current) return;
         softTick += 1;
         const anchor = resolveWorldmapReleaseAnchorPlanetId();
         const keepIds = resolveWorldmapKeepPlanetIds(anchor);
         if (softTick % GALAXY_MAP_DEEP_RECLAIM_EVERY_N_SOFT_TICKS === 0) {
-          runGalaxyMapResidentDeepReclaimPass('galaxy_map_periodic_deep', keepIds);
+          runGalaxyMapResidentDeepReclaimPass('galaxy_map_periodic_deep', keepIds, {
+            reclaimHubSkia: true,
+          });
           return;
         }
         runGalaxyMapSoftNativeReclaimPass('galaxy_map_periodic', keepIds);
       }, GALAXY_MAP_SOFT_RECLAIM_INTERVAL_MS);
-      /** 허브(전투) → 지도 진입 GL 잔존 후속 — focus 후 90s 1회 (이동 중이면 주기 deep이 승계) */
-      const postIngressFollowupTimer = setTimeout(() => {
-        if (isMovingRef.current || !isFocusedRef.current) return;
-        const anchor = resolveWorldmapReleaseAnchorPlanetId();
-        runGalaxyMapResidentDeepReclaimPass(
-          'galaxy_map_post_ingress_followup',
-          resolveWorldmapKeepPlanetIds(anchor),
-        );
+
+      /** 1차 — focus 후 수 초(허브 teardown·Skia finalizer lag) */
+      const settleTimer = setTimeout(() => {
+        scheduleDeepWhenIdle('galaxy_map_post_ingress_settle', true);
+      }, GALAXY_MAP_POST_HUB_COMBAT_SETTLE_MS);
+
+      /** 2차 — settle 이후 Fresco/GL lag 잔여 */
+      const followupTimer = setTimeout(() => {
+        scheduleDeepWhenIdle('galaxy_map_post_ingress_followup', true);
       }, GALAXY_MAP_POST_HUB_COMBAT_FOLLOWUP_MS);
+
       return () => {
         clearInterval(intervalId);
-        clearTimeout(postIngressFollowupTimer);
+        clearTimeout(settleTimer);
+        clearTimeout(followupTimer);
+        for (let i = 0; i < pendingDeepRetryTimers.length; i++) {
+          clearTimeout(pendingDeepRetryTimers[i]);
+        }
       };
     }, []),
   );

@@ -17,6 +17,7 @@ export type MemProfileEvent =
   | 'route_blur'
   | 'route_focus'
   | 'ingress_reclaim'
+  | 'deep_reclaim'
   | 'system_change'
   | 'transit_combat_nav'
   | 'planet_change'

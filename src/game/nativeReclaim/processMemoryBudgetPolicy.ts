@@ -36,8 +36,19 @@ export const HUB_SOFT_NATIVE_RECLAIM_INTERVAL_MS = 5 * 60 * 1000;
 /** worldmap 체류 — soft 틱 N회마다 1회 deep(GPU layer release + Fresco trim) 승격 (N×5분=15분) */
 export const GALAXY_MAP_DEEP_RECLAIM_EVERY_N_SOFT_TICKS = 3;
 
-/** 허브 전투 후 worldmap 진입 — GL 잔존 후속 deep pass 지연(체류·비이동 확인 후 1회) */
-export const GALAXY_MAP_POST_HUB_COMBAT_FOLLOWUP_MS = 90 * 1000;
+/**
+ * 허브→지도 진입 직후 1차 deep — InteractionManager/2×rAF 이후 잔존 GL·Views 조기 회수.
+ * (2026-07-23 06:50 idle: soft만 돌고 GL~142·Views 555 고착 — 90s 단일 followup은
+ * isMoving skip 시 영구 누락되거나 체류 중 floor가 안 내려감)
+ */
+export const GALAXY_MAP_POST_HUB_COMBAT_SETTLE_MS = 4 * 1000;
+
+/** 허브 전투 후 worldmap 진입 — 2차 deep followup (settle 이후 잔여 Fresco/GL lag) */
+export const GALAXY_MAP_POST_HUB_COMBAT_FOLLOWUP_MS = 45 * 1000;
+
+/** settle/followup 시 isMoving이면 이 간격으로 deep 재시도 (최대 N회) */
+export const GALAXY_MAP_DEEP_RECLAIM_RETRY_MS = 15 * 1000;
+export const GALAXY_MAP_DEEP_RECLAIM_RETRY_MAX = 4;
 
 /** heavy Skia peak 종료 1차 reclaim 후 GL floor 2차 회수 (Worklet·Fresco lag) */
 export const POST_SKIA_PEAK_FOLLOWUP_MS = 90 * 1000;

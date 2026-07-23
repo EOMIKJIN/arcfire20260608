@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import firestore from '@react-native-firebase/firestore';
+import { deleteField, serverTimestamp, Timestamp } from '@react-native-firebase/firestore';
 import {
   deleteDoc,
   doc,
@@ -377,8 +377,8 @@ export async function uploadGameSaveBackup(
     const metaOk = await setFirestoreBackupDoc(gameSaveBackupDocRef(uid, backupId), {
       ...chunkedMeta,
       // Firestore TTL 정책용 Timestamp — 콘솔에서 expiresAt TTL 활성화 시 이탈 유저 백업 자동 삭제
-      expiresAt: firestore.Timestamp.fromMillis(chunkedMeta.expiresAtMs),
-      server_savedAt: firestore.FieldValue.serverTimestamp(),
+      expiresAt: Timestamp.fromMillis(chunkedMeta.expiresAtMs),
+      server_savedAt: serverTimestamp(),
     });
     if (!metaOk) {
       await deleteSnapshotChunks(uid, backupId).catch(() => {
@@ -400,8 +400,8 @@ export async function uploadGameSaveBackup(
   const inlineOk = await setFirestoreBackupDoc(gameSaveBackupDocRef(uid, backupId), {
     ...inlineDoc,
     // Firestore TTL 정책용 Timestamp — 콘솔에서 expiresAt TTL 활성화 시 이탈 유저 백업 자동 삭제
-    expiresAt: firestore.Timestamp.fromMillis(inlineDoc.expiresAtMs),
-    server_savedAt: firestore.FieldValue.serverTimestamp(),
+    expiresAt: Timestamp.fromMillis(inlineDoc.expiresAtMs),
+    server_savedAt: serverTimestamp(),
   });
   if (!inlineOk) {
     return { ok: false, skipped: 'upload_failed' };
@@ -506,7 +506,7 @@ export async function setAdminGameSaveRestorePending(
       userDocRef(uid),
       {
         [ADMIN_GAME_SAVE_RESTORE_PENDING_FIELD]: pending,
-        server_updatedAt: firestore.FieldValue.serverTimestamp(),
+        server_updatedAt: serverTimestamp(),
       },
       { merge: true },
     ).then(() => true),
@@ -521,7 +521,7 @@ export async function clearAdminGameSaveRestorePending(uid: string): Promise<voi
   await setDoc(
     userDocRef(uid),
     {
-      [ADMIN_GAME_SAVE_RESTORE_PENDING_FIELD]: firestore.FieldValue.delete(),
+      [ADMIN_GAME_SAVE_RESTORE_PENDING_FIELD]: deleteField(),
     },
     { merge: true },
   );

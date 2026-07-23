@@ -1,4 +1,4 @@
-import firestore from '@react-native-firebase/firestore';
+import { deleteField, serverTimestamp } from '@react-native-firebase/firestore';
 import { setDoc, userDocRef } from './firestoreRefs';
 import {
   configureFirestorePersistence,
@@ -189,7 +189,7 @@ export async function syncUserDataWithServer(): Promise<void> {
 
   // 점(.) 경로 키(`planetCoreRuntime.byPlanetId`)와 동시에 `planetCoreRuntime` 객체를 보내면
   // 일부 네이티브 직렬화에서 맵/문자열 충돌(uncaught: value is a string, expected an object)이 날 수 있어,
-  // FieldValue.delete()는 중첩 맵 안에서만 보낸다.
+  // deleteField()는 중첩 맵 안에서만 보낸다.
   const existingPc = localBundle.planetCoreRuntime;
   const planetCoreBase =
     existingPc && typeof existingPc === 'object' && !Array.isArray(existingPc)
@@ -206,15 +206,15 @@ export async function syncUserDataWithServer(): Promise<void> {
     ...localBundle,
     planetCoreRuntime: {
       ...planetCoreBase,
-      byPlanetId: firestore.FieldValue.delete(),
+      byPlanetId: deleteField(),
     },
     clanWarFoundation: {
       ...clanWarBase,
       // 구형 중복 사본 제거 — planet_holds top-level 단일 사본만 유지
-      planetHolds: firestore.FieldValue.delete(),
+      planetHolds: deleteField(),
     },
     // merge 저장에서는 누락 필드가 삭제되지 않으므로, 구형 대용량 행성 맵은 명시적으로 제거
-    server_updatedAt: firestore.FieldValue.serverTimestamp(),
+    server_updatedAt: serverTimestamp(),
     app_version: resolveAppVersion(),
     region_code: resolveRegionCode(),
     user_type: resolveUserType(uid, player.nickname),
