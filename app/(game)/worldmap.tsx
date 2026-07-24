@@ -113,6 +113,7 @@ import { computeGalaxyMapTerritoryVoronoiModel } from '../../src/galaxyMap/compu
 import { GalaxyMapTerritoryOccupationLabelsSvg } from '../../src/galaxyMap/GalaxyMapTerritoryOccupationLabelsSvg';
 import { GalaxyMapTerritoryVoronoiSvg } from '../../src/galaxyMap/GalaxyMapTerritoryVoronoiSvg';
 import { GalaxyMapSystemsSvg } from '../../src/galaxyMap/GalaxyMapSystemsSvg';
+import { GalaxyMapUndiscoveredStarlightSvg } from '../../src/galaxyMap/GalaxyMapUndiscoveredStarlightSvg';
 import { findShortestUnlockedSystemPath } from '../../src/galaxyMap/findShortestUnlockedSystemPath';
 import { GalaxyMapContestedZoneRingOverlay } from '../../src/galaxyMap/GalaxyMapContestedZoneRingOverlay';
 import {
@@ -1804,6 +1805,10 @@ export default function WorldMapScreen() {
                   <GalaxyMapTerritoryVoronoiSvg
                     fills={territoryVoronoiModel.fills}
                     paths={territoryVoronoiModel.paths}
+                  />
+                  <GalaxyMapUndiscoveredStarlightSvg
+                    systems={hiddenUndiscoveredSystems}
+                    toScreen={toScreen}
                   />
                   <GalaxyMapSystemsSvg
                     systems={visibleSystemsList}

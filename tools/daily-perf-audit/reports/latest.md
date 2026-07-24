@@ -1,4 +1,4 @@
-# Daily audit — 2026-07-23T15:00:11.096Z
+# Daily audit — 2026-07-24T15:00:08.435Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -18,7 +18,7 @@
 [rebalance-weapon-ttk] updated 0 weapons in weapon_list.csv
 weapon_trade_listing_policy: shop=83 excluded_npc_clone=20
 tradePortListed sync: canonical=83 TRUE=83 demoted=0
-patched D:\arcfire20260607\tables\content\item_defs.csv (275 data rows)
+patched D:\arcfire20260607\tables\content\item_defs.csv (287 data rows)
 patched missions.csv + mission_objectives.csv
 patched 0 npc ship name_en rows
 patched planets.csv
@@ -43,14 +43,14 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·보상 item 정적 검
 
 - 662,116 — `src/data/generated/galaxySystems100.generated.ts`
 - 477,992 — `src/data/generated/csvNpcCapitalShips.ts`
-- 365,782 — `src/data/generated/csvItemDefs.ts`
+- 376,711 — `src/data/generated/csvItemDefs.ts`
 - 285,280 — `src/data/generated/csvNpcCaptains.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
 - 151,799 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 115,935 — `src/data/generated/csvStoryScenes.ts`
 - 78,892 — `src/i18n/locales/ko.ts`
-- 78,225 — `app/(game)/worldmap.tsx`
-- 73,688 — `app/(game)/planet.tsx`
+- 78,502 — `app/(game)/worldmap.tsx`
+- 74,183 — `app/(game)/planet.tsx`
 - 71,974 — `src/i18n/locales/en.ts`
 - 71,070 — `src/data/generated/csvWeapons.ts`
 - 70,149 — `src/data/balance/generated/csvSynthSystemColonization.ts`
@@ -58,7 +58,7 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·보상 item 정적 검
 - 60,176 — `src/data/generated/csvMissions.ts`
 - 47,321 — `app/(game)/shipyard.tsx`
 - 43,388 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
-- 38,452 — `app/(game)/trade.tsx`
+- 38,806 — `app/(game)/trade.tsx`
 
 ## Planet hub eager `src/combat` import (should be absent)
 

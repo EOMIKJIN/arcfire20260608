@@ -27,7 +27,7 @@ export class ArcNewsBoardSubCore extends BaseArcSubCore {
   private unsubCommands: (() => void) | null = null;
 
   constructor() {
-    super('arc_news_board_subcore', 'Arc News Board 서브코어');
+    super('arc_news_board_subcore', '이리스 · 공지 보드');
     this.registerTimedMission({
       id: 'arc_news_world_summary',
       name: '아크코어 월드 요약 브리핑',

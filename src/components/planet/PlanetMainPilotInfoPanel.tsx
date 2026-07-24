@@ -151,7 +151,12 @@ export const PlanetMainPilotInfoPanel = memo(function PlanetMainPilotInfoPanel({
                 accessibilityRole="image"
               >
                 {portraitSource ? (
-                  <Image source={portraitSource} style={styles.photoImage} resizeMode="cover" />
+                  <Image
+                    source={portraitSource}
+                    style={styles.photoImage}
+                    resizeMode="cover"
+                    resizeMethod="resize"
+                  />
                 ) : (
                   <View style={styles.photoPlaceholder} />
                 )}

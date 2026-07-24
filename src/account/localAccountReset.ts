@@ -33,6 +33,7 @@ import { purgeAccountLedgerProfileSkillByUid } from './accountLifecycle';
 import { resetArcInboundDroneCampaigns } from '../arcCore/inboundDrone/resetArcInboundDroneCampaigns';
 import { purgeAllPlanetHubScanUnlockState } from '../game/planetHub/planetHubScanUnlockState';
 import { useArcCoreSpyExpelledStore } from '../store/arcCoreSpyExpelledStore';
+import { useArcCorePantheonCodexStore } from '../arcCore/pantheon/arcCorePantheonCodexStore';
 import { useAppBootStore } from '../store/appBootStore';
 import { runStageUiAfterIdle } from '../navigation/stageNavGate';
 import { useArcOverlayStore } from '../ui/overlay/arcOverlayStore';
@@ -199,6 +200,7 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   resetArcInboundDroneCampaigns();
   purgeAllPlanetHubScanUnlockState();
   await useArcCoreSpyExpelledStore.getState().resetLocal();
+  await useArcCorePantheonCodexStore.getState().resetForAccountPurge();
 
   await clearArcCoreRtdbDailyKpiPushState();
   await resetFirebaseAnonymousAuthForAccountPurge();

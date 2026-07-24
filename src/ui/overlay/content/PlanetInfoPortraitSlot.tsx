@@ -41,6 +41,7 @@ export const PlanetInfoPortraitSlot = memo(function PlanetInfoPortraitSlot({ pla
           source={imageSource}
           style={[styles.image, { aspectRatio }]}
           resizeMode="contain"
+          resizeMethod="resize"
           accessibilityRole="image"
           accessibilityLabel={a11yLabel}
         />

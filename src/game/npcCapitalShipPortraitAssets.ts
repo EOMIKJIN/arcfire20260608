@@ -1,6 +1,7 @@
 // ============================================================
 // 전함 테이블 `portraitImageAssetKey` → Metro 정적 require
 // 새 이미지 추가 시: assets 복사 + 아래 맵에 동일 키 문자열로 등록
+// 감사: npm run audit:npc-capital-ship-portraits
 // ============================================================
 
 import type { ImageSourcePropType } from 'react-native';
@@ -19,7 +20,7 @@ export function resolveNpcCapitalShipPortraitSource(
   return PORTRAIT_BY_ASSET_KEY[k] ?? null;
 }
 
-/** 로딩 화면 등에서 일괄 프리페치할 전함 포트레이트(등록된 키 전부) */
+/** 로딩 화면 등에서 일괄 프리페치할 전함 포트레이트(등록된 키 전부) — 소수만 유지 */
 export function listNpcCapitalPortraitSources(): ImageSourcePropType[] {
   return Object.values(PORTRAIT_BY_ASSET_KEY);
 }

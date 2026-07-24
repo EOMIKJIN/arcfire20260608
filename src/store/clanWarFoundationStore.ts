@@ -354,6 +354,8 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
       homePlayerUid: uid,
       kind: 'player_independent',
       capturedAt: resolvedHold.capturedAt > 0 ? resolvedHold.capturedAt : now,
+      // 전쟁 스폴일가(neutralizedAt) 종료 — 구매 후 단가 변동은 추후 구현
+      neutralizedAt: null,
     };
     set({ planetHolds: { ...get().planetHolds, [planetId]: nextHold } });
     const p = usePlayerStore.getState().player;

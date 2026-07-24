@@ -12,7 +12,7 @@ import { usePlanetMineralLedgerStore } from '../../store/planetMineralLedgerStor
  */
 export class AiPlanetsSubCore extends BaseArcSubCore {
   constructor() {
-    super('ai_planets_subcore', 'AI Planets 서브코어');
+    super('ai_planets_subcore', '가이아 · 행성 코어');
   }
 
   override onBoot(): void {

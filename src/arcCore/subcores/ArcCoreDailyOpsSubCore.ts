@@ -25,7 +25,7 @@ export class ArcCoreDailyOpsSubCore extends BaseArcSubCore {
   private batchRunning = false;
 
   constructor() {
-    super('arc_core_daily_ops_subcore', '아크코어 일일 운영');
+    super('arc_core_daily_ops_subcore', '크로노스 · 일일 운영');
   }
 
   override onBoot(): void {

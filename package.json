@@ -17,6 +17,8 @@
     "build:content-tables": "node tools/gen-mineral-region-members.mjs && node tools/balance-tables/rebalance-weapon-ttk.mjs && node tools/content-tables/gen-weapon-trade-listing-policy.mjs && node tools/content-tables/sync-weapon-trade-listing.mjs && node tools/content-tables/patch-item-defs-en.mjs && node tools/content-tables/patch-missions-en.mjs && node tools/content-tables/patch-npc-ships-en.mjs && node tools/content-tables/patch-planets-en.mjs && node tools/content-tables/generate-arc-seed-transport-rows.mjs && node tools/content-tables/sync-synth-ownership-into-item-defs.mjs && node tools/content-tables/build-content-from-csv.mjs && node tools/content-tables/audit-npc-fleet-master.mjs && node tools/content-tables/audit-mission-quest-placements.mjs",
     "gen:arc-seed-transport": "node tools/content-tables/generate-arc-seed-transport-rows.mjs",
     "audit:npc-fleet": "node tools/content-tables/audit-npc-fleet-master.mjs",
+    "audit:npc-captain-portraits": "node tools/debug/audit-npc-captain-portraits.mjs",
+    "audit:npc-capital-ship-portraits": "node tools/debug/audit-npc-capital-ship-portraits.mjs",
     "audit:mission-quest-placements": "node tools/content-tables/audit-mission-quest-placements.mjs",
     "build:planet-nebula-bakes": "tsx tools/planet-nebula-bake/bake-planet-nebula-images.ts",
     "gen:trade-route-assignments": "node tools/gen-trade-route-planet-assignments.mjs",

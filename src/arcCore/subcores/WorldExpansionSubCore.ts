@@ -12,7 +12,7 @@ import { isArcCoreGlobalWorldExpansionEnabled } from '../worldExpansionGlobalPol
  */
 export class WorldExpansionSubCore extends BaseArcSubCore {
   constructor() {
-    super('world_expansion_subcore', 'World Expansion 서브코어');
+    super('world_expansion_subcore', '야누스 · 월드 확장');
   }
 
   override onBoot(): void {

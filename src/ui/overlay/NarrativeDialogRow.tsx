@@ -82,7 +82,12 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
             portraitTransform ? { transform: portraitTransform } : null,
           ]}
         >
-          <Image source={imageSource} style={styles.portrait} resizeMode="contain" />
+          <Image
+            source={imageSource}
+            style={styles.portrait}
+            resizeMode="contain"
+            resizeMethod="resize"
+          />
         </View>
       ) : (
         <View

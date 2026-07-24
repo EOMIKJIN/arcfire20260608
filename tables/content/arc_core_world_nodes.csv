@@ -1,0 +1,14 @@
+nodeId,role,godNameKo,godNameEn,godId,subCoreId,planetId,systemId,mapVisibleWhileLocked,notesKo
+node_eternal_throne,prime,,,,,eternal_throne,eternity,false,아크코어 근원 — 12좌 밖(본체)
+seat_chronos,subcore,크로노스,Chronos,chronos,arc_core_daily_ops_subcore,synth_035_p,synth_035,false,일일 배치·행성개발 벽시계
+seat_ares,subcore,아레스,Ares,ares,arc_core_territorial_combat_subcore,synth_063_p,synth_063,false,접전·영토 전투
+seat_themis,subcore,테미스,Themis,themis,ai_aabs_subcore,synth_061_p,synth_061,false,능동 밸런스 정책
+seat_hermes,subcore,헤르메스,Hermes,hermes,ai_npc_subcore,synth_040_p,synth_040,false,궤도 수송·NPC 트래픽
+seat_apollon,subcore,아폴론,Apollon,apollon,arc_inbound_drone_subcore,synth_048_p,synth_048,false,인바운드 드론 타격
+seat_nyx,subcore,닉스,Nyx,nyx,arc_core_spy_subcore,synth_030_p,synth_030,false,스파이·침식 감시
+seat_gaia,subcore,가이아,Gaia,gaia,ai_planets_subcore,synth_027_p,synth_027,false,행성 코어·광물 런타임
+seat_plutos,subcore,플루토스,Plutos,plutos,economy_subcore,synth_056_p,synth_056,false,무역소·경제
+seat_athena,subcore,아테나,Athena,athena,arc_attack_subcore,synth_077_p,synth_077,false,통합 공격 골격
+seat_iris,subcore,이리스,Iris,iris,arc_news_board_subcore,synth_074_p,synth_074,false,공지·선술집 보드
+seat_astraia,subcore,아스트라이아,Astraia,astraia,arc_planet_nebula_subcore,synth_079_p,synth_079,false,성운 프로필·일일 변조
+seat_janus,subcore,야누스,Janus,janus,world_expansion_subcore,synth_064_p,synth_064,false,월드/신규 성계 해금

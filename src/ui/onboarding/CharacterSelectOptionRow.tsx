@@ -44,7 +44,12 @@ export const CharacterSelectOptionRow = memo(function CharacterSelectOptionRow({
     >
       {portraitSource ? (
         <View style={styles.portraitCard}>
-          <Image source={portraitSource} style={styles.portrait} resizeMode="contain" />
+          <Image
+          source={portraitSource}
+          style={styles.portrait}
+          resizeMode="contain"
+          resizeMethod="resize"
+        />
         </View>
       ) : (
         <View style={styles.portraitPlaceholder} />

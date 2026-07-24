@@ -26,7 +26,7 @@ export class ArcCoreSpySubCore extends BaseArcSubCore {
   private readonly notifiedSpyKeys = new Set<string>();
 
   constructor() {
-    super('arc_core_spy_subcore', 'ArcCore Spy');
+    super('arc_core_spy_subcore', '닉스 · 스파이');
     this.onWallTick = ({ wallDeltaSec }) => {
       this.tick(wallDeltaSec);
     };

@@ -38,6 +38,7 @@ export const ShipPurchasePortraitSlot = memo(function ShipPurchasePortraitSlot({
           source={imageSource}
           style={styles.image}
           resizeMode="contain"
+          resizeMethod="resize"
           accessibilityRole="image"
           accessibilityLabel={t('tradeQty.shipImageA11y')}
         />

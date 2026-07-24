@@ -196,6 +196,8 @@ import {
   resolvePlanetHubSpyIntelDialogTarget,
 } from '../../src/game/planetHubSpyIntelDialog';
 import { formatSalvageLootLabel, pickSalvageLootItemId } from '../../src/game/planetSalvageSearch';
+import { getArcCorePantheonRelicByItemId } from '../../src/arcCore/pantheon/arcCorePantheonRelicRegistry';
+import { useArcCorePantheonCodexStore } from '../../src/arcCore/pantheon/arcCorePantheonCodexStore';
 import { NearbyShipInfoPanel, PlanetStageBackground } from '../../src/components/planet/planetHub/planetHubSubcomponents';
 import { PlanetMainPlanetInfoTapOverlay } from '../../src/components/planet/PlanetMainPlanetInfoTapOverlay';
 import { planetHubStyles as styles } from '../../src/components/planet/planetHub/planetHubStyles';
@@ -1179,6 +1181,12 @@ export default function PlanetScreen() {
     const itemId = pickSalvageLootItemId(planet.id, activeSalvageWreck.id, attempt);
     addInventoryItem(itemId, 1);
     setMenuBadge('trade', true);
+    const relic = getArcCorePantheonRelicByItemId(itemId);
+    if (relic) {
+      useArcCorePantheonCodexStore.getState().unlockGod(relic.godId, relic.revealLevelDefault);
+      showArcAlert('유물을 회수했다', `${relic.godNameKo}의 흔적을 발견했다.`);
+      return;
+    }
     showArcAlert(t('planet.searchDoneTitle'), t('planet.searchDoneBody', { item: formatSalvageLootLabel(itemId) }));
   }, [planet, activeSalvageWreck, addInventoryItem, setMenuBadge, t]);
   const tableOrbitSlotCountRef = useRef(0);

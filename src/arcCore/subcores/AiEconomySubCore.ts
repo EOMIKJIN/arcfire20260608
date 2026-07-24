@@ -36,7 +36,7 @@ export class AiEconomySubCore extends BaseArcSubCore {
   private unsubCommands: (() => void) | null = null;
 
   constructor() {
-    super('economy_subcore', '경제 (무역소)');
+    super('economy_subcore', '플루토스 · 무역소·경제');
   }
 
   override onBoot(): void {

@@ -55,7 +55,7 @@ export class AiNpcSubCore extends BaseArcSubCore {
   private unsubCommands: (() => void) | null = null;
 
   constructor() {
-    super('ai_npc_subcore', 'AI NPC 서브코어');
+    super('ai_npc_subcore', '헤르메스 · 궤도 수송');
     this.onWallTick = ({ wallDeltaSec }) => {
       this.tickShips(wallDeltaSec);
       if (this.ships.length > 0) {

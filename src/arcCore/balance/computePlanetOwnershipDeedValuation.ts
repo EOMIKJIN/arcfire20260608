@@ -16,6 +16,10 @@ import type { ZoneType } from '../../types';
 export type PlanetOwnershipDeedValuationPolicy = {
   testPlanetIds: Set<string>;
   testPriceCredits: number;
+  /** 전쟁 후 중립·분쟁지역 테스트가 — 추후 정상가−전쟁보상으로 교체 */
+  warSpoilsTestPriceCredits: number;
+  /** true면 분쟁지역(정적·동적)만 전쟁 스폴일가 적용 */
+  warSpoilsRequireContested: boolean;
   annualDays: number;
   zoneAnnualEarnRatio: number;
   observedFeeWeight: number;
@@ -56,12 +60,19 @@ export function resolvePlanetOwnershipDeedValuationPolicy(): PlanetOwnershipDeed
   );
   cachedPolicy = {
     testPlanetIds: new Set(
-      String(kv.get('test_planet_ids') ?? 'arcadia_prime')
+      String(kv.get('test_planet_ids') ?? '')
         .split(',')
         .map((id) => id.trim())
         .filter(Boolean),
     ),
     testPriceCredits: Math.max(1, Math.floor(num(kv.get('test_price_credits'), 1))),
+    warSpoilsTestPriceCredits: Math.max(
+      1,
+      Math.floor(num(kv.get('war_spoils_test_price_credits'), 10)),
+    ),
+    warSpoilsRequireContested: String(kv.get('war_spoils_require_contested') ?? 'true')
+      .trim()
+      .toLowerCase() !== 'false',
     annualDays: Math.max(1, Math.floor(num(kv.get('annual_days'), 365))),
     zoneAnnualEarnRatio: Math.max(0, Math.min(2, num(kv.get('zone_annual_earn_ratio'), 0.55))),
     observedFeeWeight: Math.max(0, num(kv.get('observed_fee_weight'), 1)),

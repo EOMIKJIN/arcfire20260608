@@ -20,6 +20,7 @@ export const PLAYER_GAME_SAVE_BACKUP_KEYS: readonly string[] = [
   'arcfire_skill_db_v1',
   'arcfire_account_profile_v1',
   'arcfire_arc_core_spy_expelled_v1',
+  'arcfire_arc_core_pantheon_codex_v1',
   'arcfire_planet_nebula_profiles_v1',
   'arcfire_mining_resume_v1',
 ] as const;

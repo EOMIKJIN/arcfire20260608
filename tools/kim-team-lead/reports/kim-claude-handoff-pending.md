@@ -1,7 +1,208 @@
-# 김클로드 → 김팀장 검수 handoff
+﻿# 김클로드 → 김팀장 검수 handoff
 
 > **정본 프로세스**: `docs/KIM_TEAM_LEAD_AGENT.md` §김클로드 검수 게이트 · `CLAUDE.md` §김팀장 최종 승인  
 > **김클로드** = Anthropic Claude Code (Cursor ✱ 패널 · 터미널 `claude`)
+
+---
+
+## ✅ REVIEWED — 아크코어 판테온 12좌 · 잔해 유물 (M1~M6) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-24 ~23:05 KST)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — ready M1~M6 충족 · 검수 중 소수정정 2건 |
+| M1 | world_nodes 13 · relics 12 · item_defs `relic_seat_*` · registry O(1) Map OK |
+| M2 | Trade 미등록 · Attack 등록·`onWallTick` 없음 · displayName 신명 12 · 등록 수 12 |
+| M3 | salvage 5% · 미해금 좌만 · 인벤+unlockGod+alert · 실행 1회 |
+| M4 | codex store · purge · backup keys · hydrate OK |
+| M5 | `relicLore` overlay · trade 탭(unsellable) 열람 · 맵 비노출 · 선택 도감 패널 생략(허용) |
+| M6 | stub만 — **검수 수정**: 도감 해금≠전점유 오판 → `return false` 고정 |
+| 기타 수정 | `ArcCoreAttackSubCore` 「미등록」주석 정정 |
+| 게이트 | `tsc` PASS · `audit:memory:all` PASS (재실행) |
+| 커밋 | **미커밋** — 대표님 지시 시 김팀장 커밋 |
+| soft | `allowedPlanetPool`/`dropWeight` CSV 미강제(MVP) · 실기 salvage 미확인 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-24 (김팀장 검수) · 2026-07-24(김클로드 구현) |
+| **task_id** | `arc-core-pantheon-relics-20260724` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-arc-core-pantheon-relics.md` |
+
+### [pss-pre-dev]
+```
+[pss-pre-dev] hot_path=salvage실행1회드롭·허브wall_tick(등록수유지) · alloc=틱당신규금지·codex는이벤트시만 · cache=world_nodes·relics_O1_Map
+[pss-pre-dev] stage=planet_hub_wreck·account_purge · risk=P1(틱금지)·P6(persist코얼레싱)
+[pss-pre-dev] verdict=PASS — Attack onWallTick 비활성·맵상시마커금지·전행성폴링금지
+```
+
+---
+
+## 📦 ARCHIVE — 김클로드 원문 (판테온 · status→REVIEWED)
+
+| 필드 | 값 |
+|------|-----|
+| **status** | ~~PENDING~~ → **REVIEWED** (상단 참조) |
+| **updated** | 2026-07-24 (김클로드) |
+| **task_id** | `arc-core-pantheon-relics-20260724` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-arc-core-pantheon-relics.md` |
+| **기획** | `docs/ARC_CORE_SUBCORE_PANTHEON_OPTIMIZATION_PLAN.md` |
+| **요청자** | 대표님 「김클로드가 해당 전체 내용 개발」→ 김팀장 배정 → "@김클로드 ... M1~M6 전체 구현" |
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=salvage실행1회드롭·허브wall_tick(등록수유지) · alloc=틱당신규금지·codex는이벤트시만 · cache=world_nodes·relics_O1_Map
+[pss-pre-dev] stage=planet_hub_wreck·account_purge · risk=P1(틱금지)·P6(persist코얼레싱)
+[pss-pre-dev] verdict=PASS — Attack onWallTick 비활성·맵상시마커금지·전행성폴링금지
+```
+
+### M1 — Table-First
+
+- `tables/content/arc_core_world_nodes.csv`(신규, 13행: prime 1 + subcore 12) · `tables/content/arc_core_pantheon_relics.csv`(신규, 12행) — `npm run build:content-tables`로 `src/data/generated/csvArcCoreWorldNodes.ts`·`csvArcCorePantheonRelics.ts` 생성 확인(기존 `buildAiClanRegistry` 패턴 그대로 `build-content-from-csv.mjs`에 함수 2개 추가).
+- `tables/content/item_defs.csv`에 `relic_seat_*` 12행 추가(기존 행 무수정) — `category=luxury`(기존 enum 내), `kind=misc`, `type=pantheon_relic`, `tradeable=false`·`sellable=false`·`nonRepurchase=true`(계정당 1회 확정 해금과 정합), `attrsJson={"pantheonGodId":"..."}`.
+- `src/types/index.ts`에 `ArcCoreWorldNodeRow`·`ArcCorePantheonRelicRow` 타입 추가.
+- 레지스트리(모듈 레벨 Map 1회, 틱당 재구성 없음): `src/arcCore/pantheon/arcCoreWorldNodeRegistry.ts`(`getArcCoreWorldNodeByGodId`/`listArcCoreSubcoreNodes`) · `arcCorePantheonRelicRegistry.ts`(`getArcCorePantheonRelicByGodId`/`getArcCorePantheonRelicByItemId`/`listArcCorePantheonRelics`).
+- 외곽 배치·비문은 ready 문서 §1 표 그대로(신명 12 ↔ subCoreId ↔ systemId/planetId) — planetId/systemId 직서는 CSV·레지스트리에만 존재, `loreBodyKo`엔 성계 별칭(EN)+방위만(예: "남쪽 어딘가 '유령 에너지 벨트'") — 실 id 비노출.
+
+### M2 — 서브코어 12개 재편
+
+- `AiTradePortLevelPolicySubCore` — **파일 유지(삭제 안 함)**, `@deprecated` 주석 추가 + `registerDefaultArcSubCores`에서 등록 제거. 이유: `tools/memory-audit/run-resident-set-audit.cjs`가 이 파일 경로를 직접 `read()`해서 onBoot 내용을 검사하므로 삭제 시 감사 스크립트가 깨짐 — ready 문서의 "삭제 **또는** deprecated" 중 안전한 쪽 선택.
+- `ArcCoreAttackSubCore` 등록 추가 — `onWallTick` **정의하지 않음**(등록 전과 동일하게 완전 inert, onBoot 정책 워밍만 기존 유지).
+- `registerDefaultArcSubCores.ts` 등록 수 — Trade 제거 + Attack 추가로 **12개 그대로**(코드로 직접 카운트 확인: `registerSubCore` 호출 12줄).
+- 12개 전부 `displayName` → 신명(ready §1 표) 반영: 크로노스·아레스·테미스·헤르메스·아폴론·닉스·가이아·플루토스·아테나·이리스·아스트라이아·야누스. `id`는 전부 기존 유지(코드 SubCore 물리 이전 없음, 아폴론=`arc_inbound_drone_subcore` 그대로).
+
+### M3 — 잔해 수색 → 유물
+
+- `src/game/planetSalvageSearch.ts` `pickSalvageLootItemId` 확장(신규 병렬 함수 아님, 기존 함수 그대로 확장) — 저확률(`RELIC_DROP_PCT=5`, ≤5% MVP 상수) 해시 판정 통과 시 `listArcCorePantheonRelics()`에서 **아직 미해금(codex 기준) 좌만** 후보로 결정적 해시 선택, 실패/전부해금이면 기존 광물 풀로 그대로 폴백.
+- 판정은 salvage 버튼 `onPress` 콜백(`app/(game)/planet.tsx` 기존 핸들러) 내 **1회만** — interval/틱/전행성 스캔 없음(신규 코드 없음, 기존 단일 호출 지점 그대로 재사용).
+- 획득 시 `useArcCorePantheonCodexStore.getState().unlockGod(godId, revealLevelDefault)` + `showArcAlert('유물을 회수했다', '{신명}의 흔적을 발견했다.')` — 해금 직후만 표시(재획득 없음, `unlockGod`이 이미 해금된 god는 no-op).
+
+### M4 — `arcCorePantheonCodexStore`
+
+- `src/arcCore/pantheon/arcCorePantheonCodexStore.ts` — AsyncStorage 키 `arcfire_arc_core_pantheon_codex_v1`. API 스펙대로 `hydrate`·`unlockGod`·`isUnlocked`·`listUnlocked`·`resetForAccountPurge`.
+- persist: `unlockGod` 성공(신규 해금) 시에만 `persistLocal()` 1회 — 이미 해금된 god 재호출은 상태변경·persist 둘 다 no-op(틱 없는 저빈도 이벤트라 이 가드가 곧 코얼레싱).
+- 부트 hydrate: `src/firebase/gameSaveBackup/applyLocalGameSaveSnapshot.ts`의 `reloadAllLocalGameSaveStores()`(부트·클라우드 복구 공용 경로, 기존 `useArcCoreSpyExpelledStore.loadLocal()` 바로 옆)에 추가.
+- 클라우드 백업 포함: `gameSaveBackupKeys.ts`의 `PLAYER_GAME_SAVE_BACKUP_KEYS`에 키 추가(안 하면 기기 변경 시 유물 진행 소실 — 계정 귀속 요구사항과 배치돼 추가함, ready 문서에 명시는 없었으나 기존 계정귀속 스토어 전부 이 목록에 있어 동일 패턴 적용).
+- `src/account/localAccountReset.ts` `purgeLocalAccountData`에 `resetForAccountPurge()` 호출 추가(계정 초기화 시 도감도 함께 리셋).
+
+### M5 — UI (최소)
+
+- 신규 `ArcOverlayKind: 'relicLore'` + `ArcOverlayRelicLoreEntry`(`src/ui/overlay/arcOverlayStore.ts`) + `presentRelicLoreOverlay(godNameKo, loreBodyKo)` + `RelicLoreOverlayContent.tsx`(`ArcOverlayCard` 사용, 신명·비문만 — 좌표·기술id 없음) + `ArcOverlayHost.tsx`·`tacticalOverlayRollout.ts` 배선.
+- 진입점: `app/(game)/trade.tsx` `handleSell` 최상단 — 탭한 아이템이 `getArcCorePantheonRelicByItemId()`에 걸리면(= relic) 기존 판매 플로우 전부 건너뛰고 lore 오버레이만 띄우고 `return`(유물은 `tradeable=false`라 원래도 판매 대상이 아니었음 — 판매 시도 대신 열람으로 대체).
+- (선택 항목이던) 선술집/설정 도감 목록 패널은 **범위에서 제외** — ready 문서에 "(선택)"으로 명시돼 있어 이번엔 구현 안 함.
+- 월드맵·허브 HUD 노출 없음(건드린 파일 없음).
+
+### M6 — 최종 게이트 stub
+
+- `src/arcCore/pantheon/arcCoreFinalGateStub.ts` — `onArcCoreWorldNodesAllPlayerOwned(): boolean` 순수 함수(부수효과 없음, **어디서도 호출 안 함** — 자리만). `ArcCoreFinalGateFlag = 'pending'|'armed'|'triggered'` 타입만 예약, 실제 저장/전이 로직 없음. 스토리모드·전체 리셋 코드 없음.
+
+### 변경 파일
+
+**신규**: `tables/content/arc_core_world_nodes.csv` · `tables/content/arc_core_pantheon_relics.csv` · `src/arcCore/pantheon/{arcCoreWorldNodeRegistry,arcCorePantheonRelicRegistry,arcCorePantheonCodexStore,arcCoreFinalGateStub}.ts` · `src/ui/overlay/content/RelicLoreOverlayContent.tsx` · (generated) `src/data/generated/{csvArcCoreWorldNodes,csvArcCorePantheonRelics}.ts`
+
+**수정**: `src/types/index.ts` · `tables/content/item_defs.csv`(+12행) · `tools/content-tables/build-content-from-csv.mjs` · `src/data/generated/index.ts`(generated) · `src/arcCore/subcores/{AiTradePortLevelPolicySubCore,registerDefaultArcSubCores,ArcCoreDailyOpsSubCore,ArcCoreTerritorialCombatSubCore,AiAabsSubCore,AiNpcSubCore,ArcInboundDroneSubCore,ArcCoreSpySubCore,AiPlanetsSubCore,AiEconomySubCore,ArcCoreAttackSubCore,ArcNewsBoardSubCore,ArcPlanetNebulaSubCore,WorldExpansionSubCore}.ts` · `src/game/planetSalvageSearch.ts` · `app/(game)/planet.tsx` · `src/firebase/gameSaveBackup/{applyLocalGameSaveSnapshot,gameSaveBackupKeys}.ts` · `src/account/localAccountReset.ts` · `src/ui/overlay/{arcOverlayStore,tacticalOverlayRollout,ArcOverlayHost}.tsx` · `app/(game)/trade.tsx`
+
+### 등록 SubCore 12개 (id · displayName)
+
+1. `arc_core_daily_ops_subcore` · 크로노스 · 일일 운영
+2. `arc_core_territorial_combat_subcore` · 아레스 · 접전지역 전투
+3. `ai_aabs_subcore` · 테미스 · 능동 밸런싱
+4. `ai_npc_subcore` · 헤르메스 · 궤도 수송
+5. `arc_inbound_drone_subcore` · 아폴론 · 인바운드 드론
+6. `arc_core_spy_subcore` · 닉스 · 스파이
+7. `ai_planets_subcore` · 가이아 · 행성 코어
+8. `economy_subcore` · 플루토스 · 무역소·경제
+9. `arc_attack_subcore` · 아테나 · 통합 공격(등록·틱 비활성)
+10. `arc_news_board_subcore` · 이리스 · 공지 보드
+11. `arc_planet_nebula_subcore` · 아스트라이아 · 성운
+12. `world_expansion_subcore` · 야누스 · 월드 확장
+
+### self-check
+
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — PASS
+- [x] `npm run audit:memory:all` — 전부 PASS(37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0) — `resident-set` 감사가 `AiTradePortLevelPolicySubCore.ts` 파일 존재를 전제하는데 파일을 지우지 않아 문제 없이 PASS
+- [x] `npm run build:content-tables` — PASS(item_defs.csv 287 data rows·기존 npc-fleet/mission-quest-placements 감사 전부 PASS 동반 재확인)
+- [x] git commit **안 함**
+
+### 리스크
+
+- **Attack 틱 미활성 확인**: `ArcCoreAttackSubCore.ts`에 `onWallTick` 미정의 — grep으로 재확인 완료, 등록해도 허브 게임루프에 새 틱 작업 없음.
+- **맵 스포일러 없음**: `worldmap.tsx`·허브 HUD 어느 파일도 건드리지 않음 — 거점 마커·신명 상시 표시 코드 자체가 없음.
+- 실기 미확인 — 잔해 수색 시 실제로(낮은 확률이지만) 유물이 나오는지, 인벤에서 유물 탭 시 lore 카드가 정상 표시되는지, 계정 초기화 후 도감이 실제로 비는지는 디바이스 확인 필요.
+- `RELIC_DROP_PCT=5`·`dropWeight=10`(전 좌 동일) 등은 전부 CSV/상수 기반 MVP 단순화 — ready 문서가 명시적으로 허용한 범위.
+- Phase D(허브 틱 옵트인·Attack 디스패치 수렴)는 이번 범위 밖, 손대지 않음.
+
+---
+
+## ✅ REVIEWED — 미발견 성계 별빛 레이어 · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-24 ~12:35 KST)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — ready 명세 준수 · 게이트 PASS |
+| 신규 | `GalaxyMapUndiscoveredStarlightSvg.tsx` — hash 희소 SHOW_PCT=36 · 색3×opacity5 버킷 · Path 배칭 · Circle/라벨/라인 없음 · Math.random 없음 |
+| 배선 | `worldmap.tsx` Voronoi 아래 · SystemsSvg 위 · `hiddenUndiscoveredSystems`만 전달 · visible 목록 미편입 |
+| 메모리 | Path 최대 15개 · 성계당 UI 노드 없음 · `toScreen` useCallback 안정 |
+| 누락 | handoff PENDING 미작성(김클로드) — 김팀장이 본 검수로 갈음 |
+| 게이트 | tsc PASS · audit:memory:all PASS |
+| 커밋 | 미커밋 유지 — 대표님 지시 시 김팀장 커밋 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-24 (김팀장 검수) · 2026-07-24(김클로드 구현) |
+| **task_id** | `galaxy-undiscovered-starlight-20260724` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-undiscovered-starlight.md` |
+
+### [pss-pre-dev]
+```
+[pss-pre-dev] hot_path=worldmap Svg 마운트·해금 변경 시 Path 재작성 · alloc=스타일별 Path≤15 · cache=없음
+[pss-pre-dev] stage=galaxy_map · risk=P1/P2 회피(배칭) · verdict=PASS
+```
+
+---
+## ⏳ PENDING — 미발견 성계 별빛 레이어
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`PENDING`** |
+| **updated** | 2026-07-24 (김클로드) |
+| **task_id** | `galaxy-undiscovered-starlight-20260724` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-undiscovered-starlight.md` |
+| **요청자** | 김팀장(Cursor 본창) 배정 — 대표님 지시(은하 암흑 미발견 성계를 별빛(도트)으로 표시 · 메모리 리스크 없이 · 미발견↔미발견 라인 숨김) → 권장 1안 |
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=worldmap Svg 마운트·해금 목록 변경 시 1회 Path 재작성 · alloc=스타일별 Path d 문자열 소수 · cache=없음(시스템 좌표는 기존 systems)
+[pss-pre-dev] stage=galaxy_map only · dispose=Svg 언마운트와 동일 · risk=P1(성계당 Circle 금지)·P2(Views)
+[pss-pre-dev] verdict=PASS — 단일/소수 Path 배칭+해시 희소만 허용 · N개 Circle/라벨/edge REDESIGN
+```
+
+### 구현 내용
+
+명세(`kim-claude-ready-undiscovered-starlight.md`) 권장 1안 그대로 구현 — 성계당 노드 없이 `systemId` 결정적 해시(FNV-1a)로 (a) 표시 여부(`hash%100 < 36`, 약 36% 희소) (b) 색 3종(cool white/blue-cyan) (c) opacity 5단(0.06~0.45)을 골라, **색×opacity 조합별로 SVG `<Path>` 1개**에 `M x y l0.01 0` 짧은 세그먼트를 배칭(`strokeLinecap="round"`로 점처럼 렌더) — 최대 3×5=15개 Path만 생성되며 시스템 수(수백)와 무관하게 상한이 걸림. `Math.random` 없음 — 매 렌더 동일 결과.
+
+`hiddenUndiscoveredSystems`(기존 값 그대로, `visibleSystemsList`에 합치지 않음)를 `GalaxyMapTerritoryVoronoiSvg`와 `GalaxyMapSystemsSvg` 사이에 배치 — 별빛이 기존 노드에 가리지 않게.
+
+### 변경 파일
+- `src/galaxyMap/GalaxyMapUndiscoveredStarlightSvg.tsx` (신규)
+- `app/(game)/worldmap.tsx` (import 1줄 + `<Svg>` 자식 1개 삽입)
+
+### 범위 밖(명세대로 손 안 댐)
+- Skia Canvas/Worklet 없음 · `visibleSystemsList` 편입 없음 · 미발견↔미발견 connection 없음 · 터치/패널/이름/i18n 없음 · deferred tile/direction prewarm 로직 변경 없음.
+
+### self-check
+- [x] `npx tsc --noEmit -p tsconfig.client.json` — PASS
+- [x] `npm run audit:memory:all` — 전부 PASS(37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
+- [x] git commit **안 함**
+
+### 리스크
+- Path 스타일 버킷 수 = 색(3) × opacity(5) = 최대 15개로 고정 상한 — 시스템 수 증가와 무관하게 View/Path 개수 안 늘어남.
+- 실기 미확인 — 은하 지도 진입 시 미발견 영역에 흐린 도트가 실제로 보이는지, 기존 Voronoi/노드 레이어와 겹칠 때 시각적으로 자연스러운지 확인 필요.
 
 ---
 

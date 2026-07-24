@@ -16,7 +16,7 @@ export class ArcCoreTerritorialCombatSubCore extends BaseArcSubCore {
   private passRunning = false;
 
   constructor() {
-    super('arc_core_territorial_combat_subcore', '아크코어 접전지역 전투');
+    super('arc_core_territorial_combat_subcore', '아레스 · 접전지역 전투');
   }
 
   override onBoot(): void {

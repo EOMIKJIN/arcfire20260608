@@ -4,6 +4,7 @@ import { useWorldObjectRuntimeStore } from '../../store/worldObjectRuntimeStore'
 import { useAccountProfileStore } from '../../store/accountProfileStore';
 import { useArcCoreInstanceMissionBoardStore } from '../../store/arcCoreInstanceMissionBoardStore';
 import { useArcCoreSpyExpelledStore } from '../../store/arcCoreSpyExpelledStore';
+import { useArcCorePantheonCodexStore } from '../../arcCore/pantheon/arcCorePantheonCodexStore';
 import { useBmExchangeLedgerStore } from '../../store/bmExchangeLedgerStore';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
 import { hydrateCombatMatchTelemetryCache } from '../../store/combatMatchTelemetryStore';
@@ -66,6 +67,7 @@ export async function reloadAllLocalGameSaveStores(): Promise<void> {
     usePlanetMineralLedgerStore.getState().loadLocal(),
     useBmExchangeLedgerStore.getState().hydrate(),
     useArcCoreSpyExpelledStore.getState().loadLocal(),
+    useArcCorePantheonCodexStore.getState().hydrate(),
   ]);
   await useWorldObjectRuntimeStore.getState().loadLocalRuntime();
   await useWorldObjectRuntimeStore.getState().bootstrapFromWorld(useWorldStore.getState().systems);

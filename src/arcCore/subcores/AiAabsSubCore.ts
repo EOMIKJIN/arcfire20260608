@@ -11,7 +11,7 @@ import { useAabsPolicyStore } from '../aabs/aabsPolicyStore';
  */
 export class AiAabsSubCore extends BaseArcSubCore {
   constructor() {
-    super('ai_aabs_subcore', 'AABS 능동 밸런싱', { timeScale: 1 });
+    super('ai_aabs_subcore', '테미스 · 능동 밸런싱', { timeScale: 1 });
   }
 
   override onBoot(): void {

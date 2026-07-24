@@ -2,6 +2,8 @@
 export { SHIP_TEMPLATES_FROM_CSV } from './csvShipTemplates';
 export { NPC_CAPTAINS_FROM_CSV } from './csvNpcCaptains';
 export { AI_CLAN_REGISTRY_FROM_CSV } from './csvAiClanRegistry';
+export { ARC_CORE_WORLD_NODES_FROM_CSV } from './csvArcCoreWorldNodes';
+export { ARC_CORE_PANTHEON_RELICS_FROM_CSV } from './csvArcCorePantheonRelics';
 export {
   NPC_CAPITAL_SHIPS_FROM_CSV,
   NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV,

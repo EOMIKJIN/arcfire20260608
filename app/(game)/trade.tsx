@@ -17,6 +17,8 @@ import {
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { presentArcOverlayTradeQuantity } from '../../src/ui/overlay/presentArcTradeQuantity';
+import { presentRelicLoreOverlay } from '../../src/ui/overlay/arcOverlayStore';
+import { getArcCorePantheonRelicByItemId } from '../../src/arcCore/pantheon/arcCorePantheonRelicRegistry';
 import { listTradeResellProfitTips } from '../../src/game/tradeProfitTips';
 import { formatCredits } from '../../src/utils/formatCredits';
 import { usePlayerStore } from '../../src/store/playerStore';
@@ -611,6 +613,11 @@ export default function TradeScreen() {
   };
 
   const handleSell = (item: CargoItem) => {
+    const relic = getArcCorePantheonRelicByItemId(item.goodId);
+    if (relic) {
+      presentRelicLoreOverlay(relic.godNameKo, relic.loreBodyKo);
+      return;
+    }
     const sellListing = market.find(m => m.goodId === item.goodId);
     const itemDef = resolveItemDefById(item.goodId);
     const good = resolveTradeGoodById(item.goodId) ?? (

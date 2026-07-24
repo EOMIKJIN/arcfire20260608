@@ -1,6 +1,8 @@
 key,value,notesKo
-test_planet_ids,arcadia_prime,테스트용 1CR 고정 행성(쉼표 구분)
-test_price_credits,1,테스트 행성 소유권 고정가(CR)
+test_planet_ids,,테스트용 고정가 행성(쉼표 구분·비우면 미사용). 아르카디아 1CR 테스트 해제(2026-07-24)
+test_price_credits,1,레거시 테스트 고정가(CR) — test_planet_ids 비어 있으면 미적용
+war_spoils_test_price_credits,10,전쟁 후 중립·분쟁지역 소유권 테스트가(CR). 추후 정상가−전쟁보상 식으로 교체
+war_spoils_require_contested,true,true=분쟁지역(정적 CSV·동적 편입)만 적용. 전성계 분쟁화 대비 동일 게이트
 annual_days,365,연간 실물수익 = max(관측 일×365 · 구역 target×ratio)
 zone_annual_earn_ratio,0.55,구역 targetCreditsEarned → 연간 실물수익 추정 비율(주식 CF)
 observed_fee_weight,1.00,당일 ledger·fabric 관측 — max(관측연간 · 구역모델)

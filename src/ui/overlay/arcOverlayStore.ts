@@ -32,7 +32,8 @@ export type ArcOverlayKind =
   | 'waveResult'
   | 'settings'
   | 'bmShop'
-  | 'nearbyPresenceInfo';
+  | 'nearbyPresenceInfo'
+  | 'relicLore';
 
 type ArcOverlayBase = {
   id: string;
@@ -154,6 +155,13 @@ export type ArcOverlayNearbyPresenceInfoEntry = ArcOverlayBase & {
   rows: NearbyInfoDetailRow[];
 };
 
+/** 판테온 유물 열람 — 신명·역할·비문(월드맵/HUD 노출 없이 인벤 유물 탭에서만) */
+export type ArcOverlayRelicLoreEntry = ArcOverlayBase & {
+  kind: 'relicLore';
+  godNameKo: string;
+  loreBodyKo: string;
+};
+
 export type ArcOverlayEntry =
   | ArcOverlayAlertEntry
   | ArcOverlayLevelUpEntry
@@ -166,7 +174,8 @@ export type ArcOverlayEntry =
   | ArcOverlayWaveResultEntry
   | ArcOverlaySettingsEntry
   | ArcOverlayBmShopEntry
-  | ArcOverlayNearbyPresenceInfoEntry;
+  | ArcOverlayNearbyPresenceInfoEntry
+  | ArcOverlayRelicLoreEntry;
 
 export type ArcOverlayInput =
   | (Omit<ArcOverlayAlertEntry, 'id'> & { id?: string })
@@ -180,7 +189,8 @@ export type ArcOverlayInput =
   | (Omit<ArcOverlayWaveResultEntry, 'id'> & { id?: string })
   | (Omit<ArcOverlaySettingsEntry, 'id'> & { id?: string })
   | (Omit<ArcOverlayBmShopEntry, 'id'> & { id?: string })
-  | (Omit<ArcOverlayNearbyPresenceInfoEntry, 'id'> & { id?: string });
+  | (Omit<ArcOverlayNearbyPresenceInfoEntry, 'id'> & { id?: string })
+  | (Omit<ArcOverlayRelicLoreEntry, 'id'> & { id?: string });
 
 type ArcOverlayState = {
   stack: ArcOverlayEntry[];
@@ -324,6 +334,18 @@ export function presentPlanetEconomyInfoOverlay(planetId: string, planetName: st
   } else {
     useArcOverlayStore.getState().present(entry);
   }
+}
+
+const RELIC_LORE_OVERLAY_ID = 'relic-lore';
+
+export function presentRelicLoreOverlay(godNameKo: string, loreBodyKo: string): void {
+  useArcOverlayStore.getState().present({
+    kind: 'relicLore',
+    godNameKo,
+    loreBodyKo,
+    dismissOnBackdrop: true,
+    id: RELIC_LORE_OVERLAY_ID,
+  });
 }
 
 const SETTINGS_OVERLAY_ID = 'app-settings';

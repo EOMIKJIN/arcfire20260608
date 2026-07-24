@@ -346,6 +346,56 @@ ${body}
 `;
 }
 
+function buildArcCoreWorldNodes() {
+  const rows = loadCsvOptional('arc_core_world_nodes.csv');
+  const body = rows
+    .map(
+      (r) => `  {
+    nodeId: ${q(r.nodeId)},
+    role: ${q(r.role === 'prime' ? 'prime' : 'subcore')},
+    godNameKo: ${q(String(r.godNameKo ?? '').trim())},
+    godNameEn: ${q(String(r.godNameEn ?? '').trim())},
+    godId: ${q(String(r.godId ?? '').trim())},
+    subCoreId: ${q(String(r.subCoreId ?? '').trim())},
+    planetId: ${q(r.planetId)},
+    systemId: ${q(r.systemId)},
+    mapVisibleWhileLocked: ${toBool(r.mapVisibleWhileLocked)},
+    notesKo: ${q(String(r.notesKo ?? '').trim())},
+  }`,
+    )
+    .join(',\n');
+  return `import type { ArcCoreWorldNodeRow } from '../../types';
+
+export const ARC_CORE_WORLD_NODES_FROM_CSV: readonly ArcCoreWorldNodeRow[] = [
+${body}
+];
+`;
+}
+
+function buildArcCorePantheonRelics() {
+  const rows = loadCsvOptional('arc_core_pantheon_relics.csv');
+  const body = rows
+    .map(
+      (r) => `  {
+    relicItemId: ${q(r.relicItemId)},
+    nodeId: ${q(r.nodeId)},
+    godId: ${q(r.godId)},
+    godNameKo: ${q(String(r.godNameKo ?? '').trim())},
+    loreBodyKo: ${q(String(r.loreBodyKo ?? '').trim())},
+    dropWeight: ${toNum(r.dropWeight, 1)},
+    allowedPlanetPool: ${q(String(r.allowedPlanetPool ?? '').trim())},
+    revealLevelDefault: ${q(String(r.revealLevelDefault ?? 'role').trim())},
+  }`,
+    )
+    .join(',\n');
+  return `import type { ArcCorePantheonRelicRow } from '../../types';
+
+export const ARC_CORE_PANTHEON_RELICS_FROM_CSV: readonly ArcCorePantheonRelicRow[] = [
+${body}
+];
+`;
+}
+
 function buildNpcCaptains() {
   const rows = loadCsv('npc_ai_captains.csv');
   assertUniqueNpcCaptainDisplayNames(rows);
@@ -1375,6 +1425,8 @@ function main() {
   mkdirSync(OUT_DIR, { recursive: true });
   writeOut('csvShipTemplates.ts', buildShips());
   writeOut('csvAiClanRegistry.ts', buildAiClanRegistry());
+  writeOut('csvArcCoreWorldNodes.ts', buildArcCoreWorldNodes());
+  writeOut('csvArcCorePantheonRelics.ts', buildArcCorePantheonRelics());
   writeOut('csvNpcCaptains.ts', buildNpcCaptains());
   writeOut('csvNpcCapitalShips.ts', buildNpcShips());
   writeOut('csvNpcCapitalShipEquipSlots.ts', buildNpcCapitalShipEquipSlots());
@@ -1398,6 +1450,8 @@ function main() {
     `export { SHIP_TEMPLATES_FROM_CSV } from './csvShipTemplates';
 export { NPC_CAPTAINS_FROM_CSV } from './csvNpcCaptains';
 export { AI_CLAN_REGISTRY_FROM_CSV } from './csvAiClanRegistry';
+export { ARC_CORE_WORLD_NODES_FROM_CSV } from './csvArcCoreWorldNodes';
+export { ARC_CORE_PANTHEON_RELICS_FROM_CSV } from './csvArcCorePantheonRelics';
 export {
   NPC_CAPITAL_SHIPS_FROM_CSV,
   NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV,

@@ -51,7 +51,7 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
   private static readonly MAX_CAMPAIGNS = 5;
 
   constructor() {
-    super('arc_inbound_drone_subcore', '아크코어 드론 서브코어');
+    super('arc_inbound_drone_subcore', '아폴론 · 인바운드 드론');
     this.onWallTick = ({ wallDeltaSec, elapsedWallSec }) => {
       this.tick(wallDeltaSec, elapsedWallSec);
     };

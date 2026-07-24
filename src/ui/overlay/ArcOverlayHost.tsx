@@ -25,6 +25,7 @@ import { WaveResultOverlayContent } from './content/WaveResultOverlayContent';
 import { SettingsOverlayContent } from './content/SettingsOverlayContent';
 import { BmShopOverlayContent } from './content/BmShopOverlayContent';
 import { NearbyPresenceInfoOverlayContent } from './content/NearbyPresenceInfoOverlayContent';
+import { RelicLoreOverlayContent } from './content/RelicLoreOverlayContent';
 
 export const ArcOverlayHost = memo(function ArcOverlayHost() {
   const insets = useSafeAreaInsets();
@@ -247,6 +248,9 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
         ) : null}
         {entry.kind === 'nearbyPresenceInfo' ? (
           <NearbyPresenceInfoOverlayContent entry={entry} onClose={dismiss} />
+        ) : null}
+        {entry.kind === 'relicLore' ? (
+          <RelicLoreOverlayContent entry={entry} onClose={dismiss} />
         ) : null}
         </View>
       </View>

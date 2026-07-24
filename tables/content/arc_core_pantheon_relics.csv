@@ -1,0 +1,13 @@
+relicItemId,nodeId,godId,godNameKo,loreBodyKo,dropWeight,allowedPlanetPool,revealLevelDefault
+relic_seat_chronos,seat_chronos,chronos,크로노스,"크로노스 — 일일 배치와 행성개발의 벽시계를 쥔 자. 비문은 남쪽 어딘가 ‘유령 에너지 벨트’의 잔광을 노래한다.",10,any_with_wreck,role
+relic_seat_ares,seat_ares,ares,아레스,"아레스 — 접전지역 전투를 관장하는 자. 비문은 남쪽 ‘아크 콜로니’의 포성을 노래한다.",10,any_with_wreck,role
+relic_seat_themis,seat_themis,themis,테미스,"테미스 — 능동 밸런스 정책을 저울질하는 자. 비문은 북쪽 ‘크로스 콜로니’의 균형을 노래한다.",10,any_with_wreck,role
+relic_seat_hermes,seat_hermes,hermes,헤르메스,"헤르메스 — 궤도 수송과 NPC 트래픽을 잇는 자. 비문은 서쪽 ‘오팔 에너지 벨트’의 항로를 노래한다.",10,any_with_wreck,role
+relic_seat_apollon,seat_apollon,apollon,아폴론,"아폴론 — 인바운드 드론의 타격을 벼리는 자. 비문은 서쪽 ‘리지 무역 거점’의 궤적을 노래한다.",10,any_with_wreck,role
+relic_seat_nyx,seat_nyx,nyx,닉스,"닉스 — 그림자 속에서 침식을 살피는 자. 비문은 동쪽 ‘노바 채굴지’의 어둠을 노래한다.",10,any_with_wreck,role
+relic_seat_gaia,seat_gaia,gaia,가이아,"가이아 — 행성 코어와 광물의 순환을 품은 자. 비문은 남쪽 ‘제니스 채굴지’의 지맥을 노래한다.",10,any_with_wreck,role
+relic_seat_plutos,seat_plutos,plutos,플루토스,"플루토스 — 무역소와 경제의 흐름을 세는 자. 비문은 서쪽 ‘플레어 경계’의 셈을 노래한다.",10,any_with_wreck,role
+relic_seat_athena,seat_athena,athena,아테나,"아테나 — 통합 공격 골격을 벼려낸 자. 비문은 북쪽 ‘게이트 기지’의 방벽을 노래한다.",10,any_with_wreck,role
+relic_seat_iris,seat_iris,iris,이리스,"이리스 — 공지와 선술집 보드의 전령. 비문은 동쪽 ‘베이스 베이스’의 속삭임을 노래한다.",10,any_with_wreck,role
+relic_seat_astraia,seat_astraia,astraia,아스트라이아,"아스트라이아 — 성운의 결과 하루의 변조를 짓는 자. 비문은 남쪽 ‘생크텀 기지’의 안개를 노래한다.",10,any_with_wreck,role
+relic_seat_janus,seat_janus,janus,야누스,"야누스 — 새 성계의 문을 여는 자. 비문은 서쪽 ‘스톤 콜로니’의 문턱을 노래한다.",10,any_with_wreck,role

@@ -433,6 +433,32 @@ export interface AiClanRegistryRow {
   notesKo: string;
 }
 
+/** 아크코어 세계 거점(로어 노드) — `tables/content/arc_core_world_nodes.csv`. role=prime은 본체(신 없음). */
+export interface ArcCoreWorldNodeRow {
+  nodeId: string;
+  role: 'prime' | 'subcore';
+  godNameKo: string;
+  godNameEn: string;
+  godId: string;
+  subCoreId: string;
+  planetId: string;
+  systemId: string;
+  mapVisibleWhileLocked: boolean;
+  notesKo: string;
+}
+
+/** 판테온 유물(잔해 수색 해금) — `tables/content/arc_core_pantheon_relics.csv`. 좌당 계정 1회 확정 해금. */
+export interface ArcCorePantheonRelicRow {
+  relicItemId: string;
+  nodeId: string;
+  godId: string;
+  godNameKo: string;
+  loreBodyKo: string;
+  dropWeight: number;
+  allowedPlanetPool: string;
+  revealLevelDefault: string;
+}
+
 /** NPC 함장 DB 레코드 (탑승·임관은 전함 레코드의 captainId로 연결) */
 export interface NpcCaptain {
   id: string;

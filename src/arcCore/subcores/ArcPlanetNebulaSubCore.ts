@@ -16,7 +16,7 @@ export class ArcPlanetNebulaSubCore extends BaseArcSubCore {
   private unsubCommands: (() => void) | null = null;
 
   constructor() {
-    super('arc_planet_nebula_subcore', 'Arc Planet Nebula 서브코어');
+    super('arc_planet_nebula_subcore', '아스트라이아 · 성운');
     this.registerTimedMission({
       id: 'planet_nebula_daily_ecology_shift',
       name: '행성 성운 생태계 일일 변조',
