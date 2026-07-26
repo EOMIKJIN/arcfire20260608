@@ -2,35 +2,14 @@
 /**
  * sessionStart — 김클로드 handoff가 PENDING이면 김팀장 세션에 검수 의무 주입
  */
-const fs = require('fs');
 const path = require('path');
+const { readPendingHandoff } = require('./kimClaudeHandoffCore.cjs');
 
 const ROOT = path.join(__dirname, '..', '..');
-const HANDOFF = path.join(
-  ROOT,
-  'tools',
-  'kim-team-lead',
-  'reports',
-  'kim-claude-handoff-pending.md',
-);
-
-function readPendingSummary() {
-  try {
-    if (!fs.existsSync(HANDOFF)) return null;
-    const text = fs.readFileSync(HANDOFF, 'utf8');
-    const statusMatch = text.match(/\*\*status\*\*\s*\|\s*`([^`]+)`/);
-    const status = statusMatch ? statusMatch[1].trim() : '';
-    if (status !== 'PENDING') return null;
-    const lines = text.split('\n').slice(0, 40).join('\n');
-    return lines;
-  } catch {
-    return null;
-  }
-}
 
 function main() {
-  const summary = readPendingSummary();
-  if (!summary) {
+  const pending = readPendingHandoff(ROOT);
+  if (!pending) {
     process.stdout.write(JSON.stringify({}));
     return;
   }
@@ -45,7 +24,7 @@ function main() {
     '**git commit은 김팀장(본 세션)만** — 사용자 명시 요청 시에만.',
     '',
     '--- handoff (head) ---',
-    summary,
+    pending.head,
   ].join('\n');
 
   process.stdout.write(JSON.stringify({ additional_context: ctx }));

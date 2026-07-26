@@ -1,0 +1,2 @@
+policyId,hostileNeighborMinAggressive,hostileNeighborMinFlanked,battlesPerIntervalNormal,battlesPerIntervalAggressive,passIntervalMulAggressive,supplyBonusMulAggressive,battleWeightBonusPctAggressive,notesKo
+default_v1,2,3,1,2,1,1.1,5,전선 압박 기본 정책 — 적대 인접 2+면 aggressive(빈도 2배), 3+면 flanked 플래그

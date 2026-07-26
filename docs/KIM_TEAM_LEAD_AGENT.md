@@ -33,13 +33,18 @@
 김클로드 규칙: **`CLAUDE.md`** (커밋 금지 · handoff 의무)  
 김팀장 규칙: **`.cursor/rules/arcfire-main-lead-agent.mdc` §김클로드 게이트**  
 훅: `.cursor/hooks/on-session-start-kim-claude-handoff-review.cjs` (handoff PENDING 시 검수 리마인드)  
-훅: `.cursor/hooks/on-before-submit-prompt-kim-claude-handoff-review.cjs` (**PENDING 감지 → 기존 대화창에서도 검수 P0 자동 시작** · 2026-07-05~)
+훅: `.cursor/hooks/on-before-submit-prompt-kim-claude-handoff-review.cjs` (**PENDING 감지 → 기존 대화창에서도 검수 P0 자동 시작** · 2026-07-05~)  
+훅: `.cursor/hooks/on-stop-kim-claude-handoff-auto-review.cjs` (**PENDING이면 stop followup으로 검수 자동 이어감** · 2026-07-26~ · 대표님 「끝나면 자동 검수」)
 
 ```text
 @김팀장 김클로드 handoff PENDING 검수해. diff·tsc·audit 확인 후 필요하면 수정.
 ```
 
-**완료 감지**: 김클로드가 handoff `status` → `PENDING` 으로 바꾸는 순간 트리거. 대표님이 본창에 **아무 메시지나** 보내면 검수가 자동으로 시작된다(완전 무인 실행은 Cursor 훅 한계상 불가 — 아래 참고).
+**자동 검수(2026-07-26~)**: handoff `status` → `PENDING` 이면 김팀장 세션이 **별도 「검수해」 지시 없이** 검수한다.
+1. 본창에 아무 메시지 → `beforeSubmitPrompt`가 검수 P0 주입  
+2. 에이전트 턴이 끝나도 PENDING이면 → `stop` followup으로 검수 재개(task당 최대 2회)  
+3. sessionStart 시 PENDING이면 리마인드  
+완전 백그라운드 무인(세션 미오픈)은 Cursor 한계상 불가 — **김팀장 본창이 한 번이라도 활성**이면 자동 착수.
 
 ## 대규모 메모리·로딩 리팩터 검수 (2026-07-05~ · 대표님 지시)
 

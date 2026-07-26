@@ -3,46 +3,24 @@
  * beforeSubmitPrompt — 김클로드 handoff status=PENDING 시 **기존 대화창**에도 검수 P0 주입.
  * sessionStart만으로는 밤새 연 채팅·김클로드 완료 직후 검수 누락 회귀 방지.
  */
-const fs = require('fs');
 const path = require('path');
+const { readPendingHandoff } = require('./kimClaudeHandoffCore.cjs');
 
 const ROOT = process.cwd();
-const HANDOFF = path.join(
-  ROOT,
-  'tools',
-  'kim-team-lead',
-  'reports',
-  'kim-claude-handoff-pending.md',
-);
 
 function readStdinJson() {
   try {
+    const fs = require('fs');
     return JSON.parse(fs.readFileSync(0, 'utf8'));
   } catch {
     return {};
   }
 }
 
-function readPendingHandoff() {
-  try {
-    if (!fs.existsSync(HANDOFF)) return null;
-    const text = fs.readFileSync(HANDOFF, 'utf8');
-    const statusMatch = text.match(/\*\*status\*\*\s*\|\s*`([^`]+)`/);
-    const status = statusMatch ? statusMatch[1].trim() : '';
-    if (status !== 'PENDING') return null;
-    const taskMatch = text.match(/\*\*task_id\*\*\s*\|\s*`([^`]+)`/);
-    const taskId = taskMatch ? taskMatch[1].trim() : '(unknown)';
-    const head = text.split('\n').slice(0, 55).join('\n');
-    return { taskId, head, mtimeMs: fs.statSync(HANDOFF).mtimeMs };
-  } catch {
-    return null;
-  }
-}
-
 function main() {
   readStdinJson();
 
-  const pending = readPendingHandoff();
+  const pending = readPendingHandoff(ROOT);
   if (!pending) {
     process.stdout.write(JSON.stringify({}));
     return;

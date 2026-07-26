@@ -180,4 +180,34 @@ test('독립국 보급 — 인접 성계의 플레이어 점유(solo_clan)만 IN
   assert.equal(countAdjacentFriendlySystems({ systemId: 'sirius', side: 'BLUE', holds }), 0);
 });
 
+// ── M0(front-pressure-tactics) — 보급 mul이 실제로 <1/≥1 되는지 시나리오 검증 ──
+test('시리우스형 — INDEPENDENT 방어 + 인접 RED≥2 + 인접 friendly 0 → defender mul < 1(고립)', () => {
+  const holds: Record<string, PlanetClanHold> = {
+    draco_haven: makeHold('draco_haven', 'draco_nebula', 'balance_seed_faction_red'),
+    perseus_memorial: makeHold('perseus_memorial', 'perseus', 'balance_seed_faction_red'),
+  };
+  const adjacentFriendly = countAdjacentFriendlySystems({
+    systemId: 'sirius',
+    side: 'INDEPENDENT',
+    holds,
+  });
+  assert.equal(adjacentFriendly, 0);
+  const defenderMul = resolveSupplyPowerMul(SUPPLY_POLICY, adjacentFriendly);
+  assert.ok(defenderMul < 1, `defenderMul=${defenderMul} < 1 이어야 함(고립)`);
+});
+
+test('공격자 RED — perseus 등 동팩션 인접 있으면 attacker mul ≥ 1', () => {
+  const holds: Record<string, PlanetClanHold> = {
+    perseus_memorial: makeHold('perseus_memorial', 'perseus', 'balance_seed_faction_red'),
+  };
+  const adjacentFriendly = countAdjacentFriendlySystems({
+    systemId: 'sirius',
+    side: 'RED',
+    holds,
+  });
+  assert.ok(adjacentFriendly >= 1);
+  const attackerMul = resolveSupplyPowerMul(SUPPLY_POLICY, adjacentFriendly);
+  assert.ok(attackerMul >= 1, `attackerMul=${attackerMul} >= 1 이어야 함(보급 확보)`);
+});
+
 console.log('[territorialSupplyLine] all tests passed');

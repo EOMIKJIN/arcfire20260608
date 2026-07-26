@@ -60,6 +60,12 @@
         "timeout": 8
       }
     ],
-    "stop": []
+    "stop": [
+      {
+        "command": ".cursor/hooks/on-stop-kim-claude-handoff-auto-review.cjs",
+        "timeout": 5,
+        "loop_limit": 2
+      }
+    ]
   }
 }

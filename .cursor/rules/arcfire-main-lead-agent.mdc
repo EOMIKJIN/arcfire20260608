@@ -49,7 +49,8 @@ alwaysApply: true
 | 3 완료 | **김팀장** | handoff verdict · **커밋(사용자 요청 시)** · status `REVIEWED`→`IDLE` |
 | 4 감시 | 김경제(배정) | `src/` 반영 시 `mem-post-dev-recheck` |
 
-**김팀장 세션 sessionStart** — handoff `PENDING`이면 훅이 검수 리마인드 (`on-session-start-kim-claude-handoff-review.cjs`).
+**김팀장 세션 sessionStart** — handoff `PENDING`이면 훅이 검수 리마인드 (`on-session-start-kim-claude-handoff-review.cjs`).  
+**beforeSubmitPrompt / stop** — PENDING이면 검수 P0 자동 시작·이어감 (`on-before-submit-prompt-kim-claude-handoff-review.cjs` · `on-stop-kim-claude-handoff-auto-review.cjs`). 대표님 「끝나면 자동 검수」(2026-07-26~).
 
 사용자 지시 예:
 
@@ -57,6 +58,7 @@ alwaysApply: true
 @김팀장 김클로드 handoff PENDING 검수해. diff·audit 돌리고 위반 있으면 수정 후 커밋 준비.
 ```
 
+(위는 수동 트리거용. **PENDING이면 자동 검수가 기본** — 별도 「검수해」 불필요.)
 **금지**: 김클로드 handoff **미검수** 커밋 · 김경제/Fable이 김클로드 산출물 **직접 커밋**.
 
 > **2026-07-05 — 대규모 메모리·로딩 리팩터**: 김클로드 전면 최적화 완료 시 **김팀장 심층 검수** 필수 — `docs/KIM_TEAM_LEAD_AGENT.md` §대규모 메모리·로딩 리팩터 검수 (연관 STAGE·부트·store·Skia·arcCore 교차 분석).

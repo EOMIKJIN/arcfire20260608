@@ -9,12 +9,17 @@ import {
   type TerritorialFactionSide,
 } from './arcCoreTerritorialCombatPolicy';
 import {
-  getTerritorialCombatLastPassAtMs,
   hydrateArcCoreTerritorialCombatState,
+  isTerritorialPassDueForPlanet,
   listTerritorialCampaignGroups,
   markTerritorialCombatPassCompleted,
   resolveTerritorialCampaignPlanetDue,
 } from './arcCoreTerritorialCombatState';
+import {
+  applyFrontPressureSupplyBonus,
+  getFrontPressure,
+  resolveFrontPressureBattleWeightPct,
+} from './frontPressureIndex';
 import {
   opposingTerritorialSide,
   resolveHoldFactionSide,
@@ -258,6 +263,7 @@ async function runIndependentHoldInvasionJudgment(input: {
       planetId,
       nowMs,
       campaignMeta ? { group: campaignMeta.group, orderIndex: campaignMeta.orderIndex } : undefined,
+      policy.passIntervalSec,
     );
   };
 
@@ -306,8 +312,11 @@ async function runIndependentHoldInvasionJudgment(input: {
     return statusQuoResult();
   }
 
-  // 3. 판정 롤 — battle 외에는 현상 유지(독립국에 중립선포 없음)
-  const decision = rollDecision(policy);
+  // 3. 판정 롤 — battle 외에는 현상 유지(독립국에 중립선포 없음). aggressive 시 battleWeightPct 소폭 가산.
+  const decision = rollDecision({
+    ...policy,
+    battleWeightPct: resolveFrontPressureBattleWeightPct(policy.systemId, policy.battleWeightPct, holds),
+  });
   if (decision !== 'battle') {
     return statusQuoResult();
   }
@@ -324,12 +333,17 @@ async function runIndependentHoldInvasionJudgment(input: {
     return statusQuoResult();
   }
 
-  const supply = resolveTerritorialSupplyContext({
-    policy,
-    attacker,
-    defender: 'INDEPENDENT',
+  const supply = applyFrontPressureSupplyBonus(
+    resolveTerritorialSupplyContext({
+      policy,
+      attacker,
+      defender: 'INDEPENDENT',
+      holds,
+    }),
+    policy.systemId,
+    policy.supplyBonusCapPct,
     holds,
-  });
+  );
   const combat = resolveTerritorialQuickCombat({
     attackerShipIds,
     defenderShipIds,
@@ -415,17 +429,19 @@ export async function runTerritorialCombatPassForPlanet(
     );
   }
 
-  if (!campaignMeta) {
-    const lastPass = getTerritorialCombatLastPassAtMs(planetId);
-    if (lastPass != null && nowMs - lastPass < policy.passIntervalSec * 1000) {
-      return null;
-    }
-  }
-
   const warStore = useClanWarFoundationStore.getState();
   if (!warStore.hydrated) {
     await warStore.loadLocalClanWarFoundation();
   }
+
+  if (!campaignMeta) {
+    // FrontPressure(캐시 히트 우선, holds invalidate 시에만 recompute) — aggressive면 같은 창에서 최대 N회 허용
+    const front = getFrontPressure(policy.systemId, warStore.planetHolds);
+    if (!isTerritorialPassDueForPlanet(planetId, nowMs, policy.passIntervalSec, front.battlesPerInterval)) {
+      return null;
+    }
+  }
+
   // 총사령관 슬롯 판정(전술 역전) 전 배정 스토어 hydrate 보장 — 멱등·부트 후 즉시 반환
   await hydratePlanetGovernorAssignmentStore();
 
@@ -438,7 +454,15 @@ export async function runTerritorialCombatPassForPlanet(
   }
 
   const previousSide = sideToMapFaction(holdSide);
-  const decision = rollDecision(policy);
+  // aggressive 시 battleWeightPct 소폭 가산(캡은 CSV battleWeightBonusPctAggressive 값 그대로 — 별도 상한 없음, 작은 값 전제)
+  const decision = rollDecision({
+    ...policy,
+    battleWeightPct: resolveFrontPressureBattleWeightPct(
+      policy.systemId,
+      policy.battleWeightPct,
+      warStore.planetHolds,
+    ),
+  });
 
   let newSide = previousSide;
   let holdChanged = false;
@@ -450,6 +474,7 @@ export async function runTerritorialCombatPassForPlanet(
       planetId,
       nowMs,
       campaignMeta ? { group: campaignMeta.group, orderIndex: campaignMeta.orderIndex } : undefined,
+      policy.passIntervalSec,
     );
   };
 
@@ -513,12 +538,17 @@ export async function runTerritorialCombatPassForPlanet(
   const attackerShipIds = resolveTerritorialFleetShipIds(planetId, attacker);
   const defenderShipIds = resolveTerritorialFleetShipIds(planetId, defender);
 
-  const supply = resolveTerritorialSupplyContext({
-    policy,
-    attacker,
-    defender,
-    holds: holdsSnapshot,
-  });
+  const supply = applyFrontPressureSupplyBonus(
+    resolveTerritorialSupplyContext({
+      policy,
+      attacker,
+      defender,
+      holds: holdsSnapshot,
+    }),
+    policy.systemId,
+    policy.supplyBonusCapPct,
+    holdsSnapshot,
+  );
 
   const usesBinaryDominance =
     policy.combatMode === 'blue_neutral' || policy.combatMode === 'red_neutral';

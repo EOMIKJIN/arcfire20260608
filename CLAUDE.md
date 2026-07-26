@@ -44,12 +44,12 @@ self-check: `npx tsc --noEmit -p tsconfig.client.json` · Skia 변경 시 `npm r
 
 | 착수 대기 작업 | handoff | 명세 |
 |------|---------|------|
-| **아크코어 판테온 12좌·외곽·잔해유물 (P0 · 2026-07-24)** | `tools/kim-team-lead/reports/kim-claude-ready-arc-core-pantheon-relics.md` | 신명·world_nodes·salvage 유물·도감·SubCore 12좌 재편 |
-| 미발견 성계 별빛 레이어 | `tools/kim-team-lead/reports/kim-claude-ready-undiscovered-starlight.md` | hash 희소 + Path 배칭 · **REVIEWED** |
-| 허브 순회 native_heap (A안) | `tools/kim-team-lead/reports/kim-claude-ready-hub-hop-native-heap-fix.md` | A1 Image 다운샘플 + A2 planet_change Fresco trim |
-| 플레이어 독립국가(녹색 국경) | `tools/kim-team-lead/reports/kim-claude-ready-player-independent-nation.md` | `docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md` |
+| **허브 순회 native_heap (A안)** | `tools/kim-team-lead/reports/kim-claude-ready-hub-hop-native-heap-fix.md` | A1 Image 다운샘플 + A2 planet_change Fresco trim |
+| **플레이어 독립국가(녹색 국경)** | `tools/kim-team-lead/reports/kim-claude-ready-player-independent-nation.md` | `docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md` |
 
-대표님 지시 시 **별빛 P0**부터 읽고 구현 → `kim-claude-handoff-pending.md` **PENDING** · **commit 금지**.
+> **최근 REVIEWED**: FrontPressure(`front-pressure-tactics-20260726`) · 판테온 유물 · 미발견 별빛 — `kim-claude-handoff-pending.md` 상단 참조.
+
+대표님 지시 시 READY 파일부터 읽고 구현 → `kim-claude-handoff-pending.md` **PENDING** · **commit 금지**.
 
 ## 어디를 보면 되는지
 

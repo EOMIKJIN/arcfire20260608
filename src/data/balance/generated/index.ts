@@ -3,6 +3,7 @@ export { AiVirtualPlayerDensity_FROM_BALANCE_CSV } from './csvAiVirtualPlayerDen
 export { ArcCoreCentralBankPolicy_FROM_BALANCE_CSV } from './csvArcCoreCentralBankPolicy';
 export { ArcCoreContestedZoneAftermathPolicy_FROM_BALANCE_CSV } from './csvArcCoreContestedZoneAftermathPolicy';
 export { ArcCoreDailyOpsPolicy_FROM_BALANCE_CSV } from './csvArcCoreDailyOpsPolicy';
+export { ArcCoreFrontPressurePolicy_FROM_BALANCE_CSV } from './csvArcCoreFrontPressurePolicy';
 export { ArcCoreInboundDronePolicy_FROM_BALANCE_CSV } from './csvArcCoreInboundDronePolicy';
 export { ArcCorePlanetAttackLevelPolicy_FROM_BALANCE_CSV } from './csvArcCorePlanetAttackLevelPolicy';
 export { ArcCorePlanetDevInvestmentPolicy_FROM_BALANCE_CSV } from './csvArcCorePlanetDevInvestmentPolicy';

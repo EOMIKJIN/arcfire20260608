@@ -15,10 +15,21 @@ export type CampaignGroupState = {
   nextPreviewOrderIndex: number;
 };
 
+type PlanetPassWindowState = {
+  lastPassAtMs: number;
+  /** 이번 passInterval 창 시작 시각 — battlesPerInterval(FrontPressure aggressive) 판정용 */
+  windowStartMs?: number;
+  /** windowStartMs 이후 누적 판정 횟수 — bounded(작은 정수, 배열 아님) */
+  passCountInWindow?: number;
+};
+
 type Persisted = {
-  byPlanetId: Record<string, { lastPassAtMs: number }>;
+  byPlanetId: Record<string, PlanetPassWindowState>;
   campaignGroups: Record<string, CampaignGroupState>;
 };
+
+/** passCountInWindow 저장 상한 — 현재 CSV 최대 battlesPerIntervalAggressive=2, 여유만 둠(unbounded 금지) */
+const MAX_TRACKED_PASS_COUNT_IN_WINDOW = 8;
 
 let mem: Persisted = { byPlanetId: {}, campaignGroups: {} };
 let hydrated = false;
@@ -128,6 +139,26 @@ export function getTerritorialCombatLastPassAtMs(planetId: string): number | nul
   return typeof row?.lastPassAtMs === 'number' ? row.lastPassAtMs : null;
 }
 
+/**
+ * 이번 passInterval 창에서 아직 battlesPerInterval 미만이면 due.
+ * FrontPressure aggressive 성계는 battlesPerInterval>1이라 같은 창에서 최대 N회까지 허용
+ * (기존엔 planetId당 1회 게이트였으나, 「시간당 1→2」 요청으로 창 단위 카운터로 확장).
+ */
+export function isTerritorialPassDueForPlanet(
+  planetId: string,
+  nowMs: number,
+  passIntervalSec: number,
+  battlesPerInterval: number,
+): boolean {
+  const row = mem.byPlanetId[planetId];
+  if (!row) return true;
+  const windowStartMs = typeof row.windowStartMs === 'number' ? row.windowStartMs : row.lastPassAtMs;
+  const intervalMs = passIntervalSec * 1000;
+  if (nowMs - windowStartMs >= intervalMs) return true;
+  const passCountInWindow = typeof row.passCountInWindow === 'number' ? row.passCountInWindow : 1;
+  return passCountInWindow < Math.max(1, battlesPerInterval);
+}
+
 export function getTerritorialCampaignGroupState(
   campaignGroup: string,
 ): CampaignGroupState | null {
@@ -162,13 +193,26 @@ export async function markTerritorialCombatPassCompleted(
   planetId: string,
   nowMs: number,
   campaign?: { group: string; orderIndex: number },
+  passIntervalSec?: number,
 ): Promise<void> {
   let previewAdvanced = false;
+  const prevRow = mem.byPlanetId[planetId];
+  const intervalMs = (passIntervalSec ?? 0) * 1000;
+  const prevWindowStartMs =
+    typeof prevRow?.windowStartMs === 'number' ? prevRow.windowStartMs : (prevRow?.lastPassAtMs ?? 0);
+  const sameWindow = intervalMs > 0 && prevRow != null && nowMs - prevWindowStartMs < intervalMs;
+  const windowStartMs = sameWindow ? prevWindowStartMs : nowMs;
+  const passCountInWindow = sameWindow
+    ? Math.min(
+        MAX_TRACKED_PASS_COUNT_IN_WINDOW,
+        (typeof prevRow?.passCountInWindow === 'number' ? prevRow.passCountInWindow : 1) + 1,
+      )
+    : 1;
   mem = {
     ...mem,
     byPlanetId: {
       ...mem.byPlanetId,
-      [planetId]: { lastPassAtMs: nowMs },
+      [planetId]: { lastPassAtMs: nowMs, windowStartMs, passCountInWindow },
     },
     campaignGroups: { ...mem.campaignGroups },
   };

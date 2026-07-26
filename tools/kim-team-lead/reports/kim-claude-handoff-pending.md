@@ -5,6 +5,95 @@
 
 ---
 
+## ✅ REVIEWED — 전선 압박(FrontPressure)·공격 전술 자동전환 (M0~M6) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-26 · 대표님 「끝나면 자동 검수」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — ready M0~M6 충족 · 코드 수정 없음 |
+| M0 | 독립국·blue_red 양쪽 supply mul 전달 · 시리우스형/공격자 보급 단위 테스트 OK |
+| M1 | `arc_core_front_pressure_policy.csv` + generated + loader · territorial policy **무수정** |
+| M2~M3 | `frontPressureIndex` O(1) 캐시 · holds 인자 주입(RN 비의존) · invalidate 2경로 · planetId 하드코딩 없음 |
+| M4 | `isTerritorialPassDueForPlanet` + window 카운터 bounded · aggressive→2 · 캠페인 미적용(허용) |
+| M5 | supply/battleWeight aggressive 가산 · cap 존중 |
+| M6 | `FRONT_PRESSURE_TACTICS_v0.md` OK |
+| M7 | 미착수(선택·명시 OK) |
+| 게이트 | `tsc` PASS · `audit:memory:all` PASS · unit tests PASS |
+| 커밋 | **미커밋** — 대표님 지시 시 김팀장 커밋 |
+| soft | invalidate 일부 경로 TTL 의존 · `passIntervalMulAggressive` 미배선(CSV=1) · 실기 미확인 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-26 (김팀장 검수) · 2026-07-26(김클로드 구현) |
+| **task_id** | `front-pressure-tactics-20260726` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-front-pressure-tactics.md` |
+
+### [pss-pre-dev]
+```
+[pss-pre-dev] hot_path=holds변경1회·territorial_pass게이트 · alloc=틱당금지·dirty성계만 · cache=FrontPressure_O1_Map
+[pss-pre-dev] stage=월드축(ArcCore)·purge분류명시 · risk=P1(틱금지)·P3(holds invalidate)
+[pss-pre-dev] verdict=PASS — 60s probe에서 전은하 재스캔 금지·자세는 이벤트 재계산만
+```
+
+---
+
+## 📦 ARCHIVE — 김클로드 원문 (FrontPressure · status→REVIEWED)
+
+| 필드 | 값 |
+|------|-----|
+| **status** | ~~PENDING~~ → **REVIEWED** (상단 참조) |
+| **updated** | 2026-07-26 (김클로드) |
+| **task_id** | `front-pressure-tactics-20260726` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-front-pressure-tactics.md` |
+| **문서** | `docs/strategy/FRONT_PRESSURE_TACTICS_v0.md`(M6 신규) · `docs/strategy/ARC_CORE_TACTICAL_AUTOMATION_AND_GALAXY_STRATEGY.md`(교차) |
+| **요청자** | 대표님 「김클로드가 개발」→ 김팀장 배정 → "@김클로드 ... M0~M6 구현" |
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=holds변경1회·territorial_pass게이트 · alloc=틱당금지·dirty성계만 · cache=FrontPressure_O1_Map
+[pss-pre-dev] stage=월드축(ArcCore)·purge분류명시 · risk=P1(틱금지)·P3(holds invalidate)
+[pss-pre-dev] verdict=PASS — 60s probe에서 전은하 재스캔 금지·자세는 이벤트 재계산만
+```
+
+### M0 — 보급 mul 배선 검증: **이미 정상, 갭 없음**
+
+`resolveTerritorialQuickCombat`가 일반·독립국 경로 모두 supply 전달 — 누락 없음. 시리우스형 고립·공격자 보급 단위 테스트 추가.
+
+### M1 — Table-First
+
+`tables/balance/arc_core_front_pressure_policy.csv` → generated + `arcCoreFrontPressurePolicy.ts`. 기존 territorial combat policy **무수정**.
+
+### M2~M3 — FrontPressure 모듈
+
+`frontPressureIndex.ts` — holds 주입·캐시·invalidate(`applyArcCoreTerritorialHold`·`claimPlanetOwnershipByPurchase`).
+
+### M4 — battlesPerInterval
+
+창 단위 카운터 · aggressive=2 · 캠페인 그룹 미적용.
+
+### M5 — 보급 연동
+
+aggressive 시 defender supply·battleWeight 가산(캡 존중).
+
+### M6 — 문서
+
+`docs/strategy/FRONT_PRESSURE_TACTICS_v0.md`.
+
+### M7 — **미착수** (선택·명시)
+
+### self-check (김클로드)
+
+- [x] tsc · audit:memory:all · build:balance-tables · unit tests · commit 안 함
+
+### 리스크·주의 (김클로드)
+
+invalidate 일부 경로 TTL 의존 · 캠페인 battlesPerInterval 미적용 · 실기 미확인.
+
+---
+
 ## ✅ REVIEWED — 아크코어 판테온 12좌 · 잔해 유물 (M1~M6) · 김클로드
 
 ### 김팀장 검수 (본창 Cursor · 2026-07-24 ~23:05 KST)

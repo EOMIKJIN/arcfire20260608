@@ -50,7 +50,8 @@ import {
   promoteDynamicContestedZone,
   promoteDynamicContestedZonesFromOperations,
 } from '../arcCore/territorial/dynamicContestedZoneStore';
-import { hasAdjacentHostileFactionSystem } from '../arcCore/territorial/territorialSupplyLine';
+import { hasAdjacentHostileFactionSystem, listAdjacentSystemIds } from '../arcCore/territorial/territorialSupplyLine';
+import { invalidateFrontPressure } from '../arcCore/territorial/frontPressureIndex';
 import { reassignPlanetGovernorForOccupationSync } from '../game/planetGovernor/reassignPlanetGovernorForOccupation';
 import { hydratePlanetGovernorAssignmentStore } from '../game/planetGovernor/planetGovernorAssignmentStore';
 
@@ -358,6 +359,10 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
       neutralizedAt: null,
     };
     set({ planetHolds: { ...get().planetHolds, [planetId]: nextHold } });
+    // FrontPressure — 독립국 편입으로 이 성계·인접 성계의 posture가 바뀔 수 있음(시리우스 시나리오 트리거)
+    if (nextHold.systemId) {
+      invalidateFrontPressure([nextHold.systemId, ...listAdjacentSystemIds(nextHold.systemId)]);
+    }
     const p = usePlayerStore.getState().player;
     if (p && p.uid === uid) {
       usePlayerStore.getState().setPlayer({
@@ -659,6 +664,8 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
       planetId,
       newFactionSide: factionSide,
     });
+    // FrontPressure — 이 성계 + 인접 성계의 posture/battlesPerInterval이 이 hold 변경으로 달라질 수 있음
+    invalidateFrontPressure([systemId, ...listAdjacentSystemIds(systemId)]);
     void get().persistClanWarFoundation();
     return { changed: true, previousSide, newSide, operationId };
   },
