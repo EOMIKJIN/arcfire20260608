@@ -93,7 +93,33 @@ ${tl ? `<tr><td>${esc(tl.iso_time)}</td><td>${esc(tl.pid)}</td><td>${esc(tl.pss_
 </body></html>`;
 
   fs.mkdirSync(LOG_DIR, { recursive: true });
-  fs.writeFileSync(OUT_HTML, html, 'utf8');
+  // 원자적 교체 — 자정 daily-commit이 읽는 중 short read 방지 (tmp → rename)
+  const tmp = `${OUT_HTML}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, html, 'utf8');
+  try {
+    fs.renameSync(tmp, OUT_HTML);
+  } catch {
+    try {
+      fs.unlinkSync(OUT_HTML);
+    } catch {
+      /* ignore */
+    }
+    try {
+      fs.renameSync(tmp, OUT_HTML);
+    } catch (err) {
+      try {
+        fs.copyFileSync(tmp, OUT_HTML);
+        fs.unlinkSync(tmp);
+      } catch {
+        try {
+          fs.unlinkSync(tmp);
+        } catch {
+          /* ignore */
+        }
+        throw err;
+      }
+    }
+  }
   process.stdout.write(`dashboard=${OUT_HTML}\n`);
 }
 

@@ -27,6 +27,29 @@ const NEVER_STAGE = [
   'GoogleService-Info.plist',
 ];
 
+/**
+ * 상시 모니터가 쓰는 중이라 `git add` short-read/index 실패를 유발하는 휘발 파일.
+ * add 단계에서 pathspec 제외 + 이후 unstage 이중 방어.
+ * (2026-07-27 자정: MONITOR_DASHBOARD_LATEST.html short read → commit/push 전부 실패)
+ */
+const VOLATILE_SKIP_STAGE = [
+  'tools/long-run-monitor/logs/MONITOR_DASHBOARD_LATEST.html',
+  'tools/long-run-monitor/logs/MONITOR_STATUS_LATEST.json',
+  'tools/long-run-monitor/logs/heartbeat.log',
+  'tools/long-run-monitor/logs/perpetual-watchdog.log',
+  'tools/long-run-monitor/logs/remediation.log',
+  'tools/long-run-monitor/logs/schedule-8am-report.log',
+  'tools/long-run-monitor/logs/mem-alerts.log',
+  'tools/long-run-monitor/logs/daily-balance-ops.log',
+  'tools/long-run-monitor/logs/.last-adb-meminfo.utc',
+  'tools/long-run-monitor/logs/.incident-poll-line-offset',
+  'tools/long-run-monitor/logs/.daily-balance-ops-kst-day.txt',
+  'tools/kim-team-lead/reports/.kim-claude-auto-review-followup.json',
+];
+
+const GIT_ADD_MAX_ATTEMPTS = 4;
+const GIT_ADD_RETRY_MS = 2000;
+
 function run(cmd, args, opts = {}) {
   const r = spawnSync(cmd, args, {
     cwd: ROOT,
@@ -36,6 +59,42 @@ function run(cmd, args, opts = {}) {
     ...opts,
   });
   return { status: r.status ?? 1, stdout: r.stdout || '', stderr: r.stderr || '' };
+}
+
+function sleepMs(ms) {
+  const end = Date.now() + ms;
+  while (Date.now() < end) {
+    /* busy-wait — 자정 1회 파이프라인용, 추가 의존성 없음 */
+  }
+}
+
+function isTransientGitAddFailure(combined) {
+  return /short read|failed to insert into database|unable to index file|index\.lock|unable to write new index/i.test(
+    combined,
+  );
+}
+
+/** volatile 제외 + 일시 실패 시 재시도 */
+function gitAddAllWithRetry() {
+  const excludes = VOLATILE_SKIP_STAGE.map((p) => `:!${p.replace(/\\/g, '/')}`);
+  const args = ['add', '-A', '--', '.', ...excludes];
+  let last = { status: 1, stdout: '', stderr: '' };
+  for (let attempt = 1; attempt <= GIT_ADD_MAX_ATTEMPTS; attempt += 1) {
+    last = run('git', args, { shell: false });
+    if (last.status === 0) {
+      if (attempt > 1) logLine(`git add succeeded on attempt ${attempt}`);
+      return last;
+    }
+    const combined = `${last.stdout}\n${last.stderr}`;
+    if (!isTransientGitAddFailure(combined) || attempt === GIT_ADD_MAX_ATTEMPTS) {
+      return last;
+    }
+    logLine(
+      `git add transient failure (attempt ${attempt}/${GIT_ADD_MAX_ATTEMPTS}) — retry in ${GIT_ADD_RETRY_MS}ms`,
+    );
+    sleepMs(GIT_ADD_RETRY_MS);
+  }
+  return last;
 }
 
 function logLine(msg) {
@@ -76,9 +135,10 @@ function alreadySnapshottedToday(dateKey) {
 }
 
 function unstageSensitivePaths() {
-  for (const rel of NEVER_STAGE) {
+  const paths = [...NEVER_STAGE, ...VOLATILE_SKIP_STAGE];
+  for (const rel of paths) {
     if (!fs.existsSync(path.join(ROOT, rel))) continue;
-    run('git', ['reset', 'HEAD', '--', rel]);
+    run('git', ['reset', 'HEAD', '--', rel], { shell: false });
   }
 }
 
@@ -134,9 +194,9 @@ function main() {
     process.exit(0);
   }
 
-  const add = run('git', ['add', '-A']);
+  const add = gitAddAllWithRetry();
   if (add.status !== 0) {
-    logLine(`git add failed: ${add.stderr.trim()}`);
+    logLine(`git add failed: ${(add.stdout + add.stderr).trim()}`);
     process.exit(add.status);
   }
 

@@ -66,6 +66,10 @@ chore(daily): snapshot 2026-06-19 (KST)
 
 `.env*`·`google-services.json` 등은 stage 후 **unstage** (`.gitignore`와 이중 방어).
 
+**휘발 모니터 파일**(`MONITOR_DASHBOARD_LATEST.html`·`MONITOR_STATUS_LATEST.json`·heartbeat 등)은
+`git add` pathspec에서 **선제 제외** + unstage 이중 방어. 모니터 동시 쓰기 short-read 시
+`git add`를 최대 4회 재시도 (2026-07-27 자정 실패 대처).
+
 ## GitHub Actions (선택)
 
 `.github/workflows/daily-commit-audit.yml` — 원격 audit 보고서만 (로컬 전체 스냅샷 대체 아님).
