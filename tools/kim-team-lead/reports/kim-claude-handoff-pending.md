@@ -5,6 +5,209 @@
 
 ---
 
+## ✅ REVIEWED — 은하 지도 플레이어 독립국 국가명 라벨 (M0~M4) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-27 · 대표님 「검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — READY M0~M4 충족 · 검수 중 코드 수정 없음 |
+| M0 | 원인=`MIN_LABEL_COMPONENT_AREA_PX2` 공용 적용 → 소형 independent skip · 단위테스트 재현 근거 OK |
+| M1 | `MIN_LABEL_COMPONENT_AREA_INDEPENDENT_PX2=0` · blue/red 12_000 **유지** |
+| M2 | `buildOccupationLabels` 위치식 무수정 · `TERRITORY_LABEL` 공용 유지 |
+| M3 | i18n/`worldmap.tsx` 무수정 |
+| M4 | unit 3케이스 PASS · import→`mapFactionSideCore` (tsx 테스트용·동작 동일) OK |
+| 게이트 | `tsc` PASS · unit PASS |
+| 커밋 | **미커밋** — 대표님 지시 시 김팀장 커밋 |
+| soft | 실기(월드맵) 미확인 · 극소 셀에서도 라벨 표시(의도) |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-27 (김팀장 검수) · 2026-07-27(김클로드 구현) |
+| **task_id** | `galaxy-map-independent-nation-label-20260727` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-galaxy-map-independent-nation-label.md` |
+
+### [pss-pre-dev]
+```
+[pss-pre-dev] hot_path=worldmap_useMemo_1회 · alloc=라벨배열N개상한 · cache=voronoi모델기존
+[pss-pre-dev] stage=galaxy_map · risk=P1(틱금지)·P3(memo deps)
+[pss-pre-dev] verdict=PASS — 렌더/틱 신규루프금지·기존 occupationLabels 파이프라인확장만
+```
+
+---
+
+## 📦 ARCHIVE — 김클로드 원문 (독립국 국가명 라벨 · status→REVIEWED)
+
+| 필드 | 값 |
+|------|-----|
+| **status** | ~~PENDING~~ → **REVIEWED** (상단 참조) |
+| **updated** | 2026-07-27 (김클로드) |
+| **task_id** | `galaxy-map-independent-nation-label-20260727` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-galaxy-map-independent-nation-label.md` |
+
+### M0~M4 요약 (김클로드)
+- M0: 면적 게이트로 independent 1성계 skip
+- M1: independent만 하한 0
+- M2~M3: 위치·폰트·i18n 기존 유지
+- M4: unit 3 + mapFactionSideCore import
+
+---
+
+## ✅ REVIEWED — 아크코어 수송선단 체류 튕김·부자연 회전 (M0~M4) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-27 · 대표님 「검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — READY M0~M2·M4 충족 · M3 미착수(허용) · 검수 중 코드 수정 없음 |
+| M0 | `publishSnapshot`의 `orbitAngleRad+=`·`readPlanetOrbitClockMs` 제거 · worklet 단일 적분 |
+| M1 | dwelling 반경 재할당 삭제 · entering 시작 시 `orbitRadiusPx`/`orbitAngleRad` 확정 |
+| M2 | `orbitAng += (phaseEl0+dt)*rate` · unit 3케이스 PASS(재-pack 연속) |
+| M3 | 타원 각속도 — **미착수**(선택·기존값 재확인 대상) OK |
+| M4 | AiNpc / worklets / SkiaLayer 계약 주석 OK |
+| 게이트 | `tsc` PASS · unit PASS · `audit:worklet-contract` PASS |
+| 커밋 | **미커밋** — 대표님 지시 시 김팀장 커밋 |
+| soft | 실기 30초+ 미확인 · wall(`phaseElapsedSec`) vs orbit SharedValue(`dt`) 잔여 드리프트 가능 · M3 후속 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-27 (김팀장 검수) · 2026-07-27(김클로드 구현) |
+| **task_id** | `arc-transport-dwell-jank-20260727` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-arc-transport-dwell-jank.md` |
+
+### [pss-pre-dev]
+```
+[pss-pre-dev] hot_path=orbit_worklet_60fps·snapshot_0.25s · alloc=flat재팩시점만 · cache=arcPackSig
+[pss-pre-dev] stage=planet_hub_orbit · risk=P1(이중적분)·P3(전함재팩동기화)
+[pss-pre-dev] verdict=PASS — 틱당 신규할당금지·sync/적분 단일화만
+```
+
+---
+
+## 📦 ARCHIVE — 김클로드 원문 (수송 체류 튕김 · status→REVIEWED)
+
+| 필드 | 값 |
+|------|-----|
+| **status** | ~~PENDING~~ → **REVIEWED** (상단 참조) |
+| **updated** | 2026-07-27 (김클로드) |
+| **task_id** | `arc-transport-dwell-jank-20260727` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-arc-transport-dwell-jank.md` |
+
+### M0~M4 요약 (김클로드)
+- M0: JS 이중적분 삭제 · worklet-only
+- M1: dwelling 반경 점프 제거
+- M2: phaseEl 앵커 공식 + unit test
+- M3: 미착수 · M4: 주석
+
+---
+
+## ✅ REVIEWED — 점령·중립화·소유권 후 「국가」표시 연동 (M0~M5) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-27 · 대표님 「김팀장 검수시작」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — READY M0~M5 충족 · 검수 중 코드 수정 없음 |
+| M0 | Core/글루 분리 · `resolveMapFactionSideFromClanId` 재사용 · independent=`worldmap.territory.nation.independent` |
+| M1 | strip ko/en + reprefix · neutral→접두 제거 |
+| M2 | `resolvePlanetTableDescription` 반환 직전 단일 주입 OK |
+| M3 | C1~C7 코드추적+단위테스트 근거 수용 |
+| M4 | `occupierFactionLabelKo` independent→동일 i18n 키 |
+| M5 | unit 10케이스 PASS |
+| P3 | Overlay `planetDescription` memo에 hold deps 추가 확인 |
+| 게이트 | `tsc` PASS · unit PASS · `planets.csv` diff 없음 |
+| 커밋 | **미커밋** — 대표님 지시 시 김팀장 커밋 |
+| soft | 실기(시리우스) 미확인 · stage 설명에도 접두 신규 부착(의도적·되돌리기 용이) · hold 미시드 시 neutral로 접두 제거 가능(시드 파이프라인 전제) |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-27 (김팀장 검수) · 2026-07-27(김클로드 구현) |
+| **task_id** | `planet-nation-display-sync-20260727` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-planet-nation-display-sync.md` |
+
+### [pss-pre-dev]
+```
+[pss-pre-dev] hot_path=행성정보오버레이오픈·스냅샷1회 · alloc=문자열치환1회 · cache=hold키미사용금지
+[pss-pre-dev] stage=dispose불필요(순수표시) · risk=P3(설명memo시hold미포함)·P1(틱경로금지)
+[pss-pre-dev] verdict=PASS — CSV기존값불변·런타임접두만재작성·틱/persist추가금지
+```
+
+---
+
+## 📦 ARCHIVE — 김클로드 원문 (국가 표시 연동 · status→REVIEWED)
+
+| 필드 | 값 |
+|------|-----|
+| **status** | ~~PENDING~~ → **REVIEWED** (상단 참조) |
+| **updated** | 2026-07-27 (김클로드) |
+| **task_id** | `planet-nation-display-sync-20260727` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-planet-nation-display-sync.md` |
+| **요청자** | 대표님 — 시리우스 점령→중립화→소유권 구매 후 국경 OK · 행성정보 `[국가:…]` CSV 고정 |
+
+### M0~M5 요약 (김클로드)
+
+- M0~M1: `resolvePlanetRuntimeNationDisplay(Core)` · strip/reprefix
+- M2: `resolvePlanetTableDescription` 단일 주입
+- M3~M4: C1~C7 · 점유 팩션 independent 라벨 정렬 · Overlay hold deps
+- M5: unit 10 PASS · csv 무수정 · commit 안 함
+
+---
+
+## ✅ REVIEWED — 허브 10초 리스폰 삭제 · 30분 재개대기 범용 (M0~M4) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-27)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — ready M0~M4 충족 · 검수 중 소수정정 1건 |
+| M0 | `RESPAWN_DELAY`·`respawnDestroyedAgents`·스케줄 전량 삭제 · repo 잔존 grep 0 |
+| M1 | 블루 승+플레이어 참전 시 `markWaveCombatVictoryCooldown` · 30분 상수 유지 |
+| M2 | `enemyFleetEntered`에 `!isWaveCombatCooldownActive` · 진행 중 웨이브는 게이트 밖 |
+| M3 | 웨이브 정합 코드 추적 OK · 실기 soft |
+| M4 | 스토어·컨트롤러 헤더 계약 주석 OK |
+| **검수 수정** | 웨이브 **중간** 클리어마다 mark → 패배해도 30분 잔존 위험 → **허브·최종웨이브만** mark |
+| 게이트 | `tsc` PASS · `audit:memory:all` PASS |
+| 커밋 | **미커밋** — 대표님 지시 시 김팀장 커밋 |
+| soft | 실기(드라코) 미확인 · `respawnAtWallRef` 필드 잔존(항상 null) |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-27 (김팀장 검수) · 2026-07-27(김클로드 구현) |
+| **task_id** | `hub-combat-cooldown-universal-20260727` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-hub-combat-cooldown-universal.md` |
+
+### [pss-pre-dev]
+```
+[pss-pre-dev] hot_path=교전종료1회·쿨다운조회sync · alloc=틱당리스폰예약금지 · cache=waveCombatCooldown_O1_Map
+[pss-pre-dev] stage=planet_hub_combat·account_purge연동유지 · risk=P1(틱할당금지)·P6(persist저빈도)
+[pss-pre-dev] verdict=PASS — 10초 리스폰 루프 제거·쿨다운은 이벤트1회 mark만
+```
+
+---
+
+## 📦 ARCHIVE — 김클로드 원문 (허브 쿨다운 · status→REVIEWED)
+
+| 필드 | 값 |
+|------|-----|
+| **status** | ~~PENDING~~ → **REVIEWED** (상단 참조) |
+| **updated** | 2026-07-27 (김클로드) |
+| **task_id** | `hub-combat-cooldown-universal-20260727` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-hub-combat-cooldown-universal.md` |
+
+### M0~M4 요약 (김클로드)
+
+- M0: RESPAWN 10초·`respawnDestroyedAgents` 삭제 · resume도 null 고정
+- M1: 허브 블루 승+플레이어 mark (검수에서 최종웨이브 게이트 추가)
+- M2: `enemyFleetEntered` 쿨다운 게이트
+- M3~M4: 웨이브 정합·주석
+- 패배 쿨다운: 미확장(승리만)
+
+---
+
 ## ✅ REVIEWED — 전선 압박(FrontPressure)·공격 전술 자동전환 (M0~M6) · 김클로드
 
 ### 김팀장 검수 (본창 Cursor · 2026-07-26 · 대표님 「끝나면 자동 검수」)

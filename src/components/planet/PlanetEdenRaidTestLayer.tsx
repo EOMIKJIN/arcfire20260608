@@ -133,6 +133,7 @@ export {
 } from '../../combat/capitalRealtimeCombatGate';
 import { getWaveFleetSeedOverride, useWaveDefenseStore } from '../../game/waveDefense/waveDefenseStore';
 import { WAVE_DEFENSE_MAX_WAVES } from '../../game/waveDefense/waveDefenseFleet';
+import { markWaveCombatVictoryCooldown } from '../../game/waveDefense/waveCombatCooldownStore';
 
 type StageFleetSeedSlot = {
   team: 'red' | 'blue' | 'orange';
@@ -314,9 +315,6 @@ const DIAMOND_HEADING_OFFSET_DEG = 90;
 const LASER_MUZZLE_FORWARD_PX = ALLY_MARK_HALF + 3;
 /** 임시: 선수(`headingRad`) 확인용 짧은 표시선 길이(px) */
 const DEBUG_CAPITAL_BOW_LINE_PX = 22;
-/** 테스트: 한쪽 격침 후 전원 리스폰 — 임시 10초(밸런스 확정 전) */
-const RESPAWN_DELAY_MS = 10_000;
-
 type Pt = { x: number; y: number };
 
 /** 1:1 전함 시뮬 에이전트 — `src/combat` 등 외부 스테이지에서 레이아웃·HP만 조정할 때 사용 */
@@ -455,10 +453,6 @@ type TeamAgentBuckets = { red: Agent[]; blue: Agent[]; orange: Agent[] };
 
 /** HUD 스냅샷용 sparse id 버퍼 — `buildCombatHudLogSnapshot`에서만 사용(GC 없음). */
 const HUD_SCRATCH_AGENT_ID_BUF: (Agent | undefined)[] = [];
-/** `respawnDestroyedAgents` 와이드 앵커용 — 리스폰 시에만 사용 */
-const RESPAWN_BLEND_BUCKETS: TeamAgentBuckets = { red: [], blue: [], orange: [] };
-const RESPAWN_BLEND_SLOT_BY_ID: number[] = [];
-const RESPAWN_BLEND_IDBUF: (Agent | undefined)[] = [];
 const WARNED_MISSING_WEAPON_IDS = new Set<string>();
 
 /** `p0`는 발사 시 고정. `p1`·`p2`는 살아 있는 표적을 매 프레임 추적(유도). */
@@ -2547,60 +2541,6 @@ function initAgents(
   return agents;
 }
 
-/** 격침된 전함만 리스폰. 생존 전함은 위치/상태를 유지. 팀 전열 슬롯에 맞춰 재배치 후 표적 재배정. */
-function respawnDestroyedAgents(
-  agents: Agent[],
-  orbitSize: number,
-  margin: number,
-  wallBaseMs: number,
-  spawnVariant: DuelSpawnVariant,
-): void {
-  const cx = orbitSize * 0.5;
-  const cy = orbitSize * 0.5;
-  const duelWide = initialSpawnDuelWidePositions(spawnVariant, cx, cy, margin, orbitSize);
-  const maxId = rebuildAgentIdSparseBuf(agents, RESPAWN_BLEND_IDBUF);
-  refillTeamBucketsWithSlots(agents, RESPAWN_BLEND_BUCKETS, RESPAWN_BLEND_SLOT_BY_ID, maxId);
-  for (const ag of agents) {
-    if (ag.alive) continue;
-    const anchor = fleetWideBlendAnchorPose(
-      duelWide,
-      ag,
-      RESPAWN_BLEND_BUCKETS,
-      RESPAWN_BLEND_SLOT_BY_ID,
-      margin,
-      orbitSize,
-    );
-    ag.x = anchor.x;
-    ag.y = anchor.y;
-    ag.headingRad = anchor.headingRad;
-    ag.vx = 0;
-    ag.vy = 0;
-    ag.headingRateRadPerMs = 0;
-    ag.hullHp = ag.maxHullHp;
-    ag.shieldHp = ag.maxShieldHp;
-    ag.alive = true;
-    ag.nextFireMs = wallBaseMs;
-    ag.nextMissileSalvoAt = wallBaseMs + (ag.team === 'blue' ? ag.missileFireIntervalMs * 0.5 : 0);
-    ag.activeSalvoBaseMs = null;
-    ag.activeSalvoNextShotAtMs = null;
-    ag.salvoSpawned = 0;
-    ag.lastLaserStartMs = wallBaseMs - 1e9;
-    ag.lastDestroyedAtMs = -1e9;
-    ag.engageStartDelayMs = randRange(0, 1400);
-    ag.detectRangeScale = randRange(0.84, 1.18);
-    ag.lastWeaponFireAtMs = wallBaseMs;
-    ag.speedSlowMul = 1;
-    ag.speedSlowUntilMs = 0;
-    ag.stallChaseBoostUntilMs = 0;
-    ag.tempoRole = 'press';
-    ag.kiteEvasionMode = 'standoff';
-    ag.kiteDistStallSinceMs = null;
-    ag.kiteDistResumeAdvanceUntilMs = 0;
-    ag.currentTargetAgentId = null;
-  }
-  assignInitialCombatTargets(agents);
-}
-
 export type PlanetEdenRaidSim = {
   tMsRef: React.MutableRefObject<number>;
   fpsRef: React.MutableRefObject<number>;
@@ -2673,7 +2613,10 @@ export function usePlanetEdenRaidSim(
   const fpsSampleRef = useRef(0);
   const lastFpsUiUpdateRef = useRef(0);
   const nextTempoJudgeAtRef = useRef(0);
-  /** 한쪽 격침 시 wall 시각 + RESPAWN_DELAY_MS, 리스폰 후 null */
+  /**
+   * @deprecated 자동 리스폰 재교전 삭제(2026-07-27) — 항상 null. 레거시 resume 스냅샷
+   * 타입 호환(`combatResumeStore`)을 위해서만 필드를 유지한다(실제 스케줄 없음).
+   */
   const respawnAtWallRef = useRef<number | null>(null);
   /** 팀 승패 보상(함장 EXP) 중복 지급 방지 */
   const waveOutcomeAwardedRef = useRef(false);
@@ -2731,7 +2674,8 @@ export function usePlanetEdenRaidSim(
     missilesRef.current = [];
     nextMissileId.current = 0;
     missileHitFxRef.current = [];
-    respawnAtWallRef.current = resumeSnap ? resumeSnap.respawnAtElapsedMs : null;
+    // 자동 리스폰 재교전 삭제 — 과거(레거시) 스냅샷에 남아있을 수 있는 값도 복원하지 않음
+    respawnAtWallRef.current = null;
     respawnCountdownSecRef.current = null;
     lastElapsedRef.current = resumeSnap ? resumeSnap.elapsedMs : 0;
     tMsRef.current = resumeSnap ? resumeSnap.elapsedMs : 0;
@@ -2887,27 +2831,6 @@ export function usePlanetEdenRaidSim(
         fpsSampleRef.current += 1;
       }
 
-      if (respawnAtWallRef.current !== null && elapsed >= respawnAtWallRef.current) {
-        respawnDestroyedAgents(
-          agentsRef.current,
-          orbitSize,
-          margin,
-          elapsed,
-          duelSpawnVariantRef.current,
-        );
-        missilesRef.current = [];
-        nextMissileId.current = 0;
-        missileHitFxRef.current = [];
-        respawnAtWallRef.current = null;
-        respawnCountdownSecRef.current = null;
-        lastElapsedRef.current = elapsed;
-        for (const ag of agentsRef.current) {
-          ag.lastWeaponFireAtMs = elapsed;
-          ag.stallChaseBoostUntilMs = 0;
-          ag.lastShieldRegenAtMs = elapsed;
-        }
-      }
-
       const ringTick = ++combatTargetRingTickRef.current;
       const agents = agentsRef.current;
       const idBuf = agentByIdBuf.current;
@@ -2945,19 +2868,8 @@ export function usePlanetEdenRaidSim(
           applyDestruction();
         }
       }
-      const allAlive = agents.every(a => a.alive);
-      if (!allAlive && respawnAtWallRef.current === null && !useWaveDefenseStore.getState().active) {
-        // 웨이브 모드에서는 자동 리스폰 금지 — 전멸(다음 웨이브)·격파(종료)는 웨이브 컨트롤러가 처리
-        respawnAtWallRef.current = elapsed + RESPAWN_DELAY_MS;
-      }
-
-      const waitingRespawn = respawnAtWallRef.current !== null;
-      if (!waitingRespawn) {
-        if (respawnCountdownSecRef.current !== null) respawnCountdownSecRef.current = null;
-      } else if (respawnAtWallRef.current !== null) {
-        const sec = Math.max(0, Math.ceil((respawnAtWallRef.current - elapsed) / 1000));
-        if (respawnCountdownSecRef.current !== sec) respawnCountdownSecRef.current = sec;
-      }
+      // 자동 리스폰 재교전 삭제(2026-07-27) — 전멸 후 재개는 쿨다운(waveCombatCooldownStore) 경유
+      // 재착륙·재진입만 허용(웨이브 모드는 기존대로 컨트롤러가 처리).
 
       const aliveRed = agents.some(a => a.alive && a.team === 'red');
       const aliveBlue = agents.some(a => a.alive && a.team === 'blue');
@@ -3003,6 +2915,12 @@ export function usePlanetEdenRaidSim(
               !wdForReveal.active
               || wdForReveal.planetId !== combatPlanetId
               || wdForReveal.waveIndex >= WAVE_DEFENSE_MAX_WAVES;
+            // 범용 재개 대기(2026-07-27) — 플레이어 참전 블루 승만.
+            // 웨이브 중간 클리어(1~8)에서 mark하면 이후 패배해도 30분이 남는 회귀 → 허브·최종웨이브만.
+            // 웨이브 전체 승리는 planet.tsx handleWaveDefenseRunEnded도 mark(중복 무해).
+            if (winnerTeam === 'blue' && hadPlayerCombat && isFinalWaveOrNonWave) {
+              markWaveCombatVictoryCooldown(combatPlanetId);
+            }
             if (isFinalWaveOrNonWave) {
               maybeTriggerArcCoreShadowRevealOnCombatVictory(
                 combatPlanetId,

@@ -26,6 +26,8 @@ import {
 import { calculatePlanetPgpFromStats } from '../../world/planetPgpModel';
 import { useArcCoreTransportFleetBankStore } from '../../store/factionVault/arcCoreTransportFleetBankStore';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
+import { usePlayerStore } from '../../store/playerStore';
+import { resolveMapFactionSideFromClanId } from '../../galaxyMap/resolveMapFactionSide';
 import {
   planetCsvBaselineToRuntime,
   usePlanetCoreRuntimeStore,
@@ -116,6 +118,7 @@ function vitalityLabelKo(tier: ReturnType<typeof resolvePlanetSupplyVitalityTier
 
 function occupierFactionLabelKo(
   faction: ReturnType<typeof resolveOccupierFactionKindForHold>,
+  occupierClanId: string | null | undefined,
 ): string {
   switch (faction) {
     case 'red':
@@ -124,8 +127,16 @@ function occupierFactionLabelKo(
       return t('econSnap.blueOccupied');
     case 'neutral':
       return t('econSnap.neutral');
-    case 'player_clan':
+    case 'player_clan': {
+      // 지도·행성정보 설명(withRuntimeNationPrefix)과 동일 판정 재사용 — 플레이어 독립국이면
+      // 월드맵과 같은 「{닉네임} 독립국」 라벨, 그 외(AI 클랜 등 player_clan 폴백 버킷)는 기존 라벨 유지.
+      const side = resolveMapFactionSideFromClanId(occupierClanId);
+      if (side === 'independent') {
+        const nickname = usePlayerStore.getState().player?.nickname ?? '';
+        return t('worldmap.territory.nation.independent', { name: nickname });
+      }
       return t('econSnap.playerClanOccupied');
+    }
     default:
       return '—';
   }
@@ -316,7 +327,7 @@ export function buildPlanetEconomyInfoSnapshot(
     pgpBmu,
     stability,
     convoyMonopolyLabel: convoyLabel || getTransportFleetDisplayNameKo(),
-    occupierFactionLabel: occupierFactionLabelKo(faction),
+    occupierFactionLabel: occupierFactionLabelKo(faction, hold?.occupierClanId),
     factionVaultLabel,
     factionVaultBalanceCredits: factionVaultBalance,
     supplyVitalityLabel,

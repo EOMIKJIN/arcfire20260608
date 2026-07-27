@@ -3,6 +3,13 @@
 // 트리거(웨이브 디펜스 행성 도착+10초) → 웨이브1 → (red 전멸=cleared) → 다음 웨이브
 //   → 9웨이브 클리어/플레이어 격파(ended) → 오퍼레이터 종료 대사.
 // sim 루프는 전멸/격파 시 store.phase 만 갱신; 실제 진행 결정은 본 컨트롤러가 담당.
+//
+// 재개 대기(waveCombatCooldownStore) 계약 요약(2026-07-27 허브 메인스테이지 교전과 범용 공유):
+//   - 이 컨트롤러는 웨이브 승리 시 handleWaveDefenseRunEnded(planet.tsx)가 markWaveCombatVictoryCooldown 호출.
+//   - resolvePlanetWaveCombatTrigger가 다음 웨이브 트리거 전에 isWaveCombatCooldownActive를 선행 검사.
+//   - 허브 비-웨이브 교전(PlanetEdenRaidTestLayer, mainStageCombatEnabled 행성)은 자동 리스폰 재교전 없이
+//     동일 쿨다운 스토어를 공유 — planet.tsx의 enemyFleetEntered가 진입 시점에 동일하게 게이트한다.
+//   - 이 훅 자체의 9웨이브·전환 로직·30분 상수는 이번 변경으로 손대지 않음(범용화는 스토어·게이트 레이어에서만).
 // ============================================================
 
 import { useEffect, useRef } from 'react';

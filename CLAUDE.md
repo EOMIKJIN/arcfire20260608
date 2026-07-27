@@ -44,10 +44,12 @@ self-check: `npx tsc --noEmit -p tsconfig.client.json` · Skia 변경 시 `npm r
 
 | 착수 대기 작업 | handoff | 명세 |
 |------|---------|------|
+| **월드맵 독립국 국가명 라벨** | `tools/kim-team-lead/reports/kim-claude-ready-galaxy-map-independent-nation-label.md` | 스텔리움/크림슨과 동일 폰트·위치계산 · task_id=`galaxy-map-independent-nation-label-20260727` |
+| **수송선단 체류 튕김·부자연 회전** | `tools/kim-team-lead/reports/kim-claude-ready-arc-transport-dwell-jank.md` | **REVIEWED PASS** (미커밋) |
 | **허브 순회 native_heap (A안)** | `tools/kim-team-lead/reports/kim-claude-ready-hub-hop-native-heap-fix.md` | A1 Image 다운샘플 + A2 planet_change Fresco trim |
-| **플레이어 독립국가(녹색 국경)** | `tools/kim-team-lead/reports/kim-claude-ready-player-independent-nation.md` | `docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md` |
+| **플레이어 독립국가(녹색 국경)** | `tools/kim-team-lead/reports/kim-claude-ready-player-independent-nation.md` | `docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md` (국경 완료 · 표시 연동은 상단 READY) |
 
-> **최근 REVIEWED**: FrontPressure(`front-pressure-tactics-20260726`) · 판테온 유물 · 미발견 별빛 — `kim-claude-handoff-pending.md` 상단 참조.
+> **최근 REVIEWED**: 허브 쿨다운 범용(`hub-combat-cooldown-universal-20260727`) · FrontPressure · 판테온 — handoff 상단 참조.
 
 대표님 지시 시 READY 파일부터 읽고 구현 → `kim-claude-handoff-pending.md` **PENDING** · **commit 금지**.
 

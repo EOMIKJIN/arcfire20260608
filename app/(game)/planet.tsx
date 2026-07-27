@@ -216,7 +216,7 @@ import {
   resolvePlanetBattleReadyDurationMs,
 } from '../../src/game/planetHub/planetHubConstants';
 import { resolvePlanetWaveCombatTrigger } from '../../src/game/waveDefense/resolvePlanetWaveCombatTrigger';
-import { markWaveCombatVictoryCooldown } from '../../src/game/waveDefense/waveCombatCooldownStore';
+import { isWaveCombatCooldownActive, markWaveCombatVictoryCooldown } from '../../src/game/waveDefense/waveCombatCooldownStore';
 import { promoteDynamicContestedZone } from '../../src/arcCore/territorial/dynamicContestedZoneStore';
 import { usePlanetHubBattleReady } from '../../src/game/planetHub/usePlanetHubBattleReady';
 import { useWaveDefenseStore } from '../../src/game/waveDefense/waveDefenseStore';
@@ -596,7 +596,11 @@ export default function PlanetScreen() {
     && system
     && isPlayerShipCombatCapable(player.ship)
     && (
-      (hasEnemyFleetEnteredPlanetOrbit(planet.id, system.id) && resolveMainStageCombatEnabled(planet.id))
+      // 범용 재개 대기(2026-07-27) — 쿨다운 중이면 새 허브 메인스테이지 교전 진입 차단.
+      // 이미 진행 중인 웨이브 디펜스 런(waveDefenseActiveHere)은 게이트 밖 — 중간에 끊지 않음.
+      (hasEnemyFleetEnteredPlanetOrbit(planet.id, system.id)
+        && resolveMainStageCombatEnabled(planet.id)
+        && !isWaveCombatCooldownActive(planet.id))
       || waveDefenseActiveHere
     ),
   );

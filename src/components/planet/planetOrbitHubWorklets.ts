@@ -43,10 +43,14 @@ export function computeArcNpcShipScreenPacked(
   const edgeAng = finiteOr(flat[b + 5]!, 0);
   const dwellRadPerSec = finiteOr(flat[b + 6]!, 0);
   const dt = (m - t0) * 0.001;
-  if (phaseCode === 1) {
-    orbitAng += dt * dwellRadPerSec;
-  }
+  // phaseEl0(= 이번 phase 진입 이후 JS `tickShips`가 누적한 경과초, 코어 벽시계 기준·throttle 없음)
+  // + dt(마지막 재-pack 이후 worklet 자체 경과, 같은 SharedValue를 worklet이 직접 읽어 지연 없음)
+  // — 두 값 다 신뢰 가능한 시계라 이어붙여도 끊김이 없다. 체류 각도는 이 합산값 하나로만 적분한다
+  // (2026-07-27, arc-transport-dwell-jank) — orbitAng(고정 앵커)는 entering 진입 때 확정된 값.
   const phaseEl = phaseEl0 + dt;
+  if (phaseCode === 1) {
+    orbitAng += phaseEl * dwellRadPerSec;
+  }
   const phaseP = Math.min(1, Math.max(0, phaseEl / phaseDur));
   const edgeX = Math.cos(edgeAng) * ARC_ORBIT_EDGE_R;
   const edgeY = Math.sin(edgeAng) * ARC_ORBIT_EDGE_R * ARC_ORBIT_EDGE_Y_MUL;
@@ -176,10 +180,12 @@ export function jsArcNpcDistanceFromCenter(
   const edgeAng = flat[b + 5]!;
   const dwellRadPerSec = flat[b + 6]!;
   const dt = (m - t0) * 0.001;
-  if (phaseCode === 1) {
-    orbitAng += dt * dwellRadPerSec;
-  }
+  // computeArcNpcShipScreenPacked와 동일 공식(2026-07-27 단일화) — 이 함수는 worklet이 아니지만
+  // "동일 궤도" 계약(위 docstring)을 지키려면 적분 방식도 반드시 같아야 한다.
   const phaseEl = phaseEl0 + dt;
+  if (phaseCode === 1) {
+    orbitAng += phaseEl * dwellRadPerSec;
+  }
   const phaseP = Math.min(1, Math.max(0, phaseEl / phaseDur));
   const edgeX = Math.cos(edgeAng) * ARC_ORBIT_EDGE_R;
   const edgeY = Math.sin(edgeAng) * ARC_ORBIT_EDGE_R * ARC_ORBIT_EDGE_Y_MUL;

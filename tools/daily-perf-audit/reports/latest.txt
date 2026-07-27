@@ -1,4 +1,4 @@
-Daily audit — 2026-07-26T15:31:06.506Z
+Daily audit — 2026-07-27T15:00:06.806Z
 
 TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -46,11 +46,11 @@ Largest TS/TSX under `src/` + `app/` (bytes)
 - 376,711 — `src/data/generated/csvItemDefs.ts`
 - 285,280 — `src/data/generated/csvNpcCaptains.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
-- 151,799 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 149,055 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 115,935 — `src/data/generated/csvStoryScenes.ts`
 - 78,892 — `src/i18n/locales/ko.ts`
 - 78,502 — `app/(game)/worldmap.tsx`
-- 74,183 — `app/(game)/planet.tsx`
+- 74,510 — `app/(game)/planet.tsx`
 - 71,974 — `src/i18n/locales/en.ts`
 - 71,070 — `src/data/generated/csvWeapons.ts`
 - 70,149 — `src/data/balance/generated/csvSynthSystemColonization.ts`

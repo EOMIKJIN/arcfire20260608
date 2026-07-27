@@ -1,7 +1,7 @@
 # Arcfire long-run incident — Kim Team Lead auto-triage
 
-packedAt: 2026-07-24T01:24:11.179Z
-triggerReason: gl_critical_active_hub
+packedAt: 2026-07-27T02:37:28.147Z
+triggerReason: mem_anomaly
 refixPayload: (none)
 
 ## Mandatory agent action (P0)
@@ -15,75 +15,70 @@ refixPayload: (none)
 ## Recent remediation
 
 ```
-[2026-07-24 10:23:31] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
-[2026-07-24 10:23:48] AUTO_FIX baseline reset pid=21744 gl=4.4MB pss=417.1MB
-[2026-07-24 10:23:48] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
-[2026-07-24 10:23:50] INVESTIGATION start reason=mem_anomaly
-[2026-07-24 10:23:50] INVESTIGATION alert=[2026-07-24 10:23:29] GL_HARD_CEILING gl=158.6 pss=1044.8 views=554
-[2026-07-24 10:23:50] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260724-102350.log
-[2026-07-24 10:23:52] INVESTIGATION mem from timeline gl=158.6MB pss=1044.8MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260724-102350.log
-[2026-07-24 10:23:53] packed D:\arcfire20260607\tools\long-run-monitor\outbox\cursor-incident-handoff.md
-[2026-07-24 10:23:53] INVESTIGATION trigger -> .cursor/trigger-incident-auto-fix.json
-[2026-07-24 10:23:53] INVESTIGATION done reason=mem_anomaly
-[2026-07-24 10:24:10] VERIFY PASS pid=21744 gl=9.5MB pss=591.6MB views=335
-[2026-07-24 10:24:10] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":1044.8,"views":554,"lastGlMb":158.6,"hardCeiling":true}
+[2026-07-27 11:34:54] AUTO_FIX static audit:skia-memory start
+[2026-07-27 11:34:56] AUTO_FIX audit:skia-memory PASS
+[2026-07-27 11:34:56] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-07-27 11:35:14] AUTO_FIX baseline reset pid=24122 gl=6MB pss=186MB
+[2026-07-27 11:35:14] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-07-27 11:35:35] VERIFY PASS pid=24122 gl=10.6MB pss=609.4MB views=120
+[2026-07-27 11:35:35] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":957.4,"views":326,"lastGlMb":53.5,"hardCeiling":true}
+[2026-07-27 11:35:37] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-07-27 11:37:24] INVESTIGATION start reason=mem_anomaly
+[2026-07-27 11:37:24] INVESTIGATION alert=[2026-07-27 11:34:53] GL_HARD_CEILING gl=53.5 pss=957.4 views=326
+[2026-07-27 11:37:26] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260727-113724.log
+[2026-07-27 11:37:27] INVESTIGATION mem from timeline gl=10.6MB pss=609.4MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260727-113724.log
 ```
 
 ## Recent incidents
 
 ```
-[2026-07-24 08:14:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260724-0800.md verdict=OK
-[2026-07-24 09:36:49] PSS_SOFT_CEILING pss=855.1 gl=130.1 views=555 native_reclaim_advisory
-[2026-07-24 09:52:21] PSS_SOFT_CEILING pss=851.5 gl=130.1 views=555 native_reclaim_advisory
-[2026-07-24 10:23:29] GL_HARD_CEILING gl=158.6 pss=1044.8 views=554
-[2026-07-24 10:23:29] REFIX_REQUESTED gl_critical_active_hub
-[2026-07-24 10:23:53] INVESTIGATION_TRIGGERED mem_anomaly
+[2026-07-27 09:16:35] DAILY_8AM_REPORT_FAIL D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260727-0800.md MEMINFO_ERROR — Command failed: adb shell pidof com.arcfire.online
+[2026-07-27 09:46:45] PSS_SOFT_CEILING pss=828.6 gl=134.1 views=573 native_reclaim_advisory
+[2026-07-27 10:02:11] PSS_SOFT_CEILING pss=826.1 gl=134.1 views=573 native_reclaim_advisory
+[2026-07-27 10:17:36] PSS_SOFT_CEILING pss=817.4 gl=134.1 views=573 native_reclaim_advisory
+[2026-07-27 11:34:53] GL_HARD_CEILING gl=53.5 pss=957.4 views=326
+[2026-07-27 11:34:54] REFIX_REQUESTED gl_critical_active_hub
 ```
 
 ## Crash signature (tail)
 
 ```
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #45 pc 0000000000786bcc  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #46 pc 0000000000786aa0  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #47 pc 0000000000786a10  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #48 pc 00000000007866b8  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::NodePropsContainer::dispose()+64) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #49 pc 0000000000786138  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::JsiDomNode::invalidate()+200) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #50 pc 00000000007850f4  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::JsiDomNode::dispose(bool)+92) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #51 pc 0000000000783d7c  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::JsiDomRenderNode::dispose(bool)+44) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #52 pc 0000000000786274  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::JsiDomNode::invalidate()+516) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #53 pc 00000000007850f4  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::JsiDomNode::dispose(bool)+92) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #54 pc 0000000000783d7c  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::JsiDomRenderNode::dispose(bool)+44) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #55 pc 00000000008e835c  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::RNSkDomRenderer::~RNSkDomRenderer()+96) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #56 pc 0000000000630cb8  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (std::__ndk1::__shared_ptr_emplace<RNSkia::RNSkDomRenderer, std::__ndk1::allocator<RNSkia::RNSkDomRenderer>>::__on_zero_shared()+28) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #57 pc 000000000061eb5c  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #58 pc 000000000061eb00  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #59 pc 0000000000619fcc  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (std::__ndk1::shared_ptr<RNSkia::RNSkRenderer>::~shared_ptr()+44) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #60 pc 000000000061f3e0  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::RNSkView::~RNSkView()+56) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #61 pc 000000000063054c  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::RNSkDomView::~RNSkDomView()+20) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #62 pc 000000000062d790  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::RNSkAndroidView<RNSkia::RNSkDomView>::~RNSkAndroidView()+20) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #63 pc 000000000062d038  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (std::__ndk1::__shared_ptr_emplace<RNSkia::RNSkAndroidView<RNSkia::RNSkDomView>, std::__ndk1::allocator<RNSkia::RNSkAndroidView<RNSkia::RNSkDomView>>>::__on_zero_shared()+36) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #64 pc 000000000061eb5c  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #65 pc 000000000061eb00  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #66 pc 0000000000614a3c  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (std::__ndk1::shared_ptr<RNSkia::RNSkBaseAndroidView>::~shared_ptr()+44) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #67 pc 00000000006292dc  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::JniSkiaBaseView::~JniSkiaBaseView()+40) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #68 pc 000000000062c5fc  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::JniSkiaDomView::~JniSkiaDomView()+64) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
-07-22 22:50:07.414 26404 26404 F DEBUG   :       #69 pc 000000000062c62c  /data/app/~~1jBCJoN39z3fV1DQIQtvXg==/com.arcfire.online-BetpbiQJUn2jx0c00be3dg==/base.apk!librnskia.so (offset 0x414b000) (RNSkia::JniSkiaDomView::~JniSkiaDomView()+24) (BuildId: a5860719700b671c6e944005d980b317d4862e34)
+07-27 11:36:28.429 24122 24235 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=36 detail=hub_wave_inter_wave
+07-27 11:36:28.429 24122 24235 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_wave_inter_wave keep=sirius_border gpuLayers=skia_nebula_backdrop,skia_combat_orbit
+07-27 11:36:30.058 24122 24235 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-27 11:37:07.420  1861  1898 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+07-27 11:37:08.118  1861  1898 I ActivityManager: Changes in 11073 2 to 15, 255 to 128
+07-27 11:37:08.174  1861  2542 I ActivityManager: Changes in 99002 19 to 10, 0 to 128
+07-27 11:37:08.241  1861  2607 I ActivityManager: Changes in 99002 15 to 15, 128 to 0
+07-27 11:37:08.241  1861  2607 I ActivityManager: Changes in 11073 15 to 15, 128 to 0
+07-27 11:37:08.290 24122 24235 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=app_background nebulaBefore=1
+07-27 11:37:08.300 24122 24235 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_background nebulaBefore=1
+07-27 11:37:08.674 24122 24235 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_background fresco=true
+07-27 11:37:08.803  1861  1898 I ActivityManager: Killing 24122:com.arcfire.online/u0a1073 (adj 900): remove task
+07-27 11:37:09.053  1861  1898 W ActivityManager: setHasOverlayUi called on unknown pid: 24122
+07-27 11:37:10.865  1861  1906 I ActivityManager: Start proc 24418:com.arcfire.online/u0a1073 for activelaunch {com.arcfire.online/com.arcfire.online.MainActivity}
+07-27 11:37:10.865  1861  1906 I ActivityManager: ProcessObserver broadcast disabled
+07-27 11:37:11.887  1861  2886 I ActivityManager: Changes in 99002 19 to 3, 0 to 184
+07-27 11:37:11.887  1861  2886 I ActivityManager: Changes in 11073 19 to 2, 0 to 255
+07-27 11:37:12.088  1861  1898 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+07-27 11:37:22.226  1861  2525 I ActivityManager: Changes in 99002 3 to 10, 184 to 0
+
 ```
 
 ## mem-timeline (tail)
 
 ```csv
 ﻿iso_time,pid,pss_mb,rss_mb,gl_mb,egl_mb,graphics_mb,native_heap_mb,java_heap_mb,threads,views,delta_pss_mb,delta_gl_mb,note
-2026-07-24 07:48:39,18955,713.7,664,32.3,19.8,52.1,298.6,36.3,,358,0.4,0,
-2026-07-24 08:04:06,18955,721.8,672.1,32.3,19.8,52.1,298.7,44.1,,358,8.1,0,
-2026-07-24 08:19:33,18955,736.1,685.7,32.6,34.3,66.9,304.9,36.8,,383,14.3,0.3,
-2026-07-24 08:34:56,18955,747.9,697.7,32.9,40.7,73.5,305.3,41.5,,383,11.8,0.3,
-2026-07-24 08:50:22,18955,721.9,671.7,32.4,20,52.4,300.5,41.3,,357,-26,-0.5,
-2026-07-24 09:05:48,18955,748.8,698.7,34.3,19.8,54.1,308,59.1,,357,26.9,1.9,
-2026-07-24 09:21:15,18955,741.6,691.4,32.3,19.8,52.1,313.7,47,,364,-7.2,-2,
-2026-07-24 09:36:41,18955,855.1,804.6,130.1,19.8,149.9,335.3,41,,555,113.5,97.8,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
-2026-07-24 09:52:14,18955,851.5,801.4,130.1,19.8,149.9,333.6,37.7,,555,-3.6,0,
-2026-07-24 10:07:48,18955,703,508.6,17.6,19.8,37.4,260.6,34,,99,-148.5,-112.5,GL_RECOVERED idle_ok
-2026-07-24 10:23:23,18955,1044.8,914.4,158.6,19.8,178.4,420.7,44,,554,341.8,141,HUB_ACTIVATION gl_mount_ok
-2026-07-24 10:24:10,21744,591.6,,9.5,,,,,,335,,,POST_REMEDIATION_VERIFY_OK
+2026-07-27 00:32:40,,,,,,,,,,,PROCESS_NOT_RUNNING
+2026-07-27 09:16:35,,,,,,,,,,,PROCESS_NOT_RUNNING
+2026-07-27 09:31:37,,,,,,,,,,,PROCESS_NOT_RUNNING
+2026-07-27 09:46:38,17709,828.6,968.6,134.1,19.8,154,405.4,50.6,,573,,,
+2026-07-27 10:02:06,17709,826.1,966,134.1,19.8,154,413.1,41.2,,573,,,
+2026-07-27 10:17:31,17709,817.4,961.5,134.1,19.8,154,401.7,44.2,,573,-8.7,0,
+2026-07-27 10:32:56,21109,717.9,866.3,53.5,40.7,94.2,364.5,37.4,,309,,,
+2026-07-27 10:48:22,21109,718,868.1,49.9,40.7,90.6,387.1,33.2,,306,,,
+2026-07-27 11:03:46,21109,813.8,942.8,27.8,19.8,47.6,524.2,57.4,,99,95.8,-22.1,PSS_SPIKE review=graphics+native
+2026-07-27 11:19:13,21109,699.5,826.7,27.8,19.8,47.6,423.3,41.3,,99,-114.3,0,
+2026-07-27 11:34:47,21109,957.4,1082.3,53.5,40.7,94.1,583,47.7,,326,257.9,25.7,HUB_ACTIVATION gl_mount_ok
+2026-07-27 11:35:35,24122,609.4,,10.6,,,,,,120,,,POST_REMEDIATION_VERIFY_OK
 ```

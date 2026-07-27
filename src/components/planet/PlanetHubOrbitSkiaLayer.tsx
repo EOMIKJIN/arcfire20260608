@@ -143,6 +143,15 @@ export const PlanetHubOrbitSkiaLayer = memo(function PlanetHubOrbitSkiaLayer({
     [arcShips],
   );
 
+  /**
+   * 재-pack(arcPackSig 변경 — 아무 함선이든 phase/planetId/반경 등 변경 시 전원 동시 재앵커) 계약
+   * (2026-07-27, arc-transport-dwell-jank): `syncMsSv`(=t0)는 `readPlanetOrbitClockMs()`의
+   * throttled JS 미러라 worklet이 직접 읽는 진짜 SharedValue보다 지연될 수 있다 — 이 지연 자체는
+   * 고치지 않는다(JS에서 SharedValue.value 직접 읽기는 2026-06-21 SIGSEGV 전례로 금지된 경로).
+   * 대신 dwelling 각도 적분은 `phaseElapsedSec`(JS `tickShips`가 코어 벽시계로 누적, throttle 없음)
+   * + dt(=m-t0, 재-pack 이후 worklet 자체 경과)를 더한 값 하나로만 하므로(`computeArcNpcShipScreenPacked`),
+   * t0 지연이 있어도 재-pack 경계에서 각도가 튀지 않는다(unit test: `planetOrbitHubWorklets.test.ts`).
+   */
   useLayoutEffect(() => {
     if (arcPackSigRef.current === arcPackSig) return;
     arcPackSigRef.current = arcPackSig;

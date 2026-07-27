@@ -3,7 +3,7 @@ import {
   MAP_FACTION_CONTEST_BORDER_COLOR,
   type MapFactionSide,
   resolveMapFactionBorderColor,
-} from './resolveMapFactionSide';
+} from './mapFactionSideCore';
 
 export type GalaxyTerritorySite = {
   systemId: string;
@@ -225,6 +225,14 @@ class UnionFind {
 }
 
 const MIN_LABEL_COMPONENT_AREA_PX2 = 12_000;
+/**
+ * 독립국(플레이어 점령) 라벨 면적 하한 — 2026-07-27 대표님 지시.
+ * blue/red는 대륙급 연결성분이라 12_000px² 임계가 자연스럽지만, 플레이어는 성계 1~소수만
+ * 독립국이어도 스텔리움/크림슨과 동일하게 국가명이 항상 보여야 한다 — 그래서 blue/red
+ * 임계값(MIN_LABEL_COMPONENT_AREA_PX2)은 그대로 두고 independent만 사실상 무하한(성계 1개
+ * 이상이면 항상 라벨 허용, cellMetrics가 area>0인 셀만 합산하므로 0 초과 확인이면 충분).
+ */
+const MIN_LABEL_COMPONENT_AREA_INDEPENDENT_PX2 = 0;
 
 function buildOccupationLabels(
   sites: GalaxyTerritorySite[],
@@ -267,7 +275,10 @@ function buildOccupationLabels(
   let redIdx = 0;
   let independentIdx = 0;
   for (const g of groups.values()) {
-    if (g.sumArea < MIN_LABEL_COMPONENT_AREA_PX2) continue;
+    const minArea = g.side === 'independent'
+      ? MIN_LABEL_COMPONENT_AREA_INDEPENDENT_PX2
+      : MIN_LABEL_COMPONENT_AREA_PX2;
+    if (g.sumArea < minArea) continue;
     const x = g.sumX / g.sumArea;
     const y = g.sumY / g.sumArea;
     if (!Number.isFinite(x) || !Number.isFinite(y)) continue;

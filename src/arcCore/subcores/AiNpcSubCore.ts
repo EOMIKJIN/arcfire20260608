@@ -14,7 +14,6 @@ import {
   spreadArcTrafficInitialPlanetIds,
 } from '../orbitPresence/balanceArcTrafficPlanetPick';
 import { getNpcCapitalShip } from '../../npc/npcFleetRegistry';
-import { readPlanetOrbitClockMs } from '../orbitClockMsBridge';
 import { usePlanetDevelopmentAccStore } from '../../store/planetDevelopmentAccStore';
 import { getConvoyShipCargoDestination } from '../economy/runArcTransportTradePass';
 import {
@@ -33,8 +32,6 @@ export class AiNpcSubCore extends BaseArcSubCore {
   private captains: ArcNpcTrafficCaptain[] = [];
   private ships: ArcNpcTrafficShip[] = [];
   private publishAccSec = 0;
-  /** `orbitClockMs` 기준 — 체류 궤도 각도는 worklet만 적분, 스냅샷 때 앵커만 여기서 보정 */
-  private lastOrbitClockMsAtNpcSnapshot: number | null = null;
   /**
    * 시뮬은 매 벽시계 틱(부드러운 궤도) — UI로는 아래 주기로만 Zustand 푸시.
    * Reanimated 레이어가 시각 보간하므로 스냅샷은 4Hz(250ms)로도 충분.
@@ -207,27 +204,16 @@ export class AiNpcSubCore extends BaseArcSubCore {
   }
 
   private publishSnapshot(): void {
-    const m = readPlanetOrbitClockMs();
-    if (m > 0) {
-      if (this.lastOrbitClockMsAtNpcSnapshot == null) {
-        this.lastOrbitClockMsAtNpcSnapshot = m;
-      } else {
-        const rawSec = (m - this.lastOrbitClockMsAtNpcSnapshot) / 1000;
-        const clockDtSec = Math.max(0, Math.min(rawSec, 0.25));
-        this.lastOrbitClockMsAtNpcSnapshot = m;
-        if (clockDtSec > 0) {
-          for (const s of this.ships) {
-            if (s.phase === 'dwelling') {
-              s.orbitAngleRad += s.arcTrafficDwellRadPerSec * clockDtSec;
-            }
-          }
-        }
-      }
-    }
     /**
-     * 위치(orbitAngleRad)는 worklet이 `phaseElapsedSec`/`arcTrafficDwellRadPerSec`로 시간 적분하므로
-     * phase·planetId·궤도 반경이 바뀌지 않으면 zustand publish가 불필요하다.
-     * 무조건 publish 시 거대 `planet.tsx`가 빈번히 리렌더되며 누적 GC 부하·메모리 폭증.
+     * 적분 단일화(2026-07-27, arc-transport-dwell-jank) — 체류 각도(orbitAngleRad)는
+     * worklet **한 곳에서만** 적분한다(`computeArcNpcShipScreenPacked`: orbitAngleRad(고정 앵커,
+     * entering 진입 시 확정) + (phaseElapsedSec + dt) × arcTrafficDwellRadPerSec).
+     * 이전엔 여기서도 `readPlanetOrbitClockMs()`(Reanimated worklet 값의 **throttled JS 미러**)
+     * 기준으로 orbitAngleRad를 매 publish마다 따로 전진시켰는데, 이 미러가 worklet이 직접 읽는
+     * 진짜 SharedValue보다 지연돼 있어 재-pack(다른 함선 phase 변경 시 전원 재앵커) 순간마다
+     * 두 시계가 어긋난 만큼 각도가 튀었다(이중적분). phase·planetId·궤도 반경이 바뀌지 않으면
+     * zustand publish가 불필요하다(무조건 publish 시 거대 `planet.tsx`가 빈번히 리렌더되며
+     * 누적 GC 부하·메모리 폭증) — 이 dedup 자체는 그대로 유지.
      */
     let key = `${this.captains.length}|${this.ships.length}`;
     for (let i = 0; i < this.ships.length; i += 1) {
@@ -262,13 +248,18 @@ export class AiNpcSubCore extends BaseArcSubCore {
       ship.phaseElapsedSec = 0;
       ship.phaseDurationSec = (4.2 + Math.random() * 1.6) * pm;
       ship.edgeAngleRad = Math.random() * Math.PI * 2;
+      // 이번 방문의 목표 궤도(반경·각도) — entering 내내 이 값을 향해 보간하고,
+      // dwelling 진입 시 그대로 이어받는다(M1: 반경 즉시 교체로 튕기던 것 제거).
+      ship.orbitRadiusPx = 106 + Math.random() * 28;
+      ship.orbitAngleRad = Math.random() * Math.PI * 2;
       return;
     }
     if (next === 'dwelling') {
       ship.phase = next;
       ship.phaseElapsedSec = 0;
       ship.phaseDurationSec = AiNpcSubCore.samplePlanetDwellSec(ship);
-      ship.orbitRadiusPx = 106 + Math.random() * 28;
+      // orbitRadiusPx·orbitAngleRad는 entering 시작 시 이미 확정됨 — 여기서 재할당하지 않아야
+      // entering 종료 지점과 반경·각도가 연속된다(재할당 시 즉시 점프 회귀).
       return;
     }
     if (ship.phase === 'dwelling') {

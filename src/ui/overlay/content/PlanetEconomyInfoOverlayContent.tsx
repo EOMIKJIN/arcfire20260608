@@ -74,7 +74,16 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
   const themeStyles = isTactical ? tacticalPlanetEconomyOverlayStyles : styles;
   const planetDescription = useMemo(
     () => session.data?.planetDescription ?? resolvePlanetTableDescription(planetId, locale),
-    [session.data?.planetDescription, planetId, locale],
+    // session은 이미 revision(planetHold 포함)에 따라 재빌드되지만, 폴백 분기(세션 로딩 중)가
+    // hold 변경을 놓치지 않도록 이 memo도 직접 hold 필드를 deps에 포함(P3 방지, 2026-07-27).
+    [
+      session.data?.planetDescription,
+      planetId,
+      locale,
+      planetHold?.occupierClanId,
+      planetHold?.kind,
+      planetHold?.deedOwnerClanId,
+    ],
   );
 
   const snapshot = session.data;

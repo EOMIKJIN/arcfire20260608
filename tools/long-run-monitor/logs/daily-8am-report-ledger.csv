@@ -191,3 +191,4 @@ kst_date,status,report_path,fail_reason,adb_connected,app_running,pss_mb,watch_p
 "2026-07-26","FAIL","D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260726-0800.md","MEMINFO_ERROR — Command failed: adb shell pidof com.arcfire.online","yes","no","?","12884"
 "2026-07-26","FAIL","D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260726-0800.md","MEMINFO_ERROR — Command failed: adb shell pidof com.arcfire.online","yes","no","?","12884"
 "2026-07-26","OK","D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260726-0800.md","","yes","yes","529.7","12884"
+"2026-07-27","FAIL","D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260727-0800.md","MEMINFO_ERROR — Command failed: adb shell pidof com.arcfire.online","yes","no","?","8872"

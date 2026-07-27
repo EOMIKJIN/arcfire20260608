@@ -7310,3 +7310,120 @@
 07-27 23:14:54.113  1861  4299 W ActivityManager: pid 4025 com.google.android.gms.persistent sent binder code 2 with flags 1 to frozen apps and got error -32
 07-27 23:14:54.385  1861  2901 I ActivityManager: Changes in 99002 10 to 8, 0 to 128
 07-27 23:14:54.409  1861  3893 I ActivityManager: Changes in 99002 8 to 10, 128 to 0
+07-27 23:16:47.019  1861  1906 I ActivityManager: Start proc 20116:com.lguplus.appstore/u0a99 for broadcast {com.lguplus.appstore/com.onestore.android.shopclient.specific.alarm.UpgradeAlarmReceiver}
+07-27 23:16:47.019  1861  1906 I ActivityManager: ProcessObserver broadcast disabled
+07-27 23:16:47.373  1861  3893 I ActivityManager: Changes in 99002 19 to 11, 0 to 128
+07-27 23:16:47.376  1861  3893 I ActivityManager: Changes in 10099 19 to 11, 0 to 128
+07-27 23:16:47.423  1861  1906 I ActivityManager: Start proc 20168:com.sec.android.provider.badge/u0a55 for broadcast {com.sec.android.provider.badge/com.sec.android.provider.badge.BadgeCountReceiver}
+07-27 23:16:47.423  1861  1906 I ActivityManager: ProcessObserver broadcast disabled
+07-27 23:16:47.431  1861  1997 I ActivityManager: Killing 17902:com.samsung.android.app.reminder/u0a224 (adj 905): empty #25
+07-27 23:16:47.483  1861  2901 I ActivityManager: Changes in 10251 6 to 6, 0 to 128
+07-27 23:16:47.519  1861  2901 I ActivityManager: Changes in 10055 19 to 11, 0 to 128
+07-27 23:16:47.584  1861  2901 I ActivityManager: Changes in 10055 11 to 5, 128 to 144
+07-27 23:16:47.649  1861  1906 I ActivityManager: Start proc 20195:com.skt.skaf.OA00018282/u0a104 for content provider {com.skt.skaf.OA00018282/com.onestore.utils.ApiContentProvider}
+07-27 23:16:47.649  1861  1906 I ActivityManager: ProcessObserver broadcast disabled
+07-27 23:16:48.854  1861  4299 I ActivityManager: Changes in 10104 19 to 10, 0 to 128
+07-27 23:16:48.896  1861  1997 I ActivityManager: Killing 18343:com.google.android.gms.unstable/u0a252 (adj 905): empty #25
+07-27 23:16:53.639  1861  1904 I ActivityManager: Changes in 10055 5 to 15, 144 to 0
+07-27 23:16:53.832  1861  1904 I ActivityManager: Changes in 10104 19 to 19, 128 to 0
+07-27 23:16:57.417  1861  2007 I ActivityManager: Changes in 99002 19 to 19, 128 to 0
+07-27 23:16:57.418  1861  2007 I ActivityManager: Changes in 10251 6 to 6, 128 to 0
+07-27 23:16:57.418  1861  2007 I ActivityManager: Changes in 10099 19 to 19, 128 to 0
+07-27 23:17:13.642  1861  1905 I ActivityManager: Killing 18808:com.sec.android.easyMover/u0a219 (adj 905): empty #25
+07-27 23:18:25.180 14983 15078 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=galaxy_map_periodic nebulaBefore=1
+07-27 23:18:26.707 14983 15078 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+07-27 23:21:58.175  1861  2038 E ActivityManager: Sending non-protected broadcast com.samsung.android.fme.FME_BASIC_SCAN_START_ACTION from system 1861:system/1000 pkg com.samsung.android.fmm
+07-27 23:21:58.175  1861  2038 E ActivityManager: java.lang.Throwable
+07-27 23:21:58.175  1861  2038 E ActivityManager: 	at com.android.server.am.BroadcastController.checkBroadcastFromSystem(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:252)
+07-27 23:21:58.175  1861  2038 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLockedTraced(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:344)
+07-27 23:21:58.175  1861  2038 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:18)
+07-27 23:21:58.175  1861  2038 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentInPackage(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:86)
+07-27 23:21:58.175  1861  2038 E ActivityManager: 	at com.android.server.am.ActivityManagerService$LocalService.broadcastIntentInPackage(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:59)
+07-27 23:21:58.175  1861  2038 E ActivityManager: 	at com.android.server.am.PendingIntentRecord.sendInner(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:133)
+07-27 23:21:58.175  1861  2038 E ActivityManager: 	at com.android.server.am.ActivityManagerService.sendIntentSender(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:17)
+07-27 23:21:58.175  1861  2038 E ActivityManager: 	at com.android.server.am.ActivityManagerService.sendIntentSender(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:1)
+07-27 23:21:58.175  1861  2038 E ActivityManager: 	at android.app.PendingIntent.sendAndReturnResult(PendingIntent.java:1133)
+07-27 23:21:58.175  1861  2038 E ActivityManager: 	at android.app.PendingIntent.send(PendingIntent.java:1099)
+07-27 23:21:58.175  1861  2038 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:112)
+07-27 23:21:58.175  1861  2038 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:75)
+07-27 23:21:58.175  1861  2038 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:720)
+07-27 23:22:16.956  1861  3893 I ActivityManager: Changes in 99002 19 to 5, 0 to 184
+07-27 23:22:32.020  1861  4299 I ActivityManager: Changes in 99002 5 to 10, 184 to 0
+07-27 23:23:25.183 14983 15078 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=15 reason=galaxy_map_periodic_deep
+07-27 23:23:25.183 14983 15078 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=galaxy_map_periodic_deep immediate=0
+07-27 23:23:25.184 14983 15078 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=48 detail=galaxy_map_periodic_deep
+07-27 23:23:25.184 14983 15078 I ReactNativeJS: [MEM] runGalaxyMapResidentDeepReclaimPass reason=galaxy_map_periodic_deep hubSkia=true
+07-27 23:23:26.711 14983 15078 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+07-27 23:23:38.305  1861  1906 I ActivityManager: Start proc 20600:com.google.android.gms.unstable/u0a252 for service {com.google.android.gms/com.google.android.gms.droidguard.DroidGuardService}
+07-27 23:23:38.305  1861  1906 I ActivityManager: ProcessObserver broadcast disabled
+07-27 23:23:38.602  1861  2901 I ActivityManager: Changes in 99002 19 to 5, 0 to 184
+07-27 23:23:43.981  1861  2901 I ActivityManager: Changes in 99002 5 to 10, 184 to 0
+07-27 23:23:43.989  1861  2901 I ActivityManager: Killing 19433:com.google.android.projection.gearhead:shared/u0a242 (adj 905): empty #25
+07-27 23:23:58.220  1861  2038 E ActivityManager: Sending non-protected broadcast com.samsung.android.fme.FME_BASIC_SCAN_STOP_ACTION from system 1861:system/1000 pkg com.samsung.android.fmm
+07-27 23:23:58.220  1861  2038 E ActivityManager: java.lang.Throwable
+07-27 23:23:58.220  1861  2038 E ActivityManager: 	at com.android.server.am.BroadcastController.checkBroadcastFromSystem(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:252)
+07-27 23:23:58.220  1861  2038 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLockedTraced(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:344)
+07-27 23:23:58.220  1861  2038 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:18)
+07-27 23:23:58.220  1861  2038 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentInPackage(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:86)
+07-27 23:23:58.220  1861  2038 E ActivityManager: 	at com.android.server.am.ActivityManagerService$LocalService.broadcastIntentInPackage(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:59)
+07-27 23:23:58.220  1861  2038 E ActivityManager: 	at com.android.server.am.PendingIntentRecord.sendInner(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:133)
+07-27 23:23:58.220  1861  2038 E ActivityManager: 	at com.android.server.am.ActivityManagerService.sendIntentSender(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:17)
+07-27 23:23:58.220  1861  2038 E ActivityManager: 	at com.android.server.am.ActivityManagerService.sendIntentSender(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:1)
+07-27 23:23:58.220  1861  2038 E ActivityManager: 	at android.app.PendingIntent.sendAndReturnResult(PendingIntent.java:1133)
+07-27 23:23:58.220  1861  2038 E ActivityManager: 	at android.app.PendingIntent.send(PendingIntent.java:1099)
+07-27 23:23:58.220  1861  2038 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:112)
+07-27 23:23:58.220  1861  2038 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:75)
+07-27 23:23:58.220  1861  2038 E ActivityManager: 	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:720)
+07-27 23:24:23.249  1861  1997 I ActivityManager: Changes in 99002 19 to 8, 0 to 128
+07-27 23:24:23.269  1861  4299 I ActivityManager: Changes in 99002 8 to 10, 128 to 0
+07-27 23:24:23.358  1861  4392 I ActivityManager: Changes in 99002 19 to 8, 0 to 128
+07-27 23:24:23.384  1861  4392 I ActivityManager: Changes in 99002 8 to 10, 128 to 0
+07-27 23:28:25.193 14983 15078 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=galaxy_map_periodic nebulaBefore=1
+07-27 23:28:26.739 14983 15078 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+07-27 23:30:47.825  1861  1997 I ActivityManager: Process com.google.android.googlequicksearchbox:search (pid 15499) has died: cch+5 CEM (338,1466)
+07-27 23:30:47.862  1861  2635 I ActivityManager: Process com.google.android.googlequicksearchbox:googleapp (pid 15987) has died: cch+5 CEM (352,1465)
+07-27 23:32:16.958  1861  2635 I ActivityManager: Changes in 99002 19 to 5, 0 to 184
+07-27 23:32:32.001  1861  2635 I ActivityManager: Changes in 99002 5 to 10, 184 to 0
+07-27 23:33:08.427  1861  4181 I ActivityManager: Changes in 99002 19 to 8, 0 to 128
+07-27 23:33:08.441  1861  2635 I ActivityManager: Changes in 99002 8 to 10, 128 to 0
+07-27 23:33:08.487  1861  2635 I ActivityManager: Changes in 99002 19 to 5, 0 to 184
+07-27 23:33:23.540  1861  4023 I ActivityManager: Changes in 99002 5 to 10, 184 to 0
+07-27 23:33:25.294 14983 15078 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=galaxy_map_periodic nebulaBefore=1
+07-27 23:33:26.818 14983 15078 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+07-27 23:37:18.578 14983 15078 I ReactNativeJS: [territorial] pass omega_hub decision=status_quo holdChanged=false neutral->neutral
+07-27 23:38:25.197 14983 15078 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=16 reason=galaxy_map_periodic_deep
+07-27 23:38:25.197 14983 15078 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=galaxy_map_periodic_deep immediate=0
+07-27 23:38:25.198 14983 15078 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=48 detail=galaxy_map_periodic_deep
+07-27 23:38:25.198 14983 15078 I ReactNativeJS: [MEM] runGalaxyMapResidentDeepReclaimPass reason=galaxy_map_periodic_deep hubSkia=true
+07-27 23:38:26.733 14983 15078 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+07-27 23:38:50.527  1861 18059 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+07-27 23:38:56.586  1861  1904 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+07-27 23:39:09.367  1861  1906 I ActivityManager: Start proc 21121:com.sec.android.easyMover/u0a219 for content provider {com.sec.android.easyMover/com.sec.android.easyMover.host.StatusProvider}
+07-27 23:39:09.367  1861  1906 I ActivityManager: ProcessObserver broadcast disabled
+07-27 23:39:09.526  1861  2607 I ActivityManager: Changes in 10219 19 to 10, 0 to 128
+07-27 23:39:15.517  1861  1904 I ActivityManager: Changes in 10219 10 to 15, 128 to 0
+07-27 23:39:44.583  1861  1905 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+07-27 23:39:44.590  1861  2876 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+07-27 23:39:44.643  1861  2607 I ActivityManager: Changes in 99002 19 to 8, 0 to 128
+07-27 23:39:44.670  1861  2876 I ActivityManager: Changes in 99002 8 to 10, 128 to 0
+07-27 23:39:44.739  1861  1997 I ActivityManager: Changes in 99002 19 to 8, 0 to 128
+07-27 23:39:44.763  1861  2607 I ActivityManager: Changes in 99002 8 to 10, 128 to 0
+07-27 23:42:16.953  1861  2876 I ActivityManager: Changes in 99002 19 to 5, 0 to 184
+07-27 23:42:32.021  1861  4391 I ActivityManager: Changes in 99002 5 to 10, 184 to 0
+07-27 23:43:25.200 14983 15078 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=galaxy_map_periodic nebulaBefore=1
+07-27 23:43:26.745 14983 15078 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+07-27 23:48:25.203 14983 15078 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=galaxy_map_periodic nebulaBefore=1
+07-27 23:48:26.730 14983 15078 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+07-27 23:52:16.960  1861  4023 I ActivityManager: Changes in 99002 19 to 5, 0 to 184
+07-27 23:52:20.092  1861  4391 I ActivityManager: Changes in 10117 19 to 19, 0 to 128
+07-27 23:52:26.201  1861  1904 I ActivityManager: Changes in 10117 19 to 19, 128 to 0
+07-27 23:52:32.025  1861  4391 I ActivityManager: Changes in 99002 5 to 10, 184 to 0
+07-27 23:53:25.207 14983 15078 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=17 reason=galaxy_map_periodic_deep
+07-27 23:53:25.210 14983 15078 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=galaxy_map_periodic_deep immediate=0
+07-27 23:53:25.211 14983 15078 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=48 detail=galaxy_map_periodic_deep
+07-27 23:53:25.211 14983 15078 I ReactNativeJS: [MEM] runGalaxyMapResidentDeepReclaimPass reason=galaxy_map_periodic_deep hubSkia=true
+07-27 23:53:26.791 14983 15078 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+07-27 23:55:57.554  1861  2607 I ActivityManager: Changes in 99002 19 to 8, 0 to 128
+07-27 23:55:57.576  1861  2876 I ActivityManager: Changes in 99002 8 to 10, 128 to 0
+07-27 23:55:57.682  1861  2876 I ActivityManager: Changes in 99002 19 to 8, 0 to 128
+07-27 23:55:57.734  1861  4023 I ActivityManager: Changes in 99002 8 to 10, 128 to 0
