@@ -314,8 +314,10 @@ function edgePairKey(a: string, b: string) {
 }
 
 /**
- * 은하 지도용: 각 성계 노드의 연결(차수)을 maxDegree 이하로 자른다.
- * 플레이 성계 간 간선(tier 0)을 거리순으로 먼저 채운 뒤, 플레이 부분그래프가 단절이면 가장 짧은 가교를 추가한다.
+ * 은하 지도용: synth 관련 간선만 maxDegree로 자른다.
+ * 플레이 성계↔플레이 성계(tier 0)는 `planets.csv`/`STAR_SYSTEMS` 정본을 **무조건 보존** —
+ * 차수 캡·교차 제거로 CSV 엣지가 지도에서 사라지면 이동(월드맵)≠분쟁/보급(CSV) 이중 그래프가 된다(2026-07-28).
+ * 플레이 부분그래프가 단절이면(비정상) 가장 짧은 가교를 추가한다.
  */
 function capSystemGraphMaxDegree(
   byId: Record<string, StarSystem>,
@@ -360,7 +362,20 @@ function capSystemGraphMaxDegree(
     return false;
   }
 
+  // Pass 1 — gameplay↔gameplay: CSV 정본 전량 유지 (maxDegree·교차 무시)
   for (const e of scored) {
+    if (e.tier !== 0) continue;
+    const k = edgePairKey(e.a, e.b);
+    if (keep.has(k)) continue;
+    keep.add(k);
+    keptEdges.push({ a: e.a, b: e.b });
+    deg[e.a]++;
+    deg[e.b]++;
+  }
+
+  // Pass 2 — synth 브리지/synth↔synth: maxDegree + 교차 회피
+  for (const e of scored) {
+    if (e.tier === 0) continue;
     if (deg[e.a] >= maxDegree || deg[e.b] >= maxDegree) continue;
     if (crossesExisting(e.a, e.b)) continue;
     keep.add(edgePairKey(e.a, e.b));
@@ -466,7 +481,8 @@ function pickNearestIds(
  * 은하계 지도 표현용으로만 100개 노드 규모의 “잠금 거미줄”을 합성한다.
  *
  * - 모든 성계 중심은 `GALAXY_MIN_CENTER_DIST` 이상 떨어지도록 배치·완화한다(원본 좌표는 mutate 하지 않음).
- * - 은하 지도/월드스토어 그래프는 성계당 최대 3연결로 캡된다(렌더·이동 후보는 `GALAXY_SYSTEMS` 기준).
+ * - 플레이 성계↔플레이 성계 간선은 `STAR_SYSTEMS`(planets.csv)와 **동일**하게 유지한다.
+ * - synth 관련 간선만 성계당 최대 3연결 캡(렌더·이동 후보는 `GALAXY_SYSTEMS` 기준).
  * - 합성 노드는 `id`가 `synth_`로 시작하며, `GAMEPLAY_SYSTEM_IDS`에 포함되지 않는다.
  */
 export function buildGalaxySystems100(): Record<string, StarSystem> {

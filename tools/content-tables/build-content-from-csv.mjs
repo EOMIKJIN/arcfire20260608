@@ -878,6 +878,10 @@ ${body}
 `;
 }
 
+// star_system_connections.csv는 planets.csv의 systemConnectionsPipe에서 파생된 산출물이다
+// (build:content-tables가 sync-star-system-connections-from-planets.mjs로 매번 전량 재생성) —
+// 수동 부분 편집 금지. 성계가 이 표에 행을 가지면 아래 로직이 planets pipe 대신 이 표만 사용하므로,
+// 과거처럼 일부 성계만 수동 기재하면 나머지 성계는 pipe와 어긋난 채 방치된다(2026-07-28 재발 방지).
 function buildSystems() {
   const planets = loadCsv('planets.csv');
   const systemConnections = loadCsvOptional('star_system_connections.csv');

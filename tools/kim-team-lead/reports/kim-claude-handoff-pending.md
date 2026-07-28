@@ -5,6 +5,281 @@
 
 ---
 
+
+## ✅ REVIEWED — 성계 노드라인 전수검사·연동 재검증(M0~M6) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-28 · 대표님 「김클로드 작업도 완료됬다 재검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — READY M0~M6 충족 · 검수 중 코드 수정 없음 |
+| **task_id** | `system-node-graph-full-reaudit-20260728` |
+| M0 | 소비처 표 OK · `runPlanetEnvironmentDiversityPass` GALAXY 일관(수정 불필요) |
+| M1 | `audit-system-connections-full` asymmetric=[] · heliosPerseusDirect=false · withoutStarRows=[] |
+| M2 | 정본 5홉·`omega↔draco` 유지 · planets.csv 키 엣지 실측 OK |
+| M3 | `capSystemGraphMaxDegree` Pass1 tier0 keep · map-vs-csv drop/extra=[] |
+| M4 | `build:content-tables`에 `sync-star-system-connections-from-planets.mjs` 편입 확인 · build 주석 OK |
+| M5~M6 | `systemNodeGraphRegression` 7/7 PASS · supplyLine·geoFlank·stackConsistency 회귀 PASS · tsc PASS |
+| CSV | combatMode/가중치 **무변경**(본 task) · star/planets는 선행 sync 계열 |
+| 커밋 | **미커밋** — 대표님 지시 시 김팀장 커밋 |
+| soft | 실기 월드맵 미확인 · 앱 완전 재시작 권장(`GALAXY_SYSTEMS_PRECOMPUTED` 모듈 캐시) |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED` → 이어서 `IDLE` 가능** |
+| **updated** | 2026-07-28 (김팀장 검수 PASS) |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-system-node-graph-full-reaudit.md` |
+| **prompt** | `tools/kim-team-lead/reports/kim-claude-task-prompt-latest.txt` |
+| **선행(재검증 대상)** | `SYSTEM_NODE_GRAPH_FULL_SYNC_20260728.md` · `HELIOS_PERSEUS_EDGE_REMOVAL_20260728.md` |
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=galaxy_graph_gen·부트 · alloc=프리컴퓨트1회 · cache=GALAXY_SYSTEMS_PRECOMPUTED
+[pss-pre-dev] stage=worldmap+territorial · risk=P1·이중그래프
+[pss-pre-dev] verdict=PASS — CSV=지도 플레이엣지 일치·숏컷/비대칭 수정·틱금지
+```
+
+### 재검증 결론 — 김팀장 초안 주장 5개 전부 **실측 확인**(맹신 없이 재검증)
+
+| 초안 주장 | 재검증 방법 | 결과 |
+|-----------|-------------|------|
+| helios↔perseus 직접 엣지 삭제 | `audit-system-connections-full.mjs` `heliosPerseusDirect` | **false**(없음) 확인 |
+| draco↔sirius 대칭 | 동일 audit `asymmetricPlanets`/`asymmetricGenerated` | **[]**(비대칭 0) 확인 |
+| star_system_connections.csv 21성계 전량 동기 | `starCoverage.withoutStarRows` | **[]**(21개 전부 star 행 보유) 확인 |
+| galaxy100 tier0 보존(플레이↔플레이 무손실) | `audit-map-vs-csv-connections.mjs` + 코드 리뷰(`capSystemGraphMaxDegree` Pass1이 tier0을 maxDegree/교차 무시하고 무조건 keep) | drop=**[]** · extra=**[]** 확인, 코드도 실제 그렇게 구현됨 |
+| `sync-star-system-connections-from-planets.mjs` 신설 | 파일 존재 확인 | 존재하나 **`build:content-tables`에 미편입**(진짜 빌드 함정 잔존) — **이번 task에서 M4로 수정** |
+
+### 구현 요약 (M0~M6)
+
+| M | 내용 | 파일 |
+|---|------|------|
+| M0 | 노드 소비처 전수 표 재작성(아래 표) — 초안이 놓친 신규 소비처 2곳 추가 발견(`runPlanetEnvironmentDiversityPass.ts`) | 본 handoff 하단 표 |
+| M1 | `audit-system-connections-full.mjs` + `audit-map-vs-csv-connections.mjs` 실행 — **둘 다 FAIL 없음**(수정 불필요, 초안이 이미 정상 상태로 만들어 놓음) | 변경 없음(검증만) |
+| M2 | 정본 항로 5홉 엣지(헬→오메→뉴에덴→베가→드라코→페르) 전부 유효·양방향 확인, `omega_station↔draco_nebula` 정상 1홉 유지 확인 | `systemNodeGraphRegression.test.ts` 3·4번 |
+| M3 | `capSystemGraphMaxDegree` tier0 보존 계약 — 코드 리뷰(Pass1 무조건 keep) + 실측(drop/extra=0) 이중 확인. 회귀 아님 — 수정 불필요 | 변경 없음(검증만) |
+| M4 | **실제 수정** — `sync-star-system-connections-from-planets.mjs`를 `build:content-tables`에 편입(`patch-planets-en.mjs`·`sync-synth-ownership-into-item-defs.mjs` 이후, `build-content-from-csv.mjs` 직전 — planets.csv 최종 확정 후 star CSV 재생성 후 빌드). `build-content-from-csv.mjs`에 "star CSV는 planets 파생·수동 부분편집 금지" 1줄 주석 추가 | `package.json`(`build:content-tables` 스크립트) · `tools/content-tables/build-content-from-csv.mjs`(주석) |
+| M5 | `npm run build:content-tables` + `npm run gen:galaxy-graph` 재실행 → 두 audit 재실행 **PASS**(diff 0), `npx tsc --noEmit` **PASS** | 재생성물: `star_system_connections.csv`·`csvSystems.ts`·`galaxySystems100.generated.ts`(git diff는 초안의 기존 미커밋 수정과 동일 계열 — 새 회귀 없음, 아래 확인 참고) |
+| M6 | `systemNodeGraphRegression.test.ts` 7케이스: helios-perseus 직접없음, sirius-draco 대칭, 정본5홉, omega-draco 정상유지, 전역비대칭0, **tier0 drop/extra=0**(플레이↔플레이 이동=분쟁그래프 동일), star CSV 21성계 전량 | `src/galaxyMap/systemNodeGraphRegression.test.ts`(신규) |
+
+### M0 — 노드 소비처 전수 표
+
+| 경로 | 그래프 | 확인 |
+|------|--------|------|
+| `worldStore.systems`(worldmap.tsx·GalaxyMapSystemsSvg·findShortestUnlockedSystemPath) | `GALAXY_SYSTEMS_PRECOMPUTED`(galaxy100) | import 직접 확인 |
+| `resolvePlanetSystemPosition.ts` / `resolvePlanetById.ts` | GALAXY 우선 + STAR 폴백(순환참조 방지 주석 명시) | 소스 확인 |
+| `territorialSupplyLine.ts`(`listAdjacentSystemIds`) / `territorialCombatGraph.ts` / FrontPressure | `STAR_SYSTEMS_FROM_CSV`(csvSystems, planets.csv 파생) | import 직접 확인 |
+| `worldExpansionFrontier.ts` / `worldExpansionUnlockDispatch.ts` / `worldExpansionFreshStartSeed.ts` / `coreOpenGameplayPlanets.ts` | `GAMEPLAY_SYSTEM_IDS`/`GALAXY_SYSTEMS`(월드 확장 synth 프런티어) | import 직접 확인 |
+| `mineralDepositModel.ts` | `GALAXY_SYSTEMS`(좌표·자원 배치, 그래프 순회 아님) | import 직접 확인 |
+| **`runPlanetEnvironmentDiversityPass.ts`**(초안 표에 없던 소비처, 이번에 발견) | `useWorldStore`(GALAXY 계열) — 현재 성계·연결 성계 주변 행성 리밸런스 | grep으로 신규 발견, GALAXY축과 일관 사용 중이라 **수정 불필요**(누락 발견만) |
+| `data/systems.ts`(`STAR_SYSTEMS`) | `STAR_SYSTEMS_FROM_CSV` 단순 재노출 | 소스 확인 |
+
+### 완료 게이트 결과
+
+```text
+audit-system-connections-full → asymmetric=0 · heliosPerseusDirect=false · planetsVsGenerated=[]
+audit-map-vs-csv-connections → dropped=[] · extra=[]
+정본항로 헬→오메→뉴에덴→베가→드라코→페르 = OK(엣지 5개 양방향 확인)
+tsc PASS · build:content-tables 재실행(sync 스크립트 편입 후) · gen:galaxy-graph 재실행 기록 완료
+build 파이프라인 star sync 편입 = **이번 task에서 완료**(이전엔 미편입 — 진짜 발견된 잔여 결함)
+```
+
+### 회귀 판별력 검증
+
+`systemNodeGraphRegression.test.ts`의 6번(tier0 drop/extra) 테스트는 생성물(`galaxySystems100.generated.ts`)에서 `iron_cross→new_eden` tier0 엣지 하나를 일시 제거해 **FAIL**(`actual: ['iron_cross->new_eden']`) 확인 → `npm run gen:galaxy-graph` 재생성으로 복원 후 **PASS** 재확인. 트리비얼 통과 아님.
+
+### self-check 결과
+
+```
+npx tsc --noEmit -p tsconfig.client.json                    → PASS(에러 0)
+node tools/debug/audit-system-connections-full.mjs           → PASS(FAIL 없음)
+node tools/debug/audit-map-vs-csv-connections.mjs             → PASS(dropped=[]·extra=[])
+npx tsx --test src/galaxyMap/systemNodeGraphRegression.test.ts → PASS 7/7(신규)
+npx tsx --test src/arcCore/territorial/territorialSupplyLine.test.ts → PASS(회귀, STAR_SYSTEMS 소비처 무관)
+npx tsx --test src/arcCore/territorial/geoFlankHeliosTitanOccupation.test.ts → PASS(회귀)
+npx tsx --test src/arcCore/territorial/territorialStackConsistency.test.ts → PASS(회귀)
+```
+
+### CSV / 기존값 변경 여부
+
+`combatMode`/가중치 CSV **무변경**. `planets.csv`·`star_system_connections.csv`는 **초안(김팀장 이전 세션)이 이미 수정한 값 그대로**(이번 task에서 값 자체를 추가 변경하지 않음) — 이번 재실행으로 재생성된 `star_system_connections.csv`/`csvSystems.ts`/`galaxySystems100.generated.ts`의 git diff는 초안이 만든 수정과 동일 계열(helios-perseus 제거·sirius-draco 대칭·tier0 복원)이며 신규 회귀 없음(audit·unit 전부 diff 0 확인). 정상 1홉(`helios↔omega`/`omega↔draco`/`draco↔perseus` 등) **삭제 없음**. synth 배치 알고리즘 무변경. Skia/STAGE 무관.
+
+### 참고 — 동시 진행 중인 별건 변경(무관, 미개입)
+
+세션 중 `src/arcCore/territorial/territorialCombatGraph.ts`가 외부(김팀장/훅)에 의해 별도로 수정됨(`resolveAdjacentSystemFactionPresence`가 런타임 holds 인자를 받도록 확장 — 본 task와 무관한 territorial 판정 개선). 본 task는 이 파일을 건드리지 않았고, tsc·회귀 테스트로 상호 충돌 없음만 확인.
+
+### 리스크 · soft(실기 미확인)
+
+- 앱 완전 재시작 권장(초안 경고 유지) — `GALAXY_SYSTEMS_PRECOMPUTED`/`STAR_SYSTEMS` 모듈 캐시 특성상, 실기(월드맵 렌더·이동·분쟁 판정 실제 화면) 확인은 **미실시**(정적 데이터·audit·unit만).
+- M4(빌드 파이프라인 편입)가 유일한 실질 코드/설정 변경 — 나머지는 초안 상태 재검증(대부분 이미 정상). 향후 `planets.csv`를 손으로 고치고 빌드를 돌리면 이제 자동으로 `star_system_connections.csv`까지 갱신되므로, "부분 3성계만 기재" 재발 가능성이 구조적으로 낮아짐.
+
+**git commit 안 함** — 김팀장(Cursor 본창) 검수·커밋 요청.
+
+---
+## ✅ REVIEWED — ArcCore 분쟁·점령 스택 일관성·효율 최적화(M0~M4) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-28 · 대표님 「김클로드 작업 끝 검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — READY M0~M4 충족 · 검수 중 코드 수정 없음 |
+| M0 | strategy §6-3 파이프라인·P0~P4·감사 교차참조 OK |
+| M1 | `DRACO_FRONT_CAMPAIGN_PLANET_ORDER` 삭제 · CSV `campaignOrder` 주석 OK · src 잔존 없음(테스트 문자열만) |
+| M2 | policy/campaign revision 캐시 · `setMem` 3곳 bump · dyn Set O(1) · `invalidate` 클리어 OK |
+| M3 | 시드 owner 모듈 1회 인덱스 · DEV warn 세션당 systemId 1회 · 판정 로직 무변경 OK |
+| M4 | `territorialStackConsistency` 6/6 PASS · P0 resolver 회귀 10/10 PASS |
+| CSV | 본 task 수치/가중치 **무변경**(helios/titan CSV diff는 직전 geo-flank 미커밋) |
+| 게이트 | `tsc` PASS · unit PASS |
+| 커밋 | **미커밋** — 대표님 지시 시 김팀장 커밋 |
+| soft | M5 미착수(지시 범위) · 실기 힙/CPU 미프로파일 · warn Set 모듈 전역(로그용만) |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-28 (김팀장 검수) · 2026-07-28(김클로드 구현) |
+| **task_id** | `territorial-stack-consistency-opt-20260728` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-territorial-stack-consistency-opt.md` |
+| **audit** | `tools/kim-team-lead/reports/TERRITORIAL_STACK_CONSISTENCY_AUDIT_20260728.md` |
+| **범위** | M0~M4 · **M5 미착수**(다음 회차 가능) |
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=territorial_probe_60s·pass_1h · alloc=정책목록캐시·시드인덱스1회 · cache=revision
+[pss-pre-dev] stage=arcCore_territorial · risk=P1(틱전량재스캔금지)·P6(persist빈도유지)
+[pss-pre-dev] verdict=PASS — 밸런스CSV수치무단변경금지·순수캐시/데드코드/문서·회귀테스트
+```
+
+**git commit 안 함** — 대표님 지시 시 김팀장 커밋.
+
+---
+
+## ✅ REVIEWED — 중립 점령 런타임 인접(보급) P0(M0~M5) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-28 · 대표님 「검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — READY 핵심(중립+한쪽만 인접→우세 축) 충족 · 검수 중 코드 수정 없음 |
+| M0 | strategy §6-2 · geo-flank와 충돌 시 **런타임 P0 우선** 명시 OK |
+| M1 | `resolveEffectiveTerritorialCombatMode` 순수함수 · planetId 없음 · 블루만/레드만/둘다/고립 OK |
+| M2 | battle 경로 attacker·binary·holdTarget·dominant 전부 `effectiveCombatMode` · meta에 policyCombatMode OK |
+| M3 | blue_red 공격자 확정과 이중 충돌 없음(주석) OK |
+| M4 | unit 10/10 PASS · 타이탄 CSV red_neutral+블루만→`blue_neutral` · 배선 grep OK |
+| M5 | §6-2에 geo-flank=접전/고립 폴백 명시 OK |
+| CSV | 본 task로 combatMode/가중치 **추가 변경 없음**(런타임 오버라이드만) |
+| 게이트 | `tsc` PASS · unit PASS |
+| 커밋 | **미커밋** — 대표님 지시 시 김팀장 커밋 |
+| soft | 고립(둘다0)은 READY의 status_quo 강제 대신 **CSV P1 폴백**(허용 범위) · 실기 1h 미확인 · P0는 **battle 분기**에서만 적용(status_quo면 여전히 미진입) |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-28 (김팀장 검수) · 2026-07-28(김클로드 구현) |
+| **task_id** | `neutral-adjacency-occupation-priority-20260728` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-neutral-adjacency-occupation-priority.md` |
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=territorial_pass_1h · alloc=보급카운트O(인접)·모드해석1회 · cache=없음
+[pss-pre-dev] stage=arcCore_territorial · risk=P1(틱추가금지)·planetId하드코딩금지
+[pss-pre-dev] verdict=PASS — NEUTRAL hold에서만 effectiveMode 해석·CSV행무단변경금지(런타임오버라이드)
+```
+
+### 김클로드 구현 요약 (ARCHIVE)
+
+- M1: `resolveEffectiveTerritorialCombatMode.ts`
+- M2: `runTerritorialCombatPass.ts` effective 배선
+- M4: unit 10 · M0/M5 strategy §6-2
+
+---
+
+## ✅ REVIEWED — 계정 초기화 시 소유권 성계 중립화(M0~M5) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-28 · 대표님 「클로드 김 작업 검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — READY M0~M5 충족 · 검수 중 코드 수정 없음 |
+| M0 | 시드복원≠중립화 · 시리우스 `red_territory` · `purge_all_non_ai` 과잉 — 원인 서술 OK |
+| M1 | `player_independent` → `neutral`+`neutralizedAt`+deed/home 클리어 · CSV 시드 복원 우회 OK |
+| M2 | `purge_all_non_ai` → 플레이어 유래만 · 국가 시드 hold 보존(iron_remnant 테스트) OK |
+| M3 | purge_account→시드파이프→purge_all_non_ai 연타 후에도 neutral 유지 OK |
+| M4 | unit 6케이스 PASS · 하드코딩 grep OK · 시리우스 재구매 `red_territory` 아님 |
+| M5 | dissolve 동일 중립화 · FrontPressure invalidate(occupier 변경 시) OK |
+| 게이트 | `tsc` PASS · `planetHoldReleasePolicy.test.ts` PASS |
+| 커밋 | **미커밋** — 대표님 지시 시 김팀장 커밋 |
+| soft | 실기 미확인 · `homePlayerUid`는 uid 일치 시에만 null(정상 purge 경로 OK) · clans 맵 non-ai 삭제 범위는 별건 · nebula purge 구멍은 **본 task 범위 외**(이전 재검수 P0) |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-28 (김팀장 검수) · 2026-07-28(김클로드 구현) |
+| **task_id** | `account-purge-ownership-neutralize-20260728` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-account-purge-ownership-neutralize.md` |
+| **요청자** | 대표님 점검 → 김팀장 READY → 김클로드 착수 |
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=계정purge1회 · alloc=holds맵부분갱신 · cache=없음
+[pss-pre-dev] stage=타이틀복귀전 · risk=P6(persist1회)·ArcCore월드축오삭제금지
+[pss-pre-dev] verdict=PASS — 틱/루프추가금지·player_independent해제만·시드팩션영토진행보존
+```
+
+### 김클로드 구현 요약 (ARCHIVE)
+
+- M1: `planetHoldReleasePolicy` 독립국→중립화
+- M2: `purge_all_non_ai` 플레이어 유래만
+- M4: unit 6 · M5 dissolve+FrontPressure
+- 변경: `planetHoldReleasePolicy.ts` · `clanWarFoundationStore.ts` · 신규 test
+
+---
+
+## ✅ REVIEWED — 헬리오스·타이탄 게이트 지리 우세 점령(M0~M5) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-28 · 대표님 「검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — READY M0~M5 충족 · 검수 중 코드 수정 없음 |
+| M0 | `docs/strategy/…` §6-1 geo-flank 실구현 표(순차4·5·combatMode·지리 근거) · §6 제안과 구분 OK |
+| M1 | CSV `helios_core` blue_neutral 70% order4 · `titan_ruins` red_neutral 70% order5 · omega/shadow/draco **기존행 무변경** · seeds **미변경** |
+| M2 | generated 정책 2행 · `draco_front` 길이 5 · 순번 1…5 단위테스트 OK |
+| M3 | 동적 `sirius_border` 첫 슬롯 **4→6** · 리셋 후 정적 길이 **5** assertion 갱신 OK |
+| M4 | `geoFlankHeliosTitanOccupation.test.ts` 정책·순서·회귀·하드코딩 grep PASS |
+| M5 | iron_cross→helios BLUE 보급 · shadow_nexus→titan_gate RED 보급 병행 PASS |
+| 게이트 | `tsc` PASS · unit(geoFlank+seed) PASS · (김클로드 self-check: build:balance-tables · audit:memory:all) |
+| 커밋 | **미커밋** — 대표님 지시 시 김팀장 커밋 |
+| soft | 실기 1h territorial 체감 미확인 · 로테이션 5→6 희석(handoff 리스크 동의) · 70% 상향은 대표님 확인 후 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **updated** | 2026-07-28 (김팀장 검수) · 2026-07-28(김클로드 구현) |
+| **task_id** | `geo-flank-helios-titan-occupation-20260728` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-geo-flank-helios-titan-occupation.md` |
+| **요청자** | 대표님 기획 → 김팀장 REFLECTABLE → 김클로드 착수 |
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=territorial_pass_1h · alloc=정책Map부트1회 · cache=policy_O1
+[pss-pre-dev] stage=arcCore_territorial · risk=P1(틱추가금지)·부트동기패스금지
+[pss-pre-dev] verdict=PASS — CSV행추가+로더/캠페인정렬·planetId하드코딩분기금지
+```
+
+### 김클로드 구현 요약 (ARCHIVE)
+
+- M0: strategy §6-1 실구현 표
+- M1: policy CSV +2행 (헬리오스 블루70%·타이탄 레드70%)
+- M2~M4: build · 동적 order 6 · unit+하드코딩 금지
+- M5: 보급 병행 2케이스
+- 변경: CSV · generated · seed 테스트 · geoFlank 테스트 · strategy 문서
+
+---
+
 ## ✅ REVIEWED — 은하 지도 플레이어 독립국 국가명 라벨 (M0~M4) · 김클로드
 
 ### 김팀장 검수 (본창 Cursor · 2026-07-27 · 대표님 「검수하라」)

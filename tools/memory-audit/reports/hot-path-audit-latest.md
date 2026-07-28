@@ -1,6 +1,6 @@
 # Hot Path Zero-Allocation Audit
 
-Generated: 2026-07-27T11:28:27.022Z
+Generated: 2026-07-27T20:52:19.713Z
 
 **Result:** PASS (hits=0)
 

@@ -1,6 +1,6 @@
 # Arcfire long-run incident — Kim Team Lead auto-triage
 
-packedAt: 2026-07-27T02:37:28.147Z
+packedAt: 2026-07-28T12:03:24.370Z
 triggerReason: mem_anomaly
 refixPayload: (none)
 
@@ -15,53 +15,53 @@ refixPayload: (none)
 ## Recent remediation
 
 ```
-[2026-07-27 11:34:54] AUTO_FIX static audit:skia-memory start
-[2026-07-27 11:34:56] AUTO_FIX audit:skia-memory PASS
-[2026-07-27 11:34:56] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
-[2026-07-27 11:35:14] AUTO_FIX baseline reset pid=24122 gl=6MB pss=186MB
-[2026-07-27 11:35:14] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
-[2026-07-27 11:35:35] VERIFY PASS pid=24122 gl=10.6MB pss=609.4MB views=120
-[2026-07-27 11:35:35] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":957.4,"views":326,"lastGlMb":53.5,"hardCeiling":true}
-[2026-07-27 11:35:37] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
-[2026-07-27 11:37:24] INVESTIGATION start reason=mem_anomaly
-[2026-07-27 11:37:24] INVESTIGATION alert=[2026-07-27 11:34:53] GL_HARD_CEILING gl=53.5 pss=957.4 views=326
-[2026-07-27 11:37:26] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260727-113724.log
-[2026-07-27 11:37:27] INVESTIGATION mem from timeline gl=10.6MB pss=609.4MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260727-113724.log
+[2026-07-28 21:00:40] AUTO_FIX static audit:skia-memory start
+[2026-07-28 21:00:42] AUTO_FIX audit:skia-memory PASS
+[2026-07-28 21:00:42] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-07-28 21:00:59] AUTO_FIX baseline reset pid=8652 gl=6MB pss=206.8MB
+[2026-07-28 21:01:00] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-07-28 21:01:21] VERIFY PASS pid=8652 gl=8.5MB pss=613.4MB views=99
+[2026-07-28 21:01:21] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":1024.3,"views":572,"lastGlMb":126,"hardCeiling":true}
+[2026-07-28 21:01:22] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-07-28 21:03:20] INVESTIGATION start reason=mem_anomaly
+[2026-07-28 21:03:20] INVESTIGATION alert=[2026-07-28 21:00:40] GL_HARD_CEILING gl=126 pss=1024.3 views=572
+[2026-07-28 21:03:22] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260728-210320.log
+[2026-07-28 21:03:24] INVESTIGATION mem from timeline gl=8.5MB pss=613.4MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260728-210320.log
 ```
 
 ## Recent incidents
 
 ```
-[2026-07-27 09:16:35] DAILY_8AM_REPORT_FAIL D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260727-0800.md MEMINFO_ERROR — Command failed: adb shell pidof com.arcfire.online
-[2026-07-27 09:46:45] PSS_SOFT_CEILING pss=828.6 gl=134.1 views=573 native_reclaim_advisory
-[2026-07-27 10:02:11] PSS_SOFT_CEILING pss=826.1 gl=134.1 views=573 native_reclaim_advisory
-[2026-07-27 10:17:36] PSS_SOFT_CEILING pss=817.4 gl=134.1 views=573 native_reclaim_advisory
-[2026-07-27 11:34:53] GL_HARD_CEILING gl=53.5 pss=957.4 views=326
-[2026-07-27 11:34:54] REFIX_REQUESTED gl_critical_active_hub
+[2026-07-28 19:58:54] VIEWS_NATIVE_ADVISORY views=572 native_heap=315.9 pss=734.8 gl=127.5 (node/list retention ??pre-hardceiling early warn)
+[2026-07-28 20:14:19] VIEWS_NATIVE_ADVISORY views=572 native_heap=315.9 pss=734 gl=125.5 (node/list retention ??pre-hardceiling early warn)
+[2026-07-28 20:29:44] VIEWS_NATIVE_ADVISORY views=572 native_heap=316.2 pss=733.8 gl=125.5 (node/list retention ??pre-hardceiling early warn)
+[2026-07-28 20:45:09] VIEWS_NATIVE_ADVISORY views=644 native_heap=351.9 pss=797.4 gl=100.4 (node/list retention ??pre-hardceiling early warn)
+[2026-07-28 21:00:40] GL_HARD_CEILING gl=126 pss=1024.3 views=572
+[2026-07-28 21:00:40] REFIX_REQUESTED gl_critical_active_hub
 ```
 
 ## Crash signature (tail)
 
 ```
-07-27 11:36:28.429 24122 24235 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=36 detail=hub_wave_inter_wave
-07-27 11:36:28.429 24122 24235 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_wave_inter_wave keep=sirius_border gpuLayers=skia_nebula_backdrop,skia_combat_orbit
-07-27 11:36:30.058 24122 24235 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
-07-27 11:37:07.420  1861  1898 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
-07-27 11:37:08.118  1861  1898 I ActivityManager: Changes in 11073 2 to 15, 255 to 128
-07-27 11:37:08.174  1861  2542 I ActivityManager: Changes in 99002 19 to 10, 0 to 128
-07-27 11:37:08.241  1861  2607 I ActivityManager: Changes in 99002 15 to 15, 128 to 0
-07-27 11:37:08.241  1861  2607 I ActivityManager: Changes in 11073 15 to 15, 128 to 0
-07-27 11:37:08.290 24122 24235 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=app_background nebulaBefore=1
-07-27 11:37:08.300 24122 24235 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_background nebulaBefore=1
-07-27 11:37:08.674 24122 24235 I ReactNativeJS: [MEM] runDeepNativeReclaimPass reason=hub_background fresco=true
-07-27 11:37:08.803  1861  1898 I ActivityManager: Killing 24122:com.arcfire.online/u0a1073 (adj 900): remove task
-07-27 11:37:09.053  1861  1898 W ActivityManager: setHasOverlayUi called on unknown pid: 24122
-07-27 11:37:10.865  1861  1906 I ActivityManager: Start proc 24418:com.arcfire.online/u0a1073 for activelaunch {com.arcfire.online/com.arcfire.online.MainActivity}
-07-27 11:37:10.865  1861  1906 I ActivityManager: ProcessObserver broadcast disabled
-07-27 11:37:11.887  1861  2886 I ActivityManager: Changes in 99002 19 to 3, 0 to 184
-07-27 11:37:11.887  1861  2886 I ActivityManager: Changes in 11073 19 to 2, 0 to 255
-07-27 11:37:12.088  1861  1898 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
-07-27 11:37:22.226  1861  2525 I ActivityManager: Changes in 99002 3 to 10, 184 to 0
+07-28 21:01:54.776  8652  8764 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=5 reason=ingress_after_hub_combat
+07-28 21:01:54.776  8652  8764 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=ingress_after_hub_combat immediate=0
+07-28 21:01:54.778  8652  8764 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=36 detail=ingress_after_hub_combat
+07-28 21:01:54.778  8652  8764 I ReactNativeJS: [MEM] runGalaxyMapResidentDeepReclaimPass reason=ingress_after_hub_combat hubSkia=true
+07-28 21:01:54.779  8652  8764 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=ingress_reclaim hermes_mb=36 detail=after_hub_combat
+07-28 21:01:54.779  8652  8764 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_focus hermes_mb=36
+07-28 21:01:54.809  8652  8764 I ReactNativeJS: [MEM] consumeGalaxyMapIngressReclaim kind=after_hub_combat fresco=true
+07-28 21:01:58.242  8652  8764 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+07-28 21:01:58.243  8652  8764 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+07-28 21:01:58.787  8652  8764 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=6 reason=galaxy_map_post_ingress_settle
+07-28 21:01:58.787  8652  8764 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=galaxy_map_post_ingress_settle immediate=0
+07-28 21:01:58.788  8652  8764 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=40 detail=galaxy_map_post_ingress_settle
+07-28 21:01:58.789  8652  8764 I ReactNativeJS: [MEM] runGalaxyMapResidentDeepReclaimPass reason=galaxy_map_post_ingress_settle hubSkia=true
+07-28 21:02:00.317  8652  8764 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+07-28 21:02:39.787  8652  8764 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=7 reason=galaxy_map_post_ingress_followup
+07-28 21:02:39.787  8652  8764 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=galaxy_map_post_ingress_followup immediate=0
+07-28 21:02:39.788  8652  8764 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=40 detail=galaxy_map_post_ingress_followup
+07-28 21:02:39.788  8652  8764 I ReactNativeJS: [MEM] runGalaxyMapResidentDeepReclaimPass reason=galaxy_map_post_ingress_followup hubSkia=true
+07-28 21:02:41.311  8652  8764 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
 
 ```
 
@@ -69,16 +69,16 @@ refixPayload: (none)
 
 ```csv
 ﻿iso_time,pid,pss_mb,rss_mb,gl_mb,egl_mb,graphics_mb,native_heap_mb,java_heap_mb,threads,views,delta_pss_mb,delta_gl_mb,note
-2026-07-27 00:32:40,,,,,,,,,,,PROCESS_NOT_RUNNING
-2026-07-27 09:16:35,,,,,,,,,,,PROCESS_NOT_RUNNING
-2026-07-27 09:31:37,,,,,,,,,,,PROCESS_NOT_RUNNING
-2026-07-27 09:46:38,17709,828.6,968.6,134.1,19.8,154,405.4,50.6,,573,,,
-2026-07-27 10:02:06,17709,826.1,966,134.1,19.8,154,413.1,41.2,,573,,,
-2026-07-27 10:17:31,17709,817.4,961.5,134.1,19.8,154,401.7,44.2,,573,-8.7,0,
-2026-07-27 10:32:56,21109,717.9,866.3,53.5,40.7,94.2,364.5,37.4,,309,,,
-2026-07-27 10:48:22,21109,718,868.1,49.9,40.7,90.6,387.1,33.2,,306,,,
-2026-07-27 11:03:46,21109,813.8,942.8,27.8,19.8,47.6,524.2,57.4,,99,95.8,-22.1,PSS_SPIKE review=graphics+native
-2026-07-27 11:19:13,21109,699.5,826.7,27.8,19.8,47.6,423.3,41.3,,99,-114.3,0,
-2026-07-27 11:34:47,21109,957.4,1082.3,53.5,40.7,94.1,583,47.7,,326,257.9,25.7,HUB_ACTIVATION gl_mount_ok
-2026-07-27 11:35:35,24122,609.4,,10.6,,,,,,120,,,POST_REMEDIATION_VERIFY_OK
+2026-07-28 18:26:40,27017,785.2,827.5,114.5,19.8,134.3,375.8,44.6,,572,14.7,0,
+2026-07-28 18:42:10,,,,,,,,,,,PROCESS_NOT_RUNNING
+2026-07-28 18:57:10,1710,744.2,868.7,127.6,19.8,147.4,319.9,47.9,,572,,,
+2026-07-28 19:12:35,1710,758,883.6,125.6,19.8,145.4,316.4,68.2,,572,,,
+2026-07-28 19:27:59,1710,730.8,857.1,125.6,19.8,145.4,313.4,42.5,,572,-27.2,0,
+2026-07-28 19:43:25,1710,735.8,863.7,125.5,19.8,145.4,315.2,45.9,,572,5,-0.1,
+2026-07-28 19:58:49,1710,734.8,863.2,127.5,19.8,147.4,315.9,42.1,,572,-1,2,
+2026-07-28 20:14:13,1710,734,860.7,125.5,19.8,145.4,315.9,42.1,,572,-0.8,-2,
+2026-07-28 20:29:38,1710,733.8,859.5,125.5,19.8,145.4,316.2,42.2,,572,-0.2,0,
+2026-07-28 20:45:03,1710,797.4,926.1,100.4,66.1,166.6,351.9,47.3,,644,63.6,-25.1,PSS_SPIKE review=graphics+native
+2026-07-28 21:00:35,1710,1024.3,1151.1,126,19.8,145.8,558,44.9,,572,226.9,25.6,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+2026-07-28 21:01:21,8652,613.4,,8.5,,,,,,99,,,POST_REMEDIATION_VERIFY_OK
 ```

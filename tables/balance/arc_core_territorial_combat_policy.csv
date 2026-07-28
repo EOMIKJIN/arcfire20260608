@@ -1,5 +1,7 @@
 planetId,systemId,enabled,contestedZone,passIntervalSec,battleWeightPct,neutralDeclareWeightPct,statusQuoWeightPct,defenderAdvantagePct,combatNoisePct,combatMode,campaignGroup,campaignOrder,dominantSideWeightPct,supplyIsolatedPenaltyPct,supplyBonusPctPerNode,supplyBonusCapPct,alertLabelKo,notesKo
-draco_haven,draco_nebula,true,true,3600,58,12,30,8,12,blue_red,draco_front,1,,35,6,18,드라코 성운,draco_front 1h·순차1/3·블루↔레드·중립선포12%
-omega_hub,omega_station,true,true,3600,58,12,30,8,12,blue_neutral,draco_front,2,70,35,6,18,오메가 스테이션,draco_front 1h·순차2/3·블루우세70%·중립선포12%
-shadow_market,shadow_nexus,true,true,3600,58,12,30,8,12,red_neutral,draco_front,3,70,35,6,18,섀도우 넥서스,draco_front 1h·순차3/3·레드우세70%·중립선포12%
-__dynamic_default__,__dynamic__,false,true,3600,58,12,30,8,12,blue_red,draco_front,0,,35,6,18,동적 분쟁지역,플레이어 전투 편입 템플릿(enabled=false·draco_front 순차 로테이션 뒤에 합류)
+draco_haven,draco_nebula,true,true,1200,58,12,30,8,12,blue_red,draco_front,1,,35,6,18,드라코 성운,draco_front 20m·순차1/3·블루↔레드·중립선포12%
+omega_hub,omega_station,true,true,1200,58,12,30,8,12,blue_neutral,draco_front,2,70,35,6,18,오메가 스테이션,draco_front 20m·순차2/3·블루우세70%·중립선포12%
+shadow_market,shadow_nexus,true,true,1200,58,12,30,8,12,red_neutral,draco_front,3,70,35,6,18,섀도우 넥서스,draco_front 20m·순차3/3·레드우세70%·중립선포12%
+helios_core,helios,true,true,1200,58,12,30,8,12,blue_neutral,draco_front,4,70,35,6,18,헬리오스,draco_front 20m·순차4·블루우세70%·아이언측방
+titan_ruins,titan_gate,true,true,1200,58,12,30,8,12,red_neutral,draco_front,5,70,35,6,18,타이탄 게이트,draco_front 20m·순차5·레드우세70%·섀도우축
+__dynamic_default__,__dynamic__,false,true,1200,58,12,30,8,12,blue_red,draco_front,0,,35,6,18,동적 분쟁지역,플레이어 전투 편입 템플릿(enabled=false·draco_front 20m 순차 로테이션 뒤에 합류)

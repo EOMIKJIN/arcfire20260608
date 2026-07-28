@@ -4,8 +4,9 @@ import {
 } from '../../data/balance/generated';
 import {
   DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID,
+  getDynamicContestedZoneRevision,
   listDynamicContestedZoneEntries,
-  listDynamicContestedZoneSystemIds,
+  listDynamicContestedZoneSystemIdSet,
 } from './dynamicContestedZoneStore';
 import { getPlanetOccupationSeedRow } from '../balance/balanceTableRegistry';
 
@@ -76,7 +77,7 @@ function buildPolicyIndex(): Map<string, TerritorialCombatPolicy> {
       systemId: row.systemId,
       enabled: parseBool(row.enabled),
       contestedZone: parseBool(row.contestedZone),
-      passIntervalSec: Math.max(60, parseNum(row.passIntervalSec, 3600)),
+      passIntervalSec: Math.max(60, parseNum(row.passIntervalSec, 1200)),
       battleWeightPct: Math.max(0, parseNum(row.battleWeightPct, 51)),
       neutralDeclareWeightPct: Math.max(0, parseNum(row.neutralDeclareWeightPct, 29)),
       statusQuoWeightPct: Math.max(0, parseNum(row.statusQuoWeightPct, 20)),
@@ -156,11 +157,21 @@ function listDynamicContestedPolicies(): TerritorialCombatPolicy[] {
   }));
 }
 
+// listTerritorialCombatPolicies() revision 캐시 — 동적 분쟁지역 promote/reset(dynamicContestedZoneStore
+// revision) 또는 invalidateTerritorialCombatPolicyCache() 호출 시에만 재빌드. 매 probe(60s)·패스마다
+// [...csv, ...dyn] 신규 배열을 만들지 않도록(핫패스 O(n) 재생성 회피).
+let cachedPolicies: TerritorialCombatPolicy[] | null = null;
+let cachedPoliciesRevision = -1;
+
 export function listTerritorialCombatPolicies(): TerritorialCombatPolicy[] {
+  const rev = getDynamicContestedZoneRevision();
+  if (cachedPolicies && cachedPoliciesRevision === rev) return cachedPolicies;
   const csv = Array.from(getPolicyMap().values()).filter(
     (p) => p.planetId !== DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID,
   );
-  return [...csv, ...listDynamicContestedPolicies()];
+  cachedPolicies = [...csv, ...listDynamicContestedPolicies()];
+  cachedPoliciesRevision = rev;
+  return cachedPolicies;
 }
 
 let contestedZoneSystemIdSet: Set<string> | null = null;
@@ -176,25 +187,32 @@ function getCsvContestedZoneSystemIdSet(): Set<string> {
   return contestedZoneSystemIdSet;
 }
 
-/** 1h 순환 점유(`contestedZone=true`·enabled) 성계 id — 은하 지도 분쟁 표기용 (동적 편입 포함) */
+/** 1회 순환 점유(`contestedZone=true`·enabled) 성계 id — 은하 지도 분쟁 표기용 (동적 편입 포함) */
 export function listContestedZoneSystemIds(): readonly string[] {
   const csv = getCsvContestedZoneSystemIdSet();
-  const dyn = listDynamicContestedZoneSystemIds();
-  if (dyn.length === 0) return Array.from(csv);
+  const dyn = listDynamicContestedZoneSystemIdSet();
+  if (dyn.size === 0) return Array.from(csv);
   return Array.from(new Set([...csv, ...dyn]));
 }
 
 export function isContestedZoneSystemId(systemId: string): boolean {
   if (getCsvContestedZoneSystemIdSet().has(systemId)) return true;
-  return listDynamicContestedZoneSystemIds().includes(systemId);
+  return listDynamicContestedZoneSystemIdSet().has(systemId);
 }
+
+const campaignPoliciesCache = new Map<string, { rev: number; list: TerritorialCombatPolicy[] }>();
 
 export function listTerritorialCombatPoliciesForCampaign(
   campaignGroup: string,
 ): TerritorialCombatPolicy[] {
-  return listTerritorialCombatPolicies()
+  const rev = getDynamicContestedZoneRevision();
+  const cached = campaignPoliciesCache.get(campaignGroup);
+  if (cached && cached.rev === rev) return cached.list;
+  const list = listTerritorialCombatPolicies()
     .filter((p) => p.enabled && p.campaignGroup === campaignGroup)
     .sort((a, b) => a.campaignOrder - b.campaignOrder);
+  campaignPoliciesCache.set(campaignGroup, { rev, list });
+  return list;
 }
 
 export function getTerritorialCombatPolicy(planetId: string): TerritorialCombatPolicy | null {
@@ -220,4 +238,7 @@ export function invalidateTerritorialCombatPolicyCache(): void {
   policyByPlanetId = null;
   fleetByPlanetSide = null;
   contestedZoneSystemIdSet = null;
+  cachedPolicies = null;
+  cachedPoliciesRevision = -1;
+  campaignPoliciesCache.clear();
 }

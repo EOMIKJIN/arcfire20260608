@@ -1,0 +1,179 @@
+{
+  "counts": {
+    "planets": 21,
+    "starSystems": 21,
+    "starEdges": 64,
+    "csvSystems": 21,
+    "galaxy100": 757
+  },
+  "starCoverage": {
+    "withStarRows": [
+      "arcadia",
+      "solar_port",
+      "minerva",
+      "vega_outpost",
+      "new_eden",
+      "iron_cross",
+      "draco_nebula",
+      "omega_station",
+      "helios",
+      "sirius",
+      "titan_gate",
+      "perseus",
+      "crimson_zone",
+      "dark_rift",
+      "blood_field",
+      "shadow_nexus",
+      "abyss",
+      "nightfall",
+      "arcfire_core",
+      "eternity",
+      "genesis"
+    ],
+    "withoutStarRows": []
+  },
+  "planetsVsGenerated": [],
+  "effectiveBuildVsGenerated": [],
+  "asymmetricPlanets": [],
+  "asymmetricGenerated": [],
+  "helios": [
+    "iron_cross",
+    "omega_station",
+    "titan_gate"
+  ],
+  "perseus": [
+    "draco_nebula",
+    "sirius",
+    "crimson_zone"
+  ],
+  "heliosPerseusDirect": false,
+  "starVsPlanetsWhereOverlapping": [
+    {
+      "id": "arcadia",
+      "star": "solar_port|vega_outpost",
+      "planets": "solar_port|vega_outpost",
+      "match": true
+    },
+    {
+      "id": "solar_port",
+      "star": "arcadia|minerva|new_eden",
+      "planets": "arcadia|minerva|new_eden",
+      "match": true
+    },
+    {
+      "id": "minerva",
+      "star": "iron_cross|solar_port",
+      "planets": "iron_cross|solar_port",
+      "match": true
+    },
+    {
+      "id": "vega_outpost",
+      "star": "arcadia|draco_nebula|new_eden",
+      "planets": "arcadia|draco_nebula|new_eden",
+      "match": true
+    },
+    {
+      "id": "new_eden",
+      "star": "iron_cross|omega_station|solar_port|vega_outpost",
+      "planets": "iron_cross|omega_station|solar_port|vega_outpost",
+      "match": true
+    },
+    {
+      "id": "iron_cross",
+      "star": "helios|minerva|new_eden|titan_gate",
+      "planets": "helios|minerva|new_eden|titan_gate",
+      "match": true
+    },
+    {
+      "id": "draco_nebula",
+      "star": "omega_station|perseus|sirius|vega_outpost",
+      "planets": "omega_station|perseus|sirius|vega_outpost",
+      "match": true
+    },
+    {
+      "id": "omega_station",
+      "star": "draco_nebula|helios|new_eden|titan_gate",
+      "planets": "draco_nebula|helios|new_eden|titan_gate",
+      "match": true
+    },
+    {
+      "id": "helios",
+      "star": "iron_cross|omega_station|titan_gate",
+      "planets": "iron_cross|omega_station|titan_gate",
+      "match": true
+    },
+    {
+      "id": "sirius",
+      "star": "crimson_zone|draco_nebula|perseus",
+      "planets": "crimson_zone|draco_nebula|perseus",
+      "match": true
+    },
+    {
+      "id": "titan_gate",
+      "star": "helios|iron_cross|omega_station|shadow_nexus",
+      "planets": "helios|iron_cross|omega_station|shadow_nexus",
+      "match": true
+    },
+    {
+      "id": "perseus",
+      "star": "crimson_zone|draco_nebula|sirius",
+      "planets": "crimson_zone|draco_nebula|sirius",
+      "match": true
+    },
+    {
+      "id": "crimson_zone",
+      "star": "blood_field|dark_rift|perseus|sirius",
+      "planets": "blood_field|dark_rift|perseus|sirius",
+      "match": true
+    },
+    {
+      "id": "dark_rift",
+      "star": "abyss|crimson_zone|shadow_nexus",
+      "planets": "abyss|crimson_zone|shadow_nexus",
+      "match": true
+    },
+    {
+      "id": "blood_field",
+      "star": "crimson_zone|nightfall",
+      "planets": "crimson_zone|nightfall",
+      "match": true
+    },
+    {
+      "id": "shadow_nexus",
+      "star": "abyss|dark_rift|titan_gate",
+      "planets": "abyss|dark_rift|titan_gate",
+      "match": true
+    },
+    {
+      "id": "abyss",
+      "star": "arcfire_core|dark_rift|nightfall|shadow_nexus",
+      "planets": "arcfire_core|dark_rift|nightfall|shadow_nexus",
+      "match": true
+    },
+    {
+      "id": "nightfall",
+      "star": "abyss|blood_field|genesis",
+      "planets": "abyss|blood_field|genesis",
+      "match": true
+    },
+    {
+      "id": "arcfire_core",
+      "star": "abyss|eternity",
+      "planets": "abyss|eternity",
+      "match": true
+    },
+    {
+      "id": "eternity",
+      "star": "arcfire_core|genesis",
+      "planets": "arcfire_core|genesis",
+      "match": true
+    },
+    {
+      "id": "genesis",
+      "star": "eternity|nightfall",
+      "planets": "eternity|nightfall",
+      "match": true
+    }
+  ],
+  "galaxy100LegacyOverlap": []
+}

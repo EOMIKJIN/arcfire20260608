@@ -42,6 +42,7 @@ import {
   listHostileFactions,
   resolveTerritorialSupplyContext,
 } from './territorialSupplyLine';
+import { resolveEffectiveTerritorialCombatMode } from './resolveEffectiveTerritorialCombatMode';
 import { usePlayerStore } from '../../store/playerStore';
 import { resolveMapFactionSideFromClanId } from '../../galaxyMap/resolveMapFactionSide';
 import type { MapFactionSide } from '../../galaxyMap/resolveMapFactionSide';
@@ -49,7 +50,6 @@ import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
 import { yieldJsThread } from '../schedule/yieldJsThread';
 import {
   DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID,
-  isDynamicContestedZonePlanet,
 } from './dynamicContestedZoneStore';
 import type { PlanetClanHold } from '../../types';
 
@@ -229,24 +229,30 @@ function resolveBattleHoldTarget(input: {
   return holdSide;
 }
 
-/** 함대 CSV — 동적 편입 행성은 `__dynamic_default__` 템플릿 편성 폴백 */
+/**
+ * 함대 CSV 조회.
+ * 행성×side 행이 없으면 `__dynamic_default__` 템플릿 폴백.
+ * — 정적 분쟁(draco_haven 등)도 소유권 구매로 INDEPENDENT가 될 수 있는데,
+ *   INDEPENDENT 편성은 템플릿에만 있어 폴백을 동적 편입 행성으로만 제한하면
+ *   def=0 → 「독립국 침공 skip — 함대 없음」 프로세스 충돌이 난다(2026-07-28).
+ */
 function resolveTerritorialFleetShipIds(
   planetId: string,
   side: TerritorialCombatParticipant,
 ): readonly string[] {
   const rows = listTerritorialFleetShipIds(planetId, side);
   if (rows.length > 0) return rows;
-  if (!isDynamicContestedZonePlanet(planetId)) return rows;
   return listTerritorialFleetShipIds(DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID, side);
 }
 
 /**
  * 독립국(플레이어 국가·녹색) 행성 침공 판정 — 정식 팩션 규칙 (2026-07-21 대표님 확정 설계).
  * - 공격자: 정치관계 CSV상 적대 팩션 중 보급선(인접 아군 성계 ≥1) 보유 측만 (동맹 블루는 침공 불가)
- * - 주둔 억지: 플레이어가 해당 행성 체류 중이면 주력전투병력 주둔으로 침공 보류 (자리를 뜨면 함락이 정론)
+ * - 주둔 억지: 플레이어가 해당 행성 체류 중이면 주력전투병력 주둔으로 침공 보류 (자리를 뜨면 함락이 정론). 보류는 무알림·무로그.
  * - 소유권 파괴: 함락 시 점유 전환 + 증서 소멸(applyArcCoreTerritorialHold 덮어쓰기 정본) → 재중립화 후 재구매
  * - neutral_declare는 미적용 — 소유권은 전투 함락으로만 소멸
  * - 총사령관 전술 역전 미적용 — NPC 국가 총독 체계 밖 (추후 병력배치 시스템에서 대체)
+ * - UI 알림: 실제 전투 결과(방어 유지·함락)만. 주둔 보류·무공격자·비교전 롤·함대 부재는 silent status_quo.
  */
 async function runIndependentHoldInvasionJudgment(input: {
   planetId: string;
@@ -267,12 +273,9 @@ async function runIndependentHoldInvasionJudgment(input: {
     );
   };
 
-  const statusQuoResult = async (): Promise<TerritorialPassResult> => {
+  /** 기계적 보류·비교전 — 패스만 완료. 알림/콘솔 금지(주둔 억지 등에서 「독립국 침공」 스팸 방지). */
+  const silentStatusQuoResult = async (): Promise<TerritorialPassResult> => {
     await completePass();
-    showTerritorialStatusQuoAlert({
-      planetLabelKo: policy.alertLabelKo,
-      side: previousSide,
-    });
     return {
       planetId,
       decision: 'status_quo',
@@ -282,13 +285,10 @@ async function runIndependentHoldInvasionJudgment(input: {
     };
   };
 
-  // 1. 주둔 억지 — 플레이어(주력전투병력)가 해당 행성에 체류 중이면 침공 보류
+  // 1. 주둔 억지 — 플레이어(주력전투병력)가 해당 행성에 체류 중이면 침공 보류(무알림)
   const player = usePlayerStore.getState().player;
   if (player?.currentPlanetId === planetId) {
-    if (__DEV__) {
-      console.log(`[territorial] ${planetId} 독립국 침공 보류 — 플레이어 주둔(주력병력) 억지`);
-    }
-    return statusQuoResult();
+    return silentStatusQuoResult();
   }
 
   const holds = warStore.planetHolds;
@@ -309,7 +309,7 @@ async function runIndependentHoldInvasionJudgment(input: {
     }
   }
   if (!attacker) {
-    return statusQuoResult();
+    return silentStatusQuoResult();
   }
 
   // 3. 판정 롤 — battle 외에는 현상 유지(독립국에 중립선포 없음). aggressive 시 battleWeightPct 소폭 가산.
@@ -318,19 +318,15 @@ async function runIndependentHoldInvasionJudgment(input: {
     battleWeightPct: resolveFrontPressureBattleWeightPct(policy.systemId, policy.battleWeightPct, holds),
   });
   if (decision !== 'battle') {
-    return statusQuoResult();
+    // 롤 결과 status_quo/neutral_declare — 독립국은 실질 이벤트 없음 → 무알림
+    return silentStatusQuoResult();
   }
 
   // 4. 전투 — 침공 함대 vs 독립국 주둔군 (보급 배율 동일 물리학)
   const attackerShipIds = resolveTerritorialFleetShipIds(planetId, attacker);
   const defenderShipIds = resolveTerritorialFleetShipIds(planetId, 'INDEPENDENT');
   if (attackerShipIds.length === 0 || defenderShipIds.length === 0) {
-    if (__DEV__) {
-      console.warn(
-        `[territorial] ${planetId} 독립국 침공 skip — 함대 없음 atk=${attackerShipIds.length} def=${defenderShipIds.length}`,
-      );
-    }
-    return statusQuoResult();
+    return silentStatusQuoResult();
   }
 
   const supply = applyFrontPressureSupplyBonus(
@@ -411,6 +407,9 @@ async function runIndependentHoldInvasionJudgment(input: {
   };
 }
 
+// 시드그래프 vs CSV combatMode — 런타임 holds 1홉 참고 경고(시드 미사용). 세션당 systemId 1회.
+const graphMismatchWarnedSystemIds = new Set<string>();
+
 export async function runTerritorialCombatPassForPlanet(
   planetId: string,
   nowMs: number,
@@ -418,16 +417,6 @@ export async function runTerritorialCombatPassForPlanet(
 ): Promise<TerritorialPassResult | null> {
   const policy = getTerritorialCombatPolicy(planetId);
   if (!policy?.enabled) return null;
-
-  const graphCheck = validateTerritorialCombatModeForSystem({
-    systemId: policy.systemId,
-    combatMode: policy.combatMode,
-  });
-  if (!graphCheck.ok && __DEV__) {
-    console.warn(
-      `[territorial] ${planetId} combatMode=${policy.combatMode} != graph=${graphCheck.expected}`,
-    );
-  }
 
   const warStore = useClanWarFoundationStore.getState();
   if (!warStore.hydrated) {
@@ -448,9 +437,24 @@ export async function runTerritorialCombatPassForPlanet(
   const hold = warStore.getHold(planetId);
   const holdSide = resolveHoldFactionSide(hold?.occupierClanId);
 
-  // 독립국(플레이어 국가) 점유 — 정식 팩션 침공 판정으로 분기
+  // 독립국 점유 — CSV combatMode(blue_red 등)와 무관한 침공 분기. 그래프 검증·경고 생략.
   if (holdSide === 'INDEPENDENT') {
     return runIndependentHoldInvasionJudgment({ planetId, policy, warStore, nowMs, campaignMeta });
+  }
+
+  // 인접 검증은 런타임 holds 정본 — 시드 initialOwner와 비교하지 않음(2026-07-28 대표님: 진행 > 시드)
+  // 독립국 분기 이후에만 수행(CSV combatMode vs 독립국 점유 충돌 경고 방지)
+  const graphCheck = validateTerritorialCombatModeForSystem({
+    systemId: policy.systemId,
+    combatMode: policy.combatMode,
+    holds: warStore.planetHolds,
+  });
+  if (!graphCheck.ok && __DEV__ && !graphMismatchWarnedSystemIds.has(policy.systemId)) {
+    graphMismatchWarnedSystemIds.add(policy.systemId);
+    console.warn(
+      `[territorial] ${planetId} combatMode=${policy.combatMode} != runtimeGraph=${graphCheck.expected} ` +
+        `(런타임 점유 1홉 참고용 경고 · 세션당 1회 · 시드 미사용 · NEUTRAL 우세는 P0)`,
+    );
   }
 
   const previousSide = sideToMapFaction(holdSide);
@@ -530,9 +534,25 @@ export async function runTerritorialCombatPassForPlanet(
     }),
   };
 
+  // 중립 hold 런타임 보급 비대칭 P0 — CSV combatMode를 NEUTRAL 한정으로 덮어씀(2026-07-28).
+  // blue_red 전용 "한쪽만 보급 → 공격자 확정"(resolveAttackerDefenderSides 내부)과는 중복 충돌 없음:
+  // effective가 blue_neutral/red_neutral이면 그 분기로 바로 진입(supplyAdjacency 재사용 안 함),
+  // effective가 blue_red면 둘 다 보급 보유(접전)라 기존 분기도 동일하게 랜덤 공격자로 귀결.
+  const effectiveCombatMode = resolveEffectiveTerritorialCombatMode({
+    holdSide,
+    policyCombatMode: policy.combatMode,
+    supplyAdjacency,
+  });
+  if (__DEV__ && effectiveCombatMode !== policy.combatMode) {
+    console.log(
+      `[territorial] ${planetId} NEUTRAL 보급비대칭 P0 오버라이드 policy=${policy.combatMode} -> effective=${effectiveCombatMode} ` +
+        `(blue=${supplyAdjacency.blue},red=${supplyAdjacency.red})`,
+    );
+  }
+
   const { attacker, defender } = resolveAttackerDefenderSides(
     holdSide,
-    policy.combatMode,
+    effectiveCombatMode,
     supplyAdjacency,
   );
   const attackerShipIds = resolveTerritorialFleetShipIds(planetId, attacker);
@@ -551,7 +571,7 @@ export async function runTerritorialCombatPassForPlanet(
   );
 
   const usesBinaryDominance =
-    policy.combatMode === 'blue_neutral' || policy.combatMode === 'red_neutral';
+    effectiveCombatMode === 'blue_neutral' || effectiveCombatMode === 'red_neutral';
 
   if (!usesBinaryDominance && (attackerShipIds.length === 0 || defenderShipIds.length === 0)) {
     await completePass();
@@ -608,7 +628,7 @@ export async function runTerritorialCombatPassForPlanet(
       planetId,
       systemId: policy.systemId,
       factionSide: resolveBattleHoldTarget({
-        combatMode: policy.combatMode,
+        combatMode: effectiveCombatMode,
         policy,
         holdSide,
         attacker,
@@ -659,7 +679,7 @@ export async function runTerritorialCombatPassForPlanet(
   }
 
   let targetFaction = resolveBattleHoldTarget({
-    combatMode: policy.combatMode,
+    combatMode: effectiveCombatMode,
     policy,
     holdSide,
     attacker,
@@ -700,11 +720,12 @@ export async function runTerritorialCombatPassForPlanet(
     operationMeta: {
       source: 'arc_core_territorial',
       decision,
-      combatMode: policy.combatMode,
+      combatMode: effectiveCombatMode,
+      policyCombatMode: policy.combatMode,
       attackerSide: attacker,
       defenderSide: defender,
       dominantSideWeightPct: policy.dominantSideWeightPct,
-      dominantFaction: resolveDominantFaction(policy.combatMode),
+      dominantFaction: resolveDominantFaction(effectiveCombatMode),
       targetFaction,
       ...(tacticsReversal
         ? {

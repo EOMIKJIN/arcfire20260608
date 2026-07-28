@@ -1,0 +1,368 @@
+{
+  "note": "GALAXY_SYSTEMS(월드맵)은 STAR_SYSTEMS 복사 후 synth 브리지 + maxDegree=3 캡. 이동/분쟁은 STAR_SYSTEMS(csv) 정본.",
+  "rows": [
+    {
+      "id": "arcadia",
+      "planetsCsv": [
+        "solar_port",
+        "vega_outpost"
+      ],
+      "g100GameplayNeighbors": [
+        "solar_port",
+        "vega_outpost"
+      ],
+      "g100SynthBridges": 1,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 3
+    },
+    {
+      "id": "solar_port",
+      "planetsCsv": [
+        "arcadia",
+        "minerva",
+        "new_eden"
+      ],
+      "g100GameplayNeighbors": [
+        "new_eden",
+        "arcadia",
+        "minerva"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 3
+    },
+    {
+      "id": "minerva",
+      "planetsCsv": [
+        "solar_port",
+        "iron_cross"
+      ],
+      "g100GameplayNeighbors": [
+        "iron_cross",
+        "solar_port"
+      ],
+      "g100SynthBridges": 1,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 3
+    },
+    {
+      "id": "vega_outpost",
+      "planetsCsv": [
+        "arcadia",
+        "new_eden",
+        "draco_nebula"
+      ],
+      "g100GameplayNeighbors": [
+        "new_eden",
+        "draco_nebula",
+        "arcadia"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 3
+    },
+    {
+      "id": "new_eden",
+      "planetsCsv": [
+        "solar_port",
+        "vega_outpost",
+        "iron_cross",
+        "omega_station"
+      ],
+      "g100GameplayNeighbors": [
+        "omega_station",
+        "solar_port",
+        "vega_outpost",
+        "iron_cross"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 4
+    },
+    {
+      "id": "iron_cross",
+      "planetsCsv": [
+        "minerva",
+        "new_eden",
+        "helios",
+        "titan_gate"
+      ],
+      "g100GameplayNeighbors": [
+        "helios",
+        "minerva",
+        "titan_gate",
+        "new_eden"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 4
+    },
+    {
+      "id": "draco_nebula",
+      "planetsCsv": [
+        "vega_outpost",
+        "omega_station",
+        "perseus",
+        "sirius"
+      ],
+      "g100GameplayNeighbors": [
+        "sirius",
+        "vega_outpost",
+        "omega_station",
+        "perseus"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 4
+    },
+    {
+      "id": "omega_station",
+      "planetsCsv": [
+        "new_eden",
+        "draco_nebula",
+        "helios",
+        "titan_gate"
+      ],
+      "g100GameplayNeighbors": [
+        "new_eden",
+        "titan_gate",
+        "helios",
+        "draco_nebula"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 4
+    },
+    {
+      "id": "helios",
+      "planetsCsv": [
+        "iron_cross",
+        "omega_station",
+        "titan_gate"
+      ],
+      "g100GameplayNeighbors": [
+        "titan_gate",
+        "iron_cross",
+        "omega_station"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 3
+    },
+    {
+      "id": "sirius",
+      "planetsCsv": [
+        "draco_nebula",
+        "perseus",
+        "crimson_zone"
+      ],
+      "g100GameplayNeighbors": [
+        "crimson_zone",
+        "draco_nebula",
+        "perseus"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 3
+    },
+    {
+      "id": "titan_gate",
+      "planetsCsv": [
+        "iron_cross",
+        "omega_station",
+        "helios",
+        "shadow_nexus"
+      ],
+      "g100GameplayNeighbors": [
+        "helios",
+        "omega_station",
+        "shadow_nexus",
+        "iron_cross"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 4
+    },
+    {
+      "id": "perseus",
+      "planetsCsv": [
+        "draco_nebula",
+        "sirius",
+        "crimson_zone"
+      ],
+      "g100GameplayNeighbors": [
+        "crimson_zone",
+        "sirius",
+        "draco_nebula"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 3
+    },
+    {
+      "id": "crimson_zone",
+      "planetsCsv": [
+        "sirius",
+        "perseus",
+        "dark_rift",
+        "blood_field"
+      ],
+      "g100GameplayNeighbors": [
+        "sirius",
+        "blood_field",
+        "perseus",
+        "dark_rift"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 4
+    },
+    {
+      "id": "dark_rift",
+      "planetsCsv": [
+        "shadow_nexus",
+        "crimson_zone",
+        "abyss"
+      ],
+      "g100GameplayNeighbors": [
+        "shadow_nexus",
+        "abyss",
+        "crimson_zone"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 3
+    },
+    {
+      "id": "blood_field",
+      "planetsCsv": [
+        "crimson_zone",
+        "nightfall"
+      ],
+      "g100GameplayNeighbors": [
+        "crimson_zone",
+        "nightfall"
+      ],
+      "g100SynthBridges": 1,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 3
+    },
+    {
+      "id": "shadow_nexus",
+      "planetsCsv": [
+        "titan_gate",
+        "dark_rift",
+        "abyss"
+      ],
+      "g100GameplayNeighbors": [
+        "dark_rift",
+        "abyss",
+        "titan_gate"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 3
+    },
+    {
+      "id": "abyss",
+      "planetsCsv": [
+        "dark_rift",
+        "shadow_nexus",
+        "nightfall",
+        "arcfire_core"
+      ],
+      "g100GameplayNeighbors": [
+        "arcfire_core",
+        "dark_rift",
+        "shadow_nexus",
+        "nightfall"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 4
+    },
+    {
+      "id": "nightfall",
+      "planetsCsv": [
+        "blood_field",
+        "abyss",
+        "genesis"
+      ],
+      "g100GameplayNeighbors": [
+        "abyss",
+        "genesis",
+        "blood_field"
+      ],
+      "g100SynthBridges": 0,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 3
+    },
+    {
+      "id": "arcfire_core",
+      "planetsCsv": [
+        "abyss",
+        "eternity"
+      ],
+      "g100GameplayNeighbors": [
+        "abyss",
+        "eternity"
+      ],
+      "g100SynthBridges": 1,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 3
+    },
+    {
+      "id": "eternity",
+      "planetsCsv": [
+        "arcfire_core",
+        "genesis"
+      ],
+      "g100GameplayNeighbors": [
+        "genesis",
+        "arcfire_core"
+      ],
+      "g100SynthBridges": 1,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 3
+    },
+    {
+      "id": "genesis",
+      "planetsCsv": [
+        "eternity",
+        "nightfall"
+      ],
+      "g100GameplayNeighbors": [
+        "eternity",
+        "nightfall"
+      ],
+      "g100SynthBridges": 1,
+      "droppedOnMapVsCsv": [],
+      "extraOnMapVsCsv": [],
+      "g100Degree": 3
+    }
+  ],
+  "summary": {
+    "systemsWithDroppedCsvEdgesOnMap": [],
+    "systemsWithExtraBaseEdgesOnMap": []
+  }
+}

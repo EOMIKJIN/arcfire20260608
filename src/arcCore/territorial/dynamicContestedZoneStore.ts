@@ -28,6 +28,29 @@ let mem: Persisted = { byPlanetId: {} };
 let hydrated = false;
 let hydratePromise: Promise<void> | null = null;
 
+// 정책 목록 revision 캐시(arcCoreTerritorialCombatPolicy.listTerritorialCombatPolicies 등)가
+// mem 변경 시에만 재빌드하도록 하는 세대 카운터 — mem을 바꾸는 모든 지점은 setMem()을 거쳐야 함.
+let revision = 0;
+function setMem(next: Persisted): void {
+  mem = next;
+  revision += 1;
+}
+
+/** 정책 목록 캐시 무효화 판단용 세대값 — mem이 바뀔 때마다 증가 */
+export function getDynamicContestedZoneRevision(): number {
+  return revision;
+}
+
+let systemIdSetCache: { rev: number; set: ReadonlySet<string> } | null = null;
+
+/** 동적 편입 systemId Set — O(1) 조회용, mem 변경 시에만 재계산(revision 캐시) */
+export function listDynamicContestedZoneSystemIdSet(): ReadonlySet<string> {
+  if (systemIdSetCache && systemIdSetCache.rev === revision) return systemIdSetCache.set;
+  const set = new Set(Object.values(mem.byPlanetId).map((e) => e.systemId));
+  systemIdSetCache = { rev: revision, set };
+  return set;
+}
+
 export async function hydrateDynamicContestedZones(): Promise<void> {
   if (hydrated) return;
   if (!hydratePromise) {
@@ -49,7 +72,7 @@ export async function hydrateDynamicContestedZones(): Promise<void> {
                 source: String((entry as DynamicContestedZoneEntry).source ?? ''),
               };
             }
-            mem = { byPlanetId: clean };
+            setMem({ byPlanetId: clean });
           }
         }
       } catch {
@@ -105,12 +128,12 @@ export async function promoteDynamicContestedZone(input: {
   await hydrateDynamicContestedZones();
   if (mem.byPlanetId[planetId]) return false;
 
-  mem = {
+  setMem({
     byPlanetId: {
       ...mem.byPlanetId,
       [planetId]: { planetId, systemId, promotedAtMs: Date.now(), source: input.source },
     },
-  };
+  });
   await persistDynamicContestedZones();
   if (typeof __DEV__ !== 'undefined' && __DEV__) {
     console.log(`[territorial] 동적 분쟁지역 편입: ${planetId} (${systemId}) source=${input.source}`);
@@ -151,7 +174,7 @@ export async function promoteDynamicContestedZonesFromOperations(
 
 /** 계정 초기화 — 플레이어 전투로 편입된 동적 분쟁지역 전체 리셋(정적 3곳으로 복귀) */
 export async function resetDynamicContestedZonesForAccountPurge(): Promise<void> {
-  mem = { byPlanetId: {} };
+  setMem({ byPlanetId: {} });
   hydrated = true;
   hydratePromise = Promise.resolve();
   try {

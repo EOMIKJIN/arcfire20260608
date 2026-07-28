@@ -209,7 +209,8 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     "connections": [
       "omega_station",
       "solar_port",
-      "vega_outpost"
+      "vega_outpost",
+      "iron_cross"
     ],
     "enemyLevel": 5,
     "description": "상업수도 성계. 은하 서부 무역 정치의 중심.",
@@ -251,7 +252,8 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     "connections": [
       "helios",
       "minerva",
-      "synth_002"
+      "titan_gate",
+      "new_eden"
     ],
     "enemyLevel": 6,
     "description": "고대 전쟁의 흔적이 남아있는 성계.",
@@ -293,6 +295,7 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     "connections": [
       "sirius",
       "vega_outpost",
+      "omega_station",
       "perseus"
     ],
     "enemyLevel": 7,
@@ -335,7 +338,8 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     "connections": [
       "new_eden",
       "titan_gate",
-      "helios"
+      "helios",
+      "draco_nebula"
     ],
     "enemyLevel": 8,
     "description": "은하의 중간지점. 모든 항로가 교차한다.",
@@ -461,7 +465,8 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     "connections": [
       "helios",
       "omega_station",
-      "shadow_nexus"
+      "shadow_nexus",
+      "iron_cross"
     ],
     "enemyLevel": 10,
     "description": "고대 타이탄 종족이 남긴 거대 게이트 유적.",
@@ -545,7 +550,8 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     "connections": [
       "sirius",
       "blood_field",
-      "perseus"
+      "perseus",
+      "dark_rift"
     ],
     "enemyLevel": 15,
     "description": "⚠ PvP 구역. 다른 파일럿의 공격에 노출된다.",
@@ -586,7 +592,8 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     ],
     "connections": [
       "shadow_nexus",
-      "abyss"
+      "abyss",
+      "crimson_zone"
     ],
     "enemyLevel": 17,
     "description": "⚠ PvP 구역. 공간 왜곡이 심하다.",
@@ -712,7 +719,8 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     "connections": [
       "arcfire_core",
       "dark_rift",
-      "shadow_nexus"
+      "shadow_nexus",
+      "nightfall"
     ],
     "enemyLevel": 20,
     "description": "⚠ PvP 구역. 심연의 끝. 여기서 살아남으면 전설이 된다.",
@@ -752,9 +760,9 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
       }
     ],
     "connections": [
-      "blood_field",
-      "synth_037",
-      "synth_003"
+      "abyss",
+      "genesis",
+      "blood_field"
     ],
     "enemyLevel": 19,
     "description": "⚠ PvP 구역. 영원한 밤이 지배하는 성계.",
@@ -879,8 +887,8 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     ],
     "connections": [
       "eternity",
-      "synth_045",
-      "synth_025"
+      "nightfall",
+      "synth_045"
     ],
     "enemyLevel": 40,
     "description": "★ 엔드게임. 모든 것의 시작이자 끝. 아크파이어 온라인의 최종 목적지.",
@@ -930,8 +938,8 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     "zone": "neutral",
     "connections": [
       "minerva",
-      "iron_cross",
-      "synth_062"
+      "synth_062",
+      "synth_067"
     ],
     "enemyLevel": 1,
     "description": "아직 항로가 개척되지 않은 성계. 센서상으로는 존재만 확인된다.",
@@ -963,8 +971,8 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     },
     "zone": "neutral",
     "connections": [
-      "nightfall",
       "synth_001",
+      "synth_037",
       "synth_011"
     ],
     "enemyLevel": 1,
@@ -1640,8 +1648,8 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     "zone": "neutral",
     "connections": [
       "arcfire_core",
-      "genesis",
-      "synth_045"
+      "synth_045",
+      "synth_047"
     ],
     "enemyLevel": 1,
     "description": "아직 항로가 개척되지 않은 성계. 센서상으로는 존재만 확인된다.",
@@ -2047,9 +2055,9 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     },
     "zone": "neutral",
     "connections": [
-      "nightfall",
       "eternity",
-      "synth_042"
+      "synth_042",
+      "synth_003"
     ],
     "enemyLevel": 1,
     "description": "아직 항로가 개척되지 않은 성계. 센서상으로는 존재만 확인된다.",
@@ -2350,9 +2358,9 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     },
     "zone": "neutral",
     "connections": [
+      "synth_025",
       "synth_050",
-      "synth_008",
-      "synth_055"
+      "synth_008"
     ],
     "enemyLevel": 1,
     "description": "아직 항로가 개척되지 않은 성계. 센서상으로는 존재만 확인된다.",
@@ -2621,8 +2629,7 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     },
     "zone": "neutral",
     "connections": [
-      "synth_050",
-      "synth_047"
+      "synth_050"
     ],
     "enemyLevel": 1,
     "description": "아직 항로가 개척되지 않은 성계. 센서상으로는 존재만 확인된다.",
@@ -3027,7 +3034,8 @@ export const GALAXY_SYSTEMS_PRECOMPUTED: Record<string, StarSystem> = {
     "zone": "neutral",
     "connections": [
       "synth_008",
-      "synth_014"
+      "synth_014",
+      "synth_002"
     ],
     "enemyLevel": 1,
     "description": "아직 항로가 개척되지 않은 성계. 센서상으로는 존재만 확인된다.",

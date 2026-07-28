@@ -242,7 +242,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         mainStageBackdropImageEnabled: false,
       }
     ],
-    connections: ["vega_outpost","omega_station","perseus"],
+    connections: ["vega_outpost","omega_station","perseus","sirius"],
     enemyLevel: 7,
     description: "짙은 성운 안에 숨겨진 신비로운 성계.",
     descriptionEn: "A mysterious system hidden inside a dense nebula.",
@@ -312,7 +312,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         mainStageBackdropImageEnabled: false,
       }
     ],
-    connections: ["iron_cross","omega_station","titan_gate","perseus"],
+    connections: ["iron_cross","omega_station","titan_gate"],
     enemyLevel: 9,
     description: "항성 에너지 수집 시설이 있는 성계.",
     descriptionEn: "A system with stellar energy collection facilities.",
@@ -417,7 +417,7 @@ export const STAR_SYSTEMS_FROM_CSV: Record<string, StarSystem> = {
         mainStageBackdropImageEnabled: false,
       }
     ],
-    connections: ["draco_nebula","sirius","helios","crimson_zone"],
+    connections: ["draco_nebula","sirius","crimson_zone"],
     enemyLevel: 11,
     description: "영웅들이 이름을 남긴 격전지.",
     descriptionEn: "A fierce battleground where heroes made their names.",

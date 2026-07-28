@@ -1,0 +1,231 @@
+{
+  "hold": {
+    "planetId": "omega_hub",
+    "systemId": "omega_station",
+    "occupierClanId": "neutral",
+    "deedOwnerClanId": null,
+    "homePlayerUid": null,
+    "kind": "neutral",
+    "capturedAt": 1784993521063,
+    "neutralizedAt": null
+  },
+  "omegaOps": [
+    {
+      "id": "op_arc_1784993521063_286759352",
+      "attackerClanId": "neutral",
+      "defenderClanId": "balance_seed_faction_blue",
+      "targetPlanetId": "omega_hub",
+      "phase": "resolved",
+      "startedAt": 1784993521063,
+      "updatedAt": 1784993521063,
+      "ext": {
+        "source": "arc_core_territorial",
+        "decision": "neutral_declare",
+        "previousSide": "blue",
+        "newSide": "neutral"
+      }
+    },
+    {
+      "id": "op_arc_1784964690574_842369978",
+      "attackerClanId": "balance_seed_faction_blue",
+      "defenderClanId": null,
+      "targetPlanetId": "omega_hub",
+      "phase": "resolved",
+      "startedAt": 1784964690574,
+      "updatedAt": 1784964690574,
+      "ext": {
+        "source": "arc_core_territorial",
+        "decision": "battle",
+        "combatMode": "blue_neutral",
+        "attackerSide": "BLUE",
+        "defenderSide": "NEUTRAL",
+        "dominantSideWeightPct": 70,
+        "dominantFaction": "BLUE",
+        "targetFaction": "BLUE",
+        "tacticsReversal": {
+          "reversed": false,
+          "reversalChancePct": 0,
+          "winnerCaptainId": "npc_cpt_gov_reserve_blue_09",
+          "loserCaptainId": null,
+          "winnerGrade": 0,
+          "loserGrade": 0
+        },
+        "previousSide": "neutral",
+        "newSide": "blue"
+      }
+    },
+    {
+      "id": "op_arc_1784935873583_635473627",
+      "attackerClanId": "neutral",
+      "defenderClanId": "balance_seed_faction_blue",
+      "targetPlanetId": "omega_hub",
+      "phase": "resolved",
+      "startedAt": 1784935873583,
+      "updatedAt": 1784935873583,
+      "ext": {
+        "source": "arc_core_territorial",
+        "decision": "neutral_declare",
+        "previousSide": "blue",
+        "newSide": "neutral"
+      }
+    },
+    {
+      "id": "op_arc_1784863677507_558642455",
+      "attackerClanId": "balance_seed_faction_blue",
+      "defenderClanId": null,
+      "targetPlanetId": "omega_hub",
+      "phase": "resolved",
+      "startedAt": 1784863677507,
+      "updatedAt": 1784863677507,
+      "ext": {
+        "source": "arc_core_territorial",
+        "decision": "battle",
+        "combatMode": "blue_neutral",
+        "attackerSide": "BLUE",
+        "defenderSide": "NEUTRAL",
+        "dominantSideWeightPct": 70,
+        "dominantFaction": "BLUE",
+        "targetFaction": "BLUE",
+        "tacticsReversal": {
+          "reversed": false,
+          "reversalChancePct": 0,
+          "winnerCaptainId": "npc_cpt_gov_reserve_blue_09",
+          "loserCaptainId": null,
+          "winnerGrade": 0,
+          "loserGrade": 0
+        },
+        "previousSide": "neutral",
+        "newSide": "blue"
+      }
+    },
+    {
+      "id": "op_arc_1784849256980_327033256",
+      "attackerClanId": "neutral",
+      "defenderClanId": "balance_seed_faction_blue",
+      "targetPlanetId": "omega_hub",
+      "phase": "resolved",
+      "startedAt": 1784849256980,
+      "updatedAt": 1784849256980,
+      "ext": {
+        "source": "arc_core_territorial",
+        "decision": "neutral_declare",
+        "previousSide": "blue",
+        "newSide": "neutral"
+      }
+    },
+    {
+      "id": "op_arc_1784762789926_210268951",
+      "attackerClanId": "balance_seed_faction_blue",
+      "defenderClanId": null,
+      "targetPlanetId": "omega_hub",
+      "phase": "resolved",
+      "startedAt": 1784762789926,
+      "updatedAt": 1784762789926,
+      "ext": {
+        "source": "arc_core_territorial",
+        "decision": "battle",
+        "combatMode": "blue_neutral",
+        "attackerSide": "BLUE",
+        "defenderSide": "NEUTRAL",
+        "dominantSideWeightPct": 70,
+        "dominantFaction": "BLUE",
+        "targetFaction": "BLUE",
+        "tacticsReversal": {
+          "reversed": false,
+          "reversalChancePct": 0,
+          "winnerCaptainId": "npc_cpt_gov_reserve_blue_09",
+          "loserCaptainId": null,
+          "winnerGrade": 0,
+          "loserGrade": 0
+        },
+        "previousSide": "neutral",
+        "newSide": "blue"
+      }
+    },
+    {
+      "id": "op_arc_1784733956779_188663445",
+      "attackerClanId": "neutral",
+      "defenderClanId": "balance_seed_faction_blue",
+      "targetPlanetId": "omega_hub",
+      "phase": "resolved",
+      "startedAt": 1784733956779,
+      "updatedAt": 1784733956779,
+      "ext": {
+        "source": "arc_core_territorial",
+        "decision": "neutral_declare",
+        "previousSide": "blue",
+        "newSide": "neutral"
+      }
+    },
+    {
+      "id": "op_arc_1784470529107_578902123",
+      "attackerClanId": "balance_seed_faction_blue",
+      "defenderClanId": "balance_seed_faction_red",
+      "targetPlanetId": "omega_hub",
+      "phase": "resolved",
+      "startedAt": 1784470529107,
+      "updatedAt": 1784470529107,
+      "ext": {
+        "source": "arc_core_territorial",
+        "decision": "battle",
+        "combatMode": "blue_neutral",
+        "attackerSide": "BLUE",
+        "defenderSide": "NEUTRAL",
+        "dominantSideWeightPct": 70,
+        "dominantFaction": "BLUE",
+        "targetFaction": "BLUE",
+        "tacticsReversal": {
+          "reversed": false,
+          "reversalChancePct": 0,
+          "winnerCaptainId": "npc_cpt_gov_reserve_blue_09",
+          "loserCaptainId": null,
+          "winnerGrade": 0,
+          "loserGrade": 0
+        },
+        "previousSide": "red",
+        "newSide": "blue"
+      }
+    }
+  ],
+  "territorial": {
+    "byPlanetId": {
+      "draco_haven": {
+        "lastPassAtMs": 1785238875699,
+        "windowStartMs": 1785238875699,
+        "passCountInWindow": 1
+      },
+      "omega_hub": {
+        "lastPassAtMs": 1785242515662,
+        "windowStartMs": 1785242515662,
+        "passCountInWindow": 1
+      },
+      "shadow_market": {
+        "lastPassAtMs": 1785224378410,
+        "windowStartMs": 1785224378410,
+        "passCountInWindow": 1
+      },
+      "sirius_border": {
+        "lastPassAtMs": 1785235274775,
+        "windowStartMs": 1785235274775,
+        "passCountInWindow": 1
+      },
+      "helios_core": {
+        "lastPassAtMs": 1785227979651,
+        "windowStartMs": 1785227979651,
+        "passCountInWindow": 1
+      },
+      "titan_ruins": {
+        "lastPassAtMs": 1785231636742,
+        "windowStartMs": 1785231636742,
+        "passCountInWindow": 1
+      }
+    },
+    "campaignGroups": {
+      "draco_front": {
+        "lastPassAtMs": 1785242515662,
+        "lastOrderIndex": 1,
+        "nextPreviewOrderIndex": 2
+      }
+    }
+  }
+}

@@ -1,10 +1,10 @@
 // ============================================================
-// ?�성 ?�유�?모델 ???�토(�??·�?��) vs ?�유�?증서(?�랜)
+// ?�성 ?�유�?모델 ???�토(�??·�?��) vs ?�유�?증서(?�랜)
 // ============================================================
 //
-// - occupierClanId: �?��·?�령?�·팩??금고 (블루/?�드 �?? ?�드 ?�는 AI ?�랜)
-// - deedOwnerClanId: null = �?? ?�폴???�유, �??�음 = ?�당 ?�랜??증서 보유
-// - 블루/?�드??UI·지??구분?? �??명�? megaFactionNationPolicy ?�본
+// - occupierClanId: �?��·?�령?�·팩??금고 (블루/?�드 �?? ?�드 ?�는 AI ?�랜)
+// - deedOwnerClanId: null = �?? ?�폴???�유, �??�음 = ?�당 ?�랜??증서 보유
+// - 블루/?�드??UI·지??구분?? �??명�? megaFactionNationPolicy ?�본
 
 import {
   ARC_CORE_SEED_BLUE_CLAN_ID,
@@ -12,8 +12,8 @@ import {
 } from '../arcCore/balance/seedPlanetOccupationFromBalance';
 import {
   getPlanetOccupationSeedRow,
-  isPlanetContestedZone,
 } from '../arcCore/balance/balanceTableRegistry';
+import { isTerritorialProcessPlanet } from '../arcCore/territorial/isTerritorialProcessPlanet';
 import {
   resolveMapFactionSideFromClanIdPure,
   type MapFactionSide,
@@ -39,7 +39,7 @@ export function isAiNpcClanId(clanId: string | null | undefined): boolean {
   return Boolean(clanId?.startsWith('ai_clan_'));
 }
 
-/** ?�레?�어·?�로 ?�랜 ??증서�??�질 보유?????�는 ?�랜 */
+/** ?�레?�어·?�로 ?�랜 ??증서�??�질 보유?????�는 ?�랜 */
 export function isPlayerOriginatedClanId(clanId: string | null | undefined): boolean {
   if (!clanId || clanId === 'neutral') return false;
   if (isNationSeedClanId(clanId) || isAiNpcClanId(clanId)) return false;
@@ -53,14 +53,14 @@ export function resolveMegaFactionSide(megaFactionId: string | null | undefined)
   return 'neutral';
 }
 
-/** �?��·금고·Voronoi ???�토 ?�유 ?�랜 */
+/** �?��·금고·Voronoi ???�토 ?�유 ?�랜 */
 export function resolveTerritorialOccupierClanId(hold: PlanetClanHold): string {
   return hold.occupierClanId;
 }
 
 /**
- * ?�유�?증서 보유 ?�랜.
- * deedOwnerClanId 미설?????�토 occupier(�?? ?�드·AI ?�랜)가 ?�폴???�유.
+ * ?�유�?증서 보유 ?�랜.
+ * deedOwnerClanId 미설?????�토 occupier(�?? ?�드·AI ?�랜)가 ?�폴???�유.
  */
 export function resolveDeedOwnerClanId(hold: PlanetClanHold): string {
   const explicit = hold.deedOwnerClanId?.trim();
@@ -81,7 +81,7 @@ export function resolveTerritorialNationClanIdForPlanet(planetId: string): strin
   return null;
 }
 
-/** CSV ?�드 기�? ?�토 occupier·kind (증서 ?�제·중립 복원) */
+/** CSV ?�드 기�? ?�토 occupier·kind (증서 ?�제·중립 복원) */
 export function resolveSeedOccupierClanForPlanet(planetId: string): {
   occupierClanId: string;
   kind: PlanetClanHold['kind'];
@@ -100,7 +100,7 @@ export function resolveSeedOccupierClanForPlanet(planetId: string): {
   return { occupierClanId: 'neutral', kind: 'neutral' };
 }
 
-/** 구매??거�? ?�력 ??�?��??Voronoi)??�?? ?�드 ?�랜 id */
+/** 구매??거�? ?�력 ??�?��??Voronoi)??�?? ?�드 ?�랜 id */
 export function resolveNationSeedClanIdForMegaFaction(
   megaFactionId: string | null | undefined,
 ): string | null {
@@ -110,7 +110,7 @@ export function resolveNationSeedClanIdForMegaFaction(
   return null;
 }
 
-/** ?�레?�어 ?�립�?hold ??`player_independent` ?�는 중립/�?? occupier + ?�레?�어 증서(legacy) */
+/** ?�레?�어 ?�립�?hold ??`player_independent` ?�는 중립/�?? occupier + ?�레?�어 증서(legacy) */
 export function isPlayerIndependentNationHold(hold: PlanetClanHold): boolean {
   if (hold.kind === 'player_independent') return true;
   const deedOwner = hold.deedOwnerClanId?.trim();
@@ -120,7 +120,7 @@ export function isPlayerIndependentNationHold(hold: PlanetClanHold): boolean {
   return hold.occupierClanId === deedOwner;
 }
 
-/** Voronoi·지??occupier ??legacy 중립 ?�토 ?�유�?구매 ?�함 */
+/** Voronoi·지??occupier ??legacy 중립 ?�토 ?�유�?구매 ?�함 */
 export function resolvePlayerIndependentOccupierClanId(hold: PlanetClanHold): string | null {
   if (!isPlayerIndependentNationHold(hold)) return null;
   const occupier = hold.occupierClanId?.trim();
@@ -130,7 +130,7 @@ export function resolvePlayerIndependentOccupierClanId(hold: PlanetClanHold): st
   return null;
 }
 
-/** ?�토 �?�� side ??중립 hold·occupier ?�함 */
+/** ?�토 �?�� side ??중립 hold·occupier ?�함 */
 export function resolveTerritorialSideForHold(
   hold: PlanetClanHold,
   clans: Record<string, ClanBasicsRecord>,
@@ -143,7 +143,7 @@ export function resolveTerritorialSideForHold(
   return resolveMapFactionSideFromClanIdPure(hold.occupierClanId, clans);
 }
 
-/** v1?�v2 마이그레?�션: 구매 ??occupierClanId�?바꾸???�?�을 ?�토/증서 분리 */
+/** v1?�v2 마이그레?�션: 구매 ??occupierClanId�?바꾸???�?�을 ?�토/증서 분리 */
 export function migratePlanetHoldOwnershipSplit(
   hold: PlanetClanHold,
 ): { hold: PlanetClanHold; changed: boolean } {
@@ -180,10 +180,10 @@ export function migratePlanetHoldsOwnershipSplit(
 }
 
 /**
- * M2-E(?�택) ??기존 구매 hold ???�립�??�환.
- * - occupier=�?? ?�드 + deedOwner=?�레?�어 (블루/?�드 ?�토 legacy)
- * - occupier=neutral + deedOwner=?�레?�어 (중립 ?�토 legacy)
- * idempotent ??�?부???�전 ?�실??
+ * M2-E(?�택) ??기존 구매 hold ???�립�??�환.
+ * - occupier=�?? ?�드 + deedOwner=?�레?�어 (블루/?�드 ?�토 legacy)
+ * - occupier=neutral + deedOwner=?�레?�어 (중립 ?�토 legacy)
+ * idempotent ??�?부???�전 ?�실??
  */
 export function migrateExistingPlayerDeedHoldToIndependent(
   hold: PlanetClanHold,
@@ -233,14 +233,20 @@ export type PlanetOwnershipDeedPurchaseCheck =
     };
 
 /**
- * ?�??지??Voronoi·?�널 ??store hold 기�? occupier.
- * hold 미시?�·비 contested neutral ?� CSV ?�드 ?�성. ?�전지??neutral ?� ArcCore ?�정 ?��?undefined).
+ * ?�??지??Voronoi·?�널 ??store hold 기�? occupier.
+ * hold 미시?�·비 contested neutral ?� CSV ?�드 ?�성. ?�전지??neutral ?� ArcCore ?�정 ?��?undefined).
+ */
+/**
+ * Map/border Voronoi occupier.
+ * Territorial process: runtime hold only (no seed fallback).
+ * Else: seed default only when hold missing or non-process neutral.
  */
 export function resolveEffectiveMapOccupierClanId(
   planetId: string,
   hold: PlanetClanHold | undefined,
 ): string | undefined {
-  if (isPlanetContestedZone(planetId)) {
+  // Contested / territorial policy — live hold beats seed initialOwner (2026-07-28)
+  if (isTerritorialProcessPlanet(planetId)) {
     if (hold) {
       const independentOccupier = resolvePlayerIndependentOccupierClanId(hold);
       if (independentOccupier) return independentOccupier;
@@ -257,7 +263,6 @@ export function resolveEffectiveMapOccupierClanId(
     if (hold.kind !== 'neutral' && occupier && occupier !== 'neutral') {
       return occupier;
     }
-    // ?�레?�어 ?�투 ?�리 중립????CSV ?�드 ?�백 ?�이 중립 �?�� ?��?
     if (hold.neutralizedAt) return undefined;
   }
 
@@ -268,7 +273,6 @@ export function resolveEffectiveMapOccupierClanId(
   return seed.occupierClanId;
 }
 
-/** hold 미시????CSV occupation ?�드�??�성 */
 export function resolvePlanetHoldForOwnershipCheck(
   planetId: string,
   hold: PlanetClanHold | undefined,
@@ -287,7 +291,7 @@ export function resolvePlanetHoldForOwnershipCheck(
   };
 }
 
-/** 무역??구매 UI ??구매 차단 ?�유(범용 Alert) */
+/** 무역??구매 UI ??구매 차단 ?�유(범용 Alert) */
 export function previewPlanetOwnershipDeedPurchase(
   planetId: string,
   hold: PlanetClanHold | undefined,
@@ -299,9 +303,9 @@ export function previewPlanetOwnershipDeedPurchase(
 }
 
 /**
- * 무역???�유�?증서 구매 가???��?.
- * - ?�용: 블루·중립 ?�토 (구매 ??모두 player_independent ?�립�?
- * - 거�?: ?�드 ?�토 · 구매??�?? ?�드 미�???· ?� ?�랜 증서
+ * 무역???�유�?증서 구매 가???��?.
+ * - ?�용: 블루·중립 ?�토 (구매 ??모두 player_independent ?�립�?
+ * - 거�?: ?�드 ?�토 · 구매??�?? ?�드 미�???· ?� ?�랜 증서
  */
 export function canPurchasePlanetOwnershipDeed(
   planetId: string,
@@ -316,8 +320,8 @@ export function canPurchasePlanetOwnershipDeed(
   if (territorialSide === 'red') {
     return { ok: false, reason: 'red_territory' };
   }
-  // independent(?�레?�어 ?�유)???�기??막�? ?�고 ?�래 deedOwner 체크�??�겨
-  // already_owner/owned_by_other_clan ?????�확???�유�?반환?�게 ?�다.
+  // independent(?�레?�어 ?�유)???�기??막�? ?�고 ?�래 deedOwner 체크�??�겨
+  // already_owner/owned_by_other_clan ?????�확???�유�?반환?�게 ?�다.
   if (territorialSide !== 'blue' && territorialSide !== 'neutral' && territorialSide !== 'independent') {
     return { ok: false, reason: 'neutral_territory' };
   }
@@ -338,11 +342,11 @@ export type PlanetHubOwnershipPlate = {
   clanColorClanId: string;
   deedOwnerClanId: string;
   isNationDefault: boolean;
-  /** ?�레?�어 ?�립�??�색 �?��) ???�유�?증서 구매�?�?? ?�토?�서 ?�립 */
+  /** ?�레?�어 ?�립�??�색 �?��) ???�유�?증서 구매�?�?? ?�토?�서 ?�립 */
   isIndependent: boolean;
 };
 
-/** ?�성 ?�브·지?????�유�?증서 기�? ?�시�?(�?? ?�폴??= ?�텔리�? ?�합 ?? */
+/** ?�성 ?�브·지?????�유�?증서 기�? ?�시�?(�?? ?�폴??= ?�텔리�? ?�합 ?? */
 export function resolvePlanetHubOwnershipPlate(
   hold: PlanetClanHold,
   clans: Record<string, ClanBasicsRecord>,
@@ -366,7 +370,7 @@ export function resolvePlanetHubOwnershipPlate(
     rawName = (clans[deedOwnerClanId]?.displayName ?? '').trim() || deedOwnerClanId;
   }
 
-  // ?�립�???"{?�네?? ?��?" ?�랜명에???�네?�만 추출("{?�네?? ?�립�? ?�기?? worldmap.panel.independent)
+  // ?�립�???"{?�네?? ?��?" ?�랜명에???�네?�만 추출("{?�네?? ?�립�? ?�기?? worldmap.panel.independent)
   const clanName = isIndependent
     ? stripSoloClanFleetSuffix(formatClanPlateDisplayName(rawName) || rawName)
     : formatClanPlateDisplayName(rawName) || rawName;
@@ -380,7 +384,7 @@ export function resolvePlanetHubOwnershipPlate(
   };
 }
 
-/** ?�레?�어 ?�랜·uid 기�? ?�질 ?�유�?(증서·거점) */
+/** ?�레?�어 ?�랜·uid 기�? ?�질 ?�유�?(증서·거점) */
 export function isPlayerPlanetDeedOwner(
   hold: PlanetClanHold,
   playerUid: string | null | undefined,

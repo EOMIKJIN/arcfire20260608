@@ -1,4 +1,4 @@
-# Daily audit — 2026-07-27T15:00:06.806Z
+# Daily audit — 2026-07-28T15:00:07.375Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -12,7 +12,7 @@
 
 ```
 > arcfire-online@0.1.1 build:content-tables
-> node tools/gen-mineral-region-members.mjs && node tools/balance-tables/rebalance-weapon-ttk.mjs && node tools/content-tables/gen-weapon-trade-listing-policy.mjs && node tools/content-tables/sync-weapon-trade-listing.mjs && node tools/content-tables/patch-item-defs-en.mjs && node tools/content-tables/patch-missions-en.mjs && node tools/content-tables/patch-npc-ships-en.mjs && node tools/content-tables/patch-planets-en.mjs && node tools/content-tables/generate-arc-seed-transport-rows.mjs && node tools/content-tables/sync-synth-ownership-into-item-defs.mjs && node tools/content-tables/build-content-from-csv.mjs && node tools/content-tables/audit-npc-fleet-master.mjs && node tools/content-tables/audit-mission-quest-placements.mjs
+> node tools/gen-mineral-region-members.mjs && node tools/balance-tables/rebalance-weapon-ttk.mjs && node tools/content-tables/gen-weapon-trade-listing-policy.mjs && node tools/content-tables/sync-weapon-trade-listing.mjs && node tools/content-tables/patch-item-defs-en.mjs && node tools/content-tables/patch-missions-en.mjs && node tools/content-tables/patch-npc-ships-en.mjs && node tools/content-tables/patch-planets-en.mjs && node tools/content-tables/generate-arc-seed-transport-rows.mjs && node tools/content-tables/sync-synth-ownership-into-item-defs.mjs && node tools/content-tables/sync-star-system-connections-from-planets.mjs && node tools/content-tables/build-content-from-csv.mjs && node tools/content-tables/audit-npc-fleet-master.mjs && node tools/content-tables/audit-mission-quest-placements.mjs
 
 [gen-mineral-region-members] 100 rows
 [rebalance-weapon-ttk] updated 0 weapons in weapon_list.csv
@@ -24,6 +24,7 @@ patched 0 npc ship name_en rows
 patched planets.csv
 [generate-arc-seed-transport-rows] nothing to add — all systems present
 [sync-synth-ownership] item_defs.csv — synth ownership up to date
+[sync-star-connections] wrote 64 directed edges -> D:\arcfire20260607\tables\content\star_system_connections.csv
 Generated CSV-driven content TS files at src/data/generated
 [audit:npc-fleet] PASS
   [info] obj_s008_a: vega_base — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
@@ -41,7 +42,7 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·보상 item 정적 검
 
 ## Largest TS/TSX under `src/` + `app/` (bytes)
 
-- 662,116 — `src/data/generated/galaxySystems100.generated.ts`
+- 662,275 — `src/data/generated/galaxySystems100.generated.ts`
 - 477,992 — `src/data/generated/csvNpcCapitalShips.ts`
 - 376,711 — `src/data/generated/csvItemDefs.ts`
 - 285,280 — `src/data/generated/csvNpcCaptains.ts`

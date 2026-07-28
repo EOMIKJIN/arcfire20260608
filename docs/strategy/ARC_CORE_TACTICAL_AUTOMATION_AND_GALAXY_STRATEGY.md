@@ -229,6 +229,46 @@ npm run build:balance-tables
 | shadow_market @ shadow_nexus | **별도 front** (`north_pvp_front`) 또는 titan_gate 경유 subgraph로 분리 |
 | (없음) sirius_border | **east_front** 추가 — sirius→draco eligibility |
 
+### 6-1. draco_front 순차4·5 — 지리 우세(geo-flank) 실 구현 (2026-07-28)
+
+위 표는 v2 **제안**(미구현)이고, 아래는 `arc_core_territorial_combat_policy.csv`에 이미 반영된 **실제** 확장이다 (`task_id=geo-flank-helios-titan-occupation-20260728`).
+
+| 순차 | planetId | systemId | combatMode | dominant | 지리 근거 |
+|------|----------|----------|------------|----------|-----------|
+| 4 | `helios_core` | `helios` | `blue_neutral` | 70% | `iron_cross`(BLUE 시드)와 1홉 인접 — 블루 측방(플랭크) 거점, 레드 직접 보급 축 약함 |
+| 5 | `titan_ruins` | `titan_gate` | `red_neutral` | 70% | `shadow_nexus`(레드 분쟁축, `shadow_market` 시드)와 1홉 인접 — 레드 측방 거점 |
+
+두 행 모두 `omega_hub`/`shadow_market`과 **동일 수치**(passIntervalSec·battleWeightPct·supply 파라미터 등) 복제 — 신규 밸런스 레버 아님, `draco_front` 캠페인 순차 로테이션에 4·5번째로 합류한 것뿐이다. `planetId` TS 하드코딩 분기 없음(정책 CSV의 `combatMode`/`dominantSideWeightPct`로만 우세 표현) — `territorial/geoFlankHeliosTitanOccupation.test.ts`로 회귀 방지.
+
+동적 분쟁지역(`__dynamic_default__` 템플릿, 플레이어 전투 편입)은 정적 멤버 뒤에 순번이 이어 붙는 구조라, 정적 5행(1~5)이 된 지금부터 동적 편입의 첫 슬롯은 **6**부터 시작한다(`seedPlanetOccupationFromBalance.test.ts`에 반영).
+
+### 6-2. 중립 점령 런타임 보급 비대칭 P0 (2026-07-28, `task_id=neutral-adjacency-occupation-priority-20260728`)
+
+**대표님 정본**: 중립 지역에서 노드 1홉에 적국(반대 팩션)이 없으면 인접 팩션 점령 고확률 — **전 중립 범용·최우선(P0)**.
+
+hold가 `NEUTRAL`일 때만 `resolveEffectiveTerritorialCombatMode`(`territorial/resolveEffectiveTerritorialCombatMode.ts`)가 런타임 `supplyAdjacency`(1홉 아군 성계 수)로 CSV `combatMode`를 덮어쓴다 — 블루만 인접 → `blue_neutral` / 레드만 인접 → `red_neutral` / 둘 다 인접 → `blue_red`(접전) / 둘 다 0(고립) → 오버라이드 없음(CSV 그대로). 비중립(BLUE/RED/INDEPENDENT) hold는 이 오버라이드 대상이 아니며 항상 CSV `combatMode` 그대로 간다.
+
+**§6-1 geo-flank CSV 행(helios_core=`blue_neutral`·titan_ruins=`red_neutral`)과 충돌 시 본 절이 우선한다** — 두 행은 여전히 **접전(양쪽 다 인접)이거나 고립(양쪽 다 미인접)** 상황의 보조 폴백으로만 쓰이고, "한쪽만 인접"인 실제 런타임 상황에서는 이 P0가 CSV 값을 덮어쓴다(예: 타이탄 게이트가 블루만 인접이면 CSV가 `red_neutral`이어도 실효 모드는 `blue_neutral`). CSV 행 자체는 수치·combatMode 무단 변경 없음 — `resolveEffectiveTerritorialCombatMode.test.ts` 3/3b번 케이스로 회귀 방지.
+
+### 6-3. 분쟁·점령 스택 실행 정본 (2026-07-28, `task_id=territorial-stack-consistency-opt-20260728`)
+
+전수검증 상세는 `tools/kim-team-lead/reports/TERRITORIAL_STACK_CONSISTENCY_AUDIT_20260728.md` 참조(§2 파이프라인·§4 데드/효율). 아래는 실행 순서 요약(코드 산재 방지용 단일 정본):
+
+```text
+runTerritorialCombatPassForPlanet(planetId)
+  ① DEV: CSV combatMode vs 시드그래프(정적 참고 경고만·세션당 1회, §3-3 graphMismatchWarnedSystemIds)
+  ② INDEPENDENT(플레이어 독립국)? → runIndependentHoldInvasionJudgment 별도 분기
+       (P0 인접 오버라이드 비적용 · 주둔 억지 · 보급 최다 적대 팩션만 침공)
+  ③ rollDecision(P2) — battle / neutral_declare / status_quo (CSV 가중치, 이 순위가 P0보다 바깥)
+  ④ status_quo・neutral_declare → 점유 거의 불변, 종료
+  ⑤ battle → effectiveCombatMode = resolveEffectiveTerritorialCombatMode(P0, §6-2, NEUTRAL 한정)
+       → blue_neutral/red_neutral: resolveBinaryDominantHoldTarget(dominantSideWeightPct)
+       → blue_red: resolveTerritorialQuickCombat(보급 mul) + (분쟁지역만) 전술 역전
+       → applyArcCoreTerritorialHold → FrontPressure invalidate(변경 systemId+인접)
+```
+
+**우선순위**: P0(중립 인접 비대칭, NEUTRAL 한정) < P1(CSV combatMode/geo-flank, P0 미적용 시 폴백) < **P2(rollDecision이 P0보다 바깥)** < P3(FrontPressure 빈도/보급) < P4(전술 역전, 분쟁지역만). P2가 P0보다 바깥이라는 뜻은 — 중립+블루만 인접이어도 이번 패스가 `status_quo`로 롤되면 점유는 그대로라는 것(감사 §3 "일관성 갭").
+
 ---
 
 ## 7. Phase 로드맵 (개발 순서)

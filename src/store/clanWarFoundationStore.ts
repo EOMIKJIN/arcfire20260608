@@ -178,6 +178,13 @@ function finalizeClanHoldRelease(
       piped.clans,
       piped.occupierChangedPlanetIds,
     );
+    // FrontPressure — 해산/purge로 occupier가 바뀐 성계 + 인접 성계의 posture가 달라질 수 있음
+    // (2026-07-28 account-purge-ownership-neutralize M5, 기존 invalidate 패턴 재사용).
+    for (const planetId of piped.occupierChangedPlanetIds) {
+      const systemId = piped.holds[planetId]?.systemId;
+      if (!systemId) continue;
+      invalidateFrontPressure([systemId, ...listAdjacentSystemIds(systemId)]);
+    }
   }
   return piped.holds;
 }

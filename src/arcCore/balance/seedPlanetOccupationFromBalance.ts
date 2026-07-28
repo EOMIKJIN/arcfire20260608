@@ -1,5 +1,6 @@
 // ============================================================
-// planet_occupation_seeds.csv ???? ??? ???·?????????????
+// planet_occupation_seeds.csv -> boot default occupation seeds
+// During territorial/contested process: runtime hold ALWAYS beats seed
 // ============================================================
 
 import { PlanetOccupationSeeds_FROM_BALANCE_CSV } from '../../data/balance/generated';
@@ -13,6 +14,7 @@ import {
   MEGA_FACTION_RED_NATION,
 } from '../../world/megaFactionNationPolicy';
 import { isDynamicContestedZonePlanet } from '../territorial/dynamicContestedZoneStore';
+import { isTerritorialProcessPlanet } from '../territorial/isTerritorialProcessPlanet';
 
 const SEED_BLUE_CLAN_ID = 'balance_seed_faction_blue';
 export const ARC_CORE_SEED_BLUE_CLAN_ID = SEED_BLUE_CLAN_ID;
@@ -61,29 +63,31 @@ function buildSeedClans(now: number): Record<string, ClanBasicsRecord> {
 
 function shouldSkipOccupationSeedReconcile(hold: PlanetClanHold): boolean {
   if (hold.kind === 'player_home') return true;
-  // ?????? ???????????? ??) ????? ??? ?? ???????, ??? ??? ??? ??
+  // Player independent nation — never restore to seed
   if (hold.kind === 'player_independent') return true;
-  // ?????? uid ?????? ??AI ?????homePlayerUid ????? ??? ?? ???
+  // Player-owned hold (non-AI) — do not overwrite
   if (hold.homePlayerUid && !isAiClanOccupier(hold.occupierClanId)) return true;
   return false;
 }
 
-/** AI ??? occupier ????? CSV ??? ?? ????*/
 function isAiClanOccupier(clanId: string | null | undefined): boolean {
   return Boolean(clanId?.startsWith('ai_clan_'));
 }
 
+/**
+ * Never restore nation seed over live holds on territorial-process planets.
+ * Seeds only fill missing holds (defaults).
+ */
 function shouldRestoreNationSeedOccupier(input: {
   contestedZone: boolean;
+  planetId: string;
   nationClanId: string;
   cur: PlanetClanHold;
 }): boolean {
-  const { contestedZone, nationClanId, cur } = input;
-  // ?????? ?????????? ??? ?? ???(shouldSkipOccupationSeedReconcile?? ??? ??)
+  const { contestedZone, planetId, nationClanId, cur } = input;
+  if (contestedZone || isTerritorialProcessPlanet(planetId)) return false;
   if (cur.kind === 'player_independent') return false;
   if (isAiClanOccupier(cur.occupierClanId)) return true;
-  if (contestedZone) return false;
-  // ?????? ??? ?????????? ??? ???????? ????RED/BLUE ????????
   if (
     cur.neutralizedAt
     && (cur.kind === 'neutral' || cur.occupierClanId === 'neutral')
@@ -113,8 +117,8 @@ function buildNationSeedHold(
 }
 
 /**
- * CSV BLUE/RED ??? ??? ??? ??neutral·AI??? ???????.
- * contestedZone=true ??ArcCore neutral/blue/red ?????????(AI??? ????????????? ???).
+ * Non-process planets only: realign mismatched neutral/AI to CSV BLUE/RED seed.
+ * Contested / territorial-process planets keep ArcCore progress holds.
  */
 function reconcileCsvSeedFactionOccupationHolds(
   holds: Record<string, PlanetClanHold>,
@@ -125,7 +129,6 @@ function reconcileCsvSeedFactionOccupationHolds(
     const owner = parseOwner(row.initialOwner);
     if (owner === 'NEUTRAL') continue;
 
-    // ?? ????(???? ?? ??) ?? ? ArcCore ?? ??(neutral/blue/red)? ??? ???? ??
     const contestedZone = parseBool(row.contestedZone) || isDynamicContestedZonePlanet(row.planetId);
     const nationClanId = owner === 'RED' ? SEED_RED_CLAN_ID : SEED_BLUE_CLAN_ID;
     const cur = holds[row.planetId];
@@ -136,7 +139,12 @@ function reconcileCsvSeedFactionOccupationHolds(
       continue;
     }
     if (shouldSkipOccupationSeedReconcile(cur)) continue;
-    if (!shouldRestoreNationSeedOccupier({ contestedZone, nationClanId, cur })) continue;
+    if (!shouldRestoreNationSeedOccupier({
+      contestedZone,
+      planetId: row.planetId,
+      nationClanId,
+      cur,
+    })) continue;
 
     holds[row.planetId] = buildNationSeedHold(row, nationClanId, cur, now);
     mutated = true;
@@ -144,7 +152,7 @@ function reconcileCsvSeedFactionOccupationHolds(
   return mutated;
 }
 
-/** ?? hold·player_home ?????????? ??? ?????????? */
+/** Keep existing holds; fill missing planets from CSV seeds only */
 export function seedPlanetOccupationHoldsFromBalance(
   existingHolds: Record<string, PlanetClanHold>,
 ): {

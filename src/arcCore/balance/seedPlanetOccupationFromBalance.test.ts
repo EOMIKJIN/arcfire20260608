@@ -36,16 +36,11 @@ function aiClanHold(planetId: string, systemId: string): PlanetClanHold {
   };
 }
 
-test('omega_hub AI클랜 → 크림슨 레기온 RED 시드', () => {
+test('omega_hub AI클랜 — 분쟁·영토 프로세스 대상이라 시드 RED로 덮지 않음(진행 우선)', () => {
   const { holds } = seedPlanetOccupationHoldsFromBalance({
     omega_hub: aiClanHold('omega_hub', 'omega_station'),
   });
-  assert.equal(holds.omega_hub?.occupierClanId, ARC_CORE_SEED_RED_CLAN_ID);
-  assert.equal(holds.omega_hub?.kind, 'clan_hold');
-  assert.equal(
-    resolveEffectiveMapOccupierClanId('omega_hub', holds.omega_hub),
-    ARC_CORE_SEED_RED_CLAN_ID,
-  );
+  assert.equal(holds.omega_hub?.occupierClanId, 'ai_clan_npc_cpt_ai_clan_neutral_01');
 });
 
 test('perseus_memorial neutral → RED 시드', () => {
@@ -81,11 +76,40 @@ test('draco_haven contested neutral 유지 (ArcCore 판정)', () => {
   assert.equal(resolveEffectiveMapOccupierClanId('draco_haven', holds.draco_haven), undefined);
 });
 
-test('draco_haven AI클랜 → BLUE 국가 시드', () => {
+test('draco_haven AI클랜 — 분쟁 프로세스 대상이라 시드 BLUE로 덮지 않음', () => {
   const { holds } = seedPlanetOccupationHoldsFromBalance({
     draco_haven: aiClanHold('draco_haven', 'draco_nebula'),
   });
-  assert.equal(holds.draco_haven?.occupierClanId, ARC_CORE_SEED_BLUE_CLAN_ID);
+  assert.equal(holds.draco_haven?.occupierClanId, 'ai_clan_npc_cpt_ai_clan_neutral_01');
+});
+
+test('omega_hub ArcCore BLUE 점유 — 시드 RED initialOwner로 되돌리지 않음', () => {
+  const { holds } = seedPlanetOccupationHoldsFromBalance({
+    omega_hub: {
+      planetId: 'omega_hub',
+      systemId: 'omega_station',
+      occupierClanId: ARC_CORE_SEED_BLUE_CLAN_ID,
+      deedOwnerClanId: null,
+      homePlayerUid: null,
+      kind: 'clan_hold',
+      capturedAt: 2000,
+    },
+  });
+  assert.equal(holds.omega_hub?.occupierClanId, ARC_CORE_SEED_BLUE_CLAN_ID);
+});
+
+test('helios_core 정책 enabled·중립 — 시드 NEUTRAL 디폴트만, 덮어쓰기 없음', () => {
+  const { holds } = seedPlanetOccupationHoldsFromBalance({
+    helios_core: {
+      planetId: 'helios_core',
+      systemId: 'helios',
+      occupierClanId: 'neutral',
+      homePlayerUid: null,
+      kind: 'neutral',
+      capturedAt: 2000,
+    },
+  });
+  assert.equal(holds.helios_core?.occupierClanId, 'neutral');
 });
 
 test('전투 승리·반란 중립화(neutralizedAt) — 비접전 RED 시드 복구 금지 + 지도 중립 표시', () => {
@@ -108,7 +132,7 @@ test('전투 승리·반란 중립화(neutralizedAt) — 비접전 RED 시드 �
   );
 });
 
-test('pipeline — AI sync 후 legacy ai_clan on nation seed 복구', () => {
+test('pipeline — 분쟁 행성 AI는 유지 · 비분쟁 perseus만 RED 시드 복구', () => {
   const holds: Record<string, PlanetClanHold> = {
     omega_hub: aiClanHold('omega_hub', 'omega_station'),
     perseus_memorial: {
@@ -121,7 +145,7 @@ test('pipeline — AI sync 후 legacy ai_clan on nation seed 복구', () => {
     },
   };
   const piped = applyPlanetOccupationSeedPipeline(holds, {} as Record<string, ClanBasicsRecord>);
-  assert.equal(piped.holds.omega_hub?.occupierClanId, ARC_CORE_SEED_RED_CLAN_ID);
+  assert.equal(piped.holds.omega_hub?.occupierClanId, 'ai_clan_npc_cpt_ai_clan_neutral_01');
   assert.equal(piped.holds.perseus_memorial?.occupierClanId, ARC_CORE_SEED_RED_CLAN_ID);
   assert.equal(piped.mutated, true);
 });
@@ -200,7 +224,7 @@ async function asyncTests(): Promise<void> {
   assert.equal(promoted, true);
   assert.equal(isDynamicContestedZonePlanet('sirius_border'), true);
 
-  // idempotent + CSV 정적 분쟁 3곳은 편입 제외
+  // idempotent + CSV 정적 분쟁 5곳(draco_haven·omega_hub·shadow_market·helios_core·titan_ruins)은 편입 제외
   assert.equal(
     await promoteDynamicContestedZone({
       planetId: 'sirius_border',
@@ -218,7 +242,9 @@ async function asyncTests(): Promise<void> {
     false,
   );
 
-  // 합성 정책 — CSV `__dynamic_default__` 템플릿 기반 · 순차 캠페인(draco_front) 4번째 합류
+  // 합성 정책 — CSV `__dynamic_default__` 템플릿 기반 · 순차 캠페인(draco_front) 6번째 합류
+  // (2026-07-28 geo-flank: helios_core order4·titan_ruins order5 정적 추가로 정적 max가 5가 됨 →
+  // 동적 첫 슬롯은 6)
   const policy = getTerritorialCombatPolicy('sirius_border');
   assert.ok(policy);
   assert.equal(policy!.enabled, true);
@@ -226,11 +252,11 @@ async function asyncTests(): Promise<void> {
   assert.equal(policy!.planetId, 'sirius_border');
   assert.equal(policy!.systemId, 'sirius');
   assert.equal(policy!.campaignGroup, 'draco_front');
-  assert.equal(policy!.campaignOrder, 4);
-  // 캠페인 로테이션 3곳 → 4곳 (순차 1곳 판정·분쟁 링도 캠페인 예고 1곳만 표시)
+  assert.equal(policy!.campaignOrder, 6);
+  // 캠페인 로테이션 5곳 → 6곳 (순차 1곳 판정·분쟁 링도 캠페인 예고 1곳만 표시)
   const campaign = listTerritorialCombatPoliciesForCampaign('draco_front');
-  assert.equal(campaign.length, 4);
-  assert.equal(campaign[3]?.planetId, 'sirius_border');
+  assert.equal(campaign.length, 6);
+  assert.equal(campaign[5]?.planetId, 'sirius_border');
   assert.equal(isContestedZoneSystemId('sirius'), true);
 
   // ArcCore 판정이 BLUE로 뒤집은 hold — 시드 reconcile이 RED로 되돌리지 않아야 함
@@ -263,7 +289,7 @@ async function asyncTests(): Promise<void> {
   await resetDynamicContestedZonesForAccountPurge();
   assert.equal(isDynamicContestedZonePlanet('sirius_border'), false);
   assert.equal(getTerritorialCombatPolicy('sirius_border'), null);
-  assert.equal(listTerritorialCombatPoliciesForCampaign('draco_front').length, 3);
+  assert.equal(listTerritorialCombatPoliciesForCampaign('draco_front').length, 5);
   console.log('PASS 동적 분쟁지역 — 캠페인 순차 합류·시드 reconcile 보호·초기화 복귀');
 }
 

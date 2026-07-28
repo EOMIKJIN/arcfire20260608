@@ -1,8 +1,30 @@
-@김클로드 tools/kim-team-lead/reports/kim-claude-ready-galaxy-map-independent-nation-label.md 를 읽고
-task_id=galaxy-map-independent-nation-label-20260727 M0~M4 구현해.
-대표님 지시: 은하 지도에서 스텔리움 연합·크림슨 레기온과 동일 폰트·동일 위치계산(buildOccupationLabels)으로
-플레이어 점령(소유권/독립국) 성계에도 국가명 표시.
-(1) 독립국 라벨이 안 나오는 원인 확정(면적 게이트 등)
-(2) independent만 보이게 수정 — TERRITORY_LABEL 공용 유지·새 폰트 금지
-(3) blue/red 면적 임계 기존값 무단 변경 금지
-commit 금지. 완료 후 kim-claude-handoff-pending.md 상단 PENDING + 김팀장 검수 요청.
+# 김클로드 즉시 착수 프롬프트
+# task_id=system-node-graph-full-reaudit-20260728
+# READY: tools/kim-team-lead/reports/kim-claude-ready-system-node-graph-full-reaudit.md
+
+대표님 지시: 성계 노드라인 연동을 김클로드가 한 번 더 전수검사하고, 남는 오류·미연동은 수정한다.
+김팀장 초안(SYSTEM_NODE_GRAPH_FULL_SYNC_20260728.md)은 재검증 대상 — 맹신 금지.
+
+[pss-pre-dev]
+hot_path=galaxy_graph_gen·부트 · alloc=프리컴퓨트1회 · cache=GALAXY_SYSTEMS_PRECOMPUTED
+stage=worldmap+territorial · risk=P1·이중그래프
+verdict=PASS — CSV=지도 플레이엣지 일치·숏컷/비대칭 수정·틱금지
+
+정본:
+- 1홉=connections. 헬↔페르 직접엣지 금지.
+- 항로: 헬리오스→오메가→뉴에덴→베가→드라코→페르세우스.
+- 이동(GALAXY)과 분쟁/보급(STAR/CSV)의 플레이↔플레이 엣지 동일.
+- omega↔draco는 정상 1홉(삭제 금지). BFS 최단≠버그 경로 레코드.
+
+할 일(M0~M6):
+0) 노드 소비처 전수표(worldmap/Svg/path/worldStore/territorialSupply/combatGraph/frontPressure/resolvePlanetSystemPosition+)
+1) node tools/debug/audit-system-connections-full.mjs + audit-map-vs-csv-connections.mjs → FAIL이면 수정
+2) helios-perseus 직접0 · sirius-draco 대칭 · 정본5홉 OK
+3) galaxy100 tier0 보존 계약 유지·회귀 시 수정
+4) sync-star-system-connections-from-planets.mjs 를 build:content-tables에 편입
+5) build:content-tables + gen:galaxy-graph + tsc PASS
+6) 연결 회귀 테스트(또는 audit 호출) 권장
+
+금지: combatMode/가중치 무단변경 · 정상1홉 삭제 · Skia · commit
+
+handoff PENDING + self-check. commit 금지.
