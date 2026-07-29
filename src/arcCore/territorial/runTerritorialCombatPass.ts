@@ -442,21 +442,6 @@ export async function runTerritorialCombatPassForPlanet(
     return runIndependentHoldInvasionJudgment({ planetId, policy, warStore, nowMs, campaignMeta });
   }
 
-  // 인접 검증은 런타임 holds 정본 — 시드 initialOwner와 비교하지 않음(2026-07-28 대표님: 진행 > 시드)
-  // 독립국 분기 이후에만 수행(CSV combatMode vs 독립국 점유 충돌 경고 방지)
-  const graphCheck = validateTerritorialCombatModeForSystem({
-    systemId: policy.systemId,
-    combatMode: policy.combatMode,
-    holds: warStore.planetHolds,
-  });
-  if (!graphCheck.ok && __DEV__ && !graphMismatchWarnedSystemIds.has(policy.systemId)) {
-    graphMismatchWarnedSystemIds.add(policy.systemId);
-    console.warn(
-      `[territorial] ${planetId} combatMode=${policy.combatMode} != runtimeGraph=${graphCheck.expected} ` +
-        `(런타임 점유 1홉 참고용 경고 · 세션당 1회 · 시드 미사용 · NEUTRAL 우세는 P0)`,
-    );
-  }
-
   const previousSide = sideToMapFaction(holdSide);
   // aggressive 시 battleWeightPct 소폭 가산(캡은 CSV battleWeightBonusPctAggressive 값 그대로 — 별도 상한 없음, 작은 값 전제)
   const decision = rollDecision({
@@ -534,7 +519,9 @@ export async function runTerritorialCombatPassForPlanet(
     }),
   };
 
-  // 중립 hold 런타임 보급 비대칭 P0 — CSV combatMode를 NEUTRAL 한정으로 덮어씀(2026-07-28).
+  // 런타임 1홉 인접 기반 실효 모드 해석 — CSV combatMode를 덮어씀(2026-07-28 P0, 2026-07-29 R1 확장).
+  // R1: 분쟁지역에서 블루·레드 둘 다 인접이면 holdSide 무관 접전(blue_red) — 오메가처럼 BLUE 홀드 뒤에도
+  //     CSV blue_neutral이 영구 고정돼 반대편(RED)이 전투에서 배제되는 재발을 막는다.
   // blue_red 전용 "한쪽만 보급 → 공격자 확정"(resolveAttackerDefenderSides 내부)과는 중복 충돌 없음:
   // effective가 blue_neutral/red_neutral이면 그 분기로 바로 진입(supplyAdjacency 재사용 안 함),
   // effective가 blue_red면 둘 다 보급 보유(접전)라 기존 분기도 동일하게 랜덤 공격자로 귀결.
@@ -542,11 +529,29 @@ export async function runTerritorialCombatPassForPlanet(
     holdSide,
     policyCombatMode: policy.combatMode,
     supplyAdjacency,
+    contestedZone: policy.contestedZone,
   });
   if (__DEV__ && effectiveCombatMode !== policy.combatMode) {
     console.log(
-      `[territorial] ${planetId} NEUTRAL 보급비대칭 P0 오버라이드 policy=${policy.combatMode} -> effective=${effectiveCombatMode} ` +
-        `(blue=${supplyAdjacency.blue},red=${supplyAdjacency.red})`,
+      `[territorial] ${planetId} 실효 모드 오버라이드 policy=${policy.combatMode} -> effective=${effectiveCombatMode} ` +
+        `(hold=${holdSide}, blue인접=${supplyAdjacency.blue},red인접=${supplyAdjacency.red})`,
+    );
+  }
+
+  // 그래프 mismatch DEV 경고 — **정책 원본이 아닌 최종 effective**를 런타임 그래프와 비교(2026-07-29 R4).
+  // 이전엔 policy.combatMode vs runtimeGraph만 비교해, effective가 이미 정확히 보정된 뒤에도
+  // (예: 오메가가 blue_red로 정상 접전 처리되는 중에도) CSV 원본 기준 오탐 경고가 세션마다 재발했었다.
+  // effective가 실제로 런타임과 일치하면 경고 없음 — 진짜 남는 불일치만 알린다.
+  const graphCheck = validateTerritorialCombatModeForSystem({
+    systemId: policy.systemId,
+    combatMode: effectiveCombatMode,
+    holds: holdsSnapshot,
+  });
+  if (!graphCheck.ok && __DEV__ && !graphMismatchWarnedSystemIds.has(policy.systemId)) {
+    graphMismatchWarnedSystemIds.add(policy.systemId);
+    console.warn(
+      `[territorial] ${planetId} 최종 effective=${effectiveCombatMode} != runtimeGraph=${graphCheck.expected} ` +
+        `(policy원본=${policy.combatMode}, 세션당 1회) — effective 산출 로직 재검토 필요`,
     );
   }
 

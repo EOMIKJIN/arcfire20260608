@@ -26,6 +26,7 @@ test('1) NEUTRAL+블루만 인접 → effective=blue_neutral (기존 resolveEffe
     holdSide: 'NEUTRAL',
     policyCombatMode: 'blue_red',
     supplyAdjacency: { blue: 1, red: 0 },
+    contestedZone: true,
   });
   assert.equal(effective, 'blue_neutral');
 });

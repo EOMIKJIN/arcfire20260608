@@ -1,0 +1,96 @@
+{
+  "now": 1785260007045,
+  "campaign": {
+    "lastPassAtMs": 1785259347669,
+    "lastOrderIndex": 3,
+    "nextPreviewOrderIndex": 4
+  },
+  "byPlanet": {
+    "draco_haven": {
+      "lastPassAtMs": 1785255746779,
+      "windowStartMs": 1785255746779,
+      "passCountInWindow": 1
+    },
+    "omega_hub": {
+      "lastPassAtMs": 1785256947030,
+      "windowStartMs": 1785256947030,
+      "passCountInWindow": 1
+    },
+    "shadow_market": {
+      "lastPassAtMs": 1785258147305,
+      "windowStartMs": 1785258147305,
+      "passCountInWindow": 1
+    },
+    "sirius_border": {
+      "lastPassAtMs": 1785254546673,
+      "windowStartMs": 1785254546673,
+      "passCountInWindow": 1
+    },
+    "helios_core": {
+      "lastPassAtMs": 1785259347669,
+      "windowStartMs": 1785259347669,
+      "passCountInWindow": 1
+    },
+    "titan_ruins": {
+      "lastPassAtMs": 1785253346280,
+      "windowStartMs": 1785253346280,
+      "passCountInWindow": 1
+    }
+  },
+  "rows": [
+    {
+      "planetId": "titan_ruins",
+      "lastPassAtMs": 1785253346280,
+      "passCountInWindow": 1,
+      "windowStartMs": 1785253346280
+    },
+    {
+      "planetId": "sirius_border",
+      "lastPassAtMs": 1785254546673,
+      "passCountInWindow": 1,
+      "windowStartMs": 1785254546673
+    },
+    {
+      "planetId": "draco_haven",
+      "lastPassAtMs": 1785255746779,
+      "passCountInWindow": 1,
+      "windowStartMs": 1785255746779
+    },
+    {
+      "planetId": "omega_hub",
+      "lastPassAtMs": 1785256947030,
+      "passCountInWindow": 1,
+      "windowStartMs": 1785256947030
+    },
+    {
+      "planetId": "shadow_market",
+      "lastPassAtMs": 1785258147305,
+      "passCountInWindow": 1,
+      "windowStartMs": 1785258147305
+    },
+    {
+      "planetId": "helios_core",
+      "lastPassAtMs": 1785259347669,
+      "passCountInWindow": 1,
+      "windowStartMs": 1785259347669
+    }
+  ],
+  "gaps": [
+    1200,
+    1200,
+    1200,
+    1200,
+    1200
+  ],
+  "staticGapsOk": 3,
+  "staticGapsBad": 1,
+  "gapVerdict": "PARTIAL",
+  "chronoIds": [
+    "titan_ruins",
+    "sirius_border",
+    "draco_haven",
+    "omega_hub",
+    "shadow_market",
+    "helios_core"
+  ]
+}

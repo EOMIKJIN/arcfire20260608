@@ -129,6 +129,12 @@ interface ClanWarFoundationState {
   ) => void;
   /** synth 아크코어 개방 직후 — 블루/레드·플레이어 home 은 덮어쓰지 않음 */
   seedSynthFrontierNeutralHold: (planetId: string, systemId: string) => void;
+  /**
+   * synth 아크코어 재잠금(세대/epoch hardReset) 시 — `seedSynthFrontierNeutralHold`가 만든
+   * 순수 neutral 자리표만 제거. player_home·플레이어 독립국·클랜 점유(non-neutral)는 절대
+   * 건드리지 않음(21코어·분쟁 시드 hold 보호 원칙과 동일).
+   */
+  clearSynthFrontierNeutralHold: (planetId: string) => void;
 }
 
 function makeId(prefix: string): string {
@@ -701,6 +707,18 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
       return;
     }
     set({ planetHolds: { ...state.planetHolds, [planetId]: nextHold } });
+    void get().persistClanWarFoundation();
+  },
+
+  clearSynthFrontierNeutralHold: (planetId) => {
+    const state = get();
+    const cur = state.planetHolds[planetId];
+    if (!cur) return;
+    // seedSynthFrontierNeutralHold가 만든 자리표만 제거 — player_home/독립국/클랜 점유는 보존
+    if (cur.kind !== 'neutral' || cur.occupierClanId !== 'neutral') return;
+    const nextHolds = { ...state.planetHolds };
+    delete nextHolds[planetId];
+    set({ planetHolds: nextHolds });
     void get().persistClanWarFoundation();
   },
 

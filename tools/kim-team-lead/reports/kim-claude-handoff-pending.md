@@ -5,6 +5,201 @@
 
 ---
 
+## 📋 PENDING — omega_hub `combatMode` 프로세스 충돌 재수정(M0~M5) · 김클로드 구현 완료 · 검수 요청
+
+```text
+status=PENDING
+task_id=omega-combatmode-runtime-conflict-20260729
+verdict=(김팀장 검수 대기)
+commit 금지
+재발원인: P0(NEUTRAL 전용)는 BLUE/RED hold가 되면 CSV combatMode가 영구 고정 → 양쪽 인접(접전)이어도 반대편이 battle에서 배제. 이전 조치는 warn 문구 완화·INDEPENDENT skip만 손대 실효 모드는 안 고쳐 재발.
+실측대응: BLUE(또는 RED) hold + 블루·레드 둘 다 인접(contestedZone) → effective=blue_red(holdSide 무관, R1 신설)
+self-check: tsc=PASS · unit=territorial 전체 PASS(신규 9케이스 포함)
+```
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`PENDING`** — 김팀장 검수 요청 |
+| **updated** | 2026-07-29 (김클로드 구현) |
+| **task_id** | `omega-combatmode-runtime-conflict-20260729` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-omega-combatmode-runtime-conflict.md` |
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=territorial_pass 1행성 · alloc=adjacency·effective 1회 · cache=세션 warn Set
+[pss-pre-dev] stage=arcCore_territorial · risk=P1(틱금지)·CSV기존행무단변경금지
+[pss-pre-dev] verdict=PASS — effectiveMode만 런타임 접전 정렬·planetId 하드코딩 금지
+```
+
+### 재발 원인 (3줄)
+
+`resolveEffectiveTerritorialCombatMode`의 P0는 **NEUTRAL hold 전용**이라, omega_hub가 한 번 BLUE 점유가 되면 CSV `blue_neutral`이 **영구 고정**돼 타이탄(RED) 인접이 있어도 매 battle에서 RED가 배제됐다(`resolveAttackerDefenderSides(BLUE, blue_neutral)` → attacker=NEUTRAL/defender=BLUE, RED 진입 불가). 이전 조치는 DEV 경고 문구를 "참고용"으로 완화하고 INDEPENDENT hold의 그래프 검증만 skip해 **드라코 독립국 경고만 해소**했을 뿐, 이 실효 모드 고착 자체는 손대지 않아 오메가에서 그대로 재발했다.
+
+### 구현 요약 (M0~M5)
+
+| M | 내용 | 파일 |
+|---|------|------|
+| M0 | READY §0~§1 요약(위 재발 원인 3줄) · 소비처 확인: `resolveEffectiveTerritorialCombatMode`(핵심 수정) · `runTerritorialCombatPassForPlanet`(배선) · `inferTerritorialCombatModeFromGraph`(런타임 그래프 참고, 재사용만·중복 로직 없음) | 본 항목 |
+| M1 | **R1 신설** — `contestedZone && hasBlue && hasRed`면 **holdSide 무관** `effective='blue_red'`. NEUTRAL hold의 기존 P0(2026-07-28, contestedZone 무관 "양쪽>0→blue_red")는 **그대로 보존**(회귀 없음) — R1은 BLUE/RED(비중립) hold에만 새로 추가된 분기. `planetId` 미입력 구조 유지(하드코딩 불가) | `resolveEffectiveTerritorialCombatMode.ts` |
+| M2 | `runTerritorialCombatPassForPlanet` — 이미 배선된 `effectiveCombatMode` 호출부에 `contestedZone: policy.contestedZone` 인자 추가. **R4**: 독립국 분기 직후에 있던 옛 조기 그래프 경고(`policy.combatMode` vs runtimeGraph, effective 계산 전)를 **삭제**하고, `effectiveCombatMode` 계산 직후(battle 경로 진입 지점)로 이동해 **`effectiveCombatMode` vs runtimeGraph**를 비교하도록 정정 — 최종 effective가 런타임과 일치하면 경고 없음(이전엔 CSV 원본만 비교해 effective가 이미 맞아도 계속 오탐 경고가 났음) | `runTerritorialCombatPass.ts` |
+| M3 | unit 9케이스 신규: (7)오메가 실측 재현(BLUE hold+blue_neutral CSV+양쪽인접→blue_red) (7b)RED hold도 동일 (7c)contestedZone=false면 R1 미적용(비중립 CSV 유지) (7d)contestedZone=false+NEUTRAL+양쪽인접은 기존 P0 경로로 여전히 blue_red(회귀 없음 고정) (8)R4 배선 정적확인(옛 조기경고 제거+새 위치가 effectiveCombatMode 사용) + 기존 1~6c 케이스 `contestedZone` 파라미터 추가 갱신 | `resolveEffectiveTerritorialCombatMode.test.ts` · `territorialStackConsistency.test.ts`(호출부 갱신) |
+| M4 | 기존 geo-flank·P0·stack-consistency·supplyLine·frontPressure 회귀 테스트 전부 재실행 PASS(신규 로직이 기존 케이스에 영향 없음 확인) | — |
+| M5 | self-check(아래) 전부 PASS | — |
+
+### 회귀 판별력 검증
+
+M1(R1) 핵심 수정을 `git stash`로 일시 되돌려 신규 테스트 7번이 **FAIL**(`actual: 'blue_neutral', expected: 'blue_red'` — 오메가 재발 시나리오 그대로 재현) 확인 → `git stash pop` 복원 후 **PASS** 재확인. 트리비얼 통과 아님.
+
+### self-check 결과
+
+```
+npx tsc --noEmit -p tsconfig.client.json                                → PASS(에러 0)
+npx tsx --test resolveEffectiveTerritorialCombatMode.test.ts            → PASS 15/15(9 신규 포함)
+npx tsx --test geoFlankHeliosTitanOccupation.test.ts                    → PASS 7/7(회귀)
+npx tsx --test territorialStackConsistency.test.ts                      → PASS 6/6(회귀)
+npx tsx --test territorialSupplyLine.test.ts                            → PASS 16/16(회귀)
+npx tsx --test frontPressureIndex.test.ts                               → PASS 5/5(회귀)
+```
+
+### CSV / 기존값 변경 여부
+
+`arc_core_territorial_combat_policy.csv`(omega_hub `blue_neutral` 포함 전 행) **git diff 없음** — 런타임 effective만 조정, CSV `combatMode`/가중치/`dominantSideWeightPct` 등 전부 무변경. `planetId==='omega_hub'` 류 하드코딩 없음(6b 회귀 테스트로 고정).
+
+### 리스크 · soft(실기 미확인)
+
+- 실기(오메가 실제 1패스 battle 진입 시 RED가 attacker로 잡히는지·`[territorial] omega_hub 최종 effective=... != runtimeGraph=...` 경고가 실제로 사라지는지)는 **미확인** — unit·정적 검증만.
+- R1은 `policy.contestedZone`에 의존하는데, 현재 CSV 전 행이 `contestedZone=true`라 실질적으로 전부 적용됨(향후 비분쟁 고정 행이 추가되면 R1 미적용 — 의도된 게이트).
+- 독립국(INDEPENDENT) 침공 분기는 이 리졸버를 아예 거치지 않음(제어 흐름상 항상 그 전에 return) — 변경·영향 없음, 회귀 테스트(territorialStackConsistency #2)로 재확인.
+
+**git commit 안 함** — 김팀장(Cursor 본창) 검수·커밋 요청.
+
+---
+
+## ✅ REVIEWED — 정식 서비스 성계 개방·세대 리셋(M0~M6) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-29 · 대표님 「검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — READY M0~M6 충족 · 검수 중 코드 수정 없음 |
+| **task_id** | `service-launch-world-expansion-reset-20260729` |
+| M1 | `resolveWorldExpansionHardReset` — gen/epoch mismatch · `null`→hardReset · `undefined`→false(안전) |
+| M2~M3 | `preserveAlreadyUnlocked=false` 시 targetCount 축소 · 일상 `true`면 기존 unlock 보존(테스트 a/a-대조/b) |
+| M4 | `clearSynthFrontierNeutralHold` — 순수 neutral만 삭제 · 21코어/분쟁 hold 비대상 |
+| M5~M6 | schedule 11/11 · resetDetection 5/5 · `tsc --noEmit -p tsconfig.client.json` PASS |
+| CSV | `world_expansion_timing_policy`·territorial **무변경** (epoch=`2026-06-26` gen=`2` 유지) |
+| 커밋 | **미커밋** — 대표님 지시 시 김팀장 커밋 |
+| soft | 실기 hardReset 미확인 · Sync 경로 applied 캐시 1틱 지연 가능 · 결함 C(정책 캐시 하이드레이트 Sync 미배선) 후속 P1 · async `syncArcCoreGlobalWorldExpansion` dead 유지 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED` → `IDLE` 가능** |
+| **updated** | 2026-07-29 (김팀장 검수 PASS) |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-service-launch-world-expansion-reset.md` |
+
+### 검수 메모
+
+- 핵심 레버(세대 bump → 초과 synth 잠금 → epoch 재개방) **코드상 성립**.
+- 정식일 반영은 여전히 **운영 체크리스트**(epochDayKey·resetGeneration·RTDB) — 본 패치는 레버만.
+- handoff M0 표기 `epochDayKey=2026-06-01`은 오기 · 실 CSV는 **`2026-06-26`**.
+
+---
+
+## 📋 PENDING (archived) — 정식 서비스 성계 개방·세대 리셋 · 김클로드 구현 원문
+
+```text
+status=PENDING→REVIEWED
+task_id=service-launch-world-expansion-reset-20260729
+verdict=PASS (김팀장 2026-07-29)
+commit 금지(검수 시)
+```
+
+| 필드 | 값 |
+|------|-----|
+| **status** | ~~PENDING~~ → **REVIEWED** |
+| **updated** | 2026-07-29 (김클로드 구현) |
+| **task_id** | `service-launch-world-expansion-reset-20260729` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-service-launch-world-expansion-reset.md` |
+| **prompt** | `tools/kim-team-lead/reports/kim-claude-task-prompt-latest.txt` |
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=부트·일일배치1회 sync · alloc=reconcile시 unlocked배열1회 · cache=정책캐시·applied상태
+[pss-pre-dev] stage=worldmap unlock 집합 · risk=P6(persist)·세대리셋시대량 remove
+[pss-pre-dev] verdict=PASS — 틱/루프 신규 없음 · gen mismatch 때만 강제 reconcile · 21코어·분쟁 CSV 무단변경 없음
+```
+
+### 확정된 근본 원인 (재확인)
+
+`buildDeterministicGlobalSynthUnlockSchedule`가 `alreadyUnlockedSynthIds`를 **`maxSynthUnlockCount` 체크 없이** schedule 접두로 무조건 밀어넣어, `targetCount`가 줄어도(세대 리셋) 결과 집합이 절대 줄어들지 않았음(결함 A). `syncArcCoreGlobalWorldExpansionSync`(실제 호출되는 유일한 경로 — 아래 M0 참고)는 `resetGeneration`을 **쓰기만** 하고 비교하지 않았음(결함 B) — 즉 세대 bump 레버 자체가 무의미했다.
+
+### 구현 요약 (M0~M6)
+
+| M | 내용 | 파일 |
+|---|------|------|
+| M0 | 소비처·저장키 표(아래) — **`syncArcCoreGlobalWorldExpansion`(async)은 실제로 어디서도 호출되지 않는 죽은 함수**임을 확인(진짜 호출부는 전부 `...Sync`). 이 사실이 hardReset 감지 설계(동기 캐시 필요)의 핵심 전제 | 아래 표 |
+| M1 | `resolveWorldExpansionHardReset(applied, policy)` 신설(순수 함수, 신규 파일) — `applied` 없음(과거 기록 無+정책 存) 또는 `resetGeneration`/`epochDayKey` 불일치 → `hardReset=true`. 동기 호출 경로는 모듈 로드 시 백그라운드로 미리 읽어둔 인메모리 캐시(`appliedStateCache`)로 비교(레이스 시 안전 기본값 `false`, 다음 호출에서 자기 교정) — 비동기 경로는 항상 `await`로 실측 비교 | `src/arcCore/worldExpansionGlobalResetDetection.ts`(신규) · `syncArcCoreGlobalWorldExpansion.ts` |
+| M2 | `hardReset=true`면 `buildGlobalSynthUnlockTargetIds(..., preserveAlreadyUnlocked=false)` — 접두 고정을 끄고 baseline+결정적 pick만으로 `targetCount`개를 순수 계산 → `reconcileGlobalSynthUnlocks`가 초과분을 정확히 remove | `worldExpansionGlobalSchedule.ts`(`preserveAlreadyUnlocked` 신규 파라미터, 기본 `true`=기존 동작) |
+| M3 | `hardReset=false`(일상)면 `preserveAlreadyUnlocked=true`(기본값) — 기존 증분 접두 유지, 이미 연 성계가 되돌아가지 않음. 신규 unit(a-대조)으로 고정 | 상동 |
+| M4 | `removed`(잠긴 synth) 각각에 대해 `clearSynthFrontierNeutralHold(planetId)` 신규 스토어 액션 호출 — `seedSynthFrontierNeutralHold`가 만든 **순수 neutral 자리표만** 제거(`kind==='neutral' && occupierClanId==='neutral'` 가드), player_home·독립국·클랜 점유는 절대 안 건드림. 21코어·BLUE/RED 시드 planetHolds는 애초에 `removed`(synth_* 한정)에 없으므로 무관 | `src/store/clanWarFoundationStore.ts`(`clearSynthFrontierNeutralHold` 신규 액션) · `syncArcCoreGlobalWorldExpansion.ts`(`clearRemovedSynthFrontierHolds` 헬퍼, 양쪽 sync 함수에서 호출) |
+| M5 | unit 11케이스: (a) 세대bump→5개가 targetCount(2)로 축소 (a-대조) preserve=true면 5개 그대로(회귀 금지 고정) (b) 세대동일+1일→기존 유지+1개만 추가 (c) epoch전날→targetCount=0→빈 스케줄(hardReset 무관) (d) GAMEPLAY_SYSTEM_IDS는 스케줄 결과물에 안 나옴 (d-2) worldStore.ts 소스에 21코어 baseline 제외 필터가 실제 있는지 정적 확인 + `resolveWorldExpansionHardReset` 5케이스(mismatch 3종·일치·미하이드레이트) | `worldExpansionGlobalSchedule.test.ts`(확장) · `worldExpansionGlobalResetDetection.test.ts`(신규) |
+| M6 | self-check(아래) 전부 PASS | — |
+
+### M0 — 소비처·저장키 표
+
+| 항목 | 역할 | 비고 |
+|------|------|------|
+| `arcfire_world_expansion_global_applied_v1`(AsyncStorage) | 직전 sync 결과({resetGeneration,epochDayKey,targetCount,lastSyncedAtMs}) | 이번에 **처음으로 실제 비교 대상**이 됨(M1) |
+| `arcfire_world_expansion_global_policy_v1`(AsyncStorage) | RTDB origin 정책 캐시(`rtdbPolicyOverride` 하이드레이트) | **운영 주의**: `hydrateWorldExpansionGlobalPolicyCache()`는 여전히 미사용(dead) 비동기 함수 `syncArcCoreGlobalWorldExpansion`에서만 호출됨 — 실제(동기) 경로는 RTDB 캐시를 부트 시 하이드레이트하지 않음(결함 C, 본 task 범위 밖·후속 P1로 남김). RTDB `ingestRtdbWorldExpansionMasterState`가 라이브 세션 중 직접 override를 세팅하므로 정상 운영 중엔 큰 문제 없으나, "재시작 직후·RTDB 접속 전" 창에서는 CSV 폴백을 씀 |
+| `tables/balance/world_expansion_timing_policy.csv` | CSV 폴백 정책(`globalScheduleEnabled/epochDayKey/resetGeneration/systemsPerDay`) | **읽기만**, 값 변경 없음(현재 `epochDayKey=2026-06-26` · `resetGeneration=2`) |
+| `arcfire_world_v1`(worldStore AsyncStorage) | `unlockedSystemIds`/`systems`/`synthColonizationPhaseByPlanetId` | `reconcileGlobalSynthUnlocks`가 갱신(기존 함수, 변경 없음 — 이미 baseline 21코어 보존 로직 있음을 재확인) |
+| clanWarFoundationDb(로컬 영속) | `planetHolds` | 신규 `clearSynthFrontierNeutralHold` 액션이 removed synth 자리표만 정리 |
+| `WorldExpansionSubCore.onBoot()` | 부트 1회 호출 — `syncArcCoreGlobalWorldExpansionSync()` | `arcCoreHub.start()`가 `bootReady`(월드스토어 hydrate 포함 병렬 로드 완료) 이후에만 실행돼 `world.loaded` 보장됨 — 모듈 로드 시 시작한 applied-state 백그라운드 하이드레이트가 이 시점까지 끝날 여유 확보 |
+| `tryArcCoreWorldDailyUnlock()`(`worldExpansionDailyUnlock.ts`) | 일일 운영 배치(`runArcCoreDailyOpsBatch`)에서 호출 | 반환값(`added.length>0`) 사용 — 시그니처 변경 없음(하위호환) |
+| `localAccountReset.ts`(계정 초기화) | 초기화 후 `syncArcCoreGlobalWorldExpansionSync()` 재호출 | 변경 없음 |
+| `fetchArcCoreRtdbOnce.ts`(RTDB ingest) | ingest 성공 후 `syncArcCoreGlobalWorldExpansionSync()` | 변경 없음 |
+| `syncArcCoreGlobalWorldExpansion`(async, export) | **실사용처 0곳 확인**(재확인용 죽은 함수) | M1 로직은 정확성을 위해 여기서도 `await`로 실측 비교하도록 구현했지만, 실제 앱에서 호출되지 않으므로 이 함수의 hardReset 판정은 현재 아무 데도 영향 없음 — 향후 배선 여부는 본 task 범위 밖 |
+
+### self-check 결과
+
+```
+npx tsc --noEmit -p tsconfig.client.json                              → PASS(에러 0)
+npx tsx src/arcCore/worldExpansionGlobalSchedule.test.ts               → PASS 11/11(5 기존+6 신규)
+npx tsx src/arcCore/worldExpansionGlobalResetDetection.test.ts         → PASS 5/5(신규)
+```
+
+### 회귀 판별력 검증
+
+M2 핵심 수정(`preserveAlreadyUnlocked`)을 `git stash`로 일시 되돌려 (a) 테스트가 **FAIL**(`5 !== 2`, 정확히 결함 A 재현) 확인 → `git stash pop` 복원 후 **PASS** 재확인. 트리비얼 통과 아님.
+
+### CSV / 기존값 변경 여부
+
+`tables/balance/world_expansion_timing_policy.csv`(`epochDayKey`/`resetGeneration` 등) **무변경** — 현재 값 그대로 유지, 실제 "정식일" 확정은 본 task 밖(김팀장/대표님 승인 후 운영 반영). `arc_core_territorial_combat_policy.csv`·21코어 시드 CSV **무변경**. combatMode/가중치/passInterval **무변경**.
+
+### 운영 체크리스트 (§4, 실행은 김팀장/운영 — 코드 레버는 이미 동작하게 완료)
+
+```text
+[ ] epochDayKey = 정식 시작일(KST YYYY-MM-DD)
+[ ] resetGeneration = 이전 값 + 1
+[ ] systemsPerDay = 1 · globalScheduleEnabled = true
+[ ] build:balance-tables
+[ ] RTDB worldExpansion/master/state 동일 값 publish (캐시 덮어쓰기)
+[ ] 기존 기기: 부트/일일배치 후 synth unlock 수 == 경과일치 · 21코어 유지
+[ ] 분쟁 3~5행성 로테이션·hold 시드 회귀 없음(본 task 무변경 확인)
+```
+
+### 리스크 · soft(실기 미확인)
+
+- 실기(실제 기기 재시작 → hardReset 발동 → synth 잠금·hold 정리) 체감은 **미확인** — unit·정적 검증만.
+- 동기 경로의 "미하이드레이트 시 안전 기본값 false" 레이스는 이론상 최초 부트 딱 1회 hardReset 판정을 1틱 늦출 수 있음(다음 호출에서 자기 교정) — `arcCoreHub.start()`가 `bootReady`(world hydrate 완료) 이후에만 실행되는 기존 부트 시퀀스상 실제 발생 가능성은 낮음.
+- 정책 캐시(RTDB AsyncStorage) 하이드레이트 미배선(결함 C)은 **본 task 범위 밖**으로 남김 — 위 M0 표에 운영 주의로 기록.
+- `syncArcCoreGlobalWorldExpansion`(async) 자체가 dead code — 삭제 여부는 김팀장 판단(본 task는 로직만 정합화, 삭제는 별건 "가비지 코드" 정리로 남김).
+
+**git commit 안 함** — 김팀장(Cursor 본창) 검수·커밋 요청.
+
+---
 
 ## ✅ REVIEWED — 성계 노드라인 전수검사·연동 재검증(M0~M6) · 김클로드
 
