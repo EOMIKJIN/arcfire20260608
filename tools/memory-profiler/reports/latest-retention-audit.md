@@ -1,12 +1,12 @@
 # Memory retention audit (STAGE close → recovery diff)
 
-Generated: 2026-07-29T14:17:04.614Z
+Generated: 2026-07-30T14:17:18.490Z
 Verdict: **FAIL**
 
 - profile samples: 3
-- mem-timeline samples: 17574
-- logcat [MEM_PROFILE] markers: 1425
-- close events audited: 176
+- mem-timeline samples: 17668
+- logcat [MEM_PROFILE] markers: 1848
+- close events audited: 210
 - retention failures: 20
 
 ## Thresholds
@@ -610,4 +610,120 @@ Verdict: **FAIL**
 - status: **INSUFFICIENT_SAMPLES**
 
 ### planet_hub / route_blur (07-29 23:01:30.985  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32 detail=sirius_border)
+- status: **INSUFFICIENT_SAMPLES**
+
+### planet_hub / route_blur (07-29 23:51:22.860  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:51:22.866  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:51:23.198  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### planet_hub / route_blur (07-29 23:51:38.691  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:51:38.693  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:51:38.888  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### planet_hub / route_blur (07-29 23:52:06.875  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:52:06.878  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### planet_hub / route_blur (07-29 23:52:06.901  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:52:06.901  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:52:07.102  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### planet_hub / route_blur (07-29 23:54:19.297  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=44)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:54:19.300  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=44)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:54:19.484  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=44)
+- status: **INSUFFICIENT_SAMPLES**
+
+### planet_hub / route_blur (07-29 23:56:11.530  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=44)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:56:11.534  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=44)
+- status: **INSUFFICIENT_SAMPLES**
+
+### planet_hub / route_blur (07-29 23:56:11.544  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=44)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:56:11.545  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=44)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:56:11.750  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=44)
+- status: **INSUFFICIENT_SAMPLES**
+
+### planet_hub / route_blur (07-29 23:56:27.985  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:56:27.988  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### planet_hub / route_blur (07-29 23:56:28.011  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:56:28.011  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-29 23:56:28.171  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-30 08:48:17.141  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=44)
+- status: **PASS**
+- baseline: PSS=779 GL=125.5 native=273.5 views=577
+- after window min: PSS=710.7 GL=8.5 native=165.8 views=99
+
+### galaxy_map / route_blur (07-30 08:48:17.287  8590  8690 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=40)
+- status: **PASS**
+- baseline: PSS=779 GL=125.5 native=273.5 views=577
+- after window min: PSS=710.7 GL=8.5 native=165.8 views=99
+
+### planet_hub / route_blur (07-30 08:49:59.992  8590 26162 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32 detail=sirius_border)
+- status: **PASS**
+- baseline: PSS=779 GL=125.5 native=273.5 views=577
+- after window min: PSS=710.7 GL=8.5 native=165.8 views=99
+
+### galaxy_map / route_blur (07-30 08:50:05.173  8590 26162 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32)
+- status: **PASS**
+- baseline: PSS=779 GL=125.5 native=273.5 views=577
+- after window min: PSS=710.7 GL=8.5 native=165.8 views=99
+
+### planet_hub / route_blur (07-30 08:50:08.333  8590 26162 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=36 detail=sirius_border)
+- status: **PASS**
+- baseline: PSS=779 GL=125.5 native=273.5 views=577
+- after window min: PSS=710.7 GL=8.5 native=165.8 views=99
+
+### galaxy_map / route_blur (07-30 08:51:08.029  8590 26162 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=60)
+- status: **PASS**
+- baseline: PSS=779 GL=125.5 native=273.5 views=577
+- after window min: PSS=710.7 GL=8.5 native=165.8 views=99
+
+### planet_hub / route_blur (07-30 08:51:13.544  8590 26162 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=60 detail=sirius_border)
+- status: **PASS**
+- baseline: PSS=779 GL=125.5 native=273.5 views=577
+- after window min: PSS=710.7 GL=8.5 native=165.8 views=99
+
+### planet_hub / route_blur (07-30 09:08:28.980 29392 29494 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=40 detail=sirius_border)
+- status: **INSUFFICIENT_SAMPLES**
+
+### galaxy_map / route_blur (07-30 15:22:52.544 29392 29494 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52)
+- status: **INSUFFICIENT_SAMPLES**
+
+### planet_hub / route_blur (07-30 20:24:31.746 29392 29494 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=sirius_border)
 - status: **INSUFFICIENT_SAMPLES**

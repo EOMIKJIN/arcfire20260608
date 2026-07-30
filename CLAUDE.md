@@ -44,12 +44,10 @@ self-check: `npx tsc --noEmit -p tsconfig.client.json` · Skia 변경 시 `npm r
 
 | 착수 대기 작업 | handoff | 명세 |
 |------|---------|------|
-| **⭐ omega combatMode 프로세스 충돌 재수정 (우선)** | `tools/kim-team-lead/reports/kim-claude-ready-omega-combatmode-runtime-conflict.md` | task_id=`omega-combatmode-runtime-conflict-20260729` · 양쪽인접→effective blue_red · 재발=warn완화만 |
 | **분쟁·점령 스택 일관성·효율** | `tools/kim-team-lead/reports/kim-claude-ready-territorial-stack-consistency-opt.md` | 감사=`TERRITORIAL_STACK_CONSISTENCY_AUDIT_20260728.md` · task_id=`territorial-stack-consistency-opt-20260728` |
 | **허브 순회 native_heap (A안)** | `tools/kim-team-lead/reports/kim-claude-ready-hub-hop-native-heap-fix.md` | A1 Image 다운샘플 + A2 planet_change Fresco trim |
 
-> **김팀장 배정(2026-07-29)**: 위 ⭐ **omega combatMode 충돌 재수정** **즉시 착수**.  
-> **최근 REVIEWED**: 정식 서비스 성계 개방 리셋 · 노드 그래프 — **미커밋**.
+> **최근 REVIEWED**: omega combatMode 프로세스 충돌 재수정(`omega-combatmode-runtime-conflict-20260729`) · 정식 서비스 성계 개방 리셋 — handoff 상단.
 
 대표님/김팀장 지시 시 READY 파일부터 읽고 구현 → `kim-claude-handoff-pending.md` **PENDING** · **commit 금지**.
 

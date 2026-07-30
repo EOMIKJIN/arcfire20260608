@@ -5,13 +5,43 @@
 
 ---
 
-## 📋 PENDING — omega_hub `combatMode` 프로세스 충돌 재수정(M0~M5) · 김클로드 구현 완료 · 검수 요청
+## ✅ REVIEWED — omega_hub `combatMode` 프로세스 충돌 재수정(M0~M5) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-30 · 대표님 「검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — READY R1~R5·M0~M5 충족 · 검수 중 코드 수정 없음 |
+| **task_id** | `omega-combatmode-runtime-conflict-20260729` |
+| M1 | BLUE/RED hold + contested + 양쪽 인접 → `effective=blue_red` (R1) · NEUTRAL P0 회귀 유지 |
+| M2 | early `policy vs graph` warn 제거 · battle 경로에서 `effective vs runtimeGraph`만 비교(R4) |
+| M3 | unit 15케이스 PASS(오메가 재현 7·7b 포함) · 하드코딩 없음 |
+| M4 | geoFlank 7/7 · stackConsistency 6/6 회귀 PASS |
+| M5 | `tsc --noEmit -p tsconfig.client.json` PASS |
+| CSV | `omega_hub` `blue_neutral` **무변경**(런타임 effective만) |
+| 커밋 | 일부 daily snapshot에 포함됐을 수 있음 · 추가 커밋은 대표님 지시 시 |
+| soft | 실기 1패스(RED attacker 실측) 미확인 · warn은 battle 진입 시에만(status_quo면 무관) |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED` → `IDLE` 가능** |
+| **updated** | 2026-07-30 (김팀장 검수 PASS) |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-omega-combatmode-runtime-conflict.md` |
+
+### 검수 메모
+
+- 재발 핵심(BLUE 홀드 + CSV `blue_neutral` → RED 배제) **코드상 해소**: `effective=blue_red` → `attacker=RED, defender=BLUE`.
+- 「참고용 경고」 오진 경로 제거됨 — 최종 effective가 runtime과 같으면 warn 없음.
+
+---
+
+## 📋 PENDING (archived) — omega combatMode 재수정 · 김클로드 구현 원문
 
 ```text
-status=PENDING
+status=PENDING→REVIEWED
 task_id=omega-combatmode-runtime-conflict-20260729
-verdict=(김팀장 검수 대기)
-commit 금지
+verdict=PASS (김팀장 2026-07-30)
+commit 금지(검수 시)
 재발원인: P0(NEUTRAL 전용)는 BLUE/RED hold가 되면 CSV combatMode가 영구 고정 → 양쪽 인접(접전)이어도 반대편이 battle에서 배제. 이전 조치는 warn 문구 완화·INDEPENDENT skip만 손대 실효 모드는 안 고쳐 재발.
 실측대응: BLUE(또는 RED) hold + 블루·레드 둘 다 인접(contestedZone) → effective=blue_red(holdSide 무관, R1 신설)
 self-check: tsc=PASS · unit=territorial 전체 PASS(신규 9케이스 포함)
@@ -19,7 +49,7 @@ self-check: tsc=PASS · unit=territorial 전체 PASS(신규 9케이스 포함)
 
 | 필드 | 값 |
 |------|-----|
-| **status** | **`PENDING`** — 김팀장 검수 요청 |
+| **status** | ~~PENDING~~ → **REVIEWED** |
 | **updated** | 2026-07-29 (김클로드 구현) |
 | **task_id** | `omega-combatmode-runtime-conflict-20260729` |
 | **ready** | `tools/kim-team-lead/reports/kim-claude-ready-omega-combatmode-runtime-conflict.md` |
