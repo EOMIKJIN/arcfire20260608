@@ -255,6 +255,33 @@ export function resolveTerritorialCampaignPlanetDue(
   return { planetId: target.planetId, orderIndex };
 }
 
+/**
+ * SAFE 스킵 전용 커서 전진(2026-07-31, contested-eligibility-pool-governor) — `lastPassAtMs`는
+ * 건드리지 않아 캠페인 due 게이트(20분 창)를 소비하지 않는다. 같은 pass 안에서 다음 ELIGIBLE
+ * 후보로 즉시 재시도할 수 있게 `nextPreviewOrderIndex`만 전진시킨다(빈 슬롯에서 정지 금지).
+ */
+export async function advanceTerritorialCampaignCursorForSkip(
+  campaignGroup: string,
+  currentOrderIndex: number,
+  campaignLength: number,
+): Promise<void> {
+  const nextPreviewOrderIndex = normalizePreviewOrderIndex(currentOrderIndex + 1, campaignLength);
+  const row = mem.campaignGroups[campaignGroup];
+  mem = {
+    ...mem,
+    campaignGroups: {
+      ...mem.campaignGroups,
+      [campaignGroup]: {
+        lastPassAtMs: row?.lastPassAtMs ?? 0,
+        lastOrderIndex: row?.lastOrderIndex ?? -1,
+        nextPreviewOrderIndex,
+      },
+    },
+  };
+  await persistTerritorialCombatState();
+  notifyTerritorialPreviewScheduleChanged();
+}
+
 export function listTerritorialCampaignGroups(
   policies: Array<{ campaignGroup: string | null; enabled: boolean }>,
 ): string[] {

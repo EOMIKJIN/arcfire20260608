@@ -9,6 +9,7 @@ import {
   type TerritorialFactionSide,
 } from './arcCoreTerritorialCombatPolicy';
 import {
+  advanceTerritorialCampaignCursorForSkip,
   hydrateArcCoreTerritorialCombatState,
   isTerritorialPassDueForPlanet,
   listTerritorialCampaignGroups,
@@ -43,6 +44,8 @@ import {
   resolveTerritorialSupplyContext,
 } from './territorialSupplyLine';
 import { resolveEffectiveTerritorialCombatMode } from './resolveEffectiveTerritorialCombatMode';
+import { resolveContestedEligibilityForSystem, type ContestedHoldSide } from './contestedEligibility';
+import { rebalanceContestedPoolsIfDirty } from './contestedPoolGovernorSync';
 import { usePlayerStore } from '../../store/playerStore';
 import { resolveMapFactionSideFromClanId } from '../../galaxyMap/resolveMapFactionSide';
 import type { MapFactionSide } from '../../galaxyMap/resolveMapFactionSide';
@@ -767,6 +770,11 @@ export async function runTerritorialCombatPassForPlanet(
 export async function runTerritorialCombatPass(nowMs = Date.now()): Promise<TerritorialPassResult[]> {
   // 동적 분쟁지역 hydrate 포함 — listTerritorialCombatPolicies가 편입 행성을 캠페인 순번으로 합산
   await hydrateArcCoreTerritorialCombatState();
+
+  // 분쟁지역 풀 거버너(2026-07-31) — hold 변경으로 dirty일 때만 1회 rebalance(onBoot 동기 전수 스캔 아님).
+  // 캠페인 due 판정 전에 실행해, 이번 패스에서 새로 승격된 성계가 곧바로 로테이션에 반영될 수 있게 한다.
+  await rebalanceContestedPoolsIfDirty(nowMs);
+
   const policies = listTerritorialCombatPolicies();
   const results: TerritorialPassResult[] = [];
   const campaignGroups = listTerritorialCampaignGroups(policies);
@@ -774,7 +782,36 @@ export async function runTerritorialCombatPass(nowMs = Date.now()): Promise<Terr
 
   for (const group of campaignGroups) {
     const groupPolicies = listTerritorialCombatPoliciesForCampaign(group);
-    const due = resolveTerritorialCampaignPlanetDue(group, groupPolicies, nowMs);
+    let due = resolveTerritorialCampaignPlanetDue(group, groupPolicies, nowMs);
+
+    // SAFE(우군 완포위) 스킵(2026-07-31 M2) — 판정 0회, 커서만 전진해 같은 pass 내 다음
+    // ELIGIBLE로 즉시 재시도(빈 슬롯 정지 금지). 그룹 길이만큼만 시도(무한루프 방지).
+    if (due) {
+      const warStore = useClanWarFoundationStore.getState();
+      if (!warStore.hydrated) {
+        await warStore.loadLocalClanWarFoundation();
+      }
+      let skipAttempts = 0;
+      while (due && skipAttempts < groupPolicies.length) {
+        const duePolicy = groupPolicies.find((p) => p.planetId === due!.planetId);
+        if (!duePolicy) break;
+        const dueHold = warStore.getHold(due.planetId);
+        const dueHoldSide = resolveHoldFactionSide(dueHold?.occupierClanId) as ContestedHoldSide;
+        const classification = resolveContestedEligibilityForSystem({
+          systemId: duePolicy.systemId,
+          holdSide: dueHoldSide,
+          holds: warStore.planetHolds,
+        });
+        if (classification !== 'safe_hinterland') break;
+        if (__DEV__) {
+          console.log(`[territorial] ${due.planetId} SAFE(완포위) 스킵 — 판정 0회, 다음 순번으로 전진`);
+        }
+        await advanceTerritorialCampaignCursorForSkip(group, due.orderIndex, groupPolicies.length);
+        skipAttempts += 1;
+        due = resolveTerritorialCampaignPlanetDue(group, groupPolicies, nowMs);
+      }
+    }
+
     if (!due) continue;
     campaignPlanetIds.add(due.planetId);
     const row = await runTerritorialCombatPassForPlanet(due.planetId, nowMs, {

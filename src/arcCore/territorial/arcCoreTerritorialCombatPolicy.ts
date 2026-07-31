@@ -4,11 +4,18 @@ import {
 } from '../../data/balance/generated';
 import {
   DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID,
+  getContestedSuspendRevision,
   getDynamicContestedZoneRevision,
+  isSuspendedStaticPlanetId,
   listDynamicContestedZoneEntries,
   listDynamicContestedZoneSystemIdSet,
 } from './dynamicContestedZoneStore';
 import { getPlanetOccupationSeedRow } from '../balance/balanceTableRegistry';
+
+/** listTerritorialCombatPolicies() 계열 캐시 키 — dynamic 편입/강등 + suspend(SAFE 완포위) 상태 둘 다 반영 */
+function getActiveContestedPoolRevision(): number {
+  return getDynamicContestedZoneRevision() * 1_000_003 + getContestedSuspendRevision();
+}
 
 export type TerritorialFactionSide = 'BLUE' | 'RED';
 export type TerritorialCombatParticipant = TerritorialFactionSide | 'NEUTRAL' | 'INDEPENDENT';
@@ -163,11 +170,19 @@ function listDynamicContestedPolicies(): TerritorialCombatPolicy[] {
 let cachedPolicies: TerritorialCombatPolicy[] | null = null;
 let cachedPoliciesRevision = -1;
 
+/**
+ * ActivePool 정본(2026-07-31) — CSV 정적행 + dynamic 편입을 합치되, **SAFE(완포위) 판정으로
+ * 런타임 suspend된 CSV 정적행은 제외**한다(파일 삭제 금지 — `setSuspendedStaticPlanetIds`로만
+ * 제외, contestedPoolGovernorSync.ts가 매 rebalance마다 갱신). dynamic 항목은 SAFE가 되면
+ * 거버너가 store에서 즉시 remove(demote)하므로 여기서 별도 필터 불필요.
+ * 캠페인 due·지도 예고 링(resolveContestedZonePreviewSystemIds)이 전부 이 함수 파생이라
+ * 단일 지점에서 걸러지면 하위 소비처 전체에 자동 반영된다.
+ */
 export function listTerritorialCombatPolicies(): TerritorialCombatPolicy[] {
-  const rev = getDynamicContestedZoneRevision();
+  const rev = getActiveContestedPoolRevision();
   if (cachedPolicies && cachedPoliciesRevision === rev) return cachedPolicies;
   const csv = Array.from(getPolicyMap().values()).filter(
-    (p) => p.planetId !== DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID,
+    (p) => p.planetId !== DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID && !isSuspendedStaticPlanetId(p.planetId),
   );
   cachedPolicies = [...csv, ...listDynamicContestedPolicies()];
   cachedPoliciesRevision = rev;
@@ -205,7 +220,7 @@ const campaignPoliciesCache = new Map<string, { rev: number; list: TerritorialCo
 export function listTerritorialCombatPoliciesForCampaign(
   campaignGroup: string,
 ): TerritorialCombatPolicy[] {
-  const rev = getDynamicContestedZoneRevision();
+  const rev = getActiveContestedPoolRevision();
   const cached = campaignPoliciesCache.get(campaignGroup);
   if (cached && cached.rev === rev) return cached.list;
   const list = listTerritorialCombatPolicies()

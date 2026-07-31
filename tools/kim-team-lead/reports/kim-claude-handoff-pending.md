@@ -5,6 +5,214 @@
 
 ---
 
+## ✅ REVIEWED — 분쟁 ActivePool·UI 정합 수정(M0~M6) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-31 · 대표님 「검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — READY M0~M6 충족 · 대표님 지적(SAFE인데 목록/링 잔존 · iron_remnant 우선 승격) 해소 |
+| **task_id** | `contested-active-pool-ui-fix-20260731` |
+| M1~M2 | suspend 오버레이 + `listTerritorialCombatPolicies` 단일 필터 → 캠페인·예고 링 파생 반영 |
+| M4 | `PROMOTE_TIER` strategic_neutral 최우선 · 1b 테스트(iron vs eternal_throne) |
+| M5 | 후보 우주 = occupation seed + 해금 `synth_*` |
+| M6 | `contestedActivePool` 5 · governor/eligibility · territorial 회귀 · **tsc PASS** |
+| CSV | `arc_core_territorial_combat_policy.csv` **무변경**(런타임 suspend만) |
+| **검수 수정** | `arcCoreTerritorialCombatPolicy.ts` — `getPlanetOccupationSeedRow` import를 함수 선언 **앞**으로 정리(모듈 중간 import) |
+| soft | `getTerritorialCombatPolicy`·`listContestedZoneSystemIds`/`isContestedZoneSystemId`는 suspend 비인지(시드·설계 조회용 · UI 예고는 preview 경로) · 실기 Shadow 링 사라짐 확인 권장 |
+| 커밋 | 대표님 지시 시 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED` → `IDLE` 가능** |
+| **updated** | 2026-07-31 (김팀장 검수 PASS) |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-contested-active-pool-ui-fix.md` |
+| **선행** | `contested-eligibility-pool-governor-20260731` |
+
+---
+
+## 📋 PENDING (archived) — ActivePool·UI 정합 · 김클로드 구현 원문
+
+```text
+status=PENDING (archived → REVIEWED 2026-07-31)
+task_id=contested-active-pool-ui-fix-20260731
+verdict=PASS (김팀장)
+commit 금지(당시)
+```
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=territorial dirty rebalance 1회 · ActivePool revision 캐시 · alloc=후보 bounded
+[pss-pre-dev] stage=arcCore territorial + worldmap preview 읽기만 · Skia 무관 · risk=P1·P6
+[pss-pre-dev] verdict=PASS — onBoot 동기 전수 금지 · CSV 정적 행 파일 삭제 금지 · suspend/ActivePool 필터만
+```
+
+### 구현 요약 (M0~M6)
+
+| M | 내용 | 파일 |
+|---|------|------|
+| M0 | 소비처 표(아래) | 본 항목 |
+| M1 | `setSuspendedStaticPlanetIds`/`isSuspendedStaticPlanetId`(신규) — SAFE로 판정된 CSV 정적행을 담는 런타임 오버레이(파일 무변경, in-memory·revision 추적, persist 불필요한 파생 캐시) | `dynamicContestedZoneStore.ts` |
+| M2 | **ActivePool 정본 단일화** — `listTerritorialCombatPolicies()`가 suspend된 CSV 정적행을 결과에서 제외하도록 필터 추가(dynamic SAFE 항목은 기존 거버너가 이미 store remove하므로 별도 처리 불필요). `listTerritorialCombatPoliciesForCampaign`·`resolveContestedZonePreviewSystemIds`는 전부 이 함수 파생이라 **단일 지점 수정으로 캠페인 due·지도 예고 링에 자동 반영** — 섀도우 SAFE면 링에도 안 뜸 | `arcCoreTerritorialCombatPolicy.ts`(캐시 키에 suspend revision 결합) |
+| M3 | 캠페인 due: Active 목록 자체에 SAFE가 없는 게 정본(M2) — 기존 M2(이전 task) 스킵 루프는 **안전망으로 그대로 유지**(이중 방어, 코드 변경 없음) | 변경 없음(`runTerritorialCombatPass.ts`) |
+| M4 | **min8 우선순위 하드 티어 신설** — `PROMOTE_TIER_BY_CLASSIFICATION`(strategic_neutral=0 최우선 · front=1 · independent_front=2)를 점수보다 먼저 비교해 정렬. 점수만으로는 보너스(연속+15·최근전투+10)가 겹치면 FRONT가 STRATEGIC_NEUTRAL 기본값을 역전할 수 있어 "중립 후보 있으면 무조건 먼저"를 못 지켰던 문제를 하드 티어로 해결. `scoreContestedEligibilityCandidate`도 STRATEGIC_NEUTRAL=120(FRONT 100보다 높게) 갱신(문서 일관성용, 강제는 티어가 담당) | `contestedPoolGovernor.ts` |
+| M5 | 승격 후보 우주 확장 — 21코어(occupation seed) **+ 현재 해금된 synth 프론티어 성계**(`worldStore.unlockedSystemIds` 중 `synth_*`, 대표 planetId=`systems[id].planets[0]`). 대부분 NEUTRAL 시작(`seedSynthFrontierNeutralHold`)이라 "외곽 국경 중립" 후보 풀이 넓어져 FRONT 땜빵 없이도 min8을 채우기 쉬워짐 | `contestedPoolGovernorSync.ts`(`buildSystemUniverse`) |
+| M6 | unit 16케이스 신규(이번 task) + 기존 territorial 10개 테스트 파일 전체 회귀 PASS + `tsc` PASS | 아래 self-check |
+
+### M0 — 소비처 표
+
+| 경로 | 역할 | 이번 task 영향 |
+|------|------|----------------|
+| `arcCoreTerritorialCombatPolicy.ts`(`listTerritorialCombatPolicies`) | ActivePool 정본 | suspend 필터 추가(단일 지점) |
+| `listTerritorialCombatPoliciesForCampaign` | 캠페인 due 후보 목록 | `listTerritorialCombatPolicies()` 파생이라 자동 반영, 캐시 키만 suspend revision 포함하도록 갱신 |
+| `resolveContestedZonePreviewSystemIds.ts` | 지도 예고 링 | 무변경(파생 자동 반영) — 직접 unit 테스트로 shadow_nexus 미표시 확인 |
+| `contestedPoolGovernorSync.ts`(`rebalanceContestedPoolsNow`) | rebalance 오케스트레이션 | 그룹 루프 종료 후 `safeStaticPlanetIds` 집계해 `setSuspendedStaticPlanetIds` 1회 호출. 그룹 목록은 **원본 CSV**에서 뽑도록 변경(정적 5행이 전부 동시 SAFE로 suspend돼도 그룹 자체가 사라져 재평가 기회를 잃지 않게) |
+| `dynamicContestedZoneStore.ts` | suspend 오버레이 저장소 | 신규 3함수 추가, zustand 의존 없음(순환참조 안전) |
+| `getTerritorialCombatPolicy(planetId)` (단일 조회) | 시드 reconcile(`isTerritorialProcessPlanet` 등)·기존 테스트가 CSV 설계값 그대로 기대 | **의도적으로 미변경** — Active 목록(List) 함수만 suspend-aware, 단일 lookup은 "정책 존재 여부(설계 사실)"라는 별개 의미라 손대면 시드 reconcile·geoFlank/seed 테스트가 깨짐(scope 경계로 판단) |
+
+### self-check 결과
+
+```
+npx tsc --noEmit -p tsconfig.client.json                              → PASS(에러 0)
+npx tsx --test contestedActivePool.test.ts                             → PASS 5/5(신규 — ActivePool·지도 링·CSV 파일 보존)
+npx tsx --test contestedPoolGovernor.test.ts                           → PASS 11/11(4 신규 티어케이스 포함)
+npx tsx --test contestedEligibility.test.ts                            → PASS 11/11(회귀)
+npx tsx --test resolveEffectiveTerritorialCombatMode.test.ts           → PASS 15/15(회귀)
+npx tsx --test geoFlankHeliosTitanOccupation.test.ts                   → PASS 7/7(회귀)
+npx tsx --test territorialStackConsistency.test.ts                     → PASS 6/6(회귀)
+npx tsx --test territorialSupplyLine.test.ts                           → PASS 16/16(회귀)
+npx tsx --test frontPressureIndex.test.ts                              → PASS 5/5(회귀)
+npx tsx --test seedPlanetOccupationFromBalance.test.ts                 → PASS(회귀)
+npx tsx --test planetHoldReleasePolicy.test.ts                         → PASS 6/6(회귀)
+```
+
+### 회귀 판별력 검증
+
+- M2(ActivePool suspend 필터)를 임시로 되돌려 `contestedActivePool.test.ts`가 **FAIL**(suspend해도 목록에 남음) 확인 → 복원 후 **PASS**.
+- M4(하드 티어)를 임시로 점수-only 정렬로 되돌려 `contestedPoolGovernor.test.ts` 1b가 **정확히 iron_remnant를 승격**하는 실패로 재현(대표님이 지적한 바로 그 버그) 확인 → 복원 후 **PASS**.
+
+### CSV / 기존값 변경 여부
+
+`arc_core_territorial_combat_policy.csv`(정적 5행) **git diff 없음** — CSV 원본 파일에 shadow_market 등 정적행이 그대로 남아있음을 테스트로 직접 확인(`contestedActivePool.test.ts` #4, 파일 텍스트 read). `faction_political_relations.csv`·`planet_occupation_seeds.csv` 무변경. 신규 CSV 추가 없음(이전 task의 `arc_core_contested_pool_policy.csv`만 유지, 이번엔 수치 변경 없음).
+
+### 리스크 · soft(실기 미확인) · 참고
+
+- 이번 세션 중 `contestedPoolGovernorSync.ts`에 **외부(김팀장/훅)가 이미 추가해 둔** "stepMax로 1회에 min/max 미도달 시 dirty 재마킹" 로직(A안 수렴 보정)을 발견 — 손대지 않고 그 위에 M1~M5를 얹었음. 이 로직 덕분에 min8 도달까지 여러 패스에 걸쳐 자동으로 재시도됨(제 예상 리스크였던 "step 상한 도달 후 고착" 문제가 이미 해결돼 있었음).
+- 실기 미확인: 실제 기기에서 섀도우 넥서스가 지도 링·캠페인에서 사라지는지, min8 보충이 실제로 중립(예: eternal_throne/genesis_origin/해금 synth)만으로 채워지는지는 unit·정적 검증만.
+- `getTerritorialCombatPolicy` 단일 조회는 의도적으로 suspend 비인지 상태로 남김(위 M0 표 근거) — 김팀장 검수 시 이 경계가 제품 의도와 맞는지 확인 요청.
+
+**git commit 안 함** — 김팀장(Cursor 본창) 검수·커밋 요청.
+
+---
+
+## ✅ REVIEWED — 분쟁지역 Eligibility·풀 거버너(A안, M0~M7) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-07-31 · 대표님 「검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — READY M0~M7 충족 · A안 min8 수렴 **1건 검수 중 수정** |
+| **task_id** | `contested-eligibility-pool-governor-20260731` |
+| M1 | SAFE/FRONT/중립/독립국 분류 · 섀도우 RED 완포위 → `safe_hinterland` 테스트 |
+| M2 | SAFE 스킵 + `advanceTerritorialCampaignCursorForSkip`(due 창 미소비) |
+| M3~M5 | 풀 거버너 순수 plan · CSV 정적 강등 금지 · demote/쿨다운 · 신규 CSV min8/max12/step2 |
+| M6 | dirty rebalance · purge 시 `arc_*` 보존 · onBoot 동기 전수 없음 |
+| M7 | tsc PASS · eligibility/governor + territorial 회귀 PASS |
+| CSV | `arc_core_territorial_combat_policy.csv` **무변경** · `arc_core_contested_pool_policy.csv` **추가만** |
+| **검수 수정** | `contestedPoolGovernorSync.ts` — stepMax로 1회에 min/max 미달 시 **dirty 재마킹**(5→7 고착 방지, A안 8 수렴) |
+| 커밋 | 대표님 지시 시 · soft: 실기 로그(`[territorial] SAFE 스킵` / `풀 거버너 승격`) 확인 권장 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED` → `IDLE` 가능** |
+| **updated** | 2026-07-31 (김팀장 검수 PASS) |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-contested-eligibility-pool-governor.md` |
+
+---
+
+## 📋 PENDING (archived) — 분쟁 Eligibility 거버너 · 김클로드 구현 원문
+
+```text
+status=PENDING (archived → REVIEWED 2026-07-31)
+task_id=contested-eligibility-pool-governor-20260731
+```
+
+| 필드 | 값 |
+|------|-----|
+| **status** | archived |
+| **updated** | 2026-07-31 (김클로드 구현) |
+| **task_id** | `contested-eligibility-pool-governor-20260731` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-contested-eligibility-pool-governor.md` |
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=territorial rebalance(캠페인1바퀴·hold변경 dirty) 1회 · alloc=후보스코어 bounded(21계) · cache=revision+adjacency
+[pss-pre-dev] stage=arcCore territorial only · Skia/UI 무관 · risk=P1(빈도)·P6(persist coalesce)
+[pss-pre-dev] verdict=PASS — onBoot 동기 전은하 스캔 금지 · SAFE 스킵+거버너만 · 기존 pass 스택 유지
+```
+
+### 구현 요약 (M0~M7)
+
+| M | 내용 | 파일 |
+|---|------|------|
+| M0 | 소비처 표(아래) — policy list·campaign state·dynamic store·probe/pass 진입점·purge. 전 repo 스캔 없이 READY §1 힌트 경로만 확인 | 본 항목 |
+| M1 | 순수 `classifyContestedEligibility`/`resolveContestedEligibilityForSystem` — SAFE_HINTERLAND(BLUE/RED hold+적대 인접 0, `hasAdjacentHostileFactionSystem` 재사용)·ELIGIBLE_FRONT(양쪽 인접, holdSide 무관)·ELIGIBLE_STRATEGIC_NEUTRAL(NEUTRAL+한쪽만)·ELIGIBLE_INDEPENDENT_FRONT(INDEPENDENT+적대 인접)·INELIGIBLE. **섀도우 넥서스 RED 완포위 실측 재현 테스트로 safe 확인**(수용기준 1) | `contestedEligibility.ts`(신규)·`.test.ts` |
+| M2 | 캠페인 due 판정에서 SAFE면 판정 0회 스킵 — `advanceTerritorialCampaignCursorForSkip`(신규, `lastPassAtMs` 불변·`nextPreviewOrderIndex`만 전진)로 같은 pass 내 다음 ELIGIBLE로 즉시 재시도(빈 슬롯 정지 금지), 그룹 길이만큼만 시도(무한루프 방지) | `arcCoreTerritorialCombatState.ts`·`runTerritorialCombatPass.ts` |
+| M3 | ActivePool = (CSV enabled·contestedZone 행 ∪ dynamic 항목) − SAFE. `planContestedPoolRebalance`(순수) — N<min이면 승격, N>max면 강등, **CSV 정적행은 강등 대상에서 원천 제외**(파일 삭제 금지·SAFE는 M2 스킵으로만 제외) | `contestedPoolGovernor.ts`(신규) |
+| M4 | 승격 스코어: FRONT=100·STRATEGIC_NEUTRAL=60·**INDEPENDENT_FRONT=80(문서 미명시 — front/strategic_neutral 중간값 채택, soft)**·Active 1홉 연속 +15·플레이어 최근 전투 +10(`isWaveCombatCooldownActive` 재사용). 동점은 planetId 사전순 결정적. `promoteDynamicContestedZone` 재사용(템플릿 합성) — **NEUTRAL 승격의 initial combatMode는 별도 곡선 없이 템플릿 기본값(blue_red) 유지**: 기존 P0(2026-07-28)가 매 패스 런타임 인접으로 재계산하므로 정적 초기값이 무의미해짐(문서 "추가 밸런스 곡선 금지"와 일치). `source` 태그 `arc_frontline`/`arc_strategic_neutral`(INDEPENDENT_FRONT도 `arc_frontline`로 태깅, soft) | `contestedPoolGovernorSync.ts`(신규, glue) |
+| M5 | 강등: CSV 정적은 파일 무변경(스킵 게이트만) · 동적(arc_*·player 무관)은 `demoteDynamicContestedZone`(신규)로 store remove + `recentlyDemoted` 쿨다운 기록. 쿨다운 = `cooldownLaps × 현재 활성 정책 수 × passIntervalSec`(신규 CSV `arc_core_contested_pool_policy.csv`: min8/max12/step2/cooldownLaps2) | `dynamicContestedZoneStore.ts`(확장)·`arcCoreContestedPoolPolicy.ts`(신규 로더)·신규 CSV |
+| M6 | 주기: onBoot 동기 전수 스캔 없음 — `markContestedPoolDirty()`를 `applyArcCoreTerritorialHold`/`claimPlanetOwnershipByPurchase`/purge-pipeline 3곳(기존 `invalidateFrontPressure` 호출부와 동일 지점)에 추가, `runTerritorialCombatPass()`가 매 probe에서 `rebalanceContestedPoolsIfDirty()`로 dirty일 때만 1회 실행. **계정 purge 계약 변경**: `resetDynamicContestedZonesForAccountPurge`가 이제 `source` 접두 `arc_`(거버너 승격)는 **보존**, `player_wave*`만 기존대로 제거(월드축 vs 플레이어 귀속 진행 분리) | `dynamicContestedZoneStore.ts`·`clanWarFoundationStore.ts`(3곳)·`runTerritorialCombatPass.ts` |
+| M7 | unit 27케이스(신규) + 기존 territorial 9개 테스트 파일 전체 회귀 PASS + `tsc` PASS | 아래 self-check |
+
+### M0 — 소비처 표
+
+| 경로 | 역할 | 이번 task 영향 |
+|------|------|----------------|
+| `arcCoreTerritorialCombatPolicy.ts`(`listTerritorialCombatPolicies`/`ForCampaign`) | CSV+dynamic 병합 정책 목록 | **무변경**(M3가 `listTerritorialCombatPolicies()` 결과를 읽기만) |
+| `arcCoreTerritorialCombatState.ts` | 캠페인 순차 due·커서 | `advanceTerritorialCampaignCursorForSkip` 신규 함수만 추가 |
+| `dynamicContestedZoneStore.ts` | 동적 편입 저장(AsyncStorage) | `demoteDynamicContestedZone`·`isRecentlyDemoted`·`pruneExpiredRecentlyDemoted`·dirty 플래그 3종 추가, purge 로직 변경(M6) |
+| `runTerritorialCombatPass.ts` | 판정 스택 진입점 | 캠페인 루프에 SAFE 스킵 + dirty rebalance 호출 추가. **내부 P0/R1/전술역전 로직 무변경** |
+| `localAccountReset.ts`(purge) | `resetDynamicContestedZonesForAccountPurge` 호출 | 함수 시그니처 무변경, 내부 동작만 변경(arc_* 보존) — 호출측 무수정 |
+| `waveCombatCooldownStore.ts`(`isWaveCombatCooldownActive`) | 최근 전투 신호 | 읽기만(M4 스코어링) |
+| `factionPoliticalRelations.ts`/`territorialSupplyLine.ts` | 적대관계·인접 카운트 | 읽기만(재사용, 신규 로직 없음) |
+
+### self-check 결과
+
+```
+npx tsc --noEmit -p tsconfig.client.json                              → PASS(에러 0)
+npx tsx --test contestedEligibility.test.ts                            → PASS 11/11(신규, 섀도우 완포위 실측 재현 포함)
+npx tsx --test contestedPoolGovernor.test.ts                           → PASS 8/8(신규, 순수 로직)
+npx tsx --test resolveEffectiveTerritorialCombatMode.test.ts           → PASS 15/15(회귀)
+npx tsx --test geoFlankHeliosTitanOccupation.test.ts                   → PASS 7/7(회귀)
+npx tsx --test territorialStackConsistency.test.ts                     → PASS 6/6(회귀)
+npx tsx --test territorialSupplyLine.test.ts                           → PASS 16/16(회귀)
+npx tsx --test frontPressureIndex.test.ts                              → PASS 5/5(회귀)
+npx tsx --test seedPlanetOccupationFromBalance.test.ts                 → PASS(회귀, 동적 캠페인 순번 무관)
+npx tsx --test planetHoldReleasePolicy.test.ts                         → PASS 6/6(회귀, purge 무관 확인)
+```
+
+### 회귀 판별력 검증
+
+M2/M6 배선(`runTerritorialCombatPass.ts`)을 `git stash`로 일시 되돌려 정적 배선 테스트가 **FAIL**(SAFE 스킵/dirty rebalance 호출부 부재) 확인 → `git stash pop` 복원 후 **PASS** 재확인. 풀 거버너 순수 로직(`contestedPoolGovernor.test.ts`)은 승격/강등 목록의 구체적 내용·길이·순서를 assert(에러 유무만 체크 아님)해 트리비얼 통과가 아님.
+
+### CSV / 기존값 변경 여부
+
+`arc_core_territorial_combat_policy.csv`(정적 5행 combatMode/가중치/passInterval) **무변경**(git diff 없음). `faction_political_relations.csv`·`planet_occupation_seeds.csv` **무변경**(읽기만). 신규 추가만: `tables/balance/arc_core_contested_pool_policy.csv`(poolMin=8/poolMax=12/stepMax=2/cooldownLaps=2) — `npm run build:balance-tables`로 generated 반영 완료(자동 CSV→TS 파이프라인, 별도 배선 불필요). `planetId==='shadow_market'` 류 하드코딩 없음(정적 grep 테스트로 고정).
+
+### 리스크 · soft(실기 미확인) · 해석적 결정
+
+- **INDEPENDENT_FRONT 스코어(+80)** — READY M4 표에 명시 없음. front(100)/strategic_neutral(60) 중간값을 안전 기본으로 채택. 실제 게임플레이 체감상 우선순위 조정 필요하면 `contestedPoolGovernor.ts`의 `scoreContestedEligibilityCandidate` 한 줄만 수정하면 됨(밸런스 CSV화는 이번 범위 밖).
+- **쿨다운 산식**(`cooldownLaps × 활성정책수 × passIntervalSec`)은 "캠페인 2바퀴"의 근사치 — 실제 캠페인 길이(8~12 변동)를 그때그때 반영해 재계산하므로 풀이 커질수록 쿨다운도 길어짐(의도된 근사, 별도 상수 하드코딩 아님).
+- **실기 미확인**: 부트 후 실제 기기에서 ActivePool이 실제로 8까지 자동 채워지는지, 섀도우 넥서스가 실제로 로테이션에서 스킵되는지는 unit·정적 검증만 — 실기 로그(`[territorial] ... SAFE(완포위) 스킵`/`풀 거버너 승격`) 확인은 김팀장/대표님 몫.
+- `eligible_independent_front` 승격이 `runIndependentHoldInvasionJudgment`(기존, 미변경)에 판정 기회를 부여하는 유일한 경로임을 코드 추적으로 확인(정책 없는 행성은애초 `runTerritorialCombatPassForPlanet` 진입 자체가 안 됨) — 부수 효과지만 의도된 것으로 판단, 문제 시 M4 스코어를 낮춰 억제 가능.
+- 계정 purge 계약 변경(arc_* 보존)은 `localAccountReset.ts` 호출부 코드 변경 없이 내부 동작만 바뀜 — 김팀장 검수 시 실제 purge 흐름(로그인 계정 초기화)에서 arc_frontline 항목이 남는지 실기 확인 권장.
+
+**git commit 안 함** — 김팀장(Cursor 본창) 검수·커밋 요청.
+
+---
+
 ## ✅ REVIEWED — omega_hub `combatMode` 프로세스 충돌 재수정(M0~M5) · 김클로드
 
 ### 김팀장 검수 (본창 Cursor · 2026-07-30 · 대표님 「검수하라」)

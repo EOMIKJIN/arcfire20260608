@@ -52,6 +52,7 @@ import {
 } from '../arcCore/territorial/dynamicContestedZoneStore';
 import { hasAdjacentHostileFactionSystem, listAdjacentSystemIds } from '../arcCore/territorial/territorialSupplyLine';
 import { invalidateFrontPressure } from '../arcCore/territorial/frontPressureIndex';
+import { markContestedPoolDirty } from '../arcCore/territorial/dynamicContestedZoneStore';
 import { reassignPlanetGovernorForOccupationSync } from '../game/planetGovernor/reassignPlanetGovernorForOccupation';
 import { hydratePlanetGovernorAssignmentStore } from '../game/planetGovernor/planetGovernorAssignmentStore';
 
@@ -191,6 +192,8 @@ function finalizeClanHoldRelease(
       if (!systemId) continue;
       invalidateFrontPressure([systemId, ...listAdjacentSystemIds(systemId)]);
     }
+    // 분쟁지역 풀 거버너(2026-07-31) — occupier 변경으로 SAFE/ELIGIBLE 분류가 바뀔 수 있음
+    markContestedPoolDirty();
   }
   return piped.holds;
 }
@@ -376,6 +379,8 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     if (nextHold.systemId) {
       invalidateFrontPressure([nextHold.systemId, ...listAdjacentSystemIds(nextHold.systemId)]);
     }
+    // 분쟁지역 풀 거버너(2026-07-31) — 독립국 편입으로 SAFE/ELIGIBLE 분류가 바뀔 수 있음
+    markContestedPoolDirty();
     const p = usePlayerStore.getState().player;
     if (p && p.uid === uid) {
       usePlayerStore.getState().setPlayer({
@@ -679,6 +684,8 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     });
     // FrontPressure — 이 성계 + 인접 성계의 posture/battlesPerInterval이 이 hold 변경으로 달라질 수 있음
     invalidateFrontPressure([systemId, ...listAdjacentSystemIds(systemId)]);
+    // 분쟁지역 풀 거버너(2026-07-31) — 이 hold 변경으로 SAFE/ELIGIBLE 분류가 바뀔 수 있음
+    markContestedPoolDirty();
     void get().persistClanWarFoundation();
     return { changed: true, previousSide, newSide, operationId };
   },
