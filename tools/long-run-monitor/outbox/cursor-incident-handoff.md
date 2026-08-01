@@ -1,7 +1,7 @@
 # Arcfire long-run incident — Kim Team Lead auto-triage
 
-packedAt: 2026-07-30T00:01:16.087Z
-triggerReason: gl_critical_active_hub
+packedAt: 2026-08-01T13:00:52.953Z
+triggerReason: mem_anomaly
 refixPayload: (none)
 
 ## Mandatory agent action (P0)
@@ -15,53 +15,53 @@ refixPayload: (none)
 ## Recent remediation
 
 ```
-[2026-07-30 08:14:10] INFO VIEWS_NATIVE_ADVISORY views=576 native_heap=276.4 pss=780.4 gl=125.3 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
-[2026-07-30 08:29:36] INFO VIEWS_NATIVE_ADVISORY views=577 native_heap=276.5 pss=776.7 gl=123.4 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
-[2026-07-30 08:45:01] INFO VIEWS_NATIVE_ADVISORY views=577 native_heap=273.5 pss=779 gl=125.5 -> no restart (native_heap/views �?조기 경보; 리스??가?�화 ?��? 추적)
-[2026-07-30 09:00:27] INCIDENT GL_HARD_CEILING gl=131.1 pss=1001.9 views=578 -> immediate remediation (OOM imminent)
-[2026-07-30 09:00:27] REFIX_REQUESTED gl_critical_active_hub -> gl-leak-refix-requested.flag
-[2026-07-30 09:00:27] AUTO_FIX static audit:skia-memory start
-[2026-07-30 09:00:30] AUTO_FIX audit:skia-memory PASS
-[2026-07-30 09:00:30] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
-[2026-07-30 09:00:55] AUTO_FIX baseline reset pid=29392 gl=6MB pss=210.6MB
-[2026-07-30 09:00:55] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
-[2026-07-30 09:01:15] VERIFY PASS pid=29392 gl=8.5MB pss=710.7MB views=99
-[2026-07-30 09:01:15] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":1001.9,"views":578,"lastGlMb":131.1,"hardCeiling":true}
+[2026-08-01 21:57:20] AUTO_FIX static audit:skia-memory start
+[2026-08-01 21:57:23] AUTO_FIX audit:skia-memory PASS
+[2026-08-01 21:57:23] AUTO_FIX app relaunch reason=gl_critical_active_hub package=com.arcfire.online
+[2026-08-01 21:57:42] AUTO_FIX baseline reset pid=7103 gl=6MB pss=199.1MB
+[2026-08-01 21:57:42] VERIFY post-remediation start reason=gl_critical_active_hub (wait 20s)
+[2026-08-01 21:58:03] VERIFY PASS pid=7103 gl=8.5MB pss=556.8MB views=99
+[2026-08-01 21:58:03] AUTO_FIX done reason=gl_critical_active_hub critical=True ctx={"pssMb":954.7,"views":575,"lastGlMb":133.8,"hardCeiling":true}
+[2026-08-01 21:58:04] HANDOFF packed -> outbox/cursor-incident-handoff.md (Kim Team Lead triage)
+[2026-08-01 22:00:50] INVESTIGATION start reason=mem_anomaly
+[2026-08-01 22:00:50] INVESTIGATION alert=[2026-08-01 21:57:20] GL_HARD_CEILING gl=133.8 pss=954.7 views=575
+[2026-08-01 22:00:51] INVESTIGATION logcat captured -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-logcat-20260801-220050.log
+[2026-08-01 22:00:52] INVESTIGATION mem from timeline gl=8.5MB pss=556.8MB -> D:\arcfire20260607\tools\long-run-monitor\logs\incident-meminfo-20260801-220050.log
 ```
 
 ## Recent incidents
 
 ```
-[2026-07-30 08:14:10] VIEWS_NATIVE_ADVISORY views=576 native_heap=276.4 pss=780.4 gl=125.3 (node/list retention ??pre-hardceiling early warn)
-[2026-07-30 08:14:13] DAILY_8AM_REPORT 2026-07-30 08:14:13 KST
-[2026-07-30 08:14:13] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260730-0800.md verdict=OK
-[2026-07-30 08:29:36] VIEWS_NATIVE_ADVISORY views=577 native_heap=276.5 pss=776.7 gl=123.4 (node/list retention ??pre-hardceiling early warn)
-[2026-07-30 08:45:01] VIEWS_NATIVE_ADVISORY views=577 native_heap=273.5 pss=779 gl=125.5 (node/list retention ??pre-hardceiling early warn)
-[2026-07-30 09:00:27] REFIX_REQUESTED gl_critical_active_hub
+[2026-08-01 20:40:04] VIEWS_NATIVE_ADVISORY views=581 native_heap=327.9 pss=784.7 gl=140.2 (node/list retention ??pre-hardceiling early warn)
+[2026-08-01 20:55:32] VIEWS_NATIVE_ADVISORY views=581 native_heap=327.9 pss=784.7 gl=140.2 (node/list retention ??pre-hardceiling early warn)
+[2026-08-01 21:26:27] PSS_SOFT_CEILING pss=823.1 gl=36.3 views=369 native_reclaim_advisory
+[2026-08-01 21:41:54] PSS_SOFT_CEILING pss=936.5 gl=130 views=575 native_reclaim_advisory
+[2026-08-01 21:57:20] GL_HARD_CEILING gl=133.8 pss=954.7 views=575
+[2026-08-01 21:57:20] REFIX_REQUESTED gl_critical_active_hub
 ```
 
 ## Crash signature (tail)
 
 ```
-07-30 09:01:02.521 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.530 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=66 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.541 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.549 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.558 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.567 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.578 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=49 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.587 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.597 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=68 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.605 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.615 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=89 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.625 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.634 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.642 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.653 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=91 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.662 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=93 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:02.671 29392 29494 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=46 origin=arc_core_policy', 'trade_port_planet_resync'
-07-30 09:01:03.066 29392 29494 I ReactNativeJS: [title-diag] catchUp=1379ms probe=1ms dailyBatchJoin=0ms
-07-30 09:01:03.526 29392 29494 I ReactNativeJS: [ArcCore/RTDB] boot sync skip (offline)
+08-01 21:59:18.678  7476  7569 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=28 detail=ingress_after_hub_combat
+08-01 21:59:18.678  7476  7569 I ReactNativeJS: [MEM] runGalaxyMapResidentDeepReclaimPass reason=ingress_after_hub_combat hubSkia=true
+08-01 21:59:18.678  7476  7569 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=ingress_reclaim hermes_mb=28 detail=after_hub_combat
+08-01 21:59:18.679  7476  7569 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_focus hermes_mb=28
+08-01 21:59:18.735  7476  7569 I ReactNativeJS: [MEM] consumeGalaxyMapIngressReclaim kind=after_hub_combat fresco=true
+08-01 21:59:20.779  7476  7569 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+08-01 21:59:20.779  7476  7569 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+08-01 21:59:22.687  7476  7569 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=4 reason=galaxy_map_post_ingress_settle
+08-01 21:59:22.687  7476  7569 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=galaxy_map_post_ingress_settle immediate=0
+08-01 21:59:22.688  7476  7569 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=36 detail=galaxy_map_post_ingress_settle
+08-01 21:59:22.688  7476  7569 I ReactNativeJS: [MEM] runGalaxyMapResidentDeepReclaimPass reason=galaxy_map_post_ingress_settle hubSkia=true
+08-01 21:59:24.218  7476  7569 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+08-01 21:59:58.673  1861 18059 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+08-01 22:00:03.686  7476  7569 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=5 reason=galaxy_map_post_ingress_followup
+08-01 22:00:03.687  7476  7569 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=galaxy_map_post_ingress_followup immediate=0
+08-01 22:00:03.687  7476  7569 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=36 detail=galaxy_map_post_ingress_followup
+08-01 22:00:03.687  7476  7569 I ReactNativeJS: [MEM] runGalaxyMapResidentDeepReclaimPass reason=galaxy_map_post_ingress_followup hubSkia=true
+08-01 22:00:04.741  1861  1904 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+08-01 22:00:05.211  7476  7569 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
 
 ```
 
@@ -69,16 +69,16 @@ refixPayload: (none)
 
 ```csv
 ﻿iso_time,pid,pss_mb,rss_mb,gl_mb,egl_mb,graphics_mb,native_heap_mb,java_heap_mb,threads,views,delta_pss_mb,delta_gl_mb,note
-2026-07-30 06:26:12,8590,801.7,738.8,125.3,19.8,145.2,289,44.9,,576,1.1,0,
-2026-07-30 06:41:37,8590,786.4,723.6,125.3,19.8,145.2,289.6,40.6,,576,-15.3,0,
-2026-07-30 06:57:02,8590,785.3,722.7,125.3,19.8,145.2,289.2,40.4,,576,-1.1,0,
-2026-07-30 07:12:27,8590,791.6,729.1,125.3,19.8,145.2,293.7,50.4,,576,6.3,0,
-2026-07-30 07:27:51,8590,809.3,732.5,125.3,19.8,145.2,276.1,69.9,,576,17.7,0,
-2026-07-30 07:43:16,8590,799.8,722.7,125.3,19.8,145.2,276.3,60.1,,576,-9.5,0,
-2026-07-30 07:58:40,8590,782.6,706,125.3,19.8,145.2,275.4,45.8,,576,-17.2,0,
-2026-07-30 08:14:05,8590,780.4,702.9,125.3,19.8,145.2,276.4,41.6,,576,-2.2,0,
-2026-07-30 08:29:30,8590,776.7,698.8,123.4,19.8,143.2,276.5,39,,577,-3.7,-1.9,
-2026-07-30 08:44:56,8590,779,697.4,125.5,19.8,145.3,273.5,38.6,,577,2.3,2.1,
-2026-07-30 09:00:21,8590,1001.9,549.5,131.1,19.8,150.9,165.8,41.3,,578,222.9,5.6,PSS_SPIKE review=graphics+native
-2026-07-30 09:01:15,29392,710.7,,8.5,,,,,,99,,,POST_REMEDIATION_VERIFY_OK
+2026-08-01 19:07:20,29412,791.8,918,142.2,19.8,162.1,324.9,58.9,,591,6.3,2,
+2026-08-01 19:22:45,29412,784,911.3,140.2,19.8,160.1,326.4,52.4,,581,-7.8,-2,
+2026-08-01 19:38:10,29412,780,907.4,140.2,19.8,160.1,326.1,48.7,,581,-4,0,
+2026-08-01 19:53:35,29412,783.5,910.1,142.2,19.8,162.1,327,50.1,,581,3.5,2,
+2026-08-01 20:09:00,29412,785.6,913.4,140.2,19.8,160.1,327.5,54.7,,581,2.1,-2,
+2026-08-01 20:24:25,29412,783.5,911.4,142.2,19.8,162.1,327.8,49.8,,581,-2.1,2,
+2026-08-01 20:39:59,29412,784.7,912.6,140.2,19.8,160.1,327.9,53.4,,581,1.2,-2,
+2026-08-01 21:10:55,29412,739.4,862.4,14.9,19.8,34.7,402.8,49.7,,229,-45.3,-125.3,GL_RECOVERED idle_ok
+2026-08-01 21:26:22,29412,823.1,951.6,36.3,19.8,56.1,423.4,60.6,,369,83.7,21.4,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+2026-08-01 21:41:47,29412,936.5,1072.4,130,19.8,149.9,460.7,51.5,,575,113.4,93.7,GL_SPIKE suspect=hub_skia_orbit_nebula_combat
+2026-08-01 21:57:14,29412,954.7,1090.7,133.8,19.8,153.6,465.6,56.8,,575,18.2,3.8,
+2026-08-01 21:58:03,7103,556.8,,8.5,,,,,,99,,,POST_REMEDIATION_VERIFY_OK
 ```

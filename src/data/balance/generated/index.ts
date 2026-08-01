@@ -6,6 +6,7 @@ export { ArcCoreContestedZoneAftermathPolicy_FROM_BALANCE_CSV } from './csvArcCo
 export { ArcCoreDailyOpsPolicy_FROM_BALANCE_CSV } from './csvArcCoreDailyOpsPolicy';
 export { ArcCoreFrontPressurePolicy_FROM_BALANCE_CSV } from './csvArcCoreFrontPressurePolicy';
 export { ArcCoreInboundDronePolicy_FROM_BALANCE_CSV } from './csvArcCoreInboundDronePolicy';
+export { ArcCoreMaginotExternalSupplyPolicy_FROM_BALANCE_CSV } from './csvArcCoreMaginotExternalSupplyPolicy';
 export { ArcCorePlanetAttackLevelPolicy_FROM_BALANCE_CSV } from './csvArcCorePlanetAttackLevelPolicy';
 export { ArcCorePlanetDevInvestmentPolicy_FROM_BALANCE_CSV } from './csvArcCorePlanetDevInvestmentPolicy';
 export { ArcCorePlanetUpkeepPolicy_FROM_BALANCE_CSV } from './csvArcCorePlanetUpkeepPolicy';
@@ -13,6 +14,7 @@ export { ArcCoreRedPlanetDevPortfolio_FROM_BALANCE_CSV } from './csvArcCoreRedPl
 export { ArcCoreSpyPolicy_FROM_BALANCE_CSV } from './csvArcCoreSpyPolicy';
 export { ArcCoreSpyRolePolicy_FROM_BALANCE_CSV } from './csvArcCoreSpyRolePolicy';
 export { ArcCoreSpyTerrorProfile_FROM_BALANCE_CSV } from './csvArcCoreSpyTerrorProfile';
+export { ArcCoreSupplyEnvelopePolicy_FROM_BALANCE_CSV } from './csvArcCoreSupplyEnvelopePolicy';
 export { ArcCoreTerritorialCombatPolicy_FROM_BALANCE_CSV } from './csvArcCoreTerritorialCombatPolicy';
 export { ArcCoreTerritorialFleetComposition_FROM_BALANCE_CSV } from './csvArcCoreTerritorialFleetComposition';
 export { ArcCoreWealthDisparityPolicy_FROM_BALANCE_CSV } from './csvArcCoreWealthDisparityPolicy';

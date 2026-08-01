@@ -13,6 +13,9 @@ import {
 import { planetAttackKstDayKey } from '../planetAttack/planetAttackKstDayKey';
 import { shouldRebellionOverthrowSucceed } from '../rebellion/computePlanetWealthDisparityDailyDelta';
 import { applyRebellionOverthrowHold } from '../rebellion/applyRebellionOverthrowHold';
+import { countAdjacentFriendlySystems } from '../territorial/territorialSupplyLine';
+import { resolveSupplyEnvelope } from '../territorial/resolveSupplyEnvelope';
+import { getArcCoreSupplyEnvelopePolicy } from '../territorial/arcCoreSupplyEnvelopePolicy';
 import {
   publishRebellionOverthrowNotice,
   publishRebellionSimmeringNotice,
@@ -85,10 +88,28 @@ export function runPlanetRebellionResolutionDailyPass(): PlanetRebellionResoluti
 
     if (wealth.wdi < wdiPolicy.wdiDangerMin) return;
 
-    const hold = useClanWarFoundationStore.getState().planetHolds[planetId];
+    const holds = useClanWarFoundationStore.getState().planetHolds;
+    const hold = holds[planetId];
     const clans = useClanWarFoundationStore.getState().clans;
     const factionSide = resolveMapFactionSideFromClanIdPure(hold?.occupierClanId ?? 'neutral', clans);
     const factionMul = resolveRebellionOverthrowProbMul(factionSide);
+
+    // 보급 3성계 포위 우세(2026-08-01 M5, 권장·선택) — 동측 STRONG(아군 완포위) hold의 반란 전복
+    // 성공확률에 envelopeRebellionOverthrowMul을 곱한다. wealth 곡선(overthrowBaseProbAtDanger 등)
+    // 자체는 무변경 — 최종 factionMul에만 배율을 얹어 "포위 지역 중립화=반란이 주 원인"을 강화한다.
+    const envelopePolicy = getArcCoreSupplyEnvelopePolicy();
+    const envelope = resolveSupplyEnvelope({
+      adjacency: {
+        blue: countAdjacentFriendlySystems({ systemId: ref.system.id, side: 'BLUE', holds }),
+        red: countAdjacentFriendlySystems({ systemId: ref.system.id, side: 'RED', holds }),
+      },
+      threshold: envelopePolicy.envelopeMinSystems,
+    });
+    const sameSideEnvelopeStrong =
+      (factionSide === 'blue' && envelope === 'blue_strong') || (factionSide === 'red' && envelope === 'red_strong');
+    const envelopeFactionMul = sameSideEnvelopeStrong
+      ? factionMul * envelopePolicy.envelopeRebellionOverthrowMul
+      : factionMul;
 
     const rollPolicy = {
       wdiDangerMin: wdiPolicy.wdiDangerMin,
@@ -100,7 +121,7 @@ export function runPlanetRebellionResolutionDailyPass(): PlanetRebellionResoluti
       planetId,
       kstDayKey,
       wealth.wdi,
-      factionMul,
+      envelopeFactionMul,
       rollPolicy,
     );
 

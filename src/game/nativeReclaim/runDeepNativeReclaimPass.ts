@@ -1,4 +1,5 @@
 import { InteractionManager } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
 
@@ -21,11 +22,40 @@ export type DeepNativeReclaimPassOptions = {
   skipBackdropRemount?: boolean;
 };
 
+/**
+ * app_background → JS 루트 풀 리로드("Running main") 시 모듈 스코프 변수가 리셋되어
+ * 쿨다운이 무력화되던 문제(worldmap-native-heap-pss-audit-recheck-20260801 재검수에서 실측 확인:
+ * 리로드 직후 첫 hub_inbound_drone_end가 쿨다운 없이 remount 실행됨) — AsyncStorage로 리로드 경계를
+ * 넘겨 영속화. waveCombatCooldownStore.ts와 동일 패턴(하이드레이트 경합 시 최신값 우선).
+ */
+const BACKDROP_REMOUNT_COOLDOWN_STORAGE_KEY = 'arcfire_hub_backdrop_remount_cooldown_v1';
+
 let backdropRemountTimer: ReturnType<typeof setTimeout> | null = null;
 let backdropRemountRaf1 = 0;
 let backdropRemountRaf2 = 0;
 let postRemountTrimTimer: ReturnType<typeof setTimeout> | null = null;
 let lastBackdropRemountAtMs = 0;
+let backdropRemountCooldownHydrateStarted = false;
+
+/** 모듈 로드(=JS 리로드 포함) 시 1회 하이드레이트 — 트리거 판정보다 항상 선행 시도 */
+function hydrateBackdropRemountCooldown(): void {
+  if (backdropRemountCooldownHydrateStarted) return;
+  backdropRemountCooldownHydrateStarted = true;
+  void AsyncStorage.getItem(BACKDROP_REMOUNT_COOLDOWN_STORAGE_KEY)
+    .then((raw) => {
+      if (!raw) return;
+      const at = Number(raw);
+      // 하이드레이트 경합 — 그 사이 실제 remount가 먼저 기록됐으면 더 최신 값을 유지
+      if (Number.isFinite(at) && at > lastBackdropRemountAtMs) {
+        lastBackdropRemountAtMs = at;
+      }
+    })
+    .catch(() => {
+      /* 손상/미가용 시 쿨다운 없이 시작(기존 동작과 동일 — 더 나빠지지 않음) */
+    });
+}
+
+hydrateBackdropRemountCooldown();
 
 function schedulePostRemountTrim(reason: string): void {
   if (postRemountTrimTimer) clearTimeout(postRemountTrimTimer);
@@ -54,6 +84,9 @@ export function scheduleHubBackdropNativeRemountAfterTrim(reason: string): void 
     return;
   }
   lastBackdropRemountAtMs = now;
+  void AsyncStorage.setItem(BACKDROP_REMOUNT_COOLDOWN_STORAGE_KEY, String(now)).catch(() => {
+    /* 디스크 기록 실패는 무해 — 다음 remount 시도에서 재기록 */
+  });
 
   if (backdropRemountTimer) {
     clearTimeout(backdropRemountTimer);
@@ -114,4 +147,5 @@ export function resetDeepNativeReclaimStateForTests(): void {
   backdropRemountRaf1 = 0;
   backdropRemountRaf2 = 0;
   lastBackdropRemountAtMs = 0;
+  backdropRemountCooldownHydrateStarted = false;
 }

@@ -269,6 +269,32 @@ runTerritorialCombatPassForPlanet(planetId)
 
 **우선순위**: P0(중립 인접 비대칭, NEUTRAL 한정) < P1(CSV combatMode/geo-flank, P0 미적용 시 폴백) < **P2(rollDecision이 P0보다 바깥)** < P3(FrontPressure 빈도/보급) < P4(전술 역전, 분쟁지역만). P2가 P0보다 바깥이라는 뜻은 — 중립+블루만 인접이어도 이번 패스가 `status_quo`로 롤되면 점유는 그대로라는 것(감사 §3 "일관성 갭").
 
+### 6-4. 보급 3성계 포위 우세 · 중립화=내부 반란 우선 (2026-08-01, `task_id=supply-envelope-occupy-rebellion-neutral-20260801`)
+
+대표님 정본: 블루(또는 레드) 보급선이 **3성계 이상**으로 둘러싸고 반대 팩션 인접이 0(`resolveSupplyEnvelope` STRONG)이면 — (A) NEUTRAL hold는 다음 순차 due에서 고확률 점유(battle 가중 상향 + `dominantSideWeightPct`를 `occupyHighWeightPct`(CSV, 기본 88)로 오버라이드), (B) BLUE/RED hold는 분쟁 `neutral_declare`가 억제되어 그 지역이 중립화되려면 **내부 반란**(`runPlanetRebellionResolutionDailyPass`, 선택 M5로 STRONG 동측 배율 가산)이 주 경로가 된다.
+
+**스택 내 위치** — §6-3 파이프라인의 `③ rollDecision(P2)` 직전에 끼어든다(§6-5 마지노선이 이보다 위):
+
+```text
+SAFE_HINTERLAND 스킵(기존, §6-3 M2)
+  → 마지노선 HARD·외부보급(§6-5, 2026-08-01)
+    → Supply Envelope STRONG(본 §6-4) — rollDecision 가중치 보정 + dominant% 오버라이드
+      → resolveEffectiveTerritorialCombatMode P0(§6-2, ≥1 인접)
+        → CSV combatMode / rollDecision 기본값(P1/P2)
+```
+
+CSV 정적 5행(`arc_core_territorial_combat_policy.csv`)의 `battleWeightPct`/`neutralDeclareWeightPct`/`dominantSideWeightPct`는 무단 변경 없음 — 신규 `tables/balance/arc_core_supply_envelope_policy.csv`(envelopeMinSystems=3·occupyHighWeightPct=88·envelopeBattleWeightBoostPct=20·envelopeNeutralDeclareMul=0·envelopeRebellionOverthrowMul=1.35)가 런타임에서 얕은 복제로만 가중치를 보정한다. 아이언크로스(`iron_remnant`) 사례 — 동적 ActivePool 편입 후 `neutral_declare` 12%로 BLUE→NEUTRAL 회귀 — 는 이 보정으로 막힌다.
+
+### 6-5. 마지노선(N≤5 HARD) · 외부팩션(F2 남부·F4 북부) 국가보급 · 전황 진동 (2026-08-01, `task_id=maginot-external-faction-supply-oscillation-20260801`)
+
+대표님 정본: **21코어 시나리오 성계**(`planet_occupation_seeds`, synth 제외) 중 BLUE/RED 각각 점유 수 N을 진동 밴드로 판정 — `N≤5(floorSystems)`=**HARD**(일방 전멸 방지, 외부보급 최대) · `5<N<10`=**SUPPORT**(수복 추진) · `N≥10(paritySystems)`=**COOL**(외부보급 감쇠·대등). 블루·레드 **각자 자기 N으로 독립·대칭** 평가. 외부팩션은 4대 팩션 중 전쟁축(F1 서부=블루·F3 동부=레드)을 뺀 **F2 남부(`trade_coalition`)·F4 북부(`miners_guild`)** — `NEUTRAL`/`INDEPENDENT`가 **아니다**(오해 금지, `galaxyRouteFactionPolicy.ts` 정본).
+
+**적용 조건**: hold가 반대 팩션(BLUE/RED)에 있고, 그 반대편(수복 시도측)이 이 성계에 인접 아군 성계를 ≥1(CSV `minAdjacentFriendlyForReclaim`) 보유할 때만 — 보급선 없는 원정은 여전히 불가(기존 물리학 유지). NEUTRAL hold는 이 레이어의 대상이 아니다(§6-4 envelope/§6-2 P0가 담당 — 두 레이어는 holdSide 조건이 배타적이라 실질 충돌 없음).
+
+**HARD**: 반대편 밴드가 hard면 그 due에서 (1) `rollDecision` 결과가 battle이 아니면 **battle 강제**(due 최종 수복 P가 `P(battle)×P(dominant)`로 붕괴하지 않게), (2) `effectiveCombatMode`를 (수복측)_neutral로 강제, (3) `dominantSideWeightPct`를 `hardFinalOccupyPct`(CSV, 기본 80%)로 오버라이드, (4) 분쟁지역 전술 역전은 HARD에서 스킵 — §6-4 envelope가 이미 검증한 `resolveBinaryDominantHoldTarget` 경로를 그대로 재사용(실패 시 기존 홀더 유지). 미네르바(차수 2, 3포위 STRONG 불가) 같은 성계도 이 레이어로 **due 1회 ≈80%** 수복이 가능해진다. **SUPPORT**: 반대편 밴드가 support면 `rollDecision`의 battle 가중에 `supportBattleWeightBoostPct`(CSV, 기본 15)만 가산(그만큼 status_quo 하향) — envelope 가중치 보정보다 먼저 적용된다. **COOL**: 보정 없음(기존 교전만).
+
+**M6(선택, 미착수)**: ActivePool 승격 우선순위에 "HARD 약세측 전선 후보" 가산을 얹는 것은 범위가 커 이번 task에서 soft로 남김 — `contestedPoolGovernor.ts`의 기존 티어(중립 최우선)와 충돌 없이 별도 가산항으로 추가하는 방향을 권장, 다음 세션 후속 과제로 handoff에 기록.
+
 ---
 
 ## 7. Phase 로드맵 (개발 순서)

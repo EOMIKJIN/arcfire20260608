@@ -5,6 +5,257 @@
 
 ---
 
+## ✅ REVIEWED — 은하계 지도 native_heap·PSS 분석 재검수 + remount 쿨다운 영속 · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-08-01 · 대표님 「검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** (분석 PARTIAL 수용 · 코드 1건 유지) |
+| **task_id** | `worldmap-native-heap-pss-audit-recheck-20260801` |
+| 스테이지 | **AGREE** — 17:34~21:05 `galaxy_map_periodic*` · 허브 드론 로그 전무 |
+| native_heap 본축 | **AGREE** — floor→21:57 native Δ+137.7 · PSS Δ+170 (≈81%) |
+| GPU onRelease | **AGREE(무해·미수정)** — 진단 카운트 전용 · 이중 dispose SIGSEGV 위험 → 주입 금지 정정 OK |
+| 21:10 사건 | **AGREE** — `app_background`→`Running "main" rootTag:41`(PID 29412) JS 루트 리로드 로그 실측 |
+| remount | **AGREE** — 21:12:22 `hubBackdropNativeRemount epoch=1`(쿨다운 무력) → 21:13~ skip 정상 |
+| 코드 | `runDeepNativeReclaimPass.ts`만 — AsyncStorage `arcfire_hub_backdrop_remount_cooldown_v1` 영속 · 판정 로직 무변경 |
+| self-check | 김팀장 재실행 `tsc` PASS · `audit:native-reclaim` 20/20 PASS |
+| soft | ① READY 원문은 코드금지였으나 김클로드 세션 「안정 개선 가능 시 진행」으로 범위 확대 — 패치는 좁아 **유지** · ② 지도 수시간 GL~140 floor·`app_background→JS리로드` 근본 원인은 **미해결**(증상 완화) · ③ hydrate 경합 fail-open · ④ 키는 월드축(계정 purge 비대상) OK |
+| 커밋 | 대표님 지시 시 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED` → `IDLE` 가능** |
+| **updated** | 2026-08-01 (김팀장 검수 PASS) |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-worldmap-native-heap-pss-audit-recheck.md` |
+
+---
+
+## 📋 PENDING (archived) — 은하계 지도 native_heap 재검수 · 김클로드 원문
+
+```text
+status=PENDING (archived → REVIEWED 2026-08-01)
+task_id=worldmap-native-heap-pss-audit-recheck-20260801
+verdict=PARTIAL + code(cooldown persist)
+commit 금지(당시)
+```
+
+### 재검수 판정표 (김클로드)
+
+| 항목 | 판정 |
+|------|------|
+| 스테이지 17:34~21:05=지도 | AGREE |
+| native_heap 본축 | AGREE |
+| GPU release no-op | PARTIAL→DISAGREE(무해) · 코드 미변경 |
+| remount cooldown / JS 리로드 | AGREE · 원인 재정의 |
+| 김팀장 1안 | 수정제안(리로드 경계) |
+| territorial 무관 | DISAGREE(무관) |
+
+(상세 근거·코드 설명은 아래 archived 본문.)
+
+---
+
+## ✅ REVIEWED — 마지노선(N≤5)·외부팩션(F2·F4) 국가보급·전황 진동(M0~M8) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-08-01 · 대표님 「검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** (김팀장 보정 1건 포함) — READY M0~M5·M7·M8 충족 · M6 soft |
+| **task_id** | `maginot-external-faction-supply-oscillation-20260801` |
+| M1~M3 | 21코어 N집계 · hard/support/cool · reclaim 판정(보급선·COOL 게이트) · F2\|F4=라벨(NEUTRAL/INDEPENDENT 아님) |
+| M4 | `runTerritorialCombatPass` 배선 · HARD→`*_neutral`+`hardFinalOccupyPct` · SUPPORT battle 가산 · envelope와 holdSide 배타 |
+| **김팀장 보정** | HARD인데 `rollDecision≠battle`이면 **battle 강제** + HARD 시 **전술 역전 스킵** — due 최종 수복이 `P(battle)×0.8`로 붕괴하던 계약 위반 수정 |
+| M5 | 연결수&lt;3 + HARD+인접≥1 → 80% 강제 unit · planetId 하드코딩 없음 |
+| M6 | ActivePool HARD 전선 가산 — soft 미착수(후속) |
+| M7 | 신규 `arc_core_maginot_external_supply_policy.csv` only · territorial combat 기존행 **diff 없음** |
+| M8 | maginot 11 · envelope/eligibility/governor 회귀 · **tsc PASS** |
+| soft | 실기 N≤5 미네르바 수복 로그 · F2\|F4는 기계적 점유 연동 없이 문서/정책 라벨 · operationMeta defenderSide 라벨 부정확(기능 무영향) |
+| 커밋 | 대표님 지시 시 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED` → `IDLE` 가능** |
+| **updated** | 2026-08-01 (김팀장 검수 PASS + 보정) |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-maginot-external-faction-supply-oscillation.md` |
+
+---
+
+## 📋 PENDING (archived) — 마지노선·외부보급 · 김클로드 구현 원문
+
+```text
+status=PENDING (archived → REVIEWED 2026-08-01)
+task_id=maginot-external-faction-supply-oscillation-20260801
+verdict=PASS (김팀장 · battle강제+전술역전스킵 보정)
+commit 금지(당시)
+```
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`PENDING`(archived)** |
+| **updated** | 2026-08-01 (김클로드 구현) |
+| **task_id** | `maginot-external-faction-supply-oscillation-20260801` |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-maginot-external-faction-supply-oscillation.md` |
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=territorial due 1회 · N집계 O(21) dirty/캐시 · alloc=밴드해석1회 · cache=hold-revision
+[pss-pre-dev] stage=arcCore territorial · Skia/UI 무관 · risk=P1(틱금지)·P6(persist불필요·파생만)
+[pss-pre-dev] verdict=PASS — onBoot 전은하 스캔 금지 · 21코어 hold 카운트만 · 기존 CSV combat 행 무단변경 금지
+```
+
+### 구현 요약 (M0~M8)
+
+| M | 내용 | 파일 |
+|---|------|------|
+| M0 | `docs/strategy/…` §6-5 신설(진동 밴드·F1-F4·§6-4 envelope와 우선순위 다이어그램 갱신) | `docs/strategy/ARC_CORE_TACTICAL_AUTOMATION_AND_GALAXY_STRATEGY.md` |
+| M1 | `listScenarioCorePlanetIds()`(21코어, synth 제외, occupation seed CSV 정본) + `countFactionSystemsInCore(holds, side)` — 독립국·순수중립은 어느 N에도 미포함 | `resolveMaginotExternalSupply.ts`(신규) |
+| M2 | `resolveMaginotBand({n, floorSystems, paritySystems})` → `'hard'\|'support'\|'cool'`. N≤5 hard·N≥10 cool·그 사이 support. 블루·레드 완전 대칭(동일 함수, side 파라미터 없음 — 호출측이 각자 N으로 독립 호출) | 상동 |
+| M3 | `resolveMaginotReclaimDecision` — 반대(수복시도)측 밴드+보급선(≥1)만 보고 판정. **HARD**: `forceHardReclaim=true` → 호출측이 `effectiveCombatMode`를 (수복측)_neutral로 강제하고 `dominantSideWeightPct`를 CSV `hardFinalOccupyPct`(기본 80%)로 오버라이드 — §6-4 envelope에서 이미 검증된 `resolveBinaryDominantHoldTarget` 경로를 100% 재사용(신규 확률 메커니즘 없음, 실패 시 기존 홀더 유지가 자연히 성립). **SUPPORT**: `supportBattleWeightBoostPct`(기본 15)만 가산 | 상동 |
+| M4 | `runTerritorialCombatPassForPlanet`에 배선 — supplyAdjacency 계산 직후(§6-4 envelope보다 먼저) N밴드·reclaim 판정 → rollDecision 가중치(SUPPORT) → `effectiveCombatMode`/`dominantSideWeightPct` 오버라이드(HARD). `envelopeDominantOverridePct`와 마지노선 오버라이드는 holdSide 조건이 서로 배타(envelope=NEUTRAL 전용·마지노선=BLUE/RED 전용)라 `??`로 안전하게 결합 | `runTerritorialCombatPass.ts` |
+| M5 | 미네르바급(연결수<3, 3포위 STRONG 구조적 불가) 실측 재현 테스트 — HARD+아군인접=2면 여전히 80% 강제 수복 발동함을 직접 증명. `if (planetId==='minerva_deep')` 없음(정적 grep 테스트) | `resolveMaginotExternalSupply.test.ts` #8 |
+| M6 | **선택 항목 — soft로 미착수.** ActivePool 승격 우선순위에 "HARD 약세측 전선" 가산은 범위가 커 이번엔 보류. `contestedPoolGovernor.ts` 기존 티어(중립 최우선, 2 tasks 전)와 충돌 없이 별도 가산항 추가하는 방향을 권장 — §6-5 문서·본 handoff에 후속 과제로 기록 | 미착수(문서만) |
+| M7 | 신규 `tables/balance/arc_core_maginot_external_supply_policy.csv`(corePlanetCountScope=scenario21·floorSystems=5·paritySystems=10·hardFinalOccupyPct=80·minAdjacentFriendlyForReclaim=1·supportBattleWeightBoostPct=15·externalFactionCodes=F2\|F4) + `arcCoreMaginotExternalSupplyPolicy.ts` O(1) 로더 | 신규 CSV·로더 |
+| M8 | unit 11케이스 신규 + 기존 territorial 11개 테스트 파일 전체 회귀 PASS + `tsc` PASS | 아래 self-check |
+
+### HARD 80% 근거 (수식·가중)
+
+새 확률 메커니즘을 만들지 않고 **기존에 검증된 binary-dominance 경로**(`resolveBinaryDominantHoldTarget`, §6-4 envelope 작업에서 이미 unit으로 증명됨)를 재사용한다: `effectiveCombatMode`를 (수복측)_neutral로 강제하면 `dominant = 수복측`, `dominantWins = Math.random()*100 < dominantSideWeightPct`. `dominantSideWeightPct`를 `hardFinalOccupyPct`(CSV 80)로 오버라이드하므로 **이 due에서 수복측이 이길 확률이 정확히 80%**이고, 지면(20%) 기존 홀더가 그대로 유지된다(코드: `resolveBinaryDominantHoldTarget`의 `if (dominantWins) return dominant; if (holdSide !== 'NEUTRAL') return holdSide;`). fleet/quickCombat 경로를 타지 않아 함대 구성과 무관하게 확률이 보장된다.
+
+### 미네르바급 검증 (연결수<3 갭 해소)
+
+`resolveSupplyEnvelope.test.ts`류 3포위(§6-4)는 연결 수 3 미만인 성계(예: 연결 2개)에서 구조적으로 STRONG이 될 수 없다 — `resolveMaginotExternalSupply.test.ts` #8이 이 정확한 상황(연결<3, envelope='none')에서도 마지노선 HARD+아군인접≥1이면 여전히 80% 강제 수복이 발동함을 직접 증명한다.
+
+### self-check 결과
+
+```
+npx tsc --noEmit -p tsconfig.client.json                              → PASS(에러 0)
+npx tsx --test resolveMaginotExternalSupply.test.ts                    → PASS 11/11(신규, 미네르바급·대칭·배선 확인 포함)
+npx tsx --test resolveSupplyEnvelope.test.ts                           → PASS 12/12(회귀)
+npx tsx --test resolveEffectiveTerritorialCombatMode.test.ts           → PASS 15/15(회귀)
+npx tsx --test contestedEligibility.test.ts                            → PASS 11/11(회귀)
+npx tsx --test contestedPoolGovernor.test.ts                           → PASS 11/11(회귀)
+npx tsx --test contestedActivePool.test.ts                             → PASS 5/5(회귀)
+npx tsx --test geoFlankHeliosTitanOccupation.test.ts                   → PASS 7/7(회귀)
+npx tsx --test territorialStackConsistency.test.ts                     → PASS 6/6(회귀)
+npx tsx --test territorialSupplyLine.test.ts                           → PASS 16/16(회귀)
+npx tsx --test frontPressureIndex.test.ts                              → PASS 5/5(회귀)
+npx tsx --test seedPlanetOccupationFromBalance.test.ts                 → PASS(회귀)
+npx tsx --test planetHoldReleasePolicy.test.ts                         → PASS 6/6(회귀)
+```
+
+### 회귀 판별력 검증
+
+`runTerritorialCombatPass.ts`의 마지노선 배선을 `git stash`로 일시 되돌려 정적 테스트 #11이 **FAIL**(HARD여도 effectiveCombatMode/dominant% 강제 오버라이드 없음) 확인 → `git stash pop` 복원 후 **PASS** 재확인.
+
+### CSV / 기존값 변경 여부
+
+`arc_core_territorial_combat_policy.csv`(정적 5행) · `arc_core_supply_envelope_policy.csv`(§6-4, 유지) · `faction_political_relations.csv` · `planet_occupation_seeds.csv` · `planet_trade_route_profile.csv` **전부 git diff 없음**. 신규 CSV(`arc_core_maginot_external_supply_policy.csv`) 1개만 추가, `build:balance-tables` 반영 완료. `if (planetId==='minerva_deep'|'iron_remnant')` 류 하드코딩 없음(정적 grep 테스트로 고정). 외부팩션은 `galaxyRouteFactionPolicy.ts`의 실제 F2(`trade_coalition`)·F4(`miners_guild`) 코드를 CSV 라벨로만 참조 — `NEUTRAL`/`INDEPENDENT` 치환 없음.
+
+### 리스크 · soft(실기 미확인) · 해석적 결정
+
+- **M6 미착수**(위 표 참고) — ActivePool 승격 가산은 다음 세션 후속 과제.
+- **operationMeta 감사 필드 소폭 부정확** — 기존 `resolveAttackerDefenderSides`의 `blue_neutral`/`red_neutral` 분기는 원래 "진짜 NEUTRAL hold"만 가정하고 설계돼 있어, 마지노선이 이 모드를 BLUE/RED-hold에 강제로 씌우면 `operationMeta.defenderSide`가 실제 이전 홀더 대신 `'NEUTRAL'`로 기록될 수 있음(순수 로그/감사 필드 — 실제 점유 판정 로직인 `resolveBinaryDominantHoldTarget`은 `holdSide`를 직접 받아 정확하게 처리하므로 **기능에는 영향 없음**). 원한다면 후속으로 `resolveAttackerDefenderSides`를 확장해 정확한 라벨을 남길 수 있음.
+- **실기 미확인**: 실제로 N이 5 이하로 떨어졌을 때 다음 due에서 80% 근처로 수복되는지, N이 10 이상 회복됐을 때 외부보급이 정말 감쇠하는지는 unit·정적 검증만 — 확률 기반이라 여러 due 표본 필요(20분 간격 due 특성상 실기 검증에 시간이 걸림).
+- CSV 수치(`floorSystems=5`·`paritySystems=10`·`hardFinalOccupyPct=80`·`supportBattleWeightBoostPct=15`)는 대표님 정본 문서의 기본값을 그대로 채택 — 실기 체감 후 조정은 CSV만 바꾸면 됨.
+
+**git commit 안 함** — 김팀장(Cursor 본창) 검수·커밋 요청.
+
+---
+
+## ✅ REVIEWED — 보급 3성계 포위 점령 우세·중립화=내부 반란 우선(M0~M7) · 김클로드
+
+### 김팀장 검수 (본창 Cursor · 2026-08-01 · 대표님 「검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** — READY M0~M7 충족 · 아이언 `neutral_declare` 회귀 경로 차단(동측 STRONG) |
+| **task_id** | `supply-envelope-occupy-rebellion-neutral-20260801` |
+| M1~M4 | `resolveSupplyEnvelope` · 가중치 보정 · dominate 88% · BLUE+STRONG → neutral_declare=0 |
+| M5 | 반란 일일패스 `envelopeRebellionOverthrowMul` 최종 mul만 · wealth CSV 무변경 |
+| M6 | 신규 `arc_core_supply_envelope_policy.csv` only · territorial combat 기존행 **diff 없음** |
+| M7 | envelope 12 · effective/eligibility/governor/ActivePool 회귀 · **tsc PASS** |
+| soft | NEUTRAL+STRONG due 1회 점유 기대≈0.69(78%×88%) — READY 「≥0.75 권장」보다 약간 낮음 · CSV boost/occupy만으로 상향 가능 · 실기 순차 1바퀴 로그 확인 권장 |
+| 커밋 | 대표님 지시 시 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED` → `IDLE` 가능** |
+| **updated** | 2026-08-01 (김팀장 검수 PASS) |
+| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-supply-envelope-occupy-rebellion-neutral.md` |
+
+---
+
+## 📋 PENDING (archived) — 보급 3성계 포위 · 김클로드 구현 원문
+
+```text
+status=PENDING (archived → REVIEWED 2026-08-01)
+task_id=supply-envelope-occupy-rebellion-neutral-20260801
+verdict=PASS (김팀장)
+commit 금지(당시)
+```
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=territorial_pass due 1회(이미 있음) · alloc=보급카운트 O(인접)·가중치 해석 1회 · cache=없음(기존 revision 재사용)
+[pss-pre-dev] stage=arcCore territorial + (선택) rebellion daily 배치 가산만 · Skia/UI 무관 · risk=P1·기존값CSV무단변경
+[pss-pre-dev] verdict=PASS — rollDecision/effectiveMode/반란 일일패스에 연결 · onBoot 동기 전수 금지 · planetId 하드코딩 금지
+```
+
+### 구현 요약 (M0~M7)
+
+| M | 내용 | 파일 |
+|---|------|------|
+| M0 | `docs/strategy/…` §6-4 신설(스택 내 위치 다이어그램·CSV 무변경 명시) + 코드 주석(아래 M2/M3) | `docs/strategy/ARC_CORE_TACTICAL_AUTOMATION_AND_GALAXY_STRATEGY.md` |
+| M1 | 순수 `resolveSupplyEnvelope({adjacency, threshold})` → `'blue_strong'\|'red_strong'\|'none'`. threshold(기본 3) 이상 인접 + 반대 팩션 인접 0. 연결 수<3인 성계는 구조적으로 STRONG 불가(자연 폴백) | `resolveSupplyEnvelope.ts`(신규) |
+| M2 | `applySupplyEnvelopeDecisionWeights` — NEUTRAL+STRONG(A)이면 battle 상향+status_quo 하향(neutral_declare는 NEUTRAL hold에 실질 no-op이라 미조정), BLUE/RED hold+동측 STRONG(B)이면 neutral_declare에 `envelopeNeutralDeclareMul`(기본 0) 적용 · 제거분은 status_quo가 흡수. `runTerritorialCombatPassForPlanet`에서 `supplyAdjacency` 계산을 rollDecision **이전**으로 이동(기존엔 battle 진입 후에만 계산돼 있었음)해 재사용 | `resolveSupplyEnvelope.ts`·`runTerritorialCombatPass.ts` |
+| M3 | `resolveSupplyEnvelopeDominantOverridePct` — NEUTRAL+STRONG일 때만 `dominantSideWeightPct`를 CSV `occupyHighWeightPct`(기본 88)로 오버라이드. `policyForDominance`(policy 얕은 복제)로만 적용, CSV 정적행 자체는 무변경 | 상동 |
+| M4 | 아이언크로스 회귀 재현 테스트로 직접 증명(BLUE hold+blueEnv=3·redEnv=0 → neutral_declare 가중 0, status_quo 42로 흡수) | `resolveSupplyEnvelope.test.ts` #6 |
+| M5(선택) | `runPlanetRebellionResolutionDailyPass.ts` — 동측 STRONG hold의 반란 전복 확률에 `envelopeRebellionOverthrowMul`(기본 1.35)을 최종 `factionMul`에만 곱함. wealth 곡선(`overthrowBaseProbAtDanger` 등) 자체는 무변경. `isPlanetContestedZone` 스킵(정적 5행)은 그대로 유지 — 동적 편입(iron_remnant 등)만 이 가산의 실질 대상 | `runPlanetRebellionResolutionDailyPass.ts` |
+| M6 | 신규 `tables/balance/arc_core_supply_envelope_policy.csv`(단일 행, envelopeMinSystems=3·occupyHighWeightPct=88·envelopeBattleWeightBoostPct=20·envelopeNeutralDeclareMul=0·envelopeRebellionOverthrowMul=1.35) + `arcCoreSupplyEnvelopePolicy.ts` 로더(O(1) 캐시). 로직이 `runTerritorialCombatPassForPlanet`(모든 ActivePool planetId 공용 진입점) 안에 있어 CSV 정적행·동적 편입(iron_remnant 등) **전부 자동 적용** — 별도 분기 없음 | 신규 CSV·`arcCoreSupplyEnvelopePolicy.ts` |
+| M7 | unit 25케이스 신규 + 기존 territorial 10개 테스트 파일 전체 회귀 PASS + `tsc` PASS | 아래 self-check |
+
+### 아이언크로스 회귀 방지 (수용 기준 핵심)
+
+`resolveSupplyEnvelope.test.ts` #6 — BLUE hold + blueEnv=3·redEnv=0(STRONG)이면 `neutral_declare` 가중치가 CSV 12%에서 **0**으로 억제되고 그만큼 `status_quo`가 흡수(30→42)함을 직접 assert. 정적 배선 테스트(#11)로 `runTerritorialCombatPass.ts`가 이 보정값을 실제 `rollDecision`에 전달하는지도 확인.
+
+### self-check 결과
+
+```
+npx tsc --noEmit -p tsconfig.client.json                              → PASS(에러 0)
+npx tsx --test resolveSupplyEnvelope.test.ts                           → PASS 12/12(신규, 아이언 회귀 재현 포함)
+npx tsx --test resolveEffectiveTerritorialCombatMode.test.ts           → PASS 15/15(회귀)
+npx tsx --test contestedEligibility.test.ts                            → PASS 11/11(회귀)
+npx tsx --test contestedPoolGovernor.test.ts                           → PASS 11/11(회귀)
+npx tsx --test contestedActivePool.test.ts                             → PASS 5/5(회귀)
+npx tsx --test geoFlankHeliosTitanOccupation.test.ts                   → PASS 7/7(회귀)
+npx tsx --test territorialStackConsistency.test.ts                     → PASS 6/6(회귀)
+npx tsx --test territorialSupplyLine.test.ts                           → PASS 16/16(회귀)
+npx tsx --test frontPressureIndex.test.ts                              → PASS 5/5(회귀)
+npx tsx --test seedPlanetOccupationFromBalance.test.ts                 → PASS(회귀)
+npx tsx --test planetHoldReleasePolicy.test.ts                         → PASS 6/6(회귀)
+```
+
+### 회귀 판별력 검증
+
+`runTerritorialCombatPass.ts`의 envelope 배선을 `git stash`로 일시 되돌려 정적 테스트 #11이 **FAIL**(rollDecision이 여전히 CSV 원본 가중치만 사용) 확인 → `git stash pop` 복원 후 **PASS** 재확인.
+
+### CSV / 기존값 변경 여부
+
+`arc_core_territorial_combat_policy.csv`(정적 5행 battle/neutral/statusQuo/combatMode) **git diff 없음**. `faction_political_relations.csv`·`planet_occupation_seeds.csv` 무변경. wealth/반란 곡선 CSV(`overthrowBaseProbAtDanger` 등) 무변경 — M5는 최종 `factionMul`에만 배율을 곱함. 신규 CSV(`arc_core_supply_envelope_policy.csv`) 1개만 추가, `build:balance-tables` 반영 완료. `if (planetId === 'iron_remnant')` 류 하드코딩 없음(정적 grep 테스트로 고정).
+
+### 리스크 · soft(실기 미확인)
+
+- 실기 1바퀴 순차(20분 간격)에서 실제로 NEUTRAL+3포위가 다음 due에 고확률 점유되는지, iron_remnant류가 실제로 neutral_declare에서 안전한지는 unit·정적 검증만 — 실기 로그(`[territorial] ... 보급포위 envelope=...`) 확인은 김팀장/대표님 몫.
+- M5(반란 가산)는 "선택" 항목으로 구현했으나, `isPlanetContestedZone`이 CSV 정적 5행만 스킵하고 동적 편입은 스킵하지 않는다는 기존 동작을 그대로 활용 — 새로 만든 조건 분기 없음(기존 계약 재사용).
+- `occupyHighWeightPct`(88%)·`envelopeBattleWeightBoostPct`(20)·`envelopeRebellionOverthrowMul`(1.35) 등 신규 CSV 수치는 대표님 정본 문서의 기본값을 그대로 채택 — 실기 체감 후 조정 필요 시 CSV 값만 바꾸면 됨(코드 변경 불필요).
+
+**git commit 안 함** — 김팀장(Cursor 본창) 검수·커밋 요청.
+
+---
+
 ## ✅ REVIEWED — 분쟁 ActivePool·UI 정합 수정(M0~M6) · 김클로드
 
 ### 김팀장 검수 (본창 Cursor · 2026-07-31 · 대표님 「검수하라」)

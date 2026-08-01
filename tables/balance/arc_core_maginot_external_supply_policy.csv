@@ -1,0 +1,2 @@
+policyId,corePlanetCountScope,floorSystems,paritySystems,hardFinalOccupyPct,minAdjacentFriendlyForReclaim,supportBattleWeightBoostPct,externalFactionCodes,notesKo
+default_v1,scenario21,5,10,80,1,15,F2|F4,대표님 정본(2026-08-01) — 21코어 시나리오(synth 제외) N<=5 HARD·N>=10 COOL·외부=F2남부(trade_coalition)|F4북부(miners_guild), 중립/독립국 아님

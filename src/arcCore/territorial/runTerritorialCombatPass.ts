@@ -46,6 +46,18 @@ import {
 import { resolveEffectiveTerritorialCombatMode } from './resolveEffectiveTerritorialCombatMode';
 import { resolveContestedEligibilityForSystem, type ContestedHoldSide } from './contestedEligibility';
 import { rebalanceContestedPoolsIfDirty } from './contestedPoolGovernorSync';
+import {
+  applySupplyEnvelopeDecisionWeights,
+  resolveSupplyEnvelope,
+  resolveSupplyEnvelopeDominantOverridePct,
+} from './resolveSupplyEnvelope';
+import { getArcCoreSupplyEnvelopePolicy } from './arcCoreSupplyEnvelopePolicy';
+import {
+  countFactionSystemsInCore,
+  resolveMaginotBand,
+  resolveMaginotReclaimDecision,
+} from './resolveMaginotExternalSupply';
+import { getArcCoreMaginotExternalSupplyPolicy } from './arcCoreMaginotExternalSupplyPolicy';
 import { usePlayerStore } from '../../store/playerStore';
 import { resolveMapFactionSideFromClanId } from '../../galaxyMap/resolveMapFactionSide';
 import type { MapFactionSide } from '../../galaxyMap/resolveMapFactionSide';
@@ -446,15 +458,119 @@ export async function runTerritorialCombatPassForPlanet(
   }
 
   const previousSide = sideToMapFaction(holdSide);
+
+  // 보급선(런타임 holds 1홉 인접) — rollDecision 가중치 보정(보급 3포위, 2026-08-01)과 공격자 선정·
+  // 전투력 배율(battle 진입 후) 양쪽에 재사용. holdSide는 이 시점에 INDEPENDENT 아님(위에서 조기 반환).
+  const holdsSnapshot = warStore.planetHolds;
+  const supplyAdjacency = {
+    blue: countAdjacentFriendlySystems({
+      systemId: policy.systemId,
+      side: 'BLUE',
+      holds: holdsSnapshot,
+    }),
+    red: countAdjacentFriendlySystems({
+      systemId: policy.systemId,
+      side: 'RED',
+      holds: holdsSnapshot,
+    }),
+  };
+
+  // 마지노선(N≤5 HARD)·외부팩션 국가보급(2026-08-01 대표님 정본) — 우선순위상 3포위 envelope보다
+  // 위(§6-4/§6-5 스택). holdSide가 NEUTRAL이면 "수복" 개념이 성립하지 않으므로 미적용(envelope/P0 담당).
+  // 21코어 시나리오 성계(synth 제외) 중 BLUE/RED 각각 점유 수(N)로 밴드를 판정 — 반대 팩션(opposingSide)
+  // 이 이 성계를 수복 시도할 때만 보정한다(홀더 자신의 밴드가 아니라 "누가 이걸 뺏으려 하는지"가 기준).
+  const maginotPolicy = getArcCoreMaginotExternalSupplyPolicy();
+  const maginotReclaimDecision =
+    holdSide === 'NEUTRAL'
+      ? null
+      : (() => {
+          const opposingSide: TerritorialFactionSide = holdSide === 'BLUE' ? 'RED' : 'BLUE';
+          const opposingN = countFactionSystemsInCore(
+            holdsSnapshot,
+            opposingSide,
+          );
+          const opposingBand = resolveMaginotBand({
+            n: opposingN,
+            floorSystems: maginotPolicy.floorSystems,
+            paritySystems: maginotPolicy.paritySystems,
+          });
+          return resolveMaginotReclaimDecision({
+            opposingSideBand: opposingBand,
+            opposingSideAdjacentFriendlyCount:
+              opposingSide === 'BLUE' ? supplyAdjacency.blue : supplyAdjacency.red,
+            minAdjacentFriendlyForReclaim: maginotPolicy.minAdjacentFriendlyForReclaim,
+            hardFinalOccupyPct: maginotPolicy.hardFinalOccupyPct,
+            supportBattleWeightBoostPct: maginotPolicy.supportBattleWeightBoostPct,
+          });
+        })();
+  if (__DEV__ && maginotReclaimDecision?.forceHardReclaim) {
+    console.log(
+      `[territorial] ${planetId} 마지노선 HARD 외부보급(F2|F4) 강제 수복 발동 — 최종점유 ${maginotReclaimDecision.hardFinalOccupyPct}%`,
+    );
+  }
+
+  // 보급 3성계 포위 우세(2026-07-28~08-01 대표님 정본) — envelopeMinSystems(기본 3) 이상 인접 + 반대
+  // 팩션 인접 0. NEUTRAL hold면 다음 due에서 고확률 점유(A), BLUE/RED hold+동측 STRONG이면 분쟁
+  // neutral_declare를 억제해 중립화가 내부 반란 경로로만 발생하게 한다(B, 아이언크로스 회귀 방지).
+  const envelopePolicy = getArcCoreSupplyEnvelopePolicy();
+  const supplyEnvelope = resolveSupplyEnvelope({
+    adjacency: supplyAdjacency,
+    threshold: envelopePolicy.envelopeMinSystems,
+  });
+
   // aggressive 시 battleWeightPct 소폭 가산(캡은 CSV battleWeightBonusPctAggressive 값 그대로 — 별도 상한 없음, 작은 값 전제)
-  const decision = rollDecision({
-    ...policy,
+  const frontPressureWeights = {
     battleWeightPct: resolveFrontPressureBattleWeightPct(
       policy.systemId,
       policy.battleWeightPct,
-      warStore.planetHolds,
+      holdsSnapshot,
     ),
+    neutralDeclareWeightPct: policy.neutralDeclareWeightPct,
+    statusQuoWeightPct: policy.statusQuoWeightPct,
+  };
+  // 마지노선 SUPPORT(HARD 아님) 가산 — envelope 보정보다 먼저 적용(우선순위 스택상 위 레이어).
+  // HARD(forceHardReclaim)는 여기서 가중치를 안 건드리고 아래 dominant% 오버라이드로 대신 처리.
+  const maginotSupportBoost = maginotReclaimDecision?.supportBattleWeightBoostPct ?? 0;
+  const maginotAdjustedWeights =
+    maginotSupportBoost > 0
+      ? {
+          battleWeightPct: frontPressureWeights.battleWeightPct + maginotSupportBoost,
+          neutralDeclareWeightPct: frontPressureWeights.neutralDeclareWeightPct,
+          statusQuoWeightPct: Math.max(0, frontPressureWeights.statusQuoWeightPct - maginotSupportBoost),
+        }
+      : frontPressureWeights;
+
+  const envelopeAdjustedWeights = applySupplyEnvelopeDecisionWeights({
+    holdSide,
+    envelope: supplyEnvelope,
+    weights: maginotAdjustedWeights,
+    envelopeBattleWeightBoostPct: envelopePolicy.envelopeBattleWeightBoostPct,
+    envelopeNeutralDeclareMul: envelopePolicy.envelopeNeutralDeclareMul,
   });
+  if (__DEV__ && supplyEnvelope !== 'none') {
+    console.log(
+      `[territorial] ${planetId} 보급포위 envelope=${supplyEnvelope} hold=${holdSide} ` +
+        `가중치(보정후) battle=${envelopeAdjustedWeights.battleWeightPct} ` +
+        `neutral=${envelopeAdjustedWeights.neutralDeclareWeightPct} statusQuo=${envelopeAdjustedWeights.statusQuoWeightPct}`,
+    );
+  }
+
+  let decision = rollDecision({
+    ...policy,
+    battleWeightPct: envelopeAdjustedWeights.battleWeightPct,
+    neutralDeclareWeightPct: envelopeAdjustedWeights.neutralDeclareWeightPct,
+    statusQuoWeightPct: envelopeAdjustedWeights.statusQuoWeightPct,
+  });
+  // 마지노선 HARD — due 1회 최종 수복 P≥hardFinalOccupyPct 를 보장하려면 battle 미진입을 허용하면 안 됨
+  // (P(수복)=P(battle)×P(dominant) 가 되어 예: 0.4×0.8=0.32로 붕괴). 김팀장 검수 보정(2026-08-01).
+  if (maginotReclaimDecision?.forceHardReclaim && decision !== 'battle') {
+    if (__DEV__) {
+      console.log(
+        `[territorial] ${planetId} 마지노선 HARD — roll=${decision} → battle 강제 (due 최종점유 ${maginotReclaimDecision.hardFinalOccupyPct}%)`,
+      );
+    }
+    decision = 'battle';
+  }
 
   let newSide = previousSide;
   let holdChanged = false;
@@ -507,28 +623,14 @@ export async function runTerritorialCombatPassForPlanet(
     return { planetId, decision, holdChanged, previousSide, newSide, operationId };
   }
 
-  // 보급선(런타임 holds 1홉 인접) — 공격자 선정·전투력 배율에 반영
-  const holdsSnapshot = warStore.planetHolds;
-  const supplyAdjacency = {
-    blue: countAdjacentFriendlySystems({
-      systemId: policy.systemId,
-      side: 'BLUE',
-      holds: holdsSnapshot,
-    }),
-    red: countAdjacentFriendlySystems({
-      systemId: policy.systemId,
-      side: 'RED',
-      holds: holdsSnapshot,
-    }),
-  };
-
+  // 보급선(holdsSnapshot·supplyAdjacency)은 위에서 이미 계산됨(envelope 가중치 보정과 공용) — 재사용만.
   // 런타임 1홉 인접 기반 실효 모드 해석 — CSV combatMode를 덮어씀(2026-07-28 P0, 2026-07-29 R1 확장).
   // R1: 분쟁지역에서 블루·레드 둘 다 인접이면 holdSide 무관 접전(blue_red) — 오메가처럼 BLUE 홀드 뒤에도
   //     CSV blue_neutral이 영구 고정돼 반대편(RED)이 전투에서 배제되는 재발을 막는다.
   // blue_red 전용 "한쪽만 보급 → 공격자 확정"(resolveAttackerDefenderSides 내부)과는 중복 충돌 없음:
   // effective가 blue_neutral/red_neutral이면 그 분기로 바로 진입(supplyAdjacency 재사용 안 함),
   // effective가 blue_red면 둘 다 보급 보유(접전)라 기존 분기도 동일하게 랜덤 공격자로 귀결.
-  const effectiveCombatMode = resolveEffectiveTerritorialCombatMode({
+  let effectiveCombatMode = resolveEffectiveTerritorialCombatMode({
     holdSide,
     policyCombatMode: policy.combatMode,
     supplyAdjacency,
@@ -539,6 +641,14 @@ export async function runTerritorialCombatPassForPlanet(
       `[territorial] ${planetId} 실효 모드 오버라이드 policy=${policy.combatMode} -> effective=${effectiveCombatMode} ` +
         `(hold=${holdSide}, blue인접=${supplyAdjacency.blue},red인접=${supplyAdjacency.red})`,
     );
+  }
+
+  // 마지노선 HARD 강제 수복(2026-08-01) — envelope/P0보다 우선. 반대(약세) 팩션 쪽 binary-dominance
+  // 모드로 강제해 기존 resolveBinaryDominantHoldTarget 경로(envelope에서 이미 검증됨)를 재사용한다.
+  // holdSide=RED인데 blue_neutral로 강제해도 안전 — resolveBinaryDominantHoldTarget은 dominant(BLUE)가
+  // 이기면 BLUE, 지면 holdSide(RED, 중립 아님) 그대로를 반환하므로 "수복 실패 시 RED 유지"가 자연히 성립.
+  if (maginotReclaimDecision?.forceHardReclaim) {
+    effectiveCombatMode = holdSide === 'BLUE' ? 'red_neutral' : 'blue_neutral';
   }
 
   // 그래프 mismatch DEV 경고 — **정책 원본이 아닌 최종 effective**를 런타임 그래프와 비교(2026-07-29 R4).
@@ -686,9 +796,29 @@ export async function runTerritorialCombatPassForPlanet(
     return { planetId, decision, holdChanged, previousSide, newSide, operationId };
   }
 
+  // 보급 3포위 고확률 점유(2026-08-01 M3) — NEUTRAL+STRONG일 때만 dominantSideWeightPct를
+  // occupyHighWeightPct(CSV, 기본 88)로 오버라이드. CSV 정적행 자체는 무변경 — 런타임 얕은 복제만.
+  const envelopeDominantOverridePct = resolveSupplyEnvelopeDominantOverridePct({
+    holdSide,
+    envelope: supplyEnvelope,
+    occupyHighWeightPct: envelopePolicy.occupyHighWeightPct,
+  });
+  // envelope는 holdSide===NEUTRAL 전용, 마지노선 HARD는 holdSide!==NEUTRAL 전용이라 동시에 non-null일
+  // 수 없음(구조적 배타) — 우선순위 스택(마지노선 위)은 실질적으로 값이 겹칠 일이 없어 ?? 로 충분.
+  const dominantOverridePct =
+    maginotReclaimDecision?.forceHardReclaim ? maginotReclaimDecision.hardFinalOccupyPct : envelopeDominantOverridePct;
+  const policyForDominance: TerritorialCombatPolicy =
+    dominantOverridePct != null ? { ...policy, dominantSideWeightPct: dominantOverridePct } : policy;
+  if (__DEV__ && dominantOverridePct != null) {
+    console.log(
+      `[territorial] ${planetId} dominantSideWeightPct 오버라이드 ${policy.dominantSideWeightPct} -> ${dominantOverridePct} ` +
+        `(${maginotReclaimDecision?.forceHardReclaim ? '마지노선HARD' : '보급포위'})`,
+    );
+  }
+
   let targetFaction = resolveBattleHoldTarget({
     combatMode: effectiveCombatMode,
-    policy,
+    policy: policyForDominance,
     holdSide,
     attacker,
     defender,
@@ -697,8 +827,9 @@ export async function runTerritorialCombatPassForPlanet(
 
   // 총사령관 [전투전술영향] 역전 재판정 — 2자 접전(blue_neutral·red_neutral)도 분쟁지역이면 1회 적용.
   // 승자 = 판정된 target 측 참가자(제3측 유지면 방어 성공으로 간주), 패자 = 반대 참가자.
+  // 마지노선 HARD는 due 최종점유% 계약이므로 전술 역전으로 80%를 깎지 않음(김팀장 검수 보정).
   let tacticsReversal: TacticsReversalOutcome | null = null;
-  if (policy.contestedZone) {
+  if (policy.contestedZone && !maginotReclaimDecision?.forceHardReclaim) {
     const winnerParticipant: TerritorialCombatParticipant =
       targetFaction === participantToHoldTarget(attacker)
         ? attacker
@@ -732,7 +863,10 @@ export async function runTerritorialCombatPassForPlanet(
       policyCombatMode: policy.combatMode,
       attackerSide: attacker,
       defenderSide: defender,
-      dominantSideWeightPct: policy.dominantSideWeightPct,
+      dominantSideWeightPct: policyForDominance.dominantSideWeightPct,
+      policyDominantSideWeightPct: policy.dominantSideWeightPct,
+      supplyEnvelope,
+      maginotForcedHardReclaim: Boolean(maginotReclaimDecision?.forceHardReclaim),
       dominantFaction: resolveDominantFaction(effectiveCombatMode),
       targetFaction,
       ...(tacticsReversal

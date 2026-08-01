@@ -47,7 +47,7 @@ self-check: `npx tsc --noEmit -p tsconfig.client.json` · Skia 변경 시 `npm r
 | **분쟁·점령 스택 일관성·효율** | `tools/kim-team-lead/reports/kim-claude-ready-territorial-stack-consistency-opt.md` | 감사=`TERRITORIAL_STACK_CONSISTENCY_AUDIT_20260728.md` · task_id=`territorial-stack-consistency-opt-20260728` |
 | **허브 순회 native_heap (A안)** | `tools/kim-team-lead/reports/kim-claude-ready-hub-hop-native-heap-fix.md` | A1 Image 다운샘플 + A2 planet_change Fresco trim |
 
-> **최근 REVIEWED**: 분쟁 ActivePool·UI 정합(`contested-active-pool-ui-fix-20260731`) · Eligibility·풀 거버너 A안 · omega combatMode · 정식 서비스 성계 개방 리셋 — handoff 상단.
+> **최근 REVIEWED**: 지도 native_heap·PSS 재검수+쿨다운영속(`worldmap-native-heap-pss-audit-recheck-20260801`) · 마지노선·F2/F4 · 보급포위 — handoff 상단.
 
 대표님/김팀장 지시 시 READY 파일부터 읽고 구현 → `kim-claude-handoff-pending.md` **PENDING** · **commit 금지**.
 
