@@ -64,7 +64,16 @@ export function resumePlayerToLastHubPlanet(options?: { persist?: boolean }): bo
   return true;
 }
 
-/** 은하계 지도 이탈·게임 종료·백그라운드 — STAGE 2 정리 + 허브 좌표 복원 */
+/**
+ * 앱 백그라운드/비활성(알림창·홈 직전 등) — 허브 좌표만 영속.
+ * STAGE 2 route_blur(프레젠테이션·제스처 tear-down)는 호출하지 않는다.
+ * (2026-08-02: background에서 full release → mapInteractionReady=false 고착 → 착륙 불가 회귀)
+ */
+export function persistGalaxyMapSessionOnBackground(options?: { persist?: boolean }): void {
+  resumePlayerToLastHubPlanet({ persist: options?.persist ?? true });
+}
+
+/** 은하계 지도 이탈·게임 종료·언마운트 — STAGE 2 정리 + 허브 좌표 복원 */
 export function finalizeGalaxyMapSessionForExit(options?: { persist?: boolean }): void {
   releaseGalaxyMapStageMemory();
   resumePlayerToLastHubPlanet({ persist: options?.persist ?? true });

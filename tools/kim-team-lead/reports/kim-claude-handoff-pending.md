@@ -5,6 +5,237 @@
 
 ---
 
+## ✅ REVIEWED — crimson_base effective≠runtimeGraph LogBox 원인 수정(R1b) · 김클로드 → 김팀장
+
+### 김팀장 검수 (본창 · 2026-08-02 · 대표님 「검수하라」· Composer/글록 검수만)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** |
+| **task_id** | `territorial-effective-graph-mismatch-warn-20260802` |
+| 원인 진단 (템플릿 blue_red 단측 고착) | **AGREE** |
+| R1b: contested 단측 → `*_neutral` | **AGREE** — graph와 정합 · warn 삭제 아님 |
+| R1 both→blue_red · NEUTRAL P0 · contestedZone=false | **AGREE** — 회귀 유지 |
+| 테스트 9/9b + stash 판별력 | **AGREE** |
+| Maginot/CSV/warn 제거 금지 | **AGREE** |
+| self-check (김팀장 재실행) | `tsx --test` PASS · `tsc` PASS |
+| soft | 단측+템플릿 blue_red는 quick combat→binary dominance로 경로 변경(의도된 정합). 실기 crimson_base LogBox 1회 확인 권장 |
+| 커밋 | 대표님 지시 시 (Composer 커밋 금지) |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED` → `IDLE` 가능** |
+| **updated** | 2026-08-02 (김팀장 검수 PASS) |
+
+---
+
+## 📋 PENDING (archived) — crimson_base R1b · 김클로드 원문
+
+```text
+status=PENDING (archived → REVIEWED 2026-08-02)
+task_id=territorial-effective-graph-mismatch-warn-20260802
+verdict=김클로드 구현 — READY 권장 1안(R1b) 그대로. warn 삭제 아님, effective 산출을 graph에 정합.
+code_changes=YES — resolveEffectiveTerritorialCombatMode.ts(1) + 동명 test.ts(신규 2케이스 + 기존 2건 설명 갱신)
+commit 금지(당시)
+```
+
+### 원인 · 수정 (김클로드 요약)
+
+비중립+contestedZone 단측 인접 시 policy blue_red 고착 → R1b로 `red_neutral`/`blue_neutral`. warn은 조건 소멸로 미표시. 테스트 9/9b·stash FAIL 증명.
+
+---
+
+## ✅ REVIEWED — 독립국 maintained 알림 「중립」 오표기 최소 패치 · 김클로드 → 김팀장
+
+### 김팀장 검수 (본창 · 2026-08-02 · 대표님 「검수하라」· Composer/글록 검수만)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **PASS** |
+| **task_id** | `territorial-independent-maintained-alert-20260802` |
+| sideKey `independent` 분기 | **AGREE** — blue/red 외 전부 폴백 제거 |
+| battle → `maintained.independentBody` | **AGREE** — 템플릿 ``.${sideKey}Body`` |
+| diplomatic → `diplomaticBody` (neutralBody 아님) | **AGREE** — `sideKey!=='neutral'` 경로 |
+| i18n ko/en independentBody | **AGREE** — blue/red 동일 패턴 |
+| 범위 | **AGREE** — 판정/홀드/CSV/Maginot 무변경 |
+| self-check | 김팀장 재실행 `tsc` — 아래 결과 |
+| soft | 실기 드라코 방어 유지 알림 1회 확인 권장 |
+| 커밋 | Opus API 복구 후 또는 대표님 지시 시 (Composer 커밋 금지) |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`REVIEWED` → `IDLE` 가능** |
+| **updated** | 2026-08-02 (김팀장 검수 PASS) |
+
+---
+
+## 📋 PENDING (archived) — 독립국 maintained 알림 · 김클로드 원문
+
+```text
+status=PENDING (archived → REVIEWED 2026-08-02)
+task_id=territorial-independent-maintained-alert-20260802
+verdict=김클로드 구현 — READY 최소 범위(sideKey·i18n) 그대로, 판정/홀드/CSV 무변경
+code_changes=YES — showTerritorialOccupationChangeAlert.ts(1) · i18n ko.ts/en.ts(각 1줄)
+commit 금지(당시)
+```
+
+**배정 경위**: READY 1순위=Opus, 2순위=김클로드(Opus API 불가 시). 대표님 「김클로드가 진행」로 착수.
+
+### 원인 · 수정 (김클로드)
+
+`sideKey`에 `independent` 분기 + `maintained.independentBody` i18n. battle는 independentBody, diplomatic는 diplomaticBody. 판정/홀드/CSV 무변경.
+
+### self-check (김클로드)
+
+```
+npx tsc --noEmit -p tsconfig.client.json   → PASS(에러 0)
+```
+
+### soft
+
+- 실기 알림 문구 노출 확인 권장.
+
+---
+
+## 📋 PENDING — 은하계 지도 성계이동 3건 · 김클로드 (김팀장 검수: ①②③ AGREE · 잔여 1건 FAIL)
+
+### 김팀장 검수 (본창 · 2026-08-02 · 대표님 「검수만 하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **CONDITIONAL** — 김클로드 ①②③ **AGREE** · **잔여 동일축 1건 FAIL** (유료 Opus 패치 대기) |
+| **task_id** | `worldmap-transit-duplicate-move-fix-20260802` |
+| ① AppState active `isMoving` 강제 해제 제거 | **AGREE** — 중복 `doMoveAlongPath` 경합 차단. `hubNavGate.reset`·제스처 rearm 유지 OK |
+| ② 일반 도착 `moveToSystem`+`persist` 애니메이션 전 커밋 | **AGREE** — 조우전은 애니 후 `begin`/전투 진입 유지 |
+| ③ blur cleanup `!landed → finalize…` 제거 | **AGREE** — `moveToSystem`→`currentPlanetId=null` 정상과 충돌. logcat 원복 설명 일치 |
+| **잔여 FAIL** | `persistGalaxyMapSessionOnBackground` → 여전히 `resumePlayerToLastHubPlanet`. 조기 커밋 후 AppState `inactive`/`background` 시 **③과 동일 허브 원복**. 수정안: `systemId && !planetId`면 persist만, hub resume 스킵 (`galaxyMapSessionResume.ts`) |
+| self-check (재실행) | 김클로드 트리 기준 `tsc` PASS · `audit:memory` 37/37 PASS — **잔여 FAIL로 완료·커밋 선언 보류** |
+| soft | 실기 이동·착륙 · 조우전 · 주기 `app_background` 근본은 범위 밖 |
+| 다음 | **Opus(김팀장)** 로 잔여 1건 패치 후 `REVIEWED`/`IDLE` · 커밋은 대표님 지시 시 |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`PENDING`** (잔여 FAIL — Composer 코드 수정·PASS 선언 금지) |
+| **updated** | 2026-08-02 (김팀장 검수 CONDITIONAL) |
+
+---
+
+## 📋 PENDING (김클로드 원문 요지) — 은하계 지도 성계이동 3건
+
+```text
+status=PENDING
+task_id=worldmap-transit-duplicate-move-fix-20260802
+verdict=김클로드 자체진단 — 3건 모두 원인 특정·수정 완료. ③이 "로딩 나타나며 여전히 이동 안 됨" 증상의 실제 근본 원인.
+code_changes=YES — app/(game)/worldmap.tsx (① AppState active 2줄 제거 ② doMoveAlongPath 커밋순서 재배치 ③ blur cleanup 강제원복 로직 제거)
+commit 금지
+```
+
+### 배경 (대표님 실측, 2026-08-02, 순차 보고 3건)
+
+1. 「전함 마크이동도 두번반복되는 버그가 있다. 어제이후 생긴것이다.」→ 버그① 수정.
+2. 「모두 수정하라」→ 이전 턴에 진단만 하고 미뤄뒀던 도착 커밋 유실 버그도 이어서 수정 → 버그② 수정.
+3. ①·②를 고친 뒤에도 「이동시 로딩이 나타나면서 여전히 이동이 안된다. 로딩이 나타나는 이유부터 전수검사」→ **실기 adb logcat을 직접 떠서 전수검사**, `system_change` 이벤트가 `arcadia→vega_outpost→arcadia→...` 패턴으로 반복되는 걸 확인 → 추적 결과 **버그②가 의도치 않게 노출시킨 기존 경합이 버그③, 이게 실제 근본 원인**.
+
+`worldmap.tsx`·`galaxyMapSessionResume.ts`에 **미커밋 상태로 김팀장이 작업 중인 변경**(hubNavGate/mapInteractionReady 「고착」 회귀 대응, 코드 주석상 2026-08-02)이 있어, 그 변경분을 기반으로 진단·수정.
+
+---
+
+## 버그① 전함 마크 2회 중복 이동
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=없음(AppState 'active' 이벤트 콜백 — 포그라운드 복귀 시 1회) ·
+              alloc=0(라인 삭제만, 신규 객체 없음) · cache=해당없음
+[pss-pre-dev] stage=galaxy_map STAGE2 이동(doMoveAlongPath) · Skia 비접촉 · risk=P1(락 로직만, 렌더/틱 무관)
+[pss-pre-dev] verdict=PASS — 기존 fallback 타이머(SHIP_TRANSIT_DURATION_MS+40ms)가 이미 자연 해제를 보장하므로
+              이 2줄 제거로 새로 stuck 되는 경로 없음(아래 근거)
+```
+
+### 원인 (파일:줄 근거)
+
+`worldmap.tsx:652-665`(김팀장 미커밋분) — 포그라운드 복귀(`AppState` `next==='active'`) 시마다:
+```ts
+hubNavGate.reset();
+setIsMoving(false);
+isMovingRef.current = false;   // ← 문제의 2줄(제거 대상)
+armGalaxyMapScrollGestures();
+```
+이 무조건 실행됨. 그런데 `doMoveAlongPath()`(`worldmap.tsx:1359`)는 홉 애니메이션 대기를 **fallback 타이머로 항상 자체 해제**(`transitFallbackTimerRef.current = setTimeout(..., SHIP_TRANSIT_DURATION_MS+40)` → `settleTransitWait(true)`)하므로, 정상 진행 중인 이동이 "영구 stuck"이 되는 경우는 원래 없음 — 단, **백그라운드 중 JS 타이머가 스로틀돼 지연**될 수 있어, 그 사이 `next==='active'`가 먼저 도착하면 이 핸들러가 **아직 살아있는 `doMoveAlongPath` 실행 도중** `isMovingRef.current`를 강제로 `false`로 되돌림. 이 순간 대표님이 재탭하면 `handleMove()`의 게이트(`if (isMovingRef.current || isMoving) return;`)를 통과해 **두 번째 `doMoveAlongPath`가 첫 번째와 동시에 실행** — 둘 다 같은 `moveProgress`/`setShipTransit`를 건드려 전함 마크 이동 애니메이션이 중복 재생됨.
+
+### 수정
+
+`hubNavGate.reset()`·`armGalaxyMapScrollGestures()`는 유지(게이트/제스처 고착 방지, 이동 락과 무관한 별개 계약). `setIsMoving(false); isMovingRef.current = false;` 2줄만 제거 — 이동 락은 `doMoveAlongPath` 자신의 fallback 타이머·`finally`에만 맡김.
+
+---
+
+## 버그② 이동 후 도착 커밋 유실(아르카디아에 그대로 남음)
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=없음(탭당 1회 실행되는 doMoveAlongPath, 렌더/틱 루프 아님) · alloc=0(기존 호출 재배치만) · cache=해당없음
+[pss-pre-dev] stage=galaxy_map STAGE2 이동 커밋 순서만 · Skia 비접촉 · risk=P2(전투 조우 분기 동작 유지 여부가 핵심 검증 포인트)
+[pss-pre-dev] verdict=PASS — 조우전 분기(begin/selectSystem/navigateToCombatAfterTeardown)는 순서·가드 100% 동일 유지, 일반 도착 분기만 애니메이션 앞으로 이동
+```
+
+### 원인
+
+`doMoveAlongPath()`가 좌표 커밋(`moveToSystem`+`persist`)을 **홉 애니메이션(3초/홉) 전부가 끝난 뒤**에만 실행하고 있었음. 애니메이션 대기 도중 `app_background`→JS 리로드/프로세스 재시작(2~10분 간격으로 반복되는 현상, 별도 미해결)이 끼어들면 `isMountedRef`/`isFocusedRef`가 꺼져 `allFinished=false`로 함수가 조용히 `return`돼 커밋이 통째로 유실됨.
+
+### 수정
+
+일반 도착(조우전 아닌 경우)의 `moveToSystem`+`markVisited`+미션 오브젝티브+`persist()`를 **연료 차감 직후, 애니메이션 루프 진입 전**으로 이동. 조우전 분기는 `willEncounter`(순수 확률 롤)만 미리 계산해두고, 실제 `begin()`/`navigateToCombatAfterTeardown()` 호출은 기존과 동일하게 애니메이션 뒤 `allFinished` 확인 후에만 실행 — 조우전 타이밍·확률·가드 전부 동작 변경 없음.
+
+---
+
+## 버그③(진짜 근본 원인) — blur cleanup의 "착륙 안 함→강제 원복"이 버그②가 만든 커밋을 매번 되돌림
+
+①·②만으로는 안 고쳐져서 adb logcat을 직접 떠 `system_change` 이벤트를 시간순 추적 — `route_blur` → `system_change detail=arcadia` → `system_change detail=vega_outpost` 클러스터가 반복 발생하는 걸 확인(즉 arcadia→vega_outpost로 이동했다가 곧바로 다시 arcadia로 되돌아감).
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=없음(useFocusEffect cleanup — blur/deps 재실행 시 1회) · alloc=0(코드 제거만) · cache=해당없음
+[pss-pre-dev] stage=galaxy_map STAGE2 blur 처리 · Skia 비접촉 · risk=P1(명시적 「마지막 허브로 복귀」 버튼 경로는 무변경 확인)
+[pss-pre-dev] verdict=PASS — 제거 대상 로직은 2026-08-02 신설분(미커밋)이라 커밋된 기존 계약을 되돌리는 게 아님
+```
+
+### 원인 (파일:줄 근거)
+
+`worldmap.tsx:675-678`(김팀장 미커밋분, 신설) — `useFocusEffect`(652행) cleanup에서:
+```ts
+const landed = usePlayerStore.getState().player?.currentPlanetId;
+if (!landed) {
+  finalizeGalaxyMapSessionForExit({ persist: true });  // → resumePlayerToLastHubPlanet → 아르카디아로 강제 이동
+}
+```
+`playerStore.ts:633`의 `moveToSystem()`은 항상 `currentPlanetId: null`을 세팅한다(주석: "moveToSystem은 currentPlanetId를 null로 두므로"). 버그②로 `moveToSystem()`이 **애니메이션 전**에 먼저 실행되도록 바뀌면서, "성계 이동 성공 직후 아직 어디에도 착륙 안 한, 완전히 정상적인 상태"에서도 `!landed`가 **항상 참**이 됨. 이 상태에서 `useFocusEffect`가 cleanup을 타는 순간(진짜 화면 이탈이 아니어도 deps `[armGalaxyMapScrollGestures, hubNavGate]` 재평가·재포커스 등으로도 발동 가능) `finalizeGalaxyMapSessionForExit()` → `resumePlayerToLastHubPlanet()`이 실행되어 방금 커밋된 목적지를 **매번 아르카디아로 되돌림**. `releaseGalaxyMapStageMemory()`도 같이 호출돼 이게 "로딩화면"으로 보이는 것도 설명됨.
+
+이 `!landed` 안전망 자체가 **틀린 전제**였다 — "착륙 안 함(currentPlanetId=null)"을 "이상 상태(이동이 중간에 끊김)"의 신호로 썼지만, moveToSystem 이후엔 착륙하기 전까지 항상 null인 게 **정상**이라 이상 상태와 구분이 안 됨. 리로드 도중 유실 방지는 이미 버그②의 조기 커밋(moveToSystem+persist)이 담당하므로 이 안전망은 불필요.
+
+### 수정
+
+`worldmap.tsx:675-678`(신설분) 제거 — cleanup은 `appSub.remove(); worldmapInternalNavRef.current = false;`만 수행. 명시적 「마지막 허브로 복귀」 버튼(`handleReturnToLastHub`, 427행)과 타이틀 복귀(`handleExitToTitle`)의 `finalizeGalaxyMapSessionForExit` 호출은 그대로 유지 — **의도적/명시적 사용자 행동에서만** 발동하도록 범위를 좁힘.
+
+### self-check (3건 공통, 최종 상태 기준)
+
+```
+npx tsc --noEmit -p tsconfig.client.json   → PASS(에러 0)
+npm run audit:memory                        → PASS 37/37 (+ skia-worklet 20/20)
+```
+
+### soft(실기 미확인, 3건 공통)
+
+- 유닛 테스트 미작성 — `worldmap.tsx`는 RN 컴포넌트(react-native-gesture-handler·reanimated 등 다중 import)라 `tsx --test` 실행 불가(기존 제약, 이 파일 전체가 원래 테스트 커버리지 없음).
+- 버그③ 제거로 "화면을 이탈했는데 착륙도 안 하고 아무 복귀 로직도 없는" 진짜 이상 상태(예: 리로드 자체가 실패하는 극단 케이스)에 대한 안전망이 약해질 가능성은 이론상 있음 — 다만 버그②의 조기 커밋이 이미 정상 이동을 원자적으로 보존하므로 실질적 리스크는 낮다고 판단.
+- 조우전 발동 케이스(버그② 변경분) 실기 회귀 확인은 여전히 권장(발생 빈도 낮음).
+- 근본 원인인 `app_background` 자체가 왜 2~10분 간격으로 반복되는지는 여전히 미해결(OS/기기 레벨, 범위 밖) — 이번 3건은 그 리로드가 나더라도 "성계 이동" 기능 자체가 깨지지 않도록 하는 수정.
+
+**git commit 안 함** — 김팀장(Cursor 본창) 검수 요청.
+
+---
+
 ## ✅ REVIEWED — 은하계 지도 native_heap·PSS 분석 재검수 + remount 쿨다운 영속 · 김클로드
 
 ### 김팀장 검수 (본창 Cursor · 2026-08-01 · 대표님 「검수하라」)

@@ -30,18 +30,20 @@ npm run audit:mem-post-dev-recheck    # 개발 반영 후 handoff·status 갱신
 
 상태: `tools/kim-team-lead/reports/DEV_PROCESS_GATE_STATUS.md`
 
-## 유료 모델 전용 — Composer·Cursor 폴백 개발 배제 (2026-07-11~)
+## 유료 모델 전용 — Composer·글록 **분석 전용** (2026-07-11~ · **2026-08-02 강화**)
 
-> **대표님 지시**: API 소진으로 Composer·글록(내장 Auto/폴백)이 **강제**될 때만 예외. 그 외 **코드 개발 금지**.
+> **대표님 지시 (2026-08-02)**: Composer·글록은 **절대 개발 금지 · 분석만**.  
+> **간단한 로그/계측 삽입도 금지**. 코드 수정은 **Opus(김팀장)·Fable·Sonnet만**.  
+> 교훈: worldmap 「고착 방지」 안전망이 이동·착륙 회귀(①③)를 유발.
 
 | 항목 | 경로 |
 |------|------|
 | 정본 규칙 | `.cursor/rules/arcfire-paid-model-exclusion-gate.mdc` |
 | 구독 갱신일 | `tools/kim-team-lead/reports/SUBSCRIPTION_RENEWAL_ANCHOR.json` |
-| API 소진 예외 | `tools/kim-team-lead/reports/API_EXHAUST_FALLBACK_ACTIVE.flag` (없으면 폴백 **금지**) |
+| API 소진 플래그 | `tools/kim-team-lead/reports/API_EXHAUST_FALLBACK_ACTIVE.flag` — **있어도 코드·로그 diff 금지** |
 
 - **허용 개발 모델**: Opus(김팀장) · Fable · Sonnet — Task 위임 시 slug **필수**
-- **금지**: Composer · `composer-2.5*` · Cursor Auto/폴백/글록 · Task `model` 생략
+- **금지**: Composer · `composer-2.5*` · Cursor Auto/폴백/글록 · Task `model` 생략 · **로그 패치** · 「김팀장」페르소나로 Composer가 코드 수정
 - **훅**: `on-session-start-paid-model-gate.cjs` · `on-before-submit-prompt-paid-model-gate.cjs`
 
 ## 기존값 변경 — 사전 재확인 (상시 · 사용자 지시)

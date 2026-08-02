@@ -1302,6 +1302,8 @@ export const KO_DICTIONARY: I18nDictionary = {
     '{planet} — 현재 전투 판정 결과, {side} 점령이 유지되었습니다.\n{outcome}',
   'territorial.alert.maintained.redBody':
     '{planet} — 현재 전투 판정 결과, {side} 점령이 유지되었습니다.\n{outcome}',
+  'territorial.alert.maintained.independentBody':
+    '{planet} — 현재 전투 판정 결과, {side} 점령이 유지되었습니다.\n{outcome}',
   'territorial.alert.statusQuoTitle': '접전지역 — 현상 유지',
   'territorial.alert.statusQuoBody':
     '{planet} — 이번 시간대 교전·외교 판정 없이 {side} 점령이 유지되었습니다.',

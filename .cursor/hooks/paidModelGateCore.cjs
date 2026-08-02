@@ -62,24 +62,24 @@ function buildPaidModelGateContext() {
   const lastRenewal = anchor?.lastRenewalDate ?? '(see SUBSCRIPTION_RENEWAL_ANCHOR.json)';
 
   const lines = [
-    '[Arcfire Paid-Model Gate — 2026-07-11~]',
+    '[Arcfire Paid-Model Gate — 2026-07-11~ · 2026-08-02 강화: Composer/글록=분석전용]',
     `구독 구간(KST): ${lastRenewal} ~ ${nextRenewal} 전일 · 유료 Claude 전용 개발`,
     `허용 Task model: ${allowed.join(' | ')}`,
-    `개발 금지: ${forbidden.join(' | ')} (Composer·Cursor 내장 Auto/폴백/글록)`,
+    `개발 금지(분석만): ${forbidden.join(' | ')} — 코드·간단한 로그/계측 diff 절대 금지`,
+    '교훈: 2026-08-02 worldmap 고착방지 안전망(①③) 회귀 — 폴백이 예방 코드를 넣지 말 것',
   ];
 
   if (fallbackActive) {
     lines.push(
-      '⚠️ API_EXHAUST_FALLBACK_ACTIVE — 폴백 **제한 허용**(잔여 100% 마감·handoff·단일 패치 초안만).',
+      '⚠️ API_EXHAUST_FALLBACK_ACTIVE — **문서·분석·handoff 문구만** (코드·로그 패치 초안 **폐지**).',
       `폴백 사유: ${readFallbackFlagPreview()}`,
-      '폴백 세션: audit PASS·완료·커밋 선언 **금지** · 김팀장 Opus 재검수 필수.',
-      '첫 줄 표기: 【폴백·검수대기】',
+      '폴백 세션: 코드/로그 diff·audit PASS·완료·커밋 선언 **금지** · 패치는 Opus 복구 후.',
+      '첫 줄 표기: 【분석전용·개발금지】',
     );
   } else {
     lines.push(
-      '🚫 Composer·Cursor 폴백(글록) **개발 참여 절대 금지** — API 소진 시에만 flag 생성 후 제한 허용.',
-      'flag 경로: tools/kim-team-lead/reports/API_EXHAUST_FALLBACK_ACTIVE.flag',
-      '코드 diff·tables·src·app 수정 전: 유료 Claude(Opus/Fable/Sonnet) 모델인지 확인. 아니면 **중단·전환 안내**.',
+      '🚫 Composer·글록 **분석 전용** — 코드·로그·안전망 수정 **절대 금지** (flag 있어도 코드 예외 없음).',
+      '「김팀장」페르소나 ≠ Composer 코드 권한. 개발 요청 → Opus/Fable/Sonnet 전환 안내.',
       'Task 위임 model 생략·(기본)·composer slug **금지**.',
     );
   }
@@ -91,9 +91,9 @@ function buildPaidModelGateContext() {
 function buildPaidModelUserAlert() {
   const fallbackActive = isFallbackFlagActive();
   if (fallbackActive) {
-    return '⚠️ API 소진 폴백 모드 — Composer/Auto는 **잔여 마감만**. 완료·커밋·audit PASS는 김팀장 Opus가 합니다.';
+    return '⚠️ API 소진 — Composer/글록은 **분석·문서만**. 코드·로그 수정 금지 · 패치는 Opus.';
   }
-  return '🚫 개발은 **Opus(김팀장)·Fable·Sonnet만**. Composer·Cursor 폴백은 API 소진 flag 없이 **코드 수정 금지**.';
+  return '🚫 Composer·글록=**분석만**. 개발·로그는 **Opus(김팀장)·Fable·Sonnet만**.';
 }
 
 module.exports = {

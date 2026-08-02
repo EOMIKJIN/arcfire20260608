@@ -83,7 +83,11 @@ export function showTerritorialOccupationMaintainedAlert(input: {
   decision: 'battle' | 'neutral_declare';
   attackerWon?: boolean;
 }): void {
-  const sideKey = input.side === 'blue' ? 'blue' : input.side === 'red' ? 'red' : 'neutral';
+  const sideKey =
+    input.side === 'blue' ? 'blue'
+    : input.side === 'red' ? 'red'
+    : input.side === 'independent' ? 'independent'
+    : 'neutral';
   const sideLabel = sideLabelKo(input.side);
 
   InteractionManager.runAfterInteractions(() => {

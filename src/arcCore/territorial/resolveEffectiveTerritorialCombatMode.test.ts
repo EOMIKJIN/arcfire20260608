@@ -73,7 +73,7 @@ test('4) NEUTRAL + 둘다 인접=0(고립) → P0 미적용, policy.combatMode �
   assert.equal(effective, 'red_neutral');
 });
 
-test('5) hold가 이미 BLUE(비중립) + 레드만 인접(한쪽) → supplyAdjacency 무관하게 policy.combatMode 그대로(오버라이드 없음)', () => {
+test('5) hold가 이미 BLUE(비중립) + 레드만 인접(한쪽) + contestedZone → effective=red_neutral (R1b, policy와 우연히 동일값이라도 R1b 경로로 산출됨)', () => {
   const effective = resolveEffectiveTerritorialCombatMode({
     holdSide: 'BLUE',
     policyCombatMode: 'red_neutral',
@@ -83,11 +83,35 @@ test('5) hold가 이미 BLUE(비중립) + 레드만 인접(한쪽) → supplyAdj
   assert.equal(effective, 'red_neutral');
 });
 
-test('5b) hold가 이미 RED(비중립) + 블루만 인접(한쪽) → supplyAdjacency 무관하게 policy.combatMode 그대로', () => {
+test('5b) hold가 이미 RED(비중립) + 블루만 인접(한쪽) + contestedZone → effective=blue_neutral (R1b)', () => {
   const effective = resolveEffectiveTerritorialCombatMode({
     holdSide: 'RED',
     policyCombatMode: 'blue_neutral',
     supplyAdjacency: { blue: 3, red: 0 },
+    contestedZone: true,
+  });
+  assert.equal(effective, 'blue_neutral');
+});
+
+// ── R1b 신설(2026-08-02, task_id=territorial-effective-graph-mismatch-warn-20260802) ──
+// crimson_base LogBox mismatch: 동적 분쟁 템플릿(policy=blue_red)이 단측 인접일 때도 그대로 반환돼
+// runtimeGraph(inferTerritorialCombatModeFromGraph) 추론과 어긋나던 갭 제거.
+
+test('9) crimson_base 재현 — RED hold + contestedZone + 레드만 인접(blue:0,red:1) + policy=blue_red(동적 템플릿 고착) → effective=red_neutral(runtimeGraph 정합, LogBox 해소)', () => {
+  const effective = resolveEffectiveTerritorialCombatMode({
+    holdSide: 'RED',
+    policyCombatMode: 'blue_red',
+    supplyAdjacency: { blue: 0, red: 1 },
+    contestedZone: true,
+  });
+  assert.equal(effective, 'red_neutral', 'policy가 blue_red로 고착돼 있어도 실제 인접이 레드뿐이면 red_neutral로 그래프와 정합해야 함');
+});
+
+test('9b) 대칭 확인 — BLUE hold + contestedZone + 블루만 인접(blue:1,red:0) + policy=blue_red → effective=blue_neutral', () => {
+  const effective = resolveEffectiveTerritorialCombatMode({
+    holdSide: 'BLUE',
+    policyCombatMode: 'blue_red',
+    supplyAdjacency: { blue: 1, red: 0 },
     contestedZone: true,
   });
   assert.equal(effective, 'blue_neutral');

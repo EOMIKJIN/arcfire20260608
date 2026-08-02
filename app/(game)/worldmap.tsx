@@ -82,7 +82,10 @@ import {
   registerGalaxyMapScrollHandles,
   teardownGalaxyMapScrollFromJs,
 } from '../../src/game/galaxyMapScrollLifecycle';
-import { finalizeGalaxyMapSessionForExit } from '../../src/game/galaxyMapSessionResume';
+import {
+  finalizeGalaxyMapSessionForExit,
+  persistGalaxyMapSessionOnBackground,
+} from '../../src/game/galaxyMapSessionResume';
 import {
   GALAXY_MAP_DEEP_RECLAIM_EVERY_N_SOFT_TICKS,
   GALAXY_MAP_DEEP_RECLAIM_RETRY_MAX,
@@ -332,6 +335,7 @@ export default function WorldMapScreen() {
               teardown: () => finalizeGalaxyMapSessionForExit({ persist: true }),
               navigate: () => router.replace('/?forceTitle=1'),
               isMounted: () => isMountedRef.current,
+              onAborted: () => hubNavGate.reset(),
             });
           },
         },
@@ -359,7 +363,12 @@ export default function WorldMapScreen() {
    * worldmap → planet/combat replace — gesture unmount → memory release → drain → navigate.
    */
   const navigateToPlanetHubAfterTeardown = useCallback((anchorPlanetId: string | null) => {
-    if (!hubNavGate.tryScheduleNavigate()) return;
+    // 이전 착륙이 isMounted=false 로 abort되면 navigateScheduled 만 남고 reset이 안 되어
+    // 이후 착륙·이동이 전부 무반응(tryScheduleNavigate/tryBegin 실패)이 된다.
+    if (!hubNavGate.tryScheduleNavigate()) {
+      hubNavGate.reset();
+      if (!hubNavGate.tryBegin() || !hubNavGate.tryScheduleNavigate()) return;
+    }
     worldmapInternalNavRef.current = true;
     if (!hubNavGate.isLocked()) hubNavGate.tryBegin();
 
@@ -379,12 +388,16 @@ export default function WorldMapScreen() {
       teardown: () => releaseWorldmapSessionFloor({ reason: 'route_blur', anchorPlanetId }),
       navigate: () => router.replace('/(game)/planet'),
       isMounted: () => isMountedRef.current,
+      onAborted: () => hubNavGate.reset(),
       drainMs: HUB_NAV_POST_TEARDOWN_DELAY_MS,
     });
   }, [hubNavGate, stopGalaxyMapInteractionLoops, moveProgress]);
 
   const navigateToCombatAfterTeardown = useCallback(() => {
-    if (!hubNavGate.tryScheduleNavigate()) return;
+    if (!hubNavGate.tryScheduleNavigate()) {
+      hubNavGate.reset();
+      if (!hubNavGate.tryBegin() || !hubNavGate.tryScheduleNavigate()) return;
+    }
     worldmapInternalNavRef.current = true;
     if (!hubNavGate.isLocked()) hubNavGate.tryBegin();
 
@@ -406,6 +419,7 @@ export default function WorldMapScreen() {
       }),
       navigate: () => router.replace('/(game)/combat'),
       isMounted: () => isMountedRef.current,
+      onAborted: () => hubNavGate.reset(),
       drainMs: HUB_NAV_POST_TEARDOWN_DELAY_MS,
     });
   }, [hubNavGate, stopGalaxyMapInteractionLoops, moveProgress]);
@@ -497,6 +511,9 @@ export default function WorldMapScreen() {
   );
 
   useEffect(() => {
+    // effect 재실행(Fast Refresh·deps identity 변경) 시 cleanup만 돌면 false로 고착되어
+    // 이후 착륙·전투·타이틀 navigate가 전부 조용히 취소된다 (combat/continue-warp와 동일 계약)
+    isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
       stopGalaxyMapInteractionLoops();
@@ -627,26 +644,38 @@ export default function WorldMapScreen() {
     }, []),
   );
 
-  /** 은하계 지도 이탈·백그라운드·비정상 종료 — 직전 허브 좌표 복원 후 persist */
+  /**
+   * 백그라운드 — 허브 좌표 persist만(route_blur 금지).
+   * 포그라운드 복귀 — 제스처·착륙 게이트 재arm(background full-release 회귀 방어).
+   * blur/언마운트 정리(route_blur)는 아래 cleanup · useStageMemory onUnmount 정본.
+   */
   useFocusEffect(
     useCallback(() => {
       const appSub = AppState.addEventListener('change', (next) => {
         if (next === 'background' || next === 'inactive') {
-          finalizeGalaxyMapSessionForExit({ persist: true });
+          persistGalaxyMapSessionOnBackground({ persist: true });
+          return;
         }
+        if (next !== 'active') return;
+        if (!isFocusedRef.current) return;
+        hubNavGate.reset();
+        // isMoving/isMovingRef는 여기서 강제로 안 풂 — doMoveAlongPath 자체가 홉마다
+        // fallback 타이머(SHIP_TRANSIT_DURATION_MS+40ms)로 항상 스스로 정착·해제된다.
+        // 여기서 같이 풀면, 백그라운드 중 타이머가 스로틀돼 아직 진행 중인(진짜 stuck 아닌)
+        // doMoveAlongPath 호출과 경합해 "이동 중 재입력 허용 → 동시 2회 실행"으로
+        // 마크·애니메이션이 중복 재생되는 회귀가 생긴다(2026-08-02 대표님 실측: 전함 마크 이동 2회 반복).
+        armGalaxyMapScrollGestures();
       });
       return () => {
         appSub.remove();
-        if (worldmapInternalNavRef.current) {
-          worldmapInternalNavRef.current = false;
-          return;
-        }
-        const landed = usePlayerStore.getState().player?.currentPlanetId;
-        if (!landed) {
-          finalizeGalaxyMapSessionForExit({ persist: true });
-        }
+        worldmapInternalNavRef.current = false;
+        // "!currentPlanetId → 마지막 허브로 강제 복귀" 안전망은 여기서 제거함 — currentPlanetId는
+        // moveToSystem()이 도착 즉시(애니메이션 전) null로 세팅하므로, 성계 간 이동 성공 직후
+        // "아직 어디에도 착륙 안 한 정상 상태"에서도 항상 true가 되어 매 이동마다 아르카디아로
+        // 되돌리는 회귀가 있었다(2026-08-02 대표님 실측: 이동 애니메이션 후 로딩 → 출발지 원복).
+        // 리로드 도중 유실 방지는 이미 doMoveAlongPath의 조기 커밋(moveToSystem+persist)이 담당.
       };
-    }, []),
+    }, [armGalaxyMapScrollGestures, hubNavGate]),
   );
 
   const PANEL_H = 148;
@@ -1339,7 +1368,13 @@ export default function WorldMapScreen() {
         );
         return;
       }
-      if (!mapMetricsReady) return;
+      if (!mapMetricsReady) {
+        if (typeof __DEV__ !== 'undefined' && __DEV__) {
+          // eslint-disable-next-line no-console
+          console.warn('[NAV] worldmap move aborted — mapMetricsReady=false');
+        }
+        return;
+      }
       if (isMovingRef.current) return;
 
       const finalSystemId = pathSystemIds[pathSystemIds.length - 1]!;
@@ -1381,6 +1416,38 @@ export default function WorldMapScreen() {
           );
           return;
         }
+      }
+
+      // 조우전 여부만 애니메이션 전에 미리 판정(순수 확률 롤, 부작용 없음).
+      // 조우전이 아니면 좌표 커밋(moveToSystem+persist)도 애니메이션 "전"에 확정 —
+      // 이후 애니메이션은 순수 연출이라 재생 중 리로드/백그라운드가 끼어들어도 이미
+      // 커밋된 도착 결과는 보존된다. 조우전 분기(begin·전투 진입)는 기존과 동일하게
+      // 애니메이션 뒤(allFinished 확인 후)에서만 실행 — 그 경로는 동작 변경 없음.
+      // (2026-08-02 대표님 실측: 이동 애니메이션 후 로딩 → 출발지에 그대로 남는 회귀 대응)
+      const missionState = useMissionStore.getState();
+      const missionProgresses = missionState.progresses;
+      const encounterChance = resolveTransitEncounterChance(
+        targetSystem.zone,
+        hasPrimaryActiveCombatMission(missionProgresses, missionState.activeMissionId),
+        missionProgresses,
+        missionState.activeMissionId,
+      );
+      const willEncounter = Math.random() < encounterChance && isPlayerShipCombatCapable(player.ship);
+
+      if (!willEncounter) {
+        moveToSystem(targetSystem.id);
+        for (let i = 1; i < pathSystemIds.length; i += 1) {
+          markVisited(pathSystemIds[i]!);
+        }
+        const playerAfterMove = usePlayerStore.getState().player;
+        if (playerAfterMove) {
+          applyReachSystemMissionObjectives(targetSystem.id, playerAfterMove, {
+            deliverFailTitle: t('worldmap.deliverFailTitle'),
+            deliverFailBody: t('worldmap.deliverFailBody'),
+          });
+          tryPresentPendingMissionClearDialog();
+        }
+        await persist();
       }
 
         let allFinished = true;
@@ -1442,16 +1509,7 @@ export default function WorldMapScreen() {
 
         if (!allFinished || !isMountedRef.current || !isFocusedRef.current) return;
 
-        const missionState = useMissionStore.getState();
-        const missionProgresses = missionState.progresses;
-        const encounterChance = resolveTransitEncounterChance(
-          targetSystem.zone,
-          hasPrimaryActiveCombatMission(missionProgresses, missionState.activeMissionId),
-          missionProgresses,
-          missionState.activeMissionId,
-        );
-
-        if (Math.random() < encounterChance && isPlayerShipCombatCapable(player.ship)) {
+        if (willEncounter) {
           useTransitCombatSessionStore.getState().begin({
             originSystemId: pathSystemIds[0]!,
             destinationSystemId: targetSystem.id,
@@ -1461,21 +1519,6 @@ export default function WorldMapScreen() {
           return;
         }
 
-        moveToSystem(targetSystem.id);
-        for (let i = 1; i < pathSystemIds.length; i += 1) {
-          markVisited(pathSystemIds[i]!);
-        }
-
-        const playerAfterMove = usePlayerStore.getState().player;
-        if (playerAfterMove) {
-          applyReachSystemMissionObjectives(targetSystem.id, playerAfterMove, {
-            deliverFailTitle: t('worldmap.deliverFailTitle'),
-            deliverFailBody: t('worldmap.deliverFailBody'),
-          });
-          tryPresentPendingMissionClearDialog();
-        }
-
-        await persist();
         if (isMountedRef.current) {
           // 방어적 가드 — 잠금이 꼬리 전체를 덮으므로 사실상 항상 null이지만,
           // 향후 다른 경로가 isMoving 게이트 밖에서 selectSystem을 건드릴 경우를 대비한 이중 방어.
@@ -1517,7 +1560,7 @@ export default function WorldMapScreen() {
 
   const handleMove = useCallback(async () => {
     if (!selectedSystem || !player) return;
-    if (isMovingRef.current || isMoving || hubNavGate.isLocked()) return;
+    if (isMovingRef.current || isMoving) return;
 
     const travelBlock = resolvePlayerTravelBlock(player);
     if (travelBlock) {
@@ -1542,12 +1585,25 @@ export default function WorldMapScreen() {
           landOnPlanet(planet.id);
           await persist();
         }
-        if (!isMountedRef.current) return;
+        if (!isMountedRef.current) {
+          // gate를 열어두지 않으면 이후 탭이 tryBegin에서 전부 막혀 무반응이 된다
+          hubNavGate.reset();
+          if (typeof __DEV__ !== 'undefined' && __DEV__) {
+            // eslint-disable-next-line no-console
+            console.warn('[NAV] worldmap land aborted — isMounted=false');
+          }
+          return;
+        }
         navigateToPlanetHubAfterTeardown(planet?.id ?? null);
       } catch {
         hubNavGate.reset();
       }
       return;
+    }
+
+    // 성계 간 이동은 StageNavGate 불필요 — 잔여 pending/lock 이 이동 버튼을 영구 비활성화하던 회귀
+    if (hubNavGate.isLocked()) {
+      hubNavGate.reset();
     }
 
     if (!selectedMovePath || selectedMovePath.length < 2) {
@@ -1613,7 +1669,11 @@ export default function WorldMapScreen() {
       markPlanetAssaultIntent(planet.id);
       landOnPlanet(planet.id);
       await persist();
-      if (!isMountedRef.current) return;
+      if (!isMountedRef.current) {
+        clearPlanetAssaultIntent();
+        hubNavGate.reset();
+        return;
+      }
       navigateToPlanetHubAfterTeardown(planet.id);
     } catch {
       clearPlanetAssaultIntent();
@@ -1665,19 +1725,19 @@ export default function WorldMapScreen() {
     && isRedOccupiedPlanet(selectedPrimaryPlanet.id);
 
   const primaryNavDisabled =
-    hubNavGate.pending
-    || isMoving
-    || (isAtSelectedSystem && !!selectedPlanetStayBlock)
+    isMoving
+    || (isAtSelectedSystem && (hubNavGate.pending || !!selectedPlanetStayBlock))
     || (!isAtSelectedSystem
       && (!selectedMovePath || selectedMovePath.length < 2 || !canAffordSelectedFuel));
 
-  const primaryNavLabel = hubNavGate.pending
-    ? t('worldmap.btn.landing')
-    : isMoving
-      ? t('worldmap.btn.moving')
-      : isAtSelectedSystem
-        ? t('worldmap.dropdown.land')
-        : t('worldmap.dropdown.move');
+  const primaryNavLabel =
+    isAtSelectedSystem && hubNavGate.pending
+      ? t('worldmap.btn.landing')
+      : isMoving
+        ? t('worldmap.btn.moving')
+        : isAtSelectedSystem
+          ? t('worldmap.dropdown.land')
+          : t('worldmap.dropdown.move');
 
   const systemActionMenuItems = useMemo((): GalaxyMapSystemActionMenuItem[] => [
       {

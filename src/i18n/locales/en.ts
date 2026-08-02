@@ -1300,6 +1300,8 @@ export const EN_DICTIONARY: I18nDictionary = {
     '{planet} — After the battle pass, {side} control is maintained.\n{outcome}',
   'territorial.alert.maintained.redBody':
     '{planet} — After the battle pass, {side} control is maintained.\n{outcome}',
+  'territorial.alert.maintained.independentBody':
+    '{planet} — After the battle pass, {side} control is maintained.\n{outcome}',
   'territorial.alert.statusQuoTitle': 'Contested Zone — Status Quo',
   'territorial.alert.statusQuoBody':
     '{planet} — No battle or diplomatic action this hour; {side} control is maintained.',

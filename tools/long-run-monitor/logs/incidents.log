@@ -4013,3 +4013,101 @@ ref=tools/long-run-monitor/logs/soak-worklet-mirror-20260621.json
 [2026-08-01 23:15:26] VIEWS_NATIVE_ADVISORY views=575 native_heap=378 pss=792.9 gl=107.1 (node/list retention ??pre-hardceiling early warn)
 [2026-08-01 23:30:51] PSS_SOFT_CEILING pss=801.7 gl=109.1 views=575 native_reclaim_advisory
 [2026-08-01 23:46:18] PSS_SOFT_CEILING pss=814.3 gl=107.1 views=575 native_reclaim_advisory
+[2026-08-02 00:01:45] VIEWS_NATIVE_ADVISORY views=577 native_heap=384.2 pss=786 gl=105.3 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 00:17:13] PSS_SOFT_CEILING pss=807.2 gl=107.1 views=577 native_reclaim_advisory
+[2026-08-02 00:32:39] PSS_SOFT_CEILING pss=808 gl=107.1 views=580 native_reclaim_advisory
+[2026-08-02 00:48:06] PSS_SOFT_CEILING pss=807.4 gl=107.1 views=580 native_reclaim_advisory
+[2026-08-02 01:03:33] PSS_SOFT_CEILING pss=806.6 gl=107.1 views=580 native_reclaim_advisory
+[2026-08-02 01:19:00] PSS_SOFT_CEILING pss=858.3 gl=121.5 views=575 native_reclaim_advisory
+[2026-08-02 01:34:31] PSS_SOFT_CEILING pss=808.4 gl=118.7 views=591 native_reclaim_advisory
+[2026-08-02 01:50:02] VIEWS_NATIVE_ADVISORY views=574 native_heap=365.7 pss=793.6 gl=122.4 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 02:05:39] VIEWS_NATIVE_ADVISORY views=574 native_heap=337.2 pss=725.4 gl=122.5 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 02:21:05] VIEWS_NATIVE_ADVISORY views=574 native_heap=344 pss=723.1 gl=124.2 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 02:36:31] VIEWS_NATIVE_ADVISORY views=577 native_heap=343.3 pss=713.1 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 02:51:57] VIEWS_NATIVE_ADVISORY views=577 native_heap=185.3 pss=691.2 gl=109.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 03:07:23] VIEWS_NATIVE_ADVISORY views=577 native_heap=186.4 pss=688.8 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 03:22:49] VIEWS_NATIVE_ADVISORY views=577 native_heap=185.8 pss=700.7 gl=111.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 03:38:16] VIEWS_NATIVE_ADVISORY views=577 native_heap=186.4 pss=696.4 gl=107.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 03:53:44] VIEWS_NATIVE_ADVISORY views=577 native_heap=187.1 pss=686.4 gl=107.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 04:09:15] VIEWS_NATIVE_ADVISORY views=583 native_heap=186.3 pss=662 gl=109.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 04:24:43] VIEWS_NATIVE_ADVISORY views=583 native_heap=187.8 pss=657.1 gl=107.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 04:40:10] VIEWS_NATIVE_ADVISORY views=580 native_heap=187.8 pss=662.1 gl=107.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 04:55:35] VIEWS_NATIVE_ADVISORY views=580 native_heap=188.5 pss=659.9 gl=109.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 05:11:01] VIEWS_NATIVE_ADVISORY views=577 native_heap=188.9 pss=664.9 gl=107.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 05:26:28] VIEWS_NATIVE_ADVISORY views=577 native_heap=189.2 pss=663.6 gl=107.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 05:41:53] VIEWS_NATIVE_ADVISORY views=577 native_heap=189.4 pss=659.7 gl=107.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 05:57:19] VIEWS_NATIVE_ADVISORY views=577 native_heap=189.4 pss=670.2 gl=109.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 06:12:46] VIEWS_NATIVE_ADVISORY views=578 native_heap=190.6 pss=669.7 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 06:28:12] VIEWS_NATIVE_ADVISORY views=578 native_heap=190 pss=660.2 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 06:43:37] VIEWS_NATIVE_ADVISORY views=578 native_heap=189.9 pss=662.5 gl=109.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 06:59:03] VIEWS_NATIVE_ADVISORY views=578 native_heap=190.1 pss=672.6 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 07:14:30] VIEWS_NATIVE_ADVISORY views=578 native_heap=189.6 pss=670.4 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 07:29:56] VIEWS_NATIVE_ADVISORY views=578 native_heap=189.2 pss=663 gl=109.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 07:45:22] VIEWS_NATIVE_ADVISORY views=578 native_heap=190.5 pss=668 gl=109.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 08:00:00] DAILY_8AM_REPORT 2026-08-02 08:00:00 KST
+[2026-08-02 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260802-0800.md verdict=OK
+[2026-08-02 08:00:50] VIEWS_NATIVE_ADVISORY views=578 native_heap=189.7 pss=668.6 gl=111.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 08:02:04] DAILY_8AM_REPORT 2026-08-02 08:02:04 KST
+[2026-08-02 08:02:04] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260802-0800.md verdict=OK
+[2026-08-02 08:04:05] DAILY_8AM_REPORT 2026-08-02 08:04:05 KST
+[2026-08-02 08:04:05] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260802-0800.md verdict=OK
+[2026-08-02 08:06:07] DAILY_8AM_REPORT 2026-08-02 08:06:07 KST
+[2026-08-02 08:06:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260802-0800.md verdict=OK
+[2026-08-02 08:08:09] DAILY_8AM_REPORT 2026-08-02 08:08:09 KST
+[2026-08-02 08:08:09] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260802-0800.md verdict=OK
+[2026-08-02 08:10:11] DAILY_8AM_REPORT 2026-08-02 08:10:11 KST
+[2026-08-02 08:10:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260802-0800.md verdict=OK
+[2026-08-02 08:12:12] DAILY_8AM_REPORT 2026-08-02 08:12:12 KST
+[2026-08-02 08:12:12] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260802-0800.md verdict=OK
+[2026-08-02 08:14:15] DAILY_8AM_REPORT 2026-08-02 08:14:15 KST
+[2026-08-02 08:14:15] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260802-0800.md verdict=OK
+[2026-08-02 08:16:16] VIEWS_NATIVE_ADVISORY views=578 native_heap=190.3 pss=663.7 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 08:31:41] VIEWS_NATIVE_ADVISORY views=578 native_heap=192.4 pss=682.5 gl=111.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 08:47:07] VIEWS_NATIVE_ADVISORY views=578 native_heap=192.7 pss=687.1 gl=109.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 09:02:33] VIEWS_NATIVE_ADVISORY views=578 native_heap=192.1 pss=679.7 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 09:17:58] VIEWS_NATIVE_ADVISORY views=578 native_heap=192.7 pss=672.3 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 09:33:24] VIEWS_NATIVE_ADVISORY views=578 native_heap=192.5 pss=690.2 gl=111.9 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 09:48:50] VIEWS_NATIVE_ADVISORY views=599 native_heap=192.9 pss=690.5 gl=107.8 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 10:04:15] VIEWS_NATIVE_ADVISORY views=578 native_heap=226.2 pss=709.7 gl=122.4 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 10:19:41] VIEWS_NATIVE_ADVISORY views=578 native_heap=223.8 pss=711.1 gl=124.2 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 10:35:07] VIEWS_NATIVE_ADVISORY views=578 native_heap=168.2 pss=693.5 gl=124.2 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 10:50:33] VIEWS_NATIVE_ADVISORY views=578 native_heap=170 pss=700.9 gl=124.2 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 11:05:59] VIEWS_NATIVE_ADVISORY views=578 native_heap=171.1 pss=698.9 gl=124.2 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 11:21:25] VIEWS_NATIVE_ADVISORY views=578 native_heap=172.6 pss=698.8 gl=124.2 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 11:36:52] VIEWS_NATIVE_ADVISORY views=578 native_heap=136.7 pss=698.7 gl=124.2 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 11:52:18] VIEWS_NATIVE_ADVISORY views=578 native_heap=136.9 pss=697.5 gl=124.2 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 12:07:43] VIEWS_NATIVE_ADVISORY views=578 native_heap=136.5 pss=697.2 gl=124.2 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 12:23:09] VIEWS_NATIVE_ADVISORY views=578 native_heap=137.2 pss=699.2 gl=124.2 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 12:38:37] VIEWS_NATIVE_ADVISORY views=579 native_heap=351.3 pss=767.2 gl=129.3 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 12:54:10] VIEWS_NATIVE_ADVISORY views=596 native_heap=352.6 pss=791.5 gl=122.3 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 14:10:46] VIEWS_NATIVE_ADVISORY views=367 native_heap=442.5 pss=756.3 gl=41.5 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 14:26:14] VIEWS_NATIVE_ADVISORY views=363 native_heap=444.3 pss=763 gl=34.8 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 14:41:40] VIEWS_NATIVE_ADVISORY views=390 native_heap=453.8 pss=798.4 gl=35.4 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 14:57:06] PSS_SOFT_CEILING pss=889 gl=137.9 views=579 native_reclaim_advisory
+[2026-08-02 15:12:34] PSS_SOFT_CEILING pss=885.6 gl=138 views=579 native_reclaim_advisory
+[2026-08-02 15:28:01] PSS_SOFT_CEILING pss=874.4 gl=138 views=579 native_reclaim_advisory
+[2026-08-02 15:43:27] PSS_SOFT_CEILING pss=876.7 gl=142.1 views=579 native_reclaim_advisory
+[2026-08-02 15:58:55] PSS_SOFT_CEILING pss=871 gl=138 views=579 native_reclaim_advisory
+[2026-08-02 16:14:18] PSS_SOFT_CEILING pss=858 gl=138 views=579 native_reclaim_advisory
+[2026-08-02 16:29:44] VIEWS_NATIVE_ADVISORY views=374 native_heap=433.1 pss=743.2 gl=34.8 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 16:45:11] VIEWS_NATIVE_ADVISORY views=391 native_heap=434 pss=736.9 gl=34.2 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 17:00:41] PSS_SOFT_CEILING pss=866.8 gl=131.1 views=577 native_reclaim_advisory
+[2026-08-02 17:16:09] PSS_SOFT_CEILING pss=900.3 gl=134.9 views=577 native_reclaim_advisory
+[2026-08-02 17:31:38] PSS_SOFT_CEILING pss=852.1 gl=118.7 views=582 native_reclaim_advisory
+[2026-08-02 17:47:04] PSS_SOFT_CEILING pss=853.8 gl=118.7 views=582 native_reclaim_advisory
+[2026-08-02 18:02:36] PSS_SOFT_CEILING pss=847.9 gl=116.7 views=582 native_reclaim_advisory
+[2026-08-02 18:18:05] PSS_SOFT_CEILING pss=929.5 gl=135.1 views=581 native_reclaim_advisory
+[2026-08-02 18:33:35] PSS_SOFT_CEILING pss=896.5 gl=139.1 views=581 native_reclaim_advisory
+[2026-08-02 18:49:01] PSS_SOFT_CEILING pss=918.3 gl=136.1 views=581 native_reclaim_advisory
+[2026-08-02 19:04:31] PSS_SOFT_CEILING pss=899.8 gl=136.1 views=581 native_reclaim_advisory
+[2026-08-02 19:35:28] VIEWS_NATIVE_ADVISORY views=581 native_heap=356 pss=789.9 gl=133.7 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 19:50:55] PSS_SOFT_CEILING pss=800.1 gl=135.7 views=581 native_reclaim_advisory
+[2026-08-02 20:06:22] VIEWS_NATIVE_ADVISORY views=581 native_heap=350.5 pss=782.5 gl=131.7 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 20:21:47] VIEWS_NATIVE_ADVISORY views=581 native_heap=350.6 pss=786.6 gl=131.7 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 20:37:17] VIEWS_NATIVE_ADVISORY views=581 native_heap=350.2 pss=784.8 gl=131.7 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 20:52:42] VIEWS_NATIVE_ADVISORY views=576 native_heap=351.1 pss=763.7 gl=117.6 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 21:08:08] VIEWS_NATIVE_ADVISORY views=576 native_heap=350.7 pss=763.6 gl=115.5 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 21:23:40] VIEWS_NATIVE_ADVISORY views=576 native_heap=350.3 pss=764.6 gl=115.5 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 21:39:07] VIEWS_NATIVE_ADVISORY views=576 native_heap=350.6 pss=762.6 gl=115.5 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 21:54:33] VIEWS_NATIVE_ADVISORY views=576 native_heap=351.3 pss=762.8 gl=115.5 (node/list retention ??pre-hardceiling early warn)
+[2026-08-02 22:09:59] VIEWS_NATIVE_ADVISORY views=576 native_heap=351.4 pss=770.8 gl=115.5 (node/list retention ??pre-hardceiling early warn)

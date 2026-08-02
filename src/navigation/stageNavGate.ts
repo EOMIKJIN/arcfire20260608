@@ -77,6 +77,8 @@ export function runStageNavAfterTeardown(opts: {
   teardown: () => void;
   navigate: () => void;
   isMounted?: () => boolean;
+  /** isMounted=false 로 navigate 가 스킵될 때 — StageNavGate.reset 등 */
+  onAborted?: () => void;
   drainMs?: number;
 }): void {
   // SVG/Skia gate-off 직후 React unmount 2프레임 대기 — teardown 선행 시 Native heap 잔류(worldmap 6/25~26)
@@ -87,7 +89,10 @@ export function runStageNavAfterTeardown(opts: {
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             setTimeout(() => {
-              if (opts.isMounted && !opts.isMounted()) return;
+              if (opts.isMounted && !opts.isMounted()) {
+                opts.onAborted?.();
+                return;
+              }
               opts.navigate();
             }, opts.drainMs ?? DEFAULT_STAGE_NAV_DRAIN_MS);
           });
