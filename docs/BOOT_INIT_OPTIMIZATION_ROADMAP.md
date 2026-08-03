@@ -3,6 +3,7 @@
 > **상태**: 🟡 **추후 손보기로 보류** — 기능 개발 우선. 본 문서는 결론·방향성 정본.
 > **재개 트리거**: 대화·이슈에서 **`초기화 단축`**, **`부트 최적화`**, **`boot init`**, **`타이틀까지 로딩`** 등을 언급하면 **본 파일을 먼저 읽을 것**.
 > **관련**: v4.0 Session-Based Memory · `.cursor/rules/arcfire-main-lead-agent.mdc` §경제 부트경로 격리 · `tools/boot-perf/README.md`
+> **교차 (2026-08-03)**: **APK/AAB·R8·ABI·Play target** 는 본 로드맵이 아님 → [`BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md`](./BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md). 본 문서는 **기동 후 JS hydrate/부트 순서**만.
 
 ---
 

@@ -4,6 +4,8 @@
 
 import { planetAttackKstDayKey } from '../planetAttack/planetAttackKstDayKey';
 import { useArcCoreTransportFleetBankStore } from '../../store/factionVault/arcCoreTransportFleetBankStore';
+import { useArcCoreVaultStore } from '../../store/factionVault/arcCoreVaultStore';
+import { useBlueTeamSharedVaultStore } from '../../store/factionVault/blueTeamSharedVaultStore';
 import { usePlanetTradeFeeLedgerStore } from '../../store/planetTradeFeeLedgerStore';
 import {
   convoyDailyCoverageEnabled,
@@ -44,6 +46,10 @@ export async function runArcCoreConvoyDailySettlementPass(): Promise<ArcCoreConv
   if (!usePlanetTradeFeeLedgerStore.getState().hydrated) {
     await usePlanetTradeFeeLedgerStore.getState().hydrate();
   }
+  // B2(task_id=faction-vault-fee-hydrate-race-20260803) — 이후 executeArcConvoyRoundTrip →
+  // applyPlanetTradeTransactionFee가 팩션 금고에 즉시 입금하므로, 배치 시작 시점에 함께 보장.
+  await useArcCoreVaultStore.getState().ensureHydrated();
+  await useBlueTeamSharedVaultStore.getState().ensureHydrated();
 
   usePlanetTradeFeeLedgerStore.getState().ensureDay(kstDayKey);
 
@@ -56,7 +62,7 @@ export async function runArcCoreConvoyDailySettlementPass(): Promise<ArcCoreConv
 
   for (const supplyPlanetId of supplyPlanetIds) {
     const shipId = `arc_daily_convoy_${kstDayKey}_${supplyPlanetId}`;
-    const trip = executeArcConvoyRoundTrip(shipId, supplyPlanetId, { minQty });
+    const trip = await executeArcConvoyRoundTrip(shipId, supplyPlanetId, { minQty });
     if (trip.ok && trip.destPlanetId) {
       supplyRoundTripsOk += 1;
       demandPlanetSet.add(trip.destPlanetId);
@@ -90,7 +96,7 @@ export async function runArcCoreConvoyDailySettlementPass(): Promise<ArcCoreConv
       continue;
     }
     const shipId = `arc_daily_convoy_backfill_${kstDayKey}_${demandPlanetId}`;
-    const trip = executeArcConvoyRoundTrip(shipId, supplyPlanetId, {
+    const trip = await executeArcConvoyRoundTrip(shipId, supplyPlanetId, {
       minQty,
       forceDestPlanetId: demandPlanetId,
     });

@@ -24,6 +24,8 @@ export type FactionVaultState = {
   totalOutflowCredits: number;
   txns: FactionVaultTxn[];
   hydrate: () => Promise<void>;
+  /** 이미 hydrated면 즉시 resolve · 진행 중이면 동일 Promise 공유(중복 hydrate 레이스 방지) */
+  ensureHydrated: () => Promise<void>;
   persist: () => Promise<void>;
   getBalance: () => number;
   applyDelta: (deltaCredits: number, meta?: Partial<FactionVaultTxn>) => void;
@@ -60,6 +62,9 @@ export function createFactionVaultStore(
   // 인스턴스 단위 persist 코얼레싱 — 잔액은 메모리에서 즉시 정확, 디스크 기록만 묶는다.
   let persistTimer: ReturnType<typeof setTimeout> | null = null;
   let flushPersist: (() => void) | null = null;
+  // in-flight hydrate 공유 — 동시 호출이 hydrate()를 중복 실행해 서로의 appendInflow를
+  // 디스크값으로 덮어쓰는 레이스 방지(task_id=faction-vault-fee-hydrate-race-20260803).
+  let hydratePromise: Promise<void> | null = null;
   const schedulePersist = () => {
     if (persistTimer) return;
     persistTimer = setTimeout(() => {
@@ -137,6 +142,18 @@ export function createFactionVaultStore(
           txns: [],
         });
       }
+    },
+
+    ensureHydrated: async () => {
+      if (get().hydrated) return;
+      if (!hydratePromise) {
+        hydratePromise = get()
+          .hydrate()
+          .finally(() => {
+            hydratePromise = null;
+          });
+      }
+      await hydratePromise;
     },
 
     persist: async () => {

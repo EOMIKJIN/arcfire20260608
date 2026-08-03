@@ -98,7 +98,7 @@ if (uncoveredDemand.length) {
       console.log(`  ${d}: backfill skip (no supply for ${tg})`);
       continue;
     }
-    const trip = executeArcConvoyRoundTrip(`audit_backfill_${d}`, supply, {
+    const trip = await executeArcConvoyRoundTrip(`audit_backfill_${d}`, supply, {
       minQty: 2,
       forceDestPlanetId: d,
     });

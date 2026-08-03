@@ -43,7 +43,7 @@ export function resolveOccupierFactionKindForHold(hold: PlanetClanHold | undefin
 
 function resolveVaultStoreByKey(vaultKey: string): Pick<
   FactionVaultState,
-  'hydrate' | 'applyDelta' | 'trySpend' | 'spendUpToBalance' | 'appendInflow' | 'getBalance'
+  'hydrate' | 'ensureHydrated' | 'applyDelta' | 'trySpend' | 'spendUpToBalance' | 'appendInflow' | 'getBalance'
 > {
   if (vaultKey === VAULT_KEY_BLUE) return useBlueTeamSharedVaultStore.getState();
   return useArcCoreVaultStore.getState();
@@ -54,7 +54,7 @@ export function resolveFactionVaultForOccupierClanId(
   occupierClanId: string,
 ): Pick<
   FactionVaultState,
-  'hydrate' | 'applyDelta' | 'trySpend' | 'spendUpToBalance' | 'appendInflow' | 'getBalance'
+  'hydrate' | 'ensureHydrated' | 'applyDelta' | 'trySpend' | 'spendUpToBalance' | 'appendInflow' | 'getBalance'
 > | null {
   const faction = resolveOccupierFactionKind(occupierClanId);
   if (faction === 'player_clan') return null;
@@ -66,7 +66,7 @@ export function resolveFactionVaultForPlanetId(
   planetId: string,
 ): Pick<
   FactionVaultState,
-  'hydrate' | 'applyDelta' | 'trySpend' | 'spendUpToBalance' | 'appendInflow' | 'getBalance'
+  'hydrate' | 'ensureHydrated' | 'applyDelta' | 'trySpend' | 'spendUpToBalance' | 'appendInflow' | 'getBalance'
 > | null {
   const hold = getClanWarFoundationStore().getState().getHold(planetId);
   if (!hold) return null;
@@ -76,7 +76,7 @@ export function resolveFactionVaultForPlanetId(
 /** [보완 #3] 무역 수수료 — BLUE→blue_vault, RED·중립·플레이어클랜→arccore_vault */
 export function resolveTradeFeeFactionVault(
   planetId: string,
-): Pick<FactionVaultState, 'hydrate' | 'applyDelta' | 'trySpend' | 'spendUpToBalance' | 'appendInflow' | 'getBalance'> {
+): Pick<FactionVaultState, 'hydrate' | 'ensureHydrated' | 'applyDelta' | 'trySpend' | 'spendUpToBalance' | 'appendInflow' | 'getBalance'> {
   if (process.env.ARCFIRE_HEADLESS_ECONOMY_AUDIT === '1') {
     return useArcCoreVaultStore.getState();
   }

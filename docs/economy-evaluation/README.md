@@ -4,6 +4,8 @@
 
 | 날짜 | 문서 | 요약 |
 |------|------|------|
+| 2026-08-03 | [2026-08-03-economy-concept-scenario-full-recheck.md](./2026-08-03-economy-concept-scenario-full-recheck.md) | **최종 재점검** — v4.0·통합밸런스·컴펜디엄·시나리오 재독 · P0 성격 재분류 · **플레이어 CR CRITICAL** · 수정 Phase A–F |
+| 2026-08-03 | [2026-08-03-economy-full-rescan.md](./2026-08-03-economy-full-rescan.md) | 경제 모델 전수 재조사 — 일1회 PASS · band CPH CRITICAL · fiscal/core_prime WARN · 플레이어 CR thin · R≠실매장 |
 | 2026-07-13 | [2026-07-13-pre-reset-longrun-baseline.md](./2026-07-13-pre-reset-longrun-baseline.md) | **완전초기화 전 29일 최장기 계정 베이스라인** — Lv11 · whaleF2P 3.12 · fiscal WARN(gini 0.288) · NATIVE_FLOOR_UP 잔존 |
 | 2026-07-02 | [2026-07-02-ferrite-FINAL-REPORT.md](./2026-07-02-ferrite-FINAL-REPORT.md) | **페라이트 10CR** 3단계 분석 **완료** · CONDITIONAL_KEEP |
 | 2026-07-02 | [2026-07-02-ferrite-anchor-3stage-plan.md](./2026-07-02-ferrite-anchor-3stage-plan.md) | 3단계 계획 |

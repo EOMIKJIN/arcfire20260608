@@ -75,7 +75,8 @@ export class AiEconomySubCore extends BaseArcSubCore {
 
   private onArcCoreCommand(cmd: ArcCoreCommand): void {
     if (cmd.type === 'economy_transport_dwell_settled') {
-      settleArcTransportDwellTrade(cmd.shipId, cmd.planetId);
+      // 커맨드 핸들러 자체는 sync 계약 유지 — 내부 hydrate await는 settleArcTransportDwellTrade가 보장.
+      void settleArcTransportDwellTrade(cmd.shipId, cmd.planetId);
       return;
     }
     if (cmd.type !== 'economy_trade_port_bulk') return;

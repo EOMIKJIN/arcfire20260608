@@ -1,7 +1,148 @@
-﻿# 김클로드 → 김팀장 검수 handoff
+# 김클로드 → 김팀장 검수 handoff
 
 > **정본 프로세스**: `docs/KIM_TEAM_LEAD_AGENT.md` §김클로드 검수 게이트 · `CLAUDE.md` §김팀장 최종 승인  
 > **김클로드** = Anthropic Claude Code (Cursor ✱ 패널 · 터미널 `claude`)
+
+---
+
+## 📋 NOTE — 대표님 지시(2026-08-03): 22:00 재검수 종료 · 도구 일괄 제거 완료
+
+- 소스 전수재검수 루프·`code-reaudit*`·`CODE_REAUDIT_*` 산출물 **삭제 완료** (2026-08-03 22:00 KST).
+- 최종 고정 결과(제거 전): **FAIL 11** (F1 F2 F3 F4 F6 F7 F9 F10 F11 F12 F16) · **WARN 3** (F13–15) · **PASS 2** (F5 F8) · 틱 중 NEW_FAIL 없음.
+- **유지**: 김경제 메모리 축 · READY 본문(수정 과제 F1~F16).
+- **우선 READY**: `daily-ops-batch-incomplete-fix` · `faction-vault-fee-hydrate-race` CONDITIONAL.
+
+---
+
+## 📋 PENDING — 일일 배치(runArcCoreDailyOpsBatch) 7/18 이후 미완료 회귀 · 패스 격리 수정 · 김클로드
+
+> ⚠ 내일 작업은 통합 READY(`daily-ops-batch-incomplete-fix`)로 진행.  
+> 본 isolation 블록은 Wave B 초안 이력 — **격리만 PASS/완료 선언 금지**.
+
+```text
+status=PENDING
+task_id=daily-ops-batch-step-isolation-20260803
+superseded_by=daily-ops-batch-incomplete-fix-20260803
+verdict=대표님 최초 제보("블루행성만 5대스탯 0.0")를 재조사한 결과 블루/레드 코드분기 아님 —
+        실기 세이브에서 daily ops 배치가 2026-07-18 이후 매일 "시작"만 되고 "완료"는 한 번도
+        못한 것을 실측 확인. 원인 후보는 같은 날짜(7/18) Firestore/Auth 전면개편(대표님 제공
+        정보)이지만 정확한 throw 지점은 미확정 — 대신 패스 격리로 회귀 자체를 구조적으로 차단.
+code_changes=YES — runArcCoreDailyOpsBatch.ts(패스별 try/catch 격리) · planetCoreStatOpsTrend.ts(스킵 로그 2줄)
+commit 금지
+```
+
+### 조사 과정 (실기 세이브 직접 검증)
+
+1. **최초 제보**: 블루 점유 행성만 행성정보창 5대 스탯이 화살표 없이 "0.0" — 레드·독립국은 정상.
+2. **정적 코드 조사**(Explore 서브에이전트 + 직접 재확인): `resolvePlanetCoreStatAuthorityContext`가 BLUE/RED hold를 동일하게 `world_default`로 처리 — **팩션을 분기하는 코드 지점 없음**. `arcadia_prime`(BLUE) 홀드도 `deedOwnerClanId`/`homePlayerUid` 둘 다 null이라 `player_owned` 아님을 직접 확인.
+3. **실기 데이터 직접 검증**(adb로 기기 AsyncStorage(RKStorage.db) pull → `better-sqlite3`로 파싱):
+   - `arcfire_planet_core_runtime_v1`의 `detail.statOpsTrend`: 표본 추출한 BLUE/RED 행성 전부 **`kstDayKey:"2026-07-18"`** — 즉 블루·레드 무관하게 마지막 실제 갱신이 7/18. 레드가 화살표 보이는 건 "오늘 갱신"이 아니라 2주 전 값이 우연히 0이 아니었던 잔재.
+   - **결정적 증거**: `arcfire_arc_core_daily_ops_v1` = `{"lastBatchDayKey":"2026-08-03","lastBatchAtMs":1784300406991}`. `lastBatchDayKey`는 조회 당일(오늘)인데 `lastBatchAtMs`를 변환하면 **2026-07-17T15:00Z(=7/18 00:00 KST)** — 16일 전. `ArcCoreDailyOpsSubCore.ts`의 설계(배치 **시작** 시 dayKey 선기록, **완료** 시에만 AtMs 갱신 — 중단 시 같은 날 무한 재시도 방지용)와 대조하면, **배치가 매일 "시작"은 되지만 끝까지 "완료"는 7/18 이후 한 번도 못 하고 있음**이 명확.
+4. **대표님 제보**: 7/18 작업이 Firebase Anonymous Auth 정식 도입(auth.uid 정본화 + 기존 Android ID 계정 마이그레이션) + Firestore rules 전면 교체(catch-all 제거, `users/{uid}` 본인만 쓰기)였음 — **날짜가 정확히 일치**. 유력 후보로 기록하나, 실기 크래시 스택트레이스를 logcat에서 못 찾았고(버퍼 순환 추정) 오프라인 재현도 완전한 실기 재현엔 한계가 있어 **정확한 throw 지점은 미확정**으로 남김(아래 soft 참고).
+
+### [pss-pre-dev]
+
+```text
+[pss-pre-dev] hot_path=아님(일 1회 배치 자체 — 호출 빈도 무변경, 패스 내부에 try/catch만 추가) ·
+              alloc=미미(catch 시 err 객체 1개, 실패 시에만) · cache=없음
+[pss-pre-dev] stage=arcCore 일일배치 · Skia/STAGE/worldmap 무관 · risk=P4(경제 배치 로직 자체는 무변경,
+              실행 순서·조건·CSV 전부 동일 — 실패 시 해당 패스만 skip되고 이후 패스는 원래대로 진행)
+[pss-pre-dev] verdict=PASS — "일 1회" 배치 호출 빈도·트리거 조건 무변경. 패스 개수·순서·CSV·판정 로직
+              전부 동일, 실패 격리(try/catch)만 추가 — 새 동기 실행·신규 패스·신규 스케줄 없음
+```
+
+### 수정
+
+**`runArcCoreDailyOpsBatch.ts`** — 기존에 보호되지 않던 약 20개 패스 호출 전부를 개별 `try/catch`로 감쌈. 패스 하나가 던져도 `reportDailyOpsStepFailure(step, err)`로 로그만 남기고(`console.error`, 항상 — `__DEV__` 무관) 다음 패스로 계속 진행. 이전엔 학습/RTDB 구간(`economyLearning`)만 보호돼 있었고 나머지는 무방비라, **아무 패스나 하나 던지면 그 뒤의 `commitPlanetCoreStatOpsTrendAfterBatch()`·`ArcCoreDailyOpsSubCore`의 `markArcCoreDailyBatchCompleted()`까지 전부 못 갔던 게 이번 회귀의 구조적 원인**이었음. `result.xxx` 필드는 실패 시 초기값(false)으로 남아 어떤 패스가 실패했는지 반환값으로도 드러남.
+
+**`planetCoreStatOpsTrend.ts`** — `beginPlanetCoreStatOpsTrendSnapshot`/`commitPlanetCoreStatOpsTrendAfterBatch`의 기존 조용한 조기 return 2곳에 `console.warn` 추가(동작 변경 없음, 원인 특정용).
+
+### 검증
+
+- `npx tsc --noEmit -p tsconfig.client.json` → PASS(에러 0)
+- **오프라인 재현 harness**: (삭제됨 · 대표님 지시 2026-08-03 개발 스캔/일회 디버그 도구 일괄 제거) 배포 후 실기 dayKey/AtMs·`statOpsTrend` 검증으로 대체.
+- 대표님 원 제보(블루 5대 스탯 0.0)는 이번 배치가 정상 완료되기 시작하면 **자연히 해소**될 것으로 판단 — 별도 블루 전용 수정 불필요(코드에 그런 분기 자체가 없었음을 확인).
+
+**git commit 안 함** — 김팀장(Cursor 본창) 검수 요청.
+
+---
+
+## 📋 PENDING — 팩션 금고 수수료 입금 hydrate 레이스(B1·B2) 수정 · 김클로드
+
+### 김팀장 검수 (본창 · 2026-08-03 · 대표님 「검수하라」)
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **CONDITIONAL** — B1/B2 핵심 **AGREE** · **플레이어 무역 호출부 누락 FAIL 잔여** |
+| **task_id** | `faction-vault-fee-hydrate-race-20260803` |
+| B1 `ensureHydrated` + fee await 입금 | **AGREE** — `createFactionVaultStore.ts` Promise 공유 · 중복 hydrate 차단 |
+| B1 원인 보강(재호출 hydrate vs 부트 미hydrate) | **AGREE** — 김클로드 재검수 합리 |
+| B2 convoy 배치 arc+blue vault pre-hydrate | **AGREE** — + `executeArcConvoyRoundTrip` await 정합 |
+| async 전파 (dwell→roundTrip→audit mjs) | **AGREE** — `tools/audit-convoy-coverage.mjs` await OK |
+| 테스트 4/4 원본 버그 재현 | **AGREE** — 김팀장 재실행 PASS |
+| tsc | **PASS** (김팀장 재실행 exit 0) |
+| READY 범위 준수(CSV·일일스냅·유지비정책 무변경) | **AGREE** |
+| **잔여 FAIL** | `app/(game)/trade.tsx` **405·748행** — `applyPlanetTradeTransactionFee` **await 없이** 호출(async 함수 fire-and-forget). 구매 직후 동기 path에서 `rollbackTradeBuyFailure`→`void reverse…` 가 **fee accumulate보다 먼저** 돌면 롤백 무력·수수료 유령 입금 가능. READY “모든 호출부 await” 미충족 |
+| soft | `void settleArcTransportDwellTrade` tick fire-and-forget은 내부 await로 B1 해소 유지(순서 위험 낮음). `hydrate()` 자체는 이미 hydrated여도 재로드 가능(호출부 대부분 `!hydrated` 가드) — 후속 harden 가능 |
+| **다음** | 김클로드 **trade.tsx 2곳 `await`**(핸들러 async화) 또는 `void`라도 구매 실패 롤백 전 fee Promise 완료 보장 — 보완 후 재검수. **완료·커밋 보류** |
+
+| 필드 | 값 |
+|------|-----|
+| **status** | **`PENDING`** (잔여 FAIL — 완료 PASS·커밋 금지) |
+| **updated** | 2026-08-03 (김팀장 검수 CONDITIONAL) |
+
+---
+
+## 📋 PENDING (김클로드 원문) — faction-vault-fee-hydrate-race
+
+```text
+status=PENDING
+task_id=faction-vault-fee-hydrate-race-20260803
+verdict=AGREE(원인) + PARTIAL 정정(구현 범위 — README "3개 호출부"보다 async 전파 범위가 더 넓음, 근거 아래)
+code_changes=YES — B1/B2만(READY 범위 준수). CSV·유지비·일일스냅 정책 무변경.
+[vault-fee-hydrate] B1=ensureHydrated · B2=convoy_pre_hydrate_vaults · tsc=PASS · deferred_policy=occupation_daily_snap_out_of_scope
+commit 금지
+```
+
+### 재검수 판정 (CLAUDE.md 「김팀장 지시 재검수」 필수 절차)
+
+| 항목 | 판정 | 근거 |
+|------|------|------|
+| B1 원인(fire-and-forget hydrate가 appendInflow를 덮어씀) | **AGREE** | `applyPlanetTradeTransactionFee.ts:63`(수정 전) `void factionVault.hydrate();` 확인. `createFactionVaultStore.ts:120-126`의 `hydrate()`가 `set({ balanceCredits: parsed... })`로 **무조건 전량 교체**(hydrated 여부 무관, 재호출 가드 없음)하는 것도 코드로 직접 확인 |
+| B1 정밀화(원인의 실제 지배적 트리거) | **AGREE + 보강** | `AiEconomySubCore.ts:42-53`에서 **부트 시 이미 4개 스토어(fleet/arcVault/blueVault/ledger) 전부 await hydrate 완료**함을 확인 — 즉 "최초 1회 hydrate 전 호출" 레이스보다, **매 거래마다 `factionVault.hydrate()`가 무조건(hydrated 가드 없이) 재호출**돼 직전 `appendInflow`가 코얼레싱 대기 중(1500ms, `VAULT_PERSIST_COALESCE_MS`)인 디스크 구버전으로 덮어써지는 **반복 레이스**가 실측 갭(레저≫금고)의 더 직접적 설명. 수정 방향(ensureHydrated)은 두 레이스 모두 동일하게 해소 — 설계 변경 불필요 |
+| B2 원인 | **AGREE** | `runArcCoreConvoyDailySettlementPass.ts:41-46`(수정 전) fleet·ledger만 await hydrate, 팩션 금고(arcVault/blueVault) hydrate 호출 자체가 없음을 확인 |
+| 구현 범위("호출부 3곳") | **PARTIAL 정정** | `applyPlanetTradeTransactionFee`를 async화하니 `settleArcTransportDwellTrade`(내부에서 fee 함수 2회 호출) → `executeArcConvoyRoundTrip`(내부에서 dwell 2회 호출) → `AiEconomySubCore.onArcCoreCommand`(경제 커맨드 핸들러) 순으로 **3단 전파**가 필요했음. `AiEconomySubCore`는 tick성 커맨드 디스패처라 여기서부터는 `void`로 fire-and-forget(내부 await가 이미 순서를 보장하므로 안전) — README에 이 전파 경로가 명시돼 있지 않아 보강 |
+
+### 수정 내용
+
+**B1** — `createFactionVaultStore.ts`에 `ensureHydrated(): Promise<void>` 추가(이미 hydrated면 즉시 resolve · 진행 중이면 동일 Promise 공유로 중복 hydrate 방지). `applyPlanetTradeTransactionFee`/`reversePlanetTradeTransactionFee`를 async화해 `factionVault.ensureHydrated()`를 `appendInflow`/`trySpend` **직전** await. 이 async 전파가 `settleArcTransportDwellTrade`(async화) → `executeArcConvoyRoundTrip`(async화)까지 이어짐. 최종 호출부:
+- `AiEconomySubCore.ts` 커맨드 핸들러 — `void settleArcTransportDwellTrade(...)`(fire-and-forget, 내부 순서는 보장됨)
+- `tradeScreenPolicy.ts`의 `rollbackTradeBuyFailure`(sync 계약 유지, UI 다수 호출부라 시그니처 안 바꿈) — `void reversePlanetTradeTransactionFee(...)`
+- `tools/audit-convoy-coverage.mjs`(README 미언급, grep으로 추가 발견) — `await executeArcConvoyRoundTrip(...)`로 수정(안 고치면 Promise를 sync 값처럼 써서 깨짐)
+
+**B2** — `runArcCoreConvoyDailySettlementPass.ts` 시작부에 `useArcCoreVaultStore.ensureHydrated()` · `useBlueTeamSharedVaultStore.ensureHydrated()` 추가(fleet·ledger와 동일 위치), 내부 `executeArcConvoyRoundTrip` 호출 2곳에 `await` 추가.
+
+### self-check
+
+```
+npx tsc --noEmit -p tsconfig.client.json                                          → PASS(에러 0)
+npx tsx --test src/store/factionVault/createFactionVaultStore.test.ts             → PASS 4/4
+```
+
+### 판별력 — 신규 테스트가 실제로 원본 버그를 재현하는지
+
+테스트 1)은 **수정 전 코드와 동일한 패턴**(`void hydrate(); appendInflow(500)`)을 직접 재현 — hydrate가 나중에 끝나며 500이 디스크값으로 덮어써 유실됨을 실측(assert). 테스트 2)~4)는 `ensureHydrated` 경유 시 유실 없음·dedup 확인. AsyncStorage 실사용 부분은 tsx(node ESM) 하에서 `@react-native-async-storage/async-storage`의 default export가 이중 래핑돼(esModuleInterop 미적용) `getItem`/`setItem`이 `undefined`로 잡히는 환경 한계로 zustand `setState`로 hydrate/persist를 대체해 검증(이 저장소의 다른 AsyncStorage 스토어들도 동일 이유로 테스트 파일 없음 — 기존 제약).
+
+### 금지 항목 준수
+
+일일 점유 스냅 입금 정책 미도입(§7 후속 별도 READY 대상, 손 안 댐) · 유지비 0-캡/마이너스 정책 무변경 · `price_elasticity`·수수료 CSV 무변경 · Headless 강제 분기(`ARCFIRE_HEADLESS_ECONOMY_AUDIT`) 프로덕션 미유입 · SKIA/STAGE/worldmap 무관.
+
+### soft
+
+- README 검증 항목 3(헤드리스/로그로 "BLUE hold 행성 fee가 블루 금고 totalInflow에 반영" 실측)은 미실기 — 코드 경로상 확실하나 실기 convoy settle 1회 후 로그 확인 권장(`tools/long-run-monitor` 다음 정오 배치에서 관찰 가능).
+- `settleArcTransportDwellTrade`/`executeArcConvoyRoundTrip` async화가 이 세션에서 새로 만든 전파 범위라, 위 항목 표의 "PARTIAL 정정"대로 실기(특히 `AiEconomySubCore`의 tick 커맨드 처리량이 많은 시간대) 회귀 여부 확인 권장 — 로직상 fire-and-forget 지점의 순서 보장은 내부 await로 유지되나, 처음 도입하는 비동기 경계라 보수적으로 재확인 요청.
+
+**git commit 안 함** — 김팀장(Cursor 본창) 검수 요청.
 
 ---
 

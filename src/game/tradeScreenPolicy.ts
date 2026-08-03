@@ -211,7 +211,9 @@ export function rollbackTradeBuyFailure(input: {
   }
   store.addCredits(input.totalCharged);
   if (input.planetId && input.grossCredits != null && input.grossCredits > 0) {
-    reversePlanetTradeTransactionFee(input.planetId, input.grossCredits);
+    // rollbackTradeBuyFailure는 sync 계약 유지(호출부 다수, UI 즉시 크레딧 환급만 보장) —
+    // 금고 반영은 내부에서 ensureHydrated로 순서 보장하는 비동기 함수에 위임.
+    void reversePlanetTradeTransactionFee(input.planetId, input.grossCredits);
   }
   if (input.capitalShipNpcId) store.removeHangarShipByNpcId(input.capitalShipNpcId);
 }

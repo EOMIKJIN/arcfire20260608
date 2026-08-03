@@ -278,7 +278,33 @@ QA·장기 soak·릴리스           ███░░░░░░░  30%
 | 날짜 | 변경 |
 |------|------|
 | 2026-06-23 | 초판 작성 — 출시 준비도 평가·M0~M3 마일스톤 고정 |
+| 2026-08-03 | **§12 보완**: 패키징·Google Play 정책 축을 별도 재조사 문서로 분리 링크 (제품 완성도 본문 유지) |
 
 ---
 
-**문서 종료 — Arcfire Release Readiness Milestone Report v1.0**
+## 12. 보완 (2026-08-03) — 빌드 패키징 · Google Play 정책
+
+> 본 문서는 2026-06-23 **제품 기능·안정성 출시 준비도** 정본.  
+> **APK/AAB 최적화 · targetSdk · 16KB · 서명 · ABI 크기** 는 아래에 **별도 정본**으로 둔다.
+
+| 항목 | 링크 |
+|------|------|
+| **정밀 재조사 보고서 (정본)** | [`docs/BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md`](../BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md) |
+| Firestore 배포 순서 | [`docs/FIRESTORE_PRODUCTION_READINESS.md`](../FIRESTORE_PRODUCTION_READINESS.md) |
+| 부트 JS 최적화 (보류) | [`docs/BOOT_INIT_OPTIMIZATION_ROADMAP.md`](../BOOT_INIT_OPTIMIZATION_ROADMAP.md) |
+
+### 12-1. 2026-08-03 코드 실측 한 줄 (요약)
+
+| 게이트 | 실측 | 제품 마일스톤과의 관계 |
+|--------|------|------------------------|
+| targetSdk | **34** | 스토어 **2026-08-31~ API 36 필수** → M3「스토어 출시」보다 **패키징 P0**가 시간 민감 |
+| R8 / shrink | **OFF** | M1-5「릴리스 빌드 품질」보강 필요 |
+| Release 서명 | **debug keystore** | 제출 **절대 불가** |
+| Native arm64 | **~200MB .so** (4ABI 합 ~745MB) | 다운로드 크기 리스크 — 기능 %와 별개 |
+| EAS/AAB 파이프라인 | **없음** | README `run:android --variant release` 수준만 |
+
+**판정 보강:** 2026-06 기준 「상용 출시 ~35~40%」에 더해, **Play 패키징·정책 축만 보면 ~20~30% (No-Go)** 로 분리 관리한다. M1 안정화와 **병렬로** `BUILD_PACKAGING…` P0를 스케줄해야 **8월 말 제출 창**을 놓치지 않는다.
+
+---
+
+**문서 종료 — Arcfire Release Readiness Milestone Report v1.0 (+ 2026-08-03 packaging addendum)**

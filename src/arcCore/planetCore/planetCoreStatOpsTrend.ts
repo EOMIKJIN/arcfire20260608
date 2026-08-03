@@ -40,7 +40,11 @@ export function roundPlanetCoreStatDeltaTenth(value: number): number {
 /** `runArcCoreDailyOpsBatch` 시작 — 배치 전 5지표 스냅샷 */
 export function beginPlanetCoreStatOpsTrendSnapshot(): void {
   const coreStore = usePlanetCoreRuntimeStore.getState();
-  if (!coreStore.hydrated) return;
+  if (!coreStore.hydrated) {
+    // eslint-disable-next-line no-console
+    console.warn('[ArcCore/DailyOps] statOpsTrend snapshot skipped — planetCoreRuntimeStore not hydrated yet');
+    return;
+  }
 
   const snap: Record<string, PlanetCoreGaugeView> = {};
   for (const planetId of Object.keys(coreStore.byPlanetId)) {
@@ -66,7 +70,11 @@ function buildTrendDelta(
 export function commitPlanetCoreStatOpsTrendAfterBatch(): void {
   const before = batchGaugeSnapshot;
   batchGaugeSnapshot = null;
-  if (!before) return;
+  if (!before) {
+    // eslint-disable-next-line no-console
+    console.warn('[ArcCore/DailyOps] statOpsTrend commit skipped — no snapshot taken at batch start');
+    return;
+  }
 
   const policy = resolveArcCoreDailyOpsPolicy();
   const kstDayKey = planetAttackKstDayKey();

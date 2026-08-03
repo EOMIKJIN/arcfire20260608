@@ -82,8 +82,10 @@ function applyConvoyUnloadGrossCap(
 /**
  * 수송선 행성 체류 종료 시 1회 — 적재 또는 하역·수익 정산.
  * 매입·매출 시 해당 행성 무역소 수수료를 팩션 금고·ledger에 즉시 반영한다.
+ * 팩션 금고 hydrate 완료를 기다리는 applyPlanetTradeTransactionFee(async)를 내부에서 await하므로
+ * 이 함수도 async — 호출부는 이후 로직(적재 화물 상태 등)이 정확히 순서대로 반영되도록 await할 것.
  */
-export function settleArcTransportDwellTrade(shipId: string, planetId: string): void {
+export async function settleArcTransportDwellTrade(shipId: string, planetId: string): Promise<void> {
   if (!shipId || !planetId) return;
   if (!isPlanetConvoyTradeEnabled(planetId)) return;
   if (!getPlanetTradeRouteProfile(planetId)) return;
@@ -120,7 +122,7 @@ export function settleArcTransportDwellTrade(shipId: string, planetId: string): 
       const unloadQty = capped.unloadQty;
       const sellGross = capped.sellGross;
 
-      applyPlanetTradeTransactionFee(planetId, sellGross, 'convoy');
+      await applyPlanetTradeTransactionFee(planetId, sellGross, 'convoy');
 
       const profitScale = existing.qty > 0 ? unloadQty / existing.qty : 1;
       const netMarginBeforeAabs = Math.floor(settlement.netProfitTotal * profitScale);
@@ -182,7 +184,7 @@ export function settleArcTransportDwellTrade(shipId: string, planetId: string): 
     return;
   }
 
-  applyPlanetTradeTransactionFee(planetId, cost, 'convoy');
+  await applyPlanetTradeTransactionFee(planetId, cost, 'convoy');
 
   adjustPlanetTradeMarketStock(planetId, plan.tgId, -plan.qty);
   shipCargoById.set(shipId, {
@@ -196,11 +198,11 @@ export function settleArcTransportDwellTrade(shipId: string, planetId: string): 
 }
 
 /** 일일 정산·백필 — 생산지 적재 후 수요지 하역까지 1회 왕복 */
-export function executeArcConvoyRoundTrip(
+export async function executeArcConvoyRoundTrip(
   shipId: string,
   supplyPlanetId: string,
   opts?: { minQty?: number; forceDestPlanetId?: string },
-): { ok: boolean; destPlanetId?: string; reason?: string } {
+): Promise<{ ok: boolean; destPlanetId?: string; reason?: string }> {
   clearConvoyShipCargo(shipId);
   if (!canRunConvoyTradeSettlement()) {
     return { ok: false, reason: 'convoy_settlement_not_ready' };
@@ -215,11 +217,11 @@ export function executeArcConvoyRoundTrip(
   });
   if (!plan) return { ok: false, reason: 'no_route' };
 
-  settleArcTransportDwellTrade(shipId, supplyPlanetId);
+  await settleArcTransportDwellTrade(shipId, supplyPlanetId);
   if (!hasConvoyShipCargo(shipId)) {
     return { ok: false, reason: 'load_failed' };
   }
 
-  settleArcTransportDwellTrade(shipId, plan.destPlanetId);
+  await settleArcTransportDwellTrade(shipId, plan.destPlanetId);
   return { ok: true, destPlanetId: plan.destPlanetId };
 }

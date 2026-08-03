@@ -30,7 +30,11 @@
 
 ```powershell
 # 1) 신규 APK/AAB 빌드·배포 (Anonymous Auth 게이팅 포함 빌드)
-npx expo run:android   # 검증용 로컬 빌드
+#    검증(로컬):  npx expo run:android --variant release
+#    스토어:      상용 서명 + AAB (bundleRelease / EAS) 필수 — debug keystore 금지
+#    상세 게이트: docs/BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md
+#                 (targetSdk·16KB page·R8·ABI 크기 · 2026-08-31 API 36)
+npx expo run:android --variant release   # 내부 검증용 로컬 release
 
 # 2) Firebase 콘솔에서 Anonymous Auth 활성화 확인
 #    Authentication → Sign-in method → Anonymous → Enable
@@ -44,6 +48,19 @@ firebase deploy --only firestore:rules
 #    (payload_chunks는 부모 삭제 시 클라이언트 prune이 처리 — 잔존분은 무해·소량)
 ```
 
+### 3-1. 패키징 전제 (2026-08-03 교차)
+
+rules 배포 대상 **클라이언트 바이너리**는 최소한:
+
+| 전제 | 이유 |
+|------|------|
+| Anonymous Auth 게이팅 포함 | 본 문서 §1 — 구버전 전면 거부 |
+| **상용 서명 + (스토어 시) AAB** | debug 서명·미서명 APK 배포 금지 |
+| **targetSdk 정책 준수** | 2026-08-31~ 신규/업데이트 **API 36** — 상세는 `BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md` |
+| Data safety / AD_ID (Analytics 사용 시) | 병합 manifest에 AD_ID 계열 권한 존재 |
+
+**정본(빌드·Play):** [`docs/BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md`](./BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md)
+
 ## 4. 관리자 도구 주의
 
 - rules 배포 후 `tools/debug/*.cjs` REST 스크립트(무인증)는 **거부된다**. 관리자 작업은 Admin SDK(서비스 계정, rules 우회) 또는 콘솔에서 수행.
@@ -53,6 +70,7 @@ firebase deploy --only firestore:rules
 
 | 우선 | 항목 |
 |---|---|
+| **높음** | **Android 패키징/Play**: target API 36 · 16KB · 상용 서명 · AAB — `BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md` |
 | 중 | App Check(Play Integrity) — 변조 클라이언트 차단 |
 | 중 | 기기 분실 대비 계정 연동(Google Play Games / Apple) — uid 이관 파이프라인 |
 | 하 | `arc_core_shadow_profiles` 닉네임 미러 통합(`users` 직접 read 제거) |

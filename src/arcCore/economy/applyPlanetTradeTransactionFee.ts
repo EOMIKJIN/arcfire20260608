@@ -46,21 +46,25 @@ function resolveFeeBreakdown(
   return computeTradeFeeForGross(grossCredits, source, planetId);
 }
 
-/** 거래 성공 후 호출 — ledger·팩션 금고에 수수료를 기록한다. */
-export function applyPlanetTradeTransactionFee(
+/**
+ * 거래 성공 후 호출 — ledger·팩션 금고에 수수료를 기록한다.
+ * 금고 hydrate 완료를 기다린 뒤 적립 — fire-and-forget hydrate가 진행 중 appendInflow를
+ * 디스크값으로 덮어써 유실시키던 레이스 제거(task_id=faction-vault-fee-hydrate-race-20260803).
+ */
+export async function applyPlanetTradeTransactionFee(
   planetId: string,
   grossCredits: number,
   source: TradeFeeSource = 'player',
-): PlanetTradeFeeBreakdown {
+): Promise<PlanetTradeFeeBreakdown> {
   const breakdown = resolveFeeBreakdown(grossCredits, source, planetId);
   if (!planetId || breakdown.grossCredits <= 0) return breakdown;
 
   if (!usePlanetTradeFeeLedgerStore.getState().hydrated) {
-    void usePlanetTradeFeeLedgerStore.getState().hydrate();
+    await usePlanetTradeFeeLedgerStore.getState().hydrate();
   }
 
   const factionVault = resolveTradeFeeFactionVault(planetId);
-  void factionVault.hydrate();
+  await factionVault.ensureHydrated();
 
   usePlanetTradeFeeLedgerStore
     .getState()
@@ -83,11 +87,11 @@ export function applyPlanetTradeTransactionFee(
   return breakdown;
 }
 
-/** 구매 롤백 시 수수료 집계·금고 적립을 되돌린다(플레이어 무역). */
-export function reversePlanetTradeTransactionFee(
+/** 구매 롤백 시 수수료 집계·금고 적립을 되돌린다(플레이어 무역). appendInflow와 동일 규칙 — hydrate 완료 후 trySpend. */
+export async function reversePlanetTradeTransactionFee(
   planetId: string,
   grossCredits: number,
-): PlanetTradeFeeBreakdown {
+): Promise<PlanetTradeFeeBreakdown> {
   const breakdown = computePlanetTradeFeeBreakdown(grossCredits);
   if (!planetId || breakdown.grossCredits <= 0) return breakdown;
 
@@ -103,6 +107,7 @@ export function reversePlanetTradeTransactionFee(
 
   if (breakdown.arcImmediateShare > 0) {
     const factionVault = resolveTradeFeeFactionVault(planetId);
+    await factionVault.ensureHydrated();
     factionVault.trySpend(breakdown.arcImmediateShare, {
       kind: 'trade_fee_reversal',
       planetId,

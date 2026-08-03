@@ -52,10 +52,15 @@ self-check: `npx tsc --noEmit -p tsconfig.client.json` · Skia 변경 시 `npm r
 
 | 착수 대기 작업 | handoff | 명세 |
 |------|---------|------|
+| **일일 배치「시작만·완료 없음」복구 (P0)** | `tools/kim-team-lead/reports/kim-claude-ready-daily-ops-batch-incomplete-fix.md` | task_id=`daily-ops-batch-incomplete-fix-20260803` · 게이트+격리+trend bulk |
+| **팩션 금고 수수료 입금 유실 (hydrate 레이스)** | `tools/kim-team-lead/reports/kim-claude-ready-faction-vault-fee-hydrate-race.md` | task_id=`faction-vault-fee-hydrate-race-20260803` · **CONDITIONAL**(trade.tsx await 잔여) · 일일 점유스냅 제외 |
+| **경제 P0/P1 (밴드 CPH · convoy · 배치 원자성)** | `tools/kim-team-lead/reports/kim-claude-ready-economy-p0-band-cph-p1-convoy.md` | task_id=`economy-p0-band-cph-p1-convoy-20260803` · 근거 `docs/economy-evaluation/2026-08-03-economy-full-rescan.md` |
 | **분쟁·점령 스택 일관성·효율** | `tools/kim-team-lead/reports/kim-claude-ready-territorial-stack-consistency-opt.md` | 감사=`TERRITORIAL_STACK_CONSISTENCY_AUDIT_20260728.md` · task_id=`territorial-stack-consistency-opt-20260728` |
 | **허브 순회 native_heap (A안)** | `tools/kim-team-lead/reports/kim-claude-ready-hub-hop-native-heap-fix.md` | A1 Image 다운샘플 + A2 planet_change Fresco trim |
 
-> **최근 REVIEWED**: 지도 native_heap·PSS 재검수+쿨다운영속(`worldmap-native-heap-pss-audit-recheck-20260801`) · 마지노선·F2/F4 · 보급포위 — handoff 상단.
+> **최근 REVIEWED**: 지도 native_heap·PSS 재검수+쿨다운영속(`worldmap-native-heap-pss-audit-recheck-20260801`) · 마지노선·F2/F4 · 보급포위 — handoff 상단.  
+> **우선 착수(2026-08-03~04)**: **일일 배치 미완료 복구**(`daily-ops-batch-incomplete-fix`) → vault fee trade await 잔여 → 경제 밴드 P0.  
+> **유지**: 김경제 **메모리** 검수(`long-run-monitor` · `audit:memory:retention` · `kim-economy-handoff` 관측). 일회성 개발 스캔/전수조사 루프 로그는 삭제됨.
 
 대표님/김팀장 지시 시 READY 파일부터 읽고 구현 → `kim-claude-handoff-pending.md` **PENDING** · **commit 금지**.
 

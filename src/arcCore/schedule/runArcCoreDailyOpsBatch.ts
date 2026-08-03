@@ -44,6 +44,17 @@ import { yieldJsThread } from './yieldJsThread';
 import { runPlanetWealthDisparityDailyPass } from '../planetCore/runPlanetWealthDisparityDailyPass';
 import { runPlanetRebellionResolutionDailyPass } from '../planetCore/runPlanetRebellionResolutionDailyPass';
 
+/**
+ * 개별 패스 격리 — 패스 하나가 던지면 이후 전부(트렌드 커밋·완료 마크 포함)가 멈춰
+ * "시작 마킹만 매일 갱신되고 실제로는 2026-07-18 이후 한 번도 완료 못 함" 회귀가 있었다
+ * (task_id=daily-ops-batch-step-isolation-20260803, 실기 세이브로 재현 확인).
+ * 패스 1개 실패해도 나머지 패스·트렌드 커밋·완료 마크는 계속 진행 — 실패만 로그로 격리.
+ */
+function reportDailyOpsStepFailure(step: string, err: unknown): void {
+  // eslint-disable-next-line no-console
+  console.error(`[ArcCore/DailyOps] step=${step} threw — isolated, batch continues`, err);
+}
+
 export type ArcCoreDailyOpsBatchResult = {
   ran: boolean;
   planetEnergy: boolean;
@@ -123,98 +134,206 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
 
   // 각 전-행성 동기 패스 사이에 매크로태스크 yield — 정오 이후 첫 부팅에서 이 배치가
   // 타이틀 버튼 활성화 직후 실행될 때, 탭 등 사용자 입력이 수 초간 막히지 않게 한다(2026-07-19).
-  const colonizationEarly = runSynthColonizationAdvancePass();
-  result.synthColonizationAdvance = colonizationEarly.advanced > 0;
-  if (policy.runWorldExpansionUnlock) {
-    result.worldExpansionUnlock = tryArcCoreWorldDailyUnlock();
+  try {
+    const colonizationEarly = runSynthColonizationAdvancePass();
+    result.synthColonizationAdvance = colonizationEarly.advanced > 0;
+  } catch (err) {
+    reportDailyOpsStepFailure('synthColonizationAdvance', err);
   }
-  await integrateUnlockedSynthFrontierStatEconomyAsync();
+  if (policy.runWorldExpansionUnlock) {
+    try {
+      result.worldExpansionUnlock = tryArcCoreWorldDailyUnlock();
+    } catch (err) {
+      reportDailyOpsStepFailure('worldExpansionUnlock', err);
+    }
+  }
+  try {
+    await integrateUnlockedSynthFrontierStatEconomyAsync();
+  } catch (err) {
+    reportDailyOpsStepFailure('integrateUnlockedSynthFrontierStatEconomy', err);
+  }
   await yieldJsThread();
 
   if (policy.runPlanetEnergyPass) {
-    runPlanetEnergyCorePass();
-    result.planetEnergy = true;
+    try {
+      runPlanetEnergyCorePass();
+      result.planetEnergy = true;
+    } catch (err) {
+      reportDailyOpsStepFailure('planetEnergy', err);
+    }
     await yieldJsThread();
   }
-  const mineralLedger = runPlanetMineralLedgerDailyPass();
-  result.planetMineralLedger = mineralLedger.ran;
+  try {
+    const mineralLedger = runPlanetMineralLedgerDailyPass();
+    result.planetMineralLedger = mineralLedger.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('planetMineralLedger', err);
+  }
   await yieldJsThread();
   if (policy.runPlanetEnvironmentPass) {
-    runPlanetEnvironmentDiversityPass();
-    result.planetEnvironment = true;
+    try {
+      runPlanetEnvironmentDiversityPass();
+      result.planetEnvironment = true;
+    } catch (err) {
+      reportDailyOpsStepFailure('planetEnvironment', err);
+    }
     await yieldJsThread();
   }
-  const contestedAftermath = runContestedZoneAftermathDailyPass();
-  result.contestedZoneAftermath = contestedAftermath.ran;
+  try {
+    const contestedAftermath = runContestedZoneAftermathDailyPass();
+    result.contestedZoneAftermath = contestedAftermath.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('contestedZoneAftermath', err);
+  }
 
-  const wealthDisparity = runPlanetWealthDisparityDailyPass();
-  result.wealthDisparity = wealthDisparity.ran;
+  try {
+    const wealthDisparity = runPlanetWealthDisparityDailyPass();
+    result.wealthDisparity = wealthDisparity.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('wealthDisparity', err);
+  }
 
-  const rebellionResolution = runPlanetRebellionResolutionDailyPass();
-  result.rebellionResolution = rebellionResolution.ran;
+  try {
+    const rebellionResolution = runPlanetRebellionResolutionDailyPass();
+    result.rebellionResolution = rebellionResolution.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('rebellionResolution', err);
+  }
   await yieldJsThread();
 
   if (policy.runPlanetMasterBalancePass) {
-    runGlobalPlanetMasterBalancePass();
-    result.planetMasterBalance = true;
+    try {
+      runGlobalPlanetMasterBalancePass();
+      result.planetMasterBalance = true;
+    } catch (err) {
+      reportDailyOpsStepFailure('planetMasterBalance', err);
+    }
     await yieldJsThread();
   }
   if (policy.runScenarioEconomyPass) {
-    const fabric = runPlanetEconomyFabricDailyPass();
-    result.economyFabric = fabric.ran;
+    try {
+      const fabric = runPlanetEconomyFabricDailyPass();
+      result.economyFabric = fabric.ran;
+    } catch (err) {
+      reportDailyOpsStepFailure('economyFabric', err);
+    }
     await yieldJsThread();
-    runPlayScenarioEconomyPass(true);
-    result.scenarioEconomy = true;
+    try {
+      runPlayScenarioEconomyPass(true);
+      result.scenarioEconomy = true;
+    } catch (err) {
+      reportDailyOpsStepFailure('scenarioEconomy', err);
+    }
     await yieldJsThread();
   }
   if (policy.runMarketPricePass) {
-    const ingest = await ingestBalanceOverlayDeltaIfPending();
-    result.simOverlayIngest = ingest.ran;
-    await runMarketMicroAdjustPass();
-    result.marketPriceAdjust = true;
-    const tradeRouteDaily = runTradeRouteDailyMarketPass();
-    result.tradeRouteDailyMarket = tradeRouteDaily.ran;
+    try {
+      const ingest = await ingestBalanceOverlayDeltaIfPending();
+      result.simOverlayIngest = ingest.ran;
+    } catch (err) {
+      reportDailyOpsStepFailure('simOverlayIngest', err);
+    }
+    try {
+      await runMarketMicroAdjustPass();
+      result.marketPriceAdjust = true;
+    } catch (err) {
+      reportDailyOpsStepFailure('marketPriceAdjust', err);
+    }
+    try {
+      const tradeRouteDaily = runTradeRouteDailyMarketPass();
+      result.tradeRouteDailyMarket = tradeRouteDaily.ran;
+    } catch (err) {
+      reportDailyOpsStepFailure('tradeRouteDailyMarket', err);
+    }
     await yieldJsThread();
   }
   if (policy.runAabsAlignmentPass) {
-    await flushDailyOpsObservationsToAabs();
-    await runDailyPolicyAlignment(true);
-    result.aabsAlignment = true;
-    const engageAdjust = await runIntegratedEngageHpAdjustPass();
-    result.integratedEngageHpAdjust = engageAdjust.ran;
+    try {
+      await flushDailyOpsObservationsToAabs();
+      await runDailyPolicyAlignment(true);
+      result.aabsAlignment = true;
+    } catch (err) {
+      reportDailyOpsStepFailure('aabsAlignment', err);
+    }
+    try {
+      const engageAdjust = await runIntegratedEngageHpAdjustPass();
+      result.integratedEngageHpAdjust = engageAdjust.ran;
+    } catch (err) {
+      reportDailyOpsStepFailure('integratedEngageHpAdjust', err);
+    }
     await yieldJsThread();
   }
-  const convoyDaily = await runArcCoreConvoyDailySettlementPass();
-  result.convoyDailySettlement = convoyDaily.ran;
+  try {
+    const convoyDaily = await runArcCoreConvoyDailySettlementPass();
+    result.convoyDailySettlement = convoyDaily.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('convoyDailySettlement', err);
+  }
   await yieldJsThread();
 
-  const upkeep = await runArcCorePlanetUpkeepDailyPass();
-  result.planetUpkeep = upkeep.ran;
+  try {
+    const upkeep = await runArcCorePlanetUpkeepDailyPass();
+    result.planetUpkeep = upkeep.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('planetUpkeep', err);
+  }
   await yieldJsThread();
 
-  const centralBank = await runArcCoreCentralBankExpenditurePass();
-  result.centralBankExpenditure = centralBank.ran;
+  try {
+    const centralBank = await runArcCoreCentralBankExpenditurePass();
+    result.centralBankExpenditure = centralBank.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('centralBankExpenditure', err);
+  }
 
-  const fiscalLoop = await runPlanetFiscalBalanceClosedLoopPass();
-  result.planetFiscalClosedLoop = fiscalLoop.ran;
+  try {
+    const fiscalLoop = await runPlanetFiscalBalanceClosedLoopPass();
+    result.planetFiscalClosedLoop = fiscalLoop.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('planetFiscalClosedLoop', err);
+  }
   await yieldJsThread();
 
-  const statEquilibrium = runPlanetCoreStatEquilibriumPass();
-  result.facilityStatNudge = statEquilibrium.ran;
-  const labRd = runLaboratoryRdSpeedPass();
-  result.laboratoryRdSpeed = labRd.ran;
-  const tavernRefresh = runTavernBountyRefreshPass();
-  result.tavernBountyRefresh = tavernRefresh.ran;
+  try {
+    const statEquilibrium = runPlanetCoreStatEquilibriumPass();
+    result.facilityStatNudge = statEquilibrium.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('facilityStatNudge', err);
+  }
+  try {
+    const labRd = runLaboratoryRdSpeedPass();
+    result.laboratoryRdSpeed = labRd.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('laboratoryRdSpeed', err);
+  }
+  try {
+    const tavernRefresh = runTavernBountyRefreshPass();
+    result.tavernBountyRefresh = tavernRefresh.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('tavernBountyRefresh', err);
+  }
   await yieldJsThread();
 
-  const instanceMissionPass = runArcCoreInstanceMissionDailyPass();
-  result.arcCoreInstanceMissionDaily = instanceMissionPass.ran;
+  try {
+    const instanceMissionPass = runArcCoreInstanceMissionDailyPass();
+    result.arcCoreInstanceMissionDaily = instanceMissionPass.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('arcCoreInstanceMissionDaily', err);
+  }
 
-  const pgpPass = runPlanetPgpDailyPass();
-  result.planetPgp = pgpPass.ran;
+  try {
+    const pgpPass = runPlanetPgpDailyPass();
+    result.planetPgp = pgpPass.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('planetPgp', err);
+  }
 
-  const ownershipPricingPass = runPlanetOwnershipDeedPricingDailyPass();
-  result.planetOwnershipDeedPricing = ownershipPricingPass.ran;
+  try {
+    const ownershipPricingPass = runPlanetOwnershipDeedPricingDailyPass();
+    result.planetOwnershipDeedPricing = ownershipPricingPass.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('planetOwnershipDeedPricing', err);
+  }
   await yieldJsThread();
 
   try {
@@ -225,14 +344,23 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
       learningResult,
       rtdbAvailable: isArcCoreRtdbAvailableForSession(),
     });
-  } catch {
-    /* learning KPI·RTDB push는 비차단 */
+  } catch (err) {
+    reportDailyOpsStepFailure('economyLearning', err);
+    /* learning KPI·RTDB push는 비차단 — 기존 계약 유지 */
   }
 
-  const gaugeComposition = runPlanetCoreGaugeCompositionApplyPass();
-  result.planetCoreGaugeComposition = gaugeComposition.ran;
+  try {
+    const gaugeComposition = runPlanetCoreGaugeCompositionApplyPass();
+    result.planetCoreGaugeComposition = gaugeComposition.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('planetCoreGaugeComposition', err);
+  }
 
-  commitPlanetCoreStatOpsTrendAfterBatch();
+  try {
+    commitPlanetCoreStatOpsTrendAfterBatch();
+  } catch (err) {
+    reportDailyOpsStepFailure('commitPlanetCoreStatOpsTrendAfterBatch', err);
+  }
 
   return result;
 }
