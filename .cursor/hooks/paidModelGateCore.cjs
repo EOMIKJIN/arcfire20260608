@@ -1,7 +1,8 @@
 'use strict';
 /**
- * 유료 Claude 전용 · Composer/Cursor 폴백 개발 배제
+ * 김팀장 핵심=글록 4.5 · Composer/Cursor Auto 폴백 분석 전용
  * 정본: .cursor/rules/arcfire-paid-model-exclusion-gate.mdc
+ * 앵커: tools/kim-team-lead/reports/SUBSCRIPTION_RENEWAL_ANCHOR.json
  */
 const fs = require('fs');
 const path = require('path');
@@ -15,16 +16,23 @@ const DEFAULT_FORBIDDEN = [
   'composer-2.5',
   'composer-2.5-fast',
   'cursor-auto',
-  'cursor-glock',
-  'glock',
+  'cursor-auto-fallback',
+  'default',
 ];
 
 const DEFAULT_ALLOWED = [
+  'cursor-grok-4.5-high-fast',
   'claude-opus-4-8-thinking-high',
   'claude-sonnet-5-thinking-high',
   'claude-fable-5-thinking-high',
   'claude-4.6-sonnet-medium-thinking',
 ];
+
+const DEFAULT_KIM_CORE = {
+  displayName: 'glock 4.5',
+  displayNameKo: '글록 4.5',
+  taskSlug: 'cursor-grok-4.5-high-fast',
+};
 
 function readAnchor() {
   try {
@@ -53,6 +61,16 @@ function readFallbackFlagPreview() {
   }
 }
 
+function resolveKimCore(anchor) {
+  const core = anchor?.kimTeamLeadCoreModel;
+  if (!core || typeof core !== 'object') return DEFAULT_KIM_CORE;
+  return {
+    displayName: core.displayName || DEFAULT_KIM_CORE.displayName,
+    displayNameKo: core.displayNameKo || DEFAULT_KIM_CORE.displayNameKo,
+    taskSlug: core.taskSlug || DEFAULT_KIM_CORE.taskSlug,
+  };
+}
+
 function buildPaidModelGateContext() {
   const anchor = readAnchor();
   const fallbackActive = isFallbackFlagActive();
@@ -60,40 +78,44 @@ function buildPaidModelGateContext() {
   const forbidden = anchor?.forbiddenFallbackAgents ?? DEFAULT_FORBIDDEN;
   const nextRenewal = anchor?.nextRenewalDate ?? '(see SUBSCRIPTION_RENEWAL_ANCHOR.json)';
   const lastRenewal = anchor?.lastRenewalDate ?? '(see SUBSCRIPTION_RENEWAL_ANCHOR.json)';
+  const kim = resolveKimCore(anchor);
 
   const lines = [
-    '[Arcfire Paid-Model Gate — 2026-07-11~ · 2026-08-02 강화: Composer/글록=분석전용]',
-    `구독 구간(KST): ${lastRenewal} ~ ${nextRenewal} 전일 · 유료 Claude 전용 개발`,
+    '[Arcfire Model Gate — 2026-08-04: 김팀장 핵심=글록 4.5 · Composer/Auto=분석전용]',
+    `김팀장 핵심 모델: ${kim.displayName} (${kim.displayNameKo}) · Task slug=${kim.taskSlug}`,
+    `구독 구간(KST): ${lastRenewal} ~ ${nextRenewal} 전일`,
     `허용 Task model: ${allowed.join(' | ')}`,
-    `개발 금지(분석만): ${forbidden.join(' | ')} — 코드·간단한 로그/계측 diff 절대 금지`,
-    '교훈: 2026-08-02 worldmap 고착방지 안전망(①③) 회귀 — 폴백이 예방 코드를 넣지 말 것',
+    `개발 금지(분석만): ${forbidden.join(' | ')} — Composer·Cursor Auto/미지정 (글록 4.5와 구분)`,
+    '교훈: 2026-08-02 worldmap 고착방지 — Composer/미지정 Auto가 예방 코드를 넣지 말 것',
   ];
 
   if (fallbackActive) {
     lines.push(
-      '⚠️ API_EXHAUST_FALLBACK_ACTIVE — **문서·분석·handoff 문구만** (코드·로그 패치 초안 **폐지**).',
+      '⚠️ API_EXHAUST_FALLBACK_ACTIVE — Composer/Auto는 **문서·분석만** (코드·로그 패치 금지).',
       `폴백 사유: ${readFallbackFlagPreview()}`,
-      '폴백 세션: 코드/로그 diff·audit PASS·완료·커밋 선언 **금지** · 패치는 Opus 복구 후.',
-      '첫 줄 표기: 【분석전용·개발금지】',
+      `가능하면 김팀장 핵심(${kim.displayName}) 세션에서 개발.`,
+      '첫 줄 표기(Composer/Auto): 【분석전용·개발금지】',
     );
   } else {
     lines.push(
-      '🚫 Composer·글록 **분석 전용** — 코드·로그·안전망 수정 **절대 금지** (flag 있어도 코드 예외 없음).',
-      '「김팀장」페르소나 ≠ Composer 코드 권한. 개발 요청 → Opus/Fable/Sonnet 전환 안내.',
-      'Task 위임 model 생략·(기본)·composer slug **금지**.',
+      `✅ 김팀장(${kim.displayName}) 세션 = 코드·검수·런타임 개발 허용.`,
+      '🚫 Composer·Cursor Auto/미지정 = 분석 전용 — 코드·로그·안전망 수정 금지.',
+      `Task 김팀장 위임 기본 model=${kim.taskSlug} · 생략·(기본)·composer **금지**.`,
     );
   }
 
-  lines.push('정본: .cursor/rules/arcfire-paid-model-exclusion-gate.mdc');
+  lines.push('정본: .cursor/rules/arcfire-paid-model-exclusion-gate.mdc · ANCHOR kimTeamLeadCoreModel');
   return lines.join('\n');
 }
 
 function buildPaidModelUserAlert() {
+  const anchor = readAnchor();
+  const kim = resolveKimCore(anchor);
   const fallbackActive = isFallbackFlagActive();
   if (fallbackActive) {
-    return '⚠️ API 소진 — Composer/글록은 **분석·문서만**. 코드·로그 수정 금지 · 패치는 Opus.';
+    return `⚠️ API 소진 — Composer/Auto는 분석·문서만. 개발은 김팀장 핵심(${kim.displayName}) 세션.`;
   }
-  return '🚫 Composer·글록=**분석만**. 개발·로그는 **Opus(김팀장)·Fable·Sonnet만**.';
+  return `김팀장 핵심=${kim.displayName}(개발 허용) · Composer/Auto=분석만.`;
 }
 
 module.exports = {
@@ -101,6 +123,7 @@ module.exports = {
   FALLBACK_FLAG_PATH,
   readAnchor,
   isFallbackFlagActive,
+  resolveKimCore,
   buildPaidModelGateContext,
   buildPaidModelUserAlert,
 };

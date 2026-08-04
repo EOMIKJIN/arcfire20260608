@@ -33,6 +33,7 @@ import { TACTICAL_HUB as TH } from '../../src/ui/tactical/tacticalHubTokens';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { isPlayerShipCombatCapable, resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 import { presentPlanetEconomyInfoOverlay } from '../../src/ui/overlay/arcOverlayStore';
+import { setTerritorialAlertGalaxyMapActive } from '../../src/arcCore/territorial/territorialAlertGalaxyMapGate';
 import { QuestHUD } from '../../src/components/QuestHUD';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { StageShell } from '../../src/stages/StageShell';
@@ -533,6 +534,9 @@ export default function WorldMapScreen() {
       markGalaxyMapResidentActive();
       emitMemProfileMarker({ stage: 'galaxy_map', event: 'route_focus' });
       ackDevMetroReloadMount();
+      // 교전지역(영유권) 팝업 — 은하계 허브 진입 상태에서만 노출(2026-08-04 대표님 지시).
+      // 보류 중이던 알림이 있으면 여기서 흘려보낸다.
+      setTerritorialAlertGalaxyMapActive(true);
       // Reanimated Pan worklet — scrollAlive=1 은 runOnUI 스크롤 적용·2×rAF 이후에만 (SIGSEGV 방지)
       const enableScrollTask = runStageUiAfterIdle(() => {
         requestAnimationFrame(() => {
@@ -548,6 +552,7 @@ export default function WorldMapScreen() {
         clearTimeout(scrollRecoveryTimer);
         enableScrollTask.cancel();
         isFocusedRef.current = false;
+        setTerritorialAlertGalaxyMapActive(false);
         scrollGesturesArmedRef.current = false;
         setMapInteractionReady(false);
         stopGalaxyMapInteractionLoops();

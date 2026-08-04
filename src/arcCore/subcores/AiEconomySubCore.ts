@@ -24,6 +24,8 @@ import { reseedCorruptConvoyFleetEconomyOnce } from '../economy/reseedArcCoreCon
 import { useArcCoreTransportFleetBankStore } from '../../store/factionVault/arcCoreTransportFleetBankStore';
 import { useArcCoreVaultStore } from '../../store/factionVault/arcCoreVaultStore';
 import { useBlueTeamSharedVaultStore } from '../../store/factionVault/blueTeamSharedVaultStore';
+import { useNeutralNationVaultStore } from '../../store/factionVault/neutralNationVaultStore';
+import { usePlayerIndependentNationVaultStore } from '../../store/factionVault/playerIndependentNationVaultStore';
 import { usePlanetTradeFeeLedgerStore } from '../../store/planetTradeFeeLedgerStore';
 import { useWorldStore } from '../../store/worldStore';
 
@@ -32,6 +34,41 @@ import { useWorldStore } from '../../store/worldStore';
  * - `01_레벨업구조` 시나리오: `runPlayScenarioEconomyPass` → 무역소 카탈로그·경제 메타
  * - 상위는 `economy_trade_port_bulk` 또는 `dispatchEconomyTradePortBulk` 만 발행.
  */
+/**
+ * __DEV__ bulk 커맨드 로그 합산 — 전행성 무역소 카탈로그 resync 등은 행성마다 별도
+ * `economy_trade_port_bulk` 커맨드(planets=1)를 발행해, 예전엔 최대 757줄까지 콘솔에
+ * 찍혔다(대표님 logcat 확인). 같은 (action,origin,reason) 조합은 짧은 창(0ms) 안에서
+ * 합산해 1줄만 찍는다 — 커맨드 처리·상태 반영 자체는 완전히 그대로(로그 표현만 압축).
+ * 2026-08-04 대표님 지시 · 김팀장 Wave R2.
+ */
+const devBulkLogAggregate = new Map<
+  string,
+  { action: string; origin: string; reason: string; calls: number; planets: number; items: number }
+>();
+let devBulkLogFlushScheduled = false;
+
+function scheduleDevBulkLogFlush(): void {
+  if (devBulkLogFlushScheduled) return;
+  devBulkLogFlushScheduled = true;
+  setTimeout(() => {
+    devBulkLogFlushScheduled = false;
+    for (const agg of devBulkLogAggregate.values()) {
+      if (agg.calls <= 1) {
+        console.log(
+          `[ArcCore/Economy] bulk ${agg.action} planets=${agg.planets} items=${agg.items} origin=${agg.origin}`,
+          agg.reason,
+        );
+      } else {
+        console.log(
+          `[ArcCore/Economy] bulk ${agg.action} x${agg.calls} calls(합산) planets=${agg.planets} origin=${agg.origin}`,
+          agg.reason,
+        );
+      }
+    }
+    devBulkLogAggregate.clear();
+  }, 0);
+}
+
 export class AiEconomySubCore extends BaseArcSubCore {
   private unsubCommands: (() => void) | null = null;
 
@@ -50,6 +87,9 @@ export class AiEconomySubCore extends BaseArcSubCore {
           await useArcCoreTransportFleetBankStore.getState().hydrate();
           await useArcCoreVaultStore.getState().hydrate();
           await useBlueTeamSharedVaultStore.getState().hydrate();
+          // [5축] task_id=economy-vault-5axis-upgrade-20260804
+          await useNeutralNationVaultStore.getState().hydrate();
+          await usePlayerIndependentNationVaultStore.getState().hydrate();
           await usePlanetTradeFeeLedgerStore.getState().hydrate();
           await reseedCorruptConvoyFleetEconomyOnce();
           await useEconomyPriceOverlayStore.getState().loadAsync();
@@ -84,10 +124,25 @@ export class AiEconomySubCore extends BaseArcSubCore {
     if (planetIds.length === 0) return;
 
     if (__DEV__) {
-      console.log(
-        `[ArcCore/Economy] bulk ${cmd.action} planets=${planetIds.length} items=${cmd.itemIds.length} origin=${cmd.meta?.origin ?? '?'}`,
-        cmd.meta?.reason ?? '',
-      );
+      const origin = cmd.meta?.origin ?? '?';
+      const reason = cmd.meta?.reason ?? '';
+      const key = `${cmd.action}|${origin}|${reason}`;
+      const agg = devBulkLogAggregate.get(key);
+      if (agg) {
+        agg.calls += 1;
+        agg.planets += planetIds.length;
+        agg.items = cmd.itemIds.length;
+      } else {
+        devBulkLogAggregate.set(key, {
+          action: cmd.action,
+          origin,
+          reason,
+          calls: 1,
+          planets: planetIds.length,
+          items: cmd.itemIds.length,
+        });
+      }
+      scheduleDevBulkLogFlush();
     }
 
     if (cmd.action === 'reset_overrides') {

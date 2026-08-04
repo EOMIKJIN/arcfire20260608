@@ -89,10 +89,9 @@ export default function TitleScreen() {
   );
   const hydrated = usePlayerStore((s) => s.hydrated);
   const player = usePlayerStore((s) => s.player);
-  // 로컬 하이드레이션·월드/코어 부트스트랩이 전부 끝난 뒤에만 버튼을 활성화한다.
+  // 로컬 하이드레이션·월드/코어 부트스트랩 완료 후 버튼 활성 (최소화 게이트).
   const bootReady = useAppBootStore((s) => s.bootReady);
-  // bootReady 직후의 아크코어 catch-up·probe(JS 점유)까지 끝나야 실제 입력이 가능 —
-  // 완료 전에는 버튼 로딩 표시를 유지해 「표시 = 입력 가능」 타이밍을 일치시킨다.
+  // catch-up·일일배치·prewarm은 **대기하지 않음** — 이어하기 시 차원항로 로딩에서 처리.
   const postBootSettled = useAppBootStore((s) => s.postBootSettled);
   const getActiveMission = useMissionStore((s) => s.getActiveMission);
   const initTutorialStory = useMissionStore((s) => s.initTutorialStory);

@@ -229,3 +229,13 @@ export const usePlanetTradeFeeLedgerStore = create<PlanetTradeFeeLedgerState>((s
 
   getBucket: (planetId: string) => get().byPlanetId[planetId] ?? emptyBucket(),
 }));
+
+/** 서비스 개시 월드 리셋 — 전 행성 수수료 일집계 비움(계정 purge와 무관) */
+export async function clearPlanetTradeFeeLedgerForServiceLaunch(): Promise<void> {
+  usePlanetTradeFeeLedgerStore.setState({
+    hydrated: true,
+    kstDayKey: planetAttackKstDayKey(),
+    byPlanetId: {},
+  });
+  await usePlanetTradeFeeLedgerStore.getState().persist();
+}

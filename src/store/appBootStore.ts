@@ -11,9 +11,9 @@ type AppBootState = {
   bootReady: boolean;
   setBootReady: (ready: boolean) => void;
   /**
-   * bootReady 이후 실행되는 아크코어 벽시계 catch-up·territorial probe 등
-   * JS 스레드 점유 후처리까지 끝난 시점. 타이틀 버튼은 이 신호까지 로딩 표시를 유지해
-   * 「버튼 표시 = 실제 입력 가능」 타이밍을 일치시킨다 (대표님 지시 2026-07-19).
+   * 타이틀 입력 게이트용. **bootReady 직후 즉시 true** (2026-08-04 대표님).
+   * 일일 배치·벽시계 catch-up·세션 prewarm 완료를 기다리지 않는다 — 그 합류는
+   * 차원항로 `runContinueSessionPrewarm` 전담. 계정 초기화 등으로 잠깐 false 후 복구에 사용.
    */
   postBootSettled: boolean;
   setPostBootSettled: (settled: boolean) => void;

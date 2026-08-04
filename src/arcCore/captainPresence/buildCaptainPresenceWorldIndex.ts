@@ -16,6 +16,7 @@ import {
   syncCaptainOrbitAssignmentEpochMemo,
   readUnlockedPlanetIdsSig,
 } from '../orbitPresence/captainOrbitPlanetAssignment';
+import { listUnlockedPlanetIdsForOrbitPresence } from '../orbitPresence/orbitPresenceUnlockedPlanets';
 import {
   readCaptainPresenceWorldIndexCache,
   writeCaptainPresenceWorldIndexCache,
@@ -172,6 +173,11 @@ export function getCaptainPresenceWorldIndex(
     });
   }
 
+  // 함장마다 resolveCaptainTableOrbitPlanetId → listCaptainOrbitPlanetCandidates가
+  // 개방 행성 목록을 반복 조회하면(비전투 함장 수 × 전체 시스템 순회) 인덱스 1회
+  // 빌드가 수 초로 폭주한다 — 이 루프에서 1회만 계산해 넘긴다
+  // (task_id=daily-ops-batch-incomplete-fix-20260803 후속).
+  const unlockedPlanetIds = listUnlockedPlanetIdsForOrbitPresence();
   for (const captain of NPC_CAPTAINS_FROM_CSV) {
     if (captain.arcOrbitPresenceFill) continue;
     if (captain.operationalState === 'combat') {
@@ -186,7 +192,7 @@ export function getCaptainPresenceWorldIndex(
       });
       continue;
     }
-    const patrolPlanet = resolveCaptainTableOrbitPlanetId(captain, { epochBucket });
+    const patrolPlanet = resolveCaptainTableOrbitPlanetId(captain, { epochBucket, unlockedPlanetIds });
     if (!patrolPlanet) continue;
     commitPresence(byCaptainId, {
       captainId: captain.id,

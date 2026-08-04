@@ -2,8 +2,8 @@ import { InteractionManager } from 'react-native';
 import { BaseArcSubCore } from './BaseArcSubCore';
 import { shouldRunArcCoreDailyBatch } from '../schedule/arcCoreDailyOpsPolicy';
 import {
-  getArcCoreDailyOpsLastBatchDayKey,
   getArcCoreDailyOpsLastBatchAtMs,
+  getArcCoreDailyOpsLastBatchCompletedDayKey,
   hydrateArcCoreDailyOpsState,
   markArcCoreDailyBatchCompleted,
   markArcCoreDailyBatchStarted,
@@ -15,6 +15,9 @@ import { setArcCoreDailyOpsSummaryPending } from '../schedule/arcCoreDailyOpsSum
 import { runArcCorePlanetDevWallTick } from '../planetDevelopment/runArcCorePlanetDevWallTick';
 import { usePlayerStore } from '../../store/playerStore';
 
+/** 배치가 던지고 실패한 뒤 — 매 60초 틱마다 즉시 재시도 스팸을 막는 세션 내(비영속) 쿨다운 */
+const DAILY_BATCH_FAILURE_COOLDOWN_MS = 10 * 60 * 1000;
+
 /**
  * 아크코어 일일 운영 서브코어
  * - 벽시계 24h 관측(수송·궤도 등) 후 정책 시각(기본 12:00)에 1회 분석·재배치.
@@ -23,6 +26,8 @@ import { usePlayerStore } from '../../store/playerStore';
 export class ArcCoreDailyOpsSubCore extends BaseArcSubCore {
   private lastProbeMs = 0;
   private batchRunning = false;
+  /** Wave A′(task_id=daily-ops-batch-incomplete-fix-20260803) — throw 시 재시도 쿨다운용 */
+  private lastFailureAtMs = 0;
 
   constructor() {
     super('arc_core_daily_ops_subcore', '크로노스 · 일일 운영');
@@ -47,45 +52,65 @@ export class ArcCoreDailyOpsSubCore extends BaseArcSubCore {
 
   private async probeDailyBatch(_source: 'boot' | 'tick'): Promise<void> {
     if (this.batchRunning) return;
-    await hydrateArcCoreDailyOpsState();
-    const now = Date.now();
-    const signupAtMs = usePlayerStore.getState().player?.createdAt ?? null;
-    if (
-      !shouldRunArcCoreDailyBatch(now, {
-        lastBatchDayKey: getArcCoreDailyOpsLastBatchDayKey(),
-        signupAtMs,
-      })
-    ) {
+    if (this.lastFailureAtMs && Date.now() - this.lastFailureAtMs < DAILY_BATCH_FAILURE_COOLDOWN_MS) {
       return;
     }
-
+    // 중복 실행 방지 — 아래 await(hydrateArcCoreDailyOpsState) 진입 전에 동기로 플래그를
+    // 세운다. boot 트리거(InteractionManager)와 60초 tick 트리거가 근접 시각에 겹치면,
+    // 플래그를 await 뒤에 세웠을 때 둘 다 위 `if (this.batchRunning) return;`를 통과해
+    // runArcCoreDailyOpsBatch()가 동시에 두 번 실행되는 경합이 있었다(실기 logcat에서
+    // market micro-adjust/trade-route daily market 결과가 완전히 동일한 값으로 두 번
+    // 찍히는 것으로 확인). 2026-08-04 수정.
     this.batchRunning = true;
-    const batchWork = (async () => {
-      try {
-        // 시작 선기록 — 배치 도중 강제종료돼도 같은 날 전체 재실행을 막는다.
-        await markArcCoreDailyBatchStarted(now);
-        const lastBatchAt = getArcCoreDailyOpsLastBatchAtMs();
-        const batchResult = await runArcCoreDailyOpsBatch();
-        const policy = resolveArcCoreDailyOpsPolicy();
-        const dayKey = formatArcCoreOpsDayKey(now, policy.timeZone);
-        const hoursSinceLastBatch =
-          lastBatchAt != null && lastBatchAt > 0
-            ? Math.max(0, (now - lastBatchAt) / (60 * 60 * 1000))
-            : 0;
-        await setArcCoreDailyOpsSummaryPending({
-          dayKey,
-          hoursSinceLastBatch,
-          economyFabric: batchResult.economyFabric,
-          simOverlayIngest: batchResult.simOverlayIngest,
-          economyLearning: batchResult.economyLearning,
-        });
-        await markArcCoreDailyBatchCompleted(now);
-      } finally {
-        this.batchRunning = false;
+    try {
+      await hydrateArcCoreDailyOpsState();
+      const now = Date.now();
+      const signupAtMs = usePlayerStore.getState().player?.createdAt ?? null;
+      if (
+        !shouldRunArcCoreDailyBatch(now, {
+          // Wave A(task_id=daily-ops-batch-incomplete-fix-20260803) — 게이트는 "완료" 기준.
+          // 예전엔 "시작" dayKey로 게이트해서, 배치가 중간에 멈춰도 그 날 영구 차단됐다.
+          lastBatchCompletedDayKey: getArcCoreDailyOpsLastBatchCompletedDayKey(),
+          signupAtMs,
+        })
+      ) {
+        return;
       }
-    })();
-    // 부트 settle 체인(타이틀 버튼 게이트)이 배치 종료를 기다릴 수 있게 등록
-    registerRunningArcCoreDailyBatch(batchWork);
-    await batchWork;
+
+      const batchWork = (async () => {
+        try {
+          // 시작 관측 기록(게이트에는 더 이상 쓰이지 않음 — Wave A) — 실기 진단·감사용으로만 유지.
+          await markArcCoreDailyBatchStarted(now);
+          const lastBatchAt = getArcCoreDailyOpsLastBatchAtMs();
+          const batchResult = await runArcCoreDailyOpsBatch();
+          const policy = resolveArcCoreDailyOpsPolicy();
+          const dayKey = formatArcCoreOpsDayKey(now, policy.timeZone);
+          const hoursSinceLastBatch =
+            lastBatchAt != null && lastBatchAt > 0
+              ? Math.max(0, (now - lastBatchAt) / (60 * 60 * 1000))
+              : 0;
+          await setArcCoreDailyOpsSummaryPending({
+            dayKey,
+            hoursSinceLastBatch,
+            economyFabric: batchResult.economyFabric,
+            simOverlayIngest: batchResult.simOverlayIngest,
+            economyLearning: batchResult.economyLearning,
+          });
+          await markArcCoreDailyBatchCompleted(now);
+          this.lastFailureAtMs = 0;
+        } catch (err) {
+          // Wave A′ — throw 시 markCompleted 금지(그 날 재시도 여지를 남김) + 세션 쿨다운만.
+          // eslint-disable-next-line no-console
+          console.error('[ArcCore/DailyOps] probeDailyBatch threw — completed 마크 안 함, 재시도 대기', err);
+          this.lastFailureAtMs = Date.now();
+        }
+      })();
+      // 차원항로 진입 prewarm(runContinueSessionPrewarm)이 배치 종료를 기다릴 수 있게
+      // 등록 — 타이틀 버튼 게이트는 더 이상 이 배치를 기다리지 않는다(2026-08-04).
+      registerRunningArcCoreDailyBatch(batchWork);
+      await batchWork;
+    } finally {
+      this.batchRunning = false;
+    }
   }
 }

@@ -125,12 +125,27 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     planetOwnershipDeedPricing: false,
   };
 
-  if (!usePlanetCoreRuntimeStore.getState().hydrated) {
-    await usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync();
+  // Wave B′(task_id=daily-ops-batch-incomplete-fix-20260803) — preamble도 격리.
+  // markArcCoreDailyBatchStarted 이후 이 구간에서 던지면 이후 25개 패스가 전부 스킵되고
+  // (SubCore 쪽 Wave A′ 격리로 앱이 죽진 않지만) 그 날의 실질적 배치 효과가 통째로 없어진다.
+  try {
+    if (!usePlanetCoreRuntimeStore.getState().hydrated) {
+      await usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync();
+    }
+  } catch (err) {
+    reportDailyOpsStepFailure('planetCoreRuntimeBootstrap', err);
   }
 
-  beginPlanetCoreStatOpsTrendSnapshot();
-  beginPlanetCoreGaugeIntentBatch();
+  try {
+    beginPlanetCoreStatOpsTrendSnapshot();
+  } catch (err) {
+    reportDailyOpsStepFailure('beginPlanetCoreStatOpsTrendSnapshot', err);
+  }
+  try {
+    beginPlanetCoreGaugeIntentBatch();
+  } catch (err) {
+    reportDailyOpsStepFailure('beginPlanetCoreGaugeIntentBatch', err);
+  }
 
   // 각 전-행성 동기 패스 사이에 매크로태스크 yield — 정오 이후 첫 부팅에서 이 배치가
   // 타이틀 버튼 활성화 직후 실행될 때, 탭 등 사용자 입력이 수 초간 막히지 않게 한다(2026-07-19).

@@ -19,6 +19,7 @@ import { useArcCoreInstanceMissionBoardStore } from '../store/arcCoreInstanceMis
 import { useNpcCaptainProgressStore } from '../store/npcCaptainProgressStore';
 import { usePlanetCoreRuntimeStore } from '../store/planetCoreRuntimeStore';
 import { usePlanetMineralLedgerStore } from '../store/planetMineralLedgerStore';
+import { resetPlayerIndependentNationVaultForAccountPurge } from '../store/factionVault/playerIndependentNationVaultStore';
 import { usePlayerStore } from '../store/playerStore';
 import { useUserSessionStore } from '../store/userSessionStore';
 import { syncArcCoreGlobalWorldExpansionSync } from '../arcCore/syncArcCoreGlobalWorldExpansion';
@@ -182,6 +183,11 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   // 행성개발(BLUE·증서) — purge 시 baseline · RED ArcCore 슬롯만 유지
   await usePlanetCoreRuntimeStore.getState().resetLocalPlanetCoreRuntimeForAccountPurge();
   await usePlanetMineralLedgerStore.getState().resetLocal();
+  // [5축] 독립국 금고 — 플레이어 축 데이터라 잔액 0으로 초기화(대표님 계약: 독립국은
+  // 계정 초기화 시 중립화). hold 자체의 중립화는 purgePlayerAccountWorldState(위)가
+  // releasePlayerPlanetHolds로 이미 처리(occupier=neutral·kind=neutral, 기존 로직) —
+  // 여기서는 그 hold에 붙어 있던 잔액만 정리한다. 월드 금고(1~4)는 손대지 않음.
+  await resetPlayerIndependentNationVaultForAccountPurge();
   // 갤럭시 개방·항행 기록(방문/개방 성계) — worldStore (초기 시드 galaxy로 복귀)
   await useWorldStore.getState().resetLocalWorld();
   syncArcCoreGlobalWorldExpansionSync();

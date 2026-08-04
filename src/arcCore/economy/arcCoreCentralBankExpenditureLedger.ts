@@ -67,6 +67,11 @@ export async function persistArcCoreCentralBankExpenditureLedger(
   await AsyncStorage.setItem(LEDGER_KEY, JSON.stringify(cache));
 }
 
+/** 서비스 개시 월드 리셋 — 중앙은행 누적 원장 제로 */
+export async function clearArcCoreCentralBankExpenditureLedgerForServiceLaunch(): Promise<void> {
+  await persistArcCoreCentralBankExpenditureLedger({ ...EMPTY });
+}
+
 export async function accumulateArcCoreCentralBankExpenditure(input: {
   kstDayKey: string;
   fleetMilitaryCredits: number;

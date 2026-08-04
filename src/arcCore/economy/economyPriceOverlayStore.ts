@@ -129,6 +129,19 @@ export const useEconomyPriceOverlayStore = create<EconomyPriceOverlayState>((set
   },
 }));
 
+/** 서비스 개시 월드 리셋 — 카테고리 배율·시뮬 마커를 기본(1.0)으로 */
+export async function resetEconomyPriceOverlayForServiceLaunch(): Promise<void> {
+  const base = defaultMultipliers();
+  useEconomyPriceOverlayStore.setState({
+    hydrated: true,
+    multipliers: { ...base },
+    baseline: { ...base },
+    lastAdjustAt: 0,
+    lastSimVirtualPopulation: 0,
+  });
+  await useEconomyPriceOverlayStore.getState().persistAsync();
+}
+
 /** zustand 외부(TradeEngine 등)에서 동기 조회 */
 export function getEconomyCategoryPriceMul(key: EconomyCategoryKey): number {
   return useEconomyPriceOverlayStore.getState().getCategoryMul(key);

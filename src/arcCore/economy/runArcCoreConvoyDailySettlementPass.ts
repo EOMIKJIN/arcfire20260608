@@ -6,6 +6,8 @@ import { planetAttackKstDayKey } from '../planetAttack/planetAttackKstDayKey';
 import { useArcCoreTransportFleetBankStore } from '../../store/factionVault/arcCoreTransportFleetBankStore';
 import { useArcCoreVaultStore } from '../../store/factionVault/arcCoreVaultStore';
 import { useBlueTeamSharedVaultStore } from '../../store/factionVault/blueTeamSharedVaultStore';
+import { useNeutralNationVaultStore } from '../../store/factionVault/neutralNationVaultStore';
+import { usePlayerIndependentNationVaultStore } from '../../store/factionVault/playerIndependentNationVaultStore';
 import { usePlanetTradeFeeLedgerStore } from '../../store/planetTradeFeeLedgerStore';
 import {
   convoyDailyCoverageEnabled,
@@ -50,6 +52,9 @@ export async function runArcCoreConvoyDailySettlementPass(): Promise<ArcCoreConv
   // applyPlanetTradeTransactionFee가 팩션 금고에 즉시 입금하므로, 배치 시작 시점에 함께 보장.
   await useArcCoreVaultStore.getState().ensureHydrated();
   await useBlueTeamSharedVaultStore.getState().ensureHydrated();
+  // [5축] fee 라우팅이 neutral·independent로도 갈 수 있어 배치 진입 시 함께 보장(E12)
+  await useNeutralNationVaultStore.getState().ensureHydrated();
+  await usePlayerIndependentNationVaultStore.getState().ensureHydrated();
 
   usePlanetTradeFeeLedgerStore.getState().ensureDay(kstDayKey);
 

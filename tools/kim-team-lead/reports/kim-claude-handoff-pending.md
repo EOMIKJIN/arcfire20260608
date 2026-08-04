@@ -5,6 +5,456 @@
 
 ---
 
+## ✅ 김팀장 구현 — 서비스 개시 월드 경제 리셋 E1 · 2026-08-04 22:03 KST
+
+```text
+status=IMPLEMENTED_BY_KIM_LEAD
+task_id=economy-service-launch-world-reset-20260804
+assignee=김팀장(글록 4.5) 직접
+code_changes=YES
+commit=미요청
+tsc=PASS
+verify=_verify-service-launch-world-reset.cjs ALL PASS
+onBoot=미연결(의도)
+```
+
+### 변경
+
+| 파일 | 내용 |
+|------|------|
+| **신규** `src/arcCore/economy/resetArcCoreWorldEconomyForServiceLaunch.ts` | `full`/`soft` API |
+| `arcCoreDailyOpsState` · summary · fee ledger · overlay · ingest · central ledger | clear/reseed 헬퍼 |
+| `runArcCoreConvoyDailySettlementPass.ts` | E12 neutral/independent ensureHydrated |
+
+대표님: 운영 호출만 · 계정 purge·synth hardReset과 분리. 커밋은 지시 시.
+
+---
+
+## 📊 김팀장 보고 — 경제 시스템 전수 구조 감사 FINAL · 2026-08-04 22:00 KST
+
+```text
+status=AUDIT_FINAL→E1_IMPLEMENTED
+task=economy-system-full-structure-audit-3loop
+report=docs/economy-evaluation/2026-08-04-economy-system-full-structure-audit-FINAL.md
+ready_p0=tools/kim-team-lead/reports/kim-claude-ready-economy-service-launch-world-reset.md
+```
+
+---
+
+## ✅ REVIEWED — 경제 금고 5축 Phase A+B · 김팀장 검수 · 2026-08-04 17:18 KST
+
+```text
+status=REVIEWED
+task_id=economy-vault-5axis-upgrade-20260804
+verdict=AGREE_WITH_FIX
+code_changes=YES (김클로드 A+B + 김팀장 라우터 이중경로 1건 정정)
+commit=미요청 · 대표님 지시 시 커밋 패키지 (debug 스크립트·로그 제외 권장)
+tsc=PASS
+verify=_verify-vault-5axis.cjs ALL PASS 16/16
+device_PASS=없음 (오프라인 검증만)
+phase_C=보류 (경제 UI 중립/독립 라벨)
+```
+
+### 김팀장 검수 요약
+
+| 축 | 판정 | 메모 |
+|----|------|------|
+| A 중립 vault + fee/upkeep 라우팅 | **AGREE** | `createFactionVaultStore` · seed 0 · 기존 3키 이전 없음 |
+| B 독립 vault + purge zero | **AGREE** | `localAccountReset` 연동 · hold 중립=`releasePlayerPlanetHolds` 기존 로직 **확인** |
+| 유지비 1차 player.credits | **AGREE** | `isPlayerOwnedHold` 분기 무변경 |
+| 수송·블루·아크 월드 purge 제외 | **AGREE** | independent만 리셋 |
+| 단일 라우터 (READY §3) | **FIX 반영** | `resolveFactionVaultForOccupierClanId`/`ForPlanetId` 가 still neutral→arccore·player null 붕괴 → **김팀장 수정** (fee/upkeep와 일치) |
+| Phase C UI | **DEFER** | `planetEconomyInfoSnapshot` red/blue 라벨만 — 후속 READY 또는 동 작업 확장 |
+| 운영 효과 | **주의** | 중립 vault 시드 0 → 당분간 중립 유지비 shortfall 증가 가능(의도: 이후 수수료 적립 전용). 아크코어 잔고 유출 감소 |
+
+### 김팀장 정정 파일
+
+- `src/arcCore/economy/resolveFactionVault.ts` — UI/공용 resolve도 neutral·independent 동일 라우팅
+
+### 후속 (커밋·다음 작업 — 대표님 지시 시)
+
+1. **Phase C**: econSnap 중립/독립 라벨 + heavy hydrate revision (선택)
+2. **device**: 무역·일일유지비·계정초기화 실기 1회
+3. 커밋 시: `tools/debug/_verify*` 및 long-run logs **제외** · vault src + account + upkeep + subcore만
+
+---
+
+## 📋 PENDING(원본 · 김클로드) — 경제 금고 5축 고도화 Phase A+B · 2026-08-04
+
+```text
+status=PENDING→superseded_by_REVIEWED
+task_id=economy-vault-5axis-upgrade-20260804
+team_lead_recheck=AGREE(대부분) + PARTIAL 정정 1건(§3 독립국 purge 중립화 — 이미 구현돼 있었음, 근거 아래)
+code_changes=YES — 신규 2파일 + 기존 4파일 수정 + 검증 스크립트 1개(커밋 제외)
+commit 금지
+[pss-pre-dev] hot_path=아님(무역 수수료=거래 시점만·유지비=일1회) · alloc=신규 스토어 2개
+  (createFactionVaultStore 재사용, txn append-only, 기존 3금고와 동일 프로파일) ·
+  cache=persist 1.5s coalesce(팩토리 그대로) · stage=일1회 upkeep 배치 + 무역 수수료 경로 +
+  AiEconomySubCore deferred hydrate + 계정 purge · risk=P3(신규 분기만 추가, 기존
+  RED/BLUE 라우팅 무변경 확인) · verdict=PASS
+```
+
+### 재검수 결과 (분석 문서 §1~§8 대조, 파일:줄 근거)
+
+| 분석 문서 항목 | 판정 | 근거 |
+|----------------|------|------|
+| §2 라우팅 — neutral·player_clan 전부 arccore로 폴백 | **AGREE** | `resolveFactionVault.ts`(수정 전) `getVaultKeyByFaction`이 blue만 구분(25-30행 구버전) · `resolveTradeFeeFactionVault`/`runArcCorePlanetUpkeepDailyPass.ts`가 `faction === 'blue' ? 'blue' : 'red'` 삼항으로 neutral을 항상 red로 붕괴시키는 것 직접 확인 |
+| §3 "독립국 hold는 purge 시 중립화 **검증·보강 필요**" | **PARTIAL 정정** | `src/clanWar/planetHoldReleasePolicy.ts:78-87` `restoreHoldAfterPlayerRelease`에 `hold.kind==='player_independent'` 전용 분기가 **이미 존재**(주석상 2026-07-28 `account-purge-ownership-neutralize` 도입 — occupier/kind→neutral, deed 클리어, `neutralizedAt` 마킹까지 전부 구현됨). "검증·보강 필요"가 아니라 **재사용만 하면 되는 기존 기능**이었음 — 새로 구현하지 않고 검증 스크립트로 재확인만 함(아래) |
+| §8 목표 라우팅 표(신규 4·5, 기존 1~3 유지) | **AGREE** | 구현 그대로 반영 |
+| §5 "기존 3키 잔액 강제 이전 금지" | **AGREE, 준수** | 신규 2금고 모두 `migrationStashKey` 미설정·시드 0 고정 — 기존 arccore/blue/transport 스토리지 키 무변경 확인(검증 스크립트에서 arccore 잔액 8,997,612 그대로 유지 실측) |
+| §5 "유지비 1차는 player.credits 유지" | **AGREE, 준수** | `runArcCorePlanetUpkeepDailyPass.ts`의 `isPlayerOwnedHold` 분기(플레이어 소유 hold → player.credits)는 **손대지 않음** — neutral 분기만 추가 |
+
+### 구현 (Phase A + B, Phase C(UI)는 미착수 — 아래 "다음")
+
+| 파일 | 변경 |
+|------|------|
+| **신규** `src/store/factionVault/neutralNationVaultStore.ts` | `createFactionVaultStore` 재사용 · storageKey `arcfire_neutral_nation_vault_v1` · 시드 0 |
+| **신규** `src/store/factionVault/playerIndependentNationVaultStore.ts` | 동일 패턴 · storageKey `arcfire_player_independent_nation_vault_v1` · 시드 0 · `resetPlayerIndependentNationVaultForAccountPurge()` export(purge 전용) |
+| `src/arcCore/economy/resolveFactionVault.ts` | `VAULT_KEY_NEUTRAL`/`VAULT_KEY_PLAYER_INDEPENDENT` 추가 · `getVaultKeyByFaction` neutral 분기 추가 · `isPlayerIndependentHold(hold)`(kind 우선, `isPlayerOriginatedClanId` 폴백) 신규 · `resolveTradeFeeFactionVault`가 독립국 우선 판정 후 blue/neutral/red 라우팅 |
+| `src/arcCore/economy/runArcCorePlanetUpkeepDailyPass.ts` | neutral vault hydrate 추가 · neutral hold 유지비를 neutral vault에서 차감(기존 red/blue 분기 옆에 추가) · 결과 타입에 `neutralUpkeepChargedCredits`/`neutralUpkeepFailedCredits` 필드 추가(기존 필드 무변경) |
+| `src/arcCore/subcores/AiEconomySubCore.ts` | deferred boot hydrate 체인에 신규 2금고 hydrate 추가(기존 3금고와 동일 위치·패턴) |
+| `src/account/localAccountReset.ts` | `purgeLocalAccountData`에 `resetPlayerIndependentNationVaultForAccountPurge()` 호출 추가(플레이어 축 섹션) — hold 중립화는 기존 `purgePlayerAccountWorldState`가 이미 처리하므로 잔액만 정리 |
+
+**건드리지 않은 것**: 기존 3금고(arccore/blue/transport)의 storageKey·시드·마이그레이션 로직, RED/BLUE 라우팅 분기, `resolveFactionVaultForOccupierClanId`/`resolveFactionVaultForPlanetId`(UI 전용, Phase C 대상), CSV 유지비/수수료율 숫자.
+
+### 실행 검증 (코드 읽기 아님 — 실제 실행, `tools/debug/_verify-vault-5axis.cjs` — 커밋 제외)
+
+실기 세이브(RKStorage.db) 백업을 로드해 순수 로직 16건 전부 실행·확인:
+
+```
+getVaultKeyByFaction: blue/neutral/red/폴백 4건 PASS
+isPlayerIndependentHold: 4건 PASS
+purge_account releasePlayerPlanetHolds(독립국 hold): occupier/kind→neutral, deed/homePlayerUid→null 5건 PASS
+독립국 금고: inflow 5000 적립 → purge reset → 잔액 0·txns 0 3건 PASS
+arccore vault 잔액(8,997,612) — purge 대상 아님, 그대로 유지 확인
+ALL PASS (16/16)
+```
+
+### self-check
+
+```
+npx tsc --noEmit -p tsconfig.client.json   → PASS(에러 0)
+npx tsx tools/debug/_verify-vault-5axis.cjs → ALL PASS (16/16)
+```
+
+### 미완·보류
+
+- **Phase C(UI)** 미착수 — `planetEconomyInfoSnapshot.ts`의 `resolveFactionVaultForOccupierClanId` 호출부가 아직 red/blue만 라벨링(242-251행 부근), neutral/독립국은 라벨 없음. 원하시면 이어서 진행하겠습니다.
+- **실기(디바이스) 검증 없음** — 위는 전부 오프라인 순수 로직 실행 검증. 실제 무역소 거래·유지비 배치·계정 초기화 버튼을 실기에서 눌러본 결과는 아닙니다.
+- CSV `neutral_vault_seed_credits`/`player_independent_vault_seed_credits` 같은 전용 시드 키는 추가하지 않음 — 코드가 `() => 0` 고정이라 필요 시에만 나중에 CSV 정책 키로 승격 가능(existing-value 변경 아님, 순수 추가라 안전).
+
+---
+
+## 📋 ASSIGNED → 김클로드 — 경제 금고 5축 고도화 · 2026-08-04
+
+```text
+status=ASSIGNED
+assignee=김클로드
+task_id=economy-vault-5axis-upgrade-20260804
+ready=tools/kim-team-lead/reports/kim-claude-ready-economy-vault-5axis-upgrade.md
+analysis=docs/economy-evaluation/2026-08-04-vault-5axis-reaudit.md
+commit 금지
+```
+
+### 한 줄
+
+아크코어=RED 동일(1) · 수송(2) · 블루(3) **유지** + **중립 vault(4)·독립국 vault(5)** · purge 시 **독립국 중립·vault 제로**.
+
+### 김클로드 지시 전문 (복사)
+
+```text
+@김클로드 경제 금고 5축.
+
+분석: docs/economy-evaluation/2026-08-04-vault-5axis-reaudit.md
+READY: tools/kim-team-lead/reports/kim-claude-ready-economy-vault-5axis-upgrade.md
+task_id=economy-vault-5axis-upgrade-20260804
+
+Phase A 중립 vault → B 독립 vault+purge 중립 → C UI.
+createFactionVaultStore만 · 기존 3키 잔액 강제 이전 금지.
+유지비 1차는 player.credits 유지. tsc · purge 검증 · commit 금지.
+```
+
+---
+
+## 📋 김팀장 → 김클로드 공유 — 전체 재검수 결과 · 2026-08-04
+
+> **대표님 지시**: 전수검사 내용을 김클로드에게 공유하라.  
+> **정본(본문 전부)**: [`kim-claude-share-full-reaudit-20260804.md`](./kim-claude-share-full-reaudit-20260804.md)  
+> **실행 DoD**: [`kim-claude-ready-rework-boot-batch-warp-20260804.md`](./kim-claude-ready-rework-boot-batch-warp-20260804.md)
+
+```text
+status=SHARED_TO_KIM_CLAUDE
+assignee=김클로드
+task_next=kim-claude-rework-boot-batch-warp-20260804  (R0→R1→R2)
+tsc=PASS (전수검사 시점)
+src_commit=미커밋 (금지)
+device_PASS=없음
+```
+
+### 요약 (김클로드 필독)
+
+| 판정 | 내용 |
+|------|------|
+| **코드 AGREE** | 타이틀 즉시 · prewarm 합류 · RTDB 6s · join 12/45s · LogBox warn↓ · batch TOCTOU · Wave A 완료게이트 · territorial worldmap · 규칙 재명기 |
+| **미완** | R0 handoff 1블록 · R1 join 20~25s · R2 catalog 로그 · **전체 device_PASS** |
+| **DEFER** | auth device uid 재시도 상수 — **변경 금지** |
+| **커밋** | src/app OK 패키지 가능하나 **device 전 · rework R0 전 · 디버그/로그 제외** |
+
+김클로드는 **공유 정본 §7 지시문**을 복사해 착수하고, 완료 시 본 파일 상단을 **PENDING 1블록**으로 교체할 것.
+
+---
+
+## 📋 PENDING — 오늘(2026-08-04) 부팅/차원항로/일일배치 전 작업 통합 · Wave R0 정리 · 김클로드
+
+> 대표님 지시(2026-08-04 오후): 김팀장 전수검사 내용을 참고로 학습 완료. **분석·우선순위 정리 위주로 전환**,
+> 추가 코드 작업은 **오늘 저녁 PM 5시 이후 재확인 후 진행**. 아래는 그 전까지의 최종 상태 스냅샷.
+
+```text
+status=PENDING
+task_id=kim-claude-rework-boot-batch-warp-20260804 (R0 완료 · R1/R2 완료 · 하위 항목은 아래 표)
+code_changes=YES — 누적 다수 파일(아래 "오늘 변경 파일 전체" 표)
+commit 금지
+team_lead_recheck=AGREE_CODE (race/title/RTDB/join-cap/territorial) · AGREE_SOFT (territorial) ·
+  DEFER (auth device retry) — 근거: kim-claude-share-full-reaudit-20260804.md §2·§5
+[pss-pre-dev] hot_path=아님(부팅 1회·이어하기 1회 진입 경로) · alloc=무변경(타임아웃 race·
+  로그 합산·게이트 flag 등 소규모 헬퍼만, 신규 순환 없음) · stage=title 부트 게이트 /
+  차원항로 prewarm / 일일배치 SubCore·economy·territorial · risk=혼합(P2~P5, 표 참고) ·
+  verdict=PASS (tsc 전부 clean, 오프라인 harness로 배치 완주 재확인)
+```
+
+### 오늘 무엇을 했는가 (완료·검증됨)
+
+| # | 항목 | 상태 | 핵심 근거 |
+|---|------|------|-----------|
+| 1 | 타이틀 버튼 즉시 활성 (`postBootSettled` 즉시) | ✅ 완료 (김팀장 초안+김클로드 재검수) | `app/_layout.tsx` — 12s deadline·daily/catch-up wait 전부 제거 |
+| 2 | catch-up·일일배치 join → 차원항로(`continueSessionPrewarm`) 전담 | ✅ 완료 | `arcCoreWallClockCatchUpGate.ts`(신규) + `arcCoreDailyBatchGate.ts` |
+| 3 | 일일배치 TOCTOU 동시 중복 실행 레이스 | ✅ 완료 | `ArcCoreDailyOpsSubCore.ts` — `batchRunning=true`를 await 이전으로, 상위 try/finally |
+| 4 | RTDB daily KPI write 무한 대기(오프라인 시 SDK가 안 풂) → 차원항로 영구 고착 | ✅ 완료 | `pushArcCoreDailyKpiToRtdb.ts` 6s 타임아웃 + `continueSessionPrewarm.ts` join 상한(catch-up 12s·daily 24s) 이중 방어 |
+| 5 | RTDB skip 시 `console.warn`이 LogBox 경고창으로 뜨던 것 | ✅ 완료 | 동일 파일 — `__DEV__` `console.log`로 하향(기존 `ensureFirebaseAnonymousAuth` 관례와 통일) |
+| 6 | 교전지역(영유권) 팝업이 타이틀 화면에 뜨던 것 | ✅ 완료 | `territorialAlertGalaxyMapGate.ts`(신규) — 은하계 허브(worldmap) 포커스 중일 때만 즉시 표시, 아니면 보류 후 진입 시 노출(최신 1건) |
+| 7 | (Wave R1) daily join 상한 45s → 24s 하향 + 단계별 상시 계측 | ✅ 완료 | `continueSessionPrewarm.ts` — `DAILY_BATCH_JOIN_TIMEOUT_MS=24_000`, `markBootPerf`로 join_catchup/join_daily/assets/bootstrap 4구간 `__DEV__` 상시 마킹(임시 아님) |
+| 8 | (Wave R2) 무역소 카탈로그 resync DEV 로그가 행성당(최대 757줄) 폭주 | ✅ 완료(로그만) | `AiEconomySubCore.ts` — 같은 (action,origin,reason) 커맨드를 0ms 창 안에서 합산해 1줄로 출력(동작 무변경, 로그 표현만 압축) |
+| 9 | 일일배치 O(N²)/중복호출 5건(findPlanetInSystems, tavern replenish, hostCaptain 재조회, orbit candidates dedup, unlockedPlanetIds 반복호출) | ✅ 완료(이전 라운드, 김팀장 AGREE 기록됨) | 오프라인 harness 41.6s → 32.5s |
+| 10 | Wave A~C′ (일일배치 미완료 근본 수정 — 게이트/격리/O(N) bulk) | ✅ 완료(이전 라운드, 김팀장 AGREE 기록됨) | `lastBatchCompletedDayKey` 완료 기준 게이트 등 |
+
+### 발견했으나 손대지 않은 것 (우선순위 정리용)
+
+| # | 항목 | 판정 | 사유 |
+|---|------|------|------|
+| A | `src/firebase/auth.ts` `resolveDeviceScopedUid()` — 기기 id 조회 최악 ≈3.2s가 `bootReady`를 막음 | **DEFER — 값 변경 금지** (김팀장 재확인) | 기기 식별 무결성 로직 — 대표님/김팀장 별도 승인 전 손대지 않음 |
+| B | `syncTradePortCatalogFromBalance`가 "bulk" 커맨드를 행성 1개 배열로 반복 호출(실질 per-item) | **원인 AGREE, 수정 미착수(P2)** | 로그 스로틀(#8)로 증상은 없앴으나, 호출 자체를 진짜 다건 배치로 합치는 건 더 큰 변경 — `AiEconomySubCore.onBoot()`의 `resyncAllCoreOpenTradePortCatalogs()`(warm 캐시 플래그까지 건드림)와 의미론이 100% 같은지 추가 확인 필요해 보류 |
+| C | 부팅 시 무역소 전행성 resync가 boot(`resyncAllCoreOpenTradePortCatalogs`)와 일일배치(`syncTradePortCatalogFromBalance`) 두 경로에서 세션 겹칠 때 중복될 가능성 | **조사만, 미수정** | 두 경로가 캐시/warm 플래그 의미론이 달라 단순 통합이 안전한지 불확실 — 손대지 말고 별도 ready로 다룰 것 권장 |
+
+### 오늘 변경 파일 전체 (커밋 대상 후보 — 커밋은 금지, 목록만)
+
+`app/_layout.tsx` · `app/index.tsx` · `app/(game)/worldmap.tsx` · `src/store/appBootStore.ts` ·
+`src/game/continueSessionPrewarm.ts` · `src/game/bootPerformance.ts` ·
+`src/arcCore/schedule/arcCoreDailyBatchGate.ts` · `src/arcCore/schedule/arcCoreWallClockCatchUpGate.ts`(신규) ·
+`src/arcCore/schedule/arcCoreDailyOpsPolicy.ts` · `src/arcCore/schedule/arcCoreDailyOpsState.ts` ·
+`src/arcCore/schedule/runArcCoreDailyOpsBatch.ts` · `src/arcCore/subcores/ArcCoreDailyOpsSubCore.ts` ·
+`src/arcCore/subcores/AiEconomySubCore.ts` ·
+`src/arcCore/territorial/showTerritorialOccupationChangeAlert.ts` ·
+`src/arcCore/territorial/territorialAlertGalaxyMapGate.ts`(신규) ·
+`src/arcCore/learning/pushArcCoreDailyKpiToRtdb.ts` · `src/firebase/arccoreRtdbConfig.ts` ·
+`src/arcCore/captainPresence/buildCaptainPresenceWorldIndex.ts` ·
+`src/arcCore/orbitPresence/captainOrbitPlanetAssignment.ts` ·
+`src/arcCore/economy/runPlanetPgpDailyPass.ts` · `src/missions/arcCoreInstanceMissionGenerator.ts` ·
+`src/store/planetCoreRuntimeStore.ts`
+
+### self-check (오늘 최종)
+
+```
+npx tsc --noEmit -p tsconfig.client.json   → PASS(에러 0)
+오프라인 harness(757행성 실데이터, 최신 코드 전부 반영) → BATCH COMPLETED OK, 32.8s
+grep waitForArcCoreDailyBatchIdle app/_layout.tsx → 0건(타이틀 경로 wait 없음 확인)
+```
+
+### 다음(오늘 저녁 5시 이후 재개 시 우선순위 — 대표님 결정 대기)
+
+1. **최우선 — 실기(디바이스) 검증**: 콜드 기동 버튼 즉시 활성 / 이어하기→차원항로 24s 이내 완주 / 오프라인 시 LogBox 경고 미표시 / 영유권 팝업 타이틀 미노출·worldmap 진입 시 노출 / micro-adjust·trade-route 로그 중복 소실. **이번 세션은 오프라인 harness·정적 코드 검수까지만 — device_PASS 전부 미검증.**
+2. 위 표의 **A(기기 uid 재시도)**: 그대로 둘지, 재시도 상수를 낮출지 대표님 판단.
+3. 위 표의 **B/C(무역소 카탈로그 resync 통합 여부)**: 필요성 낮음 판단되면 그대로 종결, 우선순위 있으면 별도 ready로.
+4. `docs/BOOT_INIT_OPTIMIZATION_ROADMAP.md` 등 규칙 문서와 코드 최종 정합 여부 — 코드는 완료, 문서 쪽 별도 확인 안 함(범위 밖으로 유지했음).
+
+### 위 ASSIGNED(`title-button-min-activation-continue-prewarm-20260804`)는 본 통합 PENDING에 흡수·마감
+
+---
+
+## 📋 김팀장 검수+추가 패치 — 시작화면 12s 잠금 (초안 이력 · 김클로드 재검수 대상) · 2026-08-04
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | 초안 존재 가능 · **김클로드 READY DoD 재검수·보완 후 PENDING으로 넘길 것** |
+| note | 아래 REVIEWED 블록은 배정 전 세션 초안. 최종 코드 소유·self-check는 김클로드. |
+
+## 📋 김팀장 검수 — daily-ops 후속 O(N²)/중복호출 5건 · 2026-08-04
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **AGREE (코드)** · 실기 초 단위 단축·device PASS는 **미확정** |
+| parent | Wave A~C′ **AGREE_CODE** 유지 · 본 라운드는 **성능 후속**만 |
+| #1 planetIndex Map bulk | **AGREE** — `buildPlanetIndexFromSystems` + O(N) 대입, find 선형 제거 |
+| #2 tavern replenish batch | **AGREE** — `computeReplenishedPlanetEntries` + 행성 Map 그룹 · single-planet `ensure*` 동등 병합 확인 |
+| #3 hostCaptain 1회 | **AGREE** — 벌크 path 파라미터 전달 · default 하위호환 |
+| #4 Set dedup orbit candidates | **AGREE** — sort 후 집합 동일 방향 |
+| #5 unlockedPlanetIds 1회 (presence index) | **AGREE** — 지배 병목 지점 합리적 · options 생략 시 기존 경로 유지 |
+| 출력 의미론 | **AGREE** — listed/cleared 분리·보드 병합 규칙 등가(정적 재검) |
+| TIMING 잔존 | **AGREE** — src 내 `[ArcCore/DailyOps][TIMING]` **0건** |
+| tsc | **PASS** (김팀장 재실행 exit 0) |
+| soft | 오프라인 41.6→32.5s **자체 재측정은 생략**(알고리즘 근거로 AGREE) · **실기 배치 중복 실행·항로 로딩 경합**은 본 patch 범위 밖 잔여 P1 · `tools/debug/_repro*` 커밋 제외 |
+| **다음** | (1) 앱 1회 cold + 배치 완주 logcat (2) 완료 dayKey/AtMs/trend (3) 지시 시 **통합 커밋**(Wave A~C′ + 본 후속) |
+
+```text
+status=REVIEWED
+team_lead_verdict=AGREE_CODE_FOLLOWUP · device_PASS_pending
+task_id=daily-ops-batch-incomplete-fix-20260803 (follow-up perf)
+commit=보류
+```
+
+---
+
+## 📋 PENDING — 일일 배치 40~70초 소요 후속 O(N²) 3건 추가 발견·수정 · 김클로드 · 2026-08-04
+
+```text
+status=PENDING
+task_id=daily-ops-batch-incomplete-fix-20260803
+parent=위 REVIEWED 섹션(Wave A~C′, AGREE)의 후속 — "device_PASS_pending" 상태에서
+  대표님이 오프라인 harness로 "정상 완료까지 40~70초" 재확인·질문 → 원인 정밀 추적
+code_changes=YES — 5개 파일 추가 수정(아래 목록)
+commit 금지
+[pss-pre-dev] hot_path=아님(일 1회 배치) · alloc=무변경(전부 조회·dedup 최적화, 새 상태 없음) ·
+  cache=arcfire_arc_core_daily_ops_v1 스키마 무변경(이번 라운드는 순수 알고리즘 성능) ·
+  stage=arcCore 일일배치+선술집 인스턴스 의뢰+함장 presence 인덱스 · risk=P4(판정로직·
+  출력 데이터 셋 무변경, 정렬·반환 결과 동일함을 각 함수별로 확인 후 반영) · verdict=PASS
+```
+
+### 무엇을 왜 했는가
+
+REVIEWED 처리된 Wave C/C′(4개 함수 O(N²) 스프레드→O(N))가 실측 26ms→2ms(N=757)로 작아서, "그럼 실측 40~70초는 어디서 오는가"를 대표님이 다시 물으셨습니다. 오프라인 harness(`tools/debug/_repro-daily-batch.cjs`, 실제 세이브 757행성 데이터)에 이번엔 **단계별 타이밍을 임시로 촘촘히 삽입**해 실측하며 추적했고(작업 완료 후 전부 원복·제거), 아래 3건의 **별도 O(N²)/중복호출 버그**를 코드로 확인·수정했습니다. 전부 Wave C/C′와 무관한, 이번 세션에 처음 발견한 항목입니다.
+
+| # | 파일:함수 | 문제 | 수정 |
+|---|-----------|------|------|
+| 1 | `store/planetCoreRuntimeStore.ts` — `patchPlanetCoresBulk`·`patchPlanetMasterBalanceBulk` | 벌크 패스 루프 안에서 행성마다 `findPlanetInSystems`(전 시스템 선형 탐색, O(N))를 호출 → O(N²) | `buildPlanetIndexFromSystems(systems): Map` O(1) 인덱스를 루프 밖에서 1회만 빌드 후 `.get()` 조회로 교체 |
+| 2 | `missions/arcCoreInstanceMissionGenerator.ts` — `runArcCoreTavernInstanceBoardReplenishPass`·`ensurePlanetTavernInstanceBoard` | 일일 배치가 선술집 활성 행성마다 `ensurePlanetTavernInstanceBoard`를 호출했는데, 그 안에서 매번 전체 `entries`(최대 757×10건)를 `filter`/재조립 → O(P×N) | 공통 코어(`computeReplenishedPlanetEntries`)를 추출해 `entries`를 행성별로 1회만 그룹핑(Map)한 뒤 각 행성은 자기 그룹만 처리 |
+| 3 | 같은 파일 — `buildArcCoreInstanceMissionEntry` 호출부 | 신규 의뢰 entry 1건(행성당 최대 10건)마다 `resolveTavernHostCaptainAtPlanet`(함장 presence 전역 인덱스 조회)을 재호출 — 결과가 같은 행성이면 항상 동일한데 10배 중복 호출 | 행성당 1회만 조회해 `hostCaptain` 파라미터로 전달(함수 내부 기본값은 하위호환 유지) |
+| 4 | `arcCore/orbitPresence/captainOrbitPlanetAssignment.ts` — `listCaptainOrbitPlanetCandidates` | 함장 궤도 후보 목록에 개방 행성(최대 757개)을 하나씩 넣으며 `out.includes(pid)`(배열 선형 탐색)로 dedup → O(P²) per 함장 | `Set` 기반 dedup으로 교체(끝에 `.sort()`하므로 결과 집합·순서 100% 동일, 동작 무변화) |
+| 5 | `arcCore/captainPresence/buildCaptainPresenceWorldIndex.ts` — `getCaptainPresenceWorldIndex` | 위 #4가 호출하는 `listUnlockedPlanetIdsForOrbitPresence()`(전 시스템 순회, 가벼운 연산 아님)를 **비전투 함장마다**(CSV 함장 247명) 반복 호출 — 인덱스 캐시가 있어도 최초 1회 빌드 자체가 이 반복 호출로 수 초 소요 | `getCaptainPresenceWorldIndex`에서 1회만 계산해 `resolveCaptainTableOrbitPlanetId(captain, {epochBucket, unlockedPlanetIds})`로 전달 |
+
+### 실측 (오프라인 harness, 757행성 실데이터, 단계별)
+
+- 1번만 반영: `perPlanetGroup`·`tailGroup` 변화 거의 없음(측정 노이즈 수준) — findPlanetInSystems 자체는 이 harness 조건(빈 보드 최초 실행)에서는 부수 기여자였음.
+- 2·3번 반영 후: `arcCoreInstanceMissionDaily` 17.4s → 16.3s(호출 수는 10배 줄었으나 아래 4·5번이 진짜 지배 요인이었음이 이 시점에 드러남).
+- 4번만 반영: 거의 무변화(dedup 메커니즘 자체보다 **호출 반복 횟수**가 지배적이었음 — 정직하게 원인 오판을 인정하고 5번까지 추적).
+- 5번까지 반영: 전체 배치 완주 시간 **41.6s → 32.5s**(같은 harness·같은 데이터로 직접 비교, 약 22% 단축).
+
+**중요한 한계**: 이 harness는 Node/tsx 위에서 도는 오프라인 재현이라, `require()` 호출 비용 등 일부 오버헤드가 실기(Metro+Hermes 번들, `require`가 숫자 인덱스로 사전 컴파일됨)보다 부풀려졌을 가능성이 있습니다. 위 5건은 전부 **알고리즘적으로 명백한 버그**(O(N²)·불필요 반복 호출)라 실기에서도 방향은 동일하게 개선되지만, 정확한 초 단위 개선폭은 실기 실측이 필요합니다.
+
+### 남은 것 (조사했으나 원인 아님으로 확인)
+
+`economyFabric`(~2.6s)·`planetMasterBalance`(~2s)·`scenarioEconomy`(~1.7s)·`convoyDailySettlement`(~3.2s) 등은 각각 757행성 규모의 정상적인 O(N) 작업으로 보이며, 이번 라운드에서 추가 O(N²) 패턴은 못 찾았습니다(얕은 확인만 — 전수 조사는 범위 밖). 32초는 이제 한 곳의 지배적 병목이 아니라 여러 패스에 고르게 분산돼 있습니다.
+
+### self-check
+
+```
+npx tsc --noEmit -p tsconfig.client.json   → PASS(에러 0, 5개 변경 파일 반영 후)
+오프라인 harness(757행성 실데이터)          → BATCH COMPLETED OK, 41.6s → 32.5s
+임시 진단 계측(TIMING 로그·__PROF·globalThis 카운터) → 전부 원복·제거 확인(grep 0건)
+```
+
+### 대표님 질문("40~70초 때문에 오류가 많다면 어떻게 고치나")에 대한 답
+
+1. 32.5초(실기는 더 짧을 가능성)는 기존에 확인된 "app_background→JS 리로드가 2~10분마다 발생"하는 주기보다 충분히 짧아, **정상 조건이라면 한 번의 연속 실행 창 안에 완주 가능**합니다.
+2. REVIEWED된 Wave A 게이트(완료 기준 재시도)가 이미 있어, 설령 이번에도 중간에 죽더라도 다음 기회에 자동 재시도됩니다 — "영구 미완료"는 이제 구조적으로 막혀 있습니다.
+3. 남은 리스크는 이번 task 범위 밖인 "왜 2~10분마다 리로드되는가"(OS/기기 레벨) — 이건 별도 조사가 필요합니다.
+
+---
+
+## 📋 김팀장 검수 — daily-ops-batch-incomplete-fix-20260803 · 2026-08-04
+
+| 항목 | 결과 |
+|------|------|
+| **verdict** | **AGREE (코드)** · **실기 PASS 전 완료·커밋 보류** |
+| task_id | `daily-ops-batch-incomplete-fix-20260803` |
+| Wave A 게이트 | **AGREE** — `shouldRun` → `lastBatchCompletedDayKey` · migrate from `lastBatchAtMs` · markStarted는 gate 미사용 |
+| Wave A′ SubCore catch | **AGREE** — catch + 10m 쿨다운 · markCompleted는 성공 경로만 |
+| Wave B 격리 | **AGREE** — 기존 패스 try/catch 유지 |
+| Wave B′ preamble | **AGREE** — bootstrap/begin* 개별 try/catch |
+| Wave C/C′ bulk | **AGREE** — 4곳 O(N) in-place · 김클로드 「late OOM 단독 root 아님」하향 **수용**(여전히 가치 있는 수정) |
+| 호출부 정합 | **AGREE** — `shouldRun` 입력 필드 단일 경로(SubCore만) |
+| tsc | **PASS** (김팀장 재실행 exit 0) |
+| READY 범위 | **AGREE** — vault fee·CSV 미침범 |
+| soft | 실기 배치 완주·statOpsTrend day 갱신 미실측 · 백그라운드 재시작 40~70s 배치 간섭은 후속 관측 · `tools/debug/_repro*`/`_bench*` 일회 도구 **커밋 제외** |
+| 리셋 | 마이그레이션으로 수동 RKStorage 리셋 **불필요**(완료 day=AtMs 기준 재시도) · 실패 시만 승인 후 키 리셋 |
+| **다음** | 앱 리로드 후 배치 1회 · logcat `[ArcCore/DailyOps]` · storage `completedDayKey`+AtMs+trend kstDay · 이상 시 리셋/재검 |
+
+```text
+status=REVIEWED
+team_lead_verdict=AGREE_CODE · device_PASS_pending
+task_id=daily-ops-batch-incomplete-fix-20260803
+commit=보류(실기 검증 후 · 사용자 지시 시)
+```
+
+---
+
+## 📋 PENDING — 일일 배치 미완료 통합 수정(Wave A·A′·B·B′·C·C′) · 김클로드
+
+```text
+status=PENDING
+task_id=daily-ops-batch-incomplete-fix-20260803
+recheck=AGREE(A/A′/B/B′) + PARTIAL 정정(C/C′ — 근거 실측, 타이밍 크기 다름, 근거 아래)
+waves=A,A′,B,B′,C,C′ 전부 구현
+code_changes=YES — 6개 파일(schedule 3·subcores 1·store 1·economy 1)
+commit 금지
+[pss-pre-dev] hot_path=아님(일 1회 배치) · alloc=무변경(게이트·격리만, bulk는 오히려 감소) ·
+  cache=arcfire_arc_core_daily_ops_v1 스키마 필드 추가(마이그레이션 포함) ·
+  stage=arcCore 일일배치 · risk=P4(배치 호출빈도·CSV·판정로직 전부 무변경, 게이트 기준과
+  실패 격리 범위만 확장) · verdict=PASS
+```
+
+### 재검수 (READY 원문 대비, 파일:줄 근거)
+
+김팀장 READY(`kim-claude-ready-daily-ops-batch-incomplete-fix.md`)는 정확했고 그대로 구현했습니다. RECON 문서(`DAILY_OPS_BATCH_INCOMPLETE_RECON_20260803.md`)는 참조 경로가 깨져 있어(파일 자체가 실제로 없음) 못 열었고, READY 본문만으로 재검수·구현했습니다.
+
+| Wave | 판정 | 근거 |
+|------|------|------|
+| **A(게이트)** | **AGREE** | `arcCoreDailyOpsState.ts`의 `markDailyBatchDayKey`가 시작 시점에 `lastBatchDayKey`를 선기록하고, `shouldRunArcCoreDailyBatch`가 이 값으로 게이트하는 걸 코드로 직접 확인 — 시작만 되고 중단되면 그 날 영구 차단됨. 실기로도 재현(어제·오늘 둘 다 `lastBatchDayKey=당일`인데 `lastBatchAtMs` 불변). |
+| **A′(SubCore catch)** | **AGREE** | `probeDailyBatch`의 `batchWork`가 `try/finally`만 있고 `catch`가 없어 throw 시 `markCompleted` 여부와 무관하게 예외가 상위로 전파(제 어제 Wave B 격리가 batch 내부 25패스는 막았지만 preamble·SubCore 레벨은 안 막았음)됨을 확인. |
+| **B(격리, 흡수)** | **AGREE, 기존 초안 유지** | 어제 구현분(`daily-ops-batch-step-isolation-20260803`) 그대로 — READY도 "격리만으로 완료 선언 금지"라 명시, C/A와 함께여야 완성. |
+| **B′(preamble 가드)** | **AGREE** | `bootstrapFromWorldAsync`/`beginPlanetCoreStatOpsTrendSnapshot`/`beginPlanetCoreGaugeIntentBatch`가 기존 25패스 try/catch **밖**(앞)에 있어 여기서 던지면 전부 스킵됨을 확인. |
+| **C/C′(O(N²) bulk)** | **PARTIAL 정정** | 4개 함수(`patchPlanetCoresBulk`·`patchPlanetMasterBalanceBulk`·`patchPlanetCoreStatOpsTrendBulk`·`runPlanetPgpDailyPass`) 전부 `next = {...next, [key]: ...}` 루프 내 재스프레드 O(N²) 패턴 **코드로 100% 확인** — 수정 자체는 명백히 옳음(무손실 O(N) 전환). **단, 마이크로벤치(`tools/debug/_bench-on2-vs-on.cjs`) 실측 결과 N=757에서 old=26ms·new=2ms — READY가 "late-stage 폭주 유력 후보"로 표현한 것보다 훨씬 작은 규모.** 이 패턴 단독으로 며칠씩 이어지는 미완료를 설명하긴 어려움 — 고쳐두는 게 명백히 이득(공짜 개선)이라 그대로 반영했지만, "유력 후보"에서 "저비용 개선(효과는 제한적)"으로 하향 정정. |
+
+### 실기 재현·검증 (오프라인 harness — 실제 세이브 757행성 데이터 사용)
+
+`tools/debug/_repro-daily-batch.cjs`(+ AsyncStorage/react-native/firebase 모크 3종) — 기기에서 pull한 RKStorage.db를 그대로 로드해 `runArcCoreDailyOpsBatch()`를 Node에서 직접 실행:
+- 수정 후: **완료(BATCH COMPLETED OK)**, firebase-mock 관련 1건만 격리되어 로그로 남고 나머지 24개 패스 정상.
+- 수정 전(C/C′만 되돌려 비교): 완료는 했지만(예외 없음) **총 소요시간 자체가 40~70초대**(1회성 비교라 노이즈 큼, 정밀 비교는 아님).
+
+### 새로 발견한 사실 — 더 유력한 후보(추정, 미확정)
+
+전체 배치 1회 완주가 오프라인에서도 **40~70초** 걸립니다. 이 중 상당수는 Firestore/RTDB `Promise.race` 타임아웃(예: `AUTH_TIMEOUT_MS=6000`·`ARCORE_SEED_PROBE_MS=4000`) 대기로 추정됩니다(오프라인 모크는 즉시 실패하지만, 실기는 실제 타임아웃 시간만큼 기다림 — 이런 지점이 여러 곳). **8/1~8/3 재검수 세션에서 이미 확인한 「app_background → JS 리로드/프로세스 재시작이 2~10분 간격으로 반복」 현상과 겹치면, 배치가 1~2분씩 걸리는 동안 리로드가 끼어들어 매번 죽는 시나리오가 이번 O(N²)보다 더 그럴듯합니다.** 이건 그 자체로 별도 조사가 필요한 OS/기기 레벨 이슈라 이번 task 범위 밖으로 남겨둡니다 — 다만 이번 Wave A 게이트 수정으로 "죽어도 다음 기회에 재시도"는 이제 보장되므로, 원인이 무엇이든 완료될 때까지 자연히 재시도됩니다.
+
+### self-check
+
+```
+npx tsc --noEmit -p tsconfig.client.json   → PASS(에러 0, 전체 6개 변경 파일 반영 후)
+오프라인 harness(757행성 실데이터)          → BATCH COMPLETED OK
+마이크로벤치(O(N²) vs O(N), N=757)          → 26ms → 2ms
+```
+
+### 마이그레이션 주의
+
+`arcfire_arc_core_daily_ops_v1`에 신규 필드 `lastBatchCompletedDayKey` 추가 — 기존 저장값엔 없으므로, `hydrateArcCoreDailyOpsState()`에서 `lastBatchAtMs`가 있으면 그 시각의 KST dayKey로 역산해 채우고, 없으면 null(즉시 재시도 대상)로 둠. 기존 세이브(예: 지금 실기의 `lastBatchAtMs≈2026-07-17T15:00Z`)는 마이그레이션되면 `completedDayKey="2026-07-18"`이 되어 오늘 재시도 대상으로 정확히 잡힘 — 별도 수동 리셋 불필요(어제 여쭤봤던 RKStorage 직접 조작은 이제 필요 없음).
+
+### soft
+
+- RECON 문서를 못 읽어서 그 안에 있었을 수 있는 추가 근거(§1-§3 상세표, 8/2 unlock·7/22 upkeep 성공 로그 등)는 READY 요약(§1)만으로 대체 검증 — 문서 경로 복구되면 대조 권장.
+- 오프라인 harness는 AsyncStorage/react-native/firebase를 모크하므로 실기 100% 재현은 아님 — 실제 기기에서 다음 배치 완료 여부는 로그(`[ArcCore/DailyOps]`)로 재확인 필요.
+- Firebase Auth/Firestore rules 연관은 READY도 "약함"으로 분류했고, 이번 조사로도 직접 증거는 못 찾음 — 배제는 아니지만 우선순위 낮춤.
+
+**git commit 안 함** — 김팀장(Cursor 본창) 검수 요청.
+
+---
+
 ## 📋 NOTE — 대표님 지시(2026-08-03): 22:00 재검수 종료 · 도구 일괄 제거 완료
 
 - 소스 전수재검수 루프·`code-reaudit*`·`CODE_REAUDIT_*` 산출물 **삭제 완료** (2026-08-03 22:00 KST).

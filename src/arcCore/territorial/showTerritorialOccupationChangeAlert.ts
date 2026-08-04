@@ -3,6 +3,7 @@ import { t } from '../../i18n';
 import { showArcNotificationAlert } from '../../utils/showArcAlert';
 import { TERRITORIAL_OCCUPATION_ALERT_ID } from '../../ui/overlay/overlayAlertContract';
 import type { MapFactionSide } from '../../galaxyMap/resolveMapFactionSide';
+import { presentTerritorialAlertGatedToGalaxyMap } from './territorialAlertGalaxyMapGate';
 
 function sideLabelKo(side: MapFactionSide): string {
   if (side === 'blue') return t('territorial.side.blue');
@@ -23,40 +24,43 @@ export function showTerritorialOccupationChangeAlert(input: {
   const prev = sideLabelKo(input.previousSide);
   const next = sideLabelKo(input.newSide);
 
-  // ArcCore 틱 → Fabric/Skia 동시 구간 회피: 오버레이는 UI 유휴 후 표시
-  InteractionManager.runAfterInteractions(() => {
-    const alertOpts = { id: TERRITORIAL_OCCUPATION_ALERT_ID };
+  // 은하계 허브(worldmap) 진입 상태가 아니면 보류 — 진입 시 자동으로 흘려보낸다.
+  presentTerritorialAlertGatedToGalaxyMap(() => {
+    // ArcCore 틱 → Fabric/Skia 동시 구간 회피: 오버레이는 UI 유휴 후 표시
+    InteractionManager.runAfterInteractions(() => {
+      const alertOpts = { id: TERRITORIAL_OCCUPATION_ALERT_ID };
 
-    if (input.decision === 'neutral_declare') {
+      if (input.decision === 'neutral_declare') {
+        showArcNotificationAlert(
+          t('territorial.alert.neutralTitle'),
+          t('territorial.alert.neutralBody', { planet: input.planetLabelKo, prev, next }),
+          alertOpts,
+        );
+        return;
+      }
+
+      if (input.decision === 'battle') {
+        showArcNotificationAlert(
+          t('territorial.alert.battleTitle'),
+          t('territorial.alert.battleBody', {
+            planet: input.planetLabelKo,
+            prev,
+            next,
+            outcome: input.attackerWon
+              ? t('territorial.alert.attackerWin')
+              : t('territorial.alert.defenderWin'),
+          }),
+          alertOpts,
+        );
+        return;
+      }
+
       showArcNotificationAlert(
-        t('territorial.alert.neutralTitle'),
-        t('territorial.alert.neutralBody', { planet: input.planetLabelKo, prev, next }),
+        t('territorial.alert.changeTitle'),
+        t('territorial.alert.changeBody', { planet: input.planetLabelKo, prev, next }),
         alertOpts,
       );
-      return;
-    }
-
-    if (input.decision === 'battle') {
-      showArcNotificationAlert(
-        t('territorial.alert.battleTitle'),
-        t('territorial.alert.battleBody', {
-          planet: input.planetLabelKo,
-          prev,
-          next,
-          outcome: input.attackerWon
-            ? t('territorial.alert.attackerWin')
-            : t('territorial.alert.defenderWin'),
-        }),
-        alertOpts,
-      );
-      return;
-    }
-
-    showArcNotificationAlert(
-      t('territorial.alert.changeTitle'),
-      t('territorial.alert.changeBody', { planet: input.planetLabelKo, prev, next }),
-      alertOpts,
-    );
+    });
   });
 }
 
@@ -67,12 +71,14 @@ export function showTerritorialStatusQuoAlert(input: {
 }): void {
   const sideLabel = sideLabelKo(input.side);
 
-  InteractionManager.runAfterInteractions(() => {
-    showArcNotificationAlert(
-      t('territorial.alert.statusQuoTitle'),
-      t('territorial.alert.statusQuoBody', { planet: input.planetLabelKo, side: sideLabel }),
-      { id: TERRITORIAL_OCCUPATION_ALERT_ID },
-    );
+  presentTerritorialAlertGatedToGalaxyMap(() => {
+    InteractionManager.runAfterInteractions(() => {
+      showArcNotificationAlert(
+        t('territorial.alert.statusQuoTitle'),
+        t('territorial.alert.statusQuoBody', { planet: input.planetLabelKo, side: sideLabel }),
+        { id: TERRITORIAL_OCCUPATION_ALERT_ID },
+      );
+    });
   });
 }
 
@@ -90,36 +96,38 @@ export function showTerritorialOccupationMaintainedAlert(input: {
     : 'neutral';
   const sideLabel = sideLabelKo(input.side);
 
-  InteractionManager.runAfterInteractions(() => {
-    const alertOpts = { id: TERRITORIAL_OCCUPATION_ALERT_ID };
+  presentTerritorialAlertGatedToGalaxyMap(() => {
+    InteractionManager.runAfterInteractions(() => {
+      const alertOpts = { id: TERRITORIAL_OCCUPATION_ALERT_ID };
 
-    if (input.decision === 'battle') {
-      const bodyKey =
+      if (input.decision === 'battle') {
+        const bodyKey =
+          sideKey === 'neutral'
+            ? 'territorial.alert.maintained.neutralBody'
+            : (`territorial.alert.maintained.${sideKey}Body` as const);
+        showArcNotificationAlert(
+          t('territorial.alert.maintainedBattleTitle'),
+          t(bodyKey, {
+            planet: input.planetLabelKo,
+            side: sideLabel,
+            outcome: input.attackerWon
+              ? t('territorial.alert.attackerWin')
+              : t('territorial.alert.defenderWin'),
+          }),
+          alertOpts,
+        );
+        return;
+      }
+
+      const diplomaticBodyKey =
         sideKey === 'neutral'
           ? 'territorial.alert.maintained.neutralBody'
-          : (`territorial.alert.maintained.${sideKey}Body` as const);
+          : 'territorial.alert.maintained.diplomaticBody';
       showArcNotificationAlert(
-        t('territorial.alert.maintainedBattleTitle'),
-        t(bodyKey, {
-          planet: input.planetLabelKo,
-          side: sideLabel,
-          outcome: input.attackerWon
-            ? t('territorial.alert.attackerWin')
-            : t('territorial.alert.defenderWin'),
-        }),
+        t('territorial.alert.maintainedNeutralDeclareTitle'),
+        t(diplomaticBodyKey, { planet: input.planetLabelKo, side: sideLabel }),
         alertOpts,
       );
-      return;
-    }
-
-    const diplomaticBodyKey =
-      sideKey === 'neutral'
-        ? 'territorial.alert.maintained.neutralBody'
-        : 'territorial.alert.maintained.diplomaticBody';
-    showArcNotificationAlert(
-      t('territorial.alert.maintainedNeutralDeclareTitle'),
-      t(diplomaticBodyKey, { planet: input.planetLabelKo, side: sideLabel }),
-      alertOpts,
-    );
+    });
   });
 }

@@ -1,4 +1,4 @@
-import type { Mission } from '../types';
+import type { Mission, NpcCaptain } from '../types';
 import { resolveTavernHostCaptainAtPlanet } from '../arcCore/captainPresence';
 import { formatArcCoreOpsDayKey, resolveArcCoreDailyOpsPolicy } from '../arcCore/schedule/arcCoreDailyOpsPolicy';
 import { listTavernEnabledCoreOpenPlanetIds } from './listTavernEnabledCoreOpenPlanetIds';
@@ -117,14 +117,22 @@ export function refreshArcCoreInstanceMissionBoardState(
   };
 }
 
+/**
+ * hostCaptain 생략 시 resolveTavernHostCaptainAtPlanet(offerPlanetId)로 직접 조회한다.
+ * 단, 이 조회는 캐시 키 계산에 `readUnlockedPlanetIdsSig()`(전체 개방 행성 O(N) join)가
+ * 포함돼 있어 행성당 여러 건(최대 10건) 반복 호출 시 비용이 커진다 — 벌크 경로
+ * (`computeReplenishedPlanetEntries`)는 행성당 1회만 조회해 hostCaptain으로 넘겨준다
+ * (task_id=daily-ops-batch-incomplete-fix-20260803 후속 — tailGroup 실측 ~17.4s의
+ * 핵심 원인, buildEntry당 매번 재조회 시 757행성 × 최대10건 = 최대 7570회 호출).
+ */
 export function buildArcCoreInstanceMissionEntry(
   template: Mission,
   offerPlanetId: string,
   dayKeyKst: string,
   nowMs: number,
   seq: number,
+  hostCaptain: NpcCaptain | undefined = resolveTavernHostCaptainAtPlanet(offerPlanetId),
 ): ArcCoreInstanceMissionBoardEntry {
-  const hostCaptain = resolveTavernHostCaptainAtPlanet(offerPlanetId);
   return {
     instanceId: buildInstanceId(offerPlanetId, seq),
     templateMissionId: template.id,
@@ -170,43 +178,45 @@ export type EnsurePlanetTavernBoardResult = {
   planetId: string;
 };
 
-/** 행성 선술집 [신규 의뢰] — listed 10건·40/40/20 비율 보충. */
-export function ensurePlanetTavernInstanceBoard(
-  state: ArcCoreInstanceMissionBoardState,
+/**
+ * 특정 행성 소유 entries(어떤 status든)만 입력받아 listed 10건·40/40/20 비율로 보충한다.
+ * 전체 보드 entries 배열 스캔은 호출부(단일 행성 vs 일괄 배치)에서 각자 책임진다 —
+ * 일괄 배치에서 행성마다 전체 entries를 filter하면 O(P × N) = O(N²)로 폭주한다
+ * (일일 배치 tailGroup 실측 ~17.5s의 핵심 원인, task_id=daily-ops-batch-incomplete-fix-20260803 후속).
+ */
+function computeReplenishedPlanetEntries(
+  planetEntries: readonly ArcCoreInstanceMissionBoardEntry[],
   planetId: string,
+  dayKey: string,
   nowMs: number,
-): EnsurePlanetTavernBoardResult {
-  const pid = planetId.trim();
-  if (!pid) return { next: state, added: 0, planetId: pid };
-
-  const dayKey = resolveArcCoreInstanceDayKeyKst(nowMs);
-  const keptOther = state.entries.filter((e) => e.offerPlanetId !== pid || e.boardStatus !== 'listed');
-  const listedForPlanet = state.entries.filter(
-    (e) => e.offerPlanetId === pid && e.boardStatus === 'listed',
-  );
+): { nextEntries: ArcCoreInstanceMissionBoardEntry[]; added: number } {
+  const keptOther = planetEntries.filter((e) => e.boardStatus !== 'listed');
+  const listedForPlanet = planetEntries.filter((e) => e.boardStatus === 'listed');
 
   const blockedTemplates = new Set<string>();
-  for (const entry of state.entries) {
-    if (entry.offerPlanetId !== pid) continue;
+  for (const entry of planetEntries) {
     if (entry.boardStatus === 'cleared') continue;
     blockedTemplates.add(entry.templateMissionId);
   }
 
-  const bucketCounts = countListedByBucket(listedForPlanet, pid);
+  const bucketCounts = countListedByBucket(listedForPlanet, planetId);
   const nextListed: ArcCoreInstanceMissionBoardEntry[] = [...listedForPlanet];
   let added = 0;
   let salt = 0;
+  // 행성당 1회만 조회 — buildArcCoreInstanceMissionEntry 내부 기본값에 맡기면
+  // 신규 entry(최대 10건)마다 재조회돼 비용이 10배로 불어난다(위 주석 참고).
+  const hostCaptain = resolveTavernHostCaptainAtPlanet(planetId);
 
   const buckets = Object.keys(TAVERN_INSTANCE_CATEGORY_SLOTS) as TavernInstanceBoardBucket[];
   for (const bucket of buckets) {
     const target = TAVERN_INSTANCE_CATEGORY_SLOTS[bucket];
     let need = target - (bucketCounts[bucket] ?? 0);
     while (need > 0 && nextListed.length < TAVERN_INSTANCE_MAX_LISTED_PER_PLANET) {
-      const template = pickTemplateForBucket(bucket, blockedTemplates, pid, dayKey, salt);
+      const template = pickTemplateForBucket(bucket, blockedTemplates, planetId, dayKey, salt);
       salt += 1;
       if (!template) break;
       blockedTemplates.add(template.id);
-      const entry = buildArcCoreInstanceMissionEntry(template, pid, dayKey, nowMs, nextListed.length);
+      const entry = buildArcCoreInstanceMissionEntry(template, planetId, dayKey, nowMs, nextListed.length, hostCaptain);
       nextListed.push(entry);
       bucketCounts[bucket] = (bucketCounts[bucket] ?? 0) + 1;
       added += 1;
@@ -220,11 +230,11 @@ export function ensurePlanetTavernInstanceBoard(
       if (nextListed.length >= TAVERN_INSTANCE_MAX_LISTED_PER_PLANET) break;
       const target = TAVERN_INSTANCE_CATEGORY_SLOTS[bucket];
       if ((bucketCounts[bucket] ?? 0) >= target) continue;
-      const template = pickTemplateForBucket(bucket, blockedTemplates, pid, dayKey, salt);
+      const template = pickTemplateForBucket(bucket, blockedTemplates, planetId, dayKey, salt);
       salt += 1;
       if (!template) continue;
       blockedTemplates.add(template.id);
-      const entry = buildArcCoreInstanceMissionEntry(template, pid, dayKey, nowMs, nextListed.length);
+      const entry = buildArcCoreInstanceMissionEntry(template, planetId, dayKey, nowMs, nextListed.length, hostCaptain);
       nextListed.push(entry);
       bucketCounts[bucket] = (bucketCounts[bucket] ?? 0) + 1;
       added += 1;
@@ -238,11 +248,32 @@ export function ensurePlanetTavernInstanceBoard(
     nextListed.length = TAVERN_INSTANCE_MAX_LISTED_PER_PLANET;
   }
 
-  const nextEntries = [...keptOther, ...nextListed];
+  return { nextEntries: [...keptOther, ...nextListed], added };
+}
+
+/** 행성 선술집 [신규 의뢰] — listed 10건·40/40/20 비율 보충(단일 행성 — UI 진입 경로). */
+export function ensurePlanetTavernInstanceBoard(
+  state: ArcCoreInstanceMissionBoardState,
+  planetId: string,
+  nowMs: number,
+): EnsurePlanetTavernBoardResult {
+  const pid = planetId.trim();
+  if (!pid) return { next: state, added: 0, planetId: pid };
+
+  const dayKey = resolveArcCoreInstanceDayKeyKst(nowMs);
+  const planetEntries = state.entries.filter((e) => e.offerPlanetId === pid);
+  const otherEntries = state.entries.filter((e) => e.offerPlanetId !== pid);
+  const { nextEntries: nextPlanetEntries, added } = computeReplenishedPlanetEntries(
+    planetEntries,
+    pid,
+    dayKey,
+    nowMs,
+  );
+
   return {
     next: {
       ...state,
-      entries: nextEntries,
+      entries: [...otherEntries, ...nextPlanetEntries],
       lastRegistrationDayKeyKst: dayKey,
     },
     added,
@@ -261,32 +292,50 @@ export function listPlanetIdsWithBoardEntries(
   return [...ids];
 }
 
-/** ArcCore 일일 배치 — 선술집 활성 코어 행성 전체 보드 보충. */
+/**
+ * ArcCore 일일 배치 — 선술집 활성 코어 행성 전체 보드 보충.
+ * `entries`를 행성별로 1회만 그룹핑(O(N))한 뒤 각 행성은 자기 그룹만 처리 —
+ * 예전엔 `ensurePlanetTavernInstanceBoard`를 행성마다 호출하며 매번 전체 entries를
+ * filter/rebuild(O(N))해 P행성 × O(N) = O(N²)로 폭주했다(실측 tailGroup ~17.5s).
+ */
 export function runArcCoreTavernInstanceBoardReplenishPass(
   state: ArcCoreInstanceMissionBoardState,
   nowMs: number,
 ): { next: ArcCoreInstanceMissionBoardState; added: number; lastInstanceId: string | null } {
-  let next = state;
+  const dayKey = resolveArcCoreInstanceDayKeyKst(nowMs);
+  const byPlanet = new Map<string, ArcCoreInstanceMissionBoardEntry[]>();
+  for (const entry of state.entries) {
+    const bucket = byPlanet.get(entry.offerPlanetId);
+    if (bucket) bucket.push(entry);
+    else byPlanet.set(entry.offerPlanetId, [entry]);
+  }
+
   let added = 0;
   let lastInstanceId: string | null = null;
+  let lastRegisteredAtMs = -Infinity;
 
   for (const planetId of listTavernEnabledCoreOpenPlanetIds()) {
-    const result = ensurePlanetTavernInstanceBoard(next, planetId, nowMs);
-    next = result.next;
-    added += result.added;
+    const planetEntries = byPlanet.get(planetId) ?? [];
+    const result = computeReplenishedPlanetEntries(planetEntries, planetId, dayKey, nowMs);
+    byPlanet.set(planetId, result.nextEntries);
     if (result.added > 0) {
-      for (const entry of next.entries) {
-        if (entry.offerPlanetId !== planetId || entry.boardStatus !== 'listed') continue;
-        if (
-          !lastInstanceId
-          || entry.registeredAtMs
-            > (next.entries.find((e) => e.instanceId === lastInstanceId)?.registeredAtMs ?? 0)
-        ) {
+      added += result.added;
+      for (const entry of result.nextEntries) {
+        if (entry.boardStatus !== 'listed') continue;
+        if (entry.registeredAtMs > lastRegisteredAtMs) {
+          lastRegisteredAtMs = entry.registeredAtMs;
           lastInstanceId = entry.instanceId;
         }
       }
     }
   }
 
-  return { next, added, lastInstanceId };
+  const nextEntries: ArcCoreInstanceMissionBoardEntry[] = [];
+  for (const list of byPlanet.values()) nextEntries.push(...list);
+
+  return {
+    next: { ...state, entries: nextEntries, lastRegistrationDayKeyKst: dayKey },
+    added,
+    lastInstanceId,
+  };
 }

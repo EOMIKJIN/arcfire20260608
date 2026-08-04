@@ -88,7 +88,7 @@ alwaysApply: true
 | 1 | STAGE 진입/이탈 `dispose` · `Navigation.replace()` · `planetSessionRegistry` | v4.0 §5·§8 |
 | 2 | Skia/Reanimated **Zero-Allocation** · Canvas 해제 · Worklet dispose 금지 | `arcfire-skia-memory-lifecycle.mdc` |
 | 3 | **틱·루프·고빈도 경로** 객체/배열/`JSON.stringify`/persist 금지 | `arcfire-main-lead-agent.mdc` §주기·틱 GC 규율 |
-| 4 | **부트 동기 경로** 무거운 패스(O(N) 행성·카탈로그 재빌드) 금지 | 김팀장 §경제 부트경로 게이트 |
+| 4 | **부트 동기 경로** 무거운 패스(O(N) 행성·카탈로그 재빌드) 금지 · **시작 화면 버튼에 배치/catch-up/prewarm 합류 금지**(차원항로 `runContinueSessionPrewarm` 전담) | 김팀장 §경제 부트경로 · §시작 화면 버튼 최소 활성 |
 | 5 | `setInterval`/화면 전용 rAF · `onSnapshot` · 스택 `navigate` | v4.0 §14 |
 | 6 | Animated `new Animated.Value` 렌더 내부 · layout top/left | v4.0 §8-2 |
 | 7 | 신규 영속 store → purge/생성 연동 · bounded 히스토리 | 김팀장 §플레이어 계정 최상위 |

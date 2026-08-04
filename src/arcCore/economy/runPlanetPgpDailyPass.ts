@@ -21,7 +21,8 @@ export function runPlanetPgpDailyPass(): PlanetPgpDailyPassResult {
   const core = usePlanetCoreRuntimeStore.getState();
   if (!core.hydrated) return { ran: false, planetsUpdated: 0 };
 
-  let next = { ...core.byPlanetId };
+  // O(N) — 루프마다 전체 재스프레드하던 O(N²) 패턴 제거(Wave C′, task_id=daily-ops-batch-incomplete-fix-20260803).
+  const next = { ...core.byPlanetId };
   let planetsUpdated = 0;
   const t = Date.now();
 
@@ -30,13 +31,10 @@ export function runPlanetPgpDailyPass(): PlanetPgpDailyPassResult {
     const gauge = planetCoreRuntimeToGaugeView(prev);
     const pgp = calculatePlanetPgpFromStats(gauge) + resolvePlanetDevelopmentTdiPgpBonusBmu(planetId);
     if (prev.pgp === pgp) return;
-    next = {
-      ...next,
-      [planetId]: {
-        ...prev,
-        pgp,
-        updatedAt: t,
-      },
+    next[planetId] = {
+      ...prev,
+      pgp,
+      updatedAt: t,
     };
     planetsUpdated += 1;
   });

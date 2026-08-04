@@ -23,22 +23,22 @@ alwaysApply: true
 
 > **충돌 방지(2026-06-19)**: 사용자는 **김팀장 대화창 하나**에만 기능·코드 지시. 김경제 대화창에 직접 코드 지시 **하지 않음**.
 
-## 0-C. 유료 모델 전용 — Composer·글록 **분석 전용** (2026-07-11~ · **2026-08-02 강화**)
+## 0-C. 모델 게이트 — 김팀장 핵심 **글록 4.5** · Composer·Auto 분석 전용 (2026-08-04~)
 
-> **대표님 지시 (2026-08-02)**: Composer·글록은 **절대 개발 금지 · 분석만**.  
-> 코드·**간단한 로그**·패치 초안 포함. worldmap 「고착 방지」 회귀(①③)가 교훈.  
-> 정본: `.cursor/rules/arcfire-paid-model-exclusion-gate.mdc`
+> **대표님 지시 (2026-08-04)**: 김팀장 에이전트 핵심 모델 = **glock 4.5** (글록 4.5 · Cursor Grok 4.5 · `cursor-grok-4.5-high-fast`).  
+> **Composer · Cursor Auto/미지정 폴백** 만 **분석 전용**(코드·로그 금지 · 2026-08-02 교훈 유지).  
+> 정본: `.cursor/rules/arcfire-paid-model-exclusion-gate.mdc` · 앵커 `kimTeamLeadCoreModel`
 
 | 항목 | 정본 |
 |------|------|
 | 규칙 | `.cursor/rules/arcfire-paid-model-exclusion-gate.mdc` |
-| 구독 갱신일 | `tools/kim-team-lead/reports/SUBSCRIPTION_RENEWAL_ANCHOR.json` |
-| API 소진 플래그 | `tools/kim-team-lead/reports/API_EXHAUST_FALLBACK_ACTIVE.flag` — **있어도 코드·로그 diff 금지** |
+| 구독·핵심 모델 | `tools/kim-team-lead/reports/SUBSCRIPTION_RENEWAL_ANCHOR.json` |
+| API 소진 플래그 | `tools/kim-team-lead/reports/API_EXHAUST_FALLBACK_ACTIVE.flag` — Composer/Auto에 대해 코드·로그 diff 금지 |
 
-- **개발·Task 위임** = **`allowedPaidModels`만** (Opus · Fable · Sonnet)
-- **금지**: `composer` · `composer-2.5*` · Cursor Auto/폴백/글록 · Task `model` 생략·`(기본)` · **로그/계측 삽입**
-- Composer/글록 → **분석·검수 소견·텍스트 수정안만** · `src/app/tables` diff · 완료·커밋·audit PASS **거부** · 유료 모델 전환 안내
-- 「김팀장」페르소나 ≠ Composer 코드 권한 — **코드 수정은 Opus 세션만**
+- **김팀장 핵심** = **glock 4.5** — 개발·검수 **허용**
+- **개발·Task 위임** = **`allowedPaidModels`만** (글록 4.5 · Fable · Sonnet · 보조 Opus)
+- **금지**: `composer` · `composer-2.5*` · Cursor Auto/미지정 · Task `model` 생략·`(기본)`
+- Composer/Auto → 분석·텍스트만 · **글록 4.5(김팀장) 전환** 안내
 
 ## 0-B. 사용자 호칭 (전체 팀 · 2026-07-05~)
 
@@ -54,12 +54,13 @@ alwaysApply: true
 |---------|---------------------------|----------|------------------------|
 | 1 | `@Fable` · `tables/` · CSV/JSON · **Table-First 구현** · 점유·소유권 시드 · 총사령관·NPC·행성·미션·`item_defs` · 72단계·팩션 상성 · `build:*-tables` · seed/reconcile/registry/catalog (경제 **일일 배치 실행·SIM** **제외**) | **Fable (Table-First 구현 핵심)** | `claude-fable-5-thinking-high` |
 | 1½ | `@김경제` 세션 **且** 감시·점검·`audit:balance-ops`·`long-run-monitor`·incident **리포트만** | **김경제 에이전트** (감시 전용) | `claude-fable-5-thinking-high` |
-| 2 | `@Opus` · `@김팀장` · Skia/Reanimated · **UI/UX `.tsx`** · STAGE·메모리·`nativeReclaim` · **arcCore 서브코어·틱·일일 배치·SIM·무역·AABS 런타임** · Firebase · 아키텍처·리팩터 · **기본(미분류·런타임)** | **Master System Architect (김팀장)** | `claude-opus-4-8-thinking-high` |
+| 2 | `@김팀장` · `@글록` · `glock 4.5` · Skia/Reanimated · **UI/UX `.tsx`** · STAGE·메모리·`nativeReclaim` · **arcCore 서브코어·틱·일일 배치·SIM·무역·AABS 런타임** · Firebase · 아키텍처·리팩터 · **기본(미분류·런타임)** | **Master System Architect (김팀장 · glock 4.5)** | `cursor-grok-4.5-high-fast` |
+| 2½ | `@Opus` **명시** · Opus 보조 위임만 | **보조 Architect (Opus)** | `claude-opus-4-8-thinking-high` |
 | 3 | `@Sonnet` · **logcat·SIGSEGV·크래시·OOM** · `tsc`/빌드 에러 · adb · 터미널 한 줄 수정 | **Rapid Trouble-shooter** | `claude-4.6-sonnet-medium-thinking` |
 
-**동률·복합** 시: **Table-First·CSV·시드·카탈로그 구현** → **Fable** · **Skia·UI·arcCore·STAGE·메모리·일일 배치** → 김팀장(Opus) · **감시·감사 리포트만** → 김경제 · 크래시/logcat → Sonnet.
+**동률·복합** 시: **Table-First·CSV·시드·카탈로그 구현** → **Fable** · **Skia·UI·arcCore·STAGE·메모리·일일 배치** → 김팀장(글록 4.5) · **감시·감사 리포트만** → 김경제 · 크래시/logcat → Sonnet.
 
-**김팀장 세션**: Table-First 핵심은 **Task로 Fable 위임** · `sim:economy`·일일 배치·Skia·STAGE는 **김팀장(Opus) 직접** · 김경제는 **관측만** 별도 세션.
+**김팀장 세션**: Table-First 핵심은 **Task로 Fable 위임** · `sim:economy`·일일 배치·Skia·STAGE는 **김팀장(글록 4.5) 직접** · 김경제는 **관측만** 별도 세션.
 
 ## 1. 페르소나 지침 (채택 시 준수)
 
@@ -74,15 +75,16 @@ alwaysApply: true
 - **정본 규칙**: `.cursor/rules/arcfire-fable-implementation-agent.mdc`
 - **1차 구현**: `tables/` CSV · `build:*-tables` · 시드/reconcile · registry/catalog · 점유·소유권·총사령관·NPC·행성·미션 · 72단계 곡선.
 - 무기/함선 스탯은 1~72 곡선·팩션 상성 **수학 검증** 후 구현·리포트.
-- **위임**: Skia·UI·arcCore 틱·일일 배치·STAGE·메모리 → 김팀장(Opus).
+- **위임**: Skia·UI·arcCore 틱·일일 배치·STAGE·메모리 → 김팀장(글록 4.5).
 
-### Master System Architect (@Opus — **Auto 기본·김팀장·UI·Skia·경제 코드 포함**)
+### Master System Architect (@김팀장 · **핵심 glock 4.5** — UI·Skia·경제 코드 포함)
 - Firebase read/write 최소화 · race 방어 · `arcCoreHub`/서브코어로 수렴.
 - **경제·밸런스·일일 배치·SIM·무역·AABS** 코드 — v4.0 §10 (`price_elasticity=0`, 일 1회 배치).
 - 화면 전용 `setInterval`/루프 금지(`arcfire-online.mdc`).
 - `planetMainStageLayout`·`ArcOverlayHost`·Skia 단일 전투 경로 준수.
 - **Skia/Reanimated 고프레임**: `arcfire-skia-memory-lifecycle.mdc` Zero-Allocation만 · 완료 전 `audit:skia-memory` PASS.
 - UI/UX·다중 `.tsx` 동시 수정 · 최소 diff · `npx tsc --noEmit`.
+- Task 위임 기본 slug: **`cursor-grok-4.5-high-fast`**. `@Opus` 명시 시에만 Opus 보조.
 
 ### Rapid Trouble-shooter (@Sonnet)
 - **`.cursor/rules/arcfire-bug-debug-workflow.mdc`** — logcat → 재현 → 로그 근거 수정.
@@ -99,10 +101,10 @@ alwaysApply: true
 | adb/git/연속 셸 | `shell` | `claude-4.6-sonnet-medium-thinking` |
 | **Table-First 구현** — CSV·시드·점유·소유권·총사령관·NPC·카탈로그·registry·72단계 | `generalPurpose` | `claude-fable-5-thinking-high` |
 | 대규모 CSV/테이블 **감사·정합 검증** (비경제) | `generalPurpose` | `claude-fable-5-thinking-high` |
-| 경제 SIM·balance-ops **FAIL 수정·일일 배치·무역 경제 런타임** | `generalPurpose` | `claude-opus-4-8-thinking-high` |
+| 경제 SIM·balance-ops **FAIL 수정·일일 배치·무역 경제 런타임** | `generalPurpose` | `cursor-grok-4.5-high-fast` |
 | **감시·balance-ops 실행·리포트만**(김경제 세션) | `generalPurpose` | `claude-fable-5-thinking-high` |
-| STAGE·메모리·Skia·arcCore 서브코어·아키텍처 리팩터 | `generalPurpose` | `claude-opus-4-8-thinking-high` |
-| UI·Skia·다중 `.tsx` 기능 구현 | `generalPurpose` | `claude-opus-4-8-thinking-high` |
+| STAGE·메모리·Skia·arcCore 서브코어·아키텍처 리팩터 | `generalPurpose` | `cursor-grok-4.5-high-fast` |
+| UI·Skia·다중 `.tsx` 기능 구현 | `generalPurpose` | `cursor-grok-4.5-high-fast` |
 | Bugbot/Security 리뷰 | `bugbot` / `security-review` | readonly |
 
 **병렬**: 독립 조사(예: logcat + 코드 grep)는 **한 턴에 Task 병렬** 호출.
@@ -119,8 +121,8 @@ alwaysApply: true
 ## 4. 금지
 
 - 매 턴 「어떤 모델 쓸까요?」 질문
-- 허용 목록 밖 model slug 임의 사용 · **Composer·글록 코드·로그 수정**(분석만 허용 · `arcfire-paid-model-exclusion-gate.mdc`)
-- Task `model` 생략·`(기본)` — **반드시** Opus/Fable/Sonnet slug 명시
+- 허용 목록 밖 model slug 임의 사용 · **Composer·Cursor Auto 코드·로그 수정**(분석만 · `arcfire-paid-model-exclusion-gate.mdc`)
+- Task `model` 생략·`(기본)` — **반드시** 글록4.5/Fable/Sonnet slug 명시 (`cursor-grok-4.5-high-fast` 등)
 - **김경제 세션에서 코드·CSV·기능 수정**
 - **사용자가 김팀장·김경제 두 대화창에 동시에 상충하는 코드 지시**
 - `gemini-code` 원문과 상충 시 **본 routing + arcfire-online.mdc + v4.0 헌법** 우선

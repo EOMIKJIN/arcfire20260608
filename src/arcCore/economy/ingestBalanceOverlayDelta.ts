@@ -71,6 +71,15 @@ async function saveIngestState(state: IngestState): Promise<void> {
   await AsyncStorage.setItem(INGEST_STORAGE_KEY, JSON.stringify(state));
 }
 
+/** 서비스 개시 월드 리셋 — SIM/RTDB overlay ingest 커서 제거(재 ingest 허용) */
+export async function clearBalanceOverlayIngestStateForServiceLaunch(): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(INGEST_STORAGE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
 /**
  * 번들된 SIM delta 1회 ingest — 일일 배치 `runMarketMicroAdjustPass` 직전 호출.
  * 동일 deltaId는 재적용하지 않음(누적은 overlay store step으로 유지).

@@ -65,12 +65,29 @@ export function syncCaptainOrbitAssignmentEpochMemo(nowMs = Date.now()): number 
   return bucket;
 }
 
-function listCaptainOrbitPlanetCandidates(captain: NpcCaptain): string[] {
-  const out: string[] = [];
+/**
+ * Set 기반 dedup — 예전엔 `out.includes(pid)`(배열 선형 탐색)로 중복 체크해
+ * 개방 행성(최대 757) 전체를 넣는 마지막 루프에서 O(P²)로 폭주했다. 끝에서
+ * `.sort()`하므로 결과 집합·순서는 동일 — dedup 메커니즘만 O(1) 조회로 교체.
+ * (일일 배치 tailGroup `getCaptainPresenceWorldIndex` 최초 빌드 1회가 ~9초를
+ * 잡아먹던 근본 원인, task_id=daily-ops-batch-incomplete-fix-20260803 후속).
+ */
+/**
+ * unlockedPlanetIds 생략 시 매 호출마다 listUnlockedPlanetIdsForOrbitPresence()를
+ * 직접 조회한다 — 이 조회 자체가 가벼운 연산이 아니라(전 시스템 순회), 함장마다
+ * 반복 호출하는 벌크 경로(`getCaptainPresenceWorldIndex`)는 1회만 계산해 넘겨준다
+ * (인덱스 1회 빌드에 ~8초가 걸리던 근본 원인 — Set dedup 자체보다 이 반복 호출이
+ * 지배적이었다. task_id=daily-ops-batch-incomplete-fix-20260803 후속).
+ */
+function listCaptainOrbitPlanetCandidates(
+  captain: NpcCaptain,
+  unlockedPlanetIds: readonly string[] = listUnlockedPlanetIdsForOrbitPresence(),
+): string[] {
+  const seen = new Set<string>();
   const add = (planetId: string | null | undefined) => {
     const pid = String(planetId ?? '').trim();
-    if (!pid || out.includes(pid)) return;
-    out.push(pid);
+    if (!pid) return;
+    seen.add(pid);
   };
 
   add(captain.basePlanetId);
@@ -88,9 +105,9 @@ function listCaptainOrbitPlanetCandidates(captain: NpcCaptain): string[] {
   }
 
   // 개방 성계(21 + synth) — 테이블 주둔 함장 3h 순환 체류 후보 (자동 등록)
-  for (const pid of listUnlockedPlanetIdsForOrbitPresence()) add(pid);
+  for (const pid of unlockedPlanetIds) add(pid);
 
-  return out.sort();
+  return [...seen].sort();
 }
 
 function isPlanetAlignedWithCaptainFaction(captain: NpcCaptain, planetId: string): boolean {
@@ -111,12 +128,12 @@ function resolveFactionCenteredCandidates(captain: NpcCaptain, candidates: reado
 /** 테이블 순찰·주둔 함장이 궤도에 표시될 단일 행성 id. 수송 풀·전투 함장은 null. */
 export function resolveCaptainTableOrbitPlanetId(
   captain: NpcCaptain,
-  options?: { epochBucket?: number },
+  options?: { epochBucket?: number; unlockedPlanetIds?: readonly string[] },
 ): string | null {
   if (captain.arcOrbitPresenceFill) return null;
   if (captain.operationalState === 'combat') return null;
 
-  const tableCandidates = listCaptainOrbitPlanetCandidates(captain);
+  const tableCandidates = listCaptainOrbitPlanetCandidates(captain, options?.unlockedPlanetIds);
   if (tableCandidates.length === 0) return null;
 
   const candidates = resolveFactionCenteredCandidates(captain, tableCandidates);

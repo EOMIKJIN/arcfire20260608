@@ -138,6 +138,22 @@ function findPlanetInSystems(systems: Record<string, StarSystem>, planetId: stri
   return undefined;
 }
 
+/**
+ * planetId → Planet O(1) 인덱스 — 벌크 패스(N=757+)에서 매 planetId마다
+ * findPlanetInSystems(전 시스템 선형 탐색, O(N))을 호출하면 O(N²)가 된다.
+ * 일일 배치 late-stage 지연(perPlanetGroup ~17s·tailGroup ~19.5s 실측)의 핵심 원인
+ * — task_id=daily-ops-batch-incomplete-fix-20260803 후속(Wave C 정밀화).
+ */
+function buildPlanetIndexFromSystems(systems: Record<string, StarSystem>): Map<string, Planet> {
+  const index = new Map<string, Planet>();
+  for (const sys of Object.values(systems)) {
+    for (const planet of sys.planets) {
+      if (!index.has(planet.id)) index.set(planet.id, planet);
+    }
+  }
+  return index;
+}
+
 function normalizeDetail(raw: unknown): PlanetCoreMetricsDetail | undefined {
   if (!raw || typeof raw !== 'object') return undefined;
   return raw as PlanetCoreMetricsDetail;
@@ -635,26 +651,28 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
     const keys = Object.keys(updates);
     if (keys.length === 0) return;
     const systems = useWorldStore.getState().systems;
-    let next = { ...get().byPlanetId };
+    // O(N) — { ...get().byPlanetId }로 딱 1회만 얕은 복제한 뒤, 루프 안에서는 그 사본에
+    // in-place로 키만 대입한다. 예전엔 루프마다 `next = { ...next, ... }`로 매번 전체를
+    // 다시 스프레드해 N(757+)에서 O(N²)로 폭주 — 일일 배치가 늦은 단계에서 멈추던
+    // 근본 원인 중 하나(task_id=daily-ops-batch-incomplete-fix-20260803, Wave C′).
+    const next = { ...get().byPlanetId };
+    const planetIndex = buildPlanetIndexFromSystems(systems);
     const t = Date.now();
     for (const planetId of keys) {
       if (!planetId) continue;
-      const planet = findPlanetInSystems(systems, planetId);
+      const planet = planetIndex.get(planetId);
       if (!planet) continue;
       const patch = updates[planetId];
       if (!patch) continue;
       const prev = next[planetId] ?? planetCsvBaselineToRuntime(planet);
-      next = {
-        ...next,
-        [planetId]: {
-          resource: clamp100(patch.resource ?? prev.resource),
-          population: clamp100(patch.population ?? prev.population),
-          defense: clamp100(patch.defense ?? prev.defense),
-          technology: clamp100(patch.technology ?? prev.technology),
-          environment: clamp100(patch.environment ?? prev.environment),
-          updatedAt: t,
-          detail: prev.detail,
-        },
+      next[planetId] = {
+        resource: clamp100(patch.resource ?? prev.resource),
+        population: clamp100(patch.population ?? prev.population),
+        defense: clamp100(patch.defense ?? prev.defense),
+        technology: clamp100(patch.technology ?? prev.technology),
+        environment: clamp100(patch.environment ?? prev.environment),
+        updatedAt: t,
+        detail: prev.detail,
       };
     }
     set({ byPlanetId: next });
@@ -666,29 +684,30 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
     const keys = Object.keys(updates);
     if (keys.length === 0) return;
     const systems = useWorldStore.getState().systems;
-    let next = { ...get().byPlanetId };
+    // O(N) — patchPlanetCoresBulk와 동일 이유(Wave C′)로 루프 내 재스프레드 제거.
+    // findPlanetInSystems 선형 탐색도 buildPlanetIndexFromSystems O(1) 인덱스로 교체
+    // (perPlanetGroup·tailGroup 실측 17~19초 지연의 핵심 원인 — 후속 정밀화).
+    const next = { ...get().byPlanetId };
+    const planetIndex = buildPlanetIndexFromSystems(systems);
     const t = Date.now();
     for (const planetId of keys) {
       if (!planetId) continue;
-      const planet = findPlanetInSystems(systems, planetId);
+      const planet = planetIndex.get(planetId);
       if (!planet) continue;
       const patch = updates[planetId];
       if (!patch) continue;
       const prev = next[planetId] ?? planetCsvBaselineToRuntime(planet);
       const g = patch.gauge;
-      next = {
-        ...next,
-        [planetId]: {
-          resource: clamp100(g.resource ?? prev.resource),
-          population: clamp100(g.population ?? prev.population),
-          defense: clamp100(g.defense ?? prev.defense),
-          technology: clamp100(g.technology ?? prev.technology),
-          environment: clamp100(g.environment ?? prev.environment),
-          updatedAt: t,
-          detail: {
-            ...prev.detail,
-            masterBalance: patch.masterBalance,
-          },
+      next[planetId] = {
+        resource: clamp100(g.resource ?? prev.resource),
+        population: clamp100(g.population ?? prev.population),
+        defense: clamp100(g.defense ?? prev.defense),
+        technology: clamp100(g.technology ?? prev.technology),
+        environment: clamp100(g.environment ?? prev.environment),
+        updatedAt: t,
+        detail: {
+          ...prev.detail,
+          masterBalance: patch.masterBalance,
         },
       };
     }
@@ -700,20 +719,20 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
   patchPlanetCoreStatOpsTrendBulk: (updates) => {
     const keys = Object.keys(updates);
     if (keys.length === 0) return;
-    let next = { ...get().byPlanetId };
+    // O(N) — Wave C(task_id=daily-ops-batch-incomplete-fix-20260803): 루프마다 전체
+    // byPlanetId(757+ 행성)를 재스프레드하던 O(N²) 패턴이 일일 배치 late-stage에서
+    // 몇 초~수십 초로 폭주해 완료(commit)까지 도달 못 하던 유력 원인이었다.
+    const next = { ...get().byPlanetId };
     for (const planetId of keys) {
       const trend = updates[planetId];
       if (!planetId || !trend) continue;
       const prev = next[planetId];
       if (!prev) continue;
-      next = {
-        ...next,
-        [planetId]: {
-          ...prev,
-          detail: {
-            ...prev.detail,
-            statOpsTrend: trend,
-          },
+      next[planetId] = {
+        ...prev,
+        detail: {
+          ...prev.detail,
+          statOpsTrend: trend,
         },
       };
     }

@@ -4,8 +4,26 @@
   "renewalDayOfMonth": 10,
   "lastRenewalDate": "2026-07-10",
   "nextRenewalDate": "2026-08-10",
-  "paidModelCycleNote": "갱신일(매월 10일 KST)부터 다음 갱신 전일까지 유료 Claude 전용. 갱신일 변경 시 본 파일만 수정.",
+  "paidModelCycleNote": "갱신일(매월 10일 KST)부터 다음 갱신 전일까지 허용 모델 전용. 갱신일 변경 시 본 파일만 수정.",
+  "kimTeamLeadCoreModel": {
+    "displayName": "glock 4.5",
+    "displayNameKo": "글록 4.5",
+    "productName": "Cursor Grok 4.5",
+    "taskSlug": "cursor-grok-4.5-high-fast",
+    "aliases": [
+      "glock 4.5",
+      "글록 4.5",
+      "Grok 4.5",
+      "Cursor Grok 4.5",
+      "glock-4.5",
+      "cursor-grok-4.5",
+      "cursor-grok-4.5-high-fast"
+    ],
+    "effectiveFrom": "2026-08-04",
+    "note": "대표님 지시(2026-08-04) — 김팀장 에이전트 핵심 모델. Composer·Cursor Auto 미지정 폴백과 구분."
+  },
   "allowedPaidModels": [
+    "cursor-grok-4.5-high-fast",
     "claude-opus-4-8-thinking-high",
     "claude-sonnet-5-thinking-high",
     "claude-fable-5-thinking-high",
@@ -17,8 +35,7 @@
     "composer-2.5",
     "composer-2.5-fast",
     "cursor-auto",
-    "cursor-glock",
-    "glock",
+    "cursor-auto-fallback",
     "default"
   ]
 }

@@ -20,10 +20,12 @@ import {
   resolveOccupierFactionKindForHold,
   VAULT_KEY_ARCCORE,
   VAULT_KEY_BLUE,
+  VAULT_KEY_NEUTRAL,
 } from './resolveFactionVault';
 import { planetAttackKstDayKey } from '../planetAttack/planetAttackKstDayKey';
 import { useArcCoreVaultStore } from '../../store/factionVault/arcCoreVaultStore';
 import { useBlueTeamSharedVaultStore } from '../../store/factionVault/blueTeamSharedVaultStore';
+import { useNeutralNationVaultStore } from '../../store/factionVault/neutralNationVaultStore';
 
 export type ArcCorePlanetUpkeepDailyPassResult = {
   ran: boolean;
@@ -32,6 +34,9 @@ export type ArcCorePlanetUpkeepDailyPassResult = {
   redUpkeepFailedCredits: number;
   blueUpkeepChargedCredits: number;
   blueUpkeepFailedCredits: number;
+  /** [5축] 중립 hold 유지비 — neutral_vault에서만 차감(신규) */
+  neutralUpkeepChargedCredits: number;
+  neutralUpkeepFailedCredits: number;
   playerUpkeepChargedCredits: number;
   playerUpkeepFailedCredits: number;
   playerWalletPayoutCredits: number;
@@ -55,6 +60,8 @@ export async function runArcCorePlanetUpkeepDailyPass(): Promise<ArcCorePlanetUp
     redUpkeepFailedCredits: 0,
     blueUpkeepChargedCredits: 0,
     blueUpkeepFailedCredits: 0,
+    neutralUpkeepChargedCredits: 0,
+    neutralUpkeepFailedCredits: 0,
     playerUpkeepChargedCredits: 0,
     playerUpkeepFailedCredits: 0,
     playerWalletPayoutCredits: 0,
@@ -73,6 +80,9 @@ export async function runArcCorePlanetUpkeepDailyPass(): Promise<ArcCorePlanetUp
   }
   if (!useBlueTeamSharedVaultStore.getState().hydrated) {
     await useBlueTeamSharedVaultStore.getState().hydrate();
+  }
+  if (!useNeutralNationVaultStore.getState().hydrated) {
+    await useNeutralNationVaultStore.getState().hydrate();
   }
   if (!usePlanetTradeFeeLedgerStore.getState().hydrated) {
     await usePlanetTradeFeeLedgerStore.getState().hydrate();
@@ -100,12 +110,15 @@ export async function runArcCorePlanetUpkeepDailyPass(): Promise<ArcCorePlanetUp
   let redUpkeepFailedCredits = 0;
   let blueUpkeepChargedCredits = 0;
   let blueUpkeepFailedCredits = 0;
+  let neutralUpkeepChargedCredits = 0;
+  let neutralUpkeepFailedCredits = 0;
   let playerUpkeepChargedCredits = 0;
   let playerUpkeepFailedCredits = 0;
   let planetsProcessed = 0;
 
   const arcVault = useArcCoreVaultStore.getState();
   const blueVault = useBlueTeamSharedVaultStore.getState();
+  const neutralVault = useNeutralNationVaultStore.getState();
 
   for (const [planetId, hold] of Object.entries(holds)) {
     const devUpkeep = applyPlanetDevUpkeepEfficiency(
@@ -145,9 +158,11 @@ export async function runArcCorePlanetUpkeepDailyPass(): Promise<ArcCorePlanetUp
     const faction = resolveOccupierFactionKindForHold(hold);
     if (faction === 'player_clan') continue;
 
-    // [보완 #2][#3] BLUE→blue_vault, RED·중립→arccore_vault
-    const vaultKey = getVaultKeyByFaction(faction === 'blue' ? 'blue' : 'red');
-    const vault = vaultKey === VAULT_KEY_BLUE ? blueVault : arcVault;
+    // [5축] BLUE→blue_vault, NEUTRAL→neutral_vault, RED→arccore_vault
+    const vaultKey = getVaultKeyByFaction(
+      faction === 'blue' ? 'blue' : faction === 'neutral' ? 'neutral' : 'red',
+    );
+    const vault = vaultKey === VAULT_KEY_BLUE ? blueVault : vaultKey === VAULT_KEY_NEUTRAL ? neutralVault : arcVault;
 
     const { spent, shortfall } = vault.spendUpToBalance(upkeep, {
       kind: 'upkeep_spend',
@@ -157,6 +172,7 @@ export async function runArcCorePlanetUpkeepDailyPass(): Promise<ArcCorePlanetUp
 
     if (spent > 0) {
       if (vaultKey === VAULT_KEY_ARCCORE) redUpkeepChargedCredits += spent;
+      else if (vaultKey === VAULT_KEY_NEUTRAL) neutralUpkeepChargedCredits += spent;
       else blueUpkeepChargedCredits += spent;
     }
 
@@ -167,6 +183,7 @@ export async function runArcCorePlanetUpkeepDailyPass(): Promise<ArcCorePlanetUp
         note: `upkeep_shortfall_${shortfall}`,
       });
       if (vaultKey === VAULT_KEY_ARCCORE) redUpkeepFailedCredits += shortfall;
+      else if (vaultKey === VAULT_KEY_NEUTRAL) neutralUpkeepFailedCredits += shortfall;
       else blueUpkeepFailedCredits += shortfall;
     }
   }
@@ -178,6 +195,8 @@ export async function runArcCorePlanetUpkeepDailyPass(): Promise<ArcCorePlanetUp
     redUpkeepFailedCredits,
     blueUpkeepChargedCredits,
     blueUpkeepFailedCredits,
+    neutralUpkeepChargedCredits,
+    neutralUpkeepFailedCredits,
     playerUpkeepChargedCredits,
     playerUpkeepFailedCredits,
     playerWalletPayoutCredits,

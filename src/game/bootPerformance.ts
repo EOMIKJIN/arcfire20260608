@@ -13,6 +13,14 @@ export type BootPerfMark =
   | 'post_boot_settled'
   | 'continue_prewarm_start'
   | 'continue_prewarm_end'
+  | 'continue_join_catchup_start'
+  | 'continue_join_catchup_end'
+  | 'continue_join_daily_start'
+  | 'continue_join_daily_end'
+  | 'continue_assets_start'
+  | 'continue_assets_end'
+  | 'continue_bootstrap_start'
+  | 'continue_bootstrap_end'
   | 'planet_first_render';
 
 type BootPerfEntry = {

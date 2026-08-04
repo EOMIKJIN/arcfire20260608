@@ -14,6 +14,20 @@ Skia/STAGE/틱/persist/부트/**memo·cache·store 순환** 전부 해당 · **1
 
 정본: `.cursor/rules/arcfire-memory-leak-audit-first.mdc` (§0-A PSS 특별조치)
 
+## 🚨 시작 화면 버튼 최소 활성 · 차원항로 로딩 전담 (무조건 · 2026-08-04 재명기)
+
+**최초 앱 실행 후 「이어하기」/「시작하기」가 켜지는 시간은 최소화한다.**  
+일일 배치·벽시계 catch-up·에셋/세션 prewarm·full CSV **어떤 사전 로딩·배치도 시작 화면에 묶지 않는다.**  
+합류·워밍 정본 슬롯 = **차원항로 진입 로딩** (`runContinueSessionPrewarm` · `ContinueSessionLoadingView` · `continue-warp`).
+
+| 허용 (타이틀 활성 전) | 금지 (타이틀 게이트) | 합류 지점 |
+|----------------------|---------------------|----------|
+| local hydrate · `bootReady` · player `hydrated` · 필요 시 클라우드 복원 판정만 | daily batch wait · catch-up settle · 12s 데드라인 · `runCriticalSessionAssetPrewarm` · full index · 배치 완료까지 lock | `src/game/continueSessionPrewarm.ts` |
+
+- **`postBootSettled`**: `bootReady` 직후 즉시 true (배치 완료 신호 아님)
+- 정본 규칙 상세: `.cursor/rules/arcfire-main-lead-agent.mdc` §시작 화면 버튼 최소 활성
+- 부트 방향: `docs/BOOT_INIT_OPTIMIZATION_ROADMAP.md`
+
 ### Cursor 훅 — 개발 프로세스 상시 강제 (2026-07-04~)
 
 | 시점 | 훅 | 역할 |
@@ -30,20 +44,20 @@ npm run audit:mem-post-dev-recheck    # 개발 반영 후 handoff·status 갱신
 
 상태: `tools/kim-team-lead/reports/DEV_PROCESS_GATE_STATUS.md`
 
-## 유료 모델 전용 — Composer·글록 **분석 전용** (2026-07-11~ · **2026-08-02 강화**)
+## 모델 게이트 — 김팀장 핵심 **glock 4.5** · Composer·Auto 분석 전용 (2026-08-04~)
 
-> **대표님 지시 (2026-08-02)**: Composer·글록은 **절대 개발 금지 · 분석만**.  
-> **간단한 로그/계측 삽입도 금지**. 코드 수정은 **Opus(김팀장)·Fable·Sonnet만**.  
-> 교훈: worldmap 「고착 방지」 안전망이 이동·착륙 회귀(①③)를 유발.
+> **대표님 지시 (2026-08-04)**: **김팀장 에이전트 핵심 모델 = glock 4.5** (글록 4.5 · Cursor Grok 4.5 · `cursor-grok-4.5-high-fast`).  
+> **Composer · Cursor Auto/미지정 폴백** = 분석만 · 코드·로그 금지 (2026-08-02 교훈 유지).
 
 | 항목 | 경로 |
 |------|------|
 | 정본 규칙 | `.cursor/rules/arcfire-paid-model-exclusion-gate.mdc` |
-| 구독 갱신일 | `tools/kim-team-lead/reports/SUBSCRIPTION_RENEWAL_ANCHOR.json` |
-| API 소진 플래그 | `tools/kim-team-lead/reports/API_EXHAUST_FALLBACK_ACTIVE.flag` — **있어도 코드·로그 diff 금지** |
+| 구독·핵심 모델 | `tools/kim-team-lead/reports/SUBSCRIPTION_RENEWAL_ANCHOR.json` → `kimTeamLeadCoreModel` |
+| API 소진 플래그 | `tools/kim-team-lead/reports/API_EXHAUST_FALLBACK_ACTIVE.flag` — Composer/Auto에 코드·로그 diff 금지 |
 
-- **허용 개발 모델**: Opus(김팀장) · Fable · Sonnet — Task 위임 시 slug **필수**
-- **금지**: Composer · `composer-2.5*` · Cursor Auto/폴백/글록 · Task `model` 생략 · **로그 패치** · 「김팀장」페르소나로 Composer가 코드 수정
+- **김팀장 핵심**: **glock 4.5** — 개발·검수 허용
+- **허용 개발 모델**: 글록 4.5(김팀장) · Fable · Sonnet · (보조) Opus — Task slug **필수**
+- **금지**: Composer · `composer-2.5*` · Cursor Auto/미지정 · Task `model` 생략 · Composer가 「김팀장」으로 코드 수정
 - **훅**: `on-session-start-paid-model-gate.cjs` · `on-before-submit-prompt-paid-model-gate.cjs`
 
 ## 기존값 변경 — 사전 재확인 (상시 · 사용자 지시)
@@ -55,7 +69,7 @@ npm run audit:mem-post-dev-recheck    # 개발 반영 후 handoff·status 갱신
 
 | 에이전트 | 호출 | 역할 | 코드 |
 |---------|------|------|------|
-| **김팀장** | `@김팀장` · 「김팀장」 | **유일한 사용자 지시** — Skia·UI·STAGE·arcCore·일일배치·메모리·버그 **런타임** | **O** |
+| **김팀장** | `@김팀장` · 「김팀장」 | **유일한 사용자 지시** — 핵심 모델 **glock 4.5** · Skia·UI·STAGE·arcCore·일일배치·메모리·버그 **런타임** | **O** |
 | **Fable** | `@Fable` · `@페이블` | **Table-First 구현 핵심** — CSV·시드·점유·카탈로그·registry·72단계 (김팀장 Task 위임) | **O (해당 축)** |
 | **김경제** (팀원) | `@김경제` · 「김경제」 | **김팀장 배정만** — 감시·**메모리 프로파일링**·`audit:balance-ops` **점검·리포트** · **개발 업데이트 시 메모리 즉각 재검수·보고** | **X** |
 | **김클로드** (보조) | `@김클로드` · Cursor ✱ / `claude` | **초안 구현** — handoff 후 **김팀장 검수·커밋** | **초안만 (커밋 X)** |
@@ -134,7 +148,7 @@ npm run monitor:dashboard           # logs/MONITOR_DASHBOARD_LATEST.html
 - **정본**: `.cursor/rules/gemini-code-agent-routing.mdc` — `alwaysApply`, 매 턴 @김팀장/@김경제/@Fable/@Opus/@Sonnet **없이** 자동 선별 (김팀장 세션 내부 라우팅).
 - **원본 기획**: `.cursor/rules/gemini-code-1781406772084.md`
 - **세션 훅**: `.cursor/hooks/on-session-start-agent-routing.cjs` (`sessionStart`)
-- **Task 위임 model**: **Fable(Table-First 구현)** `claude-fable-5-thinking-high` · 김경제(감시만) `claude-fable-5-thinking-high` · 김팀장(런타임·Skia·STAGE) `claude-opus-4-8-thinking-high` · Sonnet `claude-4.6-sonnet-medium-thinking`
+- **Task 위임 model**: **김팀장(글록 4.5)** `cursor-grok-4.5-high-fast` · **Fable** `claude-fable-5-thinking-high` · 김경제(감시만) `claude-fable-5-thinking-high` · Sonnet `claude-4.6-sonnet-medium-thinking` · (보조 `@Opus`) `claude-opus-4-8-thinking-high`
 - **Fable 규칙**: `.cursor/rules/arcfire-fable-implementation-agent.mdc`
 
 Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc`** (프로젝트 헌법 v4.0)를 따릅니다. 구현·운영 세부 요약은 아래와 `AGENTS.md`에 둡니다.

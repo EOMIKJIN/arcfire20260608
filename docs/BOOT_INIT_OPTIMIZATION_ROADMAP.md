@@ -34,8 +34,14 @@
 Stage 0 — Splash / Auth / Title gate
   · 계정·플레이어·lastPlanetId·systemId
   · CSV minimal index (`buildCsvStaticIndexesMinimal`)
-  · 타이틀 interactive: bootReady && hydrated && !cloudRestorePending
-  · ArcCore 전원 start / 전행성 economy sync ❌ (현재는 bootReady 직후 ArcCore start — 개선 대상)
+  · 타이틀 interactive: bootReady && postBootSettled(즉시) && hydrated && !cloudRestorePending
+  · **금지**: 일일 배치 wait · 벽시계 catch-up settle · 에셋 prewarm · full CSV (2026-08-04 재명기)
+  · ArcCore start는 백그라운드 가능 — **버튼 lock과 합류 대기는 금지**
+
+Stage 0.5 — 차원항로 / 이어하기 로딩 (`runContinueSessionPrewarm`) ← 합류 정본 슬롯
+  · wait catch-up gate + daily batch gate
+  · full CSV index · critical asset prewarm · 행성 세션 워밍
+  · 이 구간은 로딩 UI가 자연스러움 — 타이틀 버튼과 혼동 금지
 
 Stage 1 — Planet Hub 진입 (현재 행성만)
   · (planetId, systemId) 코어 런타임 슬라이스

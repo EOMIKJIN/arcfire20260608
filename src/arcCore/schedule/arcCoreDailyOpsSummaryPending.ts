@@ -24,6 +24,15 @@ export async function setArcCoreDailyOpsSummaryPending(
   }
 }
 
+/** 서비스 개시 월드 리셋 — pending 요약 폐기 */
+export async function clearArcCoreDailyOpsSummaryPendingForServiceLaunch(): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
 /** 소비 후 삭제 — 허브에서 1회만 표시 */
 export async function consumeArcCoreDailyOpsSummaryPending(): Promise<ArcCoreDailyOpsSummaryPending | null> {
   try {
