@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { type StyleProp, type ViewStyle } from 'react-native';
 import { ArcButton } from './ArcButton';
+import { useT } from '../../i18n';
 
 type Props = {
   onPress: () => void;
@@ -11,9 +12,11 @@ type Props = {
 /** 서브 스테이지 공통 — ◀ 나가기 */
 export const ArcStageBackButton = memo(function ArcStageBackButton({
   onPress,
-  label = '◀ 나가기',
+  label: labelProp,
   style,
 }: Props) {
+  const t = useT();
+  const label = labelProp ?? t('common.back');
   return (
     <ArcButton
       label={label}

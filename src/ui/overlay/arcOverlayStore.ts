@@ -159,6 +159,8 @@ export type ArcOverlayNearbyPresenceInfoEntry = ArcOverlayBase & {
 export type ArcOverlayRelicLoreEntry = ArcOverlayBase & {
   kind: 'relicLore';
   godNameKo: string;
+  /** EN display name — omit to fall back to godNameKo */
+  godNameEn?: string;
   loreBodyKo: string;
 };
 
@@ -258,7 +260,7 @@ export function presentArcOverlayAlert(
   const list =
     buttons && buttons.length > 0
       ? buttons
-      : [{ text: '확인', style: 'default' as const }];
+      : [{ text: t('common.confirmBare'), style: 'default' as const }];
   const alertId = options?.id?.trim();
   const entry: Omit<ArcOverlayAlertEntry, 'id'> & { id?: string } = {
     kind: 'alert',
@@ -338,10 +340,15 @@ export function presentPlanetEconomyInfoOverlay(planetId: string, planetName: st
 
 const RELIC_LORE_OVERLAY_ID = 'relic-lore';
 
-export function presentRelicLoreOverlay(godNameKo: string, loreBodyKo: string): void {
+export function presentRelicLoreOverlay(
+  godNameKo: string,
+  loreBodyKo: string,
+  godNameEn?: string,
+): void {
   useArcOverlayStore.getState().present({
     kind: 'relicLore',
     godNameKo,
+    godNameEn,
     loreBodyKo,
     dismissOnBackdrop: true,
     id: RELIC_LORE_OVERLAY_ID,

@@ -19,6 +19,7 @@ import {
   resolveNarrativeTypewriterSpeedMs,
 } from './narrativeDialogLayout';
 import { useNarrativeDialogNextReveal } from './useNarrativeDialogNextReveal';
+import { useT } from '../../i18n';
 
 export type NarrativeDialogRowProps = {
   label: string;
@@ -49,12 +50,14 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
   imageSource,
   portraitScale = 1,
   maxLines = NARRATIVE_DIALOG_LAYOUT.maxLinesDefault,
-  buttonText = '[ 다음 ]',
+  buttonText: buttonTextProp,
   nextDisabled = false,
   onPressNext,
   showActionButton = true,
   visualTheme = 'phosphor',
 }: NarrativeDialogRowProps) {
+  const t = useT();
+  const buttonText = buttonTextProp ?? t('common.next');
   const ink = useMemo(() => resolveOverlayVisualTokens(visualTheme), [visualTheme]);
   const isTactical = visualTheme === 'tactical';
   const portraitTransform = portraitScale !== 1 ? [{ scale: portraitScale }] : undefined;

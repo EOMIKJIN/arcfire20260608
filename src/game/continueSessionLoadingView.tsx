@@ -6,6 +6,7 @@ import React, { memo, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Reanimated, { useAnimatedStyle, useFrameCallback, useSharedValue } from 'react-native-reanimated';
 import { COLORS, FONTS, SPACING } from '../utils/theme';
+import { useT } from '../i18n';
 
 const PARTICLE_COUNT = 96;
 
@@ -130,6 +131,7 @@ export type ContinueSessionLoadingViewProps = {
 };
 
 export function ContinueSessionLoadingView({ width, height, phaseLabel }: ContinueSessionLoadingViewProps) {
+  const t = useT();
   return (
     <View style={[styles.root, { width, height }]}>
       <View style={[StyleSheet.absoluteFill, { backgroundColor: COLORS.bg_primary }]} />
@@ -137,9 +139,9 @@ export function ContinueSessionLoadingView({ width, height, phaseLabel }: Contin
       <View style={styles.vignette} pointerEvents="none" />
       <View style={styles.centerWrap} pointerEvents="none">
         <View style={styles.centerCol}>
-          <Text style={styles.title}>차원 항로 진입</Text>
+          <Text style={styles.title}>{t('session.continue.title')}</Text>
           <Text style={styles.sub}>{phaseLabel}</Text>
-          <Text style={styles.hint}>우주 맵·궤도 표시 경로를 미리 불러옵니다</Text>
+          <Text style={styles.hint}>{t('session.continue.hint')}</Text>
         </View>
       </View>
     </View>

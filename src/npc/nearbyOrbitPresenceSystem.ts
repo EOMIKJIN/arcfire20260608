@@ -21,6 +21,10 @@ import { memoizePerPlanetSystem } from '../game/planetMemoCache';
 import { useArcNpcTrafficStore } from '../store/arcNpcTrafficStore';
 import { resolveCaptainAiClanDisplayName } from '../clanWar/aiClanRegistry';
 import { PLAYER_BENCH_CAPTAIN_ID, NEARBY_PRESENCE_DISPLAY_SEP } from '../game/planetHub/nearbyPresenceContract';
+import { getLocale, resolveDictionaryLocale } from '../i18n';
+import { resolveNpcCaptainDisplayName } from '../i18n/captainText';
+import { resolveNpcCapitalShipDisplayName } from '../i18n/shipText';
+import type { AppLocale } from '../i18n/types';
 
 type CaptainShipRow = { captain: (typeof NPC_CAPTAINS_FROM_CSV)[number]; ship: NpcCapitalShip };
 
@@ -92,6 +96,7 @@ function mkMarkFromSeed(seed: number): string {
 function buildPlanetNearbyPresence(
   planetId: string,
   systemId: string,
+  locale: AppLocale,
 ): NearbyOrbitPresenceRow[] {
   const shipById = getShipByIdIndex();
   const arcShips = useArcNpcTrafficStore.getState().ships;
@@ -127,12 +132,18 @@ function buildPlanetNearbyPresence(
     const infoRight = classification
       ? formatCapitalShipInfoPanelBadge(classification)
       : (generalShip.ship.infoLineSuffix && generalShip.ship.infoLineSuffix.trim()) || mk;
-    const clanLabel = resolveCaptainAiClanDisplayName(generalShip.captain, 'ko');
+    const clanLabel = resolveCaptainAiClanDisplayName(generalShip.captain, locale);
     const clanPrefix = clanLabel ? `‹${clanLabel}› ` : '';
+    const captainName = resolveNpcCaptainDisplayName(generalShip.captain, locale);
+    const shipName = resolveNpcCapitalShipDisplayName(
+      generalShip.ship.id,
+      generalShip.ship.name,
+      locale,
+    );
     rows.push({
       slotIndex: slot,
       hullClassId: hullClass.id,
-      displayLine: `${clanPrefix}${generalShip.captain.displayName} · ${generalShip.ship.name}${sep}${infoRight}`,
+      displayLine: `${clanPrefix}${captainName} · ${shipName}${sep}${infoRight}`,
       orbit,
       linkedCapitalShipId: generalShip.ship.id,
     });
@@ -141,25 +152,35 @@ function buildPlanetNearbyPresence(
   return rows;
 }
 
+/** locale별 캐시 — 언어 전환 시 KO/EN 슬롯이 섞이지 않도록 분리 */
+export const NEARBY_PRESENCE_MEMO_NAMESPACE_KO =
+  'nearbyOrbitPresenceSystem.resolvePlanetNearbyPresence.ko';
+export const NEARBY_PRESENCE_MEMO_NAMESPACE_EN =
+  'nearbyOrbitPresenceSystem.resolvePlanetNearbyPresence.en';
+
+const resolvePlanetNearbyPresenceCachedKo = memoizePerPlanetSystem(
+  NEARBY_PRESENCE_MEMO_NAMESPACE_KO,
+  (planetId, systemId) => buildPlanetNearbyPresence(planetId, systemId, 'ko'),
+);
+const resolvePlanetNearbyPresenceCachedEn = memoizePerPlanetSystem(
+  NEARBY_PRESENCE_MEMO_NAMESPACE_EN,
+  (planetId, systemId) => buildPlanetNearbyPresence(planetId, systemId, 'en'),
+);
+
 /**
  * 행성 주변 근접 NPC 슬롯 전부 (info 줄 + 궤도 + DB 링크).
- *
- * (planetId, systemId)에만 의존하는 결정론 결과 — `memoizePerPlanetSystem`으로
- * 행성 단위 캐시. 행성 변경/메인스테이지 이탈 시 `releasePlanetMainStageSession`이
- * 자동으로 캐시를 무효화한다.
+ * locale 분리 캐시 — 행성 변경/메인스테이지 이탈 시 무효화.
  */
 export const resolvePlanetNearbyPresence = (
   planetId: string,
   systemId: string,
 ): NearbyOrbitPresenceRow[] => {
   syncCaptainOrbitAssignmentEpochMemo();
-  return resolvePlanetNearbyPresenceCached(planetId, systemId);
+  const loc = resolveDictionaryLocale(getLocale());
+  return loc === 'en'
+    ? resolvePlanetNearbyPresenceCachedEn(planetId, systemId)
+    : resolvePlanetNearbyPresenceCachedKo(planetId, systemId);
 };
-
-const resolvePlanetNearbyPresenceCached = memoizePerPlanetSystem(
-  'nearbyOrbitPresenceSystem.resolvePlanetNearbyPresence',
-  buildPlanetNearbyPresence,
-);
 
 /** 슬롯별 AI 스냅샷 (등록 전함만; 나머지는 null — 추후 적 NPC 슬롯 확장) */
 export function resolveNearbyPresenceAiContexts(

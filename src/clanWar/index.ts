@@ -8,7 +8,11 @@ export {
 } from './clanWarRules';
 
 export { resolveGameplayZoneHubPlanet, type ClanWarHubZone } from './resolveZoneHubPlanet';
-export { formatClanPlateDisplayName } from './formatClanPlateDisplayName';
+export {
+  formatClanPlateDisplayName,
+  resolveClanDisplayNameForLocale,
+  stripSoloClanFleetSuffix,
+} from './formatClanPlateDisplayName';
 export {
   getAiClanRegistryRow,
   isCaptainAiClanAffiliated,

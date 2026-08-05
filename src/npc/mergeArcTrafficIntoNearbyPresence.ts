@@ -5,8 +5,11 @@
 
 import type { ArcNpcTrafficCaptain, ArcNpcTrafficShip } from '../store/arcNpcTrafficStore';
 import { NPC_CAPITAL_HULL_FALLBACK_ID } from '../types';
+import { getLocale } from '../i18n';
+import { resolveNpcCaptainDisplayName } from '../i18n/captainText';
+import { resolveNpcCapitalShipDisplayName } from '../i18n/shipText';
 import { getNpcCapitalHullClassDef, resolveNpcCapitalOrbitKinematic } from './npcCapitalClassRegistry';
-import { getNpcCapitalShip } from './npcFleetRegistry';
+import { getNpcCaptain, getNpcCapitalShip } from './npcFleetRegistry';
 import {
   formatCapitalShipInfoPanelBadge,
   resolveCapitalShipClassification,
@@ -49,7 +52,7 @@ export function mergeArcShipsIntoNearbyHubPresence(
   planetId: string,
   systemId: string,
 ): NearbyOrbitPresenceRow[] {
-  const nameById = new Map(captains.map((c) => [c.id, c.name] as const));
+  const locale = getLocale();
   const seenShip = new Set(
     baseRows.map((r) => r.linkedCapitalShipId).filter((id): id is string => Boolean(id)),
   );
@@ -62,7 +65,9 @@ export function mergeArcShipsIntoNearbyHubPresence(
     if (label) seenCaptainLabel.add(label);
   }
   for (const c of captains) {
-    if (seenCaptainLabel.has(c.name.trim())) seenCaptainId.add(c.id);
+    const csv = getNpcCaptain(c.id);
+    const label = (resolveNpcCaptainDisplayName(csv, locale) || c.name).trim();
+    if (label && seenCaptainLabel.has(label)) seenCaptainId.add(c.id);
   }
   const sep = NEARBY_PRESENCE_DISPLAY_SEP;
   const extra: NearbyOrbitPresenceRow[] = [];
@@ -73,9 +78,13 @@ export function mergeArcShipsIntoNearbyHubPresence(
     if (seenShip.has(ship.id)) continue;
     if (seenCaptainId.has(ship.captainId)) continue;
     const hull = getNpcCapitalShip(ship.id);
-    const captainName = nameById.get(ship.captainId) ?? ship.captainId;
+    const csvCaptain = getNpcCaptain(ship.captainId);
+    const captainName =
+      resolveNpcCaptainDisplayName(csvCaptain, locale) ||
+      captains.find((c) => c.id === ship.captainId)?.name ||
+      ship.captainId;
     if (seenCaptainLabel.has(captainName.trim())) continue;
-    const shipName = hull?.name ?? ship.id;
+    const shipName = resolveNpcCapitalShipDisplayName(ship.id, hull?.name ?? ship.id, locale);
     const classification = resolveCapitalShipClassification(ship.id);
     const infoRight = classification
       ? formatCapitalShipInfoPanelBadge(classification)

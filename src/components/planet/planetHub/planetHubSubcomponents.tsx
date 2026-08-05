@@ -38,6 +38,8 @@ import { useCapitalRealtimeCombatSimContext } from '../../../combat';
 import { resolvePlanetNebulaBakedSource } from '../../../game/planetNebulaBakedAssets';
 import { subscribeHubSkiaNativeReclaim } from '../../../game/nativeReclaim/hubSkiaNativeReclaimSignal';
 import { subscribeHubBackdropNativeRemount } from '../../../game/nativeReclaim/hubBackdropNativeRemountSignal';
+import { HUB_DODGE_OVERLAY_UNMOUNT_DEBOUNCE_MS } from '../../../game/nativeReclaim/processMemoryBudgetPolicy';
+import { emitMemProfileMarker } from '../../../game/devMemoryProfileBridge';
 import { useDevSkiaMountAllowed } from '../../../hooks/useDevSkiaMountAllowed';
 import { resolveDefenseSatelliteCombatStatsForObject } from '../../../systems/planetaryDefense/resolveDefenseSatelliteCombatStats';
 import { computeTableNpcOrbitXY } from '../planetOrbitHubWorklets';
@@ -307,7 +309,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   const dodgeBridgeAliveSv = useSharedValue(1);
   const [dodgeOrbitOffset, setDodgeOrbitOffset] = useState({ x: 0, y: 0 });
   const [inboundDroneSkiaDodgeLatch, setInboundDroneSkiaDodgeLatch] = useState(false);
-  /** dodge Skia 오버레이 — latch OFF마다 언마운트하면 useImage/GC FinalizerDaemon SIGSEGV 유발 → 세션 sticky */
+  /** dodge Skia 오버레이 — latch 직후 즉시 언마운트 금지(SIGSEGV) · OFF 후 디바운스 언마운트 */
   const [hubDodgeSkiaOverlayMounted, setHubDodgeSkiaOverlayMounted] = useState(false);
   /** Skia dodge Canvas 성운 로드 완료 — 이때 RN 성운 중복 그리기 숨김 */
   const [hubSkiaDodgeNebulaReady, setHubSkiaDodgeNebulaReady] = useState(false);
@@ -346,6 +348,11 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
       dodgeStageMountedRef.current = false;
     };
   }, [dodgeBridgeAliveSv, dodgeFxBridgeActive, dodgeBridgeLastSyncMs]);
+  /**
+   * latch ON → sticky mount (SIGSEGV 회피).
+   * latch OFF → 즉시 언마운트 금지 · 디바운스 후 언마운트해 useImage EGL 상주 해제
+   * (이전: soft reclaim/ blur 전까지 sticky → EGL~2× 스파이크가 수분 고정).
+   */
   useEffect(() => {
     dodgeFxBridgeActive.value = inboundDroneSkiaDodgeLatch ? 1 : 0;
     if (inboundDroneSkiaDodgeLatch) {
@@ -354,7 +361,20 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
       const nowMs = readPlanetOrbitClockMs();
       dodgeBridgeLastSyncMs.value = nowMs;
       bridgeNoteHubDodgeTimeMs(nowMs);
+      return undefined;
     }
+    const timer = setTimeout(() => {
+      if (!dodgeStageMountedRef.current) return;
+      if (inboundDroneSkiaDodgeLatchRef.current) return;
+      setHubDodgeSkiaOverlayMounted(false);
+      setHubSkiaDodgeNebulaReady(false);
+      emitMemProfileMarker({
+        stage: 'planet_hub',
+        event: 'manual',
+        detail: 'hub_dodge_overlay_unmount_debounce',
+      });
+    }, HUB_DODGE_OVERLAY_UNMOUNT_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
   }, [inboundDroneSkiaDodgeLatch, dodgeFxBridgeActive, dodgeBridgeLastSyncMs, bridgeNoteHubDodgeTimeMs]);
   useAnimatedReaction(
     () => orbitClockMs.value,

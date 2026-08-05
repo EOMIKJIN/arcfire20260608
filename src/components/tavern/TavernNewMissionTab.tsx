@@ -8,6 +8,7 @@ import {
   resolveMissionDescription,
   resolveMissionTitle,
 } from '../../i18n/missionText';
+import { resolveNpcCaptainDisplayName } from '../../i18n/captainText';
 import { formatCredits } from '../../utils/formatCredits';
 import { getNpcCaptain } from '../../npc/npcFleetRegistry';
 import { resolveCaptainAiClanDisplayName } from '../../clanWar/aiClanRegistry';
@@ -118,11 +119,14 @@ function InstanceMissionCard({
         <Text style={[fs.cardMeta, styles.clientMeta]}>
           {captainClanName
             ? t('tavern.newMissions.clientClan', {
-                name: captain.displayName,
+                name: resolveNpcCaptainDisplayName(captain, locale),
                 rank: captain.rank,
                 clan: captainClanName,
               })
-            : t('tavern.newMissions.client', { name: captain.displayName, rank: captain.rank })}
+            : t('tavern.newMissions.client', {
+                name: resolveNpcCaptainDisplayName(captain, locale),
+                rank: captain.rank,
+              })}
         </Text>
       ) : null}
       <Text style={[fs.cardBody, styles.cardBodyGap]}>{description}</Text>

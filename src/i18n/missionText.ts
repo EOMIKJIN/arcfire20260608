@@ -1,9 +1,10 @@
 import type { Mission, MissionObjective } from '../types';
 import type { AppLocale } from './types';
 import { useAppSettingsStore } from '../store/appSettingsStore';
+import { isKoUi } from './index';
 
 function pickEn(locale: AppLocale, ko: string, en?: string | null): string {
-  return locale !== 'ko' && en?.trim() ? en.trim() : ko;
+  return !isKoUi(locale) && en?.trim() ? en.trim() : ko;
 }
 
 export function resolveMissionTitle(mission: Pick<Mission, 'title' | 'titleEn'>, locale: AppLocale): string {

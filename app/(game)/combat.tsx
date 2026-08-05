@@ -14,6 +14,9 @@ import * as Haptics from 'expo-haptics';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
 import { useT } from '../../src/i18n';
+import { resolveNpcCaptainDisplayName } from '../../src/i18n/captainText';
+import { useAppSettingsStore } from '../../src/store/appSettingsStore';
+import { resolveNpcCapitalShipDisplayName } from '../../src/i18n/shipText';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { runTransitCombatPostFlow } from '../../src/game/transitCombat/transitCombatPostFlow';
 import { useTransitCombatSessionStore } from '../../src/game/transitCombat/transitCombatSession';
@@ -177,10 +180,11 @@ export default function CombatScreen() {
     if (!transitPirateShipId) return null;
     return resolveNpcCapitalShip(transitPirateShipId) ?? null;
   }, [transitPirateShipId]);
+  const locale = useAppSettingsStore((s) => s.locale);
   const pirateLabel = pirateNpc
-    ? `${pirateNpc.name} · ${pirateNpc.captain.displayName}`
+    ? `${resolveNpcCapitalShipDisplayName(pirateNpc.id, pirateNpc.name, locale)} · ${resolveNpcCaptainDisplayName(pirateNpc.captain, locale)}`
     : combatSetup.captain
-      ? combatSetup.captain.displayName
+      ? resolveNpcCaptainDisplayName(combatSetup.captain, locale)
       : enemyTemplate.name;
 
   const finishTransitCombatAndNavigate = useCallback(async (

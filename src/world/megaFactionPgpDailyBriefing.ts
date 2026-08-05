@@ -138,11 +138,11 @@ export function publishMegaFactionPgpDailyBriefingNotice(): void {
       redCount: snap.redPlanetCount,
       leader: leaderKey,
     },
-    title: '세력 PGP 전력 브리핑',
-    body: `${MEGA_FACTION_BLUE_NATION.displayNameKo} ${formatPlanetPgpBmu(snap.bluePgpBmu)} vs ${MEGA_FACTION_RED_NATION.displayNameKo} ${formatPlanetPgpBmu(snap.redPgpBmu)} — ${
-      leaderKey === 'blue' ? '블루 우세' : leaderKey === 'red' ? '레드 우세' : '팽팽'
+    title: 'Faction PGP Power Briefing',
+    body: `${MEGA_FACTION_BLUE_NATION.displayNameEn} ${formatPlanetPgpBmu(snap.bluePgpBmu)} vs ${MEGA_FACTION_RED_NATION.displayNameEn} ${formatPlanetPgpBmu(snap.redPgpBmu)} — ${
+      leaderKey === 'blue' ? 'Blue lead' : leaderKey === 'red' ? 'Red lead' : 'Even'
     }`,
-    tag: '외교',
+    tag: 'diplomacy',
     dedupeKey: todayDedupeKey(),
   });
 }

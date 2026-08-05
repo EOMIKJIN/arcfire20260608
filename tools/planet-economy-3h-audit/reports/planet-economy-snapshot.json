@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-08-03T15:03:34.471Z",
-  "kstDayKey": "2026-08-04",
+  "timestamp": "2026-08-05T15:00:54.383Z",
+  "kstDayKey": "2026-08-06",
   "overall": "WARN",
   "convoyDaily": {
     "ran": true,
-    "kstDayKey": "2026-08-04",
+    "kstDayKey": "2026-08-06",
     "supplyRoundTripsOk": 18,
     "supplyRoundTripsFailed": 1,
     "demandPlanetsCovered": 19,
@@ -12,10 +12,10 @@
       "core_prime"
     ]
   },
-  "fleetBankBalance": 518638,
-  "arcVaultDelta": 138790,
+  "fleetBankBalance": 520044,
+  "arcVaultDelta": 136074,
   "blueVaultDelta": 0,
-  "arcVaultBalance": 238790,
+  "arcVaultBalance": 236074,
   "blueVaultBalance": 100000,
   "upkeepProjection": {
     "fixedPerPlanet": 800,
@@ -163,9 +163,9 @@
       },
       {
         "planetId": "omega_hub",
-        "dailyArcFeeCredits": 4174,
-        "dailyUpkeepCredits": 1551,
-        "feeUpkeepRatio": 2.69,
+        "dailyArcFeeCredits": 3302,
+        "dailyUpkeepCredits": 1394,
+        "feeUpkeepRatio": 2.37,
         "status": "ok"
       },
       {
@@ -219,9 +219,9 @@
       },
       {
         "planetId": "nightfall_citadel",
-        "dailyArcFeeCredits": 2283,
-        "dailyUpkeepCredits": 1210,
-        "feeUpkeepRatio": 1.89,
+        "dailyArcFeeCredits": 1820,
+        "dailyUpkeepCredits": 1127,
+        "feeUpkeepRatio": 1.61,
         "status": "ok"
       },
       {
@@ -255,7 +255,7 @@
     ],
     "maxFeeUpkeepRatio": 3.07,
     "minFeeUpkeepRatio": 0.04,
-    "gini": 0.297,
+    "gini": 0.299,
     "warnCount": 0,
     "failCount": 0,
     "deficitCount": 4,
@@ -348,14 +348,14 @@
     },
     {
       "planetId": "omega_hub",
-      "arcFeeCredits": 4174,
-      "convoyGrossCredits": 41740,
-      "convoyFeeCredits": 4174,
+      "arcFeeCredits": 3302,
+      "convoyGrossCredits": 33028,
+      "convoyFeeCredits": 3302,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 41740,
-      "upkeepExpectedDaily": 1551,
+      "grossCredits": 33028,
+      "upkeepExpectedDaily": 1394,
       "occupierSeed": "RED",
       "revenueOk": true,
       "zeroReason": ""
@@ -460,14 +460,14 @@
     },
     {
       "planetId": "nightfall_citadel",
-      "arcFeeCredits": 2283,
-      "convoyGrossCredits": 22835,
-      "convoyFeeCredits": 2283,
+      "arcFeeCredits": 1820,
+      "convoyGrossCredits": 18208,
+      "convoyFeeCredits": 1820,
       "playerTradeGrossCredits": 0,
       "playerTradeFeeCredits": 0,
       "playerWalletPending": 0,
-      "grossCredits": 22835,
-      "upkeepExpectedDaily": 1210,
+      "grossCredits": 18208,
+      "upkeepExpectedDaily": 1127,
       "occupierSeed": "RED",
       "revenueOk": true,
       "zeroReason": ""

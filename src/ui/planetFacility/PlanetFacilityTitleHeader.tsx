@@ -1,5 +1,6 @@
 import React, { memo, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type TextStyle } from 'react-native';
+import { useT } from '../../i18n';
 import { FONTS, SPACING } from '../../utils/theme';
 import { TACTICAL_FACILITY as TF } from '../tactical/tacticalFacilityScreenTokens';
 import {
@@ -24,9 +25,11 @@ export const PlanetFacilityTitleHeader = memo(function PlanetFacilityTitleHeader
   title,
   subtitle,
   onBack,
-  backLabel = '◀',
+  backLabel: backLabelProp,
   trailing,
 }: Props) {
+  const t = useT();
+  const backLabel = backLabelProp ?? t('common.back');
   const resolvedTitle = formatTacticalOverlayTitle(title);
   const resolvedSubtitle = tacticalTitleHeaderSubtitle(subtitle);
 

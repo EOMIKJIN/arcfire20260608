@@ -5,6 +5,11 @@ export const KO_DICTIONARY: I18nDictionary = {
   'common.loading.accessibility': '로딩',
   'common.continue': '[ 계속 ]',
   'common.confirm': '[ 확인 ]',
+  'common.confirmBare': '확인',
+  'common.next': '[ 다음 ]',
+  'common.back': '◀ 나가기',
+  'levelUp.cardTitle': 'LEVEL UP',
+  'relic.title': '〔유물〕{name}',
   'common.cancel': '[ 취소 ]',
 
   'stageTransition.stuck.title': '화면 전환 지연',
@@ -49,7 +54,49 @@ export const KO_DICTIONARY: I18nDictionary = {
   'settings.section.account': '— 계정 —',
   'settings.reset.hint': '캐릭터 데이터(닉네임/진행/미션/인벤/스킬)를 삭제하고 타이틀로 돌아갑니다.',
   'settings.reset.button': '[ 게임 계정 초기화 ]',
+  'settings.reset.progress': '계정 초기화 중…',
+  'settings.reset.error.title': '초기화 오류',
+  'settings.reset.error.body':
+    '일부 데이터가 남았을 수 있습니다. 앱을 완전히 종료한 뒤 다시 시도해 주세요.',
   'settings.close': '[ 닫기 ]',
+
+  // ── 게임 저장 백업 (backup) ──
+  'backup.sectionTitle': '게임 저장 백업 · 복구 (7일)',
+  'backup.sectionHint':
+    '클라우드에 최대 7일간 보관됩니다. 계정 초기화 직전·6시간마다 자동 백업됩니다.',
+  'backup.manual': '지금 백업하기',
+  'backup.refresh': '백업 목록 새로고침',
+  'backup.listPrompt': '「백업 목록 새로고침」을 눌러 클라우드 백업 목록을 확인하세요.',
+  'backup.listEmpty': '저장된 백업이 없습니다. 플레이 후 자동 생성되거나 위에서 수동 백업하세요.',
+  'backup.listTimeout': '목록 조회 시간이 초과되었습니다. 네트워크 확인 후 다시 시도하세요.',
+  'backup.listError': '목록을 불러오지 못했습니다. 잠시 후 다시 시도하세요.',
+  'backup.line': '{date} · {reason} · synth {synth} · Lv{level}',
+  'backup.reason.pre_purge': '초기화 직전',
+  'backup.reason.scheduled': '자동',
+  'backup.reason.manual': '수동',
+  'backup.ok.title': '백업 완료',
+  'backup.ok.body': '클라우드에 저장했습니다.',
+  'backup.fail.title': '백업 실패',
+  'backup.fail.payloadTooLarge':
+    '저장 데이터가 너무 큽니다. 잠시 후 다시 시도하거나 개발자에게 문의하세요.',
+  'backup.fail.interval': '6시간 이내 자동 백업이 이미 있습니다.',
+  'backup.fail.upload': '네트워크 오류로 백업 업로드에 실패했습니다.',
+  'backup.fail.generic': '백업에 실패했습니다. 네트워크 연결을 확인해 주세요.',
+  'backup.restore.ok.title': '복구 완료',
+  'backup.restore.ok.body':
+    '저장 데이터를 불러왔습니다. 앱을 한 번 재시작하거나 행성 허브를 다시 열어 주세요.',
+  'backup.restore.fail.title': '복구 실패',
+  'backup.restore.pendingOk.title': '복구 예약',
+  'backup.restore.pendingOk.body': '다음 앱 실행 시 선택한 백업으로 자동 복구됩니다.',
+  'backup.restore.pendingFail.title': '복구 예약 실패',
+  'backup.restore.now': '이 백업으로 복구',
+  'backup.restore.nextBoot': '다음 실행 시 복구',
+  'backup.error.expired': '백업 보관 기간(7일)이 지났습니다.',
+  'backup.error.empty': '백업 데이터가 비어 있습니다.',
+  'backup.error.apply': '로컬 저장소에 적용하지 못했습니다. 앱 재시작 후 다시 시도하세요.',
+  'backup.error.pendingTimeout':
+    '복구 예약 저장 시간이 초과되었습니다. 네트워크 확인 후 다시 시도하세요.',
+  'backup.error.notFound': '백업을 찾을 수 없거나 불러오지 못했습니다.',
 
   // ── 조선소 (shipyard) ──
   'shipyard.title': '조선소',
@@ -478,6 +525,13 @@ export const KO_DICTIONARY: I18nDictionary = {
   'combat.shipDestroyedTitle': '전함 격침',
   'combat.shipDestroyedBody': '전함이 파괴되어 생존포드로 거점 행성에 귀환했습니다.\n조선소에서 전함을 재구매·탑승하세요.',
   'combat.confirm': '확인',
+  'battleStance.AGGRESSIVE': '공격 태세',
+  'battleStance.DEFENSIVE': '방어 태세',
+  'battleStance.NEUTRAL': '중립 태세',
+  'dialog.comm': '[ 통신 ]',
+  'dialog.next': '[ 다음 ]',
+  'dialog.ok': '[ 확인 ]',
+  'dialog.pilotFallback': '파일럿',
   'combat.fleeTitle': '도주',
   'combat.fleeBody': '전투를 포기하고 도주하시겠습니까?',
   'combat.cancel': '취소',
@@ -1178,7 +1232,12 @@ export const KO_DICTIONARY: I18nDictionary = {
   'skillCat.trade': '무역',
   'skillCat.fleet': '함대',
 
-  // ── 선술집 공지 태그 (noticeTag) ──
+  // ── 선술집 공지 태그 (noticeTag) — stable codes + legacy KO keys ──
+  'noticeTag.ops': '작전',
+  'noticeTag.economy': '경제',
+  'noticeTag.diplomacy': '외교',
+  'noticeTag.rumor': '소문',
+  'noticeTag.arccore': '아크코어',
   'noticeTag.작전': '작전',
   'noticeTag.경제': '경제',
   'noticeTag.외교': '외교',
@@ -1223,6 +1282,12 @@ export const KO_DICTIONARY: I18nDictionary = {
   'news.economyBulk.body': '아크코어 경제 서브코어가 {action} 정책을 반영했습니다.',
   'news.briefing.title': '아크코어 정기 브리핑',
   'news.briefing.body': '개방 성계 {unlocked}/{total}, 활성 수송선 {traffic}척 상태입니다.',
+  'news.nebulaShift.title': '행성 성운 생태계 정기 조정',
+  'news.nebulaShift.body':
+    '아크코어가 일일 주기 기준으로 {count}개 행성 성운 파라미터를 미세 조정했습니다.',
+  'news.expansionTest.title': '[테스트] 미개척 성계 개방',
+  'news.expansionTest.body':
+    '아크코어 1회 테스트로 {systemName}({systemId})이(가) 개방되었습니다. 이후 일일 주기는 24시간으로 돌아갑니다.',
   'news.megaFactionPgp.title': '세력 PGP 전력 브리핑',
   'news.megaFactionPgp.body':
     '{blueNation}(블루·서부항로) 총 PGP {bluePgp} BMU · {redNation}(레드·동부항로) 총 PGP {redPgp} BMU — {leaderLine}',
@@ -1265,6 +1330,25 @@ export const KO_DICTIONARY: I18nDictionary = {
 
   // ── 함선 장비 (equipment) ──
   'equipment.effectPendingSuffix': '[추후 연동]',
+  'equip.stat.speedBonusPct': '속도',
+  'equip.stat.maneuverBonusPct': '기동',
+  'equip.stat.powerEfficiencyPct': '동력효율',
+  'equip.stat.armorBonusPct': '장갑',
+  'equip.stat.shieldBonusPct': '실드',
+  'equip.stat.damageReductionPct': '피해감소',
+  'equip.stat.detectRangeBonusPct': '탐지',
+  'equip.stat.linkStabilityPct': '링크',
+  'equip.stat.stealthDetectBonusPct': '은밀탐지',
+  'equip.stat.ecmStrengthPct': 'ECM',
+  'equip.stat.allyBuffPct': '아군버프',
+  'equip.stat.decoyStrengthPct': '미끼',
+  'equip.stat.hullRepairPerMinPct': '선체수리',
+  'equip.stat.overheatReductionPct': '과열완화',
+  'equip.stat.postCombatRepairPct': '전투후수리',
+  'equip.stat.evasionBonusPct': '회피',
+  'equip.stat.cooldownReductionPct': '쿨다운',
+  'equip.stat.routeEfficiencyPct': '항로효율',
+  'equip.stat.miningYieldBonusPct': '채굴',
 
   // ── 구역 라벨 (zone) ──
   'zone.safe': '안전 구역',
@@ -1278,6 +1362,9 @@ export const KO_DICTIONARY: I18nDictionary = {
   'session.remoteTimeout.body': '서버 연결이 5초를 넘겼습니다.\n네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
   'session.cloudRestoreFail.title': '클라우드 복구 실패',
   'session.cloudRestoreFail.body': '저장 데이터를 불러오지 못했습니다.\n네트워크를 확인한 뒤 다시 시도해 주세요.',
+  'session.continue.title': '차원 항로 진입',
+  'session.continue.hint': '우주 맵·궤도 표시 경로를 미리 불러옵니다',
+  'a11y.itemIcon': '아이템 아이콘',
 
   // ── 접전지역 자동전투 (territorial) ──
   'territorial.side.blue': '블루팀',

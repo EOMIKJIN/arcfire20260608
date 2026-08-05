@@ -1,12 +1,13 @@
 import type { ItemDef } from '../types';
 import type { AppLocale } from './types';
 import { useAppSettingsStore } from '../store/appSettingsStore';
+import { isKoUi } from './index';
 
 type ItemEnFields = Pick<ItemDef, 'name' | 'description'> &
   Partial<Pick<ItemDef, 'nameEn' | 'descriptionEn' | 'featureDescription' | 'featureDescriptionEn'>>;
 
 function pickEn(locale: AppLocale, ko: string, en?: string | null): string {
-  return locale !== 'ko' && en?.trim() ? en.trim() : ko;
+  return !isKoUi(locale) && en?.trim() ? en.trim() : ko;
 }
 
 export function resolveItemName(item: ItemEnFields, locale: AppLocale): string {

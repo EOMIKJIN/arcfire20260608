@@ -66,7 +66,8 @@ export const useAppSettingsStore = create<AppSettingsState>((set, get) => ({
   ...DEFAULTS,
 
   setLocale: (locale) => {
-    if (!SUPPORTED_LOCALES.includes(locale)) return;
+    // 출시 기준: 완전 번역(ko/en)만 영속. pending locale 신규 저장 금지.
+    if (!(FULLY_TRANSLATED_LOCALES as readonly string[]).includes(locale)) return;
     set({ locale });
     persistFrom(get());
   },
@@ -92,13 +93,21 @@ export const useAppSettingsStore = create<AppSettingsState>((set, get) => ({
       const raw = await AsyncStorage.getItem(STORAGE_KEY);
       if (raw) {
         const o = JSON.parse(raw) as Partial<AppSettingsState>;
+        const rawLocale =
+          o.locale && SUPPORTED_LOCALES.includes(o.locale) ? o.locale : DEFAULTS.locale;
+        // 레거시 ja/zh/es/de 저장값 → EN(사전·UI 정합). ko만 한국어 유지.
+        const locale: AppLocale = (FULLY_TRANSLATED_LOCALES as readonly string[]).includes(rawLocale)
+          ? rawLocale
+          : 'en';
         set({
-          locale: o.locale && SUPPORTED_LOCALES.includes(o.locale) ? o.locale : DEFAULTS.locale,
+          locale,
           bgmMuted: typeof o.bgmMuted === 'boolean' ? o.bgmMuted : DEFAULTS.bgmMuted,
           bgmVolume: typeof o.bgmVolume === 'number' ? clamp01(o.bgmVolume) : DEFAULTS.bgmVolume,
           sfxMuted: typeof o.sfxMuted === 'boolean' ? o.sfxMuted : DEFAULTS.sfxMuted,
           sfxVolume: typeof o.sfxVolume === 'number' ? clamp01(o.sfxVolume) : DEFAULTS.sfxVolume,
         });
+        // pending→en 정규화 시 디스크도 갱신(재부팅 후 재이주 방지)
+        if (locale !== rawLocale) persistFrom(get());
       }
     } catch {
       /* 손상 시 기본값 유지 */

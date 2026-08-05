@@ -30,10 +30,6 @@ const EN_BY_ID = {
   ore_voidstone: ['Voidstone', 'Special energy crystal from late-zone sectors.', 'Special energy crystal from late-zone sectors.'],
 };
 
-const OWNERSHIP_EN_SUFFIX = ' / Ownership';
-const OWNERSHIP_DESC_EN =
-  'Planet ownership deed (non-resale). Purchasing assigns your clan to hold this planet.';
-
 function parseCsvLine(line) {
   const out = [];
   let cur = '';
@@ -73,9 +69,6 @@ function main() {
 
   const header = parseCsvLine(lines[0]).map((h) => String(h).replace(/^\uFEFF/, '').trim());
   const idIdx = header.indexOf('id');
-  const nameIdx = header.indexOf('name');
-  const descIdx = header.indexOf('description');
-  const featIdx = header.findIndex((h) => h === '특징설명' || h === 'featureDescription');
 
   let nameEnIdx = header.indexOf('name_en');
   let descEnIdx = header.indexOf('description_en');
@@ -103,23 +96,8 @@ function main() {
     while (cols.length < newHeader.length) cols.push('');
 
     const id = cols[idIdx].trim();
-    const koName = cols[nameIdx] ?? '';
-    const koDesc = cols[descIdx] ?? '';
-    const koFeat = featIdx >= 0 ? cols[featIdx] ?? '' : koDesc;
-
-    let enTriple = EN_BY_ID[id];
-    if (!enTriple && id.startsWith('ownership_')) {
-      const planetLabel = koName.replace(/\/소유권$/, '').trim();
-      enTriple = [
-        `${planetLabel}${OWNERSHIP_EN_SUFFIX}`,
-        OWNERSHIP_DESC_EN,
-        OWNERSHIP_DESC_EN,
-      ];
-    }
-    if (!enTriple && id.startsWith('tg_')) {
-      enTriple = [koName, koDesc, koFeat];
-    }
-
+    const enTriple = EN_BY_ID[id];
+    // ownership_* / tg_* / eq_* 영문 정본 → patch-item-defs-trade-en-full.mjs
     if (enTriple) {
       if (!cols[nameEnIdx]?.trim()) cols[nameEnIdx] = enTriple[0];
       if (!cols[descEnIdx]?.trim()) cols[descEnIdx] = enTriple[1];

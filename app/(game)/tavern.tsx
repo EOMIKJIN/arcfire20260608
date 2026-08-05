@@ -8,6 +8,8 @@ import { useFocusEffect } from 'expo-router';
 import { FONTS, SPACING } from '../../src/utils/theme';
 import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
 import { useT, t as tStatic } from '../../src/i18n';
+import { resolveNpcCaptainDisplayName } from '../../src/i18n/captainText';
+import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import {
   createTavernScreenSession,
@@ -57,6 +59,7 @@ function formatPostedAt(postedAtMs: number): string {
 
 export default function TavernScreen() {
   const t = useT();
+  const locale = useAppSettingsStore((s) => s.locale);
   const localeRenderKey = useLocaleRenderKey();
   const player = usePlayerStore((s) => s.player);
   const notices = useTavernBoardStore((s) => s.notices);
@@ -97,12 +100,12 @@ export default function TavernScreen() {
   const headerSubtitle = useMemo(() => {
     if (tavernHostCaptain) {
       return t('tavern.hostMeta', {
-        name: tavernHostCaptain.displayName,
+        name: resolveNpcCaptainDisplayName(tavernHostCaptain, locale),
         rank: tavernHostCaptain.rank,
       });
     }
     return boardMeta;
-  }, [tavernHostCaptain, boardMeta, t]);
+  }, [tavernHostCaptain, boardMeta, t, locale]);
 
   useEffect(() => {
     if (!hostDialogVisible || !tavernHostCaptain) return;
@@ -153,7 +156,7 @@ export default function TavernScreen() {
           title={t('tavern.title')}
           subtitle={headerSubtitle}
           onBack={safeBack}
-          backLabel="◀ 나가기"
+          backLabel={t('common.back')}
         />
 
         <View style={fs.bodyPanel}>
@@ -179,7 +182,7 @@ export default function TavernScreen() {
                     <PlanetFacilitySectionHeader inCard first title={t('tavern.hostCardTitle')} />
                     <Text style={styles.hostMeta}>
                       {t('tavern.hostMeta', {
-                        name: tavernHostCaptain.displayName,
+                        name: resolveNpcCaptainDisplayName(tavernHostCaptain, locale),
                         rank: tavernHostCaptain.rank,
                       })}
                     </Text>

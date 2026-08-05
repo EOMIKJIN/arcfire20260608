@@ -3,7 +3,6 @@
 // ============================================================
 
 import { t } from '../../i18n';
-import { useAppSettingsStore } from '../../store/appSettingsStore';
 import { usePlayerStore } from '../../store/playerStore';
 import type { MapFactionSide } from '../../galaxyMap/mapFactionSideCore';
 import type { PlanetRebellionOperatorAlertPending } from './planetRebellionOperatorAlertStore';
@@ -11,9 +10,8 @@ import type { PlanetRebellionOperatorAlertPending } from './planetRebellionOpera
 const NICK_TOKEN = /\[닉네임\]|\[Pilot\]/g;
 
 function applyPilotTokens(text: string): string {
-  const locale = useAppSettingsStore.getState().locale;
   const nickname = usePlayerStore.getState().player?.nickname;
-  const fallback = locale === 'ko' ? '파일럿' : 'Pilot';
+  const fallback = t('dialog.pilotFallback');
   return text.replace(NICK_TOKEN, (nickname ?? '').trim() || fallback);
 }
 

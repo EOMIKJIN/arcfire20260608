@@ -5,6 +5,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mireille",
     displayName: "미레유 보스",
+    displayNameEn: "Mireille Voss",
     rank: "제독",
     factionId: "federation",
     aiAggression: "standard",
@@ -43,6 +44,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_orin",
     displayName: "오린 케이드",
+    displayNameEn: "Orin Cade",
     rank: "대령",
     factionId: "federation_military",
     aiAggression: "cautious",
@@ -81,6 +83,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_sela",
     displayName: "셀라 모른",
+    displayNameEn: "Sela Moran",
     rank: "함대장",
     factionId: "miners_guild",
     aiAggression: "passive",
@@ -119,6 +122,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_jex",
     displayName: "젝스 타르",
+    displayNameEn: "Jex Tar",
     rank: "경비사령",
     factionId: "border_watch",
     aiAggression: "aggressive",
@@ -157,6 +161,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vector",
     displayName: "벡터-7",
+    displayNameEn: "Vector-7",
     rank: "연산 함장",
     factionId: "scientists",
     aiAggression: "cautious",
@@ -195,6 +200,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_kresh",
     displayName: "크레쉬 박",
+    displayNameEn: "Kresh Park",
     rank: "전쟁군주",
     factionId: "trade_coalition",
     aiAggression: "berserk",
@@ -233,6 +239,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_raid_scar",
     displayName: "스카 레인",
+    displayNameEn: "Scar Raine",
     rank: "해적 선장",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -271,6 +278,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_eden_08",
     displayName: "카일 렌드",
+    displayNameEn: "Kyle Rend",
     rank: "순항대장",
     factionId: "independent",
     aiAggression: "standard",
@@ -309,6 +317,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_eden_09",
     displayName: "라나 벨",
+    displayNameEn: "Lana Bell",
     rank: "정비사령",
     factionId: "independent",
     aiAggression: "cautious",
@@ -347,6 +356,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_eden_10",
     displayName: "오멜 카르",
+    displayNameEn: "Omel Kar",
     rank: "경계지휘관",
     factionId: "independent",
     aiAggression: "aggressive",
@@ -385,6 +395,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_watch_01",
     displayName: "하르만 돌",
+    displayNameEn: "Harman Dohl",
     rank: "초계지휘관",
     factionId: "border_watch",
     aiAggression: "cautious",
@@ -423,6 +434,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_watch_02",
     displayName: "세린 코프",
+    displayNameEn: "Serin Korf",
     rank: "항로감독",
     factionId: "border_watch",
     aiAggression: "standard",
@@ -461,6 +473,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_solar_guard_01",
     displayName: "이사 벤트",
+    displayNameEn: "Isa Vent",
     rank: "항만사령",
     factionId: "federation",
     aiAggression: "passive",
@@ -499,6 +512,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_solar_guard_02",
     displayName: "토닉 레일",
+    displayNameEn: "Tonic Rail",
     rank: "무역호위대장",
     factionId: "federation_military",
     aiAggression: "standard",
@@ -537,6 +551,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_test_a",
     displayName: "베가 보조대 알파",
+    displayNameEn: "Vega Aux Alpha",
     rank: "시험대장",
     factionId: "federation_military",
     aiAggression: "aggressive",
@@ -575,6 +590,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_test_b",
     displayName: "베가 보조대 브라보",
+    displayNameEn: "Vega Aux Bravo",
     rank: "시험대장",
     factionId: "federation_military",
     aiAggression: "cautious",
@@ -613,6 +629,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_red_04",
     displayName: "베가 레드 04",
+    displayNameEn: "Vega Red 04",
     rank: "돌격대장",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -651,6 +668,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_red_05",
     displayName: "베가 레드 05",
+    displayNameEn: "Vega Red 05",
     rank: "돌격대장",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -689,6 +707,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_red_06",
     displayName: "베가 레드 06",
+    displayNameEn: "Vega Red 06",
     rank: "공성지휘관",
     factionId: "pirates",
     aiAggression: "berserk",
@@ -727,6 +746,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_red_07",
     displayName: "베가 레드 07",
+    displayNameEn: "Vega Red 07",
     rank: "공성지휘관",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -765,6 +785,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_red_08",
     displayName: "베가 레드 08",
+    displayNameEn: "Vega Red 08",
     rank: "전투대장",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -803,6 +824,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_red_09",
     displayName: "베가 레드 09",
+    displayNameEn: "Vega Red 09",
     rank: "전투대장",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -841,6 +863,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_red_10",
     displayName: "베가 레드 10",
+    displayNameEn: "Vega Red 10",
     rank: "선봉지휘관",
     factionId: "pirates",
     aiAggression: "berserk",
@@ -879,6 +902,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_red_11",
     displayName: "베가 레드 11",
+    displayNameEn: "Vega Red 11",
     rank: "선봉지휘관",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -917,6 +941,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_red_12",
     displayName: "베가 레드 12",
+    displayNameEn: "Vega Red 12",
     rank: "선봉지휘관",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -955,6 +980,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_blue_07",
     displayName: "베가 블루 07",
+    displayNameEn: "Vega Blue 07",
     rank: "방어대장",
     factionId: "border_watch",
     aiAggression: "cautious",
@@ -993,6 +1019,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_blue_08",
     displayName: "베가 블루 08",
+    displayNameEn: "Vega Blue 08",
     rank: "방어대장",
     factionId: "border_watch",
     aiAggression: "standard",
@@ -1031,6 +1058,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_blue_09",
     displayName: "베가 블루 09",
+    displayNameEn: "Vega Blue 09",
     rank: "순찰사령",
     factionId: "federation_military",
     aiAggression: "cautious",
@@ -1069,6 +1097,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_blue_10",
     displayName: "베가 블루 10",
+    displayNameEn: "Vega Blue 10",
     rank: "정찰사령",
     factionId: "federation",
     aiAggression: "cautious",
@@ -1107,6 +1136,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_vega_blue_11",
     displayName: "베가 블루 11",
+    displayNameEn: "Vega Blue 11",
     rank: "경계지휘관",
     factionId: "independent",
     aiAggression: "standard",
@@ -1145,6 +1175,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_neweden_red_07",
     displayName: "뉴에덴 레드 07",
+    displayNameEn: "New Eden Red 07",
     rank: "침투지휘관",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -1183,6 +1214,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_neweden_blue_07",
     displayName: "뉴에덴 블루 07",
+    displayNameEn: "New Eden Blue 07",
     rank: "방어지휘관",
     factionId: "independent",
     aiAggression: "cautious",
@@ -1221,6 +1253,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arcadia_lane_01",
     displayName: "엘렌 드 코르",
+    displayNameEn: "Ellen de Cor",
     rank: "관문순찰대장",
     factionId: "federation",
     aiAggression: "cautious",
@@ -1259,6 +1292,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arcadia_lane_02",
     displayName: "마르크 세인",
+    displayNameEn: "Marc Sane",
     rank: "외곽초계",
     factionId: "federation_military",
     aiAggression: "standard",
@@ -1297,6 +1331,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_arcadia_01",
     displayName: "카일 드레이",
+    displayNameEn: "Kyle Dray",
     rank: "관문침입자",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -1335,6 +1370,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_arcadia_02",
     displayName: "니나 포르",
+    displayNameEn: "Nina Forr",
     rank: "외곽차단장",
     factionId: "pirates",
     aiAggression: "standard",
@@ -1373,6 +1409,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_arcadia_03",
     displayName: "토르 그레이",
+    displayNameEn: "Thor Gray",
     rank: "초계사냥꾼",
     factionId: "pirates",
     aiAggression: "cautious",
@@ -1411,6 +1448,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_solar_01",
     displayName: "레나 보크",
+    displayNameEn: "Lena Vork",
     rank: "항구침입자",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -1449,6 +1487,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_minerva_01",
     displayName: "드록 한",
+    displayNameEn: "Drok Han",
     rank: "광산습격자",
     factionId: "pirates",
     aiAggression: "standard",
@@ -1487,6 +1526,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_vega_01",
     displayName: "자크 린",
+    displayNameEn: "Zach Lynn",
     rank: "전초습격자",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -1525,6 +1565,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_eden_01",
     displayName: "비토 산체즈",
+    displayNameEn: "Vito Sanchez",
     rank: "정비독 침투장",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -1563,6 +1604,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_ai_clan_safe_01",
     displayName: "아델린 루크",
+    displayNameEn: "Adeline Luke",
     rank: "연방해군",
     factionId: "federation",
     aiAggression: "standard",
@@ -1601,6 +1643,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_ai_clan_neutral_01",
     displayName: "린 켄달",
+    displayNameEn: "Lynn Kendall",
     rank: "중립무역대장",
     factionId: "independent",
     aiAggression: "standard",
@@ -1639,6 +1682,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_ai_clan_pvp_01",
     displayName: "모라 섀이어",
+    displayNameEn: "Mora Shayer",
     rank: "해적제독",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -1677,6 +1721,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_pf_01",
     displayName: "루안 베르",
+    displayNameEn: "Luan Verre",
     rank: "선장",
     factionId: "independent",
     aiAggression: "passive",
@@ -1715,6 +1760,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_pf_02",
     displayName: "테오 반성",
+    displayNameEn: "Theo Banseong",
     rank: "선장",
     factionId: "independent",
     aiAggression: "cautious",
@@ -1753,6 +1799,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_pf_03",
     displayName: "미카 소렌",
+    displayNameEn: "Mika Soren",
     rank: "선장",
     factionId: "independent",
     aiAggression: "passive",
@@ -1791,6 +1838,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_pf_04",
     displayName: "조이 힐데",
+    displayNameEn: "Joey Hilde",
     rank: "선장",
     factionId: "independent",
     aiAggression: "cautious",
@@ -1829,6 +1877,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_pf_05",
     displayName: "카이 네므",
+    displayNameEn: "Kai Nem",
     rank: "선장",
     factionId: "independent",
     aiAggression: "passive",
@@ -1867,6 +1916,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_pf_06",
     displayName: "사라 올튼",
+    displayNameEn: "Sara Olton",
     rank: "선장",
     factionId: "independent",
     aiAggression: "cautious",
@@ -1905,6 +1955,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_pf_07",
     displayName: "데렉 훈",
+    displayNameEn: "Derek Hoon",
     rank: "선장",
     factionId: "independent",
     aiAggression: "passive",
@@ -1943,6 +1994,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_pf_08",
     displayName: "이안 크로프",
+    displayNameEn: "Ian Kroff",
     rank: "선장",
     factionId: "independent",
     aiAggression: "cautious",
@@ -1981,6 +2033,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_pf_09",
     displayName: "노바 린",
+    displayNameEn: "Nova Lynn",
     rank: "선장",
     factionId: "independent",
     aiAggression: "passive",
@@ -2019,6 +2072,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_pf_10",
     displayName: "제이 파크",
+    displayNameEn: "Jay Park",
     rank: "선장",
     factionId: "independent",
     aiAggression: "cautious",
@@ -2057,6 +2111,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_pf_11",
     displayName: "윤 하림",
+    displayNameEn: "Yoon Harim",
     rank: "선장",
     factionId: "independent",
     aiAggression: "passive",
@@ -2095,6 +2150,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_pf_12",
     displayName: "리스 베가",
+    displayNameEn: "Reese Vega",
     rank: "선장",
     factionId: "independent",
     aiAggression: "cautious",
@@ -2133,6 +2189,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_iron_01",
     displayName: "갈렌 브록",
+    displayNameEn: "Galen Brock",
     rank: "잔해약탈대장",
     factionId: "scavengers",
     aiAggression: "aggressive",
@@ -2171,6 +2228,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_iron_02",
     displayName: "베라 스톤",
+    displayNameEn: "Vera Stone",
     rank: "차단함장",
     factionId: "scavengers",
     aiAggression: "standard",
@@ -2209,6 +2267,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_iron_03",
     displayName: "코르 엔딕",
+    displayNameEn: "Cor Endic",
     rank: "잔해사냥꾼",
     factionId: "scavengers",
     aiAggression: "cautious",
@@ -2247,6 +2306,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_draco_01",
     displayName: "라스 베일",
+    displayNameEn: "Ras Vale",
     rank: "성운약탈대장",
     factionId: "void_walkers",
     aiAggression: "aggressive",
@@ -2285,6 +2345,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_draco_02",
     displayName: "니아 크룩스",
+    displayNameEn: "Nia Crux",
     rank: "성운잠행함장",
     factionId: "void_walkers",
     aiAggression: "cautious",
@@ -2323,6 +2384,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_draco_03",
     displayName: "테온 모르",
+    displayNameEn: "Teon Mor",
     rank: "왜곡추격자",
     factionId: "void_walkers",
     aiAggression: "standard",
@@ -2361,6 +2423,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_omega_01",
     displayName: "자르 렉스",
+    displayNameEn: "Zar Rex",
     rank: "회항로 약탈자",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -2399,6 +2462,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_omega_02",
     displayName: "밀라 콘",
+    displayNameEn: "Mila Korn",
     rank: "항로차단장",
     factionId: "pirates",
     aiAggression: "standard",
@@ -2437,6 +2501,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_omega_03",
     displayName: "오스 델타",
+    displayNameEn: "Os Delta",
     rank: "교차점 사냥꾼",
     factionId: "pirates",
     aiAggression: "cautious",
@@ -2475,6 +2540,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_helios_01",
     displayName: "바론 솔",
+    displayNameEn: "Baron Sol",
     rank: "태양권 강습장",
     factionId: "energy_corp",
     aiAggression: "aggressive",
@@ -2513,6 +2579,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_helios_02",
     displayName: "이리스 플레어",
+    displayNameEn: "Iris Flare",
     rank: "코일약탈함장",
     factionId: "energy_corp",
     aiAggression: "standard",
@@ -2551,6 +2618,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_helios_03",
     displayName: "카른 루멘",
+    displayNameEn: "Karn Lumen",
     rank: "광압추격자",
     factionId: "energy_corp",
     aiAggression: "cautious",
@@ -2589,6 +2657,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_sirius_01",
     displayName: "드렉 칼로",
+    displayNameEn: "Drek Kalo",
     rank: "변경 약탈장",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -2627,6 +2696,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_sirius_02",
     displayName: "렌 바스크",
+    displayNameEn: "Ren Vask",
     rank: "경계선 침투장",
     factionId: "pirates",
     aiAggression: "standard",
@@ -2665,6 +2735,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_sirius_03",
     displayName: "샤라 밀",
+    displayNameEn: "Shara Mill",
     rank: "밀수호위대장",
     factionId: "pirates",
     aiAggression: "cautious",
@@ -2703,6 +2774,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_titan_01",
     displayName: "오르 나딘",
+    displayNameEn: "Or Nadin",
     rank: "유적강탈장",
     factionId: "archaeologists",
     aiAggression: "aggressive",
@@ -2741,6 +2813,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_titan_02",
     displayName: "벨 토르",
+    displayNameEn: "Bel Tor",
     rank: "고대품 추적자",
     factionId: "archaeologists",
     aiAggression: "standard",
@@ -2779,6 +2852,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_titan_03",
     displayName: "렉스 하울",
+    displayNameEn: "Rex Howl",
     rank: "게이트 차단장",
     factionId: "archaeologists",
     aiAggression: "cautious",
@@ -2817,6 +2891,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_perseus_01",
     displayName: "케인 발러",
+    displayNameEn: "Kane Valor",
     rank: "기념항로 약탈장",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -2855,6 +2930,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_perseus_02",
     displayName: "도라 네임",
+    displayNameEn: "Dora Name",
     rank: "전장수집가",
     factionId: "pirates",
     aiAggression: "standard",
@@ -2893,6 +2969,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_perseus_03",
     displayName: "마르 오닉스",
+    displayNameEn: "Mar Onyx",
     rank: "용병요격장",
     factionId: "pirates",
     aiAggression: "cautious",
@@ -2931,6 +3008,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_crimson_01",
     displayName: "로크 블러드",
+    displayNameEn: "Rok Blood",
     rank: "크림슨 전대장",
     factionId: "pirates",
     aiAggression: "berserk",
@@ -2969,6 +3047,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_crimson_02",
     displayName: "세브 라우",
+    displayNameEn: "Sev Rau",
     rank: "피의 차단장",
     factionId: "pirates",
     aiAggression: "aggressive",
@@ -3007,6 +3086,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_crimson_03",
     displayName: "아크 네로",
+    displayNameEn: "Ark Nero",
     rank: "붉은 포식자",
     factionId: "pirates",
     aiAggression: "standard",
@@ -3045,6 +3125,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_dark_01",
     displayName: "모르 벡스",
+    displayNameEn: "Mor Vex",
     rank: "리프트 군주",
     factionId: "void_walkers",
     aiAggression: "aggressive",
@@ -3083,6 +3164,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_dark_02",
     displayName: "실라 녹스",
+    displayNameEn: "Sila Nox",
     rank: "왜곡 차단장",
     factionId: "void_walkers",
     aiAggression: "cautious",
@@ -3121,6 +3203,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_dark_03",
     displayName: "카스 이본",
+    displayNameEn: "Kas Yvon",
     rank: "심연 추격자",
     factionId: "void_walkers",
     aiAggression: "standard",
@@ -3159,6 +3242,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_blood_01",
     displayName: "하르 브루트",
+    displayNameEn: "Har Brute",
     rank: "혈전 지휘관",
     factionId: "trade_coalition",
     aiAggression: "berserk",
@@ -3197,6 +3281,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_blood_02",
     displayName: "레다 카인",
+    displayNameEn: "Leda Cain",
     rank: "전리품 감독관",
     factionId: "trade_coalition",
     aiAggression: "aggressive",
@@ -3235,6 +3320,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_blood_03",
     displayName: "바스 론",
+    displayNameEn: "Vas Ron",
     rank: "혈장 요격장",
     factionId: "trade_coalition",
     aiAggression: "standard",
@@ -3273,6 +3359,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_shadow_01",
     displayName: "녹스 베일",
+    displayNameEn: "Nox Vale",
     rank: "암시장 함대장",
     factionId: "black_market",
     aiAggression: "aggressive",
@@ -3311,6 +3398,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_shadow_02",
     displayName: "메이즈 클라인",
+    displayNameEn: "Maze Klein",
     rank: "그림자 차단장",
     factionId: "black_market",
     aiAggression: "cautious",
@@ -3349,6 +3437,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_shadow_03",
     displayName: "제드 라운",
+    displayNameEn: "Jed Rown",
     rank: "은폐 요격장",
     factionId: "black_market",
     aiAggression: "standard",
@@ -3387,6 +3476,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_abyss_01",
     displayName: "칼 오르딘",
+    displayNameEn: "Kal Ordin",
     rank: "어비스 문지기",
     factionId: "unknown",
     aiAggression: "berserk",
@@ -3425,6 +3515,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_abyss_02",
     displayName: "엘라 보이드",
+    displayNameEn: "Ella Void",
     rank: "심연 항법장",
     factionId: "unknown",
     aiAggression: "aggressive",
@@ -3463,6 +3554,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_abyss_03",
     displayName: "노르 카단",
+    displayNameEn: "Nor Kadan",
     rank: "관문 차단장",
     factionId: "unknown",
     aiAggression: "cautious",
@@ -3501,6 +3593,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_nightfall_01",
     displayName: "벨가 룬",
+    displayNameEn: "Belga Rune",
     rank: "나이트폴 군주",
     factionId: "dark_lords",
     aiAggression: "berserk",
@@ -3539,6 +3632,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_nightfall_02",
     displayName: "세른 다크",
+    displayNameEn: "Sern Dark",
     rank: "흑야 강습장",
     factionId: "dark_lords",
     aiAggression: "aggressive",
@@ -3577,6 +3671,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_nightfall_03",
     displayName: "이라 문",
+    displayNameEn: "Ira Moon",
     rank: "성채 포위장",
     factionId: "dark_lords",
     aiAggression: "standard",
@@ -3615,6 +3710,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_core_01",
     displayName: "아우렐 코어",
+    displayNameEn: "Aurel Core",
     rank: "코어 수문장",
     factionId: "ancients",
     aiAggression: "berserk",
@@ -3653,6 +3749,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_core_02",
     displayName: "세라프 제로",
+    displayNameEn: "Seraph Zero",
     rank: "고대 감시자",
     factionId: "ancients",
     aiAggression: "aggressive",
@@ -3691,6 +3788,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_core_03",
     displayName: "오닉스 프라임",
+    displayNameEn: "Onyx Prime",
     rank: "코어 요격장",
     factionId: "ancients",
     aiAggression: "standard",
@@ -3729,6 +3827,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_eternity_01",
     displayName: "크로노스 베일",
+    displayNameEn: "Chronos Vale",
     rank: "영원대장",
     factionId: "ancients",
     aiAggression: "berserk",
@@ -3767,6 +3866,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_eternity_02",
     displayName: "아델 노바",
+    displayNameEn: "Adel Nova",
     rank: "정지궤도 감시자",
     factionId: "ancients",
     aiAggression: "aggressive",
@@ -3805,6 +3905,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_enemy_eternity_03",
     displayName: "레온 엔드",
+    displayNameEn: "Leon End",
     rank: "왕좌 요격장",
     factionId: "ancients",
     aiAggression: "standard",
@@ -3843,6 +3944,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "Player_pilot",
     displayName: "플레이어 함선",
+    displayNameEn: "Player Ship",
     rank: "파일럿",
     factionId: "independent",
     aiAggression: "cautious",
@@ -3881,6 +3983,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_draco_obs_01",
     displayName: "세레나 드릴",
+    displayNameEn: "Serena Drill",
     rank: "성운관측장",
     factionId: "scientists",
     aiAggression: "cautious",
@@ -3919,6 +4022,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_draco_escort_01",
     displayName: "델 라인",
+    displayNameEn: "Dell Line",
     rank: "연방호위대장",
     factionId: "federation_military",
     aiAggression: "standard",
@@ -3957,6 +4061,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_01",
     displayName: "목업 파일럿 01",
+    displayNameEn: "Mock Pilot 01",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "standard",
@@ -3995,6 +4100,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_02",
     displayName: "목업 파일럿 02",
+    displayNameEn: "Mock Pilot 02",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "standard",
@@ -4033,6 +4139,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_03",
     displayName: "목업 파일럿 03",
+    displayNameEn: "Mock Pilot 03",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "standard",
@@ -4071,6 +4178,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_04",
     displayName: "목업 파일럿 04",
+    displayNameEn: "Mock Pilot 04",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "standard",
@@ -4109,6 +4217,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_05",
     displayName: "목업 파일럿 05",
+    displayNameEn: "Mock Pilot 05",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "aggressive",
@@ -4147,6 +4256,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_06",
     displayName: "목업 파일럿 06",
+    displayNameEn: "Mock Pilot 06",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "cautious",
@@ -4185,6 +4295,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_07",
     displayName: "목업 파일럿 07",
+    displayNameEn: "Mock Pilot 07",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "standard",
@@ -4223,6 +4334,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_08",
     displayName: "목업 파일럿 08",
+    displayNameEn: "Mock Pilot 08",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "standard",
@@ -4261,6 +4373,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_09",
     displayName: "목업 파일럿 09",
+    displayNameEn: "Mock Pilot 09",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "aggressive",
@@ -4299,6 +4412,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_10",
     displayName: "목업 파일럿 10",
+    displayNameEn: "Mock Pilot 10",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "cautious",
@@ -4337,6 +4451,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_11",
     displayName: "목업 파일럿 11",
+    displayNameEn: "Mock Pilot 11",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "standard",
@@ -4375,6 +4490,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_12",
     displayName: "목업 파일럿 12",
+    displayNameEn: "Mock Pilot 12",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "standard",
@@ -4413,6 +4529,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_13",
     displayName: "목업 파일럿 13",
+    displayNameEn: "Mock Pilot 13",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "aggressive",
@@ -4451,6 +4568,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_14",
     displayName: "목업 파일럿 14",
+    displayNameEn: "Mock Pilot 14",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "cautious",
@@ -4489,6 +4607,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_15",
     displayName: "목업 파일럿 15",
+    displayNameEn: "Mock Pilot 15",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "standard",
@@ -4527,6 +4646,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_16",
     displayName: "목업 파일럿 16",
+    displayNameEn: "Mock Pilot 16",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "standard",
@@ -4565,6 +4685,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_17",
     displayName: "목업 파일럿 17",
+    displayNameEn: "Mock Pilot 17",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "aggressive",
@@ -4603,6 +4724,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_18",
     displayName: "목업 파일럿 18",
+    displayNameEn: "Mock Pilot 18",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "cautious",
@@ -4641,6 +4763,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_mock_pvp_19",
     displayName: "목업 파일럿 19",
+    displayNameEn: "Mock Pilot 19",
     rank: "중위",
     factionId: "mock_pvp",
     aiAggression: "standard",
@@ -4679,6 +4802,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_tavern_ret_01",
     displayName: "한로 크레인",
+    displayNameEn: "Hanro Crane",
     rank: "퇴역제독",
     factionId: "independent",
     aiAggression: "passive",
@@ -4717,6 +4841,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_tavern_ret_02",
     displayName: "미아 벨로",
+    displayNameEn: "Mia Velo",
     rank: "퇴역사령",
     factionId: "independent",
     aiAggression: "passive",
@@ -4755,6 +4880,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_tavern_ret_03",
     displayName: "타드 레인",
+    displayNameEn: "Tad Raine",
     rank: "퇴역대장",
     factionId: "independent",
     aiAggression: "passive",
@@ -4793,6 +4919,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_tavern_ret_04",
     displayName: "세라 미온",
+    displayNameEn: "Sera Mion",
     rank: "퇴역함대장",
     factionId: "independent",
     aiAggression: "passive",
@@ -4831,6 +4958,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_minerva",
     displayName: "니카 스톤",
+    displayNameEn: "Nika Stone",
     rank: "광산총감독",
     factionId: "miners_guild",
     aiAggression: "standard",
@@ -4869,6 +4997,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_iron",
     displayName: "오렌 피스",
+    displayNameEn: "Oren Peace",
     rank: "잔해수호사령",
     factionId: "federation",
     aiAggression: "cautious",
@@ -4907,6 +5036,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_helios",
     displayName: "솔라 핀",
+    displayNameEn: "Solar Finn",
     rank: "태양권 관리인",
     factionId: "energy_corp",
     aiAggression: "passive",
@@ -4945,6 +5075,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_genesis",
     displayName: "아르카노 원",
+    displayNameEn: "Arcano One",
     rank: "기원 수문장",
     factionId: "creators",
     aiAggression: "aggressive",
@@ -4983,6 +5114,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_operator_stella",
     displayName: "스텔라 아리스",
+    displayNameEn: "Stella Aris",
     rank: "안내오퍼레이터",
     factionId: "federation",
     aiAggression: "passive",
@@ -5021,6 +5153,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_ai_robot_default",
     displayName: "AI 로봇 함장(디폴트)",
+    displayNameEn: "AI Robot Captain (Default)",
     rank: "자동운용",
     factionId: "neutral_ai",
     aiAggression: "passive",
@@ -5059,6 +5192,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_w_01",
     displayName: "아덴 라일",
+    displayNameEn: "Aden Lyle",
     rank: "선장",
     factionId: "federation",
     aiAggression: "passive",
@@ -5097,6 +5231,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_w_02",
     displayName: "브리엔 솔",
+    displayNameEn: "Brien Sol",
     rank: "선장",
     factionId: "federation",
     aiAggression: "cautious",
@@ -5135,6 +5270,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_w_03",
     displayName: "카엘 문",
+    displayNameEn: "Kael Moon",
     rank: "선장",
     factionId: "federation",
     aiAggression: "passive",
@@ -5173,6 +5309,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_w_04",
     displayName: "다린 포스",
+    displayNameEn: "Darin Force",
     rank: "선장",
     factionId: "federation",
     aiAggression: "cautious",
@@ -5211,6 +5348,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_w_05",
     displayName: "에라 신",
+    displayNameEn: "Era Syn",
     rank: "선장",
     factionId: "federation",
     aiAggression: "passive",
@@ -5249,6 +5387,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_w_06",
     displayName: "피온 테크",
+    displayNameEn: "Pion Tech",
     rank: "선장",
     factionId: "federation",
     aiAggression: "cautious",
@@ -5287,6 +5426,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_w_07",
     displayName: "가렌 힐",
+    displayNameEn: "Garen Hill",
     rank: "선장",
     factionId: "federation",
     aiAggression: "passive",
@@ -5325,6 +5465,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_w_08",
     displayName: "헬라 윈",
+    displayNameEn: "Hela Wynn",
     rank: "선장",
     factionId: "federation",
     aiAggression: "cautious",
@@ -5363,6 +5504,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_w_09",
     displayName: "이온 세트",
+    displayNameEn: "Ion Set",
     rank: "선장",
     factionId: "federation",
     aiAggression: "passive",
@@ -5401,6 +5543,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_w_10",
     displayName: "준 마르",
+    displayNameEn: "Jun Mar",
     rank: "선장",
     factionId: "federation",
     aiAggression: "cautious",
@@ -5439,6 +5582,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_w_11",
     displayName: "키라 론",
+    displayNameEn: "Kira Ron",
     rank: "선장",
     factionId: "federation",
     aiAggression: "passive",
@@ -5477,6 +5621,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_w_12",
     displayName: "레나 보스",
+    displayNameEn: "Lena Boss",
     rank: "선장",
     factionId: "federation",
     aiAggression: "cautious",
@@ -5515,6 +5660,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_s_01",
     displayName: "마커스 솔",
+    displayNameEn: "Marcus Sol",
     rank: "선장",
     factionId: "miners_guild",
     aiAggression: "passive",
@@ -5553,6 +5699,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_s_02",
     displayName: "니나 드록",
+    displayNameEn: "Nina Drok",
     rank: "선장",
     factionId: "miners_guild",
     aiAggression: "cautious",
@@ -5591,6 +5738,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_s_03",
     displayName: "오스카 핀",
+    displayNameEn: "Oscar Finn",
     rank: "선장",
     factionId: "miners_guild",
     aiAggression: "passive",
@@ -5629,6 +5777,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_s_04",
     displayName: "페트라 울",
+    displayNameEn: "Petra Ull",
     rank: "선장",
     factionId: "miners_guild",
     aiAggression: "cautious",
@@ -5667,6 +5816,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_s_05",
     displayName: "퀸 로즈",
+    displayNameEn: "Quinn Rose",
     rank: "선장",
     factionId: "miners_guild",
     aiAggression: "passive",
@@ -5705,6 +5855,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_s_06",
     displayName: "라스 베인",
+    displayNameEn: "Ras Vane",
     rank: "선장",
     factionId: "miners_guild",
     aiAggression: "cautious",
@@ -5743,6 +5894,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_s_07",
     displayName: "실바 모트",
+    displayNameEn: "Silva Mott",
     rank: "선장",
     factionId: "miners_guild",
     aiAggression: "passive",
@@ -5781,6 +5933,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_s_08",
     displayName: "타루 엑스",
+    displayNameEn: "Taru X",
     rank: "선장",
     factionId: "miners_guild",
     aiAggression: "cautious",
@@ -5819,6 +5972,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_s_09",
     displayName: "우르 페인",
+    displayNameEn: "Ur Pain",
     rank: "선장",
     factionId: "miners_guild",
     aiAggression: "passive",
@@ -5857,6 +6011,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_s_10",
     displayName: "베라 솔",
+    displayNameEn: "Vera Sol",
     rank: "선장",
     factionId: "miners_guild",
     aiAggression: "cautious",
@@ -5895,6 +6050,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_s_11",
     displayName: "윌 크랙",
+    displayNameEn: "Will Crack",
     rank: "선장",
     factionId: "miners_guild",
     aiAggression: "passive",
@@ -5933,6 +6089,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_s_12",
     displayName: "제나 아크",
+    displayNameEn: "Jena Ark",
     rank: "선장",
     factionId: "miners_guild",
     aiAggression: "cautious",
@@ -5971,6 +6128,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_e_01",
     displayName: "알마 리스",
+    displayNameEn: "Alma Rees",
     rank: "선장",
     factionId: "scientists",
     aiAggression: "passive",
@@ -6009,6 +6167,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_e_02",
     displayName: "벤 조",
+    displayNameEn: "Ben Jo",
     rank: "선장",
     factionId: "scientists",
     aiAggression: "cautious",
@@ -6047,6 +6206,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_e_03",
     displayName: "코라 민",
+    displayNameEn: "Cora Min",
     rank: "선장",
     factionId: "scientists",
     aiAggression: "passive",
@@ -6085,6 +6245,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_e_04",
     displayName: "데일 힐",
+    displayNameEn: "Dale Hill",
     rank: "선장",
     factionId: "scientists",
     aiAggression: "cautious",
@@ -6123,6 +6284,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_e_05",
     displayName: "엘라 손",
+    displayNameEn: "Ella Son",
     rank: "선장",
     factionId: "scientists",
     aiAggression: "passive",
@@ -6161,6 +6323,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_e_06",
     displayName: "프랭크 노",
+    displayNameEn: "Frank No",
     rank: "선장",
     factionId: "scientists",
     aiAggression: "cautious",
@@ -6199,6 +6362,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_e_07",
     displayName: "그레이스 터",
+    displayNameEn: "Grace Ter",
     rank: "선장",
     factionId: "scientists",
     aiAggression: "passive",
@@ -6237,6 +6401,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_e_08",
     displayName: "헨리 웰",
+    displayNameEn: "Henry Well",
     rank: "선장",
     factionId: "scientists",
     aiAggression: "cautious",
@@ -6275,6 +6440,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_e_09",
     displayName: "아이리스 팬",
+    displayNameEn: "Iris Fan",
     rank: "선장",
     factionId: "scientists",
     aiAggression: "passive",
@@ -6313,6 +6479,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_e_10",
     displayName: "잭 오",
+    displayNameEn: "Jack Oh",
     rank: "선장",
     factionId: "scientists",
     aiAggression: "cautious",
@@ -6351,6 +6518,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_e_11",
     displayName: "케이트 루",
+    displayNameEn: "Kate Ru",
     rank: "선장",
     factionId: "scientists",
     aiAggression: "passive",
@@ -6389,6 +6557,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_e_12",
     displayName: "레오 파",
+    displayNameEn: "Leo Pa",
     rank: "선장",
     factionId: "scientists",
     aiAggression: "cautious",
@@ -6427,6 +6596,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_n_01",
     displayName: "나이트 볼",
+    displayNameEn: "Night Ball",
     rank: "선장",
     factionId: "independent",
     aiAggression: "passive",
@@ -6465,6 +6635,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_n_02",
     displayName: "옥스 섀도",
+    displayNameEn: "Ox Shadow",
     rank: "선장",
     factionId: "independent",
     aiAggression: "cautious",
@@ -6503,6 +6674,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_n_03",
     displayName: "페인 레드",
+    displayNameEn: "Pain Red",
     rank: "선장",
     factionId: "independent",
     aiAggression: "passive",
@@ -6541,6 +6713,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_n_04",
     displayName: "퀘이크 닉",
+    displayNameEn: "Quake Nick",
     rank: "선장",
     factionId: "independent",
     aiAggression: "cautious",
@@ -6579,6 +6752,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_n_05",
     displayName: "레이븐 솔",
+    displayNameEn: "Raven Sol",
     rank: "선장",
     factionId: "independent",
     aiAggression: "passive",
@@ -6617,6 +6791,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_n_06",
     displayName: "스파크 진",
+    displayNameEn: "Spark Jin",
     rank: "선장",
     factionId: "independent",
     aiAggression: "cautious",
@@ -6655,6 +6830,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_n_07",
     displayName: "토르크 블랙",
+    displayNameEn: "Torque Black",
     rank: "선장",
     factionId: "independent",
     aiAggression: "passive",
@@ -6693,6 +6869,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_n_08",
     displayName: "울프 자드",
+    displayNameEn: "Wolf Jad",
     rank: "선장",
     factionId: "independent",
     aiAggression: "cautious",
@@ -6731,6 +6908,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_n_09",
     displayName: "벡스 다크",
+    displayNameEn: "Vex Dark",
     rank: "선장",
     factionId: "independent",
     aiAggression: "passive",
@@ -6769,6 +6947,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_n_10",
     displayName: "와일드 포",
+    displayNameEn: "Wild Poe",
     rank: "선장",
     factionId: "independent",
     aiAggression: "cautious",
@@ -6807,6 +6986,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_n_11",
     displayName: "제로 크론",
+    displayNameEn: "Zero Kron",
     rank: "선장",
     factionId: "independent",
     aiAggression: "passive",
@@ -6845,6 +7025,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_faction_n_12",
     displayName: "조드 헤이",
+    displayNameEn: "Zod Hay",
     rank: "선장",
     factionId: "independent",
     aiAggression: "cautious",
@@ -6883,6 +7064,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_01",
     displayName: "카일 델",
+    displayNameEn: "Kyle Dell",
     rank: "제독",
     factionId: "federation_military",
     aiAggression: "standard",
@@ -6921,6 +7103,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_02",
     displayName: "리나 오르",
+    displayNameEn: "Lina Orr",
     rank: "대장",
     factionId: "federation",
     aiAggression: "standard",
@@ -6959,6 +7142,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_03",
     displayName: "마르셀 킨",
+    displayNameEn: "Marcel Kin",
     rank: "군단장",
     factionId: "border_watch",
     aiAggression: "standard",
@@ -6997,6 +7181,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_04",
     displayName: "세라 몬트",
+    displayNameEn: "Sera Mont",
     rank: "함대장",
     factionId: "federation_military",
     aiAggression: "standard",
@@ -7035,6 +7220,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_05",
     displayName: "토바스 린",
+    displayNameEn: "Tobias Lynn",
     rank: "전략장",
     factionId: "federation",
     aiAggression: "standard",
@@ -7073,6 +7259,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_06",
     displayName: "유리아 벡",
+    displayNameEn: "Yuria Beck",
     rank: "순항사령",
     factionId: "federation_military",
     aiAggression: "standard",
@@ -7111,6 +7298,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_07",
     displayName: "헬레나 쿠",
+    displayNameEn: "Helena Koo",
     rank: "방어사령",
     factionId: "border_watch",
     aiAggression: "standard",
@@ -7149,6 +7337,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_08",
     displayName: "이안 크로스",
+    displayNameEn: "Ian Cross",
     rank: "초계장",
     factionId: "border_watch",
     aiAggression: "standard",
@@ -7187,6 +7376,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_09",
     displayName: "노바 스톤",
+    displayNameEn: "Nova Stone",
     rank: "호위사령",
     factionId: "federation",
     aiAggression: "standard",
@@ -7225,6 +7415,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_10",
     displayName: "알렉스 드레",
+    displayNameEn: "Alex Dre",
     rank: "특임장",
     factionId: "federation_military",
     aiAggression: "standard",
@@ -7263,6 +7454,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_11",
     displayName: "한설 율",
+    displayNameEn: "Hansol Yul",
     rank: "전선장",
     factionId: "federation_military",
     aiAggression: "standard",
@@ -7301,6 +7493,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_12",
     displayName: "길버트 안",
+    displayNameEn: "Gilbert Ahn",
     rank: "기동장",
     factionId: "federation",
     aiAggression: "standard",
@@ -7339,6 +7532,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_13",
     displayName: "페네 장",
+    displayNameEn: "Fenne Jang",
     rank: "정찰장",
     factionId: "border_watch",
     aiAggression: "standard",
@@ -7377,6 +7571,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_14",
     displayName: "오스카 민",
+    displayNameEn: "Oscar Min",
     rank: "지원장",
     factionId: "miners_guild",
     aiAggression: "standard",
@@ -7415,6 +7610,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_15",
     displayName: "카렌 송",
+    displayNameEn: "Karen Song",
     rank: "연합장",
     factionId: "federation",
     aiAggression: "standard",
@@ -7453,6 +7649,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_16",
     displayName: "비토 델",
+    displayNameEn: "Vito Dell",
     rank: "성계장",
     factionId: "federation_military",
     aiAggression: "standard",
@@ -7491,6 +7688,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_17",
     displayName: "클라라 하",
+    displayNameEn: "Clara Ha",
     rank: "수비장",
     factionId: "federation",
     aiAggression: "standard",
@@ -7529,6 +7727,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_18",
     displayName: "마르틴 네오",
+    displayNameEn: "Martin Neo",
     rank: "교전장",
     factionId: "federation_military",
     aiAggression: "standard",
@@ -7567,6 +7766,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_19",
     displayName: "엘라 솔",
+    displayNameEn: "Ella Sol",
     rank: "태양장",
     factionId: "energy_corp",
     aiAggression: "standard",
@@ -7605,6 +7805,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_blue_20",
     displayName: "로젤린 파크",
+    displayNameEn: "Roseline Park",
     rank: "방위장",
     factionId: "federation",
     aiAggression: "standard",
@@ -7643,6 +7844,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_01",
     displayName: "발크 크림손",
+    displayNameEn: "Valk Crimson",
     rank: "군주",
     factionId: "pirates",
     aiAggression: "standard",
@@ -7681,6 +7883,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_02",
     displayName: "세라 피멸",
+    displayNameEn: "Sera Doom",
     rank: "전대장",
     factionId: "pirates",
     aiAggression: "standard",
@@ -7719,6 +7922,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_03",
     displayName: "가론 매",
+    displayNameEn: "Garon Mae",
     rank: "약탈장",
     factionId: "void_walkers",
     aiAggression: "standard",
@@ -7757,6 +7961,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_04",
     displayName: "이자벨 프리스트",
+    displayNameEn: "Isabel Priest",
     rank: "혈전장",
     factionId: "trade_coalition",
     aiAggression: "standard",
@@ -7795,6 +8000,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_05",
     displayName: "다리우스 솔",
+    displayNameEn: "Darius Sol",
     rank: "암흑장",
     factionId: "black_market",
     aiAggression: "standard",
@@ -7833,6 +8039,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_06",
     displayName: "맥시밀 게이트",
+    displayNameEn: "Maximil Gate",
     rank: "문지기",
     factionId: "unknown",
     aiAggression: "standard",
@@ -7871,6 +8078,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_07",
     displayName: "노아 달",
+    displayNameEn: "Noah Dahl",
     rank: "야습장",
     factionId: "dark_lords",
     aiAggression: "standard",
@@ -7909,6 +8117,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_08",
     displayName: "에밀 코어빈",
+    displayNameEn: "Emile Corbin",
     rank: "수문장",
     factionId: "ancients",
     aiAggression: "standard",
@@ -7947,6 +8156,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_09",
     displayName: "라일리 에테",
+    displayNameEn: "Riley Ete",
     rank: "영원장",
     factionId: "ancients",
     aiAggression: "standard",
@@ -7985,6 +8195,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_10",
     displayName: "빅터 타우",
+    displayNameEn: "Victor Tau",
     rank: "차단장",
     factionId: "archaeologists",
     aiAggression: "standard",
@@ -8023,6 +8234,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_11",
     displayName: "조나단 페르",
+    displayNameEn: "Jonathan Fer",
     rank: "침투장",
     factionId: "pirates",
     aiAggression: "standard",
@@ -8061,6 +8273,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_12",
     displayName: "클로 오메",
+    displayNameEn: "Clo Ome",
     rank: "습격장",
     factionId: "pirates",
     aiAggression: "standard",
@@ -8099,6 +8312,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_13",
     displayName: "헬릭스 플레임",
+    displayNameEn: "Helix Flame",
     rank: "강습장",
     factionId: "energy_corp",
     aiAggression: "standard",
@@ -8137,6 +8351,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_14",
     displayName: "미라 식스",
+    displayNameEn: "Mira Six",
     rank: "왜곡장",
     factionId: "void_walkers",
     aiAggression: "standard",
@@ -8175,6 +8390,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_15",
     displayName: "코르빈 블레드",
+    displayNameEn: "Corbin Bled",
     rank: "전리장",
     factionId: "trade_coalition",
     aiAggression: "standard",
@@ -8213,6 +8429,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_16",
     displayName: "아르테 진홍",
+    displayNameEn: "Arte Crimson",
     rank: "포위장",
     factionId: "pirates",
     aiAggression: "standard",
@@ -8251,6 +8468,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_17",
     displayName: "폴렉스 델타",
+    displayNameEn: "Pollex Delta",
     rank: "사냥장",
     factionId: "pirates",
     aiAggression: "standard",
@@ -8289,6 +8507,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_18",
     displayName: "세레스 이본",
+    displayNameEn: "Ceres Yvon",
     rank: "봉쇄장",
     factionId: "unknown",
     aiAggression: "standard",
@@ -8327,6 +8546,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_19",
     displayName: "제로 그라비",
+    displayNameEn: "Zero Gravi",
     rank: "감시장",
     factionId: "ancients",
     aiAggression: "standard",
@@ -8365,6 +8585,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_red_20",
     displayName: "엔드 피니",
+    displayNameEn: "End Fini",
     rank: "왕좌장",
     factionId: "ancients",
     aiAggression: "standard",
@@ -8403,6 +8624,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_neutral_01",
     displayName: "태온 스틸",
+    displayNameEn: "Taon Steel",
     rank: "관리인",
     factionId: "energy_corp",
     aiAggression: "standard",
@@ -8441,6 +8663,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_neutral_02",
     displayName: "메리 클라",
+    displayNameEn: "Mary Clara",
     rank: "중재장",
     factionId: "black_market",
     aiAggression: "standard",
@@ -8479,6 +8702,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_neutral_03",
     displayName: "토르가드",
+    displayNameEn: "Torgard",
     rank: "유적장",
     factionId: "archaeologists",
     aiAggression: "standard",
@@ -8517,6 +8741,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_neutral_04",
     displayName: "노아 제네시스",
+    displayNameEn: "Noah Genesis",
     rank: "수문장",
     factionId: "creators",
     aiAggression: "standard",
@@ -8555,6 +8780,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_gov_reserve_neutral_05",
     displayName: "플로라 이리",
+    displayNameEn: "Flora Iri",
     rank: "감시장",
     factionId: "ancients",
     aiAggression: "standard",
@@ -8593,6 +8819,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_abyss",
     displayName: "베라 호송",
+    displayNameEn: "Vera Convoy",
     rank: "선장",
     factionId: "unknown",
     aiAggression: "passive",
@@ -8631,6 +8858,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_arcadia",
     displayName: "카란 ARC",
+    displayNameEn: "Karan ARC",
     rank: "선장",
     factionId: "federation",
     aiAggression: "passive",
@@ -8669,6 +8897,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_arcfire_core",
     displayName: "듀로 ARC",
+    displayNameEn: "Duro ARC",
     rank: "선장",
     factionId: "ancients",
     aiAggression: "passive",
@@ -8707,6 +8936,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_blood_field",
     displayName: "엘라 호송",
+    displayNameEn: "Ella Convoy",
     rank: "선장",
     factionId: "trade_coalition",
     aiAggression: "passive",
@@ -8745,6 +8975,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_crimson_zone",
     displayName: "피온 ARC",
+    displayNameEn: "Pion ARC",
     rank: "선장",
     factionId: "pirates",
     aiAggression: "passive",
@@ -8783,6 +9014,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_dark_rift",
     displayName: "하렌 호송",
+    displayNameEn: "Haren Convoy",
     rank: "선장",
     factionId: "void_walkers",
     aiAggression: "passive",
@@ -8821,6 +9053,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_draco_nebula",
     displayName: "이온 ARC",
+    displayNameEn: "Ion ARC",
     rank: "선장",
     factionId: "scientists",
     aiAggression: "passive",
@@ -8859,6 +9092,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_eternity",
     displayName: "제나 호송",
+    displayNameEn: "Jena Convoy",
     rank: "선장",
     factionId: "ancients",
     aiAggression: "passive",
@@ -8897,6 +9131,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_genesis",
     displayName: "카일 ARC",
+    displayNameEn: "Kyle ARC",
     rank: "선장",
     factionId: "creators",
     aiAggression: "passive",
@@ -8935,6 +9170,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_helios",
     displayName: "루나 호송",
+    displayNameEn: "Luna Convoy",
     rank: "선장",
     factionId: "energy_corp",
     aiAggression: "passive",
@@ -8973,6 +9209,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_iron_cross",
     displayName: "오스 ARC",
+    displayNameEn: "Os ARC",
     rank: "선장",
     factionId: "scavengers",
     aiAggression: "passive",
@@ -9011,6 +9248,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_minerva",
     displayName: "세라 호송",
+    displayNameEn: "Sera Convoy",
     rank: "선장",
     factionId: "miners_guild",
     aiAggression: "passive",
@@ -9049,6 +9287,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_new_eden",
     displayName: "탈로 ARC",
+    displayNameEn: "Talo ARC",
     rank: "선장",
     factionId: "independent",
     aiAggression: "passive",
@@ -9087,6 +9326,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_nightfall",
     displayName: "비온 호송",
+    displayNameEn: "Vion Convoy",
     rank: "선장",
     factionId: "dark_lords",
     aiAggression: "passive",
@@ -9125,6 +9365,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_omega_station",
     displayName: "게일 ARC",
+    displayNameEn: "Gale ARC",
     rank: "선장",
     factionId: "independent",
     aiAggression: "passive",
@@ -9163,6 +9404,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_perseus",
     displayName: "노바 호송",
+    displayNameEn: "Nova Convoy",
     rank: "선장",
     factionId: "veterans",
     aiAggression: "passive",
@@ -9201,6 +9443,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_shadow_nexus",
     displayName: "리안 ARC",
+    displayNameEn: "Lian ARC",
     rank: "선장",
     factionId: "black_market",
     aiAggression: "passive",
@@ -9239,6 +9482,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_sirius",
     displayName: "소라 호송",
+    displayNameEn: "Sora Convoy",
     rank: "선장",
     factionId: "border_watch",
     aiAggression: "passive",
@@ -9277,6 +9521,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_solar_port",
     displayName: "테온 ARC",
+    displayNameEn: "Teon ARC",
     rank: "선장",
     factionId: "federation",
     aiAggression: "passive",
@@ -9315,6 +9560,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_titan_gate",
     displayName: "윈드 호송",
+    displayNameEn: "Wind Convoy",
     rank: "선장",
     factionId: "archaeologists",
     aiAggression: "passive",
@@ -9353,6 +9599,7 @@ export const NPC_CAPTAINS_FROM_CSV: readonly NpcCaptain[] = [
   {
     id: "npc_cpt_arc_seed_vega_outpost",
     displayName: "제로 ARC",
+    displayNameEn: "Zero ARC",
     rank: "선장",
     factionId: "federation_military",
     aiAggression: "passive",

@@ -40,15 +40,25 @@ service cloud.firestore {
     }
 
     // 닉네임 예약 — docId = sha256(정규화 닉네임), 본문 uidHash만(평문 없음)
-    // create-only: 동시 가입 레이스에서도 중복 확정 차단. delete 금지(선점 해제 공격 차단).
+    // create: 동시 가입 레이스 중복 차단. delete 금지(임의 선점 해제 공격 차단).
+    // update: (1) 동일 uidHash 유지·해제(released) (2) released 문서를 새 uidHash가 재선점.
     match /nicknames/{nicknameKey} {
       allow get: if authed();
       allow list: if false;
       allow create: if authed()
-        && request.resource.data.keys().hasOnly(['uidHash', 'reservedAt'])
-        && request.resource.data.uidHash is string;
+        && request.resource.data.keys().hasAll(['uidHash', 'reservedAt'])
+        && request.resource.data.keys().hasOnly(['uidHash', 'reservedAt', 'released'])
+        && request.resource.data.uidHash is string
+        && (!('released' in request.resource.data) || request.resource.data.released is bool);
       allow update: if authed()
-        && request.resource.data.uidHash == resource.data.uidHash;
+        && request.resource.data.uidHash is string
+        && (
+          // 소유자: 재예약·계정 초기화 해제(released=true)
+          request.resource.data.uidHash == resource.data.uidHash
+          // 타인: released 문서만 새 소유로 재선점
+          || (resource.data.released == true
+              && request.resource.data.released == false)
+        );
       allow delete: if false;
     }
 

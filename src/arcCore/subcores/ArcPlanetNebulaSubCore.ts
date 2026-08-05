@@ -66,9 +66,11 @@ export class ArcPlanetNebulaSubCore extends BaseArcSubCore {
     const result = usePlanetNebulaStore.getState().applyDailyEcologyShiftIfDue();
     if (!result.applied || result.changedCount <= 0) return;
     useTavernBoardStore.getState().pushNotice({
-      title: '행성 성운 생태계 정기 조정',
-      body: `아크코어가 일일 주기 기준으로 ${result.changedCount}개 행성 성운 파라미터를 미세 조정했습니다.`,
-      tag: '아크코어',
+      i18nKey: 'news.nebulaShift',
+      i18nParams: { count: result.changedCount },
+      title: 'Planetary Nebula Ecosystem Adjusted',
+      body: `ArcCore fine-tuned nebula parameters on ${result.changedCount} planets (daily cycle).`,
+      tag: 'arccore',
       dedupeKey: `planet_nebula_daily_shift_${new Date().toISOString().slice(0, 10)}`,
     });
   }

@@ -5,6 +5,7 @@ import type { TradeBuySubTabId } from '../../game/tradeBuySubTab';
 import { TACTICAL_FACILITY as TF } from '../tactical/tacticalFacilityScreenTokens';
 import { PlanetHubActionIcon } from '../tactical/PlanetHubActionIcon';
 import { resolveTradeListingIconSpec } from '../tactical/listingIconSpecs';
+import { useT } from '../../i18n';
 
 export const TRADE_LISTING_ICON_SIZE_PX = 44;
 
@@ -19,13 +20,14 @@ export const TradeListingIcon = memo(function TradeListingIcon({
   category,
   buySubTab,
 }: Props) {
+  const t = useT();
   const spec = useMemo(
     () => resolveTradeListingIconSpec(goodId, category as TradeGoodCategory | string, buySubTab),
     [buySubTab, category, goodId],
   );
 
   return (
-    <View style={styles.slot} accessibilityRole="image" accessibilityLabel="아이템 아이콘">
+    <View style={styles.slot} accessibilityRole="image" accessibilityLabel={t('a11y.itemIcon')}>
       <PlanetHubActionIcon spec={spec} size={22} color={TF.labelInk} />
     </View>
   );

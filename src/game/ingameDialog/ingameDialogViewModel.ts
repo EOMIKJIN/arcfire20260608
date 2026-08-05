@@ -4,6 +4,7 @@
 
 import type { ImageSourcePropType } from 'react-native';
 import type { AppLocale } from '../../i18n/types';
+import { isKoUi, translate } from '../../i18n';
 import { resolveStoryPageLabel, resolveStoryPageText } from '../../i18n/storyText';
 import { resolveIngameDialogPortraitSource } from './resolveIngameDialogPortraitSource';
 import {
@@ -45,7 +46,7 @@ function applyTextContext(
   context: IngameDialogTextContext,
 ): string {
   const title =
-    locale !== 'ko' && context.missionTitleEn
+    !isKoUi(locale) && context.missionTitleEn
       ? context.missionTitleEn
       : context.missionTitle ?? '';
   return text.replace(/\[미션제목\]/g, title);
@@ -88,9 +89,9 @@ export function buildIngameDialogViewModel(input: {
   splitOptions?: NarrativeDialogSplitOptions;
 }): IngameDialogViewModel | null {
   const { session, scene, locale, nickname, splitOptions } = input;
-  const commFallback = locale === 'ko' ? '[ 통신 ]' : '[ COMM ]';
-  const nextLabel = locale === 'ko' ? '[ 다음 ]' : '[ Next ]';
-  const okLabel = locale === 'ko' ? '[ 확인 ]' : '[ OK ]';
+  const commFallback = translate(locale, 'dialog.comm');
+  const nextLabel = translate(locale, 'dialog.next');
+  const okLabel = translate(locale, 'dialog.ok');
 
   if (session.kind === 'adhoc') {
     const p = session.payload;

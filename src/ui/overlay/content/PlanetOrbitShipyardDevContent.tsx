@@ -31,6 +31,8 @@ import {
   planetDevLevelI18nParams,
   planetDevUpgradeI18nParams,
 } from '../../../game/planetDevelopment/planetFacilityDevLevelDisplay';
+import { PLANET_DEV_ACTIVE_JOB_UI_POLL_MS } from '../../../game/planetDevelopment/planetDevUiPollPolicy';
+import type { PlanetFacilityModuleDetail } from '../../../store/planetCoreMetricTypes';
 
 export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDevContent({
   planetId,
@@ -44,10 +46,14 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
   const isTactical = visualTheme === 'tactical';
   const [tick, setTick] = useState(0);
 
+  /** JSON.stringify 매 구독 평가 금지 — 필드 키만 */
   const shipyardRev = usePlanetCoreRuntimeStore(
     useCallback((s) => {
-      const dev = s.byPlanetId[planetId]?.detail?.development?.byModuleId?.[PLANET_DEV_MODULE_ORBIT_SHIPYARD];
-      return JSON.stringify(dev ?? null);
+      const raw = s.byPlanetId[planetId]?.detail?.development?.byModuleId?.[PLANET_DEV_MODULE_ORBIT_SHIPYARD];
+      const dev = raw as PlanetFacilityModuleDetail | undefined;
+      if (!dev || typeof dev !== 'object') return '0';
+      const job = dev.upgradeJob;
+      return `${dev.installed ? 1 : 0}|${dev.level ?? 0}|${job?.targetLevel ?? 0}|${job?.completeAtMs ?? 0}`;
     }, [planetId]),
   );
 
@@ -58,7 +64,7 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
     if (!hasActiveJob) return undefined;
     const id = setInterval(() => {
       setTick((v) => v + 1);
-    }, 500);
+    }, PLANET_DEV_ACTIVE_JOB_UI_POLL_MS);
     return () => clearInterval(id);
   }, [hasActiveJob, planetId, shipyardRev]);
 

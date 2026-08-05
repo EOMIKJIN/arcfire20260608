@@ -1,7 +1,7 @@
 import { getSynthSystemColonizationRow } from '../arcCore/balance/balanceTableRegistry';
 import type { AppLocale } from './types';
 import type { Planet, StarSystem } from '../types';
-import { translate } from './index';
+import { isKoUi, translate } from './index';
 import { useAppSettingsStore } from '../store/appSettingsStore';
 
 function pickEn(primary: string | undefined, fallbackKo: string): string {
@@ -22,7 +22,7 @@ function stripLegacyTeamFactionLabels(text: string): string {
 }
 
 function resolveSynthProceduralName(nameKo: string, locale: AppLocale): string | null {
-  if (locale === 'ko') return null;
+  if (isKoUi(locale)) return null;
   const unexploredDash = nameKo.match(/^미개척-(\d+)$/);
   if (unexploredDash) {
     return translate(locale, 'system.synth.unexploredLabel', { n: unexploredDash[1] });
@@ -51,7 +51,7 @@ function isSynthCoreOpenForDisplay(systemId: string): boolean {
 }
 
 function resolveSynthProceduralDescription(descKo: string, locale: AppLocale): string | null {
-  if (locale === 'ko') return null;
+  if (isKoUi(locale)) return null;
   const legacy =
     '아직 항로가 개척되지 않은 성계. 센서상으로는 존재만 확인된다.';
   const expansion = '아직 발견되지 않은 외곽 성계. 아크코어 스캔 대기 상태다.';
@@ -67,7 +67,7 @@ export function resolveStarSystemDisplayName(
   system: Pick<StarSystem, 'id' | 'name' | 'nameEn'>,
   locale: AppLocale,
 ): string {
-  if (locale === 'ko') return String(system.name ?? '').trim();
+  if (isKoUi(locale)) return String(system.name ?? '').trim();
   const direct = pickEn(system.nameEn, system.name);
   if (direct !== String(system.name ?? '').trim()) return direct;
 
@@ -87,7 +87,7 @@ export function resolveStarSystemDescription(
   system: Pick<StarSystem, 'id' | 'description' | 'descriptionEn'>,
   locale: AppLocale,
 ): string {
-  if (locale === 'ko') {
+  if (isKoUi(locale)) {
     return stripLegacyTeamFactionLabels(String(system.description ?? '').trim());
   }
   const direct = pickEn(system.descriptionEn, system.description);
@@ -111,7 +111,7 @@ export function resolvePlanetDisplayName(
   planet: Pick<Planet, 'name' | 'nameEn'>,
   locale: AppLocale,
 ): string {
-  if (locale === 'ko') return String(planet.name ?? '').trim();
+  if (isKoUi(locale)) return String(planet.name ?? '').trim();
   const direct = pickEn(planet.nameEn, planet.name);
   if (direct !== String(planet.name ?? '').trim()) return direct;
   if (planet.name === '미상 행성') return translate(locale, 'system.synth.unknownPlanet');
@@ -123,7 +123,7 @@ export function resolvePlanetDescription(
   locale: AppLocale,
   systemId?: string,
 ): string {
-  if (locale === 'ko') {
+  if (isKoUi(locale)) {
     return stripLegacyTeamFactionLabels(String(planet.description ?? '').trim());
   }
   const direct = pickEn(planet.descriptionEn, planet.description);

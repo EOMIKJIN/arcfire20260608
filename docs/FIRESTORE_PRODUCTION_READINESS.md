@@ -10,7 +10,7 @@
 | 인증 게이팅 | 모든 Firestore read/write 전 Anonymous Auth 확보(세션 영속·최초 1회만 sign-in) | `userDataSync` · `gameSaveBackupService` · `arcCoreShadowPairing` · `firestore.ts` · `arccoreFirestoreBootstrap` |
 | iOS 기기 uid | `getIosIdForVendorAsync()` 지원 — 종전 iOS 전 기기 `local-guest` 수렴 결함 제거 | `src/firebase/auth.ts` |
 | local-guest 폐기 | 공유 폴백 uid 영속 금지 → 기기 로컬 랜덤 uid 1회 생성 · `local-guest` 자동 admin 판정 제거 | `auth.ts` · `firestoreClientConfig.ts` · `firestore.ts` |
-| 닉네임 예약 | `nicknames/{sha256(닉네임)}` create-only 예약 — 동시 가입 중복 원천 차단 · 기존 계정은 동기화 시 1회 소급 예약 | `nicknameRegistry.ts`(신규) · `onboardingPilotRegistration.ts` |
+| 닉네임 예약 | `nicknames/{sha256(닉네임)}` 예약 · 계정 초기화 시 `released:true` tombstone(타인 재선점 가능) · delete 금지 유지 | `nicknameRegistry.ts` · `firestore.rules` · `localAccountReset.ts` |
 | users 문서 슬림 | `clanWarFoundation.planetHolds` 중복 사본 제거(FieldValue.delete 정리 포함) · `operations` 40개(최신순)·`deployments` 60개 캡 — 로컬 정본은 무손실 | `userDataSync.ts` |
 | 대기열 샤딩 | 섀도우 페어링 대기열 `waiting_0..7` 8슬롯 분산(단일 문서 초당 1회 쓰기 한계 해소) · 레거시 `waiting`은 소진 전용 | `arcCoreShadowPairing.ts` |
 | 백업 TTL 필드 | 백업 문서에 `expiresAt`(Timestamp) 추가 — 콘솔 TTL 정책으로 이탈 유저 백업 자동 삭제 | `gameSaveBackupService.ts` |

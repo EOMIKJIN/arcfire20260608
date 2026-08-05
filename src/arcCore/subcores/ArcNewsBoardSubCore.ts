@@ -12,6 +12,7 @@ const TRANSPORT_NOTICE_DEDUPE_PREFIX = 'seed_transport_daily_digest_';
 type NoticeInput = {
   i18nKey: string;
   i18nParams?: I18nParams;
+  /** Locale-neutral fallback (EN) — UI prefers i18nKey via noticeText */
   title: string;
   body: string;
   tag: TavernNoticeTag;
@@ -27,10 +28,10 @@ export class ArcNewsBoardSubCore extends BaseArcSubCore {
   private unsubCommands: (() => void) | null = null;
 
   constructor() {
-    super('arc_news_board_subcore', '이리스 · 공지 보드');
+    super('arc_news_board_subcore', 'Iris · Notice Board');
     this.registerTimedMission({
       id: 'arc_news_world_summary',
-      name: '아크코어 월드 요약 브리핑',
+      name: 'ArcCore world summary briefing',
       stepDurationsSec: [BOARD_SUMMARY_INTERVAL_SEC],
       repeat: true,
       onCompleted: () => this.publishWorldSummary(),
@@ -51,9 +52,9 @@ export class ArcNewsBoardSubCore extends BaseArcSubCore {
   private publishBootNotice(): void {
     this.pushNotice({
       i18nKey: 'news.sync',
-      title: '아크코어 공지 보드 동기화 완료',
-      body: '월드 확장·수송선단·경제 지시 이벤트를 실시간 수집합니다.',
-      tag: '아크코어',
+      title: 'ArcCore Notice Board Synced',
+      body: 'Collecting world expansion, convoy, and economy directive events in real time.',
+      tag: 'arccore',
       dedupeKey: 'arc_news_boot_notice',
     });
   }
@@ -63,9 +64,9 @@ export class ArcNewsBoardSubCore extends BaseArcSubCore {
       this.pushNotice({
         i18nKey: 'news.worldUnlock',
         i18nParams: { systemName: cmd.systemName, systemId: cmd.systemId },
-        title: `성계 개척: ${cmd.systemName}`,
-        body: `아크코어가 ${cmd.systemName} 성계를 개방했습니다. (${cmd.systemId})`,
-        tag: '작전',
+        title: `System Unlocked: ${cmd.systemName}`,
+        body: `ArcCore has opened the ${cmd.systemName} system. (${cmd.systemId})`,
+        tag: 'ops',
         dedupeKey: `world_unlock_${cmd.systemId}`,
       });
       return;
@@ -75,14 +76,18 @@ export class ArcNewsBoardSubCore extends BaseArcSubCore {
       this.pushNotice({
         i18nKey: 'news.transport',
         i18nParams: { factionId: cmd.factionId },
-        title: '수송선단 파견 보고',
-        body: `${cmd.factionId} 소속 수송선단 파견이 감지되었습니다. 상세 파견 로그는 아크코어 내부에서 계속 집계합니다.`,
-        tag: '외교',
+        title: 'Convoy Dispatch Report',
+        body: `A ${cmd.factionId} convoy dispatch was detected. Detailed logs continue to aggregate in ArcCore.`,
+        tag: 'diplomacy',
         dedupeKey: `${TRANSPORT_NOTICE_DEDUPE_PREFIX}${dayKey}`,
       });
       return;
     }
     if (cmd.type === 'economy_trade_port_bulk') {
+      const scopeLabel =
+        cmd.scope.kind === 'all_trade_ports'
+          ? 'All trade ports'
+          : `${cmd.scope.planetIds.length} planet trade ports`;
       this.pushNotice({
         i18nKey: 'news.economyBulk',
         i18nParams: {
@@ -90,12 +95,9 @@ export class ArcNewsBoardSubCore extends BaseArcSubCore {
           planetCount: cmd.scope.kind === 'all_trade_ports' ? 0 : cmd.scope.planetIds.length,
           action: cmd.action,
         },
-        title:
-          cmd.scope.kind === 'all_trade_ports'
-            ? '경제 지시 반영: 전체 무역소'
-            : `경제 지시 반영: ${cmd.scope.planetIds.length}개 행성 무역소`,
-        body: `아크코어 경제 서브코어가 ${cmd.action} 정책을 반영했습니다.`,
-        tag: '경제',
+        title: `Economy Directive Applied: ${scopeLabel}`,
+        body: `ArcCore economy subcore applied the ${cmd.action} policy.`,
+        tag: 'economy',
         dedupeKey: `economy_bulk_${cmd.action}_${cmd.scope.kind}`,
       });
       return;
@@ -110,9 +112,9 @@ export class ArcNewsBoardSubCore extends BaseArcSubCore {
     this.pushNotice({
       i18nKey: 'news.briefing',
       i18nParams: { unlocked, total, traffic },
-      title: '아크코어 정기 브리핑',
-      body: `개방 성계 ${unlocked}/${total}, 활성 수송선 ${traffic}척 상태입니다.`,
-      tag: '아크코어',
+      title: 'ArcCore Routine Briefing',
+      body: `Systems unlocked ${unlocked}/${total}, active convoys ${traffic} ships.`,
+      tag: 'arccore',
     });
   }
 

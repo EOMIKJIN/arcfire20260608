@@ -5,6 +5,7 @@ import {
   hasAnyPlanetDevJobInProgress,
   tryCompleteAllPlanetDevJobs,
 } from '../../../game/planetDevelopment/planetDevelopmentListRowModel';
+import { PLANET_DEV_ACTIVE_JOB_UI_POLL_MS } from '../../../game/planetDevelopment/planetDevUiPollPolicy';
 import { formatCredits } from '../../../utils/formatCredits';
 import { showArcAlert } from '../../../utils/showArcAlert';
 import { useT } from '../../../i18n';
@@ -57,7 +58,7 @@ export const PlanetDevelopmentListContent = memo(function PlanetDevelopmentListC
     const id = setInterval(() => {
       tryCompleteAllPlanetDevJobs(planetId);
       setTick((v) => v + 1);
-    }, 500);
+    }, PLANET_DEV_ACTIVE_JOB_UI_POLL_MS);
     return () => clearInterval(id);
   }, [hasActiveJob, planetId]);
 

@@ -37,9 +37,11 @@ function tryLegacyPerUserArcCoreWorldDailyUnlock(): boolean {
   if (isArcExpansionTestOneShotEnvOn() && !isArcExpansionTestOneShotConsumed()) {
     void markArcExpansionTestOneShotDoneAsync();
     useTavernBoardStore.getState().pushNotice({
-      title: '[테스트] 미개척 성계 개방',
-      body: `아크코어 1회 테스트로 ${targetSystem.name}(${candidateId})이(가) 개방되었습니다. 이후 일일 주기는 24시간으로 돌아갑니다.`,
-      tag: '아크코어',
+      i18nKey: 'news.expansionTest',
+      i18nParams: { systemName: targetSystem.name, systemId: candidateId },
+      title: `[TEST] Unexplored system opened`,
+      body: `ArcCore one-shot test opened ${targetSystem.name}(${candidateId}). Daily cycle returns to 24h.`,
+      tag: 'arccore',
       dedupeKey: 'arc_expansion_test_one_shot_v1',
     });
   }

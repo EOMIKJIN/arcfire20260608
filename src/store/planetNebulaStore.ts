@@ -21,6 +21,8 @@ type PlanetNebulaState = {
   ensureProfileForPlanet: (planetId: string) => PlanetNebulaProfile | null;
   ensureProfilesForSystem: (systemId: string) => void;
   applyDailyEcologyShiftIfDue: (nowMs?: number) => { applied: boolean; changedCount: number };
+  /** 계정 초기화 — 성운 프로필 캐시 폐기(신규 시작 시 재생성) */
+  resetLocalProfilesForAccountPurge: () => Promise<void>;
 };
 
 function hashStringToInt(input: string): number {
@@ -115,6 +117,19 @@ export const usePlanetNebulaStore = create<PlanetNebulaState>((set, get) => ({
       persistTimer = null;
       void get().persistProfiles();
     }, PERSIST_DEBOUNCE_MS);
+  },
+
+  resetLocalProfilesForAccountPurge: async () => {
+    if (persistTimer) {
+      clearTimeout(persistTimer);
+      persistTimer = null;
+    }
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+    set({ profilesByPlanetId: {}, lastDailyShiftDayKey: null });
   },
 
   pruneOrphanProfiles: () => {

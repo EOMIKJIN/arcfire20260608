@@ -1,6 +1,7 @@
 import type { PlayerProfessionCsvRow } from '../data/generated';
 import type { AppLocale } from './types';
 import { useAppSettingsStore } from '../store/appSettingsStore';
+import { isKoUi } from './index';
 
 type ProfessionEnFields = Pick<
   PlayerProfessionCsvRow,
@@ -8,7 +9,7 @@ type ProfessionEnFields = Pick<
 >;
 
 function pickEn(locale: AppLocale, ko: string, en?: string | null): string {
-  return locale !== 'ko' && en?.trim() ? en.trim() : ko;
+  return !isKoUi(locale) && en?.trim() ? en.trim() : ko;
 }
 
 export function resolveProfessionName(profession: ProfessionEnFields, locale: AppLocale): string {

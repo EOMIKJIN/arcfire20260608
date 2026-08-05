@@ -1,5 +1,6 @@
 import type { TavernNotice } from '../store/tavernBoardStore';
 import type { I18nParams } from './types';
+import { getLocale, resolveDictionaryLocale } from './index';
 
 function buildParams(
   notice: Pick<TavernNotice, 'i18nKey' | 'i18nParams'>,
@@ -19,7 +20,16 @@ function buildParams(
   if (notice.i18nKey === 'news.megaFactionPgp') {
     const leader = String(raw.leader ?? 'tie');
     const leaderLine = t(`news.megaFactionPgp.leader.${leader}`);
-    return { ...raw, leaderLine };
+    const dict = resolveDictionaryLocale(getLocale());
+    const blueNation =
+      dict === 'en'
+        ? String(raw.blueNationEn ?? raw.blueNation ?? '')
+        : String(raw.blueNation ?? raw.blueNationEn ?? '');
+    const redNation =
+      dict === 'en'
+        ? String(raw.redNationEn ?? raw.redNation ?? '')
+        : String(raw.redNation ?? raw.redNationEn ?? '');
+    return { ...raw, leaderLine, blueNation, redNation };
   }
 
   if (notice.i18nKey === 'news.territorialHold') {

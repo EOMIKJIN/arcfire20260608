@@ -19,10 +19,21 @@ import {
   readUnlockedPlanetIdsSig,
 } from './orbitPresenceUnlockedPlanets';
 
+/** nearbyOrbitPresenceSystem locale 분리 memo — 순환 import 금지로 문자열 상수만 공유 */
+const NEARBY_PRESENCE_MEMO_NAMESPACE_KO =
+  'nearbyOrbitPresenceSystem.resolvePlanetNearbyPresence.ko';
+const NEARBY_PRESENCE_MEMO_NAMESPACE_EN =
+  'nearbyOrbitPresenceSystem.resolvePlanetNearbyPresence.en';
+
+function invalidateNearbyPresenceMemos(): void {
+  invalidatePlanetMemoCacheNamespace(NEARBY_PRESENCE_MEMO_NAMESPACE_KO);
+  invalidatePlanetMemoCacheNamespace(NEARBY_PRESENCE_MEMO_NAMESPACE_EN);
+}
+
 /** synth·성계 개방 직후 — 3h 배정·근접 궤도 memo 즉시 갱신 */
 export function invalidateOrbitPresenceCachesOnWorldExpansion(): void {
   planetFactionById = null;
-  invalidatePlanetMemoCacheNamespace(NEARBY_PRESENCE_MEMO_NAMESPACE);
+  invalidateNearbyPresenceMemos();
   invalidateCaptainPresenceWorldIndexCache();
 }
 
@@ -30,8 +41,6 @@ export { readUnlockedPlanetIdsSig };
 
 /** 테이블 주둔 전함 행성 재배치 주기 (wall-clock, ms) — 3시간 */
 export const CAPTAIN_ORBIT_ASSIGNMENT_ROTATION_MS = 3 * 60 * 60 * 1000;
-
-const NEARBY_PRESENCE_MEMO_NAMESPACE = 'nearbyOrbitPresenceSystem.resolvePlanetNearbyPresence';
 
 let planetFactionById: Map<string, string | null> | null = null;
 let lastMemoEpochBucket = -1;
@@ -59,7 +68,7 @@ export function syncCaptainOrbitAssignmentEpochMemo(nowMs = Date.now()): number 
   const bucket = getCaptainOrbitAssignmentEpochBucket(nowMs);
   if (bucket !== lastMemoEpochBucket) {
     lastMemoEpochBucket = bucket;
-    invalidatePlanetMemoCacheNamespace(NEARBY_PRESENCE_MEMO_NAMESPACE);
+    invalidateNearbyPresenceMemos();
     invalidateCaptainPresenceWorldIndexCache();
   }
   return bucket;

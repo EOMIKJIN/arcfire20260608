@@ -16,7 +16,7 @@ import { ensureFirebaseAnonymousAuth } from './firebaseAnonymousAuth';
 import { sha256Hex } from '../utils/sha256Hex';
 
 export const NICKNAMES_COLLECTION = 'nicknames';
-const NICKNAME_RESERVED_FLAG_KEY = 'arcfire_nickname_reserved_v1';
+export const NICKNAME_RESERVED_FLAG_KEY = 'arcfire_nickname_reserved_v1';
 /** 예약 read/write 상한 — 온보딩 UX 보호 */
 const NICKNAME_REGISTRY_OP_MS = 6_000;
 
@@ -63,7 +63,8 @@ export async function checkNicknameRegistry(
     const snap = await race(getDoc(nicknameDocRef(trimmed)), NICKNAME_REGISTRY_OP_MS);
     if (!snap) return 'offline';
     if (!snap.exists()) return 'available';
-    const data = snap.data() as { uidHash?: unknown } | undefined;
+    const data = snap.data() as { uidHash?: unknown; released?: unknown } | undefined;
+    if (data?.released === true) return 'available';
     const uidHash = typeof data?.uidHash === 'string' ? data.uidHash : '';
     const excludeUid = opts?.excludeUid?.trim();
     if (excludeUid && uidHash && uidHash === hashUidForNicknameRegistry(excludeUid)) {
@@ -77,7 +78,7 @@ export async function checkNicknameRegistry(
 }
 
 /**
- * 닉네임 예약 — create-only(rules). 이미 타인이 선점했으면 false.
+ * 닉네임 예약 — create 또는 released 재선점(rules). 이미 타인이 선점했으면 false.
  * 본인 재예약(동일 uidHash)은 rules update 허용으로 성공한다.
  */
 export async function reserveNickname(nickname: string, uid: string): Promise<boolean> {
@@ -90,6 +91,7 @@ export async function reserveNickname(nickname: string, uid: string): Promise<bo
       setDoc(nicknameDocRef(trimmed), {
         uidHash: hashUidForNicknameRegistry(trimmedUid),
         reservedAt: Date.now(),
+        released: false,
       }).then(() => true),
       NICKNAME_REGISTRY_OP_MS,
     );
@@ -101,6 +103,60 @@ export async function reserveNickname(nickname: string, uid: string): Promise<bo
     // 타인 선점(permission denied) 포함 — 호출부에서 재검사로 구분
     console.warn('[nicknameRegistry] reserve failed:', e);
     return false;
+  }
+}
+
+/**
+ * 계정 초기화 — 로컬 예약 플래그 제거 + Firestore 예약을 released로 표시(타인 재사용 가능).
+ * delete는 rules상 금지 · tombstone(released)만 허용.
+ * @param nicknameHint purge 직전 player/profile에서 읽은 닉(플래그 없을 때 보조)
+ */
+export async function releaseNicknameReservationForAccountPurge(
+  uid: string,
+  nicknameHint?: string | null,
+): Promise<void> {
+  const trimmedUid = uid.trim();
+  if (!trimmedUid) return;
+  const flagKey = `${NICKNAME_RESERVED_FLAG_KEY}:${trimmedUid}`;
+  let nickname: string | null = null;
+  try {
+    nickname = await AsyncStorage.getItem(flagKey);
+  } catch {
+    /* ignore */
+  }
+  try {
+    await AsyncStorage.removeItem(flagKey);
+  } catch {
+    /* ignore */
+  }
+  const fromHint = typeof nicknameHint === 'string' ? nicknameHint.trim() : '';
+  const trimmedNick =
+    (typeof nickname === 'string' && nickname.trim() ? nickname.trim() : '') || fromHint;
+  if (!trimmedNick) return;
+  try {
+    await ensureFirebaseAnonymousAuth();
+    const ref = nicknameDocRef(trimmedNick);
+    const snap = await race(getDoc(ref), NICKNAME_REGISTRY_OP_MS);
+    if (!snap || !snap.exists()) return;
+    const data = snap.data() as { uidHash?: unknown } | undefined;
+    const uidHash = typeof data?.uidHash === 'string' ? data.uidHash : '';
+    if (uidHash !== hashUidForNicknameRegistry(trimmedUid)) return;
+    await race(
+      setDoc(
+        ref,
+        {
+          uidHash,
+          reservedAt: Date.now(),
+          released: true,
+        },
+        { merge: true },
+      ).then(() => true),
+      NICKNAME_REGISTRY_OP_MS,
+    );
+  } catch (e) {
+    if (__DEV__) {
+      console.warn('[nicknameRegistry] release on purge failed (offline/queued):', e);
+    }
   }
 }
 

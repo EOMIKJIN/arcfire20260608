@@ -5,6 +5,7 @@ import { SPACING, FONTS, COLORS } from '../../../utils/theme';
 import { ArcOverlayCard } from '../ArcOverlayCard';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
+import { getLocale, isKoUi, useT } from '../../../i18n';
 
 type Props = {
   entry: ArcOverlayRelicLoreEntry;
@@ -16,13 +17,18 @@ export const RelicLoreOverlayContent = memo(function RelicLoreOverlayContent({
   entry,
   onClose,
 }: Props) {
+  const t = useT();
   const visualTheme = resolveArcOverlayVisualTheme('relicLore');
+  const godName =
+    !isKoUi(getLocale()) && entry.godNameEn?.trim()
+      ? entry.godNameEn.trim()
+      : entry.godNameKo;
 
   return (
     <ArcOverlayCard
       layout="panel"
       visualTheme={visualTheme}
-      title={`〔유물〕${entry.godNameKo}`}
+      title={t('relic.title', { name: godName })}
       onClose={onClose}
       footer={
         <ArcOverlayFooterActions

@@ -400,7 +400,7 @@ export default function ShipyardScreen() {
       <PlanetFacilityTitleHeader
         title={t('shipyard.title')}
         onBack={safeBack}
-        backLabel="◀ 나가기"
+        backLabel={t('common.back')}
         trailing={<Text style={fs.headerTrailingInk}>{formatCredits(credits)}</Text>}
       />
 

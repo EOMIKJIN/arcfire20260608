@@ -42,6 +42,7 @@ import {
 } from '../../combat/capitalRealtimeCombatGate';
 import { buildTransitCombatSeedSlots } from '../../combat/capitalTransitCombatSeed';
 import { NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV } from '../../data/generated';
+import { resolveNpcCaptainDisplayNameNow } from '../../i18n/captainText';
 import { getNpcCapitalShip, hasNpcCapitalShipId, listAllNpcCapitalShipRows, listNpcCaptains } from '../../npc/npcFleetRegistry';
 import type { NpcCapitalShip } from '../../types';
 import {
@@ -2345,7 +2346,9 @@ function initAgents(
   const blueSlots = stageSlots.filter(s => s.team === 'blue');
   const orangeSlots = stageSlots.filter(s => s.team === 'orange');
   const shipMap = new Map(listAllNpcCapitalShipRows().map((s) => [s.id, s]));
-  const captainNameMap = new Map(listNpcCaptains().map((c) => [c.id, c.displayName]));
+  const captainNameMap = new Map(
+    listNpcCaptains().map((c) => [c.id, resolveNpcCaptainDisplayNameNow(c)]),
+  );
   const playerBinding = resolvePlayerFlagshipCombatBinding();
   let id = 0;
   for (let r = 0; r < redSlots.length; r++) {

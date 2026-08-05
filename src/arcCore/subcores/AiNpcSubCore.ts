@@ -13,6 +13,7 @@ import {
   pickBalancedArcTrafficPlanetId,
   spreadArcTrafficInitialPlanetIds,
 } from '../orbitPresence/balanceArcTrafficPlanetPick';
+import { resolveNpcCaptainDisplayNameNow } from '../../i18n/captainText';
 import { getNpcCapitalShip } from '../../npc/npcFleetRegistry';
 import { usePlanetDevelopmentAccStore } from '../../store/planetDevelopmentAccStore';
 import { getConvoyShipCargoDestination } from '../economy/runArcTransportTradePass';
@@ -176,7 +177,8 @@ export class AiNpcSubCore extends BaseArcSubCore {
     const rows = listArcNpcTrafficRowsFromTables();
     this.captains = rows.map(({ captain }) => ({
       id: captain.id,
-      name: captain.displayName,
+      // 허브 INFO는 merge 시 CSV+locale로 재해석 — store name은 KO 정본 폴백
+      name: captain.displayName || resolveNpcCaptainDisplayNameNow(captain),
     }));
     const initialPlanets = spreadArcTrafficInitialPlanetIds(this.listAllPlanetIds(), rows.length);
     this.ships = rows.map(({ captain, shipId }, i) => {
@@ -223,9 +225,53 @@ export class AiNpcSubCore extends BaseArcSubCore {
     if (key === this.lastPublishedShipKey) return;
     this.lastPublishedShipKey = key;
 
+    const prev = useArcNpcTrafficStore.getState();
+    const prevById = new Map<string, ArcNpcTrafficShip>();
+    for (let i = 0; i < prev.ships.length; i += 1) {
+      const p = prev.ships[i]!;
+      prevById.set(p.id, p);
+    }
+    /** phase 등 구조 키가 같으면 이전 스냅샷 객체 재사용 — 전량 `{...s}` 할당/GC 완화 */
+    const nextShips: ArcNpcTrafficShip[] = new Array(this.ships.length);
+    for (let i = 0; i < this.ships.length; i += 1) {
+      const s = this.ships[i]!;
+      const p = prevById.get(s.id);
+      if (
+        p
+        && p.phase === s.phase
+        && p.planetId === s.planetId
+        && p.orbitRadiusPx === s.orbitRadiusPx
+        && p.phaseDurationSec === s.phaseDurationSec
+        && p.orbitAngleRad === s.orbitAngleRad
+        && p.edgeAngleRad === s.edgeAngleRad
+        && p.captainId === s.captainId
+        && p.arcTrafficDwellRadPerSec === s.arcTrafficDwellRadPerSec
+        && p.arcTrafficPhaseDurationMul === s.arcTrafficPhaseDurationMul
+        && p.arcTrafficPlanetDwellSecMin === s.arcTrafficPlanetDwellSecMin
+        && p.arcTrafficPlanetDwellSecMax === s.arcTrafficPlanetDwellSecMax
+      ) {
+        nextShips[i] = p;
+      } else {
+        nextShips[i] = { ...s };
+      }
+    }
+    let nextCaptains = prev.captains;
+    if (prev.captains.length !== this.captains.length) {
+      nextCaptains = this.captains.slice();
+    } else {
+      for (let i = 0; i < this.captains.length; i += 1) {
+        const c = this.captains[i]!;
+        const pc = prev.captains[i]!;
+        if (pc.id !== c.id || pc.name !== c.name) {
+          nextCaptains = this.captains.slice();
+          break;
+        }
+      }
+    }
+
     useArcNpcTrafficStore.getState().setSnapshot({
-      captains: this.captains.slice(),
-      ships: this.ships.map((s) => ({ ...s })),
+      captains: nextCaptains,
+      ships: nextShips,
       initialized: this.captains.length > 0,
     });
   }

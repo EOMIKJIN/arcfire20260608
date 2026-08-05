@@ -5,6 +5,7 @@ import { PlanetHubDigitalGauge } from '../../../components/planet/PlanetHubActio
 import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';
 import { usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore';
 import { readDefenseSatelliteDetailFromCoreDetail } from '../../../game/planetDevelopment/planetDefenseSatelliteRuntime';
+import { PLANET_DEV_ACTIVE_JOB_UI_POLL_MS } from '../../../game/planetDevelopment/planetDevUiPollPolicy';
 import {
   buildDefenseSatelliteDevSnapshot,
   formatDefenseSatelliteDurationLabel,
@@ -44,10 +45,12 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
   const isTactical = visualTheme === 'tactical';
   const [tick, setTick] = useState(0);
 
+  /** JSON.stringify 매 구독 평가 금지 — 필드 키만 (PSS/Hermes 압력) */
   const defenseRev = usePlanetCoreRuntimeStore(
     useCallback((s) => {
-      const detail = s.byPlanetId[planetId]?.detail;
-      return JSON.stringify(readDefenseSatelliteDetailFromCoreDetail(detail));
+      const d = readDefenseSatelliteDetailFromCoreDetail(s.byPlanetId[planetId]?.detail);
+      const job = d.upgradeJob;
+      return `${d.installed ? 1 : 0}|${d.level}|${job?.targetLevel ?? 0}|${job?.completeAtMs ?? 0}`;
     }, [planetId]),
   );
 
@@ -58,7 +61,7 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
     if (!hasActiveJob) return undefined;
     const id = setInterval(() => {
       setTick((t) => t + 1);
-    }, 500);
+    }, PLANET_DEV_ACTIVE_JOB_UI_POLL_MS);
     return () => clearInterval(id);
   }, [hasActiveJob, planetId, defenseRev]);
 

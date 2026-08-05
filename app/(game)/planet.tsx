@@ -125,6 +125,10 @@ import {
   PLANET_MAIN_TOPBAR_PADDING_VERTICAL,
 } from '../../src/stages/planetMainStageLayout';
 import { resolvePlanetNearbyPresence } from '../../src/npc';
+import { getNpcCaptain } from '../../src/npc/npcFleetRegistry';
+import { resolveNpcCaptainDisplayName } from '../../src/i18n/captainText';
+import { resolvePlayerShipDisplayName } from '../../src/i18n/shipText';
+import { resolveClanDisplayNameForLocale } from '../../src/clanWar/formatClanPlateDisplayName';
 import { getCaptainOrbitAssignmentEpochBucket } from '../../src/arcCore/orbitPresence/captainOrbitPlanetAssignment';
 import { listCaptainCoPresencePairsAtPlanet } from '../../src/arcCore/captainPresence';
 import {
@@ -1084,7 +1088,7 @@ export default function PlanetScreen() {
       token.release();
       setNearbyPresence([]);
     };
-  }, [isPlanetRouteFocused, planet?.id, system?.id]);
+  }, [isPlanetRouteFocused, planet?.id, system?.id, appLocale]);
 
   const nearbyPresenceRef = useRef(nearbyPresence);
 
@@ -1096,9 +1100,15 @@ export default function PlanetScreen() {
   const orbitTablePresence = orbitRenderBudget.tableRows;
   const orbitArcShipsAtPlanet = orbitRenderBudget.arcShips;
   const orbitArcSkiaCaptionHeads = useMemo(() => {
-    const m = new Map(arcNpcCaptainsSnap.map((c) => [c.id, c.name] as const));
+    const m = new Map(
+      arcNpcCaptainsSnap.map((c) => {
+        const csv = getNpcCaptain(c.id);
+        const name = resolveNpcCaptainDisplayName(csv, appLocale) || c.name;
+        return [c.id, name] as const;
+      }),
+    );
     return orbitArcShipsAtPlanet.map((s) => orbitLabelHead3(m.get(s.captainId) ?? s.captainId));
-  }, [orbitArcShipsAtPlanet, arcNpcCaptainsSnap]);
+  }, [orbitArcShipsAtPlanet, arcNpcCaptainsSnap, appLocale]);
 
   /** 궤도에 표시 중인 전함 = INFO 단일 소스 (중복 출연 금지) */
   const planetHubOrbitInfoRows = useMemo(() => {
@@ -1110,7 +1120,7 @@ export default function PlanetScreen() {
       planet.id,
       system.id,
     );
-  }, [orbitTablePresence, orbitArcShipsAtPlanet, arcNpcCaptainsSnap, planet, system]);
+  }, [orbitTablePresence, orbitArcShipsAtPlanet, arcNpcCaptainsSnap, planet, system, appLocale]);
 
   const hubMergedRowsRef = useRef(planetHubOrbitInfoRows);
   const planetHubCaptainIds = useMemo(
@@ -1488,8 +1498,21 @@ export default function PlanetScreen() {
       const clanId = player?.political.clanId;
       if (!clanId) return t('planet.unaffiliated');
       const displayName = (s.clans[clanId]?.displayName ?? '').trim();
-      return displayName.length > 0 ? displayName : clanId;
-    }, [player?.political.clanId, t]),
+      const raw = displayName.length > 0 ? displayName : clanId;
+      return resolveClanDisplayNameForLocale(raw, appLocale);
+    }, [player?.political.clanId, t, appLocale]),
+  );
+  const pilotShipDisplayName = useMemo(
+    () =>
+      player?.ship
+        ? resolvePlayerShipDisplayName(player.ship, appLocale)
+        : '',
+    [
+      player?.ship?.name,
+      player?.ship?.templateId,
+      player?.ship?.portraitNpcCapitalShipId,
+      appLocale,
+    ],
   );
   const pilotPortraitSource = useMemo(
     () => resolvePlayerPilotPortraitSource(player?.pilotProfile?.professionId),
@@ -1685,7 +1708,7 @@ export default function PlanetScreen() {
             nickname={player.nickname}
             level={player.level}
             creditsLabel={formatCredits(player.credits, { suffix: false })}
-            shipName={player.ship.name}
+            shipName={pilotShipDisplayName}
             skillPoints={player.skillPoints}
             clanName={currentPilotClanName}
             portraitSource={pilotPortraitSource}

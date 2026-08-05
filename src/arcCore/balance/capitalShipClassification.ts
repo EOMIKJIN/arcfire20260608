@@ -16,6 +16,7 @@ import { NPC_CAPITAL_SHIPS_FROM_CSV } from '../../data/generated';
 import type { CapitalShipArchetype } from '../../types';
 import { resolveHullTierKeyForTradeCatalogShip } from './capitalShipTradeListingPolicy';
 import type { AppLocale } from '../../i18n/types';
+import { isKoUi } from '../../i18n';
 import { useAppSettingsStore } from '../../store/appSettingsStore';
 
 export type CapitalShipLoadoutProfileKey =
@@ -250,7 +251,7 @@ export function formatCapitalShipIdentityBlock(
   classification: CapitalShipClassification,
   locale: AppLocale = useAppSettingsStore.getState().locale,
 ): string {
-  if (locale !== 'ko') {
+  if (!isKoUi(locale)) {
     const headline = `Tier ${classification.tierBand} · ${classification.labelEn} · ${classification.loadoutLabelEn} · ${classification.combatRangeEn}`;
     return `${headline}\n${classification.roleSummaryEn}`;
   }
@@ -263,9 +264,9 @@ export function formatCapitalShipInfoPanelBadge(
   locale: AppLocale = useAppSettingsStore.getState().locale,
 ): string {
   if (classification.loadoutProfile === 'survival') {
-    return locale !== 'ko' ? classification.loadoutLabelEn : classification.infoPanelBadge;
+    return !isKoUi(locale) ? classification.loadoutLabelEn : classification.infoPanelBadge;
   }
-  const hull = locale !== 'ko' ? classification.labelEn : classification.labelKo;
-  const loadout = locale !== 'ko' ? classification.loadoutLabelEn : classification.loadoutLabelKo;
+  const hull = !isKoUi(locale) ? classification.labelEn : classification.labelKo;
+  const loadout = !isKoUi(locale) ? classification.loadoutLabelEn : classification.loadoutLabelKo;
   return `T${classification.tierBand} ${hull} · ${loadout}`;
 }

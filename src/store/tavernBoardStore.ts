@@ -11,7 +11,8 @@ export const TAVERN_BOARD_MAX_VISIBLE_NOTICES = 20;
 /** 표시에서 밀려난 공지 — 시스템 아카이브(상한) */
 export const TAVERN_BOARD_MAX_HISTORY_NOTICES = 200;
 
-export type TavernNoticeTag = '작전' | '경제' | '외교' | '소문' | '아크코어';
+/** Stable tag codes — display via `t('noticeTag.' + tag)`. Legacy KO tags migrate on load. */
+export type TavernNoticeTag = 'ops' | 'economy' | 'diplomacy' | 'rumor' | 'arccore';
 
 export type TavernNotice = {
   id: string;
@@ -23,6 +24,16 @@ export type TavernNotice = {
   i18nKey?: string;
   i18nParams?: I18nParams;
 };
+
+export function normalizeTavernNoticeTag(raw: unknown): TavernNoticeTag {
+  const v = String(raw ?? '').trim();
+  if (v === 'ops' || v === '작전') return 'ops';
+  if (v === 'economy' || v === '경제') return 'economy';
+  if (v === 'diplomacy' || v === '외교') return 'diplomacy';
+  if (v === 'rumor' || v === '소문') return 'rumor';
+  if (v === 'arccore' || v === '아크코어') return 'arccore';
+  return 'rumor';
+}
 
 type TavernBoardState = {
   notices: TavernNotice[];
@@ -135,7 +146,7 @@ function normalizeNoticeRow(raw: Partial<TavernNotice>): TavernNotice | null {
     id: typeof raw.id === 'string' ? raw.id : formatId(),
     title: raw.title,
     body: raw.body,
-    tag: (raw.tag ?? '소문') as TavernNoticeTag,
+    tag: normalizeTavernNoticeTag(raw.tag),
     postedAtMs: Number.isFinite(Number(raw.postedAtMs)) ? Number(raw.postedAtMs) : Date.now(),
     dedupeKey: typeof raw.dedupeKey === 'string' ? raw.dedupeKey : undefined,
     i18nKey: typeof raw.i18nKey === 'string' ? raw.i18nKey : undefined,
@@ -184,18 +195,18 @@ function getDefaultNotices(): TavernNotice[] {
   return [
     {
       id: `seed_${now}_1`,
-      title: '아크코어 공지 보드 가동',
-      body: '월드 확장, 수송선단 배치, 도메인 서브코어 상태를 자동 수집합니다.',
-      tag: '아크코어',
+      title: 'ArcCore Notice Board Online',
+      body: 'Automatically collects world expansion, convoy deployment, and domain subcore status.',
+      tag: 'arccore',
       postedAtMs: now - 2 * 60 * 1000,
       dedupeKey: 'seed_boot_1',
       i18nKey: 'news.boardBoot',
     },
     {
       id: `seed_${now}_2`,
-      title: '은하계 운영 소식판 안내',
-      body: '선술집 공지 보드는 아크코어 이벤트 로그 기반으로 자동 갱신됩니다.',
-      tag: '작전',
+      title: 'Galaxy Operations Board Guide',
+      body: 'The tavern notice board auto-updates from ArcCore event logs.',
+      tag: 'ops',
       postedAtMs: now - 1 * 60 * 1000,
       dedupeKey: 'seed_boot_2',
       i18nKey: 'news.guide',
@@ -281,7 +292,7 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
         id: formatId(),
         title: notice.title,
         body: notice.body,
-        tag: notice.tag,
+        tag: normalizeTavernNoticeTag(notice.tag),
         postedAtMs: nextPostedAtMs,
         dedupeKey: notice.dedupeKey,
         i18nKey: notice.i18nKey,
@@ -305,7 +316,7 @@ export const useTavernBoardStore = create<TavernBoardState>((set, get) => ({
         id: formatId(),
         title: notice.title,
         body: notice.body,
-        tag: notice.tag,
+        tag: normalizeTavernNoticeTag(notice.tag),
         postedAtMs: nextPostedAtMs,
         dedupeKey,
         i18nKey: notice.i18nKey,

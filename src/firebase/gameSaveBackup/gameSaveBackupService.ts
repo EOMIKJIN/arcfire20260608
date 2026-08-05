@@ -325,6 +325,49 @@ export async function pruneExpiredGameSaveBackups(uid: string, nowMs: number = D
   return removed;
 }
 
+/** 계정 초기화 — 해당 uid의 백업·payload_chunks 전량 삭제(부모 users 삭제와 비캐스케이드 보완) */
+export async function purgeAllGameSaveBackupsForAccountPurge(uid: string): Promise<number> {
+  const trimmed = uid.trim();
+  if (!trimmed || trimmed === 'local-guest') return 0;
+  configureFirestorePersistence();
+  try {
+    await ensureFirebaseAnonymousAuth();
+  } catch {
+    /* offline — 아래 get/delete가 큐잉되거나 실패 */
+  }
+  const col = gameSaveBackupsCollectionRef(trimmed);
+  const allSnap = await readFirestoreBackupQuery(
+    query(col, limit(GAME_SAVE_BACKUP_MAX_PER_UID + 40)),
+    GAME_SAVE_BACKUP_PRUNE_MS,
+  );
+  if (!allSnap) return 0;
+  let removed = 0;
+  for (const d of allSnap.docs) {
+    await deleteSnapshotChunks(trimmed, d.id).catch(() => {
+      /* ignore */
+    });
+    try {
+      await deleteDoc(d.ref);
+      removed += 1;
+    } catch {
+      /* offline queue */
+    }
+  }
+  await clearGameSaveBackupLastAtForAccountPurge(trimmed);
+  return removed;
+}
+
+/** 계정 초기화 — 자동 백업 간격 타임스탬프 제거(신규 계정 즉시 백업 가능) */
+export async function clearGameSaveBackupLastAtForAccountPurge(uid: string): Promise<void> {
+  const trimmed = uid.trim();
+  if (!trimmed) return;
+  try {
+    await AsyncStorage.removeItem(`${LAST_BACKUP_AT_KEY}:${trimmed}`);
+  } catch {
+    /* ignore */
+  }
+}
+
 export async function uploadGameSaveBackup(
   uid: string,
   reason: GameSaveBackupReason,

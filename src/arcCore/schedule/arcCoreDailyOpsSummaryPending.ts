@@ -24,13 +24,18 @@ export async function setArcCoreDailyOpsSummaryPending(
   }
 }
 
-/** 서비스 개시 월드 리셋 — pending 요약 폐기 */
-export async function clearArcCoreDailyOpsSummaryPendingForServiceLaunch(): Promise<void> {
+/** pending 요약 폐기 — 서비스 개시 월드 리셋 · 계정 초기화 공용 */
+export async function clearArcCoreDailyOpsSummaryPending(): Promise<void> {
   try {
     await AsyncStorage.removeItem(STORAGE_KEY);
   } catch {
     /* ignore */
   }
+}
+
+/** @deprecated `clearArcCoreDailyOpsSummaryPending` 사용 */
+export async function clearArcCoreDailyOpsSummaryPendingForServiceLaunch(): Promise<void> {
+  await clearArcCoreDailyOpsSummaryPending();
 }
 
 /** 소비 후 삭제 — 허브에서 1회만 표시 */

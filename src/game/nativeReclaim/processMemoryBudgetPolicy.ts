@@ -33,6 +33,15 @@ export const GALAXY_MAP_SOFT_RECLAIM_INTERVAL_MS = 5 * 60 * 1000;
 /** 허브 체류 — soft + deferred Fresco (전투 orbit 활성 시 skip) */
 export const HUB_SOFT_NATIVE_RECLAIM_INTERVAL_MS = 5 * 60 * 1000;
 
+/**
+ * 인바운드 드론 colorDodge 오버레이 — latch OFF 후 sticky 언마운트 대기.
+ * latch 토글마다 즉시 언마운트하면 useImage/FinalizerDaemon SIGSEGV(기존 sticky 사유).
+ * 반대로 sticky를 soft(5분)까지 유지하면 useImage×3이 EGL mtrack을 ~2배로 고정
+ * (2026-08-05 17:41 EGL 40.7→17:57 19.8 = soft reclaim 시점 회수).
+ * FX 잔향(~0.2s)보다 길고 soft보다 짧게 — 연속 드론 시 타이머만 리셋.
+ */
+export const HUB_DODGE_OVERLAY_UNMOUNT_DEBOUNCE_MS = 3 * 1000;
+
 /** worldmap 체류 — soft 틱 N회마다 1회 deep(GPU layer release + Fresco trim) 승격 (N×5분=15분) */
 export const GALAXY_MAP_DEEP_RECLAIM_EVERY_N_SOFT_TICKS = 3;
 

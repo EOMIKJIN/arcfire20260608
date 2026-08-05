@@ -5,6 +5,7 @@ import { ArcButton } from '../ArcButton';
 import { ArcOverlayCard } from '../ArcOverlayCard';
 import { resolveOverlayCompactBodyStyles } from '../overlayCompactBodyStyles';
 import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
+import { useT } from '../../../i18n';
 
 type Props = {
   entry: ArcOverlayLevelUpEntry;
@@ -12,13 +13,19 @@ type Props = {
 };
 
 export const LevelUpOverlayContent = memo(function LevelUpOverlayContent({ entry, onClose }: Props) {
+  const t = useT();
   const visualTheme = resolveArcOverlayVisualTheme('levelUp');
   const body = resolveOverlayCompactBodyStyles(visualTheme);
   return (
-    <ArcOverlayCard title="LEVEL UP" layout="compact" visualTheme={visualTheme} onClose={onClose}>
+    <ArcOverlayCard
+      title={t('levelUp.cardTitle')}
+      layout="compact"
+      visualTheme={visualTheme}
+      onClose={onClose}
+    >
       <LevelUpDetailPanel summary={entry.summary} visualTheme={visualTheme} />
       <ArcButton
-        label="[ 확인 ]"
+        label={t('common.confirm')}
         visualTheme={visualTheme}
         intent="primary"
         onPress={onClose}

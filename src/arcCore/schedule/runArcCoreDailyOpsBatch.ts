@@ -25,14 +25,15 @@ import { runPlanetCoreStatEquilibriumPass } from '../planetCore/runPlanetCoreSta
 import { runLaboratoryRdSpeedPass } from '../planetFacility/runLaboratoryRdSpeedPass';
 import { runTavernBountyRefreshPass } from '../planetFacility/runTavernBountyRefreshPass';
 import { runArcCoreInstanceMissionDailyPass } from '../missions/runArcCoreInstanceMissionDailyPass';
-import { runArcCoreEconomyLearningDailyPass } from '../learning/runArcCoreEconomyLearningDailyPass';
+import {
+  runArcCoreEconomyLearningDailyPass,
+  type ArcCoreEconomyLearningDailyPassResult,
+} from '../learning/runArcCoreEconomyLearningDailyPass';
 import { runPlanetFiscalBalanceClosedLoopPass } from '../economy/runPlanetFiscalBalanceClosedLoopPass';
 import { runPlanetMineralLedgerDailyPass } from '../planetResource/runPlanetMineralLedgerDailyPass';
 import { integrateUnlockedSynthFrontierStatEconomyAsync } from '../planetCore/integrateUnlockedSynthFrontierStatEconomy';
-import { pushArcCoreDailyKpiToRtdbIfDue } from '../learning/pushArcCoreDailyKpiToRtdb';
-import { isArcCoreRtdbAvailableForSession } from '../../firebase/rtdbRefs';
-import { getCurrentUser } from '../../firebase/auth';
 import { resolveArcCoreDailyOpsPolicy } from './arcCoreDailyOpsPolicy';
+import { noteDailyOpsBatchStep } from './dailyOpsBatchProgress';
 import {
   beginPlanetCoreStatOpsTrendSnapshot,
   commitPlanetCoreStatOpsTrendAfterBatch,
@@ -85,6 +86,8 @@ export type ArcCoreDailyOpsBatchResult = {
   planetFiscalClosedLoop: boolean;
   planetMineralLedger: boolean;
   planetOwnershipDeedPricing: boolean;
+  /** learning 패스 산출 — RTDB push는 SubCore가 markCompleted 이후에 최선노력 */
+  learningKpi: ArcCoreEconomyLearningDailyPassResult | null;
 };
 
 /**
@@ -123,12 +126,16 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     planetFiscalClosedLoop: false,
     planetMineralLedger: false,
     planetOwnershipDeedPricing: false,
+    learningKpi: null,
   };
+
+  noteDailyOpsBatchStep('batch_begin');
 
   // Wave B′(task_id=daily-ops-batch-incomplete-fix-20260803) — preamble도 격리.
   // markArcCoreDailyBatchStarted 이후 이 구간에서 던지면 이후 25개 패스가 전부 스킵되고
   // (SubCore 쪽 Wave A′ 격리로 앱이 죽진 않지만) 그 날의 실질적 배치 효과가 통째로 없어진다.
   try {
+    noteDailyOpsBatchStep('planetCoreRuntimeBootstrap');
     if (!usePlanetCoreRuntimeStore.getState().hydrated) {
       await usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync();
     }
@@ -279,6 +286,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     await yieldJsThread();
   }
   try {
+    noteDailyOpsBatchStep('convoyDailySettlement');
     const convoyDaily = await runArcCoreConvoyDailySettlementPass();
     result.convoyDailySettlement = convoyDaily.ran;
   } catch (err) {
@@ -287,6 +295,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   await yieldJsThread();
 
   try {
+    noteDailyOpsBatchStep('planetUpkeep');
     const upkeep = await runArcCorePlanetUpkeepDailyPass();
     result.planetUpkeep = upkeep.ran;
   } catch (err) {
@@ -295,6 +304,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   await yieldJsThread();
 
   try {
+    noteDailyOpsBatchStep('centralBankExpenditure');
     const centralBank = await runArcCoreCentralBankExpenditurePass();
     result.centralBankExpenditure = centralBank.ran;
   } catch (err) {
@@ -302,6 +312,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   }
 
   try {
+    noteDailyOpsBatchStep('planetFiscalClosedLoop');
     const fiscalLoop = await runPlanetFiscalBalanceClosedLoopPass();
     result.planetFiscalClosedLoop = fiscalLoop.ran;
   } catch (err) {
@@ -352,19 +363,18 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   await yieldJsThread();
 
   try {
+    noteDailyOpsBatchStep('economyLearning');
     const learningResult = await runArcCoreEconomyLearningDailyPass(result);
     result.economyLearning = true;
-    await pushArcCoreDailyKpiToRtdbIfDue({
-      localDeviceId: getCurrentUser().uid,
-      learningResult,
-      rtdbAvailable: isArcCoreRtdbAvailableForSession(),
-    });
+    result.learningKpi = learningResult;
+    // RTDB KPI push는 markCompleted를 막지 않도록 SubCore 완료 마킹 이후로 이동
+    // (오프라인 write hang 회귀 방지 · 2026-08-05).
   } catch (err) {
     reportDailyOpsStepFailure('economyLearning', err);
-    /* learning KPI·RTDB push는 비차단 — 기존 계약 유지 */
   }
 
   try {
+    noteDailyOpsBatchStep('planetCoreGaugeComposition');
     const gaugeComposition = runPlanetCoreGaugeCompositionApplyPass();
     result.planetCoreGaugeComposition = gaugeComposition.ran;
   } catch (err) {
@@ -372,10 +382,12 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   }
 
   try {
+    noteDailyOpsBatchStep('commitPlanetCoreStatOpsTrendAfterBatch');
     commitPlanetCoreStatOpsTrendAfterBatch();
   } catch (err) {
     reportDailyOpsStepFailure('commitPlanetCoreStatOpsTrendAfterBatch', err);
   }
 
+  noteDailyOpsBatchStep('batch_return');
   return result;
 }

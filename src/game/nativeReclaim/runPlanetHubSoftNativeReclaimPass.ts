@@ -14,13 +14,14 @@ import { debugPlanetGpuLayerSnapshot } from '../planetStageGpuSupervisor';
 export function runPlanetHubSoftNativeReclaimPass(planetId: string, reason: string): void {
   if (!tryBeginHubNativeReclaim(reason)) return;
 
-  /** sticky dodge overlay·useImage 상주 해제 — 전투/드론 종료 후 GL ~150MB floor 방지 */
+  /** sticky dodge overlay·useImage 상주 해제 — 전투/드론 종료 후 GL/EGL floor 방지 */
   signalHubSkiaNativeReclaim(reason);
   /** 전투 orbit 비활성 주기 reclaim — module Path/Paint 캐시 */
   runCombatSkiaPresentationReclaim();
 
   const keep = resolveSinglePlanetSessionKeepIds(planetId);
   runSoftNativeReclaimPass(reason);
+  /** Fresco는 deferred 1회만 — 즉시+deferred 이중 trim 시 native floor 톱니(6/30) */
   scheduleDeferredNativeReclaimPass({
     stage: 'planet_hub',
     reason,

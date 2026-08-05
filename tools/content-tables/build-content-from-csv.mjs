@@ -292,18 +292,30 @@ ${body}
 }
 
 function assertUniqueNpcCaptainDisplayNames(rows) {
-  const seen = new Map();
+  const seenKo = new Map();
+  const seenEn = new Map();
   for (const r of rows) {
     const name = String(r.displayName ?? '').trim();
     if (!name) {
       throw new Error(`[npc_ai_captains] displayName 비어 있음: id=${r.id}`);
     }
-    if (seen.has(name)) {
+    if (seenKo.has(name)) {
       throw new Error(
-        `[npc_ai_captains] displayName 중복(항상 서로 다른 이름 유지): "${name}" — ${seen.get(name)} vs ${r.id}`,
+        `[npc_ai_captains] displayName 중복(항상 서로 다른 이름 유지): "${name}" — ${seenKo.get(name)} vs ${r.id}`,
       );
     }
-    seen.set(name, r.id);
+    seenKo.set(name, r.id);
+
+    const nameEn = String(r.displayNameEn ?? r.display_name_en ?? '').trim();
+    if (!nameEn) {
+      throw new Error(`[npc_ai_captains] displayNameEn 비어 있음: id=${r.id}`);
+    }
+    if (seenEn.has(nameEn)) {
+      throw new Error(
+        `[npc_ai_captains] displayNameEn 중복: "${nameEn}" — ${seenEn.get(nameEn)} vs ${r.id}`,
+      );
+    }
+    seenEn.set(nameEn, r.id);
   }
 }
 
@@ -404,6 +416,7 @@ function buildNpcCaptains() {
     .map(r => `  {
     id: ${q(r.id)},
     displayName: ${q(r.displayName)},
+    displayNameEn: ${readCsvEnField(r, 'displayNameEn', 'display_name_en') ? q(readCsvEnField(r, 'displayNameEn', 'display_name_en')) : 'undefined'},
     rank: ${q(r.rank)},
     factionId: ${q(nullable(r.factionId))},
     aiAggression: ${q(r.aiAggression)},

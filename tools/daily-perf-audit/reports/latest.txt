@@ -1,4 +1,4 @@
-Daily audit — 2026-08-04T15:00:10.141Z
+Daily audit — 2026-08-05T15:00:08.662Z
 
 TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -12,7 +12,7 @@ Content tables (`npm run build:content-tables`)
 
 
 > arcfire-online@0.1.1 build:content-tables
-> node tools/gen-mineral-region-members.mjs && node tools/balance-tables/rebalance-weapon-ttk.mjs && node tools/content-tables/gen-weapon-trade-listing-policy.mjs && node tools/content-tables/sync-weapon-trade-listing.mjs && node tools/content-tables/patch-item-defs-en.mjs && node tools/content-tables/patch-missions-en.mjs && node tools/content-tables/patch-npc-ships-en.mjs && node tools/content-tables/patch-planets-en.mjs && node tools/content-tables/generate-arc-seed-transport-rows.mjs && node tools/content-tables/sync-synth-ownership-into-item-defs.mjs && node tools/content-tables/sync-star-system-connections-from-planets.mjs && node tools/content-tables/build-content-from-csv.mjs && node tools/content-tables/audit-npc-fleet-master.mjs && node tools/content-tables/audit-mission-quest-placements.mjs
+> node tools/gen-mineral-region-members.mjs && node tools/balance-tables/rebalance-weapon-ttk.mjs && node tools/content-tables/gen-weapon-trade-listing-policy.mjs && node tools/content-tables/sync-weapon-trade-listing.mjs && node tools/content-tables/patch-item-defs-en.mjs && node tools/content-tables/patch-missions-en.mjs && node tools/content-tables/patch-npc-ships-en.mjs && node tools/content-tables/patch-planets-en.mjs && node tools/content-tables/generate-arc-seed-transport-rows.mjs && node tools/content-tables/sync-synth-ownership-into-item-defs.mjs && node tools/content-tables/patch-item-defs-trade-en-full.mjs && node tools/content-tables/sync-star-system-connections-from-planets.mjs && node tools/content-tables/build-content-from-csv.mjs && node tools/content-tables/audit-npc-fleet-master.mjs && node tools/content-tables/audit-mission-quest-placements.mjs
 
 [gen-mineral-region-members] 100 rows
 [rebalance-weapon-ttk] updated 0 weapons in weapon_list.csv
@@ -24,6 +24,7 @@ patched 0 npc ship name_en rows
 patched planets.csv
 [generate-arc-seed-transport-rows] nothing to add — all systems present
 [sync-synth-ownership] item_defs.csv — synth ownership up to date
+patched rows=0 path=D:\arcfire20260607\tables\content\item_defs.csv
 [sync-star-connections] wrote 64 directed edges -> D:\arcfire20260607\tables\content\star_system_connections.csv
 Generated CSV-driven content TS files at src/data/generated
 [audit:npc-fleet] PASS
@@ -44,21 +45,21 @@ Largest TS/TSX under `src/` + `app/` (bytes)
 
 - 662,275 — `src/data/generated/galaxySystems100.generated.ts`
 - 477,992 — `src/data/generated/csvNpcCapitalShips.ts`
-- 376,711 — `src/data/generated/csvItemDefs.ts`
-- 285,280 — `src/data/generated/csvNpcCaptains.ts`
+- 380,493 — `src/data/generated/csvItemDefs.ts`
+- 293,391 — `src/data/generated/csvNpcCaptains.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
-- 149,055 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 149,162 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 115,935 — `src/data/generated/csvStoryScenes.ts`
+- 84,099 — `src/i18n/locales/ko.ts`
 - 82,693 — `app/(game)/worldmap.tsx`
-- 79,042 — `src/i18n/locales/ko.ts`
-- 74,510 — `app/(game)/planet.tsx`
-- 72,108 — `src/i18n/locales/en.ts`
+- 76,443 — `src/i18n/locales/en.ts`
+- 75,372 — `app/(game)/planet.tsx`
 - 71,070 — `src/data/generated/csvWeapons.ts`
 - 70,149 — `src/data/balance/generated/csvSynthSystemColonization.ts`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
 - 60,176 — `src/data/generated/csvMissions.ts`
-- 47,321 — `app/(game)/shipyard.tsx`
-- 43,388 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
+- 47,324 — `app/(game)/shipyard.tsx`
+- 44,314 — `src/components/planet/planetHub/planetHubSubcomponents.tsx`
 - 40,043 — `src/arcCore/territorial/runTerritorialCombatPass.ts`
 
 Planet hub eager `src/combat` import (should be absent)

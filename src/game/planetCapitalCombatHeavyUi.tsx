@@ -25,6 +25,7 @@ import {
 import { COLORS, FONTS, SPACING } from '../utils/theme';
 
 import { useBattleStanceStore, BATTLE_STANCE_META } from '../store/battleStanceStore';
+import { useT } from '../i18n';
 
 import {
 
@@ -214,6 +215,8 @@ export function PlanetMainStanceRow({
 
   const sim = useCapitalRealtimeCombatSimContext();
 
+  const t = useT();
+
   const activeStance = useBattleStanceStore((s) => s.activeStance);
 
   const setBattleStance = useBattleStanceStore((s) => s.setStance);
@@ -350,7 +353,9 @@ export function PlanetMainStanceRow({
 
             >
 
-              [{meta.label}]
+              [{
+                t(`battleStance.${stanceId}`)
+              }]
 
             </Text>
 

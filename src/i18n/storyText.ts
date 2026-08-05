@@ -6,11 +6,12 @@
 import type { StoryScenePageDef } from '../types';
 import type { AppLocale } from './types';
 import { useAppSettingsStore } from '../store/appSettingsStore';
+import { isKoUi, translate } from './index';
 
 const NICK_TOKEN = /\[닉네임\]|\[Pilot\]/g;
 
 function fallbackPilot(locale: AppLocale): string {
-  return locale === 'ko' ? '파일럿' : 'Pilot';
+  return translate(locale, 'dialog.pilotFallback');
 }
 
 /** 페이지 본문(locale + 닉네임 치환). */
@@ -19,7 +20,7 @@ export function resolveStoryPageText(
   locale: AppLocale,
   nickname?: string | null,
 ): string {
-  const raw = locale !== 'ko' && page.textEn ? page.textEn : page.text;
+  const raw = !isKoUi(locale) && page.textEn ? page.textEn : page.text;
   return (raw ?? '').replace(NICK_TOKEN, (nickname ?? '').trim() || fallbackPilot(locale));
 }
 
@@ -28,7 +29,7 @@ export function resolveStoryPageLabel(
   page: Pick<StoryScenePageDef, 'label' | 'labelEn'>,
   locale: AppLocale,
 ): string {
-  return (locale !== 'ko' && page.labelEn ? page.labelEn : page.label) ?? '';
+  return (!isKoUi(locale) && page.labelEn ? page.labelEn : page.label) ?? '';
 }
 
 /** 현재 앱 locale 기준 비반응 조회(컴포넌트 밖/일회성). */

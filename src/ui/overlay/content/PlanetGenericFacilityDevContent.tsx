@@ -20,6 +20,7 @@ import {
   planetDevLevelI18nParams,
   planetDevUpgradeI18nParams,
 } from '../../../game/planetDevelopment/planetFacilityDevLevelDisplay';
+import { PLANET_DEV_ACTIVE_JOB_UI_POLL_MS } from '../../../game/planetDevelopment/planetDevUiPollPolicy';
 import {
   HeavyUiOverlayShell,
   createPlanetDevDetailSession,
@@ -340,7 +341,7 @@ export const PlanetGenericFacilityDevContent = memo(function PlanetGenericFacili
     const id = setInterval(() => {
       api.tryCompleteUpgrade(planetId);
       setTick((v) => v + 1);
-    }, 500);
+    }, PLANET_DEV_ACTIVE_JOB_UI_POLL_MS);
     return () => clearInterval(id);
   }, [hasActiveJob, api, planetId, moduleId]);
 

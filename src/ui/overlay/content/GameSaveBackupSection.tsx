@@ -13,41 +13,49 @@ import {
 } from '../../../firebase/gameSaveBackup/gameSaveBackupService';
 import { uploadManualGameSaveBackup } from '../../../firebase/gameSaveBackup/scheduleGameSaveBackup';
 import { showArcAlert } from '../../../utils/showArcAlert';
+import { useT } from '../../../i18n';
 
 type Props = {
   isTactical: boolean;
 };
 
-function formatBackupLine(item: GameSaveBackupListItem): string {
+function formatBackupLine(
+  item: GameSaveBackupListItem,
+  t: (key: string, params?: Record<string, string | number>) => string,
+): string {
   const d = new Date(item.createdAtMs);
   const date = `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-  const reasonLabel =
-    item.reason === 'pre_purge'
-      ? '초기화 직전'
-      : item.reason === 'scheduled'
-        ? '자동'
-        : item.reason === 'manual'
-          ? '수동'
-          : item.reason;
-  return `${date} · ${reasonLabel} · synth ${item.summary.synthUnlockCount} · Lv${item.summary.playerLevel ?? '?'}`;
+  const reasonKey = `backup.reason.${item.reason}`;
+  const reasonLabel = t(reasonKey);
+  const reason = reasonLabel !== reasonKey ? reasonLabel : item.reason;
+  return t('backup.line', {
+    date,
+    reason,
+    synth: item.summary.synthUnlockCount,
+    level: item.summary.playerLevel ?? '?',
+  });
 }
 
-function formatRestoreError(error?: string): string {
+function formatRestoreError(
+  t: (key: string, params?: Record<string, string | number>) => string,
+  error?: string,
+): string {
   switch (error) {
     case 'backup_expired':
-      return '백업 보관 기간(7일)이 지났습니다.';
+      return t('backup.error.expired');
     case 'backup_empty':
-      return '백업 데이터가 비어 있습니다.';
+      return t('backup.error.empty');
     case 'apply_failed':
-      return '로컬 저장소에 적용하지 못했습니다. 앱 재시작 후 다시 시도하세요.';
+      return t('backup.error.apply');
     case 'pending_write_timeout':
-      return '복구 예약 저장 시간이 초과되었습니다. 네트워크 확인 후 다시 시도하세요.';
+      return t('backup.error.pendingTimeout');
     default:
-      return '백업을 찾을 수 없거나 불러오지 못했습니다.';
+      return t('backup.error.notFound');
   }
 }
 
 export const GameSaveBackupSection = memo(function GameSaveBackupSection({ isTactical }: Props) {
+  const t = useT();
   const player = usePlayerStore((s) => s.player);
   const playerUid = player?.uid ?? '';
 
@@ -82,14 +90,14 @@ export const GameSaveBackupSection = memo(function GameSaveBackupSection({ isTac
       setItems(result.items);
       setListLoaded(true);
       if (result.status === 'timeout') {
-        setListHint('목록 조회 시간이 초과되었습니다. 네트워크 확인 후 다시 시도하세요.');
+        setListHint(t('backup.listTimeout'));
       } else if (result.status === 'error') {
-        setListHint('목록을 불러오지 못했습니다. 잠시 후 다시 시도하세요.');
+        setListHint(t('backup.listError'));
       }
     } finally {
       if (seq === reloadSeqRef.current) setListLoading(false);
     }
-  }, [playerUid]);
+  }, [playerUid, t]);
 
   const busy = listLoading || actionBusy;
 
@@ -101,23 +109,23 @@ export const GameSaveBackupSection = memo(function GameSaveBackupSection({ isTac
     try {
       const result = await uploadManualGameSaveBackup(uid);
       if (result.ok) {
-        showArcAlert('백업 완료', '클라우드에 저장했습니다.');
+        showArcAlert(t('backup.ok.title'), t('backup.ok.body'));
         void reload();
       } else {
         const reason =
           result.skipped === 'payload_too_large'
-            ? '저장 데이터가 너무 큽니다. 잠시 후 다시 시도하거나 개발자에게 문의하세요.'
+            ? t('backup.fail.payloadTooLarge')
             : result.skipped === 'interval'
-              ? '6시간 이내 자동 백업이 이미 있습니다.'
+              ? t('backup.fail.interval')
               : result.skipped === 'upload_failed'
-                ? '네트워크 오류로 백업 업로드에 실패했습니다.'
-                : '백업에 실패했습니다. 네트워크 연결을 확인해 주세요.';
-        showArcAlert('백업 실패', reason);
+                ? t('backup.fail.upload')
+                : t('backup.fail.generic');
+        showArcAlert(t('backup.fail.title'), reason);
       }
     } finally {
       setActionBusy(false);
     }
-  }, [playerUid, reload]);
+  }, [playerUid, reload, t]);
 
   const onRestore = useCallback(
     async (backupId: string) => {
@@ -128,18 +136,15 @@ export const GameSaveBackupSection = memo(function GameSaveBackupSection({ isTac
       try {
         const result = await restoreGameSaveBackupToLocal(uid, backupId);
         if (result.ok) {
-          showArcAlert(
-            '복구 완료',
-            '저장 데이터를 불러왔습니다. 앱을 한 번 재시작하거나 행성 허브를 다시 열어 주세요.',
-          );
+          showArcAlert(t('backup.restore.ok.title'), t('backup.restore.ok.body'));
         } else {
-          showArcAlert('복구 실패', formatRestoreError(result.error));
+          showArcAlert(t('backup.restore.fail.title'), formatRestoreError(t, result.error));
         }
       } finally {
         setActionBusy(false);
       }
     },
-    [playerUid],
+    [playerUid, t],
   );
 
   const onQueueBootRestore = useCallback(
@@ -151,15 +156,18 @@ export const GameSaveBackupSection = memo(function GameSaveBackupSection({ isTac
       try {
         const pending = await setAdminGameSaveRestorePending(uid, backupId, 'admin_in_app');
         if (pending.ok) {
-          showArcAlert('복구 예약', '다음 앱 실행 시 선택한 백업으로 자동 복구됩니다.');
+          showArcAlert(t('backup.restore.pendingOk.title'), t('backup.restore.pendingOk.body'));
         } else {
-          showArcAlert('복구 예약 실패', formatRestoreError(pending.error));
+          showArcAlert(
+            t('backup.restore.pendingFail.title'),
+            formatRestoreError(t, pending.error),
+          );
         }
       } finally {
         setActionBusy(false);
       }
     },
-    [playerUid],
+    [playerUid, t],
   );
 
   if (!backupUid) return null;
@@ -170,44 +178,40 @@ export const GameSaveBackupSection = memo(function GameSaveBackupSection({ isTac
 
   return (
     <>
-      <View style={isTactical ? phosphorOverlay.divider : phosphorOverlay.divider} />
-      <Text style={isTactical ? phosphorOverlay.sectionLabel : phosphorOverlay.sectionLabel}>
-        게임 저장 백업 · 복구 (7일)
-      </Text>
-      <Text style={hintStyle}>
-        클라우드에 최대 7일간 보관됩니다. 계정 초기화 직전·6시간마다 자동 백업됩니다.
-      </Text>
+      <View style={phosphorOverlay.divider} />
+      <Text style={phosphorOverlay.sectionLabel}>{t('backup.sectionTitle')}</Text>
+      <Text style={hintStyle}>{t('backup.sectionHint')}</Text>
       <Pressable style={rowStyle} onPress={() => void onManualBackup()} disabled={busy}>
-        <Text style={labelStyle}>지금 백업하기</Text>
+        <Text style={labelStyle}>{t('backup.manual')}</Text>
       </Pressable>
       <Pressable style={rowStyle} onPress={() => void reload()} disabled={busy}>
-        <Text style={labelStyle}>백업 목록 새로고침</Text>
+        <Text style={labelStyle}>{t('backup.refresh')}</Text>
       </Pressable>
       {listLoading ? (
         <ActivityIndicator color={OVERLAY_TOKENS.phosphorAccent} style={styles.spinner} />
       ) : null}
       {listHint ? <Text style={hintStyle}>{listHint}</Text> : null}
       {!listLoaded && !listLoading ? (
-        <Text style={hintStyle}>「백업 목록 새로고침」을 눌러 클라우드 백업 목록을 확인하세요.</Text>
+        <Text style={hintStyle}>{t('backup.listPrompt')}</Text>
       ) : null}
       {listLoaded && items.length === 0 && !listLoading ? (
-        <Text style={hintStyle}>저장된 백업이 없습니다. 플레이 후 자동 생성되거나 위에서 수동 백업하세요.</Text>
+        <Text style={hintStyle}>{t('backup.listEmpty')}</Text>
       ) : null}
       {items.map((item) => (
         <View key={item.backupId} style={styles.backupBlock}>
           <Text style={hintStyle} numberOfLines={2}>
-            {formatBackupLine(item)}
+            {formatBackupLine(item, t)}
           </Text>
           <View style={styles.btnRow}>
             <Pressable style={rowStyle} onPress={() => void onRestore(item.backupId)} disabled={busy}>
-              <Text style={labelStyle}>이 백업으로 복구</Text>
+              <Text style={labelStyle}>{t('backup.restore.now')}</Text>
             </Pressable>
             <Pressable
               style={rowStyle}
               onPress={() => void onQueueBootRestore(item.backupId)}
               disabled={busy}
             >
-              <Text style={labelStyle}>다음 실행 시 복구</Text>
+              <Text style={labelStyle}>{t('backup.restore.nextBoot')}</Text>
             </Pressable>
           </View>
         </View>

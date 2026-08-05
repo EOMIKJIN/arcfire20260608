@@ -4,11 +4,13 @@ import { deleteUserCloudSave } from '../firebase/firestore';
 import { getCurrentUser, markFreshStartAfterReset } from '../firebase/auth';
 import { resetFirebaseAnonymousAuthForAccountPurge } from '../firebase/firebaseAnonymousAuth';
 import { clearArcCoreRtdbDailyKpiPushState } from '../arcCore/learning/pushArcCoreDailyKpiToRtdb';
+import { clearArcCoreDailyOpsSummaryPending } from '../arcCore/schedule/arcCoreDailyOpsSummaryPending';
 import { cancelScheduledUserCloudSync } from '../firebase/userCloudSyncSchedule';
-import {
-  cancelScheduledGameSaveBackup,
-  uploadPrePurgeGameSaveBackup,
-} from '../firebase/gameSaveBackup/scheduleGameSaveBackup';
+import { cancelScheduledGameSaveBackup } from '../firebase/gameSaveBackup/scheduleGameSaveBackup';
+import { purgeAllGameSaveBackupsForAccountPurge } from '../firebase/gameSaveBackup/gameSaveBackupService';
+import { releaseNicknameReservationForAccountPurge } from '../firebase/nicknameRegistry';
+import { useAccountProfileStore } from '../store/accountProfileStore';
+import { usePlanetNebulaStore } from '../store/planetNebulaStore';
 import { usePlanetStageLifecycleStore } from '../game/planetStageLifecycle';
 import { clearMiningResumeSnapshot } from '../systems/mining/miningResumeStore';
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
@@ -29,6 +31,7 @@ import { useTavernBoardStore } from '../store/tavernBoardStore';
 import { useBmExchangeLedgerStore } from '../store/bmExchangeLedgerStore';
 import { resetCombatMatchTelemetry } from '../store/combatMatchTelemetryStore';
 import { showArcAlert } from '../utils/showArcAlert';
+import { t } from '../i18n';
 import { clearOnboardingProfessionId } from '../game/onboardingDraftStorage';
 import { purgeAccountLedgerProfileSkillByUid } from './accountLifecycle';
 import { resetArcInboundDroneCampaigns } from '../arcCore/inboundDrone/resetArcInboundDroneCampaigns';
@@ -76,7 +79,7 @@ function presentAccountResetBlockingOverlay(): void {
     store.present({
       id: ACCOUNT_RESET_OVERLAY_ID,
       kind: 'blocking',
-      message: '계정 초기화 중…',
+      message: t('settings.reset.progress'),
       dismissOnBackdrop: false,
     });
   } catch {
@@ -122,10 +125,21 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   const primaryUid = resetUids[0] ?? null;
   const { currentClanId } = params;
 
+  // 닉네임 힌트 — profile/player 삭제 전에 확보(레지스트리 released tombstone용)
+  const nicknameHintsByUid = new Map<string, string>();
+  const playerNick = usePlayerStore.getState().player?.nickname?.trim();
+  const profiles = useAccountProfileStore.getState().profilesByUid;
+  for (const uid of resetUids) {
+    const fromProfile = profiles[uid]?.nicknameSnapshot?.trim();
+    const hint = (uid === primaryUid && playerNick ? playerNick : '') || fromProfile || '';
+    if (hint) nicknameHintsByUid.set(uid, hint);
+  }
+
   clearCombatResumeSnapshot();
   clearMiningResumeSnapshot();
 
-  // 클라우드 단계 — 백업·삭제를 병렬로 돌리고 단계 전체를 15s 한 번으로 상한.
+  // 클라우드 단계 — users 문서 삭제 + 백업 서브트리 전삭제 + 닉네임 해제.
+  // pre_purge 백업 업로드는 제거(고아·신규 시작 오염 방지). 필요 시 초기화 전 설정에서 수동 백업.
   // 릴리즈 부팅 지연 시 `local-guest`로 등록된 고아 users 문서가 남으면
   // 이후 deviceUid 재등록에서 동일 닉네임이 '이미 사용 중'으로 오판되므로 함께 삭제한다.
   const deleteUids = [...resetUids];
@@ -134,23 +148,23 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   }
   // 삭제는 즉시 발행한다 — deleteDoc은 호출 즉시 Firestore 로컬 캐시·영속 mutation 큐에
   // 반영되므로(오프라인 포함), 서버 ack를 기다리다 강제종료돼도 재시작 시 SDK가 이어서
-  // 커밋하고, 캐시 읽기에서도 문서는 이미 삭제로 보인다. (백업은 users/{uid} 하위
-  // 서브컬렉션에만 쓰므로 부모 문서 삭제와 병렬로 돌려도 안전하다.)
+  // 커밋하고, 캐시 읽기에서도 문서는 이미 삭제로 보인다.
   const cloudPhase = Promise.all([
     ...deleteUids.map((uid) =>
       deleteUserCloudSave(uid).catch(() => {
         /* offline — Firestore queue */
       }),
     ),
-    ...resetUids.map(async (uid) => {
-      try {
-        await uploadPrePurgeGameSaveBackup(uid);
-      } catch (e) {
-        if (__DEV__) {
-          console.warn('[localAccountReset] pre-purge game save backup failed', uid, e);
-        }
-      }
-    }),
+    ...resetUids.map((uid) =>
+      purgeAllGameSaveBackupsForAccountPurge(uid).catch(() => 0),
+    ),
+    ...resetUids.map((uid) =>
+      releaseNicknameReservationForAccountPurge(uid, nicknameHintsByUid.get(uid) ?? null).catch(
+        () => {
+          /* offline */
+        },
+      ),
+    ),
   ]).then(() => undefined);
   await Promise.race([
     cloudPhase,
@@ -207,6 +221,9 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   purgeAllPlanetHubScanUnlockState();
   await useArcCoreSpyExpelledStore.getState().resetLocal();
   await useArcCorePantheonCodexStore.getState().resetForAccountPurge();
+  // 성운 프로필·일일배치 허브 요약 — 신규 첫 허브 오염 방지
+  await usePlanetNebulaStore.getState().resetLocalProfilesForAccountPurge();
+  await clearArcCoreDailyOpsSummaryPending();
 
   await clearArcCoreRtdbDailyKpiPushState();
   await resetFirebaseAnonymousAuthForAccountPurge();
@@ -270,10 +287,7 @@ function scheduleAccountResetFailedTip(): void {
   InteractionManager.runAfterInteractions(() => {
     setTimeout(() => {
       try {
-        showArcAlert(
-          '초기화 오류',
-          '일부 데이터가 남았을 수 있습니다. 앱을 완전히 종료한 뒤 다시 시도해 주세요.',
-        );
+        showArcAlert(t('settings.reset.error.title'), t('settings.reset.error.body'));
       } catch {
         /* ignore */
       }

@@ -462,7 +462,10 @@ export interface ArcCorePantheonRelicRow {
 /** NPC 함장 DB 레코드 (탑승·임관은 전함 레코드의 captainId로 연결) */
 export interface NpcCaptain {
   id: string;
+  /** 표시명(한국어 정본) */
   displayName: string;
+  /** 표시명(영어) — locale en UI */
+  displayNameEn?: string;
   rank: string;
   /** 세부 세력 키(군·길드 등). 플레이어의 `political.megaFactionId`(연합·제국·동맹급) 아래 층에 해당할 수 있음 */
   factionId: string | null;

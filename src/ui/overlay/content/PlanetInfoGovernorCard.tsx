@@ -8,6 +8,8 @@ import {
 import { getNpcCaptain } from '../../../npc/npcFleetRegistry';
 import { useNpcCaptainProgressStore } from '../../../store/npcCaptainProgressStore';
 import { useT } from '../../../i18n';
+import { resolveNpcCaptainDisplayName } from '../../../i18n/captainText';
+import { useAppSettingsStore } from '../../../store/appSettingsStore';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import type { ArcOverlayVisualTheme } from '../tacticalOverlayPreview';
 import { TACTICAL_OVERLAY } from '../tacticalOverlayStyles';
@@ -90,7 +92,7 @@ export const PlanetInfoGovernorCard = memo(function PlanetInfoGovernorCard({
 
   if (!governor || !captain) return null;
 
-  const name = String(captain.displayName ?? '').trim();
+  const name = resolveNpcCaptainDisplayName(captain, useAppSettingsStore.getState().locale);
   if (!name) return null;
 
   const level = Math.max(1, runtimeLevel ?? captain.progression.initialLevel ?? 1);

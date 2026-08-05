@@ -6,7 +6,12 @@ export const EN_DICTIONARY: I18nDictionary = {
   'common.loading.accessibility': 'Loading',
   'common.continue': '[ Continue ]',
   'common.confirm': '[ OK ]',
+  'common.confirmBare': 'OK',
+  'common.next': '[ Next ]',
+  'common.back': '◀ Exit',
   'common.cancel': '[ Cancel ]',
+  'levelUp.cardTitle': 'LEVEL UP',
+  'relic.title': '[Relic] {name}',
 
   'stageTransition.stuck.title': 'Screen Transition Stalled',
   'stageTransition.stuck.body':
@@ -50,7 +55,49 @@ export const EN_DICTIONARY: I18nDictionary = {
   'settings.section.account': '— ACCOUNT —',
   'settings.reset.hint': 'Deletes character data (name/progress/missions/inventory/skills) and returns to the title.',
   'settings.reset.button': '[ Reset Game Account ]',
+  'settings.reset.progress': 'Resetting account…',
+  'settings.reset.error.title': 'Reset Error',
+  'settings.reset.error.body':
+    'Some data may remain. Fully close the app and try again.',
   'settings.close': '[ Close ]',
+
+  // ── Game save backup (backup) ──
+  'backup.sectionTitle': 'Cloud Save Backup · Restore (7 days)',
+  'backup.sectionHint':
+    'Kept in the cloud for up to 7 days. Auto-backed up before account reset and every 6 hours.',
+  'backup.manual': 'Back Up Now',
+  'backup.refresh': 'Refresh Backup List',
+  'backup.listPrompt': 'Tap “Refresh Backup List” to load cloud backups.',
+  'backup.listEmpty': 'No backups yet. They appear after play (auto) or when you back up manually.',
+  'backup.listTimeout': 'Listing timed out. Check your network and try again.',
+  'backup.listError': 'Could not load the list. Please try again shortly.',
+  'backup.line': '{date} · {reason} · synth {synth} · Lv{level}',
+  'backup.reason.pre_purge': 'Pre-reset',
+  'backup.reason.scheduled': 'Auto',
+  'backup.reason.manual': 'Manual',
+  'backup.ok.title': 'Backup Complete',
+  'backup.ok.body': 'Saved to the cloud.',
+  'backup.fail.title': 'Backup Failed',
+  'backup.fail.payloadTooLarge':
+    'Save data is too large. Try again later or contact support.',
+  'backup.fail.interval': 'An automatic backup already exists within the last 6 hours.',
+  'backup.fail.upload': 'Network error while uploading the backup.',
+  'backup.fail.generic': 'Backup failed. Check your network connection.',
+  'backup.restore.ok.title': 'Restore Complete',
+  'backup.restore.ok.body':
+    'Save data loaded. Restart the app once or reopen the planet hub.',
+  'backup.restore.fail.title': 'Restore Failed',
+  'backup.restore.pendingOk.title': 'Restore Queued',
+  'backup.restore.pendingOk.body': 'The selected backup will restore automatically on next launch.',
+  'backup.restore.pendingFail.title': 'Queue Failed',
+  'backup.restore.now': 'Restore This Backup',
+  'backup.restore.nextBoot': 'Restore Next Launch',
+  'backup.error.expired': 'This backup has expired (7-day retention).',
+  'backup.error.empty': 'Backup data is empty.',
+  'backup.error.apply': 'Could not apply to local storage. Restart the app and try again.',
+  'backup.error.pendingTimeout':
+    'Timed out while saving the restore queue. Check your network and try again.',
+  'backup.error.notFound': 'Backup not found or could not be loaded.',
 
   // ── Shipyard ──
   'shipyard.title': 'Shipyard',
@@ -479,6 +526,13 @@ export const EN_DICTIONARY: I18nDictionary = {
   'combat.shipDestroyedTitle': 'Capital Ship Lost',
   'combat.shipDestroyedBody': 'Your ship was destroyed and you returned to your home planet in an escape pod.\nRepurchase and board a ship at the shipyard.',
   'combat.confirm': 'OK',
+  'battleStance.AGGRESSIVE': 'Aggressive',
+  'battleStance.DEFENSIVE': 'Defensive',
+  'battleStance.NEUTRAL': 'Neutral',
+  'dialog.comm': '[ COMM ]',
+  'dialog.next': '[ Next ]',
+  'dialog.ok': '[ OK ]',
+  'dialog.pilotFallback': 'Pilot',
   'combat.fleeTitle': 'Flee',
   'combat.fleeBody': 'Abandon the battle and flee?',
   'combat.cancel': 'Cancel',
@@ -1176,7 +1230,12 @@ export const EN_DICTIONARY: I18nDictionary = {
   'skillCat.trade': 'Trade',
   'skillCat.fleet': 'Fleet',
 
-  // ── Tavern Notice Tags (noticeTag) ──
+  // ── Tavern Notice Tags (noticeTag) — stable codes + legacy KO keys ──
+  'noticeTag.ops': 'OPS',
+  'noticeTag.economy': 'ECON',
+  'noticeTag.diplomacy': 'DIPLO',
+  'noticeTag.rumor': 'RUMOR',
+  'noticeTag.arccore': 'ARCCORE',
   'noticeTag.작전': 'OPS',
   'noticeTag.경제': 'ECON',
   'noticeTag.외교': 'DIPLO',
@@ -1221,9 +1280,15 @@ export const EN_DICTIONARY: I18nDictionary = {
   'news.economyBulk.body': 'ArcCore economy subcore applied the {action} policy.',
   'news.briefing.title': 'ArcCore Routine Briefing',
   'news.briefing.body': 'Systems unlocked {unlocked}/{total}, active convoys {traffic} ships.',
+  'news.nebulaShift.title': 'Planetary Nebula Ecosystem Adjusted',
+  'news.nebulaShift.body':
+    'ArcCore fine-tuned nebula parameters on {count} planets (daily cycle).',
+  'news.expansionTest.title': '[TEST] Unexplored System Opened',
+  'news.expansionTest.body':
+    'ArcCore one-shot test opened {systemName}({systemId}). Daily cycle returns to 24h.',
   'news.megaFactionPgp.title': 'Faction PGP Power Briefing',
   'news.megaFactionPgp.body':
-    '{blueNationEn}(Blue · West Route) total PGP {bluePgp} BMU · {redNationEn}(Red · East Route) total PGP {redPgp} BMU — {leaderLine}',
+    '{blueNation}(Blue · West Route) total PGP {bluePgp} BMU · {redNation}(Red · East Route) total PGP {redPgp} BMU — {leaderLine}',
   'news.megaFactionPgp.leader.blue': 'Stellium Alliance (Blue) dominant',
   'news.megaFactionPgp.leader.red': 'Crimson Legion (Red) dominant',
   'news.megaFactionPgp.leader.tie': 'Both factions are evenly matched in total PGP',
@@ -1263,6 +1328,25 @@ export const EN_DICTIONARY: I18nDictionary = {
 
   // ── Ship equipment (equipment) ──
   'equipment.effectPendingSuffix': '[Coming Soon]',
+  'equip.stat.speedBonusPct': 'Speed',
+  'equip.stat.maneuverBonusPct': 'Maneuver',
+  'equip.stat.powerEfficiencyPct': 'Power eff.',
+  'equip.stat.armorBonusPct': 'Armor',
+  'equip.stat.shieldBonusPct': 'Shield',
+  'equip.stat.damageReductionPct': 'DR',
+  'equip.stat.detectRangeBonusPct': 'Detect',
+  'equip.stat.linkStabilityPct': 'Link',
+  'equip.stat.stealthDetectBonusPct': 'Stealth',
+  'equip.stat.ecmStrengthPct': 'ECM',
+  'equip.stat.allyBuffPct': 'Ally buff',
+  'equip.stat.decoyStrengthPct': 'Decoy',
+  'equip.stat.hullRepairPerMinPct': 'Hull repair',
+  'equip.stat.overheatReductionPct': 'Overheat',
+  'equip.stat.postCombatRepairPct': 'Post-combat',
+  'equip.stat.evasionBonusPct': 'Evasion',
+  'equip.stat.cooldownReductionPct': 'Cooldown',
+  'equip.stat.routeEfficiencyPct': 'Route',
+  'equip.stat.miningYieldBonusPct': 'Mining',
 
   // ── Zone labels (zone) ──
   'zone.safe': 'Safe Zone',
@@ -1276,6 +1360,9 @@ export const EN_DICTIONARY: I18nDictionary = {
   'session.remoteTimeout.body': 'Server connection exceeded 5 seconds.\nCheck your network and try again.',
   'session.cloudRestoreFail.title': 'Cloud Restore Failed',
   'session.cloudRestoreFail.body': 'Could not load saved data.\nCheck your network and try again.',
+  'session.continue.title': 'Entering Dimensional Route',
+  'session.continue.hint': 'Preloading galaxy map and orbit display paths',
+  'a11y.itemIcon': 'Item icon',
 
   // ── Contested zone auto-combat (territorial) ──
   'territorial.side.blue': 'Blue Team',

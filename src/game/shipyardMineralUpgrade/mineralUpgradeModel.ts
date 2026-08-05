@@ -37,16 +37,17 @@ export type MineralUpgradeStatDef = {
 export type MineralUpgradeCostLine = { statId: string; oreId: string; qtyPerTargetLevel: number };
 
 /** mineral_upgrade_stats.csv 정본 동기 */
+/** label/perLevelHint = EN fallback; UI uses `mineralStat.label.*` / `mineralStat.hint.*` */
 export const MINERAL_UPGRADE_STATS: readonly MineralUpgradeStatDef[] = [
-  { statId: 'ship_hull_hp', label: '선체 내구도 (HP)', upgradeGroup: 'ship', sortOrder: 1, perLevelHint: '+50 최대 HP', effectKind: 'ship_bonus_max_hp', effectValuePerLevel: 50, effectFloor: 0 },
-  { statId: 'ship_shield', label: '실드 (Shield)', upgradeGroup: 'ship', sortOrder: 2, perLevelHint: '+30 최대 실드', effectKind: 'ship_bonus_max_shield', effectValuePerLevel: 30, effectFloor: 0 },
-  { statId: 'ship_turn_speed', label: '선회 속도', upgradeGroup: 'ship', sortOrder: 3, perLevelHint: '+3% 선회율', effectKind: 'ship_turn_rate_mul_per_level', effectValuePerLevel: 0.03, effectFloor: 0 },
-  { statId: 'weapon_laser_damage', label: '레이저 공격력', upgradeGroup: 'weapon_laser', sortOrder: 4, perLevelHint: '+1 DMG', effectKind: 'weapon_damage_flat', effectValuePerLevel: 1, effectFloor: 0 },
-  { statId: 'weapon_laser_fire_rate', label: '레이저 연사', upgradeGroup: 'weapon_laser', sortOrder: 5, perLevelHint: '쿨다운 -5%', effectKind: 'weapon_fire_rate_cooldown', effectValuePerLevel: 0.95, effectFloor: 120 },
-  { statId: 'weapon_laser_range', label: '레이저 사거리', upgradeGroup: 'weapon_laser', sortOrder: 6, perLevelHint: '+8 px', effectKind: 'weapon_range_flat', effectValuePerLevel: 8, effectFloor: 0 },
-  { statId: 'weapon_missile_damage', label: '미사일 공격력', upgradeGroup: 'weapon_missile', sortOrder: 7, perLevelHint: '+1 DMG', effectKind: 'weapon_damage_flat', effectValuePerLevel: 1, effectFloor: 0 },
-  { statId: 'weapon_missile_fire_rate', label: '미사일 연사', upgradeGroup: 'weapon_missile', sortOrder: 8, perLevelHint: '쿨다운 -5%', effectKind: 'weapon_fire_rate_cooldown', effectValuePerLevel: 0.95, effectFloor: 120 },
-  { statId: 'weapon_missile_range', label: '미사일 사거리', upgradeGroup: 'weapon_missile', sortOrder: 9, perLevelHint: '+10 px', effectKind: 'weapon_range_flat', effectValuePerLevel: 10, effectFloor: 0 },
+  { statId: 'ship_hull_hp', label: 'Hull Durability (HP)', upgradeGroup: 'ship', sortOrder: 1, perLevelHint: '+50 Max HP', effectKind: 'ship_bonus_max_hp', effectValuePerLevel: 50, effectFloor: 0 },
+  { statId: 'ship_shield', label: 'Shield', upgradeGroup: 'ship', sortOrder: 2, perLevelHint: '+30 Max Shield', effectKind: 'ship_bonus_max_shield', effectValuePerLevel: 30, effectFloor: 0 },
+  { statId: 'ship_turn_speed', label: 'Turn Speed', upgradeGroup: 'ship', sortOrder: 3, perLevelHint: '+3% Turn Rate', effectKind: 'ship_turn_rate_mul_per_level', effectValuePerLevel: 0.03, effectFloor: 0 },
+  { statId: 'weapon_laser_damage', label: 'Laser Damage', upgradeGroup: 'weapon_laser', sortOrder: 4, perLevelHint: '+1 DMG', effectKind: 'weapon_damage_flat', effectValuePerLevel: 1, effectFloor: 0 },
+  { statId: 'weapon_laser_fire_rate', label: 'Laser Fire Rate', upgradeGroup: 'weapon_laser', sortOrder: 5, perLevelHint: 'Cooldown -5%', effectKind: 'weapon_fire_rate_cooldown', effectValuePerLevel: 0.95, effectFloor: 120 },
+  { statId: 'weapon_laser_range', label: 'Laser Range', upgradeGroup: 'weapon_laser', sortOrder: 6, perLevelHint: '+8 px', effectKind: 'weapon_range_flat', effectValuePerLevel: 8, effectFloor: 0 },
+  { statId: 'weapon_missile_damage', label: 'Missile Damage', upgradeGroup: 'weapon_missile', sortOrder: 7, perLevelHint: '+1 DMG', effectKind: 'weapon_damage_flat', effectValuePerLevel: 1, effectFloor: 0 },
+  { statId: 'weapon_missile_fire_rate', label: 'Missile Fire Rate', upgradeGroup: 'weapon_missile', sortOrder: 8, perLevelHint: 'Cooldown -5%', effectKind: 'weapon_fire_rate_cooldown', effectValuePerLevel: 0.95, effectFloor: 120 },
+  { statId: 'weapon_missile_range', label: 'Missile Range', upgradeGroup: 'weapon_missile', sortOrder: 9, perLevelHint: '+10 px', effectKind: 'weapon_range_flat', effectValuePerLevel: 10, effectFloor: 0 },
 ];
 
 /** mineral_upgrade_cost_lines.csv 정본 동기 — N강 비용 = qtyPerTargetLevel × N */

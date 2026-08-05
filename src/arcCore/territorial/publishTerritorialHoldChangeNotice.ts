@@ -28,9 +28,9 @@ export function publishTerritorialHoldChangeNotice(input: {
         nextSide: sideKey(input.newSide),
         decision: input.decision,
       },
-      title: '접전지역 점령 변경',
-      body: `${input.planetLabelKo} 점유: ${input.previousSide} → ${input.newSide}`,
-      tag: '작전',
+      title: 'Contested Zone — Occupation Changed',
+      body: `${input.planetLabelKo}: ${input.previousSide} → ${input.newSide}`,
+      tag: 'ops',
     },
     dedupeKey,
   );

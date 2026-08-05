@@ -19,6 +19,7 @@ import { showArcAlert } from '../../src/utils/showArcAlert';
 import { presentArcOverlayTradeQuantity } from '../../src/ui/overlay/presentArcTradeQuantity';
 import { presentRelicLoreOverlay } from '../../src/ui/overlay/arcOverlayStore';
 import { getArcCorePantheonRelicByItemId } from '../../src/arcCore/pantheon/arcCorePantheonRelicRegistry';
+import { getArcCoreWorldNodeByGodId } from '../../src/arcCore/pantheon/arcCoreWorldNodeRegistry';
 import { listTradeResellProfitTips } from '../../src/game/tradeProfitTips';
 import { formatCredits } from '../../src/utils/formatCredits';
 import { usePlayerStore } from '../../src/store/playerStore';
@@ -615,7 +616,8 @@ export default function TradeScreen() {
   const handleSell = (item: CargoItem) => {
     const relic = getArcCorePantheonRelicByItemId(item.goodId);
     if (relic) {
-      presentRelicLoreOverlay(relic.godNameKo, relic.loreBodyKo);
+      const node = getArcCoreWorldNodeByGodId(relic.godId);
+      presentRelicLoreOverlay(relic.godNameKo, relic.loreBodyKo, node?.godNameEn);
       return;
     }
     const sellListing = market.find(m => m.goodId === item.goodId);
@@ -795,7 +797,7 @@ export default function TradeScreen() {
             : undefined
         }
         onBack={safeBack}
-        backLabel="◀ 나가기"
+        backLabel={t('common.back')}
         trailing={(
           <Text style={fs.headerTrailingInk}>
             {t('trade.header.invSlots', { n: inventorySellAgg.length })}

@@ -10,7 +10,6 @@ import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { phosphorOverlay, PHOSPHOR_MUTED } from './phosphorOverlayStyles';
 import {
   useAppSettingsStore,
-  SUPPORTED_LOCALES,
   LOCALE_LABELS,
   FULLY_TRANSLATED_LOCALES,
 } from '../../../store/appSettingsStore';
@@ -180,9 +179,9 @@ export const SettingsOverlayContent = memo(function SettingsOverlayContent({
       <Text style={isTactical ? section.sectionLabel : phosphorOverlay.sectionLabel}>
         {t('settings.section.language')}
       </Text>
-      {SUPPORTED_LOCALES.map((l) => {
-        const selected = l === locale;
-        const ready = FULLY_TRANSLATED_LOCALES.includes(l);
+      {/* 출시 기준: 한↔영 완전 번역만 선택 노출(준비중 locale 위장 제거) */}
+      {FULLY_TRANSLATED_LOCALES.map((l) => {
+        const selected = l === locale || (!FULLY_TRANSLATED_LOCALES.includes(locale) && l === 'en');
         return (
           <Pressable
             key={l}
@@ -198,7 +197,6 @@ export const SettingsOverlayContent = memo(function SettingsOverlayContent({
             <Text style={[styles.langLabel, isTactical && styles.langLabelTactical, selected && (isTactical ? styles.langLabelSelTactical : styles.langLabelSel)]}>
               {LOCALE_LABELS[l]}
             </Text>
-            {!ready ? <Text style={styles.langPending}>{t('settings.language.pending')}</Text> : null}
           </Pressable>
         );
       })}

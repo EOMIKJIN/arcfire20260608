@@ -14,9 +14,23 @@ import { formatArcCoreOpsDayKey, resolveArcCoreDailyOpsPolicy } from '../schedul
 import { setArcCoreDailyOpsSummaryPending } from '../schedule/arcCoreDailyOpsSummaryPending';
 import { runArcCorePlanetDevWallTick } from '../planetDevelopment/runArcCorePlanetDevWallTick';
 import { usePlayerStore } from '../../store/playerStore';
+import {
+  getDailyOpsBatchElapsedMs,
+  getDailyOpsBatchLastStep,
+  noteDailyOpsBatchStep,
+} from '../schedule/dailyOpsBatchProgress';
+import { pushArcCoreDailyKpiToRtdbIfDue } from '../learning/pushArcCoreDailyKpiToRtdb';
+import { isArcCoreRtdbAvailableForSession } from '../../firebase/rtdbRefs';
+import { getCurrentUser } from '../../firebase/auth';
 
 /** 배치가 던지고 실패한 뒤 — 매 60초 틱마다 즉시 재시도 스팸을 막는 세션 내(비영속) 쿨다운 */
 const DAILY_BATCH_FAILURE_COOLDOWN_MS = 10 * 60 * 1000;
+
+/**
+ * 배치 전체 상한 — hang 시 markCompleted 미도달·batchRunning 영구 고착을 끊고 재시도.
+ * 정상 실측은 수십 초대. 4분은 여유 상한.
+ */
+const DAILY_OPS_BATCH_HARD_BUDGET_MS = 4 * 60 * 1000;
 
 /**
  * 아크코어 일일 운영 서브코어
@@ -69,7 +83,6 @@ export class ArcCoreDailyOpsSubCore extends BaseArcSubCore {
       if (
         !shouldRunArcCoreDailyBatch(now, {
           // Wave A(task_id=daily-ops-batch-incomplete-fix-20260803) — 게이트는 "완료" 기준.
-          // 예전엔 "시작" dayKey로 게이트해서, 배치가 중간에 멈춰도 그 날 영구 차단됐다.
           lastBatchCompletedDayKey: getArcCoreDailyOpsLastBatchCompletedDayKey(),
           signupAtMs,
         })
@@ -81,27 +94,71 @@ export class ArcCoreDailyOpsSubCore extends BaseArcSubCore {
         try {
           // 시작 관측 기록(게이트에는 더 이상 쓰이지 않음 — Wave A) — 실기 진단·감사용으로만 유지.
           await markArcCoreDailyBatchStarted(now);
+          // eslint-disable-next-line no-console
+          console.log(
+            `[ArcCore/DailyOps] batch started dayKey=${formatArcCoreOpsDayKey(now, resolveArcCoreDailyOpsPolicy().timeZone)} source=${_source}`,
+          );
           const lastBatchAt = getArcCoreDailyOpsLastBatchAtMs();
-          const batchResult = await runArcCoreDailyOpsBatch();
+          const batchResult = await Promise.race([
+            runArcCoreDailyOpsBatch(),
+            new Promise<never>((_, reject) => {
+              setTimeout(() => {
+                reject(
+                  new Error(
+                    `daily_ops_budget_exceeded ms=${DAILY_OPS_BATCH_HARD_BUDGET_MS} lastStep=${getDailyOpsBatchLastStep()} elapsedMs=${getDailyOpsBatchElapsedMs()}`,
+                  ),
+                );
+              }, DAILY_OPS_BATCH_HARD_BUDGET_MS);
+            }),
+          ]);
+
+          // 완료 도장 최우선 — summary/RTDB보다 먼저. AtMs는 실제 완료 시각(Date.now).
+          const completedAtMs = Date.now();
+          await markArcCoreDailyBatchCompleted(completedAtMs);
+          noteDailyOpsBatchStep('markCompleted');
+          // eslint-disable-next-line no-console
+          console.log(
+            `[ArcCore/DailyOps] batch completed dayKey=${formatArcCoreOpsDayKey(completedAtMs, resolveArcCoreDailyOpsPolicy().timeZone)} elapsedMs=${completedAtMs - now}`,
+          );
+
           const policy = resolveArcCoreDailyOpsPolicy();
-          const dayKey = formatArcCoreOpsDayKey(now, policy.timeZone);
+          const dayKey = formatArcCoreOpsDayKey(completedAtMs, policy.timeZone);
           const hoursSinceLastBatch =
             lastBatchAt != null && lastBatchAt > 0
-              ? Math.max(0, (now - lastBatchAt) / (60 * 60 * 1000))
+              ? Math.max(0, (completedAtMs - lastBatchAt) / (60 * 60 * 1000))
               : 0;
-          await setArcCoreDailyOpsSummaryPending({
-            dayKey,
-            hoursSinceLastBatch,
-            economyFabric: batchResult.economyFabric,
-            simOverlayIngest: batchResult.simOverlayIngest,
-            economyLearning: batchResult.economyLearning,
-          });
-          await markArcCoreDailyBatchCompleted(now);
+          try {
+            await setArcCoreDailyOpsSummaryPending({
+              dayKey,
+              hoursSinceLastBatch,
+              economyFabric: batchResult.economyFabric,
+              simOverlayIngest: batchResult.simOverlayIngest,
+              economyLearning: batchResult.economyLearning,
+            });
+          } catch (summaryErr) {
+            // eslint-disable-next-line no-console
+            console.error('[ArcCore/DailyOps] summary pending failed (completed already marked)', summaryErr);
+          }
+
+          // RTDB는 완료 도장 이후 최선노력 — hang이 게이트를 다시 막지 않음.
+          if (batchResult.learningKpi) {
+            void pushArcCoreDailyKpiToRtdbIfDue({
+              localDeviceId: getCurrentUser().uid,
+              learningResult: batchResult.learningKpi,
+              rtdbAvailable: isArcCoreRtdbAvailableForSession(),
+            }).catch(() => {
+              /* ignore */
+            });
+          }
+
           this.lastFailureAtMs = 0;
         } catch (err) {
           // Wave A′ — throw 시 markCompleted 금지(그 날 재시도 여지를 남김) + 세션 쿨다운만.
           // eslint-disable-next-line no-console
-          console.error('[ArcCore/DailyOps] probeDailyBatch threw — completed 마크 안 함, 재시도 대기', err);
+          console.error(
+            `[ArcCore/DailyOps] probeDailyBatch threw — completed 마크 안 함, 재시도 대기 lastStep=${getDailyOpsBatchLastStep()}`,
+            err,
+          );
           this.lastFailureAtMs = Date.now();
         }
       })();

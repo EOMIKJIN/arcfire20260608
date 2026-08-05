@@ -11,6 +11,7 @@ import type {
 } from '../types';
 import { NPC_CAPTAINS } from '../data/npcCaptains';
 import { NPC_CAPITAL_SHIPS } from '../data/npcCapitalShips';
+import { resolveNpcCaptainDisplayNameNow } from '../i18n/captainText';
 import { assertNpcCapitalShipsHullClassesRegistered, getNpcCapitalHullClassDef } from './npcCapitalClassRegistry';
 
 function buildCaptainMap(): Map<string, NpcCaptain> {
@@ -205,7 +206,7 @@ export function listNpcCapitalShipsByCaptain(captainId: string): NpcCapitalShip[
 export function npcCapitalResolvedToCombatant(resolved: NpcCapitalShipResolved): Combatant {
   const { captain, combat, name } = resolved;
   return {
-    name: `${name} · ${captain.displayName}`,
+    name: `${name} · ${resolveNpcCaptainDisplayNameNow(captain)}`,
     hp: combat.maxHp,
     maxHp: combat.maxHp,
     shield: combat.maxShield,
