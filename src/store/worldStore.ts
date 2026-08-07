@@ -351,6 +351,16 @@ export const useWorldStore = create<WorldState>((set, get) => ({
       }
       reconcileUnlockedSynthPhaseOnWorldLoad(get);
       set({ loaded: true });
+      // 경제 서브코어 deferred boot가 world.loaded 이전에 끝나면 무역 진열이 빈 채로 남을 수 있음.
+      // 월드 hydrate 완료 시점에 코어 개방 무역소 카탈로그를 1회 재적재(idempotent).
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { resyncAllCoreOpenTradePortCatalogs } =
+          require('../arcCore/balance/tradePortCatalogPolicy') as typeof import('../arcCore/balance/tradePortCatalogPolicy');
+        resyncAllCoreOpenTradePortCatalogs();
+      } catch {
+        /* economy 모듈 미준비 — AiEconomy onBoot / trade session이 후속 보장 */
+      }
     }
   },
 
@@ -440,18 +450,17 @@ export const useWorldStore = create<WorldState>((set, get) => ({
     const { invalidateOrbitPresenceCachesOnWorldExpansion } =
       require('../arcCore/orbitPresence/captainOrbitPlanetAssignment') as typeof import('../arcCore/orbitPresence/captainOrbitPlanetAssignment');
     invalidateOrbitPresenceCachesOnWorldExpansion();
-    if (normalizedId.startsWith('synth_')) {
+    if (normalizedId.startsWith('synth_') && planetId) {
       try {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { integrateUnlockedSynthFrontierStatEconomy } =
-          require('../arcCore/planetCore/integrateUnlockedSynthFrontierStatEconomy') as typeof import('../arcCore/planetCore/integrateUnlockedSynthFrontierStatEconomy');
-        integrateUnlockedSynthFrontierStatEconomy();
-        if (planetId) {
-          // eslint-disable-next-line @typescript-eslint/no-require-imports
-          const { forceResyncPlanetTradePortCatalog } =
-            require('../arcCore/balance/tradePortCatalogPolicy') as typeof import('../arcCore/balance/tradePortCatalogPolicy');
-          forceResyncPlanetTradePortCatalog(planetId);
-        }
+        const { usePlanetCoreRuntimeStore } =
+          require('./planetCoreRuntimeStore') as typeof import('./planetCoreRuntimeStore');
+        usePlanetCoreRuntimeStore.getState().ensureUnlockedWorldPlanetsInCoreRuntime();
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { enrollSynthFrontierPlanetInArcEconomy } =
+          require('../arcCore/economy/synthFrontierConvoyTradeBridge') as typeof import('../arcCore/economy/synthFrontierConvoyTradeBridge');
+        // 단일 성계 개방 — 전 synth 재 enroll 금지(일일 1개방에서도 O(n) set_catalog 누적 방지)
+        enrollSynthFrontierPlanetInArcEconomy(planetId);
       } catch {
         /* arcCore lazy */
       }
@@ -567,14 +576,8 @@ export const useWorldStore = create<WorldState>((set, get) => ({
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { integrateUnlockedSynthFrontierStatEconomy } =
           require('../arcCore/planetCore/integrateUnlockedSynthFrontierStatEconomy') as typeof import('../arcCore/planetCore/integrateUnlockedSynthFrontierStatEconomy');
+        // 일괄 개방 1회 enroll(+행성별 set_catalog). 이후 finalize에서 재 integrate 금지.
         integrateUnlockedSynthFrontierStatEconomy();
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { forceResyncPlanetTradePortCatalog } =
-          require('../arcCore/balance/tradePortCatalogPolicy') as typeof import('../arcCore/balance/tradePortCatalogPolicy');
-        for (const systemId of added) {
-          const planetId = nextSystems[systemId]?.planets[0]?.id;
-          if (planetId) forceResyncPlanetTradePortCatalog(planetId);
-        }
       } catch {
         /* arcCore lazy */
       }

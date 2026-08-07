@@ -16,6 +16,7 @@ import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityS
 import { useT } from '../../src/i18n';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { getCurrentUser } from '../../src/firebase/auth';
+import { ensureFirebaseAnonymousAuth } from '../../src/firebase/firebaseAnonymousAuth';
 import { StageShell } from '../../src/stages/StageShell';
 import {
   completePilotRegistration,
@@ -36,6 +37,8 @@ export default function NicknameScreen() {
   /** 인트로 직후 전환에서는 autoFocus만으로는 키보드가 안 뜨는 경우가 있어 1회 보강 */
   useFocusEffect(
     useCallback(() => {
+      // 확인 탭 직전에 Auth+Firestore가 cold start 되지 않도록 유휴 warm(실패해도 로컬 등록 가능)
+      void ensureFirebaseAnonymousAuth();
       const t = setTimeout(() => inputRef.current?.focus(), 200);
       return () => clearTimeout(t);
     }, []),

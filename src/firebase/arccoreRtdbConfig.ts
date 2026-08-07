@@ -3,11 +3,15 @@
 // Firebase Console → Realtime Database → URL 과 일치해야 함
 // ============================================================
 
-/** google-services.json project_id 기준 (미설정 시 Android RTDB 연결 실패) */
+/**
+ * 정본 RTDB URL (Asia Southeast 1).
+ * ⚠️ `.firebaseio.com`(US 기본)은 프로젝트에 인스턴스가 없어 404 → boot 4s timeout → offline 오인.
+ * google-services.json `firebase_url` 과 반드시 동기화. `getRtdb()`가 이 상수를 명시 사용.
+ */
 export const ARCORE_RTDB_DATABASE_URL =
-  'https://arcfire-49d69-default-rtdb.firebaseio.com';
+  'https://arcfire-49d69-default-rtdb.asia-southeast1.firebasedatabase.app';
 
-/** boot 1회 read 상한 — withBootTimeout 8s 대기 방지 */
+/** boot 1회 read 상한 — withBootTimeout 8s 대기 방지 · 정상 Asia 호스트면 충분 */
 export const ARCORE_RTDB_BOOT_READ_TIMEOUT_MS = 4_000;
 
 /**

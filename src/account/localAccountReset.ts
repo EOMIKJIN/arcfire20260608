@@ -3,6 +3,7 @@ import { clearCombatResumeSnapshot } from '../combat/combatResumeStore';
 import { deleteUserCloudSave } from '../firebase/firestore';
 import { getCurrentUser, markFreshStartAfterReset } from '../firebase/auth';
 import { resetFirebaseAnonymousAuthForAccountPurge } from '../firebase/firebaseAnonymousAuth';
+import { scheduleArcCoreRtdbBootSyncAfterAccountPurge } from '../firebase/fetchArcCoreRtdbOnce';
 import { clearArcCoreRtdbDailyKpiPushState } from '../arcCore/learning/pushArcCoreDailyKpiToRtdb';
 import { clearArcCoreDailyOpsSummaryPending } from '../arcCore/schedule/arcCoreDailyOpsSummaryPending';
 import { cancelScheduledUserCloudSync } from '../firebase/userCloudSyncSchedule';
@@ -166,12 +167,17 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
       ),
     ),
   ]).then(() => undefined);
+  const cloudPhaseStartedAtMs = Date.now();
   await Promise.race([
     cloudPhase,
     new Promise<void>((resolve) => {
       setTimeout(resolve, CLOUD_PURGE_PHASE_MAX_WAIT_MS);
     }),
   ]);
+  // eslint-disable-next-line no-console
+  if (__DEV__) {
+    console.log(`[reset-diag] cloud_phase=${Date.now() - cloudPhaseStartedAtMs}ms`);
+  }
 
   if (primaryUid) {
     await useClanWarFoundationStore.getState().purgePlayerAccountWorldState({
@@ -203,8 +209,17 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   // 여기서는 그 hold에 붙어 있던 잔액만 정리한다. 월드 금고(1~4)는 손대지 않음.
   await resetPlayerIndependentNationVaultForAccountPurge();
   // 갤럭시 개방·항행 기록(방문/개방 성계) — worldStore (초기 시드 galaxy로 복귀)
+  const worldPhaseStartedAtMs = Date.now();
   await useWorldStore.getState().resetLocalWorld();
-  syncArcCoreGlobalWorldExpansionSync();
+  // 전역 synth 일정 재적용 — enroll은 reconcile 1회로만(finalize 중복 integrate 금지)
+  const expansion = syncArcCoreGlobalWorldExpansionSync();
+  // eslint-disable-next-line no-console
+  if (__DEV__) {
+    console.log(
+      `[reset-diag] world_expansion=${Date.now() - worldPhaseStartedAtMs}ms ` +
+        `added=${expansion.added.length} removed=${expansion.removed.length}`,
+    );
+  }
   // 행성 월드오브젝트 인스턴스 상태(방위위성 HP·고갈 노드 등) — worldObjectRuntimeStore
   await useWorldObjectRuntimeStore.getState().resetRuntime();
   // 전투 텔레메트리(교전 기록) — combatMatchTelemetry
@@ -228,6 +243,7 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await clearArcCoreRtdbDailyKpiPushState();
   await resetFirebaseAnonymousAuthForAccountPurge();
   // fresh-start 플래그는 purge **시작부**에서 이미 기록됨(강제종료 대비 선기록).
+  // RTDB boot 재시도는 finalize finally에서 1회(부분 실패 시에도 잠금 해제).
 }
 
 /**
@@ -272,6 +288,10 @@ export async function finalizeLocalAccountResetNavigation(
     dismissAccountResetBlockingOverlay();
     // eslint-disable-next-line no-console
     if (__DEV__) console.log(`[reset-diag] purge=${Date.now() - purgeStartedAtMs}ms`);
+    // RTDB 세션 잠금 해제 + Auth 재확보 후 boot 1회(타이틀·bootReady 비차단).
+    const rtdbBootUid =
+      getCurrentUser().uid?.trim() || String(params.uid ?? '').trim() || '';
+    scheduleArcCoreRtdbBootSyncAfterAccountPurge(rtdbBootUid);
     navigateToTitle();
     runStageUiAfterIdle(() => {
       useAppBootStore.getState().setPostBootSettled(true);

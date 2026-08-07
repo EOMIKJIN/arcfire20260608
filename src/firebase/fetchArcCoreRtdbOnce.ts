@@ -11,7 +11,9 @@ import {
   type ArcCoreRtdbWorldExpansionMasterState,
   ARCORE_RTDB_SCHEMA_VERSION,
 } from './arccoreRtdbTypes';
+import { ensureFirebaseAnonymousAuth } from './firebaseAnonymousAuth';
 import {
+  clearArcCoreRtdbUnavailableForSession,
   isArcCoreRtdbAvailableForSession,
   markArcCoreRtdbUnavailableForSession,
   readRtdbValueOnce,
@@ -37,6 +39,8 @@ export type ArcCoreRtdbBootSyncResult = {
   skippedReason?:
     | 'disabled'
     | 'offline'
+    | 'timeout'
+    | 'wrong_host'
     | 'session_throttle'
     | 'safe_mode'
     | 'no_data'
@@ -83,10 +87,16 @@ function normalizePolicyPack(raw: unknown): ArcCoreRtdbPolicyPack | null {
 
 function classifyRtdbBootError(e: unknown): ArcCoreRtdbBootSyncResult['skippedReason'] {
   const msg = e instanceof Error ? e.message : String(e);
-  if (msg.includes('rtdb_read_timeout')) return 'offline';
+  if (msg.includes('rtdb_read_timeout')) return 'timeout';
+  if (/404|not.?found|does not exist|wrong.?host|firebaseio\.com/i.test(msg)) return 'wrong_host';
   if (/database.*not.*configured|firebase.*database.*url/i.test(msg)) return 'not_configured';
-  if (/permission|denied|unavailable|network/i.test(msg)) return 'offline';
+  if (/permission|denied|unavailable|network|offline/i.test(msg)) return 'offline';
   return 'offline';
+}
+
+function formatRtdbBootErrorDetail(e: unknown): string {
+  const msg = e instanceof Error ? e.message : String(e);
+  return msg.replace(/\s+/g, ' ').slice(0, 180);
 }
 
 export async function loadPendingRtdbPolicyPack(): Promise<ArcCoreRtdbPolicyPack | null> {
@@ -112,6 +122,44 @@ async function storePendingPolicyPack(pack: ArcCoreRtdbPolicyPack): Promise<void
 }
 
 let sessionBootSyncDone = false;
+
+/**
+ * 계정 purge 직후 — 같은 JS 세션에서 RTDB boot를 다시 허용.
+ * (이전 boot가 wrong_host/timeout으로 끝나 session_throttle·unavailable에 잠기던 P1)
+ */
+export function resetArcCoreRtdbBootSyncSessionForAccountPurge(): void {
+  sessionBootSyncDone = false;
+  clearArcCoreRtdbUnavailableForSession();
+  if (__DEV__) {
+    console.log('[ArcCore/RTDB] boot session reset (account purge)');
+  }
+}
+
+/**
+ * purge → 타이틀 복귀 후 백그라운드 1회 RTDB boot 재시도.
+ * Auth 재확보 후 실행 · 타이틀 UI/bootReady 비차단 · 실패해도 로컬 플레이 유지.
+ */
+export function scheduleArcCoreRtdbBootSyncAfterAccountPurge(uid: string): void {
+  const trimmed = uid.trim();
+  if (!trimmed) return;
+  resetArcCoreRtdbBootSyncSessionForAccountPurge();
+  void (async () => {
+    try {
+      await ensureFirebaseAnonymousAuth();
+      const result = await fetchArcCoreRtdbBootSyncOnce({ uid: trimmed });
+      if (__DEV__) {
+        console.log(
+          `[ArcCore/RTDB] post-purge boot ran=${result.ran} pack=${result.pendingPolicyPackId ?? 'none'} ` +
+            `skip=${result.skippedReason ?? 'ok'}`,
+        );
+      }
+    } catch (e) {
+      if (__DEV__) {
+        console.log('[ArcCore/RTDB] post-purge boot skipped:', e);
+      }
+    }
+  })();
+}
 
 /**
  * 세션당 1회 — config · active policy pack · learning/global mirror read.
@@ -142,6 +190,8 @@ export async function fetchArcCoreRtdbBootSyncOnce(input: {
   if (!uid) return empty;
 
   try {
+    // Auth는 public read에 불필요하나, 이후 KPI·Firestore와 동일 세션 토큰을 맞춘다(실패해도 계속).
+    await ensureFirebaseAnonymousAuth();
     const configRaw = await readRtdbValueOnce<unknown>('config');
     if (configRaw == null) {
       if (__DEV__) {
@@ -234,11 +284,18 @@ export async function fetchArcCoreRtdbBootSyncOnce(input: {
     };
   } catch (e) {
     const skippedReason = classifyRtdbBootError(e);
+    // wrong_host/timeout은 URL 교정·재시도로 회복 가능 — 세션 영구 disable 금지.
+    // not_configured(네이티브 DB 미설정)만 세션 잠금.
     if (skippedReason === 'not_configured') {
-      markArcCoreRtdbUnavailableForSession('not_configured');
+      markArcCoreRtdbUnavailableForSession(skippedReason);
+    } else {
+      // 같은 세션 재시도 가능하도록 throttle 플래그만 유지(sessionBootSyncDone=true).
+      // purge 시 resetArcCoreRtdbBootSyncSessionForAccountPurge 로 해제.
     }
     if (__DEV__) {
-      console.log(`[ArcCore/RTDB] boot sync skip (${skippedReason})`);
+      console.log(
+        `[ArcCore/RTDB] boot sync skip (${skippedReason}) detail=${formatRtdbBootErrorDetail(e)}`,
+      );
     }
     return { ...empty, ran: true, skippedReason };
   }

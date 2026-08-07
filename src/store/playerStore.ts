@@ -207,13 +207,19 @@ function buildShipEquipmentItems(ship: PlayerShip): ShipEquipmentItemAssignment[
 }
 
 function normalizeLoadedPlayerShip(ship: PlayerShip | undefined, templateIdFallback: string): PlayerShip {
-  const template = SHIP_TEMPLATES[templateIdFallback];
+  const template =
+    SHIP_TEMPLATES[templateIdFallback] ?? SHIP_TEMPLATES.starter_fighter;
   const fallbackEquipCapacity = Math.max(0, Math.floor(template?.equipSlots ?? 0));
   if (!ship || typeof ship !== 'object') {
     const created = shipFromTemplate(templateIdFallback);
+    // 미지 templateId 시 shipFromTemplate이 starter로 폴백하므로,
+    // 잘못된 fallbackEquipCapacity(0)로 덮어쓰지 않는다.
     return {
       ...created,
-      equipCapacity: fallbackEquipCapacity,
+      equipCapacity:
+        fallbackEquipCapacity > 0
+          ? fallbackEquipCapacity
+          : created.equipCapacity,
     };
   }
   const legacyCargoCapacity = (ship as PlayerShip & { cargoCapacity?: unknown }).cargoCapacity;
@@ -375,9 +381,11 @@ function reconcileCapitalShipInventoryFromHangar(
 }
 
 function shipFromTemplate(templateId: string): PlayerShip {
-  const t = SHIP_TEMPLATES[templateId];
+  const resolvedId =
+    SHIP_TEMPLATES[templateId] != null ? templateId : 'starter_fighter';
+  const t = SHIP_TEMPLATES[resolvedId] ?? SHIP_TEMPLATES.starter_fighter;
   const seed: PlayerShip = {
-    templateId,
+    templateId: resolvedId,
     portraitNpcCapitalShipId: t.portraitNpcCapitalShipId,
     name: t.name,
     durabilityPct: DURABILITY_DEFAULT_PCT,

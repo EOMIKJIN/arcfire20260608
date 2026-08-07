@@ -49,6 +49,7 @@ export function getOverlayChrome(kind: ArcOverlayKind): {
     case 'planetDevelopment':
     case 'tradeQuantity':
     case 'nearbyPresenceInfo':
+    case 'relicLore':
       return {
         zIndex: OVERLAY_Z.panel,
         backdrop: resolveOverlayBackdrop(kind),

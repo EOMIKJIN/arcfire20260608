@@ -4,8 +4,8 @@ import type { ArcOverlayRewardEntry } from '../arcOverlayStore';
 import { LevelUpDetailPanel } from '../../../components/LevelUpDetailPanel';
 import { formatCredits } from '../../../utils/formatCredits';
 import { useT } from '../../../i18n';
-import { ArcButton } from '../ArcButton';
 import { ArcOverlayCard } from '../ArcOverlayCard';
+import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { resolveOverlayCompactBodyStyles } from '../overlayCompactBodyStyles';
 import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
 
@@ -26,6 +26,14 @@ export const RewardOverlayContent = memo(function RewardOverlayContent({ entry, 
       layout="compact"
       visualTheme={visualTheme}
       onClose={onClose}
+      footer={(
+        <ArcOverlayFooterActions
+          confirmOnly
+          confirmLabel={t('reward.continue')}
+          onConfirm={onClose}
+          visualTheme={visualTheme}
+        />
+      )}
     >
       <View style={body.divider} />
       <Text style={body.sectionLabel}>{t('reward.gained')}</Text>
@@ -52,13 +60,6 @@ export const RewardOverlayContent = memo(function RewardOverlayContent({ entry, 
           <Text style={body.rowText}>{t('reward.levelUp', { level: newLevel ?? 0 })}</Text>
         </View>
       ) : null}
-      <ArcButton
-        label={t('reward.continue')}
-        visualTheme={visualTheme}
-        intent="primary"
-        onPress={onClose}
-        style={body.closeBtn}
-      />
     </ArcOverlayCard>
   );
 });

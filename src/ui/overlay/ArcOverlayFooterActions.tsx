@@ -10,7 +10,7 @@ import type { ArcButtonVariant } from './ArcButton';
 import type { ArcOverlayVisualTheme } from './tacticalOverlayPreview';
 
 type Props = {
-  onCancel: () => void;
+  onCancel?: () => void;
   onConfirm: () => void;
   cancelLabel?: string;
   confirmLabel?: string;
@@ -18,6 +18,8 @@ type Props = {
   cancelDisabled?: boolean;
   confirmDisabled?: boolean;
   visualTheme?: ArcOverlayVisualTheme;
+  /** true — 확인만 (reward · waveResult 등 compact 단버튼) */
+  confirmOnly?: boolean;
 };
 
 export const ArcOverlayFooterActions = memo(function ArcOverlayFooterActions({
@@ -29,18 +31,32 @@ export const ArcOverlayFooterActions = memo(function ArcOverlayFooterActions({
   cancelDisabled,
   confirmDisabled,
   visualTheme = 'phosphor',
+  confirmOnly = false,
 }: Props) {
   const t = useT();
   const cancelVariant: ArcButtonVariant =
     visualTheme === 'tactical' ? 'tacticalSecondary' : 'secondary';
   const resolvedConfirmVariant: ArcButtonVariant =
     confirmVariant ?? (visualTheme === 'tactical' ? 'tacticalPrimary' : 'primary');
+  if (confirmOnly) {
+    return (
+      <View style={styles.row}>
+        <ArcButton
+          label={confirmLabel ?? t('common.confirm')}
+          variant={resolvedConfirmVariant}
+          onPress={onConfirm}
+          disabled={confirmDisabled}
+          style={styles.btn}
+        />
+      </View>
+    );
+  }
   return (
     <View style={styles.row}>
       <ArcButton
         label={cancelLabel ?? t('common.cancel')}
         variant={cancelVariant}
-        onPress={onCancel}
+        onPress={onCancel ?? onConfirm}
         disabled={cancelDisabled}
         style={styles.btn}
       />

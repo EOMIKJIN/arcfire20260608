@@ -8,8 +8,8 @@ import { isKoUi } from './index';
 
 /** `SHIP_TEMPLATES` KO name 대응 EN (템플릿 id 키) */
 const SHIP_TEMPLATE_NAME_EN: Record<string, string> = {
-  starter_fighter: 'Arcfire Mk.I',
-  scout_ship: 'Scout Radar',
+  starter_fighter: 'Basic Fighter Mk.I',
+  scout_ship: 'Basic Ranger CM.I',
   freighter: 'Cosmos Freighter',
 };
 

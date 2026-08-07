@@ -1,5 +1,5 @@
 # UI Overlay Integration Audit
 
-Generated: 2026-07-19T14:06:50.118Z
+Generated: 2026-08-05T15:22:51.533Z
 
 **PASS** — 위반 없음.

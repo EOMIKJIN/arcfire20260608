@@ -45,15 +45,80 @@ export class PilotRegistrationError extends Error {
   }
 }
 
-async function runRemoteRegistrationStep<T>(label: string, step: () => Promise<T>): Promise<T> {
+/**
+ * 닉네임 조회·예약 — offline/`null` 폴백 계약.
+ * hard `network_timeout` throw 금지: Firestore·Auth가 offline이면 getDoc이 내부 6s까지
+ * 늘어지는데, 바깥 5초 reject가 먼저 뜨면 신규 등록이 팝업으로 막힌다
+ * (실측: purge 직후 `[ArcCore/RTDB] boot sync skip (offline)` + pilotReg.network_timeout).
+ * 상한 초과 시 soft-offline으로 로컬 진행(예약은 온라인 복귀 시 소급).
+ */
+async function runNicknameRemoteStepSoft<T>(
+  label: string,
+  step: () => Promise<T>,
+  onSoftOffline: () => T,
+  markSoftOffline: () => void,
+): Promise<T> {
   try {
     return await withRemoteNetworkTimeout(label, step);
   } catch (e) {
-    if (isRemoteNetworkTimeoutError(e)) {
-      throw new PilotRegistrationError('network_timeout');
+    markSoftOffline();
+    if (__DEV__) {
+      const reason = isRemoteNetworkTimeoutError(e) ? 'remote timeout' : 'error';
+      console.log(`[pilotReg] ${label} soft-offline (${reason}) — local continue`);
     }
-    throw e;
+    return onSoftOffline();
   }
+}
+
+/** 로컬 계정 확정 후 클라우드 쓰기 — 실패해도 등록 성공. offline이면 await 생략. */
+function schedulePilotCloudSync(opts: {
+  uid: string;
+  nickname: string;
+  professionId?: string;
+  alreadySoftOffline: boolean;
+}): void {
+  const run = async () => {
+    try {
+      await createUserDocOnNicknameConfirm(opts.uid, opts.nickname, {
+        professionId: opts.professionId,
+      });
+    } catch {
+      /* createUserDoc 내부도 offline swallow */
+    }
+    try {
+      await syncUserDataWithServer();
+    } catch {
+      /* 정기 sync가 소급 */
+    }
+  };
+
+  if (opts.alreadySoftOffline) {
+    if (__DEV__) {
+      console.log(
+        '[pilotReg] cloud sync deferred (firebase offline) — local account OK; retry on reconnect',
+      );
+    }
+    void run();
+    return;
+  }
+
+  void (async () => {
+    try {
+      await withRemoteNetworkTimeout('create_user_doc', () =>
+        createUserDocOnNicknameConfirm(opts.uid, opts.nickname, {
+          professionId: opts.professionId,
+        }),
+      );
+      await withRemoteNetworkTimeout('sync_user_data', () => syncUserDataWithServer());
+    } catch {
+      if (__DEV__) {
+        console.log(
+          '[pilotReg] cloud sync deferred (timeout) — local account OK; retry on reconnect',
+        );
+      }
+      void run();
+    }
+  })();
 }
 
 /** character-select 초안 + CSV 검증 */
@@ -84,8 +149,17 @@ export async function completePilotRegistration(uid: string, nickname: string): 
     throw new PilotRegistrationError('already_registered');
   }
 
-  const available = await runRemoteRegistrationStep('check_nickname', () =>
-    checkNicknameAvailable(trimmedNick, { excludeUid: uid }),
+  let cloudSoftOffline = false;
+  const markSoftOffline = () => {
+    cloudSoftOffline = true;
+  };
+
+  // 닉네임 검사·예약은 offline 허용 계약 — hard network_timeout 금지(내부 6s race → 'offline').
+  const available = await runNicknameRemoteStepSoft(
+    'check_nickname',
+    () => checkNicknameAvailable(trimmedNick, { excludeUid: uid }),
+    () => true,
+    markSoftOffline,
   );
   if (!available) {
     throw new PilotRegistrationError('nickname_taken');
@@ -93,11 +167,19 @@ export async function completePilotRegistration(uid: string, nickname: string): 
 
   // 닉네임 예약 확정(create-only 문서) — 동시 가입 레이스 최종 차단.
   // 오프라인이면 예약을 미루고 진행(정기 동기화의 소급 예약이 재시도).
-  const reserved = await runRemoteRegistrationStep('reserve_nickname', () =>
-    reserveNickname(trimmedNick, uid),
+  const reserved = await runNicknameRemoteStepSoft(
+    'reserve_nickname',
+    () => reserveNickname(trimmedNick, uid),
+    () => false,
+    markSoftOffline,
   );
   if (!reserved) {
-    const state = await checkNicknameRegistry(trimmedNick, { excludeUid: uid });
+    const state = await runNicknameRemoteStepSoft(
+      'recheck_nickname',
+      () => checkNicknameRegistry(trimmedNick, { excludeUid: uid }),
+      () => 'offline' as const,
+      markSoftOffline,
+    );
     if (state === 'taken') {
       throw new PilotRegistrationError('nickname_taken');
     }
@@ -140,31 +222,22 @@ export async function completePilotRegistration(uid: string, nickname: string): 
 
   useMissionStore.getState().initTutorialStory();
 
-  // ⚠️ 여기서부터는 로컬 플레이어가 이미 생성된 상태 — 원격 쓰기(create_user_doc·sync)가
-  // 타임아웃/실패해도 등록을 실패로 올리지 않는다. 실패를 throw하면 절반 생성된
-  // player(introSeen=true)가 남은 채 에러 창이 떠서 타이틀이 「이어하기」로 바뀌는
-  // 회귀(2026-07-19)가 있었다. Firestore SDK가 쓰기를 큐잉해 온라인 복귀 시 자동
-  // 반영하고, 정기 동기화(syncUserDataWithServer)가 소급 재시도한다.
-  try {
-    await runRemoteRegistrationStep('create_user_doc', () =>
-      createUserDocOnNicknameConfirm(player.uid, player.nickname, {
-        professionId: player.pilotProfile?.professionId,
-      }),
-    );
-  } catch (e) {
-    if (__DEV__) console.warn('[pilotReg] create_user_doc deferred (offline/timeout)', e);
-  }
+  // 로컬 persist 먼저 확정 — 클라우드 쓰기는 실패해도 등록 성공(2026-07-19 회귀 방지).
   await usePlayerStore.getState().persist();
   await persistAccountDataBundle();
   await useClanWarFoundationStore.getState().persistClanWarFoundation();
-  try {
-    await runRemoteRegistrationStep('sync_user_data', () => syncUserDataWithServer());
-  } catch (e) {
-    if (__DEV__) console.warn('[pilotReg] sync_user_data deferred (offline/timeout)', e);
-  }
   await clearOnboardingProfessionId();
   // 새 계정 생성 완료 — 초기화 후 클라우드 자동 복원 차단(fresh-start)을 해제한다.
   await clearFreshStartAfterAccountCreated();
+
+  // 클라우드 create/sync — 닉네임 단계에서 이미 soft-offline이면 5s×2 await 생략(경고 스팸·지연 방지).
+  // SDK 큐 + 정기 syncUserDataWithServer가 온라인 복귀 시 소급.
+  schedulePilotCloudSync({
+    uid: player.uid,
+    nickname: player.nickname,
+    professionId: player.pilotProfile?.professionId,
+    alreadySoftOffline: cloudSoftOffline,
+  });
 
   // 아크코어 섀도우 페어링 — 온보딩 성공 직후 1회 (실패 시 부트 소급 패스가 재시도)
   void runArcCoreShadowPairingPass();

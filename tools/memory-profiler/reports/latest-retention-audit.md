@@ -1,10 +1,10 @@
 # Memory retention audit (STAGE close → recovery diff)
 
-Generated: 2026-08-05T14:19:07.805Z
+Generated: 2026-08-06T03:19:19.289Z
 Verdict: **FAIL**
 
 - profile samples: 3
-- mem-timeline samples: 18225
+- mem-timeline samples: 18276
 - logcat [MEM_PROFILE] markers: 2761
 - close events audited: 352
 - retention failures: 20

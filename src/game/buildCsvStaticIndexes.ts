@@ -7,10 +7,10 @@
 import { markBootPerf } from './bootPerformance';
 import { reloadBalanceOverlayIndices } from '../arcCore/aabs/reloadBalanceIndices';
 import { listArcNpcTrafficRowsFromTables } from '../arcCore/arcNpcTrafficTableRegistry';
-import { ensureItemCatalogLoaded } from '../items/itemCatalogRegistry';
 import { listNpcCaptains, listNpcCapitalShips } from '../npc/npcFleetRegistry';
 import { warmNearbyOrbitPresenceTableIndexes } from '../npc/nearbyOrbitPresenceSystem';
 import { buildPlanetMineralDepositIndex } from '../world/mineralDepositModel';
+import { listItemDefIds } from '../data/itemRegistry';
 
 let minimalBootstrapped = false;
 let fullBootstrapped = false;
@@ -37,7 +37,8 @@ export function buildCsvStaticIndexesFull(): void {
   if (fullBootstrapped) return;
   fullBootstrapped = true;
   markBootPerf('csv_indexes_start', 'full');
-  ensureItemCatalogLoaded();
+  // item_defs 정본 warm (레거시 ItemCatalogRegistry/weaponCatalogSeed 부트 로드 금지)
+  void listItemDefIds().length;
   void buildPlanetMineralDepositIndex();
   reloadBalanceOverlayIndices();
   markBootPerf('csv_indexes_end', 'full');

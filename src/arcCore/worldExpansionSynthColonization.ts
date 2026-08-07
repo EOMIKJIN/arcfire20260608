@@ -5,15 +5,17 @@
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
 import { useWorldStore } from '../store/worldStore';
 import { SYNTH_COLONIZATION_MAX_PHASE } from './synthColonizationPhasePolicy';
-import { integrateUnlockedSynthFrontierStatEconomy } from './planetCore/integrateUnlockedSynthFrontierStatEconomy';
-import { forceResyncPlanetTradePortCatalog } from './balance/tradePortCatalogPolicy';
 import { assertPlanetOwnershipItemDefOnFrontierUnlock } from './balance/planetOwnershipItemDefTableContract';
 import { dispatchArcCoreSeedTransportForSystem, dispatchArcCoreSystemUnlockNotice } from './worldExpansionUnlockDispatch';
 import type { ArcCoreSystemUnlockKind } from './worldExpansionUnlockDispatch';
 
 export { SYNTH_COLONIZATION_MAX_PHASE, SYNTH_FRONTIER_FACTION_ID } from './synthColonizationPhasePolicy';
 
-/** 개방 직후 — phase 1(초기화 완료) · 궤도 수송 시드 · 중립 hold + 공지 */
+/**
+ * 개방 직후 — phase 1 · 중립 hold · 궤도 수송 시드 · 공지.
+ * 경제/카탈로그 연동은 호출 전 `unlockSystem` / `reconcileGlobalSynthUnlocks`가 담당한다.
+ * (여기서 전 synth `integrate`를 반복하면 일괄 개방 시 O(n²) set_catalog — 계정 purge 46s 회귀)
+ */
 export function finalizeArcCoreSynthFrontierUnlock(
   systemId: string,
   kind: ArcCoreSystemUnlockKind,
@@ -28,9 +30,7 @@ export function finalizeArcCoreSynthFrontierUnlock(
   }
 
   useClanWarFoundationStore.getState().seedSynthFrontierNeutralHold(planetId, systemId);
-  integrateUnlockedSynthFrontierStatEconomy();
   assertPlanetOwnershipItemDefOnFrontierUnlock(planetId);
-  forceResyncPlanetTradePortCatalog(planetId);
   dispatchArcCoreSeedTransportForSystem(systemId, 'frontier_system_unlock_orbit_seed');
   dispatchArcCoreSystemUnlockNotice(systemId, kind);
 }

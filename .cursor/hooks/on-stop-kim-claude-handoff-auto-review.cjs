@@ -1,8 +1,7 @@
 'use strict';
 /**
  * stop — 김클로드 handoff status=PENDING 이면 followup으로 검수를 자동 이어감.
- * 대표님 지시(2026-07-26): 「김클로드 작업이 끝나면 자동으로 알아서 검수」.
- *
+ * 대표님 지시(2026-07-26): 「김클로드 작업이 끝나면 자동으로 알아서 검수」 *
  * 루프 방지:
  * - task_id+mtime 당 followup 최대 MAX_FOLLOWUPS회
  * - 상단 status가 REVIEWED/IDLE 이면 무동작

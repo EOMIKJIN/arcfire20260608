@@ -4283,3 +4283,23 @@ ref=tools/long-run-monitor/logs/soak-worklet-mirror-20260621.json
 [2026-08-05 19:14:56] PSS_SOFT_CEILING pss=814.5 gl=39.9 views=371 native_reclaim_advisory
 [2026-08-05 19:30:25] PSS_SOFT_CEILING pss=826.4 gl=33 views=371 native_reclaim_advisory
 [2026-08-05 19:45:55] PSS_SOFT_CEILING pss=838.3 gl=33 views=368 native_reclaim_advisory
+[2026-08-06 00:24:33] PSS_SOFT_CEILING pss=811.8 gl=127.2 views=577 native_reclaim_advisory
+[2026-08-06 02:28:39] PSS_SOFT_CEILING pss=811.8 gl=37.4 views=390 native_reclaim_advisory
+[2026-08-06 04:47:45] PSS_SOFT_CEILING pss=801 gl=41.4 views=400 native_reclaim_advisory
+[2026-08-06 06:35:50] PSS_SOFT_CEILING pss=810.9 gl=41.5 views=378 native_reclaim_advisory
+[2026-08-06 08:00:00] DAILY_8AM_REPORT 2026-08-06 08:00:00 KST
+[2026-08-06 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=WARN
+[2026-08-06 08:02:06] DAILY_8AM_REPORT 2026-08-06 08:02:06 KST
+[2026-08-06 08:02:06] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=WARN
+[2026-08-06 08:04:08] DAILY_8AM_REPORT 2026-08-06 08:04:08 KST
+[2026-08-06 08:04:08] DAILY_8AM_REPORT_FAIL D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md MEMINFO_ERROR — Command failed: adb shell pidof com.arcfire.online
+[2026-08-06 08:06:09] DAILY_8AM_REPORT 2026-08-06 08:06:09 KST
+[2026-08-06 08:06:09] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+[2026-08-06 08:08:10] DAILY_8AM_REPORT 2026-08-06 08:08:10 KST
+[2026-08-06 08:08:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+[2026-08-06 08:10:11] DAILY_8AM_REPORT 2026-08-06 08:10:11 KST
+[2026-08-06 08:10:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+[2026-08-06 08:12:14] DAILY_8AM_REPORT 2026-08-06 08:12:14 KST
+[2026-08-06 08:12:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+[2026-08-06 08:14:16] DAILY_8AM_REPORT 2026-08-06 08:14:16 KST
+[2026-08-06 08:14:16] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK

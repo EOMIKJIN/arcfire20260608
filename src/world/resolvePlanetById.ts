@@ -4,7 +4,7 @@
 
 import { GALAXY_SYSTEMS } from '../data/galaxy100';
 import { STAR_SYSTEMS } from '../data/systems';
-import type { Planet } from '../types';
+import type { Planet, StarSystem } from '../types';
 import { resolveSystemIdForPlanetIdFromGalaxy } from './resolvePlanetSystemPosition';
 
 function readWorldStoreSystems(): Record<string, import('../types').StarSystem> {
@@ -32,6 +32,18 @@ function findInGalaxySystems(planetId: string): Planet | null {
     if (planet) return planet;
   }
   return null;
+}
+
+/**
+ * 성계 id → StarSystem — **단일 facade** (신규 코드는 STAR/GALAXY 직접 조회 대신 사용).
+ * 우선순위: worldStore 런타임 → GALAXY_SYSTEMS → STAR_SYSTEMS(CSV 21).
+ */
+export function resolveSystemById(systemId: string): StarSystem | null {
+  const id = systemId.trim();
+  if (!id) return null;
+  const runtime = readWorldStoreSystems()[id];
+  if (runtime) return runtime;
+  return GALAXY_SYSTEMS[id] ?? STAR_SYSTEMS[id] ?? null;
 }
 
 /** synth — worldStore autogen(B→A) 우선. GALAXY 정적 템플릿은 hasTradePort=false 잔재 */

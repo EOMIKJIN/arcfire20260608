@@ -83,7 +83,10 @@ export function resetDefaultItemCatalogRegistryForTests(): void {
   defaultSeeded = false;
 }
 
-/** 앱 어디서든 1회 호출해도 됨(내부적으로 idempotent). */
+/**
+ * @deprecated 전투·무역 정본은 `weapon_list.csv` / `item_defs` generated.
+ * 부트(`buildCsvStaticIndexesFull`)에서 호출하지 않는다. 테스트·레거시 브리지 전용.
+ */
 export function ensureItemCatalogLoaded(): void {
   getDefaultItemCatalogRegistry();
 }

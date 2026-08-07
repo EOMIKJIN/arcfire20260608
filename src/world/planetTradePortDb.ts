@@ -17,7 +17,7 @@ type ItemDefLike = {
 
 function readItemDef(itemId: string): ItemDefLike | undefined {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { getItemDef } = require('../data/goods') as typeof import('../data/goods');
+  const { getItemDef } = require('../data/itemRegistry') as typeof import('../data/itemRegistry');
   return getItemDef(itemId);
 }
 

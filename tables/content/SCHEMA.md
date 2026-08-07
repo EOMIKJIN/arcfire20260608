@@ -1,13 +1,19 @@
 # CSV Table Schema
 
-## 1) 전함 스탯 (`ship_stats.csv`)
-- `id` string PK
-- `name` string
-- `description` string
-- `maxHp,maxShield,armor,speed,cargoCapacity,weaponSlots,equipSlots` int
-- `baseWeaponId,baseWeaponName,baseWeaponType` string
-- `baseWeaponAttackBonus,baseWeaponRange,baseWeaponDiceCount,baseWeaponDiceSides,baseWeaponDiceBonus` int
-- `pixelSpriteKey` string
+> **현행(2026-08-06)**: `ship_stats.csv` / 독립 `star_systems.csv` **없음**.  
+> 전함 본체 = `npc_ai_ships.csv` · 플레이어 템플릿 = `Player_*` 행 → `SHIP_TEMPLATES_FROM_CSV` ·  
+> 레거시 templateId(`starter_fighter` 등)는 `src/data/ships.ts`에서 Player_ 별칭.  
+> 성계 = `planets.csv` 임베드 컬럼 + `star_system_connections.csv` → `STAR_SYSTEMS_FROM_CSV` ·  
+> 확장 성계 = `GALAXY_SYSTEMS` (`galaxySystems100.generated`) · 조회 facade = `resolvePlanetById` / `resolveSystemById`.
+
+## 1) 전함 스탯 (정본: `npc_ai_ships.csv`)
+
+플레이어·NPC 함선 스탯·무기 FK·무역 진열 플래그는 **`npc_ai_ships.csv` 단일 정본**.  
+빌드: `SHIP_TEMPLATES_FROM_CSV` · `NPC_CAPITAL_SHIPS_FROM_CSV` · `tradePortListed` 시 `capital_ship_{id}` ItemDef merge.
+
+- `id` string PK (`Player_` 접두 = 플레이어 소유/템플릿)
+- `name`, `hullTypeId`, `captainId`, combat·이동 스탯, `laserWeaponId`/`missileWeaponId` FK → `weapon_list.id`
+- `tradePortListed`, `capitalShipArchetype`, `combatLevel`, `expReward` 등 — §2 `npc_ai_ships` 상세 참고
 
 ## 2) NPC AI
 ### `npc_ai_captains.csv`
@@ -134,30 +140,23 @@
 - `itemId` string
 
 ## 4) 맵/행성
-### `star_systems.csv`
-- `id` string PK
-- `name,zone,description` string
-- `posX,posY` number
-- `enemyLevel` int
-- 레거시 호환 컬럼: `connectionsPipe`
 
-### `star_system_connections.csv` (권장)
-- `systemId` FK -> star_systems.id
-- `connectedSystemId` FK -> star_systems.id
+### `planets.csv` (성계 임베드 정본 · 21행)
+- **성계 필드(행마다 중복)**: `systemId,systemName,systemPosX,systemPosY,systemZone,systemConnectionsPipe,systemEnemyLevel,systemDescription` (+ En)
+- **행성 필드**: `id,name,description,factionId,hasTradePort,hasShipyard,hasTavern`
+- `backdropImageAssetKey` · `infoPanelPortraitAssetKey` · 메인스테이지 레이어 플래그
+- 핵심 지표 시드(0..100): `coreResource,corePopulation,coreDefense,coreTechnology,coreEnvironment`  
+  → **런타임 정본**은 `planetCoreRuntimeStore` (`arcfire_planet_core_runtime_v1`)
+- 레거시: `tradeGoodsPipe` (진열 정본 아님 — `syncTradePortCatalogFromBalance`)
 
-### `planets.csv`
-- `systemId` FK -> star_systems.id
-- `id` string PK
-- `name,description,factionId` string
-- `hasTradePort,hasShipyard,hasTavern` boolean
-- `backdropImageAssetKey` string nullable (행성 배경 이미지 에셋 키; 미할당 시 Skia 성운만 표시)
-- 핵심 대표 지표(0..100): `coreResource,corePopulation,coreDefense,coreTechnology,coreEnvironment`
-- 행성 중심 디지털 게이지(`R,P,D,T,E`)는 위 5개를 20% 단위(5칸)로 표시
-- 레거시 호환 컬럼: `tradeGoodsPipe`
+### `star_system_connections.csv`
+- `systemId` · `connectedSystemId` — `planets.systemConnectionsPipe`와 동기(`sync-star-system-connections-from-planets.mjs`)
+- 빌드 산출: `STAR_SYSTEMS_FROM_CSV` (`csvSystems.ts`)
 
-### `planet_trade_goods.csv` (권장)
-- `planetId` FK -> planets.id
-- `goodId` string
+### 상점 ItemDef merge (빌드 전용 · `item_defs.csv`에 수동 행 없음)
+- `weapon_list.tradePortListed` → generated `weapon_item_{weaponId}` (`type=weapon_module`)
+- `npc_ai_ships.tradePortListed` → generated `capital_ship_{npcId}` (`type=capital_ship`)
+- 감사: `node tools/content-tables/audit-item-defs-sku-merge.mjs`
 
 ## 5) 스킬
 ### `skills.csv`
@@ -172,10 +171,18 @@
 - `effectDescription` string
 - `icon` string
 
-## 8) 아이템 정의 (`item_defs.csv`) — 행성 소유권 (2026-07-02~)
+## 8) 아이템 정의 (`item_defs.csv`)
 
-- **단일 정본**: `tables/content/item_defs.csv` only — `id=ownership_{planetId}` · `type=planet_ownership` · `tradeable=true`
-- A(21): 수동 행 · synth(79): `synth_system_colonization.csv` → `sync-synth-ownership-into-item-defs.mjs` append
-- **금지**: 별도 ownership CSV · 빌드 merge-only · 런타임 lazy ItemDef
-- 무역 진열: item_defs 등록 ≠ 진열 — synth는 unlock+phase≥1 eligibility · 카탈로그 resync는 hydrate/unlock 이벤트만
-- 감사: `npx tsx tools/debug/audit-planet-ownership-item-defs.ts`
+### 편집 CSV에 두는 것
+- `ownership_{planetId}` (`type=planet_ownership`) — A+synth sync 정본
+- `tg_*` 교역품 · `ship_equipment` · 광물/유물 등
+
+### 빌드 merge로만 generated에 존재하는 것
+- `weapon_item_*` ← `weapon_list.csv`
+- `capital_ship_*` ← `npc_ai_ships.csv` (`tradePortListed`)
+- **금지**: 위 SKU를 `item_defs.csv`에 수동 복제(이중 정본)
+
+### 소유권
+- A(21): 수동 행 · synth: `synth_system_colonization.csv` → `sync-synth-ownership-into-item-defs.mjs`
+- 무역 진열: 등록 ≠ 진열 — eligibility + `resyncAllCoreOpenTradePortCatalogs` / 행성별 force resync
+- 감사: `npx tsx tools/debug/audit-planet-ownership-item-defs.ts` · `audit-item-defs-sku-merge.mjs`

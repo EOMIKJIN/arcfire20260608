@@ -34,7 +34,10 @@ import { useTavernBoardStore } from '../src/store/tavernBoardStore';
 import { hydrateCombatMatchTelemetryCache } from '../src/store/combatMatchTelemetryStore';
 import { useWorldObjectRuntimeStore } from '../src/store/worldObjectRuntimeStore';
 import { initGuestAuth } from '../src/firebase/auth';
-import { scheduleFirebaseAnonymousAuthWarmup } from '../src/firebase/firebaseAnonymousAuth';
+import {
+  ensureFirebaseAnonymousAuthForCloudBoot,
+  scheduleFirebaseAnonymousAuthWarmup,
+} from '../src/firebase/firebaseAnonymousAuth';
 import { arcCoreHub } from '../src/arcCore/ArcCoreHub';
 import { attachArcCoreRuntimeCommandBridge } from '../src/arcCore/ArcCoreRuntimeBridge';
 import { ArcOverlayHost } from '../src/ui/overlay/ArcOverlayHost';
@@ -212,27 +215,31 @@ export default function RootLayout() {
 
       // 네트워크만 타이틀 백그라운드. 이미지/세션 prewarm은 차원항로(이어하기) 구간만
       // (`runContinueSessionPrewarm`) — 시작화면 버튼 지연·JS 경합 금지(2026-08-04 대표님).
-      void syncUserDataWithServer();
-      try {
-        if (!authUser) return;
-        void ensureArcCoreCollectionSeeded({ uid: authUser.uid }).catch(() => {
-          /* 오프라인 — arccore 시드 생략 */
-        });
-        void fetchArcCoreRtdbBootSyncOnce({ uid: authUser!.uid }).catch(() => {
-          /* RTDB 미배포·오프라인 — 번들 SIM 정본, [boot] 경고 없음 */
-        });
-        // 아크코어 섀도우 페어링 소급 패스 — 기존 유저 포함 전 유저 동일, 부트당 1회 지연 실행
-        scheduleArcCoreShadowPairingPassAfterBoot();
-        void resolveAppUpdateGateAfterBoot(resolveAppVersion())
-          .then((gate) => {
-            if (gate) setUpdateGate(gate);
-          })
-          .catch(() => {
-            /* 오프라인 — 업데이트 안내 생략 */
+      // Auth → Firestore 시드/RTDB boot 순서로 레이스·rules 실패를 줄인다(타이틀 bootReady는 이미 true).
+      void (async () => {
+        try {
+          if (!authUser) return;
+          await ensureFirebaseAnonymousAuthForCloudBoot();
+          void syncUserDataWithServer();
+          void ensureArcCoreCollectionSeeded({ uid: authUser.uid }).catch(() => {
+            /* 오프라인 — arccore 시드 생략 */
           });
-      } catch {
-        /* 부팅 후 백그라운드 — 실패해도 로컬 플레이 진행 */
-      }
+          void fetchArcCoreRtdbBootSyncOnce({ uid: authUser.uid }).catch(() => {
+            /* RTDB 미배포·오프라인 — 번들 SIM 정본, [boot] 경고 없음 */
+          });
+          // 아크코어 섀도우 페어링 소급 패스 — 기존 유저 포함 전 유저 동일, 부트당 1회 지연 실행
+          scheduleArcCoreShadowPairingPassAfterBoot();
+          void resolveAppUpdateGateAfterBoot(resolveAppVersion())
+            .then((gate) => {
+              if (gate) setUpdateGate(gate);
+            })
+            .catch(() => {
+              /* 오프라인 — 업데이트 안내 생략 */
+            });
+        } catch {
+          /* 부팅 후 백그라운드 — 실패해도 로컬 플레이 진행 */
+        }
+      })();
     })();
   }, [
     ensureAccountProfile,

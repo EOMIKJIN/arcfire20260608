@@ -3,8 +3,8 @@ import { Text, View } from 'react-native';
 import type { ArcOverlayWaveResultEntry } from '../arcOverlayStore';
 import { COLORS } from '../../../utils/theme';
 import { useT } from '../../../i18n';
-import { ArcButton } from '../ArcButton';
 import { ArcOverlayCard } from '../ArcOverlayCard';
+import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
 import { ArcOverlayInfoRow } from '../ArcOverlayInfoRow';
 import { resolveOverlayCompactBodyStyles } from '../overlayCompactBodyStyles';
 import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
@@ -30,12 +30,11 @@ export const WaveResultOverlayContent = memo(function WaveResultOverlayContent({
       visualTheme={visualTheme}
       onClose={onClose}
       footer={(
-        <ArcButton
-          label={t('waveResult.confirm')}
+        <ArcOverlayFooterActions
+          confirmOnly
+          confirmLabel={t('waveResult.confirm')}
+          onConfirm={onClose}
           visualTheme={visualTheme}
-          intent="primary"
-          onPress={onClose}
-          style={body.closeBtn}
         />
       )}
     >

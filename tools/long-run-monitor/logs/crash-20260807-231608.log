@@ -1,0 +1,541 @@
+--------- beginning of system
+08-07 23:27:41.451  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:27:41.455  1865  2837 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:28:41.452  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:28:41.457  1865  2837 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:29:41.462  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:29:41.467  1865  4406 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:30:00.050  1865  1918 I ActivityManager: Start proc 16037:com.samsung.android.ce/u0a96 for broadcast {com.samsung.android.mcfds/com.samsung.android.ce.ContextEngineReceiver}
+08-07 23:30:00.051  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:30:00.273  1865  4406 I ActivityManager: Killing 14688:com.google.android.tts/u0a260 (adj 985): empty #25
+08-07 23:30:00.968  1865  1917 I ActivityManager: Changes in 10328 19 to 11, 0 to 128
+08-07 23:30:00.979  1865  4150 I ActivityManager: Changes in 10328 11 to 19, 128 to 0
+08-07 23:30:41.468  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:30:41.473  1865  3159 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:31:41.490  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:31:41.494  1865  4155 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:32:36.968  1865  1918 I ActivityManager: Start proc 16156:com.samsung.mfcontents/u0a95 for service {com.samsung.mfcontents/com.samsung.mfcontents.scheduler.MFCJobService}
+08-07 23:32:36.968  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:32:37.085  1865  4402 I ActivityManager: Changes in 10095 19 to 8, 0 to 128
+08-07 23:32:37.102  1865  4406 I ActivityManager: Changes in 10095 8 to 10, 128 to 0
+08-07 23:32:37.111  1865  4162 I ActivityManager: Killing 14585:com.google.android.webview:webview_service/u0a263 (adj 975): empty #25
+08-07 23:32:41.488  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:32:41.493  1865  4162 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:33:41.501  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:33:41.507  1865  4406 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:34:41.504  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:34:41.509  1865  4155 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:35:41.505  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:35:41.509  1865  4406 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:36:39.242  1865  1918 I ActivityManager: Start proc 16216:com.samsung.android.smartface/1000 for service {com.samsung.android.smartface/com.samsung.android.smartface.SmartFaceServiceStarter}
+08-07 23:36:39.242  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:36:40.208  1865  4155 I ActivityManager: Killing 15091:com.google.android.apps.docs/u0a309 (adj 975): empty #25
+08-07 23:36:41.516  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:36:41.520  1865  4155 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:37:41.524  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:37:41.528  1865  3137 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:37:59.461  1865  1918 I ActivityManager: Start proc 16332:com.google.android.gms.unstable/u0a252 for service {com.google.android.gms/com.google.android.gms.droidguard.DroidGuardService}
+08-07 23:37:59.461  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:38:05.399  1865  2663 I ActivityManager: Killing 14928:com.google.android.permissioncontroller/u0a302 (adj 965): empty #25
+08-07 23:38:41.526  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:38:41.530  1865  4150 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:39:41.531  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:39:41.536  1865  3137 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:40:06.809  1865  1918 I ActivityManager: Start proc 16410:com.lguplus.appstore/u0a99 for service {com.lguplus.appstore/androidx.work.impl.background.systemjob.SystemJobService}
+08-07 23:40:06.809  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:07.051  1865  1918 I ActivityManager: Start proc 16463:com.sec.android.provider.badge/u0a55 for broadcast {com.sec.android.provider.badge/com.sec.android.provider.badge.BadgeCountReceiver}
+08-07 23:40:07.052  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:07.057  1865  3159 I ActivityManager: Changes in 10099 19 to 8, 0 to 128
+08-07 23:40:07.115  1865  3159 I ActivityManager: Changes in 10251 19 to 8, 0 to 128
+08-07 23:40:07.129  1865  3137 I ActivityManager: Changes in 10055 19 to 11, 0 to 128
+08-07 23:40:07.144  1865  3137 I ActivityManager: Changes in 10251 8 to 10, 128 to 0
+08-07 23:40:07.145  1865  3137 I ActivityManager: Changes in 10099 8 to 10, 128 to 0
+08-07 23:40:07.148  1865  3159 I ActivityManager: Killing 14728:com.samsung.cmh/5004 (adj 965): empty #25
+08-07 23:40:07.183  1865  3159 I ActivityManager: Changes in 10055 11 to 5, 128 to 144
+08-07 23:40:07.226  1865  2023 W ActivityManager: pid 1865 system sent binder code 3 with flags 1 to frozen apps and got error -32
+08-07 23:40:07.228  1865  2023 W ActivityManager: Application dead when creating service ServiceRecord{7f29926 u0 com.samsung.cmh/.core.cmhjobservice.CMHJobService c:android}
+08-07 23:40:07.229  1865  2023 W ActivityManager: Scheduling restart of crashed service com.samsung.cmh/.core.cmhjobservice.CMHJobService in 1000ms for connection
+08-07 23:40:07.230  1865  2047 W ActivityManager: Unable to query binder frozen stats for pid 14728
+08-07 23:40:07.231  1865  2023 W ActivityManager: Exception when starting service com.samsung.cmh/.core.cmhjobservice.CMHJobService
+08-07 23:40:07.231  1865  2023 W ActivityManager: android.os.DeadObjectException
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at android.os.BinderProxy.transactNative(Native Method)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at android.os.BinderProxy.transact(BinderProxy.java:661)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at android.app.IApplicationThread$Stub$Proxy.scheduleCreateService(IApplicationThread.java:1892)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at android.app.IApplicationThread$Delegator.scheduleCreateService(IApplicationThread.java:287)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at com.android.server.am.ActiveServices.realStartServiceLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:120)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at com.android.server.am.ActiveServices.bringUpServiceInnerLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:415)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at com.android.server.am.ActiveServices.bringUpServiceLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:33)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at com.android.server.am.ActiveServices.bindServiceLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:186)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at com.android.server.am.ActivityManagerService.bindServiceInstance(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:34)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at com.android.server.am.ActivityManagerService.bindServiceInstance(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:1)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at android.app.ContextImpl.bindServiceCommon(ContextImpl.java:2306)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at android.app.ContextImpl.bindServiceAsUser(ContextImpl.java:2226)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at com.android.server.job.JobServiceContext.executeRunnableJob(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:423)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at com.android.server.job.JobConcurrencyManager.startJobLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:73)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at com.android.server.job.JobConcurrencyManager.assignJobsToContextsLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:284)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at com.android.server.job.JobSchedulerService.maybeRunPendingJobsLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:26)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at com.android.server.job.JobSchedulerService$JobHandler.handleMessage(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:483)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at android.os.Looper.loopOnce(Looper.java:273)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at android.os.Looper.loop(Looper.java:363)
+08-07 23:40:07.231  1865  2023 W ActivityManager: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+08-07 23:40:08.263  1865  1918 I ActivityManager: Start proc 16494:com.samsung.cmh/5004 for service {com.samsung.cmh/com.samsung.cmh.core.cmhjobservice.CMHJobService}
+08-07 23:40:08.263  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:08.360  1865  3137 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+08-07 23:40:08.374  1865  3159 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+08-07 23:40:08.404  1865  3138 I ActivityManager: Changes in 5004 19 to 8, 0 to 128
+08-07 23:40:08.409  1865  3137 I ActivityManager: Changes in 5004 8 to 10, 128 to 0
+08-07 23:40:08.532  1865  1918 I ActivityManager: Start proc 16544:com.samsung.faceservice/5004 for content provider {com.samsung.faceservice/com.samsung.faceservice.provider.FaceServiceProvider}
+08-07 23:40:08.532  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:08.661  1865  3159 W ActivityManager: Receiver with filter android.content.IntentFilter@b89a75b already registered for pid 16544, callerPackage is com.samsung.faceservice
+08-07 23:40:08.661  1865  3159 W ActivityManager: Receiver with filter android.content.IntentFilter@b9478d1 already registered for pid 16544, callerPackage is com.samsung.faceservice
+08-07 23:40:08.918  1865  1983 I ActivityManager: Changes in 10251 10 to 10, 0 to 128
+08-07 23:40:08.945  1865  1918 I ActivityManager: Start proc 16564:com.samsung.android.sm.devicesecurity/u0a214 for broadcast {com.samsung.android.sm.devicesecurity/com.samsung.android.sm.devicesecurity.AppVerificationReceiver}
+08-07 23:40:08.945  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:09.111  1865  3137 I ActivityManager: Changes in 10214 19 to 11, 0 to 128
+08-07 23:40:09.130  1865  1918 I ActivityManager: Start proc 16585:com.samsung.android.game.gos/u0a76 for broadcast {com.samsung.android.game.gos/com.samsung.android.game.gos.receiver.GameServiceReceiver}
+08-07 23:40:09.131  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:09.270  1865  3137 I ActivityManager: Changes in 10076 19 to 11, 0 to 128
+08-07 23:40:09.285  1865  1918 I ActivityManager: Start proc 16613:com.samsung.android.lool/1000 for broadcast {com.samsung.android.lool/com.samsung.android.sm.security.model.trigger.SecurityBridgeReceiver}
+08-07 23:40:09.285  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:09.286  1865  3137 I ActivityManager: Changes in 10076 10 to 10, 128 to 0
+08-07 23:40:09.368  1865  3138 I ActivityManager: Killing 14160:com.samsung.android.app.contacts/u0a120 (adj 965): empty #25
+08-07 23:40:09.650  1865  3159 I ActivityManager: Killing 15559:com.samsung.android.aremoji/u0a50 (adj 955): empty #25
+08-07 23:40:10.387  1865  2164 I ActivityManager: Killing 15605:com.samsung.android.samsungpass/u0a127 (adj 955): empty #25
+08-07 23:40:10.395  1865  2164 I ActivityManager: Killing 15574:com.sec.android.app.sbrowser/u0a330 (adj 955): empty #26
+08-07 23:40:13.203  1865  1916 I ActivityManager: Changes in 10055 5 to 15, 144 to 0
+08-07 23:40:27.695  1865  1905 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+08-07 23:40:31.364  1865  1918 I ActivityManager: Start proc 16702:com.eonsoft.ScreenON/u0a275 for activelaunch {com.eonsoft.ScreenON/com.eonsoft.ScreenON.SplashActivity}
+08-07 23:40:31.365  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:31.492  1865  1905 I ActivityManager: Changes in 10275 19 to 2, 0 to 255
+08-07 23:40:31.492  1865  1905 I ActivityManager: Changes in 10251 19 to 3, 128 to 184
+08-07 23:40:31.639  1865  1918 I ActivityManager: Start proc 16752:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0i34 for  {com.eonsoft.ScreenON/org.chromium.content.app.SandboxedProcessService0:0}
+08-07 23:40:31.639  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+--------- beginning of main
+08-07 23:40:31.640 16752 16752 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+08-07 23:40:31.698  1865  2663 I ActivityManager: Changes in 99034 19 to 3, 0 to 184
+08-07 23:40:32.403  1865  1918 I ActivityManager: Start proc 16893:com.google.android.permissioncontroller/u0a302 for next-top-activity {com.google.android.permissioncontroller/com.android.permissioncontroller.permission.ui.GrantPermissionsActivity}
+08-07 23:40:32.404  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:32.431  1865  2164 I ActivityManager: Changes in 10302 20 to 2, 0 to 255
+08-07 23:40:32.725  1865  1905 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+08-07 23:40:33.245  1865  1905 I ActivityManager: Changes in 10302 2 to 19, 255 to 0
+08-07 23:40:33.529  1865  1918 I ActivityManager: Start proc 17015:com.android.chrome/u0a266 for service {com.android.chrome/org.chromium.chrome.browser.customtabs.CustomTabsConnectionService}
+08-07 23:40:33.530  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:33.879  1865  4153 I ActivityManager: Changes in 10266 19 to 10, 0 to 128
+08-07 23:40:34.137  1865  1918 I ActivityManager: Start proc 17064:com.android.chrome:privileged_process0/u0a266 for service {com.android.chrome/org.chromium.content.app.PrivilegedProcessService0}
+08-07 23:40:34.137  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:34.153  1865  1918 I ActivityManager: Start proc 17065:com.google.android.webview:webview_service/u0a263 for service {com.google.android.webview/org.chromium.android_webview.services.VariationsSeedServer}
+08-07 23:40:34.155  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:34.221  1865  1905 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+08-07 23:40:34.263  1865  2663 I ActivityManager: Killing 15590:com.samsung.android.calendar/u0a222 (adj 985): empty #25
+08-07 23:40:34.287  1865  2663 I ActivityManager: Changes in 10263 19 to 3, 0 to 184
+08-07 23:40:34.353  1865  4155 I ActivityManager: Changes in 10263 3 to 10, 184 to 0
+08-07 23:40:34.353  1865  3137 I ActivityManager: Killing 15561:com.samsung.android.app.reminder/u0a224 (adj 985): empty #25
+08-07 23:40:34.833  1865  1905 I ActivityManager: Changes in 99034 3 to 6, 184 to 128
+08-07 23:40:34.834  1865  1905 I ActivityManager: Changes in 10275 2 to 6, 255 to 128
+08-07 23:40:34.834  1865  1905 I ActivityManager: Changes in 10251 3 to 6, 184 to 128
+08-07 23:40:34.925  1865  2613 I ActivityManager: Changes in 99034 6 to 6, 128 to 0
+08-07 23:40:34.926  1865  2613 I ActivityManager: Changes in 10275 6 to 6, 128 to 0
+08-07 23:40:34.926  1865  2613 I ActivityManager: Changes in 10266 17 to 17, 128 to 0
+08-07 23:40:35.248  1865  1918 W ActivityManager: Slow operation: 140ms so far, now at startProcess: returned from zygote!
+08-07 23:40:35.248  1865  1918 W ActivityManager: Slow operation: 140ms so far, now at startProcess: done updating battery stats
+08-07 23:40:35.248  1865  1918 W ActivityManager: Slow operation: 141ms so far, now at startProcess: building log message
+08-07 23:40:35.248  1865  1918 I ActivityManager: Start proc 17177:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0ai0 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:0}
+08-07 23:40:35.248  1865  1918 W ActivityManager: Slow operation: 141ms so far, now at startProcess: starting to update pids map
+08-07 23:40:35.249 17177 17177 E libc    : SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+08-07 23:40:35.250  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:35.250  1865  1918 W ActivityManager: Slow operation: 142ms so far, now at startProcess: done updating pids map
+08-07 23:40:35.292  1865  4162 I ActivityManager: Killing 15766:com.android.providers.calendar/u0a115 (adj 985): empty #25
+08-07 23:40:35.451  1865  4155 I ActivityManager: Changes in 10251 6 to 5, 128 to 184
+08-07 23:40:39.114  1865  2023 I ActivityManager: Changes in 10214 10 to 10, 128 to 0
+08-07 23:40:39.223  1865  1917 I ActivityManager: Force stopping com.arcfire.online appid=11073 user=-1: installPackageLI
+08-07 23:40:39.270  1865  1983 I ActivityManager: Force stopping com.arcfire.online appid=11073 user=0: pkg removed
+08-07 23:40:39.374  1865  1917 I ActivityManager: Changes in 10214 10 to 10, 0 to 128
+08-07 23:40:39.402  1865  1918 W ActivityManager: Slow operation: 55ms so far, now at startProcess: returned from zygote!
+08-07 23:40:39.474  1865  1918 W ActivityManager: Slow operation: 127ms so far, now at startProcess: done updating battery stats
+08-07 23:40:39.474  1865  1918 W ActivityManager: Slow operation: 127ms so far, now at startProcess: building log message
+08-07 23:40:39.474  1865  1918 I ActivityManager: Start proc 17249:com.android.keychain/1000 for service {com.android.keychain/com.android.keychain.KeyChainService}
+08-07 23:40:39.474  1865  1918 W ActivityManager: Slow operation: 127ms so far, now at startProcess: starting to update pids map
+08-07 23:40:39.474  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:39.474  1865  1918 W ActivityManager: Slow operation: 127ms so far, now at startProcess: done updating pids map
+08-07 23:40:39.475  1865  1918 W ActivityManager: Slow operation: 63ms so far, now at startProcess: asking zygote to start proc
+08-07 23:40:39.498  1865  1918 W ActivityManager: Slow operation: 86ms so far, now at startProcess: returned from zygote!
+08-07 23:40:39.501  1865  2465 I ActivityManager: Changes in 10302 19 to 6, 0 to 128
+08-07 23:40:39.564  1865  1918 W ActivityManager: Slow operation: 152ms so far, now at startProcess: done updating battery stats
+08-07 23:40:39.564  1865  1918 W ActivityManager: Slow operation: 152ms so far, now at startProcess: building log message
+08-07 23:40:39.564  1865  1918 I ActivityManager: Start proc 17262:com.samsung.android.app.routines/u0a53 for service {com.samsung.android.app.routines/com.samsung.android.app.routines.domainmodel.service.RoutineService}
+08-07 23:40:39.564  1865  1918 W ActivityManager: Slow operation: 152ms so far, now at startProcess: starting to update pids map
+08-07 23:40:39.564  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:39.564  1865  1918 W ActivityManager: Slow operation: 153ms so far, now at startProcess: done updating pids map
+08-07 23:40:39.655  1865  4155 I ActivityManager: Changes in 10214 10 to 10, 128 to 0
+08-07 23:40:39.675  1865  1917 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+08-07 23:40:39.685  1865  1918 I ActivityManager: Start proc 17285:com.samsung.android.provider.filterprovider/1000 for broadcast {com.samsung.android.provider.filterprovider/com.samsung.android.provider.filterprovider.PackageIntentReceiver}
+08-07 23:40:39.685  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:39.696  1865  3138 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+08-07 23:40:39.902  1865  1918 I ActivityManager: Start proc 17324:com.skt.skaf.OA00018282/u0a104 for content provider {com.skt.skaf.OA00018282/com.onestore.utils.ApiContentProvider}
+08-07 23:40:39.902  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:40.007  1865  1918 I ActivityManager: Start proc 17336:com.android.vending:background/u0a251 for broadcast {com.android.vending/com.google.android.finsky.packagemonitor.backgroundimpl.BackgroundPackageMonitorReceiverImpl$RegisteredReceiver}
+08-07 23:40:40.010  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:40:40.016  1865  1918 W ActivityManager: Slow operation: 55ms so far, now at startProcess: done updating pids map
+08-07 23:40:40.040  1865  3138 I ActivityManager: Killing 13881:com.sec.android.app.shealth:remote/u0a328 (adj 985): empty #25
+08-07 23:40:40.534  1865  2633 I ActivityManager: Killing 15620:com.sec.android.app.shealth/u0a328 (adj 985): empty #25
+08-07 23:40:40.651  1865  4149 I ActivityManager: Killing 15417:com.samsung.android.scloud/5009 (adj 975): empty #25
+08-07 23:40:40.742  1865  2015 I ActivityManager: Changes in 10056 19 to 5, 0 to 144
+08-07 23:40:41.362  1865  2015 I ActivityManager: Killing 15571:com.samsung.android.app.notes/u0a326 (adj 975): empty #25
+08-07 23:40:41.528  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:40:41.532  1865  2015 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:40:46.764  1865  1916 I ActivityManager: Changes in 10056 5 to 15, 144 to 0
+08-07 23:40:49.676  1865  2465 I ActivityManager: Changes in 10302 6 to 10, 128 to 0
+08-07 23:40:49.680  1865  3138 I ActivityManager: Killing 15022:com.samsung.android.scpm/5009 (adj 965): empty #25
+08-07 23:40:54.564  1865  1917 I ActivityManager: Waited long enough for: ServiceRecord{c6c690 u0 com.samsung.android.sm.devicesecurity/.PostInstallationScanService c:com.samsung.android.sm.devicesecurity}
+08-07 23:40:55.726  1865  2015 I ActivityManager: Changes in 10251 3 to 6, 184 to 0
+08-07 23:40:59.617  1865  2015 I ActivityManager: Changes in 10251 6 to 3, 0 to 184
+08-07 23:41:01.476  1865  1918 I ActivityManager: Start proc 17518:com.arcfire.online/u0a1073 for next-top-activity {com.arcfire.online/com.arcfire.online.MainActivity}
+08-07 23:41:01.489  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:41:01.552  1865  4151 I ActivityManager: Changes in 11073 19 to 2, 0 to 255
+08-07 23:41:02.743  1865  1905 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+08-07 23:41:12.897  1865  2837 I ActivityManager: Changes in 10251 3 to 6, 184 to 128
+08-07 23:41:14.830  1865  2837 I ActivityManager: Killing 14361:com.osp.app.signin/u0a117 (adj 985): empty #25
+08-07 23:41:29.646  1865  4150 I ActivityManager: Changes in 10251 6 to 6, 128 to 0
+08-07 23:41:40.714 17518 17631 I ReactNativeJS: Bridgeless mode is enabled
+08-07 23:41:40.958 17518 17631 I ReactNativeJS: Running "main" with {"rootTag":11,"initialProps":{},"fabric":true}
+08-07 23:41:41.536  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:41:41.539  1865  4155 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:41:44.137 17518 17631 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+08-07 23:41:44.156 17518 17631 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+08-07 23:41:44.174 17518 17631 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+08-07 23:41:44.196 17518 17631 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+08-07 23:41:44.210 17518 17631 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+08-07 23:41:44.309  1865  4155 I ActivityManager: Changes in 10251 6 to 3, 0 to 184
+08-07 23:41:45.387 17518 17631 I ReactNativeJS: [boot-perf] root_layout total=2317ms | layout_effect_start+1150ms → csv_indexes_start(minimal)+0ms → csv_indexes_end(minimal)+8ms → storage_load_start+95ms → storage_load_end+1037ms → boot_ready+27ms
+08-07 23:41:45.392 17518 17631 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+08-07 23:41:45.604 17518 17631 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `ref`. Please use `ref()` instead.
+08-07 23:41:45.606 17518 17631 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `once`. Please use `get()` instead.
+08-07 23:41:46.530 17518 17631 I ReactNativeJS: [ArcCore/WorldExpansion] global sync(sync) gen=2 epoch=2026-06-26 target=43 +1 -0 hardReset=false
+08-07 23:41:47.429 17518 17631 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog x86 calls(합산) planets=86 origin=arc_core_policy', 'trade_port_planet_resync'
+08-07 23:41:47.431 17518 17631 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `ref`. Please use `ref()` instead.
+08-07 23:41:47.431 17518 17631 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `once`. Please use `get()` instead.
+08-07 23:41:47.520 17518 17631 I ReactNativeJS: [ArcCore/DailyOps] batch started dayKey=2026-08-07 source=tick
+08-07 23:41:47.526 17518 17631 I ReactNativeJS: [ArcCore/DailyOps][STEP] batch_begin
+08-07 23:41:47.526 17518 17631 I ReactNativeJS: [ArcCore/DailyOps][STEP] planetCoreRuntimeBootstrap
+08-07 23:41:48.069  1865  1917 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+08-07 23:41:48.075  1865  1918 I ActivityManager: Start proc 17733:com.google.android.projection.gearhead:shared/u0a242 for broadcast {com.google.android.projection.gearhead/com.google.android.apps.auto.wireless.bluetooth.WifiBluetoothReceiver}
+08-07 23:41:48.075  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:41:48.272  1865  4150 I ActivityManager: Changes in 10242 19 to 11, 0 to 128
+08-07 23:41:48.291  1865  1918 I ActivityManager: Start proc 17767:com.google.android.projection.gearhead:car/u0a242 for broadcast {com.google.android.projection.gearhead/com.google.android.apps.auto.carservice.gmscorecompat.CarBluetoothReceiver}
+08-07 23:41:48.292  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:41:48.373  1865  4150 I ActivityManager: Killing 13737:com.google.android.googlequicksearchbox:search/u0a253 (adj 905): empty #25
+08-07 23:41:48.393  1865  1918 I ActivityManager: Start proc 17791:com.samsung.accessory.budsunitemgr/u0a314 for broadcast {com.samsung.accessory.budsunitemgr/com.samsung.accessory.hearablemgr.budsplugin.receiver.BluetoothReceiver}
+08-07 23:41:48.393  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:41:48.440  1865  3129 I ActivityManager: Killing 16156:com.samsung.mfcontents/u0a95 (adj 975): empty #25
+08-07 23:41:48.467  1865  3159 W ActivityManager: pid 18506 com.google.android.googlequicksearchbox:interactor sent binder code 2 with flags 1 to frozen apps and got error -32
+08-07 23:41:48.668  1865  4406 I ActivityManager: Changes in 10314 19 to 11, 0 to 128
+08-07 23:41:48.669  1865  4406 I ActivityManager: Changes in 10076 19 to 11, 0 to 128
+08-07 23:41:48.685  1865  1918 I ActivityManager: Start proc 17841:com.sec.android.CcInfo/1000 for broadcast {com.sec.android.CcInfo/com.sec.android.CcInfo.WifiConnectionReceiver}
+08-07 23:41:48.685  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:41:48.698  1865  3129 I ActivityManager: Changes in 10076 11 to 10, 128 to 0
+08-07 23:41:48.728  1865  3129 I ActivityManager: Killing 16037:com.samsung.android.ce/u0a96 (adj 975): empty #25
+08-07 23:41:48.783  1865  4160 I ActivityManager: Changes in 10056 19 to 6, 0 to 128
+08-07 23:41:48.787  1865  3129 I ActivityManager: Killing 16216:com.samsung.android.smartface/1000 (adj 915): empty #25
+08-07 23:41:48.823 17518 17631 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `ref`. Please use `ref()` instead.
+08-07 23:41:48.824 17518 17631 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `once`. Please use `get()` instead.
+08-07 23:41:48.827 17518 17631 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog x86 calls(합산) planets=86 origin=arc_core_policy', 'trade_port_planet_resync'
+08-07 23:41:48.890 17518 17631 I ReactNativeJS: [territorial] pass iron_remnant decision=battle holdChanged=false blue->blue
+08-07 23:41:49.071 17518 17631 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `ref`. Please use `ref()` instead.
+08-07 23:41:49.072 17518 17631 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `once`. Please use `get()` instead.
+08-07 23:41:50.605 17518 17631 I ReactNativeJS: [ArcCore/Convoy] heal convoy gross over cap planets=50 cap=45000
+08-07 23:41:50.610 17518 17631 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog x60 calls(합산) planets=60 origin=arc_core_policy', 'trade_port_zone_catalog'
+08-07 23:41:51.464  1865  1918 I ActivityManager: Start proc 17903:com.samsung.android.dqagent/1000 for broadcast {com.samsung.android.dqagent/com.samsung.android.dqagent.receiver.DQADataReceiver}
+08-07 23:41:51.464  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:41:51.715  1865  2837 I ActivityManager: Killing 16332:com.google.android.gms.unstable/u0a252 (adj 905): empty #25
+08-07 23:41:54.088 17518 17631 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog x60 calls(합산) planets=60 origin=arc_core_policy', 'trade_port_planet_resync'
+08-07 23:41:54.088 17518 17631 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog x60 calls(합산) planets=60 origin=arc_core_policy', 'trade_port_zone_catalog'
+08-07 23:41:54.387  1865  3159 I ActivityManager: Changes in 10251 3 to 6, 184 to 128
+08-07 23:41:54.835  1865  1916 I ActivityManager: Changes in 10056 6 to 15, 128 to 0
+08-07 23:41:56.037 17518 17631 I ReactNativeJS: [ArcCore/Learning] RTDB global merge entries=14
+08-07 23:41:56.420 17518 17631 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog x103 calls(합산) planets=103 origin=arc_core_policy', 'trade_port_planet_resync'
+08-07 23:41:56.421 17518 17631 I ReactNativeJS: [ArcCore/RTDB] boot sync ok pack=2026-06-26-1782444492960 global=true
+08-07 23:41:56.461 17518 17631 I ReactNativeJS: [ArcCore/Economy] overlay delta ingest id=2026-06-26-1782444492960 source=rtdb kpi=ok
+08-07 23:41:56.478 17518 17631 I ReactNativeJS: '[ArcCore/Economy] market micro-adjust pop=100000 sample=500', { weapon: 1.0753180674799396,
+08-07 23:41:56.478 17518 17631 I ReactNativeJS:   mineral: 0.9417385185330925,
+08-07 23:41:56.478 17518 17631 I ReactNativeJS:   food: 1.0014869746009296,
+08-07 23:41:56.478 17518 17631 I ReactNativeJS:   tech: 1.075317644838583,
+08-07 23:41:56.478 17518 17631 I ReactNativeJS:   luxury: 1.075317651755262,
+08-07 23:41:56.478 17518 17631 I ReactNativeJS:   contraband: 1.0753173518702202,
+08-07 23:41:56.478 17518 17631 I ReactNativeJS:   trade_route: 1.0753180205190294,
+08-07 23:41:56.478 17518 17631 I ReactNativeJS:   capital_ship: 1.0753170236864191 }
+08-07 23:41:56.869 17518 17631 I ReactNativeJS: '[ArcCore/Economy] trade-route daily market planets=60 entries=1011', 'pressure=1.000 mul=1.075'
+08-07 23:41:56.888 17518 17631 I ReactNativeJS: [title-diag] catchUp=8055ms probe=1ms
+08-07 23:41:56.920 17518 17631 I ReactNativeJS: [ArcCore/DailyOps][STEP] convoyDailySettlement
+08-07 23:42:11.166  1865  2023 I ActivityManager: Changes in 10251 6 to 6, 128 to 0
+08-07 23:42:11.172  1865  2023 I ActivityManager: Changes in 10242 19 to 19, 128 to 0
+08-07 23:42:11.174  1865  2023 I ActivityManager: Changes in 10314 19 to 19, 128 to 0
+08-07 23:42:11.176  1865  2023 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+08-07 23:42:32.705 17518 17631 I ReactNativeJS: [ArcCore/DailyOps][STEP] planetUpkeep
+08-07 23:42:33.565 17518 17631 I ReactNativeJS: [ArcCore/DailyOps][STEP] centralBankExpenditure
+08-07 23:42:33.603 17518 17631 I ReactNativeJS: [ArcCore/DailyOps][STEP] planetFiscalClosedLoop
+08-07 23:42:33.677 17518 17631 I ReactNativeJS: [ArcCore/Fiscal] day=2026-08-07 overall=warn maxRatio=3.18 gini=0.271 streak=1 adjust=false
+08-07 23:42:37.589 17518 17631 I ReactNativeJS: [ArcCore/DailyOps][STEP] economyLearning
+08-07 23:42:37.610 17518 17631 I ReactNativeJS: [ArcCore/Learning] economy daily pass day=2026-08-07 planets=757 tradeGross=0 convoyProfit=0
+08-07 23:42:37.611 17518 17631 I ReactNativeJS: [ArcCore/DailyOps][STEP] planetCoreGaugeComposition
+08-07 23:42:37.697 17518 17631 I ReactNativeJS: [ArcCore/DailyOps][STEP] commitPlanetCoreStatOpsTrendAfterBatch
+08-07 23:42:37.710 17518 17631 I ReactNativeJS: [ArcCore/DailyOps][STEP] batch_return
+08-07 23:42:37.722 17518 17631 I ReactNativeJS: [ArcCore/DailyOps][STEP] markCompleted
+08-07 23:42:37.736 17518 17631 I ReactNativeJS: [ArcCore/DailyOps] batch completed dayKey=2026-08-07 elapsedMs=50277
+08-07 23:42:37.770 17518 17631 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `ref`. Please use `ref()` instead.
+08-07 23:42:37.770 17518 17631 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `set`. Please use `set()` instead.
+08-07 23:42:39.029 17518 17631 I ReactNativeJS: [ArcCore/RTDB] daily KPI push auth=62lJSr… day=2026-08-07
+08-07 23:42:39.088 17518 17631 I ReactNativeJS: [boot-perf] continue_prewarm total=56017ms | layout_effect_start+1150ms → csv_indexes_start(minimal)+0ms → csv_indexes_end(minimal)+8ms → storage_load_start+95ms → storage_load_end+1037ms → boot_ready+27ms → arc_core_start+255ms → post_boot_settled+1721ms → continue_prewarm_start+46329ms → csv_indexes_start(full)+3ms → csv_indexes_end(full)+7ms → continue_join_catchup_start+319ms → continue_join_catchup_end+1ms → continue_join_daily_start+0ms → continue_join_daily_end+3744ms → continue_assets_start+0ms → continue_assets_end+33ms → continue_bootstrap_start+0ms → continue_bootstrap_end+5ms → continue_prewarm_end+1284ms
+08-07 23:42:41.355 17518 17631 I ReactNativeJS: [MEM] planet_main_stage_hub mount
+08-07 23:42:41.357 17518 17631 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=32 detail=arcadia_prime
+08-07 23:42:41.523 17518 17631 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=32
+08-07 23:42:41.539  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:42:41.544  1865  3129 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:42:41.576 17518 17631 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=42 origin=arc_core_policy', 'trade_port_planet_resync'
+08-07 23:42:44.362 17518 17631 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=32 detail=hub_dodge_overlay_unmount_debounce
+08-07 23:43:01.984 17518 17631 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=manual hermes_mb=32 detail=departure_preflight_arcadia_prime
+08-07 23:43:01.989 17518 17631 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=1 reason=galaxy_departure_after_combat
+08-07 23:43:01.993 17518 17631 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=planet_hub reason=galaxy_departure_after_combat immediate=0
+08-07 23:43:01.993 17518 17631 I ReactNativeJS: [MEM] teardownPlanetHubCombatForGalaxyDeparture planet=arcadia_prime
+08-07 23:43:02.662 17518 17631 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=2 reason=route_blur
+08-07 23:43:02.664 17518 17631 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=planet_hub reason=route_blur immediate=0
+08-07 23:43:02.666 17518 17631 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32 detail=arcadia_prime
+08-07 23:43:02.667 17518 17631 I ReactNativeJS: [MEM] releasePlanetMainStageSession dedupe route_blur:arcadia_prime
+08-07 23:43:02.668 17518 17631 I ReactNativeJS: [MEM] planet_main_stage_hub disposed
+08-07 23:43:02.708 17518 17631 I ReactNativeJS: [MEM] galaxy_map mount
+08-07 23:43:02.744 17518 17631 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=3 reason=ingress_after_hub_combat
+08-07 23:43:02.744 17518 17631 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=ingress_after_hub_combat immediate=0
+08-07 23:43:02.745 17518 17631 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=32 detail=ingress_after_hub_combat
+08-07 23:43:02.745 17518 17631 I ReactNativeJS: [MEM] runGalaxyMapResidentDeepReclaimPass reason=ingress_after_hub_combat hubSkia=true
+08-07 23:43:02.746 17518 17631 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=ingress_reclaim hermes_mb=32 detail=after_hub_combat
+08-07 23:43:02.746 17518 17631 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_focus hermes_mb=32
+08-07 23:43:02.905 17518 17631 I ReactNativeJS: [MEM] consumeGalaxyMapIngressReclaim kind=after_hub_combat fresco=true
+08-07 23:43:05.551 17518 17631 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+08-07 23:43:05.552 17518 17631 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+08-07 23:43:06.763 17518 17631 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=4 reason=galaxy_map_post_ingress_settle
+08-07 23:43:06.763 17518 17631 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=galaxy_map_post_ingress_settle immediate=0
+08-07 23:43:06.765 17518 17631 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=32 detail=galaxy_map_post_ingress_settle
+08-07 23:43:06.765 17518 17631 I ReactNativeJS: [MEM] runGalaxyMapResidentDeepReclaimPass reason=galaxy_map_post_ingress_settle hubSkia=true
+08-07 23:43:08.306 17518 17631 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+08-07 23:43:47.763 17518 17631 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=5 reason=galaxy_map_post_ingress_followup
+08-07 23:43:47.763 17518 17631 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=galaxy_map_post_ingress_followup immediate=0
+08-07 23:43:47.764 17518 17631 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=36 detail=galaxy_map_post_ingress_followup
+08-07 23:43:47.764 17518 17631 I ReactNativeJS: [MEM] runGalaxyMapResidentDeepReclaimPass reason=galaxy_map_post_ingress_followup hubSkia=true
+08-07 23:43:49.306 17518 17631 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+08-07 23:43:56.964  1865  3159 I ActivityManager: Changes in 10251 6 to 3, 0 to 184
+08-07 23:43:56.970  1865  1918 I ActivityManager: Start proc 18020:com.samsung.android.ce/u0a96 for broadcast {com.samsung.android.mcfds/com.samsung.android.ce.ContextEngineReceiver}
+08-07 23:43:56.970  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:43:57.179  1865  4406 I ActivityManager: Killing 16463:com.sec.android.provider.badge/u0a55 (adj 965): empty #25
+08-07 23:44:12.026  1865  3129 I ActivityManager: Changes in 10251 3 to 6, 184 to 0
+08-07 23:44:20.785  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:44:20.791  1865  3159 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:45:37.586  1865  4406 I ActivityManager: Killing 15688:com.samsung.android.stickercenter/1000 (adj 915): empty #25
+08-07 23:45:52.136  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:45:52.141  1865  3129 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:47:18.849  1865  1905 I ActivityManager: Changes in 10147 5 to 2, 184 to 255
+08-07 23:47:18.856  1865  1905 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+08-07 23:47:19.481  1865  1905 I ActivityManager: Changes in 11073 2 to 15, 255 to 128
+08-07 23:47:19.615  1865  3025 I ActivityManager: Changes in 11073 15 to 15, 128 to 0
+08-07 23:47:20.015  1865  1905 I ActivityManager: Killing 17518:com.arcfire.online/u0a1073 (adj 900): remove task
+08-07 23:47:20.251  1865  1905 W ActivityManager: setHasOverlayUi called on unknown pid: 17518
+08-07 23:47:21.951  1865  1918 I ActivityManager: Start proc 18177:com.arcfire.online/u0a1073 for activelaunch {com.arcfire.online/com.arcfire.online.MainActivity}
+08-07 23:47:21.953  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:47:22.977  1865  4149 I ActivityManager: Changes in 11073 19 to 2, 0 to 255
+08-07 23:47:23.202  1865  1905 I ActivityManager: Changes in 10147 2 to 5, 255 to 184
+08-07 23:47:23.485  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:47:23.488  1865  4149 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:47:34.211 18177 18264 I ReactNativeJS: Bridgeless mode is enabled
+08-07 23:47:34.537 18177 18264 I ReactNativeJS: Running "main" with {"rootTag":11,"initialProps":{},"fabric":true}
+08-07 23:47:38.500 18177 18264 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+08-07 23:47:38.525 18177 18264 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+08-07 23:47:38.552 18177 18264 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `settings`. Please use `settings()` instead.', { [Component Stack] name: 'Component Stack' }
+08-07 23:47:38.586 18177 18264 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.', { [Component Stack] name: 'Component Stack' }
+08-07 23:47:38.604 18177 18264 W ReactNativeJS: 'This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `logEvent`. Please use `logEvent()` instead.', { [Component Stack] name: 'Component Stack' }
+08-07 23:47:40.501 18177 18264 I ReactNativeJS: [boot-perf] root_layout total=3372ms | layout_effect_start+1488ms → csv_indexes_start(minimal)+0ms → csv_indexes_end(minimal)+22ms → storage_load_start+146ms → storage_load_end+1679ms → boot_ready+36ms
+08-07 23:47:40.506 18177 18264 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22 Please use `getApp()` instead.
+08-07 23:47:40.731 18177 18264 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `ref`. Please use `ref()` instead.
+08-07 23:47:40.734 18177 18264 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `once`. Please use `get()` instead.
+08-07 23:47:42.016 18177 18264 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog x43 calls(합산) planets=43 origin=arc_core_policy', 'trade_port_planet_resync'
+08-07 23:47:42.019 18177 18264 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `ref`. Please use `ref()` instead.
+08-07 23:47:42.020 18177 18264 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `once`. Please use `get()` instead.
+08-07 23:47:42.194 18177 18264 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `ref`. Please use `ref()` instead.
+08-07 23:47:42.194 18177 18264 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `once`. Please use `get()` instead.
+08-07 23:47:42.240 18177 18264 I ReactNativeJS: [ArcCore/Convoy] heal convoy gross over cap planets=16 cap=45000
+08-07 23:47:44.108 18177 18264 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog x103 calls(합산) planets=103 origin=arc_core_policy', 'trade_port_planet_resync'
+08-07 23:47:46.419 18177 18264 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `ref`. Please use `ref()` instead.
+08-07 23:47:46.420 18177 18264 W ReactNativeJS: This method is deprecated (as well as all React Native Firebase namespaced API) and will be removed in the next major release as part of move to match Firebase Web modular SDK API. Please see migration guide for more details: https://rnfirebase.io/migrating-to-v22. Method called was `once`. Please use `get()` instead.
+08-07 23:47:46.423 18177 18264 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog x60 calls(합산) planets=60 origin=arc_core_policy', 'trade_port_planet_resync'
+08-07 23:47:47.325 18177 18264 I ReactNativeJS: [ArcCore/Learning] RTDB global merge entries=14
+08-07 23:47:47.331 18177 18264 I ReactNativeJS: [ArcCore/RTDB] boot sync ok pack=2026-06-26-1782444492960 global=true
+08-07 23:47:50.040 18177 18264 I ReactNativeJS: [title-diag] catchUp=5929ms probe=2ms
+08-07 23:47:51.691 18177 18264 I ReactNativeJS: [boot-perf] continue_prewarm total=14562ms | layout_effect_start+1488ms → csv_indexes_start(minimal)+0ms → csv_indexes_end(minimal)+22ms → storage_load_start+146ms → storage_load_end+1679ms → boot_ready+36ms → arc_core_start+290ms → post_boot_settled+1138ms → continue_prewarm_start+5504ms → csv_indexes_start(full)+3ms → csv_indexes_end(full)+21ms → continue_join_catchup_start+188ms → continue_join_catchup_end+2396ms → continue_join_daily_start+0ms → continue_join_daily_end+1ms → continue_assets_start+0ms → continue_assets_end+26ms → continue_bootstrap_start+0ms → continue_bootstrap_end+5ms → continue_prewarm_end+1618ms
+08-07 23:47:53.939 18177 18264 I ReactNativeJS: [MEM] planet_main_stage_hub mount
+08-07 23:47:53.942 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=28 detail=arcadia_prime
+08-07 23:47:54.160 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=28
+08-07 23:47:54.207 18177 18264 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog planets=1 items=42 origin=arc_core_policy', 'trade_port_planet_resync'
+08-07 23:47:56.953 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=28 detail=hub_dodge_overlay_unmount_debounce
+08-07 23:48:54.842  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:48:54.845  1865  4151 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:49:20.540 18177 18264 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=1 reason=hub_inbound_drone_end
+08-07 23:49:20.549 18177 18264 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=2 reason=hub_inbound_drone_end:post_skia_peak:pre_backdrop
+08-07 23:49:20.550 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=52 detail=hub_inbound_drone_end
+08-07 23:49:20.551 18177 18264 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+08-07 23:49:20.843 18177 18264 I ReactNativeJS: [MEM] hubBackdropNativeRemount epoch=1 reason=hub_inbound_drone_end:post_skia_peak
+08-07 23:49:21.292 18177 18264 I ReactNativeJS: [MEM] postRemountTrim reason=hub_inbound_drone_end:post_skia_peak fresco=true
+08-07 23:49:22.398 18177 18264 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+08-07 23:49:25.411 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=52 detail=hub_dodge_overlay_unmount_debounce
+08-07 23:50:26.192  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:50:26.194  1865  4149 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:50:40.398 18177 18264 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=3 reason=hub_inbound_drone_end
+08-07 23:50:40.400 18177 18264 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+08-07 23:50:40.400 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=56 detail=hub_inbound_drone_end
+08-07 23:50:40.400 18177 18264 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+08-07 23:50:42.165 18177 18264 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+08-07 23:50:45.170 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=56 detail=hub_dodge_overlay_unmount_debounce
+08-07 23:51:57.533  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:51:57.535  1865  4151 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:52:00.100 18177 18264 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=4 reason=hub_inbound_drone_end
+08-07 23:52:00.102 18177 18264 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+08-07 23:52:00.103 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=48 detail=hub_inbound_drone_end
+08-07 23:52:00.103 18177 18264 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+08-07 23:52:01.971 18177 18264 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+08-07 23:52:04.983 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=48 detail=hub_dodge_overlay_unmount_debounce
+08-07 23:52:53.981 18177 18264 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=5 reason=hub_periodic_soft
+08-07 23:52:53.983 18177 18264 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+08-07 23:52:53.983 18177 18264 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=arcadia_prime gpuLayers=-
+08-07 23:52:55.553 18177 18264 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+08-07 23:53:18.125 18177 18264 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=6 reason=hub_inbound_drone_end
+08-07 23:53:18.126 18177 18264 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+08-07 23:53:18.127 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=40 detail=hub_inbound_drone_end
+08-07 23:53:18.128 18177 18264 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+08-07 23:53:19.906 18177 18264 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+08-07 23:53:23.248 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=40 detail=hub_dodge_overlay_unmount_debounce
+08-07 23:53:29.060  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:53:29.064  1865  4151 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:53:46.328  1865  1918 I ActivityManager: Start proc 18489:com.samsung.android.privacydashboard/u0a107 for content provider {com.samsung.android.privacydashboard/com.samsung.android.privacydashboard.provider.PermissionAccessInformationContentProvider}
+08-07 23:53:46.329  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-07 23:53:46.560  1865  4151 I ActivityManager: Changes in 10107 19 to 5, 0 to 144
+08-07 23:53:52.748  1865  1916 I ActivityManager: Changes in 10107 5 to 15, 144 to 0
+08-07 23:54:12.749  1865  1917 I ActivityManager: Killing 15813:com.samsung.android.authfw/5278 (adj 985): empty #25
+08-07 23:54:34.643 18177 18264 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=7 reason=hub_inbound_drone_end
+08-07 23:54:34.644 18177 18264 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+08-07 23:54:34.645 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=40 detail=hub_inbound_drone_end
+08-07 23:54:34.645 18177 18264 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+08-07 23:54:36.572 18177 18264 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+08-07 23:54:40.178 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=40 detail=hub_dodge_overlay_unmount_debounce
+08-07 23:54:50.250  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:54:50.259  1865  4149 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:55:51.868 18177 18264 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=8 reason=hub_inbound_drone_end
+08-07 23:55:51.870 18177 18264 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+08-07 23:55:51.870 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=40 detail=hub_inbound_drone_end
+08-07 23:55:51.871 18177 18264 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+08-07 23:55:53.654 18177 18264 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+08-07 23:55:57.080 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=40 detail=hub_dodge_overlay_unmount_debounce
+08-07 23:56:02.319  1865  1917 I ActivityManager: Changes in 10108 10 to 10, 0 to 128
+08-07 23:56:02.333  1865  4162 I ActivityManager: Changes in 10108 10 to 10, 128 to 0
+08-07 23:56:11.443  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:56:11.448  1865  2505 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:57:08.175 18177 18264 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=9 reason=hub_inbound_drone_end
+08-07 23:57:08.176 18177 18264 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+08-07 23:57:08.177 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=44 detail=hub_inbound_drone_end
+08-07 23:57:08.177 18177 18264 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+08-07 23:57:09.810 18177 18264 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+08-07 23:57:13.708 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=40 detail=hub_dodge_overlay_unmount_debounce
+08-07 23:57:32.643  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:57:32.646  1865  3137 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:57:54.002 18177 18264 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=10 reason=hub_periodic_soft
+08-07 23:57:54.004 18177 18264 I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=hub_periodic_soft nebulaBefore=1
+08-07 23:57:54.005 18177 18264 I ReactNativeJS: [MEM] runPlanetHubSoftNativeReclaimPass reason=hub_periodic_soft keep=arcadia_prime gpuLayers=-
+08-07 23:57:55.585 18177 18264 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+08-07 23:58:25.091 18177 18264 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=11 reason=hub_inbound_drone_end
+08-07 23:58:25.093 18177 18264 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+08-07 23:58:25.093 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=40 detail=hub_inbound_drone_end
+08-07 23:58:25.094 18177 18264 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+08-07 23:58:26.733 18177 18264 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+08-07 23:58:30.324 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=40 detail=hub_dodge_overlay_unmount_debounce
+08-07 23:58:43.684  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-07 23:58:43.687  1865  4151 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-07 23:59:42.063 18177 18264 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=12 reason=hub_inbound_drone_end
+08-07 23:59:42.065 18177 18264 I ReactNativeJS: [MEM] backdropRemount cooldown skip reason=hub_inbound_drone_end:post_skia_peak
+08-07 23:59:42.065 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=40 detail=hub_inbound_drone_end
+08-07 23:59:42.066 18177 18264 I ReactNativeJS: [MEM] runPlanetHubPostSkiaPeakReclaimPass reason=hub_inbound_drone_end keep=arcadia_prime gpuLayers=skia_inbound_drone_trail,skia_nebula_backdrop
+08-07 23:59:43.805 18177 18264 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+08-07 23:59:47.349 18177 18264 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=36 detail=hub_dodge_overlay_unmount_debounce
+08-08 00:00:00.022  1865  2329 I ActivityManager: Changes in 10108 10 to 5, 0 to 144
+08-08 00:00:00.220  1865  3137 E ActivityManager: Sending non-protected broadcast com.samsung.android.app.aodservice.LOCK_WIDGET_REQUEST from system 2514:com.android.systemui/u0a53 pkg com.android.systemui
+08-08 00:00:00.220  1865  3137 E ActivityManager: java.lang.Throwable
+08-08 00:00:00.220  1865  3137 E ActivityManager: 	at com.android.server.am.BroadcastController.checkBroadcastFromSystem(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:252)
+08-08 00:00:00.220  1865  3137 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLockedTraced(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:344)
+08-08 00:00:00.220  1865  3137 E ActivityManager: 	at com.android.server.am.BroadcastController.broadcastIntentLocked(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:18)
+08-08 00:00:00.220  1865  3137 E ActivityManager: 	at com.android.server.am.ActivityManagerService.broadcastIntentWithFeature(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:149)
+08-08 00:00:00.220  1865  3137 E ActivityManager: 	at android.app.IActivityManager$Stub.onTransact$broadcastIntentWithFeature$(IActivityManager.java:12412)
+08-08 00:00:00.220  1865  3137 E ActivityManager: 	at android.app.IActivityManager$Stub.onTransact(IActivityManager.java:3205)
+08-08 00:00:00.220  1865  3137 E ActivityManager: 	at com.android.server.am.ActivityManagerService.onTransact(qb/108940926 802103cef46cde14cb0d3b748d2076734c471a17d4b8e991ffa01c0e15de42a9:425)
+08-08 00:00:00.220  1865  3137 E ActivityManager: 	at android.os.Binder.execTransactInternal(Binder.java:1462)
+08-08 00:00:00.220  1865  3137 E ActivityManager: 	at android.os.Binder.execTransact(Binder.java:1401)
+08-08 00:00:00.250  1865  1918 I ActivityManager: Start proc 18691:com.samsung.android.calendar/u0a222 for broadcast {com.samsung.android.calendar/com.samsung.android.app.calendar.widget.AodCalendarReceiver}
+08-08 00:00:00.250  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-08 00:00:00.265  1865  1917 I ActivityManager: Changes in 10056 19 to 11, 0 to 128
+08-08 00:00:00.273  1865  4151 I ActivityManager: Changes in 10056 11 to 19, 128 to 0
+08-08 00:00:00.654  1865  4162 I ActivityManager: Changes in 10222 19 to 11, 0 to 128
+08-08 00:00:00.668  1865  1918 I ActivityManager: Start proc 18711:com.android.providers.calendar/u0a115 for content provider {com.android.providers.calendar/com.android.providers.calendar.CalendarProvider2}
+08-08 00:00:00.668  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-08 00:00:00.705  1865  1918 W ActivityManager: Slow operation: 57ms so far, now at startProcess: returned from zygote!
+08-08 00:00:00.706  1865  1918 W ActivityManager: Slow operation: 58ms so far, now at startProcess: done updating battery stats
+08-08 00:00:00.706  1865  1918 W ActivityManager: Slow operation: 58ms so far, now at startProcess: building log message
+08-08 00:00:00.706  1865  1918 I ActivityManager: Start proc 18726:com.samsung.android.app.reminder/u0a224 for content provider {com.samsung.android.app.reminder/com.samsung.android.app.reminder.data.provider.ReminderProvider}
+08-08 00:00:00.706  1865  1918 W ActivityManager: Slow operation: 58ms so far, now at startProcess: starting to update pids map
+08-08 00:00:00.707  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-08 00:00:00.707  1865  1918 W ActivityManager: Slow operation: 60ms so far, now at startProcess: done updating pids map
+08-08 00:00:00.742  1865  4162 I ActivityManager: Changes in 10222 11 to 19, 128 to 0
+08-08 00:00:00.881  1865  2505 I ActivityManager: Killing 17064:com.android.chrome:privileged_process0/u0a266 (adj 975): empty #25
+08-08 00:00:00.956  1865  4151 W ActivityManager: Scheduling restart of crashed service com.android.chrome/org.chromium.content.app.PrivilegedProcessService0 in 1000ms for connection
+08-08 00:00:00.966  1865  1918 I ActivityManager: Start proc 18759:com.samsung.android.app.aodservice:provider/u0a53 for content provider {com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.provider.AODContentProvider}
+08-08 00:00:00.968  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-08 00:00:01.169  1865  4162 I ActivityManager: Killing 17065:com.google.android.webview:webview_service/u0a263 (adj 975): empty #25
+08-08 00:00:01.248  1865  4162 I ActivityManager: Changes in 10115 19 to 5, 0 to 144
+08-08 00:00:01.268  1865  4162 I ActivityManager: Changes in 10224 19 to 5, 0 to 144
+08-08 00:00:01.268  1865  4162 I ActivityManager: Changes in 10222 19 to 5, 0 to 144
+08-08 00:00:02.885  1865  2505 I ActivityManager: Changes in 10056 19 to 5, 0 to 144
+08-08 00:00:04.889  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-08 00:00:04.894  1865  4162 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-08 00:00:06.085  1865  1916 I ActivityManager: Changes in 10108 5 to 10, 144 to 0
+08-08 00:00:07.198  1865  1916 I ActivityManager: Changes in 10224 5 to 15, 144 to 0
+08-08 00:00:07.279  1865  1916 I ActivityManager: Changes in 10222 5 to 15, 144 to 0
+08-08 00:00:07.285  1865  1916 I ActivityManager: Changes in 10115 5 to 15, 144 to 0
+08-08 00:00:07.286  1865  1916 I ActivityManager: Changes in 10056 5 to 15, 144 to 0
+08-08 00:00:10.028  1865  1918 I ActivityManager: Start proc 18802:com.samsung.android.forest/1000 for service {com.samsung.android.forest/com.samsung.android.forest.service.WAlarmIntentService}
+08-08 00:00:10.029  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-08 00:00:27.201  1865  1917 I ActivityManager: Killing 17177:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a266i-9000 (adj 911): empty #25
+08-08 00:00:27.245  1865  4151 W ActivityManager: Scheduling restart of crashed service com.android.chrome/org.chromium.content.app.SandboxedProcessService0:0 in 1000ms for connection
+08-08 00:00:28.202  1865  1917 I ActivityManager: Killing 16410:com.lguplus.appstore/u0a99 (adj 965): empty #25
+08-08 00:00:28.204  1865  1917 I ActivityManager: Killing 17249:com.android.keychain/1000 (adj 965): empty #26
+08-08 00:00:42.730 18177 18264 I ReactNativeJS: [ArcCore/DailyOps] batch started dayKey=2026-08-08 source=tick
+08-08 00:00:42.737 18177 18264 I ReactNativeJS: [ArcCore/DailyOps][STEP] batch_begin
+08-08 00:00:42.738 18177 18264 I ReactNativeJS: [ArcCore/DailyOps][STEP] planetCoreRuntimeBootstrap
+08-08 00:00:44.634 18177 18264 I ReactNativeJS: [ArcCore/WorldExpansion] global sync(sync) gen=2 epoch=2026-06-26 target=44 +1 -0 hardReset=false
+08-08 00:00:46.032 18177 18264 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog x131 calls(합산) planets=131 origin=arc_core_policy', 'trade_port_planet_resync'
+08-08 00:00:49.240 18177 18264 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog x61 calls(합산) planets=61 origin=arc_core_policy', 'trade_port_zone_catalog'
+08-08 00:00:52.582 18177 18264 I ReactNativeJS: '[ArcCore/Economy] bulk set_catalog x61 calls(합산) planets=61 origin=arc_core_policy', 'trade_port_zone_catalog'
+08-08 00:00:52.988 18177 18264 I ReactNativeJS: '[ArcCore/Economy] market micro-adjust pop=100000 sample=500', { weapon: 1.0753180674799396,
+08-08 00:00:52.988 18177 18264 I ReactNativeJS:   mineral: 0.9417385185330925,
+08-08 00:00:52.988 18177 18264 I ReactNativeJS:   food: 1.0014869746009296,
+08-08 00:00:52.988 18177 18264 I ReactNativeJS:   tech: 1.075317644838583,
+08-08 00:00:52.988 18177 18264 I ReactNativeJS:   luxury: 1.075317651755262,
+08-08 00:00:52.988 18177 18264 I ReactNativeJS:   contraband: 1.0753173518702202,
+08-08 00:00:52.988 18177 18264 I ReactNativeJS:   trade_route: 1.0753180205190294,
+08-08 00:00:52.988 18177 18264 I ReactNativeJS:   capital_ship: 1.0753170236864191 }
+08-08 00:00:53.548 18177 18264 I ReactNativeJS: '[ArcCore/Economy] trade-route daily market planets=61 entries=1030', 'pressure=1.000 mul=1.075'
+08-08 00:00:53.777 18177 18264 I ReactNativeJS: [ArcCore/DailyOps][STEP] convoyDailySettlement
+08-08 00:01:26.080  1865  1917 I ActivityManager: Changes in 10250 19 to 11, 0 to 128
+08-08 00:01:26.084  1865  4162 I ActivityManager: Changes in 10250 11 to 19, 128 to 0
+08-08 00:01:29.026  1865  1918 I ActivityManager: Start proc 18860:com.lguplus.appstore/u0a99 for broadcast {com.lguplus.appstore/com.onestore.android.shopclient.specific.alarm.UpgradeAlarmReceiver}
+08-08 00:01:29.027  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-08 00:01:29.403  1865  2505 I ActivityManager: Changes in 10099 19 to 11, 0 to 128
+08-08 00:01:29.433  1865  1918 I ActivityManager: Start proc 18919:com.sec.android.provider.badge/u0a55 for broadcast {com.sec.android.provider.badge/com.sec.android.provider.badge.BadgeCountReceiver}
+08-08 00:01:29.435  1865  1918 I ActivityManager: ProcessObserver broadcast disabled
+08-08 00:01:29.447  1865  4149 I ActivityManager: Killing 17285:com.samsung.android.provider.filterprovider/1000 (adj 965): empty #25
+08-08 00:01:29.538  1865  4162 I ActivityManager: Changes in 10251 6 to 6, 0 to 128
+08-08 00:01:29.544  1865  2505 I ActivityManager: Changes in 10104 19 to 19, 0 to 128
+08-08 00:01:29.610  1865  4151 I ActivityManager: Changes in 10055 19 to 11, 0 to 128
+08-08 00:01:29.648  1865  3137 I ActivityManager: Changes in 10055 11 to 5, 128 to 144

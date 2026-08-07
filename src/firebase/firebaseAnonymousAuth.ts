@@ -71,6 +71,15 @@ export function scheduleFirebaseAnonymousAuthWarmup(): void {
   });
 }
 
+/**
+ * 타이틀 버튼(bootReady) 이후 클라우드 경로용 — Auth를 먼저 확보한 뒤 Firestore/RTDB 시드.
+ * 실패해도 null 반환(로컬 플레이 계속). 타이틀 UI를 막지 않는다.
+ */
+export async function ensureFirebaseAnonymousAuthForCloudBoot(): Promise<string | null> {
+  warmupScheduled = true;
+  return ensureFirebaseAnonymousAuth();
+}
+
 /** 계정 초기화 — KPI 기기 키 분리용 sign-out */
 export async function resetFirebaseAnonymousAuthForAccountPurge(): Promise<void> {
   cachedAuthUid = null;

@@ -1,4 +1,4 @@
-Daily audit — 2026-08-05T15:00:08.662Z
+Daily audit — 2026-08-07T15:00:08.863Z
 
 TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 

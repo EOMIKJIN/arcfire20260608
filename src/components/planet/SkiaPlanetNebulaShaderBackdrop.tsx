@@ -272,24 +272,54 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
     };
   }, []);
 
+  /**
+   * dodge FX 없을 때는 50ms 상시 틱 금지(전투 성운 dodgeFxActive=true 구간 포함).
+   * 가벼운 폴링으로 FX 출현만 보고, 활성 중에만 DODGE_FX_TICK_MS 고빈도 flush.
+   */
   useEffect(() => {
     if (!fxLoopActive) return undefined;
-    const id = setInterval(() => {
+    let heavyId: ReturnType<typeof setInterval> | null = null;
+    const DODGE_FX_IDLE_POLL_MS = 200;
+    const stopHeavy = () => {
+      if (heavyId != null) {
+        clearInterval(heavyId);
+        heavyId = null;
+      }
+    };
+    const startHeavy = () => {
+      if (heavyId != null) return;
+      heavyId = setInterval(() => {
+        if (!skiaLoopsActiveRef.current) return;
+        const n = dodgeHitFxRef?.current?.length ?? 0;
+        if (n <= 0) {
+          flushDodgePicture();
+          stopHeavy();
+          return;
+        }
+        flushDodgePicture();
+      }, DODGE_FX_TICK_MS);
+    };
+    if ((dodgeHitFxRef?.current?.length ?? 0) > 0) startHeavy();
+    const pollId = setInterval(() => {
       if (!skiaLoopsActiveRef.current) return;
-      flushDodgePicture();
-    }, DODGE_FX_TICK_MS);
+      if ((dodgeHitFxRef?.current?.length ?? 0) > 0) startHeavy();
+    }, DODGE_FX_IDLE_POLL_MS);
     const sessionToken = sessionPlanetId
       ? registerPlanetSessionResource({
         ownerId: 'skia_nebula_dodge_fx_tick',
         planetId: sessionPlanetId,
-        dispose: () => clearInterval(id),
+        dispose: () => {
+          stopHeavy();
+          clearInterval(pollId);
+        },
       })
       : null;
     return () => {
-      clearInterval(id);
+      stopHeavy();
+      clearInterval(pollId);
       sessionToken?.release();
     };
-  }, [fxLoopActive, sessionPlanetId, flushDodgePicture]);
+  }, [fxLoopActive, sessionPlanetId, flushDodgePicture, dodgeHitFxRef]);
 
   useEffect(() => {
     flushDodgePicture();

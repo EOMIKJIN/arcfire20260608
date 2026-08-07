@@ -72,7 +72,10 @@ export async function checkNicknameRegistry(
     }
     return 'taken';
   } catch (e) {
-    console.warn('[nicknameRegistry] check failed (offline fallback):', e);
+    // offline/timeout 기대 경로 — console.warn은 RN LogBox 팝업을 띄움(대표님 실기).
+    if (__DEV__) {
+      console.log('[nicknameRegistry] check soft-offline:', e instanceof Error ? e.message : e);
+    }
     return 'offline';
   }
 }
@@ -100,8 +103,11 @@ export async function reserveNickname(nickname: string, uid: string): Promise<bo
     }
     return ok === true;
   } catch (e) {
-    // 타인 선점(permission denied) 포함 — 호출부에서 재검사로 구분
-    console.warn('[nicknameRegistry] reserve failed:', e);
+    // 타인 선점(permission denied)·offline 포함 — 호출부에서 재검사로 구분.
+    // console.warn 금지(LogBox 팝업).
+    if (__DEV__) {
+      console.log('[nicknameRegistry] reserve soft-fail:', e instanceof Error ? e.message : e);
+    }
     return false;
   }
 }
@@ -155,7 +161,10 @@ export async function releaseNicknameReservationForAccountPurge(
     );
   } catch (e) {
     if (__DEV__) {
-      console.warn('[nicknameRegistry] release on purge failed (offline/queued):', e);
+      console.log(
+        '[nicknameRegistry] release on purge deferred:',
+        e instanceof Error ? e.message : e,
+      );
     }
   }
 }
@@ -174,8 +183,10 @@ export async function ensureNicknameReservedRetro(uid: string, nickname: string)
     const state = await checkNicknameRegistry(trimmedNick, { excludeUid: trimmedUid });
     if (state === 'offline') return; // 다음 동기화에서 재시도
     if (state === 'taken') {
-      // 소급 시점 충돌(먼저 예약한 타 유저 존재) — 게임 진행은 막지 않고 로그만
-      console.warn('[nicknameRegistry] retro reserve conflict — nickname already reserved');
+      // 소급 시점 충돌(먼저 예약한 타 유저 존재) — 게임 진행은 막지 않음. LogBox 금지.
+      if (__DEV__) {
+        console.log('[nicknameRegistry] retro reserve conflict — nickname already reserved');
+      }
       await AsyncStorage.setItem(`${NICKNAME_RESERVED_FLAG_KEY}:${trimmedUid}`, trimmedNick);
       return;
     }
