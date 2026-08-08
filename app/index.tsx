@@ -32,12 +32,12 @@ import { syncUserDataWithServer } from '../src/firebase/userDataSync';
 import { StageShell } from '../src/stages/StageShell';
 import { ContinueSessionLoadingView } from '../src/game/continueSessionLoadingView';
 import {
-  CONTINUE_SESSION_MIN_LOADING_MS,
   runContinueSessionPrewarm,
   yieldToUi,
 } from '../src/game/continueSessionPrewarm';
 import { resumePlayerToLastHubPlanet } from '../src/game/galaxyMapSessionResume';
 import { runStageNavAfterTeardown } from '../src/navigation/stageNavGate';
+import { playUiSfx } from '../src/audio';
 
 /** 타이틀·네이티브 스플래시와 로고 톤 맞춤 */
 const TITLE_SCREEN_BG = '#000000';
@@ -98,16 +98,17 @@ export default function TitleScreen() {
 
   const [continueFlowActive, setContinueFlowActive] = useState(false);
   const [cloudRestorePending, setCloudRestorePending] = useState(false);
-  /** 인트로(신규계정·비-introSeen) 경로 탭 직후 즉시 표시 — runStageNavAfterTeardown 자체가
-   * rAF+idle-wait+drain으로 최대 2.5초+ 걸릴 수 있는데, 그동안 버튼에 아무 시각적 변화가
-   * 없어서 "눌러도 반응 없음"으로 보이고 재탭까지 유발했다(재탭은 titleNavLockRef에 막혀 무시됨). */
+  /**
+   * 버튼 로딩 스피너 — 클릭연출(activeOpacity) 직후·실제 비용 구간과 동시.
+   * 이어하기: 차원항로 트리 교체·마운트 직전 / 시작하기: runStageNavAfterTeardown 대기.
+   * 가짜 대기 연출용 아님. 비용이 없으면 1~2프레임만 보이고 다음 화면으로 넘어간다.
+   */
   const [navPending, setNavPending] = useState(false);
   /** 타이틀 입력 준비 완료 — RN 부트·하이드레이션·catch-up·(있다면)클라우드 복원 판정까지 종료 */
   const titleInteractive = bootReady && postBootSettled && hydrated && !cloudRestorePending;
   const cloudCheckStartedRef = useRef(false);
   const flowCancelledRef = useRef(false);
   const prewarmPromiseRef = useRef<Promise<void> | null>(null);
-  const continueMinHoldTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleNavLockRef = useRef(false);
   const titleNavScheduledRef = useRef(false);
   const titleMountedRef = useRef(true);
@@ -122,10 +123,6 @@ export default function TitleScreen() {
   useEffect(() => {
     return () => {
       flowCancelledRef.current = true;
-      if (continueMinHoldTimerRef.current) {
-        clearTimeout(continueMinHoldTimerRef.current);
-        continueMinHoldTimerRef.current = null;
-      }
     };
   }, []);
 
@@ -198,32 +195,29 @@ export default function TitleScreen() {
   const handleStart = () => {
     const p = usePlayerStore.getState().player;
     if (p?.flags.introSeen) {
-      if (continueFlowActive || titleNavLockRef.current) return;
+      if (continueFlowActive || titleNavLockRef.current || navPending) return;
 
       flowCancelledRef.current = false;
       titleNavLockRef.current = true;
-      // 로딩화면부터 먼저 그린다 — runContinueSessionPrewarm()이 내부적으로 부르는
-      // buildCsvStaticIndexesFull()(아이템·광물·밸런스 오버레이 인덱스)이 첫 await 전까지
-      // 동기로 도는데, 이걸 setContinueFlowActive보다 먼저 호출하면 그 동안 화면이 전혀
-      // 안 바뀌어서 "탭해도 2~3초 멈춰있다"로 보였다. 프레임을 한 번 넘겨 로딩화면이 실제로
-      // 페인트된 뒤에야 무거운 동기 작업을 시작한다.
-      setContinueFlowActive(true);
+      // 정석: (1) TouchableOpacity 클릭연출은 버튼이 살아 있는 동안 완료
+      // (2) 비용 구간과 동시에 버튼 스피너 (3) 페인트 후 차원항로 교체·마운트
+      // (4) 차원항로 페인트 후 prewarm — 무거운 동기는 항상 "보이는 로딩"과 동시.
+      setNavPending(true);
 
       void (async () => {
         await yieldToUi();
         await yieldToUi();
+        if (flowCancelledRef.current || !titleMountedRef.current) return;
+        setContinueFlowActive(true);
+        await yieldToUi();
+        await yieldToUi();
         if (flowCancelledRef.current) return;
         if (!getActiveMission()) initTutorialStory();
+        // 강제 minHold 없음 — prewarm(실비용) 완료 즉시 허브 진입.
         prewarmPromiseRef.current = runContinueSessionPrewarm().catch(() => {
           /* 프리로드 실패해도 진입은 허용 */
         });
-        const minHold = new Promise<void>((r) => {
-          continueMinHoldTimerRef.current = setTimeout(() => {
-            continueMinHoldTimerRef.current = null;
-            r();
-          }, CONTINUE_SESSION_MIN_LOADING_MS);
-        });
-        await Promise.all([prewarmPromiseRef.current ?? Promise.resolve(), minHold]);
+        await (prewarmPromiseRef.current ?? Promise.resolve());
         if (flowCancelledRef.current || titleNavScheduledRef.current) return;
         titleNavScheduledRef.current = true;
         resumePlayerToLastHubPlanet();
@@ -237,8 +231,9 @@ export default function TitleScreen() {
 
       return;
     }
-    if (titleNavLockRef.current) return;
+    if (titleNavLockRef.current || navPending) return;
     titleNavLockRef.current = true;
+    // 시작하기: 클릭연출 후 스피너 ↔ teardown 대기 동시 → 인트로.
     setNavPending(true);
     if (p) {
       runStageNavAfterTeardown({
@@ -323,9 +318,15 @@ export default function TitleScreen() {
             <View style={styles.btnArea}>
               <TouchableOpacity
                 style={[styles.btnStart, player ? styles.btnStartWithSave : null]}
+                onPressIn={() => {
+                  if (!titleInteractive || navPending) return;
+                  playUiSfx('ui_confirm');
+                }}
                 onPress={handleStart}
                 activeOpacity={0.82}
-                disabled={!titleInteractive || navPending}
+                // navPending 때는 disabled 하지 않음 — disabled가 activeOpacity 클릭연출을 끊음.
+                // 연타는 titleNavLockRef / handleStart 가드로 차단.
+                disabled={!titleInteractive}
               >
                 {!titleInteractive || navPending ? (
                   <ActivityIndicator color={COLORS.ink_dark} />

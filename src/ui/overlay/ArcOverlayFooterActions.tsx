@@ -46,6 +46,7 @@ export const ArcOverlayFooterActions = memo(function ArcOverlayFooterActions({
           variant={resolvedConfirmVariant}
           onPress={onConfirm}
           disabled={confirmDisabled}
+          sfxCue="ui_confirm"
           style={styles.btn}
         />
       </View>
@@ -58,6 +59,7 @@ export const ArcOverlayFooterActions = memo(function ArcOverlayFooterActions({
         variant={cancelVariant}
         onPress={onCancel ?? onConfirm}
         disabled={cancelDisabled}
+        sfxCue="ui_cancel"
         style={styles.btn}
       />
       <ArcButton
@@ -65,6 +67,7 @@ export const ArcOverlayFooterActions = memo(function ArcOverlayFooterActions({
         variant={resolvedConfirmVariant}
         onPress={onConfirm}
         disabled={confirmDisabled}
+        sfxCue="ui_confirm"
         style={styles.btn}
       />
     </View>

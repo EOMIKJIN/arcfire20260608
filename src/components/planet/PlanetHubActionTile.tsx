@@ -1,10 +1,11 @@
-import React, { memo, useId } from 'react';
+import React, { memo, useId, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import { FONTS, SPACING } from '../../utils/theme';
 import { TACTICAL_HUB } from '../../ui/tactical/tacticalHubTokens';
 import { PlanetHubActionIcon } from '../../ui/tactical/PlanetHubActionIcon';
 import type { PlanetHubActionIconSpec } from '../../ui/tactical/planetHubActionIcons';
+import { bindUiSfxPressIn } from '../../audio';
 
 /** 스캔·무역소 등 메인스테이지 하단 액션 타일 공통 높이 */
 export const PLANET_HUB_ACTION_TILE_MIN_HEIGHT_PX = 52;
@@ -87,6 +88,10 @@ export const PlanetHubActionTile = memo(function PlanetHubActionTile({
 }: Props) {
   const gradId = useId().replace(/:/g, '');
   const faded = disabled || dimmed;
+  const onPressIn = useMemo(
+    () => bindUiSfxPressIn({ cue: 'ui_click', silent: faded }),
+    [faded],
+  );
 
   return (
     <Pressable
@@ -97,6 +102,7 @@ export const PlanetHubActionTile = memo(function PlanetHubActionTile({
         pressed && !disabled && styles.tilePressed,
         style,
       ]}
+      onPressIn={onPressIn}
       onPress={onPress}
       disabled={disabled}
       android_disableSound

@@ -148,8 +148,7 @@ const MAP_PAN_DECELERATION = 0.992;
 /** 루트 간 이동 시간(임시 고정) */
 const SHIP_TRANSIT_DURATION_MS = 3000;
 const DEFERRED_TILE_STEP_MS = 120;
-/** 출발 직후 replace — 맵 onLayout·첫 rAF 전까지 LOADING 유지(시설 서브스테이지와 동일 패턴) */
-const GALAXY_MAP_LOADING_MIN_MS = 520;
+/** 출발 직후 replace — 강제 ms 대기 없이 2프레임 페인트 후 게이트 해제(실 readiness는 mapMetrics·stageFrame·session) */
 /** worldmap → planet/combat replace 전 Reanimated performOperations drain */
 const HUB_NAV_POST_TEARDOWN_DELAY_MS = DEFAULT_STAGE_NAV_DRAIN_MS;
 type DeferredDirection = 'north' | 'east' | 'south' | 'west';
@@ -712,14 +711,22 @@ export default function WorldMapScreen() {
       const transitReturn = pendingTransitCombatReturnRef.current;
       if (transitReturn) {
         setGalaxyLoadingMinHold(true);
-      } else {
-        setGalaxyLoadingMinHold(false);
+        return () => {
+          setGalaxyLoadingMinHold(false);
+        };
       }
-      const t = transitReturn
-        ? null
-        : setTimeout(() => setGalaxyLoadingMinHold(true), GALAXY_MAP_LOADING_MIN_MS);
+      setGalaxyLoadingMinHold(false);
+      let cancelled = false;
+      let raf2 = 0;
+      const raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => {
+          if (!cancelled) setGalaxyLoadingMinHold(true);
+        });
+      });
       return () => {
-        if (t) clearTimeout(t);
+        cancelled = true;
+        cancelAnimationFrame(raf1);
+        if (raf2) cancelAnimationFrame(raf2);
         setGalaxyLoadingMinHold(false);
       };
     }, []),

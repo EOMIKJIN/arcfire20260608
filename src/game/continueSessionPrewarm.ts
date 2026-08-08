@@ -13,8 +13,11 @@ import { resumePlayerToLastHubPlanet, resolveResumeHubPlanetId } from './galaxyM
 import { waitForArcCoreDailyBatchIdle } from '../arcCore/schedule/arcCoreDailyBatchGate';
 import { waitForArcCoreWallClockCatchUpIdle } from '../arcCore/schedule/arcCoreWallClockCatchUpGate';
 
-/** 이어하기 로딩 UI 최소 유지 시간(ms) — prewarm 완료 후에도 짧게 유지 */
-export const CONTINUE_SESSION_MIN_LOADING_MS = 1200;
+/**
+ * @deprecated 강제 minHold 제거(2026-08-08). prewarm 실소요만 대기.
+ * 하위 호환 import용 — 값은 0. 신규 대기 로직에 쓰지 말 것.
+ */
+export const CONTINUE_SESSION_MIN_LOADING_MS = 0;
 
 export function yieldToUi(): Promise<void> {
   return new Promise((resolve) => {

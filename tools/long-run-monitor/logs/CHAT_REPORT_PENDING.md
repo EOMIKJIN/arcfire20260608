@@ -1,14 +1,14 @@
 # [08:00 KST] Arcfire 메모리 감시 자동보고
 
-**시각 (KST)**: 2026-08-06 08:14:16
+**시각 (KST)**: 2026-08-08 08:14:16
 **판정**: **OK**
 
 | 항목 | 값 |
 |------|-----|
 | adb | 연결됨 |
-| watch-30m | PID 8872 |
-| 런타임 | PSS 609.1MB · GL 34.1MB · Views 99 · pid=31074 |
-| 상세 파일 | `D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md` |
+| watch-30m | PID 7840 |
+| 런타임 | PSS 519.1MB · GL 7.8MB · Views 368 · pid=21451 |
+| 상세 파일 | `D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md` |
 
 ## 요약
 - incidents actionable: 15

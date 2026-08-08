@@ -1,5 +1,5 @@
 // ============================================================
-// 아크파이어 온라인 — 이어하기 우주 항로 로딩 (직접 진입 시: 프리로드 + 최소 표시)
+// 아크파이어 온라인 — 이어하기 우주 항로 로딩 (직접 진입 시: 프리로드만 대기)
 // ============================================================
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -7,10 +7,7 @@ import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { COLORS } from '../../src/utils/theme';
 import { StageShell } from '../../src/stages/StageShell';
-import {
-  CONTINUE_SESSION_MIN_LOADING_MS,
-  runContinueSessionPrewarm,
-} from '../../src/game/continueSessionPrewarm';
+import { runContinueSessionPrewarm } from '../../src/game/continueSessionPrewarm';
 import { ContinueSessionLoadingView } from '../../src/game/continueSessionLoadingView';
 import { runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
 
@@ -25,7 +22,6 @@ export default function ContinueWarpScreen() {
     if (target === 'planet') return '/(game)/planet' as const;
     return '/(game)/planet' as const;
   }, [target]);
-  const minHoldTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navScheduledRef = useRef(false);
   const isMountedRef = useRef(true);
 
@@ -39,17 +35,10 @@ export default function ContinueWarpScreen() {
   useEffect(() => {
     let cancelled = false;
     void (async () => {
-      const minHold = new Promise<void>((r) => {
-        minHoldTimerRef.current = setTimeout(() => {
-          minHoldTimerRef.current = null;
-          r();
-        }, CONTINUE_SESSION_MIN_LOADING_MS);
-      });
       try {
-        await Promise.all([runContinueSessionPrewarm(), minHold]);
+        await runContinueSessionPrewarm();
       } catch {
         /* 프리로드 실패해도 진입은 허용 */
-        await minHold;
       }
       if (cancelled || navScheduledRef.current) return;
       navScheduledRef.current = true;
@@ -61,10 +50,6 @@ export default function ContinueWarpScreen() {
     })();
     return () => {
       cancelled = true;
-      if (minHoldTimerRef.current) {
-        clearTimeout(minHoldTimerRef.current);
-        minHoldTimerRef.current = null;
-      }
     };
   }, [nextRoute]);
 

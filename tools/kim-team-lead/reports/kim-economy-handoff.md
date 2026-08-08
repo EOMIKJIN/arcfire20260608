@@ -6390,6 +6390,238 @@
 
 > status: monitor-ok · **08:00 보고체 유지**
 
+## [관측] 2026-08-08 08:00:00 KST — **데일리 08:00 상시 자동보고** (OK)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **7840** · auto-fix=ON
+- **adb**: OK (192.168.45.197:42867)
+- **앱**: RUNNING
+- **mem-monitor**: **OK** (PSS 519.9MB · GL 7.8MB · Views 368 · pid=21451)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md
+- **verdict**: **OK**
+- **incidents (actionable tail)**: 15
+  - [2026-08-06 08:02:06] DAILY_8AM_REPORT 2026-08-06 08:02:06 KST
+  - [2026-08-06 08:02:06] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=WARN
+  - [2026-08-06 08:04:08] DAILY_8AM_REPORT 2026-08-06 08:04:08 KST
+  - [2026-08-06 08:04:08] DAILY_8AM_REPORT_FAIL D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md MEMINFO_ERROR — Command failed: adb shell pidof com.arcfire.online
+  - [2026-08-06 08:06:09] DAILY_8AM_REPORT 2026-08-06 08:06:09 KST
+  - [2026-08-06 08:06:09] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:08:10] DAILY_8AM_REPORT 2026-08-06 08:08:10 KST
+  - [2026-08-06 08:08:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:10:11] DAILY_8AM_REPORT 2026-08-06 08:10:11 KST
+  - [2026-08-06 08:10:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:12:14] DAILY_8AM_REPORT 2026-08-06 08:12:14 KST
+  - [2026-08-06 08:12:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:14:16] DAILY_8AM_REPORT 2026-08-06 08:14:16 KST
+  - [2026-08-06 08:14:16] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT 2026-08-08 08:00:00 KST
+- **권장(김팀장 1안)**: daily 08:00 soak OK — review report
+
+> status: monitor-ok · **08:00 보고체 유지**
+
+## [관측] 2026-08-08 08:02:07 KST — **데일리 08:00 상시 자동보고** (OK)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **7840** · auto-fix=ON
+- **adb**: OK (192.168.45.197:42867)
+- **앱**: RUNNING
+- **mem-monitor**: **OK** (PSS 519.3MB · GL 7.8MB · Views 368 · pid=21451)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md
+- **verdict**: **OK**
+- **incidents (actionable tail)**: 15
+  - [2026-08-06 08:04:08] DAILY_8AM_REPORT 2026-08-06 08:04:08 KST
+  - [2026-08-06 08:04:08] DAILY_8AM_REPORT_FAIL D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md MEMINFO_ERROR — Command failed: adb shell pidof com.arcfire.online
+  - [2026-08-06 08:06:09] DAILY_8AM_REPORT 2026-08-06 08:06:09 KST
+  - [2026-08-06 08:06:09] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:08:10] DAILY_8AM_REPORT 2026-08-06 08:08:10 KST
+  - [2026-08-06 08:08:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:10:11] DAILY_8AM_REPORT 2026-08-06 08:10:11 KST
+  - [2026-08-06 08:10:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:12:14] DAILY_8AM_REPORT 2026-08-06 08:12:14 KST
+  - [2026-08-06 08:12:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:14:16] DAILY_8AM_REPORT 2026-08-06 08:14:16 KST
+  - [2026-08-06 08:14:16] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT 2026-08-08 08:00:00 KST
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:02:07] DAILY_8AM_REPORT 2026-08-08 08:02:07 KST
+- **권장(김팀장 1안)**: daily 08:00 soak OK — review report
+
+> status: monitor-ok · **08:00 보고체 유지**
+
+## [관측] 2026-08-08 08:04:08 KST — **데일리 08:00 상시 자동보고** (OK)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **7840** · auto-fix=ON
+- **adb**: OK (192.168.45.197:42867)
+- **앱**: RUNNING
+- **mem-monitor**: **OK** (PSS 519.3MB · GL 7.8MB · Views 368 · pid=21451)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md
+- **verdict**: **OK**
+- **incidents (actionable tail)**: 15
+  - [2026-08-06 08:06:09] DAILY_8AM_REPORT 2026-08-06 08:06:09 KST
+  - [2026-08-06 08:06:09] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:08:10] DAILY_8AM_REPORT 2026-08-06 08:08:10 KST
+  - [2026-08-06 08:08:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:10:11] DAILY_8AM_REPORT 2026-08-06 08:10:11 KST
+  - [2026-08-06 08:10:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:12:14] DAILY_8AM_REPORT 2026-08-06 08:12:14 KST
+  - [2026-08-06 08:12:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:14:16] DAILY_8AM_REPORT 2026-08-06 08:14:16 KST
+  - [2026-08-06 08:14:16] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT 2026-08-08 08:00:00 KST
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:02:07] DAILY_8AM_REPORT 2026-08-08 08:02:07 KST
+  - [2026-08-08 08:02:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:04:08] DAILY_8AM_REPORT 2026-08-08 08:04:08 KST
+- **권장(김팀장 1안)**: daily 08:00 soak OK — review report
+
+> status: monitor-ok · **08:00 보고체 유지**
+
+## [관측] 2026-08-08 08:06:10 KST — **데일리 08:00 상시 자동보고** (OK)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **7840** · auto-fix=ON
+- **adb**: OK (192.168.45.197:42867)
+- **앱**: RUNNING
+- **mem-monitor**: **OK** (PSS 519.2MB · GL 7.8MB · Views 368 · pid=21451)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md
+- **verdict**: **OK**
+- **incidents (actionable tail)**: 15
+  - [2026-08-06 08:08:10] DAILY_8AM_REPORT 2026-08-06 08:08:10 KST
+  - [2026-08-06 08:08:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:10:11] DAILY_8AM_REPORT 2026-08-06 08:10:11 KST
+  - [2026-08-06 08:10:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:12:14] DAILY_8AM_REPORT 2026-08-06 08:12:14 KST
+  - [2026-08-06 08:12:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:14:16] DAILY_8AM_REPORT 2026-08-06 08:14:16 KST
+  - [2026-08-06 08:14:16] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT 2026-08-08 08:00:00 KST
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:02:07] DAILY_8AM_REPORT 2026-08-08 08:02:07 KST
+  - [2026-08-08 08:02:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:04:08] DAILY_8AM_REPORT 2026-08-08 08:04:08 KST
+  - [2026-08-08 08:04:08] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:06:10] DAILY_8AM_REPORT 2026-08-08 08:06:10 KST
+- **권장(김팀장 1안)**: daily 08:00 soak OK — review report
+
+> status: monitor-ok · **08:00 보고체 유지**
+
+## [관측] 2026-08-08 08:08:11 KST — **데일리 08:00 상시 자동보고** (OK)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **7840** · auto-fix=ON
+- **adb**: OK (192.168.45.197:42867)
+- **앱**: RUNNING
+- **mem-monitor**: **OK** (PSS 519.3MB · GL 7.8MB · Views 368 · pid=21451)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md
+- **verdict**: **OK**
+- **incidents (actionable tail)**: 15
+  - [2026-08-06 08:10:11] DAILY_8AM_REPORT 2026-08-06 08:10:11 KST
+  - [2026-08-06 08:10:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:12:14] DAILY_8AM_REPORT 2026-08-06 08:12:14 KST
+  - [2026-08-06 08:12:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:14:16] DAILY_8AM_REPORT 2026-08-06 08:14:16 KST
+  - [2026-08-06 08:14:16] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT 2026-08-08 08:00:00 KST
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:02:07] DAILY_8AM_REPORT 2026-08-08 08:02:07 KST
+  - [2026-08-08 08:02:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:04:08] DAILY_8AM_REPORT 2026-08-08 08:04:08 KST
+  - [2026-08-08 08:04:08] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:06:10] DAILY_8AM_REPORT 2026-08-08 08:06:10 KST
+  - [2026-08-08 08:06:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:08:11] DAILY_8AM_REPORT 2026-08-08 08:08:11 KST
+- **권장(김팀장 1안)**: daily 08:00 soak OK — review report
+
+> status: monitor-ok · **08:00 보고체 유지**
+
+## [관측] 2026-08-08 08:10:13 KST — **데일리 08:00 상시 자동보고** (OK)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **7840** · auto-fix=ON
+- **adb**: OK (192.168.45.197:42867)
+- **앱**: RUNNING
+- **mem-monitor**: **OK** (PSS 519.1MB · GL 7.8MB · Views 368 · pid=21451)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md
+- **verdict**: **OK**
+- **incidents (actionable tail)**: 15
+  - [2026-08-06 08:12:14] DAILY_8AM_REPORT 2026-08-06 08:12:14 KST
+  - [2026-08-06 08:12:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-06 08:14:16] DAILY_8AM_REPORT 2026-08-06 08:14:16 KST
+  - [2026-08-06 08:14:16] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT 2026-08-08 08:00:00 KST
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:02:07] DAILY_8AM_REPORT 2026-08-08 08:02:07 KST
+  - [2026-08-08 08:02:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:04:08] DAILY_8AM_REPORT 2026-08-08 08:04:08 KST
+  - [2026-08-08 08:04:08] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:06:10] DAILY_8AM_REPORT 2026-08-08 08:06:10 KST
+  - [2026-08-08 08:06:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:08:11] DAILY_8AM_REPORT 2026-08-08 08:08:11 KST
+  - [2026-08-08 08:08:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:10:13] DAILY_8AM_REPORT 2026-08-08 08:10:13 KST
+- **권장(김팀장 1안)**: daily 08:00 soak OK — review report
+
+> status: monitor-ok · **08:00 보고체 유지**
+
+## [관측] 2026-08-08 08:12:14 KST — **데일리 08:00 상시 자동보고** (OK)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **7840** · auto-fix=ON
+- **adb**: OK (192.168.45.197:42867)
+- **앱**: RUNNING
+- **mem-monitor**: **OK** (PSS 518.5MB · GL 7.8MB · Views 368 · pid=21451)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md
+- **verdict**: **OK**
+- **incidents (actionable tail)**: 15
+  - [2026-08-06 08:14:16] DAILY_8AM_REPORT 2026-08-06 08:14:16 KST
+  - [2026-08-06 08:14:16] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260806-0800.md verdict=OK
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT 2026-08-08 08:00:00 KST
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:02:07] DAILY_8AM_REPORT 2026-08-08 08:02:07 KST
+  - [2026-08-08 08:02:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:04:08] DAILY_8AM_REPORT 2026-08-08 08:04:08 KST
+  - [2026-08-08 08:04:08] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:06:10] DAILY_8AM_REPORT 2026-08-08 08:06:10 KST
+  - [2026-08-08 08:06:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:08:11] DAILY_8AM_REPORT 2026-08-08 08:08:11 KST
+  - [2026-08-08 08:08:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:10:13] DAILY_8AM_REPORT 2026-08-08 08:10:13 KST
+  - [2026-08-08 08:10:13] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:12:14] DAILY_8AM_REPORT 2026-08-08 08:12:14 KST
+- **권장(김팀장 1안)**: daily 08:00 soak OK — review report
+
+> status: monitor-ok · **08:00 보고체 유지**
+
+## [관측] 2026-08-08 08:14:16 KST — **데일리 08:00 상시 자동보고** (OK)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **7840** · auto-fix=ON
+- **adb**: OK (192.168.45.197:42867)
+- **앱**: RUNNING
+- **mem-monitor**: **OK** (PSS 519.1MB · GL 7.8MB · Views 368 · pid=21451)
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md
+- **verdict**: **OK**
+- **incidents (actionable tail)**: 15
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT 2026-08-08 08:00:00 KST
+  - [2026-08-08 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:02:07] DAILY_8AM_REPORT 2026-08-08 08:02:07 KST
+  - [2026-08-08 08:02:07] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:04:08] DAILY_8AM_REPORT 2026-08-08 08:04:08 KST
+  - [2026-08-08 08:04:08] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:06:10] DAILY_8AM_REPORT 2026-08-08 08:06:10 KST
+  - [2026-08-08 08:06:10] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:08:11] DAILY_8AM_REPORT 2026-08-08 08:08:11 KST
+  - [2026-08-08 08:08:11] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:10:13] DAILY_8AM_REPORT 2026-08-08 08:10:13 KST
+  - [2026-08-08 08:10:13] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:12:14] DAILY_8AM_REPORT 2026-08-08 08:12:14 KST
+  - [2026-08-08 08:12:14] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260808-0800.md verdict=OK
+  - [2026-08-08 08:14:16] DAILY_8AM_REPORT 2026-08-08 08:14:16 KST
+- **권장(김팀장 1안)**: daily 08:00 soak OK — review report
+
+> status: monitor-ok · **08:00 보고체 유지**
+
 ## 작업 요약
 
 - **일자 (KST)**: 2026-06-18

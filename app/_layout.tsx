@@ -73,6 +73,7 @@ import { resumePlayerToLastHubPlanet } from '../src/game/galaxyMapSessionResume'
 import { IdleSessionRestartGuard } from '../src/components/IdleSessionRestartGuard';
 import { GameSaveRestorePendingConsumer } from '../src/firebase/gameSaveBackup/GameSaveRestorePendingConsumer';
 import { registerRunningArcCoreWallClockCatchUp } from '../src/arcCore/schedule/arcCoreWallClockCatchUpGate';
+import { preloadRegisteredUiSfx } from '../src/audio';
 
 type UpdateGateState = {
   visible: boolean;
@@ -274,6 +275,10 @@ export default function RootLayout() {
     markBootPerf('arc_core_start');
     arcCoreHub.bootstrapDefaultSubCores();
     arcCoreHub.start();
+    // UI SFX — 등록된 리소스만 유휴 preload (타이틀 버튼·부트 경로 비차단). 미등록이면 no-op.
+    const sfxWarm = InteractionManager.runAfterInteractions(() => {
+      void preloadRegisteredUiSfx();
+    });
     // 타이틀 버튼: bootReady 직후 즉시 postBootSettled (catch-up·일일배치·prewarm 대기 금지).
     // 무거운 합류는 차원항로 `runContinueSessionPrewarm` 전담(2026-08-04 대표님 · 개발규칙).
     // catch-up Promise는 **즉시 등록**(defer는 Promise 내부) — 탭이 400ms 전에 와도 wait가 누락되지 않음.
@@ -297,6 +302,7 @@ export default function RootLayout() {
     registerRunningArcCoreWallClockCatchUp(catchUpWork);
     const detachArcCoreBridge = attachArcCoreRuntimeCommandBridge();
     return () => {
+      sfxWarm.cancel?.();
       detachArcCoreBridge();
       arcCoreHub.stop();
     };

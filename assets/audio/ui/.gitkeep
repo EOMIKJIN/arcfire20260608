@@ -1,0 +1,2 @@
+# Drop UI SFX here, then enable require() in src/audio/uiSfxAssetMap.ts
+# click.mp3 | confirm.mp3 | cancel.mp3 | back.mp3 | close.mp3

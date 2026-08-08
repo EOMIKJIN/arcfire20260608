@@ -1,11 +1,19 @@
 import React, { memo, useMemo } from 'react';
-import { Pressable, StyleSheet, Text, type StyleProp, type ViewStyle } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import { COLORS, FONTS, SPACING } from '../../utils/theme';
 import { OVERLAY_TOKENS } from '../../utils/theme';
 import { resolveOverlayVisualTokens } from './overlayVisualTokens';
 import type { ArcOverlayVisualTheme } from './tacticalOverlayRollout';
 import { TACTICAL_OVERLAY } from './tacticalOverlayStyles';
 import { formatArcUniversalButtonLabel } from './arcUniversalButtonLabel';
+import { bindUiSfxPressIn, type UiSfxCue } from '../../audio';
 
 export type ArcButtonVariant = 'primary' | 'secondary' | 'destructive' | 'panel' | 'cta' | 'tacticalPrimary' | 'tacticalSecondary';
 export type ArcButtonIntent = 'primary' | 'secondary' | 'cta';
@@ -18,6 +26,13 @@ type Props = {
   visualTheme?: ArcOverlayVisualTheme;
   intent?: ArcButtonIntent;
   disabled?: boolean;
+  /**
+   * 불가피한 비용(네비 게이트·persist·네트워크) 구간과 동시 표시.
+   * 즉각 전환 버튼에는 쓰지 말 것. busy 중에는 라벨 대신 스피너.
+   */
+  busy?: boolean;
+  /** UI SFX cue — onPressIn(클릭연출)과 동기. 리소스 미등록 시 silent. */
+  sfxCue?: UiSfxCue | null;
   style?: StyleProp<ViewStyle>;
   /** 시설 탭 등 좁은 슬롯 — `[라벨]`·패딩 축소·중앙 정렬 */
   compact?: boolean;
@@ -30,6 +45,8 @@ export const ArcButton = memo(function ArcButton({
   visualTheme,
   intent = 'primary',
   disabled = false,
+  busy = false,
+  sfxCue = 'ui_click',
   style,
   compact = false,
 }: Props) {
@@ -38,6 +55,22 @@ export const ArcButton = memo(function ArcButton({
     if (visualTheme) return resolveOverlayVisualTokens(visualTheme).buttons[intent];
     return 'primary';
   }, [variant, visualTheme, intent]);
+
+  const spinnerColor =
+    resolvedVariant === 'cta' || resolvedVariant === 'tacticalPrimary'
+      ? COLORS.bg_primary
+      : resolvedVariant === 'primary'
+        ? OVERLAY_TOKENS.phosphorAccent
+        : COLORS.ink_dark;
+
+  const onPressIn = useMemo(
+    () =>
+      bindUiSfxPressIn({
+        cue: sfxCue ?? 'ui_click',
+        silent: disabled || busy || sfxCue === null,
+      }),
+    [busy, disabled, sfxCue],
+  );
 
   return (
     <Pressable
@@ -51,33 +84,38 @@ export const ArcButton = memo(function ArcButton({
         resolvedVariant === 'tacticalPrimary' && styles.tacticalPrimary,
         resolvedVariant === 'tacticalSecondary' && styles.tacticalSecondary,
         compact && styles.baseCompact,
-        pressed && !disabled && styles.pressed,
-        disabled && styles.disabled,
+        pressed && !disabled && !busy && styles.pressed,
+        (disabled || busy) && styles.disabled,
         style,
       ]}
+      onPressIn={onPressIn}
       onPress={onPress}
-      disabled={disabled}
+      disabled={disabled || busy}
       android_disableSound
     >
-      <Text
-        style={[
-          styles.textBase,
-          resolvedVariant === 'primary' && styles.textPrimary,
-          resolvedVariant === 'secondary' && styles.textSecondary,
-          resolvedVariant === 'destructive' && styles.textDestructive,
-          resolvedVariant === 'panel' && styles.textPanel,
-          resolvedVariant === 'cta' && styles.textCta,
-          resolvedVariant === 'tacticalPrimary' && styles.textTacticalPrimary,
-          resolvedVariant === 'tacticalSecondary' && styles.textTacticalSecondary,
-          compact && styles.textCompact,
-          disabled && styles.textDisabled,
-        ]}
-        numberOfLines={1}
-        adjustsFontSizeToFit
-        minimumFontScale={compact ? 0.72 : 0.85}
-      >
-        {formatArcUniversalButtonLabel(label, { compact })}
-      </Text>
+      {busy ? (
+        <ActivityIndicator color={spinnerColor} size="small" />
+      ) : (
+        <Text
+          style={[
+            styles.textBase,
+            resolvedVariant === 'primary' && styles.textPrimary,
+            resolvedVariant === 'secondary' && styles.textSecondary,
+            resolvedVariant === 'destructive' && styles.textDestructive,
+            resolvedVariant === 'panel' && styles.textPanel,
+            resolvedVariant === 'cta' && styles.textCta,
+            resolvedVariant === 'tacticalPrimary' && styles.textTacticalPrimary,
+            resolvedVariant === 'tacticalSecondary' && styles.textTacticalSecondary,
+            compact && styles.textCompact,
+            disabled && styles.textDisabled,
+          ]}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={compact ? 0.72 : 0.85}
+        >
+          {formatArcUniversalButtonLabel(label, { compact })}
+        </Text>
+      )}
     </Pressable>
   );
 });

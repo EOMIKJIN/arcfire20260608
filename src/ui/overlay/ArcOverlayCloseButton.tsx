@@ -1,8 +1,9 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../utils/theme';
 import type { ArcOverlayVisualTheme } from './tacticalOverlayPreview';
 import { TACTICAL_OVERLAY } from './tacticalOverlayStyles';
+import { bindUiSfxPressIn } from '../../audio';
 
 type Props = {
   onPress: () => void;
@@ -17,13 +18,16 @@ export const ArcOverlayCloseButton = memo(function ArcOverlayCloseButton({
   accessibilityLabel = 'Close',
 }: Props) {
   const isTactical = visualTheme === 'tactical';
+  const onPressIn = useMemo(() => bindUiSfxPressIn({ cue: 'ui_close' }), []);
   return (
     <Pressable
       style={[styles.btn, isTactical ? styles.btnTactical : null]}
+      onPressIn={onPressIn}
       onPress={onPress}
       hitSlop={8}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
+      android_disableSound
     >
       <Text style={[styles.text, isTactical ? styles.textTactical : null]}>✕</Text>
     </Pressable>

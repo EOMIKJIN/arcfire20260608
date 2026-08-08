@@ -1,7 +1,8 @@
-import React, { memo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { memo, useMemo } from 'react';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { FONTS, SPACING } from '../../utils/theme';
 import { CINEMATIC_PROLOGUE as CP } from './cinematicPrologueTokens';
+import { bindUiSfxPressIn } from '../../audio';
 
 type Props = {
   pageCount: number;
@@ -10,6 +11,8 @@ type Props = {
   nextLabel: string;
   showSkip: boolean;
   disabled: boolean;
+  /** 최종 전환 등 실비용 구간 — 다음 버튼에만 스피너 */
+  busy?: boolean;
   onSkip: () => void;
   onNext: () => void;
 };
@@ -21,9 +24,19 @@ export const CinematicPrologueFooter = memo(function CinematicPrologueFooter({
   nextLabel,
   showSkip,
   disabled,
+  busy = false,
   onSkip,
   onNext,
 }: Props) {
+  const silent = disabled || busy;
+  const onSkipPressIn = useMemo(
+    () => bindUiSfxPressIn({ cue: 'ui_click', silent }),
+    [silent],
+  );
+  const onNextPressIn = useMemo(
+    () => bindUiSfxPressIn({ cue: 'ui_click', silent }),
+    [silent],
+  );
   return (
     <View style={styles.footer}>
       <View style={styles.progressRow}>
@@ -40,23 +53,29 @@ export const CinematicPrologueFooter = memo(function CinematicPrologueFooter({
       <View style={styles.actionsRow}>
         {showSkip ? (
           <Pressable
+            onPressIn={onSkipPressIn}
             onPress={onSkip}
-            disabled={disabled}
+            disabled={disabled || busy}
             style={({ pressed }) => [styles.controlHit, pressed && styles.controlPressed]}
             accessibilityRole="button"
           >
-            <Text style={[styles.controlText, disabled && styles.controlDisabled]}>{skipLabel}</Text>
+            <Text style={[styles.controlText, (disabled || busy) && styles.controlDisabled]}>{skipLabel}</Text>
           </Pressable>
         ) : (
           <View style={styles.controlHit} />
         )}
         <Pressable
+          onPressIn={onNextPressIn}
           onPress={onNext}
-          disabled={disabled}
+          disabled={disabled || busy}
           style={({ pressed }) => [styles.controlHit, styles.controlHitEnd, pressed && styles.controlPressed]}
           accessibilityRole="button"
         >
-          <Text style={[styles.controlTextEmphasis, disabled && styles.controlDisabled]}>{nextLabel}</Text>
+          {busy ? (
+            <ActivityIndicator color={CP.controlInkEmphasis} size="small" />
+          ) : (
+            <Text style={[styles.controlTextEmphasis, disabled && styles.controlDisabled]}>{nextLabel}</Text>
+          )}
         </Pressable>
       </View>
     </View>

@@ -22,6 +22,7 @@ export const ArcStageBackButton = memo(function ArcStageBackButton({
       label={label}
       variant="secondary"
       onPress={onPress}
+      sfxCue="ui_back"
       style={[{ alignSelf: 'flex-start', marginRight: 8 }, style]}
     />
   );

@@ -1,7 +1,7 @@
 // ============================================================
 // 앱(디바이스) 설정 — 언어·배경음악·효과음. 계정 무관(계정 초기화로 purge 안 함).
 // AsyncStorage 단일 키 영속 + 부트 1회 hydrate. i18n 런타임이 locale 을 참조.
-// 실제 오디오 재생 엔진은 별도(향후) — 본 store 는 선호값만 보관한다.
+// UI SFX 재생 엔진: `src/audio` (playUiSfx · settings 볼륨/뮤트 참조). 본 store 는 선호값만 보관.
 // ============================================================
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';

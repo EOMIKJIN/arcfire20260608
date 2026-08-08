@@ -39,6 +39,7 @@ export default function CharacterSelectScreen() {
       showArcAlert(t('charSelect.errorTitle'), t('charSelect.notFound'));
       return;
     }
+    // AsyncStorage + stage nav gate — 실비용 동안 busy 스피너 유지(성공 시 언마운트까지).
     setSubmitting(true);
     try {
       await setOnboardingProfessionId(selectedId);
@@ -47,7 +48,7 @@ export default function CharacterSelectScreen() {
         teardown: () => {},
         navigate: () => router.replace('/(game)/nickname' as Href),
       });
-    } finally {
+    } catch {
       setSubmitting(false);
     }
   }, [selectedId, submitting, t]);
@@ -88,7 +89,8 @@ export default function CharacterSelectScreen() {
           <ArcButton
             label={t('charSelect.register')}
             variant="panel"
-            disabled={!selectedId || submitting}
+            disabled={!selectedId}
+            busy={submitting}
             onPress={() => {
               void handleConfirm();
             }}

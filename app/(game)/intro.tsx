@@ -196,6 +196,7 @@ export default function IntroScreen() {
               nextLabel={nextLabel}
               showSkip={Boolean(scene?.skippable)}
               disabled={isTransitioning || awaitingReveal}
+              busy={isTransitioning}
               onSkip={handleSkipScene}
               onNext={handleNext}
             />
@@ -233,7 +234,8 @@ export default function IntroScreen() {
               <ArcButton
                 label={nextLabel}
                 variant="panel"
-                disabled={isTransitioning || awaitingReveal}
+                disabled={awaitingReveal}
+                busy={isTransitioning}
                 onPress={handleNext}
                 style={styles.nextBtn}
               />

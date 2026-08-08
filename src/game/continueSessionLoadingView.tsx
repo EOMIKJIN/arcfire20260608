@@ -2,7 +2,7 @@
 // 이어하기 세션 — 항로 로딩 비주얼 (타이틀 / continue-warp 공용)
 // ============================================================
 
-import React, { memo, useEffect, useMemo } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Reanimated, { useAnimatedStyle, useFrameCallback, useSharedValue } from 'react-native-reanimated';
 import { COLORS, FONTS, SPACING } from '../utils/theme';
@@ -132,10 +132,24 @@ export type ContinueSessionLoadingViewProps = {
 
 export function ContinueSessionLoadingView({ width, height, phaseLabel }: ContinueSessionLoadingViewProps) {
   const t = useT();
+  // 첫 페인트는 배경·카피만 — 96 Reanimated 스트릭은 다음 프레임에 붙여
+  // 타이틀→차원항로 교체 프레임의 마운트 스파이크를 줄인다(버튼 스피너 구간과 역할 분리).
+  const [tunnelMounted, setTunnelMounted] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    const id = requestAnimationFrame(() => {
+      if (!cancelled) setTunnelMounted(true);
+    });
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(id);
+    };
+  }, []);
+
   return (
     <View style={[styles.root, { width, height }]}>
       <View style={[StyleSheet.absoluteFill, { backgroundColor: COLORS.bg_primary }]} />
-      <WarpTunnelLayer width={width} height={height} />
+      {tunnelMounted ? <WarpTunnelLayer width={width} height={height} /> : null}
       <View style={styles.vignette} pointerEvents="none" />
       <View style={styles.centerWrap} pointerEvents="none">
         <View style={styles.centerCol}>

@@ -4,7 +4,8 @@ import type {
   HeavyUiSessionConfig,
 } from './types';
 
-const DEFAULT_MIN_LOADING_MS = 180;
+/** 강제 최소 연출 없음 — hydrate/build 실소요만. 호출부가 명시할 때만 minLoadingMs 사용. */
+const DEFAULT_MIN_LOADING_MS = 0;
 
 function normalizeBuildError(err: unknown): string {
   if (err instanceof Error && err.message.trim()) return err.message.trim();
