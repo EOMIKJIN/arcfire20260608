@@ -29,5 +29,11 @@ $logFile = Join-Path $logDir ($kst.ToString('yyyy-MM-dd') + '.log')
 Write-Host "[daily-commit] repo=$RepoRoot push=$doPush audit=$doAudit"
 
 $npmScript = if ($doPush -and $doAudit) { 'daily:release' } else { 'daily:commit' }
-npm run $npmScript 2>&1 | Tee-Object -FilePath $logFile -Append
-exit $LASTEXITCODE
+# Tee-Object 파이프는 PS 5.1에서 npm LASTEXITCODE를 덮어쓴다. cmd /c 로 exit 보존.
+cmd /c "npm run $npmScript >> `"$logFile`" 2>&1"
+$exitCode = $LASTEXITCODE
+if ($exitCode -ne 0) {
+  Write-Host "[daily-commit] FAILED exit=$exitCode — writing CHAT_REPORT_PENDING"
+  node (Join-Path $PSScriptRoot 'write-daily-commit-failure-pending.cjs') "$exitCode"
+}
+exit $exitCode

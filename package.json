@@ -48,6 +48,7 @@
     "audit:daily": "node tools/daily-perf-audit/run-daily-audit.cjs",
     "daily:commit": "node tools/daily-commit/run-daily-commit.cjs",
     "daily:release": "node tools/daily-commit/run-daily-release.cjs",
+    "audit:daily-commit-process": "node tools/daily-commit/audit-daily-commit-process.cjs",
     "audit:memory": "node tools/memory-audit/run-memory-audit.cjs",
     "audit:native-reclaim": "node tools/native-reclaim-audit/run-native-reclaim-stability-audit.cjs",
     "audit:skia-memory": "node tools/memory-audit/run-skia-worklet-memory-audit.cjs",

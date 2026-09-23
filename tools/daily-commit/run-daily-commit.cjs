@@ -28,9 +28,10 @@ const NEVER_STAGE = [
 ];
 
 /**
- * 상시 모니터가 쓰는 중이라 `git add` short-read/index 실패를 유발하는 휘발 파일.
- * add 단계에서 pathspec 제외 + 이후 unstage 이중 방어.
- * (2026-07-27 자정: MONITOR_DASHBOARD_LATEST.html short read → commit/push 전부 실패)
+ * 상시 모니터·훅이 쓰는 휘발 파일. unstage 이중 방어.
+ * `git add` pathspec `:!`에는 **gitignore가 아닌 것만** 넣는다.
+ * git 2.47+ 는 이미 ignore된 경로를 `:!`로 지목하면 exit 1
+ * (`The following paths are ignored…`) — 2026-08-10~09-24 46일 연속 실패 원인.
  */
 const VOLATILE_SKIP_STAGE = [
   'tools/long-run-monitor/logs/MONITOR_DASHBOARD_LATEST.html',
@@ -74,10 +75,63 @@ function isTransientGitAddFailure(combined) {
   );
 }
 
+function gitCheckIgnore(rel) {
+  const r = run('git', ['check-ignore', '-q', '--', rel], { shell: false });
+  return r.status === 0;
+}
+
+function gitIsTracked(rel) {
+  const r = run('git', ['ls-files', '--error-unmatch', '--', rel], { shell: false });
+  return r.status === 0;
+}
+
+/**
+ * `:!` pathspec 제외 — gitignore된 경로는 넣지 않는다 (git 2.47+ exit 1).
+ * 추적 중이거나, ignore가 아닌 실존 휘발 파일만 제외.
+ */
+function buildGitAddExcludes() {
+  const excludes = [];
+  for (const rel of VOLATILE_SKIP_STAGE) {
+    const norm = rel.replace(/\\/g, '/');
+    if (gitCheckIgnore(norm)) continue;
+    const abs = path.join(ROOT, norm);
+    if (!fs.existsSync(abs) && !gitIsTracked(norm)) continue;
+    excludes.push(`:!${norm}`);
+  }
+  return excludes;
+}
+
+function buildGitAddArgs() {
+  const excludes = buildGitAddExcludes();
+  return excludes.length > 0 ? ['add', '-A', '--', '.', ...excludes] : ['add', '-A'];
+}
+
+function formatGitFailure(stdout, stderr) {
+  const lines = `${stdout}\n${stderr}`
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
+  const priority = [];
+  const rest = [];
+  const warnings = [];
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (/The following paths are ignored|ignored by one of your \.gitignore|^fatal:|^error:/i.test(line)) {
+      priority.push(line);
+    } else if (/^warning:/i.test(line)) {
+      warnings.push(line);
+    } else {
+      rest.push(line);
+    }
+  }
+  const picked = [...priority, ...rest, ...warnings.slice(0, 2)];
+  return picked.join(' | ') || '(empty git stderr)';
+}
+
 /** volatile 제외 + 일시 실패 시 재시도 */
 function gitAddAllWithRetry() {
-  const excludes = VOLATILE_SKIP_STAGE.map((p) => `:!${p.replace(/\\/g, '/')}`);
-  const args = ['add', '-A', '--', '.', ...excludes];
+  const args = buildGitAddArgs();
+  logLine(`git add args: ${args.join(' ')}`);
   let last = { status: 1, stdout: '', stderr: '' };
   for (let attempt = 1; attempt <= GIT_ADD_MAX_ATTEMPTS; attempt += 1) {
     last = run('git', args, { shell: false });
@@ -162,7 +216,7 @@ function pushIfEnabled(reason) {
   logLine(`${reason} — pushing ${ahead} commit(s) to remote …`);
   const push = run('git', ['push'], { shell: false });
   if (push.status !== 0) {
-    logLine(`git push failed: ${(push.stdout + push.stderr).trim()}`);
+    logLine(`git push failed: ${formatGitFailure(push.stdout, push.stderr)}`);
     return false;
   }
   logLine('pushed to remote');
@@ -196,7 +250,7 @@ function main() {
 
   const add = gitAddAllWithRetry();
   if (add.status !== 0) {
-    logLine(`git add failed: ${(add.stdout + add.stderr).trim()}`);
+    logLine(`git add failed: ${formatGitFailure(add.stdout, add.stderr)}`);
     process.exit(add.status);
   }
 
@@ -223,4 +277,14 @@ function main() {
   process.exit(0);
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  VOLATILE_SKIP_STAGE,
+  buildGitAddArgs,
+  buildGitAddExcludes,
+  formatGitFailure,
+  gitCheckIgnore,
+};

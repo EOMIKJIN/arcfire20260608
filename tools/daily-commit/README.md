@@ -54,7 +54,8 @@ schtasks /Delete /TN "ArcfireOnline_DailyRelease" /F
 ```
 
 확인: `taskschd.msc` → `ArcfireOnline_DailyCommit`  
-즉시 테스트: `npm run daily:release`
+즉시 테스트: `npm run daily:release`  
+프로세스 점검: `npm run audit:daily-commit-process`
 
 ## 커밋 메시지
 
@@ -66,9 +67,13 @@ chore(daily): snapshot 2026-06-19 (KST)
 
 `.env*`·`google-services.json` 등은 stage 후 **unstage** (`.gitignore`와 이중 방어).
 
-**휘발 모니터 파일**(`MONITOR_DASHBOARD_LATEST.html`·`MONITOR_STATUS_LATEST.json`·heartbeat 등)은
-`git add` pathspec에서 **선제 제외** + unstage 이중 방어. 모니터 동시 쓰기 short-read 시
-`git add`를 최대 4회 재시도 (2026-07-27 자정 실패 대처).
+**휘발 모니터 파일**은 `.gitignore`된 경로는 `git add` pathspec `:!`에 **넣지 않는다**.
+git 2.47+ 는 ignore된 경로를 `:!`로 지목하면 exit 1 (`paths are ignored`) — 2026-08-10~09-24
+46일 연속 실패 원인. ignore가 아닌 휘발 파일만 `:!` 제외 + unstage 이중 방어.
+`git add` 일시 실패(short-read)는 최대 4회 재시도.
+
+무결성: `npm run audit:daily-commit-process` (add dry-run · settings push · 스케줄러 `-Push`).
+실패 시 `tools/long-run-monitor/logs/CHAT_REPORT_PENDING.md` 기록.
 
 ## GitHub Actions (선택)
 

@@ -5,6 +5,18 @@
 
 ---
 
+## ✅ REVIEWED — 데일리 커밋 46일 실패 수정 · 2026-09-24
+
+```text
+status=REVIEWED
+verdict=AGREE (gitignore pathspec :! → git 2.47+ exit 1)
+task_id=daily-commit-process-integrity-20260924
+```
+
+**김팀장**: `gitAddAllWithRetry` 가 ignore된 `tools/long-run-monitor/logs/*` 11개를 `:!`로 지목해 8/10~09-24 자정 커밋이 매일 실패. ignore 경로는 pathspec에서 제외. 실패 로그는 ignored/fatal 우선. `daily-commit.ps1` 은 `cmd /c`로 npm exit 보존 + 실패 시 `CHAT_REPORT_PENDING`. 스케줄러 `ArcfireOnline_DailyCommit` 이미 `-Push -RunAudit`. `npm run audit:daily-commit-process` PASS.
+
+---
+
 ## 🔴 URGENT — 복구 중 상태 동시 점검 (0시 기준) · 2026-09-24 01:50
 
 ```text
@@ -56,8 +68,63 @@ unstaged = 6 files      (+233 / −33 · galaxyMap voronoi 작업 중)
 
 **권고 (커밋 권한은 김팀장)**
 1. 복구 안정화 즉시 **중간 스냅샷 커밋 1회**. 완벽하지 않아도 `chore(daily): snapshot 2026-09-24 (KST)`로 끊어 두는 편이 낫다.
-2. 일일 스냅샷 커밋이 **8/09에 멈춘 원인** 확인 — 자동화가 죽었다면 그것부터 복구.
+2. 아래 **자동 커밋 고장**을 먼저 고칠 것 — 안 고치면 오늘 커밋해도 내일부터 다시 안 쌓인다.
 3. 커밋 전이라도 작업 트리 사본을 **저장소 밖에 1회 백업**.
+
+---
+
+### 🔴 근본 원인 확정 — 일일 자동 커밋이 46일째 매일 실패 중
+
+**대표님 질문**: 「매일 커밋을 하지 않고 있었나?」 → **하고 있었다. 자동으로, 매일 자정. 다만 8/10부터 46일 연속 실패했고 아무도 몰랐다.**
+
+| 구간 | 결과 |
+|---|---|
+| ~2026-08-09 | 자정 자동 커밋 **46일 연속 성공** (로그 균일 694B) |
+| 2026-08-10 ~ 09-24 | **46일 연속 실패** (`git add failed` 37건 + 다른 형태 10건 · 로그 8~40KB로 폭증) |
+
+**스케줄러는 지금도 살아 있다** — `ArcfireOnline_DailyCommit` · state=Ready · **last=2026-09-24 00:00:00 · result=1(실패)** · next=09-25 00:00. 매일 돌고 매일 실패한다.
+
+**원인 — `git add` pathspec이 gitignore된 경로를 가리켜 exit 1**
+
+`run-daily-commit.cjs:78-98` `gitAddAllWithRetry()`가 실행하는 명령:
+
+```
+git add -A -- . :!tools/long-run-monitor/logs/MONITOR_DASHBOARD_LATEST.html …(11개)
+```
+
+그런데 `.gitignore:67-68`이 `tools/long-run-monitor/logs/` 를 **디렉터리째 무시**한다. git 2.47.3은 pathspec이 무시된 경로를 지목하면 오류로 처리한다:
+
+```
+The following paths are ignored by one of your .gitignore files:
+tools/long-run-monitor/logs
+hint: Use -f if you really want to add them.
+```
+
+**인덱스를 건드리지 않고 `--dry-run`으로 재현 확인**:
+- `git add -A -n -- . :!…(11개)` → **EXIT=1** (실패 재현)
+- `git add -A -n -- .` (제외목록 없이) → **EXIT=0** (정상)
+
+이어서 `isTransientGitAddFailure()`(:71-75)의 정규식(`short read|index.lock|…`)에 이 오류가 **매칭되지 않아 재시도 없이 즉시 반환** → `main()`이 커밋 전에 중단된다.
+
+**왜 46일간 아무도 몰랐나 — 로그가 엉뚱한 범인을 지목한다**
+
+```
+[2026-08-09T15:00:53.351Z] git add failed: warning: in the working copy of
+'app/(game)/planet.tsx', LF will be replaced by CRLF the next time Git touches it
+```
+
+stderr 첫 줄인 **무해한 CRLF 경고**를 실패 사유로 출력한다. 진짜 오류(ignored paths)는 그 뒤에 묻힌다. 로그만 보면 "줄바꿈 경고 때문에 실패"로 읽혀 원인 추적이 막힌다.
+
+**수정안 (김팀장 · 코드 3줄 수준)**
+
+`VOLATILE_SKIP_STAGE` 12개 중 **11개는 이미 gitignore 대상**이라 `:!` 제외가 **애초에 불필요**하다(`git check-ignore`로 확인). `git add -A`가 어차피 스테이징하지 않는다.
+
+1. `gitAddAllWithRetry()`의 제외 목록에서 `tools/long-run-monitor/logs/...` **11개를 빼고**, gitignore 대상이 아닌 **`tools/kim-team-lead/reports/.kim-claude-auto-review-followup.json` 1개만 남긴다.** → dry-run 기준 EXIT=0 확인 완료.
+2. 11개는 `unstageSensitivePaths()`(:137-143)에 그대로 두면 이중 방어가 유지된다(그쪽은 `git reset`이라 무해).
+3. 부수: `logLine('git add failed: …')`가 stderr 첫 줄만 찍지 말고 **ignored/fatal 줄을 우선 출력**하도록 고치면 재발 시 즉시 진단된다.
+4. 부수: 스케줄러 `result != 0`이 **아무 데도 통보되지 않는다.** 실패 시 알림(기존 `tools/long-run-monitor` 경로 재사용)을 붙일 것.
+
+> 8/09→8/10 전환 시점의 정확한 방아쇠는 **특정하지 못했다.** 스크립트·`.gitignore`·대상 파일 존재·추적 상태 모두 HEAD 이후 무변경이라, git 버전 업데이트로 pathspec-ignore 검사가 엄격해졌을 가능성이 가장 높다(현재 2.47.3). 다만 **현상·원인·수정은 재현으로 확정**됐으므로 방아쇠 규명은 수정의 선행 조건이 아니다.
 
 **김클로드는 읽기만 했다** — 파일 변경 0 · 스테이징 0 · 커밋 0. 이 handoff 항목만 추가.
 

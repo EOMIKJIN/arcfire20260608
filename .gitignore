@@ -44,6 +44,7 @@ web-build/
 
 # --- 데일리 커밋 로그 (로컬) ---
 tools/daily-commit/logs/*.log
+tools/kim-team-lead/reports/.kim-claude-auto-review-followup.json
 
 # =============================================================================
 # 저장소 위생 (2026-08-09) — 런타임 로그·번들 실험·날짜 아카이브·잔해
