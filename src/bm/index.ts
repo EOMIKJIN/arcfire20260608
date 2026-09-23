@@ -26,4 +26,15 @@ export {
   type BmShopKind,
   type BmShopProduct,
 } from './bmShopCatalog';
+export {
+  buildBmProductPurchaseExplainBody,
+  listBmProductContentLines,
+  resolveBmProductOverlapNotes,
+} from './bmProductOfferCopy';
+export {
+  PLANET_DEED_IAP_PRODUCT_ID,
+  PLANET_DEED_IAP_ACCOUNT_LIMIT,
+  getPlanetDeedIapAccountLimit,
+  isPlanetDeedIapProductId,
+} from './planetDeedCashGrantPolicy';
 export { formatGemBalance, resolvePlayerGemBalance } from './bmWalletDisplay';

@@ -5,6 +5,7 @@
 
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { View, StyleSheet, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SPACING } from '../../src/utils/theme';
 import { usePlayerStore } from '../../src/store/playerStore';
@@ -22,13 +23,17 @@ import { useT } from '../../src/i18n';
 import { CinematicPrologueScene } from '../../src/ui/onboarding/CinematicPrologueScene';
 import { CinematicPrologueFooter } from '../../src/ui/onboarding/CinematicPrologueFooter';
 import { CINEMATIC_PROLOGUE } from '../../src/ui/onboarding/cinematicPrologueTokens';
+import { useMainStoryProgressStore } from '../../src/store/mainStoryProgressStore';
 import type { Href } from 'expo-router';
 import { runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
+import { usePreHubWorldOpsAlertSuppress } from '../../src/navigation/usePreHubWorldOpsAlertSuppress';
 import { ArcButton } from '../../src/ui/overlay/ArcButton';
 
 export default function IntroScreen() {
+  usePreHubWorldOpsAlertSuppress();
   const t = useT();
   const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ sceneId?: string | string[]; flow?: string | string[] }>();
   const paramSceneId = Array.isArray(params.sceneId) ? params.sceneId[0] : params.sceneId;
   const paramFlow = Array.isArray(params.flow) ? params.flow[0] : params.flow;
@@ -42,6 +47,8 @@ export default function IntroScreen() {
   const [segmentIndex, setSegmentIndex] = useState(0);
   const [pageComplete, setPageComplete] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  /** 스킵으로 도달한 페이지 — 타이핑 애니메이션 없이 텍스트를 즉시 전체 표시한다. */
+  const [skipRevealPage, setSkipRevealPage] = useState<number | null>(null);
   const introNavScheduledRef = useRef(false);
   const appLocale = useAppSettingsStore(s => s.locale);
   const player = usePlayerStore(s => s.player);
@@ -59,9 +66,13 @@ export default function IntroScreen() {
   const ingameSplitOptions = useMemo(
     () => ({
       windowWidth: width,
-      widthInsets: { hostHorizontalPadPx: NARRATIVE_DIALOG_LAYOUT.hostHorizontalPadPx },
+      widthInsets: {
+        safeLeft: insets.left,
+        safeRight: insets.right,
+        hostHorizontalPadPx: NARRATIVE_DIALOG_LAYOUT.hostHorizontalPadPx,
+      },
     }),
-    [width],
+    [width, insets.left, insets.right],
   );
   const ingameTextSegments = useMemo(() => {
     if (currentViewMode !== 'ingame_dialog') return [renderedText];
@@ -69,6 +80,8 @@ export default function IntroScreen() {
   }, [currentViewMode, renderedText, ingameMaxLines, ingameSplitOptions]);
   const ingameSegmentText = ingameTextSegments[segmentIndex] ?? '';
   const isLastIngameSegment = segmentIndex >= Math.max(0, ingameTextSegments.length - 1);
+  // 스킵으로 이 페이지에 도달했고, 아직 세그먼트 0(스킵 직후 첫 표시)일 때만 즉시 전체 표시.
+  const skipRevealActive = skipRevealPage === page && segmentIndex === 0;
 
   const typingRevealKey = isCinematicPage
     ? `intro-cinematic-${page}`
@@ -118,7 +131,9 @@ export default function IntroScreen() {
           scheduleIntroNavigate('/(game)/character-select');
           return;
         }
-        if (scene.completionPolicy === 'mark_intro_seen_and_start_first_mission') {
+        if (scene.completionPolicy === 'return_hub_after_chapter_story') {
+          useMainStoryProgressStore.getState().markChapterEndSeen(scene.id);
+        } else if (scene.completionPolicy === 'mark_intro_seen_and_start_first_mission') {
           runIntroSeenAndStartFirstMissionPolicy();
         }
         const nextRoute = (scene.nextRoute as '/(game)/planet') || '/(game)/planet';
@@ -149,7 +164,9 @@ export default function IntroScreen() {
   ]);
 
   const handleSkipScene = useCallback(() => {
-    setPage(Math.max(0, pages.length - 1));
+    const lastPageIndex = Math.max(0, pages.length - 1);
+    setSkipRevealPage(lastPageIndex);
+    setPage(lastPageIndex);
     setPageComplete(false);
   }, [pages.length]);
 
@@ -188,6 +205,7 @@ export default function IntroScreen() {
               fadeInDurationMs={scene?.fadeInDurationMs ?? CINEMATIC_PROLOGUE.fadeDefaultMs}
               onTextComplete={onTypingComplete}
               onPressAdvance={handleNext}
+              skipAnimation={skipRevealActive}
             />
             <CinematicPrologueFooter
               pageCount={pages.length}
@@ -215,6 +233,7 @@ export default function IntroScreen() {
                   portraitScale={popupImageScale}
                   maxLines={ingameMaxLines}
                   showActionButton={false}
+                  skipAnimation={skipRevealActive}
                 />
               </View>
             </View>

@@ -1,0 +1,12 @@
+{
+  "name": "arcfire-arc-core-chat-aws",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "npx tsx --test src/handler.test.ts src/verifyFirebaseJwt.test.ts",
+    "build": "npx esbuild src/lambdaEntry.ts --bundle --platform=node --target=node24 --format=cjs --outfile=dist/index.js --legal-comments=none"
+  }
+}

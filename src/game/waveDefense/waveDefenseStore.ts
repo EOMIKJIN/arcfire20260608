@@ -35,12 +35,21 @@ type WaveDefenseState = {
   expEarned: number;
   /** 클리어 완료한 웨이브 수(최종 결과창 진행도 표기) */
   wavesCleared: number;
+  /** 전체 종료 UI 직전 짧은 홀드(전투 캔버스 유지) */
+  endHoldActive: boolean;
+  /** requestEndRun 후 endRun 대기 결과 */
+  pendingOutcome: WaveDefenseOutcome | null;
 
   startRun: (planetId: string, systemId: string | null) => void;
   setWave: (waveIndex: number, fleet: CombatFleetSeedSlot[]) => void;
   setPhase: (phase: WaveDefensePhase) => void;
   /** 웨이브 N 클리어 1회 기록 — 보상 경험치 누적 + 클리어 수 갱신 */
   recordWaveCleared: (waveIndex: number) => void;
+  /**
+   * 전체 종료 1회 예약 — active 유지한 채 홀드 후 컨트롤러가 endRun.
+   * failsafe orphan/stall 은 기존처럼 endRun 직접 호출.
+   */
+  requestEndRun: (outcome: WaveDefenseOutcome) => void;
   endRun: (outcome: WaveDefenseOutcome) => void;
   reset: () => void;
 };
@@ -56,6 +65,8 @@ const INITIAL = {
   outcome: null as WaveDefenseOutcome | null,
   expEarned: 0,
   wavesCleared: 0,
+  endHoldActive: false,
+  pendingOutcome: null as WaveDefenseOutcome | null,
 };
 
 export const useWaveDefenseStore = create<WaveDefenseState>((set) => ({
@@ -71,6 +82,8 @@ export const useWaveDefenseStore = create<WaveDefenseState>((set) => ({
       outcome: null,
       expEarned: 0,
       wavesCleared: 0,
+      endHoldActive: false,
+      pendingOutcome: null,
     }),
   setWave: (waveIndex, fleet) =>
     set((s) => ({ waveIndex, fleetSeedOverride: fleet, phase: 'combat', waveGenKey: s.waveGenKey + 1 })),
@@ -80,7 +93,19 @@ export const useWaveDefenseStore = create<WaveDefenseState>((set) => ({
       expEarned: s.expEarned + waveDefenseWaveExpReward(waveIndex),
       wavesCleared: Math.max(s.wavesCleared, Math.max(0, Math.floor(waveIndex))),
     })),
-  endRun: (outcome) => set({ active: false, phase: 'ended', fleetSeedOverride: null, outcome }),
+  requestEndRun: (outcome) =>
+    set((s) => {
+      if (!s.active || s.phase === 'ended' || s.pendingOutcome) return s;
+      return { endHoldActive: true, pendingOutcome: outcome };
+    }),
+  endRun: (outcome) => set({
+    active: false,
+    phase: 'ended',
+    fleetSeedOverride: null,
+    outcome,
+    endHoldActive: false,
+    pendingOutcome: null,
+  }),
   reset: () => set({ ...INITIAL }),
 }));
 

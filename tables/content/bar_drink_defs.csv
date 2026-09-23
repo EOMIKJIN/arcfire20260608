@@ -1,0 +1,4 @@
+drinkId,displayNameKo,displayNameEn,priceCredits,durationSec,unlockBundleTier,bmSkuId,minBarLevel,enabled
+drink_house_ale,하우스 에일,House Ale,200,900,1,,1,1
+drink_nebula_wine,성운 와인,Nebula Wine,200,900,2,,2,1
+drink_phosphor_fizz,포스포 피즈,Phosphor Fizz,200,900,3,,3,1

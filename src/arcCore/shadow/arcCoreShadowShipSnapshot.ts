@@ -16,8 +16,7 @@
 
 import { NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV } from '../../data/generated';
 import { getNpcCapitalShip } from '../../npc/npcFleetRegistry';
-import { isKnownCapitalWeaponId } from '../../game/capitalWeaponRowLookup';
-import { DEFAULT_CLOSE_RANGE_WEAPON_ID } from '../../game/combatWeaponSlots';
+import { resolvePlayerCombatWeaponChannels } from '../../game/resolvePlayerCombatWeaponChannels';
 import {
   applyMineralUpgradeToShipPerformance,
   calculateShipPerformance,
@@ -71,12 +70,6 @@ export type ArcCoreShadowShipSnapshot = {
   updatedAtMs: number;
 };
 
-function resolveSlotWeaponId(raw: unknown): string {
-  const s = String(raw ?? '').trim();
-  if (!s || s === '0') return '';
-  const id = s.replace(/^weapon_item_/, '').trim();
-  return id && isKnownCapitalWeaponId(id) ? id : '';
-}
 
 /**
  * 현재 플레이어 기함의 최종 전투 스펙 스냅샷 — publish 용.
@@ -93,25 +86,12 @@ export function buildLocalArcCoreShadowShipSnapshot(): ArcCoreShadowShipSnapshot
   if (!npcRow) return null;
   const runtimeBase = NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV[npcShipId];
 
-  let laserWeaponId = resolveSlotWeaponId(player.ship.equipSlots?.WEAPON_1?.itemDefId);
-  let missileWeaponId = resolveSlotWeaponId(player.ship.equipSlots?.WEAPON_2?.itemDefId);
-  let closeRangeWeaponId = resolveSlotWeaponId(player.ship.equipSlots?.WEAPON_3?.itemDefId);
-  let auxWeaponId = resolveSlotWeaponId(player.ship.equipSlots?.WEAPON_4?.itemDefId);
-  if (!laserWeaponId && runtimeBase?.laserWeaponId?.trim() && isKnownCapitalWeaponId(runtimeBase.laserWeaponId.trim())) {
-    laserWeaponId = runtimeBase.laserWeaponId.trim();
-  }
-  if (!missileWeaponId && runtimeBase?.missileWeaponId?.trim() && isKnownCapitalWeaponId(runtimeBase.missileWeaponId.trim())) {
-    missileWeaponId = runtimeBase.missileWeaponId.trim();
-  }
-  if (!closeRangeWeaponId && runtimeBase?.closeRangeWeaponId?.trim() && isKnownCapitalWeaponId(runtimeBase.closeRangeWeaponId.trim())) {
-    closeRangeWeaponId = runtimeBase.closeRangeWeaponId.trim();
-  }
-  if (!closeRangeWeaponId && isKnownCapitalWeaponId(DEFAULT_CLOSE_RANGE_WEAPON_ID)) {
-    closeRangeWeaponId = DEFAULT_CLOSE_RANGE_WEAPON_ID;
-  }
-  if (!auxWeaponId && runtimeBase?.auxWeaponId?.trim() && isKnownCapitalWeaponId(runtimeBase.auxWeaponId.trim())) {
-    auxWeaponId = runtimeBase.auxWeaponId.trim();
-  }
+  const {
+    laserWeaponId,
+    missileWeaponId,
+    closeRangeWeaponId,
+    auxWeaponId,
+  } = resolvePlayerCombatWeaponChannels(player.ship.equipSlots, runtimeBase);
 
   const baseCombat = {
     ...npcRow.combat,

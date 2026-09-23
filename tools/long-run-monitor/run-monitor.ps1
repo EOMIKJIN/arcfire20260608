@@ -129,7 +129,8 @@ while ($true) {
         $note = 'HUB_ACTIVATION gl_mount_ok'
         Write-Meta "INFO hub activation GL ${prevGl}->${glMb}MB views ${prevViews}->${curViews} (no restart)"
       } elseif ($hubActive) {
-        $note = 'GL_SPIKE suspect=hub_skia_orbit_nebula_combat'
+        # 하드코딩 라벨 — STAGE3 전투 진입 증거가 아님. 허브 활성+GL Δ만 의미.
+        $note = 'GL_SPIKE suspect=hub_idle_skia_inbound_or_nebula'
         Add-Content -Path $alertLog -Value "[$iso] GL +${deltaGl}MB views=${curViews} (PSS ${deltaPss}MB) — active hub"
         Write-Meta "ALERT GL +${deltaGl}MB active hub views=${curViews}"
         # 단일 스파이크만으로 즉시 재시작하지 않는다(전투 진입 마운트 급상승 false-positive 방지).

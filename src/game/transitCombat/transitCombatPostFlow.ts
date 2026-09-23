@@ -10,6 +10,7 @@ import {
   isIngameDialogActive,
   presentIngameDialogScene,
 } from '../ingameDialog/ingameDialogApi';
+import { COMBAT_END_OPERATOR_AUTO_DISMISS_MS } from '../ingameDialog/ingameDialogAutoDismiss';
 import { useMissionStore } from '../../store/missionStore';
 import { usePlayerStore } from '../../store/playerStore';
 import { useArcOverlayStore } from '../../ui/overlay/arcOverlayStore';
@@ -119,6 +120,7 @@ async function presentAdHocTransitDialog(label: string, text: string): Promise<v
       const ok = presentAdHocIngameDialog({
         label,
         text,
+        autoDismissMs: COMBAT_END_OPERATOR_AUTO_DISMISS_MS,
         onDismiss: () => resolve(true),
       });
       if (!ok) resolve(false);
@@ -179,14 +181,12 @@ async function presentMissionClearWhenReady(): Promise<void> {
     });
 
     if (completed) {
-      useMissionStore.setState({ pendingMissionClearDialog: null });
-      return;
+      continue;
     }
 
     if (useMissionStore.getState().pendingMissionDialogId === missionId) {
       useMissionStore.getState().finalizeMissionCompletion(missionId);
     }
-    useMissionStore.setState({ pendingMissionClearDialog: null });
     return;
   }
 }

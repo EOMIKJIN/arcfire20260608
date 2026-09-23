@@ -5,6 +5,7 @@
 import type { WeaponData } from '../types';
 import type { WeaponFamily, WeaponSystemCatalogEntry } from './catalogTypes';
 import { getCapitalWeaponRow } from '../game/capitalWeaponRowLookup';
+import { formatWeaponSpecialDisplayName } from '../combat/weaponSpecialFxPolicy';
 import { getDefaultItemCatalogRegistry } from './itemCatalogRegistry';
 
 /** 구 ItemCatalog id → weapon_list.csv id (호환만 · 신규 사용 금지) */
@@ -54,7 +55,7 @@ function weaponDataFromWeaponListId(weaponId: string): WeaponData | null {
   const diceSides = Math.max(4, Math.min(12, Math.round(row.damage)));
   return {
     id: row.id,
-    name: row.name,
+    name: formatWeaponSpecialDisplayName(weaponId, row.name),
     type: row.kind === 'missile' ? 'missile' : 'laser',
     attackBonus: Math.max(0, Math.floor(row.damage)),
     range: Math.max(1, Math.floor(row.rangePx)),

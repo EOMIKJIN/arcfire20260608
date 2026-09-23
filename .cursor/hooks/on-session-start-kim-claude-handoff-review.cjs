@@ -3,7 +3,7 @@
  * sessionStart — 김클로드 handoff가 PENDING이면 김팀장 세션에 검수 의무 주입
  */
 const path = require('path');
-const { readPendingHandoff } = require('./kimClaudeHandoffCore.cjs');
+const { readPendingHandoff, extraDutyForPending } = require('./kimClaudeHandoffCore.cjs');
 
 const ROOT = path.join(__dirname, '..', '..');
 
@@ -22,6 +22,7 @@ function main() {
     '',
     '필수: git diff → tsc → (해당 시) audit:skia-memory / audit:memory:all → 필요 시 수정 → handoff verdict 기록 → status REVIEWED 후 IDLE.',
     '**git commit은 김팀장(본 세션)만** — 사용자 명시 요청 시에만.',
+    extraDutyForPending(pending),
     '',
     '--- handoff (head) ---',
     pending.head,

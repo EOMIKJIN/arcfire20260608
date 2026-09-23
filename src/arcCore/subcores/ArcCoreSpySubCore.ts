@@ -12,6 +12,7 @@ import { useArcNpcTrafficStore } from '../../store/arcNpcTrafficStore';
 import { usePlayerStore } from '../../store/playerStore';
 import { tryNotifyArcCoreSpyIntelAlert } from '../spy/tryNotifyArcCoreSpyIntelAlert';
 import { resetArcCoreSpyIntelAlertStore } from '../spy/arcCoreSpyIntelAlertStore';
+import { resetPlanetHubSpyIntelDialogSchedule } from '../spy/spyIntelAutoOpenGate';
 import { resolveArcCoreSpyTacticalBundleAtPlanet } from '../spy/resolveArcCoreSpyTacticalBundleAtPlanet';
 
 /**
@@ -20,10 +21,13 @@ import { resolveArcCoreSpyTacticalBundleAtPlanet } from '../spy/resolveArcCoreSp
  */
 export class ArcCoreSpySubCore extends BaseArcSubCore {
   private pulseAccSec = 0;
+  private lookupAccSec = 0;
   private lastPlanetId: string | null = null;
   private lastSpyKey = '';
+  private cachedSpyIds: readonly string[] = [];
   /** 세션 내 스파이별 정보원 알림 1회 — `${planetId}:${captainId}` */
   private readonly notifiedSpyKeys = new Set<string>();
+  private static readonly LOOKUP_INTERVAL_SEC = 1;
 
   constructor() {
     super('arc_core_spy_subcore', '닉스 · 스파이');
@@ -35,18 +39,24 @@ export class ArcCoreSpySubCore extends BaseArcSubCore {
   override onBoot(): void {
     void useArcCoreSpyExpelledStore.getState().loadLocal();
     this.pulseAccSec = 0;
+    this.lookupAccSec = 0;
     this.lastPlanetId = null;
     this.lastSpyKey = '';
+    this.cachedSpyIds = [];
     this.notifiedSpyKeys.clear();
     resetArcCoreSpyIntelAlertStore();
+    resetPlanetHubSpyIntelDialogSchedule();
   }
 
   override onShutdown(): void {
     this.pulseAccSec = 0;
+    this.lookupAccSec = 0;
     this.lastPlanetId = null;
     this.lastSpyKey = '';
+    this.cachedSpyIds = [];
     this.notifiedSpyKeys.clear();
     resetArcCoreSpyIntelAlertStore();
+    resetPlanetHubSpyIntelDialogSchedule();
   }
 
   private tick(wallDeltaSec: number): void {
@@ -56,20 +66,30 @@ export class ArcCoreSpySubCore extends BaseArcSubCore {
     const playerPlanetId = usePlayerStore.getState().player?.currentPlanetId ?? null;
     if (policy.playerPlanetOnly && !playerPlanetId?.trim()) {
       this.pulseAccSec = 0;
+      this.lookupAccSec = 0;
       this.lastPlanetId = null;
       this.lastSpyKey = '';
+      this.cachedSpyIds = [];
       return;
     }
 
     const planetId = playerPlanetId!.trim();
     if (planetId !== this.lastPlanetId) {
       this.pulseAccSec = 0;
+      this.lookupAccSec = 0;
       this.lastPlanetId = planetId;
       this.lastSpyKey = '';
+      this.cachedSpyIds = [];
+      this.notifiedSpyKeys.clear();
     }
 
+    this.lookupAccSec += wallDeltaSec;
     const arcShips = useArcNpcTrafficStore.getState().ships;
-    const spyIds = listActiveArcCoreSpyCaptainIdsAtPlanet(planetId, arcShips);
+    if (this.lookupAccSec >= ArcCoreSpySubCore.LOOKUP_INTERVAL_SEC || this.cachedSpyIds.length === 0) {
+      this.lookupAccSec = 0;
+      this.cachedSpyIds = listActiveArcCoreSpyCaptainIdsAtPlanet(planetId, arcShips);
+    }
+    const spyIds = this.cachedSpyIds;
     if (spyIds.length === 0) {
       this.pulseAccSec = 0;
       this.lastSpyKey = '';
@@ -86,15 +106,18 @@ export class ArcCoreSpySubCore extends BaseArcSubCore {
         if (!prevSet.has(captainId)) newlyArrived.push(captainId);
       }
       if (newlyArrived.length > 0) {
-        tryNotifyArcCoreSpyIntelAlert({
+        const consumed = tryNotifyArcCoreSpyIntelAlert({
           planetId,
           newlyArrivedSpyCaptainIds: newlyArrived,
           activeSpyCaptainIds: spyIds,
           notifiedSpyKeys: this.notifiedSpyKeys,
         });
+        this.pulseAccSec = 0;
+        if (consumed) this.lastSpyKey = spyKey;
+      } else {
+        this.pulseAccSec = 0;
+        this.lastSpyKey = spyKey;
       }
-      this.pulseAccSec = 0;
-      this.lastSpyKey = spyKey;
     }
 
     this.pulseAccSec += wallDeltaSec;

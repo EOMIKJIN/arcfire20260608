@@ -1,27 +1,23 @@
 import type { ItemDef } from '../types';
 import type { AppLocale } from './types';
 import { useAppSettingsStore } from '../store/appSettingsStore';
-import { isKoUi } from './index';
+import { pickLocalized } from './pickLocalized';
 
 type ItemEnFields = Pick<ItemDef, 'name' | 'description'> &
   Partial<Pick<ItemDef, 'nameEn' | 'descriptionEn' | 'featureDescription' | 'featureDescriptionEn'>>;
 
-function pickEn(locale: AppLocale, ko: string, en?: string | null): string {
-  return !isKoUi(locale) && en?.trim() ? en.trim() : ko;
-}
-
 export function resolveItemName(item: ItemEnFields, locale: AppLocale): string {
-  return pickEn(locale, item.name, item.nameEn);
+  return pickLocalized(locale, item.name, item.nameEn);
 }
 
 export function resolveItemDescription(item: ItemEnFields, locale: AppLocale): string {
-  return pickEn(locale, item.description, item.descriptionEn);
+  return pickLocalized(locale, item.description, item.descriptionEn);
 }
 
 export function resolveItemFeatureDescription(item: ItemEnFields, locale: AppLocale): string {
   const feature = item.featureDescription?.trim() || item.description;
   const featureEn = item.featureDescriptionEn?.trim() || item.descriptionEn;
-  return pickEn(locale, feature, featureEn);
+  return pickLocalized(locale, feature, featureEn);
 }
 
 export function resolveItemNameNow(item: ItemEnFields): string {

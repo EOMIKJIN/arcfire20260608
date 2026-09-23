@@ -89,7 +89,7 @@ const V20 = {
     upgrade: [0, 0, 250_000, 700_000, 1_500_000, 3_500_000, 7_000_000, 14_000_000, 28_000_000, 60_000_000, 120_000_000, 198_000_000, 326_000_000, 538_000_000, 887_000_000, 1_460_000_000],
     instant: [0, 0, 100_000, 280_000, 600_000, 1_400_000, 2_800_000, 5_600_000, 11_200_000, 24_000_000, 48_000_000, 79_200_000, 130_400_000, 215_200_000, 354_800_000, 584_000_000],
   },
-  tavern: {
+  bar: {
     l1Install: 80_000,
     l1Instant: 40_000,
     upgrade: [0, 0, 200_000, 500_000, 1_000_000, 2_500_000, 5_000_000, 10_000_000, 20_000_000, 40_000_000, 80_000_000, 132_000_000, 217_000_000, 357_000_000, 587_000_000, 965_000_000],
@@ -114,7 +114,7 @@ const V20 = {
 const L1_ANCHOR = {
   trade_port: 500,
   shipyard: 800,
-  tavern: 800,
+  bar: 800,
   laboratory: 2000,
   defense: 1000,
 };
@@ -208,9 +208,9 @@ patchCsvNumericColumns(path.join(BALANCE, 'facility_shipyard_level_policy.csv'),
   return cols;
 });
 
-const tavern = buildFacilityCosts('tavern');
-patchCsvNumericColumns(path.join(BALANCE, 'facility_tavern_level_policy.csv'), (lv, cols, header) => {
-  const r = tavern[lv - 1];
+const bar = buildFacilityCosts('bar');
+patchCsvNumericColumns(path.join(BALANCE, 'facility_bar_level_policy.csv'), (lv, cols, header) => {
+  const r = bar[lv - 1];
   cols[header.indexOf('installCostCredits')] = String(r.installCostCredits);
   cols[header.indexOf('upgradeCostCredits')] = String(r.upgradeCostCredits);
   cols[header.indexOf('instantUpgradeCostCredits')] = String(r.instantUpgradeCostCredits);
@@ -244,7 +244,7 @@ const costIdx = catHeader.indexOf('installCostCredits');
 const catalogCostById = {
   dev_trade_port: L1_ANCHOR.trade_port,
   dev_orbit_shipyard: L1_ANCHOR.shipyard,
-  dev_population_dome: L1_ANCHOR.tavern,
+  dev_population_dome: L1_ANCHOR.bar,
   dev_research_lab: L1_ANCHOR.laboratory,
 };
 for (let i = 1; i < catalogParsed.length; i += 1) {
@@ -265,7 +265,7 @@ const report = {
   perFacilityMaxCr: {
     trade_port: sumPath(trade),
     shipyard: sumPath(shipyard),
-    tavern: sumPath(tavern),
+    bar: sumPath(bar),
     laboratory: sumPath(lab),
     defense: sumPath(defense),
   },

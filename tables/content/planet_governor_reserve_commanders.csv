@@ -19,7 +19,7 @@ npc_cpt_gov_reserve_blue_17,BLUE,수비장,거점수비사령,npc_dialog_gov_blu
 npc_cpt_gov_reserve_blue_18,BLUE,교전장,교전지휘관,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_18,18,true,스텔리움 예비 총사령관 18,-3
 npc_cpt_gov_reserve_blue_19,BLUE,태양장,태양권 파견장,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_19,19,true,스텔리움 예비 총사령관 19,-1
 npc_cpt_gov_reserve_blue_20,BLUE,방위장,방위연합총감,npc_dialog_gov_blue_reserve,npc_ship_gov_reserve_blue_20,20,true,스텔리움 예비 총사령관 20,0
-npc_cpt_gov_reserve_red_01,RED,군주,크림슨 군단장,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_01,1,true,크림슨 예비 총사령관 01,3
+npc_cpt_gov_reserve_red_01,RED,군주,크림슨 레기온장,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_01,1,true,크림슨 예비 총사령관 01,3
 npc_cpt_gov_reserve_red_02,RED,전대장,붉은 전대사령,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_02,2,true,크림슨 예비 총사령관 02,2
 npc_cpt_gov_reserve_red_03,RED,약탈장,약탈전단장,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_03,3,true,크림슨 예비 총사령관 03,1
 npc_cpt_gov_reserve_red_04,RED,혈전장,혈전사령관,npc_dialog_gov_red_hostile,npc_ship_gov_reserve_red_04,4,true,크림슨 예비 총사령관 04,1

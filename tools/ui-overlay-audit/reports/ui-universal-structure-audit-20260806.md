@@ -12,7 +12,7 @@ Generated: 2026-08-06 KST · 김팀장 정적 전수
 | 팝업 → `ArcOverlayHost` 단일 루트 | **적용됨** (`app/_layout.tsx`) |
 | panel 조립(Card·TitleHeader·FooterActions) | **주요 panel kind 완료** |
 | compact (alert/levelUp/reward/waveResult) | **Card 사용 · FooterActions 미통일** (스펙 Phase A) |
-| 시설 STAGE 화면 (무역/선술집/조선소) | **별도 `PlanetFacility*` 셸** — 오버레이 kind 아님(의도) |
+| 시설 STAGE 화면 (무역/바/조선소) | **별도 `PlanetFacility*` 셸** — 오버레이 kind 아님(의도) |
 | 통합 범용 완성도 | **약 80%** — Host 수렴 OK · compact/레거시·chrome 갭 잔존 |
 
 ---
@@ -26,7 +26,7 @@ app/_layout.tsx
  └─ (game) STAGE screens
       ├─ planet.tsx         허브
       ├─ worldmap / combat
-      └─ trade / tavern / shipyard / skilltree  ← SUB-STAGE 풀스크린
+      └─ trade / bar / shipyard / skilltree  ← SUB-STAGE 풀스크린
            └─ PlanetFacilityTitleHeader + ScrollView spacer
 ```
 
@@ -101,7 +101,7 @@ WARN 요약: `LevelUpModal` dead legacy · HeavyUi/Portrait tactical 토큰 갭 
 
 ### 비이슈 (의도적 분리)
 
-- trade/tavern/shipyard/skilltree = STAGE push · 오버레이 강제 아님
+- trade/bar/shipyard/skilltree = STAGE push · 오버레이 강제 아님
 - narrative = IngameDialogHost 축
 - 허브 인라인 HUD
 
@@ -111,7 +111,7 @@ WARN 요약: `LevelUpModal` dead legacy · HeavyUi/Portrait tactical 토큰 갭 
 
 | 화면 | 공용 헤더 | 비고 |
 |------|-----------|------|
-| trade / tavern / shipyard | `PlanetFacilityTitleHeader` | `t('common.back')` 등 i18n |
+| trade / bar / shipyard | `PlanetFacilityTitleHeader` | `t('common.back')` 등 i18n |
 | skilltree | 시설 토큰 계열 | 동일 레이아웃 헌법 |
 | NearbyPresence overlay | Facility 타이포 일부 재사용 | panel Card 안 |
 

@@ -4,102 +4,54 @@ import {
   resolveNarrativeDialogCharsPerLine,
   type NarrativeDialogWidthInsets,
 } from './narrativeDialogLayout';
+import {
+  countNarrativeDialogVisualLines,
+  splitNarrativeDialogSegmentsCore,
+} from './splitNarrativeDialogSegmentsCore';
 
 export type NarrativeDialogSplitOptions = {
   windowWidth?: number;
   widthInsets?: NarrativeDialogWidthInsets;
+  /** 테스트 전용 — 넘기면 폭 계산·재분할을 건너뜀 */
+  charsPerLine?: number;
 };
 
-function wrapHardLine(line: string, maxChars: number): string[] {
-  const trimmed = line.trim();
-  if (!trimmed) return [''];
-  if (trimmed.length <= maxChars) return [trimmed];
-
-  const rows: string[] = [];
-  let rest = trimmed;
-  while (rest.length > maxChars) {
-    let cut = maxChars;
-    const slice = rest.slice(0, maxChars + 1);
-    const lastSpace = slice.lastIndexOf(' ');
-    if (lastSpace > Math.floor(maxChars * 0.45)) {
-      cut = lastSpace;
-    }
-    rows.push(rest.slice(0, cut).trimEnd());
-    rest = rest.slice(cut).trimStart();
-  }
-  if (rest.length > 0) rows.push(rest);
-  return rows;
-}
-
-function countVisualLines(chunk: string, charsPerLine: number): number {
-  if (!chunk) return 0;
-  let total = 0;
-  for (const para of chunk.split('\n')) {
-    if (!para) {
-      total += 1;
-      continue;
-    }
-    total += wrapHardLine(para, charsPerLine).length;
-  }
-  return total;
-}
-
-function splitWithCharsPerLine(
-  text: string,
-  maxLinesPerSegment: number,
-  charsPerLine: number,
-): string[] {
-  const normalized = String(text ?? '')
-    .replace(/\r\n/g, '\n')
-    .replace(/\r/g, '\n')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
-
-  if (!normalized) return [''];
-
-  const visualLines: string[] = [];
-  for (const para of normalized.split('\n')) {
-    if (!para) {
-      visualLines.push('');
-      continue;
-    }
-    for (const row of wrapHardLine(para, charsPerLine)) {
-      visualLines.push(row);
-    }
-  }
-
-  const safeMax = Math.max(1, maxLinesPerSegment | 0);
-  const chunks: string[] = [];
-  for (let i = 0; i < visualLines.length; i += safeMax) {
-    chunks.push(visualLines.slice(i, i + safeMax).join('\n'));
-  }
-  return chunks.length > 0 ? chunks : [''];
-}
+export {
+  isNarrativeDialogContextBreak,
+  narrativeDialogPagesFitLineBudget,
+  splitNarrativeDialogSegmentsCore,
+} from './splitNarrativeDialogSegmentsCore';
 
 /**
- * 인게임 대화 세그먼트 — hud 실제 너비 기준 soft-wrap · 3줄 단위.
- * 가로를 임의로 줄이지 않는다. 3줄 초과 시에만 1글자씩 재분할(최대 2회).
+ * 인게임 대화 세그먼트 — hud 실제 너비 기준 soft-wrap · 2~3줄.
+ * 빈 줄은 표시하지 않고, 가능하면 문장 경계에서 페이지를 넘긴다.
+ * 초상은 상단이라 본문 너비에서 빼지 않는다. 3줄 초과 시에만 1글자씩 재분할(최대 2회).
+ * 작성 `\n` 존중. 폭을 넘는 작성 줄은 시각 줄로 페이지 분할(3줄 박스 초과 금지).
  */
 export function splitNarrativeDialogSegments(
   text: string,
   maxLinesPerSegment: number = NARRATIVE_DIALOG_LAYOUT.maxLinesDefault,
   options?: NarrativeDialogSplitOptions,
 ): string[] {
+  if (options?.charsPerLine != null) {
+    return splitNarrativeDialogSegmentsCore(text, maxLinesPerSegment, options.charsPerLine);
+  }
+
   const windowWidth = options?.windowWidth ?? Dimensions.get('window').width;
   const widthInsets = options?.widthInsets ?? {};
 
   let charsPerLine = resolveNarrativeDialogCharsPerLine(windowWidth, widthInsets);
 
   for (let attempt = 0; attempt < 3; attempt++) {
-    const chunks = splitWithCharsPerLine(text, maxLinesPerSegment, charsPerLine);
+    const chunks = splitNarrativeDialogSegmentsCore(text, maxLinesPerSegment, charsPerLine);
     const fits = chunks.every(
-      (chunk) => countVisualLines(chunk, charsPerLine) <= maxLinesPerSegment,
+      (chunk) => countNarrativeDialogVisualLines(chunk, charsPerLine) <= maxLinesPerSegment,
     );
     if (fits && chunks.length > 0) return chunks;
     charsPerLine = Math.max(10, charsPerLine - 1);
   }
 
-  return splitWithCharsPerLine(text, maxLinesPerSegment, charsPerLine);
+  return splitNarrativeDialogSegmentsCore(text, maxLinesPerSegment, charsPerLine);
 }
 
 export function narrativeDialogSegmentCount(

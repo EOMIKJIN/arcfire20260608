@@ -96,6 +96,42 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // 행성 유일 소유권 증서 — 행성 키만(users 열거 아님). 랭킹 단발 list 허용.
+    // 실시간 onSnapshot 금지(클라 계약). 쓰기는 구매 트랜잭션·함락/초기화 해제만.
+    // 게임 uid ≠ Auth uid. users 문서는 인증만으로 update 가능하므로 boundAuthUid
+    // 교차참조는 위조 탈취 구멍 — 삭제/갱신은 문서 authUid == request.auth.uid 만.
+    match /planet_unique_deeds/{planetId} {
+      function deedFieldsValid() {
+        return request.resource.data.keys().hasOnly([
+            'ownerUid',
+            'authUid',
+            'nickname',
+            'playerLevel',
+            'megaFactionId',
+            'planetId',
+            'securedAt'
+          ])
+          && request.resource.data.planetId == planetId
+          && request.resource.data.ownerUid is string
+          && request.resource.data.ownerUid.size() > 0
+          && request.resource.data.ownerUid.size() < 80
+          && request.resource.data.authUid == request.auth.uid
+          && request.resource.data.nickname is string
+          && request.resource.data.nickname.size() > 0
+          && request.resource.data.nickname.size() < 40
+          && request.resource.data.playerLevel is number
+          && request.resource.data.megaFactionId is string
+          && request.resource.data.securedAt is number;
+      }
+      allow get, list: if authed();
+      allow create: if authed() && deedFieldsValid();
+      allow update: if authed()
+        && deedFieldsValid()
+        && resource.data.authUid == request.auth.uid
+        && request.resource.data.ownerUid == resource.data.ownerUid;
+      allow delete: if authed() && resource.data.authUid == request.auth.uid;
+    }
+
     // 그 외 모든 경로(battles 등 폐기 컬렉션 포함) — default deny
   }
 }

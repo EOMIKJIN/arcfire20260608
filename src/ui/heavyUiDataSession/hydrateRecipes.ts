@@ -2,6 +2,10 @@ import { useArcCoreTransportFleetBankStore } from '../../store/factionVault/arcC
 import { useArcCoreVaultStore } from '../../store/factionVault/arcCoreVaultStore';
 import { useBlueTeamSharedVaultStore } from '../../store/factionVault/blueTeamSharedVaultStore';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
+import {
+  ensureStelliumColonizeHydrated,
+  useStelliumColonizeStore,
+} from '../../store/stelliumColonizeStore';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { usePlanetTradeFeeLedgerStore } from '../../store/planetTradeFeeLedgerStore';
 import type { HeavyUiHydrateStep } from './types';
@@ -19,6 +23,14 @@ export function createClanWarFoundationStep(): HeavyUiHydrateStep {
     id: 'clan_war_foundation',
     isReady: () => useClanWarFoundationStore.getState().hydrated,
     run: () => useClanWarFoundationStore.getState().loadLocalClanWarFoundation(),
+  };
+}
+
+export function createStelliumColonizeStep(): HeavyUiHydrateStep {
+  return {
+    id: 'stellium_colonize',
+    isReady: () => useStelliumColonizeStore.getState().hydrated,
+    run: () => ensureStelliumColonizeHydrated(),
   };
 }
 

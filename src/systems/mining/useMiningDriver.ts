@@ -4,7 +4,7 @@
 // planet.tsx 안에 산재하던 `setInterval` + tick 분배 로직을 단일 훅으로 격리한다.
 //
 // 책임:
-//   - `enabled` 신호가 true 인 동안 500ms 인터벌로 채굴 tick 평가
+//   - `enabled` 신호가 true 인 동안 2s 인터벌로 채굴 tick 평가(사이클 30s · 게이지 2s)
 //   - `runMiningTick` 결과를 ORBIT_MINING_SESSION_MAX_UNITS 한도 내에서 분배
 //   - 게이지 UI 갱신은 `MINING_GAUGE_UI_MIN_STEP_MS`(2s)로 스로틀
 //   - tick 보상은 `onGrant` 로 위임(인벤토리 add·뱃지·persist 등은 호출자 책임)
@@ -29,9 +29,10 @@ import { isOrbitMiningDailyAllowanceExhausted } from '../../game/mining/orbitMin
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { usePlanetMineralLedgerStore } from '../../store/planetMineralLedgerStore';
 
-/** 게이지 UI 갱신 최소 간격 — 500ms 인터벌 대비 과도한 리렌더 방지(체감 영향 미미). */
+/** 게이지 UI 갱신 최소 간격 — 사이클(30s)과 별개. 지급 타이밍을 바꾸지 않는다. */
 const MINING_GAUGE_UI_MIN_STEP_MS = 2000;
-const MINING_TICK_INTERVAL_MS = 500;
+/** 사이클 30s보다 짧게만 보면 됨. 500ms는 대기 구간 store/policy 조회가 불필요. */
+const MINING_TICK_INTERVAL_MS = 2000;
 
 export interface MiningGrant {
   goodId: string;
@@ -100,6 +101,16 @@ export function useMiningDriver(opts: UseMiningDriverOptions): void {
       if (prev.status !== 'running') return;
       const planetId = prev.planetId;
       if (!planetId) return;
+      const last = prev.lastTickAtMs ?? now;
+      const elapsed = now - last;
+
+      if (elapsed < ORBIT_MINING_CYCLE_MS) {
+        if (now - lastGaugeUiAtRef.current < MINING_GAUGE_UI_MIN_STEP_MS) return;
+        lastGaugeUiAtRef.current = now;
+        applyUiNowMsRef.current(now);
+        return;
+      }
+
       const sessionMaxUnits = Math.max(1, resolveSessionMaxUnitsRef.current(planetId));
       const runtimeR =
         usePlanetCoreRuntimeStore.getState().getPlanetCoreRuntime(planetId)?.resource;
@@ -109,15 +120,6 @@ export function useMiningDriver(opts: UseMiningDriverOptions): void {
         sessionRef.current = stopped;
         applySessionRef.current(stopped);
         onDailyAllowanceExhaustedRef.current?.();
-        return;
-      }
-      const last = prev.lastTickAtMs ?? now;
-      const elapsed = now - last;
-
-      if (elapsed < ORBIT_MINING_CYCLE_MS) {
-        if (now - lastGaugeUiAtRef.current < MINING_GAUGE_UI_MIN_STEP_MS) return;
-        lastGaugeUiAtRef.current = now;
-        applyUiNowMsRef.current(now);
         return;
       }
 

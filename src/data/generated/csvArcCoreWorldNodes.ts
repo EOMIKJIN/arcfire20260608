@@ -132,7 +132,7 @@ export const ARC_CORE_WORLD_NODES_FROM_CSV: readonly ArcCoreWorldNodeRow[] = [
     planetId: "synth_074_p",
     systemId: "synth_074",
     mapVisibleWhileLocked: false,
-    notesKo: "공지·선술집 보드",
+    notesKo: "공지·바 보드",
   },
   {
     nodeId: "seat_astraia",

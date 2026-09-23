@@ -1,6 +1,7 @@
 import { buildCsvStaticIndexesFull } from '../../../game/buildCsvStaticIndexes';
 import { useClanWarFoundationStore } from '../../../store/clanWarFoundationStore';
-import { createClanWarFoundationStep } from '../hydrateRecipes';
+import { createClanWarFoundationStep, createStelliumColonizeStep } from '../hydrateRecipes';
+import { useStelliumColonizeStore } from '../../../store/stelliumColonizeStore';
 import { resolvePlanetHubPreflightId } from '../../../world/resolvePlanetById';
 import { preflightPlanetHubDepartureSession } from '../preflightPlanetHub';
 import type { HeavyUiSessionConfig } from '../types';
@@ -16,6 +17,7 @@ export function createWorldmapScreenSession(planetId: string): HeavyUiSessionCon
     preflight: () => preflightPlanetHubDepartureSession(anchorPlanetId),
     hydrateSteps: [
       createClanWarFoundationStep(),
+      createStelliumColonizeStep(),
       {
         id: 'csv_static_indexes',
         run: async () => {
@@ -30,5 +32,6 @@ export function createWorldmapScreenSession(planetId: string): HeavyUiSessionCon
 
 export function readWorldmapSessionRevision(): string {
   const holds = useClanWarFoundationStore.getState().planetHolds;
-  return `${Object.keys(holds).length}:${useClanWarFoundationStore.getState().hydrated}`;
+  const colonize = useStelliumColonizeStore.getState();
+  return `${Object.keys(holds).length}:${useClanWarFoundationStore.getState().hydrated}:${colonize.revision}`;
 }

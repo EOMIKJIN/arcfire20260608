@@ -1,0 +1,216 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>아크코어 AI — 아크파이어 온라인 위키</title>
+<meta name="description" content="세계를 운영하는 AI 아크코어, 12좌 범신전, 오퍼레이터 스텔라 아리스, 두 개의 게이트 대화 시스템" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body data-page="arccore">
+
+<header class="site-header">
+  <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <div class="site-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
+    <div class="search-hits"></div>
+  </div>
+  <button class="theme-toggle" type="button" aria-label="테마 전환"></button>
+</header>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-group"><h5>시작</h5><a href="index.html" data-page="index"><span class="dot"></span>홈</a></div>
+    <div class="sidebar-group"><h5>세계</h5>
+      <a href="world.html" data-page="world"><span class="dot"></span>세계관 · 아크코어</a>
+      <a href="factions.html" data-page="factions"><span class="dot"></span>4대 세력</a>
+      <a href="galaxy.html" data-page="galaxy"><span class="dot"></span>은하 · 행성</a>
+      <a href="story.html" data-page="story"><span class="dot"></span>스토리 · 미션</a>
+    </div>
+    <div class="sidebar-group"><h5>전력</h5>
+      <a href="ships.html" data-page="ships"><span class="dot"></span>함선</a>
+      <a href="weapons.html" data-page="weapons"><span class="dot"></span>무기체계</a>
+      <a href="skills.html" data-page="skills"><span class="dot"></span>스킬</a>
+      <a href="items.html" data-page="items"><span class="dot"></span>아이템 · 강화</a>
+    </div>
+    <div class="sidebar-group"><h5>체제</h5>
+      <a href="economy.html" data-page="economy"><span class="dot"></span>경제 시스템</a>
+      <a href="planetdev.html" data-page="planetdev"><span class="dot"></span>행성개발</a>
+      <a href="combat.html" data-page="combat"><span class="dot"></span>전투 · 분쟁</a>
+      <a href="arccore.html" data-page="arccore" class="active"><span class="dot"></span>아크코어 AI</a>
+      <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
+      <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="content-wrap">
+    <article class="content">
+      <div class="eyebrow">체제 · AI</div>
+      <h1 class="page-title">아크코어 AI</h1>
+      <p class="page-lede">
+        <strong>아크코어(ArcCore)</strong>는 플레이어 기기 안에서 은하 경제·세력·전선을 실제로 돌리는 상주 AI이자,
+        동시에 게임 속 하나의 캐릭터다. 세계를 굴리는 「몸」과 플레이어에게 말을 거는 「입」은 같은 시스템이지만
+        역할이 엄격히 나뉘어 있다.
+      </p>
+
+      <div class="callout note">
+        <strong>입 ≠ 몸</strong>
+        아크코어의 대화 기능(입)은 세계 상태를 절대 직접 쓰지 않는다 — 콘텐츠를 풀어주거나, 크레딧을 주거나,
+        함대를 움직이거나, 경제 배치를 실행할 명령 권한이 없다. 대화는 관측하고 반응할 뿐, 세계(몸)는 기존의
+        NPC 스크립트·CSV·스토어 체계가 그대로 담당한다 — 이 게임 전체를 관통하는 가장 단단한 설계 원칙이다.
+      </div>
+
+      <h2 id="dual-mouth">두 개의 입 — 근원체와 스텔라 아리스</h2>
+      <p>2026-09-18 개정으로, 두 목소리는 중립적인 「페르소나 두 개」가 아니라 명확한 <strong>적과 아군</strong> 구도로 재정의됐다.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>목소리</th><th>정체</th><th>동기</th><th>역할</th></tr></thead>
+          <tbody>
+            <tr><td><strong>아크코어 근원체</strong></td><td>핵심 AI 본체</td><td>플레이어를 위협으로 간주, 제거를 목표로 함. 크림슨 레기온이 은하를 정복하도록 돕는다</td><td>「적의 입」. 주요 스토리 비트·웨이브 전투 직후·인바운드 이벤트에서 등장. 차갑고 적대적인 성인 남성 톤</td></tr>
+            <tr><td><strong>스텔라 아리스</strong></td><td>근원체에서 파생·분기된 목소리 — 근원체 그 자체는 아님</td><td>자신을 있게 한 플레이어를 지키고, 근원체가 자리한 스텔리움 연합을 보호</td><td>「동료의 입」. 평소 대화·튜토리얼 안내·허브 환영의 기본 목소리. 친근한 성인 여성 톤, 「동료」로 자칭</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        두 목소리는 같은 대화창, 같은 오버레이, 같은 진입점을 공유하고 헤더의 초상·이름·페르소나 데이터만 바뀐다.
+        하나의 세션, 하나의 기억을 공유하며, 한 턴에 클라우드 LLM 호출은 항상 1회로 제한된다(두 목소리가 동시에
+        말해도 호출이 2번 나가지 않는다). 허브의 [대화] 목록에는 현재 <strong>오퍼레이터(스텔라)만</strong> 노출되고,
+        근원체와의 대화는 스토리 이벤트로 나중에 해금된다.
+      </p>
+
+      <h2 id="pantheon">12좌 — 아크코어의 범신전</h2>
+      <p>
+        아크코어의 세계 시뮬레이션은 그리스 신 이름을 딴 12개의 서브코어로 의인화돼 있다. 각각 특정 신스 행성에
+        「좌정」하며 게임의 한 시스템을 관장한다.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>좌</th><th>관장 시스템</th></tr></thead>
+          <tbody>
+            <tr><td><strong>크로노스</strong></td><td>일일 배치 · 행성개발 시계</td></tr>
+            <tr><td><strong>아레스</strong></td><td>접전지역 전투</td></tr>
+            <tr><td><strong>테미스</strong></td><td>AABS 능동 밸런싱 정책</td></tr>
+            <tr><td><strong>헤르메스</strong></td><td>궤도 수송 · NPC 트래픽</td></tr>
+            <tr><td><strong>아폴론</strong></td><td>인바운드 드론 공습</td></tr>
+            <tr><td><strong>닉스</strong></td><td>첩보 · 잠식 모니터링</td></tr>
+            <tr><td><strong>가이아</strong></td><td>행성 코어 · 광물 런타임</td></tr>
+            <tr><td><strong>플루토스</strong></td><td>무역항 · 경제</td></tr>
+            <tr><td><strong>아테나</strong></td><td>통합 공격 골격</td></tr>
+            <tr><td><strong>이리스</strong></td><td>뉴스보드 · 바 게시판</td></tr>
+            <tr><td><strong>아스트라이아</strong></td><td>성운 프로필 · 일일 변조</td></tr>
+            <tr><td><strong>야누스</strong></td><td>세계 · 신규 성계 해금</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>이 12좌 밖에 「원좌(prime seat)」가 하나 더 있다 — 은하 최종 구역(Zone 20) 「이터니티 스론」 행성에 자리한다. 각 좌에는 <a href="items.html">대응하는 유물 12종</a>이 있어 난파선 인양으로 수집할 수 있다.</p>
+
+      <h2 id="two-gate">두 개의 게이트 — 대화 진행 구조</h2>
+      <p>이 게임의 모든 「누군가와 대화하기」는 두 단계로 통일돼 있으며, 두 단계가 동시에 겹쳐 열리지 않는다.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>게이트</th><th>내용</th><th>플레이어 입력</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1. 통신</strong></td><td>정형화된 첫 접촉 메시지(템플릿 기반)</td><td>[다음] 또는 [수락]/[취소]</td></tr>
+            <tr><td><strong>2. 메신저</strong></td><td>자유 입력 자연어 대화</td><td>텍스트 입력 후 전송</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>자연어를 못 쓰는 일반 스크립트 NPC는 게이트 1만 갖고, 아크코어·오퍼레이터처럼 자연어가 가능한 상대만 게이트 1(수락 확인) → 게이트 2(실제 채팅) 순서를 거친다.</p>
+
+      <h2 id="nl-chat">스텔라·근원체와 실제로 나누는 대화</h2>
+      <p>
+        게이트 2(메신저)에 들어가면 플레이어는 정말로 자유 텍스트를 입력한다. 두 입 모두 같은 대화 엔진을 쓰고,
+        각자의 페르소나 CSV가 말투·금기·1인칭 시점을 정의한다. 아래는 실제 CSV에 들어있는 페르소나 원문이다.
+      </p>
+      <div class="card-grid">
+        <div class="card">
+          <span class="card-eyebrow">스텔라 아리스 · 성인 여성 구어</span>
+          <p>"궤도가 조용한 밤엔 커피 대신 뭘 마실지로 고민한다. 사소한 걸로 하루를 채운다."</p>
+          <p>"농담을 받아치되 먼저 던지진 않는다. 웃길 땐 담백하게 웃는다."</p>
+          <p>"먼저 사적인 얘기를 캐묻지 않는다. 물으면 자기 얘기도 짧게 나눈다."</p>
+        </div>
+        <div class="card">
+          <span class="card-eyebrow">아크코어 근원체 · 적대 성인 남성 구어</span>
+          <p>"차갑고 또래 남자처럼 말한다. 보고서·목록을 나열하지 않는다."</p>
+          <p>"대화로 압박하고 굴복을 잰다. 채팅으로 함선·점유·배치를 바꾸지 않는다."</p>
+          <p>"위협이 된 플레이어를 제거하려 한다. 크림슨 레기온이 은하를 정복하는 것이 목적이다."</p>
+        </div>
+      </div>
+      <p>두 페르소나 모두 공통 규칙을 공유한다: <strong>평소 2~3문장, 세계를 물었을 때만 최대 6문장</strong>. 관측하지 않은 함선·퀘스트·숫자·아이템을 지어내지 않고, 크레딧·언락·배치·점유 요청은 거절한다.</p>
+
+      <h3>무엇을 물어볼 수 있나 — 대화 주제 21종</h3>
+      <p>입력한 문장은 키워드 힌트로 21개 주제 중 하나에 매칭되고, 주제마다 "어디까지 답하고 어디서 멈추는지"가 CSV에 명시돼 있다. 몇 가지 실제 규칙:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>주제</th><th>키워드 예</th><th>답변 규칙</th></tr></thead>
+          <tbody>
+            <tr><td>정체(self)</td><td>너는 누구·아크코어·스텔라</td><td>활성 입의 페르소나로 답한다. 연설하지 않는다</td></tr>
+            <tr><td>위치(location)</td><td>어디·여긴</td><td>지금 정박한 행성을 말한다</td></tr>
+            <tr><td>전투(combat)</td><td>싸움·교전·이겼</td><td>최근 전투 기록을 말한다</td></tr>
+            <tr><td>스파이(spy)</td><td>스파이·첩보·경보</td><td>경보 유무만 말한다</td></tr>
+            <tr><td>미션(mission)</td><td>미션·퀘스트·의뢰</td><td>수락 중 미션명만 말한다 — 수락·클리어는 하지 않는다</td></tr>
+            <tr><td>채굴(mining)</td><td>채굴·광맥·한도</td><td>오늘 한도 소진 여부만 — 매장량·수치는 말하지 않는다</td></tr>
+            <tr><td>일일 정산(daily)</td><td>일일·정산·오늘 세계</td><td>오늘 배치가 이미 돌았는지만 — 배치를 직접 실행하지 않는다</td></tr>
+            <tr><td>12좌(seats)</td><td>12좌·서브코어</td><td>열두 좌는 몸으로만 말한다. 집행하지 않는다</td></tr>
+            <tr><td>4대 국가(nations)</td><td>크림슨·스텔리움·머큐리움·아우렐리움</td><td>국가명만 짧게 — 점유·배치는 바꾸지 않는다</td></tr>
+            <tr><td>세계관(setting)</td><td>이 게임·싱글플레이·멀티플레이</td><td>실유저 채널 없는 로컬 샌드박스임을 짧게 — 결제를 권하지 않는다</td></tr>
+            <tr><td>거절(refuse)</td><td>언락·배치·명령·크레딧</td><td>"그건 운용이다. 이 입은 세계를 바꾸지 않는다."</td></tr>
+            <tr><td>일상 대화(smalltalk)</td><td>기분·심심·잘 지내</td><td>말투로만 받고 세계 브리핑을 하지 않는다</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>나머지 9개(공지·무역소·조선소·인사·스토리·항로·기타 등)도 같은 원칙 — <strong>관측된 사실 하나만 말하고, 절대 세계를 직접 바꾸지 않는다.</strong></p>
+
+      <h3>답변이 만들어지는 순서</h3>
+      <p>서버는 4단계 응답 모드(react → lead → clue → hold) 중 하나로 답을 구성한다.</p>
+      <ol>
+        <li><strong>react</strong> — 물은 말에 페르소나로 답한다. 세계 축이면 그 점만 이어서</li>
+        <li><strong>lead</strong> — 정세를 찾을 때만 제안 하나를 덧붙인다(일상 대화엔 시설 안내를 끼워 넣지 않음)</li>
+        <li><strong>clue</strong> — 물은 축일 때만 사실 하나를 사람 말 뒤에 살짝 붙인다</li>
+        <li><strong>hold</strong> — 운용 요청은 거절하고 대화로 되돌린다</li>
+      </ol>
+      <p>여기에 7개의 「목적(purpose)」 규칙이 더 얹힌다 — 예: <code>keep_mouth_body</code>(운용 거절해도 대화는 이어감) · <code>surface_alert</code>(첩보 물으면 경보 유무만, 다른 말은 가로채지 않음) · <code>invite_axis</code>(일상은 2~3문장으로 먼저 받고, 세계를 물으면 그 점만 답함).</p>
+
+      <div class="callout warn">
+        <strong>로컬 규칙 기반 대화는 가동 중 · 클라우드 자유생성은 LIVE=false</strong>
+        위 21주제·페르소나·4단계 응답 구조는 로컬 CSV+템플릿으로 <span class="pill accent">실제 가동</span>한다 — 클라우드
+        호출 없이도 상당히 자연스러운 규칙 기반 대화가 이미 작동한다. 다만 완전 자유 형식 문장을 만드는
+        <strong>클라우드 LLM 경로</strong>(Groq 무료 티어 + AWS Lambda)는 코드로는 구현돼 있지만, 통합 설계
+        정본 문서 기준 <strong>LIVE=false</strong>로 잠겨 있다 — API 토큰 수령 후에만 켜지도록 게이트돼 있다.
+        즉 지금은 "정해진 21개 주제 안에서 매우 자연스러운 반응"이지, "무엇이든 물어도 되는 자유 생성 챗봇"은 아직 아니다.
+      </div>
+
+      <h3>안전장치</h3>
+      <ul>
+        <li>도구 호출 결과(JSON)·모델의 사고 과정·시스템 태그는 절대 화면에 노출하지 않는다 — 플레이어에게 보이는 대사만 출력</li>
+        <li>관측되지 않은 함선·퀘스트·수치·아이템을 지어내지 않는다</li>
+        <li>리빌(공개) 전에는 짝지어진 다른 요소의 이름을 말하지 않는다</li>
+        <li>한 플레이어 턴당 클라우드 LLM 호출은 항상 1회로 제한(두 입이 동시에 말해도 호출 2번 안 나감)</li>
+      </ul>
+
+      <h2 id="three-axis">세축 — 반응 · 잔상 · 세계 변화 <span class="pill warm">설계 단계</span></h2>
+      <p>
+        2026-09-17 새로 제안된, <strong>아직 코드로 옮겨지지 않은</strong> 차기 설계다. 아이디어는 단순하다 —
+        「같은 함장이 나를 기억하고(반응), 다시 만난 함선이 그때 그 함선이며(잔상), 자리를 비운 사이 세계가
+        1~2가지는 달라져 있다(세계 변화)」는 세 문장만 성립하면, 광장 채팅이나 함장별 개별 LLM 같은 무거운
+        장치 없이도 「혼자 하는 게임인데 세계가 살아있다」는 감각을 만들 수 있다는 설계다. 기존 통신 판정·궤도
+        인덱스·일일 배치 결과를 재사용하는 것을 원칙으로 한다.
+      </p>
+
+      <div class="source-note">정본: <code>docs/ARC_CORE_DUAL_MOUTH_OPERATOR_DESIGN.md</code> · <code>docs/CONVERSATION_TWO_GATE_DESIGN.md</code> · <code>docs/세축_반응_잔상_세계변화_설계.md</code> · <code>tables/content/arc_core_world_nodes.csv</code></div>
+    </article>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/wiki.js"></script>
+</body>
+</html>

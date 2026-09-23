@@ -5,6 +5,10 @@
 import { usePlayerStore } from '../../store/playerStore';
 import { useArcCoreVaultStore } from '../../store/factionVault/arcCoreVaultStore';
 import { ARC_CORE_CENTRAL_BANK_TXN_KIND } from '../economy/arcCoreCentralBank';
+import {
+  getArcCorePlanetDevBudgetRemaining,
+  isArcCorePlanetDevBudgetPrepaid,
+} from './arcCorePlanetDevBudgetState';
 import type { PlanetDevFundingSource } from '../../game/planetDevelopment/planetDevelopmentActionOptions';
 
 export type PlanetDevSpendMeta = {
@@ -27,6 +31,10 @@ export function spendPlanetDevelopmentCredits(
     return ok;
   }
 
+  if (isArcCorePlanetDevBudgetPrepaid()) {
+    return true;
+  }
+
   return useArcCoreVaultStore.getState().trySpend(credits, {
     kind: ARC_CORE_CENTRAL_BANK_TXN_KIND.spendPlanetDevelopment,
     planetId: meta?.planetId,
@@ -42,11 +50,12 @@ export function refundPlanetDevelopmentCredits(
   if (credits <= 0) return;
 
   if (source === 'player') {
-    usePlayerStore.getState().addCredits(credits);
+    usePlayerStore.getState().refundCredits(credits);
     void usePlayerStore.getState().persist();
     return;
   }
 
+  if (isArcCorePlanetDevBudgetPrepaid()) return;
   useArcCoreVaultStore.getState().appendInflow(credits, {
     kind: 'arc_planet_dev_refund',
     note: 'arc_planet_dev_refund',
@@ -56,6 +65,9 @@ export function refundPlanetDevelopmentCredits(
 export function resolvePlanetDevFundingBalance(source: PlanetDevFundingSource): number {
   if (source === 'player') {
     return usePlayerStore.getState().player?.credits ?? 0;
+  }
+  if (isArcCorePlanetDevBudgetPrepaid()) {
+    return getArcCorePlanetDevBudgetRemaining();
   }
   return useArcCoreVaultStore.getState().getBalance();
 }

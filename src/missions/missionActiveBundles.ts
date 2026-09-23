@@ -19,6 +19,17 @@ export function listActiveMissionBundles(
   return rows;
 }
 
+/** QuestHUD 가시 여부와 동일 — 핀(`activeMissionId`)이 없어도 활성 진행이 있으면 true */
+export function hasAnyActiveMissionBundle(
+  progresses: Record<string, MissionProgress>,
+): boolean {
+  for (const progress of Object.values(progresses)) {
+    if (progress.status !== 'active') continue;
+    if (getMissionById(progress.missionId)) return true;
+  }
+  return false;
+}
+
 export function findFirstIncompleteObjective(
   bundles: MissionActiveBundle[],
   type: MissionObjective['type'],

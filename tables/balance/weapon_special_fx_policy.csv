@@ -1,0 +1,43 @@
+weaponId,profileId,tintHex,glowHex,iconEmoji,iconKind,ignoreShield,ignoreArmor,aoeRadiusPx,slowMul,slowMs,empMs,markMs,interceptNearby,stripShield,allyHealPct,notesKo
+w_laser_arc_010,ghost_phase,#A78BFA,#E9D5FF,👻,ghost,1,1,0,0.85,1800,0,1000,0,0,0,고스트 — 실드·장갑 무시·짧은 충격
+w_laser_arc_011,cutting_beam,#F43F5E,#FECDD3,⚔️,cut,0,0,0,0,0,0,800,0,0,0,커팅 — 적색 절단 빔
+w_laser_arc_020,shield_overload,#F59E0B,#FDE68A,⚡,overload,0,0,0,0,0,0,900,0,0,0,과부하 — 호박 섬광
+w_laser_arc_029,antimatter,#7C3AED,#DDD6FE,✴️,pierce,0,0,0,0,0,0,900,0,0,0,반물질 — 보라 관통 섬광
+w_laser_arc_030,system_defense,#38BDF8,#BAE6FD,📡,pierce,0,0,28,0,0,0,800,0,0,0,성계방위 — 명중점 소형 스플래시
+w_laser_arc_046,void_vortex,#4C1D95,#C4B5FD,🌀,void,0,0,0,0.6,2500,0,1400,0,0,0,보이드 — 흡입 감속+함체 틴트
+w_laser_arc_056,hijack_visual,#EC4899,#F9A8D4,🎛️,hijack_visual,0,0,0,0,0,0,1600,0,1,0,하이어라키 — 탈취 대신 실드박탈
+w_laser_arc_057,pantheon,#FBBF24,#FEF3C7,✨,star,0,0,0,0,0,0,1000,0,0,0,판테온 — 성좌색 빔
+w_laser_arc_064,infinity_zero,#F8FAFC,#E0E7FF,♾️,pierce,1,1,0,0,0,0,1100,0,0,0,인피니티 — 실드·장갑 무시
+w_laser_arc_066,destiny,#F1F5F9,#CBD5E1,⏳,pierce,0,0,0,0,0,0,900,0,0,0,데스티니 — 백색 변주
+w_missile_arc_009,shrapnel,#FB923C,#FDBA74,💥,shard,0,0,36,0,0,0,800,0,0,0,파편 — 소형 광역
+w_missile_arc_014,heatsink,#F87171,#FECACA,🎯,pierce,0,0,0,0,0,0,700,0,0,0,열추적 — 조준 변주
+w_missile_arc_018,grav_scatter,#818CF8,#C7D2FE,🧲,void,0,0,32,0.7,2200,0,1000,0,0,0,중력자 — 광역 감속
+w_missile_arc_032,energy_bow,#22D3EE,#A5F3FC,🏹,pierce,1,0,0,0,0,0,900,0,0,0,에너지보우 — 실드 무시
+w_missile_arc_035,meteor,#F97316,#FED7AA,☄️,shard,0,0,0,0,0,0,800,0,0,0,메테오 — 운석색 탄두
+w_missile_arc_041,triple_warhead,#FBBF24,#FDE68A,🔱,shard,0,0,0,0,0,0,800,0,0,0,트리플 — 황금 탄두
+w_missile_arc_044,laser_net,#38BDF8,#BAE6FD,🕸️,star,0,0,0,0,0,0,800,0,0,0,레이저망 — 청 그물색
+w_missile_arc_045,sector_cleave,#F43F5E,#FECDD3,🗡️,shard,0,0,32,0,0,0,800,0,0,0,섹터클린 — 소형 광역
+w_missile_arc_052,thundering,#EAB308,#FDE047,🌩️,shield_break,0,0,40,0,0,0,1100,0,1,0,선더링 — 주변 실드 파괴
+w_missile_arc_054,antimagic_emp,#67E8F9,#ECFEFF,⚡,emp,0,0,42,0.45,4000,4000,1400,0,0,0,EMP — 광역 감속
+w_intercept_missile_01,intercept,#4ADE80,#BBF7D0,🛡️,intercept,0,0,0,0,0,0,700,1,0,0,요격 — 착탄점 근처 적탄 소멸
+w_missile_arc_059,star_genesis,#FDE047,#FEF9C3,🌟,star,0,0,44,0.4,2200,0,900,0,0,0,스타제네시스 — 광역+감속
+w_missile_arc_068,ether_shard,#C4B5FD,#EDE9FE,💫,ghost,0,0,36,0,0,0,900,0,0,0,에테르 — 파편 광역
+w_missile_arc_069,void_strike,#6D28D9,#DDD6FE,🕳️,void,0,0,0,0.5,2400,0,1000,0,0,0,보이드스트라이크 — 강감속
+w_laser_arc_012,second_burst,#F97316,#FFEDD5,💣,shard,0,0,24,0,0,0,800,0,0,0,돌격로켓 — 2차 폭발 링
+w_laser_arc_021,shatter_core,#FB7185,#FECDD3,💥,shard,0,0,28,0,0,0,800,0,0,0,파쇄핵 — 분산 외 폭발
+w_missile_arc_024,module_snipe,#38BDF8,#BAE6FD,🎯,pierce,0,0,0,0,0,0,700,0,0,0,자기장가속 — 조준 변주
+w_laser_arc_028,defender_burst,#86EFAC,#D1FAE5,🛡️,star,0,0,0,0,0,0,700,0,0,0,디펜더 — 방호색 탄두
+w_laser_arc_038,crust_break,#D97706,#FDE68A,🪨,shard,0,0,0,0,0,0,2000,0,0,0,지각붕괴 — 함체 균열 틴트
+w_laser_arc_039,kass_absorb,#A855F7,#E9D5FF,🌀,void,0,0,0,0.6,2000,0,900,0,0,0,카스 — 에너지 흡수 감속
+w_missile_arc_042,dire_rail,#F43F5E,#FECDD3,⚔️,cut,0,0,0,0,0,0,800,0,0,0,다이어레일 — 절단색
+w_laser_arc_047,soul_dissolve,#A855F7,#F5D0FE,💀,soul,0,0,0,0.7,2000,0,1200,0,0,0,나노소울 — 감속 연출
+w_laser_arc_048,divine_slay,#F8FAFC,#FEE2E2,☠️,shard,0,0,40,0,0,0,900,0,0,0,신격학살 — 광역 근사(함대증발 HOLD)
+w_laser_arc_055,kairos,#22D3EE,#CFFAFE,⏱️,time,0,0,0,0.35,2800,2800,1600,0,0,0,카이로스 — 강감속(시간정지 대체)
+w_laser_arc_065,singularity,#7C3AED,#DDD6FE,🌀,void,0,0,0,0.5,2400,0,1200,0,0,0,싱귤래리티 — 질량 감속
+w_missile_arc_022,long_cruise,#38BDF8,#BAE6FD,🌐,star,0,0,0,0,0,0,700,0,0,0,장거리순항 — 사거리 반영·색만
+w_missile_arc_040,superluminal,#22D3EE,#A5F3FC,⏩,pierce,0,0,0,0,0,0,700,0,0,0,초광속 — 사거리 반영·색만
+w_missile_arc_051,dim_leap,#A78BFA,#DDD6FE,🌀,void,0,0,0,0,0,0,800,0,0,0,차원도약 — 사거리 반영·색만
+w_missile_arc_060,omni_aim,#F43F5E,#FECDD3,🎯,star,0,0,60,0,0,0,1000,0,0,0,옴니조준 — 최광역 근사
+w_missile_arc_061,world_echo,#F59E0B,#FDE68A,🌊,shard,0,0,56,0,0,0,1000,0,0,0,월드에코 — 광역 근사
+w_missile_arc_063,genesis_mothership,#FBBF24,#FEF3C7,🧬,star,0,0,52,0,0,0,1100,0,0,8,제네시스 — 적 광역+아군 소량 치유
+w_missile_arc_036,adamantine_ram,#94A3B8,#E2E8F0,🧱,pierce,0,1,0,0,0,0,800,0,0,0,아다만틴 — 장갑무시(실드무시 아님)

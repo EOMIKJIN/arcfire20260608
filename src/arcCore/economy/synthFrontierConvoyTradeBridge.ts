@@ -17,7 +17,6 @@ import {
   unregisterRuntimePlanetTradeRouteProfile,
   clearRuntimePlanetTradeRouteProfiles,
   getPlanetTradeRouteProfile,
-  type PlanetTradeRouteProfile,
 } from './tradeRouteRegistry';
 import {
   clearRuntimeTradeRouteAssignments,
@@ -25,21 +24,13 @@ import {
   unregisterRuntimeTradeRouteAssignments,
 } from './tradeRoutePlanetAssignmentRegistry';
 import { splitPipeCategoriesFromSectorBand } from './tradeRouteSectorCategories';
+import { GALAXY_ROUTE_POLICIES, type GalaxyRouteDirection } from '../../world/galaxyRouteFactionPolicy';
+import { isRouteCapitalPlanetId } from '../../world/galaxyFrontierDevelopmentRidge';
 
-type QuadrantKey = 'north' | 'south' | 'east' | 'west';
+type QuadrantKey = GalaxyRouteDirection;
 
 /** synth 런타임 convoy SKU 상한 — CSV 21행성 1:1(~10) 정렬 */
 const SYNTH_RUNTIME_TRADE_ROUTE_SKU_CAP = 10;
-
-const QUADRANT_TRADE_FACTION: Record<
-  QuadrantKey,
-  Pick<PlanetTradeRouteProfile, 'tradeFactionCode' | 'tradeRegionCode'>
-> = {
-  north: { tradeFactionCode: 'F4', tradeRegionCode: 'N' },
-  south: { tradeFactionCode: 'F2', tradeRegionCode: 'S' },
-  east: { tradeFactionCode: 'F3', tradeRegionCode: 'E' },
-  west: { tradeFactionCode: 'F1', tradeRegionCode: 'W' },
-};
 
 function parseCsvNum(raw: string | number | undefined, fallback: number): number {
   const n = typeof raw === 'number' ? raw : Number(raw);
@@ -117,6 +108,17 @@ export function isPlanetConvoyTradeEnabled(planetId: string): boolean {
 /**
  * synth 행성 교역 프로필·SKU 등록(무역소 게이트 없음) — activate·audit 공용.
  */
+function resolveSynthFrontierConvoyQuadrant(
+  planetId: string,
+  systemId: string,
+): GalaxyRouteDirection | null {
+  const csvRow = getSynthSystemColonizationRow(systemId);
+  if (csvRow) return resolveQuadrantFromTradeProfile(String(csvRow.tradeProfile ?? ''), 'east');
+  if (planetId === 'synth_706_p' || systemId === 'synth_706') return 'south';
+  if (planetId === 'synth_732_p' || systemId === 'synth_732') return 'north';
+  return null;
+}
+
 function applySynthFrontierConvoyTradeProfile(planetId: string): boolean {
   if (!isSynthFrontierPlanetId(planetId)) return false;
 
@@ -124,10 +126,9 @@ function applySynthFrontierConvoyTradeProfile(planetId: string): boolean {
   if (!systemId) return false;
 
   const csvRow = getSynthSystemColonizationRow(systemId);
-  if (!csvRow) return false;
-
-  const quadrant = resolveQuadrantFromTradeProfile(String(csvRow.tradeProfile ?? ''), 'east');
-  const tradeMeta = QUADRANT_TRADE_FACTION[quadrant];
+  const quadrant = resolveSynthFrontierConvoyQuadrant(planetId, systemId);
+  if (!quadrant) return false;
+  const tradeMeta = GALAXY_ROUTE_POLICIES[quadrant];
 
   registerRuntimePlanetTradeRouteProfile({
     planetId,
@@ -135,7 +136,11 @@ function applySynthFrontierConvoyTradeProfile(planetId: string): boolean {
     tradeRegionCode: tradeMeta.tradeRegionCode,
   });
 
-  const zoneIndex = parseCsvNum(csvRow.zoneIndex, 1);
+  const zoneIndex = csvRow
+    ? parseCsvNum(csvRow.zoneIndex, 1)
+    : isRouteCapitalPlanetId(planetId)
+      ? 16
+      : 1;
   const levelingRow = getPlanetLevelingRowForZone(zoneIndex);
   const sectorBand = String(levelingRow.sectorBand ?? 'early');
   const { supplyTgIds, demandTgIds } = computeTradeRouteAssignmentsForFaction(

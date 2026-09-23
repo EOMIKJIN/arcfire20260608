@@ -20,6 +20,7 @@ export type MemProfileEvent =
   | 'deep_reclaim'
   | 'system_change'
   | 'transit_combat_nav'
+  | 'transit_hop_start'
   | 'planet_change'
   | 'manual';
 

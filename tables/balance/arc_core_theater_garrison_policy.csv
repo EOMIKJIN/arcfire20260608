@@ -1,0 +1,2 @@
+policyId,enabled,theaterDailyUpkeepCredits,rebuildLocalFeeSharePct,rebuildNationSharePct,rebuildDailyCapPctOfTarget,occupyRetainPct,defendWinRetainPct,spoilsOnOccupyCredits,combatMulMin,combatMulMax,applyOnPlayerWave,notesKo
+default_v1,true,200,60,40,25,20,100,400,0.85,1.05,false,전선 주둔 군비 — 800 내정과 별축 · 웨이브 미적용 · 수비 화력만 배율

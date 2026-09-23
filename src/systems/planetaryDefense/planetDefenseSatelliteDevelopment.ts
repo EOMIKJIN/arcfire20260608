@@ -38,7 +38,10 @@ import {
   resolvePlanetDevFundingBalance,
   spendPlanetDevelopmentCredits,
 } from '../../arcCore/planetDevelopment/planetDevelopmentFunding';
-import type { PlanetDefenseSatelliteDetail } from '../../store/planetCoreMetricTypes';
+import type {
+  PlanetDefenseSatelliteDetail,
+  PlanetDefenseSatelliteInstalledBy,
+} from '../../store/planetCoreMetricTypes';
 import {
   patchPlanetDefenseSatelliteInstanceLevel,
   resolvePlanetDefenseSatelliteLevel,
@@ -87,9 +90,24 @@ function normalizeDefenseSatelliteDetail(
     version: 1,
     installed,
     level,
+    installedBy: raw.installedBy === 'player' || raw.installedBy === 'arc_core'
+      ? raw.installedBy
+      : undefined,
     upgradeJob,
     updatedAtMs: raw.updatedAtMs,
   };
+}
+
+function resolveSatelliteInvestorStamp(opts?: PlanetDevActionOpts): PlanetDefenseSatelliteInstalledBy {
+  return isArcCorePlanetDevAction(opts) ? 'arc_core' : 'player';
+}
+
+function nextSatelliteInstalledBy(
+  prev: PlanetDefenseSatelliteInstalledBy | undefined,
+  stamp: PlanetDefenseSatelliteInstalledBy,
+): PlanetDefenseSatelliteInstalledBy {
+  if (prev === 'player' || stamp === 'player') return 'player';
+  return stamp;
 }
 
 export function readPlanetDefenseSatelliteDetail(
@@ -167,6 +185,7 @@ export function tryCompleteDefenseSatelliteUpgrade(planetId: string): boolean {
     patchDefenseSatelliteDetail(planetId, {
       installed: true,
       level: 1,
+      installedBy: detail.installedBy ?? 'player',
       upgradeJob: null,
     });
     syncDefenseSatelliteInstances(planetId, 1);
@@ -299,6 +318,7 @@ export function installPlanetDefenseSatellite(
     patchDefenseSatelliteDetail(planetId, {
       installed: true,
       level: 1,
+      installedBy: nextSatelliteInstalledBy(detail.installedBy, resolveSatelliteInvestorStamp(opts)),
       upgradeJob: null,
     });
     syncDefenseSatelliteInstances(planetId, 1);
@@ -309,15 +329,22 @@ export function installPlanetDefenseSatellite(
   patchDefenseSatelliteDetail(planetId, {
     installed: false,
     level: 0,
+    installedBy: nextSatelliteInstalledBy(detail.installedBy, resolveSatelliteInvestorStamp(opts)),
     upgradeJob: buildInstallUpgradeJob(durationSec, Date.now(), resolveActivePlanetFacilityDurationTier()),
   });
   invalidatePlanetMemoCachesForPlanet(planetId);
   return { ok: true };
 }
 
-function applyDefenseSatelliteLevel(planetId: string, targetLevel: number): void {
+function applyDefenseSatelliteLevel(
+  planetId: string,
+  targetLevel: number,
+  opts?: PlanetDevActionOpts,
+): void {
+  const prev = readPlanetDefenseSatelliteDetail(planetId);
   patchDefenseSatelliteDetail(planetId, {
     level: targetLevel,
+    installedBy: nextSatelliteInstalledBy(prev.installedBy, resolveSatelliteInvestorStamp(opts)),
     upgradeJob: null,
   });
   syncDefenseSatelliteInstances(planetId, targetLevel);
@@ -342,10 +369,11 @@ export function startPlanetDefenseSatelliteUpgrade(
   const durationSec = resolveDefenseSatelliteUpgradeDurationSec(level) ?? 0;
   const targetLevel = level + 1;
   if (durationSec <= 0) {
-    applyDefenseSatelliteLevel(planetId, targetLevel);
+    applyDefenseSatelliteLevel(planetId, targetLevel, opts);
     return { ok: true };
   }
   patchDefenseSatelliteDetail(planetId, {
+    installedBy: nextSatelliteInstalledBy(detail.installedBy, resolveSatelliteInvestorStamp(opts)),
     upgradeJob: buildUpgradeJob(
       targetLevel,
       durationSec,
@@ -374,7 +402,12 @@ export function instantCompleteDefenseSatelliteUpgrade(
   const instantCost = resolvePlanetDevDiscountedCredits(planetId, rawInstant);
   if (!spendPlayerCredits(instantCost)) return { ok: false, reason: t('defenseSatDev.notEnoughCredits') };
   if (isInstall) {
-    patchDefenseSatelliteDetail(planetId, { installed: true, level: 1, upgradeJob: null });
+    patchDefenseSatelliteDetail(planetId, {
+      installed: true,
+      level: 1,
+      installedBy: nextSatelliteInstalledBy(detail.installedBy, 'player'),
+      upgradeJob: null,
+    });
     syncDefenseSatelliteInstances(planetId, 1);
     invalidatePlanetMemoCachesForPlanet(planetId);
     finalizePlanetFacilityLevelApplied(planetId, 'defense_satellite', 1);

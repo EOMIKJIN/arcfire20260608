@@ -1,0 +1,36 @@
+key,value,notesKo
+turn_sec,8,1턴 = 8초 (실시간 전투 자동 액션 주기)
+proc_banner_ms,1600,발동 텍스트 표시 시간
+emp_cooldown_turns,4,EMP 쿨
+fortress_duration_turns,1,요새화 지속
+fortress_cooldown_turns,3,요새화 쿨
+fortress_auto_hull_pct,30,요새화 자동 발동 선체 비율(쿨 준비+HP 이하)
+repair_drone_hub_interval_ms,60000,수리 드론 허브 회복 최소 간격 ms
+perfect_defense_duration_turns,1,절대방어 지속
+perfect_defense_cooldown_turns,4,절대방어 쿨
+stealth_duration_turns,3,스텔스 지속
+stealth_cooldown_turns,4,스텔스 쿨
+gravity_swing_duration_turns,1,중력가속 지속
+gravity_swing_cooldown_turns,3,중력가속 쿨
+blink_cooldown_turns,2,차원도약 쿨
+blink_invuln_ms,500,차원도약 직후 무적 ms
+hull_regen_interval_turns,1,나노봇 수복 주기
+singularity_cooldown_turns,5,특이점 쿨
+singularity_pull_px,80,특이점 흡인 거리
+singularity_damage,12,특이점 광역 피해
+wingman_duration_turns,3,윙맨 유지
+wingman_cooldown_turns,4,윙맨 재소환 쿨
+wingman_hull_mul,0.7,윙맨 선체 배율(기함 대비)
+emergency_warp_hull_pct,10,긴급탈출 선체 비율
+smuggler_base_detect_pct,20,밀수 기본 발각 %
+bulk_qty_threshold,10,대량거래 수량 임계
+cargo_slot_bonus_cap,20,화물 슬롯 보너스 상한
+hangar_base,30,격납고 기본
+hangar_slot_bonus_cap,8,격납고 보너스 상한
+scan_duration_reduce_cap_pct,40,스캔시간 감면 상한
+jump_speed_postcap_fuel,0,미사용(점프가속=하이퍼점프 연출 시간)
+wormhole_finder_postcap_pct,15,웜홀 탐색 캡 후 절감
+star_pathfinder_uncharted_pct,15,미방문 성계 캡 후 추가 절감
+wormhole_generator_skip_hops,1,웜홀 생성=홉 1 스킵(영구포탈 HOLD)
+monopoly_buy_pct,30,시장독점 개인 매입 할인
+contraband_detect_confiscate,1,밀수 발각 시 거래 취소

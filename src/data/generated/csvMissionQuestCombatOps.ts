@@ -14,6 +14,48 @@ export const MISSION_QUEST_COMBAT_OPS_FROM_CSV: MissionQuestCombatOpRow[] = [
     anchorPlanetId: "arcadia_prime",
   },
   {
+    id: "qco_obj_story_002_c",
+    objectiveId: "obj_story_002_c",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: "minerva_deep",
+  },
+  {
+    id: "qco_obj_story_004_a",
+    objectiveId: "obj_story_004_a",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: "vega_base",
+  },
+  {
+    id: "qco_obj_story_006_a",
+    objectiveId: "obj_story_006_a",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: "draco_haven",
+  },
+  {
+    id: "qco_obj_s034_d",
+    objectiveId: "obj_s034_d",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: "synth_075_p",
+  },
+  {
+    id: "qco_obj_s035_d",
+    objectiveId: "obj_s035_d",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: "synth_078_p",
+  },
+  {
+    id: "qco_obj_s036_c",
+    objectiveId: "obj_s036_c",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: "synth_070_p",
+  },
+  {
+    id: "qco_obj_s037_c",
+    objectiveId: "obj_s037_c",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: "synth_070_p",
+  },
+  {
     id: "qco_obj_s001_a",
     objectiveId: "obj_s001_a",
     encounterPolicy: "transit_guaranteed",
@@ -102,6 +144,12 @@ export const MISSION_QUEST_COMBAT_OPS_FROM_CSV: MissionQuestCombatOpRow[] = [
     objectiveId: "obj_s029_a",
     encounterPolicy: "transit_guaranteed",
     anchorPlanetId: "nightfall_citadel",
+  },
+  {
+    id: "qco_obj_s032_a",
+    objectiveId: "obj_s032_a",
+    encounterPolicy: "transit_guaranteed",
+    anchorPlanetId: "minerva_deep",
   },
   {
     id: "qco_obj_tq_c01_a",

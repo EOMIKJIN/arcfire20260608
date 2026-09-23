@@ -9,7 +9,7 @@ export const SYNTH_FRONTIER_FACTION_ID = 'independent';
 
 export type SynthColonizationPhaseRow = {
   phaseIndex: number;
-  hasTavern: boolean;
+  hasBar: boolean;
   hasTradePort: boolean;
   hasShipyard: boolean;
   useQuadrantFaction: boolean;
@@ -27,7 +27,7 @@ function parseNum(raw: string | number | undefined, fallback = 0): number {
 
 const PHASE_ROWS: SynthColonizationPhaseRow[] = SynthColonizationPhasePolicy_FROM_BALANCE_CSV.map((row) => ({
   phaseIndex: parseNum(row.phaseIndex, 0),
-  hasTavern: parseBool(row.hasTavern),
+  hasBar: parseBool(row.hasBar),
   hasTradePort: parseBool(row.hasTradePort),
   hasShipyard: parseBool(row.hasShipyard),
   useQuadrantFaction: parseBool(row.useQuadrantFaction),

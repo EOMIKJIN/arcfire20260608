@@ -44,6 +44,8 @@ export type TerritorialCombatPolicy = {
   /** 보급선 — 인접 가산 상한(%) */
   supplyBonusCapPct: number;
   alertLabelKo: string;
+  /** EN UI 점령 알림 성계명 (Table-First) */
+  alertLabelEn: string;
 };
 
 function parseNum(raw: string | number | undefined, fallback = 0): number {
@@ -101,6 +103,7 @@ function buildPolicyIndex(): Map<string, TerritorialCombatPolicy> {
       supplyBonusPctPerNode: Math.max(0, parseNum(row.supplyBonusPctPerNode, 6)),
       supplyBonusCapPct: Math.max(0, parseNum(row.supplyBonusCapPct, 18)),
       alertLabelKo: row.alertLabelKo?.trim() || row.planetId,
+      alertLabelEn: row.alertLabelEn?.trim() || row.planetId,
     });
   }
   return m;
@@ -161,6 +164,8 @@ function listDynamicContestedPolicies(): TerritorialCombatPolicy[] {
     campaignOrder: template.campaignGroup ? baseOrder + 1 + i : 0,
     alertLabelKo:
       getPlanetOccupationSeedRow(entry.planetId)?.alertLabelKo?.trim() || entry.planetId,
+    alertLabelEn:
+      getPlanetOccupationSeedRow(entry.planetId)?.alertLabelEn?.trim() || entry.planetId,
   }));
 }
 
@@ -213,6 +218,22 @@ export function listContestedZoneSystemIds(): readonly string[] {
 export function isContestedZoneSystemId(systemId: string): boolean {
   if (getCsvContestedZoneSystemIdSet().has(systemId)) return true;
   return listDynamicContestedZoneSystemIdSet().has(systemId);
+}
+
+/**
+ * 순차 분쟁 결정 리스트(ActivePool) 소속 — CSV 정적 + 동적 편입, SAFE suspend 제외.
+ * 캠페인 due·지도 예고와 동일 정본(`listTerritorialCombatPolicies`).
+ * 웨이브 착륙 게이트 전용 조회. 순차 패스·커서·promote/demote는 여기서 바꾸지 않는다.
+ */
+export function isSequentialContestedDecisionPlanet(planetId: string): boolean {
+  const id = planetId.trim();
+  if (!id) return false;
+  const policies = listTerritorialCombatPolicies();
+  for (let i = 0; i < policies.length; i++) {
+    const p = policies[i]!;
+    if (p.planetId === id && p.enabled && p.contestedZone) return true;
+  }
+  return false;
 }
 
 const campaignPoliciesCache = new Map<string, { rev: number; list: TerritorialCombatPolicy[] }>();

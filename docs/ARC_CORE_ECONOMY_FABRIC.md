@@ -1,7 +1,9 @@
 # ArcCore Economy Fabric — 김경제 분석·개선 로드맵
 
 > **원칙**: 운영 **실물 데이터**(교역 재고·수송 정산·공격 피해)가 먼저이고, 5대 스탯(R,P,D,T,E)은 그 결과를 **반영·정규화**하는 계층.  
-> **구현 정본**: `src/arcCore/economy/planetEconomyFabric.ts`
+> **구현 정본**: `src/arcCore/economy/planetEconomyFabric.ts`  
+> **확장(남·북 선단 병렬 등)**: `docs/expansion/README.md` — 선단 운영자 다중화는 본 fabric 위에 **게이트 통과 후**만.  
+> **재정·군사 적용 구조 (2026-08-25)**: [economy-evaluation/2026-08-25-arccore-fiscal-military-structure.md](./economy-evaluation/2026-08-25-arccore-fiscal-military-structure.md) — 중앙은행·선단 적립·프록시 군사비. **§12**.
 
 ---
 
@@ -168,15 +170,31 @@ npx tsc --noEmit -p tsconfig.client.json
 
 ## 9. 유지비·거래수수료 루프 (2026-06-15)
 
-### 9-1. 자금 흐름 (금고 3분리)
+### 9-0. 금고 5축 (2026-08-04 코드 · 본 절 3축 서술은 역사)
+
+| # | 금고 | 코드 | purge |
+|---|------|------|-------|
+| 1 | 아크코어 = RED = 중앙은행 | `useArcCoreVaultStore` | 월드 유지 |
+| 2 | 수송선단 | `useArcCoreTransportFleetBankStore` | 월드 유지 |
+| 3 | 블루 | `useBlueTeamSharedVaultStore` | 월드 유지 |
+| 4 | 중립 | `useNeutralNationVaultStore` | 월드 유지 |
+| 5 | 독립국 | `usePlayerIndependentNationVaultStore` | **제로** + hold 중립 |
+
+라우팅 정본: `resolveFactionVault.ts`. §11-3 「중립→arccore 폴백」은 **구현 전 문구** — 수수료/유지비는 중립·독립으로 분리됨.
+
+### 9-1. 자금 흐름 (금고 5축 · 2026-08-25 재확인)
 
 ```text
-수송선단 convoy → arcCoreTransportFleetBank (중립 경제·RED 소속 연출)
-RED 행성 유지비·무역 수수료(5%) → arcCoreVault
-BLUE 행성 유지비·무역 수수료(5%) → blueTeamSharedVault
-플레이어 소유 행성 유지비 → player.credits (일 1회)
-무역 수수료 플레이어 몫(5%) → 행성 풀 → 1일 1회 지갑
-중립·플레이어클랜 점유 행성 수수료(팩션 몫) → arcCoreVault 폴백
+수송선단 convoy → arcCoreTransportFleetBank
+  순마진 30% → arcCoreVault (RED=중앙은행) · CSV `convoy_net_margin_arc_core_share_pct`
+  순마진 70% → 선단 잔류 (자동 이전 없음 · 고정비 없음 → 적립 편향)
+RED 유지비·수수료 → arcCoreVault
+BLUE → blueTeamSharedVault
+중립 → neutralNationVault
+독립 수수료 → playerIndependentNationVault · 유지비 1차 player.credits
+플레이어 소유 유지비 → player.credits
+무역 수수료 플레이어 몫 → 행성 풀 → 1일 1회 지갑
+중앙은행 시드초과 → 34% 함대소각 · 33% 개방소각 · 33% 개발예산(선소각 없음)
 ```
 
 레거시 `arcfire_arc_core_temp_bank_v1` → 부팅 시 txn 종류별 분할 마이그레이션.
@@ -219,8 +237,8 @@ BLUE 행성 유지비·무역 수수료(5%) → blueTeamSharedVault
 
 **의도적 설계 (버그 아님 · 2026-06-29 갱신)**
 
-- 수송선단 금고: **매입 전액 출금(`convoy_buy`)** · 하역 **`convoy_trade_margin` 입금 → `convoy_transport`(연료·기타) 출금 → `convoy_arc_core_share` 출금** · fleet 순유지 = **순마진의 (100−arc_share)%** (기본 90%).
-- **순마진 arc_share%**(기본 10%) → **`useArcCoreVaultStore`** (`convoy_net_margin_share`).
+- 수송선단 금고: **매입 전액 출금(`convoy_buy`)** · 하역 **`convoy_trade_margin` 입금 → `convoy_transport`(연료·기타) 출금 → `convoy_arc_core_share` 출금** · fleet 순유지 = **순마진의 (100−arc_share)%** (CSV 현재 70%).
+- **순마진 arc_share%**(CSV `convoy_net_margin_arc_core_share_pct`, 현재 30%) → **`useArcCoreVaultStore`** (`convoy_net_margin_share`).
 - 운송비 = `computeTradeRouteTransportCostPerUnit` × 하역 qty · note에 연료/기타 비율(`convoy_transport_fuel_share_pct` / `ops_share_pct`) 표시.
 - `price_elasticity=0` · 일 1회 배치 · 순마진 플래너(손실 경로 제외) 유지.
 
@@ -333,10 +351,11 @@ CSV: `tables/balance/arc_core_planet_upkeep_policy.csv` · `runArcCorePlanetUpke
 |------|---------|--------|
 | BLUE | `blue_vault` | `blueTeamSharedVaultStore` |
 | RED | `arccore_vault` | `arcCoreVaultStore` |
-| **중립** | `arccore_vault` | 플레이어·convoy 수수료 **전부** 아크코어 금고 |
-| 플레이어 클랜 | `arccore_vault` | 수수료 폴백 |
+| **중립** | `neutral_vault` | `neutralNationVaultStore` — **구문서의 arccore 폴백은 폐기** |
+| 독립국 | `player_independent_vault` | 수수료. 유지비 1차는 `player.credits` |
+| RED | `arccore_vault` | 중앙은행과 동일 |
 
-분기 정본: `getVaultKeyByFaction(faction)` · `resolveTradeFeeFactionVault` (`resolveFactionVault.ts`).
+분기 정본: `getVaultKeyByFaction` · `resolveTradeFeeFactionVault` (`resolveFactionVault.ts`). 상세 재정 갭은 §12.
 
 ### 11-4. [보완 #4] PGP(행성 총생산)
 
@@ -353,10 +372,31 @@ CSV: `tables/balance/arc_core_planet_upkeep_policy.csv` · `runArcCorePlanetUpke
 
 ---
 
+## 12. 재정·군사 프록시 구조 (2026-08-25)
+
+월드 교역 엔진은 동작한다. **국가가 군사·함선·함장을 부양하는 항등식은 비어 있다.**
+
+| 지금 | 목표 |
+|------|------|
+| 함대·개방 = vault 회계 소각, 게임 효과 없음 | 일 1회 프록시 오펙스 (D·PGP·궤도 척수·연구소 레벨) |
+| 선단 순마진 **70%** 유보 · 고정비 0 | 선단 일 운용 프록시 (± 승인 시 RED 소액 배당) |
+| 시설 유지비 = 방위위성만 | 조선소 등 CSV `dailyUpkeep` 슬롯 채움 (기존 위성 수치 유지) |
+| 학습 두 함수 = KPI 기록만. 인접 `runPlanetFiscalBalanceClosedLoopPass` = **fee/upkeep → trade_route** (vault 아님) | 시드배수에 따른 계수 ±캡 (가격 탄력 금지). P1 vault 지출은 폐회로에 직접 안 탐 |
+
+구현 단계·프록시 표·기존값 금지: [2026-08-25-arccore-fiscal-military-structure.md](./economy-evaluation/2026-08-25-arccore-fiscal-military-structure.md).  
+**P1–P5 구현 (2026-08-25 라이브)**: `runArcCoreFiscalOpexPass` · `shadow_mode=false` · 시드 위 실지출 · 함대·개방 빈 소각 생략 · 개발 33% 금고 선지출 · 선단 운용 2% · 시설 유지비 신규 CSV(위성 수치 유지) · 계수 힌트 ±캡 · HUD extras는 persist 스냅샷만. F7: cargoDest 우선 + RAM 화물 persist. 부트/틱 전 행성 루프 금지.  
+김클로드 재검수: [2026-08-25-kim-claude-fiscal-military-review.md](./economy-evaluation/2026-08-25-kim-claude-fiscal-military-review.md) · 김팀장 판정 **PARTIAL** → 후속 라이브 완결.
+
+**국가 대출 의도 (2026-09-21 · 런타임 잠금)**: 대주 향후=`military_industry_vault` · 잔액↑→군수업체 이자↑ · 디폴트=군수조달 중단 · 점령반환→중립화→비용청산. 정본 `tables/balance/arc_core_sovereign_loan_*.csv` · [2026-09-21-sovereign-loan-military-industry-intent.md](./economy-evaluation/2026-09-21-sovereign-loan-military-industry-intent.md). 고도화 전 이자/중단/청산 엔진 금지.
+
+---
+
 ## 10. 외부 평가·히스토리
 
 타이틀 비교·운영 효율성 **종합 평가 리포트**는 `docs/economy-evaluation/`에 날짜별 보관.
 
 - 인덱스: [economy-evaluation/README.md](./economy-evaluation/README.md)
+- 국가 대출 의도 (2026-09-21): [2026-09-21-sovereign-loan-military-industry-intent.md](./economy-evaluation/2026-09-21-sovereign-loan-military-industry-intent.md)
+- 재정·군사 구조 (2026-08-25): [2026-08-25-arccore-fiscal-military-structure.md](./economy-evaluation/2026-08-25-arccore-fiscal-military-structure.md)
 - 1차 (2026-06-15): [2026-06-15-arccore-economy-evaluation.md](./economy-evaluation/2026-06-15-arccore-economy-evaluation.md)
 

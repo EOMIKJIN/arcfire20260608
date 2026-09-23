@@ -1,114 +1,14 @@
 #!/usr/bin/env node
 /**
- * synth_system_colonization.csv → planet_resource_genesis.csv
- *
- * R(자원) 설계 원칙 (2026-06-27):
- * - R = 일반(저가) 광물·에너지 풍부도 + 거주 쾌적성. zone 난이도 ≠ 저자원.
- * - 희귀/고급 광물은 mining_zone_mineral_pool · poolWeight로만 제한.
- * - scenario 21행성: lore·planets.csv·무역/광물 지역 수동 정본.
- * - synth: 미개척 개척지 — zone에 완만히만 연동(저zone=14% 같은 빈곤 곡선 금지).
+ * planet_resource_genesis.csv — 코어 21 + 남·북 수도만.
+ * synth/확장 5지표는 런타임 거리 능선(`galaxyFrontierDevelopmentRidge`) 정본.
+ * 구 zone↑=스탯↑ synth 행은 쓰지 않는다 (2026-09-13).
  */
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const ROOT = resolve(process.cwd());
-const SYNTH_CSV = resolve(ROOT, 'tables/balance/synth_system_colonization.csv');
 const GENESIS_CSV = resolve(ROOT, 'tables/balance/planet_resource_genesis.csv');
-
-function parseCsv(text) {
-  const rows = [];
-  let i = 0;
-  let field = '';
-  let row = [];
-  let inQuotes = false;
-  while (i < text.length) {
-    const ch = text[i];
-    if (inQuotes) {
-      if (ch === '"') {
-        if (text[i + 1] === '"') {
-          field += '"';
-          i += 2;
-          continue;
-        }
-        inQuotes = false;
-      } else field += ch;
-      i += 1;
-      continue;
-    }
-    if (ch === '"') {
-      inQuotes = true;
-      i += 1;
-      continue;
-    }
-    if (ch === ',') {
-      row.push(field);
-      field = '';
-      i += 1;
-      continue;
-    }
-    if (ch === '\n' || ch === '\r') {
-      if (ch === '\r' && text[i + 1] === '\n') i += 1;
-      row.push(field);
-      field = '';
-      rows.push(row);
-      row = [];
-      i += 1;
-      continue;
-    }
-    field += ch;
-    i += 1;
-  }
-  if (field.length > 0 || row.length > 0) {
-    row.push(field);
-    rows.push(row);
-  }
-  return rows;
-}
-
-function clamp100(n) {
-  return Math.max(0, Math.min(100, Math.round(n)));
-}
-
-function planetIdSeed(planetId) {
-  let s = 0;
-  for (let i = 0; i < planetId.length; i += 1) s += planetId.charCodeAt(i) * (i + 17);
-  return s;
-}
-
-function pseudoRandom(seed) {
-  const x = Math.sin(seed) * 10000;
-  return x - Math.floor(x);
-}
-
-/** synth 미개척 — R 하한 34+, zone 21에서 ~62 (구 10~70 빈곤 곡선 폐기) */
-function genesisFromZone(planetId, zoneIndex) {
-  const z = Math.max(1, Math.min(21, Number(zoneIndex) || 1));
-  const seed = planetIdSeed(planetId);
-  const jitter = (pseudoRandom(seed) - 0.5) * 6;
-  const resource = clamp100(36 + ((z - 1) / 20) * 28 + jitter);
-  const population = clamp100(44 + ((z - 1) / 20) * 14 + (pseudoRandom(seed + 3) - 0.5) * 8);
-  const defense = clamp100(40 + ((z - 1) / 20) * 18 + (pseudoRandom(seed + 7) - 0.5) * 6);
-  const technology = clamp100(42 + ((z - 1) / 20) * 16 + (pseudoRandom(seed + 11) - 0.5) * 8);
-  const environment = clamp100(42 + ((z - 1) / 20) * 12 + (pseudoRandom(seed + 19) - 0.5) * 10);
-  const depositWeightMul = Math.round((resource / 50) * 100) / 100;
-  return { resource, population, defense, technology, environment, depositWeightMul };
-}
-
-if (!existsSync(SYNTH_CSV)) {
-  console.warn('[generate-synth-resource-genesis] skip — no synth csv');
-  process.exit(0);
-}
-
-const synthRaw = readFileSync(SYNTH_CSV, 'utf8').trim();
-const synthRows = parseCsv(synthRaw);
-const synthHeader = synthRows[0];
-const synthData = synthRows.slice(1).map((cols) => {
-  const o = {};
-  synthHeader.forEach((h, i) => {
-    o[h] = cols[i] ?? '';
-  });
-  return o;
-});
 
 const header = [
   'planetId',
@@ -207,6 +107,14 @@ const manualGenesis = {
     stats: [65, 44, 62, 60, 52],
     notes: 'cosmic origin endgame — myth tier deposits',
   },
+  synth_706_p: {
+    stats: [52, 54, 50, 52, 48],
+    notes: 'mercurium south-route rim capital — not core 21',
+  },
+  synth_732_p: {
+    stats: [50, 52, 48, 54, 50],
+    notes: 'aurelium north-route rim capital — not core 21',
+  },
 };
 
 const manualOut = Object.entries(manualGenesis).map(([planetId, { stats: [r, p, d, t, e], notes }]) => {
@@ -214,21 +122,6 @@ const manualOut = Object.entries(manualGenesis).map(([planetId, { stats: [r, p, 
   return [planetId, r, p, d, t, e, mul, notes].join(',');
 });
 
-const synthOut = synthData.map((row) => {
-  const planetId = `${row.synthSystemId}_p`;
-  const g = genesisFromZone(planetId, row.zoneIndex);
-  return [
-    planetId,
-    g.resource,
-    g.population,
-    g.defense,
-    g.technology,
-    g.environment,
-    g.depositWeightMul,
-    `synth zone ${row.zoneIndex} colonizable frontier`,
-  ].join(',');
-});
-
-const out = [header.join(','), ...manualOut, ...synthOut].join('\n') + '\n';
+const out = [header.join(','), ...manualOut].join('\n') + '\n';
 writeFileSync(GENESIS_CSV, out, 'utf8');
-console.log(`[generate-synth-resource-genesis] ${synthOut.length} synth + ${manualOut.length} manual rows`);
+console.log(`[generate-synth-resource-genesis] ${manualOut.length} core+capital rows (synth ridge is runtime)`);

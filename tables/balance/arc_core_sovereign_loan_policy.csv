@@ -1,0 +1,24 @@
+key,value,notesKo
+policy_version,1,국가 대출·군수업체 이자·조달중단·점령반환 청산 — 의도 잠금. 고도화 때 재설계
+intent_lock,true,true면 런타임 이자·조달중단·점령청산 구현 금지. 설정 정본만
+runtime_interest_enabled,false,고도화 전 이자 미적용
+runtime_procurement_halt_enabled,false,고도화 전 군수조달 중단 미적용
+runtime_occupation_settlement_enabled,false,고도화 전 점령반환·중립화·비용청산 미적용
+lender_vault_key_future,military_industry_vault,향후 대출 원금·이자수입 귀속. 스토어 미생성
+lender_vault_key_transitional,arccore_vault,현행 개척 상환 자리표시(중앙금고). 군수업체 이전은 고도화
+borrower_nations,stellium|arccore|neutral|independent,국가 단위 차주. 플레이어 개인 지갑 제외
+interest_accrual_base,outstanding_principal,대출잔액이 클수록 군수업체 이자수입 증가
+interest_income_to,military_industry,이자 귀속=군수업체. 중앙은행·수송선단 아님
+interest_rate_pct_locked,false,금리 수치는 고도화 재설계. 지금 확정값 없음
+default_consequence,halt_military_procurement,국가가 대출을 못 갚으면 군수물자 조달 중단
+procurement_halt_scope,nation_hull|nation_weapon|nation_equip|colonize_outfitting,국가 군수 경로만. 플레이어 위성 L1·개인 지갑 제외
+occupation_unwind_path,return_hold|neutralize|settle_loan_cost,점령지 반환→중립국화→대출 비용청산
+occupation_unwind_clears,book_tied_to_returned_holds,반환 행성에 묶인 대출분만 청산 대상(고도화)
+repay_clock,daily_batch_only,상환·이자는 일 1회 배치만. 틱 금지
+seed_protect_repay,true,운용 금고 시드 아래는 상환하지 않음(현행 개척 대출과 동일)
+new_persist_key_allowed,false,신규 persist 키 금지. 현행 개척 loanCredits만 실잔액
+thirteenth_subcore,false,13번째 서브코어 금지. 기존 일일 배치에만 합류(고도화)
+price_elasticity,0,대출이 시장가 탄력에 연결 금지
+player_wallet_is_not_sovereign_loan,true,플레이어 credits·위성 L1는 국가 대출 아님
+transport_vault_is_not_lender,true,G8 유지. 수송선단 금고는 대출 원금 아님
+world_axis,true,국가 대출 장부는 월드 축. 계정 purge로 지우지 않음

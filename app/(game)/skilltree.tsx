@@ -2,7 +2,7 @@
 // 아크파이어 온라인 - 연구소 화면
 // ============================================================
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View, Text, StyleSheet,
   ScrollView,
@@ -11,7 +11,8 @@ import { FONTS, SPACING } from '../../src/utils/theme';
 import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
 import { useT } from '../../src/i18n';
 import { resolveSkillDescription, resolveSkillEffectDescription, resolveSkillName } from '../../src/i18n/skillText';
-import { showArcAlert } from '../../src/utils/showArcAlert';
+import { useAppSettingsStore } from '../../src/store/appSettingsStore';
+import { presentSkillInfoOverlay, useArcOverlayStore } from '../../src/ui/overlay/arcOverlayStore';
 import { usePlayerStore } from '../../src/store/playerStore';
 import { SKILLS, SKILL_CATEGORIES } from '../../src/data/skills';
 import { Skill, SkillCategory } from '../../src/types';
@@ -26,6 +27,7 @@ import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory
 import { usePlanetHubFacilityAccessGate } from '../../src/hooks/usePlanetHubFacilityAccessGate';
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
+import { useUiScreenShell } from '../../src/ui/process/useUiScreenShell';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacilityTabBar';
 import {
@@ -36,12 +38,17 @@ import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
 import { SkillTreeBoard } from '../../src/components/skillTree/SkillTreeBoard';
 import { SkillTreeBlueprintBackdrop } from '../../src/components/skillTree/SkillTreeBlueprintBackdrop';
+import {
+  resolveSkillRuntimePartialNoteKey,
+  resolveSkillRuntimeStatus,
+} from '../../src/game/skillTree/skillRuntimeStatus';
 
 /** 메인스테이지 기준 하단 공백과 동기 */
 const SKILLTREE_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
 
 export default function SkillTreeScreen() {
   const t = useT();
+  const locale = useAppSettingsStore((s) => s.locale);
   const localeRenderKey = useLocaleRenderKey();
   const player = usePlayerStore(s => s.player);
   const learnSkill = usePlayerStore(s => s.learnSkill);
@@ -55,6 +62,7 @@ export default function SkillTreeScreen() {
   );
   const skilltreeSession = useHeavyUiDataSession(skilltreeSessionConfig);
   const screenReady = skilltreeSession.phase === 'ready' && stageFrameReady;
+  useUiScreenShell('skilltree', screenReady);
   usePlanetSubStageMemory('skilltree', () => {
     setSelectedCategory('combat');
   });
@@ -73,56 +81,49 @@ export default function SkillTreeScreen() {
     return null;
   }, [skilltreeSession.data, t]);
 
+  useEffect(() => {
+    return () => {
+      useArcOverlayStore.getState().dismissWhere((e) => e.kind === 'skillInfo');
+    };
+  }, []);
+
   const handleSkillPress = useCallback((skill: Skill) => {
     if (!player) return;
     const learned = player.skills.includes(skill.id);
     const canLearn = canLearnSkill(skill, player);
     const prereqLearned = skill.prerequisiteIds.every((id) => player.skills.includes(id));
-    const name = resolveSkillName(skill, t);
-    const desc = resolveSkillDescription(skill, t);
-    const effect = resolveSkillEffectDescription(skill, t);
-
-    if (learned) {
-      showArcAlert(
-        t('skilltree.learnedTitle', { name }),
-        t('skilltree.body', { desc, effect }),
-      );
-      return;
-    }
-    if (canLearn) {
-      showArcAlert(
-        t('skilltree.learnTitle', { name }),
-        t('skilltree.learnBody', { desc, effect, sp: player.skillPoints }),
-        [
-          { text: t('skilltree.cancel'), style: 'cancel' },
-          {
-            text: t('skilltree.learn'),
-            onPress: async () => {
-              learnSkill(skill.id);
-              await persist();
-            },
-          },
-        ],
-      );
-      return;
-    }
-    if (!prereqLearned) {
-      const names = skill.prerequisiteIds
-        .map((id) => (SKILLS[id] ? resolveSkillName(SKILLS[id], t) : id))
+    const name = resolveSkillName(skill, locale);
+    const desc = resolveSkillDescription(skill, locale);
+    const effect = resolveSkillEffectDescription(skill, locale);
+    const prerequisiteLine = skill.prerequisiteIds.length === 0
+      ? t('skilltree.req.none')
+      : skill.prerequisiteIds
+        .map((id) => (SKILLS[id] ? resolveSkillName(SKILLS[id], locale) : id))
         .join(', ');
-      showArcAlert(t('skilltree.prereqTitle'), t('skilltree.prereqBody', { names }));
-      return;
-    }
-    if (player.level < skill.levelRequired) {
-      showArcAlert(t('skilltree.levelTitle'), t('skilltree.levelBody', { level: skill.levelRequired }));
-      return;
-    }
-    if (player.skillPoints <= 0) {
-      showArcAlert(t('skilltree.spTitle'), t('skilltree.spBody'));
-      return;
-    }
-    showArcAlert(name, desc);
-  }, [learnSkill, persist, player, t]);
+
+    presentSkillInfoOverlay({
+      skillName: name,
+      categoryLabel: t(`skilltree.cat.${skill.category}`),
+      tier: skill.tier,
+      description: desc,
+      effect,
+      runtimeStatus: resolveSkillRuntimeStatus(skill.id),
+      runtimeNoteKey: resolveSkillRuntimePartialNoteKey(skill.id) ?? undefined,
+      learned,
+      canLearn,
+      levelRequired: skill.levelRequired,
+      playerLevel: player.level,
+      skillPoints: player.skillPoints,
+      prerequisiteLine,
+      prerequisitesMet: prereqLearned,
+      onLearn: canLearn
+        ? async () => {
+          learnSkill(skill.id);
+          await persist();
+        }
+        : undefined,
+    });
+  }, [learnSkill, locale, persist, player, t]);
 
   if (!player) return null;
 

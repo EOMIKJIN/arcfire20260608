@@ -1,5 +1,6 @@
-import React, { memo, type ReactNode } from 'react';
+import React, { memo, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type TextStyle } from 'react-native';
+import { reportFacilityHatchHeaderWindowBottom } from './facilityHatchHeaderMeasure';
 import { useT } from '../../i18n';
 import { FONTS, SPACING } from '../../utils/theme';
 import { TACTICAL_FACILITY as TF } from '../tactical/tacticalFacilityScreenTokens';
@@ -32,9 +33,25 @@ export const PlanetFacilityTitleHeader = memo(function PlanetFacilityTitleHeader
   const backLabel = backLabelProp ?? t('common.back');
   const resolvedTitle = formatTacticalOverlayTitle(title);
   const resolvedSubtitle = tacticalTitleHeaderSubtitle(subtitle);
+  const shellRef = useRef<View>(null);
+
+  const reportHatchBottom = useCallback(() => {
+    requestAnimationFrame(() => {
+      shellRef.current?.measureInWindow((_x, y, _w, h) => {
+        if (h <= 0) return;
+        reportFacilityHatchHeaderWindowBottom(y + h);
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      reportFacilityHatchHeaderWindowBottom(null);
+    };
+  }, []);
 
   return (
-    <View style={styles.shell}>
+    <View ref={shellRef} style={styles.shell} onLayout={reportHatchBottom}>
       <View style={styles.accentTop} pointerEvents="none" />
       <TitleHeaderHatchPattern
         patternId={FACILITY_HATCH_PATTERN_ID}
@@ -368,6 +385,7 @@ export const planetFacilityScreenStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  /** 빗살무늬 헤더 — 대사 클리어는 `measureInWindow` 실측만 */
   shell: {
     width: '100%',
     backgroundColor: TF.headerBg,

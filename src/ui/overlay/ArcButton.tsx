@@ -13,7 +13,8 @@ import { resolveOverlayVisualTokens } from './overlayVisualTokens';
 import type { ArcOverlayVisualTheme } from './tacticalOverlayRollout';
 import { TACTICAL_OVERLAY } from './tacticalOverlayStyles';
 import { formatArcUniversalButtonLabel } from './arcUniversalButtonLabel';
-import { bindUiSfxPressIn, type UiSfxCue } from '../../audio';
+import type { UiSfxCue } from '../../audio';
+import { useArcButtonReleaseHandlers } from '../press/useArcButtonRelease';
 
 export type ArcButtonVariant = 'primary' | 'secondary' | 'destructive' | 'panel' | 'cta' | 'tacticalPrimary' | 'tacticalSecondary';
 export type ArcButtonIntent = 'primary' | 'secondary' | 'cta';
@@ -31,7 +32,7 @@ type Props = {
    * 즉각 전환 버튼에는 쓰지 말 것. busy 중에는 라벨 대신 스피너.
    */
   busy?: boolean;
-  /** UI SFX cue — onPressIn(클릭연출)과 동기. 리소스 미등록 시 silent. */
+  /** UI SFX cue — 눌림(onPressIn) 연출 전용. 동작은 뗌(onPress). */
   sfxCue?: UiSfxCue | null;
   style?: StyleProp<ViewStyle>;
   /** 시설 탭 등 좁은 슬롯 — `[라벨]`·패딩 축소·중앙 정렬 */
@@ -63,14 +64,11 @@ export const ArcButton = memo(function ArcButton({
         ? OVERLAY_TOKENS.phosphorAccent
         : COLORS.ink_dark;
 
-  const onPressIn = useMemo(
-    () =>
-      bindUiSfxPressIn({
-        cue: sfxCue ?? 'ui_click',
-        silent: disabled || busy || sfxCue === null,
-      }),
-    [busy, disabled, sfxCue],
-  );
+  const release = useArcButtonReleaseHandlers({
+    onPress,
+    disabled: disabled || busy,
+    sfxCue,
+  });
 
   return (
     <Pressable
@@ -88,8 +86,9 @@ export const ArcButton = memo(function ArcButton({
         (disabled || busy) && styles.disabled,
         style,
       ]}
-      onPressIn={onPressIn}
-      onPress={onPress}
+      onPressIn={release.onPressIn}
+      onPressOut={release.onPressOut}
+      onPress={release.onPress}
       disabled={disabled || busy}
       android_disableSound
     >

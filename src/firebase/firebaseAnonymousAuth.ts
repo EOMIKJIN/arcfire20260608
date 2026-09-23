@@ -6,17 +6,25 @@
 // ============================================================
 
 import { InteractionManager } from 'react-native';
-import auth from '@react-native-firebase/auth';
+import { getApp } from '@react-native-firebase/app';
+import { getAuth, signInAnonymously, signOut } from '@react-native-firebase/auth';
 
 const AUTH_TIMEOUT_MS = 6_000;
 
 let cachedAuthUid: string | null = null;
 let ensurePromise: Promise<string | null> | null = null;
 let warmupScheduled = false;
+let authInst: ReturnType<typeof getAuth> | null = null;
+
+/** 모듈 Auth 핸들 — 네임스페이스 `auth()` 금지(v22 getApp 경고). 세션 1회. */
+export function getFirebaseAuth(): ReturnType<typeof getAuth> {
+  if (!authInst) authInst = getAuth(getApp());
+  return authInst;
+}
 
 function readCurrentAuthUid(): string | null {
   if (cachedAuthUid) return cachedAuthUid;
-  const uid = auth().currentUser?.uid;
+  const uid = getFirebaseAuth().currentUser?.uid;
   if (uid) cachedAuthUid = uid;
   return uid ?? null;
 }
@@ -32,10 +40,11 @@ export async function ensureFirebaseAnonymousAuth(): Promise<string | null> {
   if (!ensurePromise) {
     ensurePromise = (async () => {
       try {
-        let user = auth().currentUser;
+        const auth = getFirebaseAuth();
+        let user = auth.currentUser;
         if (!user) {
           const credential = await Promise.race([
-            auth().signInAnonymously(),
+            signInAnonymously(auth),
             new Promise<never>((_, reject) => {
               setTimeout(() => reject(new Error('firebase_anonymous_auth_timeout')), AUTH_TIMEOUT_MS);
             }),
@@ -85,8 +94,9 @@ export async function resetFirebaseAnonymousAuthForAccountPurge(): Promise<void>
   cachedAuthUid = null;
   warmupScheduled = false;
   try {
-    if (auth().currentUser) {
-      await auth().signOut();
+    const auth = getFirebaseAuth();
+    if (auth.currentUser) {
+      await signOut(auth);
     }
   } catch {
     /* ignore */

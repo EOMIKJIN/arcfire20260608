@@ -1,4 +1,4 @@
-# 김경제 장기감시 — heartbeat·실시간 알림 공통 필터 (오탐 차단)
+﻿# 김경제 장기감시 — heartbeat·실시간 알림 공통 필터 (오탐 차단)
 # 정본: mem-gl-leak-rules.ps1 Get-ArcfireCrashLogEvents
 
 function Test-WatchActionableIncident {

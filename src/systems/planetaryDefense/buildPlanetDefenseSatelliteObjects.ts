@@ -41,7 +41,9 @@ export function buildPlanetDefenseSatelliteObjects(
       systemId,
       defenseWeaponId: defensePolicy.defaultWeaponId,
       defenseLevel: planetLevel,
-      title: `방위위성 ${i + 1}`,
+      // i18n 키 — 로케일 전환 시 렌더 시점에 t(title, {n: titleOrdinal})로 해석
+      title: 'hubBg.defenseSatelliteTitle',
+      titleOrdinal: i + 1,
       description: '',
       transform: {
         orbitSlotIndex: 900 + i,

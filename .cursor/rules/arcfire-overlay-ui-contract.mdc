@@ -24,11 +24,13 @@ alwaysApply: false
 
 - **신규 panel kind** → `overlayChrome.ts`에 `hostAnchor: 'top'` 등록 (ArcOverlayHost에 `kind === '...'` 분기 추가 **금지**)
 - **신규 compact kind** → `hostAnchor: 'center'`
+- **전경 순차**: 메뉴/데이터 셸(`useUiScreenShell`)이 ready 되기 전 진입 대사 present 금지. 정본 `src/ui/process/uiForegroundSequence.ts`. 대화 오픈 전환 연출은 보류.
 
-## alert kind(compact 팝업) — 30초 자동 닫힘 (필수 · 2026-06-30~)
+## compact 범용 팝업 — 40초 자동 닫힘 (필수 · 2026-08-24~)
 
-- **일일 채굴 한도·에러·안내·향후 모든 `showArcAlert` / `presentArcOverlayAlert`** → 기본 **30초 자동 닫힘**
-- 정본: `overlayAlertContract.ts` · `resolveArcAlertAutoDismissMs()` · `ArcOverlayHost` timer
+- **`showArcAlert` / `presentArcOverlayAlert` / `waveResult`(전투 승·패 결과) / `reward` / `levelUp`** → 기본 **40초 자동 닫힘**
+- 정본: `overlayAlertContract.ts` · `resolveArcOverlayAutoDismissMs()` · `ArcOverlayHost` timer
+- 단버튼 확인(전투 패배 귀환 등)은 자동 닫힘 = 확인과 동일. 2버튼(취소+확인)은 닫기만
 - **수동만 유지**가 필요할 때만 `autoDismissMs: 0` (파괴적 2단 확인 등) — 사유 주석 필수
 - `Alert.alert` / RN `Modal` / 로컬 alert View **금지** — Host 경유만
 

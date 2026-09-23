@@ -296,20 +296,35 @@ function buildOccupationLabels(
   return labels;
 }
 
-export function buildGalaxyTerritoryVoronoiLayers(input: {
+export type GalaxyTerritoryGeometry = {
+  sites: GalaxyTerritorySite[];
+  clipBounds: Bounds;
+  fills: GalaxyTerritoryFill[];
+  cellMetrics: Array<{ side: 'blue' | 'red' | 'independent'; x: number; y: number; area: number } | null>;
+  edgeOwners: Map<string, { a: Point; b: Point; sites: number[] }>;
+};
+
+function isGalaxyTerritorySiteRevealed(
+  systemId: string,
+  revealedSystemIds?: ReadonlySet<string>,
+): boolean {
+  return !revealedSystemIds || revealedSystemIds.has(systemId);
+}
+
+/** site·점유·clip만. 안개 변경 때 Delaunay를 다시 돌리지 않는다. */
+export function tessellateGalaxyTerritoryGeometry(input: {
   sites: GalaxyTerritorySite[];
   bounds: Bounds;
-}): GalaxyTerritoryLayers {
+}): GalaxyTerritoryGeometry | null {
   const { sites, bounds: mapBounds } = input;
   const n = sites.length;
-  if (n < 2) return { fills: [], borders: [], occupationLabels: [] };
+  if (n < 2) return null;
 
   const clipBounds = computeClipBounds(sites, mapBounds);
   const delaunay = Delaunay.from(sites, (d) => d.x, (d) => d.y);
   const voronoi = delaunay.voronoi([clipBounds.x0, clipBounds.y0, clipBounds.x1, clipBounds.y1]);
 
   const fills: GalaxyTerritoryFill[] = [];
-  const borderSegments: BorderSegment[] = [];
   const edgeOwners = new Map<string, { a: Point; b: Point; sites: number[] }>();
   const cellMetrics: Array<{ side: 'blue' | 'red' | 'independent'; x: number; y: number; area: number } | null> =
     Array.from({ length: n }, () => null);
@@ -345,13 +360,43 @@ export function buildGalaxyTerritoryVoronoiLayers(input: {
     }
   }
 
+  return { sites, clipBounds, fills, cellMetrics, edgeOwners };
+}
+
+export function paintGalaxyTerritoryLayers(
+  geometry: GalaxyTerritoryGeometry,
+  revealedSystemIds?: ReadonlySet<string>,
+): GalaxyTerritoryLayers {
+  const { sites, clipBounds, fills, cellMetrics, edgeOwners } = geometry;
+  const n = sites.length;
+  const paintedFills = revealedSystemIds
+    ? fills.filter((fill) => revealedSystemIds.has(fill.key))
+    : fills;
+
+  const paintedMetrics = revealedSystemIds ? cellMetrics.slice() : cellMetrics;
+  if (revealedSystemIds) {
+    for (let i = 0; i < n; i += 1) {
+      if (!isGalaxyTerritorySiteRevealed(sites[i]!.systemId, revealedSystemIds)) {
+        paintedMetrics[i] = null;
+      }
+    }
+  }
+
+  const borderSegments: BorderSegment[] = [];
   for (const { a, b, sites: owners } of edgeOwners.values()) {
     if (owners.length !== 2) continue;
 
-    const sideA = sites[owners[0]].factionSide;
-    const sideB = sites[owners[1]].factionSide;
+    const siteA = sites[owners[0]];
+    const siteB = sites[owners[1]];
+    if (!siteA || !siteB) continue;
+    const sideA = siteA.factionSide;
+    const sideB = siteB.factionSide;
     if (sideA === sideB) continue;
     if (sideA === 'neutral' && sideB === 'neutral') continue;
+    if (
+      !isGalaxyTerritorySiteRevealed(siteA.systemId, revealedSystemIds)
+      || !isGalaxyTerritorySiteRevealed(siteB.systemId, revealedSystemIds)
+    ) continue;
     if (isClipHullEdge(a, b, clipBounds)) continue;
 
     const { glowColor, coreColor } = resolveBorderStyle(sideA, sideB);
@@ -379,7 +424,23 @@ export function buildGalaxyTerritoryVoronoiLayers(input: {
     }
   }
 
-  const occupationLabels = buildOccupationLabels(sites, n, edgeOwners, cellMetrics);
+  return {
+    fills: paintedFills,
+    borders,
+    occupationLabels: buildOccupationLabels(sites, n, edgeOwners, paintedMetrics),
+  };
+}
 
-  return { fills, borders, occupationLabels };
+export function buildGalaxyTerritoryVoronoiLayers(input: {
+  sites: GalaxyTerritorySite[];
+  bounds: Bounds;
+  /** 있으면 채움·국경·라벨을 이 성계만. 격자는 전체 site 유지(셀 폭발 방지). */
+  revealedSystemIds?: ReadonlySet<string>;
+}): GalaxyTerritoryLayers {
+  const geometry = tessellateGalaxyTerritoryGeometry({
+    sites: input.sites,
+    bounds: input.bounds,
+  });
+  if (!geometry) return { fills: [], borders: [], occupationLabels: [] };
+  return paintGalaxyTerritoryLayers(geometry, input.revealedSystemIds);
 }

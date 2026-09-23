@@ -1,7 +1,7 @@
 // ============================================================
 // 마지노선(N≤5 HARD) · 외부팩션(F2 남부·F4 북부) 국가보급 정책 — Table-First 정본
 // (tables/balance/arc_core_maginot_external_supply_policy.csv)
-// F2=trade_coalition(남부)·F4=miners_guild(북부) — galaxyRouteFactionPolicy.ts 정본,
+// F2=mega_mercurium_coalition(남부)·F4=mega_aurelium_guild(북부) — galaxyRouteFactionPolicy.ts §6-5 정본,
 // NEUTRAL/INDEPENDENT 아님(대표님 확정). 이 로더는 F 코드를 문서/로그 라벨로만 취급한다.
 // ============================================================
 

@@ -6,7 +6,7 @@
 // 실제 스토어 적용(rebalanceContestedPoolNow)만 zustand/store를 만짐.
 // ============================================================
 
-import type { ContestedEligibilityClass } from './contestedEligibility';
+import { isContestedPoolEligibleClass, type ContestedEligibilityClass } from './contestedEligibility';
 
 /**
  * 승격 우선순위 티어(2026-07-31, contested-active-pool-ui-fix) — 숫자가 작을수록 우선.
@@ -61,15 +61,16 @@ export function planContestedPoolRebalance(input: {
   const demote: string[] = [];
   let stepsUsed = 0;
 
-  // 1) SAFE 지속 동적 멤버 정리 — CSV 정적행은 대상 아님(파일 삭제 금지, 스킵 게이트로만 제외)
-  const safeDynamicActive = members.filter(
+  // 1) SAFE·ineligible 지속 동적 멤버 정리 — 아군만 접한 후방/비전선은 풀 슬롯이 아님
+  // CSV 정적행은 대상 아님(파일 삭제 금지, 스킵 게이트로만 제외)
+  const dropDynamicActive = members.filter(
     (m) =>
       m.isActiveMember
       && !m.isStaticCsvRow
-      && m.classification === 'safe_hinterland'
+      && !isContestedPoolEligibleClass(m.classification)
       && !m.inCooldown,
   );
-  for (const m of safeDynamicActive) {
+  for (const m of dropDynamicActive) {
     if (stepsUsed >= stepMax) break;
     demote.push(m.planetId);
     stepsUsed += 1;
@@ -77,7 +78,8 @@ export function planContestedPoolRebalance(input: {
   const willBeDemoted = new Set(demote);
 
   const activeNonSafeCount = members.filter(
-    (m) => m.isActiveMember && !willBeDemoted.has(m.planetId) && m.classification !== 'safe_hinterland',
+    (m) =>
+      m.isActiveMember && !willBeDemoted.has(m.planetId) && isContestedPoolEligibleClass(m.classification),
   ).length;
 
   if (activeNonSafeCount < poolMin && stepsUsed < stepMax) {
@@ -85,8 +87,7 @@ export function planContestedPoolRebalance(input: {
       .filter(
         (m) =>
           !m.isActiveMember
-          && m.classification !== 'safe_hinterland'
-          && m.classification !== 'ineligible'
+          && isContestedPoolEligibleClass(m.classification)
           && !m.inCooldown,
       )
       .sort(
@@ -109,7 +110,7 @@ export function planContestedPoolRebalance(input: {
           m.isActiveMember
           && !m.isStaticCsvRow
           && !willBeDemoted.has(m.planetId)
-          && m.classification !== 'safe_hinterland'
+          && isContestedPoolEligibleClass(m.classification)
           && !m.inCooldown,
       )
       .sort((a, b) => a.score - b.score || a.planetId.localeCompare(b.planetId));

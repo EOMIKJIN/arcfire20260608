@@ -92,6 +92,14 @@ export function runInboundDroneInterceptPass(
   wallDeltaSec: number,
 ): void {
   if (wallDeltaSec <= 0) return;
+  let hasInbound = false;
+  for (let i = 0; i < drones.length; i += 1) {
+    if (drones[i]!.phase === 'inbound') {
+      hasInbound = true;
+      break;
+    }
+  }
+  if (!hasInbound) return;
   const satellites = listPlanetDefenseSatellites(planetId);
   if (satellites.length === 0) return;
 

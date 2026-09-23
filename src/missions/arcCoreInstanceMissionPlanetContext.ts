@@ -14,12 +14,12 @@ import {
   resolveSystemIdForPlanetIdFromGalaxy,
 } from '../world/resolvePlanetSystemPosition';
 
-export const TAVERN_INSTANCE_NEIGHBOR_SYSTEM_PLACEHOLDER = '__neighbor_system__';
-export const TAVERN_INSTANCE_DISCOVERY_PLANET_PLACEHOLDER = '__discovery_planet__';
+export const BAR_INSTANCE_NEIGHBOR_SYSTEM_PLACEHOLDER = '__neighbor_system__';
+export const BAR_INSTANCE_DISCOVERY_PLANET_PLACEHOLDER = '__discovery_planet__';
 
 const MAX_DELIVERY_HOPS = 3;
 
-export type TavernInstancePlanetContext = {
+export type BarInstancePlanetContext = {
   planetId: string;
   systemId: string | null;
   neighborSystemId: string | null;
@@ -112,10 +112,10 @@ function pickDeliveryTargetSystemId(
   };
 }
 
-export function resolveTavernInstancePlanetContext(
+export function resolveBarInstancePlanetContext(
   planetId: string,
   options?: { instanceId?: string },
-): TavernInstancePlanetContext {
+): BarInstancePlanetContext {
   const pid = planetId.trim();
   const systemId = resolveSystemIdForPlanetIdFromGalaxy(pid);
   const originSystem = systemId ? readGalaxySystemRecord(systemId) : undefined;
@@ -153,21 +153,16 @@ export function resolveTavernInstancePlanetContext(
   };
 }
 
-export function patchTavernInstanceObjectiveTargetId(
+export function patchBarInstanceObjectiveTargetId(
   type: string,
   targetId: string,
-  ctx: TavernInstancePlanetContext,
+  ctx: BarInstancePlanetContext,
 ): string {
-  if (type === 'reach_system' && targetId === TAVERN_INSTANCE_NEIGHBOR_SYSTEM_PLACEHOLDER) {
-    const resolved =
-      ctx.neighborSystemId
-      ?? (ctx.systemId ? resolveFirstGalaxyNeighborSystemId(ctx.systemId) : null)
-      ?? ctx.systemId;
-    return resolved && resolved !== TAVERN_INSTANCE_NEIGHBOR_SYSTEM_PLACEHOLDER
-      ? resolved
-      : (ctx.systemId ?? targetId);
+  if (type === 'reach_system' && targetId === BAR_INSTANCE_NEIGHBOR_SYSTEM_PLACEHOLDER) {
+    // 인접 성계는 특정 id로 고정하지 않는다 — 착륙 시 출발 성계가 아니면 완료.
+    return BAR_INSTANCE_NEIGHBOR_SYSTEM_PLACEHOLDER;
   }
-  if (type === 'reach_planet' && targetId === TAVERN_INSTANCE_DISCOVERY_PLANET_PLACEHOLDER) {
+  if (type === 'reach_planet' && targetId === BAR_INSTANCE_DISCOVERY_PLANET_PLACEHOLDER) {
     return ctx.discoveryPlanetId ?? ctx.planetId;
   }
   return targetId;

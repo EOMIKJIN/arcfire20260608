@@ -1,0 +1,9 @@
+id,envKey,condition,moodDelta,focusDelta,lineKo,lineEn
+er_night,hour,gte:22,-4,-2,밤이라 목소리가 낮아,Night makes the voice quieter
+er_dawn,hour,lte:5,-2,-6,아직 새벽이라 느리다,Still slow before dawn
+er_noon,hour,gte:12&lte:14,2,-2,한낮이라 숨이 길다,Midday stretches the breath
+er_weekend,weekday,in:67,4,-2,쉬는 쪽이라 말이 짧다,Weekend so fewer words
+er_spy,spy,eq:1,-6,8,신경이 조금 곤두섰어,Nerves are a bit up
+er_combat,lastCombat,eq:1,-2,4,방금 여파가 아직 남아,The last aftertaste is still here
+er_core_r_hi,coreR,gte:70,2,0,거점 기운이 살아 있어,The dock feels lively
+er_core_d_lo,coreD,lte:30,-4,2,거점이 조금 불안해,The dock feels uneasy

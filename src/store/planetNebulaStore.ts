@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import type { Planet, ZoneType } from '../types';
 import { useWorldStore } from './worldStore';
+import { PLANET_NEBULA_PALETTE_REV } from '../game/planetNebulaCanonPalettes';
 import { buildNebulaProfile, type PlanetNebulaProfile } from '../game/planetNebulaProfile';
 
 export type { PlanetNebulaProfile } from '../game/planetNebulaProfile';
@@ -45,22 +46,6 @@ function mulberry32(seed: number) {
 
 function clamp(v: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, v));
-}
-
-function mixHex(a: string, b: string, tRaw: number): string {
-  const t = Math.max(0, Math.min(1, tRaw));
-  const pa = parseInt(a.slice(1), 16);
-  const pb = parseInt(b.slice(1), 16);
-  const ar = (pa >> 16) & 0xff;
-  const ag = (pa >> 8) & 0xff;
-  const ab = pa & 0xff;
-  const br = (pb >> 16) & 0xff;
-  const bg = (pb >> 8) & 0xff;
-  const bb = pb & 0xff;
-  const r = Math.round(ar + (br - ar) * t);
-  const g = Math.round(ag + (bg - ag) * t);
-  const bch = Math.round(ab + (bb - ab) * t);
-  return `#${[r, g, bch].map((n) => n.toString(16).padStart(2, '0')).join('')}`;
 }
 
 function dayKeyUtc(ms: number): number {
@@ -157,10 +142,20 @@ export const usePlanetNebulaStore = create<PlanetNebulaState>((set, get) => ({
 
   ensureProfileForPlanet: (planetId: string) => {
     const existing = get().profilesByPlanetId[planetId];
-    if (existing) return existing;
+    if (existing && existing.paletteRev === PLANET_NEBULA_PALETTE_REV) return existing;
     const info = resolvePlanetWithZone(planetId);
-    if (!info) return null;
-    const profile = buildNebulaProfile(info.planet, info.zone);
+    if (!info) return existing ?? null;
+    const fresh = buildNebulaProfile(info.planet, info.zone);
+    const profile: PlanetNebulaProfile = existing
+      ? {
+          ...fresh,
+          seed: existing.seed,
+          flowSpeed: existing.flowSpeed,
+          swirl: existing.swirl,
+          density: existing.density,
+          paletteRev: PLANET_NEBULA_PALETTE_REV,
+        }
+      : fresh;
     set((state) => ({
       profilesByPlanetId: {
         ...state.profilesByPlanetId,
@@ -178,8 +173,19 @@ export const usePlanetNebulaStore = create<PlanetNebulaState>((set, get) => ({
     let changed = false;
     const next = { ...get().profilesByPlanetId };
     for (const planet of system.planets) {
-      if (next[planet.id]) continue;
-      next[planet.id] = buildNebulaProfile(planet, system.zone);
+      const cur = next[planet.id];
+      if (cur && cur.paletteRev === PLANET_NEBULA_PALETTE_REV) continue;
+      const fresh = buildNebulaProfile(planet, system.zone);
+      next[planet.id] = cur
+        ? {
+            ...fresh,
+            seed: cur.seed,
+            flowSpeed: cur.flowSpeed,
+            swirl: cur.swirl,
+            density: cur.density,
+            paletteRev: PLANET_NEBULA_PALETTE_REV,
+          }
+        : fresh;
       changed = true;
     }
     if (!changed) return;
@@ -216,8 +222,7 @@ export const usePlanetNebulaStore = create<PlanetNebulaState>((set, get) => ({
           flowSpeed: clamp(cur.flowSpeed + flowDelta, 0.008, 0.05),
           swirl: clamp(cur.swirl + swirlDelta, 0.8, 3.0),
           density: clamp(cur.density + densityDelta, 0.2, 1.2),
-          paletteB: mixHex(cur.paletteB, '#7ac8ff', 0.01 + driftRand() * 0.02),
-          paletteC: mixHex(cur.paletteC, '#ffd27a', 0.01 + driftRand() * 0.02),
+          // 팔레트는 베이크 주요색 고정 — 청록·금 보색 드리프트 금지
           updatedAt: nowMs,
         };
         changedCount += 1;

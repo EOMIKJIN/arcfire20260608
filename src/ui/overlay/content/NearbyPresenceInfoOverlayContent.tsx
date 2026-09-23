@@ -1,7 +1,14 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { ArcOverlayNearbyPresenceInfoEntry } from '../arcOverlayStore';
 import { useT } from '../../../i18n';
+import { useAppSettingsStore } from '../../../store/appSettingsStore';
+import {
+  localizeNearbyInfoDetailRow,
+  omitPlayerFlagshipHubInfoRows,
+  resolveNearbyInfoPanelCaptainName,
+} from '../../../game/planetHub/nearbyPresenceDisplay';
+import { PINNED_INFO_MARK_INK, resolvePinnedInfoMark } from '../../../game/planetHub/nearbyPresenceContract';
 import { SPACING } from '../../../utils/theme';
 import { ArcOverlayCard } from '../ArcOverlayCard';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
@@ -11,6 +18,8 @@ import {
   planetFacilityScreenStyles as fs,
 } from '../../planetFacility/PlanetFacilityTitleHeader';
 import { NearbyPresenceRowActionButton } from '../../../components/planet/NearbyPresenceRowActionButton';
+import { NearbyPresenceQuestMarkRail } from '../../../components/planet/NearbyPresenceQuestMarkRail';
+import { requestNearbyOrbitComm } from '../../../game/planetHub/requestNearbyOrbitComm';
 
 type Props = {
   entry: ArcOverlayNearbyPresenceInfoEntry;
@@ -22,8 +31,15 @@ export const NearbyPresenceInfoOverlayContent = memo(function NearbyPresenceInfo
   onClose,
 }: Props) {
   const t = useT();
+  const locale = useAppSettingsStore((s) => s.locale);
   const visualTheme = resolveArcOverlayVisualTheme('nearbyPresenceInfo');
-  const { rows } = entry;
+  const rows = useMemo(
+    () =>
+      omitPlayerFlagshipHubInfoRows(
+        entry.rows.map((row) => localizeNearbyInfoDetailRow(row, locale)),
+      ),
+    [entry.rows, locale],
+  );
 
   return (
     <ArcOverlayCard
@@ -52,17 +68,44 @@ export const NearbyPresenceInfoOverlayContent = memo(function NearbyPresenceInfo
             const description = [row.shipLabel, row.detailRight ? `│ ${row.detailRight}` : '']
               .filter(Boolean)
               .join(' ');
-            const action = row.action ?? { kind: 'none' as const };
+            const action = row.commGuaranteed
+              ? { kind: 'dialog' as const, label: t('nearbyPresence.action.commLink') }
+              : (row.action ?? { kind: 'none' as const });
+            const pinMark = resolvePinnedInfoMark(row.pinKind);
+            const name = resolveNearbyInfoPanelCaptainName(row);
+            const title =
+              row.pinKind === 'governor' ? t('nearbyPresence.role.governorName', { name }) : name;
             return (
-              <View key={`nearby-detail-${row.keySlot}`} style={fs.listingCard}>
+              <View key={`nearby-detail-${row.keySlot}`} style={[fs.listingCard, styles.nameCard]}>
                 <View style={fs.listingLeft}>
-                  <PlanetFacilityCardTitleBlock
-                    title={row.captainName || row.line}
-                    description={description || row.line}
-                    descriptionLines={2}
+                  <View style={styles.cardTitleRow}>
+                    {pinMark ? <Text style={styles.cardPinMark}>{pinMark}</Text> : null}
+                    <View style={styles.cardTitleBody}>
+                      <PlanetFacilityCardTitleBlock
+                        title={title}
+                        description={description || row.line}
+                        descriptionLines={2}
+                      />
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.cardActionCol}>
+                  <NearbyPresenceQuestMarkRail
+                    visible={row.showQuestMarks === true}
+                    marks={{ M: row.hasMainQuest === true }}
+                  />
+                  <NearbyPresenceRowActionButton
+                    action={action}
+                    variant="panel"
+                    onPress={() => {
+                      requestNearbyOrbitComm({
+                        ...row,
+                        planetId: entry.planetId,
+                        commGuaranteed: row.commGuaranteed === true,
+                      });
+                    }}
                   />
                 </View>
-                <NearbyPresenceRowActionButton action={action} variant="panel" />
               </View>
             );
           })
@@ -79,5 +122,34 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: SPACING.xs,
     gap: SPACING.xs,
+  },
+  cardTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    minWidth: 0,
+    flex: 1,
+  },
+  cardTitleBody: {
+    flex: 1,
+    minWidth: 0,
+  },
+  cardPinMark: {
+    marginRight: 6,
+    marginTop: 1,
+    color: PINNED_INFO_MARK_INK,
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: '700',
+  },
+  nameCard: {
+    alignItems: 'flex-start',
+  },
+  cardActionCol: {
+    alignItems: 'stretch',
+    justifyContent: 'flex-start',
+    gap: 6,
+    flexShrink: 0,
+    minWidth: 97,
+    marginLeft: SPACING.sm,
   },
 });

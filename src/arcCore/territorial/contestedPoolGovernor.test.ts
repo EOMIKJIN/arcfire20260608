@@ -117,6 +117,18 @@ test('2) N=14(>max=12) — 동적 멤버만, 점수 낮은 순으로 강등(최�
   assert.equal(plan.demote.includes('csv_1'), false, 'CSV 정적행은 강등(store remove) 대상이면 안 됨');
 });
 
+test('3b) ineligible 지속 동적 멤버도 SAFE와 같이 우선 정리(후방 포켓이 풀 슬롯을 먹지 않음)', () => {
+  const members: ContestedPoolMemberInput[] = [
+    member({ planetId: 'dyn_pocket', isActiveMember: true, isStaticCsvRow: false, classification: 'ineligible' }),
+    ...Array.from({ length: 8 }, (_, i) =>
+      member({ planetId: `active_${i}`, isActiveMember: true, classification: 'eligible_front' }),
+    ),
+  ];
+  const plan = planContestedPoolRebalance({ members, poolMin: 8, poolMax: 12, stepMax: 2 });
+  assert.deepEqual(plan.demote, ['dyn_pocket']);
+  assert.deepEqual(plan.promote, []);
+});
+
 test('3) SAFE 지속 동적 멤버는 N과 무관하게 우선 정리(demote) — CSV 정적행은 SAFE여도 제외 대상 아님', () => {
   const members: ContestedPoolMemberInput[] = [
     member({ planetId: 'csv_safe', isActiveMember: true, isStaticCsvRow: true, classification: 'safe_hinterland' }),

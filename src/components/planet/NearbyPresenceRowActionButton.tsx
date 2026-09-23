@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { FONTS, SPACING } from '../../utils/theme';
 import { TACTICAL_FACILITY as TF } from '../../ui/tactical/tacticalFacilityScreenTokens';
-import { ArcButton } from '../../ui/overlay/ArcButton';
+import { useArcButtonReleaseHandlers } from '../../ui/press/useArcButtonRelease';
 import {
   NEARBY_PRESENCE_ROW_ACTION_NONE,
   type NearbyPresenceRowAction,
@@ -12,19 +12,27 @@ import { useT } from '../../i18n';
 type Props = {
   action: NearbyPresenceRowAction;
   variant: 'compact' | 'panel';
+  onPress?: () => void;
 };
 
 export const NearbyPresenceRowActionButton = memo(function NearbyPresenceRowActionButton({
   action: actionProp,
   variant,
+  onPress,
 }: Props) {
   const t = useT();
   const action = actionProp ?? NEARBY_PRESENCE_ROW_ACTION_NONE;
   const isNone = action.kind === 'none';
+  const handlePress = action.onPress ?? onPress;
+  const disabled = action.disabled ?? !handlePress;
+  const release = useArcButtonReleaseHandlers({
+    onPress: handlePress,
+    disabled,
+  });
   const label =
     action.label
     ?? (action.kind === 'dialog'
-      ? t('nearbyPresence.action.dialog')
+      ? t('nearbyPresence.action.commRequest')
       : action.kind === 'mission'
         ? t('nearbyPresence.action.mission')
         : action.kind === 'custom'
@@ -39,8 +47,11 @@ export const NearbyPresenceRowActionButton = memo(function NearbyPresenceRowActi
         ) : (
           <Pressable
             style={({ pressed }) => [styles.compactBtn, pressed && styles.compactBtnPressed]}
-            disabled={action.disabled ?? !action.onPress}
-            onPress={action.onPress}
+            disabled={action.disabled ?? !handlePress}
+            onPress={(event) => {
+              event.stopPropagation();
+              handlePress?.();
+            }}
             accessibilityRole="button"
             accessibilityLabel={label}
           >
@@ -58,13 +69,24 @@ export const NearbyPresenceRowActionButton = memo(function NearbyPresenceRowActi
   }
 
   return (
-    <ArcButton
-      label={label}
-      variant="tacticalSecondary"
-      disabled={action.disabled ?? !action.onPress}
-      onPress={action.onPress ?? (() => {})}
-      style={styles.panelBtn}
-    />
+    <Pressable
+      style={({ pressed }) => [
+        styles.panelBtn,
+        pressed && !disabled && styles.panelBtnPressed,
+        disabled && styles.panelBtnDisabled,
+      ]}
+      disabled={disabled}
+      onPressIn={release.onPressIn}
+      onPressOut={release.onPressOut}
+      onPress={release.onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      android_disableSound
+    >
+      <Text style={styles.panelBtnLabel} numberOfLines={1}>
+        {label}
+      </Text>
+    </Pressable>
   );
 });
 
@@ -108,8 +130,27 @@ const styles = StyleSheet.create({
     opacity: 0.45,
   },
   panelBtn: {
-    minWidth: 72,
+    minWidth: 88,
     minHeight: 32,
-    paddingHorizontal: SPACING.xs,
+    paddingHorizontal: SPACING.sm,
+    borderRadius: 4,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#8F96A3',
+    backgroundColor: '#C5C9D2',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  panelBtnPressed: {
+    opacity: 0.82,
+  },
+  panelBtnDisabled: {
+    opacity: 0.45,
+  },
+  panelBtnLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    fontWeight: FONTS.weight.bold,
+    color: '#3E4552',
+    letterSpacing: 0.2,
   },
 });

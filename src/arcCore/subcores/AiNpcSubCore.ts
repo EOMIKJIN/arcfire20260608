@@ -13,15 +13,22 @@ import {
   pickBalancedArcTrafficPlanetId,
   spreadArcTrafficInitialPlanetIds,
 } from '../orbitPresence/balanceArcTrafficPlanetPick';
+import {
+  ARC_TRAFFIC_EDGE_R,
+  bakeDwellOrbitAngleIntoAnchor,
+  bakeEnteringLerpToOrbitAnchor,
+} from '../orbitPresence/arcNpcTrafficPhaseMath';
 import { resolveNpcCaptainDisplayNameNow } from '../../i18n/captainText';
 import { getNpcCapitalShip } from '../../npc/npcFleetRegistry';
 import { usePlanetDevelopmentAccStore } from '../../store/planetDevelopmentAccStore';
+import { addWallTickFromDwellOccupancy } from '../dwell/planetDwellCivicAcc';
 import { getConvoyShipCargoDestination } from '../economy/runArcTransportTradePass';
 import {
   arcSeedTransportShipIdForSystem,
   resolveArcSeedTransportCaptainForSystem,
   resolveArcSeedTransportShipForSystem,
 } from '../arcSeedTransportRegistry';
+import { invalidateNearbyPresenceMemosOnArcTrafficPublish } from '../orbitPresence/captainOrbitPlanetAssignment';
 
 /**
  * AI NPC 서브코어
@@ -59,6 +66,7 @@ export class AiNpcSubCore extends BaseArcSubCore {
       if (this.ships.length > 0) {
         usePlanetDevelopmentAccStore.getState().addWallTickFromTransportShips(this.ships, wallDeltaSec);
       }
+      addWallTickFromDwellOccupancy(wallDeltaSec);
       this.publishAccSec += wallDeltaSec;
       if (this.publishAccSec >= AiNpcSubCore.NPC_SNAPSHOT_INTERVAL_SEC) {
         this.publishAccSec = 0;
@@ -91,8 +99,9 @@ export class AiNpcSubCore extends BaseArcSubCore {
   private onArcCoreCommand(cmd: ArcCoreCommand): void {
     if (cmd.type === 'npc_gather_planet') {
       this.gatherDirectivePlanetId = cmd.planetId;
+      // 행성만 바꾸면 체류 중 마크가 허브에서 순간 소멸한다 → entering으로 리셋해 진입 애니 유지.
       for (const s of this.ships) {
-        s.planetId = cmd.planetId;
+        AiNpcSubCore.resetShipToEnteringAtPlanet(s, cmd.planetId);
       }
       this.publishSnapshot();
       return;
@@ -100,7 +109,7 @@ export class AiNpcSubCore extends BaseArcSubCore {
     if (cmd.type === 'npc_release_gather') {
       this.gatherDirectivePlanetId = null;
       for (const s of this.ships) {
-        s.planetId = this.pickNextPlanetId(s.id);
+        AiNpcSubCore.resetShipToEnteringAtPlanet(s, this.pickNextPlanetId(s.id));
       }
       this.publishSnapshot();
       return;
@@ -114,6 +123,18 @@ export class AiNpcSubCore extends BaseArcSubCore {
     }
   }
 
+  /** gather/release — 목표 행성에서 entering으로 재시작(순간 텔레포트 점프 방지) */
+  private static resetShipToEnteringAtPlanet(ship: ArcNpcTrafficShip, planetId: string): void {
+    const pm = ship.arcTrafficPhaseDurationMul;
+    ship.planetId = planetId;
+    ship.phase = 'entering';
+    ship.phaseElapsedSec = 0;
+    ship.phaseDurationSec = (4.2 + Math.random() * 1.6) * pm;
+    ship.edgeAngleRad = Math.random() * Math.PI * 2;
+    ship.orbitRadiusPx = 106 + Math.random() * 28;
+    ship.orbitAngleRad = Math.random() * Math.PI * 2;
+  }
+
   /** 스파이 색출 등 — 해당 행성 궤도 체류 수송선을 즉시 이탈 phase 로 전환 */
   private ejectCaptainFromPlanet(captainId: string, planetId: string): void {
     const cid = String(captainId ?? '').trim();
@@ -123,6 +144,11 @@ export class AiNpcSubCore extends BaseArcSubCore {
     for (const ship of this.ships) {
       if (ship.captainId !== cid || ship.planetId !== pid) continue;
       if (ship.phase !== 'entering' && ship.phase !== 'dwelling') continue;
+      if (ship.phase === 'dwelling') {
+        AiNpcSubCore.bakeDwellAngleBeforeDepart(ship);
+      } else if (ship.phase === 'entering') {
+        AiNpcSubCore.bakeEnteringLerpBeforeDepart(ship);
+      }
       ship.phase = 'departing';
       ship.phaseElapsedSec = 0;
       ship.phaseDurationSec = (4 + Math.random() * 1.6) * ship.arcTrafficPhaseDurationMul;
@@ -141,8 +167,15 @@ export class AiNpcSubCore extends BaseArcSubCore {
 
     const captainId = tableCaptain.id;
     const captainName = tableCaptain.displayName;
-    const { shipId, hullFromRegistry } = resolveArcSeedTransportShipForSystem(systemId);
-    const simShipId = hullFromRegistry ? shipId : arcSeedTransportShipIdForSystem(systemId);
+    // 교통 sim id는 성계마다 고유. hull lookup만 템플릿/레지스트리 shipId 사용
+    // (템플릿 폴백 시 shipId=npc_arc_seed_ship_vega_outpost 등이 재사용되어
+    //  HubOrbit key={ship.id} same-key 경고가 났음 — logcat 2026-08-10)
+    const simShipId = arcSeedTransportShipIdForSystem(systemId);
+    if (this.ships.some((s) => s.id === simShipId)) {
+      this.seededSystemIds.add(systemId);
+      return;
+    }
+    const { shipId: hullShipId } = resolveArcSeedTransportShipForSystem(systemId);
 
     const ship: ArcNpcTrafficShip = {
       id: simShipId,
@@ -159,7 +192,7 @@ export class AiNpcSubCore extends BaseArcSubCore {
       arcTrafficPlanetDwellSecMin: 55,
       arcTrafficPlanetDwellSecMax: 180,
     };
-    const hull = getNpcCapitalShip(shipId);
+    const hull = getNpcCapitalShip(hullShipId) ?? getNpcCapitalShip(simShipId);
     if (hull) {
       ship.arcTrafficDwellRadPerSec = hull.arcTrafficDwellRadPerSec ?? ship.arcTrafficDwellRadPerSec;
       ship.arcTrafficPhaseDurationMul = hull.arcTrafficPhaseDurationMul ?? ship.arcTrafficPhaseDurationMul;
@@ -274,6 +307,8 @@ export class AiNpcSubCore extends BaseArcSubCore {
       ships: nextShips,
       initialized: this.captains.length > 0,
     });
+    // 구조 키 변경 publish만 — nearby memo 키는 planet|system이라 arc 스냅샷을 안 봄
+    invalidateNearbyPresenceMemosOnArcTrafficPublish();
   }
 
   private tickShips(dtSec: number): void {
@@ -283,6 +318,50 @@ export class AiNpcSubCore extends BaseArcSubCore {
       if (s.phaseElapsedSec < s.phaseDurationSec) continue;
       this.advanceShipPhase(s);
     }
+    // store 스냅샷은 phase 구조 변경 시에만 교체되므로, 체류 중 phaseElapsedSec이 stale로 남는다.
+    // 재-pack 시 이 stale 값으로 각도가 체류 시작점으로 되돌아가는 점프를 막기 위해
+    // 동일 id 객체에 elapsed만 in-place 동기한다(setState 없음 → 리렌더·GC 없음).
+    this.syncLivePhaseElapsedToPublishedShips();
+  }
+
+  /** published zustand 함선 객체에 live elapsed만 기록 (할당·set 없음) */
+  private syncLivePhaseElapsedToPublishedShips(): void {
+    const published = useArcNpcTrafficStore.getState().ships;
+    if (published.length === 0) return;
+    for (let i = 0; i < this.ships.length; i += 1) {
+      const live = this.ships[i]!;
+      for (let j = 0; j < published.length; j += 1) {
+        const pub = published[j]!;
+        if (pub.id !== live.id) continue;
+        if (pub.phaseElapsedSec !== live.phaseElapsedSec) {
+          pub.phaseElapsedSec = live.phaseElapsedSec;
+        }
+        break;
+      }
+    }
+  }
+
+  /** dwelling 적분 각 → orbitAngleRad 앵커 (departing worklet이 dwell 적분을 안 함) */
+  private static bakeDwellAngleBeforeDepart(ship: ArcNpcTrafficShip): void {
+    ship.orbitAngleRad = bakeDwellOrbitAngleIntoAnchor({
+      orbitAngleRad: ship.orbitAngleRad,
+      phaseElapsedSec: ship.phaseElapsedSec,
+      arcTrafficDwellRadPerSec: ship.arcTrafficDwellRadPerSec,
+    });
+  }
+
+  /** entering lerp 현재 위치 → 궤도 앵커 (이탈 시작 점프 방지) */
+  private static bakeEnteringLerpBeforeDepart(ship: ArcNpcTrafficShip): void {
+    const baked = bakeEnteringLerpToOrbitAnchor({
+      phaseElapsedSec: ship.phaseElapsedSec,
+      phaseDurationSec: ship.phaseDurationSec,
+      orbitAngleRad: ship.orbitAngleRad,
+      orbitRadiusPx: ship.orbitRadiusPx,
+      edgeAngleRad: ship.edgeAngleRad,
+      edgeRadiusPx: ARC_TRAFFIC_EDGE_R,
+    });
+    ship.orbitAngleRad = baked.orbitAngleRad;
+    ship.orbitRadiusPx = baked.orbitRadiusPx;
   }
 
   private advanceShipPhase(ship: ArcNpcTrafficShip): void {
@@ -315,6 +394,8 @@ export class AiNpcSubCore extends BaseArcSubCore {
         planetId: ship.planetId,
         meta: { origin: 'arc_core_policy', reason: 'transport_dwell_trade' },
       });
+      // 체류 중 worklet이 적분한 현재 각을 앵커에 굽지 않으면 departing 시작 시 앵커로 순간 이동한다.
+      AiNpcSubCore.bakeDwellAngleBeforeDepart(ship);
     }
     ship.phase = 'departing';
     ship.phaseElapsedSec = 0;
@@ -347,11 +428,11 @@ export class AiNpcSubCore extends BaseArcSubCore {
   }
 
   private pickNextPlanetId(shipId?: string): string {
-    if (this.gatherDirectivePlanetId) return this.gatherDirectivePlanetId;
     if (shipId) {
       const cargoDest = getConvoyShipCargoDestination(shipId);
       if (cargoDest) return cargoDest;
     }
+    if (this.gatherDirectivePlanetId) return this.gatherDirectivePlanetId;
     const allPlanetIds = this.listAllPlanetIds();
     return pickBalancedArcTrafficPlanetId(allPlanetIds, this.ships, {
       excludeShipId: shipId,

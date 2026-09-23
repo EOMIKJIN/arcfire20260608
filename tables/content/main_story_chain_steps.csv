@@ -1,0 +1,7 @@
+parentQuestId,stepIndex,stepId,bindMissionId,contentStatus,stepKind,titlePlaceholderKo,titlePlaceholderEn
+story_c01_q01,1,story_c01_q01_s01,story_001,ready,mission,동기가 확인되지 않는 살인사건,Unmotivated Murder Case
+story_c01_q02,1,story_c01_q02_s01,story_002,ready,mission,동기 없는 진실,The Motive-less Truth
+story_c01_q03,1,story_c01_q03_s01,story_003,ready,mission,대행 출정,Stand-in Deployment
+story_c01_q04,1,story_c01_q04_s01,story_004,ready,mission,예상 밖의 참사,Unforeseen Disaster
+story_c01_q05,1,story_c01_q05_s01,story_005,ready,mission,복수는 누가 하는 겁니까?,Who Takes Revenge?
+story_c01_q06,1,story_c01_q06_s01,story_006,ready,mission,숨은 자와의 대면,Facing the Hidden One

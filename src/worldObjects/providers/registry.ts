@@ -1,6 +1,7 @@
 import { defenseSatelliteWorldObjectProvider } from '../../systems/planetaryDefense/defenseSatelliteWorldObjectProvider';
 import { asteroidWorldObjectProvider } from './asteroidWorldObjectProvider';
 import type { PlanetWorldObjectProvider, PlanetWorldObjectProviderContext } from './types';
+import { stelliumColonizeWorldObjectProvider } from './stelliumColonizeWorldObjectProvider';
 import { wreckWorldObjectProvider } from './wreckWorldObjectProvider';
 
 /** 등록 순서 = `listPlanetWorldObjects` 병합 순서 */
@@ -8,6 +9,7 @@ export const PLANET_WORLD_OBJECT_PROVIDERS: readonly PlanetWorldObjectProvider[]
   asteroidWorldObjectProvider,
   defenseSatelliteWorldObjectProvider,
   wreckWorldObjectProvider,
+  stelliumColonizeWorldObjectProvider,
 ];
 
 export function listPlanetWorldObjectsFromProviders(

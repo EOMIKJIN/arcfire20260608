@@ -11,7 +11,20 @@ import {
 } from '../game/ingameDialog/ingameDialogSceneIndex';
 import { advanceIngameDialogSession } from '../game/ingameDialog/ingameDialogSessionLogic';
 import { runIngameDialogCompletionBatch } from '../game/ingameDialog/ingameDialogCompletion';
-import { resolveIngameDialogSegmentCount } from '../game/ingameDialog/ingameDialogViewModel';
+import {
+  cancelIngameDialogIdlePresentsAndNotify,
+  drainIngameDialogIdleCallbacks,
+} from '../game/ingameDialog/ingameDialogIdle';
+import { cancelIngameDialogFeatureLinkDelay } from '../game/ingameDialog/ingameDialogFeatureLink';
+import {
+  bindUiSequenceDialogBusy,
+  clearUiForegroundSequence,
+  runWhenUiScreenReady,
+} from '../ui/process/uiForegroundSequence';
+import {
+  resolveAdHocIngameDialogSegmentCount,
+  resolveIngameDialogSegmentCount,
+} from '../game/ingameDialog/ingameDialogViewModel';
 import { getActiveNarrativeDialogSplitOptions } from '../ui/overlay/splitNarrativeDialogSegments';
 import type {
   AdHocIngameDialogPayload,
@@ -33,7 +46,16 @@ type IngameDialogState = {
   presentAdHoc: (payload: AdHocIngameDialogPayload) => boolean;
   tryFireTrigger: (query: IngameDialogTriggerQuery, options?: PresentIngameDialogOptions) => boolean;
   dismiss: () => void;
+  /** 첫 창 무입력 자동닫힘 — completion 없이 종료, 남은 페이지·대기 대사 취소 */
+  dismissCancelRemaining: () => void;
+  /** 허브 이탈·purge — NL 통신만 수락 없이 닫음. idle drain 없음(combat_end 체인 보호) */
+  abortLeavingStage: () => void;
   pressNext: () => void;
+  /**
+   * [취소] — completion(수락) 없이 종료.
+   * CSV 메인 스토리: onDismiss(배지 ack). adhoc 수락형 통신: onCancel만(메신저 금지).
+   */
+  pressCancel: () => void;
   markPageComplete: () => void;
   isActive: () => boolean;
   resetPlanetLandedDedupe: () => void;
@@ -69,6 +91,7 @@ async function finishSession(session: IngameDialogSession): Promise<void> {
     }
   }
   onDismiss?.();
+  drainIngameDialogIdleCallbacks();
 }
 
 export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
@@ -80,7 +103,8 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
   resetPlanetLandedDedupe: () => set({ lastPlanetLandedId: null }),
 
   presentScene: (sceneId, options) => {
-    if (get().session) return false;
+    return runWhenUiScreenReady(() => {
+      if (get().session) return false;
     const scene = getIngameDialogSceneById(sceneId);
     if (!scene || !isIngameDialogScene(scene)) return false;
     if (
@@ -100,26 +124,33 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
         completionActions: buildCompletionActionsForScene(sceneId, options),
         onDismiss: options?.onDismiss,
         context: options?.context ?? {},
+        autoDismissMs: options?.autoDismissMs,
+        autoDismissMode: options?.autoDismissMode,
       },
     });
     return true;
+    }, options?.bypassScreenShell);
   },
 
   presentAdHoc: (payload) => {
+    return runWhenUiScreenReady(() => {
     if (get().session) return false;
     adhocSeq += 1;
     set({
       session: {
         kind: 'adhoc',
         adhocId: `adhoc_${adhocSeq}`,
+        segmentIndex: 0,
         pageComplete: false,
         payload,
       },
     });
     return true;
+    }, payload.bypassScreenShell);
   },
 
   tryFireTrigger: (query, options) => {
+    return runWhenUiScreenReady(() => {
     if (get().session) return false;
     if (query.triggerKey === 'planet_landed' && query.targetId) {
       if (get().lastPlanetLandedId === query.targetId) return false;
@@ -128,9 +159,10 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
     const candidates = listIngameDialogScenesForTrigger(query.triggerKey, query.targetId);
     for (const scene of candidates) {
       if (scene.triggerRepeat === 'once' && isSceneSeen(scene.id)) continue;
-      return get().presentScene(scene.id, options);
+      return get().presentScene(scene.id, { ...options, bypassScreenShell: true });
     }
     return false;
+    }, options?.bypassScreenShell);
   },
 
   dismiss: () => {
@@ -138,6 +170,53 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
     if (!session) return;
     set({ session: null });
     void finishSession(session);
+  },
+
+  dismissCancelRemaining: () => {
+    const session = get().session;
+    if (!session) return;
+    set({ session: null });
+    cancelIngameDialogFeatureLinkDelay();
+    clearUiForegroundSequence();
+    if (session.kind === 'csv_scene') {
+      session.onDismiss?.();
+    } else {
+      session.payload.onCancel?.();
+      if (!session.payload.onCancel) {
+        session.payload.onDismiss?.();
+      }
+    }
+    cancelIngameDialogIdlePresentsAndNotify();
+  },
+
+  abortLeavingStage: () => {
+    clearUiForegroundSequence();
+    cancelIngameDialogFeatureLinkDelay();
+    const session = get().session;
+    if (!session || session.kind !== 'adhoc') return;
+    if (session.payload.abortOnStageLeave !== true) return;
+    set({ session: null });
+    session.payload.onCancel?.();
+  },
+
+  pressCancel: () => {
+    const session = get().session;
+    if (!session) return;
+    if (session.kind === 'csv_scene') {
+      if (!session.pageComplete) return;
+      const hasMainStoryAccept = session.completionActions.some(
+        (a) => a.type === 'accept_main_story_mission',
+      );
+      if (!hasMainStoryAccept) return;
+      set({ session: null });
+      session.onDismiss?.();
+      drainIngameDialogIdleCallbacks();
+      return;
+    }
+    if (!session.pageComplete) return;
+    set({ session: null });
+    session.payload.onCancel?.();
+    drainIngameDialogIdleCallbacks();
   },
 
   markPageComplete: () => {
@@ -156,14 +235,25 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
 
     if (session.kind === 'adhoc') {
       if (!session.pageComplete) return;
+      const segmentCount = resolveAdHocIngameDialogSegmentCount(
+        session.payload.text,
+        getActiveNarrativeDialogSplitOptions(),
+      );
+      const result = advanceIngameDialogSession(session, null, segmentCount);
+      if (result.type === 'blocked') return;
+      if (result.type === 'advanced') {
+        set({ session: result.session });
+        return;
+      }
       set({ session: null });
-      void finishSession(session);
+      void finishSession(result.session);
       return;
     }
 
     const scene = getIngameDialogSceneById(session.sceneId);
     if (!scene) {
       set({ session: null });
+      drainIngameDialogIdleCallbacks();
       return;
     }
 
@@ -187,6 +277,8 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
     void finishSession(completedSession);
   },
 }));
+
+bindUiSequenceDialogBusy(() => useIngameDialogStore.getState().isActive());
 
 // STORY_SCENES 참조 유지 — tree-shake 방지·타입 체크
 void STORY_SCENES_FROM_CSV;

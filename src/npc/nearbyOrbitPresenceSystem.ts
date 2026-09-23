@@ -17,9 +17,9 @@ import { getNpcCapitalHullClassDef, resolveNpcCapitalOrbitKinematic } from './np
 import { npcDeterministicHash32 } from './npcDeterministicHash';
 import { isCaptainHubOrbitPrimaryAtPlanet } from '../arcCore/captainPresence/buildCaptainPresenceWorldIndex';
 import { syncCaptainOrbitAssignmentEpochMemo } from '../arcCore/orbitPresence/captainOrbitPlanetAssignment';
+import { isArcSeedTransportCaptainId } from '../arcCore/arcSeedTransportRegistry';
 import { memoizePerPlanetSystem } from '../game/planetMemoCache';
 import { useArcNpcTrafficStore } from '../store/arcNpcTrafficStore';
-import { resolveCaptainAiClanDisplayName } from '../clanWar/aiClanRegistry';
 import { PLAYER_BENCH_CAPTAIN_ID, NEARBY_PRESENCE_DISPLAY_SEP } from '../game/planetHub/nearbyPresenceContract';
 import { getLocale, resolveDictionaryLocale } from '../i18n';
 import { resolveNpcCaptainDisplayName } from '../i18n/captainText';
@@ -84,6 +84,8 @@ export type NearbyOrbitPresenceRow = {
   orbit: NearbyOrbitMotion;
   /** 등록 전함 DB id — 전투/월드 AI 진입 시 사용 */
   linkedCapitalShipId?: string;
+  /** INFO 한/영 재해석용 — 표시 문자열에 의존하지 않음 */
+  captainId?: string;
 };
 
 /** MK.I ~ MK.V (로마 숫자) */
@@ -103,7 +105,10 @@ function buildPlanetNearbyPresence(
   const tableDrivenPairs = NPC_CAPTAINS_FROM_CSV.flatMap(captain => {
     const state = captain.operationalState;
     if (captain.id === PLAYER_BENCH_CAPTAIN_ID) return [];
+    if (captain.questOnly) return [];
     if (captain.arcOrbitPresenceFill) return [];
+    // seed는 arc merge 경로만 — 테이블 슬롯 이중 표시 금지
+    if (isArcSeedTransportCaptainId(captain.id)) return [];
     if (!isCaptainHubOrbitPrimaryAtPlanet(captain, planetId, arcShips)) return [];
     const assignedShip = captain.assignedShipId ? shipById.get(captain.assignedShipId) : undefined;
     if (!assignedShip) return [];
@@ -130,10 +135,9 @@ function buildPlanetNearbyPresence(
     const orbit = resolveNpcCapitalOrbitKinematic(planetId, systemId, slot, hullClass.orbit);
     const classification = resolveCapitalShipClassification(generalShip.ship.id);
     const infoRight = classification
-      ? formatCapitalShipInfoPanelBadge(classification)
+      ? formatCapitalShipInfoPanelBadge(classification, locale)
       : (generalShip.ship.infoLineSuffix && generalShip.ship.infoLineSuffix.trim()) || mk;
-    const clanLabel = resolveCaptainAiClanDisplayName(generalShip.captain, locale);
-    const clanPrefix = clanLabel ? `‹${clanLabel}› ` : '';
+    // 허브 궤도·INFO 계약: 함장명만 (아크 수송 merge와 동일). 클랜/함대명 prefix 금지.
     const captainName = resolveNpcCaptainDisplayName(generalShip.captain, locale);
     const shipName = resolveNpcCapitalShipDisplayName(
       generalShip.ship.id,
@@ -143,20 +147,22 @@ function buildPlanetNearbyPresence(
     rows.push({
       slotIndex: slot,
       hullClassId: hullClass.id,
-      displayLine: `${clanPrefix}${captainName} · ${shipName}${sep}${infoRight}`,
+      displayLine: `${captainName} · ${shipName}${sep}${infoRight}`,
       orbit,
       linkedCapitalShipId: generalShip.ship.id,
+      captainId: generalShip.captain.id,
     });
   }
 
   return rows;
 }
 
-/** locale별 캐시 — 언어 전환 시 KO/EN 슬롯이 섞이지 않도록 분리 */
+/** locale별 캐시 — 언어 전환 시 KO/EN 슬롯이 섞이지 않도록 분리.
+ * `.v2` — 클랜 prefix 제거 표시 계약(아크 수송과 함장명 일관). invalidate 문자열도 동기 유지. */
 export const NEARBY_PRESENCE_MEMO_NAMESPACE_KO =
-  'nearbyOrbitPresenceSystem.resolvePlanetNearbyPresence.ko';
+  'nearbyOrbitPresenceSystem.resolvePlanetNearbyPresence.ko.v3';
 export const NEARBY_PRESENCE_MEMO_NAMESPACE_EN =
-  'nearbyOrbitPresenceSystem.resolvePlanetNearbyPresence.en';
+  'nearbyOrbitPresenceSystem.resolvePlanetNearbyPresence.en.v3';
 
 const resolvePlanetNearbyPresenceCachedKo = memoizePerPlanetSystem(
   NEARBY_PRESENCE_MEMO_NAMESPACE_KO,

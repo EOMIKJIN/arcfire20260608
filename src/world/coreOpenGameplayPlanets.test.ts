@@ -12,6 +12,7 @@ import {
   isCanonicalCoreOpenPlanetId,
   listCoreOpenGameplayPlanetIds,
 } from './coreOpenGameplayPlanets';
+import { resolveFrontierWorldFacilitySeed } from './galaxyFrontierDevelopmentRidge';
 
 function test(name: string, fn: () => void): void {
   fn();
@@ -31,40 +32,45 @@ test('synth phase0 — C tier locked, no world facilities', () => {
   const planet = locked.planets[0];
   assert.equal(planet.hasTradePort, false);
   assert.equal(planet.hasShipyard, false);
-  assert.equal(planet.hasTavern, false);
+  assert.equal(planet.hasBar, false);
 });
 
-test('synth phase1 — B→A merge, CSV colonization facilities enabled', () => {
+test('synth phase1 — 이름 CSV · 시설은 거리 능선', () => {
   const base = GALAXY_SYSTEMS.synth_002;
   assert.ok(base);
   const opened = applySynthSystemAutogen(base, 1);
   assert.equal(opened.name, '오로라 관측국');
   assert.equal(opened.nameEn, 'Aurora Observatory');
-  assert.ok(opened.description.includes('오로라 허브'));
   const planet = opened.planets[0];
   assert.equal(planet.name, '오로라 허브');
-  assert.equal(planet.hasTradePort, true);
-  assert.equal(planet.hasShipyard, true);
-  assert.equal(planet.hasTavern, true);
   assert.equal(planet.id, 'synth_002_p');
+  const seed = resolveFrontierWorldFacilitySeed('synth_002_p', 1);
+  assert.equal(planet.hasTradePort, seed.hasTradePort);
+  assert.equal(planet.hasShipyard, seed.hasShipyard);
+  assert.equal(planet.hasBar, seed.hasBar);
 });
 
-test('synth phase0 — locked placeholder names preserved (no CSV leak)', () => {
+test('synth phase0 — 시설명은 잠금 · 개척 CSV 이름은 유지', () => {
   const base = GALAXY_SYSTEMS.synth_002;
   assert.ok(base);
   const locked = applySynthSystemAutogen(base, 0);
-  assert.equal(locked.name, '미개척-2');
-  assert.equal(locked.description, base.description);
+  assert.equal(locked.name, '오로라 관측국');
+  const planet = locked.planets[0];
+  assert.equal(planet.hasTradePort, false);
+  assert.equal(planet.hasShipyard, false);
+  assert.equal(planet.hasBar, false);
 });
 
-test('synth_005 phase1 — partial CSV facilities (no shipyard)', () => {
+test('synth_005 phase1 — 시설은 거리 능선 (CSV 3종 미지급)', () => {
   const base = GALAXY_SYSTEMS.synth_005;
   assert.ok(base);
   const opened = applySynthSystemAutogen(base, 1);
   const planet = opened.planets[0];
-  assert.equal(planet.hasTradePort, true);
+  const seed = resolveFrontierWorldFacilitySeed('synth_005_p', 1);
+  assert.equal(planet.hasTradePort, seed.hasTradePort);
+  assert.equal(planet.hasShipyard, seed.hasShipyard);
+  assert.equal(planet.hasBar, seed.hasBar);
   assert.equal(planet.hasShipyard, false);
-  assert.equal(planet.hasTavern, true);
 });
 
 test('headless — canonical 21 always in core-open planet list', () => {

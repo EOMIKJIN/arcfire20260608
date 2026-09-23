@@ -33,9 +33,13 @@ export function useContestedZonePreviewSystemIds(active: boolean): ReadonlySet<s
 
   useEffect(() => {
     if (!active) return;
-    void ensureTerritorialCampaignPreviewSchedules().then(() => {
-      setTick(getTerritorialPreviewScheduleRevision());
-    });
+    void ensureTerritorialCampaignPreviewSchedules()
+      .then(() => {
+        setTick(getTerritorialPreviewScheduleRevision());
+      })
+      .catch(() => {
+        /* hydrate 실패 — 링 예고만 다음 구독/타이머에서 재시도 */
+      });
   }, [active]);
 
   useEffect(() => {

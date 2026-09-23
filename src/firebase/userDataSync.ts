@@ -139,11 +139,17 @@ export function buildUnifiedLocalUserObject(uid: string): Record<string, unknown
   const inventory = buildInventorySyncBundle(uid);
   const skillDb = useSkillDbStore.getState().skillDbsByUid[uid] ?? null;
   const npcCaptainProgress = buildNpcCaptainRefBundle();
+  const missions = useMissionStore.getState();
   const missionState = {
-    progresses: useMissionStore.getState().progresses,
-    activeMissionId: useMissionStore.getState().activeMissionId,
+    progresses: missions.progresses,
+    activeMissionId: missions.activeMissionId,
+    clearedArcInstCount: missions.clearedArcInstCount,
+    clearedArcInstSnapshots: missions.clearedArcInstSnapshots,
   };
-  const world = { visitedSystemIds: useWorldStore.getState().visitedSystemIds };
+  const world = {
+    visitedSystemIds: useWorldStore.getState().visitedSystemIds,
+    inspectedPlanetInfoIds: useWorldStore.getState().inspectedPlanetInfoIds,
+  };
   const planetCoreRuntime = buildPlanetCoreRuntimeSyncBundle(uid);
   const cw = useClanWarFoundationStore.getState();
   // 문서 크기·인덱스 팬아웃 통제(1MB 한계 대비 · 10만 유저):
@@ -226,7 +232,11 @@ export async function syncUserDataWithServer(): Promise<void> {
   try {
     // rules 통과용 Anonymous Auth 확보(세션 영속 — 최초 1회만 sign-in)
     const { ensureFirebaseAnonymousAuth } = await import('./firebaseAnonymousAuth');
-    await ensureFirebaseAnonymousAuth();
+    const boundAuthUid = await ensureFirebaseAnonymousAuth();
+    // 재설치 후 동일 게임 uid 복원 시 증서 락 쓰기 권한 재연결
+    if (boundAuthUid) {
+      payload.boundAuthUid = boundAuthUid;
+    }
     await setDoc(userDocRef(uid), payload as Record<string, unknown>, { merge: true });
     void import('./gameSaveBackup/scheduleGameSaveBackup').then((m) => {
       m.scheduleGameSaveBackupAfterCloudSync(uid);

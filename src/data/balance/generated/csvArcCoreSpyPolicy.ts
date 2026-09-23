@@ -5,7 +5,7 @@ export const ArcCoreSpyPolicy_FROM_BALANCE_CSV = [
   { "key": "spy_pulse_interval_sec", "value": "8", "notesKo": "스파이 1명 체류 시 T 피해 펄스 주기(초) — 드론 impact 주기 대응" },
   { "key": "spy_pulse_intensity_per_spy", "value": "1", "notesKo": "펄스당 intensityMul × 활성 스파이 수" },
   { "key": "player_planet_only", "value": "1", "notesKo": "1=플레이어 currentPlanetId 에만 백엔드 피해" },
-  { "key": "informant_captain_id", "value": "npc_cpt_tavern_ret_01", "notesKo": "행성 허브 정보원 함장(한로 크레인)" },
+  { "key": "informant_captain_id", "value": "npc_cpt_bar_ret_01", "notesKo": "행성 허브 정보원 함장(한로 크레인)" },
   { "key": "informant_dialog_scene_id", "value": "arc_core_spy_intel_alert", "notesKo": "스파이 감지 인게임 대화 씬 id" },
   { "key": "spy_intel_notify_pct", "value": "100", "notesKo": "스파이 활동 시작 시 정보원 알림 확률(%). 향후 감지 스킬 가산" },
   { "key": "spy_intel_auto_open_dialog", "value": "1", "notesKo": "1=허브 체류 중 활동 시작 시 대화 자동 오픈" },

@@ -22,6 +22,10 @@ export const TACTICAL_HUB = {
   /** 아이콘 대비 한 단계 어두운 라벨 */
   tileLabelInk: 'rgba(148, 156, 170, 0.92)',
   tileLabelPrimaryInk: 'rgba(172, 180, 194, 0.92)',
+  /** 출발(Launch) 타일 라벨 — 안정 티어 그린과 동일 */
+  tileLabelDepartureInk: '#3DDC84',
+  /** 은하 지도 [전투] 메뉴 라벨 */
+  tileLabelCombatInk: '#E36B6B',
   tileLabelLedActive: '#229ECC',
   tileLabelDisabledInk: TACTICAL_OVERLAY.btnSecondaryInk,
   tilePrimaryBg: TACTICAL_OVERLAY.btnPrimaryBg,

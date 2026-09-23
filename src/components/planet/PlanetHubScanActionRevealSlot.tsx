@@ -1,9 +1,10 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
-import { Animated, View, type StyleProp, type ViewStyle } from 'react-native';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, type StyleProp, type ViewStyle } from 'react-native';
 
-const REVEAL_STAGGER_MS = 68;
-const HIDE_STAGGER_MS = 42;
-const HIDE_DURATION_MS = 150;
+const REVEAL_STAGGER_MS = 92;
+const HIDE_STAGGER_MS = 48;
+const HIDE_DURATION_MS = 160;
+const WING_SLIDE_PX = 28;
 
 type RevealAxis = 'horizontal' | 'vertical';
 
@@ -20,7 +21,7 @@ type Props = {
   slideFrom?: 'start' | 'end';
   /**
    * true면 숨김 완료 후 레이아웃에서 제거.
-   * 가로 5열(출발 정렬)에서는 false — 칸 너비 유지해 스캔이 오른쪽에 고정.
+   * 가로 5열에서는 false — 칸 너비 유지해 스캔이 가운데에 고정.
    */
   collapseWhenHidden?: boolean;
   style?: StyleProp<ViewStyle>;
@@ -28,8 +29,9 @@ type Props = {
 };
 
 /**
- * 스캔 잠금 해제 시 타일 등장 — 채굴·대화·수색 가로(오른쪽→왼쪽) 순차 pop.
- * 행성개발은 항시 표시(본 슬롯 미사용).
+ * 스캔 잠금 해제 시 타일 등장 — 가운데 스캔에서 좌·우 날개(안쪽→바깥) 순차 pop.
+ * native driver 사용 금지: JS 값이 0에 남으면 스캔 완료 리렌더에서 타일이 사라진다.
+ * 등장 후 View 교체도 금지(그 스왑이 깜박임).
  * RN Animated only — 허브 Skia worklet 경로와 분리.
  */
 export const PlanetHubScanActionRevealSlot = memo(function PlanetHubScanActionRevealSlot({
@@ -46,97 +48,88 @@ export const PlanetHubScanActionRevealSlot = memo(function PlanetHubScanActionRe
   const progress = useRef(new Animated.Value(instant && revealed ? 1 : 0)).current;
   const hideDelayIndex = hideStaggerIndex ?? staggerIndex;
   const revealedStableRef = useRef(instant && revealed);
-  /** 등장 완료 후 Plain View — 채굴 primary 등 자식 re-render 시 Animated opacity 깜박임 방지 */
-  const [revealedSettled, setRevealedSettled] = useState(instant && revealed);
   const [layoutCollapsed, setLayoutCollapsed] = useState(collapseWhenHidden && !(instant && revealed));
+
+  const translateFrom = axis === 'vertical' ? 18 : slideFrom === 'end' ? WING_SLIDE_PX : -WING_SLIDE_PX;
+
+  const motionStyle = useMemo(
+    () => ({
+      opacity: progress,
+      transform: [
+        axis === 'vertical'
+          ? {
+              translateY: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [translateFrom, 0],
+              }),
+            }
+          : {
+              translateX: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [translateFrom, 0],
+              }),
+            },
+        {
+          scaleX: progress.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0.72, 1],
+          }),
+        },
+      ],
+    }),
+    [axis, progress, translateFrom],
+  );
 
   useEffect(() => {
     if (instant && revealed) {
+      progress.stopAnimation();
       progress.setValue(1);
       revealedStableRef.current = true;
-      setRevealedSettled(true);
       setLayoutCollapsed(false);
-      return;
+      return undefined;
     }
     if (!revealed) {
-      if (!revealedStableRef.current) {
-        if (collapseWhenHidden) setLayoutCollapsed(true);
-        return;
-      }
       revealedStableRef.current = false;
-      setRevealedSettled(false);
-      Animated.timing(progress, {
+      const hide = Animated.timing(progress, {
         toValue: 0,
         duration: HIDE_DURATION_MS,
         delay: hideDelayIndex * HIDE_STAGGER_MS,
-        useNativeDriver: true,
-      }).start(({ finished }) => {
+        useNativeDriver: false,
+      });
+      hide.start(({ finished }) => {
         if (finished && collapseWhenHidden) setLayoutCollapsed(true);
       });
-      return;
+      return () => hide.stop();
     }
-    /** 이미 표시 완료 — 부모 re-render·instant 토글 시 progress 0 리셋 깜박임 방지 */
     if (revealedStableRef.current) {
-      progress.setValue(1);
-      setRevealedSettled(true);
-      setLayoutCollapsed(false);
-      return;
+      return undefined;
     }
-    revealedStableRef.current = true;
     setLayoutCollapsed(false);
-    setRevealedSettled(false);
     progress.setValue(0);
-    Animated.spring(progress, {
+    const show = Animated.spring(progress, {
       toValue: 1,
       delay: staggerIndex * REVEAL_STAGGER_MS,
-      useNativeDriver: true,
+      useNativeDriver: false,
       tension: 340,
       friction: 15,
       velocity: 3,
-    }).start(({ finished }) => {
-      if (finished) setRevealedSettled(true);
     });
+    show.start(({ finished }) => {
+      if (!finished) return;
+      progress.setValue(1);
+      revealedStableRef.current = true;
+    });
+    return () => show.stop();
   }, [collapseWhenHidden, hideDelayIndex, instant, progress, revealed, staggerIndex]);
 
   if (layoutCollapsed && !revealed) {
     return null;
   }
 
-  const translateFrom =
-    axis === 'vertical' ? 18 : slideFrom === 'end' ? 22 : -22;
-
-  if (revealedSettled && revealed) {
-    return (
-      <View pointerEvents="auto" style={style}>
-        {children}
-      </View>
-    );
-  }
-
   return (
     <Animated.View
       pointerEvents={revealed ? 'auto' : 'none'}
-      style={[
-        style,
-        {
-          opacity: progress,
-          transform: [
-            axis === 'vertical'
-              ? {
-                  translateY: progress.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [translateFrom, 0],
-                  }),
-                }
-              : {
-                  translateX: progress.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [translateFrom, 0],
-                  }),
-                },
-          ],
-        },
-      ]}
+      style={[style, motionStyle]}
     >
       {children}
     </Animated.View>

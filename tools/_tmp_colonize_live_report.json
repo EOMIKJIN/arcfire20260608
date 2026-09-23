@@ -1,0 +1,180 @@
+{
+  "pulledAt": "2026-09-22T10:46:11.971Z",
+  "todayKst": "2026-09-22",
+  "fleetReadyAtMs": [],
+  "fiscalKeys": [
+    "hullsOutfitted",
+    "loanCredits",
+    "lastRepayDayKey"
+  ],
+  "fiscal": {
+    "hullsOutfitted": 0,
+    "loanCredits": 0,
+    "lastRepayDayKey": "2026-09-22"
+  },
+  "playerColonize": [],
+  "rows": [
+    {
+      "name": "요새 베이스",
+      "rec": {
+        "planetId": "synth_078_p",
+        "systemId": "synth_078",
+        "factionId": "stellium",
+        "phase": "outpost",
+        "hopDistance": 4,
+        "travelDays": 3,
+        "attempt": 0,
+        "departedDayKey": "2026-09-21",
+        "dueDayKey": "2026-09-24",
+        "outpostDueAtMs": 1789998875614,
+        "lastOpexDayKey": "2026-09-22"
+      },
+      "hold": {
+        "occupierClanId": "neutral",
+        "kind": "neutral",
+        "occupationOrigin": null
+      },
+      "sat": {
+        "found": true,
+        "installed": true,
+        "level": 1,
+        "installedBy": "player"
+      }
+    },
+    {
+      "name": "글로우 국경",
+      "rec": {
+        "planetId": "synth_054_p",
+        "systemId": "synth_054",
+        "factionId": "stellium",
+        "phase": "queued",
+        "hopDistance": 3,
+        "travelDays": 3,
+        "attempt": 0,
+        "departedDayKey": null,
+        "dueDayKey": null,
+        "outpostDueAtMs": null,
+        "lastOpexDayKey": null
+      },
+      "hold": {
+        "occupierClanId": "neutral",
+        "kind": "neutral",
+        "occupationOrigin": null
+      },
+      "sat": {
+        "found": true,
+        "installed": false,
+        "level": 0,
+        "installedBy": null
+      }
+    },
+    {
+      "name": "비콘 개척지",
+      "rec": {
+        "planetId": "synth_057_p",
+        "systemId": "synth_057",
+        "factionId": "stellium",
+        "phase": "queued",
+        "hopDistance": 5,
+        "travelDays": 3,
+        "attempt": 0,
+        "departedDayKey": null,
+        "dueDayKey": null,
+        "outpostDueAtMs": null,
+        "lastOpexDayKey": null
+      },
+      "hold": {
+        "occupierClanId": "neutral",
+        "kind": "neutral",
+        "occupationOrigin": null
+      },
+      "sat": {
+        "found": true,
+        "installed": false,
+        "level": 0,
+        "installedBy": null
+      }
+    },
+    {
+      "name": "코어 항로",
+      "rec": {
+        "planetId": "synth_070_p",
+        "systemId": "synth_070",
+        "factionId": "stellium",
+        "phase": "outpost",
+        "hopDistance": 6,
+        "travelDays": 3,
+        "attempt": 0,
+        "departedDayKey": "2026-09-22",
+        "dueDayKey": "2026-09-25",
+        "outpostDueAtMs": 1790040482883,
+        "lastOpexDayKey": "2026-09-22"
+      },
+      "hold": {
+        "occupierClanId": "neutral",
+        "kind": "neutral",
+        "occupationOrigin": null
+      },
+      "sat": {
+        "found": true,
+        "installed": true,
+        "level": 1,
+        "installedBy": "player"
+      }
+    },
+    {
+      "name": "허브 항로",
+      "rec": {
+        "planetId": "synth_069_p",
+        "systemId": "synth_069",
+        "factionId": "stellium",
+        "phase": "outpost",
+        "hopDistance": 7,
+        "travelDays": 3,
+        "attempt": 0,
+        "departedDayKey": "2026-09-21",
+        "dueDayKey": "2026-09-24",
+        "outpostDueAtMs": 1790000984568,
+        "lastOpexDayKey": "2026-09-22"
+      },
+      "hold": {
+        "occupierClanId": "neutral",
+        "kind": "neutral",
+        "occupationOrigin": null
+      },
+      "sat": {
+        "found": true,
+        "installed": true,
+        "level": 1,
+        "installedBy": "player"
+      }
+    },
+    {
+      "name": "필드 항로",
+      "rec": {
+        "planetId": "synth_065_p",
+        "systemId": "synth_065",
+        "factionId": "stellium",
+        "phase": "queued",
+        "hopDistance": 8,
+        "travelDays": 3,
+        "attempt": 0,
+        "departedDayKey": null,
+        "dueDayKey": null,
+        "outpostDueAtMs": null,
+        "lastOpexDayKey": null
+      },
+      "hold": {
+        "occupierClanId": "neutral",
+        "kind": "neutral",
+        "occupationOrigin": null
+      },
+      "sat": {
+        "found": true,
+        "installed": true,
+        "level": 1,
+        "installedBy": "player"
+      }
+    }
+  ]
+}

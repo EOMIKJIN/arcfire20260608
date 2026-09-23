@@ -28,7 +28,7 @@ export const TACTICAL_OVERLAY = {
   rowDivider: 'rgba(26, 35, 50, 0.12)',
   /** 패널 팝업(무역·행성정보 등) — 뒤 화면 80% dim */
   panelBackdrop: 'rgba(37, 41, 48, 0.80)',
-  /** 인게임 대사창(narrative) — 하단 소형 창, dim 없음 (범용) */
+  /** 인게임 대사창(narrative) — 세로 3단 팝업, dim 없음 (범용) */
   narrativeBackdrop: 'transparent',
 } as const;
 

@@ -11,6 +11,8 @@ export type ArcCorePlanetDevBudgetState = {
   budgetRemainingCr: number;
   budgetAllocatedCr: number;
   spentTodayCr: number;
+  /** true면 금고에서 이미 선지출 — 건설 시 vault 재차감 금지 */
+  prepaidFromVault: boolean;
 };
 
 const EMPTY: ArcCorePlanetDevBudgetState = {
@@ -18,6 +20,7 @@ const EMPTY: ArcCorePlanetDevBudgetState = {
   budgetRemainingCr: 0,
   budgetAllocatedCr: 0,
   spentTodayCr: 0,
+  prepaidFromVault: false,
 };
 
 let cache: ArcCorePlanetDevBudgetState | null = null;
@@ -31,6 +34,7 @@ function normalize(raw: unknown): ArcCorePlanetDevBudgetState {
     budgetRemainingCr: Math.max(0, Math.floor(src.budgetRemainingCr ?? 0)),
     budgetAllocatedCr: Math.max(0, Math.floor(src.budgetAllocatedCr ?? 0)),
     spentTodayCr: Math.max(0, Math.floor(src.spentTodayCr ?? 0)),
+    prepaidFromVault: src.prepaidFromVault === true,
   };
 }
 
@@ -57,16 +61,43 @@ export function getArcCorePlanetDevBudgetRemaining(): number {
 async function persistBudget(next: ArcCorePlanetDevBudgetState): Promise<void> {
   cache = normalize(next);
   hydrated = true;
-  await AsyncStorage.setItem(BUDGET_KEY, JSON.stringify(cache));
+  try {
+    await AsyncStorage.setItem(BUDGET_KEY, JSON.stringify(cache));
+  } catch {
+    /* 메모리 예산은 유지 */
+  }
 }
 
-/** 일 1회 central bank pass — development slice를 예산 풀에 적립 (vault 선소각 없음) */
+export function isArcCorePlanetDevBudgetPrepaid(): boolean {
+  return cache?.prepaidFromVault === true;
+}
+
+/** 일 1회 central bank pass — development slice를 예산 풀에 적립. lockFromVault면 금고 선지출. */
 export async function creditArcCorePlanetDevDailyBudget(
   kstDayKey: string,
   amount: number,
+  opts?: { lockFromVault?: boolean },
 ): Promise<ArcCorePlanetDevBudgetState> {
-  const credits = Math.max(0, Math.floor(amount));
   const cur = await hydrateArcCorePlanetDevBudgetState();
+  if (cur.kstDayKey === kstDayKey && (cur.prepaidFromVault || cur.budgetAllocatedCr > 0)) {
+    return cur;
+  }
+  let credits = Math.max(0, Math.floor(amount));
+  let prepaidFromVault = false;
+  if (opts?.lockFromVault && credits > 0) {
+    const { useArcCoreVaultStore } = await import('../../store/factionVault/arcCoreVaultStore');
+    const { getArcCoreVaultSeedCredits } = await import('../economy/planetUpkeepPolicy');
+    const { spendableAboveSeed } = await import('../economy/computeArcCoreFiscalOpexProxy');
+    const vault = useArcCoreVaultStore.getState();
+    if (!vault.hydrated) await vault.hydrate();
+    const cap = spendableAboveSeed(vault.getBalance(), getArcCoreVaultSeedCredits());
+    const locked = vault.spendUpToBalance(Math.min(credits, cap), {
+      kind: 'fiscal_opex_dev_lock',
+      note: `planet_dev_budget_lock kst=${kstDayKey} amt=${credits}`,
+    });
+    credits = locked.spent;
+    prepaidFromVault = locked.spent > 0;
+  }
   const sameDay = cur.kstDayKey === kstDayKey;
   const next: ArcCorePlanetDevBudgetState = sameDay
     ? {
@@ -74,12 +105,14 @@ export async function creditArcCorePlanetDevDailyBudget(
       budgetRemainingCr: cur.budgetRemainingCr + credits,
       budgetAllocatedCr: cur.budgetAllocatedCr + credits,
       spentTodayCr: cur.spentTodayCr,
+      prepaidFromVault: prepaidFromVault || cur.prepaidFromVault,
     }
     : {
       kstDayKey,
       budgetRemainingCr: credits,
       budgetAllocatedCr: credits,
       spentTodayCr: 0,
+      prepaidFromVault,
     };
   await persistBudget(next);
   return next;
@@ -95,7 +128,9 @@ export function tryConsumeArcCorePlanetDevBudget(amount: number): boolean {
     budgetRemainingCr: cache.budgetRemainingCr - credits,
     spentTodayCr: cache.spentTodayCr + credits,
   };
-  void AsyncStorage.setItem(BUDGET_KEY, JSON.stringify(cache));
+  void AsyncStorage.setItem(BUDGET_KEY, JSON.stringify(cache)).catch(() => {
+    /* 예산 메모리는 이미 반영 */
+  });
   return true;
 }
 
@@ -107,7 +142,9 @@ export function releaseArcCorePlanetDevBudget(amount: number): void {
     budgetRemainingCr: cache.budgetRemainingCr + credits,
     spentTodayCr: Math.max(0, cache.spentTodayCr - credits),
   };
-  void AsyncStorage.setItem(BUDGET_KEY, JSON.stringify(cache));
+  void AsyncStorage.setItem(BUDGET_KEY, JSON.stringify(cache)).catch(() => {
+    /* 예산 메모리는 이미 반영 */
+  });
 }
 
 export async function recordArcCorePlanetDevActualSpend(

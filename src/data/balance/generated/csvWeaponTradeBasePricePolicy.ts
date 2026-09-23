@@ -15,7 +15,7 @@ export const WeaponTradeBasePricePolicy_FROM_BALANCE_CSV = [
   { "key": "trade_port_capital_listing_count", "value": "12", "notesKo": "행성 무역소 전함 등급 그룹 상한(격투+정찰 쌍은 1그룹·재고와 무관)" },
   { "key": "trade_port_capital_min_per_planet", "value": "4", "notesKo": "행성 무역소 전함 최소 진열 척수(SKU·밴드 버퍼 적용 후)" },
   { "key": "trade_port_capital_zone_overlap", "value": "1", "notesKo": "인접 zone 레벨 밴드 겹침(무기와 동일·행성 독점 없음)" },
-  { "key": "trade_port_weapon_listing_count", "value": "20", "notesKo": "행성당 진열 상한(기본 pinned 8 + progression 밴드)" },
+  { "key": "trade_port_weapon_listing_count", "value": "24", "notesKo": "행성당 진열 상한(pinned + 현재·다음 존 도전 키트 예약 + 밴드)" },
   { "key": "trade_port_weapon_min_per_planet", "value": "4", "notesKo": "행성 무역소 무기 최소 진열 종류(성능 밴드 내)" },
   { "key": "trade_port_weapon_zone_overlap", "value": "1", "notesKo": "인접 zone 레벨 밴드 겹침(2~3행성 이동 시 동일 무기 재등장)" },
   { "key": "trade_port_weapon_exclude_rule", "value": "vmock_wave_only", "notesKo": "제외=vmock·wave NPC슬롯복제만(기본_01·arc·NPC기본무장 판매)" },

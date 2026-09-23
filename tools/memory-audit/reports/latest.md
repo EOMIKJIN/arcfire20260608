@@ -1,6 +1,6 @@
 # Memory / Stage Contract Audit
 
-Generated: 2026-08-02T04:40:50.752Z
+Generated: 2026-09-23T14:06:26.823Z
 
 **Result:** PASS (37/37 checks)
 
@@ -15,7 +15,7 @@ Generated: 2026-08-02T04:40:50.752Z
 - [x] combat.tsx has useStageMemory
 - [x] trade.tsx has usePlanetSubStageMemory
 - [x] shipyard.tsx has usePlanetSubStageMemory
-- [x] tavern.tsx has usePlanetSubStageMemory
+- [x] bar.tsx has usePlanetSubStageMemory
 - [x] skilltree.tsx has usePlanetSubStageMemory
 - [x] releaseGalaxyMapStageMemory clears scroll + memo + nebula + heavyUi
 - [x] releasePlanetMainStageSession dedupe blur+unmount

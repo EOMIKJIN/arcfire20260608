@@ -34,48 +34,61 @@ export async function runArcCorePlanetDevWallTick(
     creditsSpent: 0,
   };
 
-  const policy = resolveArcCorePlanetDevInvestmentPolicy();
-  if (!policy.investmentTickEnabled) return { ...empty, ran: true };
+  try {
+    const policy = resolveArcCorePlanetDevInvestmentPolicy();
+    if (!policy.investmentTickEnabled) return { ...empty, ran: true };
 
-  const planetIds = listArcCoreRedOccupiedPlanetIds();
-  for (let i = 0; i < planetIds.length; i += 1) {
-    tryCompleteAllPlanetDevJobs(planetIds[i]!);
-  }
-
-  await hydrateArcCorePlanetDevBudgetState();
-  if (getArcCorePlanetDevBudgetRemaining() <= 0) {
-    return { ran: true, planetsCompleted: planetIds.length, investmentsStarted: 0, creditsSpent: 0 };
-  }
-
-  const vault = useArcCoreVaultStore.getState();
-  if (!vault.hydrated) {
-    await vault.hydrate();
-  }
-
-  const candidates = pickArcCorePlanetDevCandidatesForTick(planetIds);
-  let investmentsStarted = 0;
-  let creditsSpent = 0;
-  const kstDayKey = planetAttackKstDayKey();
-
-  for (let i = 0; i < candidates.length && investmentsStarted < policy.maxStartsPerTick; i += 1) {
-    const candidate = candidates[i]!;
-    if (candidate.cost > vault.getBalance()) break;
-    if (candidate.cost > getArcCorePlanetDevBudgetRemaining()) break;
-
-    const result = arcCoreExecutePlanetDevCandidate(candidate);
-    if (!result.ok) continue;
-
-    investmentsStarted += 1;
-    creditsSpent += result.spentCr;
-    if (result.spentCr > 0) {
-      await recordArcCorePlanetDevActualSpend(kstDayKey, result.spentCr);
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { tickPlanetDevJobsRealtime } =
+        require('../../game/planetDevelopment/planetDevJobRealtimeWatch') as typeof import('../../game/planetDevelopment/planetDevJobRealtimeWatch');
+      tickPlanetDevJobsRealtime(_nowMs);
+    } catch {
+      /* 플레이어 개발 워치 미기동 */
     }
-  }
 
-  return {
-    ran: true,
-    planetsCompleted: planetIds.length,
-    investmentsStarted,
-    creditsSpent,
-  };
+    const planetIds = listArcCoreRedOccupiedPlanetIds();
+    for (let i = 0; i < planetIds.length; i += 1) {
+      tryCompleteAllPlanetDevJobs(planetIds[i]!);
+    }
+
+    await hydrateArcCorePlanetDevBudgetState();
+    if (getArcCorePlanetDevBudgetRemaining() <= 0) {
+      return { ran: true, planetsCompleted: planetIds.length, investmentsStarted: 0, creditsSpent: 0 };
+    }
+
+    const vault = useArcCoreVaultStore.getState();
+    if (!vault.hydrated) {
+      await vault.hydrate();
+    }
+
+    const candidates = pickArcCorePlanetDevCandidatesForTick(planetIds);
+    let investmentsStarted = 0;
+    let creditsSpent = 0;
+    const kstDayKey = planetAttackKstDayKey();
+
+    for (let i = 0; i < candidates.length && investmentsStarted < policy.maxStartsPerTick; i += 1) {
+      const candidate = candidates[i]!;
+      if (candidate.cost > vault.getBalance()) break;
+      if (candidate.cost > getArcCorePlanetDevBudgetRemaining()) break;
+
+      const result = arcCoreExecutePlanetDevCandidate(candidate);
+      if (!result.ok) continue;
+
+      investmentsStarted += 1;
+      creditsSpent += result.spentCr;
+      if (result.spentCr > 0) {
+        await recordArcCorePlanetDevActualSpend(kstDayKey, result.spentCr);
+      }
+    }
+
+    return {
+      ran: true,
+      planetsCompleted: planetIds.length,
+      investmentsStarted,
+      creditsSpent,
+    };
+  } catch {
+    return empty;
+  }
 }

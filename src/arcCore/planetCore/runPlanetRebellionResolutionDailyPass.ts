@@ -4,7 +4,7 @@
 
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { resolveCoreOpenGameplayPlanetRef, forEachCoreOpenGameplayPlanet } from '../../world/coreOpenGameplayPlanets';
-import { isPlanetContestedZone } from '../balance/balanceTableRegistry';
+import { shouldSkipWdiForWarTheater } from '../territorial/resolveWarTheaterState';
 import {
   resolveRebellionOverthrowProbMul,
   resolveRebellionResolutionPolicy,
@@ -16,6 +16,8 @@ import { applyRebellionOverthrowHold } from '../rebellion/applyRebellionOverthro
 import { countAdjacentFriendlySystems } from '../territorial/territorialSupplyLine';
 import { resolveSupplyEnvelope } from '../territorial/resolveSupplyEnvelope';
 import { getArcCoreSupplyEnvelopePolicy } from '../territorial/arcCoreSupplyEnvelopePolicy';
+import { resolveCapitalDefenseContext } from '../territorial/resolveCapitalDefenseContext';
+import { resolveCapitalDefenseRebellionMul } from '../territorial/applyCapitalDefenseAdjustments';
 import {
   publishRebellionOverthrowNotice,
   publishRebellionSimmeringNotice,
@@ -67,12 +69,13 @@ export function runPlanetRebellionResolutionDailyPass(): PlanetRebellionResoluti
   if (!coreStore.hydrated) return empty;
 
   const kstDayKey = planetAttackKstDayKey();
+  const holds = useClanWarFoundationStore.getState().planetHolds;
   let overthrows = 0;
   let simmering = 0;
   let penaltiesApplied = 0;
 
-  forEachCoreOpenGameplayPlanet(({ planetId, planet }) => {
-    if (isPlanetContestedZone(planetId)) return;
+  forEachCoreOpenGameplayPlanet(({ planetId, planet, system }) => {
+    if (shouldSkipWdiForWarTheater(planetId, system.id, holds)) return;
 
     const runtime = coreStore.getPlanetCoreRuntime(planetId);
     const wealth = runtime?.detail?.wealthDisparity;
@@ -88,7 +91,6 @@ export function runPlanetRebellionResolutionDailyPass(): PlanetRebellionResoluti
 
     if (wealth.wdi < wdiPolicy.wdiDangerMin) return;
 
-    const holds = useClanWarFoundationStore.getState().planetHolds;
     const hold = holds[planetId];
     const clans = useClanWarFoundationStore.getState().clans;
     const factionSide = resolveMapFactionSideFromClanIdPure(hold?.occupierClanId ?? 'neutral', clans);
@@ -110,6 +112,17 @@ export function runPlanetRebellionResolutionDailyPass(): PlanetRebellionResoluti
     const envelopeFactionMul = sameSideEnvelopeStrong
       ? factionMul * envelopePolicy.envelopeRebellionOverthrowMul
       : factionMul;
+    const capitalDefense = resolveCapitalDefenseContext({
+      planetId,
+      systemId: ref.system.id,
+      holdSide: factionSide === 'independent' ? 'INDEPENDENT' : factionSide === 'blue' ? 'BLUE' : factionSide === 'red' ? 'RED' : 'NEUTRAL',
+      adjacency: {
+        blue: countAdjacentFriendlySystems({ systemId: ref.system.id, side: 'BLUE', holds }),
+        red: countAdjacentFriendlySystems({ systemId: ref.system.id, side: 'RED', holds }),
+      },
+      holds,
+    });
+    const capitalFactionMul = envelopeFactionMul * resolveCapitalDefenseRebellionMul(capitalDefense);
 
     const rollPolicy = {
       wdiDangerMin: wdiPolicy.wdiDangerMin,
@@ -121,7 +134,7 @@ export function runPlanetRebellionResolutionDailyPass(): PlanetRebellionResoluti
       planetId,
       kstDayKey,
       wealth.wdi,
-      envelopeFactionMul,
+      capitalFactionMul,
       rollPolicy,
     );
 

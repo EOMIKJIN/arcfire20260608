@@ -9,6 +9,7 @@ import { useClanWarFoundationStore } from '../../../store/clanWarFoundationStore
 import { usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore';
 import { usePlanetTradeFeeLedgerStore } from '../../../store/planetTradeFeeLedgerStore';
 import { readPlanetInfoPanelPresentationRevision } from '../../../game/planetHub/resolvePlanetInfoPanelStage';
+import { useAppSettingsStore } from '../../../store/appSettingsStore';
 import { createPlanetEconomyInfoHydrateSteps } from '../hydrateRecipes';
 import { preflightPlanetHubSession } from '../preflightPlanetHub';
 import type { HeavyUiSessionConfig } from '../types';
@@ -35,6 +36,7 @@ export function readPlanetEconomyInfoRevision(planetId: string): string {
   const blueVault = useBlueTeamSharedVaultStore.getState().balanceCredits;
   const trend = core?.detail?.statOpsTrend;
   return [
+    useAppSettingsStore.getState().locale,
     readPlanetInfoPanelPresentationRevision(planetId),
     core?.population ?? '',
     core?.resource ?? '',

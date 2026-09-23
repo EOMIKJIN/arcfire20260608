@@ -1,10 +1,12 @@
 // ============================================================
 // 웨이브 디펜스 적함대 빌더 — 'red' 적 슬롯만 생성(플레이어 blue 기함은
 // resolveStageFleetSeedSlotsForPlanet 가 자동 추가).
-// 적함은 기존 테이블의 웨이브 적함(npc_wave_invader_t*) + AI봇 함장(npc_cpt_ai_robot_default).
+// 행성이 있으면 npc_enemy_* 목적지 헐, 없으면 targetCombatLevel → invader t1..t30.
 // ============================================================
 
+import { resolvePlanetTargetCombatLevel } from '../../arcCore/balance/balanceTableRegistry';
 import type { CombatFleetSeedSlot } from '../../combat/capitalRealtimeCombatGate';
+import { hasWaveShipId, listPlanetWaveEnemySlots } from './waveDefensePlanetEnemyIndex';
 
 /** 테스트 한정: 전체 9웨이브 */
 export const WAVE_DEFENSE_MAX_WAVES = 9;
@@ -16,14 +18,8 @@ export const WAVE_DEFENSE_MAX_WAVES = 9;
  */
 const WAVE_DEFENSE_MAX_CONCURRENT_ENEMIES = 12;
 
-/** 웨이브 적함 티어(이미 테이블에 존재) — 웨이브가 올라갈수록 상위 티어 */
-const WAVE_ENEMY_SHIP_TIERS = [
-  'npc_wave_invader_t1',
-  'npc_wave_invader_t2',
-  'npc_wave_invader_t3',
-  'npc_wave_invader_t4',
-  'npc_wave_invader_t5',
-];
+const WAVE_INVADER_TIER_MAX = 30;
+const WAVE_INVADER_FALLBACK_ID = 'npc_wave_invader_t1';
 
 const WAVE_ENEMY_CAPTAIN_ID = 'npc_cpt_ai_robot_default';
 
@@ -34,10 +30,33 @@ export function waveDefenseEnemyCount(waveIndex: number): number {
   return Math.min(WAVE_DEFENSE_MAX_CONCURRENT_ENEMIES, ideal);
 }
 
-/** 웨이브 N의 적 함선 id(웨이브↑ → 상위 티어, 가용 티어 내에서 클램프) */
-export function waveDefenseEnemyShipId(waveIndex: number): string {
-  const idx = Math.min(Math.max(0, Math.floor(waveIndex) - 1), WAVE_ENEMY_SHIP_TIERS.length - 1);
-  return WAVE_ENEMY_SHIP_TIERS[idx] ?? WAVE_ENEMY_SHIP_TIERS[0]!;
+export function waveDefenseInvaderTier(combatLevel: number, waveIndex: number): number {
+  const level = Math.max(1, Math.floor(combatLevel));
+  const wave = Math.max(1, Math.floor(waveIndex));
+  const base = Math.max(1, Math.ceil(level / 2));
+  return Math.min(WAVE_INVADER_TIER_MAX, base + wave - 1);
+}
+
+export function waveDefenseInvaderShipId(combatLevel: number, waveIndex: number): string {
+  const tier = waveDefenseInvaderTier(combatLevel, waveIndex);
+  const id = `npc_wave_invader_t${tier}`;
+  return hasWaveShipId(id) ? id : WAVE_INVADER_FALLBACK_ID;
+}
+
+/** 웨이브 N의 적 함선 id — planetId 있으면 목적지 헐/레벨, 없으면 레거시 t1..t5 */
+export function waveDefenseEnemyShipId(waveIndex: number, planetId?: string | null): string {
+  const wave = Math.max(1, Math.floor(waveIndex));
+  const pid = planetId?.trim() ?? '';
+  if (pid) {
+    const planetSlots = listPlanetWaveEnemySlots(pid);
+    if (planetSlots.length > 0) {
+      const idx = Math.min(wave - 1, planetSlots.length - 1);
+      return planetSlots[idx]!.shipId;
+    }
+    return waveDefenseInvaderShipId(resolvePlanetTargetCombatLevel(pid), wave);
+  }
+  const legacyTier = Math.min(5, wave);
+  return `npc_wave_invader_t${legacyTier}`;
 }
 
 /** 적함 1척당 기본 경험치(npc_wave_invader expReward 기준) */
@@ -53,16 +72,32 @@ export function waveDefenseWaveExpReward(waveIndex: number): number {
 }
 
 /** 웨이브 N의 적(red) 함대 시드 — 플레이어 blue 슬롯은 seam이 자동 추가 */
-export function buildWaveDefenseEnemyFleet(waveIndex: number): CombatFleetSeedSlot[] {
-  const count = waveDefenseEnemyCount(waveIndex);
-  const shipId = waveDefenseEnemyShipId(waveIndex);
+export function buildWaveDefenseEnemyFleet(
+  waveIndex: number,
+  planetId?: string | null,
+): CombatFleetSeedSlot[] {
+  const wave = Math.max(1, Math.floor(waveIndex));
+  const count = waveDefenseEnemyCount(wave);
+  const pid = planetId?.trim() ?? '';
+  const planetSlots = pid ? listPlanetWaveEnemySlots(pid) : [];
+  const fallbackShipId = waveDefenseEnemyShipId(wave, pid || null);
   const slots: CombatFleetSeedSlot[] = [];
   for (let i = 0; i < count; i += 1) {
+    if (planetSlots.length > 0) {
+      const pick = planetSlots[(wave - 1 + i) % planetSlots.length]!;
+      slots.push({
+        team: 'red',
+        npcShipId: pick.shipId,
+        captainId: pick.captainId,
+        combatInstanceKey: `wave_defense_w${wave}_s${i}`,
+      });
+      continue;
+    }
     slots.push({
       team: 'red',
-      npcShipId: shipId,
+      npcShipId: fallbackShipId,
       captainId: WAVE_ENEMY_CAPTAIN_ID,
-      combatInstanceKey: `wave_defense_w${waveIndex}_s${i}`,
+      combatInstanceKey: `wave_defense_w${wave}_s${i}`,
     });
   }
   return slots;

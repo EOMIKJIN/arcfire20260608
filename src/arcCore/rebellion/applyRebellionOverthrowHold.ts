@@ -5,6 +5,7 @@
 import type { MapFactionSide } from '../../galaxyMap/mapFactionSideCore';
 import { resolveMapFactionSideFromClanIdPure } from '../../galaxyMap/mapFactionSideCore';
 import { reassignPlanetGovernorForOccupationSync } from '../../game/planetGovernor/reassignPlanetGovernorForOccupation';
+import { scheduleReleasePlanetUniqueDeedLocks } from '../../firebase/planetUniqueDeedLock';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
 import type { PlanetClanHold } from '../../types';
 
@@ -97,6 +98,9 @@ export function applyRebellionOverthrowHold(planetId: string, systemId: string):
     newFactionSide: 'NEUTRAL',
   });
   void useClanWarFoundationStore.getState().persistClanWarFoundation();
+  if (hadPlayerDeed) {
+    scheduleReleasePlanetUniqueDeedLocks([planetId]);
+  }
 
   return {
     applied: true,

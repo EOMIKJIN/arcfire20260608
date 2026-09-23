@@ -1,9 +1,14 @@
-// 퀘스트(의뢰) 수락 — 선술집·허브 대화 공용 피드백 (ArcOverlayHost alert)
+// 퀘스트(의뢰)·메인스토리 수락 — 바·허브 대화 공용 피드백 (ArcOverlayHost alert)
 // 튜토리얼 스토리(mission_*)는 initTutorialStory — 본 모듈 대상 아님
 // ============================================================
 
 import { showArcAlert } from '../utils/showArcAlert';
-import { useMissionStore, type AcceptQuestMissionResult } from '../store/missionStore';
+import {
+  useMissionStore,
+  type AcceptMainStoryMissionResult,
+  type AcceptQuestMissionResult,
+} from '../store/missionStore';
+import { reconcileActiveMissionProgressAfterEvent } from './reconcileActiveMissionProgress';
 import { getMissionById } from './missionCatalog';
 import { resolveMissionTitle } from '../i18n/missionText';
 import { useAppSettingsStore } from '../store/appSettingsStore';
@@ -26,21 +31,23 @@ export function questMissionAcceptFailMessage(
 ): string {
   switch (result) {
     case 'level_locked':
-      return t('tavern.newMissions.acceptFailLevel');
+      return t('bar.newMissions.acceptFailLevel');
     case 'already_active':
-      return t('tavern.newMissions.acceptFailActive');
+      return t('bar.newMissions.acceptFailActive');
     case 'already_complete':
-      return t('tavern.newMissions.acceptFailComplete');
+      return t('bar.newMissions.acceptFailComplete');
     case 'wrong_planet':
-      return t('tavern.newMissions.acceptFailPlanet');
+      return t('bar.newMissions.acceptFailPlanet');
     case 'prereq_missing':
-      return t('tavern.newMissions.acceptFailPrereq');
+      return t('bar.newMissions.acceptFailPrereq');
     case 'wrong_captain':
-      return t('tavern.newMissions.acceptFailCaptain');
+      return t('bar.newMissions.acceptFailCaptain');
     case 'not_on_board':
-      return t('tavern.newMissions.acceptFailNotOnBoard');
+      return t('bar.newMissions.acceptFailNotOnBoard');
+    case 'no_objectives':
+      return t('bar.newMissions.acceptFailNoObjectives');
     default:
-      return t('tavern.newMissions.acceptFailGeneric');
+      return t('bar.newMissions.acceptFailGeneric');
   }
 }
 
@@ -52,7 +59,7 @@ export function instanceMissionAcceptFailMessage(
   return questMissionAcceptFailMessage(result, t);
 }
 
-/** 선술집·인게임 대화 — acceptQuestMission + ArcOverlay alert */
+/** 바·인게임 대화 — acceptQuestMission + ArcOverlay alert */
 export function tryAcceptQuestMissionWithFeedback(
   missionId: string,
   context: QuestMissionAcceptContext,
@@ -62,6 +69,12 @@ export function tryAcceptQuestMissionWithFeedback(
   const mission = getMissionById(missionId);
   const locale = useAppSettingsStore.getState().locale;
   const title = mission ? resolveMissionTitle(mission, locale) : missionId;
+  if (result === 'accepted') {
+    reconcileActiveMissionProgressAfterEvent();
+    if (useMissionStore.getState().pendingMissionDialogId === missionId) {
+      return result;
+    }
+  }
   showQuestMissionAcceptFeedback(result, title, t);
   return result;
 }
@@ -82,13 +95,13 @@ export function showQuestMissionAcceptFeedback(
 ): void {
   if (result === 'accepted') {
     showArcAlert(
-      t('tavern.newMissions.acceptSuccessTitle'),
-      t('tavern.newMissions.acceptSuccessBody', { title: missionTitle }),
+      t('bar.newMissions.acceptSuccessTitle'),
+      t('bar.newMissions.acceptSuccessBody', { title: missionTitle }),
     );
     return;
   }
   showArcAlert(
-    t('tavern.newMissions.acceptFailTitle'),
+    t('bar.newMissions.acceptFailTitle'),
     questMissionAcceptFailMessage(result, t),
   );
 }
@@ -100,4 +113,55 @@ export function showInstanceMissionAcceptFeedback(
   t: AcceptFeedbackT,
 ): void {
   showQuestMissionAcceptFeedback(result, missionTitle, t);
+}
+
+export function mainStoryMissionAcceptFailMessage(
+  result: Exclude<AcceptMainStoryMissionResult, 'accepted'>,
+  t: AcceptFeedbackT,
+): string {
+  switch (result) {
+    case 'level_locked':
+      return t('bar.newMissions.acceptFailLevel');
+    case 'already_active':
+      return t('mission.mainStory.acceptFailActive');
+    case 'already_complete':
+      return t('mission.mainStory.acceptFailComplete');
+    case 'wrong_planet':
+      return t('mission.mainStory.acceptFailPlanet');
+    case 'prereq_missing':
+      return t('bar.newMissions.acceptFailPrereq');
+    case 'wrong_captain':
+      return t('mission.mainStory.acceptFailCaptain');
+    case 'not_main_story':
+      return t('mission.mainStory.acceptFailNotStory');
+    case 'no_objectives':
+      return t('bar.newMissions.acceptFailNoObjectives');
+    default:
+      return t('mission.mainStory.acceptFailGeneric');
+  }
+}
+
+/** INFO 통신·허브 NPC 1차 대사 — acceptMainStoryMission + ArcOverlay alert */
+export function tryAcceptMainStoryMissionWithFeedback(
+  missionId: string,
+  context: QuestMissionAcceptContext,
+  t: AcceptFeedbackT,
+): AcceptMainStoryMissionResult {
+  const result = useMissionStore.getState().acceptMainStoryMission(missionId, context);
+  const mission = getMissionById(missionId);
+  const locale = useAppSettingsStore.getState().locale;
+  const title = mission ? resolveMissionTitle(mission, locale) : missionId;
+  if (result === 'accepted') {
+    reconcileActiveMissionProgressAfterEvent();
+    if (useMissionStore.getState().pendingMissionDialogId === missionId) {
+      return result;
+    }
+    showArcAlert(
+      t('mission.mainStory.acceptSuccessTitle'),
+      t('mission.mainStory.acceptSuccessBody', { title }),
+    );
+    return result;
+  }
+  showArcAlert(t('mission.mainStory.acceptFailTitle'), mainStoryMissionAcceptFailMessage(result, t));
+  return result;
 }

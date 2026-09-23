@@ -26,5 +26,29 @@ export function isWaveTestTradeShipId(npcShipId: string | null | undefined): boo
   return WAVE_TEST_TRADE_SHIP_IDS.has(String(npcShipId ?? '').trim());
 }
 
+/** itemDef → 웨이브 테스트 무기/전함 (광물 싱크·헐 밴드 예외) */
+export function isWaveTestTradeItemDef(itemDef: {
+  type?: string | null;
+  id?: string | null;
+  attrs?: Record<string, unknown> | null;
+} | null | undefined): boolean {
+  if (!itemDef) return false;
+  if (itemDef.type === 'weapon_module') {
+    const fromAttr = typeof itemDef.attrs?.weaponId === 'string'
+      ? itemDef.attrs.weaponId
+      : '';
+    const fromId = String(itemDef.id ?? '').replace(/^weapon_item_/, '');
+    return isWaveTestTradeWeaponId(fromAttr || fromId);
+  }
+  if (itemDef.type === 'capital_ship') {
+    const fromAttr = typeof itemDef.attrs?.npcCapitalShipId === 'string'
+      ? itemDef.attrs.npcCapitalShipId
+      : '';
+    const fromId = String(itemDef.id ?? '').replace(/^capital_ship_/, '');
+    return isWaveTestTradeShipId(fromAttr || fromId);
+  }
+  return false;
+}
+
 /** 테스트 단계 강제 거래가(크레딧) */
 export const WAVE_TEST_TRADE_PRICE_CREDITS = 1;

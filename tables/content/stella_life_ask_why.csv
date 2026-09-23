@@ -1,0 +1,6 @@
+id,priority,askId,motiveIds,lineKo,lineEn
+w_promise,1,promise,need_you|check_in,그때 말한 것, 아직 유효한가?,That thing you mentioned — still good?
+w_correction,2,correction,want_right,내가 빗나갔나. 다시 물을게,Did I miss it? I will ask again.
+w_thread,3,thread,unfinished,그 얘기, 이어서 할까,Want to pick that up?
+w_care,4,care,need_you|check_in,그때 말한 거, 지금은 어때,That thing you said — how is it now?
+w_share,5,share,want_share,잠깐 — 오늘 {anchor} 때문에 네가 궁금해,Wait — today {anchor} made me wonder about you.

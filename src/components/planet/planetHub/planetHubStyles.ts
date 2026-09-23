@@ -1,6 +1,7 @@
 // planet hub styles — extracted from app/(game)/planet.tsx
 import { Platform, StyleSheet } from 'react-native';
 import { COLORS, FONTS, SPACING } from '../../../utils/theme';
+import { PINNED_INFO_MARK_INK } from '../../../game/planetHub/nearbyPresenceContract';
 import { TACTICAL_HUB } from '../../../ui/tactical/tacticalHubTokens';
 import {
   PLANET_MAIN_BACKGROUND_CLAN_PLATE_AFTER_NAME_GAP_PX,
@@ -20,8 +21,8 @@ import {
   INFO_LOG_CONTENT_PAD_BOTTOM,
   INFO_LOG_LINE_HEIGHT_PX,
   INFO_LOG_ROW_GAP_PX,
-  PLANET_HUB_CAPITAL_COMBAT_DIM_OPACITY,
   PLANET_HUB_CAPITAL_COMBAT_GRAY,
+  PLANET_HUB_CAPITAL_COMBAT_VEIL_FILL,
   PLANET_MAIN_COMBAT_LAYER_HEIGHT_SCALE_Y,
   PLANET_MAIN_COMBAT_LAYER_WIDTH_SCALE_X,
   MINING_GUIDE_LABEL_PAST_TIP_PX,
@@ -127,17 +128,6 @@ export const planetHubStyles = StyleSheet.create({
     marginBottom: 4,
     textTransform: 'lowercase',
   },
-  infoPanelWrapCapitalCombatMuted: {
-    opacity: PLANET_HUB_CAPITAL_COMBAT_DIM_OPACITY,
-    borderColor: 'rgba(130, 138, 150, 0.3)',
-    backgroundColor: 'rgba(14, 18, 26, 0.34)',
-  },
-  infoPanelTitleCapitalCombatMuted: {
-    color: PLANET_HUB_CAPITAL_COMBAT_GRAY.systemName,
-  },
-  infoInkCapitalCombatMuted: {
-    color: PLANET_HUB_CAPITAL_COMBAT_GRAY.territory,
-  },
   infoLogScroll: {
     flexGrow: 0,
   },
@@ -155,6 +145,13 @@ export const planetHubStyles = StyleSheet.create({
     fontSize: 9,
     lineHeight: INFO_LOG_LINE_HEIGHT_PX,
     color: COLORS.ink_light,
+  },
+  infoPinMark: {
+    fontFamily: FONTS.mono,
+    fontSize: 9,
+    lineHeight: INFO_LOG_LINE_HEIGHT_PX,
+    color: PINNED_INFO_MARK_INK,
+    flexShrink: 0,
   },
   infoNameMkCluster: {
     flexDirection: 'row',
@@ -524,13 +521,38 @@ export const planetHubBgStyles = StyleSheet.create({
     /** 행성 궤도와 붙이기 — 배지 자체 Y는 스택 상단에서 동일 */
     marginBottom: SPACING.xs,
   },
-  /** 자본궤도 전투 중 — 성계 배지 전체를 살짝 투명하게(텍스트는 별도 회색 톤) */
-  planetHubCapitalCombatBadgeDim: {
-    opacity: 0.9,
+  /** 전투 중 배지 elevation 해제 — 베일이 덮게. 전투 오버레이와 elevation 충돌 방지 */
+  systemBadgeCombatUnderVeil: {
+    zIndex: 1,
+    elevation: 0,
   },
-  /** 자본궤도 전투 중 — 궤도 연출(전투 SVG 제외) 투명도 */
-  planetHubCapitalCombatOrbitDim: {
-    opacity: PLANET_HUB_CAPITAL_COMBAT_DIM_OPACITY,
+  planetHubCapitalCombatVeil: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: PLANET_HUB_CAPITAL_COMBAT_VEIL_FILL,
+    zIndex: 40,
+  },
+  hubCombatGrayText: {
+    color: PLANET_HUB_CAPITAL_COMBAT_GRAY.systemName,
+  },
+  hubCombatGrayTerritory: {
+    color: PLANET_HUB_CAPITAL_COMBAT_GRAY.territory,
+  },
+  hubCombatGrayMark: {
+    color: PLANET_HUB_CAPITAL_COMBAT_GRAY.shipMark,
+  },
+  hubCombatGrayCaption: {
+    color: PLANET_HUB_CAPITAL_COMBAT_GRAY.territory,
+    textShadowColor: 'rgba(8, 12, 18, 0.45)',
+  },
+  hubCombatGrayAsteroid: {
+    backgroundColor: PLANET_HUB_CAPITAL_COMBAT_GRAY.gaugeOn,
+    borderColor: 'rgba(160, 168, 180, 0.7)',
+  },
+  hubCombatGrayWreck: {
+    borderColor: PLANET_HUB_CAPITAL_COMBAT_GRAY.shipMark,
+  },
+  hubCombatGraySat: {
+    borderBottomColor: PLANET_HUB_CAPITAL_COMBAT_GRAY.shipMark,
   },
   planetOrbitSlot: {
     flex: 1,
@@ -749,6 +771,23 @@ export const planetHubBgStyles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: WORLD_OBJECT_WRECK_STROKE_COLOR,
     borderRadius: 1,
+  },
+  worldObjectStelliumColonizeWrap: {
+    width: 20,
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  worldObjectStelliumColonizeCore: {
+    position: 'absolute',
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: '#FF8A2A',
+    shadowColor: '#FF8A2A',
+    shadowOpacity: 0.95,
+    shadowRadius: 4,
+    elevation: 2,
   },
   worldObjectDefenseSatelliteWrap: {
     alignItems: 'center',

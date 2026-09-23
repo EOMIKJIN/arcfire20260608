@@ -1,0 +1,22 @@
+productId,contentKey,sortOrder,notesKo
+starter_pack,starter_gems,1,스타터 보석
+starter_pack,starter_credits,2,스타터 크레딧
+starter_pack,starter_gear,3,초반 장비
+starter_pack,account_once,4,계정당 1회
+gem_pack_small,gem_grant,1,보석만 지급(중첩 구매 가능)
+gem_pack_medium,gem_grant,1,보석만 지급(중첩 구매 가능)
+gem_pack_large,gem_grant,1,보석만 지급(중첩 구매 가능)
+gem_pack_xlarge,gem_grant,1,보석만 지급(중첩 구매 가능)
+season_pass_premium,season_track,1,시즌 유료 트랙
+season_pass_premium,no_direct_gems,2,보석 직접 지급 없음
+planet_deed_grant,one_planet,1,개방 행성 1곳
+planet_deed_grant,account_once,2,계정당 1회
+vip_basic,daily_gems,1,매일 보석
+vip_basic,vip_duration,2,30일 구독
+vip_plus,daily_gems,1,매일 보석(상위 지급량)
+vip_plus,vip_duration,2,30일 구독
+vip_plus,growth_boost,3,성장 가속
+vip_max,daily_gems,1,매일 보석(최상위 지급량)
+vip_max,vip_duration,2,30일 구독
+vip_max,growth_boost,3,성장 가속
+vip_max,max_convenience,4,최대 편의

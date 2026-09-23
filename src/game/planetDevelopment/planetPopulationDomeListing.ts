@@ -1,9 +1,9 @@
 import { readFacilityModuleDetail, isFacilityModuleInstalled } from './planetFacilityModuleRuntime';
 
-/** 인구 거주 돔 — 허브 선술집 연동 (Lv1 설치 시 tavern 활성) */
+/** 인구 거주 돔 — 허브 바 연동 (Lv1 설치 시 bar 활성) */
 export const PLANET_DEV_MODULE_POPULATION_DOME = 'dev_population_dome';
 
-const LEGACY_MODULE_ID = 'dev_tavern';
+const LEGACY_MODULE_ID = 'dev_bar';
 
 export function readPlanetPopulationDomeDetail(planetId: string) {
   const cur = readFacilityModuleDetail(planetId, PLANET_DEV_MODULE_POPULATION_DOME);

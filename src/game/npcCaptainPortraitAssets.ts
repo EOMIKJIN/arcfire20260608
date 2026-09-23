@@ -3,6 +3,9 @@ import { Image, type ImageSourcePropType } from 'react-native';
 /**
  * CSV `portraitImageAssetKey` → Metro 정적 require.
  * 새 PNG: assets/images/npc/ 저장 후 아래 맵에 **동일 키** 등록.
+ * 픽셀 규격: `npcPortraitPixelContract.ts` (240×240 · noname_char007 정본).
+ * 스텔리움 군복: 005 네이비 / 010 화이트 · 얼굴만 교체.
+ * 제작 정본: docs/NPC_PORTRAIT_PRODUCTION_CANON.md
  * 계약: docs/NPC_CAPTAIN_PORTRAIT_ASSET_CONTRACT.md
  * 금지: listCriticalSessionImageSources 에 함장 초상 전수 편입.
  */

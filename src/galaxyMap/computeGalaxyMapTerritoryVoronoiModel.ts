@@ -1,12 +1,16 @@
 import { resolveClanMapDisplayColor } from '../arcCore/balance/clanMapFactionColorPolicy';
 import type { StarSystem } from '../types';
 import {
-  buildGalaxyBlueRedVoronoiBorderSegments,
+  paintGalaxyBlueRedVoronoiBorderSegments,
+  tessellateGalaxyBlueRedVoronoiBorderSegments,
+  type GalaxyVoronoiOwnedBorderSegment,
   type GalaxyVoronoiSite,
 } from './buildGalaxyBlueRedVoronoiBorders';
 import {
-  buildGalaxyTerritoryVoronoiLayers,
+  paintGalaxyTerritoryLayers,
+  tessellateGalaxyTerritoryGeometry,
   type GalaxyTerritoryFill,
+  type GalaxyTerritoryGeometry,
   type GalaxyTerritoryOccupationLabel,
   type GalaxyTerritorySite,
 } from './buildGalaxyTerritoryVoronoi';
@@ -26,6 +30,11 @@ export type GalaxyMapTerritoryVoronoiModel = {
   occupationLabels: GalaxyTerritoryOccupationLabel[];
 };
 
+export type GalaxyMapTerritoryTessellation = {
+  geometry: GalaxyTerritoryGeometry | null;
+  borderSegments: GalaxyVoronoiOwnedBorderSegment[];
+};
+
 function polylineToPath(points: [number, number][], closed: boolean): string {
   const finite = points.filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y));
   if (finite.length < 2) return '';
@@ -40,14 +49,12 @@ function borderCoreStrokeColor(baseColor: string): string {
   return baseColor;
 }
 
-/** Voronoi 채움·국경·점령 라벨 앵커 — worldmap 1회 useMemo 전용 */
-export function computeGalaxyMapTerritoryVoronoiModel(input: {
+function buildVoronoiSites(input: {
   systems: StarSystem[];
   occupierClanIdBySystemId: Record<string, string | undefined>;
-  mapBounds: { x0: number; y0: number; x1: number; y1: number };
   toScreen: (pos: { x: number; y: number }) => { x: number; y: number };
-}): GalaxyMapTerritoryVoronoiModel {
-  const { systems, occupierClanIdBySystemId, mapBounds, toScreen } = input;
+}): { voronoiSites: GalaxyVoronoiSite[]; territorySites: GalaxyTerritorySite[] } {
+  const { systems, occupierClanIdBySystemId, toScreen } = input;
   const voronoiSites: GalaxyVoronoiSite[] = [];
   const territorySites: GalaxyTerritorySite[] = [];
 
@@ -66,16 +73,52 @@ export function computeGalaxyMapTerritoryVoronoiModel(input: {
     });
   }
 
-  if (voronoiSites.length < 2) {
-    return { fills: [], paths: [], occupationLabels: [] };
-  }
+  return { voronoiSites, territorySites };
+}
 
-  const layers = buildGalaxyTerritoryVoronoiLayers({
-    sites: territorySites,
-    bounds: mapBounds,
-  });
+const EMPTY_TESSELLATION: GalaxyMapTerritoryTessellation = {
+  geometry: null,
+  borderSegments: [],
+};
 
-  const segments = buildGalaxyBlueRedVoronoiBorderSegments({ sites: voronoiSites, bounds: mapBounds });
+const EMPTY_MODEL: GalaxyMapTerritoryVoronoiModel = {
+  fills: [],
+  paths: [],
+  occupationLabels: [],
+};
+
+export function tessellateGalaxyMapTerritoryVoronoiModel(input: {
+  systems: StarSystem[];
+  occupierClanIdBySystemId: Record<string, string | undefined>;
+  mapBounds: { x0: number; y0: number; x1: number; y1: number };
+  toScreen: (pos: { x: number; y: number }) => { x: number; y: number };
+}): GalaxyMapTerritoryTessellation {
+  const { voronoiSites, territorySites } = buildVoronoiSites(input);
+  if (voronoiSites.length < 2) return EMPTY_TESSELLATION;
+
+  return {
+    geometry: tessellateGalaxyTerritoryGeometry({
+      sites: territorySites,
+      bounds: input.mapBounds,
+    }),
+    borderSegments: tessellateGalaxyBlueRedVoronoiBorderSegments({
+      sites: voronoiSites,
+      bounds: input.mapBounds,
+    }),
+  };
+}
+
+export function paintGalaxyMapTerritoryVoronoiModel(
+  tessellation: GalaxyMapTerritoryTessellation,
+  revealedSystemIds?: ReadonlySet<string>,
+): GalaxyMapTerritoryVoronoiModel {
+  if (!tessellation.geometry) return EMPTY_MODEL;
+
+  const layers = paintGalaxyTerritoryLayers(tessellation.geometry, revealedSystemIds);
+  const segments = paintGalaxyBlueRedVoronoiBorderSegments(
+    tessellation.borderSegments,
+    revealedSystemIds,
+  );
   const polylines = chainAndChamferGalaxyBorders(segments);
   const paths = polylines
     .map((pl, idx) => ({
@@ -91,4 +134,18 @@ export function computeGalaxyMapTerritoryVoronoiModel(input: {
     paths,
     occupationLabels: layers.occupationLabels,
   };
+}
+
+/** Voronoi 채움·국경·점령 라벨 앵커 — tessellate + paint. worldmap은 둘을 분리 memo. */
+export function computeGalaxyMapTerritoryVoronoiModel(input: {
+  systems: StarSystem[];
+  occupierClanIdBySystemId: Record<string, string | undefined>;
+  mapBounds: { x0: number; y0: number; x1: number; y1: number };
+  toScreen: (pos: { x: number; y: number }) => { x: number; y: number };
+  revealedSystemIds?: ReadonlySet<string>;
+}): GalaxyMapTerritoryVoronoiModel {
+  return paintGalaxyMapTerritoryVoronoiModel(
+    tessellateGalaxyMapTerritoryVoronoiModel(input),
+    input.revealedSystemIds,
+  );
 }

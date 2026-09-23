@@ -60,7 +60,7 @@
 | 14 | SIM ingest · market micro · trade route daily | 가격 1회 |
 | 15 | AABS + **integrated engage HP** | 전투 난이도 |
 | 16–19 | **convoy** · **upkeep** · central bank · **fiscal closed loop** | 물류·금고·재정 |
-| 20–22 | equilibrium · lab/tavern · mission/PGP/ownership 가격 | 장기 평형 |
+| 20–22 | equilibrium · lab/bar · mission/PGP/ownership 가격 | 장기 평형 |
 | 23–24 | learning(optional) · gauge apply · trend commit | 마감 |
 
 패스 간 `yieldJsThread()` — 부트 블로킹 방어.

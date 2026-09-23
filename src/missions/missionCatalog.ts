@@ -1,19 +1,28 @@
 import { Mission } from '../types';
 import { MISSIONS_FROM_CSV } from '../data/generated';
 import { getArcCoreInstanceMaterializedMission, isArcCoreInstanceMissionId } from './arcCoreInstanceMissionResolver';
+import { isCaptainPersonalMissionId } from './captainPersonalMissionIds';
+import { getCaptainPersonalMaterializedMission } from './captainPersonalMissionResolver';
 
 export {
   FIRST_TUTORIAL_MISSION_ID,
   FIRST_MISSION_ID,
+  MAIN_STORY_MISSION_PREFIX,
   isTutorialMissionId,
+  isMainStoryMissionId,
+  isCampaignPrimaryMissionId,
   isQuestMissionId,
+  CHAPTER1_NAMED_SIDE_QUEST_IDS,
+  isChapter1NamedSideQuestId,
   isStoryMissionId,
   isInstanceMissionId,
   listTutorialMissions,
+  listMainStoryMissions,
   listQuestMissions,
   listStoryMissions,
   listInstanceMissions,
   resolveMissionTrack,
+  missionTrackHudPriority,
   type MissionTrack,
 } from './missionTrack';
 
@@ -21,6 +30,9 @@ export {
 export function getMissionById(missionId: string): Mission | undefined {
   if (isArcCoreInstanceMissionId(missionId)) {
     return getArcCoreInstanceMaterializedMission(missionId);
+  }
+  if (isCaptainPersonalMissionId(missionId)) {
+    return getCaptainPersonalMaterializedMission(missionId);
   }
   return MISSIONS_FROM_CSV[missionId];
 }

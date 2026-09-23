@@ -1,9 +1,9 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../utils/theme';
 import type { ArcOverlayVisualTheme } from './tacticalOverlayPreview';
 import { TACTICAL_OVERLAY } from './tacticalOverlayStyles';
-import { bindUiSfxPressIn } from '../../audio';
+import { useArcButtonReleaseHandlers } from '../press/useArcButtonRelease';
 
 type Props = {
   onPress: () => void;
@@ -18,12 +18,17 @@ export const ArcOverlayCloseButton = memo(function ArcOverlayCloseButton({
   accessibilityLabel = 'Close',
 }: Props) {
   const isTactical = visualTheme === 'tactical';
-  const onPressIn = useMemo(() => bindUiSfxPressIn({ cue: 'ui_close' }), []);
+  const release = useArcButtonReleaseHandlers({ onPress, sfxCue: 'ui_close' });
   return (
     <Pressable
-      style={[styles.btn, isTactical ? styles.btnTactical : null]}
-      onPressIn={onPressIn}
-      onPress={onPress}
+      style={({ pressed }) => [
+        styles.btn,
+        isTactical ? styles.btnTactical : null,
+        pressed && styles.pressed,
+      ]}
+      onPressIn={release.onPressIn}
+      onPressOut={release.onPressOut}
+      onPress={release.onPress}
       hitSlop={8}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
@@ -46,6 +51,7 @@ const styles = StyleSheet.create({
     borderColor: TACTICAL_OVERLAY.insetBorder,
     backgroundColor: TACTICAL_OVERLAY.insetBg,
   },
+  pressed: { opacity: 0.72 },
   text: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,

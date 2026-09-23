@@ -7,6 +7,7 @@ import type { PlanetCoreGaugeView } from '../../store/planetCoreRuntimeStore';
 import { listInstalledFacilityLevels } from '../../game/planetDevelopment/planetFacilityLevelResolver';
 import { resolvePlanetCoreStatEquilibriumPolicy } from '../balance/planetCoreStatEquilibriumPolicy';
 import {
+  resolvePlanetGenesisCoreGauge,
   resolvePlanetGenesisResourcePct,
   resolvePlanetResourceEcosystemPolicy,
 } from '../planetResource/planetResourceEcosystemPolicy';
@@ -18,7 +19,7 @@ const FACILITY_TYPES = [
   'shipyard',
   'defense_satellite',
   'laboratory',
-  'tavern',
+  'bar',
 ] as const;
 
 export type PlanetDevStatWeightGauge = PlanetCoreGaugeView;
@@ -84,16 +85,17 @@ export function computePlanetDevelopmentStatTargets(
   const base = policy.baselineStatPct;
   const targetMax = policy.fullDevTargetPct;
   const span = Math.max(0, targetMax - base);
-  const genesisResource = clamp100(baseline?.resource ?? resolvePlanetGenesisResourcePct(planetId));
+  const genesis = resolvePlanetGenesisCoreGauge(planetId);
+  const genesisResource = clamp100(baseline?.resource ?? genesis.resource ?? resolvePlanetGenesisResourcePct(planetId));
   const resourceTargetMax = eco.resourceFullDevTargetPct;
   const resourceSpan = Math.max(0, resourceTargetMax - genesisResource);
 
   const b: PlanetCoreGaugeView = {
     resource: genesisResource,
-    population: baseline?.population ?? base,
-    defense: baseline?.defense ?? base,
-    technology: baseline?.technology ?? base,
-    environment: baseline?.environment ?? base,
+    population: baseline?.population ?? genesis.population ?? base,
+    defense: baseline?.defense ?? genesis.defense ?? base,
+    technology: baseline?.technology ?? genesis.technology ?? base,
+    environment: baseline?.environment ?? genesis.environment ?? base,
   };
 
   const weights = resolvePlanetDevelopmentStatWeights(planetId);

@@ -10,6 +10,9 @@ import { applyReachSystemMissionObjectives } from '../../missions/applyReachSyst
 export type TransitCombatSession = {
   originSystemId: string;
   destinationSystemId: string;
+  /** 활성 defeat_enemy 가 있으면 HUD·시뮬 시드 동일 함장 */
+  missionEnemyTemplateId?: string | null;
+  missionPlanetId?: string | null;
 };
 
 type TransitCombatSessionState = {
@@ -17,6 +20,10 @@ type TransitCombatSessionState = {
   /** 전투 종료 후 worldmap 진입 시 목적지 패널 1회 표시 */
   pendingWorldmapArrivalUi: boolean;
   begin: (session: TransitCombatSession) => void;
+  bindMission: (patch: {
+    missionEnemyTemplateId: string;
+    missionPlanetId: string | null;
+  }) => void;
   clear: () => void;
   consumeWorldmapArrivalUi: () => boolean;
   commitArrival: (opts?: {
@@ -30,6 +37,18 @@ export const useTransitCombatSessionStore = create<TransitCombatSessionState>((s
   pendingWorldmapArrivalUi: false,
 
   begin: (session) => set({ session }),
+
+  bindMission: (patch) => {
+    const session = get().session;
+    if (!session) return;
+    set({
+      session: {
+        ...session,
+        missionEnemyTemplateId: patch.missionEnemyTemplateId,
+        missionPlanetId: patch.missionPlanetId,
+      },
+    });
+  },
 
   clear: () => set({ session: null, pendingWorldmapArrivalUi: false }),
 

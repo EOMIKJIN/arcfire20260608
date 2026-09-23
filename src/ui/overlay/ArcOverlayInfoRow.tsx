@@ -8,6 +8,7 @@ type Props = {
   label: string;
   value: string;
   visualTheme?: ArcOverlayVisualTheme;
+  valueColor?: string;
 };
 
 /** 범용 오버레이 라벨·값 행 — phosphor(시안/흰) · tactical(라이트 카드) */
@@ -15,12 +16,13 @@ export const ArcOverlayInfoRow = memo(function ArcOverlayInfoRow({
   label,
   value,
   visualTheme = 'phosphor',
+  valueColor,
 }: Props) {
   const styles = visualTheme === 'tactical' ? tacticalStyles : phosphorStyles;
   return (
     <View style={styles.row}>
       <Text style={styles.rowLabel}>{label}</Text>
-      <Text style={styles.rowValue}>{value}</Text>
+      <Text style={[styles.rowValue, valueColor ? { color: valueColor } : null]}>{value}</Text>
     </View>
   );
 });

@@ -3,10 +3,21 @@ import { Pressable, Text, View } from 'react-native';
 import { PlanetHubDigitalGauge } from '../../../components/planet/PlanetHubActionGaugeSlot';
 import type { PlanetDevListRowView } from '../../../game/planetDevelopment/planetDevelopmentListRowModel';
 import { useT } from '../../../i18n';
+import { isEpicPlanetFacilityDevLevel } from '../../../game/planetDevelopment/planetFacilityDevLevelDisplay';
+import {
+  PLANET_DEV_LIST_ICON_MONO,
+  PLANET_DEV_LIST_ICON_PX,
+  PLANET_DEV_LIST_LEVEL_TAG_BG,
+  PLANET_DEV_LIST_LEVEL_TAG_INK,
+  PLANET_DEV_LIST_LEVEL_TAG_INK_MUTED,
+  resolvePlanetDevListIconChromaColor,
+} from '../../../game/planetDevelopment/planetDevListIconChroma';
+import { COLORS } from '../../../utils/theme';
 import { PlanetHubActionIcon } from '../../../ui/tactical/PlanetHubActionIcon';
 import { overlayInkColor } from '../overlayVisualTokens';
 import type { ArcOverlayVisualTheme } from '../tacticalOverlayRollout';
 import { PlanetDevListItemHeader } from './PlanetDevOverlayChrome';
+import { PlanetDevProgressBreathText } from './PlanetDevProgressBreathText';
 import { planetDevelopmentOverlayStyles as styles } from './planetDevelopmentOverlayStyles';
 
 type Props = {
@@ -32,6 +43,8 @@ export const PlanetDevelopmentListRow = memo(function PlanetDevelopmentListRow({
     : [styles.listItemImageSlot, styles.listItemImageSlotPhosphor];
 
   const progressPct = row.progress?.progressPct ?? 0;
+  const chromaPct = Math.max(0, Math.min(1, row.iconChromaPct));
+  const chromaColor = resolvePlanetDevListIconChromaColor(row.catalogId);
   const gaugeA11y = row.progress
     ? row.progress.a11yLabel
     : t('planetDev.listGaugeIdleA11y', { pct: progressPct });
@@ -45,14 +58,58 @@ export const PlanetDevelopmentListRow = memo(function PlanetDevelopmentListRow({
       ]}
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={row.label}
+      accessibilityLabel={`${row.label} ${row.levelTag}`}
     >
       <View style={styles.listItemRow}>
-        <View
-          style={imageSlotStyle}
-          accessibilityLabel={t('planetDev.listImagePlaceholderA11y', { label: row.label })}
-        >
-          <PlanetHubActionIcon spec={row.placeholderIcon} size={28} color={labelInk} />
+        <View style={styles.listItemLead}>
+          <View
+            style={imageSlotStyle}
+            accessibilityLabel={t('planetDev.listImagePlaceholderA11y', { label: row.label })}
+          >
+            <View style={styles.listItemIconStack}>
+              <View style={styles.listItemIconLayer}>
+                <PlanetHubActionIcon spec={row.placeholderIcon} size={PLANET_DEV_LIST_ICON_PX} color={PLANET_DEV_LIST_ICON_MONO} />
+              </View>
+              {chromaPct > 0 ? (
+                <View style={[styles.listItemIconChromaClip, { height: PLANET_DEV_LIST_ICON_PX * chromaPct }]}>
+                  <View style={styles.listItemIconChromaInner}>
+                    <PlanetHubActionIcon spec={row.placeholderIcon} size={PLANET_DEV_LIST_ICON_PX} color={chromaColor} />
+                  </View>
+                </View>
+              ) : null}
+            </View>
+          </View>
+          <View style={styles.listItemLevelTagSlot}>
+            <View
+              style={[
+                styles.listItemLevelTag,
+                {
+                  backgroundColor: PLANET_DEV_LIST_LEVEL_TAG_BG,
+                  borderColor: isEpicPlanetFacilityDevLevel(row.displayLevel)
+                    ? COLORS.gold
+                    : row.displayLevel > 0
+                      ? chromaColor
+                      : PLANET_DEV_LIST_ICON_MONO,
+                },
+              ]}
+            >
+              {row.displayLevel > 0 ? (
+                <View style={[styles.listItemLevelTagAccent, { backgroundColor: chromaColor }]} />
+              ) : null}
+              <Text
+                style={[
+                  styles.listItemLevelTagText,
+                  {
+                    color: row.displayLevel > 0
+                      ? PLANET_DEV_LIST_LEVEL_TAG_INK
+                      : PLANET_DEV_LIST_LEVEL_TAG_INK_MUTED,
+                  },
+                ]}
+              >
+                {row.levelTag}
+              </Text>
+            </View>
+          </View>
         </View>
         <View style={styles.listItemBody}>
           <PlanetDevListItemHeader
@@ -71,12 +128,13 @@ export const PlanetDevelopmentListRow = memo(function PlanetDevelopmentListRow({
           />
           <View style={styles.listDevGaugeSlot}>
             {row.progress ? (
-              <Text
+              <PlanetDevProgressBreathText
                 style={[styles.listItemProgressLabel, { color: labelInk }]}
                 numberOfLines={2}
+                accessibilityLabel={row.progress.a11yLabel}
               >
                 {row.progress.label}
-              </Text>
+              </PlanetDevProgressBreathText>
             ) : row.completeStatus ? (
               <Text
                 style={[styles.listItemStatusComplete, { color: valueInk }]}

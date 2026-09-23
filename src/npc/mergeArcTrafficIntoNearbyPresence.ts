@@ -15,6 +15,7 @@ import {
   resolveCapitalShipClassification,
 } from '../arcCore/balance/capitalShipClassification';
 import { NEARBY_PRESENCE_DISPLAY_SEP, type NearbyOrbitPresenceRow } from './nearbyOrbitPresenceSystem';
+import { stripHubOrbitClanBracketPrefix } from '../game/planetHub/nearbyPresenceContract';
 
 const ARC_HUB_INFO_SLOT_BASE = 1000;
 
@@ -22,7 +23,8 @@ function captainLabelFromDisplayLine(displayLine: string): string {
   const sep = NEARBY_PRESENCE_DISPLAY_SEP;
   const head = (displayLine.split(sep)[0] ?? displayLine).trim();
   const dot = head.indexOf(' · ');
-  return dot >= 0 ? head.slice(0, dot).trim() : head;
+  const raw = dot >= 0 ? head.slice(0, dot).trim() : head;
+  return stripHubOrbitClanBracketPrefix(raw);
 }
 
 /** 행성 주변 전시용 — 반지름을 줄인 결정론 궤도(플레이스홀더) */
@@ -61,6 +63,7 @@ export function mergeArcShipsIntoNearbyHubPresence(
   for (const row of baseRows) {
     const shipId = row.linkedCapitalShipId;
     if (shipId) seenShip.add(shipId);
+    if (row.captainId) seenCaptainId.add(row.captainId);
     const label = captainLabelFromDisplayLine(row.displayLine);
     if (label) seenCaptainLabel.add(label);
   }
@@ -87,7 +90,7 @@ export function mergeArcShipsIntoNearbyHubPresence(
     const shipName = resolveNpcCapitalShipDisplayName(ship.id, hull?.name ?? ship.id, locale);
     const classification = resolveCapitalShipClassification(ship.id);
     const infoRight = classification
-      ? formatCapitalShipInfoPanelBadge(classification)
+      ? formatCapitalShipInfoPanelBadge(classification, locale)
       : (hull?.infoLineSuffix && hull.infoLineSuffix.trim()) || '';
     const mk = 'MK.I';
     const hullClassId = hull?.hullTypeId ?? NPC_CAPITAL_HULL_FALLBACK_ID;
@@ -97,6 +100,7 @@ export function mergeArcShipsIntoNearbyHubPresence(
       displayLine: `${captainName} · ${shipName}${sep}${infoRight || mk}`,
       orbit: arcTrafficPlaceholderOrbit(planetId, systemId, salt++),
       linkedCapitalShipId: ship.id,
+      captainId: ship.captainId,
     });
     seenShip.add(ship.id);
     seenCaptainId.add(ship.captainId);

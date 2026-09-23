@@ -54,11 +54,26 @@ export function listIngameDialogScenesForTrigger(
 }
 
 import { resolveArcCoreInstanceTemplateMissionId } from '../../missions/arcCoreInstanceMissionResolver';
+import type { MissionClearNpcSceneKind } from '../../missions/resolveMissionClearNpcContext';
 
-export function resolveMissionClearDialogSceneId(missionId: string): string | null {
+/**
+ * 완료 대화 씬 선택 3단 우선순위:
+ * 1. 미션별 맞춤 씬(`mission_clear_${missionId}`, 기존) — 항상 최우선
+ * 2. 담당 NPC 배정 시 제네릭 담당자 씬(배달/도착)
+ * 3. 오퍼레이터 기본(`mission_clear_default`, 기존 폴백)
+ */
+export function resolveMissionClearDialogSceneId(
+  missionId: string,
+  assignedClearNpcCaptainId?: string | null,
+  npcSceneKind?: MissionClearNpcSceneKind,
+): string | null {
   const templateId = resolveArcCoreInstanceTemplateMissionId(missionId) ?? missionId;
   const specific = `mission_clear_${templateId}`;
   if (INGAME_SCENE_BY_ID.has(specific)) return specific;
+  if (assignedClearNpcCaptainId) {
+    const npcSceneId = npcSceneKind === 'delivery' ? 'mission_clear_npc_delivery' : 'mission_clear_npc_arrival';
+    if (INGAME_SCENE_BY_ID.has(npcSceneId)) return npcSceneId;
+  }
   if (INGAME_SCENE_BY_ID.has('mission_clear_default')) return 'mission_clear_default';
   return null;
 }

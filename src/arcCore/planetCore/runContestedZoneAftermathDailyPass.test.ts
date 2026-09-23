@@ -7,13 +7,24 @@ import {
 import { isPlanetContestedZone } from '../balance/balanceTableRegistry';
 import { calculatePlanetPgpFromStats } from '../../world/planetPgpModel';
 
-test('contested zones — 3 planets flagged in occupation seeds', () => {
+test('contested zones — seed 3 remain flagged; theater rows added', () => {
   const ids = listContestedZoneStatAftermathPlanetIds();
-  assert.equal(ids.length, 3);
-  for (const id of ids) {
-    assert.equal(isPlanetContestedZone(id), true, id);
+  const seed = ids.filter((id) => isPlanetContestedZone(id));
+  assert.equal(seed.length, 3);
+  for (const id of seed) {
     assert.ok(resolveContestedZoneStatAftermathOffsets(id));
   }
+  assert.equal(isPlanetContestedZone('helios_core'), false);
+  assert.equal(isPlanetContestedZone('titan_ruins'), false);
+  assert.equal(isPlanetContestedZone('__dynamic_front__'), false);
+  assert.ok(ids.includes('helios_core'));
+  assert.ok(ids.includes('titan_ruins'));
+  assert.ok(ids.includes('__dynamic_front__'));
+  const helios = resolveContestedZoneStatAftermathOffsets('helios_core')!;
+  const draco = resolveContestedZoneStatAftermathOffsets('draco_haven')!;
+  assert.equal(helios.resource, draco.resource);
+  assert.equal(helios.population, draco.population);
+  assert.equal(helios.defense, draco.defense);
 });
 
 test('contested aftermath offsets — net war economy vs civilian drag', () => {

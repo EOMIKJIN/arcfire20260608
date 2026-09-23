@@ -1,5 +1,6 @@
 import {
   invalidatePlanetWorldObjectsListCache,
+  listPlanetWorldObjectsByKindCached,
   listPlanetWorldObjectsCached,
 } from './planetWorldObjectsListCache';
 import type { WorldObject, WorldObjectKind } from './types';
@@ -35,7 +36,7 @@ export function listPlanetWorldObjectsByKind(
   systemId: string,
   kind: WorldObjectKind,
 ): WorldObject[] {
-  return listPlanetWorldObjectsCached(planetId, systemId).filter((o) => o.kind === kind);
+  return listPlanetWorldObjectsByKindCached(planetId, systemId, kind);
 }
 
 export function getPlanetWorldObject(

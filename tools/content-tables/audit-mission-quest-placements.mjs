@@ -145,8 +145,20 @@ for (const obj of defeatObjectives) {
     err(`defeat_enemy objective ${oid} (${obj.missionId}): mission_quest_combat_ops.csv 행 없음`);
     continue;
   }
-  if (op.encounterPolicy.trim() !== 'transit_guaranteed') {
-    warn(`${oid}: encounterPolicy=${op.encounterPolicy} (권장: transit_guaranteed)`);
+  const policy = op.encounterPolicy.trim();
+  const allowedPolicies = new Set([
+    'transit_guaranteed',
+    'transit_toward_anchor',
+    'hub_orbit',
+    'wave_assault',
+  ]);
+  if (!allowedPolicies.has(policy)) {
+    err(`${oid}: encounterPolicy=${policy} — 허용값 transit_guaranteed|transit_toward_anchor|hub_orbit|wave_assault`);
+  }
+  const endgameAnchors = new Set(['abyss_gate', 'core_prime', 'eternal_throne', 'genesis_origin']);
+  const policyAnchor = (op.anchorPlanetId?.trim() || missionById.get(missionId)?.offerPlanetId?.trim() || '');
+  if ((policy === 'hub_orbit' || policy === 'wave_assault') && endgameAnchors.has(policyAnchor)) {
+    err(`${oid}: ${policy} 를 endgame_boss 행성(${policyAnchor})에 둘 수 없음`);
   }
   const enemyId = obj.targetId.trim();
   if (!enemyTemplateIds.has(enemyId)) {
@@ -182,7 +194,7 @@ for (const c of combatOps) {
   }
 }
 
-// --- tq_* 선술집 인스턴스 의뢰 — materialize·보상·완료 트리거 정적 검증 ---
+// --- tq_* 바 인스턴스 의뢰 — materialize·보상·완료 트리거 정적 검증 ---
 const NEIGHBOR_PLACEHOLDER = '__neighbor_system__';
 const DISCOVERY_PLACEHOLDER = '__discovery_planet__';
 const tqMissions = missions.filter((m) => m.id.trim().startsWith('tq_'));
@@ -194,13 +206,13 @@ for (const obj of objectives) {
 }
 
 const systemByPlanet = new Map();
-const tavernPlanets = [];
+const barPlanets = [];
 for (const row of planets) {
   const planetId = row.id.trim();
   const systemId = row.systemId.trim();
   if (planetId && systemId) systemByPlanet.set(planetId, systemId);
-  if (String(row.hasTavern).toLowerCase() === 'true' && planetId) {
-    tavernPlanets.push(planetId);
+  if (String(row.hasBar).toLowerCase() === 'true' && planetId) {
+    barPlanets.push(planetId);
   }
 }
 
@@ -289,7 +301,7 @@ for (const mission of tqMissions) {
   }
 }
 
-for (const planetId of tavernPlanets) {
+for (const planetId of barPlanets) {
   for (const mission of tqMissions) {
     const mid = mission.id.trim();
     for (const obj of objectivesByMission.get(mid) ?? []) {
@@ -310,7 +322,7 @@ console.log('=== audit:mission-quest-placements ===');
 console.log(`buy_goods objectives: ${buyObjectives.length}`);
 console.log(`defeat_enemy objectives: ${defeatObjectives.length}`);
 console.log(`placements: ${placements.length} · combat_ops: ${combatOps.length}`);
-console.log(`tq_* tavern templates: ${tqMissions.length} · tavern planets: ${tavernPlanets.length}`);
+console.log(`tq_* bar templates: ${tqMissions.length} · bar planets: ${barPlanets.length}`);
 
 if (warnings.length > 0) {
   console.log('\n[WARN]');

@@ -20,6 +20,7 @@ import {
   listTradeRouteDemandImportItemIdsForPlanet,
 } from './tradeRouteRegistry';
 import { resolveTradeRouteAssignedSupplyPlanetId } from './tradeRoutePlanetAssignmentRegistry';
+import { isPlanetConvoyTradeEnabled } from './synthFrontierConvoyTradeBridge';
 
 export type ArcCoreConvoyDailySettlementResult = {
   ran: boolean;
@@ -59,7 +60,8 @@ export async function runArcCoreConvoyDailySettlementPass(): Promise<ArcCoreConv
   usePlanetTradeFeeLedgerStore.getState().ensureDay(kstDayKey);
 
   const minQty = getConvoyDailyMinTradeQty();
-  const supplyPlanetIds = listConvoySupplyPlanetIds();
+  // 교역 미개방(잠금 synth·비무역 A축)은 프로필만 있어도 왕복 대상이 아님 — 실패 집계에서 제외
+  const supplyPlanetIds = listConvoySupplyPlanetIds().filter(isPlanetConvoyTradeEnabled);
   const demandPlanetSet = new Set<string>();
   const failedPlanetIds: string[] = [];
   let supplyRoundTripsOk = 0;
@@ -77,7 +79,7 @@ export async function runArcCoreConvoyDailySettlementPass(): Promise<ArcCoreConv
     }
   }
 
-  const allDemand = listConvoyDemandPlanetIds();
+  const allDemand = listConvoyDemandPlanetIds().filter(isPlanetConvoyTradeEnabled);
   for (const demandPlanetId of allDemand) {
     if (!demandPlanetSet.has(demandPlanetId)) {
       const bucket = usePlanetTradeFeeLedgerStore.getState().byPlanetId[demandPlanetId];
@@ -96,7 +98,7 @@ export async function runArcCoreConvoyDailySettlementPass(): Promise<ArcCoreConv
       continue;
     }
     const supplyPlanetId = resolveTradeRouteAssignedSupplyPlanetId(tgId);
-    if (!supplyPlanetId) {
+    if (!supplyPlanetId || !isPlanetConvoyTradeEnabled(supplyPlanetId)) {
       failedPlanetIds.push(demandPlanetId);
       continue;
     }

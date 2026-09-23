@@ -52,6 +52,9 @@ export function pickBalancedArcTrafficPlanetId(
   return pickAmongLeastLoaded(allPlanetIds, counts, salt);
 }
 
+/** 스타터 허브 — 부트 직후 아크 수송이 전 행성 분산만 되면 아르카디아가 빈 화면으로 관측됨 */
+const STARTER_HUB_SOFT_PIN_PLANET_ID = 'arcadia_prime';
+
 /** 부트스트랩: N척을 행성 풀에 순차 균등 분산 */
 export function spreadArcTrafficInitialPlanetIds(
   allPlanetIds: readonly string[],
@@ -64,6 +67,17 @@ export function spreadArcTrafficInitialPlanetIds(
     const pid = pickAmongLeastLoaded(allPlanetIds, counts, i);
     out.push(pid);
     counts.set(pid, (counts.get(pid) ?? 0) + 1);
+  }
+  // 스타터 허브에 최소 1척 시드 — 이후 tick 균형 배분이 재배치한다.
+  if (
+    allPlanetIds.includes(STARTER_HUB_SOFT_PIN_PLANET_ID)
+    && out.length > 0
+    && !out.includes(STARTER_HUB_SOFT_PIN_PLANET_ID)
+  ) {
+    const prev = out[0]!;
+    out[0] = STARTER_HUB_SOFT_PIN_PLANET_ID;
+    counts.set(prev, Math.max(0, (counts.get(prev) ?? 1) - 1));
+    counts.set(STARTER_HUB_SOFT_PIN_PLANET_ID, (counts.get(STARTER_HUB_SOFT_PIN_PLANET_ID) ?? 0) + 1);
   }
   return out;
 }

@@ -1,9 +1,11 @@
 export { IngameDialogHost } from './IngameDialogHost';
 export {
+  abortIngameDialogLeavingStage,
   dismissIngameDialog,
   getIngameDialogSceneById,
   isIngameDialogActive,
   presentIngameDialogScene,
+  presentAdHocIngameDialog,
   registerIngameDialogCallback,
   resetIngameDialogPlanetLandedDedupe,
   resolveMissionClearDialogSceneId,
@@ -14,8 +16,19 @@ export {
   runIntroSeenAndStartFirstMissionPolicy,
   INGAME_DIALOG_OVERLAY_ID,
 } from './ingameDialogApi';
-export { resolveTavernHostDialogSceneId } from './resolveTavernHostDialogSceneId';
+export { COMBAT_END_OPERATOR_AUTO_DISMISS_MS } from './ingameDialogAutoDismiss';
+export {
+  tryPresentScanToMainQuestDialog,
+  flushPendingScanIngameDialog,
+} from './tryPresentScanToMainQuestDialog';
+export {
+  INGAME_DIALOG_FEATURE_LINK_DELAY_MS,
+  runAfterIngameDialogFeatureLinkDelay,
+  cancelIngameDialogFeatureLinkDelay,
+} from './ingameDialogFeatureLink';
+export { resolveBarHostDialogSceneId } from './resolveBarHostDialogSceneId';
 export type {
+  IngameDialogAutoDismissMode,
   IngameDialogCompletionAction,
   IngameDialogTextContext,
   PresentIngameDialogOptions,

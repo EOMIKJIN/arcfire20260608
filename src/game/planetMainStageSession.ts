@@ -7,6 +7,9 @@ import { trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
 import { runStageNativeReclaimPass } from './nativeReclaim/runStageNativeReclaimPass';
 import { runPlanetChangeNativeReclaimLight } from './nativeReclaim/runPlanetChangeNativeReclaimLight';
 import { emitMemProfileMarker } from './devMemoryProfileBridge';
+import { dismissArcCoreChatOverlays } from '../arcCore/chat/dismissArcCoreChatOverlays';
+import { clearStellaQuestTalkMemory } from '../arcCore/chat/stellaQuestTalkMemory';
+import { cancelIngameDialogFeatureLinkDelay } from './ingameDialog/ingameDialogFeatureLink';
 
 export type PlanetMainStageReleaseReason = 'route_blur' | 'planet_change';
 
@@ -48,6 +51,12 @@ export function releasePlanetMainStageSession(opts: {
   }
   lastPlanetMainReleaseKey = releaseKey;
   lastPlanetMainReleaseAtMs = now;
+
+  cancelIngameDialogFeatureLinkDelay();
+  if (opts.reason === 'route_blur') {
+    dismissArcCoreChatOverlays();
+    clearStellaQuestTalkMemory();
+  }
 
   releaseAllPlanetSessionResources({
     reason: opts.reason,

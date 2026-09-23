@@ -1,0 +1,112 @@
+{
+  "colonizeTopKeys": [
+    "byPlanetId",
+    "fleetReadyAtMs"
+  ],
+  "colonizeType": "object",
+  "fleetReadyAtMs": [],
+  "sample": {
+    "byPlanetId": {
+      "synth_078_p": {
+        "planetId": "synth_078_p",
+        "systemId": "synth_078",
+        "factionId": "stellium",
+        "phase": "outpost",
+        "hopDistance": 4,
+        "travelDays": 3,
+        "attempt": 0,
+        "departedDayKey": "2026-09-21",
+        "dueDayKey": "2026-09-24",
+        "outpostDueAtMs": 1789998875614,
+        "lastOpexDayKey": "2026-09-22"
+      },
+      "synth_054_p": {
+        "planetId": "synth_054_p",
+        "systemId": "synth_054",
+        "factionId": "stellium",
+        "phase": "queued",
+        "hopDistance": 3,
+        "travelDays": 3,
+        "attempt": 0,
+        "departedDayKey": null,
+        "dueDayKey": null,
+        "outpostDueAtMs": null,
+        "lastOpexDayKey": null
+      },
+      "synth_057_p": {
+        "planetId": "synth_057_p",
+        "systemId": "synth_057",
+        "factionId": "stellium",
+        "phase": "queued",
+        "hopDistance": 5,
+        "travelDays": 3,
+        "attempt": 0,
+        "departedDayKey": null,
+        "dueDayKey": null,
+        "outpostDueAtMs": null,
+        "lastOpexDayKey": null
+      },
+      "synth_070_p": {
+        "planetId": "synth_070_p",
+        "systemId": "synth_070",
+        "factionId": "stellium",
+        "phase": "outpost",
+        "hopDistance": 6,
+        "travelDays": 3,
+        "attempt": 0,
+        "departedDayKey": "2026-09-22",
+        "dueDayKey": "2026-09-25",
+        "outpostDueAtMs": 1790040482883,
+        "lastOpexDayKey": "2026-09-22"
+      },
+      "synth_069_p": {
+        "planetId": "synth_069_p",
+        "systemId": "synth_069",
+        "factionId": "stellium",
+        "phase": "outpost",
+        "hopDistance": 7,
+        "travelDays": 3,
+        "attempt": 0,
+        "departedDayKey": "2026-09-21",
+        "dueDayKey": "2026-09-24",
+        "outpostDueAtMs": 1790000984568,
+        "lastOpexDayKey": "2026-09-22"
+      },
+      "synth_065_p": {
+        "planetId": "synth_065_p",
+        "systemId": "synth_065",
+        "factionId": "stellium",
+        "phase": "queued",
+        "hopDistance": 8,
+        "travelDays": 3,
+        "attempt": 0,
+        "departedDayKey": null,
+        "dueDayKey": null,
+        "outpostDueAtMs": null,
+        "lastOpexDayKey": null
+      }
+    },
+    "fleetReadyAtMs": []
+  },
+  "holdTopKeys": [
+    "version",
+    "updatedAt",
+    "data"
+  ],
+  "holdDataKeys": [
+    "clans",
+    "planetHolds",
+    "deployments",
+    "operations"
+  ],
+  "fiscalTopKeys": [
+    "hullsOutfitted",
+    "loanCredits",
+    "lastRepayDayKey"
+  ],
+  "fiscalSummary": {
+    "vaultCredits": null,
+    "reserved": null,
+    "lastDayKey": null
+  }
+}

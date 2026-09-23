@@ -27,7 +27,7 @@ export type PlanetOwnershipDeedValuationPolicy = {
   zoneMulByType: Record<ZoneType, number>;
   facilityTradePortMul: number;
   facilityShipyardMul: number;
-  facilityTavernMul: number;
+  facilityBarMul: number;
   supplyVitalityMin: number;
   supplyVitalityMax: number;
   populationRevenueFloor: number;
@@ -85,7 +85,7 @@ export function resolvePlanetOwnershipDeedValuationPolicy(): PlanetOwnershipDeed
     },
     facilityTradePortMul: Math.max(1, num(kv.get('facility_trade_port_mul'), 1.12)),
     facilityShipyardMul: Math.max(1, num(kv.get('facility_shipyard_mul'), 1.06)),
-    facilityTavernMul: Math.max(1, num(kv.get('facility_tavern_mul'), 1.04)),
+    facilityBarMul: Math.max(1, num(kv.get('facility_bar_mul'), 1.04)),
     supplyVitalityMin: Math.max(0.1, num(kv.get('supply_vitality_min'), 0.55)),
     supplyVitalityMax: Math.max(0.1, num(kv.get('supply_vitality_max'), 1.35)),
     populationRevenueFloor: Math.max(0, num(kv.get('population_revenue_floor'), 0.72)),
@@ -111,13 +111,13 @@ export function resolveOwnershipPricingZoneType(planetId: string): ZoneType {
 }
 
 function resolveFacilitySovereignMul(
-  planet: { hasTradePort?: boolean; hasShipyard?: boolean; hasTavern?: boolean },
+  planet: { hasTradePort?: boolean; hasShipyard?: boolean; hasBar?: boolean },
   policy: PlanetOwnershipDeedValuationPolicy,
 ): number {
   let mul = 1;
   if (planet.hasTradePort) mul *= policy.facilityTradePortMul;
   if (planet.hasShipyard) mul *= policy.facilityShipyardMul;
-  if (planet.hasTavern) mul *= policy.facilityTavernMul;
+  if (planet.hasBar) mul *= policy.facilityBarMul;
   return mul;
 }
 

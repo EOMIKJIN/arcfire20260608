@@ -1,5 +1,5 @@
 // ============================================================
-// 일일 배치 완료 요약 — 허브 1회 알림 (B-UX-3)
+// 일일 배치 완료 요약 — 구버전 허브 대기 pending 잔여 · 계정 초기화 정리
 // ============================================================
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -38,7 +38,7 @@ export async function clearArcCoreDailyOpsSummaryPendingForServiceLaunch(): Prom
   await clearArcCoreDailyOpsSummaryPending();
 }
 
-/** 소비 후 삭제 — 허브에서 1회만 표시 */
+/** 소비 후 삭제 — 부트 leftover flush 전용 */
 export async function consumeArcCoreDailyOpsSummaryPending(): Promise<ArcCoreDailyOpsSummaryPending | null> {
   try {
     const raw = await AsyncStorage.getItem(STORAGE_KEY);

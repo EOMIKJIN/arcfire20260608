@@ -97,8 +97,8 @@ export type PlanetEconomyFabricDetail = {
   recentEvents: PlanetEconomyFabricEvent[];
 };
 
-/** 선술집 바운티 보드 항목 — v2.0 §6-3 */
-export type TavernBountyEntry = {
+/** 바 바운티 보드 항목 — v2.0 §6-3 */
+export type BarBountyEntry = {
   id: string;
   titleKey: string;
   rewardCredits: number;
@@ -119,12 +119,19 @@ export type PlanetDefenseSatelliteUpgradeJob = {
   durationTier?: PlanetFacilityDurationTier;
 };
 
+export type PlanetDefenseSatelliteInstalledBy = 'player' | 'arc_core';
+
 export type PlanetDefenseSatelliteDetail = {
   version: 1;
   /** 최초 설치 완료 여부 */
   installed: boolean;
-  /** 1..10 — `planet_defense_satellite_level_policy.csv` */
+  /** 1..15 — `planet_defense_satellite_level_policy.csv` */
   level: number;
+  /**
+   * 투자 주체 — 자동 분쟁 어드밴티지는 `player`만.
+   * omit = 구 세이브. 플레이어 설치·업그레이드 시 스탬프.
+   */
+  installedBy?: PlanetDefenseSatelliteInstalledBy;
   /** 진행 중 업그레이드 (없으면 null) */
   upgradeJob?: PlanetDefenseSatelliteUpgradeJob | null;
   updatedAtMs?: number;
@@ -144,11 +151,11 @@ export type PlanetFacilityModuleDetail = {
   builtHullTierKeys?: string[];
   /** 연구소 — R&D 속도 감소율 캐시(%) */
   rdSpeedBonusPct?: number;
-  /** 선술집 — 활성 바운티 수 · 마지막 갱신 시각 */
+  /** 바 — 활성 바운티 수 · 마지막 갱신 시각 */
   activeBountyCount?: number;
   lastBountyRefreshTimestamp?: number;
-  /** 선술집 — 바운티 보드 슬롯 (일일 배치 갱신) */
-  bountyBoard?: TavernBountyEntry[];
+  /** 바 — 바운티 보드 슬롯 (일일 배치 갱신) */
+  bountyBoard?: BarBountyEntry[];
   /** 진행 중 업그레이드 (없으면 null) */
   upgradeJob?: PlanetDefenseSatelliteUpgradeJob | null;
   updatedAtMs?: number;

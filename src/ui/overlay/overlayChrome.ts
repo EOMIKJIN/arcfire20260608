@@ -5,6 +5,7 @@ import { TACTICAL_OVERLAY } from './tacticalOverlayStyles';
 
 export const OVERLAY_Z = {
   blocking: 2000,
+  agentSurface: 2500,
   narrative: 3000,
   panel: 4000,
   alert: 9999,
@@ -20,11 +21,11 @@ export const OVERLAY_BACKDROP = {
 
 export type OverlayCardVariant = 'phosphor' | 'panel' | 'narrative';
 
-/** Host 세로 정렬 — panel=상단 앵커 · compact=중앙 bias (kind별 하드코딩 금지, 본 테이블만) */
-export type OverlayHostAnchor = 'top' | 'center';
+/** Host 세로 정렬 — panel=상단 앵커 · compact=중앙 bias · fill=전면 (kind별 하드코딩 금지, 본 테이블만) */
+export type OverlayHostAnchor = 'top' | 'center' | 'fill';
 
 function resolveOverlayBackdrop(kind: ArcOverlayKind): string {
-  /** 인게임 대사(IngameDialogHost 등) — 하단 소형 창, 뒤 투명도 없음 */
+  /** 인게임 대사(IngameDialogHost 등) — 세로 3단 팝업, dim 없음 */
   if (kind === 'narrative') {
     return resolveArcOverlayVisualTheme(kind) === 'tactical'
       ? TACTICAL_OVERLAY.narrativeBackdrop
@@ -50,11 +51,21 @@ export function getOverlayChrome(kind: ArcOverlayKind): {
     case 'tradeQuantity':
     case 'nearbyPresenceInfo':
     case 'relicLore':
+    case 'hubTalkRoster':
+    case 'planetOwnershipRoster':
+    case 'skillInfo':
       return {
         zIndex: OVERLAY_Z.panel,
         backdrop: resolveOverlayBackdrop(kind),
         cardVariant: 'panel',
         hostAnchor: 'top',
+      };
+    case 'arcCoreChat':
+      return {
+        zIndex: OVERLAY_Z.panel,
+        backdrop: TACTICAL_OVERLAY.cardBg,
+        cardVariant: 'panel',
+        hostAnchor: 'fill',
       };
     case 'levelUp':
     case 'reward':

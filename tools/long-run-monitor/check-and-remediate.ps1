@@ -161,9 +161,24 @@ if (Test-Path $baselineJson) {
       $baseline.glMb = [double]$saved.glMb
       $baseline.pssMb = [double]$saved.pssMb
       $baseline.peakGlMb = [double]$saved.peakGlMb
+      if ($null -ne $saved.combatGracePssMb) {
+        $baseline.combatGracePssMb = [double]$saved.combatGracePssMb
+      }
     }
   } catch { }
 }
+
+$combatMountGraceEligible = $hubActiveNow -and $hardCeilingNow -and -not $hasRecentRealCrash -and (
+  Test-MemPssOnlyHardCeilingCombatGrace -GlMb $lastGl -PssMb $lastPss -Views $lastViews
+)
+$combatMountGraceClimb = $false
+if ($combatMountGraceEligible -and $baseline.ContainsKey('combatGracePssMb')) {
+  $combatMountGraceClimb = $lastPss -ge ([double]$baseline.combatGracePssMb + $MEM_COMBAT_MOUNT_PSS_CLIMB_MB)
+}
+if ($combatMountGraceEligible -and -not $combatMountGraceClimb -and -not $baseline.ContainsKey('combatGracePssMb')) {
+  $baseline.combatGracePssMb = $lastPss
+}
+
 if ($hubActiveNow -and $lastGl -gt 0) {
   if ($baseline.glMb -le 0 -or $lastGl -lt $baseline.glMb) { $baseline.glMb = $lastGl }
   if ($lastGl -gt $baseline.peakGlMb) { $baseline.peakGlMb = $lastGl }
@@ -201,6 +216,9 @@ if ($hubActiveNow -and $hardCeilingNow) {
     if (Write-GlCeilingPausedThrottle -LogDir $LogDir -GlMb $lastGl -PssMb $lastPss -Views $lastViews) {
       Write-Remediation "INFO GL_HARD_CEILING_RECORD_ONLY gl=$lastGl pss=$lastPss views=$lastViews (monitor-paused — no incident/refix spam)"
     }
+  } elseif ($combatMountGraceEligible -and -not $combatMountGraceClimb) {
+    Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] COMBAT_MOUNT_PSS_GRACE gl=$lastGl pss=$lastPss views=$lastViews gracePss=$($baseline.combatGracePssMb) restart_held"
+    Write-Remediation "INFO COMBAT_MOUNT_PSS_GRACE gl=$lastGl pss=$lastPss views=$lastViews -> restart held (PSS-only hard ceiling in combat GL band; climb/GL>=200 still remediates)"
   } else {
     Add-Content -Path $incidentLog -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] GL_HARD_CEILING gl=$lastGl pss=$lastPss views=$lastViews"
     Write-Remediation "INCIDENT GL_HARD_CEILING gl=$lastGl pss=$lastPss views=$lastViews -> immediate remediation (OOM imminent)"

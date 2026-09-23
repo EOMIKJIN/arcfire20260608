@@ -42,7 +42,7 @@
 | 개발 상세(방위위성·궤도조선소) | `planetDevDetailSession.ts` | `PlanetDevelopmentOverlayContent.tsx` (**gate 인라인**) |
 | 무역 | `tradeScreenSession.ts` | `app/(game)/trade.tsx` |
 | 조선소 | `shipyardScreenSession.ts` | `app/(game)/shipyard.tsx` |
-| 선술집 | `tavernScreenSession.ts` | `app/(game)/tavern.tsx` |
+| 바 | `barScreenSession.ts` | `app/(game)/bar.tsx` |
 | 스킬트리 | `skilltreeScreenSession.ts` | `app/(game)/skilltree.tsx` |
 | 월드맵 | `worldmapScreenSession.ts` | `app/(game)/worldmap.tsx` |
 
@@ -65,7 +65,7 @@ Metro `r` 리로드 후 아래 **실기기 탭** 확인 필요:
 
 - [ ] 행성정보 오버레이
 - [ ] 행성개발 목록·방위위성·궤도조선소 상세
-- [ ] trade / shipyard / tavern / skilltree / worldmap
+- [ ] trade / shipyard / bar / skilltree / worldmap
 
 ---
 

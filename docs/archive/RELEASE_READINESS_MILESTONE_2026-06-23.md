@@ -67,11 +67,11 @@ QA·장기 soak·릴리스           ███░░░░░░░  30%
 
 | 영역 | 구현 상태 | 주요 경로 |
 |------|-----------|-----------|
-| **핵심 루프** | E2E 플레이 가능 | intro → character-select → nickname → planet → worldmap → combat → trade/shipyard/tavern/skilltree |
+| **핵심 루프** | E2E 플레이 가능 | intro → character-select → nickname → planet → worldmap → combat → trade/shipyard/bar/skilltree |
 | **아키텍처** | v4.0 헌법 준수 | STAGE replace · dispose · Table-First · Local-AI-First |
 | **ArcCore** | 일 1회 배치 | `runArcCoreDailyOpsBatch` · planetEconomyFabric 1차 |
 | **전투** | Skia 단일 경로 | `combat.tsx` · transit combat post-flow |
-| **미션** | 코어 연동 | CSV 정본 · tavern 3탭 · objective 4종 |
+| **미션** | 코어 연동 | CSV 정본 · bar 3탭 · objective 4종 |
 | **행성 개발** | 5모듈 enabled | 방위위성·궤도조선소·무역소·연구소·인구 |
 | **계정** | persist + reset | Firebase guest · `purgeLocalAccountData` |
 | **스토리 i18n** | EN 67페이지 | `resolveStoryPage*` · `story_scene_pages.csv` |
@@ -114,7 +114,7 @@ QA·장기 soak·릴리스           ███░░░░░░░  30%
 | 1 | `planet.tsx` | ✅ | Skia 궤도·AI 트래픽·QuestHUD·스캔·채굴·허브 전투 |
 | 2 | `worldmap.tsx` | 🟡 | 이동·미션 reach_system — **장기 soak 후 SIGSEGV** |
 | 3 | `combat.tsx` | 🟡 | transit/허브 Skia 전투 — post-flow 재검 필요 |
-| SUB | trade / shipyard / tavern / skilltree | 🟡 | Heavy UI 연동 — **실기 탭 QA 미완** |
+| SUB | trade / shipyard / bar / skilltree | 🟡 | Heavy UI 연동 — **실기 탭 QA 미완** |
 | 경제 | 무역 buy/sell · 17무역소 | ✅ | tg 교역 · 일 1회 배치 |
 | BM | 💎→Cr 교환 | 🟡 | IAP·획득 경로 없음 |
 | 계정 | persist · reset · Firestore 단발 | ✅ | v4.0 onSnapshot 금지 준수 |
@@ -154,7 +154,7 @@ QA·장기 soak·릴리스           ███░░░░░░░  30%
 | # | 작업 | 완료 기준 | 우선순위 |
 |---|------|-----------|----------|
 | M1-1 | **장기 soak 안정화** | 5h+ worldmap/transit-combat 복귀 SIGSEGV 0 · PSS ceiling 미발생 · idle 2h floor drift ±50MB 이내 | P0 |
-| M1-2 | **Heavy UI 8화면 실기 QA** | trade/shipyard/tavern/skilltree/worldmap/행성개발 오버레이 탭·로딩·크래시 0 | P0 |
+| M1-2 | **Heavy UI 8화면 실기 QA** | trade/shipyard/bar/skilltree/worldmap/행성개발 오버레이 탭·로딩·크래시 0 | P0 |
 | M1-3 | **핵심 루프 E2E** | 신규/기존 부트 · 이동→조우→전투→승리/도주→목적지 · 미션 완료 1사이클 | P0 |
 | M1-4 | **transit post-flow 검증** | combat 화면: dialog→결과→레벨업→미션→worldmap 순서 실기 확인 | P0 |
 | M1-5 | **릴리스 빌드 품질** | debug→release 교차 · incident handoff ack · 미커밋 정리·브랜치 고정 | P0 |
@@ -195,7 +195,7 @@ QA·장기 soak·릴리스           ███░░░░░░░  30%
 
 | # | 작업 | 완료 기준 | 우선순위 |
 |---|------|-----------|----------|
-| M3-1 | **이벤트 미션 DSL** | talk_npc · story trigger · tavern 인스턴스 수락 | P2 |
+| M3-1 | **이벤트 미션 DSL** | talk_npc · story trigger · bar 인스턴스 수락 | P2 |
 | M3-2 | **월드오브젝트 상호작용** | mining/salvage/dock Placeholder → 실구현 | P2 |
 | M3-3 | **Economy fabric P2~4** | 스탯↔재고 순환 · TDI/R&D 15단계 | P2 |
 | M3-4 | **부트 lazy 워밍** | `BOOT_INIT_OPTIMIZATION_ROADMAP` — 시작 화면 응답·OOM 방지 | P2 |

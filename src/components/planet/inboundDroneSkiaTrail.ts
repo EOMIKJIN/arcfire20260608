@@ -5,13 +5,18 @@
 import type { SkPath } from '@shopify/react-native-skia';
 import type { ArcInboundDrone } from '../../store/arcInboundDroneStore';
 import { INBOUND_DRONE_Y_MUL } from './planetOrbitInboundDroneConstants';
+import { INBOUND_DRONE_FLAME_FX_MS } from './planetSkiaHitFxContract';
 
 /** trail flat: phase, startOrbitMs|endElapsed, dur, ang, endOrbitMs */
 export const INBOUND_DRONE_TRAIL_PACK_STRIDE = 5;
 
-/** 전투 `MISSILE_INFLIGHT_TRAIL_WINDOW_U` / `MISSILE_TRAIL_FADE_MS` 패턴 */
+/** 전투 `MISSILE_INFLIGHT_TRAIL_WINDOW_U` / guided trail fade 패턴 */
 export const INBOUND_DRONE_TRAIL_WINDOW_U = 0.78;
-export const INBOUND_DRONE_TRAIL_FADE_MS = 1400;
+/**
+ * impact/요격 후 꼬리·헤드 잔존 — 화염보다 짧게 끝나 폭발에 흡수되는 느낌
+ * (구 1400→700도 스토어 phase 지연과 겹치면 길게 남음 → visual end와 동기 + 본 값).
+ */
+export const INBOUND_DRONE_TRAIL_FADE_MS = Math.round(INBOUND_DRONE_FLAME_FX_MS * 0.72);
 export const INBOUND_DRONE_TRAIL_GLOW_STROKE_MUL = 2.4;
 export const INBOUND_DRONE_TRAIL_GLOW_OPACITY_MUL = 0.42;
 export const INBOUND_DRONE_TRAIL_GLOW_COLOR = 'rgba(239, 68, 68, 0.55)';
@@ -46,7 +51,9 @@ export function packInboundDroneTrailFlat(
   for (let i = 0; i < drones.length; i += 1) {
     const d = drones[i]!;
     const b = i * INBOUND_DRONE_TRAIL_PACK_STRIDE;
-    const flying = d.phase === 'inbound';
+    /** visual impact/요격 FX 시점에 endMap이 먼저 잡히면 phase=inbound여도 페이드 시작 */
+    const forcedEndMs = endMap.get(d.id);
+    const flying = d.phase === 'inbound' && forcedEndMs == null;
     out[b] = flying ? 0 : 1;
     out[b + 2] = Math.max(0.001, Number.isFinite(d.inboundDurationSec) ? d.inboundDurationSec : 0.001);
     out[b + 3] = Number.isFinite(d.approachAngleRad) ? d.approachAngleRad : 0;
@@ -57,7 +64,7 @@ export function packInboundDroneTrailFlat(
       const startMs =
         startMap.get(d.id)
         ?? (typeof d.inboundStartOrbitMs === 'number' ? d.inboundStartOrbitMs : undefined);
-      const endMs = d.inboundEndOrbitMs ?? endMap.get(d.id) ?? orbitMsNow;
+      const endMs = forcedEndMs ?? d.inboundEndOrbitMs ?? orbitMsNow;
       let elapsedAtEnd = Number.isFinite(d.inboundElapsedSec) ? d.inboundElapsedSec : 0;
       if (startMs != null && Number.isFinite(startMs)) {
         elapsedAtEnd = Math.max(0, (endMs - startMs) * 0.001);
@@ -102,7 +109,8 @@ export function resolveInboundDroneTrailSlice(
     if (fadeMs >= INBOUND_DRONE_TRAIL_FADE_MS) return null;
     const postHitT01 = fadeMs / INBOUND_DRONE_TRAIL_FADE_MS;
     uTail = tailStartAtImpact + (1 - tailStartAtImpact) * postHitT01;
-    trailOpacity *= Math.max(0, 1 - Math.pow(postHitT01, 0.85));
+    /** 후반 급감 — 화염 피크 이후 꼬리만 남지 않게 */
+    trailOpacity *= Math.max(0, 1 - Math.pow(postHitT01, 1.35));
   }
 
   const span = uHead - uTail;

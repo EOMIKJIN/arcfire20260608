@@ -1,19 +1,10 @@
-# 김클로드 즉시 착수 — omega combatMode 프로세스 충돌 재수정
+# STOP — 이동중 전투 Skia 배경은 검수 종료 · 베가 TEMP 해제
 
-대표님 지시(김팀장 배정 2026-07-29):
-[territorial] omega_hub combatMode != runtimeGraph — 「단순 로그」가 아님.
-실측: omega=BLUE + titan_gate=RED 1홉 → CSV blue_neutral이 RED 재탈환을 막아 프로세스 충돌.
-이전 패치는 경고 완화·INDEPENDENT skip만 → 재발.
+task_id=transit-combat-skia-backdrop-fix-20260916
+status=REVIEWED
+verdict=PARTIAL
+vega_temp_force=OFF
+김클로드 재구현 금지.
 
-정본 READY (이것만 읽고 구현):
-tools/kim-team-lead/reports/kim-claude-ready-omega-combatmode-runtime-conflict.md
-
-task_id=omega-combatmode-runtime-conflict-20260729
-
-필수:
-1. contested + 1홉 hasBlue&&hasRed → effective=blue_red (holdSide BLUE/RED/NEUTRAL 모두)
-2. DEV warn은 최종 effective 기준 · 「참고용」오진 문구 정리
-3. CSV combatMode 기존행 무단변경 금지 · planetId 하드코딩 금지
-4. unit + tsc PASS → handoff PENDING · commit 금지
-
-금지: warn만 삭제 · 전 repo 스캔 · territorial CSV 기존값 변경
+정본:
+tools/kim-team-lead/reports/kim-team-lead-transit-backdrop-review-20260916.md

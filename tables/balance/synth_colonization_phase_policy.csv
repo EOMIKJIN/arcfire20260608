@@ -1,4 +1,4 @@
-phaseIndex,hasTavern,hasTradePort,hasShipyard,useQuadrantFaction,seedTransport,notesKo
+phaseIndex,hasBar,hasTradePort,hasShipyard,useQuadrantFaction,seedTransport,notesKo
 0,false,false,false,false,false,레거시·개방 시 phase1로 승격
 1,false,false,false,false,false,개방=초기화 완료·행성개발 개방·궤도수송은 unlock 시드
 2,false,false,false,false,false,아크코어 개발 진행(시설은 dev 설치)

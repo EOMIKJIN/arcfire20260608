@@ -54,16 +54,22 @@ const contractPath = path.join(ROOT, 'src/ui/overlay/overlayAlertContract.ts');
 const storePath = path.join(ROOT, 'src/ui/overlay/arcOverlayStore.ts');
 const contractText = fs.readFileSync(contractPath, 'utf8');
 const storeText = fs.readFileSync(storePath, 'utf8');
-if (!/ARC_ALERT_DEFAULT_AUTO_DISMISS_MS\s*=\s*30_000/.test(contractText)) {
+if (!/ARC_OVERLAY_DEFAULT_AUTO_DISMISS_MS\s*=\s*40_000/.test(contractText)) {
   violations.push({
     file: 'src/ui/overlay/overlayAlertContract.ts',
-    rule: 'alert 기본 자동 닫힘 30s 상수(ARC_ALERT_DEFAULT_AUTO_DISMISS_MS) 필수',
+    rule: '범용 팝업 기본 자동 닫힘 40s 상수(ARC_OVERLAY_DEFAULT_AUTO_DISMISS_MS) 필수',
   });
 }
 if (!/resolveArcAlertAutoDismissMs/.test(storeText)) {
   violations.push({
     file: 'src/ui/overlay/arcOverlayStore.ts',
     rule: 'presentArcOverlayAlert — resolveArcAlertAutoDismissMs 적용 필수',
+  });
+}
+if (!/presentWaveResultOverlay[\s\S]*resolveArcAlertAutoDismissMs/.test(storeText)) {
+  violations.push({
+    file: 'src/ui/overlay/arcOverlayStore.ts',
+    rule: 'presentWaveResultOverlay — 범용 40s 자동 닫힘 적용 필수',
   });
 }
 

@@ -5,6 +5,3226 @@
 
 ---
 
+## 🔴 URGENT — 복구 중 상태 동시 점검 (0시 기준) · 2026-09-24 01:50
+
+```text
+status=OBSERVED (읽기 전용 · 파일 변경 0)
+task_id=recovery-state-observation-20260924
+kind=STATE_DIAGNOSIS
+verdict=코드 건전 · 커밋 보호 없음
+```
+
+**대표님 지시**: 김팀장 코드 복구 중 — 상태를 동시 확인. 복구기준일 = 0시.
+
+### 건전성 — 이상 없음
+
+| 항목 | 결과 |
+|---|---|
+| 충돌 마커(`<<<<<<<`/`>>>>>>>`) | `src`·`tables`·`tools`·`app` 전역 **0건** |
+| 미추적 잔여 파일 | **0건** |
+| `story_scene_pages.csv` | **230p** 정상(증감 없음) |
+| 병합·리베이스 진행 흔적 | 없음 |
+| `tsc --noEmit -p tsconfig.client.json` | **EXIT=0** |
+| `buildGalaxyTerritoryVoronoi.test.ts` | **PASS** (작업 중 파일인데도 green) |
+| `missionTableIntegrity.test.ts` | **PASS** |
+
+### 대사 작업 전량 생존 확인
+
+§12 정정 + §13 성별 말투가 **모두 살아 있고 구버전 잔존 0건**이다.
+
+- 생존: 테오 혼(2) · 살인범과 동일인 · 내 얘기부터 · 닐라 「새고 있어」 · 이사 벤트 「허가해 줬다」 · 한로 「한로일세」 · 세레나 「걷어내 줘」 · 레아 「대조할게」 · 대명사 수정
+- 잔존 0: 「그 손이다」 0 · 「다렐 혼」 0
+- 적용 스크립트 2종 확인: `_apply-quest-dialogue-rewrite-20260923.mjs`(29KB) · `_apply-quest-dialogue-gender-voice-20260923.mjs`(12KB)
+
+### 타임라인 (0시 이후)
+
+- **01:30:08~01:30:19** — 대규모 일괄 복원·적용. 대사·설계문서·경제·디바이스UI·IAP 전 영역 동시 타임스탬프.
+- **01:40:53~01:41:31** — `buildGalaxyBlueRedVoronoiBorders.ts` · `buildGalaxyTerritoryVoronoi.ts` 등 **Voronoi 영토 렌더링 4파일** 작업 중(unstaged · +233/−33).
+
+### 🔴 진짜 위험 — 46일치 작업이 커밋 없이 인덱스에만 있다
+
+```text
+HEAD = c06b29b  chore(daily): snapshot 2026-08-09 (KST)  @ 2026-08-09 00:02 +0900
+현재 = 2026-09-24 01:50  →  마지막 커밋으로부터 46일
+staged   = 2,517 files  (+159,084 / −2,473,750)
+unstaged = 6 files      (+233 / −33 · galaxyMap voronoi 작업 중)
+```
+
+**8/09 이후 커밋이 한 건도 없다.** 대규모 삭제(−247만 줄)는 `.expo-tmp-bundle-test/` 정리분이라 정상이지만, **46일치 실작업 전부가 git 인덱스와 작업 트리에만 존재**한다. 인덱스가 날아가면 복구 경로가 없다.
+
+> `stash@{0} = backup-before-restore-to-72a234d-20260616` — **6/16에도 같은 유형의 복구 사고** 흔적이 있다. 반복되고 있다.
+
+**권고 (커밋 권한은 김팀장)**
+1. 복구 안정화 즉시 **중간 스냅샷 커밋 1회**. 완벽하지 않아도 `chore(daily): snapshot 2026-09-24 (KST)`로 끊어 두는 편이 낫다.
+2. 일일 스냅샷 커밋이 **8/09에 멈춘 원인** 확인 — 자동화가 죽었다면 그것부터 복구.
+3. 커밋 전이라도 작업 트리 사본을 **저장소 밖에 1회 백업**.
+
+**김클로드는 읽기만 했다** — 파일 변경 0 · 스테이징 0 · 커밋 0. 이 handoff 항목만 추가.
+
+---
+
+## ✅ REVIEWED — 남녀 NPC 말투 차별화 반영 · 2026-09-23
+
+```text
+status=REVIEWED
+verdict=AGREE (gender 컬럼·초상 HOLD)
+task_id=quest-dialogue-gender-voice-20260923
+kind=TEXT_REWRITE_APPLIED
+문서=docs/QUEST_DIALOGUE_REWRITE_PROPOSAL.md §13
+기준=§12-4 김팀장 반영 완료본
+```
+
+**김팀장**: A안·계급>성별·`~요` 금지 **AGREE**. 로스터 **남 11 / 여 10** 확정(베일=여 · 켓=남 · 벤트=여). `story_scene_pages.csv` `text` **45p** 반영(말투 표 전량 + 벤트 여 전환 2p + 대명사 1). 닐라 p0 L1 22자→18자 단축. `gender` 컬럼·초상·E-3 온보딩 **HOLD**. 빌드=`build-content-from-csv.mjs` · id·체인·목표 불변.
+
+**대표님 10:03 「초상과 상관없이 재수정안 반영」**: 초상 미변경. 이름+배역 재수정안은 이미 CSV 일치 — 재실행 `changed=0` / expected=45.
+
+[pss-pre-dev] hot_path=이벤트(대화 오픈) alloc=문자열 상수만 cache=CSV 빌드 1회
+[pss-pre-dev] stage=해당없음(대사 컬럼만) risk=P1·P6 해당없음
+[pss-pre-dev] verdict=PASS
+
+---
+
+## 🗂 ARCHIVE — 남녀 말투 제안 원문 · 2026-09-23
+
+```text
+status=ARCHIVED
+task_id=quest-dialogue-gender-voice-20260923
+kind=TEXT_REWRITE_PROPOSAL (반영 완료)
+문서=docs/QUEST_DIALOGUE_REWRITE_PROPOSAL.md §13
+기준=§12-4 김팀장 반영 완료본
+```
+
+**대표님 지시**: 남자 NPC와 여자 NPC의 말투는 달라야 한다. 전수 조사하여 수정.
+**대표님 선택**: 말투=**A안 캐릭터 기반 차별화** · 성별=**이름 기준 확정 + 초상 재배정 요청**
+
+**대표님 추가 지시(2026-09-23)**: 「일단 초상은 임시이고, 모두 **이름과 스토리 부여 설정**으로 남녀 구분하라.」 → **초상을 성별 근거에서 완전히 제외**하고 이름 어감 + 스토리 배역으로 **전원 확정**. 되물을 미결 인물 없음.
+
+**성별 로스터 확정 — 남 11 / 여 10** (§13-1)
+- 이름이 중성이던 3인도 배역 근거로 확정: **베일 훅=여**(오렌과 「군 vs 민간 / 남 vs 여」 이중 대비) · **켓 미온=남**(바 단골 `세라 미온`과 성씨 공유 → 남매 · 아우라 국경 성비 2:2) · **이사 벤트=여**(이름 어감 `Isa` + 메인 성비 5:5).
+- **이사 벤트만 이전 판정에서 변경**(남→여). 항만사령이라 계급은 유지하고 연결어미·관찰 나열로만 여성축을 드러냄 — `obj_story_001_e` 2p 추가 치환.
+- 팩 단위 성비도 쏠리지 않음: 아우라 국경 2:2 · 코어 항로 2:2 · 암흑 팩 1:1.
+
+**초상은 이번 작업 대상 아님** — 임시 자산 확정. 다만 실제 초상 제작 시점 참조용으로 불일치 4건만 기록해 둠: **다렐 소사**(남 ← 은발 노년 여성 제독) · **레아 빈**(여 ← 이안 코발과 동일한 백발 남성 제독) · **하르만 돌**(남 ← 스텔라 아리스 본인 초상) · **한로 크레인**(남 ← 흑발 장발 젊은 여성). 남성 초상이 2종뿐이라 제작 시 5~6종 추가 필요.
+
+**데이터 권고(선택)**: `npc_ai_captains.csv` 39개 컬럼에 성별 필드가 없어 §13-1이 최초의 성별 정본이 된다. `gender` 컬럼 신설은 김팀장 판단.
+
+**차별화 원칙 — 「~요」를 쓰지 않는다**
+
+여성이라고 존댓말·`~요` 계열을 붙이면 엘렌·세레나 같은 **여성 지휘관이 부하에게 존댓말**을 쓰게 되어 계급이 무너지고 번역체 여성어가 된다. 대신 4축: **종결**(남=체언 종결 / 여=동사 종결) · **연결**(남=단문 나열 / 여=`~고`·`~는데`·`~더군`) · **정보 순서**(남=결론 먼저 / 여=근거 먼저) · **지시**(남=명령형 / 여=계급 없으면 부탁형). **계급이 성별보다 우선** — 명령 장면은 남녀 모두 단정체 유지.
+
+**🔴 부수 발견 2건**
+- **대명사 성별 오류 1건**: `npc_dialog_sq_orren_bask` p2 「베일 훅이 맡는다 / **그를** 찾아가」 — 베일 훅은 여성. → 「찾아가서 입구부터 확인해라」(대명사 제거가 가장 자연스러운 국어). 전수 확인 결과 대명사는 3건뿐이고 나머지 2건(「그자」=노아, 「그를」=다렐 소사)은 정상.
+- **한로 크레인 말투 불일치**: 대기 대사는 노년 하게체(「한 잔 하시려나 / 비어 있네」)인데 **퀘스트 대사는 단정체**(「한로다 / 봤다 / 해라」). **같은 인물이 장면마다 다른 사람처럼 말한다.**
+
+**반영 범위**: `story_scene_pages.csv` `text` **40p**(말투 37 + 이사 벤트 여성 전환 2 + 대명사 1). id·구조·목표·보상 변경 0 · 페이지 수 불변 · 전 대체문 3줄 21자 이내 · **쉼표 신규 삽입 없음**(§10 따옴표 이슈 해당 없음) · 영문 컬럼 미수정(영어엔 어미 구분이 없어 원문 유지가 맞다).
+
+**유지 판단**: 하르만 돌(남성 기준선) · 이안 코발 · 이사 벤트 · 다렐 소사 · 노아 프릭 · 미아 벨로 · 톨린 그레이브 · 케이드 림 · 켓 미온 · 칼 릿지 — 이미 성별·연령에 맞는 목소리다. 톨린의 **위장(친근 반말)→발각(냉정 단정체)** 전환은 그대로 두는 편이 낫다.
+
+**대표님 확인**: 성별 로스터는 **전원 확정 · 미결 없음**. 남은 선택은 `gender` 컬럼 신설 여부 1건뿐이며 김팀장 판단으로 넘겨도 무방하다.
+
+**self-check**: 문서 2개(제안서 §13 신설 + 이 handoff). 코드·CSV·생성물 변경 0 · 커밋 없음.
+
+---
+
+## ✅ REVIEWED — 퀘스트 대사 재검수 재반영 · 2026-09-23
+
+```text
+status=REVIEWED
+verdict=AGREE (E-3 HOLD)
+task_id=quest-dialogue-rewrite-20260923
+kind=POST_APPLY_REVIEW
+문서=docs/QUEST_DIALOGUE_REWRITE_PROPOSAL.md §12·§12-4
+```
+
+**김팀장**: §12 전량 검토. E-1·E-2·E-4·R-2·R-3 **반영**. R-1 **의도 수용·21자 재절단**. E-3 **HOLD**(온보딩 별도 전수).
+
+---
+
+## 🗂 ARCHIVE — 재검수 요청 원문 · 2026-09-23
+
+```text
+status=ARCHIVED
+task_id=quest-dialogue-rewrite-20260923
+kind=POST_APPLY_REVIEW (재반영 완료)
+문서=docs/QUEST_DIALOGUE_REWRITE_PROPOSAL.md §12
+```
+
+**대표님 지시**: 김팀장 작업 완료 후 일괄 재검수·반복 검사하여 오류를 찾아 수정. **§11 체크리스트 12단계 전량 수행, 9단계 완전 통과.**
+
+- 행 수 보존(`story_scene_pages` **230** 불변 — 페이지 증가 0) · 열 수 균일(**CSV 파손 0**) · §10 따옴표 위험 10건 정상 인용 · 치환 누락 0 · 퀘스트 범위 구용어 0(「대역」 과잉 치환 없음) · `talk_npc` 함장 참조 **28건 유효** · 빌드 OK · `missionTableIntegrity` PASS · `tsc` EXIT=0.
+- **서사 통독 결과 N-1~N-8 여덟 건 모두 의도대로 작동.** 테오 혼/다렐 소사 혼동 해소 · 메인↔서브 연결 성립(오렌·칼 릿지) · 톨린 발각 계기로 켓 대조 보상 · 「관문」 3회 후 주제문 착지 확인.
+- 김팀장 자체 보강(「챕터1 분기 정본」 본편 5자국↔서브 5분기 대응표)과 자체 발견 오류 2건(오렌 보고 요새→캠프, 닐라 증언 아우라→요새) 수정도 **적절**.
+
+**🔴 재반영 9곳 — 전부 문자열 치환, 구조 변경 0**
+
+| # | 내용 | 곳 |
+|---|---|---|
+| **E-1** | **줄 길이 22자 초과 3건** — 실제 상한은 21자(`resolveNarrativeDialogCharsPerLine` = `floor((W−28)/12.7)−1`, 320dp). 320dp에서 자동 분할돼 페이지가 늘어난다. `npc_dialog_sq_orren_bask` p1 · `npc_dialog_sq_noll_pass` p1 · `mission_clear_mission_001` p0 | 3 |
+| **E-2** | `docs/EARLY_STORY_AND_QUEST_SPINE.md:344-345` 미동기화 — 「다렐 혼」·「대타 출정」 잔존 + 「미바인드/skeleton」(실제는 `story_002`~`006` bind 완료) | 3 |
+| **R-1** | q01 «시신 신원은 확인됐다» ↔ q02 «죽은 사람은 테오 혼이다»(설계상 **최초 공개 반전**). **반전이 앞 대사에 미리 소진**돼 있다. 노아 p1 → «이름은 이미 알 거다. / 테오 혼 — 국경 방어 함대 함장 내정자였다.»로 **직책이 반전임을 명확화** | 1 |
+| **R-2** | 코발이 «먼저 **내 질문**부터 들어라» 예고 후 **끝내 묻지 않고**, 다음 씬에서 플레이어가 물은 것(«물었지»)으로 바뀐다. `story_005` p1 → «먼저 **내 얘기**부터 들어라» | 1 |
+| **R-3** | 리라 «오늘은 그 기록을 펴지 않는다»·«수사도 없었고» ↔ «칼 릿지가 한 말은 **적어 뒀다**» 모순. `obj_s038_c` p1 → «칼 릿지 얘긴 흘려들었다» | 1 |
+| **E-4** | 🔴 **대표님 지적** — «아르카디아 살인사건 때 **그 손**이다» 의미 불명. **내 오류**: 「손」을 범인의 환유로 쓰고 「그」가 가리킬 대상을 안 깔았다(§0-1 결함 #2·#4를 내가 그대로 반복). `obj_s034_e` p0 → «**아르카디아 살인범과 동일인이다.**» · `sandbox_034` 설명문 «같은 손이다» → «**똑같다. 같은 자가 국경까지 왔다는 뜻이다.**» 부수로 「손을 타다」 2곳(`rhea_vin` p0 · `sandbox_037` 설명문) → «손댄»으로 통일 권고 | 4 |
+
+> **R-1은 원문에도 있었고 두 차례 수정에서 모두 살아남은** 서사 결함이다.
+
+**E-3 (범위 밖 · 대표님 판단 대기)**: 김팀장이 「범위 밖 유지」로 기록한 `early_route_arcadia_hub` 「호출부」 외에 2건 추가 발견 — `early_route_eden_bar` 1p 「튜토리얼 종료—이제 **본편**이다」(**N-4와 동일한 메타 용어 노출**) · `npc_dialog_vega_watch_01` 0p 「초계」. **김팀장 작업은 범위대로 정확**했다. `early_route_*` 32p 전수는 별도 배치 권장.
+
+**자기 정정 2건**
+- 내 문서 §8 컬럼명 3건이 전부 오기였다 — `bodyKo`→**`text`**, `labelKo`→**`description`**, `targetRef`→**`targetId`**. 실물 기준 작업이라 반영엔 지장 없었으나 **문서만 보고 스크립트를 짜면 전 항목이 빈 값으로 나온다**(내 1차 검수가 실제로 전건 FAIL). §0-2 상한도 20자→**21자**로 정정.
+- 목표문 건수도 내 표는 35, 김팀장 실측 **37**이 맞다(김팀장 지적 수용).
+
+**self-check**: 문서 2개(제안서 §12 신설 + 이 handoff). 코드·CSV·생성물 변경 0 · 커밋 없음. 빌드는 검증 목적 1회 실행 — 생성물은 김팀장 반영분과 동일.
+
+---
+
+## ✅ REVIEWED — 퀘스트 대사 전수 재구성 반영 · 2026-09-23
+
+```text
+status=REVIEWED
+verdict=AGREE
+task_id=quest-dialogue-rewrite-20260923
+kind=TEXT_REWRITE_APPLIED
+문서=docs/QUEST_DIALOGUE_REWRITE_PROPOSAL.md (v2.0 · APPLIED)
+```
+
+**김팀장 검수**: 수정안 N-1~N-8·§9 용어표 5건을 현행 CSV와 대조 후 **전부 AGREE**. 대표님 「모두 확인후 반영하라」를 §9 일괄 승인으로 해석해 한국어 문자열만 반영함.
+
+**반영량**
+- `story_scene_pages.csv` `text` **96p** (유지 5p: `story_004` 0·1, `obj_story_004_b` 0, `intro01` 1·2)
+- `missions.csv` description **14** + title `story_003` 대타→**대행 출정**
+- `mission_objectives.csv` description **37** (제안 §8의 35는 표 집계 오차, 치환 목록은 37)
+- 정합: `main_story_quests`/`main_story_chain_steps` 제목 · `story_scenes` displayName 3 · `npc_ai_captains` bioShort 2(오렌·켓)
+- 설계: `main_quest_template_v3` · `아크파이어_메인스토리.md` · `CHAPTER1_MAJOR_SIDE_QUESTS_DESIGN.md` — 테오 혼·대행 출정·식별 신호
+- 빌드: `node tools/content-tables/build-content-from-csv.mjs` · `tsc --noEmit -p tsconfig.client.json` **PASS**
+- **영문 컬럼 미수정** · id·체인·목표 타입·수락 지점·보상·함장 id **0 변경**
+- 범위 밖 유지: `early_route_arcadia_hub` 「호출부」
+
+**[pss-pre-dev]** hot_path=없음(CSV 문자열+빌드 1회) alloc=0 cache=generated 재생성
+**[pss-pre-dev]** stage=해당없음 risk=없음
+**[pss-pre-dev]** verdict=PASS
+**[existing-value-change]** 한국어 대사·설명·목표문 · 대표님 일괄 승인
+**[econ-boot-audit]** 해당없음(콘텐츠 문자열)
+
+**김클로드 §11 재검수** 대기(대표님 지시). CSV 직접 수정 금지 · 오류는 문서 「반영 후 정정」으로.
+
+---
+
+## 🟠 PENDING — 김팀장 v1.1 적용분 재검수 + 설정 문서 정합 · 2026-09-23
+
+```text
+status=PENDING
+task_id=chapter1-side-quests-frontier-route-20260923
+kind=SETTING_DOC_RECONCILE (코드·CSV 변경 0)
+verdict=AGREE (PARTIAL 1건)
+문서=docs/CHAPTER1_MAJOR_SIDE_QUESTS_DESIGN.md §11 (신규)
+```
+
+**대표님 지시**: "김팀장 작업이 끝나면 설정문서 내용도 모두 김팀장 작업내용으로 업데이트하라."
+
+**한 일** — 김팀장 리포트를 받아쓰지 않고 실물 CSV를 직접 대조(CLAUDE.md 재검수 계약). §11 신설.
+
+- **AGREE**: `missions.csv:46-67` 22행 · `mission_objectives.csv:79-100`(`collect_item` 0건) · `npc_ai_captains.csv:252-262` questOnly 11명 + `activityPlanetIds` · 4거점 TCL(1/5/9/28) · 팩 첫 행만 오퍼 · `galaxy100.ts:524` `_p` 규칙 — **리포트 주장 전부 실물과 일치**.
+- **자기 오류 정정(§11-2)**: 내 §9-2 "synth는 전부 무명 stub" = **틀림**. `tables/balance/synth_system_colonization.csv`가 `synth_001`~`079`(+`706`/`732`)에 실명·TCL·사분면을 이미 부여하고 있고, `worldStore.ts:208-222`가 CSV를 우선 적용한다. `galaxy100.ts`의 "미개척-N"은 CSV 행 부재 시 폴백이었다. 대표님이 드신 예시 지명은 실명 인용이었다. §8·§9·§10 전부 기각·이력 확정.
+
+**⚠️ PARTIAL 1건 — 대표님/김팀장 판단 필요**
+
+대표님 지시 원문은 「**글로우 국경** → 요새베이스 → 코어항로 → 캠프 베이스」인데 적용분 1단은 **아우라 국경(`synth_052`)**이다. 리포트에 치환 사유 없음.
+
+- `tradeProfile`은 사분면 **정본**이다 — `worldStore.ts:216`이 좌표 사분면을 덮어쓰고 `resolveFactionForQuadrant()`로 귀속 세력까지 결정.
+- 적용분 = 아우라(**west**) → 요새(east) → 코어항로(east) → 캠프(south). **1→2단에서 은하 중심을 가로질러 반대 팔로 건너뛴다**(`sandbox_039`→`sandbox_040`이 그 구간). "동선을 따라 뻗어나가게"라는 지시와 어긋남.
+- 지시대로 글로우 국경(`synth_054`, **east**, TCL 3)을 쓰면 east/east/east/south가 되어 앞 3단이 같은 팔·같은 귀속 세력에 놓이고 TCL도 3→5→9→28 단조 상승.
+
+**권고(설정)**: 팩별 분리 — **이중인격자**(`sandbox_039`–`043`, lv5) 수락만 `synth_052_p`→**`synth_054_p`**로 이동(함장 `nila_shol`·`kett_mion` `offerPlanetId`/`activityPlanetIds` 동반). **마음의 고향**(lv1)은 TCL 1 정합 + 귀환점 역할이므로 **아우라 유지**. 대표님이 "(예시)"라 쓰신 만큼 아우라 유지도 선택지 — 그 경우 "의도적 치환"으로 확정 기록.
+
+**김팀장 조치**: 위 판단 확정 전까지 `sandbox_039`–`043` CSV **현 상태 유지**. 판단 후 CSV 반영은 김팀장 소관.
+
+**self-check**: 문서 3개만 수정(설계 문서 §9-2 경고 + §11 신설 + 헤더). 코드·CSV·생성물 변경 0 · 커밋 없음.
+
+---
+
+## ✅ REVIEWED PARTIAL — 서브퀘스트 프론티어 재개발 (김팀장 주도) · 2026-09-23
+
+```text
+status=REVIEWED
+task_id=chapter1-side-quests-frontier-route-20260923
+kind=CONTENT_REBIND
+verdict=PARTIAL
+정본=docs/CHAPTER1_MAJOR_SIDE_QUESTS_DESIGN.md (APPLIED frontier v1.1)
+김팀장=tools/kim-team-lead/reports/kim-team-lead-chapter1-side-quests-frontier-v1-20260923.md
+```
+
+**김팀장 (2026-09-23)**: 김클로드 §10 **DISAGREE**. 국경/요새/코어항로/캠프 = `synth_052_p`/`synth_078_p`/`synth_070_p`/`synth_075_p`. Vega 다리 미작성. `sandbox_034`–`055` 수락·탐문·전투를 코어 21 밖으로 재배치. questOnly 11. 바가 닫혀도 허브 INFO/대화로 수락.
+
+**잔여**: 4성계가 아직 미해금이면 기존 월드맵 해금 규칙으로만 착륙 가능(강제 unlock 없음). 실기 착륙 수락 확인.
+
+---
+
+## 🟠 PENDING — 서브퀘스트 국경→요새→코어항로→캠프 4단 동선 설정 수정요청 · 2026-09-23 (이력)
+
+```text
+status=REVIEWED (이력 — 위 프론티어 재개발이 정본)
+task_id=chapter1-side-quests-frontier-route-20260923
+kind=SETTING_REVISION_REQUEST (코드·CSV 변경 0 — 당시)
+문서=docs/CHAPTER1_MAJOR_SIDE_QUESTS_DESIGN.md §10
+```
+
+**요약**
+- 대표님 지시: 서브퀘스트 설정을 「국경(예시: 글로우 국경) → 요새베이스 → 코어항로 → 캠프 베이스」 동선에 배치해 시나리오가 이쪽으로 뻗어나가게 수정. **진행 방식은 대표님 지정대로 설정=김클로드 지금 확정, CSV 반영=김팀장이 §0 적용 작업 마무리 후** 이 절을 수정요청으로 받아 진행.
+- 김팀장이 이미 적용한 `sandbox_034`~`055`(22행) 실데이터를 직접 대조 — **4단 중 3단이 이미 우연히 들어맞아 있음을 확인**: 국경=시리우스(이중인격자 전체) · 코어항로=오메가(코어의 파편 전체) · 캠프=크림슨 구역(암흑으로 진입 수락·종결). **요새베이스(베가 전초기지)만 5팩 중 어디도 안 씀.**
+- 수정 요청 핵심: 세 팩을 강제 병합하지 않고 **대사 훅 + 신규 2단 다리 팩**(`sandbox_056`~`057` 가번호, 베가 전초기지 수락, 전투 없이 대화만)으로 연결 — 닐라(이중인격자 종결)→요새 다리→레아(코어의 파편 종결)가 "이 경로가 캠프까지 이어진다"로 자연스럽게 이어지게 로그라인만 보강.
+- 부의근원(섀도우 넥서스)·마음의 고향(아르카디아)은 이 4단 동선과 역할이 달라 **변경 없음** 권장(섀도우 넥서스는 캠프 너머 곁가지, 아르카디아는 귀환점 대비).
+- 다리 팩 `levelRequired`(가안 12~14)가 베가 원래 낮은 난이도(3)와 어긋나는 점만 반영 시 재조정 필요 항목으로 명시.
+
+**이력**: 김클로드 §10은 김팀장이 DISAGREE 후 프론티어 v1.1로 재개발. Vega 다리·코어 재매핑은 적용하지 않음.
+
+---
+
+## ✅ REVIEWED PARTIAL — 챕터1 주요 서브퀘스트 5종 적용 · 2026-09-23
+
+```text
+status=REVIEWED
+task_id=chapter1-major-side-quests-design-20260923
+kind=CONTENT_BIND
+verdict=PARTIAL
+정본=docs/CHAPTER1_MAJOR_SIDE_QUESTS_DESIGN.md (APPLIED v1.0)
+김팀장=tools/kim-team-lead/reports/kim-team-lead-chapter1-side-quests-v1-20260923.md
+```
+
+**김팀장 (2026-09-23)**: A안 DSL. 1차 코어 21 배치. **프론티어 v1.1에 의해 SUPERSEDED.**
+
+**잔여**: 상단 프론티어 재개발 블록 참고.
+
+---
+
+## 🟠 PENDING — 챕터1 주요 서브퀘스트 5종 설계 초안 (이력) · 2026-09-23
+
+```text
+status=REVIEWED (이력 — 위 적용 블록이 정본)
+task_id=chapter1-major-side-quests-design-20260923
+kind=NEW_DESIGN_DRAFT (코드·CSV 변경 0 — 당시)
+문서=docs/CHAPTER1_MAJOR_SIDE_QUESTS_DESIGN.md
+```
+
+**요약**
+- 대표님이 주신 스토리 키워드 5개(암흑으로 진입·이중인격자·부의근원·코어의 파편·마음의 고향)를 `sandbox_*` 서브퀘스트 5개(`sandbox_034`~`038` 가번호)로 설계.
+- 시스템 배치는 §11 성계 루트 전수검사와 같은 방법으로 검증 — **5개 전부 신규 지명 없이 실재 성계**에 배치(다크 리프트·시리우스·섀도우 넥서스·오메가 스테이션·아르카디아), `systemEnemyLevel`(1/8/10/16/17)이 테마 난이도와 일치. 4곳은 이미 유사 톤의 기존 `sandbox_*` 계약이 있어 배경 충돌 없음.
+- 대표님이 주신 1~5 번호는 퀘스트 식별로 유지하되, 실제 추천 진입 난이도 순서(마음의고향→코어의파편→이중인격자→부의근원→암흑으로진입)를 별도 표로 제시.
+- **핵심 결정 필요**: "부의근원"·"코어의 파편" 2건은 A안(기존 DSL만, 즉시 구현 가능)과 B안(이상현상 퀘스트 v1.1에서 제안된 미구현 `collect_item` DSL 필요) 중 선택 필요 — A안 채택 시 5개 전부 지금 구현 착수 가능.
+- 신규 NPC 4명은 전부 `questOnly=TRUE` 기존 계약 준수, 기존 함장 이름과 미충돌 확인 필요 항목으로 남김.
+
+**추가 (2026-09-23, 같은 날 후속 지시) — §8 수락지점 동선 재배치**
+- 대표님 지시: 서브퀘스트 수락지점을 서쪽 라인·요새베이스·허브항로 점프베이스 동선을 따라 재배치 가능한지 확인. **설정=김클로드, 구현=김팀장**으로 역할 분리해 진행.
+- 은하 21개 성계 좌표 전수 확인 결과 **미네르바·아르카디아가 이미 은하 최서단** — 신규 성계 없이 "서쪽 라인" 순수 확장은 불가능함을 확인(중요 제약, 문서 §8-2에 명시).
+- 요새베이스=베가 전초기지(`federation_military` 유일 요새) · 허브항로 점프베이스=타이탄 게이트("게이트 유적", 아직 어떤 퀘스트도 안 닿은 신규 커버리지) · 서쪽(연방 안전지대 해석)=솔라 항구로 확정.
+- 재배치안 3건: ①"암흑으로 진입" 수락지점 크림슨 구역→베가 전초기지(부수효과로 원안의 "적진에서 반크림슨 작전 브리핑" 설정 어색함도 같이 해소) ②"코어의 파편" 수락+목표를 오메가→타이탄 게이트로 통합(난이도 8→10 소폭 상승, 재확인 필요) ③"이중인격자" 수락만 시리우스→솔라 항구로 당기고 대면·처단은 시리우스 유지(여정형 구조, 난이도 불변). "부의근원"·"마음의 고향"은 3라인과 무관해 원안 유지.
+- 구현 시 체크리스트(build 스크립트 재확인 등) §8-5에 기록.
+
+**정정 (2026-09-23, 대표님 지적) — §9 신설, §8-2 오류 수정**
+- 대표님 지적: §8-2의 "21개가 은하 전체"라는 전제가 틀렸다 — 실제 그래프는 `galaxy100.ts` 기준 **~757~760개**(코어 21 + synth 계열). 재분석 지시.
+- 재확인 결과: 은하는 십자(+) 형태 — 중앙 존5(코어21+미개척76=97, 지금 화면) + 동서남북 4개 팔(각 165개=관문4+미발견161), 대각 4칸은 성계 없음. **서쪽(존4)에 165개가 실제로 존재** — §8-2의 "서쪽 확장 불가" 결론은 21개만 보고 낸 오분석이었음을 인정·정정.
+- 그런데도 지금 당장 서쪽에 못 놓는 진짜 이유 3가지 확인: ①자리는 있음(공간 문제 아님) ②서쪽 165개 전부 `galaxy100.ts` 자동생성 완전 무명 stub(이름 "미개척-N"/"미발견-N", 세력 unknown, 스탯 전부 50 고정 — 서사 자체가 없어 퀘스트를 놓으려면 성계 하나하나 이름·세력·설명을 새로 써야 함, 위치이동이 아니라 콘텐츠 제작) ③존4는 현재 "미발견"(지도에도 안 보임) — 이를 가시로 승격하는 기능은 `docs/성계700_전개방_메모리_운영_설계.md` §16이 이미 설계까지 해놓고 **대표님 지시로 안정화 이후로 홀드**해 둔 상태(2026-08-21, R1 HOLD).
+- 재수립한 계획: §8(21코어 내 재배치)은 그대로 유지·지금 착수 가능. 진짜 "서쪽 라인"은 성계700 로드맵의 R1(미발견→미개척 표시) 홀드 해제 여부가 먼저 결정돼야 함 — **이건 이 서브퀘스트 문서가 아니라 `성계700_전개방_메모리_운영_설계.md` §10 소관**이라고 명시. 재개 시 서쪽 첫 관문 `synth_083`을 요새 라인 최전방으로 명명하는 안만 후보로 기록해 둠(착수 아님).
+
+**김팀장(Cursor 본창) — §7·§8은 그대로 착수 판단 가능. §9의 "R1 홀드 해제 여부"는 대표님께 별도 상정 필요.**
+
+**김팀장(Cursor 본창) 검수 요청 — §7 A/B안 + §8 재배치안 둘 다 판단 요청.**
+
+---
+
+## ✅ REVIEWED PARTIAL — 메인퀘스트 성계 루트 검수 + q02–q06 bind · 2026-09-23
+
+```text
+status=REVIEWED
+task_id=main-quest-system-route-audit-20260923
+kind=CONTENT_BIND
+verdict=PARTIAL
+정본=docs/main_quest_template_v3_chapter1_complete.md §11
+김팀장=tools/kim-team-lead/reports/kim-team-lead-main-quest-route-v1-20260923.md
+```
+
+**김팀장 (2026-09-23)**: 홉 AGREE. 성계id≠행성id · 지도Lv≠TCL DISAGREE. 국경=`vega_base`. q09=`iron_remnant`/`omega_hub`/`eden_city`. **q02–q06 `story_002`…`006` bind**. `story_001` 동결. q07+ skeleton. 신규 행성 없음.
+
+**잔여**: q07–q30 미션 미생성 · 전멸/데드코러스 다함대 서사 대행 · 그리하벤 권장=`shadow_market` 문서만.
+
+---
+
+## ✅ REVIEWED PARTIAL — 구글 플레이 인앱상점 연동 설계 v1.0 · 2026-09-23
+
+```text
+status=REVIEWED
+task_id=google-play-billing-iap-foundation-design-20260923
+kind=DESIGN_READY (코드 변경 0)
+verdict=PARTIAL
+정본=docs/GOOGLE_PLAY_BILLING_IAP_FOUNDATION_DESIGN.md v1.0
+김팀장=tools/kim-team-lead/reports/kim-team-lead-google-play-iap-foundation-v1-20260923.md
+```
+
+**김팀장 (2026-09-23)**: 결제 0%·coming soon·더미 증서 AGREE. `purchaseHistory`/`gems.balance` 미구현·실코드 `player.gems` number — DISAGREE(스키마). 검증 C/A1 기각. B 또는 A2(기존 Lambda) 대표님 선택. 관련실=§3 SKU·§4 콘솔 지금 가능. 승인 전 코드 없음.
+
+**요약**
+- 실측 결과: 결제 연동 수준 **0%**. `react-native-iap`/`expo-iap`/RevenueCat 등 결제 라이브러리 전무. 실제 구글 플레이 상품 ID 없음(`gem_pack_catalog.csv`의 `iapPriceKey`가 전부 `mock_*`).
+- 반대로 경제·카탈로그·UI 계층(`src/bm/*`, 상점 오버레이, 보석 지갑, 보석→크레딧 교환+원장)은 **실동작 수준으로 성숙**함을 확인 — 결제 배관만 없는 상태.
+- `BmShopOverlayContent.tsx:handlePremiumAction` 확인: 보석팩 등 전 상품이 "준비 중" 알림만 뜨고 끝남. 행성증서권 한 건만 `grantPlanetDeedPurchaseDummy()`(함수명 자체가 더미)로 이어짐 — 결제 없이 화폐를 몰래 지급하는 코드는 없어 안전하게 비어 있는 상태.
+- **중요**: 기존 `BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md`(7주 전, No-Go 판정)를 재확인한 결과 Expo/RN 스택이 그때와 동일 — 그 문서가 경고한 **target API 36 기한(2026-08-31)이 이미 지남.** 결제 연동보다 스토어 제출 게이트 자체 재확인이 먼저일 수 있음(콘솔 접근 권한자 확인 필요).
+- 핵심 설계 쟁점 1건 도출: 이 프로젝트의 "서버리스 헌법(Cloud Functions 없음)"과 "결제 영수증은 서버에서 검증해야 한다"는 업계 원칙이 충돌 — RevenueCat류 제3자 위탁 서비스를 쓰면 자체 서버 없이 양쪽을 동시에 만족시킬 수 있음을 확인, 권장안으로 제시.
+- 신규 설계문서(P0~P4 단계별 계획 + 대표님 확인 필요 4항목 포함)를 `docs/GOOGLE_PLAY_BILLING_IAP_FOUNDATION_DESIGN.md`로 작성 완료. 김클로드 초안이라 **검수 후 문서 소유권 전환 필요**(다른 설계문서와 달리 author가 김팀장이 아님).
+
+**김팀장(Cursor 본창) 검수 요청 — 특히 §1-4(스토어 제출 게이트 시간경과) 우선 확인 요청.**
+
+---
+
+## ✅ REVIEWED PARTIAL — 기기대응 UI 설계 v0.2 (김클로드 보강 + 태블릿 전체 확대) · 2026-09-23
+
+```text
+status=REVIEWED
+task_id=device-adaptive-ui-design-reinforcement-20260923
+kind=DESIGN_ONLY (코드 변경 0)
+verdict=PARTIAL
+정본=docs/DEVICE_ADAPTIVE_UI_DESIGN.md v0.2
+김클로드=tools/kim-team-lead/reports/kim-claude-device-adaptive-ui-design-reinforcement-20260923.md
+김팀장=tools/kim-team-lead/reports/kim-team-lead-device-adaptive-ui-v02-20260923.md
+```
+
+**김팀장 (2026-09-23)**: Play Frame 방향 AGREE. WSC 열·Play Tier 명문화·Fold 커버 분리·inset 비대칭·오포=표준 API AGREE. 「공식 640/701로 700 선확정」은 **DISAGREE**(8형 min=640은 기존 700 밖 · 기존값). 대표님 참고 반영 — 대형 태블릿은 §3-5 `playScale=min(availW/390,availH/844)` 전체 확대. 폰 밴드 scale 금지. 승인 전 코드 없음.
+
+---
+
+## 🟠 PENDING — 파이어베이스 DB·리얼타임데이터 back단 구조 전수조사 · 2026-09-23
+
+```text
+status=PENDING
+task_id=firebase-backend-structure-audit-20260923
+kind=AUDIT (코드 변경 0)
+전문=tools/kim-team-lead/reports/kim-claude-firebase-backend-structure-audit-20260923.md
+```
+
+**요약**
+- 절대금지(onSnapshot·실시간 멀티플레이) 위반 0건 확인. Firestore·RTDB 리스너 실사용 코드 전무(전수 grep, 오탐만 있었음).
+- 구조 전반 견고: 보안 규칙(list 차단으로 uid 열거 봉쇄) 양호 · 프로필 동기화(120초+900ms)와 백업(6시간) 두 계층이 목적별로 명확히 분리 · 모든 Firestore 호출에 타임아웃 레이스 적용돼 back단 장애가 로컬 플레이를 안 막음.
+- **쓰레기 파일 1 + 죽은 코드 2 확정(0참조 증거)**: `src/firebase/config.ts`(완전히 빈 파일, import 0건) · `loadPlayerFromFirestore()`(firestore.ts, @deprecated·호출 0건) · `estimateGameSaveSnapshotCharSize()`(collectLocalGameSaveSnapshot.ts, @deprecated·호출 0건). 즉시 삭제 가능.
+- 이전 감사(2026-07-08 메모리)에서 이미 발견된 미해결 건 재확인: 백업 청크 전량 성공 후 메타 문서 쓰기 직전 앱 종료 시 `payload_chunks` 고아 문서가 영구히 안 지워지는 경로 — 여전히 그대로. 낮은 빈도, 참고용.
+- 백업 슬림화 6개 키 목록에 `arcfire_missions_v1` 미포함 — 최근 퀘스트 id재사용 수정으로 완화됐으나 관찰 목록에 추가 권장.
+- 라이브 Firestore 문서(실제 DB 내용)는 이 세션에서 조회 불가 — 코드/스키마 레벨 감사임을 명시.
+
+**김팀장(Cursor 본창) — 쓰레기 파일·죽은 코드 3건 삭제부터 처리 요청.**
+
+---
+
+## ✅ REVIEWED APPLY — 무기/전함 구매 광물 소모 제거 · 2026-09-23
+
+```text
+status=REVIEWED
+task_id=trade-mineral-sink-removal-review-20260923
+kind=A안 적용 + 가격·매매 전수
+verdict=APPLY
+김클로드=tools/kim-team-lead/reports/kim-claude-trade-mineral-sink-removal-review-20260923.md
+김팀장=tools/kim-team-lead/reports/kim-team-lead-trade-mineral-sink-removal-20260923.md
+```
+
+**김팀장 (2026-09-23)**: 김클로드 AGREE. 대표님 의도=구매 광물 관문 제거. **A안 적용**(CSV 데이터 행 비움 · generated `[]` · 가격/수수료/판매식 미변경). B안(모듈 삭제) 보류. 조선소 ferrite/silicate/crystal 업그레이드·채굴 `ore_ferrite`·Macro SIM KPI 싱크는 별축 유지. `[existing-value-change]` sink qty 8/120→없음 · 대표님 승인(내의도).
+
+---
+
+## ✅ REVIEWED APPLY — 무기 전량 해제해도 전투에서 발사됨 · 2026-09-23
+
+```text
+status=REVIEWED
+task_id=weapon-unequip-still-fires-audit-20260922
+kind=BUG_FIX
+verdict=APPLY
+전문=tools/kim-team-lead/reports/kim-claude-weapon-unequip-still-fires-audit-20260922.md
+```
+
+**김팀장 (2026-09-23)**: §5 AGREE. 조선소 수동 해제도 `UNEQUIPPED_WEAPON_ITEM_ID('0')` 확인. §7은 대표님 요구대로 **비무장 진입 허용 · 발사 없음**. `resolvePlayerCombatWeaponChannels` 공용화(허브/이동중 + 섀도우 스냅샷). NPC `createCapitalAgentBase` 근접 폴백은 유지. 단위테스트 4건 PASS.
+
+---
+
+## 🟠 PENDING — 미확인 이상현상 v1.1 재검수 · 위협 전투 통합 P0 2건 · 2026-09-22
+
+```text
+status=PENDING
+task_id=unidentified-anomaly-quest-v1.1-review-20260922
+kind=DESIGN_REVIEW (코드 변경 0)
+전문=tools/kim-team-lead/reports/kim-claude-unidentified-anomaly-quest-v1.1-review-20260922.md
+대상=docs/UNIDENTIFIED_ANOMALY_QUEST_DESIGN.md v1.1
+```
+
+**요약**
+- v1.0 검수 8건(P1×3·P2×3·P3×1·확인 1)은 v1.1에 전부 반영 확인. `settleAnomalyEvent` idempotent 가드 명문화만 P3로 잔존.
+- v1.1 신규 본선(§6-0 50:50 유물/위협)의 **§6-3 위협 전투 통합에서 P0 2건** 발견 — 그대로 구현하면 동작 안 함:
+  1. `shouldGuaranteeQuestTransitEncounter`를 "항로 누수 방지(false 필요)"와 "STAGE 3 화면 진입 시 적 선택 게이트(true 필요)" 두 용도에 동시에 씀. 설계가 요구한 false로 고정하면 `combat.tsx`가 무작위 일반 해적을 띄우고, 이겨도 `canCompleteQuestDefeatEnemy` 템플릿 불일치로 퀘스트가 안 끝남.
+  2. `useTransitCombatSessionStore`(`transitCombatSession.ts`) 실제 타입에 `kind`/`returnTo` 필드가 없고, `commitArrival()`은 성계 간 이동 도착을 전제로 `moveToSystem`+worldmap 도착 연출을 무조건 실행. `combat.tsx`의 승리/도주/격침 종료 분기 전부 worldmap 또는 planet으로 하드코딩돼 있어 "수색하던 행성 허브로 복귀"를 지원하는 경로가 없음.
+  3. (P1) 시드로 지목한 `buildTransitCombatSeedSlots`는 실제로 다른 화면(`PlanetEdenRaidTestLayer.tsx`, venue=`hub_orbit`) 소속 — `app/(game)/combat.tsx`(venue=`transit`)는 안 씀. 어느 화면을 쓸지부터 재확정 필요.
+- 보완 방향(§4) 제시: 엔트리 게이팅 분리 · 완료 판정 전용 함수 · 복귀 전용 종료 분기 · 화면 재확정.
+
+**김팀장(Cursor 본창) 검수 요청.**
+
+---
+
+## ✅ REVIEWED APPLY — 미확인 이상현상 퀘스트 설계 검토 · 2026-09-22
+
+```text
+status=REVIEWED
+task_id=unidentified-anomaly-quest-design-review-20260922
+kind=DESIGN_REVIEW
+verdict=APPLY
+전문=tools/kim-team-lead/reports/kim-claude-unidentified-anomaly-quest-review-20260922.md
+정본=docs/UNIDENTIFIED_ANOMALY_QUEST_DESIGN.md (v1.1)
+```
+
+**김팀장 (2026-09-22)**: P1 3건 전부 설계 반영. P2는 (a) TTL 고정 12h · 이 퀘스트만 연구원 포기 · 해소 행성 3일 쿨다운. P3 로컬 전용 명시. 대표님 추가 지시로 수색 공개는 인스턴스당 50:50 유물/미확인 위협(이동중형 전투 · 미확인 물체 · 항로 guaranteed 금지). **코드는 설계 승인 후.**
+
+---
+
+## 🟠 PENDING — 방어위성 등 행성개발 완료 실시간성 조사 · 2026-09-22
+
+```text
+status=PENDING
+task_id=planet-dev-realtime-completion-audit-20260922
+kind=AUDIT (코드 변경 0)
+전문=tools/kim-team-lead/reports/kim-claude-planet-dev-realtime-completion-audit-20260922.md
+대표님 보고=방어위성 1레벨 완료·개척선 발진이 착륙 순간에만 발생
+commit=NOT_REQUESTED
+```
+
+**요약**
+- 대표님 진단 AGREE: HEAD 기준 완료 판정은 착륙·개발목록 열람·ArcCore RED 60초 틱(플레이어 행성 제외) 3곳에서만 호출됨 → 벽시계 완료가 실제로 UI 트리거 전까지 미반영 상태로 남아있었음.
+- **이미 워킹트리에 미커밋 WIP로 수정판이 존재함** (`planetDevJobRealtimeWatch.ts` 신규 + `_layout.tsx`·`planetCoreRuntimeStore.ts`·방어위성/범용모듈/코어스탯RD/광물강화 쓰기 경로에 배선). 대표님이 보신 증상은 이 WIP 반영 전 빌드로 추정.
+- 재검수 결과 결함 1건: `writeFacilityModuleDetail`이 내부 `patchPlanetCore`의 조용한 실패(행성이 worldStore에 없을 때)를 확인 안 함 → 팬텀 완료 알림·중복 알림 가능성(P2, 좁은 트리거 조건).
+- 유사 시스템도 동일 패턴으로 이미 미커밋 수정됨: 의뢰 만료(`missionExpireRealtimeWatch.ts`)·바 후원 만료(`barPatronageExpireRealtimeWatch.ts`). 스텔리움 개척 도착은 이전부터 이미 실시간.
+- 실기 재현은 세션 제약으로 미실시 — 김팀장 확인 요청.
+
+**김팀장(Cursor 본창) 검수 요청.**
+
+---
+
+## 🟠 PENDING — 최근 적용분(퀘스트 0/1단계) 재검수 중 발견 · O(P×M) 재스캔 패턴 · 2026-09-22
+
+```text
+status=PENDING
+task_id=quest-refactor-stage0-1-postapply-recheck-20260922
+kind=SPOT_CHECK (코드 변경 0)
+대상=src/missions/arcCoreInstanceMissionGenerator.ts:26-34,221-224
+```
+
+A1(id 재사용) 적용분 재확인 중 발견. `peekArcInstProgressIds()`가 `useMissionStore.progresses` 전체를 캐시 없이 매번 `Object.keys`+filter로 훑고, 이 함수가 `computeReplenishedPlanetEntries` 안에서 **행성마다** 호출된다(`runArcCoreBarInstanceBoardReplenishPass`가 전 코어 개방 행성을 순회). 같은 파일 206-209행 주석이 바로 이 클래스(행성마다 전체 배열 재스캔 → O(P×N))를 일일 배치 tailGroup 17.5초 지연의 원인으로 지목하며 경계하고 있는데, 이번 수정이 `progresses`에 대해 같은 패턴을 새로 들여왔다.
+
+- **현재 규모 실측 근거로는 무해**: 코어 개방 바 행성 21개(실측) × `progresses` 통상 수백 건 → 전체 배치 1회 총 비용 1ms 미만 추정(이전 조사의 stringify/scan 벤치 기준 환산). tsc PASS, 테스트 19/19 PASS.
+- **리스크는 규모**: 행성 수 확장 또는 계정 진행 기록이 커지면(예: 활성 미션이 수천 건) 같은 배치 안에서 재차 느려질 수 있는 구조. 지금 당장 막을 필요는 없으나 **행성 루프 밖에서 1회만 계산해 넘기는 형태로 정리** 권장(같은 파일의 `computeReplenishedPlanetEntries` 다른 인자들과 동일 패턴).
+- 수정 필요 없음(P3) — 다음에 이 파일을 만질 때 같이 정리 권장. 급함 없음.
+
+---
+
+## ✅ REVIEWED APPLY — 잔해 수색 크레딧·한도 전수조사 · 2026-09-22
+
+```text
+status=REVIEWED
+task_id=salvage-search-credit-cap-audit-20260922
+kind=IMPL_AUDIT + TEAMLEAD_APPLY
+전문=tools/kim-team-lead/reports/kim-claude-salvage-search-credit-cap-audit-20260922.md
+적용=tools/kim-team-lead/reports/kim-team-lead-salvage-search-credit-cap-apply-20260922.md
+verdict=APPLY — A grantSalvageCredits · B enabled=한도게이트 · C dayKey+count 시드 · D 기기시계 유지
+```
+
+**김팀장 (2026-09-22)**: 핵심 경로 동의. 시세 CR·AABS 미적용 유지. 한도는 enabled 일 때만. 시드는 persist 된 일일 카운트. Firestore는 player blob. **커밋은 대표님 지시 시.**
+
+---
+
+## ✅ REVIEWED APPLY — 퀘스트 리팩터 0·1단계 코드 · 2026-09-22
+
+```text
+status=REVIEWED
+task_id=quest-system-refactor-stage0-1-20260922
+정본=docs/코드작업을_위한_퀘스트_시스템_리팩토링.md
+verdict=APPLY — A1 prune+id회피 · A2 persist-first+rewardedAt · A3 qty=1 · A4 cloud retry · persist coalesce · reset cancel · AppState flush
+tsc=PASS
+tests=18/18
+```
+
+**김팀장**: 2단계 형식 분리는 설계대로 재판정 후 미착수. **커밋은 대표님 지시 시.**
+
+---
+
+## ✅ REVIEWED — 퀘스트 시스템 정밀 전수 조사 + 리팩터 설계 개정 · 2026-09-22
+
+```text
+status=REVIEWED
+task_id=quest-system-audit-and-redesign-review-20260922
+kind=AUDIT + DESIGN_REVIEW + TEAMLEAD_REVISE
+전문=tools/kim-team-lead/reports/kim-claude-quest-system-audit-20260922.md
+검수=tools/kim-team-lead/reports/kim-team-lead-quest-refactor-design-review-20260922.md
+정본=docs/코드작업을_위한_퀘스트_시스템_리팩토링.md
+verdict=DESIGN_REVISED — 코드 0
+```
+
+**김팀장 (2026-09-22)**: A1 P0 인정·(a) 정리. A2는 완료 즉시 저장 후 보상. 활성 인덱스 보류. reset=cancel. 수량·반복은 범위 밖. **코드는 0단계 착수 지시 후.**
+
+---
+
+## 🟡 SUPERSEDED 검수 원문 — 퀘스트 전수 조사 (아래는 김클로드 · 설계 정본은 위 REVIEWED)
+
+```text
+status=SUPERSEDED
+task_id=quest-system-audit-and-redesign-review-20260922
+kind=AUDIT + DESIGN_REVIEW (코드 변경 0)
+전문=tools/kim-team-lead/reports/kim-claude-quest-system-audit-20260922.md
+대상=docs/코드작업을_위한_퀘스트_시스템_리팩토링.md
+```
+
+**요약**
+- 설계 전제 판정: AGREE 4 · PARTIAL 3 · DISAGREE 3 (활성 인덱스 이득 무의미 실측 · 클라우드 sync 이미 디바운스 · 앱 사망 시 대사는 복구됨 · reset은 cancel이어야 함).
+- **A1 P0 후보**: 주간 갱신(`accepted`만 유지) 후 `arc_inst_*` id 재사용 → 이전 완료 진행과 충돌 → 새 의뢰 「완료」 표시·수락 불가.
+- **A2 P1**: 보상 지급과 미션 완료 저장이 독립 → 1.5초 코얼레스가 보상 재지급 창을 확대.
+
+---
+
+## ✅ REVIEWED PARTIAL_APPLY — 스텔라 아리스 라이프 **구현** 전수 검수 · 2026-09-21
+
+```text
+status=REVIEWED
+task_id=stella-aris-life-impl-audit-20260921
+kind=IMPL_AUDIT + TEAMLEAD_APPLY
+전문=tools/kim-team-lead/reports/kim-claude-stella-aris-life-impl-audit-20260921.md
+적용=tools/kim-team-lead/reports/kim-team-lead-stella-impl-audit-apply-20260921.md
+verdict=PARTIAL_APPLY — I1·I2·I3·I4(done)·I5·I6(검역문구)·I7·I8 반영 · I4서사CSV·I6실닉·I9·I10 HOLD
+tsc=PASS
+life_tests=17/17
+```
+
+**김팀장 (2026-09-21)**: 잠금 19건 준수 동의. 효과 확정분만 코드 반영. 가짜 3일·취소 쿨다운·UTF-8 3KB 클램프·EN done·「원래」오탐·비매칭 EMA 제외. 서사 CSV 240·짝 실닉 대조는 보류. **커밋은 대표님 지시 시.**
+
+---
+
+## 🟡 SUPERSEDED 검수 원문 — 스텔라 아리스 라이프 구현 전수 (아래는 김클로드 · 적용 정본은 위 REVIEWED)
+
+```text
+status=SUPERSEDED
+task_id=stella-aris-life-impl-audit-20260921
+kind=IMPL_AUDIT
+전문=tools/kim-team-lead/reports/kim-claude-stella-aris-life-impl-audit-20260921.md
+대상=v0.2 구현분 (소스 24 · CSV 6 · generated 6)
+verdict=PARTIAL — 잠금 19건 전부 준수 · 중대 3 · 보강 4 · 경미 3
+```
+
+**대표님 지시**: 김팀장 구현완료분 전수 정밀 조사 검수.
+
+**결론**: **v0.2가 잠근 구조는 하나도 뚫리지 않았다.** 게이트 함수가 실제로 배선돼 있고(존재만 하고 안 불리는 결함 없음), 테스트가 D7·humanFirst·멱등·결정론을 실제로 고정한다. 깨진 것은 **경계조건 3건**.
+
+**중대 3건 (실행으로 확정)**
+
+| # | 내용 | 근거 |
+|---|---|---|
+| **I1** | **신규 계정이 「설치 전 3일」 일상을 가짐** — 실행: digest 3건(9/18·19·20) + done「잠깐 끼니를 때우고 있어」 생성. `lastConsolidatedDayKey`가 빈 값일 때 `from = 어제-3일`이라 **결번 백필과 최초 생성이 같은 경로**를 탐. 스텔라가 플레이어 만나기 전을 기억 → §0-H·L11 「세계가 틀림」 | `stellaLifeDigest.ts:102-104` |
+| **I2** | **`[취소]`가 `lastAskDay`를 안 씀** → 행성 hop마다 같은 질문 재배지. v0.2 §16-4 「예의 쿨다운 달력 1일」 우회. §16-0이 없애려던 「무작위로 말 걸기」로 회귀. 수락만 세면 **거절당할수록 더 자주 묻는** 구조 | `planetHubTalkRoster.ts:369-371` |
+| **I3** | **3KB 안전장치 무효** — 상수는 **테스트에서만** 참조(런타임 강제 0) · `stellaLifeSnapshotBytes`는 이름과 달리 **UTF-16 length**를 잼 · 테스트는 빈/파싱직후만 검증. 실측 40일 포화 = length 2,254 / **실제 3,028B(상한의 98.6%, 여유 44B)**. parse 상한 포화는 **7,190B**인데 감지 안 됨 | `stellaLifeSnapshot.ts:3,139` |
+
+> **수정 순서 주의**: I3을 **I4보다 먼저**. narrative를 CSV 240자로 옮기면(I4) 3KB가 **즉시 초과**한다. 지금 안 터지는 이유는 하드코딩 문장이 11자라서다.
+
+**보강 4**: I4 문장 하드코딩(narrative en 없음 · `done`이 `activityEn` 버림 → **영문 팩에 한국어**) · I5 `PAY_RE` 오탐(실행: 「원래 짧게 말해」 차단, 「원 단위로」 통과) · I6 섀도우 차단이 짝 **닉네임**을 못 막음(단 `get_shadow_nick` 금지와 구조적 충돌) · I7 traits 평균회귀로 narrative 40일 후에도 기본값.
+
+**경미 3**: I8 도달 불가 분기(`stellaLifeDigest.ts:88-90`) · I9 중복 조건 · I10 인자 드리프트(무해).
+
+**self-check (게이트 실행)**
+- `npx tsc --noEmit -p tsconfig.client.json` — **통과**
+- 라이프 전용 테스트 **13/13 통과**
+- arcCore chat 전체 **134/135** — `arcCoreChatGmBeat.test.ts` 1건 실패. 원인 = tsx/esbuild가 `react-native/index.js` Flow 변환 실패(**실행 환경 문제, 로직 아님**). 라이프 모듈은 RN 비의존이라 **인과 아님**으로 판단하나, 기능셋 전체가 미커밋(`A`)이라 HEAD 비교 불가 → **김팀장 확인 필요**
+
+**정합 확인 19건**: 신규 persist 키 0 · schema 5 · C5/D7 입 격리(호출처 확인) · 타이머 0 · fetch 0 · ObservationBus 0 · SubCore 0 · AsyncStorage 직접접근 0 · K2 호출처 1곳 · B8 검역 배선 · 튜토리얼 2중 차단 · 2게이트 · 팩 ≤400 · humanFirst · STAGE dispose · 배치 훅 말미+catch · 백필 멱등 · 시계 역행 no-op · Skia 해당없음.
+
+**리스크**: I1·I2는 플레이어가 **첫날**과 **행성 이동**에서 바로 만나는 경로. 실기 전 수정 권장. 전부 국소 수정이며 **설계 변경 불필요**.
+
+**변경 파일**: 검수 보고서 1개 신규 · 본 handoff. **코드 0.**
+
+---
+
+## ✅ REVIEWED — 스텔라 아리스 프로젝트 · 에이전트 라이프 시스템 설계 · 2026-09-21
+
+```text
+status=REVIEWED
+task_id=stella-aris-life-system-design-20260921
+kind=DESIGN_DRAFT + DESIGN_SELF_AUDIT + TEAMLEAD_UPGRADE
+초안=docs/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.1.md
+정본=docs/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.2.md
+감사=tools/kim-team-lead/reports/kim-claude-stella-aris-life-design-full-audit-20260921.md
+검수=tools/kim-team-lead/reports/kim-team-lead-stella-aris-life-design-v02-20260921.md
+audit_verdict=PARTIAL_AGREE · C5 추가 · 구현은 v0.2만
+```
+
+**김팀장 검수 (2026-09-21)**: 골자 채택. C1~C4 동의. **C5 신규** — `inbound_request`는 근원체 입(`resolveChatReplySpeaker.ts:28`). 라이프를 기존 inbound에 실으면 적이 스텔라 일상을 말함. S0–S4 선제 없음 · schemaVersion 5 · 3요소는 내부 파이프. **코드 0.**
+
+---
+
+## 🟡 SUPERSEDED 초안 메모 — 스텔라 아리스 v0.1 (아래는 김클로드 원문 · 구현에 쓰지 말 것)
+
+```text
+status=SUPERSEDED
+task_id=stella-aris-life-system-design-20260921
+kind=DESIGN_DRAFT + DESIGN_SELF_AUDIT
+전문=docs/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.1.md
+감사=tools/kim-team-lead/reports/kim-claude-stella-aris-life-design-full-audit-20260921.md
+audit_verdict=PARTIAL (중대 4 · 보강 4 · 사실오류 4 · 정합 18)
+```
+
+**추가 지시 (2026-09-21)**: 전체 설계를 게임 모든 정본과 대조해 전수 정밀 조사 → **완료**. 정본 16건(문서 12 + 코드 4) 대조.
+
+**감사 결과 — 중대 4건 (구현 착수 전 정정 필수)**
+
+| # | 내용 | 정본 근거 |
+|---|---|---|
+| C1 | **신규 persist 키 제안이 역행** — 정본 §11-2 「키 분리보다 한 키가 purge 누락 적다」 · L2가 키 이름 명시 · 코드는 schemaVersion **4**로 judgment/speaker까지 같은 키 누적 | 구현정본 §11-2·L2 · `arcCoreChatStore.ts:35` |
+| C2 | **2게이트 누락** — 라이프 선제 연락이 메신저 직행처럼 읽힘 | `CONVERSATION_TWO_GATE_DESIGN.md` §5 금지1 |
+| C3 | **일일 배치는 접속한 날만 돈다** — L1 「14일」이 실제로 「최근 접속 14회」. 오래 비운 플레이어에게 세계가 틀림 | Master Spec:279 · `runArcCoreDailyOpsBatch` |
+| C4 | **등록 지점 오기 + `bootstrapAccountData` 누락** — 내가 4번으로 적은 `arcCoreMemoryRegistry`는 **미구현 계획물** | 구현정본 §11-1 · `arcfire-main-lead-agent.mdc:241` |
+
+**C1 채택 시 C4가 자동 해소**된다 — `arcfire_arc_core_chat_v1`은 이미 5곳 전부에 등록돼 있고 slim 비대상(passthrough)이라 클라우드까지 원형 전달. **C3은 D1 결정론으로 해소** — 안 산 날도 사후 계산 가능(백필 ≤3일).
+
+**보강 4건**: B5 환경변수가 L8 화이트리스트 초과(배치·팩션 → 2차) · B6 튜토리얼 계약 누락 · B7 §0-H 「기분 질문에 라이프 덤프」 가드 없음 · B8 anchors 입력측 검역 부재(기존 검역은 출력 전용, §16-A 섀도우 닉 위험).
+
+**사실오류 4건**: A9 백업주기 30분→**실제 6시간**(`GAME_SAVE_BACKUP_MIN_INTERVAL_MS`) · A10 pss-pre-dev `risk=` 누락 · A11(C3 흡수) · A12 별건.
+
+**정합 확인 18건**: 입≠몸 · 채널1 · 13좌없음 · 온디바이스없음 · 턴당LLM1 · ZERO_BILL · onSnapshot없음 · 고빈도없음 · Learning분리 · 친밀도미도입 · 로맨스배제 · 상점GM미도입 · Table-First · i18n · 팩예산 · 오버레이1 · STAGE해당없음 · 레이아웃불변.
+
+**김팀장 별건 2건 (라이프 무관 · 정본 문구 정리 필요 · 김클로드가 고치지 않음)**
+1. 구현정본 **§12-A 미개정** — 「Bedrock 전용」이 ZERO_BILL 「Bedrock 금지」와 정면 충돌
+2. 구현정본 **§0-I 튜토리얼 행 미개정** — 「NL 명단 침묵」이 dual mouth v0.4·코드(`arcCoreChatTutorialForce.ts:1`)와 불일치
+
+**대표님 지시**: 스텔라 아리스가 하루 일상을 행동·학습·저장·기억하고, 그것이 플레이어 대화 맥락에 반영되게 한다. LLM + 기존 템플릿 체계와 이어지는 사고수준. 과도한 데이터 금지 · 최대 저장일 + 고도화 교체. 기획의도·기술가능성·설계안정성·적용현실성 분석. **코드작업 금지**.
+
+**결론**: 구현 가능. 단 핵심 결정 1개가 대표님 제시 수단과 다르다 — **「10분/30분/1시간 주기 작동」을 타이머로 구현하면 실패한다.**
+
+**재검수 판정 (기존 정본 대비)**
+
+| 축 | 판정 | 근거 |
+|---|---|---|
+| 주기 틱 | **DISAGREE(수단)** | `setInterval`은 CLAUDE.md 절대금지4 · PSS §0-A 위반이고, Android 백그라운드에서 JS 타이머가 애초에 안 돌아 **기능 자체가 실패**. → 결정론적 가상 시계(지연 평가)로 교체. 상태는 실제로 30분마다 변하되 CPU 주기 실행 0 |
+| 라이프 LLM 생성 | **DISAGREE(수단)** | 48슬롯/일 호출은 ZERO_BILL·무료 티어 쿼터 붕괴. → 라이프는 100% 로컬 CSV 결정론, LLM 홉 **추가 0** |
+| 친밀도/호감 수치 | **AGREE(김팀장 HOLD)** | `STELLA_ARIS_OPERATOR_DIALOG_DEPTH_VERDICT_20260913.md` §7-3 HOLD 존중 — 수치 게이지 대신 anchors(기억) |
+| Learning 축 연동 | **AGREE(기존 잠금)** | `arcCoreChatJudgmentMemory.ts` 주석 계약대로 publish 금지 · 단방향 읽기만 |
+| 「게임 내 실제 행동기반」 | **PARTIAL** | 발화·선제대화·화제선택에는 반영(본선). **월드 write는 입≠몸으로 계속 기각**. 제안 편향은 B 스위치와 함께 예약 |
+
+**설계 골자**: 가상 시계(48슬롯/일) · 사고 변수 7개 · 3계층 기억(L0 세션 / L1 14일 / L2 고정) · 일 1회 배치에서 EMA α=0.15 합본 후 **원본 폐기** → 총 **≤3KB 고정** · 팩 주입 ≤400자 · 신규 CSV 3장 · Firestore 신규 컬렉션 0(기존 세이브 편승) · G3 폴백도 같은 재료.
+
+**변경 파일**: `docs/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.1.md` (신규) · `tools/kim-team-lead/reports/kim-claude-stella-aris-life-design-full-audit-20260921.md` (신규) · 본 handoff. **코드 0.**
+
+설계 문서에는 **사실오류 2건만 정정**(A9 6시간 · A10 risk=P2)하고 감사 배너를 달았다. 중대 4건·보강 4건은 **본문 미반영** — v0.2 개정은 김팀장 검수 후.
+
+**self-check**: 문서만 작성 — 소스 미변경으로 `tsc`/audit 실행 대상 없음. 정본 **16건** 대조(구현정본 L1~L12·§0-H·§0-I·§7·§8·§10·§11·§12-A / 2게이트 / dual mouth v0.4 / agent world domain / sustainable learning / 김팀장 09-13 판정 / ZERO_BILL / Master Spec v4.0 / memory-leak-audit-first §0-A / main-lead-agent §230-241 / overlay·dialog·shadow 규칙 / `arcCoreChatStore.ts` / `gameSaveBackup/*` / `arcCoreChatTutorialForce.ts` / `runArcCoreDailyOpsBatch.ts`).
+
+**리스크**: v0.1 그대로 구현에 넘기면 **C1·C2·C4에서 회귀**. v0.2 정정 후 착수 권장. 설계 골자(가상시계·로컬결정론·3계층·EMA합본·3KB·입≠몸)는 정정해도 **불변**.
+
+**대표님 결정 5건**(§12) 여전히 필요 — 슬롯 해상도(권장 30분) · L1 보존일(권장 14일) · purge 범위(권장 player scope) · 친밀도 수치(권장 미도입) · 월드 반영(권장 지금 열지 않음). **C1 채택 시 3번은 자동 결정**(기존 채팅 키 = player scope).
+
+---
+
+## 🟡 PENDING — 이동중 전투 배경 성운·구름 연출 코드 전수조사 · 2026-09-20
+
+```text
+status=PENDING
+task_id=transit-combat-backdrop-audit-20260920
+kind=CODE_AUDIT
+전문=tools/kim-team-lead/reports/kim-claude-transit-combat-backdrop-audit-20260920.md
+```
+
+**대표님 지시**: 이동중 전투 배경 구름성운·연출 코드 안정화 여부 전수조사 — 프레임/메모리/연출효과 구현 코드단 조사만.
+
+**결론**: 확정 결함 없음. 프레임(전투 rAF와 배경 120ms 틱 분리, 실측 튜닝 근거 코드 내 주석+회귀테스트로 고정) · 메모리(Paint/Rect/Float32Array 전부 모듈 스크래치 재사용, SkPicture/SkImage 수동 dispose 금지 계약 준수) 모두 정상.
+
+**경미 1건**: 이 컴포넌트가 STAGE reclaim 정리 함수를 `registerSkPictureFrameInvalidate`·`registerCombatSkiaPresentationReclaim` 두 레지스트리에 중복 등록 — STAGE 이탈 1회당 동일 cleanup이 2번 실행됨(멱등이라 안전, 낭비만). §2 참고.
+
+**변경 파일**: 없음(분석만, 코드 수정 없음).
+
+**self-check**: 코드 리뷰만 진행 — `tsc`/audit 스크립트 실행 대상 변경 없어 미실행.
+
+**리스크**: 없음.
+
+---
+
+## 🟢 REVIEWED — 개척선 시스템 고도화 코드 전수 감사 · 2026-09-19
+
+```text
+status=REVIEWED
+verdict=AGREE_PARTIAL
+task_id=stellium-colonize-full-audit-20260919
+kind=KIM_TEAM_LEAD_REVIEW
+전문=tools/kim-team-lead/reports/kim-claude-stellium-colonize-full-audit-20260919.md
+```
+
+**김클로드 §1 5분 핸드오프 미영속**: AGREE — 이미 store `fleetReadyAtMs` 왕복으로 반영됨(본 검수 전 구현).
+
+**김클로드 §2 전초기지 워치 중복**: AGREE — 행성당 모듈 타이머 1개로 합침. 허브 세션 dispose에 묶지 않음(벽시계 5분은 행성 이탈 후에도 유지). 핸드오프 출항 후 다른 행성 `in_flight`에도 워치. 퍼지 시 clear.
+
+**김팀장 추가**: 즉시 핸드오프는 queued+ready+캡 여유일 때만. 재진입 가드.
+
+---
+
+## 🟢 REVIEWED — 궤도 개척선 마크 미표시 분석 · 2026-09-19
+
+```text
+status=REVIEWED
+verdict=AGREE_PARTIAL
+task_id=stellium-colonize-mark-inspection-20260919
+kind=KIM_TEAM_LEAD_REVIEW
+전문=tools/kim-team-lead/reports/kim-claude-stellium-colonize-mark-inspection-20260919.md
+```
+
+**회전 재사용 DISAGREE(미이해 추정)**: AGREE — WO 공용 궤도 재사용이 맞음. 추가 파이프라인 없음.
+
+**already_blue / contested 가설**: 대표님 실기로 기각. 코드로 재적용하지 않음.
+
+**§4-2 DEV 스킵 로그**: AGREE — `disabled`/`no_system`/자격사유/`no_hop`만. 이미 추적 중인 행성 착륙 스팸은 생략.
+
+**§4-3 QA 강제 주입**: DISAGREE — 자격 우회. 착륙·도착·런타임 코어 그래프가 정본.
+
+**정보창 1회 가드**: 착륙·성계 도착·일 배치 backfill이 재시도. 별도 우회 없음.
+
+---
+
+## 🟢 REVIEWED — 「세축 반응·잔상·세계 변화」설계 김클로드 검토 · 2026-09-17
+
+```text
+status=REVIEWED
+verdict=AGREE_WITH_AMENDMENTS
+task_id=three-axis-world-change-design-review-20260917
+kind=KIM_TEAM_LEAD_REVIEW
+code_changes=NO (설계 문서만 v1.1)
+commit=FORBIDDEN
+target=docs/세축_반응_잔상_세계변화_설계.md (v1.1)
+전문=tools/kim-team-lead/reports/kim-claude-review-three-axis-world-change-design-20260917.md
+```
+
+**김클로드**: 코드 근거 13건 AGREE. 구조 결함 없음. 질문 2건은 블로커 아님. Phase 1 착수 동의.
+
+**김팀장 반영 (v1.1)**: (1) `__revisit` 1씬+토큰 = **의도 잠금**. 잔상은 팝업 2키. `__revisit_from`은 후속 여지. (2) 방문 캡 **16→24** (코어 21+synth 3). 소유 핀 금지. (3) L9 국호 표 오독 수정. (4) 3h 상수 파일 위치 정정. (5) `complete_talk_npc` 재사용 기각. (6) `holdSig`에 증서. (7) W3는 허브 세션 진입 — 대사 착륙 가드와 비공유.
+
+Phase 1 착수는 대표님 지시 후. src/tables 미변경.
+
+---
+
+## 🟢 REVIEWED — 이동중 전투 Skia 배경 · 2026-09-16 19:30
+
+| 항목 | 값 |
+|---|---|
+| **status** | **`REVIEWED`** |
+| **task_id** | `transit-combat-skia-backdrop-fix-20260916` |
+| **verdict** | `PARTIAL` |
+
+```text
+status=REVIEWED
+verdict=PARTIAL
+task_id=transit-combat-skia-backdrop-fix-20260916
+kind=KIM_TEAM_LEAD_REVIEW
+code_changes=NO (검수 턴 — 기능 패치 없음)
+commit=FORBIDDEN
+next=실기 1회 후 대표님 커밋 지시
+정본=tools/kim-team-lead/reports/kim-team-lead-transit-backdrop-review-20260916.md
+ready=CLOSED tools/kim-team-lead/reports/kim-claude-ready-transit-combat-skia-backdrop-20260916.md
+[pss-pre-dev] hot_path=none alloc=0 cache=n/a
+[pss-pre-dev] stage=검수 정리 risk=없음
+[pss-pre-dev] verdict=PASS
+```
+
+**김팀장 판정 PARTIAL**: 김클로드 구름 raw 캔버스 + safe-area flush 제거는 **수용**. 헤더 원본 `TF.panelBg` 유지. 크래시 P0 해제(대표님 확인). 이 축 **재구현·추가 패치 금지**. 실기(끊김·띠·헤더)만 남음. 커밋은 대표님 지시 후.
+
+---
+
+## ⚪ 이력 — PENDING(구현+자가검수 완료) — 이동중 전투 Skia 배경 풀블리드 수정 · 2026-09-16
+
+```text
+status=SUPERSEDED_BY_REVIEWED
+task_id=transit-combat-skia-backdrop-fix-20260916
+kind=IMPLEMENT + SELF_REVIEW
+code_changes=YES
+commit=FORBIDDEN
+files=src/components/combat/TransitCombatSkiaParallaxBackdrop.tsx · tools/memory-audit/run-skia-worklet-memory-audit.cjs
+ready=tools/kim-team-lead/reports/kim-claude-ready-transit-combat-skia-backdrop-20260916.md
+전문=tools/kim-team-lead/reports/kim-claude-transit-combat-skia-backdrop-inspection-20260916.md (§8)
+[pss-pre-dev] hot_path=flushPicture() 80ms setInterval alloc=신규 없음(기존 모듈 스크래치 재사용) cache=Picture 1장(state)
+[pss-pre-dev] stage=combat STAGE3 risk=P1(레이아웃) — 크래시 신규 가능성 없음(변경은 위치·범위 계산뿐)
+[pss-pre-dev] verdict=PASS
+```
+
+**READY §2 재검수(받아쓰지 않음)**: A=**PARTIAL**(공백 원인 진단은 맞았으나, 도착 시점 디스크는 이미 컨테이너는 풀블리드로 고쳐져 있었고 **구름만 여전히 `resolveTransitFullscreenContentBox`로 인셋**돼 있어 잔여 공백이 남아있었음 — 근본원인 진단은 맞되 당시 남은 증상은 다른 지점이었음) · B=**AGREE, 이미 반영됨**(`as any` 캐스팅 확인) · C=**PARTIAL**(`useEffect` 래핑은 이미 복원돼 있었음. `clipRect`/`width()` 재도입 없음 확인).
+
+**구현 요약**: 대표님 확인 결과 "구름 3겹 교차 흐름이 끊기고, 위아래 공백이 남는다"는 잔여 문제 재분석 — `PlanetNebulaImageBackdrop.tsx`(허브 실제 배경, `absoluteFillObject` 전체 화면)를 대조 기준 삼아 **구름 레이어도 flat-fill/베이크 성운과 동일하게 풀캔버스(raw `canvasW/canvasH`) 기준으로 그리도록 변경** — `resolveTransitFullscreenContentBox` 기반 콘텐츠박스 인셋을 구름 드로잉에서 제거. 이 인셋이 `useSafeAreaInsets().bottom`(비동기 값)에 의존해 매 변경마다 `flushPicture` 콜백 재생성 → 인터벌 재시작을 유발하던 것도 같이 제거돼, "끊기는" 문제의 유력 원인 하나(safe-area 값 변화 → 타일 크기 재계산 → 시각적 점프, 기존 `skipFlushTicksRef` 2틱 스킵 가드는 `gfxSize` 리사이즈만 커버하고 이 경로는 못 잡았음)도 함께 제거됨.
+
+`tools/memory-audit/run-skia-worklet-memory-audit.cjs`의 관련 체크 1개가 옛 설계(구름 content-box 유지)를 전제로 작성돼 있어 **불일치 실패** — 새 설계 기준으로 체크 로직 갱신(풀캔버스 일치 검증)해 29/29 PASS.
+
+**자가검수**: `npx tsc --noEmit` 클린 · `npx tsx src/combat/transitCombatParallaxPlan.test.ts` 17/17 PASS · `npm run audit:skia-memory` 29/29 PASS.
+
+**실기 미확인 — 명시**: 코드·정적 검사로는 근본원인(안전영역 비동기 값 의존)을 제거했다고 판단하나, "끊기는" 체감이 실제로 해소됐는지는 **기기 재생 확인이 필요**(대표님 재테스트 대상). 크래시는 현재 미재현 상태(대표님 확인) — 이번 변경은 레이아웃·범위 계산만 건드려 신규 크래시 경로 유발 가능성 낮다고 판단하나 이것도 실기로 재확인 요망.
+
+src/tables 외 변경 없음. **commit 없음** — 대표님 지시 후 김팀장 커밋.
+
+---
+
+## ⚪ 이력 — READY(구현+자가검수 이관, 처리 완료) — 이동중 전투 Skia 배경 · 2026-09-16
+
+```text
+status=CLOSED
+task_id=transit-combat-skia-backdrop-fix-20260916
+kind=IMPLEMENT + SELF_REVIEW
+assignee=CLOSED
+kim_team_lead_code=STOP
+commit=FORBIDDEN
+READY=CLOSED
+분석=tools/kim-team-lead/reports/kim-claude-transit-combat-skia-backdrop-inspection-20260916.md
+```
+
+**대표님 지시 (2026-09-16 19:01)**: 「지금 수정이 안되는 중이므로 김클로드가 이어서 구현하고 검수하는 쪽으로 변경한다.」
+
+김팀장 이 축 **코드 패치 중단**. 김클로드는 READY를 읽고 구현 + 같은 턴 자가검수 → 본 파일 상단을 **PENDING**으로 갱신. **commit 금지.** 김팀장 패치 받아쓰기 금지.
+
+---
+
+## ⚪ 이력 — PENDING(재검수 완료 · 2/3 미수정) — 이동중 전투 배경 Skia 레이어 전수 정밀조사 (크래시 2건 실측) · 2026-09-16
+
+```text
+status=PENDING
+task_id=transit-combat-skia-backdrop-inspection-20260916
+kind=RE_VERIFICATION_AFTER_FIX
+code_changes=NO
+commit=FORBIDDEN
+target=src/components/combat/TransitCombatSkiaParallaxBackdrop.tsx
+전문=tools/kim-team-lead/reports/kim-claude-transit-combat-skia-backdrop-inspection-20260916.md (§6 재검수)
+```
+
+**대표님 지시**: "지금 좀전에 수정이 끝났는데 한번더 전수 검사해봐라." — 아래 최초 리포트(§1~3)의 3개 항목을 수정 후 코드로 재대조.
+
+**결과 — 1/3만 수정됨**:
+- ✅ **tsc TS2345 해소** — `useImage((bakedSource ?? null) as never)`로 수정 확인. `npx tsc --noEmit` 재실행 에러 0건.
+- ❌ **위아래 공백 미수정** — `TransitCombatSkiaParallaxBackdrop.tsx:396`의 `top:chromePad.topPx/bottom:chromePad.bottomPx` 컨테이너 인셋 그대로. 테스트도 이 동작을 여전히 "의도"로 단언(`transitCombatParallaxPlan.test.ts:108-120`). **계속 재현될 가능성 높음.**
+- ❌ **크래시 유력 후보(ref 동기화 useEffect 밖 대입) 미수정** — `:251-255` 그대로. 새 크래시 tombstone도 없음(단, 수정 후 실기 재현 시도 자체가 없었던 것으로 보여 "해결 확인"과는 다름 — 재테스트 필요).
+- `tools/memory-audit/reports/skia-worklet-latest.md`(26/26 PASS)는 이번 수정 후 재실행되지 않았고, 애초에 텍스트 패턴 스캔이라 공백/useEffect 문제를 잡아낼 수 있는 검사가 아님 — PASS가 근거가 되지 않음.
+
+상세는 전문 §6. src/tables 미변경, commit 없음.
+
+---
+
+## 🔴 PENDING(1차 분석, 참고용) — 이동중 전투 배경 Skia 레이어 전수 정밀조사 (크래시 2건 실측) · 2026-09-16 (재검수는 위 항목 참조)
+
+```text
+status=PENDING
+task_id=transit-combat-skia-backdrop-inspection-20260916
+kind=CRASH_INVESTIGATION
+code_changes=NO
+commit=FORBIDDEN
+target=src/components/combat/TransitCombatSkiaParallaxBackdrop.tsx · src/combat/transitCombatParallax*.ts
+전문=tools/kim-team-lead/reports/kim-claude-transit-combat-skia-backdrop-inspection-20260916.md
+```
+
+**대표님 지시**: "김팀장이 이동중 전투 배경그래픽(Skia) 레이어 구현중. 위아래 공백 + 크래시. 현재 구현 전수 정밀조사, 분석만."
+
+**⚠️ 조사 중 파일이 실시간으로 편집됨** — 두 번 읽는 사이 `stageInsets`→`chromePad` 리팩터로 내용이 바뀌는 것을 직접 목격(그 과도기에 `tsc`가 `Cannot find name 'stageInsets'`를 순간 띄움). 아래는 **최신 스냅샷 기준**이며 이 문서를 읽는 시점엔 또 바뀌어 있을 수 있음.
+
+**확정 사실 3건**:
+1. **위아래 공백 원인 확정** — `TransitCombatSkiaParallaxBackdrop.tsx:396`가 이미 풀블리드인 `StageShell.backgroundOverlay`(`StageShell.tsx:98` absoluteFillObject) 컨테이너를 `top:72/bottom:54` 만큼 자체적으로 다시 인셋시켜, 그 띠 구간엔 Canvas 자체가 없음(단색 `#05070e`만 노출). `resolveTransitBackdropChromePad`(원래 "구름이 여백에 안 들어가게" 의도)가 View 위치에 잘못 적용됨.
+2. **`tsc` 실패 재현됨** — `TransitCombatSkiaParallaxBackdrop.tsx:241` TS2345(`useImage(bakedSource ?? null)`). 기존 정상 동작 sibling `SkiaPlanetNebulaShaderBackdrop.tsx:140-141`은 `as any` 캐스팅으로 이미 우회 중 — 신규 파일에 캐스팅 누락.
+3. **오늘자 실제 크래시 tombstone 2건 확보**(`.tmp-crash-buf.txt`/`buf2.txt`) — 18:10:16 `JsiSkCanvas::clipRect` assert(SIGABRT), 18:19:29 `JsiSkImage::width()` SIGSEGV. 단, `src/` 전수 grep 결과 두 크래시 모두 **애플리케이션 코드에서 정확한 호출부를 확정하지 못함**(앱에 `clipRect` 호출 0건, `.width()`는 이 컴포넌트가 도달하지 않는 다른 함수에만 존재). 최유력 가설: 5개 `useImage()` 동시 사용 + 이미지 ref 동기화가 (조사 중 목격한 최신 변경으로) `useEffect` 밖 렌더 본문에서 직접 대입되고 있어, 80ms 인터벌이 Skia가 폐기 중인 이미지 핸들을 참조할 레이스 가능성. 확정 아님, 정황 근거로만 제시.
+
+권고(미적용): (1) 인셋을 컨테이너가 아닌 구름 타일 그리기에만 적용, (2) `as any` 캐스팅 추가, (3) 이미지 ref 동기화를 `useEffect`로 원복. 전문에 상세 근거·재현 커맨드 기재. src/tables 미변경, commit 없음.
+
+---
+
+## ✅ REVIEWED — 전쟁·경제 연동 설계 v0.2 재검수 반영 · Phase 0–1.5 착수 · 2026-09-14
+
+```text
+status=REVIEWED
+task_id=war-economy-theater-v02-review-20260914
+kind=DESIGN_REVIEW + IMPLEMENT
+kim_team_lead_verdict=AGREE_WITH_FIXES
+code_changes=YES
+commit=NOT_REQUESTED
+target=docs/strategy/WAR_ECONOMY_THEATER_AUDIT_AND_UPGRADE_DESIGN.md (v0.2.1)
+전문=tools/kim-team-lead/reports/WAR_ECONOMY_THEATER_V02_REVIEW_20260914.md
+```
+
+김클로드 3건 반영: 쿨다운 예시 5.3h · vault 함수명 `resolveFactionVaultForPlanetId` · 주둔 배율은 수비 화력만(`defenderGarrisonMul`).  
+구현: `resolveWarTheaterState` · 여파/WDI theater 합류 · 주둔 persist(월드 축) · NPC 승리금/잔존 · 일 배치 `runTheaterGarrisonDailyPass`. 플레이어 웨이브 밸런스 불변.
+
+---
+
+## 🔴 PENDING(참고자료 · 김팀장 확인 대기) — 전투 연출·이펙트 아트 디렉션 참고 가이드 (HighFleet) · 2026-09-16
+
+```text
+status=PENDING
+task_id=combat-vfx-art-direction-highfleet-20260916
+kind=ART_DIRECTION_REFERENCE
+code_changes=NO
+commit=FORBIDDEN
+전문=docs/COMBAT_VFX_ART_DIRECTION_REFERENCE_HIGHFLEET_20260916.md
+```
+
+**대표님 지시**: 유튜브 전투영상(HighFleet, "Sevastopol Veteran Gunner" 근접포격 장면)의 연출·효과·분위기·색감을 분석해 아크파이어 그래픽 전반(전투 이펙트/색감/연출 톤)에 참고할 개발가이드 작성. 이후 **대표님이 실제 전투 스크린샷 1장을 첨부**해 실측 분석으로 보강.
+
+**요약**: 1차는 영상 제목/메타데이터 + HighFleet 공개 아트 디렉션 자료 기반이었으나, 첨부 스크린샷을 직접 분석해 §2에 실측 HEX 팔레트(배경 `#5B6672`~`#7A8590` 슬레이트 블루그레이, 대폭발 3단 그라디언트 `#FFF7E0→#FDBA74→#F97316`, 트레이서 `#FB7185`/`#F97316`+하이라이트 `#FEF3C7`, 함미화염 `#FDE047→#F59E0B→#C2410C`, UI 라임그린 `#BEF264`~`#D9F99D`)와 구도 관찰(광원=이펙트뿐·트레이서는 점이 아닌 선분·대기원근·파편 방사낙하·UI 3요소 단색)을 반영해 전면 보강했다.
+
+핵심 제안: **연사 무기 발사 리듬에 미세 지터 + 크로스파이어 밀도 구간에서 최근 발사탄만 하이라이트**해 "쏟아붓는" 인상 강화. 명중 섬광 3단 그라디언트, 저HP/화재 상태 `statusTintHex` 시간 보간 등도 기존 `weapon_special_fx_policy.csv`·`buildLaserBolt()` 구조 안에서만 조정하는 방향으로 제안. **모두 Skia 루프 무할당 원칙 준수 — 신규 렌더 파이프라인 없음.**
+
+**한계**: 스크린샷 1장 기준 — 다른 장면(원거리·완전야간·격침 직전 등) 색감 편차 가능성 있음. 추가 스크린샷 있으면 더 정교화 가능. 착수는 별도 지시 후 READY 분리.
+
+src/tables 미변경. commit 없음.
+
+---
+
+## 🔴 PENDING(분석 완료 · 김팀장 판정 대기) — 전쟁·경제 연동 설계 v0.2 독립 재검수 · 2026-09-14 (이력)
+
+```text
+status=REVIEWED
+task_id=war-economy-theater-v02-review-20260914
+kind=DESIGN_REVIEW
+code_changes=NO
+commit=FORBIDDEN
+target=docs/strategy/WAR_ECONOMY_THEATER_AUDIT_AND_UPGRADE_DESIGN.md (v0.2)
+전문=tools/kim-team-lead/reports/WAR_ECONOMY_THEATER_V02_REVIEW_20260914.md
+```
+
+**대표님 지시**: "김팀장이 수립한 전쟁·경제 연동설계 v0.2를 분석 검수하고 업데이트 요소나 리스크요소를 정리해 김팀장에게 보고하라."
+
+**요약**: 문서 핵심 뼈대(분쟁 삼중 정의·연결맵·헌법 8원칙·`resolveWarTheaterState` 아키텍처·전선 주둔 프록시)를 코드/CSV 직접 대조로 재검수. 스팟체크 6건 중 5건 **AGREE**(정의 A/B/C, 여파 CSV 수치, `allySupplyEnabled` NO-LINK 전부 코드와 정확히 일치), 1건 **DISAGREE**(§1 쿨다운 예시 "풀8→10.7시간"은 문서가 인용한 공식 자체로 계산하면 약 5.3시간 — 계산 오류, 신규 발견).
+
+업데이트 요소 3건(쿨다운 수치 정정 · §10-4 함수명 정밀화 `resolveFactionVaultForPlanetId` · `resolveWarTheaterState`의 캐시-의존성 명시) + 리스크 요소 3건(관측버퍼/주둔맵 캡 강제 실장 확인 · 주둔 배율 삽입점 중복계산 가능성 · 60개 체크리스트 전항목은 이번 라운드 미검증) 상세는 전문 참조. 종합 판정: **착수 가능**, 단 §8 질문3(로테이션 유지) 답변 전 쿨다운 수치 정정 권장.
+
+src/tables 미변경. commit 없음.
+
+---
+
+## 🔴 PENDING(분석 완료 · 김팀장 판정 대기) — 웨이브 전투 FPS 저하 독립 재검수 · 2026-09-14
+
+```text
+status=PENDING
+task_id=wave-combat-fps-analysis-20260914
+kind=RE_VERIFICATION
+code_changes=NO
+commit=FORBIDDEN
+kim_team_lead_verdict=PARTIAL
+ready=tools/kim-team-lead/reports/kim-claude-ready-wave-combat-fps-20260914.md
+전문=tools/kim-team-lead/reports/kim-claude-wave-combat-fps-analysis-20260914.md
+reviewed_at=2026-09-14
+```
+
+김팀장 판정 **PARTIAL** → **2026-09-14 00:33 정정**: 대표님 — 아르카디아 전투 없음(블루). 재현=**베가 `vega_base` L3**. 어느 성계든 전투 시 프레임 저하.
+
+L3 적 픽은 **특수FX 없음**. Type C `012` AoE는 **이번 재현 1순위 아님**. 공통 바닥=STAGE3 상시 신규 패키지.
+
+**김팀장 보완 적용 (2026-09-14)**: 연출/FX/CSV 불변. 베가 1웨이브 rAF — 빈 스킬·빈 크래프트 skip, filter 제거, prevPts·clamp in-place. 전문 §7-2. `tsc` PASS.
+
+김팀장 1차 분석(§1-1~1-6) 받아쓰지 않고 코드·git diff·`npx tsx` 실측으로 재검수 완료. 1차 리포트 보완·확장판.
+
+---
+
+**판정 표 (전 항목):**
+
+| 항목 | 판정 | 한 줄 요약 |
+|------|------|-----------|
+| §1-1 플레이어 기본무기 특수FX 기각 | **AGREE** | w_laser_heavy_01 / w_missile_guided_triple_01 / w_missile_arc_005 모두 FX policy 행 없음, 기각 확정 |
+| §1-2/1-3 Type C `w_laser_arc_012` AoE | **AGREE (확정도↑)** | L1에서 rocket 패밀리 requiredLevel≤1 없음 → 폴백 100% 확정. hit당 O(N) AoE + 800ms Skia tint. npx tsx 실측 일치 |
+| §1-4 `tickPlayerAutoCombatSkills` NEW | **AGREE (NEW, cheap)** | HEAD 없음 확인, 스킬 0개 시 비교연산 ~10개만, 단독 영향 미미 |
+| §1-4 `tickCapitalCrafts` NEW | **DISAGREE (이번 무관)** | NEW지만 풀 항상 비어있어 0비용 (플레이어/L1적 모두 drone/carrier 없음) |
+| §1-4 `quadBezier` 요격 루프 NEW | **DISAGREE (이번 무관)** | craft alive 없어 루프 진입 안 함 |
+| §1-4 `writeCapitalHeavyTurnLaw` NEW | **NEW, negligible** | HEAD 없음, 산술연산만, 1에이전트당 microsecond 이하 |
+| §1-4 `agents.filter().length` (3134) | **AGREE (기존)** | `git show HEAD` 검색됨 — 김팀장 "기존" 동의 |
+| §1-4 Skia statusTint per-frame | **AGREE (NEW 비용, 추가 확인)** | HEAD에 FX 없어 tinted=false였음. working tree에서 AoE hit → 800ms 매프레임 draw.circle 추가. 피격 최대 5에이전트 × 800ms = 24,000 draw/레이저1회 |
+| §1-5 근접 8연사 `w_missile_arc_005` 신규 | **DISAGREE (신규 아님)** | `git diff HEAD -- combatWeaponSlots.ts` 출력 없음. HEAD부터 기존 |
+| §1-6 L5+ 후반행성 | **실측 완료 (추가)** | L5: A+B=w_laser_arc_011(cutting_beam FX×4명), B+C=w_missile_arc_009(shrapnel AoE 36px, double scan 가능성). L1보다 훨씬 심각 |
+
+**김팀장 놓친 것:**
+- **Skia tint per-frame 연속 비용**: FX 판정(hit-time O(N))만 언급, AoE 이후 800ms×매프레임 draw.circle 비용 별도 명시 안 됨
+- **L2가 L1보다 오히려 싸다**: npx tsx 실측에서 L2 Type C → `w_missile_arc_005`(무FX)로 전환. 비선형 패턴(L1폴백FX → L2무FX → L5다중FX)
+
+**순위 3 (L1 기준):**
+1. Type C 레이저 hit → `applySpecialWeaponAoeAroundPoint` O(N) NEW + 800ms Skia tint NEW (확정)
+2. `tickPlayerAutoCombatSkills` 등 신규 루프 합산 (중첩 기여)
+3. Skia tint draw.circle per-frame 연속 비용 (실기 미측정)
+
+**실기로 가를 질문 (2개):**
+1. 재현이 아르카디아(L1)만인지, L5+ 행성도 포함인지 — L5+면 `w_missile_arc_009` double-scan이 추가 원인
+2. FPS 저하가 교전 직후부터인지 vs. 첫 Type C 레이저 hit 이후 점진적인지 — 후자면 틴트 per-frame 비용이 주범
+
+패치 1안(제안, 미구현): `hostile_enemy_weapon_loadout_policy.csv` 신규 행 추가 (L1 전용 폴백=`w_laser_arc_007`, 무FX). 기존 `second_burst` FX 데이터 변경 없음.
+
+코드·CSV·commit 전부 무변경.
+
+---
+
+## 🟢 READY — 웨이브 전투 프레임 저하 독립 분석 · 2026-09-14
+
+```text
+status=READY
+task_id=wave-combat-fps-analysis-20260914
+assignee=김클로드
+kind=ANALYSIS_ONLY
+commit=FORBIDDEN
+code_changes=FORBIDDEN
+ready=tools/kim-team-lead/reports/kim-claude-ready-wave-combat-fps-20260914.md
+assigned_at=2026-09-14
+```
+
+대표님 지시: 프레임 저하를 김클로드에 공유하고 **분석만**. 플레이어는 **기본무기만**(추가 무기 무관).  
+김클로드는 김팀장 1차 분석을 **받아쓰지 말고** 코드·피커 재검수 → 리포트 `kim-claude-wave-combat-fps-analysis-20260914.md` → 본 파일 상단 `PENDING`. **패치·커밋 금지.**
+
+---
+
+## ✅ REVIEWED — 스텔라 아리스 인앱 LLM 대화 고도화 · 2026-09-13
+
+```text
+status=REVIEWED
+task_id=stella-aris-operator-shop-guide-ethical-design-20260913
+kim_team_lead_verdict=PARTIAL
+applied=§7-2 op_persona_perspective/humor/boundary · pack/Lambda cap 12
+already=§7-4 memory tags 공유 rollingSummary
+held=§2–5 shop GM · §7-3 친밀도 4단계 · §7-5 미연시 regex
+reviewed_at=2026-09-13
+전문=tools/kim-team-lead/reports/STELLA_ARIS_OPERATOR_SHOP_GUIDE_ETHICAL_DESIGN_20260913.md
+판정=tools/kim-team-lead/reports/STELLA_ARIS_OPERATOR_DIALOG_DEPTH_VERDICT_20260913.md
+```
+
+김클로드 설계 §0 윤리는 **잠금**. 대화수준 고도화는 **관점 3행만** 적용. 상점 안내·친밀도 기계는 HOLD.
+
+---
+
+## ✅ REVIEWED — 스킬트리 36종 설계 반영 · 2026-09-13
+
+```text
+status=REVIEWED
+task_id=skill-tree-36-undeveloped-design-20260913
+kim_team_lead_verdict=PARTIAL
+applied=요새화 HP≤30% 게이트 · 액티브 스태거 · 수리드론 허브 내구 · 정찰 안개+1홉/위협미리보기/수색시간 · 시장감지 가격 · 암시장 밀수 진열 · 웜홀탐색 결정론 홉스킵 · jump_speed=이동시간
+held=영구 웜홀 포탈 · 월드 시세 조작 · 다중록온 추가 미사일 · 싱귤래리티 전용 탄
+rejected=autoTriggerCondition CSV 컬럼 · wingman=capitalCraftPool(대표님 B안=블루 전함)
+reviewed_at=2026-09-13
+전문=tools/kim-team-lead/reports/SKILL_TREE_36_UNDEVELOPED_DESIGN_20260913.md
+```
+
+김클로드 36종 설계 §2~§5 재검수 후 김팀장 결정:
+
+| 주장 | 판정 | 조치 |
+|---|---|---|
+| active≠발동 버튼 · 자동전투 수식 | **AGREE** | 기존 잠금 유지 |
+| `jump_speed` 소비처 미확인 | **AGREE→해소** | `SHIP_TRANSIT_DURATION_MS` × 0.7 |
+| `sensor_range` 판정 위치 미확인 | **AGREE→해소** | 스캔/수색 시간 · 이동 안개 +1홉 · 위협 미리보기 |
+| `repair_drone` 비전투 1회 | **AGREE** | 허브 착륙 60s 간격 내구 +1%p |
+| 요새화 HP 트리거 | **AGREE** | 쿨 준비 + 선체 ≤30%. CSV 컬럼 없음 |
+| `market_sense` 가격 미리보기 | **AGREE** | 인접 성계 대표 SKU 매입가 |
+| `black_market_boss` 진열 게이트 | **AGREE** | 섹터와 무관 `contraband` 추가 |
+| `wormhole_finder` 홉 절감 | **AGREE** | 결정론 15% 1홉. 실패 시 연료 −15% |
+| `autoTriggerCondition` 컬럼 | **DISAGREE** | 정책+쿨로 충분 |
+| 윙맨=함재기 풀 | **DISAGREE** | 대표님 B안 블루 전함 |
+| 독점=월드 물가 | **DISAGREE** | `price_elasticity=0` · 개인 매입만 |
+| 영구 웜홀 포탈 | **HOLD** | 홉 스킵 유지 |
+
+---
+
+## 🗄 SUPERSEDED — 스킬트리 미개발 36종 개별 개발안 · 2026-09-13 (김클로드 원문)
+
+```text
+status=SUPERSEDED
+task_id=skill-tree-36-undeveloped-design-20260913
+kind=DESIGN_PROPOSAL (36개 개별)
+code_changes=NO
+전문=tools/kim-team-lead/reports/SKILL_TREE_36_UNDEVELOPED_DESIGN_20260913.md
+```
+
+대표님 지시: 김팀장 스킬 개발 중 — 미개발 36종에 김클로드가 기획·설계 채워 개발문서 작성 후 전달.
+
+**36종 수치 재확인(AGREE)**: `skills.csv` 45종 중 `skillRuntimeStatus.ts`의 `COMPLETE_IDS`(8)+`PARTIAL`(1)을 뺀 정확히 36종 — 대표님 수치와 일치.
+
+**핵심 재검수 결과**: CSV `effectType=active` 라벨만 보고 "플레이어 발동형 액티브 스킬 시스템"을 새로 만들어야 한다고 오판하기 쉬운데, 실제로는 이 게임 전투가 자동전투라 **15개 "active" 중 5개는 그냥 자동전투 수식에 계수 추가**(A그룹 패시브 21개와 구현 난이도 동일), 6개만 `capitalWeaponImpact.ts`에 이미 있는 `statusTintUntilMs`/`speedSlowUntilMs` 같은 기존 "임시상태 타이머" 필드 패턴 재사용으로 해결 가능, 1개(`wingman`)는 어제 정밀검사한 `capitalCraftPool.ts` 함재기 풀을 그대로 재사용 가능, 나머지 3개만 전투 시뮬 밖 도메인(은하이동·무역경제)이라 별도 설계 필요.
+
+**설계 구성**: A그룹(패시브 21종) — 전투 2종·무역 6종은 기존 Bind 파일에 필드만 추가, 항법 4종·함대 9종은 신규 Bind 파일 2개 필요(기존 패턴 복붙 수준). B그룹(액티브 15종) — 5가지 성격으로 재분류(자동전투수식형/임시상태형/소환형/아웃오브컴뱃형/조건부자동트리거형), 전문 §3에 각 성격별 구체 소비 지점·필드명까지 제시.
+
+**이번 설계에서 유일하게 "기반 작업"이 필요한 지점**: B-2 임시상태형 6종을 위한 `Agent` 신규 상태 필드 4~5개(`stanceMode`/`stealthUntilTurn`/`invincibleUntilMs`/`speedBoostMul`/`speedBoostUntilMs`) + 선택적 CSV `autoTriggerCondition` 신규 컬럼. 그 외 34종은 기존 컬럼·기존 패턴만으로 충분.
+
+**미확인 2건(김팀장 확인 요청)**: `jump_speed`(점프가속) 소비처가 이미 있는지, `sensor_range`(정찰센서) 구체 판정 로직 위치.
+
+코드·CSV 전부 무변경. 전문 §4 우선순위 참고해 반영 판단 요청.
+
+---
+
+## ✅ REVIEWED — 특수무기류 정밀검사 대안 반영 · 2026-09-13
+
+```text
+status=REVIEWED
+task_id=weapon-special-fx-system-inspection-20260913
+kim_team_lead_verdict=PARTIAL
+applied=연출만 4행 플래그 보강 · 누락 8+1행 신규 · 제네시스 아군치유 · 함재기 ignoreArmor 연동
+held=실제 탈취 · 함대증발 · 아다만틴 ignoreShield 0→1
+rejected=048=카스(오인 — 039가 카스) · 036 ignoreShield 오기정정(IgnoreDR=장갑)
+reviewed_at=2026-09-13
+전문=tools/kim-team-lead/reports/WEAPON_SPECIAL_FX_SYSTEM_INSPECTION_20260913.md
+```
+
+김클로드 §1~§4 재검수 후 김팀장 결정:
+
+| 주장 | 판정 | 조치 |
+|---|---|---|
+| 34종 실제 판정·메모리 OK | **AGREE** | 유지 |
+| 연출만 4종 CSV 플래그 보강 | **AGREE** | `056` 실드박탈 · `059` 광역+감속 · `068` 광역 · `069` 감속 |
+| 사거리 플레이버 3종 틴트만 | **AGREE** | `022`/`040`/`051` 신규 행 |
+| 옴니·월드에코 광역 근사 | **AGREE** | `060` r=60 · `061` r=56 |
+| 제네시스 적 광역+아군 치유 | **AGREE** | `063` aoe+`allyHealPct` · `applyAllyHealAroundPoint` |
+| 카스 감속=`048` | **DISAGREE** | `048`은 신격학살. 감속은 `039`에 적용. `048`은 광역 근사만 |
+| 아다만틴 `ignoreShield` 0→1 | **DISAGREE** | IgnoreDR=장갑. `ignoreArmor=1` 특수행 + 크래프트 타격 연동 |
+| `listWeaponTradeItemIds` 삭제 | **HOLD** | 낮은 우선순위 · 이번 턴 미삭제 |
+| 실제 탈취·함대증발 | **HOLD** | 기존 방침 유지 |
+
+---
+
+## 🗄 SUPERSEDED — 특수무기류 정밀검사 + 미완부분 대안 제시 · 2026-09-13 (김클로드 원문)
+
+```text
+status=SUPERSEDED
+task_id=weapon-special-fx-system-inspection-20260913
+kind=DEVELOPMENT_QA + GAP_REMEDIATION_PROPOSAL
+code_changes=NO
+전문=tools/kim-team-lead/reports/WEAPON_SPECIAL_FX_SYSTEM_INSPECTION_20260913.md
+```
+
+대표님 지시: 김팀장이 개발한 특수무기류의 연출·완성도·메모리효율·리스크 전수정밀검사 + 전체 무기리스트 미완부분에 기능작동 가능한 대안 제시 후 김팀장 전달.
+
+**연출·기능 검사(AGREE — 실제 전투에 반영됨)**: `weaponSpecialFxPolicy.ts`+`weapon_special_fx_policy.csv`(34개 무기) 확인 — `capitalWeaponImpact.ts`에서 ignoreShield/ignoreArmor가 실제 데미지 계산에 전달되고, AoE·감속·실드박탈·요격이 전부 진짜 수치를 조작함(색만 다른 게 아님). `npx tsx src/combat/weaponSpecialFxPolicy.test.ts` 13/13 PASS 직접 재확인.
+
+**메모리·리스크 전수검사(문제 없음)**: 정책·프레젠테이션 둘 다 Map 캐시, 틱 루프 전부 for문(신규 배열 생성 없음) — 이 프로젝트 Zero-Alloc 관례 준수 확인. 어제 발견한 드라코 VMock/웨이브 테스트 무기 12개가 특수무기 경로로 상점에 새는지도 확인 — `isCanonicalTradePortWeapon()`의 `tradePortListed` 필터로 정상 차단됨(리스크 없음). 부수로 `weaponItemBridge.ts`의 `listWeaponTradeItemIds()` 죽은 코드 1건 발견(낮은 우선순위).
+
+**미완 부분 실측**: 34개 중 4개는 CSV 자신이 "연출만(예: 하이어라키=탈취 미구현)"이라 명시. 추가로 설명문에 강한 특수능력이 있는데 정책 테이블에 행 자체가 없는 무기 8개 발견(장거리순항·초광속·차원도약·옴니조준·월드에코·제네시스모함·카스의파멸·아다만틴함재기).
+
+**대안(전부 기존 CSV 컬럼만 채우면 되는 안, 코드변경 없음)**: 전문 §4에 무기별 구체 값 제시 — 코스믹/신격 티어는 기존 최상급 광역+감속 조합으로 격 맞춤, 사거리로 이미 반영된 것(Global/Distant/Warp)은 아이콘·틴트만 추가, 아다만틴 함재기는 `ignoreShield` 값 오기 정정. **유일하게 코드 추가가 필요한 예외**: 제네시스 모함의 "아군 치유" 절반은 기존 AoE 함수가 적 팀만 순회하도록 짜여 있어 CSV만으로 불가 — 신규 소규모 함수(10줄 내외) 필요함을 명시.
+
+코드·CSV값 전부 무변경. 전문 검토 후 반영 판단 요청.
+
+---
+
+## ✅ REVIEWED — 무기체계 전수검사·드론/함재기 검수안 반영 · 2026-09-13
+
+```text
+status=REVIEWED
+task_id=weapon-drone-carrier-system-inventory-20260913
+kim_team_lead_verdict=PARTIAL
+applied=풀상한 항창 회수 · trySpawnCapitalCraftVolley · 본선 발사 경로 테스트 · 파이프라인 주석 정정
+held=드라코 __DEV__ 가드 · CSV 밸런스 수치 변경
+rejected=본선 미연결(오진 — TestLayer=본선 시뮬)
+reviewed_at=2026-09-13
+전문=tools/kim-team-lead/reports/WEAPON_DRONE_CARRIER_SYSTEM_INVENTORY_20260913.md
+```
+
+김클로드 1단계 인벤토리 §2-층4·§5 재검수 후 김팀장 결정:
+
+| 주장 | 판정 | 조치 |
+|---|---|---|
+| 층4 본선 미연결 | **DISAGREE** | `PlanetEdenRaidTestLayer`는 허브·웨이브·STAGE3 **본선 시뮬**. 스폰/틱은 `pushCapitalProjectileMissile`에 이미 연결 |
+| 재장전 2200ms vs 선회수명·poolHardCap | **AGREE** | `trySpawnCapitalCraftVolley` — 상한이면 가장 오래된 동패밀리 기체 회수 후 재스폰. weapon_list 곡선 미변경 |
+| 본선 연결 테스트 부재 | **AGREE** | 프로덕션·VMock loiter active + 일제 스폰 회수 테스트 추가 |
+| 파이프라인 주석이 테스트벤만 가리킴 | **PARTIAL** | 본선 시뮬·항창 회수 한 줄 명시 |
+| 드라코 `__DEV__` 가드 | **HOLD** | 대표님 시험 베뉴 지시와 충돌. Metro 실기 유지 |
+| 12개 CSV 프로필 밸런스 재조정 | **HOLD** | 기존값 변경 재확인 대상. 이번 턴 수치 안 건드림 |
+
+---
+
+## 🗄 SUPERSEDED — 무기체계 전수검사·드론/함재기 개발현황 · 2026-09-13 (김클로드 원문)
+
+```text
+status=SUPERSEDED
+task_id=weapon-drone-carrier-system-inventory-20260913
+kind=SYSTEM_INVENTORY (1단계)
+code_changes=NO
+전문=tools/kim-team-lead/reports/WEAPON_DRONE_CARRIER_SYSTEM_INVENTORY_20260913.md
+```
+
+대표님 지시: 김팀장이 드론·함재기 기초연출·기능 개발 중 — 먼저 전체 무기체계 전수검사 + 개발현황 파악, 완료되면 2단계 재검사·보고.
+
+**전체 무기체계**: `weapon_list.csv` 82개 프로덕션(laser/missile/rocket/drone/carrier) + 신규 "드라코 VMock" 테스트 무기 10개(레이저+함재기/레이저+드론 5쌍) — 어제 PSS 조사에서 찾은 `dracoCombatTestVenue.ts`(`draco_haven`)와 같은 계열로 확인.
+
+**드론·함재기 개발현황(3층 확인, 4층에서 미완성 발견)**:
+1. 데이터(`weapon_craft_loiter_policy.csv`) — **완료**, 프로덕션 7드론+5함재기 전부 개별 튜닝 완료
+2. 시뮬레이션 엔진(`capitalCraftPool.ts`) — **완료**, FSM 7단계·특수플래그 전부 구현·사전할당(Zero-Alloc 준수). `npx tsx --test` 재실행 **5/5 PASS**
+3. 렌더링(`PlanetEdenRaidOrbitSkiaCombat.tsx:899-921`) — **완료**, 프로덕션 Skia 렌더러에 이미 드론(원)·함재기(오벌) 그리기 있음, 풀링된 Path 재사용(Make() 없음)
+4. **본선 연결 — 미완성**: `tickCapitalCrafts`/`trySpawnCapitalCraft` 호출부가 `PlanetEdenRaidTestLayer.tsx`(드라코 테스트) **단 한 곳뿐** — 실제 플레이어 vs 실제 적 전투 시뮬레이션에는 아직 스폰/틱이 안 붙어 있음. `capitalWeaponPipeline.ts` 헤더 주석은 drone/carrier "연출O·전투O"라 적어놨는데, 이건 테스트 벤 기준이고 본선 기준으로는 이르다고 판단됨.
+
+**2단계(개발 완료 후) 재검사 예정 항목**: 본선 훅에 스폰/틱 연결 여부 재확인, 발사주기-풀상한(8) 상충 여부, 어제 발견한 드라코 벤 프로덕션 노출 이슈가 이 타이밍에 정리됐는지, 신규 12개 CSV 프로필 밸런스, 본선 연결부 신규 테스트 존재 여부.
+
+코드는 건드리지 않았다. 김팀장 개발 완료 신호 오면 2단계 진행.
+
+---
+
+## ✅ REVIEWED — PSS 대응 정밀 설계(A/B/C) · 2026-09-12 김팀장 결정
+
+```text
+status=REVIEWED
+task_id=pss-1gb-memory-spike-investigation-20260911
+kim_team_lead_verdict=PARTIAL
+applied=C only (08:00 memory-budget-ledger)
+held=A account_reset Fresco trim · B reset repro (2h map soak 중)
+rejected=purge setTimeout yield · NativeReclaimStage에 account_reset 가짜 STAGE
+reviewed_at=2026-09-12
+```
+
+김클로드 §8-5 재검수 후 김팀장 결정:
+
+| 안 | 판정 | 이유 |
+|---|---|---|
+| **A** 리셋 후 `account_reset` trim | **HOLD** | 인용 줄은 맞음. 그러나 trim은 Fresco 비트맵. 09-11 스파이크는 native 330→504→623(카탈로그/Hermes 규모). STAGE union에 계정 리셋 섞는 건 계약 오염. 효과 검증(B) 전에 넣지 않음 |
+| **B** 계정 리셋 재현 | **HOLD** | 지금 은하 지도 2h 정밀감시 중(PID 23159). 리셋하면 곡선 파기. soak 종료 후 별도 재현 |
+| **C** 08:00 원장 | **APPLY** | 앱 무영향 · verdict 불변 · 2.5개월 방치 방지. `schedule-8am-kim-daily-auto-report.cjs`에 `shSafe`+handoff 한 줄 반영 |
+| 2단계 purge `setTimeout(0)` | **REJECT** | 일을 줄이지 않고 레이스만 키움. 다음 런타임 1안은 **이미 enroll된 synth `set_catalog` 재실행 skip**(동일 버스트를 3번 돌리는 쪽) |
+| Draco 벤 프로덕션 | 메모리 무관 · 별도 QA | 이번 반영 아님 |
+
+---
+
+## 🗄 SUPERSEDED — PSS 대응 정밀 설계(A/B/C) · 2026-09-12 (김클로드 원문)
+
+```text
+status=SUPERSEDED
+task_id=pss-1gb-memory-spike-investigation-20260911
+kind=IMPLEMENTATION_READY_DESIGN (라운드 4)
+code_changes=NO
+전문=tools/kim-team-lead/reports/PSS_1GB_OVER_MEMORY_SPIKE_INVESTIGATION_20260911.md §8-5
+```
+
+라운드 3의 느슨한 제안 2개를 **바로 diff로 옮길 수 있는 수준**까지 코드 재확인 후 구체화했다.
+
+**A. 계정 리셋 직후 네이티브 트림 (3곳)**:
+1. `nativeReclaimContracts.ts:3` — `NativeReclaimStage` union에 `'account_reset'` 추가
+2. `nativeReclaimBootstrap.ts:30,46` — 기존 두 리스너(`nebula-lru-deferred`·`fresco-trim-deferred`) `stages` 배열에 `'account_reset'` 추가(로직 변경 없음)
+3. `localAccountReset.ts` `finalizeLocalAccountResetNavigation`의 `navigateToTitle()`(314행) 직후 `scheduleDeferredNativeReclaimPass({stage:'account_reset', reason:'account_reset_complete'})` 한 줄 — 기존 IM+2×rAF+지연 게이트를 그대로 재사용, 신규 메커니즘 없음
+
+**솔직한 한계**: 이 trim은 확인상 Fresco 비트맵 캐시 축(`trimNativeBitmapCachesAsync`, `arcfire-native-memory` 네이티브 모듈)이다. 안드로이드 dumpsys가 Hermes JS 힙도 종종 "Native Heap"으로 잡기 때문에, **이게 실제로 이번 스파이크에 효과 있을지는 적용 전 B로 먼저 검증 필요** — 과신하지 않고 검증 절차를 우선순위 1번으로 배치했다.
+
+**B. 검증 절차**: 계정 리셋 재현하며 `mem-timeline.csv` 실시간 관찰 — native_heap이 리셋 직후 뛰는지 vs 허브 재진입 시점에 뛰는지로 A가 맞는 지점인지 먼저 확정.
+
+**C. 메모리 예산 원장 정기화 (1곳)**: `schedule-8am-kim-daily-auto-report.cjs`의 `runDailyReport()` — 이미 상시 가동 중인 데일리 08:00 스케줄러(영구 루프 확인됨) 안, 기존 `shSafe()` 안전 패턴으로 `build-arc-memory-budget-ledger.ps1` 재실행을 끼워 넣고 결과를 매일 handoff 블록에 자동 기록. FAIL/OK 판정 로직은 안 건드림(원장 실패가 데일리 보고 자체를 막지 않게). 이러면 이번처럼 2.5개월 방치되는 게 구조적으로 막힘.
+
+전문 §8-5-D에 우선순위(검증→A→C→문서정리→QA전달) 정리. 전부 기존 패턴 재사용, 신규 아키텍처 없음 — 김팀장이 그대로 diff화 가능.
+
+---
+
+## 🟡 PENDING(참고용, 코드 없음 — 읽기·측정만) — PSS 스파이크 전체 작업코드 전수검사 · 2026-09-12
+
+```text
+status=PENDING
+task_id=pss-1gb-memory-spike-investigation-20260911
+kind=MEMORY_INVESTIGATION (라운드 3 — 대표님 지시 「전체 작업코드 정밀 전수검사 + 관련 문서 재학습」)
+code_changes=NO
+전문=tools/kim-team-lead/reports/PSS_1GB_OVER_MEMORY_SPIKE_INVESTIGATION_20260911.md §8
+```
+
+오늘(09-11) 신규/변경된 5개 시스템(전투·웨이브디펜스 Draco 벤·행성체류·BM상점·선술집음성·은하지도) 전부 + 김팀장이 지목한 계정리셋/WorldExpansion 경로(`purgeLocalAccountData`·`syncArcCoreGlobalWorldExpansionSync`·`set_catalog`·런타임 원반베이크 큐)를 직접 읽고, Explore 서브에이전트로 나머지 4개 시스템을 독립 재검사했다.
+
+**결론**: **어느 하나에서도 고전적 누수 버그(dispose 누락·무한누적·매프레임 재할당)를 못 찾았다** — 전부 이 프로젝트 관례(캡·메모이제이션·dispose 토큰)를 지키고 있었다. 유일한 실제 결함은 메모리와 무관: **Draco 전투 테스트 벤이 `__DEV__` 가드 없이 실제 은하(`draco_haven`)에 라이브로 연결돼 전 플레이어에게 노출됨**(QA 이슈로 별도 전달 권고).
+
+**문서 재학습에서 나온 중요 사실**: `docs/MEMORY_REFACTOR_MASTER_PLAN.md`의 마지막 실측이 **6월 27일**(석 달 전)이고 그때도 이미 목표 초과였음(PSS p50 937.9/목표750·native p50 565.5/목표350). `npm run audit:memory-budget-ledger`(읽기전용, 기기 연결 확인 후 직접 재실행)로 **지금 재측정**: PSS p50 **792.8MB**·native p50 **374.3MB** — 6월보다 상당히 개선됐지만 목표엔 살짝 못 미침. 이 재측정으로 **어젯밤 1179MB 스파이크가 "원래 이랬다"가 아니라 평소보다 튄 이상치임을 확인** — 김팀장의 "계정리셋+WorldExpansion" 연관이 여전히 최유력.
+
+**현재 최선의 가설(버그 아님)**: 개별 조각은 전부 가벼운데(`set_catalog`=문자열배열 교체, 원반베이크 큐=QUEUE_MAX 2로 강제 제한), `purgeLocalAccountData`(30여 스토어 순차 리셋)+`syncArcCoreGlobalWorldExpansionSync`(78성계 일괄 재통합)가 **동시에 몰리는 일회성 버스트 총합**이 원인일 가능성이 가장 높음 — 안드로이드 네이티브 할당기가 압박 전엔 즉시 반환 안 하는 특성과 겹침.
+
+**제안(미실행)**: 계정리셋 완료 직후 기존 `runPlanetHubSoftNativeReclaimPass`류 패턴으로 native trim 1회 추가 검토, 리셋 실기 재현으로 native_heap 실시간 관찰(리셋 즉시 vs 재진입 시점 구분), `audit:memory-budget-ledger` 정기 재실행 관례화, 깨진 문서 참조(`docs/2.1.memory.md` 등) 정리.
+
+---
+
+## ✅ REVIEWED — PSS 1GB 스파이크 조사 (김클로드 분석 재대조) · 2026-09-11
+
+```text
+status=REVIEWED
+task_id=pss-1gb-memory-spike-investigation-20260911
+kim_team_lead_verdict=PARTIAL
+kim_claude_verdict=ANALYSIS_ONLY
+reviewed_at=2026-09-11
+code_changes=NO — 플래그/80장 PNG 끄지 않음(주원인 아님)
+전문=tools/kim-team-lead/reports/PSS_1GB_OVER_MEMORY_SPIKE_INVESTIGATION_20260911.md
+```
+
+김클로드 전제 재검수(코드·파일 헤더·mem-timeline 원자료):
+
+| 주장 | 판정 | 근거 |
+|---|---|---|
+| 오늘 PSS 1GB 3회 · 09-06~10엔 없음 | **AGREE** | 22:15 1179 / 22:48 1056 / 23:03 1133 |
+| GL 회복해도 PSS가 안 내려감 · 범인은 native_heap | **AGREE** | 23:03→23:19 GL 150→46.7, native 485→457, PSS 1133→1016. 재시동 후에야 663 |
+| 모니터 GL/Skia 추정이 이번 건은 빗나감 | **AGREE** | 지도 Voronoi/별빛 최적화는 JS·Delaunay 축. native floor와 별개 |
+| `TEMP_ADMIN_ARCADIA_GLOBE_BAKE=true` · 80장 신규 | **AGREE** | 플래그 true · 80 PNG 실재 |
+| 80장 베이크가 native_heap 1GB의 최유력 원인 | **DISAGREE** | 전부 **256×256**, 디스크 합 **6.1MB**. 80장 전량 디코드해도 RGBA ≈ **21MB**. 485~623MB native와 자릿수가 안 맞음 |
+| Fresco/reclaim이 이 경로에 미연결 | **PARTIAL** | 주석 "prewarm·remount 키 미연결"은 맞음. 다만 `trimNativeBitmapCachesAsync`는 hub soft/planet_change/map ingress에 **이미 배선**. 마운트 중 Image 1장(~84px 표시)은 trim이 안 지움 — 그게 500MB는 아님 |
+| 채증 로그가 재시작 직후라 확정 못 함 | **AGREE** | `incident-logcat-20260911-232018` = POST_REMEDIATION |
+
+**김팀장 결론**: 김클로드가 맞춘 축은 **「GL 회복 ≠ PSS 회복 · native_heap floor」**. 원인 지목(허브 원반 80장)은 용량이 안 되어 기각. 플래그 A/B로 끌 이유 없음(시각만 사라지고 floor는 남을 가능성 큼).
+
+오늘 실측과 맞는 잔여 축(다음 조치 후보, 이번 턴 미착수):
+- 22:02 계정 리셋 + `WorldExpansion target=78` + `set_catalog` 152+93+169행성 — native 330→504→623 점프와 시각이 맞음
+- 허브 복귀 Views 393(21:28은 669) — Yoga/네이티브 뷰 잔류
+- 지도 쪽은 해금 성계 Voronoi/별빛 사이트 캡·존 컬링은 이미 반영(JS 피크). native floor 본축은 아님
+
+---
+
+## 🗄 SUPERSEDED — PSS 1GB 초과 메모리 스파이크 조사 · 2026-09-11 (김클로드 원문)
+
+```text
+status=SUPERSEDED
+task_id=pss-1gb-memory-spike-investigation-20260911
+kind=MEMORY_INVESTIGATION
+code_changes=NO
+전문=tools/kim-team-lead/reports/PSS_1GB_OVER_MEMORY_SPIKE_INVESTIGATION_20260911.md
+```
+
+대표님 지시: "오늘 김팀장 작업분량 적용으로 PSS가 1GB를 넘고 있다. 최적화 가능한 부분 전수 정밀 조사 후 별도 보고."
+
+**실측 확인(AGREE)**: `tools/long-run-monitor/logs/mem-timeline.csv` 원자료 직접 판독 — 오늘 22:15~23:04 **PSS 1179.5MB·1056.7MB·1133.3MB 3회 1GB 초과**, 09-06~09-10 로그엔 없던 패턴(전부 200MB대 이하) — "오늘부터"라는 진단과 시점 일치.
+
+**중요 발견 — 기존 자동회복이 진짜 범인을 못 잡고 있음**: 스파이크 컬럼을 분해하니 `gl_mb`는 150→46.7로 정상 회복(`GL_RECOVERED`)했는데 `pss_mb`는 거의 안 내려감(1133.3→1016.5) — **`native_heap_mb`(485~623MB, PSS 절반 이상)가 회복 이벤트에도 그대로 남아있었다.** 프로세스 강제 재시작 후에야(663MB) 정상화. 기존 모니터의 "GL/Skia" 추정 자체가 이번 건은 과녁이 빗나가 있다.
+
+**최유력 후보(미확정)**: 오늘 `assets/images/planet/baked/*.png` 80장이 신규 추가되고 `TEMP_ADMIN_ARCADIA_GLOBE_BAKE=true`로 켜져, 허브 초상이 SVG(비트맵 0)에서 베이크 PNG `<Image>` 디코드로 전환된 것으로 보임(`planetHubSubcomponents.tsx:228-266`). 이 기능의 소스 파일(`tempAdminArcadiaGlobeBake.ts:4`) 자체 주석이 "prewarm·remount 키 미연결"이라고 명시 — 기존 Fresco/native reclaim 파이프라인(`runPlanetHubSoftNativeReclaimPass.ts`)이 이 신규 이미지 경로를 제대로 회수하는지 설계 시점에 검증 안 됐을 가능성. **단, 오늘 채증 로그가 스파이크 순간이 아니라 재시작 직후를 찍어서(§5-3, 채증 타이밍 갭) 실기로 100% 확정은 못 함** — 확정 재현 절차(플래그 off 후 A/B 비교)를 전문 §4에 제안.
+
+**부수 발견**: `nebula/baked` 21장 재베이크로 평균 900KB→530KB(이전 세션 에셋 감사 권고 반영, 좋은 방향이나 530KB는 600KB 캡에 근접해 개별 파일 재점검 여지 있음). 정적 `audit:memory:all`은 오늘도 37/37 PASS — 이런 실측 스파이크는 애초에 그 감사망 밖.
+
+읽기·측정만 했고 코드/설정/플래그 전부 무변경. 전문 §4(재현 절차)·§6(요약) 참고.
+
+---
+
+## ✅ REVIEWED — inbound 질문 안 B + human-first P0~P3 반영 · 2026-09-10
+
+```text
+status=REVIEWED
+task_id=arc-core-chat-inbound-proactive-question-review-20260909
+kim_team_lead_verdict=REVIEWED
+applied=안 B 수락 시 클라우드 질문 1회 + 로컬 질문 폴백 · P1 키워드/intent 조임 · P2 잡담 로테이션 · P3 주석 · P0 테이블 재빌드
+reviewed_at=2026-09-10
+```
+
+김클로드 전제 **AGREE** 후 김팀장 반영:
+- inbound why 문구를 질문형 폴백으로 교체. 수락 `onPress`는 opener 확정 뒤에만 채널 오픈.
+- 팩 `inboundWhy` + Lambda Inbound open 지시. `QUOTA_PER_MIN`은 uid당 POST 전체(전송·inbound 공유).
+- P1: topics CSV + `classifyArcCoreChatIntent`에서 맨몸 `여기`/`결과`/`활력`/`누구` 제거.
+- P2: smalltalk 3+2 로테이션. P3: worldProposal 주석 정정.
+
+---
+
+## ✅ REVIEWED — "성인 남성 자연대화+시스템연동" 재검수 라운드 2 반영 · 2026-09-10
+
+```text
+status=REVIEWED
+task_id=arc-core-chat-human-first-intelligence-verification-20260909
+kind=RE_VERIFICATION (라운드 2) → 김팀장 반영
+kim_claude_verdict=PARTIAL
+kim_team_lead_verdict=REVIEWED
+applied=P0 유지 재빌드 · P1/P2/P3 코드 반영
+```
+
+---
+
+## 🗄 SUPERSEDED — "성인 남성 자연대화+시스템연동" 재검수 라운드 2 (이력 · 2026-09-10 당시)
+
+```text
+status=SUPERSEDED
+task_id=arc-core-chat-human-first-intelligence-verification-20260909
+kind=RE_VERIFICATION (라운드 2) — 이후 김팀장 P1/P2/P3 반영 · 상단 REVIEWED
+code_changes=NO (당시 읽기 전용)
+kim_claude_verdict=PARTIAL — 당시 P1/P2/P3 미착수. 2026-09-10 김팀장 반영 후 상단 REVIEWED
+전문=tools/kim-team-lead/reports/ARC_CORE_CHAT_HUMAN_FIRST_INTELLIGENCE_VERIFICATION_20260909.md §10~13
+```
+
+대표님 지시: "김팀장 작업 완료. 재검수하라."
+
+**실측 재확인 — P0 해결됨(AGREE)**: `npm run build:content-tables` 재실행 확인(생성 파일 타임스탬프가 소스 CSV보다 최신으로 갱신됨). `npx tsx --test arcCoreChatConversation.test.ts` 재실행 — **24/24 전부 PASS**(라운드1 FAIL이던 "asked seats and trade…" 통과). "12좌가 뭐야?" 류 시스템 질문은 이제 정상 작동.
+
+**보너스 확인**: `arc_core_chat_persona.csv` 전체가 "성인 남자" 톤으로 다시 쓰임(temperament/goal/style/tone 4행) — 요청 범위 밖이었지만 잘 반영됨.
+
+**미해결 — 라운드1 P1이 실측 재현으로 격상됨(DISAGREE, 아직 안 고쳐짐)**: `hintArcCoreChatTopicId`(단어경계 없는 부분일치)를 **직접 호출해 실측** — `"오늘 좀 활력이 없다"`→`cores`, `"숙제 결과 어때"`→`combat`, `"누구 왔어?"`→`self`, `"나 요즘 여기 되게 심심해"`→`location`. **순수 일상 말 4건 전부 시스템 축으로 오분류되는 걸 이번에 실측으로 재현**했다 — §0-H의 "일상 말에 시스템 가로채기 금지" 약속이 이 케이스들에서 실제로 깨짐. 라운드1엔 "위험"이었는데 이번엔 "확정 결함"이다.
+
+**나머지 미해결(코드 무변경 확인)**: P2(로컬 캐주얼 폴백 고정 문장 2개, `ko.ts:838-839` byte-identical) · P3(`arcCoreChatWorldProposal.ts` 헤더 주석-동작 불일치, 파일 byte-identical) — 둘 다 라운드1 그대로.
+
+**종합**: 이번 "작업 완료"는 P0(빌드)+페르소나 톤, 두 가지 범위였던 것으로 보임. P1(오분류, 최우선 승격 권고)·P2·P3는 아직 손 안 댐 — 전문 §12에 우선순위 갱신.
+
+---
+
+## 🗄 SUPERSEDED — 아크코어 선제대화(inbound) 질문형 전환 = 안 B 채택 · 2026-09-09 (이력)
+
+```text
+status=SUPERSEDED
+task_id=arc-core-chat-inbound-proactive-question-review-20260909
+kind=DESIGN_REVIEW → DIRECTIVE — 이후 김팀장 안 B 구현 · 상단 REVIEWED
+code_changes=NO (당시 설계만)
+directive=대표님 명시 — 안 B 채택. 2026-09-10 김팀장 반영 완료
+전문=tools/kim-team-lead/reports/ARC_CORE_CHAT_PROACTIVE_QUESTION_DESIGN_REVIEW_20260909.md §6
+```
+
+대표님 지시: 아크코어가 먼저 질문/일상대화를 시도하는 설계가 되고 있는지 검토(대표님 관찰: "지금은 단순 규칙 알림창만, 질문·대화 시도는 안 함").
+
+**확인 결과 대표님 관찰이 정확함**: `arcCoreInboundTalkRequest.ts`(45~90초 최초 지연·8~15분 쿨다운·safe-slot 타이머)가 "왜 열렸는지" 이유 5종(spy/combat/story/observe/idle)은 판정하지만, `arcCoreInboundTalkWhy.ts:18-42`의 실제 문구 5개 전부 **마침표로 끝나는 통보문**이고 물음표(질문)가 하나도 없음(story만 GM steerLine으로 약간 동적, 나머지 4개 완전 고정). `arcCoreChatOpenSpeech.ts:20-23`가 이 텍스트를 가공 없이 그대로 첫 대사로 꽂아 **클라우드 LLM을 아예 안 거침** — §0-H "성인 남성 자연대화" 파이프라인은 플레이어가 먼저 말 걸 때만 작동하고, 아크코어가 먼저 걸 때는 전혀 연결 안 돼 있음.
+
+**대표님이 안 B를 채택**했다 — 수락 시점에 새 F1(클라우드) 호출 지점을 열어 그 순간 상황에 맞는 질문을 LLM이 즉석에서 짓는 방식. **지금 바로 착수 아님** — 김팀장의 현재 진행 중인 전수검사 완료 후, 대표님이 별도로 실행 지시를 다시 내린 뒤 진행. 착수 전 선결 확인 사항(전문 §6에 정리): 서버 쿼터(`QUOTA_PER_MIN=8`)가 inbound 수락도 같은 카운터를 타는지, `npm run audit:arc-core-chat-billing`이 새 호출 지점을 전제해도 유효한지, PSS `hot_path`를 "전송 1회"에서 "전송 1회 + inbound 수락 1회"로 갱신해야 하는지.
+
+---
+
+## 🗄 SUPERSEDED — "성인 남성 자연대화+시스템연동" 재검수 · 2026-09-09 (이력)
+
+```text
+status=SUPERSEDED
+task_id=arc-core-chat-human-first-intelligence-verification-20260909
+kind=RE_VERIFICATION — 이후 P0~P3 반영 · 상단 REVIEWED
+code_changes=NO (대표님 지시 — 코드/빌드 실행도 포함해 엄격히 미착수)
+kim_claude_verdict=PARTIAL — §0-H/§0-H-2 설계·라우팅 로직 자체는 AGREE(방향 맞음), 그러나 실제 런타임 동작은 DISAGREE(핵심 기능 4종 죽어 있음)
+전문=tools/kim-team-lead/reports/ARC_CORE_CHAT_HUMAN_FIRST_INTELLIGENCE_VERIFICATION_20260909.md
+```
+
+대표님 지시: "성인 남성 수준 자연대화 + 게임 시스템 지적 대화" 의도가 실제로 코드·설계에 반영됐는지 집중 검증(코드 작업 없이).
+
+**P0(최우선, 실측 재현됨)**: `tables/content/arc_core_chat_topics.csv`·`arc_core_chat_knowledge.csv`가 `seats`(12좌)·`cores`(행성지표)·`trade`(무역소)·`shipyard`(조선소) 4개 신규 지식축을 담고 있는데, **`npm run build:content-tables`가 그 이후 재실행되지 않아** `src/data/generated/csvArcCoreChatTopics.ts`·`csvArcCoreChatKnowledge.ts`(CSV보다 78~99분 더 오래됨)에 이 4개가 통째로 빠져 있음 — **지금 앱에서 "12좌가 뭐야"/"무역소 있어?" 류 질문이 전부 인식 안 됨.** `npx tsx --test src/arcCore/chat/arcCoreChatConversation.test.ts` 직접 실행해 **24개 중 1개 FAIL로 실측 재현**(`asked seats and trade stay knowledge talk` — topicId expected 'seats' got 'other'). §0-H-2가 약속한 6개 시스템 지식축 중 4개가 지금 죽어 있다는 뜻 — 대표님이 "지적 수준 대화 확인 못 함"이라 느낀 핵심 원인일 가능성 높음. **`npm run build:content-tables` 재실행 + 테스트 재확인이 최우선.**
+
+**P1**: `arcCoreChatTableIndex.ts:169` `hintArcCoreChatTopicId`가 단어경계 없는 부분일치(`includes`)라 "여기 되게 심심해"(location `여기`)·"활력이 없다"(cores `활력`)·"결과 어때"(combat `결과`) 같은 일상 문장이 시스템 축으로 오분류될 위험 재현 가능(코드 추적으로 확인, 실기 미목격·테스트 0건).
+
+**P2**: 로컬(오프라인) 캐주얼 폴백이 `arcCoreChat.reply.smalltalk`/`smalltalkAgain` 고정 문장 2개뿐 — 클라우드 실패 시(쿼터·타임아웃 등, 이전 라운드에서 이미 실측됨) 이 문서 자신의 불합격 기준("매 턴 같은 말")에 정확히 걸림.
+
+**P3(낮음)**: `arcCoreChatWorldProposal.ts` 헤더 주석("LIVE=false면 제안 항상 null")과 실제 사용 함수(`suggestArcCoreChatWorldProposal`, LIVE 플래그 미참조)가 불일치 — 지금은 무해(집행 함수 없음)하나 향후 오해 소지.
+
+잘 된 부분(AGREE)도 기록: Lambda 프롬프트 Layer 0/1 계층화(`pack.ts`)는 브리핑 강제 방지가 실제로 프롬프트에 반영됨, 인간우선 게이트 자체 단위 로직은 정확함(문제는 입력 topicId 신뢰성), world-write 경계 전부 준수.
+
+전문 §7에 다음 단계 제안(재빌드 최우선) 정리. 이번 세션은 지시대로 **`npm run build:content-tables`조차 실행하지 않음** — 김팀장 확인 후 직접 재빌드 권장.
+
+---
+
+## 🟡 PENDING(참고용, 코드 없음) — 아크코어 인격·지적능력·대화수준 고도화 설계 · 2026-09-09
+
+```text
+status=PENDING
+task_id=arc-core-chat-personality-intelligence-upgrade-design-20260909
+kind=DESIGN_ANALYSIS
+code_changes=NO (대표님 명시 — "코드작업은 하지말것")
+전문=tools/kim-team-lead/reports/ARC_CORE_CHAT_PERSONALITY_INTELLIGENCE_UPGRADE_DESIGN_20260909.md
+```
+
+대표님 지시: NL 연동 완료 후 "아크코어 인격·지적능력·대화수준 고도화" 가능성 전수 조사 + 설계(코드 미착수).
+
+**중요 발견 1**: `docs/대화형_아크코어_구현.md` §0-F의 H1~H6 인격화 로드맵(일화 태그·톤 고정·문장분할·DND·선호추출·뉘앙스힌트) + §0-G GM 축이 **전부 이미 코드로 구현·가동 중**임을 직접 대조 확인(문서 표기는 아직 "대기"처럼 보임 — 문서가 실제보다 뒤처짐).
+
+**중요 발견 2**: 지금 아크코어가 "관측"하는 시스템은 위치·스파이·전투1건·현재행성코어5값·공지1건·미션1건뿐 — 경제(금고)·팩션/외교·은하이동·함선보유·캡틴관계·전투태세 등은 전부 안 보임. Explore 서브에이전트로 전 저장소를 재조사해 8개 신규 read-tool 후보(팩션소속+관계·이동상태·식민단계·함선격납고개수·캡틴호감도·미션게시판규모·전투태세·파일럿레벨)를 스칼라/라벨/개수만 노출하는 형태로 설계함 — 전부 §6 기존 화이트리스트(전 행성/프로필/금고/함선 스냅샷 금지) 안에서.
+
+**자체 오류 정정 기록**: 1차 조사에서 "함선 보유·캡틴 관계 시스템이 없다"고 잘못 판단했다가, Explore 재조사로 실제 존재를 확인하고 문서 내에서 직접 정정함(§3-1).
+
+**하지 않기로 한 것**: 경제(금고 잔액) 노출은 능력 문제가 아니라 헌법상 의도적 금지로 유지 권고. 코드 변경 없음 — 순수 설계·우선순위 제안 문서.
+
+---
+
+## ✅ REVIEWED — 인게임 아크코어 NL 관측성 플러밍 라운드 4 · 2026-09-09
+
+```text
+status=REVIEWED
+task_id=arc-core-chat-nl-template-fallback-analysis-20260909
+kind=BUG_FIX + OBSERVABILITY
+code_changes=YES
+kim_claude_verdict=PARTIAL (로그 경로 AGREE · 「미배포」 DISAGREE)
+kim_team_lead_verdict=REVIEWED
+reviewed_at=2026-09-09
+applied=providerId/fallbackUsed UI 플러밍 수용 · __DEV__ [dev] cloud|local 배지 유지
+scope=src/arcCore/chat/arcCoreBackchannelReply.ts, src/arcCore/chat/presentArcCoreBackchannel.ts, src/ui/overlay/content/ArcCoreChatOverlayContent.tsx
+```
+
+김팀장 판정:
+- **로그가 UI까지 버려짐** — **AGREE**. `buildArcCoreBackchannelReply`가 text만 넘기던 구조 확인. 객체 반환 + submit 통과 + `__DEV__` 배지·`lastDebug`는 persist 없음 · footer deps에 `lastDebug` 포함. 호출부 1곳.
+- **「라운드3 미배포」** — **DISAGREE**. Lambda는 이미 `update-function-code`로 반영됨(KeyLen=56). git 미커밋 ≠ 미배포. 라운드4는 클라 전용이라 추가 Lambda 배포 불필요.
+- 인게임이 템플릿처럼 보인 최근 원인은 미연결이 아니라 Groq가 G3 문장을 복붙한 것(실기 저장 대화). 프롬프트 금지 문구는 김팀장이 Lambda에 반영함.
+
+개발 빌드 `r` 후 입력창 위 `[dev] cloud` / `[dev] local(fallback)` 로 경로 확인.
+
+---
+
+## ✅ REVIEWED — 인게임 아크코어 NL 간헐 `no_model` 수정 적용 라운드 3 · 2026-09-09
+
+```text
+status=REVIEWED
+task_id=arc-core-chat-nl-template-fallback-analysis-20260909
+kind=BUG_FIX
+code_changes=YES
+kim_claude_verdict=AGREE (§9-1 원인 · §10-D 패치)
+kim_team_lead_verdict=REVIEWED
+reviewed_at=2026-09-09
+applied=groqInvoke D안 수용 · Lambda code-only 재배포(키 유지) · Groq 실호출 6/6 ok
+scope=aws/arc-core-chat/src/groqInvoke.ts, aws/arc-core-chat/src/handler.test.ts
+self_check=handler.test 17/17 PASS · Groq probe 6/6 finish=stop empty=0 · KeyLen=56
+```
+
+김팀장 판정: **AGREE**. gpt-oss 추론 토큰이 `max_tokens` 예산을 잠식해 빈 content→`no_model`이 되는 설명은 이전 CloudWatch `ok`/`no_model` 혼재와 맞다. 패치(`max_completion_tokens=384` · `reasoning_effort=low` · `reasoning_format=hidden` · gpt-oss만 게이팅 · `<think>` 스트립 유지)는 최소 diff이고 비추론 모델에 파라미터를 안 붙인 점도 맞다. `llama-3.1-8b-instant` 회귀 보류는 이 계정 모델 목록에 해당 id가 없어 **AGREE**.
+
+배포는 `sam deploy`가 아니라 **`update-function-code`만**(template env `''`로 키를 덮지 않음). Groq 동일 바디 실호출 **6/6 content 있음 · empty 0**.
+
+인게임 최종 확인: Metro `r` 후 `[arcCoreChat] cloud ok`.
+
+---
+
+## ✅ REVIEWED(참고) — 인게임 아크코어 NL 간헐 `no_model` 원인 재검수 라운드 2 · 2026-09-09
+
+```text
+status=PENDING
+task_id=arc-core-chat-nl-template-fallback-analysis-20260909
+kind=BUG_ANALYSIS (코드 변경 없음 — 이 영역은 김팀장 활성 작업, 임의 구현 안 함)
+code_changes=NO
+전문=tools/kim-team-lead/reports/ARC_CORE_CHAT_NL_TEMPLATE_FALLBACK_ANALYSIS_20260909.md §7~12
+```
+
+대표님 지시: "김팀장 수정 완료. 전수 정밀 검사 + 최종 목표(인앱 NL) 재분석."
+
+**라운드 1 판정 재확인(AGREE)**: 김팀장이 적용했다는 A-1(배포 스크립트 자동 키주입·`no_key` reason 분리·`hasKey` 로그)을 코드로 직접 재확인 — `deploy-groq-free-tier.ps1`·`llmInvoke.ts`·`handler.ts` 전부 정확히 반영됨. `npx tsx --test aws/arc-core-chat/src/handler.test.ts` 12/12 PASS 재실행 확인. 김팀장의 "지금은 no_key 상시 아님(키 있음·ok/no_model 혼재)" 정정에도 AGREE.
+
+**라운드 2 신규 발견(최유력, 코드 미확인이었던 영역)**: `groqInvoke.ts:3`의 `DEFAULT_GROQ_MODEL='openai/gpt-oss-20b'`는 **추론(reasoning) 모델**인데, 숨은 추론 토큰이 응답 토큰 예산(`max_tokens: 256`, 실제 Groq 파라미터명은 `max_completion_tokens`)을 그대로 잡아먹고, `reasoning_effort`(기본 medium)·`reasoning_format`을 코드가 지정하지 않아 프롬프트마다 추론 분량이 달라짐 — 어떤 턴은 추론 후 답변까지 나와 `ok`, 어떤 턴은 추론만으로 예산이 바닥나 content가 빈 문자열이 되어 `no_model`. **김팀장이 관측한 "ok/no_model 혼재" 패턴과 정확히 일치**(Groq 공식 문서 `console.groq.com/docs/reasoning` 직접 조회로 검증). 부수로, 추론 도중(닫는 `</think>` 전) 예산이 바닥나면 `<think>` 스트립 정규식이 못 지워 **모델 사고 과정 원문이 플레이어에게 그대로 노출될 위험**도 코드상 열려 있음(아직 실기 목격 안 됨). 또한 원 설계 문서(`READY_ARC_CORE_CHAT_FREE_TIER_NL.md:29`)는 비추론 모델 `llama-3.1-8b-instant`를 명시했는데 실제 코드는 `gpt-oss-20b`로 바뀌어 있음 — 변경 사유 문서 없음.
+
+**제안(미적용)**: `groqInvoke.ts`에 `reasoning_effort:'low'`·`reasoning_format:'hidden'` 추가 + `max_tokens`→`max_completion_tokens` 파라미터명 정정. 또는 원 설계대로 `llama-3.1-8b-instant`로 회귀 검토(대표님/김팀장 판단 필요 — 품질 트레이드오프 있음). 상세 근거·검증 방법은 전문 §9~11.
+
+---
+
+## ✅ REVIEWED — 인게임 아크코어 NL 템플릿 고착 원인 분석 · 2026-09-09
+
+```text
+status=REVIEWED
+task_id=arc-core-chat-nl-template-fallback-analysis-20260909
+kind=BUG_ANALYSIS
+code_changes=NO (분석) → 김팀장 후속: deploy 스크립트 A-1 + OPS 문서 + Lambda 진단로그
+kim_claude_verdict=PARTIAL (배포스크립트 결함 AGREE · 「현재 항상 no_key」는 DISAGREE)
+kim_team_lead_verdict=REVIEWED
+reviewed_at=2026-09-09
+applied=deploy-groq-free-tier.ps1 A-1(키 자동주입) · OPS §B 정정 · llm no_key 구분·hasKey 로그
+```
+
+### 김팀장 실측 재검수
+
+| 주장 | 판정 | 근거 |
+|------|------|------|
+| `deploy-groq-free-tier.ps1`가 없는 CFN `GroqApiKey`를 override · 배포 후 키 주입 안내 누락 | **AGREE** | 스크립트·OPS §B 확인. A-1 반영 완료 |
+| **지금** Lambda 키가 비어 `no_key`→항상 템플릿 | **DISAGREE** | `KeyLen=56` · CloudWatch `ok`(textLen 40/48)와 `no_model` **혼재** |
+| 호출 경로 cloud→실패→local G3 | **AGREE** | `completeArcCoreChatReply` 경로 재확인 |
+| Firebase 익명 미비 가능 | **미확정** | 요청이 서버에 도달하므로 전량 unauthenticated는 아님 |
+| `getArcCoreChatReplyProvider` 죽은 코드 | **AGREE**(원인 아님) | 호출 0 · 정리 후보 |
+
+**현재 남은 문제**: 서버는 이미 간헐 NL(`ok`)인데, 턴마다 `no_model`도 나와 그 턴은 템플릿 폴백. 인게임이 “항상 템플릿”처럼 보이면 (1) Metro 미반영 (2) `no_model` 비율 (3) 클라 quarantine. 대표님께 Metro `r` 후 `[arcCoreChat] cloud ok` 확인 요청.
+
+전문: `tools/kim-team-lead/reports/ARC_CORE_CHAT_NL_TEMPLATE_FALLBACK_ANALYSIS_20260909.md`
+
+---
+
+## 📝 원문 보관 — PENDING 분석 요약 · 2026-09-09
+
+```text
+status=PENDING (archived after REVIEWED)
+task_id=arc-core-chat-nl-template-fallback-analysis-20260909
+kind=BUG_ANALYSIS (코드 변경 없음 — 대표님 지시로 착수 보류 중)
+code_changes=NO
+전문=tools/kim-team-lead/reports/ARC_CORE_CHAT_NL_TEMPLATE_FALLBACK_ANALYSIS_20260909.md
+```
+
+대표님 지시: 김팀장 Lambda/Groq 인게임 NL 연동 작업이 계속 템플릿 대화만 나오는 버그로 안 되고 있어 별도 분석 요청 — **코드는 아직 건드리지 말 것**(김팀장 작업 완료 후 또는 반복 실패 시에만 착수).
+
+**최유력 원인**(김클로드): `template.yaml`에 `Parameters: GroqApiKey` 없는데 deploy/OPS가 `--parameter-overrides GroqApiKey=...` — 키 빈 값 → `no_key`→템플릿. (김팀장: 프로세스 위험은 맞으나 **현재 실기는 키 있음·ok 혼재**로 수정 판정.)
+
+---
+
+## ✅ REVIEWED — 설치 용량 최적화 기반작업(에셋 크기 예산 감사 툴) 신규 · 2026-09-06
+
+```text
+status=REVIEWED
+task_id=asset-size-budget-audit-foundation-20260906
+kim_team_lead_verdict=REVIEWED
+applied=audit툴수용 · FAIL에셋압축(npc/ship/nebula/pip) · bar Image resizeMethod · memory:all 편입보류
+reviewed_at=2026-09-06
+```
+
+김팀장 판정: 기반툴(CSV 정책·`audit:asset-size-budget`·npm script)은 AGREE로 수용한다. 하드캡 FAIL 에셋은 npc/ship/nebula/pip 압축을 이미 진행했고, 바 라운지·공연 `<Image>`에 Android `resizeMethod="resize"`를 추가했다(표시 로직 변경 없음). `audit:memory:all` 편입은 잔여 WARN 정리·재베이크 정책 확정 후로 보류한다. 유니크초상 맵 자동생성은 후속.
+
+---
+
+## 📝 원문 보관 — 설치 용량 기반작업 PENDING 본문 · 2026-09-06
+
+```text
+status=PENDING (archived after REVIEWED)
+task_id=asset-size-budget-audit-foundation-20260906
+kind=NEW_TOOLING (감사 스크립트 신규 · 게임 로직 변경 없음)
+code_changes=YES (신규 파일만, 기존 파일 수정 0건 — package.json scripts 1줄 추가 제외)
+kim_claude_verdict=N/A (신규 조사·툴링, 기존 설계 재검수 대상 아님)
+scope=tables/content/asset_size_budget_policy.csv(신규), tools/debug/audit-asset-size-budget.mjs(신규), package.json(스크립트 1줄 추가), docs/바_종업원_유니크초상_로딩전략_검토.md(신규, 별건이나 같은 세션)
+self_check=tsc --noEmit -p tsconfig.client.json 0에러 · npm run audit:asset-size-budget 정상 실행(의도된 FAIL, 아래 참고) · 기존 audit:memory:all·package.json 기존 스크립트 무변경
+risk=낮음 — 신규 독립 스크립트, 어떤 런타임 코드도 import하지 않음. audit:memory:all 체인에 편입하지 않았음(기존 콘텐츠 다수가 하드캡 초과라 즉시 편입 시 그 체인 자체가 항상 FAIL 상태가 됨 — 편입 여부는 대표님/김팀장 판단 대기)
+```
+
+**대표님 지시**: 「설치용량의 최적화를 위한 기반작업이 가능한가?」
+
+### 결론 — 가능. 실제로 만들어서 돌려보니 구체적 문제 목록이 바로 나왔다
+
+`tools/debug/audit-planet-globe-assets.ts`(기존 허브 원반 베이크 감사)를 템플릿 삼아, `assets/images/` 전수를 카테고리별 용량 예산(warn/hardCap)으로 점검하는 범용 감사 스크립트를 새로 만들었다. 정책은 Table-First 원칙에 따라 CSV(`asset_size_budget_policy.csv`)로 분리했다 — 카테고리별 warnKb/hardCapKb는 실측(`npc_portrait`는 기존 `NPC_CAPTAIN_PORTRAIT_ASSET_CONTRACT.md`의 "145px contain" 표시 기준, `planet_globe_baked`는 기존 `audit:planet-globe-assets`의 256KB 계약과 동일하게 맞춤)에 근거했다.
+
+`npm run audit:asset-size-budget` 실행 결과(신규 등록):
+
+- 총 165개 이미지 · 36.1MB
+- 카테고리별: `nebula_backdrop` 21개/18.7MB(최대), `planet_globe_baked` 80개/6.2MB, `npc_portrait` 25개/5.0MB, `ship_portrait` 13개/4.4MB, `planet_backdrop` 14개/1.9MB, `misc` 6개/0.6MB, `effects` 6개/0.1MB
+- **WARN 13건**(권장 초과, 즉시 실패 아님)
+- **FAIL 49건**(하드캡 초과, exit 1) — 가장 큰 단일 기회는 `assets/images/nebula/baked/*.png` **21개 전부**(819~980KB, 캡 600KB) 약 18.7MB. 다음은 `assets/images/ship/*.png` 5개가 캡(200KB) 대비 3.5~4배(696~756KB). `npc_portrait` 15건도 캡(150KB) 초과 — 이 중 `bar_att_char006~015.png`(10개, 162~195KB)는 **직접 파일을 열어 재확인한 결과 orphan이 아니라 `src/game/barAttendantPortraitAssets.ts`에 이미 실제로 wiring된 신규 샘플 10장 순환**(김팀장이 이전 5장 bargirl 순환을 교체, 파일 내 주석 "샘플 10장 판정용" 확인)이었다 — 즉 최근 실제 배포 자산이지 방치된 미사용 파일이 아니다.
+
+### 다음 단계 제안(선택, 미실행)
+
+1. `nebula/baked/*`는 절차적 베이크 산출물(이전 세션에서 확인한 `planetGlobeBakeSample.ts` 계열 파이프라인 추정) — 원본 아트 리사이즈보다 **베이크 타겟 해상도를 낮춰 재생성**하는 쪽이 더 쉬울 가능성이 높음(미확인, 재확인 필요).
+2. `ship/*` 5개, `npc_portrait` 15개는 실제 아트 파일 재압축/리사이즈(표시 크기 기준)로 해결.
+3. `audit:asset-size-budget`을 `audit:memory:all` 등 필수 체인에 편입할지 여부 — 지금 편입하면 기존 콘텐츠 부채 때문에 그 체인이 항상 FAIL로 바뀌므로, 편입은 위 1·2 remediation 이후로 미루는 걸 권장.
+4. 커밋 없음 — 신규 파일 3개(CSV·mjs·doc) + package.json 스크립트 1줄, 전부 검수 대기.
+
+---
+
+## ✅ REVIEWED — 바 종업원 구조 업그레이드(은하 전역화) 전수 검사 · 2026-09-05 3차
+
+```text
+status=REVIEWED
+task_id=bar-attendant-galaxy-upgrade-review-20260905-r3
+kind=CODE_REVIEW
+code_changes=NO
+kim_claude_verdict=AGREE
+scope=tools/content-tables/seed-bar-attendants-galaxy.mjs, tables/content/bar_attendants.csv(288행)·bar_songs.csv(신규), src/game/barAttendantPortraitAssets.ts, src/game/bar/patronage/*, src/components/bar/BarPatronagePerformView.tsx
+self_check=tsc 0에러 · barPatronageTables.test.ts 6/6 PASS(신규) · audit:memory:all 전부 PASS · build:content-tables 정상(attendants=288·songs=5·drinks=3·planetDrinkPrices=54)
+kim_team_lead_verdict=REVIEWED
+applied=§15-7 실효상한16·trim분기문서화 · soft-cap/낭비경고 미적용(상품보류)
+reviewed_at=2026-09-05
+```
+
+김팀장 판정: 김클로드 AGREE를 수용한다. 은하 시드 288·로스터 단순화·song 텍스트 전용·초상 5장 순환·endSession/PerformView 가드는 재확인했고 런타임 결함 없음. §7 참고(시드 16이라 roster_max=20이어도 실효 노출 최대 16, trim은 16 초과 시드 시에만 활성)만 설계 §15-7·`buildBarPatronageRoster` 주석에 문서화했다. 시드 16(288) 유지·20명 풀 확장은 별도 지시 시. r2와 동일하게 낭비구매 경고·초장기 세션 soft-cap은 상품 보류(대표님 추가 지시 전 미적용). 커밋 없음.
+
+대표님 지시: 「바 종업원 구조 업그레이드 전수검사」. 2차 검수 이후 추가된 은하 전역 종업원 시딩·로스터 알고리즘 재작성·노래(song) 필드·초상 자산 구조를 전부 코드로 재확인했습니다.
+
+### 1. 은하 전역 시딩 — AGREE
+
+`seed-bar-attendants-galaxy.mjs`가 `hasBar=true` 18행성 × 16명 = 288명을 생성하며, 스크립트 자체에 `EXPECTED_BAR_PLANETS`/`EXPECTED_TOTAL` 어설션과 id/이름 중복 검사가 내장돼 있어 재실행해도 사고가 나기 어려운 구조입니다. `planetId='*'`(유랑 풀)은 완전히 제거되고 전원 행성 고정 — 신규 테스트(`barPatronageTables.test.ts:46-82`)가 288개 전수(중복 id/이름/초상 0건, 행성당 정확히 16명)를 직접 검증하고, 실행해서 6/6 PASS 확인했습니다.
+
+### 2. 로스터 알고리즘 재작성 — AGREE(직접 재계산·테스트 실행으로 검증)
+
+`resolveRosterSize`가 `rosterMin+level-1`(12~20, 대표님 2026-09-05 지시로 5→12·15→20 변경 확인)로, `buildBarPatronageRoster`는 가중치 랜덤 뽑기 대신 "후보가 목표 이하면 전원, 초과하면 가중치+일별시드 정렬 후 자르기"로 단순해졌습니다. 처음엔 손계산으로 레벨10에서 20명이 나와야 하는데 테스트가 16명을 기대해 불일치로 의심했으나, 실제로는 **행성당 후보가 16명뿐이라 목표(20)보다 항상 적어 전원 반환되는 게 맞는 동작**임을 코드 재확인 + 테스트 재실행(PASS)으로 확인했습니다 — 제 첫 암산이 틀렸던 것이었습니다.
+
+### 3. 노래(song) 필드 — AGREE, 크래시 위험 없음
+
+`bar_songs.csv`(5개, 전부 `note=placeholder`)의 `assetKey`는 실제 오디오 파일을 가리키지 않는데, 코드 전체를 grep한 결과 `Audio.Sound`/`expo-av` 등 오디오 재생 시도가 전혀 없고 `BarPatronagePerformView.tsx:114-115`에서 **곡 제목을 텍스트로만** 표시합니다 — 존재하지 않는 에셋을 로드하려다 크래시할 경로가 없습니다.
+
+### 4. 초상 자산(288 슬롯 → PNG 5장 순환) — AGREE, 메모리 안전
+
+`barAttendantPortraitAssets.ts`가 288개 키를 전부 `require()`로 이미 로드된 PNG 5장 중 하나에 매핑합니다. `require()`는 같은 모듈을 매번 같은 참조로 반환하므로, 288명 중 누가 뜨든 RN 이미지 캐시엔 실질적으로 **5장만** 상주합니다 — 슬롯 수가 288이라고 메모리가 288배로 늘지 않습니다.
+
+### 5. 공연 화면 UI 개편("영상통화" 프레임) — AGREE
+
+정적 초상 풀스크린 + LIVE 칩 + ♪ 오버레이로 바뀌었지만 여전히 Skia 없이 순수 RN `Image`/`Animated`만 사용합니다(파일 헤더 주석에도 "Skia 금지" 명시).
+
+### 6. 이전 지적 반영 확인
+
+2차 검수에서 지적했던 `endSession()`의 죽은 이중 `set()`(`phase:'ended'` 쓰고 바로 `null`로 덮어쓰던 것)이 이번에 **단일 `set({activeSession:null})`으로 정리**됐습니다 — 반영 확인.
+
+### 7. 참고용 — 사소
+
+`buildBarPatronageRoster`의 "후보 > 목표" 분기(가중치+시드 정렬 후 자르기)는 현재 CSV로는 **도달 불가능**합니다(행성당 후보 수가 레벨에 따라 12→16으로 늘고 목표도 같은 속도로 12→20까지 늘어서, 후보가 목표를 넘는 조합이 없음). 지금은 무해한 대비 코드이고, 향후 행성당 인원을 16명 초과로 늘리면 그때 실제로 동작합니다.
+
+### 결론
+
+은하 전역화·로스터 재작성·노래 필드·초상 순환 전부 코드와 신규 테스트로 직접 확인했고 이견 없습니다. 지난 검수 지적사항도 반영됐습니다.
+
+코드 수정 없음(검토만). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## ✅ REVIEWED — 바 후원시스템 보강분 재검수 · 2026-09-05 2차
+
+```text
+status=REVIEWED
+task_id=bar-patronage-system-review-20260905-r2
+kind=CODE_REVIEW
+code_changes=NO
+kim_claude_verdict=AGREE (판단 요청 1건 · 경미 1건 유지)
+design_doc=docs/바_후원시스템_설계.md §5 갱신 확인
+scope=src/store/barPatronageStore.ts, src/game/bar/patronage/barPatronageTables.ts, app/(game)/bar.tsx, src/components/bar/BarPatronage*.tsx, tables/content/bar_planet_drink_prices.csv(신규)
+self_check=tsc 0에러 · audit:memory:all 전부 PASS
+kim_team_lead_verdict=REVIEWED
+applied=endSession null-only · PerformView session timer guard
+product=세션잔수캡없음·1000 UI 유지(대표님 기존 지시) · 낭비구매경고·초장기세션 soft-cap은 미적용(추가 지시 시)
+```
+
+1차 검수(`bar-patronage-system-review-20260905`) 이후 김팀장이 보강한 분을 다시 코드로 전수 대조했습니다. 이전 지적사항 상태 갱신 + 신규 변경분 재검수입니다.
+
+### 1. 신규 보강 — 전부 AGREE
+
+- **행성별 정찰 단가**(`bar_planet_drink_prices.csv` 신규, 21개 행성×3술): `resolveBarDrinkUnitPrice(planetId, drinkId)`가 라운지 표시가(`BarPatronageLoungeTab.tsx:45-48`)와 실제 결제 계산(`barPatronageStore.ts:270-271`) **양쪽에서 동일하게 호출**됩니다 — 표시가와 청구가가 다를 수 있는 구조적 위험을 확인했으나 실제로는 일치합니다.
+- **주인 대사 순서 개선**: 이제 맞이+요청 대사(`presentBarDialogTurns`)가 먼저 재생되고, 끝난 뒤 `onDismiss`로 수락/거절 확인창이 뜹니다(`bar.tsx:202-213`) — 이전엔 대사 없이 바로 확인창이었던 것보다 자연스럽습니다.
+- **인기도·지출 원장 추가**(`popularityByAttendantId`/`spendByPlanetId`/`spendLedger`): `spendLedger`는 `BAR_PATRONAGE_SPEND_LEDGER_CAP=200`으로 상한이 걸려 있고 로드 시에도 `sanitizeLedger`가 초과분을 잘라냅니다 — 무한 누적 위험 없음.
+- **구세이브 마이그레이션**: `migrateLoad`가 옛 필드명(`affinityByAttendantId`)을 새 필드(`drinksBoughtByAttendantId`)로 옮겨줘서, 1차 검수 때 봤던 구 스키마 세이브도 깨지지 않습니다.
+- **`expireSessionIfNeeded` 신설**: 로드·포커스·수락 시점마다 호출돼 만료된 세션을 능동적으로 `null` 처리 — 이전에 지적했던 "공연 화면이 죽은 세션을 붙들고 15초마다 헛도는" 경미 사항이, `bar.tsx`의 신규 `showPerformTab` 가드(`activeSession` 비활성 시 자동으로 `perform` 탭 이탈 → 컴포넌트 언마운트 → 인터벌 정리)로 **부수적으로 해소**됐습니다. `BarPatronagePerformView` 자체에 `if (!session) return;` 가드는 여전히 없지만, 이제 그 상태에 도달할 경로가 없습니다.
+
+### 2. ⚠️ 판단 요청 — 세션당 잔수 상한 제거(설계 문서 §5 갱신 확인, 부작용 2가지)
+
+`bar_patronage_policy.csv`에서 `max_drinks_per_session` 행 자체가 삭제됐고, `startOrExtendSession`에서도 세션 잔수 캡 체크가 완전히 빠졌습니다. `resolvePatronageDrinkMaxQty()`는 이제 인자 없이 **UI 안전 상한 1000**만 반환하고, 실제 제약은 `spendCredits`의 잔액 확인뿐입니다. 설계 문서 §5도 "상한(1차) — UI 피커 1000 상한 · confirm 시 크레딧만 실제 차감(세션 잔수 캡 없음)"으로 **이미 갱신돼 있어 의도된 변경**임을 확인했습니다(제가 처음엔 회귀로 의심했다가 문서 대조로 정정).
+
+의도된 변경이라는 전제 하에, 구현상 부작용 2가지만 확인 요청드립니다 — 크래시·메모리 문제는 아니고 상품/UX 판단입니다:
+1. **낭비 구매 무경고**: `unlockedBundleTier`는 CSV에 정의된 티어 수만큼만 실제로 대사가 늘어나고 그 이상은 효과가 없는데, 잔 수 피커에는 "이미 최고 티어를 넘는 구매는 효과 없음" 같은 경고가 없습니다. 예를 들어 티어가 4개뿐인데 50잔을 사면 49잔 분 크레딧이 그대로 낭비됩니다.
+2. **극단적 세션 길이**: 잔 수가 커지면 `durationMs`가 그대로 비례해서(예: 1000잔×15분 ≈ 10.4일) 세션이 며칠~열흘 단위로 "활성" 상태가 됩니다. 크래시·틱 위험은 없음을 확인했지만(백그라운드에서 폴링하지 않고 `endsAtMs` 차이만 계산), "세션 1회 ≈ 15~60분"이라는 원래 UX 프레이밍과는 크게 달라진 결과라 의도한 그림인지 확인 부탁드립니다.
+
+### 3. 이전 지적 재확인 — 아직 남아있음(경미, 유지)
+
+`endSession()`(`barPatronageStore.ts:340-348`)이 `phase:'ended'`로 `set()`한 직후 같은 함수에서 바로 `activeSession: null`로 덮어써서, "ended" 기록이 1.5초 뒤 코얼레싱 persist에 반영되지 않는 문제는 그대로입니다. 지금도 이 기록을 읽는 곳이 없어 기능 영향은 없습니다.
+
+### 결론
+
+보강분은 전부 견고하고, 1차 때 지적한 경미 사항 중 하나는 부수적으로 해소됐습니다. 유일한 확인 요청은 "세션 잔수 캡 제거"가 문서화된 의도임을 확인했으니 코드 자체엔 이견 없고, 다만 그로 인한 낭비구매·초장기세션 두 가지가 상품 의도와 맞는지만 회신 부탁드립니다.
+
+코드 수정 없음(검토만). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## ✅ REVIEWED — 바 후원시스템(종업원 술 사주기) 전수 검수 · 2026-09-05
+
+```text
+status=REVIEWED
+task_id=bar-patronage-system-review-20260905
+kind=CODE_REVIEW
+code_changes=NO
+kim_claude_verdict=AGREE (경미 항목 3건)
+design_doc=docs/바_후원시스템_설계.md (impl=P1_LIVE)
+scope=src/store/barPatronageStore.ts, src/game/bar/patronage/*, src/components/bar/BarPatronage*.tsx, app/(game)/bar.tsx, tables/content/bar_*.csv
+self_check=tsc 0에러 · audit:memory:all 전부 PASS · 자동 테스트 없음(신규 갭, 아래 참고)
+kim_team_lead_verdict=REVIEWED
+applied=endSession null-only · PerformView session timer guard
+product=세션잔수캡없음·1000 UI 유지(대표님 기존 지시) · 낭비구매경고·초장기세션 soft-cap은 미적용(추가 지시 시)
+```
+
+대표님 지시: 「김팀장이 구현한 바 후원시스템 종업원 술 사주기 시스템이 잘 구현되었는지 검수하라」. 설계 문서(`docs/바_후원시스템_설계.md`, P1_LIVE)의 계약 사항을 코드로 직접 대조했습니다.
+
+### 1. 핵심 계약 준수 — AGREE
+
+- **STAGE dispose**: `usePlanetSubStageMemory('bar', () => {...pauseSession()...})`(`bar.tsx:218-222`)가 블러 시 세션을 pause하고 탭을 `lounge`로 되돌립니다. `BarPatronagePerformView`는 `activeTab==='perform'`일 때만 마운트되는 조건부 렌더라, 탭이 바뀌면 그 안의 `setInterval`·`Animated.loop`가 React 언마운트로 자연히 정리됩니다 — STAGE 이탈 시 실제로 타이머·애니메이션이 살아남지 않습니다.
+- **틱 규율**: `bar_patronage_policy.csv`의 `timer_ui_tick_sec=15`가 실제로 쓰이고(`BarPatronagePerformView.tsx:56` `Math.max(5_000, policy.timerUiTickSec*1000)`), 세션 종료는 벽시계 `endsAtMs` 기준이라 백그라운드 복귀 후에도 재계산만으로 정확합니다(틱에 의존하지 않음).
+- **경제 안전성**: `spendCredits`(`playerStore.ts:666-671`)가 잔액 확인+차감을 한 번에 처리하는 원자적 구현이고, `startOrExtendSession`(`barPatronageStore.ts:117-172`)이 UI가 계산한 `maxQty`와 별개로 **스토어 자체에서도** `maxDrinksPerSession` 캡을 재검증합니다(방어 이중화) — UI 버그로 세션 한도를 넘겨 구매하는 경로가 없습니다.
+- **로스터 결정성**: `buildBarPatronageRoster`(`barPatronageTables.ts:74-116`)가 `planetId+dayKey` 해시 시드(mulberry32)로 당일 고정 샘플링 — 설계의 "당일 roster 시드 고정, 깜빡임 방지"와 일치.
+- **NL 훅 안전성**: `resolveBarDialogLine`(`barPatronageDialog.ts:44-61`)이 `delivery=nl_preferred`일 때만 resolver를 시도하고, 실패·빈 문자열 시 CSV 스크립트로 폴백(`try/catch` + `trimmed || fallback`) — NL이 아직 없어도(현재 `nlLineResolver=null`) 항상 스크립트 경로로 정상 동작.
+- **purge 연동**: `useBarPatronageStore.getState().resetLocal()`이 `localAccountReset.ts:244`에 실제로 등록돼 있음 — 계정 초기화 시 정상 삭제됩니다(최초 grep으로는 놓칠 뻔해서 파일 직접 열어 재확인).
+- **Skia 미사용**: `BarPatronagePerformView`의 "춤" 연출은 순수 RN `Animated`(`translateY`/`rotate` 크로스페이드류)뿐 — 설계의 "Skia 금지(1차)" 그대로.
+
+### 2. 경미 항목 (참고용, 급하지 않음)
+
+- **`endSession()`의 죽은 대입**(`barPatronageStore.ts:196-204`): `phase:'ended'`로 먼저 `set()`한 직후 같은 함수 안에서 바로 `activeSession: null`로 또 `set()`해서, "ended" 상태는 어떤 구독자도 관측할 기회 없이 곧장 덮어써집니다. 1.5초 뒤 코얼레싱된 persist도 그 시점엔 이미 `null`을 읽어 저장하므로, "이 세션이 방금 종료됐다"는 기록 자체가 저장소에 안 남습니다. 지금은 이 기록을 읽는 곳이 없어 기능상 문제는 없지만, 나중에 종료 로그·통계를 붙이려 하면 바로 걸릴 코드입니다 — 첫 `set()` 줄만 지워도 됩니다.
+- **공연 뷰 타이머가 세션 종료 후에도 계속 재무장**(`BarPatronagePerformView.tsx:55-66`): 세션이 자연 만료돼 `session`이 `null`이 돼도 이 `useEffect`는 `if (!session) return;` 가드가 없어서, 플레이어가 '공연' 탭에 그대로 머물러 있으면 15초마다 `remainingMs()`/`endSession()` 빈 호출을 계속 반복합니다(둘 다 내부에서 조용히 no-op이라 크래시·오작동은 없음). 탭 전환·화면 이탈 시엔 정상 정리되니 STAGE 계약 위반은 아니지만, 가드 한 줄 추가하면 깔끔합니다.
+- **자동 테스트 부재**: 로스터 시드 결정성(`buildBarPatronageRoster`), 잔 수 상한 계산(`resolvePatronageDrinkMaxQty`), 세션 연장 로직(`startOrExtendSession`) 전부 순수 함수라 테스트하기 쉬운데, 이번 세션 다른 시스템들(`resolveMissionClearNpcContext.test.ts` 등)과 달리 `.test.ts`가 없습니다. 지금 당장 깨진 건 없지만 회귀 방지용으로 권장합니다.
+
+### 결론
+
+설계 문서의 필수 계약(STAGE dispose·틱 규율·경제 원자성·로스터 결정성·NL 폴백·purge 연동·Skia 금지) 전부 코드로 직접 확인했고 정확히 지켜지고 있습니다. 위 3개는 전부 코드 품질/견고성 참고 사항이며 지금 플레이에 영향을 주는 결함은 아닙니다.
+
+코드 수정 없음(검토만). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## 📋 PENDING — 경제고도화(P1-P5) 배포분 전면 정밀 재검수 · 2026-08-25 2차
+
+```text
+status=PENDING
+task_id=arccore-fiscal-military-review-20260825-r2
+kind=CODE_REVIEW (배포분)
+code_changes=NO
+kim_claude_verdict=PARTIAL AGREE (유지) — 김팀장 8-1 반박 인정, 리스크는 P1→P2로 재귀속 확인
+review_doc=docs/economy-evaluation/2026-08-25-kim-claude-fiscal-military-review.md §8
+self_check=tsc 0에러 · computeArcCoreFiscalOpexProxy.test.ts 3/3 · tradeRouteSectorCategories.test.ts 2/2 · audit:memory:all 전부 PASS · audit:balance-ops Overall FAIL(기존과 동일 사유, esbuild 도구 FAIL — 신규 아님)
+```
+
+대표님 지시: 「현재 김팀장의 경제고도화 작업을 전면 정밀 재검수하라」. 1차 검수 이후 P1-P5가 전부 **오늘 라이브 배포**(`arc_core_fiscal_opex_policy.csv` `shadow_mode=false`·`enabled=true` 직접 확인)됐음을 확인해, 설계 재검토가 아니라 배포된 코드 전체로 범위를 넓혔습니다.
+
+### 1. 김팀장의 8-1 반박 — 재확인 결과 AGREE(정정 인정)
+
+"P1 vault 지출이 fiscal WARN을 키운다"는 제 1차 지적은 틀렸습니다. `planetFiscalKpi.ts`의 `buildPlanetFiscalSnapshot` 입력은 `dailyArcFeeCredits`/`dailyUpkeepCredits`뿐이고 vault 잔액을 전혀 안 봅니다 — 코드로 직접 재확인, 김팀장 말이 맞습니다.
+
+### 2. ⚠️ 그러나 리스크는 사라진 게 아니라 **P1이 아니라 P2로 재귀속** — CONFIRMED, 관측 공백 있음
+
+`runPlanetFiscalBalanceClosedLoopPass.ts:15,59`가 `computePlanetDevelopmentUpkeepBreakdown`(P2로 오늘 조선소·연구소·무역소·거주돔 유지비까지 확장됨)을 **직접 import해 `dailyUpkeepCredits`에 합산**합니다. 즉 P2 시설 유지비 신설 → upkeep 상승 → fee/upkeep 비율 하락 → WARN/FAIL 연속일 증가 → 기존에 이미 실전 연결된 `trade_route` 가격 자동 인하로 이어질 수 있는 경로가 실재하고, **오늘부터 활성 상태**입니다. 원 설계 문서도 이 상호작용을 "그때(P2 시점) 재확인"하겠다고 예견했는데, 그 시점이 이미 왔습니다.
+
+방금 `audit:balance-ops`를 재실행했는데, `fiscal WARN — max fee/upkeep 3.09× gini=0.379` 수치가 **배포 전 관측치와 완전히 동일**했습니다 — 이 감사는 실시간 시뮬이 아니라 마지막 실제 배치(하루 1회 12:00 KST) 결과를 읽는 구조라, **P1/P2가 라이브로 바뀐 뒤 배치가 한 번도 새로 안 돌았다는 뜻**입니다. 시설 유지비 신설이 실제로 재정 지표·자동 가격조정에 얼마나 영향을 주는지는 다음 배치 전까지 아무도 관측한 적이 없습니다.
+
+**제안**: 다음 12:00 KST 배치 직후 `audit:balance-ops`를 재실행해 `fiscalOverall`/`gini`/`maxFeeUpkeepRatio`가 배포 전 대비 얼마나 움직였는지 꼭 확인 요청드립니다. 의도된 효과(국가가 시설비를 문다)일 수도 있지만, 첫 관측 없이 지나가면 나중에 "왜 무역로 가격이 자동으로 깎였지"를 원인 불명 상태로 재조사하게 됩니다.
+
+### 3. 구현 품질 스팟체크 — 전부 AGREE(안전장치 정상)
+
+시드 보호(`spendableAboveSeed`+`Math.min` 캡), P3 개발예산 락 멱등성(같은 날 재실행 시 재차감 없음), P4 계수 힌트 0.85~1.15 하드 캡, F1 이중소각 방지(`skip_empty_central_bank_burn_when_live`), F7 범위 준수(정량만, 코드 미수정) — 전부 코드로 직접 확인했고 견고합니다.
+
+### 결론
+
+구현 자체는 견고하고 자체 검사도 깨끗합니다. 유일한 공백은 "P2 배포 후 첫 실제 배치 관측이 아직 없다"는 점 — 코드 결함이 아니라 관측 타이밍 문제입니다. **PARTIAL AGREE 유지** — 다음 배치 직후 지표 재확인만 요청.
+
+코드 수정 없음(검토만). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## ✅ REVIEWED — 아크코어 재정·군사 구조 설계안 재검수 · 김팀장 재대조 · 2026-08-25
+
+```text
+status=REVIEWED
+task_id=arccore-fiscal-military-review-20260825
+kind=DESIGN_REVIEW
+code_changes=YES (문서+정산 파일 주석 1줄. P1 게임 로직 없음)
+kim_claude_verdict=PARTIAL AGREE — 구조·방향 승인, 착수 전 확정 요청 3건
+kim_team_verdict=PARTIAL — 30/70·삽입점·폐회로 존재 AGREE · P1→가격인하 메커니즘 DISAGREE · F7은 정량만
+reviewed_at=2026-08-25
+design_doc=docs/economy-evaluation/2026-08-25-arccore-fiscal-military-structure.md
+review_doc=docs/economy-evaluation/2026-08-25-kim-claude-fiscal-military-review.md
+```
+
+**김팀장 재확인 (코드 직접 대조):**
+
+| 김클로드 주장 | 판정 | 근거 |
+|---|---|---|
+| 빈 소각 · 위성만 유지비 · 5축 | **AGREE** | `arcCoreCentralBank.ts:53-69` · `planetDevelopmentUpkeep.ts` · `resolveFactionVault.ts` |
+| 원문서 90/10은 오류 · CSV **30/70** | **AGREE** | `trade_route_transport_policy.csv:12` · settlement 56–59. 헤더 주석이 10%로 문서 오염 |
+| 학습 두 함수는 기록만 · 인접 폐회로 있음 | **AGREE** | `runPlanetFiscalBalanceClosedLoopPass.ts:88-101` `trade_route` overlay |
+| P1 지출 → fiscal WARN → 가격 인하 | **DISAGREE** | `planetFiscalKpi.ts` 입력 = fee/upkeep. vault 없음. 결합은 **P2 시설 유지비** |
+| 삽입 = 게이지 후 · 트렌드 커밋 전 | **AGREE** | `runArcCoreDailyOpsBatch.ts` 382–395 |
+| F7을 P1보다 먼저 구현 | **PARTIAL** | R1 `pickNextPlanetId` gather 우선 **잔존**. 유실 정량만 P1 계수 전. 코드 수정은 P2 |
+
+**반영:** 설계 문서·FABRIC 30/70·폐회로·삽입점 · `applyConvoyUnloadVaultSettlement.ts` 주석. P1 코드·수수료/800/탄력0 미변경.
+
+---
+
+## 📋 REVIEWED (원문 보존) — 아크코어 재정·군사 구조 설계안 재검수 + 보완설계 · 2026-08-25
+
+```text
+status=REVIEWED
+task_id=arccore-fiscal-military-review-20260825
+kind=DESIGN_REVIEW
+code_changes=NO
+kim_claude_verdict=PARTIAL AGREE — 구조·방향 승인, 착수 전 확정 요청 3건
+design_doc=docs/economy-evaluation/2026-08-25-arccore-fiscal-military-structure.md
+review_doc=docs/economy-evaluation/2026-08-25-kim-claude-fiscal-military-review.md (전체 내용은 이 문서 참조)
+```
+
+대표님 지시: 「김팀장이 전수설계한 경제개선안을 김클로드 입장에서 전수정밀조사한 후 의견과 보완설계를 작성 후 김팀장에게 검수 받아라」. 문서의 모든 사실 주장을 코드로 직접 재확인했습니다(원문서를 그대로 신뢰하지 않고 파일:줄 단위 대조).
+
+### 총평: PARTIAL AGREE
+
+진단(중앙은행=군사·함선 재정부가 아니라 빈 소각 장치, 시설 유지비 방위위성만 실물, 5축 라우팅 정상 동작)은 **코드와 정확히 일치**하며, 목표 구조(프록시 일일 지출 패스, 일 1회·틱 없음, 기존 수수료/유지비/탄력0 불변)도 방향에 이견 없습니다.
+
+### 재검수 중 발견한 3가지 — P1 착수 전 확정 요청 (상세 근거는 `review_doc` 참조)
+
+1. **사실 오류(수치)**: 원문서가 "수송 순마진 90%가 선단에 남고 RED는 10%"라고 썼지만, 실제 CSV 정본(`tables/balance/trade_route_transport_policy.csv:12` `convoy_net_margin_arc_core_share_pct=30`)은 **RED 30% / 선단 잔류 70%**입니다. 코드(`applyConvoyUnloadVaultSettlement.ts:56-59`)는 CSV를 정확히 읽고 있고, 문제는 같은 파일 2행의 **낡은 헤더 주석**("10%")을 원문서가 그대로 인용한 것으로 보입니다. §3-3 선단 적립 억제 계수는 실제값(70%) 기준으로 재계산 필요.
+2. **상호작용 미검토**: `runPlanetFiscalBalanceClosedLoopPass.ts:74-102`가 **이미 실전 가동 중인 가격 폐회로**로, 학습 스토어의 WARN/FAIL 연속일수가 임계치를 넘으면 무역로 가격을 자동으로 낮춥니다. P1이 매일 새 유출(군사·함선·함장·R&D 프록시)을 만들면 이 스트릭이 늘어나 **의도치 않은 무역로 가격 자동 인하가 연쇄**될 수 있습니다 — 원문서 "학습은 개회로" 결론은 이 인접 폐회로를 놓치고 있습니다. P1 첫 배포는 실지출 없는 shadow 모드로 스트릭 영향을 먼저 관측할 것을 제안합니다.
+3. **삽입 지점 특정 필요**: 원문서 "배치 말미"는 실제로 한 지점으로 좁혀야 합니다 — `runArcCoreDailyOpsBatch.ts`의 진짜 마지막은 `planetCoreGaugeComposition`(383)→`commitPlanetCoreStatOpsTrendAfterBatch`(391)이고, 이 사이(게이지 확정 후·트렌드 커밋 전)에 P1을 넣어야 프록시 계수가 그날 최신값을 읽고 그날 지출 효과가 그날 트렌드에 커밋됩니다.
+
+### 그 외 제안
+
+F7(convoy 원금 유실, 원문서 P2 예정)은 P1의 "수입−지출 항등식" 전제와 순서가 얽혀 있어, P1보다 먼저 고치거나 최소한 유실 규모를 P1 계수 산정 전에 정량화해두길 권합니다(우선순위 재조정이 아니라 순서 문제).
+
+코드 수정 없음(문서만). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## ✅ REVIEWED — 퀘스트 시스템 현재 시점 재점검 · 김팀장 재대조 · 2026-08-25
+
+```text
+status=REVIEWED
+task_id=mission-system-current-state-recheck-20260825
+kind=CODE_REVIEW
+code_changes=NO
+kim_claude_verdict=PARTIAL — 검증된 결함 1건(만료 스윕이 완료 대기중 미션도 삭제)
+kim_team_verdict=PARTIAL — 메커니즘 AGREE · 「미검토 결함」DISAGREE · 재현 경로 과장 정정 · (a)/(b)는 정책 변경이라 미적용
+reviewed_at=2026-08-25
+```
+
+**김팀장 재확인 (코드 직접 대조):**
+
+| 김클로드 주장 | 판정 | 근거 |
+|---|---|---|
+| `status==='active'`만 건너뛰고 allDone도 만료 삭제 | **AGREE** | `computeExpiredMissionSweep` 148–173 · `completeObjective` allDone은 `active` 유지 · `finalizeMissionCompletion`에서만 `complete` |
+| `dropExpiredPendingClears`는 삭제 후 큐 정리만 | **AGREE** | `missionStore.ts:111-131` |
+| 인스턴스 만료 시 `listed` 복귀 | **AGREE** | 같은 로컬 보드. 「다른 플레이어」는 **틀림**(싱글 샌드박스) |
+| 바 주인에게 말해야 클리어 대사가 뜸 | **DISAGREE** | 허브 `sweep → applyLanded → tryPresentPendingMissionClearDialog`가 **전 미션** 자동 present. 바 주인은 **놓쳤을 때 안전망** |
+| 만료×클리어 큐 상호작용이 미검토 | **DISAGREE** | `docs/MISSION_TIME_LIMIT_DESIGN.md` §3에 「클리어 대화 대기열에서 제거」명시. **만료 우선이 설계** |
+| (a) allDone 만료 제외 · (b) 완료 시 기한 해제 | **보류** | 기존 1.1안 변경. 대표님 승인 전 코드 금지 |
+
+남는 UX(설계 가장자리, 이중 구현 아님): 목표가 끝났는데 클리어 대사를 **끝까지 안 닫고** 벽시계가 지나면 보상 없이 삭제. 착륙 직후 대사가 뜨는 정상 경로와는 별개.
+
+---
+
+## 📋 REVIEWED (원문 보존) — 퀘스트 시스템 현재 시점 재점검(2026-08-25)
+
+```text
+status=REVIEWED
+task_id=mission-system-current-state-recheck-20260825
+kind=CODE_REVIEW
+code_changes=NO
+kim_claude_verdict=PARTIAL — 검증된 결함 1건(만료 스윕이 완료 대기중 미션도 삭제)
+scope=src/store/missionStore.ts(sweepExpiredMissions), src/missions/missionTimeLimit.ts, src/missions/pendingMissionClearQueue.ts, src/game/planetHubTalkRoster.ts, 그 외 미션/대화 관련 신규 테스트 전체
+self_check=tsc 0에러 · 미션/대화 관련 테스트 10파일 40/40 PASS · build:content-tables 정상(npc-fleet·mission-quest-placements 감사 PASS) · audit:memory:all 전부 PASS
+```
+
+대표님 지시: 「현재 시점으로 문제가 없는지 다시 전수 조사하라」. 하룻밤 사이 김팀장이 미션 시스템을 대폭 확장(신규 `missionTimeLimit.ts` 만료 스윕, `mainStory/` 모듈, `missionNeighborReach*`, NPC 영구사망 설계 문서 등)했음을 확인 — 이번 검수는 직전 작업(퀘스트 완료 담당자 대화)과 직접 맞물리는 범위(미션 상태·만료·클리어 큐·대화목록)에 집중했고, 무관한 신규 모듈(mainStory 콘텐츠, NPC 영구사망 등)은 전수 조사 범위 밖입니다.
+
+### 1. 전체 상태 — AGREE (회귀 없음)
+
+`tsc` 0에러, 미션/인게임대화 관련 테스트 10개 파일 40개 케이스 전부 PASS(신규 `missionNeighborReach.test.ts`·`missionTimeLimit.test.ts`·`arcCoreInstanceMissionGenerator.test.ts`·`mainStoryProgression.test.ts` 포함), `build:content-tables` 정상 재생성 및 자체 감사(`audit:npc-fleet`·`audit:mission-quest-placements`) 전부 PASS, 메모리 오디트 6종 전부 PASS. 지난 턴의 타입 수정(`MissionClearContactInput`/`isMissionClearContactAtPlanet`에 `id` 추가)이 그대로 안정적으로 유지되고 있습니다.
+
+### 2. ⚠️ 신규 결함 — 만료 스윕이 "완료 대기 중"(담당자 대화 대기) 미션도 삭제할 수 있음 (CONFIRMED)
+
+- 신규 `missionTimeLimit.ts`의 `computeExpiredMissionSweep`(`missionTimeLimit.ts:148-173`)은 `progress.status !== 'active'`인 것만 건너뛰고, `expiresAtMs`가 지났으면 나머지는 전부 삭제 대상으로 봅니다.
+- 그런데 **objective가 전부 끝났지만(`buildPendingClearDialog`로 클리어 대화가 큐잉된 상태)도 `status`는 여전히 `'active'`입니다** — `'complete'`로 바뀌는 건 `finalizeMissionCompletion`(대화 종료·`grant_mission_rewards`)에서만입니다(`missionStore.ts:565-609` 부근). 즉 **"이미 배달을 마쳤지만 아직 담당자와 대화를 안 한" 미션은 만료 스윕 대상에서 제외되지 않습니다.**
+- `expiresAtMs`는 수락 시점(`startedAt + N시간`)에 고정되고, objective 완료 시점에 갱신·해제되지 않습니다(`missionStore.ts:99-109` `createActiveMissionProgress`, `backfillMissingExpiresAt`). `dropExpiredPendingClears`(`missionStore.ts:111-131`)는 만료 판정 **이후** 큐 참조만 정리할 뿐, 만료 판정 자체를 막지는 않습니다.
+- **재현 조건**: 배달형(72h 만료) 퀘스트를 수락 → 마감 직전에 화물 배달·`reach_system` objective 자동완료(허브 착륙 시 그대로 자동 진행되는 현행 설계) → 그런데 그 미션이 `isAnyNeighborReachMission`(인접 성계 배달, 예: 「광물 샘플운송」류 ArcCore 인스턴스) 계열이라 완료 대화는 **바 주인에게 직접 말을 걸어야만** 뜸(`tryPresentBarNeighborMissionClear`, `planetHubTalkRoster.ts:47-85`) → 플레이어가 만료 시점(수락 후 72h)까지 그 담당자에게 다시 말을 안 걸면 → `sweepExpiredMissions`가 **이미 다 배달한 미션을 "만료"로 지우고 보상은 지급되지 않습니다.**
+- 이번 세션에서 만든 "담당자 대화로 완료" 안전망 기능(대표님 지시, 2026-08-24)과 신규 만료 스윕(김팀장, 2026-08-24~25 사이 추가)이 **서로 독립적으로 짜여 있어 상호작용이 검토되지 않은 것**으로 보입니다 — 각자 따로는 멀쩡하지만 조합하면 "다 했는데 못 받는" 케이스가 생깁니다.
+- **제안**(코드 미수정, 판단 요청): (a) `computeExpiredMissionSweep`에서 `isActiveMissionAllObjectivesDone(mission, progress)`(이미 존재하는 헬퍼)인 미션은 만료 대상에서 제외 — 가장 간단. (b) objective 전부 완료 시 `expiresAtMs`를 해제(또는 클리어 대화 큐잉 시점으로 유예 연장). 어느 쪽이든 "이미 끝낸 일이 조용히 사라지는" 케이스만 막으면 됩니다.
+
+### 3. 그 외 확인 — 참고용
+
+- `dropExpiredPendingClears`가 헤드/큐에서 만료된 미션의 대화 참조를 정리하는 로직 자체는 정확합니다(헤드 만료 시 다음 큐로 승격, 큐 항목 삭제 시 나머지 보존) — §2 결함은 "삭제 이후 뒷정리"가 아니라 "애초에 삭제 대상 판정" 쪽 문제입니다.
+- ArcCore 인스턴스 미션이 만료되면 `restoreListedInstanceIds`로 보드에 재게시되는데(`missionTimeLimit.ts:170-172`, `missionStore.ts:493-496`), §2 케이스처럼 실수로 삭제된 경우도 동일하게 재게시되어 **다른 플레이어(또는 같은 플레이어가 재수락)에게 같은 인스턴스가 다시 뜰 수 있음** — §2가 고쳐지면 자연히 해소됩니다.
+- 지난 턴 handoff에 남겨둔 "안전망(`tryPresentBarNeighborMissionClear`)이 ArcCore 인접배달에만 적용되고 고정 목적지 CSV 배달엔 없는 게 의도인지" 질문은 아직 코드상 그대로입니다 — 재확인 부탁드립니다.
+
+### 결론
+
+지난 턴 타입 수정 이후 전체적으로 안정적이고 회귀 없음. §2(만료 스윕 vs 완료대기 미션)만 신규로 확인된 실질적 리스크이며, 발생 조건이 좁아(배달 만료 임박 + 대화 미이행) 긴급하진 않지만 "완료해도 보상을 못 받는" 부류라 우선순위 있게 봐주시길 권합니다.
+
+코드 수정 없음(검토만). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## ✅ REVIEWED — 퀘스트 완료 담당자 수동 인터랙션 · 김팀장 재대조 · 2026-08-25
+
+```text
+status=REVIEWED
+task_id=mission-clear-npc-manual-interaction-20260824
+kind=COLLISION_RESOLUTION + 타입버그 수정
+kim_claude_verdict=AGREE (되돌림+타입만 · 범위 질문 남김)
+kim_team_verdict=AGREE+CLOSE — 되돌림 올바름 · 타입 `id` 유지 · 고정목적지 안전망 미확장은 의도
+code_changes=YES (김클로드: 타입만. 경쟁 구현 없음)
+reviewed_at=2026-08-25
+```
+
+**김팀장:** `completeMissionContactHandoff.ts` 없음. `applyLandedMissionObjectives` 착륙 자동완료 유지. `MissionClearContactInput`에 `id` 있음.
+
+**범위 질문 답:** `tryPresentBarNeighborMissionClear`가 `isAnyNeighborReachMission`만 보는 것은 **의도**. 인접 배달은 수락 때 담당자를 못 찍음 → 착륙 행성 바 주인으로 다시 품. `sandbox_006`/`sandbox_012`는 목적지 확정 → 수락 스냅샷 + 허브 `quest_contact` + 착륙 시 클리어 대사 자동 present. neighbor 안전망을 고정 목적지로 넓히면 발송지 바에서 오완료될 수 있어 **확장하지 않음**.
+
+---
+
+## 📋 REVIEWED (원문 보존) — 퀘스트 완료 "담당자 대화 수동 인터랙션" — 실시간 동시편집 정리 · 2026-08-24
+
+```text
+status=REVIEWED
+task_id=mission-clear-npc-manual-interaction-20260824
+kind=COLLISION_RESOLUTION + 타입버그 수정
+code_changes=YES (김팀장 진행분 보존, 제 경쟁 구현은 되돌림, 컴파일 에러 2건만 수정)
+files_touched=src/missions/resolveMissionClearNpcContext.ts(+test) — id 필드 타입 보강만
+files_reverted_by_me=src/missions/applyLandedMissionObjectives.ts, applyReachSystemMissionObjectives.ts(git checkout -- 로 김팀장 스테이지 버전 복원), src/missions/completeMissionContactHandoff.ts(신규 파일 삭제)
+self_check=tsc 0에러 · missionCategory/pendingMissionClearQueue/resolveHudCurrentObjective/resolveMissionClearNpcContext(16/16) 전부 PASS · audit:memory:all 전부 PASS
+```
+
+대표님 지시: 「담당자 지목 퀘스트는 성계 이동→스캔→대화목록에서 NPC 확인→대화로 완료하는 수동 인터랙션 추가. 기존 자동완료(행성허브 도착시)는 테스트 편의용이었고, 여러 NPC 겹침 시 우선순위 꼬임 방지용 수동 안전 프로세스로 고도화. 작업완료 후 김팀장 검수 요청.」
+
+### 상황 — 작업 중 김팀장과 동일 파일 실시간 동시편집 충돌 발견, 제 쪽을 되돌림
+
+착수 직후 `src/store/missionStore.ts`·`src/missions/resolveMissionClearNpcContext.ts`·`src/game/planetHubTalkRoster.ts`가 제가 읽는 도중에도 계속 바뀌고 있어, 김팀장이 **바로 지금 이 기능을 실시간으로 구현 중**임을 확인했습니다. 대표님이 저와 김팀장 양쪽에 같은 지시를 거의 동시에 내리신 것으로 보입니다.
+
+제가 처음 설계한 접근(담당자 배정 미션은 `applyLandedMissionObjectives`/`applyReachSystemMissionObjectives`에서 **자동완료 자체를 막고** 대화목록에서만 완료)과, 김팀장이 이미 구현 중인 접근(자동완료는 그대로 두고, `planetHubTalkRoster.ts`의 `tryPresentBarNeighborMissionClear`로 **완료 대화 노출**을 대화목록 수동 선택에 안전망으로 얹는 방식)이 **서로 다른 설계**임을 발견했습니다. 제 쪽으로 밀어붙이면 김팀장의 "자동완료된 미션을 나중에 대화로 다시 띄운다"는 전제(`allDone`을 재조회하는 `requeueMissionClearDialogIfReady`)가 깨져 **오히려 퀘스트가 영원히 완료 안 되는 신규 리스크**가 생기는 걸 확인했습니다(대표님이 정확히 우려하신 그 유형의 버그를 제가 만들 뻔했습니다).
+
+**조치**: 제 게이팅 변경분을 `git checkout --`로 되돌려 `applyLandedMissionObjectives.ts`/`applyReachSystemMissionObjectives.ts`를 김팀장 스테이지 버전으로 복원했고, 제가 새로 만든 미배선 파일 `completeMissionContactHandoff.ts`는 삭제했습니다. 대신 김팀장 작업 중 발생한 **실제 컴파일 에러 2건**(`resolveMissionClearNpcContext.ts`의 `MissionClearContactInput`/`isMissionClearContactAtPlanet` 파라미터 타입이 `id` 없이 선언돼 내부에서 `id`를 쓰는 `resolveMissionDestinationPlanetId`/`isAnyNeighborReachMission` 호출과 충돌)을 `id` 필드 추가로 수정했고, 이미 김팀장이 새로 갈아엎은 제 테스트 파일(`resolveMissionClearNpcContext.test.ts`, 16개 케이스로 확장돼 있었음)도 같은 타입 불일치로 깨져 있어 헬퍼 시그니처만 `Partial`로 보정했습니다. **로직은 전혀 바꾸지 않았습니다** — 전부 타입 선언 보강뿐입니다.
+
+### 김팀장 구현 이해 — 제가 재구성한 그림(교차 확인 요청)
+
+- 담당자 배정(`assignedClearNpcCaptainId`)은 수락 시점 스냅샷 그대로 유지. **단, `isAnyNeighborReachMission`(ArcCore 인스턴스 배달 전부 포함)인 미션은 목적지가 모호해 스냅샷 자체를 비워두고**, 완료 대화 화자를 프레젠테이션 시점에 "착륙한 행성의 바 주인"으로 다시 푸는 방식(`resolveClearDialogSpeakerCaptainId`)으로 처리하고 있습니다.
+- 객체 완료(reach_system/reach_planet, 화물 소모)는 **여전히 착륙 시 자동**입니다(제가 막으려던 부분을 김팀장은 그대로 둠) — 자동완료된 순간 `pendingMissionClearDialog`가 즉시 큐잉·프레젠트되는 기존 경로도 그대로입니다.
+- `tryPresentBarNeighborMissionClear`(대화목록에서 바 주인과 대화 시)는 **"안전망"** 역할로 보입니다: 자동 프레젠트가 다른 착륙 트리거들과 우선순위가 꼬여 놓쳤을 경우, 대화목록에서 그 담당자를 직접 선택하면 pending을 다시 present하거나(`allDone`인데 아직 안 떴으면) `requeueMissionClearDialogIfReady`로 재등록 후 present합니다.
+- **범위가 `isAnyNeighborReachMission`(ArcCore 인스턴스 배달)로 한정**돼 있어, 손으로 쓴 고정 목적지 CSV 배달 미션(`sandbox_006`/`sandbox_012` 등 `type=delivery`, 목적지 확정)에는 이 안전망이 적용되지 않는 것으로 보입니다. 이게 의도인지(고정 목적지는 우선순위 충돌이 애초에 안 난다는 판단인지) 확인이 필요해 보여 남겨둡니다 — 제가 임의로 확장하지 않았습니다.
+
+### 결론
+
+로직 구현은 김팀장이 실시간으로 진행 중이라 제가 중복·경쟁 구현을 만들지 않고 **되돌림 + 컴파일 에러 수정**으로 역할을 좁혔습니다. 현재 전체 상태는 `tsc` 0에러·관련 테스트 전부 PASS·메모리 오디트 전부 PASS로 안전합니다. 위 "범위" 질문 외에는 이견 없습니다.
+
+코드 수정 최소(타입 보강만). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 — 특히 지금 실시간으로 작업 중이시면 이 handoff는 참고만 하시고 계속 진행하셔도 됩니다.
+
+---
+
+## ✅ REVIEWED — 퀘스트 완료 담당자 · 김팀장 정정 구현 · 2026-08-24
+
+```text
+status=REVIEWED
+task_id=mission-clear-npc-dialog-implementation-20260824
+kind=IMPLEMENTATION
+kim_claude_verdict=PARTIAL — 인프라(스냅샷·제네릭 씬·토큰)는 재사용. 「목적지 있으면 바 주인 전원 배정」은 대표님 정본과 불일치
+kim_team_verdict=DISAGREE+FIX — 오퍼레이터 기본. shouldAssignClearContact 게이트. 배달·접선만 미션에 담당자 stamp. 허브는 그 담당자만 활성화
+code_changes=YES (김팀장 직접)
+```
+
+대표님 지시: 일반 퀘스트는 오퍼레이터. 발송지→배송지 담당이 있을 퀘스트만 생성 시 미션에 담당자를 적고, 그 경우에만 담당자 대화가 켜지게 구분하라.
+
+**김클로드 초안에서 유지:** 수락 스냅샷 `assignedClearNpcCaptainId`, 씬 3단(맞춤 > NPC 템플릿 > 오퍼레이터), `[담당자]` 토큰, 맞춤 씬 `mission_001`~`003` 최우선, 완료 판정 비침습.
+
+**김클로드 초안에서 기각·정정:** `resolveMissionClearAssignedNpcCaptainId`가 탐험/이동에도 목적지 바 주인을 붙이던 부분. `mission_004`/`tq_oth_01` 같은 일반 이동이 NPC 클리어로 바뀌면 안 됨.
+
+**김팀장 반영:** `shouldAssignClearContact` · CSV `requiresClearContact`(접선 `mission_001`/`tq_oth_05`) · 인스턴스 설명 stamp · 허브 `quest_contact` · hydrate 백필.
+
+---
+
+## 📋 REVIEWED (원문 보존) — 퀘스트 완료 담당자(NPC) 대화 구현 완료 · 2026-08-24
+
+```text
+status=REVIEWED
+task_id=mission-clear-npc-dialog-implementation-20260824
+kind=IMPLEMENTATION
+code_changes=YES
+kim_team_note=상단 REVIEWED 정정안이 정본. 아래는 김클로드 원문.
+files_modified=src/types/index.ts, src/store/missionStore.ts, src/game/ingameDialog/{ingameDialogTypes,ingameDialogViewModel,ingameDialogSceneIndex,resolveIngameDialogPortraitSource}.ts, src/missions/arcCoreInstanceMissionResolver.ts, tables/content/{story_scenes,story_scene_pages}.csv(+생성 재빌드)
+files_added=src/missions/resolveMissionClearNpcContext.ts(+test)
+self_check=tsc 0에러 · resolveMissionClearNpcContext.test.ts 9/9 · missionCategory/pendingMissionClearQueue/resolveHudCurrentObjective/ingameDialogAutoDismiss/barInstanceMissionDifficulty 전체 PASS(회귀 0건) · build:content-tables 정상(신규 CSV 2행 반영) · audit:memory:all 전부 PASS
+```
+
+전 turn 설계(`mission-clear-npc-dialog-design-20260824`)를 대표님 지시("광물 샘플운송 예시 — 인접 성계 배달지의 바 주인이 기본, 특별 퀘스트는 추가 배정. 유사 퀘스트 완료 안 되는 리스크도 점검. 구현 진행")에 맞춰 실제 구현했습니다. **`missionStore.ts`/`ingameDialog*` 등 김팀장이 동시 편집 중이던 파일도 이번엔 직접 수정**(대표님 명시 구현 지시)했고, 문자열 단위 정밀 편집으로 김팀장의 기존 스테이지된 변경분(§2 클리어 큐, `resolveHudCurrentObjective` 등)은 그대로 보존한 채 그 위에 얹었습니다 — 관련 테스트 전부 회귀 0건으로 확인.
+
+### 설계 반영 — 대표님 정정사항 그대로 구현
+
+- **기본 담당자 = 목적지 행성의 "바 주인"**(대표님 지시대로, 설계 초안의 governor 대신). `resolveBarHostCaptainAtPlanet(planetId)`(기존 인프라, `barPlanetIds` 기반)를 재사용 — 신규 NPC 배정 체계를 만들지 않음.
+- **특별한 퀘스트 = 명시 오버라이드**: `Mission.clearNpcCaptainId?`(신규 optional 필드) — CSV에 지금은 채워진 값 없음(전부 기본=바 주인 경로), 특정 미션에 별도 캐릭터를 배정하고 싶으면 이 필드만 채우면 즉시 동작.
+- **배정 시점 = 수락 시 스냅샷**: `MissionProgress.assignedClearNpcCaptainId?`(신규 optional) — `acceptQuestMission`(ArcCore 인스턴스·일반 sandbox 양쪽) · `acceptMainStoryMission` · `initTutorialStory` · 체인 진행(`advanceMissionChainAfterComplete`) **5개 진행-생성 지점 전부**에서 스냅샷. ArcCore 인스턴스 미션(`tq_*` 템플릿)도 `clearNpcCaptainId`가 템플릿→인스턴스 복제 시 전파되도록 `arcCoreInstanceMissionResolver.ts` 1줄 추가.
+- **씬 선택 3단 우선순위**(`resolveMissionClearDialogSceneId` 확장): 미션별 맞춤 씬(기존, 최우선) → 담당 NPC 배정 시 `mission_clear_npc_delivery`/`mission_clear_npc_arrival`(신규 CSV 2건, `[담당자]`/`[미션제목]`/`[닉네임]` 토큰) → 오퍼레이터 기본(기존 폴백). 기존 mission_001~003 손대사는 전혀 안 바뀜.
+- **동적 화자**: `IngameDialogTextContext`에 `npcCaptainId/npcName(En)` 추가, `resolveIngameDialogPortraitSource`가 씬 고정 `speakerNpcCaptainId`보다 컨텍스트 오버라이드를 우선하도록 수정, 라벨("[ AI 오퍼레이터 ]" 위치)도 `applyTextContext`를 타도록 해 `[담당자]` 토큰이 이름으로 치환됨.
+
+### 광물 샘플 운송(`tq_del_03`) 검증
+
+목표 2개(`buy_goods minerals×3` → `reach_system __neighbor_system__`)로, ArcCore 인스턴스 미션이라 수락 시 `__neighbor_system__`이 실제 인접 성계로 치환된 상태의 Mission이 `getMissionById`에서 반환됨을 확인 — 제 리졸버는 이 materialize된 실제 목표를 그대로 받아 목적지 행성(성계의 첫 행성)을 해석하므로 정상 동작합니다. `sceneKind`는 `buy_goods` 동반이라 `delivery`로 판정 — 완료 시 목적지 행성 바 주인이 "화물 확인했다" 계열 대사로 응답합니다.
+
+### 유사 퀘스트 "완료 안 되는 리스크" 점검 결과
+
+이번 기능은 **완료 판정 로직(`completeObjective`/objectives/allDone)을 전혀 건드리지 않습니다** — 어떤 씬·NPC가 보여지는지만 바꿉니다. 따라서 이전에 보고한 §2(동시 완료 슬롯 덮어쓰기, 김팀장 조치완료)·§3-B/3-C(식량팩 배달 재검증, `resolveHudCurrentObjective.ts`로 대응 중인 것으로 보임 — 관련 테스트 파일 확인) 외에 신규로 "완료 안 되는" 리스크를 추가하지 않았음을 코드 경로 추적으로 확인했습니다. 유일한 부작용 리스크는 화자 데이터 누락 시(예: 담당 NPC가 나중에 로스터에서 삭제됨) `[담당자]` 토큰이 빈 문자열로 나오는 **표시상 결함**뿐이며, 완료 자체는 막지 않습니다(오퍼레이터 폴백 체인이 씬 선택 실패 시에도 항상 동작).
+
+### 커밋 전 체크리스트
+
+CSV 2건(`mission_clear_npc_delivery`/`_arrival`)과 재생성된 `csvStoryScenes.ts`가 함께 커밋되어야 합니다(빌드 스크립트로 재생성 가능하지만 diff에 포함 확인 권장).
+
+코드 구현 완료 — 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## 📋 REVIEWED — 퀘스트 완료 담당자(NPC) 대화 고도화 설계 · 2026-08-24
+
+```text
+status=REVIEWED
+task_id=mission-clear-npc-dialog-design-20260824
+kim_team_verdict=PARTIAL — 스냅샷·3단 씬은 채택. governor 기본·목적지 전원 배정은 대표님 정본으로 정정
+```
+
+## 📋 PENDING — 퀘스트 완료 담당자(NPC) 대화 고도화 설계 · 2026-08-24 (원문 보존)
+
+```text
+status=REVIEWED
+task_id=mission-clear-npc-dialog-design-20260824
+kind=DESIGN + 신규 파일 준비(비침습)
+code_changes=YES (신규 파일 3개만 — 기존 파일 0건 수정)
+files_added=docs/퀘스트_완료_담당자_대화_고도화_설계.md, src/missions/resolveMissionClearNpcContext.ts, src/missions/resolveMissionClearNpcContext.test.ts
+self_check=tsc 0에러 · resolveMissionClearNpcContext.test.ts 8/8 PASS
+```
+
+대표님 지시: 「퀘스트 완료조건마다 오퍼레이터 대화가 기본조건 — 각 퀘스트마다 배달지·도착 행성의 담당자(수락 시부터 배정)가 대화에 응답하는 프로세스를 추가. 기존 시스템 철저 분석 후 고도화 설계·구현 준비.」
+
+### 분석 결론 — 신규 인프라 대부분 불필요
+
+전수 분석 결과 필요한 인프라가 **이미 대부분 존재**합니다: 행성별 고정 담당자(`planet_governor_commanders.csv` + `planetGovernorRegistry.ts`, 점령 변경 런타임 오버라이드까지 지원), 대화 텍스트 토큰 치환(`[미션제목]`/`[닉네임]`), 화자 초상 동적 해석(`speakerNpcCaptainId`). 신규로 필요한 건 "이 인프라를 퀘스트 완료 대화에 연결하는 다리"뿐입니다. 부수 발견: `Mission.clearDialogSceneId` 필드가 CSV엔 채워지는데 실제 resolver가 이 필드를 안 읽고 문자열을 재계산합니다(死필드) — 이번 설계는 이 선례를 반복하지 않고 실제로 읽는 필드로 만들었습니다.
+
+### 핵심 결정 3가지 (문서 §2 상세)
+
+1. **오퍼레이터=기본/폴백, 담당자=향상 레이어** — 담당자를 못 찾으면(미배정·talkEnabled=false·전투형처럼 목적지 없는 미션) 지금과 100% 동일하게 오퍼레이터 유지. 무엇도 깨지지 않는 구조.
+2. **배정 시점=수락 시 스냅샷** — 담당자는 점령전으로 런타임에 바뀔 수 있어서, 완료 시점에 다시 조회하면 우호 NPC였다가 적대로 바뀐 채 응답하는 모순이 생깁니다. `MissionProgress`에 신규 optional 필드(`assignedClearNpcCaptainId`)로 수락 순간 스냅샷 — 대표님 "수락 시부터 배정" 지시와 정확히 일치.
+3. **씬 우선순위 3단**: 미션별 맞춤 씬(기존, 최우선 유지) > 담당자 배정 시 제네릭 템플릿 2종("배달 수령"/"도착 보고", `[담당자]` 토큰) > 오퍼레이터 기본(기존 폴백). 기존에 손으로 쓴 mission_001~003 완료 대사는 전혀 안 바뀝니다.
+
+### 이번 턴 준비물 — 신규 파일만, 기존 파일 무수정
+
+`missionStore.ts`/`ingameDialogTypes.ts`/`ingameDialogViewModel.ts`/`ingameDialogSceneIndex.ts` 실통합은 **일부러 이번 턴에 안 했습니다** — 지금 이 파일들이 김팀장의 §2 클리어 큐·§3-C 식량팩 작업으로 동시 편집 중이라 충돌 방지 차원입니다. 대신 아무 데서도 아직 안 쓰이는 순수 함수 모듈만 준비했습니다:
+- `src/missions/resolveMissionClearNpcContext.ts` — 목적지 행성 해석(reach_planet 직접/reach_system→시스템 첫 행성) + governor 조회(talkEnabled 확인) + 씬 종류(배달/도착) 판정. 스토어·CSV I/O 전혀 없는 순수 함수라 안전하게 리뷰·재사용 가능.
+- 테스트 8/8 PASS(reach_planet/reach_system/목적지 없음/governor 미배정/talkEnabled=false 등 전 케이스).
+
+문서 §5에 실제 통합 시 손댈 5개 파일과 변경 요지를 표로 정리해뒀습니다 — 김팀장 검수 후 그대로 진행 가능한 규모(신규 아키텍처·신규 트리거 없음, 기존 완료 파이프라인에 씬 선택 우선순위 1단만 추가).
+
+코드 변경은 신규 파일 3개뿐(기존 파일 무영향). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## ✅ REVIEWED — 퀘스트 전수검사 §2·§3·§3-B · 김팀장 재대조 마감 · 2026-08-25
+
+```text
+status=REVIEWED
+task_id=mission-system-full-integrity-review-20260823
+kind=CODE_REVIEW
+kim_claude_verdict=PARTIAL — §2·§3 조치 후 §3-B·§3-C 남김
+kim_team_verdict=§2 AGREE+FIX · §3 AGREE+DOC · §3-B AGREE+FIX · §3-C OPEN(식량팩, 퀘스트 파이프와 별축 · 신규 실측 없으면 재개 금지)
+reviewed_at=2026-08-25
+```
+
+재대조: `pendingMissionClearQueue` 동작 · `missionObjectiveDsl`는 `hub_landing` 정본 · HUD `resolveHudCurrentObjective` + `mission.hud.cargoShort` 유지. §3-C는 당시 관찰만 — 이번 재검토에서 재현·패치 없음.
+
+---
+
+## 📋 REVIEWED (원문 보존) — 퀘스트(미션) 시스템 수락~진행~완료 전수 정밀검사 · 2026-08-23 (실사용 제보 §3-B·3-C 추가)
+
+```text
+status=REVIEWED
+task_id=mission-system-full-integrity-review-20260823
+kind=CODE_REVIEW
+code_changes=YES (김팀장 §2·§3 후속 완료) + §3-B HUD 화물부족 표시 적용 · §3-C 다음 단계
+kim_claude_verdict=PARTIAL — §2·§3은 김팀장 조치 완료. §3-B(원인 확정) · §3-C(원인 미확정, 김팀장 진행 중인 식량팩 아이템 수정과 연관 추정) 신규 판단 필요
+kim_team_verdict=§2·§3 AGREE+FIX · §3-B AGREE+(a) HUD 화물부족 재표시 · §3-C 다음 단계
+scope=src/store/missionStore.ts, src/engine/MissionEngine.ts, src/missions/*(수락/진행/완료 전체 체인), app/(game)/{worldmap,combat,trade}.tsx·planet.tsx 소비부, tables/content/mission*.csv, 식량팩(food) 아이템 인벤토리 파이프라인
+self_check=tsc 0에러 · missionCategory.test.ts · pendingMissionClearQueue.test.ts · resolveHudCurrentObjective.test.ts
+```
+
+**김팀장 재확인·조치 (2026-08-23):**  
+§2 동시 완료 덮어쓰기 **AGREE** — `pendingMissionClearQueue`(상한 8, persist 없음)로 헤드를 보존하고, hydrate는 막힌 미션을 한 번에 전부 복구. 이동전투 postFlow는 성공 후 다음 헤드를 이어 present.  
+§3 계약 문서 **이미 hub_landing 정본**이었음(김클로드 검수 시점과 어긋난 구문서는 해소). `system_arrival` 전용 분기는 만들지 않음 — DSL·`missionCategory`에 「향후 플래그 추가」만 명시.  
+`MISSION_SYSTEM_HANDOFF.md` 목표 표도 허브 착륙으로 정합.
+
+**대표님 지시(2026-08-23, 이 시점 추가): 「식량팩 아이템은 김팀장이 별도로 수정 중. 현재까지 확인된 문제를 모두 김팀장에게 보고하라.」** → 아래 §3-B·§3-C가 그 보고 대상입니다. §3-C는 진행 중인 식량팩 아이템 수정과 겹칠 가능성이 높아 제가 추가로 원인을 파고들지 않고 관찰 사실만 남겼습니다.
+
+대표님 지시: 「퀘스트 시스템 수락→단계별 체크 업데이트→퀘스트 종류별 수행·처리 무결성 전수 검사」. 김팀장이 선작업 중인 시스템이라, Explore 서브에이전트로 전체 파일 지도를 먼저 뽑은 뒤 **에이전트 보고를 그대로 믿지 않고 핵심 파일 전부를 제가 직접 읽어 재검증**했습니다(아래 §2에 실제로 에이전트 보고가 틀렸던 사례 기록).
+
+### 1. 수락(Accept) — AGREE
+
+`missionStore.ts`의 `acceptQuestMission`/`acceptMainStoryMission`(+deprecated alias `acceptInstanceMission`) 모두 존재/objective 有無/트랙 일치/행성/레벨/선행미션/캡틴/보드 상태(ArcCore 인스턴스 전용 `not_on_board`) 순으로 촘촘히 가드하고 있고, 실패 사유가 문자열 유니온 타입(`AcceptQuestMissionResult` 등)으로 전부 명시돼 있어 UI가 사유별 분기하기 쉽습니다. `activeMissionId`(QuestHUD 주선 핀) 승계 로직도 트랙 우선순위(튜토리얼 > 메인스토리 > 의뢰)가 3개 수락 함수에서 일관됩니다.
+
+### 2. ⚠️ 핵심 결함 — 동시 완료 시 `pendingMissionClearDialog` 단일 슬롯이 서로를 덮어씀 (CONFIRMED)
+
+- `completeObjective`(`missionStore.ts:470-517`)는 마지막 objective가 완료되면 보상 지급 없이 `pendingMissionDialogId`/`pendingMissionClearDialog`(스토어에 **딱 1개 슬롯**)만 세팅하고 리턴합니다. 실제 보상 지급·`status:'complete'` 전환·체인 진행은 전부 `finalizeMissionCompletion`(대화 종료 후 `grant_mission_rewards` 액션이 호출)에서만 일어납니다.
+- **모든 미션이 이 경로를 탑니다** — `resolveMissionClearDialogSceneId`가 특정 클리어씬이 없으면 `mission_clear_default`로 폴백하는데, 이 씬이 실제로 `csvStoryScenes.ts`에 존재함을 확인했습니다. 즉 `completeObjective` 안의 "클리어씬 없으면 즉시 완료" 분기(519-530행)는 **도달 불가능한 죽은 코드**이고, 사실상 전 미션이 단일 슬롯 경로를 씁니다.
+- 그런데 `buy_goods`(`applyBuyGoodsMissionObjectives.ts`) · `reach_planet`/`reach_system`(`missionPlanetHubSync.ts`→`applyReachSystemMissionObjectives.ts`) · `defeat_enemy`(`applyDefeatEnemyMissionObjectives.ts`) 4개 진행-갱신 함수 **전부**가 `listActiveMissionBundles()`로 활성 미션 전체를 순회하며 조건 충족 시 `completeObjective`를 동기 루프 안에서 호출합니다. **같은 이벤트(구매 1회·착륙 1회·전투 승리 1회) 안에서 서로 다른 두 활성 미션이 동시에 마지막 objective를 채우면**, 두 번째 `completeObjective` 호출이 `pendingMissionDialogId`/`pendingMissionClearDialog`를 덮어써 첫 번째 미션의 클리어 등록이 사라집니다.
+- **결과**: 덮어써진 미션은 `progresses[id].objectives`가 전부 `true`인데 `status`는 계속 `'active'`로 남고, 대화·보상·체인 진행이 전부 보류된 채 QuestHUD에 "다 깼는데 안 사라지는" 퀘스트로 남습니다. 크래시·에러 로그는 없어 조용히 발생합니다.
+- **완전히 유실되지는 않음**(정확성을 위해 정정): 앱 재부팅 시 `loadLocalMissions()`(261-277행)가 "활성+전 objective 완료+pending 없음" 미션을 찾아 클리어 대화를 재등록하는 스윕이 있어 **다음 세션에서 자연 복구**됩니다. 다만 이 스윕은 **한 번에 1건만**(`break`) 복구하므로, 동시에 2건 이상 막혀 있으면 재부팅을 여러 번 해야 전부 풀립니다 — 세션 내내 완료가 안 되는 게 아니라 "재부팅해야 완료된다"는 지연/UX 결함입니다.
+- **재현 조건 예**: 서로 다른 두 활성 미션이 같은 최종 objective를 동시에 만족 — 예) 두 sandbox 의뢰가 동시에 같은 재화(`food` 등) 구매를 마지막 목표로 두거나, 튜토리얼/메인스토리/의뢰가 같은 행성에 착륙하는 것을 각자의 마지막 objective로 두는 경우. 지금 21개 미션 CSV에서 이런 조합이 동시에 활성 상태가 되는 실제 사례를 콘텐츠 단에서 특정하진 않았으나, **QuestHUD가 이미 "동시에 여러 의뢰 활성" 설계(스크롤 리스트)로 확장돼 있어** 콘텐츠가 늘어날수록 재현 확률이 올라가는 구조적 리스크입니다.
+- **제안**(코드 미수정, 판단 요청): `pendingMissionClearDialog`를 단일 값 대신 큐(배열)로 바꾸거나, `completeObjective`가 기존 pending을 덮어쓰기 전에 먼저 큐에 밀어넣는 처리만 추가하면 근본 해결됩니다. 수정 여부·방식은 김팀장 판단에 맡깁니다.
+
+### 3. `reach_system` 게이트 — 문서(v1 동결 계약)와 실제 동작 불일치 (문서 결함, 코드는 의도된 동작)
+
+- `src/missions/missionObjectiveDsl.ts`(§`reach_system`, "v1 동결" 계약 문서)는 "완료 조건(비배송): `worldmap.tsx` `doMove` 종료 시 성계 id 일치"라고 명시하지만, 실제 `shouldApplyReachSystemObjective`(`missionCategory.ts:27-32`)는 `_mission` 파라미터를 아예 쓰지 않고 `gate === 'hub_landing'`만 봅니다. `worldmap.tsx:1589`·`transitCombatSession.ts:60`(둘 다 성계 도착 시점, `gate` 미지정→기본값 `'system_arrival'`)에서 호출하면 **모든 미션이 스킵**되고, `reach_system`은 배송이든 단순 이동이든 **행성 허브 착륙에서만** 완료됩니다.
+- 이건 버그가 아니라 **의도된 현재 동작**입니다 — `missionCategory.test.ts`가 정확히 이 동작("all reach_system complete on hub landing only")을 테스트로 고정해뒀고, 직접 실행해 PASS를 확인했습니다. 다만 `missionObjectiveDsl.ts`(계약 문서, "v1 동결"이라 신뢰되는 문서)가 이 결정과 **정반대 내용을 여전히 적어두고 있어** 향후 미션 콘텐츠 작성 시 오해 소지가 큽니다.
+- 실사용 영향은 제한적입니다 — 허브 기반 게임이라 목적 성계 도착 후 대개 착륙하므로 대부분 "도착=완료"처럼 보이지만, **착륙할 행성 허브가 없는 성계를 목표로 하는 순수 이동형 미션**(현재 CSV의 `mission_004`/`mission_005`/`tq_oth_01`/`tq_oth_06` 등 "도착"류)이 있다면 해당 성계에 착륙 가능한 행성이 없는 한 영구히 완료 불가할 수 있습니다 — 대상 성계들이 전부 착륙 가능한 행성을 가졌는지는 이번 검수 범위 밖(월드 데이터 대조 필요)입니다.
+- **제안**(판단 요청): (a) 계약 문서를 실제 동작("전부 hub_landing")에 맞춰 갱신, 또는 (b) 원래 의도대로 비배송은 system_arrival에서도 완료되게 `shouldApplyReachSystemObjective`에 `isDeliveryHubLandingMission(mission)` 분기를 되살리는 것 — 둘 중 방향 결정이 필요합니다.
+
+**3-A. 대표님 확인(2026-08-23)**: 「이동 퀘스트는 거의 90%가 행성허브 도착으로 생성될 것이고, 단순 성계(지도상) 이동 시 발생하는 퀘스트·이벤트 처리가 있을 수 있다」— 즉 현재 코드의 "전부 hub_landing" 동작이 대다수(90%) 케이스에는 **의도와 맞습니다**(§3의 (a) 방향, 문서만 고치면 됨). 다만 향후 "성계 지도 이동만으로 트리거되는" 소수 퀘스트·이벤트를 만들 계획이 있다면 주의가 필요합니다 — `shouldApplyReachSystemObjective`는 `gate==='system_arrival'`일 때 **미션 종류와 무관하게 무조건 false**를 반환해, `worldmap.tsx:1589`·`transitCombatSession.ts:60`(성계 도착 시점 호출)의 `reach_system` 완료 경로가 **현재 100% 죽어있는 상태**입니다. 즉 지금 코드베이스엔 "성계 도착만으로 완료"되는 목표를 만들 수단이 전혀 없습니다 — 나중에 그런 소수 케이스가 필요해지면 문서 정정과 별개로 `shouldApplyReachSystemObjective`에 실제 분기(예: 미션에 `arrival_only` 플래그나 `isDeliveryHubLandingMission` 역방향 체크)를 새로 만들어야 합니다. 지금 당장 막힌 콘텐츠는 없어 급하지 않지만, 이 캐퍼빌리티 자체가 비어있다는 걸 김팀장이 인지하고 있어야 향후 설계 시 놓치지 않습니다.
+
+### 3-B. 실사용 제보(2026-08-23) — 「외곽항로 점검(`sandbox_002`) 배달 목표가 도착해도 완료 안 됨」 — **근본원인 확정(CONFIRMED)**
+
+대표님이 실기 테스트 중 보고. 처음엔 `mission_001`로 추정했으나 대표님이 "외곽항로 점검" 퀘스트라고 특정 정정 — 실제로는 **`sandbox_002`**(CSV title "외곽 항로 점검"/"Outer Route Check", `type=delivery`)였습니다. 목표 2개: `obj_s002_a`(`buy_goods`, food×3) · `obj_s002_b`(`reach_system`, `vega_outpost`, "베가 전초기지로 이동").
+
+**게임 내 실제 상태를 대표님께 직접 확인받아 근본원인을 확정했습니다**(추정이 아님): 미션 진행 목록에 "식량 팩 3개 구매"는 이미 체크된 상태인데, **현재 인벤토리엔 식량팩이 0개**입니다.
+
+**원인**: `applyReachSystemMissionObjectives`(`applyReachSystemMissionObjectives.ts:36-78`)는 배송형(buy_goods 동반) `reach_system` 목표를 완료 처리할 때, **이미 체크된 `buy_goods` progress 플래그를 신뢰하지 않고 도착 시점의 실제 인벤토리를 다시 확인·소모**합니다(51-64행: `countGoodInInventory(...) >= required` 재검증 후 `removeGoodFromInventorySlots`로 실제 차감). 즉:
+1. 식량팩 3개 구매 → `obj_s002_a` 영구 체크(정상, 여기까진 의도대로 동작).
+2. 그 후 어떤 이유로든(판매·소모·다른 활동 등) 식량팩이 인벤토리에서 사라짐 — **objective 체크는 그대로 유지된 채**.
+3. 베가 전초기지 도착 → `obj_s002_b` 완료를 시도하지만, 51-56행의 재검증에서 `countGoodInInventory('food') < 3`으로 `canDeliver=false` → **완료되지 않고 조용히 스킵**(`applyReachSystemMissionObjectives.ts:66-72`가 `deliverFailTitle`/`deliverFailBody` 알림을 띄우도록 되어 있으나, 대표님이 알림을 언급하지 않으신 걸 보면 놓쳤거나 알림 자체가 눈에 띄지 않았을 가능성 — 이 부분은 별도 확인 필요).
+
+**즉 "허브에 도착해도 갱신이 안 된다"는 정확한 관찰이었고, 원인은 버그라기보다 설계 허점입니다**: HUD는 `buy_goods` 체크를 영구 완료처럼 보여주지만(`QuestHUD.tsx:67` `mission.objectives.find(obj => !progress.objectives[obj.id])` — 이미 true인 objective는 표시 목록에서 사라짐), 실제 배달 로직은 그 체크를 신뢰하지 않고 매번 재검증합니다. 플레이어 입장에선 "이미 다 했다"고 표시된 목표가 실은 "그 재화를 계속 갖고 있어야 완료된다"는 숨은 조건이 있는 셈이라 혼란을 유발합니다.
+
+**대표님 조치(즉시)**: 식량팩을 다시 3개 이상 구매한 뒤 베가 전초기지에 재입장하면 정상 완료될 것으로 예상됩니다(코드 로직상 재검증만 통과하면 바로 `completeObjective` 호출).
+
+**제안**(판단 요청, 코드 미수정): (a) 현재 동작 유지 — "배송 시점에 실제로 화물을 갖고 있어야 한다"는 설계 의도라면, 대신 HUD가 `buy_goods` 체크를 "영구 완료"가 아니라 "현재 보유량 부족" 상태를 다시 드러내도록 개선(예: 재화 부족해지면 체크 해제 또는 경고 표시). (b) 원래 "한 번 사면 그걸로 충분"이 의도라면 도착 시 재검증·소모 로직을 없애고 `progress.objectives[obj_s002_a]===true`만으로 완료 처리. 김팀장 판단 필요.
+
+**김팀장 조치(2026-08-23, 1단계만):** (a) 채택 — 배달은 실화물 재검증 유지(허브 실패 팝업은 넣지 않음). HUD만 `resolveHudCurrentObjective`로, 이동 목표가 아직 남았는데 화물이 부족하면 구매 목표를 다시 보여 `· 부족`을 붙인다. persist 플래그는 그대로 둔다(배달 직후 클리어 대기 중 구매 목표가 되살아나지 않게, 미완료 reach가 있을 때만). §3-C는 다음 단계.
+
+### 3-C. 실사용 제보(2026-08-23) — 「식량팩 10개 구매 직후 인벤토리에 식량팩이 안 보임」 — **원인 미확정, 김팀장 진행 중인 식량팩 아이템 수정과 연관 가능성**
+
+§3-B 확인 직후 대표님이 베가 전초기지(도착 상태)에서 식량팩 10개를 구매 → **인벤토리에 식량팩 0개**, "외곽항로 점검" 퀘스트도 **여전히 미완료**로 확인.
+
+**§3-B 메커니즘만으로는 이 결과가 설명되지 않습니다** — 코드를 따라가면 다음이 예상됩니다: `trade.tsx:566-568`에서 구매분(+10)을 `setPlayer`로 반영 → 곧바로 `trade.tsx:584` `reconcileActiveMissionProgressAfterEvent()` → (도착 상태이므로) `applyLandedMissionObjectives('vega_base')` → `applyReachSystemMissionObjectives`가 재검증에서 이번엔 `countGoodInInventory('food') = 10 ≥ 3`을 통과해 3개를 `removeGoodFromInventorySlots`로 소모하고 `obj_s002_b` `completeObjective` 호출 — **즉 코드 흐름대로면 "7개 남고 퀘스트는 자동 완료"가 정상 예상값**입니다. 그런데 실제로는 0개·미완료라 **예상과 다릅니다.**
+
+가능성 있는 지점(코드 미수정, 우선순위 판단·추가 조사는 김팀장):
+1. `addToInventorySlotsMax`(구매 시 인벤토리 추가 함수, `trade.tsx:551`)가 `food` goodId에 대해 실제로는 슬롯에 추가하지 못하고 있을 가능성(꽉 찬 슬롯·아이템 정의 이슈 등) — 대표님이 "식량팩 아이템은 김팀장이 수정 중"이라고 하신 것과 겹칠 가능성이 높습니다.
+2. 인벤토리 UI 표시 쪽이 최신 `player.inventorySlots`를 반영하지 못하는 별개의 렌더링/구독 문제일 가능성.
+3. §3-B의 배달 재검증 로직이 `food` 아이템 정의 쪽 문제와 맞물려 예상보다 많이(또는 전량) 소모하고 있을 가능성.
+
+**제가 더 파고들지 않은 이유**: 대표님이 "식량팩 아이템은 김팀장이 별도로 수정 중"이라고 명시하셔서, 이미 진행 중인 작업과 중복/충돌하지 않도록 관찰 사실만 기록하고 원인 조사는 김팀장께 맡깁니다. 다만 이 관찰(0개·미완료)이 §3-B의 배달 재검증 설계(코드 로직상 정상이라면 7개가 남아야 함)와 어긋난다는 점은, 김팀장이 진행 중인 식량팩 수정이 **§3-B의 증상까지 함께 해결/설명**할 가능성을 시사하므로 교차 참고해 주시기 바랍니다.
+
+### 4. 그 외 확인 — 참고용
+
+- **Explore 에이전트 보고 오류 1건 발견·직접 정정**: 최초 지도 작성 에이전트가 "`applyDefeatEnemyMissionObjectives.ts`는 어디서도 호출되지 않는 죽은 코드"라고 보고했으나, 제가 직접 grep·코드 대조한 결과 `app/(game)/combat.tsx:217`(`handleVictory`)과 `PlanetEdenRaidTestLayer.tsx:2932`에서 실제로 호출되고 있어 **에이전트 보고가 틀렸음을 확인, 정정**했습니다(CLAUDE.md 재검수 원칙에 따라 에이전트 산출물도 그대로 신뢰하지 않고 직접 검증).
+- `defeat_enemy`도 동일한 `listActiveMissionBundles` 순회 + `completeObjective` 동기 호출 패턴이라 §2와 같은 리스크를 공유합니다(적 1체 격파가 서로 다른 두 미션의 마지막 목표를 동시에 만족하는 경우).
+- `deliver_cargo` 타입은 문서·타입 정의만 있고 실제 CSV 미션 어디에도 쓰이지 않음(0건) — "미구현"이라는 문서 설명과 실제가 일치, 현재 살아있는 결함 아님.
+- 튜토리얼 체인 종단 처리(`markTutorialCompleteIfChainEnded`)·세이브 로드 소급(`reconcileTutorialCompleteFromProgress`)·ArcCore 인스턴스 의뢰(보드 상태·`markBoardEntryAccepted`/`Cleared`) 연동은 별도 결함 없음.
+
+### 결론
+
+수락 경로는 견고합니다. §2·§3은 김팀장이 이미 조치 완료(위 기록). **남은 판단 대상은 §3-B(배달형 목표의 재검증·소모 설계 — 원인 확정, 방향 결정만 필요)와 §3-C(식량팩 구매 직후 인벤토리 소실 — 원인 미확정, 김팀장 진행 중인 식량팩 아이템 수정과 연관 가능성 높음)** 입니다.
+
+코드 수정 없음(§3-B·3-C 모두 검토·관찰만). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## 📋 REVIEWED — 행성허브 원형행성 그래픽 베이크 전수 검수 · 2026-08-22
+
+```text
+status=REVIEWED
+task_id=planet-hub-globe-bake-review-20260822
+kind=CODE_REVIEW
+code_changes=YES (김팀장 후속: 중복 스크립트 제거 · 룩 유니크 테스트)
+kim_claude_verdict=AGREE (경미 항목)
+kim_team_verdict=AGREE+CORRECT
+scope=src/game/planetGlobeLookCanon.ts, planetGlobeBakeSample.ts, tempAdminArcadiaGlobeBake.ts, tools/planet-globe-bake/*, src/data/generated/planetGlobeBakedAssets.ts, assets/images/planet/baked/*.png, planetHubSubcomponents.tsx의 PlanetDot 소비부
+self_check=tsc PASS · test:planet-globe-look · bake-arcadia 삭제 · sample 런타임 import 0
+```
+
+**김팀장 재확인 (2026-08-22 후속):** 구조·킬스위치·PlanetDot 틱 미연결 **AGREE**.  
+정정: `require`는 번들 포함만 — 허브 마운트 시 Fresco **1장 디코드**는 있음(성운 1024와 다른 256급).  
+채택: `bake-arcadia-globe.ts` 중복 제거 · `planetGlobeLookCanon.test.ts` 결정론·kind 내 샘플 불일치.  
+커밋은 대표님 지시 시에만(PNG 21장 동반).
+
+대표님 지시: 「행성허브 그래픽 원형행성만, 그래픽 베이크 작업전체를 전수 검사하라」. 김팀장이 신규로 만든 "허브 중앙 원형행성(구체) 이미지 베이크" 파이프라인을 빌드타임 스크립트→생성 자산→런타임 소비까지 전 구간 코드로 추적했습니다.
+
+### 1. 구조 — 빌드타임 전용, 런타임은 정적 PNG만 소비 (AGREE)
+
+- `planetGlobeBakeSample.ts`(순수 FBM 노이즈 구체 셰이더 함수, `habit/arid/barren/volcanic/gas/umbral/aether/station` 8종)에 "런타임 틱·Skia 루프에서 import 금지" 주석이 있는데, **grep으로 직접 확인**: 실제 임포터가 `tools/planet-globe-bake/bake-core-planet-globes.ts`·`bake-arcadia-globe.ts` 2곳(둘 다 Node 빌드 스크립트, `sharp`로 PNG 인코딩)뿐 — 런타임 코드 임포트 0건. 주석과 실제가 일치합니다.
+- 생성된 21개 PNG(256×256, 총 ~1.42MB, `assets/images/planet/baked/`)는 `src/data/generated/planetGlobeBakedAssets.ts`에 `require()`로 정적 매핑 — RN 표준 정적 자산 경로라 런타임에 새 디코드/할당을 유발하지 않습니다.
+- 소비부(`planetHubSubcomponents.tsx:198,217-224` `PlanetDot`)는 허브 중앙 행성 1개만 렌더 — 궤도 함선/오브젝트처럼 매 프레임(`orbitClockMs`) 갱신되는 레이어가 아니라, `orbitClockMs`가 `SharedValue<number>`(Reanimated, UI스레드 전용)로만 하위 궤도 컴포넌트에 전달되고 `PlanetDot`에는 애초에 전달되지 않는 것을 직접 확인 — **틱마다 재렌더/재디코드되지 않습니다.**
+- `<Image resizeMode="cover" resizeMethod="resize" .../>`: `resizeMethod="resize"`가 안드로이드에서 원본을 전체 디코드 후 스케일하지 않고 네이티브 다운샘플 디코드를 쓰게 하는 기존 모범 패턴 — 256px 소스를 84px 표시 크기로 줄이는 이 용도에 정확히 맞게 적용됨.
+
+### 2. 킬스위치·폴백 체인 — AGREE
+
+`TEMP_ADMIN_ARCADIA_GLOBE_BAKE`(`tempAdminArcadiaGlobeBake.ts:11`) `false` 1줄로 즉시 복구(→ 기존 SVG 초상 경로). `combatMuted` 시에도 `resolveArcadiaGlobeBakeSource`가 `null`을 반환해 자동으로 SVG 초상(전투 회색 톤 지원)으로 폴백 — PNG는 정적 색상이라 전투 뮤트 틴트를 표현할 수 없는데, 그 상황만 골라 기존 경로로 우회하는 설계가 정확합니다. `tempAdminArcadiaPlanetPortraitOverride.ts`(블루그린 틴트, 기존 임시 기능)도 베이크 활성 시 `derived` 그대로 반환하며 조용히 비활성화 — 두 임시 기능 간 충돌 없음.
+
+### 3. 경미 항목 (참고용, 급하지 않음)
+
+- **미커밋 신규 자산**: `assets/images/planet/baked/*.png`(21개) · `src/data/generated/planetGlobeBakedAssets.ts` · `tools/planet-globe-bake/*` · `src/game/planetGlobeLookCanon.ts`·`planetGlobeBakeSample.ts`·`tempAdminArcadiaGlobeBake.ts` 전부 git 미추적(`??`/신규) 상태입니다. 커밋 시 PNG 21개를 함께 `git add`하지 않으면 다른 환경에서 `require('.../assets/images/planet/baked/xxx.png')`가 깨집니다 — 커밋 전 체크리스트에 추가 권고.
+- **`bake-arcadia-globe.ts` 중복**: `arcadia_prime`이 이미 `PLANET_GLOBE_LOOK_CANON`(21행성 정본)에 포함돼 `bake-core-planet-globes.ts` 배치 실행만으로도 같은 파일(`arcadia_prime.png`)이 동일 함수로 재생성됩니다. 초기 프로토타입용 단일 스크립트로 보이는데, 지금은 사실상 중복 — 둘 다 남겨둬도 결과물이 어긋나진 않지만(같은 샘플 함수 사용), 유지보수 관점에서 하나로 정리하는 걸 권고(선택).
+- 신규 로직(`planetGlobeBakeSample.ts`의 노이즈/FBM 함수들)에 대한 자동 테스트는 없음 — 빌드타임 전용·순수 함수라 리스크는 낮지만, 결정론적 시드 기반이라 회귀 테스트를 붙이기 쉬운 대상입니다(선택 권고).
+
+### 결론
+
+전체 파이프라인이 CLAUDE.md 메모리 1순위 규칙과 정합합니다 — 신규 Skia 없음, 프레임 루프 할당 없음, 빌드타임/런타임 경계가 실제 코드(주석뿐 아니라 import 그래프)로 지켜지고 있고, 킬스위치·폴백 체인도 정상 동작합니다. 위 3개는 전부 코드 품질 관점의 경미한 참고 사항이며 즉시 조치가 필요한 리스크는 없습니다.
+
+코드 수정 없음(검토만). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## 📋 REVIEWED — 은하 지도 줌 인/아웃 구현(코드) 전수 검수 · 2026-08-22
+
+```text
+status=REVIEWED
+task_id=galaxy-map-zoom-implementation-review-20260822
+kind=CODE_REVIEW
+code_changes=NO
+kim_claude_verdict=AGREE
+kim_team_verdict=AGREE
+design_doc=docs/은하지도_줌_개발계획.md
+scope=src/galaxyMap/galaxyMapZoomLadder.ts(+test), GalaxyMapZoomControls.tsx(신규), app/(game)/worldmap.tsx 줌 연동분
+self_check=tsc 0에러 · audit:memory:all 37/37·20/20·PASS·20/20·7/7·hot-path 0hit 전부 PASS · galaxyMapZoomLadder.test.ts 9/9 PASS
+```
+
+**김팀장 재확인 (2026-08-23):** 구현 AGREE. 잔여 문서 §8·Z5를 사용 단 1..3(`[−]` 2회) 기준으로 맞춤.
+
+대표님 지시: 「김팀장의 줌인아웃 구현이 끝났다. 코드상의 구현을 검수하라」. 이전 세션(2026-08-21, `galaxy-map-zoom-plan-review-20260821`)은 설계 문서 단계 검수였고, 이번엔 실제 완성 코드를 대조했습니다.
+
+### 1. 지난 설계검수 지적 2건 — 둘 다 정확히 해소됨 (AGREE)
+
+- **`NODE_HIT_R` 스케일 미반영 우려** → `resolveGalaxyMapNodeHitRadius(baseHitR, scale)`(`galaxyMapZoomLadder.ts:87-98`)가 `baseHitR/scale` + 최소 반경 클램프로 정확히 구현. `worldmap.tsx`의 탭 히트 루프가 고정 `NODE_HIT_R` 대신 `nodeHitRRef.current`(스케일 반영값)를 씀 — 확인.
+- **`mapLayout.w/h` 다지점 불일치 우려** → 실제 구조는 제 우려보다 더 안전한 방식으로 해소: `toScreen`/`mapContentSize`/`galaxyBounds`는 **전부 1x 그대로 유지**, 줌은 래퍼 View 하나에 순수 네이티브 `transform:[{translateX},{translateY},{scale}]`(`worldmap.tsx:1174-1191`, `zoomCameraStyle`)만 적용. SVG 콘텐츠 좌표계 자체는 절대 커지지 않아 Android SvgView 비정상 크기 크래시 이력과 원천 차단됨. `computeScrollTargetForSystem`/`resolveGalaxyMapZoomMaxScroll`엔 `scale`을 별도 파라미터로 명시 전달 — `toScreen`과의 "식 중복"도 발생하지 않음.
+- 탭 좌표 변환(`mapViewportTapToContent`)도 `zoomScaleRef`/`zoomLetterXRef`/`zoomLetterYRef` 등 ref 경유 — JS에서 SharedValue `.value` 직접 읽기 없음(executeSync SIGSEGV 방어 유지, §0-A 계약 그대로).
+
+### 2. `GALAXY_MAP_ZOOM_ENABLED` 킬스위치 — AGREE
+
+`false` 1줄로 버튼 미표시·배율 1 고정 복구 가능(§9 그대로 구현). 신규 persist 없음(세션 한정) 확인.
+
+### 3. 사용 가능 줌 단이 3단(1~3)뿐 — 원본 잠금(§0) 5단(0~4)과 다름 — **대표님 확인 완료, AGREE**
+
+- 코드: `GALAXY_MAP_ZOOM_STEP_MIN=1` / `GALAXY_MAP_ZOOM_STEP_MAX=3`(`galaxyMapZoomLadder.ts:15-17`) — 단 0(최대축소)·단 4(최대확대)는 `stepGalaxyMapZoom()`에서 도달 불가로 클램프. 버튼도 `canZoomOut={zoomStep > 1}`/`canZoomIn={zoomStep < 3}`(`worldmap.tsx:2118-2119`)로 실기에서 항상 비활성. 테스트(`galaxyMapZoomLadder.test.ts:53-70`)도 이 3단 제한을 의도로 못박음.
+- 최초 검수 시 이 축소가 §0 "잠금(대표님 정본)"의 5단 요구와 달라 근거 불명으로 PARTIAL 플래그했으나, **대표님이 직접 3단 제한 본인 지시임을 확인** — 문제없음. `kim_claude_verdict=AGREE`로 정정.
+- 잔여 사소 항목(코드 수정 불필요, 참고용): 문서 `docs/은하지도_줌_개발계획.md` **§8 완료 게이트**가 옛 5단 기준("최대확대에서 `[−]` 4회 = 최대축소")을 그대로 남겨둬 최상단 "마무리(1..3단)" 선언과 문서 내부적으로 모순 — 다음 문서 정리 시 §8도 3단 기준으로 맞춰두면 향후 재검수 혼선을 줄일 수 있음.
+
+### 결론
+
+메모리·크래시 방어·조작 정합성 전부 우수하게 구현됐고 지난 설계검수 지적사항도 정확히 반영됐습니다. 3단 축소는 대표님 확인 완료 — **전체 AGREE**.
+
+코드 수정 없음(검토만). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## 📋 REVIEWED — 은하 지도 줌 개발계획 · 김팀장 재대조 · 2026-08-22
+
+```text
+status=REVIEWED
+task_id=galaxy-map-zoom-plan-review-20260821
+kind=DESIGN_REVIEW
+code_changes=NO
+kim_claude_verdict=AGREE
+kim_team_verdict=AGREE+CORRECT
+design_doc=docs/은하지도_줌_개발계획.md
+```
+
+김팀장 재대조(`worldmap.tsx` 줄 확인). SIGSEGV 주석·`clampDim` 8192·`NODE_HIT_R=28`·`toScreen`/`computeScrollTarget` 식 중복 **AGREE**.  
+정정: `mapLayout.w/h`를 전부 ×scale 하면 안 됨 — **콘텐츠만** scale, **뷰포트는 불변**.  
+채택: hitR 스케일+클램프 · `mapContentSize` clamp 재사용 · Z4 `mapLayout` 전수. 계획 §4-A·§4-B 반영. 코드 미착수.
+
+---
+
+## 📋 (원문 보관) 김클로드 PENDING — 은하 지도 줌 개발계획 독립 재검수 · 2026-08-21
+
+```text
+status=REVIEWED
+task_id=galaxy-map-zoom-plan-review-20260821
+kind=DESIGN_REVIEW
+code_changes=NO
+verdict=AGREE
+design_doc=docs/은하지도_줌_개발계획.md (상태: 코드 미착수)
+```
+
+대표님 지시: 「은하지도 줌 개발계획 전수 검사, 특히 메모리·조작 리스크 확인」. 코드가 아직 없는 순수 설계 문서라, 문서가 전제로 삼은 기존 코드 사실들을 직접 코드로 재확인하는 방식으로 검수했습니다.
+
+### 총평
+
+**AGREE.** 핀치 대신 5단 버튼(사다리) 방식을 택한 근거(§0-A)가 실제 코드의 **진짜 크래시 이력**에 기반해 있고, 설계가 제시한 제약("JS에서 SharedValue `.value` 읽기 금지" 등)이 기존 방어 패턴과 **문구까지 정확히 일치**합니다. Skia·신규 persist·레이아웃 상수 변경도 없어 이번 세션 내내 강조된 메모리 1순위 규칙과 정합합니다. 다만 실제 Z4(탭 히트 동기화) 구현 시 놓치기 쉬운 지점 2개를 찾아 아래에 남깁니다.
+
+### 1. §0-A "Pan/Tap worklet executeSync SIGSEGV 이력" — AGREE (실재 확인)
+
+문서가 핀치 대신 버튼을 택한 핵심 근거인데, 지어낸 이유가 아니라 **코드에 지금도 남아있는 실제 방어 패턴**입니다:
+- `app/(game)/worldmap.tsx:172` — `/** UI 스레드 전용 — JS useEffect에서 scroll SharedValue 읽기 금지 (executeSync SIGSEGV) */`
+- `app/(game)/worldmap.tsx:304` — `/** runOnUI 스크롤 — scrollAlive=1 이전에 실행하면 executeSync SIGSEGV (장기 idle 후 출발) */`
+- `app/(game)/worldmap.tsx:471,547` — 2×rAF 이후에만 제스처 arm, `scrollAlive` 게이트로 방지
+- `src/game/galaxyMapScrollLifecycle.ts:27` — `// JS에서 scrollAlive=0을 먼저 내린 뒤 UI에서 decay 취소 — blur 직후 제스처 이벤트 SIGSEGV 방지`
+
+설계 §4의 "스크롤 SharedValue는 버튼 탭 후에만 기존 `runOnUI` 클램프로 갱신. JS에서 `.value` 읽기 금지"가 이 기존 규율과 **정확히 같은 문구·같은 이유**로 되어 있어, 새 사고를 유발할 새 패턴을 만들지 않고 기존 안전장치에 올라타는 설계임을 확인했습니다.
+
+### 2. 메모리 — AGREE (신규 위험 없음)
+
+- 은하 지도는 Skia가 아니라 `react-native-svg`(`GalaxyMapSystemsSvg`/`Voronoi`/`UndiscoveredStarlight` 전부 `Path`/`Polygon`) — §0의 "신규 Canvas/핀치 제스처 없음" 주장과 일치, Skia Zero-Allocation 규칙 대상이 아님.
+- `mapContentSize`(`worldmap.tsx:996-1008`)에 이미 `Math.max(span, 0.001)`(0분모 방지) + `clampDim([1,8192])`(안드로이드 비정상 크기 네이티브 크래시 방지)가 있음 — **`S_min`/`S_max` 계산이 이 기존 가드를 재사용**하면 새 엣지케이스(bbox 퇴화·과대 캔버스)를 만들지 않습니다. 문서가 "S_min은 뷰포트·bbox로 계산, 상수 금지"라고만 하고 이 기존 가드 재사용을 명시하진 않아 — Z1 구현 시 `mapContentSize`와 같은 clamp를 쓰라고 못박아두길 권고.
+- persist 없음(세션 한정, 이탈 시 `1`로 복귀) — 계정 데이터 증가 없음.
+
+### 3. 조작(操作) — AGREE 방향, 구현 시 놓치기 쉬운 지점 2개
+
+- **`NODE_HIT_R`(28px 고정 상수, `worldmap.tsx:155`) 스케일 미언급**: `touchTargets`(탭 히트 판정)의 좌표는 `toScreen`을 타므로 배율이 적용되지만, 비교 대상인 히트 반경 `NODE_HIT_R`는 별개 고정값입니다. 문서 §4는 "히트 박스는 스케일된 좌표"라고만 해서 **좌표만** 스케일하는 것처럼 읽히는데, 그러면 최대축소(노드 간격 좁아짐)에서 인접 노드 오탭, 최대확대(노드 간격 넓어짐)에서 반경이 상대적으로 너무 좁아지는 체감이 생길 수 있습니다. Z4에서 `NODE_HIT_R`도 같이 스케일(또는 최소/최대 클램프)하는 걸 명시해두길 권고.
+- **`mapLayout.w`/`mapLayout.h` 직접 참조 지점이 여러 곳**: `toScreen`(958-964줄) 외에도 `mapContentSize`(996-1008줄)·`computeScrollTargetForSystem`(1033-1040줄) 등 **최소 3곳 이상**이 `mapLayout.w`/`h`를 직접 곱해 좌표를 계산합니다. 배율을 `toScreen` 한 곳에만 넣으면 탭 이동 목적지·콘텐츠 크기·실제 렌더 좌표가 서로 어긋날 수 있습니다. Z4 완료 게이트에 "`mapLayout.w`/`h`를 참조하는 모든 지점 목록화 후 배율 동시 적용 확인"을 체크리스트 항목으로 추가 권고(문서 §8엔 "탭 히트·toScreen 동기"만 있고 전수 목록화는 없음).
+
+### 4. 그 외 — AGREE
+
+- 핀치·연속 슬라이더·3클릭 이상 배제(§6), 최대축소에서 700 미발견 풀노드 미전개, `planetMainStageLayout` 불변, 신규 persist 없음 — 전부 리스크를 줄이는 방향의 결정으로 이견 없음.
+- 포그·존 로딩과 배율을 독립 축으로 분리(§5)한 것도 설계상 깔끔 — 다만 §4의 `toScreen`이 지난번 검수한 존 로딩의 `starlightSystems` 필터(`isHiddenSystemInGalaxyMapStarlightPayload`)에도 쓰이므로, 배율 도입 후 그 필터가 여전히 "스크롤/포커스 시에만 재계산"(틱 없음) 원칙을 지키는지는 **Z1 구현 후 별도로 한 번 더 확인 필요**(버튼 탭도 트리거에 추가되는 것 자체는 설계 의도상 정상).
+
+### 결론
+
+설계 방향은 그대로 채택 가능. 위 2·3번 세부사항(히트 반경 스케일, `mapLayout.w/h` 전수 목록화)을 Z1/Z4 체크리스트에 한 줄씩 추가해두면 구현 턴에서 재검수가 더 빠르게 끝납니다.
+
+코드 수정 없음(검토만). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## 📋 REVIEWED — 은하 지도 존 분할로딩 전수재점검 · 김팀장 재대조 · 2026-08-21
+
+```text
+status=REVIEWED
+task_id=galaxy-map-zone-load-review-20260821
+kind=CODE_REVIEW
+code_changes=NO
+kim_claude_verdict=AGREE
+kim_team_verdict=AGREE+CORRECT
+design_doc=docs/성계700_전개방_메모리_운영_설계.md v0.3 §16-17
+scope=src/galaxyMap/galaxyMapZoneContract.ts, galaxyMapZoneLoadSession.ts (+테스트), app/(game)/worldmap.tsx 존 로딩 연동분
+```
+
+김팀장 재대조(코드·§16-17). 기하·히스테리시스·별빛 필터·리셋 훅 **AGREE**.  
+정정: `visibleSystemsList` ≠ 존5 97 — **코어+레거시+관문16(+해금) ≈ 113**. `galaxyBounds`는 관문까지 포함. 존 필터로 가시 노드를 줄이면 관문이 사라짐.  
+범위: Z1 레지스트리 + 로드 세션(별빛만). Z2는 대표님 줌 제외·현행 비주얼 고정이라 **지금 착수하지 않음**.
+
+---
+
+## 📋 (원문 보관) 김클로드 PENDING — 은하 지도 존 분할로딩(Z1) 메모리관리 체계 전수재점검 · 2026-08-21
+
+```text
+status=REVIEWED
+task_id=galaxy-map-zone-load-review-20260821
+kind=CODE_REVIEW
+code_changes=NO
+verdict=AGREE
+design_doc=docs/성계700_전개방_메모리_운영_설계.md v0.3 §16-17
+scope=src/galaxyMap/galaxyMapZoneContract.ts, galaxyMapZoneLoadSession.ts (+테스트), app/(game)/worldmap.tsx 존 로딩 연동분
+```
+
+대표님 지시: 「은하계지도 분할로딩 메모리관리 체계 전수재점검」. `성계700_전개방_메모리_운영_설계.md`가 오늘 v0.3까지 갱신돼 있어(§16 개발순서 잠금·§17 존 기하 9칸 실측) 최신 설계와 실제 코드를 같이 대조했습니다.
+
+### 총평
+
+**AGREE.** 설계 문서 §17이 못박은 9칸 존 기하 수치(전체 757·존5=97[코어21+레거시76]·십자 4존 각 165[관문4+미발견161]·코너 0)가 **실제 그래프 데이터와 정확히 일치**하고, 히스테리시스(반대 존 즉시 언로드 금지) 로직도 설계 §17-2 그대로 구현돼 있습니다. 신규 테스트 16/16 통과, `tsc` 0에러, `audit:memory:all`(37/37·20/20·20/20·20/20·7/7·hot-path 0hit) 전부 PASS — 회귀 없음을 확인했습니다.
+
+### 1. `galaxyMapZoneContract.ts` (Z1 존 분류) — AGREE
+
+- 9칸 정규화 분류(`resolveGalaxyMapZoneIdFromPosition`)가 그래프 전체 bbox 기준으로 정확히 동작 — 테스트로 전수 검증: 존5=97(코어21+레거시76 정확히 일치), 4개 십자존 각 165(관문4+미발견161), 코너 1/3/7/9는 0(설계 §17-1과 일치).
+- 주 관문 매핑(`GALAXY_MAP_PRIMARY_GATEWAY_BY_ZONE`: 2→synth_092, 4→synth_083, 6→synth_085, 8→synth_090)이 설계 §17-2 표와 정확히 일치, 각 관문이 실제로 해당 존에 속하는지도 테스트로 확인됨.
+- 순수 함수·모듈 캐시(`boundsCache`/`zoneIdsByZoneCache`) 구조라 매 프레임 재계산 없음 — PSS 정합.
+
+### 2. `galaxyMapZoneLoadSession.ts` (로드 세션) — AGREE
+
+- 초기 상태 = 존5만(설계 §16-4 Z1 계약과 일치).
+- 히스테리시스: 현재/선택 성계가 새 방향으로 트리거되면 그 존을 추가하되, **반대 존은 활성 트리거가 반대로 바뀌기 전까진 유지** — 테스트로 north↔south, east↔west 전환 케이스 전부 확인.
+- `isHiddenSystemInGalaxyMapStarlightPayload`: 존이 로드됐으면 표시, 아니면 화면 콘텐츠 bbox±48px 마진 폴백 — `worldmap.tsx`의 `galaxyBounds`가 **가시 시스템만의 좁은 bbox**라서 존 5 밖 성계는 자연스럽게 콘텐츠 범위 밖으로 좌표가 밀려나 마진 체크가 의도대로 "가깝/멂"을 가른다는 것을 좌표 계산 직접 추적으로 확인(테스트의 극단값 -400 케이스와 일치).
+
+### 3. `worldmap.tsx` 연동 — AGREE
+
+- `loadedZoneIds` state가 기존 STAGE-safe 리셋 훅(`registerGalaxyMapDeferredTileReset`/`registerGalaxyMapPresentationReset`)에 그대로 얹혀 있어 **새 리셋 경로를 발명하지 않음**.
+- `applyZoneLoadState`는 `useCallback([])` + ref 패턴으로 안정적 — 존 변경 감지 `useEffect`가 `currentSystemId`/`selectedSystemId` 변경시에만 재계산.
+- `sameGalaxyMapZoneIdList`로 동일 목록이면 `setState` 자체를 생략 — 불필요 리렌더 방지.
+- `starlightSystems`의 `useMemo` deps에 `toScreen`이 있는데, `toScreen`이 스크롤 위치가 아니라 레이아웃 치수(`galaxyBounds`/`mapLayout`)에만 의존하는 안정 콜백임을 확인 — **스크롤마다 재계산되지 않음**(설계 §16-5 "스크롤/포커스 시에만" 요구와 일치).
+
+### 4. 범위 확인 — 착각 방지용 (착수 안 함, 정상)
+
+같은 커밋 묶음에 `GalaxyMapContestedZoneRingOverlay.tsx`·`GalaxyMapSystemsSvg.tsx`·`GalaxyMapTerritoryVoronoiSvg.tsx`·`GalaxyMapUndiscoveredStarlightSvg.tsx` 4개 파일도 수정돼 있어서 존 로딩과 관련된 줄 알고 diff를 봤는데, **전부 무관한 별개 수정**(React key 중복 경고 수정 — 동일 systemId 중복 입력 제거, SVG 형제 레이어 간 key 네임스페이스 분리)이었습니다. 존 로딩 관련 import는 이 4개 파일 어디에도 없음(grep 0건) — 헷갈리지 않으시도록 명시해 둡니다.
+
+**지금 구현 범위는 설계 §16-4의 Z1(존 레지스트리)까지이고, 미발견 별빛(starlight) 레이어에만 필터가 붙어 있습니다.** 코어+레거시 가시 노드를 그리는 `GalaxyMapSystemsSvg`·Voronoi·contested-ring은 아직 `visibleSystemsList`(존 5, ~97개, 항상 전량)를 그대로 쓰고 있어 이번 존 로딩의 직접적 절감 대상이 아닙니다 — 이는 설계 §17("존 5는 상시, 가시 노드 불변")이 원래 의도한 범위이지, 빠뜨린 게 아닙니다. Z2(뷰포트 컬링으로 가시 노드 자체를 줄이는 단계)는 아직 착수 전입니다.
+
+### 5. 결론
+
+Z1 단계 구현은 설계와 코드가 정확히 일치하고, 회귀·리스크를 찾지 못했습니다. 다음 단계(Z2 뷰포트 컬링, §16-4)로 넘어가기 전 이 정도 스코프에서는 추가 보강할 점이 없습니다.
+
+코드 수정 없음(재검수만). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+```text
+status=REVIEWED
+task_id=tutorial-system-design-review-20260821
+kind=DESIGN_REVIEW
+code_changes=NO
+kim_claude_verdict=PARTIAL
+kim_team_verdict=AGREE+ADD
+design_doc=docs/튜토리얼_시스템.md v0.3
+```
+
+김팀장 재대조: P0-1·P0-2·P1·P2 **코드 일치(AGREE)**.  
+추가: `app/index.tsx` 이어하기 `initTutorialStory()`는 김클로드 목록에 없었으나 동일 P0. 설계 v0.3에 세 발화점·스파이·배틀레디·뱃지 3소스를 흡수함. 게임 코드는 아직 없음.
+
+---
+
+## 📋 (원문 보관) 김클로드 PENDING — 튜토리얼 시스템 설계(v0.2) 독립 재검수 · 2026-08-21
+
+```text
+status=REVIEWED
+task_id=tutorial-system-design-review-20260821
+kind=DESIGN_REVIEW
+code_changes=NO
+verdict=PARTIAL
+design_doc=docs/튜토리얼_시스템.md v0.2 → v0.3
+```
+
+대표님 지시: 「선행 앞단 튜토리얼 시스템(김팀장 설계) 재분석·검수 — 보강할 점과 리스크 확인」. 문서 §2·§3의 팩트 주장은 Explore 서브에이전트 2개로 코드 대조, §1-A-3 "침묵 목록"(끼어들면 안 되는 시스템)의 완전성은 `planet.tsx` 전수 grep으로 별도 검증했습니다.
+
+### 총평
+
+설계 자체(강제 순차·화이트리스트 잠금·Table-First 스텝·§12 "0단계=대표님 승인 후 착수")는 v4.0 헌법·PSS와 정합하고 구조가 탄탄합니다. `docs/성계700...`·`ARC_CORE_...` 계열처럼 **코드 착수 전 리뷰 게이트를 스스로 요구**한 점도 좋습니다. 다만 재검수 결과, 착수 전에 반드시 메워야 할 **구멍 2개(P0)**를 찾았습니다 — 둘 다 지금 이대로 구현하면 "튜토리얼 중 아무것도 안 끼어든다"는 문서의 최우선 전제가 실기에서 깨집니다.
+
+### P0-1. `initTutorialStory()` 실제 발화 시점이 문서 가정과 다름 (가장 중요)
+
+문서 §2-1·§6-2는 "인트로 완료(ingame_dialog_01) 시점에 initTutorialStory() 호출"을 전제로 "인트로 완료 → 호출 안 함, D2에서 호출"(1안)을 제안합니다. 그런데 실제로는:
+
+- `src/game/onboardingPilotRegistration.ts:223` — **캐릭터 생성 직후(인트로 시네마틱이 뜨기도 전)** 이미 `useMissionStore.getState().initTutorialStory()`가 호출됨.
+- `ingameDialogCompletion.ts:55,69`의 호출은 `initTutorialStory()` 내부 `activeMissionId` 가드에 막혀 사실상 no-op.
+
+즉 `mission_001`(베가 이동)은 실제로 **캐릭터 생성 즉시** 활성화됩니다. §6-2 1안대로 `ingameDialogCompletion.ts` 쪽만 고치면 `onboardingPilotRegistration.ts:223`이 그대로 남아 "D2 전 QuestHUD에 베가 이동이 뜨면 안 된다"는 §4-4 요구가 **바로 깨집니다.** §14 코드 앵커 목록에도 이 파일이 빠져 있습니다. `firstMissionStarted` 플래그는 grep 결과 다른 곳에서 읽는 코드가 없어(세터 2곳뿐) 발화 시점을 늦겨도 부작용은 없어 보입니다 — 이 파일을 앵커에 추가하고 1안 조치 대상에 포함시키면 됩니다.
+
+### P0-2. 스파이 정보원 자동 오픈이 침묵 목록에서 완전히 빠짐
+
+`app/(game)/planet.tsx:1273-1279`:
+```js
+useEffect(() => {
+  if (!planet?.id) return;
+  if (!resolveArcCoreSpyPolicy().spyIntelAutoOpenDialog) return;
+  if (isIngameDialogActive()) return;
+  if (!hasUnacknowledgedPlanetHubSpyIntelAlert(planet.id)) return;
+  presentPlanetHubSpyIntelDialog(planet.id);
+}, [planet?.id, spyIntelAlertRev, hubDialogBadgeRev]);
+```
+`spyIntelAutoOpenDialog` 기본값 **true**(`arcCoreSpyPolicy.ts:57`). 가드가 `isIngameDialogActive()`뿐이라 `isHubTutorialActive()` 개념이 전혀 없습니다. A0~D2 도중 스파이 경보 조건만 맞으면 오퍼레이터 대사창을 밀어내고 끼어들 수 있는 실제 경로인데, §1-A-3 표 어디에도 이름이 없습니다.
+
+### P1. "배틀레디"(전투 진입 배너/카운트다운) 완전 누락
+
+`usePlanetHubBattleReady.ts:39-51,75-78` — 적대 함대 궤도 진입(`evaluateHubMainStageCombatEntered`) 시 자동으로 점멸 배너·카운트다운이 뜨고 만료되면 전투 오비트가 열립니다. `useWaveDefenseController`와는 **별개 판정 경로**라서 §1-A-3의 "웨이브 디펜스 자동 시작 금지" 항목이 이걸 커버하지 못합니다. 아르카디아에 적대 세력이 뜨는 조건이면 튜토리얼 중 화면을 가릴 수 있습니다.
+
+### P2. 배지 소스 표현이 실제보다 뭉뚱그려짐
+
+문서는 "명단 배지·무역 뱃지"라고만 쓰지만 실제로는 `mining/service.ts:89`(무역)·`barBoardStore.ts:307,330`(**바**)·`hubDialogBadgeRev`(명단) **3곳**입니다. 기능적 위험은 낮지만(다 숨기면 되므로) 구현 체크리스트 누락 방지를 위해 표를 "무역·바·명단"으로 구체화 권고.
+
+### §2-1·§3 그 외 항목 — AGREE (코드로 확인)
+
+인트로→허브 흐름, `ingame_dialog_01` `planet_landed` 트리거, `planetHubScanUnlockState`가 세션 Map(persist 아님)이라는 서술, 채굴 게이트가 범용 규칙이라는 서술, `tutorialComplete` 플래그 로직, 오퍼레이터 NPC 데이터, `PlanetMainScanActionRow.tsx`의 6개 타일 잠금 조건, `planetHubFeatureSystems.ts`의 5개 시설 CSV 게이트 — 전부 파일:줄 대조로 정확함을 확인했습니다(controlId의 snake_case 표기는 설계 단계 가칭이고 실제 코드는 camelCase — §2-2 "없는 것"에 이미 명시돼 있어 문제 아님).
+
+### 참고 — 최근 QuestHUD 변경과의 정합
+
+이번 세션에서 제가 QuestHUD를 "활성 미션 0개면 완전히 숨김"으로 바꿔둔 게(`bundles.length === 0 return null`), P0-1이 고쳐지면 "D2 전 QuestHUD 안 뜸" 요구를 **추가 게이트 없이 자동으로 만족**시킵니다 — 참고하시면 구현 범위가 줄어듭니다.
+
+### 결론
+
+설계 골격은 그대로 채택 가능하나, **P0-1·P0-2를 §6-2/§14와 §1-A-3에 흡수한 뒤 착수**를 권고합니다. P1은 §1-A-3에 항목 추가, P2는 표 문구만 수정하면 됩니다. 코드는 건드리지 않았습니다.
+
+대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## 김팀장 검수 — QuestHUD 중복 헤더 (후속 7~10) · 2026-08-20
+
+```text
+status=REVIEWED
+scope=quest-hud-followups-7-10
+verdict=CONDITIONAL_PASS
+commit=NOT_DONE
+```
+
+- 헤더 1개(「진행 중인 임무」) + 1행 스냅 스크롤 + 무채색 카운트 배지: **지시와 정합**. 트랙라벨을 미션마다 반복하던 「헤더 여러 개」는 해소.
+- 검수 중 김팀장 수정: `hasQuestHud`를 `getActiveMission()` → `hasAnyActiveMissionBundle(progresses)` (HUD 가시와 배경 paddingTop 동기). 목표 없는 행 `minHeight` 고정(스냅 깨짐 방지). `listAllMissionHudBundles`는 `listActiveMissionBundles` 재사용.
+- `tsc --noEmit -p tsconfig.client.json` **PASS**.
+- **미승인·미변경**: `PLANET_MAIN_QUEST_HUD_ACTIVE_EST_PX`(현재 92). 새 HUD 실측 ≈ 헤더26 + 스크롤47 + 보더2 ≈ **75**. 16px 과대 예약. 레이아웃 상수라 대표님 승인 전 미수정.
+- 인게임 대사창 크롬(`ingame-narrative-dialog-chrome-20260820`)은 **이 검수 범위 밖** — 아래 PENDING 유지.
+
+---
+
+## 📋 PENDING — 인게임 대사창(narrative) 헤더·하단 크롬 정리 · 김클로드 · 2026-08-20
+
+```text
+status=PENDING
+task_id=ingame-narrative-dialog-chrome-20260820
+kind=UI_FIX
+code_changes=YES
+commit=FORBIDDEN
+```
+
+### 후속 10 — 헤더 우측 카운트 배지 추가 (2026-08-20)
+
+「'진행 중인 임무' 제목 오른쪽 끝에 리스트 숫자를 라운드 배경으로 표시」 → 이후 「무채색으로」 정정.
+
+**변경**: `src/components/QuestHUD.tsx`
+- `headerBar`를 `justifyContent:'space-between'`으로 바꾸고, 아이콘+제목을 `headerTitleRow`(`flex:1`)로 묶어 우측에 여백 확보.
+- 우측 끝에 `headerCountBadge`(원형, `borderRadius:9`, `minWidth:18`) + `headerCountText`(`ordered.length`) 신규 추가.
+- 배지 색은 처음 시안(청록 accent) → 대표님 지시로 **무채색**(`rgba(210,216,224,0.9)` 배경 + 짙은 회색 텍스트)으로 정정, 패널의 나머지 그레이 톤(`chromeBg`/`chromeBorder`/`chromeInk`)과 통일.
+
+**self-check**: `tsc` 에러 0.
+
+### 후속 9 — 가시 높이 1행으로 정정 + 스냅 스크롤 (2026-08-20)
+
+대표님 재지시: 「220px로 보이게 하지 말라 — 헤더(진행 중인 임무) 아래 미션 1개(제목+목표 설명 1줄)만 보이고 나머지는 스크롤」. 제가 임의로 잡은 220px가 3개를 한 번에 보여줘서 "헤더 3개"로 보였던 근본 원인이었음을 재확인.
+
+**변경**: `src/components/QuestHUD.tsx`
+- `QUEST_HUD_SCROLL_MAX_HEIGHT_PX`를 임의값(220) 대신 **행 1개 실측 공식**으로 교체: `paddingVertical*2 + 제목 lineHeight + 목표 gap + 목표 lineHeight + 구분선` = 6*2+16+2+16+1 = **47px**. 스크롤 영역이 정확히 미션 1개 분량만 보이게 됨.
+- 후속 지시(같은 턴, 「스냅으로 붙게」): `ScrollView`에 `snapToInterval`(행 1개 단위)·`snapToAlignment="start"`·`decelerationRate="fast"`·`disableIntervalMomentum` 추가. 첫 행도 구분선과 같은 높이의 투명 스페이서를 넣어 **모든 행의 단위 높이를 동일하게 맞춰** 스냅 간격이 어긋나지 않게 함.
+
+**self-check**: `tsc` 에러 0.
+
+### 후속 8 — 헤더 1개 + 목록 행 스크롤로 재구조화 (2026-08-20)
+
+「헤더는 1개로 보이고, [나머지는] 스크롤해서 리스트화하라」 — 후속 7에서 각 미션마다 자기 `header` 스타일(아이콘+트랙라벨+제목, 굵게)을 그대로 반복해서 "헤더 3개"처럼 보였던 게 원인.
+
+**변경**: `src/components/QuestHUD.tsx` 전체 재작성.
+- 컨테이너 맨 위에 **고정 헤더 1개**만(`🗒️` + `mission.hud.title` 공용 캡션, 밑줄 구분선) — 특정 미션에 종속되지 않는 범용 라벨.
+- 개별 미션은 `HudMissionBlock`(헤더 트리트먼트) → `HudMissionRow`로 교체 — 아이콘+제목 한 줄 + 목표 한 줄, 트랙라벨(굵은 텍스트) 제거해 "헤더처럼" 안 보이게 단순화. `ScrollView`(maxHeight 220) 안에 구분선으로만 나뉘어 나열.
+- `src/i18n/locales/ko.ts`/`en.ts`에 `mission.hud.title`(「진행 중인 임무」/"Active Missions") 신규 키 추가.
+
+**self-check**: `tsc` 에러 0 · `npm run audit:i18n` **패리티 PASS**(KO/EN 신규 키 정상 대응 확인).
+
+### 후속 7 — "헤더 중복" 원인 규명 + QuestHUD 스크롤 리스트화 (2026-08-20)
+
+대표님 지적: 「인앱 대화창이 메인 헤더창 오류 중복을 만드는지 확인」 → 「튜토리얼 퀘스트 헤더, accepted quest 헤더가 두 개 동시에 나타난다」.
+
+**원인 규명(코드 확인, "중복 렌더 버그" 아님)**: 두 "헤더"는 실제로는 `src/components/QuestHUD.tsx`의 **주선(primary)+부선(secondary) 두 슬롯**입니다 — 튜토리얼(📖)과 수락한 의뢰(📋)가 동시에 활성이면 원래부터 함께 표시되는 **의도된 설계**(`missionHudSlots.ts` 주석: "주선이 의뢰면 부선 생략(중복 방지)" 로직 존재 확인). `QuestHUD`는 `app/(game)/planet.tsx`·`worldmap.tsx`·`combat.tsx`에서 상시 렌더되고 `isIngameDialogActive()` 같은 가드가 전혀 없습니다(`planet.tsx:1723` 확인) — 즉 지금까지 이 두 슬롯이 안 보이거나 덜 보였던 건 순전히 **인앱 대화창 카드가 그 화면 위치를 우연히 가려주고 있었기 때문**입니다. 제가 이번 요청들에서 오프셋을 15→18→20→30, 거기에 상단 흰 여백 +10까지 누적으로 카드를 밑으로 밀면서, 카드가 예전만큼 위쪽을 덮지 않게 됐고 — 원래 항상 그 자리에 있던 QuestHUD 주+부선이 새로 드러나 "헤더 두 개가 갑자기 나타난" 것으로 보입니다. **즉 제 누적 오프셋 튜닝의 부작용이 맞고, QuestHUD 자체는 버그가 아닙니다.**
+
+**대표님 후속 지시**: 「겹치는 퀘스트 진행이면 한 영역 안에서 스크롤로 리스트화하라」 → 2슬롯(주선/부선) 고정 구조를 **전체 활성 미션 스크롤 리스트**로 교체.
+
+**변경**:
+- `src/missions/missionHudSlots.ts` — `listAllMissionHudBundles()` 신규 export(기존 정렬 로직 재사용, 개수 제한 없음). 기존 `resolveMissionHudSlots`는 그대로 유지(하위 호환, 다른 소비처 없음 확인).
+- `src/components/QuestHUD.tsx` — 주/부선 고정 2슬롯 → `ScrollView`(`maxHeight=220px`) 안에 전체 활성 미션 리스트로 교체. `activeMissionId` 핀은 목록 맨 위로 유지. 2개 초과일 때만 스크롤 인디케이터 표시.
+
+**self-check**: `npx tsc --noEmit -p tsconfig.client.json` 에러 0. (관련 기존 테스트 없음 — `missionHudSlots.ts`/`QuestHUD.tsx` 둘 다 테스트 파일 없었음, 신규 작성은 이번 범위 밖으로 판단해 생략)
+
+**주의**: 이건 "메인 헤더창 중복" 자체를 없앤 게 아니라, 여러 개 겹칠 때 화면을 침범하지 않도록 스크롤 영역에 가두는 처방입니다. 인앱 대화창 오프셋(30+10)을 더 키우면 QuestHUD가 계속 드러난 채로 남아있을 수 있으니, 이후 오프셋을 추가로 조정하실 때는 이 부분도 같이 실기 확인 부탁드립니다.
+
+### 후속 6 — 상단 흰색 여백 10px 추가 (2026-08-20)
+
+「NPC 인앱대화창(아크코어 채팅 아님) 프레임 위쪽에도 하단과 동일하게 흰색 여백 10px 추가 — 지금은 포트레이트만 보여서 잘린 것처럼 보임」
+
+**변경**:
+- `narrativeDialogLayout.ts` — `NARRATIVE_DIALOG_TOP_WHITE_MARGIN_PX = 10` 신규 상수. `NarrativeDialogStageFillMetrics`에 `topWhiteMarginPx` 필드 추가. 헤더 실측 스페이서(투명, 헤더 노출)와 카드 사이에 이 값을 끼워 넣고, `bottomBleedPx`에서 같은 만큼 빼서 합(windowHeight) 불변 유지 — 기존 offset 보정과 동일 패턴.
+- `NarrativeDialogRow.tsx` — spacer(투명)와 카드 사이에 `topWhiteMargin`(흰색, `bottomWhite`/`reservedWhite`와 동일 색) View 신규 삽입.
+- `narrativeDialogLayout.test.ts` — `topWhiteMarginPx` 단정 추가, 불변식 테스트에 이 필드 포함하도록 갱신.
+
+**주의**: 헤더(빗살무늬)는 이 여백보다 **위**(스페이서 구간)에서 그대로 노출되므로 이 변경으로 헤더가 가려지지 않음 — 헤더와 카드 사이에 흰 띠 하나가 새로 끼는 것뿐.
+
+**self-check**: `tsc` 에러 0 · `narrativeDialogLayout.test.ts` 6/6 pass · `audit:ui-overlay` PASS.
+
+### 후속 5 — 전체 코드 재검수 (대표님 지시: "코드가 잘 적용되었는지 검수부터") · 2026-08-20
+
+렌더 체인 전체(`ArcOverlayHost.tsx` → `NarrativeOverlayContent.tsx` → `NarrativeDialogRow.tsx` → `narrativeDialogLayout.ts`, + `StageShell.tsx`·`facilityHatchHeaderMeasure.ts`·`PlanetFacilityTitleHeader.tsx`)를 처음부터 다시 전부 읽고 재확인했습니다.
+
+**확인된 것 (코드상 정상)**:
+- `narrativeDialogLayout.ts`: offset=30, `bottomBleedPx` 반대보정 로직 그대로 저장돼 있음 — 파일 내용 재확인.
+- `ArcOverlayHost.tsx` passthrough 분기(178-207행): `paddingTop` 자체가 없어 `stageFillRoot`가 화면 Y=0부터 시작 — `narrativeDialogLayout.ts`의 절대좌표 가정과 정합.
+- `NarrativeDialogRow.tsx`(158-167행): spacer→card→(bleed)→reserved 순서, `bottomWhite`/`reservedWhite` 둘 다 동일 색상·경계없음 — 화면상 카드 바로 아래부터 화면 끝까지 이음새 없는 흰 블록 하나로 보임(재확인).
+- `StageShell.tsx`의 `STAGE_BOTTOM_MIN_INSET_PX`(54) 기반 자체 하단 패딩 관례와 `resolveNarrativeDialogReservedBottomPx`(동일하게 54 하한)가 일치 — 별도 상수 불일치 없음.
+- 루트(`app/_layout.tsx`) 트리 순서상 `<ArcOverlayHost/>`가 `<Stack/>` **뒤**(형제로 나중)에 렌더 — 안드로이드 elevation 0끼리는 문서 순서가 그리기 순서를 결정하므로, Stack 내부 화면 콘텐츠가 이 오버레이보다 위에 그려질 구조적 경로는 못 찾음.
+- `tsc --noEmit`·`npm run audit:ui-overlay`(PASS)·`narrativeDialogLayout.test.ts`(6/6) 전부 재실행 통과.
+
+**확인 못 한 것 (디바이스 없이는 못 잡음, 솔직히 말씀드립니다)**:
+- 실제 기기에서 `hatchMeasured`가 진짜 true로 잡히는지(코드상 레이스 가능성은 있으나 지속 실패의 구조적 증거는 못 찾음 — 이전 §1 표).
+- 실제 기기의 `insets.bottom` 실측값이 코드가 가정하는 범위와 맞는지.
+- 안드로이드 실제 컴포지팅 결과(정적 분석으로는 elevation 문제 재현 불가).
+
+**결론**: 코드는 설계 의도대로 일관되게 작성·저장돼 있고 정적 검증(tsc/테스트/오디트)은 전부 통과합니다. 그런데도 대표님이 실기에서 여전히 하단 노출을 보고 계시다면, 코드 로직 자체보다 **제가 접근 불가능한 실기 값**(실측 성공 여부, 실제 safe-area 값) 쪽 문제일 가능성이 높습니다. 스크린샷 1장이나 `hatchMeasured`/`insets.bottom` 콘솔 로그 한 줄이면 다음 단계를 바로 좁힐 수 있습니다.
+
+### 후속 4 — 실기 반복 튜닝: 18 → 20 → 30 (2026-08-20)
+
+대표님 연속 지시(실기 육안 확인하며 값만 지정) — `NARRATIVE_DIALOG_EXTRA_TOP_OFFSET_PX`: 18 → 「20으로 반영」 → 「30으로 반영」 → 최종 **`30`**. 매 값마다 `tsc`·테스트 6/6 재확인(자기완결성 보정이 있어 값이 뭐든 최하단 배경 노출 없음).
+
+### 후속 3 — 3px 추가 하향: 18 (2026-08-20)
+
+「3px 더 아래로」 → `NARRATIVE_DIALOG_EXTRA_TOP_OFFSET_PX = 15` → **`18`**. `tsc`·테스트 6/6 재확인 완료.
+
+### 후속 2 — 방향 오적용 정정: +15(아래) (2026-08-20)
+
+직전 항목에서 대표님이 「아래로 15px」라 하신 걸 제가 **-15(위)로 잘못 적용**했습니다. 즉시 `NARRATIVE_DIALOG_EXTRA_TOP_OFFSET_PX = 15`(아래 방향)로 정정. `tsc`·테스트 6/6 재확인 완료.
+
+### 후속 1 — 오프셋 -15로 확대 (2026-08-20, 대표님 실기 확인 후, 방향 오적용 — 위 항목에서 정정됨)
+
+대표님: 「5px 어떻든간에 정상이 아니다. 실측을 못하는 거 같은데 그냥 이 상태에서 -15px 옮겨라.」  
+→ `NARRATIVE_DIALOG_EXTRA_TOP_OFFSET_PX`를 `0` → **`-15`**로 변경(위로 15px 추가). 자기완결성 보정 로직(§0, `bottomBleedPx` 반대 보정)은 그대로라 이 값에서도 `spacer+card+bleed+reserved = windowHeight` 불변 — `tsc`·테스트(6/6, 심볼릭 상수라 자동 반영) 재확인 완료.
+
+**"실측을 못하는 것 같다"는 의심은 별도로 열어둡니다** — 이번 코드 재검수에서 `hatchMeasured`가 *지속적으로* false가 될 구조적 원인(예: 동일 `PlanetFacilityTitleHeader`를 쓰는 다른 시설 화면이 언마운트되며 전역 `hatchBottomY`를 `null`로 되돌리는 순서 문제 등)은 못 찾았고, 찾은 건 최초 1~2프레임짜리 일시적 레이스뿐이었습니다(이전 §1 표 참고). 다만 저는 디바이스가 없어 실기로 `hatchMeasured` 값 자체를 확인할 방법이 없습니다 — 대표님/김팀장 쪽에서 로그 한 줄(`hatchMeasured`/`hatchBottomY` 콘솔 출력) 찍어서 실측이 정말 안 되는지 확인해주시면, 그게 사실이면 오프셋 튜닝이 아니라 측정 파이프라인 자체를 고쳐야 합니다.
+
+정본: `tools/kim-team-lead/reports/kim-claude-ready-ingame-narrative-dialog-chrome-20260820.md`. `narrative-dialog-position-tune-20260820`(−5px 조각) **흡수 완료**, 이력은 아래 남김.
+
+### 0. 총평
+
+**근본 원인은 제가 직전에 넣은 `-5px` 오프셋 자체였습니다.** `resolveNarrativeDialogStageFill()`은 스페이서(`headerBottomPx`)+카드(`imageHeightPx`)+여유백(`bottomBleedPx`)+절대보호영역(`reservedBottomPx`)의 합이 정확히 `windowHeight`가 되도록 설계된 자기완결 시스템인데, `headerBottomPx`에만 −5를 더하고 `bottomBleedPx`는 그대로 둬서 합이 5px 부족해졌습니다. 그 결과가 대표님이 보신 두 증상과 정확히 일치합니다: ① 카드가 5px 위로 밀려 실측 헤더 하단(`hatchBottomY`)보다 위로 올라가 헤더를 침범, ② 합계 부족으로 최하단에 5px 빈틈이 생겨 뒤 배경이 노출. **오프셋을 0(원본 정확 정렬)으로 되돌리고, `bottomBleedPx`를 반대 부호로 같이 보정하는 로직을 추가**해 앞으로 다시 오프셋을 조정해도 이 자기완결성이 깨지지 않게 했습니다(수치 검증 §3).
+
+### 1. §2 김팀장 실패 경위 재검수 (AGREE/PARTIAL/DISAGREE, 근거)
+
+| # | 항목 | 판정 | 근거 |
+|---|------|------|------|
+| 1 | 행성 탑바 `STAGE_TOP_INSET+topBar−lift` 오적용 | **AGREE** | 코드 전체 grep — 해당 패턴 0건, 이미 제거됨. 바은 `PlanetFacilityTitleHeader`(별개 컴포넌트)를 쓰므로 애초에 행성 허브 탑바와 무관 |
+| 2 | `planetFacilityHeaderMetrics`(추정 px) 삭제됨 | **AGREE** | grep 0건, 실제로 삭제 확인. 지금 유일한 소스는 `measureInWindow`(`PlanetFacilityTitleHeader.tsx:38-45`) |
+| 3-6 | 하단 흰색/검정/투명 시행착오 | **AGREE(현재 코드 기준)** | 지금 `NarrativeDialogRow.tsx:180-187`은 `bottomWhite`/`reservedWhite` 둘 다 `TACTICAL_OVERLAY.cardBg`(불투명 흰색) 고정, `card`(포트레이트) 배경만 `#05070d`(어두움)로 분리돼 있어 — 검정/투명이 보호영역을 침범하던 과거 실패 패턴은 구조적으로 재발 불가능한 상태. 다만 삭제된 과거 시도 자체는 코드에 남아있지 않아 1:1로 재현·재검증은 못 함 |
+| — | "레이스면 실측이 대사보다 늦게 들어와 헤더가 계속 가려질 수 있다" | **PARTIAL** | `app/(game)/bar.tsx:110-114` `useEffect`가 `hostDialogVisible` true 시 `presentIngameDialogScene` 호출 — `PlanetFacilityTitleHeader`의 `onLayout→requestAnimationFrame→measureInWindow`(네이티브 라운드트립) 완료보다 **먼저 실행될 개연성이 높음**(RN에서 `useEffect`는 JS 커밋 직후, `onLayout`은 네이티브 레이아웃 확정 후 브릿지로 돌아옴). 다만 `NarrativeOverlayContent.tsx:24-35`가 `useFacilityHatchHeaderWindowBottom()`(`useSyncExternalStore`)을 `useMemo` dep으로 구독하고 있어, 측정값이 `null→실측` 으로 바뀌는 순간 **자동 재렌더로 즉시 자가교정**됩니다. 즉 레이스는 존재하나 **최초 1~2프레임의 일시적 플래시**로 그치고, 대표님이 보신 것처럼 "계속 가려진" 지속 상태는 이 레이스만으로는 설명이 안 되고 위 0번(제 −5px 버그)이 주원인이라고 판단합니다. `presentIngameDialogScene`을 `onLayout` 이후로 지연시키는 구조 변경은 **적용하지 않았습니다** — 이미 있는 구독 기반 자가교정이 충분하고, present 타이밍을 건드리면 다른 게임 흐름(미션 클리어 대사 등과의 경합)에 영향을 줄 위험이 더 크다고 판단 |
+
+### 2. §5 권장 1안 재검수
+
+| 항목 | 채택 여부 | 근거 |
+|------|-----------|------|
+| 1. 헤더 하단 Y = `measureInWindow`만, 상수 합산 금지 | **PARTIAL(현행 유지)** | 현재 `headerBottomPx = min(hatchBottomY, pinBottomPx − hudHeight)` 클램프가 있음. windowHeight=800 기준 실측 `pinBottomPx−hudHeight ≈ 510`인데, 바 헤더(제목+부제 2줄)는 실측상 100~150px대라 **이 클램프는 사실상 발동하지 않음**(수치로 확인, §3). 즉 "상수 합산이 헤더를 가린다"는 현재 코드에선 재현되지 않는 걱정이라 판단해 클램프는 안전장치로 유지하고 제거하지 않았습니다. 발동 사례가 실기에서 확인되면 그때 제거 권고 |
+| 2. 레이스면 present를 onLayout 이후로 지연 | **DISAGREE(비채택)** | 위 1번 표 참고 — 이미 있는 구독 기반 자가교정으로 충분 판단 |
+| 3. 하단 흰색·투명/검정 금지 | **AGREE·이미 충족** | 현재 코드 구조 그대로 |
+| 4. Host fill 컬럼 유지, 김팀장 `ArcOverlayHost` fill 변경과 한 덩어리로 | **AGREE·미접촉** | `ArcOverlayHost.tsx`는 이번에도 건드리지 않았습니다(김팀장 uncommitted 작업 영역과 충돌 방지) |
+
+### 3. 수치 검증 (offset 0/±N 모두 자기완결성 유지 확인)
+
+```
+node -e 계산 결과 (windowHeight=800, hatchBottomY=300, reservedBottomPx=24):
+offset=0  → headerBottomPx=300 imageHeightPx=386 bottomBleedPx=90 total=800
+offset=-5 → headerBottomPx=295 imageHeightPx=386 bottomBleedPx=95 total=800
+offset=12 → headerBottomPx=312 imageHeightPx=386 bottomBleedPx=78 total=800
+```
+어떤 offset 값에서도 total(=스페이서+카드+여유백+보호영역)이 정확히 windowHeight로 불변 — 최하단 배경 노출 버그가 구조적으로 재발하지 않습니다.
+
+### 4. 변경 파일
+
+- `src/ui/overlay/narrativeDialogLayout.ts` — `NARRATIVE_DIALOG_EXTRA_TOP_OFFSET_PX = 0`(원복) + `bottomBleedPx`에 `-offset` 보정 추가(실측/미실측 두 분기 동일 패턴).
+- `src/ui/overlay/narrativeDialogLayout.test.ts` — 기존 2개 단정문을 offset 반영 공식으로 일반화 + **신규 회귀 테스트**("spacer+card+bleed+reserved always sums to windowHeight regardless of offset") 추가.
+- `src/ui/overlay/ArcOverlayHost.tsx` — **미접촉**(김팀장 작업 영역).
+
+### 5. self-check
+
+- `npx tsc --noEmit -p tsconfig.client.json` — 에러 0
+- `npx tsx --test src/ui/overlay/narrativeDialogLayout.test.ts` — **6/6 pass**(신규 회귀 테스트 포함)
+
+### 6. §7 완료 조건 체크
+
+- [x] 미실측 경로: 크기 540·+20만 유지(미접촉, 회귀 없음)
+- [x] intro·arcCoreChat 무변경(grep 재확인 — 두 경로 모두 `narrativeDialogLayout.ts` 변경분과 무관)
+- [x] 테스트 + tsc
+- [x] handoff PENDING · commit 금지
+- [x] 김팀장 분석 AGREE/PARTIAL/DISAGREE + 근거 (위 §1·§2)
+- [ ] **바 실기 확인 필요** — 헤더 완전 노출·하단 흰색·미션 리스트 비침 없음, 3가지 육안 확인은 실기가 없어 대표님/김팀장 확인 부탁드립니다.
+
+### 이전 이력 (참고용, 흡수 완료)
+
+아래는 이번 READY로 흡수되기 전 진행 경위입니다:
+
+[pss-pre-dev] hot_path=없음(정적 상수 1개, `resolveNarrativeDialogStageFill` 호출당 덧셈 1회) alloc=0  
+[pss-pre-dev] stage=오버레이 레이어만(`NarrativeDialogRow`/`narrativeDialogLayout.ts`) — STAGE/Skia/게임화면 트리 미접촉  
+[pss-pre-dev] verdict=PASS
+
+### 지시 경위
+
+1차: 「인앱대화창만 30px 낮게」→ 아크코어 채팅창(`arcCoreChat`)으로 오인, 작업 후 대표님이 "그게 아니다" 정정 → **즉시 원복**(별도 REVERTED 이력, 아래 참고).  
+2차: 「NPC 대사창(narrative dialog) = 인앱게임대화창」으로 명확화 + 「범용 UI니까 기존 시스템 재분석 후 수정」 지시.  
+3차(작업 중 실시간 정정): 「5px 정도 위로 올리면 딱 맞다. 기준은 빗살무늬 헤더 하단 ~ 최하단 완전공백 사이에 카드가 맞물리는 것」 → 방향을 30px 하향에서 **5px 상향**으로 전환.
+
+### 기존 시스템 재분석 (핵심 발견)
+
+NPC 대사창 위치는 단순 패딩이 아니라 **실측 기반 정밀 계산**입니다.
+
+- `src/ui/planetFacility/facilityHatchHeaderMeasure.ts` — 빗살무늬 시설 헤더(`PlanetFacilityTitleHeader`)의 화면상 실제 하단 Y좌표를 `measureInWindow`로 실측해 전역에 보고(`hatchBottomY`).
+- `src/ui/overlay/narrativeDialogLayout.ts`의 `resolveNarrativeDialogStageFill()` — `hatchBottomY`가 있으면(허브·시설 화면 대부분) 그 실측값을 카드 상단 기준으로 직접 사용, 없으면 `resolveNarrativeDialogPinTopPx()` 공식(+20px)으로 폴백.
+- `NarrativeDialogRow.tsx`는 이 결과(`headerBottomPx`=spacer 높이, `imageHeightPx`=카드 높이, `bottomBleedPx`/`reservedBottomPx`=하단 여백)를 그대로 flex 컬럼에 쌓아 렌더 — 즉 **대표님이 말씀하신 "기준"(헤더 하단~최하단 공백 사이)이 이미 이 시스템의 설계 의도** 그 자체였습니다.
+- **`ArcOverlayHost.tsx`는 건드리지 않았습니다.** 이 파일에 김팀장의 별도 uncommitted 작업(narrative wrap `narrativeCenterSlot/-Wrap` → `narrativeFillSlot/-Wrap` 리네임, `isCenterNarrativeFill` 분기)이 이미 걸려 있어(REVERTED 이력에서 발견), 같은 파일을 동시에 건드리면 충돌 위험이 있다고 판단해 **`narrativeDialogLayout.ts` 한 곳에만 격리**해서 수정했습니다.
+
+### 변경
+
+- `src/ui/overlay/narrativeDialogLayout.ts` — `NARRATIVE_DIALOG_EXTRA_TOP_OFFSET_PX = -5` 신규 상수. `resolveNarrativeDialogStageFill()`의 두 분기(실측/미실측) 모두 최종 `headerBottomPx`에만 이 값을 더함 — `imageHeightPx`(카드 높이)·`pinBottomPx`(bottomBleed 계산용 내부값)는 손대지 않아 카드 크기·하단 여백 계산 로직은 그대로 유지, 카드 시작 위치만 순수하게 5px 위로 이동.
+- `src/ui/overlay/narrativeDialogLayout.test.ts` — 위 변경에 맞춰 기존 2개 단정문 값 보정(±offset 반영). 실측/미실측 분기 모두 회귀 없음.
+
+**적용 범위**: `entry.anchor === 'center'`로 열리는 narrative(NPC 대사) 오버레이에만 적용됩니다. `stageFill`을 안 쓰는 intro 컷신 대사·`anchor==='bottom'` 대사·아크코어 채팅창(`arcCoreChat`, 완전히 다른 kind)에는 **영향 없음**.
+
+### self-check
+
+- `npx tsc --noEmit -p tsconfig.client.json` — 에러 0
+- `npx tsx --test src/ui/overlay/narrativeDialogLayout.test.ts` — **5/5 pass**
+
+### 리스크·주의
+
+- `ArcOverlayHost.tsx`에 김팀장의 관련 작업이 동시 진행 중입니다(narrative wrap 리네임 — 위 "재분석" 항목 참고). 그쪽 작업이 완료·반영된 뒤 **실기에서 같이 확인**이 필요합니다 — 두 변경이 겹치는 영역(narrative 오버레이 레이아웃)이라 따로따로 검증하면 최종 위치가 예상과 다를 수 있습니다.
+- -5px는 대표님이 실측 없이 육안으로 판단해주신 값입니다. 실기 확인 후 미세 조정이 더 필요하면 `NARRATIVE_DIALOG_EXTRA_TOP_OFFSET_PX` 값만 바꾸면 됩니다(다른 곳 수정 불필요).
+
+commit 금지. 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## ⛔ REVERTED — 아크코어 인앱대화창 세로 위치 30px 하향 (대상 착오) · 김클로드 · 2026-08-20
+
+```text
+status=REVERTED
+task_id=arc-core-chat-window-offset-20260820
+kind=UI_FIX
+code_changes=NO (변경 후 즉시 원복 완료)
+```
+
+대표님 정정: 「아크코어 인앱대화창을 이야기한 게 아니다. 전체 작업 복구하라.」  
+→ `src/ui/overlay/overlayPanelLayout.ts`(`OVERLAY_FILL_TOP_OFFSET_PX` 추가분 전부)와 `src/ui/overlay/ArcOverlayHost.tsx`(import·`paddingTop` 1줄)를 **정확히 원복**. `git diff` 재확인 결과 `overlayPanelLayout.ts`는 변경 0, `ArcOverlayHost.tsx`는 제 손을 댄 부분만 깨끗이 사라졌음(`tsc` 재확인 통과).
+
+**주의(김팀장 확인 필요)**: 원복 과정에서 `ArcOverlayHost.tsx`에 **김팀장의 기존 작업 중인 변경분**(narrative 오버레이 `narrativeCenterSlot/-Wrap` → `narrativeFillSlot/-Wrap` 리네임 + `isCenterNarrativeFill` 분기, 이번 handoff와 무관)이 이미 uncommitted 상태로 걸려 있는 걸 확인했습니다. 이건 건드리지 않고 그대로 뒀습니다 — 아마 대표님이 말씀하신 "인앱대화창"이 이 narrative(NPC 대사창) 쪽 작업일 가능성이 있어 보입니다.
+
+---
+
+## 📋 PENDING — 하이브리드(웹+앱) 서비스 기반 작업 가능성 검토 · 김클로드 · 2026-08-20
+
+```text
+status=PENDING
+task_id=hybrid-web-app-feasibility-review-20260820
+kind=ARCHITECTURE_REVIEW
+code_changes=NO
+verdict=CONDITIONAL — 가능하나 현재 착수점은 0, Skia가 최대 리스크
+```
+
+### 총평
+
+**"기반 작업이 가능한가"의 답: 기술적으로 가능하지만, 지금은 완전한 0에서 시작.** `react-native-web`·`react-dom`이 `package.json`에 아예 없고, `app.json`에 `expo.web` 블록 자체가 없어 **웹 익스포트를 한 번도 시도한 적 없는 상태**다. 코드베이스 전체에 `Platform.OS === 'web'` 분기, `.native.ts`/`.web.ts` 분리 파일이 **0건** — 웹을 염두에 둔 흔적이 전혀 없다. 가장 큰 리스크는 이 게임의 핵심 렌더링(STAGE 1 허브·STAGE 3 전투)이 전부 `@shopify/react-native-skia`인데, 웹에서는 CanvasKit(WASM) 런타임으로 완전히 다르게 동작하고 — 이 프로젝트 1순위 규칙인 "메모리 누수 전수조사"가 전제하는 GL ceiling·native_heap 개념 자체가 브라우저에는 없어 실측 없이는 안전성을 보장할 수 없다.
+
+### 계층별 검토 (코드/설정 파일 직접 확인)
+
+| 계층 | 현재 상태 | 웹 호환 판정 |
+|------|-----------|--------------|
+| Expo/RN 코어(Router·Reanimated·gesture-handler·SVG) | `expo ~51.0.0`, `react-native 0.74.5` — 버전상 `react-native-web` 페어링 가능 | **호환 가능** (표준 지원 대상), 단 설치·설정 0 |
+| `expo.web` 설정 | `app.json`에 `web` 블록 없음, `react-native-web`/`react-dom` devDependency 없음 | **미착수** — 가장 먼저 해야 할 일 |
+| Firebase | `@react-native-firebase/*`(analytics/app/auth/database/firestore) — 네이티브 브리지 전용, 12개 파일에서 사용(`src/firebase/*`, `arcCore/chat/cloudConversationalProvider.ts` 등) | **웹에서 전혀 동작 안 함** — Firebase JS SDK로 별도 계층·플랫폼 어댑터 신규 설계 필요 |
+| Skia 렌더링 | `@shopify/react-native-skia` 1.2.3, 9개 파일(`PlanetEdenRaidOrbitSkiaCombat.tsx` 등 STAGE 1·3 핵심) | **최대 리스크** — 웹은 CanvasKit 별도 런타임. 프레임 예산·dispose 타이밍이 이 프로젝트의 Zero-Allocation 규칙과 동일하게 적용될지 실측 전에는 불명 |
+| `arcfire-native-memory`(커스텀 네이티브 모듈) | native reclaim 파이프라인 12개 파일에서 사용(`src/game/nativeReclaim/*`) — GL ceiling·native_heap 진단 | **웹에 대응 개념 없음** — 전부 no-op/Platform 가드 필요. 이 프로젝트 메모리 감시 체계(`audit:skia-memory`·`audit:native-reclaim` 등) 전체가 네이티브 힙 전제라 웹에서는 별도 기준 필요 |
+| 게임 로직/스토어(zustand·AsyncStorage·CSV 런타임) | 순수 JS/RN 표준 API 위주 | **호환 가능성 높음** — 별도 이슈 없어 보임 |
+| Firebase Hosting | `firebase.json`에 `hosting` 섹션 없음 | **배포 인프라 미착수** |
+
+### 권장 착수 순서 (제안, 미구현 — 대표님 승인 후 김팀장 착수)
+
+1. `react-native-web`+`react-dom` 설치 + `app.json` `expo.web` 블록 추가 후 `expo start --web` **1회 실측** — 지금은 추측만 가능하고 실측 데이터가 전혀 없음. 뭐가 깨지는지부터 확인해야 이후 범위를 잡을 수 있음.
+2. Firebase 계층을 native/web 어댑터로 분리(우선 로그인·프로필 read/write만).
+3. **Skia STAGE 렌더 웹 호환성 실측** — 여기가 실질적 승부처. 안 되면 "하이브리드"를 웹에서는 비-Skia 화면(허브 UI·월드맵 등)만으로 축소하는 것도 옵션.
+4. `arcfire-native-memory`/native reclaim 계열은 웹 빌드에서 전부 no-op 처리.
+
+코드 수정 없음(검토만). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+### 후속 — 준비 단계 문서화 완료 (2026-08-20)
+
+대표님 지시: 위 분석을 **「웹서비스 개발준비 단계」 문서로 정리 + 개발항목 명기, 이번엔 준비 단계만 진행.**  
+→ `docs/웹서비스_개발준비_단계.md` v0.1 신규 작성 완료. 준비 단계 항목 P1~P6 표로 정리(§4), 이번 단계 제외 항목 명시(§5), DoD·리스크 레지스터 포함.  
+**코드/설정 파일 변경 없음** — P1(웹 타겟 최소 활성화: `react-native-web` 설치·`app.json` `expo.web` 블록 추가)도 문서에만 정의, 실행은 대표님 별도 승인 후.
+
+---
+
+## ✅ REVIEWED — 아크코어 에이전트 A경로 구현 + 전수 재검수 · 김팀장·김클로드 · 2026-08-20
+
+| 항목 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **task_id** | `arc-core-agent-world-domain-impl-20260820` |
+
+```text
+status=REVIEWED
+task_id=arc-core-agent-world-domain-impl-20260820
+kind=IMPL + FULL_REAUDIT
+code_changes=YES
+verdict=AGREE
+reviewed_by=김팀장 + 김클로드 병행
+design_doc=docs/ARC_CORE_AGENT_WORLD_DOMAIN_DESIGN.md v0.2
+```
+
+### 구현 범위
+
+- 세계 콘트롤 **A(관측만)** · B `WORLD_PROPOSAL_LIVE=false`
+- 페르소나 핵 temperament/office/purpose · stance observe/warn/refuse/inquire
+- 로컬 회신 근원체 톤 · CLOUD_LIVE=false
+
+### 전수 재검수
+
+| 게이트 | 결과 |
+|--------|------|
+| 클라 채팅 테스트 | 36/36 PASS |
+| AWS 테스트 | 11/11 PASS |
+| tsc client | PASS |
+| audit:memory:all | PASS |
+| 김클로드 10항 | **AGREE** · P0/P1/P2 없음 |
+
+김팀장 잔여 P2(완료 차단 아님): 세션 오프너 `arcCoreChat.session.welcome`은 잠금 A2 인사. 회신 키만 근원체 톤으로 바꿈.
+
+[existing-value-change] `arc_core_chat_persona.csv` persona_goal 문구 · i18n `reply.greet/greetAgain/other/otherAgain/self` · 대표님 「설계대로 개발」 승인
+
+---
+
+## 📋 원본 — 아크코어 에이전트 「이중세계 도메인」 설계 독립 재검수 · 김클로드 · 2026-08-20
+
+```text
+status=REVIEWED
+task_id=arc-core-agent-world-domain-review-20260820
+kind=DESIGN_REVIEW
+code_changes=NO (원본) / YES (위 구현)
+verdict=AGREE
+design_doc=docs/ARC_CORE_AGENT_WORLD_DOMAIN_DESIGN.md v0.1 (+ docs/대화형_아크코어_구현.md §0-E)
+```
+
+대표님이 「현실세계=기존 상용 에이전트, 게임세계=아크코어 에이전트」 지시를 김팀장과 김클로드 **양쪽에 동시 하달**하셨습니다. 김팀장이 이미 `ARC_CORE_AGENT_WORLD_DOMAIN_DESIGN.md` v0.1을 작성해 두어, 그 결과물을 **받아쓰지 않고 코드·CSV로 직접 재검수**했습니다.
+
+### 총평
+
+**AGREE.** 김팀장 설계는 기존 잠금(L1 입≠몸·12좌 고정·온디바이스 금지·상용 툴 루프 없음)을 전부 유지한 채로 페르소나 핵·아크코어 자체 의도(`ArcCoreStance`)·세계 콘트롤 깊이(A/B/C)를 분리해 제안했고, C안(입이 직접 write)을 스스로 기각한 뒤 A/B 선택만 대표님께 되묻는 구조 — 설계 절차상 흠이 없습니다. 아래 2개는 검수 중 코드로 발견한 세부 구현 시 주의사항(차단 사유 아님)입니다.
+
+### 1. 사실관계 검증 (코드/CSV 직접 대조)
+
+| 도메인 문서 주장 | 검증 | 판정 |
+|---|---|---|
+| 현재 `persona_goal`은 「돕는다」(안내원 톤) | `tables/content/arc_core_chat_persona.csv:5` `persona_goal,4,goal,관측한 사실로만 돕는다...` — 원문 그대로 인용 정확 | AGREE |
+| 지금은 유저 의도만 분류하고 아크코어 자신의 의도(축)는 없음 | `arcCoreChatIntent.ts:3-10` `ARC_CORE_CHAT_INTENTS`가 `refuse/location/spy/combat/greet/other` 6종 **PlayerIntent만** — `ArcCoreStance`류 자체 목적 축은 코드에 0건 | AGREE |
+| 세계 콘트롤 경로 없음(관측만) | `arcCoreChatReadTools.ts:15-21` `ALLOWED_TOOLS` 5개 전부 읽기 전용, dispatch/unlock/credit 계열 0건(2026-08-20 이전 검수 재확인) | AGREE |
+| C안(입 write)은 L1과 충돌 | 기존 handoff `arc-core-chat-aws-readiness-review-20260820`에서 이미 확인한 worldWrite 이중검증(클라+서버)과 정합 — C안 채택 시 그 방어선을 스스로 허무는 셈이라 기각 판단이 맞음 | AGREE |
+
+### 2. 구현 시 주의(발견한 갭, 지금 당장 결정 불필요)
+
+1. **persona 행에는 리빌 게이팅이 없다.** knowledge 카드는 `speakIf`(`revealed_shadow`/`never_before_reveal` 등)로 리빌 전후를 걸러내지만(`arcCoreAgentPack.ts:52-63` `knowledgeAllowed`), persona는 `listArcCoreChatPersonaRows().slice(0,8)`(`arcCoreAgentPack.ts:74-77`)로 **무조건 전부** 팩에 실린다. 도메인 문서 §3 "②리빌 후 한 줄만 인간에 가까움"을 구현하려면 persona 행에도 knowledge와 같은 `speakIf` 필터를 먼저 추가해야 함 — 지금 파이프라인엔 그 자리가 없음.
+2. **B안(제안→확인→몸) 채택 시 오버레이 시퀀싱 미정.** "적용은 `ArcOverlayHost` 확인 또는 기존 시설 화면"이라고만 돼 있는데, 지금 `arcCoreChat` 패널이 열려 있는 상태에서 제안을 확정해 다른 화면(무역소·조선소 등)을 띄우려면 기존 `combat_end`처럼 **채팅 패널 dismiss 후** present하는 시퀀싱이 필요(§13 "명단+채팅+스크립트 동시 스택 금지"와 동일 원칙). B안 구현 시 이 시퀀싱을 §5-1 제안 화이트리스트 표 옆에 한 줄 명시해 두는 걸 권고.
+
+### 3. 결론
+
+의도 반영 가능 여부: **가능** (김팀장 판정에 동의). A/B 선택은 대표님 몫이며, 코드 착수 전 위 2개를 설계 문서에 흡수해 두면 구현 턴에서 다시 막히지 않습니다.
+
+코드 수정 없음. 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## ✅ REVIEWED — 아크코어 대화 LLM/AWS 연동 전수 재검수 · 김팀장 흡수·고도화 · 2026-08-20
+
+| 항목 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **task_id** | `arc-core-chat-aws-readiness-review-20260820` |
+
+```text
+status=REVIEWED
+task_id=arc-core-chat-aws-readiness-review-20260820
+kind=CODE_REVIEW
+code_changes=YES (김팀장 고도화)
+verdict=PARTIAL_ABSORBED
+reviewed_by=김팀장(글록 4.5) · 2026-08-20
+design_doc=docs/대화형_아크코어_구현.md §12-A
+scope=src/arcCore/chat/**, src/store/arcCoreChatStore*, aws/arc-core-chat/**, functions/src/arcCoreChatTurn.ts
+```
+
+### 김클로드 판정 재확인
+
+| # | 김클로드 | 김팀장 |
+|---|----------|--------|
+| 클라 G3 | AGREE · 실기 배포 가능 | **동의** · `CLOUD_LIVE=false` 유지 |
+| **P0 Bearer 실서명 없음** | 키 연결 전 JWT 검증 필수 | **흡수·구현** · JWKS RS256 후에만 Bedrock. 위조 Bearer=`unauthenticated` |
+| P1 Lambda 아티팩트 없음 | IaC/번들 필요 | **흡수·구현** · `lambdaEntry` + esbuild CJS `dist/index.js` + SAM `template.yaml` |
+| P2 quota 인스턴스 Map | 정보성 | **유지** · Dynamo는 과도. 트래픽 낮음. JWT 검증이 비용 창을 닫음 |
+
+`CLOUD_LIVE`·URL은 여전히 꺼 둠. 키를 먼저 열지 않는다.
+
+### 김팀장 추가 고도화 (P2)
+
+- Bedrock fetch 12초 abort
+- 공지 제목 i18n · 호칭 로케일 · `hasCombatRecord` lastMatch 동기 캐시
+- `lastArcQuestion` persist · 클라우드 질문 검역
+- 바/미션 스토어 lazy require · persist 중 purge 시 removeItem
+- Firebase 옵션 경로 서버 검역
+
+---
+
+## 📋 원본 재검수 — 아크코어 대화 LLM/AWS 연동 전수 (김클로드 · 2026-08-20 · 코드 수정 없음)
+
+```text
+status=REVIEWED
+task_id=arc-core-chat-aws-readiness-review-20260820
+kind=CODE_REVIEW
+code_changes=NO (원본 재검수) / YES (아래 김팀장 고도화)
+verdict=PARTIAL
+design_doc=docs/대화형_아크코어_구현.md v1.1.6
+scope=src/arcCore/chat/**, src/store/arcCoreChatStore*, aws/arc-core-chat/**, functions/src/arcCoreChatTurn.ts, src/ui/overlay(chat 연동분)
+```
+
+### 총평 (5줄 이내)
+
+클라이언트 쪽(로컬 G3 "본선")은 **완성도 높고 실기 테스트 가능한 수준**이다 — 키 미보유·worldWrite:false 이중 검증·검역·STAGE/오버레이 가드·purge/backup 4곳 등록·CSV Table-First 인덱싱까지 코드로 전부 확인했고 tsc·테스트(client 32건 + AWS 4건) 전부 통과했다. 다만 **AWS 연동 자체("중요 키·계정만 연결하면 바로 실기")는 아직 아니다** — Lambda 핸들러가 Bearer 토큰의 **실서명 검증을 하지 않아**, 실제 Function URL+Bedrock 키를 연결하는 순간 누구나 임의 문자열로 유료 Bedrock 호출을 무제한에 가깝게 소비할 수 있는 상태다(quota가 그 위조 토큰 문자열로 우회됨). 이 1건만 막으면 나머지는 실기 연동 테스트로 넘어가도 안전하다.
+
+### 1. 클라이언트 — 키/월드write/검역/STAGE (전부 AGREE, 코드 확인)
+
+| 확인 항목 | 근거 (파일:줄) | 판정 |
+|-----------|----------------|------|
+| 클라에 벤더 키/SDK 없음 | `cloudConversationalProvider.ts` — `fetch(cloudUrl, {Authorization: Bearer <Firebase idToken>})`만, AWS SDK/키 문자열 전무 | AGREE |
+| 클라우드 게이트 dark | `arcCoreChatCloudGate.ts:3,11` `ARC_CORE_CHAT_CLOUD_LIVE=false` · `ARC_CORE_CHAT_AWS_TURN_URL=''` — 지금 실호출 0건 | AGREE |
+| worldWrite 이중 검증 | 클라 `arcCoreAgentPack.ts:124` 하드코딩 `false` **+** 서버 `aws/arc-core-chat/src/pack.ts:35`·`functions/src/arcCoreChatTurn.ts:57` `worldWrite===true`면 즉시 null/reject | AGREE |
+| 읽기 도구 화이트리스트 ≤4 | `arcCoreChatReadTools.ts:15-21` `ALLOWED_TOOLS` 5개(get_location/callsign/spy_alert/last_combat/planet_cores)뿐, dispatch/unlock/credit 계열 전무(grep 0건) | AGREE |
+| 검역 | `quarantineArcCoreChatReply.ts` — 운용실행 암시·섀도우 닉·시스템/JSON 누설 정규식 3종 + 500자 clamp, 로컬·클라우드 공통 경로 | AGREE |
+| STAGE 가드 | `app/(game)/planet.tsx:1084-1104` waveResult `onClose` 내부 **`queueMicrotask`**로 `combat_end` 지연 발화 확인(동기 present 아님) · 캡틀레이드는 grep 0건(슬롯만, 설계와 일치) | AGREE |
+| 오버레이 kind 3곳 | `tacticalOverlayRollout.ts:36,38` · `overlayChrome.ts:53,61` · `ArcOverlayHost.tsx:300,306` 모두 등록, `npm run audit:ui-overlay` **PASS** | AGREE |
+| barrel 누출 없음 | `src/arcCore/index.ts` 전체에 `./chat` import/export 0건 | AGREE |
+| purge/backup/restore 4곳 | `localAccountReset.ts:241` `resetArcCoreChatForAccountPurge()` · `gameSaveBackupKeys.ts:19` 키 포함 · `applyLocalGameSaveSnapshot.ts:82` restore 시 `hydrate()` 재호출 — 3곳 실등록 확인(4번째 "reset 함수"는 스토어 자체 export이므로 사실상 동일 지점) | AGREE |
+| Table-First 인덱싱 | `arcCoreChatTableIndex.ts` 모듈 캐시 1회, 매 턴 CSV find 없음. `build:content-tables`에 `build-arc-core-chat-tables.mjs` 체이닝 확인(`package.json:17`) | AGREE |
+| 컴파일·테스트 | `npx tsc --noEmit -p tsconfig.client.json` 에러 0 · `src/arcCore/chat`+`src/store/arcCoreChat*`+overlay 테스트 10개 파일 32 케이스 전부 pass(`tsx --test`, 이 프로젝트 컨벤션) | AGREE |
+| i18n | `arcCoreChat.*` 키 KO/EN 완전 대응(29개 키 확인) | AGREE |
+
+### 2. AWS 연동 — 실기 테스트 전 반드시 막아야 할 것
+
+| # | 문제 | 근거 | 판정 |
+|---|------|------|------|
+| **1 (P0)** | **Bearer 토큰 실서명 미검증.** `aws/arc-core-chat/src/handler.ts:74-81` — 주석부터 "Firebase JWT 실검증은 토큰 수령 후. 지금은 Bearer 존재만 본다." `readBearer()`가 헤더 존재만 확인하고, `uid = 'bearer:'+token.slice(0,16)`을 그대로 quota 키로 씀(43-54행). **실제 Function URL+Bedrock 키를 연결하는 순간**, 인증되지 않은 임의 문자열 Bearer로 유료 Bedrock 호출이 가능하고, quota도 토큰 문자열을 매번 바꿔 우회 가능(분당 8회 제한이 사실상 무의미) | 설계문서 자체도 이 순서를 "토큰 수령 후"로 미뤄뒀으나, **문의 의도("연동해도 안전한 수준")상 이 검증은 키를 연결하기 전에 먼저 있어야 함**. Firebase Admin SDK(`verifyIdToken`) 또는 Firebase JWKS 수동 검증을 handler.ts에 추가 권고 | **PARTIAL** — 코드 품질 자체는 문제 없으나 순서가 위험 |
+| 2 (P1) | Lambda 배포 아티팩트 없음 | `aws/arc-core-chat/package.json`에 런타임 의존성·빌드 스크립트 없음(테스트만 `tsx --test`). IaC(SAM/CDK/serverless.yml) 없음, Lambda가 요구하는 handler 진입점(`exports.handler` 또는 ESM 규약) 빌드 산출물이 없음 — README도 "지금은 소스만"이라 명시해 **알려진 상태**지만, "바로 실기 테스트"로 넘어가려면 별도 빌드/패키징 단계가 먼저 필요 | 정보성(설계상 이미 인지된 갭) |
+| 3 (P2) | quota가 Lambda 인스턴스 메모리(`Map`)에만 존재 | `handler.ts:23-24` `quotaByUid` 모듈 전역 — 콜드스타트·다중 인스턴스 시 유저별 분당 상한이 인스턴스마다 리셋됨. 트래픽 낮은 싱글플레이 게임 특성상 치명적이진 않으나, #1과 결합하면 비용 노출이 커짐 | 정보성 |
+
+### 3. 결론
+
+**클라이언트(G3 본선)는 그대로 실기 배포해도 안전.** AWS 쪽은 **#1(JWT 검증)을 먼저 넣은 뒤** Function URL·Bedrock 키를 연결하는 순서를 권고한다 — 지금 순서대로(키부터 연결 후 나중에 검증 추가) 진행하면 짧게라도 무인증 유료 엔드포인트가 인터넷에 노출되는 창이 생긴다. #2·#3은 차단 사유는 아니고 배포 준비 시 같이 처리하면 되는 항목.
+
+코드 수정은 하지 않았습니다(재검수 지시 범위). 대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## ✅ REVIEWED — 아크코어 대화 에이전트 기획 공동 검수 · 김팀장 흡수 · 2026-08-14
+
+| 항목 | 값 |
+|------|-----|
+| **status** | **`REVIEWED`** |
+| **task_id** | `arc-core-backchannel-joint-review-20260814` |
+
+```text
+status=REVIEWED
+task_id=arc-core-backchannel-joint-review-20260814
+kind=DESIGN_REVIEW
+code_changes=NO (문서만 · v0.4 흡수)
+verdict=PARTIAL_ABSORBED
+reviewed_by=김팀장(글록 4.5) · 2026-08-14
+design_doc=docs/ARC_CORE_BACKCHANNEL_AND_HUB_TALK_ROSTER.md v0.4
+full_audit=PASS · kim-team-lead-ready-arc-core-backchannel-post-review-full-audit.md
+impl=HOLD — 대표님 구현 지시 대기
+```
+
+### 김팀장 검수·반영
+
+김클로드 `PARTIAL` 15 AGREE + 5 PARTIAL. 코드 재확인 후 **문서 전량 흡수**.  
+C18 「`arcCore/index.ts` 없음」만 **정정**(파일 존재). 순환 가드는 유지.  
+메모리·누적·채팅기록 §11 재확인 **PASS**. 게임 코드 미착수.
+
+| 흡수 | 반영처 |
+|------|--------|
+| 궤도 상한 5→8 | §2-1 |
+| C4 WaveDefense `onClose` / 캡틀레이드 dispose 분리 | §8 · C4 |
+| C5 blanket dismissAll · narrative 별 세션 | §5-0-3 · C5 |
+| C13 최초 TextInput · 실기 키보드 | §6-1 |
+| C17 kind 등록 3곳 · audit 미검사 | §8 · C17 |
+| C18 배럴 존재 + SubCore 정적 import 금지 | C18 |
+| C19 비동기 join | C19 |
+| hydrate 타이틀 금지 | §6-3 |
+
+원본 김클로드 총평·C1~C20 표는 아래 유지.
+
+---
+
+## 📋 원본 — 아크코어 대화 에이전트 기획 공동 검수 · 김클로드 · 2026-08-14
+
+```text
+status=ABSORBED
+task_id=arc-core-backchannel-joint-review-20260814
+kind=DESIGN_REVIEW
+code_changes=NO
+verdict=PARTIAL
+design_doc=docs/ARC_CORE_BACKCHANNEL_AND_HUB_TALK_ROSTER.md v0.3 (당시)
+```
+
+### 1. 총평 (5줄 이내)
+
+기획 자체는 **구현해도 되는 설계**다. §10 C1~C20 중 **15건 AGREE**, 나머지 **5건 PARTIAL**이며 전부 P0 차단 사유가 아니라 "문서가 인용한 기존 코드 근거를 좀 더 정확히" 고치면 되는 수준이다(수치 오기, 실재하지 않는 자동 감사 장치를 근거로 든 것, 신규 규율을 기존 관례처럼 서술한 것). C4(전투 종료 트리거)만 실제 구현 시 추가 조사가 필요한 진짜 갭 — 결과 오버레이와 캡틀레이드 Skia dispose를 잇는 기존 배선이 코드에 없다. 12좌·명령버스·일일배치·섀도우·뉴스보드·persist 축은 전부 코드로 직접 대조해 문서 주장과 일치함을 확인했다. **결론: 구현 착수해도 좋으나, 아래 §3 정정 + §4 가드를 문서에 먼저 흡수한 뒤 착수 권장.**
+
+### 2. §10 C1~C20 재검수 (코드 직접 확인, 파일:줄)
+
+| ID | 판정 | 근거 |
+|----|------|------|
+| C1 | **AGREE** | `src/arcCore/subcores/registerDefaultArcSubCores.ts:20-31` — `registerSubCore` 정확히 12회. `node_eternal_throne`은 서브코어 클래스가 아니라 `tables/content/arc_core_world_nodes.csv:2` CSV 로우로만 존재(12좌 밖 개념은 데이터 레벨) |
+| C2 | **AGREE** | `src/arcCore/ArcCoreCommandBus.ts:13-19` `ArcCoreCommandOrigin`에 `player_chat` 없음. 113행 `dispatchArcCoreCommand` 시그니처 확인 |
+| C3 | **AGREE** | `runArcCoreDailyOpsBatch.ts:97-393` 본문에 UI/overlay 호출 0건. `continueSessionPrewarm.ts:76,80` join 지점 확인. `arcCoreDailyOpsPolicy.ts:137,144,161` 12:00 KST 게이트 확인 |
+| C4 | **PARTIAL** | 변수명은 `postStepRef`가 아니라 `combatOrbitPostStepRef`(`PlanetEdenRaidTestLayer.tsx:2567,2641`, 표기 오차·사소). 더 중요한 점: "결과 오버레이 = dispose 이후"를 잇는 기존 배선이 캡틀레이드 Skia 경로에 없음 — `presentWaveResultOverlay`는 별개 시스템인 WaveDefense(`app/(game)/planet.tsx:990-1058`) 소속이라 capital-raid dispose와 직접 연결되지 않음. `combat_end` 트리거를 캡틀레이드에 걸려면 dispose 완료 시점(974-975, 2706-2709, 3374-3376행 null 대입 지점) 중 어디에 훅을 걸지 **구현 시 신규로 정해야 함** |
+| C5 | **PARTIAL** | `resolvePendingArcOverlaysForStageExit`(`arcOverlayStore.ts:311-324`)는 "kind별 게이트"가 아니라 `levelUp/reward/waveResult`만 `onClose()` 실행 후 스택 **전체**를 `dismissAll()`로 비우는 blanket 방식. 결론(채팅·명단이 STAGE 이탈 시 자동으로 닫힘)은 여전히 성립하지만, 이 함수는 `narrative`(ingameDialogStore, 별도 세션)를 다루지 않음 — 미션클리어 대사 유실 방지는 이 함수 범위 밖(기존부터 그랬음, 채팅 기획과 무관한 기존 갭) |
+| C6 | **AGREE** | `present()`(`arcOverlayStore.ts:223-226`)는 스택에 append. `dismissWhere`(238-240) 존재. `presentWaveResultOverlay`가 이미 "dismissWhere 후 present 1장" 패턴을 쓰고 있어 채팅에 그대로 재사용 가능한 선례 |
+| C7 | **AGREE** | `transitCombatPostFlow.ts:210-247` — `waitForIngameDialogIdle`→`waitForArcOverlayKindsIdle(['reward'])`→레벨업→미션클리어 순차 idle-wait 패턴이 이미 존재. 채팅 트리거도 이 헬퍼 재사용 권장 |
+| C8 | **AGREE** | `missionPlanetHubSync.ts:17` `tryPresentPendingMissionClearDialog`가 이미 `isIngameDialogActive()` 가드 사용 중 |
+| C9 | **AGREE** | `app/(game)/planet.tsx:1196-1202` 스파이 자동오픈이 이미 `isIngameDialogActive()` 가드로 보호됨 |
+| C10 | **AGREE** | `aabsPolicyStore.ts:158-172` 배율 함수 확인. 환불 버그는 가상의 경고가 아니라 실제 이력(`docs/AABS_능동밸런싱_시스템_전수조사.md:82,188-190,292-294`) — 근거 탄탄 |
+| C11 | **AGREE** | `arcCoreShadowReveal.ts:29-30` `revealedAtMs` 게이트 확인. `planetHubSpyIntelDialog.ts`는 섀도우 스토어 import 안 함(현재 겹침 없음) |
+| C12 | **AGREE** | `ArcNewsBoardSubCore.ts:27-124` 일방 `pushNotice`만, 24h 주기(`BOARD_SUMMARY_INTERVAL_SEC`), 채팅형 상호작용 없음 |
+| C13 | **AGREE** | `planetMainStageLayout` 임포터 13개 중 `src/ui/overlay/` 소속 0개 — 레이아웃 상수와 오버레이 계층은 이미 분리. 단, `ArcOverlayCard.tsx`에 `KeyboardAvoidingView` 선례가 전무(`keyboardShouldPersistTaps`뿐) — 채팅 패널이 **ArcOverlayHost 사상 최초의 TextInput 오버레이**라 키보드 회피는 선례 없이 새로 구현·양 플랫폼 실기 검증 필요(가드로 추가 권장) |
+| C14 | **AGREE** | `localAccountReset.ts:199-244` 20여개 개별 reset 호출 패턴 확인(섀도우만 의도적 예외). `gameSaveBackupKeys.ts:5-28` 정적 키 배열 — 신규 스토어는 여기 등록 안 하면 백업 누락 |
+| C15 | **AGREE** | `src/ui/overlay/` 전체에 `missionStore` 직접 참조 0건(grep) — "미션은 API만 호출" 분리가 이미 구조적으로 지켜지는 중 |
+| C16 | **AGREE** | `runHeavyUiDataSession.ts`는 preflight/hydrateSteps/build 범용 프레임이지만 실사용처(`planetEconomyInfoSession`, `tradeScreenSession`)가 전부 허브 시설 화면 전용 — 월드맵/전투후에서도 떠야 하는 채팅에 이 프레임을 억지로 태우면 안 된다는 문서 판단이 맞음 |
+| C17 | **PARTIAL** | `audit:ui-overlay`(`tools/ui-overlay-audit/run-ui-overlay-audit.cjs`)는 RN Modal/Alert 안티패턴 grep일 뿐 kind 테이블 완전성은 검사 **안 함**. 실제 컴파일 강제 지점은 `tacticalOverlayRollout.ts:22` `TACTICAL_OVERLAY_KIND_FLAGS: Record<ArcOverlayKind, boolean>` 1곳뿐 — `overlayChrome.ts`의 switch는 `default` 폴백이 있어 누락돼도 컴파일 통과(alert로 조용히 폴백), `ArcOverlayHost.tsx`도 exhaustive가 아닌 조건부 JSX라 누락 시 컴파일 에러 없이 그냥 렌더 안 됨. 즉 신규 kind 2개 등록 지점 3곳 중 **1곳만 컴파일러가 강제**, 나머지 2곳은 수동 체크리스트로 관리해야 함 |
+| C18 | **PARTIAL** | `arcCore/index.ts` 배럴 파일 자체가 존재하지 않아 문서가 우려하는 순환 경로는 코드상 없음. 다만 "SubCore가 UI를 직접 부르지 않는다"는 게 기존 관례가 아니라 **새로 세우는 규율**임을 명시해야 함 — `src/arcCore/territorial/showTerritorialOccupationChangeAlert.ts:3-4`가 이미 overlay/alert 함수를 정적 import해 territorial SubCore 경로(`runTerritorialCombatPass.ts`)에서 호출하는 선례가 존재하기 때문 |
+| C19 | **PARTIAL** | `arcCoreWallClockCatchUpGate.ts`는 "부트 시 동기 스냅샷 재빌드"가 아니라 단순 join 게이트. 실제 catch-up 작업은 `app/_layout.tsx:302,326`에서 비동기 백그라운드로 시작되고 `continueSessionPrewarm`에서 join되는 구조. 결론("오픈/전송 시 1회 읽기, 틱 재수집 금지")은 daily-batch·catch-up의 "1회 비동기 join, 재수집 없음" 관례로 여전히 뒷받침되지만, 문서가 "동기 재빌드"라고 표현한 부분은 과장 |
+| C20 | **AGREE** | `src/`·`app/` 전체 `onSnapshot` 실사용 0건(매치 3건은 전부 "금지" 명시 주석 또는 무관한 타입명) |
+
+### 3. 김팀장 전제 정정 (틀렸거나 부분적인 것만)
+
+1. **§2-1 궤도 동시 트래픽 상한 수치** — 문서 "약 5척"은 오기. 실제 `PLANET_HUB_ORBIT_CAPITAL_RENDER_MAX = 8`(`planetHubOrbitRenderBudget.ts:10`), `ARC_ORBIT_PRESENCE_FILL_MAX = 8`(`arcNpcTrafficTableRegistry.ts:10`). "명단 N이 bounded"라는 결론엔 영향 없음, 수치만 8로 정정.
+2. **C17 근거 오귀속** — 위 표 참조. `audit:ui-overlay`가 아니라 `tacticalOverlayRollout.ts`의 `Record<ArcOverlayKind, boolean>`이 실제 컴파일 강제 지점.
+3. **C19 "동기 재빌드" 표현** — 위 표 참조. 실제는 비동기 백그라운드 + prewarm join.
+4. **C18 "SubCore는 chat을 정적 import 안 함"** — 기존 관례 확인이 아니라 신규 자체 규율. territorial alert 선례가 이미 이 원칙을 어기고 있으므로 "왜 채팅만 예외적으로 더 엄격한가"를 문서에 한 줄 남겨두는 게 좋음(추적 가능성).
+
+### 4. 구현 전 추가 가드 (문서에 흡수 요청)
+
+1. **C4 실제 훅 지점 명시** — `combat_end` 트리거를 캡틀레이드(`PlanetEdenRaidOrbitSkiaCombat.tsx`)와 WaveDefense(`planet.tsx:990-1058`) 중 어느 결과 화면에 걸지, dispose 완료 콜백(`combatOrbitPostStepRef=null` 3곳 중 어디)에서 트리거를 fire할지 §8 파일 지도에 구체 지점 추가.
+2. **C17 등록 체크리스트 3곳 명시** — `ArcOverlayKind` 유니온 추가 시 (a) `tacticalOverlayRollout.ts` `TACTICAL_OVERLAY_KIND_FLAGS`(컴파일 강제) (b) `overlayChrome.ts` switch (c) `ArcOverlayHost.tsx` 렌더 분기 — 3곳 모두 §8 파일 지도에 명시. (b)(c)는 누락돼도 컴파일 통과하므로 수동 확인 필수.
+3. **C13 키보드 회피 신규 구현 명시** — ArcOverlayHost 사상 최초 TextInput이므로 §6-1에 "Android soft-input 모드·iOS KeyboardAvoidingView 양쪽 실기 검증" 한 줄 추가 권장.
+4. **C5 narrative 미커버 사실 명시** — `resolvePendingArcOverlaysForStageExit`가 `narrative` kind를 안 다룬다는 사실을 §5-0-3 "동시성" 절에 각주로 남겨(채팅 자체는 문제 없음, 기존 갭이 채팅 때문에 새로 생긴 것처럼 오독되지 않도록).
+
+### 5. 구현하지 말 것 (재확인)
+
+문서 §10-5 그대로 유지 확인: `runArcCoreDailyOpsBatch`·`AiNpcSubCore`/`ArcInboundDroneSubCore` 틱·AABS 정렬·`planetMainStageLayout`·`NARRATIVE_DIALOG_LAYOUT`·스파이 정책 CSV·12좌 CSV·명령 타입 추가 — 전부 코드로 재확인했고 이번 기획이 건드릴 이유 없음. 온디바이스 LLM·`player_chat` 명령버스 origin·13번째 SubCore 제안으로 구현 착수 금지도 동일 유지.
+
+대표님께: 「김팀장(Cursor 본창) 검수 요청」 안내 부탁드립니다.
+
+---
+
+## ✅ REVIEWED — 성계700 전개방 설계 문서 독립 재검수 · 김클로드 · 2026-08-12
+
+```text
+status=REVIEWED
+task_id=galaxy700-design-review-20260812
+verdict=AGREE_WITH_IMPROVEMENTS_ABSORBED
+reviewed_by=김팀장(글록 4.5) · 2026-08-12
+code_changes=NO (문서·READY·앵커만)
+impl_followup=tools/kim-team-lead/reports/kim-team-lead-ready-galaxy700-scale-ops.md (HOLD)
+design_doc=docs/성계700_전개방_메모리_운영_설계.md v0.1.3
+```
+
+### 김팀장 검수·반영
+
+김클로드 §14·§14-6 개선안 5건 **전량 문서 반영**(v0.1.3).  
+향후 개발용 Wave I1~I5·파일 맵·DoD는 READY(홀드)에 고정.  
+**게임 코드 미착수** — 대표님 구현 승인 시 READY `HOLD`→`READY` 후 I1부터.
+
+| §14-6 | 반영처 |
+|-------|--------|
+| Persist ~760·slim 재사용 | 설계 §4-5 · READY **I1** |
+| colonization 전복제·우선↑ | 설계 §4-3 · READY **I2** |
+| warmedPlanetCatalogIds | 설계 §4-1 · READY **I3** |
+| R1 실측 각주 | 설계 §6 |
+| §3-1 네 축 | v0.1.2 완료 |
+
+원본 분석 요지(byPlanetId~760 · systems 전복제 · slim/warm 선례)는 설계 §14에 유지.
+
+---
+
+## 📋 PENDING — 행성허브 월드오브젝트(잔해·방위위성·소행성) 표시명 로케일 미전환 수정 · 김클로드 · 2026-08-04
+
+```text
+status=PENDING
+task_id=planet-hub-worldobject-title-i18n-20260804
+parent=대표님 지시 — "행성허브의 잔해, 방위위성 행성 1 등의 표시 명이 번역 전환이
+  안된 상태이다. 확인하라"
+code_changes=YES — 8개 파일(신규 파일 없음, 전부 i18n 키 정합화)
+commit 금지
+[pss-pre-dev] hot_path=아님(행성 허브 진입 시 provider 목록 1회 빌드 + 로케일 전환 시
+  React 재렌더로만 갱신, 틱 경로 무관) · alloc=무변경(문자열 리터럴 → i18n 키 리터럴로
+  교체만, 신규 객체/루프 없음) · stage=행성 허브 월드오브젝트 렌더(STAGE 1) ·
+  risk=P4(순수 표시 텍스트 치환 — provider가 반환하는 kind/interactions/state 등
+  게임 로직 데이터는 전혀 무변경, title 문자열의 "의미"만 원문 텍스트→i18n 키로 변경) ·
+  verdict=PASS
+```
+
+### 원인 (코드로 확인)
+
+행성 허브 월드오브젝트 3종 provider가 표시명을 **원문 한국어 문자열로 직접 하드코딩**하고 있었습니다:
+- `src/worldObjects/providers/wreckWorldObjectProvider.ts` — `title: '잔해'`
+- `src/systems/planetaryDefense/buildPlanetDefenseSatelliteObjects.ts` — `title: \`방위위성 ${i+1}\`` (대표님이 보신 "방위위성 행성 1"이 이것)
+- `src/worldObjects/providers/asteroidWorldObjectProvider.ts` — `title: \`소행성 ${n}\`` (같은 패턴, 대표님이 언급하신 "등"에 해당)
+
+렌더 소비처(`planetHubSubcomponents.tsx:957`의 화면 표시 캡션, `interactionComponents.tsx:29`의 접근성 라벨) 둘 다 이 `title` 값을 **그대로** 찍고 있어서, 로케일을 영어로 바꿔도 이 캡션들만 한국어로 고정돼 있었습니다. 바로 옆의 `accessibilityLabel={t('hubBg.wreck')}`(939행)·`t('hubBg.defenseSatellite')`(941행)는 이미 정상적으로 i18n 처리돼 있어 — 화면 소비처 자체는 i18n 인프라가 갖춰져 있었는데, provider가 **번역 키가 아니라 완성된 한국어 문자열**을 `title`에 채워 넣던 게 근본 원인이었습니다.
+
+### 수정
+
+`WorldObject.title`의 계약을 "완성된 표시 문자열" → "**i18n 키**"로 정정하고, 번호가 붙는 표시명(방위위성·소행성)은 신규 `titleOrdinal?: number` 필드로 분리해 `t(title, {n: titleOrdinal})` 형태로 렌더 시점에 해석하도록 바꿨습니다.
+
+| 파일 | 변경 |
+|------|------|
+| `src/worldObjects/types.ts` | `title` 주석을 "i18n 키" 계약으로 명시, `titleOrdinal?: number` 필드 신규 추가 |
+| `wreckWorldObjectProvider.ts` | `title: '잔해'` → `title: 'hubBg.wreck'`(기존 키 재사용, 번호 없음) |
+| `buildPlanetDefenseSatelliteObjects.ts` | `title: \`방위위성 ${i+1}\`` → `title: 'hubBg.defenseSatelliteTitle', titleOrdinal: i+1`(신규 키) |
+| `asteroidWorldObjectProvider.ts` | `title: \`소행성 ${n}\`` → `title: 'hubBg.asteroidTitle', titleOrdinal: n`(신규 키) |
+| `src/i18n/locales/ko.ts` / `en.ts` | `hubBg.defenseSatelliteTitle`('방위위성 {n}'/'Defense Satellite {n}'), `hubBg.asteroidTitle`('소행성 {n}'/'Asteroid {n}') 신규 추가 |
+| `planetHubSubcomponents.tsx` | 957행 `{object.title}` → `{t(object.title, ...)}`로 렌더 시점 해석(이 컴포넌트는 이미 `useT()` 사용 중이라 반응형으로 로케일 전환 시 즉시 갱신) |
+| `interactionComponents.tsx` | `PlaceholderActionButton`에 `useT()` 추가해 접근성 라벨도 동일하게 해석 |
+
+**소비처가 딱 2곳뿐임을 grep으로 확인** 후 진행 — `title` 필드의 의미를 바꾸는 변경이라 블라스트 반경을 먼저 확인했습니다. `description` 필드(같은 provider들이 하드코딩)는 화면에 렌더되는 곳이 없어(grep 확인) 이번 범위에서 제외했습니다.
+
+### self-check
+
+```
+npx tsc --noEmit -p tsconfig.client.json   → PASS(에러 0)
+grep 확인: WorldObject.title 소비처 2곳(위 표) 외 없음, 하드코딩 원문 문자열 참조하는
+  테스트 없음
+```
+
+### 미완·보류
+
+- 실기 확인 필요 — 행성 허브에서 로케일을 영어로 전환한 뒤 잔해/방위위성/소행성 캡션이 즉시 영문으로 바뀌는지, 숫자(N번째)가 정확히 유지되는지.
+- `description` 필드는 현재 화면에 안 쓰여 이번엔 안 건드림 — 나중에 노출 UI가 생기면 같은 패턴(i18n 키화)으로 처리 필요.
+- `WorldObjectKind`에 정의만 있고 provider가 없는 `station`/`anomaly`는 이번 조사에서 발견되지 않아 해당 없음(현재 미사용 kind로 보임).
+
+---
+
+## 📋 PENDING — 최초 시작 스토리(intro01) 스킵 버튼 — 마지막 페이지 즉시 전체 표시 · 김클로드 · 2026-08-04
+
+```text
+status=PENDING
+task_id=intro-story-skip-instant-reveal-20260804
+parent=대표님 지시 — "스킵버튼의 처리가 제대로 연출을 스킵시키는지 확인하라" →
+  확인 결과 "스킵이 마지막 페이지로만 이동하고 그 페이지 타이핑 애니메이션이 처음부터
+  다시 재생돼 실질 2번 더 탭해야 진입됨"을 보고 → 대표님 결정: "마지막 페이지 이동은
+  유지, 텍스트는 이미 다 드러난 상태로 표시해 탭 1번만 더 필요하게"
+code_changes=YES — 4개 파일(신규 파일 없음, 전부 옵션 prop 추가)
+commit 금지
+[pss-pre-dev] hot_path=아님(스토리 화면 최초 1회 진입 경로, 틱/렌더루프 아님) ·
+  alloc=무변경(기존 useEffect 분기만 추가, 신규 상태 1개는 intro.tsx 로컬 useState) ·
+  stage=intro 스토리 화면(app/(game)/intro.tsx) 전용, STAGE 1/행성허브 무관 ·
+  risk=P5(옵션 prop 전부 기본값 false — 스킵 미사용 시 기존 동작 100% 동일, 다른
+  TypewriterText/NarrativeDialogRow 호출부 전부 영향 없음) · verdict=PASS
+```
+
+### 확인된 원인 (재검수 결과, 이전 턴에서 이미 보고)
+
+`app/(game)/intro.tsx`의 `handleSkipScene`이 `setPage(pages.length-1)`로 마지막 페이지로만 이동시키는데, `TypewriterText`가 `key={pageKey}`로 리마운트되며 그 페이지 텍스트가 **처음부터 다시 타이핑 애니메이션**됨 — 플레이어가 스킵을 눌러도 (1) 마지막 페이지 타이핑을 기다리거나 한 번 더 스킵(다음 버튼이 "스킵 타이핑"으로 표시)하고 (2) 그 다음에야 "게임 시작"이 눌리는 2단계 추가 조작이 필요했음.
+
+### 수정 (대표님 지시안 그대로 — 마지막 페이지 이동 유지 + 텍스트 즉시 전체 표시)
+
+| 파일 | 변경 |
+|------|------|
+| `src/components/TypewriterText.tsx` | `skipAnimation?: boolean`(기본 false) prop 추가 — true면 애니메이션 루프 없이 `setDisplayed(text); setDone(true); onComplete()`를 즉시 호출. 기존 호출부(스킵 미지정)는 전부 동일 동작 |
+| `src/ui/onboarding/CinematicPrologueScene.tsx` | 동일 prop 추가해 `TypewriterText`로 전달(시네마틱 페이지 경로) |
+| `src/ui/overlay/NarrativeDialogRow.tsx` | 동일 prop 추가해 `TypewriterText`로 전달(ingame_dialog 페이지 경로 — `handleSkipScene`이 두 경로에 공유되므로 일관성 위해 같이 반영) |
+| `app/(game)/intro.tsx` | `skipRevealPage: number\|null` state 신규 — `handleSkipScene`이 마지막 페이지 인덱스를 여기 기록. `skipRevealActive = skipRevealPage === page && segmentIndex === 0`를 계산해 두 렌더 분기(`CinematicPrologueScene`/`NarrativeDialogRow`) 모두에 `skipAnimation`으로 전달 |
+
+**건드리지 않은 것**: 마지막 페이지 도달 후 "게임 시작" 버튼이 눌리기까지의 짧은 `nextButtonRevealDelayMs` 딜레이(기존에도 모든 페이지 완료 시 동일하게 있던 것, 스킵 전용 아님) — 그대로 유지. 스킵을 안 쓰는 일반 진행(페이지 0→1→2→3→4 순차 진행)은 전부 기존과 동일하게 타이핑 애니메이션 재생.
+
+### self-check
+
+```
+npx tsc --noEmit -p tsconfig.client.json   → PASS(에러 0)
+```
+
+### 미완·보류
+
+- 실기 확인 필요 — 신규 계정 생성 → intro01 진입 → 1페이지에서 스킵 탭 → 마지막 페이지 텍스트가 애니메이션 없이 즉시 전체 표시되는지, "게임 시작" 버튼이 잠깐(기존 딜레이)의 후 눌려서 정상적으로 `/(game)/planet`(차원항로 경유)까지 진입하는지 확인.
+- 이미 마지막 페이지에 있을 때 스킵을 다시 누르면(엣지 케이스) `pageComplete`가 로컬에서 false로 재설정돼 "게임 시작" 버튼이 한 번 더 탭을 요구할 수 있음(락 아님, 텍스트도 이미 즉시 표시 상태라 무해) — 이전 턴에서 발견한 기존 동작이라 이번 수정 범위 밖으로 유지.
+
+---
+
 ## ✅ 김팀장 구현 — 서비스 개시 월드 경제 리셋 E1 · 2026-08-04 22:03 KST
 
 ```text
@@ -234,7 +3454,7 @@ team_lead_recheck=AGREE_CODE (race/title/RTDB/join-cap/territorial) · AGREE_SOF
 | 6 | 교전지역(영유권) 팝업이 타이틀 화면에 뜨던 것 | ✅ 완료 | `territorialAlertGalaxyMapGate.ts`(신규) — 은하계 허브(worldmap) 포커스 중일 때만 즉시 표시, 아니면 보류 후 진입 시 노출(최신 1건) |
 | 7 | (Wave R1) daily join 상한 45s → 24s 하향 + 단계별 상시 계측 | ✅ 완료 | `continueSessionPrewarm.ts` — `DAILY_BATCH_JOIN_TIMEOUT_MS=24_000`, `markBootPerf`로 join_catchup/join_daily/assets/bootstrap 4구간 `__DEV__` 상시 마킹(임시 아님) |
 | 8 | (Wave R2) 무역소 카탈로그 resync DEV 로그가 행성당(최대 757줄) 폭주 | ✅ 완료(로그만) | `AiEconomySubCore.ts` — 같은 (action,origin,reason) 커맨드를 0ms 창 안에서 합산해 1줄로 출력(동작 무변경, 로그 표현만 압축) |
-| 9 | 일일배치 O(N²)/중복호출 5건(findPlanetInSystems, tavern replenish, hostCaptain 재조회, orbit candidates dedup, unlockedPlanetIds 반복호출) | ✅ 완료(이전 라운드, 김팀장 AGREE 기록됨) | 오프라인 harness 41.6s → 32.5s |
+| 9 | 일일배치 O(N²)/중복호출 5건(findPlanetInSystems, bar replenish, hostCaptain 재조회, orbit candidates dedup, unlockedPlanetIds 반복호출) | ✅ 완료(이전 라운드, 김팀장 AGREE 기록됨) | 오프라인 harness 41.6s → 32.5s |
 | 10 | Wave A~C′ (일일배치 미완료 근본 수정 — 게이트/격리/O(N) bulk) | ✅ 완료(이전 라운드, 김팀장 AGREE 기록됨) | `lastBatchCompletedDayKey` 완료 기준 게이트 등 |
 
 ### 발견했으나 손대지 않은 것 (우선순위 정리용)
@@ -294,7 +3514,7 @@ grep waitForArcCoreDailyBatchIdle app/_layout.tsx → 0건(타이틀 경로 wait
 | **verdict** | **AGREE (코드)** · 실기 초 단위 단축·device PASS는 **미확정** |
 | parent | Wave A~C′ **AGREE_CODE** 유지 · 본 라운드는 **성능 후속**만 |
 | #1 planetIndex Map bulk | **AGREE** — `buildPlanetIndexFromSystems` + O(N) 대입, find 선형 제거 |
-| #2 tavern replenish batch | **AGREE** — `computeReplenishedPlanetEntries` + 행성 Map 그룹 · single-planet `ensure*` 동등 병합 확인 |
+| #2 bar replenish batch | **AGREE** — `computeReplenishedPlanetEntries` + 행성 Map 그룹 · single-planet `ensure*` 동등 병합 확인 |
 | #3 hostCaptain 1회 | **AGREE** — 벌크 path 파라미터 전달 · default 하위호환 |
 | #4 Set dedup orbit candidates | **AGREE** — sort 후 집합 동일 방향 |
 | #5 unlockedPlanetIds 1회 (presence index) | **AGREE** — 지배 병목 지점 합리적 · options 생략 시 기존 경로 유지 |
@@ -324,7 +3544,7 @@ code_changes=YES — 5개 파일 추가 수정(아래 목록)
 commit 금지
 [pss-pre-dev] hot_path=아님(일 1회 배치) · alloc=무변경(전부 조회·dedup 최적화, 새 상태 없음) ·
   cache=arcfire_arc_core_daily_ops_v1 스키마 무변경(이번 라운드는 순수 알고리즘 성능) ·
-  stage=arcCore 일일배치+선술집 인스턴스 의뢰+함장 presence 인덱스 · risk=P4(판정로직·
+  stage=arcCore 일일배치+바 인스턴스 의뢰+함장 presence 인덱스 · risk=P4(판정로직·
   출력 데이터 셋 무변경, 정렬·반환 결과 동일함을 각 함수별로 확인 후 반영) · verdict=PASS
 ```
 
@@ -335,8 +3555,8 @@ REVIEWED 처리된 Wave C/C′(4개 함수 O(N²) 스프레드→O(N))가 실측
 | # | 파일:함수 | 문제 | 수정 |
 |---|-----------|------|------|
 | 1 | `store/planetCoreRuntimeStore.ts` — `patchPlanetCoresBulk`·`patchPlanetMasterBalanceBulk` | 벌크 패스 루프 안에서 행성마다 `findPlanetInSystems`(전 시스템 선형 탐색, O(N))를 호출 → O(N²) | `buildPlanetIndexFromSystems(systems): Map` O(1) 인덱스를 루프 밖에서 1회만 빌드 후 `.get()` 조회로 교체 |
-| 2 | `missions/arcCoreInstanceMissionGenerator.ts` — `runArcCoreTavernInstanceBoardReplenishPass`·`ensurePlanetTavernInstanceBoard` | 일일 배치가 선술집 활성 행성마다 `ensurePlanetTavernInstanceBoard`를 호출했는데, 그 안에서 매번 전체 `entries`(최대 757×10건)를 `filter`/재조립 → O(P×N) | 공통 코어(`computeReplenishedPlanetEntries`)를 추출해 `entries`를 행성별로 1회만 그룹핑(Map)한 뒤 각 행성은 자기 그룹만 처리 |
-| 3 | 같은 파일 — `buildArcCoreInstanceMissionEntry` 호출부 | 신규 의뢰 entry 1건(행성당 최대 10건)마다 `resolveTavernHostCaptainAtPlanet`(함장 presence 전역 인덱스 조회)을 재호출 — 결과가 같은 행성이면 항상 동일한데 10배 중복 호출 | 행성당 1회만 조회해 `hostCaptain` 파라미터로 전달(함수 내부 기본값은 하위호환 유지) |
+| 2 | `missions/arcCoreInstanceMissionGenerator.ts` — `runArcCoreBarInstanceBoardReplenishPass`·`ensurePlanetBarInstanceBoard` | 일일 배치가 바 활성 행성마다 `ensurePlanetBarInstanceBoard`를 호출했는데, 그 안에서 매번 전체 `entries`(최대 757×10건)를 `filter`/재조립 → O(P×N) | 공통 코어(`computeReplenishedPlanetEntries`)를 추출해 `entries`를 행성별로 1회만 그룹핑(Map)한 뒤 각 행성은 자기 그룹만 처리 |
+| 3 | 같은 파일 — `buildArcCoreInstanceMissionEntry` 호출부 | 신규 의뢰 entry 1건(행성당 최대 10건)마다 `resolveBarHostCaptainAtPlanet`(함장 presence 전역 인덱스 조회)을 재호출 — 결과가 같은 행성이면 항상 동일한데 10배 중복 호출 | 행성당 1회만 조회해 `hostCaptain` 파라미터로 전달(함수 내부 기본값은 하위호환 유지) |
 | 4 | `arcCore/orbitPresence/captainOrbitPlanetAssignment.ts` — `listCaptainOrbitPlanetCandidates` | 함장 궤도 후보 목록에 개방 행성(최대 757개)을 하나씩 넣으며 `out.includes(pid)`(배열 선형 탐색)로 dedup → O(P²) per 함장 | `Set` 기반 dedup으로 교체(끝에 `.sort()`하므로 결과 집합·순서 100% 동일, 동작 무변화) |
 | 5 | `arcCore/captainPresence/buildCaptainPresenceWorldIndex.ts` — `getCaptainPresenceWorldIndex` | 위 #4가 호출하는 `listUnlockedPlanetIdsForOrbitPresence()`(전 시스템 순회, 가벼운 연산 아님)를 **비전투 함장마다**(CSV 함장 247명) 반복 호출 — 인덱스 캐시가 있어도 최초 1회 빌드 자체가 이 반복 호출로 수 초 소요 | `getCaptainPresenceWorldIndex`에서 1회만 계산해 `resolveCaptainTableOrbitPlanetId(captain, {epochBucket, unlockedPlanetIds})`로 전달 |
 
@@ -973,7 +4193,7 @@ npx tsx --test planetHoldReleasePolicy.test.ts                         → PASS 
 
 ### CSV / 기존값 변경 여부
 
-`arc_core_territorial_combat_policy.csv`(정적 5행) · `arc_core_supply_envelope_policy.csv`(§6-4, 유지) · `faction_political_relations.csv` · `planet_occupation_seeds.csv` · `planet_trade_route_profile.csv` **전부 git diff 없음**. 신규 CSV(`arc_core_maginot_external_supply_policy.csv`) 1개만 추가, `build:balance-tables` 반영 완료. `if (planetId==='minerva_deep'|'iron_remnant')` 류 하드코딩 없음(정적 grep 테스트로 고정). 외부팩션은 `galaxyRouteFactionPolicy.ts`의 실제 F2(`trade_coalition`)·F4(`miners_guild`) 코드를 CSV 라벨로만 참조 — `NEUTRAL`/`INDEPENDENT` 치환 없음.
+`arc_core_territorial_combat_policy.csv`(정적 5행) · `arc_core_supply_envelope_policy.csv`(§6-4, 유지) · `faction_political_relations.csv` · `planet_occupation_seeds.csv` · `planet_trade_route_profile.csv` **전부 git diff 없음**. 신규 CSV(`arc_core_maginot_external_supply_policy.csv`) 1개만 추가, `build:balance-tables` 반영 완료. `if (planetId==='minerva_deep'|'iron_remnant')` 류 하드코딩 없음(정적 grep 테스트로 고정). 외부팩션은 `galaxyRouteFactionPolicy.ts`의 실제 F2(`mega_mercurium_coalition`)·F4(`mega_aurelium_guild`) 코드를 CSV 라벨로만 참조 — `NEUTRAL`/`INDEPENDENT` 치환 없음. `trade_coalition`/`miners_guild`는 flavor이며 국가 id가 아니다.
 
 ### 리스크 · soft(실기 미확인) · 해석적 결정
 
@@ -2164,2142 +5384,3 @@ invalidate 일부 경로 TTL 의존 · 캠페인 battlesPerInterval 미적용 ·
 
 - 신규 `ArcOverlayKind: 'relicLore'` + `ArcOverlayRelicLoreEntry`(`src/ui/overlay/arcOverlayStore.ts`) + `presentRelicLoreOverlay(godNameKo, loreBodyKo)` + `RelicLoreOverlayContent.tsx`(`ArcOverlayCard` 사용, 신명·비문만 — 좌표·기술id 없음) + `ArcOverlayHost.tsx`·`tacticalOverlayRollout.ts` 배선.
 - 진입점: `app/(game)/trade.tsx` `handleSell` 최상단 — 탭한 아이템이 `getArcCorePantheonRelicByItemId()`에 걸리면(= relic) 기존 판매 플로우 전부 건너뛰고 lore 오버레이만 띄우고 `return`(유물은 `tradeable=false`라 원래도 판매 대상이 아니었음 — 판매 시도 대신 열람으로 대체).
-- (선택 항목이던) 선술집/설정 도감 목록 패널은 **범위에서 제외** — ready 문서에 "(선택)"으로 명시돼 있어 이번엔 구현 안 함.
-- 월드맵·허브 HUD 노출 없음(건드린 파일 없음).
-
-### M6 — 최종 게이트 stub
-
-- `src/arcCore/pantheon/arcCoreFinalGateStub.ts` — `onArcCoreWorldNodesAllPlayerOwned(): boolean` 순수 함수(부수효과 없음, **어디서도 호출 안 함** — 자리만). `ArcCoreFinalGateFlag = 'pending'|'armed'|'triggered'` 타입만 예약, 실제 저장/전이 로직 없음. 스토리모드·전체 리셋 코드 없음.
-
-### 변경 파일
-
-**신규**: `tables/content/arc_core_world_nodes.csv` · `tables/content/arc_core_pantheon_relics.csv` · `src/arcCore/pantheon/{arcCoreWorldNodeRegistry,arcCorePantheonRelicRegistry,arcCorePantheonCodexStore,arcCoreFinalGateStub}.ts` · `src/ui/overlay/content/RelicLoreOverlayContent.tsx` · (generated) `src/data/generated/{csvArcCoreWorldNodes,csvArcCorePantheonRelics}.ts`
-
-**수정**: `src/types/index.ts` · `tables/content/item_defs.csv`(+12행) · `tools/content-tables/build-content-from-csv.mjs` · `src/data/generated/index.ts`(generated) · `src/arcCore/subcores/{AiTradePortLevelPolicySubCore,registerDefaultArcSubCores,ArcCoreDailyOpsSubCore,ArcCoreTerritorialCombatSubCore,AiAabsSubCore,AiNpcSubCore,ArcInboundDroneSubCore,ArcCoreSpySubCore,AiPlanetsSubCore,AiEconomySubCore,ArcCoreAttackSubCore,ArcNewsBoardSubCore,ArcPlanetNebulaSubCore,WorldExpansionSubCore}.ts` · `src/game/planetSalvageSearch.ts` · `app/(game)/planet.tsx` · `src/firebase/gameSaveBackup/{applyLocalGameSaveSnapshot,gameSaveBackupKeys}.ts` · `src/account/localAccountReset.ts` · `src/ui/overlay/{arcOverlayStore,tacticalOverlayRollout,ArcOverlayHost}.tsx` · `app/(game)/trade.tsx`
-
-### 등록 SubCore 12개 (id · displayName)
-
-1. `arc_core_daily_ops_subcore` · 크로노스 · 일일 운영
-2. `arc_core_territorial_combat_subcore` · 아레스 · 접전지역 전투
-3. `ai_aabs_subcore` · 테미스 · 능동 밸런싱
-4. `ai_npc_subcore` · 헤르메스 · 궤도 수송
-5. `arc_inbound_drone_subcore` · 아폴론 · 인바운드 드론
-6. `arc_core_spy_subcore` · 닉스 · 스파이
-7. `ai_planets_subcore` · 가이아 · 행성 코어
-8. `economy_subcore` · 플루토스 · 무역소·경제
-9. `arc_attack_subcore` · 아테나 · 통합 공격(등록·틱 비활성)
-10. `arc_news_board_subcore` · 이리스 · 공지 보드
-11. `arc_planet_nebula_subcore` · 아스트라이아 · 성운
-12. `world_expansion_subcore` · 야누스 · 월드 확장
-
-### self-check
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — PASS
-- [x] `npm run audit:memory:all` — 전부 PASS(37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0) — `resident-set` 감사가 `AiTradePortLevelPolicySubCore.ts` 파일 존재를 전제하는데 파일을 지우지 않아 문제 없이 PASS
-- [x] `npm run build:content-tables` — PASS(item_defs.csv 287 data rows·기존 npc-fleet/mission-quest-placements 감사 전부 PASS 동반 재확인)
-- [x] git commit **안 함**
-
-### 리스크
-
-- **Attack 틱 미활성 확인**: `ArcCoreAttackSubCore.ts`에 `onWallTick` 미정의 — grep으로 재확인 완료, 등록해도 허브 게임루프에 새 틱 작업 없음.
-- **맵 스포일러 없음**: `worldmap.tsx`·허브 HUD 어느 파일도 건드리지 않음 — 거점 마커·신명 상시 표시 코드 자체가 없음.
-- 실기 미확인 — 잔해 수색 시 실제로(낮은 확률이지만) 유물이 나오는지, 인벤에서 유물 탭 시 lore 카드가 정상 표시되는지, 계정 초기화 후 도감이 실제로 비는지는 디바이스 확인 필요.
-- `RELIC_DROP_PCT=5`·`dropWeight=10`(전 좌 동일) 등은 전부 CSV/상수 기반 MVP 단순화 — ready 문서가 명시적으로 허용한 범위.
-- Phase D(허브 틱 옵트인·Attack 디스패치 수렴)는 이번 범위 밖, 손대지 않음.
-
----
-
-## ✅ REVIEWED — 미발견 성계 별빛 레이어 · 김클로드
-
-### 김팀장 검수 (본창 Cursor · 2026-07-24 ~12:35 KST)
-
-| 항목 | 결과 |
-|------|------|
-| **verdict** | **PASS** — ready 명세 준수 · 게이트 PASS |
-| 신규 | `GalaxyMapUndiscoveredStarlightSvg.tsx` — hash 희소 SHOW_PCT=36 · 색3×opacity5 버킷 · Path 배칭 · Circle/라벨/라인 없음 · Math.random 없음 |
-| 배선 | `worldmap.tsx` Voronoi 아래 · SystemsSvg 위 · `hiddenUndiscoveredSystems`만 전달 · visible 목록 미편입 |
-| 메모리 | Path 최대 15개 · 성계당 UI 노드 없음 · `toScreen` useCallback 안정 |
-| 누락 | handoff PENDING 미작성(김클로드) — 김팀장이 본 검수로 갈음 |
-| 게이트 | tsc PASS · audit:memory:all PASS |
-| 커밋 | 미커밋 유지 — 대표님 지시 시 김팀장 커밋 |
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** |
-| **updated** | 2026-07-24 (김팀장 검수) · 2026-07-24(김클로드 구현) |
-| **task_id** | `galaxy-undiscovered-starlight-20260724` |
-| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-undiscovered-starlight.md` |
-
-### [pss-pre-dev]
-```
-[pss-pre-dev] hot_path=worldmap Svg 마운트·해금 변경 시 Path 재작성 · alloc=스타일별 Path≤15 · cache=없음
-[pss-pre-dev] stage=galaxy_map · risk=P1/P2 회피(배칭) · verdict=PASS
-```
-
----
-## ⏳ PENDING — 미발견 성계 별빛 레이어
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`PENDING`** |
-| **updated** | 2026-07-24 (김클로드) |
-| **task_id** | `galaxy-undiscovered-starlight-20260724` |
-| **ready** | `tools/kim-team-lead/reports/kim-claude-ready-undiscovered-starlight.md` |
-| **요청자** | 김팀장(Cursor 본창) 배정 — 대표님 지시(은하 암흑 미발견 성계를 별빛(도트)으로 표시 · 메모리 리스크 없이 · 미발견↔미발견 라인 숨김) → 권장 1안 |
-
-### [pss-pre-dev]
-
-```text
-[pss-pre-dev] hot_path=worldmap Svg 마운트·해금 목록 변경 시 1회 Path 재작성 · alloc=스타일별 Path d 문자열 소수 · cache=없음(시스템 좌표는 기존 systems)
-[pss-pre-dev] stage=galaxy_map only · dispose=Svg 언마운트와 동일 · risk=P1(성계당 Circle 금지)·P2(Views)
-[pss-pre-dev] verdict=PASS — 단일/소수 Path 배칭+해시 희소만 허용 · N개 Circle/라벨/edge REDESIGN
-```
-
-### 구현 내용
-
-명세(`kim-claude-ready-undiscovered-starlight.md`) 권장 1안 그대로 구현 — 성계당 노드 없이 `systemId` 결정적 해시(FNV-1a)로 (a) 표시 여부(`hash%100 < 36`, 약 36% 희소) (b) 색 3종(cool white/blue-cyan) (c) opacity 5단(0.06~0.45)을 골라, **색×opacity 조합별로 SVG `<Path>` 1개**에 `M x y l0.01 0` 짧은 세그먼트를 배칭(`strokeLinecap="round"`로 점처럼 렌더) — 최대 3×5=15개 Path만 생성되며 시스템 수(수백)와 무관하게 상한이 걸림. `Math.random` 없음 — 매 렌더 동일 결과.
-
-`hiddenUndiscoveredSystems`(기존 값 그대로, `visibleSystemsList`에 합치지 않음)를 `GalaxyMapTerritoryVoronoiSvg`와 `GalaxyMapSystemsSvg` 사이에 배치 — 별빛이 기존 노드에 가리지 않게.
-
-### 변경 파일
-- `src/galaxyMap/GalaxyMapUndiscoveredStarlightSvg.tsx` (신규)
-- `app/(game)/worldmap.tsx` (import 1줄 + `<Svg>` 자식 1개 삽입)
-
-### 범위 밖(명세대로 손 안 댐)
-- Skia Canvas/Worklet 없음 · `visibleSystemsList` 편입 없음 · 미발견↔미발견 connection 없음 · 터치/패널/이름/i18n 없음 · deferred tile/direction prewarm 로직 변경 없음.
-
-### self-check
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — PASS
-- [x] `npm run audit:memory:all` — 전부 PASS(37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
-- [x] git commit **안 함**
-
-### 리스크
-- Path 스타일 버킷 수 = 색(3) × opacity(5) = 최대 15개로 고정 상한 — 시스템 수 증가와 무관하게 View/Path 개수 안 늘어남.
-- 실기 미확인 — 은하 지도 진입 시 미발견 영역에 흐린 도트가 실제로 보이는지, 기존 Voronoi/노드 레이어와 겹칠 때 시각적으로 자연스러운지 확인 필요.
-
----
-
-## ✅ REVIEWED — (1) FinalizerDaemon SIGSEGV 검증 + (2) GL_HARD_CEILING 재조사 · 김클로드
-
-### 김팀장 검수 (본창 Cursor · 2026-07-23 08:19 KST)
-
-| 항목 | 결과 |
-|------|------|
-| **verdict** | **① PASS · ② PASS(조건부)** — 코드 변경 없음, handoff 진단 수용. 다음 구현은 아래 P0 |
-| ① SIGSEGV | `scheduleSkPictureDispose` no-op · Picture React-frame만 교체 · 크래시 로그(`225007`) 스택 일치 — **추가 조치 불필요** |
-| ② 가설 기각 | 웨이브마다 remount / 회수 트리거 부재 / presentation Set 덮어쓰기 — 코드 대조 **기각 타당** (`Set<fn>` · `hub_combat_orbit_end` · 세션 단위 orbit active) |
-| ② 보완(김팀장) | 「배선 완전·네이티브만」은 **조기 단정**. 07-23 08시 실측: 지도 idle에서 soft만 돌고 **`galaxy_map_post_ingress`/`periodic_deep` 로그 미관측**, ingress는 **`releaseGpuLayers: false`**, Views **555·GL~147** 고착(지도 baseline Views~350·GL~49). soft 무력 + deep 미실행이 **관리 갭**으로 남음 |
-| **다음 P0(구현)** | (a) deep 미실행 원인(`isMoving` skip·focus reset) 수정 (b) `after_hub_combat`/`from_planet_hub` ingress에서 GPU release 또는 settle 직후 deep 1회 (c) Views 555 허브 트리 잔존 여부 — **김클로드 또는 김팀장 Opus 구현 후 재 PENDING** |
-| 게이트 | 본 항목 코드 diff 없음 · 김클로드 self-check(tsc·audit:memory:all) 수용 |
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** |
-| **updated** | 2026-07-23 (김팀장 검수) · 2026-07-23(김클로드) |
-| **task_id** | `memory-handling-verify-and-gl-leak-reinvestigate-20260723` |
-| **요청자** | 대표님 — "현재 김팀장이 분석한 메모리 처리문제를 확인하고 지금 수정작업진행하라" → 두 갈래 확인 후 "GL 리텐션 누수(미해결) 쪽으로 진행"으로 답변 |
-
-### (1) FinalizerDaemon SIGSEGV 크래시 수정 — 검증 결과: **완료·정상**
-
-- 근거 로그 직접 대조: `tools/long-run-monitor/logs/crash-20260722-225007-capture.log`(SIGSEGV tid=FinalizerDaemon, `SkiaDomView.finalize→PictureProp::~→JsiSkPicture::~`) — 김팀장 commit `300de54`(2026-07-23 00:01 KST) 코드 주석의 timestamp·스택과 정확히 일치.
-- `src/game/skia/skiaMemoryLifecycle.ts` 전체 재확인 — `scheduleSkPictureDispose`는 no-op, `dropSkPictureReactFrame`/`commitSkPictureReactFrame` 모두 React state 교체만 하고 수동 dispose 없음. 2026-06-17 SkImage 크래시 때 확립된 "manual dispose 금지, native finalizer에 수명 위임" 규칙을 SkPicture로 정확히 확장한 것.
-- `PlanetEdenRaidOrbitSkiaCombat.tsx` 동일 커밋 diff도 함께 확인 — 주석·근거 일치, 로직 충돌 없음.
-- **우회 경로 전수 검색**(`safeSkiaDispose`/`.dispose()` 전체 grep) — 남아있는 모든 수동 dispose 호출은 `<Picture>`에 넘겨진 적 없는 객체(draw 실패로 즉시 버려지는 picture, pooled `SkPath`, `PictureRecorder`)뿐 — 크래시 경로(JsiDomNode에 바인딩된 SkPicture)를 우회하는 곳 없음.
-- 게이트 재실행: `npx tsc --noEmit -p tsconfig.client.json` PASS · `npm run audit:memory:all` 전부 PASS(37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0).
-- **결론**: 이 항목은 이미 완료된 수정이며 제 검증 결과 추가 조치 불필요.
-
-### (2) GL_HARD_CEILING 잔류 누수 — 재조사 결과: **근본원인 미확정, 기존 결론과 동일**
-
-`tools/long-run-monitor/logs/gl-leak-refix-requested.flag`(07-22 23:37:37 발생, `suspect=hub_skia_orbit_nebula_combat`, gl=203.4MB·pss=1028.5MB·views=553)가 (1)의 크래시 수정 커밋(00:01 KST) **이후**에도 오늘 아침 06:50~07:52 동일 패턴(`GL_SPIKE suspect=hub_skia_orbit_nebula_combat`, GL +92.9MB, 이후 미회복)으로 재발 — `tools/long-run-monitor/logs/overnight-final-report-20260723-0800.md` 확인. 즉 **크래시 수정과 GL 누수는 서로 다른 문제**이며, 크래시 수정이 GL 누수를 해결하지 못했음을 실측으로 확인.
-
-**이번에 새로 확인/기각한 가설**:
-1. ~~"vega_base 자동전투 루프가 웨이브마다(~10초) `PlanetEdenRaidOrbitSkiaCombat`를 마운트/언마운트 반복 → GC-finalizer-only 수명주기(위 크래시 수정으로 manual dispose 폴백까지 사라짐)와 겹쳐 회수가 GC 타이밍에 못 따라간다"~~ — **기각**: `app/(game)/planet.tsx:682-684` 주석으로 `capitalCombatOrbitActive`가 웨이브 디펜스 런 9웨이브 내내 `true`로 고정됨을 코드로 확인 — 웨이브마다 마운트/언마운트가 아니라 **세션(런) 단위 1회**만 마운트/언마운트. 마운트 빈도는 처음 가정보다 훨씬 낮음.
-2. ~~"전투 종료 후 회수 트리거 자체가 없다(route_blur/planet_change에만 걸려있다)"~~ — **기각**: `planet.tsx:710-717`에 이미 `capitalCombatOrbitActive: true→false` 전이를 감지해 `schedulePlanetHubPostSkiaPeakReclaim(pid, 'hub_combat_orbit_end')`를 호출하는 전용 effect가 존재. 이 함수(`runPlanetHubPostSkiaPeakReclaimPass.ts`)는 2×rAF+32ms+`InteractionManager` 지연 후 `runCombatSkiaPresentationReclaim`+`signalHubSkiaNativeReclaim`+성운 프로필 prune+memo 캐시 compact+Fresco bitmap trim+백드롭 remount를 실행하고 **90초 뒤 동일 패스를 한 번 더**(`followup_90s`) 돈다 — 이미 상당히 정교한 다층 회수 체계.
-3. ~~"`combatSkiaPresentationReclaim`의 Set 등록이 덮어써져 일부 콜백이 누락된다"~~(과거 handoff 기록상 한때 실제 버그였던 항목) — **기각**: `src/combat/combatSkiaPresentationReclaim.ts` 현재 코드는 `Set<fn>` 기반 다중 등록으로 정상 구현돼 있음(과거 버그는 이미 수정된 상태).
-
-**남은 상태**: JS/TS 레벨의 등록·트리거·캐시 정리 체계는 세 가설을 기각하고도 남을 만큼 이미 촘촘하게 구현돼 있음 — 이번 재조사로 "명백한 배선 누락형 버그"는 찾지 못했습니다. 이 이슈는 2026-07-10부터 최소 3차례(`aurora-hub-native-heap-hard-ceiling-20260707`, `galaxy-map-gl-residual-on-hub-reentry-20260708`, 그리고 오늘 이 항목) 반복 조사됐고 매번 "방어적 안전판만 추가, 근본 leak 미확정"으로 마무리됐습니다. 남은 가능성은 JS 코드 리뷰로는 확인 불가능한 네이티브 레벨(RN-Skia Android `GrContext`/EGL 리소스 캐시가 JS 참조 해제 이후에도 즉시 GPU 드라이버 메모리를 반납하지 않는 것 등)일 가능성이 높다고 판단합니다.
-
-### 코드 변경
-
-**없음** — 이번 세션은 (1) 검증 (2) 재조사 모두 read-only. 리스크 있는 아키텍처 변경(예: combat-orbit을 nebula backdrop처럼 상시 마운트+상태만 토글하는 방식으로 바꾸는 것)은 실기 검증 없이 이 반복적으로 실패해온 이슈에 또 하나의 미확정 "반쪽 패치"를 얹는 것이라 판단해 진행하지 않았습니다.
-
-### self-check
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — PASS (변경 없음)
-- [x] `npm run audit:memory:all` — 전부 PASS(37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
-- [x] git commit **안 함**
-
-### 리스크·주의
-
-- GL 누수는 여전히 미해결 — 다음 재발 시에도 자동 재시작(모니터 remediation)으로 서비스 영향은 제한적이나, 재시작 빈도 자체가 사용자 경험 저하.
-- 다음 단계로 제안: (a) 실기(Android Studio GPU/Memory Profiler)로 vega_base 웨이브런 종료 전후 실제 GL 텍스처/서페이스 반납 여부 직접 관찰, 또는 (b) `runPlanetHubPostSkiaPeakReclaimPass` 실행 전후 `[MEM]` 로그에 실측 GL MB(현재는 `gpuLayers` id 목록만 찍음, 바이트 수치 없음)를 추가해 다음 재발 로그캣에서 "회수 패스가 돌긴 도는데 효과가 없다" vs "애초에 패스 자체가 트리거 안 됐다"를 구분 — 우선순위는 대표님/김팀장 판단 필요.
-
-### 정정 (2026-07-23, 대표님 확인) — `suspect=hub_skia_orbit_nebula_combat` 태그는 이번 건 오귀속
-
-07-23 06:50~08:23 구간(views=555 완전 고정, gl/pss만 완만히 우상향) 관련해 대표님께 실기 상태를 여쭤본 결과 — **디바이스는 이 시간 내내 전투 없이 은하계 지도맵 화면에서 액션 없이 대기 중**이었음. 즉 모니터의 `hub_skia_orbit_nebula_combat` 자동 추정 태그는 이번 재발엔 틀렸고, 실제로는 위 `galaxy-map-gl-residual-on-hub-reentry-20260708`(PENDING, 미착수) 항목과 같은 계열(worldmap 화면 자체 체류 중 축적) 가능성이 높음 — 다만 이번엔 "허브 재진입 후 잔류"가 아니라 **worldmap 화면에 계속 머무르는 동안** gl/pss가 완만히 우상향한 것이라 07-08 진단(재진입 시 회수 누락)과도 정확히 같은 패턴은 아님. 위 (2) 섹션의 combat-orbit 관련 가설(마운트 빈도·회수 트리거·pool 정리)은 **이번 재발과는 무관한 것으로 정정** — combat 관련 코드 경로는 이번 재발에 관여하지 않았을 가능성이 높음.
-
-**대표님 안내**: 현재 김팀장이 이 건을 직접 수정 중 — 김클로드는 추가 조사·구현 중단하고 김팀장 수정 완료 후 검수만 진행.
-
-### 김클로드 검수 (2026-07-23) — 김팀장 구현(작업트리, 미커밋) 대상
-
-**verdict: PASS**
-
-- **대상 파일**: `app/(game)/worldmap.tsx` · `src/game/nativeReclaim/{galaxyMapIngressReclaim,index,processMemoryBudgetPolicy,runGalaxyMapResidentDeepReclaimPass}.ts` · `src/game/devMemoryProfileBridge.ts`(신규 이벤트 타입 `deep_reclaim`만 추가). `src/arcCore/{syncArcCoreGlobalWorldExpansion,worldExpansionGlobalSchedule}.ts`는 `git diff`로 실제 내용 변경 0바이트 확인(CRLF 개행 메타데이터 경고만) — 이번 fix와 무관.
-- **근본원인 대응 확인**: 김팀장이 08:19 검수에서 지적한 관리 갭(① ingress가 `releaseGpuLayers:false`로 호출돼 허브 GPU layer 레지스트리 잔존분을 안 걷음 ② 90초 단일 followup이 `isMoving`이면 그 자리에서 통째로 증발 — 재시도 없음)을 정확히 그 두 지점에서 수정:
-  - `consumeGalaxyMapIngressReclaim`: soft-only(`releaseGpuLayers:false`) → `runGalaxyMapResidentDeepReclaimPass(..., {reclaimHubSkia:true})`(deep=GPU layer 해제+Fresco trim) 전환.
-  - `worldmap.tsx` focus effect: 90초 단일 followup → 4초 settle + 45초 followup 2단, 각각 `scheduleDeepWhenIdle`로 `isMoving` 시 15초 간격 최대 4회 재시도 후 강제 1회 실행(`_forced`) — 무한 증발 경로 차단.
-- **`stage==='planet_hub'`에서만 `signalHubSkiaNativeReclaim`을 호출하는 `runStageNativeReclaimPass`의 기존 게이트**(07-08 진단에서 이미 지적됐던 지점)를 건드리지 않고, `runGalaxyMapResidentDeepReclaimPass`에서 `stage:'galaxy_map'`이어도 별도로 직접 `signalHubSkiaNativeReclaim`을 호출하도록 우회 — 공유 함수의 다른 호출부(허브 자체 blur 등)에 영향 없는 수술적 수정. `signalHubSkiaNativeReclaim`은 Set 기반 pub-sub+try/catch라 구독자 없을 때도 안전한 no-op임을 코드로 확인.
-- **호출부 3곳**(`worldmap.tsx` ×2, `galaxyMapIngressReclaim.ts` ×1) 전부 신규 3번째 `opts` 파라미터로 정확히 갱신됨 — 시그니처 불일치 없음.
-- **타이머 누수 없음**: `pendingDeepRetryTimers` 배열에 전부 push 후 effect cleanup에서 일괄 clear, `isFocusedRef.current` 가드로 unfocus 후 재귀 재시도 안 함.
-- **게이트**: `npx tsc --noEmit -p tsconfig.client.json` PASS · `npm run audit:memory:all` 전부 PASS(37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0).
-- **리스크**: 낮음 — 전부 기존에 검증된 reclaim 프리미티브(`runGalaxyMapResidentDeepReclaimPass`/`signalHubSkiaNativeReclaim`/`trimNativeBitmapCachesAsync`) 재사용, 신규 Skia/GPU 로직 없음. `isMoving` 중엔 deep을 계속 미루므로 이동 중 프레임 드랍 유발 가능성도 낮음.
-- **미확인(실기 필요)**: 다음 vega_base/전투→지도 진입 또는 장시간 지도 체류 시나리오에서 `mem-timeline.csv` GL/Views가 baseline(~49MB/~350)까지 실제로 떨어지는지 — 코드 리뷰로는 "의도한 대로 실행될 것"까지만 확인 가능, 실측 확인은 김경제 모니터 다음 주기 관측 권장.
-- 커밋 여부는 기존 프로토콜대로 김팀장 판단.
-
----
-
-## ✅ REVIEWED(진짜 원인) — "이어하기" 버튼 탭 직후 2~3초 완전 정지 — 근본원인 특정·수정 · 김클로드
-
-### 김팀장 검수 (본창 Cursor · 2026-07-19)
-
-| 항목 | 결과 |
-|------|------|
-| **verdict** | **PASS — 승인 + 김팀장 보완 조치 추가** |
-| r3 검증 | `handleStart` 이어하기 분기의 `buildCsvStaticIndexesFull()` 동기 선실행 → `setContinueFlowActive(true)` 선반전 + 2프레임 yield — 김팀장 독립 분석과 동일 결론, diff 일치 |
-| r2 검증 | `navPending` 즉시 스피너 + catch-up `setTimeout(400)` InteractionManager 대기열 분리 — 승인 |
-| **김팀장 보완(같은 턴)** | 탭 이벤트 자체가 부트 직후 catch-up 체인에 막히는 잔여 원인 제거 — ① `applyOfflineCatchUpWallClockChunked`(서브코어별 매크로태스크 yield) 신설·적용 ② `runArcCoreDailyOpsBatch` 패스 그룹 사이 `yieldJsThread()` 삽입(정오 이후 첫 부팅 수 초 블록 해소) ③ `runTerritorialCombatPass` 행성별 yield. 신규: `src/arcCore/schedule/yieldJsThread.ts` |
-| [pss-pre-dev] | hot_path=부트 1회·일 1회 배치 alloc=틱당 신규 객체 없음(스케줄링만 변경) cache=변경 없음 · stage=해당 없음 risk=P1 해당 없음 · verdict=PASS |
-| 게이트 | tsc PASS · `audit:memory:all` 전부 PASS(37/37·20/20·worklet·reclaim 20/20·resident 7/7·hot-path 0) · `audit:balance-ops` 배치 계약 OK(WARN=기존 fiscal 모니터 항목) |
-| tools/debug 잔여물 | `_layout_0715.tsx`·`_layout_0719.tsx`(김팀장 디버그 스냅샷, 전체 tsc 깨뜨림) 삭제 완료 |
-| 실기 검증 | 대표님 확인 대기 — 이어하기 탭 즉시 로딩화면·타이틀 탭 무반응 소멸 여부 |
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** |
-| **updated** | 2026-07-19 (김팀장 검수·보완) · 2026-07-19(3차 김클로드) |
-| **task_id** | `title-continue-button-synchronous-freeze-20260719-r3` |
-| **요청자** | 대표님 — "이어하기 버튼이 클릭시 바로 반응하지않고 2~3초간 멈춰있다고 몇번 이야기하는데 그부분에 대해 왜 분석을 진행하지 않나?? 재 분석후 수정하라" |
-| **정정** | 1·2차는 **신규 계정** 경로(타이틀→인트로)와 부트 타이밍을 다뤘음. 이번에 지적하신 **"이어하기"(기존 계정, `introSeen=true`) 버튼**은 이번에 처음으로 전용 분석함 — 별개의 진짜 원인이 있었음. |
-
-### 근본원인 (코드로 확정 — 이번엔 추측 아님)
-
-`app/index.tsx`의 `handleStart`(이어하기 분기)가 호출 순서상 **무거운 동기 작업을 화면 갱신보다 먼저** 실행하고 있었음:
-
-```js
-if (!getActiveMission()) initTutorialStory();          // 1) 동기, 가벼움
-prewarmPromiseRef.current = runContinueSessionPrewarm() // 2) 호출 즉시 내부 동기부가 실행됨
-  .catch(() => {});
-setContinueFlowActive(true);                             // 3) 로딩화면 표시 — 이게 제일 늦게 실행됨
-```
-
-`runContinueSessionPrewarm()`(`src/game/continueSessionPrewarm.ts`)은 `async` 함수라 `await`하지 않고 호출만 해도, **첫 `await` 지점 전까지는 그 자리에서 그대로 동기 실행**됩니다. 그 함수의 첫 줄이 바로:
-
-```js
-export async function runContinueSessionPrewarm() {
-  await measureBootPhase('continue_prewarm_start', 'continue_prewarm_end', async () => {
-    buildCsvStaticIndexesFull();   // ← 첫 await 전, 완전 동기. 여기서 멈춤.
-    await yieldToUi();             // 첫 yield 지점
-    ...
-```
-
-`buildCsvStaticIndexesFull()`(`src/game/buildCsvStaticIndexes.ts`)은 세션당 1회, **아이템 카탈로그 로드 + 광물 매장지 인덱스 + 밸런스 오버레이 재로드**를 전부 동기로 수행합니다(주석에도 "이어하기·행성 허브 등 — full tier"로 명시돼 있어 가벼운 작업이 아님을 이미 알고 있었음). 이게 `setContinueFlowActive(true)`보다 **먼저** 실행되니, 탭한 순간부터 이 함수가 끝날 때까지 리액트가 로딩화면조차 못 그리고 **화면이 완전히 멈춥니다** — 정확히 "탭해도 2~3초 멈춰있다"는 증상 그 자체입니다. 1·2차에서 고친 것(부트 타이밍·InteractionManager 경합·신규계정 시각피드백)과는 완전히 다른, 이 분기 고유의 원인이었습니다.
-
-### 수정 내용
-
-`app/index.tsx` — 순서를 뒤집었습니다: `setContinueFlowActive(true)`를 **제일 먼저** 실행해 로딩화면을 즉시 그리고, 프레임을 2번 넘겨(`yieldToUi()` — 기존 `continueSessionPrewarm.ts`에 있던 헬퍼를 export해서 재사용) 리액트가 실제로 페인트를 마친 뒤에야 `initTutorialStory()`·`runContinueSessionPrewarm()`(그리고 그 안의 `buildCsvStaticIndexesFull()`)을 실행하도록 재배치했습니다. 무거운 작업 자체는 그대로 — **실행 순서만 "화면 갱신 → 무거운 작업"으로 뒤집은 것**이라 로직 변경 리스크는 낮습니다.
-
-- `src/game/continueSessionPrewarm.ts`: 내부 전용이던 `yieldToUi()`를 `export`로 변경(신규 로직 없음).
-- `app/index.tsx`: `yieldToUi` import 추가, `handleStart`의 이어하기 분기 순서 재배치.
-
-### self-check
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — 내가 수정한 파일(`app/index.tsx`·`src/game/continueSessionPrewarm.ts`) 기준 **에러 없음**(grep으로 파일명 필터링 확인). 다만 프로젝트 전체 tsc는 현재 **`tools/debug/_layout_0715.tsx`·`_layout_0719.tsx`**(미추적 파일, 상대경로가 깨진 `_layout.tsx` 스냅샷 — `tools/debug/_title_stall_capture.txt` 등 정황상 김팀장이 이 버그를 실기로 디버깅하며 남긴 캡처로 보임) 때문에 전체 실행은 실패 상태입니다. 제 변경과 무관하고, 진행 중인 작업물일 수 있어 임의로 건드리지 않았습니다 — 검수 시 확인 부탁드립니다.
-- [x] `npm run audit:memory:all` — **전부 PASS**(37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0) — tsc와 달리 프로젝트 전체를 컴파일하지 않아 영향 없음.
-- [x] git commit **안 함**
-
-### 리스크·주의
-
-- 실기 미확인 — "이어하기" 탭 즉시 로딩화면이 뜨고, 그 뒤로 진행되는지 확인 필요.
-- `tools/debug/_layout_07*.tsx` 정리(또는 tsconfig exclude에 `tools/debug/` 추가)는 이번 범위 밖 — 김팀장 작업물일 가능성이 있어 별도 확인 필요.
-
----
-
-## ✅ REVIEWED(후속 수정) — 타이틀 버튼 "탭해도 무반응" 잔여 원인 추가 조치 · 김클로드
-
-### 김팀장 검수 (본창 Cursor · 2026-07-19)
-
-| 항목 | 결과 |
-|------|------|
-| **verdict** | **PASS — 승인 (수정 없음)** · 잔여 JS 점유 원인은 위 3차 항목의 김팀장 보완(청크화)으로 마감 |
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** |
-| **updated** | 2026-07-19 (김팀장 검수) · 2026-07-19(2차 김클로드) |
-| **task_id** | `title-postbootsettled-catchup-block-regression-20260719-r2` |
-| **요청자** | 대표님 — 1차 수정(아래, REVIEWED PASS) 이후 "버튼이 반응을 안한다... 이전과 다른 버그이다. 이부분이 문제가 된 것이다"로 별도 재지적 |
-
-### 1차 수정 이후에도 남아있던 것
-
-1차는 "버튼이 활성화되기까지 오래 걸림"은 확실히 고쳤지만(`postBootSettled` 즉시 true), 대표님이 지적하신 "탭해도 무반응"은 **1차가 다루던 것과 별개로 두 가지가 더 있었음**:
-
-1. **탭 직후 시각적 피드백이 원래 없었음(기존부터)**: `handleStart`의 신규계정·`introSeen` 안 된 계정 분기(`app/index.tsx`)는 `titleNavLockRef.current=true`만 세팅하고 `runStageNavAfterTeardown`을 호출하는데, 이 함수 자체가 rAF 2회+idle-wait(`InteractionManager` 또는 최대 2.5초 상한)+rAF 2회+64ms 순서로 **버튼 모양이 그대로인 채** 최대 2.5초+ 걸려서야 실제 화면 전환이 일어남. 그 사이 유저가 "안 눌렸나?" 하고 재탭하면 `titleNavLockRef` 때문에 조용히 무시됨 — 이게 "탭해도 무반응"으로 보였을 가능성이 큼. (`continueFlowActive` 분기는 이미 즉시 로딩화면으로 바뀌어서 이 문제가 없었음 — 신규계정 분기만 빠져있었음.)
-2. **1차 수정 자체가 만든 잔여 경합 가능성**: 1차에서 catch-up을 `InteractionManager.runAfterInteractions`로 옮겼는데, 타이틀 버튼의 `runStageNavAfterTeardown`도 내부적으로 **같은 `InteractionManager` 대기열**을 씀(`stageNavGate.ts`의 `runStageUiAfterIdle`). 버튼이 빨리 활성화되도록 고친 만큼 유저가 더 빨리 탭하게 됐고, 그 타이밍에 catch-up 콜백도 막 대기열에서 실행될 수 있어 여전히 경합 여지가 남아있었음.
-
-### 수정 내용
-
-- **`app/index.tsx`**: `navPending` state 신설 — `handleStart`의 신규계정/미완료계정 분기에서 `titleNavLockRef.current=true` 직후 `setNavPending(true)`로 **탭 즉시** 버튼을 로딩 스피너로 전환(`continueFlowActive` 분기와 동일한 즉각 피드백을 이 분기에도 적용). 버튼 `disabled`·스피너 조건에 `navPending` 추가.
-- **`app/_layout.tsx`**: catch-up 지연 방식을 `InteractionManager.runAfterInteractions` → **`setTimeout(fn, 400)`**로 교체(부트 효과·포그라운드 복귀 효과 둘 다) — 타이틀 화면 자체 네비게이션이 쓰는 `InteractionManager` 대기열과 완전히 분리해 경합 가능성 자체를 없앰. 서브코어 자체 `onBoot()` 프로브(`ArcCoreDailyOpsSubCore`·`ArcCoreTerritorialCombatSubCore`)는 원래대로 `InteractionManager` 유지(이번 변경과 무관, 재진입 가드(`passRunning`)로 중복 실행도 안전).
-
-### self-check
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
-- [x] `npm run audit:memory:all` — **전부 PASS**(memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
-- [x] git commit **안 함**
-
-### 리스크·주의
-
-- 실기 미확인 — 특히 **신규 계정(최초 실행) 탭 직후 즉시 스피너로 바뀌는지**, 그리고 **버튼 활성화 직후 바로 연타해도 두 번째 탭이 무시만 되고 화면이 이상해지지 않는지** 확인 필요.
-- `ARC_CORE_CATCH_UP_DEFER_MS=400`은 임의값 — 실기에서 여전히 탭과 경합하면 늘리는 방향으로 조정.
-
----
-
-## ✅ REVIEWED — 타이틀 화면 로딩 몇배 증가·버튼 무반응 회귀 수정 · 김클로드
-
-### 김팀장 검수 (본창 Cursor · 2026-07-19)
-
-| 항목 | 결과 |
-|------|------|
-| **verdict** | **PASS — 승인 (수정 없음)** |
-| 근본원인 검증 | 김팀장이 당일 추가한 `postBootSettled` await 게이트가 ①로딩 수 배 증가 ②`Promise.race` 12초 상한 후에도 백그라운드 catch-up이 JS 스레드 점유 → 탭 무반응 재발 — diff·코드로 재확인. 서브코어 `onBoot()`의 검증된 `InteractionManager.runAfterInteractions` 패턴으로 통일한 것이 타당 |
-| diff 전수 확인 | `app/_layout.tsx` 2곳(부트·포그라운드 복귀) InteractionManager 이관 + `catchUpTask.cancel()` 클린업 · `appBootStore`/`index.tsx`/`localAccountReset.ts`의 `postBootSettled` 용례 유지 — handoff 기술과 일치 |
-| 잔여 리스크 | catch-up 실행 도중 탭이 들어오면 해당 sync 패스 길이만큼 지연 가능(기존 서브코어 프로브와 동일 수준) — 실기에서 `[title-diag] catchUp=..ms` 로그로 확인 예정 |
-| 게이트 재실행 | `npx tsc --noEmit -p tsconfig.client.json` PASS · `npm run audit:memory:all` 전부 PASS(37/37 · skia 20/20 · worklet PASS · reclaim 20/20 · resident 7/7 · hot-path 0) |
-| 실기 검증 | 미실시 — 대표님 실기에서 ①버튼 활성화 속도 복원 ②활성화 직후 탭 반응 ③백그라운드 복귀 ④`[title-diag]` 로그로 catch-up 실행 확인 |
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** |
-| **updated** | 2026-07-19 (김팀장 검수) · 2026-07-19 (김클로드 작성) |
-| **task_id** | `title-postbootsettled-catchup-block-regression-20260719` |
-| **요청자** | 대표님 — "현재 시작화면 로딩(시작버튼)이 이전보다 몇배 늘어나고 버튼 활성화시 바로 클릭이 안되는 오류가 발생중이다. 현재 김팀장이 수정중인데 바로 수정이 안되고 있다... 완전히 수정하라" |
-| **선행 분석** | 같은 대화에서 먼저 "분석만" 진행 — git diff로 원인 확정 후 이번에 실제 수정. 분석 결과를 그대로 handoff에 남김(아래) |
-
-### 근본원인 (git diff로 확정)
-
-오늘(2026-07-19) 김팀장이 **다른** 버그("버튼 보이는데 탭해도 무반응")를 고치려고 `app/_layout.tsx`·`src/store/appBootStore.ts`에 `postBootSettled` 게이트를 추가했는데, 이게 두 증상을 **동시에** 유발했음:
-
-1. **로딩 몇 배 증가**: 타이틀 버튼이 `bootReady` 하나만 보던 걸(이전 정상 동작), 오늘부터 `bootReady && postBootSettled`로 바뀌었고 `postBootSettled`는 아크코어 벽시계 catch-up(`applyArcCoreWallClockCatchUpFromPersistedGap` — 최대 48시간분 오프라인 경과를 일괄 반영)과 영토전 probe(`requestTerritorialCombatProbeAfterCatchUp` — 5단계 hydrate+combat pass)를 **`await`로 다 기다린 뒤에야** true가 되도록 바뀌었음(`Promise.race`로 12초 상한은 있었지만, 정상 케이스에서도 이전엔 없던 대기가 새로 생김).
-2. **버튼 활성화돼도 클릭 무반응(재발)**: 애초에 고치려던 증상 그 자체 — `Promise.race([작업, 12초 타임아웃])`은 진 쪽 프라미스를 취소하지 않아서, 12초 상한에 걸리면 `postBootSettled=true`(버튼 활성화)로 바뀌어도 무거운 catch-up 작업이 백그라운드에서 계속 JS 스레드를 점유 중이라 그 순간 탭하면 그대로 무반응 — 고치려던 버그가 형태만 바뀌어 남아있었음.
-
-**중요 발견**: 이 프로젝트에는 이미 정확히 같은 문제(무거운 부트 후속 작업이 JS 스레드를 점유해 화면이 멈추는 것)를 해결한 **검증된 패턴**이 있었음 — `ArcCoreDailyOpsSubCore.onBoot()`·`ArcCoreTerritorialCombatSubCore.onBoot()`가 이미 `InteractionManager.runAfterInteractions()`로 무거운 프로브를 감싸서 "현재 인터랙션과 경합 안 할 때만" 실행하고 있음(주석: "부트 프레임 차단 금지... 정오 이후 부팅 시 무거운 경제·코어 배치가 JS 스레드를 점유해 시작 화면이 멈추는 회귀 방지"). 오늘 추가된 코드만 이 패턴을 안 쓰고 `await`+`Promise.race`로 직접 막았던 게 회귀 원인.
-
-### 수정 내용
-
-`app/_layout.tsx` 2곳(①`bootReady` 효과, ②`AppState` 포그라운드 복귀 효과) — 기존 검증된 패턴과 동일하게 통일:
-
-- `postBootSettled`를 catch-up 완료 대기 없이 **`bootReady`와 거의 동시에 즉시 `true`**로 설정(이전 정상 동작과 동일 타이밍으로 복원).
-- 벽시계 catch-up + territorial probe는 `InteractionManager.runAfterInteractions(...)`로 넘겨, 현재 진행 중인 탭/인터랙션이 없을 때만 백그라운드로 실행 — 서브코어 자체 `onBoot()`와 동일한 방어 패턴.
-- `Promise.race`+12초 타임아웃 제거(더 이상 버튼을 막지 않으므로 상한 자체가 불필요 — 실패해도 `try/catch`로 무시하고 다음 기회에 재시도되는 건 기존과 동일).
-- `postBootSettled` 자체는 **삭제하지 않고 유지** — `src/account/localAccountReset.ts`(계정 초기화 후 타이틀 복귀 시 `InteractionManager.runAfterInteractions`로 올바르게 쓰고 있음)의 기존 용례는 이번 수정과 무관하게 그대로 둠.
-
-### self-check
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
-- [x] `npm run audit:memory:all` — **전부 PASS**(memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
-- [x] git commit **안 함**
-
-### 리스크·주의
-
-- **실기 미확인**(에뮬레이터/디바이스 없음) — 아래 확인 필요:
-  1. 타이틀 화면 진입 시 버튼이 예전(오늘 이전) 속도로 빠르게 활성화되는지
-  2. 활성화 직후 즉시 탭해도 정상 반응하는지(오래 앱을 안 켰던 계정 포함 — catch-up 대상량이 큰 케이스가 재현 조건에 더 유리)
-  3. 앱을 백그라운드로 오래 뒀다가 복귀할 때도 동일하게 정상인지(②구간)
-  4. 벽시계 catch-up·영토전 probe 자체가 어쨌든 실행은 되는지(`__DEV__`일 때 `[title-diag] catchUp=...ms probe=...ms` 로그로 확인 가능 — 실행 시점만 늦춰졌을 뿐 스킵되면 안 됨)
-- `postBootSettled=true`를 즉시 세팅하는 방식이 "실제 입력 가능=버튼 표시" 원칙(주석 의도)에서 살짝 벗어난 것처럼 보일 수 있으나, `InteractionManager.runAfterInteractions`가 정확히 "탭 등 진행 중인 인터랙션이 없을 때만" 실행을 보장하므로 실질적으로는 동일한 보호를 더 가벼운 방식(캐치업 자체를 안 막고 경합만 피함)으로 달성한 것.
-
----
-
-## ✅ REVIEWED — 최초 게임시작 인트로 "화면 한번 나왔다 스킵/재시작" 버그 수정 · 김클로드
-
-### 김팀장 검수 (본창 Cursor · 2026-07-17)
-
-| 항목 | 결과 |
-|------|------|
-| **verdict** | **PASS — 승인 (수정 없음)** |
-| 근본원인 검증 | `!hadLocalAccountMeta` 분기만 `setCloudRestorePending(true/false)` 누락 — 바로 아래 `hadLocalAccountMeta:true` 분기와 비대칭이었음을 코드로 재확인. `titleInteractive`가 이 값으로 버튼을 잠그므로 stale `player=null` 라우팅 → 뒤늦은 `setPlayer()` 개입 시나리오와 증상 일치 |
-| 예외 안전성 | `tryRestorePlayerFromCloud`는 내부 try/catch로 **절대 throw하지 않음**(`firestore.ts:159-162`) → pending=true로 영구 잠기는 경로 없음. 신규 계정(캐시·클라우드 모두 없음)은 서버 왕복 없이 즉시 `no_cloud_account` 반환이라 버튼 잠금 체감 지연도 거의 없음 |
-| cancelled 경로 | `if (cancelled) return`으로 pending이 남는 케이스는 기존 true-분기와 동일 패턴(언마운트/deps 재실행 시 자연 해소) — 신규 리스크 아님 |
-| 메모리 | 부트 1회 경로 상태 2회 갱신뿐 — 틱/루프 할당 없음 |
-| tsc | `npx tsc --noEmit -p tsconfig.client.json` PASS (재실행 확인) |
-| 실기 검증 | 미실시 — 완전초기화 재테스트 사이클의 재설치 시나리오에서 확인 예정 |
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** |
-| **updated** | 2026-07-17 (김팀장 검수) · 2026-07-17 (김클로드 작성) |
-| **task_id** | `title-cloud-restore-intro-flash-race-20260717` |
-| **요청자** | 대표님 — "최초 게임시작시 스토리 진행시 인류는 인공지능... 으로 시작되는 화면이 한번 나오다가 스킵되고 정상적으로 다시 시작되는 버그" |
-
-### 근본원인 (코드로 확인)
-
-`app/index.tsx`의 타이틀 화면 클라우드 복원 판정 로직(125-183행)에서, 로컬 계정 메타가 없는 경우(`!hadLocalAccountMeta` — 신규 설치·재설치 등) 분기(153-164행, 수정 전)만 유독 `setCloudRestorePending(true)`를 안 부르고 있었습니다. 같은 함수의 `hadLocalAccountMeta: true` 분기(166행)는 정상적으로 `true`→(대기)→`false`로 감싸는데, 이 분기만 비대칭이었습니다.
-
-`titleInteractive = bootReady && hydrated && !cloudRestorePending`(99행)이 이 값으로 [게임 시작] 버튼 활성화를 결정하므로, 이 분기에서는 **Firestore `tryRestorePlayerFromCloud` 판정이 끝나기 전에도 버튼이 눌립니다.** 이때:
-
-1. `handleStart`(185행)가 `player` 스냅샷을 읽는데, 판정이 아직 안 끝나 `player`가 `null`인 상태라 "신규 계정" 분기로 확정 — `NEW_ACCOUNT_INTRO_ROUTE`(`/intro?sceneId=intro01&flow=preNickname`)로 라우팅해 인트로 1페이지("인류는 인공지능...")를 띄웁니다.
-2. 잠시 후 백그라운드에서 돌던 클라우드 복원이 완료되면 `usePlayerStore.getState().setPlayer(result.player)` + `bootstrapPlayerAfterCloudRestore(...)`가 **인트로 화면이 이미 마운트된 상태에서** 전역 player/world 상태를 큼직하게 갈아치웁니다.
-3. 이 타이밍(재설치·클라우드에 기존 진행분이 있는 계정 등)에서 "인트로 1페이지가 잠깐 보였다가, 뭔가에 끊기고, 다시 처음부터 정상적으로 재생"되는 게 보고된 증상과 일치합니다.
-
-### 수정
-
-`app/index.tsx`의 `!hadLocalAccountMeta` 분기에 `setCloudRestorePending(true)`(호출 전)·`setCloudRestorePending(false)`(호출 후) 2줄 추가 — 바로 아래 `hadLocalAccountMeta: true` 분기와 완전히 대칭되도록 맞췄습니다. 이제 두 분기 모두 클라우드 판정이 끝날 때까지 [게임 시작] 버튼이 잠기므로, `handleStart`가 stale `player=null` 스냅샷으로 라우팅을 확정한 뒤 뒤늦게 진짜 player가 끼어드는 창구 자체가 사라집니다.
-
-### self-check
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
-- [x] git commit **안 함**
-
-### 리스크·주의
-
-- **실기 미확인** — 재설치(로컬 데이터 삭제 후 같은 계정으로 재접속) 시나리오로 재현·검증 필요(에뮬레이터/디바이스 미보유). 진짜 신규 계정(클라우드에도 데이터 없음)은 버튼이 잠깐 더 길게 비활성 상태로 보일 수 있으나(Firestore 왕복 1회), 신규 계정은 원래도 `tryRestorePlayerFromCloud`가 즉시 `not_found`류로 끝나 체감 지연은 거의 없을 것으로 예상됩니다.
-- 이 수정은 레이스 윈도우를 없애는 것 — 정확히 어떤 리렌더/리마운트 경로로 "화면이 끊겼다 재시작"되는 시각효과가 나오는지까지는 재현 없이 100% 특정하지 못했지만, 원인이 되는 stale-snapshot 라우팅 자체는 확실히 막힙니다.
-
----
-
-## ✅ REVIEWED — eternal_throne 웨이브 디펜스 진입 트리거 + 마지막 웨이브 보스 게이트 · 김클로드
-
-### 김팀장 검수 (본창 Cursor · 2026-07-17)
-
-| 항목 | 결과 |
-|------|------|
-| **verdict** | **PASS — 승인 (수정 없음)** |
-| diff 전수 확인 | `planet.tsx`(하드코딩 `isTestBed`→CSV `mainStageCombatVariant` 기반 `waveDefenseEnabled`) · `useWaveDefenseController.ts`(rename만, 로직 동일) · `arcCoreShadowBossClone.ts`(최종 웨이브 게이트, `getState()` 동기 read만) · `PlanetEdenRaidTestLayer.tsx`(리빌 최종 웨이브 게이트 + endgame_boss 스폰 레이아웃) · amendment §2·§3 — 전부 handoff 기술과 일치 |
-| 메모리·핫패스 | `resolvePlanetMainStageCombatVariant`는 모듈 Map O(1) 조회(렌더당 할당 없음) · 전투 경로 네트워크 호출 없음 · `npm run audit:memory:all` 전부 PASS (재실행 확인) |
-| tsc | `npx tsc --noEmit -p tsconfig.client.json` PASS (재실행 확인) |
-| vega_base 회귀 | `arcCoreShadowBossClone` 본진 행성 가드로 무영향 · draco_wave 트리거 동작 동일 (정적 확인) |
-| 잔여 과제 | ①(Firestore `arc_core_shadow_*` 쓰기 권한 — 자기 uid만 허용 규칙) **미해결·별도 P1** · ②(닉네임 미러 통일) 저우선 · ③(진입 트리거 부재)은 **본 작업으로 해소** |
-| 실기 검증 | 미실시 — 대표님 완전초기화 후 재테스트 사이클에서 handoff 기재 시나리오 1~6 확인 예정 |
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** |
-| **updated** | 2026-07-17 (김팀장 검수) · 2026-07-13 (김클로드 작성) |
-| **task_id** | `arccore-shadow-eternal-throne-wave-trigger-20260713` |
-| **요청자** | 대표님 — 2차 검수 지적 ③(진입 트리거 부재)에 "웨이브 전투룰로 전투를 시작하는 것은? 전 행성의 기본 전투룰은 웨이브 전투룰이다"로 재검토 지시 → plan mode 승인 → "웨이브 전투룰 그대로 재사용, 마지막 웨이브만 보스 적용" 확정 |
-| **선행** | 위 2차 검수(`review-arccore-shadow-pairing-20260713-r2`) 지적 ③에 대한 실제 코드 수정. ①(Firestore 쓰기 권한)·②(닉네임 미러 우회)는 이번 범위 밖, 여전히 미해결로 남아있음 |
-
-### 검토 결과 — 재확인한 사실관계
-
-`tables/balance/planet_hostile_red_progression.csv`에 `mainStageCombatVariant` 컬럼이 이미 있고 `vega_base=draco_wave`, `eternal_throne=endgame_boss`(zoneIndex=20, amendment 문구와 일치)로 **서로 다른 값**이 이미 채워져 있었음. 그런데 `useWaveDefenseController`를 트리거하는 `isTestBed: planet?.id === 'vega_base'`(`planet.tsx:954`)는 이 컬럼을 안 읽고 행성 id 문자열을 하드코딩한 것이었음 — eternal_throne이 전투 진입 자체가 안 되던 근본 원인. 대표님이 "웨이브 전투룰이 기본"이라고 하셔서, `draco_wave`뿐 아니라 `endgame_boss`도 같은 웨이브 디펜스 엔진을 타도록 하는 것으로 확정.
-
-**로직상 문제 2건 확인**(둘 다 이번에 같이 수정, 대표님 "그대로 재사용" 지시의 자연스러운 연장으로 판단):
-1. `resolveArcCoreShadowBossOverride`가 웨이브 번호를 안 봐서, 그대로 뒀으면 9웨이브 전부의 red 슬롯0에 복제 보스가 반복 등장했을 것(1웨이브부터 범용 침입자 대신 보스 등장 — "최종 보스전" 서사와 안 맞음).
-2. 리빌(닉네임 공개) 트리거도 웨이브 번호를 안 봐서, 그대로 뒀으면 **1웨이브만 이겨도 짝 유저 닉네임이 공개**됐을 것.
-
-### 수정 내용
-
-- **`app/(game)/planet.tsx`**: `resolvePlanetMainStageCombatVariant`(기존 함수, `PlanetEdenRaidTestLayer.tsx`에서 이미 쓰던 것 재사용) import 추가. `useWaveDefenseController`의 `isTestBed: planet?.id === 'vega_base'`(문자열 하드코딩) → `waveDefenseEnabled: variant === 'draco_wave' || variant === 'endgame_boss'`(테이블 기반)로 교체.
-- **`src/game/waveDefense/useWaveDefenseController.ts`**: prop `isTestBed` → `waveDefenseEnabled`로 rename(eternal_throne은 QA 테스트베드가 아니라 실제 엔드게임 콘텐츠라 이름이 오해 소지 있었음). 로직(10초 지연 트리거·9웨이브 루프·`endRun`)은 완전히 그대로, 이름·주석만 갱신.
-- **`src/arcCore/shadow/arcCoreShadowBossClone.ts`**: `resolveArcCoreShadowBossOverride`에 게이트 추가 — 웨이브 디펜스가 해당 행성에서 `active`하면 `waveIndex >= WAVE_DEFENSE_MAX_WAVES`(9)일 때만 통과, 그 전 웨이브는 `null` 반환(기존 CSV 범용 침입자 그대로 스폰). 기존 게이트(본진 행성·슬롯0·스냅샷 보유)는 안 건드림.
-- **`src/components/planet/PlanetEdenRaidTestLayer.tsx`**:
-  - `maybeTriggerArcCoreShadowRevealOnCombatVictory` 호출부에 동일한 "마지막 웨이브 또는 비-웨이브전투"게이트 추가(`useWaveDefenseStore`/`WAVE_DEFENSE_MAX_WAVES` 신규 import 1개만 추가, `useWaveDefenseStore`는 이미 이 파일에서 쓰던 것).
-  - `resolveDuelSpawnVariantForPlanet`의 `draco_wave` 전용 고정 스폰 레이아웃 분기에 `endgame_boss`도 포함(스폰 방식 일관성).
-- **`.cursor/rules/arcfire-shadow-pairing-amendment.mdc`**: §2·§3에 웨이브 디펜스 재사용·마지막 웨이브 게이트 내용 반영(정본 문서-구현 동기화).
-
-### self-check
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
-- [x] `npm run audit:memory:all` — **전부 PASS**(memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
-- [x] git commit **안 함**
-
-### 리스크·주의 — combat 핵심 로직 변경이라 실기 검증 중요
-
-- **실기 미확인**(에뮬레이터/디바이스 미보유) — 아래 시나리오 전부 대표님 확인 필요:
-  1. `eternal_throne` 착륙 → 10초 후 웨이브1 자동 시작(vega_base와 동일 패턴인지)
-  2. 웨이브 1~8: 복제 보스 안 나오고 범용 침입자만, 리빌 알럿 안 뜨는지
-  3. 웨이브 9: 슬롯0에 짝 유저 기함 스펙 적용 + 위장명(`아크코어 근원체`) 표시
-  4. 웨이브 9 승리 시점에만 닉네임 공개 알럿 1회
-  5. **`vega_base` 회귀 없는지** — `arcCoreShadowBossClone.ts` 게이트가 `combatPlanetId !== ARC_CORE_SHADOW_HOME_BASE_PLANET_ID`에서 이미 걸러지므로 vega_base엔 영향 없어야 함(정적 코드로는 확인, 실기 재확인 권장)
-  6. 스냅샷 미보유(미페어·오프라인) 상태로 웨이브9 도달 시 CSV 폴백 정상 동작
-- **①(Firestore 쓰기 권한)·②(닉네임 전체프로필 읽기)는 이번 작업 범위 밖** — 2차 검수 기록 그대로 유효, 별도 조치 필요.
-- `buildWaveDefenseEnemyFleet`(범용 침입자 생성 로직) 자체는 미변경 — 웨이브 1-8 난이도·구성은 vega_base와 동일 공식.
-
----
-
-## 🔵 REVIEW ONLY(코드 변경 없음) — 아크코어 섀도우 페어링 2차 검수(확장분 포함) · 김클로드
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEW`** — 코드 변경 없음, 검수 의견만 |
-| **updated** | 2026-07-13(2차) |
-| **task_id** | `review-arccore-shadow-pairing-20260713-r2` |
-| **요청자** | 대표님 — "김팀장이 구현 내용 재검토 실시" |
-| **전제** | 1차 검수(아래 `review-arccore-shadow-pairing-20260713`) 이후 김팀장이 **"복제 전함 보스" 기능을 크게 확장**함(전함 스냅샷 publish/fetch, `arc_core_shadow_profiles/{uid}` 미러, 본진 red 리드 슬롯 주입) — amendment §16-A도 이 내용으로 갱신됨. 1차 지적 3건 중 어디까지 해소됐는지 재확인. |
-
-### 1차 지적 재확인
-
-**① Firestore 쓰기 권한 무방비 — 미해결, 오히려 심각도 상승.** `firestore.rules`는 여전히 그대로(`arc_core_shadow_*` 전부 `allow read, write: if true`, auth 조건도 없음). 1차 때는 "페어링 장부 조작" 정도였는데, 이번 확장으로 **`arc_core_shadow_profiles/{uid}`에 전투 스탯 스냅샷(`maxHp`·`attackBonus`·`damageDiceBonus`·이동속도 등)을 아무나 직접 덮어쓸 수 있게** 됐습니다. `parseArcCoreShadowShipSnapshot`(`arcCoreShadowShipSnapshot.ts:176-235`)이 타입 체크·일부 `Math.max` 하한은 두지만 **상한 클램프가 전혀 없어서**, 변조 클라이언트가 예컨대 `combat.maxHp: 999999999` 나 `combat.attackBonus: 999999`를 남의 uid 문서에 심으면 그 사람이 겪는 "핵심 플레이"(본진 보스전)가 즉시 무적이거나 즉사시키는 보스로 바뀝니다. 즉 1차의 "장부 조작" 리스크가 이번 확장으로 "**다른 실제 유저의 엔드게임 전투를 직접 망가뜨릴 수 있는**" 리스크로 격상됐습니다. `game_save_backups`에 이미 있는 `request.auth.uid == uid` 패턴을 `arc_core_shadow_pairs`·`arc_core_shadow_profiles`·`arc_core_shadow_pool`에도 적용하는 걸 강하게 권합니다(최소한 각자 자기 uid 문서만 쓰게).
-
-**② 짝 유저 데이터 미러 우회 — 부분 해소.** 새 스냅샷(전함 스펙) 쪽은 스펙대로 `arc_core_shadow_profiles/{uid}` 미러를 통해서만 오갑니다(`publishArcCoreShadowShipProfile`/`fetchArcCoreShadowShipProfile`) — 잘 지켜졌습니다. 다만 `fetchArcCoreShadowNickname()`은 여전히 `users/{uid}` 전체 문서를 직접 `getDoc`합니다(변경 없음). §1의 "닉네임 등 공개 안전 필드는 단발 getDoc 허용"과 §2의 "확장 데이터는 미러로만, 전체 프로필 직접 참조 금지"를 같이 읽으면 — 닉네임 자체는 v1 허용 범위로 봐도 되겠지만, 굳이 전체 문서를 당겨올 필요 없이 이제 존재하는 `arc_core_shadow_profiles`에 닉네임도 같이 넣어서 그쪽만 읽으면 되므로, 기왕 미러가 생긴 김에 통일하는 걸 권합니다(우선순위는 낮음).
-
-**③ 리빌·보스 진입 트리거 도달 불가능 — 미해결, 이번 확장으로 비중이 커짐.** 코드 배선(`resolveArcCoreShadowBossOverride`가 `initAgents`의 red 슬롯0 생성 경로(`PlanetEdenRaidTestLayer.tsx:2354`)에 정확히 연결됨)은 확인했고 잘 만들어져 있습니다. 그런데 `eternal_throne`에 배치된 함장 3명(`npc_ai_captains.csv` 100-102행, `npc_cpt_enemy_eternity_01/02/03`)이 **여전히 `operationalState=general`**이고(테이블 자체는 이번에도 안 바뀜), `app/(game)/planet.tsx`·`src/game/planetHub/` 어디에도 `eternal_throne` 언급이 없습니다 — `vega_base`류 강제 테스트베드 트리거도 없습니다. 표준 전투 진입 판정(`hasEnemyFleetEnteredPlanetOrbit`)은 `operationalState==='combat'`만 인정하므로, **지금 게임 상태로는 플레이어가 본진에서 전투를 시작할 방법이 여전히 안 보입니다.** amendment 자체가 이 기능을 "핵심 실제 플레이(핵심 플레이)"라고 부르는데, 그 핵심이 아직 발동 지점이 없는 셈이라 — 이번 확장분(스냅샷 시스템 전체)이 지금은 도달 불가능한 코드입니다. 있다면 제가 못 찾은 것이니 확인 부탁드립니다.
-
-### 신규 확인 사항 (확장분 자체 품질)
-
-- `buildLocalArcCoreShadowShipSnapshot`(자기 기함 스냅샷 빌드) → `publishArcCoreShadowShipProfile`(publish) → `fetchArcCoreShadowShipProfile`(짝 유저 fetch, 부트당 1회, `runArcCoreShadowPairingPass.ts`의 `syncShadowShipProfilesOnce`) → `resolveArcCoreShadowBossOverride`(전투 스폰 시 zustand 동기 read만, 네트워크 없음) → `initAgents` red 슬롯0 주입까지 **엔드투엔드로 실제 연결돼 있음을 코드로 확인**. 전투 경로 자체에는 네트워크 호출이 없다는 설계 의도(§16-A)도 지켜짐.
-- 스냅샷 미보유(미페어·오프라인·fetch 실패) 시 `resolveArcCoreShadowBossOverride`가 `null`을 반환해 기존 CSV 보스로 자연 폴백 — 안전.
-- i18n 신규 키(`arcCoreShadow.boss.concealedName`) ko/en 둘 다 존재.
-- `npx tsc --noEmit -p tsconfig.client.json` 전체 PASS(확장분 포함, 에러 없음).
-
-### 결론
-
-코드 완성도 자체는 높습니다(파이프라인 연결, 폴백, 타입 안전 전부 확인). 다만 **①(쓰기 권한)과 ③(진입 트리거 부재)는 여전히 미해결**이고, 특히 ①은 이번 확장으로 "다른 실유저 엔드게임 전투 결과를 원격으로 조작 가능"이라는 더 구체적이고 심각한 형태가 됐습니다. 실서비스 노출 전에 최소 ①(자기 uid만 쓰기 허용 규칙)과 ③(본진 전투 진입 경로) 둘 다 확정 필요.
-
----
-
-## 🔵 REVIEW ONLY(코드 변경 없음) — 아크코어 섀도우 페어링(김팀장 구현) 검수 의견 · 김클로드
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEW`** — 이 항목은 제가 코드를 고친 게 아니라 **김팀장 작업물을 검수한 의견**입니다 |
-| **updated** | 2026-07-13 |
-| **task_id** | `review-arccore-shadow-pairing-20260713` |
-| **요청자** | 대표님 — "현재 김팀장 쪽에서 아크코어 섀도우 페어링 구현 작업이 진행되었다. 전체 작업에 대해 철저하게 검수하라. (코드 보완부분 중점)" |
-| **범위** | `.cursor/rules/arcfire-shadow-pairing-amendment.mdc`, `src/firebase/arcCoreShadowPairing.ts`, `src/store/arcCoreShadowIdentityStore.ts`, `src/arcCore/shadow/*.ts`, 연동부(`app/_layout.tsx`·`onboardingPilotRegistration.ts`·`PlanetEdenRaidTestLayer.tsx`·`localAccountReset.ts`), i18n 2개 키. 전부 **미커밋 상태**(git status 미추적/수정) — 아직 handoff 기록도 없었음. |
-
-### 결론 요약
-
-핵심 매칭 로직(대기열 트랜잭션)·boot 비동기 규율·계정초기화 제외 처리는 잘 만들어졌습니다. 다만 **③이 가장 심각**하고, 나머지는 "완성 전 스텁/설계 의도와 실제 구현의 괴리" 성격입니다.
-
-### ① [높음] `arc_core_shadow_pairs/{uid}` · `arc_core_shadow_pool/waiting` — Firestore 쓰기 권한 무방비
-
-`firestore.rules`를 직접 확인한 결과, 이 두 컬렉션은 프로젝트 공통 와일드카드 `allow read, write: if true`(그나마 `request.auth != null` 조건도 없음) 하나로만 걸려 있습니다. 반면 이미 존재하는 `users/{uid}/game_save_backups/**` 규칙은 `request.auth.uid == uid`로 **본인 문서만** 쓰게 막아뒀습니다 — 즉 "본인 uid만 쓰기 허용" 패턴이 이 프로젝트에 이미 있는데 섀도우 페어링에는 적용 안 됨.
-
-`ensureArcCoreShadowPairing(uid)`가 `uid`를 내부에서 `getCurrentUser()`로 강제하지 않고 인자로 받기 때문에, 그리고 규칙상 아무나 아무 uid 문서에 쓸 수 있기 때문에 — 변조 클라이언트가 `arc_core_shadow_pairs/{다른유저uid}`에 직접 `setDoc`으로 임의 `shadowUid`를 덮어써서 **타 유저의 페어 관계를 조작/훼손**할 수 있습니다(트랜잭션 로직 자체를 완전히 우회 가능). 대기열 문서(`arc_core_shadow_pool/waiting`)도 마찬가지로 스팸/오염이 가능합니다. 헌법 수정안 §16-A가 "공개 안전 필드만", "일회성 상호 매칭"이라고 신중하게 스코프를 좁혀놨는데, 정작 쓰기 자체엔 그 신중함에 걸맞은 서버측 강제가 전혀 없습니다.
-
-**제안**: `game_save_backups`와 동일한 패턴으로 `arc_core_shadow_pairs/{uid}`에 `request.auth.uid == uid` 규칙 추가(자기 자신의 페어 문서만 쓰기 허용 — 상대방 페어 문서는 트랜잭션 안에서 같이 쓰는 구조라 규칙 설계를 조금 더 고민 필요할 수 있음, 예: Cloud Function 경유 또는 "상대 문서엔 자기 uid를 shadowUid로 넣는 것만" 허용하는 조건식).
-
-### ② [중간] 짝 유저 닉네임 읽기가 수정안 자기 조항(§2)을 벗어남
-
-`fetchArcCoreShadowNickname()`(`src/firebase/arcCoreShadowPairing.ts:117-129`)이 `users/{uid}` **전체 문서**를 `getDoc`으로 읽습니다. 그런데 수정안 §2 "확장" 조항은 "짝 유저 데이터 노출은 `arc_core_shadow_profiles/{uid}` 공개 안전 미러 문서를 통해서만 확장한다(**전체 프로필 직접 참조 금지**)"라고 명시돼 있습니다 — 지금 코드는 정확히 그 금지된 방식(전체 프로필 직접 참조)으로 닉네임만 골라 씁니다. UI엔 닉네임만 노출되지만, 네트워크 상으로는 상대방 `users/{uid}` 문서 전체(`isAdmin` 포함)가 클라이언트에 도달합니다. `arc_core_shadow_profiles/{uid}` 미러 문서 자체가 아직 존재하지 않는 것으로 보아, 이건 "1차 스코프 축소"였을 가능성이 있지만 — 수정안 문구와 명백히 어긋나므로 김팀장·대표님 확인 필요.
-
-### ③ [중간, 미완성 가능성] 리빌 트리거 자체가 현재 도달 불가능할 수 있음
-
-`eternal_throne`에 배치된 NPC 함장 3명(`npc_cpt_enemy_eternity_01/02/03`, `npc_ai_captains.csv` 100-102행)을 확인했는데 **`operationalState = general`**입니다(`combat`이 아님). 기존 전투 트리거 판정 `hasEnemyFleetEnteredPlanetOrbit()`(`planetHubConstants.ts`)은 `operationalState !== 'combat'`이면 무시하도록 돼 있어서, 이 함장들은 지금 상태로는 궤도 진입 판정에 안 걸립니다. `eternal_throne`은 `vega_base` 같은 웨이브디펜스 테스트베드 플래그도 없습니다. 즉 **현재 게임 상태로는 플레이어가 `eternal_throne`에서 전투에 진입할 방법 자체가 안 보입니다** — 있다면 제가 못 찾은 것이니 확인 부탁드리고, 없다면 `maybeTriggerArcCoreShadowRevealOnCombatVictory` 배선 자체는 맞게 돼 있어도 실제로는 아직 발동 불가능한 "완성 전" 상태입니다(엔드게임 보스전 콘텐츠가 별도로 더 필요).
-
-### 잘 되어 있는 부분 (참고용)
-
-- 트랜잭션 매칭 로직(대기열 확인→상호 페어 원자적 기록→자기자신 페어링 방지 가드)은 Firestore 트랜잭션 재시도 의미론에 맞게 정확히 짜여 있음.
-- boot·온보딩 연동 전부 `void`/`setTimeout` 기반 fire-and-forget — CLAUDE.md 부트 동기 실행 금지 규칙 위반 없음. `onSnapshot`·주기 폴링도 없음(수정안 §1 준수).
-- `arcCoreShadowIdentityStore`가 `purgeLocalAccountData`에서 의도적으로 제외됐다는 주석·실제 코드 둘 다 확인 — 계정초기화 후에도 유지된다는 설계와 일치.
-- i18n 키(`arcCoreShadow.reveal.*`) ko/en 둘 다 존재, `npx tsc --noEmit -p tsconfig.client.json` 전체 PASS(신규 파일 포함 타입 에러 없음).
-
-### 확인 안 한 것 (제 검수 범위 밖)
-
-- `arc_core_shadow_profiles/{uid}` 미러 문서 스키마·구현 여부(존재 자체를 못 찾음 — ②와 연결).
-- 실기(디바이스) 상에서 실제 페어링 완료·리빌 알럿 동작은 미확인(정적 코드 검토만 수행).
-- 테스트 코드 없음(신규 기능 전체) — 필요 여부는 팀 판단.
-
----
-
-## 🟡 PENDING(신규 기능, UI만·테이블 재사용) — 무역소 전함 구매창 상단 이미지 슬롯 추가 · 김클로드
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`PENDING`** |
-| **updated** | 2026-07-12 |
-| **task_id** | `trade-ship-purchase-portrait-slot-20260712` |
-| **요청자** | 대표님 — "무역소 Buy 탭 > Ships 탭에서 전함 카드 클릭 시 뜨는 구매 정보창 최상단에 정사각형(현재 레이아웃 최대) 이미지 영역을 확보하고, 이미지 준비중 텍스트만 표시... 기존 상품 테이블에서 호출하는 테이블 기반 작업이어야 함(하드코딩·신규 테이블 생성 금지). Starter Fighter Mk.I는 이미 에셋 있음 — 연결" |
-
-### 구현 내용
-
-기존에 이미 존재하던 "전함 id → `npc_ai_ships.csv`의 `portraitImageAssetKey` → asset require()" 체인(조선소 화면 `app/(game)/shipyard.tsx`에서 이미 쓰던 것과 완전히 동일한 테이블·리졸버)을 무역소 구매창에도 그대로 연결. **신규 테이블·신규 CSV 컬럼·이미지 매핑 하드코딩 전부 없음** — 기존 `src/game/npcCapitalShipPortraitAssets.ts`(전함 id→require 맵, `ship_001.png` 등 이미 등록돼 있던 것 그대로)를 재사용만 함.
-
-- `src/ui/overlay/content/ShipPurchasePortraitSlot.tsx`(신규) — 헤더 바로 아래 카드 전폭 정사각형(`aspectRatio: 1`) 슬롯. `getNpcCapitalShip(npcCapitalShipId)?.portraitImageAssetKey` → `resolveNpcCapitalShipPortraitSource()`로 이미지 있으면 `resizeMode="contain"`으로 표시, 없으면 "이미지 준비중" 텍스트만 표시(`PlanetInfoPortraitSlot.tsx`의 filled/empty 이중 상태 패턴 그대로 재사용, 정사각형만 다름).
-- `src/ui/overlay/arcOverlayStore.ts` — `ArcOverlayTradeQuantityEntry`에 `npcCapitalShipId?: string | null` 필드 추가(전함 구매일 때만 채워짐 → 무기/장비/일반 아이템 구매창은 기존과 완전히 동일, 이미지 슬롯 자체가 안 뜸).
-- `src/ui/overlay/content/TradeQuantityOverlayContent.tsx` — `ArcOverlayCard`의 기존 `panelBleedPrefix` 슬롯(행성정보창에서 이미 쓰던 것과 동일 메커니즘)에 `entry.npcCapitalShipId`가 있을 때만 `ShipPurchasePortraitSlot` 연결.
-- `app/(game)/trade.tsx` `handleBuy` — 기존에 `onConfirm` 안에서만 계산하던 `capitalShipNpcId`(`itemDef.attrs.npcCapitalShipId`, `type==='capital_ship'`일 때만)를 함수 상단으로 끌어올려 `presentArcOverlayTradeQuantity` 호출 시 `npcCapitalShipId`로 같이 전달 — 중복 계산 제거, 로직 변경 없음.
-- `src/i18n/locales/ko.ts`·`en.ts` — `tradeQty.shipImagePending`("이미지 준비중"/"Image coming soon")·`tradeQty.shipImageA11y` 2개 키 추가.
-
-**Starter Fighter Mk.I 확인**: `capital_ship_Player_npc_red_fleet_1` → `attrs.npcCapitalShipId = "Player_npc_red_fleet_1"` → `npc_ai_ships.csv` 해당 행 `portraitImageAssetKey = "assets/images/ship/ship_001.png"` → 이미 `npcCapitalShipPortraitAssets.ts`에 등록돼 있어 실제 이미지로 표시됨. 그 외 전함(맵에 미등록된 `portraitImageAssetKey`)은 "이미지 준비중"으로 표시 — 이후 이미지 추가 시 `npcCapitalShipPortraitAssets.ts`의 맵에 한 줄만 추가하면 자동 반영(테이블 값은 이미 대부분 채워져 있어 별도 CSV 작업 불필요).
-
-### ⚠️ 후속 수정(같은 턴) — 스크롤 레이아웃 버그
-
-최초 구현은 이미지 슬롯을 `ArcOverlayCard`의 `panelBleedPrefix`(스크롤 밖 고정 영역, 행성정보창과 동일 메커니즘)로 붙였는데, 대표님이 즉시 "Description 영역만 스크롤되어 화면 아래에 너무 작게 표시된다"고 지적. 원인: 정사각형 이미지(카드 폭만큼 높이도 큼)가 헤더·메타 정보·푸터와 함께 카드의 **고정** 영역을 차지해버려서, bounded 카드 높이 안에서 ScrollView(설명·Tips·수량)에 남는 공간이 거의 없어짐 — 행성정보창 이미지(가로가 세로보다 훨씬 긴 배너형)에서는 안 생기던 문제가 정사각형이라 크게 불거짐.
-
-**수정**: `panelBleedPrefix` 사용을 제거하고, 이미지 슬롯을 `children`(=ScrollView 내부)의 **첫 항목**으로 이동 — 이미지·설명·Tips·수량이 전부 하나의 스크롤 영역 안에서 함께 움직임(`TradeQuantityOverlayContent.tsx` `styles.shipPortraitSection` 신설). `panelPrefix`(단가·재고·수요·보유 메타 행)는 그대로 고정 유지 — 크기가 작아 원인이 아니었음, 다른 구매창(무기/장비/아이템) 동작에 영향 없도록 최소 변경. 이미지는 이제 카드 좌우 패딩만큼 안쪽으로 들어가지만(기존 bleed는 카드 폭 끝까지) 여전히 정사각형·최상단·스크롤 가능.
-
-### self-check
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**(두 차례 모두)
-- [ ] `npm run audit:memory:all` — 해당 없음(Skia/STAGE dispose 무관, 순수 RN Image/View UI 추가)
-- [x] git commit **안 함**
-
-### 리스크·주의
-
-- 실기 미확인 — 무역소 Buy > Ships 탭에서 실제로 카드 눌러서 정사각형 슬롯·"이미지 준비중" 텍스트·Starter Fighter Mk.I 실제 이미지 표시·전체 스크롤 동작을 눈으로 확인 필요.
-- 무기/장비/일반 아이템 구매창·판매(sell) 모달은 `npcCapitalShipId`가 항상 null이라 기존 레이아웃과 100% 동일 — 회귀 리스크 낮음.
-
----
-
-## 🟡 PENDING(1줄 실질 수정 + 전면 재검수) — 웨이브전투 진입/웨이브전환/종료 메모리 할당·해제 전수 재검수 · 김클로드
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`PENDING`** |
-| **updated** | 2026-07-11 02:40 KST |
-| **task_id** | `wave-defense-combat-entry-exit-memory-audit-20260711` |
-| **요청자** | 대표님 — "전투 전환 상황에 대해 모두 재검수하고, 일괄적인 전투 진입과 해제에 대한 메모리 할당및 해제 부분도 집중검사하라... 웨이브전투 중심으로 집중 검수하라... 수정사항이 있다면 수정작업도 바로 진행하라" |
-| **선행작업** | 바로 위 `hub-activation-gl-views-spike-rootcause-20260710`(REVIEWED PASS) — vega_base 자동전투가 GL 급증의 트리거임을 확인한 작업의 후속. 이번엔 그 전투 자체의 진입→웨이브전환(9회)→종료 전 구간 메모리 수명을 전수 검사 |
-
-### 검사 범위·방법
-
-Explore 에이전트 2개(①웨이브디펜스 상태기계 entry→9웨이브→exit 추적 ②Skia/GPU 리소스 할당·해제 대칭성 감사)를 병렬로 돌렸으나 **세션 한도로 둘 다 중도 실패** — 이후 전부 직접 코드로 재확인하며 진행. 아래는 전부 파일:라인 직접 대조 완료.
-
-### 확인 결과 — 정상 동작 중인 것 (버그 아님, 이미 잘 구현돼 있음)
-
-1. **런 전체 종료(9웨이브 완주/패배)**: `useWaveDefenseController.ts` `endRun()` → `active=false` → `app/(game)/planet.tsx`의 `capitalCombatOrbitActive`가 false로 → `PlanetCapitalCombatRoot`(`src/game/planetCapitalCombatIntegration.tsx:60-62`)가 `<Binder>` 서브트리 전체를 실제로 **React 언마운트**시킴 → `PlanetEdenRaidOrbitSkiaCombat.tsx`의 언마운트 cleanup(950줄 파일 전수 확인)이 정확히 실행됨: `missileTrail`·`novaHead`·`diamond` 3개 Path 풀 전부 `drainSkPathPool` (라인 950-952, 최초 훑어봤을 때 앞 2줄을 놓쳐 "누락 아닌가" 의심했다가 재확인해서 배제), `novaTangentStable`·`thrusterLenSmooth` clear, `dropSkPictureReactFrame`, `reclaimCombatSkiaModuleCaches()`(모듈 전역 Paint·SkColor 캐시·PictureRecorder까지) 순서대로 실행. **완전함.**
-2. **웨이브 전환(9회, 런 안에서는 Canvas 리마운트 없음)**: `waveDefenseStore.ts`의 `waveGenKey`가 `setWave()`마다 증가 → `PlanetEdenRaidTestLayer.tsx:2649-2704`의 reseed effect가 `waveGenKey` 변화를 감지해 매 웨이브 `missilesRef`·missileHitFxRef·respawn 상태 등을 명시적으로 리셋하고, `clearCapitalRealtimeCombatPresentationCaches()`(= `runCombatSkiaPresentationReclaim()`)를 호출해 Skia 모듈 캐시·live picture frame을 회수함. **완전함.**
-3. **전투 중(9웨이브 내내) 주기적 안전판**: `app/(game)/planet.tsx:794-810`에 `HUB_COMBAT_SAFE_RECLAIM_INTERVAL_MS`(3분) 간격 `setInterval`이 이미 존재 — 처음엔 `runPlanetHubCombatSafeReclaimPass` 호출부를 못 찾아 "죽은 코드(orphaned)"로 오판했으나, `app/(game)/planet.tsx`가 `src/` 밖(Expo Router `app/` 디렉토리)이라 제 첫 grep 범위가 놓친 것 — 재검색으로 정상 존재·정상 배선 확인. 가드 조건(`periodicReclaimSuppressedRef`, 라인 671-678·797-800)도 이중부정이라 처음엔 반대로 읽었으나, "웨이브 모드에서는 phase==='combat'(실제 교전 프레임) 동안만 다른 5분/15분 reclaim을 skip하고, 그 skip 구간에서만 combat-safe reclaim이 대신 돈다"는 의도와 정확히 일치함(오독 정정 완료).
-
-### 확인 결과 — 실제 수정한 것 (1건)
-
-**`runPlanetHubCombatSafeReclaimPass`(`src/game/nativeReclaim/runPlanetHubCombatSafeReclaimPass.ts`)의 회수 범위가 좁았음.** 이 함수 자체는 정상 배선돼 있었지만(위 3번), 내부적으로는 `runCombatSkiaPresentationReclaim()`(Skia 캐시)과 `trimNativeBitmapCachesAsync()`(Fresco)만 호출 — 함수 docblock이 명시한 "mid-frame에 안전한 것만 골랐다"는 설계 의도 자체는 맞지만, **정작 `nativeReclaimBootstrap.ts`에 stage='combat' 리스너로 이미 등록돼 있던 `prunePlanetNebulaProfilesLru`/`compactPlanetMemoRegistryShells`(둘 다 순수 JS, Skia/GPU 호출 없음 — mid-frame 안전 기준에 부합)는 빠져 있었음**. 이 두 함수는 `runStageNativeReclaimPass`(스테이지 **이탈** 시점)를 통해서만 실제로 호출되고 있었고, 전투 중에는 한 번도 안 불림.
-
-**실제 발생 가능한 문제**: 허브를 여러 번 순회(허브 순회, 이미 CLAUDE.md에 READY 항목으로 등록된 이슈)하다가 vega_base 같은 곳에서 장시간(9웨이브) 자동전투에 들어가면, 이전에 들렀던 다른 행성들의 nebula profile이 route_blur 없이 전투 내내(15분+) 계속 상주 — 오늘(2026-07-10) 재시동 #2의 시그니처(GL은 평탄인데 PSS/native_heap만 +281MB 급등, 07-07 인시던트와 동일 패턴)와 부합하는 후보.
-
-**수정**: `runPlanetHubCombatSafeReclaimPass()`에 `prunePlanetNebulaProfilesLru(NEBULA_PROFILE_KEEP_ON_HUB_BLUR)` + `compactPlanetMemoRegistryShells()` 2줄 추가. 둘 다 이미 다른 곳(`runStageNativeReclaimPass.ts`)에서 검증된 함수 재사용 — 새 로직 없음, mid-frame 안전 기준(Skia/GPU 미호출)에 부합.
-
-### self-check
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
-- [x] `npm run audit:memory:all` — **전부 PASS**(memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
-- [x] git commit **안 함**
-
-### 리스크·주의
-
-- 이번 변경 1줄 추가는 이미 검증된 함수(`prunePlanetNebulaProfilesLru`·`compactPlanetMemoRegistryShells`) 재사용이라 신규 로직 리스크는 낮음. 다만 **실기(디바이스) 검증은 아직 안 함** — 다음 vega_base 장시간 전투 재현 때 `mem-timeline.csv`에서 restart #2류 패턴(GL 평탄, PSS/native_heap만 급등)이 줄어드는지 확인 필요.
-- 이번 조사에서 새로운 코드 버그는 이 1건 외에 발견 못 함 — 나머지(런 종료 언마운트, 웨이브 전환 리셋, 3분 주기 안전판)는 전부 이미 올바르게 구현돼 있었음. 두 Explore 에이전트가 세션 한도로 중도 실패해 제가 직접 대체 검증했는데, 시간 관계상 `CapitalRealtimeCombatOrbitView.tsx`/`capitalRealtimeBridge.ts`/`planetCapitalCombatHeavyUi.tsx`(전투 HUD·오버레이 쪽) 세 파일은 이번 패스에서 깊이 못 봄 — 필요시 후속 조사 대상.
-- 제가 조사 중 스스로 두 번 오판했다가 재확인 후 정정한 부분을 위에 그대로 남겨뒀습니다(①풀 드레인 누락 오판 ②`runPlanetHubCombatSafeReclaimPass` orphaned 오판) — 검수 시 제 최종 결론(둘 다 정상이었음)만 보시면 됩니다.
-
----
-
-## 🟡 PENDING(분석+계측만, 코드 로직 변경 없음) — HUB_ACTIVATION GL/Views 급증 근본원인 + GPU 레이어 계측 추가 · 김클로드
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** · **verdict PASS** (김팀장 2026-07-10 21:55 KST) |
-| **updated** | 2026-07-10 21:15 KST |
-| **task_id** | `hub-activation-gl-views-spike-rootcause-20260710` |
-| **요청자** | 대표님 — "메모리 관련된 비정상적 오류(김팀장 개발분량)는 완전히 수정되었나?" → "오늘 발생한 문제인가?" → "결론적으로 메모리 관련된 문제는 시기와 발생건수 기타 작업에 최우선으로 수정한다" → "집중 분석하라" |
-| **트리거** | `tools/long-run-monitor` 실측: 오늘(2026-07-10) `GL_HARD_CEILING` 강제재시동 2회(19:57:54, 20:44:58) — `outbox/cursor-incident-handoff.md`에 3번째(21:01:05) 추가 발생 확인 |
-
-### 근본원인 (Explore 에이전트 2개 병렬 + 직접 코드 재검증으로 확정)
-
-**vega_base(웨이브 디펜스 테스트베드) 자동전투 트리거가 원인 체인의 시작점** — `app/(game)/planet.tsx:954` `isTestBed: planet?.id === 'vega_base'` → `src/game/waveDefense/useWaveDefenseController.ts:53-73`: 착륙 후 **플레이어 입력 없이 10초 뒤 자동으로** `startRun()` + 9웨이브(`WAVE_DEFENSE_MAX_WAVES=9`, 웨이브당 최대 동시 적 12기) 전투 시작. 이게 `capitalCombatOrbitActive`를 true로 바꾸며 평소 전투 중에만 마운트되는 Skia 캔버스 스택(`PlanetEdenRaidOrbitSkiaCombat`·전투용 `SkiaPlanetNebulaShaderBackdrop`·드론 웨이브 겹치면 `PlanetHubInboundDroneSkiaTrailLayer`까지 최대 3개 동시)이 실제로 마운트되고, 9웨이브가 자동으로 이어지며 모니터 폴링 간격(~15분) 내내 지속 — `mem-timeline.csv`의 `HUB_ACTIVATION gl_mount_ok`(19:57:49, 20:29:23) 패턴과 정확히 일치.
-
-**대표님 확인 완료**: vega_base 자동전투 트리거 자체는 **의도된 QA/테스트 기능으로 유지** — "자동시작은 유지, GL 원인만 우선 수정"으로 스코프 확정. 따라서 이번 작업은 **트리거·전투 로직은 건드리지 않고**, 왜 그 상태에서 GL이 80~130MB나 튀는지 원인만 좁혀서 파는 것으로 한정.
-
-**2건의 강제재시동은 서로 다른 성격**(로그 델타 재검증):
-- **#1(19:57:54)**: GL 19.9→120.7MB, views 99→568 — 모니터 자체 룰(허브 활성 중 GL≥80MB면 무조건 강제재시동)에 걸림. 콤뱃 Skia 마운트 비용이 그대로 원인.
-- **#2(20:44:58)**: 같은 창에서 GL은 +32.4MB뿐인데 PSS는 +281.2MB — GL/텍스처가 아니라 **native_heap 쪽 누적**(9웨이브 동안 적 함대 spawn/teardown 반복, 혹은 기존 07-08 문서화된 잔여 native_heap 이슈)이 주범으로 추정 — **별개 원인, 이번 계측 범위 밖**.
-
-### 코드로 배제 확인한 것 (80~130MB GL의 원인이 아님)
-
-- 콤뱃/드론트레일 Canvas 크기는 `PLANET_MAIN_ORBIT_SCENE_SIZE = 320`(320×320px) — 픽셀 버퍼 자체는 수백KB급, 80~130MB를 설명 못함.
-- 콤뱃에서 `useImage`로 로드하는 이펙트 이미지 2개(`color_dodge_02.png`, `tail_fire_02.png`)는 소형 스프라이트 — 대형 텍스처 아님.
-- `_combatPictureRecorder`는 모듈 전역 싱글턴으로 이미 재사용 중(`PlanetEdenRaidOrbitSkiaCombat.tsx:281-285`) — "매 프레임 PictureRecorder 신규 생성" 패턴의 누수 아님.
-- `commitSkPictureReactFrame`은 커밋마다 직전 프레임 1장만 dispose 예약 — 무한 누적 큐가 아님(정상 동작).
-
-### 남은 가설 (코드로 확정 못 함 — 런타임 계측 필요, 이번 작업의 이유)
-
-콤뱃 활성 시 최대 3개의 **독립된** `<Canvas>`(콤뱃 궤도·전투용 성운 백드롭·드론 트레일)가 동시 마운트될 수 있음. react-native-skia는 `<Canvas>`마다 별도 GPU 리소스 컨텍스트(Ganesh GrContext)를 잡는 경우가 흔하고, 이 컨텍스트당 고정 오버헤드(셰이더 캐시·리소스 캐시 예산 등)가 픽셀 데이터와 무관하게 수십MB 단위일 수 있음 — 3개 동시 마운트 시 관측된 100~130MB 범위와 맞아떨어짐. **단, 이건 코드 정적분석만으로 확정할 수 없는 가설**이라 실기 계측이 필요.
-
-### 이번에 한 것 — 계측 추가만 (렌더링/디스포즈 로직 변경 없음)
-
-기존에 `SkiaPlanetNebulaShaderBackdrop.tsx`만 `registerGpuLayer`/`unregisterGpuLayer`(`src/game/planetStageGpuSupervisor.ts`)에 등록하고 있었고 콤뱃·드론트레일은 등록 안 하고 있어 `debugPlanetGpuLayerSnapshot()`으로 "지금 몇 개의 Canvas가 동시에 떠 있는지" 확인이 불가능했음. 아래 4개 파일에 **카운트 전용, 부작용 없는** 계측만 추가:
-
-- `PlanetEdenRaidOrbitSkiaCombat.tsx`: mount/unmount에 `registerGpuLayer('skia_combat_orbit','T0')`/`unregisterGpuLayer` 추가.
-- `PlanetHubInboundDroneSkiaTrailLayer.tsx`: 동일하게 `'skia_inbound_drone_trail'` 등록.
-- `runPlanetHubSoftNativeReclaimPass.ts`·`runPlanetHubPostSkiaPeakReclaimPass.ts`: 기존 `[MEM]` 로그 라인에 `gpuLayers=...` 필드 추가 — `debugPlanetGpuLayerSnapshot()` 결과를 그대로 찍음.
-
-다음에 vega_base에서 자동전투가 다시 발생하면, logcat의 `[MEM] runPlanetHub*ReclaimPass ... gpuLayers=skia_nebula_backdrop,skia_combat_orbit,skia_inbound_drone_trail` 같은 라인으로 **동시 마운트된 Canvas 개수를 실측**할 수 있음 — 이게 3개 동시 마운트로 확인되면 "Canvas 통합(여러 `<Canvas>`를 하나로 합치기)"이 다음 단계의 구체적 수정안이 되고, 1개뿐인데도 GL이 크면 다른 원인(예: Android GL 드라이버 측 별도 요인)을 다시 찾아야 함 — 즉 다음 조치를 코드가 아니라 **데이터로 결정**하기 위한 계측.
-
-### self-check
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
-- [x] `npm run audit:memory:all` — **전부 PASS**(memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
-- [x] git commit **안 함**
-
-### 리스크·주의
-
-- 이번 변경은 `registerGpuLayer`/`unregisterGpuLayer`(이미 존재하는 기존 API) 호출 추가와 `console.log` 필드 추가뿐 — 렌더링·디스포즈 타이밍·전투 로직에는 손 안 댐. `__DEV__` 가드 안에서만 로그가 찍히므로 릴리스 빌드 영향 없음.
-- **아직 실제 GL 원인 수정은 안 됨** — 이번 건은 원인을 좁히기 위한 계측 1단계. Canvas 통합 등 실제 구조 변경은 계측 데이터 확보 후 별도 작업으로 진행 예정(대표님 재확인 필요할 가능성 높음 — 콤뱃 렌더링 코드라 리스크 있는 변경).
-- 재시동 #2(native_heap 급등, GL 평탄)는 이번 계측 범위 밖 — 07-08 문서화된 잔여 이슈와 겹칠 가능성, 별도로 다뤄야 함.
-- `outbox/cursor-incident-handoff.md`에 21:01:05 세 번째 `GL_HARD_CEILING`(gl=120.9, pss=1075.4)이 추가로 찍혀 있음 — 김팀장 쪽에서 진행 중인 `skiaPictureFrameRegistry.ts`(우연히도 이번 조사와 같은 파일들을 건드리는 별도 diff, 미커밋) 관련 회귀인지 무관한 재발인지는 미확인 — 검수 시 확인 부탁.
-
-### 확인해야 할 것 (김팀장)
-
-1. 이 계측 diff 자체(`registerGpuLayer` 호출 위치·로그 필드) 검토.
-2. 다음 vega_base 자동전투 사이클에서 `gpuLayers=` 로그 실측 → Canvas 동시 마운트 개수 확인.
-3. 진행 중이신 `skiaPictureFrameRegistry.ts` 관련 diff와 이번 계측 diff가 충돌 없이 공존하는지 확인(현재 둘 다 워킹트리에 공존, self-check 전부 PASS 확인함).
-
-### 김팀장 검수 (2026-07-10 21:55 KST)
-
-| 항목 | 결과 |
-|------|------|
-| **근본원인 분석** | **PASS(타당)** — vega_base 자동 웨이브 → combat Skia 3 Canvas 동시 마운트 → GL 80~130MB spike. #2 재시동(native_heap)은 별개 축으로 분리 OK. |
-| **계측 `registerGpuLayer`** | **PASS** — combat·drone mount/unmount 쌍 대칭 · nebula와 동일 패턴 · Map만 유지(onRelease 없음=카운트 전용) · **누수 없음** |
-| **reclaim 로그 `gpuLayers=`** | **PASS** — soft/postSkiaPeak `__DEV__` 한정 · `debugPlanetGpuLayerSnapshot()` 정본 |
-| **SkPicture registry 공존** | **PASS** — `runCombatSkiaPresentationReclaim` → `invalidateAllSkPictureFrames()` 선행 · combat/drone `dropSkPictureReactFrame`+registry 등록 · reclaim과 계측 충돌 없음 |
-| **실제 GL 수정** | **미착수(의도)** — 계측 1단계만 · Canvas 통합은 `gpuLayers=` 실측 후 별도 task |
-| **tsc · audit:memory:all** | **PASS** (김팀장 재실행 21:55 KST) |
-| **검수 중 정리** | drone `flushPicture` 중복 `if` 1건 merge 잔재 → 김팀장 정리 |
-
-**verdict: PASS(조건부)** — 계측·분석 OK · GL 구조 수정은 실측 데이터 후 2단계.
-
-**[kim-claude-review] 2026-07-10 hub-activation-gl-views-spike PASS(조건부) — GPU layer 계측 · vega_base 원인분석 · skiaPicture registry 공존 OK · Canvas 통합 대기**
-
----
-
-## 🟡 PENDING(3차 재구현 — 재검수 필요) — 은하계 지도 드롭다운 재이동 오작동 + GL/Views 급증 원인 수정 · 김클로드
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** · **verdict PASS** (김팀장 2026-07-10 21:55 KST) |
-| **updated** | 2026-07-10 21:05 KST |
-| **task_id** | `worldmap-dropdown-move-relock-hitarea-fix-20260710` |
-| **요청자** | 대표님 — 최초 보고 → "드롭다운으로 해결할 수 없나?" → "겹침 회피 로직으로 다시 구현하라" + "메뉴영역만 하위 클릭 안 되게" → (2차 결과물에 "성계 왼쪽이 아니라 오른쪽이라니까!!") → "겹침 회피 로직은 쓰지 말고, 메뉴 버튼 아래 인터랙션 되는 요소를 비활성 시키는 작업으로" |
-| **진행방식** | plan mode(1차) → 대표님 승인 → 구현·김팀장 REVIEWED(PASS, 1차) → 대표님 재검토 요청 → 겹침 회피 4방향 반전(2차) → 대표님이 좌측 반전에 반대 → **오른쪽 고정 + 하부 노드 탭 비활성화(3차, 최종)** |
-
-### ⚠️ 버그 B 수정 방식이 세 번 바뀌었습니다 — 최종은 3차입니다 (김팀장 재검수는 3차 기준으로)
-
-- **1차(김팀장 REVIEWED·PASS 처리됨)**: 메뉴를 지도 레이어에서 완전히 빼서 하단 고정 패널로 이동. 겹침은 구조적으로 불가능해지지만 "노드 옆에 뜨는 드롭다운" UX 포기 — 대표님이 이 트레이드오프에 재검토 요청.
-- **2차(폐기)**: 드롭다운(노드 앵커)을 유지하되 right→left→below→above 순으로 안 겹치는 방향을 자동 탐색해 반전. 대표님이 "왼쪽으로 가면 안 된다, 오른쪽 기준"이라고 명확히 반대 — 폐기.
-- **3차(최종, 이번 갱신)**: **위치는 항상 성계 노드 오른쪽으로 고정**(반전 없음, 김팀장 원안과 동일). 대신 메뉴가 떠 있는 동안 그 사각형에 걸치는 성계 노드는 지도 쪽 탭 판정(`handleMapTapAt`)에서 아예 제외 — "메뉴 버튼 아래 인터랙션 요소를 비활성화"하는 대표님 지시를 그대로 구현.
-
-### 확정된 두 근본 원인 (코드로 직접 검증)
-
-**버그 A — `doMoveAlongPath` 레이스 컨디션**(`app/(game)/worldmap.tsx`): 이동 애니메이션 종료 시 `setIsMoving(false)`가 `moveToSystem`/`persist()`/`selectSystem(targetSystem.id)` 처리보다 **먼저** 실행되던 구조. 그 사이 창구에 지도가 다시 탭 가능해져, 사용자가 새 목적지를 탭해도 나중에 실행되는 `selectSystem(targetSystem.id)`가 그 선택을 도착지점으로 조용히 되돌림 → `selectedSystem.id === player.currentSystemId`가 다시 참이 되어 "이미 도착" 분기가 실행되고 현재 지점에 착륙 — 정확히 보고된 증상.
-
-**버그 B — 드롭다운 메뉴가 인접 성계 노드의 탭 영역을 가림**(`src/galaxyMap/GalaxyMapSystemActionMenu.tsx`): 메뉴가 지도의 팬 가능한 콘텐츠 좌표 레이어 **안에** 렌더링되어(`toScreen(selectedSystem.position)` 앵커), 도착 즉시 자동으로 다시 뜨는 이 불투명 메뉴(약 124×138px, 여백 없이 3버튼이 전체를 채움)가 현재 위치 바로 옆 인접 노드를 물리적으로 덮어버림. 사용자가 다음 목적지를 탭해도 지도 제스처가 아니라 메뉴의 "이동/착륙" 버튼이 먼저 잡아서 또 현재 지점 착륙 실행. 이 메뉴가 대체한 기존 `ArcButton`은 지도 하단 고정 패널 안에 있어 이런 겹침이 원천적으로 없었음 — 신규 회귀.
-
-**GL·Views 급증**: `handleMove`/`handleCombat` 모두 기존 STAGE2 dispose 경로(`navigateToPlanetHubAfterTeardown`)를 그대로 호출 — dispose 우회·신규 누수는 발견 안 됨(`galaxyMapStageSession.ts` 미변경 확인). 다만 이 세션에서 이미 문서화된 두 미해결 잔여 비용(`galaxy-map-gl-residual-on-hub-reentry-20260708`, `multi-hub-hop-gl-hard-ceiling-restart-20260708`)이 버그 A·B 때문에 "의도한 이동 1회"가 실제로는 잘못된 착륙→재시도의 추가 STAGE 전환을 여러 번 유발해 훨씬 자주 누적되는 것으로 추정 — 새 누수가 아니라 기존 잔여 비용의 증폭. 이건 합리적 추론이며 재측정으로 별도 검증한 건 아님(수정 후 실기 확인 필요).
-
-### 수정 내용 (최종, 3차)
-
-**① `app/(game)/worldmap.tsx` `doMoveAlongPath`** — (1~3차 공통, 변경 없음) 홉 애니메이션 루프부터 마지막 `selectSystem`/`setShowPanel`까지 전체를 `try { ... } finally { if (isMountedRef.current) setIsMoving(false); }`로 감싸, 중단/전투조우/정상완료 세 종료 경로 전부에서 잠금이 정확히 한 번만·비동기 꼬리까지 유지된 뒤 해제되도록 함. 마지막 `selectSystem(targetSystem.id)`에 `useWorldStore.getState().selectedSystemId === null` 방어 가드.
-
-**② 메뉴 배치 — 오른쪽 고정 + 하부 노드 탭 명시적 비활성화 (최종)**
-- `GalaxyMapSystemActionMenu.tsx`: 좌표 앵커 절대배치(세로 3행 드롭다운, 김팀장 원안)를 그대로 유지. `side` prop(`'right'|'left'|'below'|'above'`)과 위치 계산 공식(`resolveMenuTopLeft`)·크기 상수(`MENU_WIDTH`·`MENU_ITEM_HEIGHT`·`MENU_ANCHOR_OFFSET_X/Y`)는 export 상태로 남겨둠(범용 유틸이라 삭제 안 함) — 단 `worldmap.tsx`에서는 이제 `side: 'right'` **고정값만** 사용, 반전 로직 전부 제거.
-- `worldmap.tsx`: `activeMenuRectRef`(맵 콘텐츠 좌표계 사각형) 신설 — 메뉴가 실제로 화면에 떠 있는 동안(`showPanel && selectedSystem`)만 `resolveMenuTopLeft('right', ...)` 기준 사각형을 채우고, 안 떠 있으면 `null`. `handleMapTapAt`(지도 자체 수동 히트테스트, `touchTargetsRef` 순회)에서 **이 사각형에 걸치는 성계 노드는 후보에서 아예 제외** — 메뉴 버튼이 이미 그 자리 터치를 가로채는 것과 별개로, 지도 쪽 판정 자체도 명시적으로 비활성화해 GestureDetector Tap과 TouchableOpacity가 같은 터치에 동시 반응할 여지를 원천 차단. 대표님이 지시하신 "메뉴 버튼 아래 인터랙션 요소 비활성화" 요구사항을 문자 그대로 구현 — 겹침 회피(위치 반전)는 사용하지 않음.
-- 하단 고정 패널(`panelActions`)·`PANEL_H`는 148 유지(1차의 196 확장은 이미 되돌려짐).
-- 앞서 2차에서 추가했던 `rectOverlapsCircle`(겹침 판정용)은 더 이상 안 쓰여 삭제.
-
-**건드리지 않음**: `galaxyMapStageSession.ts`·`combatSkiaPresentationReclaim.ts` 등 STAGE dispose 내부 — 원인 아님 확인. `systemActionMenuItems`/`handleMove`/`handlePlanetInfo`/`handleCombat` 로직은 전부 그대로.
-
-### self-check (3차, 최종)
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
-- [x] `npm run audit:memory:all` — **전부 PASS**(memory 37/37 · **skia-worklet 20/20**(아래 참고) · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
-- [x] git commit **안 함**
-
-### ⚠️ 별개 발견(제 작업과 무관, 사전 존재) — `audit:skia-memory` FAIL 2건
-
-`PlanetEdenRaidOrbitSkiaCombat.tsx`·`SkiaPlanetNebulaShaderBackdrop.tsx` 둘 다 최종 수정시각이 제 작업 시작보다 **2시간 이상 이전**(제가 이번 세션에서 손댄 적 없음, 확인 완료)인데, `audit:skia-memory`가 18/20으로 실패 중임을 이번 self-check 도중 우연히 발견. 원인: 두 파일 모두 `scheduleSkPictureDispose` 식별자가 사라짐(다른 필수 식별자 `pictureFlushRafRef`·`combatSkiaLoopsActiveRef`·`skiaLoopsActiveRef`는 존재) — `skiaMemoryLifecycle.ts`(공용 헬퍼)엔 이 함수가 여전히 있는데 두 소비 파일에서 호출부만 없어진 상태. 진행 중인 별도 작업(김팀장 측?)의 중간 상태로 추정 — 제가 임의로 손대지 않았습니다. 검수 시 확인 부탁드립니다.
-
-### 수동 smoke 체크리스트 (대표님 실기 확인 필요, 3차 기준)
-
-1. 인접 성계로 이동 → 도착 → 1초 이내 다른 성계 탭 → 실제로 그 방향 이동 시작하는지(현재/도착 지점 재착륙 안 하는지) 8~10회 반복
-2. "이동중..." 라벨이 도착 직후 정착까지 끊김 없이 유지되는지
-3. 메뉴가 항상 성계 노드 **오른쪽**에 뜨는지(왼쪽·위·아래로 안 옮겨지는지)
-4. 메뉴가 우연히 다른 성계 노드 위를 덮는 상황을 재현해서, 그 아래 노드를 탭했을 때 **메뉴 버튼이 반응하거나(의도한 동작) 아무 반응도 없어야** 하고, **가려진 노드가 선택되면 안 됨**(activeMenuRectRef 비활성화 확인)
-5. 이동→착륙→이동 15~20회 빠르게 반복 — 고착·오작동 없는지
-6. (선택) 반복 중 `tools/long-run-monitor` gl_mb·views 급증 빈도가 수정 전 대비 줄었는지 비교
-
-### ⚠️ 아래 김팀장 검수는 1차(패널 이동안) 기준 — 3차(오른쪽 고정+탭 비활성화)로 재검수 필요
-
-버그 A·`scheduleSkPictureDispose` 오탐 관련 판정은 여전히 유효(변경 없음). **"버그 B — 메뉴 hit-area 겹침" 행과 "검수 메모 1"만 3차 최종 구현 기준으로 다시 봐주세요** — 지금은 하단 패널이 아니라 지도 위 오른쪽 고정 드롭다운 + `activeMenuRectRef` 기반 하부 노드 탭 비활성화 방식입니다.
-
-### 김팀장 검수 (2026-07-10 21:55 KST · 3차 최종)
-
-| 항목 | 결과 |
-|------|------|
-| **버그 A — isMoving 레이스** | **PASS** — `try/finally` + `isMovingRef` 선점(연료 차감 전) · Kim Team Lead 보완 포함 |
-| **버그 B — hit-area (3차)** | **PASS** — 노드 **오른쪽 고정** 드롭다운 · `activeMenuRectRef` + 메뉴 rect 내 탭 early-return · 노드 중심 in-rect 제외 |
-| **중복 클릭** | **PASS** — [착륙/전투] `hubNavGate` · [이동] `isMovingRef` 동기 잠금 |
-| **메모리** | **PASS** — RN View만 · 패널/이동 시 언마운트 · Skia/타이머 추가 없음 |
-| **STAGE dispose** | **PASS** — 기존 teardown 경로 유지 |
-| **tsc · audit:memory:all** | **PASS** (21:55 KST 재실행) |
-| **실기 smoke** | handoff §6항 — 대표님 확인 권장 |
-
-**verdict: PASS**
-
-**[kim-claude-review] 2026-07-10 worldmap-dropdown-3rd PASS — 오른쪽 고정+activeMenuRectRef · isMovingRef 연타방지 · tsc+audit PASS · smoke 대기**
-
-### 김팀장 검수 (2026-07-10 20:31 KST, 1차 기준 — 위 참고)
-
-| 항목 | 결과 |
-|------|------|
-| **버그 A — isMoving 레이스** | **PASS** — `doMoveAlongPath` 전체를 `try/finally`로 감싸 `persist`·`selectSystem`·미션 처리까지 잠금 유지. 조기 `setIsMoving(false)` 제거 확인. `selectedSystemId === null`일 때만 `selectSystem(target)` 이중 방어 OK. |
-| **버그 B — 메뉴 hit-area 겹침** | **PASS** — 지도 팬 레이어 내 `selectedSystemMenuAnchor`/좌표 앵커 드롭다운 **완전 제거**. `GalaxyMapSystemActionMenu` → 하단 고정 `panelActions` flex 가로 3버튼(`PANEL_H` 196). 인접 노드 탭 물리적 차단 구조적으로 해소. |
-| **핸들러·분기** | **PASS** — `handleMove`/`handlePlanetInfo`/`handleCombat` · 레드 영토 `resolvePlayerPlanetStayBlock` · `isRedOccupiedPlanet` 전투 게이트 · `hubNavGate`/`isMoving` 차단 유지. |
-| **STAGE dispose** | **PASS** — `galaxyMapStageSession.ts` 미변경 · 기존 `navigateToPlanetHubAfterTeardown`/`navigateToCombatAfterTeardown` 경로 그대로. |
-| **tsc** | **PASS** |
-| **audit:memory** | **PASS** (37/37) |
-| **audit:worklet-contract** | **PASS** |
-| **audit:native-reclaim** | **PASS** (20/20) |
-| **audit:resident-set** | **PASS** (7/7) |
-| **audit:hot-path** | **PASS** (hits=0) |
-| **audit:skia-memory** | **PASS** (20/20) — 런타임 dispose는 `dropSkPictureReactFrame`/`commitSkPictureReactFrame`(내부 `scheduleSkPictureDispose`)로 **이미 구현됨**. Kim Claude self-check 시점 audit가 직접 문자열만 검사해 18/20 **오탐** → `run-skia-worklet-memory-audit.cjs` `usesSkPictureDispose()` 래퍼 인정 규칙 반영 후 **20/20 PASS** (2026-07-10 20:39 KST 재실행). |
-| **커밋** | 미실행 (대표님 지시 시) |
-| **실기 smoke** | handoff §5항 — 대표님 1회 확인 권장(재이동 오작동·15~20회 왕복) |
-
-**검수 메모**:
-1. **UI 형태 변경** — 성계 옆 세로 드롭다운 → 하단 패널 가로 3버튼. 겹침 방지 trade-off로 타당; 대표님 선호(노드 높이 정렬)와 다르면 smoke 후 재조정 가능.
-2. **GL/Views** — 코드상 신규 누수 없음. 오작동→잘못된 착륙 반복이 줄면 기존 잔여 floor 비용 **증폭**만 완화될 가능성(실측 대기).
-3. **Skia audit** — 런타임 버그 아님 · audit 규칙 갱신으로 **20/20 PASS** 확인.
-
-**verdict: PASS** — 코드·정적 게이트 전부 OK · smoke 5항만 대기.
-
-**[kim-claude-review] 2026-07-10 worldmap-dropdown-move-relock-hitarea-fix PASS — try/finally isMoving · 패널 메뉴 재배치 · tsc+audit:memory:all(20/20 skia) PASS · smoke 대기**
-
----
-
-## 🟡 PENDING — 플레이어 독립국가(녹색 국경) M1+M2 구현 완료 · 김클로드
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** · **verdict PASS** (김팀장 2026-07-09 21:50 KST) |
-| **updated** | 2026-07-09 12:42 KST |
-| **task_id** | `player-independent-nation-m1-m2-20260707` |
-| **명세** | `docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md` · `tools/kim-team-lead/reports/kim-claude-ready-player-independent-nation.md` |
-
-### 추가 보완 — 독립국 표기 형식 (대표님 요청, 명세 이후 추가)
-
-패널 라인이 처음엔 `독립국 · {클랜명}`(예: "독립국 · 엄스 함대")이었는데, 대표님이 `{닉네임} 독립국`(예: "엄스 독립국") 형식을 요청 → 반영 완료.
-- `formatClanPlateDisplayName.ts`에 `stripSoloClanFleetSuffix` 신설 — 솔로 클랜명("{닉네임} 함대")에서 "함대" 접미어만 제거해 순수 닉네임 추출.
-- `resolvePlanetHubOwnershipPlate`(`planetOwnershipModel.ts`) — `isIndependent`일 때만 `clanName`에 이 strip을 적용(다른 kind는 기존 클랜명 그대로 유지).
-- i18n `worldmap.panel.independent`: `'독립국 · {name}'` → `'{name} 독립국'`(ko), `'Independent Nation · {name}'` → `'{name} Independent Nation'`(en).
-- self-check: `tsc` PASS · `audit:memory:all` PASS(재실행 완료).
-
-**추가 반영(지도 라벨까지 확장)**: 위 "범위 한정"에서 지적했던 지도 위 성계 라벨 문제 — 대표님이 "싱글플레이 게임이라 유저들의 국가가 공유되지 않는다"고 확인해주셔서, 여러 플레이어의 독립국이 한 지도에 동시에 뜨는 시나리오 자체가 없다는 게 확정됨(세이브당 독립국 소유자는 항상 본인 1명뿐). 그래서 라벨 파이프라인 구조 변경 없이 **`territoryNationLabels.independent`를 정적 문자열 대신 `player.nickname`으로 채워** 지도 라벨도 "{닉네임} 독립국"으로 통일(`worldmap.tsx`, `worldmap.territory.nation.independent` i18n 키를 `{name}` 파라미터 받도록 수정). self-check 재실행 PASS.
-| **요청자** | 대표님 지시 — 명세 정본 그대로 M1+M2 구현 |
-
-### 구현 요약
-
-소유권 증서 구매 시 행성이 블루/레드 국가 occupier로 강제되던 것을 **플레이어(솔로 클랜) 자신이 occupier**가 되도록 변경 — 녹색 국경·채움의 **독립국(`independent`)** side 신설. M1(코어: side·kind·구매·reconcile 보호) + M2(지도 Voronoi 국경·채움·라벨·허브 플레이트) 전부 구현.
-
-### M1 — 코어
-
-- **M1-A** `src/galaxyMap/mapFactionSideCore.ts`: `MapFactionSide`에 `'independent'` 추가. `resolveMapFactionSideFromClanIdPure`에 "플레이어 유래 clanId → independent" 판정을 **megaFactionId 체크보다 먼저** 삽입(솔로 클랜이 출신국 megaFactionId를 유지해도 블루로 오판정되지 않도록). `isPlayerOriginatedClanId`를 그대로 import하면 `planetOwnershipModel.ts`와 순환참조가 생겨(그쪽이 이 파일을 import) **인라인 재구현**(`isPlayerOriginatedClanIdInline`)으로 회피. `resolveMapFactionBorderColor`에 `#3FBF6B` 녹색 추가.
-- **M1-B** `tables/balance/clan_map_faction_color_policy.csv`: **신규 행만 추가**(`clan_prefix,solo_clan_,#3FBF6B,95,...`) — priority 95로 mega_faction(70) 행보다 우선시켜, 솔로 클랜의 **채움색**(`resolveClanMapDisplayColor`, 국경색과 별도 시스템)도 megaFactionId와 무관하게 녹색이 되도록 함. 이거 없으면 국경선은 녹색인데 영역 채움은 블루로 보이는 불일치 발생 — 실제 테스트해보지 않았다면 놓치기 쉬운 지점이라 특히 확인 권장.
-- **M1-C** `src/types/index.ts`: `PlanetHoldKind`에 `'player_independent'` 추가.
-- **M1-D** `src/store/clanWarFoundationStore.ts` `claimPlanetOwnershipByPurchase`: `occupierClanId: nationOccupierId` → `occupierClanId: clanId`, `kind` → 무조건 `'player_independent'`. `deedOwnerClanId: clanId`는 기존값 유지(역마이그레이션 함정 회피 조건 그대로 충족).
-- **M1-E** `src/arcCore/balance/seedPlanetOccupationFromBalance.ts`: `shouldSkipOccupationSeedReconcile`에 `kind === 'player_independent'` 보호 추가(1차 방어) + `shouldRestoreNationSeedOccupier`에도 동일 보호 추가(2차 방어, 이중 안전장치) — 명세에서 지목한 두 지점 모두 반영.
-- **M1-F** `resolveTerritorialSideForHold`는 M1-A 반영만으로 자동 동작 확인(occupier 경유) — 코드 수정 불요.
-
-### M2 — 지도·UI
-
-- **M2-A/B** `buildGalaxyBlueRedVoronoiBorders.ts`: `VoronoiSiteSide`·`GalaxyVoronoiBorderSegment.kind`에 `'independent'` 추가. 국경 분기 — **independent가 걸리면 상대(블루/레드/중립) 무관 항상 녹색 우선**(명세 1차 구현 지침 그대로: "independent가 포함된 모든 국경 = 녹색"). `chainAndChamferGalaxyBorders.ts`의 타입 플러밍도 동반 수정.
-- **M2-C** `buildGalaxyTerritoryVoronoi.ts`: 채움(fill)은 기존 `factionSide !== 'neutral'` 조건이 이미 범용이라 자동 커버됨. **라벨**(`buildOccupationLabels`)은 기존에 blue/red만 집계하던 `cellMetrics`가 independent를 누락하고 있어서(라벨이 전혀 안 뜸) 별도 반영 필요했음 — `cellMetrics` 타입·집계 조건·라벨 push 3곳 모두 수정. `resolveBorderStyle`(이 파일 자체의 별도 국경 스타일 함수, M2-B의 것과 다른 함수)도 **sideA/sideB 순서에 따라 색이 뒤바뀌는 버그**가 있어(예: red+independent 순서면 red색 반환) independent 우선 분기를 맨 앞에 추가해 순서 무관하게 고정.
-- **M2-D** 허브 플레이트: `PlanetHubOwnershipPlate`에 `isIndependent` 필드 추가(`resolvePlanetHubOwnershipPlate`). `worldmap.tsx`의 패널 라인에 `독립국 · {name}` 분기 추가, 지도 위 성계 라벨(`territoryNationLabels`)에도 independent 항목 추가. i18n(ko/en) `worldmap.panel.independent` · `worldmap.territory.nation.independent` 신규 키. `megaFactionNationPolicy.ts`의 `resolveNationDisplayNameForMapSide`도 independent 대응 확장(향후 재사용 대비).
-- **M2-E(선택, 구현함)** 기존에 이미 구매됐던 hold(occupier=국가 시드, deedOwner=플레이어 — 현재까지의 "블루 소유" 표현 방식)를 독립국으로 **1회성·idempotent 전환**하는 패스(`migrateExistingPlayerDeedHoldsToIndependentAll`) 신설, `planetOccupationSeedPipeline.ts`(부팅·AI 동기화 후처리 공용 파이프라인)에 편입 — 대표님이 이미 구매해둔 행성이 있어도 다음 부팅 시 자동으로 녹색 전환됨.
-
-### 명세에 없었지만 빌드 중 발견해 수정한 것 (1건)
-
-`src/clanWar/planetTerritoryPlayerAccess.ts`(RED 점령지 체류·개발 차단 — "플레이어 영토 접근" 게이트)의 `resolveTerritorialSideForPlanet` 반환 타입이 `'blue'|'red'|'neutral'`로 좁게 하드코딩되어 있어 `tsc`에서 컴파일 에러 발생 — `MapFactionSide`로 타입만 넓힘(로직 변경 없음, `=== 'red'` 체크라 independent는 자동으로 차단 안 됨 — 정상).
-
-### self-check
-
-- [x] `npm run build:balance-tables` — **PASS**(101 tables 생성, CSV 신규 행 반영 확인)
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**(위 1건 수정 후)
-- [x] `npm run audit:memory:all` — **PASS**(memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
-- [x] git commit **안 함**
-
-### diff 범위 (17개 파일 + build 산출물)
-
-```
-src/types/index.ts
-src/galaxyMap/mapFactionSideCore.ts
-src/galaxyMap/buildGalaxyBlueRedVoronoiBorders.ts
-src/galaxyMap/buildGalaxyTerritoryVoronoi.ts
-src/galaxyMap/chainAndChamferGalaxyBorders.ts
-src/galaxyMap/GalaxyMapTerritoryOccupationLabelsSvg.tsx
-src/clanWar/planetOwnershipModel.ts
-src/clanWar/planetOccupationSeedPipeline.ts
-src/clanWar/planetTerritoryPlayerAccess.ts   (명세外, tsc 에러로 발견해 수정)
-src/store/clanWarFoundationStore.ts
-src/arcCore/balance/seedPlanetOccupationFromBalance.ts
-src/world/megaFactionNationPolicy.ts
-src/i18n/locales/ko.ts
-src/i18n/locales/en.ts
-app/(game)/worldmap.tsx
-tables/balance/clan_map_faction_color_policy.csv
-src/data/balance/generated/**                 (build:balance-tables 산출물 — 직접 수정 안 함)
-```
-
-**참고**: `build:balance-tables` 실행 중 이번 작업과 무관한 신규 CSV 5개(`csvArcCoreContestedZoneAftermathPolicy` 등)의 generated 산출물도 함께 생성됨(untracked였던 CSV들이 이번에 처음 빌드됨) — 제가 만든 CSV 아님, 기존 저장소에 있던 미빌드 상태였던 것으로 보임. 김팀장 diff 검수 시 이 부분은 이번 작업과 분리해서 봐주시면 됩니다.
-
-### 미착수·건드리지 않음 (명세 준수)
-
-- **M3(외교·전투)**: `faction_diplomacy_policy.csv`·`resolveTerritorialDiplomacyRelation`·ArcCore 접전 연동 — 전혀 착수 안 함(명세 지시대로 2차 task).
-- `planetOwnershipDeedPricing`/v5 가격 곡선, Skia 전투·STAGE dispose, `planet_occupation_seeds.csv` 기존 행 — 전부 미변경.
-- `src/arcCore/rebellion/applyRebellionOverthrowHold.ts`(반란 전복 — 모든 점유 kind를 중립화하는 별도 메커닉)는 `player_home`도 동일하게 무방비로 전복 대상이라, `player_independent`도 같은 취급을 받도록 **의도적으로 손대지 않음**(기존 설계와의 일관성 — 대칭 취급이 오히려 맞다고 판단, 다른 의견 있으면 알려주세요).
-
-### 수동 smoke 체크리스트 (명세 §6, 대표님 확인 필요 — 코드 검증만으론 확정 불가)
-
-1. 블루 영토 행성 무역소에서 소유권 구매 → worldmap 해당 성계 **녹색 채움·녹색 국경**
-2. 허브 진입 시 클랜 플레이트 **독립국** 표기 확인
-3. 앱 재시작·12:00 KST 배치 후에도 **블루로 복구되지 않음** 확인(M1-E 검증)
-4. 이미 구매해둔 기존 행성이 있다면, 재시작 후 자동으로 녹색 전환되는지 확인(M2-E 검증)
-
-### 김팀장 검수 (2026-07-09 21:50 KST)
-
-| 항목 | 결과 |
-|------|------|
-| M1 코어 | **PASS** — `independent` side · `#3FBF6B` · `player_independent` kind · 구매 occupier=clanId · reconcile 이중 보호 |
-| M1-B CSV | **PASS** — `solo_clan_` 신규 행만 추가(priority 95) · blue/red 기존 행 미변경 |
-| M2 지도·UI | **PASS** — Voronoi 국경 independent 우선 녹색 · 채움·라벨 · `{name} 독립국` i18n · M2-E 부팅 마이그레이션 |
-| 역마이그레이션 | **PASS** — occupier·deedOwner 둘 다 player clanId · `migratePlanetHoldOwnershipSplit` 분기 회피 |
-| M3·금지 범위 | **PASS** — 외교 CSV·Skia·`planet_occupation_seeds` 기존 행 미착수 |
-| tsc | **PASS** |
-| audit:memory:all | **PASS** (37/37 · skia 20/20 · worklet · native-reclaim 20/20 · resident-set 7/7 · hot-path 0) |
-| **커밋** | 미실행 (대표님 지시 시) |
-| mem-post-dev-recheck | **배정** — 김경제 handoff 갱신 권장 |
-
-**verdict: PASS**
-
-**검수 메모**:
-1. **채움색 일치** — `clan_prefix,solo_clan_,#3FBF6B,95`로 megaFactionId(블루)와 무관하게 영역 채움 녹색 — 국경만 녹색인 불일치 방지 OK.
-2. **파이프라인 순서** — `seed` → `ownershipSplit` → `migrateExistingPlayerDeedHoldsToIndependentAll` — 기존 구매 hold(occupier=국가·deed=플레이어) 전환 경로 정합.
-3. **총사령관 side** — `mapOccupierToGovernorSide`가 independent→`NEUTRAL` 반환(의도 미명시). M1/M2 범위外 · M3 또는 별도 과제로 검토 가능.
-4. **실기 smoke** — handoff §6 4항(구매→녹색·플레이트·배치 후 유지·기존 hold 전환) 대표님 1회 확인 권장.
-
-**[kim-claude-review] 2026-07-09 player-independent-nation-m1-m2 PASS — M1+M2+표기 · tsc+audit PASS · smoke 4항 대기**
-
----
-
-## ✅ REVIEWED — 저장구조 심층 재검수 + 쓰레기 코드 정리 · 김클로드
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** · **verdict PASS** (김팀장 2026-07-08 22:43 KST) |
-| **updated** | 2026-07-08 22:43 KST |
-| **task_id** | `save-structure-deep-audit-cleanup-20260708` |
-| **요청자** | 대표님 — "플레이어 계정 정보와 파이어스토어 DB, 로컬스마트폰의 저장데이터등을 심층분석해서 설계와 구조에 리스크가 없는지, 또한 쓰레기 파일이나 코드 DB들이 남아있는지 재확인 검수하라" |
-
-### 조사 방법
-
-Explore 에이전트 3개를 병렬로 돌려 확인: ① AsyncStorage 54개 키 전수(플레이어 백업 목록 20개 vs 나머지 34개) 커버리지 대조, ② 마이그레이션·레거시 잔재 실사용 여부, ③ Firestore 백업 정리(prune) 로직의 orphan 데이터 리스크. 각 에이전트 보고 중 핵심 주장(죽은 코드 grep 결과, 총사령관 스토어 헤더 주석 등)은 제가 직접 재검증 완료.
-
-### 1) Firestore 백업 주기 — 6시간으로 재통일 (되돌림)
-
-지난 조치로 30분 주기로 줄였었는데, 대표님 최종 지침("파이어스토어 주기를 6시간으로 통일하라")에 따라 원복. 계기: Explore 조사에서 30분 주기가 `GAME_SAVE_BACKUP_MAX_PER_UID=28`과 어긋나 **실질 보관기간이 7일→약 14시간으로 줄고, 쓰기/읽기량이 약 12배 늘어나는** 비용 문제를 확인했음 — 대표님이 강조하신 "효율적 통일" 원칙과 정면으로 배치되는 부작용이었음. `gameSaveBackupContract.ts` 1줄만 원복.
-
-### 2) AsyncStorage 54개 키 커버리지 — 갭 없음, 모순 1건 해소
-
-플레이어 백업 대상 20개 키 전부 실사용 확인(죽은 참조 없음), 누락된 플레이어 데이터도 없음. 유일한 모순 — **`arcfire_planet_governor_assignments_v1`**(행성 총사령관 배정)이 파일 헤더 주석("ArcCore 영토 상태, 계정 purge 제외")과 달리 백업/복원 대상 목록에 포함되어 있었음. 대표님 확인: **"현재는 아크코어가 자동 배정, 플레이어는 배정 불가 — 향후 소유권 기능확장으로 플레이어가 총사령관(행성소유자)이 될 수 있음"** → 현재 시점 기준 ArcCore 자율 상태가 맞으므로 `gameSaveBackupKeys.ts`의 `PLAYER_GAME_SAVE_BACKUP_KEYS`에서 **제거**(purge 제외와 일치시킴). **주의**: 향후 소유권 기능 구현 시 이 판단을 재검토해야 함 — 플레이어가 총사령관이 되는 시점부터는 해당 행성 배정은 다시 플레이어 귀속으로 바뀌어야 할 수 있음.
-
-### 3) 마이그레이션/레거시 잔재 — 확정 죽은 코드 2건 삭제
-
-대표님 정의("중복구현이거나 완전히 사용될 가능성조차 없는 코드")에 맞춰 즉시 삭제 처리(grep으로 호출부 0건 직접 재검증 완료):
-- `useArcCoreTempBankStore`(`src/store/factionVault/arcCoreVaultStore.ts`) — deprecated alias, 사용처 0
-- `consumeFreshStartFlag()`(`src/firebase/auth.ts`) — deprecated 함수, 실호출 0(참조하던 주석 1곳도 `consumeFreshStartForTitle()`로 정정)
-
-**삭제 보류(미구현과 구분)** — 아래는 "아직 사용될 가능성이 있는" 코드라 대표님 기준상 쓰레기가 아님, 그대로 유지:
-- `LEGACY_MODULE_PAIRS`(dev_laboratory→dev_research_lab 등)·`reconcileDefenseSatelliteDevRecordOnLanding`·`migrateLegacyArcCoreTempBankOnce`·`reseedCorruptConvoyFleetEconomyOnce` — 전부 "매 부팅 실행되지만 조건 안 맞으면 스스로 스킵"하는 자체-스로틀 방식. 아직 마이그레이션 안 된 구세이브가 이론상 존재할 수 있어(2~3주 전 코드) 완전히 쓰일 가능성이 없다고 단정 불가.
-- `isLegacyArcCoreMissileNotice`(tavernBoardStore) — 오래된 공지 필터링, 자연 소멸(20개 캡) 예정이라 마찬가지로 보류.
-
-### 4) Firestore 백업 prune — orphan 리스크 1건 확인(수정 안 함, 보고만)
-
-정상 만료/초과삭제 경로는 청크 서브컬렉션도 같이 지워지도록 이미 정상 구현됨(문제없음). 다만 **"청크 쓰기 성공 직후, 메타데이터 문서 쓰기 전에 앱이 죽는" 좁은 케이스**에서 생기는 고아 청크는 이를 나중에 찾아 지우는 스윕 로직이 전무해 영구 방치됨(발생 확률 낮음, 발생 시 복구 불가). 이번 범위에서는 수정하지 않음 — 필요시 별도 orphan-sweep 작업으로 다룰 것을 제안.
-
-### self-check
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS** (매 변경 후 재확인)
-- [x] `npm run audit:memory:all` — **PASS**(죽은 코드 삭제분까지 전부 포함해 재실행 완료 — memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
-- [x] diff 범위: `gameSaveBackupContract.ts`(1줄), `gameSaveBackupKeys.ts`(1줄 제거), `arcCoreVaultStore.ts`(3줄 제거), `firebase/auth.ts`(deprecated 함수+주석 정리)
-- [x] git commit **안 함**
-
----
-
-## ✅ REVIEWED — planetCoreRuntime 파싱 실패 시 조용한 전체 리셋 수정(근본 버그) · 김클로드
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** · **verdict PASS** (김팀장 2026-07-08 22:17 KST) |
-| **updated** | 2026-07-08 22:17 KST |
-| **task_id** | `planet-core-runtime-corrupt-parse-cloud-recover-20260708` |
-| **요청자** | 대표님 — "재설치하기 전에 근본 버그(파싱 실패 시 조용히 전체 리셋되는 부분) 이 부분을 집중적으로 수정하라" |
-
-### 배경 — 왜 위성이 "전부" 사라졌는지의 최종 원인
-
-지난 대화에서 확인: 방위위성뿐 아니라 757개 행성 전체의 `detail.development`가 로컬에 통째로 없었던 이유는 개별 유실이 아니라 **`planetCoreRuntimeStore`의 로컬 파싱 로직이 JSON.parse 실패 시 경고 하나 없이 전체를 CSV 기본값으로 되돌리는 구조**였기 때문. 이 앱이 메모리압으로 하루 여러 번 강제종료(`am force-stop`)되는 것을 이번 세션 내내 확인했으므로, 저장 파일 쓰기 도중 강제종료 → 파일 손상 → 다음 부팅 파싱 실패 → 전체 리셋, 이 흐름이 가장 유력.
-
-### 구현 내용 — `src/store/planetCoreRuntimeStore.ts` (단일 파일, +68/-2줄)
-
-1. **`parseStoragePayload`가 `corrupted: boolean` 플래그를 추가로 반환** — `raw === null`(최초무데이터, 정상)과 `raw`는 있는데 `JSON.parse` 자체가 실패(손상)를 구분. 기존엔 두 경우 모두 조용히 같은 빈 기본값을 반환해 구분이 불가능했음.
-2. **손상 감지 시 손상된 원본을 별도 키(`arcfire_planet_core_runtime_corrupt_stash_v1`)에 보관**(`stashCorruptedPlanetCoreRuntimePayload`) — 포렌식·수동복구 여지를 남김. 실패해도 부팅에 영향 없는 best-effort.
-3. **손상 감지 시에만(=드문 경우에만) 최신 Firestore 백업에서 이 키(`arcfire_planet_core_runtime_v1`) 단건만 복구 시도**(`tryRecoverPlanetCoreRuntimeFromCloudBackup`) — 계정 전체 스냅샷 복원이 아니라 **이 한 스토어만** 선별 복구. `resolveGameSaveBackupUid`(클라이언트 자기 uid, admin 자격증명 불필요) → `listGameSaveBackupsForUid(uid, 1)`(최신 1건만) → `fetchGameSaveBackupDoc` → 그 안의 `snapshot['arcfire_planet_core_runtime_v1']`만 재파싱해서 사용.
-4. 복구 성공 시 즉시 로컬에도 다시 저장(`persistStoragePayload`)해서 다음 부팅부터는 클라우드 조회 없이 정상 동작 — 자가치유.
-5. 복구 실패(오프라인·백업 없음·타임아웃 등) 시 기존 동작(빈 기본값)으로 그대로 진행 — **부팅을 막거나 지연시키지 않음**.
-
-### 왜 이전에 보류했던 "③ 부팅 시 Firestore 대조"와 다른가
-
-③은 **매 부팅마다** 클라우드와 대조하는 설계라 리스크가 커서 보류했었음. 이번 것은 **로컬 파싱이 실제로 실패했을 때만**(정상 부팅에서는 100% 발동 안 함) 발동하는 훨씬 좁은 범위라, 정상 케이스에는 코드 경로 자체가 실행되지 않아 리스크가 낮음. 대표님이 요청하신 "이 부분을 집중적으로"에 정확히 맞춘 좁은 수정.
-
-### 순환참조 회피
-
-`planetCoreRuntimeStore.ts` → `gameSaveBackupService.ts` → `applyLocalGameSaveSnapshot.ts` → `planetCoreRuntimeStore.ts`로 되돌아오는 순환참조가 있어, 정적 import 대신 **동적 `await import()`** 사용(이 파일에 이미 있던 `runLegacyPlanetDevModuleMigrationAll`의 기존 패턴과 동일한 방식으로 회피).
-
-### self-check
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
-- [x] `npm run audit:memory:all` — **PASS** (memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
-- [x] diff 범위: `git diff HEAD --stat` 확인 결과 `src/store/planetCoreRuntimeStore.ts` **1개 파일**만(+68/-2)
-- [x] git commit **안 함**
-
-### 리스크·주의 (김팀장 검수 시 반드시 확인)
-
-- **부팅 경로(`bootstrapFromWorldAsync`) 변경 포함** — 이 프로젝트에서 반복적으로 "민감 구간"으로 지적된 영역이라, 대표님께도 "부팅 시퀀스는 별도 신중 검토 필요"라고 안내했던 부분. 다만 정상(비손상) 케이스는 분기 자체를 안 타므로 기존 동작과 100% 동일 — **정상 부팅 성능/동작 변화 없음**은 코드상 확인됨.
-- 실기 시뮬레이션(의도적으로 로컬 JSON을 손상시켜 실제 복구 동작 확인)은 **미실시** — 정적 검증만 완료. 실제 손상 재현 테스트는 QA 환경에서 한 번 검증 권장.
-- `listGameSaveBackupsForUid`/`fetchGameSaveBackupDoc`는 각각 6초/12초 자체 타임아웃 내장(기존 서비스 코드) — 손상 감지 시 최악의 경우 부팅이 최대 ~18초 지연될 수 있음(드문 케이스에 한함, 정상 부팅엔 영향 없음).
-- 대표님이 이전에 "재설치해서 테스트"하겠다고 하신 방위위성 재설치는 **이 수정이 검수·배포된 이후에** 진행하시는 걸 권장(안 그러면 같은 이유로 또 사라질 위험이 있었던 부분을 이번에 막은 것이므로).
-
-### 김팀장 검수 (2026-07-08 22:17 KST)
-
-| 항목 | 결과 |
-|------|------|
-| 근본 원인 | **PASS** — `parseStoragePayload` catch 시 `corrupted` 미구분·빈 baseline → `mergeWorldWithDisk` 전체 CSV 리셋. force-stop 중 coalesce persist와 정합 |
-| 수정 범위 | **PASS** — `planetCoreRuntimeStore.ts` 단일 파일(+68/-2). 정상 부팅(`corrupted:false`)은 기존 경로 100% 동일 |
-| 손상 분기 | **PASS** — stash → cloud 단건 복구 → `mergeWorldWithDisk` → 성공 시 `persistStoragePayload` 자가치유 |
-| 순환참조 | **PASS** — `gameSaveBackupService` 동적 import, 기존 migration 패턴과 동일 |
-| 부트 지연 | **PASS(조건부)** — 손상 시에만 Firestore 6s+12s 타임아웃 가능. 정상 부팅 무영향 |
-| tsc | **PASS** |
-| audit:memory:all | **PASS** (37/37 · skia 20/20 · worklet · native-reclaim 20/20 · resident-set 7/7 · hot-path 0) |
-
-**잔여 리스크(완료 선언 아님 · 후속):**
-- JSON.parse는 성공했지만 `byPlanetId`가 비어 있는 **부분 손상**은 `corrupted:false` → 복구 분기 미진입(기존과 동일한 silent reset). 후속: `raw` 존재 + `byPlanetId` 비어 있음 + 이전 stash/백업 대조 검토.
-- **이미 리셋된 데이터**는 본 패치로 소급 복구 불가(대표님 「예」 확인). 앞으로만 방어.
-- 손상 재현 QA(의도적 truncate → cloud recover) **미실시** — 배포 전 1회 권장.
-
-**verdict: PASS** — 근본 버그(조용한 전체 리셋) 대응으로 승인. ② 백업 30분과 함께 Metro `r` 후 방위위성 재설치 권장.
-
----
-
-## ✅ REVIEWED — 게임 저장 Firestore 백업 강화(② 단일 주기) · 김클로드 · ③ 설계안 보류
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** · **verdict PASS(②)** / **③ HOLD** (김팀장 2026-07-08 22:17 KST) |
-| **updated** | 2026-07-08 22:17 KST |
-| **task_id** | `game-save-backup-hardening-20260708` |
-| **요청자** | 대표님 — 방위위성 전체 소실 사후 "플레이어의 모든 게임 저장기록이 파이어스토어에 저장되어 안전하게 유지되는게 맞다..." → 이후 "데이터를 자주 백업하지 않아도 모든 데이터가 같은 주기에 같은 시점에 100% 완전 복구가 되면 된다... 더 중요한 데이터와 덜 중요한 데이터 구분없이 파이어베이스를 절약하는 차원에서 효율적으로 통일하라"(최종 지침으로 ① 되돌림) |
-
-**⚠️ 설계 변경 이력 — ①(시설완료 즉시 백업)은 구현 후 대표님 지침으로 되돌림.** 최초 ①+②로 구현했으나, 대표님이 "중요도 구분 없이 통일 + Firestore 비용 절약"을 최종 지침으로 주셔서 ①(방위위성 등 완료 이벤트만 즉시 백업하는 특수경로)을 제거하고 **② 단일 주기(30분)만 전 데이터에 동일 적용**하는 구조로 최종 확정. 아래 "구현 완료" 섹션은 이 최종 상태 기준.
-
-### 배경 — 실기 조사로 확인된 근본 갭 (방위위성 소실 건과 직결)
-
-adb로 기기 AsyncStorage(`RKStorage`)를 직접 pull해 확인한 결과, 757개 행성 전체에서 `detail.development`(byModuleId)가 **완전히 부재** — 로컬에도 소실 흔적조차 없었음. 코드 추적 결과 다음 구조적 갭 확인:
-
-1. `GAME_SAVE_BACKUP_MIN_INTERVAL_MS`가 **6시간**이었음 — 이 세션 내내 확인된 하루 여러 번의 강제 재시동(GL_HARD_CEILING 등) 빈도를 감안하면, 로컬 설치 후 6시간 내 재시동되면 Firestore에 한 번도 반영 안 된 채 유실 가능.
-2. Firestore 백업은 `scheduled`(6h 간격) 외에는 **admin이 명시적으로 트리거하는 복구 경로**로만 읽힘 — 정상 부팅에서는 Firestore를 전혀 조회하지 않아, 클라우드에 최신 데이터가 있어도 로컬이 비었으면 그냥 빈 채로 시작됨.
-3. 업로드 실패는 `catch(() => {/* offline — Firestore queue */})`로 조용히 삼켜짐 — 실패가 반복돼도 드러나지 않음.
-
-대표님께 3개 조치(①즉시 백업 트리거 ②주기 단축 ③부팅 시 Firestore 대조)를 제안드렸고, ③은 부팅 시퀀스(이 프로젝트에서 반복적으로 "민감 구간"으로 확인된 영역)를 건드리는 리스크가 있어 **①+②만 우선 구현**, ③은 설계안만 정리하기로 확정.
-
-### 구현 완료 (② 단일 주기 — 최종)
-
-**② 예약 백업 간격 단축** — `gameSaveBackupContract.ts`
-- `GAME_SAVE_BACKUP_MIN_INTERVAL_MS`: 6시간 → **30분**
-- 이 하나의 주기가 `PLAYER_GAME_SAVE_BACKUP_KEYS`(인벤토리·미션·계정정보·행성개발·방위위성 등 20개 키) **전체를 한 스냅샷으로 묶어서** 업로드(`collectLocalGameSaveSnapshot`) — 항목별 중요도 구분 없이 동일 주기·동일 시점에 전량 백업되므로, 복구 시 그 시점 기준 100% 일관된 전체 복구가 됨.
-
-**되돌린 것 (① 폐기)** — 방위위성 등 "완료" 이벤트에만 별도 즉시-백업 경로를 추가했던 `triggerFacilityCompleteGameSaveBackup`/`scheduleUrgentGameSaveBackupAfterFacilityComplete`/`GameSaveBackupReason.facility_complete`를 전부 제거. 대표님 지침("중요도 구분 없이 통일해서 Firestore 절약")에 따라 이벤트별 특수 트리거 없이 **하나의 예약 주기로만** 처리.
-
-CLAUDE.md 절대금지(`onSnapshot`/실시간 동기화 없음, 경제/AABS 고빈도 실행 금지)에 저촉되지 않음 — 여전히 단발·예약 Firestore write일 뿐, push 기반 realtime이나 게임 루프 고빈도 처리가 아님.
-
-**잔여 리스크(대표님께 명시적으로 공유 완료)**: 예약 주기(30분) 이전에 강제 재시동이 발생하면 그 사이의 변경분은 유실 가능 — 대표님도 "그전에 유실되지 않아야 하는 건 당연하다"고 하셨으나 이는 로컬 저장 자체의 신뢰성(coalesce 즉시 flush 등, 이번 change 범위 밖) 영역이라 별개로 관리 필요. 30분 간격은 과거 6시간 대비 유실 가능 구간을 12배 줄인 것이지 완전히 없앤 것은 아님.
-
-### 설계안 — ③ 부팅 시 Firestore 대조 (구현 보류, 승인 필요)
-
-**목표**: 로컬 `arcfire_planet_core_runtime_v1`이 비정상적으로 비어있거나(이번 사건처럼) 오래됐을 때, 매 부팅마다 최신 Firestore 백업과 대조해 안전망 역할.
-
-**제안 설계 (초안)**:
-1. `bootstrapFromWorldAsync`(또는 그 이후 별도 단계)에서 로컬 하이드레이션 완료 후, `fetchGameSaveBackupDoc`으로 **최신 백업 1건만** 조회(목록 전체 조회 아님 — 비용 최소화).
-2. **전체 스냅샷 덮어쓰기 금지** — `arcfire_planet_core_runtime_v1` 키만 선별 비교: 백업의 `byPlanetId[planetId].detail.development`가 존재하는데 로컬은 없는 행성만 골라 그 부분만 병합 적용(현재 확인된 정확한 실패 패턴을 정조준).
-3. 병합 판단 기준은 `updatedAtMs`/`detail.development` 존재 여부 우선 — "최신"을 시간 비교만으로 판단하면 로컬이 실제로 더 최신인데 클라우드가 오래된 스냅샷을 덮어쓸 위험이 있어, **"로컬에 아예 없는데 클라우드엔 있다"는 경우만** 채워 넣는 보수적 병합으로 제한.
-4. 실패해도 부팅을 막지 않음(best-effort, timeout 후 로컬만으로 진행) — 부팅 지연·행 방지가 최우선.
-
-**리스크**: 부팅 시퀀스는 이 프로젝트에서 여러 차례 "민감 구간"으로 지적된 영역(초기화 지연·행 이슈 이력)이라, 병합 로직 버그 시 오히려 새로운 부팅 문제를 만들 수 있음 — 별도 세션에서 충분한 시간을 두고 김팀장 리뷰 후 구현 권장.
-
-### self-check (② 최종 — ① 되돌린 이후 재검증)
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
-- [x] `npm run audit:memory:all` — **PASS** (memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
-- [x] diff 범위: `git diff HEAD` 확인 결과 **`gameSaveBackupContract.ts` 1개 파일, 1줄**(간격 상수)만 최종 남음 — `scheduleGameSaveBackup.ts`·`planetFacilityLevelApplied.ts`는 ① 되돌리면서 원본과 완전히 동일한 상태로 복귀 확인
-- [x] git commit **안 함**
-
-### 별개 확인 요청 (이전 handoff 항목 관련)
-
-방위위성 소실의 실제 트리거(김팀장 작업 중 admin 복원 실행 여부)는 여전히 미확인 — `npm run admin:game-save:list -- --uid 519f756a7517ac11`로 백업 이력 확인 부탁드립니다(Firebase Admin 자격증명 필요해 김클로드 쪽에서 직접 조회 불가).
-
-### 별도 요청 사항 (금번 대화에서 대표님이 언급, 미착수)
-
-- "블루팀(스텔리움연합) 점유지역 행성은 아크코어 자동개발 대상에서 제외, 데이터 삭제 금지" — 기존 `player-independent-nation-m1-m2` 스펙과의 관계 확인 필요(중복/누락 점검 후 반영 여부 판단 요망).
-
-### 추가 — 전체 저장구조 재검토 (대표님 요청, 코드 변경 없음 · 결론만)
-
-대표님이 "플레이 기록·미션·행성개발(방위위성)·레벨업·보유아이템 등 모든 데이터가 안전하게 지속되는 구조인지 재확인" 요청 → 백업 대상 키(`gameSaveBackupKeys.ts` `PLAYER_GAME_SAVE_BACKUP_KEYS` 20개) 전수 대조 + `localAccountReset.ts` 계정 완전삭제 로직까지 확인 완료.
-
-**결론: 분류 경계 자체는 이미 정확했다.** 미션·행성개발(방위위성 포함)·레벨업·아이템·스킬·함장 등 플레이어 직접 액션 항목은 전부 백업 대상에 이미 포함되어 있었고, ArcCore RED 금고·수송선단 금고·중앙은행·일일배치 상태 등 "아크코어가 주체인" 항목은 이미 전부 제외되어 있었다(`resetLocalPlanetCoreRuntimeForAccountPurge`가 RED 슬롯 스냅샷→복원 방식으로 완전삭제 시에도 RED 쪽을 보존하는 것까지 코드 레벨로 확인). 오늘 위성이 사라진 근본 원인은 분류 오류가 아니라 위 ①+②로 고친 **백업 반영 타이밍(6시간 지연 + 정상 부팅 시 미조회)** 문제였고, 같은 취약점을 미션·레벨업·아이템 등 다른 모든 항목도 공유하고 있었으므로 ①+② 수정으로 전체가 함께 보강됨.
-
-**경계 판단 보류했던 2건 → 대표님 확인으로 해소:**
-- `arcfire_blue_team_shared_vault_v1`(블루팀 공용 금고) — "블루팀도 플레이어 금고가 아닌 이상 종속될 필요 없고 아크코어 종속 관리로 둬도 된다"(대표님) → **백업 대상 추가 불필요, 현행(제외) 유지 확정.**
-- `arcfire_planet_trade_fee_ledger_v1`(일일 수수료 정산 풀) — 플레이어 직접 액션이 아닌 시스템 정산 버킷 → 마찬가지로 **현행(제외) 유지.**
-
-**핵심 원칙 확정(향후 신규 스토어 추가 시 적용)**: "플레이어가 직접 액션한 진행 내용"만 계정 귀속·백업 대상. 이름에 "블루팀"이 들어가도 플레이어 개인 지갑이 아니면(공용/시스템 관리 buckets) 계정 귀속 불필요.
-
----
-
-- [x] git commit **안 함**
-
-### 김팀장 검수 (2026-07-08 22:43 KST)
-
-| 항목 | 결과 |
-|------|------|
-| ① 백업 6h 재통일 | **PASS** — `6h × MAX_PER_UID(28) = 7일` 보관과 정합. 30분이면 ~14시간만 보관·쓰기 12배 증가 — 대표님 「6시간 통일」 지침과 일치 |
-| ② 총사령관 키 제거 | **PASS** — `arcfire_planet_governor_assignments_v1`는 ArcCore 자율 배정·purge 제외와 일치. 향후 플레이어 소유권 확장 시 재검토 필요(김클로드 주석 동의) |
-| ③ 죽은 코드 삭제 | **PASS** — `useArcCoreTempBankStore`·`consumeFreshStartFlag` grep 0건. `auth.ts` 주석 `consumeFreshStartForTitle`로 정정 |
-| ④ orphan 청크 | **HOLD(보고만)** — 청크 성공 후 메타 쓰기 전 crash 시 고아 가능. 별도 sweep 과제 |
-| tsc | **PASS** |
-| audit:memory:all | **PASS** (37/37 · skia 20/20 · worklet · native-reclaim 20/20 · resident-set 7/7 · hot-path 0) |
-
-**verdict: PASS** — 저장 분류·비용 정합 수정만. P0 `planetCoreRuntimeStore` 손상 복구와 병행 적용 권장.
-
----
-
-## ✅ REVIEWED — 방위위성 전체 소실(byModuleId/legacy 분기) · 김클로드
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** · **verdict PASS(조건부)** (김팀장 2026-07-08 22:43 KST) |
-| **updated** | 2026-07-08 22:43 KST |
-| **task_id** | `defense-satellite-vanish-byModuleId-legacy-fix-20260708` |
-| **요청자** | 대표님 — "최근 김팀장 작업이 원인인지, 아크코어 주기설정변경이 원인인지 몰라도 방위위성들이 갑자기 모두 사라졌다. 원인을 철저하게 분석해 복구하고 수정하라" |
-
-### 근본 원인 (확정)
-
-`src/game/planetDevelopment/planetDefenseSatelliteRuntime.ts`의 (수정 전) `readDefenseSatelliteDetailFromPlanet`가 **`development.byModuleId.defense_satellite`가 존재하기만 하면(설치값 무관) 그대로 신뢰**하고, legacy `detail.defenseSatellite`는 byModuleId가 아예 없을 때만 참조하는 구조였음:
-
-```ts
-// 수정 전 (요약)
-if (fromModule && fromModule.version === 1) return fromModule;   // installed:false 여도 그대로 반환
-const legacy = runtime?.detail?.defenseSatellite;
-if (legacy?.version === 1) return legacy;
-```
-
-→ **byModuleId 쪽이 `{installed:false}`(빈 기본값)로 존재하는데 legacy 쪽에 실제 설치 이력(`installed:true`)이 남아있는 행성**은 무조건 "미설치"로 읽힘 — 게임 내 모든 방위위성 표시·전투 판정·궤도 월드오브젝트가 이 단일 함수를 거치므로, 이 분기가 한번 어긋나면 **모든 행성의 방위위성이 동시에 사라진 것처럼 보임**(대표님이 보고한 증상과 정확히 일치).
-
-byModuleId가 이렇게 "존재하지만 빈 값"이 되는 경로는 여러 곳에서 가능함(`ensurePlanetCoreRuntimeForDev`의 기본 초기화, 스토어 재부트 시 기본값 채움 등) — 즉 **트리거는 김팀장의 최근 작업일 수도, 재부팅(이번 세션에서 반복 확인된 GL_HARD_CEILING 강제 재시동 포함)일 수도 있으나, 실제로 증상을 유발한 코드는 이 읽기 함수의 설계 결함**이라는 결론. `아크코어 주기설정변경`(예: `planet_defense_satellite_policy.csv` policy_version 1→2, 2026-06-29 커밋) 자체는 min/max 위성 수를 바꾼 의도된 밸런스 변경이며 이번 소실 증상의 직접 원인은 아님(확인 완료 — CSV는 현재 uncommitted diff 없음, 9일 전 커밋).
-
-### 확인 — 김팀장 최근 작업(uncommitted)이 이미 이 문제를 겨냥한 수정 중이었음
-
-`planetDefenseSatelliteRuntime.ts`·`planetDefenseSatelliteDevelopment.ts`·`syncPlanetHubDevelopmentOnLanding.ts` 3개 파일이 이미 **uncommitted 상태로 병합 로직 수정 중**이었음(주석: "byModuleId만 installed:false인데 legacy installed:true → 궤도 위성 0기 회귀 방지"). 로직 검증 결과 **OR 병합(`installed = moduleDetail.installed || legacyDetail.installed`) 자체는 정확** — 김클로드가 이어받아 아래 갭 2곳을 마저 메우고 self-check까지 완료.
-
-### 김클로드 추가 조치 (이번 작업)
-
-1. **복구 범위 확대** (`planetFacilityLegacyMigration.ts` `migrateLegacyPlanetDevModulesForPlanet`) — 기존에는 `reconcileDefenseSatelliteDevRecordOnLanding`이 **착륙한 행성 1곳만** 복구했음(플레이어가 재방문해야만 복구). 부트마다 전 행성을 순회하는 기존 `migrateLegacyPlanetDevModulesAll()` 파이프라인 안에 이 reconcile을 편입 — **다음 앱 부팅 시 방문 여부와 무관하게 전 행성 일괄 복구**되도록 확장.
-2. **동일 버그의 중복 구현 2곳 발견 및 수정** — 공유 병합 함수(`readDefenseSatelliteDetailFromCoreDetail`)를 거치지 않고 **같은 `byModule ?? legacy` 버그 패턴을 각자 복제**하고 있던 코드:
-   - `src/ui/overlay/content/PlanetDefenseSatelliteDevContent.tsx:49` — 방위위성 개발 오버레이의 재렌더 트리거 키(`defenseRev`). 실제 표시 데이터는 `buildDefenseSatelliteDevSnapshot`(정상 경로)라 화면 자체는 안전했으나, 이 revision key가 legacy만 바뀐 변경을 놓쳐 재렌더/틱 갱신이 씹힐 수 있었음.
-   - `src/game/planetHub/planetHubStoreMemoRevisions.ts` `planetHubDefenseSatelliteMemoRev` — **더 중대**: 이 함수가 `src/worldObjects/planetWorldObjectsListCache.ts`의 월드오브젝트(궤도 위성 오브젝트 포함) 캐시 무효화 키로 직접 쓰임. byModuleId만 보고 legacy 변화를 놓치면, 착륙 시 강제 invalidate(`syncPlanetHubDevelopmentOnLanding`)가 없는 경로(허브 체류 중 실시간 갱신 등)에서는 캐시가 갱신되지 않아 위성이 화면에 반영 안 될 여지가 있었음.
-   둘 다 공유 함수 `readDefenseSatelliteDetailFromCoreDetail` 호출로 교체 — 향후 병합 로직이 또 갈라질 여지 자체를 제거.
-
-### 최종 수정 파일 (6개)
-
-- `src/game/planetDevelopment/planetDefenseSatelliteRuntime.ts` (김팀장 기존 작업 — 검증만)
-- `src/systems/planetaryDefense/planetDefenseSatelliteDevelopment.ts` (김팀장 기존 작업 — 검증만)
-- `src/game/planetDevelopment/syncPlanetHubDevelopmentOnLanding.ts` (김팀장 기존 작업 — 검증만)
-- `src/game/planetDevelopment/planetFacilityLegacyMigration.ts` (김클로드 추가 — 전 행성 복구 편입)
-- `src/game/planetHub/planetHubStoreMemoRevisions.ts` (김클로드 추가 — 중복 로직 제거)
-- `src/ui/overlay/content/PlanetDefenseSatelliteDevContent.tsx` (김클로드 추가 — 중복 로직 제거)
-
-### self-check
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS** (에러 없음)
-- [x] `npm run audit:memory:all` — **PASS** (memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
-- [x] git commit **안 함**
-
-### 복구 관련 안내 (중요 — 대표님 확인 필요)
-
-- 이 수정은 **읽기·캐시 로직 복구**다 — byModuleId/legacy 중 "true"가 하나라도 있으면 즉시 정상 표시된다. 즉, **legacy 필드에 실제 설치 이력이 남아있는 행성은 다음 부팅(또는 재착륙) 즉시 위성이 재표시**된다.
-- 단, **만약 특정 행성이 byModuleId·legacy 양쪽 모두 `installed:false`로 이미 덮어써진 상태라면(진짜 데이터 유실)** 이번 수정으로는 복구 불가 — 그 경우 Firebase 세이브 백업(`src/firebase/gameSaveBackup/`) 스냅샷에서 해당 시점 이전 데이터 확인이 필요할 수 있음(대표님 실기 확인 후 필요 시 별도 요청 바람).
-- **런타임 검증 미완료** — 정적 분석·self-check 게이트만 통과했고, 실기(다음 부팅 후 방위위성 재표시 여부)는 대표님 확인이 필요.
-
-### 김팀장 검수 (2026-07-08 22:43 KST)
-
-| 항목 | 결과 |
-|------|------|
-| 근본 원인 | **PASS** — byModuleId `installed:false` 우선 → legacy `installed:true` 무시. 증상(전 행성 동시 소실)과 정합 |
-| 병합 읽기 | **PASS** — `readDefenseSatelliteDetailFromCoreDetail` 단일 경로로 memo rev·오버레이·월드오브젝트 캐시 통일 |
-| 부트 일괄 복구 | **PASS** — `migrateLegacyPlanetDevModulesForPlanet`에 reconcile 편입 → 착륙 없이 전 행성(legacy 잔존 시) |
-| planetCore 손상 | **별도 P0** — JSON.parse 실패 전체 리셋은 본 handoff와 별개. P0 패치와 함께 배포 필수 |
-| 데이터 복구 한계 | **확인** — 양쪽 `installed:false`면 복구 불가(대표님 「예」). legacy 잔존 행성만 자동 복구 |
-| tsc · audit:memory:all | **PASS** |
-
-**verdict: PASS(조건부)** — 코드·원인 분석 승인. **실기 1회**(부팅 후 legacy 잔존 행성 위성 재표시) + P0 planetCore 패치 Metro `r` 동시 반영 권장.
-
----
-
-## ✅ REVIEWED — 허브 순회 native_heap 누적 · 권장 A안(A1+A2) · 김클로드
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`REVIEWED`** · **verdict PASS** (김팀장 2026-07-08) |
-| **updated** | 2026-07-08 10:47 KST |
-| **task_id** | `hub-hop-native-heap-fix-a-plan-20260708` |
-| **assigned_by** | 김팀장 — 전반 분석 완료 후 대표님 지시(권장 A안) |
-| **명세** | `tools/kim-team-lead/reports/kim-claude-ready-hub-hop-native-heap-fix.md` |
-
-### 구현 내역
-
-**A1 — `src/components/planet/PlanetNebulaImageBackdrop.tsx`**
-- `backgroundImageSource`·`nebulaBakedImageSource` 두 `<Image>` 모두에 `resizeMethod="resize"` 추가
-- 각 `style`에 명시적 `{ width: size, height: size }` 추가(기존 `styles.layer`의 `width/height:'100%'` 위에 덮어써 우선 적용) — Android 디코드 시 1024×1024 풀 디코드 대신 뷰포트 `size` 기준 다운샘플 유도
-- `resizeMode="cover"`·크로스페이드 시각은 변경 없음(레이아웃/opacity 로직 불변)
-
-**A2 — `src/game/nativeReclaim/runPlanetChangeNativeReclaimLight.ts`**
-- `arcfire-native-memory`의 `trimNativeBitmapCachesAsync` import 추가
-- 기존 3단계(combat skia reclaim·nebula profile prune·memo compact) 뒤에 `void trimNativeBitmapCachesAsync().then(...)` 추가 — ingress 정본 패턴(`runPlanetHubIngressReclaimPass.ts`)과 동일하게 비동기·non-blocking
-- DEV 로그에 `fresco=${result.frescoCleared}` 반영(기존 로그를 `.then()` 안으로 통합, 별도 로그 중복 없음)
-
-### self-check (김클로드)
-
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — **PASS**
-- [x] `npm run audit:memory:all` — **PASS** (memory 37/37 · skia 20/20 · worklet · native-reclaim 20/20 · resident-set 7/7 · hot-path 0)
-
-### 김팀장 검수 (본창 Cursor)
-
-| 항목 | 결과 |
-|------|------|
-| diff·계약 | **PASS** — A1/A2 명세 2파일만 · Skia/worklet/STAGE 계약 위반 없음 |
-| A1 호출 경로 | **PASS** — `planetHubSubcomponents.tsx` `size={nebulaBackdropSize}` (뷰포트 크기) 전달 확인 |
-| A2 호출 경로 | **PASS** — `planetMainStageSession.ts` `planet_change` → `runPlanetChangeNativeReclaimLight` 배선 유지 |
-| audit 재실행 | **tsc PASS** · **audit:memory:all PASS** (37/37 · skia 20/20 · worklet · native-reclaim 20/20 · hot-path 0) |
-| **커밋** | 미실행 (대표님 지시 시) |
-| mem-post-dev-recheck | **배정** — 김경제 handoff 갱신 권장 |
-
-**verdict**: `PASS`
-
-**검수 메모**:
-1. **A1** — 1024 풀 디코드 → `nebulaBackdropSize` 기준 다운샘플. worldmap↔hub 왕복(대표님 재현 경로)에 직접 효과 — **가장 큰 레버**.
-2. **A2** — in-hub `planet_change` Fresco trim 공백 메움. ingress 정본과 동일 `void trim...then()` 패턴.
-3. **한계** — Skia `useImage` 성운 사본·Fresco 캐시 상한 plateau는 A안 범위外(명세대로). **실기**: 은하계 3+ 행성 순회 후 native_heap floor +40MB 이내 확인 권장.
-4. **반영** — Metro **`r` 리로드**만으로 충분(네이티브 재빌드 불요).
-
-**[kim-claude-review] 2026-07-08 hub-hop-native-heap-fix-a-plan PASS — A1 resizeMethod+size · A2 planet_change fresco trim · tsc+audit PASS · 실기 native_heap 재측정 대기**
-
----
-
-## 🔴 PENDING — 행성허브 3곳+ 순회 시 재시동(하드실링 실시간 재현) · 김클로드 (진단 완료 → **A안 READY로 이관**)
-
-| 필드 | 값 |
-|------|-----|
-| **status** | `PENDING` (실시간 인시던트로 확증 — 코드 수정은 승인 후) |
-| **updated** | 2026-07-08 10:10 KST |
-| **task_id** | `multi-hub-hop-gl-hard-ceiling-restart-20260708` |
-| **요청자** | 대표님 — "은하계 지도상에서 여러 행성 허브 3개 이상을 돌아다니면 결국 재시동되는(메모리 위험) 상태" |
-| **관련** | 직전 항목 `galaxy-map-gl-residual-on-hub-reentry-20260708`(은하계 지도 체류 GL 잔류)와 같은 계열 — 부분적으로 원인 중첩 |
-
-### 실시간 확증 — 조사 도중 정확히 재현됨
-
-```
-09:46:15  pss=920.7  gl=122.9  native_heap=424.2  views=377
-10:01:40  pss=959.9  gl=45.3   native_heap=494.3  views=404   ← GL_HARD_CEILING 발동
-10:01:48  [INCIDENT] GL_HARD_CEILING gl=45.3 pss=959.9 views=404 → 즉시 remediation(OOM 임박 판단)
-10:01:50  [AUTO_FIX] app relaunch reason=gl_critical_active_hub
-10:02:09  baseline reset pid=23222 gl=6MB pss=190.8MB
-10:02:30  VERIFY PASS pid=23222 gl=5.1MB pss=458MB views=82
-```
-
-대표님이 보고한 증상이 조사 도중 **실제로 자동 재시동을 유발**했다(모니터가 950MB 하드 예산 초과로 판단, 자동 relaunch 완료 — 현재 앱은 정상 기동 상태, pid 23222).
-
-**중요 — 이번 트리거는 GL 자체가 아니라 native_heap 급등**: 같은 구간에서 `gl_mb`는 오히려 122.9→45.3으로 **하락**했는데(모니터가 `GL_RECOVERED idle_ok`로 오라벨링) `native_heap_mb`는 424.2→494.3으로 **15분 새 +70MB 급증**하며 pss가 950MB 하드 예산을 넘음. 즉 "GL_HARD_CEILING"이라는 인시던트명과 달리 실제 주범은 native_heap 쪽.
-
-### 코드 추적 — native_heap 급증 후보
-
-1. **행성 허브 배경 성운("베이크 PNG")이 이중 디코드 경로를 가짐**:
-   - `SkiaPlanetNebulaShaderBackdrop.tsx:134-135` — `useImage()`(Skia GL 텍스처 관리, `nebulaBakedImageSource`/`backgroundImageSource` 둘 다)
-   - `PlanetNebulaImageBackdrop.tsx:44-57` — 동일 소스를 RN `<Image>`(Fresco/native_heap)로 **별도 디코드**(크로스페이드용, `planetHubSubcomponents.tsx:586,610` 두 곳에서 마운트)
-   - 즉 허브 진입마다 같은 성운 아트가 **Skia 텍스처 + Fresco 비트맵** 두 벌로 메모리에 올라갈 수 있는 구조.
-2. **베이크 PNG 실측 용량** — `assets/images/nebula/baked/*.png` 21개, 파일당 **820KB~980KB**(압축). 디코드 시 raw bitmap은 통상 5~15배 팽창 — 장당 수 MB~10MB+ 예상(정본 실측은 기기 프로파일러 필요).
-3. **`resolvePlanetNebulaBakedSource`**(`src/game/planetNebulaBakedAssets.ts`) — 정본 21행성은 전용 PNG, synth/미개척 행성은 zone별 폴백 풀(안전 4장/중립 8장/pvp 6장/엔드게임 3장)에서 **행성 id 해시로 결정론적 선택**. 폴백이라도 zone 내 여러 장 중 하나이므로, 서로 다른 행성 3곳을 순회하면 서로 다른 이미지 2~3장이 동시에 디코드될 가능성이 높음(모두 같은 이미지로 수렴할 보장 없음).
-4. **인그레스 측 회수 설계가 "이전 허브 정리"를 하지 않음** — `runPlanetHubIngressReclaimPass`(`src/game/nativeReclaim/runPlanetHubIngressReclaimPass.ts:27-33`)는 새 허브 마운트를 방해하지 않으려고 **의도적으로** `reclaimHubSkia: false, releaseGpuLayers: false`를 넘김(직전 handoff 항목에서도 지적한 지점). 결과적으로 "떠나온 이전 행성의 배경 텍스처/비트맵을 강제로 내리는 지점"이 STAGE1↔STAGE2 전환 어디에도 없고, 오직 Skia/Fresco 자체의 소스-키 기반 캐시 재사용·GC 타이밍에만 의존 — 방문한 행성이 다양할수록(=서로 다른 소스 캐시 엔트리가 늘어날수록) 이 의존이 깨지고 상주량이 쌓일 여지가 커짐.
-5. `hubRnBackdropRemountGen`(`planetHubSubcomponents.tsx:393-407`) 기반 강제 리마운트는 **"주기 deep reclaim"** 시점에만 발동 — 행성→행성 이동(허브 진입) 시점에는 발동 안 함.
-
-### 결론 (진단 한정, 수정 없음)
-
-- 직전 항목(은하계 지도 GL 잔류, +87MB 정체)과 이번 항목(다중 허브 순회 native_heap 급증)은 **같은 구조적 원인**을 공유: STAGE2→STAGE1 전환 시 "새 STAGE 마운트를 방해하지 않기 위해 이전 STAGE 자원 강제회수를 의도적으로 생략"하는 설계가, 정작 "여러 개의 서로 다른 콘텐츠(여러 성계 GL / 여러 행성 배경 이미지)를 반복 방문"하는 시나리오에서는 각 방문분이 회수 없이 누적되는 역효과를 냄.
-- 이번 native_heap +70MB의 **정확한 단일 원인(이중 디코드 vs 폴백 풀 다양성 vs 다른 native 할당)은 기기 프로파일러 없이 코드 추적만으로 100% 특정 불가** — 위 1~5번은 확인된 구조적 후보이며 확률 순으로 나열한 것.
-- **코드 수정 미착수**(대표님 요청이 "추가 검토"였으므로 진단에 한정). 수정 시 승인 필요 후보:
-  (a) 허브 진입 시 "이전 planetId의 성운 배경 텍스처/비트맵" 명시적 언마운트·trim 스텝 추가(`runPlanetHubIngressReclaimPass`에 keep=[신규 planetId]로 이전 소스 evict),
-  (b) Skia/RN 이중 디코드 중 하나로 단일화(크로스페이드 필요 없는 경로에서),
-  (c) 폴백 풀 다양성 축소 또는 zone당 1장으로 통일(방문 성계 다양성과 무관하게 캐시 재사용률 100% 보장).
-
-### 참고
-
-- 대응 relaunch는 모니터 자동 remediation이 정상 수행 완료(정상 기동 확인, VERIFY PASS). 사용자 조치 불필요.
-- 직전 handoff 항목 `galaxy-map-gl-residual-on-hub-reentry-20260708`과 함께 김팀장 검토 시 묶어서 판단 권장(원인 계열 동일).
-
----
-
-## 🟢 READY — 플레이어 독립국가(녹색 국경) · 김클로드 착수 대기
-
-| 필드 | 값 |
-|------|-----|
-| **status** | **`READY`** (구현 대기 — 대표님 지시 시 김클로드 착수) |
-| **updated** | 2026-07-07 18:10 KST |
-| **task_id** | `player-independent-nation-m1-m2-20260707` |
-| **assigned_by** | 김팀장 (Cursor 본창) — 분석·명세 패키징 완료 |
-
-### 착수 문서 (필독 순서)
-
-1. **`tools/kim-team-lead/reports/kim-claude-ready-player-independent-nation.md`** — 작업 요약·복사용 지시문
-2. **`docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md`** — M1~M3 상세 명세·파일 체크리스트·테스트
-
-### 대표님 → 김클로드 복사 지시
-
-```text
-@김클로드 docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md 와 tools/kim-team-lead/reports/kim-claude-ready-player-independent-nation.md 를 읽고 M1+M2 구현해. 완료 후 kim-claude-handoff-pending.md status=PENDING. 커밋 금지.
-```
-
-### 범위
-
-- **M1+M2**: independent side · 구매 occupier 전환 · reconcile 보호 · 녹색 Voronoi·허브 플레이트
-- **M3 보류**: faction_diplomacy CSV · ArcCore 접전 (2차 task)
-
-김클로드 완료 시 본 파일 상단 **READY** 블록 아래에 **PENDING** handoff 추가 · 김팀장 검수.
-
----
-
-## 🟡 PENDING — 은하계 지도맵 GL 잔류(worldmap→hub 회수 누락) · 김클로드 (분석 완료, 수정 미착수)
-
-| 필드 | 값 |
-|------|-----|
-| **status** | `PENDING` (진단 완료 — 코드 수정은 승인 후 진행) |
-| **updated** | 2026-07-08 09:52 KST |
-| **task_id** | `galaxy-map-gl-residual-on-hub-reentry-20260708` |
-| **요청자** | 대표님 — "은하계 지도맵에서 머무르다 행성허브로 들어가면 메모리가 해제되어야 하는데 여전히 높게 유지된다" |
-
-### 실측 근거 (`tools/long-run-monitor/logs/mem-timeline.csv`, `incidents.log`)
-
-```
-08:14:02  gl=35.8MB  pss=837.0  views=399   (베이스라인)
-08:29:23  gl=135.8MB pss=935.2  views=581   GL_SPIKE (+100MB, +182 views)
-08:44:43  gl=147.9MB pss=941.5  views=560
-09:00:06  gl=147.9MB pss=941.1  views=560   (변화없음 — 정체)
-09:15:31  gl=122.8MB pss=916.9  views=375   GL_RECOVERED(모니터 라벨) — views는 베이스라인 근접 회복하지만 GL은 아님
-09:30:51  gl=122.9MB pss=906.0  views=373
-09:46:15  gl=122.9MB pss=920.7  views=377   (09:15 이후 30분간 122.8~122.9MB 고정 — 추가 회수 없음)
-```
-
-**모니터의 `GL_RECOVERED idle_ok` 라벨은 오판정** — 추세가 하락했다는 것만 보고 베이스라인 복귀 여부는 안 봄. 실제로는 148MB → 123MB로 부분 회수(views는 거의 완전 회복) 후 **베이스라인(35.8MB) 대비 +87MB가 30분 이상 고정 잔류** — 대표님이 보고한 "은하계 지도 체류 중 GL+100MB → 행성허브 재착륙 후 미해제" 증상과 정확히 일치. views 폭증분(+182)이 GL 스파이크와 동시에 뜨고 동시에 대부분 빠진 패턴은 Skia/전투(`hub_skia_orbit_nebula_combat`, 모니터 자동 추정 태그)보다는 **네이티브 View 개수 자체가 늘어나는 렌더 소스**(= 은하계 지도의 `react-native-svg` 노드)에 더 부합.
-
-### 코드 추적 결과 (처리과정 확인)
-
-1. **`app/(game)/worldmap.tsx` `navigateToPlanetHubAfterTeardown`** — `router.replace('/(game)/planet')` 직전 `releaseWorldmapSessionFloor({reason:'route_blur'})` → `releaseGalaxyMapStageMemoryFull` 호출 확인(정상 배선).
-2. **`src/game/galaxyMapStageSession.ts` `runGalaxyMapReleaseCore(route_blur)`** — nebula prune·heavyUi abort·memo invalidate·drone campaign trim·Fresco bitmap trim(`trimNativeBitmapCachesAsync`)·`runStageNativeReclaimPass({stage:'galaxy_map'})`까지는 수행.
-3. **그러나 `runStageNativeReclaimPass`(`src/game/nativeReclaim/runStageNativeReclaimPass.ts:47`)의 `signalHubSkiaNativeReclaim(...)`는 `opts.stage === 'planet_hub'`일 때만 호출** — `stage: 'galaxy_map'`으로 부르는 worldmap 이탈 경로에서는 애초에 대상 밖. (그리고 이 함수 자체도 이름 그대로 "허브 Skia" 전용이라 은하계 지도 자체 렌더 소스와는 무관.)
-4. **허브 재착륙측 `runPlanetHubIngressReclaimPass`(`src/game/nativeReclaim/runPlanetHubIngressReclaimPass.ts:27-33`)는 명시적으로 `reclaimHubSkia: false, releaseGpuLayers: false`를 넘김** — 주석 그대로 "hub Skia mount 전/직후 PSS floor 정리; hub Skia tear-down 은 하지 않는다"로, **허브 자신의 Skia를 보존하기 위한 의도된 설계**. 즉 STAGE2→STAGE1 전환 양쪽 모두에서 "은하계 지도 자체가 렌더한 네이티브 뷰/그래픽 메모리를 강제로 회수하는 지점"이 구조적으로 존재하지 않음.
-5. **은하계 지도의 실제 렌더 소스**: `worldmap.tsx`는 Skia Canvas가 아니라 `react-native-svg`(`<Svg>` + `GalaxyMapSystemsSvg`/`GalaxyMapTerritoryVoronoiSvg`/`GalaxyMapTerritoryOccupationLabelsSvg`)를 사용. `GalaxyMapSystemsSvg.tsx:177` `systems.map(...)` — **비가상화 렌더**로 unlock된 성계 수만큼 SVG 노드(원+라벨+아이콘)가 그대로 생성됨. "1일 1성계개방" 설계상 unlock 성계 수는 시간이 갈수록 단조 증가하므로, 지도 체류 시 생성되는 네이티브 뷰 총량도 게임 진행에 따라 계속 늘어나는 구조.
-6. `releaseAllPlanetGpuLayers`(worldmap 이탈 시 호출됨)는 이름과 달리 `planetStageGpuSupervisor.ts`의 **"허브측" GPU 레이어 레지스트리** 전용(`registerGpuLayer(onRelease) → releaseAllPlanetGpuLayers`) — 은하계 지도 SVG 트리와 무관.
-
-### 결론
-
-- STAGE1↔STAGE2 dispose 레지스트리(이전 라이프사이클 감사에서 "정상"으로 확인됐던 3계층: `registerPlanetSessionResource`/`galaxyMapStageSession`/`nativeReclaimRegistry`)는 모두 **Skia(@shopify/react-native-skia) + Fresco 비트맵 캐시**를 대상으로 설계된 것이고, `react-native-svg` 기반 은하계 지도 자체의 네이티브 View/그래픽 메모리는 이 계약 범위 밖 — 감사 사각지대.
-- 실측상 GL은 스파이크 후 부분 회수(148→123MB)만 되고 이후 30분+ 고정 잔류 — "완전 미해제"는 아니고 "불완전 회수 후 정체"가 정확한 표현.
-- **코드 수정은 진행하지 않음** — 진단 요청("처리과정을 확인하라")에 한정. 수정 방향 후보(승인 필요): (a) `runStageNativeReclaimPass(stage:'galaxy_map')`에 SVG 트리 전용 회수 스텝 추가, (b) `GalaxyMapSystemsSvg`에 화면 밖/미선택 성계 가상화 적용, (c) worldmap route_blur 시 지도 언마운트 후 명시적 GC/trimMemory 유도. 어느 쪽이든 "1일 1성계개방"으로 unlock 수가 계속 느는 구조라 (b)가 근본 해결에 가장 가까움.
-
-### 미완/보류
-
-- 위 3안 중 실제 수정 미착수 — 대표님/김팀장 우선순위 지시 대기.
-- `hub_skia_orbit_nebula_combat`(모니터 자동 추정 태그)가 실제로 오귀속인지, 아니면 08:29 시점에 실제로 허브+전투 동시 활성이었는지는 로그캣 원본까지는 대조 안 함(현재 timeline/incidents만 근거).
-
----
-
-## 🟡 PENDING — 오로라 관측국 재시작 인시던트(native_heap 주도) · 김클로드
-
-| 필드 | 값 |
-|------|-----|
-| **status** | `PENDING` |
-| **updated** | 2026-07-07 21:55 KST |
-| **kim_claude_session** | Claude Code (VSCode) |
-| **assigned_by** | 사용자 직접 지시 — 방금 발생한 재시작(오로라/synth_002_p 허브) 원인 확인 요청 |
-| **task_id** | `aurora-hub-native-heap-hard-ceiling-20260707` |
-
-### 사용자 지시 배경
-
-"오로라 관측국"(=`synth_002_p`, phase3 정착완료 명칭) 허브 체류 중 앱이 자동 재시작됨. 재시작 직전 상태·이상 유무 확인 요청.
-
-### 조사 결과 — 모니터 로그 대조
-
-- 21:43:25 `GL_HARD_CEILING gl=110.4 pss=993.5 views=464` → 자동 relaunch, 21:44:07 정상 복구 검증됨(pid 27487, gl=8.6MB·pss=505.2MB·views=99).
-- **이번 인시던트는 오늘까지의 GL 전용 수정(콤뱃-세이프 reclaim 등)과 다른 축**: `mem-timeline.csv` 대조 결과 21:27:48(views=19) → 21:43:16(views=464, `PSS_SPIKE review=graphics+native`) 15분 사이 **GL은 110.4→110.4로 거의 그대로**인데 **native_heap_mb가 259.8→503.1(+243)·views가 19→464(+445)** 로 급증 — GL 축은 기존 fix가 억제 중임을 재확인, 이번엔 native_heap/views 축이 하드실링을 유발.
-- 실기 logcat은 이번에도 프로덕션 빌드라 `[MEM]` JS 로그 없음(206바이트, ActivityManager 노이즈뿐) — 원인은 코드 레벨 추론으로 접근.
-
-### 작업 요약
-
-`runPlanetHubCombatSafeReclaimPass`(전투 중에도 도는 3분 안전판, 어제 신설)에 **Fresco 비트맵 캐시 트림**(`trimNativeBitmapCachesAsync`)을 추가. 이 함수는 현재 마운트된 Image가 참조 중인 비트맵은 안 건드리고 "안 쓰는 재사용 풀"만 비우는 것으로 판단(RN Image key 리마운트가 아님) — dodge overlay 강제 해제·RN 백드롭 remount처럼 전투 중 화면 끊김 위험이 있는 나머지는 여전히 제외.
-
-**중요 — 완전한 원인 규명은 아님**: 이 fix는 native_heap 증가분 중 Fresco 비트맵 캐시가 원인인 부분만 겨냥한다. **views가 19→464로 급증한 부분**(순수 네이티브 View 개수)은 비트맵 캐시 트림과는 별개 축이라 이 fix로 해결된다는 보장이 없음 — 어떤 컴포넌트가 그렇게 많은 뷰를 마운트하는지는 프로덕션 빌드 로그 부재로 특정 못함. 실측(다음 유사 상황에서 views 추이) 필요.
-
-### 변경 파일
-- `src/game/nativeReclaim/runPlanetHubCombatSafeReclaimPass.ts` — `trimNativeBitmapCachesAsync()` 호출 추가.
-
-### self-check
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — clean
-- [x] `npm run audit:memory:all` — memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path 0 hits
-
-### 리스크·주의
-- Fresco "안 쓰는 캐시만 비운다"는 판단은 TS 브릿지 시그니처 기반 추론이고 네이티브(Android) 쪽 실제 구현은 직접 못 봤음 — 실기 확인 시 화면 끊김 없는지 같이 봐야 함.
-- **views 급증 원인 미규명** — 별도 조사 필요(어떤 화면/리스트가 그렇게 많은 뷰를 마운트하는지).
-- git commit 안 함.
-
-### 미완·보류
-- views 19→464 급증의 정확한 소스 특정 — 이번 범위 밖(로그 부재로 코드 리뷰만으로는 확정 어려움).
-- 위 대표님 지시 대기 중인 `player-independent-nation-m1-m2-20260707`(READY)는 이번 작업과 무관 — 아직 미착수.
-
----
-
-## ✅ REVIEWED — timer-optimization-p1 (이전 사이클)
-
-| 필드 | 값 |
-|------|-----|
-| **status** | `REVIEWED` · **verdict PASS** (김팀장 2026-07-07) |
-| **updated** | 2026-07-07 11:20 KST |
-| **kim_claude_session** | Claude Code (VSCode) |
-| **assigned_by** | 사용자 직접 지시 — 타이머 검수(이전 사이클)에서 나온 P1 최적화 진행 지시 |
-| **task_id** | `timer-optimization-p1-20260707` |
-
-## 사용자 지시 배경 (2026-07-07 · 타이머 P1 최적화 진행)
-
-이전 사이클(`drone-fx-timer-memory-regression-audit-20260707`, 분석 전용)에서 찾은 P1 2건 중 실행 지시.
-
-### 작업 요약
-
-**1) 행성개발 오버레이 3곳 — 활성 작업 없을 때도 500ms 타이머가 무조건 돌던 것 게이트 추가**
-`PlanetDevelopmentListContent.tsx`(정답 패턴, `hasActiveJob` 게이트 기존 보유)와 동일하게 나머지 3곳도 `snapshot.isInstalling || snapshot.isUpgrading`(또는 세션 데이터 기반 동등 조건)일 때만 500ms 폴링이 돌도록 수정:
-- `src/ui/overlay/content/PlanetOrbitShipyardDevContent.tsx` — `buildOrbitShipyardDevSnapshot` 결과로 게이트, `useEffect` 순서를 스냅샷 계산 이후로 재배치.
-- `src/ui/overlay/content/PlanetDefenseSatelliteDevContent.tsx` — 동일 패턴(`buildDefenseSatelliteDevSnapshot`).
-- `src/ui/overlay/content/PlanetGenericFacilityDevContent.tsx` — `session.data` 로딩이 `tick` 부트스트랩과 얽혀있어, `sessionConfig`/`session` 선언을 effect보다 앞으로 옮기고 `session.data.snapshot.isInstalling/isUpgrading`로 게이트.
-
-**2) 허브 전투 중 서브초 타이머 통합 — battle-ready tick(100ms)+blink(180ms)를 setInterval 1개로**
-`src/game/planetHub/usePlanetHubBattleReady.ts` — 두 타이머가 이미 동일 활성조건(`intervalActive`)을 쓰고 있어서, 100ms tick 콜백 안에 blink용 누적 경과(`blinkAccumMsRef`, ms 단위)를 같이 세서 180ms 도달 시 자체적으로 토글하도록 통합. tick·blink 각각의 실제 주기(100ms/180ms)는 그대로 유지 — 등록되는 `setInterval` 개수만 2→1로 축소.
-
-**보류(이번엔 손 안 댐)**: 전투 engagement poll(250ms, `planetCapitalCombatHeavyUi.tsx`)까지 합치는 건 서로 다른 파일·다른 활성조건(`sim` 존재 여부 vs `msLeft>0`)이라 공유 티커를 새로 만들어야 하는 더 큰 구조변경 — 이번 P1 범위에서 제외, 필요시 별도 진행.
-
-### 변경 파일
-- `src/ui/overlay/content/PlanetOrbitShipyardDevContent.tsx`
-- `src/ui/overlay/content/PlanetDefenseSatelliteDevContent.tsx`
-- `src/ui/overlay/content/PlanetGenericFacilityDevContent.tsx`
-- `src/game/planetHub/usePlanetHubBattleReady.ts`
-
-### self-check (김클로드가 실행한 것)
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — clean
-- [x] `npm run audit:memory:all` — memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path 0 hits
-
-### 리스크·주의 (3줄 이내)
-- 세 오버레이 모두 "게이트 추가"만 했고 타이머가 하는 일(진행률 재계산·재렌더) 자체는 안 건드림 — 활성 작업 없을 때 폴링을 멈추는 것뿐이라 회귀 위험 낮음.
-- `PlanetGenericFacilityDevContent.tsx`는 `session.data`가 아직 null인 초기 로딩 구간엔 `hasActiveJob=false`라 인터벌이 안 도는데, 최초 로딩 자체는 `useHeavyUiDataSession`이 `tick`과 무관하게 자체 처리하므로 문제 없음(같은 패턴의 `PlanetDevelopmentListContent.tsx`가 이미 이렇게 동작 중).
-- git commit 안 함.
-
-### 미완·보류
-- engagement poll(250ms) 통합은 범위 밖 — 필요 시 별도 태스크.
-- P2 항목(worldmap 5분 reclaim 중복, `IdleSessionRestartGuard` 60s)은 미착수.
-
----
-
-## 김팀장 검수 (본창 Cursor · timer-optimization-p1-20260707)
-
-| 항목 | 결과 |
-|------|------|
-| diff·계약 | **PASS** — 시설 3곳 `hasActiveJob` 게이트 = `PlanetDevelopmentListContent` 동일 · `useEffect` cleanup `clearInterval` · battle-ready `usePlanetHubInterval`+`registerPlanetSessionResource` 유지 |
-| tick·blink 통합 | **PASS** — setInterval 2→1 · blink 180ms는 100ms tick 누적(±20ms 시각 drift, 허용) · `intervalActive` 게이트·planetId dispose unchanged |
-| 메모리 회귀 | **PASS** — hot-path 0 · reclaim·드론 publish key·PictureRecorder 등 기존 최적화 diff 범위 밖 |
-| audit 재실행 | **tsc PASS** · **audit:memory:all PASS** (37/37 · skia 20/20 · worklet · native-reclaim · resident-set · hot-path 0) |
-| **커밋** | 미실행 (김클로드·김팀장 공통 정책 — 대표님 지시 시) |
-| mem-post-dev-recheck | **배정** — 김경제 handoff 갱신 권장 |
-
-**verdict**: `PASS`
-
-**검수 메모**:
-1. P1 두 건 범위 내 구현 확인 — engagement 250ms는 handoff대로 보류 OK.
-2. `PlanetGenericFacilityDevContent` — `session.data` null 구간 폴링 off는 list 패턴과 동일, `useHeavyUiDataSession` 부트스트랩과 충돌 없음.
-3. **실기 smoke** — (a) 시설 업그레이드 중 진행률 갱신 (b) 웨이브 battle-ready 카운트·blink — 각 1회 권장.
-
-**[kim-claude-review] 2026-07-07 timer-optimization-p1 PASS — facility hasActiveJob×3 · battle-ready tick+blink merge · tsc+audit PASS**
-
----
-
-## 사용자 지시 배경 (2026-07-07 · 3종 검수, 이전 사이클)
-
-(1) 직전 작업(드론 폭발 이펙트·파괴시점 관련, `inboundEndOrbitMs` 도입) 검수, (2) 게임 내 작동 중인 타이머 일괄 검수 + 비효율 최적화 가능성 분석, (3) 어제까지의 메모리 최적화 작업에 변경사항(회귀)이 생겼는지 검수. 전부 read-only 분석 요청 — 코드 수정 없음.
-
-### (1) 드론 폭발/파괴시점 작업 검수 — **문제 없음**
-
-`git diff` 대조 확인(`inboundDroneKinematics.ts`·`runInboundDroneInterceptPass.ts`·`ArcInboundDroneSubCore.ts`·`PlanetHubInboundDroneLayer.tsx`·`inboundDroneSkiaTrail.ts`): 신규 `ArcInboundDrone.inboundEndOrbitMs` 필드로 드론이 파괴/충돌된 정확한 orbit 시각에 위치를 고정 → FX 스폰 좌표·트레일 패킹·kinematics 진행률 계산이 전부 이 값을 일관되게 참조하도록 정리됨. 기존 fallback 경로(저장된 elapsed·start 역산) 유지돼 하위호환. `tsc` clean·`audit:memory:all` 전체 PASS 재확인 — 문제 없음.
-
-**참고(범위 밖 발견)**: 같은 diff 범위에 무관해 보이는 변경 3건도 같이 포함돼 있었음 — `runArcCoreInstanceMissionDailyPass.ts`(선술집 보드 동기화 함수 추가), `planetHubFacilityGates.ts`(`missionStore` 정적 import를 순환참조 회피용 `require()`로 변경 — 구조적으론 순환참조 자체를 없애는 게 더 정공법이나 급한 건 아님), `transitCombatSession.ts`(미션 클리어 대화 트리거 추가). 드론 작업과 무관해 보여 검수 범위 밖으로 두고 목록만 남김.
-
-### (2) 게임 내 타이머 일괄 검수 (Explore 에이전트 1개)
-
-기존에 이미 파악·조치된 것(허브 5분/15분/3분 reclaim, 2s 시설개발 완료 폴, battle-ready tick/blink, 일일배치 60s 게이트, 영토전투 60s 게이트, 뉴스보드·성운생태 24h 미션)은 재조사 안 하고 **그 외 전부**를 새로 훑음.
-
-**P1 — 최적화 가치 있음**
-- `PlanetOrbitShipyardDevContent.tsx:55` · `PlanetGenericFacilityDevContent.tsx:322` · `PlanetDefenseSatelliteDevContent.tsx:55` — 500ms 폴링 타이머 3개가 **활성 작업 여부 게이트 없이** 오버레이 열려있는 내내 무조건 도는 중. 같은 계열의 `PlanetDevelopmentListContent.tsx:57`은 이미 `hasActiveJob` 게이트가 있어 정답 패턴이 바로 옆에 있음 — 3곳에 그대로 복사 적용 가능한 낮은 리스크 수정.
-- 허브에서 전투 진행 중일 때 **100ms(battle-ready tick)·180ms(blink)·250ms(engagement poll)** 서브초 타이머 3개가 동시에 개별 `setInterval`로 돎 — 하나의 공유 티커로 합치면 전투 중 JS 스레드 wake-up이 대략 1/3로 줄어듦.
-
-**P2 — 경미**
-- `worldmap.tsx`의 5분 soft reclaim이 `planet.tsx`의 5분 soft reclaim과 **같은 주기·같은 패턴을 화면별로 중복 구현** — 개념적으로 하나의 "포커스된 화면의 주기 reclaim"으로 공유 가능.
-- `IdleSessionRestartGuard.tsx:92` — 60초 유휴 체크 타이머가 **앱 전체 수명 동안** 정지 조건 없이 계속 돎(콜백 자체는 가벼움) — AppState 이벤트 기반으로 바꾸면 완전히 없앨 수 있는 종류.
-
-**확인됨(문제 없음)**: 미사일/드론 dodge FX(50ms)·전투 HUD(120ms)·듀얼 전멸판정(90ms)·채굴 드라이버(500ms, elapsed 기반 캐치업+2s UI 스로틀) — 전부 이미 적절히 게이트·스코프됨.
-
-**사소한 발견**: `AiNpcSubCore.ts:81`의 `registerTimedMission`(`npc_birth_and_transport_build`)은 주석은 "상시 순찰"처럼 읽히지만 실제로는 `repeat` 플래그가 없는 **1회성** 미션 — 실제 순찰 유지는 서브코어의 `onWallTick`이 담당. 기능 버그는 아니고 주석·네이밍 혼동.
-
-### (3) 메모리 최적화 작업 회귀 여부 검수 — **회귀 없음**
-
-어제까지 적용한 6건(은하그래프 빌드타임 프리컴파일 `GALAXY_SYSTEMS_PRECOMPUTED`·드론 trail `PictureRecorder` 재사용 `recorderRef`·`combatSkiaPresentationReclaim` Set 다중구독·월드확장 방향균형+증분 스케줄·오버레이 STAGE-이탈 정리 `resolvePendingArcOverlaysForStageExit`·허브 3분 combat-safe reclaim) 전부 grep으로 현재 파일에 그대로 남아있음을 확인 — 최근 드론/미션 작업과 겹치는 파일이 없어 충돌·되돌림 없음. `tsc` clean·`audit:memory:all` PASS 재확인.
-
-### 리스크·주의
-- 이번 턴은 전부 분석만 — 코드 수정 없음. P1 두 건은 위험도 낮은 수정 후보로 판단되나 실행은 지시 대기.
-- git commit 안 함.
-
----
-
-## 김팀장 검수 (본창 Cursor · worldmap-black-screen-post-wave-defense-20260706)
-
-| 항목 | 결과 |
-|------|------|
-| diff·계약 위반 | **PASS** — `ArcOverlayHost` 루트 잔존 P1과 일치 · `onClose` 선행 후 `dismissAll` · STAGE 이탈 공통 경로 1곳 |
-| gauge composition 교차 | **충돌 없음** — overlay 정리는 `planet.tsx` navigation 경로만 · gauge intent/batch는 `runArcCoreDailyOpsBatch` 축 |
-| audit 재실행 | **tsc PASS** · **audit:memory:all PASS** (37/37 · hot-path 0) |
-| **커밋** | **김팀장만** (대표님 명시 요청 시) |
-| mem-post-dev-recheck | **배정** — 김경제 handoff 갱신 |
-
-**verdict**: `PASS`
-
-**검수 메모**:
-1. **근본원인 타당** — 웨이브 결과 오버레이 미닫힘 + 루트 `ArcOverlayHost`가 STAGE 전환 후에도 스택 유지 → worldmap 가림. `resolvePendingArcOverlaysForStageExit`가 reward/waveResult `onClose` 선행으로 보상 유실 방지.
-2. **호출 위치** — `beginPlanetHubSuspendingNavigation` 최상단(출발·시설·타이틀 공통) + ingame dialog `dismiss()` — 배정 diff와 일치.
-3. **잔여** — 대화 `onDismiss` 비동기 엣지케이스는 handoff대로 범위外 · **실기 재현**(결과창 안 닫고 출발 → worldmap 정상) 권장.
-
-**[kim-claude-review] 2026-07-06 worldmap-black-screen-post-wave-defense PASS — resolvePendingArcOverlaysForStageExit · tsc+audit PASS · 실기 재현 대기**
-
----
-
-## 김팀장 검수 (본창 Cursor · planet-core-gauge-composition-20260706)
-
-| 필드 | 값 |
-|------|-----|
-| **task_id** | `planet-core-gauge-composition-20260706` |
-| **verdict** | `PASS` |
-
-### 작업 요약 (김팀장 구현 완료)
-Aurora(`synth_002_p`) 등 synth 행성 **>10% 일일 스탯 급등** 원인 — `ensureUnlockedWorldPlanetsInCoreRuntime`의 flat-50 baseline **덮어쓰기** + `SYNTH_PLANET_CORE_SEED=50` autogen. **단일 gauge composition** 아키텍처로 수렴:
-
-- **genesis per-planet** — `planet_resource_genesis.csv` 정본 (`resolvePlanetGenesisCoreGauge`)
-- **일일 배치 intent** — Energy / Environment / MasterBalance / Equilibrium → `pushPlanetCoreGaugeIntent`
-- **단일 apply** — `runPlanetCoreGaugeCompositionApplyPass` — ArcCore+dev 합산 **1.5%/metric cap** (`planet_core_gauge_composition_policy.csv`)
-- **P0 제거** — synth ensureUnlocked gauge replace 삭제 · autogen flat-50 → genesis per planet
-
-### 변경 파일 (핵심)
-| 파일 | 내용 |
-|------|------|
-| `tables/balance/planet_core_gauge_composition_policy.csv` | pct cap 1.5% |
-| `src/arcCore/planetCore/planetCoreGaugeIntent.ts` | 배치 intent 누적 |
-| `src/arcCore/planetCore/planetCoreGaugeCompositionModel.ts` | base/share 분해·cap apply |
-| `src/arcCore/planetCore/runPlanetCoreGaugeCompositionApplyPass.ts` | 일 1회 단일 patch |
-| `src/store/planetCoreRuntimeStore.ts` | ensureUnlocked synth replace 제거 · genesis seed |
-| `src/store/worldStore.ts` | synth autogen genesis per planet |
-| `runPlanetEnergyCorePass` / `runPlanetEnvironmentDiversityPass` / `runGlobalPlanetMasterBalancePass` / `runPlanetCoreStatEquilibriumPass` | intent 연동 |
-| `runArcCoreDailyOpsBatch.ts` | `beginPlanetCoreGaugeIntentBatch` → passes → composition apply → statOpsTrend commit |
-
-### audit
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — PASS
-- [x] `npm run audit:memory:all` — 37/37 · skia 20/20 · worklet · native-reclaim · hot-path 0
-
-### 리스크·주의
-- **legacy flat-50 세이브** — `mergeWorldWithDisk`의 `applyGenesisCoreSeed` + genesis realign rev가 1회 보정 · 이미 진행 중 gauge는 composition 초기 분해(`resolveInitialGaugeComposition`)로 점진 수렴.
-- **Equilibrium `max_daily_stat_gain_per_metric=4`** — 배치 중에는 intent만 push · **최종 cap은 composition 1.5%**가 우선.
-- **런타임** — Aurora 등 synth 1일 배치 후 Δ ≤1.5%/metric 실측 권장(대표님/김경제).
-
-**[kim-team-lead] 2026-07-06 planet-core-gauge-composition PASS — genesis 단일원 · intent batch · pct cap apply · ensureUnlocked flat-50 제거 · tsc+audit PASS**
-
----
-
-베가 전초기지 웨이브 전투 종료 → 인게임 대화창을 한동안(수 분) 방치 → 확인 버튼을 누르고 출발 → **은하계 지도가 검은 화면으로 뜸(당시 실시간 재현 중)**.
-
-### 조사 (Explore 에이전트 1개 + 라이브 로그·모니터 대조)
-- **오늘 오전의 `galaxy100.ts` 프리컴파일 변경은 원인 아님** — 생성 파일 757개 성계 전부 무결성 확인(끊긴 connections·빈 planets 없음), `vega_outpost`(vega_base의 소속 성계) 정상. 디스크 영속 상태도 `systems` 그래프 자체는 안 건드리고 `unlockedSystemIds` 등만 필터링 — 손상 경로 아님.
-- **라이브 모니터 로그에서 결정적 단서 확보**: 신고 시점 직후 03:24:51 `GL_HARD_CEILING`(gl=218.4, pss=914.2, **views=558**) → 자동 relaunch로 이미 복구됨(pid 12334). 재현 당시 사용자가 "은하지도"에 있다고 했는데 views가 허브 전투급으로 높았던 점이 단서.
-- **근본원인(가장 유력)**: `ArcOverlayHost`/`IngameDialogHost`(`app/_layout.tsx`)는 **루트 레이아웃 레벨의 전역 싱글턴**이라 STAGE(`Stack.Screen`) 전환과 무관하게 계속 마운트 상태 유지. 웨이브 종료 대화(`ingame_dialog_wave_defense_end`) 확인 후 뜨는 **`presentWaveResultOverlay`(웨이브 결과창)를 사용자가 직접 닫지 않고 바로 "출발"을 누르면**, 이 오버레이가 `arcOverlayStore` 스택에 그대로 남은 채 STAGE가 은하지도로 전환됨 — 오늘 앞선 라이프사이클 감사에서 이미 짚었던 "STAGE 이탈 시 오버레이 강제 정리 경로 없음"(P1) 항목이 실제로 터진 사례로 판단.
-- `dismissAllArcOverlays()`가 이미 존재했지만 **어떤 STAGE 이탈 핸들러에서도 호출되지 않고 있었음**(감사 리포트 기존 지적과 일치).
-
-### 작업 요약
-STAGE 1(행성 허브) 이탈 공통 지점(`beginPlanetHubSuspendingNavigation` — 출발·시설 이동·타이틀 복귀 전부 경유)에서 오버레이·인게임 대화 강제 정리를 추가. 단, 그냥 `dismissAll()`만 하면 `waveResult`/`reward`/`levelUp` 오버레이의 `onClose`(경험치 지급·웨이브 스토어 reset 등)가 안 불려 **보상이 유실**되는 걸 발견해서, 새 함수로 그 부수효과를 먼저 실행한 뒤 스택을 비우도록 구현.
-
-### 변경 파일
-- `src/ui/overlay/arcOverlayStore.ts` — `resolvePendingArcOverlaysForStageExit()` 신설. 스택의 `levelUp`/`reward`/`waveResult` 항목은 `onClose()`를 먼저 호출(보상 지급 등 부수효과 보존)한 뒤 `dismissAll()`로 스택을 비움. `alert`/`narrative`/`tradeQuantity` 등 나머지 종류는 onClose 없이 그냥 제거(사용자 선택 없는 상태라 안전).
-- `app/(game)/planet.tsx` — `beginPlanetHubSuspendingNavigation`(출발·시설 이동·타이틀 복귀 공통 경로) 최상단에서 `resolvePendingArcOverlaysForStageExit()` + (열려있으면) `useIngameDialogStore.getState().dismiss()` 호출.
-
-### self-check (김클로드가 실행한 것)
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — clean
-- [x] `npm run audit:memory:all` — memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path 0 hits
-
-### 리스크·주의 (3줄 이내)
-- **잔여 엣지케이스**: 인게임 대화(`IngameDialogHost`)가 아직 열려있는 상태에서 강제 `dismiss()`하면 `onDismiss` 콜백이 비동기(await 포함)라, 그 콜백이 **새 오버레이를 여는 경우**(예: 이 웨이브 종료 대화 자체) STAGE 전환 이후에 새로 뜰 여지가 이론상 남음 — 이번 신고 시나리오(대화는 이미 확인 완료 후 출발)에는 해당 안 되지만, 완전히 막으려면 다이얼로그 스토어 자체를 동기화하는 별도 작업 필요(이번 범위 밖).
-- 자동 모니터가 이미 앱을 강제 재시작해 사용자의 즉시 증상은 해소됐을 가능성 높음 — 재현 재확인 필요.
-- git commit 안 함.
-
-### 미완·보류
-- 실기기 재현 확인(리로드 후 동일 시나리오 — 웨이브 종료 → 결과창 안 닫고 바로 출발 → 은하지도 정상 렌더 확인) 필요.
-- 위 "다이얼로그 아직 열림" 엣지케이스는 재발 시 별도 작업.
-
----
-
-## 사용자 지시 배경 (2026-07-05 · 부팅 시 은하지도 로딩 구조개선)
-
-"은하계 지도 로딩(차원항로 진입 시퀀스용으로 설계된 부분)이 왜 시작 부팅에 들어가 있는지" 문의 → 감사 리포트 P0#1 관련. 구조개선 가능 여부 검토 후 안전한 부분은 진행 지시.
-
-### 검토 결과 (Explore 에이전트 1개 병렬 조사 포함)
-
-- **"위치만 지연 계산"은 안전하지 않음** — `capSystemGraphMaxDegree`(연결선 확정 단계)가 완화된 좌표로 거리·교차 판정을 하므로 **좌표와 연결그래프가 순차 결합**돼 있음. `computeGalaxyTransitFuelQuote`·`tradeRouteTransportCost`·`syncNpcAiClanTerritoryFromGalaxy`(Continue 탭 시 실행) 등 실제 게임로직이 지도 화면을 열기 전에도 좌표를 읽음 — "지도 열 때만 계산"으로 미루면 이 경로들에서 여전히 일찍 트리거되거나, 트리거 안 되면 그래프 자체가 없어 에러.
-- **대신 "빌드타임에 한 번만 계산해 정적 파일로 굳히기"가 안전** — `buildGalaxySystems100()`은 고정 시드(`mulberry32(20260415)`)·정적 입력(`STAR_SYSTEMS`)만 쓰는 순수 함수라 결과가 항상 같음. 기존 CSV 밸런스 테이블도 이미 이 방식(빌드타임 코드젠 → 정적 `.ts` import)이라 같은 컨벤션.
-- **부수 발견**: 같은 프로세스 안에서는 100% 결정적이지만, **서로 다른 프로세스 실행 간에는 부동소수점 최종 좌표가 미세하게(약 0.0005) 갈릴 수 있음**(V8 JIT 타이밍에 따른 200회 반복 시뮬레이션 누적 오차로 추정 — 연결그래프 자체는 영향 없음, 확인함). 오늘 처음 발견한, 원래부터 있던 특성. 빌드타임에 하나로 고정하면 오히려 전 기기가 **완전히 동일한 은하 그래프**를 갖게 되어 이 잠재적 불일치도 같이 해소됨.
-
-### 작업 요약
-`buildGalaxySystems100()`의 결과(760개 중 활성 757개 성계)를 빌드타임에 1회 계산해 정적 파일로 굳히고, 런타임(`galaxy100.ts`)은 그 결과만 재노출하도록 변경. 함수 자체·다른 export(`GAMEPLAY_SYSTEM_IDS` 등)는 그대로 — 소비하는 쪽 코드는 전혀 안 건드림(같은 이름 `GALAXY_SYSTEMS`, 같은 타입, 같은 값).
-
-### 변경 파일
-- `tools/galaxy-graph/generate-galaxy-systems.ts` (신규) — `buildGalaxySystems100()`을 실행해 결과를 정적 `.ts`로 직렬화하는 생성기. 실행: `npx tsx tools/galaxy-graph/generate-galaxy-systems.ts` (또는 `npm run gen:galaxy-graph`).
-- `src/data/generated/galaxySystems100.generated.ts` (신규, AUTO-GENERATED) — 프리컴파일된 757개 성계 데이터.
-- `src/data/galaxy100.ts` — `export const GALAXY_SYSTEMS = buildGalaxySystems100()`(매 부팅 실행) → `GALAXY_SYSTEMS_PRECOMPUTED` import로 교체. `buildGalaxySystems100()` 함수 자체는 생성기 전용으로 계속 export.
-- `package.json` — `gen:galaxy-graph` 스크립트 신설, `postinstall`·`prestart`·`preandroid`에 연결(밸런스 테이블과 동일하게 `STAR_SYSTEMS` 변경 시 자동 재생성).
-
-### self-check (김클로드가 실행한 것)
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — clean
-- [x] `npm run audit:memory:all` — memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · **resident-set 7/7** · hot-path 0 hits
-- [x] `npx tsx src/arcCore/worldExpansionGlobalSchedule.test.ts` — 기존 5개 테스트 전부 PASS(정확히 `synth_002` 등 동일 그래프 확인)
-- [x] 임시 검증(작업 후 삭제): 새 정적 파일과 그 시점의 런타임 재계산 결과를 deepEqual 대조 — 좌표는 위에 적은 프로세스간 부동소수점 미세오차 확인(연결그래프는 동일), 정적 파일 자체는 생성 시점 실행 결과 그대로 정확히 반영됨.
-
-### 리스크·주의 (3줄 이내)
-- **STAR_SYSTEMS(src/data/systems) 수정 시 반드시 `npm run gen:galaxy-graph` 재실행 필요** — 안 하면 정적 파일이 stale해짐. `postinstall`/`prestart`/`preandroid`에 걸어놔서 일반적인 개발 흐름에선 자동 반영되나, 수동으로 CSV/코드만 고치고 바로 커밋하면 놓칠 수 있음 — 김팀장 검수 시 확인 권장.
-- 프로세스간 부동소수점 미세오차 발견은 이번 fix로 오히려 해소되는 방향(전 기기 동일 그래프) — 회귀 아님.
-- git commit 안 함. `src/data/generated/galaxySystems100.generated.ts`는 신규 untracked 파일 — 커밋 시 포함 필요.
-
-### 미완·보류
-- 감사 리포트의 P0#2(미개방 성계까지 포함해 전체 행성 코어 런타임을 부팅마다 구축)·P0#3(계정 초기화 후 재부팅 미실행)은 이번 범위 밖 — 별도 진행 여부 확인 필요.
-
----
-
-## 김팀장 검수 (본창 Cursor · memory-loading-optimization-refactor-20260705)
-
-| 항목 | 결과 |
-|------|------|
-| diff·계약 위반 | **PASS** — Table-First 코드젠 컨벤션 · `GALAXY_SYSTEMS` API 동일 · 소비처 무변경 |
-| audit 재실행 | **tsc PASS** · **audit:memory:all PASS** (37/37 · resident-set 7/7) · **audit:dev-process-gate PASS** · **worldExpansion test 5/5** |
-| **커밋** | **김팀장만** (대표님 명시 요청 시) |
-| mem-post-dev-recheck | **배정** — 김경제 handoff 갱신 |
-
-**verdict**: `PASS`
-
-**심층 검수 (10축 요약)**:
-1. **범위** — P0#1(부팅 sync O(n²) 제거)만 구현 · P0#2·P0#3 **미포함**(handoff 보류 동의).
-2. **부트·로딩** — `buildGalaxySystems100()` 런타임 모듈 init **제거** → `GALAXY_SYSTEMS_PRECOMPUTED` import · 757 systems · `synth_002` connections=3 확인.
-3. **STAGE·dispose** — 변경 없음 · 회귀 없음.
-4. **계정 라이프사이클** — 변경 없음.
-5. **Skia·native** — 변경 없음.
-6. **arcCore** — world-expansion 테스트 동일 그래프(`synth_002` 등) PASS.
-7. **코드젠** — `tools/galaxy-graph/generate-galaxy-systems.ts` · `npm run gen:galaxy-graph` · `postinstall`/`prestart`/`preandroid` 연동 OK.
-8. **정적 게이트** — 전 항목 PASS.
-9. **런타임** — 부팅 체감·타이틀→허브 **대표님 실측** 권장(정적 import parse 1회 vs O(n²) 제거 — net 이득 예상).
-10. **감시** — 김경제 `mem-post-dev-recheck` 배정.
-
-**검수 메모**:
-- **순환 import(생성기)**: generator가 `galaxy100.buildGalaxySystems100()` 호출 · 런타임은 precomputed만 — 안전.
-- **stale 위험**: `galaxy100.ts` 알고리즘/`STAR_SYSTEMS` 변경 시 `gen:galaxy-graph` 필수 — hook으로 대부분 자동 · **커밋 전 generated 포함** 확인.
-- **dev tradeoff**: `prestart`마다 codegen 1회(O(n²)) — **앱 부팅이 아닌 Metro 시작** 비용 · 수용.
-- **untracked**: `galaxySystems100.generated.ts` · `tools/galaxy-graph/` · 커밋 시 포함.
-
-**[kim-claude-review] 2026-07-05 memory-loading-optimization-refactor PASS — galaxy precompile codegen · P0#1 boot fix · tsc+audit PASS · 부팅 체감 실측 대기**
-
----
-
-## 사용자 지시 배경 (2026-07-05 · 전체 라이프사이클 감사)
-
-향후 콘텐츠·기능 확장을 고려해 부팅→STAGE 전환→계정 삭제/재생성까지 전체 흐름의 메모리 해제·기타 리스크를 집중 점검 요청. 이중구현·죽은 코드도 같이 확인 요청. Explore 에이전트 4개(부팅/STAGE dispose/계정 라이프사이클/확장성) 병렬 실행 후 종합.
-
-**전체 보고서(아티팩트)**: https://claude.ai/code/artifact/5118b9f6-4c8c-4f7b-bda7-070d5b6cf80e
-
-### 요약 (P0 3건 · P1 8건 · P2 6건 · 확인됨 다수)
-
-**P0**
-1. `src/data/galaxy100.ts:534` `relaxGalaxyMinDistance()` — 760개 성계 O(n²)×200회 좌표 재배치가 **모듈 로드 시 동기 실행**(React 렌더 전, boot-perf 마커 밖) — "멈춘 듯한" 체감 지연의 최유력 원인.
-2. `src/store/planetCoreRuntimeStore.ts:277-305,436-453` — 미개방 성계까지 포함해 전체 760개 행성 코어 런타임을 부팅마다 구축(일 1개씩만 여는 설계인데도).
-3. `app/(game)/planet.tsx:1345-1352` `navigateToTitle()` — 계정 초기화 후 **전체 부팅 재부트스트랩이 안 일어남**(in-place router.replace, RootLayout 미언마운트) — 명시적으로 안 지운 스토어/서브코어는 이전 계정 상태를 그대로 물려받음.
-
-**P1 (요약)**: `initGuestAuth()` 네트워크 대기가 로컬 하이드레이션보다 앞섬 · `useDisposableRegistry`(spec 강제)가 실호출처 0건(툴링 사각지대) · STAGE 이탈 시 오버레이 강제 정리(`dismissAllArcOverlays`) 미호출 · `planetNebulaStore`(백업 대상인데 리셋 경로 없음) · `planetGovernorAssignmentStore`(계정 purge 제외 주석 vs 백업 키 목록 등록 — 분류 불일치) · `ZONE_MAX=21` 조용한 클램프(콘텐츠 확장 시 숨은 함정) · `TARGET_TOTAL=760`(10배 확장 시 O(n²) 배치 비용 동반 상승) · 부팅 중복 호출 2건(`bootstrapFromWorldAsync` 3회, clan sync 2회).
-
-**P2 (요약)**: `buildCsvStaticIndexes()` 죽은 코드 · whole-store reset 3종 미사용(`itemLedgerStore`/`accountProfileStore`/`skillDbStore`) · deprecated 재-export shim 잔존 · 단일슬롯 레지스트리 2건 더(`galaxyMapScrollLifecycle.ts`/`orbitClockMsBridge.ts`, 오늘 고친 버그와 동일 모양이나 위험도 낮음) · `drawPlanetFlameBurstOnSkCanvas`가 같은 파일의 `cachedSkColor()` 안 씀 · bootReady 플래그 2중 추적.
-
-**확인됨(정상)**: STAGE1/STAGE2/네이티브reclaim 레지스트리 3계층 분리 건강 · 오늘 추가한 3개 reclaim 주기 상호배제 확인 · watchdog 타이밍 가정 여전히 유효 · "베이스라인부터 재계산 후 롤백" 안티패턴은 오늘 고친 world-expansion 건 외 다른 곳에 없음 · CSV/밸런스 테이블은 이미 빌드타임 코드젠(런타임 파싱 없음).
-
-### 리스크·주의
-- 이번 턴은 **분석·보고만** — 코드 수정 없음. P0 3건은 실제 수정 시 각각 별도 태스크로 김팀장 승인 필요(특히 3번은 "재부팅 강제 vs 리셋함수 완전성 재검증" 중 방향 결정 필요).
-- git commit 안 함.
-
-### 미완·보류
-- 우선순위 확인 후 항목별 진행 방식 사용자 결정 대기.
-
----
-
-## 사용자 지시 배경 (2026-07-05 · combat-safe reclaim 적용 후 실측)
-
-리로드 후 베가 전초기지 웨이브 전투 실측: GL은 30분+ 동안 47.9→47.9→48.8로 사실상 고정(3분 안전판 효과 확인됨). 그런데 **`native_heap_mb`가 408.5→428.4→468.8로 30분간 +60MB 계속 상승** — GL과 별개 축이라 사용자가 이 부분 집중 원인파악·수정 지시.
-
-## 김클로드 작성 (작업 종료 시 · status=`PENDING`으로 변경)
-
-### 작업 요약
-Explore 에이전트 2개(전투 sim 렌더링 / 허브 사운드·햅틱·네이티브모듈)를 병렬로 돌려 교차검증 — **고빈도(root cause) 확정**: `PlanetHubInboundDroneSkiaTrailLayer.tsx`의 `recordInboundDroneVfxPicture`가 드론·히트FX가 하나라도 활성일 때마다(~48ms 주기, 초당 약 20회) `Skia.PictureRecorder()`를 **매번 새로 생성**하고 있었음. `SkPictureRecorder`는 `dispose()` 메서드 자체가 없어(타입 정의 확인) JS GC가 finalizer를 통해 지연 회수할 때까지 native(JSI) 쪽에 그대로 남음 — 드론 침공이 계속되는 장시간 웨이브 세션 동안 초당 20개씩 고아 객체가 쌓이는 구조. 같은 파일 주석(L162-163)에 이미 "idle 상태에서는 recorder를 아예 안 만든다"는 수정 이력이 있어("장시간 네이티브 JSI finalizer 지연 누적 원인" — 팀이 이미 이 패턴 자체를 위험군으로 알고 있었음), 이번엔 **활성 상태(정확히 지금 문제가 된 경우)** 쪽이 빠져있었던 것.
-
-같은 파일 안에 이미 정본 패턴(`pathPoolRef`/`trailPaintRef` — 컴포넌트 수명 동안 1개만 만들어 재사용)이 있었고, 형제 파일 `PlanetEdenRaidOrbitSkiaCombat.tsx`의 `_combatPictureRecorder`/`getCombatPictureRecorder()`도 동일하게 "1개 만들어 매 프레임 `beginRecording()`만 다시 호출" 방식이라, 이번 fix는 그 기존 컨벤션을 그대로 따라간 것 — 새로운 패턴 도입 아님.
-
-### 변경 파일
-- `src/components/planet/PlanetHubInboundDroneSkiaTrailLayer.tsx`
-  - `recordInboundDroneVfxPicture` 시그니처에 `recorder` 파라미터 추가, 함수 내부에서 `Skia.PictureRecorder()` 직접 생성하던 걸 제거하고 전달받은 recorder의 `beginRecording()`만 재사용.
-  - 컴포넌트에 `recorderRef`(컴포넌트 수명 ref) 신설 — `trailPaintRef`와 동일하게 lazy 초기화(최초 1회만 `Skia.PictureRecorder()` 생성) 후 매 flush마다 재사용.
-  - 언마운트 cleanup에 `safeSkiaDispose(recorderRef.current)` 추가(기존 `pathPoolRef`/`trailPaintRef` 해제 순서 바로 뒤) — `_combatPictureRecorder` 정리와 동일하게 `dispose?: () => void`로 캐스팅해 no-op 안전 처리.
-
-### self-check (김클로드가 실행한 것)
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — clean
-- [x] `npm run audit:skia-memory` — 20/20 PASS
-- [x] `npm run audit:memory:all` — memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path 0 hits
-
-### 리스크·주의 (3줄 이내)
-- **재사용 패턴은 이 코드베이스에 이미 검증된 컨벤션**(`_combatPictureRecorder`가 동일하게 매 프레임 `beginRecording()` 재호출) — 새 위험 도입 아님, 안전 확신 높음.
-- 이번 fix로 native_heap 상승이 "이 recorder 하나"로 전부 설명되는지는 실측 전까지 100% 확정 아님 — 병렬 조사에서 사운드·햅틱·타이머·이미지·네이티브모듈은 전부 배제 확인됐고, 이 recorder가 유일하게 남은 "초당 반복 native 할당" 지점이었음(수렴 증거는 강함).
-- git commit 안 함.
-
-### 미완·보류
-- **런타임 재실측 필요** — 리로드 후 베가 전초기지에서 다시 장시간 웨이브 진행하며 `native_heap_mb` 추이 확인. 이번에도 계속 오르면 다른 축(예: Reanimated 내부, Hermes 힙 파편화 등)을 더 봐야 함.
-
----
-
-## 김팀장 검수 (본창 Cursor · hub-inbound-drone-picturerecorder-leak-20260705)
-
-| 항목 | 결과 |
-|------|------|
-| diff·계약 위반 | **PASS** — PictureRecorder 1회 lazy·재사용 · `_combatPictureRecorder` 동일 컨벤션 · unmount dispose |
-| audit 재실행 | **tsc PASS** · **audit:skia-memory 20/20 PASS** |
-| **커밋** | **김팀장만** (대표님 명시 요청 시) |
-| mem-post-dev-recheck | **배정** — 김경제 handoff 갱신 |
-
-**verdict**: `PASS`
-
-**검수 메모**:
-1. **근본원인 타당** — 활성 드론/히트FX flush마다 `Skia.PictureRecorder()` 신규 생성(~48ms) → `dispose()` 없음 → JSI finalizer 지연 → `native_heap_mb` +60MB/30m 실측과 일치. idle 경로(L166-176)는 기존대로 recorder 미생성 유지.
-2. **수정 패턴** — `recorderRef` lazy 1회 + `beginRecording()` 재호출만 · `finishRecordingAsPicture()` 산출 `SkPicture`는 기존 `scheduleSkPictureDispose(prev)` 경로 유지 · unmount `safeSkiaDispose(recorderRef)` — `PlanetEdenRaidOrbitSkiaCombat`/`SkiaPlanetNebulaShaderBackdrop` 정본과 동일.
-3. **Skia 헌법** — 루프 내 `Make()`/`Paint()` 신규 없음 · Path pool `rewind()` 유지 · audit:skia-memory PASS.
-4. **실측** — 베가 웨이브 장시간 `native_heap_mb` floor 추이 재확인 권장(대표님/김경제).
-
-**[kim-claude-review] 2026-07-05 hub-inbound-drone-picturerecorder-leak PASS — recorder reuse · tsc+audit:skia-memory PASS · native_heap 재실측 대기**
-
----
-
-## 사용자 지시 배경 (2026-07-05 16:52 KST 자동재시작 인시던트)
-
-`GL_HARD_CEILING gl=160.2 pss=972.1 views=371` → 자동 relaunch(정상 복구 확인됨). 오늘 같은 패턴(`suspect=hub_skia_orbit_nebula_combat`)이 하루 6번(09:56·10:12·11:45·13:02·14:49·16:52) 발생. 분석 결과 **오늘 이미 고친 두 건(idle GL floor·웨이브 디펜스 inter-wave 공백)과는 별개로, "전투 orbit 진행 중"에는 5분 soft·15분 deep 주기 reclaim이 통째로 skip되고 그걸 대체할 안전판이 전혀 없어, 단일 인카운터가 길게 이어지면 PSS가 무제한으로 쌓이다 하드실링(950MB)을 그냥 넘겨버릴 수 있는 구조적 gap**임을 확인·보고 → 사용자가 이 gap을 고치는 작업 진행 지시.
-
-## 김클로드 작성 (작업 종료 시 · status=`PENDING`으로 변경)
-
-### 작업 요약
-전투 orbit 활성 "중"에만 도는 별도의 안전(safe) reclaim 주기(3분)를 신설. 기존 5분 soft·15분 deep 주기는 mid-frame Skia/worklet 레이스 회피를 위해 전투 중 전면 skip하는 게 맞다고 보고 그 설계는 유지 — 대신 그 skip 구간 동안에도 안전하게 돌 수 있는 부분(module Path/Paint/maskfilter 캐시 trim, `runCombatSkiaPresentationReclaim` 하나)만 별도 타이머로 뽑아 전투 중에도 계속 돌게 함.
-
-**중요 — 확정된 단일 근본원인은 못 찾음**: `skColorCache`·`_teamFlameTintCache`·`_mfCache`(마스크필터, sigma 기반 키) 등 combat Skia 모듈 캐시들을 추적했으나, 실제 호출부(`drawPlanetFlameBurstOnSkCanvas` 등)에서 쓰는 `scaleMul`/`baseSpec`이 전부 고정 상수라 키 공간이 작아(대략 10여개 이하) 무한 증가 소스로 보기 어려움. 그래서 "정확히 뭐가 새는지 고치기"보다 **"전투 중엔 아무것도 안 돈다"는 구조적 gap 자체를 닫는 안전판**으로 접근함 — 실측(김팀장/사용자)으로 실제 GL 추이가 개선되는지 확인 필요.
-
-### 변경 파일
-- `src/game/nativeReclaim/processMemoryBudgetPolicy.ts` — `HUB_COMBAT_SAFE_RECLAIM_INTERVAL_MS = 3분` 신설.
-- `src/game/nativeReclaim/runPlanetHubCombatSafeReclaimPass.ts` (신규) — `runCombatSkiaPresentationReclaim()`만 호출하는 얇은 wrapper. `signalHubSkiaNativeReclaim`(dodge overlay 강제 해제·전투 중 시각적 끊김 위험) · Fresco trim · RN 백드롭 remount는 **의도적으로 제외**.
-- `src/game/nativeReclaim/index.ts` — 위 신규 함수·상수 barrel export 추가.
-- `app/(game)/planet.tsx` — 기존 5분/15분 주기 effect 옆에 3번째 주기 effect 신설. 게이트는 `periodicReclaimSuppressedRef.current`(기존 두 주기가 "전투 중이면 skip"하는 바로 그 플래그)를 **반대로 사용** — "전투 중일 때만" 돈다. `arcInboundFlyingDroneCountRef` 체크는 없음(이 안전판은 드론 여부와 무관하게 전투 orbit 자체를 게이트로 씀).
-
-### self-check (김클로드가 실행한 것)
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — clean
-- [x] `npm run audit:skia-memory` — 20/20 PASS
-- [x] `npm run audit:memory:all` — memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path 0 hits
-
-### 리스크·주의 (3줄 이내)
-- **근본원인 미확정** — 위에 적었듯 캐시 키 공간 조사로는 무한증가 소스를 못 찾았음. 이 fix는 "혹시 뭐가 쌓이든 3분마다 안전하게 비운다"는 방어적 안전판이지 원인 제거가 아님 — 다음 인시던트에서도 재발하면 다른 각도(예: sim 쪽 배열/버퍼, native_heap 자체)로 더 파야 함.
-- `runCombatSkiaPresentationReclaim()`은 이미 hub idle soft pass에서 매일 수백 번 검증되며 쓰이던 안전한 함수라 재사용 자체의 리스크는 낮음 — dodge overlay·Fresco·RN remount를 안 건드린 것도 기존 "mid-frame 위험군" 구분을 그대로 따름.
-- git commit 안 함.
-
-### 미완·보류
-- 런타임 실측 필요(다음 유사 인카운터에서 GL이 실제로 덜 쌓이는지) — 기기 필요, 김팀장/사용자 확인 권장.
-- 근본원인을 더 정밀하게 찾으려면 sim 버퍼(missiles/hitFx 배열)·native_heap 쪽까지 넓혀서 봐야 함 — 이번 범위 밖.
-
----
-
-## 김팀장 검수 (본창 Cursor · hub-combat-in-progress-safety-valve-20260705)
-
-| 항목 | 결과 |
-|------|------|
-| diff·계약 위반 | **PASS** — 3분 combat-safe 주기 · inverse gate · session dispose · mid-frame 위험군 제외 |
-| audit 재실행 | **tsc PASS** · **audit:memory:all PASS** (37/37 · native-reclaim 20/20 · hot-path 0) |
-| **커밋** | **김팀장만** (대표님 명시 요청 시) |
-| mem-post-dev-recheck | **배정** — 김경제 handoff 갱신 |
-
-**verdict**: `PASS`
-
-**검수 메모**:
-1. **안전판(본 태스크)** — `HUB_COMBAT_SAFE_RECLAIM_INTERVAL_MS`(3분) + `periodicReclaimSuppressedRef` **반전 게이트** → 전투 orbit 진행 중에만 `runPlanetHubCombatSafeReclaimPass` → `runCombatSkiaPresentationReclaim`만. dodge/Fresco/remount 제외 — 기존 mid-frame 레이스 회피 설계 유지.
-2. **동봉 diff(웨이브 메모리 축 · 상호 보완)** — handoff 본문外이나 working tree에 함께 있음: `combatSkiaPresentationReclaim` **Set 다중 등록**(hit-fx+module 캐시 둘 다 reclaim — 이전 단일 fn 덮어쓰기 버그 수정) · 웨이브 `phase==='combat'`만 soft/deep skip · `hub_wave_inter_wave` post-Skia peak · `PlanetEdenRaidTestLayer` waveReseed 캐시 clear · post-Skia 90s followup. 전부 웨이브/전투 GL 누적 방어 축 — **PASS**.
-3. **신규 파일** — `runPlanetHubCombatSafeReclaimPass.ts` 아직 untracked → 커밋 시 반드시 포함.
-4. **한계** — 방어적 안전판(근본 leak 미확정). 장시간 단일 combat phase GL 추이는 **실기/김경제 soak** 권장.
-
-**[kim-claude-review] 2026-07-05 hub-combat-in-progress-safety-valve PASS — 3m combat-safe reclaim · reclaim Set fix · wave inter-wave · tsc+audit PASS · GL mtrack 실측 대기**
-
----
-
-## 사용자 지시 배경 (2026-07-05 · 성계개방 방향 편중 문제)
-
-사용자가 "1일 1성계개방"이 동서남북 중 한쪽만 계속 개방되고 다른 방향은 오래 안 열리는 것 아니냐고 문의 → 김클로드가 코드 확인 후 **실제로 그런 구조적 편중이 있음을 확인·보고** → 사용자가 "가장 안정적인 규칙으로 선별해서 코드작업 개시, 단 **현재 개방된 성계가 미개척으로 회귀하는 일만 없으면 됨**"이라고 지시.
-
-### 확인된 문제 2가지 (수정 전)
-1. **미개척 되돌림 위험(치명적)** — `buildDeterministicGlobalSynthUnlockSchedule`가 매 호출마다 baseline부터 전체 스케줄을 재계산하고, `reconcileGlobalSynthUnlocks`가 diff로 "목표 집합에 없는 건 강제 롤백"(unlockedSystemIds 제거 + 성계 상태 초기화 + 식민화 phase 삭제)까지 하는 구조라, 선택 알고리즘을 조금만 바꿔도 이미 열린 성계가 되돌아갈 수 있었음.
-2. **방향 편중(실측 확인)** — 임시 검증 스크립트로 확인한 결과, 기존 순수 사전순(lexicographic-min) 방식은 확장(미발견) 노드 200개 중 **north=165(전량) · east=38 · south=0 · west=0**로 극단적으로 쏠림. 원인은 방향별 클러스터가 그래프상 서로/base·legacy와 직접 연결이 거의 없어서(관문 브릿지가 그래프 생성 후 degree-cap 단계에서 소실된 것으로 추정), 프론티어가 비면 "아무 성계나" 강제로 여는 기존 폴백이 매번 같은(처음 걸리는) 방향만 재시드하고, 한번 진입한 클러스터가 내부 인접만으로 165개를 다 소진할 때까지 다른 방향은 전혀 안 열렸음.
-
-## 김클로드 작성 (작업 종료 시 · status=`PENDING`으로 변경)
-
-### 작업 요약
-(1) 성계개방 스케줄을 "매번 baseline부터 전체 재계산" 방식에서 "현재 실제로 열려있는 성계를 고정 접두사로 두고 부족한 만큼만 새로 뽑는" 증분 방식으로 변경 — 정상 진행(일일 배치·부팅 동기화) 경로에서 기존 개방분이 목표 집합에서 빠지는 경우가 원천적으로 없어짐(reconcile의 되돌림 로직 자체는 안 건드림 — `resetGeneration` 같은 명시적 전체 리셋 레버는 그대로 남되, 일반 진행 중엔 절대 발동 안 함).
-(2) 확장(미발견) 단계 선택 규칙을 "사전순 최소" 단일 규칙에서 "매 pick마다 현재 개방 수가 가장 적은 방향(N/E/S/W)부터 시도 → 그 방향에 인접 프론티어 후보 있으면 그걸, 없으면 그 방향 노드를 직접 시드 → 그래도 없으면(방향 전체 소진) 다음으로 적은 방향" 방식으로 교체. 레거시(1~79번) 우선 소진 순서는 안 건드림(사용자 우려 대상이 아님).
-
-### 변경 파일
-- `src/arcCore/worldExpansionFrontier.ts`
-  - `pickDirectionBalancedExpansion` 신설 — 방향별 개방 수 오름차순으로 순회하며 (조직적 프론티어 → 직접 시드) 순으로 pick. 기존 "프론티어 비면 아무 성계나" 폴백을 대체하는 게 아니라 **그 강제선택을 방향 인지형으로 정밀화**한 것(완전히 새로운 동작 아님).
-  - `pickDeterministicSynthFrontierCandidate`의 expansion 분기만 교체, legacy 분기·최종 안전 폴백은 미변경.
-- `src/arcCore/worldExpansionGlobalSchedule.ts`
-  - `buildDeterministicGlobalSynthUnlockSchedule`에 `alreadyUnlockedSynthIds` 파라미터 추가(기본값 `[]`, 기존 호출부·테스트 하위호환) — 이미 열린 성계를 schedule 앞부분에 고정하고 부족분만 새로 pick.
-  - `buildGlobalSynthUnlockTargetIds`도 동일 파라미터 추가해 전달.
-- `src/arcCore/syncArcCoreGlobalWorldExpansion.ts`
-  - `syncArcCoreGlobalWorldExpansion`·`syncArcCoreGlobalWorldExpansionSync` 양쪽 호출부에서 `world.unlockedSystemIds`의 synth만 필터링해 `alreadyUnlockedSynthIds`로 전달.
-
-### self-check (김클로드가 실행한 것)
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — clean
-- [x] `npm run audit:memory:all` — memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path 0 hits
-- [x] `npx tsx src/arcCore/worldExpansionGlobalSchedule.test.ts` — 기존 5개 테스트 전부 PASS(수정 전과 동일 결과 — 하위호환 확인)
-- [x] 임시 검증 스크립트(작업 후 삭제) 3건 실행 결과:
-  - **되돌림 없음**: 1~120일차를 매일 순차 호출(전날 결과를 `alreadyUnlockedSynthIds`로 재투입)하며 이전 스케줄이 항상 접두사로 그대로 유지됨을 확인
-  - **방향 균형**: 확장 200개 pick 결과 `{north:51, east:51, south:51, west:50}`(수정 전 `{north:165, east:38, south:0, west:0}` 대비 극적 개선)
-  - **완전 소진**: 전체 736개 synth 요청 시 정확히 736개에서 멈추고(무한루프 없음) 중복 없이 전량 커버 확인
-
-### 리스크·주의 (3줄 이내)
-- **`resetGeneration`/`epochDayKey` 변경 시의 기존 "초과 개방 강제 롤백" 레버가 정상 진행 경로에서는 더 이상 발동하지 않게 됨** — 이건 사용자 지시("절대 회귀 없어야 함")와 정확히 일치하는 의도된 변경이지만, 향후 팀이 "완전 리셋"이 실제로 필요한 상황이 오면 이 경로로는 안 되고 별도 조치가 필요함(문서화만 해둠, 코드로 막지는 않음 — `reconcileGlobalSynthUnlocks` 자체는 안 건드렸음).
-- 방향 판정은 좌표 재계산 없이 **synth ordinal 산술**(`(ord - legacyCount - 1) % 4`)로 복원 — `galaxy100.ts`의 `buildExpansionSpiderPositions`가 `cluster = i % 4`로 배치하는 것과 동일 산식임을 코드로 대조 확인했으나, 그래프 생성 로직이 나중에 바뀌면 이 산식도 같이 갱신 필요.
-- git commit 안 함.
-
-### 미완·보류
-- 근본 원인으로 추정한 "방향별 관문 브릿지가 degree-cap 단계에서 소실"은 `galaxy100.ts`(그래프 생성) 쪽 이슈로 보이나, 이번 수정 범위 밖이라 **건드리지 않음** — 이번 fix는 그 결과(편중)를 선택 알고리즘 레벨에서 상쇄하는 방식이라 원인 자체를 고친 게 아님. 필요하면 별도로 `galaxy100.ts`의 degree-cap/게이트웨이 연결 로직을 검토 권장.
-- 런타임 실측(실제 기기에서 여러 날 경과 후 방향별 개방 분포)은 시간이 걸려 못함 — 위 검증은 순수 함수 레벨 시뮬레이션.
-
----
-
-## 김팀장 검수 (본창 Cursor · world-expansion-direction-balance-20260705)
-
-| 항목 | 결과 |
-|------|------|
-| diff·계약 위반 | **PASS** — 증분 스케줄(`alreadyUnlockedSynthIds` 접두 고정) · 방향 균형 pick · sync 양 경로 전달 |
-| audit 재실행 | **tsc PASS** · **audit:memory:all PASS** (37/37 · hot-path 0) · **unit test 5/5 PASS** |
-| **커밋** | **김팀장만** (대표님 명시 요청 시) |
-| mem-post-dev-recheck | **배정** — 김경제 handoff 갱신 |
-
-**verdict**: `PASS`
-
-**검수 메모**:
-1. **미개척 회귀 방지** — `buildDeterministicGlobalSynthUnlockSchedule`가 `alreadyUnlockedSynthIds`를 schedule 접두로 고정 → `syncArcCoreGlobalWorldExpansion(Sync)`가 `world.unlockedSystemIds` synth를 전달. 정상 진행 경로에서 reconcile `toRemove` 발동 조건 제거 — 대표님 지시(「개방된 성계 미개척 회귀 금지」) 충족.
-2. **방향 편중** — `pickDirectionBalancedExpansion`: 개방 수 최소 방향 우선 → organic frontier → reseed. `resolveExpansionDirection` 산식이 `galaxy100.ts` `cluster = i % 4`와 일치 확인.
-3. **성능** — reseed 시 `Object.keys(systems)` O(N)은 **일 1회 배치·부트 sync** 한정 호출 — tick/렌더 경로 아님 · arcCore 배치 계약 OK.
-4. **잔존 리스크** — `resetGeneration`/epoch 변경 시 reconcile 롤백 레버는 유지(의도). `galaxy100` degree-cap 브릿지 소실은 별도 태스크(김클로드 보류 동의).
-
-**런타임**: 실제 기기에서 다일 경과 후 N/E/S/W 분포 실측 — 대표님/김경제 권장(순 함수 검증만으로는 충분하지만 장기 soak 권장).
-
-**[kim-claude-review] 2026-07-05 world-expansion-direction-balance PASS — incremental schedule prefix · direction-balanced pick · tsc+audit+test PASS**
-
----
-
-## 김팀장 검수·배정 (2026-07-05 · 아크코어 inbound publish 핫패스)
-
-**배경**: 웨이브 전투 handoff(`wave-combat-mem-20260705`) **PASS** 후, 김클로드·김팀장 메모리 분석에 남은 **ArcCore tick→Zustand publish** 축을 김팀장이 코드 대조 검수함.
-
-### 김팀장 검수 요약 (수정 필요 → 김클로드 배정)
-
-| # | 항목 | 판정 | 조치 |
-|---|------|------|------|
-| A1 | **`ArcInboundDroneSubCore.publishCampaignSnapshot` publish key** | **수정 필요 P0** | key에 `inboundElapsedSec`(×4 floor) 포함 → **250ms마다 key 변경** → `.map({...d})` clone + `planet.tsx` 리렌더. UI측 `buildInboundDronePackSig`는 **elapsed 제외** 설계(주석 L72) — **SubCore key와 불일치** |
-| A2 | **`syncRenderSnapshot` force 경로** | **확인·최소 diff** | STAGE exit/trim 시 1회 clone OK. `lastPublishedKey=null` 후 무조건 set — force 의도 유지, **sim tick 경로와 분리**만 확인 |
-| A3 | **`trimArcInboundDroneCampaignsForStageExit`** | **조치 불필요** | 이미 `planetMainStageSession`·`galaxyMapStageSession` 연동 · `ArcInboundDroneSubCore.trimCampaignsForStageExit` 구현됨 |
-| A4 | **`investment_tick_enabled=false`** | **조치 보류** | CSV 잠금 유지(김팀장 구조 결정 전 re-enable 금지). 60s probe early-return만 — 본 태스크 범위外 |
-| A5 | **`AiNpcSubCore.publishSnapshot` 패턴** | **참조 정본** | phase·planetId·radius만 key — 연속 각도/elapsed 제외. inbound도 동일 계약 적용 |
-
-**근거 코드**:
-- `src/arcCore/subcores/ArcInboundDroneSubCore.ts` L329–345 — key에 elapsed 포함
-- `src/components/planet/planetOrbitInboundDroneWorklets.ts` L72–83 — `buildInboundDronePackSig` elapsed 제외
-- `src/components/planet/PlanetHubInboundDroneLayer.tsx` — worklet이 `startOrbitMs`+orbit clock으로 위치 적분 → **store elapsed 고주기 갱신 불필요**
-
-**목표**: inbound 드론 활성 중 Zustand publish를 **phase·hp·spawn·duration·angle 변경 시에만** 발화. sim 내부 `inboundElapsedSec` 갱신(요격·dwell)은 유지.
-
-**범위**: `src/arcCore/subcores/ArcInboundDroneSubCore.ts` (+ 필요 시 store/setSnapshot 계약 주석). **investment tick CSV·DailyOps·모니터 수정 금지.**
-
-**완료 시**: status → `PENDING` · self-check · **git commit 금지**.
-
-### 구현 가이드 (김클로드)
-
-1. `publishCampaignSnapshot` key를 `buildInboundDronePackSig`와 **동일 필드**(id, phase, duration, angle, hp)로 정렬. **elapsed/dwellSec는 key 제외**.
-2. phase=`inbound` 동안 sim tick은 campaign 메모리만 갱신 — publish skip 시 worklet 위치는 기존 anchor+orbit clock으로 충분한지 **PlanetHubInboundDroneLayer** 호출 경로 확인.
-3. phase 전환(destroyed/impacted)·hp 변화·신규 spawn 시에는 **반드시 publish** (FX/trail 트리거).
-4. 메모리 1순위: `.cursor/rules/arcfire-memory-leak-audit-first.mdc` · 틱 GC 규율(김팀장 §주기·틱).
-5. `npx tsc` · `npm run audit:memory:all` · ArcCore tick 변경 시 hot-path 0 hits 확인.
-
----
-
-## 김클로드 작성 (작업 종료 시 · status=`PENDING`으로 변경)
-
-### 작업 요약
-A1 지시대로 `publishCampaignSnapshot`의 key를 `buildInboundDronePackSig`(worklet 계약)와 정렬 — elapsed/dwell을 key에서 완전히 제거하고 `id·phase·duration·angle·hp`만 사용. A2는 코드 변경 없이 분리 확인만 완료. A3·A4는 배정대로 손대지 않음.
-
-### 변경 파일
-- `src/arcCore/subcores/ArcInboundDroneSubCore.ts`
-  - `publishCampaignSnapshot`의 key 조합에서 `Math.floor(d.inboundElapsedSec*4)`(inbound)·`Math.round(d.inboundElapsedSec*10)`(그 외)를 제거하고 `d.inboundDurationSec.toFixed(3)`·`d.approachAngleRad.toFixed(4)`로 교체(phase 분기 불필요해져 단일 루프로 단순화). `hp`는 유지(피격 반응·HP 표기용). 신규 spawn은 기존대로 `campaign.drones.length`가 key 앞부분에 있어 그대로 감지됨.
-  - `SNAPSHOT_INTERVAL_SEC=0.25`(250ms) 자체는 안 건드림 — 문제는 그 주기 자체가 아니라 그 주기마다 key가 무조건 바뀌어 스로틀이 사실상 무력화되어 있던 것(교체 전 key가 250ms마다 반드시 변경되는 구조였음). 이번 수정으로 실제 변화(phase/hp/spawn) 없으면 스킵됨.
-
-### self-check (김클로드가 실행한 것)
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — clean
-- [x] `npm run audit:memory:all` — memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · **hot-path 0 hits**
-- [x] inbound 드론 활성 중 publish 빈도 감소 코드 경로 — `PlanetHubInboundDroneLayer.tsx`의 `inboundPackSig`/`trailPackSig`(둘 다 `buildInboundDronePackSig` 기반, elapsed 제외)로 `packInboundDronesToFloat32`/트레일 패킹이 이미 게이트되어 있음을 확인. 다만 그 바깥의 `useLayoutEffect` 본체(스폰 anchor 등록·hit-fx 감지·prevPhase 추적·Set cleanup)는 zustand publish가 있을 때마다(구독 컴포넌트 리렌더 시) 매번 실행됐음 — 이번 SubCore key 수정으로 이 리렌더 자체가 실질 변화 시에만 발생하도록 줄어듦. worklet 위치 애니메이션은 `startOrbitMsByIdRef`(드론별 1회 캐시) + 실시간 orbit clock으로 계산되므로 publish 빈도와 무관 — 확인 완료(A2 관련 확인 사항).
-
-### 리스크·주의 (3줄 이내)
-- key에서 `hp`는 그대로 두었음 — 전투 중 매 프레임 hp가 바뀌는 상황이면 여전히 자주 publish될 수 있으나, 이건 실제 상태 변화(피격)라 스킵하면 안 되는 케이스라 의도대로 둠. 드론은 전투 유닛이 아니라 침공 오브젝트라 hp 변화 빈도 자체는 낮을 것으로 추정(요격 시 1회성 감소 위주) — 런타임 확인 권장.
-- `d.inboundDurationSec`/`d.approachAngleRad`는 spawnDrone에서 1회만 설정되고 이후 안 바뀌는 것을 코드로 확인(재할당 지점 없음) — key에 넣어도 사실상 상수라 안전.
-- git commit 안 함.
-
-### 미완·보류
-- 없음 — A1 구현·A2 확인 모두 완료. 런타임 실측(허브에서 드론 웨이브 진행 중 리렌더/publish 빈도 감소 체감)은 기기 필요 — 김팀장/사용자 확인 권장.
-
----
-
-## 김팀장 검수 (본창 Cursor · PENDING 후)
-
-| 항목 | 결과 |
-|------|------|
-| diff·계약 위반 | **PASS** — key가 `buildInboundDronePackSig`+`hp`와 정렬 · elapsed/dwell 제거 · `syncRenderSnapshot` force 경로 유지(A2) |
-| audit 재실행 | **tsc PASS** · **audit:memory:all PASS** (37/37 · hot-path 0) |
-| **커밋** | **김팀장만** (사용자 명시 요청 시) |
-| mem-post-dev-recheck | **배정** — 김경제 handoff 갱신 |
-
-**verdict**: `PASS`
-
-**검수 메모**:
-1. **A1** — `publishCampaignSnapshot` key에서 `inboundElapsedSec` 분기 제거 → `id·phase·duration·angle·hp` 단일 루프. 250ms tick은 유지하되 **변화 없으면 skip** — 배정 의도 일치.
-2. **A2** — `syncRenderSnapshot` STAGE exit/trim force clone 경로 미변경 · sim tick publish와 분리 OK.
-3. **hp in key** — 요격·피격 시 publish 필요 · 침공 드론 hp 변화 빈도 낮음(김클로드 리스크 동의).
-
-**런타임**: inbound 웨이브 진행 중 `planet.tsx` 리렌더/publish 빈도 감소 — 사용자/김경제 실측 권장.
-
-**[kim-claude-review] 2026-07-05 arccore-inbound-publish PASS — elapsed-free publish key · tsc+audit PASS**
-
----
-
-<details>
-<summary>이전 사이클 — wave-combat-mem-20260705 (2026-07-05 PASS)</summary>
-
-| 필드 | 값 |
-|------|-----|
-| **task_id** | `wave-combat-mem-20260705` |
-| **verdict** | `PASS` |
-
-## 김팀장 배정 (2026-07-05 · 웨이브 전투 메모리 누적·설계 수정)
-
-**목표**: 웨이브 디펜스(허브 전투 orbit) 구간에서 PSS/GL이 장시간 누적되어 모니터 **PSS≥950 강제 relaunch**가 발생하는 설계·회수 gap을 코드로 수정한다.  
-**범위**: `src/` · `app/(game)/planet.tsx` — **모니터 스크립트(`tools/long-run-monitor/`) 수정은 본 태스크 제외** (김팀장 별도).
-
-**완료 시**: 본 파일 **status → `PENDING`**, 변경 파일·self-check·리스크 기록 → 사용자에게 「김팀장(Cursor 본창) 검수 요청」 안내. **git commit 금지.**
-
----
-
-### 1) 인시던트·분석 요약 (김팀장·김클로드 read-only 분석 통합)
-
-#### 2026-07-05 09:10 KST — idle GL floor (김팀장 FIX_APPLIED 완료)
-- PSS 967 / GL 154 / views 389 → auto relaunch → VERIFY OK
-- **원인**: idle 구간 soft reclaim이 Skia sticky dodge·백드롭 remount 미연결 → GL 149MB 장시간 고착
-- **조치 완료** (김팀장, working tree): `signalHubSkiaNativeReclaim` 5분 soft · postSkiaPeak + 90s followup · inbound-only drone skip
-- **검수**: tsc PASS · audit:skia-memory 20/20 · audit:memory:all 37/37
-
-#### 2026-07-05 10:12:29 KST — **웨이브 전투 중 PSS hard ceiling** (본 태스크 P0)
-- **크래시 아님** — `gl_critical_active_hub` → PSS **1039.3 ≥ 950MB** → auto relaunch (pid 21199→23480)
-- mem-timeline: `GL_SPIKE suspect=hub_skia_orbit_nebula_combat` · dPSS=**+247.9** · dGL=**+93.8** (15분)
-- 직전: 09:56 PSS 791 → 10:12 PSS 1039 (세션 floor ~790MB + 전투 spike)
-- GL 129MB · views 323 · logcat `incident-logcat-20260705-101253.log` **empty**
-- 근거: `tools/long-run-monitor/logs/remediation.log` L1882–1898 · `mem-timeline.csv` L15675–15677
-
-**판정**: idle GL gap은 부분 해결됨. **웨이브 연속 전투 세션**에서 reclaim 백스톱이 막혀 PSS가 950+까지 상승 — **구조적 설계 gap**.
-
----
-
-### 2) 근본 설계 gap (김클로드가 수정할 핵심)
-
-| # | gap | 근거 |
-|---|-----|------|
-| G1 | **`capitalCombatOrbitActive` 동안 5분/15분 soft·deep reclaim 전면 skip** | `planet.tsx` L707–729 — `capitalCombatOrbitActiveRef.current` 이면 return |
-| G2 | **웨이브 디펜스 전체 런 동안 `enemyFleetEntered=true` 유지** → orbit이 거의 끊기지 않음 | `planet.tsx` L562–570 `waveDefenseActiveHere` OR 조건 |
-| G3 | **웨이브 간 `cleared` 2.6s 구간에도 orbit active** — `battleReadyMsLeft`는 최초 진입 1회만 리셋 | `usePlanetHubBattleReady.ts` L37–48 · `useWaveDefenseController.ts` `WAVE_DEFENSE_BETWEEN_WAVE_MS=2600` |
-| G4 | **`hub_combat_orbit_end` reclaim은 orbit false 전환 시에만** — 9웨이브 연속 중에는 미발화 | `planet.tsx` L657–664 |
-| G5 | **`endRun` 후에도 overlay/대사 동안 `reset()` 지연** — orbit 종료·reclaim 추가 지연 | `handleWaveDefenseRunEnded` → dialog → `presentWaveResultOverlay` → `onClose`에서 `reset()` |
-| G6 | **waveGenKey 재시드는 JS 버퍼만 클리어** — Skia Path pool / presentation reclaim은 wave 전환 시 미호출 | `PlanetEdenRaidTestLayer.tsx` L2646–2702 vs `runCombatSkiaPresentationReclaim` |
-
----
-
-### 3) 수정 방향 (김클로드 구현 가이드 — 최소 diff · 계약 준수)
-
-**메모리 1순위**: `.cursor/rules/arcfire-memory-leak-audit-first.mdc` · Skia `.cursor/rules/arcfire-skia-memory-lifecycle.mdc`  
-**worklet**: `runOnUI(useCallback)` 금지 · dispose는 JS 클린업만 · mid-frame Canvas unmount 금지
-
-#### A. 웨이브 간(inter-wave) reclaim 훅 (권장 P0)
-- `waveDefenseStore.phase === 'cleared'` 진입 시 `schedulePlanetHubPostSkiaPeakReclaim(pid, 'hub_wave_inter_wave')` 1회
-- 구현 위치 후보: `planet.tsx` (wave phase subscribe) 또는 `useWaveDefenseController` (planetId 전달 필요)
-- **2.6s cleared 구간** — sim은 idle/cleared, Skia peak 종료로 간주 가능. Worklet race 회피 위해 기존 `schedulePlanetHubPostSkiaPeakReclaim` 재사용
-
-#### B. reclaim skip 게이트 정밀화 (권장 P0)
-- 5분 soft / 15분 deep skip 조건을 **`capitalCombatOrbitActive` 단독** → **`waveDefense phase === 'combat'`** 또는 **sim stepping active** 로 좁히기 검토
-- cleared · countdown · ended 구간에는 soft reclaim 허용 (inbound drone flying count > 0 이면 기존 skip 유지)
-- **전투 mid-frame** soft reclaim 금지 — phase 전환·cleared 타이머 경계에서만
-
-#### C. 웨이브 run 종료 reclaim (권장 P1)
-- `endRun('win'|'lose')` 직후 또는 `phase === 'ended'` 시 reclaim 스케줄 (`hub_wave_run_end`)
-- overlay/dialog 전 **`active=false`** 이미 설정됨 — `enemyFleetEntered` false 전환과 reclaim 타이밍 정렬 확인
-- 필요 시 `handleWaveDefenseRunEnded` **앞단**에서 경량 reclaim (대사는 유지)
-
-#### D. waveGenKey 재시드 + Skia presentation (권장 P1)
-- `PlanetEdenRaidTestLayer` wave reseed effect(L2649+) 끝에서 **`runCombatSkiaPresentationReclaim()`** 또는 등록된 pool rewind 호출 검토
-- Canvas 리마운트 없이 JS/native presentation floor만 회수
-
-#### E. 금지·범위 외
-- 모니터 PSS≥950 combat hold (`check-and-remediate.ps1`) — **본 태스크 제외**
-- `planetMainStageLayout` 상수 변경 금지
-- 전투 sim 물리 루프 구조 대개편 금지 — reclaim·게이트만
-
----
-
-### 4) 참조 파일 (우선 읽기)
-
-| 파일 | 역할 |
-|------|------|
-| `app/(game)/planet.tsx` | reclaim interval · postSkiaPeak · waveDefense wiring |
-| `src/game/planetHub/usePlanetHubBattleReady.ts` | `capitalCombatOrbitActive` 정의 |
-| `src/game/waveDefense/useWaveDefenseController.ts` | 웨이브 phase·between-wave 2.6s |
-| `src/game/waveDefense/waveDefenseStore.ts` | phase: idle/countdown/combat/cleared/ended |
-| `src/game/nativeReclaim/runPlanetHubPostSkiaPeakReclaimPass.ts` | peak 종료 reclaim (김팀장 90s followup 포함) |
-| `src/game/nativeReclaim/runPlanetHubSoftNativeReclaimPass.ts` | 5분 soft + signalHubSkiaNativeReclaim |
-| `src/components/planet/PlanetEdenRaidTestLayer.tsx` | waveGenKey reseed · setPhase('cleared') |
-| `src/game/planetCapitalCombatIntegration.tsx` | combat lazy mount (active=false unmount OK 확인됨) |
-
----
-
-### 5) 수용 기준 (김클로드 self-check · 김팀장 재검수)
-
-- [ ] 웨이브 **cleared** 구간 또는 wave 종료 시 reclaim이 **실제 코드 경로**로 연결됨 (no-op 아님)
-- [ ] **combat mid-frame**에 soft reclaim이 돌지 않음 (race/SIGSEGV 방지)
-- [ ] `npx tsc --noEmit -p tsconfig.client.json` PASS
-- [ ] Skia/Reanimated 변경 시 `npm run audit:skia-memory` PASS
-- [ ] STAGE/reclaim 변경 시 `npm run audit:memory:all` PASS
-- [ ] handoff에 **변경 파일 목록** · **메모리 조사 1~3줄** · **잔여 리스크** 기록
-
-**런타임 검증** (김팀장·사용자): vega_base 웨이브 디펜스 3웨이브+ → 웨이브 간·종료 후 GL mtrack Δ ±15MB · PSS가 950 직전까지 계단 상승하지 않음.
-
----
-
-## 김클로드 작성 (작업 종료 시 · status=`PENDING`으로 변경)
-
-### 작업 요약
-배정된 G1~G6 중 A·B·D를 구현. C는 별도 코드 불필요(기존 G4 훅이 이미 처리, 근거는 아래 4번). 구현 중 **웨이브와 무관한 기존 버그(F)**를 하나 발견해 같이 고침 — combat Skia reclaim 콜백이 single-slot 레지스트리라 두 번째 등록이 첫 번째를 덮어써 Paint/PictureRecorder 캐시가 회수 경로에서 통째로 빠져 있었음.
-
-### 변경 파일
-- `app/(game)/planet.tsx`
-  - `waveDefensePhase` 구독 추가 (`useWaveDefenseStore((s) => s.phase)`)
-  - **A**: `prevWaveDefensePhaseRef` 신설 — `waveDefenseActiveHere`일 때 phase가 `cleared`로 전환되는 매 순간 `schedulePlanetHubPostSkiaPeakReclaim(pid, 'hub_wave_inter_wave')` 1회 발화
-  - **B**: `periodicReclaimSuppressedRef` 신설 — 웨이브 세션 중엔 `phase==='combat'`일 때만 5분 soft·15분 deep 주기 reclaim을 skip, `cleared/countdown/ended`는 허용(비웨이브 전투는 기존 `capitalCombatOrbitActive` 전체 skip 그대로 유지). 두 `setInterval` 콜백의 `capitalCombatOrbitActiveRef.current` 체크를 `periodicReclaimSuppressedRef.current`로 교체
-- `src/combat/combatSkiaPresentationReclaim.ts` (**F**, 신규 발견 버그 수정)
-  - `registerCombatSkiaPresentationReclaim`이 단일 변수(`reclaimFn`)만 유지해 `PlanetEdenRaidOrbitSkiaCombat.tsx`의 두 번째 등록(`disposePlanetSkiaHitFxModuleCaches`)이 첫 번째(`reclaimCombatSkiaModuleCaches` — skColorCache·teamFlameTint·SK_PAINT_STROKE/FILL·thrusterFlamePaint·combatPictureRecorder)를 덮어써서, 이 파일이 존재한 이래 `runCombatSkiaPresentationReclaim()`을 호출해도 Paint/PictureRecorder 계열은 **한 번도 회수된 적이 없었음**. `Set<fn>` 기반 다중 구독으로 교체 — 등록된 모든 콜백이 실행되도록 수정. 호출부(hub soft/deep reclaim, 이번에 추가한 D)는 변경 없음
-- `src/components/planet/PlanetEdenRaidTestLayer.tsx` (**D**)
-  - waveGenKey 재시드 effect에서 `waveReseed`일 때만 (초기 마운트 제외) 기존 import된 `clearCapitalRealtimeCombatPresentationCaches()` 호출 추가 — F 수정 덕분에 이제 실제로 Path/Paint·hit-fx 캐시 전체가 웨이브 전환마다 회수됨
-
-### self-check (김클로드가 실행한 것)
-- [x] `npx tsc --noEmit -p tsconfig.client.json` — clean
-- [x] `npm run audit:skia-memory` — 20/20 PASS
-- [x] `npm run audit:memory:all` — memory 37/37 · skia-worklet 20/20 · worklet-contract PASS · native-reclaim 20/20 · resident-set 7/7 · hot-path 0 hits, 전체 PASS
-
-### 리스크·주의 (3줄 이내)
-- **F(레지스트리 버그) 수정으로 이번에 처음 실제로 도는 dispose 경로**라 런타임 실측(웨이브 3+ 진행 중 GL mtrack)에서 예상보다 큰 폭 하락이 나올 수 있음 — 회귀 아니라 그동안 안 돌던 회수가 정상 작동하는 것.
-- B의 skip 조건은 `waveDefenseActiveHere` 세션에만 좁혔고, 일반(비웨이브) capitalCombatOrbitActive 전투 경로는 전혀 손대지 않음 — 그쪽 회귀 없음.
-- git commit 안 함. F는 배정 범위(`src/`) 안이지만 wave-defense 전용 파일은 아니므로 diff 검수 시 별도로 표시해둠.
-
-### 미완·보류
-- C(웨이브 run 종료 reclaim)는 별도 구현 안 함: `endRun()`이 `active:false`를 즉시 세팅 → `enemyFleetEntered`→`capitalCombatOrbitActive` false 전환 → 기존 G4 `hub_combat_orbit_end` 훅(`planet.tsx` L657대)이 이미 발화함. `handleWaveDefenseRunEnded`/`reset()` 지연(G5)은 이 reclaim 발화 타이밍에 영향 없음(리스너들은 값 세팅 순간 반응, 대사창 표시와 무관) — 별도 확인만 하고 코드 추가 안 함.
-- 런타임 실측(vega_base 웨이브 3+, GL mtrack Δ, PSS 950 근접 여부)은 기기 필요 — 김팀장/사용자 확인 요청.
-
----
-
-## 김팀장 검수 (본창 Cursor · status=`REVIEWED` 후 `IDLE`로)
-
-| 항목 | 결과 |
-|------|------|
-| diff·계약 위반 | **PASS** — A·B·D·F 모두 배정 의도 일치 · worklet/Skia 루프 mid-frame reclaim 없음 · layout 상수 미변경 |
-| audit 재실행 | **tsc PASS** · **audit:skia-memory 20/20** · **audit:memory:all PASS** (37/37 · worklet · native-reclaim · hot-path 0) |
-| G4/C (run 종료) | **PASS** — `endRun`→`active:false`→`hub_combat_orbit_end` 기존 훅으로 충분 (별도 코드 불필요 동의) |
-| **F (레지스트리 버그)** | **PASS** — `PlanetEdenRaidOrbitSkiaCombat` module-level 2등록 모두 `Set` 순회 확인 · hub reclaim·wave reseed 경로 실효 |
-| **커밋** | **김팀장만** (사용자 명시 요청 시) |
-| mem-post-dev-recheck | **배정** — 김경제 handoff `[mem-post-dev-recheck]` 갱신 |
-
-**verdict**: `PASS`
-
-**검수 메모**:
-1. **A** `hub_wave_inter_wave` — `phase→cleared` edge만 발화 · `waveDefenseActiveHere`·routeFocused 게이트 OK · `schedulePlanetHubPostSkiaPeakReclaim` 재사용(Worklet race 회피).
-2. **B** `periodicReclaimSuppressedRef` — 웨이브 세션=`combat`만 skip · cleared/countdown/ended에서 5/15분 soft·deep 허용 · 비웨이브는 `capitalCombatOrbitActive` 유지.
-3. **D** waveGenKey reseed 시 `clearCapitalRealtimeCombatPresentationCaches()` — F 수정 후 실제 Paint/Path pool 회수 연결됨.
-4. **F** 단일-slot 덮어쓰기 버그 — 그동안 hub soft/deep·postSkiaPeak의 `runCombatSkiaPresentationReclaim()`이 hit-fx 쪽만 실행됐을 가능성 높음 · 이번 수정이 10:12급 누적의 **잠재 2차 원인** 제거.
-
-**잔여 (런타임)**:
-- vega_base 웨이브 3+ · GL mtrack Δ ±15MB · PSS 950 근접 여부 — **사용자/김경제 실측 대기**
-- 모니터 PSS≥950 combat hold — **범위 외** (김팀장 별도)
-
-**[kim-claude-review] 2026-07-05 wave-combat-mem PASS — inter-wave reclaim · phase-gated periodic · reclaim registry fix · tsc+audit PASS · GL mtrack 실측 대기**
-
-</details>
-
----
-
-<details>
-<summary>이전 사이클 (2026-07-05 idle GL · 2026-07-04 safe-scope) — 참고</summary>
-
-### idle GL floor FIX_APPLIED (김팀장 2026-07-05)
-1. `runPlanetHubSoftNativeReclaimPass` — 5분 `signalHubSkiaNativeReclaim`
-2. `runPlanetHubPostSkiaPeakReclaimPass` — peak 후 backdrop remount + 90s followup
-3. `planet.tsx` — inbound-only drone skip (`arcInboundFlyingDroneCount`)
-
-**verdict**: FIX_APPLIED · tsc+skia-memory PASS · GL mtrack 실측 대기
-
-### 2026-07-04 safe-scope PASS
-`_layout.tsx` 들여쓰기 · `investment_tick_enabled=false` · balance-tables 재빌드
-
-</details>

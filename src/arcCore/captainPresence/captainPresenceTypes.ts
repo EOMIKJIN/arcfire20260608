@@ -10,7 +10,7 @@ export type CaptainPresenceActivity =
   | 'orbit_table_patrol'
   | 'governor_post'
   | 'combat_orbit_posture'
-  | 'tavern_host'
+  | 'bar_host'
   | 'mission_combat_anchor'
   | 'transit_encounter';
 

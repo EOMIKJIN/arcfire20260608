@@ -1,6 +1,7 @@
 import Constants from 'expo-constants';
 import * as Application from 'expo-application';
-import firestore from '@react-native-firebase/firestore';
+import { getApp } from '@react-native-firebase/app';
+import { initializeFirestore } from '@react-native-firebase/firestore';
 
 const ADMIN_NICKNAME = 'Representative';
 const ADMIN_UID_ALLOWLIST = new Set(
@@ -17,12 +18,9 @@ export function configureFirestorePersistence(): void {
   if (firestoreConfigured) return;
   firestoreConfigured = true;
   try {
-    const fs = firestore();
-    if (typeof (fs as { settings?: (o: Record<string, unknown>) => void }).settings === 'function') {
-      (fs as { settings: (o: Record<string, unknown>) => void }).settings({
-        ignoreUndefinedProperties: true,
-      });
-    }
+    void initializeFirestore(getApp(), { ignoreUndefinedProperties: true }).catch((e) => {
+      console.warn('[firestoreClientConfig] Firestore settings skipped:', e);
+    });
   } catch (e) {
     console.warn('[firestoreClientConfig] Firestore settings skipped:', e);
   }

@@ -26,10 +26,10 @@ import {
   startPlanetLaboratoryUpgrade,
 } from '../../game/planetDevelopment/planetLaboratoryDevelopment';
 import {
-  buildTavernFacilityDevSnapshot,
-  installPlanetTavernFacility,
-  startPlanetTavernFacilityUpgrade,
-} from '../../game/planetDevelopment/planetTavernFacilityDevelopment';
+  buildBarFacilityDevSnapshot,
+  installPlanetBarFacility,
+  startPlanetBarFacilityUpgrade,
+} from '../../game/planetDevelopment/planetBarFacilityDevelopment';
 import type { PlanetDevFacilitySnapshotSlice } from '../../game/planetDevelopment/planetDevelopmentListRowModel';
 import { hasAnyPlanetDevJobInProgress } from '../../game/planetDevelopment/planetDevelopmentListRowModel';
 import {
@@ -73,7 +73,7 @@ export function buildArcCorePlanetDevModuleSnapshot(
     case 'dev_research_lab':
       return buildLaboratoryDevSnapshot(planetId);
     case 'dev_population_dome':
-      return buildTavernFacilityDevSnapshot(planetId);
+      return buildBarFacilityDevSnapshot(planetId);
     default:
       return null;
   }
@@ -142,8 +142,8 @@ function dispatchArcCorePlanetDevAction(
         : startPlanetLaboratoryUpgrade(planetId, opts);
     case 'dev_population_dome':
       return action === 'install'
-        ? installPlanetTavernFacility(planetId, opts)
-        : startPlanetTavernFacilityUpgrade(planetId, opts);
+        ? installPlanetBarFacility(planetId, opts)
+        : startPlanetBarFacilityUpgrade(planetId, opts);
     default:
       return { ok: false, reason: 'unknown_module' };
   }

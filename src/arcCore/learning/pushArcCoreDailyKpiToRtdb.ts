@@ -5,7 +5,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ensureFirebaseAnonymousAuth } from '../../firebase/firebaseAnonymousAuth';
 import { isArcCoreRtdbLearningSyncEnabled } from '../../firebase/arccoreRtdbSessionFlags';
-import { arccoreRtdbRef } from '../../firebase/rtdbRefs';
+import { writeRtdbValue } from '../../firebase/rtdbRefs';
 import { ARCORE_RTDB_DAILY_KPI_WRITE_TIMEOUT_MS } from '../../firebase/arccoreRtdbConfig';
 import {
   ARCORE_RTDB_SCHEMA_VERSION,
@@ -76,7 +76,7 @@ export async function pushArcCoreDailyKpiToRtdbIfDue(input: {
     // 타임아웃되면 실제 write는 SDK 내부에 큐잉된 채로 남을 수 있으나, 이 write는
     // 매일 1회짜리 최선노력 텔레메트리라 유실돼도 다음날 재시도로 충분하다.
     await Promise.race([
-      arccoreRtdbRef(`learning/devices/${authUid}/dailyKpi`).set(payload),
+      writeRtdbValue(`learning/devices/${authUid}/dailyKpi`, payload),
       new Promise<never>((_, reject) => {
         setTimeout(() => reject(new Error('rtdb_daily_kpi_write_timeout')), ARCORE_RTDB_DAILY_KPI_WRITE_TIMEOUT_MS);
       }),

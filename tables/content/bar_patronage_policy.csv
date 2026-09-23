@@ -1,0 +1,7 @@
+key,value,note
+drink_duration_sec_default,900,술 1잔 기본 초(15분)
+roster_min,1,리스트 하한(대표님 2026-09-16 · 바당 1~2명)
+roster_max,2,리스트 상한(바당 최대 2명)
+roster_dev_bonus_cap,0,1~2 고정 · 발전 가산 없음
+timer_ui_tick_sec,15,남은시간 UI 갱신 간격(고빈도 틱 금지)
+default_drink_id,drink_house_ale,1차 기본 술

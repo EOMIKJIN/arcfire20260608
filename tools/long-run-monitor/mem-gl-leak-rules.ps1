@@ -1,4 +1,4 @@
-# Arcfire long-run monitor — GL leak vs hub-activation classification (shared)
+﻿# Arcfire long-run monitor — GL leak vs hub-activation classification (shared)
 # idle→허브 mount 와 동일 상태 계단식 누수를 분리한다.
 
 $script:MEM_GL_IDLE_MAX_MB = 10
@@ -13,6 +13,9 @@ $script:MEM_BASELINE_LEAK_MARGIN_MB = 25
 # 안정 plateau는 누수가 아닌 footprint로 간주해 재시작을 보류한다.
 $script:MEM_GL_HARD_CEILING_MB = 200
 $script:MEM_PSS_HARD_CEILING_MB = 950
+# 장시간 허브 floor(~830) + 정상 전투 GL(80~200) 첫 마운트가 PSS 950을 넘는 경우
+# (2026-09-09 10:14: GL 159 / PSS 1025, 크래시 없음) — GL 하드실링·PSS 추가 상승만 재시작.
+$script:MEM_COMBAT_MOUNT_PSS_CLIMB_MB = 40
 # Native Reclaim Tier soft zone — 기록·앱 soft pass 권고, force-stop 없음
 $script:MEM_PSS_SOFT_CEILING_MB = 800
 # views/native_heap 단독 급증 조기 경보 — PSS 하드실링(950) 전에 먼저 감지·기록만(force-stop 없음).
@@ -82,12 +85,28 @@ function Test-MemGlStableCombatFootprint {
 }
 
 # 안정 footprint 라도 무조건 재시작해야 하는 진짜 OOM 임박 여부.
+# PSS-only + 전투 GL 구간은 Test-MemPssOnlyHardCeilingCombatGrace 로 1차 보류 가능.
 function Test-MemHardCeilingBreach {
   param(
     [double]$GlMb,
     [double]$PssMb
   )
   return ($GlMb -ge $script:MEM_GL_HARD_CEILING_MB) -or ($PssMb -ge $script:MEM_PSS_HARD_CEILING_MB)
+}
+
+# PSS>=950 이지만 GL 은 정상 전투 구간(80~200) — 장시간 floor 위 전투 마운트 false-kill 후보.
+# GL>=200 · idle GL · 비허브는 제외(즉시 하드실링 유지).
+function Test-MemPssOnlyHardCeilingCombatGrace {
+  param(
+    [double]$GlMb,
+    [double]$PssMb,
+    [int]$Views
+  )
+  if (-not (Test-MemHubActive -Views $Views)) { return $false }
+  if ($GlMb -ge $script:MEM_GL_HARD_CEILING_MB) { return $false }
+  if ($GlMb -lt $script:MEM_GL_CRITICAL_ACTIVE_MB) { return $false }
+  if ($PssMb -lt $script:MEM_PSS_HARD_CEILING_MB) { return $false }
+  return $true
 }
 
 function Test-MemPssSoftCeilingBreach {

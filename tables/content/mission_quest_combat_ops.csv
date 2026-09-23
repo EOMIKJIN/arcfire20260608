@@ -1,5 +1,12 @@
 id,objectiveId,encounterPolicy,anchorPlanetId,notesKo
 qco_obj_002_a,obj_002_a,transit_guaranteed,arcadia_prime,튜토리얼 — 아르카디아 주변 해적
+qco_obj_story_002_c,obj_story_002_c,transit_guaranteed,minerva_deep,본편 q02 — 미네르바 밀수조 호위
+qco_obj_story_004_a,obj_story_004_a,transit_guaranteed,vega_base,본편 q04 — 베가 국경 기습(전멸 연출 대행 1척)
+qco_obj_story_006_a,obj_story_006_a,transit_guaranteed,draco_haven,본편 q06 — 드라코 요새 호위
+qco_obj_s034_d,obj_s034_d,transit_guaranteed,synth_075_p,서브 암흑 — 캠프 출구 호위
+qco_obj_s035_d,obj_s035_d,transit_guaranteed,synth_078_p,서브 이중 — 요새 톨린 호위 순양함
+qco_obj_s036_c,obj_s036_c,transit_guaranteed,synth_070_p,서브 부의근원 — 코어 항로 장부 호위
+qco_obj_s037_c,obj_s037_c,transit_guaranteed,synth_070_p,서브 코어파편 — 코어 항로 상자 호위
 qco_obj_s001_a,obj_s001_a,transit_guaranteed,arcadia_prime,샌드박스 — 아르카디아 해적
 qco_obj_s003_a,obj_s003_a,transit_guaranteed,solar_station,샌드박스 — 솔라 밀수 호위
 qco_obj_s005_a,obj_s005_a,transit_guaranteed,minerva_deep,샌드박스 — 미네르바 광산 해적
@@ -15,6 +22,7 @@ qco_obj_s023_a,obj_s023_a,transit_guaranteed,crimson_base,샌드박스 — 크�
 qco_obj_s025_a,obj_s025_a,transit_guaranteed,dark_haven,샌드박스 — 다크 현상금
 qco_obj_s027_a,obj_s027_a,transit_guaranteed,shadow_market,샌드박스 — 섀도우 추적자
 qco_obj_s029_a,obj_s029_a,transit_guaranteed,nightfall_citadel,샌드박스 — 나이트폴 현상금
+qco_obj_s032_a,obj_s032_a,transit_guaranteed,minerva_deep,샌드박스 — 미네르바 호송 해적
 qco_obj_tq_c01_a,obj_tq_c01_a,transit_guaranteed,,ArcCore tq fighter
 qco_obj_tq_c02_a,obj_tq_c02_a,transit_guaranteed,,ArcCore tq fighter 2
 qco_obj_tq_c03_a,obj_tq_c03_a,transit_guaranteed,,ArcCore tq cruiser

@@ -1,6 +1,6 @@
 // ============================================================
 // 아크코어 — CSV 함장 primary presence 전역 인덱스 (함장 id당 1곳)
-// 우선순위: 총사령관 > 아크 수송 > 전투 주둔 > 테이블 순찰(3h) > off_world
+// 우선순위: 총사령관 > 아크 수송 > 전투 주둔 > 테이블 순찰(능동 판단) > off_world
 // ============================================================
 
 import { NPC_CAPTAINS_FROM_CSV } from '../../data/generated';
@@ -11,14 +11,20 @@ import type { ArcNpcTrafficShip } from '../../store/arcNpcTrafficStore';
 import { listGovernorCaptainPrimaryPlanets } from '../../game/planetGovernor/planetGovernorAssignmentStore';
 import { resolveSystemIdForPlanetId } from '../../world/resolvePlanetSystemId';
 import {
+  assignCaptainTableDwellPlanetId,
   getCaptainOrbitAssignmentEpochBucket,
-  resolveCaptainTableOrbitPlanetId,
   syncCaptainOrbitAssignmentEpochMemo,
   readUnlockedPlanetIdsSig,
 } from '../orbitPresence/captainOrbitPlanetAssignment';
+import { getDwellJudgmentDayBucket } from '../dwell/planetDwellJudgment';
+import { publishDwellRoleOccupancy } from '../dwell/planetDwellCivicAcc';
+import type { DwellRoleCounts } from '../dwell/planetDwellCivicAcc';
 import { listUnlockedPlanetIdsForOrbitPresence } from '../orbitPresence/orbitPresenceUnlockedPlanets';
+import { isArcSeedTransportCaptainId } from '../arcSeedTransportRegistry';
 import {
   readCaptainPresenceWorldIndexCache,
+  readCaptainPresenceWorldIndexIfUnchanged,
+  rememberCaptainPresenceWorldIndexInputs,
   writeCaptainPresenceWorldIndexCache,
 } from './captainPresenceWorldIndexCache';
 import type {
@@ -34,7 +40,7 @@ const ACTIVITY_RANK: Record<CaptainPresenceActivity, number> = {
   mission_combat_anchor: 2,
   combat_orbit_posture: 2,
   orbit_arc_transport: 3,
-  tavern_host: 4,
+  bar_host: 4,
   governor_post: 5,
 };
 
@@ -117,13 +123,28 @@ export function getCaptainPresenceWorldIndex(
   arcShips: readonly ArcNpcTrafficShip[] = [],
 ): CaptainPresenceWorldIndex {
   const epochBucket = syncCaptainOrbitAssignmentEpochMemo();
-  const govSig = [...listGovernorCaptainPrimaryPlanets().entries()]
+  const dayBucket = getDwellJudgmentDayBucket();
+  const govMap = listGovernorCaptainPrimaryPlanets();
+  const unlockedSig = readUnlockedPlanetIdsSig();
+  const unchanged = readCaptainPresenceWorldIndexIfUnchanged(
+    epochBucket,
+    dayBucket,
+    arcShips,
+    govMap,
+    unlockedSig,
+  );
+  if (unchanged) return unchanged;
+
+  const govSig = [...govMap.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([c, p]) => `${c}:${p}`)
     .join('|');
-  const key = `${epochBucket}|${arcTrafficSig(arcShips)}|${govSig}|${readUnlockedPlanetIdsSig()}`;
+  const key = `${epochBucket}|${dayBucket}|${arcTrafficSig(arcShips)}|${govSig}|${unlockedSig}`;
   const cached = readCaptainPresenceWorldIndexCache(key);
-  if (cached) return cached;
+  if (cached) {
+    rememberCaptainPresenceWorldIndexInputs(epochBucket, dayBucket, arcShips, govMap, unlockedSig);
+    return cached;
+  }
 
   const byCaptainId = new Map<string, CaptainPrimaryPresence>();
 
@@ -148,12 +169,12 @@ export function getCaptainPresenceWorldIndex(
   }
 
   for (const captain of NPC_CAPTAINS_FROM_CSV) {
-    for (const planetId of captain.tavernPlanetIds) {
+    for (const planetId of captain.barPlanetIds) {
       const pid = String(planetId ?? '').trim();
       if (!pid) continue;
       commitPresence(byCaptainId, {
         captainId: captain.id,
-        activity: 'tavern_host',
+        activity: 'bar_host',
         planetId: pid,
         systemId: systemIdForPlanet(pid),
         shipId: null,
@@ -178,8 +199,15 @@ export function getCaptainPresenceWorldIndex(
   // 빌드가 수 초로 폭주한다 — 이 루프에서 1회만 계산해 넘긴다
   // (task_id=daily-ops-batch-incomplete-fix-20260803 후속).
   const unlockedPlanetIds = listUnlockedPlanetIdsForOrbitPresence();
+  const occupancy = new Map<string, number>();
+  const roleOccupancy = new Map<string, DwellRoleCounts>();
+  const tableCaptains: NpcCaptain[] = [];
+
   for (const captain of NPC_CAPTAINS_FROM_CSV) {
+    if (captain.questOnly) continue;
     if (captain.arcOrbitPresenceFill) continue;
+    // seed는 AiNpc arc 수송만 — 테이블 순찰 commit 금지(이중 표시·stale memo 방지)
+    if (isArcSeedTransportCaptainId(captain.id)) continue;
     if (captain.operationalState === 'combat') {
       const anchor = resolveCombatCaptainAnchorPlanetId(captain);
       if (!anchor) continue;
@@ -192,7 +220,20 @@ export function getCaptainPresenceWorldIndex(
       });
       continue;
     }
-    const patrolPlanet = resolveCaptainTableOrbitPlanetId(captain, { epochBucket, unlockedPlanetIds });
+    const cur = byCaptainId.get(captain.id);
+    if (cur && ACTIVITY_RANK[cur.activity] > ACTIVITY_RANK.orbit_table_patrol) continue;
+    tableCaptains.push(captain);
+  }
+
+  tableCaptains.sort((a, b) => a.id.localeCompare(b.id));
+  for (const captain of tableCaptains) {
+    const { planetId: patrolPlanet } = assignCaptainTableDwellPlanetId(captain, {
+      epochBucket,
+      dayBucket,
+      unlockedPlanetIds,
+      occupancy,
+      roleOccupancy,
+    });
     if (!patrolPlanet) continue;
     commitPresence(byCaptainId, {
       captainId: captain.id,
@@ -202,6 +243,7 @@ export function getCaptainPresenceWorldIndex(
       shipId: captain.assignedShipId ?? null,
     });
   }
+  publishDwellRoleOccupancy(roleOccupancy);
 
   const hubOrbitCaptainIdsByPlanet = buildHubOrbitMap(byCaptainId);
   const index: CaptainPresenceWorldIndex = {
@@ -210,6 +252,7 @@ export function getCaptainPresenceWorldIndex(
     hubOrbitCaptainIdsByPlanet,
   };
   writeCaptainPresenceWorldIndexCache(key, index);
+  rememberCaptainPresenceWorldIndexInputs(epochBucket, dayBucket, arcShips, govMap, unlockedSig);
   return index;
 }
 
@@ -226,7 +269,9 @@ export function isCaptainHubOrbitPrimaryAtPlanet(
   planetId: string,
   arcShips: readonly ArcNpcTrafficShip[] = [],
 ): boolean {
-  if (captain.arcOrbitPresenceFill) {
+  // fill·seed 동일 — AiNpc arc 수송 primary만 허브 궤도 인정
+  if (captain.questOnly) return false;
+  if (captain.arcOrbitPresenceFill || isArcSeedTransportCaptainId(captain.id)) {
     const p = getCaptainPrimaryPresence(captain.id, arcShips);
     return p?.activity === 'orbit_arc_transport' && p.planetId === planetId;
   }

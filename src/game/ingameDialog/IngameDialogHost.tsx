@@ -19,6 +19,12 @@ import { useIngameDialogStore } from '../../store/ingameDialogStore';
 import { getIngameDialogSceneById } from './ingameDialogSceneIndex';
 import { buildIngameDialogViewModel } from './ingameDialogViewModel';
 import { INGAME_DIALOG_OVERLAY_ID } from './ingameDialogTypes';
+import {
+  resolveSessionAutoDismissKey,
+  resolveSessionAutoDismissMode,
+  resolveSessionAutoDismissMs,
+  shouldArmSessionAutoDismiss,
+} from './ingameDialogAutoDismiss';
 
 export const IngameDialogHost = memo(function IngameDialogHost() {
   const { width: windowWidth } = useWindowDimensions();
@@ -26,6 +32,9 @@ export const IngameDialogHost = memo(function IngameDialogHost() {
   const edges = resolveOverlayEdgeInsets(insets);
   const session = useIngameDialogStore((s) => s.session);
   const pressNext = useIngameDialogStore((s) => s.pressNext);
+  const pressCancel = useIngameDialogStore((s) => s.pressCancel);
+  const dismiss = useIngameDialogStore((s) => s.dismiss);
+  const dismissCancelRemaining = useIngameDialogStore((s) => s.dismissCancelRemaining);
   const markPageComplete = useIngameDialogStore((s) => s.markPageComplete);
   const locale = useAppSettingsStore((s) => s.locale);
   const nickname = usePlayerStore((s) => s.player?.nickname);
@@ -65,15 +74,39 @@ export const IngameDialogHost = memo(function IngameDialogHost() {
       typewriterSpeedMs: viewModel.typewriterSpeedMs,
       onTextComplete: markPageComplete,
       imageSource: viewModel.imageSource,
+      portraitScale: viewModel.portraitScale,
       maxLines: viewModel.maxLines,
       onPressNext: pressNext,
+      onPressSecondary: viewModel.showAcceptCancelChoice ? pressCancel : undefined,
       nextDisabled: viewModel.nextDisabled,
       buttonText: viewModel.buttonText,
+      secondaryButtonText: viewModel.secondaryButtonText,
       showActionButton: viewModel.hasMoreDialogue || viewModel.isFinalStep,
     };
-  }, [session, viewModel, markPageComplete, pressNext]);
+  }, [session, viewModel, markPageComplete, pressNext, pressCancel]);
 
   useArcNarrativeOverlay(INGAME_DIALOG_OVERLAY_ID, Boolean(session), config);
+
+  const autoDismissKey = resolveSessionAutoDismissKey(session);
+  const autoDismissMs = resolveSessionAutoDismissMs(session);
+  const autoDismissArmed = shouldArmSessionAutoDismiss(
+    session,
+    Boolean(viewModel?.isFinalStep),
+  );
+  useEffect(() => {
+    if (!autoDismissArmed || !autoDismissKey || autoDismissMs <= 0) return;
+    const key = autoDismissKey;
+    const timer = setTimeout(() => {
+      const cur = useIngameDialogStore.getState().session;
+      if (resolveSessionAutoDismissKey(cur) !== key) return;
+      if (resolveSessionAutoDismissMode(cur) === 'first_idle') {
+        dismissCancelRemaining();
+        return;
+      }
+      dismiss();
+    }, autoDismissMs);
+    return () => clearTimeout(timer);
+  }, [autoDismissArmed, autoDismissKey, autoDismissMs, dismiss, dismissCancelRemaining]);
 
   return null;
 });

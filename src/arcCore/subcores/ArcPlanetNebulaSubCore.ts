@@ -3,7 +3,7 @@ import { subscribeArcCoreCommands, type ArcCoreCommand } from '../ArcCoreCommand
 import { useWorldStore } from '../../store/worldStore';
 import { usePlanetNebulaStore } from '../../store/planetNebulaStore';
 import { planetSkiaNebulaProfileNotNeeded } from '../../game/mainStageSkiaBackdrop';
-import { useTavernBoardStore } from '../../store/tavernBoardStore';
+import { useBarBoardStore } from '../../store/barBoardStore';
 
 const DAILY_ECOLOGY_SHIFT_INTERVAL_SEC = 24 * 60 * 60;
 
@@ -65,7 +65,7 @@ export class ArcPlanetNebulaSubCore extends BaseArcSubCore {
   private applyDailyEcologyShift(): void {
     const result = usePlanetNebulaStore.getState().applyDailyEcologyShiftIfDue();
     if (!result.applied || result.changedCount <= 0) return;
-    useTavernBoardStore.getState().pushNotice({
+    useBarBoardStore.getState().pushNotice({
       i18nKey: 'news.nebulaShift',
       i18nParams: { count: result.changedCount },
       title: 'Planetary Nebula Ecosystem Adjusted',

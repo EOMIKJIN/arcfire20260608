@@ -1,4 +1,5 @@
 import { Platform, StyleSheet } from 'react-native';
+import { PLANET_DEV_LIST_ICON_PX } from '../../../game/planetDevelopment/planetDevListIconChroma';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import { TACTICAL_OVERLAY } from '../tacticalOverlayStyles';
 import {
@@ -94,8 +95,14 @@ export const planetDevelopmentOverlayStyles = StyleSheet.create({
   },
   listItemRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'stretch',
     columnGap: SPACING.md,
+  },
+  listItemLead: {
+    width: 72,
+    flexShrink: 0,
+    alignItems: 'center',
+    overflow: 'visible',
   },
   listItemImageSlot: {
     width: 72,
@@ -104,7 +111,65 @@ export const planetDevelopmentOverlayStyles = StyleSheet.create({
     borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
-    flexShrink: 0,
+  },
+  listItemLevelTagSlot: {
+    width: 72,
+    minHeight: 22,
+    marginTop: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  listItemLevelTag: {
+    minWidth: 46,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderWidth: 1,
+    borderRadius: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  listItemLevelTagAccent: {
+    width: 3,
+    height: 10,
+    marginRight: 4,
+    borderRadius: 0,
+  },
+  listItemLevelTagText: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.xs,
+    fontWeight: FONTS.weight.bold,
+    letterSpacing: 0.8,
+    lineHeight: 12,
+  },
+  listItemIconStack: {
+    width: PLANET_DEV_LIST_ICON_PX,
+    height: PLANET_DEV_LIST_ICON_PX,
+  },
+  listItemIconLayer: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: PLANET_DEV_LIST_ICON_PX,
+    height: PLANET_DEV_LIST_ICON_PX,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  listItemIconChromaClip: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    overflow: 'hidden',
+  },
+  listItemIconChromaInner: {
+    position: 'absolute',
+    left: 0,
+    bottom: 0,
+    width: PLANET_DEV_LIST_ICON_PX,
+    height: PLANET_DEV_LIST_ICON_PX,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   listItemImageSlotTactical: {
     borderColor: TACTICAL_OVERLAY.cardBorder,

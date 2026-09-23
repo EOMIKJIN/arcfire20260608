@@ -46,7 +46,7 @@ const BLUE_POOL = [
 ];
 
 const RED_POOL = [
-  ['01', '발크 크림손', '군주', '크림슨 군단장', 'pirates'],
+  ['01', '발크 크림손', '군주', '크림슨 레기온장', 'pirates'],
   ['02', '세라 피멸', '전대장', '붉은 전대사령', 'pirates'],
   ['03', '가론 매', '약탈장', '약탈전단장', 'void_walkers'],
   ['04', '이자벨 프리스트', '혈전장', '혈전사령관', 'trade_coalition'],
@@ -165,6 +165,7 @@ function buildRows(side, pool, ships, shipTemplatesText) {
         assignedShipId, '12', '0', '110', '55', '18',
         'FALSE', '', '', 'FALSE', meta.talk, '2', meta.dialogSceneId,
         '', '', '', '',
+        'FALSE', 'none',
       ].join(','),
       shipLine,
     };

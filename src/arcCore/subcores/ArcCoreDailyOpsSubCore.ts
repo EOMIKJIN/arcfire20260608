@@ -11,7 +11,10 @@ import {
 import { registerRunningArcCoreDailyBatch } from '../schedule/arcCoreDailyBatchGate';
 import { runArcCoreDailyOpsBatch } from '../schedule/runArcCoreDailyOpsBatch';
 import { formatArcCoreOpsDayKey, resolveArcCoreDailyOpsPolicy } from '../schedule/arcCoreDailyOpsPolicy';
-import { setArcCoreDailyOpsSummaryPending } from '../schedule/arcCoreDailyOpsSummaryPending';
+import {
+  flushLeftoverArcCoreDailyOpsSummaryAlertOnce,
+  presentArcCoreDailyOpsSummaryAlert,
+} from '../schedule/presentArcCoreDailyOpsSummaryAlert';
 import { runArcCorePlanetDevWallTick } from '../planetDevelopment/runArcCorePlanetDevWallTick';
 import { usePlayerStore } from '../../store/playerStore';
 import {
@@ -51,7 +54,9 @@ export class ArcCoreDailyOpsSubCore extends BaseArcSubCore {
     // 부트 프레임 차단 금지 — 타이틀/허브 첫 렌더가 끝난 뒤 유휴 시점에 일일 배치 실행.
     // (정오 이후 부팅 시 무거운 경제·코어 배치가 JS 스레드를 점유해 시작 화면이 멈추는 회귀 방지)
     InteractionManager.runAfterInteractions(() => {
-      void this.probeDailyBatch('boot');
+      void this.probeDailyBatch('boot').catch(() => {
+        /* boot probe 실패는 다음 tick에서 재시도 */
+      });
     });
   }
 
@@ -60,8 +65,12 @@ export class ArcCoreDailyOpsSubCore extends BaseArcSubCore {
     const now = Date.now();
     if (now - this.lastProbeMs < 60_000) return;
     this.lastProbeMs = now;
-    void runArcCorePlanetDevWallTick(now);
-    void this.probeDailyBatch('tick');
+    void runArcCorePlanetDevWallTick(now).catch(() => {
+      /* 60s tick — reject가 LogBox로 올라가지 않게 */
+    });
+    void this.probeDailyBatch('tick').catch(() => {
+      /* tick probe 실패는 다음 주기에서 재시도 */
+    });
   }
 
   private async probeDailyBatch(_source: 'boot' | 'tick'): Promise<void> {
@@ -87,6 +96,11 @@ export class ArcCoreDailyOpsSubCore extends BaseArcSubCore {
           signupAtMs,
         })
       ) {
+        if (_source === 'boot') {
+          void flushLeftoverArcCoreDailyOpsSummaryAlertOnce().catch(() => {
+            /* leftover 소비 실패는 알림만 생략 */
+          });
+        }
         return;
       }
 
@@ -127,18 +141,13 @@ export class ArcCoreDailyOpsSubCore extends BaseArcSubCore {
             lastBatchAt != null && lastBatchAt > 0
               ? Math.max(0, (completedAtMs - lastBatchAt) / (60 * 60 * 1000))
               : 0;
-          try {
-            await setArcCoreDailyOpsSummaryPending({
-              dayKey,
-              hoursSinceLastBatch,
-              economyFabric: batchResult.economyFabric,
-              simOverlayIngest: batchResult.simOverlayIngest,
-              economyLearning: batchResult.economyLearning,
-            });
-          } catch (summaryErr) {
-            // eslint-disable-next-line no-console
-            console.error('[ArcCore/DailyOps] summary pending failed (completed already marked)', summaryErr);
-          }
+          presentArcCoreDailyOpsSummaryAlert({
+            dayKey,
+            hoursSinceLastBatch,
+            economyFabric: batchResult.economyFabric,
+            simOverlayIngest: batchResult.simOverlayIngest,
+            economyLearning: batchResult.economyLearning,
+          });
 
           // RTDB는 완료 도장 이후 최선노력 — hang이 게이트를 다시 막지 않음.
           if (batchResult.learningKpi) {

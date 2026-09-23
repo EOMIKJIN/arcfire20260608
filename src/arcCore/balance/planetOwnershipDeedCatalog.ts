@@ -1,16 +1,12 @@
 // ============================================================
 // 행성 소유권 증서 — 무역소 진열 단일 eligibility 계약
-// CSV 21행성(A) + B→A synth — colonization CSV·개방 성계 기준
+// CSV 21행성(A) + B→A synth — hop 능선 무역소·개방 성계 기준
 // (정적 GALAXY hasTradePort=false · isCoreOpenPlanetId 순환 잔재 회피)
 // ============================================================
 
-import { getSynthSystemColonizationRow } from './balanceTableRegistry';
 import { isPlanetCsvTradePortWorldEnabled } from '../../game/planetDevelopment/planetCsvWorldFlags';
+import { resolveFrontierWorldFacilitySeed } from '../../world/galaxyFrontierDevelopmentRidge';
 import { isSynthFrontierPlanetId } from '../../world/isSynthFrontierPlanetId';
-
-function parseCsvBool(raw: string | undefined): boolean {
-  return String(raw ?? '').trim().toLowerCase() === 'true';
-}
 
 function normalizeSynthSystemId(id: string): string {
   if (!id.startsWith('synth_')) return id;
@@ -20,7 +16,7 @@ function normalizeSynthSystemId(id: string): string {
   return `synth_${String(n).padStart(3, '0')}`;
 }
 
-/** B→A synth — worldStore unlocked + phase≥1 + colonization CSV hasTradePort */
+/** B→A synth — worldStore unlocked + phase≥1 + hop 능선 무역소 */
 function isUnlockedSynthPlanetOwnershipDeedEligible(planetId: string): boolean {
   if (!isSynthFrontierPlanetId(planetId)) return false;
   try {
@@ -30,9 +26,9 @@ function isUnlockedSynthPlanetOwnershipDeedEligible(planetId: string): boolean {
     if (!world.loaded) return false;
     const systemId = normalizeSynthSystemId(planetId.replace(/_p$/, ''));
     if (!world.unlockedSystemIds.includes(systemId)) return false;
-    if (world.getSynthColonizationPhase(planetId) < 1) return false;
-    const row = getSynthSystemColonizationRow(systemId);
-    return parseCsvBool(String(row?.hasTradePort));
+    const phase = world.getSynthColonizationPhase(planetId);
+    if (phase < 1) return false;
+    return resolveFrontierWorldFacilitySeed(planetId, phase).hasTradePort;
   } catch {
     return false;
   }

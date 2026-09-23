@@ -12,10 +12,21 @@ export {
   resolveArcCoreInstanceTemplateMissionId,
 } from './arcCoreInstanceMissionResolver';
 export {
+  isCaptainPersonalMissionId,
+  isCaptainPersonalTemplateId,
+  CAPTAIN_PERSONAL_MISSION_ID_PREFIX,
+  CAPTAIN_PERSONAL_ACTIVE_ACCOUNT_MAX,
+} from './captainPersonalMissionIds';
+export {
   resolveMissionTrack,
   isTutorialMissionId,
+  isMainStoryMissionId,
+  isCampaignPrimaryMissionId,
   isQuestMissionId,
   isArcCoreAutoInstanceMissionId,
+  listMainStoryMissions,
   type MissionTrack,
   FIRST_TUTORIAL_MISSION_ID,
+  MAIN_STORY_MISSION_PREFIX,
 } from './missionTrack';
+export { resolveMissionHudSlots, type MissionHudBundle } from './missionHudSlots';

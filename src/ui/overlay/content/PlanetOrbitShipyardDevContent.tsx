@@ -266,7 +266,7 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
 
         {snapshot.isInstalling ? (
           <View style={styles.gaugeBlock}>
-            <PlanetDevSectionBar label={t('planetDev.installProgress')} visualTheme={visualTheme} />
+            <PlanetDevSectionBar label={t('planetDev.installProgress')} visualTheme={visualTheme} breathe />
             <PlanetDevHintText visualTheme={visualTheme} variant="body">
               {snapshot.installDurationSec != null
                 ? formatOrbitShipyardDurationLabel(snapshot.installDurationSec)
@@ -281,7 +281,7 @@ export const PlanetOrbitShipyardDevContent = memo(function PlanetOrbitShipyardDe
 
         {snapshot.isUpgrading ? (
           <View style={styles.gaugeBlock}>
-            <PlanetDevSectionBar label={t('orbitShipyard.upgradeProgress')} visualTheme={visualTheme} />
+            <PlanetDevSectionBar label={t('orbitShipyard.upgradeProgress')} visualTheme={visualTheme} breathe />
             <PlanetDevHintText visualTheme={visualTheme} variant="body">
               {snapshot.upgradeJob?.targetLevel != null
                 ? formatPlanetDevLevelUpgradeArrow(snapshot.level, snapshot.upgradeJob.targetLevel, t)

@@ -60,6 +60,12 @@ async function writePayload(payload: TelemetryPayload): Promise<void> {
 
 /** UI·선행조건 — 동기 조회용 in-memory 캐시(부트 시 hydrate) */
 let winCountByPlanetCache: Record<string, number> | null = null;
+/** 채팅 읽기 도구 — 최근 전투 1건만. 80건 디스크 재읽기 금지 */
+let lastMatchCache: CombatMatchSummary | null = null;
+
+export function getLastMatchSummarySync(): CombatMatchSummary | null {
+  return lastMatchCache;
+}
 
 function rebuildWinCountCache(entries: CombatMatchSummary[]): Record<string, number> {
   const out: Record<string, number> = {};
@@ -86,6 +92,7 @@ export function countPlanetCombatWinsSync(planetId: string): number {
 export async function hydrateCombatMatchTelemetryCache(): Promise<void> {
   const payload = await readPayload();
   winCountByPlanetCache = rebuildWinCountCache(payload.entries);
+  lastMatchCache = payload.entries.length > 0 ? payload.entries[payload.entries.length - 1]! : null;
 }
 
 /** STAGE 3 전투 종료 시 1회 기록 — 일일 배치에서만 HP 배율 보정에 사용 */
@@ -100,6 +107,7 @@ export async function recordMatchSummary(entry: Omit<CombatMatchSummary, 'record
     payload.entries = payload.entries.slice(-MAX_ENTRIES);
   }
   await writePayload(payload);
+  lastMatchCache = recorded;
   if (!winCountByPlanetCache) {
     winCountByPlanetCache = rebuildWinCountCache(payload.entries);
   } else if (recorded.playerWon && recorded.planetId) {
@@ -114,9 +122,10 @@ export async function listRecentMatchSummaries(limit = 20): Promise<CombatMatchS
 
 /** 계정 초기화 — 플레이어 전투 텔레메트리(교전 기록) 제거 */
 export async function resetCombatMatchTelemetry(): Promise<void> {
+  winCountByPlanetCache = {};
+  lastMatchCache = null;
   try {
     await AsyncStorage.removeItem(STORAGE_KEY);
-    winCountByPlanetCache = {};
   } catch {
     /* ignore */
   }

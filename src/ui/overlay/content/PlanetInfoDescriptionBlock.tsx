@@ -3,6 +3,9 @@ import { Platform, StyleSheet, Text, View } from 'react-native';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import type { ArcOverlayVisualTheme } from '../tacticalOverlayPreview';
 import {
+  PLANET_DEV_DETAIL_DESCRIPTION_BLOCK_HEIGHT_PX,
+  PLANET_DEV_DETAIL_DESCRIPTION_LINE_HEIGHT_PX,
+  PLANET_DEV_DETAIL_DESCRIPTION_LINES,
   PLANET_DEV_LIST_DESCRIPTION_BLOCK_HEIGHT_PX,
   PLANET_DEV_LIST_DESCRIPTION_LINE_HEIGHT_PX,
   PLANET_DEV_LIST_DESCRIPTION_LINES,
@@ -18,8 +21,8 @@ type Props = {
   visualTheme?: ArcOverlayVisualTheme;
   /** panelPrefix 첫 블록 — bodyPanel paddingTop 만으로 간격 확보 */
   compactTop?: boolean;
-  /** 행성개발 목록 — 3줄·xs (줄바꿈은 CSV/i18n `\n`만) */
-  variant?: 'planetInfo' | 'devList';
+  /** planetInfo=행성정보 4줄 · devList=목록 3줄 · devDetail=개발 상세 상단 4줄 */
+  variant?: 'planetInfo' | 'devList' | 'devDetail';
 };
 
 const androidTextFix = Platform.OS === 'android' ? { includeFontPadding: false as const } : null;
@@ -33,16 +36,25 @@ export const PlanetInfoDescriptionBlock = memo(function PlanetInfoDescriptionBlo
 }: Props) {
   const isTactical = visualTheme === 'tactical';
   const isDevList = variant === 'devList';
+  const isDevDetail = variant === 'devDetail';
   const trimmed = description.trim();
   if (!trimmed) return null;
 
-  const lineCount = isDevList ? PLANET_DEV_LIST_DESCRIPTION_LINES : PLANET_INFO_DESCRIPTION_LINES;
+  const lineCount = isDevList
+    ? PLANET_DEV_LIST_DESCRIPTION_LINES
+    : isDevDetail
+      ? PLANET_DEV_DETAIL_DESCRIPTION_LINES
+      : PLANET_INFO_DESCRIPTION_LINES;
   const lineHeight = isDevList
     ? PLANET_DEV_LIST_DESCRIPTION_LINE_HEIGHT_PX
-    : PLANET_INFO_DESCRIPTION_LINE_HEIGHT_PX;
+    : isDevDetail
+      ? PLANET_DEV_DETAIL_DESCRIPTION_LINE_HEIGHT_PX
+      : PLANET_INFO_DESCRIPTION_LINE_HEIGHT_PX;
   const blockHeight = isDevList
     ? PLANET_DEV_LIST_DESCRIPTION_BLOCK_HEIGHT_PX
-    : PLANET_INFO_DESCRIPTION_BLOCK_HEIGHT_PX - SPACING.sm;
+    : isDevDetail
+      ? PLANET_DEV_DETAIL_DESCRIPTION_BLOCK_HEIGHT_PX
+      : PLANET_INFO_DESCRIPTION_BLOCK_HEIGHT_PX - SPACING.sm;
 
   const textStyle = [
     styles.block,

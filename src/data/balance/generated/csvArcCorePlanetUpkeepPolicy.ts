@@ -14,6 +14,7 @@ export const ArcCorePlanetUpkeepPolicy_FROM_BALANCE_CSV = [
   { "key": "convoy_daily_coverage_enabled", "value": "true", "notesKo": "교역 행성 일 1회 수송선단 정산" },
   { "key": "convoy_daily_min_trade_qty", "value": "2", "notesKo": "일일 정산 최소 교역 수량" },
   { "key": "transport_fleet_display_name_ko", "value": "아크코어 수송선단", "notesKo": "거래 독점 선단 표시명" },
+  { "key": "transport_fleet_display_name_en", "value": "ArcCore Transport Fleet", "notesKo": "거래 독점 선단 표시명(EN)" },
   { "key": "fiscal_fee_upkeep_warn_ratio", "value": "20", "notesKo": "일 수수료/유지비 WARN (배 이상)" },
   { "key": "fiscal_fee_upkeep_fail_ratio", "value": "50", "notesKo": "일 수수료/유지비 FAIL (배 이상)" },
   { "key": "convoy_progressive_fee_threshold_ratio", "value": "15", "notesKo": "수송 progressive fee — fee/upkeep 이 비율 초과 시 감쇠" },

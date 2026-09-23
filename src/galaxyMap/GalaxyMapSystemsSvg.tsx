@@ -2,8 +2,25 @@ import React, { memo, useMemo } from 'react';
 import { Circle, G, Path, Text as SvgText } from 'react-native-svg';
 import type { StarSystem } from '../types';
 import type { AppLocale } from '../i18n/types';
-import { resolveStarSystemDisplayName } from '../i18n/systemText';
+import {
+  GALAXY_MAP_UNIDENTIFIED_LABEL_FILL,
+  isGalaxyMapSystemNameRevealed,
+  resolveGalaxyMapSystemDisplayLabel,
+  shouldShowGalaxyMapSystemLabel,
+} from './galaxyMapUnidentifiedLabel';
+import { resolveVisitedNodeInnerR } from './galaxyMapColonizeHubPulse';
 import { COLORS, FONTS, LAYOUT, ZONE_COLORS } from '../utils/theme';
+import {
+  EMPTY_GALAXY_MAP_QUEST_ACCEPT_MARKS,
+  GALAXY_MAP_QUEST_MARK_MAIN_FILL,
+  GALAXY_MAP_QUEST_MARK_MAIN_STROKE,
+  GALAXY_MAP_QUEST_MARK_SIDE_FILL,
+  GALAXY_MAP_QUEST_MARK_SIDE_STROKE,
+  GALAXY_MAP_QUEST_MARK_STROKE_WIDTH,
+  diamondPathD,
+  resolveQuestMarkCenter,
+  type GalaxyMapQuestAcceptMarks,
+} from './galaxyMapQuestAcceptMarks';
 /** Hermes — named import from sibling module can throw at runtime after HMR; keep local. */
 type GalaxyMapEdgeSegment = {
   x1: number;
@@ -64,6 +81,15 @@ function batchGalaxyMapConnectionPaths(segments: readonly GalaxyMapEdgeSegment[]
   return out;
 }
 
+/** 경로 미리보기 — edges와 형제 Path라 key 네임스페이스를 분리한다 */
+function batchGalaxyMapRoutePreviewPaths(segments: readonly GalaxyMapEdgeSegment[]): BatchedGalaxyMapPath[] {
+  const batched = batchGalaxyMapConnectionPaths(segments);
+  return batched.map((line, i) => ({
+    ...line,
+    key: `galaxy-route-${i}-${line.stroke}|${line.strokeWidth}|${line.opacity}`,
+  }));
+}
+
 const NODE_R = LAYOUT.map_node_radius;
 const NODE_R_CURRENT = LAYOUT.map_node_radius_start;
 
@@ -72,6 +98,9 @@ const GAME_LINE_DIM = 'rgba(255,255,255,0.22)';
 const GAME_LINE_HI = 'rgba(255,255,255,0.85)';
 /** 선택 성계까지 최단 이동 경로 미리보기 */
 const ROUTE_PREVIEW_ORANGE = '#FF9A3C';
+/** 연결선이 모이는 성계 중심점 — 원 테두리(0.39)보다 아주 살짝 밝음 */
+const HUB_DOT_R = 1.5;
+const HUB_DOT_FILL = 'rgba(255,255,255,0.48)';
 
 export type GalaxyMapSystemsSvgProps = {
   systems: StarSystem[];
@@ -86,6 +115,8 @@ export type GalaxyMapSystemsSvgProps = {
   clanOwnerColorBySystemId: Record<string, string | undefined>;
   toScreen: (pos: { x: number; y: number }) => { x: number; y: number };
   locale: AppLocale;
+  /** 수락 전 퀘스트 위치. 끄면 EMPTY */
+  questAcceptMarks?: GalaxyMapQuestAcceptMarks;
 };
 
 function shortName(name: string): string {
@@ -109,10 +140,16 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
   clanOwnerColorBySystemId,
   toScreen,
   locale,
+  questAcceptMarks = EMPTY_GALAXY_MAP_QUEST_ACCEPT_MARKS,
 }: GalaxyMapSystemsSvgProps) {
   const unlockedSet = useMemo(() => new Set(unlockedIds), [unlockedIds]);
   const visitedSet = useMemo(() => new Set(visitedIds), [visitedIds]);
   const reachableSet = useMemo(() => new Set(reachableIds), [reachableIds]);
+  const renderedSystemIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (let i = 0; i < systems.length; i++) ids.add(systems[i]!.id);
+    return ids;
+  }, [systems]);
 
   const batchedLines = useMemo(() => {
     const renderedLines = new Set<string>();
@@ -121,7 +158,8 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
     for (const sys of systems) {
       const posA = toScreen(sys.position);
       for (const connId of sys.connections) {
-        const key = [sys.id, connId].sort().join('--');
+        if (!renderedSystemIds.has(connId)) continue;
+        const key = sys.id < connId ? `${sys.id}--${connId}` : `${connId}--${sys.id}`;
         if (renderedLines.has(key)) continue;
         renderedLines.add(key);
 
@@ -149,7 +187,7 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
     }
 
     return batchGalaxyMapConnectionPaths(segments);
-  }, [systems, systemById, currentId, unlockedSet, reachableSet, toScreen]);
+  }, [systems, systemById, currentId, unlockedSet, reachableSet, renderedSystemIds, toScreen]);
 
   const routePreviewLines = useMemo(() => {
     if (routePreviewSystemIds.length < 2) return [];
@@ -170,7 +208,7 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
         opacity: 1,
       });
     }
-    return batchGalaxyMapConnectionPaths(segments);
+    return batchGalaxyMapRoutePreviewPaths(segments);
   }, [routePreviewSystemIds, systemById, toScreen]);
 
   const nodes = useMemo(() => {
@@ -188,8 +226,13 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
       const opacity = isGameplay
         ? (isVisited || isCurrent || isReachable ? 1 : 0.75)
         : 0.55;
-      const label = shortName(resolveStarSystemDisplayName(sys, locale));
-      const labelFill = isGameplay ? '#FFFFFF' : '#7F93B8';
+      const nameRevealed = isGalaxyMapSystemNameRevealed(isVisited, isCurrent);
+      const rawLabel = resolveGalaxyMapSystemDisplayLabel(sys, locale, nameRevealed);
+      const label = nameRevealed ? shortName(rawLabel) : rawLabel;
+      const labelFill = nameRevealed
+        ? (isGameplay ? '#FFFFFF' : '#7F93B8')
+        : GALAXY_MAP_UNIDENTIFIED_LABEL_FILL;
+      const showLabel = shouldShowGalaxyMapSystemLabel(isGameplay, isSelected);
 
       let body: React.ReactNode;
       if (!isGameplay) {
@@ -206,7 +249,7 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
           />
         );
       } else if (isVisited) {
-        const innerR = Math.max(2.5, r * 0.42) + 1;
+        const innerR = resolveVisitedNodeInnerR(r);
         const innerFill = resolveOccupiedNodeInnerFill(clanOwnerColor);
         body = (
           <>
@@ -228,7 +271,7 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
             cy={pos.y}
             r={r}
             fill={`${accent}33`}
-            stroke={clanOwnerColor ? `${clanOwnerColor}DD` : GAME_LINE_HI}
+            stroke={clanOwnerColor ? `${clanOwnerColor}9B` : 'rgba(255,255,255,0.60)'}
             strokeWidth={1.5}
           />
         );
@@ -239,7 +282,7 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
             cy={pos.y}
             r={r}
             fill={clanOwnerColor ? `${clanOwnerColor}22` : 'rgba(255,255,255,0.10)'}
-            stroke={clanOwnerColor ? `${clanOwnerColor}CC` : 'rgba(255,255,255,0.55)'}
+            stroke={clanOwnerColor ? `${clanOwnerColor}8F` : 'rgba(255,255,255,0.39)'}
             strokeWidth={1.25}
           />
         );
@@ -259,17 +302,24 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
           ) : null}
           {body}
           {isCurrent ? <Circle cx={pos.x} cy={pos.y} r={3} fill={COLORS.bg_primary} /> : null}
-          <SvgText
-            x={pos.x}
-            y={pos.y + r + 10}
-            fill={labelFill}
-            fontSize={8}
-            fontFamily={FONTS.mono}
-            textAnchor="middle"
-            opacity={isGameplay ? 0.95 : 0.75}
-          >
-            {label}
-          </SvgText>
+          <Circle cx={pos.x} cy={pos.y} r={HUB_DOT_R} fill={HUB_DOT_FILL} />
+          {/*
+            Views: 잠금 전체 라벨은 생략. 개방 성계는 미확인/실명 라벨 유지.
+            실명은 도착(방문·현재) 후에만 — 선택/도달만으로는 본명 노출 금지.
+          */}
+          {showLabel ? (
+            <SvgText
+              x={pos.x}
+              y={pos.y + r + 10}
+              fill={labelFill}
+              fontSize={8}
+              fontFamily={FONTS.mono}
+              textAnchor="middle"
+              opacity={isGameplay ? 0.95 : 0.75}
+            >
+              {label}
+            </SvgText>
+          ) : null}
         </G>
       );
     });
@@ -284,6 +334,32 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
     toScreen,
     locale,
   ]);
+
+  const questMarkPaths = useMemo(() => {
+    if (questAcceptMarks === EMPTY_GALAXY_MAP_QUEST_ACCEPT_MARKS) {
+      return { mainD: '', sideD: '' };
+    }
+    let mainD = '';
+    let sideD = '';
+    for (const systemId in questAcceptMarks) {
+      const mark = questAcceptMarks[systemId];
+      if (!mark || (!mark.main && !mark.side)) continue;
+      const sys = systemById[systemId];
+      if (!sys) continue;
+      const pos = toScreen(sys.position);
+      const r = systemId === currentId ? NODE_R_CURRENT : NODE_R;
+      const both = mark.main && mark.side;
+      if (mark.main) {
+        const c = resolveQuestMarkCenter(pos.x, pos.y, r, both ? 'main' : 'solo');
+        mainD += diamondPathD(c.x, c.y);
+      }
+      if (mark.side) {
+        const c = resolveQuestMarkCenter(pos.x, pos.y, r, both ? 'side' : 'solo');
+        sideD += diamondPathD(c.x, c.y);
+      }
+    }
+    return { mainD, sideD };
+  }, [systemById, currentId, questAcceptMarks, toScreen]);
 
   return (
     <G>
@@ -310,6 +386,24 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
         />
       ))}
       {nodes}
+      {questMarkPaths.mainD ? (
+        <Path
+          d={questMarkPaths.mainD}
+          fill={GALAXY_MAP_QUEST_MARK_MAIN_FILL}
+          stroke={GALAXY_MAP_QUEST_MARK_MAIN_STROKE}
+          strokeWidth={GALAXY_MAP_QUEST_MARK_STROKE_WIDTH}
+          strokeLinejoin="miter"
+        />
+      ) : null}
+      {questMarkPaths.sideD ? (
+        <Path
+          d={questMarkPaths.sideD}
+          fill={GALAXY_MAP_QUEST_MARK_SIDE_FILL}
+          stroke={GALAXY_MAP_QUEST_MARK_SIDE_STROKE}
+          strokeWidth={GALAXY_MAP_QUEST_MARK_STROKE_WIDTH}
+          strokeLinejoin="miter"
+        />
+      ) : null}
     </G>
   );
 });

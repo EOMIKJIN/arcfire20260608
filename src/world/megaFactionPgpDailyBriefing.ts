@@ -1,5 +1,5 @@
 // ============================================================
-// 블루·레드 세력 PGP 합산 — 선술집 일 1회 공지 (앱 기동 시)
+// 블루·레드 세력 PGP 합산 — 바 일 1회 공지 (앱 기동 시)
 // ============================================================
 
 import { PlanetOccupationSeeds_FROM_BALANCE_CSV } from '../data/balance/generated';
@@ -12,7 +12,7 @@ import {
 } from '../store/planetCoreRuntimeStore';
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
 import { usePlanetCoreRuntimeStore } from '../store/planetCoreRuntimeStore';
-import { useTavernBoardStore } from '../store/tavernBoardStore';
+import { useBarBoardStore } from '../store/barBoardStore';
 import { useWorldStore } from '../store/worldStore';
 import {
   calculatePlanetPgpFromStats,
@@ -119,13 +119,13 @@ function todayDedupeKey(): string {
   return `${PGP_BRIEFING_DEDUPE_PREFIX}${new Date().toISOString().slice(0, 10)}`;
 }
 
-/** 앱 기동 1회 — 당일 중복 dedupeKey 로 선술집 공지 1건 */
+/** 앱 기동 1회 — 당일 중복 dedupeKey 로 바 공지 1건 */
 export function publishMegaFactionPgpDailyBriefingNotice(): void {
   const snap = computeMegaFactionPgpSnapshot();
   const leaderKey =
     snap.leader === 'blue' ? 'blue' : snap.leader === 'red' ? 'red' : 'tie';
 
-  useTavernBoardStore.getState().pushNotice({
+  useBarBoardStore.getState().pushNotice({
     i18nKey: 'news.megaFactionPgp',
     i18nParams: {
       blueNation: MEGA_FACTION_BLUE_NATION.displayNameKo,

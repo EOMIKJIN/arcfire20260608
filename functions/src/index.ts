@@ -11,3 +11,5 @@ admin.initializeApp();
 export const ping = onRequest((req, res) => {
   res.status(200).send('ok');
 });
+
+// Spark(무료) 기간: arcCoreChatTurn 은 소스만 유지. deploy/export 하지 않음.

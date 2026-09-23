@@ -263,7 +263,9 @@ export function resolveCapitalShipRepairCost(
 
   const missingPct = DURABILITY_DEFAULT_PCT - durabilityPct;
   const raw = referencePrice * (missingPct / DURABILITY_DEFAULT_PCT) * policy.repairCostRatio;
-  return Math.max(policy.repairFloorCredits, Math.ceil(raw));
+  const baseCost = Math.max(policy.repairFloorCredits, Math.ceil(raw));
+  const { applyInvestorDealToRepairCost } = require('../playerOwnedSkillTradeAdjust') as typeof import('../playerOwnedSkillTradeAdjust');
+  return applyInvestorDealToRepairCost(baseCost);
 }
 
 export function repairActiveShipHull(player: Player): Player | null {

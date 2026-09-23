@@ -15,6 +15,10 @@ interface TypewriterTextProps {
   /** 영화 프롤로그 등 어두운 배경용 커서 색 */
   cursorColor?: string;
   numberOfLines?: number;
+  /** true면 애니메이션 없이 즉시 전체 텍스트를 표시(스킵 후 마지막 페이지 등) */
+  skipAnimation?: boolean;
+  /** false면 rAF를 시작하지 않음 — 오버레이 오픈 시퀀스 동안 */
+  active?: boolean;
 }
 
 export function TypewriterText({
@@ -25,6 +29,8 @@ export function TypewriterText({
   cursor = true,
   cursorColor,
   numberOfLines,
+  skipAnimation = false,
+  active = true,
 }: TypewriterTextProps) {
   const [displayed, setDisplayed] = useState('');
   const [done, setDone] = useState(false);
@@ -46,10 +52,26 @@ export function TypewriterText({
   }, []);
 
   useEffect(() => {
+    carryMsRef.current = 0;
+
+    if (!active) {
+      setDisplayed('');
+      setDone(false);
+      indexRef.current = 0;
+      return;
+    }
+
+    if (skipAnimation) {
+      indexRef.current = text.length;
+      setDisplayed(text);
+      setDone(true);
+      onCompleteRef.current?.();
+      return;
+    }
+
     setDisplayed('');
     setDone(false);
     indexRef.current = 0;
-    carryMsRef.current = 0;
 
     const perCharMs = Math.max(1, speed);
     let lastTs = 0;
@@ -86,7 +108,7 @@ export function TypewriterText({
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     };
-  }, [text, speed]);
+  }, [active, text, speed, skipAnimation]);
 
   return (
     <Text style={[defaultStyle, style]} numberOfLines={numberOfLines}>

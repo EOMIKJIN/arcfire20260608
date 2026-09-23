@@ -13,6 +13,7 @@ import { adjustPlanetTradeMarketStock } from '../../world/planetTradeMarketStore
 import {
   planArcConvoyRouteAtSupply,
   resolveArcConvoyUnloadSettlement,
+  type ArcConvoyRoutePlan,
 } from './arcConvoyTradePlanner';
 import {
   canRunConvoyTradeSettlement,
@@ -26,6 +27,11 @@ import {
   parseTradeRouteAttrs,
   type TradeRouteAttrs,
 } from './tradeRouteRegistry';
+import {
+  hydrateConvoyRamCargoLots,
+  markConvoyRamCargoHydrated,
+  scheduleConvoyRamCargoPersist,
+} from './convoyRamCargoPersist';
 
 type ShipCargo = {
   tgId: string;
@@ -37,15 +43,54 @@ type ShipCargo = {
 };
 
 const shipCargoById = new Map<string, ShipCargo>();
+let cargoRestoreStarted = false;
+
+function persistRamCargoLots(): void {
+  const lots = [];
+  for (const [shipId, cargo] of shipCargoById) {
+    lots.push({
+      shipId,
+      tgId: cargo.tgId,
+      qty: cargo.qty,
+      unitBuyPrice: cargo.unitBuyPrice,
+      srcPlanetId: cargo.srcPlanetId,
+      plannedDestPlanetId: cargo.plannedDestPlanetId,
+    });
+  }
+  scheduleConvoyRamCargoPersist(lots);
+}
+
+export async function ensureConvoyRamCargoRestored(): Promise<void> {
+  if (cargoRestoreStarted) return;
+  cargoRestoreStarted = true;
+  const lots = await hydrateConvoyRamCargoLots();
+  for (const lot of lots) {
+    if (shipCargoById.has(lot.shipId)) continue;
+    const def = getItemDef(lot.tgId);
+    const attrs = parseTradeRouteAttrs(def);
+    if (!attrs) continue;
+    shipCargoById.set(lot.shipId, {
+      tgId: lot.tgId,
+      qty: lot.qty,
+      unitBuyPrice: lot.unitBuyPrice,
+      srcPlanetId: lot.srcPlanetId,
+      plannedDestPlanetId: lot.plannedDestPlanetId,
+      attrs,
+    });
+  }
+  markConvoyRamCargoHydrated();
+}
 
 export function clearConvoyShipCargo(shipId: string): void {
   if (!shipId) return;
   shipCargoById.delete(shipId);
+  persistRamCargoLots();
 }
 
 /** 부트 reseed·STAGE 이탈 — RAM 적재 화물 전부 해제 */
 export function clearAllConvoyShipCargo(): void {
   shipCargoById.clear();
+  persistRamCargoLots();
 }
 
 export function hasConvoyShipCargo(shipId: string): boolean {
@@ -54,7 +99,19 @@ export function hasConvoyShipCargo(shipId: string): boolean {
 
 /** 적재 후 목표 수요 행성 — 궤도 수송선 다음 행성 선택에 사용 */
 export function getConvoyShipCargoDestination(shipId: string): string | null {
+  void ensureConvoyRamCargoRestored();
   return shipCargoById.get(shipId)?.plannedDestPlanetId ?? null;
+}
+
+/** F7 정량 — RAM 적재 원금. persist 없음. 일 1회 오펙스 패스 전용. */
+export function summarizeConvoyRamCargo(): { lots: number; buyCredits: number } {
+  let lots = 0;
+  let buyCredits = 0;
+  for (const cargo of shipCargoById.values()) {
+    lots += 1;
+    buyCredits += Math.max(0, Math.floor(cargo.qty * cargo.unitBuyPrice));
+  }
+  return { lots, buyCredits };
 }
 
 function applyConvoyUnloadGrossCap(
@@ -85,8 +142,13 @@ function applyConvoyUnloadGrossCap(
  * 팩션 금고 hydrate 완료를 기다리는 applyPlanetTradeTransactionFee(async)를 내부에서 await하므로
  * 이 함수도 async — 호출부는 이후 로직(적재 화물 상태 등)이 정확히 순서대로 반영되도록 await할 것.
  */
-export async function settleArcTransportDwellTrade(shipId: string, planetId: string): Promise<void> {
+export async function settleArcTransportDwellTrade(
+  shipId: string,
+  planetId: string,
+  opts?: { routePlan?: ArcConvoyRoutePlan },
+): Promise<void> {
   if (!shipId || !planetId) return;
+  await ensureConvoyRamCargoRestored();
   if (!isPlanetConvoyTradeEnabled(planetId)) return;
   if (!getPlanetTradeRouteProfile(planetId)) return;
   if (!canRunConvoyTradeSettlement()) return;
@@ -111,6 +173,7 @@ export async function settleArcTransportDwellTrade(shipId: string, planetId: str
       );
       if (capped.unloadQty <= 0 || capped.sellGross <= 0) {
         shipCargoById.delete(shipId);
+        persistRamCargoLots();
         bank.recordAudit('convoy_cap_reject', {
           shipId,
           planetId,
@@ -151,16 +214,22 @@ export async function settleArcTransportDwellTrade(shipId: string, planetId: str
         vaultResult.fleetRetained,
       );
       shipCargoById.delete(shipId);
+      persistRamCargoLots();
     }
     return;
   }
 
   if (!getPlanetTradeRouteProfile(planetId)) return;
 
-  const plan = planArcConvoyRouteAtSupply(planetId, shipId, bank.getBalance(), {
-    ignoreBankAffordability: vaultAllowsNegativeBalance(),
-  });
+  const planned = opts?.routePlan;
+  const plan =
+    planned && planned.srcPlanetId === planetId
+      ? planned
+      : planArcConvoyRouteAtSupply(planetId, shipId, bank.getBalance(), {
+          ignoreBankAffordability: vaultAllowsNegativeBalance(),
+        });
   if (!plan) return;
+  if (!isPlanetConvoyTradeEnabled(plan.destPlanetId)) return;
 
   const def = getItemDef(plan.tgId);
   const attrs = parseTradeRouteAttrs(def);
@@ -195,6 +264,7 @@ export async function settleArcTransportDwellTrade(shipId: string, planetId: str
     plannedDestPlanetId: plan.destPlanetId,
     attrs,
   });
+  persistRamCargoLots();
 }
 
 /** 일일 정산·백필 — 생산지 적재 후 수요지 하역까지 1회 왕복 */
@@ -216,12 +286,18 @@ export async function executeArcConvoyRoundTrip(
     forceDestPlanetId: opts?.forceDestPlanetId,
   });
   if (!plan) return { ok: false, reason: 'no_route' };
+  if (!isPlanetConvoyTradeEnabled(supplyPlanetId) || !isPlanetConvoyTradeEnabled(plan.destPlanetId)) {
+    return { ok: false, reason: 'convoy_disabled' };
+  }
 
-  await settleArcTransportDwellTrade(shipId, supplyPlanetId);
+  await settleArcTransportDwellTrade(shipId, supplyPlanetId, { routePlan: plan });
   if (!hasConvoyShipCargo(shipId)) {
     return { ok: false, reason: 'load_failed' };
   }
 
   await settleArcTransportDwellTrade(shipId, plan.destPlanetId);
+  if (hasConvoyShipCargo(shipId)) {
+    return { ok: false, reason: 'unload_failed' };
+  }
   return { ok: true, destPlanetId: plan.destPlanetId };
 }

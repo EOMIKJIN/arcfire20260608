@@ -9,6 +9,7 @@ import {
   listTerritorialCombatPolicies,
   listTerritorialCombatPoliciesForCampaign,
   invalidateTerritorialCombatPolicyCache,
+  isSequentialContestedDecisionPlanet,
 } from './arcCoreTerritorialCombatPolicy';
 import { resolveContestedZonePreviewSystemIds } from './resolveContestedZonePreviewSystemIds';
 import { setSuspendedStaticPlanetIds } from './dynamicContestedZoneStore';
@@ -78,6 +79,20 @@ test('5) suspend 해제하면 다시 목록에 나타남(가역적 오버레이)
   assert.equal(listTerritorialCombatPolicies().some((p) => p.planetId === 'shadow_market'), false);
   setSuspendedStaticPlanetIds(new Set());
   assert.ok(listTerritorialCombatPolicies().some((p) => p.planetId === 'shadow_market'));
+});
+
+test('6) 순차 분쟁 결정 행성 — 정적 5곳 true · 분쟁외(vega) false · SAFE suspend 시 제외', () => {
+  assert.equal(isSequentialContestedDecisionPlanet('draco_haven'), true);
+  assert.equal(isSequentialContestedDecisionPlanet('omega_hub'), true);
+  assert.equal(isSequentialContestedDecisionPlanet('shadow_market'), true);
+  assert.equal(isSequentialContestedDecisionPlanet('helios_core'), true);
+  assert.equal(isSequentialContestedDecisionPlanet('titan_ruins'), true);
+  assert.equal(isSequentialContestedDecisionPlanet('vega_base'), false);
+  assert.equal(isSequentialContestedDecisionPlanet('eternal_throne'), false);
+  assert.equal(isSequentialContestedDecisionPlanet('arcadia_prime'), false);
+  setSuspendedStaticPlanetIds(new Set(['shadow_market']));
+  assert.equal(isSequentialContestedDecisionPlanet('shadow_market'), false);
+  assert.equal(isSequentialContestedDecisionPlanet('helios_core'), true);
 });
 
 console.log('[contestedActivePool] all tests passed');

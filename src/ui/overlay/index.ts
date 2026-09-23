@@ -29,6 +29,12 @@ export { ArcMenuTile } from './ArcMenuTile';
 export { ArcStageBackButton } from './ArcStageBackButton';
 export { NarrativeDialogRow } from './NarrativeDialogRow';
 export type { NarrativeDialogRowProps } from './NarrativeDialogRow';
+export { ArcOverlayShortTransition } from './ArcOverlayShortTransition';
+export {
+  OVERLAY_SHORT_TRANSITION,
+  OVERLAY_SHORT_TRANSITION_CLOSE_MS,
+  OVERLAY_SHORT_TRANSITION_OPEN_MS,
+} from './overlayShortTransition';
 export { useArcNarrativeOverlay } from './useArcNarrativeOverlay';
 export type { ArcNarrativeOverlayConfig } from './useArcNarrativeOverlay';
 export {

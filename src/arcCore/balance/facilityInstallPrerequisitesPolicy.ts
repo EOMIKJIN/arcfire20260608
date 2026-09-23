@@ -19,10 +19,10 @@ export const PLANET_DEV_MODULE_TO_FACILITY_TYPE: Record<string, string> = {
   dev_orbit_shipyard: 'shipyard',
   defense_satellite: 'defense_satellite',
   dev_research_lab: 'laboratory',
-  dev_population_dome: 'tavern',
+  dev_population_dome: 'bar',
   /** legacy saves */
   dev_laboratory: 'laboratory',
-  dev_tavern: 'tavern',
+  dev_bar: 'bar',
 };
 
 export function resolveFacilityTypeFromModuleId(moduleId: string): string | null {

@@ -6,6 +6,7 @@
 
 import type { DerivedPlanetPortrait } from '../arcCore/planetCorePortrait/corePortraitDerive';
 import { STARTING_PLANET_ID } from '../data/systems';
+import { TEMP_ADMIN_ARCADIA_GLOBE_BAKE } from './tempAdminArcadiaGlobeBakeFlag';
 
 /** 임시 관리자 시각 테스트 — 끄면 아르카디아도 기본 초상 톤으로 복귀 */
 export const TEMP_ADMIN_ARCADIA_BLUEGREEN_PORTRAIT = true;
@@ -70,6 +71,7 @@ export function applyTempAdminArcadiaPortraitTint(
   derived: DerivedPlanetPortrait,
   opts: { combatMuted?: boolean },
 ): DerivedPlanetPortrait {
+  if (TEMP_ADMIN_ARCADIA_GLOBE_BAKE) return derived;
   if (!TEMP_ADMIN_ARCADIA_BLUEGREEN_PORTRAIT) return derived;
   if (opts.combatMuted) return derived;
   if (planetId !== STARTING_PLANET_ID) return derived;

@@ -8,6 +8,7 @@ import {
   type PlanetCoreGaugeView,
 } from '../../store/planetCoreRuntimeStore';
 import { isPlanetContestedZone } from '../balance/balanceTableRegistry';
+import { isPlanetInActiveTerritorialRotation } from '../territorial/resolveWarTheaterState';
 import { listCoreOpenGameplayPlanetIds, resolveCoreOpenGameplayPlanetRef } from '../../world/coreOpenGameplayPlanets';
 
 const GAUGE_KEYS = ['resource', 'population', 'defense', 'technology', 'environment'] as const;
@@ -33,7 +34,7 @@ export function computeNonContestedGalaxyGaugeReference(): {
   let sampleCount = 0;
 
   for (const planetId of listCoreOpenGameplayPlanetIds()) {
-    if (isPlanetContestedZone(planetId)) continue;
+    if (isPlanetContestedZone(planetId) || isPlanetInActiveTerritorialRotation(planetId)) continue;
     const ref = resolveCoreOpenGameplayPlanetRef(planetId);
     if (!ref) continue;
     const gauge = planetCoreRuntimeToGaugeView(planetCsvBaselineToRuntime(ref.planet));

@@ -10,8 +10,10 @@ import { StageShell } from '../../src/stages/StageShell';
 import { runContinueSessionPrewarm } from '../../src/game/continueSessionPrewarm';
 import { ContinueSessionLoadingView } from '../../src/game/continueSessionLoadingView';
 import { runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
+import { usePreHubWorldOpsAlertSuppress } from '../../src/navigation/usePreHubWorldOpsAlertSuppress';
 
 export default function ContinueWarpScreen() {
+  usePreHubWorldOpsAlertSuppress();
   const { width, height } = useWindowDimensions();
   const rawTarget = useLocalSearchParams<{ target?: string | string[] }>().target;
   const target = useMemo(

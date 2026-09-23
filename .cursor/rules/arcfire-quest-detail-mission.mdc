@@ -1,0 +1,40 @@
+---
+description: 세부미션 = 부모 퀘스트 1개의 순차 목표. 메인·서브·향후 모든 퀘스트 지시 공통.
+globs: tables/content/mission*.csv,tables/content/missions.csv,src/missions/**,docs/**/*QUEST*
+alwaysApply: true
+---
+
+# 퀘스트 세부미션 정본 (2026-09-23 · 대표님 잠금)
+
+대표님이 「세부미션」이라고 하면 **무조건 메인퀘스트 개념**이다. 향후 메인·서브·기타 퀘스트 개발 지시에도 동일하다.
+
+## 구조 (유일한 해석)
+
+```text
+퀘스트 1개 (missions.csv 1행)
+  └─ 하위 세부미션 01~N (mission_objectives.csv, 같은 missionId, CSV 행 순서 = 순차)
+```
+
+예시:
+
+| 부모 | 세부미션 |
+|---|---|
+| 메인 `story_001` | `obj_story_001_a`…`e` (1. 솔라 항구에 도착하라 …) |
+| 서브 `sandbox_034` | `obj_s034_a`…`e` (순차 1~5종) |
+| 서브 `sandbox_038` | `obj_s038_a`…`d` (순차 1~4종) |
+
+대표님 예시: `메인퀘스트 001 + 하위 세부미션 01~10` · `서브퀘스트 015 + 하위 세부미션 01~05`.
+
+## 금지 (이 오류를 다시 만들지 말 것)
+
+- 세부미션마다 `missions.csv` 행을 쪼개고 `nextMissionId`로 체인하는 것
+- 「4단 팩」= 「개별 퀘스트 4개」로 해석하는 것
+- `sandbox_001`–`033` 바 **수락 의뢰**를 서브퀘스트/세부미션과 혼동하는 것
+
+## 구현 계약
+
+- 부모 1행만 `offerCaptainId` / `offerPlanetId`
+- 세부미션은 `getCurrentSequentialObjective` 순차 진행 (앞 목표 완료 전 다음 완료 불가)
+- 대화 씬 id = `story_dialog_{objectiveId}`
+- 전투 연동은 `mission_quest_combat_ops.csv`가 **objectiveId**를 가리킴
+- 내용은 목표 문구·대사 유지, 구조만 부모+하위로 묶음

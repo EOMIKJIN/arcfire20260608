@@ -72,8 +72,17 @@ export function usePlanetHubBattleReady(input: {
     },
   );
 
-  const battleReadyVisible = enemyFleetEntered && battleReadyMsLeft > 0;
-  const battleReadyCounterSec = Math.max(1, Math.ceil(battleReadyMsLeft / 1000));
+  /** 진입 첫 프레임 — effect가 msLeft를 채우기 전에 카운트가 비고 교전이 한 프레임 켜지는 것 방지 */
+  const awaitingCountdownStart =
+    enemyFleetEntered && !prevEnemyFleetEnteredRef.current && battleReadyMsLeft <= 0;
+  const battleReadyVisible =
+    enemyFleetEntered && (battleReadyMsLeft > 0 || awaitingCountdownStart);
+  const battleReadyDisplayMs = battleReadyMsLeft > 0
+    ? battleReadyMsLeft
+    : awaitingCountdownStart
+      ? battleReadyDurationMs
+      : 0;
+  const battleReadyCounterSec = Math.max(1, Math.ceil(battleReadyDisplayMs / 1000));
   const capitalCombatOrbitActive =
     enemyFleetEntered && !battleReadyVisible && stageSessionActive;
 

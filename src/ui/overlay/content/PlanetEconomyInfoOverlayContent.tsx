@@ -32,13 +32,82 @@ import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
 import {
   tacticalPlanetEconomyOverlayStyles,
 } from '../tacticalOverlayStyles';
+import { useWorldStore } from '../../../store/worldStore';
+import {
+  formatUnidentifiedSystemLabel,
+  resolveGalaxyMapSystemCatalogOrdinal,
+} from '../../../galaxyMap/galaxyMapUnidentifiedLabel';
+import { resolveSystemIdForPlanetId } from '../../../world/resolvePlanetSystemId';
+import { resolveSystemById } from '../../../world/resolvePlanetById';
 
 type Props = {
   entry: ArcOverlayPlanetEconomyInfoEntry;
   onClose: () => void;
 };
 
-export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOverlayContent({
+const UnidentifiedPlanetEconomyInfoOverlayContent = memo(
+  function UnidentifiedPlanetEconomyInfoOverlayContent({
+    entry,
+    onClose,
+  }: Props) {
+    const t = useT();
+    const locale = useAppSettingsStore((s) => s.locale);
+    const visualTheme = resolveArcOverlayVisualTheme('planetEconomyInfo');
+    const isTactical = visualTheme === 'tactical';
+    const themeStyles = isTactical ? tacticalPlanetEconomyOverlayStyles : styles;
+    const unknown = t('worldmap.unidentifiedValue');
+    const systemId = resolveSystemIdForPlanetId(entry.planetId);
+    const system = systemId ? resolveSystemById(systemId) : null;
+    const fogName = formatUnidentifiedSystemLabel(
+      system ? resolveGalaxyMapSystemCatalogOrdinal(system) : 0,
+      locale,
+    );
+
+    const infoRow = (rowKey: string, label: string) => (
+      <ArcOverlayInfoRow key={rowKey} label={label} value={unknown} visualTheme={visualTheme} />
+    );
+    const section = (label: string) => (
+      <Text style={[themeStyles.section, !isTactical ? { color: OVERLAY_TOKENS.phosphorAccent } : null]}>
+        {label}
+      </Text>
+    );
+
+    return (
+      <HeavyUiOverlayShell
+        title={t('econInfo.title')}
+        subtitle={fogName}
+        layout="panel"
+        phase="ready"
+        error={null}
+        preflightCode={null}
+        onClose={onClose}
+        onRetry={onClose}
+        visualTheme={visualTheme}
+        footer={<ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} visualTheme={visualTheme} />}
+      >
+        <PlanetInfoDescriptionBlock description={t('worldmap.unidentifiedDesc')} visualTheme={visualTheme} />
+        {section(t('econInfo.pgpTotal'))}
+        {infoRow('fog-pgp', t('econInfo.pgpTotal'))}
+        {section(t('econInfo.upkeep', { pct: unknown }))}
+        {infoRow('fog-upkeep-daily', t('econInfo.daily'))}
+        {infoRow('fog-upkeep-monthly', t('econInfo.monthlyEst'))}
+        {section(t('econInfo.tradeFee'))}
+        {infoRow('fog-fee-faction', t('econInfo.factionShareToday'))}
+        {infoRow('fog-fee-player', t('econInfo.playerFeeToday'))}
+        {section(t('econInfo.coreMetrics'))}
+        {infoRow('fog-resource', t('econInfo.resource'))}
+        {infoRow('fog-population', t('econInfo.population'))}
+        {infoRow('fog-defense', t('econInfo.defense'))}
+        {infoRow('fog-technology', t('econInfo.technology'))}
+        {infoRow('fog-environment', t('econInfo.environment'))}
+        {section(t('econInfo.tradeOccupy'))}
+        {infoRow('fog-occupier', t('econInfo.occupierFaction'))}
+      </HeavyUiOverlayShell>
+    );
+  },
+);
+
+const RevealedPlanetEconomyInfoOverlayContent = memo(function RevealedPlanetEconomyInfoOverlayContent({
   entry,
   onClose,
 }: Props) {
@@ -61,7 +130,7 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
   );
   const revision = useMemo(
     () => readPlanetEconomyInfoRevision(planetId),
-    [planetId, coreSlice, tradeBucket, planetHold, fleetBalance, arcVaultBalance, blueVaultBalance],
+    [planetId, locale, coreSlice, tradeBucket, planetHold, fleetBalance, arcVaultBalance, blueVaultBalance],
   );
 
   const session = useHeavyUiDataSession(sessionConfig, revision);
@@ -92,8 +161,8 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
     ? `${snapshot.planetName} · KST ${snapshot.kstDayKey}`
     : planetName;
 
-  const infoRow = (label: string, value: string) => (
-    <ArcOverlayInfoRow label={label} value={value} visualTheme={visualTheme} />
+  const infoRow = (rowKey: string, label: string, value: string) => (
+    <ArcOverlayInfoRow key={rowKey} label={label} value={value} visualTheme={visualTheme} />
   );
 
   const section = (label: string) => (
@@ -140,16 +209,17 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
             visualTheme={isTactical ? 'tactical' : 'default'}
           />
           {section(t('econInfo.upkeep', { pct: snapshot.populationPct }))}
-          {infoRow(t('econInfo.daily'), formatCredits(snapshot.upkeepDailyCredits, { suffix: true }))}
-          {infoRow(t('econInfo.monthlyEst'), formatCredits(snapshot.upkeepMonthlyCredits, { suffix: true }))}
+          {infoRow('econ-upkeep-daily', t('econInfo.daily'), formatCredits(snapshot.upkeepDailyCredits, { suffix: true }))}
+          {infoRow('econ-upkeep-monthly', t('econInfo.monthlyEst'), formatCredits(snapshot.upkeepMonthlyCredits, { suffix: true }))}
           {section(t('econInfo.tradeFee'))}
-          {infoRow(t('econInfo.factionShareToday'), formatCredits(snapshot.tradeFeeTodayCredits, { suffix: true }))}
-          {infoRow(t('econInfo.convoyFeeToday'), formatCredits(snapshot.convoyTradeFeeTodayCredits, { suffix: true }))}
-          {infoRow(t('econInfo.playerFeeToday'), formatCredits(snapshot.playerTradeFeeTodayCredits, { suffix: true }))}
-          {infoRow(t('econInfo.monthlyEst'), formatCredits(snapshot.tradeFeeMonthlyEstCredits, { suffix: true }))}
+          {infoRow('econ-fee-faction', t('econInfo.factionShareToday'), formatCredits(snapshot.tradeFeeTodayCredits, { suffix: true }))}
+          {infoRow('econ-fee-convoy', t('econInfo.convoyFeeToday'), formatCredits(snapshot.convoyTradeFeeTodayCredits, { suffix: true }))}
+          {infoRow('econ-fee-player', t('econInfo.playerFeeToday'), formatCredits(snapshot.playerTradeFeeTodayCredits, { suffix: true }))}
+          {/* 라벨 문구는 동일(월간 추정) — React key는 행 식별자로 분리 */}
+          {infoRow('econ-fee-monthly', t('econInfo.monthlyEst'), formatCredits(snapshot.tradeFeeMonthlyEstCredits, { suffix: true }))}
           {section(t('econInfo.fabricEcology'))}
-          {infoRow(t('econSnap.supplyVitality'), snapshot.supplyVitalityLabel)}
-          {infoRow(t('econInfo.fabricOpsToday'), snapshot.fabricOpsSummary)}
+          {infoRow('econ-supply-vitality', t('econSnap.supplyVitality'), snapshot.supplyVitalityLabel)}
+          {infoRow('econ-fabric-ops', t('econInfo.fabricOpsToday'), snapshot.fabricOpsSummary)}
           {section(t('econInfo.coreMetrics'))}
           <PlanetCoreStatInfoRow
             label={t('econInfo.resource')}
@@ -182,10 +252,11 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
             visualTheme={visualTheme}
           />
           {section(t('econInfo.tradeOccupy'))}
-          {infoRow(t('econInfo.convoyMonopoly'), snapshot.convoyMonopolyLabel)}
-          {infoRow(t('econInfo.occupierFaction'), snapshot.occupierFactionLabel)}
+          {infoRow('econ-convoy-monopoly', t('econInfo.convoyMonopoly'), snapshot.convoyMonopolyLabel)}
+          {infoRow('econ-occupier', t('econInfo.occupierFaction'), snapshot.occupierFactionLabel)}
           {snapshot.factionVaultLabel != null ? (
             infoRow(
+              'econ-faction-vault',
               snapshot.factionVaultLabel,
               snapshot.factionVaultBalanceCredits != null
                 ? formatCredits(snapshot.factionVaultBalanceCredits, { suffix: true })
@@ -205,6 +276,17 @@ export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOv
       ) : null}
     </HeavyUiOverlayShell>
   );
+});
+
+export const PlanetEconomyInfoOverlayContent = memo(function PlanetEconomyInfoOverlayContent({
+  entry,
+  onClose,
+}: Props) {
+  const inspected = useWorldStore((s) => s.inspectedPlanetInfoIds.includes(entry.planetId));
+  if (!inspected) {
+    return <UnidentifiedPlanetEconomyInfoOverlayContent entry={entry} onClose={onClose} />;
+  }
+  return <RevealedPlanetEconomyInfoOverlayContent entry={entry} onClose={onClose} />;
 });
 
 const styles = StyleSheet.create({

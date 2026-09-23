@@ -125,6 +125,10 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   hideUntilImagesReady?: boolean;
 }) {
   const fxLoopActive = dodgeFxActive ?? active;
+  /**
+   * ColorDodge는 성운 baked 와 동일 SkCanvas 필수(투명·RN 레이어 위에서는 깨짐 — planetSkiaHitFxContract).
+   * dodgeFxOnlyOverlay = latch OFF 시 Canvas 조기 드롭(회수)용이지, 성운 useImage 생략이 아님.
+   */
   const loadNebulaImages = true;
   const mountedRef = useRef(true);
   const skiaLoopsActiveRef = useRef(true);
@@ -197,10 +201,10 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
 
   useEffect(() => {
     if (!loadNebulaImages || imagesReadyNotifiedRef.current || !onNebulaImagesReady) return;
-    if (dodgeFxOnlyOverlay) return;
     const nebulaOk = !renderNebulaShader || !nebulaBakedImageSource || Boolean(nebulaImage);
     const backdropOk = !backgroundImageSource || Boolean(backdropImage);
-    if (!nebulaOk || !backdropOk) return;
+    const dodgeOk = Boolean(dodgeImage);
+    if (!nebulaOk || !backdropOk || !dodgeOk) return;
     imagesReadyNotifiedRef.current = true;
     onNebulaImagesReady();
   }, [
@@ -209,20 +213,20 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
     backgroundImageSource,
     nebulaBakedImageSource,
     nebulaImage,
+    dodgeImage,
     onNebulaImagesReady,
     renderNebulaShader,
-    dodgeFxOnlyOverlay,
   ]);
 
   const showNebulaBaked = loadNebulaImages && renderNebulaShader && Boolean(nebulaImage);
   const showBackdropImage = loadNebulaImages && Boolean(backdropImage);
   const imagesReady =
     (!renderNebulaShader || !nebulaBakedImageSource || Boolean(nebulaImage))
-    && (!backgroundImageSource || Boolean(backdropImage));
+    && (!backgroundImageSource || Boolean(backdropImage))
+    && Boolean(dodgeImage);
   const deferCanvas = hideUntilImagesReady && !imagesReady;
 
   useEffect(() => {
-    if (dodgeFxOnlyOverlay) return;
     if (imagesReady) {
       everReadyRef.current = true;
     } else if (everReadyRef.current) {
@@ -230,21 +234,7 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
       imagesReadyNotifiedRef.current = false;
       onNebulaImagesLost?.();
     }
-  }, [dodgeFxOnlyOverlay, imagesReady, onNebulaImagesLost]);
-
-  useEffect(() => {
-    if (!dodgeFxOnlyOverlay || !onNebulaImagesReady) return;
-    if (!imagesReady) {
-      if (imagesReadyNotifiedRef.current) {
-        imagesReadyNotifiedRef.current = false;
-        onNebulaImagesLost?.();
-      }
-      return;
-    }
-    if (imagesReadyNotifiedRef.current) return;
-    imagesReadyNotifiedRef.current = true;
-    onNebulaImagesReady();
-  }, [dodgeFxOnlyOverlay, imagesReady, onNebulaImagesReady, onNebulaImagesLost]);
+  }, [imagesReady, onNebulaImagesLost]);
 
   useEffect(() => {
     return registerSkPictureFrameInvalidate(() => {

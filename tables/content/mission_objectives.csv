@@ -1,10 +1,31 @@
 missionId,id,description,type,targetId,quantity,description_en
-mission_001,obj_001_a,베가 전초기지 행성 진입,reach_planet,vega_base,,Enter Vega Outpost planet
-mission_002,obj_002_a,해적 전투기 격파 (1대),defeat_enemy,pirate_fighter,1,Destroy pirate fighter (1)
-mission_003,obj_003_a,솔라 항구에서 식량 팩 구매 (10개),buy_goods,food,10,Buy food packs at Sola Port (10)
-mission_003,obj_003_b,미네르바로 배달,reach_system,minerva,,Deliver to Minerva
-mission_004,obj_004_a,뉴 에덴 도착,reach_system,new_eden,,Arrive at New Eden
-mission_005,obj_005_a,오메가 스테이션 도착,reach_system,omega_station,,Arrive at Omega Station
+mission_001,obj_001_a,베가 전초기지에 진입하라,reach_planet,vega_base,,Enter Vega Outpost planet
+mission_002,obj_002_a,해적 전투기 1대를 격파하라,defeat_enemy,pirate_fighter,1,Destroy pirate fighter (1)
+mission_003,obj_003_a,솔라 항구에서 식량 팩 10개를 구매하라,buy_goods,food,10,Buy food packs at Sola Port (10)
+mission_003,obj_003_b,미네르바로 배달하라,reach_system,minerva,,Deliver to Minerva
+mission_004,obj_004_a,뉴 에덴에 도착하라,reach_system,new_eden,,Arrive at New Eden
+mission_005,obj_005_a,오메가 스테이션에 도착하라,reach_system,omega_station,,Arrive at Omega Station
+story_001,obj_story_001_a,솔라 항구에 도착하라,reach_planet,solar_station,,Arrive at Solar Port
+story_001,obj_story_001_b,솔라 항구 술집에서 목격자를 탐문하라,talk_npc,npc_cpt_bar_ret_01|solar_station,,Interview a witness at the Solar Port bar
+story_001,obj_story_001_c,아르카디아로 돌아가 중간보고하라,reach_planet,arcadia_prime,,Return to Arcadia for a progress report
+story_001,obj_story_001_d,관문 순찰대장 엘렌과 대화하라,talk_npc,npc_cpt_arcadia_lane_01|arcadia_prime,,Talk with Gate Patrol Captain Ellen
+story_001,obj_story_001_e,이사 벤트에게 도킹 기록을 받아라,talk_npc,npc_cpt_solar_guard_01|solar_station,,Secure the final evidence at Solar Port
+story_002,obj_story_002_a,미네르바 딥에 도착하라,reach_planet,minerva_deep,,Arrive at Minerva Deep
+story_002,obj_story_002_b,미네르바 술집에서 밀수조 단서를 확보하라,talk_npc,npc_cpt_bar_ret_02|minerva_deep,,Secure a smuggling lead at the Minerva bar
+story_002,obj_story_002_c,미네르바 외곽의 호위 해적 1척을 격파하라,defeat_enemy,pirate_fighter,1,Destroy 1 pirate escort near Minerva
+story_002,obj_story_002_d,하수인 노아 프릭을 심문하라,talk_npc,npc_cpt_story_noah_frick|minerva_deep,,Interrogate hired hand Noah Frick
+story_002,obj_story_002_e,광산 총감독 니카 스톤에게 지휘 공백을 확인하라,talk_npc,npc_cpt_gov_minerva|minerva_deep,,Confirm the command vacancy with the mine overseer
+story_003,obj_story_003_a,아르카디아에서 이안 코발과 대화하라,talk_npc,npc_cpt_story_ian_koval|arcadia_prime,,Talk with Ian Koval on Arcadia
+story_003,obj_story_003_b,엘렌에게 대행 출정 지시를 확인하라,talk_npc,npc_cpt_arcadia_lane_01|arcadia_prime,,Confirm the stand-in order with Ellen
+story_003,obj_story_003_c,베가 전초기지에 도착하라,reach_planet,vega_base,,Arrive at Vega Outpost
+story_004,obj_story_004_a,베가 국경을 덮친 기습 함대를 격파하라,defeat_enemy,pirate_cruiser,1,Break the Vega frontier raid fleet
+story_004,obj_story_004_b,베가 순찰지휘관 하르만 돌에게 생존을 보고하라,talk_npc,npc_cpt_vega_watch_01|vega_base,,Report survival to the Vega watch commander
+story_004,obj_story_004_c,아르카디아로 귀환하라,reach_planet,arcadia_prime,,Return to Arcadia
+story_005,obj_story_005_a,이안 코발의 집무 통신에 응하라,talk_npc,npc_cpt_story_ian_koval|arcadia_prime,,Answer Ian Koval's office comm
+story_005,obj_story_005_b,드라코 성운 헤이븐에 도착하라,reach_planet,draco_haven,,Arrive at Draco Nebula Haven
+story_006,obj_story_006_a,드라코 요새의 호위 1척을 격파하라,defeat_enemy,pirate_cruiser,1,Destroy 1 Draco fortress escort
+story_006,obj_story_006_b,성운 관측장 세레나 드릴에게 신호를 확인하라,talk_npc,npc_cpt_draco_obs_01|draco_haven,,Confirm the unique signal with the nebula observer
+story_006,obj_story_006_c,기함의 다렐 소사와 대면하라,talk_npc,npc_cpt_story_darel_sosa|draco_haven,,Face Darell Sosa at the flagship signal
 sandbox_001,obj_s001_a,해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter
 sandbox_002,obj_s002_a,식량 팩 3개 구매,buy_goods,food,3,Buy 3 food packs
 sandbox_002,obj_s002_b,베가 전초기지로 이동,reach_system,vega_outpost,,Travel to Vega Outpost
@@ -50,6 +71,33 @@ sandbox_028,obj_s028_b,어비스로 이동,reach_system,abyss,,Travel to Abyss
 sandbox_029,obj_s029_a,현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter
 sandbox_030,obj_s030_a,기술 부품 6개 구매,buy_goods,tech,6,Buy 6 tech components
 sandbox_030,obj_s030_b,아크파이어 코어로 이동,reach_system,arcfire_core,,Travel to Arcfire Core
+sandbox_031,obj_s031_a,무기류 2개 구매,buy_goods,weapon,2,Buy 2 weapons
+sandbox_031,obj_s031_b,솔라 항구로 배달,reach_system,solar_port,,Deliver to Sola Port
+sandbox_032,obj_s032_a,해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter
+sandbox_033,obj_s033_a,식량 팩 4개 구매,buy_goods,food,4,Buy 4 food packs
+sandbox_033,obj_s033_b,오메가 스테이션으로 배달,reach_system,omega_station,,Deliver to Omega Station
+sandbox_034,obj_s034_a,캠프 게이트에 도착하라,reach_planet,synth_075_p,,Arrive at Camp Gate
+sandbox_034,obj_s034_b,베일 훅에게 캠프 입구 위치를 확인하라,talk_npc,npc_cpt_sq_veil_hook|synth_075_p,,Confirm the camp mouth with Veil Hook
+sandbox_034,obj_s034_c,베일 훅에게 순찰선 주기를 받아라,talk_npc,npc_cpt_sq_veil_hook|synth_075_p,,Take the patrol cycle from Veil Hook
+sandbox_034,obj_s034_d,캠프 출구를 지키는 현상금 사냥꾼을 격파하라,defeat_enemy,bounty_hunter,1,Destroy the camp-exit bounty hunter
+sandbox_034,obj_s034_e,오렌 바스크에게 지워진 식별 신호를 보고하라,talk_npc,npc_cpt_sq_orren_bask|synth_075_p,,Report the wiped callsign to Orren
+sandbox_035,obj_s035_a,켓 미온과 식별 신호를 대조하라,talk_npc,npc_cpt_sq_kett_mion|synth_052_p,,Cross-check the callsign with Kett Mion
+sandbox_035,obj_s035_b,요새 필드에 도착하라,reach_planet,synth_078_p,,Arrive at Fortress Field
+sandbox_035,obj_s035_c,톨린 그레이브의 위장 교신을 엿들어라,talk_npc,npc_cpt_sq_tolin_grave|synth_078_p,,Hear Tolin Grave's false comm
+sandbox_035,obj_s035_d,톨린을 엄호하는 순양함을 격파하라,defeat_enemy,pirate_cruiser,1,Destroy Tolin's covering cruiser
+sandbox_035,obj_s035_e,요새에서 닐라 숄과 증언을 매듭지어라,talk_npc,npc_cpt_sq_nila_shol|synth_078_p,,Close the testimony with Nila at the fort
+sandbox_036,obj_s036_a,아이비 켄에게 중개 수수료를 물어라,talk_npc,npc_cpt_sq_ivy_kenn|synth_070_p,,Ask Ivy Kenn for the fixer's cut
+sandbox_036,obj_s036_b,놀 패스에게 장부 원본을 받아 내라,talk_npc,npc_cpt_sq_noll_pass|synth_070_p,,Ask Noll Pass to show the three blank lines
+sandbox_036,obj_s036_c,장부를 노리는 전투기를 격파하라,defeat_enemy,pirate_fighter,1,Destroy the fighter hunting the ledger
+sandbox_036,obj_s036_d,놀 패스에게 출처 없는 자금의 행방을 확인하라,talk_npc,npc_cpt_sq_noll_pass|synth_070_p,,Confirm the sourceless money with Noll
+sandbox_037,obj_s037_a,케이드 림에게 항로 상자 위치를 확인하라,talk_npc,npc_cpt_sq_kade_rim|synth_070_p,,Confirm the route crate with Kade Rim
+sandbox_037,obj_s037_b,레아 빈과 상자 일련번호를 대조하라,talk_npc,npc_cpt_sq_rhea_vin|synth_070_p,,Match the crate serial with Rhea
+sandbox_037,obj_s037_c,상자를 호위하는 전투기를 격파하라,defeat_enemy,pirate_fighter,1,Destroy the crate-escort fighter
+sandbox_037,obj_s037_d,레아 빈에게서 파편 사본을 받아라,talk_npc,npc_cpt_sq_rhea_vin|synth_070_p,,Take the fragment copy from Rhea
+sandbox_038,obj_s038_a,술집에서 칼 릿지와 한잔 나눠라,talk_npc,npc_cpt_sq_cal_ridge|synth_052_p,,Sit with Cal Ridge at the bar
+sandbox_038,obj_s038_b,리라 몬에게 국경의 사정을 들어라,talk_npc,npc_cpt_sq_lira_mon|synth_052_p,,Talk with Lira in the language of the border
+sandbox_038,obj_s038_c,리라 몬과 아우라 관문을 함께 둘러보라,talk_npc,npc_cpt_sq_lira_mon|synth_052_p,,Settle the day with Lira at the Aura gate
+sandbox_038,obj_s038_d,리라 몬과 하루를 마무리하고 관문을 나서라,talk_npc,npc_cpt_sq_lira_mon|synth_052_p,,Close the day with Lira at the Aura gate
 tq_del_01,obj_tq_d01_a,식량 팩 3개 구매,buy_goods,food,3,Buy 3 food packs
 tq_del_01,obj_tq_d01_b,인접 성계로 배달,reach_system,__neighbor_system__,,Deliver to linked system
 tq_del_02,obj_tq_d02_a,기술 부품 2개 구매,buy_goods,tech,2,Buy 2 tech components

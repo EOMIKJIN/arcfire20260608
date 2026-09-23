@@ -8,6 +8,7 @@ import {
   TradePortWeaponTierPolicy_FROM_BALANCE_CSV,
 } from '../../data/balance/generated';
 import { listTradeRoutePlayerBuyItemIds } from '../economy/tradeRouteCommercePolicy';
+import { listSectorCargoSkuItemIds } from '../economy/tradeRouteSectorCategories';
 import { resolvePlanetSupplyStockScale } from '../economy/planetEconomyFabric';
 import {
   listZoneTradeableMineralIds,
@@ -17,7 +18,6 @@ import { getItemDef, listItemDefs } from '../../data/itemRegistry';
 import {
   isPlanetOwnershipItemId,
 } from './planetOwnershipDeedItemDef';
-import { isPlanetOwnershipDeedCatalogEligible, resolvePlanetOwnershipDeedItemId } from './planetOwnershipDeedCatalog';
 import { resolveStarSystemForPlanetId } from '../../world/resolvePlanetSystemPosition';
 import { dispatchEconomyTradePortBulk } from '../ArcCoreCommandBus';
 import {
@@ -124,13 +124,6 @@ function resolveEquipmentTierKeyFromWeaponTier(recommendedWeaponTierKey: string)
   return 'eq_t1';
 }
 
-function resolvePlanetOwnershipItemId(planetId: string): string | null {
-  if (!isPlanetOwnershipDeedCatalogEligible(planetId)) return null;
-  const id = resolvePlanetOwnershipDeedItemId(planetId);
-  const def = getItemDef(id);
-  return def?.tradeable ? id : null;
-}
-
 /** 행성 zone · `recommendedWeaponTierKey` 기준 무기 모듈 진열 */
 export function listWeaponModuleItemIdsForPlanetZone(
   recommendedPilotLevel: number,
@@ -209,7 +202,7 @@ function listMineralIdsForPlanetCatalog(planetId: string, zoneIndex: number): st
   return pool.slice(0, slotCount);
 }
 
-/** 아크코어 — 행성별 무역소 전체 진열 id (교역품·무기·전함·소유권·글로벌) */
+/** 아크코어 — 행성별 무역소 전체 진열 id (교역품·무기·전함·글로벌). 소유권은 현금상점 전용 */
 export function resolveTradePortCatalogItemIds(planetId: string): string[] {
   const system = findSystemForPlanetId(planetId);
   const zoneIndex = resolvePlanetZoneIndex(planetId, system ?? null);
@@ -219,6 +212,7 @@ export function resolveTradePortCatalogItemIds(planetId: string): string[] {
 
   const parts = [
     ...listTradeRoutePlayerBuyItemIds(planetId),
+    ...listSectorCargoSkuItemIds(String(row.sectorBand ?? 'early')),
     ...listMineralIdsForPlanetCatalog(planetId, zoneIndex),
     ...listWeaponModuleItemIdsForPlanet(planetId),
     ...listShipEquipmentItemIdsForPlanetZone(recommendedPilotLevel, recommendedWeaponTierKey),
@@ -226,18 +220,16 @@ export function resolveTradePortCatalogItemIds(planetId: string): string[] {
     ...globalTradePortItemIds,
   ];
 
-  const ownershipId = resolvePlanetOwnershipItemId(planetId);
-  if (ownershipId) parts.push(ownershipId);
-
   const unique = [...new Set(parts)];
   return unique.filter((id) => {
-    if (ownershipId && id === ownershipId) return true;
+    if (isPlanetOwnershipItemId(id)) return false;
     return Boolean(getItemDef(id)?.tradeable);
   });
 }
 
 /** 플레이어 레벨 — 구매 가능 여부(진열은 행성 zone, 구매는 성장 레벨) */
 export function isTradePortItemPurchasableByPlayer(itemId: string, playerLevel: number): boolean {
+  if (isPlanetOwnershipItemId(itemId)) return false;
   const def = getItemDef(itemId);
   if (!def?.tradeable) return false;
 
@@ -268,12 +260,7 @@ export function isTradePortItemPurchasableByPlayer(itemId: string, playerLevel: 
 
 /** 무역소 구매 탭 — 행성 카탈로그 진열(플레이어 Lv 무관). 구매 차단은 isTradePortItemPurchasableByPlayer */
 export function isTradePortBuyMarketListedItem(itemId: string): boolean {
-  if (isPlanetOwnershipItemId(itemId)) {
-    const planetId = itemId.slice('ownership_'.length).trim();
-    if (!planetId || !isPlanetOwnershipDeedCatalogEligible(planetId)) return false;
-    const def = getItemDef(itemId);
-    return Boolean(def?.tradeable);
-  }
+  if (isPlanetOwnershipItemId(itemId)) return false;
 
   const def = getItemDef(itemId);
   if (!def?.tradeable) return false;

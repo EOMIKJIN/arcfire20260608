@@ -47,6 +47,12 @@ export { ITEM_DEFS_FROM_CSV } from './csvItemDefs';
 export { SKILLS_FROM_CSV } from './csvSkills';
 export { STORY_SCENES_FROM_CSV } from './csvStoryScenes';
 export {
+  MAIN_STORY_CHAPTERS_FROM_CSV,
+  MAIN_STORY_QUESTS_FROM_CSV,
+  MAIN_STORY_BRANCHES_FROM_CSV,
+  MAIN_STORY_CHAIN_STEPS_FROM_CSV,
+} from './csvMainStorySpine';
+export {
   PLAYER_PROFESSIONS_FROM_CSV,
   PLAYER_PROFESSION_LIST_FROM_CSV,
   type PlayerProfessionCsvRow,

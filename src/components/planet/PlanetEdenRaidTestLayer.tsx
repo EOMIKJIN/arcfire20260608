@@ -3,7 +3,7 @@
 // 스테이지·이벤트 공용 진입: `src/combat/index.ts` (직접 import 지양).
 // 함선 규모는 `edenCapitalFleetConfig`(소규모 기본; 대규모는 `LARGE_SCALE_*`). 규약은 `capitalCombatConventions.ts`. 궤도 표시는 `PlanetEdenRaidOrbitSkiaCombat`(Skia 단일 Canvas + postStepRef, 시뮬 `agentsRef` 등 직접 읽기).
 // 무기 교환 루프는 여전히 O(N²) 근사 — 대규모 함대는 공간 분할·타깃 수 상한이 별도 필요.
-// 전투비행: 탐지→추격→미사일사거리+패턴(거리띄우기 링)→근접레이저. 미사일은 살보 3발 중 1발 비유도(낙점 고정·무피해), 나머지 유도·궤적 전량 렌더. 근접은 미사일 비발사. 복합 목표·분리. 가속/요속 적분. 스폰 블렌드.
+// 전투비행: 조우 후 장거리 우선 운용→선회(현측/후방)→근접. 교착은 함장 판단으로 짧게 타파. 미사일 살보·레이저·근접은 운용 밴드 게이트. 복합 목표·분리. 가속/요속 적분. 스폰 블렌드.
 // ============================================================
 
 import React, {
@@ -43,31 +43,56 @@ import {
 import { buildTransitCombatSeedSlots } from '../../combat/capitalTransitCombatSeed';
 import { NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV } from '../../data/generated';
 import { resolveNpcCaptainDisplayNameNow } from '../../i18n/captainText';
-import { getNpcCapitalShip, hasNpcCapitalShipId, listAllNpcCapitalShipRows, listNpcCaptains } from '../../npc/npcFleetRegistry';
+import { getNpcCapitalShip, getNpcCaptain, hasNpcCapitalShipId } from '../../npc/npcFleetRegistry';
 import type { NpcCapitalShip } from '../../types';
 import {
   getCapitalWeaponRow,
   getRocketBurstPolicy,
-  isKnownCapitalWeaponId,
   resolveMissileSalvoCount,
   resolveMissileSalvoIntervalMs,
 } from '../../game/capitalWeaponRegistry';
 import {
   buildCapitalProjectileSpawn,
+  createCapitalCraftImpactScratch,
+  createCapitalCraftPool,
+  getWeaponCraftLoiterPolicy,
+  isCraftFamilyKind,
+  isCraftLoiterRuntimeActive,
   isNovaAoeWeapon,
   isRocketFamilyWeapon,
+  resetCapitalCraftPool,
   resolveCapitalLaserBeamPresentation,
   resolveCapitalWeaponImpact,
+  applySpecialWeaponStatusOnAgent,
+  applySpecialWeaponAoeAroundPoint,
+  getWeaponSpecialFxPolicy,
+  tickCapitalCrafts,
+  trySpawnCapitalCraftVolley,
+  type CapitalCraft,
+  type CapitalCraftImpactEvent,
 } from '../../combat/capitalWeaponPipeline';
 import { DEFAULT_CLOSE_RANGE_WEAPON_ID } from '../../game/combatWeaponSlots';
+import { resolvePlayerCombatWeaponChannels } from '../../game/resolvePlayerCombatWeaponChannels';
 import {
   resolveMainStageCombatEnabled,
   resolvePlanetEnemyAffinityKind,
   resolvePlanetMainStageCombatVariant,
-  resolvePlanetTargetCombatLevel,
+  resolveCombatEncounterTargetLevel,
+  resolvePlayScenarioPrimaryPlanetId,
+  resolveTransitCombatEncounterTargetLevel,
 } from '../../arcCore/balance/balanceTableRegistry';
+import { resolveTransitHostileHullScalePlanetId } from '../../npc/transitHostileCaptainResolve';
 import { resolvePlayerHullAffinityKind } from '../../combat/playerHullAffinity';
 import { resolveHostileEnemyWeaponLoadout } from '../../combat/hostileEnemyWeaponLoadoutFromBalance';
+import { applyPlanetHostileHullScale } from '../../combat/planetHostileHullScale';
+import { buildQuestHubOrbitSeedSlots } from '../../combat/questHubOrbitCombatSeed';
+import { useMissionStore } from '../../store/missionStore';
+import {
+  resolveQuestCombatLock,
+  resolveQuestLockTransitEncounterLevel,
+  resolveQuestLockTransitHullPlanetId,
+  shouldGuaranteeQuestTransitEncounter,
+} from '../../missions/questCombatLock';
 import {
   applyMineralUpgradeToShipPerformance,
   calculateShipPerformance,
@@ -84,15 +109,32 @@ import {
   type CapitalCombatRangeBands,
 } from '../../game/capitalWeaponRange';
 import {
+  appendDracoCombatTestAllies,
+  resolveDracoCombatTestDoctrine,
+  resolveDracoCombatTestRuntimePatch,
+} from '../../combat/dracoCombatTestVenue';
+import {
   applyTempoJudge,
+  capitalWeaponFireAllowed,
   combatMotionStageFromDist,
   createCapitalManeuverDecision,
+  createManeuverEmploymentDefaults,
+  employBandLabelKo,
+  propagateFleetTempoFromLeads,
   resolveCapitalManeuverDecision,
+  type BearingGoal,
   type CapitalManeuverInput,
   type CombatMotionStage,
+  type EmployBand,
   type KiteEvasionMode,
+  type PreferredWeapon,
   type TempoRole,
 } from '../../combat/maneuver/capitalManeuverDecision';
+import {
+  createCapitalHeavyTurnLaw,
+  headingAlignGainForMaxYaw,
+  writeCapitalHeavyTurnLaw,
+} from '../../combat/maneuver/capitalHeavyTurnLaw';
 import {
   resolveDoctrineForCaptain,
   type CaptainTacticDoctrine,
@@ -108,6 +150,7 @@ import { recordMatchSummary } from '../../store/combatMatchTelemetryStore';
 import { maybeTriggerArcCoreShadowRevealOnCombatVictory } from '../../arcCore/shadow/arcCoreShadowReveal';
 import { resolveArcCoreShadowBossOverride } from '../../arcCore/shadow/arcCoreShadowBossClone';
 import { isSurvivalPodNpcShipId } from '../../game/playerSurvivalPod';
+import { t } from '../../i18n';
 import { showArcAlert } from '../../utils/showArcAlert';
 import { useOrbitCapitalCombatUiStore } from '../../store/orbitCapitalCombatUiStore';
 import { useBattleStanceStore, type BattleStanceId } from '../../store/battleStanceStore';
@@ -119,6 +162,27 @@ import {
   type ShipEquipmentAgentKnobs,
 } from '../../game/shipEquipment';
 import { resolveNpcCapitalShipCombatBinding } from '../../game/npcCapitalShipCombatBinding';
+import {
+  applySkillArmorPierceToArmorStat,
+  EMPTY_PLAYER_COMBAT_SKILL_BIND,
+  PLAYER_WINGMAN_CAPTAIN_ID,
+  resolvePlayerCombatSkillBind,
+} from '../../game/playerOwnedSkillCombatBind';
+import { resolveSkillAutoCombatPolicy, skillTurnMs } from '../../game/skillAutoCombatPolicy';
+import { SKILL_PROC_LABEL } from '../../game/skillProcBanner';
+import {
+  applyMultiLockExtraHits,
+  createNpcAgentSkillAuto,
+  createPlayerAgentSkillAuto,
+  createWingmanAgentSkillAuto,
+  isAgentSkillInvulnerable,
+  isAgentStealthed,
+  readSkillProcLabel,
+  resolveSkillMoveSpeedMult,
+  playerAutoCombatSkillsNeedTick,
+  tickPlayerAutoCombatSkills,
+  type AgentSkillAuto,
+} from '../../combat/playerAutoCombatSkills';
 import { FONTS } from '../../utils/theme';
 import { PlanetEdenRaidOrbitSkiaCombat } from './PlanetEdenRaidOrbitSkiaCombat';
 
@@ -132,20 +196,38 @@ export {
   hasCapitalRealtimeCombatSlotsForPlanet,
   isCapitalRealtimeCombatOrbitPlanet,
 } from '../../combat/capitalRealtimeCombatGate';
+import { COMBAT_END_HOLD_MS } from '../../game/combatEndHold';
 import { getWaveFleetSeedOverride, useWaveDefenseStore } from '../../game/waveDefense/waveDefenseStore';
 import { WAVE_DEFENSE_MAX_WAVES } from '../../game/waveDefense/waveDefenseFleet';
 import { markWaveCombatVictoryCooldown } from '../../game/waveDefense/waveCombatCooldownStore';
+import { applyDefeatEnemyMissionObjectives } from '../../missions/applyDefeatEnemyMissionObjectives';
+import { tryPresentPendingMissionClearDialog } from '../../missions/missionPlanetHubSync';
 
 type StageFleetSeedSlot = {
   team: 'red' | 'blue' | 'orange';
   npcShipId: string | null;
   captainId: string | null;
+  combatInstanceKey?: string | null;
 };
+
+function lookupSlotCaptainDisplayName(captainId: string | null): string | undefined {
+  if (!captainId) return undefined;
+  const captain = getNpcCaptain(captainId);
+  if (!captain) return undefined;
+  return resolveNpcCaptainDisplayNameNow(captain);
+}
 
 function resolveTransitCombatSeedSlots(systemId: string | null): StageFleetSeedSlot[] {
   const currentFlagshipNpcId = resolveCurrentPlayerFlagshipNpcShipId();
   return buildTransitCombatSeedSlots(systemId, currentFlagshipNpcId);
 }
+
+const PLAYER_FLAGSHIP_CAPTAIN_ID = 'Player_pilot';
+const PLAYER_FLAGSHIP_NPC_SHIP_ID = 'Player_npc_red_fleet_1';
+/** 자동전투 스킬 틱·스텔스 판정용. 루프 선두에서만 갱신 */
+let COMBAT_SKILL_NOW_MS = 0;
+/** 내 전함 마름모·선수선만 녹색으로 구분 */
+const PLAYER_FLAGSHIP_SHIP_STROKE = '#22C55E';
 
 /** 전 행성 공통: 전투 함장 매칭(`npc_ai_captains.csv`) → 없으면 기본 폴백 편성. */
 function resolveStageFleetSeedSlotsForPlanet(
@@ -155,6 +237,8 @@ function resolveStageFleetSeedSlotsForPlanet(
   if (planetId === CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID) {
     return resolveTransitCombatSeedSlots(systemId);
   }
+  const withDracoTestAllies = (slots: StageFleetSeedSlot[]): StageFleetSeedSlot[] =>
+    appendDracoCombatTestAllies(planetId, slots);
   // 웨이브 디펜스 — 활성 시 해당 행성에 커스텀 적(red) 함대 주입 + 플레이어 blue 기함 자동 추가.
   const waveOverride = getWaveFleetSeedOverride(planetId);
   if (waveOverride && waveOverride.length > 0) {
@@ -162,9 +246,24 @@ function resolveStageFleetSeedSlotsForPlanet(
     if (!hasBlue) {
       const currentFlagshipNpcId = resolveCurrentPlayerFlagshipNpcShipId();
       const blueShipId = hasNpcCapitalShipId(currentFlagshipNpcId) ? currentFlagshipNpcId : null;
-      return [...waveOverride, { team: 'blue', npcShipId: blueShipId, captainId: null }];
+      // 웨이브 blue는 항상 플레이어 기함 슬롯 — captainId 고정으로 isPlayerCombatAgent/격파→endRun 경로 보장.
+      // (captainId null이면 NPC blue로만 시드되어 red 승 시 cleared/endRun이 안 나와 stall까지 고착됨)
+      return withDracoTestAllies([
+        ...waveOverride,
+        { team: 'blue', npcShipId: blueShipId, captainId: PLAYER_FLAGSHIP_CAPTAIN_ID },
+      ]);
     }
-    return waveOverride;
+    return withDracoTestAllies(waveOverride);
+  }
+  const missionState = useMissionStore.getState();
+  const questHubSlots = buildQuestHubOrbitSeedSlots(
+    resolveQuestCombatLock(missionState.progresses, missionState.activeMissionId),
+    planetId,
+    systemId,
+    resolveCurrentPlayerFlagshipNpcShipId(),
+  );
+  if (questHubSlots && questHubSlots.length > 0) {
+    return withDracoTestAllies(questHubSlots);
   }
   const fromCaptains = resolveCombatFleetSlotsFromCaptains(planetId, systemId);
   if (fromCaptains.length > 0) {
@@ -172,14 +271,17 @@ function resolveStageFleetSeedSlotsForPlanet(
     if (!hasBlue && resolveMainStageCombatEnabled(planetId)) {
       const currentFlagshipNpcId = resolveCurrentPlayerFlagshipNpcShipId();
       const blueShipId = hasNpcCapitalShipId(currentFlagshipNpcId) ? currentFlagshipNpcId : null;
-      return [...fromCaptains, { team: 'blue', npcShipId: blueShipId, captainId: null }];
+      return withDracoTestAllies([
+        ...fromCaptains,
+        { team: 'blue', npcShipId: blueShipId, captainId: null },
+      ]);
     }
-    return fromCaptains;
+    return withDracoTestAllies(fromCaptains);
   }
   // 레드팀 폴백 슬롯 없음 — 적함은 CSV `combat`+`red` 함장(베가·드라코 테스트)만 사용.
   const rows: StageFleetSeedSlot[] = [];
   for (let i = 0; i < DUEL_TEAM_BLUE_COUNT_FALLBACK; i++) rows.push({ team: 'blue', npcShipId: null, captainId: null });
-  return rows;
+  return withDracoTestAllies(rows);
 }
 
 /** 팀 전열에서 함선 간격(px) */
@@ -241,28 +343,9 @@ const EDGE_EVADE_STEP_PX = 22;
 const EDGE_CENTER_ESCAPE_STEP_PX = 30;
 /** 경계 정체 판정(목표-현재 오차) */
 const EDGE_STALL_EPS_PX = 1.2;
-type MovementPhase = 'approach' | 'ellipse' | 'orbit';
-
-/** 근접 패턴: 서로 거리 호흡(레이저 사거리 근처) */
-const DUEL_SEP_CENTER = 118;
-const DUEL_SEP_AMP = 62;
-const DUEL_SEP_OMEGA = 0.00042;
-const DUEL_PHASE_OFFSET = Math.PI / 2;
-/** 이동 패턴 구간(ms): 근접 → 타원 → 궤도 */
-const MOVE_PHASE_APPROACH_MS = 7200;
-const MOVE_PHASE_ELLIPSE_MS = 7800;
-const MOVE_PHASE_ORBIT_MS = 6400;
-const MOVE_CYCLE_MS =
-  MOVE_PHASE_APPROACH_MS + MOVE_PHASE_ELLIPSE_MS + MOVE_PHASE_ORBIT_MS;
-const AGENT_SEGMENT_PHASE: ReadonlyArray<readonly MovementPhase[]> = [
-  ['approach', 'ellipse', 'orbit'],
-  ['ellipse', 'orbit', 'approach'],
-];
-/** 목표 헤딩 오차(rad)에 대한 목표 각속도 비례 이득 — 과대 시 좌우 요동·떨림 */
-const HEADING_ALIGN_GAIN = 0.38;
 /** 작은 헤딩 오차에서 요레이트 명령을 줄여 요동 억제(rad) */
-const HEADING_STEER_DEAD_RAD = 0.04;
-const HEADING_STEER_SOFT_RAD = 0.11;
+const HEADING_STEER_DEAD_RAD = 0.05;
+const HEADING_STEER_SOFT_RAD = 0.16;
 /** 이 거리(px) 안에서는 목표 선속도 0(브레이크)으로 과슈트·앞뒤 흔들림 완화 */
 const ARRIVE_DEADZONE_PX = 3.5;
 /** 이 거리까지는 최고 속도에 비례해 순항 속도를 낮춤(선형 램프) */
@@ -270,7 +353,8 @@ const ARRIVE_SLOW_RADIUS_PX = 74;
 /**
  * 전함 이동(이 레이어 적분기 기준):
  * - 전진: 선수 방향(heading) 전방으로 가속·순항.
- * - 좌·우 선회: 제자리 회전 없음. |요각속도| ≤ |전후 선속도| / R_min (최소 선회 반경).
+ * - 좌·우 선회: 제자리 회전 없음. |요각속도| ≤ |전후 선속도| / R_min.
+ *   R_min·요·각가속은 `capitalHeavyTurnLaw`(이동속도 대비 육중 상한). 표 값이 더 느리면 표 우선.
  * - 후진: 전후 선속도가 정지에 가깝기 전에는 후진 가속 금지(브레이크 후 전환). 후진 최고속은 전진 max의 21%(기존 30% 대비 30% 감속).
  * - kite·standoff 거리벌림: 목표점 후진이 아니라 적 기준 멀어짐+좌/우 큰 곡선으로 후진(경계 보정).
  * - 횡방향(빔축) 속도는 감쇠해 측방 미끄럼을 줄임.
@@ -370,7 +454,7 @@ export type Agent = {
   salvoStepMs: number;
   /** 전투 프로세스 시작 지연(ms) — 시작 시점을 분리 */
   engageStartDelayMs: number;
-  /** 인지/추적 거리 스케일 — 최초 추적 길이를 개체별로 분리 */
+  /** 탐지 스케일 — 센서 탐색이 아님. FSM closing 이탈·미사일 발사 게이트에만 곱함 */
   detectRangeScale: number;
   /** 개체별 무기 정체 복구(전역 동기화 방지) */
   lastWeaponFireAtMs: number;
@@ -378,6 +462,12 @@ export type Agent = {
   speedSlowMul: number;
   /** 상태이상: 감속 유지 종료 시각(ms) */
   speedSlowUntilMs: number;
+  /** 특수무기 피격 함체 틴트 종료(ms). 0=없음 */
+  statusTintUntilMs: number;
+  /** 정책 interned hex. 빈 문자열=기본 stroke */
+  statusTintHex: string;
+  /** 정책 interned iconKind. 빈 문자열=배지 없음 */
+  statusIconKind: string;
   /** 플레이어 태세 실드 재생 마지막 반영 시각(ms) */
   lastShieldRegenAtMs: number;
   stallChaseBoostUntilMs: number;
@@ -391,6 +481,20 @@ export type Agent = {
   kiteDistResumeAdvanceUntilMs: number;
   /** 함장 전투 전술 독트린(Table-First) — 스폰 시 1회 바인딩(카탈로그 불변 참조) */
   doctrine: CaptainTacticDoctrine;
+  stalemateSinceMs: number | null;
+  stalemateAnchorDist: number;
+  stalemateBreakUntilMs: number;
+  stalemateRearmUntilMs: number;
+  stalemateBreakSeq: number;
+  stalemateBreakKind: 0 | 1 | 2;
+  stalemateWeaponLock: boolean;
+  bearingGoal: BearingGoal;
+  forcedEmployBand: EmployBand | null;
+  longRangeEmploySinceMs: number | null;
+  longRangeSalvoSpent: number;
+  lastPairDist: number;
+  employBand: EmployBand;
+  preferredWeapon: PreferredWeapon;
   /** 현재 주력 교전 상대(적 팀 함선 id). 격침 시 `resolveCombatOpponent`가 다음 표적으로 갱신 */
   currentTargetAgentId: number | null;
   /** 편대 테이블에서 지정된 NPC 전함 id (없으면 null) */
@@ -448,6 +552,12 @@ export type Agent = {
   equipmentHullRegenPerTick: number;
   /** 장비 — 적 미사일 명중 회피 확률(0~1) */
   equipmentMissileMissChance: number;
+  /** 스킬 armor_pierce — 매치 시작 1회. NPC는 0 */
+  skillArmorPierce: number;
+  /** 스킬 damage_reduction 배율 — 매치 시작 1회. NPC는 1 */
+  skillIncomingDamageMul: number;
+  /** 자동전투 스킬 타이머·패시브. 매치 시작 1회 할당 */
+  skillAuto: AgentSkillAuto;
 };
 
 type TeamAgentBuckets = { red: Agent[]; blue: Agent[]; orange: Agent[] };
@@ -495,14 +605,6 @@ export type MissileHitFx = {
   ownerTeam?: 'red' | 'blue' | 'orange';
   effectKind?: 'default' | 'nova_dodge' | 'laser_dodge' | 'rocket_spread' | 'drone_burst' | 'carrier_bomb';
 };
-
-function quadBezier(p0: Pt, p1: Pt, p2: Pt, t: number): Pt {
-  const u = 1 - t;
-  return {
-    x: u * u * p0.x + 2 * u * t * p1.x + t * t * p2.x,
-    y: u * u * p0.y + 2 * u * t * p1.y + t * t * p2.y,
-  };
-}
 
 /** from 에서 to 방향으로 최대 maxDist 까지 — 레이저 길이·미사일 낙점 클램프 */
 function clampPointToward(from: Pt, to: Pt, maxDist: number): Pt {
@@ -613,7 +715,7 @@ function refillTeamBucketsWithSlots(
   stamp(buckets.orange);
 }
 
-/** 전투 개시 시 팀별 라운드로빈으로 첫 표적을 붙인다. */
+/** 전투 개시 시 팀별 라운드로빈으로 첫 표적을 붙인다. 탐지 원 진입이 아님(좌표는 공유). */
 function assignInitialCombatTargets(agents: Agent[]): void {
   const oranges = agentsByTeamSorted(agents, 'orange');
   if (oranges.length >= 2) {
@@ -639,6 +741,7 @@ function currentTargetAliveByBuf(self: Agent, idBuf: (Agent | undefined)[]): Age
   if (tid === null) return null;
   const t = idBuf[tid];
   if (!t?.alive) return null;
+  if (isAgentStealthed(t, COMBAT_SKILL_NOW_MS) && t.team !== self.team) return null;
   if (self.team !== 'orange' && t.team === self.team) return null;
   if (self.team === 'orange' && t.id === self.id) return null;
   return t;
@@ -686,6 +789,7 @@ function pickNextAliveEnemyTargetFull(self: Agent, agents: Agent[]): void {
   for (let i = 0; i < agents.length; i++) {
     const a = agents[i]!;
     if (!a.alive) continue;
+    if (isAgentStealthed(a, COMBAT_SKILL_NOW_MS) && a.team !== selfTeam) continue;
     if (selfTeam === 'orange') {
       if (a.id === selfId) continue;
     } else if (a.team === selfTeam) {
@@ -717,6 +821,7 @@ function pickNextAliveEnemyTarget(self: Agent, agents: Agent[], ringTick: number
   for (let k = 0; k < win; k++) {
     const a = agents[(start + k) % n]!;
     if (!a.alive) continue;
+    if (isAgentStealthed(a, COMBAT_SKILL_NOW_MS) && a.team !== selfTeam) continue;
     if (selfTeam === 'orange') {
       if (a.id === selfId) continue;
     } else if (a.team === selfTeam) {
@@ -894,7 +999,8 @@ function resolveAgentAttackOutcome(attacker: Agent, defender: Agent, weaponType:
   const attackBonusDelta = attackerStance === 'AGGRESSIVE' ? 2 : attackerStance === 'DEFENSIVE' ? -1 : 0;
   const acBonusDelta = defenderStance === 'AGGRESSIVE' ? -2 : defenderStance === 'DEFENSIVE' ? 3 : 0;
   const critDelta = attackerStance === 'AGGRESSIVE' ? -1 : attackerStance === 'DEFENSIVE' ? 1 : 0;
-  const critThreshold = Math.min(20, Math.max(2, COMBAT_CRIT_NATURAL_THRESHOLD + critDelta));
+  const skillCrit = attacker.skillAuto?.critRange || COMBAT_CRIT_NATURAL_THRESHOLD;
+  const critThreshold = Math.min(20, Math.max(2, Math.min(skillCrit, COMBAT_CRIT_NATURAL_THRESHOLD) + critDelta));
   const attackTotal = natural + attacker.attackBonusStat + attacker.sizeClass + attacker.strMod + attackBonusDelta;
   const defenseAc = 10 + defender.sizeClass + defender.dexMod + defender.armorStat + acBonusDelta
     + Math.max(0, defender.equipmentAcBonus);
@@ -950,26 +1056,53 @@ function rollAgentWeaponDamage(
   return Math.max(1, Math.round(critBase * critMult));
 }
 
-function applyAgentIncomingDamage(defender: Agent, rawDamage: number, attackerAttackBonus: number): number {
+function applyAgentIncomingDamage(
+  defender: Agent,
+  rawDamage: number,
+  attackerAttackBonus: number,
+  ignoreShield = false,
+  ignoreArmor = false,
+  attackerArmorPierce = 0,
+  attackerShieldPenPct = 0,
+  attackerSneakMul = 1,
+  consumeSneak?: AgentSkillAuto,
+): number {
   if (rawDamage <= 0) return 0;
+  if (isAgentSkillInvulnerable(defender, COMBAT_SKILL_NOW_MS)) return 0;
   const defenderStance = isPlayerCombatAgent(defender)
     ? useBattleStanceStore.getState().activeStance
     : 'NEUTRAL';
   const damageReduction = defenderStance === 'DEFENSIVE' ? 0.85 : 1;
   const equipmentMul = Math.max(0.65, Math.min(1, defender.equipmentIncomingDamageMul || 1));
-  const reducedDamage = Math.max(1, Math.round(rawDamage * damageReduction * equipmentMul));
+  const skillMul = Math.max(0.6, Math.min(1, defender.skillIncomingDamageMul || 1));
+  let fortressMul = 1;
+  if (defender.skillAuto && defender.skillAuto.fortressUntilMs > COMBAT_SKILL_NOW_MS && defender.skillAuto.fortressDefensePct > 0) {
+    fortressMul = 1 / (1 + defender.skillAuto.fortressDefensePct / 100);
+  }
+  const sneak = consumeSneak && consumeSneak.sneakReady && attackerSneakMul > 1 ? attackerSneakMul : 1;
+  if (consumeSneak && sneak > 1) consumeSneak.sneakReady = false;
+  const reducedDamage = Math.max(1, Math.round(rawDamage * damageReduction * equipmentMul * skillMul * fortressMul * sneak));
   let remaining = reducedDamage;
-  if (defender.shieldHp > 0) {
+  let hullDirect = 0;
+  if (!ignoreShield && attackerShieldPenPct > 0) {
+    hullDirect = Math.floor(remaining * Math.min(80, attackerShieldPenPct) / 100);
+    remaining -= hullDirect;
+  }
+  if (!ignoreShield && defender.shieldHp > 0) {
     const absorbed = Math.min(defender.shieldHp, remaining);
     defender.shieldHp -= absorbed;
     remaining -= absorbed;
   }
+  remaining += hullDirect;
   if (remaining <= 0) return 0;
-  const armorMitigation = Math.max(
-    0,
-    Math.floor(defender.armorStat * 0.4) - Math.floor(attackerAttackBonus * 0.15),
-  );
-  const hullDamage = Math.max(1, reducedDamage - armorMitigation);
+  const effectiveArmor = applySkillArmorPierceToArmorStat(defender.armorStat, attackerArmorPierce);
+  const armorMitigation = ignoreArmor
+    ? 0
+    : Math.max(
+        0,
+        Math.floor(effectiveArmor * 0.4) - Math.floor(attackerAttackBonus * 0.15),
+      );
+  const hullDamage = Math.max(1, remaining - armorMitigation);
   defender.hullHp = Math.max(0, defender.hullHp - hullDamage);
   return hullDamage;
 }
@@ -1008,6 +1141,68 @@ function clampToOrbit(p: Pt, margin: number, orbitSize: number): Pt {
     x: Math.min(orbitSize - margin, Math.max(margin, p.x)),
     y: Math.min(orbitSize - margin, Math.max(margin, p.y)),
   };
+}
+
+function clampOrbitCoord(v: number, margin: number, orbitSize: number): number {
+  return Math.min(orbitSize - margin, Math.max(margin, v));
+}
+
+const interceptBezierScratch: Pt = { x: 0, y: 0 };
+const skillClampScratch: Pt = { x: 0, y: 0 };
+
+function writeQuadBezierInto(out: Pt, p0: Pt, p1: Pt, p2: Pt, t: number): Pt {
+  const u = 1 - t;
+  out.x = u * u * p0.x + 2 * u * t * p1.x + t * t * p2.x;
+  out.y = u * u * p0.y + 2 * u * t * p1.y + t * t * p2.y;
+  return out;
+}
+
+function writePrevAgentPts(prevPts: Pt[], agents: Agent[], prevPtsLen: number): void {
+  if (prevPts.length !== prevPtsLen) prevPts.length = prevPtsLen;
+  for (let i = 0; i < agents.length; i += 1) {
+    const a = agents[i]!;
+    const slot = prevPts[a.id];
+    if (slot) {
+      slot.x = a.x;
+      slot.y = a.y;
+    } else {
+      prevPts[a.id] = { x: a.x, y: a.y };
+    }
+  }
+}
+
+const aliveBattleScratch = {
+  aliveRed: false,
+  aliveBlue: false,
+  aliveOrange: false,
+  aliveCount: 0,
+};
+
+function recountAliveBattle(agents: Agent[]): typeof aliveBattleScratch {
+  let aliveRed = false;
+  let aliveBlue = false;
+  let aliveOrange = false;
+  let aliveCount = 0;
+  for (let i = 0; i < agents.length; i += 1) {
+    const a = agents[i]!;
+    if (!a.alive) continue;
+    aliveCount += 1;
+    if (a.team === 'red') aliveRed = true;
+    else if (a.team === 'blue') aliveBlue = true;
+    else if (a.team === 'orange') aliveOrange = true;
+  }
+  aliveBattleScratch.aliveRed = aliveRed;
+  aliveBattleScratch.aliveBlue = aliveBlue;
+  aliveBattleScratch.aliveOrange = aliveOrange;
+  aliveBattleScratch.aliveCount = aliveCount;
+  return aliveBattleScratch;
+}
+
+function anyCapitalCraftAlive(crafts: CapitalCraft[]): boolean {
+  for (let i = 0; i < crafts.length; i += 1) {
+    if (crafts[i]!.alive) return true;
+  }
+  return false;
 }
 
 function isNearOrbitBoundary(p: Pt, margin: number, orbitSize: number, pad = 1.5): boolean {
@@ -1119,6 +1314,9 @@ type KiteStandoffReverseCurve = {
   turnSign: -1 | 1;
 };
 
+/** 적분 틱 재사용 — 육중 선회 상한 산출용(프레임당 Make 금지) */
+const heavyTurnLawBuf = createCapitalHeavyTurnLaw();
+
 /** 목표 지점·헤딩을 향해 전·후진(surge) + 선회각(속도 연동)으로 적분 — 제자리 회전·즉시 후진 없음 */
 function integrateAgentKinematics(
   ag: Agent,
@@ -1208,22 +1406,26 @@ function integrateAgentKinematics(
     surgeDes = Math.max(surgeDes, -reverseMax);
   }
 
-  const Rmin = maxMoveSpeed / (ag.maxTurnRateRadPerMs + 1e-14);
-  const turnCap = Math.abs(vFwd0) / Rmin;
-  let omegaDes = Math.max(
-    -ag.maxTurnRateRadPerMs,
-    Math.min(ag.maxTurnRateRadPerMs, steerErr * HEADING_ALIGN_GAIN),
+  writeCapitalHeavyTurnLaw(
+    maxMoveSpeed,
+    ag.maxTurnRateRadPerMs,
+    ag.turnAccelRadPerMs2,
+    ag.sizeClass,
+    heavyTurnLawBuf,
   );
+  const maxYaw = heavyTurnLawBuf.maxTurnRateRadPerMs;
+  const turnAccel = heavyTurnLawBuf.turnAccelRadPerMs2;
+  const Rmin = heavyTurnLawBuf.minTurnRadiusPx;
+  const turnCap = Math.abs(vFwd0) / Rmin;
+  const headingGain = headingAlignGainForMaxYaw(maxYaw);
+  let omegaDes = Math.max(-maxYaw, Math.min(maxYaw, steerErr * headingGain));
   omegaDes = Math.max(-turnCap, Math.min(turnCap, omegaDes));
 
   let dw = omegaDes - ag.headingRateRadPerMs;
-  const maxDw = ag.turnAccelRadPerMs2 * dt;
+  const maxDw = turnAccel * dt;
   if (Math.abs(dw) > maxDw) dw = dw > 0 ? maxDw : -maxDw;
   ag.headingRateRadPerMs += dw;
-  ag.headingRateRadPerMs = Math.max(
-    -ag.maxTurnRateRadPerMs,
-    Math.min(ag.maxTurnRateRadPerMs, ag.headingRateRadPerMs),
-  );
+  ag.headingRateRadPerMs = Math.max(-maxYaw, Math.min(maxYaw, ag.headingRateRadPerMs));
 
   ag.headingRad += ag.headingRateRadPerMs * dt;
   while (ag.headingRad > Math.PI) ag.headingRad -= 2 * Math.PI;
@@ -1258,11 +1460,12 @@ function integrateAgentKinematics(
 
   const bx = ag.x;
   const by = ag.y;
-  const cl = clampToOrbit({ x: ag.x, y: ag.y }, margin, orbitSize);
-  if (Math.abs(cl.x - bx) > 1e-5) ag.vx = 0;
-  if (Math.abs(cl.y - by) > 1e-5) ag.vy = 0;
-  ag.x = cl.x;
-  ag.y = cl.y;
+  const clx = clampOrbitCoord(ag.x, margin, orbitSize);
+  const cly = clampOrbitCoord(ag.y, margin, orbitSize);
+  if (Math.abs(clx - bx) > 1e-5) ag.vx = 0;
+  if (Math.abs(cly - by) > 1e-5) ag.vy = 0;
+  ag.x = clx;
+  ag.y = cly;
 }
 
 type AgentPose = { x: number; y: number; headingRad: number };
@@ -1294,23 +1497,7 @@ function chaseTargetPose(self: Pt, other: Pt): AgentPose {
   return { x: other.x, y: other.y, headingRad };
 }
 
-function pairSeparationPx(elapsedMs: number): number {
-  return (
-    DUEL_SEP_CENTER + DUEL_SEP_AMP * Math.sin(elapsedMs * DUEL_SEP_OMEGA + DUEL_PHASE_OFFSET)
-  );
-}
-
-function movementPhaseAtForAgent(elapsedMs: number, agentId: number): MovementPhase {
-  const u = elapsedMs % MOVE_CYCLE_MS;
-  const d0 = MOVE_PHASE_APPROACH_MS;
-  const d1 = MOVE_PHASE_ELLIPSE_MS;
-  const row = AGENT_SEGMENT_PHASE[agentId & 1];
-  if (u < d0) return row[0];
-  if (u < d0 + d1) return row[1];
-  return row[2];
-}
-
-/** 서로 탐지 가능 거리 = 맵 기준 최대 초기 이격(스폰과 동일 스케일) */
+/** 탐지 거리 베이스(px) — 맵 최대 이격. 표적 획득이 아니라 교전 단계·미사일 게이트용 */
 function combatDetectionRangePx(orbitSize: number, margin: number): number {
   return maxHorizontalPairSeparationPx(orbitSize, margin);
 }
@@ -1324,6 +1511,14 @@ const maneuverInputBuf: CapitalManeuverInput = {
   bands: deriveCapitalCombatRangeBands(0, 0),
   speedPxPerMs: 0,
   teamSlot: 0,
+  weaponProfileReady: true,
+  hasMissile: false,
+  hasLaser: false,
+  hasClose: false,
+  selfHeadingRad: 0,
+  enemyHeadingRad: 0,
+  bearingToEnemyRad: 0,
+  maneuverSeed: 0,
 };
 /** 진형 앵커 재사용 버퍼(zero-allocation) — 같은 반복 내에서만 소비 */
 const formationAnchorBuf = createFormationAnchorPose();
@@ -1412,63 +1607,10 @@ function navalBrawlOrbitTargetPose(
   return { x: c.x, y: c.y, headingRad };
 }
 
-/** 한 척의 패턴 목표 — 궤도는 직전 프레임 상대 위치 기준 */
-function agentTargetPose(
-  phase: MovementPhase,
-  agentId: number,
-  cx: number,
-  cy: number,
-  margin: number,
-  orbitSize: number,
-  elapsedMs: number,
-  otherPrev: Pt,
-): AgentPose {
-  if (phase === 'approach') {
-    let d = pairSeparationPx(elapsedMs);
-    const maxD = maxHorizontalPairSeparationPx(orbitSize, margin);
-    const minD = 44;
-    d = Math.min(maxD, Math.max(minD, d));
-    const half = d * 0.5;
-    const raw = agentId === 0 ? { x: cx - half, y: cy } : { x: cx + half, y: cy };
-    const c = clampToOrbit(raw, margin, orbitSize);
-    return {
-      x: c.x,
-      y: c.y,
-      headingRad: agentId === 0 ? 0 : Math.PI,
-    };
-  }
-  if (phase === 'ellipse') {
-    const span = Math.min(orbitSize - 2 * margin - 12, orbitSize * 0.72);
-    const a = span * 0.42;
-    const b = span * 0.28;
-    const omega = 0.00038;
-    const th = elapsedMs * omega + (agentId === 0 ? 0 : Math.PI);
-    const raw = { x: cx + a * Math.cos(th), y: cy + b * Math.sin(th) };
-    const c = clampToOrbit(raw, margin, orbitSize);
-    return {
-      x: c.x,
-      y: c.y,
-      headingRad: Math.atan2(b * Math.cos(th), -a * Math.sin(th)),
-    };
-  }
-  const R = Math.min(90, (orbitSize - 2 * margin) * 0.34);
-  const omega = 0.00052;
-  const ang = elapsedMs * omega + agentId * Math.PI * 1.07;
-  const raw = {
-    x: otherPrev.x + R * Math.cos(ang),
-    y: otherPrev.y + R * Math.sin(ang),
-  };
-  const c = clampToOrbit(raw, margin, orbitSize);
-  return { x: c.x, y: c.y, headingRad: ang + Math.PI / 2 };
-}
-
 /**
- * 1:1 전전 — 단일 적(`otherPrev`) 기준 패턴 + 추격 + 미사일 사거리 거리띄우기(스탠드오프 링) 복합 목표.
- * 근접(`brawl`)은 해상전 스타일: 적 주변 링 공전 목표 + 낮은 직추격 가중.
- * `chaseWeight` 는 전투 단계에 따라 1(순추격) ~ 패턴혼합.
- * 블렌드 점이 상대와 너무 가까우면 자기 쪽으로 목표를 밀어 최소 이격 확보.
- * kite·거리벌림: `standoff`는 스탠드오프·선수 대적·후진 이격(`openingReverseOnly`).
- * `planet_orbit`은 적 중심 광궤도(강한 궤도 블렌드). 최종 헤딩은 선수 대적 1순위.
+ * 단일 적 기준 추격 + (브롤만) 해상전 링 + 미사일 사거리 스탠드오프.
+ * 21초 안무 패턴은 전술 단계와 분리되어 제거됨 — 목표점은 판단 계층 chase/standoff/brawl만.
+ * kite·거리벌림: `standoff`는 후진 이격, `planet_orbit`은 적 중심 광궤도. 최종 헤딩은 선수 대적 1순위.
  */
 function compositeNavigatePose(
   agentId: number,
@@ -1486,6 +1628,10 @@ function compositeNavigatePose(
   bands: CapitalCombatRangeBands,
   /** 독트린 스탠드오프 링 오프셋(px) — 0이면 현행과 완전 동일 */
   standoffRingOffsetPx = 0,
+  otherHeadingRad = 0,
+  bearingGoal: BearingGoal = 'bow',
+  employBand: EmployBand = 'approach',
+  holdPairDistPx = 0,
 ): AgentPose {
   let wc = Math.min(1, Math.max(0, chaseWeight));
   if (combatStage === 'brawl') {
@@ -1498,12 +1644,11 @@ function compositeNavigatePose(
     wc = Math.min(wc, 0.035);
     wp = 1 - wc;
   }
-  const phase = movementPhaseAtForAgent(elapsedMs, agentId);
+  const cha = chaseTargetPose(selfPrev, otherPrev);
   const pat =
     combatStage === 'brawl'
       ? navalBrawlOrbitTargetPose(agentId, elapsedMs, selfPrev, otherPrev, margin, orbitSize, bands)
-      : agentTargetPose(phase, agentId, cx, cy, margin, orbitSize, elapsedMs, otherPrev);
-  const cha = chaseTargetPose(selfPrev, otherPrev);
+      : cha;
   let mx = cha.x * wc + pat.x * wp;
   let my = cha.y * wc + pat.y * wp;
   const pairD = Math.hypot(selfPrev.x - otherPrev.x, selfPrev.y - otherPrev.y);
@@ -1513,6 +1658,11 @@ function compositeNavigatePose(
     ws *= combatStage === 'brawl' ? 0.58 : 0.35;
   } else {
     ws = Math.min(1, ws * 1.55 + 0.08);
+  }
+  if (employBand === 'standoff_long') {
+    ws = Math.min(1, ws * 2.35 + 0.2);
+  } else if (bearingGoal !== 'bow') {
+    ws = Math.min(1, ws + 0.14);
   }
   let headingBlend = lerpAngleRad(pat.headingRad, cha.headingRad, wc);
   if (ws > 1e-6) {
@@ -1530,12 +1680,45 @@ function compositeNavigatePose(
         Math.max(bands.laserBrawlOuterPx + 4, ringDist + standoffRingOffsetPx),
       );
     }
+    if (holdPairDistPx > 0) {
+      ringDist = Math.min(
+        bands.missileMaxRangePx + CAPITAL_MISSILE_RANGE_LOOSEN_PX - 2,
+        Math.max(bands.minHoldPairDistPx, holdPairDistPx),
+      );
+    }
     const st = standoffTargetPose(selfPrev, otherPrev, ringDist, margin, orbitSize);
     mx = mx * (1 - ws) + st.x * ws;
     my = my * (1 - ws) + st.y * ws;
     headingBlend = lerpAngleRad(headingBlend, st.headingRad, ws * 0.5);
   }
-  const sepPad = MIN_CAPITAL_CENTER_SEP_PX + 6;
+  if (bearingGoal !== 'bow') {
+    const holdR = Math.max(
+      bands.minHoldPairDistPx,
+      holdPairDistPx > 0
+        ? holdPairDistPx
+        : Math.max(bands.laserBrawlOuterPx + 10, Math.min(pairD, bands.missileIdealPairDistPx)),
+    );
+    const angOff =
+      bearingGoal === 'stern'
+        ? Math.PI
+        : bearingGoal === 'beam_port'
+          ? Math.PI * 0.5
+          : -Math.PI * 0.5;
+    const ang = otherHeadingRad + angOff;
+    const rawBear = {
+      x: otherPrev.x + holdR * Math.cos(ang),
+      y: otherPrev.y + holdR * Math.sin(ang) * CAPITAL_ENEMY_ORBIT_ELLIPSE_Y_MUL,
+    };
+    const bear = clampToOrbit(rawBear, margin, orbitSize);
+    const bw = bearingGoal === 'stern' ? 0.58 : 0.64;
+    mx = mx * (1 - bw) + bear.x * bw;
+    my = my * (1 - bw) + bear.y * bw;
+  }
+  const sepPad = Math.max(
+    MIN_CAPITAL_CENTER_SEP_PX + 6,
+    bands.minHoldPairDistPx ?? 0,
+    holdPairDistPx,
+  );
   const rdx = mx - otherPrev.x;
   const rdy = my - otherPrev.y;
   const rd = Math.hypot(rdx, rdy);
@@ -1646,7 +1829,15 @@ function resolveCapitalShipOverlaps(
       let dx = b.x - a.x;
       let dy = b.y - a.y;
       let d = Math.hypot(dx, dy);
-      if (d >= minCenterDist) continue;
+      const pairMin =
+        a.team !== b.team
+          ? Math.max(
+              minCenterDist,
+              a.rangeBands.minHoldPairDistPx ?? 0,
+              b.rangeBands.minHoldPairDistPx ?? 0,
+            )
+          : minCenterDist;
+      if (d >= pairMin) continue;
       if (d < 1e-10) {
         dx = 1;
         dy = 0;
@@ -1654,7 +1845,7 @@ function resolveCapitalShipOverlaps(
       }
       dx /= d;
       dy /= d;
-      const pen = (minCenterDist - d) * 0.5;
+      const pen = (pairMin - d) * 0.5;
       a.x -= dx * pen;
       a.y -= dy * pen;
       b.x += dx * pen;
@@ -1692,23 +1883,6 @@ function horizontalDuelFromCenterDistance(
     h0: 0,
     h1: Math.PI,
   };
-}
-
-/** 1:1 전전 전용 스폰 — 팀당 1척(슬롯·다척 세로 분산 없음). */
-function formationDuelSpawnPose(
-  team: 'red' | 'blue' | 'orange',
-  cx: number,
-  cy: number,
-  margin: number,
-  orbitSize: number,
-): AgentPose {
-  const maxD = maxHorizontalPairSeparationPx(orbitSize, margin);
-  const half = Math.min(maxD * 0.45, (orbitSize - 2 * margin) * 0.42);
-  const x = team === 'red' ? cx - half : team === 'blue' ? cx + half : cx;
-  const span = Math.min((orbitSize - 2 * margin) * 0.64, 220);
-  const y = cy - span * 0.5;
-  const c = clampToOrbit({ x, y }, margin, orbitSize);
-  return { x: c.x, y: c.y, headingRad: team === 'red' ? 0 : team === 'blue' ? Math.PI : -Math.PI / 2 };
 }
 
 /** 최초·리스폰 직후: 함선 중심간 거리 목표 = 맵 허용 최대의 2배 요청(수평 클램프로 실제는 맵 한도까지) */
@@ -1781,54 +1955,6 @@ function initialSpawnDuelWidePositions(
   };
 }
 
-/** 근접 스폰(formation) 변형별 레드·블루 포즈 */
-function duelSpawnPairFromVariant(
-  variant: DuelSpawnVariant,
-  orbitSize: number,
-  margin: number,
-): { red: AgentPose; blue: AgentPose } {
-  const cx = orbitSize * 0.5;
-  const cy = orbitSize * 0.5;
-  if (variant === 0) {
-    return {
-      red: formationDuelSpawnPose('red', cx, cy, margin, orbitSize),
-      blue: formationDuelSpawnPose('blue', cx, cy, margin, orbitSize),
-    };
-  }
-  const maxD = maxHorizontalPairSeparationPx(orbitSize, margin);
-  const half = Math.min(maxD * 0.45, (orbitSize - 2 * margin) * 0.42);
-  const spanY = Math.min((orbitSize - 2 * margin) * 0.64, 220) * 0.5;
-  if (variant === 1) {
-    const rC = clampToOrbit({ x: cx, y: cy - half }, margin, orbitSize);
-    const bC = clampToOrbit({ x: cx, y: cy + half }, margin, orbitSize);
-    return {
-      red: { x: rC.x, y: rC.y, headingRad: Math.PI / 2 },
-      blue: { x: bC.x, y: bC.y, headingRad: -Math.PI / 2 },
-    };
-  }
-  const rRaw = { x: cx - half * 0.88, y: cy - spanY * 0.55 };
-  const bRaw = { x: cx + half * 0.88, y: cy + spanY * 0.55 };
-  const rc = clampToOrbit(rRaw, margin, orbitSize);
-  const bc = clampToOrbit(bRaw, margin, orbitSize);
-  return {
-    red: {
-      x: rc.x,
-      y: rc.y,
-      headingRad: Math.atan2(bc.y - rc.y, bc.x - rc.x),
-    },
-    blue: {
-      x: bc.x,
-      y: bc.y,
-      headingRad: Math.atan2(rc.y - bc.y, rc.x - bc.x),
-    },
-  };
-}
-
-const PLAYER_FLAGSHIP_CAPTAIN_ID = 'Player_pilot';
-const PLAYER_FLAGSHIP_NPC_SHIP_ID = 'Player_npc_red_fleet_1';
-/** 내 전함 마름모·선수선만 녹색으로 구분 */
-const PLAYER_FLAGSHIP_SHIP_STROKE = '#22C55E';
-
 function resolveCurrentPlayerFlagshipNpcShipId(): string {
   const currentId = usePlayerStore.getState().player?.ship?.portraitNpcCapitalShipId?.trim();
   if (currentId && currentId.length > 0) return currentId;
@@ -1852,38 +1978,14 @@ function resolvePlayerFlagshipCombatBinding(): PlayerFlagshipCombatBinding | nul
   if (!npcRow) return null;
   const runtimeBase = NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV[npcShipId];
 
-  // 플레이어 전투 무장은 equipSlots가 정본이다. ship.weapons 잔존값은 발사 판정에 쓰지 않는다.
-  const slotLaserRaw = String(player.ship.equipSlots?.WEAPON_1?.itemDefId ?? '').trim();
-  const slotMissileRaw = String(player.ship.equipSlots?.WEAPON_2?.itemDefId ?? '').trim();
-  const slotCloseRaw = String(player.ship.equipSlots?.WEAPON_3?.itemDefId ?? '').trim();
-  const slotAuxRaw = String(player.ship.equipSlots?.WEAPON_4?.itemDefId ?? '').trim();
-  const slotLaserId = slotLaserRaw && slotLaserRaw !== '0' ? slotLaserRaw.replace(/^weapon_item_/, '').trim() : '';
-  const slotMissileId = slotMissileRaw && slotMissileRaw !== '0' ? slotMissileRaw.replace(/^weapon_item_/, '').trim() : '';
-  const slotCloseId = slotCloseRaw && slotCloseRaw !== '0' ? slotCloseRaw.replace(/^weapon_item_/, '').trim() : '';
-  const slotAuxId = slotAuxRaw && slotAuxRaw !== '0' ? slotAuxRaw.replace(/^weapon_item_/, '').trim() : '';
-  let laserWeaponId = slotLaserId && isKnownCapitalWeaponId(slotLaserId) ? slotLaserId : '';
-  let missileWeaponId = slotMissileId && isKnownCapitalWeaponId(slotMissileId) ? slotMissileId : '';
-  let closeRangeWeaponId = slotCloseId && isKnownCapitalWeaponId(slotCloseId) ? slotCloseId : '';
-  let auxWeaponId = slotAuxId && isKnownCapitalWeaponId(slotAuxId) ? slotAuxId : '';
-  if (!laserWeaponId && runtimeBase?.laserWeaponId?.trim()) {
-    const fallback = runtimeBase.laserWeaponId.trim();
-    if (isKnownCapitalWeaponId(fallback)) laserWeaponId = fallback;
-  }
-  if (!missileWeaponId && runtimeBase?.missileWeaponId?.trim()) {
-    const fallback = runtimeBase.missileWeaponId.trim();
-    if (isKnownCapitalWeaponId(fallback)) missileWeaponId = fallback;
-  }
-  if (!closeRangeWeaponId && runtimeBase?.closeRangeWeaponId?.trim()) {
-    const fallback = runtimeBase.closeRangeWeaponId.trim();
-    if (isKnownCapitalWeaponId(fallback)) closeRangeWeaponId = fallback;
-  }
-  if (!closeRangeWeaponId && isKnownCapitalWeaponId(DEFAULT_CLOSE_RANGE_WEAPON_ID)) {
-    closeRangeWeaponId = DEFAULT_CLOSE_RANGE_WEAPON_ID;
-  }
-  if (!auxWeaponId && runtimeBase?.auxWeaponId?.trim()) {
-    const fallback = runtimeBase.auxWeaponId.trim();
-    if (isKnownCapitalWeaponId(fallback)) auxWeaponId = fallback;
-  }
+  // 플레이어 전투 무장은 equipSlots가 정본이다. 해제('0'/빈) = 그 채널 ''.
+  // ship.weapons 잔존값·기종 CSV 기본무장·전역 근접 폴백은 쓰지 않는다.
+  const {
+    laserWeaponId,
+    missileWeaponId,
+    closeRangeWeaponId,
+    auxWeaponId,
+  } = resolvePlayerCombatWeaponChannels(player.ship.equipSlots, runtimeBase);
 
   const baseCombat = {
     ...npcRow.combat,
@@ -1902,24 +2004,14 @@ function resolvePlayerFlagshipCombatBinding(): PlayerFlagshipCombatBinding | nul
   const equipmentBonuses = aggregateShipEquipmentBonuses(player.ship.equipSlots);
   const equipmentAgentKnobs = resolveShipEquipmentAgentKnobs(perf.combat.maxHp, equipmentBonuses);
 
-  const mergedRuntime = runtimeBase
-    ? {
-        ...runtimeBase,
-        ...perf.runtimeConfig,
-        laserWeaponId: laserWeaponId || '',
-        missileWeaponId: missileWeaponId || '',
-        closeRangeWeaponId: closeRangeWeaponId || '',
-        auxWeaponId: auxWeaponId || '',
-      }
-    : perf.runtimeConfig
-      ? {
-          ...perf.runtimeConfig,
-          laserWeaponId: laserWeaponId || '',
-          missileWeaponId: missileWeaponId || '',
-          closeRangeWeaponId: closeRangeWeaponId || '',
-          auxWeaponId: auxWeaponId || '',
-        }
-      : undefined;
+  const mergedRuntime = {
+    ...(runtimeBase ?? {}),
+    ...(perf.runtimeConfig ?? {}),
+    laserWeaponId: laserWeaponId || '',
+    missileWeaponId: missileWeaponId || '',
+    closeRangeWeaponId: closeRangeWeaponId || '',
+    auxWeaponId: auxWeaponId || '',
+  };
 
   return {
     displayName: shipForCombat.name,
@@ -1977,9 +2069,10 @@ function resolvePlayerStanceForAgent(ag: Agent): BattleStanceId {
 
 function resolvePlayerStanceMoveSpeedMult(ag: Agent): number {
   const stance = resolvePlayerStanceForAgent(ag);
-  if (stance === 'AGGRESSIVE') return 1.18;
-  if (stance === 'DEFENSIVE') return 0.84;
-  return 1;
+  let base = 1;
+  if (stance === 'AGGRESSIVE') base = 1.18;
+  else if (stance === 'DEFENSIVE') base = 0.84;
+  return resolveSkillMoveSpeedMult(ag, COMBAT_SKILL_NOW_MS, base);
 }
 
 function resolvePlayerStanceMissileSalvoDelta(ag: Agent): number {
@@ -2007,6 +2100,47 @@ function finalizeShipDestroyed(victim: Agent, owner: Agent | undefined, elapsedM
       killCount: 1,
     });
     void s.persistNpcCaptainProgress();
+  }
+}
+
+function applyCapitalCraftHitToAgent(
+  owner: Agent,
+  target: Agent,
+  ev: CapitalCraftImpactEvent,
+  elapsed: number,
+  margin: number,
+  orbitSize: number,
+): void {
+  if (!target.alive) return;
+  const craftOutcome = resolveAgentAttackOutcome(owner, target, 'missile');
+  if (craftOutcome > 0) {
+    const craftRawDamage = Math.max(
+      1,
+      Math.round(rollAgentWeaponDamage(owner, target, 'missile', craftOutcome) * (owner.skillAuto?.droneDamageMul || 1)),
+    );
+    const craftFx = getWeaponSpecialFxPolicy(ev.weaponId);
+    const hullDamage = applyAgentIncomingDamage(
+      target,
+      craftRawDamage,
+      owner.attackBonusStat,
+      ev.ignoreShield,
+      craftFx?.ignoreArmor ?? false,
+      owner.skillArmorPierce,
+      owner.skillAuto?.shieldPenPct ?? 0,
+      owner.skillAuto?.sneakAttackMul ?? 1,
+      owner.skillAuto,
+    );
+    if (craftFx) {
+      applySpecialWeaponStatusOnAgent(target, craftFx, elapsed);
+    }
+    applyHitKnockback(target, ev, Math.max(1, hullDamage), margin, orbitSize);
+  }
+  if (ev.slowMs > 0 && ev.slowMul > 0 && ev.slowMul < 1) {
+    target.speedSlowMul = Math.min(target.speedSlowMul, ev.slowMul);
+    target.speedSlowUntilMs = Math.max(target.speedSlowUntilMs, elapsed + ev.slowMs);
+  }
+  if (target.hullHp <= 0) {
+    finalizeShipDestroyed(target, owner, elapsed);
   }
 }
 
@@ -2102,8 +2236,9 @@ function createCapitalAgentBase(
   const detectRangeScale = runtimeConfig?.detectRangeScale ?? randRange(0.84, 1.18);
   const laserWeaponId = runtimeConfig?.laserWeaponId?.trim() ?? '';
   const missileWeaponId = runtimeConfig?.missileWeaponId?.trim() ?? '';
+  const specifiedClose = runtimeConfig?.closeRangeWeaponId;
   const closeRangeWeaponId =
-    runtimeConfig?.closeRangeWeaponId?.trim() || DEFAULT_CLOSE_RANGE_WEAPON_ID;
+    specifiedClose === undefined ? DEFAULT_CLOSE_RANGE_WEAPON_ID : specifiedClose.trim();
   const auxWeaponId = runtimeConfig?.auxWeaponId?.trim() ?? '';
   const laserWeapon = laserWeaponId ? getCapitalWeaponRow(laserWeaponId) : null;
   const missileWeapon = missileWeaponId ? getCapitalWeaponRow(missileWeaponId) : null;
@@ -2140,7 +2275,11 @@ function createCapitalAgentBase(
   const missileMaxRangePx = hasMissileWeapon && missileWeapon ? resolveCapitalWeaponRangePx(missileWeapon) : 0;
   const closeRangeMaxRangePx =
     hasCloseRangeWeapon && closeRangeWeapon ? resolveCapitalWeaponRangePx(closeRangeWeapon) : 0;
-  const rangeBands = deriveCapitalCombatRangeBands(laserEngageRangePx, missileMaxRangePx);
+  const rangeBands = deriveCapitalCombatRangeBands(
+    laserEngageRangePx,
+    missileMaxRangePx,
+    closeRangeMaxRangePx,
+  );
   const laserSpeedPxPerSec = Math.max(1, laserWeapon?.projectileSpeedPxPerSec ?? 5200);
   const laserBoltTravelMs = Math.max(8, Math.round((Math.max(1, laserEngageRangePx) / laserSpeedPxPerSec) * 1000));
   const missileSpeedPxPerSec = Math.max(
@@ -2187,6 +2326,39 @@ function createCapitalAgentBase(
     hullRegenPerTick: 0,
     missileMissChance: 0,
   };
+  const isWingman = captainId === PLAYER_WINGMAN_CAPTAIN_ID;
+  const combatSkill = captainId === PLAYER_FLAGSHIP_CAPTAIN_ID
+    ? resolvePlayerCombatSkillBind()
+    : EMPTY_PLAYER_COMBAT_SKILL_BIND;
+  const skillAuto = captainId === PLAYER_FLAGSHIP_CAPTAIN_ID
+    ? createPlayerAgentSkillAuto(combatSkill)
+    : isWingman
+      ? createWingmanAgentSkillAuto()
+      : createNpcAgentSkillAuto();
+  const statMul = 1 + combatSkill.statMultiplierPct / 100;
+  const armorStatResolved = armorStat + combatSkill.armorBonus;
+  const attackBonusResolved = Math.round(attackBonusStat * statMul) + combatSkill.partyAttackBonus;
+  const shieldMaxResolved = Math.max(0, Math.round(maxShieldHp * combatSkill.shieldMaxMul));
+  const laserCd = Math.max(120, Math.round(laserRechargeMs * combatSkill.weaponCooldownMul));
+  const missileCd = Number.isFinite(missileFireIntervalMs)
+    ? Math.max(900, Math.round(missileFireIntervalMs * combatSkill.weaponCooldownMul))
+    : missileFireIntervalMs;
+  const closeCd = Number.isFinite(closeRangeFireIntervalMs)
+    ? Math.max(420, Math.round(closeRangeFireIntervalMs * combatSkill.weaponCooldownMul))
+    : closeRangeFireIntervalMs;
+  const salvoResolved = hasMissileWeapon
+    ? missileSalvoCount + combatSkill.missileSalvoBonus
+    : missileSalvoCount;
+  if (combatSkill.shieldMaxMul > 1) {
+    skillAuto.procLabel = SKILL_PROC_LABEL.shieldOverload;
+    skillAuto.procUntilMs = wallBaseMs + resolveSkillAutoCombatPolicy().procBannerMs;
+  }
+  if (combatSkill.wingman) {
+    skillAuto.wingmanUntilMs = wallBaseMs + resolveSkillAutoCombatPolicy().wingmanDurationTurns * skillTurnMs();
+    skillAuto.nextWingmanMs = skillAuto.wingmanUntilMs + resolveSkillAutoCombatPolicy().wingmanCooldownTurns * skillTurnMs();
+    skillAuto.procLabel = SKILL_PROC_LABEL.wingman;
+    skillAuto.procUntilMs = wallBaseMs + resolveSkillAutoCombatPolicy().procBannerMs;
+  }
   return {
     id,
     team,
@@ -2205,8 +2377,8 @@ function createCapitalAgentBase(
       runtimeConfig?.turnAccelRadPerMs2 ?? (redLikeStats ? 0.00012 * 0.5 : 0.0001 * 0.5),
     hullHp: maxHullHp,
     maxHullHp,
-    shieldHp: maxShieldHp,
-    maxShieldHp,
+    shieldHp: shieldMaxResolved,
+    maxShieldHp: shieldMaxResolved,
     alive: true,
     stroke: isPlayerFlagshipSlot(captainId, npcShipId, { combatPlanetId, team })
       ? PLAYER_FLAGSHIP_SHIP_STROKE
@@ -2237,13 +2409,17 @@ function createCapitalAgentBase(
     lastWeaponFireAtMs: wallBaseMs,
     speedSlowMul: 1,
     speedSlowUntilMs: 0,
+    statusTintUntilMs: 0,
+    statusTintHex: '',
+    statusIconKind: '',
     lastShieldRegenAtMs: wallBaseMs,
     stallChaseBoostUntilMs: 0,
     tempoRole: 'press',
     kiteEvasionMode: 'standoff',
     kiteDistStallSinceMs: null,
     kiteDistResumeAdvanceUntilMs: 0,
-    doctrine: resolveDoctrineForCaptain(captainId),
+    doctrine: resolveDracoCombatTestDoctrine(captainId) ?? resolveDoctrineForCaptain(captainId),
+    ...createManeuverEmploymentDefaults(),
     currentTargetAgentId: null,
     npcShipId,
     captainId,
@@ -2258,8 +2434,8 @@ function createCapitalAgentBase(
     strMod,
     dexMod,
     sizeClass,
-    armorStat,
-    attackBonusStat,
+    armorStat: armorStatResolved,
+    attackBonusStat: attackBonusResolved,
     expRewardStat,
     laserMinDamage,
     laserMaxDamage,
@@ -2267,11 +2443,11 @@ function createCapitalAgentBase(
     missileMaxDamage,
     closeRangeMinDamage,
     closeRangeMaxDamage,
-    laserRechargeMs,
-    missileFireIntervalMs,
-    missileSalvoCount,
+    laserRechargeMs: laserCd,
+    missileFireIntervalMs: missileCd,
+    missileSalvoCount: salvoResolved,
     missileSalvoIntervalMs,
-    closeRangeFireIntervalMs,
+    closeRangeFireIntervalMs: closeCd,
     closeRangeSalvoCount,
     closeRangeSalvoIntervalMs,
     laserEngageRangePx,
@@ -2286,6 +2462,9 @@ function createCapitalAgentBase(
     equipmentIncomingDamageMul: eqKnobs.incomingDamageMul,
     equipmentHullRegenPerTick: eqKnobs.hullRegenPerTick,
     equipmentMissileMissChance: eqKnobs.missileMissChance,
+    skillArmorPierce: combatSkill.armorPierce,
+    skillIncomingDamageMul: combatSkill.incomingDamageMul,
+    skillAuto,
   };
 }
 
@@ -2331,6 +2510,7 @@ function initAgents(
   spawnVariant: DuelSpawnVariant,
   combatPlanetId: string,
   combatSystemId: string | null,
+  stageSlots: StageFleetSeedSlot[],
 ): Agent[] {
   const cx = orbitSize * 0.5;
   const cy = orbitSize * 0.5;
@@ -2341,27 +2521,42 @@ function initAgents(
   const px = -dy / len;
   const py = dx / len;
   const agents: Agent[] = [];
-  const stageSlots = resolveStageFleetSeedSlotsForPlanet(combatPlanetId, combatSystemId);
   const redSlots = stageSlots.filter(s => s.team === 'red');
   const blueSlots = stageSlots.filter(s => s.team === 'blue');
   const orangeSlots = stageSlots.filter(s => s.team === 'orange');
-  const shipMap = new Map(listAllNpcCapitalShipRows().map((s) => [s.id, s]));
-  const captainNameMap = new Map(
-    listNpcCaptains().map((c) => [c.id, resolveNpcCaptainDisplayNameNow(c)]),
-  );
   const playerBinding = resolvePlayerFlagshipCombatBinding();
+  const isTransitCombat = combatPlanetId === CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID;
+  const transitPlayerLevel = usePlayerStore.getState().player?.level ?? 1;
+  const missionState = useMissionStore.getState();
+  const questLock = resolveQuestCombatLock(missionState.progresses, missionState.activeMissionId);
+  const questTransitSeedActive =
+    isTransitCombat && shouldGuaranteeQuestTransitEncounter(questLock, combatSystemId);
+  const questTransitHullPlanetId = questTransitSeedActive
+    ? resolveQuestLockTransitHullPlanetId(questLock)
+    : null;
+  const questTransitLevel = questTransitSeedActive
+    ? resolveQuestLockTransitEncounterLevel(questLock, transitPlayerLevel)
+    : null;
+  const transitHullAffinityPlanetId = questTransitHullPlanetId
+    ?? (isTransitCombat
+      ? (resolvePlayScenarioPrimaryPlanetId(combatSystemId) ?? combatPlanetId)
+      : combatPlanetId);
+  const transitEncounterLevel = questTransitLevel
+    ?? (isTransitCombat
+      ? resolveTransitCombatEncounterTargetLevel(combatSystemId, transitPlayerLevel)
+      : resolveCombatEncounterTargetLevel(combatPlanetId, combatSystemId));
   let id = 0;
   for (let r = 0; r < redSlots.length; r++) {
     const slot = redSlots[r]!;
     const off = (r - (redSlots.length - 1) / 2) * FLEET_SLOT_SPACING_PX;
     const c = clampToOrbit({ x: duelWide.x0 + px * off, y: duelWide.y0 + py * off }, margin, orbitSize);
-    const npc = slot.npcShipId ? shipMap.get(slot.npcShipId) : undefined;
+    const npc = slot.npcShipId ? getNpcCapitalShip(slot.npcShipId) : undefined;
     const runtimeConfig = slot.npcShipId
       ? NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV[slot.npcShipId]
       : undefined;
     const captainId = slot.captainId ?? npc?.captainId ?? null;
     const shipName = runtimeConfig?.displayName ?? npc?.name ?? `RED-${r + 1}`;
-    const csvCaptainName = captainId ? captainNameMap.get(captainId) : undefined;
+    const csvCaptainName = lookupSlotCaptainDisplayName(captainId);
     const nameplate = resolveCapitalAgentNameplateLabel(
       captainId,
       slot.npcShipId,
@@ -2383,7 +2578,7 @@ function initAgents(
     let appliedName = isPlayerSlot ? (playerBinding?.displayName ?? nameplate) : nameplate;
     let appliedCaptainLabel = isPlayerSlot ? (resolveLinkedAccountNicknameForFlagship() ?? '—') : nameplate;
     let appliedEquipmentKnobs = agentBinding.equipmentAgentKnobs;
-    const planetAffinity = resolvePlanetEnemyAffinityKind(combatPlanetId);
+    const planetAffinity = resolvePlanetEnemyAffinityKind(transitHullAffinityPlanetId);
     // 아크코어 본진(endgame_boss) — 짝 유저의 복제 전함이 보스 리드 슬롯을 차지 (§16-A)
     const shadowBoss = !isPlayerSlot ? resolveArcCoreShadowBossOverride(combatPlanetId, r) : null;
     if (shadowBoss) {
@@ -2396,15 +2591,19 @@ function initAgents(
       appliedName = shadowBoss.shipDisplayName;
       appliedCaptainLabel = shadowBoss.nameplateLabel;
     } else if (!isPlayerSlot) {
-      const hostileLoadout = resolveHostileEnemyWeaponLoadout(
-        r,
-        resolvePlanetTargetCombatLevel(combatPlanetId),
-      );
+      const hostileLoadout = resolveHostileEnemyWeaponLoadout(r, transitEncounterLevel);
       appliedRuntimeConfig = {
         ...(appliedRuntimeConfig ?? {}),
         laserWeaponId: hostileLoadout.laserWeaponId,
         missileWeaponId: hostileLoadout.missileWeaponId,
       } as typeof appliedRuntimeConfig;
+      if (appliedCombatStats) {
+        const hullPlanetId = questTransitHullPlanetId
+          ?? (combatPlanetId === CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID
+            ? resolveTransitHostileHullScalePlanetId(combatSystemId, captainId)
+            : combatPlanetId);
+        appliedCombatStats = applyPlanetHostileHullScale(hullPlanetId, appliedCombatStats);
+      }
     }
     agents.push(
       createCapitalAgentBase(
@@ -2429,13 +2628,13 @@ function initAgents(
     const slot = blueSlots[b]!;
     const off = (b - (blueSlots.length - 1) / 2) * FLEET_SLOT_SPACING_PX;
     const c = clampToOrbit({ x: duelWide.x1 + px * off, y: duelWide.y1 + py * off }, margin, orbitSize);
-    const npc = slot.npcShipId ? shipMap.get(slot.npcShipId) : undefined;
+    const npc = slot.npcShipId ? getNpcCapitalShip(slot.npcShipId) : undefined;
     const runtimeConfig = slot.npcShipId
       ? NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV[slot.npcShipId]
       : undefined;
     const captainId = slot.captainId ?? npc?.captainId ?? null;
     const shipName = runtimeConfig?.displayName ?? npc?.name ?? `BLUE-${b + 1}`;
-    const csvCaptainName = captainId ? captainNameMap.get(captainId) : undefined;
+    const csvCaptainName = lookupSlotCaptainDisplayName(captainId);
     const nameplate = resolveCapitalAgentNameplateLabel(
       captainId,
       slot.npcShipId,
@@ -2457,11 +2656,18 @@ function initAgents(
       playerBinding,
     });
     const appliedCombatStats = agentBinding.combatStats;
-    const appliedRuntimeConfig = agentBinding.runtimeConfig;
-    const appliedName = isPlayerSlot ? (playerBinding?.displayName ?? nameplate) : nameplate;
-    const appliedCaptainLabel = isPlayerSlot ? (resolveLinkedAccountNicknameForFlagship() ?? '—') : nameplate;
     const appliedNpcShipId = isPlayerSlot ? null : slot.npcShipId;
     const appliedCaptainId = isPlayerSlot ? PLAYER_FLAGSHIP_CAPTAIN_ID : captainId;
+    const testPatch = isPlayerSlot ? null : resolveDracoCombatTestRuntimePatch(appliedCaptainId);
+    const appliedRuntimeConfig = testPatch
+      ? ({ ...(agentBinding.runtimeConfig ?? {}), ...testPatch } as typeof agentBinding.runtimeConfig)
+      : agentBinding.runtimeConfig;
+    const appliedName = isPlayerSlot
+      ? (playerBinding?.displayName ?? nameplate)
+      : (testPatch?.displayName ?? nameplate);
+    const appliedCaptainLabel = isPlayerSlot
+      ? (resolveLinkedAccountNicknameForFlagship() ?? '—')
+      : (testPatch?.displayName ?? nameplate);
     const playerLevel = usePlayerStore.getState().player?.level ?? 1;
     const blueAffinity = isPlayerSlot
       ? resolvePlayerHullAffinityKind(playerLevel)
@@ -2494,13 +2700,13 @@ function initAgents(
       margin,
       orbitSize,
     );
-    const npc = slot.npcShipId ? shipMap.get(slot.npcShipId) : undefined;
+    const npc = slot.npcShipId ? getNpcCapitalShip(slot.npcShipId) : undefined;
     const runtimeConfig = slot.npcShipId
       ? NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV[slot.npcShipId]
       : undefined;
     const captainId = slot.captainId ?? npc?.captainId ?? null;
     const shipName = runtimeConfig?.displayName ?? npc?.name ?? `ORANGE-${o + 1}`;
-    const csvCaptainName = captainId ? captainNameMap.get(captainId) : undefined;
+    const csvCaptainName = lookupSlotCaptainDisplayName(captainId);
     const nameplate = resolveCapitalAgentNameplateLabel(
       captainId,
       slot.npcShipId,
@@ -2540,6 +2746,58 @@ function initAgents(
       ),
     );
   }
+  let playerAg: Agent | null = null;
+  for (let i = 0; i < agents.length; i += 1) {
+    if (agents[i]!.captainId === PLAYER_FLAGSHIP_CAPTAIN_ID) {
+      playerAg = agents[i]!;
+      break;
+    }
+  }
+  if (playerAg?.skillAuto.wingmanOwned && playerBinding) {
+    const policy = resolveSkillAutoCombatPolicy();
+    const c = clampToOrbit(
+      { x: playerAg.x + px * FLEET_SLOT_SPACING_PX, y: playerAg.y + py * FLEET_SLOT_SPACING_PX },
+      margin,
+      orbitSize,
+    );
+    const wingStats = {
+      ...playerBinding.combatStats,
+      maxHp: Math.max(1, Math.round(playerAg.maxHullHp * policy.wingmanHullMul)),
+      maxShield: Math.max(0, Math.round(playerAg.maxShieldHp * policy.wingmanHullMul)),
+    };
+    agents.push(
+      createCapitalAgentBase(
+        id++,
+        'blue',
+        combatPlanetId,
+        { x: c.x, y: c.y, headingRad: playerAg.headingRad },
+        wallBaseMs,
+        false,
+        playerAg.npcShipId,
+        PLAYER_WINGMAN_CAPTAIN_ID,
+        '윙맨',
+        '윙맨',
+        wingStats,
+        playerBinding.runtimeConfig,
+        playerAg.enemyAffinityKind,
+        playerBinding.equipmentAgentKnobs,
+      ),
+    );
+  }
+  if (playerAg) {
+    const bind = resolvePlayerCombatSkillBind();
+    const auraAlly = bind.auraAllyHit;
+    const auraEnemy = bind.auraEnemyHit;
+    for (let i = 0; i < agents.length; i += 1) {
+      const a = agents[i]!;
+      if (a.team === 'blue' && a.id !== playerAg.id) {
+        a.attackBonusStat += bind.partyAttackBonus + auraAlly;
+      } else if (a.team === 'red' || a.team === 'orange') {
+        a.attackBonusStat = Math.max(0, a.attackBonusStat - auraEnemy);
+      }
+    }
+    playerAg.attackBonusStat += auraAlly;
+  }
   assignInitialCombatTargets(agents);
   return agents;
 }
@@ -2555,6 +2813,8 @@ export type PlanetEdenRaidSim = {
   /** 시뮬 스텝마다 갱신 — 궤도 레이저 표시 등 읽기 전용 O(1) 표적 lookup */
   agentByIdSparseRef: React.MutableRefObject<(Agent | undefined)[]>;
   missilesRef: React.MutableRefObject<Missile[]>;
+  /** STAGE3 드론·함재기 사전할당 풀 — persist 없음 */
+  craftsRef: React.MutableRefObject<CapitalCraft[]>;
   missileHitFxRef: React.MutableRefObject<MissileHitFx[]>;
   /** 리스폰 카운트다운(초); HUD는 rAF에서 직접 읽는다 — setState 없음 */
   respawnCountdownSecRef: React.MutableRefObject<number | null>;
@@ -2604,6 +2864,8 @@ export function usePlanetEdenRaidSim(
   // active=false 구간에는 무거운 에이전트 배열을 들고 있지 않음
   const agentsRef = useRef<Agent[]>([]);
   const missilesRef = useRef<Missile[]>([]);
+  const craftsRef = useRef<CapitalCraft[]>(createCapitalCraftPool());
+  const craftImpactScratchRef = useRef(createCapitalCraftImpactScratch(24));
   const missileHitFxRef = useRef<MissileHitFx[]>([]);
   const nextMissileId = useRef(0);
   const lastElapsedRef = useRef(0);
@@ -2642,6 +2904,16 @@ export function usePlanetEdenRaidSim(
   /** 웨이브 전환 재시드 트리거 — 값이 바뀌면 같은 활성 세션에서 함대만 재초기화(Canvas 리마운트 없음) */
   const waveGenKey = useWaveDefenseStore((s) => s.waveGenKey);
   const lastWaveGenKeyRef = useRef(0);
+  const waveLoseAlertHoldTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (waveLoseAlertHoldTimerRef.current) {
+        clearTimeout(waveLoseAlertHoldTimerRef.current);
+        waveLoseAlertHoldTimerRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!active || !combatPlanetId) return;
@@ -2670,6 +2942,7 @@ export function usePlanetEdenRaidSim(
       duelSpawnVariantRef.current,
       combatPlanetId,
       combatSystemId,
+      slots,
     );
     if (resumeSnap) {
       applyCombatResumeSnapshotToAgents(agentsRef.current, resumeSnap);
@@ -2677,6 +2950,7 @@ export function usePlanetEdenRaidSim(
     missilesRef.current = [];
     nextMissileId.current = 0;
     missileHitFxRef.current = [];
+    resetCapitalCraftPool(craftsRef.current);
     // 자동 리스폰 재교전 삭제 — 과거(레거시) 스냅샷에 남아있을 수 있는 값도 복원하지 않음
     respawnAtWallRef.current = null;
     respawnCountdownSecRef.current = null;
@@ -2709,6 +2983,7 @@ export function usePlanetEdenRaidSim(
     missilesRef.current = [];
     nextMissileId.current = 0;
     missileHitFxRef.current = [];
+    resetCapitalCraftPool(craftsRef.current);
     agentsRef.current = [];
     agentByIdBuf.current = [];
     prevPtsRef.current = [];
@@ -2732,6 +3007,35 @@ export function usePlanetEdenRaidSim(
     flightSpeedPxPerMs: number,
   ) => {
     if (!weaponId.trim()) return;
+    if (isCraftLoiterRuntimeActive(weaponId)) {
+      const family = getCapitalWeaponRow(weaponId)?.familyKind;
+      if (isCraftFamilyKind(family)) {
+        const policy = getWeaponCraftLoiterPolicy(family, weaponId);
+        const muzzle = laserMuzzleFromAgent(owner);
+        const hx = Math.cos(owner.headingRad);
+        const hy = Math.sin(owner.headingRad);
+        const nx = -hy;
+        const ny = hx;
+        trySpawnCapitalCraftVolley(
+          craftsRef.current,
+          {
+            family,
+            ownerAgentId: owner.id,
+            targetAgentId,
+            weaponId,
+            x: muzzle.x,
+            y: muzzle.y,
+            headingRad: owner.headingRad,
+            speedPxPerMs: flightSpeedPxPerMs * policy.approachSpeedMul,
+            policy,
+          },
+          nx,
+          ny,
+          9,
+        );
+        return;
+      }
+    }
     if (salvoCount <= 1) {
       const hasActive = missilesRef.current.some((m) => {
         if (m.ownerAgentId !== owner.id) return false;
@@ -2821,6 +3125,11 @@ export function usePlanetEdenRaidSim(
     }
     let lastWallNowMs = performance.now();
     let raf = 0;
+    const clampSkillPos = (x: number, y: number) => {
+      skillClampScratch.x = clampOrbitCoord(x, margin, orbitSize);
+      skillClampScratch.y = clampOrbitCoord(y, margin, orbitSize);
+      return skillClampScratch;
+    };
     const loop = () => {
       if (simLoopHaltedRef.current) return;
       const nowMs = performance.now();
@@ -2829,6 +3138,7 @@ export function usePlanetEdenRaidSim(
       const dt = Math.min(33, rawDt);
       const elapsed = lastElapsedRef.current + dt;
       lastElapsedRef.current = elapsed;
+      COMBAT_SKILL_NOW_MS = elapsed;
       if (rawDt > 0) {
         fpsAccumRef.current += 1000 / rawDt;
         fpsSampleRef.current += 1;
@@ -2842,26 +3152,70 @@ export function usePlanetEdenRaidSim(
       for (const ag of agents) {
         if (!ag.team) ag.team = ag.id % 2 === 0 ? 'red' : 'blue';
       }
-      const playerAgent = agents.find((a) => isPlayerCombatAgent(a));
+      let playerAgent: Agent | null = null;
+      for (let pi = 0; pi < agents.length; pi += 1) {
+        const cand = agents[pi]!;
+        if (isPlayerCombatAgent(cand)) {
+          playerAgent = cand;
+          break;
+        }
+      }
+      if (playerAgent?.alive && playerAutoCombatSkillsNeedTick(playerAgent.skillAuto)) {
+        const autoTick = tickPlayerAutoCombatSkills(
+          playerAgent,
+          agents,
+          elapsed,
+          clampSkillPos,
+        );
+        if (autoTick.emergencyWarpFlee) {
+          playerCapitalDestroyedRef.current = true;
+          respawnAtWallRef.current = null;
+          respawnCountdownSecRef.current = null;
+          for (let wi = 0; wi < agents.length; wi += 1) {
+            if (agents[wi]!.captainId === PLAYER_WINGMAN_CAPTAIN_ID) {
+              agents[wi]!.alive = false;
+            }
+          }
+          if (useWaveDefenseStore.getState().active) {
+            useWaveDefenseStore.getState().requestEndRun('lose');
+          }
+        }
+      }
       if (
         playerAgent
         && !playerAgent.alive
         && !playerCapitalDestroyedRef.current
+        && !playerAgent.skillAuto?.emergencyUsed
         && !isSurvivalPodNpcShipId(usePlayerStore.getState().player?.ship?.portraitNpcCapitalShipId)
       ) {
         playerCapitalDestroyedRef.current = true;
         respawnAtWallRef.current = null;
         respawnCountdownSecRef.current = null;
-        // 웨이브 디펜스: 플레이어 격파 = 패배 종료 → 컨트롤러가 오퍼레이터 종료 대사 처리
+        // 웨이브 디펜스: 플레이어 격파 = 패배 종료(홀드 후 오퍼레이터 대사)
         if (useWaveDefenseStore.getState().active) {
-          useWaveDefenseStore.getState().endRun('lose');
+          useWaveDefenseStore.getState().requestEndRun('lose');
         }
+        const delayWaveLoseAlert = useWaveDefenseStore.getState().active
+          || useWaveDefenseStore.getState().endHoldActive;
         const applyDestruction = () => {
           void usePlayerStore.getState().applyCapitalShipDestruction().then(() => {
-            showArcAlert(
-              '전함 격침',
-              '전함이 파괴되어 생존포드로 거점 행성에 귀환했습니다.\n조선소에서 전함을 재구매·탑승하세요.',
-            );
+            const presentDestroyAlert = () => {
+              showArcAlert(
+                t('combat.shipDestroyedTitle'),
+                t('combat.shipDestroyedBody'),
+              );
+            };
+            if (!delayWaveLoseAlert) {
+              presentDestroyAlert();
+              return;
+            }
+            if (waveLoseAlertHoldTimerRef.current) {
+              clearTimeout(waveLoseAlertHoldTimerRef.current);
+            }
+            waveLoseAlertHoldTimerRef.current = setTimeout(() => {
+              waveLoseAlertHoldTimerRef.current = null;
+              presentDestroyAlert();
+            }, COMBAT_END_HOLD_MS);
           });
         };
         if (!playerDurabilityWearAppliedRef.current) {
@@ -2874,10 +3228,7 @@ export function usePlanetEdenRaidSim(
       // 자동 리스폰 재교전 삭제(2026-07-27) — 전멸 후 재개는 쿨다운(waveCombatCooldownStore) 경유
       // 재착륙·재진입만 허용(웨이브 모드는 기존대로 컨트롤러가 처리).
 
-      const aliveRed = agents.some(a => a.alive && a.team === 'red');
-      const aliveBlue = agents.some(a => a.alive && a.team === 'blue');
-      const aliveOrange = agents.some(a => a.alive && a.team === 'orange');
-      const aliveCount = agents.filter(a => a.alive).length;
+      const { aliveRed, aliveBlue, aliveOrange, aliveCount } = recountAliveBattle(agents);
       const activeBattle = aliveOrange ? aliveCount >= 2 : aliveRed && aliveBlue;
       if (activeBattle) {
         waveOutcomeAwardedRef.current = false;
@@ -2923,6 +3274,18 @@ export function usePlanetEdenRaidSim(
             // 웨이브 전체 승리는 planet.tsx handleWaveDefenseRunEnded도 mark(중복 무해).
             if (winnerTeam === 'blue' && hadPlayerCombat && isFinalWaveOrNonWave) {
               markWaveCombatVictoryCooldown(combatPlanetId);
+              const hubLock = resolveQuestCombatLock(
+                useMissionStore.getState().progresses,
+                useMissionStore.getState().activeMissionId,
+              );
+              applyDefeatEnemyMissionObjectives({
+                venue: 'hub_orbit',
+                planetId: combatPlanetId,
+                enemyTemplateId: hubLock?.venue === 'hub_orbit' ? hubLock.templateId : null,
+              });
+              if (!wdForReveal.active) {
+                tryPresentPendingMissionClearDialog();
+              }
             }
             if (isFinalWaveOrNonWave) {
               maybeTriggerArcCoreShadowRevealOnCombatVictory(
@@ -2935,8 +3298,14 @@ export function usePlanetEdenRaidSim(
         waveOutcomeAwardedRef.current = true;
         battleEngageStartMsRef.current = null;
         // 웨이브 디펜스: red 전멸(blue 승) → 컨트롤러에 클리어 신호(다음 웨이브 재장전)
-        if (winnerTeam === 'blue' && useWaveDefenseStore.getState().active) {
-          useWaveDefenseStore.getState().setPhase('cleared');
+        // red/orange 승 → 패배 종료(플레이어 격파 경로가 빗나가도 phase=combat 고착 방지)
+        const wdOutcome = useWaveDefenseStore.getState();
+        if (wdOutcome.active) {
+          if (winnerTeam === 'blue') {
+            wdOutcome.setPhase('cleared');
+          } else {
+            wdOutcome.requestEndRun('lose');
+          }
         }
       }
       for (const ag of agents) {
@@ -2972,10 +3341,7 @@ export function usePlanetEdenRaidSim(
       }
       const prevPts = prevPtsRef.current;
       const prevPtsLen = maxAgentId < 0 ? 0 : maxAgentId + 1;
-      if (prevPts.length !== prevPtsLen) prevPts.length = prevPtsLen;
-      for (const a of agents) {
-        prevPts[a.id] = { x: a.x, y: a.y };
-      }
+      writePrevAgentPts(prevPts, agents, prevPtsLen);
       if (
         activeBattle &&
         elapsed >= nextTempoJudgeAtRef.current &&
@@ -2986,6 +3352,7 @@ export function usePlanetEdenRaidSim(
         const a1 = firstAliveLeadByTeam(agents, 'blue');
         if (a0?.alive && a1?.alive && a0.team !== a1.team) {
           applyTempoJudge(a0, a1);
+          propagateFleetTempoFromLeads(agents, a0, a1);
         }
         nextTempoJudgeAtRef.current = elapsed + TEMPO_JUDGE_INTERVAL_MS;
       }
@@ -3014,6 +3381,19 @@ export function usePlanetEdenRaidSim(
         maneuverInputBuf.bands = ag.rangeBands;
         maneuverInputBuf.speedPxPerMs = Math.hypot(ag.vx, ag.vy);
         maneuverInputBuf.teamSlot = teamSlotByAgentIdRef.current[ag.id] ?? 0;
+        maneuverInputBuf.weaponProfileReady = true;
+        maneuverInputBuf.hasMissile =
+          ag.missileSalvoCount > 0 && ag.missileWeaponId.trim().length > 0;
+        maneuverInputBuf.hasLaser = ag.laserWeaponId.trim().length > 0 && ag.laserEngageRangePx > 0;
+        maneuverInputBuf.hasClose =
+          ag.closeRangeSalvoCount > 0 && ag.closeRangeWeaponId.trim().length > 0;
+        maneuverInputBuf.selfHeadingRad = ag.headingRad;
+        maneuverInputBuf.enemyHeadingRad = other.headingRad;
+        maneuverInputBuf.bearingToEnemyRad = Math.atan2(
+          otherPrev.y - selfPrev.y,
+          otherPrev.x - selfPrev.x,
+        );
+        maneuverInputBuf.maneuverSeed = ag.id;
         const decision = resolveCapitalManeuverDecision(ag, maneuverInputBuf, maneuverDecisionBuf);
         let P = compositeNavigatePose(
           ag.id,
@@ -3030,6 +3410,10 @@ export function usePlanetEdenRaidSim(
           ag.kiteEvasionMode,
           ag.rangeBands,
           decision.standoffRingOffsetPx,
+          other.headingRad,
+          decision.bearingGoal,
+          decision.employBand,
+          decision.holdPairDistPx,
         );
         if (
           activeBattle &&
@@ -3142,8 +3526,26 @@ export function usePlanetEdenRaidSim(
         const inLaserRange = dist <= ag.laserEngageRangePx;
         const inAttackArc = targetInCapitalFrontAttackArc(ag, other);
         const laserReady = elapsed >= ag.nextFireMs;
-        // 규칙: 쿨다운 + 사거리 + 전방 120° 부채꼴
-        if (laserReady && inLaserRange && inAttackArc) {
+        const allowLaser = capitalWeaponFireAllowed(
+          ag.employBand,
+          ag.preferredWeapon,
+          'laser',
+          ag.stalemateWeaponLock,
+        );
+        const allowMissile = capitalWeaponFireAllowed(
+          ag.employBand,
+          ag.preferredWeapon,
+          'missile',
+          ag.stalemateWeaponLock,
+        );
+        const allowClose = capitalWeaponFireAllowed(
+          ag.employBand,
+          ag.preferredWeapon,
+          'close',
+          ag.stalemateWeaponLock,
+        );
+        // 규칙: 쿨다운 + 사거리 + 전방 120° 부채꼴 + 함장 우선 무기 게이트
+        if (laserReady && inLaserRange && inAttackArc && allowLaser) {
           ag.nextFireMs = elapsed + ag.laserRechargeMs + ag.laserCooldownJitterMs;
           ag.lastLaserStartMs = elapsed;
           ag.lastWeaponFireAtMs = elapsed;
@@ -3152,14 +3554,53 @@ export function usePlanetEdenRaidSim(
           /** 레이저는 발사 시점에 즉시 1회 판정/타격 */
           if (laserOutcome > 0) {
             const rawLaserDamage = rollAgentWeaponDamage(ag, other, 'laser', laserOutcome);
-            const hullDamage = applyAgentIncomingDamage(other, rawLaserDamage, ag.attackBonusStat);
+            const laserFx = getWeaponSpecialFxPolicy(ag.laserWeaponId);
+            const hullDamage = applyAgentIncomingDamage(
+              other,
+              rawLaserDamage,
+              ag.attackBonusStat,
+              laserFx?.ignoreShield ?? false,
+              laserFx?.ignoreArmor ?? false,
+              ag.skillArmorPierce,
+              ag.skillAuto?.shieldPenPct ?? 0,
+              ag.skillAuto?.sneakAttackMul ?? 1,
+              ag.skillAuto,
+            );
             applyHitKnockback(other, { x: ag.x, y: ag.y }, Math.max(1, hullDamage), margin, orbitSize);
+            applyMultiLockExtraHits(ag, other.id, agents, (extra) => {
+              applyAgentIncomingDamage(
+                extra,
+                rawLaserDamage,
+                ag.attackBonusStat,
+                laserFx?.ignoreShield ?? false,
+                laserFx?.ignoreArmor ?? false,
+                ag.skillArmorPierce,
+                ag.skillAuto?.shieldPenPct ?? 0,
+              );
+              if (extra.hullHp <= 0) finalizeShipDestroyed(extra, ag, elapsed);
+            });
+            if (laserFx) {
+              applySpecialWeaponStatusOnAgent(other, laserFx, elapsed);
+              applySpecialWeaponAoeAroundPoint({
+                owner: ag,
+                agents,
+                impactPoint: { x: other.x, y: other.y },
+                elapsedMs: elapsed,
+                weaponId: ag.laserWeaponId,
+                skipAgentId: other.id,
+                damageSlot: 'laser',
+                applyIncomingDamage: applyAgentIncomingDamage,
+                rollDamage: rollAgentWeaponDamage,
+                resolveAttackOutcome: resolveAgentAttackOutcome,
+                finalizeDestroyed: finalizeShipDestroyed,
+              });
+            }
             missileHitFxRef.current.push({
               id: 1000000 + ag.id * 1000 + other.id,
               x: other.x,
               y: other.y,
               startMs: elapsed,
-              color: other.stroke ?? '#94A3B8',
+              color: laserFx?.tintHex || other.stroke || '#94A3B8',
               missileWeaponId: ag.laserWeaponId,
               ownerTeam: ag.team,
               effectKind: 'laser_dodge',
@@ -3181,7 +3622,13 @@ export function usePlanetEdenRaidSim(
           dist <= ag.missileMaxRangePx + CAPITAL_MISSILE_RANGE_LOOSEN_PX &&
           dist <= combatDetectionRangePx(orbitSize, margin) * ag.detectRangeScale + 8;
         const missileSalvoReady = elapsed >= ag.nextMissileSalvoAt;
-        if (ag.activeSalvoBaseMs === null && missileSalvoReady && inMissileRange && inAttackArc) {
+        if (
+          ag.activeSalvoBaseMs === null &&
+          missileSalvoReady &&
+          inMissileRange &&
+          inAttackArc &&
+          allowMissile
+        ) {
           ag.activeSalvoBaseMs = elapsed;
           ag.activeSalvoNextShotAtMs = elapsed;
           ag.salvoSpawned = 0;
@@ -3209,6 +3656,7 @@ export function usePlanetEdenRaidSim(
             ag.activeSalvoBaseMs = null;
             ag.activeSalvoNextShotAtMs = null;
             ag.salvoSpawned = 0;
+            ag.longRangeSalvoSpent += 1;
           } else if (
             elapsed >
             ag.activeSalvoBaseMs +
@@ -3230,7 +3678,12 @@ export function usePlanetEdenRaidSim(
           dist <= ag.closeRangeMaxRangePx + CAPITAL_MISSILE_RANGE_LOOSEN_PX &&
           inAttackArc;
         const closeRangeSalvoReady = elapsed >= ag.nextCloseRangeSalvoAt;
-        if (ag.activeCloseRangeSalvoBaseMs === null && closeRangeSalvoReady && inCloseRange) {
+        if (
+          ag.activeCloseRangeSalvoBaseMs === null &&
+          closeRangeSalvoReady &&
+          inCloseRange &&
+          allowClose
+        ) {
           ag.activeCloseRangeSalvoBaseMs = elapsed;
           ag.activeCloseRangeNextShotAtMs = elapsed;
           ag.closeRangeSalvoSpawned = 0;
@@ -3275,6 +3728,66 @@ export function usePlanetEdenRaidSim(
         }
       }
 
+      const craftScratch = craftImpactScratchRef.current;
+      const craftsNow = craftsRef.current;
+      if (!anyCapitalCraftAlive(craftsNow)) {
+        craftScratch.count = 0;
+      } else {
+      tickCapitalCrafts(craftsNow, dt, idBuf, craftScratch);
+      for (let ci = 0; ci < craftsNow.length; ci++) {
+        const craft = craftsNow[ci]!;
+        if (!craft.alive || !craft.interceptMissiles) continue;
+        for (let mi = 0; mi < missilesRef.current.length; mi++) {
+          const incoming = missilesRef.current[mi]!;
+          if (incoming.hitApplied || incoming.missPassThrough) continue;
+          if (incoming.targetAgentId !== craft.ownerAgentId) continue;
+          if (incoming.ownerAgentId === craft.ownerAgentId) continue;
+          const u = Math.min(
+            1,
+            Math.max(0, (elapsed - incoming.startMs) / Math.max(1, incoming.travelMs)),
+          );
+          const pos = writeQuadBezierInto(
+            interceptBezierScratch,
+            incoming.p0,
+            incoming.p1,
+            incoming.p2,
+            u,
+          );
+          if (Math.hypot(pos.x - craft.x, pos.y - craft.y) <= 18) {
+            incoming.hitApplied = true;
+            incoming.missPassThrough = true;
+          }
+        }
+      }
+      for (let ci = 0; ci < craftScratch.count; ci++) {
+        const ev = craftScratch.events[ci]!;
+        const owner = idBuf[ev.ownerAgentId];
+        const victim = idBuf[ev.targetAgentId];
+        if (victim?.alive && owner) {
+          applyCapitalCraftHitToAgent(owner, victim, ev, elapsed, margin, orbitSize);
+        }
+        if (ev.aoeRadiusPx > 0 && owner) {
+          for (let ai = 0; ai < agents.length; ai++) {
+            const other = agents[ai]!;
+            if (!other.alive || other.id === ev.targetAgentId) continue;
+            if (other.team === owner.team) continue;
+            if (Math.hypot(other.x - ev.x, other.y - ev.y) > ev.aoeRadiusPx) continue;
+            applyCapitalCraftHitToAgent(owner, other, ev, elapsed, margin, orbitSize);
+          }
+        }
+        missileHitFxRef.current.push({
+          id: nextMissileId.current++,
+          x: ev.x,
+          y: ev.y,
+          startMs: elapsed,
+          color: victim?.stroke ?? '#94A3B8',
+          missileWeaponId: ev.weaponId,
+          ownerTeam: owner?.team,
+          effectKind: ev.family === 'drone' ? 'drone_burst' : 'carrier_bomb',
+        });
+      }
+      }
+
       for (const m of missilesRef.current) {
         if (m.hitApplied) continue;
         if (elapsed - m.startMs < m.travelMs) continue;
@@ -3304,6 +3817,7 @@ export function usePlanetEdenRaidSim(
           applyIncomingDamage: applyAgentIncomingDamage,
           applyKnockback: applyHitKnockback,
           finalizeDestroyed: finalizeShipDestroyed,
+          missiles: missilesRef.current,
         });
         missileHitFxRef.current.push({
           id: m.id,
@@ -3317,8 +3831,31 @@ export function usePlanetEdenRaidSim(
             const missileOutcome = resolveAgentAttackOutcome(owner, victim, 'missile');
             if (missileOutcome > 0) {
               const missileRawDamage = rollAgentWeaponDamage(owner, victim, 'missile', missileOutcome);
-              const hullDamage = applyAgentIncomingDamage(victim, missileRawDamage, owner.attackBonusStat);
+              const missileFx = getWeaponSpecialFxPolicy(m.missileWeaponId);
+              const hullDamage = applyAgentIncomingDamage(
+                victim,
+                missileRawDamage,
+                owner.attackBonusStat,
+                missileFx?.ignoreShield ?? false,
+                missileFx?.ignoreArmor ?? false,
+                owner.skillArmorPierce,
+                owner.skillAuto?.shieldPenPct ?? 0,
+                owner.skillAuto?.sneakAttackMul ?? 1,
+                owner.skillAuto,
+              );
               applyHitKnockback(victim, m.p0, Math.max(1, hullDamage), margin, orbitSize);
+              applyMultiLockExtraHits(owner, victim.id, agents, (extra) => {
+                applyAgentIncomingDamage(
+                  extra,
+                  missileRawDamage,
+                  owner.attackBonusStat,
+                  missileFx?.ignoreShield ?? false,
+                  missileFx?.ignoreArmor ?? false,
+                  owner.skillArmorPierce,
+                  owner.skillAuto?.shieldPenPct ?? 0,
+                );
+                if (extra.hullHp <= 0) finalizeShipDestroyed(extra, owner, elapsed);
+              });
             }
           }
           if (owner) {
@@ -3374,6 +3911,7 @@ export function usePlanetEdenRaidSim(
     combatOrbitPostStepRef.current = null;
     missilesRef.current = [];
     missileHitFxRef.current = [];
+    resetCapitalCraftPool(craftsRef.current);
     agentsRef.current = [];
     agentByIdBuf.current = [];
     prevPtsRef.current = [];
@@ -3397,6 +3935,7 @@ export function usePlanetEdenRaidSim(
       agentsRef,
       agentByIdSparseRef: agentByIdBuf,
       missilesRef,
+      craftsRef,
       missileHitFxRef,
       respawnCountdownSecRef,
       combatOrbitPostStepRef,
@@ -3466,6 +4005,7 @@ function hudCombatLogStrideFrames(agentCount: number): number {
 
 type CombatHudLogSnapshot = {
   respawnLine: string | null;
+  skillProcLine: string | null;
   agentLines: Array<{
     agId: number;
     main: string;
@@ -3483,6 +4023,14 @@ function buildCombatHudLogSnapshot(sim: PlanetEdenRaidSim): CombatHudLogSnapshot
   const idBuf = HUD_SCRATCH_AGENT_ID_BUF;
   const respSec = respawnCountdownSecRef.current;
   const respawnLine = respSec === null ? null : `리스폰 ${respSec}s (테스트)`;
+  let skillProcLine: string | null = null;
+  for (let i = 0; i < agents.length; i += 1) {
+    const ag = agents[i];
+    if (!ag || !isPlayerCombatAgent(ag)) continue;
+    const label = readSkillProcLabel(ag, nowMs);
+    if (label) skillProcLine = label;
+    break;
+  }
   const agentLines: CombatHudLogSnapshot['agentLines'] = [];
   const nAgents = agents.length;
   for (let i = 0; i < nAgents; i++) {
@@ -3516,7 +4064,7 @@ function buildCombatHudLogSnapshot(sim: PlanetEdenRaidSim): CombatHudLogSnapshot
     const detectR = combatDetectionRangePx(orbitSize, margin) * ag.detectRangeScale;
     const baseStage = combatMotionStageFromDist(dist, detectR, ag.rangeBands);
     const navStage = ag.tempoRole === 'kite' ? 'missile_reposition' : baseStage;
-    const tail = ` ${combatStageLabelKo(navStage)} 거리 ${Math.round(dist)} L ${(
+    const tail = ` ${employBandLabelKo(ag.employBand)}/${combatStageLabelKo(navStage)} 거리 ${Math.round(dist)} L ${(
       laserCd / 1000
     ).toFixed(1)}s M ${(missileCd / 1000).toFixed(1)}s`;
     const press = ag.tempoRole === 'press';
@@ -3528,7 +4076,7 @@ function buildCombatHudLogSnapshot(sim: PlanetEdenRaidSim): CombatHudLogSnapshot
       tempoPress: press,
     });
   }
-  return { respawnLine, agentLines };
+  return { respawnLine, skillProcLine, agentLines };
 }
 
 export function PlanetEdenRaidCombatHudOverlay({
@@ -3542,7 +4090,7 @@ export function PlanetEdenRaidCombatHudOverlay({
   const sim = simOverride ?? fromCtx;
   const [renderFpsDisplay, setRenderFpsDisplay] = useState(() => sim?.renderFpsRef.current ?? 60);
   const [logHud, setLogHud] = useState<CombatHudLogSnapshot>(() =>
-    sim ? buildCombatHudLogSnapshot(sim) : { respawnLine: null, agentLines: [] },
+    sim ? buildCombatHudLogSnapshot(sim) : { respawnLine: null, skillProcLine: null, agentLines: [] },
   );
   /** 접힘: 상단 FPS만 표시. 펼침: 전투 로그 전체 — 기본은 접힘 */
   const [hudLogExpanded, setHudLogExpanded] = useState(false);
@@ -3550,14 +4098,12 @@ export function PlanetEdenRaidCombatHudOverlay({
   useEffect(() => {
     if (!sim) return;
     setRenderFpsDisplay(sim.renderFpsRef.current);
-    if (CAPITAL_REALTIME_COMBAT_LOG_UI_ENABLED) {
-      setLogHud(buildCombatHudLogSnapshot(sim));
-    }
+    setLogHud(buildCombatHudLogSnapshot(sim));
   }, [sim]);
 
   useEffect(() => {
     if (sim) return;
-    setLogHud({ respawnLine: null, agentLines: [] });
+    setLogHud({ respawnLine: null, skillProcLine: null, agentLines: [] });
     setHudLogExpanded(false);
   }, [sim]);
 
@@ -3571,20 +4117,16 @@ export function PlanetEdenRaidCombatHudOverlay({
         lastRenderFpsShown = rf;
         setRenderFpsDisplay(rf);
       }
-      if (CAPITAL_REALTIME_COMBAT_LOG_UI_ENABLED) {
-        frame += 1;
-        const stride = hudCombatLogStrideFrames(sim.agentsRef.current.length);
-        if (frame % stride === 0) {
-          setLogHud(buildCombatHudLogSnapshot(sim));
-        }
+      frame += 1;
+      const stride = hudCombatLogStrideFrames(sim.agentsRef.current.length);
+      if (frame % stride === 0) {
+        setLogHud(buildCombatHudLogSnapshot(sim));
       }
     };
     frame = 0;
     lastRenderFpsShown = sim.renderFpsRef.current;
     setRenderFpsDisplay(lastRenderFpsShown);
-    if (CAPITAL_REALTIME_COMBAT_LOG_UI_ENABLED) {
-      setLogHud(buildCombatHudLogSnapshot(sim));
-    }
+    setLogHud(buildCombatHudLogSnapshot(sim));
     const id = setInterval(tick, 120);
     return () => clearInterval(id);
   }, [sim]);
@@ -3621,6 +4163,11 @@ export function PlanetEdenRaidCombatHudOverlay({
           </Pressable>
         </View>
       </View>
+      {logHud.skillProcLine ? (
+        <Text style={styles.hudSkillProc} numberOfLines={1}>
+          {logHud.skillProcLine}
+        </Text>
+      ) : null}
       {hudLogExpanded && CAPITAL_REALTIME_COMBAT_LOG_UI_ENABLED
         ? logHud.agentLines.map(line => (
             <View key={line.agId} style={styles.hudAgentRow}>
@@ -3708,6 +4255,14 @@ const styles = StyleSheet.create({
     fontSize: 9,
     color: 'rgba(255,214,120,0.95)',
     fontFamily: FONTS.mono,
+  },
+  hudSkillProc: {
+    fontSize: 12,
+    color: '#FDE68A',
+    fontFamily: FONTS.mono,
+    fontWeight: '700',
+    letterSpacing: 1,
+    marginBottom: 2,
   },
   hudFps: {
     fontSize: 9,

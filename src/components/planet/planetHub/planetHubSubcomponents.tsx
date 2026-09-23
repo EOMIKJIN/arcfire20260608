@@ -1,6 +1,6 @@
 // planet hub subcomponents — extracted from app/(game)/planet.tsx
 import React, { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, useWindowDimensions, Platform, Pressable } from 'react-native';
+import { View, Text, Image, useWindowDimensions, Platform, Pressable } from 'react-native';
 import type { LayoutChangeEvent } from 'react-native';
 import Animated, {
   runOnJS,
@@ -19,12 +19,14 @@ import { resolvePlanetZoneDisplayLabel } from '../../../i18n/zoneText';
 import type { StarSystem, ZoneType } from '../../../types';
 import type { PlanetCoreGaugeView } from '../../../store/planetCoreRuntimeStore';
 import { planetCoreRuntimeToGaugeView, planetCsvBaselineToRuntime, usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore';
+import { usePlanetGlobeRuntimeSourceStore } from '../../../store/planetGlobeRuntimeSourceStore';
 import { usePlanetNebulaStore } from '../../../store/planetNebulaStore';
 import { usePlayerStore } from '../../../store/playerStore';
 import { useClanWarFoundationStore } from '../../../store/clanWarFoundationStore';
 import type { ArcNpcTrafficShip } from '../../../store/arcNpcTrafficStore';
 import type { ArcInboundDrone } from '../../../store/arcInboundDroneStore';
 import { PlanetCorePortraitWithTempAdminOverride } from '../PlanetCorePortraitWithTempAdminOverride';
+import { resolveArcadiaGlobeBakeSource } from '../../../game/tempAdminArcadiaGlobeBake';
 import { PlanetAtmosphereBoundaryRing } from '../PlanetAtmosphereBoundaryRing';
 import { PlanetHubOrbitSkiaLayer } from '../PlanetHubOrbitSkiaLayer';
 import { PlanetHubInboundDroneLayer } from '../PlanetHubInboundDroneLayer';
@@ -33,6 +35,9 @@ import { readPlanetOrbitClockMs } from '../../../arcCore/orbitClockMsBridge';
 import { HUB_WORKLET_JS_BRIDGE_INTERVAL_MS } from '../planetHubWorkletContract';
 import { PlanetNebulaImageBackdrop } from '../PlanetNebulaImageBackdrop';
 import { SkiaPlanetNebulaShaderBackdrop } from '../SkiaPlanetNebulaShaderBackdrop';
+import { enqueueColonizedPlanetGlobeBake, hasBundledPlanetGlobeBake } from '../../../game/planetGlobeRuntimeBake';
+import { registerPlanetSessionResource } from '../../../game/planetSessionRegistry';
+import { resolvePlanetAtmosphereRingHex } from '../../../game/planetNebulaProfile';
 import { resolveMainStageSkiaBackdrop } from '../../../game/mainStageSkiaBackdrop';
 import { useCapitalRealtimeCombatSimContext } from '../../../combat';
 import { resolvePlanetNebulaBakedSource } from '../../../game/planetNebulaBakedAssets';
@@ -53,7 +58,16 @@ import {
 } from '../../../stages/planetMainStageLayout';
 import type { CapitalRealtimeCombatSim } from '../../../combat/capitalRealtimeTypes';
 import type { WorldObject } from '../../../worldObjects';
-import { WORLD_OBJECT_DEFENSE_SATELLITE_ORBIT_CYCLE_MS, WORLD_OBJECT_ORBIT_CYCLE_MS, clampDefenseSatelliteRadiusScale, clampWorldObjectRadiusScale } from '../../../worldObjects/planetWorldObjectOrbit';
+import { isStelliumColonizeWorldObject } from '../../../worldObjects/providers/stelliumColonizeWorldObjectProvider';
+import { STELLIUM_COLONIZE_ORANGE, StelliumColonizeOrbitTrafficMark } from './StelliumColonizeOrbitMark';
+import { isStelliumColonizeRimPhase } from '../../../arcCore/colonize/stelliumColonizeTypes';
+import { useStelliumColonizeStore } from '../../../store/stelliumColonizeStore';
+import {
+  WORLD_OBJECT_DEFENSE_SATELLITE_ORBIT_CYCLE_MS,
+  WORLD_OBJECT_ORBIT_CYCLE_MS,
+  clampDefenseSatelliteRadiusScale,
+  clampWorldObjectRadiusScale,
+} from '../../../worldObjects/planetWorldObjectOrbit';
 import {
   INFO_LOG_VIEWPORT_ROWS,
   MAX_WORLD_OBJECT_MARKS,
@@ -66,10 +80,13 @@ import {
   WORLD_OBJECT_ANCHOR_PX,
 } from '../../../game/planetHub/planetHubConstants';
 import { planetHubStyles as styles, planetHubBgStyles as bgStyles } from './planetHubStyles';
-import { resolveNearbyInfoPanelPrimaryLabel } from '../../../game/planetHub/nearbyPresenceDisplay';
+import {
+  localizeNearbyInfoDetailRow,
+  resolveNearbyInfoPanelCaptainName,
+} from '../../../game/planetHub/nearbyPresenceDisplay';
+import { resolvePinnedInfoMark } from '../../../game/planetHub/nearbyPresenceContract';
 import type { NearbyInfoDetailRow } from '../../../game/planetHub/nearbyPresenceDisplay';
 import { presentNearbyPresenceInfoOverlay } from '../../../ui/overlay/arcOverlayStore';
-import { NearbyPresenceRowActionButton } from '../NearbyPresenceRowActionButton';
 
 export const ORBIT_CENTER = ORBIT_SCENE_SIZE / 2;
 
@@ -81,45 +98,52 @@ export type NearbyInfoRow = NearbyInfoDetailRow;
 
 export function NearbyShipInfoPanel({
   rows,
-  mutedForCapitalCombat,
+  planetId,
 }: {
   rows: NearbyInfoDetailRow[];
-  /** 메인스테이지 자본궤도 전투 중 — info 패널을 회색·낮은 불투명도로 전환 */
-  mutedForCapitalCombat?: boolean;
+  planetId?: string;
 }) {
   const t = useT();
+  const locale = useAppSettingsStore((s) => s.locale);
+  const localizedRows = useMemo(
+    () => rows.map((row) => localizeNearbyInfoDetailRow(row, locale)),
+    [rows, locale],
+  );
 
   const openDetailOverlay = useCallback(() => {
-    presentNearbyPresenceInfoOverlay(rows);
-  }, [rows]);
+    presentNearbyPresenceInfoOverlay(localizedRows, planetId ?? '');
+  }, [localizedRows, planetId]);
 
   return (
     <Pressable
       onPress={openDetailOverlay}
-      style={[styles.infoPanelWrap, mutedForCapitalCombat && styles.infoPanelWrapCapitalCombatMuted]}
+      style={styles.infoPanelWrap}
       accessibilityRole="button"
       accessibilityLabel={t('nearbyPresence.panelA11y')}
     >
-      <Text style={[styles.infoPanelTitle, mutedForCapitalCombat && styles.infoPanelTitleCapitalCombatMuted]}>
-        info
+      <Text style={styles.infoPanelTitle}>
+        {t('nearbyPresence.panelTitle')}
       </Text>
       <View style={styles.infoLogContent} pointerEvents="none">
-        {rows.slice(0, INFO_LOG_VIEWPORT_ROWS).map((row) => (
+        {localizedRows.slice(0, INFO_LOG_VIEWPORT_ROWS).map((row) => {
+          const pinMark = resolvePinnedInfoMark(row.pinKind);
+          return (
           <View key={`info-slot-${row.keySlot}`} style={styles.infoTableRow}>
-            <Text
-              style={[styles.infoRowBullet, mutedForCapitalCombat && styles.infoInkCapitalCombatMuted]}
-            >
+            <Text style={styles.infoRowBullet}>
               ›{' '}
             </Text>
+            {pinMark ? (
+              <Text style={styles.infoPinMark}>{pinMark} </Text>
+            ) : null}
             <Text
-              style={[styles.infoTableCaptain, mutedForCapitalCombat && styles.infoInkCapitalCombatMuted]}
+              style={styles.infoTableCaptain}
               numberOfLines={1}
             >
-              {resolveNearbyInfoPanelPrimaryLabel(row)}
+              {resolveNearbyInfoPanelCaptainName(row)}
             </Text>
-            <NearbyPresenceRowActionButton action={row.action} variant="compact" />
           </View>
-        ))}
+          );
+        })}
       </View>
     </Pressable>
   );
@@ -185,7 +209,39 @@ export function PlanetDot({
   combatMuted?: boolean;
 }) {
   const color = combatMuted ? PLANET_HUB_CAPITAL_COMBAT_GRAY.planetRing : ZONE_COLORS[zone];
+  const colonizeRimActive = useStelliumColonizeStore((s) =>
+    isStelliumColonizeRimPhase(s.byPlanetId[planetId]?.phase),
+  );
+  const nebulaRingHex = resolvePlanetAtmosphereRingHex(planetId, zone);
+  const runtimeGlobeUri = usePlanetGlobeRuntimeSourceStore((s) =>
+    s.activePlanetId === planetId ? s.dataUri : null,
+  );
+  useLayoutEffect(() => {
+    if (combatMuted) return;
+    usePlanetNebulaStore.getState().ensureProfileForPlanet(planetId);
+  }, [combatMuted, planetId]);
+  useEffect(() => {
+    if (combatMuted || hasBundledPlanetGlobeBake(planetId)) return;
+    const token = registerPlanetSessionResource({
+      ownerId: 'planet_globe_runtime',
+      planetId,
+      dispose: () => {
+        usePlanetGlobeRuntimeSourceStore.getState().clearIfPlanet(planetId);
+      },
+    });
+    enqueueColonizedPlanetGlobeBake(planetId, zone);
+    return () => {
+      token.release();
+    };
+  }, [combatMuted, planetId, zone]);
+  const atmosphereRingColor = colonizeRimActive
+    ? STELLIUM_COLONIZE_ORANGE
+    : (combatMuted ? color : (nebulaRingHex ?? color));
   const innerSize = size * 0.7;
+  const globeBakeSource = resolveArcadiaGlobeBakeSource(planetId, {
+    combatMuted,
+    runtimeFileUri: runtimeGlobeUri,
+  });
 
   return (
     <View
@@ -204,13 +260,23 @@ export function PlanetDot({
               overflow: 'hidden',
             }}
           >
-            <PlanetCorePortraitWithTempAdminOverride
-              planetId={planetId}
-              size={innerSize}
-              zone={zone}
-              coreGauges={coreGauges}
-              combatMuted={combatMuted}
-            />
+            {globeBakeSource ? (
+              <Image
+                source={globeBakeSource}
+                style={{ width: innerSize, height: innerSize }}
+                resizeMode="cover"
+                resizeMethod="resize"
+                accessibilityIgnoresInvertColors
+              />
+            ) : (
+              <PlanetCorePortraitWithTempAdminOverride
+                planetId={planetId}
+                size={innerSize}
+                zone={zone}
+                coreGauges={coreGauges}
+                combatMuted={combatMuted}
+              />
+            )}
           </View>
         </View>
       ) : null}
@@ -239,7 +305,7 @@ export function PlanetDot({
           ))}
         </View>
       ) : null}
-      <PlanetAtmosphereBoundaryRing size={size} borderColor={color} borderWidth={2} />
+      <PlanetAtmosphereBoundaryRing size={size} borderColor={atmosphereRingColor} borderWidth={2} />
     </View>
   );
 }
@@ -311,7 +377,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   const [inboundDroneSkiaDodgeLatch, setInboundDroneSkiaDodgeLatch] = useState(false);
   /** dodge Skia 오버레이 — latch 직후 즉시 언마운트 금지(SIGSEGV) · OFF 후 디바운스 언마운트 */
   const [hubDodgeSkiaOverlayMounted, setHubDodgeSkiaOverlayMounted] = useState(false);
-  /** Skia dodge Canvas 성운 로드 완료 — 이때 RN 성운 중복 그리기 숨김 */
+  /** Skia dodge Canvas 성운+dodge 로드 완료 — ColorDodge 동일 버퍼 준비 후 RN 성운 숨김 */
   const [hubSkiaDodgeNebulaReady, setHubSkiaDodgeNebulaReady] = useState(false);
   /** deep reclaim — RN Image remount key only (Skia dodge sticky — key remount 금지) */
   const [hubRnBackdropRemountGen, setHubRnBackdropRemountGen] = useState(0);
@@ -516,13 +582,12 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
     showEdenRaidTest,
   ]);
   const nebulaBackdropSize = Math.round(Math.max(bgWindowWidth, bgWindowHeight) * 0.59);
-  /** dual-stack: Skia가 성운+colorDodge를 그릴 때 RN Image 중복 방지 */
-  const hideRnNebulaForSkiaDodge = Boolean(
-    hubNebulaDualStack
-    && inboundDroneSkiaDodgeLatch
-    && hubDodgeSkiaOverlayMounted
-    && hubSkiaDodgeNebulaReady,
-  );
+  /**
+   * ColorDodge는 Skia 성운과 동일 버퍼 필수 — ready 후 RN만 숨김(언마운트 금지).
+   * inbound remount 스킵은 reclaim 경로에서 유지(깜빡임↓ · 회수 본체 유지).
+   */
+  const hideRnNebulaForSkiaDodge =
+    hubDodgeSkiaOverlayMounted && hubSkiaDodgeNebulaReady && inboundDroneSkiaDodgeLatch;
 
   const hubInboundSkiaDodgeOverlay = (
     <SkiaPlanetNebulaShaderBackdrop
@@ -541,7 +606,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
       dodgeOrbitOffsetX={dodgeOrbitOffset.x}
       dodgeOrbitOffsetY={dodgeOrbitOffset.y}
       sessionPlanetId={planetId}
-      hideUntilImagesReady={Boolean(mainStageBackdrop.nebulaShaderEnabled && nebulaBakedImageSource)}
+      hideUntilImagesReady
       onNebulaImagesReady={handleSkiaDodgeNebulaReady}
       onNebulaImagesLost={handleSkiaDodgeNebulaLost}
     />
@@ -594,13 +659,9 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
         ) : hubNebulaDualStack ? (
           <>
             {/*
-              RN 성운 백드롭을 "항상" 베이스로 유지한다(opacity 1, 언마운트·투명화 금지).
-              과거엔 skiaNebulaCommitted 시 RN을 언마운트하고 Skia 단독 렌더했으나,
-              무역소/조선소 등 다른 GL 화면 왕복 시 Android가 Skia 성운 텍스처를 축출하면
-              (useImage SkImage 객체는 non-null로 남아 onNebulaImagesLost 미발화) Skia가
-              빈 화면을 그려 성운이 사라졌다(2026-06-18 릴리즈 회귀). Skia는 드론 colorDodge
-              FX 블렌드용 오버레이로만 위에 얹는다 — 정상 시 Skia가 덮고, 텍스처 축출 시
-              Skia가 투명해져 밑의 RN 성운이 그대로 보인다(단일 실패점 제거).
+              RN 성운은 마운트 유지(키 remount만 deep reclaim). dodge 활성+Skia ready 시에만
+              opacity 0 — ColorDodge는 Skia 성운 동일 버퍼. Skia 언마운트 시 RN opacity 1 복귀
+              (inbound backdrop remount 스킵으로 재로딩 깜빡임 최소화).
             */}
             <PlanetNebulaImageBackdrop
               key={`rn-nebula-${planetId}-${hubRnBackdropRemountGen}`}
@@ -637,7 +698,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
         ) : null}
       </View>
       <View style={bgStyles.planetBgStack}>
-        <View style={[bgStyles.systemBadge, hubCapitalCombatMute && bgStyles.planetHubCapitalCombatBadgeDim]}>
+        <View style={[bgStyles.systemBadge, hubCapitalCombatMute && bgStyles.systemBadgeCombatUnderVeil]}>
           <Text
             style={[
               bgStyles.zoneBadge,
@@ -661,14 +722,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
             ]}
           >
             <Text
-              style={[
-                bgStyles.systemName,
-                hubCapitalCombatMute && {
-                  color: PLANET_HUB_CAPITAL_COMBAT_GRAY.systemName,
-                  textShadowColor: 'rgba(8, 12, 18, 0.45)',
-                  textShadowRadius: 2,
-                },
-              ]}
+              style={[bgStyles.systemName, hubCapitalCombatMute && bgStyles.hubCombatGrayText]}
               numberOfLines={2}
               ellipsizeMode="tail"
             >
@@ -705,7 +759,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                   <Text
                     style={[
                       bgStyles.safeAiClanPlateClan,
-                      hubCapitalCombatMute && { color: PLANET_HUB_CAPITAL_COMBAT_GRAY.clanText },
+                      hubCapitalCombatMute && bgStyles.hubCombatGrayText,
                     ]}
                     numberOfLines={1}
                   >
@@ -719,10 +773,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
             <Text
               style={[
                 bgStyles.territorySubtitle,
-                hubCapitalCombatMute && {
-                  color: PLANET_HUB_CAPITAL_COMBAT_GRAY.territory,
-                  opacity: 0.88,
-                },
+                hubCapitalCombatMute && bgStyles.hubCombatGrayTerritory,
               ]}
               numberOfLines={2}
             >
@@ -739,10 +790,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
           >
             <View ref={orbitSceneRef} style={bgStyles.orbitScene} onLayout={handleOrbitSceneLayout}>
               <View
-                style={[
-                  bgStyles.orbitLayerPlanet,
-                  hubCapitalCombatMute && bgStyles.planetHubCapitalCombatOrbitDim,
-                ]}
+                style={bgStyles.orbitLayerPlanet}
                 pointerEvents="box-none"
               >
                 <PlanetDot
@@ -750,31 +798,25 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                   size={120}
                   zone={system.zone}
                   coreGauges={planetCoreGauges}
-                  combatMuted={hubCapitalCombatMute}
                 />
               </View>
               {worldObjects.length > 0 ? (
                 <View
-                  style={[
-                    bgStyles.orbitLayerWorldObjects,
-                    hubCapitalCombatMute && bgStyles.planetHubCapitalCombatOrbitDim,
-                  ]}
+                  style={bgStyles.orbitLayerWorldObjects}
                   pointerEvents="box-none"
                 >
                   <PlanetWorldObjectOrbitMarks
                     orbitClockMs={orbitClockMs}
                     worldObjects={worldObjects}
-                    miningPathActive={Boolean(miningPathActive)}
+                    miningPathActive={Boolean(miningPathActive) && !hubCapitalCombatMute}
                     miningProgressPct={Math.max(0, Math.min(100, Math.round(miningProgressPct ?? 0)))}
+                    combatGray={hubCapitalCombatMute}
                   />
                 </View>
               ) : null}
               {hubStageSkiaActive && (tableOrbitSlotCount > 0 || arcNpcShipsAtPlanet.length > 0 || arcInboundDronesAtPlanet.length > 0) ? (
                 <View
-                  style={[
-                    bgStyles.orbitLayerShips,
-                    hubCapitalCombatMute && bgStyles.planetHubCapitalCombatOrbitDim,
-                  ]}
+                  style={bgStyles.orbitLayerShips}
                   pointerEvents="none"
                 >
                 <PlanetTableOrbitMarks
@@ -783,11 +825,13 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                   tableSlotCount={tableOrbitSlotCount}
                   npcOrbitCycleMs={npcOrbitCycleMs}
                   captions={orbitCaptionsBySlot ?? []}
+                  combatGray={hubCapitalCombatMute}
                 />
                   <PlanetHubOrbitSkiaLayer
                     orbitClockMs={orbitClockMs}
                     arcShips={arcNpcShipsAtPlanet}
                     arcCaptionHeads={arcSkiaCaptionHeads}
+                    combatGray={hubCapitalCombatMute}
                   />
                   {!showEdenRaidTest && arcInboundDronesAtPlanet.length > 0 ? (
                     <PlanetHubInboundDroneLayer
@@ -800,10 +844,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
               ) : null}
               {hubStageSkiaActive && !showEdenRaidTest ? (
                 <View
-                  style={[
-                    bgStyles.orbitLayerPlayer,
-                    hubCapitalCombatMute && bgStyles.planetHubCapitalCombatOrbitDim,
-                  ]}
+                  style={bgStyles.orbitLayerPlayer}
                   pointerEvents="none"
                 >
                   <PlanetPlayerBlueOrbitMark orbitClockMs={orbitClockMs} npcOrbitCycleMs={npcOrbitCycleMs} />
@@ -813,6 +854,9 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
           </View>
         </View>
       </View>
+      {hubCapitalCombatMute ? (
+        <View style={bgStyles.planetHubCapitalCombatVeil} pointerEvents="none" />
+      ) : null}
     </View>
   );
 });
@@ -829,19 +873,20 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
   miningPathActive,
   mineable,
   miningProgressPct,
+  combatGray,
 }: {
   object: WorldObject;
   orbitClockMs: SharedValue<number>;
   miningPathActive: boolean;
   mineable: boolean;
   miningProgressPct: number;
+  combatGray?: boolean;
 }) {
   const t = useT();
   const orbitRadiusPx = useMemo(() => {
-    const radiusScale =
-      object.kind === 'defense_satellite'
-        ? clampDefenseSatelliteRadiusScale(object.transform.radiusScale)
-        : clampWorldObjectRadiusScale(object.transform.radiusScale);
+    const radiusScale = object.kind === 'defense_satellite'
+      ? clampDefenseSatelliteRadiusScale(object.transform.radiusScale)
+      : clampWorldObjectRadiusScale(object.transform.radiusScale);
     return ORBIT_CENTER * radiusScale;
   }, [object.kind, object.transform.radiusScale]);
 
@@ -865,10 +910,9 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
   const animated = useAnimatedStyle(() => {
     'worklet';
     const now = orbitClockMs.value;
-    const cycleMs =
-      object.kind === 'defense_satellite'
-        ? WORLD_OBJECT_DEFENSE_SATELLITE_ORBIT_CYCLE_MS
-        : WORLD_OBJECT_ORBIT_CYCLE_MS;
+    const cycleMs = object.kind === 'defense_satellite'
+      ? WORLD_OBJECT_DEFENSE_SATELLITE_ORBIT_CYCLE_MS
+      : WORLD_OBJECT_ORBIT_CYCLE_MS;
     const phase = ((now % cycleMs) / cycleMs + object.transform.phaseBias) % 1;
     const angle = phase * Math.PI * 2;
     const x = ORBIT_CENTER + Math.cos(angle) * orbitRadiusPx;
@@ -888,9 +932,10 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
               style={[
                 bgStyles.worldObjectAsteroidDot,
                 mineable ? null : bgStyles.worldObjectAsteroidDotInactive,
+                combatGray ? bgStyles.hubCombatGrayAsteroid : null,
               ]}
             />
-            {mineable ? (
+            {mineable && !combatGray ? (
               <View style={bgStyles.worldObjectMiningOverlay} pointerEvents="box-none">
               <Svg
                 width={MINING_GUIDE_LINE_RUN_PX}
@@ -936,7 +981,10 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
             ) : null}
           </>
         ) : object.kind === 'wreck' ? (
-          <View style={bgStyles.worldObjectWreckMark} accessibilityLabel={t('hubBg.wreck')} />
+          <View
+            style={[bgStyles.worldObjectWreckMark, combatGray && bgStyles.hubCombatGrayWreck]}
+            accessibilityLabel={t('hubBg.wreck')}
+          />
         ) : object.kind === 'defense_satellite' ? (
           <View style={bgStyles.worldObjectDefenseSatelliteWrap} accessibilityLabel={t('hubBg.defenseSatellite')}>
             <View
@@ -944,17 +992,30 @@ const PlanetWorldObjectOrbitMark = memo(function PlanetWorldObjectOrbitMark({
               pointerEvents="none"
               accessibilityLabel={t('hubBg.defenseZone')}
             />
-            <View style={bgStyles.worldObjectDefenseSatelliteMark} />
+            <View
+              style={[
+                bgStyles.worldObjectDefenseSatelliteMark,
+                combatGray && bgStyles.hubCombatGraySat,
+              ]}
+            />
           </View>
         ) : (
-          <Text style={bgStyles.worldObjectGlyph}>{worldObjectGlyph(object.kind)}</Text>
+          <Text
+            style={[bgStyles.worldObjectGlyph, combatGray && bgStyles.hubCombatGrayMark]}
+          >
+            {worldObjectGlyph(object.kind)}
+          </Text>
         )}
         <Text
-          style={[bgStyles.worldObjectCaption, bgStyles.worldObjectCaptionOverlay]}
+          style={[
+            bgStyles.worldObjectCaption,
+            bgStyles.worldObjectCaptionOverlay,
+            combatGray && bgStyles.hubCombatGrayCaption,
+          ]}
           numberOfLines={1}
           ellipsizeMode="clip"
         >
-          {object.title}
+          {t(object.title, object.titleOrdinal != null ? { n: object.titleOrdinal } : undefined)}
         </Text>
       </View>
     </Animated.View>
@@ -966,16 +1027,21 @@ const PlanetWorldObjectOrbitMarks = memo(function PlanetWorldObjectOrbitMarks({
   orbitClockMs,
   miningPathActive,
   miningProgressPct,
+  combatGray,
 }: {
   worldObjects: WorldObject[];
   orbitClockMs: SharedValue<number>;
   miningPathActive: boolean;
   miningProgressPct: number;
+  combatGray?: boolean;
 }) {
   const renderTargets = useMemo(() => {
     const defenseSats = worldObjects.filter((object) => object.kind === 'defense_satellite');
-    const others = worldObjects.filter((object) => object.kind !== 'defense_satellite');
-    return [...defenseSats, ...others].slice(0, MAX_WORLD_OBJECT_MARKS);
+    const colonizers = worldObjects.filter((object) => isStelliumColonizeWorldObject(object));
+    const others = worldObjects.filter(
+      (object) => object.kind !== 'defense_satellite' && !isStelliumColonizeWorldObject(object),
+    );
+    return [...colonizers, ...defenseSats, ...others].slice(0, MAX_WORLD_OBJECT_MARKS);
   }, [worldObjects]);
   const activeMineableAsteroidId = useMemo(
     () => renderTargets.find((object) => object.kind === 'asteroid')?.id ?? null,
@@ -984,14 +1050,24 @@ const PlanetWorldObjectOrbitMarks = memo(function PlanetWorldObjectOrbitMarks({
   return (
     <>
       {renderTargets.map((object) => (
-        <PlanetWorldObjectOrbitMark
-          key={object.id}
-          object={object}
-          orbitClockMs={orbitClockMs}
-          miningPathActive={miningPathActive}
-          mineable={object.kind === 'asteroid' && object.id === activeMineableAsteroidId}
-          miningProgressPct={miningProgressPct}
-        />
+        isStelliumColonizeWorldObject(object) ? (
+          <StelliumColonizeOrbitTrafficMark
+            key={object.id}
+            object={object}
+            orbitClockMs={orbitClockMs}
+            combatGray={combatGray}
+          />
+        ) : (
+          <PlanetWorldObjectOrbitMark
+            key={object.id}
+            object={object}
+            orbitClockMs={orbitClockMs}
+            miningPathActive={miningPathActive}
+            mineable={object.kind === 'asteroid' && object.id === activeMineableAsteroidId}
+            miningProgressPct={miningProgressPct}
+            combatGray={combatGray}
+          />
+        )
       ))}
     </>
   );
@@ -1004,6 +1080,7 @@ const PlanetTableOrbitMark = memo(function PlanetTableOrbitMark({
   orbitParamsSv,
   tableSlotCount,
   npcOrbitCycleMs,
+  combatGray,
 }: {
   slotIndex: number;
   caption: string;
@@ -1011,6 +1088,7 @@ const PlanetTableOrbitMark = memo(function PlanetTableOrbitMark({
   orbitParamsSv: SharedValue<number[]>;
   tableSlotCount: number;
   npcOrbitCycleMs: number;
+  combatGray?: boolean;
 }) {
   const animated = useAnimatedStyle(() => {
     'worklet';
@@ -1042,9 +1120,13 @@ const PlanetTableOrbitMark = memo(function PlanetTableOrbitMark({
   return (
     <Animated.View style={[bgStyles.orbitMarkWrap, animated]}>
       <View style={bgStyles.orbitMarkLabelCol}>
-        <Text style={bgStyles.orbitMarkGray}>◇</Text>
+        <Text style={[bgStyles.orbitMarkGray, combatGray && bgStyles.hubCombatGrayMark]}>◇</Text>
         {caption ? (
-          <Text style={bgStyles.orbitShipCaption} numberOfLines={1} ellipsizeMode="tail">
+          <Text
+            style={[bgStyles.orbitShipCaption, combatGray && bgStyles.hubCombatGrayCaption]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {caption}
           </Text>
         ) : null}
@@ -1059,12 +1141,14 @@ const PlanetTableOrbitMarks = memo(function PlanetTableOrbitMarks({
   tableSlotCount,
   npcOrbitCycleMs,
   captions,
+  combatGray,
 }: {
   orbitClockMs: SharedValue<number>;
   orbitParamsSv: SharedValue<number[]>;
   tableSlotCount: number;
   npcOrbitCycleMs: number;
   captions: string[];
+  combatGray?: boolean;
 }) {
   return (
     <>
@@ -1077,6 +1161,7 @@ const PlanetTableOrbitMarks = memo(function PlanetTableOrbitMarks({
           orbitParamsSv={orbitParamsSv}
           tableSlotCount={tableSlotCount}
           npcOrbitCycleMs={npcOrbitCycleMs}
+          combatGray={combatGray}
         />
       ))}
     </>

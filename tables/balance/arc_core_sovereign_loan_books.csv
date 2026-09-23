@@ -1,0 +1,12 @@
+bookId,borrowerNation,instrument,liveNow,principalSource,lenderNow,lenderFuture,defaultHalt,occupationUnwind,classifiedAs,notesKo
+stellium_colonize_ops,stellium,revolving_ops,true,arcfire_stellium_colonize_fleet_fiscal_v1.loanCredits,arccore_vault,military_industry_vault,halt_military_procurement,return_hold|neutralize|settle_loan_cost,sovereign_loan,유일한 실잔액. 개척 운용 회전대출. 상환은 중앙금고 자리표시
+crimson_military_ops,arccore,revolving_ops,false,,military_industry_vault,military_industry_vault,halt_military_procurement,return_hold|neutralize|settle_loan_cost,sovereign_loan_reserved,레드 군수 운용 대출. 고도화 신설
+neutral_ops,neutral,revolving_ops,false,,military_industry_vault,military_industry_vault,halt_military_procurement,return_hold|neutralize|settle_loan_cost,sovereign_loan_reserved,중립국 대출. 고도화 신설
+independent_ops,independent,revolving_ops,false,,military_industry_vault,military_industry_vault,halt_military_procurement,return_hold|neutralize|settle_loan_cost,sovereign_loan_reserved,독립국 대출. purge 시 월드 장부 유지·행성은 중립화 후 청산
+planet_upkeep_800,all,expense,false,,none,none,none,none,not_debt,행성 유지비 800은 지출. 부채 아님. 기존값 유지
+fiscal_opex_proxy,arccore,expense,false,,none,none,none,none,not_debt,재정 프록시 오펙스는 일 지출. 부채 아님
+central_bank_expenditure,arccore,expense,false,,none,none,none,none,not_debt,함대·개방 회계소각·개발예산은 지출. 부채 아님
+transport_fleet_cash,arccore_fleet,cash,false,,none,none,none,none,not_debt,수송선단 잔액은 운영현금. 대출 원금 아님
+vault_seed_equity,all,equity,false,,none,none,none,none,not_debt,금고 시드는 자본. 부채 아님
+player_sat_l1_wallet,player,player_spend,false,,none,none,none,none,not_debt,방위위성 L1 플레이어 지불은 국가 대출 아님
+colonize_cash_spend,stellium,expense,false,,none,none,none,none,not_debt,개척 의장·운용·시도·보증의 현금 차감분은 지출. 부족분만 stellium_colonize_ops

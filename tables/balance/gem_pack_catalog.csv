@@ -1,4 +1,5 @@
 productId,iapPriceKey,gemAmount,bonusPct,badgeKey,visual,notesKo
+planet_deed_grant,mock_4999,0,0,accountOnce,planetDeed,행성 소유권 증서권 · 계정당 1회 · 현금 최고가(특대팩 동가 ₩55000)
 starter_pack,mock_499,250,0,starterOnce,starterPack,스타터: 250💎+25000Cr+장비(별도)
 gem_pack_small,mock_099,100,0,,gems,소형 100💎 · ₩1100 앵커
 gem_pack_medium,mock_499,550,10,popular,gems,중형 605💎(+10%) · ₩5500

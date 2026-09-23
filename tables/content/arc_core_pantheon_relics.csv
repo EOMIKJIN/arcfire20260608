@@ -8,6 +8,6 @@ relic_seat_nyx,seat_nyx,nyx,닉스,"닉스 — 그림자 속에서 침식을 살
 relic_seat_gaia,seat_gaia,gaia,가이아,"가이아 — 행성 코어와 광물의 순환을 품은 자. 비문은 남쪽 ‘제니스 채굴지’의 지맥을 노래한다.",10,any_with_wreck,role
 relic_seat_plutos,seat_plutos,plutos,플루토스,"플루토스 — 무역소와 경제의 흐름을 세는 자. 비문은 서쪽 ‘플레어 경계’의 셈을 노래한다.",10,any_with_wreck,role
 relic_seat_athena,seat_athena,athena,아테나,"아테나 — 통합 공격 골격을 벼려낸 자. 비문은 북쪽 ‘게이트 기지’의 방벽을 노래한다.",10,any_with_wreck,role
-relic_seat_iris,seat_iris,iris,이리스,"이리스 — 공지와 선술집 보드의 전령. 비문은 동쪽 ‘베이스 베이스’의 속삭임을 노래한다.",10,any_with_wreck,role
+relic_seat_iris,seat_iris,iris,이리스,"이리스 — 공지와 바 보드의 전령. 비문은 동쪽 ‘베이스 베이스’의 속삭임을 노래한다.",10,any_with_wreck,role
 relic_seat_astraia,seat_astraia,astraia,아스트라이아,"아스트라이아 — 성운의 결과 하루의 변조를 짓는 자. 비문은 남쪽 ‘생크텀 기지’의 안개를 노래한다.",10,any_with_wreck,role
 relic_seat_janus,seat_janus,janus,야누스,"야누스 — 새 성계의 문을 여는 자. 비문은 서쪽 ‘스톤 콜로니’의 문턱을 노래한다.",10,any_with_wreck,role

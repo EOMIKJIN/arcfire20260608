@@ -1,6 +1,7 @@
-import { useTavernBoardStore } from '../../store/tavernBoardStore';
+import { useBarBoardStore } from '../../store/barBoardStore';
 import type { MapFactionSide } from '../../galaxyMap/resolveMapFactionSide';
 import type { TerritorialPassDecision } from './runTerritorialCombatPass';
+import { resolveTerritorialAlertPlanetLabel } from './showTerritorialOccupationChangeAlert';
 
 function sideKey(side: MapFactionSide): string {
   if (side === 'blue') return 'blue';
@@ -8,9 +9,10 @@ function sideKey(side: MapFactionSide): string {
   return 'neutral';
 }
 
-/** 점유 변경 시 선술집 공지 — 행성별 dedupeKey 갱신(최신 점령 상태로 교체) */
+/** 점유 변경 시 바 공지 — 행성별 dedupeKey 갱신(최신 점령 상태로 교체) */
 export function publishTerritorialHoldChangeNotice(input: {
   planetLabelKo: string;
+  planetLabelEn?: string;
   planetId: string;
   previousSide: MapFactionSide;
   newSide: MapFactionSide;
@@ -18,18 +20,24 @@ export function publishTerritorialHoldChangeNotice(input: {
 }): void {
   if (input.previousSide === input.newSide) return;
 
+  const planet = resolveTerritorialAlertPlanetLabel({
+    alertLabelKo: input.planetLabelKo,
+    alertLabelEn: input.planetLabelEn,
+    fallback: input.planetLabelKo,
+  });
+
   const dedupeKey = `territorial_hold_${input.planetId}`;
-  useTavernBoardStore.getState().pushOrRefreshNotice(
+  useBarBoardStore.getState().pushOrRefreshNotice(
     {
       i18nKey: 'news.territorialHold',
       i18nParams: {
-        planet: input.planetLabelKo,
+        planet,
         prevSide: sideKey(input.previousSide),
         nextSide: sideKey(input.newSide),
         decision: input.decision,
       },
       title: 'Contested Zone — Occupation Changed',
-      body: `${input.planetLabelKo}: ${input.previousSide} → ${input.newSide}`,
+      body: `${planet}: ${input.previousSide} → ${input.newSide}`,
       tag: 'ops',
     },
     dedupeKey,

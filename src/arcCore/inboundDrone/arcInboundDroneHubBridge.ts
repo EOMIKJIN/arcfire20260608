@@ -5,7 +5,7 @@
 export type ArcInboundDroneHubBridge = {
   planetId: string | null;
   systemId: string | null;
-  /** 허브 자본궤도 전투 연출 중 — 시뮬·연출 일시정지 (캠페인 유지) */
+  /** 허브 자본궤도 전투·battleReady 카운트다운 — 시뮬·연출 일시정지 (캠페인 유지) */
   hubCombatActive: boolean;
   routeFocused: boolean;
   appActive: boolean;

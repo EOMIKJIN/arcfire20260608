@@ -4,7 +4,7 @@
  * sessionStart만으로는 밤새 연 채팅·김클로드 완료 직후 검수 누락 회귀 방지.
  */
 const path = require('path');
-const { readPendingHandoff } = require('./kimClaudeHandoffCore.cjs');
+const { readPendingHandoff, extraDutyForPending } = require('./kimClaudeHandoffCore.cjs');
 
 const ROOT = process.cwd();
 
@@ -38,6 +38,7 @@ function main() {
     '4. verdict 기록 → status `REVIEWED` → `IDLE` · **커밋은 대표님 명시 요청 시만**',
     '',
     '정본: `docs/KIM_TEAM_LEAD_AGENT.md` §김클로드 검수 게이트',
+    extraDutyForPending(pending),
     '',
     '--- handoff (head) ---',
     pending.head,

@@ -14,7 +14,7 @@ export const PlanetOwnershipDeedPolicy_FROM_BALANCE_CSV = [
   { "key": "zone_endgame_mul", "value": "1.55", "notesKo": "엔드게임 구역 정성 배율" },
   { "key": "facility_trade_port_mul", "value": "1.12", "notesKo": "무역소 보유 정성 배율" },
   { "key": "facility_shipyard_mul", "value": "1.06", "notesKo": "조선소 보유 정성 배율" },
-  { "key": "facility_tavern_mul", "value": "1.04", "notesKo": "선술집 보유 정성 배율" },
+  { "key": "facility_bar_mul", "value": "1.04", "notesKo": "바 보유 정성 배율" },
   { "key": "supply_vitality_min", "value": "0.55", "notesKo": "생산 활력 하한 — 연간 수익 추정" },
   { "key": "supply_vitality_max", "value": "1.35", "notesKo": "생산 활력 상한 — 연간 수익 추정" },
   { "key": "population_revenue_floor", "value": "0.72", "notesKo": "인구(R/P) 기반 수익 바닥 계수" },

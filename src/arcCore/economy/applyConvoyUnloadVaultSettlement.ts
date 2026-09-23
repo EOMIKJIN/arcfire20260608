@@ -1,5 +1,5 @@
 // ============================================================
-// convoy 하역 — 운송비 지출·순마진 10% 아크코어 금고 귀속
+// convoy 하역 — 운송비 지출·순마진 arcSharePct%(CSV convoy_net_margin_arc_core_share_pct, 현재 30) 아크코어 금고 귀속
 // ============================================================
 
 import { applyAabsTradeIncomeMultiplier } from '../aabs/aabsPolicyStore';

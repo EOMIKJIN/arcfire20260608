@@ -148,6 +148,32 @@ test('M1: 연타(재-purge) 안전망 — 이미 neutral+neutralizedAt인 hold�
   assert.equal(hold!.kind, 'neutral');
 });
 
+test('M6: 개척 유래 BLUE hold는 purge 시 시드/중립으로 되돌리고 시드 BLUE는 남긴다', () => {
+  const colonizeHold: PlanetClanHold = {
+    planetId: 'helios_core',
+    systemId: 'helios',
+    occupierClanId: 'balance_seed_faction_blue',
+    deedOwnerClanId: null,
+    homePlayerUid: null,
+    kind: 'clan_hold',
+    capturedAt: 9,
+    occupationOrigin: 'player_colonize',
+  };
+  const holds: Record<string, PlanetClanHold> = {
+    helios_core: colonizeHold,
+    iron_remnant: nationSeedHold('iron_remnant', 'iron_cross', 'balance_seed_faction_blue'),
+  };
+  const result = runFullPurgeSequence({ holds, clans: {}, uid: PLAYER_UID });
+  const helios = result.holds.helios_core;
+  assert.ok(helios);
+  assert.equal(helios!.occupierClanId, 'neutral');
+  assert.equal(helios!.kind, 'neutral');
+  assert.equal(helios!.occupationOrigin ?? null, null);
+  const iron = result.holds.iron_remnant;
+  assert.equal(iron!.occupierClanId, 'balance_seed_faction_blue');
+  assert.equal(iron!.occupationOrigin ?? null, null);
+});
+
 test('M2: 인접 국가 시드 hold(iron_remnant BLUE)는 purge_all_non_ai에 불변', () => {
   const holds: Record<string, PlanetClanHold> = {
     draco_haven: playerIndependentHold('draco_haven', 'draco_nebula'),

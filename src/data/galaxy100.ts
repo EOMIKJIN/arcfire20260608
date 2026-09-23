@@ -1,5 +1,6 @@
 import { StarSystem, ZoneType } from '../types';
 import { STAR_SYSTEMS } from './systems';
+import { resolveCsvPlanetInfoPortraitAssetKey } from './csvPlanetInfoPortraitKeys';
 import { GALAXY_SYSTEMS_PRECOMPUTED } from './generated/galaxySystems100.generated';
 
 export const GAMEPLAY_SYSTEM_IDS = new Set(Object.keys(STAR_SYSTEMS));
@@ -526,7 +527,7 @@ export function buildGalaxySystems100(): Record<string, StarSystem> {
         description: '탐사 불가 구역.',
         hasTradePort: false,
         hasShipyard: false,
-        hasTavern: false,
+        hasBar: false,
         tradeGoods: [],
         factionId: 'unknown',
         coreResource: 50,
@@ -670,5 +671,33 @@ export function buildGalaxySystems100(): Record<string, StarSystem> {
  * 매 앱 부팅마다 런타임에서 다시 계산할 필요가 없다(760개 O(n²)x200 좌표 완화 비용 제거).
  * 실제 값은 tools/galaxy-graph/generate-galaxy-systems.ts 로 미리 계산해 정적 파일로 굳혀두고
  * 여기서는 그 결과만 재노출한다. STAR_SYSTEMS나 생성 알고리즘이 바뀌면 위 스크립트로 재생성할 것.
+ *
+ * 정보창 초상만 CSV 정본으로 1회 overlay — 프리컴퓨트 재생성 전에
+ * `infoPanelPortraitAssetKey: null` 이 런타임 worldStore 를 덮어쓰는 단절을 막는다.
+ * 코어 21성계만 복제. synth·좌표·연결은 그대로.
  */
-export const GALAXY_SYSTEMS: Record<string, StarSystem> = GALAXY_SYSTEMS_PRECOMPUTED;
+function overlayCsvCorePlanetInfoPortraits(
+  systems: Record<string, StarSystem>,
+): Record<string, StarSystem> {
+  let next: Record<string, StarSystem> | null = null;
+  for (const csvSystemId of Object.keys(STAR_SYSTEMS)) {
+    const runtime = (next ?? systems)[csvSystemId];
+    if (!runtime) continue;
+    const planets = runtime.planets;
+    let changed = false;
+    const nextPlanets = planets.map((planet) => {
+      const csvKey = resolveCsvPlanetInfoPortraitAssetKey(planet.id);
+      if (!csvKey || String(planet.infoPanelPortraitAssetKey ?? '').trim()) return planet;
+      changed = true;
+      return { ...planet, infoPanelPortraitAssetKey: csvKey };
+    });
+    if (!changed) continue;
+    if (!next) next = { ...systems };
+    next[csvSystemId] = { ...runtime, planets: nextPlanets };
+  }
+  return next ?? systems;
+}
+
+export const GALAXY_SYSTEMS: Record<string, StarSystem> = overlayCsvCorePlanetInfoPortraits(
+  GALAXY_SYSTEMS_PRECOMPUTED,
+);

@@ -13,7 +13,7 @@ zone_pvp_mul,1.28,PvP 구역 정성 배율
 zone_endgame_mul,1.55,엔드게임 구역 정성 배율
 facility_trade_port_mul,1.12,무역소 보유 정성 배율
 facility_shipyard_mul,1.06,조선소 보유 정성 배율
-facility_tavern_mul,1.04,선술집 보유 정성 배율
+facility_bar_mul,1.04,바 보유 정성 배율
 supply_vitality_min,0.55,생산 활력 하한 — 연간 수익 추정
 supply_vitality_max,1.35,생산 활력 상한 — 연간 수익 추정
 population_revenue_floor,0.72,인구(R/P) 기반 수익 바닥 계수

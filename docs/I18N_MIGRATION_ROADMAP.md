@@ -23,7 +23,7 @@
 | P2 | `app/(game)/trade.tsx` + `TradeQuantityOverlayContent` | ~68 | 오버레이 **레이아웃·ArcOverlayCard 마이그레이션 완료**(2026-06-20) — i18n 문자열 치환 잔여 |
 | P3 | 행성 개발/방위위성 오버레이(`PlanetDefenseSatelliteDevContent` 등) | ~85 |
 | P4 | `app/(game)/worldmap.tsx` · `combat.tsx` · `planet.tsx` 잔여 HUD | ~70 |
-| P5 | 경제 정보·뉴스보드·tavern·nickname·미션(`missions.ts`) | ~120 |
+| P5 | 경제 정보·뉴스보드·bar·nickname·미션(`missions.ts`) | ~120 |
 | P6 | 콘텐츠 이름(아이템/무기/함선 CSV) — 별도 `*_en` 컬럼 파이프라인 | 대량 |
 
 ## 단계별 절차(고정)

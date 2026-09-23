@@ -211,6 +211,7 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
   const hitFxRef = useRef<InboundDroneHitFx[]>([]);
   const spawnedHitFxIdsRef = useRef<Set<string>>(new Set());
   const inboundDronesRef = useRef<ArcInboundDrone[]>([]);
+  const trailDronesRef = useRef<ArcInboundDrone[]>([]);
   const inboundCountSv = useSharedValue(0);
   const impactBridgeLastSyncMs = useSharedValue(0);
   /** worklet→JS impact bridge — unmount 후 runOnJS SIGSEGV 방지 */
@@ -218,10 +219,15 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
   const layerMountedRef = useRef(true);
   const [hitFxTick, setHitFxTick] = useState(0);
   const [vfxOverlayOpen, setVfxOverlayOpen] = useState(false);
+  /** 폭발/요격 FX 순간 — 스토어 phase 전환 전 마크·trail 페이드 동기 */
+  const [visualEndIds, setVisualEndIds] = useState<ReadonlySet<string>>(() => new Set());
 
   const inboundDrones = useMemo(
-    () => drones.filter((d) => d.phase === 'inbound').slice(0, PLANET_HUB_INBOUND_DRONE_RENDER_MAX),
-    [drones],
+    () =>
+      drones
+        .filter((d) => d.phase === 'inbound' && !visualEndIds.has(d.id))
+        .slice(0, PLANET_HUB_INBOUND_DRONE_RENDER_MAX),
+    [drones, visualEndIds],
   );
 
   const trailDrones = useMemo(
@@ -233,6 +239,19 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
   const trailPackSig = useMemo(() => buildInboundDronePackSig(trailDrones), [trailDrones]);
 
   inboundDronesRef.current = inboundDrones;
+  trailDronesRef.current = trailDrones;
+
+  useEffect(() => {
+    if (visualEndIds.size === 0) return;
+    const live = new Set(drones.map((d) => d.id));
+    let changed = false;
+    const next = new Set<string>();
+    for (const id of visualEndIds) {
+      if (live.has(id)) next.add(id);
+      else changed = true;
+    }
+    if (changed) setVisualEndIds(next);
+  }, [drones, visualEndIds]);
 
   useEffect(() => {
     inboundCountSv.value = inboundDrones.length;
@@ -252,6 +271,23 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
     setVfxOverlayOpen(true);
     onSkiaDodgeBackdropLatchRef.current?.(true);
   }, []);
+
+  const publishTrailPackNow = useCallback(
+    (orbitMs: number) => {
+      const packed = packInboundDroneTrailFlat(
+        trailDronesRef.current,
+        startOrbitMsByIdRef.current,
+        endOrbitMsByIdRef.current,
+        orbitMs,
+      );
+      trailCountJsRef.current = trailDronesRef.current.length;
+      trailPackMirror.publish(packed, (v) => {
+        trailFlatSv.value = v;
+      });
+      trailCountSv.value = trailDronesRef.current.length;
+    },
+    [trailFlatSv, trailCountSv, trailPackMirror],
+  );
 
   useLayoutEffect(() => {
     layerMountedRef.current = true;
@@ -275,6 +311,7 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
       if (!layerMountedRef.current) return;
       const { center: c, edgeR: er, impactR: ir } = geomRef.current;
       let spawned = false;
+      const endedIds: string[] = [];
       for (const d of inboundDronesRef.current) {
         if (d.phase !== 'inbound') continue;
         if (spawnedHitFxIdsRef.current.has(`${d.id}:impacted`)) continue;
@@ -295,12 +332,24 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
             spawnedHitFxIds: spawnedHitFxIdsRef.current,
           })
         ) {
+          endOrbitMsByIdRef.current.set(d.id, orbitMs);
+          endedIds.push(d.id);
           spawned = true;
         }
       }
-      if (spawned) noteHitSpawn();
+      if (spawned) {
+        publishTrailPackNow(orbitMs);
+        if (endedIds.length > 0) {
+          setVisualEndIds((prev) => {
+            const next = new Set(prev);
+            for (const id of endedIds) next.add(id);
+            return next;
+          });
+        }
+        noteHitSpawn();
+      }
     },
-    [noteHitSpawn],
+    [noteHitSpawn, publishTrailPackNow],
   );
 
   const checkVisualImpactsRef = useRef(checkVisualImpactsImpl);
@@ -380,6 +429,9 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
             spawnedHitFxIds,
           })
         ) {
+          if (!endOrbitMsById.has(d.id)) {
+            endOrbitMsById.set(d.id, d.inboundEndOrbitMs ?? nowMs);
+          }
           spawnedHit = true;
         }
       }

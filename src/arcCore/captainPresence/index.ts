@@ -23,7 +23,7 @@ export {
   resolveMissionCaptainPrimaryBlockReason,
 } from './resolveMissionCaptainPresence';
 
-export { resolveTavernHostCaptainAtPlanet } from './resolveTavernHostCaptainAtPlanet';
+export { resolveBarHostCaptainAtPlanet } from './resolveBarHostCaptainAtPlanet';
 
 export {
   getCaptainPresenceWorldIndex,

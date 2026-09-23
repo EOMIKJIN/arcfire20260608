@@ -6,9 +6,10 @@ import { findPlanetById } from '../arcCore/planetEnvironment/resolvePlanetAstero
 import { resolvePlanetDisplayName } from '../i18n/systemText';
 import type { AppLocale } from '../i18n/types';
 import {
+  isMegaFactionCapitalPlanet,
   resolveGalaxyRouteDirectionForPlanet,
-  resolveMegaFactionCapitalSide,
 } from './galaxyRouteFactionBridge';
+import { GALAXY_ROUTE_POLICIES } from './galaxyRouteFactionPolicy';
 
 type TranslateFn = (key: string, params?: Record<string, string | number>) => string;
 
@@ -19,11 +20,18 @@ export function resolveMegaFactionCapitalHubSubtitle(
   locale: AppLocale = 'ko',
 ): string | null {
   const id = String(planetId ?? '').trim();
-  if (!resolveMegaFactionCapitalSide(id)) return null;
+  if (!isMegaFactionCapitalPlanet(id)) return null;
+
+  const route = resolveGalaxyRouteDirectionForPlanet(id);
+  if (route === 'south' || route === 'north') {
+    const nation = GALAXY_ROUTE_POLICIES[route];
+    const nationName = locale === 'en' ? nation.displayNameEn : nation.displayNameKo;
+    const capitalWord = locale === 'en' ? 'Capital' : '수도';
+    return `${nationName} ${capitalWord} · ${t(`worldmap.route.${route}`)}`;
+  }
 
   const planet = findPlanetById(id);
   const place = planet ? resolvePlanetDisplayName(planet, locale) : id;
-  const route = resolveGalaxyRouteDirectionForPlanet(id);
   if (!route) return place;
 
   return `${place} ${t(`worldmap.route.${route}`)}`;

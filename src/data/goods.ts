@@ -12,7 +12,9 @@ function itemDefToTradeGood(def: ItemDef): TradeGood {
   return {
     id: def.id,
     name: def.name,
+    nameEn: def.nameEn,
     description: def.description,
+    descriptionEn: def.descriptionEn,
     basePrice: def.basePrice,
     priceVariance: def.priceVariance,
     volume: def.volume,

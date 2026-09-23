@@ -1,4 +1,4 @@
-﻿zoneIndex,recommendedPilotLevel,proficiencyMultiplier,operatingEfficiencyPct,combatsInZone,combatMinutesTotal,targetCreditsEarned,requiredFleetMinDps,enemyAffinityKind,recommendedHullTierKey,recommendedWeaponTierKey,mineralUpgradeCapAtZone,sectorBand,notesKo
+zoneIndex,recommendedPilotLevel,proficiencyMultiplier,operatingEfficiencyPct,combatsInZone,combatMinutesTotal,targetCreditsEarned,requiredFleetMinDps,enemyAffinityKind,recommendedHullTierKey,recommendedWeaponTierKey,mineralUpgradeCapAtZone,sectorBand,notesKo
 1,1,1.01,101,3,6,30000,150,light,frigate_default,t1_laser,0,early,01_레벨업구조 행성1 아르카디아
 2,3,1.03,103,5,10,60000,250,light,frigate_default,t1_laser,1,early,행성2 베가 전초기지
 3,5,1.05,105,7,14,105000,400,light,frigate_default,t1_missile,2,early,행성3 솔라 항구
@@ -19,3 +19,4 @@
 18,52,1.52,152,45,90,15750000,16500,heavy,battlecruiser,t4_railgun,13,late,행성18 어비스
 19,56,1.56,156,50,100,20000000,20000,heavy,battlecruiser,t4_endgame,14,late,행성19 아크파이어 코어
 20,60,1.6,160,60,120,30000000,25000,boss_heavy,battlecruiser_max,t4_endgame,15,late,행성20 이터니티·만렙
+21,60,1.6,160,60,120,30000000,25000,boss_heavy,battlecruiser_max,t4_endgame,15,late,행성21 제네시스·권장 Lv60 동일

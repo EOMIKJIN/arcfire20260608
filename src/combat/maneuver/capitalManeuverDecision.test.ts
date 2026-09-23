@@ -8,17 +8,25 @@ import assert from 'node:assert/strict';
 import { deriveCapitalCombatRangeBands } from '../../game/capitalWeaponRange';
 import {
   applyTempoJudge,
+  propagateFleetTempoFromLeads,
+  capitalWeaponFireAllowed,
   chaseWeightForCombatStage,
   combatMotionStageFromDist,
   createCapitalManeuverDecision,
+  createManeuverEmploymentDefaults,
+  DEFAULT_LONG_RANGE_SPEND_MS,
   KITE_DIST_RESUME_ADVANCE_MS,
   KITE_DIST_STALL_HOLD_MS,
   KITE_DIST_STALL_SPEED_PX_PER_MS,
+  LONG_RANGE_CHASE_CAP,
+  PAIR_STALEMATE_BREAK_MS,
+  PAIR_STALEMATE_DETECT_MS,
   resolveCapitalManeuverDecision,
   rpsOutcome,
   TEMPO_KITE_CHASE_WEIGHT,
   TEMPO_PRESS_CHASE_WEIGHT,
   type CapitalManeuverInput,
+  type FleetTempoMember,
   type ManeuverAgentState,
   type TempoJudgeAgentState,
 } from './capitalManeuverDecision';
@@ -55,6 +63,7 @@ function makeState(overrides: Partial<ManeuverAgentState> = {}): ManeuverAgentSt
     stallChaseBoostUntilMs: 0,
     engageStartDelayMs: 0,
     doctrine: FALLBACK_DEFAULT_TACTIC_DOCTRINE,
+    ...createManeuverEmploymentDefaults(),
     ...overrides,
   };
 }
@@ -67,8 +76,27 @@ function makeInput(overrides: Partial<CapitalManeuverInput> = {}): CapitalManeuv
     bands: BANDS,
     speedPxPerMs: 0.02,
     teamSlot: 0,
+    weaponProfileReady: false,
+    hasMissile: false,
+    hasLaser: false,
+    hasClose: false,
+    selfHeadingRad: 0,
+    enemyHeadingRad: 0,
+    bearingToEnemyRad: 0,
+    maneuverSeed: 0,
     ...overrides,
   };
+}
+
+function liveWeapons(overrides: Partial<CapitalManeuverInput> = {}): CapitalManeuverInput {
+  return makeInput({
+    weaponProfileReady: true,
+    hasMissile: true,
+    hasLaser: true,
+    hasClose: true,
+    pairDist: 200,
+    ...overrides,
+  });
 }
 
 const out = createCapitalManeuverDecision();
@@ -80,10 +108,11 @@ test('교전 단계 FSM — 거리 경계값이 추출 전과 동일', () => {
   assert.equal(combatMotionStageFromDist(252, DETECT_R, BANDS), 'missile_pattern');
   // brawlOuter(162) 초과 → missile_pattern
   assert.equal(combatMotionStageFromDist(163, DETECT_R, BANDS), 'missile_pattern');
-  // brawlInner(120)+0.5 초과 → missile_reposition
+  // brawlOuter(162) 이하 → missile_reposition, 최단 유지(≈116.6) 이하만 brawl
   assert.equal(combatMotionStageFromDist(161, DETECT_R, BANDS), 'missile_reposition');
   assert.equal(combatMotionStageFromDist(121, DETECT_R, BANDS), 'missile_reposition');
-  assert.equal(combatMotionStageFromDist(120, DETECT_R, BANDS), 'brawl');
+  assert.equal(combatMotionStageFromDist(118, DETECT_R, BANDS), 'missile_reposition');
+  assert.equal(combatMotionStageFromDist(116, DETECT_R, BANDS), 'brawl');
 });
 
 test('단계별 추격 가중 — 상수 동일(1 / 0.42 / 0.16 / 0.3)', () => {
@@ -201,6 +230,51 @@ test('기세 판정 — 승자 press·패자 kite 상호 배타', () => {
   }
 });
 
+test('함대 기세 전파 — 리드 결과를 같은 팀 윙맨에 복사 · orange 유지', () => {
+  const redLead: FleetTempoMember = {
+    id: 1,
+    team: 'red',
+    alive: true,
+    tempoRole: 'press',
+    kiteEvasionMode: 'standoff',
+  };
+  const blueLead: FleetTempoMember = {
+    id: 2,
+    team: 'blue',
+    alive: true,
+    tempoRole: 'press',
+    kiteEvasionMode: 'standoff',
+  };
+  applyTempoJudge(redLead, blueLead);
+  const redWing: FleetTempoMember = {
+    id: 3,
+    team: 'red',
+    alive: true,
+    tempoRole: 'press',
+    kiteEvasionMode: 'standoff',
+  };
+  const blueWing: FleetTempoMember = {
+    id: 4,
+    team: 'blue',
+    alive: true,
+    tempoRole: 'press',
+    kiteEvasionMode: 'standoff',
+  };
+  const orange: FleetTempoMember = {
+    id: 5,
+    team: 'orange',
+    alive: true,
+    tempoRole: 'press',
+    kiteEvasionMode: 'standoff',
+  };
+  propagateFleetTempoFromLeads([redLead, blueLead, redWing, blueWing, orange], redLead, blueLead);
+  assert.equal(redWing.tempoRole, redLead.tempoRole);
+  assert.equal(redWing.kiteEvasionMode, redLead.kiteEvasionMode);
+  assert.equal(blueWing.tempoRole, blueLead.tempoRole);
+  assert.equal(blueWing.kiteEvasionMode, blueLead.kiteEvasionMode);
+  assert.equal(orange.tempoRole, 'press');
+});
+
 // ─── Phase 1~2: 독트린·진형 ────────────────────────────────────────────────
 
 test('독트린 CSV default — 추출 전 하드코딩 상수와 100% 동일(현행 동작 보존)', () => {
@@ -286,6 +360,74 @@ test('escort_line — 진형 파라미터 파싱(cohesion 0.35 · spacing 64)', 
   assert.equal(doc.formationType, 'line');
   assert.equal(doc.formationCohesion, 0.35);
   assert.equal(doc.formationSpacingPx, 64);
+});
+
+test('운용 프로필 off — preferred=any · 추격은 Phase 0 그대로', () => {
+  const st = makeState({ tempoRole: 'press' });
+  const d = resolveCapitalManeuverDecision(st, makeInput({ pairDist: 200 }), out);
+  assert.equal(d.preferredWeapon, 'any');
+  assert.equal(d.employBand, 'approach');
+  assert.equal(d.bearingGoal, 'bow');
+  assert.equal(d.chaseWeight, TEMPO_PRESS_CHASE_WEIGHT);
+});
+
+test('장거리 운용 — 미사일 밴드에서 추격 상한 · 우선 미사일 · 방위는 선수', () => {
+  const st = makeState({ tempoRole: 'press' });
+  const d = resolveCapitalManeuverDecision(st, liveWeapons({ pairDist: 200 }), out);
+  assert.equal(d.employBand, 'standoff_long');
+  assert.equal(d.preferredWeapon, 'missile');
+  assert.equal(d.bearingGoal, 'bow');
+  assert.ok(d.chaseWeight <= LONG_RANGE_CHASE_CAP);
+  assert.equal(capitalWeaponFireAllowed(d.employBand, d.preferredWeapon, 'missile', false), true);
+  assert.equal(capitalWeaponFireAllowed(d.employBand, d.preferredWeapon, 'laser', false), false);
+});
+
+test('장거리 일정 운용 후 — 밴드는 장거리 유지 · 현측만 전환', () => {
+  const st = makeState({ tempoRole: 'press' });
+  resolveCapitalManeuverDecision(st, liveWeapons({ elapsedMs: 10_000, pairDist: 200 }), out);
+  assert.equal(st.longRangeEmploySinceMs, 10_000);
+  const d2 = resolveCapitalManeuverDecision(
+    st,
+    liveWeapons({ elapsedMs: 10_000 + DEFAULT_LONG_RANGE_SPEND_MS, pairDist: 200 }),
+    out,
+  );
+  assert.equal(d2.employBand, 'standoff_long');
+  assert.equal(d2.bearingGoal, 'beam_port');
+  assert.equal(d2.preferredWeapon, 'missile');
+  assert.ok(d2.holdPairDistPx >= BANDS.missileIdealPairDistPx - 1);
+  assert.equal(capitalWeaponFireAllowed(d2.employBand, d2.preferredWeapon, 'missile', false), true);
+  assert.equal(capitalWeaponFireAllowed(d2.employBand, d2.preferredWeapon, 'laser', false), false);
+});
+
+test('교착 — 마주보고 거리 고정 2.2s 후 방위 타파', () => {
+  const st = makeState({ tempoRole: 'press', engageStartDelayMs: 0, lastPairDist: 200 });
+  const staleIn = liveWeapons({
+    elapsedMs: 3000,
+    pairDist: 200,
+    speedPxPerMs: 0.004,
+    selfHeadingRad: 0,
+    enemyHeadingRad: Math.PI,
+    bearingToEnemyRad: 0,
+    maneuverSeed: 1,
+  });
+  resolveCapitalManeuverDecision(st, staleIn, out);
+  assert.equal(st.stalemateSinceMs, 3000);
+  const dBreak = resolveCapitalManeuverDecision(
+    st,
+    { ...staleIn, elapsedMs: 3000 + PAIR_STALEMATE_DETECT_MS },
+    out,
+  );
+  assert.ok(st.stalemateBreakUntilMs > 3000);
+  assert.notEqual(dBreak.bearingGoal, 'bow');
+  assert.equal(st.stalemateBreakUntilMs, 3000 + PAIR_STALEMATE_DETECT_MS + PAIR_STALEMATE_BREAK_MS);
+});
+
+test('발사 게이트 — any는 전 무기 허용', () => {
+  assert.equal(capitalWeaponFireAllowed('mid', 'any', 'close', false), true);
+  assert.equal(capitalWeaponFireAllowed('brawl', 'close', 'missile', false), false);
+  assert.equal(capitalWeaponFireAllowed('brawl', 'close', 'laser', false), true);
+  assert.equal(capitalWeaponFireAllowed('mid', 'laser', 'laser', true), true);
+  assert.equal(capitalWeaponFireAllowed('mid', 'laser', 'missile', true), false);
 });
 
 test('기세 바이어스 — 0이면 현행 동일 · 극단 바이어스는 우세 강제 경향', () => {

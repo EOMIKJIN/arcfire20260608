@@ -28,4 +28,22 @@ export function finalizePlanetFacilityLevelApplied(
   syncPlanetInfoAfterDevChange(planetId);
   showPlanetFacilityLevelUpNotification(planetId, facilityType, newLevel);
   void flushPlanetCoreRuntimePersist();
+  if (facilityType === 'defense_satellite' && newLevel >= 1) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { tryEnqueueStelliumColonizeFromLanding } =
+        require('../../arcCore/colonize/tryEnqueueStelliumColonize') as typeof import('../../arcCore/colonize/tryEnqueueStelliumColonize');
+      tryEnqueueStelliumColonizeFromLanding(planetId);
+    } catch {
+      /* 착륙 큐 미기동 */
+    }
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { tickStelliumColonizeRealtime } =
+        require('../../arcCore/colonize/tickStelliumColonizeRealtime') as typeof import('../../arcCore/colonize/tickStelliumColonizeRealtime');
+      tickStelliumColonizeRealtime({ persistNow: false, presentHqAlert: true });
+    } catch {
+      /* 개척 패스 미기동 */
+    }
+  }
 }

@@ -6,7 +6,6 @@ import { AABS_DAILY_ALIGNMENT_MS } from './aabsConstants';
 import { useAabsPolicyStore } from './aabsPolicyStore';
 import { runSimBot200Engine } from './simBotEngine';
 import { applyGrowthSyncFromSim, syncEconomicMultipliers } from './growthSyncEngine';
-import { enforceNpcDeploymentPolicy } from './deploymentExecutor';
 import { activateGuardianSafeMode, evaluateGuardianMode } from './guardianMode';
 import { reloadBalanceOverlayIndices } from './reloadBalanceIndices';
 
@@ -58,7 +57,12 @@ export async function runDailyPolicyAlignment(force = false): Promise<DailyAlign
 
   applyGrowthSyncFromSim(sim);
   syncEconomicMultipliers();
-  const deploymentMoves = enforceNpcDeploymentPolicy(3);
+  /**
+   * NPC 재배치는 여기서 실행하지 않는다.
+   * `enforceNpcDeploymentPolicy` → `npc_gather_planet` 은 유인 비콘·총독 security 전용이며
+   * AiNpcSubCore가 **궤도 수송선 전부**를 한 행성으로 리셋한다. 일일 AABS에 붙이면
+   * 정오마다 허브 트래픽이 한 행성으로 몰리는 부작용이 난다.
+   */
 
   store.markAlignment();
   await store.persistAsync();
@@ -66,7 +70,7 @@ export async function runDailyPolicyAlignment(force = false): Promise<DailyAlign
   return {
     ran: true,
     simBots: sim.bots.length,
-    deploymentMoves,
+    deploymentMoves: 0,
     guardianTriggered: false,
     multipliers: useAabsPolicyStore.getState().multipliers,
   };

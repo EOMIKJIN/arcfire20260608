@@ -1,31 +1,27 @@
 import type { PlayerProfessionCsvRow } from '../data/generated';
 import type { AppLocale } from './types';
 import { useAppSettingsStore } from '../store/appSettingsStore';
-import { isKoUi } from './index';
+import { pickLocalized } from './pickLocalized';
 
 type ProfessionEnFields = Pick<
   PlayerProfessionCsvRow,
   'nameKo' | 'nameEn' | 'labelKo' | 'labelEn' | 'summaryKo' | 'summaryEn' | 'personalityKo' | 'personalityEn'
 >;
 
-function pickEn(locale: AppLocale, ko: string, en?: string | null): string {
-  return !isKoUi(locale) && en?.trim() ? en.trim() : ko;
-}
-
 export function resolveProfessionName(profession: ProfessionEnFields, locale: AppLocale): string {
-  return pickEn(locale, profession.nameKo, profession.nameEn);
+  return pickLocalized(locale, profession.nameKo, profession.nameEn);
 }
 
 export function resolveProfessionLabel(profession: ProfessionEnFields, locale: AppLocale): string {
-  return pickEn(locale, profession.labelKo, profession.labelEn);
+  return pickLocalized(locale, profession.labelKo, profession.labelEn);
 }
 
 export function resolveProfessionSummary(profession: ProfessionEnFields, locale: AppLocale): string {
-  return pickEn(locale, profession.summaryKo, profession.summaryEn);
+  return pickLocalized(locale, profession.summaryKo, profession.summaryEn);
 }
 
 export function resolveProfessionPersonality(profession: ProfessionEnFields, locale: AppLocale): string {
-  return pickEn(locale, profession.personalityKo, profession.personalityEn);
+  return pickLocalized(locale, profession.personalityKo, profession.personalityEn);
 }
 
 export function resolveProfessionNow(

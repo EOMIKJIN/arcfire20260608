@@ -8,7 +8,7 @@ export type StageId =
   | 'transit_warp'
   | 'trade'
   | 'shipyard'
-  | 'tavern'
+  | 'bar'
   | 'skill_tree';
 
 export type StageRouteName =
@@ -22,7 +22,7 @@ export type StageRouteName =
   | 'combat'
   | 'trade'
   | 'shipyard'
-  | 'tavern'
+  | 'bar'
   | 'skilltree';
 
 export interface StageDefinition {

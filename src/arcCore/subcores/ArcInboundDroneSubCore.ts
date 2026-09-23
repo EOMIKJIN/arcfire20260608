@@ -18,6 +18,7 @@ import { useArcInboundDroneStore,
   type ArcInboundDrone,
 } from '../../store/arcInboundDroneStore';
 import { useArcNpcTrafficStore } from '../../store/arcNpcTrafficStore';
+import { INBOUND_DRONE_TRAIL_FADE_MS } from '../../components/planet/inboundDroneSkiaTrail';
 
 type PendingSpawn = {
   dueSec: number;
@@ -45,8 +46,8 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
   private lastPublishedPlanetId: string | null = null;
 
   private static readonly SNAPSHOT_INTERVAL_SEC = 0.25;
-  /** Skia trail 페이드 — `INBOUND_DRONE_TRAIL_FADE_MS`와 맞춤 */
-  private static readonly TRAIL_FADE_SEC = 1.4;
+  /** Skia trail 페이드 — `INBOUND_DRONE_TRAIL_FADE_MS`와 단일 정본 */
+  private static readonly TRAIL_FADE_SEC = INBOUND_DRONE_TRAIL_FADE_MS / 1000;
   /** 동시 보관 행성 캠페인 상한 — Map 누적 방지 */
   private static readonly MAX_CAMPAIGNS = 5;
 
@@ -232,11 +233,17 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
       }
     }
 
-    campaign.drones = campaign.drones.filter((d) => {
-      if (d.phase === 'inbound') return true;
-      const end = d.trailEndWallSec ?? elapsedWallSec;
-      return elapsedWallSec - end < ArcInboundDroneSubCore.TRAIL_FADE_SEC;
-    });
+    let keep = 0;
+    for (let i = 0; i < campaign.drones.length; i += 1) {
+      const d = campaign.drones[i]!;
+      if (d.phase !== 'inbound') {
+        const end = d.trailEndWallSec ?? elapsedWallSec;
+        if (elapsedWallSec - end >= ArcInboundDroneSubCore.TRAIL_FADE_SEC) continue;
+      }
+      campaign.drones[keep] = d;
+      keep += 1;
+    }
+    if (keep < campaign.drones.length) campaign.drones.length = keep;
     while (campaign.drones.length > policy.maxActiveDrones) {
       campaign.drones.shift();
     }
@@ -265,20 +272,23 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
     policy: ReturnType<typeof getArcCoreInboundDronePolicy>,
   ): void {
     if (campaign.pendingSpawns.length === 0) return;
-    const kept: PendingSpawn[] = [];
-    for (const job of campaign.pendingSpawns) {
+    let keep = 0;
+    for (let i = 0; i < campaign.pendingSpawns.length; i += 1) {
+      const job = campaign.pendingSpawns[i]!;
       if (job.planetId !== planetId) continue;
       if (job.dueSec > elapsedWallSec) {
-        kept.push(job);
+        campaign.pendingSpawns[keep] = job;
+        keep += 1;
         continue;
       }
       if (campaign.drones.length >= policy.maxActiveDrones) {
-        kept.push(job);
+        campaign.pendingSpawns[keep] = job;
+        keep += 1;
         continue;
       }
       this.spawnDrone(campaign, planetId, policy, elapsedWallSec);
     }
-    campaign.pendingSpawns = kept;
+    if (keep < campaign.pendingSpawns.length) campaign.pendingSpawns.length = keep;
   }
 
   private spawnDrone(

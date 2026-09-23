@@ -5,8 +5,8 @@
 ## [pss-pre-dev]
 
 ```text
-[pss-pre-dev] hot_path=settings locale toggle / tavern board render · alloc=dictionary lookup only · cache=module dict
-[pss-pre-dev] stage=settings overlay · tavern · combat stance row · continue loading · risk=P3
+[pss-pre-dev] hot_path=settings locale toggle / bar board render · alloc=dictionary lookup only · cache=module dict
+[pss-pre-dev] stage=settings overlay · bar · combat stance row · continue loading · risk=P3
 [pss-pre-dev] verdict=PASS
 ```
 
@@ -22,7 +22,7 @@
 ## 구조 최적화
 
 1. **사전 locale** — `resolveDictionaryLocale`: `ko` 외 전부 EN (ja/zh 위장 KO 제거).
-2. **공지 태그** — `TavernNoticeTag`를 `ops|economy|diplomacy|rumor|arccore` 코드로 통일 · 로드 시 구형 KO 태그 migrate · `noticeTag.*` 이중 키 유지.
+2. **공지 태그** — `BarNoticeTag`를 `ops|economy|diplomacy|rumor|arccore` 코드로 통일 · 로드 시 구형 KO 태그 migrate · `noticeTag.*` 이중 키 유지.
 3. **장비 스탯** — `equip.stat.*` 사전 수렴 (`shipEquipmentDisplay`).
 4. **전투 태세** — 라벨을 `battleStance.*`로 분리 (`BATTLE_STANCE_META`는 color만).
 
@@ -41,7 +41,7 @@
 
 | 성격 | 예 |
 |------|-----|
-| 레거시 마이그레이션 매칭 | `tavernBoardStore` KO title 매칭 (~23) |
+| 레거시 마이그레이션 매칭 | `barBoardStore` KO title 매칭 (~23) |
 | DEV/콘솔·데이터 시드 | `PlanetEdenRaidTestLayer` · `weaponCatalogSeed` · `registry` |
 | KO 원문 매칭 리더 | `systemText` synth 설명 매칭 |
 | CSV `*_en` 공란 | 콘텐츠 파이프라인(별도) |
@@ -54,7 +54,7 @@ npx tsc --noEmit -p tsconfig.client.json
 npm run audit:i18n
 ```
 
-설정에서 **한국어 ↔ English** 토글 후: 설정 백업 섹션 · 선술집 공지 태그 · 전투 태세 · 이어하기 로딩 문구 육안 확인 권장.
+설정에서 **한국어 ↔ English** 토글 후: 설정 백업 섹션 · 바 공지 태그 · 전투 태세 · 이어하기 로딩 문구 육안 확인 권장.
 
 ## Follow-up (서브에이전트 §6 UI 기본 라벨)
 

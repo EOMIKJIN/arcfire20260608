@@ -78,7 +78,7 @@ for (const [file, needle] of mainStages) {
 }
 
 // P1 — sub-stage memory hooks
-for (const file of ['trade.tsx', 'shipyard.tsx', 'tavern.tsx', 'skilltree.tsx']) {
+for (const file of ['trade.tsx', 'shipyard.tsx', 'bar.tsx', 'skilltree.tsx']) {
   const body = read(`app/(game)/${file}`);
   checks.push(
     check(`${file} has usePlanetSubStageMemory`, body.includes('usePlanetSubStageMemory'), file),

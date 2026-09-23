@@ -3,7 +3,7 @@ export const WeaponFamilyRuntimePolicy_FROM_BALANCE_CSV = [
   { "familyKind": "laser", "trajectoryMode": "instant_beam", "impactMode": "target_track", "hitFxKind": "laser_dodge", "projectileRenderKind": "laser_beam", "implementationStatus": "active", "notesKo": "즉시 판정 직선 빔" },
   { "familyKind": "missile", "trajectoryMode": "bezier_guided", "impactMode": "target_track", "hitFxKind": "default", "projectileRenderKind": "missile_trail", "implementationStatus": "active", "notesKo": "베지어 유도 미사일" },
   { "familyKind": "rocket", "trajectoryMode": "straight_fixed", "impactMode": "spread_circle", "hitFxKind": "rocket_spread", "projectileRenderKind": "rocket_bolt", "implementationStatus": "active", "notesKo": "직선 고속·원형 착탄 분산" },
-  { "familyKind": "drone", "trajectoryMode": "orbit_loiter", "impactMode": "spread_circle", "hitFxKind": "drone_burst", "projectileRenderKind": "drone_sprite", "implementationStatus": "effectPending", "notesKo": "표적 주위 선회 후 타격(미구현)" },
-  { "familyKind": "carrier", "trajectoryMode": "arc_loiter_turn", "impactMode": "spread_circle", "hitFxKind": "carrier_bomb", "projectileRenderKind": "carrier_wing", "implementationStatus": "effectPending", "notesKo": "선회 비행 후 투하(미구현)" },
+  { "familyKind": "drone", "trajectoryMode": "orbit_loiter", "impactMode": "spread_circle", "hitFxKind": "drone_burst", "projectileRenderKind": "drone_sprite", "implementationStatus": "active", "notesKo": "표적 주위 원궤도 1바퀴 후 돌입" },
+  { "familyKind": "carrier", "trajectoryMode": "arc_loiter_turn", "impactMode": "spread_circle", "hitFxKind": "carrier_bomb", "projectileRenderKind": "carrier_wing", "implementationStatus": "active", "notesKo": "8자 선회 주기공격 후 모함 귀환" },
 ] as const;
 export type WeaponFamilyRuntimePolicyRow = (typeof WeaponFamilyRuntimePolicy_FROM_BALANCE_CSV)[number];

@@ -7,10 +7,11 @@
 // │  ② tail_fire_02.png — BlendMode.Screen 오버레이
 // │  ✗ ColorDodge 금지 (투명 Picture 위에서 깨짐)
 // │
-// └─ 닷지 섬광 (COLOR_DODGE) ─ SkiaPlanetNebulaShaderBackdrop ONLY
+// └─ 닷지 섬광 (COLOR_DODGE) ─ 성운/구름 픽셀과 동일 SkCanvas ONLY
 //    ① color_dodge_02.png · BlendMode.ColorDodge (JSI enum — 문자열 금지)
-//    ② 성운 baked image 와 동일 SkCanvas · orbit→nebula 좌표 변환
-//    ✗ PlanetHubInboundDroneSkiaTrailLayer / Combat Picture 에서 dodge 금지
+//    ② 허브: SkiaPlanetNebulaShaderBackdrop · 이동전투: TransitCombatSkiaParallaxBackdrop
+//    ③ orbit→배경 좌표 변환 후 구름/성운 위에 빛번짐
+//    ✗ PlanetHubInboundDroneSkiaTrailLayer / 전투 궤도 Picture 에서 dodge 금지
 //
 // ── 메모리 정책 (2026-06-15) ──────────────────────────────────
 //   burst/dodge Paint 는 모듈 레벨 스크래치(한 번만 생성).
@@ -39,6 +40,9 @@ export const INBOUND_DRONE_FLAME_FX_MS = PLANET_FLAME_BURST_FADE_MS;
 export const NEBULA_DODGE_FX_DURATION_MS = 203;
 export const NEBULA_DODGE_FX_RENDER_LIMIT = 12;
 export const NEBULA_DODGE_BASE_PULSE_PX = 60;
+/** assets/images/effects/color_dodge_02.png IHDR. 틱에서 SkImage.width() 금지. */
+export const COLOR_DODGE_02_NATIVE_W = 78;
+export const COLOR_DODGE_02_NATIVE_H = 77;
 
 /** 구 intercept inbound burst r=22/12/5 — scale 1.0 기준 */
 export const PLANET_FLAME_BURST_BASE = {
@@ -306,11 +310,9 @@ export function drawNebulaColorDodgeFxOnSkCanvas(
     if (!pulse) continue;
 
     paint.setAlphaf(pulse.pulseOpacity);
-    const iw = dodgeImage.width();
-    const ih = dodgeImage.height();
     canvas.drawImageRect(
       dodgeImage,
-      scratchSrcRect(iw, ih),
+      scratchSrcRect(COLOR_DODGE_02_NATIVE_W, COLOR_DODGE_02_NATIVE_H),
       scratchDestRect(
         fxX - pulse.pulseSize * 0.5,
         fxY - pulse.pulseSize * 0.5,
@@ -372,11 +374,9 @@ export function drawNebulaColorDodgeFxTransformedOnSkCanvas(
       + (fxY - orbitCenter) * transform.scaleY;
 
     paint.setAlphaf(pulse.pulseOpacity);
-    const iw = dodgeImage.width();
-    const ih = dodgeImage.height();
     canvas.drawImageRect(
       dodgeImage,
-      scratchSrcRect(iw, ih),
+      scratchSrcRect(COLOR_DODGE_02_NATIVE_W, COLOR_DODGE_02_NATIVE_H),
       scratchDestRect(
         px - pulse.pulseSize * 0.5,
         py - pulse.pulseSize * 0.5,

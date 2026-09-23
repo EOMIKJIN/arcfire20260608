@@ -1,0 +1,13 @@
+id,axis,lo,hi,packAnchors,allowLead,allowLifeLine,forceHumanFirst
+recall_lo,recall,0,39,0,0,1,0
+recall_mid,recall,40,69,1,0,1,0
+recall_hi,recall,70,100,1,1,1,0
+ask_lo,askDepth,0,39,1,0,1,0
+ask_mid,askDepth,40,69,1,0,1,0
+ask_hi,askDepth,70,100,1,1,1,0
+ground_lo,grounding,0,39,0,0,1,0
+ground_mid,grounding,40,69,1,0,1,0
+ground_hi,grounding,70,100,1,0,1,0
+casual_lo,casualFirst,0,39,1,1,1,0
+casual_mid,casualFirst,40,69,1,0,1,0
+casual_hi,casualFirst,70,100,0,0,0,1

@@ -42,6 +42,13 @@ export const HUB_SOFT_NATIVE_RECLAIM_INTERVAL_MS = 5 * 60 * 1000;
  */
 export const HUB_DODGE_OVERLAY_UNMOUNT_DEBOUNCE_MS = 3 * 1000;
 
+/**
+ * 인바운드 flying→0 직후 1차 post-peak 다음, dodge debounce·trail 잔존 언마운트 이후
+ * floor 2차 회수 지연. 시각/웨이브 주기 변경 없음 — reclaim 타이밍만.
+ * (2026-08-10 hub idle PSS 계단: Native+Unknown — peak 직후 gpuLayers 잔존 관측)
+ */
+export const HUB_INBOUND_SETTLE_RECLAIM_MS = HUB_DODGE_OVERLAY_UNMOUNT_DEBOUNCE_MS + 96;
+
 /** worldmap 체류 — soft 틱 N회마다 1회 deep(GPU layer release + Fresco trim) 승격 (N×5분=15분) */
 export const GALAXY_MAP_DEEP_RECLAIM_EVERY_N_SOFT_TICKS = 3;
 

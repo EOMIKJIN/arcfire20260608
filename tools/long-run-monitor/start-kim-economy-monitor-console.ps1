@@ -1,4 +1,4 @@
-# 김경제 에이전트 — 사용자용 모니터링 콘솔 (report-watch visible 단일 인스턴스)
+﻿# 김경제 에이전트 — 사용자용 모니터링 콘솔 (report-watch visible 단일 인스턴스)
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$WatchIntervalMin = 15,

@@ -8,7 +8,8 @@ import {
   usePlanetCoreRuntimeStore,
 } from '../../store/planetCoreRuntimeStore';
 import { resolveCoreOpenGameplayPlanetRef } from '../../world/coreOpenGameplayPlanets';
-import { isPlanetContestedZone } from '../balance/balanceTableRegistry';
+import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
+import { shouldSkipWdiForWarTheater } from '../territorial/resolveWarTheaterState';
 import {
   resolvePopulationDomeWdiReductionPerDay,
   resolveWealthDisparityGlobalPolicy,
@@ -64,10 +65,11 @@ export function runPlanetWealthDisparityDailyPass(): PlanetWealthDisparityDailyP
   if (!coreStore.hydrated) return empty;
 
   const kstDayKey = planetAttackKstDayKey();
+  const holds = useClanWarFoundationStore.getState().planetHolds;
   let planetsProcessed = 0;
 
-  forEachCoreOpenGameplayPlanet(({ planetId, planet }) => {
-    if (isPlanetContestedZone(planetId)) return;
+  forEachCoreOpenGameplayPlanet(({ planetId, planet, system }) => {
+    if (shouldSkipWdiForWarTheater(planetId, system.id, holds)) return;
 
     const ref = resolveCoreOpenGameplayPlanetRef(planetId);
     if (!ref) return;

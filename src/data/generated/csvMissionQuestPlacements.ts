@@ -153,5 +153,23 @@ export const MISSION_QUEST_PLACEMENTS_FROM_CSV: MissionQuestPlacementRow[] = [
     stockQty: 99,
     unitPriceOverride: 420,
     questTag: "quest",
+  },
+  {
+    id: "qq_obj_s031_a",
+    objectiveId: "obj_s031_a",
+    planetId: "solar_station",
+    itemId: "weapon",
+    stockQty: 99,
+    unitPriceOverride: 720,
+    questTag: "quest",
+  },
+  {
+    id: "qq_obj_s033_a",
+    objectiveId: "obj_s033_a",
+    planetId: "omega_hub",
+    itemId: "food",
+    stockQty: 99,
+    unitPriceOverride: 42,
+    questTag: "quest",
   }
 ];

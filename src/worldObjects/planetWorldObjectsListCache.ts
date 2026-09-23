@@ -2,9 +2,12 @@ import { listPlanetWorldObjectsFromProviders } from './providers/registry';
 import { planetHubDefenseSatelliteMemoRev, planetHubFacilityDevMemoRev } from '../game/planetHub/planetHubStoreMemoRevisions';
 import { usePlanetCoreRuntimeStore } from '../store/planetCoreRuntimeStore';
 import { useWorldObjectRuntimeStore } from '../store/worldObjectRuntimeStore';
+import { useStelliumColonizeStore } from '../store/stelliumColonizeStore';
 import {
   invalidatePlanetWorldObjectsListCache,
+  readPlanetWorldObjectsKindCache,
   readPlanetWorldObjectsListCache,
+  writePlanetWorldObjectsKindCache,
   writePlanetWorldObjectsListCache,
 } from './planetWorldObjectsListCacheRegistry';
 import type { WorldObject } from './types';
@@ -26,11 +29,14 @@ export function resolvePlanetWorldObjectsListRevision(planetId: string): string 
     if (typeof state.hp === 'number') instanceSig += Math.floor(state.hp);
     if (typeof state.defenseLevel === 'number') instanceSig += state.defenseLevel * 3;
   }
+  const colonize = useStelliumColonizeStore.getState();
+  const colonizeRow = colonize.byPlanetId[planetId];
   return [
     planetHubDefenseSatelliteMemoRev(coreDetail),
     planetHubFacilityDevMemoRev(coreDetail),
     `a${orbitCount}:${mineralSig}`,
     `i${instanceSig}`,
+    `c${colonize.revision}:${colonizeRow?.phase ?? '-'}`,
   ].join(';');
 }
 
@@ -43,4 +49,16 @@ export function listPlanetWorldObjectsCached(
   if (hit) return hit;
   const list = listPlanetWorldObjectsFromProviders({ planetId, systemId });
   return writePlanetWorldObjectsListCache(planetId, systemId, revision, list);
+}
+
+export function listPlanetWorldObjectsByKindCached(
+  planetId: string,
+  systemId: string,
+  kind: WorldObject['kind'],
+): WorldObject[] {
+  const revision = resolvePlanetWorldObjectsListRevision(planetId);
+  const hit = readPlanetWorldObjectsKindCache(planetId, systemId, kind, revision);
+  if (hit) return hit;
+  const list = listPlanetWorldObjectsCached(planetId, systemId).filter((o) => o.kind === kind);
+  return writePlanetWorldObjectsKindCache(planetId, systemId, kind, revision, list);
 }

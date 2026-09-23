@@ -3,7 +3,9 @@
 > **정본 데이터**: `tables/content/missions.csv` · `mission_objectives.csv` · `mission_combat_captains.csv` · **`mission_quest_placements.csv`** · **`mission_quest_combat_ops.csv`**  
 > **빌드**: `npm run build:content-tables` → `src/data/generated/csvMissions.ts` 등  
 > **감사**: `npm run audit:mission-quest-placements` — buy_goods/defeat_enemy 전수 검증  
-> **런타임 진입점**: `src/missions/missionTrack.ts` · `missionCatalog.ts` · **`questItemOpsRegistry.ts`** · `missionStore.ts`
+> **런타임 진입점**: `src/missions/missionTrack.ts` · `missionCatalog.ts` · **`questItemOpsRegistry.ts`** · `missionStore.ts`  
+> **본편 기반 (2026-09-14)**: `docs/MAIN_QUEST_FOUNDATION.md` — 인증 `actionLabel` · 연퀘 미완료 bind · HUD `n/total` · `questOnly`. 스토리/함장 행/q02+ bind는 추후.  
+> **전투레벨 전수 (2026-09-17)**: 존 TCL vs 허브/웨이브/퀘스트 연동 — `docs/PLAY_SCENARIO_COMBAT_LEVEL_ADVANCEMENT.md`. 라이브 메인퀘 전투는 `mission_002` 뿐. q02+ 전투 bind 없음.
 
 ---
 
@@ -26,8 +28,8 @@
 
 | 트랙 | id 접두사 | 진입 API | UI |
 |---|---|---|---|
-| **튜토리얼 스토리** | `mission_*` | `initTutorialStory()` (온보딩·인트로) | QuestHUD 📖 · 선술집 「튜토리얼 스토리」 |
-| **수락 의뢰(퀘스트)** | `sandbox_*` | `acceptQuestMission()` (선술집·NPC 대화) | QuestHUD 📋 · 선술집 「수락 의뢰」 |
+| **튜토리얼 스토리** | `mission_*` | `initTutorialStory()` (온보딩·인트로) | QuestHUD 📖 · 바 「튜토리얼 스토리」 |
+| **수락 의뢰(퀘스트)** | `sandbox_*` | `acceptQuestMission()` (바·NPC 대화) | QuestHUD 📋 · 바 「수락 의뢰」 |
 
 - 분류 정본: `src/missions/missionTrack.ts` — `resolveMissionTrack()`
 - 구 명칭 alias: `initMissions` · `acceptInstanceMission` · `isStoryMissionId` · `isInstanceMissionId` (deprecated)
@@ -53,14 +55,14 @@
 | objective | 파일 |
 |-----------|------|
 | `reach_planet` | `missionPlanetHubSync.ts` |
-| `reach_system` + 배달 | `worldmap.tsx` |
+| `reach_system` + 배달 | `missionPlanetHubSync.ts` (허브 착륙만. 월드맵 성계 도착은 연출) |
 | `buy_goods` | `trade.tsx` |
 | `defeat_enemy` | `combat.tsx` + combat captain 리졸버 |
 
-### 선술집 UI
+### 바 UI
 - [x] 탭 3개: 공지판 · 미션현황 · 신규미션
-- [x] `TavernMissionStatusTab` — 진행/완료 목록
-- [x] `TavernNewMissionTab` — 행성별 sandbox(퀘스트) 목록 + **수락**
+- [x] `BarMissionStatusTab` — 진행/완료 목록
+- [x] `BarNewMissionTab` — 행성별 sandbox(퀘스트) 목록 + **수락**
 - [x] `missionStore.acceptQuestMission()` — 레벨·행성·선행·중복 검증
 
 ### 튜토리얼 스토리 (구 스토리 체인)
@@ -69,17 +71,25 @@
 
 ---
 
+## 본편 메인스토리 챕터 골격 (2026-08-24)
+
+- 정본 CSV: `main_story_chapters.csv` · `main_story_quests.csv` · `main_story_branches.csv` · `main_story_chain_steps.csv`
+- 설계: `docs/MAIN_STORY_CHAPTER_SPINE.md`
+- `story_001`만 실기. 나머지 10×30 본선 + 챕터당 분기 4슬롯은 골격(`skeleton`)
+- 시나리오·보상 확정 후 missions bind + `contentStatus=ready` · 챕터 엔딩은 `endStoryReady=1`
+
 ## 미완료 / 다음 스프린트
 
 ### P2 — 이벤트 미션
-- [ ] objective 타입 `talk_npc` (또는 `dialog_scene`) DSL v2 정의
+- [x] objective 타입 `talk_npc` — `story_001` 연퀘 실기. `captainId\|planetId` · `story_dialog_{objectiveId}`
 - [ ] `story_scenes.csv` 트리거: `mission_accept`, `npc_talk` 등
 - [ ] `npc_ai_captains.mainStageMissionTriggerId` 런타임 소비
 - [ ] `deriveMissionPlayCategory` → `event` 분기 실연동
 
 ### P2 — 전투 확장
-- [ ] 행성 궤도 전투(`planet.tsx`) 승리 → `defeat_enemy` 완료 연동
+- [x] 행성 궤도/웨이브 승리 → `defeat_enemy` — **베뉴+템플릿 가드** (2026-09-21). 행성 id 단독 완료 삭제
 - [x] 미션별 **강제 인카운터** — `mission_quest_combat_ops.csv` + `transit_guaranteed` (2026-06-27)
+- [x] `QuestCombatLock` — 항로 락 중 앵커 TCL/선체 · `hub_orbit` 시드 선점 · 분쟁 pending 보류
 - [ ] `defeat_enemy.quantity` 다수 격파 (v1: 1체 고정)
 
 ### P2 — 정리·품질
@@ -113,17 +123,17 @@ src/missions/
   missionPlanetHubSync.ts
   resolveMissionCombatCaptain.ts
   missionCombatEncounter.ts
-  tavernMissionBoard.ts
+  barMissionBoard.ts
 
 src/store/missionStore.ts
 
 app/(game)/
-  tavern.tsx
+  bar.tsx
   combat.tsx / worldmap.tsx / trade.tsx / planet.tsx
 
-src/components/tavern/
-  TavernMissionStatusTab.tsx
-  TavernNewMissionTab.tsx
+src/components/bar/
+  BarMissionStatusTab.tsx
+  BarNewMissionTab.tsx
 ```
 
 ---
@@ -133,7 +143,7 @@ src/components/tavern/
 1. `npm run build:content-tables` (CSV 변경 시)
 2. `npx tsc --noEmit -p tsconfig.client.json`
 3. Metro `r` 리로드
-4. 선술집 → 신규미션 → 수락 → 미션현황 확인
+4. 바 → 신규미션 → 수락 → 미션현황 확인
 5. 전투형: 은하 이동 조우 → 승리 후 objective ✓
 6. 배달형: 무역 구매 → 목표 성계 도착
 
@@ -142,10 +152,10 @@ src/components/tavern/
 ## 다음 세션 권장 순서
 
 1. **이벤트 미션 DSL v2** — `talk_npc` 타입 + `story_scenes` 트리거 1건 파일럿
-2. **궤도 전투 → defeat_enemy** — `planet.tsx` combat gate 연동
+2. **도착 퀘스트 행** — 챕터 바인드 시 `hub_orbit` 1행 (정책은 열림, 기존 26행 유지)
 3. **QuestHUD 병행 표시** — 주 미션(스토리) + 인스턴스 서브 라인
 4. E2E 수동 테스트 후 sandbox i18n 보강
 
 ---
 
-*마지막 갱신: 2026-06-18 · 레거시 `missions.ts` 제거 완료*
+*마지막 갱신: 2026-09-17 · 전투레벨 고도화 조사 교차 `PLAY_SCENARIO_COMBAT_LEVEL_ADVANCEMENT.md`*

@@ -1,6 +1,7 @@
 id,displayName,triggerKey,triggerTargetId,triggerRepeat,maxLinesPerPage,completionPolicy,nextRoute,skippable,typewriterSpeedMs,fadeInEnabled,fadeInDurationMs,fadeOutEnabled,fadeOutDurationMs
-intro01,튜토리얼 인트로,nickname_created,,once,5,mark_intro_seen_and_start_first_mission,/(game)/planet,TRUE,40,TRUE,700,TRUE,600
+intro01,튜토리얼 인트로,nickname_created,,once,4,mark_intro_seen_and_start_first_mission,/(game)/planet,TRUE,72,TRUE,700,TRUE,600
 ingame_dialog_01,아르카디아 환영 대사,planet_landed,arcadia_prime,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+ingame_dialog_scan_main_quest,스캔 후 메신저 안내,planet_scan_complete,arcadia_prime,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 ingame_dialog_wave_defense_end,웨이브 디펜스 종료,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_default,함장 인사 폴백,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_arc_transport_temp,아크수송선단 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,70,FALSE,0,FALSE,0
@@ -54,11 +55,13 @@ npc_dialog_arc_pf_09,노바 린 임시 대화,manual,,repeat,4,none,/(game)/plan
 npc_dialog_arc_pf_10,제이 파크 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_arc_pf_11,윤 하림 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_arc_pf_12,리스 베가 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-npc_dialog_tavern_ret_01,한로 크레인 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-npc_dialog_tavern_ret_02,미아 벨로 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-npc_dialog_tavern_ret_03,타드 레인 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-npc_dialog_tavern_ret_04,세라 미온 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_01,한로 크레인 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_02,미아 벨로 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_03,타드 레인 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_04,세라 미온 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 mission_clear_default,미션 완료(범용),manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+mission_clear_npc_delivery,미션 완료(담당자·배달),manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+mission_clear_npc_arrival,미션 완료(담당자·도착),manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 mission_clear_mission_001,첫 비행 완료,manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 mission_clear_mission_002,해적 소탕 완료,manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 mission_clear_mission_003,무역 루트 개척 완료,manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
@@ -73,15 +76,81 @@ npc_dialog_gov_genesis,아르카노 원 기원수문 대화,manual,,repeat,4,non
 npc_dialog_gov_blue_reserve,블루 총사령관 예비,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_gov_neutral_reserve,중립 총사령관 예비,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 early_route_arcadia_hub,아르카디아 궤도 Lv1-2,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-early_route_arcadia_tavern,아르카디아 선술집 Lv1-2,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+early_route_arcadia_bar,아르카디아 바 Lv1-2,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 early_route_vega_hub,베가 궤도 Lv2-4,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-early_route_vega_tavern,베가 선술집 Lv2-4,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+early_route_vega_bar,베가 바 Lv2-4,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 early_route_solar_hub,솔라 궤도 Lv4-5,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-early_route_solar_tavern,솔라 선술집 Lv4-5,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+early_route_solar_bar,솔라 바 Lv4-5,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 early_route_minerva_hub,미네르바 궤도 Lv5-7,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-early_route_minerva_tavern,미네르바 선술집 Lv5-7,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+early_route_minerva_bar,미네르바 바 Lv5-7,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 early_route_draco_hub,드라코 궤도 Lv7-9,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-early_route_draco_tavern,드라코 선술집 Lv7-9,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+early_route_draco_bar,드라코 바 Lv7-9,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 early_route_eden_hub,뉴에덴 궤도 Lv10,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-early_route_eden_tavern,뉴에덴 선술집 Lv10,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+early_route_eden_bar,뉴에덴 바 Lv10,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 arc_core_spy_intel_alert,스파이 수상 감지(정보원),manual,,repeat,4,none,/(game)/planet,TRUE,70,FALSE,0,FALSE,0
+story_dialog_story_001,메인스토리·동기불명 살인사건,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_001_b,메인스토리·솔라 바 목격자,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_001_d,메인스토리·엘렌 중간보고,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_001_e,메인스토리·솔라 도킹로그 증거,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_story_002,메인스토리·동기 없는 진실,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_002_b,메인스토리·미네르바 바 밀수조,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_002_d,메인스토리·노아 프릭 심문,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_002_e,메인스토리·지휘 공백 통보,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_story_003,메인스토리·대행 출정,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_003_a,메인스토리·코발 출정 하달,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_003_b,메인스토리·엘렌 관문 허가,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_story_004,메인스토리·예상 밖의 참사,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_004_b,메인스토리·베가 생존 보고,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_story_005,메인스토리·복수는 누가,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_005_a,메인스토리·코발 좌표 하달,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_story_006,메인스토리·숨은 자와의 대면,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_006_b,메인스토리·데드코러스 신호,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_006_c,메인스토리·다렐 소사 대면,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_story_noah_frick,노아 프릭 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_story_ian_koval,이안 코발 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_story_darel_sosa,다렐 소사 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s034_b,서브·캠프 입구,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s034_c,서브·왜곡 초계,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s034_e,서브·지워진 식별 신호,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s035_a,서브·식별 신호 대조,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s035_b,서브·요새 입성,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s035_c,서브·위장 통신,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s035_e,서브·요새 증언,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s036_a,서브·중개인의 값,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s036_b,서브·세 칸 원본,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s036_d,서브·출처 없는 돈,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s037_a,서브·항로 상자,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s037_b,서브·상자 일련,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s037_d,서브·파편 사본,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s038_a,서브·바의 빈 자리,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s038_b,서브·국경의 말,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s038_c,서브·관문 정리,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_s038_d,서브·문 앞,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_sq_orren_bask,오렌 바스크 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_sq_veil_hook,베일 훅 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_sq_nila_shol,닐라 숄 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_sq_tolin_grave,톨린 그레이브 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_sq_noll_pass,놀 패스 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_sq_ivy_kenn,아이비 켄 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_sq_rhea_vin,레아 빈 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_sq_kade_rim,케이드 림 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_sq_lira_mon,리라 몬 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_sq_kett_mion,켓 미온 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_sq_cal_ridge,칼 릿지 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_chapter_end_01,챕터1 엔딩 시네마틱(대기),manual,,once,4,return_hub_after_chapter_story,/(game)/planet,TRUE,72,TRUE,700,TRUE,600
+story_chapter_end_02,챕터2 엔딩 시네마틱(대기),manual,,once,4,return_hub_after_chapter_story,/(game)/planet,TRUE,72,TRUE,700,TRUE,600
+story_chapter_end_03,챕터3 엔딩 시네마틱(대기),manual,,once,4,return_hub_after_chapter_story,/(game)/planet,TRUE,72,TRUE,700,TRUE,600
+story_chapter_end_04,챕터4 엔딩 시네마틱(대기),manual,,once,4,return_hub_after_chapter_story,/(game)/planet,TRUE,72,TRUE,700,TRUE,600
+story_chapter_end_05,챕터5 엔딩 시네마틱(대기),manual,,once,4,return_hub_after_chapter_story,/(game)/planet,TRUE,72,TRUE,700,TRUE,600
+story_chapter_end_06,챕터6 엔딩 시네마틱(대기),manual,,once,4,return_hub_after_chapter_story,/(game)/planet,TRUE,72,TRUE,700,TRUE,600
+story_chapter_end_07,챕터7 엔딩 시네마틱(대기),manual,,once,4,return_hub_after_chapter_story,/(game)/planet,TRUE,72,TRUE,700,TRUE,600
+story_chapter_end_08,챕터8 엔딩 시네마틱(대기),manual,,once,4,return_hub_after_chapter_story,/(game)/planet,TRUE,72,TRUE,700,TRUE,600
+story_chapter_end_09,챕터9 엔딩 시네마틱(대기),manual,,once,4,return_hub_after_chapter_story,/(game)/planet,TRUE,72,TRUE,700,TRUE,600
+story_chapter_end_10,챕터10 엔딩 시네마틱(대기),manual,,once,4,return_hub_after_chapter_story,/(game)/planet,TRUE,72,TRUE,700,TRUE,600
+npc_dialog_orbit_comm_refuse_hostile,궤도 통신 거부(적대·폐쇄),manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_orbit_comm_refuse_unidentified,궤도 통신 거부(미식별),manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_default__revisit,함장 재회,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_arc_transport_temp__revisit,아크수송선단 재회,manual,,repeat,4,none,/(game)/planet,TRUE,70,FALSE,0,FALSE,0
+npc_dialog_mireille__revisit,미레유 보스 재회,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_orin__revisit,오린 케이드 재회,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_sela__revisit,셀라 모른 재회,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0

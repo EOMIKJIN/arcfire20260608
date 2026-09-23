@@ -4,7 +4,7 @@
 
 import { getFacilityLaboratoryLevelRow, resolveLaboratoryUpgradeCostCredits, resolveLaboratoryUpgradeDurationSec } from '../../arcCore/balance/facilityLaboratoryLevelPolicy';
 import { getFacilityShipyardLevelRow, resolveShipyardUpgradeCostCredits, resolveShipyardUpgradeDurationSec } from '../../arcCore/balance/facilityShipyardLevelPolicy';
-import { getFacilityTavernLevelRow, resolveTavernUpgradeCostCredits, resolveTavernUpgradeDurationSec } from '../../arcCore/balance/facilityTavernLevelPolicy';
+import { getFacilityBarLevelRow, resolveBarUpgradeCostCredits, resolveBarUpgradeDurationSec } from '../../arcCore/balance/facilityBarLevelPolicy';
 import { getFacilityTradePortLevelRow, resolveTradePortUpgradeCostCredits, resolveTradePortUpgradeDurationSec } from '../../arcCore/balance/facilityTradePortLevelPolicy';
 import {
   getPlanetDefenseSatelliteLevelRow,
@@ -52,12 +52,12 @@ const FACILITY_RESOLVERS: Record<string, FacilityInstantResolver> = {
     resolveInstallCostCredits: () => getPlanetDevelopmentCatalogRow('dev_research_lab')?.installCostCredits ?? 0,
     resolveLegacyInstallInstantCredits: () => getFacilityLaboratoryLevelRow(1)?.instantUpgradeCostCredits ?? 0,
   },
-  tavern: {
-    resolveUpgradeCostCredits: resolveTavernUpgradeCostCredits,
-    resolveUpgradeDurationSec: resolveTavernUpgradeDurationSec,
-    resolveLegacyInstantCredits: (lv) => getFacilityTavernLevelRow(lv + 1)?.instantUpgradeCostCredits ?? null,
+  bar: {
+    resolveUpgradeCostCredits: resolveBarUpgradeCostCredits,
+    resolveUpgradeDurationSec: resolveBarUpgradeDurationSec,
+    resolveLegacyInstantCredits: (lv) => getFacilityBarLevelRow(lv + 1)?.instantUpgradeCostCredits ?? null,
     resolveInstallCostCredits: () => getPlanetDevelopmentCatalogRow('dev_population_dome')?.installCostCredits ?? 0,
-    resolveLegacyInstallInstantCredits: () => getFacilityTavernLevelRow(1)?.instantUpgradeCostCredits ?? 0,
+    resolveLegacyInstallInstantCredits: () => getFacilityBarLevelRow(1)?.instantUpgradeCostCredits ?? 0,
   },
   defense_satellite: {
     resolveUpgradeCostCredits: resolveDefenseSatelliteUpgradeCostCredits,

@@ -28,9 +28,9 @@
 | 파일 | 내용 |
 |------|------|
 | `src/game/continueSessionPrewarm.ts` | 차원항로 prewarm `InteractionManager.runAfterInteractions` → 단순 `yieldToUi` (워프→행성 전환 행 제거) |
-| `src/account/localAccountReset.ts` | 계정 초기화 시 **행성개발(planetCore)·월드오브젝트·전투텔레메트리·세션·선술집보드·갤럭시(world)** 함께 리셋 |
+| `src/account/localAccountReset.ts` | 계정 초기화 시 **행성개발(planetCore)·월드오브젝트·전투텔레메트리·세션·바보드·갤럭시(world)** 함께 리셋 |
 | `src/store/combatMatchTelemetryStore.ts` | `resetCombatMatchTelemetry()` 추가 |
-| `src/store/tavernBoardStore.ts` | `resetLocalBoard()` 추가 (기본 시드 복귀) |
+| `src/store/barBoardStore.ts` | `resetLocalBoard()` 추가 (기본 시드 복귀) |
 | `.cursor/rules/arcfire-main-lead-agent.mdc` | 「플레이어 계정 최상위」·「주기·틱 메모리」·「경제 부트경로 감사」 규칙 |
 | `app/_layout.tsx` | (스플래시 게이팅 추가 후 **롤백 완료** — 순변경 없음) |
 

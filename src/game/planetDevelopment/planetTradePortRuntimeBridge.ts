@@ -8,6 +8,7 @@ import type { PlanetTradeFeeBreakdown } from '../../arcCore/economy/planetUpkeep
 import {
   resolveTradePortFeeRatePct,
 } from '../../arcCore/balance/facilityTradePortLevelPolicy';
+import { applyPlayerTaxCutToFeeBreakdown } from '../playerOwnedSkillTradeAdjust';
 import { isPlanetCsvTradePortWorldEnabled } from './planetCsvWorldFlags';
 import { isPlanetTradePortInstalled, readPlanetTradePortDetail } from './planetTradePortListing';
 
@@ -23,13 +24,15 @@ export function resolvePlanetTradePortDevLevel(planetId: string): number | null 
 export function computeTradeFeeForPlanetGross(
   planetId: string | null | undefined,
   grossCredits: number,
+  opts?: { contraband?: boolean },
 ): PlanetTradeFeeBreakdown {
-  if (!planetId) return computePlanetTradeFeeBreakdown(grossCredits);
+  const taxOpts = opts?.contraband ? { contraband: true } : undefined;
+  if (!planetId) return applyPlayerTaxCutToFeeBreakdown(computePlanetTradeFeeBreakdown(grossCredits), undefined, taxOpts);
   const level = resolvePlanetTradePortDevLevel(planetId);
-  if (level == null) return computePlanetTradeFeeBreakdown(grossCredits);
+  if (level == null) return applyPlayerTaxCutToFeeBreakdown(computePlanetTradeFeeBreakdown(grossCredits), undefined, taxOpts);
   const base = resolvePlanetUpkeepPolicy();
-  return computePlanetTradeFeeBreakdown(grossCredits, {
+  return applyPlayerTaxCutToFeeBreakdown(computePlanetTradeFeeBreakdown(grossCredits, {
     ...base,
     tradeFeeRatePct: resolveTradePortFeeRatePct(level),
-  });
+  }), undefined, taxOpts);
 }

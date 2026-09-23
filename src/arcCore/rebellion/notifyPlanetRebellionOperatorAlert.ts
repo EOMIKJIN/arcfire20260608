@@ -33,7 +33,7 @@ export function notifyPlanetRebellionOperatorAlert(input: {
   });
 }
 
-/** @deprecated 선술집 공지 대신 notifyPlanetRebellionOperatorAlert 사용 */
+/** @deprecated 바 공지 대신 notifyPlanetRebellionOperatorAlert 사용 */
 export function publishRebellionOverthrowNotice(input: {
   planetLabelKo: string;
   planetId: string;
@@ -49,7 +49,7 @@ export function publishRebellionOverthrowNotice(input: {
   });
 }
 
-/** @deprecated 선술집 공지 대신 notifyPlanetRebellionOperatorAlert 사용 */
+/** @deprecated 바 공지 대신 notifyPlanetRebellionOperatorAlert 사용 */
 export function publishRebellionSimmeringNotice(input: {
   planetLabelKo: string;
   planetId: string;

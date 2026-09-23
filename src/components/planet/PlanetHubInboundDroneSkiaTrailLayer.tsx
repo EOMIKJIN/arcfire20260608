@@ -78,7 +78,15 @@ function recordInboundDroneVfxPicture(input: {
     const path = pathPool[i]!;
     resetSkPath(path);
 
-    const wrote = writeInboundDroneTaperedTrailFillPath(path, center, edgeR, impactR, slice.ang, slice.uTail, slice.uHead);
+    const wrote = writeInboundDroneTaperedTrailFillPath(
+      path,
+      center,
+      edgeR,
+      impactR,
+      slice.ang,
+      slice.uTail,
+      slice.uHead,
+    );
     if (!wrote) continue;
 
     trailPaint.setAlphaf(Math.max(0, Math.min(1, slice.trailOpacity * INBOUND_DRONE_TRAIL_GLOW_OPACITY_MUL)));

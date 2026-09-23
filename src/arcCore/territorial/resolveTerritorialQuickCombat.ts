@@ -9,6 +9,8 @@ export type TerritorialQuickCombatInput = {
   /** 보급선 배율 — 고립 <1 · 보급 확보 ≥1 (기본 1) */
   attackerSupplyMul?: number;
   defenderSupplyMul?: number;
+  /** 전선 주둔 — 수비 화력만. 롤 가중·defenderAdvantage와 별축 */
+  defenderGarrisonMul?: number;
 };
 
 export type TerritorialQuickCombatResult = {
@@ -42,8 +44,10 @@ export function resolveTerritorialQuickCombat(
 ): TerritorialQuickCombatResult {
   const attackerSupplyMul = input.attackerSupplyMul ?? 1;
   const defenderSupplyMul = input.defenderSupplyMul ?? 1;
+  const defenderGarrisonMul = input.defenderGarrisonMul ?? 1;
   const attackerPower = resolveFleetPower(input.attackerShipIds) * attackerSupplyMul;
-  const defenderPower = resolveFleetPower(input.defenderShipIds) * defenderSupplyMul;
+  const defenderPower =
+    resolveFleetPower(input.defenderShipIds) * defenderSupplyMul * defenderGarrisonMul;
   const defBonus = 1 + Math.max(0, input.defenderAdvantagePct) / 100;
   const attackerEffective = applyNoise(attackerPower, input.combatNoisePct);
   const defenderEffective = applyNoise(defenderPower * defBonus, input.combatNoisePct);

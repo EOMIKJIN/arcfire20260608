@@ -1,6 +1,10 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { listPlanetDefenseSatelliteLevelRows } from '../../../arcCore/balance/planetDefenseSatelliteLevelPolicy';
+import {
+  appendDefenseSatColonizeSummaryLine,
+  resolveStelliumColonizeRequiredDefenseSatLevel,
+} from '../../../arcCore/colonize/stelliumColonizeDefenseSat';
 import { PlanetHubDigitalGauge } from '../../../components/planet/PlanetHubActionGaugeSlot';
 import type { PlanetDevelopmentModuleContext } from '../../../game/planetDevelopment/planetDevelopmentRegistry';
 import { usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore';
@@ -70,7 +74,12 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
   const currentRow = snapshot.level > 0 ? getDefenseSatelliteLevelStatRow(snapshot.level) : null;
   const moduleSummaryKey = 'planetDev.summary.defense_satellite';
   const moduleSummaryRaw = t(moduleSummaryKey);
-  const moduleSummary = moduleSummaryRaw === moduleSummaryKey ? '' : moduleSummaryRaw;
+  const colonizeNeed = resolveStelliumColonizeRequiredDefenseSatLevel();
+  const colonizeSummaryLine = colonizeNeed > 0
+    ? t('planetDev.summary.defense_satelliteColonize', { level: colonizeNeed })
+    : '';
+  const moduleSummaryBase = moduleSummaryRaw === moduleSummaryKey ? '' : moduleSummaryRaw;
+  const moduleSummary = appendDefenseSatColonizeSummaryLine(moduleSummaryBase, colonizeSummaryLine);
   const levelRows = listPlanetDefenseSatelliteLevelRows();
   const nextDurationLabel = snapshot.nextUpgradeDurationSec != null
     ? formatDefenseSatelliteDurationLabel(snapshot.nextUpgradeDurationSec)
@@ -227,12 +236,25 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
             <ArcOverlayInfoRow label={t('defenseSat.defenseZone')} value={`${currentRow.defenseZoneDiameterPx}px`} visualTheme={visualTheme} />
             <ArcOverlayInfoRow label={t('defenseSat.hitRate')} value={`${currentRow.interceptHitPct}%`} visualTheme={visualTheme} />
             <ArcOverlayInfoRow label={t('defenseSat.interceptDwell')} value={t('defenseSat.interceptDwellValue', { sec: currentRow.interceptDwellSec })} visualTheme={visualTheme} />
+            <ArcOverlayInfoRow
+              label={t('defenseSat.territorialDefense')}
+              value={t('defenseSat.territorialDefenseValue', { pct: currentRow.territorialDefenderAdvantagePct })}
+              visualTheme={visualTheme}
+            />
+            <ArcOverlayInfoRow
+              label={t('defenseSat.invasionSuppress')}
+              value={t('defenseSat.invasionSuppressValue', { pct: currentRow.territorialStatusQuoAbsorbPct })}
+              visualTheme={visualTheme}
+            />
+            <PlanetDevHintText visualTheme={visualTheme} variant="body">
+              {t('defenseSat.territorialHint')}
+            </PlanetDevHintText>
           </>
         ) : null}
 
         {snapshot.isInstalling ? (
           <View style={styles.gaugeBlock}>
-            <PlanetDevSectionBar label={t('planetDev.installProgress')} visualTheme={visualTheme} />
+            <PlanetDevSectionBar label={t('planetDev.installProgress')} visualTheme={visualTheme} breathe />
             <PlanetDevHintText visualTheme={visualTheme} variant="body">
               {snapshot.installDurationSec != null
                 ? formatDefenseSatelliteDurationLabel(snapshot.installDurationSec)
@@ -247,7 +269,7 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
 
         {snapshot.isUpgrading ? (
           <View style={styles.gaugeBlock}>
-            <PlanetDevSectionBar label={t('defenseSat.upgradeProgress')} visualTheme={visualTheme} />
+            <PlanetDevSectionBar label={t('defenseSat.upgradeProgress')} visualTheme={visualTheme} breathe />
             <PlanetDevHintText visualTheme={visualTheme} variant="body">
               {snapshot.upgradeJob?.targetLevel != null
                 ? formatPlanetDevLevelUpgradeArrow(snapshot.level, snapshot.upgradeJob.targetLevel, t)
@@ -283,7 +305,12 @@ export const PlanetDefenseSatelliteDevContent = memo(function PlanetDefenseSatel
                 zone: row.defenseZoneDiameterPx,
                 hit: row.interceptHitPct,
                 dwell: row.interceptDwellSec,
+                adv: row.territorialDefenderAdvantagePct,
+                absorb: row.territorialStatusQuoAbsorbPct,
               })}
+              {colonizeNeed > 0 && row.level === colonizeNeed
+                ? t('defenseSat.colonizeEntryOption')
+                : ''}
             </Text>
           </View>
         ))}

@@ -1,0 +1,2 @@
+policyId,enabled,siegeGateAlliedMin,capitalNeutralDeclareMul,capitalBattleWeightMul,capitalStatusQuoAbsorb,capitalDefenderAdvantageBonusPct,capitalAttackerDominantPenaltyPct,capitalRebellionOverthrowMul,capitalRebellionRingMul,capitalPoolPromoteBannedWhenRingIntact,capitalPoolScorePenalty,capitalSeedRestoreIgnoresHostileAdj,notesKo
+default_v1,true,1,0.15,0.45,true,18,20,0.35,0.55,true,40,true,4대 항로 수도 방위 우세 — 포위문·자동 점유/반란/분쟁만(플레이어 웨이브 제외)

@@ -1,10 +1,12 @@
-import type { TavernNotice } from '../store/tavernBoardStore';
-import type { I18nParams } from './types';
+import type { BarNotice } from '../store/barBoardStore';
+import type { AppLocale, I18nParams } from './types';
 import { getLocale, resolveDictionaryLocale } from './index';
+import { resolveLocalizedSystemNameById } from './systemText';
 
 function buildParams(
-  notice: Pick<TavernNotice, 'i18nKey' | 'i18nParams'>,
+  notice: Pick<BarNotice, 'i18nKey' | 'i18nParams'>,
   t: (key: string, params?: I18nParams) => string,
+  locale: AppLocale,
 ): I18nParams | undefined {
   const raw = notice.i18nParams;
   if (!raw || !notice.i18nKey) return raw;
@@ -20,7 +22,7 @@ function buildParams(
   if (notice.i18nKey === 'news.megaFactionPgp') {
     const leader = String(raw.leader ?? 'tie');
     const leaderLine = t(`news.megaFactionPgp.leader.${leader}`);
-    const dict = resolveDictionaryLocale(getLocale());
+    const dict = resolveDictionaryLocale(locale);
     const blueNation =
       dict === 'en'
         ? String(raw.blueNationEn ?? raw.blueNation ?? '')
@@ -30,6 +32,16 @@ function buildParams(
         ? String(raw.redNationEn ?? raw.redNation ?? '')
         : String(raw.redNation ?? raw.redNationEn ?? '');
     return { ...raw, leaderLine, blueNation, redNation };
+  }
+
+  if (notice.i18nKey === 'news.worldUnlock' || notice.i18nKey === 'news.expansionTest') {
+    const systemId = String(raw.systemId ?? '');
+    const systemName = resolveLocalizedSystemNameById(
+      systemId,
+      String(raw.systemName ?? ''),
+      locale,
+    );
+    return { ...raw, systemId, systemName };
   }
 
   if (notice.i18nKey === 'news.territorialHold') {
@@ -46,24 +58,24 @@ function buildParams(
 }
 
 export function resolveNoticeTitle(
-  notice: Pick<TavernNotice, 'title' | 'i18nKey' | 'i18nParams'>,
+  notice: Pick<BarNotice, 'title' | 'i18nKey' | 'i18nParams'>,
   t: (key: string, params?: I18nParams) => string,
 ): string {
   if (notice.i18nKey) {
     const key = `${notice.i18nKey}.title`;
-    const val = t(key, buildParams(notice, t));
+    const val = t(key, buildParams(notice, t, getLocale()));
     if (val !== key) return val;
   }
   return notice.title ?? '';
 }
 
 export function resolveNoticeBody(
-  notice: Pick<TavernNotice, 'body' | 'i18nKey' | 'i18nParams'>,
+  notice: Pick<BarNotice, 'body' | 'i18nKey' | 'i18nParams'>,
   t: (key: string, params?: I18nParams) => string,
 ): string {
   if (notice.i18nKey) {
     const key = `${notice.i18nKey}.body`;
-    const val = t(key, buildParams(notice, t));
+    const val = t(key, buildParams(notice, t, getLocale()));
     if (val !== key) return val;
   }
   return notice.body ?? '';

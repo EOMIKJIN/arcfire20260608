@@ -3,7 +3,7 @@
   "l1Anchor": {
     "trade_port": 500,
     "shipyard": 800,
-    "tavern": 800,
+    "bar": 800,
     "laboratory": 2000,
     "defense": 1000
   },
@@ -27,7 +27,7 @@
   "perFacilityMaxCr": {
     "trade_port": 469803200,
     "shipyard": 1155382900,
-    "tavern": 765150400,
+    "bar": 765150400,
     "laboratory": 1450279360,
     "defense": 1312194800
   },

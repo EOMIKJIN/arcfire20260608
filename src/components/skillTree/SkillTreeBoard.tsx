@@ -11,6 +11,7 @@ import { canLearnSkill } from '../../engine/SkillEngine';
 import { FONTS, SPACING } from '../../utils/theme';
 import { useT } from '../../i18n';
 import { resolveSkillName } from '../../i18n/skillText';
+import { useAppSettingsStore } from '../../store/appSettingsStore';
 import { resolveSkillTreeIconSpec } from '../../game/skillTree/skillTreeIcons';
 import { PlanetHubActionIcon } from '../../ui/tactical/PlanetHubActionIcon';
 import { TACTICAL_HUB as TH } from '../../ui/tactical/tacticalHubTokens';
@@ -22,7 +23,7 @@ import {
 } from '../../game/skillTree/skillTreeLayout';
 
 const NODE_W = 76;
-const NODE_H = 86;
+const NODE_H = 98;
 const COL_W = 104;
 const TIER_GAP = 32;
 const TIER_LABEL_H = 24;
@@ -50,6 +51,8 @@ const SKILL_CARD = {
   tierInk: TH.tileLabelInk,
   edgeActive: SKILL_LED_ACTIVE,
   edgeIdle: 'rgba(110, 128, 160, 0.38)',
+  statusAcquired: SKILL_LED_ACTIVE,
+  statusUnacquired: 'rgba(184, 190, 201, 0.62)',
 } as const;
 
 type Pt = { x: number; y: number };
@@ -180,11 +183,16 @@ const SkillTreeNode = memo(function SkillTreeNode({
   onPress: () => void;
 }) {
   const t = useT();
+  const locale = useAppSettingsStore((s) => s.locale);
   const { learned, prereqLearned, canLearn } = resolveNodeVisualState(skill, player);
   const { left, top } = nodeTopLeft(layout.tier, layout.column);
   const locked = !learned && !prereqLearned;
   const iconSpec = resolveSkillTreeIconSpec(skill.id, skill.category);
   const iconColor = resolveIconColor(learned, canLearn && !learned, locked);
+  const statusLabel = learned
+    ? t('skilltree.nodeStatus.acquired')
+    : t('skilltree.nodeStatus.unacquired');
+  const statusColor = learned ? SKILL_CARD.statusAcquired : SKILL_CARD.statusUnacquired;
 
   return (
     <Pressable
@@ -207,10 +215,13 @@ const SkillTreeNode = memo(function SkillTreeNode({
         <PlanetHubActionIcon spec={iconSpec} size={22} color={iconColor} />
       </View>
       <Text style={[styles.nodeName, learned && styles.nodeNameLearned]} numberOfLines={1}>
-        {resolveSkillName(skill, t)}
+        {resolveSkillName(skill, locale)}
       </Text>
       <Text style={[styles.nodeLevel, locked && styles.nodeLevelLocked]}>
         {t('skilltree.nodeLevel', { level: skill.levelRequired })}
+      </Text>
+      <Text style={[styles.nodeStatus, { color: statusColor }]} numberOfLines={1}>
+        {statusLabel}
       </Text>
     </Pressable>
   );
@@ -389,5 +400,12 @@ const styles = StyleSheet.create({
   },
   nodeLevelLocked: {
     color: SKILL_CARD.iconLocked,
+  },
+  nodeStatus: {
+    fontFamily: FONTS.mono,
+    fontSize: 9,
+    marginTop: 1,
+    textAlign: 'center',
+    ...androidTextFix,
   },
 });

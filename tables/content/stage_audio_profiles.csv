@@ -9,6 +9,6 @@ worldmap,bgm_galaxy_map,bgm_combat|bgm_planet_hub,sfx_ui_confirm,은하계 지�
 combat,bgm_combat,bgm_planet_hub,sfx_combat_hit|sfx_combat_destroy,전투
 trade,bgm_trade,bgm_planet_hub,sfx_ui_confirm|sfx_ui_back,무역소
 shipyard,bgm_shipyard,bgm_planet_hub,sfx_ui_confirm|sfx_ui_back,조선소
-tavern,bgm_tavern,bgm_planet_hub,sfx_ui_confirm|sfx_ui_back,선술집
+bar,bgm_bar,bgm_planet_hub,sfx_ui_confirm|sfx_ui_back,바
 skilltree,bgm_skilltree,bgm_planet_hub,sfx_ui_confirm|sfx_ui_back,연구소
 gem-shop,bgm_trade,bgm_planet_hub,sfx_ui_confirm|sfx_ui_back,보석 상점

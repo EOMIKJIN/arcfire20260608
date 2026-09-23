@@ -18,8 +18,8 @@ export const PLANET_HUB_ACTION_ICONS = {
   trade: { family: 'material-community', name: 'cube-scan' },
   /** 조선소 — 궤도 도크·정비 기지 */
   shipyard: { family: 'material-community', name: 'space-station' },
-  /** 선술집 — 크루 라운지·홀로 coms */
-  tavern: { family: 'material-community', name: 'account-voice' },
+  /** 바 — 크루 라운지·홀로 coms */
+  bar: { family: 'material-community', name: 'account-voice' },
   /** 연구소 — 테크 트리·분기 */
   skilltree: { family: 'material-community', name: 'source-branch' },
   /** 출발 — 함대 상륙 */

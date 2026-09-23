@@ -56,13 +56,15 @@ function StageShellInner({
       style={[styles.safe, { backgroundColor: safeAreaBackgroundColor ?? COLORS.bg_primary }]}
       edges={edges}
     >
-      {background === 'stars' ? (
+      {background === 'stars' || backgroundOverlay ? (
         <View style={styles.bg} pointerEvents="box-none">
-          <View style={styles.bgStars} pointerEvents="none">
-            <StarField width={width} height={height} count={starFieldCount} />
-          </View>
+          {background === 'stars' ? (
+            <View style={styles.bgStars} pointerEvents="none">
+              <StarField width={width} height={height} count={starFieldCount} />
+            </View>
+          ) : null}
           {backgroundOverlay ? (
-            <View style={styles.bgOverlay} pointerEvents="box-none">
+            <View style={styles.bgOverlay} pointerEvents="none">
               {backgroundOverlay}
             </View>
           ) : null}

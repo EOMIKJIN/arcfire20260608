@@ -5,6 +5,7 @@ import {
   type ArcAlertButton,
   type ArcOverlayNarrativeEntry,
 } from './arcOverlayStore';
+import { resolveArcAlertAutoDismissMs } from './overlayAlertContract';
 
 export type { ArcAlertButton, ArcOverlayEntry, ArcOverlayKind, PlanetDevelopmentInitialView } from './arcOverlayStore';
 export {
@@ -16,6 +17,8 @@ export {
   presentWaveResultOverlay,
   presentSettingsOverlay,
   presentBmShopOverlay,
+  presentPlanetOwnershipRosterOverlay,
+  presentSkillInfoOverlay,
   useArcOverlayStore,
 } from './arcOverlayStore';
 
@@ -43,6 +46,7 @@ export function showArcOverlayReward(payload: {
     newLevel: payload.newLevel,
     levelUpDetail: payload.levelUpDetail,
     onClose: payload.onClose,
+    autoDismissMs: resolveArcAlertAutoDismissMs(),
   });
 }
 

@@ -20,6 +20,8 @@ type Props = {
   fadeInDurationMs?: number;
   onTextComplete: () => void;
   onPressAdvance: () => void;
+  /** true면 타이핑 애니메이션 없이 즉시 전체 텍스트 표시(스킵 후 마지막 페이지) */
+  skipAnimation?: boolean;
 };
 
 /** 검은 화면 + 흰 자막 — 영화 프롤로그 연출 (범용 오버레이·Tactical UI 미사용) */
@@ -32,6 +34,7 @@ export const CinematicPrologueScene = memo(function CinematicPrologueScene({
   fadeInDurationMs = CP.fadeDefaultMs,
   onTextComplete,
   onPressAdvance,
+  skipAnimation = false,
 }: Props) {
   const { height } = useWindowDimensions();
   const letterboxH = Math.round(height * CP.letterboxHeightPct);
@@ -74,6 +77,7 @@ export const CinematicPrologueScene = memo(function CinematicPrologueScene({
             onComplete={onTextComplete}
             style={styles.body}
             cursorColor={CP.cursorInk}
+            skipAnimation={skipAnimation}
           />
         </Animated.View>
       </Pressable>

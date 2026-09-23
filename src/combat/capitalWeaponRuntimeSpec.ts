@@ -159,6 +159,20 @@ export function isRocketFamilyWeapon(weaponId: string): boolean {
   return resolveCapitalWeaponRuntimeSpec(weaponId)?.familyKind === 'rocket';
 }
 
+export function isCraftFamilyKind(familyKind: string | null | undefined): familyKind is 'drone' | 'carrier' {
+  return familyKind === 'drone' || familyKind === 'carrier';
+}
+
+export function isCraftFamilyWeapon(weaponId: string): boolean {
+  return isCraftFamilyKind(getCapitalWeaponRow(weaponId)?.familyKind);
+}
+
+/** 선회 루프 사용 — family 정책이 active 일 때만. effectPending 이면 로켓 스텁 유지 */
+export function isCraftLoiterRuntimeActive(weaponId: string): boolean {
+  if (!isCraftFamilyWeapon(weaponId)) return false;
+  return isCapitalWeaponCombatActive(weaponId);
+}
+
 export function isNovaAoeWeapon(weaponId: string): boolean {
   return resolveCapitalWeaponRuntimeSpec(weaponId)?.impactMode === 'nova_aoe';
 }

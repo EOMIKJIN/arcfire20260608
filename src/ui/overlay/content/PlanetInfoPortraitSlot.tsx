@@ -18,8 +18,8 @@ type Props = {
 
 /**
  * 행성 정보 오버레이 — 헤더 바로 아래 카드 **가로 100%** 맞춤.
- * 세로는 번들 PNG 원본 width/height(`resolvePlanetInfoPortraitAspectRatio`)만 사용.
- * @2x 제작 가로 660px · 세로는 원본 비율 유지 — UI 고정 높이 없음.
+ * 세로는 번들 이미지 width/height(`resolvePlanetInfoPortraitAspectRatio`)만 사용.
+ * 제작 가로 480px JPEG · 세로는 원본 비율 유지 — UI 고정 높이 없음.
  */
 export const PlanetInfoPortraitSlot = memo(function PlanetInfoPortraitSlot({ planetId }: Props) {
   const t = useT();

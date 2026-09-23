@@ -15,6 +15,13 @@ export type PlanetDefenseSatelliteLevelRow = {
   interceptMissileCount: number;
   /** [v3] 레벨별 1일 유지비(크레딧) — 행성 유지비 개발도 비례 가산분 */
   dailyUpkeepCredits: number;
+  /**
+   * NPC 자동 분쟁 퀵컴뱃 수비 가산(포인트). 기존 hp/영역/명중과 별축.
+   * 플레이어 웨이브·롤 CSV 원본은 읽지 않음.
+   */
+  territorialDefenderAdvantagePct: number;
+  /** NPC 롤에서 battle → status_quo 이동(포인트). declare 가중은 유지. */
+  territorialStatusQuoAbsorbPct: number;
   notesKo: string;
 };
 
@@ -42,6 +49,14 @@ function parseLevelRow(raw: (typeof PlanetDefenseSatelliteLevelPolicy_FROM_BALAN
     grantsSecondSatellite: parseBool(raw.grantsSecondSatellite),
     interceptMissileCount: Math.max(1, Math.floor(Number(raw.interceptMissileCount) || 1)),
     dailyUpkeepCredits: Math.max(0, Math.floor(Number((raw as { dailyUpkeepCredits?: string }).dailyUpkeepCredits) || 0)),
+    territorialDefenderAdvantagePct: Math.max(
+      0,
+      Math.min(10, Math.floor(Number((raw as { territorialDefenderAdvantagePct?: string }).territorialDefenderAdvantagePct) || 0)),
+    ),
+    territorialStatusQuoAbsorbPct: Math.max(
+      0,
+      Math.min(4, Math.floor(Number((raw as { territorialStatusQuoAbsorbPct?: string }).territorialStatusQuoAbsorbPct) || 0)),
+    ),
     notesKo: String(raw.notesKo ?? ''),
   };
 }

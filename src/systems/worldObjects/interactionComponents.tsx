@@ -22,11 +22,13 @@ function PlaceholderActionButton({
   object: WorldObject;
   onExecute?: (objectId: string, interaction: WorldObjectInteractionKind) => void;
 }) {
+  const t = useT();
+  const objectTitle = t(object.title, object.titleOrdinal != null ? { n: object.titleOrdinal } : undefined);
   return (
     <TouchableOpacity
       style={styles.actionButton}
       onPress={() => onExecute?.(object.id, kind)}
-      accessibilityLabel={`${object.title} ${label}`}
+      accessibilityLabel={`${objectTitle} ${label}`}
     >
       <Text style={styles.actionText}>{label}</Text>
     </TouchableOpacity>

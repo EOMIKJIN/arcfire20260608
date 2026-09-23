@@ -1,5 +1,5 @@
 // ============================================================
-// 범용 시설 레벨 정책 파서 — trade_port / laboratory / tavern CSV 공통
+// 범용 시설 레벨 정책 파서 — trade_port / laboratory / bar CSV 공통
 // ============================================================
 
 export type FacilityGenericLevelRow = {

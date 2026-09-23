@@ -3,13 +3,21 @@ import { MISSIONS_FROM_CSV } from '../data/generated';
 import type { ArcCoreInstanceMissionBoardEntry } from './arcCoreInstanceMissionTypes';
 import { ARC_CORE_INSTANCE_MISSION_ID_PREFIX } from './arcCoreInstanceMissionTypes';
 import {
-  patchTavernInstanceObjectiveTargetId,
-  resolveTavernInstancePlanetContext,
+  patchBarInstanceObjectiveTargetId,
+  resolveBarInstancePlanetContext,
 } from './arcCoreInstanceMissionPlanetContext';
+import { resolveBarReputationBonusPct } from '../arcCore/balance/facilityBarLevelPolicy';
 import {
-  computeTavernInstanceMissionDifficulty,
-  scaleTavernInstanceMissionRewards,
-} from './tavernInstanceMissionDifficulty';
+  computeBarInstanceMissionDifficulty,
+  scaleBarInstanceMissionRewards,
+} from './barInstanceMissionDifficulty';
+import { resolvePlanetBarDomeLevelForMissions } from './barInstanceDomeLevel';
+import { applyResolvedClearContactToMission } from './resolveMissionClearNpcContext';
+import {
+  resolveCaptainContactLabel,
+  resolveMissionContactPlanetIdForSystem,
+  resolveBarHostCaptainIdAtPlanet,
+} from './missionClearContactLookups';
 
 const materializedByInstanceId = new Map<string, Mission>();
 const templateByInstanceId = new Map<string, string>();
@@ -26,26 +34,39 @@ export function resolveArcCoreInstanceTemplateMissionId(missionId: string): stri
 function cloneMissionFromTemplate(entry: ArcCoreInstanceMissionBoardEntry): Mission | undefined {
   const template = MISSIONS_FROM_CSV[entry.templateMissionId];
   if (!template) return undefined;
-  const ctx = resolveTavernInstancePlanetContext(entry.offerPlanetId, {
+  const ctx = resolveBarInstancePlanetContext(entry.offerPlanetId, {
     instanceId: entry.instanceId,
   });
-  const difficulty = computeTavernInstanceMissionDifficulty(template, ctx, entry.offerPlanetId);
-  const scaledRewards = scaleTavernInstanceMissionRewards(template.rewards, difficulty.tier);
-  return {
+  const difficulty = computeBarInstanceMissionDifficulty(template, ctx, entry.offerPlanetId);
+  const domeLevel = resolvePlanetBarDomeLevelForMissions(entry.offerPlanetId);
+  const scaledRewards = scaleBarInstanceMissionRewards(
+    template.rewards,
+    difficulty.tier,
+    resolveBarReputationBonusPct(domeLevel),
+  );
+  const cloned: Mission = {
     ...template,
     id: entry.instanceId,
     objectives: template.objectives.map((obj) => ({
       ...obj,
-      targetId: patchTavernInstanceObjectiveTargetId(obj.type, obj.targetId, ctx),
+      targetId: patchBarInstanceObjectiveTargetId(obj.type, obj.targetId, ctx),
     })),
     prerequisiteIds: [...template.prerequisiteIds],
     rewards: scaledRewards,
     offerPlanetId: entry.offerPlanetId,
     offerCaptainId: entry.offerCaptainId ?? template.offerCaptainId,
     clearDialogSceneId: template.clearDialogSceneId,
+    clearNpcCaptainId: template.clearNpcCaptainId,
+    requiresClearContact: template.requiresClearContact,
     instanceDifficultyTier: difficulty.tier,
     instanceDifficultyScore: difficulty.score,
   };
+  return applyResolvedClearContactToMission(
+    cloned,
+    resolveMissionContactPlanetIdForSystem,
+    resolveBarHostCaptainIdAtPlanet,
+    resolveCaptainContactLabel,
+  );
 }
 
 /** 보드 hydrate·등록 후 1회 호출 — getMissionById O(1). */

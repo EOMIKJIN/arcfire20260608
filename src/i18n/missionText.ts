@@ -1,28 +1,24 @@
 import type { Mission, MissionObjective } from '../types';
 import type { AppLocale } from './types';
 import { useAppSettingsStore } from '../store/appSettingsStore';
-import { isKoUi } from './index';
-
-function pickEn(locale: AppLocale, ko: string, en?: string | null): string {
-  return !isKoUi(locale) && en?.trim() ? en.trim() : ko;
-}
+import { pickLocalized } from './pickLocalized';
 
 export function resolveMissionTitle(mission: Pick<Mission, 'title' | 'titleEn'>, locale: AppLocale): string {
-  return pickEn(locale, mission.title, mission.titleEn);
+  return pickLocalized(locale, mission.title, mission.titleEn);
 }
 
 export function resolveMissionDescription(
   mission: Pick<Mission, 'description' | 'descriptionEn'>,
   locale: AppLocale,
 ): string {
-  return pickEn(locale, mission.description, mission.descriptionEn);
+  return pickLocalized(locale, mission.description, mission.descriptionEn);
 }
 
 export function resolveMissionObjectiveDescription(
   objective: Pick<MissionObjective, 'description' | 'descriptionEn'>,
   locale: AppLocale,
 ): string {
-  return pickEn(locale, objective.description, objective.descriptionEn);
+  return pickLocalized(locale, objective.description, objective.descriptionEn);
 }
 
 export function resolveMissionTitleNow(mission: Pick<Mission, 'title' | 'titleEn'>): string {

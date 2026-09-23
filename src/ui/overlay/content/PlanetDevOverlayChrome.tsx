@@ -6,6 +6,7 @@ import { TACTICAL_OVERLAY, tacticalPlanetEconomyOverlayStyles } from '../tactica
 import { overlayInkColor, resolveOverlayVisualTokens } from '../overlayVisualTokens';
 import { planetDevelopmentOverlayStyles as devStyles } from './planetDevelopmentOverlayStyles';
 import { PlanetInfoDescriptionBlock } from './PlanetInfoDescriptionBlock';
+import { PlanetDevProgressBreathText } from './PlanetDevProgressBreathText';
 
 export { resolvePlanetDevArcButtonVariants } from '../overlayVisualTokens';
 
@@ -14,6 +15,8 @@ type SectionBarProps = {
   visualTheme?: ArcOverlayVisualTheme;
   /** 스크롤 첫 섹션 — bodyPanel paddingTop 과 중복 margin 제거 */
   leadSection?: boolean;
+  /** 건설·업그레이드 진행 중 — 라벨 호흡 */
+  breathe?: boolean;
 };
 
 /** 행성정보창 유지비 섹션 — 회색 바 배경 (제목 전용) */
@@ -21,31 +24,16 @@ export const PlanetDevSectionBar = memo(function PlanetDevSectionBar({
   label,
   visualTheme = 'phosphor',
   leadSection = false,
+  breathe = false,
 }: SectionBarProps) {
   const isTactical = visualTheme === 'tactical';
-  if (isTactical) {
-    return (
-      <Text
-        style={[
-          tacticalPlanetEconomyOverlayStyles.section,
-          leadSection ? styles.leadSection : null,
-        ]}
-      >
-        {label}
-      </Text>
-    );
+  const barStyle = isTactical
+    ? [tacticalPlanetEconomyOverlayStyles.section, leadSection ? styles.leadSection : null]
+    : [devStyles.section, styles.sectionPhosphor, leadSection ? styles.leadSection : null];
+  if (breathe) {
+    return <PlanetDevProgressBreathText style={barStyle}>{label}</PlanetDevProgressBreathText>;
   }
-  return (
-    <Text
-      style={[
-        devStyles.section,
-        styles.sectionPhosphor,
-        leadSection ? styles.leadSection : null,
-      ]}
-    >
-      {label}
-    </Text>
-  );
+  return <Text style={barStyle}>{label}</Text>;
 });
 
 type ListItemHeaderProps = {
@@ -150,7 +138,7 @@ type SummaryInsetProps = {
   visualTheme?: ArcOverlayVisualTheme;
 };
 
-/** 상세 화면 상단 모듈 설명 — 행성정보 설명란과 동일 높이 */
+/** 상세 화면 상단 모듈 설명 — 4줄 고정(descender 여유). 목록 3줄과 분리 */
 export const PlanetDevSummaryInset = memo(function PlanetDevSummaryInset({
   text,
   visualTheme = 'phosphor',
@@ -160,6 +148,7 @@ export const PlanetDevSummaryInset = memo(function PlanetDevSummaryInset({
       description={text}
       visualTheme={visualTheme}
       compactTop
+      variant="devDetail"
     />
   );
 });

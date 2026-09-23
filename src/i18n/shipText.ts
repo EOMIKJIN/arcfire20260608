@@ -5,6 +5,9 @@ import type { PlayerShip } from '../types';
 import type { AppLocale } from './types';
 import { useAppSettingsStore } from '../store/appSettingsStore';
 import { isKoUi } from './index';
+import { pickNpcCapitalShipDisplayName } from './shipTextPick';
+
+export { pickNpcCapitalShipDisplayName } from './shipTextPick';
 
 /** `SHIP_TEMPLATES` KO name 대응 EN (템플릿 id 키) */
 const SHIP_TEMPLATE_NAME_EN: Record<string, string> = {
@@ -22,16 +25,8 @@ export function resolveNpcCapitalShipDisplayName(
   if (!id) return fallback;
 
   const npc = getNpcCapitalShip(id);
-  if (!isKoUi(locale) && npc?.nameEn?.trim()) return npc.nameEn.trim();
-  if (npc?.name?.trim()) return npc.name.trim();
-
-  const itemId = `capital_ship_${id}`;
-  const itemDef = ITEM_DEFS_FROM_CSV[itemId];
-  if (!isKoUi(locale) && itemDef?.nameEn?.trim()) {
-    return itemDef.nameEn.replace(/\s*\(Delivery\)\s*$/i, '').trim();
-  }
-
-  return fallback.trim() || id;
+  const itemDef = ITEM_DEFS_FROM_CSV[`capital_ship_${id}`];
+  return pickNpcCapitalShipDisplayName(locale, npc, itemDef, fallback.trim() || id);
 }
 
 /**

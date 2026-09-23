@@ -1,0 +1,6 @@
+id,sort,when,track,bindMissionId,intentKo,intentEn,steerKo,steerEn,bodyHint,suggestedProposalId
+beat_tutorial_active,1,tutorial_active,tutorial,,튜토리얼 체인을 관측 축으로 이끈다.,Steer the tutorial chain as the observed axis.,지금 줄기는 {title}이다. 수행은 퀘스트 창과 몸이 한다.,The current stem is {title}. The quest HUD and the body perform it.,quest_hud,
+beat_story_active,2,story_active,main_story,,본편 사건을 관측 축으로 이끈다.,Steer the main incident as the observed axis.,지금 사건은 {title}이다. 수락·클리어는 하지 않는다.,The incident is {title}. Do not accept or clear it here.,narrative,
+beat_quest_active,3,quest_active,quest,,수락한 의뢰를 관측 축으로 이끈다.,Steer the accepted request as the observed axis.,진행 중 의뢰는 {title}이다. 집행은 몸이다.,The active request is {title}. Execution is the body.,quest_hud,
+beat_story_offer,4,story_available,main_story,story_001,본편 사건이 열려 있음을 단서로만 드러낸다.,Reveal only that a main incident is open.,아르카디아에 조사가 열린다. 수락은 바·NPC 대화다.,An investigation opens on Arcadia. Accept it in the bar or NPC dialogue.,bar,open_mission
+beat_idle,9,idle,idle,,세계 줄기를 관측하되 퀘스트를 만들지 않는다.,Observe the world stem. Do not invent quests.,줄기는 관측된다. 의뢰는 바에서 몸이 연다.,The stem is observed. The body opens requests in the bar.,bar,

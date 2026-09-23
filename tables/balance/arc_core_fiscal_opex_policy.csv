@@ -1,0 +1,23 @@
+key,value,notesKo
+policy_version,1,아크코어 재정 프록시 오펙스 — 일 1회 배치 전용
+enabled,true,패스 실행(계산). 실지출은 shadow_mode
+shadow_mode,false,false=실지출 · 시드 보호 spendUpToBalance
+k_mil,40,군사운용 = k_mil × D × pgp_unit (행성별 합)
+pgp_unit_divisor,3375,pgp_unit = pgp/이 값(PGP 식 단위). pgp 없으면 D
+k_ship,4000,전함운용 궤도척당(캡 적용)
+orbit_traffic_cap,5,STAGE1 궤도 트래픽 상한과 동일 캡
+k_shipyard,800,설치 조선소 레벨당 가산
+fleet_ship_share_pct,70,전함운용 — 선단(물류)
+red_ship_share_pct,30,전함운용 — RED(전투 프록시)
+k_cap,150,함장양성 — 총사령관(talkEnabled)+궤도 함장
+k_rd,400,전함 R&D — 설치 연구소 레벨합 · RED만
+residual_surplus_pct,15,시드초과 잔여 소각% (빈 함대 소각 대체)
+skip_empty_central_bank_burn_when_live,true,라이브 시 함대·개방 빈 소각 생략(개발 33% 유지)
+fleet_opex_of_surplus_pct,2,선단 시드초과 잔액의 일 운용% (배당 0)
+red_dividend_pct,0,선단→RED 배당 · 승인 전 0 고정
+dev_budget_pre_spend,true,개발 33% 금고 선지출 후 예산 풀 일치
+coeff_hint_enabled,true,학습 시드배수 → k_mil/k_ship ±캡
+coeff_hint_seed_multiple,20,이 배수 초과 시 계수 상향
+coeff_hint_step_pct,5,일 1회 힌트 스텝
+coeff_hint_mul_min,0.85,계수 배율 하한
+coeff_hint_mul_max,1.15,계수 배율 상한

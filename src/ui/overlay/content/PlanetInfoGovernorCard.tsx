@@ -1,32 +1,30 @@
 import React, { memo, useMemo } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { getPlanetGovernorCommander } from '../../../game/planetGovernor/planetGovernorRegistry';
-import {
-  resolveNpcCaptainPortraitAspectRatio,
-  resolveNpcCaptainPortraitSource,
-} from '../../../game/npcCaptainPortraitAssets';
+import { resolveNpcCaptainPortraitSource } from '../../../game/npcCaptainPortraitAssets';
 import { getNpcCaptain } from '../../../npc/npcFleetRegistry';
 import { useNpcCaptainProgressStore } from '../../../store/npcCaptainProgressStore';
 import { useT } from '../../../i18n';
-import { resolveNpcCaptainDisplayName } from '../../../i18n/captainText';
+import { resolveNpcCaptainDisplayName, resolveNpcCaptainRank } from '../../../i18n/captainText';
+import { resolveGovernorTitle } from '../../../i18n/governorText';
+import { resolveNpcCapitalShipDisplayName } from '../../../i18n/shipText';
 import { useAppSettingsStore } from '../../../store/appSettingsStore';
 import { FONTS, OVERLAY_TOKENS, SPACING } from '../../../utils/theme';
 import type { ArcOverlayVisualTheme } from '../tacticalOverlayPreview';
 import { TACTICAL_OVERLAY } from '../tacticalOverlayStyles';
 import { PHOSPHOR_MUTED } from './phosphorOverlayStyles';
-
-/** 카드 본문(사진 열) 높이 — 파일럿 여권 카드(`PlanetMainPilotInfoPanel`) 비율 참고 */
-const GOVERNOR_CARD_BODY_HEIGHT_PX = 112;
-const GOVERNOR_CARD_DOC_HEADER_PX = 22;
-/** 포트레이트 미할당 시 사진 열 폴백 가로 */
-const PHOTO_COLUMN_FALLBACK_WIDTH_PX = 78;
+import {
+  PASSPORT_IDENTITY_BODY_HEIGHT_PX,
+  PASSPORT_IDENTITY_CARD_HEIGHT_PX,
+  PASSPORT_IDENTITY_DOC_HEADER_PX,
+  resolvePassportIdentityPhotoWidthPx,
+} from '../../passportIdentityPhotoLayout';
 
 type ThemedStyles = {
   card: object;
   docHeader: object;
   docTitle: object;
   photoBg: object;
-  placeholderGlyph: object;
   divider: object;
   fieldLabel: object;
   fieldValue: object;
@@ -55,21 +53,19 @@ function GovernorField({ label, value, themed }: FieldProps) {
 
 type Props = {
   planetId: string;
-  /** 행성정보창과 동일 테마 강제 — phosphor(네이비·시안) / tactical(G-ARCHIVE 라이트) */
   visualTheme?: ArcOverlayVisualTheme;
 };
 
 /**
- * 행성 정보창 — 총사령관(함장) 포트레이트 카드.
- * 레이아웃은 파일럿 정보(여권형: 사진 열 + 필드 열)를 따르고,
- * 데이터는 범용 NPC AI 테이블(`npc_ai_captains.csv` → `getNpcCaptain`)이 정본이다.
- * 레벨은 런타임 성장(`npcCaptainProgressStore`) 우선 · CSV 시드(initialLevel) 폴백.
+ * 행성 정보창 — 총사령관 신분증 카드.
+ * 레이아웃 정본: 허브 파일럿 여권(헤더 + 좌 초상 열 + 우 2열×3행).
  */
 export const PlanetInfoGovernorCard = memo(function PlanetInfoGovernorCard({
   planetId,
   visualTheme = 'phosphor',
 }: Props) {
   const t = useT();
+  const locale = useAppSettingsStore((s) => s.locale);
   const themed = visualTheme === 'tactical' ? tacticalThemed : phosphorThemed;
 
   const governor = useMemo(() => getPlanetGovernorCommander(planetId), [planetId]);
@@ -84,38 +80,45 @@ export const PlanetInfoGovernorCard = memo(function PlanetInfoGovernorCard({
     () => resolveNpcCaptainPortraitSource(captain?.portraitImageAssetKey ?? null),
     [captain?.portraitImageAssetKey],
   );
-  const photoColumnWidthPx = useMemo(() => {
-    const aspect = resolveNpcCaptainPortraitAspectRatio(portraitSource);
-    if (aspect != null) return Math.round(GOVERNOR_CARD_BODY_HEIGHT_PX * aspect);
-    return PHOTO_COLUMN_FALLBACK_WIDTH_PX;
-  }, [portraitSource]);
+  const photoColumnWidthPx = resolvePassportIdentityPhotoWidthPx();
+
+  const shipName = useMemo(() => {
+    const shipId = String(captain?.assignedShipId ?? '').trim();
+    if (!shipId) return '—';
+    const name = resolveNpcCapitalShipDisplayName(shipId, shipId, locale).trim();
+    return name || '—';
+  }, [captain?.assignedShipId, locale]);
 
   if (!governor || !captain) return null;
 
-  const name = resolveNpcCaptainDisplayName(captain, useAppSettingsStore.getState().locale);
+  const name = resolveNpcCaptainDisplayName(captain, locale);
   if (!name) return null;
 
   const level = Math.max(1, runtimeLevel ?? captain.progression.initialLevel ?? 1);
-  const rank = String(captain.rank ?? '').trim() || '—';
-  const governorTitle = String(governor.governorTitleKo ?? '').trim() || '—';
+  const rank = resolveNpcCaptainRank(captain, locale) || '—';
+  const governorTitle = resolveGovernorTitle(governor, locale) || '—';
+  const clanName = captain.aiClanName?.trim() || '—';
 
   return (
     <View style={[styles.card, themed.card]} accessibilityLabel={t('econInfo.governorCardA11y')}>
       <View style={[styles.docHeader, themed.docHeader]}>
         <Text style={[styles.docTitle, themed.docTitle]}>{t('econInfo.governorCardHeader')}</Text>
       </View>
-      <View style={styles.body}>
+      <View style={styles.passportBody}>
         <View
           style={[styles.photoColumn, themed.photoBg, { width: photoColumnWidthPx }]}
           accessibilityRole="image"
           accessibilityLabel={t('econInfo.governorPortraitA11y')}
         >
           {portraitSource ? (
-            <Image source={portraitSource} style={styles.photoImage} resizeMode="cover" />
+            <Image
+              source={portraitSource}
+              style={styles.photoImage}
+              resizeMode="cover"
+              resizeMethod="resize"
+            />
           ) : (
-            <View style={[styles.photoPlaceholder, themed.photoBg]}>
-              <Text style={[styles.photoPlaceholderGlyph, themed.placeholderGlyph]}>◈</Text>
-            </View>
+            <View style={[styles.photoPlaceholder, themed.photoBg]} />
           )}
         </View>
         <View style={[styles.photoDivider, themed.divider]} />
@@ -128,11 +131,23 @@ export const PlanetInfoGovernorCard = memo(function PlanetInfoGovernorCard({
               themed={themed}
             />
           </View>
-          <View style={[styles.infoRow, styles.infoRowLast]}>
+          <View style={styles.infoRow}>
             <GovernorField label={t('econInfo.governorField.rank')} value={rank} themed={themed} />
             <GovernorField
               label={t('econInfo.governorField.title')}
               value={governorTitle}
+              themed={themed}
+            />
+          </View>
+          <View style={[styles.infoRow, styles.infoRowLast]}>
+            <GovernorField
+              label={t('econInfo.governorField.ship')}
+              value={shipName}
+              themed={themed}
+            />
+            <GovernorField
+              label={t('econInfo.governorField.clan')}
+              value={clanName}
               themed={themed}
             />
           </View>
@@ -142,7 +157,6 @@ export const PlanetInfoGovernorCard = memo(function PlanetInfoGovernorCard({
   );
 });
 
-/** phosphor — 네이비 카드·시안 라벨 (행성정보창 phosphor 복구 시) */
 const phosphorThemed: ThemedStyles = StyleSheet.create({
   card: {
     borderColor: OVERLAY_TOKENS.phosphorBorder,
@@ -158,9 +172,6 @@ const phosphorThemed: ThemedStyles = StyleSheet.create({
   photoBg: {
     backgroundColor: 'rgba(8, 18, 28, 0.55)',
   },
-  placeholderGlyph: {
-    color: OVERLAY_TOKENS.phosphorBorder,
-  },
   divider: {
     backgroundColor: OVERLAY_TOKENS.phosphorBorder,
   },
@@ -175,7 +186,6 @@ const phosphorThemed: ThemedStyles = StyleSheet.create({
   },
 });
 
-/** tactical(G-ARCHIVE) — 행성정보창 현행 테마: 라이트 그레이 카드·다크 잉크 */
 const tacticalThemed: ThemedStyles = StyleSheet.create({
   card: {
     borderColor: TACTICAL_OVERLAY.insetBorder,
@@ -190,9 +200,6 @@ const tacticalThemed: ThemedStyles = StyleSheet.create({
   },
   photoBg: {
     backgroundColor: TACTICAL_OVERLAY.footerBg,
-  },
-  placeholderGlyph: {
-    color: TACTICAL_OVERLAY.labelInk,
   },
   divider: {
     backgroundColor: TACTICAL_OVERLAY.insetBorder,
@@ -211,12 +218,13 @@ const tacticalThemed: ThemedStyles = StyleSheet.create({
 const styles = StyleSheet.create({
   card: {
     marginTop: SPACING.sm,
+    height: PASSPORT_IDENTITY_CARD_HEIGHT_PX,
     borderWidth: 1,
-    borderRadius: 4,
+    borderRadius: 6,
     overflow: 'hidden',
   },
   docHeader: {
-    minHeight: GOVERNOR_CARD_DOC_HEADER_PX,
+    minHeight: PASSPORT_IDENTITY_DOC_HEADER_PX,
     justifyContent: 'center',
     paddingHorizontal: SPACING.md,
     paddingVertical: 4,
@@ -224,12 +232,12 @@ const styles = StyleSheet.create({
   },
   docTitle: {
     fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    fontWeight: FONTS.weight.bold,
-    letterSpacing: 0.5,
+    fontSize: 10,
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
   },
-  body: {
-    minHeight: GOVERNOR_CARD_BODY_HEIGHT_PX,
+  passportBody: {
+    height: PASSPORT_IDENTITY_BODY_HEIGHT_PX,
     flexDirection: 'row',
     alignItems: 'stretch',
   },
@@ -244,12 +252,6 @@ const styles = StyleSheet.create({
   },
   photoPlaceholder: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  photoPlaceholderGlyph: {
-    fontFamily: FONTS.mono,
-    fontSize: FONTS.size.lg,
   },
   photoDivider: {
     width: StyleSheet.hairlineWidth,
@@ -258,7 +260,8 @@ const styles = StyleSheet.create({
   infoColumn: {
     flex: 1,
     minWidth: 0,
-    paddingHorizontal: SPACING.sm,
+    paddingLeft: SPACING.sm,
+    paddingRight: SPACING.sm,
     paddingVertical: SPACING.sm,
     justifyContent: 'space-between',
   },
@@ -282,8 +285,7 @@ const styles = StyleSheet.create({
   },
   fieldValue: {
     fontFamily: FONTS.mono,
-    fontSize: FONTS.size.sm,
-    fontWeight: FONTS.weight.bold,
+    fontSize: FONTS.size.xs,
     paddingBottom: 3,
   },
   fieldLine: {

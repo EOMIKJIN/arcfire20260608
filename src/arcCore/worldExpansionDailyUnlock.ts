@@ -1,4 +1,4 @@
-import { useTavernBoardStore } from '../store/tavernBoardStore';
+import { useBarBoardStore } from '../store/barBoardStore';
 import { useWorldStore } from '../store/worldStore';
 import {
   getExpansionUnlockIntervalSec,
@@ -36,7 +36,7 @@ function tryLegacyPerUserArcCoreWorldDailyUnlock(): boolean {
 
   if (isArcExpansionTestOneShotEnvOn() && !isArcExpansionTestOneShotConsumed()) {
     void markArcExpansionTestOneShotDoneAsync();
-    useTavernBoardStore.getState().pushNotice({
+    useBarBoardStore.getState().pushNotice({
       i18nKey: 'news.expansionTest',
       i18nParams: { systemName: targetSystem.name, systemId: candidateId },
       title: `[TEST] Unexplored system opened`,

@@ -95,6 +95,10 @@ export interface Player {
   mineralUpgrades?: Record<string, number>;
   /** 조선소 광물 업그레이드 진행 중 작업 — statId → 강화 job(행성개발 게이지와 동일 진행 표시). */
   mineralUpgradeJobs?: Record<string, MineralUpgradeJob>;
+  /** 잔해 수색 일일 한도 — KST YYYY-MM-DD. 계정 귀속. */
+  salvageSearchDayKey?: string;
+  /** 해당 KST 일의 수색 시도 횟수(현금 성공이 아님). */
+  salvageSearchCountToday?: number;
   createdAt: number;
 }
 
@@ -174,6 +178,11 @@ export interface PlanetClanHold {
    * 설정 시 CSV 국가 시드 복구·지도 시드 폴백에서 제외되어 국경이 중립으로 유지된다. (2026-07-20)
    */
   neutralizedAt?: number | null;
+  /**
+   * 점유 유래 — `player_colonize` 만 계정 purge 시 시드/중립으로 되돌린다.
+   * 시드·영토전투 hold 는 비움(월드 축).
+   */
+  occupationOrigin?: 'player_colonize' | null;
 }
 
 /** 행성 주둔/공격 편대로 배치된 전함(테이블 asset id 또는 추후 플레이어 거대함 id) */
@@ -419,6 +428,13 @@ export type NpcAiRole =
 export type NpcCaptainOperationalState = 'combat' | 'general' | 'neutral' | 'hostile';
 /** 전투 진입 시 함장 소속 팀 (`orange` = 자유교전/FFA) */
 export type NpcCaptainCombatTeam = 'red' | 'blue' | 'orange' | 'none';
+/**
+ * 영구 사망 자격 클래스 — `npc_ai_captains.csv` `deathClass`.
+ * v0.2: `main_story`만 런타임 사망 원장 대상. 일반 트래픽·웨이브는 `none`.
+ */
+export type NpcCaptainDeathClass = 'none' | 'main_story';
+/** 메인스토리 함장 사망 원인(런타임 원장 메타) */
+export type MainStoryCaptainDeathCause = 'story_combat' | 'story_script';
 
 /** AI 클랜 레지스트리 (`tables/content/ai_clan_registry.csv`) */
 export interface AiClanRegistryRow {
@@ -467,6 +483,8 @@ export interface NpcCaptain {
   /** 표시명(영어) — locale en UI */
   displayNameEn?: string;
   rank: string;
+  /** 직함(영어) — locale en UI. 없으면 `npcCaptainRankEn` 어휘 폴백 */
+  rankEn?: string;
   /** 세부 세력 키(군·길드 등). 플레이어의 `political.megaFactionId`(연합·제국·동맹급) 아래 층에 해당할 수 있음 */
   factionId: string | null;
   aiAggression: NpcAiAggression;
@@ -516,10 +534,22 @@ export interface NpcCaptain {
   mainStageMissionTriggerId: string | null;
   /** 대화 진입 시 함께 발동할 이벤트 트리거 id(없으면 null) */
   mainStageEventTriggerId: string | null;
-  /** 선술집 운영(퇴역 함장) 담당 행성 목록. 비어 있으면 선술집 운영자 아님 */
-  tavernPlanetIds: readonly string[];
+  /** 바 운영(퇴역 함장) 담당 행성 목록. 비어 있으면 바 운영자 아님 */
+  barPlanetIds: readonly string[];
   /** 인게임 대화창에 사용할 NPC 초상화 이미지 키(`assets/images/npc/*.png`) */
   portraitImageAssetKey: string | null;
+  /**
+   * 영구 사망 **가능** 여부(Table-First 자격).
+   * 플레이 결과 사망 여부는 런타임 원장(`mainStoryCaptainDeadStore`)이 정본.
+   */
+  deathEligible: boolean;
+  /** 사망 자격 클래스 — `main_story`만 스토리 사망 경로 활성 */
+  deathClass: NpcCaptainDeathClass;
+  /**
+   * 본편 퀘스트 전용 함장. 궤도 트래픽·수송 풀에 올리지 않음.
+   * 전함 없이 talk_npc만 가능. 행은 나중에 등록.
+   */
+  questOnly: boolean;
   /** 초기 성장값(고정 테이블 값) */
   progression: {
     initialLevel: number;
@@ -736,7 +766,7 @@ export interface Planet {
   mainStageBackdropImageEnabled?: boolean;
   hasTradePort: boolean;
   hasShipyard: boolean;
-  hasTavern: boolean;
+  hasBar: boolean;
   tradeGoods: string[];
   factionId: string;
   /** 핵심 대표 지표(0..100) — Resource */
@@ -806,18 +836,35 @@ export interface Mission {
   prerequisiteIds: string[];
   nextMissionId: string | null;
   dc: number;
-  /** 선술집 인스턴스 미션 의뢰 함장 (sandbox_*). */
+  /** 바 인스턴스 미션 의뢰 함장 (sandbox_*). */
   offerCaptainId?: string;
-  /** 선술집 게시 행성 id (sandbox_*). */
+  /** 바 게시 행성 id (sandbox_*). */
   offerPlanetId?: string;
   /** 수락 가능 최소 플레이어 레벨 (sandbox_*). */
   levelRequired?: number;
   /** 미션 클리어 인게임 대화 scene id. */
   clearDialogSceneId?: string;
-  /** ArcCore 선술집 인스턴스 — 측정 난이도 등급 (EASY~EXPERT). */
+  /**
+   * 완료·허브 대화 담당 NPC. 배달·접선 퀘스트는 생성/수락 시 목적지 바
+   * 주인이 찍힌다. 비우면 오퍼레이터. 탐험·전투는 비운다.
+   */
+  clearNpcCaptainId?: string;
+  /**
+   * 화물 없는 접선·지휘관 회동 등 — 목적지 담당자에게 컨택해야 하는 특별 퀘스트.
+   * CSV `requiresClearContact=1`. 일반 이동/전투는 두지 않는다.
+   */
+  requiresClearContact?: boolean;
+  /** ArcCore 바 인스턴스 — 측정 난이도 등급 (EASY~EXPERT). */
   instanceDifficultyTier?: 'easy' | 'normal' | 'hard' | 'expert';
-  /** ArcCore 선술집 인스턴스 — 난이도 점수(감사·디버그). */
+  /** ArcCore 바 인스턴스 — 난이도 점수(감사·디버그). */
   instanceDifficultyScore?: number;
+  /**
+   * 제한시간(벽시계 시간). `0` = 없음.
+   * 수락 시 `MissionProgress.expiresAtMs`로 스냅샷한다.
+   */
+  timeLimitHours?: number;
+  /** 함장 개인미션 clone — `cp_*` 템플릿 id. */
+  instanceTemplateMissionId?: string;
 }
 
 /**
@@ -828,7 +875,7 @@ export interface MissionObjective {
   id: string;
   description: string;
   descriptionEn?: string;
-  type: 'reach_system' | 'reach_planet' | 'defeat_enemy' | 'deliver_cargo' | 'buy_goods';
+  type: 'reach_system' | 'reach_planet' | 'defeat_enemy' | 'deliver_cargo' | 'buy_goods' | 'talk_npc';
   targetId: string;
   quantity?: number;
   complete: boolean;
@@ -847,6 +894,24 @@ export interface MissionProgress {
   objectives: Record<string, boolean>;
   startedAt?: number;
   completedAt?: number;
+  /**
+   * 컨택 대상 퀘스트의 목적지 담당 NPC — 수락 시점 스냅샷.
+   * 일반 퀘스트는 비움(오퍼레이터).
+   */
+  assignedClearNpcCaptainId?: string;
+  /**
+   * 수락 시점 만료 시각(벽시계 ms). 없으면 제한시간 없음.
+   * 이후 CSV 변경은 이미 수락한 건에 소급하지 않는다.
+   */
+  expiresAtMs?: number;
+  /** 함장 개인미션 — 재기동 rematerialize용 `cp_*` 템플릿. */
+  captainPersonalTemplateId?: string;
+  /** 함장 개인미션 — 재기동 rematerialize용 오퍼 행성. */
+  captainPersonalOfferPlanetId?: string;
+  /** 보상 지급 시각. 있으면 applyMissionCompletionRewards 재진입 금지. */
+  rewardedAt?: number;
+  /** 완료 당시 제목. 보드 materialize 해제·고아 정리 후에도 이력 표시. */
+  titleSnapshot?: string;
 }
 
 export type SkillCategory = 'combat' | 'navigation' | 'trade' | 'fleet';
@@ -883,7 +948,10 @@ export type TradeGoodCategory =
 export interface TradeGood {
   id: string;
   name: string;
+  /** locale !== ko 표시 — item_defs `name_en` */
+  nameEn?: string;
   description: string;
+  descriptionEn?: string;
   basePrice: number;
   priceVariance: number;
   volume: number;
@@ -947,12 +1015,14 @@ export interface MarketListing {
 export type StorySceneTriggerKey =
   | 'nickname_created'
   | 'planet_landed'
+  | 'planet_scan_complete'
   | 'system_arrived'
   | 'manual';
 
 export type StorySceneCompletionPolicy =
   | 'none'
-  | 'mark_intro_seen_and_start_first_mission';
+  | 'mark_intro_seen_and_start_first_mission'
+  | 'return_hub_after_chapter_story';
 export type StorySceneTriggerRepeatPolicy = 'once' | 'repeat';
 
 export interface StoryScenePageDef {
@@ -969,6 +1039,9 @@ export interface StoryScenePageDef {
   viewMode: 'cinematic' | 'popup_overlay' | 'ingame_dialog';
   textBoxPreset: 'default' | 'compact';
   imageScalePct: number;
+  /** 마지막 페이지 버튼. 비면 `[ 확인 ]`/`[ 수락 ]`. 인증 칸은 `[ 블랙마켓인도처리 ]`처럼 동사 */
+  actionLabel?: string | null;
+  actionLabelEn?: string | null;
 }
 
 export interface StorySceneDef {

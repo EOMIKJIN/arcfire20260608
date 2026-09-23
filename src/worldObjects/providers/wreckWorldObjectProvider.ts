@@ -12,7 +12,8 @@ export const wreckWorldObjectProvider: PlanetWorldObjectProvider = {
       kind: 'wreck',
       planetId: ctx.planetId,
       systemId: ctx.systemId,
-      title: '잔해',
+      // i18n 키 — 로케일 전환 시 렌더 시점에 t()로 해석(원문 문자열 직접 저장 금지)
+      title: 'hubBg.wreck',
       description: '궤도 표류 잔해 — 수색 시 회수품 획득 가능(기초)',
       transform: {
         orbitSlotIndex: 960,

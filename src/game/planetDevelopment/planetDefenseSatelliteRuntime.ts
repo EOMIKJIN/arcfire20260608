@@ -1,8 +1,21 @@
 import type {
   PlanetCoreMetricsDetail,
   PlanetDefenseSatelliteDetail,
+  PlanetDefenseSatelliteInstalledBy,
   PlanetDevelopmentDetail,
 } from '../../store/planetCoreMetricTypes';
+
+function parseInstalledBy(raw: unknown): PlanetDefenseSatelliteInstalledBy | undefined {
+  return raw === 'player' || raw === 'arc_core' ? raw : undefined;
+}
+
+function mergeInstalledBy(
+  a?: PlanetDefenseSatelliteInstalledBy,
+  b?: PlanetDefenseSatelliteInstalledBy,
+): PlanetDefenseSatelliteInstalledBy | undefined {
+  if (a === 'player' || b === 'player') return 'player';
+  return a ?? b;
+}
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { ensurePlanetCoreRuntimeForDev } from './planetFacilityModuleRuntime';
 
@@ -32,6 +45,7 @@ function normalizeDefenseSatelliteDetailRaw(
     version: 1,
     installed,
     level,
+    installedBy: parseInstalledBy(raw.installedBy),
     upgradeJob,
     updatedAtMs: raw.updatedAtMs,
   };
@@ -57,6 +71,7 @@ function mergeDefenseSatelliteDetails(
     version: 1,
     installed,
     level,
+    installedBy: mergeInstalledBy(moduleDetail.installedBy, legacyDetail.installedBy),
     upgradeJob,
     updatedAtMs,
   };
@@ -145,6 +160,14 @@ export function writeDefenseSatelliteDetailToPlanet(
       defenseSatellite: detail,
     },
   });
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { notePlanetDevJobMaybe } =
+      require('./planetDevJobRealtimeWatch') as typeof import('./planetDevJobRealtimeWatch');
+    notePlanetDevJobMaybe(planetId);
+  } catch {
+    /* 워치 미기동 */
+  }
 }
 
 export function isDefenseSatelliteInstalledDetail(

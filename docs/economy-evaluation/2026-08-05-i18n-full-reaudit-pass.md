@@ -37,7 +37,7 @@
 
 | 분류 | 예 |
 |------|-----|
-| LEGACY_MIGRATE | `tavernBoardStore` 구형 KO title 매칭 |
+| LEGACY_MIGRATE | `barBoardStore` 구형 KO title 매칭 |
 | DEV_CONSOLE | `PlanetEdenRaidTestLayer` · territorial pass 로그 |
 | DATA_SEED | weaponCatalog · ships · galaxy100 |
 | KO_MATCHER | `systemText` synth 한국어 원문 매칭 |

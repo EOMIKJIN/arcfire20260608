@@ -3,6 +3,7 @@
 // ============================================================
 
 import type { PlanetClanHold } from '../types';
+import { isPlayerColonizeHoldOrigin } from '../arcCore/colonize/stelliumColonizeTypes';
 import {
   isPlayerOriginatedClanId,
   resolveSeedOccupierClanForPlanet,
@@ -22,6 +23,7 @@ export type ReleasePlayerPlanetHoldsInput = {
 export type ReleasePlayerPlanetHoldsResult = {
   holds: Record<string, PlanetClanHold>;
   releasedPlanetCount: number;
+  releasedPlanetIds: string[];
 };
 
 function shouldReleaseHold(
@@ -44,18 +46,20 @@ function shouldReleaseHold(
       (uid != null && hold.homePlayerUid === uid) || deedOwned || legacyOccupierOwned;
     const isOrphanNonAiHold =
       !hold.occupierClanId.startsWith('ai_clan_') && !remainingClanIds.has(hold.occupierClanId);
-    return isTargetPlayerHold || isOrphanNonAiHold;
+    return isTargetPlayerHold || isOrphanNonAiHold || isPlayerColonizeHoldOrigin(hold.occupationOrigin);
   }
 
   // purge_all_non_ai — 플레이어 유래(독립국·거점·플레이어 클랜 점유/증서) hold만 축소 릴리스한다.
   // (2026-07-28 account-purge-ownership-neutralize) 예전엔 "!ai_clan_*"이라 국가 시드
   // (balance_seed_faction_*)·이미 중립인 hold까지 전부 걸려 release → CSV 재시드가 반복 발생,
   // ArcCore 영토 진행이 계정 purge마다 리셋될 위험이 있었음.
+  // (2026-09-19) 개척 유래 BLUE 는 시드 블루와 구분 — 계정 축이므로 되돌린다.
   return (
     hold.kind === 'player_independent'
     || hold.kind === 'player_home'
     || isPlayerOriginatedClanId(hold.occupierClanId)
     || Boolean(hold.deedOwnerClanId && isPlayerOriginatedClanId(hold.deedOwnerClanId))
+    || isPlayerColonizeHoldOrigin(hold.occupationOrigin)
   );
 }
 
@@ -93,6 +97,7 @@ function restoreHoldAfterPlayerRelease(
     deedOwnerClanId: null,
     homePlayerUid: uid != null && hold.homePlayerUid === uid ? null : hold.homePlayerUid,
     kind: seed.kind,
+    occupationOrigin: null,
   };
 }
 
@@ -101,6 +106,7 @@ export function releasePlayerPlanetHolds(
   input: ReleasePlayerPlanetHoldsInput,
 ): ReleasePlayerPlanetHoldsResult {
   let releasedPlanetCount = 0;
+  const releasedPlanetIds: string[] = [];
   const next: Record<string, PlanetClanHold> = {};
 
   for (const [planetId, hold] of Object.entries(input.holds)) {
@@ -110,9 +116,10 @@ export function releasePlayerPlanetHolds(
     }
 
     releasedPlanetCount += 1;
+    releasedPlanetIds.push(planetId);
     const restored = restoreHoldAfterPlayerRelease(planetId, hold, input.mode, input.uid);
     if (restored) next[planetId] = restored;
   }
 
-  return { holds: next, releasedPlanetCount };
+  return { holds: next, releasedPlanetCount, releasedPlanetIds };
 }

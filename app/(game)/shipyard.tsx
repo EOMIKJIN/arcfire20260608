@@ -39,7 +39,7 @@ import {
   UNEQUIPPED_WEAPON_ITEM_ID,
 } from '../../src/game/combatWeaponSlots';
 import { SHIPYARD_EQUIP_SLOT_DEFS } from '../../src/game/shipyardEquipSlots';
-import { TRADE_GOODS } from '../../src/data/goods';
+import { TRADE_GOODS, getItemDef } from '../../src/data/goods';
 import type {
   Player,
   PlayerShip,
@@ -55,6 +55,7 @@ import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory
 import { usePlanetHubFacilityAccessGate } from '../../src/hooks/usePlanetHubFacilityAccessGate';
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
 import { useStageFirstFrameReady } from '../../src/navigation/useStageFirstFrameReady';
+import { useUiScreenShell } from '../../src/ui/process/useUiScreenShell';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacilityTabBar';
 import {
@@ -135,6 +136,7 @@ export default function ShipyardScreen() {
   );
   const shipyardSession = useHeavyUiDataSession(shipyardSessionConfig);
   const screenReady = shipyardSession.phase === 'ready' && stageFrameReady;
+  useUiScreenShell('shipyard', screenReady);
 
   const hangarSorted = useMemo(() => {
     if (!player) return [];
@@ -732,16 +734,22 @@ function ShipyardInventoryGrid({
       <View style={styles.inventoryList}>
         {slots.map((cell, i) => {
           const good = cell ? TRADE_GOODS[cell.goodId] : undefined;
+          const itemDef = cell ? getItemDef(cell.goodId) : undefined;
           const weaponDef = cell ? resolveWeaponItemDef(cell.goodId) : null;
           const isWeaponModule = Boolean(cell && isWeaponItemId(cell.goodId));
           const isEquipmentModule = Boolean(cell && isShipEquipmentItemId(cell.goodId));
           const isEquipped = Boolean(cell && isInventoryCellEquipped(ship, i, cell.goodId));
           const itemName = cell
             ? (() => {
-              const base = good
-                ? resolveItemName(good, locale)
-                : weaponDef
-                  ? resolveEquipSlotDisplayName(cell.goodId, weaponDef.name, locale)
+              // 무역소와 동일: ItemDef(name/nameEn) 우선 · 무기는 weapon_list 로케일
+              const base = isWeaponModule
+                ? resolveEquipSlotDisplayName(
+                    cell.goodId,
+                    weaponDef?.name ?? itemDef?.name ?? good?.name,
+                    locale,
+                  )
+                : itemDef || good
+                  ? resolveItemName(itemDef ?? good!, locale)
                   : cell.goodId;
               const pendingSuffix = isEquipmentModule
                 ? formatShipEquipmentListingSuffix(cell.goodId, ` ${t('equipment.effectPendingSuffix')}`)

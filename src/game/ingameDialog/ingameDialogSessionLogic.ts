@@ -44,6 +44,16 @@ export function advanceIngameDialogSession(
 ): AdvanceIngameDialogResult {
   if (session.kind === 'adhoc') {
     if (!session.pageComplete) return { type: 'blocked' };
+    if (session.segmentIndex < Math.max(0, segmentCount - 1)) {
+      return {
+        type: 'advanced',
+        session: {
+          ...session,
+          segmentIndex: session.segmentIndex + 1,
+          pageComplete: false,
+        },
+      };
+    }
     return { type: 'completed', session };
   }
   if (!scene) return { type: 'blocked' };

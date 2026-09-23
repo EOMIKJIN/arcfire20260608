@@ -181,7 +181,9 @@ const styles = StyleSheet.create({
   },
   centerCol: {
     alignItems: 'center',
+    alignSelf: 'center',
     paddingHorizontal: SPACING.lg,
+    width: '100%',
     maxWidth: 320,
   },
   title: {
@@ -190,6 +192,8 @@ const styles = StyleSheet.create({
     color: '#DCE9FF',
     letterSpacing: 3,
     fontWeight: FONTS.weight.bold,
+    textAlign: 'center',
+    width: '100%',
   },
   sub: {
     marginTop: SPACING.sm,
@@ -197,6 +201,8 @@ const styles = StyleSheet.create({
     fontSize: FONTS.size.xs,
     color: COLORS.ink_light,
     letterSpacing: 1,
+    textAlign: 'center',
+    width: '100%',
   },
   hint: {
     marginTop: SPACING.md,
@@ -204,6 +210,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: COLORS.ink_faint,
     textAlign: 'center',
+    width: '100%',
     maxWidth: 280,
     lineHeight: 15,
   },

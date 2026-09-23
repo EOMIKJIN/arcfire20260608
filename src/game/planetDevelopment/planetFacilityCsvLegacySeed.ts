@@ -2,7 +2,7 @@
 // planets.csv 시설 플래그 → zone 카탈로그 동기화만 (dev 모듈 자동 설치 금지)
 // ============================================================
 
-import { getPlanetRecord } from '../../world/planetTradePortDb';
+import { isPlanetCsvTradePortWorldEnabled } from './planetCsvWorldFlags';
 
 function planetCoreStoreState() {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -13,8 +13,7 @@ function planetCoreStoreState() {
 /** hasTradePort 행성 — zone 무역 카탈로그만 동기화(dev 자동 설치 없음) */
 export function syncCsvTradePortCatalogForPlanet(planetId: string): boolean {
   if (!planetId) return false;
-  const planet = getPlanetRecord(planetId);
-  if (!planet?.hasTradePort) return false;
+  if (!isPlanetCsvTradePortWorldEnabled(planetId)) return false;
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { syncTradePortCatalogForPlanet } = require('../../arcCore/balance/tradePortCatalogPolicy') as typeof import('../../arcCore/balance/tradePortCatalogPolicy');

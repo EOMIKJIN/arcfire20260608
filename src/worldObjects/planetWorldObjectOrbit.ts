@@ -4,6 +4,8 @@ import { PLANET_MAIN_ORBIT_SCENE_SIZE } from '../stages/planetMainStageLayout';
 export const WORLD_OBJECT_ORBIT_CYCLE_MS = 168_000;
 /** 방위위성 — 동일 궤도 반경, 회전 2배 느림 */
 export const WORLD_OBJECT_DEFENSE_SATELLITE_ORBIT_CYCLE_MS = WORLD_OBJECT_ORBIT_CYCLE_MS * 2;
+/** 개척선 — 기본 WO보다 조금 느림 */
+export const WORLD_OBJECT_STELLIUM_COLONIZE_ORBIT_CYCLE_MS = 210_000;
 
 /** `query.ts` 소행성 최내곽 — `0.58 + i * 0.035` 의 i=0 */
 export const WORLD_OBJECT_ASTEROID_INNER_RADIUS_SCALE = 0.58;
@@ -11,6 +13,19 @@ export const WORLD_OBJECT_ASTEROID_INNER_RADIUS_SCALE = 0.58;
 /** 행성 도트(120px) 림 — ORBIT_SCENE/2 대비 */
 export const WORLD_OBJECT_PLANET_RIM_RADIUS_SCALE =
   (120 / 2) / (PLANET_MAIN_ORBIT_SCENE_SIZE / 2);
+
+/**
+ * 행성 외곽 볼드 링과 소행성 내곽 사이 · 행성에 가깝게.
+ * rim 0.375 · asteroid 0.58 → 0.43
+ */
+export const WORLD_OBJECT_STELLIUM_COLONIZE_RADIUS_SCALE =
+  WORLD_OBJECT_PLANET_RIM_RADIUS_SCALE
+  + (WORLD_OBJECT_ASTEROID_INNER_RADIUS_SCALE - WORLD_OBJECT_PLANET_RIM_RADIUS_SCALE) * 0.27;
+
+export const WORLD_OBJECT_STELLIUM_COLONIZE_RADIUS_SCALE_MIN =
+  WORLD_OBJECT_PLANET_RIM_RADIUS_SCALE + 0.03;
+export const WORLD_OBJECT_STELLIUM_COLONIZE_RADIUS_SCALE_MAX =
+  WORLD_OBJECT_ASTEROID_INNER_RADIUS_SCALE - 0.04;
 
 /**
  * 방위위성 밴드: 중심 행성 바깥 · 소행성 궤도 안쪽.
@@ -34,6 +49,13 @@ export function clampDefenseSatelliteRadiusScale(radiusScale: number): number {
   return Math.max(
     WORLD_OBJECT_DEFENSE_SATELLITE_RADIUS_SCALE_MIN,
     Math.min(WORLD_OBJECT_DEFENSE_SATELLITE_RADIUS_SCALE_MAX, radiusScale),
+  );
+}
+
+export function clampStelliumColonizeRadiusScale(radiusScale: number): number {
+  return Math.max(
+    WORLD_OBJECT_STELLIUM_COLONIZE_RADIUS_SCALE_MIN,
+    Math.min(WORLD_OBJECT_STELLIUM_COLONIZE_RADIUS_SCALE_MAX, radiusScale),
   );
 }
 

@@ -1,4 +1,10 @@
 import type { Planet, ZoneType } from '../types';
+import { resolvePlanetNebulaBakeKey } from './planetNebulaBakeKey';
+import { resolvePlanetNebulaBakeRingHex } from './planetNebulaBakeRingHex';
+import {
+  PLANET_NEBULA_PALETTE_REV,
+  resolvePlanetNebulaCanonPalette,
+} from './planetNebulaCanonPalettes';
 
 export type PlanetNebulaProfile = {
   seed: number;
@@ -9,6 +15,8 @@ export type PlanetNebulaProfile = {
   paletteB: string;
   paletteC: string;
   updatedAt: number;
+  /** 구 persist 팔레트 폐기용. 없으면 재빌드. */
+  paletteRev?: number;
 };
 
 function hashStringToInt(input: string): number {
@@ -33,7 +41,7 @@ function clamp01(v: number): number {
   return Math.max(0, Math.min(1, v));
 }
 
-function mixHex(a: string, b: string, tRaw: number): string {
+export function mixHex(a: string, b: string, tRaw: number): string {
   const t = clamp01(tRaw);
   const pa = parseInt(a.slice(1), 16);
   const pb = parseInt(b.slice(1), 16);
@@ -68,25 +76,30 @@ export function buildNebulaProfile(planet: Planet, zone: ZoneType): PlanetNebula
     `${planet.id}:${planet.factionId}:${planet.coreResource}:${planet.corePopulation}:${planet.coreDefense}:${planet.coreTechnology}:${planet.coreEnvironment}`,
   );
   const rand = mulberry32(seed);
-  const base = resolveZonePalette(zone);
+  const canon = resolvePlanetNebulaCanonPalette(planet.id);
+  const base = canon ?? resolveZonePalette(zone);
   const techFactor = clamp01(planet.coreTechnology / 100);
   const envFactor = clamp01(planet.coreEnvironment / 100);
   const defenseFactor = clamp01(planet.coreDefense / 100);
   const resourceFactor = clamp01(planet.coreResource / 100);
+  const swirlMul = canon?.swirlMul ?? 1;
+  const densityMul = canon?.densityMul ?? 1;
 
-  const paletteA = mixHex(base.a, '#0b0f18', 0.24 * (1 - envFactor));
-  const paletteB = mixHex(base.b, '#4ec5ff', 0.18 * techFactor + rand() * 0.08);
-  const paletteC = mixHex(base.c, '#ffcc66', 0.12 * resourceFactor + 0.1 * defenseFactor);
+  // 정본/존 가문 안에서만 밝기 조절. 청록·금 보색 믹스는 덩어리를 만든다.
+  const paletteA = mixHex(base.a, '#070b12', 0.18 * (1 - envFactor));
+  const paletteB = mixHex(base.b, base.a, 0.1 * (1 - techFactor));
+  const paletteC = mixHex(base.c, base.b, 0.08 * (1 - resourceFactor) + 0.04 * (1 - defenseFactor));
 
   return {
     seed,
     flowSpeed: 0.012 + techFactor * 0.018 + rand() * 0.01,
-    swirl: 1.2 + defenseFactor * 1.1 + rand() * 0.6,
-    density: 0.36 + resourceFactor * 0.42 + rand() * 0.14,
+    swirl: (1.2 + defenseFactor * 1.1 + rand() * 0.6) * swirlMul,
+    density: (0.36 + resourceFactor * 0.42 + rand() * 0.14) * densityMul,
     paletteA,
     paletteB,
     paletteC,
     updatedAt: Date.now(),
+    paletteRev: PLANET_NEBULA_PALETTE_REV,
   };
 }
 
@@ -94,4 +107,26 @@ export function hexToRgb01(hex: string): [number, number, number] {
   const raw = hex.startsWith('#') ? hex.slice(1) : hex;
   const n = parseInt(raw.padStart(6, '0').slice(0, 6), 16);
   return [((n >> 16) & 0xff) / 255, ((n >> 8) & 0xff) / 255, (n & 0xff) / 255];
+}
+
+/** 베이크 없는 폴백만 — 하이라이트(C)를 약하게. 정본 21·synth 폴백은 베이크 링. */
+export const NEBULA_ATMOSPHERE_RING_C_MIX = 0.22;
+
+export function resolveNebulaAtmosphereRingHex(
+  profile: Pick<PlanetNebulaProfile, 'paletteB' | 'paletteC'>,
+): string {
+  return mixHex(profile.paletteB, profile.paletteC, NEBULA_ATMOSPHERE_RING_C_MIX);
+}
+
+/** 허브 볼드 링 — 화면에 깔린 베이크 장의 주요색. persist 드리프트 무시. */
+export function resolvePlanetAtmosphereRingHex(
+  planetId: string,
+  zone?: ZoneType | null,
+  profile?: Pick<PlanetNebulaProfile, 'paletteB' | 'paletteC'> | null,
+): string | null {
+  const bakeKey = resolvePlanetNebulaBakeKey(planetId, zone);
+  const baked = resolvePlanetNebulaBakeRingHex(bakeKey);
+  if (baked) return baked;
+  if (profile) return resolveNebulaAtmosphereRingHex(profile);
+  return null;
 }

@@ -15,6 +15,9 @@ import {
 } from '../../world/megaFactionNationPolicy';
 import { isDynamicContestedZonePlanet } from '../territorial/dynamicContestedZoneStore';
 import { isTerritorialProcessPlanet } from '../territorial/isTerritorialProcessPlanet';
+import { hasAdjacentHostileFactionSystem } from '../territorial/territorialSupplyLine';
+import { getArcCoreCapitalDefensePolicy } from '../territorial/arcCoreCapitalDefensePolicy';
+import { isRouteCapitalPlanetId } from '../../world/galaxyFrontierDevelopmentRidge';
 
 const SEED_BLUE_CLAN_ID = 'balance_seed_faction_blue';
 export const ARC_CORE_SEED_BLUE_CLAN_ID = SEED_BLUE_CLAN_ID;
@@ -63,9 +66,11 @@ function buildSeedClans(now: number): Record<string, ClanBasicsRecord> {
 
 function shouldSkipOccupationSeedReconcile(hold: PlanetClanHold): boolean {
   if (hold.kind === 'player_home') return true;
-  // Player independent nation � never restore to seed
+  // Player independent nation  never restore to seed
   if (hold.kind === 'player_independent') return true;
-  // Player-owned hold (non-AI) � do not overwrite
+  // 플레이어 정찰 개척 hold — 시드 파이프가 덮어쓰면 purge 구분이 무너진다
+  if (hold.occupationOrigin === 'player_colonize') return true;
+  // Player-owned hold (non-AI)  do not overwrite
   if (hold.homePlayerUid && !isAiClanOccupier(hold.occupierClanId)) return true;
   return false;
 }
@@ -78,6 +83,49 @@ function isAiClanOccupier(clanId: string | null | undefined): boolean {
  * Never restore nation seed over live holds on territorial-process planets.
  * Seeds only fill missing holds (defaults).
  */
+/**
+ * ??? ?? ?????? OFF? ?? ?? ?? ??? ???? ?? ??? ????.
+ * CSV contestedZone=true(?? ?? 5?)? ?? ??? ????? ??.
+ * ???? ??? ???(neutralizedAt)? ??.
+ */
+function shouldForceRestoreAllyHinterlandSeed(input: {
+  occupationCombatEnabled: boolean;
+  csvContestedZone: boolean;
+  planetId: string;
+  systemId: string;
+  seedSide: 'BLUE' | 'RED';
+  nationClanId: string;
+  cur: PlanetClanHold;
+  holds: Readonly<Record<string, PlanetClanHold>>;
+}): boolean {
+  const { occupationCombatEnabled, csvContestedZone, planetId, systemId, seedSide, nationClanId, cur, holds } =
+    input;
+  if (shouldSkipOccupationSeedReconcile(cur)) return false;
+  if (cur.occupierClanId === nationClanId && cur.kind === 'clan_hold') return false;
+  if (cur.neutralizedAt) return false;
+  if (
+    (cur.occupierClanId === SEED_BLUE_CLAN_ID || cur.occupierClanId === SEED_RED_CLAN_ID)
+    && cur.occupierClanId !== nationClanId
+  ) {
+    return false;
+  }
+  const capitalPolicy = getArcCoreCapitalDefensePolicy();
+  if (
+    capitalPolicy.enabled
+    && capitalPolicy.capitalSeedRestoreIgnoresHostileAdj
+    && isRouteCapitalPlanetId(planetId)
+  ) {
+    return true;
+  }
+  if (!occupationCombatEnabled) return true;
+  if (csvContestedZone) return false;
+  return !hasAdjacentHostileFactionSystem({
+    systemId,
+    side: seedSide,
+    holds,
+  });
+}
+
 function shouldRestoreNationSeedOccupier(input: {
   contestedZone: boolean;
   planetId: string;
@@ -87,6 +135,13 @@ function shouldRestoreNationSeedOccupier(input: {
   const { contestedZone, planetId, nationClanId, cur } = input;
   if (contestedZone || isTerritorialProcessPlanet(planetId)) return false;
   if (cur.kind === 'player_independent') return false;
+  if (
+    isRouteCapitalPlanetId(planetId)
+    && (cur.occupierClanId === SEED_BLUE_CLAN_ID || cur.occupierClanId === SEED_RED_CLAN_ID)
+    && cur.occupierClanId !== nationClanId
+  ) {
+    return false;
+  }
   if (isAiClanOccupier(cur.occupierClanId)) return true;
   if (
     cur.neutralizedAt
@@ -125,29 +180,53 @@ function reconcileCsvSeedFactionOccupationHolds(
   now: number,
 ): boolean {
   let mutated = false;
-  for (const row of PlanetOccupationSeeds_FROM_BALANCE_CSV) {
-    const owner = parseOwner(row.initialOwner);
-    if (owner === 'NEUTRAL') continue;
+  // ?? ??? ?? ??? ?? ??? ?? ? ?? ?? 2?(21?? bounded)
+  for (let pass = 0; pass < 2; pass += 1) {
+    let passChanged = false;
+    for (const row of PlanetOccupationSeeds_FROM_BALANCE_CSV) {
+      const owner = parseOwner(row.initialOwner);
+      if (owner === 'NEUTRAL') continue;
 
-    const contestedZone = parseBool(row.contestedZone) || isDynamicContestedZonePlanet(row.planetId);
-    const nationClanId = owner === 'RED' ? SEED_RED_CLAN_ID : SEED_BLUE_CLAN_ID;
-    const cur = holds[row.planetId];
+      const csvContestedZone = parseBool(row.contestedZone);
+      const occupationCombatEnabled = parseBool(row.occupationCombatEnabled);
+      const contestedZone = csvContestedZone || isDynamicContestedZonePlanet(row.planetId);
+      const nationClanId = owner === 'RED' ? SEED_RED_CLAN_ID : SEED_BLUE_CLAN_ID;
+      const cur = holds[row.planetId];
 
-    if (!cur) {
-      holds[row.planetId] = buildNationSeedHold(row, nationClanId, undefined, now);
+      if (!cur) {
+        holds[row.planetId] = buildNationSeedHold(row, nationClanId, undefined, now);
+        mutated = true;
+        passChanged = true;
+        continue;
+      }
+      if (shouldForceRestoreAllyHinterlandSeed({
+        occupationCombatEnabled,
+        csvContestedZone,
+        planetId: row.planetId,
+        systemId: row.systemId,
+        seedSide: owner,
+        nationClanId,
+        cur,
+        holds,
+      })) {
+        holds[row.planetId] = buildNationSeedHold(row, nationClanId, cur, now);
+        mutated = true;
+        passChanged = true;
+        continue;
+      }
+      if (shouldSkipOccupationSeedReconcile(cur)) continue;
+      if (!shouldRestoreNationSeedOccupier({
+        contestedZone,
+        planetId: row.planetId,
+        nationClanId,
+        cur,
+      })) continue;
+
+      holds[row.planetId] = buildNationSeedHold(row, nationClanId, cur, now);
       mutated = true;
-      continue;
+      passChanged = true;
     }
-    if (shouldSkipOccupationSeedReconcile(cur)) continue;
-    if (!shouldRestoreNationSeedOccupier({
-      contestedZone,
-      planetId: row.planetId,
-      nationClanId,
-      cur,
-    })) continue;
-
-    holds[row.planetId] = buildNationSeedHold(row, nationClanId, cur, now);
-    mutated = true;
+    if (!passChanged) break;
   }
   return mutated;
 }

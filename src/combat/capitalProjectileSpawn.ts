@@ -136,7 +136,7 @@ function buildStraightFixedSpawn(
   };
 }
 
-/** family trajectoryMode → 스폰 결과. drone/carrier는 effectPending이어도 straight/bezier 폴백 */
+/** family trajectoryMode → 스폰 결과. drone/carrier active는 CapitalCraft, pending만 직선 스텁 */
 export function buildCapitalProjectileSpawn(
   params: CapitalProjectileSpawnParams,
 ): CapitalProjectileSpawnResult | null {
@@ -150,7 +150,8 @@ export function buildCapitalProjectileSpawn(
       return buildBezierGuidedSpawn(params);
     case 'orbit_loiter':
     case 'arc_loiter_turn':
-      // 미구현: 우선 로켓과 동일 직선+분산으로 스텁(연출만 family 팔레트)
+      // active: CapitalCraft 풀이 담당. effectPending 만 로켓 직선 스텁
+      if (spec.implementationStatus === 'active') return null;
       return buildStraightFixedSpawn(params, resolveRocketImpactSpreadRadiusPx(params.weaponId) * 1.2);
     case 'instant_beam':
       return null;

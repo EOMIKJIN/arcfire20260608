@@ -1,12 +1,9 @@
 // ============================================================
-// 이동중(transit) 전투 시드 — npcFleetRegistry O(1) 조회
+// 이동중(transit) 전투 시드 — 목적지 전용적 1척 + 플레이어 기함
 // ============================================================
 
-import {
-  getNpcCaptain,
-  hasNpcCapitalShipId,
-  resolveTransitPirateCaptainForSystem,
-} from '../npc/npcFleetRegistry';
+import { getNpcCaptain, hasNpcCapitalShipId } from '../npc/npcFleetRegistry';
+import { resolveTransitHostileCaptainForSystem } from '../npc/transitHostileCaptainResolve';
 import {
   resolveCombatEnemyCaptain,
   type MissionCombatCaptainResolveInput,
@@ -16,6 +13,20 @@ import {
   buildMissionCombatSeedMeta,
   isCaptainAvailableForMissionCombatAtPlanet,
 } from '../arcCore/captainPresence/resolveMissionCaptainPresence';
+import { useTransitCombatSessionStore } from '../game/transitCombat/transitCombatSession';
+
+function resolveBoundTransitMissionContext(
+  systemId: string | null,
+): MissionCombatCaptainResolveInput | null {
+  const session = useTransitCombatSessionStore.getState().session;
+  const templateId = session?.missionEnemyTemplateId?.trim() ?? '';
+  if (!templateId) return null;
+  return {
+    enemyTemplateId: templateId,
+    planetId: session?.missionPlanetId ?? null,
+    systemId,
+  };
+}
 
 export function resolveTransitPirateShipIdFromTables(
   systemId?: string | null,
@@ -27,7 +38,7 @@ export function resolveTransitPirateShipIdFromTables(
         planetId: missionContext.planetId ?? null,
         systemId: systemId ?? null,
       })
-    : resolveTransitPirateCaptainForSystem(systemId ?? null);
+    : resolveTransitHostileCaptainForSystem(systemId ?? null);
   const shipId = captain?.assignedShipId?.trim() ?? '';
   if (!shipId || !hasNpcCapitalShipId(shipId)) return null;
   return shipId;
@@ -46,24 +57,31 @@ export function buildTransitCombatSeedSlots(
   currentFlagshipNpcId: string,
   missionContext?: MissionCombatCaptainResolveInput | null,
 ): TransitCombatSeedSlot[] {
-  const redCaptain = missionContext?.enemyTemplateId
+  const boundMission = missionContext?.enemyTemplateId
+    ? missionContext
+    : resolveBoundTransitMissionContext(systemId);
+  const redCaptain = boundMission?.enemyTemplateId
     ? resolveCombatEnemyCaptain({
-        enemyTemplateId: missionContext.enemyTemplateId,
-        planetId: missionContext.planetId ?? null,
+        enemyTemplateId: boundMission.enemyTemplateId,
+        planetId: boundMission.planetId ?? null,
         systemId,
       })
-    : resolveTransitPirateCaptainForSystem(systemId);
+    : resolveTransitHostileCaptainForSystem(systemId);
 
-  const missionMeta = missionContext?.enemyTemplateId
+  const missionMeta = boundMission?.enemyTemplateId
     ? buildMissionCombatSeedMeta(
-        missionContext.enemyTemplateId,
-        missionContext.planetId ?? null,
+        boundMission.enemyTemplateId,
+        boundMission.planetId ?? null,
         redCaptain,
       )
     : null;
 
-  const redAvailable =
-    redCaptain && isCaptainAvailableForMissionCombatAtPlanet(redCaptain, missionContext?.planetId ?? null);
+  const redAvailable = boundMission?.enemyTemplateId
+    ? Boolean(
+        redCaptain
+        && isCaptainAvailableForMissionCombatAtPlanet(redCaptain, boundMission.planetId ?? null),
+      )
+    : Boolean(redCaptain);
   const redShipId =
     redAvailable && redCaptain?.assignedShipId?.trim()
       ? redCaptain.assignedShipId.trim()

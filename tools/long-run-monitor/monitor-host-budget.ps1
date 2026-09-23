@@ -1,4 +1,4 @@
-# 감시 = PC(adb) 전용 · 앱 번들/런타임 루프 주입 금지 · adb 부하 상한
+﻿# 감시 = PC(adb) 전용 · 앱 번들/런타임 루프 주입 금지 · adb 부하 상한
 # 정본: tools/long-run-monitor/logs/MONITOR_APP_ZERO_IMPACT.md
 
 $script:MONITOR_MIN_MEMINFO_INTERVAL_MIN = 15
@@ -46,10 +46,33 @@ function Enforce-MonitorIntervalFloor {
   return $IntervalMin
 }
 
+function Parse-TimelineHeartbeatRow {
+  param([string]$Line)
+  if ([string]::IsNullOrWhiteSpace($Line)) { return $null }
+  $cols = @($Line -split ',')
+  if ($cols.Count -lt 11) { return $null }
+  if ($cols[1] -notmatch '^\d+$') { return $null }
+  if ($cols[2] -notmatch '^\d') { return $null }
+  try {
+    $ts = [datetime]::Parse($cols[0].Trim())
+  } catch {
+    return $null
+  }
+  return @{
+    pid = $cols[1].Trim()
+    pssMb = $cols[2].Trim()
+    glMb = $cols[4].Trim()
+    views = $cols[10].Trim()
+    ts = $ts
+  }
+}
+
 function Get-TimelineHeartbeatMetrics {
   param(
     [string]$LogDir = '',
-    [int]$MaxAgeMin = 20
+    [int]$MaxAgeMin = 20,
+    [int]$StaleFallbackMaxAgeMin = 90,
+    [string]$MatchPid = ''
   )
   $dir = Get-MonitorBudgetLogDir $LogDir
   $csv = Join-Path $dir 'mem-timeline.csv'
@@ -57,18 +80,24 @@ function Get-TimelineHeartbeatMetrics {
   try {
     $rows = @(Get-Content $csv -ErrorAction SilentlyContinue | Select-Object -Skip 1 | Where-Object { $_.Trim() })
     if ($rows.Count -lt 1) { return $null }
-    $last = ($rows[-1] -split ',')
-    if ($last.Count -lt 11) { return $null }
-    $iso = $last[0]
-    $ts = [datetime]::Parse($iso)
-    $ageMin = ((Get-Date) - $ts).TotalMinutes
-    if ($ageMin -gt $MaxAgeMin) { return $null }
+    $parsed = $null
+    for ($i = $rows.Count - 1; $i -ge 0; $i--) {
+      $cand = Parse-TimelineHeartbeatRow -Line $rows[$i]
+      if (-not $cand) { continue }
+      if ($MatchPid -and $cand.pid -ne $MatchPid) { continue }
+      $parsed = $cand
+      break
+    }
+    if (-not $parsed) { return $null }
+    $ageMin = ((Get-Date) - $parsed.ts).TotalMinutes
+    if ($ageMin -gt $StaleFallbackMaxAgeMin) { return $null }
     return @{
-      pid = $last[1]
-      pssMb = $last[2]
-      glMb = $last[4]
-      views = $last[10]
+      pid = $parsed.pid
+      pssMb = $parsed.pssMb
+      glMb = $parsed.glMb
+      views = $parsed.views
       ageMin = [math]::Round($ageMin, 1)
+      stale = ($ageMin -gt $MaxAgeMin)
       source = 'mem-timeline'
     }
   } catch {

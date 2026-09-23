@@ -1,5 +1,7 @@
 // ============================================================
 // NPC 배치 정책 집행 — AABS §2-C
+// `npc_gather_planet`은 유인 비콘·총독 security 전용(궤도 함선 전체 소집).
+// 일일 `runDailyPolicyAlignment`에서는 호출하지 않는다(허브 트래픽 몰림 방지).
 // ============================================================
 
 import { listCoreOpenGameplaySystemIds, resolveCoreOpenStarSystem } from '../../world/coreOpenGameplayPlanets';
@@ -20,6 +22,7 @@ export function enforceNpcDeploymentPolicy(maxMoves = 3): number {
   for (const captain of listNpcCaptains()) {
     if (moves >= maxMoves) break;
     if (captain.operationalState !== 'combat') continue;
+    if (captain.questOnly) continue;
     if (captain.arcOrbitPresenceFill) continue;
     const sysId = captain.baseSystemId?.trim();
     if (!sysId) continue;

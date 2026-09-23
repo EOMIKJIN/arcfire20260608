@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>행성개발 — 아크파이어 온라인 위키</title>
+<meta name="description" content="무역소·조선소·방위위성·연구소·바 5개 시설, 레벨 1~15 업그레이드 체계와 일일 스탯 넛지" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body data-page="planetdev">
+
+<header class="site-header">
+  <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <div class="site-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
+    <div class="search-hits"></div>
+  </div>
+  <button class="theme-toggle" type="button" aria-label="테마 전환"></button>
+</header>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-group"><h5>시작</h5><a href="index.html" data-page="index"><span class="dot"></span>홈</a></div>
+    <div class="sidebar-group"><h5>세계</h5>
+      <a href="world.html" data-page="world"><span class="dot"></span>세계관 · 아크코어</a>
+      <a href="factions.html" data-page="factions"><span class="dot"></span>4대 세력</a>
+      <a href="galaxy.html" data-page="galaxy"><span class="dot"></span>은하 · 행성</a>
+      <a href="story.html" data-page="story"><span class="dot"></span>스토리 · 미션</a>
+    </div>
+    <div class="sidebar-group"><h5>전력</h5>
+      <a href="ships.html" data-page="ships"><span class="dot"></span>함선</a>
+      <a href="weapons.html" data-page="weapons"><span class="dot"></span>무기체계</a>
+      <a href="skills.html" data-page="skills"><span class="dot"></span>스킬</a>
+      <a href="items.html" data-page="items"><span class="dot"></span>아이템 · 강화</a>
+    </div>
+    <div class="sidebar-group"><h5>체제</h5>
+      <a href="economy.html" data-page="economy"><span class="dot"></span>경제 시스템</a>
+      <a href="planetdev.html" data-page="planetdev" class="active"><span class="dot"></span>행성개발</a>
+      <a href="combat.html" data-page="combat"><span class="dot"></span>전투 · 분쟁</a>
+      <a href="arccore.html" data-page="arccore"><span class="dot"></span>아크코어 AI</a>
+      <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
+      <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="content-wrap">
+    <article class="content">
+      <div class="eyebrow">체제 · 성장</div>
+      <h1 class="page-title">행성개발</h1>
+      <p class="page-lede">
+        본거지 행성에는 5개의 건설 가능한 시설 — 무역소·조선소·방위위성·연구소·바 — 이 있고, 각각 레벨 1~15까지
+        올릴 수 있다. 시설 레벨은 매일 배치에서 행성 5대 지표(R/P/D/T/E)를 조금씩 밀어 올리는 방식으로
+        <a href="economy.html">경제 시스템</a>과 연결된다.
+      </p>
+
+      <div class="callout warn">
+        <strong>기획 문서 vs 실제 테이블 — 실제 테이블 기준으로 정리함</strong>
+        원 설계 문서(<code>_000_09_DESIGN_FACILITY_UPGRADE_SYSTEM_v2_0.md</code>, 2026-06-19)는 레벨 1~10 · 전투 승수
+        기반 건설 조건(무역소 10승, 조선소 5승, 연구소 15승, 바 8승)을 명시하지만, 실제 반영된 테이블(v3.1/v3.2)은
+        <strong>레벨이 15까지 확장</strong>됐고 <strong>전투 승수 조건은 전부 제거</strong>됐다(설치 대기시간만 남음). 이 페이지는
+        Table-First 원칙에 따라 실제 CSV 값을 기준으로 작성했다 — 오래된 기획 문서와 다른 숫자가 보이면 이 페이지가 더 최신이다.
+      </div>
+
+      <h2>5개 시설 한눈에</h2>
+      <div class="card-grid">
+        <div class="card"><span class="card-eyebrow">무역소</span><h4>Trade Port</h4><p>거래 수수료↓·재고 상한↑·고급 무기 취급 비중↑. R·P 지표 밀어올림.</p></div>
+        <div class="card"><span class="card-eyebrow">조선소</span><h4>Shipyard</h4><p>건조 가능 함급 해금·광물 강화 상한↑·건조 시간↓. T 지표.</p></div>
+        <div class="card"><span class="card-eyebrow">방위위성</span><h4>Defense Satellite</h4><p>위성 수·DPS·침공 요격률↑. D 지표(파괴 시 즉시 감소, 격퇴 시 증가).</p></div>
+        <div class="card"><span class="card-eyebrow">연구소</span><h4>Laboratory</h4><p>R&amp;D 해금 속도↑·환경 재생·첩보 탐지·대테러·드론 요격 보너스. T·E 지표.</p></div>
+        <div class="card"><span class="card-eyebrow">바</span><h4>Bar</h4><p>현상금 게시판 슬롯↑·평판 보너스·용병 등급 해금. P 지표.</p></div>
+      </div>
+      <p style="font-size:0.85rem;color:var(--text-faint);">일일 유지비 테이블에는 이 5개 외에 <code>population_dome</code>(거주돔)이라는 6번째 시설명이 등장하지만, 레벨 정책 테이블도 기획 문서도 없어 실제 효과는 확인할 수 없다 — 데이터에만 존재하는 시설로 표기해 둔다.</p>
+
+      <h2>레벨별 실제 수치</h2>
+
+      <h3>무역소</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Lv</th><th>이름</th><th class="num">수수료</th><th class="num">재고 상한</th><th class="num">공급배율</th><th class="num">설치/강화 비용</th><th>소요시간</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td>간이 교역소</td><td class="num">10%</td><td class="num">100</td><td class="num">1.0</td><td class="num">500cr</td><td>15~30분</td></tr>
+          <tr><td class="num">5</td><td>지역 교역 센터</td><td class="num">8%</td><td class="num">750</td><td class="num">1.15</td><td class="num">64,000cr</td><td>1일</td></tr>
+          <tr><td class="num">10</td><td>은하 무역 중심</td><td class="num">5%</td><td class="num">5,000</td><td class="num">1.4</td><td class="num">7,000,000cr</td><td>7일</td></tr>
+          <tr><td class="num">15</td><td>은하 무역 절대</td><td class="num">3%</td><td class="num">15,000</td><td class="num">1.65</td><td class="num">236,000,000cr</td><td>60일</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>조선소</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Lv</th><th>이름</th><th>해금 함급(누적)</th><th class="num">강화 상한</th><th class="num">건조속도</th><th class="num">비용</th><th>소요시간</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td>간이 정비소</td><td>기본 프리깃</td><td class="num">3강</td><td class="num">±0%</td><td class="num">800cr</td><td>~18분</td></tr>
+          <tr><td class="num">5</td><td>중형 조선소</td><td>+순양함</td><td class="num">9강</td><td class="num">-20%</td><td class="num">112,000cr</td><td>1.5일</td></tr>
+          <tr><td class="num">10</td><td>은하 최대 조선소</td><td>+드레드노트·슈퍼캐피털·아펙스</td><td class="num">15강</td><td class="num">-50%</td><td class="num">16,800,000cr</td><td>7일</td></tr>
+          <tr><td class="num">15</td><td>은하 최종 조선소</td><td>(동일, 상한만 확장)</td><td class="num">20강</td><td class="num">-60%</td><td class="num">584,000,000cr</td><td>60일</td></tr>
+        </tbody>
+      </table></div>
+      <p>강화 상한은 조선소 레벨과 파일럿 전투레벨 중 <strong>더 낮은 쪽</strong>을 따른다(<a href="items.html">아이템 · 강화</a> 참고).</p>
+
+      <h3>바 (시설 레벨 — 종업원·콘텐츠는 <a href="social.html#bar">별도 문서</a>)</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Lv</th><th>이름</th><th class="num">현상금 슬롯</th><th class="num">평판 보너스</th><th>용병 등급</th><th class="num">비용</th><th>소요시간</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td>임시 주점</td><td class="num">2</td><td class="num">±0%</td><td>일반</td><td class="num">800cr</td><td>~20분</td></tr>
+          <tr><td class="num">5</td><td>주요 바</td><td class="num">7</td><td class="num">+12%</td><td>정예</td><td class="num">80,000cr*</td><td>1.5일</td></tr>
+          <tr><td class="num">10</td><td>은하 전설의 주점</td><td class="num">25</td><td class="num">+35%</td><td>전설</td><td class="num">11,200,000cr</td><td>7일</td></tr>
+          <tr><td class="num">15</td><td>은하 최종 주점</td><td class="num">35</td><td class="num">+45%</td><td>전설</td><td class="num">386,000,000cr</td><td>60일</td></tr>
+        </tbody>
+      </table></div>
+      <p style="font-size:0.82rem;color:var(--text-faint);">* Lv5는 인구(P) 지표 30 이상도 함께 요구.</p>
+
+      <h3>연구소</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Lv</th><th>이름</th><th class="num">R&amp;D 속도</th><th class="num">첩보탐지</th><th class="num">대테러</th><th class="num">드론요격</th><th class="num">비용</th><th>소요시간</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td>간이 연구실</td><td class="num">-5%</td><td class="num">+2%</td><td class="num">+1%</td><td class="num">+1</td><td class="num">2,000cr</td><td>30분</td></tr>
+          <tr><td class="num">5</td><td>고급 연구소</td><td class="num">-20%</td><td class="num">+7%</td><td class="num">+5%</td><td class="num">+4</td><td class="num">160,000cr*</td><td>2일</td></tr>
+          <tr><td class="num">10</td><td>아크파이어 연구원</td><td class="num">-50%</td><td class="num">+16%</td><td class="num">+14%</td><td class="num">+10</td><td class="num">21,000,000cr</td><td>8일</td></tr>
+          <tr><td class="num">15</td><td>은하 최종 연구소</td><td class="num">-60%</td><td class="num">+22%</td><td class="num">+20%</td><td class="num">+15</td><td class="num">733,788,800cr</td><td>60일</td></tr>
+        </tbody>
+      </table></div>
+      <p style="font-size:0.82rem;color:var(--text-faint);">* Lv5는 기술(T) 지표 30 이상도 함께 요구. 이 연구소는 <a href="skills.html">허브 스킬 트리</a>와는 다른 시설이다 — 스킬 트리는 파일럿 영구 특성, 이 연구소는 R&amp;D 해금 타이머·방위 관련 보조 스탯만 다룬다.</p>
+
+      <h3>방위위성</h3>
+      <p>Lv1: 위성 1기·DPS 200·요격률 5% → Lv10: 위성 5기·DPS 150,000·요격률 95%. 위성이 파괴되면 D 지표가 즉시 깎이고, 침공을 격퇴하면 D 지표가 오른다 — 다른 4개 시설과 달리 <strong>양방향으로 지표가 움직이는</strong> 유일한 시설이다.</p>
+
+      <h2>매일 일어나는 일 — 스탯 넛지</h2>
+      <p>시설 레벨은 실시간으로 아무것도 하지 않는다. <strong>매일 12:00 KST 배치</strong>에서만 레벨×계수만큼 지표를 밀어올린다(100 상한, 미점유 중엔 중단).</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>시설</th><th>지표</th><th class="num">레벨당</th><th class="num">Lv10 합계</th><th class="num">Lv15 합계</th></tr></thead>
+        <tbody>
+          <tr><td>무역소</td><td>R, P (각각)</td><td class="num">+0.2</td><td class="num">+2.0/일</td><td class="num">+3.0/일</td></tr>
+          <tr><td>조선소</td><td>T</td><td class="num">+0.1</td><td class="num">+1.0/일</td><td class="num">+1.5/일</td></tr>
+          <tr><td>방위위성</td><td>D</td><td class="num">+0.3</td><td class="num">+3.0/일</td><td class="num">+4.5/일</td></tr>
+          <tr><td>연구소</td><td>T, E (각각)</td><td class="num">+0.3</td><td class="num">+3.0/일</td><td class="num">+4.5/일</td></tr>
+          <tr><td>바</td><td>P</td><td class="num">+0.25</td><td class="num">+2.5/일</td><td class="num">+3.75/일</td></tr>
+        </tbody>
+      </table></div>
+
+      <h2>강화 소요시간과 즉시완료</h2>
+      <p>레벨이 오를수록 소요시간이 기하급수로 늘어난다 — Lv1→2 45분, Lv4→5 1일, Lv9→10 30일, Lv14→15 60일. 시설마다 배속이 다르다(무역소·바는 살짝 빠름, 연구소는 10% 느림).</p>
+      <p>
+        기다리지 않고 <strong>크레딧으로 즉시완료</strong>할 수 있다 — 강화 비용의 약 <strong>40%</strong>(최초 설치는 설치비의 50%)가
+        추가로 든다. 전체적으로 처음부터 끝까지 즉시완료로만 밀면 기본 비용의 <strong>3~5배</strong>가 든다.
+      </p>
+
+      <h2>일일 유지비</h2>
+      <p>시설별로 레벨당 약 9~10크레딧씩 늘어나는 별도 유지비가 있다(경제 시스템의 행성당 800cr 고정 유지비와는 별개의 항목).</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>시설</th><th class="num">Lv1</th><th class="num">Lv5</th><th class="num">Lv10</th><th class="num">Lv15</th></tr></thead>
+        <tbody>
+          <tr><td>조선소</td><td class="num">24</td><td class="num">64</td><td class="num">114</td><td class="num">164</td></tr>
+          <tr><td>연구소</td><td class="num">20</td><td class="num">56</td><td class="num">101</td><td class="num">146</td></tr>
+          <tr><td>무역소</td><td class="num">18</td><td class="num">50</td><td class="num">90</td><td class="num">130</td></tr>
+        </tbody>
+      </table></div>
+      <p style="font-size:0.82rem;color:var(--text-faint);">방위위성·바는 이 유지비 테이블에 행 자체가 없다 — 추가 유지비가 없거나 다른 표에서 관리되는 것으로 보인다.</p>
+
+      <h2>건설 조건</h2>
+      <p>점유한 행성이면 어떤 시설이든 별도 전투 승수 조건 없이 바로 건설 착수 가능하다 — 설치 대기시간(15~30분)만 있다. 레벨을 올릴 때는 파일럿 레벨과 특정 지표 문턱이 걸린다.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>시설</th><th>Lv5 조건</th><th>Lv8 조건</th></tr></thead>
+        <tbody>
+          <tr><td>무역소</td><td>파일럿 Lv15</td><td>파일럿 Lv30</td></tr>
+          <tr><td>조선소</td><td>파일럿 Lv20</td><td>파일럿 Lv40</td></tr>
+          <tr><td>바</td><td>파일럿 Lv15 + 인구(P) 30</td><td>파일럿 Lv30 + 인구(P) 55</td></tr>
+          <tr><td>연구소</td><td>파일럿 Lv20 + 기술(T) 30</td><td>파일럿 Lv40 + 기술(T) 55</td></tr>
+        </tbody>
+      </table></div>
+      <p>지표 문턱 때문에 시설들은 서로 직접적인 선행조건은 없어도, <strong>같은 5대 지표 풀을 공유</strong>해 간접적으로 서로를 밀어준다 — 무역소·연구소가 올린 T·P가 바·연구소의 다음 단계 조건을 채워주는 식이다.</p>
+
+      <div class="source-note">정본: <code>tables/balance/facility_*.csv</code>(무역소·조선소·바·연구소 레벨정책, 소요시간, 즉시완료, 유지비, 설치조건) · <code>docs/_000_09_DESIGN_FACILITY_UPGRADE_SYSTEM_v2_0.md</code>(2026-06-19, 일부 항목은 실제 테이블에서 갱신됨)</div>
+    </article>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/wiki.js"></script>
+</body>
+</html>

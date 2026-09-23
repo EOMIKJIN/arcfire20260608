@@ -2,15 +2,12 @@
 // 스파이 활동 시작 → 정보원 인게임 대화 알림 큐
 // ============================================================
 
+import { shouldSkipWorldOpsNotifyUntilPlanetHub } from '../../navigation/worldOpsNotifyPresence';
 import { resolveArcCoreSpyPolicy } from './arcCoreSpyPolicy';
 import {
   getPendingArcCoreSpyIntelAlertForPlanet,
   queueArcCoreSpyIntelAlert,
 } from './arcCoreSpyIntelAlertStore';
-import {
-  rollSpyIntelNotifyPass,
-  resolveSpyIntelNotifyProbabilityPct,
-} from './resolveSpyIntelNotifyProbabilityPct';
 
 export function buildArcCoreSpyIntelAckKey(planetId: string, spyCaptainId: string): string {
   return `hub_spy_intel:${planetId}:${spyCaptainId}`;
@@ -29,14 +26,18 @@ export type TryNotifyArcCoreSpyIntelAlertInput = {
 /**
  * 스파이가 행성 체류 인원에 새로 포함될 때 정보원 대화 알림 큐.
  * zero/low-allocation — edge tick 에만 호출.
+ * @returns false 면 허브 전 스킵 — notifiedSpyKeys/lastSpyKey 소비 금지, 도착 후 재시도.
  */
-export function tryNotifyArcCoreSpyIntelAlert(input: TryNotifyArcCoreSpyIntelAlertInput): void {
+export function tryNotifyArcCoreSpyIntelAlert(input: TryNotifyArcCoreSpyIntelAlertInput): boolean {
   const policy = resolveArcCoreSpyPolicy();
-  if (!policy.enabled) return;
+  if (!policy.enabled) return true;
 
   const planetId = String(input.planetId ?? '').trim();
-  if (!planetId || input.newlyArrivedSpyCaptainIds.length === 0) return;
+  if (!planetId || input.newlyArrivedSpyCaptainIds.length === 0) return true;
+  if (shouldSkipWorldOpsNotifyUntilPlanetHub()) return false;
 
+  const { rollSpyIntelNotifyPass, resolveSpyIntelNotifyProbabilityPct } =
+    require('./resolveSpyIntelNotifyProbabilityPct') as typeof import('./resolveSpyIntelNotifyProbabilityPct');
   const notifyPct = resolveSpyIntelNotifyProbabilityPct(planetId);
   const sceneId = policy.informantDialogSceneId;
   const informantCaptainId = policy.informantCaptainId;
@@ -65,4 +66,5 @@ export function tryNotifyArcCoreSpyIntelAlert(input: TryNotifyArcCoreSpyIntelAle
     });
     break;
   }
+  return true;
 }

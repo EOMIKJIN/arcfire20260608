@@ -69,6 +69,21 @@ export function resolveGalaxyTransitHullFuelCostMul(hullTierKey: string): number
   return getHullMulByTier().get(hullTierKey) ?? 1;
 }
 
+function clampFuelPct(n: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, n));
+}
+
+/** 견적 소계에 연료효율 % 적용. capPct 초과분은 버린다. */
+export function applyGalaxyTransitFuelEfficiency(
+  total: number,
+  efficiencyPct: number,
+  capPct: number,
+): number {
+  const capped = clampFuelPct(efficiencyPct, 0, capPct);
+  const mul = 1 - capped / 100;
+  return Math.max(0, Math.round(total * mul));
+}
+
 export function invalidateGalaxyTransitFuelPolicyCache(): void {
   policyKv = null;
   hullMulByTier = null;

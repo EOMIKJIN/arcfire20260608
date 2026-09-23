@@ -1,0 +1,145 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>함선 — 아크파이어 온라인 위키</title>
+<meta name="description" content="플레이어 함급 12종과 6개 선체 원형, NPC 함대 구조" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body data-page="ships">
+
+<header class="site-header">
+  <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <div class="site-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
+    <div class="search-hits"></div>
+  </div>
+  <button class="theme-toggle" type="button" aria-label="테마 전환"></button>
+</header>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-group"><h5>시작</h5>
+      <a href="index.html" data-page="index"><span class="dot"></span>홈</a>
+    </div>
+    <div class="sidebar-group"><h5>세계</h5>
+      <a href="world.html" data-page="world"><span class="dot"></span>세계관 · 아크코어</a>
+      <a href="factions.html" data-page="factions"><span class="dot"></span>4대 세력</a>
+      <a href="galaxy.html" data-page="galaxy"><span class="dot"></span>은하 · 행성</a>
+      <a href="story.html" data-page="story"><span class="dot"></span>스토리 · 미션</a>
+    </div>
+    <div class="sidebar-group"><h5>전력</h5>
+      <a href="ships.html" data-page="ships" class="active"><span class="dot"></span>함선</a>
+      <a href="weapons.html" data-page="weapons"><span class="dot"></span>무기체계</a>
+      <a href="skills.html" data-page="skills"><span class="dot"></span>스킬</a>
+      <a href="items.html" data-page="items"><span class="dot"></span>아이템 · 강화</a>
+    </div>
+    <div class="sidebar-group"><h5>체제</h5>
+      <a href="economy.html" data-page="economy"><span class="dot"></span>경제 시스템</a>
+      <a href="planetdev.html" data-page="planetdev"><span class="dot"></span>행성개발</a>
+      <a href="combat.html" data-page="combat"><span class="dot"></span>전투 · 분쟁</a>
+      <a href="arccore.html" data-page="arccore"><span class="dot"></span>아크코어 AI</a>
+      <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
+      <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="content-wrap">
+    <article class="content">
+      <div class="eyebrow">전력 · 함선</div>
+      <h1 class="page-title">함선</h1>
+      <p class="page-lede">
+        플레이어는 시작 정찰함부터 최상위 「아펙스 레전드」까지 12단계 함급을 조선소에서 구매하며 성장한다.
+        NPC는 293종의 함선이 존재하지만 실제 선체 원형은 6종뿐이며, 이름과 진영·역할만 다르다.
+      </p>
+
+      <h2>플레이어 함급 사다리</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>함급</th><th class="num">요구 Lv</th><th class="num">HP</th><th class="num">실드</th><th class="num">장갑</th><th>선체</th><th class="num">가격(cr)</th></tr></thead>
+          <tbody>
+            <tr><td>레인저 CM.I <span class="pill accent">시작함</span></td><td class="num">2</td><td class="num">72</td><td class="num">88</td><td class="num">11</td><td>patrol</td><td class="num">0</td></tr>
+            <tr><td>스트라이커 Mk.II</td><td class="num">7</td><td class="num">400</td><td class="num">95</td><td class="num">9</td><td>raider</td><td class="num">250,000</td></tr>
+            <tr><td>파이터 Mk.I</td><td class="num">13</td><td class="num">560</td><td class="num">210</td><td class="num">16</td><td>line</td><td class="num">무료 전환</td></tr>
+            <tr><td>가디언 구축함 / 헌터 구축함</td><td class="num">15</td><td class="num">600 / 450</td><td class="num">250 / 125</td><td class="num">18 / 10</td><td>patrol / raider</td><td class="num">1,200,000</td></tr>
+            <tr><td>오라클 순양함 / 섀도우 순양함</td><td class="num">31</td><td class="num">600 / 470</td><td class="num">235 / 140</td><td class="num">17 / 11</td><td>siege / patrol</td><td class="num">5,000,000</td></tr>
+            <tr><td>소버린 순양전함 / 랩터 순양전함</td><td class="num">52</td><td class="num">620 / 500</td><td class="num">245 / 155</td><td class="num">18 / 12</td><td>siege / raider</td><td class="num">15,000,000</td></tr>
+            <tr><td>드레드노트</td><td class="num">65</td><td class="num">680</td><td class="num">265</td><td class="num">19</td><td>siege</td><td class="num">25,000,000</td></tr>
+            <tr><td>슈퍼캐피털</td><td class="num">72</td><td class="num">800</td><td class="num">295</td><td class="num">20</td><td>line</td><td class="num">50,000,000</td></tr>
+            <tr><td>아펙스 레전드 <span class="pill purple">최상위</span></td><td class="num">80</td><td class="num">880</td><td class="num">320</td><td class="num">21</td><td>line</td><td class="num">100,000,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>각 등급마다 동일 스탯의 「팬텀/섀도우」 이명 함선이 한 척씩 짝을 이룬다 — 능력치는 같고 외형·명칭만 다른 파생형이다. 별도로 웨이브 디펜스 미니게임 전용 「웨이브 디펜스 전함」(HP 3,700·실드 1,500)이 존재한다.</p>
+
+      <h2>선체 6원형</h2>
+      <p>플레이어·NPC 함선 293척 전체가 아래 6개 선체 중 하나를 공유한다.</p>
+      <div class="card-grid">
+        <div class="card"><h4>patrol</h4><p>가장 많이 쓰이는 경·중형 순찰 프레임 (192척)</p></div>
+        <div class="card"><h4>raider</h4><p>기동형 습격 프레임 (35척)</p></div>
+        <div class="card"><h4>line</h4><p>플레이어 최상위 라인의 주력함 프레임 (30척)</p></div>
+        <div class="card"><h4>siege</h4><p>순양함~드레드노트급 공성 프레임 (15척)</p></div>
+        <div class="card"><h4>research</h4><p>「블루 플릿」 등 연구/모의전용 프레임 (11척)</p></div>
+        <div class="card"><h4>carrier_light</h4><p>「서바이벌 포드」 경량 캐리어 (10척)</p></div>
+      </div>
+
+      <h2>NPC 함대와 진영</h2>
+      <p>
+        NPC 함선은 소속 본성계별로 Invader / Interdictor / Pursuer / Raider / Hunter 등 역할별 이름 변형을 갖는다.
+        아르카디아·드라코 성운·솔라 항구·미네르바·베가 전초기지·뉴에덴·아이언 크로스·오메가 스테이션·헬리오스·시리우스,
+        그리고 PvP 클랜 「나이트폴(홍월/Crimson Moon)」까지 총 11개 본성계 소속이 등록돼 있다.
+      </p>
+
+      <h2 id="all-ships">전체 함선 목록 — 293척</h2>
+      <p><code>npc_ai_ships.csv</code> 전체다. 플레이어 12함급을 포함해 모든 NPC 함선의 본성계·선체·스탯을 담았다.</p>
+      <div id="ship-table"></div>
+
+      <h2>웨이브 디펜스 침입자</h2>
+      <p>
+        웨이브 디펜스 모드는 <code>npc_wave_invader_t1</code>부터 <code>t30</code>까지 30단계 침입자를 쓴다.
+        모두 기초 스탯(HP 80·실드 40·장갑 8)은 동일하고, 장착 무기만 티어가 오를수록 기본 레이저에서
+        후반 「싱귤래리티/코스메가 로켓」급으로 강해진다 — <a href="combat.html#tcl">전투 난이도는 스탯이 아니라 무기로 오른다</a>.
+      </p>
+
+      <h2>장비 슬롯</h2>
+      <p>모든 함선은 <code>ARMOR · ENGINE · SYSTEM · EX_01</code> 4개 기본 슬롯을 가지며, <a href="items.html#equipment">57종 장비 카탈로그</a>에 따라 최대 <code>EX_04</code>·<code>FIGHTER</code>까지 확장된다.</p>
+
+      <div class="source-note">정본: <code>tables/content/npc_ai_ships.csv</code>(293행) · <code>npc_capital_ship_equip_slots.csv</code> · <code>docs/_000_ARCFIRE_SHIPYARD_UPGRADE_UI_SPEC_v1.md</code></div>
+    </article>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/data/ships.js"></script>
+<script src="assets/datatable.js"></script>
+<script src="assets/wiki.js"></script>
+<script>
+  mountWikiDataTable({
+    mount: document.getElementById("ship-table"),
+    data: window.SHIP_DATA || [],
+    label: "함선",
+    searchKeys: ["id", "name", "nameEn", "homeSystem", "hull", "archetype"],
+    columns: [
+      { key: "name", label: "이름" },
+      { key: "nameEn", label: "영문명" },
+      { key: "homeSystem", label: "본성계" },
+      { key: "hull", label: "선체" },
+      { key: "hp", label: "HP", num: true },
+      { key: "shield", label: "실드", num: true },
+      { key: "armor", label: "장갑", num: true },
+      { key: "lvl", label: "전투Lv", num: true },
+      { key: "archetype", label: "아키타입" },
+    ],
+  });
+</script>
+</body>
+</html>

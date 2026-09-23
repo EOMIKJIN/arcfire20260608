@@ -73,7 +73,20 @@ function smoothstep(edge0: number, edge1: number, x: number): number {
   return t * t * (3 - 2 * t);
 }
 
-/** fragcoord 기준 RGBA 0..1 — SkiaPlanetNebulaShaderBackdrop SKSL과 동일. */
+function mixRgb(
+  a: [number, number, number],
+  b: [number, number, number],
+  tRaw: number,
+): [number, number, number] {
+  const t = Math.max(0, Math.min(1, tRaw));
+  return [
+    a[0] + (b[0] - a[0]) * t,
+    a[1] + (b[1] - a[1]) * t,
+    a[2] + (b[2] - a[2]) * t,
+  ];
+}
+
+/** fragcoord 기준 RGBA 0..1 — 가문 안 보간. 보색 가산 금지. */
 export function samplePlanetNebulaRgba(
   fragX: number,
   fragY: number,
@@ -88,41 +101,40 @@ export function samplePlanetNebulaRgba(
   const d = Math.max(0.05, Math.min(1.4, uniforms.density));
   const seed = uniforms.seed;
 
+  const warp = fbm([p[0] * 1.12 + t * 0.15, p[1] * 1.12 - t * 0.11], seed + 19);
+  p = [p[0] + (warp - 0.5) * 0.38 * sw, p[1] + (warp - 0.5) * 0.3 * sw];
+
   const n1 = fbm([p[0] * (2 + d * 0.4) + 0, p[1] * (2 + d * 0.4) + t], seed);
   const n2 = fbm([p[0] * (3.1 + d * 0.5) + t * 0.9, p[1] * (3.1 + d * 0.5) - t * 0.35], seed);
   const n3 = fbm([p[0] * (4.9 + d * 0.3) - t * 0.65, p[1] * (4.9 + d * 0.3) + t * 0.52], seed);
   let n = n1 * 0.5 + n2 * 0.32 + n3 * 0.18;
-  n += Math.sin((p[0] * 1.4 + p[1] * 1.1) * sw + t * 2.2) * 0.08;
+  n += Math.sin((p[0] * 1.4 + p[1] * 1.1) * sw + t * 2.2) * 0.06;
 
-  const fog = smoothstep(0.22, 0.88, n);
-  const ridge = smoothstep(0.6, 0.94, n + 0.04 * Math.sin((p[0] - p[1]) * 5.2 + t * 1.3));
-  let col: [number, number, number] = [uniforms.colA[0], uniforms.colA[1], uniforms.colA[2]];
-  col = [
-    col[0] + uniforms.colB[0] * fog * (0.68 + d * 0.2),
-    col[1] + uniforms.colB[1] * fog * (0.68 + d * 0.2),
-    col[2] + uniforms.colB[2] * fog * (0.68 + d * 0.2),
-  ];
-  col = [
-    col[0] + uniforms.colC[0] * ridge * (0.48 + d * 0.36),
-    col[1] + uniforms.colC[1] * ridge * (0.48 + d * 0.36),
-    col[2] + uniforms.colC[2] * ridge * (0.48 + d * 0.36),
-  ];
+  const fog = smoothstep(0.16, 0.8, n);
+  const ridge = smoothstep(0.5, 0.9, n + 0.03 * Math.sin((p[0] - p[1]) * 5.2 + t * 1.3)) * 0.42;
+  let col = mixRgb(uniforms.colA, uniforms.colB, fog * (0.78 + d * 0.14));
+  col = mixRgb(col, uniforms.colC, ridge);
 
   const vignette = smoothstep(1.34, 0.36, Math.hypot(p[0] * 1, p[1] * 1.2));
-  col = [col[0] * vignette, col[1] * vignette, col[2] * vignette];
+  col = [col[0] * (0.22 + 0.78 * vignette), col[1] * (0.22 + 0.78 * vignette), col[2] * (0.22 + 0.78 * vignette)];
 
   const c: [number, number] = [uv[0] - 0.5, uv[1] - 0.5];
   const r = Math.hypot(c[0], c[1]);
   const ang = Math.atan2(c[1], c[0]);
   const wobble =
-    (fbm([c[0] * 6.2 + tSec * 0.1, c[1] * 6.2 - tSec * 0.08], seed) - 0.5) * 0.1 +
-    Math.sin(ang * 3 + tSec * 0.24) * 0.02 +
-    Math.sin(ang * 7 - tSec * 0.17) * 0.013;
-  const cloudCore = 0.35 + wobble;
-  const cloudOuter = cloudCore + 0.16;
+    (fbm([c[0] * 5.6 + tSec * 0.1, c[1] * 5.6 - tSec * 0.08], seed) - 0.5) * 0.18 +
+    Math.sin(ang * 2 + tSec * 0.24) * 0.034 +
+    Math.sin(ang * 5 - tSec * 0.17) * 0.02;
+  const cloudCore = 0.33 + wobble;
+  const cloudOuter = cloudCore + 0.17;
   const edgeFade = 1 - smoothstep(cloudCore, cloudOuter, r);
   const tailFade = 1 - smoothstep(cloudOuter - 0.02, cloudOuter + 0.08, r);
   const alpha = Math.max(0, Math.min(1, edgeFade * tailFade * vignette));
 
-  return [Math.max(0, col[0]), Math.max(0, col[1]), Math.max(0, col[2]), alpha];
+  return [
+    Math.max(0, Math.min(1, col[0])),
+    Math.max(0, Math.min(1, col[1])),
+    Math.max(0, Math.min(1, col[2])),
+    alpha,
+  ];
 }

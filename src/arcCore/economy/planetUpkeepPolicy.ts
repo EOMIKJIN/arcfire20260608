@@ -135,6 +135,11 @@ export function getTransportFleetDisplayNameKo(): string {
   return raw?.trim() || '아크코어 수송선단';
 }
 
+export function getTransportFleetDisplayNameEn(): string {
+  const raw = getPolicyKv().get('transport_fleet_display_name_en');
+  return raw?.trim() || 'ArcCore Transport Fleet';
+}
+
 export function computeConvoyTradeFeeBreakdown(
   grossCredits: number,
   opts?: { dailyArcFeeCredits?: number; dailyUpkeepCredits?: number },

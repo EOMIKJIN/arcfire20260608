@@ -1,0 +1,15 @@
+familyKind,weaponId,profileId,approachSpeedMul,orbitRadiusPx,orbitEnterPx,orbitLaps,orbitMsMax,strikeHitPx,standoffPx,figure8RadiusPx,figure8PeriodMs,engageMs,attackPeriodMs,craftHp,recoverPx,maxAlivePerOwner,poolHardCap,craftCount,orbitAttack,ignoreShield,aoeRadiusPx,pierceAfterStrike,ramThenRtb,interceptMissiles,pierceMs,slowMul,slowMs,notesKo
+drone,,default,1.0,28,32,1.0,1800,10,0,0,0,0,0,1,0,2,8,1,0,0,0,0,0,0,0,0,0,패밀리 기본 — 원궤도 1바퀴 후 돌입
+carrier,,default,1.0,0,0,0,0,0,52,22,1600,2800,450,8,16,2,8,1,0,0,0,0,0,0,0,0,0,패밀리 기본 — 8자 주기공격 후 귀환
+drone,w_missile_arc_003,swarm_intercept,1.0,22,26,1.0,1600,10,0,0,0,0,0,1,0,3,8,3,0,0,0,0,0,1,0,0,0,요격 군집 — 3기 소용돌이·아군행 미사일 격추
+drone,w_missile_arc_016,wrap_shred,1.05,24,28,2.0,2800,10,0,0,0,0,400,1,0,3,8,2,1,0,0,0,0,0,0,0,0,스파이크 — 2바퀴 감싸며 외장 소사 후 돌입
+drone,w_missile_arc_017,kamikaze,1.55,20,80,0,400,10,0,0,0,0,0,1,0,2,8,1,0,0,22,1,0,0,280,0,0,가속 돌격 — 선회 생략 관통 자폭
+drone,w_missile_arc_025,squadron_strafe,1.1,34,38,2.0,3000,10,0,0,0,0,350,1,0,4,8,3,1,0,28,0,0,0,0,0,0,전술 편대 — 3기 삼각 소사(12기 연출 축약)
+drone,w_missile_arc_034,dancing,1.15,36,40,2.5,3200,10,0,0,0,0,320,1,0,2,8,1,1,0,0,0,0,0,0,0,0,댄싱 — 약점 추적 장기 선회 사격
+drone,w_missile_arc_053,contain,1.0,30,34,1.0,2000,10,0,0,0,0,0,1,0,2,8,1,0,0,48,0,0,0,0,0.5,6000,아차원 — 착탄 광역 감속 격리
+drone,w_missile_arc_070,entropy,1.2,32,36,1.5,2400,10,0,0,0,0,380,1,0,2,8,1,1,0,36,0,0,0,0,0.65,4000,엔트로피 — 선회 소사+광역 감속
+carrier,w_missile_arc_006,bomber_rtb,1.0,0,0,0,0,0,52,22,1600,2800,450,8,16,2,8,1,0,0,0,0,0,0,0,0,0,범용 폭격 — 기본 8자 후 귀환
+carrier,w_missile_arc_027,infiltrate,1.1,0,0,0,0,0,44,18,1500,2600,400,8,16,2,8,1,0,1,0,0,0,0,0,0,0,침투 — 실드 무시 내부 폭격
+carrier,w_missile_arc_036,adamantine_ram,1.05,0,0,0,0,10,48,20,1400,1800,500,16,16,2,8,1,0,0,0,0,1,0,0,0,0,아다만틴 — 고내구 들이받기 후 귀환
+carrier,w_missile_arc_043,regen_cover,1.15,0,0,0,0,0,50,26,1500,4000,320,14,16,3,8,2,0,0,0,0,0,0,0,0,0,무한 기동 — 재생 편대 장기 제압
+carrier,w_missile_arc_071,universe_burst,1.1,0,0,0,0,0,54,24,1600,3200,400,10,16,2,8,1,0,0,52,0,0,0,0,0,0,유니버스 — 타격마다 차원 광역

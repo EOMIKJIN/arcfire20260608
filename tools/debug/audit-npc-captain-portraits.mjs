@@ -72,6 +72,17 @@ function listPngFiles(dir) {
   );
 }
 
+/** PNG IHDR — 범용 초상 규격 240×240 (`noname_char007` 정본) */
+const CANONICAL_W = 240;
+const CANONICAL_H = 240;
+
+function readPngSize(absPath) {
+  const buf = fs.readFileSync(absPath);
+  if (buf.length < 24) return null;
+  if (buf.toString('ascii', 1, 4) !== 'PNG') return null;
+  return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+}
+
 const csv = parseCsvPortraitKeys(fs.readFileSync(csvPath, 'utf8'));
 const mapKeys = parseMapKeys(fs.readFileSync(mapPath, 'utf8'));
 const files = listPngFiles(dirPath);
@@ -89,9 +100,25 @@ const mapNotInFile = [...mapKeys].filter((k) => {
 });
 const fileNotInMap = [...files].filter((k) => !mapKeys.has(k));
 
+const sizeMismatches = [];
+for (const rel of files) {
+  const base = path.basename(rel);
+  const abs = path.join(dirPath, base);
+  if (!/\.png$/i.test(base)) continue;
+  const size = readPngSize(abs);
+  if (!size) {
+    sizeMismatches.push(`${rel} (unreadable)`);
+    continue;
+  }
+  if (size.width !== CANONICAL_W || size.height !== CANONICAL_H) {
+    sizeMismatches.push(`${rel} ${size.width}x${size.height} (want ${CANONICAL_W}x${CANONICAL_H})`);
+  }
+}
+
 console.log('# audit:npc-captain-portraits');
 console.log(`captain_rows=${csv.totalRows} csv_empty=${csv.emptyRows} csv_keyed=${csv.keys.length} unique_keys=${csvUnique.length}`);
 console.log(`map_keys=${mapKeys.size} npc_files=${files.size}`);
+console.log(`canonical_px=${CANONICAL_W}x${CANONICAL_H} (noname_char007)`);
 console.log(`csv_not_in_map=${csvNotInMap.length}`);
 csvNotInMap.slice(0, 20).forEach((k) => console.log(`  - ${k}`));
 console.log(`csv_not_in_file=${csvNotInFile.length}`);
@@ -100,8 +127,14 @@ console.log(`map_npc_not_in_file=${mapNotInFile.length}`);
 mapNotInFile.forEach((k) => console.log(`  - ${k}`));
 console.log(`file_not_in_map=${fileNotInMap.length}`);
 fileNotInMap.forEach((k) => console.log(`  - ${k}`));
+console.log(`size_mismatch=${sizeMismatches.length}`);
+sizeMismatches.forEach((k) => console.log(`  - ${k}`));
 
-const hardFail = csvNotInMap.length > 0 || csvNotInFile.length > 0 || mapNotInFile.length > 0;
+const hardFail =
+  csvNotInMap.length > 0 ||
+  csvNotInFile.length > 0 ||
+  mapNotInFile.length > 0 ||
+  sizeMismatches.length > 0;
 if (hardFail) {
   console.log('RESULT=FAIL');
   process.exit(1);

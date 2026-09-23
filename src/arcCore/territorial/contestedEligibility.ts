@@ -52,7 +52,16 @@ export function classifyContestedEligibility(
 }
 
 export function isContestedEligibilityActive(cls: ContestedEligibilityClass): boolean {
-  return cls !== 'safe_hinterland';
+  return isContestedPoolEligibleClass(cls);
+}
+
+/** ActivePool N·승격 대상 — 전선/전략중립/독립국전선만. SAFE·ineligible은 슬롯을 채우지 않음. */
+export function isContestedPoolEligibleClass(cls: ContestedEligibilityClass): boolean {
+  return (
+    cls === 'eligible_front'
+    || cls === 'eligible_strategic_neutral'
+    || cls === 'eligible_independent_front'
+  );
 }
 
 /**

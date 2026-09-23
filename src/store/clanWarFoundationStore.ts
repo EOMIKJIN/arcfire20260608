@@ -18,11 +18,13 @@ import {
 } from '../clanWar/clanWarRules';
 import {
   canPurchasePlanetOwnershipDeed,
+  isPlayerOriginatedClanId,
   resolveNationSeedClanIdForMegaFaction,
   resolvePlanetHoldForOwnershipCheck,
   resolveTerritorialNationClanIdForPlanet,
 } from '../clanWar/planetOwnershipModel';
 import { releasePlayerPlanetHolds } from '../clanWar/planetHoldReleasePolicy';
+import { scheduleReleasePlanetUniqueDeedLocks } from '../firebase/planetUniqueDeedLock';
 import { resolveGameplayZoneHubPlanet } from '../clanWar/resolveZoneHubPlanet';
 import { npcCaptainLeaderUid, normalizeAiClanId } from '../clanWar/aiNpcClanIds';
 import { listAiClanTerritoryHubClans } from '../clanWar/aiClanRegistry';
@@ -49,12 +51,15 @@ import {
   hydrateDynamicContestedZones,
   promoteDynamicContestedZone,
   promoteDynamicContestedZonesFromOperations,
+  demoteOccupationCombatDisabledDynamicZones,
 } from '../arcCore/territorial/dynamicContestedZoneStore';
 import { hasAdjacentHostileFactionSystem, listAdjacentSystemIds } from '../arcCore/territorial/territorialSupplyLine';
 import { invalidateFrontPressure } from '../arcCore/territorial/frontPressureIndex';
 import { markContestedPoolDirty } from '../arcCore/territorial/dynamicContestedZoneStore';
 import { reassignPlanetGovernorForOccupationSync } from '../game/planetGovernor/reassignPlanetGovernorForOccupation';
 import { hydratePlanetGovernorAssignmentStore } from '../game/planetGovernor/planetGovernorAssignmentStore';
+import { grantGovernorOccupationCaptureExp } from '../game/planetGovernor/grantGovernorOccupationCaptureExp';
+import { shouldGrantGovernorOccupationCaptureExp } from '../game/planetGovernor/governorOccupationCaptureExpGate';
 
 interface ClanWarFoundationState {
   hydrated: boolean;
@@ -118,6 +123,12 @@ interface ClanWarFoundationState {
     neutralizedByPlayer?: boolean;
   }) => { changed: boolean; previousSide: MapFactionSide; newSide: MapFactionSide; operationId: string };
   getHold: (planetId: string) => PlanetClanHold | undefined;
+  /** 스텔리움 개척 성공 — BLUE hold + player_colonize 유래. 영토전투 operation 없음 */
+  applyPlayerColonizeHold: (params: {
+    planetId: string;
+    systemId: string;
+    occupierClanId: string;
+  }) => { changed: boolean };
   listDeploymentsForPlanet: (planetId: string) => PlanetCapitalDeployment[];
   getClanBasics: (clanId: string) => ClanBasicsRecord | undefined;
   /**
@@ -209,6 +220,7 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     try {
       // 동적 분쟁지역(플레이어 전투 편입) 판정이 시드 reconcile·소급 수리보다 먼저 준비돼야 함
       await hydrateDynamicContestedZones();
+      const demotedCombatDisabled = await demoteOccupationCombatDisabledDynamicZones();
       const loaded = await loadClanWarFoundationDb();
       // 소급 수리 — 마커 도입 전 전투 승리·반란 중립화가 시드 복구로 되돌려진 hold 복원
       const repaired = repairRuntimeNeutralizedHoldsFromOperations(
@@ -247,6 +259,9 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
           deployments: loaded.deployments,
           operations: loaded.operations,
         });
+      }
+      if (piped.occupierChangedPlanetIds.length > 0 || demotedCombatDisabled.length > 0) {
+        markContestedPoolDirty();
       }
       await hydratePlanetGovernorAssignmentStore();
       // 소급 편입 — 이미 플레이어 전투가 벌어진 행성(작전 기록)을 동적 분쟁지역에 합류.
@@ -447,6 +462,7 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     });
     void usePlayerStore.getState().persist();
     void get().persistClanWarFoundation();
+    scheduleReleasePlanetUniqueDeedLocks(released.releasedPlanetIds);
 
     return { ok: true, dissolvedClanId: clanId, releasedPlanetCount: released.releasedPlanetCount };
   },
@@ -504,6 +520,7 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     });
     finalizeClanHoldRelease(get, set, released.holds, nextClans);
     await get().persistClanWarFoundation();
+    scheduleReleasePlanetUniqueDeedLocks(released.releasedPlanetIds);
     return { ok: true, removedClanIds, releasedPlanetCount: released.releasedPlanetCount };
   },
 
@@ -556,6 +573,7 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     });
     finalizeClanHoldRelease(get, set, released.holds, nextClans);
     await get().persistClanWarFoundation();
+    scheduleReleasePlanetUniqueDeedLocks(released.releasedPlanetIds);
     return {
       ok: true,
       removedClanCount: nonAiClanIdSet.size,
@@ -678,19 +696,71 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
       planetHolds: { ...state.planetHolds, [planetId]: nextHold },
       operations: [op, ...state.operations],
     });
-    reassignPlanetGovernorForOccupationSync({
+    const assignment = reassignPlanetGovernorForOccupationSync({
       planetId,
       newFactionSide: factionSide,
     });
+    if (
+      assignment?.captainId
+      && shouldGrantGovernorOccupationCaptureExp({
+        changed: true,
+        factionSide,
+        source: operationMeta.source,
+      })
+    ) {
+      grantGovernorOccupationCaptureExp(assignment.captainId);
+    }
     // FrontPressure — 이 성계 + 인접 성계의 posture/battlesPerInterval이 이 hold 변경으로 달라질 수 있음
     invalidateFrontPressure([systemId, ...listAdjacentSystemIds(systemId)]);
     // 분쟁지역 풀 거버너(2026-07-31) — 이 hold 변경으로 SAFE/ELIGIBLE 분류가 바뀔 수 있음
     markContestedPoolDirty();
     void get().persistClanWarFoundation();
+    if (
+      prevHold
+      && (
+        prevHold.kind === 'player_independent'
+        || Boolean(prevHold.homePlayerUid)
+        || isPlayerOriginatedClanId(prevHold.deedOwnerClanId)
+      )
+    ) {
+      scheduleReleasePlanetUniqueDeedLocks([planetId]);
+    }
     return { changed: true, previousSide, newSide, operationId };
   },
 
   getHold: (planetId) => get().planetHolds[planetId],
+
+  applyPlayerColonizeHold: ({ planetId, systemId, occupierClanId }) => {
+    const state = get();
+    const prev = state.planetHolds[planetId];
+    if (prev?.kind === 'player_home' || prev?.kind === 'player_independent') {
+      return { changed: false };
+    }
+    const now = Date.now();
+    const nextHold: PlanetClanHold = {
+      planetId,
+      systemId,
+      occupierClanId,
+      deedOwnerClanId: prev?.deedOwnerClanId ?? null,
+      homePlayerUid: null,
+      kind: 'clan_hold',
+      capturedAt: now,
+      neutralizedAt: null,
+      occupationOrigin: 'player_colonize',
+    };
+    if (prev?.occupierClanId === occupierClanId && prev?.occupationOrigin === 'player_colonize') {
+      return { changed: false };
+    }
+    set({ planetHolds: { ...state.planetHolds, [planetId]: nextHold } });
+    reassignPlanetGovernorForOccupationSync({
+      planetId,
+      newFactionSide: mapOccupierToGovernorSide(occupierClanId, state.clans),
+    });
+    invalidateFrontPressure([systemId, ...listAdjacentSystemIds(systemId)]);
+    markContestedPoolDirty();
+    void get().persistClanWarFoundation();
+    return { changed: true };
+  },
 
   seedSynthFrontierNeutralHold: (planetId, systemId) => {
     const state = get();

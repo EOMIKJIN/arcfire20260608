@@ -287,7 +287,7 @@ CSV 정적 5행(`arc_core_territorial_combat_policy.csv`)의 `battleWeightPct`/`
 
 ### 6-5. 마지노선(N≤5 HARD) · 외부팩션(F2 남부·F4 북부) 국가보급 · 전황 진동 (2026-08-01, `task_id=maginot-external-faction-supply-oscillation-20260801`)
 
-대표님 정본: **21코어 시나리오 성계**(`planet_occupation_seeds`, synth 제외) 중 BLUE/RED 각각 점유 수 N을 진동 밴드로 판정 — `N≤5(floorSystems)`=**HARD**(일방 전멸 방지, 외부보급 최대) · `5<N<10`=**SUPPORT**(수복 추진) · `N≥10(paritySystems)`=**COOL**(외부보급 감쇠·대등). 블루·레드 **각자 자기 N으로 독립·대칭** 평가. 외부팩션은 4대 팩션 중 전쟁축(F1 서부=블루·F3 동부=레드)을 뺀 **F2 남부(`trade_coalition`)·F4 북부(`miners_guild`)** — `NEUTRAL`/`INDEPENDENT`가 **아니다**(오해 금지, `galaxyRouteFactionPolicy.ts` 정본).
+대표님 정본: **21코어 시나리오 성계**(`planet_occupation_seeds`, synth 제외) 중 BLUE/RED 각각 점유 수 N을 진동 밴드로 판정 — `N≤5(floorSystems)`=**HARD**(일방 전멸 방지, 외부보급 최대) · `5<N<10`=**SUPPORT**(수복 추진) · `N≥10(paritySystems)`=**COOL**(외부보급 감쇠·대등). 블루·레드 **각자 자기 N으로 독립·대칭** 평가. 외부팩션은 4대 팩션 중 전쟁축(F1 서부=블루·F3 동부=레드)을 뺀 **F2 남부(`mega_mercurium_coalition` · 머큐리움 연합 / Mercurium Coalition)·F4 북부(`mega_aurelium_guild` · 아우렐리움 길드 / Aurelium Guild)** — `NEUTRAL`/`INDEPENDENT`가 **아니다**(오해 금지, `megaFactionNationPolicy.ts` · `galaxyRouteFactionPolicy.ts` 정본). `trade_coalition`/`miners_guild`는 행성·NPC flavor이며 국가 id가 아니다.
 
 **적용 조건**: hold가 반대 팩션(BLUE/RED)에 있고, 그 반대편(수복 시도측)이 이 성계에 인접 아군 성계를 ≥1(CSV `minAdjacentFriendlyForReclaim`) 보유할 때만 — 보급선 없는 원정은 여전히 불가(기존 물리학 유지). NEUTRAL hold는 이 레이어의 대상이 아니다(§6-4 envelope/§6-2 P0가 담당 — 두 레이어는 holdSide 조건이 배타적이라 실질 충돌 없음).
 

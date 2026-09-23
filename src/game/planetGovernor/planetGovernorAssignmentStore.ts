@@ -43,6 +43,12 @@ let mem: Persisted = {
 };
 let hydrated = false;
 let persistTimer: ReturnType<typeof setTimeout> | null = null;
+let primaryPlanetsCache: ReadonlyMap<string, string> | null = null;
+
+function setMem(next: Persisted): void {
+  mem = next;
+  primaryPlanetsCache = null;
+}
 
 function schedulePersist(): void {
   if (persistTimer) return;
@@ -60,7 +66,7 @@ export async function hydratePlanetGovernorAssignmentStore(): Promise<void> {
     const raw = await AsyncStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as Partial<Persisted>;
-      mem = {
+      setMem({
         byPlanetId:
           parsed.byPlanetId && typeof parsed.byPlanetId === 'object'
             ? parsed.byPlanetId
@@ -75,7 +81,7 @@ export async function hydratePlanetGovernorAssignmentStore(): Promise<void> {
           parsed.sideSlotsByPlanetId && typeof parsed.sideSlotsByPlanetId === 'object'
             ? parsed.sideSlotsByPlanetId
             : {},
-      };
+      });
       // 마이그레이션: 기존 단일 배정을 해당 진영 슬롯으로 승격 (v1 → 슬롯 도입)
       let migrated = false;
       for (const [planetId, assignment] of Object.entries(mem.byPlanetId)) {
@@ -109,12 +115,14 @@ export function getPlanetGovernorAssignment(planetId: string): PlanetGovernorAss
 
 /** 총사령관 reserve captainId → 주둔 planetId (primary presence · 전역 배타) */
 export function listGovernorCaptainPrimaryPlanets(): ReadonlyMap<string, string> {
+  if (primaryPlanetsCache) return primaryPlanetsCache;
   const out = new Map<string, string>();
   for (const [planetId, assignment] of Object.entries(mem.byPlanetId)) {
     const captainId = String(assignment.captainId ?? '').trim();
     if (!captainId) continue;
     out.set(captainId, planetId);
   }
+  primaryPlanetsCache = out;
   return out;
 }
 
@@ -133,14 +141,14 @@ export function ensurePlanetGovernorSideSlotCaptain(
   const reserve = pickGovernorReserveCommanderAtIndex(side, index);
   if (!reserve) return null;
 
-  mem = {
+  setMem({
     ...mem,
     sideNextIndex: { ...mem.sideNextIndex, [side]: index + 1 },
     sideSlotsByPlanetId: {
       ...mem.sideSlotsByPlanetId,
       [planetId]: { ...mem.sideSlotsByPlanetId[planetId], [side]: reserve.captainId },
     },
-  };
+  });
   schedulePersist();
   return reserve.captainId;
 }
@@ -167,7 +175,7 @@ export function assignPlanetGovernorFromReserve(params: {
       occupationSide,
       assignedAtMs: Date.now(),
     };
-    mem = { ...mem, byPlanetId: { ...mem.byPlanetId, [planetId]: assignment } };
+    setMem({ ...mem, byPlanetId: { ...mem.byPlanetId, [planetId]: assignment } });
     schedulePersist();
     return assignment;
   }
@@ -188,7 +196,7 @@ export function assignPlanetGovernorFromReserve(params: {
     assignedAtMs: Date.now(),
   };
 
-  mem = { ...mem, byPlanetId: { ...mem.byPlanetId, [planetId]: assignment } };
+  setMem({ ...mem, byPlanetId: { ...mem.byPlanetId, [planetId]: assignment } });
   schedulePersist();
   return assignment;
 }
@@ -215,19 +223,19 @@ function pickExclusiveNeutralReserveCaptainId(planetId: string): string | null {
     if (!candidate) return null;
     if (offset > 0 && candidate.captainId === firstPick.captainId) break; // 한 바퀴 순회 완료
     if (!inUse.has(candidate.captainId)) {
-      mem = {
+      setMem({
         ...mem,
         sideNextIndex: { ...mem.sideNextIndex, NEUTRAL: startIndex + offset + 1 },
-      };
+      });
       return candidate.captainId;
     }
   }
 
   // 전원 사용 중 — round-robin 폴백
-  mem = {
+  setMem({
     ...mem,
     sideNextIndex: { ...mem.sideNextIndex, NEUTRAL: startIndex + 1 },
-  };
+  });
   return firstPick.captainId;
 }
 
@@ -256,7 +264,7 @@ function dedupeNeutralGovernorAssignments(): void {
   for (const planetId of duplicatePlanetIds) {
     const replacement = pickExclusiveNeutralReserveCaptainId(planetId);
     if (!replacement) continue;
-    mem = {
+    setMem({
       ...mem,
       byPlanetId: {
         ...mem.byPlanetId,
@@ -266,7 +274,7 @@ function dedupeNeutralGovernorAssignments(): void {
           assignedAtMs: Date.now(),
         },
       },
-    };
+    });
   }
   schedulePersist();
 }

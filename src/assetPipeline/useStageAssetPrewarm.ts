@@ -13,7 +13,7 @@ const STAGE_ASSET_PREWARM_ROUTES = new Set<StageRouteName>([
   'worldmap',
   'trade',
   'shipyard',
-  'tavern',
+  'bar',
   'skilltree',
   'combat',
 ]);

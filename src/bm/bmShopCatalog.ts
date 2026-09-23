@@ -1,6 +1,6 @@
 // ============================================================
 // BM 더미 상점 카탈로그 — v2.1 이중통화 (크레딧 / 보석)
-//   premium: Type A/E — 현금 IAP (보석팩·스타터·시즌패스·VIP)
+//   premium: Type A/E — 현금 IAP (소유권 증서권·보석팩·스타터·시즌패스·VIP)
 //   exchange: Type B — 보석 → 크레딧 단방향 교환 (현금 크레딧 구매 없음)
 // Table-First: gem_*_catalog.csv · vip_tier_policy.csv
 // ============================================================
@@ -11,6 +11,7 @@ import {
   listGemExchangeCatalog,
   listGemPackCatalog,
 } from './bmCatalogIndex';
+import { PLANET_DEED_IAP_PRODUCT_ID } from './planetDeedCashGrantPolicy';
 
 /** @deprecated getGemExchangeBaseCrPerGem() 사용 */
 export const BM_DUMMY_GEM_TO_CREDIT_RATE = getGemExchangeBaseCrPerGem();
@@ -23,7 +24,8 @@ export type BmShopProductVisual =
   | 'seasonPass'
   | 'vip'
   | 'starterPack'
-  | 'exchange';
+  | 'exchange'
+  | 'planetDeed';
 
 export type BmShopPriceKind = 'iap' | 'gems';
 
@@ -42,6 +44,8 @@ export interface BmShopProduct {
   /** 보석팩 — 실지급 보석(CSV grant) */
   gemGrantAmount?: number;
 }
+
+const PLANET_DEED_TINT = '#3D4A28';
 
 const GEM_PACK_TINTS: Record<string, string> = {
   starter_pack: '#3D4A2A',
@@ -75,7 +79,9 @@ function buildPremiumProducts(): readonly BmShopProduct[] {
     priceKind: 'iap' as const,
     badgeKey: mapBadgeKey(row.badgeKey),
     visual: row.visual as BmShopProductVisual,
-    tint: GEM_PACK_TINTS[row.productId] ?? '#1E3A5F',
+    tint: row.productId === PLANET_DEED_IAP_PRODUCT_ID
+      ? PLANET_DEED_TINT
+      : (GEM_PACK_TINTS[row.productId] ?? '#1E3A5F'),
     gemGrantAmount: Number(row.gemAmount) > 0
       ? Math.floor(Number(row.gemAmount) * (100 + Number(row.bonusPct || 0)) / 100)
       : undefined,

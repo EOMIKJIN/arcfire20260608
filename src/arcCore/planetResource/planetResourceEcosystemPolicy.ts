@@ -7,10 +7,14 @@ import {
   PlanetResourceEcosystemPolicy_FROM_BALANCE_CSV,
   PlanetResourceGenesis_FROM_BALANCE_CSV,
 } from '../../data/balance/generated';
-import { resolvePlanetZoneIndex } from '../planetBalance/planetZoneIndexRegistry';
-import { resolveStarSystemForPlanetId } from '../../world/resolvePlanetSystemPosition';
 import { getPlanetRecord } from '../../world/planetTradePortDb';
 import type { PlanetCoreGaugeView } from '../../store/planetCoreRuntimeStore';
+import {
+  invalidateGalaxyFrontierRidgeCache,
+  isCoreScenarioPlanetId,
+  isRouteCapitalPlanetId,
+  resolveFrontierRidgeGenesisGauge,
+} from '../../world/galaxyFrontierDevelopmentRidge';
 
 let kv: Map<string, string> | null = null;
 
@@ -107,63 +111,52 @@ function getGenesisIndex(): Map<string, PlanetGenesisGauge> {
   return genesisByPlanetId;
 }
 
-function planetIdSeed(planetId: string): number {
-  let s = 0;
-  for (let i = 0; i < planetId.length; i += 1) {
-    s += planetId.charCodeAt(i) * (i + 17);
-  }
-  return s;
-}
-
-function pseudoRandom(seed: number): number {
-  const x = Math.sin(seed) * 10000;
-  return x - Math.floor(x);
-}
-
-function zoneFallbackGenesisGauge(planetId: string): PlanetGenesisGauge {
-  const policy = resolvePlanetResourceEcosystemPolicy();
-  const system = resolveStarSystemForPlanetId(planetId);
-  const zoneIndex = resolvePlanetZoneIndex(planetId, system ?? null);
-  const span = Math.max(1, policy.genesisRMax - policy.genesisRMin);
-  const zoneT = (Math.max(1, Math.min(21, zoneIndex)) - 1) / 20;
-  const seed = planetIdSeed(planetId);
-  const jitter = (pseudoRandom(seed) - 0.5) * 8;
-  const resource = clamp100(policy.genesisRMin + zoneT * span + jitter);
-  const population = clamp100(42 + zoneT * 18 + (pseudoRandom(seed + 3) - 0.5) * 10);
-  const defense = clamp100(38 + zoneT * 22 + (pseudoRandom(seed + 7) - 0.5) * 8);
-  const technology = clamp100(40 + zoneT * 24 + (pseudoRandom(seed + 11) - 0.5) * 10);
-  const environment = clamp100(44 + zoneT * 16 + (pseudoRandom(seed + 19) - 0.5) * 12);
+function toGenesisGauge(g: {
+  genesisResourcePct: number;
+  genesisPopulationPct: number;
+  genesisDefensePct: number;
+  genesisTechnologyPct: number;
+  genesisEnvironmentPct: number;
+  depositWeightMul: number;
+}): PlanetGenesisGauge {
   return {
-    genesisResourcePct: resource,
-    genesisPopulationPct: population,
-    genesisDefensePct: defense,
-    genesisTechnologyPct: technology,
-    genesisEnvironmentPct: environment,
-    depositWeightMul: resource / policy.depositWeightBaselineR,
+    genesisResourcePct: clamp100(g.genesisResourcePct),
+    genesisPopulationPct: clamp100(g.genesisPopulationPct),
+    genesisDefensePct: clamp100(g.genesisDefensePct),
+    genesisTechnologyPct: clamp100(g.genesisTechnologyPct),
+    genesisEnvironmentPct: clamp100(g.genesisEnvironmentPct),
+    depositWeightMul: Math.max(0.05, g.depositWeightMul),
   };
 }
 
-/** synth·미등록 행성 — zone + 결정론 jitter → genesis R */
+/** synth·미등록 — 거리 능선. 구 zone↑=스탯↑ 폴백 폐기 */
 export function resolveZoneFallbackGenesisResourcePct(planetId: string): number {
-  return zoneFallbackGenesisGauge(planetId).genesisResourcePct;
+  return resolveFrontierRidgeGenesisGauge(planetId).genesisResourcePct;
 }
 
 export function resolvePlanetGenesisGauge(planetId: string): PlanetGenesisGauge {
-  const row = getGenesisIndex().get(planetId);
-  if (row) return row;
-  const planet = getPlanetRecord(planetId);
-  if (planet && (planet.coreResource !== 50 || planet.corePopulation !== 50)) {
-    const policy = resolvePlanetResourceEcosystemPolicy();
-    return {
-      genesisResourcePct: clamp100(planet.coreResource),
-      genesisPopulationPct: clamp100(planet.corePopulation),
-      genesisDefensePct: clamp100(planet.coreDefense),
-      genesisTechnologyPct: clamp100(planet.coreTechnology),
-      genesisEnvironmentPct: clamp100(planet.coreEnvironment),
-      depositWeightMul: clamp100(planet.coreResource) / policy.depositWeightBaselineR,
-    };
+  const id = String(planetId ?? '').trim();
+  if (isCoreScenarioPlanetId(id)) {
+    const row = getGenesisIndex().get(id);
+    if (row) return row;
+    const planet = getPlanetRecord(id);
+    if (planet) {
+      const policy = resolvePlanetResourceEcosystemPolicy();
+      return {
+        genesisResourcePct: clamp100(planet.coreResource),
+        genesisPopulationPct: clamp100(planet.corePopulation),
+        genesisDefensePct: clamp100(planet.coreDefense),
+        genesisTechnologyPct: clamp100(planet.coreTechnology),
+        genesisEnvironmentPct: clamp100(planet.coreEnvironment),
+        depositWeightMul: clamp100(planet.coreResource) / policy.depositWeightBaselineR,
+      };
+    }
   }
-  return zoneFallbackGenesisGauge(planetId);
+  if (isRouteCapitalPlanetId(id)) {
+    const row = getGenesisIndex().get(id);
+    if (row) return row;
+  }
+  return toGenesisGauge(resolveFrontierRidgeGenesisGauge(id));
 }
 
 /** CSV 정본 → 태초 R(%) */
@@ -255,4 +248,5 @@ export function hasPlanetResourceGenesisCsvRow(planetId: string): boolean {
 export function invalidatePlanetResourceGenesisCache(): void {
   kv = null;
   genesisByPlanetId = null;
+  invalidateGalaxyFrontierRidgeCache();
 }

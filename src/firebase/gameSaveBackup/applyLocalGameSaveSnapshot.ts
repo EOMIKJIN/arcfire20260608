@@ -4,19 +4,23 @@ import { useWorldObjectRuntimeStore } from '../../store/worldObjectRuntimeStore'
 import { useAccountProfileStore } from '../../store/accountProfileStore';
 import { useArcCoreInstanceMissionBoardStore } from '../../store/arcCoreInstanceMissionBoardStore';
 import { useArcCoreSpyExpelledStore } from '../../store/arcCoreSpyExpelledStore';
+import { useMainStoryCaptainDeadStore } from '../../store/mainStoryCaptainDeadStore';
 import { useArcCorePantheonCodexStore } from '../../arcCore/pantheon/arcCorePantheonCodexStore';
 import { useBmExchangeLedgerStore } from '../../store/bmExchangeLedgerStore';
+import { usePlanetDeedCashGrantStore } from '../../store/planetDeedCashGrantStore';
 import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
 import { hydrateCombatMatchTelemetryCache } from '../../store/combatMatchTelemetryStore';
+import { useArcCoreChatStore } from '../../store/arcCoreChatStore';
 import { useItemLedgerStore } from '../../store/itemLedgerStore';
 import { useMissionStore } from '../../store/missionStore';
+import { useMainStoryProgressStore } from '../../store/mainStoryProgressStore';
 import { useNpcCaptainProgressStore } from '../../store/npcCaptainProgressStore';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { usePlanetMineralLedgerStore } from '../../store/planetMineralLedgerStore';
 import { usePlanetNebulaStore } from '../../store/planetNebulaStore';
 import { usePlayerStore } from '../../store/playerStore';
 import { useSkillDbStore } from '../../store/skillDbStore';
-import { useTavernBoardStore } from '../../store/tavernBoardStore';
+import { useBarBoardStore } from '../../store/barBoardStore';
 import { useUserSessionStore } from '../../store/userSessionStore';
 import { useWorldStore } from '../../store/worldStore';
 import type { GameSaveBackupSnapshot } from './gameSaveBackupContract';
@@ -55,10 +59,11 @@ export async function reloadAllLocalGameSaveStores(): Promise<void> {
     usePlayerStore.getState().loadLocalPlayer(),
     useClanWarFoundationStore.getState().loadLocalClanWarFoundation(),
     useMissionStore.getState().loadLocalMissions(),
+    useMainStoryProgressStore.getState().loadLocal(),
     useArcCoreInstanceMissionBoardStore.getState().loadLocalArcCoreInstanceMissionBoard(),
     useNpcCaptainProgressStore.getState().loadLocalNpcCaptainProgress(),
     usePlanetNebulaStore.getState().loadLocalProfiles(),
-    useTavernBoardStore.getState().loadLocalBoard(),
+    useBarBoardStore.getState().loadLocalBoard(),
     useWorldStore.getState().loadLocalWorld(),
     useUserSessionStore.getState().loadLocalUserSession(),
     useItemLedgerStore.getState().loadLocalItemLedger(),
@@ -66,12 +71,16 @@ export async function reloadAllLocalGameSaveStores(): Promise<void> {
     useSkillDbStore.getState().loadLocalSkillDb(),
     usePlanetMineralLedgerStore.getState().loadLocal(),
     useBmExchangeLedgerStore.getState().hydrate(),
+    usePlanetDeedCashGrantStore.getState().hydrate(),
     useArcCoreSpyExpelledStore.getState().loadLocal(),
+    useMainStoryCaptainDeadStore.getState().loadLocal(),
     useArcCorePantheonCodexStore.getState().hydrate(),
   ]);
+  useMissionStore.getState().reconcileOrphanArcInstWithBoard();
   await useWorldObjectRuntimeStore.getState().loadLocalRuntime();
   await useWorldObjectRuntimeStore.getState().bootstrapFromWorld(useWorldStore.getState().systems);
   await usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync();
   await hydratePlanetGovernorAssignmentStore();
   await hydrateCombatMatchTelemetryCache();
+  await useArcCoreChatStore.getState().hydrate();
 }

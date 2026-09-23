@@ -26,15 +26,24 @@ import { SettingsOverlayContent } from './content/SettingsOverlayContent';
 import { BmShopOverlayContent } from './content/BmShopOverlayContent';
 import { NearbyPresenceInfoOverlayContent } from './content/NearbyPresenceInfoOverlayContent';
 import { RelicLoreOverlayContent } from './content/RelicLoreOverlayContent';
-
+import { HubTalkRosterOverlayContent } from './content/HubTalkRosterOverlayContent';
+import { PlanetOwnershipRosterOverlayContent } from './content/PlanetOwnershipRosterOverlayContent';
+import { ArcCoreChatOverlayContent } from './content/ArcCoreChatOverlayContent';
+import { SkillInfoOverlayContent } from './content/SkillInfoOverlayContent';
+import { markArcCoreBootChatFirstFinished } from '../../arcCore/chat/arcCoreBootChatFirstGate';
+import {
+  isCompactAutoDismissOverlayKind,
+  resolveCompactOverlayAutoDismissAction,
+} from './overlayAlertContract';
 export const ArcOverlayHost = memo(function ArcOverlayHost() {
   const insets = useSafeAreaInsets();
   const edges = resolveOverlayEdgeInsets(insets);
-  const entry = useArcOverlayStore((s) => {
+  const top = useArcOverlayStore((s) => {
     const stack = s.stack;
     return stack.length > 0 ? stack[stack.length - 1]! : null;
   });
   const dismiss = useArcOverlayStore((s) => s.dismiss);
+  const entry = top;
 
   useEffect(() => {
     if (!entry) return;
@@ -45,35 +54,54 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
     return () => clearTimeout(t);
   }, [entry?.id]);
 
-  const alertAutoDismissKey =
-    entry?.kind === 'alert'
-      ? `${entry.id}|${entry.autoDismissMs ?? 0}|${entry.title}|${entry.message}`
+  const compactAutoDismissKey =
+    top && isCompactAutoDismissOverlayKind(top.kind)
+      ? `${top.kind}|${top.id}|${top.autoDismissMs ?? 0}`
       : null;
 
   useEffect(() => {
-    if (!alertAutoDismissKey) return;
+    if (!compactAutoDismissKey) return;
     const top = useArcOverlayStore.getState().top();
-    if (top?.kind !== 'alert') return;
+    if (!top || !isCompactAutoDismissOverlayKind(top.kind)) return;
+    const action = resolveCompactOverlayAutoDismissAction(top);
+    if (!action) return;
     const autoMs = top.autoDismissMs;
     if (!autoMs || autoMs <= 0) return;
+    const expectedId = top.id;
     const timer = setTimeout(() => {
+      const current = useArcOverlayStore.getState().top();
+      if (!current || current.id !== expectedId) return;
+      const next = resolveCompactOverlayAutoDismissAction(current);
+      if (!next) return;
       dismiss();
+      if (next.type === 'dismiss_then_press') {
+        void Promise.resolve(next.onPress()).catch(() => {});
+        return;
+      }
+      if (next.type === 'dismiss_then_close') {
+        try {
+          next.onClose();
+        } catch {
+          /* idempotent */
+        }
+      }
     }, autoMs);
     return () => clearTimeout(timer);
-  }, [dismiss, alertAutoDismissKey]);
+  }, [dismiss, compactAutoDismissKey]);
 
   const handleBackdrop = useCallback(() => {
-    if (!entry || entry.dismissOnBackdrop === false) return;
-    if (entry.kind === 'levelUp') {
-      entry.onClose();
-    } else if (entry.kind === 'reward') {
-      entry.onClose();
-    } else if (entry.kind === 'narrative') {
-      if (!entry.nextDisabled) entry.onPressNext();
+    if (!top || top.dismissOnBackdrop === false) return;
+    if (top.kind === 'levelUp') {
+      top.onClose();
+    } else if (top.kind === 'reward') {
+      top.onClose();
+    } else if (top.kind === 'narrative') {
+      if (top.nextDisabled) return;
+      top.onPressNext();
       return;
     }
     dismiss();
-  }, [dismiss, entry]);
+  }, [dismiss, top]);
 
   const handleAlertButton = useCallback(
     (onPress?: () => void | Promise<void>) => {
@@ -84,44 +112,57 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
   );
 
   const handleLevelUpClose = useCallback(() => {
-    if (entry?.kind === 'levelUp') entry.onClose();
+    if (top?.kind === 'levelUp') top.onClose();
     dismiss();
-  }, [dismiss, entry]);
+  }, [dismiss, top]);
 
   const handleRewardClose = useCallback(() => {
-    if (entry?.kind === 'reward') entry.onClose();
+    if (top?.kind === 'reward') top.onClose();
     dismiss();
-  }, [dismiss, entry]);
+  }, [dismiss, top]);
 
   const handleWaveResultClose = useCallback(() => {
-    if (entry?.kind === 'waveResult') entry.onClose();
+    if (top?.kind === 'waveResult') top.onClose();
     dismiss();
-  }, [dismiss, entry]);
+  }, [dismiss, top]);
 
   const handleSettingsReset = useCallback(() => {
-    if (entry?.kind !== 'settings') return;
-    const reset = entry.onResetAccount;
+    if (top?.kind !== 'settings') return;
+    const reset = top.onResetAccount;
     dismiss();
     // 확인 알림(alert, z 9999)이 설정 패널 위로 자연스럽게 뜨도록 닫은 뒤 호출
     reset();
-  }, [dismiss, entry]);
+  }, [dismiss, top]);
 
   const handleNarrativeNext = useCallback(() => {
-    if (entry?.kind !== 'narrative' || entry.nextDisabled) return;
-    entry.onPressNext();
-  }, [entry]);
+    if (top?.kind !== 'narrative' || top.nextDisabled) return;
+    top.onPressNext();
+  }, [top]);
+
+  const handleNarrativeSecondary = useCallback(() => {
+    if (top?.kind !== 'narrative' || top.nextDisabled) return;
+    top.onPressSecondary?.();
+  }, [top]);
 
   const handleTradeQuantityConfirm = useCallback(
     (qty: number) => {
-      if (entry?.kind !== 'tradeQuantity') return;
+      if (top?.kind !== 'tradeQuantity') return;
       dismiss();
-      void Promise.resolve(entry.onConfirm(qty)).catch(() => {});
+      void Promise.resolve(top.onConfirm(qty)).catch(() => {});
     },
-    [dismiss, entry],
+    [dismiss, top],
   );
 
   const handleTradeQuantityCancel = useCallback(() => {
     dismiss();
+  }, [dismiss]);
+
+  const handleArcCoreChatClose = useCallback(() => {
+    markArcCoreBootChatFirstFinished();
+    dismiss();
+    const { useArcCoreAgentSurfaceStore } =
+      require('../../arcCore/chat/arcCoreAgentSurfaceStore') as typeof import('../../arcCore/chat/arcCoreAgentSurfaceStore');
+    useArcCoreAgentSurfaceStore.getState().activateGame();
   }, [dismiss]);
 
   if (!entry) return null;
@@ -131,28 +172,40 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
   const isBottomNarrative = isNarrative && entry.anchor === 'bottom';
   const isBlocking = entry.kind === 'blocking';
   const isTopAnchoredPanel = chrome.hostAnchor === 'top';
+  const isFillHost = chrome.hostAnchor === 'fill';
   const backdropClear = chrome.backdrop === 'transparent';
   /** 인게임 대사 — 전체 딤·backdrop 터치·elevation 없음 (시설 화면 그대로 노출) */
   const isPassthroughNarrative = isNarrative && backdropClear;
   const bottomPad = isBottomNarrative ? resolveOverlayBottomAnchorPad(insets, SPACING.md) : 0;
-  const overlayHorizontalPad = isNarrative
-    ? NARRATIVE_DIALOG_LAYOUT.hostHorizontalPadPx
-    : SPACING.lg;
-  const contentSlotStyle = isBottomNarrative
-    ? styles.bottomNarrativeSlot
+  const overlayHorizontalPad = isFillHost
+    ? 0
     : isNarrative
-      ? styles.narrativeCenterSlot
-      : styles.centerSlot;
+      ? NARRATIVE_DIALOG_LAYOUT.hostHorizontalPadPx
+      : SPACING.lg;
+  const isCenterNarrativeFill = isNarrative && !isBottomNarrative;
+  const contentSlotStyle = isFillHost
+    ? styles.fillSlot
+    : isBottomNarrative
+      ? styles.bottomNarrativeSlot
+      : isCenterNarrativeFill
+        ? styles.narrativeFillSlot
+        : styles.centerSlot;
 
   const narrativeContent =
     entry.kind === 'narrative' ? (
       <View pointerEvents="auto" style={isPassthroughNarrative ? styles.passthroughNarrativeTouch : undefined}>
-        <NarrativeOverlayContent entry={entry} onPressNext={handleNarrativeNext} />
+        <NarrativeOverlayContent
+          entry={entry}
+          onPressNext={handleNarrativeNext}
+          onPressSecondary={handleNarrativeSecondary}
+        />
       </View>
     ) : null;
 
   if (isPassthroughNarrative) {
-    const passthroughWrapStyle = isBottomNarrative ? styles.bottomWrap : styles.centerWrap;
+    const passthroughWrapStyle = isBottomNarrative
+      ? styles.bottomWrap
+      : styles.narrativeFillWrap;
     return (
       <View
         style={[styles.passthroughOverlay, { zIndex: chrome.zIndex }]}
@@ -180,12 +233,21 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
     );
   }
 
-  const contentFramePad = {
-    paddingTop: isPassthroughNarrative ? 0 : SPACING.sm + edges.top,
-    paddingBottom: isBottomNarrative ? bottomPad : SPACING.sm + edges.bottom,
-    paddingLeft: overlayHorizontalPad + edges.left,
-    paddingRight: overlayHorizontalPad + edges.right,
-  };
+  const contentFramePad = isFillHost
+    ? {
+        paddingTop: edges.top,
+        paddingBottom: 0,
+        paddingLeft: edges.left,
+        paddingRight: edges.right,
+      }
+    : {
+        paddingTop: isPassthroughNarrative ? 0 : SPACING.sm + edges.top,
+        paddingBottom: isBottomNarrative ? bottomPad : SPACING.sm + edges.bottom,
+        paddingLeft: overlayHorizontalPad + edges.left,
+        paddingRight: overlayHorizontalPad + edges.right,
+      };
+
+  const framePointerEvents = isFillHost || isBlocking ? 'auto' : 'box-none';
 
   return (
     <View
@@ -194,7 +256,7 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
         { zIndex: chrome.zIndex },
         isPassthroughNarrative ? { elevation: 0 } : null,
       ]}
-      pointerEvents={isBlocking ? 'auto' : 'box-none'}
+      pointerEvents={isFillHost || isBlocking ? 'auto' : 'box-none'}
       collapsable={false}
     >
       {!isPassthroughNarrative ? (
@@ -203,16 +265,30 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
           onPress={isBlocking ? undefined : handleBackdrop}
         />
       ) : null}
-      <View style={[styles.overlayContentFrame, contentFramePad]} pointerEvents="box-none">
+      <View
+        style={[styles.overlayContentFrame, contentFramePad]}
+        pointerEvents={framePointerEvents}
+        collapsable={false}
+      >
       <View
         style={[
-          isBottomNarrative ? styles.bottomWrap : styles.centerWrap,
+          isFillHost
+            ? styles.fillWrap
+            : isBottomNarrative
+              ? styles.bottomWrap
+              : isCenterNarrativeFill
+                ? styles.narrativeFillWrap
+                : styles.centerWrap,
           isTopAnchoredPanel ? styles.topAnchoredWrap : null,
-          entry.kind === 'narrative' && entry.anchor === 'center' ? styles.narrativeCenterWrap : null,
         ]}
-        pointerEvents="box-none"
+        pointerEvents={framePointerEvents}
+        collapsable={false}
       >
-        <View style={contentSlotStyle} pointerEvents="box-none">
+        <View
+          style={contentSlotStyle}
+          pointerEvents={framePointerEvents}
+          collapsable={false}
+        >
         {entry.kind === 'alert' ? (
           <AlertOverlayContent entry={entry} onButton={handleAlertButton} onClose={dismiss} />
         ) : null}
@@ -252,6 +328,18 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
         {entry.kind === 'relicLore' ? (
           <RelicLoreOverlayContent entry={entry} onClose={dismiss} />
         ) : null}
+        {entry.kind === 'hubTalkRoster' ? (
+          <HubTalkRosterOverlayContent entry={entry} onClose={dismiss} />
+        ) : null}
+        {entry.kind === 'planetOwnershipRoster' ? (
+          <PlanetOwnershipRosterOverlayContent entry={entry} onClose={dismiss} />
+        ) : null}
+        {entry.kind === 'arcCoreChat' ? (
+          <ArcCoreChatOverlayContent onClose={handleArcCoreChatClose} />
+        ) : null}
+        {entry.kind === 'skillInfo' ? (
+          <SkillInfoOverlayContent entry={entry} onClose={dismiss} />
+        ) : null}
         </View>
       </View>
       </View>
@@ -279,7 +367,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   passthroughNarrativeTouch: {
+    flex: 1,
     alignSelf: 'stretch',
+    width: '100%',
+  },
+  narrativeFillWrap: {
+    flex: 1,
+    width: '100%',
+    alignSelf: 'stretch',
+  },
+  narrativeFillSlot: {
+    flex: 1,
+    width: '100%',
+    alignSelf: 'stretch',
+    minHeight: 0,
   },
   centerWrap: {
     flex: 1,
@@ -300,6 +401,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexShrink: 0,
   },
+  fillWrap: {
+    flex: 1,
+    width: '100%',
+    alignSelf: 'stretch',
+    justifyContent: 'flex-end',
+  },
+  fillSlot: {
+    flex: 1,
+    width: '100%',
+    alignSelf: 'stretch',
+    minHeight: 0,
+    justifyContent: 'flex-end',
+  },
   bottomWrap: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -309,14 +423,5 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'stretch',
     flexShrink: 0,
-  },
-  narrativeCenterSlot: {
-    width: '100%',
-    maxWidth: '100%',
-    alignSelf: 'center',
-    flexShrink: 0,
-  },
-  narrativeCenterWrap: {
-    paddingHorizontal: SPACING.sm,
   },
 });

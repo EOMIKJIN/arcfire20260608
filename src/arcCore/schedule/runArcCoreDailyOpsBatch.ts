@@ -12,6 +12,7 @@ import { runMarketMicroAdjustPass } from '../economy/runMarketMicroAdjustPass';
 import { runTradeRouteDailyMarketPass } from '../economy/runTradeRouteDailyMarketPass';
 import { tryArcCoreWorldDailyUnlock } from '../worldExpansionDailyUnlock';
 import { runSynthColonizationAdvancePass } from '../worldExpansionSynthColonization';
+import { runStelliumColonizePass } from '../colonize/runStelliumColonizePass';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { flushDailyOpsObservationsToAabs } from '../userMod/dailyOpsObservationQueue';
 import { runIntegratedEngageHpAdjustPass } from '../balance/runIntegratedEngageHpAdjustPass';
@@ -19,17 +20,20 @@ import { runPlanetEconomyFabricDailyPass } from '../economy/planetEconomyFabric'
 import { runArcCoreConvoyDailySettlementPass } from '../economy/runArcCoreConvoyDailySettlementPass';
 import { runArcCoreCentralBankExpenditurePass } from '../economy/runArcCoreCentralBankExpenditurePass';
 import { runArcCorePlanetUpkeepDailyPass } from '../economy/runArcCorePlanetUpkeepDailyPass';
+import { runTheaterGarrisonDailyPass } from '../economy/runTheaterGarrisonDailyPass';
 import { runPlanetPgpDailyPass } from '../economy/runPlanetPgpDailyPass';
 import { runPlanetOwnershipDeedPricingDailyPass } from '../economy/runPlanetOwnershipDeedPricingDailyPass';
 import { runPlanetCoreStatEquilibriumPass } from '../planetCore/runPlanetCoreStatEquilibriumPass';
 import { runLaboratoryRdSpeedPass } from '../planetFacility/runLaboratoryRdSpeedPass';
-import { runTavernBountyRefreshPass } from '../planetFacility/runTavernBountyRefreshPass';
+import { runBarBountyRefreshPass } from '../planetFacility/runBarBountyRefreshPass';
 import { runArcCoreInstanceMissionDailyPass } from '../missions/runArcCoreInstanceMissionDailyPass';
+import { useMissionStore } from '../../store/missionStore';
 import {
   runArcCoreEconomyLearningDailyPass,
   type ArcCoreEconomyLearningDailyPassResult,
 } from '../learning/runArcCoreEconomyLearningDailyPass';
 import { runPlanetFiscalBalanceClosedLoopPass } from '../economy/runPlanetFiscalBalanceClosedLoopPass';
+import { runArcCoreFiscalOpexPass } from '../economy/runArcCoreFiscalOpexPass';
 import { runPlanetMineralLedgerDailyPass } from '../planetResource/runPlanetMineralLedgerDailyPass';
 import { integrateUnlockedSynthFrontierStatEconomyAsync } from '../planetCore/integrateUnlockedSynthFrontierStatEconomy';
 import { resolveArcCoreDailyOpsPolicy } from './arcCoreDailyOpsPolicy';
@@ -44,6 +48,8 @@ import { runContestedZoneAftermathDailyPass } from '../planetCore/runContestedZo
 import { yieldJsThread } from './yieldJsThread';
 import { runPlanetWealthDisparityDailyPass } from '../planetCore/runPlanetWealthDisparityDailyPass';
 import { runPlanetRebellionResolutionDailyPass } from '../planetCore/runPlanetRebellionResolutionDailyPass';
+import { consolidateStellaLifeOnDailyBatch } from '../chat/stellaLifeDaily';
+import { runPlanetDwellCivicDailyPass } from '../dwell/runPlanetDwellCivicDailyPass';
 
 /**
  * 개별 패스 격리 — 패스 하나가 던지면 이후 전부(트렌드 커밋·완료 마크 포함)가 멈춰
@@ -70,6 +76,7 @@ export type ArcCoreDailyOpsBatchResult = {
   worldExpansionUnlock: boolean;
   integratedEngageHpAdjust: boolean;
   planetUpkeep: boolean;
+  theaterGarrison: boolean;
   convoyDailySettlement: boolean;
   centralBankExpenditure: boolean;
   facilityStatNudge: boolean;
@@ -78,14 +85,21 @@ export type ArcCoreDailyOpsBatchResult = {
   rebellionResolution: boolean;
   planetCoreGaugeComposition: boolean;
   laboratoryRdSpeed: boolean;
-  tavernBountyRefresh: boolean;
+  barBountyRefresh: boolean;
   arcCoreInstanceMissionDaily: boolean;
   planetPgp: boolean;
   synthColonizationAdvance: boolean;
+  stelliumColonize: boolean;
   economyLearning: boolean;
   planetFiscalClosedLoop: boolean;
   planetMineralLedger: boolean;
   planetOwnershipDeedPricing: boolean;
+  planetDwellCivic: boolean;
+  fiscalOpex: boolean;
+  fiscalOpexShadow: boolean;
+  fiscalOpexRequested: number;
+  fiscalOpexSpent: number;
+  fiscalOpexF7RamCargoBuyCredits: number;
   /** learning 패스 산출 — RTDB push는 SubCore가 markCompleted 이후에 최선노력 */
   learningKpi: ArcCoreEconomyLearningDailyPassResult | null;
 };
@@ -110,6 +124,7 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     worldExpansionUnlock: false,
     integratedEngageHpAdjust: false,
     planetUpkeep: false,
+    theaterGarrison: false,
     convoyDailySettlement: false,
     centralBankExpenditure: false,
     facilityStatNudge: false,
@@ -118,14 +133,21 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     rebellionResolution: false,
     planetCoreGaugeComposition: false,
     laboratoryRdSpeed: false,
-    tavernBountyRefresh: false,
+    barBountyRefresh: false,
     arcCoreInstanceMissionDaily: false,
     planetPgp: false,
     synthColonizationAdvance: false,
+    stelliumColonize: false,
     economyLearning: false,
     planetFiscalClosedLoop: false,
     planetMineralLedger: false,
     planetOwnershipDeedPricing: false,
+    planetDwellCivic: false,
+    fiscalOpex: false,
+    fiscalOpexShadow: true,
+    fiscalOpexRequested: 0,
+    fiscalOpexSpent: 0,
+    fiscalOpexF7RamCargoBuyCredits: 0,
     learningKpi: null,
   };
 
@@ -161,6 +183,12 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     result.synthColonizationAdvance = colonizationEarly.advanced > 0;
   } catch (err) {
     reportDailyOpsStepFailure('synthColonizationAdvance', err);
+  }
+  try {
+    const stelliumColonize = await runStelliumColonizePass();
+    result.stelliumColonize = stelliumColonize.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('stelliumColonize', err);
   }
   if (policy.runWorldExpansionUnlock) {
     try {
@@ -295,11 +323,29 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   await yieldJsThread();
 
   try {
+    noteDailyOpsBatchStep('planetDwellCivic');
+    const dwellCivic = runPlanetDwellCivicDailyPass();
+    result.planetDwellCivic = dwellCivic.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('planetDwellCivic', err);
+  }
+  await yieldJsThread();
+
+  try {
     noteDailyOpsBatchStep('planetUpkeep');
     const upkeep = await runArcCorePlanetUpkeepDailyPass();
     result.planetUpkeep = upkeep.ran;
   } catch (err) {
     reportDailyOpsStepFailure('planetUpkeep', err);
+  }
+  await yieldJsThread();
+
+  try {
+    noteDailyOpsBatchStep('theaterGarrison');
+    const theaterGarrison = await runTheaterGarrisonDailyPass();
+    result.theaterGarrison = theaterGarrison.ran;
+  } catch (err) {
+    reportDailyOpsStepFailure('theaterGarrison', err);
   }
   await yieldJsThread();
 
@@ -333,10 +379,10 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     reportDailyOpsStepFailure('laboratoryRdSpeed', err);
   }
   try {
-    const tavernRefresh = runTavernBountyRefreshPass();
-    result.tavernBountyRefresh = tavernRefresh.ran;
+    const barRefresh = runBarBountyRefreshPass();
+    result.barBountyRefresh = barRefresh.ran;
   } catch (err) {
-    reportDailyOpsStepFailure('tavernBountyRefresh', err);
+    reportDailyOpsStepFailure('barBountyRefresh', err);
   }
   await yieldJsThread();
 
@@ -345,6 +391,11 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     result.arcCoreInstanceMissionDaily = instanceMissionPass.ran;
   } catch (err) {
     reportDailyOpsStepFailure('arcCoreInstanceMissionDaily', err);
+  }
+  try {
+    useMissionStore.getState().sweepExpiredMissions({ notify: true });
+  } catch (err) {
+    reportDailyOpsStepFailure('missionTimeLimitSweep', err);
   }
 
   try {
@@ -382,10 +433,30 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
   }
 
   try {
+    noteDailyOpsBatchStep('fiscalOpex');
+    const fiscalOpex = await runArcCoreFiscalOpexPass();
+    result.fiscalOpex = fiscalOpex.ran;
+    result.fiscalOpexShadow = fiscalOpex.shadow;
+    result.fiscalOpexRequested = fiscalOpex.requestedSum;
+    result.fiscalOpexSpent = fiscalOpex.spentSum;
+    result.fiscalOpexF7RamCargoBuyCredits = fiscalOpex.f7RamCargoBuyCredits;
+  } catch (err) {
+    reportDailyOpsStepFailure('fiscalOpex', err);
+  }
+  await yieldJsThread();
+
+  try {
     noteDailyOpsBatchStep('commitPlanetCoreStatOpsTrendAfterBatch');
     commitPlanetCoreStatOpsTrendAfterBatch();
   } catch (err) {
     reportDailyOpsStepFailure('commitPlanetCoreStatOpsTrendAfterBatch', err);
+  }
+
+  try {
+    noteDailyOpsBatchStep('stellaLifeConsolidate');
+    await consolidateStellaLifeOnDailyBatch();
+  } catch (err) {
+    reportDailyOpsStepFailure('stellaLifeConsolidate', err);
   }
 
   noteDailyOpsBatchStep('batch_return');

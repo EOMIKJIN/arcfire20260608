@@ -37,6 +37,9 @@
 - `mainStageTalkEnabled` bool — 메인스테이지에서 조우 시 대화 버튼 등 인터랙션 UI 활성 후보 여부
 - `mainStageMissionTriggerId` string|null — 대화 시작과 함께 발동할 미션 트리거 id(미설정 가능)
 - `mainStageEventTriggerId` string|null — 대화 시작과 함께 발동할 이벤트 트리거 id(미설정 가능)
+- `deathEligible` bool — 영구 사망 **자격**(Table-First). 기본 `FALSE`. 플레이 결과 사망 여부는 CSV에 쓰지 않음 → 런타임 원장
+- `deathClass` enum: `none|main_story` — v0.2는 `main_story`만 스토리 사망 경로 활성. 일반 트래픽·웨이브는 `none`
+- `questOnly` bool — 본편 퀘스트 전용 함장. `TRUE`면 궤도 트래픽·수송 풀·주둔 배정·AABS 재배치에서 제외. `assignedShipId` 비워도 됨(`talk_npc`만). **행은 추후 등록** — 지금은 컬럼만. 정본: `docs/MAIN_QUEST_FOUNDATION.md`
 
 ### `npc_ai_ships.csv`
 - `npcMode` enum: `general|combat` (`general`은 행성 INFO 궤도 표시 전용, 전투 미진입)
@@ -91,21 +94,23 @@
 
 ## 3) 미션
 ### `missions.csv`
-- `id` string PK (`mission_*` 스토리 체인 · `sandbox_*` 행성 퀘스트 · **`tq_*` 선술집 인스턴스 템플릿**)
+- `id` string PK (`mission_*` 스토리 체인 · `sandbox_*` 행성 퀘스트 · **`tq_*` 바 인스턴스 템플릿**)
 - `title,description,type` string (`type`은 메타; 런타임은 `mission_objectives` 조합이 근거)
 - `offerCaptainId` string|null — 인스턴스 의뢰 NPC (`npc_ai_captains.id`)
-- `offerPlanetId` string|null — 선술집 게시 행성 (`planets.id`); **`tq_*`는 비움**(행성별 ArcCore clone)
+- `offerPlanetId` string|null — 바 게시 행성 (`planets.id`); **`tq_*`는 비움**(행성별 ArcCore clone)
 - `levelRequired` int — 수락 최소 파일럿 레벨
-- `rewardCredits,rewardExp,rewardSkillPointBonus,dc` int — **`tq_*`의 CR/EXP = NORMAL 등급 기준선**; 런타임 `tavernInstanceMissionDifficulty.ts`가 측정 등급(EASY~EXPERT)에 따라 배율 적용
+- `rewardCredits,rewardExp,rewardSkillPointBonus,dc` int — **`tq_*`의 CR/EXP = NORMAL 등급 기준선**; 런타임 `barInstanceMissionDifficulty.ts`가 측정 등급(EASY~EXPERT)에 따라 배율 적용
 - `dc` int — 템플릿 난이도 앵커(인스턴스 점수 산출에 사용; 구 스토리 체크용 잔존)
 - `nextMissionId` string|null — 스토리 체인만 사용
 - `clearDialogSceneId` string|null — 클리어 인게임 대화 scene id (선택)
+- `clearNpcCaptainId` string|null — 목적지 담당 NPC 명시. 비우면 배달·접선만 런타임이 목적지 바 주인을 찍고, 그 외는 오퍼레이터
+- `requiresClearContact` 0|1 — 화물 없는 접선·지휘관 회동. `1`이면 목적지 담당 배정. 일반 이동/전투는 비움
 - `title_en`, `description_en` string (i18n)
 - 레거시 호환: `rewardItemsPipe`, `prerequisiteIdsPipe`
 
-**선술집 ArcCore 인스턴스 (`tq_*` → `arc_inst_*`)**
-- 생성: `arcCoreInstanceMissionGenerator.ts` — 코어 개방·선술집 행성당 listed 10건 · 40/40/20(배달/전투·현상금/기타)
-- 목표 패치: `__neighbor_system__` / `__discovery_planet__` — BFS 1~3홉 가변 배달 거리(`arcCoreInstanceMissionPlanetContext.ts`)
+**바 ArcCore 인스턴스 (`tq_*` → `arc_inst_*`)**
+- 생성: `arcCoreInstanceMissionGenerator.ts` — 코어 개방·바 행성당 listed 10건 · 40/40/20(배달/전투·현상금/기타)
+- 목표 패치: `__neighbor_system__` 는 특정 성계로 고정하지 않음(출발 성계가 아닌 아무 성계 착륙이면 완료) · `__discovery_planet__` 은 탐사 행성 패치. 난이도 홉만 `arcCoreInstanceMissionPlanetContext.ts` BFS 1~3
 - **난이도 등급**: 배송 홉·구역(safe/neutral/pvp) transit 위험·전투 적 템플릿·dc·levelRequired → EASY/NORMAL/HARD/EXPERT
 - **보상**: CSV NORMAL 기준 × 등급 배율(EASY 0.8 · NORMAL 1.0 · HARD 1.3 · EXPERT 1.65) — `arcCoreInstanceMissionResolver.ts`
 
@@ -115,8 +120,9 @@
 - `description,type,targetId` string
 - `quantity` int nullable
 - `description_en` string (i18n)
-- **타입 계약**: `reach_planet` · `reach_system` · `defeat_enemy` · `buy_goods` · `deliver_cargo`(v1 미연동)
+- **타입 계약**: `reach_planet` · `reach_system` · `defeat_enemy` · `buy_goods` · `deliver_cargo`(v1 미연동) · `talk_npc`
 - **카테고리 파생**: `defeat_enemy`만 → 전투 · `buy_goods`+`reach_system` → 배달 · `reach_*` → 이동
+- `talk_npc` 인증: 미구현 플레이는 새 타입 없이 마지막 페이지 `actionLabel` 동사로 처리 (`docs/MAIN_QUEST_FOUNDATION.md`)
 
 ### `mission_combat_captains.csv`
 - `id` string PK
@@ -139,11 +145,29 @@
 - `missionId` FK -> missions.id
 - `itemId` string
 
+### 본편 메인스토리 챕터 골격 (2026-08-24)
+정본: `main_story_chapters.csv` · `main_story_quests.csv` · `main_story_branches.csv` · `main_story_chain_steps.csv`  
+런타임: `src/missions/mainStory/` · 생성: `csvMainStorySpine.ts`  
+**콘텐츠(제목·주제·하위 미션·보상)는 대표님 시나리오 확정 후 CSV/missions에 기입.** 골격 id만 예약.
+
+- **챕터** 10 (`ms_ch_01`…`ms_ch_10`) — `endStorySceneId=story_chapter_end_NN` · `endStoryReady=0`이면 시네마틱 재생 없음
+- **본선 퀘스트** 챕터당 30 (`story_c01_q01`…`story_c10_q30`) — `story_c01_q01.bindMissionId=story_001`만 `ready`. **`q31`–`q36` 슬롯 없음**. 챕터 클로저 = `q30`
+- **분기 슬롯** 챕터당 4 (`story_cXX_b01`…`b04`) — `main_story_branches.enabled=1`일 때만 진입
+- **연퀘 스텝** `main_story_chain_steps` — 부모 퀘스트 아래 순차 하위 미션. 보상 정본은 이후 `missions.csv`
+- **기존값** `missions.csv` `story_001` 제목·보상·목표는 변경하지 않음
+- **기반만 (2026-09-14)**: 스토리 본문·퀘스트 전용 함장 행·q02+ bind는 추후. 계약 `docs/MAIN_QUEST_FOUNDATION.md`
+
+### `story_scene_pages.csv`
+- `sceneId` FK → `story_scenes.id` · `pageIndex` int
+- `label,text` 한국어 정본 · `label_en,text_en` 병렬 EN
+- `actionLabel`, `actionLabel_en` — 마지막 페이지 버튼. 비면 `[ 확인 ]`. 인증 칸은 `[ 블랙마켓인도처리 ]`처럼 동사. 수락/취소 액션이 있으면 수락 라벨이 이김
+- `speakerNpcCaptainId` · `viewMode` · `textBoxPreset` · `imageAssetKey` · `imageScalePct`
+
 ## 4) 맵/행성
 
 ### `planets.csv` (성계 임베드 정본 · 21행)
 - **성계 필드(행마다 중복)**: `systemId,systemName,systemPosX,systemPosY,systemZone,systemConnectionsPipe,systemEnemyLevel,systemDescription` (+ En)
-- **행성 필드**: `id,name,description,factionId,hasTradePort,hasShipyard,hasTavern`
+- **행성 필드**: `id,name,description,factionId,hasTradePort,hasShipyard,hasBar`
 - `backdropImageAssetKey` · `infoPanelPortraitAssetKey` · 메인스테이지 레이어 플래그
 - 핵심 지표 시드(0..100): `coreResource,corePopulation,coreDefense,coreTechnology,coreEnvironment`  
   → **런타임 정본**은 `planetCoreRuntimeStore` (`arcfire_planet_core_runtime_v1`)

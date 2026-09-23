@@ -1,0 +1,3 @@
+id,sort,displayNameKo,displayNameEn,subtitleKo,subtitleEn,portraitAssetKey,captainId,defaultActive,inboundPreferred
+operator,1,스텔라 아리스,Stella Aris,동료 입,Companion mouth,assets/images/npc/stella_aris_char001.png,npc_cpt_operator_stella,1,0
+arc_core,2,아크코어 근원체,ArcCore Origin,적의 입,Enemy mouth,,,0,1

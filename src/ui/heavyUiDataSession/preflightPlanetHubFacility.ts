@@ -2,7 +2,7 @@ import type { PlanetHubFacilityGateKind } from '../../hooks/usePlanetHubFacility
 import {
   isPlanetHubResearchLabEnabled,
   isPlanetHubShipyardEnabled,
-  isPlanetHubTavernEnabled,
+  isPlanetHubBarEnabled,
   isPlanetHubTradePortEnabled,
 } from '../../game/planetDevelopment/planetHubFacilityGates';
 import { t } from '../../i18n';
@@ -13,7 +13,7 @@ import type { HeavyUiPreflightResult } from './types';
 const FACILITY_ENABLED: Record<PlanetHubFacilityGateKind, (planetId: string) => boolean> = {
   trade: isPlanetHubTradePortEnabled,
   shipyard: isPlanetHubShipyardEnabled,
-  tavern: isPlanetHubTavernEnabled,
+  bar: isPlanetHubBarEnabled,
   research_lab: isPlanetHubResearchLabEnabled,
 };
 

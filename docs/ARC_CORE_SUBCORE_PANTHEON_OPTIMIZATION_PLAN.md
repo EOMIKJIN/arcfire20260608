@@ -82,7 +82,7 @@ AFTER: 여전히 등록 12개 (Trade 자리 → Athena/Attack 좌)
 | 07 | **가이아** | `gaia` | Planets | 행성 코어·광물 런타임 |
 | 08 | **플루토스** | `plutos` | Economy (+구 TradePolicy) | 무역소·경제 |
 | 09 | **아테나** | `athena` | Attack (승격·얇은 좌) | 통합 공격 골격(단계 활성) |
-| 10 | **이리스** | `iris` | NewsBoard | 공지·선술집 보드 |
+| 10 | **이리스** | `iris` | NewsBoard | 공지·바 보드 |
 | 11 | **아스트라이아** | `astraia` | Nebula | 성운 프로필·일일 변조 |
 | 12 | **야누스** | `janus` | WorldExpansion | 월드/synth 해금 |
 
@@ -154,7 +154,7 @@ AFTER: 여전히 등록 12개 (Trade 자리 → Athena/Attack 좌)
 | 수색 루트 | `planetSalvageSearch.ts` | 현재 광물 풀만 → **유물 테이블 분기 추가** |
 | 아이템 | `item_defs.csv` | `type=relic` / `arc_core_pantheon_shard` 12종(+본체 단서 1) |
 | 진행 | 계정 귀속 store (가칭 `arcCorePantheonCodexStore`) | **purge 연동 필수** |
-| UI | 인벤 유물 상세 · (선택) 선술집/도감 패널 | `ArcOverlayHost`만 |
+| UI | 인벤 유물 상세 · (선택) 바/도감 패널 | `ArcOverlayHost`만 |
 
 ### Table-First (가칭)
 

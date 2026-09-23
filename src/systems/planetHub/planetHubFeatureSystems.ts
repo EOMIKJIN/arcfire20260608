@@ -9,7 +9,7 @@ type TranslateFn = (key: string, params?: I18nParams) => string;
 type PlanetHubMenuPlanet = {
   hasTradePort: boolean;
   hasShipyard: boolean;
-  hasTavern: boolean;
+  hasBar: boolean;
   hasResearchLab: boolean;
 };
 
@@ -29,8 +29,8 @@ type PlanetHubFeatureContext = {
   planet: PlanetHubMenuPlanet | null | undefined;
   hasTradeBadge: boolean;
   clearTradeBadge: () => void;
-  hasTavernBadge: boolean;
-  clearTavernBadge: () => void;
+  hasBarBadge: boolean;
+  clearBarBadge: () => void;
   /** 시설 4곳 — 출발과 동일하게 메인스테이지 suspend·스냅샷 후 `router.push`. */
   onFacilityNavigate: (href: Href) => void;
   /** 출발 폴백 전용 (`onDeparture` 미지정 시). */
@@ -40,6 +40,11 @@ type PlanetHubFeatureContext = {
    * `push('/(game)/worldmap')`을 직접 호출해야 한다. 미지정이면 기본 동작(스냅샷 없이 push)을 사용한다.
    */
   onDeparture?: () => void;
+  /**
+   * 웨이브/Ready 카운트·교전 중 시설 잠금.
+   * 출발은 제외(은하지도 이탈 허용).
+   */
+  lockNonDepartureMenus?: boolean;
 };
 
 /**
@@ -59,17 +64,18 @@ export function buildPlanetHubFeatureMenuItems(
 ): PlanetHubFeatureMenuItem[] {
   const hasTradePort = Boolean(ctx.planet?.hasTradePort);
   const hasShipyard = Boolean(ctx.planet?.hasShipyard);
-  const hasTavern = Boolean(ctx.planet?.hasTavern);
+  const hasBar = Boolean(ctx.planet?.hasBar);
   const hasResearchLab = Boolean(ctx.planet?.hasResearchLab);
+  const lockFacilities = ctx.lockNonDepartureMenus === true;
   return [
     {
       id: 'trade',
       label: tr('hubMenu.trade'),
       icon: PLANET_HUB_ACTION_ICONS.trade,
-      disabled: !hasTradePort,
+      disabled: !hasTradePort || lockFacilities,
       showBadge: ctx.hasTradeBadge,
       onPress: () => {
-        if (!hasTradePort) return;
+        if (lockFacilities || !hasTradePort) return;
         if (!runPlanetHubSubmenuPreflight('trade', ctx.planetId)) return;
         runThrottledPlanetHubNavigation(() => {
           ctx.clearTradeBadge();
@@ -81,25 +87,25 @@ export function buildPlanetHubFeatureMenuItems(
       id: 'shipyard',
       label: tr('hubMenu.shipyard'),
       icon: PLANET_HUB_ACTION_ICONS.shipyard,
-      disabled: !hasShipyard,
+      disabled: !hasShipyard || lockFacilities,
       onPress: () => {
-        if (!hasShipyard) return;
+        if (lockFacilities || !hasShipyard) return;
         if (!runPlanetHubSubmenuPreflight('shipyard', ctx.planetId)) return;
         runThrottledPlanetHubNavigation(() => ctx.onFacilityNavigate('/(game)/shipyard'));
       },
     },
     {
-      id: 'tavern',
-      label: tr('hubMenu.tavern'),
-      icon: PLANET_HUB_ACTION_ICONS.tavern,
-      disabled: !hasTavern,
-      showBadge: ctx.hasTavernBadge,
+      id: 'bar',
+      label: tr('hubMenu.bar'),
+      icon: PLANET_HUB_ACTION_ICONS.bar,
+      disabled: !hasBar || lockFacilities,
+      showBadge: ctx.hasBarBadge,
       onPress: () => {
-        if (!hasTavern) return;
-        if (!runPlanetHubSubmenuPreflight('tavern', ctx.planetId)) return;
+        if (lockFacilities || !hasBar) return;
+        if (!runPlanetHubSubmenuPreflight('bar', ctx.planetId)) return;
         runThrottledPlanetHubNavigation(() => {
-          ctx.clearTavernBadge();
-          ctx.onFacilityNavigate('/(game)/tavern');
+          ctx.clearBarBadge();
+          ctx.onFacilityNavigate('/(game)/bar');
         });
       },
     },
@@ -107,9 +113,9 @@ export function buildPlanetHubFeatureMenuItems(
       id: 'skilltree',
       label: tr('hubMenu.skilltree'),
       icon: PLANET_HUB_ACTION_ICONS.skilltree,
-      disabled: !hasResearchLab,
+      disabled: !hasResearchLab || lockFacilities,
       onPress: () => {
-        if (!hasResearchLab) return;
+        if (lockFacilities || !hasResearchLab) return;
         if (!runPlanetHubSubmenuPreflight('research_lab', ctx.planetId)) return;
         runThrottledPlanetHubNavigation(() => ctx.onFacilityNavigate('/(game)/skilltree'));
       },

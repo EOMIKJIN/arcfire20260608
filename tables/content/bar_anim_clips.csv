@@ -1,0 +1,3 @@
+clipId,animSetId,loop,durationMs,motionHint,enabled
+clip_soft_sway,aset_soft,1,2400,sway,1
+clip_soft_bounce,aset_soft,1,1800,bounce,1

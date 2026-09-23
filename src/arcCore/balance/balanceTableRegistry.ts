@@ -185,8 +185,18 @@ export function getPlayScenarioEconomyRowForZone(zoneIndex: number) {
   return PlayScenarioEconomy_FROM_BALANCE_CSV.find((r) => Number(r.zoneIndex) === z) ?? null;
 }
 
+export function normalizeSynthSystemId(raw: string): string {
+  const id = String(raw ?? '').trim();
+  const m = id.match(/^synth_(\d+)$/i);
+  if (!m) return id;
+  return `synth_${m[1]!.padStart(3, '0')}`;
+}
+
 export function getSynthSystemColonizationRow(synthSystemId: string) {
-  return getSynthBySystemId().get(synthSystemId) ?? null;
+  const id = String(synthSystemId ?? '').trim();
+  if (!id) return null;
+  const map = getSynthBySystemId();
+  return map.get(id) ?? map.get(normalizeSynthSystemId(id)) ?? null;
 }
 
 export function getPlanetOccupationSeedRow(planetId: string) {
@@ -225,6 +235,108 @@ export function resolvePlanetTargetCombatLevel(planetId: string): number {
     if (synth) return parseNum(synth.targetCombatLevel, 1);
   }
   return 1;
+}
+
+let playScenarioByZoneIndex: Map<
+  number,
+  (typeof PlayScenarioZonePlanets_FROM_BALANCE_CSV)[number]
+> | null = null;
+
+function getPlayScenarioByZoneIndex(): Map<
+  number,
+  (typeof PlayScenarioZonePlanets_FROM_BALANCE_CSV)[number]
+> {
+  if (!playScenarioByZoneIndex) {
+    playScenarioByZoneIndex = new Map();
+    for (const row of PlayScenarioZonePlanets_FROM_BALANCE_CSV) {
+      const z = Math.floor(parseNum(row.zoneIndex, 0));
+      if (z > 0) playScenarioByZoneIndex.set(z, row);
+    }
+  }
+  return playScenarioByZoneIndex;
+}
+
+/** 시나리오 존 TCL — 무역 도전 키트·선체 스케일 조회. 틱 금지. */
+export function resolveTargetCombatLevelForZone(zoneIndex: number): number {
+  const z = Math.max(1, Math.min(21, Math.floor(zoneIndex)));
+  const row = getPlayScenarioByZoneIndex().get(z);
+  return parseNum(row?.targetCombatLevel, z >= 20 ? 60 : 1);
+}
+
+const TRANSIT_COMBAT_PLANET_ID = '__transit__';
+
+let playScenarioBySystemId: Map<
+  string,
+  (typeof PlayScenarioZonePlanets_FROM_BALANCE_CSV)[number]
+> | null = null;
+
+function getPlayScenarioBySystemId(): Map<
+  string,
+  (typeof PlayScenarioZonePlanets_FROM_BALANCE_CSV)[number]
+> {
+  if (!playScenarioBySystemId) {
+    playScenarioBySystemId = new Map(
+      PlayScenarioZonePlanets_FROM_BALANCE_CSV.map((row) => [row.systemId, row]),
+    );
+  }
+  return playScenarioBySystemId;
+}
+
+/** 코어 21성계 zoneIndex(1~21) — 지도 미확인 넘버링. 모듈 Map 1회. */
+export function getPlayScenarioZoneIndexBySystemId(systemId: string): number | null {
+  const row = getPlayScenarioBySystemId().get(systemId.trim());
+  if (!row) return null;
+  const z = Number(row.zoneIndex);
+  return Number.isFinite(z) && z > 0 ? Math.floor(z) : null;
+}
+
+/**
+ * 조우 목표 전투 레벨 — 행성 CSV 우선, 차원항로(`__transit__`)는 성계 시나리오 행.
+ * 시드 1회 조회 전용(틱/렌더 금지).
+ */
+export function resolveCombatEncounterTargetLevel(
+  planetId: string,
+  systemId?: string | null,
+): number {
+  const pid = planetId.trim();
+  if (pid && pid !== TRANSIT_COMBAT_PLANET_ID) {
+    return resolvePlanetTargetCombatLevel(pid);
+  }
+  const sid = systemId?.trim();
+  if (sid) {
+    const row = getPlayScenarioBySystemId().get(sid);
+    if (row) return parseNum(row.targetCombatLevel, 1);
+    const synth = getSynthSystemColonizationRow(sid);
+    if (synth) return parseNum(synth.targetCombatLevel, 1);
+  }
+  return 1;
+}
+
+/** 성계 시나리오·신스 주 행성 — 이동중 헐 스케일 키. */
+export function resolvePlayScenarioPrimaryPlanetId(
+  systemId?: string | null,
+): string | null {
+  const sid = systemId?.trim();
+  if (!sid) return null;
+  const row = getPlayScenarioBySystemId().get(sid);
+  const planetId = String(row?.primaryPlanetId ?? '').trim();
+  if (planetId) return planetId;
+  const synth = getSynthSystemColonizationRow(sid);
+  if (synth) return `${synth.synthSystemId}_p`;
+  return null;
+}
+
+/**
+ * 이동중 무기 TCL — 목적지 시나리오 레벨을 상한으로, 플레이어 레벨을 넘지 않음.
+ */
+export function resolveTransitCombatEncounterTargetLevel(
+  systemId?: string | null,
+  playerLevel?: number | null,
+): number {
+  const destTcl = resolveCombatEncounterTargetLevel(TRANSIT_COMBAT_PLANET_ID, systemId);
+  if (playerLevel == null || !Number.isFinite(Number(playerLevel))) return destTcl;
+  const cap = Math.max(1, Math.floor(Number(playerLevel)));
+  return Math.min(destTcl, cap);
 }
 
 export function getWeaponTradePriceBounds(): { min: number; max: number } {

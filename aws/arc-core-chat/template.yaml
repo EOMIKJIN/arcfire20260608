@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: ArcCore chat turn — ZERO_BILL Groq Free 중계. Bedrock IAM 없음. 클라는 키를 갖지 않는다.
+
+# GroqApiKey 는 CFN Parameter 로 넣지 않는다 (특수문자 ValidationError).
+# 배포 후: aws lambda update-function-configuration 또는
+#          tools/arc-core-chat/set-groq-lambda-key.ps1
+
+Globals:
+  Function:
+    Runtime: nodejs24.x
+    Architectures:
+      - arm64
+    Timeout: 15
+    MemorySize: 256
+
+Resources:
+  ArcCoreChatTurn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: arcfire-arc-core-chat-turn
+      Handler: index.handler
+      CodeUri: dist/
+      FunctionUrlConfig:
+        AuthType: NONE
+        Cors:
+          AllowOrigins:
+            - '*'
+          AllowHeaders:
+            - authorization
+            - content-type
+          AllowMethods:
+            - POST
+      Environment:
+        Variables:
+          ARC_CORE_CHAT_FIREBASE_PROJECT_ID: arcfire-49d69
+          ARC_CORE_CHAT_LLM_PROVIDER: groq
+          ARC_CORE_CHAT_ALLOW_BEDROCK: '0'
+          ARC_CORE_CHAT_GROQ_API_KEY: ''
+          # 주의: sam deploy 시 이 값이 '' 로 덮어씀 → 배포 후 반드시
+          # tools/arc-core-chat/set-groq-lambda-key.ps1 재실행
+          ARC_CORE_CHAT_GROQ_MODEL: openai/gpt-oss-20b
+          ARC_CORE_CHAT_GROQ_TIMEOUT_MS: '7000'
+
+Outputs:
+  TurnUrl:
+    Description: Function URL — 클라 ARC_CORE_CHAT_FREE_TIER_TURN_URL
+    Value: !GetAtt ArcCoreChatTurnUrl.FunctionUrl
+  FunctionName:
+    Description: Lambda name — set Groq key after deploy
+    Value: !Ref ArcCoreChatTurn

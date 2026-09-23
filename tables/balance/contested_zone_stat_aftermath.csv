@@ -2,3 +2,7 @@ planetId,offsetResource,offsetPopulation,offsetDefense,offsetTechnology,offsetEn
 draco_haven,-2,-5,8,6,-6,성운 전선 — 기반시설·환경·인구 저해 · 군사·연구 급등
 omega_hub,3,-4,5,4,-3,교차 허브 — 전쟁경제·무역 이익 · 유동인구·환경 타격
 shadow_market,5,-3,4,3,-4,암시장 — 불법무역·자원 유입 · 치안·환경·인구 불안
+helios_core,-2,-5,8,6,-6,캠페인 전선 템플릿(신규) — 기존 3행 수치 불변
+titan_ruins,-2,-5,8,6,-6,캠페인 전선 템플릿(신규) — 기존 3행 수치 불변
+__dynamic_front__,-2,-5,8,6,-6,동적 전선 폴백 템플릿 — 직접 패스 대상 아님
+

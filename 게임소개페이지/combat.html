@@ -1,0 +1,134 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>전투 · 분쟁 — 아크파이어 온라인 위키</title>
+<meta name="description" content="4개 전투 축, 전투레벨(TCL) 체계, 접전지역 로테이션, 수도 방위" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body data-page="combat">
+
+<header class="site-header">
+  <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <div class="site-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
+    <div class="search-hits"></div>
+  </div>
+  <button class="theme-toggle" type="button" aria-label="테마 전환"></button>
+</header>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-group"><h5>시작</h5><a href="index.html" data-page="index"><span class="dot"></span>홈</a></div>
+    <div class="sidebar-group"><h5>세계</h5>
+      <a href="world.html" data-page="world"><span class="dot"></span>세계관 · 아크코어</a>
+      <a href="factions.html" data-page="factions"><span class="dot"></span>4대 세력</a>
+      <a href="galaxy.html" data-page="galaxy"><span class="dot"></span>은하 · 행성</a>
+      <a href="story.html" data-page="story"><span class="dot"></span>스토리 · 미션</a>
+    </div>
+    <div class="sidebar-group"><h5>전력</h5>
+      <a href="ships.html" data-page="ships"><span class="dot"></span>함선</a>
+      <a href="weapons.html" data-page="weapons"><span class="dot"></span>무기체계</a>
+      <a href="skills.html" data-page="skills"><span class="dot"></span>스킬</a>
+      <a href="items.html" data-page="items"><span class="dot"></span>아이템 · 강화</a>
+    </div>
+    <div class="sidebar-group"><h5>체제</h5>
+      <a href="economy.html" data-page="economy"><span class="dot"></span>경제 시스템</a>
+      <a href="planetdev.html" data-page="planetdev"><span class="dot"></span>행성개발</a>
+      <a href="combat.html" data-page="combat" class="active"><span class="dot"></span>전투 · 분쟁</a>
+      <a href="arccore.html" data-page="arccore"><span class="dot"></span>아크코어 AI</a>
+      <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
+      <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="content-wrap">
+    <article class="content">
+      <div class="eyebrow">체제 · 전투</div>
+      <h1 class="page-title">전투 · 분쟁</h1>
+      <p class="page-lede">
+        전투는 하나의 시스템이 아니라 네 가지 서로 다른 축으로 이뤄져 있고, 은하의 세력 판도는 20분 주기의
+        자동 로테이션으로 따로 돌아간다. 이 페이지는 그 네 축과, 판도를 바꾸는 접전지역 시스템을 정리한다.
+      </p>
+
+      <h2>전투 4개 축</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>축</th><th>플레이어 경험</th><th>트리거</th><th>난이도 입력</th></tr></thead>
+          <tbody>
+            <tr><td><strong>A. 허브 실시간 전투</strong></td><td>궤도에 적이 있을 때 준비 완료 후 즉시 교전</td><td>궤도에 적대 함장 존재</td><td>TCL → 무기 로드아웃만</td></tr>
+            <tr><td><strong>B. 웨이브 디펜스(9라운드)</strong></td><td>카운트다운 후 3→6→12로 늘어나는 침입</td><td>접전지역 차례 · 강습 · 임무 지정</td><td>TCL → 침입자 티어(행성 전용 로스터 없을 때만)</td></tr>
+            <tr><td><strong>C. 항행 중 조우전</strong></td><td>성계 이동 중 무작위 인카운터</td><td>확률 판정 · 특정 퀘스트</td><td>조우 대상 레벨 산정 함수</td></tr>
+            <tr><td><strong>D. 퀘스트 전투</strong></td><td>이동 중 지정된 적 1척 격파</td><td>임무 전투 오퍼레이션 테이블</td><td>앵커 행성의 TCL·함선 CSV 상속</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="tcl">전투레벨(TCL) — 난이도의 실제 의미</h2>
+      <p>
+        모든 행성은 1~60 사이의 <strong>목표 전투레벨(TCL)</strong>을 갖는다. 그런데 TCL이 실제로 바꾸는 건
+        <strong>적의 무기 로드아웃</strong>과 <strong>조우/웨이브 침입자 티어</strong>뿐이다. 적 함선의 HP·장갑·실드는
+        TCL과 무관하게 함선 CSV에 고정돼 있고, 웨이브 침입자는 30개 티어 전부 HP 80·실드 40·장갑 8로 동일하다 —
+        후반으로 갈수록 어려워지는 체감은 대부분 <strong>무기 교체</strong>와 <strong>동시 적 수</strong> 증가에서 온다.
+      </p>
+      <div class="callout warn">
+        <strong>네 가지 레벨 척도가 따로 논다</strong>
+        TCL(무기·조우 선정용) · 추천 파일럿 레벨(페이싱용) · 지도에 표시되는 레벨(장식용, 종종 TCL과 불일치) ·
+        실제 함장·함선 전투레벨(TCL로 재조정되지 않음) — 이 네 축이 같은 행성에서 서로 다른 숫자를 보여줄 수 있다.
+        예: 헬리오스 코어는 지도에 레벨 9로 뜨지만 실제 TCL은 37이다.
+      </div>
+
+      <h2>드론·함재기 전투</h2>
+      <p>
+        설계 문서 기준(코드 구현 진행 중) 드론은 <strong>접근→목표 주위 궤도 선회→최종 돌격 1회 후 소멸</strong>,
+        함재기는 <strong>모함에서 발진→8자 궤적으로 여러 차례 공격→시간 만료 시 모함(이동한 현재 위치)으로 귀환</strong>하는
+        전용 거동을 가진다. 기존 미사일 베지어 곡선으로는 표현할 수 없어 드론 8기·함재기 8기 고정 슬롯 풀로
+        별도 구현된다 — <a href="weapons.html">무기체계</a> 참고.
+      </p>
+
+      <h2 id="territorial">접전지역 — 「분쟁」이 세 가지로 갈라진 이유</h2>
+      <p>
+        은하 판도는 <strong>20분마다 1개 행성씩</strong> 순회하는 캠페인 로테이션으로 움직인다(서브코어는 60초마다
+        「차례가 됐는지」만 확인). 그런데 「분쟁지역」이라는 말이 코드에서 세 가지 다른 정의로 쓰이고 있다 — 이것이
+        판도는 바뀌는데 경제·체감이 못 따라오는 근본 원인으로 지목된 구조적 결함이다.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>정의</th><th>쓰이는 곳</th><th>포함 범위</th></tr></thead>
+          <tbody>
+            <tr><td><strong>A. 시드 분쟁</strong></td><td>일일 「여파」 스탯 변화 · 내정(WDI/반란) 스킵 판정</td><td>드라코·오메가·섀도우마켓 <strong>3곳뿐</strong></td></tr>
+            <tr><td><strong>B. 캠페인 분쟁</strong></td><td>20분 로테이션 · NPC 자동전투 · 지도 표시 링</td><td>A의 3곳 + 헬리오스·타이탄 + 동적 승격분</td></tr>
+            <tr><td><strong>C. 동적 분쟁</strong></td><td>풀(8~12) 채우기 · 전쟁 스폴리아(전리품) 자격</td><td>전선·전략중립 승격 행성</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>그 결과 「여파」(행성 스탯 변화)는 3곳에만 적용되고, 헬리오스·타이탄처럼 눈에 보이게 전선을 이루는 행성은 여파도 내정 변화도 없는 사각지대가 생긴다.</p>
+      <p>쿨다운 공식: <code>강등쿨다운랩 × 활성풀 수 × 1200초</code>. 풀이 8이면 약 5.3시간.</p>
+
+      <h2>수도 방위</h2>
+      <p>
+        4개 세력 항로마다 하나씩 「수도」 행성이 있다 — 서부(스텔리움) 뉴에덴, 동부(크림슨) 아크파이어 코어 프라임,
+        남·북(머큐리움/아우렐리움)은 후속 확장용 신스 행성으로 지정만 돼 있다. 아군 인접 성계가 1개 이상이면
+        <strong>완전 면역</strong>(자동 침공·중립 선포·풀 승격 모두 차단) 상태를 유지하고, 인접 아군이 0이 되고 적대 인접이
+        생겨야 비로소 <strong>포위(siege) 개방</strong> — 이때도 방어측에 유리한 배율이 붙는다. 이 시스템은 자동전 전용이며,
+        플레이어가 직접 벌이는 웨이브 전투 승패 규칙에는 영향을 주지 않는다.
+      </p>
+
+      <div class="source-note">정본: <code>docs/PLAY_SCENARIO_COMBAT_LEVEL_ADVANCEMENT.md</code> · <code>docs/strategy/WAR_ECONOMY_THEATER_AUDIT_AND_UPGRADE_DESIGN.md</code> · <code>docs/strategy/ROUTE_CAPITAL_DEFENSE_ADVANTAGE_DESIGN.md</code> · <code>docs/드론_함재기_전투연출_설계.md</code></div>
+    </article>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/wiki.js"></script>
+</body>
+</html>

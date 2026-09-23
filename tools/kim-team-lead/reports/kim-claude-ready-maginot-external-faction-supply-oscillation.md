@@ -30,10 +30,10 @@
 
 | 코드 | 지역 | `GALAXY_ROUTE` `factionId` | 전쟁 역할 |
 |------|------|---------------------------|-----------|
-| **F1** | 서부(W) | `federation` | **스텔리움(블루)** 축 |
-| **F2** | 남부(S) | `trade_coalition` | **외부** 보급원 |
-| **F3** | 동부(E) | `scientists` | **크림슨(레드)** 축 |
-| **F4** | 북부(N) | `miners_guild` | **외부** 보급원 |
+| **F1** | 서부(W) | `mega_stellium_alliance` | **스텔리움 연합(블루)** 축 |
+| **F2** | 남부(S) | `mega_mercurium_coalition` | **외부** 보급원 |
+| **F3** | 동부(E) | `mega_crimson_legion` | **크림슨 레기온(레드)** 축 |
+| **F4** | 북부(N) | `mega_aurelium_guild` | **외부** 보급원 |
 
 정본: `planet_trade_route_profile.csv` · `galaxyRouteFactionPolicy.ts` · `galaxyRouteFactionBridge.ts` · `megaFactionNationPolicy`(블루=서부항로·레드=동부항로).
 

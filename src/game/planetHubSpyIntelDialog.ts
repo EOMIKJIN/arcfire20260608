@@ -8,10 +8,26 @@ import {
   getPendingArcCoreSpyIntelAlertForPlanet,
 } from '../arcCore/spy/arcCoreSpyIntelAlertStore';
 import { resolveArcCoreSpyPolicy } from '../arcCore/spy/arcCoreSpyPolicy';
-import { presentIngameDialogScene } from './ingameDialog/ingameDialogApi';
+import {
+  hasPlanetHubLandDialogSyncDone,
+  isSpyIntelAutoOpenIdleArmed,
+  markPlanetHubLandDialogSyncDone,
+  resetPlanetHubSpyIntelDialogSchedule,
+  setSpyIntelAutoOpenIdleArmed,
+  shouldHoldSpyIntelAutoOpen,
+} from '../arcCore/spy/spyIntelAutoOpenGate';
+import { isIngameDialogActive, presentIngameDialogScene } from './ingameDialog/ingameDialogApi';
+import { COMBAT_END_OPERATOR_AUTO_DISMISS_MS } from './ingameDialog/ingameDialogAutoDismiss';
+import { runAfterIngameDialogIdle } from './ingameDialog/ingameDialogIdle';
 import { usePlayerStore } from '../store/playerStore';
 import type { PlanetHubNpcDialogTarget } from './planetHubNpcDialog';
 import { markHubDialogBadgeAcknowledged } from './planetHubNpcDialog';
+
+export {
+  hasPlanetHubLandDialogSyncDone,
+  markPlanetHubLandDialogSyncDone,
+  resetPlanetHubSpyIntelDialogSchedule,
+};
 
 function isSpyIntelAcknowledged(ackKey: string): boolean {
   const keys = usePlayerStore.getState().player?.flags.acknowledgedHubDialogKeys ?? [];
@@ -43,6 +59,29 @@ export function hasUnacknowledgedPlanetHubSpyIntelAlert(planetId: string): boole
   return resolvePlanetHubSpyIntelDialogTarget(planetId) != null;
 }
 
+/**
+ * 허브 자동 긴급보고 — 최초 도착 전 스킵, 착륙 대사 시도 후,
+ * 오퍼레이터 창이 열려 있으면 idle 뒤에만 오픈 (슬롯 탈취 금지).
+ */
+export function schedulePlanetHubSpyIntelDialog(planetId: string): boolean {
+  const pid = String(planetId ?? '').trim();
+  if (!pid) return false;
+  if (shouldHoldSpyIntelAutoOpen(pid)) return false;
+  if (!resolveArcCoreSpyPolicy().spyIntelAutoOpenDialog) return false;
+  if (!hasUnacknowledgedPlanetHubSpyIntelAlert(pid)) return false;
+  if (isIngameDialogActive()) {
+    if (!isSpyIntelAutoOpenIdleArmed()) {
+      setSpyIntelAutoOpenIdleArmed(true);
+      runAfterIngameDialogIdle(() => {
+        setSpyIntelAutoOpenIdleArmed(false);
+        schedulePlanetHubSpyIntelDialog(pid);
+      });
+    }
+    return false;
+  }
+  return presentPlanetHubSpyIntelDialog(pid);
+}
+
 export function presentPlanetHubSpyIntelDialog(
   planetId: string,
   options?: { onDismiss?: () => void },
@@ -59,6 +98,8 @@ export function presentPlanetHubSpyIntelDialog(
   ];
 
   return presentIngameDialogScene(sceneId, {
+    autoDismissMs: COMBAT_END_OPERATOR_AUTO_DISMISS_MS,
+    autoDismissMode: 'first_idle',
     onDismiss: () => {
       markHubDialogBadgeAcknowledged(ackKeys);
       clearPendingArcCoreSpyIntelAlert(planetId);

@@ -1,0 +1,7 @@
+id,driveId,goalKo,goalEn,spanDays,progressStep,retireRule
+gl_duty,duty,당직 리듬을 흐트러뜨리지 않기,Keep the watch rhythm steady,7,8,span
+gl_curiosity,curiosity,오늘 들은 말 하나를 정확히 기억하기,Remember one thing they said,5,10,span
+gl_care,care,상대가 남긴 말을 잊지 않기,Do not drop what they left,6,8,span
+gl_rest,rest,비번에 어깨를 내리기,Drop the shoulders off-duty,4,12,span
+gl_growth,growth,빗나간 말을 다음엔 고치기,Fix a missed read next time,8,6,span
+gl_unease,unease,혼자인 밤을 짧게 자르기,Keep lonely nights short,5,8,span

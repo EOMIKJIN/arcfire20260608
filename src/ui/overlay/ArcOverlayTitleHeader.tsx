@@ -17,6 +17,8 @@ type Props = {
   subtitle?: string;
   /** 기본 흰색 — 패배 등 의미색만 예외 */
   titleColor?: string;
+  /** 제목 왼쪽 상징 — 미전달 시 기존 중앙/좌측 타이틀만 */
+  leading?: ReactNode;
   trailing?: ReactNode;
   visualTheme?: ArcOverlayVisualTheme;
 };
@@ -25,11 +27,14 @@ export const ArcOverlayTitleHeader = memo(function ArcOverlayTitleHeader({
   title,
   subtitle,
   titleColor = OVERLAY_TOKENS.titleHeaderTitleColor,
+  leading,
   trailing,
   visualTheme = 'phosphor',
 }: Props) {
   const isTactical = visualTheme === 'tactical';
+  const hasLeading = leading != null;
   const hasTrailing = trailing != null;
+  const splitLayout = hasLeading || hasTrailing;
   return (
     <View style={[styles.shell, isTactical ? tacticalOverlayTitleHeaderStyles.shell : null]}>
       <View
@@ -43,12 +48,13 @@ export const ArcOverlayTitleHeader = memo(function ArcOverlayTitleHeader({
         patternId={isTactical ? TACTICAL_HATCH_PATTERN_ID : HATCH_PATTERN_ID}
         stroke={isTactical ? TACTICAL_OVERLAY.headerPatternStroke : 'rgba(255, 255, 255, 0.085)'}
       />
-      <View style={[styles.content, hasTrailing ? styles.contentWithTrailing : null]}>
-        <View style={[styles.textBlock, hasTrailing ? styles.textBlockTrailing : null]}>
+      <View style={[styles.content, splitLayout ? styles.contentSplit : null]}>
+        {hasLeading ? <View style={styles.leading}>{leading}</View> : null}
+        <View style={[styles.textBlock, splitLayout ? styles.textBlockSplit : null]}>
           <Text
             style={[
               styles.title,
-              hasTrailing ? styles.titleLeading : null,
+              splitLayout ? styles.titleLeading : null,
               { color: titleColor },
             ]}
             numberOfLines={2}
@@ -60,7 +66,7 @@ export const ArcOverlayTitleHeader = memo(function ArcOverlayTitleHeader({
               style={[
                 styles.subtitle,
                 isTactical ? tacticalOverlayTitleHeaderStyles.subtitle : null,
-                hasTrailing ? styles.subtitleLeading : null,
+                splitLayout ? styles.subtitleLeading : null,
               ]}
               numberOfLines={2}
             >
@@ -106,9 +112,9 @@ const styles = StyleSheet.create({
     zIndex: 3,
     alignItems: 'center',
   },
-  contentWithTrailing: {
+  contentSplit: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'space-between',
     gap: SPACING.sm,
   },
@@ -116,13 +122,16 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     alignItems: 'center',
   },
-  textBlockTrailing: {
+  textBlockSplit: {
     flex: 1,
     alignItems: 'flex-start',
   },
+  leading: {
+    flexShrink: 0,
+    justifyContent: 'center',
+  },
   trailing: {
     flexShrink: 0,
-    paddingTop: 2,
   },
   title: {
     fontFamily: FONTS.mono,

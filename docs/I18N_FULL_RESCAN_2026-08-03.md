@@ -63,9 +63,9 @@
 | `audit:i18n` 한글 잔여 | **311** 라인 · **87** 파일 |
 
 ### 네임스페이스 (KO 상위)
-shipyard · tavern · planetDev · trade · bmShop · researchLab · worldmap · defenseSat · econInfo · combat · territorial …
+shipyard · bar · planetDev · trade · bmShop · researchLab · worldmap · defenseSat · econInfo · combat · territorial …
 
-로드맵(`I18N_MIGRATION_ROADMAP.md`)의 711/94·shipyard 118 잔여 수치는 **구식** — 현재 잔여 중심은 **backup / tavern 시드 / news board / equipment**.
+로드맵(`I18N_MIGRATION_ROADMAP.md`)의 711/94·shipyard 118 잔여 수치는 **구식** — 현재 잔여 중심은 **backup / bar 시드 / news board / equipment**.
 
 ---
 
@@ -99,7 +99,7 @@ shipyard · tavern · planetDev · trade · bmShop · researchLab · worldmap ·
 | 잔여 | 파일 | 성격 |
 |-----:|------|------|
 | 29 | `GameSaveBackupSection.tsx` | 클라우드 백업 UI 전부 KO |
-| 26 | `tavernBoardStore.ts` | 보드 시드·제목 KO 매칭 |
+| 26 | `barBoardStore.ts` | 보드 시드·제목 KO 매칭 |
 | 18 | `ArcNewsBoardSubCore.ts` | 아크 뉴스 푸시 KO |
 | 18 | `shipEquipmentDisplay.ts` | 장비 스탯 라벨 KO |
 | 15 | `PlanetEdenRaidTestLayer.tsx` | 전투/테스트 라벨 (혼합) |
@@ -130,7 +130,7 @@ shipyard · tavern · planetDev · trade · bmShop · researchLab · worldmap ·
 ### P0
 1. `GameSaveBackupSection` → `settings.backup.*`  
 2. `shipEquipmentDisplay` → `equipment.stat.*`  
-3. 뉴스/tavern 시드 → `i18nKey` + params (`noticeText` 패턴)  
+3. 뉴스/bar 시드 → `i18nKey` + params (`noticeText` 패턴)  
 4. common: `confirm` / `continue` / `back`  
 5. Relic 알림 키화  
 

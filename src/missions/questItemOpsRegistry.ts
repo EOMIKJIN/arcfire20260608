@@ -11,10 +11,14 @@ import {
   type MissionQuestCombatOpRow,
   type MissionQuestPlacementRow,
 } from '../data/generated';
-import { getMissionById } from './missionCatalog';
 import { isArcCoreInstanceMissionId } from './arcCoreInstanceMissionResolver';
-import { findFirstIncompleteObjective, listActiveMissionBundles, type MissionActiveBundle } from './missionActiveBundles';
+import { listActiveMissionBundles } from './missionActiveBundles';
 import { sortMarketListingsByBuyPrice } from '../engine/TradeEngine';
+import {
+  resolveQuestCombatAnchorFromLock,
+  resolveQuestCombatLock,
+  shouldGuaranteeQuestTransitEncounter,
+} from './questCombatLock';
 
 const placementByObjectiveId = new Map<string, MissionQuestPlacementRow>(
   MISSION_QUEST_PLACEMENTS_FROM_CSV.map((row) => [row.objectiveId, row]),
@@ -124,48 +128,23 @@ export function applyQuestMarketListingOverrides(
   return sortMarketListingsByBuyPrice([...byGoodId.values()]);
 }
 
-function bundleHasTransitGuaranteedDefeat(bundle: MissionActiveBundle): boolean {
-  for (const objective of bundle.mission.objectives) {
-    if (objective.type !== 'defeat_enemy') continue;
-    if (bundle.progress.objectives[objective.id] === true) continue;
-    const op = combatOpByObjectiveId.get(objective.id);
-    if (op?.encounterPolicy === 'transit_guaranteed') return true;
-  }
-  return false;
-}
-
-/** transit 이동 시 전투 미션 — `transit_guaranteed` 정책이면 100% 조우 */
+/** transit 이동 — 락 베뉴가 transit 이고 정책이 보장일 때 100% */
 export function shouldGuaranteeQuestCombatEncounter(
   progresses: Record<string, MissionProgress>,
   activeMissionId?: string | null,
+  destSystemId?: string | null,
 ): boolean {
-  const bundles = listActiveMissionBundles(progresses);
-  if (activeMissionId) {
-    const primary = bundles.find((bundle) => bundle.mission.id === activeMissionId);
-    return primary ? bundleHasTransitGuaranteedDefeat(primary) : false;
-  }
-  const first = findFirstIncompleteObjective(bundles, 'defeat_enemy');
-  if (!first) return false;
-  const op = combatOpByObjectiveId.get(first.objective.id);
-  return op?.encounterPolicy === 'transit_guaranteed';
+  const lock = resolveQuestCombatLock(progresses, activeMissionId);
+  return shouldGuaranteeQuestTransitEncounter(lock, destSystemId);
 }
 
-/** combat.tsx — offerPlanetId 대신 퀘스트 앵커 행성 우선 */
+/** combat.tsx — 락 앵커 우선, 없으면 offer/폴백 */
 export function resolveQuestCombatAnchorPlanetId(
   progresses: Record<string, MissionProgress>,
   fallbackPlanetId: string | null | undefined,
+  activeMissionId?: string | null,
 ): string | null {
-  for (const bundle of listActiveMissionBundles(progresses)) {
-    for (const objective of bundle.mission.objectives) {
-      if (objective.type !== 'defeat_enemy') continue;
-      if (bundle.progress.objectives[objective.id] === true) continue;
-      const op = combatOpByObjectiveId.get(objective.id);
-      if (op?.anchorPlanetId) return op.anchorPlanetId;
-      const mission = getMissionById(bundle.mission.id);
-      if (mission?.offerPlanetId) return mission.offerPlanetId;
-    }
-  }
-  return fallbackPlanetId ?? null;
+  return resolveQuestCombatAnchorFromLock(progresses, activeMissionId, fallbackPlanetId);
 }
 
 export function listAllQuestPlacementRows(): MissionQuestPlacementRow[] {

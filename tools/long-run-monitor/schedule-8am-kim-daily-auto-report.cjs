@@ -79,6 +79,30 @@ function hasPublishedForToday() {
   }
 }
 
+function alreadyDeliveredToday() {
+  return hasReportForToday() && hasPublishedForToday();
+}
+
+function registerAdbMeminfoUtc() {
+  try {
+    fs.writeFileSync(path.join(logDir, '.last-adb-meminfo.utc'), new Date().toISOString(), 'ascii');
+  } catch {
+    /* ignore */
+  }
+}
+
+function appendDailyTimelineRow(pid, pssMb, glMb, views) {
+  if (!pid || pssMb === '?' || glMb === '?') return;
+  const csv = path.join(logDir, 'mem-timeline.csv');
+  if (!fs.existsSync(csv)) return;
+  const line = `${formatKst()},${pid},${pssMb},,${glMb},,,,,,${views},,,DAILY_8AM_REPORT\n`;
+  try {
+    fs.appendFileSync(csv, line, 'utf8');
+  } catch {
+    /* ignore */
+  }
+}
+
 function log(msg) {
   const line = `[${formatKst()}] ${msg}`;
   console.log(line);
@@ -229,15 +253,15 @@ function waitUntilNext8am() {
       global.__8amRanOnce = true;
       return now;
     }
-    // 08:00~08:14 정시 창 (구버전 2분 창은 sleep 지연 시 하루 통째 누락)
-    if (now.getHours() === 8 && now.getMinutes() < 15) {
+    // 08:00~08:14 정시 창 — 당일 보고가 아직 없을 때만. (창+120s 루프가 2분마다 dumpsys 재실행하던 회귀 차단)
+    if (now.getHours() === 8 && now.getMinutes() < 15 && !alreadyDeliveredToday()) {
       return now;
     }
-    // catch-up: 08:00~11:59 — md·LATEST·CHAT 중 하나라도 없으면 즉시 보충
+    // catch-up: 08:00~11:59 — md·LATEST 중 하나라도 없으면 즉시 보충
     if (
       now.getHours() >= 8 &&
       now.getHours() < 12 &&
-      (!hasReportForToday() || !hasPublishedForToday())
+      !alreadyDeliveredToday()
     ) {
       log(
         `CATCH_UP missing publish for ${kstDateKey(now)} (report=${hasReportForToday()} latest=${hasPublishedForToday()}) — running now`,
@@ -338,6 +362,10 @@ function runDailyReport() {
   const kst = kstNow();
   const dateTag = kstDateKey(kst).replace(/-/g, '');
   const reportFile = todayReportFile(kst);
+  if (alreadyDeliveredToday() && !publishOnly && !runNow) {
+    log(`SKIP_ALREADY_PUBLISHED ${kstDateKey(kst)} — no extra dumpsys`);
+    return;
+  }
   const markerLine = `[${kstStamp(kst)}] ${TimelineMarker} ${kstStamp(kst)} KST`;
   fs.appendFileSync(path.join(logDir, 'incidents.log'), `${markerLine}\n`, 'utf8');
 
@@ -369,11 +397,33 @@ function runDailyReport() {
         if (gl) glMb = (parseInt(gl[1], 10) / 1024).toFixed(1);
         if (v) views = v[1];
         memLine = `PSS ${pssMb}MB · GL ${glMb}MB · Views ${views} · pid=${pidApp}`;
+        registerAdbMeminfoUtc();
+        appendDailyTimelineRow(pidApp, pssMb, glMb, views);
       } else {
         memLine = 'APP_NOT_RUNNING (report still delivered)';
       }
     } catch (e) {
       failReasons.push(`MEMINFO_ERROR — ${e.message || e}`);
+    }
+  }
+
+  // 메모리 예산 원장 — 참고 한 줄만. 실패해도 08:00 verdict 불변.
+  let ledgerLine = '';
+  if (adbOk) {
+    shSafe('powershell', [
+      '-NoProfile',
+      '-ExecutionPolicy',
+      'Bypass',
+      '-File',
+      path.join(__dirname, 'build-arc-memory-budget-ledger.ps1'),
+    ]);
+    try {
+      const ledgerMd = fs.readFileSync(path.join(logDir, 'arc-memory-budget-ledger-latest.md'), 'utf8');
+      const p50 = ledgerMd.match(/PSS p50 \| ([\d.]+) MB/);
+      const nat = ledgerMd.match(/Native p50 \| ([\d.]+) MB/);
+      if (p50 && nat) ledgerLine = `ledger p50=${p50[1]}MB native=${nat[1]}MB`;
+    } catch {
+      /* ignore */
     }
   }
 
@@ -458,6 +508,7 @@ function runDailyReport() {
     `- **adb**: ${adbOk ? `OK (${devices.join(', ')})` : '**FAIL — 미연결**'}`,
     `- **앱**: ${appRunning ? 'RUNNING' : 'NOT_RUNNING (보고는 정상 산출)'}`,
     `- **mem-monitor**: **${memStatus}** (${memLine})`,
+    ...(ledgerLine ? [`- **mem-budget-ledger**: ${ledgerLine}`] : []),
     `- **report**: ${reportFile}`,
     `- **verdict**: **${verdict}**${failReasons.length ? ` — ${failReasons.join('; ')}` : ''}`,
     `- **incidents (actionable tail)**: ${actionable.length}`,

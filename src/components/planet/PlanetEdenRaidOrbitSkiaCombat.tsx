@@ -23,10 +23,17 @@ import type { SkImage } from '@shopify/react-native-skia';
 import type { SkColor } from '@shopify/react-native-skia';
 import { FONTS } from '../../utils/theme';
 import {
+  CRAFT_CARRIER_HEAD_COLOR,
+  CRAFT_CARRIER_TRAIL_GLOW_COLOR,
+  CRAFT_DRONE_HEAD_COLOR,
+  CRAFT_DRONE_TRAIL_GLOW_COLOR,
   resolveCapitalLaserBeamPresentation,
   resolveCapitalProjectilePresentation,
-  ROCKET_TEST_PRESENTATION,
 } from '../../combat/capitalWeaponPipeline';
+import {
+  CRAFT_TRAIL_SAMPLES,
+  type CapitalCraft,
+} from '../../combat/capitalCraftPool';
 import { registerCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
 import { disposePlanetSkiaHitFxModuleCaches } from './planetSkiaHitFxContract';
 import {
@@ -67,6 +74,13 @@ const NOVA_HEAD_MINOR_RADIUS = MISSILE_HEAD_DOT_RADIUS * 1.35;
 /** 로켓탄 탄두 — 표시 최소 타원(비행방향 major · 횡방향 minor). 원보다 얇게 보여 발칸 탄두 느낌 */
 const ROCKET_HEAD_MAJOR_RADIUS = 1.0;
 const ROCKET_HEAD_MINOR_RADIUS = 0.42;
+const CRAFT_DRONE_HEAD_RADIUS = 2.15;
+const CRAFT_CARRIER_MAJOR_RADIUS = 2.6;
+const CRAFT_CARRIER_MINOR_RADIUS = 1.15;
+const CRAFT_TRAIL_GLOW_STROKE_DRONE = 2.0;
+const CRAFT_TRAIL_GLOW_STROKE_CARRIER = 2.4;
+const CRAFT_TRAIL_GLOW_OPACITY = 0.55;
+const EMPTY_CRAFTS: CapitalCraft[] = [];
 const BEZIER_SAMPLES = 16;
 const MISSILE_MAX_TRAIL_SEGMENTS = 10;
 // 전함 폭발 FX — 아크코어 드론 미사일 폭발과 동일한 화염 폭발 FX(planetSkiaHitFxContract) 재사용.
@@ -90,6 +104,11 @@ type CombatSkiaPoolBundle = {
   novaTangentStable: Map<number, number>;
   /** 에이전트 id → 분사화염 길이(속도 연동 ease 상태) */
   thrusterLenSmooth: Map<number, number>;
+  /** 함재기 타원 1개 rewind — 루프 내 Path.Make 금지 */
+  craftOval: SkPath | null;
+  /** 드론·함재기 꼬리 배칭 Path 각 1개 — 기체당 Path 금지 */
+  craftTrailDrone: SkPath | null;
+  craftTrailCarrier: SkPath | null;
 };
 
 function createCombatSkiaPoolBundle(): CombatSkiaPoolBundle {
@@ -102,7 +121,68 @@ function createCombatSkiaPoolBundle(): CombatSkiaPoolBundle {
     novaHeadSpare: [],
     novaTangentStable: new Map(),
     thrusterLenSmooth: new Map(),
+    craftOval: null,
+    craftTrailDrone: null,
+    craftTrailCarrier: null,
   };
+}
+
+function ensureCraftOval(pools: CombatSkiaPoolBundle): SkPath {
+  let path = pools.craftOval;
+  if (!path) {
+    path = Skia.Path.Make();
+    pools.craftOval = path;
+  }
+  return path;
+}
+
+function ensureCraftTrailPath(
+  pools: CombatSkiaPoolBundle,
+  family: 'drone' | 'carrier',
+): SkPath {
+  if (family === 'drone') {
+    let path = pools.craftTrailDrone;
+    if (!path) {
+      path = Skia.Path.Make();
+      pools.craftTrailDrone = path;
+    }
+    return path;
+  }
+  let path = pools.craftTrailCarrier;
+  if (!path) {
+    path = Skia.Path.Make();
+    pools.craftTrailCarrier = path;
+  }
+  return path;
+}
+
+function writeCraftTrailBatch(
+  path: SkPath,
+  crafts: readonly CapitalCraft[],
+  family: 'drone' | 'carrier',
+): boolean {
+  resetPath(path);
+  let any = false;
+  for (let i = 0; i < crafts.length; i++) {
+    const c = crafts[i]!;
+    if (!c.alive || c.family !== family || c.trailLen < 2) continue;
+    const xs = c.trailXs;
+    const ys = c.trailYs;
+    const oldest = (c.trailWrite - c.trailLen + CRAFT_TRAIL_SAMPLES) % CRAFT_TRAIL_SAMPLES;
+    const x0 = xs[oldest]!;
+    const y0 = ys[oldest]!;
+    if (!finiteNum(x0) || !finiteNum(y0)) continue;
+    path.moveTo(x0, y0);
+    for (let k = 1; k < c.trailLen; k++) {
+      const idx = (oldest + k) % CRAFT_TRAIL_SAMPLES;
+      const x = xs[idx]!;
+      const y = ys[idx]!;
+      if (!finiteNum(x) || !finiteNum(y)) continue;
+      path.lineTo(x, y);
+    }
+    any = true;
+  }
+  return any;
 }
 
 function finiteNum(n: unknown): n is number {
@@ -678,11 +758,20 @@ function recordCombatOrbitPicture(
   const tMs = sim.tMsRef.current;
   const agents = sim.agentsRef.current;
   const missiles = sim.missilesRef.current;
+  const crafts = sim.craftsRef?.current ?? EMPTY_CRAFTS;
   const idBuf = sim.agentByIdSparseRef.current;
 
   syncCombatSkiaPoolsFromSim(missiles, agents, pools);
 
-  const vfx = resolveCombatOrbitVfxBudget(agents.length, missiles.length, sim.fpsRef.current);
+  let craftAlive = 0;
+  for (let ci = 0; ci < crafts.length; ci++) {
+    if (crafts[ci]!.alive) craftAlive += 1;
+  }
+  const vfx = resolveCombatOrbitVfxBudget(
+    agents.length,
+    missiles.length + craftAlive,
+    sim.fpsRef.current,
+  );
 
   const recorder = getCombatPictureRecorder();
   const canvas = recorder.beginRecording(Skia.XYWHRect(0, 0, orbitSize, orbitSize));
@@ -715,9 +804,7 @@ function recordCombatOrbitPicture(
     /** 스폰 시 확정 플래그 — 틱마다 runtimeSpec 객체 재생성 금지(GC·Finalizer 압력) */
     const isRocket = m.isRocketProjectile;
     const isNovaLocked = m.isNovaProjectile;
-    const projectileVis = isRocket
-      ? ROCKET_TEST_PRESENTATION
-      : resolveCapitalProjectilePresentation(m.missileWeaponId);
+    const projectileVis = resolveCapitalProjectilePresentation(m.missileWeaponId);
     const showNovaTelegraph =
       isNovaLocked &&
       tSince >= 0 &&
@@ -845,11 +932,30 @@ function recordCombatOrbitPicture(
       const diamondPool = pools.diamond;
       const dPath = acquireSkPathFromPool(diamondPool, pools.diamondSpare, ag.id);
       writeDiamondPath(dPath, ag.x, ag.y, ag.headingRad, ALLY_MARK_HALF);
-      draw.pathStroke(dPath, ag.stroke, 2.5, 0.98, StrokeJoin.Miter, StrokeCap.Round);
+      const tinted = tMs < ag.statusTintUntilMs && ag.statusTintHex.length > 0;
+      const hullStroke = tinted ? ag.statusTintHex : ag.stroke;
+      draw.pathStroke(dPath, hullStroke, 2.5, 0.98, StrokeJoin.Miter, StrokeCap.Round);
 
       const bx = ag.x + Math.cos(ag.headingRad) * DEBUG_CAPITAL_BOW_LINE_PX;
       const by = ag.y + Math.sin(ag.headingRad) * DEBUG_CAPITAL_BOW_LINE_PX;
-      draw.line(ag.x, ag.y, bx, by, ag.stroke, 1.35, 0.9);
+      draw.line(ag.x, ag.y, bx, by, hullStroke, 1.35, 0.9);
+      if (tinted) {
+        draw.circle(ag.x, ag.y, ALLY_MARK_HALF + 3.2, hullStroke, 'stroke', 1.35, 0.7);
+        const kind = ag.statusIconKind;
+        if (kind === 'pierce' || kind === 'ghost' || kind === 'cut') {
+          const nx = Math.cos(ag.headingRad);
+          const ny = Math.sin(ag.headingRad);
+          draw.line(
+            ag.x - nx * 10,
+            ag.y - ny * 10,
+            ag.x + nx * 10,
+            ag.y + ny * 10,
+            hullStroke,
+            1.55,
+            0.82,
+          );
+        }
+      }
     } else if (showDestroyFx) {
       // 전함 폭발 — 아크코어 드론 미사일 폭발과 동일한 화염 폭발 FX(궤도 Picture 전용)
       drawPlanetFlameBurstOnSkCanvas(
@@ -862,6 +968,55 @@ function recordCombatOrbitPicture(
         flameImage,
       );
     }
+  }
+
+  const craftOval = craftAlive > 0 ? ensureCraftOval(pools) : null;
+  if (craftAlive > 0) {
+    const droneTrail = ensureCraftTrailPath(pools, 'drone');
+    if (writeCraftTrailBatch(droneTrail, crafts, 'drone')) {
+      draw.pathStroke(
+        droneTrail,
+        CRAFT_DRONE_TRAIL_GLOW_COLOR,
+        CRAFT_TRAIL_GLOW_STROKE_DRONE,
+        CRAFT_TRAIL_GLOW_OPACITY,
+      );
+    }
+    const carrierTrail = ensureCraftTrailPath(pools, 'carrier');
+    if (writeCraftTrailBatch(carrierTrail, crafts, 'carrier')) {
+      draw.pathStroke(
+        carrierTrail,
+        CRAFT_CARRIER_TRAIL_GLOW_COLOR,
+        CRAFT_TRAIL_GLOW_STROKE_CARRIER,
+        CRAFT_TRAIL_GLOW_OPACITY,
+      );
+    }
+  }
+  for (let ci = 0; ci < crafts.length; ci++) {
+    const craft = crafts[ci]!;
+    if (!craft.alive) continue;
+    if (!finiteNum(craft.x) || !finiteNum(craft.y)) continue;
+    if (craft.family === 'drone') {
+      draw.circle(
+        craft.x,
+        craft.y,
+        CRAFT_DRONE_HEAD_RADIUS,
+        CRAFT_DRONE_HEAD_COLOR,
+        'fill',
+        undefined,
+        0.98,
+      );
+      continue;
+    }
+    if (!craftOval) continue;
+    writeNovaHeadOvalAlongTangent(
+      craftOval,
+      craft.x,
+      craft.y,
+      craft.headingRad,
+      CRAFT_CARRIER_MAJOR_RADIUS,
+      CRAFT_CARRIER_MINOR_RADIUS,
+    );
+    canvas.drawPath(craftOval, fillPaint(CRAFT_CARRIER_HEAD_COLOR, 0.98));
   }
 
   if (renderMissileDodgeFx && dodgeImage) {
@@ -978,6 +1133,18 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
         drainSkPathPool(pools.missileTrail, pools.missileTrailSpare);
         drainSkPathPool(pools.novaHead, pools.novaHeadSpare);
         drainSkPathPool(pools.diamond, pools.diamondSpare);
+        if (pools.craftOval) {
+          safeSkiaDispose(pools.craftOval);
+          pools.craftOval = null;
+        }
+        if (pools.craftTrailDrone) {
+          safeSkiaDispose(pools.craftTrailDrone);
+          pools.craftTrailDrone = null;
+        }
+        if (pools.craftTrailCarrier) {
+          safeSkiaDispose(pools.craftTrailCarrier);
+          pools.craftTrailCarrier = null;
+        }
         pools.novaTangentStable.clear();
         pools.thrusterLenSmooth.clear();
         dropSkPictureReactFrame({ liveRef: picLiveRef, setPicture });

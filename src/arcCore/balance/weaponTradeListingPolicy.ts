@@ -5,10 +5,12 @@
 
 import { WeaponTradeListingPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
 import { CAPITAL_WEAPON_LIST_FROM_CSV } from '../../data/generated/csvWeapons';
+import { resolveHostileEnemyWeaponLoadout } from '../../combat/hostileEnemyWeaponLoadoutFromBalance';
 import {
   getTradePortWeaponListingCount,
   getTradePortWeaponMinPerPlanet,
   getTradePortWeaponZoneOverlap,
+  resolveTargetCombatLevelForZone,
 } from './balanceTableRegistry';
 import { getPlanetLevelingRowForZone } from '../planetBalance/planetZoneIndexRegistry';
 
@@ -172,25 +174,75 @@ export function buildTradePortWeaponIdsForZoneUncapped(zoneIndex: number): strin
     }
   }
 
+  for (const id of listChallengeWeaponIdsForZone(zoneIndex)) {
+    selected.add(id);
+  }
+
   return sortTradePortWeaponIds([...selected]);
 }
 
-/** pinned 유지 + progression 선두 N종(기본 zone 배분) */
-export function capTradePortWeaponListingToZonePolicy(sortedUncapped: readonly string[]): string[] {
-  const listingCap = getTradePortWeaponListingCount();
-  if (sortedUncapped.length <= listingCap) return [...sortedUncapped];
+/** 현재 존 + 다음 존 TCL 적 무장 — 무역소에 예약 진열(구매는 파일럿 Lv) */
+export function listChallengeWeaponIdsForZone(zoneIndex: number): string[] {
+  const zone = Math.max(1, Math.min(21, Math.round(zoneIndex)));
+  const levels = [resolveTargetCombatLevelForZone(zone)];
+  if (zone < 21) levels.push(resolveTargetCombatLevelForZone(zone + 1));
+  const selected = new Set<string>();
+  for (const level of levels) {
+    for (let spawn = 0; spawn < 3; spawn += 1) {
+      const loadout = resolveHostileEnemyWeaponLoadout(spawn, level);
+      if (isCanonicalTradePortWeapon(loadout.laserWeaponId)) selected.add(loadout.laserWeaponId);
+      if (isCanonicalTradePortWeapon(loadout.missileWeaponId)) selected.add(loadout.missileWeaponId);
+    }
+  }
+  return [...selected];
+}
 
-  const pinned = sortedUncapped.filter((id) => isPinnedTradePortWeapon(id));
-  const progression = sortedUncapped.filter((id) => !isPinnedTradePortWeapon(id));
-  const progressionSlots = Math.max(0, listingCap - pinned.length);
-  return [...pinned, ...progression.slice(0, progressionSlots)];
+/** pinned + 도전 키트 우선, 나머지는 progression 선두 */
+export function capTradePortWeaponListingToZonePolicy(
+  sortedUncapped: readonly string[],
+  reservedIds: readonly string[] = [],
+): string[] {
+  const listingCap = getTradePortWeaponListingCount();
+  const reserved: string[] = [];
+  const seen = new Set<string>();
+  for (const raw of reservedIds) {
+    const id = raw.trim();
+    if (!id || seen.has(id) || !isCanonicalTradePortWeapon(id)) continue;
+    seen.add(id);
+    reserved.push(id);
+  }
+  if (sortedUncapped.length <= listingCap && reserved.every((id) => sortedUncapped.includes(id))) {
+    const extra = reserved.filter((id) => !sortedUncapped.includes(id));
+    if (extra.length === 0) return [...sortedUncapped];
+  }
+
+  const pinned = sortedUncapped.filter((id) => isPinnedTradePortWeapon(id) && !seen.has(id));
+  const rest = sortedUncapped.filter((id) => !isPinnedTradePortWeapon(id) && !seen.has(id));
+  const out: string[] = [];
+  for (const id of reserved) {
+    if (out.length >= listingCap) break;
+    out.push(id);
+  }
+  for (const id of pinned) {
+    if (out.length >= listingCap) break;
+    out.push(id);
+  }
+  for (const id of rest) {
+    if (out.length >= listingCap) break;
+    out.push(id);
+  }
+  return sortTradePortWeaponIds(out);
 }
 
 /**
- * 행성 zone — 기본 무장(pinned) 상시 + 성능 밴드 progression + 계열 최소 1종.
+ * 행성 zone — 기본 무장(pinned) 상시 + 현재·다음 존 도전 키트 + 성능 밴드.
  */
 export function resolveTradePortWeaponIdsForZone(zoneIndex: number): string[] {
-  return capTradePortWeaponListingToZonePolicy(buildTradePortWeaponIdsForZoneUncapped(zoneIndex));
+  const reserved = listChallengeWeaponIdsForZone(zoneIndex);
+  return capTradePortWeaponListingToZonePolicy(
+    buildTradePortWeaponIdsForZoneUncapped(zoneIndex),
+    reserved,
+  );
 }
 
 export function resolveWeaponFamilyKindForTradeCatalogWeapon(weaponId: string): string {

@@ -57,6 +57,7 @@ export {
   arcSeedTransportCaptainIdForSystem,
   arcSeedTransportShipIdForSystem,
   invalidateArcSeedTransportTemplateCache,
+  isArcSeedTransportCaptainId,
   resolveArcSeedTransportCaptainForSystem,
   resolveArcSeedTransportShipForSystem,
 } from './arcSeedTransportRegistry';

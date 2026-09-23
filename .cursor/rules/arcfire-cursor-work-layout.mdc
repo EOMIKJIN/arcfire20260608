@@ -1,0 +1,14 @@
+---
+description: 기존작업환경 복구 — 김클로드 가운데 탭 · 김팀장 오른쪽 Agent. 대표님이 「기존작업환경 복구」라고 하면 실행.
+alwaysApply: false
+---
+
+# 기존작업환경 복구
+
+대표님 명령이 **「기존작업환경 복구」** · **작업환경 복구** · **김클로드 창이 작다** 이면:
+
+1. `.cursor/skills/restore-work-layout/SKILL.md` 를 읽고
+2. `powershell -NoProfile -ExecutionPolicy Bypass -File .cursor/work-layout/restore-work-layout.ps1` 를 저장소 루트에서 실행
+3. 게임 `src/` · `app/` 는 만지지 않는다
+
+복구 목표: 김클로드 = 가운데 에디터 탭. 김팀장 = 오른쪽 Agent. 왼쪽 아래 Claude 아이콘 금지.

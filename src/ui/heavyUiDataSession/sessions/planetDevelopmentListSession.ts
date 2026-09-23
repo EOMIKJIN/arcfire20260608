@@ -3,7 +3,7 @@ import type { PlanetDevFacilitySnapshotSlice } from '../../../game/planetDevelop
 import { buildOrbitShipyardDevSnapshot } from '../../../game/planetDevelopment/planetOrbitShipyardDevelopment';
 import { buildTradePortDevSnapshot } from '../../../game/planetDevelopment/planetTradePortDevelopment';
 import { buildLaboratoryDevSnapshot } from '../../../game/planetDevelopment/planetLaboratoryDevelopment';
-import { buildTavernFacilityDevSnapshot } from '../../../game/planetDevelopment/planetTavernFacilityDevelopment';
+import { buildBarFacilityDevSnapshot } from '../../../game/planetDevelopment/planetBarFacilityDevelopment';
 import { buildDefenseSatelliteDevSnapshot } from '../../../systems/planetaryDefense/planetDefenseSatelliteDevelopment';
 import { createPlanetDevelopmentHydrateSteps } from '../hydrateRecipes';
 import { preflightPlanetHubSession } from '../preflightPlanetHub';
@@ -21,6 +21,7 @@ function toSnapshotSlice(
   return {
     installed: snap.installed,
     level: snap.level,
+    maxLevel: snap.maxLevel,
     isInstalling: snap.isInstalling,
     isUpgrading: snap.isUpgrading,
     upgradeProgressPct: snap.upgradeProgressPct,
@@ -38,14 +39,14 @@ export function buildPlanetDevelopmentListSessionData(
   const shipyardSnapshot = buildOrbitShipyardDevSnapshot(planetId);
   const tradePortSnapshot = buildTradePortDevSnapshot(planetId);
   const laboratorySnapshot = buildLaboratoryDevSnapshot(planetId);
-  const tavernSnapshot = buildTavernFacilityDevSnapshot(planetId);
+  const barSnapshot = buildBarFacilityDevSnapshot(planetId);
 
   const snapshotByCatalogId: Record<string, PlanetDevFacilitySnapshotSlice | null> = {
     defense_satellite: toSnapshotSlice(defenseSnapshot),
     dev_orbit_shipyard: toSnapshotSlice(shipyardSnapshot),
     dev_trade_port: toSnapshotSlice(tradePortSnapshot),
     dev_research_lab: toSnapshotSlice(laboratorySnapshot),
-    dev_population_dome: toSnapshotSlice(tavernSnapshot),
+    dev_population_dome: toSnapshotSlice(barSnapshot),
   };
 
   const activeSnapshots = Object.values(snapshotByCatalogId).filter(

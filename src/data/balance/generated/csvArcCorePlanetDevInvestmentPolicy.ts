@@ -6,7 +6,7 @@ export const ArcCorePlanetDevInvestmentPolicy_FROM_BALANCE_CSV = [
   { "key": "module_weight_dev_orbit_shipyard", "value": "70", "notesKo": "궤도 조선소" },
   { "key": "module_weight_dev_trade_port", "value": "75", "notesKo": "무역소" },
   { "key": "module_weight_dev_research_lab", "value": "60", "notesKo": "연구소" },
-  { "key": "module_weight_dev_population_dome", "value": "50", "notesKo": "선술집" },
+  { "key": "module_weight_dev_population_dome", "value": "50", "notesKo": "바" },
   { "key": "contested_defense_bonus", "value": "40", "notesKo": "접전지 방위위성 가산" },
   { "key": "capital_prime_bonus", "value": "30", "notesKo": "core_prime 행성 가산" },
   { "key": "min_first_wave_planets", "value": "3", "notesKo": "1차 우선선행 개발 행성 최소 수" },

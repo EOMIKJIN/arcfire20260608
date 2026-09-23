@@ -8,19 +8,26 @@ import { resolvePlanetDevModuleIcon } from '../../ui/tactical/listingIconSpecs';
 import { t } from '../../i18n';
 import { tryCompleteLaboratoryUpgrade } from './planetLaboratoryDevelopment';
 import { tryCompleteOrbitShipyardUpgrade } from './planetOrbitShipyardDevelopment';
-import { tryCompleteTavernFacilityUpgrade } from './planetTavernFacilityDevelopment';
+import { tryCompleteBarFacilityUpgrade } from './planetBarFacilityDevelopment';
 import { tryCompleteTradePortUpgrade } from './planetTradePortDevelopment';
 import { tryCompleteDefenseSatelliteUpgrade } from '../../systems/planetaryDefense/planetDefenseSatelliteDevelopment';
+import { tryCompletePlanetCoreStatRd } from './planetCoreStatRdRuntime';
 import {
   planetDevLevelI18nParams,
   planetDevUpgradeI18nParams,
   formatPlanetDevLevelLabel,
   formatPlanetDevLevelUpgradeArrow,
 } from './planetFacilityDevLevelDisplay';
+import { formatPlanetDevListLevelTag, resolvePlanetDevIconChromaPct } from './planetDevListIconChroma';
+import {
+  appendDefenseSatColonizeSummaryLine,
+  resolveStelliumColonizeRequiredDefenseSatLevel,
+} from '../../arcCore/colonize/stelliumColonizeDefenseSat';
 
 export type PlanetDevFacilitySnapshotSlice = {
   installed: boolean;
   level: number;
+  maxLevel: number;
   isInstalling: boolean;
   isUpgrading: boolean;
   upgradeProgressPct: number;
@@ -39,6 +46,9 @@ export type PlanetDevListRowView = {
   catalogId: string;
   enabled: boolean;
   placeholderIcon: PlanetHubActionIconSpec;
+  iconChromaPct: number;
+  levelTag: string;
+  displayLevel: number;
   label: string;
   summary: string;
   completeStatus: string | null;
@@ -54,7 +64,14 @@ function resolveLabel(row: PlanetDevelopmentCatalogRow): string {
 function resolveSummary(row: PlanetDevelopmentCatalogRow): string {
   const key = `planetDev.summary.${row.id}`;
   const val = t(key);
-  return val === key ? row.summaryKo : val;
+  const base = val === key ? row.summaryKo : val;
+  if (row.id !== 'defense_satellite') return base;
+  const need = resolveStelliumColonizeRequiredDefenseSatLevel();
+  if (need <= 0) return base;
+  return appendDefenseSatColonizeSummaryLine(
+    base,
+    t('planetDev.summary.defense_satelliteColonize', { level: need }),
+  );
 }
 
 export function resolvePlanetDevListPlaceholderIcon(catalogId: string): PlanetHubActionIconSpec {
@@ -125,11 +142,26 @@ export function buildPlanetDevListRowView(
   const summary = resolveSummary(row);
   const placeholderIcon = resolvePlanetDevListPlaceholderIcon(row.id);
 
+  const iconChromaPct = resolvePlanetDevIconChromaPct({
+    enabled: row.enabled,
+    installed: snapshot?.installed ?? false,
+    level: snapshot?.level ?? 0,
+    maxLevel: snapshot?.maxLevel ?? 15,
+    isInstalling: snapshot?.isInstalling ?? false,
+    isUpgrading: snapshot?.isUpgrading ?? false,
+    upgradeProgressPct: snapshot?.upgradeProgressPct ?? 0,
+  });
+  const displayLevel = snapshot?.installed ? Math.max(0, Math.floor(snapshot.level)) : 0;
+  const levelTag = formatPlanetDevListLevelTag(displayLevel);
+
   if (!row.enabled || !snapshot) {
     return {
       catalogId: row.id,
       enabled: row.enabled,
       placeholderIcon,
+      iconChromaPct,
+      levelTag,
+      displayLevel,
       label,
       summary,
       completeStatus: null,
@@ -141,6 +173,9 @@ export function buildPlanetDevListRowView(
     catalogId: row.id,
     enabled: row.enabled,
     placeholderIcon,
+    iconChromaPct,
+    levelTag,
+    displayLevel,
     label,
     summary,
     completeStatus: resolveCompleteStatus(row.id, snapshot),
@@ -153,7 +188,8 @@ export function tryCompleteAllPlanetDevJobs(planetId: string): void {
   tryCompleteOrbitShipyardUpgrade(planetId);
   tryCompleteTradePortUpgrade(planetId);
   tryCompleteLaboratoryUpgrade(planetId);
-  tryCompleteTavernFacilityUpgrade(planetId);
+  tryCompleteBarFacilityUpgrade(planetId);
+  tryCompletePlanetCoreStatRd(planetId);
 }
 
 export function hasAnyPlanetDevJobInProgress(

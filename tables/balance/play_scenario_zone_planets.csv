@@ -3,7 +3,7 @@ zoneIndex,primaryPlanetId,systemId,planetLabelKo,scenarioLocationKo,hostileShipC
 2,vega_base,vega_outpost,베가 전초기지 베이스,베가 전초기지(Vega Outpost),2,3,250,light,40,false,draco_wave
 3,solar_station,solar_port,솔라 항구 스테이션,솔라 항구(Solar Port),2,5,400,light,44,false,draco_wave
 4,minerva_deep,minerva,미네르바 딥,미네르바(Minerva),2,7,650,light,48,false,draco_wave
-5,draco_haven,draco_nebula,드라코 성운 헤이븐,드라코 성운(Draco Nebula),3,9,900,shielded,72,true,draco_boss
+5,draco_haven,draco_nebula,드라코 성운 헤이븐,드라코 성운(Draco Nebula),2,9,900,shielded,72,true,draco_boss
 6,eden_city,new_eden,뉴에덴 프라임,뉴에덴(New Eden),2,12,1200,light,60,false,draco_wave
 7,iron_remnant,iron_cross,아이언 크로스 레므난트,아이언 크로스(Iron Cross),3,15,1600,shielded,52,false,draco_wave
 8,sirius_border,sirius,시리우스 보더,시리우스(Sirius),3,18,2100,shielded,60,false,draco_wave

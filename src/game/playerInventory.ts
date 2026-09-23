@@ -15,14 +15,28 @@ export const PLAYER_INVENTORY_MAX_STACK = 99_999;
 
 export type PlayerInventorySlot = CargoItem | null;
 
-export function createEmptyInventorySlots(): PlayerInventorySlot[] {
-  return Array.from({ length: PLAYER_INVENTORY_SLOT_COUNT }, () => null);
+export function createEmptyInventorySlots(slotCount = PLAYER_INVENTORY_SLOT_COUNT): PlayerInventorySlot[] {
+  const n = Math.max(PLAYER_INVENTORY_SLOT_COUNT, Math.floor(slotCount));
+  return Array.from({ length: n }, () => null);
 }
 
-export function normalizeInventorySlots(raw: unknown): PlayerInventorySlot[] {
-  if (!Array.isArray(raw)) return createEmptyInventorySlots();
+/** 슬롯 수를 늘릴 때만 빈 칸을 붙인다. 축소하지 않음(기존 적재 보존) */
+export function ensureInventorySlotCapacity(
+  slots: PlayerInventorySlot[],
+  slotCount: number,
+): PlayerInventorySlot[] {
+  const n = Math.max(PLAYER_INVENTORY_SLOT_COUNT, Math.floor(slotCount));
+  if (slots.length >= n) return slots;
+  const next = slots.slice();
+  while (next.length < n) next.push(null);
+  return next;
+}
+
+export function normalizeInventorySlots(raw: unknown, slotCount = PLAYER_INVENTORY_SLOT_COUNT): PlayerInventorySlot[] {
+  const n = Math.max(PLAYER_INVENTORY_SLOT_COUNT, Math.floor(slotCount));
+  if (!Array.isArray(raw)) return createEmptyInventorySlots(n);
   const out: PlayerInventorySlot[] = [];
-  for (let i = 0; i < PLAYER_INVENTORY_SLOT_COUNT; i++) {
+  for (let i = 0; i < n; i++) {
     const cell = raw[i];
     if (!cell || typeof cell !== 'object') {
       out.push(null);
@@ -104,6 +118,19 @@ export function addToInventorySlotsMax(
     }
   }
   return { slots: next, added };
+}
+
+/** 보유분만큼만 차감. 부족해도 있는 수량은 제거한다. */
+export function removeGoodFromInventorySlotsBestEffort(
+  slots: PlayerInventorySlot[],
+  goodId: string,
+  quantity: number,
+): { slots: PlayerInventorySlot[]; removed: number } {
+  const have = countGoodInInventory(slots, goodId);
+  const take = Math.min(have, Math.max(0, Math.floor(quantity)));
+  if (take <= 0) return { slots, removed: 0 };
+  const next = removeGoodFromInventorySlots(slots, goodId, take);
+  return { slots: next ?? slots, removed: next ? take : 0 };
 }
 
 /** goodId 기준 수량만큼 인벤에서 차감(뒤 슬롯부터). 실패 시 null */

@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import React, { memo, useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   Animated,
   Easing,
@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { FONTS, SPACING } from '../../utils/theme';
 import { TACTICAL_HUB } from '../../ui/tactical/tacticalHubTokens';
-import { resolveNpcCaptainPortraitAspectRatio } from '../../game/npcCaptainPortraitAssets';
+import { resolvePassportIdentityPhotoWidthPx } from '../../ui/passportIdentityPhotoLayout';
 import { useT } from '../../i18n';
 
 /** 하단 고정 헤더 높이 — `planetMainStageLayout` 도크 추정과 동기 */
@@ -29,11 +29,6 @@ export const PLANET_MAIN_PILOT_STATS_EXPANDED_HEIGHT_PX = 156;
 const EXPAND_ANIM_MS = 280;
 
 const PASSPORT_DOC_HEADER_PX = 22;
-const PASSPORT_BODY_HEIGHT_PX =
-  PLANET_MAIN_PILOT_STATS_EXPANDED_HEIGHT_PX - PASSPORT_DOC_HEADER_PX;
-
-/** 포트레이트 미로드 시 사진 열 폴백 */
-const PASSPORT_PHOTO_COLUMN_FALLBACK_WIDTH_PX = 90;
 
 const PASSPORT = {
   docHeaderBg: 'rgba(24, 28, 36, 0.98)',
@@ -94,13 +89,7 @@ export const PlanetMainPilotInfoPanel = memo(function PlanetMainPilotInfoPanel({
   const [expanded, setExpanded] = useState(false);
   const expandAnim = useRef(new Animated.Value(0)).current;
 
-  const photoColumnWidthPx = useMemo(() => {
-    const aspect = resolveNpcCaptainPortraitAspectRatio(portraitSource);
-    if (aspect != null) {
-      return Math.round(PASSPORT_BODY_HEIGHT_PX * aspect);
-    }
-    return PASSPORT_PHOTO_COLUMN_FALLBACK_WIDTH_PX;
-  }, [portraitSource]);
+  const photoColumnWidthPx = resolvePassportIdentityPhotoWidthPx();
 
   useEffect(() => {
     Animated.timing(expandAnim, {

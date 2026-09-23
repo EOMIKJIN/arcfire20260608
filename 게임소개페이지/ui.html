@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>게임 UI — 아크파이어 온라인 위키</title>
+<meta name="description" content="단일 오버레이 호스트 구조, 인게임 대화창 3단 팝업, Tactical/Phosphor 두 비주얼 테마" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body data-page="ui">
+
+<header class="site-header">
+  <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <div class="site-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
+    <div class="search-hits"></div>
+  </div>
+  <button class="theme-toggle" type="button" aria-label="테마 전환"></button>
+</header>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-group"><h5>시작</h5><a href="index.html" data-page="index"><span class="dot"></span>홈</a></div>
+    <div class="sidebar-group"><h5>세계</h5>
+      <a href="world.html" data-page="world"><span class="dot"></span>세계관 · 아크코어</a>
+      <a href="factions.html" data-page="factions"><span class="dot"></span>4대 세력</a>
+      <a href="galaxy.html" data-page="galaxy"><span class="dot"></span>은하 · 행성</a>
+      <a href="story.html" data-page="story"><span class="dot"></span>스토리 · 미션</a>
+    </div>
+    <div class="sidebar-group"><h5>전력</h5>
+      <a href="ships.html" data-page="ships"><span class="dot"></span>함선</a>
+      <a href="weapons.html" data-page="weapons"><span class="dot"></span>무기체계</a>
+      <a href="skills.html" data-page="skills"><span class="dot"></span>스킬</a>
+      <a href="items.html" data-page="items"><span class="dot"></span>아이템 · 강화</a>
+    </div>
+    <div class="sidebar-group"><h5>체제</h5>
+      <a href="economy.html" data-page="economy"><span class="dot"></span>경제 시스템</a>
+      <a href="planetdev.html" data-page="planetdev"><span class="dot"></span>행성개발</a>
+      <a href="combat.html" data-page="combat"><span class="dot"></span>전투 · 분쟁</a>
+      <a href="arccore.html" data-page="arccore"><span class="dot"></span>아크코어 AI</a>
+      <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
+      <a href="ui.html" data-page="ui" class="active"><span class="dot"></span>게임 UI</a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="content-wrap">
+    <article class="content">
+      <div class="eyebrow">체제 · 화면</div>
+      <h1 class="page-title">게임 UI</h1>
+      <p class="page-lede">
+        화면은 3단 스테이지(행성 허브 → 은하 지도 → 전투)를 오가고, 그 위에 뜨는 모든 팝업·알림·대화창은
+        RN(React Native)의 기본 Modal이 아니라 <strong>단일 오버레이 호스트</strong> 하나로 통일돼 있다.
+        이 구조 원칙 자체가 이 게임 UI의 가장 큰 특징이다.
+      </p>
+
+      <h2>단일 오버레이 호스트 — 모든 팝업의 공통 뼈대</h2>
+      <p>
+        상점·설정·행성개발 상세·거래 수량 입력 같은 화면형 팝업은 전부 같은 조립 구조를 쓴다. 새 팝업을
+        만들 때도 독립된 화면을 새로 짜지 않고 이 조립을 확장한다.
+      </p>
+      <blockquote>
+ArcOverlayHost<br />
+&nbsp;└─ ArcOverlayCard(제목 헤더 + 본문 스크롤 + 하단 액션 독)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;├─ ArcOverlayTitleHeader — 제목·부제만(데이터 금지)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;├─ body — panelPrefix(단가·재고 등 고정 메타) + 스크롤 본문<br />
+&nbsp;&nbsp;&nbsp;&nbsp;└─ footerDock — [취소][확인]류 액션, 스크롤 밖에 고정
+      </blockquote>
+      <p>이 구조를 지키기 위한 회귀 방지 규칙 4가지가 명시돼 있다:</p>
+      <ol>
+        <li>카드 폭은 항상 100% — 제목 텍스트 길이에 맞춰 줄어들지 않게 별도로 고정</li>
+        <li>본문에 <code>flex:1</code>을 직접 쓰지 않는다 — RN에서 높이 0으로 붕괴하는 버그의 원인이라 스크롤은 카드 내부에서만 처리</li>
+        <li>하단 버튼 영역은 스크롤 영역 <strong>밖</strong>에 고정 — 스크롤에 잘려 버튼이 가려지는 걸 방지</li>
+        <li>제목 헤더에는 가격·재고 같은 실데이터를 넣지 않는다 — 헤더는 제목 전용, 데이터는 본문 상단 고정 영역으로</li>
+      </ol>
+      <p>단순 알림류(일일 채굴 한도 안내·레벨업·보상·전투 결과)는 <strong>40초 후 자동으로 닫힌다</strong> — 예외(파괴적 확인 등)만 수동 확인으로 남긴다.</p>
+
+      <h2>인게임 대화창 — 3단 세로 팝업</h2>
+      <p>
+        NPC와의 첫 접촉(통신, <a href="arccore.html#two-gate">두 개의 게이트</a> 중 1단계)이나 스토리 컷신은
+        전용 팝업으로 뜬다. 현재 런타임 정본은 <strong>세로 3단 구조</strong>다.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>단</th><th>높이</th><th>내용</th></tr></thead>
+          <tbody>
+            <tr><td>1. 얼굴</td><td class="num">300px</td><td>NPC 초상(또는 장면 이미지), contain 비율</td></tr>
+            <tr><td>2. 대사</td><td class="num">가변</td><td>최대 3줄 단위로 잘라 순차 표시</td></tr>
+            <tr><td>3. 버튼</td><td class="num">56px</td><td>[다음] 또는 [수락][취소]</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:0.85rem;color:var(--text-faint);">합계 482px. 이전엔 허브 화면 위에 반투명으로 겹쳐 탑바·퀘스트 카드가 비치는 구성도 검토됐으나(2026-08-24 설계), 2026-09-06 기준 이 세로 3단 팝업 방식으로 대체·확정됐다.</p>
+
+      <h2>두 가지 비주얼 테마</h2>
+      <p>
+        오버레이 카드는 현재 두 스타일이 공존한다 — 기존 <strong>Phosphor</strong> 테마가 대부분의 화면에 남아있고,
+        신형 <strong>Tactical(G-ARCHIVE)</strong> 테마가 행성정보 화면부터 순차 적용 중이다.
+      </p>
+      <div class="card-grid">
+        <div class="card">
+          <span class="card-eyebrow">Tactical · G-ARCHIVE</span>
+          <h4>행성정보 화면에 우선 적용</h4>
+          <p>헤더 진회색(<code>#252930</code>) + 빗살(hatch) 패턴, 본문 밝은 회색(<code>#DDE1E8</code>), 전용 버튼 스타일(<code>tacticalPrimary</code>/<code>tacticalSecondary</code>). 다른 화면으로의 전면 교체는 리스크 레지스터 검토 후 순차 예정.</p>
+        </div>
+        <div class="card">
+          <span class="card-eyebrow">Phosphor · 레거시</span>
+          <h4>나머지 대부분의 팝업</h4>
+          <p>설정·상점·거래 수량·행성개발·알림·레벨업·보상·전투결과 등 대부분의 kind가 아직 이 테마다. Tactical로의 순차 전환 대상.</p>
+        </div>
+      </div>
+
+      <h2>3단 스테이지 구조</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>스테이지</th><th>화면</th><th>전환 규칙</th></tr></thead>
+          <tbody>
+            <tr><td>STAGE 1</td><td>행성 허브</td><td rowspan="3">전환은 항상 <code>replace()</code>만 — 뒤로가기로 이전 스테이지 자원이 살아있는 <code>navigate()</code>는 금지. 전환 시 이전 스테이지 자원(특히 Skia 렌더 리소스) 해제가 필수.</td></tr>
+            <tr><td>STAGE 2</td><td>은하 지도</td></tr>
+            <tr><td>STAGE 3</td><td>전투</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>UI 회귀를 막기 위한 감사 도구</h2>
+      <p>이 오버레이 규칙들은 사람이 매번 눈으로 확인하는 게 아니라, 전용 자동 감사 스크립트로 검증된다 — RN <code>Modal</code>/<code>Alert.alert</code> 직접 사용이나 매직 넘버 패딩이 코드에 남아있으면 감사가 실패한다. 오버레이 UI를 건드리는 모든 작업은 이 감사를 통과해야 완료로 친다.</p>
+
+      <div class="source-note">정본: <code>docs/OVERLAY_UI_UNIVERSAL_SPEC.md</code> · <code>docs/TACTICAL_UI_BASELINE_AND_ROLLOUT_READINESS.md</code> · <code>docs/인게임_대화창_레이어_재설계_20260824.md</code></div>
+    </article>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/wiki.js"></script>
+</body>
+</html>

@@ -28,7 +28,7 @@ export default function GameLayout() {
       <Stack.Screen name="skilltree" />
       <Stack.Screen name="trade" />
       <Stack.Screen name="shipyard" />
-      <Stack.Screen name="tavern" />
+      <Stack.Screen name="bar" />
     </Stack>
   );
 }

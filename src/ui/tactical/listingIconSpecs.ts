@@ -11,7 +11,7 @@ const PLANET_DEV_MODULE_ICONS: Record<string, PlanetHubActionIconSpec> = {
   dev_orbit_shipyard: PLANET_HUB_ACTION_ICONS.shipyard,
   dev_trade_port: PLANET_HUB_ACTION_ICONS.trade,
   dev_research_lab: PLANET_HUB_ACTION_ICONS.skilltree,
-  dev_population_dome: PLANET_HUB_ACTION_ICONS.tavern,
+  dev_population_dome: PLANET_HUB_ACTION_ICONS.bar,
   dev_energy_plant: { family: 'material-community', name: 'flash-outline' },
   dev_mineral_refinery: PLANET_HUB_ACTION_ICONS.mining,
   dev_trade_route: { family: 'material-community', name: 'transit-connection-variant' },

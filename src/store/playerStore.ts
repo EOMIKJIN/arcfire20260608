@@ -25,6 +25,11 @@ import {
   resolvePlayerSocialStatsFromProfession,
 } from '../game/playerPilotProfessionModel';
 import { NPC_CAPITAL_SHIPS_FROM_CSV } from '../data/generated';
+import {
+  ACKNOWLEDGED_HUB_DIALOG_KEYS_MAX,
+  SEEN_STORY_SCENE_IDS_MAX,
+  capBoundedStringList,
+} from './playerFlagBounds';
 import { resolvePlayerDefaultNpcCapitalShipId } from '../arcCore/balance/capitalHullPurchaseFromBalance';
 import {
   grantNpcCapitalShipBundleToInventory,
@@ -45,15 +50,27 @@ import {
 } from '../game/playerSurvivalPod';
 import { gainExp, processLevelUp, learnSkill as engineLearnSkill } from '../engine/SkillEngine';
 import { applyAabsCreditMultiplier, applyAabsExpMultiplier } from '../arcCore/aabs/aabsPolicyStore';
+import {
+  nextSalvageSearchDailyUsage,
+  resolveSalvageSearchDailyUsage,
+  sanitizeSalvageSearchCountToday,
+  sanitizeSalvageSearchDayKey,
+} from '../game/planetSalvageSearchDaily';
 import { SKILLS } from '../data/skills';
 import { Skill } from '../types';
 import {
   addToInventorySlotsMax,
   countGoodInInventory,
   createEmptyInventorySlots,
+  ensureInventorySlotCapacity,
   normalizeInventorySlots,
   removeGoodFromInventorySlots,
+  removeGoodFromInventorySlotsBestEffort,
 } from '../game/playerInventory';
+import {
+  resolvePlayerHangarShipCap,
+  resolvePlayerInventorySlotCount,
+} from '../game/playerOwnedSkillFleetAdjust';
 import { SHIPYARD_EQUIP_SLOT_DEFS } from '../game/shipyardEquipSlots';
 import {
   applyPostCombatDurabilityPass,
@@ -78,7 +95,6 @@ import { resolveSystemIdForPlanetId } from '../world/resolvePlanetSystemId';
 
 const STORAGE_KEY = 'arcfire_player_v1';
 const DEFAULT_GRANTED_SKILL_IDS = ['double_shot'] as const;
-const TEMP_MAX_HANGAR_SHIPS = 30;
 /** 신규·구세이브 보정용. `mega_*` id는 추후 거대 세력 콘텐츠 테이블과 맞출 것 */
 const DEFAULT_PLAYER_POLITICAL: PlayerPoliticalProfile = {
   megaFactionId: 'mega_stellium_alliance',
@@ -292,17 +308,18 @@ function normalizePlayerPolitical(raw: PlayerPersistenceShape): Player {
         Boolean((f as { ingameDialog01Seen?: boolean }).ingameDialog01Seen)
         && !base.includes('ingame_dialog_01')
       ) {
-        return [...base, 'ingame_dialog_01'];
+        return capBoundedStringList([...base, 'ingame_dialog_01'], SEEN_STORY_SCENE_IDS_MAX);
       }
-      return base;
+      return capBoundedStringList(base, SEEN_STORY_SCENE_IDS_MAX);
     })(),
-    acknowledgedHubDialogKeys: Array.isArray(
-      (f as { acknowledgedHubDialogKeys?: string[] }).acknowledgedHubDialogKeys,
-    )
-      ? (f as { acknowledgedHubDialogKeys?: string[] }).acknowledgedHubDialogKeys!.filter(
-          (v) => typeof v === 'string' && v.length > 0,
-        )
-      : [],
+    acknowledgedHubDialogKeys: capBoundedStringList(
+      Array.isArray((f as { acknowledgedHubDialogKeys?: string[] }).acknowledgedHubDialogKeys)
+        ? (f as { acknowledgedHubDialogKeys?: string[] }).acknowledgedHubDialogKeys!.filter(
+            (v) => typeof v === 'string' && v.length > 0,
+          )
+        : [],
+      ACKNOWLEDGED_HUB_DIALOG_KEYS_MAX,
+    ),
   };
   const tid = typeof raw.shipId === 'string' && raw.shipId ? raw.shipId : 'starter_fighter';
   const base: Player = {
@@ -317,8 +334,17 @@ function normalizePlayerPolitical(raw: PlayerPersistenceShape): Player {
         : raw.currentPlanetId ?? null,
     orbitalMiningOre1DeliveredByPlanet: raw.orbitalMiningOre1DeliveredByPlanet ?? {},
     orbitalMiningDeliveredByPlanet: raw.orbitalMiningDeliveredByPlanet ?? {},
+    salvageSearchDayKey: sanitizeSalvageSearchDayKey(
+      (raw as { salvageSearchDayKey?: unknown }).salvageSearchDayKey,
+    ),
+    salvageSearchCountToday: sanitizeSalvageSearchCountToday(
+      (raw as { salvageSearchCountToday?: unknown }).salvageSearchCountToday,
+    ),
     shipHangar: normalizeShipHangar(raw.shipHangar),
-    inventorySlots: normalizeInventorySlots((raw as { inventorySlots?: unknown }).inventorySlots),
+    inventorySlots: normalizeInventorySlots(
+      (raw as { inventorySlots?: unknown }).inventorySlots,
+      resolvePlayerInventorySlotCount(mergedSkills),
+    ),
     ship: raw.ship as PlayerShip,
   };
   const normalizedHangar = normalizeShipHangar(base.shipHangar);
@@ -329,7 +355,7 @@ function normalizePlayerPolitical(raw: PlayerPersistenceShape): Player {
     ship: normalizedShip,
     inventorySlots: reconcileEquippedWeaponsInInventory(
       reconcileCapitalShipInventoryFromHangar(
-        normalizeInventorySlots(base.inventorySlots),
+        normalizeInventorySlots(base.inventorySlots, resolvePlayerInventorySlotCount(mergedSkills)),
         normalizedHangar,
       ),
       normalizedShip,
@@ -486,6 +512,20 @@ interface PlayerState {
   landOnPlanet: (planetId: string) => void;
   spendCredits: (amount: number) => boolean;
   addCredits: (amount: number) => void;
+  /**
+   * 지출 롤백·환불 — AABS `creditReward` 배율 미적용, lifetime 미누적.
+   * `spendCredits`와 쌍을 이뤄 원금을 그대로 되돌린다. 보상 지급에는 `addCredits`를 쓴다.
+   * 잔해 수색 시세 CR 은 `grantSalvageCredits`.
+   */
+  refundCredits: (amount: number) => void;
+  /**
+   * 잔해 수색 시세 CR — AABS 미적용·lifetime 미누적.
+   * 연료 회수 시세 고정. 전투·무역 보상(`addCredits`)과 분리.
+   */
+  grantSalvageCredits: (amount: number) => void;
+  /** 잔해 수색 1회 소진. 일일 한도면 false. persist는 coalesce. */
+  tryConsumeSalvageSearchDailyAttempt: (nowMs?: number) => boolean;
+  isSalvageSearchDailyCapped: (nowMs?: number) => boolean;
   /** v2.1 BM — 보석 소비(교환·직구). 잔액 부족 시 false */
   spendGems: (amount: number) => boolean;
   /** v2.1 BM — 보석 지급(IAP·이벤트). 음수 무시 */
@@ -505,6 +545,8 @@ interface PlayerState {
   removeHangarShipByNpcId: (npcCapitalShipId: string) => boolean;
   /** 아이템 획득은 인벤토리 슬롯 단일 체계로 누적 */
   addInventoryItem: (goodId: string, quantity: number) => void;
+  /** 보유분만큼만 차감. 만료 화물 회수 등 — persist는 호출측. */
+  removeInventoryItemBestEffort: (goodId: string, quantity: number) => number;
   /** 조선소 광물 업그레이드 — ore 차감 후 강화 job 시작(행성개발 게이지 진행). shipyardLevel은 UI(조선소)에서 전달(순환 import 방지). */
   applyMineralUpgrade: (statId: string, shipyardLevel?: number) => { ok: boolean; reason?: string };
   /** 완료 시각이 지난 광물 강화 job을 정산(레벨 반영·job 제거). 변경이 있으면 true. */
@@ -676,6 +718,34 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     });
   },
 
+  refundCredits: (amount) => {
+    const { player } = get();
+    if (!player) return;
+    const grant = Math.max(0, Math.floor(amount));
+    if (grant <= 0) return;
+    set({ player: { ...player, credits: player.credits + grant } });
+  },
+
+  isSalvageSearchDailyCapped: (nowMs) => {
+    return resolveSalvageSearchDailyUsage(get().player, nowMs).capped;
+  },
+
+  tryConsumeSalvageSearchDailyAttempt: (nowMs) => {
+    const { player } = get();
+    if (!player) return false;
+    const next = nextSalvageSearchDailyUsage(player, nowMs);
+    if (!next) return false;
+    set({
+      player: {
+        ...player,
+        salvageSearchDayKey: next.salvageSearchDayKey,
+        salvageSearchCountToday: next.salvageSearchCountToday,
+      },
+    });
+    get().schedulePersist();
+    return true;
+  },
+
   spendGems: (amount) => {
     const { player } = get();
     if (!player) return false;
@@ -697,6 +767,14 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   },
 
   grantExchangeCredits: (amount) => {
+    const { player } = get();
+    if (!player) return;
+    const grant = Math.max(0, Math.floor(amount));
+    if (grant <= 0) return;
+    set({ player: { ...player, credits: player.credits + grant } });
+  },
+
+  grantSalvageCredits: (amount) => {
     const { player } = get();
     if (!player) return;
     const grant = Math.max(0, Math.floor(amount));
@@ -749,7 +827,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     if (!player || !npcCapitalShipId) return false;
     if (isSurvivalPodNpcShipId(npcCapitalShipId)) return false;
     if (!NPC_CAPITAL_SHIPS_FROM_CSV.some(s => s.id === npcCapitalShipId)) return false;
-    if (player.shipHangar.length >= TEMP_MAX_HANGAR_SHIPS) return false;
+    if (player.shipHangar.length >= resolvePlayerHangarShipCap(player.skills)) return false;
     const id = `hg_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
     const entry: PlayerHangarShip = {
       id,
@@ -792,6 +870,16 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     set({ player: { ...player, inventorySlots: inv.slots } });
   },
 
+  removeInventoryItemBestEffort: (goodId, quantity) => {
+    const { player } = get();
+    if (!player || quantity <= 0) return 0;
+    const slots = normalizeInventorySlots(player.inventorySlots);
+    const next = removeGoodFromInventorySlotsBestEffort(slots, goodId, quantity);
+    if (next.removed <= 0) return 0;
+    set({ player: { ...player, inventorySlots: next.slots } });
+    return next.removed;
+  },
+
   applyMineralUpgrade: (statId, shipyardLevel) => {
     const { player } = get();
     if (!player) return { ok: false, reason: 'no_player' };
@@ -828,6 +916,14 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     };
     set({ player: { ...player, inventorySlots: slots, mineralUpgradeJobs } });
     get().schedulePersist();
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { schedulePlanetDevJobWatch } =
+        require('../game/planetDevelopment/planetDevJobRealtimeWatch') as typeof import('../game/planetDevelopment/planetDevJobRealtimeWatch');
+      schedulePlanetDevJobWatch();
+    } catch {
+      /* 워치 미기동 */
+    }
     return { ok: true };
   },
 
@@ -839,6 +935,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     const statIds = Object.keys(jobs);
     if (statIds.length === 0) return false;
     let changed = false;
+    const completed: { statId: string; targetLevel: number }[] = [];
     const nextJobs: Record<string, NonNullable<typeof jobs>[string]> = {};
     const nextUpgrades = { ...(player.mineralUpgrades ?? {}) };
     for (const statId of statIds) {
@@ -846,6 +943,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       if (nowMs >= job.completeAtMs) {
         const prevLv = Math.max(0, Math.floor(nextUpgrades[statId] ?? 0));
         nextUpgrades[statId] = Math.max(prevLv, job.targetLevel);
+        completed.push({ statId, targetLevel: job.targetLevel });
         changed = true;
       } else {
         nextJobs[statId] = job;
@@ -860,6 +958,14 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       },
     });
     get().schedulePersist();
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { showMineralUpgradeCompleteNotification } =
+        require('../game/shipyardMineralUpgrade/showMineralUpgradeCompleteNotification') as typeof import('../game/shipyardMineralUpgrade/showMineralUpgradeCompleteNotification');
+      showMineralUpgradeCompleteNotification(completed);
+    } catch {
+      /* 알림만 생략 */
+    }
     return true;
   },
 
@@ -939,7 +1045,12 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     if (!skill) return;
     const next = engineLearnSkill(skill, player);
     if (next === player) return;
-    set({ player: next });
+    const cap = resolvePlayerInventorySlotCount(next.skills);
+    const withSlots = {
+      ...next,
+      inventorySlots: ensureInventorySlotCapacity(next.inventorySlots, cap),
+    };
+    set({ player: withSlots });
     const skillDb = useSkillDbStore.getState();
     skillDb.ensureSkillDb(next.uid);
     skillDb.syncOwnedSkills({

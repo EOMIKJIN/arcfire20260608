@@ -28,6 +28,11 @@ export type GalaxyVoronoiBorderSegment = {
   color: string;
 };
 
+export type GalaxyVoronoiOwnedBorderSegment = GalaxyVoronoiBorderSegment & {
+  ownerA: string;
+  ownerB: string;
+};
+
 type Bounds = { x0: number; y0: number; x1: number; y1: number };
 type Point = [number, number];
 
@@ -59,10 +64,10 @@ function isClipHullEdge(a: Point, b: Point, bounds: Bounds): boolean {
  * - neutral↔neutral = 그리지 않음 (중립·미개척은 자기 국경선 없음)
  * - 맵 가장자리(clip hull) 변은 제외.
  */
-export function buildGalaxyBlueRedVoronoiBorderSegments(input: {
+export function tessellateGalaxyBlueRedVoronoiBorderSegments(input: {
   sites: GalaxyVoronoiSite[];
   bounds: Bounds;
-}): GalaxyVoronoiBorderSegment[] {
+}): GalaxyVoronoiOwnedBorderSegment[] {
   const { sites, bounds } = input;
   const n = sites.length;
   if (n < 2) return [];
@@ -97,11 +102,14 @@ export function buildGalaxyBlueRedVoronoiBorderSegments(input: {
   const independentColor = resolveMapFactionBorderColor('independent');
   const contestColor = MAP_FACTION_CONTEST_BORDER_COLOR;
 
-  const segments: GalaxyVoronoiBorderSegment[] = [];
+  const segments: GalaxyVoronoiOwnedBorderSegment[] = [];
   for (const { a, b, owners } of edgeOwners.values()) {
     if (owners.length !== 2) continue;
-    const sideA = sites[owners[0]].side;
-    const sideB = sites[owners[1]].side;
+    const siteA = sites[owners[0]];
+    const siteB = sites[owners[1]];
+    if (!siteA || !siteB) continue;
+    const sideA = siteA.side;
+    const sideB = siteB.side;
     if (sideA === sideB) continue;
 
     const hasBlue = sideA === 'blue' || sideB === 'blue';
@@ -128,8 +136,43 @@ export function buildGalaxyBlueRedVoronoiBorderSegments(input: {
       color = redColor;
     }
 
-    segments.push({ x1: a[0], y1: a[1], x2: b[0], y2: b[1], kind, color });
+    segments.push({
+      x1: a[0],
+      y1: a[1],
+      x2: b[0],
+      y2: b[1],
+      kind,
+      color,
+      ownerA: siteA.systemId,
+      ownerB: siteB.systemId,
+    });
   }
 
   return segments;
+}
+
+export function paintGalaxyBlueRedVoronoiBorderSegments(
+  segments: readonly GalaxyVoronoiOwnedBorderSegment[],
+  revealedSystemIds?: ReadonlySet<string>,
+): GalaxyVoronoiBorderSegment[] {
+  if (!revealedSystemIds) return segments.slice();
+  const out: GalaxyVoronoiBorderSegment[] = [];
+  for (let i = 0; i < segments.length; i += 1) {
+    const seg = segments[i]!;
+    if (revealedSystemIds.has(seg.ownerA) && revealedSystemIds.has(seg.ownerB)) {
+      out.push(seg);
+    }
+  }
+  return out;
+}
+
+export function buildGalaxyBlueRedVoronoiBorderSegments(input: {
+  sites: GalaxyVoronoiSite[];
+  bounds: Bounds;
+  revealedSystemIds?: ReadonlySet<string>;
+}): GalaxyVoronoiBorderSegment[] {
+  return paintGalaxyBlueRedVoronoiBorderSegments(
+    tessellateGalaxyBlueRedVoronoiBorderSegments(input),
+    input.revealedSystemIds,
+  );
 }

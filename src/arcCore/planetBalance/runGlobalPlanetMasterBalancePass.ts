@@ -21,6 +21,7 @@ import {
 import { runPlayScenarioEconomyPass } from '../balance/runPlayScenarioEconomyPass';
 import { resolvePlanetCoreStatAuthority } from '../balance/planetCoreStatAuthorityPolicy';
 import { resolvePlanetCoreStatAuthorityContext } from '../planetCore/resolvePlanetCoreStatContext';
+import { isFrontierWildernessGaugeHold } from '../../world/galaxyFrontierDevelopmentRidge';
 import {
   pushPlanetCoreGaugeIntent,
   isPlanetCoreGaugeIntentBatchActive,
@@ -85,7 +86,8 @@ export function runGlobalPlanetMasterBalancePass(
 
       const authorityContext = resolvePlanetCoreStatAuthorityContext(planetId);
       const authority = resolvePlanetCoreStatAuthority(authorityContext);
-      if (!authority.masterBalanceGauge) {
+      const gaugeAuthority = authority.masterBalanceGauge && !isFrontierWildernessGaugeHold(planetId);
+      if (!gaugeAuthority) {
         planetsSkippedPlayerAuthority += 1;
       }
 
@@ -102,7 +104,7 @@ export function runGlobalPlanetMasterBalancePass(
       );
       const current = planetCoreRuntimeToGaugeView(runtime);
       const effectiveMaxDelta = defaultMaxDelta ?? maxDelta;
-      const gauge = authority.masterBalanceGauge
+      const gauge = gaugeAuthority
         ? nudgeGaugeTowardTargetWithOptionalFloor(
             current,
             target,
@@ -113,7 +115,7 @@ export function runGlobalPlanetMasterBalancePass(
 
       const prevBal = runtime.detail?.masterBalance;
       const gaugeChanged =
-        authority.masterBalanceGauge &&
+        gaugeAuthority &&
         (gauge.resource !== current.resource ||
           gauge.population !== current.population ||
           gauge.defense !== current.defense ||

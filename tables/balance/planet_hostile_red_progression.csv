@@ -1,9 +1,9 @@
-﻿progressionOrder,planetId,systemId,zoneIndex,hostileShipCount,targetCombatLevel,requiredFleetMinDps,enemyAffinityKind,targetEngageSec,mainStageCombatEnabled,mainStageCombatVariant
+progressionOrder,planetId,systemId,zoneIndex,hostileShipCount,targetCombatLevel,requiredFleetMinDps,enemyAffinityKind,targetEngageSec,mainStageCombatEnabled,mainStageCombatVariant
 1,arcadia_prime,arcadia,1,1,1,150,light,36,true,tutorial_escape
 2,vega_base,vega_outpost,2,2,3,250,light,40,false,draco_wave
 3,solar_station,solar_port,3,2,5,400,light,44,false,draco_wave
 4,minerva_deep,minerva,4,2,7,650,light,48,false,draco_wave
-5,draco_haven,draco_nebula,5,3,9,900,shielded,72,true,draco_boss
+5,draco_haven,draco_nebula,5,2,9,900,shielded,72,true,draco_boss
 6,eden_city,new_eden,6,2,12,1200,light,60,false,draco_wave
 7,iron_remnant,iron_cross,7,3,15,1600,shielded,52,false,draco_wave
 8,sirius_border,sirius,8,3,18,2100,shielded,60,false,draco_wave

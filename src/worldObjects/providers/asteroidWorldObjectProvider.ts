@@ -31,7 +31,9 @@ export const asteroidWorldObjectProvider: PlanetWorldObjectProvider = {
         planetId: ctx.planetId,
         systemId: ctx.systemId,
         mineralItemId,
-        title: `소행성 ${n}`,
+        // i18n 키 — 로케일 전환 시 렌더 시점에 t(title, {n: titleOrdinal})로 해석
+        title: 'hubBg.asteroidTitle',
+        titleOrdinal: n,
         description: `채광 가능 · 표시 광물(참고): ${mineralItemId}`,
         transform: {
           orbitSlotIndex: i,

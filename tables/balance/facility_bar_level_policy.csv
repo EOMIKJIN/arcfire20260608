@@ -1,0 +1,16 @@
+level,displayNameKr,barBountySlots,barReputationBonusPct,barMercTierUnlock,barRefreshIntervalHours,upgradeDurationSec,installCostCredits,upgradeCostCredits,instantUpgradeCostCredits,requiredPlayerLevelMin,requiredStatType,requiredStatValue,notesKo
+1,임시 주점,2,0,standard,24,0,800,0,400,0,,0,v2.0 §6 Lv1 · catalog 80k · 즉시 40k
+2,소형 바,3,2,standard,24,18000,0,3600,1440,0,,0,v2.0 · 5h
+3,바,4,5,skilled,24,43200,0,9000,3600,0,,0,v2.0 · 12h · 숙련 용병
+4,확장 바,5,8,skilled,18,86400,0,32000,12800,0,,0,v2.0 · 1일
+5,주요 바,7,12,elite,18,129600,0,80000,32000,15,population,30,v2.0 · 1.5일 · P≥30
+6,고급 바,9,16,elite,18,172800,0,275000,110000,0,,0,v2.0 · 2일
+7,성계 바,12,20,special,12,259200,0,550000,220000,0,,0,v2.0 · 3일
+8,광역 바,15,25,special,12,345600,0,1800000,720000,30,population,55,v2.0 · 4일 · P≥55
+9,은하 주점,20,30,legendary,12,432000,0,3600000,1440000,0,,0,v2.0 · 5일
+10,은하 전설의 주점,25,35,legendary,8,604800,0,11200000,4480000,0,,0,v2.0 L10 · 7일 · 바운티 25슬롯
+11,초월 용병 주점,28,38,legendary,8,0,0,23760000,9504000,0,,0,v3.2 L11 · 바운티 28
+12,성간 용병 허브,30,40,legendary,6,0,0,47740000,19096000,0,,0,v3.2 L12 · 6h 갱신
+13,은하 전설 주점,32,42,legendary,6,0,0,96390000,38556000,0,,0,v3.2 L13
+14,아크파이어 주점,34,44,legendary,6,0,0,193710000,77484000,0,,0,v3.2 L14
+15,은하 최종 주점,35,45,legendary,4,0,0,386000000,154400000,0,,0,v3.2 L15 · 바운티 35 · 4h 갱신

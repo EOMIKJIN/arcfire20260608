@@ -29,6 +29,7 @@ export type ArcNpcTrafficTableRow = {
 export function listArcNpcTrafficRowsFromTables(): ArcNpcTrafficTableRow[] {
   const rows: ArcNpcTrafficTableRow[] = [];
   for (const captain of listNpcCaptains()) {
+    if (captain.questOnly) continue;
     if (!captain.arcOrbitPresenceFill) continue;
     if (captain.operationalState === 'combat') continue;
     const sid = captain.assignedShipId?.trim();

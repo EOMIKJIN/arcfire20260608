@@ -1,0 +1,347 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { create } from 'zustand';
+import { scheduleUserCloudSync } from '../firebase/userCloudSyncSchedule';
+import type { I18nParams } from '../i18n/types';
+import { useMenuNotificationStore } from './menuNotificationStore';
+
+const STORAGE_KEY = 'arcfire_bar_board_v1';
+/** 구 Tavern 키 — hydrate 시 1회 이전 후 삭제 */
+const LEGACY_STORAGE_KEY = 'arcfire_tavern_board_v1';
+
+/** 공지판 UI — 최신 N건만 표시 */
+export const BAR_BOARD_MAX_VISIBLE_NOTICES = 20;
+/** 표시에서 밀려난 공지 — 시스템 아카이브(상한) */
+export const BAR_BOARD_MAX_HISTORY_NOTICES = 200;
+
+/** Stable tag codes — display via `t('noticeTag.' + tag)`. Legacy KO tags migrate on load. */
+export type BarNoticeTag = 'ops' | 'economy' | 'diplomacy' | 'rumor' | 'arccore';
+
+export type BarNotice = {
+  id: string;
+  title: string;
+  body: string;
+  tag: BarNoticeTag;
+  postedAtMs: number;
+  dedupeKey?: string;
+  i18nKey?: string;
+  i18nParams?: I18nParams;
+};
+
+export function normalizeBarNoticeTag(raw: unknown): BarNoticeTag {
+  const v = String(raw ?? '').trim();
+  if (v === 'ops' || v === '작전') return 'ops';
+  if (v === 'economy' || v === '경제') return 'economy';
+  if (v === 'diplomacy' || v === '외교') return 'diplomacy';
+  if (v === 'rumor' || v === '소문') return 'rumor';
+  if (v === 'arccore' || v === '아크코어') return 'arccore';
+  return 'rumor';
+}
+
+type BarBoardState = {
+  notices: BarNotice[];
+  history: BarNotice[];
+  loaded: boolean;
+  loadLocalBoard: () => Promise<void>;
+  persistBoard: () => Promise<void>;
+  resetLocalBoard: () => Promise<void>;
+  listNoticeHistory: () => readonly BarNotice[];
+  pushNotice: (notice: Omit<BarNotice, 'id' | 'postedAtMs'> & { postedAtMs?: number }) => void;
+  /** dedupeKey 일치 공지를 최신 내용으로 교체(행성별 점령 갱신) */
+  pushOrRefreshNotice: (
+    notice: Omit<BarNotice, 'id' | 'postedAtMs'> & { postedAtMs?: number },
+    dedupeKey: string,
+  ) => void;
+};
+
+function formatId(): string {
+  return `board_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+/** 삭제된 ArcCore 장거리 미사일(arc_core_message_*) 공지 — AsyncStorage 잔존분 제거용 */
+function isLegacyArcCoreMissileNotice(
+  notice: Pick<BarNotice, 'title' | 'body' | 'dedupeKey'>,
+): boolean {
+  const dedupe = notice.dedupeKey ?? '';
+  if (dedupe.startsWith('arc_core_msg_')) return true;
+
+  const title = notice.title;
+  if (title === 'Missile 공습경고') return true;
+  if (title.startsWith('아크코어 메시지 미사일')) return true;
+  if (title.includes('아크코어 메시지') && title.includes('근접')) return true;
+  if (title.includes('방위위성') && title.includes('요격')) return true;
+
+  const body = notice.body;
+  if (body.includes('아크코어 장거리 미사일')) return true;
+  if (body.includes('장거리 미사일') && body.includes('아크코어')) return true;
+
+  return false;
+}
+
+function stripLegacyArcCoreMissileNotices(notices: BarNotice[]): BarNotice[] {
+  return notices.filter((n) => !isLegacyArcCoreMissileNotice(n));
+}
+
+/** AsyncStorage에 한국어만 저장된 구형 공지 → i18nKey 부여(표시 시점 locale 해석) */
+function migrateLegacyNoticeI18n(notice: BarNotice): BarNotice {
+  if (notice.i18nKey) return notice;
+
+  if (notice.dedupeKey === 'seed_boot_1' || notice.title === '아크코어 공지 보드 가동') {
+    return { ...notice, i18nKey: 'news.boardBoot' };
+  }
+  if (notice.dedupeKey === 'seed_boot_2' || notice.title === '은하계 운영 소식판 안내') {
+    return { ...notice, i18nKey: 'news.guide' };
+  }
+  if (notice.dedupeKey === 'arc_news_boot_notice' || notice.title === '아크코어 공지 보드 동기화 완료') {
+    return { ...notice, i18nKey: 'news.sync' };
+  }
+
+  const unlockMatch =
+    notice.title.match(/^성계 개척: (.+)$/)
+    ?? notice.title.match(/^System Unlocked:\s*(.+)$/i);
+  if (unlockMatch) {
+    const systemName = unlockMatch[1]!.trim();
+    const idMatch = notice.body.match(/\(([a-z0-9_]+)\)\s*$/i);
+    return {
+      ...notice,
+      i18nKey: 'news.worldUnlock',
+      i18nParams: { systemName, systemId: idMatch?.[1] ?? '' },
+    };
+  }
+
+  if (notice.title === '수송선단 파견 보고') {
+    const factionMatch = notice.body.match(/^(.+?) 소속/);
+    return {
+      ...notice,
+      i18nKey: 'news.transport',
+      i18nParams: { factionId: factionMatch?.[1]?.trim() ?? '' },
+    };
+  }
+
+  if (notice.title.startsWith('경제 지시 반영:')) {
+    const scopeLabel = notice.title.replace('경제 지시 반영: ', '').trim();
+    const actionMatch = notice.body.match(/가 (.+?) 정책을/);
+    const scopeKind = scopeLabel === '전체 무역소' ? 'all' : 'planets';
+    const planetCount =
+      scopeKind === 'planets' ? Number.parseInt(scopeLabel.replace(/[^\d]/g, ''), 10) || 0 : 0;
+    return {
+      ...notice,
+      i18nKey: 'news.economyBulk',
+      i18nParams: { scopeKind, planetCount, action: actionMatch?.[1]?.trim() ?? '' },
+    };
+  }
+
+  if (notice.title === '아크코어 정기 브리핑') {
+    const m = notice.body.match(/개방 성계 (\d+)\/(\d+), 활성 수송선 (\d+)척/);
+    if (m) {
+      return {
+        ...notice,
+        i18nKey: 'news.briefing',
+        i18nParams: { unlocked: m[1]!, total: m[2]!, traffic: m[3]! },
+      };
+    }
+  }
+
+  return notice;
+}
+
+function normalizeNoticeRow(raw: Partial<BarNotice>): BarNotice | null {
+  if (!raw || typeof raw.title !== 'string' || typeof raw.body !== 'string') return null;
+  return migrateLegacyNoticeI18n({
+    id: typeof raw.id === 'string' ? raw.id : formatId(),
+    title: raw.title,
+    body: raw.body,
+    tag: normalizeBarNoticeTag(raw.tag),
+    postedAtMs: Number.isFinite(Number(raw.postedAtMs)) ? Number(raw.postedAtMs) : Date.now(),
+    dedupeKey: typeof raw.dedupeKey === 'string' ? raw.dedupeKey : undefined,
+    i18nKey: typeof raw.i18nKey === 'string' ? raw.i18nKey : undefined,
+    i18nParams:
+      raw.i18nParams && typeof raw.i18nParams === 'object' ? (raw.i18nParams as I18nParams) : undefined,
+  });
+}
+
+function dedupeNoticesById(notices: readonly BarNotice[]): BarNotice[] {
+  const byId = new Map<string, BarNotice>();
+  for (const notice of notices) {
+    if (!byId.has(notice.id)) byId.set(notice.id, notice);
+  }
+  return Array.from(byId.values()).sort((a, b) => b.postedAtMs - a.postedAtMs);
+}
+
+function splitVisibleAndHistory(
+  allNotices: readonly BarNotice[],
+  seedHistory: readonly BarNotice[] = [],
+): { notices: BarNotice[]; history: BarNotice[] } {
+  const merged = dedupeNoticesById([
+    ...stripLegacyArcCoreMissileNotices([...allNotices]),
+    ...stripLegacyArcCoreMissileNotices([...seedHistory]),
+  ]);
+  const notices = merged.slice(0, BAR_BOARD_MAX_VISIBLE_NOTICES);
+  const visibleIds = new Set(notices.map((n) => n.id));
+  const history = merged
+    .filter((n) => !visibleIds.has(n.id))
+    .slice(0, BAR_BOARD_MAX_HISTORY_NOTICES);
+  return { notices, history };
+}
+
+function removeDedupeKey(
+  notices: BarNotice[],
+  history: BarNotice[],
+  dedupeKey: string,
+): { notices: BarNotice[]; history: BarNotice[] } {
+  return {
+    notices: notices.filter((n) => n.dedupeKey !== dedupeKey),
+    history: history.filter((n) => n.dedupeKey !== dedupeKey),
+  };
+}
+
+function getDefaultNotices(): BarNotice[] {
+  const now = Date.now();
+  return [
+    {
+      id: `seed_${now}_1`,
+      title: 'ArcCore Notice Board Online',
+      body: 'Automatically collects world expansion, convoy deployment, and domain subcore status.',
+      tag: 'arccore',
+      postedAtMs: now - 2 * 60 * 1000,
+      dedupeKey: 'seed_boot_1',
+      i18nKey: 'news.boardBoot',
+    },
+    {
+      id: `seed_${now}_2`,
+      title: 'Galaxy Operations Board Guide',
+      body: 'The bar notice board auto-updates from ArcCore event logs.',
+      tag: 'ops',
+      postedAtMs: now - 1 * 60 * 1000,
+      dedupeKey: 'seed_boot_2',
+      i18nKey: 'news.guide',
+    },
+  ];
+}
+
+export const useBarBoardStore = create<BarBoardState>((set, get) => ({
+  notices: getDefaultNotices(),
+  history: [],
+  loaded: false,
+
+  loadLocalBoard: async () => {
+    try {
+      let raw = await AsyncStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        const legacy = await AsyncStorage.getItem(LEGACY_STORAGE_KEY);
+        if (legacy) {
+          raw = legacy;
+          try {
+            await AsyncStorage.setItem(STORAGE_KEY, legacy);
+            await AsyncStorage.removeItem(LEGACY_STORAGE_KEY);
+          } catch {
+            /* migrate best-effort */
+          }
+        }
+      }
+      if (!raw) {
+        set({ loaded: true });
+        return;
+      }
+      const parsed = JSON.parse(raw) as { notices?: Partial<BarNotice>[]; history?: Partial<BarNotice>[] };
+      const loadedNotices = (parsed.notices ?? [])
+        .map(normalizeNoticeRow)
+        .filter((n): n is BarNotice => n != null);
+      const loadedHistory = (parsed.history ?? [])
+        .map(normalizeNoticeRow)
+        .filter((n): n is BarNotice => n != null);
+      const split = splitVisibleAndHistory(loadedNotices, loadedHistory);
+      const nextNotices = split.notices.length > 0 ? split.notices : getDefaultNotices();
+      const nextHistory = split.notices.length > 0 ? split.history : [];
+      const needsPersist =
+        !Array.isArray(parsed.history)
+        || loadedNotices.length > BAR_BOARD_MAX_VISIBLE_NOTICES
+        || split.notices.length !== loadedNotices.length
+        || split.history.length !== loadedHistory.length
+        || loadedNotices.some((n, i) => {
+          const raw = parsed.notices?.[i] as Partial<BarNotice> | undefined;
+          return raw?.i18nKey !== n.i18nKey;
+        });
+      set({ notices: nextNotices, history: nextHistory, loaded: true });
+      if (needsPersist) {
+        await AsyncStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ notices: nextNotices, history: nextHistory }),
+        );
+      }
+    } catch {
+      set({ loaded: true });
+    }
+  },
+
+  persistBoard: async () => {
+    const { notices, history } = get();
+    const payload = {
+      notices: notices.slice(0, BAR_BOARD_MAX_VISIBLE_NOTICES),
+      history: history.slice(0, BAR_BOARD_MAX_HISTORY_NOTICES),
+    };
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    scheduleUserCloudSync();
+  },
+
+  resetLocalBoard: async () => {
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+    set({ notices: getDefaultNotices(), history: [], loaded: true });
+  },
+
+  listNoticeHistory: () => get().history,
+
+  pushNotice: (notice) => {
+    if (isLegacyArcCoreMissileNotice(notice)) return;
+    const nextPostedAtMs = notice.postedAtMs ?? Date.now();
+    let didChange = false;
+    set((state) => {
+      if (notice.dedupeKey) {
+        const onBoard = state.notices.some((n) => n.dedupeKey === notice.dedupeKey);
+        if (onBoard) return state;
+      }
+      didChange = true;
+      const next: BarNotice = {
+        id: formatId(),
+        title: notice.title,
+        body: notice.body,
+        tag: normalizeBarNoticeTag(notice.tag),
+        postedAtMs: nextPostedAtMs,
+        dedupeKey: notice.dedupeKey,
+        i18nKey: notice.i18nKey,
+        i18nParams: notice.i18nParams,
+      };
+      const split = splitVisibleAndHistory([next, ...state.notices], state.history);
+      return { notices: split.notices, history: split.history };
+    });
+    if (didChange) {
+      useMenuNotificationStore.getState().setBadge('bar', true);
+      void get().persistBoard();
+    }
+  },
+
+  pushOrRefreshNotice: (notice, dedupeKey) => {
+    if (isLegacyArcCoreMissileNotice(notice)) return;
+    const nextPostedAtMs = notice.postedAtMs ?? Date.now();
+    set((state) => {
+      const stripped = removeDedupeKey(state.notices, state.history, dedupeKey);
+      const next: BarNotice = {
+        id: formatId(),
+        title: notice.title,
+        body: notice.body,
+        tag: normalizeBarNoticeTag(notice.tag),
+        postedAtMs: nextPostedAtMs,
+        dedupeKey,
+        i18nKey: notice.i18nKey,
+        i18nParams: notice.i18nParams,
+      };
+      const split = splitVisibleAndHistory([next, ...stripped.notices], stripped.history);
+      return { notices: split.notices, history: split.history };
+    });
+    useMenuNotificationStore.getState().setBadge('bar', true);
+    void get().persistBoard();
+  },
+}));

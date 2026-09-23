@@ -107,12 +107,23 @@ test('10) planetId를 입력받지 않음(구조적 하드코딩 불가) — 소
   assert.equal(/planetId/.test(src), false);
 });
 
-test('11) M2/M3/M4 배선 확인(정적) — runTerritorialCombatPass.ts가 rollDecision·dominant%에 envelope 보정을 실제로 사용', () => {
+test('11) M2/M3/M4 배선 확인(정적) — rollDecision은 envelope 보정 후 수도 방위 가중을 사용', () => {
   const src = readFileSync(resolve(__dirname, 'runTerritorialCombatPass.ts'), 'utf8');
+  assert.match(src, /applySupplyEnvelopeDecisionWeights/, 'envelope 보정 호출 유지');
   assert.match(
     src,
-    /battleWeightPct: envelopeAdjustedWeights\.battleWeightPct,\s*\n\s*neutralDeclareWeightPct: envelopeAdjustedWeights\.neutralDeclareWeightPct,\s*\n\s*statusQuoWeightPct: envelopeAdjustedWeights\.statusQuoWeightPct,/,
-    'rollDecision이 envelope 보정 가중치를 써야 함(CSV 원본 policy.battleWeightPct 등 직접 사용 아님)',
+    /applyCapitalDefenseRollWeights\(\{[\s\S]*weights: envelopeAdjustedWeights/,
+    '수도 방위는 envelope 출력 위에만 곱함',
+  );
+  assert.match(
+    src,
+    /applyDefenseSatelliteRollWeights\(\{[\s\S]*weights: capitalAdjustedWeights/,
+    '방위위성 억제는 수도 방위 출력 위에만 가산',
+  );
+  assert.match(
+    src,
+    /battleWeightPct: satelliteAdjustedWeights\.battleWeightPct,\s*\n\s*neutralDeclareWeightPct: satelliteAdjustedWeights\.neutralDeclareWeightPct,\s*\n\s*statusQuoWeightPct: satelliteAdjustedWeights\.statusQuoWeightPct,/,
+    'rollDecision이 CSV 원본 가중이 아니라 보정 스택을 써야 함',
   );
   assert.match(
     src,
@@ -131,7 +142,8 @@ test('12) M5 배선 확인(정적) — 반란 일일패스가 envelopeFactionMul
     resolve(__dirname, '../planetCore/runPlanetRebellionResolutionDailyPass.ts'),
     'utf8',
   );
-  assert.match(src, /envelopeFactionMul,\s*\n\s*rollPolicy,/);
+  assert.match(src, /envelopeFactionMul/);
+  assert.match(src, /capitalFactionMul,\s*\n\s*rollPolicy,/);
   assert.match(src, /getArcCoreSupplyEnvelopePolicy/);
 });
 

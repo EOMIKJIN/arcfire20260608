@@ -10,7 +10,7 @@ export const PopulationDomeWdiStability_FROM_BALANCE_CSV = [
   { "level": "7", "wdi_reduction_per_day": "3.5", "notesKo": "" },
   { "level": "8", "wdi_reduction_per_day": "4", "notesKo": "" },
   { "level": "9", "wdi_reduction_per_day": "4.5", "notesKo": "" },
-  { "level": "10", "wdi_reduction_per_day": "5", "notesKo": "Lv10 — 선술집 풀 슬롯" },
+  { "level": "10", "wdi_reduction_per_day": "5", "notesKo": "Lv10 — 바 풀 슬롯" },
   { "level": "11", "wdi_reduction_per_day": "5.5", "notesKo": "" },
   { "level": "12", "wdi_reduction_per_day": "6", "notesKo": "" },
   { "level": "13", "wdi_reduction_per_day": "6.5", "notesKo": "" },

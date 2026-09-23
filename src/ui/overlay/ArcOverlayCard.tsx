@@ -2,7 +2,7 @@
 // 범용 오버레이 카드 셸 — header + body(+scroll) + footerDock 레이아웃 정본
 // footer는 body 밖(card 직속) — overflow:hidden·스크롤에 버튼 가림 방지
 // ============================================================
-import React, { memo, useMemo, type ReactNode } from 'react';
+import React, { memo, useMemo, type ReactNode, type Ref } from 'react';
 import { ScrollView, StyleSheet, View, useWindowDimensions, type StyleProp, type ViewStyle } from 'react-native';
 import { OVERLAY_TOKENS, SPACING } from '../../utils/theme';
 import { ArcOverlayTitleHeader } from './ArcOverlayTitleHeader';
@@ -20,7 +20,7 @@ import {
   resolveOverlayPanelMinHeight,
 } from './overlayPanelLayout';
 
-export type ArcOverlayCardLayout = 'compact' | 'panel';
+export type ArcOverlayCardLayout = 'compact' | 'panel' | 'fill';
 
 type Props = {
   title: string;
@@ -30,6 +30,8 @@ type Props = {
   onClose?: () => void;
   /** false면 onClose 있어도 ✕ 숨김(특수 케이스) */
   showCloseButton?: boolean;
+  /** 헤더 제목 왼쪽 — 미전달 시 기존과 동일 */
+  leading?: ReactNode;
   trailing?: ReactNode;
   /** panel 전용 — ScrollView 위 고정 블록(초상화·배너 등) */
   panelPrefix?: ReactNode;
@@ -41,6 +43,9 @@ type Props = {
   minHeight?: number | `${number}%`;
   maxHeight?: number | `${number}%`;
   footer?: ReactNode;
+  /** panel ScrollView — 채팅 등 전송 후 하단 스크롤용. 미전달 시 기존과 동일 */
+  scrollViewRef?: Ref<ScrollView>;
+  keyboardDismissMode?: 'none' | 'on-drag' | 'interactive';
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
   bodyStyle?: StyleProp<ViewStyle>;
@@ -54,6 +59,7 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
   titleColor,
   onClose,
   showCloseButton = true,
+  leading,
   trailing,
   panelPrefix,
   panelBleedPrefix,
@@ -62,27 +68,32 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
   minHeight,
   maxHeight,
   footer,
+  scrollViewRef,
+  keyboardDismissMode,
   children,
   style,
   bodyStyle,
   visualTheme = 'phosphor',
 }: Props) {
   const { height: winH } = useWindowDimensions();
-  const isPanel = layout === 'panel';
+  const isPanel = layout === 'panel' || layout === 'fill';
+  const isFill = layout === 'fill';
   const isTactical = visualTheme === 'tactical';
   const hasFooter = footer != null;
   const panelMinPx = useMemo(() => resolveOverlayPanelMinHeight(winH), [winH]);
   const panelMaxPx = useMemo(() => resolveOverlayPanelMaxHeight(winH), [winH]);
-  const resolvedMinHeight =
-    minHeight
-    ?? (isPanel ? panelMinPx : hasFooter ? OVERLAY_PANEL_CARD_MIN_HEIGHT_PCT : undefined);
-  const resolvedMaxHeight =
-    maxHeight
-    ?? (isPanel ? panelMaxPx : hasFooter ? OVERLAY_PANEL_CARD_MAX_HEIGHT_PCT : undefined);
+  const resolvedMinHeight = isFill
+    ? minHeight
+    : minHeight
+      ?? (isPanel ? panelMinPx : hasFooter ? OVERLAY_PANEL_CARD_MIN_HEIGHT_PCT : undefined);
+  const resolvedMaxHeight = isFill
+    ? maxHeight
+    : maxHeight
+      ?? (isPanel ? panelMaxPx : hasFooter ? OVERLAY_PANEL_CARD_MAX_HEIGHT_PCT : undefined);
   const resolvedBodyStyle = isPanel
     ? [{ paddingTop: OVERLAY_PANEL_BODY_PADDING_TOP_PX }, bodyStyle]
     : bodyStyle;
-  const isBounded = resolvedMinHeight != null || resolvedMaxHeight != null;
+  const isBounded = isFill || resolvedMinHeight != null || resolvedMaxHeight != null;
   const resolvedTitles = useMemo(
     () => resolveOverlayPanelTitles(visualTheme, title, subtitle),
     [visualTheme, title, subtitle],
@@ -107,6 +118,7 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
       style={[
         styles.card,
         isTactical ? tacticalOverlayCardStyles.card : null,
+        isFill ? styles.cardFill : null,
         isBounded ? styles.cardBounded : null,
         resolvedMinHeight != null ? { minHeight: resolvedMinHeight } : null,
         resolvedMaxHeight != null ? { maxHeight: resolvedMaxHeight } : null,
@@ -118,6 +130,7 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
           title={resolvedTitles.title}
           subtitle={resolvedTitles.subtitle}
           titleColor={titleColor}
+          leading={leading}
           trailing={headerTrailing}
           visualTheme={visualTheme}
         />
@@ -137,6 +150,7 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
           >
             {panelPrefix ? <View style={styles.panelPrefixWrap}>{panelPrefix}</View> : null}
             <ScrollView
+              ref={scrollViewRef}
               style={[
                 isBounded ? styles.scrollBounded : null,
                 !isBounded && scrollMaxHeight != null ? { maxHeight: scrollMaxHeight } : null,
@@ -144,6 +158,7 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
               contentContainerStyle={styles.scrollContent}
               showsVerticalScrollIndicator
               keyboardShouldPersistTaps="handled"
+              keyboardDismissMode={keyboardDismissMode}
               nestedScrollEnabled
             >
               {children}
@@ -192,6 +207,16 @@ const styles = StyleSheet.create({
   },
   cardBounded: {
     flexDirection: 'column',
+  },
+  cardFill: {
+    flexGrow: 1,
+    flex: 1,
+    alignSelf: 'stretch',
+    width: '100%',
+    minHeight: 0,
+    borderRadius: 0,
+    borderWidth: 0,
+    flexShrink: 1,
   },
   headerWrap: {
     flexShrink: 0,

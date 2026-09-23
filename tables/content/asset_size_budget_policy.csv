@@ -1,0 +1,8 @@
+category,pathPrefix,warnKb,hardCapKb,note
+npc_portrait,assets/images/npc/,40,150,"함장·바 종업원 초상 — 대화 145px/썸네일 72px 표시 기준"
+planet_globe_baked,assets/images/planet/baked/,256,256,"허브 원반 베이크 — 기존 audit:planet-globe-assets 256KB 계약과 동일"
+planet_backdrop,assets/images/planet/,200,400,"행성 배경·정보패널 이미지"
+ship_portrait,assets/images/ship/,80,200,"전함 카탈로그·초상 이미지"
+nebula_backdrop,assets/images/nebula/,300,600,"메인스테이지 성운 배경 레이어"
+effects,assets/images/effects/,60,150,"이펙트 스프라이트"
+misc,assets/images/,80,200,"위 카테고리에 안 걸리는 나머지(아이콘·스플래시 등)"

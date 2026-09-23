@@ -4,10 +4,36 @@
 
 import { useMissionStore } from '../../store/missionStore';
 import { usePlayerStore } from '../../store/playerStore';
+import { SEEN_STORY_SCENE_IDS_MAX, capBoundedStringList } from '../../store/playerFlagBounds';
 import type { StorySceneCompletionPolicy } from '../../types';
 import type { IngameDialogCompletionAction } from './ingameDialogTypes';
-import { tryAcceptQuestMissionWithFeedback } from '../../missions/instanceMissionAcceptFeedback';
 import { t } from '../../i18n';
+import {
+  tryAcceptMainStoryMissionWithFeedback,
+  tryAcceptQuestMissionWithFeedback,
+} from '../../missions/instanceMissionAcceptFeedback';
+import { applyTalkNpcMissionObjectives } from '../../missions/applyTalkNpcMissionObjectives';
+import {
+  missionIdFromObjectiveId,
+  rememberStellaQuestTalk,
+} from '../../arcCore/chat/stellaQuestTalkMemory';
+import { filterIngameDialogPages, getIngameDialogSceneById } from './ingameDialogSceneIndex';
+
+function rememberQuestTalkFromScene(sceneId: string): void {
+  if (!sceneId.startsWith('story_dialog_') && !sceneId.startsWith('npc_dialog_sq_')) return;
+  const scene = getIngameDialogSceneById(sceneId);
+  const captain = scene ? (filterIngameDialogPages(scene)[0]?.speakerNpcCaptainId?.trim() ?? '') : '';
+  if (!captain || captain === 'npc_cpt_operator_stella') return;
+  let objectiveId = '';
+  let missionId = '';
+  if (sceneId.startsWith('story_dialog_obj_')) {
+    objectiveId = sceneId.slice('story_dialog_'.length);
+    missionId = missionIdFromObjectiveId(objectiveId);
+  } else if (sceneId.startsWith('story_dialog_story_')) {
+    missionId = sceneId.slice('story_dialog_'.length);
+  }
+  rememberStellaQuestTalk({ sceneId, speakerCaptainId: captain, missionId, objectiveId });
+}
 
 const callbackRegistry = new Map<string, () => void | Promise<void>>();
 
@@ -22,6 +48,7 @@ export function registerIngameDialogCallback(
 }
 
 export function markIngameDialogSceneSeen(sceneId: string): void {
+  rememberQuestTalkFromScene(sceneId);
   const snapshot = usePlayerStore.getState().player;
   if (!snapshot) return;
   const prevSeen = snapshot.flags.seenStorySceneIds ?? [];
@@ -30,7 +57,7 @@ export function markIngameDialogSceneSeen(sceneId: string): void {
     ...snapshot,
     flags: {
       ...snapshot.flags,
-      seenStorySceneIds: [...prevSeen, sceneId],
+      seenStorySceneIds: capBoundedStringList([...prevSeen, sceneId], SEEN_STORY_SCENE_IDS_MAX),
     },
   });
   void usePlayerStore.getState().persist();
@@ -78,6 +105,35 @@ export async function runIngameDialogCompletionAction(
         },
         t,
       );
+      break;
+    }
+    case 'accept_main_story_mission': {
+      const player = usePlayerStore.getState().player;
+      const level = player?.level ?? 1;
+      tryAcceptMainStoryMissionWithFeedback(
+        action.missionId,
+        {
+          planetId: action.planetId,
+          playerLevel: level,
+          expectCaptainId: action.expectCaptainId,
+        },
+        t,
+      );
+      break;
+    }
+    case 'complete_talk_npc':
+      applyTalkNpcMissionObjectives(action.captainId, action.planetId);
+      break;
+    case 'record_orbit_comm': {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { recordOrbitComm } = require('../../store/orbitPresenceMemoryStore') as typeof import('../../store/orbitPresenceMemoryStore');
+      recordOrbitComm({
+        captainId: action.captainId,
+        planetId: action.planetId,
+        outcome: action.outcome,
+        sceneId: action.sceneId,
+        writeId: action.writeId,
+      });
       break;
     }
     case 'mark_intro_seen_and_start_first_mission':

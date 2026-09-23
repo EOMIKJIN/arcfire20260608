@@ -78,6 +78,34 @@ test('5) listTerritorialCombatPolicies() 연속 2회 호출 — revision 캐시�
   assert.equal(a, b, '동적 분쟁지역 상태가 안 바뀐 동안엔 같은 배열 참조를 반환해야 함(캐시 hit)');
 });
 
+test('5c) 체류 중 분쟁 차례는 플레이어 웨이브 이관(패스 미완료·NPC 블루 차단)', () => {
+  const src = readFileSync(resolve(__dirname, 'runTerritorialCombatPass.ts'), 'utf8');
+  assert.match(src, /requestTerritorialPlayerWavePending/);
+  assert.match(src, /player_wave_pending/);
+  assert.match(src, /currentPlanetId === planetId/);
+  assert.match(src, /clearTerritorialPlayerWavePending\(planetId\)/);
+  assert.match(src, /requestTerritorialPlayerWaveIfLandedOnDue/);
+});
+
+test('5e) 학습은 최종 검증만 — 전투 배율 중첩·부트 hydrate 없음', () => {
+  const src = readFileSync(resolve(__dirname, 'runTerritorialCombatPass.ts'), 'utf8');
+  assert.match(src, /lockBlowoutIfClear/);
+  assert.match(src, /shouldVetoWeakerHoldTransfer/);
+  assert.match(src, /peekLatestFactionPowerKpi/);
+  assert.equal(src.includes('hydrateArcCoreLearningStore'), false);
+  assert.equal(src.includes('resolveTerritorialLearningCombatMuls'), false);
+  assert.equal(src.includes('attackerLearningMul'), false);
+});
+
+test('5d) 학습 관측은 완료 패스만 — pending 은 publish 하지 않음', () => {
+  const src = readFileSync(resolve(__dirname, 'runTerritorialCombatPass.ts'), 'utf8');
+  assert.match(src, /publishTerritorialPassLearning/);
+  const pendingIdx = src.indexOf("decision: 'player_wave_pending'");
+  const publishIdx = src.lastIndexOf('publishTerritorialPassLearning');
+  assert.ok(pendingIdx >= 0 && publishIdx > pendingIdx, 'pending 반환 뒤에만 학습 publish');
+  assert.match(src, /if \(r\.decision === 'player_wave_pending'\) continue;/);
+});
+
 test('5b) listTerritorialCombatPoliciesForCampaign도 동일 그룹 연속 호출 시 동일 참조(캐시 hit)', () => {
   const a = listTerritorialCombatPoliciesForCampaign('draco_front');
   const b = listTerritorialCombatPoliciesForCampaign('draco_front');

@@ -22,15 +22,17 @@ import {
   maxAddableToInventory,
   normalizeInventorySlots,
 } from './playerInventory';
-import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
-import { previewPlanetOwnershipDeedPurchase } from '../clanWar/planetOwnershipModel';
-import { soloClanIdForUid } from '../clanWar/clanWarRules';
 import { computeTradeFeeForPlanetGross } from './planetDevelopment/planetTradePortRuntimeBridge';
 import { resolveTradeMineralSinkTotalQty } from '../arcCore/economy/tradeMineralSinkPolicy';
 import { usePlayerStore } from '../store/playerStore';
 import { reversePlanetTradeTransactionFee } from '../arcCore/economy/applyPlanetTradeTransactionFee';
 import { useMissionStore } from '../store/missionStore';
 import { generateMarketByItemIds, getBuyPrice, getSellPrice } from '../engine/TradeEngine';
+import {
+  applyBlackMarketBossToCatalogIds,
+  applyPlayerTradeBuyUnitPrice,
+  applyPlayerTradeSellUnitPrice,
+} from './playerOwnedSkillTradeAdjust';
 import { resolvePlayerLifetimeCredits } from './resolvePlayerLifetimeCredits';
 import { resolveTradeRoutePlayerSellUnit } from '../arcCore/economy/tradeRouteCommercePolicy';
 import { resolveMineralCatalogSellPrice } from '../arcCore/economy/mineralTradePricing';
@@ -67,11 +69,13 @@ export function resolveTradePortListedItemIds(
   planetId: string,
   playerLevel: number,
   progresses: Record<string, MissionProgress>,
+  ownedSkillIds?: readonly string[],
 ): string[] {
   let catalogIds = getPlanetTradePortItemIds(planetId);
   // 카탈로그 resync는 tradeScreenSession·arcMemoryGovernor warm 에서만 — 렌더 dispatch 금지
   const base = filterTradePortCatalogForBuyMarket(catalogIds, playerLevel);
-  return mergeQuestTradePortItemIds(planetId, base, progresses);
+  const withQuest = mergeQuestTradePortItemIds(planetId, base, progresses);
+  return applyBlackMarketBossToCatalogIds(withQuest, ownedSkillIds);
 }
 
 export function resolveTradeBuyBlock(input: {
@@ -108,32 +112,7 @@ export function resolveTradeBuyBlock(input: {
   }
 
   if (isPlanetOwnershipItemType) {
-    const deedPlanetId = typeof itemDef?.attrs?.planetId === 'string'
-      ? String(itemDef.attrs.planetId).trim()
-      : null;
-    if (deedPlanetId && player.uid) {
-      const clanWar = useClanWarFoundationStore.getState();
-      const purchasePreview = previewPlanetOwnershipDeedPurchase(
-        deedPlanetId,
-        clanWar.planetHolds[deedPlanetId],
-        soloClanIdForUid(player.uid),
-        player.political.megaFactionId,
-        clanWar.clans,
-      );
-      if (!purchasePreview.ok) {
-        const failMsgKey =
-          purchasePreview.reason === 'red_territory'
-            ? 'trade.own.claimFailRedTerritory'
-            : purchasePreview.reason === 'already_owner'
-              ? 'trade.own.claimFailAlready'
-              : purchasePreview.reason === 'owned_by_other_clan'
-                ? 'trade.own.claimFailMsg'
-                : purchasePreview.reason === 'faction_mismatch' || purchasePreview.reason === 'neutral_territory'
-                  ? 'trade.own.claimFailFaction'
-                  : 'trade.own.claimFailMsg';
-        return { title: tStatic('trade.own.claimFailTitle'), message: tStatic(failMsgKey) };
-      }
-    }
+    return { title: tStatic('trade.own.cashOnlyTitle'), message: tStatic('trade.own.cashOnlyMsg') };
   }
 
   if (!filterTradePortCatalogForPlayer([listing.goodId], player.level).includes(listing.goodId)) {
@@ -209,7 +188,7 @@ export function rollbackTradeBuyFailure(input: {
     const restored = refundTradeMineralSink(current, input.itemDef, input.buyQty);
     if (restored !== current) store.setPlayer(restored);
   }
-  store.addCredits(input.totalCharged);
+  store.refundCredits(input.totalCharged);
   if (input.planetId && input.grossCredits != null && input.grossCredits > 0) {
     // rollbackTradeBuyFailure는 sync 계약 유지(호출부 다수, UI 즉시 크레딧 환급만 보장) —
     // 금고 반영은 내부에서 ensureHydrated로 순서 보장하는 비동기 함수에 위임.
@@ -222,10 +201,11 @@ export function resolveFreshTradeBuyUnitPrice(
   listing: MarketListing,
   planetId: string,
   player: Player,
+  qty = 1,
 ): number {
   const progresses = useMissionStore.getState().progresses;
   const base = generateMarketByItemIds(
-    resolveTradePortListedItemIds(planetId, player.level, progresses),
+    resolveTradePortListedItemIds(planetId, player.level, progresses, player.skills),
     planetId.length * 37,
     resolvePlayerLifetimeCredits(player),
     planetId,
@@ -233,7 +213,12 @@ export function resolveFreshTradeBuyUnitPrice(
   // 화면 진열과 동일한 퀘스트 배치 단가 오버라이드를 적용해야 표시가와 일치한다.
   const freshListing = applyQuestMarketListingOverrides(base, planetId, progresses)
     .find((m) => m.goodId === listing.goodId);
-  return getBuyPrice(freshListing ?? listing);
+  return applyPlayerTradeBuyUnitPrice(getBuyPrice(freshListing ?? listing), player.skills, qty);
+}
+
+/** 무역소 진열·수량 팝업 — 플레이어 매입 단가(스킬 포함) */
+export function resolvePlayerVisibleBuyUnitPrice(listing: MarketListing): number {
+  return applyPlayerTradeBuyUnitPrice(getBuyPrice(listing), undefined, 1);
 }
 
 /** 수량 선택 UI 상한 — 진열 재고 기준(0이면 1). 구매 가능 여부는 구매 버튼에서 검증 */
@@ -247,14 +232,15 @@ export function resolveInventorySellPrice(
   basePrice: number,
   listing: MarketListing | undefined,
   inventoryBuyUnitPrice = 0,
+  qty = 1,
 ): number {
   const itemDef = resolveItemDefById(goodId);
   if (itemDef?.type === 'trade_route') {
     const tgSell = resolveTradeRoutePlayerSellUnit(planetId, goodId, inventoryBuyUnitPrice);
-    if (tgSell > 0) return tgSell;
+    if (tgSell > 0) return applyPlayerTradeSellUnitPrice(tgSell, undefined, qty);
   }
-  if (listing) return getSellPrice(listing, { planetId, goodId });
+  if (listing) return applyPlayerTradeSellUnitPrice(getSellPrice(listing, { planetId, goodId }), undefined, qty);
   const mineralPolicy = resolveMineralCatalogSellPrice(goodId);
-  if (mineralPolicy != null) return mineralPolicy;
-  return Math.floor(basePrice * 0.7);
+  if (mineralPolicy != null) return applyPlayerTradeSellUnitPrice(mineralPolicy, undefined, qty);
+  return applyPlayerTradeSellUnitPrice(Math.floor(basePrice * 0.7), undefined, qty);
 }

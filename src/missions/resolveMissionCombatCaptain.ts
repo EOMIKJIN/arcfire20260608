@@ -1,5 +1,7 @@
 import { MISSION_COMBAT_CAPTAINS_FROM_CSV } from '../data/generated';
-import { getNpcCaptain, resolveTransitPirateCaptainForSystem } from '../npc/npcFleetRegistry';
+import { getNpcCaptain } from '../npc/npcFleetRegistry';
+import { resolveTransitHostileCaptainForSystem } from '../npc/transitHostileCaptainResolve';
+import { isCaptainAllowedInCombat } from '../npc/mainStoryCaptainDeathGate';
 import type { NpcCaptain } from '../types';
 
 export type MissionCombatCaptainResolveInput = {
@@ -22,6 +24,8 @@ function pickBestCaptainRow(
 
   const consider = (rows: typeof candidates) => {
     for (const row of rows) {
+      // 메인스토리 사망 원장 — 사망자는 스킵하고 다음 priority 후보
+      if (!isCaptainAllowedInCombat(row.captainId)) continue;
       if (row.priority < bestPriority) continue;
       if (row.priority === bestPriority && bestCaptainId) continue;
       bestCaptainId = row.captainId;
@@ -44,6 +48,7 @@ export function resolveMissionCombatCaptain(
 ): NpcCaptain | undefined {
   const captainId = pickBestCaptainRow(input.enemyTemplateId, input.planetId ?? null);
   if (!captainId) return undefined;
+  if (!isCaptainAllowedInCombat(captainId)) return undefined;
   return getNpcCaptain(captainId);
 }
 
@@ -53,5 +58,5 @@ export function resolveCombatEnemyCaptain(
 ): NpcCaptain | undefined {
   const fromMissionTable = resolveMissionCombatCaptain(input);
   if (fromMissionTable) return fromMissionTable;
-  return resolveTransitPirateCaptainForSystem(input.systemId ?? null);
+  return resolveTransitHostileCaptainForSystem(input.systemId ?? null);
 }

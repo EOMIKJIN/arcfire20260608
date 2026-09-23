@@ -30,6 +30,8 @@ const gpuSupervisor = read('src/game/planetStageGpuSupervisor.ts');
 const nebulaBackdrop = read('src/components/planet/SkiaPlanetNebulaShaderBackdrop.tsx');
 const skiaLifecycle = read('src/game/skia/skiaMemoryLifecycle.ts');
 const inboundTrail = read('src/components/planet/PlanetHubInboundDroneSkiaTrailLayer.tsx');
+const transitParallax = read('src/components/combat/TransitCombatSkiaParallaxBackdrop.tsx');
+const hitFxContract = read('src/components/planet/planetSkiaHitFxContract.ts');
 
 const checks = [];
 
@@ -202,8 +204,116 @@ checks.push(
   check(
     'SkImage manual dispose forbidden (SIGSEGV guard)',
     /수동 dispose 금지|dispose 금지/.test(combat)
-      && /수동 dispose 금지|dispose 금지/.test(nebulaBackdrop),
-    'combat + nebula backdrop',
+      && /수동 dispose 금지|dispose 금지/.test(nebulaBackdrop)
+      && /수동 dispose 금지|dispose 금지/.test(transitParallax),
+    'combat + nebula + transit parallax',
+  ),
+);
+
+checks.push(
+  check(
+    'transit parallax: single Canvas + Picture (no Path.map, no worklet)',
+    exists('src/components/combat/TransitCombatSkiaParallaxBackdrop.tsx')
+      && transitParallax.includes('<Picture picture={picture} />')
+      && transitParallax.includes('BlendMode.Screen')
+      && transitParallax.includes('drawNebulaColorDodgeFxTransformedOnSkCanvas')
+      && !transitParallax.includes('useFrameCallback')
+      && !/<Path[\s\S]*\.map\(/.test(transitParallax),
+    'TransitCombatSkiaParallaxBackdrop.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'transit parallax: skiaLoopsActive + delayed Picture drop',
+    transitParallax.includes('skiaLoopsActiveRef')
+      && usesSkPictureDispose(transitParallax),
+    'TransitCombatSkiaParallaxBackdrop.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'transit parallax: no PictureRecorder dispose (combat-end SIGSEGV)',
+    transitParallax.includes('getParallaxRecorder')
+      && !/_parallaxRecorder\)[\s\S]{0,40}safeSkiaDispose/.test(transitParallax)
+      && !transitParallax.includes('safeSkiaDispose(_parallaxRecorder'),
+    'TransitCombatSkiaParallaxBackdrop.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'transit parallax: no clipRect on PictureRecorder (JsiSkCanvas getBool assert)',
+    !transitParallax.includes('clipRect'),
+    'TransitCombatSkiaParallaxBackdrop.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'transit parallax: no SkImage.width/height on tick (JsiSkImage::width SIGSEGV)',
+    !transitParallax.includes('.width()') && !transitParallax.includes('.height()'),
+    'TransitCombatSkiaParallaxBackdrop.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'ColorDodge FX: no dodgeImage.width/height (JsiSkImage::width SIGSEGV)',
+    !hitFxContract.includes('dodgeImage.width()') && !hitFxContract.includes('dodgeImage.height()'),
+    'planetSkiaHitFxContract.ts',
+  ),
+);
+
+checks.push(
+  check(
+    'transit parallax: overlay is full-bleed (no container chrome inset)',
+    transitParallax.includes('StyleSheet.absoluteFillObject')
+      && !/top:\s*chromePad/.test(transitParallax)
+      && !/style=\{\[styles\.root,/.test(transitParallax),
+    'TransitCombatSkiaParallaxBackdrop.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'transit parallax: one/two drifting clouds (no tile grid)',
+    transitParallax.includes('resolveTransitCloudSpriteSize')
+      && transitParallax.includes('drawDriftingCloud')
+      && !transitParallax.includes('TRANSIT_CLOUD_TILE_COLS')
+      && !transitParallax.includes('drawCloudCoverage'),
+    'TransitCombatSkiaParallaxBackdrop.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'transit parallax: tick interval not rebound on layout/dodge (flush ref)',
+    transitParallax.includes('flushPictureRef')
+      && /setInterval\(\(\) => \{\s*flushPictureRef\.current\(\);/.test(transitParallax)
+      && /\[active, stopParallaxLoops\]/.test(transitParallax),
+    'TransitCombatSkiaParallaxBackdrop.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'transit parallax: starfield is Skia catalog (no RN StarField Views)',
+    transitParallax.includes('drawTransitStarField')
+      && transitParallax.includes('fillTransitStarCatalog')
+      && !transitParallax.includes('from \'../../renderer/StarField\'')
+      && !transitParallax.includes('new Array('),
+    'TransitCombatSkiaParallaxBackdrop.tsx',
+  ),
+);
+
+checks.push(
+  check(
+    'transit parallax: image refs sync in useEffect (not render body)',
+    /useEffect\(\(\) => \{\s*bakedImageRef\.current = bakedImage/.test(transitParallax)
+      && /useEffect\(\(\) => \{\s*dodgeImageRef\.current = dodgeImage/.test(transitParallax),
+    'TransitCombatSkiaParallaxBackdrop.tsx',
   ),
 );
 

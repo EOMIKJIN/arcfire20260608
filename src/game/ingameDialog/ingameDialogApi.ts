@@ -28,6 +28,11 @@ export function dismissIngameDialog(): void {
   useIngameDialogStore.getState().dismiss();
 }
 
+/** 허브 이탈·계정 purge — NL 1차 통신만 메신저 없이 닫는다. */
+export function abortIngameDialogLeavingStage(): void {
+  useIngameDialogStore.getState().abortLeavingStage();
+}
+
 export function tryFireIngameDialogTrigger(
   triggerKey: StorySceneTriggerKey,
   targetId: string | null,
@@ -55,6 +60,7 @@ export {
 } from './resolveNpcCaptainDialogSceneId';
 export type {
   PresentIngameDialogOptions,
+  IngameDialogAutoDismissMode,
   IngameDialogCompletionAction,
   IngameDialogTextContext,
 } from './ingameDialogTypes';

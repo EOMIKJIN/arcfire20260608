@@ -51,6 +51,7 @@ type PlanetTradeFeeLedgerState = {
     source?: 'player' | 'convoy',
   ) => void;
   takePlayerWalletPendingForPlanets: (planetIds: string[]) => number;
+  spendArcFeeCredits: (planetId: string, amount: number) => number;
   snapshotBuckets: () => Record<string, PlanetTradeFeeBucket>;
   getBucket: (planetId: string) => PlanetTradeFeeBucket;
 };
@@ -207,6 +208,22 @@ export const usePlanetTradeFeeLedgerStore = create<PlanetTradeFeeLedgerState>((s
     const next = { ...get().byPlanetId, [planetId]: nextBucket };
     set({ byPlanetId: next });
     scheduleFeeLedgerPersist(get);
+  },
+
+  spendArcFeeCredits: (planetId, amount) => {
+    const want = Math.max(0, Math.floor(amount));
+    if (!planetId || want <= 0) return 0;
+    const prev = get().byPlanetId[planetId];
+    if (!prev || prev.arcFeeCredits <= 0) return 0;
+    const spent = Math.min(want, prev.arcFeeCredits);
+    set({
+      byPlanetId: {
+        ...get().byPlanetId,
+        [planetId]: { ...prev, arcFeeCredits: prev.arcFeeCredits - spent },
+      },
+    });
+    scheduleFeeLedgerPersist(get);
+    return spent;
   },
 
   takePlayerWalletPendingForPlanets: (planetIds) => {

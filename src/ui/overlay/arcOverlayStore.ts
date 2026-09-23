@@ -33,20 +33,41 @@ export type ArcOverlayKind =
   | 'settings'
   | 'bmShop'
   | 'nearbyPresenceInfo'
-  | 'relicLore';
+  | 'relicLore'
+  | 'hubTalkRoster'
+  | 'planetOwnershipRoster'
+  | 'arcCoreChat'
+  | 'skillInfo';
 
 type ArcOverlayBase = {
   id: string;
   dismissOnBackdrop?: boolean;
+  /** compact 범용 팝업(alert·waveResult·reward·levelUp) — 양수=자동 닫힘 */
+  autoDismissMs?: number;
+};
+
+export type ArcOverlayAlertMessageLeadTone = 'ready' | 'pending';
+
+export type ArcOverlayAlertMessageLead = {
+  text: string;
+  tone: ArcOverlayAlertMessageLeadTone;
+};
+
+/** compact 공통 — Reward/WaveResult 의 divider + sectionLabel + 설명 */
+export type ArcOverlayAlertMessageSection = {
+  label: string;
+  text: string;
 };
 
 export type ArcOverlayAlertEntry = ArcOverlayBase & {
   kind: 'alert';
   title: string;
   message: string;
+  /** 본문 위 임시 배지(연구소 스킬 개발상태 등) */
+  messageLead?: ArcOverlayAlertMessageLead;
+  /** 본문 아래 구분선 + 섹션 제목 + 설명 */
+  messageSection?: ArcOverlayAlertMessageSection;
   buttons: ArcAlertButton[];
-  /** ms 후 자동 닫힘 — presentArcOverlayAlert 기본 30s (0=비활성) */
-  autoDismissMs?: number;
 };
 
 export type ArcOverlayLevelUpEntry = ArcOverlayBase & {
@@ -74,10 +95,15 @@ export type ArcOverlayNarrativeEntry = ArcOverlayBase & {
   typewriterKey: string;
   buttonText: string;
   onPressNext: () => void;
+  /** 메인 퀘스트 수락 등 — 보조 버튼([ 취소 ]) */
+  secondaryButtonText?: string;
+  onPressSecondary?: () => void;
   nextDisabled?: boolean;
   onTextComplete?: () => void;
   typewriterSpeedMs?: number;
   imageSource?: ImageSourcePropType;
+  /** 얼굴 레이어 안 추가 스케일(기본 1). intro CSV·adhoc 등 */
+  portraitScale?: number;
   maxLines?: number;
   /** false — 화면 외부 버튼이 진행 담당(intro footer 등) */
   showActionButton?: boolean;
@@ -152,6 +178,7 @@ export type ArcOverlayBmShopEntry = ArcOverlayBase & {
 /** 궤도 근접 INFO — 거리순 함장·전함 상세 (행성 허브 우측 info 탭) */
 export type ArcOverlayNearbyPresenceInfoEntry = ArcOverlayBase & {
   kind: 'nearbyPresenceInfo';
+  planetId: string;
   rows: NearbyInfoDetailRow[];
 };
 
@@ -163,6 +190,55 @@ export type ArcOverlayRelicLoreEntry = ArcOverlayBase & {
   godNameEn?: string;
   loreBodyKo: string;
 };
+
+export type ArcOverlayHubTalkRosterRow = {
+  rowKey: string;
+  kind: 'arc_core' | 'operator' | 'npc';
+  displayName: string;
+  subtitle: string;
+  showInitiatedBadge: boolean;
+  captainId?: string;
+  sceneId?: string;
+  source?: string;
+};
+
+export type ArcOverlayHubTalkRosterEntry = ArcOverlayBase & {
+  kind: 'hubTalkRoster';
+  planetId: string;
+  rows: ArcOverlayHubTalkRosterRow[];
+};
+
+export type ArcOverlayPlanetOwnershipRosterEntry = ArcOverlayBase & {
+  kind: 'planetOwnershipRoster';
+};
+
+export type ArcOverlayArcCoreChatEntry = ArcOverlayBase & {
+  kind: 'arcCoreChat';
+};
+
+export type ArcOverlaySkillInfoEntry = ArcOverlayBase & {
+  kind: 'skillInfo';
+  skillName: string;
+  categoryLabel: string;
+  tier: number;
+  description: string;
+  effect: string;
+  runtimeStatus: 'complete' | 'partial' | 'undeveloped';
+  runtimeNoteKey?: string;
+  learned: boolean;
+  canLearn: boolean;
+  levelRequired: number;
+  playerLevel: number;
+  skillPoints: number;
+  prerequisiteLine: string;
+  prerequisitesMet: boolean;
+  onLearn?: () => void | Promise<void>;
+};
+
+export const HUB_TALK_ROSTER_OVERLAY_ID = 'hub-talk-roster';
+export const PLANET_OWNERSHIP_ROSTER_OVERLAY_ID = 'planet-ownership-roster';
+/** STAGE blur dismiss 정책 `ARC_CORE_CHAT_OVERLAY_DISMISS_ID`와 동일해야 한다. */
+export const ARC_CORE_CHAT_OVERLAY_ID = 'arc-core-chat';
 
 export type ArcOverlayEntry =
   | ArcOverlayAlertEntry
@@ -177,7 +253,11 @@ export type ArcOverlayEntry =
   | ArcOverlaySettingsEntry
   | ArcOverlayBmShopEntry
   | ArcOverlayNearbyPresenceInfoEntry
-  | ArcOverlayRelicLoreEntry;
+  | ArcOverlayRelicLoreEntry
+  | ArcOverlayHubTalkRosterEntry
+  | ArcOverlayPlanetOwnershipRosterEntry
+  | ArcOverlayArcCoreChatEntry
+  | ArcOverlaySkillInfoEntry;
 
 export type ArcOverlayInput =
   | (Omit<ArcOverlayAlertEntry, 'id'> & { id?: string })
@@ -192,7 +272,11 @@ export type ArcOverlayInput =
   | (Omit<ArcOverlaySettingsEntry, 'id'> & { id?: string })
   | (Omit<ArcOverlayBmShopEntry, 'id'> & { id?: string })
   | (Omit<ArcOverlayNearbyPresenceInfoEntry, 'id'> & { id?: string })
-  | (Omit<ArcOverlayRelicLoreEntry, 'id'> & { id?: string });
+  | (Omit<ArcOverlayRelicLoreEntry, 'id'> & { id?: string })
+  | (Omit<ArcOverlayHubTalkRosterEntry, 'id'> & { id?: string })
+  | (Omit<ArcOverlayPlanetOwnershipRosterEntry, 'id'> & { id?: string })
+  | (Omit<ArcOverlayArcCoreChatEntry, 'id'> & { id?: string })
+  | (Omit<ArcOverlaySkillInfoEntry, 'id'> & { id?: string });
 
 type ArcOverlayState = {
   stack: ArcOverlayEntry[];
@@ -244,11 +328,13 @@ export const useArcOverlayStore = create<ArcOverlayState>((set, get) => ({
 
 /**
  * alert — 연속 호출 시 최상단 alert 만 교체 (또는 options.id 고정 교체)
- * autoDismissMs: 생략=30초 자동 닫힘 · 0=수동만 · 양수=해당 ms
+ * autoDismissMs: 생략=40초 자동 닫힘 · 0=수동만 · 양수=해당 ms
  */
 export type ArcAlertPresentOptions = {
   id?: string;
   autoDismissMs?: number;
+  messageLead?: ArcOverlayAlertMessageLead;
+  messageSection?: ArcOverlayAlertMessageSection;
 };
 
 export function presentArcOverlayAlert(
@@ -269,12 +355,20 @@ export function presentArcOverlayAlert(
     buttons: list,
     dismissOnBackdrop: true,
     autoDismissMs: resolveArcAlertAutoDismissMs(options?.autoDismissMs),
+    ...(options?.messageLead ? { messageLead: options.messageLead } : {}),
+    ...(options?.messageSection ? { messageSection: options.messageSection } : {}),
     ...(alertId ? { id: alertId } : {}),
   };
   const store = useArcOverlayStore.getState();
   if (alertId) {
-    store.dismissWhere((e) => e.id === alertId);
-    store.present(entry);
+    // dismissWhere+present 분리 시 연속 호출(접전 status_quo 다건)에서 동일 id가
+    // 스택에 겹칠 수 있음 → 단일 set으로 교체·삽입(스택 위생).
+    // 참고: ArcOverlayHost는 top만 렌더하므로 스택 중복 id 자체는 React same-key 원인이 아님.
+    const next = withId(entry);
+    useArcOverlayStore.setState((s) => {
+      const filtered = s.stack.filter((e) => e.id !== alertId);
+      return { stack: [...filtered, next] };
+    });
     return;
   }
   const top = store.top();
@@ -323,6 +417,14 @@ export function presentPlanetEconomyInfoOverlay(planetId: string, planetName: st
     presentArcOverlayAlert(t('heavyUi.errorTitle'), t(`heavyUi.preflight.${pf.code}`));
     return;
   }
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { tryRevealPlanetInfoOnPresent } =
+      require('../../world/planetInfoReveal') as typeof import('../../world/planetInfoReveal');
+    tryRevealPlanetInfoOnPresent(planetId);
+  } catch {
+    /* reveal helper lazy */
+  }
   const entry: ArcOverlayInput = {
     kind: 'planetEconomyInfo',
     planetId,
@@ -332,6 +434,25 @@ export function presentPlanetEconomyInfoOverlay(planetId: string, planetName: st
   };
   const top = useArcOverlayStore.getState().top();
   if (top?.kind === 'planetEconomyInfo' && top.planetId === planetId) {
+    useArcOverlayStore.getState().replaceTop(entry);
+  } else {
+    useArcOverlayStore.getState().present(entry);
+  }
+}
+
+const SKILL_INFO_OVERLAY_ID = 'skill-info';
+
+export function presentSkillInfoOverlay(
+  payload: Omit<ArcOverlaySkillInfoEntry, 'id' | 'kind' | 'dismissOnBackdrop'>,
+): void {
+  const entry: ArcOverlayInput = {
+    kind: 'skillInfo',
+    id: SKILL_INFO_OVERLAY_ID,
+    dismissOnBackdrop: true,
+    ...payload,
+  };
+  const top = useArcOverlayStore.getState().top();
+  if (top?.kind === 'skillInfo') {
     useArcOverlayStore.getState().replaceTop(entry);
   } else {
     useArcOverlayStore.getState().present(entry);
@@ -380,6 +501,7 @@ export function presentWaveResultOverlay(
     kind: 'waveResult',
     dismissOnBackdrop: false,
     ...payload,
+    autoDismissMs: resolveArcAlertAutoDismissMs(payload.autoDismissMs),
   });
 }
 
@@ -422,15 +544,30 @@ export function presentPlanetDevelopmentOverlay(
   }
 }
 
-const NEARBY_PRESENCE_INFO_OVERLAY_ID = 'nearby-presence-info';
+export function presentPlanetOwnershipRosterOverlay(): void {
+  useArcOverlayStore.getState().dismissWhere((e) => e.id === PLANET_OWNERSHIP_ROSTER_OVERLAY_ID);
+  useArcOverlayStore.getState().present({
+    id: PLANET_OWNERSHIP_ROSTER_OVERLAY_ID,
+    kind: 'planetOwnershipRoster',
+    dismissOnBackdrop: true,
+  });
+}
+
+export const NEARBY_PRESENCE_INFO_OVERLAY_ID = 'nearby-presence-info';
 
 export function presentNearbyPresenceInfoOverlay(
   rows: ArcOverlayNearbyPresenceInfoEntry['rows'],
+  planetId = '',
 ): void {
   useArcOverlayStore.getState().present({
     id: NEARBY_PRESENCE_INFO_OVERLAY_ID,
     kind: 'nearbyPresenceInfo',
+    planetId,
     rows,
     dismissOnBackdrop: true,
   });
+}
+
+export function dismissNearbyPresenceInfoOverlay(): void {
+  useArcOverlayStore.getState().dismissWhere((e) => e.id === NEARBY_PRESENCE_INFO_OVERLAY_ID);
 }

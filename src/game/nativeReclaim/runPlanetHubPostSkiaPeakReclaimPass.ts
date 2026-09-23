@@ -10,7 +10,12 @@ import { scheduleDeferredNativeReclaimPass } from './deferredNativeReclaimSchedu
 import { scheduleHubBackdropNativeRemountAfterTrim } from './runDeepNativeReclaimPass';
 import { signalHubSkiaNativeReclaim } from './hubSkiaNativeReclaimSignal';
 import { resolveSinglePlanetSessionKeepIds } from './singlePlanetSessionKeep';
-import { POST_SKIA_PEAK_FOLLOWUP_MS } from './processMemoryBudgetPolicy';
+import {
+  HUB_INBOUND_SETTLE_RECLAIM_MS,
+  POST_SKIA_PEAK_FOLLOWUP_MS,
+} from './processMemoryBudgetPolicy';
+import { runPlanetHubSoftNativeReclaimPass } from './runPlanetHubSoftNativeReclaimPass';
+import { consumeHubSoftReclaimPending } from './hubPendingSoftReclaim';
 import { debugPlanetGpuLayerSnapshot } from '../planetStageGpuSupervisor';
 
 const POST_SKIA_PEAK_DEFER_MS = 32;
@@ -35,8 +40,16 @@ export function runPlanetHubPostSkiaPeakReclaimPass(planetId: string, reason: st
 
   void trimNativeBitmapCachesAsync();
 
-  /** GL floor — Fresco trim 후 RN 백드롭 remount (30m cooldown · deep pass와 동일) */
-  scheduleHubBackdropNativeRemountAfterTrim(`${reason}:post_skia_peak`);
+  /**
+   * inbound peak — RN 성운 remount는 Image 재로딩 깜빡임만 키우고,
+   * 회수 본체(signalHubSkia + Picture invalidate + Fresco)는 이미 위에서 수행.
+   * 전투 orbit 종료 등 non-inbound만 remount(30m cooldown).
+   */
+  const skipInboundBackdropRemount =
+    reason.includes('hub_inbound') || reason.includes('inbound_settle');
+  if (!skipInboundBackdropRemount) {
+    scheduleHubBackdropNativeRemountAfterTrim(`${reason}:post_skia_peak`);
+  }
 
   emitMemProfileMarker({
     stage: 'planet_hub',
@@ -63,6 +76,15 @@ export function schedulePlanetHubPostSkiaPeakReclaim(
   let raf2 = 0;
   let timer: ReturnType<typeof setTimeout> | null = null;
   let followupTimer: ReturnType<typeof setTimeout> | null = null;
+  let settleTimer: ReturnType<typeof setTimeout> | null = null;
+
+  /**
+   * settle soft는 trail/VFX 완전 이탈(hub_inbound_vfx_cleared)에서만.
+   * flying→0 peak는 dodge force-unmount·1차 trim만 — trail 잔존(~0.5s) 중 settle은 조기/coalesce 무효화 유발.
+   */
+  const scheduleInboundSettle =
+    reason === 'hub_inbound_vfx_cleared'
+    || reason.startsWith('hub_inbound_vfx_cleared:');
 
   const run = () => {
     if (cancelled) return;
@@ -73,6 +95,26 @@ export function schedulePlanetHubPostSkiaPeakReclaim(
         if (cancelled) return;
         runPlanetHubPostSkiaPeakReclaimPass(planetId, `${reason}:followup_90s`);
       }, POST_SKIA_PEAK_FOLLOWUP_MS);
+      if (scheduleInboundSettle) {
+        settleTimer = setTimeout(() => {
+          if (cancelled) return;
+          /** pending은 soft 본문 성공 시에만 소비 — coalesce no-op에 pending 유실 금지 */
+          const ran = runPlanetHubSoftNativeReclaimPass(
+            planetId,
+            `${reason}:inbound_settle`,
+            { bypassCoalesce: true },
+          );
+          if (ran) consumeHubSoftReclaimPending();
+          runCombatSkiaPresentationReclaim();
+          void trimNativeBitmapCachesAsync();
+          if (typeof __DEV__ !== 'undefined' && __DEV__) {
+            // eslint-disable-next-line no-console
+            console.log(
+              `[MEM] hubInboundSettleReclaim reason=${reason} after_ms=${HUB_INBOUND_SETTLE_RECLAIM_MS} softRan=${ran ? 1 : 0}`,
+            );
+          }
+        }, HUB_INBOUND_SETTLE_RECLAIM_MS);
+      }
     });
   };
 
@@ -88,5 +130,6 @@ export function schedulePlanetHubPostSkiaPeakReclaim(
     if (raf2) cancelAnimationFrame(raf2);
     if (timer) clearTimeout(timer);
     if (followupTimer) clearTimeout(followupTimer);
+    if (settleTimer) clearTimeout(settleTimer);
   };
 }

@@ -1,0 +1,179 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>아크파이어 온라인 위키</title>
+<meta name="description" content="아크파이어 온라인 — 세계관·세력·은하·함선·무기·경제·전투·아크코어 AI를 정리한 게임 소개 위키" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body data-page="index">
+
+<header class="site-header">
+  <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <div class="site-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
+    <div class="search-hits"></div>
+  </div>
+  <button class="theme-toggle" type="button" aria-label="테마 전환"></button>
+</header>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <h5>시작</h5>
+      <a href="index.html" data-page="index" class="active"><span class="dot"></span>홈</a>
+    </div>
+    <div class="sidebar-group">
+      <h5>세계</h5>
+      <a href="world.html" data-page="world"><span class="dot"></span>세계관 · 아크코어</a>
+      <a href="factions.html" data-page="factions"><span class="dot"></span>4대 세력</a>
+      <a href="galaxy.html" data-page="galaxy"><span class="dot"></span>은하 · 행성</a>
+      <a href="story.html" data-page="story"><span class="dot"></span>스토리 · 미션</a>
+    </div>
+    <div class="sidebar-group">
+      <h5>전력</h5>
+      <a href="ships.html" data-page="ships"><span class="dot"></span>함선</a>
+      <a href="weapons.html" data-page="weapons"><span class="dot"></span>무기체계</a>
+      <a href="skills.html" data-page="skills"><span class="dot"></span>스킬</a>
+      <a href="items.html" data-page="items"><span class="dot"></span>아이템 · 강화</a>
+    </div>
+    <div class="sidebar-group">
+      <h5>체제</h5>
+      <a href="economy.html" data-page="economy"><span class="dot"></span>경제 시스템</a>
+      <a href="planetdev.html" data-page="planetdev"><span class="dot"></span>행성개발</a>
+      <a href="combat.html" data-page="combat"><span class="dot"></span>전투 · 분쟁</a>
+      <a href="arccore.html" data-page="arccore"><span class="dot"></span>아크코어 AI</a>
+      <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
+      <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <section class="hero">
+      <div class="eyebrow">게임 소개 위키 · 비공식 정리본</div>
+      <h1>아크파이어 온라인</h1>
+      <p class="lede">
+        AI가 세계를 대신 운영하는 은하에서, 플레이어는 단 한 척의 함선으로 무역·전투·세력전을 헤쳐 나가는
+        <strong>싱글플레이 우주 전략 게임</strong>이다. 서버에 다른 사람은 없지만, 은하는 <strong>아크코어(ArcCore)</strong>라는
+        상주 AI가 하루 한 번의 배치로 계속 돌아간다 — 플레이어가 접속하지 않은 사이에도 세력은 흥하고,
+        항로는 붐비거나 끊기고, 어떤 행성은 주인이 바뀐다.
+      </p>
+      <div class="stat-strip">
+        <div class="stat-item"><span class="num">4</span><span class="label">대 세력</span></div>
+        <div class="stat-item"><span class="num">21+</span><span class="label">핵심 성계</span></div>
+        <div class="stat-item"><span class="num">103</span><span class="label">무기 항목</span></div>
+        <div class="stat-item"><span class="num">45</span><span class="label">스킬</span></div>
+        <div class="stat-item"><span class="num">1</span><span class="label">척, 오직 나의 함선</span></div>
+      </div>
+    </section>
+
+    <h2 style="border:none; margin-top:0;">카테고리</h2>
+    <p class="page-lede" style="margin-bottom:1.4em;">위키백과 방식으로 세계·전력·체제 세 갈래로 나누었다. 왼쪽 목차나 검색으로도 이동할 수 있다.</p>
+
+    <div class="category-grid">
+      <a class="category-card" href="world.html">
+        <span class="idx">01 · 세계</span>
+        <h3>세계관 · 아크코어</h3>
+        <p>은하의 배경, 그리고 세계를 실제로 굴리는 AI 「아크코어」가 무엇을 하고, 무엇을 하지 않는지.</p>
+        <span class="count">세계관 개요 →</span>
+      </a>
+      <a class="category-card" href="factions.html">
+        <span class="idx">02 · 세계</span>
+        <h3>4대 세력</h3>
+        <p>은하를 나눠 가진 네 국가의 정체성, 색채, 그리고 플레이어의 독립국 지위.</p>
+        <span class="count">세력 목록 →</span>
+      </a>
+      <a class="category-card" href="galaxy.html">
+        <span class="idx">03 · 세계</span>
+        <h3>은하 · 행성</h3>
+        <p>성계 그래프, 대표 행성, 접전지역과 전선의 지리.</p>
+        <span class="count">행성 목록 →</span>
+      </a>
+      <a class="category-card" href="story.html">
+        <span class="idx">04 · 세계</span>
+        <h3>스토리 · 미션</h3>
+        <p>메인 스토리의 장(챕터) 구조와 미션 체계.</p>
+        <span class="count">스토리 개요 →</span>
+      </a>
+      <a class="category-card" href="ships.html">
+        <span class="idx">05 · 전력</span>
+        <h3>함선</h3>
+        <p>플레이어 함선과 NPC 함급, 드론·함재기 편성.</p>
+        <span class="count">함급 목록 →</span>
+      </a>
+      <a class="category-card" href="weapons.html">
+        <span class="idx">06 · 전력</span>
+        <h3>무기체계</h3>
+        <p>레이저·미사일·로켓과 드론·함재기 무장, 특수 이펙트를 가진 희귀 무기.</p>
+        <span class="count">무기 목록 →</span>
+      </a>
+      <a class="category-card" href="skills.html">
+        <span class="idx">07 · 전력</span>
+        <h3>스킬</h3>
+        <p>자동전투를 보강하는 함장·함선 스킬 전체 목록.</p>
+        <span class="count">스킬 목록 →</span>
+      </a>
+      <a class="category-card" href="items.html">
+        <span class="idx">08 · 전력</span>
+        <h3>아이템 · 강화</h3>
+        <p>장비 카테고리와 광물 기반 강화·조선소 업그레이드.</p>
+        <span class="count">아이템 개요 →</span>
+      </a>
+      <a class="category-card" href="economy.html">
+        <span class="idx">09 · 체제</span>
+        <h3>경제 시스템</h3>
+        <p>무역 항로, 5축 금고, 일일 배치가 굴리는 은하 경제.</p>
+        <span class="count">경제 구조 →</span>
+      </a>
+      <a class="category-card" href="combat.html">
+        <span class="idx">10 · 체제</span>
+        <h3>전투 · 분쟁</h3>
+        <p>궤도 실시간 전투, 웨이브, 접전지역 로테이션과 수도 방위.</p>
+        <span class="count">전투 체계 →</span>
+      </a>
+      <a class="category-card" href="arccore.html">
+        <span class="idx">11 · 체제</span>
+        <h3>아크코어 AI</h3>
+        <p>세계를 운영하는 아크코어와, 인간처럼 말을 거는 오퍼레이터 「스텔라 아리스」.</p>
+        <span class="count">AI 체계 →</span>
+      </a>
+      <a class="category-card" href="social.html">
+        <span class="idx">12 · 체제</span>
+        <h3>바 · 함장 · 플레이어</h3>
+        <p>사교 공간 「바」, NPC 함장들, 캐릭터 생성과 플레이어 성장 메타.</p>
+        <span class="count">사회 체계 →</span>
+      </a>
+      <a class="category-card" href="planetdev.html">
+        <span class="idx">13 · 체제</span>
+        <h3>행성개발</h3>
+        <p>무역소·조선소·방위위성·연구소·바 5개 시설, 레벨 1~15 업그레이드와 일일 스탯 넛지.</p>
+        <span class="count">시설 체계 →</span>
+      </a>
+      <a class="category-card" href="ui.html">
+        <span class="idx">14 · 체제</span>
+        <h3>게임 UI</h3>
+        <p>단일 오버레이 호스트, 인게임 대화창 3단 팝업, 두 가지 비주얼 테마.</p>
+        <span class="count">UI 구조 →</span>
+      </a>
+    </div>
+
+    <div class="callout note">
+      <strong>이 위키에 대하여</strong>
+      이 문서는 저장소 내 기획·설계 문서와 콘텐츠 테이블(CSV)을 전수 조사해 정리한 <strong>비공식 게임 소개 위키</strong>다.
+      실제 코드·수치는 계속 바뀔 수 있으며, 여기 실린 내용은 조사 시점(2026-09-18)의 스냅샷이다.
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본 · 저장소 기획 문서·콘텐츠 테이블 기반</footer>
+
+<script src="assets/search-index.js"></script>
+<script src="assets/wiki.js"></script>
+</body>
+</html>

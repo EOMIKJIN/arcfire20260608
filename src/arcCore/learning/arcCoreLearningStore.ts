@@ -5,6 +5,7 @@
 // ============================================================
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { FactionPowerKpiCompact } from './factionPowerTypes';
 import type { ArcCoreObservationEvent } from '../observation/arcCoreObservationTypes';
 import { planetAttackKstDayKey } from '../planetAttack/planetAttackKstDayKey';
 import { EconomySimOverlayDelta_FROM_SIM } from '../../data/balance/generated/economySimOverlayDelta';
@@ -39,6 +40,8 @@ export type ArcCoreLearningKpiTimelineEntry = {
   memory?: {
     pssFloorMb?: number;
   };
+  /** 팩션 전력 평가 압축 — 전체 스냅샷 persist 금지 */
+  factionPower?: FactionPowerKpiCompact;
 };
 
 export type ArcCoreLearningSimRun = {
@@ -147,6 +150,17 @@ export function getArcCoreLearningObservationCount(): number {
   return memoryStore.observations.tail.length;
 }
 
+/** hydrate된 경우에만. 없으면 null — 분쟁 패스가 부트 hydrate 하지 않음 */
+export function peekLatestFactionPowerKpi(): FactionPowerKpiCompact | null {
+  if (!hydrated) return null;
+  const timeline = memoryStore.kpiTimeline;
+  for (let i = timeline.length - 1; i >= 0; i -= 1) {
+    const kpi = timeline[i]?.factionPower;
+    if (kpi) return kpi;
+  }
+  return null;
+}
+
 /** 번들 SIM KPI — learning store가 비어 있을 때 1회 시드(재빌드·초기화 불필요) */
 export async function seedEconomyKpiBaselineIfEmpty(): Promise<boolean> {
   await hydrateArcCoreLearningStore();
@@ -167,17 +181,23 @@ export async function seedEconomyKpiBaselineIfEmpty(): Promise<boolean> {
   return true;
 }
 
+/** hydrate 이후 호출. persist 없음 — 일일 KPI persist와 합류 */
+export function ingestObservationsInMemory(events: ArcCoreObservationEvent[]): number {
+  if (events.length === 0) return 0;
+  const merged = memoryStore.observations.tail.concat(events);
+  memoryStore.observations.tail = merged.slice(-MAX_OBSERVATIONS);
+  memoryStore.observations.lastFlushDayKey = planetAttackKstDayKey();
+  return events.length;
+}
+
 export async function appendObservationsToLearningStore(
   events: ArcCoreObservationEvent[],
 ): Promise<number> {
   if (events.length === 0) return 0;
   await hydrateArcCoreLearningStore();
-
-  const merged = memoryStore.observations.tail.concat(events);
-  memoryStore.observations.tail = merged.slice(-MAX_OBSERVATIONS);
-  memoryStore.observations.lastFlushDayKey = planetAttackKstDayKey();
-  await persistStore();
-  return events.length;
+  const n = ingestObservationsInMemory(events);
+  if (n > 0) await persistStore();
+  return n;
 }
 
 export async function appendOrUpdateKpiTimeline(
@@ -197,6 +217,9 @@ function applyKpiTimelineEntryInMemory(entry: ArcCoreLearningKpiTimelineEntry): 
       economy: { ...prev.economy, ...entry.economy },
       combat: { ...prev.combat, ...entry.combat },
       memory: entry.memory ?? prev.memory,
+      factionPower: entry.factionPower
+        ? { ...prev.factionPower, ...entry.factionPower }
+        : prev.factionPower,
     };
   } else {
     memoryStore.kpiTimeline.push(entry);

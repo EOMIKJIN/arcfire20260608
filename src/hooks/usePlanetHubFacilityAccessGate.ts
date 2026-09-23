@@ -9,24 +9,25 @@ import { usePlayerStore } from '../store/playerStore';
 import { usePlanetCoreRuntimeStore } from '../store/planetCoreRuntimeStore';
 import { useSafeRouterBack } from '../navigation/useSafeRouterBack';
 import { showArcAlert } from '../utils/showArcAlert';
+import { planetHubFacilityDevMemoRev } from '../game/planetHub/planetHubStoreMemoRevisions';
 import {
   isPlanetHubResearchLabEnabled,
   isPlanetHubShipyardEnabled,
-  isPlanetHubTavernEnabled,
+  isPlanetHubBarEnabled,
   isPlanetHubTradePortEnabled,
 } from '../game/planetDevelopment/planetHubFacilityGates';
 
-export type PlanetHubFacilityGateKind = 'shipyard' | 'trade' | 'tavern' | 'research_lab';
+export type PlanetHubFacilityGateKind = 'shipyard' | 'trade' | 'bar' | 'research_lab';
 
 const GATE_CHECKERS: Record<PlanetHubFacilityGateKind, (planetId: string) => boolean> = {
   shipyard: isPlanetHubShipyardEnabled,
   trade: isPlanetHubTradePortEnabled,
-  tavern: isPlanetHubTavernEnabled,
+  bar: isPlanetHubBarEnabled,
   research_lab: isPlanetHubResearchLabEnabled,
 };
 
 /**
- * SUB-STAGE(조선소·무역소·선술집·연구소) 포커스 시 설치 여부 검사.
+ * SUB-STAGE(조선소·무역소·바·연구소) 포커스 시 설치 여부 검사.
  * 미설치면 안내 후 planet 허브로 pop.
  */
 export function usePlanetHubFacilityAccessGate(kind: PlanetHubFacilityGateKind): void {
@@ -37,7 +38,7 @@ export function usePlanetHubFacilityAccessGate(kind: PlanetHubFacilityGateKind):
 
   const devRev = usePlanetCoreRuntimeStore((s) => {
     if (!planetId) return '';
-    return JSON.stringify(s.byPlanetId[planetId]?.detail?.development?.byModuleId ?? null);
+    return planetHubFacilityDevMemoRev(s.byPlanetId[planetId]?.detail);
   });
 
   useFocusEffect(

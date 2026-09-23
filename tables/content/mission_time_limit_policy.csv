@@ -1,0 +1,13 @@
+track,playCategory,timeLimitHours
+tutorial,*,0
+main_story,*,0
+quest,combat,24
+quest,delivery,72
+quest,travel,48
+quest,mixed,48
+quest,event,48
+inst_tpl,combat,24
+inst_tpl,delivery,72
+inst_tpl,travel,48
+inst_tpl,mixed,48
+inst_tpl,event,48

@@ -1,0 +1,22 @@
+zoneIndex,planetId,hullHpMul,shieldMul,armorMul,minHullHp,notesKo
+1,arcadia_prime,1.00,1.00,1.00,0,초반 시드 유지·플레이데이터로 재조정
+2,vega_base,1.00,1.00,1.00,0,초반 시드 유지
+3,solar_station,1.00,1.00,1.00,0,초반 시드 유지
+4,minerva_deep,1.05,1.05,1.00,0,프리깃 개량 직전
+5,draco_haven,1.10,1.20,1.05,0,허브 2척 유지·실드 약간
+6,eden_city,1.15,1.05,1.00,0,중초반
+7,iron_remnant,1.25,1.20,1.10,0,구축함 권장대
+8,sirius_border,1.30,1.20,1.10,0,구축함
+9,perseus_memorial,1.35,1.20,1.10,0,구축함
+10,crimson_base,1.45,1.25,1.15,0,구축 개량
+11,blood_station,1.50,1.20,1.25,0,Heavy
+12,helios_core,1.70,1.20,1.25,0,순양 권장·CSV HP 역행 보정
+13,titan_ruins,1.75,1.20,1.25,0,순양
+14,omega_hub,1.85,1.20,1.25,0,순양
+15,nightfall_citadel,2.00,1.25,1.25,0,순양 개량
+16,shadow_market,2.10,1.25,1.25,0,순양 개량
+17,dark_haven,2.20,1.25,1.25,0,순양 개량
+18,abyss_gate,2.50,1.25,1.30,0,순양전함 권장
+19,core_prime,2.80,1.30,1.30,0,수도
+20,eternal_throne,3.00,1.30,1.35,0,왕좌
+21,genesis_origin,6.00,3.00,2.00,480,침입자 HP80 바닥 보정

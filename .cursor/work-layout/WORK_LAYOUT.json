@@ -1,0 +1,21 @@
+{
+  "id": "arcfire-cursor-work-layout-v1",
+  "savedAt": "2026-09-20T01:53:00+09:00",
+  "command": "기존작업환경 복구",
+  "notes": "김팀장=오른쪽 Agent. 김클로드=가운데 에디터 탭. 왼쪽 아래 Claude 아이콘은 쓰지 않음.",
+  "workspaceSettings": {
+    "claudeCode.preferredLocation": "panel",
+    "claudeCode.lockEditorGroups": true,
+    "claudeCode.useTerminal": false
+  },
+  "userSettingsMerge": {
+    "claudeCode.preferredLocation": "panel",
+    "window.commandCenter": true,
+    "window.autoDetectColorScheme": false,
+    "cursor.composer.queueMessageDefaultBehavior": "steer"
+  },
+  "openClaudeCode": {
+    "commandTitle": "Claude Code: Open in New Tab",
+    "commandId": "claude-vscode.editor.open"
+  }
+}

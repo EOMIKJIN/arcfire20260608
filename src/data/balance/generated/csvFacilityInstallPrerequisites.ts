@@ -9,6 +9,6 @@ export const FacilityInstallPrerequisites_FROM_BALANCE_CSV = [
   { "facility_type": "", "requiredFacilityType": "", "requiredFacilityLevel": "", "requiredCombatWins": "", "installDurationSec": "", "notesKo": "" },
   { "facility_type": "laboratory", "requiredFacilityType": "", "requiredFacilityLevel": "0", "requiredCombatWins": "0", "installDurationSec": "1800", "notesKo": "v3.1 Lv1 30분" },
   { "facility_type": "", "requiredFacilityType": "", "requiredFacilityLevel": "", "requiredCombatWins": "", "installDurationSec": "", "notesKo": "" },
-  { "facility_type": "tavern", "requiredFacilityType": "", "requiredFacilityLevel": "0", "requiredCombatWins": "0", "installDurationSec": "1200", "notesKo": "v3.1 Lv1 20분" },
+  { "facility_type": "bar", "requiredFacilityType": "", "requiredFacilityLevel": "0", "requiredCombatWins": "0", "installDurationSec": "1200", "notesKo": "v3.1 Lv1 20분" },
 ] as const;
 export type FacilityInstallPrerequisitesRow = (typeof FacilityInstallPrerequisites_FROM_BALANCE_CSV)[number];

@@ -1,4 +1,5 @@
-import firestore, {
+import { getApp } from '@react-native-firebase/app';
+import {
   collection,
   deleteDoc,
   doc,
@@ -16,7 +17,11 @@ import firestore, {
 export const USERS_COLLECTION = 'users';
 export const ARCCORE_COLLECTION = 'arccore';
 
-const db = () => getFirestore();
+let cachedDb: ReturnType<typeof getFirestore> | null = null;
+const db = () => {
+  if (!cachedDb) cachedDb = getFirestore(getApp());
+  return cachedDb;
+}
 
 export function userDocRef(uid: string) {
   return doc(db(), USERS_COLLECTION, uid);
@@ -49,7 +54,6 @@ export function arccoreDocRef(docId: string) {
 export {
   deleteDoc,
   doc,
-  firestore,
   getDoc,
   getDocFromCache,
   getDocFromServer,

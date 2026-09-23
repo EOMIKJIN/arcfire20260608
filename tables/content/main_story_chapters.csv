@@ -1,0 +1,11 @@
+id,order,titleKo,titleEn,themeKo,themeEn,contentStatus,endStorySceneId,endStoryReady,notes
+ms_ch_01,1,은폐된 진실,Concealed Truth,라이트홀드 은폐. 퀘스트 본문은 이후 보강한다.,The Light Hold cover-up. Quest bodies will be reinforced later.,partial,story_chapter_end_01,0,title locked 2026-09-12. q01=story_001 실기. 나머지 슬롯 골격
+ms_ch_02,2,챕터 2 (시나리오 대기),Chapter 2 (scenario pending),대표님 시나리오·제목·주제 확정 후 기입,Fill after the owner supplies the scenario title and theme,skeleton,story_chapter_end_02,0,본선 30+분기 4 슬롯 예약
+ms_ch_03,3,챕터 3 (시나리오 대기),Chapter 3 (scenario pending),대표님 시나리오·제목·주제 확정 후 기입,Fill after the owner supplies the scenario title and theme,skeleton,story_chapter_end_03,0,본선 30+분기 4 슬롯 예약
+ms_ch_04,4,챕터 4 (시나리오 대기),Chapter 4 (scenario pending),대표님 시나리오·제목·주제 확정 후 기입,Fill after the owner supplies the scenario title and theme,skeleton,story_chapter_end_04,0,본선 30+분기 4 슬롯 예약
+ms_ch_05,5,챕터 5 (시나리오 대기),Chapter 5 (scenario pending),대표님 시나리오·제목·주제 확정 후 기입,Fill after the owner supplies the scenario title and theme,skeleton,story_chapter_end_05,0,본선 30+분기 4 슬롯 예약
+ms_ch_06,6,챕터 6 (시나리오 대기),Chapter 6 (scenario pending),대표님 시나리오·제목·주제 확정 후 기입,Fill after the owner supplies the scenario title and theme,skeleton,story_chapter_end_06,0,본선 30+분기 4 슬롯 예약
+ms_ch_07,7,챕터 7 (시나리오 대기),Chapter 7 (scenario pending),대표님 시나리오·제목·주제 확정 후 기입,Fill after the owner supplies the scenario title and theme,skeleton,story_chapter_end_07,0,본선 30+분기 4 슬롯 예약
+ms_ch_08,8,챕터 8 (시나리오 대기),Chapter 8 (scenario pending),대표님 시나리오·제목·주제 확정 후 기입,Fill after the owner supplies the scenario title and theme,skeleton,story_chapter_end_08,0,본선 30+분기 4 슬롯 예약
+ms_ch_09,9,챕터 9 (시나리오 대기),Chapter 9 (scenario pending),대표님 시나리오·제목·주제 확정 후 기입,Fill after the owner supplies the scenario title and theme,skeleton,story_chapter_end_09,0,본선 30+분기 4 슬롯 예약
+ms_ch_10,10,챕터 10 (시나리오 대기),Chapter 10 (scenario pending),대표님 시나리오·제목·주제 확정 후 기입,Fill after the owner supplies the scenario title and theme,skeleton,story_chapter_end_10,0,본선 30+분기 4 슬롯 예약

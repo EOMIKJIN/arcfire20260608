@@ -8,6 +8,7 @@ import { resolve } from 'node:path';
 import {
   classifyContestedEligibility,
   isContestedEligibilityActive,
+  isContestedPoolEligibleClass,
   resolveContestedEligibilityForSystem,
 } from './contestedEligibility';
 import type { PlanetClanHold } from '../../types';
@@ -145,17 +146,19 @@ test('7) RED hold + 적대(INDEPENDENT)만 인접, BLUE 없음 → NOT SAFE(hasA
   assert.equal(cls, 'ineligible');
 });
 
-test('8) isContestedEligibilityActive — safe만 false, 나머지는 true', () => {
+test('8) isContestedEligibilityActive — 전선 3종만 true, SAFE·ineligible은 풀 슬롯 아님', () => {
   assert.equal(isContestedEligibilityActive('safe_hinterland'), false);
   assert.equal(isContestedEligibilityActive('eligible_front'), true);
   assert.equal(isContestedEligibilityActive('eligible_strategic_neutral'), true);
   assert.equal(isContestedEligibilityActive('eligible_independent_front'), true);
-  assert.equal(isContestedEligibilityActive('ineligible'), true);
+  assert.equal(isContestedEligibilityActive('ineligible'), false);
+  assert.equal(isContestedPoolEligibleClass('ineligible'), false);
 });
 
-test('9) M2 배선 확인(정적) — runTerritorialCombatPass.ts가 SAFE면 판정 없이 커서만 전진(advanceTerritorialCampaignCursorForSkip)', () => {
+test('9) 하드게이트 배선 — due가 blocked면 판정 없이 커서만 전진', () => {
   const src = readFileSync(resolve(__dirname, 'runTerritorialCombatPass.ts'), 'utf8');
-  assert.match(src, /classification !== 'safe_hinterland'/);
+  assert.match(src, /resolveContestedZoneHardGate/);
+  assert.match(src, /if \(!gate\.blocked\) break;/);
   assert.match(src, /advanceTerritorialCampaignCursorForSkip\(group, due\.orderIndex, groupPolicies\.length\)/);
 });
 

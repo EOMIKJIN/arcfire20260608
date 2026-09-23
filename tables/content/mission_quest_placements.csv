@@ -15,3 +15,5 @@ qq_obj_s024_a,obj_s024_a,crimson_base,contraband,99,3200,quest,샌드박스 — 
 qq_obj_s026_a,obj_s026_a,blood_station,food,99,42,quest,샌드박스 — 블러드 식량/의료
 qq_obj_s028_a,obj_s028_a,omega_hub,tech,99,420,quest,샌드박스 — 오메가 기술
 qq_obj_s030_a,obj_s030_a,solar_station,tech,99,420,quest,샌드박스 — 솔라 고급 기술
+qq_obj_s031_a,obj_s031_a,solar_station,weapon,99,720,quest,샌드박스 — 솔라 군수 무기
+qq_obj_s033_a,obj_s033_a,omega_hub,food,99,42,quest,샌드박스 — 오메가 예비 식량

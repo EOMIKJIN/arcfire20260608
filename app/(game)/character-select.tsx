@@ -17,6 +17,7 @@ import { listPlayerProfessions, getPlayerProfessionById } from '../../src/game/p
 import { resolveNpcCaptainPortraitSource } from '../../src/game/npcCaptainPortraitAssets';
 import { setOnboardingProfessionId } from '../../src/game/onboardingDraftStorage';
 import { runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
+import { usePreHubWorldOpsAlertSuppress } from '../../src/navigation/usePreHubWorldOpsAlertSuppress';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { useT } from '../../src/i18n';
 import type { PlayerProfessionCsvRow } from '../../src/data/generated';
@@ -26,6 +27,7 @@ import {
 } from '../../src/ui/onboarding/onboardingScreenLayout';
 
 export default function CharacterSelectScreen() {
+  usePreHubWorldOpsAlertSuppress();
   const t = useT();
   const insets = useSafeAreaInsets();
   const professions = useMemo(() => [...listPlayerProfessions()], []);

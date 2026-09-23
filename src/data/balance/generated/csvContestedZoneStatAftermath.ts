@@ -3,5 +3,8 @@ export const ContestedZoneStatAftermath_FROM_BALANCE_CSV = [
   { "planetId": "draco_haven", "offsetResource": "-2", "offsetPopulation": "-5", "offsetDefense": "8", "offsetTechnology": "6", "offsetEnvironment": "-6", "notesKo": "성운 전선 — 기반시설·환경·인구 저해 · 군사·연구 급등" },
   { "planetId": "omega_hub", "offsetResource": "3", "offsetPopulation": "-4", "offsetDefense": "5", "offsetTechnology": "4", "offsetEnvironment": "-3", "notesKo": "교차 허브 — 전쟁경제·무역 이익 · 유동인구·환경 타격" },
   { "planetId": "shadow_market", "offsetResource": "5", "offsetPopulation": "-3", "offsetDefense": "4", "offsetTechnology": "3", "offsetEnvironment": "-4", "notesKo": "암시장 — 불법무역·자원 유입 · 치안·환경·인구 불안" },
+  { "planetId": "helios_core", "offsetResource": "-2", "offsetPopulation": "-5", "offsetDefense": "8", "offsetTechnology": "6", "offsetEnvironment": "-6", "notesKo": "캠페인 전선 템플릿(신규) — 기존 3행 수치 불변" },
+  { "planetId": "titan_ruins", "offsetResource": "-2", "offsetPopulation": "-5", "offsetDefense": "8", "offsetTechnology": "6", "offsetEnvironment": "-6", "notesKo": "캠페인 전선 템플릿(신규) — 기존 3행 수치 불변" },
+  { "planetId": "__dynamic_front__", "offsetResource": "-2", "offsetPopulation": "-5", "offsetDefense": "8", "offsetTechnology": "6", "offsetEnvironment": "-6", "notesKo": "동적 전선 폴백 템플릿 — 직접 패스 대상 아님" },
 ] as const;
 export type ContestedZoneStatAftermathRow = (typeof ContestedZoneStatAftermath_FROM_BALANCE_CSV)[number];

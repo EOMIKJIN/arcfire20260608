@@ -5,7 +5,7 @@ ai_clan_crimson_raiders,홍월 약탈 함대,Crimson Moon Raider Fleet,pvp,mega_
 ai_clan_federation_patrol,연방 순항대,Federation Patrol Wing,safe,mega_stellium_alliance,npc_cpt_mireille,,연방·군정 함장 소속 순항 클랜
 ai_clan_border_watch,변경 경계 수호단,Border Watch Corps,safe,mega_stellium_alliance,npc_cpt_jex,,시리우스·베가 변경 경계 순찰
 ai_clan_miners_convoy,미네르바 광물 호송단,Minerva Mineral Convoy,safe,mega_stellium_alliance,npc_cpt_sela,,광산·정제광 호송 전문
-ai_clan_free_traders,자유 중립 상단,Free Neutral Merchants,neutral,mega_stellium_alliance,npc_cpt_tavern_ret_01,,독립·무역 연합 중립 상단
+ai_clan_free_traders,자유 중립 상단,Free Neutral Merchants,neutral,mega_stellium_alliance,npc_cpt_bar_ret_01,,독립 중립 상단
 ai_clan_void_marauders,공허 약탈단,Void Marauder Pack,pvp,mega_crimson_legion,npc_cpt_kresh,,해적·공허행자·암시장 약탈
-ai_clan_scrap_collectors,고철 수집단,Scrap Salvage Collective,neutral,mega_stellium_alliance,npc_cpt_tavern_ret_04,,잔해권·회수품 전문
+ai_clan_scrap_collectors,고철 수집단,Scrap Salvage Collective,neutral,mega_stellium_alliance,npc_cpt_bar_ret_04,,잔해권·회수품 전문
 ai_clan_research_convoy,학술 연구 순항단,Academic Research Convoy,neutral,mega_stellium_alliance,npc_cpt_vector,,과학·고고학 연구 호송

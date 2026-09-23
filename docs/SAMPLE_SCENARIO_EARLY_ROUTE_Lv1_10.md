@@ -1,4 +1,4 @@
-# 샘플 시나리오 — Lv1~10 뉴에덴 동선 (인앱 NPC·선술집 대화)
+# 샘플 시나리오 — Lv1~10 뉴에덴 동선 (인앱 NPC·바 대화)
 
 > **참고**: `docs/01_10 레벨업구조.csv`  
 > **데이터 정본**: `tables/content/story_scenes.csv` · `story_scene_pages.csv`  
@@ -10,28 +10,28 @@
 
 | 구간 | Lv | 행성 id | 성계 | 기획 의도 | 샘플 대화 씬 |
 |---|---|---|---|---|---|
-| 1 | 1~2 | `arcadia_prime` | arcadia | 불시착·기본 루프·탈출 | `early_route_arcadia_hub` / `_tavern` |
-| 2 | 2~4 | `vega_base` | vega_outpost | SOS·첫 실전·연방 협동전 | `early_route_vega_hub` / `_tavern` |
-| 3 | 4~5 | `solar_station` | solar_port | 전함 구매·무역·배송 학습 | `early_route_solar_hub` / `_tavern` |
-| 4 | 5~7 | `minerva_deep` | minerva | 채굴·장비 풀세팅·경제 성장 | `early_route_minerva_hub` / `_tavern` |
-| 5 | 7~9 | `draco_haven` | draco_nebula | 성운 돌파·전면전·보스전 | `early_route_draco_hub` / `_tavern` |
-| 6 | 10 | `eden_city` | new_eden | 신세계 도착·튜토리얼 종료 | `early_route_eden_hub` / `_tavern` |
+| 1 | 1~2 | `arcadia_prime` | arcadia | 불시착·기본 루프·탈출 | `early_route_arcadia_hub` / `_bar` |
+| 2 | 2~4 | `vega_base` | vega_outpost | SOS·첫 실전·연방 협동전 | `early_route_vega_hub` / `_bar` |
+| 3 | 4~5 | `solar_station` | solar_port | 전함 구매·무역·배송 학습 | `early_route_solar_hub` / `_bar` |
+| 4 | 5~7 | `minerva_deep` | minerva | 채굴·장비 풀세팅·경제 성장 | `early_route_minerva_hub` / `_bar` |
+| 5 | 7~9 | `draco_haven` | draco_nebula | 성운 돌파·전면전·보스전 | `early_route_draco_hub` / `_bar` |
+| 6 | 10 | `eden_city` | new_eden | 신세계 도착·튜토리얼 종료 | `early_route_eden_hub` / `_bar` |
 
 **권장 이동 경로 (초반):**  
 `아르카디아 → 베가 전초 → 솔라 항구 → 미네르바 → (드라코 성운) → 뉴에덴`
 
 ---
 
-## 2. NPC 배치 (허브 궤도 vs 선술집)
+## 2. NPC 배치 (허브 궤도 vs 바)
 
-| 구간 | 허브 궤도 NPC (`speakerNpcCaptainId`) | 선술집 NPC (`tavernPlanetIdsPipe`) |
+| 구간 | 허브 궤도 NPC (`speakerNpcCaptainId`) | 바 NPC (`barPlanetIdsPipe`) |
 |---|---|---|
-| 아르카디아 | `npc_cpt_arcadia_lane_01` 엘렌 드 코르 | `npc_cpt_tavern_ret_01` 한로 크레인 |
-| 베가 | `npc_cpt_eden_08` 카일 렌드 | `npc_cpt_tavern_ret_04` 세라 미온 |
-| 솔라 | `npc_cpt_solar_guard_01` 이사 벤트 | `npc_cpt_tavern_ret_01` 한로 크레인 |
-| 미네르바 | `npc_cpt_gov_minerva` 니카 스톤 | `npc_cpt_tavern_ret_02` 미아 벨로 |
-| 드라코 | `npc_cpt_draco_obs_01` 세레나 드릴 | `npc_cpt_tavern_ret_03` 타드 레인 |
-| 뉴에덴 | `npc_cpt_neweden_blue_07` 뉴에덴 블루 07 | `npc_cpt_tavern_ret_02` 미아 벨로 |
+| 아르카디아 | `npc_cpt_arcadia_lane_01` 엘렌 드 코르 | `npc_cpt_bar_ret_01` 한로 크레인 |
+| 베가 | `npc_cpt_eden_08` 카일 렌드 | `npc_cpt_bar_ret_04` 세라 미온 |
+| 솔라 | `npc_cpt_solar_guard_01` 이사 벤트 | `npc_cpt_bar_ret_01` 한로 크레인 |
+| 미네르바 | `npc_cpt_gov_minerva` 니카 스톤 | `npc_cpt_bar_ret_02` 미아 벨로 |
+| 드라코 | `npc_cpt_draco_obs_01` 세레나 드릴 | `npc_cpt_bar_ret_03` 타드 레인 |
+| 뉴에덴 | `npc_cpt_neweden_blue_07` 뉴에덴 블루 07 | `npc_cpt_bar_ret_02` 미아 벨로 |
 
 **보조 안내 (아르카디아):** `npc_cpt_operator_stella` — 기존 `ingame_dialog_01` 유지, 샘플 시나리오 1막과 병행.
 
@@ -46,9 +46,9 @@
 | 0 | 엘렌 | 관문 궤도 순찰 중. 잔해 신호에서 [닉네임] 식별. 불시착 파일럿으로 추정. |
 | 1 | 엘렌 | 아르카디아 외곽에 해적 정찰기 포착. 대기권 봉쇄 시도 중. |
 | 2 | 엘렌 | 베가 전초기지로 가는 항로가 가장 빠름. 솔라 항구는 보급·정비용. |
-| 3 | 엘렌 | 출항 전 선술집 게시판 확인 권고. 연방 통행 로그가 올라와 있음. |
+| 3 | 엘렌 | 출항 전 바 게시판 확인 권고. 연방 통행 로그가 올라와 있음. |
 
-### 3-2. 아르카디아 선술집 — `early_route_arcadia_tavern`
+### 3-2. 아르카디아 바 — `early_route_arcadia_bar`
 
 | page | 화자 | 내용 |
 |---|---|---|
@@ -64,13 +64,13 @@
 | 0 | 카일 | 베가 보급 항로 감독 카일. 아르카디아에서 온 신호 확인. |
 | 1 | 카일 | 전초기지가 해적 선발대 공격 중. 연방군이 반격 준비 중. |
 | 2 | 카일 | 무기·타겟·실드 — 실전에서 세 가지만 기억하면 된다. |
-| 3 | 카일 | 부상병 수송선 호위가 급하다. 선술집 전선 게시판을 보라. |
+| 3 | 카일 | 부상병 수송선 호위가 급하다. 바 전선 게시판을 보라. |
 
-### 3-4. 베가 선술집 — `early_route_vega_tavern`
+### 3-4. 베가 바 — `early_route_vega_bar`
 
 | page | 화자 | 내용 |
 |---|---|---|
-| 0 | 세라 | 전선 인접 선술집. 여기서 쉬는 동안에도 포격음이 들린다. |
+| 0 | 세라 | 전선 인접 바. 여기서 쉬는 동안에도 포격음이 들린다. |
 | 1 | 세라 | Lv3 전면전 의뢰는 연방 함대와 합류해야 한다. |
 | 2 | 세라 | 소형선으로는 한계가 온다. 솔라 항구에서 정규 전함을 알아보라. |
 | 3 | 세라 | 지금은 생존이 우선. 의뢰 하나만 골라서 실전 감각부터 키워라. |
@@ -84,7 +84,7 @@
 | 2 | 이사 | 함선 정비소는 항만 콘솔 3번. 구매 후 첫 화물 운송이 계약 조건. |
 | 3 | 이사 | 무역·적재 시스템은 실제 배송 한 번이면 몸에 배인다. |
 
-### 3-6. 솔라 선술집 — `early_route_solar_tavern`
+### 3-6. 솔라 바 — `early_route_solar_bar`
 
 | page | 화자 | 내용 |
 |---|---|---|
@@ -102,14 +102,14 @@
 | 2 | 니카 | 고가 광물을 노린 약탈자가 늘었다. 호송·방어 의뢰가 쌓인다. |
 | 3 | 니카 | 판매→플라즈마 포·강화 실드. 풀 세팅 후 동쪽으로 가라. |
 
-### 3-8. 미네르바 선술집 — `early_route_minerva_tavern`
+### 3-8. 미네르바 바 — `early_route_minerva_bar`
 
 | page | 화자 | 내용 |
 |---|---|---|
 | 0 | 미아 | 미네르바·에덴 항로 소식판 미아. 광물 시세는 매일 변한다. |
 | 1 | 미아 | Lv6 자원 밀수꾼 소탕 — 채굴한 광물 들고 다니면 표적이 된다. |
 | 2 | 미아 | 정제광 샘플 배송 의뢰는 뉴에덴 방향 연습에 좋다. |
-| 3 | 미아 | 선술집 의뢰와 궤도 함장 의뢰는 같은 판이다. 중복 수락 조심. |
+| 3 | 미아 | 바 의뢰와 궤도 함장 의뢰는 같은 판이다. 중복 수락 조심. |
 
 ### 3-9. 드라코 (Lv7~9) — `early_route_draco_hub`
 
@@ -120,11 +120,11 @@
 | 2 | 세레나 | Lv8 전면 포격전 — 연방 함대와 합류 지점이 성운 중심부. |
 | 3 | 세레나 | Lv9 해적 총수 기함. 풀 세팅 무장 없으면 돌아가라. |
 
-### 3-10. 드라코 선술집 — `early_route_draco_tavern`
+### 3-10. 드라코 바 — `early_route_draco_bar`
 
 | page | 화자 | 내용 |
 |---|---|---|
-| 0 | 타드 | 드라코·오메가권 선술집 타드. 여기서 마지막 술을 마시는 파일럿이 많다. |
+| 0 | 타드 | 드라코·오메가권 바 타드. 여기서 마지막 술을 마시는 파일럿이 많다. |
 | 1 | 타드 | 성운 연구 시료 운송 의뢰 — 위험하지만 보상도 크다. |
 | 2 | 타드 | 반란군·해적 총수가 관문을 막고 있다. 돌파 후가 진짜 시작. |
 | 3 | 타드 | 뉴에덴 입항 허가는 드라코 통과 증명이 필요하다. |
@@ -138,7 +138,7 @@
 | 2 | 블루 07 | 거대 정거장 입항 슬롯 배정. Lv10 신세계의 문 클리어. |
 | 3 | 블루 07 | 튜토리얼 구간 종료. 현상금·무역·길드 중 향후를 고르라. |
 
-### 3-12. 뉴에덴 선술집 — `early_route_eden_tavern`
+### 3-12. 뉴에덴 바 — `early_route_eden_bar`
 
 | page | 화자 | 내용 |
 |---|---|---|
@@ -154,9 +154,9 @@
 | 항목 | 현재 | 후속 연동 |
 |---|---|---|
 | 스토리 미션 `mission_001~005` | 베가→해적→솔라 배달→뉴에덴→오메가 | 샘플 시나리오는 **드라코 경유** — mission CSV와 **서사 분기 정렬** 필요 |
-| 인스턴스 `sandbox_*` | 선술집·함장 offer | 대사 3막에서 **의뢰판·함장 의뢰** 언급 → `offerCaptainId` 매칭 |
+| 인스턴스 `sandbox_*` | 바·함장 offer | 대사 3막에서 **의뢰판·함장 의뢰** 언급 → `offerCaptainId` 매칭 |
 | `mainStageTalkSceneId` | 임시 `npc_dialog_*` | Lv 구간별 `early_route_*_hub`로 교체 후보 |
-| 선술집 대화 | 별도 트리거 없음 | tavern 진입 시 `early_route_*_tavern` 1회 present |
+| 바 대화 | 별도 트리거 없음 | bar 진입 시 `early_route_*_bar` 1회 present |
 | 트리거 | 전부 `manual` | `player.level` + `planetId` + `seenStorySceneIds` 게이트 |
 
 ---
@@ -179,8 +179,8 @@ npx tsc --noEmit -p tsconfig.client.json
 | Table-First 대사 데이터 | **PASS** — `story_scenes` + `story_scene_pages`만 추가 |
 | 1~10 Lv 동선 커버 | **PASS** — 6행성 × 2채널 |
 | 1~2분 분량 | **PASS** — 씬당 4페이지 × ~15초 |
-| 선술집·궤도 이중 채널 | **PASS** — 동일 서사·다른 역할(현장/의뢰) |
+| 바·궤도 이중 채널 | **PASS** — 동일 서사·다른 역할(현장/의뢰) |
 | 런타임 연동 | **보류** — 본 문서 §4 후속 |
 
 **다음 연동 작업(권장 순):**  
-1) Lv+행성 트리거 게이트 · 2) `mainStageTalkSceneId` 매핑 · 3) `mission_001~005` vs 드라코 서사 정렬 · 4) 선술집 탭 진입 대화.
+1) Lv+행성 트리거 게이트 · 2) `mainStageTalkSceneId` 매핑 · 3) `mission_001~005` vs 드라코 서사 정렬 · 4) 바 탭 진입 대화.

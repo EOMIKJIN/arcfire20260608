@@ -1,0 +1,45 @@
+turnId,dialogSetId,bundleTier,sortOrder,speechAct,nlTopicId,delivery,speakerRole,textKo,textEn
+host_greet_01,dset_host,0,10,host_greet,bar.host.greet,scripted,host,어서 오게. 먼 항로를 달려왔군.,Welcome. You've come a long way through the lanes.
+host_ask_01,dset_host,0,20,host_ask_drink,bar.host.ask_drink,nl_preferred,host,한잔 사 주시겠나? 우리 아이들도 손님을 기다리고 있어.,Buy a round? Our attendants are waiting for a guest.
+host_decline_01,dset_host,0,30,host_decline_ack,bar.host.decline,scripted,host,알겠네. 공지판이랑 의뢰는 언제든 보게.,Understood. The board and jobs are always here.
+cheerful_t1_01,dset_cheerful,1,10,attendant_hello,bar.attendant.hello,nl_preferred,attendant,안녕하세요. 오늘 밤은 천천히 가볼까요?,Hi. Shall we take tonight slow?
+cheerful_t1_02,dset_cheerful,1,20,attendant_thanks_drink,bar.attendant.thanks_drink,nl_preferred,attendant,고마워요. 이 한잔으로 잠시 별을 잊게 해드릴게요.,Thank you. This drink will help you forget the stars for a bit.
+cheerful_t1_03,dset_cheerful,1,30,attendant_banter,bar.attendant.banter,nl_preferred,attendant,항로 이야기는 나중에… 지금은 음악만 들어요.,Lane stories later — for now just the music.
+cheerful_t2_01,dset_cheerful,2,10,attendant_banter,bar.attendant.story,nl_preferred,attendant,사실 저는 오케스트라 연습실 출신이에요. 여기가 더 따뜻하더라고요.,I used to train in an orchestra room. This place feels warmer.
+cheerful_t2_02,dset_cheerful,2,20,attendant_dance_cue,bar.attendant.dance,scripted,attendant,자 한 박자만 맞춰 볼까요?,Come — just one beat with me.
+calm_t1_01,dset_calm,1,10,attendant_hello,bar.attendant.hello,nl_preferred,attendant,포스포 불빛 아래에서 쉬어 가세요.,Rest under the phosphor glow.
+calm_t1_02,dset_calm,1,20,attendant_thanks_drink,bar.attendant.thanks_drink,nl_preferred,attendant,잔이 따뜻해질 때까지 말없이 있어도 돼요.,You can stay quiet until the glass warms.
+calm_t1_03,dset_calm,1,30,attendant_banter,bar.attendant.banter,nl_preferred,attendant,소란은 바깥에 두고 오세요.,Leave the noise outside.
+calm_t2_01,dset_calm,2,10,attendant_banter,bar.attendant.story,nl_preferred,attendant,조용한 밤이 제일 비싼 서비스예요.,A quiet night is the dearest service.
+calm_t2_02,dset_calm,2,20,attendant_dance_cue,bar.attendant.dance,scripted,attendant,호흡만 맞춰도 춤이 돼요.,Matching breath is already a dance.
+jazz_t1_01,dset_jazz,1,10,attendant_hello,bar.attendant.hello,nl_preferred,attendant,자리 비워 뒀어요.,I saved you a seat.
+jazz_t1_02,dset_jazz,1,20,attendant_thanks_drink,bar.attendant.thanks_drink,nl_preferred,attendant,천천히 들이켜요. 재즈는 서두르지 않으니까.,Sip slow. Jazz never hurries.
+jazz_t1_03,dset_jazz,1,30,attendant_banter,bar.attendant.banter,nl_preferred,attendant,손님 함선… 엔진음이 조금 피곤해 보였어요.,Your ship's engines sounded a little tired.
+jazz_t2_01,dset_jazz,2,10,attendant_banter,bar.attendant.story,nl_preferred,attendant,이 바은 늦은 밤에 더 솔직해져요.,This bar grows honest after midnight.
+jazz_t2_02,dset_jazz,2,20,attendant_dance_cue,bar.attendant.dance,scripted,attendant,스윙 한 소절만 어깨부터.,One swing phrase — start with the shoulders.
+star_t1_01,dset_star,1,10,attendant_hello,bar.attendant.hello,nl_preferred,attendant,별빛 노래 한 소절 들을래요?,Want a verse of starlight song?
+star_t1_02,dset_star,1,20,attendant_thanks_drink,bar.attendant.thanks_drink,nl_preferred,attendant,고마워요. 노래는 술이 있어야 제맛이거든요.,Thanks. Songs taste better with a drink.
+star_t1_03,dset_star,1,30,attendant_banter,bar.attendant.banter,nl_preferred,attendant,창밖 성운이 오늘따라 가까이 보여요.,The nebula outside looks closer tonight.
+star_t2_01,dset_star,2,10,attendant_banter,bar.attendant.story,nl_preferred,attendant,항로마다 다른 별이 있어요. 손님 별은 어떤 색인가요?,Every lane has a different star. What color is yours?
+star_t2_02,dset_star,2,20,attendant_dance_cue,bar.attendant.dance,scripted,attendant,손을 조금 올려 봐요. 별이 따라올 거예요.,Lift your hand a little. The stars will follow.
+ballroom_t1_01,dset_ballroom,1,10,attendant_hello,bar.attendant.hello,nl_preferred,attendant,스텝 한 번만 따라와요.,Just follow one step.
+ballroom_t1_02,dset_ballroom,1,20,attendant_thanks_drink,bar.attendant.thanks_drink,nl_preferred,attendant,한잔이면 리듬이 살아나요.,One drink and the rhythm wakes up.
+ballroom_t1_03,dset_ballroom,1,30,attendant_banter,bar.attendant.banter,nl_preferred,attendant,발끝만 믿으면 돼요.,Trust only your toes.
+ballroom_t2_01,dset_ballroom,2,10,attendant_banter,bar.attendant.story,nl_preferred,attendant,무도회는 전쟁보다 정직해요. 박자가 거짓말하지 않거든요.,A ballroom is more honest than war. The beat never lies.
+ballroom_t2_02,dset_ballroom,2,20,attendant_dance_cue,bar.attendant.dance,scripted,attendant,자 한 바퀴!,Come — one turn!
+whisper_t1_01,dset_whisper,1,10,attendant_hello,bar.attendant.hello,nl_preferred,attendant,오늘은 소문 대신 조용한 이야기만.,Quiet stories today — no rumors.
+whisper_t1_02,dset_whisper,1,20,attendant_thanks_drink,bar.attendant.thanks_drink,nl_preferred,attendant,잔 아래로 속삭여도 들어요.,I can hear you even under the glass.
+whisper_t1_03,dset_whisper,1,30,attendant_banter,bar.attendant.banter,nl_preferred,attendant,어떤 항로는 지도에 없어요.,Some lanes are not on the map.
+whisper_t2_01,dset_whisper,2,10,attendant_banter,bar.attendant.story,nl_preferred,attendant,비밀은 술보다 빨리 식어요. 지금만요.,Secrets cool faster than drinks. Only now.
+whisper_t2_02,dset_whisper,2,20,attendant_dance_cue,bar.attendant.dance,scripted,attendant,가까이… 한 박자만.,Closer… just one beat.
+ember_t1_01,dset_ember,1,10,attendant_hello,bar.attendant.hello,nl_preferred,attendant,박수 한 번으로 시작해요.,We start with one clap.
+ember_t1_02,dset_ember,1,20,attendant_thanks_drink,bar.attendant.thanks_drink,nl_preferred,attendant,불이 붙었네요. 이 한잔!,The spark caught. This drink!
+ember_t1_03,dset_ember,1,30,attendant_banter,bar.attendant.banter,nl_preferred,attendant,응원은 크게 이별은 짧게.,Cheer loud. Part short.
+ember_t2_01,dset_ember,2,10,attendant_banter,bar.attendant.story,nl_preferred,attendant,잿더미에서도 건배는 남아요.,Even in ashes a toast remains.
+ember_t2_02,dset_ember,2,20,attendant_dance_cue,bar.attendant.dance,scripted,attendant,손뼉! 그리고 한 스텝.,Clap! Then one step.
+echo_t1_01,dset_echo,1,10,attendant_hello,bar.attendant.hello,nl_preferred,attendant,제 화음에 맞춰 숨을 내쉬어 봐요.,Exhale with my harmony.
+echo_t1_02,dset_echo,1,20,attendant_thanks_drink,bar.attendant.thanks_drink,nl_preferred,attendant,잔이 울리면 노래가 시작돼요.,When the glass rings the song begins.
+echo_t1_03,dset_echo,1,30,attendant_banter,bar.attendant.banter,nl_preferred,attendant,메아리는 혼자가 아니란 뜻이에요.,An echo means you are not alone.
+echo_t2_01,dset_echo,2,10,attendant_banter,bar.attendant.story,nl_preferred,attendant,같은 곡도 듣는 사람에 따라 달라요.,The same song changes with the listener.
+echo_t2_02,dset_echo,2,20,attendant_dance_cue,bar.attendant.dance,scripted,attendant,여운을 남겨 볼까요?,Shall we leave a little aftertone?
+farewell_generic,dset_shared,1,90,attendant_farewell,bar.attendant.farewell,scripted,attendant,또 들러 주세요. 잔이 식기 전에.,Come again before the glass goes cold.

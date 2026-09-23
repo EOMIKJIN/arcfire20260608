@@ -14,6 +14,7 @@ import {
   resolveMineralUpgradeJobProgressPct,
   type MineralUpgradeGroup,
 } from '../../game/shipyardMineralUpgrade/mineralUpgradeModel';
+import { PLANET_DEV_ACTIVE_JOB_UI_POLL_MS } from '../../game/planetDevelopment/planetDevUiPollPolicy';
 import { resolvePlanetShipyardLevelForMineralCap } from '../../game/planetDevelopment/planetOrbitShipyardMineralCap';
 import { showArcAlert } from '../../utils/showArcAlert';
 import { useT } from '../../i18n';
@@ -22,9 +23,6 @@ import { TACTICAL_FACILITY as TF } from '../../ui/tactical/tacticalFacilityScree
 import { planetFacilityScreenStyles as fs, PlanetFacilityCardTitleBlock } from '../../ui/planetFacility/PlanetFacilityTitleHeader';
 import { ArcButton } from '../../ui/overlay/ArcButton';
 import { PlanetHubDigitalGauge } from '../planet/PlanetHubActionGaugeSlot';
-
-/** 강화 job 진행 게이지 갱신 주기 — 행성개발 설치/업그레이드와 동일(활성 job 있을 때만 가동) */
-const MINERAL_UPGRADE_TICK_MS = 500;
 
 export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab() {
   const t = useT();
@@ -36,7 +34,7 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
   const jobs = player?.mineralUpgradeJobs;
   const hasActiveJob = !!jobs && Object.keys(jobs).length > 0;
 
-  // 활성 강화 job이 있을 때만 500ms 폴링(게이지 진행·완료 정산). 없으면 타이머 미가동.
+  // 활성 강화 job이 있을 때만 폴링(게이지 진행·완료 정산). 주기는 행성개발과 동일(2s).
   useEffect(() => {
     // 진입 시 만료된 job 즉시 정산(이탈 중 완료분 반영)
     settleMineralUpgradeJobs();
@@ -45,7 +43,7 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
       const changed = settleMineralUpgradeJobs();
       // 완료 정산이 없으면 게이지 진행만 갱신(리렌더 트리거)
       if (!changed) setNowTick((n) => (n + 1) % 1_000_000);
-    }, MINERAL_UPGRADE_TICK_MS);
+    }, PLANET_DEV_ACTIVE_JOB_UI_POLL_MS);
     return () => clearInterval(id);
   }, [hasActiveJob, settleMineralUpgradeJobs]);
 

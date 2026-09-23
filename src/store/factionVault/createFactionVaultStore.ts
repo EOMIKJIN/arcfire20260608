@@ -158,10 +158,14 @@ export function createFactionVaultStore(
 
     persist: async () => {
       const { balanceCredits, totalInflowCredits, totalOutflowCredits, txns } = get();
-      await AsyncStorage.setItem(
-        config.storageKey,
-        JSON.stringify({ balanceCredits, totalInflowCredits, totalOutflowCredits, txns }),
-      );
+      try {
+        await AsyncStorage.setItem(
+          config.storageKey,
+          JSON.stringify({ balanceCredits, totalInflowCredits, totalOutflowCredits, txns }),
+        );
+      } catch {
+        /* 디스크 실패 — 잔액은 메모리에 유지, void persist()가 reject 되지 않게 */
+      }
     },
 
     getBalance: () => get().balanceCredits,

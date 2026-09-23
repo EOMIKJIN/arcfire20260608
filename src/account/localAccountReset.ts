@@ -10,6 +10,7 @@ import { cancelScheduledUserCloudSync } from '../firebase/userCloudSyncSchedule'
 import { cancelScheduledGameSaveBackup } from '../firebase/gameSaveBackup/scheduleGameSaveBackup';
 import { purgeAllGameSaveBackupsForAccountPurge } from '../firebase/gameSaveBackup/gameSaveBackupService';
 import { releaseNicknameReservationForAccountPurge } from '../firebase/nicknameRegistry';
+import { releasePlanetUniqueDeedsOwnedBy } from '../firebase/planetUniqueDeedLock';
 import { useAccountProfileStore } from '../store/accountProfileStore';
 import { usePlanetNebulaStore } from '../store/planetNebulaStore';
 import { usePlanetStageLifecycleStore } from '../game/planetStageLifecycle';
@@ -17,7 +18,10 @@ import { clearMiningResumeSnapshot } from '../systems/mining/miningResumeStore';
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
 import { resetDynamicContestedZonesForAccountPurge } from '../arcCore/territorial/dynamicContestedZoneStore';
 import { resetWaveCombatCooldownsForAccountPurge } from '../game/waveDefense/waveCombatCooldownStore';
+import { clearTerritorialPlayerWavePending } from '../arcCore/territorial/territorialPlayerWavePending';
+import { clearChatArmedWavePending } from '../game/waveDefense/chatArmedWavePending';
 import { useMissionStore } from '../store/missionStore';
+import { useMainStoryProgressStore } from '../store/mainStoryProgressStore';
 import { useArcCoreInstanceMissionBoardStore } from '../store/arcCoreInstanceMissionBoardStore';
 import { useNpcCaptainProgressStore } from '../store/npcCaptainProgressStore';
 import { usePlanetCoreRuntimeStore } from '../store/planetCoreRuntimeStore';
@@ -28,9 +32,16 @@ import { useUserSessionStore } from '../store/userSessionStore';
 import { syncArcCoreGlobalWorldExpansionSync } from '../arcCore/syncArcCoreGlobalWorldExpansion';
 import { useWorldStore } from '../store/worldStore';
 import { useWorldObjectRuntimeStore } from '../store/worldObjectRuntimeStore';
-import { useTavernBoardStore } from '../store/tavernBoardStore';
+import { useBarBoardStore } from '../store/barBoardStore';
+import { useBarPatronageStore } from '../store/barPatronageStore';
 import { useBmExchangeLedgerStore } from '../store/bmExchangeLedgerStore';
+import { usePlanetDeedCashGrantStore } from '../store/planetDeedCashGrantStore';
 import { resetCombatMatchTelemetry } from '../store/combatMatchTelemetryStore';
+import { resetArcCoreChatForAccountPurge } from '../store/arcCoreChatStore';
+import { resetOrbitPresenceMemory } from '../store/orbitPresenceMemoryStore';
+import { resetStelliumColonizeForAccountPurge } from '../store/stelliumColonizeStore';
+import { dismissArcCoreChatOverlays } from '../arcCore/chat/dismissArcCoreChatOverlays';
+import { resetArcCoreInboundTalkRequestForAccountPurge } from '../arcCore/chat/arcCoreInboundTalkRequest';
 import { showArcAlert } from '../utils/showArcAlert';
 import { t } from '../i18n';
 import { clearOnboardingProfessionId } from '../game/onboardingDraftStorage';
@@ -38,10 +49,15 @@ import { purgeAccountLedgerProfileSkillByUid } from './accountLifecycle';
 import { resetArcInboundDroneCampaigns } from '../arcCore/inboundDrone/resetArcInboundDroneCampaigns';
 import { purgeAllPlanetHubScanUnlockState } from '../game/planetHub/planetHubScanUnlockState';
 import { useArcCoreSpyExpelledStore } from '../store/arcCoreSpyExpelledStore';
+import { useMainStoryCaptainDeadStore } from '../store/mainStoryCaptainDeadStore';
 import { useArcCorePantheonCodexStore } from '../arcCore/pantheon/arcCorePantheonCodexStore';
 import { useAppBootStore } from '../store/appBootStore';
 import { runStageUiAfterIdle } from '../navigation/stageNavGate';
 import { useArcOverlayStore } from '../ui/overlay/arcOverlayStore';
+import { setAccountResetInProgress } from './accountResetPresence';
+import { resetRepairDroneHubPresence } from '../game/playerOwnedSkillFleetAdjust';
+
+export { isAccountResetInProgress } from './accountResetPresence';
 
 export type LocalAccountResetParams = {
   uid: string | null | undefined;
@@ -49,18 +65,12 @@ export type LocalAccountResetParams = {
 };
 
 /**
- * 계정 초기화 진행 중 플래그 — purge 도중 `resetLocalPlayer()`가 player 를 null 로 만들면
- * 행성 허브의 `!player → router.replace('/')` 안전망이 즉시 발화해, 나머지 purge(코어·월드·
- * 세션·fresh-start 플래그)가 끝나기 전에 타이틀이 조기 노출되는 회귀가 있었다. 이 플래그가
- * 켜진 동안에는 화면 측 자동 리다이렉트를 보류하고, 타이틀 이동은 오직 finalize 가
- * "완전한 purge 완료 후" 1회 수행한다(부하정리 완료 후 복귀 보장).
+ * 계정 초기화 진행 중 플래그 — `accountResetPresence` 스칼라.
+ * purge 도중 `resetLocalPlayer()`가 player 를 null 로 만들면 행성 허브의
+ * `!player → router.replace('/')` 안전망이 즉시 발화해 나머지 purge가 끝나기 전에
+ * 타이틀이 조기 노출되는 회귀가 있었다. 이 플래그가 켜진 동안에는 화면 측 자동
+ * 리다이렉트를 보류하고, 타이틀 이동은 오직 finalize 가 완료 후 1회 수행한다.
  */
-let accountResetInProgress = false;
-
-/** 계정 초기화(purge) 진행 중 여부 — 화면 측 자동 타이틀 리다이렉트 보류용. */
-export function isAccountResetInProgress(): boolean {
-  return accountResetInProgress;
-}
 
 /**
  * 클라우드 단계(pre-purge 백업 + 클라우드 세이브 삭제) 전체 상한.
@@ -151,6 +161,11 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   // 반영되므로(오프라인 포함), 서버 ack를 기다리다 강제종료돼도 재시작 시 SDK가 이어서
   // 커밋하고, 캐시 읽기에서도 문서는 이미 삭제로 보인다.
   const cloudPhase = Promise.all([
+    ...(primaryUid
+      ? [
+          releasePlanetUniqueDeedsOwnedBy(primaryUid).catch(() => 0),
+        ]
+      : []),
     ...deleteUids.map((uid) =>
       deleteUserCloudSave(uid).catch(() => {
         /* offline — Firestore queue */
@@ -193,9 +208,13 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await resetDynamicContestedZonesForAccountPurge();
   // 웨이브 전투 승리 재개 대기(30분) — 플레이어 전투 진행 데이터, 함께 리셋
   await resetWaveCombatCooldownsForAccountPurge();
+  clearTerritorialPlayerWavePending();
+  clearChatArmedWavePending();
 
+  resetRepairDroneHubPresence();
   await usePlayerStore.getState().resetLocalPlayer();
   await useMissionStore.getState().resetLocalMissions();
+  await useMainStoryProgressStore.getState().resetLocal();
   await useArcCoreInstanceMissionBoardStore.getState().resetLocalArcCoreInstanceMissionBoard();
   await useNpcCaptainProgressStore.getState().resetLocalNpcCaptainProgress();
   // ── 플레이어 계정 귀속 — 인터랙티브로 누적된 모든 진행을 함께 초기화한다. ──
@@ -226,15 +245,23 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await resetCombatMatchTelemetry();
   // 플레이 세션·투여 시간 — userSessionStore
   await useUserSessionStore.getState().resetLocalUserSession();
-  // 선술집 공지 보드(클라우드 동기 대상) — tavernBoardStore
-  await useTavernBoardStore.getState().resetLocalBoard();
+  // 바 공지 보드(클라우드 동기 대상) — barBoardStore
+  await useBarBoardStore.getState().resetLocalBoard();
+  await useBarPatronageStore.getState().resetLocal();
   await useBmExchangeLedgerStore.getState().resetLocal();
+  await usePlanetDeedCashGrantStore.getState().resetLocal();
+  dismissArcCoreChatOverlays({ unmountAgent: true });
+  resetArcCoreInboundTalkRequestForAccountPurge();
+  await resetArcCoreChatForAccountPurge();
+  await resetOrbitPresenceMemory();
+  await resetStelliumColonizeForAccountPurge();
   // 캐릭터 선택 중간 초안 — character-select → nickname 사이 professionId
   await clearOnboardingProfessionId();
   // 행성별 inbound 드론 벽시계 캠페인 — SubCore Map + UI store
   resetArcInboundDroneCampaigns();
   purgeAllPlanetHubScanUnlockState();
   await useArcCoreSpyExpelledStore.getState().resetLocal();
+  await useMainStoryCaptainDeadStore.getState().resetLocal();
   await useArcCorePantheonCodexStore.getState().resetForAccountPurge();
   // 성운 프로필·일일배치 허브 요약 — 신규 첫 허브 오염 방지
   await usePlanetNebulaStore.getState().resetLocalProfilesForAccountPurge();
@@ -255,7 +282,7 @@ export async function finalizeLocalAccountResetNavigation(
   params: LocalAccountResetParams,
 ): Promise<void> {
   let purgeError: unknown = null;
-  accountResetInProgress = true;
+  setAccountResetInProgress(true);
   // purge 동안(오프라인 클라우드 상한 포함 수 초~15초) 메인스테이지가 그대로 떠 있어
   // 「초기화가 안 된다」로 보이던 회귀 방지 — 루트 blocking 오버레이로 진행 상태를 표시한다.
   presentAccountResetBlockingOverlay();
@@ -284,7 +311,7 @@ export async function finalizeLocalAccountResetNavigation(
     //    postBootSettled=false로 타이틀 버튼이 영원히 잠기는 회귀(2026-07-19 계정 초기화 먹통).
     //    runStageUiAfterIdle = IM idle 또는 2.5s 데드라인 중 먼저 오는 쪽에서 반드시 1회 실행.
     useAppBootStore.getState().setPostBootSettled(false);
-    accountResetInProgress = false;
+    setAccountResetInProgress(false);
     dismissAccountResetBlockingOverlay();
     // eslint-disable-next-line no-console
     if (__DEV__) console.log(`[reset-diag] purge=${Date.now() - purgeStartedAtMs}ms`);

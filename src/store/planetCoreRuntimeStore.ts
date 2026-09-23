@@ -12,10 +12,11 @@ import {
 import type { PlanetCoreMetricsDetail, PlanetMasterBalanceDetail, PlanetCoreStatOpsTrendDetail } from './planetCoreMetricTypes';
 import { planetPgpStorageKey } from '../world/planetPgpModel';
 import {
-  hasPlanetResourceGenesisCsvRow,
   isLegacyFlatCoreSeed,
   resolvePlanetGenesisCoreGauge,
 } from '../arcCore/planetResource/planetResourceEcosystemPolicy';
+import { isCoreScenarioPlanetId } from '../world/galaxyFrontierDevelopmentRidge';
+import type { PlanetFacilityModuleDetail } from './planetCoreMetricTypes';
 import {
   mergeArcCoreRedWorldPlanetRuntime,
   snapshotArcCoreRedWorldPlanetRuntime,
@@ -125,6 +126,14 @@ function scheduleDeferredLegacyPlanetDevMigration(
         }
       } finally {
         legacyMigrationQueued = false;
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          const { rebuildPlanetDevJobWatch } =
+            require('../game/planetDevelopment/planetDevJobRealtimeWatch') as typeof import('../game/planetDevelopment/planetDevJobRealtimeWatch');
+          rebuildPlanetDevJobWatch();
+        } catch {
+          /* 워치 미기동 */
+        }
       }
     })();
   });
@@ -373,10 +382,23 @@ const PLANET_DT_REALIGN_REV = 1;
 const PLANET_DT_REALIGN_IDS = new Set(['arcadia_prime']);
 
 /** 구 genesis zone=저R 곡선 오적용 → lore·planets.csv 정본 1회 보정 (planet_resource_genesis.csv 행 전체) */
-const PLANET_GENESIS_ECOLOGY_REALIGN_REV = 2;
+/** rev 3 — 거리 능선 오지 재시드. 코어 21 손맛 유지 · 플레이어 실설치 시설 있으면 스킵 */
+const PLANET_GENESIS_ECOLOGY_REALIGN_REV = 3;
 
-function isGenesisEcosystemRealignTarget(planetId: string): boolean {
-  return hasPlanetResourceGenesisCsvRow(planetId);
+function hasPlayerInstalledDevModule(stored: PlanetCoreRuntime): boolean {
+  const mods = stored.detail?.development?.byModuleId;
+  if (!mods) return false;
+  for (const raw of Object.values(mods)) {
+    const m = raw as PlanetFacilityModuleDetail | undefined;
+    if (m?.version === 1 && m.installed === true) return true;
+  }
+  return false;
+}
+
+function isGenesisEcosystemRealignTarget(planetId: string, stored: PlanetCoreRuntime): boolean {
+  if (hasPlayerInstalledDevModule(stored)) return false;
+  if (isCoreScenarioPlanetId(planetId)) return false;
+  return true;
 }
 
 function realignStarterPlanetDefenseTechnology(
@@ -425,9 +447,9 @@ function realignPlanetGenesisEcosystemFromTable(
 ): Record<string, PlanetCoreRuntime> {
   const out = { ...byPlanetId };
   for (const planetId of Object.keys(out)) {
-    if (!isGenesisEcosystemRealignTarget(planetId)) continue;
     const stored = out[planetId];
     if (!stored) continue;
+    if (!isGenesisEcosystemRealignTarget(planetId, stored)) continue;
     const rev = stored.detail?.resource?.genesisRealignRev ?? 0;
     if (rev >= PLANET_GENESIS_ECOLOGY_REALIGN_REV) continue;
 
@@ -532,6 +554,16 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
         await persistStoragePayload({ byPlanetId: next, globalMultipliers });
       }
       scheduleDeferredLegacyPlanetDevMigration(true, get);
+      InteractionManager.runAfterInteractions(() => {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          const { rebuildPlanetDevJobWatch } =
+            require('../game/planetDevelopment/planetDevJobRealtimeWatch') as typeof import('../game/planetDevelopment/planetDevJobRealtimeWatch');
+          rebuildPlanetDevJobWatch();
+        } catch {
+          /* 워치 미기동 */
+        }
+      });
       return;
     }
 
@@ -619,6 +651,14 @@ export const usePlanetCoreRuntimeStore = create<PlanetCoreRuntimeState>((set, ge
     markPlanetCorePersistDirty();
     await persistStoragePayload({ byPlanetId: next, globalMultipliers });
     planetCorePersistDirty = false;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { rebuildPlanetDevJobWatch } =
+        require('../game/planetDevelopment/planetDevJobRealtimeWatch') as typeof import('../game/planetDevelopment/planetDevJobRealtimeWatch');
+      rebuildPlanetDevJobWatch();
+    } catch {
+      /* 워치 미기동 */
+    }
   },
 
   getPlanetCoreRuntime: (planetId) => get().byPlanetId[planetId],

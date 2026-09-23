@@ -1,0 +1,34 @@
+{
+  "id": "npc-captain-permanent-death-design",
+  "titleKo": "NPC 함장 영구 사망 — 기획·기반 설계",
+  "docPath": "docs/NPC_CAPTAIN_PERMANENT_DEATH_DESIGN.md",
+  "docVersion": "v0.2.1",
+  "status": "foundation_implemented_awaiting_S0",
+  "runtimeCodeAllowed": true,
+  "tablesChangeAllowed": "death_columns_only_defaults_false",
+  "createdAt": "2026-08-13",
+  "updatedAt": "2026-08-13",
+  "owner": "kim-team-lead",
+  "waves": {
+    "T1": "DONE",
+    "R1": "DONE",
+    "S0": "PENDING_roster",
+    "C1": "PENDING",
+    "U1": "PENDING"
+  },
+  "scope": {
+    "in": ["main_story_key_captains_permanent_death"],
+    "outDeferred": [
+      "general_traffic_captains",
+      "wave_defense",
+      "governor_territorial_death",
+      "arc_orbit_fill_pool"
+    ]
+  },
+  "implPaths": {
+    "store": "src/store/mainStoryCaptainDeadStore.ts",
+    "gate": "src/npc/mainStoryCaptainDeathGate.ts",
+    "storageKey": "arcfire_main_story_captain_dead_v1"
+  },
+  "notesKo": "기반 T1+R1 완료. 전원 deathEligible=false라 동작 동일. S0 배정·C1 트리거 대기."
+}

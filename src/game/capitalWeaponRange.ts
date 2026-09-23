@@ -21,6 +21,8 @@ export type CapitalCombatRangeBands = {
   laserBrawlOuterPx: number;
   laserBrawlInnerPx: number;
   missileIdealPairDistPx: number;
+  /** 무기 사거리에서 파생한 페어 최단 유지거리 — 헐 겹침(38)보다 우선 */
+  minHoldPairDistPx: number;
 };
 
 export function resolveCapitalWeaponRangePx(row: CapitalWeaponCsvRow): number {
@@ -33,10 +35,16 @@ export function resolveCapitalWeaponRangePxById(weaponId: string): number | null
   return resolveCapitalWeaponRangePx(row);
 }
 
+/** 근접 무기 미장착 시 레이저 사거리의 이 비율을 최단 유지거리로 씀 */
+export const CAPITAL_LASER_MIN_HOLD_FRAC = 0.72;
+/** 행성 지름보다 무기 사거리를 우선 — 헐 밀착(46px) 선회 금지 */
+export const CAPITAL_MIN_HOLD_FLOOR_PX = 88;
+
 /** 항법·교전 단계 — 테이블 사거리에서 파생(별도 교정 배율 없음) */
 export function deriveCapitalCombatRangeBands(
   laserEngageRangePx: number,
   missileMaxRangePx: number,
+  closeRangeMaxRangePx = 0,
 ): CapitalCombatRangeBands {
   const laser =
     laserEngageRangePx > 0
@@ -46,9 +54,17 @@ export function deriveCapitalCombatRangeBands(
     missileMaxRangePx > 0
       ? Math.max(CAPITAL_WEAPON_RANGE_PX_MIN, missileMaxRangePx)
       : CAPITAL_WEAPON_RANGE_FALLBACK_MISSILE_PX;
+  const close =
+    closeRangeMaxRangePx > 0
+      ? Math.max(CAPITAL_WEAPON_RANGE_PX_MIN, closeRangeMaxRangePx)
+      : 0;
   const loosen = CAPITAL_MISSILE_RANGE_LOOSEN_PX;
   const laserBrawlOuterPx = laser;
-  const laserBrawlInnerPx = Math.min(laser, CAPITAL_COMBAT_PLANET_DIAM_PX);
+  const minHoldPairDistPx = Math.max(
+    CAPITAL_MIN_HOLD_FLOOR_PX,
+    close > 0 ? close : laser * CAPITAL_LASER_MIN_HOLD_FRAC,
+  );
+  const laserBrawlInnerPx = Math.min(laser, minHoldPairDistPx);
   const missileIdealPairDistPx = Math.min(
     missile + loosen - 4,
     Math.max(laserBrawlOuterPx + 24, missile * 0.9),
@@ -59,6 +75,7 @@ export function deriveCapitalCombatRangeBands(
     laserBrawlOuterPx,
     laserBrawlInnerPx,
     missileIdealPairDistPx,
+    minHoldPairDistPx,
   };
 }
 
@@ -66,8 +83,11 @@ export function navalBrawlRingBoundsFromBands(bands: CapitalCombatRangeBands): {
   rMin: number;
   rMax: number;
 } {
-  const rMin = Math.max(bands.laserBrawlInnerPx * 0.44, 46);
-  const rMax = Math.max(rMin + 4, Math.min(bands.laserBrawlOuterPx - 2, bands.laserEngageRangePx - 8));
+  const rMin = Math.max(bands.minHoldPairDistPx * 0.92, bands.laserBrawlInnerPx * 0.9);
+  const rMax = Math.max(
+    rMin + 4,
+    Math.min(bands.laserBrawlOuterPx - 2, bands.laserEngageRangePx - 8, rMin + 28),
+  );
   return { rMin, rMax };
 }
 

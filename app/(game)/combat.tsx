@@ -2,10 +2,10 @@
 // 아크파이어 온라인 — 이동중 전투 (`/(game)/combat`)
 // - 은하 지도 이동 후 랜덤 만남(강제) 전용. 행성 착륙(`planet`) 궤도 CSV 전투와 분리.
 // - 시뮬 엔진은 `PlanetEdenRaidTestLayer` 공용 — 무장(`equipSlots`)·미사일 모듈·명중 닷지(Skia 성운)까지 메인 스테이지 궤도와 동일 세트.
-// - 함대 시드만 `CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID`(1:1 해적·플레이어 기함).
+// - 함대 시드만 `CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID`(1:1 · 목적지 전용적·플레이어 기함).
 // ============================================================
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, type LayoutChangeEvent,
 } from 'react-native';
@@ -18,6 +18,8 @@ import { resolveNpcCaptainDisplayName } from '../../src/i18n/captainText';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { resolveNpcCapitalShipDisplayName } from '../../src/i18n/shipText';
 import { showArcAlert } from '../../src/utils/showArcAlert';
+import { CombatEndHoldVeil } from '../../src/components/combat/CombatEndHoldVeil';
+import { waitCombatEndHold } from '../../src/game/combatEndHold';
 import { runTransitCombatPostFlow } from '../../src/game/transitCombat/transitCombatPostFlow';
 import { useTransitCombatSessionStore } from '../../src/game/transitCombat/transitCombatSession';
 import { QuestHUD } from '../../src/components/QuestHUD';
@@ -32,13 +34,11 @@ import { useMissionStore } from '../../src/store/missionStore';
 import { ENEMY_TEMPLATES } from '../../src/data/d20tables';
 import { resolveNpcCapitalShip, getNpcCapitalShip } from '../../src/npc';
 import { resolveTransitPirateShipIdFromTables } from '../../src/combat/capitalTransitCombatSeed';
-import {
-  findFirstIncompleteObjective,
-  forEachIncompleteObjective,
-  listActiveMissionBundles,
-} from '../../src/missions/missionActiveBundles';
+import { resolveTransitHostileCaptainForSystem } from '../../src/npc/transitHostileCaptainResolve';
+import { applyDefeatEnemyMissionObjectives } from '../../src/missions/applyDefeatEnemyMissionObjectives';
 import { resolveCombatEnemyCaptain } from '../../src/missions/resolveMissionCombatCaptain';
 import { resolveQuestCombatAnchorPlanetId } from '../../src/missions/questItemOpsRegistry';
+import { resolveQuestCombatLock, shouldGuaranteeQuestTransitEncounter } from '../../src/missions/questCombatLock';
 import {
   CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID,
   CapitalRealtimeCombatHudOverlay,
@@ -47,10 +47,9 @@ import {
   useCapitalRealtimeCombatSimContext,
   useCapitalRealtimeDuelOutcome,
 } from '../../src/combat';
-import { SkiaPlanetNebulaShaderBackdrop } from '../../src/components/planet/SkiaPlanetNebulaShaderBackdrop';
-import { usePlanetNebulaStore } from '../../src/store/planetNebulaStore';
-import { resolvePlanetNebulaBakedSource } from '../../src/game/planetNebulaBakedAssets';
+import { TransitCombatSkiaParallaxBackdrop } from '../../src/components/combat/TransitCombatSkiaParallaxBackdrop';
 import { useStageMemory } from '../../src/hooks/useStageMemory';
+import { hideArcCoreAgentSurfaceForCombat } from '../../src/arcCore/chat/arcCoreAgentSurfaceStore';
 import { releaseCombatStageMemory } from '../../src/game/stageMemoryRelease';
 import { markPostHubCombatWorldmapIngressReclaim } from '../../src/game/nativeReclaim/galaxyMapIngressReclaim';
 import { markPlanetHubIngressReclaim } from '../../src/game/nativeReclaim/planetHubIngressReclaim';
@@ -58,30 +57,34 @@ import { isPlayerShipCombatCapable, resolvePlayerTravelBlock } from '../../src/g
 import { useStageNavGate, runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
 
-/** 성운 Skia 백드롭 — colorDodge 닷지는 성운 픽셀과 동일 캔버스에 그린다 */
-function CombatOrbitNebulaBackdrop({
-  size,
-  planetId,
+/** 이동중 전투 패럴랙스 — 허브 베이크 + space_cd01~03 Screen. 물리 궤도 밖 풀화면. */
+const CombatOrbitTransitBackdrop = memo(function CombatOrbitTransitBackdrop({
+  destSystemId,
+  originSystemId,
+  active,
+  dodgeOrbitOffsetX,
+  dodgeOrbitOffsetY,
 }: {
-  size: number;
-  planetId: string;
+  destSystemId: string;
+  originSystemId: string;
+  active: boolean;
+  dodgeOrbitOffsetX: number;
+  dodgeOrbitOffsetY: number;
 }) {
   const sim = useCapitalRealtimeCombatSimContext();
-  const nebulaBakedImageSource = useMemo(
-    () => resolvePlanetNebulaBakedSource(planetId),
-    [planetId],
-  );
   return (
-    <SkiaPlanetNebulaShaderBackdrop
-      size={size}
-      active
-      nebulaBakedImageSource={nebulaBakedImageSource}
+    <TransitCombatSkiaParallaxBackdrop
+      destSystemId={destSystemId}
+      originSystemId={originSystemId}
+      active={active}
       dodgeHitFxRef={sim?.missileHitFxRef ?? null}
       dodgeTimeMsRef={sim?.tMsRef ?? null}
-      dodgeOrbitSize={sim?.orbitSize ?? size}
+      dodgeOrbitSize={sim?.orbitSize ?? 0}
+      dodgeOrbitOffsetX={dodgeOrbitOffsetX}
+      dodgeOrbitOffsetY={dodgeOrbitOffsetY}
     />
   );
-}
+});
 
 export default function CombatScreen() {
   const t = useT();
@@ -91,9 +94,9 @@ export default function CombatScreen() {
   const addExp = usePlayerStore(s => s.addExp);
   const addCredits = usePlayerStore(s => s.addCredits);
   const persist = usePlayerStore(s => s.persist);
-  const completeObjective = useMissionStore(s => s.completeObjective);
 
   const [resolving, setResolving] = useState(false);
+  const [endHoldVisible, setEndHoldVisible] = useState(false);
   const resolvedRef = useRef(false);
   const isMountedRef = useRef(true);
   const exitNavGate = useStageNavGate();
@@ -101,8 +104,12 @@ export default function CombatScreen() {
   const windowOrbitSize = useMemo(() => Math.max(220, Math.floor(width)), [width]);
   const [battleStageWidth, setBattleStageWidth] = useState(windowOrbitSize);
   const orbitSize = useMemo(() => Math.max(220, Math.floor(battleStageWidth)), [battleStageWidth]);
-  const nebulaPlanetId = player?.currentPlanetId ?? '';
-  const ensureNebulaProfileForPlanet = usePlanetNebulaStore((s) => s.ensureProfileForPlanet);
+  const transitDestSystemId = useTransitCombatSessionStore(
+    (s) => s.session?.destinationSystemId ?? '',
+  );
+  const transitOriginSystemId = useTransitCombatSessionStore(
+    (s) => s.session?.originSystemId ?? '',
+  );
 
   useStageMemory(
     'combat_transit',
@@ -115,6 +122,7 @@ export default function CombatScreen() {
   useFocusEffect(
     useCallback(() => {
       setIsCombatRouteFocused(true);
+      hideArcCoreAgentSurfaceForCombat();
       return () => setIsCombatRouteFocused(false);
     }, []),
   );
@@ -136,43 +144,72 @@ export default function CombatScreen() {
     });
   }, [exitNavGate]);
 
-  React.useEffect(() => {
-    if (!nebulaPlanetId) return;
-    ensureNebulaProfileForPlanet(nebulaPlanetId);
-  }, [ensureNebulaProfileForPlanet, nebulaPlanetId]);
+  const orbitWrapRef = useRef<View>(null);
+  const [orbitGfxOffset, setOrbitGfxOffset] = useState({ x: 0, y: 0 });
 
   const handleBattleStageLayout = useCallback((event: LayoutChangeEvent) => {
     const measuredWidth = Math.max(220, Math.floor(event.nativeEvent.layout.width));
     setBattleStageWidth(prev => (prev === measuredWidth ? prev : measuredWidth));
   }, []);
 
+  const handleOrbitWrapLayout = useCallback(() => {
+    orbitWrapRef.current?.measureInWindow((x, y) => {
+      const nx = Math.round(x);
+      const ny = Math.round(y);
+      setOrbitGfxOffset((prev) => (prev.x === nx && prev.y === ny ? prev : { x: nx, y: ny }));
+    });
+  }, []);
+
   const [combatSetup] = useState(() => {
-    const bundles = listActiveMissionBundles(useMissionStore.getState().progresses);
-    const progresses = useMissionStore.getState().progresses;
-    const defeatCtx = findFirstIncompleteObjective(bundles, 'defeat_enemy');
+    const missionState = useMissionStore.getState();
+    const progresses = missionState.progresses;
+    const lock = resolveQuestCombatLock(progresses, missionState.activeMissionId);
     const playerState = usePlayerStore.getState().player;
-    const systemId = playerState?.currentSystemId ?? null;
+    const destSystemId =
+      useTransitCombatSessionStore.getState().session?.destinationSystemId
+      ?? playerState?.currentSystemId
+      ?? null;
+    const transitLock = shouldGuaranteeQuestTransitEncounter(lock, destSystemId) ? lock : null;
     const planetId = resolveQuestCombatAnchorPlanetId(
       progresses,
-      defeatCtx?.bundle.mission.offerPlanetId ?? playerState?.currentPlanetId ?? null,
+      playerState?.currentPlanetId ?? null,
+      missionState.activeMissionId,
     );
-    const templateId = defeatCtx?.objective.targetId;
+    const templateId = transitLock?.templateId;
     const templates = Object.values(ENEMY_TEMPLATES);
     const enemyTemplate = templateId && ENEMY_TEMPLATES[templateId]
       ? ENEMY_TEMPLATES[templateId]
       : templates[Math.floor(Math.random() * Math.min(2, templates.length))];
-    const captain = resolveCombatEnemyCaptain({
-      enemyTemplateId: enemyTemplate.id,
-      planetId,
-      systemId,
-    });
-    const transitPirateShipId = captain?.assignedShipId?.trim()
-      ?? resolveTransitPirateShipIdFromTables(systemId, {
-        enemyTemplateId: enemyTemplate.id,
-        planetId,
-        systemId,
+    if (templateId) {
+      useTransitCombatSessionStore.getState().bindMission({
+        missionEnemyTemplateId: templateId,
+        missionPlanetId: planetId,
       });
-    return { enemyTemplate, captain, transitPirateShipId };
+    }
+    const captain = templateId
+      ? resolveCombatEnemyCaptain({
+          enemyTemplateId: enemyTemplate.id,
+          planetId,
+          systemId: destSystemId,
+        })
+      : resolveTransitHostileCaptainForSystem(destSystemId);
+    const transitPirateShipId = captain?.assignedShipId?.trim()
+      ?? resolveTransitPirateShipIdFromTables(
+        destSystemId,
+        templateId
+          ? {
+              enemyTemplateId: enemyTemplate.id,
+              planetId,
+              systemId: destSystemId,
+            }
+          : null,
+      );
+    return {
+      enemyTemplate,
+      captain,
+      transitPirateShipId,
+      missionEnemyTemplateId: templateId ?? null,
+    };
   });
   const enemyTemplate = combatSetup.enemyTemplate;
   const transitPirateShipId = combatSetup.transitPirateShipId;
@@ -204,17 +241,18 @@ export default function CombatScreen() {
   const handleVictory = useCallback(async () => {
     if (resolvedRef.current) return;
     resolvedRef.current = true;
-    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setEndHoldVisible(true);
+    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    await waitCombatEndHold();
+    if (!isMountedRef.current) return;
     const destroyedLabels = await usePlayerStore.getState().applyPostCombatDurabilityWear(Date.now());
     const expGain = enemyTemplate.expReward;
     const creditGain = enemyTemplate.creditReward;
     addExp(expGain);
     addCredits(creditGain);
-    const bundles = listActiveMissionBundles(useMissionStore.getState().progresses);
-    forEachIncompleteObjective(bundles, 'defeat_enemy', (bundle, obj) => {
-      if (obj.targetId === enemyTemplate.id) {
-        completeObjective(bundle.mission.id, obj.id);
-      }
+    applyDefeatEnemyMissionObjectives({
+      venue: 'transit',
+      enemyTemplateId: combatSetup.missionEnemyTemplateId ?? enemyTemplate.id,
     });
     await persist();
     useTransitCombatSessionStore.getState().commitArrival({
@@ -228,16 +266,19 @@ export default function CombatScreen() {
       expGain,
       destroyedLabels,
     });
-  }, [addCredits, addExp, completeObjective, enemyTemplate.creditReward, enemyTemplate.expReward, enemyTemplate.id, enemyTemplate.name, finishTransitCombatAndNavigate, persist, t]);
+  }, [addCredits, addExp, combatSetup.missionEnemyTemplateId, enemyTemplate.creditReward, enemyTemplate.expReward, enemyTemplate.id, enemyTemplate.name, finishTransitCombatAndNavigate, persist, t]);
 
   const handleDefeat = useCallback(async () => {
     if (resolvedRef.current || !player) return;
     resolvedRef.current = true;
-    setResolving(true);
-    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    setEndHoldVisible(true);
+    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    await waitCombatEndHold();
+    if (!isMountedRef.current) return;
     await usePlayerStore.getState().applyPostCombatDurabilityWear(Date.now());
     useTransitCombatSessionStore.getState().clear();
     await usePlayerStore.getState().applyCapitalShipDestruction();
+    if (!isMountedRef.current) return;
     showArcAlert(
       t('combat.shipDestroyedTitle'),
       t('combat.shipDestroyedBody'),
@@ -246,7 +287,6 @@ export default function CombatScreen() {
         scheduleCombatExitNavigate(() => router.replace('/(game)/planet'));
       } }],
     );
-    setResolving(false);
   }, [player, scheduleCombatExitNavigate, t]);
 
   const handleFlee = useCallback(async () => {
@@ -263,6 +303,9 @@ export default function CombatScreen() {
             void (async () => {
               if (resolvedRef.current) return;
               resolvedRef.current = true;
+              setEndHoldVisible(true);
+              await waitCombatEndHold();
+              if (!isMountedRef.current) return;
               useTransitCombatSessionStore.getState().commitArrival({
                 deliverFailTitle: t('worldmap.deliverFailTitle'),
                 deliverFailBody: t('worldmap.deliverFailBody'),
@@ -333,9 +376,25 @@ export default function CombatScreen() {
       orbitSize={orbitSize}
       active={isCombatRouteFocused && !exitPending}
       combatPlanetId={isCombatRouteFocused && !exitPending ? CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID : null}
-      combatSystemId={isCombatRouteFocused && !exitPending ? player.currentSystemId : null}
+      combatSystemId={isCombatRouteFocused && !exitPending
+        ? (transitDestSystemId || player.currentSystemId)
+        : null}
     >
-      <StageShell routeName="combat" background="none" edges={['bottom']}>
+      <StageShell
+        routeName="combat"
+        background="none"
+        edges={['bottom']}
+        safeAreaBackgroundColor="#05070e"
+        backgroundOverlay={(
+          <CombatOrbitTransitBackdrop
+            destSystemId={transitDestSystemId || 'transit'}
+            originSystemId={transitOriginSystemId || player?.currentSystemId || ''}
+            active={isCombatRouteFocused && !exitPending}
+            dodgeOrbitOffsetX={orbitGfxOffset.x}
+            dodgeOrbitOffsetY={orbitGfxOffset.y}
+          />
+        )}
+      >
         <View style={styles.header}>
           <View>
             <Text style={styles.headerTitle}>{t('combat.headerTitle')}</Text>
@@ -353,16 +412,17 @@ export default function CombatScreen() {
         <QuestHUD />
 
         <View style={styles.battleStage} onLayout={handleBattleStageLayout}>
-          <View style={[styles.orbitWrap, { width: orbitSize, height: orbitSize }]}>
-            <CombatOrbitNebulaBackdrop
-              size={orbitSize}
-              planetId={nebulaPlanetId}
-            />
+          <View
+            ref={orbitWrapRef}
+            style={[styles.orbitWrap, { width: orbitSize, height: orbitSize }]}
+            onLayout={handleOrbitWrapLayout}
+          >
             <CapitalRealtimeCombatOrbitSkia renderMissileDodgeFx={false} />
           </View>
           <View style={styles.hudWrap} pointerEvents="box-none">
             <CapitalRealtimeCombatHudOverlay />
           </View>
+          <CombatEndHoldVeil visible={endHoldVisible} />
         </View>
 
         <CombatRealtimeBindings onEnemyDefeated={handleVictory} onPlayerDefeated={handleDefeat} />
@@ -428,14 +488,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 0,
     paddingVertical: SPACING.md,
+    overflow: 'hidden',
   },
   orbitWrap: {
     width: '100%',
-    borderWidth: 1,
-    borderColor: TF.panelBorder,
-    borderRadius: 8,
     overflow: 'hidden',
-    backgroundColor: 'rgba(8,12,22,0.55)',
+    backgroundColor: 'transparent',
   },
   hudWrap: {
     position: 'absolute',

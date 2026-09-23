@@ -2,8 +2,8 @@
 // 은하 지도 — 다음 분쟁 판정 예고(1h 순환) 노드 링 오버레이
 // ============================================================
 
-import React, { memo, useCallback, useEffect, useMemo } from 'react';
-import { View, StyleSheet, AppState } from 'react-native';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { View, StyleSheet, AppState, type AppStateStatus } from 'react-native';
 import Animated, {
   cancelAnimation,
   Easing,
@@ -15,6 +15,10 @@ import Animated, {
 } from 'react-native-reanimated';
 import { LAYOUT } from '../utils/theme';
 import type { StarSystem } from '../types';
+
+function isAppForeground(state: AppStateStatus): boolean {
+  return state === 'active';
+}
 
 const NODE_R = LAYOUT.map_node_radius;
 const NODE_R_CURRENT = LAYOUT.map_node_radius_start;
@@ -103,12 +107,25 @@ export const GalaxyMapContestedZoneRingOverlay = memo(function GalaxyMapConteste
   animActive,
 }: GalaxyMapContestedZoneRingOverlayProps) {
   const rotation = useSharedValue(0);
+  /** 백그라운드에서는 링 View 트리 자체를 내려 Views/애니 잔류를 막는다(overnight soak). */
+  const [appForeground, setAppForeground] = useState(() =>
+    isAppForeground(AppState.currentState),
+  );
+  const ringsLive = animActive && appForeground;
+
   const restartSpin = useCallback(() => {
     startContestedRingSpin(rotation);
   }, [rotation]);
 
   useEffect(() => {
-    if (!animActive) {
+    const sub = AppState.addEventListener('change', (next) => {
+      setAppForeground(isAppForeground(next));
+    });
+    return () => sub.remove();
+  }, []);
+
+  useEffect(() => {
+    if (!ringsLive) {
       cancelAnimation(rotation);
       return undefined;
     }
@@ -116,36 +133,34 @@ export const GalaxyMapContestedZoneRingOverlay = memo(function GalaxyMapConteste
     return () => {
       cancelAnimation(rotation);
     };
-  }, [animActive, rotation, restartSpin]);
-
-  /** RN Animated.loop는 JS 스레드·백그라운드 복귀 후 멈춤 — 포그라운드 재시작 */
-  useEffect(() => {
-    if (!animActive) return undefined;
-    const sub = AppState.addEventListener('change', (next) => {
-      if (next === 'active') restartSpin();
-    });
-    return () => sub.remove();
-  }, [animActive, restartSpin]);
+  }, [ringsLive, rotation, restartSpin]);
 
   const anchors = useMemo((): RingAnchor[] => {
-    return systems.map((sys) => {
+    // 동일 systemId 중복 입력 시 React same-key 경고 — 성계당 링 1개만
+    const seen = new Set<string>();
+    const out: RingAnchor[] = [];
+    for (let i = 0; i < systems.length; i += 1) {
+      const sys = systems[i]!;
+      if (seen.has(sys.id)) continue;
+      seen.add(sys.id);
       const pos = toScreen(sys.position);
       const isCurrent = sys.id === currentSystemId;
-      return {
+      out.push({
         systemId: sys.id,
         cx: pos.x,
         cy: pos.y,
         nodeR: isCurrent ? NODE_R_CURRENT : NODE_R,
-      };
-    });
+      });
+    }
+    return out;
   }, [systems, currentSystemId, toScreen]);
 
-  if (anchors.length === 0) return null;
+  if (!ringsLive || anchors.length === 0) return null;
 
   return (
     <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
       {anchors.map((anchor) => (
-        <ContestedZoneRingMark key={anchor.systemId} anchor={anchor} rotation={rotation} />
+        <ContestedZoneRingMark key={`contested-ring-${anchor.systemId}`} anchor={anchor} rotation={rotation} />
       ))}
     </View>
   );

@@ -1,40 +1,22 @@
 // ============================================================
-// 동서남북 항로 · 교역 F1–F4 · 점유 시드 — 기존 테이블 연결
+// 동서남북 항로 · 교역 F1–F4 · 점유 수도 — 기존 테이블 연결
 // ============================================================
 
 import { getPlanetTradeRouteProfile } from '../arcCore/economy/tradeRouteRegistry';
-import { PlanetOccupationSeeds_FROM_BALANCE_CSV } from '../data/balance/generated';
 import {
-  GALAXY_ROUTE_POLICIES,
   type GalaxyRouteDirection,
-  type GalaxyRoutePolicy,
+  type QuadTradeFactionCode,
+  type TradeRegionCode,
 } from './galaxyRouteFactionPolicy';
 
-export type TradeRegionCode = 'W' | 'E' | 'S' | 'N';
+export type { TradeRegionCode };
 
-const TRADE_REGION_TO_GALAXY_ROUTE: Record<TradeRegionCode, GalaxyRouteDirection> = {
-  W: 'west',
-  E: 'east',
-  S: 'south',
-  N: 'north',
+const TRADE_FACTION_TO_GALAXY_ROUTE: Record<QuadTradeFactionCode, GalaxyRouteDirection> = {
+  F1: 'west',
+  F2: 'south',
+  F3: 'east',
+  F4: 'north',
 };
-
-/** `tables/balance/planet_trade_route_profile.csv` → `GALAXY_ROUTE_POLICIES` */
-export function resolveGalaxyRouteDirectionForPlanet(planetId: string): GalaxyRouteDirection | null {
-  const profile = getPlanetTradeRouteProfile(planetId);
-  if (!profile) return null;
-  const code = profile.tradeRegionCode as TradeRegionCode;
-  return TRADE_REGION_TO_GALAXY_ROUTE[code] ?? null;
-}
-
-export function resolveGalaxyRoutePolicyForPlanet(planetId: string): GalaxyRoutePolicy | null {
-  const dir = resolveGalaxyRouteDirectionForPlanet(planetId);
-  return dir ? GALAXY_ROUTE_POLICIES[dir] : null;
-}
-
-export function resolveOccupationSeedForPlanet(planetId: string) {
-  return PlanetOccupationSeeds_FROM_BALANCE_CSV.find((row) => row.planetId === planetId) ?? null;
-}
 
 /** docs/_000_ARCFIRE_PLANET_COMPENDIUM §5 — eden_city = 블루 상업 수도 (occupation BLUE) */
 export const BLUE_COMMERCIAL_CAPITAL_PLANET_ID = 'eden_city';
@@ -42,10 +24,30 @@ export const BLUE_COMMERCIAL_CAPITAL_PLANET_ID = 'eden_city';
 /** planet_occupation_seeds — core_prime = 레드팀 수도 (occupation RED) */
 export const RED_FACTION_CAPITAL_PLANET_ID = 'core_prime';
 
-export const MEGA_FACTION_CAPITAL_PLANET_IDS = {
-  blue: BLUE_COMMERCIAL_CAPITAL_PLANET_ID,
-  red: RED_FACTION_CAPITAL_PLANET_ID,
-} as const;
+/** F2 머큐리움 — 확장 남단(코어 21 밖) */
+export const SOUTH_FACTION_CAPITAL_PLANET_ID = 'synth_706_p';
+
+/** F4 아우렐리움 — 확장 북단(코어 21 밖) */
+export const NORTH_FACTION_CAPITAL_PLANET_ID = 'synth_732_p';
+
+const CAPITAL_ROUTE_BY_PLANET_ID: Record<string, GalaxyRouteDirection> = {
+  [BLUE_COMMERCIAL_CAPITAL_PLANET_ID]: 'west',
+  [SOUTH_FACTION_CAPITAL_PLANET_ID]: 'south',
+  [RED_FACTION_CAPITAL_PLANET_ID]: 'east',
+  [NORTH_FACTION_CAPITAL_PLANET_ID]: 'north',
+};
+
+/** 교역 프로필 F 코드 → 항로 (지역 키 이중 해석 없음). 4대 수도 id 는 프로필 없어도 항로 고정 */
+export function resolveGalaxyRouteDirectionForPlanet(planetId: string): GalaxyRouteDirection | null {
+  const id = String(planetId ?? '').trim();
+  if (!id) return null;
+  const locked = CAPITAL_ROUTE_BY_PLANET_ID[id];
+  if (locked) return locked;
+  const profile = getPlanetTradeRouteProfile(id);
+  if (!profile) return null;
+  const code = profile.tradeFactionCode as QuadTradeFactionCode;
+  return TRADE_FACTION_TO_GALAXY_ROUTE[code] ?? null;
+}
 
 export function isBlueCommercialCapitalPlanet(planetId: string | null | undefined): boolean {
   return String(planetId ?? '').trim() === BLUE_COMMERCIAL_CAPITAL_PLANET_ID;
@@ -55,22 +57,28 @@ export function isRedFactionCapitalPlanet(planetId: string | null | undefined): 
   return String(planetId ?? '').trim() === RED_FACTION_CAPITAL_PLANET_ID;
 }
 
-export function isMegaFactionCapitalPlanet(planetId: string | null | undefined): boolean {
-  return isBlueCommercialCapitalPlanet(planetId) || isRedFactionCapitalPlanet(planetId);
+export function isSouthFactionCapitalPlanet(planetId: string | null | undefined): boolean {
+  return String(planetId ?? '').trim() === SOUTH_FACTION_CAPITAL_PLANET_ID;
 }
 
+export function isNorthFactionCapitalPlanet(planetId: string | null | undefined): boolean {
+  return String(planetId ?? '').trim() === NORTH_FACTION_CAPITAL_PLANET_ID;
+}
+
+export function isMegaFactionCapitalPlanet(planetId: string | null | undefined): boolean {
+  return (
+    isBlueCommercialCapitalPlanet(planetId)
+    || isRedFactionCapitalPlanet(planetId)
+    || isSouthFactionCapitalPlanet(planetId)
+    || isNorthFactionCapitalPlanet(planetId)
+  );
+}
+
+/** 전쟁축(블루/레드) 수도만. 남·북은 점유 hold 접두가 아님 */
 export function resolveMegaFactionCapitalSide(
   planetId: string | null | undefined,
 ): 'blue' | 'red' | null {
   if (isBlueCommercialCapitalPlanet(planetId)) return 'blue';
   if (isRedFactionCapitalPlanet(planetId)) return 'red';
   return null;
-}
-
-/** 은하 좌표 → 동서남북 (worldStore·월드맵과 동일) */
-export function resolveCardinalKeyForPosition(pos: { x: number; y: number }): GalaxyRouteDirection {
-  const dx = pos.x - 0.5;
-  const dy = pos.y - 0.5;
-  if (Math.abs(dx) >= Math.abs(dy)) return dx >= 0 ? 'east' : 'west';
-  return dy >= 0 ? 'south' : 'north';
 }

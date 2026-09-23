@@ -1,0 +1,19 @@
+id,slotFrom,slotTo,weekdayMask,dutyOrOff,activityKo,activityEn,energyDelta,focusDelta,topicHint
+sl_sleep_a,4,11,*,off,비번이라 늘어져 있었어,Off-duty and lying low,-8,-12,rest
+sl_sleep_b,4,11,*,off,눈을 붙이는 중이야,Catching a little sleep,-6,-10,rest
+sl_dawn_a,12,17,*,duty,야간 로그를 인수하고 있어,Taking over the night log,4,8,duty
+sl_dawn_b,12,17,*,duty,브리핑 전에 머리를 깨우는 중,Waking up before briefing,6,6,duty
+sl_morning_a,18,23,*,duty,관측 검수를 보고 있어,Checking the watch notes,2,10,duty
+sl_morning_b,18,23,*,duty,연합 통신을 정리하는 중,Sorting alliance comms,0,8,duty
+sl_meal_a,24,27,*,off,잠깐 끼니를 때우고 있어,Grabbing a quick bite,8,-4,meal
+sl_meal_b,24,27,*,off,밥 먹으면서 멍 때리는 중,Zoning out over a meal,6,-6,meal
+sl_aft_a,28,35,*,duty,항로 이상을 훑고 있어,Skimming route anomalies,-2,8,duty
+sl_aft_b,28,35,*,duty,보고서 한 장을 붙잡는 중,Wrestling one report,-4,6,duty
+sl_eve_a,36,43,*,off,당직 인계하고 한숨 돌리는 중,Handing off and unwinding,4,-2,personal
+sl_eve_b,36,43,*,off,사적으로 머리를 비우는 중,Clearing my head off-duty,6,-4,personal
+sl_night_a,44,47,*,duty,야간 당직을 보고 있어,On the night watch,-4,4,duty
+sl_night_b,44,47,*,off,비번이라 정리를 미루는 중,Off-duty and putting chores off,2,-6,personal
+sl_late_a,0,3,*,duty,늦은 당직이 아직 안 끝났어,Late watch is not done,-6,2,duty
+sl_late_b,0,3,*,off,오늘은 비번이라 느슨해,Off-duty and loose tonight,0,-8,rest
+sl_wknd_meal,24,27,67,off,쉬는 날 끼니가 느슨해,Weekend meal is slower,10,-8,meal
+sl_wknd_eve,36,43,67,off,쉬는 저녁이라 말이 짧아,Weekend evening so I talk less,4,-2,personal

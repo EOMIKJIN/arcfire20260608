@@ -55,7 +55,7 @@ export function computePlanetDiversityIndex(
   const selfN = Math.min(1, selfVar / 520);
 
   const fac =
-    [planet.hasTradePort, planet.hasShipyard, planet.hasTavern].filter(Boolean).length / 3;
+    [planet.hasTradePort, planet.hasShipyard, planet.hasBar].filter(Boolean).length / 3;
   const tr = Math.min(1, getPlanetTradePortItemIds(planet.id).length / 14);
 
   const structural = clamp100((0.34 * crossN + 0.24 * selfN + 0.2 * fac + 0.1 * tr) * 100) / 100;

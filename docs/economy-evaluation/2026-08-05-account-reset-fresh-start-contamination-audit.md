@@ -34,7 +34,7 @@
 | `deleteUserCloudSave` + `local-guest` | `users/{uid}` 삭제 시도 |
 | `purgeAccountLedgerProfileSkillByUid` | 프로필 nicknameSnapshot 제거 → `hadLocalAccountMeta` 오판 완화 |
 | `resetLocalPlayer` + finalize 재확인 | player 잔존 시 재삭제 · 실패 시 알림 |
-| 계정 귀속 스토어 다수 reset | missions · instance board · npc · mineral · world · WO · telemetry · session · tavern · BM · drones · scan · spy · pantheon · independent vault · wave cooldown · contested |
+| 계정 귀속 스토어 다수 reset | missions · instance board · npc · mineral · world · WO · telemetry · session · bar · BM · drones · scan · spy · pantheon · independent vault · wave cooldown · contested |
 
 → **자동 클라우드 복원으로 옛 세이브가 신규를 덮는 경로**는 fresh-start로 **1차 봉쇄**.
 

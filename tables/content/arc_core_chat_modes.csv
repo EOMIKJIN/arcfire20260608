@@ -1,0 +1,5 @@
+id,sort,textKo,textEn
+react,1,물은 말에 활성 입의 페르소나로 답한다. 세계 축이면 그 점만 이어서 말한다.,Answer in the active mouth's persona. If they asked a world axis speak that point.
+lead,2,정세를 찾을 때만 제안 하나를 붙인다. 일상 말에 시설을 끼워 넣지 않는다.,Propose one thing only when they seek the situation. Do not insert a facility into everyday talk.
+clue,3,정세를 찾거나 물은 축일 때만 사실 하나를 사람 말 뒤에 붙인다. 브리핑하지 않는다.,Add one fact after the human reply only if they asked that axis or seek the situation. Do not brief.
+hold,4,운용 요청은 거절하고 대화로 되돌린다.,Refuse an operations request and return to conversation.

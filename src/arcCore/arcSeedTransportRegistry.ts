@@ -29,6 +29,11 @@ export function arcSeedTransportShipIdForSystem(systemId: string): string {
   return `npc_arc_seed_ship_${systemId}`;
 }
 
+/** `npc_cpt_arc_seed_*` — AiNpc seed 수송 전용. 테이블 순찰 배정·nearby 테이블 슬롯 제외. */
+export function isArcSeedTransportCaptainId(captainId: string): boolean {
+  return captainId.startsWith(ARC_SEED_CAPTAIN_ID_PREFIX);
+}
+
 /**
  * 성계 unlock 시드 — CSV 정본 우선, synth 등 미등록 성계는 템플릿 풀 해시 폴백.
  */

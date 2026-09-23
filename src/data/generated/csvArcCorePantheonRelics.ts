@@ -97,7 +97,7 @@ export const ARC_CORE_PANTHEON_RELICS_FROM_CSV: readonly ArcCorePantheonRelicRow
     nodeId: "seat_iris",
     godId: "iris",
     godNameKo: "이리스",
-    loreBodyKo: "이리스 — 공지와 선술집 보드의 전령. 비문은 동쪽 ‘베이스 베이스’의 속삭임을 노래한다.",
+    loreBodyKo: "이리스 — 공지와 바 보드의 전령. 비문은 동쪽 ‘베이스 베이스’의 속삭임을 노래한다.",
     dropWeight: 10,
     allowedPlanetPool: "any_with_wreck",
     revealLevelDefault: "role",

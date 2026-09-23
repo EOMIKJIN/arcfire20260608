@@ -64,7 +64,7 @@ const MODULE_FACILITY_PAIRS: Array<{
   },
   {
     moduleId: PLANET_DEV_MODULE_POPULATION_DOME,
-    facilityType: 'tavern',
+    facilityType: 'bar',
     isInstalled: isPlanetPopulationDomeInstalled,
     readLevel: (planetId) => (isPlanetPopulationDomeInstalled(planetId) ? readPlanetPopulationDomeDetail(planetId).level : 0),
   },

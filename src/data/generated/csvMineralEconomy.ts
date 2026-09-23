@@ -471,5 +471,13 @@ export const MINERAL_REGION_MEMBERS_FROM_CSV: readonly MineralRegionMember[] = [
   {
     regionId: "region_frontier_rim",
     planetId: "synth_079_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_706_p",
+  },
+  {
+    regionId: "region_frontier_rim",
+    planetId: "synth_732_p",
   }
 ];

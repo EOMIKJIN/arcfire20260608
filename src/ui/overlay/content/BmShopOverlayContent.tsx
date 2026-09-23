@@ -3,8 +3,8 @@
 //   premium: IAP 보석팩·VIP·시즌패스·스타터팩
 //   exchange: 보석 → 크레딧 단방향 교환
 // ============================================================
-import React, { memo, useCallback, useEffect } from 'react';
-import { Text, View } from 'react-native';
+import React, { memo, useCallback, useEffect, useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
 import type { ArcOverlayBmShopEntry } from '../arcOverlayStore';
 import type { BmShopProduct, BmShopProductVisual } from '../../../bm/bmShopCatalog';
 import {
@@ -15,6 +15,11 @@ import {
   resolveBmShopTitleKey,
 } from '../../../bm/bmShopCatalog';
 import {
+  buildBmProductPurchaseExplainBody,
+  listBmProductContentLines,
+  resolveBmProductOverlapNotes,
+} from '../../../bm/bmProductOfferCopy';
+import {
   ensureBmExchangeLedgerReady,
   executeGemToCreditExchange,
   mapGemExchangeErrorKey,
@@ -22,7 +27,18 @@ import {
 import { buildExchangeCapSnapshot } from '../../../bm/gemExchangeModel';
 import { getBmPolicyNumber } from '../../../bm/bmCatalogIndex';
 import { formatGemBalance, resolvePlayerGemBalance } from '../../../bm/bmWalletDisplay';
+import { isPlanetDeedIapProductId } from '../../../bm/planetDeedCashGrantPolicy';
+import {
+  claimPlanetDeedFromCashGrant,
+  ensurePlanetDeedCashGrantReady,
+  grantPlanetDeedPurchaseDummy,
+  listPlanetDeedCashGrantTargets,
+  listPlanetDeedCashGrantTargetsWithCloud,
+  readPlanetDeedGrantStatus,
+  type PlanetDeedPickerRow,
+} from '../../../bm/planetDeedCashGrantService';
 import { useBmExchangeLedgerStore } from '../../../store/bmExchangeLedgerStore';
+import { usePlanetDeedCashGrantStore } from '../../../store/planetDeedCashGrantStore';
 import { useT } from '../../../i18n';
 import { usePlayerStore } from '../../../store/playerStore';
 import { formatCredits } from '../../../utils/formatCredits';
@@ -50,6 +66,8 @@ function visualIcon(visual: BmShopProductVisual): string {
       return '⬡';
     case 'exchange':
       return '⇄';
+    case 'planetDeed':
+      return '◎';
     default:
       return '◆';
   }
@@ -81,9 +99,17 @@ function ProductRow({
           </View>
         ) : null}
         <Text style={styles.productTitle}>{t(product.titleKey)}</Text>
-        <Text style={styles.productDesc} numberOfLines={2}>
-          {t(product.descKey)}
-        </Text>
+        <Text style={styles.productDesc}>{t(product.descKey)}</Text>
+        {listBmProductContentLines(product.id, t).map((line) => (
+          <Text key={line} style={styles.contentLine}>
+            {`· ${line}`}
+          </Text>
+        ))}
+        {resolveBmProductOverlapNotes(product.id, t).map((note) => (
+          <Text key={note} style={styles.overlapNote}>
+            {note}
+          </Text>
+        ))}
         <View style={styles.productFooter}>
           <Text
             style={[
@@ -107,6 +133,19 @@ function ProductRow({
   );
 }
 
+function resolveDeedActionLabel(
+  t: (key: string) => string,
+  productId: string,
+  defaultLabel: string,
+  claimedPlanetId: string | null,
+  pendingGrant: boolean,
+): string {
+  if (!isPlanetDeedIapProductId(productId)) return defaultLabel;
+  if (claimedPlanetId) return t('bmShop.deed.owned');
+  if (pendingGrant) return t('bmShop.deed.pick');
+  return defaultLabel;
+}
+
 export const BmShopOverlayContent = memo(function BmShopOverlayContent({
   entry,
   onClose,
@@ -122,20 +161,83 @@ export const BmShopOverlayContent = memo(function BmShopOverlayContent({
   const actionLabel = t(resolveBmShopActionKey(entry.shopKind));
   const dailyUsedGems = useBmExchangeLedgerStore((s) => s.dailyGemsExchanged);
   const weeklyUsedGems = useBmExchangeLedgerStore((s) => s.weeklyGemsExchanged);
+  const deedClaimedPlanetId = usePlanetDeedCashGrantStore((s) => s.claimedPlanetId);
+  const deedPendingGrant = usePlanetDeedCashGrantStore((s) => s.pendingGrant);
   const exchangeCap = buildExchangeCapSnapshot(
     dailyUsedGems,
     weeklyUsedGems,
     getBmPolicyNumber('gem_exchange_weekly_cap_gems', 2000),
   );
+  const [deedPickerOpen, setDeedPickerOpen] = useState(false);
+  const [pickerRows, setPickerRows] = useState<PlanetDeedPickerRow[]>([]);
+  const [selectedPlanetId, setSelectedPlanetId] = useState<string | null>(null);
+  const [deedClaiming, setDeedClaiming] = useState(false);
 
   useEffect(() => {
     if (entry.shopKind !== 'exchange') return;
     void ensureBmExchangeLedgerReady();
   }, [entry.shopKind]);
 
-  const handlePremiumAction = useCallback(() => {
-    showArcAlert(t('bmShop.comingSoonTitle'), t('bmShop.comingSoonBody'));
-  }, [t]);
+  useEffect(() => {
+    if (entry.shopKind !== 'premium') return;
+    void ensurePlanetDeedCashGrantReady();
+  }, [entry.shopKind]);
+
+  useEffect(() => {
+    if (!deedPickerOpen) return;
+    setPickerRows(listPlanetDeedCashGrantTargets());
+    setSelectedPlanetId(null);
+    let cancelled = false;
+    void listPlanetDeedCashGrantTargetsWithCloud().then((rows) => {
+      if (!cancelled) setPickerRows(rows);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [deedPickerOpen]);
+
+  const openDeedPicker = useCallback(() => {
+    setDeedPickerOpen(true);
+  }, []);
+
+  const handlePremiumAction = useCallback((product: BmShopProduct) => {
+    if (!isPlanetDeedIapProductId(product.id)) {
+      showArcAlert(
+        t('bmShop.purchase.guideTitle', { name: t(product.titleKey) }),
+        buildBmProductPurchaseExplainBody(product.id, t, t('bmShop.comingSoonBody')),
+      );
+      return;
+    }
+    const status = readPlanetDeedGrantStatus();
+    if (status.claimedPlanetId) {
+      showArcAlert(t('bmShop.deed.ownedTitle'), t('bmShop.deed.ownedBody'));
+      return;
+    }
+    if (status.canPickPlanet) {
+      openDeedPicker();
+      return;
+    }
+    showArcAlert(
+      t('bmShop.deed.confirmTitle'),
+      buildBmProductPurchaseExplainBody(product.id, t, t('bmShop.deed.confirmBody')),
+      [
+      { text: t('bmShop.deed.cancel'), style: 'cancel' },
+      {
+        text: t('bmShop.deed.confirm'),
+        onPress: () => {
+          const granted = grantPlanetDeedPurchaseDummy();
+          if (!granted.ok) {
+            showArcAlert(
+              t('bmShop.deed.failTitle'),
+              granted.reason === 'already' ? t('bmShop.deed.ownedBody') : t('bmShop.deed.failNoPlayer'),
+            );
+            return;
+          }
+          openDeedPicker();
+        },
+      },
+    ]);
+  }, [openDeedPicker, t]);
 
   const handleExchangeAction = useCallback(
     async (product: BmShopProduct) => {
@@ -161,10 +263,43 @@ export const BmShopOverlayContent = memo(function BmShopOverlayContent({
         void handleExchangeAction(product);
         return;
       }
-      handlePremiumAction();
+      handlePremiumAction(product);
     },
     [entry.shopKind, handleExchangeAction, handlePremiumAction],
   );
+
+  const handleClaimSelected = useCallback(() => {
+    if (deedClaiming) return;
+    if (!selectedPlanetId) {
+      showArcAlert(t('bmShop.deed.failTitle'), t('bmShop.deed.needSelect'));
+      return;
+    }
+    setDeedClaiming(true);
+    void claimPlanetDeedFromCashGrant(selectedPlanetId).then((result) => {
+      setDeedClaiming(false);
+      if (!result.ok) {
+        const failKey =
+          result.claimReason === 'red_territory'
+            ? 'trade.own.claimFailRedTerritory'
+            : result.claimReason === 'already_owner'
+              ? 'trade.own.claimFailAlready'
+              : result.claimReason === 'cloud_taken'
+                ? 'trade.own.claimFailCloudTaken'
+                : result.claimReason === 'cloud_offline' || result.claimReason === 'cloud_auth'
+                  ? 'trade.own.claimFailCloudOffline'
+                  : result.claimReason === 'owned_by_other_clan'
+                    ? 'trade.own.claimFailMsg'
+                    : result.reason === 'no_player'
+                      ? 'bmShop.deed.failNoPlayer'
+                      : 'trade.own.claimFailMsg';
+        showArcAlert(t('trade.own.claimFailTitle'), t(failKey));
+        void listPlanetDeedCashGrantTargetsWithCloud().then(setPickerRows);
+        return;
+      }
+      setDeedPickerOpen(false);
+      showArcAlert(t('trade.own.claimDoneTitle'), t('trade.own.claimDoneMsg', { planet: result.planetName }));
+    });
+  }, [deedClaiming, selectedPlanetId, t]);
 
   const panelPrefix = (
     <>
@@ -185,28 +320,68 @@ export const BmShopOverlayContent = memo(function BmShopOverlayContent({
         </Text>
       ) : null}
       <Text style={styles.notice}>{t(resolveBmShopNoticeKey(entry.shopKind))}</Text>
+      {entry.shopKind === 'premium' ? (
+        <Text style={styles.overlapHint}>{t('bmShop.overlap.familyHint')}</Text>
+      ) : null}
+      {deedPickerOpen ? (
+        <Text style={styles.pickerHint}>{t('bmShop.deed.pickerHint')}</Text>
+      ) : null}
     </>
   );
 
   return (
     <ArcOverlayCard
-      title={t(resolveBmShopTitleKey(entry.shopKind))}
-      subtitle={t(resolveBmShopSubtitleKey(entry.shopKind))}
+      title={deedPickerOpen ? t('bmShop.deed.pickerTitle') : t(resolveBmShopTitleKey(entry.shopKind))}
+      subtitle={deedPickerOpen ? t('bmShop.deed.pickerSubtitle') : t(resolveBmShopSubtitleKey(entry.shopKind))}
       layout="panel"
       panelPrefix={panelPrefix}
       visualTheme={visualTheme}
       onClose={onClose}
-      footer={<ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} visualTheme={visualTheme} />}
-    >
-      {products.map((product) => (
-        <ProductRow
-          key={product.id}
-          product={product}
-          actionLabel={actionLabel}
-          onAction={handleAction}
-          isTactical={isTactical}
+      footer={
+        <ArcOverlayFooterActions
+          onCancel={deedPickerOpen ? () => setDeedPickerOpen(false) : onClose}
+          onConfirm={deedPickerOpen ? handleClaimSelected : onClose}
+          confirmLabel={deedPickerOpen ? t('bmShop.deed.claim') : undefined}
+          cancelLabel={deedPickerOpen ? t('bmShop.deed.back') : undefined}
+          confirmDisabled={deedPickerOpen && (!selectedPlanetId || deedClaiming)}
+          visualTheme={visualTheme}
         />
-      ))}
+      }
+    >
+      {deedPickerOpen ? (
+        pickerRows.length === 0 ? (
+          <Text style={styles.pickerHint}>{t('bmShop.deed.pickerEmpty')}</Text>
+        ) : (
+          pickerRows.map((row) => (
+            <Pressable
+              key={row.planetId}
+              onPress={() => setSelectedPlanetId(row.planetId)}
+              style={[styles.pickerRow, selectedPlanetId === row.planetId && styles.pickerRowSelected]}
+            >
+              <Text style={styles.pickerName}>{row.name}</Text>
+              {row.systemName ? (
+                <Text style={styles.pickerSystem}>{row.systemName}</Text>
+              ) : null}
+            </Pressable>
+          ))
+        )
+      ) : (
+        products.map((product) => (
+          <ProductRow
+            key={product.id}
+            product={product}
+            actionLabel={resolveDeedActionLabel(
+              t,
+              product.id,
+              actionLabel,
+              deedClaimedPlanetId,
+              deedPendingGrant,
+            )}
+            onAction={handleAction}
+            isTactical={isTactical}
+          />
+        ))
+      )}
     </ArcOverlayCard>
   );
 });

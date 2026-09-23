@@ -141,6 +141,25 @@ export function resolvePlanetDescription(
   return stripLegacyTeamFactionLabels(String(planet.description ?? '').trim());
 }
 
+/** 공지·미션 파라미터용. systemId만으로 로케일 성계명. 월드 스토어 불필요. */
+export function resolveLocalizedSystemNameById(
+  systemId: string,
+  fallbackName: string,
+  locale: AppLocale,
+): string {
+  const fallback = String(fallbackName ?? '').trim();
+  const row = getSynthSystemColonizationRow(systemId);
+  if (isKoUi(locale)) {
+    const ko = String(row?.systemNameKo ?? '').trim();
+    return ko || fallback;
+  }
+  const en = String(row?.systemNameEn ?? '').trim();
+  if (en) return en;
+  const procedural = resolveSynthProceduralName(fallback, locale);
+  if (procedural) return procedural;
+  return fallback;
+}
+
 export function resolveStarSystemDisplayNameNow(
   system: Pick<StarSystem, 'id' | 'name' | 'nameEn'>,
 ): string {

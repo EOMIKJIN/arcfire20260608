@@ -1,5 +1,9 @@
 import { useEffect } from 'react';
 import { useArcOverlayStore, type ArcOverlayNarrativeEntry } from './arcOverlayStore';
+import {
+  isNarrativeOverlayContentChanged,
+  resolveNarrativeOverlayWrite,
+} from './narrativeOverlaySync';
 
 export type ArcNarrativeOverlayConfig = Omit<
   ArcOverlayNarrativeEntry,
@@ -8,7 +12,7 @@ export type ArcNarrativeOverlayConfig = Omit<
 
 /**
  * 화면 state → 루트 ArcOverlayHost narrative 동기.
- * typewriterKey 변경 시에만 재마운트, nextDisabled 등은 patchOverlay 로 갱신.
+ * 페이지(typewriterKey/text) 변경은 patch 만. dismiss 는 창을 닫을 때·언마운트만.
  */
 export function useArcNarrativeOverlay(
   overlayId: string,
@@ -16,12 +20,33 @@ export function useArcNarrativeOverlay(
   config: ArcNarrativeOverlayConfig | null,
 ): void {
   useEffect(() => {
-    if (!visible || !config) {
-      useArcOverlayStore.getState().dismissWhere((e) => e.id === overlayId);
-      return;
-    }
     const state = useArcOverlayStore.getState();
     const existing = state.stack.find((e) => e.id === overlayId);
+    const write = resolveNarrativeOverlayWrite(
+      visible,
+      Boolean(config),
+      existing?.kind === 'narrative',
+      Boolean(
+        config
+        && existing?.kind === 'narrative'
+        && isNarrativeOverlayContentChanged({
+          existingTypewriterKey: existing.typewriterKey,
+          existingText: existing.text,
+          existingLabel: existing.label,
+          existingPortraitScale: existing.portraitScale,
+          nextTypewriterKey: config.typewriterKey,
+          nextText: config.text,
+          nextLabel: config.label,
+          nextPortraitScale: config.portraitScale,
+          imageChanged: existing.imageSource !== config.imageSource,
+        }),
+      ),
+    );
+    if (write === 'dismiss') {
+      state.dismissWhere((e) => e.id === overlayId);
+      return;
+    }
+    if (!config) return;
     const entry: ArcOverlayNarrativeEntry = {
       id: overlayId,
       kind: 'narrative',
@@ -29,21 +54,13 @@ export function useArcNarrativeOverlay(
       showActionButton: true,
       ...config,
     };
-    if (!existing) {
+    if (write === 'present') {
       state.present(entry);
-    } else if (existing.kind === 'narrative') {
-      const contentChanged =
-        existing.typewriterKey !== config.typewriterKey
-        || existing.text !== config.text
-        || existing.label !== config.label
-        || existing.imageSource !== config.imageSource;
-      if (contentChanged) {
-        state.patchOverlay(overlayId, entry);
-      }
+      return;
     }
-    return () => {
-      useArcOverlayStore.getState().dismissWhere((e) => e.id === overlayId);
-    };
+    if (write === 'patch') {
+      state.patchOverlay(overlayId, entry);
+    }
   }, [
     visible,
     overlayId,
@@ -53,7 +70,14 @@ export function useArcNarrativeOverlay(
     config?.anchor,
     config?.typewriterSpeedMs,
     config?.imageSource,
+    config?.portraitScale,
   ]);
+
+  useEffect(() => {
+    return () => {
+      useArcOverlayStore.getState().dismissWhere((e) => e.id === overlayId);
+    };
+  }, [overlayId]);
 
   useEffect(() => {
     if (!visible || !config) return;
@@ -61,6 +85,8 @@ export function useArcNarrativeOverlay(
       nextDisabled: config.nextDisabled,
       buttonText: config.buttonText,
       onPressNext: config.onPressNext,
+      secondaryButtonText: config.secondaryButtonText,
+      onPressSecondary: config.onPressSecondary,
       onTextComplete: config.onTextComplete,
       showActionButton: config.showActionButton,
     });
@@ -69,8 +95,10 @@ export function useArcNarrativeOverlay(
     overlayId,
     config?.nextDisabled,
     config?.buttonText,
+    config?.secondaryButtonText,
     config?.showActionButton,
     config?.onPressNext,
+    config?.onPressSecondary,
     config?.onTextComplete,
   ]);
 }

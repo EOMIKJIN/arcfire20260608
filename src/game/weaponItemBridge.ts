@@ -2,6 +2,7 @@ import type { ItemDef, TradeGood } from '../types';
 import { CAPITAL_WEAPON_LIST_FROM_CSV } from '../data/generated';
 import { resolveIntegratedWeaponTradePrice } from '../arcCore/economy/weaponTradePricing';
 import { getCapitalWeaponRow } from './capitalWeaponRegistry';
+import { formatWeaponSpecialDisplayName } from '../combat/weaponSpecialFxPolicy';
 import {
   isWeaponItemId,
   weaponIdFromWeaponItemId,
@@ -26,7 +27,7 @@ export function resolveWeaponItemDef(
   const basePrice = resolveIntegratedWeaponTradePrice(weaponId, cumulativeCredits);
   return {
     id: itemId,
-    name: row.name,
+    name: formatWeaponSpecialDisplayName(weaponId, row.name),
     description: `${row.familyKind.toUpperCase()} · DMG ${row.damage} · RANGE ${Math.round(row.rangePx)}`,
     featureDescription: row.featureDescription?.trim() || '',
     basePrice,
@@ -60,7 +61,9 @@ export function resolveWeaponTradeGood(itemId: string, cumulativeCredits = 0): T
   return {
     id: def.id,
     name: def.name,
+    nameEn: def.nameEn,
     description: def.description,
+    descriptionEn: def.descriptionEn,
     basePrice: def.basePrice,
     priceVariance: def.priceVariance,
     volume: def.volume,

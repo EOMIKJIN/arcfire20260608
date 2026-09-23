@@ -6,10 +6,15 @@
 // ============================================================
 
 import { resolveDefenseSatelliteDailyUpkeepCredits } from '../balance/planetDefenseSatelliteLevelPolicy';
+import { resolveFacilityDailyUpkeepCredits } from '../balance/facilityDailyUpkeepPolicy';
 import {
   isPlanetDefenseSatelliteInstalled,
   resolvePlanetDefenseSatelliteLevel,
 } from '../../systems/planetaryDefense/planetDefenseSatelliteLevel';
+import { readPlanetOrbitShipyardDetail } from '../../game/planetDevelopment/planetOrbitShipyardListing';
+import { readPlanetResearchLabDetail } from '../../game/planetDevelopment/planetResearchLabListing';
+import { readPlanetTradePortDetail } from '../../game/planetDevelopment/planetTradePortListing';
+import { readPlanetPopulationDomeDetail } from '../../game/planetDevelopment/planetPopulationDomeListing';
 
 export type PlanetDevelopmentUpkeepLine = {
   entityId: string;
@@ -25,7 +30,7 @@ export type PlanetDevelopmentUpkeepBreakdown = {
 
 /**
  * 행성의 모든 개발 엔티티 레벨별 1일 유지비 합산.
- * 현재 구현 완료 엔티티: 방위위성(defense_satellite). 그 외는 미구현(0).
+ * 방위위성 = 기존 CSV 수치. 조선소·연구소·무역소·돔 = facility_daily_upkeep_policy 신규 슬롯.
  */
 export function computePlanetDevelopmentUpkeepBreakdown(
   planetId: string,
@@ -41,6 +46,35 @@ export function computePlanetDevelopmentUpkeepBreakdown(
         level,
         dailyUpkeepCredits,
       });
+    }
+  }
+
+  const shipyard = readPlanetOrbitShipyardDetail(planetId);
+  if (shipyard.installed) {
+    const dailyUpkeepCredits = resolveFacilityDailyUpkeepCredits('shipyard', shipyard.level);
+    if (dailyUpkeepCredits > 0) {
+      lines.push({ entityId: 'dev_orbit_shipyard', level: shipyard.level, dailyUpkeepCredits });
+    }
+  }
+  const lab = readPlanetResearchLabDetail(planetId);
+  if (lab.installed) {
+    const dailyUpkeepCredits = resolveFacilityDailyUpkeepCredits('laboratory', lab.level);
+    if (dailyUpkeepCredits > 0) {
+      lines.push({ entityId: 'dev_research_lab', level: lab.level, dailyUpkeepCredits });
+    }
+  }
+  const trade = readPlanetTradePortDetail(planetId);
+  if (trade.installed) {
+    const dailyUpkeepCredits = resolveFacilityDailyUpkeepCredits('trade_port', trade.level);
+    if (dailyUpkeepCredits > 0) {
+      lines.push({ entityId: 'dev_trade_port', level: trade.level, dailyUpkeepCredits });
+    }
+  }
+  const dome = readPlanetPopulationDomeDetail(planetId);
+  if (dome.installed) {
+    const dailyUpkeepCredits = resolveFacilityDailyUpkeepCredits('population_dome', dome.level);
+    if (dailyUpkeepCredits > 0) {
+      lines.push({ entityId: 'dev_population_dome', level: dome.level, dailyUpkeepCredits });
     }
   }
 

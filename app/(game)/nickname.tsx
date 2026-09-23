@@ -11,6 +11,7 @@ import {
 import { router, useFocusEffect } from 'expo-router';
 import type { Href } from 'expo-router';
 import { runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
+import { usePreHubWorldOpsAlertSuppress } from '../../src/navigation/usePreHubWorldOpsAlertSuppress';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
 import { useT } from '../../src/i18n';
@@ -26,6 +27,7 @@ import {
 const NICKNAME_REGEX = /^[a-zA-Z0-9가-힣]{2,12}$/;
 
 export default function NicknameScreen() {
+  usePreHubWorldOpsAlertSuppress();
   const t = useT();
   const [nickname, setNickname] = useState('');
   const [checking, setChecking] = useState(false);

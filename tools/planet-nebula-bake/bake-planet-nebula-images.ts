@@ -16,11 +16,20 @@ const REGISTRY_PATH = path.join(ROOT, 'src/data/generated/planetNebulaBakedAsset
 async function main() {
   await fs.mkdir(OUT_DIR, { recursive: true });
 
+  const onlyArg = process.argv.find((a) => a.startsWith('--only='));
+  const only = new Set(
+    (onlyArg?.slice('--only='.length) ?? '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean),
+  );
+
   const entries: Array<{ planetId: string; relKey: string }> = [];
   for (const system of Object.values(STAR_SYSTEMS_FROM_CSV)) {
     if (system.planets.length === 0) continue;
     for (const planet of system.planets) {
       if (planet.mainStageSkiaNebulaEnabled === false) continue;
+      if (only.size > 0 && !only.has(planet.id)) continue;
       const profile = buildNebulaProfile(planet, system.zone);
       const uniforms = nebulaProfileToBakeUniforms(profile);
       const size = PLANET_NEBULA_BAKE_SIZE_PX;
@@ -44,6 +53,19 @@ async function main() {
         relKey: `assets/images/nebula/baked/${planet.id}.png`,
       });
       console.log(`Baked: ${planet.id}`);
+    }
+  }
+
+  if (only.size > 0) {
+    const existing = await fs.readdir(OUT_DIR);
+    for (const file of existing) {
+      if (!file.endsWith('.png')) continue;
+      const planetId = file.slice(0, -4);
+      if (entries.some((e) => e.planetId === planetId)) continue;
+      entries.push({
+        planetId,
+        relKey: `assets/images/nebula/baked/${planetId}.png`,
+      });
     }
   }
 

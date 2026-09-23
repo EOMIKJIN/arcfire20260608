@@ -1,0 +1,14 @@
+id,driveId,dutyOrOff,moodLo,moodHi,motiveId,allowAsk
+m_none_duty,duty,duty,0,100,none,0
+m_none_duty_off,duty,off,50,100,none,0
+m_checkin_low,care,off,0,45,check_in,1
+m_checkin_rest,rest,off,0,40,check_in,1
+m_checkin_unease,unease,off,0,50,check_in,1
+m_share_rest,rest,off,40,100,want_share,1
+m_share_care,care,off,40,100,want_share,1
+m_share_cur,curiosity,off,50,100,want_share,1
+m_need_care,care,*,0,100,need_you,1
+m_need_cur,curiosity,off,30,100,need_you,1
+m_unfinished,curiosity,*,40,100,unfinished,1
+m_right_growth,growth,*,0,100,want_right,1
+m_right_unease,unease,*,0,80,want_right,1

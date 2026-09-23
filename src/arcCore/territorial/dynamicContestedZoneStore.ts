@@ -8,6 +8,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ArcCoreTerritorialCombatPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
+import { isPlanetOccupationCombatEnabled } from '../balance/balanceTableRegistry';
 
 const STORAGE_KEY = 'arcfire_dynamic_contested_zones_v1';
 
@@ -177,6 +178,8 @@ export async function promoteDynamicContestedZone(input: {
   const systemId = input.systemId.trim();
   if (!planetId || !systemId) return false;
   if (planetId === DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID) return false;
+  // 시작 거점 등 CSV 점유전투 OFF — 풀 min 땜빵·웨이브 소급 편입 모두 거부
+  if (!isPlanetOccupationCombatEnabled(planetId)) return false;
   // CSV 정본 정책이 이미 있는 행성(정적 분쟁 3곳 등)은 그대로 CSV 규칙 사용
   // (정책 모듈 순환 import 방지 — generated CSV 행 존재만 직접 확인)
   if (ArcCoreTerritorialCombatPolicy_FROM_BALANCE_CSV.some((r) => r.planetId === planetId)) {
@@ -197,6 +200,17 @@ export async function promoteDynamicContestedZone(input: {
     console.log(`[territorial] 동적 분쟁지역 편입: ${planetId} (${systemId}) source=${input.source}`);
   }
   return true;
+}
+
+/** 점유전투 OFF 거점이 과거에 풀 땜빵으로 편입된 항목을 부트 시 제거 */
+export async function demoteOccupationCombatDisabledDynamicZones(): Promise<string[]> {
+  await hydrateDynamicContestedZones();
+  const targets = Object.keys(mem.byPlanetId).filter((id) => !isPlanetOccupationCombatEnabled(id));
+  const removed: string[] = [];
+  for (const planetId of targets) {
+    if (await demoteDynamicContestedZone(planetId)) removed.push(planetId);
+  }
+  return removed;
 }
 
 /**

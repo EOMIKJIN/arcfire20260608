@@ -4,6 +4,9 @@
 
 | 날짜 | 문서 | 요약 |
 |------|------|------|
+| 2026-09-21 | [2026-09-21-sovereign-loan-military-industry-intent.md](./2026-09-21-sovereign-loan-military-industry-intent.md) | **국가 대출 의도** — 대주=군수업체 · 이자=잔액연동 · 디폴트=군수조달 중단 · 점령반환→중립화→청산 · 런타임 잠금 |
+| 2026-08-25 | [2026-08-25-arccore-fiscal-military-structure.md](./2026-08-25-arccore-fiscal-military-structure.md) | **재정·군사 구조** — 중앙은행 빈 소각 · 선단 70% 유보(CSV 30) · 프록시 오펙스 P0–P5 · FABRIC §12 |
+| 2026-08-25 | [2026-08-25-kim-claude-fiscal-military-review.md](./2026-08-25-kim-claude-fiscal-military-review.md) | 김클로드 재검수 · 김팀장 **PARTIAL** (30/70·삽입점 AGREE · P1→가격인하 메커니즘 DISAGREE) |
 | 2026-08-03 | [2026-08-03-economy-concept-scenario-full-recheck.md](./2026-08-03-economy-concept-scenario-full-recheck.md) | **최종 재점검** — v4.0·통합밸런스·컴펜디엄·시나리오 재독 · P0 성격 재분류 · **플레이어 CR CRITICAL** · 수정 Phase A–F |
 | 2026-08-03 | [2026-08-03-economy-full-rescan.md](./2026-08-03-economy-full-rescan.md) | 경제 모델 전수 재조사 — 일1회 PASS · band CPH CRITICAL · fiscal/core_prime WARN · 플레이어 CR thin · R≠실매장 |
 | 2026-07-13 | [2026-07-13-pre-reset-longrun-baseline.md](./2026-07-13-pre-reset-longrun-baseline.md) | **완전초기화 전 29일 최장기 계정 베이스라인** — Lv11 · whaleF2P 3.12 · fiscal WARN(gini 0.288) · NATIVE_FLOOR_UP 잔존 |
@@ -13,7 +16,8 @@
 
 ## 관련 정본
 
-- 구현·로드맵: [ARC_CORE_ECONOMY_FABRIC.md](../ARC_CORE_ECONOMY_FABRIC.md)
+- 구현·로드맵: [ARC_CORE_ECONOMY_FABRIC.md](../ARC_CORE_ECONOMY_FABRIC.md) · §12 재정·군사
+- 확장시스템(남·북 선단 병렬·운영자 게이트): [docs/expansion/README.md](../expansion/README.md)
 - 3h 운영 감사: `npm run audit:planet-economy-3h` · `npm run audit:balance-ops`
 - 김경제 워크플로: [KIM_ECONOMY_AGENT.md](../KIM_ECONOMY_AGENT.md)
 

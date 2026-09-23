@@ -10,11 +10,36 @@ import { View, Text, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { FONTS, SPACING } from '../utils/theme';
 import { TACTICAL_HUB as TH } from '../ui/tactical/tacticalHubTokens';
+import {
+  resolveGalaxyMapActionMenuLabelColor,
+  type GalaxyMapSystemActionMenuInk,
+} from './galaxyMapActionMenuInk';
+import {
+  MENU_FIRST_ROW_HALF,
+  MENU_FIRST_ROW_HIT_GAP,
+  MENU_ITEM_HEIGHT,
+  MENU_WIDTH,
+} from './galaxyMapSystemActionMenuHit';
+
+export type { GalaxyMapSystemActionMenuInk };
+export { resolveGalaxyMapActionMenuLabelColor };
+export {
+  MENU_FIRST_ROW_HALF,
+  MENU_FIRST_ROW_HIT_GAP,
+  MENU_ITEM_HEIGHT,
+  MENU_WIDTH,
+  isGalaxyMapMenuCloseHit,
+  isGalaxyMapMenuNavHit,
+  resolveGalaxyMapMenuTap,
+} from './galaxyMapSystemActionMenuHit';
+export type { GalaxyMapMenuTapResult } from './galaxyMapSystemActionMenuHit';
 
 export type GalaxyMapSystemActionMenuItem = {
   key: 'nav' | 'planetInfo' | 'combat';
   label: string;
   disabled?: boolean;
+  /** land=착륙 가능할 때만 녹색 · combat=전투 가능할 때만 적색 */
+  ink?: GalaxyMapSystemActionMenuInk;
   onPress: () => void;
 };
 
@@ -26,10 +51,12 @@ type Props = {
   anchorY: number;
   side: GalaxyMapSystemActionMenuSide;
   items: GalaxyMapSystemActionMenuItem[];
+  onClose: () => void;
+  closeA11yLabel: string;
 };
 
-export const MENU_WIDTH = 124;
-export const MENU_ITEM_HEIGHT = 46;
+const MENU_CLOSE_GLYPH_SIZE = 22;
+
 /** 성계 노드 중심 기준 여백 — right/left는 가로, above/below는 세로 */
 export const MENU_ANCHOR_OFFSET_X = 34;
 export const MENU_ANCHOR_OFFSET_Y = 30;
@@ -60,6 +87,8 @@ export const GalaxyMapSystemActionMenu = memo(function GalaxyMapSystemActionMenu
   anchorY,
   side,
   items,
+  onClose,
+  closeA11yLabel,
 }: Props) {
   const menuHeight = items.length * MENU_ITEM_HEIGHT;
   const { left, top } = resolveMenuTopLeft(side, anchorX, anchorY, items.length);
@@ -69,9 +98,49 @@ export const GalaxyMapSystemActionMenu = memo(function GalaxyMapSystemActionMenu
       pointerEvents="box-none"
       style={[styles.anchorWrap, { left, top, width: MENU_WIDTH, height: menuHeight }]}
     >
-      <View style={styles.menuCard} pointerEvents="auto">
+      <View style={[styles.menuCard, { width: MENU_WIDTH, height: menuHeight }]} pointerEvents="auto">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
+          const isFirst = index === 0;
+          const label = (
+            <Text
+              style={[
+                styles.menuItemLabel,
+                { color: resolveGalaxyMapActionMenuLabelColor(item.ink, !!item.disabled) },
+              ]}
+              numberOfLines={1}
+            >
+              {item.label}
+            </Text>
+          );
+          if (isFirst) {
+            return (
+              <View key={item.key} style={[styles.firstRow, !isLast && styles.menuItemBorder]}>
+                <TouchableOpacity
+                  style={[styles.navHit, item.disabled && styles.menuItemDisabled]}
+                  onPress={item.onPress}
+                  disabled={item.disabled}
+                  activeOpacity={0.72}
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: !!item.disabled }}
+                >
+                  {label}
+                </TouchableOpacity>
+                <View style={styles.firstRowGap} pointerEvents="none" />
+                <TouchableOpacity
+                  style={styles.closeHit}
+                  onPress={onClose}
+                  activeOpacity={0.72}
+                  accessibilityRole="button"
+                  accessibilityLabel={closeA11yLabel}
+                >
+                  <View style={styles.closeBtn}>
+                    <Text style={styles.closeGlyph}>✕</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            );
+          }
           return (
             <TouchableOpacity
               key={item.key}
@@ -86,12 +155,7 @@ export const GalaxyMapSystemActionMenu = memo(function GalaxyMapSystemActionMenu
               accessibilityRole="button"
               accessibilityState={{ disabled: !!item.disabled }}
             >
-              <Text
-                style={[styles.menuItemLabel, item.disabled && styles.menuItemLabelDisabled]}
-                numberOfLines={1}
-              >
-                {item.label}
-              </Text>
+              {label}
             </TouchableOpacity>
           );
         })}
@@ -106,7 +170,6 @@ const styles = StyleSheet.create({
     zIndex: 12,
   },
   menuCard: {
-    flex: 1,
     borderWidth: 1,
     borderColor: TH.controlBtnBorder,
     backgroundColor: TH.controlBtnBg,
@@ -117,6 +180,44 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.28,
     shadowRadius: 4,
     elevation: 4,
+  },
+  firstRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    height: MENU_ITEM_HEIGHT,
+    minHeight: MENU_ITEM_HEIGHT,
+    backgroundColor: 'rgba(32, 36, 44, 0.88)',
+  },
+  navHit: {
+    width: MENU_FIRST_ROW_HALF,
+    height: MENU_ITEM_HEIGHT,
+    justifyContent: 'center',
+    paddingHorizontal: SPACING.sm,
+  },
+  firstRowGap: {
+    width: MENU_FIRST_ROW_HIT_GAP,
+  },
+  closeHit: {
+    width: MENU_FIRST_ROW_HALF,
+    height: MENU_ITEM_HEIGHT,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  closeBtn: {
+    width: MENU_CLOSE_GLYPH_SIZE,
+    height: MENU_CLOSE_GLYPH_SIZE,
+    borderRadius: MENU_CLOSE_GLYPH_SIZE / 2,
+    borderWidth: 1,
+    borderColor: TH.controlBtnBorder,
+    backgroundColor: 'rgba(20, 24, 32, 0.92)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  closeGlyph: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.sm,
+    color: TH.miningSummaryInk,
+    lineHeight: 16,
   },
   menuItem: {
     height: MENU_ITEM_HEIGHT,
@@ -138,8 +239,5 @@ const styles = StyleSheet.create({
     fontWeight: FONTS.weight.bold,
     color: TH.tileLabelPrimaryInk,
     letterSpacing: 0.4,
-  },
-  menuItemLabelDisabled: {
-    color: TH.tileLabelDisabledInk,
   },
 });

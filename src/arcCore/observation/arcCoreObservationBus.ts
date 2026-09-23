@@ -33,10 +33,15 @@ export function publishArcCoreObservation(
   }
 }
 
+/** 버스 버퍼 drain — persist 없음. 일일 패스가 메모리 ingest 후 KPI와 한 번에 persist */
+export function drainArcCoreObservationBuffer(): ArcCoreObservationEvent[] {
+  if (buffer.length === 0) return [];
+  return buffer.splice(0, buffer.length);
+}
+
 /** 버스 버퍼 → Learning Store tail append. 반환: flush 건수 (일 1회 배치 전용) */
 export async function flushObservationsToLearningStore(): Promise<number> {
-  if (buffer.length === 0) return 0;
-  const batch = buffer.splice(0, buffer.length);
+  const batch = drainArcCoreObservationBuffer();
   return appendObservationsToLearningStore(batch);
 }
 

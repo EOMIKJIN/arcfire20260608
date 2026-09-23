@@ -8,6 +8,7 @@ import { useTransitCombatPostFlowRunning } from '../../game/transitCombat/transi
 import { usePlayerStore } from '../../store/playerStore';
 import { useOrbitCapitalCombatUiStore } from '../../store/orbitCapitalCombatUiStore';
 import { useArcOverlayStore } from './arcOverlayStore';
+import { resolveArcAlertAutoDismissMs } from './overlayAlertContract';
 
 const LEVEL_UP_OVERLAY_ID = 'auto-level-up';
 
@@ -42,6 +43,7 @@ export const LevelUpOverlayBridge = memo(function LevelUpOverlayBridge() {
           summary: levelUpSummary,
           dismissOnBackdrop: false,
           onClose: () => clearLevelUp(),
+          autoDismissMs: resolveArcAlertAutoDismissMs(),
         });
       }
     } else {

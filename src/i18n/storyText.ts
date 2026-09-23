@@ -32,6 +32,15 @@ export function resolveStoryPageLabel(
   return (!isKoUi(locale) && page.labelEn ? page.labelEn : page.label) ?? '';
 }
 
+/** 마지막 페이지 인증 버튼. 비면 빈 문자열 → 뷰모델이 `[ 확인 ]` 폴백 */
+export function resolveStoryPageActionLabel(
+  page: Pick<StoryScenePageDef, 'actionLabel' | 'actionLabelEn'>,
+  locale: AppLocale,
+): string {
+  const raw = !isKoUi(locale) && page.actionLabelEn ? page.actionLabelEn : page.actionLabel;
+  return (raw ?? '').trim();
+}
+
 /** 현재 앱 locale 기준 비반응 조회(컴포넌트 밖/일회성). */
 export function resolveStoryPageNow(
   page: StoryScenePageDef,

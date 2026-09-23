@@ -8,3 +8,5 @@ export {
   playUiSfx as playUiSfxAsync,
 } from './uiSfxPlayer';
 export { getUiSfxAssetSource, listRegisteredUiSfxCues } from './uiSfxAssetMap';
+export { getBarVoiceAssetSource, listRegisteredBarVoiceAssetKeys } from './barVoiceAssetMap';
+export { playBarVoiceClip, stopBarVoice } from './barVoicePlayer';

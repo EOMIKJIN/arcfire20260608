@@ -1,7 +1,7 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { COLORS, FONTS, OVERLAY_TOKENS, SPACING } from '../../utils/theme';
-import { bindUiSfxPressIn } from '../../audio';
+import { useArcButtonReleaseHandlers } from '../press/useArcButtonRelease';
 
 type Props = {
   label: string;
@@ -21,10 +21,7 @@ export const ArcMenuTile = memo(function ArcMenuTile({
   showBadge = false,
   style,
 }: Props) {
-  const onPressIn = useMemo(
-    () => bindUiSfxPressIn({ cue: 'ui_click', silent: disabled }),
-    [disabled],
-  );
+  const release = useArcButtonReleaseHandlers({ onPress, disabled });
   return (
     <Pressable
       style={({ pressed }) => [
@@ -34,8 +31,9 @@ export const ArcMenuTile = memo(function ArcMenuTile({
         pressed && !disabled && styles.pressed,
         style,
       ]}
-      onPressIn={onPressIn}
-      onPress={onPress}
+      onPressIn={release.onPressIn}
+      onPressOut={release.onPressOut}
+      onPress={release.onPress}
       disabled={disabled}
       android_disableSound
     >

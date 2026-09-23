@@ -83,6 +83,45 @@ test('draco_haven AI클랜 — 분쟁 프로세스 대상이라 시드 BLUE로 �
   assert.equal(holds.draco_haven?.occupierClanId, 'ai_clan_npc_cpt_ai_clan_neutral_01');
 });
 
+test('arcadia_prime 점유전투 OFF — RED 불법 점유를 시드 BLUE로 복구(아군만 접한 후방)', () => {
+  const { holds } = seedPlanetOccupationHoldsFromBalance({
+    arcadia_prime: {
+      planetId: 'arcadia_prime',
+      systemId: 'arcadia',
+      occupierClanId: ARC_CORE_SEED_RED_CLAN_ID,
+      deedOwnerClanId: null,
+      homePlayerUid: null,
+      kind: 'clan_hold',
+      capturedAt: 2000,
+    },
+  });
+  assert.equal(holds.arcadia_prime?.occupierClanId, ARC_CORE_SEED_BLUE_CLAN_ID);
+});
+
+test('arcadia_prime 점유전투 OFF — 인접 베가가 RED여도(전선처럼 보여도) 시드 BLUE 복구', () => {
+  const { holds } = seedPlanetOccupationHoldsFromBalance({
+    arcadia_prime: {
+      planetId: 'arcadia_prime',
+      systemId: 'arcadia',
+      occupierClanId: ARC_CORE_SEED_RED_CLAN_ID,
+      deedOwnerClanId: null,
+      homePlayerUid: null,
+      kind: 'clan_hold',
+      capturedAt: 2000,
+    },
+    vega_base: {
+      planetId: 'vega_base',
+      systemId: 'vega_outpost',
+      occupierClanId: ARC_CORE_SEED_RED_CLAN_ID,
+      deedOwnerClanId: null,
+      homePlayerUid: null,
+      kind: 'clan_hold',
+      capturedAt: 2000,
+    },
+  });
+  assert.equal(holds.arcadia_prime?.occupierClanId, ARC_CORE_SEED_BLUE_CLAN_ID);
+});
+
 test('omega_hub ArcCore BLUE 점유 — 시드 RED initialOwner로 되돌리지 않음', () => {
   const { holds } = seedPlanetOccupationHoldsFromBalance({
     omega_hub: {
@@ -110,6 +149,74 @@ test('helios_core 정책 enabled·중립 — 시드 NEUTRAL 디폴트만, 덮어
     },
   });
   assert.equal(holds.helios_core?.occupierClanId, 'neutral');
+});
+
+test('뉴에덴 수도 — 마커 없는 중립은 오메가 접경이어도 BLUE 시드 복구', () => {
+  const { holds } = seedPlanetOccupationHoldsFromBalance({
+    eden_city: {
+      planetId: 'eden_city',
+      systemId: 'new_eden',
+      occupierClanId: 'neutral',
+      homePlayerUid: null,
+      kind: 'neutral',
+      capturedAt: 2000,
+    },
+    omega_hub: {
+      planetId: 'omega_hub',
+      systemId: 'omega_station',
+      occupierClanId: ARC_CORE_SEED_RED_CLAN_ID,
+      homePlayerUid: null,
+      kind: 'clan_hold',
+      capturedAt: 2000,
+    },
+    solar_station: {
+      planetId: 'solar_station',
+      systemId: 'solar_port',
+      occupierClanId: ARC_CORE_SEED_BLUE_CLAN_ID,
+      homePlayerUid: null,
+      kind: 'clan_hold',
+      capturedAt: 2000,
+    },
+  });
+  assert.equal(holds.eden_city?.occupierClanId, ARC_CORE_SEED_BLUE_CLAN_ID);
+});
+
+test('뉴에덴 수도 — 적 국가(RED) 함락은 시드로 되돌리지 않음', () => {
+  const { holds } = seedPlanetOccupationHoldsFromBalance({
+    eden_city: {
+      planetId: 'eden_city',
+      systemId: 'new_eden',
+      occupierClanId: ARC_CORE_SEED_RED_CLAN_ID,
+      deedOwnerClanId: null,
+      homePlayerUid: null,
+      kind: 'clan_hold',
+      capturedAt: 2000,
+    },
+    omega_hub: {
+      planetId: 'omega_hub',
+      systemId: 'omega_station',
+      occupierClanId: ARC_CORE_SEED_RED_CLAN_ID,
+      homePlayerUid: null,
+      kind: 'clan_hold',
+      capturedAt: 2000,
+    },
+  });
+  assert.equal(holds.eden_city?.occupierClanId, ARC_CORE_SEED_RED_CLAN_ID);
+});
+
+test('뉴에덴 수도 — neutralizedAt 중립은 복구 금지', () => {
+  const { holds } = seedPlanetOccupationHoldsFromBalance({
+    eden_city: {
+      planetId: 'eden_city',
+      systemId: 'new_eden',
+      occupierClanId: 'neutral',
+      homePlayerUid: null,
+      kind: 'neutral',
+      capturedAt: 2000,
+      neutralizedAt: 3000,
+    },
+  });
+  assert.equal(holds.eden_city?.occupierClanId, 'neutral');
 });
 
 test('전투 승리·반란 중립화(neutralizedAt) — 비접전 RED 시드 복구 금지 + 지도 중립 표시', () => {
@@ -240,6 +347,15 @@ async function asyncTests(): Promise<void> {
       source: 'x',
     }),
     false,
+  );
+  assert.equal(
+    await promoteDynamicContestedZone({
+      planetId: 'arcadia_prime',
+      systemId: 'arcadia',
+      source: 'arc_frontline',
+    }),
+    false,
+    'occupationCombatEnabled=false 거점은 동적 분쟁 편입 금지',
   );
 
   // 합성 정책 — CSV `__dynamic_default__` 템플릿 기반 · 순차 캠페인(draco_front) 6번째 합류

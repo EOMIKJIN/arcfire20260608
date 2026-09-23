@@ -1,5 +1,5 @@
 // ============================================================
-// 범용 시설 개발 런타임 팩토리 — 무역소·연구소·선술집 공통 install/upgrade
+// 범용 시설 개발 런타임 팩토리 — 무역소·연구소·바 공통 install/upgrade
 // ============================================================
 
 import type { FacilityGenericLevelRow } from '../../arcCore/balance/facilityGenericLevelPolicy';

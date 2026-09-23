@@ -25,7 +25,9 @@ export function buildTradeGoodsRecord(defs: Record<string, ItemDef>): Record<str
     out[def.id] = {
       id: def.id,
       name: def.name,
+      nameEn: def.nameEn,
       description: def.description,
+      descriptionEn: def.descriptionEn,
       basePrice: def.basePrice,
       priceVariance: def.priceVariance,
       volume: def.volume,

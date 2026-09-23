@@ -255,7 +255,7 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
       {renderExtraStats?.(snapshot, currentRow, visualTheme)}
       {snapshot.isInstalling ? (
         <View style={styles.gaugeBlock}>
-          <PlanetDevSectionBar label={t('planetDev.installProgress')} visualTheme={visualTheme} />
+          <PlanetDevSectionBar label={t('planetDev.installProgress')} visualTheme={visualTheme} breathe />
           <PlanetDevHintText visualTheme={visualTheme} variant="body">
             {snapshot.installDurationSec != null
               ? api.formatDurationLabel(snapshot.installDurationSec)
@@ -269,7 +269,7 @@ const PlanetGenericFacilityDevReady = memo(function PlanetGenericFacilityDevRead
       ) : null}
       {snapshot.isUpgrading ? (
         <View style={styles.gaugeBlock}>
-          <PlanetDevSectionBar label={t(`${i18nPrefix}.upgradeProgress`)} visualTheme={visualTheme} />
+          <PlanetDevSectionBar label={t(`${i18nPrefix}.upgradeProgress`)} visualTheme={visualTheme} breathe />
           <PlanetDevHintText visualTheme={visualTheme} variant="body">
             {snapshot.upgradeJob?.targetLevel != null
               ? formatPlanetDevLevelUpgradeArrow(snapshot.level, snapshot.upgradeJob.targetLevel, t)

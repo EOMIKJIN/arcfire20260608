@@ -4,12 +4,12 @@
  * 대표님 지시(2026-07-26): 「김클로드 작업이 끝나면 자동으로 알아서 검수」 *
  * 루프 방지:
  * - task_id+mtime 당 followup 최대 MAX_FOLLOWUPS회
- * - 상단 status가 REVIEWED/IDLE 이면 무동작
+ * - 상단 status가 REVIEWED/IDLE 이면 무동작ㅎ
  * - hooks.json loop_limit 과 함께 사용
  */
 const fs = require('fs');
 const path = require('path');
-const { readPendingHandoff } = require('./kimClaudeHandoffCore.cjs');
+const { readPendingHandoff, extraDutyForPending } = require('./kimClaudeHandoffCore.cjs');
 
 const ROOT = path.join(__dirname, '..', '..');
 const STATE = path.join(
@@ -80,6 +80,7 @@ function main() {
     '3. (해당 시) `npm run audit:memory:all` / `audit:skia-memory`',
     '4. 위반 시 수정 → verdict 기록 → status `REVIEWED` → `IDLE`',
     '5. **git commit은 대표님 명시 요청 시에만**',
+    extraDutyForPending(pending),
   ].join('\n');
 
   process.stdout.write(JSON.stringify({ followup_message: msg }));

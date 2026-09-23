@@ -37,7 +37,7 @@ export {
 export { createPlanetDevDetailSession } from './sessions/planetDevDetailSession';
 export { createTradeScreenSession, type TradeScreenSessionData } from './sessions/tradeScreenSession';
 export { createShipyardScreenSession, type ShipyardScreenSessionData } from './sessions/shipyardScreenSession';
-export { createTavernScreenSession, type TavernScreenSessionData } from './sessions/tavernScreenSession';
+export { createBarScreenSession, type BarScreenSessionData } from './sessions/barScreenSession';
 export { createSkilltreeScreenSession, type SkilltreeScreenSessionData } from './sessions/skilltreeScreenSession';
 export {
   createWorldmapScreenSession,

@@ -16,12 +16,14 @@ import {
   computeTradeRouteTransportCostPerUnit,
 } from './tradeRouteTransportCost';
 import {
+  isTradeRouteDestinationPlanet,
   listConvoySourceRoutesAtPlanet,
   listDemandPlanetIdsForTradeGood,
   resolveTradeRouteRole,
   type TradeRouteAttrs,
 } from './tradeRouteRegistry';
 import { resolveConvoyDemandGrossRoomCredits } from './convoyDemandGrossRoom';
+import { isPlanetConvoyTradeEnabled } from './synthFrontierConvoyTradeBridge';
 
 export type ArcConvoyRoutePlan = {
   tgId: string;
@@ -59,6 +61,7 @@ export function planArcConvoyRouteAtSupply(
   bankBalance: number,
   opts?: { ignoreBankAffordability?: boolean; minQty?: number; forceDestPlanetId?: string },
 ): ArcConvoyRoutePlan | null {
+  if (!isPlanetConvoyTradeEnabled(supplyPlanetId)) return null;
   const routes = listConvoySourceRoutesAtPlanet(supplyPlanetId);
   if (routes.length === 0) return null;
 
@@ -85,6 +88,8 @@ export function planArcConvoyRouteAtSupply(
 
     for (const destPlanetId of listDemandPlanetIdsForTradeGood(route.tgId)) {
       if (opts?.forceDestPlanetId && destPlanetId !== opts.forceDestPlanetId) continue;
+      if (!isPlanetConvoyTradeEnabled(destPlanetId)) continue;
+      if (!isTradeRouteDestinationPlanet(destPlanetId, route.attrs)) continue;
       const unitSellPrice = resolveDemandPlanetSellUnit(destPlanetId, route.tgId);
       if (unitSellPrice <= 0) continue;
 

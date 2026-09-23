@@ -113,14 +113,27 @@ export function computeTableNpcOrbitXY(
   return { x: center + x, y: center + y };
 }
 
-/** JS 스레드 — Zustand 스냅샷 → worklet용 숫자 배열 */
-export function packArcNpcShipsToFloat32(ships: ArcNpcTrafficShip[]): number[] {
+/**
+ * JS 스레드 — Zustand 스냅샷 → worklet용 숫자 배열.
+ * `elapsedOverrideById` — 재-pack 시 orbit-clock 연속 경과(arcOrbitPackEpoch) 주입.
+ */
+export function packArcNpcShipsToFloat32(
+  ships: readonly ArcNpcTrafficShip[],
+  elapsedOverrideById?: ReadonlyMap<string, number>,
+): number[] {
   const out = new Array<number>(ships.length * ARC_ORBIT_PACK_STRIDE).fill(0);
   for (let i = 0; i < ships.length; i++) {
     const s = ships[i]!;
     const b = i * ARC_ORBIT_PACK_STRIDE;
+    const elapsedOverride = elapsedOverrideById?.get(s.id);
+    const phaseEl =
+      elapsedOverride != null && Number.isFinite(elapsedOverride)
+        ? Math.max(0, elapsedOverride)
+        : Number.isFinite(s.phaseElapsedSec)
+          ? s.phaseElapsedSec
+          : 0;
     out[b] = s.phase === 'entering' ? 0 : s.phase === 'dwelling' ? 1 : 2;
-    out[b + 1] = Number.isFinite(s.phaseElapsedSec) ? s.phaseElapsedSec : 0;
+    out[b + 1] = phaseEl;
     out[b + 2] = Math.max(0.001, Number.isFinite(s.phaseDurationSec) ? s.phaseDurationSec : 0.001);
     out[b + 3] = Number.isFinite(s.orbitAngleRad) ? s.orbitAngleRad : 0;
     out[b + 4] = Number.isFinite(s.orbitRadiusPx) ? s.orbitRadiusPx : 0;

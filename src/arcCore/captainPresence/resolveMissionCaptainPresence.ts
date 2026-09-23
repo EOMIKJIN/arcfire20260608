@@ -13,7 +13,7 @@ const BLOCKING_ACTIVITIES = new Set([
   'governor_post',
   'orbit_arc_transport',
   'orbit_table_patrol',
-  'tavern_host',
+  'bar_host',
 ]);
 
 /**

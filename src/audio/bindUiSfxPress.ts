@@ -9,8 +9,8 @@ type BindOpts = {
 };
 
 /**
- * Pressable/Touchable onPressIn 에 UI SFX를 붙인다.
- * 클릭연출(pressed)과 동일 시점에 재생.
+ * Pressable onPressIn 전용 — SFX·눌림 연출만. 동작(페이지 넘김·닫기)은 넣지 말 것.
+ * 동작은 뗌(`onPress` / useArcButtonReleaseHandlers).
  */
 export function bindUiSfxPressIn(opts: BindOpts = {}): () => void {
   const cue = opts.cue ?? 'ui_click';

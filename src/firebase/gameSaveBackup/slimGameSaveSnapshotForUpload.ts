@@ -1,3 +1,4 @@
+import { normalizeArcCoreChatPayload } from '../../store/arcCoreChatStore';
 import type { GameSaveBackupSnapshot } from './gameSaveBackupContract';
 
 /** 백업에서 제외 — 복구 핵심 아님 · 재생성 가능 */
@@ -9,6 +10,7 @@ export const GAME_SAVE_BACKUP_OMIT_KEYS = new Set<string>([
 type WorldPersistShape = {
   unlockedSystemIds?: string[];
   visitedSystemIds?: string[];
+  inspectedPlanetInfoIds?: string[];
   synthColonizationPhaseByPlanetId?: Record<string, number>;
 };
 
@@ -152,13 +154,21 @@ function slimClanWarRaw(raw: string): string {
   }
 }
 
-function slimTavernBoardRaw(raw: string): string {
+function slimBarBoardRaw(raw: string): string {
   try {
     const parsed = JSON.parse(raw) as { notices?: unknown[]; history?: unknown[] };
     return JSON.stringify({
       notices: Array.isArray(parsed.notices) ? parsed.notices.slice(0, 20) : [],
       history: Array.isArray(parsed.history) ? parsed.history.slice(0, 60) : [],
     });
+  } catch {
+    return raw;
+  }
+}
+
+function slimArcCoreChatRaw(raw: string): string {
+  try {
+    return JSON.stringify(normalizeArcCoreChatPayload(JSON.parse(raw)));
   } catch {
     return raw;
   }
@@ -174,8 +184,10 @@ function slimSnapshotValue(key: string, value: string, retainPlanetIds: Set<stri
       return slimItemLedgerRaw(value);
     case 'arcfire_clan_war_foundation_v2':
       return slimClanWarRaw(value);
-    case 'arcfire_tavern_board_v1':
-      return slimTavernBoardRaw(value);
+    case 'arcfire_bar_board_v1':
+      return slimBarBoardRaw(value);
+    case 'arcfire_arc_core_chat_v1':
+      return slimArcCoreChatRaw(value);
     default:
       return value;
   }

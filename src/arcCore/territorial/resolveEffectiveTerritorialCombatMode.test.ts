@@ -192,12 +192,12 @@ test('6c) 배선 확인(정적) — battle 경로가 policy.combatMode가 아닌
   assert.match(src, /resolveDominantFaction\(effectiveCombatMode\)/);
 });
 
-test('8) R4 배선 확인(정적) — graph mismatch 경고가 policy.combatMode가 아닌 effectiveCombatMode를 런타임과 비교', () => {
+test('8) R4 배선 확인(정적) — graph mismatch 경고가 policy.combatMode가 아닌 인접 실효 모드를 런타임과 비교', () => {
   const src = readFileSync(resolve(__dirname, 'runTerritorialCombatPass.ts'), 'utf8');
   assert.match(
     src,
-    /validateTerritorialCombatModeForSystem\(\{\s*\n\s*systemId: policy\.systemId,\s*\n\s*combatMode: effectiveCombatMode,/,
-    'validateTerritorialCombatModeForSystem이 policy.combatMode가 아닌 effectiveCombatMode로 호출돼야 함(R4)',
+    /validateTerritorialCombatModeForSystem\(\{\s*\n\s*systemId: policy\.systemId,\s*\n\s*combatMode: adjacencyEffectiveMode,/,
+    'validateTerritorialCombatModeForSystem이 마지노선 강제 전 인접 실효(adjacencyEffectiveMode)를 써야 함(R4·시리우스 오탐 방지)',
   );
   // 옛 조기 경고(독립국 분기 직후, effectiveCombatMode 계산 전에 policy.combatMode로 비교하던 코드)는 제거됐어야 함
   assert.equal(
@@ -205,6 +205,24 @@ test('8) R4 배선 확인(정적) — graph mismatch 경고가 policy.combatMode
     false,
     '독립국 분기 직후의 옛 policy.combatMode 기준 그래프 비교 블록이 남아있으면 안 됨',
   );
+  assert.match(
+    src,
+    /forceHardReclaim\)\s*\{\s*\r?\n\s*effectiveCombatMode = holdSide/,
+    '마지노선 HARD가 effectiveCombatMode를 강제하는 블록이 있어야 함',
+  );
+  const graphIdx = src.indexOf('combatMode: adjacencyEffectiveMode');
+  const maginotAssignIdx = src.indexOf('effectiveCombatMode = holdSide === \'BLUE\' ? \'red_neutral\'');
+  assert.ok(graphIdx >= 0 && maginotAssignIdx >= 0 && maginotAssignIdx < graphIdx, '마지노선 HARD 강제는 그래프 검증보다 앞·검증은 강제 전 모드');
+});
+
+test('8b) 시리우스 보더 재현 — RED hold + 레드만 인접 + 동적 템플릿 blue_red → 인접 실효는 red_neutral(그래프 정합)', () => {
+  const effective = resolveEffectiveTerritorialCombatMode({
+    holdSide: 'RED',
+    policyCombatMode: 'blue_red',
+    supplyAdjacency: { blue: 0, red: 3 },
+    contestedZone: true,
+  });
+  assert.equal(effective, 'red_neutral');
 });
 
 console.log('[resolveEffectiveTerritorialCombatMode] all tests passed');

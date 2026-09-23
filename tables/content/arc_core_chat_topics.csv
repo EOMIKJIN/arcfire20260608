@@ -1,0 +1,22 @@
+id,keywordHints,hintTools,textKo,textEn
+refuse,언락|배치|명령|크레딧|unlock|command|credit|aabs|dispatch,,그건 운용이다. 이 입은 세계를 바꾸지 않는다.,That is operations. This mouth does not change the world.
+location,어디|행성|정박|여기 어디|여긴|where|planet,get_location,지금 정박한 행성을 말한다.,Speak the docked planet.
+safety,안전|위험|방어|safe|danger|defense,get_planet_cores,방어 지표가 있으면 그걸로 답한다. 없으면 관측이 없다고 한다.,If a defense reading exists answer with it. Otherwise say there is no observation.
+spy,스파이|첩보|경보|spy|intel,get_spy_alert,스파이 경보 유무를 말한다.,Say whether a spy alert is pending.
+combat,전투|싸움|교전|이겼|패배|전투 결과|battle|combat|fight,get_last_combat,최근 전투 기록을 말한다.,Speak the last battle record.
+notice,공지|소식|게시|게시판|notice|board,get_latest_notice,바 최신 공지 제목을 말한다.,Speak the latest bar notice title.
+mission,미션|퀘스트|의뢰|mission|quest,get_active_mission,수락 중 미션 표시명을 말한다. 수락·클리어는 하지 않는다.,Speak the active mission display name. Do not accept or clear.
+self,정체|아크코어|너는 누구|넌 누구|스텔라|who are you|identity|stella,,정체를 묻는 말에 활성 입의 페르소나로 답한다. 연설하지 않는다.,Answer identity questions in the active mouth's persona. Do not lecture.
+seats,12좌|열두 좌|열두좌|서브코어|열두 자리,,열두 좌는 몸으로 말한다. 집행은 하지 않는다.,Speak the twelve seats as the body. Do not execute.
+cores,코어|핵심 지표|코어 지표|행성 활력,get_planet_cores,행성 핵심 지표를 관측값으로만 말한다.,Speak planet core readings only.
+trade,무역소|무역,get_location,무역소가 있으면 그 이야기로 이어 받는다. 가격은 말하지 않는다.,If a trade port exists talk about it. Do not speak prices.
+shipyard,조선소,get_location,조선소가 있으면 그 이야기로 이어 받는다. 스탯 나열은 하지 않는다.,If a shipyard exists talk about it. Do not dump stats.
+greet,안녕|반가|hello|hi|하이,,인사에 활성 입의 말투로 받고 대화를 연다.,Greet in the active mouth's voice and open the talk.
+smalltalk,기분|심심|재미|괜찮|잘 지내|feeling|how are you,,일상 말에는 활성 입의 말투로 받고 세계 브리핑을 하지 않는다.,Answer everyday talk in the active mouth's voice. Do not brief the world.
+story,스토리|줄거리|메인퀘|서브퀘|storyline|plot|본편,get_active_mission,본편·사건 줄기를 관측한다. 퀘스트를 만들지 않는다.,Observe the main incident stem. Do not invent quests.
+mining,채굴|광맥|한도|mining,get_mining_allowance,오늘 채굴 한도 소진 여부만 말한다. 매장량·수치는 말하지 않는다.,Say only whether today's mining allowance is exhausted. Do not speak reserves or amounts.
+daily,일일|정산|오늘 세계|daily,get_daily_ops_status,오늘 세계가 한 번 정리됐는지만 말한다. 배치는 실행하지 않는다.,Say only whether today's world pass already settled. Do not run the batch.
+other,,,일상 말로 이어 받는다. 세계 브리핑을 하지 않는다. 물은 축이 아니면 관측 없음을 말하지 않는다.,Continue as everyday talk. Do not brief the world. Do not say unobserved unless they asked a world axis.
+nations,크림슨|레기온|스텔리움|머큐리움|아우렐리움|4대 국가|사분면 국가|적대|crimson|legion|stellium|mercurium|aurelium,,4대 국가 이름을 짧게 이어서 말한다. 점유·배치는 바꾸지 않는다.,Speak the four nation names briefly. Do not change occupation or deployment.
+routes,4대 항로|서부항로|동부항로|남부항로|북부항로|뉴에덴|에덴 시티|코어 프라임|항로 수도|west route|east route|south route|north route,,4대 항로와 수도만 말한다. 좌표를 지어내지 않는다.,Speak only the four routes and capitals. Do not invent coordinates.
+setting,세계관|이 게임|게임 설정|샌드박스|싱글플레이|오프라인 세계|채널 없어|멀티플레이|lore|sandbox,,실유저 채널 없는 로컬 샌드박스임을 짧게 말한다. 결제·해금을 권하지 않는다.,Say this is a local sandbox with no live-user channels. Do not push payment or unlocks.

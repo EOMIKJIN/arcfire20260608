@@ -13,6 +13,10 @@ import {
 } from './arcCoreCentralBank';
 import { accumulateArcCoreCentralBankExpenditure } from './arcCoreCentralBankExpenditureLedger';
 import { creditArcCorePlanetDevDailyBudget } from '../planetDevelopment/arcCorePlanetDevBudgetState';
+import {
+  resolveArcCoreFiscalOpexPolicy,
+  shouldSkipCentralBankEmptyAccountingBurn,
+} from './arcCoreFiscalOpexPolicy';
 
 export type ArcCoreCentralBankExpenditurePassResult = {
   ran: boolean;
@@ -64,24 +68,33 @@ export async function runArcCoreCentralBankExpenditurePass(): Promise<ArcCoreCen
   }
 
   const split = splitSurplusAcrossExpenditureCategories(surplusBefore, policy);
+  const skipEmptyBurn = shouldSkipCentralBankEmptyAccountingBurn();
 
-  const fleetOk = spendArcCoreCentralBankAccounting(
-    split.fleet,
-    ARC_CORE_CENTRAL_BANK_TXN_KIND.spendFleetMilitary,
-    {
-      note: `fleet_military_accounting kst=${kstDayKey} amt=${split.fleet}`,
-    },
-  );
-  const openingOk = spendArcCoreCentralBankAccounting(
-    split.opening,
-    ARC_CORE_CENTRAL_BANK_TXN_KIND.spendPlanetOpening,
-    {
-      note: `planet_opening_accounting kst=${kstDayKey} amt=${split.opening}`,
-    },
-  );
+  const fleetOk = skipEmptyBurn
+    ? false
+    : spendArcCoreCentralBankAccounting(
+        split.fleet,
+        ARC_CORE_CENTRAL_BANK_TXN_KIND.spendFleetMilitary,
+        {
+          note: `fleet_military_accounting kst=${kstDayKey} amt=${split.fleet}`,
+        },
+      );
+  const openingOk = skipEmptyBurn
+    ? false
+    : spendArcCoreCentralBankAccounting(
+        split.opening,
+        ARC_CORE_CENTRAL_BANK_TXN_KIND.spendPlanetOpening,
+        {
+          note: `planet_opening_accounting kst=${kstDayKey} amt=${split.opening}`,
+        },
+      );
+  const fiscalOpex = resolveArcCoreFiscalOpexPolicy();
+  const lockDev = !fiscalOpex.shadowMode && fiscalOpex.devBudgetPreSpend;
   const devBudgetAllocated = split.development;
   if (devBudgetAllocated > 0) {
-    await creditArcCorePlanetDevDailyBudget(kstDayKey, devBudgetAllocated);
+    await creditArcCorePlanetDevDailyBudget(kstDayKey, devBudgetAllocated, {
+      lockFromVault: lockDev,
+    });
   }
 
   const fleetMilitarySpent = fleetOk ? split.fleet : 0;

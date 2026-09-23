@@ -5,6 +5,7 @@
 import { WeaponLaserTierColorPolicy_FROM_BALANCE_CSV } from '../data/balance/generated';
 import { getCapitalWeaponRow } from '../game/capitalWeaponRegistry';
 import { resolveCapitalWeaponRuntimeSpec } from './capitalWeaponRuntimeSpec';
+import { getWeaponSpecialFxPolicy } from './weaponSpecialFxPolicy';
 
 export type CapitalLaserBeamPresentation = {
   coreColor: string;
@@ -44,9 +45,9 @@ const FAMILY_PROJECTILE_DEFAULTS: Record<
     headColor: 'rgba(255,180,90,0.98)',
   },
   drone: {
-    trailColor: 'rgba(134,239,172,0.75)',
-    trailGlowColor: 'rgba(74,222,128,0.45)',
-    headColor: 'rgba(167,243,208,0.98)',
+    trailColor: 'rgba(248,113,113,0.82)',
+    trailGlowColor: 'rgba(220,38,38,0.5)',
+    headColor: 'rgba(239,68,68,0.98)',
   },
   carrier: {
     trailColor: 'rgba(196,181,253,0.8)',
@@ -54,6 +55,12 @@ const FAMILY_PROJECTILE_DEFAULTS: Record<
     headColor: 'rgba(221,214,254,0.98)',
   },
 };
+
+/** STAGE3 크래프트 헤드 — 렌더 틱에서 resolveCapitalProjectilePresentation 재할당 금지 */
+export const CRAFT_DRONE_HEAD_COLOR = 'rgba(239,68,68,0.98)';
+export const CRAFT_CARRIER_HEAD_COLOR = 'rgba(221,214,254,0.98)';
+export const CRAFT_DRONE_TRAIL_GLOW_COLOR = 'rgba(220,38,38,0.5)';
+export const CRAFT_CARRIER_TRAIL_GLOW_COLOR = 'rgba(167,139,250,0.5)';
 
 function normalizeHexColor(raw: string): string | null {
   const t = raw.trim();
@@ -85,31 +92,54 @@ function resolveLaserTierPolicy(requiredLevel: number) {
   return WeaponLaserTierColorPolicy_FROM_BALANCE_CSV[0];
 }
 
-/** 레이저 빔 색 — CSV laserColor 우선, 없으면 요구레벨 구간 정책(약=붉음 → 강=백색) */
+const laserPresentationCache = new Map<string, CapitalLaserBeamPresentation>();
+const projectilePresentationCache = new Map<string, CapitalProjectilePresentation>();
+
+/** 레이저 빔 색 — 특수 FX 틴트 > CSV laserColor > 요구레벨 구간 정책 */
 export function resolveCapitalLaserBeamPresentation(weaponId: string): CapitalLaserBeamPresentation {
+  const cached = laserPresentationCache.get(weaponId);
+  if (cached) return cached;
+
+  const special = getWeaponSpecialFxPolicy(weaponId);
+  if (special?.tintHex) {
+    const resolved: CapitalLaserBeamPresentation = {
+      coreColor: special.tintHex,
+      glowColor: special.glowHex || special.tintHex,
+      glowWidthMul: 1.28,
+      tierLabelKo: special.iconEmoji || 'SP',
+    };
+    laserPresentationCache.set(weaponId, resolved);
+    return resolved;
+  }
+
   const row = getCapitalWeaponRow(weaponId);
-  if (!row) return DEFAULT_LASER;
+  if (!row) {
+    laserPresentationCache.set(weaponId, DEFAULT_LASER);
+    return DEFAULT_LASER;
+  }
 
   const csvCore = normalizeHexColor(row.laserColor);
   const csvGlow = normalizeHexColor(row.glowColor);
   if (csvCore) {
-    return {
+    const resolved: CapitalLaserBeamPresentation = {
       coreColor: csvCore,
       glowColor: csvGlow ?? csvCore,
       glowWidthMul: 1.1,
       tierLabelKo: row.tierLabel || 'CSV',
     };
+    laserPresentationCache.set(weaponId, resolved);
+    return resolved;
   }
 
   const tier = resolveLaserTierPolicy(Math.max(1, row.requiredLevel || 1));
-  const core = normalizeHexColor(tier.beamCoreColor) ?? DEFAULT_LASER.coreColor;
-  const glow = normalizeHexColor(tier.beamGlowColor) ?? DEFAULT_LASER.glowColor;
-  return {
-    coreColor: core,
-    glowColor: glow,
+  const resolved: CapitalLaserBeamPresentation = {
+    coreColor: normalizeHexColor(tier.beamCoreColor) ?? DEFAULT_LASER.coreColor,
+    glowColor: normalizeHexColor(tier.beamGlowColor) ?? DEFAULT_LASER.glowColor,
     glowWidthMul: Number(tier.glowWidthMul) || 1,
     tierLabelKo: tier.tierLabelKo,
   };
+  laserPresentationCache.set(weaponId, resolved);
+  return resolved;
 }
 
 /** 로켓탄 테스트 기간 통일 연출 — 궤적 없음 · 기본 흰색 최소 타원 탄두 (대표님 지시 2026-07-22) */
@@ -121,27 +151,47 @@ export const ROCKET_TEST_PRESENTATION: CapitalProjectilePresentation = Object.fr
   trailEnabled: false,
 });
 
-/** 발사체 궤적·탄두 — CSV projectileColor 우선, 없으면 familyKind 기본 팔레트 */
+/** 발사체 궤적·탄두 — 특수 FX 틴트 > (로켓=흰색 무궤적) > CSV projectileColor > family 팔레트 */
 export function resolveCapitalProjectilePresentation(weaponId: string): CapitalProjectilePresentation {
+  const cached = projectilePresentationCache.get(weaponId);
+  if (cached) return cached;
+
   const spec = resolveCapitalWeaponRuntimeSpec(weaponId);
   const family = spec?.familyKind ?? 'missile';
-  /** 로켓 family는 테스트 기간 동안 CSV 색상보다 우선해 흰색·무궤적으로 통일 */
-  if (family === 'rocket') return ROCKET_TEST_PRESENTATION;
-  const base = FAMILY_PROJECTILE_DEFAULTS[family] ?? FAMILY_PROJECTILE_DEFAULTS.missile;
-  const row = spec?.row;
-  const csvColor = normalizeHexColor(row?.projectileColor ?? '');
-  if (csvColor) {
-    return {
-      trailColor: hexToRgba(csvColor, 0.88),
-      trailGlowColor: hexToRgba(csvColor, 0.45),
-      headColor: hexToRgba(csvColor, 0.98),
-      headRadiusMul: 1,
-      trailEnabled: true,
+  const special = getWeaponSpecialFxPolicy(weaponId);
+  if (special?.tintHex) {
+    const resolved: CapitalProjectilePresentation = {
+      trailColor: hexToRgba(special.tintHex, 0.88),
+      trailGlowColor: hexToRgba(special.glowHex || special.tintHex, 0.45),
+      headColor: hexToRgba(special.tintHex, 0.98),
+      headRadiusMul: 1.12,
+      trailEnabled: family !== 'rocket',
     };
+    projectilePresentationCache.set(weaponId, resolved);
+    return resolved;
   }
-  return {
-    ...base,
-    headRadiusMul: 1,
-    trailEnabled: true,
-  };
+
+  /** 일반 로켓은 테스트 기간 흰색·무궤적 유지 (대표님 지시 2026-07-22) */
+  if (family === 'rocket') {
+    projectilePresentationCache.set(weaponId, ROCKET_TEST_PRESENTATION);
+    return ROCKET_TEST_PRESENTATION;
+  }
+
+  const base = FAMILY_PROJECTILE_DEFAULTS[family] ?? FAMILY_PROJECTILE_DEFAULTS.missile;
+  const csvColor = normalizeHexColor(spec?.row?.projectileColor ?? '');
+  const resolved: CapitalProjectilePresentation = csvColor
+    ? {
+        trailColor: hexToRgba(csvColor, 0.88),
+        trailGlowColor: hexToRgba(csvColor, 0.45),
+        headColor: hexToRgba(csvColor, 0.98),
+        headRadiusMul: 1,
+        trailEnabled: true,
+      }
+    : {
+        ...base,
+        headRadiusMul: 1,
+        trailEnabled: true,
+      };
+  projectilePresentationCache.set(weaponId, resolved);
+  return resolved;
 }

@@ -121,6 +121,8 @@ function captainRow(systemId, factionId, displayName, shipId) {
     '',
     'arc_direct',
     '',
+    'FALSE',
+    'none',
   ].join(',');
 }
 

@@ -52,7 +52,14 @@ self-check: `npx tsc --noEmit -p tsconfig.client.json` · Skia 변경 시 `npm r
 
 | 착수 대기 작업 | handoff | 명세 |
 |------|---------|------|
-| **⭐ 경제 금고 5축 고도화 (A 중립·B 독립+purge 중립)** | `tools/kim-team-lead/reports/kim-claude-ready-economy-vault-5axis-upgrade.md` | task_id=`economy-vault-5axis-upgrade-20260804` · 분석=`docs/economy-evaluation/2026-08-04-vault-5axis-reaudit.md` · **신규 우선(경제)** |
+| ~~이동중 전투 Skia 배경 구현+자가검수~~ **REVIEWED PARTIAL** | 정본=`kim-team-lead-transit-backdrop-review-20260916.md` | task_id=`transit-combat-skia-backdrop-fix-20260916` · 구름 풀캔버스 수용 · 헤더 `TF.panelBg` · 크래시 P0 해제 · **재구현 금지** · 베가 TEMP 강제 조우 **해제** · 실기 후 커밋 |
+| ~~웨이브 전투 FPS 저하 독립 분석~~ **HOLD (2026-09-18)** | 정본=`HOLD_WAVE_COMBAT_FPS_20260918.md` · 분석=`kim-claude-wave-combat-fps-analysis-20260914.md` | task_id=`wave-combat-fps-improve-20260918` · **별도 관리** · 재지시 전 전투 틱·Skia 패치 **금지** · 1안=기록 Zero-Alloc |
+| **인게임 대사창 헤더·하단 크롬 정리 (P0)** | `tools/kim-team-lead/reports/kim-claude-ready-ingame-narrative-dialog-chrome-20260820.md` | task_id=`ingame-narrative-dialog-chrome-20260820` · 바 빗살 헤더 실측 · 하단 흰색 · 미실측 +20 · **commit 금지** · 김팀장 검수만 |
+| ~~아크코어 대화 에이전트 기획 공동 검수~~ **REVIEWED** | `kim-claude-handoff-pending.md` 상단 | task_id=`arc-core-backchannel-joint-review-20260814` · 정본 v0.4 · §11 전수 **PASS** · 구현은 대표님 지시 후 |
+| **인게임 NL ZERO_BILL** | `ARC_CORE_CHAT_ZERO_BILL_REDESIGN.md` | 종량 $0 강제 · Bedrock LIVE 금지 · free-tier READY |
+| **Free-tier NL 연동 (Groq Free+Lambda)** | `READY_ARC_CORE_CHAT_FREE_TIER_NL.md` · `ARC_CORE_CHAT_GROQ_FREE_LAMBDA_OPS.md` | 코드 반영 · **sam deploy+URL+LIVE** 후 인게임 NL |
+| ~~인게임 아크코어 NL 전면 HOLD~~ | `ARC_CORE_CHAT_INGAME_NL_HOLD.md` | **개정** = 종량만 HOLD (`HOLD_METERED_ONLY`) |
+| **경제 금고 5축 고도화 (A 중립·B 독립+purge 중립)** | `tools/kim-team-lead/reports/kim-claude-ready-economy-vault-5axis-upgrade.md` | task_id=`economy-vault-5axis-upgrade-20260804` · 분석=`docs/economy-evaluation/2026-08-04-vault-5axis-reaudit.md` |
 | **김팀장 전체 재검수 공유 → rework boot/warp** | `kim-claude-share-full-reaudit-20260804.md` + `kim-claude-ready-rework-boot-batch-warp-20260804.md` | warp/부트 잔여 R0~R2 · task=`kim-claude-rework-boot-batch-warp-20260804` |
 | 시작 화면 버튼 최소 활성 (원본 READY) | `…-title-button-min-activation-continue-prewarm.md` | **rework에 흡수** |
 | **일일 배치「시작만·완료 없음」복구 (P0)** | `tools/kim-team-lead/reports/kim-claude-ready-daily-ops-batch-incomplete-fix.md` | task_id=`daily-ops-batch-incomplete-fix-20260803` |
@@ -75,6 +82,7 @@ self-check: `npx tsc --noEmit -p tsconfig.client.json` · Skia 변경 시 `npm r
 | 전투 Skia | `src/components/planet/PlanetEdenRaidOrbitSkiaCombat.tsx` |
 | STAGE 세션 | `src/game/planetSessionRegistry.ts` |
 | 일일 배치 | `src/arcCore/schedule/runArcCoreDailyOpsBatch.ts` |
+| 확장시스템 | `docs/expansion/README.md` · `docs/expansion/아크파이어_확장시스템_설계안.md` |
 | CSV | `tables/content/` → `npm run build:content-tables` |
 | UI 알림 | `ArcOverlayHost` / `showArcAlert` (RN Modal 산재 금지) |
 

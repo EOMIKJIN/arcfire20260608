@@ -1,5 +1,6 @@
 ﻿# Arcfire long-run watch — 사용자용 간단 보고 콘솔 (heartbeat)
-# v2.7 — 신선한 arcfire 크래시·실제 incident만 적색/황색 (구 log 오탐·paused GL 스팸 제거)
+# v2.8 — 신선한 arcfire 크래시·실제 incident만 적색/황색 (구 log 오탐·paused GL 스팸 제거)
+#         PID 생존 시 동일 pid 타임라인 stale 재사용 — 08:00 dumpsys 폭주와 겹쳐 「측정 실패」 오탐 금지
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$IntervalMin = 30
@@ -61,7 +62,7 @@ $prevPlaytest  = Get-LineCount $playtestAlerts
 $sessionPid    = ''
 $startStamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
 $pausedNote = if (Test-Path $pauseFlag) { ' · auto-fix=OFF' } else { '' }
-Emit "[$startStamp] === report-watch v2.7 (pkg=$Package · ${IntervalMin}m · 신선 크래시만)$pausedNote ===" 'Cyan'
+Emit "[$startStamp] === report-watch v2.8 (pkg=$Package · ${IntervalMin}m · 신선 크래시만)$pausedNote ===" 'Cyan'
 
 while ($true) {
   $hhmm = Get-Date -Format 'HH:mm'
@@ -101,8 +102,13 @@ while ($true) {
   if ($appPid) {
     $pss = ''; $gl = ''; $views = ''
     $measOk = $false
-    $timelineSnap = Get-TimelineHeartbeatMetrics -LogDir $logDir -MaxAgeMin ($IntervalMin + 5)
+    $measNote = ''
+    $failReason = ''
+    # watch-30m 주기(15~30m)보다 heartbeat가 짧으면 MaxAge=Interval+5만으로는 중간 틱이 만료됨
+    $freshMaxAge = [math]::Max(($IntervalMin + 5), 35)
+    $timelineSnap = Get-TimelineHeartbeatMetrics -LogDir $logDir -MaxAgeMin $freshMaxAge -StaleFallbackMaxAgeMin 90 -MatchPid $appPid
     $useTimeline = $timelineSnap -and $timelineSnap.pid -eq $appPid
+    $timelineFresh = $useTimeline -and -not $timelineSnap.stale
 
     if ($pidChanged -or $hasCrash -or $actionIncidents.Count -gt 0) {
       # 이상 시에만 adb meminfo (budget gate)
@@ -115,16 +121,27 @@ while ($true) {
           if ($null -ne $met.GlKb) { $gl = [math]::Round($met.GlKb / 1024, 1) }
           if ($null -ne $met.Views) { $views = [int]$met.Views }
           if ($pss -ne '') { $measOk = $true }
-        } catch { $measOk = $false }
+        } catch {
+          $measOk = $false
+          $failReason = 'adb_busy_or_parse'
+        }
+      } elseif ($useTimeline) {
+        $pss = $timelineSnap.pssMb
+        $gl = $timelineSnap.glMb
+        $views = $timelineSnap.views
+        $measOk = $true
+        $measNote = "stale $($timelineSnap.ageMin)m · adb_budget"
+      } else {
+        $failReason = 'adb_budget'
       }
-    } elseif ($useTimeline) {
+    } elseif ($timelineFresh) {
       $pss = $timelineSnap.pssMb
       $gl = $timelineSnap.glMb
       $views = $timelineSnap.views
       $measOk = $true
     } else {
-      # timeline stale — budget 허용 시에만 1회 meminfo
-      if (Test-CanInvokeAdbMeminfo -LogDir $logDir) {
+      $canDump = Test-CanInvokeAdbMeminfo -LogDir $logDir
+      if ($canDump) {
         try {
           $raw = (adb shell dumpsys meminfo $Package 2>&1 | Out-String)
           Register-AdbMeminfoInvocation -LogDir $logDir
@@ -132,8 +149,23 @@ while ($true) {
           if ($met.PssKb) { $pss = [math]::Round($met.PssKb / 1024, 1) }
           if ($null -ne $met.GlKb) { $gl = [math]::Round($met.GlKb / 1024, 1) }
           if ($null -ne $met.Views) { $views = [int]$met.Views }
-          if ($pss -ne '') { $measOk = $true }
-        } catch { $measOk = $false }
+          if ($pss -ne '') { $measOk = $true } else { $failReason = 'parse_empty' }
+        } catch {
+          $measOk = $false
+          $failReason = 'adb_busy_or_parse'
+        }
+      } else {
+        $failReason = 'adb_budget'
+      }
+      if (-not $measOk -and $useTimeline) {
+        $pss = $timelineSnap.pssMb
+        $gl = $timelineSnap.glMb
+        $views = $timelineSnap.views
+        $measOk = $true
+        $measNote = "stale $($timelineSnap.ageMin)m · $failReason"
+        $failReason = ''
+      } elseif (-not $measOk -and -not $failReason) {
+        $failReason = 'timeline_none'
       }
     }
 
@@ -145,18 +177,15 @@ while ($true) {
     } elseif ($actionIncidents.Count -gt 0) {
       $summary = ($actionIncidents | Select-Object -Last 1)
       Emit "[$hhmm] !! 이상감지: $summary" 'Yellow'
-    } elseif (-not $measOk -and $useTimeline) {
-      $pss = $timelineSnap.pssMb
-      $gl = $timelineSnap.glMb
-      $views = $timelineSnap.views
-      $measOk = $true
     } elseif (-not $measOk) {
-      Emit "[$hhmm] ?? 측정 실패 — PID=$appPid" 'Magenta'
+      if (-not $failReason) { $failReason = 'timeline_none' }
+      Emit "[$hhmm] ?? 측정 실패 — PID=$appPid · $failReason" 'Magenta'
     } else {
       $glNote = ''
       if ((Test-Path $pauseFlag) -and $gl -ne '' -and [double]$gl -ge 200) {
         $glNote = " · GL ${gl}MB (기록만·조치OFF)"
       }
+      if ($measNote) { $glNote = " · $measNote$glNote" }
       Emit "[$hhmm] OK · PID $appPid · PSS ${pss}MB / GL ${gl}MB / views ${views}$glNote" 'Green'
     }
   } else {

@@ -2,7 +2,7 @@ import { BaseArcSubCore } from './BaseArcSubCore';
 import { subscribeArcCoreCommands, type ArcCoreCommand } from '../ArcCoreCommandBus';
 import { useWorldStore } from '../../store/worldStore';
 import { useArcNpcTrafficStore } from '../../store/arcNpcTrafficStore';
-import { useTavernBoardStore, type TavernNoticeTag } from '../../store/tavernBoardStore';
+import { useBarBoardStore, type BarNoticeTag } from '../../store/barBoardStore';
 import type { I18nParams } from '../../i18n/types';
 import { publishMegaFactionPgpDailyBriefingNotice } from '../../world/megaFactionPgpDailyBriefing';
 
@@ -15,14 +15,14 @@ type NoticeInput = {
   /** Locale-neutral fallback (EN) — UI prefers i18nKey via noticeText */
   title: string;
   body: string;
-  tag: TavernNoticeTag;
+  tag: BarNoticeTag;
   dedupeKey?: string;
 };
 
 /**
  * 아크코어 공지 보드 서브코어
  * - ArcCore 명령/월드 상태를 공지 피드로 축약한다.
- * - 선술집 소식판의 실데이터 공급원 역할.
+ * - 바 소식판의 실데이터 공급원 역할.
  */
 export class ArcNewsBoardSubCore extends BaseArcSubCore {
   private unsubCommands: (() => void) | null = null;
@@ -119,6 +119,6 @@ export class ArcNewsBoardSubCore extends BaseArcSubCore {
   }
 
   private pushNotice(input: NoticeInput): void {
-    useTavernBoardStore.getState().pushNotice(input);
+    useBarBoardStore.getState().pushNotice(input);
   }
 }

@@ -6,7 +6,7 @@
 import type { PlanetFacilityModuleDetail } from '../../store/planetCoreMetricTypes';
 import {
   isPlanetCsvShipyardWorldEnabled,
-  isPlanetCsvTavernWorldEnabled,
+  isPlanetCsvBarWorldEnabled,
   isPlanetCsvTradePortWorldEnabled,
 } from './planetCsvWorldFlags';
 import { PLANET_DEV_MODULE_ORBIT_SHIPYARD } from './planetOrbitShipyardListing';
@@ -23,7 +23,7 @@ const CSV_BASELINE_MODULE_IDS: ReadonlyArray<{
 }> = [
   { moduleId: PLANET_DEV_MODULE_TRADE_PORT, isCsvWorld: isPlanetCsvTradePortWorldEnabled },
   { moduleId: PLANET_DEV_MODULE_ORBIT_SHIPYARD, isCsvWorld: isPlanetCsvShipyardWorldEnabled },
-  { moduleId: PLANET_DEV_MODULE_POPULATION_DOME, isCsvWorld: isPlanetCsvTavernWorldEnabled },
+  { moduleId: PLANET_DEV_MODULE_POPULATION_DOME, isCsvWorld: isPlanetCsvBarWorldEnabled },
 ];
 
 export function isPlanetCsvWorldDevModuleBaseline(planetId: string, moduleId: string): boolean {

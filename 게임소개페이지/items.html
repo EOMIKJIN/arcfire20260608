@@ -1,0 +1,145 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>아이템 · 강화 — 아크파이어 온라인 위키</title>
+<meta name="description" content="289종 아이템 분류, 57종 함선 장비, 10종 광물, 조선소 강화 시스템" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body data-page="items">
+
+<header class="site-header">
+  <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <div class="site-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
+    <div class="search-hits"></div>
+  </div>
+  <button class="theme-toggle" type="button" aria-label="테마 전환"></button>
+</header>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-group"><h5>시작</h5><a href="index.html" data-page="index"><span class="dot"></span>홈</a></div>
+    <div class="sidebar-group"><h5>세계</h5>
+      <a href="world.html" data-page="world"><span class="dot"></span>세계관 · 아크코어</a>
+      <a href="factions.html" data-page="factions"><span class="dot"></span>4대 세력</a>
+      <a href="galaxy.html" data-page="galaxy"><span class="dot"></span>은하 · 행성</a>
+      <a href="story.html" data-page="story"><span class="dot"></span>스토리 · 미션</a>
+    </div>
+    <div class="sidebar-group"><h5>전력</h5>
+      <a href="ships.html" data-page="ships"><span class="dot"></span>함선</a>
+      <a href="weapons.html" data-page="weapons"><span class="dot"></span>무기체계</a>
+      <a href="skills.html" data-page="skills"><span class="dot"></span>스킬</a>
+      <a href="items.html" data-page="items" class="active"><span class="dot"></span>아이템 · 강화</a>
+    </div>
+    <div class="sidebar-group"><h5>체제</h5>
+      <a href="economy.html" data-page="economy"><span class="dot"></span>경제 시스템</a>
+      <a href="planetdev.html" data-page="planetdev"><span class="dot"></span>행성개발</a>
+      <a href="combat.html" data-page="combat"><span class="dot"></span>전투 · 분쟁</a>
+      <a href="arccore.html" data-page="arccore"><span class="dot"></span>아크코어 AI</a>
+      <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
+      <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="content-wrap">
+    <article class="content">
+      <div class="eyebrow">전력 · 장비</div>
+      <h1 class="page-title">아이템 · 강화</h1>
+      <p class="page-lede">
+        아이템 289종은 분류상 사치품(행성 소유권 증서 중심)·기술·광물·식료품·무역용 무기 화물·밀수품으로 나뉜다.
+        함선을 실제로 강하게 만드는 축은 셋 — <strong>함급 구매</strong>·<strong>장비 장착</strong>·<strong>광물 강화</strong>가 동시에 쌓인다.
+      </p>
+
+      <h2>아이템 분류</h2>
+      <div class="card-grid">
+        <div class="card"><span class="card-eyebrow">128</span><h4>사치품</h4><p>행성 소유권 증서 100여 종이 대부분</p></div>
+        <div class="card"><span class="card-eyebrow">86</span><h4>기술</h4><p>장비·모듈류</p></div>
+        <div class="card"><span class="card-eyebrow">36</span><h4>광물</h4><p>강화 원료</p></div>
+        <div class="card"><span class="card-eyebrow">19</span><h4>식료품</h4><p>교역 상품</p></div>
+        <div class="card"><span class="card-eyebrow">12</span><h4>무기(화물)</h4><p>탑재 무기가 아닌 교역용 무기 화물</p></div>
+        <div class="card"><span class="card-eyebrow">8</span><h4>밀수품</h4><p>고위험 고수익 교역 품목</p></div>
+      </div>
+
+      <h2 id="all-items">전체 아이템 목록 — 289종</h2>
+      <p><code>item_defs.csv</code> 전체다. 사치품(행성 증서 다수)·기술·광물·식료품·무기(화물)·밀수품을 모두 포함한다.</p>
+      <div id="item-table"></div>
+
+      <h2 id="equipment">함선 장비 — 57종</h2>
+      <p>7개 계열 × 3등급(1/2/3). 등급이 오를수록 효과와 가격이 대략 두 배씩 뛴다.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>계열</th><th>대표 라인</th><th>슬롯</th><th>효과</th></tr></thead>
+          <tbody>
+            <tr><td>추진</td><td>이온가속부스터 · 핵융합코어 · 벡터추력기</td><td>ENGINE/SYSTEM/EX_01</td><td>속도 · 출력 효율 · 기동성 <span class="pill accent">가동</span></td></tr>
+            <tr><td>방어</td><td>분자장갑판 · 실드증폭기 · 외장장갑</td><td>ARMOR/EX_02/ARMOR</td><td>장갑률 · 실드율 · 피해 감소 상한 <span class="pill accent">가동</span></td></tr>
+            <tr><td>센서</td><td>장거리스캔 · 암호통신모듈 · 패시브센서</td><td>EX_03/EX_04/FIGHTER</td><td>탐지거리 · 통신 안정 · 은신 탐지 <span class="pill accent">가동</span></td></tr>
+            <tr><td>전자전</td><td>전자파재머 · 전술데이터링크 · 미끼발사기</td><td>EX_01/EX_02/EX_03</td><td>ECM 강도 <span class="pill accent">가동</span> · 아군 버프 <span class="pill">미구현</span> · 디코이 강도 <span class="pill accent">가동</span></td></tr>
+            <tr><td>지원</td><td>나노수리로봇 · 화재진압시스템 · 선체패치베이</td><td>EX_04/SYSTEM/FIGHTER</td><td>선체 재생 <span class="pill accent">가동</span> · 과열 감소 <span class="pill accent">가동</span> · 전후 수리 <span class="pill">미구현</span></td></tr>
+            <tr><td>항법</td><td>보조항법장치 · 전술연산프로세서 · 워프항법계산기</td><td>SYSTEM/EX_04/FIGHTER</td><td>회피 <span class="pill accent">가동</span> · 쿨다운 감소 <span class="pill accent">가동</span> · 항로 효율 <span class="pill">미구현</span></td></tr>
+            <tr><td>채굴</td><td>채굴드론</td><td>FIGHTER</td><td>채굴 수율 <span class="pill">미구현</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:0.85rem;color:var(--text-faint);">57종 중 12종(채굴드론 3등급 · 전술데이터링크 · 선체패치베이 · 워프항법계산기)은 판매되지만 아직 수치 효과가 연결되지 않았다.</p>
+
+      <h2>광물 10종</h2>
+      <p>페라이트 → 실리케이트 → 탄소질 → 니켈 → 티타늄 → 백금 → 에너지 결정 → 오리하르콘 → 중성자 → 공허석 순으로 희귀해지며, 기본가는 10에서 420까지 오른다. 조선소 강화의 소모 자원이다.</p>
+
+      <h2>조선소 강화</h2>
+      <p>
+        선체 장갑·실드 셀·엔진 코어·무기 모드·에너지 5개 슬롯 중 하나를 골라 주 광물(60%)과 보조 광물(40%)을
+        소모해 레벨을 올린다. 필요량은 <code>5×다음레벨−2</code>로 늘어나며(레벨1=3개, 레벨8=38개), 최대 강화 레벨은
+        파일럿 전투레벨로 상한이 걸린다(≤14 → 5강 · ≤30 → 8강 · ≤50 → 12강 · 그 이상 → 15강). 최대 HP +50,
+        최대 실드 +30, 선회율 +3%/레벨 등 고정 보너스가 붙고, 레이저·미사일 계열은 추가로 피해·재장전·사거리
+        보너스를 받는다.
+      </p>
+
+      <div class="callout note">
+        <strong>행성 소유권 증서(102종)</strong>
+        아이템 카테고리 중 가장 큰 비중(128개 사치품의 대부분)을 차지하는 특수 품목으로, 21개 핵심 행성 + 약 45개
+        신스(Synth) 행성마다 하나씩 존재한다. 고정 12,000cr, 재판매 불가 — 구매 시 해당 행성이 플레이어 클랜 소유로 귀속된다.
+      </div>
+
+      <h2>12좌 유물</h2>
+      <p>
+        <code>relic_seat_chronos</code> 등 <a href="arccore.html#pantheon">아크코어 12좌</a>에 대응하는 12종의 「범신전 유물」이 있다.
+        전투·경제 효과는 없고, 난파선 인양으로만 얻으며 도감(코덱스) 항목만 해금한다 — 수집형 세계관 아이템.
+      </p>
+
+      <div class="source-note">정본: <code>tables/content/item_defs.csv</code>(289행) · <code>mineral_upgrade_stats.csv</code> · <code>mineral_upgrade_level_caps.csv</code></div>
+    </article>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/data/items.js"></script>
+<script src="assets/datatable.js"></script>
+<script src="assets/wiki.js"></script>
+<script>
+  mountWikiDataTable({
+    mount: document.getElementById("item-table"),
+    data: window.ITEM_DATA || [],
+    label: "아이템",
+    searchKeys: ["id", "name", "nameEn", "category", "kind", "type", "desc"],
+    columns: [
+      { key: "name", label: "이름" },
+      { key: "nameEn", label: "영문명" },
+      { key: "category", label: "분류" },
+      { key: "type", label: "타입" },
+      { key: "price", label: "기본가", num: true },
+      { key: "tradeable", label: "거래가능", render: function (r) { return r.tradeable === "true" ? "가능" : "불가"; } },
+    ],
+  });
+</script>
+</body>
+</html>

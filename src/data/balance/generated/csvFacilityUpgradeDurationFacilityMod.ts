@@ -4,6 +4,6 @@ export const FacilityUpgradeDurationFacilityMod_FROM_BALANCE_CSV = [
   { "facility_type": "shipyard", "install_duration_sec": "1080", "upgrade_duration_mul": "1.00", "instant_complete_mul": "1.00", "notesKo": "v3.1 조선소" },
   { "facility_type": "defense_satellite", "install_duration_sec": "1500", "upgrade_duration_mul": "1.05", "instant_complete_mul": "1.05", "notesKo": "v3.1 방위위성" },
   { "facility_type": "laboratory", "install_duration_sec": "1800", "upgrade_duration_mul": "1.10", "instant_complete_mul": "1.10", "notesKo": "v3.1 연구소" },
-  { "facility_type": "tavern", "install_duration_sec": "1200", "upgrade_duration_mul": "0.98", "instant_complete_mul": "0.98", "notesKo": "v3.1 선술집" },
+  { "facility_type": "bar", "install_duration_sec": "1200", "upgrade_duration_mul": "0.98", "instant_complete_mul": "0.98", "notesKo": "v3.1 바" },
 ] as const;
 export type FacilityUpgradeDurationFacilityModRow = (typeof FacilityUpgradeDurationFacilityMod_FROM_BALANCE_CSV)[number];

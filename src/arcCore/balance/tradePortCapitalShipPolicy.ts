@@ -115,36 +115,54 @@ export function listCapitalShipItemIdsForPlanet(planetId: string): string[] {
   const npcIds = resolveTradePortNpcShipIdsForZone(zoneIndex);
   const listingMode = resolvePlanetShipyardListingMode(planetId);
 
+  const sortShipItemIds = (ids: string[]): string[] =>
+    [...ids].sort((a, b) => {
+      const tierA = resolveHullTierKeyForTradeCatalogShip(a.slice('capital_ship_'.length));
+      const tierB = resolveHullTierKeyForTradeCatalogShip(b.slice('capital_ship_'.length));
+      const rankDiff = hullTierRank(tierA) - hullTierRank(tierB);
+      if (rankDiff !== 0) return rankDiff;
+      return a.localeCompare(b);
+    });
+
+  const keepWaveTestShips = (ids: string[]): string[] => {
+    const seen = new Set(ids);
+    const out = [...ids];
+    for (const id of npcIds) {
+      if (!isWaveTestTradeShipId(id) || !isCanonicalTradePortCapitalShip(id)) continue;
+      const itemId = `capital_ship_${id}`;
+      if (seen.has(itemId)) continue;
+      out.push(itemId);
+      seen.add(itemId);
+    }
+    return out;
+  };
+
   if (listingMode.mode === 'filtered') {
     const tierFilter = new Set(listingMode.builtHullTierKeys);
-    return npcIds
-      .filter((id) => isCanonicalTradePortCapitalShip(id))
-      .filter((id) => tierFilter.has(resolveHullTierKeyForTradeCatalogShip(id)))
-      .map((id) => `capital_ship_${id}`)
-      .sort((a, b) => {
-        const tierA = resolveHullTierKeyForTradeCatalogShip(a.slice('capital_ship_'.length));
-        const tierB = resolveHullTierKeyForTradeCatalogShip(b.slice('capital_ship_'.length));
-        const rankDiff = hullTierRank(tierA) - hullTierRank(tierB);
-        if (rankDiff !== 0) return rankDiff;
-        return a.localeCompare(b);
-      });
+    return sortShipItemIds(keepWaveTestShips(
+      npcIds
+        .filter((id) => isCanonicalTradePortCapitalShip(id))
+        .filter((id) =>
+          isWaveTestTradeShipId(id)
+          || tierFilter.has(resolveHullTierKeyForTradeCatalogShip(id)),
+        )
+        .map((id) => `capital_ship_${id}`),
+    ));
   }
 
   // dev 미설치 · CSV 조선소 보유 — zone 티어 정본(기존 밸런스 유지)
   if (isPlanetCsvShipyardWorldEnabled(planetId)) {
     const zoneTiers = resolveTradePortHullTiersForZone(zoneIndex);
     const tierFilter = new Set(zoneTiers);
-    return npcIds
-      .filter((id) => isCanonicalTradePortCapitalShip(id))
-      .filter((id) => tierFilter.has(resolveHullTierKeyForTradeCatalogShip(id)))
-      .map((id) => `capital_ship_${id}`)
-      .sort((a, b) => {
-        const tierA = resolveHullTierKeyForTradeCatalogShip(a.slice('capital_ship_'.length));
-        const tierB = resolveHullTierKeyForTradeCatalogShip(b.slice('capital_ship_'.length));
-        const rankDiff = hullTierRank(tierA) - hullTierRank(tierB);
-        if (rankDiff !== 0) return rankDiff;
-        return a.localeCompare(b);
-      });
+    return sortShipItemIds(keepWaveTestShips(
+      npcIds
+        .filter((id) => isCanonicalTradePortCapitalShip(id))
+        .filter((id) =>
+          isWaveTestTradeShipId(id)
+          || tierFilter.has(resolveHullTierKeyForTradeCatalogShip(id)),
+        )
+        .map((id) => `capital_ship_${id}`),
+    ));
   }
 
   return [];

@@ -25,12 +25,13 @@ import { formatCredits } from '../../src/utils/formatCredits';
 import { usePlayerStore } from '../../src/store/playerStore';
 import { useWorldStore } from '../../src/store/worldStore';
 import { useMissionStore } from '../../src/store/missionStore';
-import { listActiveMissionBundles } from '../../src/missions/missionActiveBundles';
-import { tryPresentPendingMissionClearDialog } from '../../src/missions/missionPlanetHubSync';
+import { reconcileActiveMissionProgressAfterEvent } from '../../src/missions/reconcileActiveMissionProgress';
+import { tryPresentPendingMissionClearDialog } from '../../src/missions/presentPendingMissionClearDialog';
 import { applyQuestMarketListingOverrides } from '../../src/missions/questItemOpsRegistry';
 import { useItemLedgerStore } from '../../src/store/itemLedgerStore';
 import { useClanWarFoundationStore } from '../../src/store/clanWarFoundationStore';
-import { generateMarketByItemIds, getBuyPrice } from '../../src/engine/TradeEngine';
+import { claimPlanetOwnershipWithUniqueLock } from '../../src/game/planetOwnership/claimPlanetOwnershipWithUniqueLock';
+import { generateMarketByItemIds } from '../../src/engine/TradeEngine';
 import { TRADE_GOODS } from '../../src/data/goods';
 import { applyPlanetTradeTransactionFee } from '../../src/arcCore/economy/applyPlanetTradeTransactionFee';
 import { recordPlanetEconomyPlayerTrade } from '../../src/arcCore/economy/planetEconomyFabric';
@@ -39,9 +40,17 @@ import {
   addToInventorySlotsMax,
   aggregateInventoryForTrade,
   countGoodInInventory,
+  ensureInventorySlotCapacity,
   normalizeInventorySlots,
   removeGoodFromInventorySlots,
 } from '../../src/game/playerInventory';
+import { resolvePlayerInventorySlotCount } from '../../src/game/playerOwnedSkillFleetAdjust';
+import {
+  playerOwnsMarketSense,
+  rollContrabandDetection,
+} from '../../src/game/playerOwnedSkillTradeAdjust';
+import { listMarketSenseNeighborLabels } from '../../src/game/playerOwnedSkillNavAdjust';
+import { SKILL_PROC_LABEL, presentSkillProcBanner } from '../../src/game/skillProcBanner';
 import { MarketListing, CargoItem, ItemDef, Player } from '../../src/types';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import { usePlanetSubStageMemory } from '../../src/hooks/usePlanetSubStageMemory';
@@ -62,10 +71,6 @@ import { StageShell } from '../../src/stages/StageShell';
 import { PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX } from '../../src/stages/planetMainStageLayout';
 import { adjustPlanetTradeMarketStock } from '../../src/world/planetTradeMarketStore';
 import { resolveTradeMineralSinkTotalQty } from '../../src/arcCore/economy/tradeMineralSinkPolicy';
-import {
-  isPlanetOwnershipDeedCatalogEligible,
-  resolvePlanetOwnershipDeedItemId,
-} from '../../src/arcCore/balance/planetOwnershipDeedCatalog';
 import { isSurvivalPodCapitalShipItemId, isSurvivalPodNpcShipId } from '../../src/game/playerSurvivalPod';
 import { resolvePlayerLifetimeCredits } from '../../src/game/resolvePlayerLifetimeCredits';
 import {
@@ -89,6 +94,7 @@ import {
   HeavyUiStageErrorPanel,
   useHeavyUiDataSession,
 } from '../../src/ui/heavyUiDataSession';
+import { useUiScreenShell } from '../../src/ui/process/useUiScreenShell';
 import {
   arcTradeDialogButtons,
   demandLabel,
@@ -96,6 +102,7 @@ import {
   refundTradeMineralSink,
   resolveFreshTradeBuyUnitPrice,
   resolveInventorySellPrice,
+  resolvePlayerVisibleBuyUnitPrice,
   resolveItemDefById,
   resolveTradeBuyBlock,
   resolveTradeBuyPickerMaxQty,
@@ -124,12 +131,11 @@ export default function TradeScreen() {
   const persist = usePlayerStore(s => s.persist);
   const setPlayer = usePlayerStore(s => s.setPlayer);
   const getSystem = useWorldStore(s => s.getSystem);
-  const completeObjective = useMissionStore(s => s.completeObjective);
+  const systems = useWorldStore(s => s.systems);
   const missionProgresses = useMissionStore(s => s.progresses);
   const appendItemTxn = useItemLedgerStore(s => s.appendTxn);
   const hasEverPurchasedItem = useItemLedgerStore(s => s.hasEverPurchasedItem);
   const persistItemLedger = useItemLedgerStore(s => s.persistItemLedger);
-  const claimPlanetOwnershipByPurchase = useClanWarFoundationStore(s => s.claimPlanetOwnershipByPurchase);
   const dissolvePlayerClanByPurchase = useClanWarFoundationStore(s => s.dissolvePlayerClanByPurchase);
 
   const [tab, setTab] = useState<'buy' | 'sell'>('buy');
@@ -145,6 +151,11 @@ export default function TradeScreen() {
 
   const system = player ? getSystem(player.currentSystemId) : undefined;
   const planet = system?.planets.find(p => p.id === player?.currentPlanetId) ?? system?.planets[0];
+  const marketSenseLine = useMemo(() => {
+    if (!playerOwnsMarketSense(player?.skills) || !player?.currentSystemId) return null;
+    const labels = listMarketSenseNeighborLabels(player.currentSystemId, systems);
+    return labels.length > 0 ? labels.join(' · ') : null;
+  }, [player?.skills, player?.currentSystemId, systems]);
 
   const tradeSessionConfig = useMemo(
     () => (planet?.id ? createTradeScreenSession(planet.id) : null),
@@ -152,6 +163,7 @@ export default function TradeScreen() {
   );
   const tradeSession = useHeavyUiDataSession(tradeSessionConfig, marketTick);
   const screenReady = tradeSession.phase === 'ready' && stageFrameReady;
+  useUiScreenShell('trade', screenReady);
 
   const shipyardCatalogRev = usePlanetCoreRuntimeStore(
     useCallback((s) => {
@@ -175,14 +187,14 @@ export default function TradeScreen() {
     () => {
       if (!planet || !player || tradeSession.phase !== 'ready') return [];
       const base = generateMarketByItemIds(
-        resolveTradePortListedItemIds(planet.id, player.level, missionProgresses),
+        resolveTradePortListedItemIds(planet.id, player.level, missionProgresses, player.skills),
         planet.id.length * 37,
         resolvePlayerLifetimeCredits(player),
         planet.id,
       );
       return applyQuestMarketListingOverrides(base, planet.id, missionProgresses);
     },
-    [planet?.id, player?.level, player?.lifetimeCreditsEarned, player?.credits, marketTick, shipyardCatalogRev, tradePortDevRev, missionProgresses, tradeSession.phase],
+    [planet?.id, player?.level, player?.skills, player?.lifetimeCreditsEarned, player?.credits, marketTick, shipyardCatalogRev, tradePortDevRev, missionProgresses, tradeSession.phase],
   );
   const inventorySellAgg = useMemo(() => {
     if (!player) return [];
@@ -292,12 +304,6 @@ export default function TradeScreen() {
     tradePlanetIdRef.current = planet.id;
     if (market.length === 0) return;
 
-    const ownershipId = resolvePlanetOwnershipDeedItemId(planet.id);
-    if (market.some((m) => m.goodId === ownershipId)) {
-      setBuySubTab('item');
-      return;
-    }
-
     const counts = TRADE_BUY_SUB_TAB_ORDER.map((id) => ({
       id,
       n: market.filter((m) => inferTradeBuySubTabFromGoodId(m.goodId) === id).length,
@@ -325,7 +331,7 @@ export default function TradeScreen() {
     const good = resolveTradeGoodById(listing.goodId);
     if (!good) return;
     const itemDef = resolveItemDefById(listing.goodId);
-    const price = getBuyPrice(listing);
+    const price = resolvePlayerVisibleBuyUnitPrice(listing);
     const playerCredits = player.credits;
     const capitalShipNpcId = itemDef?.type === 'capital_ship'
       && typeof itemDef?.attrs?.npcCapitalShipId === 'string'
@@ -352,7 +358,7 @@ export default function TradeScreen() {
         const buyQty = Math.max(1, Math.floor(qty));
         const latestPlayer = usePlayerStore.getState().player;
         if (!latestPlayer || !planet) return;
-        const freshUnitPrice = resolveFreshTradeBuyUnitPrice(listing, planet.id, latestPlayer);
+        const freshUnitPrice = resolveFreshTradeBuyUnitPrice(listing, planet.id, latestPlayer, buyQty);
         if (freshUnitPrice !== price) {
           setMarketTick((tick) => tick + 1);
           showArcAlert(
@@ -394,9 +400,20 @@ export default function TradeScreen() {
     capitalShipNpcId: string | null,
   ) => {
     if (!player || !planet) return;
+    if (itemDef?.type === 'planet_ownership') {
+      showArcAlert(t('trade.own.cashOnlyTitle'), t('trade.own.cashOnlyMsg'), arcTradeDialogButtons());
+      return;
+    }
     const qty = Math.max(1, Math.floor(buyQty));
+    const detect = rollContrabandDetection(itemDef?.category, listing.goodId, player.skills);
+    if (detect.caught) {
+      presentSkillProcBanner(SKILL_PROC_LABEL.smugglerCatch);
+      return;
+    }
     const gross = unitPrice * qty;
-    const feeBreakdown = computeTradeFeeForPlanetGross(planet.id, gross);
+    const feeBreakdown = computeTradeFeeForPlanetGross(planet.id, gross, {
+      contraband: detect.contraband,
+    });
     const totalCharged = gross + feeBreakdown.totalFee;
     const ok = spendCredits(totalCharged);
     if (!ok) {
@@ -437,7 +454,7 @@ export default function TradeScreen() {
     let capitalShipIdForRollback: string | null = null;
 
     if (isPlanetOwnershipItem && ownershipPlanetId) {
-      const claim = claimPlanetOwnershipByPurchase({
+      const claim = await claimPlanetOwnershipWithUniqueLock({
         uid: player.uid,
         planetId: ownershipPlanetId,
         systemId: player.currentSystemId,
@@ -459,7 +476,13 @@ export default function TradeScreen() {
               ? 'trade.own.claimFailFaction'
               : claim.reason === 'already_owner'
                 ? 'trade.own.claimFailAlready'
-                : 'trade.own.claimFailMsg';
+                : claim.reason === 'cloud_taken'
+                  ? 'trade.own.claimFailCloudTaken'
+                  : claim.reason === 'cloud_offline'
+                    ? 'trade.own.claimFailCloudOffline'
+                    : claim.reason === 'cloud_auth'
+                      ? 'trade.own.claimFailCloudAuth'
+                      : 'trade.own.claimFailMsg';
         showArcAlert(t('trade.own.claimFailTitle'), t(failMsgKey));
         return;
       }
@@ -552,8 +575,10 @@ export default function TradeScreen() {
       capitalShipIdForRollback = npcCapitalShipId;
     }
 
-    const slots0 = normalizeInventorySlots(
-      (usePlayerStore.getState().player ?? player).inventorySlots,
+    const latestInvPlayer = usePlayerStore.getState().player ?? player;
+    const slots0 = ensureInventorySlotCapacity(
+      normalizeInventorySlots(latestInvPlayer.inventorySlots, resolvePlayerInventorySlotCount(latestInvPlayer.skills)),
+      resolvePlayerInventorySlotCount(latestInvPlayer.skills),
     );
     const invTry = addToInventorySlotsMax(slots0, listing.goodId, qty, unitPrice);
     const inventoryAdded = invTry.added > 0;
@@ -588,20 +613,7 @@ export default function TradeScreen() {
       await persistItemLedger();
     }
 
-    const activeBundles = listActiveMissionBundles(useMissionStore.getState().progresses);
-    for (const active of activeBundles) {
-      const invAfter = inventoryAdded ? invTry.slots : normalizeInventorySlots(player.inventorySlots);
-      const owned = isCapitalShipItem && capitalShipNpcId
-        ? player.shipHangar.filter((h) => h.npcCapitalShipId === capitalShipNpcId).length
-        : countGoodInInventory(invAfter, listing.goodId);
-      active.mission.objectives.forEach((obj) => {
-        if (obj.type === 'buy_goods' && obj.targetId === listing.goodId) {
-          if (!obj.quantity || owned >= obj.quantity) {
-            completeObjective(active.mission.id, obj.id);
-          }
-        }
-      });
-    }
+    reconcileActiveMissionProgressAfterEvent();
     tryPresentPendingMissionClearDialog();
     if (itemDef?.type === 'trade_route' && player.currentPlanetId && inventoryAdded) {
       adjustPlanetTradeMarketStock(player.currentPlanetId, listing.goodId, -invTry.added);
@@ -710,7 +722,19 @@ export default function TradeScreen() {
           { text: t('trade.btn.cancel'), style: 'cancel' },
           {
             text: t('trade.btn.confirm'),
-            onPress: () => executeSellQuantity(item, qtyToSell, itemDef, price),
+            onPress: () => executeSellQuantity(
+              item,
+              qtyToSell,
+              itemDef,
+              resolveInventorySellPrice(
+                planet.id,
+                item.goodId,
+                good.basePrice,
+                sellListing,
+                item.buyPrice,
+                qtyToSell,
+              ),
+            ),
           },
         ]);
       },
@@ -745,8 +769,15 @@ export default function TradeScreen() {
       }
       workingPlayer = usePlayerStore.getState().player ?? workingPlayer;
     }
+    const sellDetect = rollContrabandDetection(itemDef?.category, item.goodId, player.skills);
+    if (sellDetect.caught) {
+      presentSkillProcBanner(SKILL_PROC_LABEL.smugglerCatch);
+      return;
+    }
     const sellGross = unitPrice * sellQty;
-    const sellFee = computeTradeFeeForPlanetGross(planet.id, sellGross);
+    const sellFee = computeTradeFeeForPlanetGross(planet.id, sellGross, {
+      contraband: sellDetect.contraband,
+    });
     applyPlanetTradeTransactionFee(player.currentPlanetId ?? planet.id, sellGross);
     addCredits(sellGross - sellFee.totalFee);
     const next = removeGoodFromInventorySlots(
@@ -792,9 +823,11 @@ export default function TradeScreen() {
       <PlanetFacilityTitleHeader
         title={t('trade.title')}
         subtitle={
-          (tradePortMiningTotal > 0 || inventoryMiningQty > 0)
-            ? t('trade.header.mining', { delivered: tradePortMiningTotal.toLocaleString(), inv: inventoryMiningQty.toLocaleString() })
-            : undefined
+          marketSenseLine
+            ? marketSenseLine
+            : (tradePortMiningTotal > 0 || inventoryMiningQty > 0)
+              ? t('trade.header.mining', { delivered: tradePortMiningTotal.toLocaleString(), inv: inventoryMiningQty.toLocaleString() })
+              : undefined
         }
         onBack={safeBack}
         backLabel={t('common.back')}
@@ -843,7 +876,7 @@ export default function TradeScreen() {
               const good = resolveTradeGoodById(listing.goodId);
               if (!good) return null;
               const rowItemDef = resolveItemDefById(listing.goodId);
-              const price = getBuyPrice(listing);
+              const price = resolvePlayerVisibleBuyUnitPrice(listing);
               const equipPendingSuffix = rowItemDef
                 ? formatShipEquipmentListingSuffix(rowItemDef, ` ${t('equipment.effectPendingSuffix')}`)
                 : '';

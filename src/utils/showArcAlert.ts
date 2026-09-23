@@ -5,7 +5,7 @@ export type { ArcAlertPresentOptions };
 
 /**
  * 시스템 `Alert.alert` 대체 — ArcOverlayHost alert kind.
- * 기본 **30초 자동 닫힘** (`overlayAlertContract`). 수동만: `{ autoDismissMs: 0 }`.
+ * 기본 **40초 자동 닫힘** (`overlayAlertContract`). 수동만: `{ autoDismissMs: 0 }`.
  */
 export function showArcAlert(
   title: string,
@@ -18,7 +18,7 @@ export function showArcAlert(
   presentArcOverlayAlert(title, message ?? '', buttons, options);
 }
 
-/** 접전·ArcCore 정보 알림 — showArcAlert 동일(30s 자동 닫힘). 의미적 별칭. */
+/** 접전·ArcCore 정보 알림 — showArcAlert 동일(40s 자동 닫힘). 의미적 별칭. */
 export function showArcNotificationAlert(
   title: string,
   message?: string,

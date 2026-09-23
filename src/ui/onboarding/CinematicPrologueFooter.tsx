@@ -1,8 +1,8 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { FONTS, SPACING } from '../../utils/theme';
 import { CINEMATIC_PROLOGUE as CP } from './cinematicPrologueTokens';
-import { bindUiSfxPressIn } from '../../audio';
+import { useArcButtonReleaseHandlers } from '../press/useArcButtonRelease';
 
 type Props = {
   pageCount: number;
@@ -29,14 +29,8 @@ export const CinematicPrologueFooter = memo(function CinematicPrologueFooter({
   onNext,
 }: Props) {
   const silent = disabled || busy;
-  const onSkipPressIn = useMemo(
-    () => bindUiSfxPressIn({ cue: 'ui_click', silent }),
-    [silent],
-  );
-  const onNextPressIn = useMemo(
-    () => bindUiSfxPressIn({ cue: 'ui_click', silent }),
-    [silent],
-  );
+  const skipRelease = useArcButtonReleaseHandlers({ onPress: onSkip, disabled: silent });
+  const nextRelease = useArcButtonReleaseHandlers({ onPress: onNext, disabled: silent });
   return (
     <View style={styles.footer}>
       <View style={styles.progressRow}>
@@ -53,8 +47,9 @@ export const CinematicPrologueFooter = memo(function CinematicPrologueFooter({
       <View style={styles.actionsRow}>
         {showSkip ? (
           <Pressable
-            onPressIn={onSkipPressIn}
-            onPress={onSkip}
+            onPressIn={skipRelease.onPressIn}
+            onPressOut={skipRelease.onPressOut}
+            onPress={skipRelease.onPress}
             disabled={disabled || busy}
             style={({ pressed }) => [styles.controlHit, pressed && styles.controlPressed]}
             accessibilityRole="button"
@@ -65,8 +60,9 @@ export const CinematicPrologueFooter = memo(function CinematicPrologueFooter({
           <View style={styles.controlHit} />
         )}
         <Pressable
-          onPressIn={onNextPressIn}
-          onPress={onNext}
+          onPressIn={nextRelease.onPressIn}
+          onPressOut={nextRelease.onPressOut}
+          onPress={nextRelease.onPress}
           disabled={disabled || busy}
           style={({ pressed }) => [styles.controlHit, styles.controlHitEnd, pressed && styles.controlPressed]}
           accessibilityRole="button"

@@ -1,0 +1,22 @@
+id,captainId,nameHints,sort,textKo,textEn
+scn_ellen,npc_cpt_arcadia_lane_01,엘렌|드 코르|ellen,1,엘렌은 관문 순찰대장이야. 현장은 짧게 끊고 빈칸이 있으면 기록을 밀어.,Ellen is Gate Patrol. She cuts the scene short and pushes the log when a cell is blank.
+scn_hanro,npc_cpt_bar_ret_01,한로|크레인|haro,1,한로는 퇴역 제독이야. 술자리에서 본 얼굴이 목격의 전부고 말은 하게체로 남아.,Haro is a retired admiral. The face at the bar is all he saw. He still talks like an old officer.
+scn_bent,npc_cpt_solar_guard_01,벤트|이사|isa|bent,1,벤트는 항만사령이야. 기록만 넘기고 사건은 여기서 접는 사람이지.,Isa Bent is Harbor Command. She hands the copy and closes the case at the desk.
+scn_mia,npc_cpt_bar_ret_02,미아|벨로|mia,1,미아는 퇴역 사령이야. 밀수조 소문은 술자리 말로만 흘려.,Mia is retired command. Smuggling talk stays in the bar and does not become a file.
+scn_noah,npc_cpt_story_noah_frick,노아|프릭|noah,1,노아는 하수인이야. 자기 이름은 숨기고 고용주 칸만 비어 있어.,Noah is hired help. He hides his own name and leaves the employer cell blank.
+scn_nica,npc_cpt_gov_minerva,니카|스톤|nica,1,니카는 광산 총감독이야. 함장 빈자리는 인과로 말하고 출정은 이미 정해져 있어.,Nica runs the mine. She names the vacant chair as cause and the sortie as already set.
+scn_koval,npc_cpt_story_ian_koval,코발|이안|koval,1,코발은 함대 사령이야. 버린 동료 이야기는 잘 안 꺼내. 꺼낸 날은 좌표가 따라와.,Koval is fleet command. He rarely names the comrade he left. When he does a fix follows.
+scn_harman,npc_cpt_vega_watch_01,하르만|돌|harman,1,하르만은 야전 순찰이야. 전멸 현장에서는 문장을 더 잇지 않아.,Harman is field watch. On a wipe site he does not add a second sentence.
+scn_serena,npc_cpt_draco_obs_01,세레나|드릴|serena,1,세레나는 관측장이지 지휘관이 아니야. 신호는 잡고 식별은 너에게 맡겨.,Serena is an observer not a commander. She holds the signal and leaves the ID to you.
+scn_darel,npc_cpt_story_darel_sosa,다렐|소사|darell|darel,1,다렐 소사는 코발이 버린 동료야. 기함 데드코러스에 타고 있고 말은 거의 없어.,Darell Sosa is the comrade Koval left. He sits the Dead Chorus and barely speaks.
+scn_orren,npc_cpt_sq_orren_bask,오렌|바스크|orren,1,오렌은 요새 정보장이야. 정식 수사로 올리기 전에 입구만 확인하라고 해.,Orren is fort intel. He wants the mouth marked before any official case.
+scn_veil,npc_cpt_sq_veil_hook,베일|훅|veil,1,베일은 캠프 관측수야. 주기와 입구만 적고 출구를 먼저 건드리지 마.,Veil watches the camp warp. She logs the cycle and the mouth. Do not touch the exit first.
+scn_kett,npc_cpt_sq_kett_mion,켓|미온|kett,1,켓은 국경 서기야. 세라 미온이랑 성씨를 나눠. 장부 대조가 그 사람 일이지.,Kett is a border clerk. Same family name as Sera Mion. The ledger match is his job.
+scn_tolin,npc_cpt_sq_tolin_grave,톨린|그레이브|tolin,1,톨린은 위장 초계야. 친한 척할 때랑 발각된 뒤 말투가 완전히 갈려.,Tolin is a false patrol. The friendly talk and the cold talk after exposure are not the same person.
+scn_nila,npc_cpt_sq_nila_shol,닐라|숄|nila,1,닐라는 민간 정보원이야. 흔적만 쫓고 아군 도장은 믿지 마라는 쪽이지.,Nila is civilian intel. She tracks traces and tells you not to trust a friendly stamp.
+scn_ivy,npc_cpt_sq_ivy_kenn,아이비|켄|ivy,1,아이비는 다리만 놓는 사람이야. 오가는 이름은 안 적고 수수료는 이미 받았대.,Ivy only lays the bridge. She keeps no names and the fee is already taken.
+scn_noll,npc_cpt_sq_noll_pass,놀|패스|noll,1,놀은 장부 중개인이야. 실명은 없고 수수료만 남지. 원본은 그 사람이 쥐고 있어.,Noll brokers ledgers. No real name. Only the fee remains. He holds the original.
+scn_kade,npc_cpt_sq_kade_rim,케이드|림|kade,1,케이드는 상자 기록원이야. 위치만 말하고 뚜껑은 열지 않아.,Kade logs crates. He gives the slot and does not open the lid.
+scn_rhea,npc_cpt_sq_rhea_vin,레아|빈|rhea,1,레아는 항로 접선이야. 일련번호는 자기가 대조하고 너에겐 위치만 확인해 달래.,Rhea is the route contact. She matches the serial and asks you only to mark the slot.
+scn_cal,npc_cpt_sq_cal_ridge,칼|릿지|cal,1,칼은 국경 바 주임이야. 빈 정박 소문은 술자리 말로만 흘려.,Cal runs the border bar. Empty-berth rumors stay in the drink and do not become a file.
+scn_lira,npc_cpt_sq_lira_mon,리라|몬|lira,1,리라는 국경 서기야. 관문을 지키는 하루를 말로 접고 고향 이야기는 서로 안 물어.,Lira keeps the gate record. She closes the day in speech and no one asks about home.

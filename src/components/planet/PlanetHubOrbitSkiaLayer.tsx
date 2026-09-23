@@ -8,9 +8,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import Animated, { type SharedValue, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import type { ArcNpcTrafficShip } from '../../store/arcNpcTrafficStore';
 import { FONTS } from '../../utils/theme';
-import { readPlanetOrbitClockMs } from '../../arcCore/orbitClockMsBridge';
+import { PLANET_HUB_CAPITAL_COMBAT_GRAY } from '../../game/planetHub/planetHubConstants';
 import { PLANET_MAIN_ORBIT_SCENE_SIZE } from '../../stages/planetMainStageLayout';
-import { computeArcNpcShipScreenPacked, packArcNpcShipsToFloat32 } from './planetOrbitHubWorklets';
+import { computeArcNpcShipScreenPacked } from './planetOrbitHubWorklets';
+import {
+  createArcOrbitPackEpochState,
+  packArcNpcShipsWithEpoch,
+} from './arcOrbitPackEpoch';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -67,6 +71,7 @@ const HubArcOrbitMark = memo(function HubArcOrbitMark({
   flatSv,
   shipCountSv,
   center,
+  combatGray,
 }: {
   index: number;
   caption: string;
@@ -75,6 +80,7 @@ const HubArcOrbitMark = memo(function HubArcOrbitMark({
   flatSv: SharedValue<number[]>;
   shipCountSv: SharedValue<number>;
   center: number;
+  combatGray?: boolean;
 }) {
   const animated = useAnimatedStyle(() => {
     'worklet';
@@ -101,9 +107,23 @@ const HubArcOrbitMark = memo(function HubArcOrbitMark({
   return (
     <AnimatedView style={[styles.markWrap, animated]} pointerEvents="none">
       <View style={styles.labelCol}>
-        <Text style={styles.diamond}>◇</Text>
+        <Text
+          style={[
+            styles.diamond,
+            combatGray ? { color: PLANET_HUB_CAPITAL_COMBAT_GRAY.shipMark } : null,
+          ]}
+        >
+          ◇
+        </Text>
         {caption ? (
-          <Text style={styles.caption} numberOfLines={1} ellipsizeMode="tail">
+          <Text
+            style={[
+              styles.caption,
+              combatGray ? { color: PLANET_HUB_CAPITAL_COMBAT_GRAY.territory } : null,
+            ]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {caption}
           </Text>
         ) : null}
@@ -116,15 +136,18 @@ export const PlanetHubOrbitSkiaLayer = memo(function PlanetHubOrbitSkiaLayer({
   orbitClockMs,
   arcShips,
   arcCaptionHeads,
+  combatGray,
 }: {
   orbitClockMs: SharedValue<number>;
   arcShips: ArcNpcTrafficShip[];
   arcCaptionHeads: string[];
+  combatGray?: boolean;
 }) {
   const flatSv = useSharedValue<number[]>([]);
   const syncMsSv = useSharedValue(0);
   const shipCountSv = useSharedValue(0);
   const arcPackSigRef = useRef('');
+  const packEpochRef = useRef(createArcOrbitPackEpochState());
 
   const arcPackSig = useMemo(
     () =>
@@ -135,6 +158,7 @@ export const PlanetHubOrbitSkiaLayer = memo(function PlanetHubOrbitSkiaLayer({
             s.phase,
             s.phaseDurationSec.toFixed(3),
             s.orbitRadiusPx.toFixed(2),
+            s.orbitAngleRad.toFixed(4),
             s.edgeAngleRad.toFixed(4),
             s.arcTrafficDwellRadPerSec.toFixed(4),
           ].join(':'),
@@ -144,29 +168,41 @@ export const PlanetHubOrbitSkiaLayer = memo(function PlanetHubOrbitSkiaLayer({
   );
 
   /**
-   * 재-pack(arcPackSig 변경 — 아무 함선이든 phase/planetId/반경 등 변경 시 전원 동시 재앵커) 계약
-   * (2026-07-27, arc-transport-dwell-jank): `syncMsSv`(=t0)는 `readPlanetOrbitClockMs()`의
-   * throttled JS 미러라 worklet이 직접 읽는 진짜 SharedValue보다 지연될 수 있다 — 이 지연 자체는
-   * 고치지 않는다(JS에서 SharedValue.value 직접 읽기는 2026-06-21 SIGSEGV 전례로 금지된 경로).
-   * 대신 dwelling 각도 적분은 `phaseElapsedSec`(JS `tickShips`가 코어 벽시계로 누적, throttle 없음)
-   * + dt(=m-t0, 재-pack 이후 worklet 자체 경과)를 더한 값 하나로만 하므로(`computeArcNpcShipScreenPacked`),
-   * t0 지연이 있어도 재-pack 경계에서 각도가 튀지 않는다(unit test: `planetOrbitHubWorklets.test.ts`).
+   * 재-pack 계약 (2026-07-27 / 08-10 / 08-10 reaudit):
+   * - syncMs = JS orbit-clock 미러 (SharedValue JS 직접 읽기 금지).
+   * - phaseElapsed는 wall store가 아니라 arcOrbitPackEpoch(직전 pack+Δmirror)로 연속.
+   * - dwelling→departing bake · entering eject bake는 AiNpcSubCore.
+   * - React key = ship.id — 목록 변동 시 슬롯 스왑 점프 방지.
    */
   useLayoutEffect(() => {
     if (arcPackSigRef.current === arcPackSig) return;
     arcPackSigRef.current = arcPackSig;
+    const { flat, syncMs } = packArcNpcShipsWithEpoch(arcShips, packEpochRef.current);
     shipCountSv.value = arcShips.length;
-    flatSv.value = packArcNpcShipsToFloat32(arcShips);
-    syncMsSv.value = readPlanetOrbitClockMs();
+    flatSv.value = flat;
+    syncMsSv.value = syncMs;
   }, [arcPackSig, arcShips, flatSv, shipCountSv, syncMsSv]);
 
   const center = PLANET_MAIN_ORBIT_SCENE_SIZE / 2;
-  const arcCaptionSlots = useMemo(
-    () => Array.from({ length: HUB_ARC_CAPTION_MAX }, (_, i) => arcCaptionHeads[i] ?? ''),
-    [arcCaptionHeads],
-  );
-  const markCount = Math.min(arcShips.length, HUB_ARC_CAPTION_MAX);
-  if (markCount <= 0) return null;
+  const markSlots = useMemo(() => {
+    const n = Math.min(arcShips.length, HUB_ARC_CAPTION_MAX);
+    const out: { reactKey: string; index: number; caption: string }[] = [];
+    const seenIds = new Set<string>();
+    for (let i = 0; i < n; i += 1) {
+      const ship = arcShips[i]!;
+      // 잔존 중복 ship.id(템플릿 seed 회귀) — React key 충돌·이중 마크 방지
+      if (seenIds.has(ship.id)) continue;
+      seenIds.add(ship.id);
+      out.push({
+        reactKey: ship.id,
+        index: i,
+        caption: arcCaptionHeads[i] ?? '',
+      });
+    }
+    return out;
+  }, [arcShips, arcCaptionHeads]);
+
+  if (markSlots.length <= 0) return null;
 
   return (
     <View
@@ -176,16 +212,17 @@ export const PlanetHubOrbitSkiaLayer = memo(function PlanetHubOrbitSkiaLayer({
       accessibilityRole="image"
       accessible
     >
-      {Array.from({ length: markCount }, (_, index) => (
+      {markSlots.map((slot) => (
         <HubArcOrbitMark
-          key={`hub-arc-mark-${index}`}
-          index={index}
-          caption={arcCaptionSlots[index] ?? ''}
+          key={slot.reactKey}
+          index={slot.index}
+          caption={slot.caption}
           orbitClockMs={orbitClockMs}
           syncMsSv={syncMsSv}
           flatSv={flatSv}
           shipCountSv={shipCountSv}
           center={center}
+          combatGray={combatGray}
         />
       ))}
     </View>

@@ -11,7 +11,9 @@ import { listTerritorialCombatPolicies } from './arcCoreTerritorialCombatPolicy'
 import { listTerritorialCampaignGroups } from './arcCoreTerritorialCombatState';
 import { getArcCoreContestedPoolPolicy } from './arcCoreContestedPoolPolicy';
 import { TERRITORIAL_CAMPAIGN_PASS_INTERVAL_SEC } from './territorialCombatCampaign';
+import { isPlanetOccupationCombatEnabled } from '../balance/balanceTableRegistry';
 import {
+  isContestedPoolEligibleClass,
   resolveContestedEligibilityForSystem,
   type ContestedEligibilityClass,
   type ContestedHoldSide,
@@ -35,6 +37,13 @@ import {
 } from './dynamicContestedZoneStore';
 import { listAdjacentSystemIds } from './territorialSupplyLine';
 import { resolveHoldFactionSide } from './territorialFactionSide';
+import {
+  applyCapitalDefensePoolScore,
+} from './applyCapitalDefenseAdjustments';
+import {
+  resolveCapitalDefenseContext,
+  shouldBanCapitalFromContestedPool,
+} from './resolveCapitalDefenseContext';
 
 export { markContestedPoolDirty, isContestedPoolDirty };
 
@@ -107,16 +116,29 @@ async function rebalanceCampaignGroup(
   const members: ContestedPoolMemberInput[] = universe.map(({ planetId, systemId }) => {
     const hold = warStore.getHold(planetId);
     const holdSide = resolveHoldFactionSide(hold?.occupierClanId) as ContestedHoldSide;
-    const classification = resolveContestedEligibilityForSystem({ systemId, holdSide, holds });
+    const rawClassification: ContestedEligibilityClass = isPlanetOccupationCombatEnabled(planetId)
+      ? resolveContestedEligibilityForSystem({ systemId, holdSide, holds })
+      : 'ineligible';
+    const capital = resolveCapitalDefenseContext({
+      planetId,
+      systemId,
+      holdSide,
+      holds,
+    });
+    const classification: ContestedEligibilityClass =
+      shouldBanCapitalFromContestedPool(capital) ? 'ineligible' : rawClassification;
     const isStaticCsvRow = csvStaticPlanetIds.has(planetId);
     const isActiveMember = isStaticCsvRow || dynamicPlanetIds.has(planetId);
     const hasAdjacentActiveMember = listAdjacentSystemIds(systemId).some((id) => activeMemberSystemIds.has(id));
     const recentPlayerCombat = isWaveCombatCooldownActive(planetId);
-    const score = scoreContestedEligibilityCandidate({
-      classification,
-      hasAdjacentActiveMember,
-      recentPlayerCombat,
-    });
+    const score = applyCapitalDefensePoolScore(
+      scoreContestedEligibilityCandidate({
+        classification,
+        hasAdjacentActiveMember,
+        recentPlayerCombat,
+      }),
+      capital,
+    );
     return {
       planetId,
       systemId,
@@ -167,14 +189,13 @@ async function rebalanceCampaignGroup(
   const nAfter = members.filter((m) => {
     if (demotedSet.has(m.planetId)) return false;
     const active = m.isActiveMember || promotedSet.has(m.planetId);
-    return active && m.classification !== 'safe_hinterland';
+    return active && isContestedPoolEligibleClass(m.classification);
   }).length;
   const hasPromoteCandidates = members.some(
     (m) =>
       !m.isActiveMember
       && !promotedSet.has(m.planetId)
-      && m.classification !== 'safe_hinterland'
-      && m.classification !== 'ineligible'
+      && isContestedPoolEligibleClass(m.classification)
       && !m.inCooldown,
   );
   const hasDemoteCandidates = members.some(
@@ -182,7 +203,7 @@ async function rebalanceCampaignGroup(
       (m.isActiveMember || promotedSet.has(m.planetId))
       && !m.isStaticCsvRow
       && !demotedSet.has(m.planetId)
-      && m.classification !== 'safe_hinterland'
+      && isContestedPoolEligibleClass(m.classification)
       && !m.inCooldown,
   );
   if (

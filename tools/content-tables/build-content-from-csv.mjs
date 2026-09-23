@@ -418,6 +418,7 @@ function buildNpcCaptains() {
     displayName: ${q(r.displayName)},
     displayNameEn: ${readCsvEnField(r, 'displayNameEn', 'display_name_en') ? q(readCsvEnField(r, 'displayNameEn', 'display_name_en')) : 'undefined'},
     rank: ${q(r.rank)},
+    rankEn: ${readCsvEnField(r, 'rankEn', 'rank_en') ? q(readCsvEnField(r, 'rankEn', 'rank_en')) : 'undefined'},
     factionId: ${q(nullable(r.factionId))},
     aiAggression: ${q(r.aiAggression)},
     aiRole: ${q(r.aiRole)},
@@ -442,8 +443,11 @@ function buildNpcCaptains() {
     mainStageTalkSceneId: ${q(nullable(r.mainStageTalkSceneId))},
     mainStageMissionTriggerId: ${q(nullable(r.mainStageMissionTriggerId))},
     mainStageEventTriggerId: ${q(nullable(r.mainStageEventTriggerId))},
-    tavernPlanetIds: ${JSON.stringify(splitPipe(r.tavernPlanetIdsPipe))},
+    barPlanetIds: ${JSON.stringify(splitPipe(r.barPlanetIdsPipe))},
     portraitImageAssetKey: ${q(nullable(r.portraitImageAssetKey))},
+    deathEligible: ${toBool(r.deathEligible)},
+    deathClass: ${q(['none', 'main_story'].includes(String(r.deathClass ?? '').trim()) ? String(r.deathClass).trim() : 'none')},
+    questOnly: ${toFlag01(r.questOnly)},
     progression: {
       initialLevel: ${toInt(r.initialLevel || 1)},
       initialExp: ${toInt(r.initialExp || 0)},
@@ -691,6 +695,13 @@ function buildMissions() {
       const offerPlanetId = nullable(m.offerPlanetId);
       const levelRequired = m.levelRequired ? toInt(m.levelRequired) : 'undefined';
       const clearDialogSceneId = nullable(m.clearDialogSceneId);
+      const clearNpcCaptainId = nullable(m.clearNpcCaptainId);
+      const requiresClearContact = toLayerBoolWithDefault(m.requiresClearContact, false);
+      const timeLimitHoursRaw = m.timeLimitHours;
+      const timeLimitHours =
+        timeLimitHoursRaw === '' || timeLimitHoursRaw == null
+          ? 'undefined'
+          : toInt(timeLimitHoursRaw);
       return `  ${JSON.stringify(m.id)}: {
     id: ${q(m.id)},
     title: ${q(m.title)},
@@ -714,6 +725,9 @@ ${objs}
     offerPlanetId: ${offerPlanetId ? q(offerPlanetId) : 'undefined'},
     levelRequired: ${levelRequired},
     clearDialogSceneId: ${clearDialogSceneId ? q(clearDialogSceneId) : 'undefined'},
+    clearNpcCaptainId: ${clearNpcCaptainId ? q(clearNpcCaptainId) : 'undefined'},
+    requiresClearContact: ${requiresClearContact ? 'true' : 'undefined'},
+    timeLimitHours: ${timeLimitHours},
   }`;
     })
     .join(',\n');
@@ -819,6 +833,7 @@ function buildPlanetGovernorCommanders() {
     ownershipTier: ${q(row.ownershipTier)},
     governorCaptainId: ${q(row.governorCaptainId)},
     governorTitleKo: ${q(row.governorTitleKo ?? '')},
+    governorTitleEn: ${readCsvEnField(row, 'governorTitleEn', 'governor_title_en') ? q(readCsvEnField(row, 'governorTitleEn', 'governor_title_en')) : 'undefined'},
     hostileToPlayerBlue: ${toBool(row.hostileToPlayerBlue)},
     talkEnabled: ${toBool(row.talkEnabled)},
     talkPriority: ${toInt(row.talkPriority, 5)},
@@ -836,6 +851,7 @@ function buildPlanetGovernorCommanders() {
   ownershipTier: string;
   governorCaptainId: string;
   governorTitleKo: string;
+  governorTitleEn?: string;
   hostileToPlayerBlue: boolean;
   talkEnabled: boolean;
   talkPriority: number;
@@ -862,6 +878,7 @@ function buildPlanetGovernorReserveCommanders() {
     occupationSide: ${q(String(row.occupationSide ?? 'NEUTRAL').trim().toUpperCase())},
     rankKo: ${q(row.rankKo ?? '')},
     governorTitleKo: ${q(row.governorTitleKo ?? '')},
+    governorTitleEn: ${readCsvEnField(row, 'governorTitleEn', 'governor_title_en') ? q(readCsvEnField(row, 'governorTitleEn', 'governor_title_en')) : 'undefined'},
     dialogSceneId: ${q(row.dialogSceneId ?? '')},
     assignedShipId: ${q(row.assignedShipId ?? '')},
     reserveOrder: ${toInt(row.reserveOrder, 0)},
@@ -876,6 +893,7 @@ function buildPlanetGovernorReserveCommanders() {
   occupationSide: 'BLUE' | 'RED' | 'NEUTRAL';
   rankKo: string;
   governorTitleKo: string;
+  governorTitleEn?: string;
   dialogSceneId: string;
   assignedShipId: string;
   reserveOrder: number;
@@ -953,7 +971,7 @@ function buildSystems() {
         descriptionEn: ${planetDescEn ? q(planetDescEn) : 'undefined'},
         hasTradePort: ${toBool(p.hasTradePort)},
         hasShipyard: ${toBool(p.hasShipyard)},
-        hasTavern: ${toBool(p.hasTavern)},
+        hasBar: ${toBool(p.hasBar)},
         tradeGoods: ${JSON.stringify(goods)},
         factionId: ${q(p.factionId)},
         coreResource: ${Math.min(100, Math.max(0, toInt(p.coreResource, 50)))},
@@ -1401,6 +1419,8 @@ function buildStoryScenes() {
         viewMode: ${q((p.viewMode || 'cinematic').trim() || 'cinematic')},
         textBoxPreset: ${q((p.textBoxPreset || 'default').trim() || 'default')},
         imageScalePct: ${toInt(p.imageScalePct, 100)},
+        actionLabel: ${q(nullable(p.actionLabel))},
+        actionLabelEn: ${q(nullable(p.actionLabel_en ?? p.actionLabelEn))},
       }`)
         .join(',\n');
 
@@ -1434,6 +1454,135 @@ ${body}
 `;
 }
 
+function toFlag01(v) {
+  const s = String(v ?? '').trim().toLowerCase();
+  return s === '1' || s === 'true' || s === 'yes';
+}
+
+function normalizeMainStoryContentStatus(v) {
+  const s = String(v ?? '').trim().toLowerCase();
+  if (s === 'ready' || s === 'partial' || s === 'skeleton') return s;
+  return 'skeleton';
+}
+
+function buildMainStorySpine() {
+  const chapters = loadCsvOptional('main_story_chapters.csv').filter((r) => String(r.id ?? '').trim());
+  const quests = loadCsvOptional('main_story_quests.csv').filter((r) => String(r.questId ?? '').trim());
+  const branches = loadCsvOptional('main_story_branches.csv').filter((r) => String(r.id ?? '').trim());
+  const steps = loadCsvOptional('main_story_chain_steps.csv').filter((r) => String(r.stepId ?? '').trim());
+
+  const chapterBody = chapters
+    .map(
+      (r) => `  {
+    id: ${q(r.id)},
+    order: ${toInt(r.order, 0)},
+    titleKo: ${q(r.titleKo || r.id)},
+    titleEn: ${q(r.titleEn || r.titleKo || r.id)},
+    themeKo: ${q(r.themeKo || '')},
+    themeEn: ${q(r.themeEn || '')},
+    contentStatus: ${q(normalizeMainStoryContentStatus(r.contentStatus))},
+    endStorySceneId: ${q(r.endStorySceneId || '')},
+    endStoryReady: ${toFlag01(r.endStoryReady)},
+    notes: ${q(r.notes || '')},
+  }`,
+    )
+    .join(',\n');
+
+  const questBody = quests
+    .map(
+      (r) => `  {
+    questId: ${q(r.questId)},
+    chapterId: ${q(r.chapterId)},
+    questIndex: ${toInt(r.questIndex, 0)},
+    bindMissionId: ${q(nullable(r.bindMissionId))},
+    contentStatus: ${q(normalizeMainStoryContentStatus(r.contentStatus))},
+    questKind: ${q(String(r.questKind || 'spine').trim() === 'branch' ? 'branch' : 'spine')},
+    isChapterCloser: ${toFlag01(r.isChapterCloser)},
+    titlePlaceholderKo: ${q(r.titlePlaceholderKo || r.questId)},
+    titlePlaceholderEn: ${q(r.titlePlaceholderEn || r.titlePlaceholderKo || r.questId)},
+    notes: ${q(r.notes || '')},
+  }`,
+    )
+    .join(',\n');
+
+  const branchBody = branches
+    .map(
+      (r) => `  {
+    id: ${q(r.id)},
+    fromQuestId: ${q(r.fromQuestId)},
+    toQuestId: ${q(r.toQuestId)},
+    choiceId: ${q(r.choiceId || '')},
+    choiceLabelKo: ${q(r.choiceLabelKo || '')},
+    choiceLabelEn: ${q(r.choiceLabelEn || '')},
+    conditionKind: ${q(String(r.conditionKind || 'always').trim() === 'flag' ? 'flag' : 'always')},
+    conditionValue: ${q(r.conditionValue || '')},
+    priority: ${toInt(r.priority, 0)},
+    enabled: ${toFlag01(r.enabled)},
+  }`,
+    )
+    .join(',\n');
+
+  const stepBody = steps
+    .map(
+      (r) => `  {
+    parentQuestId: ${q(r.parentQuestId)},
+    stepIndex: ${toInt(r.stepIndex, 0)},
+    stepId: ${q(r.stepId)},
+    bindMissionId: ${q(nullable(r.bindMissionId))},
+    contentStatus: ${q(normalizeMainStoryContentStatus(r.contentStatus))},
+    stepKind: 'mission',
+    titlePlaceholderKo: ${q(r.titlePlaceholderKo || r.stepId)},
+    titlePlaceholderEn: ${q(r.titlePlaceholderEn || r.titlePlaceholderKo || r.stepId)},
+  }`,
+    )
+    .join(',\n');
+
+  return `import type {
+  MainStoryBranchRow,
+  MainStoryChapterRow,
+  MainStoryChainStepRow,
+  MainStoryQuestRow,
+} from '../../missions/mainStory/mainStoryTypes';
+
+export const MAIN_STORY_CHAPTERS_FROM_CSV: readonly MainStoryChapterRow[] = [
+${chapterBody}
+];
+
+export const MAIN_STORY_QUESTS_FROM_CSV: readonly MainStoryQuestRow[] = [
+${questBody}
+];
+
+export const MAIN_STORY_BRANCHES_FROM_CSV: readonly MainStoryBranchRow[] = [
+${branchBody}
+];
+
+export const MAIN_STORY_CHAIN_STEPS_FROM_CSV: readonly MainStoryChainStepRow[] = [
+${stepBody}
+];
+`;
+}
+
+function buildMissionTimeLimitPolicy() {
+  const rows = loadCsvOptional('mission_time_limit_policy.csv');
+  const body = rows
+    .map(
+      (r) =>
+        `  { track: ${q(r.track)}, playCategory: ${q(r.playCategory)}, timeLimitHours: ${toInt(r.timeLimitHours)} }`,
+    )
+    .join(',\n');
+  return `/** Table-First 정본: tables/content/mission_time_limit_policy.csv */
+export type MissionTimeLimitPolicyRow = {
+  track: string;
+  playCategory: string;
+  timeLimitHours: number;
+};
+
+export const MISSION_TIME_LIMIT_POLICY_FROM_CSV: MissionTimeLimitPolicyRow[] = [
+${body}
+];
+`;
+}
+
 function writeOut(fileName, content) {
   writeFileSync(resolve(OUT_DIR, fileName), `// AUTO-GENERATED by tools/content-tables/build-content-from-csv.mjs\n${content}`, 'utf8');
 }
@@ -1449,6 +1598,11 @@ function main() {
   writeOut('csvNpcCapitalShipEquipSlots.ts', buildNpcCapitalShipEquipSlots());
   writeOut('csvWeapons.ts', buildWeapons());
   writeOut('csvMissions.ts', buildMissions());
+  writeFileSync(
+    resolve(ROOT, 'src', 'missions', 'missionTimeLimitPolicy.ts'),
+    `// AUTO-GENERATED by tools/content-tables/build-content-from-csv.mjs\n${buildMissionTimeLimitPolicy()}`,
+    'utf8',
+  );
   writeOut('csvMissionQuestPlacements.ts', buildMissionQuestPlacements());
   writeOut('csvMissionQuestCombatOps.ts', buildMissionQuestCombatOps());
   writeOut('csvMissionCombatCaptains.ts', buildMissionCombatCaptains());
@@ -1462,6 +1616,7 @@ function main() {
   writeOut('csvSkills.ts', buildSkills());
   writeOut('csvPlayerProfessions.ts', buildPlayerProfessions());
   writeOut('csvStoryScenes.ts', buildStoryScenes());
+  writeOut('csvMainStorySpine.ts', buildMainStorySpine());
   writeOut(
     'index.ts',
     `export { SHIP_TEMPLATES_FROM_CSV } from './csvShipTemplates';
@@ -1511,6 +1666,12 @@ export { ENEMY_TEMPLATES_FROM_CSV, type EnemyTemplateCsvRow } from './csvEnemyTe
 export { ITEM_DEFS_FROM_CSV } from './csvItemDefs';
 export { SKILLS_FROM_CSV } from './csvSkills';
 export { STORY_SCENES_FROM_CSV } from './csvStoryScenes';
+export {
+  MAIN_STORY_CHAPTERS_FROM_CSV,
+  MAIN_STORY_QUESTS_FROM_CSV,
+  MAIN_STORY_BRANCHES_FROM_CSV,
+  MAIN_STORY_CHAIN_STEPS_FROM_CSV,
+} from './csvMainStorySpine';
 export {
   PLAYER_PROFESSIONS_FROM_CSV,
   PLAYER_PROFESSION_LIST_FROM_CSV,

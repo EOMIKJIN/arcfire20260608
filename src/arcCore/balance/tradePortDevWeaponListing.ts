@@ -10,7 +10,9 @@ import { resolveTradePortHighGradeWeaponWeightBonus } from './facilityTradePortL
 import {
   buildTradePortWeaponIdsForZoneUncapped,
   capTradePortWeaponListingToZonePolicy,
+  isCanonicalTradePortWeapon,
   isPinnedTradePortWeapon,
+  listChallengeWeaponIdsForZone,
   MAX_WEAPON_TRADE_GRADE_RANK,
   resolveTradePortWeaponIdsForZone,
   resolveWeaponTradeGradeRank,
@@ -82,14 +84,23 @@ export function resolveTradePortWeaponIdsForPlanetDev(
     return resolveTradePortWeaponIdsForZone(zoneIndex);
   }
 
+  const reserved = listChallengeWeaponIdsForZone(zoneIndex);
   const uncapped = buildTradePortWeaponIdsForZoneUncapped(zoneIndex);
   const listingCap = getTradePortWeaponListingCount();
-  if (uncapped.length <= listingCap) return uncapped;
+  if (uncapped.length <= listingCap) {
+    return capTradePortWeaponListingToZonePolicy(uncapped, reserved);
+  }
 
-  const pinned = uncapped.filter((id) => isPinnedTradePortWeapon(id));
-  const progression = uncapped.filter((id) => !isPinnedTradePortWeapon(id));
-  const progressionSlots = Math.max(0, listingCap - pinned.length);
-  if (progressionSlots <= 0) return capTradePortWeaponListingToZonePolicy(uncapped);
+  const reservedSet = new Set(reserved);
+  const pinned = uncapped.filter((id) => isPinnedTradePortWeapon(id) && !reservedSet.has(id));
+  const progression = uncapped.filter(
+    (id) => !isPinnedTradePortWeapon(id) && !reservedSet.has(id),
+  );
+  const reservedSlots = reserved.filter((id) => isCanonicalTradePortWeapon(id));
+  const progressionSlots = Math.max(0, listingCap - pinned.length - reservedSlots.length);
+  if (progressionSlots <= 0) {
+    return capTradePortWeaponListingToZonePolicy(uncapped, reserved);
+  }
 
   const weightBonus = resolveTradePortHighGradeWeaponWeightBonus(tradePortLevel);
   const seed = hashStringToInt(`${planetId}:trade_port_weapon:${tradePortLevel}`);
@@ -101,5 +112,5 @@ export function resolveTradePortWeaponIdsForPlanetDev(
     rand,
   );
 
-  return sortTradePortWeaponIds([...pinned, ...picked]);
+  return sortTradePortWeaponIds([...reservedSlots, ...pinned, ...picked]);
 }

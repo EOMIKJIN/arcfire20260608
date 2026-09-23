@@ -51,10 +51,10 @@ export const STAGES: Record<StageRouteName, StageDefinition> = {
     routeName: 'shipyard',
     displayName: '조선소',
   },
-  tavern: {
-    id: 'tavern',
-    routeName: 'tavern',
-    displayName: '선술집',
+  bar: {
+    id: 'bar',
+    routeName: 'bar',
+    displayName: '바',
   },
   skilltree: {
     id: 'skill_tree',

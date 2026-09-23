@@ -54,6 +54,14 @@ export function writeFacilityModuleDetail(
       development: { version: 1, byModuleId },
     },
   });
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { notePlanetDevJobMaybe } =
+      require('./planetDevJobRealtimeWatch') as typeof import('./planetDevJobRealtimeWatch');
+    notePlanetDevJobMaybe(planetId);
+  } catch {
+    /* 워치 미기동 */
+  }
   return true;
 }
 

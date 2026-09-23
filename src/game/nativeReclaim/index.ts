@@ -18,6 +18,11 @@ export {
   schedulePlanetHubPostSkiaPeakReclaim,
 } from './runPlanetHubPostSkiaPeakReclaimPass';
 export {
+  markHubSoftReclaimPending,
+  consumeHubSoftReclaimPending,
+  peekHubSoftReclaimPending,
+} from './hubPendingSoftReclaim';
+export {
   resolveActivePlanetSessionAnchorId,
   resolveSinglePlanetSessionKeepIds,
 } from './singlePlanetSessionKeep';
@@ -35,6 +40,7 @@ export { runPostHubCombatWorldmapIngressReclaim } from './runPostHubCombatWorldm
 export { runDeepNativeReclaimPass } from './runDeepNativeReclaimPass';
 export type { DeepNativeReclaimPassOptions } from './runDeepNativeReclaimPass';
 export { runPlanetHubCombatSafeReclaimPass } from './runPlanetHubCombatSafeReclaimPass';
+export { runPlanetHubPreCombatReclaimPass } from './runPlanetHubPreCombatReclaimPass';
 export {
   getHubBackdropNativeRemountEpoch,
   signalHubBackdropNativeRemount,
@@ -46,6 +52,7 @@ export {
   HUB_DEEP_NATIVE_RECLAIM_INTERVAL_MS,
   HUB_SOFT_NATIVE_RECLAIM_INTERVAL_MS,
   HUB_DODGE_OVERLAY_UNMOUNT_DEBOUNCE_MS,
+  HUB_INBOUND_SETTLE_RECLAIM_MS,
   GALAXY_MAP_DEEP_RECLAIM_EVERY_N_SOFT_TICKS,
   GALAXY_MAP_DEEP_RECLAIM_RETRY_MAX,
   GALAXY_MAP_DEEP_RECLAIM_RETRY_MS,

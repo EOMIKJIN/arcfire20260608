@@ -1,0 +1,116 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>세계관 — 아크파이어 온라인 위키</title>
+<meta name="description" content="아크파이어 온라인의 배경 세계, 핵심 루프, 아크코어의 위치" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body data-page="world">
+
+<header class="site-header">
+  <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <div class="site-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
+    <div class="search-hits"></div>
+  </div>
+  <button class="theme-toggle" type="button" aria-label="테마 전환"></button>
+</header>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-group"><h5>시작</h5><a href="index.html" data-page="index"><span class="dot"></span>홈</a></div>
+    <div class="sidebar-group"><h5>세계</h5>
+      <a href="world.html" data-page="world" class="active"><span class="dot"></span>세계관 · 아크코어</a>
+      <a href="factions.html" data-page="factions"><span class="dot"></span>4대 세력</a>
+      <a href="galaxy.html" data-page="galaxy"><span class="dot"></span>은하 · 행성</a>
+      <a href="story.html" data-page="story"><span class="dot"></span>스토리 · 미션</a>
+    </div>
+    <div class="sidebar-group"><h5>전력</h5>
+      <a href="ships.html" data-page="ships"><span class="dot"></span>함선</a>
+      <a href="weapons.html" data-page="weapons"><span class="dot"></span>무기체계</a>
+      <a href="skills.html" data-page="skills"><span class="dot"></span>스킬</a>
+      <a href="items.html" data-page="items"><span class="dot"></span>아이템 · 강화</a>
+    </div>
+    <div class="sidebar-group"><h5>체제</h5>
+      <a href="economy.html" data-page="economy"><span class="dot"></span>경제 시스템</a>
+      <a href="planetdev.html" data-page="planetdev"><span class="dot"></span>행성개발</a>
+      <a href="combat.html" data-page="combat"><span class="dot"></span>전투 · 분쟁</a>
+      <a href="arccore.html" data-page="arccore"><span class="dot"></span>아크코어 AI</a>
+      <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
+      <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="content-wrap">
+    <article class="content">
+      <div class="eyebrow">세계 · 배경</div>
+      <h1 class="page-title">세계관</h1>
+      <p class="page-lede">
+        플레이어는 은하 동쪽을 장악한 <strong>크림슨 레기온</strong>과, 서쪽의 <strong>스텔리움 연합</strong>이
+        전쟁 중인 시기에 국경 행성 아르카디아에 배치된 <strong>중급 함장</strong>이다. 다른 유저는 없지만,
+        은하는 <strong>아크코어(ArcCore)</strong>라는 AI가 실제로 굴린다 — 이 게임에서 「세계관」은 장식이 아니라
+        경제·전투·대화 시스템이 실제로 근거하는 설정이다.
+      </p>
+
+      <h2>핵심 루프</h2>
+      <p>게임은 3단계 스테이지를 오간다.</p>
+      <div class="card-grid">
+        <div class="card"><span class="card-eyebrow">STAGE 1</span><h4>행성 허브</h4><p>스캔 → 채굴 → 무역 → 조선소 → 바·NPC 대화</p></div>
+        <div class="card"><span class="card-eyebrow">STAGE 2</span><h4>은하 지도</h4><p>성계 간 이동, 조우전 발생 지점</p></div>
+        <div class="card"><span class="card-eyebrow">STAGE 3</span><h4>전투</h4><p>궤도 실시간 전투 · 웨이브 디펜스</p></div>
+      </div>
+      <p>
+        본거지 행성은 자원·인구·방어·기술·환경 5개 지표로 발전하며, 이 지표들이 <a href="economy.html">경제 시스템</a>
+        전체의 기반이 된다. 경쟁 배제형 싱글플레이 샌드박스로 설계돼 있다 — 다른 유저와의 PvP 과금 압박 구조가 없다.
+      </p>
+
+      <h2>아크코어란 무엇인가</h2>
+      <p>
+        아크코어는 은하 경제·세력·전선을 실제로 돌리는 백엔드 AI이면서, 동시에 이야기 속 캐릭터이기도 하다.
+        2026-09-18 자로 확정된 설정은 다음과 같다: <strong>아크코어 근원체는 플레이어를 위협으로 간주하는 적대적
+        존재</strong>이며, 늘 친절하게 말을 걸어주던 오퍼레이터 <strong>스텔라 아리스</strong>는 사실 그 근원체에서
+        갈라져 나와 플레이어 편에 선 목소리다. 「세계를 운영하는 중립적인 AI인 줄 알았는데, 사실은 적이었고,
+        지금껏 대화해온 친근한 목소리는 그 적에게서 갈라져 나와 나를 지키기로 한 존재였다」 — 이 게임의 대화
+        시스템 전체를 관통하는 가장 큰 반전이다. 자세한 구조는 <a href="arccore.html">아크코어 AI</a> 문서에서 다룬다.
+      </p>
+
+      <h2>세계관 속 디테일</h2>
+      <ul>
+        <li><strong>게임 제목 자체가 지명이다</strong> — 「아크파이어」는 은하 동쪽 끝, 영원히 타오르는 화염 에너지 코어를 품은
+        행성(크림슨 레기온의 수도)의 이름이다. 세 세력 모두가 그 안에 봉인된 고대 에너지를 두고 다툰다.</li>
+        <li><strong>시작과 끝을 상징하는 두 행성</strong> — 은하 서사의 종착점인 「이터니티(과거·현재·미래가 겹쳐 보이는 최종
+        보스 행성)」와 「제네시스(원시 바다와 생명이 있는, 만물의 기원)」는 의도적으로 짝을 이루는 처음·끝 상징으로
+        설계돼 있다.</li>
+        <li><strong>신스(Synth) 식민지</strong> — 21개 핵심 행성 외에 아크코어의 「자동 식민화 프로토콜」이 시간이 지나며
+        새로 풀어주는 79개의 신스 행성이 있다. 플레이어가 게임을 하는 동안에도 은하가 계속 개척되고 있다는
+        설정적 장치다.</li>
+        <li><strong>페르세우스 메모리얼</strong> — 전설적인 「페르세우스 전투」에서 희생된 함대를 기리는, 행성 하나를 통째로
+        전쟁 기념관으로 쓰는 곳. 아직 본문에 자세히 풀리지 않은 은하 역사를 암시한다.</li>
+      </ul>
+
+      <div class="callout note">
+        <strong>더 볼 곳</strong>
+        세력별 정체성과 색은 <a href="factions.html">4대 세력</a>, 21개 행성과 은하 그래프 구조는
+        <a href="galaxy.html">은하 · 행성</a>, 메인 스토리 1장과 현재 플레이 가능한 퀘스트는
+        <a href="story.html">스토리 · 미션</a>에서 이어진다.
+      </div>
+
+      <div class="source-note">정본: <code>docs/_000_ARCFIRE_BM_REPORT_v2.0.md</code> · <code>docs/_000_Arcfire_Planet_Final_Master_Plan.md</code> · <code>docs/ARC_CORE_DUAL_MOUTH_OPERATOR_DESIGN.md</code></div>
+    </article>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/wiki.js"></script>
+</body>
+</html>

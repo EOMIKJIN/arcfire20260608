@@ -19,6 +19,7 @@ import { COLORS } from '../src/utils/theme';
 import { t as tStatic } from '../src/i18n';
 import { usePlayerStore } from '../src/store/playerStore';
 import { useMissionStore } from '../src/store/missionStore';
+import { useMainStoryProgressStore } from '../src/store/mainStoryProgressStore';
 import { useArcCoreInstanceMissionBoardStore } from '../src/store/arcCoreInstanceMissionBoardStore';
 import { useWorldStore } from '../src/store/worldStore';
 import { useNpcCaptainProgressStore } from '../src/store/npcCaptainProgressStore';
@@ -30,7 +31,8 @@ import { useSkillDbStore } from '../src/store/skillDbStore';
 import { useClanWarFoundationStore } from '../src/store/clanWarFoundationStore';
 import { usePlanetCoreRuntimeStore } from '../src/store/planetCoreRuntimeStore';
 import { usePlanetNebulaStore } from '../src/store/planetNebulaStore';
-import { useTavernBoardStore } from '../src/store/tavernBoardStore';
+import { useBarBoardStore } from '../src/store/barBoardStore';
+import { useBarPatronageStore } from '../src/store/barPatronageStore';
 import { hydrateCombatMatchTelemetryCache } from '../src/store/combatMatchTelemetryStore';
 import { useWorldObjectRuntimeStore } from '../src/store/worldObjectRuntimeStore';
 import { initGuestAuth } from '../src/firebase/auth';
@@ -41,6 +43,10 @@ import {
 import { arcCoreHub } from '../src/arcCore/ArcCoreHub';
 import { attachArcCoreRuntimeCommandBridge } from '../src/arcCore/ArcCoreRuntimeBridge';
 import { ArcOverlayHost } from '../src/ui/overlay/ArcOverlayHost';
+import {
+  ArcCoreAgentSurfaceHost,
+  ArcCoreDualAppShell,
+} from '../src/ui/overlay/ArcCoreAgentSurfaceHost';
 import { IngameDialogHost } from '../src/game/ingameDialog/IngameDialogHost';
 import { LevelUpOverlayBridge } from '../src/ui/overlay/LevelUpOverlayBridge';
 import { useArcOverlayStore } from '../src/ui/overlay/arcOverlayStore';
@@ -93,6 +99,7 @@ export default function RootLayout() {
   const [updateGate, setUpdateGate] = useState<UpdateGateState | null>(null);
   const loadLocalPlayer = usePlayerStore((s) => s.loadLocalPlayer);
   const loadLocalMissions = useMissionStore((s) => s.loadLocalMissions);
+  const loadLocalMainStoryProgress = useMainStoryProgressStore((s) => s.loadLocal);
   const loadLocalArcCoreInstanceMissionBoard = useArcCoreInstanceMissionBoardStore(
     (s) => s.loadLocalArcCoreInstanceMissionBoard,
   );
@@ -117,7 +124,8 @@ export default function RootLayout() {
   const syncOwnedSkills = useSkillDbStore((s) => s.syncOwnedSkills);
   const loadLocalClanWarFoundation = useClanWarFoundationStore((s) => s.loadLocalClanWarFoundation);
   const loadLocalPlanetNebulaProfiles = usePlanetNebulaStore((s) => s.loadLocalProfiles);
-  const loadLocalBoard = useTavernBoardStore((s) => s.loadLocalBoard);
+  const loadLocalBoard = useBarBoardStore((s) => s.loadLocalBoard);
+  const loadLocalPatronage = useBarPatronageStore((s) => s.loadLocal);
   const bootstrapWorldObjectRuntimeFromWorld = useWorldObjectRuntimeStore((s) => s.bootstrapFromWorld);
 
   useEffect(() => {
@@ -155,6 +163,7 @@ export default function RootLayout() {
           loadLocalPlayer(),
           loadLocalClanWarFoundation(),
           loadLocalMissions(),
+          loadLocalMainStoryProgress(),
           loadLocalArcCoreInstanceMissionBoard(),
           loadLocalWorld(),
           loadLocalUserSession(),
@@ -164,7 +173,9 @@ export default function RootLayout() {
           loadLocalNpcCaptainProgress(),
           loadLocalPlanetNebulaProfiles(),
           loadLocalBoard(),
+          loadLocalPatronage(),
         ]);
+        useMissionStore.getState().reconcileOrphanArcInstWithBoard();
         await hydrateCombatMatchTelemetryCache();
         await bootstrapWorldObjectRuntimeFromWorld(useWorldStore.getState().systems);
         await usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync();
@@ -251,10 +262,12 @@ export default function RootLayout() {
     loadLocalClanWarFoundation,
     loadLocalItemLedger,
     loadLocalMissions,
+    loadLocalMainStoryProgress,
     loadLocalArcCoreInstanceMissionBoard,
     loadLocalNpcCaptainProgress,
     loadLocalPlanetNebulaProfiles,
     loadLocalBoard,
+    loadLocalPatronage,
     bootstrapWorldObjectRuntimeFromWorld,
     loadLocalPlayer,
     loadLocalSkillDb,
@@ -326,6 +339,30 @@ export default function RootLayout() {
             registerRunningArcCoreWallClockCatchUp(work);
           }, ARC_CORE_CATCH_UP_DEFER_MS);
         }
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          const { tickPlanetDevJobsRealtime } =
+            require('../src/game/planetDevelopment/planetDevJobRealtimeWatch') as typeof import('../src/game/planetDevelopment/planetDevJobRealtimeWatch');
+          tickPlanetDevJobsRealtime();
+        } catch {
+          /* 백그라운드 복귀 개발 완료 catch-up */
+        }
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          const { tickMissionExpireRealtime } =
+            require('../src/missions/missionExpireRealtimeWatch') as typeof import('../src/missions/missionExpireRealtimeWatch');
+          tickMissionExpireRealtime();
+        } catch {
+          /* 백그라운드 복귀 의뢰 만료 catch-up */
+        }
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          const { tickBarPatronageExpireRealtime } =
+            require('../src/game/bar/patronage/barPatronageExpireRealtimeWatch') as typeof import('../src/game/bar/patronage/barPatronageExpireRealtimeWatch');
+          tickBarPatronageExpireRealtime();
+        } catch {
+          /* 백그라운드 복귀 바 후원 만료 catch-up */
+        }
         resumeForegroundSession();
         void persistUserSession();
         const p = usePlayerStore.getState().player;
@@ -346,6 +383,7 @@ export default function RootLayout() {
       }
       void persistArcCoreWallClockLeftActiveNow();
       finalizeForegroundSlice();
+      void useMissionStore.getState().flushScheduledMissionPersist();
       cancelScheduledUserCloudSync();
       void persistUserSession();
       const p = usePlayerStore.getState().player;
@@ -357,6 +395,7 @@ export default function RootLayout() {
     });
     return () => {
       finalizeForegroundSlice();
+      void useMissionStore.getState().flushScheduledMissionPersist();
       cancelScheduledUserCloudSync();
       void persistUserSession();
       const p = usePlayerStore.getState().player;
@@ -440,6 +479,7 @@ export default function RootLayout() {
       <IdleSessionRestartGuard>
         <GameSaveRestorePendingConsumer />
         <StatusBar style="light" backgroundColor="#060A14" />
+        <ArcCoreDualAppShell>
         <Stack
           screenOptions={{
             headerShown: false,
@@ -450,6 +490,8 @@ export default function RootLayout() {
           <Stack.Screen name="index" />
           <Stack.Screen name="(game)" />
         </Stack>
+        </ArcCoreDualAppShell>
+        <ArcCoreAgentSurfaceHost />
         <ArcOverlayHost />
         <IngameDialogHost />
         <LevelUpOverlayBridge />

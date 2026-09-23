@@ -9,13 +9,18 @@ import {
   usePlanetCoreRuntimeStore,
   type PlanetCoreGaugeView,
 } from '../../store/planetCoreRuntimeStore';
-import { resolveCoreOpenGameplayPlanetRef } from '../../world/coreOpenGameplayPlanets';
-import { isPlanetContestedZone } from '../balance/balanceTableRegistry';
+import { forEachCoreOpenGameplayPlanet, resolveCoreOpenGameplayPlanetRef } from '../../world/coreOpenGameplayPlanets';
 import {
-  listContestedZoneStatAftermathPlanetIds,
   resolveContestedZoneAftermathGlobalPolicy,
   resolveContestedZoneStatAftermathOffsets,
 } from '../balance/contestedZoneAftermathPolicy';
+import { useClanWarFoundationStore } from '../../store/clanWarFoundationStore';
+import {
+  shouldApplyTheaterAftermath,
+  resolveWarTheaterState,
+  WAR_THEATER_AFTERMATH_TEMPLATE_PLANET_ID,
+} from '../territorial/resolveWarTheaterState';
+import { resolveHoldFactionSide } from '../territorial/territorialFactionSide';
 import { planetAttackKstDayKey } from '../planetAttack/planetAttackKstDayKey';
 import { calculatePlanetPgpFromStats } from '../../world/planetPgpModel';
 import {
@@ -100,12 +105,27 @@ export function runContestedZoneAftermathDailyPass(): ContestedZoneAftermathDail
   const kstDayKey = planetAttackKstDayKey();
   let planetsProcessed = 0;
 
-  const contestedIds = listContestedZoneStatAftermathPlanetIds().filter(
-    (planetId) => isPlanetContestedZone(planetId),
-  );
+  const holds = useClanWarFoundationStore.getState().planetHolds;
+  const contestedIds: string[] = [];
+  const seen = new Set<string>();
+  forEachCoreOpenGameplayPlanet(({ planetId, system }) => {
+    if (planetId === WAR_THEATER_AFTERMATH_TEMPLATE_PLANET_ID || seen.has(planetId)) return;
+    const holdSide = resolveHoldFactionSide(holds[planetId]?.occupierClanId);
+    const theater = resolveWarTheaterState({
+      planetId,
+      systemId: system.id,
+      holdSide,
+      holds,
+    });
+    if (!shouldApplyTheaterAftermath(theater)) return;
+    seen.add(planetId);
+    contestedIds.push(planetId);
+  });
 
   for (const planetId of contestedIds) {
-    const offsets = resolveContestedZoneStatAftermathOffsets(planetId);
+    const offsets =
+      resolveContestedZoneStatAftermathOffsets(planetId)
+      ?? resolveContestedZoneStatAftermathOffsets(WAR_THEATER_AFTERMATH_TEMPLATE_PLANET_ID);
     if (!offsets) continue;
 
     const baseline = csvBaselineGauge(planetId);

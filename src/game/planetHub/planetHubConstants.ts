@@ -1,6 +1,7 @@
 import { resolvePlanetTargetEngageSec } from '../../arcCore/balance/balanceTableRegistry';
 import { NPC_CAPTAINS_FROM_CSV } from '../../data/generated';
 import { NEARBY_PRESENCE_DISPLAY_SEP } from '../../npc';
+import { stripHubOrbitClanBracketPrefix } from './nearbyPresenceContract';
 import { captainMatchesPlanetOrbitTable } from '../../npc/captainOrbitTableMatch';
 
 /** 행성 허브 궤도 worklet·Skia 공통 */
@@ -28,6 +29,8 @@ export const PLANET_CORE_GAUGE_SPEC = [
   { key: 'environment', label: 'E', color: '#FFE36B' },
 ] as const;
 
+/** 허브 전투 배경 — 폰트·마크 ink만 회색. 행성 구체·게이지는 칼라 유지. 베일은 배경 전면 */
+export const PLANET_HUB_CAPITAL_COMBAT_VEIL_FILL = 'rgba(6, 8, 14, 0.64)';
 export const PLANET_HUB_CAPITAL_COMBAT_DIM_OPACITY = 0.48;
 export const PLANET_HUB_CAPITAL_COMBAT_GRAY = {
   zoneText: '#96A0B0',
@@ -47,7 +50,7 @@ export const PLANET_HUB_CAPITAL_COMBAT_GRAY = {
 export const INFO_LOG_LINE_HEIGHT_PX = 16;
 export const INFO_LOG_ROW_GAP_PX = 4;
 export const INFO_LOG_LINE_BLOCK_PX = INFO_LOG_LINE_HEIGHT_PX + INFO_LOG_ROW_GAP_PX;
-export const INFO_LOG_VIEWPORT_ROWS = 5;
+export const INFO_LOG_VIEWPORT_ROWS = 7;
 export const INFO_LOG_CONTENT_PAD_BOTTOM = 8;
 export const INFO_LOG_SCROLL_VIEWPORT_PX =
   INFO_LOG_VIEWPORT_ROWS * INFO_LOG_LINE_BLOCK_PX + INFO_LOG_CONTENT_PAD_BOTTOM;
@@ -91,7 +94,8 @@ export function orbitCaptainCaptionFromLine(line: string): string {
   const left = line.split(NEARBY_PRESENCE_DISPLAY_SEP)[0] ?? '';
   const idx = left.indexOf(' · ');
   const raw = idx >= 0 ? left.slice(0, idx).trim() : left.trim();
-  return orbitLabelHead3(raw);
+  // 함장명만 — 구 displayLine의 ‹클랜› prefix가 캡션·head3에 섞이지 않게 제거
+  return orbitLabelHead3(stripHubOrbitClanBracketPrefix(raw));
 }
 
 export function splitStoryTextByMaxLines(text: string, maxLines: number): string[] {

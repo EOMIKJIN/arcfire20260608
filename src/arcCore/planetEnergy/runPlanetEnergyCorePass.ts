@@ -39,6 +39,7 @@ import {
   resolvePlanetGenesisResourcePct,
   resolvePlanetResourceEcosystemPolicy,
 } from '../planetResource/planetResourceEcosystemPolicy';
+import { resolveFrontierEnergyResourceCap } from '../../world/galaxyFrontierDevelopmentRidge';
 import {
   applyPlanetCoreGaugeChangeOrIntent,
   isPlanetCoreGaugeIntentBatchActive,
@@ -103,12 +104,16 @@ export function runPlanetEnergyCorePass(): void {
       const runtime = coreStore.getPlanetCoreRuntime(planetId);
       if (!runtime) return;
 
-      const target = targetResourceFromMineralAndOrbit({
+      const uncapped = targetResourceFromMineralAndOrbit({
         planet,
         planetId,
         profile: profilesByPlanetId.get(planetId),
         universe,
       });
+      const target = Math.min(
+        uncapped,
+        resolveFrontierEnergyResourceCap(planetId, resolvePlanetGenesisResourcePct(planetId)),
+      );
       const orbitCount = resolvePlanetAsteroidOrbitCount(planetId);
       orbitCountPatch[planetId] = orbitCount;
       orbitMineralPatch[planetId] = resolvePlanetAsteroidAssignedMineralIds(planetId, orbitCount);

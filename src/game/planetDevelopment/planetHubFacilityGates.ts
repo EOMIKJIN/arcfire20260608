@@ -13,7 +13,7 @@ import { isPlanetPopulationDomeInstalled } from './planetPopulationDomeListing';
 import { hasActiveQuestBuyPlacementAtPlanet } from '../../missions/questItemOpsRegistry';
 import {
   isPlanetCsvShipyardWorldEnabled,
-  isPlanetCsvTavernWorldEnabled,
+  isPlanetCsvBarWorldEnabled,
   isPlanetCsvTradePortWorldEnabled,
 } from './planetCsvWorldFlags';
 
@@ -25,8 +25,8 @@ function planetHasCsvShipyard(planetId: string): boolean {
   return isPlanetCsvShipyardWorldEnabled(planetId);
 }
 
-function planetHasCsvTavern(planetId: string): boolean {
-  return isPlanetCsvTavernWorldEnabled(planetId);
+function planetHasCsvBar(planetId: string): boolean {
+  return isPlanetCsvBarWorldEnabled(planetId);
 }
 
 /** 허브 ⚓ 조선소 SUB-STAGE — CSV 조선소 보유 또는 dev 설치 */
@@ -50,9 +50,9 @@ export function isPlanetHubResearchLabEnabled(planetId: string): boolean {
   return isPlanetResearchLabInstalled(planetId);
 }
 
-/** 허브 🍺 선술집 — CSV 선술집 또는 dev 인구 돔 */
-export function isPlanetHubTavernEnabled(planetId: string): boolean {
-  return planetHasCsvTavern(planetId) || isPlanetPopulationDomeInstalled(planetId);
+/** 허브 🍺 바 — CSV 바 또는 dev 인구 돔 */
+export function isPlanetHubBarEnabled(planetId: string): boolean {
+  return planetHasCsvBar(planetId) || isPlanetPopulationDomeInstalled(planetId);
 }
 
 /** 방위위성 — dev 설치만 */

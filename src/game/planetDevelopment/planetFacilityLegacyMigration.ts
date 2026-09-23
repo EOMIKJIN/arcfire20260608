@@ -8,19 +8,19 @@ import { getPlanetRecord } from '../../world/planetTradePortDb';
 
 const LEGACY_MODULE_PAIRS = [
   { canonical: 'dev_research_lab', legacy: 'dev_laboratory' },
-  { canonical: 'dev_population_dome', legacy: 'dev_tavern' },
+  { canonical: 'dev_population_dome', legacy: 'dev_bar' },
 ] as const;
 
 const CSV_WORLD_DEV_PAIRS: ReadonlyArray<{
   moduleId: string;
-  csvFlag: 'hasTradePort' | 'hasShipyard' | 'hasTavern';
+  csvFlag: 'hasTradePort' | 'hasShipyard' | 'hasBar';
 }> = [
   { moduleId: 'dev_trade_port', csvFlag: 'hasTradePort' },
   { moduleId: 'dev_orbit_shipyard', csvFlag: 'hasShipyard' },
-  { moduleId: 'dev_population_dome', csvFlag: 'hasTavern' },
+  { moduleId: 'dev_population_dome', csvFlag: 'hasBar' },
 ];
 
-function planetCsvFlagEnabled(planetId: string, flag: 'hasTradePort' | 'hasShipyard' | 'hasTavern'): boolean {
+function planetCsvFlagEnabled(planetId: string, flag: 'hasTradePort' | 'hasShipyard' | 'hasBar'): boolean {
   const planet = getPlanetRecord(planetId);
   if (!planet) return false;
   return Boolean(planet[flag]);

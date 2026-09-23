@@ -1,0 +1,8 @@
+id,sort,when,clueTopic,textKo,textEn
+keep_mouth_body,1,refuse,,운용 요청은 거절하되 대화는 이어 받는다. 세계를 바꾸지 않는다.,Refuse operations requests but keep talking. Do not change the world.
+surface_alert,2,spy_pending,spy,첩보를 물으면 경보 유무를 말한다. 다른 말을 가로채지 않는다.,If asked about intel say whether an alert is pending. Do not hijack other talk.
+name_self,3,self,,정체를 물으면 활성 입의 페르소나로 답한다. 한 줄 정책으로 자르지 않되 연설로 늘리지 않는다.,"If asked who you are answer in the active mouth's persona. Do not cut it to a policy line, and do not lecture."
+anchor_location,4,has_planet,location,위치를 물으면 지금 정박한 행성으로 답한다.,If asked where they are answer with the docked planet.
+close_combat,5,has_combat,combat,전투를 물으면 기록으로 답한다. 묻지 않았으면 끌어가지 않는다.,If asked about battle answer from the record. Do not drag them there unasked.
+invite_axis,6,always,,일상은 두세 문장으로 먼저 받는다. 세계를 물으면 그 점만 이어서 답한다.,Receive everyday talk in two or three sentences. If they ask about the world answer that point.
+guide_story,7,has_story,mission,스토리·미션을 물으면 있는 줄기만 말한다. 수락·클리어·신설은 하지 않는다.,If asked about story or mission speak only the existing stem. Do not accept clear or invent.

@@ -1,7 +1,9 @@
 import { usePlayerStore } from '../store/playerStore';
+import { useMissionStore } from '../store/missionStore';
 import { useWorldStore } from '../store/worldStore';
 import { usePlanetCoreRuntimeStore } from '../store/planetCoreRuntimeStore';
 import { useNpcCaptainProgressStore } from '../store/npcCaptainProgressStore';
+import { useMainStoryCaptainDeadStore } from '../store/mainStoryCaptainDeadStore';
 import { useClanWarFoundationStore } from '../store/clanWarFoundationStore';
 import { NPC_CAPTAINS_FROM_CSV } from '../data/generated';
 import { resolvePlanetNearbyPresence } from '../npc/nearbyOrbitPresenceSystem';
@@ -12,6 +14,8 @@ import { runCriticalSessionAssetPrewarm } from '../assetPipeline/runCriticalSess
 import { resumePlayerToLastHubPlanet, resolveResumeHubPlanetId } from './galaxyMapSessionResume';
 import { waitForArcCoreDailyBatchIdle } from '../arcCore/schedule/arcCoreDailyBatchGate';
 import { waitForArcCoreWallClockCatchUpIdle } from '../arcCore/schedule/arcCoreWallClockCatchUpGate';
+import { ensureConvoyRamCargoRestored } from '../arcCore/economy/runArcTransportTradePass';
+import { hydrateFiscalOpexHudSnapshot } from '../arcCore/economy/fiscalOpexSnapshot';
 
 /**
  * @deprecated 강제 minHold 제거(2026-08-08). prewarm 실소요만 대기.
@@ -79,6 +83,13 @@ export async function runContinueSessionPrewarm(): Promise<void> {
     await withJoinTimeout(waitForArcCoreDailyBatchIdle(), DAILY_BATCH_JOIN_TIMEOUT_MS);
     markBootPerf('continue_join_daily_end');
 
+    markBootPerf('continue_fiscal_restore_start');
+    await Promise.all([
+      ensureConvoyRamCargoRestored(),
+      hydrateFiscalOpexHudSnapshot(),
+    ]);
+    markBootPerf('continue_fiscal_restore_end');
+
     markBootPerf('continue_assets_start');
     await runCriticalSessionAssetPrewarm();
     markBootPerf('continue_assets_end');
@@ -92,14 +103,18 @@ export async function runContinueSessionPrewarm(): Promise<void> {
     await Promise.all([
       usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync(),
       useNpcCaptainProgressStore.getState().loadLocalNpcCaptainProgress(),
+      useMainStoryCaptainDeadStore.getState().loadLocal(),
     ]);
     markBootPerf('continue_bootstrap_end');
+    useMissionStore.getState().sweepExpiredMissions({ notify: true });
 
     const clanWar = useClanWarFoundationStore.getState();
     clanWar.syncNpcAiClanTerritoryFromGalaxy(useWorldStore.getState().systems, {
       skipOccupationSeedPipeline: true,
     });
-    useNpcCaptainProgressStore.getState().ensureCaptainsRegistered(NPC_CAPTAINS_FROM_CSV.map((c) => c.id));
+    const captainProgress = useNpcCaptainProgressStore.getState();
+    captainProgress.ensureCaptainsRegistered(NPC_CAPTAINS_FROM_CSV.map((c) => c.id));
+    await captainProgress.persistNpcCaptainProgress();
 
     void resolvePlanetNearbyPresence(planetId, systemId);
     void listArcNpcTrafficRowsFromTables();

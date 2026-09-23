@@ -6,13 +6,26 @@ import { resolveSinglePlanetSessionKeepIds } from './singlePlanetSessionKeep';
 import { runCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
 import { debugPlanetGpuLayerSnapshot } from '../planetStageGpuSupervisor';
 
+export type PlanetHubSoftNativeReclaimOpts = {
+  /**
+   * inbound settle 등 — 45s coalesce를 건너뛴다(타임스탬프도 갱신하지 않음).
+   * flying→0 직후 soft가 coalesce를 찍으면 settle soft가 통째로 no-op 되던 회귀 방지.
+   */
+  bypassCoalesce?: boolean;
+};
+
 /**
  * planet hub 체류 — PSS/Native floor 완화 + idle sticky Skia dodge 해제.
  * worldmap `runGalaxyMapSoftNativeReclaimPass` 와 대칭.
  * Fresco trim은 deferred 1회만 — 즉시+deferred 이중 trim 시 Native floor 톱니(6/30 handoff).
+ * @returns soft 본문이 실제로 실행됐는지 (coalesce skip이면 false)
  */
-export function runPlanetHubSoftNativeReclaimPass(planetId: string, reason: string): void {
-  if (!tryBeginHubNativeReclaim(reason)) return;
+export function runPlanetHubSoftNativeReclaimPass(
+  planetId: string,
+  reason: string,
+  opts?: PlanetHubSoftNativeReclaimOpts,
+): boolean {
+  if (!opts?.bypassCoalesce && !tryBeginHubNativeReclaim(reason)) return false;
 
   /** sticky dodge overlay·useImage 상주 해제 — 전투/드론 종료 후 GL/EGL floor 방지 */
   signalHubSkiaNativeReclaim(reason);
@@ -30,6 +43,10 @@ export function runPlanetHubSoftNativeReclaimPass(planetId: string, reason: stri
   if (typeof __DEV__ !== 'undefined' && __DEV__) {
     const gpuLayers = debugPlanetGpuLayerSnapshot().map((l) => l.id).join(',') || '-';
     // eslint-disable-next-line no-console
-    console.log(`[MEM] runPlanetHubSoftNativeReclaimPass reason=${reason} keep=${keep.join(',') || '-'} gpuLayers=${gpuLayers}`);
+    console.log(
+      `[MEM] runPlanetHubSoftNativeReclaimPass reason=${reason} keep=${keep.join(',') || '-'} gpuLayers=${gpuLayers}`
+        + (opts?.bypassCoalesce ? ' bypassCoalesce=1' : ''),
+    );
   }
+  return true;
 }

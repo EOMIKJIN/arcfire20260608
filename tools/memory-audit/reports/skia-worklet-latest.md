@@ -1,8 +1,8 @@
 # Skia worklet memory audit
 
-Generated: 2026-08-05T15:22:53.422Z
+Generated: 2026-09-23T14:06:30.472Z
 
-**20/20** passed
+**31/31** passed
 
 | Status | Check | Detail |
 |--------|-------|--------|
@@ -25,6 +25,17 @@ Generated: 2026-08-05T15:22:53.422Z
 | PASS | nebula: skiaLoopsActive + delayed Picture dispose | SkiaPlanetNebulaShaderBackdrop.tsx |
 | PASS | shared skiaMemoryLifecycle helpers | skiaMemoryLifecycle.ts |
 | PASS | inbound drone: shared lifecycle import | PlanetHubInboundDroneSkiaTrailLayer.tsx |
-| PASS | SkImage manual dispose forbidden (SIGSEGV guard) | combat + nebula backdrop |
+| PASS | SkImage manual dispose forbidden (SIGSEGV guard) | combat + nebula + transit parallax |
+| PASS | transit parallax: single Canvas + Picture (no Path.map, no worklet) | TransitCombatSkiaParallaxBackdrop.tsx |
+| PASS | transit parallax: skiaLoopsActive + delayed Picture drop | TransitCombatSkiaParallaxBackdrop.tsx |
+| PASS | transit parallax: no PictureRecorder dispose (combat-end SIGSEGV) | TransitCombatSkiaParallaxBackdrop.tsx |
+| PASS | transit parallax: no clipRect on PictureRecorder (JsiSkCanvas getBool assert) | TransitCombatSkiaParallaxBackdrop.tsx |
+| PASS | transit parallax: no SkImage.width/height on tick (JsiSkImage::width SIGSEGV) | TransitCombatSkiaParallaxBackdrop.tsx |
+| PASS | ColorDodge FX: no dodgeImage.width/height (JsiSkImage::width SIGSEGV) | planetSkiaHitFxContract.ts |
+| PASS | transit parallax: overlay is full-bleed (no container chrome inset) | TransitCombatSkiaParallaxBackdrop.tsx |
+| PASS | transit parallax: one/two drifting clouds (no tile grid) | TransitCombatSkiaParallaxBackdrop.tsx |
+| PASS | transit parallax: tick interval not rebound on layout/dodge (flush ref) | TransitCombatSkiaParallaxBackdrop.tsx |
+| PASS | transit parallax: starfield is Skia catalog (no RN StarField Views) | TransitCombatSkiaParallaxBackdrop.tsx |
+| PASS | transit parallax: image refs sync in useEffect (not render body) | TransitCombatSkiaParallaxBackdrop.tsx |
 
 **OK:** no strike-system residue in audit scope.

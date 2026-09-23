@@ -107,23 +107,6 @@ export function getNpcCaptainByAssignedShipId(shipId: string): NpcCaptain | unde
   return CAPTAIN_BY_ASSIGNED_SHIP_ID.get(sid) ?? undefined;
 }
 
-/** 이동중 전투(해적) — `operationalState` combat/general, pirates faction */
-export function resolveTransitPirateCaptainForSystem(
-  systemId: string | null,
-): NpcCaptain | undefined {
-  for (const captain of NPC_CAPTAINS) {
-    if (captain.factionId !== 'pirates') continue;
-    if (captain.operationalState !== 'combat' && captain.operationalState !== 'general') continue;
-    const sid = (captain.assignedShipId ?? '').trim();
-    if (!sid || !SHIP_BY_ID.has(sid)) continue;
-    if (!systemId) return captain;
-    if (captain.baseSystemId === systemId || captain.activitySystemIds.includes(systemId)) {
-      return captain;
-    }
-  }
-  return undefined;
-}
-
 let firstPlayerRegistryShipIdCache: string | null | undefined;
 
 /** `Player_` 접두 첫 전함 id — 폴백용 (모듈 1회 스캔) */

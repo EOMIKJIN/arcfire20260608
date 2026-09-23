@@ -8,6 +8,9 @@ import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import type { ArcCoreDailyOpsBatchResult } from '../schedule/runArcCoreDailyOpsBatch';
 import { planetAttackKstDayKey } from '../planetAttack/planetAttackKstDayKey';
 import { appendOrUpdateKpiTimeline } from './arcCoreLearningStore';
+import { formatFactionPowerEvalReport } from './formatFactionPowerEvalReport';
+import { runFactionPowerEvalDailyPass } from './runFactionPowerEvalDailyPass';
+import type { FactionPowerKpiCompact } from './factionPowerTypes';
 
 export type ArcCoreEconomyLearningDailyPassResult = {
   kpiDayKey: string;
@@ -15,6 +18,7 @@ export type ArcCoreEconomyLearningDailyPassResult = {
   windowTradeGross: number;
   windowConvoyTrips: number;
   windowConvoyProfit: number;
+  factionPower: FactionPowerKpiCompact | null;
 };
 
 function aggregateFabricWindowTotals(): {
@@ -60,6 +64,19 @@ export async function runArcCoreEconomyLearningDailyPass(
   const core = usePlanetCoreRuntimeStore.getState();
   const globalEngageHpMul = core.hydrated ? core.getGlobalEngageHpMul() : undefined;
 
+  let factionPower: FactionPowerKpiCompact | null = null;
+  try {
+    const factionEval = await runFactionPowerEvalDailyPass();
+    factionPower = factionEval.kpi;
+    if (__DEV__) {
+      console.log(`[ArcCore/Learning] faction power\n${formatFactionPowerEvalReport(factionEval)}`);
+    }
+  } catch (err) {
+    if (__DEV__) {
+      console.warn('[ArcCore/Learning] faction power eval isolated — economy KPI continues', err);
+    }
+  }
+
   await appendOrUpdateKpiTimeline({
     dayKey: kpiDayKey,
     economy: {
@@ -73,6 +90,7 @@ export async function runArcCoreEconomyLearningDailyPass(
     combat: {
       globalEngageHpMul,
     },
+    factionPower: factionPower ?? undefined,
   });
 
   if (__DEV__) {
@@ -87,5 +105,6 @@ export async function runArcCoreEconomyLearningDailyPass(
     windowTradeGross: fabricTotals.windowTradeGross,
     windowConvoyTrips: fabricTotals.windowConvoyTrips,
     windowConvoyProfit: fabricTotals.windowConvoyProfit,
+    factionPower,
   };
 }

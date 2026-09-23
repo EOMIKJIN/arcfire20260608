@@ -5,7 +5,7 @@ module_weight_defense_satellite,100,방위위성 기본 가중치
 module_weight_dev_orbit_shipyard,70,궤도 조선소
 module_weight_dev_trade_port,75,무역소
 module_weight_dev_research_lab,60,연구소
-module_weight_dev_population_dome,50,선술집
+module_weight_dev_population_dome,50,바
 contested_defense_bonus,40,접전지 방위위성 가산
 capital_prime_bonus,30,core_prime 행성 가산
 min_first_wave_planets,3,1차 우선선행 개발 행성 최소 수

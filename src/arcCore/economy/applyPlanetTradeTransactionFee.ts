@@ -11,6 +11,7 @@ import {
   resolvePlanetUpkeepPolicy,
   type PlanetTradeFeeBreakdown,
 } from './planetUpkeepPolicy';
+import { applyPlayerTaxCutToFeeBreakdown } from '../../game/playerOwnedSkillTradeAdjust';
 import { computePlanetDevelopmentUpkeepBreakdown } from './planetDevelopmentUpkeep';
 
 export type TradeFeeSource = 'player' | 'convoy';
@@ -35,7 +36,7 @@ export function computeTradeFeeForGross(
       dailyUpkeepCredits: dailyUpkeep,
     });
   }
-  return computePlanetTradeFeeBreakdown(grossCredits);
+  return applyPlayerTaxCutToFeeBreakdown(computePlanetTradeFeeBreakdown(grossCredits), undefined, undefined);
 }
 
 function resolveFeeBreakdown(
@@ -92,7 +93,7 @@ export async function reversePlanetTradeTransactionFee(
   planetId: string,
   grossCredits: number,
 ): Promise<PlanetTradeFeeBreakdown> {
-  const breakdown = computePlanetTradeFeeBreakdown(grossCredits);
+  const breakdown = applyPlayerTaxCutToFeeBreakdown(computePlanetTradeFeeBreakdown(grossCredits));
   if (!planetId || breakdown.grossCredits <= 0) return breakdown;
 
   usePlanetTradeFeeLedgerStore

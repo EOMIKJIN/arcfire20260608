@@ -7,6 +7,7 @@ import {
   type PlanetInfoPanelStageRow,
 } from '../../arcCore/balance/planetInfoPanelStageRegistry';
 import { findPlanetById } from '../../arcCore/planetEnvironment/resolvePlanetAsteroidVisualPolicy';
+import { resolveCsvPlanetInfoPortraitAssetKey } from '../../data/csvPlanetInfoPortraitKeys';
 import { resolvePlanetDescription } from '../../i18n/systemText';
 import type { AppLocale } from '../../i18n/types';
 import { isSynthFrontierPlanetId } from '../../world/isSynthFrontierPlanetId';
@@ -55,11 +56,17 @@ function pickDescription(
   return resolvePlanetDescription(planet, locale, undefined);
 }
 
-function pickAssetKey(rowValue: string, planetValue: string | null | undefined): string | null {
+function pickAssetKey(
+  rowValue: string,
+  planetValue: string | null | undefined,
+  csvFallback?: string | null,
+): string | null {
   const staged = rowValue.trim();
   if (staged) return staged;
   const base = String(planetValue ?? '').trim();
-  return base || null;
+  if (base) return base;
+  const csv = String(csvFallback ?? '').trim();
+  return csv || null;
 }
 
 /** 행성 정보창·월드 sync 공용 — synth phase + dev 모듈 수로 최고 tier stage 선택 */
@@ -81,6 +88,7 @@ export function resolvePlanetInfoPanelPresentation(
     infoPanelPortraitAssetKey: pickAssetKey(
       stageRow?.infoPanelPortraitAssetKey ?? '',
       planet?.infoPanelPortraitAssetKey,
+      resolveCsvPlanetInfoPortraitAssetKey(planetId),
     ),
     backdropImageAssetKey: pickAssetKey(
       stageRow?.backdropImageAssetKey ?? '',

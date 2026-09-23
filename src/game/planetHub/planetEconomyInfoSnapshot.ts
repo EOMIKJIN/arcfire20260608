@@ -4,10 +4,10 @@
 
 import {
   computePlanetDailyUpkeepCredits,
-  getTransportFleetDisplayNameKo,
   PLANET_ECONOMY_MONTHLY_DAYS,
   resolvePlanetUpkeepPolicy,
 } from '../../arcCore/economy/planetUpkeepPolicy';
+import { resolveTransportFleetDisplayName } from '../../i18n/transportFleetText';
 import { resolvePlanetTradeConvoyMonopolyLabel } from '../../arcCore/economy/resolvePlanetTradeConvoyMonopoly';
 import {
   resolveFactionVaultForOccupierClanId,
@@ -46,6 +46,10 @@ import {
   resolvePlanetStabilityDisplay,
   type PlanetStabilityDisplay,
 } from '../../world/planetStabilityModel';
+import {
+  getFiscalOpexHudSnapshot,
+  hydrateFiscalOpexHudSnapshot,
+} from '../../arcCore/economy/fiscalOpexSnapshot';
 
 export type PlanetEconomyInfoExtraRow = {
   label: string;
@@ -263,8 +267,8 @@ export function buildPlanetEconomyInfoSnapshot(
     gross: formatCredits(fabricTradeGross, { suffix: true }),
     scalePct: supplyScalePct.toFixed(0),
   });
-  const convoyLabel = resolvePlanetTradeConvoyMonopolyLabel(planetId);
   const locale = useAppSettingsStore.getState().locale;
+  const convoyLabel = resolvePlanetTradeConvoyMonopolyLabel(planetId, locale);
   // 총사령관 이름 줄은 붙이지 않는다 — 정보창의 총사령관 포트레이트 카드와 중복(2026-07-19)
   const planetDescription = resolvePlanetTableDescription(planetId, locale);
 
@@ -290,6 +294,28 @@ export function buildPlanetEconomyInfoSnapshot(
       value: formatCredits(bucket.playerWalletPending, { suffix: true }),
     },
   ];
+  void hydrateFiscalOpexHudSnapshot();
+  const fiscal = getFiscalOpexHudSnapshot();
+  if (fiscal) {
+    extras.push({
+      label: t('econSnap.fiscalOpex'),
+      value: t('econSnap.fiscalOpexValue', {
+        req: formatCredits(fiscal.requestedSum, { suffix: true }),
+        spent: formatCredits(fiscal.spentSum, { suffix: true }),
+      }),
+    });
+    extras.push({
+      label: t('econSnap.fiscalOpexCaptain'),
+      value: `${fiscal.captainCount} · k_cap ${Math.round(fiscal.kCap)}`,
+    });
+    extras.push({
+      label: t('econSnap.fiscalOpexRd'),
+      value: t('econSnap.fiscalOpexRdValue', {
+        levels: String(fiscal.laboratoryLevelSum),
+        kRd: String(Math.round(fiscal.kRd)),
+      }),
+    });
+  }
 
   // [보완 #4] 배치 갱신 PGP 우선 — 없으면 레거시 즉시 계산 폴백
   const pgpBmu =
@@ -326,7 +352,7 @@ export function buildPlanetEconomyInfoSnapshot(
     statTrends: buildStatTrendSnapshot(planetId),
     pgpBmu,
     stability,
-    convoyMonopolyLabel: convoyLabel || getTransportFleetDisplayNameKo(),
+    convoyMonopolyLabel: convoyLabel || resolveTransportFleetDisplayName(locale),
     occupierFactionLabel: occupierFactionLabelKo(faction, hold?.occupierClanId),
     factionVaultLabel,
     factionVaultBalanceCredits: factionVaultBalance,

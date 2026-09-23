@@ -19,6 +19,7 @@ export type ArcCoreSpyPolicy = {
 };
 
 let kv: Map<string, string> | null = null;
+let cachedPolicy: ArcCoreSpyPolicy | null = null;
 
 function getKv(): Map<string, string> {
   if (!kv) {
@@ -45,21 +46,24 @@ function str(key: string, fallback: string): string {
 }
 
 export function resolveArcCoreSpyPolicy(): ArcCoreSpyPolicy {
-  return {
+  if (cachedPolicy) return cachedPolicy;
+  cachedPolicy = {
     enabled: bool01('enabled', true),
     spyPoolFractionPct: Math.max(0, Math.min(100, num('spy_pool_fraction_pct', 1))),
     spyPulseIntervalSec: Math.max(1, num('spy_pulse_interval_sec', 8)),
     spyPulseIntensityPerSpy: Math.max(0.01, num('spy_pulse_intensity_per_spy', 1)),
     playerPlanetOnly: bool01('player_planet_only', true),
-    informantCaptainId: str('informant_captain_id', 'npc_cpt_tavern_ret_01'),
+    informantCaptainId: str('informant_captain_id', 'npc_cpt_bar_ret_01'),
     informantDialogSceneId: str('informant_dialog_scene_id', 'arc_core_spy_intel_alert'),
     spyIntelNotifyPct: Math.max(0, Math.min(100, num('spy_intel_notify_pct', 100))),
     spyIntelAutoOpenDialog: bool01('spy_intel_auto_open_dialog', true),
     spyDroneRoleFractionPct: Math.max(0, Math.min(100, num('spy_drone_role_fraction_pct', 40))),
     spyDroneLinkEnabled: bool01('spy_drone_link_enabled', true),
   };
+  return cachedPolicy;
 }
 
 export function invalidateArcCoreSpyPolicyCache(): void {
   kv = null;
+  cachedPolicy = null;
 }

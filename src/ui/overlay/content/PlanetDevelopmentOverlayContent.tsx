@@ -26,7 +26,7 @@ import { PlanetDevelopmentListContent } from './PlanetDevelopmentListContent';
 import { PlanetOrbitShipyardDevContent } from './PlanetOrbitShipyardDevContent';
 import { PlanetTradePortDevContent } from './PlanetTradePortDevContent';
 import { PlanetLaboratoryDevContent } from './PlanetLaboratoryDevContent';
-import { PlanetTavernFacilityDevContent } from './PlanetTavernFacilityDevContent';
+import { PlanetBarFacilityDevContent } from './PlanetBarFacilityDevContent';
 
 type DevView = 'list' | string;
 
@@ -126,7 +126,7 @@ function ensurePlanetDevelopmentModulesRegistered(): void {
   registerPlanetDevelopmentModule({
     id: PLANET_DEV_MODULE_POPULATION_DOME,
     enabled: true,
-    DetailView: PlanetTavernFacilityDevContent,
+    DetailView: PlanetBarFacilityDevContent,
   });
   /** legacy save deep-link */
   registerPlanetDevelopmentModule({
@@ -135,9 +135,9 @@ function ensurePlanetDevelopmentModulesRegistered(): void {
     DetailView: PlanetLaboratoryDevContent,
   });
   registerPlanetDevelopmentModule({
-    id: 'dev_tavern',
+    id: 'dev_bar',
     enabled: true,
-    DetailView: PlanetTavernFacilityDevContent,
+    DetailView: PlanetBarFacilityDevContent,
   });
   markPlanetDevelopmentModuleRegistered();
   modulesRegistered = true;

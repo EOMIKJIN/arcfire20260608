@@ -1,14 +1,23 @@
 // ============================================================
-// 은하 이동 연료비 견적 — 홉·맵 거리·함급·연료효율(향후 스킬/아이템)
+// 은하 이동 연료비 견적 — 홉·맵 거리·함급·연료효율(스킬 fuel_efficiency)
 // ============================================================
 
 import type { PlayerShip, StarSystem } from '../../types';
 import { resolvePlayerDefaultNpcCapitalShipId } from '../../arcCore/balance/capitalHullPurchaseFromBalance';
 import { resolveHullTierKeyForNpcShipId } from '../../arcCore/balance/tradePortCapitalShipPolicy';
+import { resolvePlayerOwnedSkillStatBonus } from '../playerOwnedSkillStatBonus';
 import {
+  applyGalaxyTransitFuelEfficiency,
   resolveGalaxyTransitFuelPolicy,
   resolveGalaxyTransitHullFuelCostMul,
 } from './galaxyTransitFuelPolicy';
+import {
+  applyPostCapNavFuelDiscount,
+  resolveWormholeFinderSkipHops,
+  resolveWormholeGeneratorSkipHops,
+} from '../playerOwnedSkillNavAdjust';
+
+export { applyGalaxyTransitFuelEfficiency } from './galaxyTransitFuelPolicy';
 
 export type GalaxyTransitFuelQuote = {
   totalCredits: number;
@@ -17,6 +26,8 @@ export type GalaxyTransitFuelQuote = {
   hullFuelCostMul: number;
   fuelEfficiencyPct: number;
   perHopCredits: readonly number[];
+  wormholeProc: boolean;
+  jumpBoostProc: boolean;
 };
 
 function clamp(n: number, min: number, max: number): number {
@@ -53,23 +64,21 @@ export function resolvePlayerFlagshipNpcShipId(ship: PlayerShip | null | undefin
   return resolvePlayerDefaultNpcCapitalShipId();
 }
 
-/** 향후 스킬·장비 fuel_efficiency 합산 — 현재 0%(배율 1.0) */
+/** 보유 스킬 `fuel_efficiency` 합산. 캡은 견적 `applyGalaxyTransitFuelEfficiency`에서 적용. `_ship`은 향후 장비용 자리. */
 export function resolvePlayerGalaxyTransitFuelEfficiencyPct(
   _ship: PlayerShip | null | undefined,
 ): number {
-  return 0;
-}
-
-function applyFuelEfficiency(total: number, efficiencyPct: number, capPct: number): number {
-  const capped = clamp(efficiencyPct, 0, capPct);
-  const mul = 1 - capped / 100;
-  return Math.max(0, Math.round(total * mul));
+  const raw = resolvePlayerOwnedSkillStatBonus('fuel_efficiency');
+  return Number.isFinite(raw) && raw > 0 ? raw : 0;
 }
 
 export function computeGalaxyTransitFuelQuote(input: {
   systems: Record<string, StarSystem>;
   pathSystemIds: readonly string[];
   ship: PlayerShip | null | undefined;
+  destSystemId?: string | null;
+  visitedSystemIds?: readonly string[];
+  ownedSkillIds?: readonly string[];
 }): GalaxyTransitFuelQuote | null {
   const { systems, pathSystemIds, ship } = input;
   if (pathSystemIds.length < 2) return null;
@@ -78,7 +87,8 @@ export function computeGalaxyTransitFuelQuote(input: {
   const npcShipId = resolvePlayerFlagshipNpcShipId(ship);
   const hullTierKey = resolveHullTierKeyForNpcShipId(npcShipId) ?? 'frigate_default';
   const hullFuelCostMul = resolveGalaxyTransitHullFuelCostMul(hullTierKey);
-  const fuelEfficiencyPct = resolvePlayerGalaxyTransitFuelEfficiencyPct(ship);
+  const rawFuelEfficiencyPct = resolvePlayerGalaxyTransitFuelEfficiencyPct(ship);
+  const fuelEfficiencyPct = clamp(rawFuelEfficiencyPct, 0, policy.fuelEfficiencyStatCapPct);
 
   const perHopCredits: number[] = [];
   for (let i = 0; i < pathSystemIds.length - 1; i += 1) {
@@ -92,17 +102,45 @@ export function computeGalaxyTransitFuelQuote(input: {
   }
 
   const hopCount = perHopCredits.length;
-  const routeLengthMul = resolveRouteLengthMul(hopCount, policy);
+  const finderSkip = resolveWormholeFinderSkipHops({
+    ownedSkillIds: input.ownedSkillIds,
+    hopCount,
+    fromSystemId: pathSystemIds[0],
+    destSystemId: input.destSystemId ?? pathSystemIds[pathSystemIds.length - 1] ?? null,
+  });
+  const skipHops = Math.min(
+    Math.max(0, hopCount - 1),
+    resolveWormholeGeneratorSkipHops(input.ownedSkillIds) + finderSkip,
+  );
+  if (skipHops > 0) {
+    perHopCredits.length = hopCount - skipHops;
+  }
+  const billedHopCount = perHopCredits.length;
+  const routeLengthMul = resolveRouteLengthMul(billedHopCount, policy);
   const subtotal = Math.round(perHopCredits.reduce((sum, n) => sum + n, 0) * routeLengthMul);
-  const totalCredits = applyFuelEfficiency(subtotal, fuelEfficiencyPct, policy.fuelEfficiencyStatCapPct);
+  const afterCap = applyGalaxyTransitFuelEfficiency(
+    subtotal,
+    fuelEfficiencyPct,
+    policy.fuelEfficiencyStatCapPct,
+  );
+  const destSystemId = input.destSystemId ?? pathSystemIds[pathSystemIds.length - 1] ?? null;
+  const nav = applyPostCapNavFuelDiscount(afterCap, {
+    ownedSkillIds: input.ownedSkillIds,
+    destSystemId,
+    visitedSystemIds: input.visitedSystemIds,
+    hopCount: billedHopCount,
+    hopSkipped: finderSkip > 0,
+  });
 
   return {
-    totalCredits,
+    totalCredits: nav.credits,
     hopCount: perHopCredits.length,
     hullTierKey,
     hullFuelCostMul,
     fuelEfficiencyPct,
     perHopCredits,
+    wormholeProc: nav.wormhole || skipHops > 0 || finderSkip > 0,
+    jumpBoostProc: nav.jumpBoost,
   };
 }
 

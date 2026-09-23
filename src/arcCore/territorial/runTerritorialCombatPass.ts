@@ -44,7 +44,8 @@ import {
   resolveTerritorialSupplyContext,
 } from './territorialSupplyLine';
 import { resolveEffectiveTerritorialCombatMode } from './resolveEffectiveTerritorialCombatMode';
-import { resolveContestedEligibilityForSystem, type ContestedHoldSide } from './contestedEligibility';
+import type { ContestedHoldSide } from './contestedEligibility';
+import { resolveContestedZoneHardGate } from './contestedZoneHardGate';
 import { rebalanceContestedPoolsIfDirty } from './contestedPoolGovernorSync';
 import {
   applySupplyEnvelopeDecisionWeights,
@@ -52,6 +53,21 @@ import {
   resolveSupplyEnvelopeDominantOverridePct,
 } from './resolveSupplyEnvelope';
 import { getArcCoreSupplyEnvelopePolicy } from './arcCoreSupplyEnvelopePolicy';
+import { resolveCapitalDefenseContext } from './resolveCapitalDefenseContext';
+import {
+  applyCapitalDefenseCombatPolicy,
+  applyCapitalDefenseRollWeights,
+} from './applyCapitalDefenseAdjustments';
+import {
+  applyDefenseSatelliteCombatAdvantage,
+  applyDefenseSatelliteRollWeights,
+} from './applyDefenseSatelliteTerritorialAdjustments';
+import { resolveDefenseSatelliteTerritorialBonus } from './resolveDefenseSatelliteTerritorialBonus';
+import { resolveTheaterGarrisonCombatMul } from './applyTheaterGarrisonAdjustments';
+import { applyTheaterNpcPassSideEffects } from './applyTheaterNpcPassSideEffects';
+import { isPlanetInActiveTerritorialRotation } from './resolveWarTheaterState';
+import { getTheaterGarrisonPct, hydrateTheaterGarrisonStore } from './theaterGarrisonStore';
+import { hydrateTerritorialPassObservation } from './territorialPassObservation';
 import {
   countFactionSystemsInCore,
   resolveMaginotBand,
@@ -66,9 +82,26 @@ import { yieldJsThread } from '../schedule/yieldJsThread';
 import {
   DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID,
 } from './dynamicContestedZoneStore';
+import {
+  clearTerritorialPlayerWavePending,
+  isTerritorialPlayerWavePending,
+  requestTerritorialPlayerWavePending,
+} from './territorialPlayerWavePending';
+import { publishTerritorialPassLearning } from '../learning/publishTerritorialPassLearning';
+import { peekLatestFactionPowerKpi } from '../learning/arcCoreLearningStore';
+import {
+  resolveTerritorialLocalBlowoutWinner,
+  shouldVetoWeakerHoldTransfer,
+} from '../learning/verifyTerritorialFinalJudgment';
 import type { PlanetClanHold } from '../../types';
 
-export type TerritorialPassDecision = 'battle' | 'neutral_declare' | 'status_quo';
+export type TerritorialPassDecision =
+  | 'battle'
+  | 'neutral_declare'
+  | 'status_quo'
+  | 'player_wave_pending';
+
+type TerritorialHoldNotifyDecision = Exclude<TerritorialPassDecision, 'player_wave_pending'>;
 
 export type TerritorialPassResult = {
   planetId: string;
@@ -79,7 +112,7 @@ export type TerritorialPassResult = {
   operationId?: string;
 };
 
-function rollDecision(policy: TerritorialCombatPolicy): TerritorialPassDecision {
+function rollDecision(policy: TerritorialCombatPolicy): TerritorialHoldNotifyDecision {
   const total =
     policy.battleWeightPct + policy.neutralDeclareWeightPct + policy.statusQuoWeightPct;
   if (total <= 0) return 'status_quo';
@@ -162,40 +195,63 @@ function participantToHoldTarget(
 function notifyHoldChange(input: {
   planetId: string;
   planetLabelKo: string;
+  planetLabelEn: string;
   previousSide: MapFactionSide;
   newSide: MapFactionSide;
-  decision: TerritorialPassDecision;
+  decision: TerritorialHoldNotifyDecision;
   attackerWon?: boolean;
+  attackerSide?: MapFactionSide;
+  defenderSide?: MapFactionSide;
 }): void {
   if (input.previousSide === input.newSide) return;
   showTerritorialOccupationChangeAlert({
     planetLabelKo: input.planetLabelKo,
+    planetLabelEn: input.planetLabelEn,
     previousSide: input.previousSide,
     newSide: input.newSide,
     decision: input.decision,
     attackerWon: input.attackerWon,
+    attackerSide: input.attackerSide,
+    defenderSide: input.defenderSide,
   });
   publishTerritorialHoldChangeNotice({
     planetId: input.planetId,
     planetLabelKo: input.planetLabelKo,
+    planetLabelEn: input.planetLabelEn,
     previousSide: input.previousSide,
     newSide: input.newSide,
     decision: input.decision,
   });
 }
 
+function resolveDefenderGarrisonMul(planetId: string): number {
+  if (!isPlanetInActiveTerritorialRotation(planetId)) return 1;
+  return resolveTheaterGarrisonCombatMul(getTheaterGarrisonPct(planetId));
+}
+
 function notifyTerritorialPassOutcome(input: {
   planetId: string;
   planetLabelKo: string;
+  planetLabelEn: string;
   previousSide: MapFactionSide;
   newSide: MapFactionSide;
-  decision: TerritorialPassDecision;
+  decision: TerritorialHoldNotifyDecision;
   holdChanged: boolean;
   attackerWon?: boolean;
+  attackerSide?: MapFactionSide;
+  defenderSide?: MapFactionSide;
 }): void {
+  applyTheaterNpcPassSideEffects({
+    planetId: input.planetId,
+    decision: input.decision,
+    holdChanged: input.holdChanged,
+    source: 'npc',
+  });
+
   if (input.decision === 'status_quo') {
     showTerritorialStatusQuoAlert({
       planetLabelKo: input.planetLabelKo,
+      planetLabelEn: input.planetLabelEn,
       side: input.newSide,
     });
     return;
@@ -208,9 +264,12 @@ function notifyTerritorialPassOutcome(input: {
 
   showTerritorialOccupationMaintainedAlert({
     planetLabelKo: input.planetLabelKo,
+    planetLabelEn: input.planetLabelEn,
     side: input.newSide,
     decision: input.decision,
     attackerWon: input.attackerWon,
+    attackerSide: input.attackerSide,
+    defenderSide: input.defenderSide,
   });
 }
 
@@ -260,10 +319,62 @@ function resolveTerritorialFleetShipIds(
   return listTerritorialFleetShipIds(DYNAMIC_CONTESTED_TEMPLATE_PLANET_ID, side);
 }
 
+function lockBlowoutIfClear(combat: {
+  winner: 'attacker' | 'defender';
+  attackerPower: number;
+  defenderPower: number;
+}): { attackerWon: boolean; blowoutLocked: boolean } {
+  const locked = resolveTerritorialLocalBlowoutWinner({
+    attackerPower: combat.attackerPower,
+    defenderPower: combat.defenderPower,
+    rolledWinner: combat.winner,
+  });
+  if (__DEV__ && locked.locked) {
+    console.log(
+      `[territorial] 완승 고정 ${combat.winner}→${locked.winner} atk=${combat.attackerPower.toFixed(0)} def=${combat.defenderPower.toFixed(0)}`,
+    );
+  }
+  return { attackerWon: locked.winner === 'attacker', blowoutLocked: locked.locked };
+}
+
+/**
+ * 체류 중 분쟁 차례 — NPC 퀵컴뱃/홀드 쓰기 없이 허브 웨이브만 요청.
+ * 패스 완료(커서 전진)는 웨이브 종료 시 completeTerritorialPassAfterPlayerWave.
+ */
+function deferTerritorialPassToPlayerWave(input: {
+  planetId: string;
+  policy: TerritorialCombatPolicy;
+  nowMs: number;
+  campaignMeta?: { group: string; orderIndex: number };
+  previousSide: MapFactionSide;
+}): TerritorialPassResult {
+  const firstRequest = !isTerritorialPlayerWavePending(input.planetId);
+  requestTerritorialPlayerWavePending({
+    planetId: input.planetId,
+    systemId: input.policy.systemId,
+    campaignGroup: input.campaignMeta?.group,
+    orderIndex: input.campaignMeta?.orderIndex,
+    passIntervalSec: input.policy.passIntervalSec,
+    requestedAtMs: input.nowMs,
+  });
+  if (__DEV__ && firstRequest) {
+    console.log(
+      `[territorial] ${input.planetId} 체류 중 분쟁 차례 → 플레이어 웨이브 이관 (패스 미완료)`,
+    );
+  }
+  return {
+    planetId: input.planetId,
+    decision: 'player_wave_pending',
+    holdChanged: false,
+    previousSide: input.previousSide,
+    newSide: input.previousSide,
+  };
+}
+
 /**
  * 독립국(플레이어 국가·녹색) 행성 침공 판정 — 정식 팩션 규칙 (2026-07-21 대표님 확정 설계).
  * - 공격자: 정치관계 CSV상 적대 팩션 중 보급선(인접 아군 성계 ≥1) 보유 측만 (동맹 블루는 침공 불가)
- * - 주둔 억지: 플레이어가 해당 행성 체류 중이면 주력전투병력 주둔으로 침공 보류 (자리를 뜨면 함락이 정론). 보류는 무알림·무로그.
+ * - 체류 중 분쟁 차례: NPC 침공 대신 플레이어 웨이브로 이관(패스 미완료). 자리를 뜨면 다음 probe에서 NPC 자동전.
  * - 소유권 파괴: 함락 시 점유 전환 + 증서 소멸(applyArcCoreTerritorialHold 덮어쓰기 정본) → 재중립화 후 재구매
  * - neutral_declare는 미적용 — 소유권은 전투 함락으로만 소멸
  * - 총사령관 전술 역전 미적용 — NPC 국가 총독 체계 밖 (추후 병력배치 시스템에서 대체)
@@ -300,13 +411,28 @@ async function runIndependentHoldInvasionJudgment(input: {
     };
   };
 
-  // 1. 주둔 억지 — 플레이어(주력전투병력)가 해당 행성에 체류 중이면 침공 보류(무알림)
+  // 1. 체류 중 분쟁 차례 — NPC 침공 금지, 웨이브 이관(패스 미완료)
   const player = usePlayerStore.getState().player;
   if (player?.currentPlanetId === planetId) {
-    return silentStatusQuoResult();
+    return deferTerritorialPassToPlayerWave({
+      planetId,
+      policy,
+      nowMs,
+      campaignMeta,
+      previousSide,
+    });
   }
 
   const holds = warStore.planetHolds;
+  const capitalDefense = resolveCapitalDefenseContext({
+    planetId,
+    systemId: policy.systemId,
+    holdSide: 'INDEPENDENT',
+    holds,
+  });
+  if (capitalDefense.mode === 'hold_defense') {
+    return silentStatusQuoResult();
+  }
 
   // 2. 공격자 선정 — 적대 팩션 중 보급선 보유 측(인접 아군 성계 최다)만 침공 가능
   let attacker: TerritorialFactionSide | null = null;
@@ -328,9 +454,24 @@ async function runIndependentHoldInvasionJudgment(input: {
   }
 
   // 3. 판정 롤 — battle 외에는 현상 유지(독립국에 중립선포 없음). aggressive 시 battleWeightPct 소폭 가산.
+  const satelliteBonus = resolveDefenseSatelliteTerritorialBonus(planetId, 'INDEPENDENT');
+  const capitalRoll = applyCapitalDefenseRollWeights({
+    ctx: capitalDefense,
+    weights: {
+      battleWeightPct: resolveFrontPressureBattleWeightPct(policy.systemId, policy.battleWeightPct, holds),
+      neutralDeclareWeightPct: 0,
+      statusQuoWeightPct: Math.max(0, 100 - policy.battleWeightPct),
+    },
+  });
+  const satelliteRoll = applyDefenseSatelliteRollWeights({
+    weights: capitalRoll,
+    bonus: satelliteBonus,
+  });
   const decision = rollDecision({
     ...policy,
-    battleWeightPct: resolveFrontPressureBattleWeightPct(policy.systemId, policy.battleWeightPct, holds),
+    battleWeightPct: satelliteRoll.battleWeightPct,
+    neutralDeclareWeightPct: 0,
+    statusQuoWeightPct: satelliteRoll.statusQuoWeightPct,
   });
   if (decision !== 'battle') {
     // 롤 결과 status_quo/neutral_declare — 독립국은 실질 이벤트 없음 → 무알림
@@ -355,23 +496,37 @@ async function runIndependentHoldInvasionJudgment(input: {
     policy.supplyBonusCapPct,
     holds,
   );
+  const capitalCombatPolicy = applyCapitalDefenseCombatPolicy(policy, capitalDefense);
   const combat = resolveTerritorialQuickCombat({
     attackerShipIds,
     defenderShipIds,
-    defenderAdvantagePct: policy.defenderAdvantagePct,
+    defenderAdvantagePct: applyDefenseSatelliteCombatAdvantage(
+      capitalCombatPolicy.defenderAdvantagePct,
+      satelliteBonus,
+    ),
     combatNoisePct: policy.combatNoisePct,
     attackerSupplyMul: supply.attacker.powerMul,
     defenderSupplyMul: supply.defender.powerMul,
+    defenderGarrisonMul: resolveDefenderGarrisonMul(planetId),
   });
-  const attackerWon = combat.winner === 'attacker';
+  const attackerWon = lockBlowoutIfClear(combat).attackerWon;
 
   if (!attackerWon) {
     await completePass();
     showTerritorialOccupationMaintainedAlert({
       planetLabelKo: policy.alertLabelKo,
+      planetLabelEn: policy.alertLabelEn,
       side: previousSide,
       decision: 'battle',
       attackerWon: false,
+      attackerSide: sideToMapFaction(attacker),
+      defenderSide: 'independent',
+    });
+    applyTheaterNpcPassSideEffects({
+      planetId,
+      decision: 'battle',
+      holdChanged: false,
+      source: 'npc',
     });
     return {
       planetId,
@@ -404,13 +559,22 @@ async function runIndependentHoldInvasionJudgment(input: {
     },
   });
   await completePass();
+  applyTheaterNpcPassSideEffects({
+    planetId,
+    decision: 'battle',
+    holdChanged: applied.changed,
+    source: 'npc',
+  });
   notifyHoldChange({
     planetId,
     planetLabelKo: policy.alertLabelKo,
+    planetLabelEn: policy.alertLabelEn,
     previousSide,
     newSide: applied.newSide,
     decision: 'battle',
     attackerWon: true,
+    attackerSide: sideToMapFaction(attacker),
+    defenderSide: 'independent',
   });
   return {
     planetId,
@@ -451,6 +615,35 @@ export async function runTerritorialCombatPassForPlanet(
 
   const hold = warStore.getHold(planetId);
   const holdSide = resolveHoldFactionSide(hold?.occupierClanId);
+  const holdGate = resolveContestedZoneHardGate({
+    planetId,
+    systemId: policy.systemId,
+    holdSide: holdSide as ContestedHoldSide,
+    holds: warStore.planetHolds,
+  });
+  if (holdGate.blocked) {
+    if (__DEV__) {
+      console.log(
+        `[territorial] ${planetId} 하드게이트(${holdGate.reason}) — 판정 0회·점유 변경 없음`,
+      );
+    }
+    return null;
+  }
+  const landedPreviousSide = sideToMapFaction(holdSide);
+
+  // 체류 중 due — NPC 자동전(블루 점령 포함) 금지. 웨이브 결과 후 커서 전진.
+  if (usePlayerStore.getState().player?.currentPlanetId === planetId) {
+    return deferTerritorialPassToPlayerWave({
+      planetId,
+      policy,
+      nowMs,
+      campaignMeta,
+      previousSide: landedPreviousSide,
+    });
+  }
+
+  // 체류를 떠난 due — 잔여 pending 해제 후 기존 NPC 자동전
+  clearTerritorialPlayerWavePending(planetId);
 
   // 독립국 점유 — CSV combatMode(blue_red 등)와 무관한 침공 분기. 그래프 검증·경고 생략.
   if (holdSide === 'INDEPENDENT') {
@@ -547,6 +740,22 @@ export async function runTerritorialCombatPassForPlanet(
     envelopeBattleWeightBoostPct: envelopePolicy.envelopeBattleWeightBoostPct,
     envelopeNeutralDeclareMul: envelopePolicy.envelopeNeutralDeclareMul,
   });
+  const capitalDefense = resolveCapitalDefenseContext({
+    planetId,
+    systemId: policy.systemId,
+    holdSide,
+    adjacency: supplyAdjacency,
+    holds: holdsSnapshot,
+  });
+  const capitalAdjustedWeights = applyCapitalDefenseRollWeights({
+    ctx: capitalDefense,
+    weights: envelopeAdjustedWeights,
+  });
+  const satelliteBonus = resolveDefenseSatelliteTerritorialBonus(planetId, holdSide);
+  const satelliteAdjustedWeights = applyDefenseSatelliteRollWeights({
+    weights: capitalAdjustedWeights,
+    bonus: satelliteBonus,
+  });
   if (__DEV__ && supplyEnvelope !== 'none') {
     console.log(
       `[territorial] ${planetId} 보급포위 envelope=${supplyEnvelope} hold=${holdSide} ` +
@@ -557,13 +766,21 @@ export async function runTerritorialCombatPassForPlanet(
 
   let decision = rollDecision({
     ...policy,
-    battleWeightPct: envelopeAdjustedWeights.battleWeightPct,
-    neutralDeclareWeightPct: envelopeAdjustedWeights.neutralDeclareWeightPct,
-    statusQuoWeightPct: envelopeAdjustedWeights.statusQuoWeightPct,
+    battleWeightPct: satelliteAdjustedWeights.battleWeightPct,
+    neutralDeclareWeightPct: satelliteAdjustedWeights.neutralDeclareWeightPct,
+    statusQuoWeightPct: satelliteAdjustedWeights.statusQuoWeightPct,
   });
+  // 수도 포위문 닫힘 — 마지노선 HARD로도 자동 수복/함락 금지(플레이어 웨이브는 이 패스 밖).
+  if (capitalDefense.mode === 'hold_defense') {
+    decision = 'status_quo';
+  }
   // 마지노선 HARD — due 1회 최종 수복 P≥hardFinalOccupyPct 를 보장하려면 battle 미진입을 허용하면 안 됨
   // (P(수복)=P(battle)×P(dominant) 가 되어 예: 0.4×0.8=0.32로 붕괴). 김팀장 검수 보정(2026-08-01).
-  if (maginotReclaimDecision?.forceHardReclaim && decision !== 'battle') {
+  if (
+    capitalDefense.mode !== 'hold_defense'
+    && maginotReclaimDecision?.forceHardReclaim
+    && decision !== 'battle'
+  ) {
     if (__DEV__) {
       console.log(
         `[territorial] ${planetId} 마지노선 HARD — roll=${decision} → battle 강제 (due 최종점유 ${maginotReclaimDecision.hardFinalOccupyPct}%)`,
@@ -591,6 +808,7 @@ export async function runTerritorialCombatPassForPlanet(
     notifyTerritorialPassOutcome({
       planetId,
       planetLabelKo: policy.alertLabelKo,
+      planetLabelEn: policy.alertLabelEn,
       previousSide,
       newSide: previousSide,
       decision,
@@ -615,6 +833,7 @@ export async function runTerritorialCombatPassForPlanet(
     notifyTerritorialPassOutcome({
       planetId,
       planetLabelKo: policy.alertLabelKo,
+      planetLabelEn: policy.alertLabelEn,
       previousSide,
       newSide,
       decision,
@@ -630,15 +849,16 @@ export async function runTerritorialCombatPassForPlanet(
   // blue_red 전용 "한쪽만 보급 → 공격자 확정"(resolveAttackerDefenderSides 내부)과는 중복 충돌 없음:
   // effective가 blue_neutral/red_neutral이면 그 분기로 바로 진입(supplyAdjacency 재사용 안 함),
   // effective가 blue_red면 둘 다 보급 보유(접전)라 기존 분기도 동일하게 랜덤 공격자로 귀결.
-  let effectiveCombatMode = resolveEffectiveTerritorialCombatMode({
+  const adjacencyEffectiveMode = resolveEffectiveTerritorialCombatMode({
     holdSide,
     policyCombatMode: policy.combatMode,
     supplyAdjacency,
     contestedZone: policy.contestedZone,
   });
-  if (__DEV__ && effectiveCombatMode !== policy.combatMode) {
+  let effectiveCombatMode = adjacencyEffectiveMode;
+  if (__DEV__ && adjacencyEffectiveMode !== policy.combatMode) {
     console.log(
-      `[territorial] ${planetId} 실효 모드 오버라이드 policy=${policy.combatMode} -> effective=${effectiveCombatMode} ` +
+      `[territorial] ${planetId} 실효 모드 오버라이드 policy=${policy.combatMode} -> effective=${adjacencyEffectiveMode} ` +
         `(hold=${holdSide}, blue인접=${supplyAdjacency.blue},red인접=${supplyAdjacency.red})`,
     );
   }
@@ -651,19 +871,19 @@ export async function runTerritorialCombatPassForPlanet(
     effectiveCombatMode = holdSide === 'BLUE' ? 'red_neutral' : 'blue_neutral';
   }
 
-  // 그래프 mismatch DEV 경고 — **정책 원본이 아닌 최종 effective**를 런타임 그래프와 비교(2026-07-29 R4).
-  // 이전엔 policy.combatMode vs runtimeGraph만 비교해, effective가 이미 정확히 보정된 뒤에도
-  // (예: 오메가가 blue_red로 정상 접전 처리되는 중에도) CSV 원본 기준 오탐 경고가 세션마다 재발했었다.
-  // effective가 실제로 런타임과 일치하면 경고 없음 — 진짜 남는 불일치만 알린다.
+  // 그래프 mismatch DEV 경고 — 인접 실효 모드 vs 런타임 그래프(2026-07-29 R4).
+  // 마지노선 HARD는 그래프와 다른 모드를 **의도적으로** 강제한다(시리우스 보더 RED 홀드 +
+  // 인접 전부 RED → 그래프 red_neutral, HARD 수복은 blue_neutral). 강제 후 모드로 비교하면
+  // 세션마다 오탐 WARN이 난다(2026-08-14). 검증은 강제 전 인접 실효만 본다.
   const graphCheck = validateTerritorialCombatModeForSystem({
     systemId: policy.systemId,
-    combatMode: effectiveCombatMode,
+    combatMode: adjacencyEffectiveMode,
     holds: holdsSnapshot,
   });
   if (!graphCheck.ok && __DEV__ && !graphMismatchWarnedSystemIds.has(policy.systemId)) {
     graphMismatchWarnedSystemIds.add(policy.systemId);
     console.warn(
-      `[territorial] ${planetId} 최종 effective=${effectiveCombatMode} != runtimeGraph=${graphCheck.expected} ` +
+      `[territorial] ${planetId} 최종 effective=${adjacencyEffectiveMode} != runtimeGraph=${graphCheck.expected} ` +
         `(policy원본=${policy.combatMode}, 세션당 1회) — effective 산출 로직 재검토 필요`,
     );
   }
@@ -701,11 +921,14 @@ export async function runTerritorialCombatPassForPlanet(
     notifyTerritorialPassOutcome({
       planetId,
       planetLabelKo: policy.alertLabelKo,
+      planetLabelEn: policy.alertLabelEn,
       previousSide,
       newSide: previousSide,
       decision,
       holdChanged: false,
       attackerWon: false,
+      attackerSide: sideToMapFaction(attacker),
+      defenderSide: sideToMapFaction(defender),
     });
     return { planetId, decision, holdChanged: false, previousSide, newSide: previousSide };
   }
@@ -716,16 +939,21 @@ export async function runTerritorialCombatPassForPlanet(
     const combat = resolveTerritorialQuickCombat({
       attackerShipIds,
       defenderShipIds,
-      defenderAdvantagePct: policy.defenderAdvantagePct,
+      defenderAdvantagePct: applyDefenseSatelliteCombatAdvantage(
+        applyCapitalDefenseCombatPolicy(policy, capitalDefense).defenderAdvantagePct,
+        satelliteBonus,
+      ),
       combatNoisePct: policy.combatNoisePct,
       attackerSupplyMul: supply.attacker.powerMul,
+      defenderGarrisonMul: resolveDefenderGarrisonMul(planetId),
       defenderSupplyMul: supply.defender.powerMul,
     });
-    attackerWon = combat.winner === 'attacker';
+    const blowout = lockBlowoutIfClear(combat);
+    attackerWon = blowout.attackerWon;
 
-    // 총사령관 [전투전술영향] 역전 재판정 — 분쟁지역 한정, 전투당 1회
+    // 총사령관 [전투전술영향] 역전 — 완승 고정이 아닐 때만. 확연한 전력 차를 뒤집지 않음.
     let tacticsReversal: TacticsReversalOutcome | null = null;
-    if (policy.contestedZone) {
+    if (policy.contestedZone && !blowout.blowoutLocked) {
       tacticsReversal = resolveGovernorTacticsReversal({
         planetId,
         winnerSide: attackerWon ? attacker : defender,
@@ -742,17 +970,38 @@ export async function runTerritorialCombatPassForPlanet(
       }
     }
 
+    let targetFaction = resolveBattleHoldTarget({
+      combatMode: effectiveCombatMode,
+      policy,
+      holdSide,
+      attacker,
+      defender,
+      attackerWon,
+    });
+    if (
+      shouldVetoWeakerHoldTransfer({
+        kpi: peekLatestFactionPowerKpi(),
+        previousSide,
+        newSide: sideToMapFaction(targetFaction),
+        attackerSide: attacker,
+        defenderSide: defender,
+        attackerPower: combat.attackerPower,
+        defenderPower: combat.defenderPower,
+      })
+    ) {
+      if (__DEV__) {
+        console.log(
+          `[territorial] ${planetId} 학습검증 거부 ${previousSide}→${sideToMapFaction(targetFaction)} (은하열세+로컬열세)`,
+        );
+      }
+      targetFaction = holdSide;
+      attackerWon = false;
+    }
+
     const applied = warStore.applyArcCoreTerritorialHold({
       planetId,
       systemId: policy.systemId,
-      factionSide: resolveBattleHoldTarget({
-        combatMode: effectiveCombatMode,
-        policy,
-        holdSide,
-        attacker,
-        defender,
-        attackerWon,
-      }),
+      factionSide: targetFaction,
       operationMeta: {
         source: 'arc_core_territorial',
         decision,
@@ -787,11 +1036,14 @@ export async function runTerritorialCombatPassForPlanet(
     notifyTerritorialPassOutcome({
       planetId,
       planetLabelKo: policy.alertLabelKo,
+      planetLabelEn: policy.alertLabelEn,
       previousSide,
       newSide,
       decision,
       holdChanged,
       attackerWon,
+      attackerSide: sideToMapFaction(attacker),
+      defenderSide: sideToMapFaction(defender),
     });
     return { planetId, decision, holdChanged, previousSide, newSide, operationId };
   }
@@ -807,8 +1059,10 @@ export async function runTerritorialCombatPassForPlanet(
   // 수 없음(구조적 배타) — 우선순위 스택(마지노선 위)은 실질적으로 값이 겹칠 일이 없어 ?? 로 충분.
   const dominantOverridePct =
     maginotReclaimDecision?.forceHardReclaim ? maginotReclaimDecision.hardFinalOccupyPct : envelopeDominantOverridePct;
-  const policyForDominance: TerritorialCombatPolicy =
-    dominantOverridePct != null ? { ...policy, dominantSideWeightPct: dominantOverridePct } : policy;
+  const policyForDominance: TerritorialCombatPolicy = applyCapitalDefenseCombatPolicy(
+    dominantOverridePct != null ? { ...policy, dominantSideWeightPct: dominantOverridePct } : policy,
+    capitalDefense,
+  );
   if (__DEV__ && dominantOverridePct != null) {
     console.log(
       `[territorial] ${planetId} dominantSideWeightPct 오버라이드 ${policy.dominantSideWeightPct} -> ${dominantOverridePct} ` +
@@ -892,10 +1146,14 @@ export async function runTerritorialCombatPassForPlanet(
   notifyTerritorialPassOutcome({
     planetId,
     planetLabelKo: policy.alertLabelKo,
+    planetLabelEn: policy.alertLabelEn,
     previousSide,
     newSide,
     decision,
     holdChanged,
+    attackerWon: newSide !== previousSide,
+    attackerSide: sideToMapFaction(attacker),
+    defenderSide: sideToMapFaction(defender),
   });
 
   return { planetId, decision, holdChanged, previousSide, newSide, operationId };
@@ -904,6 +1162,8 @@ export async function runTerritorialCombatPassForPlanet(
 export async function runTerritorialCombatPass(nowMs = Date.now()): Promise<TerritorialPassResult[]> {
   // 동적 분쟁지역 hydrate 포함 — listTerritorialCombatPolicies가 편입 행성을 캠페인 순번으로 합산
   await hydrateArcCoreTerritorialCombatState();
+  await hydrateTheaterGarrisonStore();
+  await hydrateTerritorialPassObservation();
 
   // 분쟁지역 풀 거버너(2026-07-31) — hold 변경으로 dirty일 때만 1회 rebalance(onBoot 동기 전수 스캔 아님).
   // 캠페인 due 판정 전에 실행해, 이번 패스에서 새로 승격된 성계가 곧바로 로테이션에 반영될 수 있게 한다.
@@ -918,8 +1178,8 @@ export async function runTerritorialCombatPass(nowMs = Date.now()): Promise<Terr
     const groupPolicies = listTerritorialCombatPoliciesForCampaign(group);
     let due = resolveTerritorialCampaignPlanetDue(group, groupPolicies, nowMs);
 
-    // SAFE(우군 완포위) 스킵(2026-07-31 M2) — 판정 0회, 커서만 전진해 같은 pass 내 다음
-    // ELIGIBLE로 즉시 재시도(빈 슬롯 정지 금지). 그룹 길이만큼만 시도(무한루프 방지).
+    // 하드게이트 스킵 — 아군만 접한 후방·점유전투 OFF·비전선은 판정 0회, 커서만 전진.
+    // 같은 pass 내 다음 ELIGIBLE로 즉시 재시도(빈 슬롯 정지 금지). 그룹 길이만큼만 시도.
     if (due) {
       const warStore = useClanWarFoundationStore.getState();
       if (!warStore.hydrated) {
@@ -931,14 +1191,17 @@ export async function runTerritorialCombatPass(nowMs = Date.now()): Promise<Terr
         if (!duePolicy) break;
         const dueHold = warStore.getHold(due.planetId);
         const dueHoldSide = resolveHoldFactionSide(dueHold?.occupierClanId) as ContestedHoldSide;
-        const classification = resolveContestedEligibilityForSystem({
+        const gate = resolveContestedZoneHardGate({
+          planetId: due.planetId,
           systemId: duePolicy.systemId,
           holdSide: dueHoldSide,
           holds: warStore.planetHolds,
         });
-        if (classification !== 'safe_hinterland') break;
+        if (!gate.blocked) break;
         if (__DEV__) {
-          console.log(`[territorial] ${due.planetId} SAFE(완포위) 스킵 — 판정 0회, 다음 순번으로 전진`);
+          console.log(
+            `[territorial] ${due.planetId} 하드게이트(${gate.reason}) 스킵 — 판정 0회, 다음 순번으로 전진`,
+          );
         }
         await advanceTerritorialCampaignCursorForSkip(group, due.orderIndex, groupPolicies.length);
         skipAttempts += 1;
@@ -968,13 +1231,74 @@ export async function runTerritorialCombatPass(nowMs = Date.now()): Promise<Terr
 
   if (__DEV__ && results.length > 0) {
     for (const r of results) {
+      if (r.decision === 'player_wave_pending') continue;
       console.log(
         `[territorial] pass ${r.planetId} decision=${r.decision} holdChanged=${r.holdChanged} ${r.previousSide}->${r.newSide}`,
       );
     }
   }
 
+  for (const r of results) {
+    if (r.decision === 'player_wave_pending') continue;
+    publishTerritorialPassLearning({
+      planetId: r.planetId,
+      decision: r.decision,
+      holdChanged: r.holdChanged,
+      previousSide: r.previousSide,
+      newSide: r.newSide,
+      source: 'npc_auto',
+    });
+  }
+
   return results;
+}
+
+/**
+ * 허브 착륙 1회 — 이미 분쟁 차례(due)인 행성이면 probe(60s)를 기다리지 않고 pending 만 세운다.
+ * SAFE 우군 완포위·미체류는 no-op. NPC/홀드 쓰기는 하지 않는다.
+ */
+export async function requestTerritorialPlayerWaveIfLandedOnDue(
+  planetId: string,
+  nowMs = Date.now(),
+): Promise<boolean> {
+  const id = planetId?.trim();
+  if (!id) return false;
+  if (usePlayerStore.getState().player?.currentPlanetId !== id) return false;
+  if (isTerritorialPlayerWavePending(id)) return true;
+
+  await hydrateArcCoreTerritorialCombatState();
+  const policy = getTerritorialCombatPolicy(id);
+  if (!policy?.enabled) return false;
+
+  const warStore = useClanWarFoundationStore.getState();
+  if (!warStore.hydrated) {
+    await warStore.loadLocalClanWarFoundation();
+  }
+  const holdSide = resolveHoldFactionSide(warStore.getHold(id)?.occupierClanId) as ContestedHoldSide;
+  const gate = resolveContestedZoneHardGate({
+    planetId: id,
+    systemId: policy.systemId,
+    holdSide,
+    holds: warStore.planetHolds,
+  });
+  if (gate.blocked) return false;
+
+  const policies = listTerritorialCombatPolicies();
+  for (const group of listTerritorialCampaignGroups(policies)) {
+    const groupPolicies = listTerritorialCombatPoliciesForCampaign(group);
+    const due = resolveTerritorialCampaignPlanetDue(group, groupPolicies, nowMs);
+    if (due?.planetId !== id) continue;
+    requestTerritorialPlayerWavePending({
+      planetId: id,
+      systemId: policy.systemId,
+      campaignGroup: group,
+      orderIndex: due.orderIndex,
+      passIntervalSec: policy.passIntervalSec,
+      requestedAtMs: nowMs,
+    });
+    return true;
+  }
+  return false;
 }
 
 export function resolveTerritorialHoldMapSide(hold: PlanetClanHold | undefined): MapFactionSide {

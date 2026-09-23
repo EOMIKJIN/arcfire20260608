@@ -1,0 +1,9 @@
+captainId,roleId,notesKo
+__default__,civilian_consumer,코어 기본 — 개별 함장 행 대량 생성 금지
+__frontier__,survey,프론티어 phase≤1 기본(민간 대신 측량)
+__garrison__,colonizer,주둔 → 개척
+__hunter__,survey,사냥 → 측량
+__patrol__,survey,순찰 → 측량
+__escort__,civilian_consumer,호위 → 민간 소비
+__fleet_leader__,civilian_consumer,함대 지휘 → 민간 소비
+__merchant_guard__,civilian_consumer,상선 호위 → 민간 소비

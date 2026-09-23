@@ -1,0 +1,193 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>바 · 함장 · 플레이어 — 아크파이어 온라인 위키</title>
+<meta name="description" content="사교 공간 바, NPC 함장 247명, 캐릭터 생성, 타로 운명 시스템, 튜토리얼" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body data-page="social">
+
+<header class="site-header">
+  <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <div class="site-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
+    <div class="search-hits"></div>
+  </div>
+  <button class="theme-toggle" type="button" aria-label="테마 전환"></button>
+</header>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-group"><h5>시작</h5><a href="index.html" data-page="index"><span class="dot"></span>홈</a></div>
+    <div class="sidebar-group"><h5>세계</h5>
+      <a href="world.html" data-page="world"><span class="dot"></span>세계관 · 아크코어</a>
+      <a href="factions.html" data-page="factions"><span class="dot"></span>4대 세력</a>
+      <a href="galaxy.html" data-page="galaxy"><span class="dot"></span>은하 · 행성</a>
+      <a href="story.html" data-page="story"><span class="dot"></span>스토리 · 미션</a>
+    </div>
+    <div class="sidebar-group"><h5>전력</h5>
+      <a href="ships.html" data-page="ships"><span class="dot"></span>함선</a>
+      <a href="weapons.html" data-page="weapons"><span class="dot"></span>무기체계</a>
+      <a href="skills.html" data-page="skills"><span class="dot"></span>스킬</a>
+      <a href="items.html" data-page="items"><span class="dot"></span>아이템 · 강화</a>
+    </div>
+    <div class="sidebar-group"><h5>체제</h5>
+      <a href="economy.html" data-page="economy"><span class="dot"></span>경제 시스템</a>
+      <a href="planetdev.html" data-page="planetdev"><span class="dot"></span>행성개발</a>
+      <a href="combat.html" data-page="combat"><span class="dot"></span>전투 · 분쟁</a>
+      <a href="arccore.html" data-page="arccore"><span class="dot"></span>아크코어 AI</a>
+      <a href="social.html" data-page="social" class="active"><span class="dot"></span>바 · 함장 · 플레이어</a>
+      <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="content-wrap">
+    <article class="content">
+      <div class="eyebrow">체제 · 사회</div>
+      <h1 class="page-title">바 · 함장 · 플레이어</h1>
+      <p class="page-lede">
+        싱글플레이 게임이지만 은하에는 247명의 이름 있는 NPC 함장과, 행성마다 문을 여는 사교 공간 「바」가 있다.
+        플레이어 자신도 시작부터 배경이 있는 파일럿으로 출발한다.
+      </p>
+
+      <h2 id="bar">바 — 사교 허브</h2>
+      <p>기획 문서는 바를 <strong>「부가 메뉴가 아니라 메인 콘텐츠」</strong>로 명시한다. 18개 행성에 바가 있고, 종업원이 행성별로 5~20명씩 배치된다(수도급 행성일수록 더 많고 화려하다).</p>
+      <ol>
+        <li>바에 입장 → 호스트 NPC가 "한 잔 사줄래?" 인게임 대화로 말을 건다</li>
+        <li>수락 → 종업원 명단 표시</li>
+        <li>한 명을 골라 음료 구매(크레딧 소모)</li>
+        <li><strong>공연 세션 시작</strong> — 음료 1잔 = 실시간 15분. 대화 페이지 + 짧은 루프 애니메이션이 풀린다</li>
+        <li>[술 추가]로 시간 연장 + 다음 단계 콘텐츠 해금(1잔=인사, 2잔=개인 사연, 3잔=댄스 클립+긴 대화…)</li>
+      </ol>
+      <p>
+        「인기도」는 술잔 수가 아니라 <strong>누적 사용 금액</strong>으로 집계된다. 음료는 하우스 에일·네뷸러 와인·
+        포스포 피즈 3종, 곡은 5곡뿐이며 종업원 전원이 공유한다 — 종업원 개개인의 개성은 8종의 대사 아키타입과
+        고유 이름·초상으로 만든다. 종업원 대사는 아크코어의 LLM으로 생성되지 않는다 — 명시적으로 범위 밖이다.
+      </p>
+      <div class="callout note"><strong>콘텐츠 등급</strong> 설계 문서는 「선정성 없음·미성년 캐릭터 묘사 없음」을 명시적인 원칙으로 못박고 있다.</div>
+
+      <div class="callout warn">
+        <strong>기획 목표 288명 vs 실제 등록 103명</strong>
+        기획 문서는 galaxy-wide 288명을 목표로 서술하지만, <code>bar_attendants.csv</code>를 직접 센 결과 현재
+        실제로 등록된 종업원은 <strong>103명</strong>이다. 이 위키는 문서의 목표치가 아니라 실제 테이블 행 수를 기준으로 삼는다.
+      </div>
+
+      <h2 id="all-attendants">전체 종업원 목록 — 103명</h2>
+      <p>행성·이름·태그라인으로 검색할 수 있다.</p>
+      <div id="attendant-table"></div>
+
+      <h2 id="captains">NPC 함장 — 247명</h2>
+      <p>
+        <code>npc_ai_captains.csv</code>에 등록된 247명은 계급(제독·대령·함대장·전쟁군주 등)·소속·AI 성향(신중~광폭)·
+        역할(함대장·순찰·호위·수비대·사냥꾼·상인 호위)을 가진 독립 개체다. 관측된 유형:
+      </p>
+      <ul>
+        <li>함대 사령관·제독급 지휘관</li>
+        <li>국경 순찰·호위 함장(광산 호송선단 경호 등)</li>
+        <li>수비대·항만 사령관</li>
+        <li>연구/과학 함장 — 예: <strong>벡터-7</strong>, 이상 에너지 신호에만 반응하는 실험용 AI 선체 함장</li>
+        <li>적대 전쟁군주·해적 습격대 함장(베가 레드/블루 넘버링 다수)</li>
+        <li>잔해지대 약탈자(아이언 크로스 잔당)</li>
+        <li>AI 클랜 기함 지도자 3인 — 안전지대(아델린 루크)·중립지대(린 켄달)·PvP지대(모라 섀이어) 각 구역형 함대 대표</li>
+      </ul>
+      <p>이 중 12명은 「민간 궤도 보충 라인」 — 이름은 있지만 순수 교통량 채우기용 함장이다.</p>
+
+      <h2 id="all-captains">전체 함장 목록 — 247명</h2>
+      <p>이름·계급·소속·역할·AI 클랜으로 검색할 수 있다.</p>
+      <div id="captain-table"></div>
+
+      <div class="callout warn">
+        <strong>영구 사망 시스템 — 설계만, 아직 아무도 죽지 않는다</strong>
+        일반 순찰·웨이브 스폰·접전지역 함장은 명시적으로 <strong>불사(면제)</strong> 처리된다 — 리스크가 너무 크다.
+        영구 사망은 오직 「메인 스토리 지정 함장」만 대상인데, 현재 247명 중 그렇게 지정된 함장은 <strong>0명</strong>이다.
+        시스템(원장·게이트)은 이미 구현돼 있지만 아직 누구도 「죽을 수 있는」 상태로 태그되지 않았다.
+      </div>
+
+      <h2 id="chargen">캐릭터 생성 <span class="pill warm">보류</span></h2>
+      <p>현재 라이브 빌드에는 캐릭터 생성 화면이 없다 — 이전 구현이 다른 변경과 얽혀 안정 커밋으로 롤백됐고, 코드는 git 태그로 보존만 돼 있다. 설계상 흐름과 3개 프리셋 직업은 다음과 같다.</p>
+      <blockquote>타이틀 → 인트로(스토리) → 캐릭터 선택 → 닉네임 → 워프 연출 → 행성 허브</blockquote>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>이름</th><th>성별</th><th>전투 아키타입</th><th>성향</th></tr></thead>
+          <tbody>
+            <tr><td>렌 카제</td><td>남</td><td>강습 파일럿 — 근접 돌파</td><td>과묵·단호</td></tr>
+            <tr><td>미아 벨로</td><td>여</td><td>정찰 파일럿 — 기동·회피</td><td>침착·관찰형</td></tr>
+            <tr><td>카일 드레이크</td><td>남</td><td>전술 파일럿 — 함대 지휘</td><td>냉철·분석형</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="tarot">타로 운명 시스템 <span class="pill warm">기획 단계</span></h2>
+      <p>
+        「미래를 결정할 첫 선택」 컨셉 — 캐릭터 선택 이전, 22장의 메이저 아르카나풍 카드 중 1장을 1~22 숫자로
+        직접 골라 「운명」을 정한다. 카드 22장의 해석 문구는 AI가 아니라 대표(오너)가 직접 집필하는 것을
+        원칙으로 못박고 있다. 1차 범위는 연출(카드가 흩어지고, 숫자를 고르면 뒤집히며 해석 문구가 나오는)까지만이고,
+        실제 스탯·스토리 분기 연결은 이후 단계로 미뤄져 있다.
+      </p>
+
+      <h2 id="tutorial">튜토리얼 <span class="pill warm">기반 설계</span></h2>
+      <p>
+        첫 착륙 행성 아르카디아에서 진행되는 강제 선형 온보딩. 진행 중에는 <strong>튜토리얼이 게임의 유일한 전경</strong>이
+        되도록 설계돼 있다 — 다른 모든 메뉴·인바운드 알림·웨이브·반란 경보가 잠긴다. 스킵 버튼은 의도적으로 없다.
+        이 구간의 유일한 목소리는 <a href="arccore.html#dual-mouth">스텔라 아리스</a>다.
+      </p>
+      <ol>
+        <li><strong>A. 생존 루프</strong> — 환영 → 스캔 → 채굴 → 화물 확인 → 무역소 열기 → 아이템 1개 판매까지 실제로 완료</li>
+        <li><strong>B. 함선</strong> — 조선소 열람만(강제 구매 없음, 시작함 이미 보유)</li>
+        <li><strong>C. 사람들</strong> — [대화] 목록에서 1명 선택, 바 게시판 열람(수락은 잠금)</li>
+        <li><strong>D. 마무리</strong> — 마무리 대사 → 출발 해금 → 이 시점에 첫 메인 임무가 실제로 시작된다</li>
+      </ol>
+
+      <div class="source-note">정본: <code>tables/content/npc_ai_captains.csv</code>(247행) · <code>tables/content/bar_attendants.csv</code> · <code>docs/바_후원시스템_설계.md</code> · <code>docs/NPC_CAPTAIN_PERMANENT_DEATH_DESIGN.md</code> · <code>docs/CHARACTER_CREATION_REDEV_PLAN.md</code> · <code>docs/PLAYER_TAROT_DESTINY_SYSTEM_PLAN.md</code> · <code>docs/튜토리얼_시스템.md</code></div>
+    </article>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/data/attendants.js"></script>
+<script src="assets/data/captains.js"></script>
+<script src="assets/datatable.js"></script>
+<script src="assets/wiki.js"></script>
+<script>
+  mountWikiDataTable({
+    mount: document.getElementById("attendant-table"),
+    data: window.ATTENDANT_DATA || [],
+    label: "종업원",
+    searchKeys: ["id", "planet", "name", "nameEn", "tagline"],
+    columns: [
+      { key: "name", label: "이름" },
+      { key: "nameEn", label: "영문명" },
+      { key: "planet", label: "행성" },
+      { key: "tagline", label: "한줄소개" },
+      { key: "dialogSet", label: "대사셋" },
+    ],
+  });
+  mountWikiDataTable({
+    mount: document.getElementById("captain-table"),
+    data: window.CAPTAIN_DATA || [],
+    label: "함장",
+    searchKeys: ["id", "name", "nameEn", "rank", "faction", "role", "bio", "clan", "planet"],
+    columns: [
+      { key: "name", label: "이름" },
+      { key: "nameEn", label: "영문명" },
+      { key: "rank", label: "계급" },
+      { key: "faction", label: "소속" },
+      { key: "role", label: "역할" },
+      { key: "planet", label: "본성계" },
+      { key: "clan", label: "AI클랜" },
+      { key: "deathEligible", label: "영구사망", render: function (r) { return r.deathEligible === "TRUE" ? '<span class="pill danger">대상</span>' : '<span class="pill">면제</span>'; } },
+    ],
+  });
+</script>
+</body>
+</html>

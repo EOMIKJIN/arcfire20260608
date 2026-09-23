@@ -130,7 +130,7 @@
 
 1. sync/backup 스케줄 취소 · **fresh-start 선기록**  
 2. 클라우드: `deleteUserCloudSave`(+ local-guest) ∥ `uploadPrePurgeGameSaveBackup` · **15s** 상한  
-3. 로컬: holds·ledger·missions·planetCore(BLUE)·world·telemetry·session·tavern·BM·드론·pantheon·independent vault 등  
+3. 로컬: holds·ledger·missions·planetCore(BLUE)·world·telemetry·session·bar·BM·드론·pantheon·independent vault 등  
 4. **유지**: ArcCore 월드 경제(금고 1~4 등) · **shadow identity**(§16-A)  
 5. RTDB KPI day 플래그 clear · Anonymous Auth sign-out  
 

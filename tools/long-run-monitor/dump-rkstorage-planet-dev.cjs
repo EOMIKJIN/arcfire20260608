@@ -76,7 +76,7 @@ if (row?.value) {
     // flatten facility modules if present at top level
     const modules = {};
     for (const k of Object.keys(slot)) {
-      if (k.startsWith('dev_') || k.includes('defense') || k.includes('satellite') || k.includes('shipyard') || k.includes('trade_port') || k.includes('lab') || k.includes('tavern') || k.includes('dome')) {
+      if (k.startsWith('dev_') || k.includes('defense') || k.includes('satellite') || k.includes('shipyard') || k.includes('trade_port') || k.includes('lab') || k.includes('bar') || k.includes('dome')) {
         modules[k] = slot[k];
       }
     }

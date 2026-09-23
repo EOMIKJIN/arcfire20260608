@@ -33,6 +33,10 @@ export const TACTICAL_OVERLAY_KIND_FLAGS: Readonly<Record<ArcOverlayKind, boolea
   bmShop: true,
   nearbyPresenceInfo: true,
   relicLore: true,
+  hubTalkRoster: true,
+  planetOwnershipRoster: true,
+  arcCoreChat: true,
+  skillInfo: true,
 };
 
 /** tactical 활성 kind 목록 (감사·리포트용) */

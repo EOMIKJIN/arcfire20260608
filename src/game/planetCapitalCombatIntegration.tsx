@@ -100,12 +100,17 @@ export function loadPlanetCapitalCombatHeavyUi(): Promise<PlanetCapitalCombatHea
   return heavyUiPromise;
 }
 
+/** 전투 시뮬 + HUD 청크 선로드 — Canvas 마운트 없음. 웨이브 대기 구간에 호출. */
+export function preloadPlanetCapitalCombatStack(): void {
+  void loadCombatHeavyModule();
+  void loadPlanetCapitalCombatHeavyUi();
+}
+
 /** active 전환 시 heavy UI 번들 선로드 */
 export function PlanetCapitalCombatPreloader({ active }: { active: boolean }) {
   useEffect(() => {
     if (!active) return;
-    void loadCombatHeavyModule();
-    void loadPlanetCapitalCombatHeavyUi();
+    preloadPlanetCapitalCombatStack();
   }, [active]);
   return null;
 }

@@ -36,4 +36,5 @@ export const ARC_CORE_OBS_SUBCORE = {
   dailyOps: 'arc_core_daily_ops_subcore',
   npc: 'npc_subcore',
   combat: 'combat_subcore',
+  territorial: 'territorial_combat_subcore',
 } as const;

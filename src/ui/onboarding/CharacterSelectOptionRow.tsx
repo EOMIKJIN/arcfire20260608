@@ -24,7 +24,9 @@ export type CharacterSelectOptionRowProps = {
   onPress: () => void;
 };
 
-/** 인게임 `NarrativeDialogRow` 포트레이트+우측 설명 스타일 — 세로 목록용 선택 카드 */
+/** 온보딩 직업 선택 카드(좌 정사각 초상·우 설명). NPC 초상 정본 240×240과 동일 비율 */
+const CHARACTER_SELECT_PORTRAIT_PX = 160;
+
 export const CharacterSelectOptionRow = memo(function CharacterSelectOptionRow({
   profession,
   selected,
@@ -88,17 +90,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(20, 28, 48, 0.92)',
   },
   portraitCard: {
-    width: 120,
-    height: 160,
+    width: CHARACTER_SELECT_PORTRAIT_PX,
+    height: CHARACTER_SELECT_PORTRAIT_PX,
     backgroundColor: '#05070d',
   },
   portrait: {
-    width: 120,
-    height: 160,
+    width: CHARACTER_SELECT_PORTRAIT_PX,
+    height: CHARACTER_SELECT_PORTRAIT_PX,
   },
   portraitPlaceholder: {
-    width: 120,
-    height: 160,
+    width: CHARACTER_SELECT_PORTRAIT_PX,
+    height: CHARACTER_SELECT_PORTRAIT_PX,
     backgroundColor: '#05070d',
   },
   hud: {

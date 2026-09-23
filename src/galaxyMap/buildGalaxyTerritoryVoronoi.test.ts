@@ -3,7 +3,12 @@
  * npx tsx --test src/galaxyMap/buildGalaxyTerritoryVoronoi.test.ts
  */
 import assert from 'node:assert/strict';
-import { buildGalaxyTerritoryVoronoiLayers, type GalaxyTerritorySite } from './buildGalaxyTerritoryVoronoi';
+import {
+  buildGalaxyTerritoryVoronoiLayers,
+  paintGalaxyTerritoryLayers,
+  tessellateGalaxyTerritoryGeometry,
+  type GalaxyTerritorySite,
+} from './buildGalaxyTerritoryVoronoi';
 
 function test(name: string, fn: () => void): void {
   try {
@@ -69,6 +74,40 @@ test('blue/red 대륙 라벨은 기존과 동일하게 생성됨(회귀 없음)'
   const redLabels = layers.occupationLabels.filter((l) => l.factionSide === 'red');
   assert.equal(blueLabels.length, 1, 'blue 대륙 라벨 1개');
   assert.equal(redLabels.length, 1, 'red 대륙 라벨 1개');
+});
+
+test('이동 안개 — revealedSystemIds가 있으면 채움·라벨은 공개 성계만', () => {
+  const sites = buildMixedGalaxy();
+  const revealed = new Set<string>(['blue_0_0', 'blue_0_1', 'sirius_border']);
+  const layers = buildGalaxyTerritoryVoronoiLayers({
+    sites,
+    bounds: { x0: -200, y0: -200, x1: 1400, y1: 1000 },
+    revealedSystemIds: revealed,
+  });
+  assert.ok(layers.fills.every((f) => revealed.has(f.key)), '채움은 공개 성계만');
+  assert.ok(layers.fills.some((f) => f.key === 'blue_0_0'));
+  assert.equal(layers.fills.some((f) => f.key === 'sirius_border'), true);
+  assert.equal(layers.fills.some((f) => String(f.key).startsWith('red_')), false);
+});
+
+test('tessellate 1회 + paint(안개)는 buildLayers와 동일 채움 키', () => {
+  const sites = buildMixedGalaxy();
+  const bounds = { x0: -200, y0: -200, x1: 1400, y1: 1000 };
+  const revealed = new Set<string>(['blue_0_0', 'blue_0_1', 'sirius_border']);
+  const geometry = tessellateGalaxyTerritoryGeometry({ sites, bounds });
+  assert.ok(geometry);
+  const painted = paintGalaxyTerritoryLayers(geometry, revealed);
+  const layers = buildGalaxyTerritoryVoronoiLayers({
+    sites,
+    bounds,
+    revealedSystemIds: revealed,
+  });
+  assert.deepEqual(
+    painted.fills.map((f) => f.key).sort(),
+    layers.fills.map((f) => f.key).sort(),
+  );
+  assert.equal(painted.occupationLabels.length, layers.occupationLabels.length);
+  assert.ok(geometry.fills.length > painted.fills.length);
 });
 
 test('independent 성계가 없으면 independent 라벨도 없음(항상-표시가 아니라 존재 시에만)', () => {

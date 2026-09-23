@@ -1,27 +1,25 @@
 import type { Skill } from '../types';
-import type { I18nParams } from './types';
-import { getLocale, resolveDictionaryLocale } from './index';
-import { EN_DICTIONARY } from './locales/en';
-import { KO_DICTIONARY } from './locales/ko';
 import type { AppLocale } from './types';
+import { resolveDictionaryLocale } from './index';
+import { EN_DICTIONARY } from './locales/en';
 
-type TFn = (key: string, params?: I18nParams) => string;
-
-/** skill.* — 사전 locale만(ko↔en). pending→EN. EN 키 없으면 CSV(대개 KO) 폴백. */
-function pickSkillField(key: string, csvFallback: string, locale: AppLocale): string {
-  const dict = resolveDictionaryLocale(locale) === 'en' ? EN_DICTIONARY : KO_DICTIONARY;
-  const val = dict[key];
-  return val ?? csvFallback;
+/**
+ * 스킬 표시 — KO는 skills.csv 정본, EN만 사전(skillEn).
+ * `t()` 2차 폴백(KO 없음 → EN)을 쓰면 한글 UI에 영어가 나오므로 사전을 직접 고른다.
+ */
+function pickSkillField(key: string, csvKo: string, locale: AppLocale): string {
+  if (resolveDictionaryLocale(locale) !== 'en') return csvKo;
+  return EN_DICTIONARY[key] ?? csvKo;
 }
 
-export function resolveSkillName(skill: Skill, t: TFn): string {
-  return pickSkillField(`skill.${skill.id}.name`, skill.name, getLocale());
+export function resolveSkillName(skill: Skill, locale: AppLocale): string {
+  return pickSkillField(`skill.${skill.id}.name`, skill.name, locale);
 }
 
-export function resolveSkillDescription(skill: Skill, t: TFn): string {
-  return pickSkillField(`skill.${skill.id}.desc`, skill.description, getLocale());
+export function resolveSkillDescription(skill: Skill, locale: AppLocale): string {
+  return pickSkillField(`skill.${skill.id}.desc`, skill.description, locale);
 }
 
-export function resolveSkillEffectDescription(skill: Skill, t: TFn): string {
-  return pickSkillField(`skill.${skill.id}.effect`, skill.effect.description, getLocale());
+export function resolveSkillEffectDescription(skill: Skill, locale: AppLocale): string {
+  return pickSkillField(`skill.${skill.id}.effect`, skill.effect.description, locale);
 }

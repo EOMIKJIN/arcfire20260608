@@ -54,12 +54,24 @@ export function resolvePlanetEffectiveStatRdHours(
   return getEffectiveRdTimeHours(baseHours, labLevel);
 }
 
+function notePlanetDevJobWatch(planetId: string): void {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { notePlanetDevJobMaybe } =
+      require('./planetDevJobRealtimeWatch') as typeof import('./planetDevJobRealtimeWatch');
+    notePlanetDevJobMaybe(planetId);
+  } catch {
+    /* 워치 미기동 */
+  }
+}
+
 export function tryCompletePlanetCoreStatRd(planetId: string): boolean {
   const rd = readRdDetail(planetId);
   const job = rd.activeJob;
   if (!job || Date.now() < job.completeAtMs) return false;
   const stages = { ...rd.stages, [job.statType]: job.targetStage };
   writeRdDetail(planetId, { stages, activeJob: null });
+  notePlanetDevJobWatch(planetId);
   return true;
 }
 
@@ -87,6 +99,7 @@ export function startPlanetCoreStatRd(
       completeAtMs: startedAtMs + hours * 3600 * 1000,
     },
   });
+  notePlanetDevJobWatch(planetId);
   return { ok: true };
 }
 

@@ -1,8 +1,7 @@
 // ============================================================
-// 행성개발 설치·레벨업 완료 — 30초 자동 닫힘 알림(범용)
+// 행성개발 설치·레벨업 완료 — 40초 자동 닫힘 알림(범용)
 // ============================================================
 
-import { InteractionManager } from 'react-native';
 import { t, getLocale } from '../../i18n';
 import { resolvePlanetDisplayName } from '../../i18n/systemText';
 import { resolvePlanetById } from '../../world/resolvePlanetById';
@@ -25,7 +24,7 @@ function resolveFacilityLabel(moduleId: string | null, facilityType: string): st
   return facilityType;
 }
 
-/** 설치(Lv.1)·레벨업 완료 시 ArcOverlay alert — 30초 후 자동 닫힘 */
+/** 설치(Lv.1)·레벨업 완료 시 ArcOverlay alert — 40초 후 자동 닫힘 */
 export function showPlanetFacilityLevelUpNotification(
   planetId: string,
   facilityType: string,
@@ -39,24 +38,23 @@ export function showPlanetFacilityLevelUpNotification(
   const facilityLabel = resolveFacilityLabel(moduleId, facilityType);
   const isInstall = newLevel === 1;
 
-  InteractionManager.runAfterInteractions(() => {
-    showArcNotificationAlert(
-      t('planetDev.levelUpAlertTitle'),
-      isInstall
-        ? t('planetDev.levelUpAlertInstallBody', {
-          planet: planetLabel,
-          facility: facilityLabel,
-          level: newLevel,
-        })
-        : t('planetDev.levelUpAlertUpgradeBody', {
-          planet: planetLabel,
-          facility: facilityLabel,
-          level: newLevel,
-        }),
-      {
-        id: PLANET_DEV_LEVEL_UP_ALERT_ID,
-        autoDismissMs: ARC_ALERT_DEFAULT_AUTO_DISMISS_MS,
-      },
-    );
-  });
+  const title = t('planetDev.levelUpAlertTitle');
+  const message = isInstall
+    ? t('planetDev.levelUpAlertInstallBody', {
+      planet: planetLabel,
+      facility: facilityLabel,
+      level: newLevel,
+    })
+    : t('planetDev.levelUpAlertUpgradeBody', {
+      planet: planetLabel,
+      facility: facilityLabel,
+      level: newLevel,
+    });
+  // 전투·이동 중 InteractionManager 대기는 완료 팝업을 착륙 뒤로 미룬다. 범용 알림은 즉시.
+  setTimeout(() => {
+    showArcNotificationAlert(title, message, {
+      id: PLANET_DEV_LEVEL_UP_ALERT_ID,
+      autoDismissMs: ARC_ALERT_DEFAULT_AUTO_DISMISS_MS,
+    });
+  }, 0);
 }

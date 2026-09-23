@@ -1,0 +1,4 @@
+productId,includesProductId,sortOrder,notesKo
+vip_plus,vip_basic,1,Plus는 Basic 혜택 전부 포함
+vip_max,vip_basic,1,Max는 Basic 혜택 전부 포함
+vip_max,vip_plus,2,Max는 Plus 혜택 전부 포함

@@ -59,7 +59,7 @@ export function hydrateWaveCombatCooldowns(): void {
     });
 }
 
-// 모듈 로드 시 하이드레이트 킥 — 트리거 판정(착륙 +10초)보다 항상 선행
+// 모듈 로드 시 하이드레이트 킥 — 트리거 판정(착륙 즉시 Ready)보다 항상 선행
 hydrateWaveCombatCooldowns();
 
 /** 전투 승리 시 1회 기록(웨이브·허브 메인스테이지 공통) — 이후 30분간 해당 행성 재교전 트리거 차단 */

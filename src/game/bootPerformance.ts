@@ -17,6 +17,8 @@ export type BootPerfMark =
   | 'continue_join_catchup_end'
   | 'continue_join_daily_start'
   | 'continue_join_daily_end'
+  | 'continue_fiscal_restore_start'
+  | 'continue_fiscal_restore_end'
   | 'continue_assets_start'
   | 'continue_assets_end'
   | 'continue_bootstrap_start'

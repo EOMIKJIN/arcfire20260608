@@ -2,7 +2,7 @@
 // 아크파이어 온라인 - 타이틀 화면 (로컬 전용)
 // ============================================================
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import {
   View,
   Text,
@@ -38,6 +38,16 @@ import {
 import { resumePlayerToLastHubPlanet } from '../src/game/galaxyMapSessionResume';
 import { runStageNavAfterTeardown } from '../src/navigation/stageNavGate';
 import { playUiSfx } from '../src/audio';
+import {
+  claimArcCoreBootChatFirstPresent,
+  getArcCoreBootChatFirstSnapshot,
+  markArcCoreBootChatFirstFinished,
+  subscribeArcCoreBootChatFirst,
+} from '../src/arcCore/chat/arcCoreBootChatFirstGate';
+import { presentArcCoreBackchannel } from '../src/arcCore/chat/presentArcCoreBackchannel';
+import { useArcOverlayStore } from '../src/ui/overlay/arcOverlayStore';
+import { setTitleStartScreenActive } from '../src/navigation/titleStartScreenPresence';
+import { lockWorldOpsNotifyUntilPlanetHub } from '../src/navigation/worldOpsNotifyPresence';
 
 /** 타이틀·네이티브 스플래시와 로고 톤 맞춤 */
 const TITLE_SCREEN_BG = '#000000';
@@ -112,12 +122,40 @@ export default function TitleScreen() {
   const titleNavLockRef = useRef(false);
   const titleNavScheduledRef = useRef(false);
   const titleMountedRef = useRef(true);
+  const bootChatCover = useSyncExternalStore(
+    subscribeArcCoreBootChatFirst,
+    getArcCoreBootChatFirstSnapshot,
+    getArcCoreBootChatFirstSnapshot,
+  );
+  const chatOverlayOpen = useArcOverlayStore((s) => {
+    const stack = s.stack;
+    for (let i = 0; i < stack.length; i += 1) {
+      if (stack[i]?.kind === 'arcCoreChat') return true;
+    }
+    return false;
+  });
+  const hideTitleChrome = bootChatCover && chatOverlayOpen;
 
   useEffect(() => {
     titleMountedRef.current = true;
+    setTitleStartScreenActive(true);
+    lockWorldOpsNotifyUntilPlanetHub();
     return () => {
       titleMountedRef.current = false;
+      setTitleStartScreenActive(false);
     };
+  }, []);
+
+  useEffect(() => {
+    if (!claimArcCoreBootChatFirstPresent()) return;
+    void presentArcCoreBackchannel({
+      reason: 'session_start',
+      immediate: true,
+      dismissOnBackdrop: false,
+      forceFreshSession: true,
+    }).then((ok) => {
+      if (!ok) markArcCoreBootChatFirstFinished();
+    });
   }, []);
 
   useEffect(() => {
@@ -268,6 +306,8 @@ export default function TitleScreen() {
     <StageShell routeName="title" background="none" safeAreaBackgroundColor={TITLE_SCREEN_BG}>
       <View style={[styles.container, { width, height }]}>
         <View style={[styles.titleLayer, { width, height }]} pointerEvents="box-none">
+          {hideTitleChrome ? null : (
+            <>
           <StarField width={width} height={height} count={60} />
 
           <View
@@ -346,6 +386,8 @@ export default function TitleScreen() {
             <Text style={styles.version}>{t('title.localBuild', { version: appVersion })}</Text>
             <Text style={styles.copyright}>© 2026 NFLOYD INC</Text>
           </View>
+            </>
+          )}
         </View>
       </View>
     </StageShell>

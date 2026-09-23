@@ -1,0 +1,4 @@
+id,fromQuestId,toQuestId,choiceId,choiceLabelKo,choiceLabelEn,conditionKind,conditionValue,priority,enabled
+br_sample_c01_flag_a,story_c01_q05,story_c01_b01,choice_a,샘플 분기 A (비활성),Sample branch A (disabled),flag,sample_path_a,10,0
+br_sample_c01_flag_b,story_c01_q05,story_c01_q06,choice_b,샘플 분기 B 본선 (비활성),Sample branch B spine (disabled),flag,sample_path_b,10,0
+br_sample_c01_rejoin,story_c01_b01,story_c01_q08,rejoin,샘플 본선 재합류 (비활성),Sample rejoin (disabled),always,,5,0

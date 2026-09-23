@@ -107,6 +107,7 @@ export const SettingsOverlayContent = memo(function SettingsOverlayContent({
   const setBgmVolume = useAppSettingsStore((s) => s.setBgmVolume);
   const setSfxMuted = useAppSettingsStore((s) => s.setSfxMuted);
   const setSfxVolume = useAppSettingsStore((s) => s.setSfxVolume);
+  const applySettings = useAppSettingsStore((s) => s.applySettings);
 
   const onSelectLocale = useCallback((l: AppLocale) => setLocale(l), [setLocale]);
 
@@ -130,15 +131,9 @@ export const SettingsOverlayContent = memo(function SettingsOverlayContent({
 
   const handleCancel = useCallback(() => {
     const init = initialRef.current;
-    if (init) {
-      setLocale(init.locale);
-      setBgmMuted(init.bgmMuted);
-      setBgmVolume(init.bgmVolume);
-      setSfxMuted(init.sfxMuted);
-      setSfxVolume(init.sfxVolume);
-    }
+    if (init) applySettings(init);
     onClose();
-  }, [onClose, setLocale, setBgmMuted, setBgmVolume, setSfxMuted, setSfxVolume]);
+  }, [applySettings, onClose]);
 
   const footer = (
     <ArcOverlayFooterActions onCancel={handleCancel} onConfirm={onClose} visualTheme={visualTheme} />

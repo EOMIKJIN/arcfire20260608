@@ -11,12 +11,12 @@
 
 | 항목 | v1.1 | v2.0 |
 |------|------|------|
-| 시설 종류 | 무역소·조선소·방위위성 3종 | **5종** (+ 연구소·선술집 추가) |
+| 시설 종류 | 무역소·조선소·방위위성 3종 | **5종** (+ 연구소·바 추가) |
 | 5대 스탯 관계 | 시설이 스탯을 보조(TDI nudge만) | **시설 레벨업 → 5대 스탯 직접 상승** |
 | 스탯 디폴트 | 50, 감소 요인 대부분 | **시설 투자로 서서히 상승 구조** |
 | PGP 연동 | 간접 | **시설 레벨 합산 → PGP 직접 기여** |
 | 연구소 | 미정의 | **T·E 스탯 상승 + R&D 속도 보너스 10단계** |
-| 선술집 | 미정의 | **P 스탯 상승 + 퀘스트·바운티 해금 10단계** |
+| 바 | 미정의 | **P 스탯 상승 + 퀘스트·바운티 해금 10단계** |
 
 ---
 
@@ -35,7 +35,7 @@
 | `facility_shipyard` | **조선소** | 함선 건조·광물 강화 | T (nudge) + R 간접 |
 | `facility_defense_satellite` | **방위위성** | DPS·위성 수 | **D** (직접) |
 | `facility_laboratory` | **연구소** ⭐NEW | R&D 속도·기술 해금 | **T·E** (직접) |
-| `facility_tavern` | **선술집** ⭐NEW | 퀘스트·바운티·평판 | **P** (직접) |
+| `facility_bar` | **바** ⭐NEW | 퀘스트·바운티·평판 | **P** (직접) |
 
 ### 레벨 구조
 
@@ -66,14 +66,14 @@
 | 조선소 | +0.1/레벨 | T | **+1.0/일** |
 | 방위위성 | +0.3/레벨 | D | **+3.0/일** |
 | 연구소 | +0.3/레벨 | T, E | **+3.0/일 (각각)** |
-| 선술집 | +0.25/레벨 | P | **+2.5/일** |
+| 바 | +0.25/레벨 | P | **+2.5/일** |
 
 ### 1-3. 시설 전부 Lv10 달성 시 일일 스탯 상승량
 
 | 스탯 | 기여 시설 | 일일 상승 | 월간 상승(30일) |
 |------|---------|---------|--------------|
 | **R(자원)** | 무역소 Lv10 | +2.0 | +60 (캡 적용) |
-| **P(인구)** | 무역소+선술집 Lv10 | +4.5 | +135 (캡 적용) |
+| **P(인구)** | 무역소+바 Lv10 | +4.5 | +135 (캡 적용) |
 | **D(방어)** | 방위위성 Lv10 | +3.0 | +90 (캡 적용) |
 | **T(기술)** | 조선소+연구소 Lv10 | +4.0 | +120 (캡 적용) |
 | **E(환경)** | 연구소 Lv10 | +3.0 | +90 (캡 적용) |
@@ -256,7 +256,7 @@ E 변화량/일 = 연구소 nudge(+0.3~+3.0) - 환경 감소(-0.5~-2.0)
 
 ---
 
-## 6. ⭐ 선술집 (Tavern) — 신규 시설
+## 6. ⭐ 바 (Bar) — 신규 시설
 
 > **역할:** P(인구) 스탯의 주된 능동 상승 수단.  
 > 퀘스트·바운티 해금 + 용병 고용 + 평판 시스템 연동.
@@ -270,31 +270,31 @@ E 변화량/일 = 연구소 nudge(+0.3~+3.0) - 환경 감소(-0.5~-2.0)
 | 비용 | 80,000 Cr |
 | 건설 시간 | 2h |
 
-> 선술집은 이미 `tavernBoardStore`가 구현되어 있으므로, 레벨업 연동만 추가한다.
+> 바은 이미 `barBoardStore`가 구현되어 있으므로, 레벨업 연동만 추가한다.
 
-### 6-2. 선술집 레벨별 성능
+### 6-2. 바 레벨별 성능
 
 | 레벨 | 명칭 | 바운티 슬롯 | 평판 보너스 | 용병 등급 | 비용(Cr) | 시간 | P nudge(/일) |
 |------|------|-----------|----------|---------|--------|------|------------|
 | 0 | 미건설 | 0 | — | — | — | — | — |
 | 1 | 임시 주점 | 2 | +0% | 일반 용병 | 80,000 | 2h | P+0.25 |
-| 2 | 소형 선술집 | 3 | +2% | 일반 용병 | 200,000 | 5h | P+0.5 |
-| 3 | 선술집 | 4 | +5% | 숙련 용병 해금 | 500,000 | 12h | P+0.75 |
-| 4 | 확장 선술집 | 5 | +8% | 숙련 용병 | 1,000,000 | 1일 | P+1.0 |
-| 5 | 주요 선술집 | 7 | +12% | 정예 용병 해금 | 2,500,000 | 1.5일 | P+1.25 |
-| 6 | 고급 선술집 | 9 | +16% | 정예 용병 | 5,000,000 | 2일 | P+1.5 |
-| 7 | 성계 선술집 | 12 | +20% | 특수 용병 해금 | 10,000,000 | 3일 | P+1.75 |
-| 8 | 광역 선술집 | 15 | +25% | 특수 용병 | 20,000,000 | 4일 | P+2.0 |
+| 2 | 소형 바 | 3 | +2% | 일반 용병 | 200,000 | 5h | P+0.5 |
+| 3 | 바 | 4 | +5% | 숙련 용병 해금 | 500,000 | 12h | P+0.75 |
+| 4 | 확장 바 | 5 | +8% | 숙련 용병 | 1,000,000 | 1일 | P+1.0 |
+| 5 | 주요 바 | 7 | +12% | 정예 용병 해금 | 2,500,000 | 1.5일 | P+1.25 |
+| 6 | 고급 바 | 9 | +16% | 정예 용병 | 5,000,000 | 2일 | P+1.5 |
+| 7 | 성계 바 | 12 | +20% | 특수 용병 해금 | 10,000,000 | 3일 | P+1.75 |
+| 8 | 광역 바 | 15 | +25% | 특수 용병 | 20,000,000 | 4일 | P+2.0 |
 | 9 | 은하 주점 | 20 | +30% | 전설 용병 해금 | 40,000,000 | 5일 | P+2.25 |
 | 10 | 은하 전설의 주점 | 25 | +35% | 전설 용병 전체 | 80,000,000 | 7일 | P+2.5 |
 
-### 6-3. 선술집 상세 기능
+### 6-3. 바 상세 기능
 
 #### 바운티 보드 시스템
-`tavernBoardStore`의 기존 `localBoard`를 레벨과 연동한다.
+`barBoardStore`의 기존 `localBoard`를 레벨과 연동한다.
 
 ```typescript
-interface TavernBoardLevelConfig {
+interface BarBoardLevelConfig {
   level: number;
   bountySlots: number;          // 동시 활성 바운티 수
   reputationMultiplier: number; // 보상 배율
@@ -310,7 +310,7 @@ interface TavernBoardLevelConfig {
 ```
 
 #### 용병 고용 시스템
-선술집 레벨에 따라 고용 가능한 용병 등급이 확장된다.
+바 레벨에 따라 고용 가능한 용병 등급이 확장된다.
 
 | 용병 등급 | 해금 레벨 | 주요 효과 |
 |---------|---------|---------|
@@ -321,10 +321,10 @@ interface TavernBoardLevelConfig {
 | 전설 용병 | Lv9 | 전투 DPS +30% + 전 스탯 보조 +1 |
 
 #### 평판(Reputation) 시스템
-선술집 레벨업 → 해당 행성의 팩션 평판 보너스 증가 → convoy 수수료 할인·거래 우대.
+바 레벨업 → 해당 행성의 팩션 평판 보너스 증가 → convoy 수수료 할인·거래 우대.
 
 ```typescript
-interface TavernReputationEffect {
+interface BarReputationEffect {
   factionRepBonus: number;      // % 보너스
   tradeDiscountPct: number;     // convoy 수수료 할인
   convoyAttractProbability: number; // convoy 자발 방문 확률
@@ -332,10 +332,10 @@ interface TavernReputationEffect {
 ```
 
 #### P스탯 상승 메커니즘
-선술집은 행성 인구(P)와 가장 직접적으로 연결된다.
+바은 행성 인구(P)와 가장 직접적으로 연결된다.
 
 ```
-P 일일 nudge = 선술집레벨 × 0.25
+P 일일 nudge = 바레벨 × 0.25
 바운티 완료 시 P+0.5 추가 nudge (일 1회 배치 집계)
 convoy 방문 시 P+0.2 추가 nudge (일 1회 배치 집계)
 ```
@@ -344,7 +344,7 @@ convoy 방문 시 P+0.2 추가 nudge (일 1회 배치 집계)
 
 | 시설 | 계산식 | 대상 스탯 |
 |------|--------|---------|
-| 선술집 | 레벨 × 3 | P스탯 TDI 보조 |
+| 바 | 레벨 × 3 | P스탯 TDI 보조 |
 
 ---
 
@@ -357,7 +357,7 @@ R(자원) ── 무역소 레벨 × 0.2 /일
          ─ convoy 정산 nudge (기존)
          ─ 플레이어 매매 nudge (기존)
 
-P(인구) ── 선술집 레벨 × 0.25 /일  ← 신규
+P(인구) ── 바 레벨 × 0.25 /일  ← 신규
          ─ 무역소 레벨 × 0.2 /일
          ─ convoy 유입·거래 횟수 nudge (기존)
          ─ 바운티 완료 +0.5 /일     ← 신규
@@ -387,7 +387,7 @@ E(환경) ── 연구소 레벨 × 0.3 /일   ← 신규
 | 조선소 | — | 5회 전투 승리 | 80,000 Cr |
 | 방위위성 | — | 점유 성공 후 즉시 | 100,000 Cr |
 | 연구소 | 무역소 Lv3 | 15회 전투 승리 | 200,000 Cr |
-| 선술집 | 방위위성 Lv1 | 8회 전투 승리 | 80,000 Cr |
+| 바 | 방위위성 Lv1 | 8회 전투 승리 | 80,000 Cr |
 
 ### 업그레이드 플레이어 레벨 제한
 
@@ -401,8 +401,8 @@ E(환경) ── 연구소 레벨 × 0.3 /일   ← 신규
 | 방위위성 | Lv8+ | 파일럿 Lv35 + D스탯 60 이상 |
 | **연구소** | **Lv5+** | **파일럿 Lv20 + T스탯 30 이상** |
 | **연구소** | **Lv8+** | **파일럿 Lv40 + T스탯 55 이상** |
-| **선술집** | **Lv5+** | **파일럿 Lv15 + P스탯 30 이상** |
-| **선술집** | **Lv8+** | **파일럿 Lv30 + P스탯 55 이상** |
+| **바** | **Lv5+** | **파일럿 Lv15 + P스탯 30 이상** |
+| **바** | **Lv8+** | **파일럿 Lv30 + P스탯 55 이상** |
 
 ### 기타 규칙
 
@@ -418,7 +418,7 @@ E(환경) ── 연구소 레벨 × 0.3 /일   ← 신규
 | 조선소 | 레벨 × 2 | T스탯 TDI 보조 | +20 |
 | 방위위성 | 레벨 × 3 | D스탯 TDI 보조 | +30 |
 | **연구소** | **레벨 × 4** | **T스탯 TDI 보조** | **+40** |
-| **선술집** | **레벨 × 3** | **P스탯 TDI 보조** | **+30** |
+| **바** | **레벨 × 3** | **P스탯 TDI 보조** | **+30** |
 | **합산 최대** | — | — | **+140점 (TDI 보조)** |
 
 > TDI 보조는 직접 스탯이 아닌 TDI 계산 시 보정 인풋. 실제 TDI = `(PlayerStatsSum × 0.7) + (ArcCoreMultiplier × 0.3)`의 `ArcCoreMultiplier` 보정에 반영.
@@ -452,7 +452,7 @@ interface PlanetFacilityState {
     upgradeFinishTimestamp: number;
     rdSpeedBonusPct: number;        // 현재 레벨 R&D 속도 감소율 (캐시)
   };
-  tavern: {                         // ⭐ 신규
+  bar: {                         // ⭐ 신규
     level: number;                  // 0~10
     isUpgrading: boolean;
     upgradeFinishTimestamp: number;
@@ -468,11 +468,11 @@ interface PlanetFacilityState {
 
 | 컬럼명 | 적용 시설 | 설명 |
 |--------|---------|------|
-| `facility_type` | 공통 | `trade_port` / `shipyard` / `defense_satellite` / `laboratory` / `tavern` |
+| `facility_type` | 공통 | `trade_port` / `shipyard` / `defense_satellite` / `laboratory` / `bar` |
 | `level` | 공통 | 0~10 |
 | `display_name_kr` | 공통 | 레벨별 명칭 |
 | `stat_r_nudge_daily` | 무역소 | R 스탯 일일 nudge |
-| `stat_p_nudge_daily` | 무역소·선술집 | P 스탯 일일 nudge |
+| `stat_p_nudge_daily` | 무역소·바 | P 스탯 일일 nudge |
 | `stat_d_nudge_daily` | 방위위성 | D 스탯 일일 nudge |
 | `stat_t_nudge_daily` | 조선소·연구소 | T 스탯 일일 nudge |
 | `stat_e_nudge_daily` | 연구소 | E 스탯 일일 nudge |
@@ -488,10 +488,10 @@ interface PlanetFacilityState {
 | `lab_rd_speed_reduction_pct` | 연구소 | R&D 속도 감소율 |
 | `lab_equipment_tier_unlock` | 연구소 | 분석 가능 장비 티어 |
 | `lab_env_regen_pct_daily` | 연구소 | E 재생률 보조 |
-| `tavern_bounty_slots` | 선술집 | 바운티 슬롯 수 |
-| `tavern_reputation_bonus_pct` | 선술집 | 평판 보너스 |
-| `tavern_merc_tier_unlock` | 선술집 | 용병 등급 해금 |
-| `tavern_refresh_interval_hours` | 선술집 | 바운티 갱신 주기 |
+| `bar_bounty_slots` | 바 | 바운티 슬롯 수 |
+| `bar_reputation_bonus_pct` | 바 | 평판 보너스 |
+| `bar_merc_tier_unlock` | 바 | 용병 등급 해금 |
+| `bar_refresh_interval_hours` | 바 | 바운티 갱신 주기 |
 | `upgrade_cost_credits` | 공통 | 업그레이드 비용 |
 | `upgrade_time_hours` | 공통 | 업그레이드 시간 |
 | `required_player_level` | 공통 | 필요 파일럿 레벨 |
@@ -509,13 +509,13 @@ interface PlanetFacilityState {
 | 조선소 Lv1→10 총 비용 | ~2.5억 Cr | ±20% |
 | 방위위성 Lv1→10 총 비용 | ~3억 Cr | ±20% |
 | **연구소 Lv1→10 총 비용** | **~3억 Cr** | **±20%** |
-| **선술집 Lv1→10 총 비용** | **~1.5억 Cr** | **±20%** |
+| **바 Lv1→10 총 비용** | **~1.5억 Cr** | **±20%** |
 | 방위위성 Lv10 DPS | 150,000 | 행성20 적함 HP 30초 내 처리 |
 | 조선소 Lv10 + combatLv60 | 광물 15강 풀강 | 두 조건 모두 필요 |
 | 무역소 수수료 하한 | 5% | 이하 금지 |
 | **시설 5종 Lv10 도달 후 전 스탯** | **~80** | **3개월 운영 기준** |
 | **연구소 Lv10 R&D 속도** | **-50%** | R&D 90일 → 45일로 단축 목표 |
-| **선술집 Lv10 바운티 슬롯** | **25개** | 동시 진행 최대 |
+| **바 Lv10 바운티 슬롯** | **25개** | 동시 진행 최대 |
 | **T스탯 50 → 80 도달 기간** | **60~90일** | 연구소 Lv5+ 기준 |
 
 ---
@@ -531,7 +531,7 @@ interface PlanetFacilityState {
 7. **PlanetFacilityState:** `planetCoreRuntimeStore` AsyncStorage 정본
 8. **조선소 건조 ≠ 구매:** `builtHullTierKeys` 갱신은 사전작업. 구매 조건은 `capital_hull_purchase_policy` 정본
 9. **연구소 R&D 단축:** `getEffectiveRdTime(baseHours, laboratoryLevel)` — 15단계 R&D 시간 CSV에 연구소 레벨 보정 곱적용
-10. **선술집 바운티:** `tavernBoardStore`의 `localBoard` 슬롯 수·갱신 주기를 레벨에서 동적으로 읽음
+10. **바 바운티:** `barBoardStore`의 `localBoard` 슬롯 수·갱신 주기를 레벨에서 동적으로 읽음
 11. **스탯 상한 클램핑:** 모든 nudge 적용 후 `Math.min(stat + nudge, 100)` 강제 적용
 
 ### 신규 배치 함수 목록
@@ -547,8 +547,8 @@ runLaboratoryRdSpeedPass(planetId: string): void
   → 연구소 레벨 조회
   → 진행 중인 R&D 항목 효과 시간 보정
 
-runTavernBountyRefreshPass(planetId: string): void
-  → 선술집 레벨 조회
+runBarBountyRefreshPass(planetId: string): void
+  → 바 레벨 조회
   → lastBountyRefreshTimestamp 기준 갱신 여부 판정
   → 슬롯 수에 맞게 바운티 보드 갱신
 ```
@@ -559,16 +559,16 @@ runTavernBountyRefreshPass(planetId: string): void
 
 | 항목 | v1.1 | v2.0 |
 |------|------|------|
-| 시설 수 | 3종 | **5종** (+연구소·선술집) |
+| 시설 수 | 3종 | **5종** (+연구소·바) |
 | 스탯 상승 주체 | R&D + 경제 실물만 | **시설 레벨업 직접 nudge 추가** |
 | T스탯 상승 경로 | 없음(TDI 보조만) | **연구소+조선소 daily nudge** |
 | E스탯 상승 경로 | 다양성 패스 간접 | **연구소 daily nudge 직접** |
-| P스탯 상승 경로 | convoy·무역 간접 | **선술집 daily nudge 직접** |
+| P스탯 상승 경로 | convoy·무역 간접 | **바 daily nudge 직접** |
 | D스탯 상승 경로 | 방위위성 Lv nudge | **동일 + 침공 격퇴 보너스** |
 | R스탯 상승 경로 | 무역·convoy | **무역소 daily nudge 명시** |
 | TDI 보조 최대 | +25점 (3시설) | **+140점 (5시설)** |
 | 스탯 50→80 달성 | 정의 없음 | **60~90일 목표 정의** |
 | 연구소 기능 | 미정의 | R&D -50% · 장비 분석 · E 재생 |
-| 선술집 기능 | 미정의 | 바운티 25슬롯 · 용병 · 평판 |
+| 바 기능 | 미정의 | 바운티 25슬롯 · 용병 · 평판 |
 | 배치 신규 함수 | — | `runFacilityStatNudgePass` 등 3종 |
 | CSV 신규 컬럼 | 기존 | **stat_*_nudge_daily 등 9개 추가** |

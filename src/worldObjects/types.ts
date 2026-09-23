@@ -40,7 +40,10 @@ export interface WorldObject {
   defenseWeaponId?: string;
   /** 방위위성 등급(플레이어 업그레이드·시험운용). */
   defenseLevel?: number;
+  /** i18n 키(예: `hubBg.wreck`) — 로케일 전환 시 렌더 시점에 `t(title, ...)`로 해석한다. 원문 문자열 직접 저장 금지. */
   title: string;
+  /** title이 번호 포함 키(`{n}` 플레이스홀더)일 때 채워질 인스턴스 순번(1부터). */
+  titleOrdinal?: number;
   description?: string;
   transform: WorldObjectTransform;
   interactions: WorldObjectInteractionSpec[];

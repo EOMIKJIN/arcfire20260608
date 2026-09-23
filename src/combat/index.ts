@@ -4,8 +4,8 @@
  * **행성 궤도 전투** — `/(game)/planet`: 착륙한 행성 id + `npc_ai_captains.csv`의 `operationalState=combat`·`assignedShipId`만으로
  * 전투 레이어 on/off·편대 구성(코드는 CSV를 읽기만 함).
  *
- * **이동중 전투** — `/(game)/combat`: 은하 이동 도중 강제 교전(현 해적). 행성 착륙과 무관·함장 CSV 궤도 함대와 분리.
- * 시뮬 시드는 `CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID`(플레이스홀더 1:1); 상세 시나리오·미션 연동은 추후.
+ * **이동중 전투** — `/(game)/combat`: 은하 이동 도중 강제 교전(목적지 전용적 1척). 행성 착륙과 무관·함장 CSV 궤도 함대와 분리.
+ * 시뮬 시드는 `CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID`(목적지 전용적 1:1 · 미션 바인드 시 퀘스트 함장).
  *
  * **규약(소규모·대규모 공통)**: `capitalCombatConventions.ts`.
  * 함대 척수 프리셋: `npc/edenCapitalFleetConfig.ts`(소규모·`LARGE_SCALE_*`).
@@ -17,6 +17,7 @@
  * - `CapitalRealtimeCombatSimBinder`로 `StageShell`을 감싼 뒤 `CapitalRealtimeCombatSimContext`로 sim 구독
  * - (레거시) 동일 `orbitSize`·`active`로 `useCapitalRealtimeCombatSim` 직접 호출은 테스트·특수 화면용
  * - 교전 전용 HP/팀: `useCapitalRealtimeEncounterLayoutEffect` 또는 `applyCapitalRealtimeEncounterLayout`
+ * - 운동 정본: `npc_ai_ships` runtime CSV → `ShipPerformanceCalculator` → 장비. `PlayerShip.speed` 패치 경로 없음.
  * - 승패: `useCapitalRealtimeDuelOutcome`
  * - 궤도만: `CapitalRealtimeCombatOrbitView` + (선택) `CapitalRealtimeCombatHudOverlay`
  * - 상세 전투 로그 HUD: `CAPITAL_REALTIME_COMBAT_LOG_UI_ENABLED` (`capitalRealtimeCombatUiFlags.ts`)
@@ -64,6 +65,14 @@ export {
 } from './capitalRealtimeCombatGate';
 
 export {
+  DRACO_COMBAT_TEST_PLANET_ID,
+  DRACO_COMBAT_TEST_SYSTEM_ID,
+  DRACO_COMBAT_TEST_VENUE_ENABLED,
+  appendDracoCombatTestAllies,
+  isDracoCombatTestVenue,
+} from './dracoCombatTestVenue';
+
+export {
   CAPITAL_REALTIME_COMBAT_ORBIT_TEST_PLANET_ID,
   DRACO_SEAMLESS_PVP_TEST_PLANET_ID,
   DRACO_SEAMLESS_PVP_TEST_SYSTEM_ID,
@@ -87,13 +96,3 @@ export {
 } from './useCapitalRealtimeEncounterLayout';
 
 export { useCapitalRealtimeDuelOutcome } from './useCapitalRealtimeDuelOutcome';
-
-export {
-  applyCapitalRealtimeEncounterBuild,
-  buildCapitalRealtimeEncounterDuel,
-  useCapitalRealtimeEncounterBuildEffect,
-  type CapitalRealtimeEncounterBuild,
-  type CapitalRealtimeEncounterBuildSource,
-  type CapitalRealtimeEncounterSimPatch,
-  type CapitalRealtimeSimSlotKnobs,
-} from './capitalEncounterBuild';

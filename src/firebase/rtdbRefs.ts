@@ -3,7 +3,7 @@
 // ============================================================
 
 import { getApp } from '@react-native-firebase/app';
-import { getDatabase } from '@react-native-firebase/database';
+import { get, getDatabase, ref, set } from '@react-native-firebase/database';
 import {
   ARCORE_RTDB_BOOT_READ_TIMEOUT_MS,
   ARCORE_RTDB_DATABASE_URL,
@@ -43,18 +43,17 @@ export function getRtdb() {
 
 export function arccoreRtdbRef(relativePath: string) {
   const trimmed = relativePath.replace(/^\/+/, '').replace(/\/+$/, '');
-  return getRtdb().ref(trimmed ? `${ARCORE_RTDB_ROOT}/${trimmed}` : ARCORE_RTDB_ROOT);
+  const path = trimmed ? `${ARCORE_RTDB_ROOT}/${trimmed}` : ARCORE_RTDB_ROOT;
+  return ref(getRtdb(), path);
 }
 
-/** `.on()` 리스너 금지 — 단발 read + 타임아웃 */
+/** `.on()` 리스너 금지 — 모듈 `get()` 단발 read + 타임아웃 */
 export async function readRtdbValueOnce<T>(relativePath: string): Promise<T | null> {
-  const readPromise = arccoreRtdbRef(relativePath)
-    .once('value')
-    .then((snap) => {
-      const val = snap.val();
-      if (val == null || typeof val !== 'object') return null;
-      return val as T;
-    });
+  const readPromise = get(arccoreRtdbRef(relativePath)).then((snap) => {
+    const val = snap.val();
+    if (val == null || typeof val !== 'object') return null;
+    return val as T;
+  });
 
   let tid: ReturnType<typeof setTimeout> | undefined;
   try {
@@ -73,4 +72,9 @@ export async function readRtdbValueOnce<T>(relativePath: string): Promise<T | nu
   } finally {
     if (tid) clearTimeout(tid);
   }
+}
+
+/** 모듈 `set()` 단발 write — 네임스페이스 `Reference.set` 금지 */
+export function writeRtdbValue(relativePath: string, value: unknown): Promise<void> {
+  return set(arccoreRtdbRef(relativePath), value);
 }

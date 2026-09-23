@@ -44,3 +44,44 @@ web-build/
 
 # --- 데일리 커밋 로그 (로컬) ---
 tools/daily-commit/logs/*.log
+
+# =============================================================================
+# 저장소 위생 (2026-08-09) — 런타임 로그·번들 실험·날짜 아카이브·잔해
+# 앱 소스(app/src/tables)·kim-team-lead handoff·reports/latest* 는 추적 유지
+# =============================================================================
+
+# 번들/export 실험 산출물
+.expo-tmp-bundle-test/
+.tmp-bundle-check/
+.tmp-expo-export-test/
+.tmp/
+.runtime-logs/
+
+# 트리/디버그 덤프 · 셸 스텁 잔해
+project_structure.txt
+/adb
+/git
+/npx
+
+# 장기 모니터 로그·대시보드 런타임 (PC adb 전용 · 앱 무영향)
+tools/long-run-monitor/logs/
+tools/long-run-monitor/logs/**
+tools/daily-commit/logs/
+
+# 감사·SIM 날짜별 아카이브 (루트 latest.md / learning-state 등은 유지)
+tools/**/reports/20*/
+tools/**/reports/20*/**
+
+# 프로파일러 타임스탬프 스냅샷 (YYYYMMDD-* · 디스크 보관·git 비추적)
+tools/memory-profiler/reports/snapshots/
+tools/memory-profiler/reports/snapshots/**
+
+# 휘발성 watch/pid/stderr (balance-ops 등)
+tools/**/reports/*.pid
+tools/**/reports/watch-*.log
+tools/**/reports/audit-last.stdout
+tools/**/reports/audit-last.stderr
+
+# 로컬 전용 빈 잔해 폴더 (재생성 방지 힌트)
+utils/
+tools/story-dialog-audit/
