@@ -282,6 +282,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  main,
   VOLATILE_SKIP_STAGE,
   buildGitAddArgs,
   buildGitAddExcludes,

@@ -51,6 +51,8 @@ import { purgeAllPlanetHubScanUnlockState } from '../game/planetHub/planetHubSca
 import { useArcCoreSpyExpelledStore } from '../store/arcCoreSpyExpelledStore';
 import { useMainStoryCaptainDeadStore } from '../store/mainStoryCaptainDeadStore';
 import { useArcCorePantheonCodexStore } from '../arcCore/pantheon/arcCorePantheonCodexStore';
+import { useUnidentifiedAnomalyStore } from '../store/unidentifiedAnomalyStore';
+import { clearUnidentifiedAnomalyTestWatch } from '../missions/unidentifiedAnomaly/unidentifiedAnomalyTestRotationWatch';
 import { useAppBootStore } from '../store/appBootStore';
 import { runStageUiAfterIdle } from '../navigation/stageNavGate';
 import { useArcOverlayStore } from '../ui/overlay/arcOverlayStore';
@@ -263,6 +265,8 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
   await useArcCoreSpyExpelledStore.getState().resetLocal();
   await useMainStoryCaptainDeadStore.getState().resetLocal();
   await useArcCorePantheonCodexStore.getState().resetForAccountPurge();
+  clearUnidentifiedAnomalyTestWatch();
+  await useUnidentifiedAnomalyStore.getState().resetLocal();
   // 성운 프로필·일일배치 허브 요약 — 신규 첫 허브 오염 방지
   await usePlanetNebulaStore.getState().resetLocalProfilesForAccountPurge();
   await clearArcCoreDailyOpsSummaryPending();

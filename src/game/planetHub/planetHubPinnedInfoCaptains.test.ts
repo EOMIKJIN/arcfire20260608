@@ -99,34 +99,57 @@ test('성계 필터 — 타 성계 퀘스트 NPC 제외 · 이 성계 체류·�
   );
 });
 
-test('applyQuestInfoMarkFlagsToRows — 퀘스트 NPC만 레일 · 메인만 M', () => {
+test('applyQuestInfoMarkFlagsToRows — 퀘스트 NPC만 레일 · 메인 M · 서브 S', () => {
   const rows = [
     row({ keySlot: 0, captainId: 'npc_cpt_story' }),
     row({ keySlot: 1, captainId: 'npc_cpt_sandbox' }),
-    row({ keySlot: 2, captainId: 'npc_cpt_orbit' }),
+    row({ keySlot: 2, captainId: 'npc_cpt_side' }),
+    row({ keySlot: 3, captainId: 'npc_cpt_orbit' }),
   ];
   const stamped = applyQuestInfoMarkFlagsToRows(rows, {
-    assignedQuestIds: new Set(['npc_cpt_story', 'npc_cpt_sandbox']),
+    assignedQuestIds: new Set(['npc_cpt_story', 'npc_cpt_sandbox', 'npc_cpt_side']),
     mainQuestIds: new Set(['npc_cpt_story']),
+    subQuestIds: new Set(['npc_cpt_sandbox', 'npc_cpt_side']),
     configuredQuestIds: new Set(['npc_cpt_configured']),
   });
   assert.equal(stamped[0]?.showQuestMarks, true);
   assert.equal(stamped[0]?.hasMainQuest, true);
+  assert.equal(stamped[0]?.hasSubQuest, false);
   assert.equal(stamped[1]?.showQuestMarks, true);
   assert.equal(stamped[1]?.hasMainQuest, false);
-  assert.equal(stamped[2]?.showQuestMarks, false);
+  assert.equal(stamped[1]?.hasSubQuest, true);
+  assert.equal(stamped[2]?.showQuestMarks, true);
   assert.equal(stamped[2]?.hasMainQuest, false);
+  assert.equal(stamped[2]?.hasSubQuest, true);
+  assert.equal(stamped[3]?.showQuestMarks, false);
+  assert.equal(stamped[3]?.hasMainQuest, false);
+  assert.equal(stamped[3]?.hasSubQuest, false);
 
   const configuredOnly = applyQuestInfoMarkFlagsToRows(
     [row({ keySlot: 3, captainId: 'npc_cpt_configured' })],
     {
       assignedQuestIds: new Set(),
       mainQuestIds: new Set(),
+      subQuestIds: new Set(),
       configuredQuestIds: new Set(['npc_cpt_configured']),
     },
   );
   assert.equal(configuredOnly[0]?.showQuestMarks, true);
   assert.equal(configuredOnly[0]?.hasMainQuest, false);
+  assert.equal(configuredOnly[0]?.hasSubQuest, false);
+
+  const sideOnly = applyQuestInfoMarkFlagsToRows(
+    [row({ keySlot: 4, captainId: 'npc_cpt_sq_orren_bask' })],
+    {
+      assignedQuestIds: new Set(),
+      mainQuestIds: new Set(),
+      subQuestIds: new Set(['npc_cpt_sq_orren_bask']),
+      configuredQuestIds: new Set(),
+    },
+  );
+  assert.equal(sideOnly[0]?.showQuestMarks, true);
+  assert.equal(sideOnly[0]?.hasSubQuest, true);
+  assert.equal(sideOnly[0]?.hasMainQuest, false);
 });
 
 test('compact label — 총사령관 마크 없음 · 퀘스트 ◈', () => {

@@ -1,3 +1,9 @@
+## [관측 요청] 2026-09-24 — mem-post-dev-recheck (이상현상 arc_anom_ persist 누적)
+
+- 김팀장 코드 반영: 종료된 `arc_anom_*` mission progress를 failed로 남기지 않고 삭제. hydrate·persist 직전 prune. 이력은 `recentResolved` cap 8
+- 관측만: 테스트 로테이션(30분) 수 사이클 후 `arcfire_missions_v1` JSON 크기·PSS floor가 계단 상승하지 않는지
+- 코드 수정 금지
+
 ## [관측 요청] 2026-09-20 — mem-post-dev-recheck (스텔리움 개척 현금)
 
 - 김팀장 코드 반영: 블루 금고 의장 4000 / 운용 200 / 시도 400×D / 보증 8000 · 출항 선지급 · hop·확률·위성 L1 기존값 유지 · persist `arcfire_stellium_colonize_fleet_fiscal_v1` (월드 · purge 제외 · 1.5s coalesce)
@@ -11904,6 +11910,40 @@
 - **권장(김팀장 1안)**: 08:00 보고 FAIL — adb/타임라인 확인 · ensure-daily-8am-report 재가동
 
 > status: **ready-for-team-lead-action** · **08:00 보고체 유지**
+
+## [관측] 2026-09-24 08:00:00 KST — **데일리 08:00 상시 자동보고** (WARN)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **29900** · auto-fix=ON
+- **adb**: OK (192.168.45.67:44363)
+- **앱**: RUNNING
+- **mem-monitor**: **WARN** (PSS 868.9MB · GL 117.4MB · Views 342 · pid=13923)
+- **mem-budget-ledger**: ledger p50=717.4MB native=392.8MB
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260924-0800.md
+- **verdict**: **WARN**
+- **incidents (actionable tail)**: 2
+  - [2026-09-24 08:00:00] DAILY_8AM_REPORT 2026-09-24 08:00:00 KST
+  - [2026-09-24 08:00:00] DAILY_8AM_REPORT 2026-09-24 08:00:00 KST
+- **권장(김팀장 1안)**: PSS 850+ — floor watch
+
+> status: monitor-ok · **08:00 보고체 유지**
+
+## [관측] 2026-09-24 08:00:00 KST — **데일리 08:00 상시 자동보고** (OK)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **29900** · auto-fix=ON
+- **adb**: OK (192.168.45.67:44363)
+- **앱**: RUNNING
+- **mem-monitor**: **OK** (PSS 841.9MB · GL 117.4MB · Views 342 · pid=13923)
+- **mem-budget-ledger**: ledger p50=717.4MB native=392.8MB
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260924-0800.md
+- **verdict**: **OK**
+- **incidents (actionable tail)**: 2
+  - [2026-09-24 08:00:00] DAILY_8AM_REPORT 2026-09-24 08:00:00 KST
+  - [2026-09-24 08:00:00] DAILY_8AM_REPORT 2026-09-24 08:00:00 KST
+- **권장(김팀장 1안)**: daily 08:00 soak OK — review report
+
+> status: monitor-ok · **08:00 보고체 유지**
 
 ## 작업 요약
 

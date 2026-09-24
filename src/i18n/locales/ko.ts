@@ -822,6 +822,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'nearbyPresence.action.commRequest': '통신요청',
   'nearbyPresence.action.commLink': '통신연결',
   'nearbyPresence.tag.mainQuest': '메인 퀘스트',
+  'nearbyPresence.tag.subQuest': '서브 퀘스트',
   'nearbyPresence.tag.questMarks': '퀘스트 타입',
   'nearbyPresence.role.governorName': '총사령관 · {name}',
   'nearbyPresence.action.mission': '미션',
@@ -1822,6 +1823,20 @@ export const KO_DICTIONARY: I18nDictionary = {
     '{planetJosa} {attackerJosa} 공격하였습니다.\n방어측은 {defender}입니다.\n전투 결과: {outcome}',
   'territorial.alert.maintained.independentBody':
     '{planetJosa} {attackerJosa} 공격하였습니다.\n방어측은 {defender}입니다.\n전투 결과: {outcome}',
+  'anomaly.alert.title': '미확인 이상현상',
+  'anomaly.alert.body':
+    '{system} 성계에서 미확인 이상현상이 관측되었습니다. 착륙 후 바의 이상현상 연구원을 찾으십시오.',
+  'anomaly.researcher.sectionTitle': '미확인 이상현상',
+  'anomaly.researcher.talk': '연구원과 대화',
+  'anomaly.researcher.listed': '수락 대기',
+  'anomaly.researcher.accepted': '조사 중',
+  'anomaly.researcher.revealed': '정체 공개',
+  'anomaly.researcher.body': '이 행성 잔해에서 이상현상의 정체를 확인하십시오. 유물일 수도, 위협일 수도 있습니다.',
+  'anomaly.hud.identify': '잔해 수색으로 이상현상의 정체를 확인',
+  'anomaly.salvage.relicTitle': '미확인 유물',
+  'anomaly.salvage.relicBody': '잔해에서 {item}을(를) 회수했습니다.',
+  'anomaly.salvage.threatTitle': '미확인 위협',
+  'anomaly.salvage.threatBody': '잔해에서 미확인 물체가 반응합니다. 조사 중단은 바의 연구원에게.',
   'territorial.alert.statusQuoTitle': '접전지역 — 전선 소강',
   'territorial.alert.statusQuoBody':
     '{planet} — 이번 시간대에는 교전이 없었습니다. {side} 점령이 유지되었습니다.',

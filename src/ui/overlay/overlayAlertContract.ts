@@ -32,6 +32,9 @@ export function isCompactAutoDismissOverlayKind(
 /** 행성 점유 변경 팝업 — 동일 id 교체로 최신 내용 갱신 */
 export const TERRITORIAL_OCCUPATION_ALERT_ID = 'territorial-occupation-alert';
 
+/** 미확인 이상현상 발동 — 동일 id 교체 */
+export const UNIDENTIFIED_ANOMALY_ALERT_ID = 'unidentified-anomaly-alert';
+
 /** 일일 배치 요약 팝업 — 배치 완료 1회 · 허브 도착 후만 · 40초 자동 닫힘 */
 export const ARC_DAILY_OPS_SUMMARY_ALERT_ID = 'arc-daily-ops-summary-alert';
 

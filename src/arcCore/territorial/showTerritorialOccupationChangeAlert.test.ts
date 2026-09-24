@@ -19,7 +19,11 @@ import {
   formatTerritorialBattleAlertCopy,
   koJosa,
 } from './territorialBattleAlertCopy';
-import { shouldSkipTerritorialOccupationAlert } from './territorialAlertGate';
+import {
+  shouldSkipTerritorialOccupationAlert,
+  shouldSkipUnidentifiedAnomalyAlert,
+  shouldSkipWorldOpsNotificationAlert,
+} from './territorialAlertGate';
 
 function test(name: string, fn: () => void): void {
   try {
@@ -44,12 +48,14 @@ test('1) 인게임(부트 완료·허브 도착) → 스킵 안 함', () => {
   assert.equal(shouldSkipTerritorialOccupationAlert(), false);
 });
 
-test('1b) 허브 미도착 → 접전·운영 팝업 스킵', () => {
+test('1b) 허브 미도착 → 일일운영만 스킵 · 접전은 표시', () => {
   useAppBootStore.getState().setBootReady(true);
   setTitleStartScreenActive(false);
   setAccountResetInProgress(false);
   lockWorldOpsNotifyUntilPlanetHub();
-  assert.equal(shouldSkipTerritorialOccupationAlert(), true);
+  assert.equal(shouldSkipWorldOpsNotificationAlert(), true);
+  assert.equal(shouldSkipTerritorialOccupationAlert(), false);
+  assert.equal(shouldSkipUnidentifiedAnomalyAlert(), false);
 });
 
 test('1c) 스토리·파일럿 등록 화면 → 스킵', () => {
@@ -67,6 +73,7 @@ test('2) 시작화면 → 전투결과 포함 접전 팝업 스킵', () => {
   useAppBootStore.getState().setBootReady(true);
   setTitleStartScreenActive(true);
   assert.equal(shouldSkipTerritorialOccupationAlert(), true);
+  assert.equal(shouldSkipUnidentifiedAnomalyAlert(), true);
 });
 
 test('3) 부트 미완료(초기화) → 스킵', () => {
@@ -116,6 +123,7 @@ test('6) 배선 — 전투결과(maintained)·변경 팝업이 공통 게이트�
   const src = readFileSync(resolve(__dirname, 'showTerritorialOccupationChangeAlert.ts'), 'utf8');
   assert.match(src, /shouldSkipTerritorialOccupationAlert/);
   assert.match(src, /function presentTerritorialAlertNow/);
+  assert.match(src, /flushPendingTerritorialOccupationAlert/);
   assert.match(src, /messageSection/);
   assert.match(src, /territorial\.alert\.resultLabel/);
   const maintainedIdx = src.indexOf('export function showTerritorialOccupationMaintainedAlert');

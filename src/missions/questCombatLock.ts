@@ -89,7 +89,11 @@ export function mapQuestCombatPolicyToVenue(
 function lookupMissionForQuestLock(missionId: string): Mission | undefined {
   const fromCsv = MISSIONS_FROM_CSV[missionId];
   if (fromCsv) return fromCsv;
-  if (missionId.startsWith('arc_inst_') || missionId.startsWith('cp_')) {
+  if (
+    missionId.startsWith('arc_inst_')
+    || missionId.startsWith('cp_')
+    || missionId.startsWith('arc_anom_')
+  ) {
     // 인스턴스/개인 미션만 catalog — 노드 테스트는 CSV 행만 씀
     const { getMissionById } = require('./missionCatalog') as typeof import('./missionCatalog');
     return getMissionById(missionId);

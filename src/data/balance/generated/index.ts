@@ -113,6 +113,7 @@ export { TradeRouteEconomyPolicy_FROM_BALANCE_CSV } from './csvTradeRouteEconomy
 export { TradeRoutePlanetSupplyAssignments_FROM_BALANCE_CSV } from './csvTradeRoutePlanetSupplyAssignments';
 export { TradeRouteTransportPolicy_FROM_BALANCE_CSV } from './csvTradeRouteTransportPolicy';
 export { TransitCombatCaptainFallback_FROM_BALANCE_CSV } from './csvTransitCombatCaptainFallback';
+export { UnidentifiedAnomalyPolicy_FROM_BALANCE_CSV } from './csvUnidentifiedAnomalyPolicy';
 export { VipTierPolicy_FROM_BALANCE_CSV } from './csvVipTierPolicy';
 export { WeaponAffinityMatrix_FROM_BALANCE_CSV } from './csvWeaponAffinityMatrix';
 export { WeaponCombatReferencePolicy_FROM_BALANCE_CSV } from './csvWeaponCombatReferencePolicy';

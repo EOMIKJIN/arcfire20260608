@@ -22,6 +22,8 @@ import { useMissionStore } from '../src/store/missionStore';
 import { useMainStoryProgressStore } from '../src/store/mainStoryProgressStore';
 import { useArcCoreInstanceMissionBoardStore } from '../src/store/arcCoreInstanceMissionBoardStore';
 import { useWorldStore } from '../src/store/worldStore';
+import { useUnidentifiedAnomalyStore } from '../src/store/unidentifiedAnomalyStore';
+import { scheduleUnidentifiedAnomalyTestWatch } from '../src/missions/unidentifiedAnomaly/unidentifiedAnomalyTestRotationWatch';
 import { useNpcCaptainProgressStore } from '../src/store/npcCaptainProgressStore';
 import { NPC_CAPTAINS_FROM_CSV } from '../src/data/generated';
 import { useUserSessionStore } from '../src/store/userSessionStore';
@@ -180,6 +182,9 @@ export default function RootLayout() {
         await bootstrapWorldObjectRuntimeFromWorld(useWorldStore.getState().systems);
         await usePlanetCoreRuntimeStore.getState().bootstrapFromWorldAsync();
         markBootPerf('storage_load_end');
+        void useUnidentifiedAnomalyStore.getState().loadLocal().then(() => {
+          scheduleUnidentifiedAnomalyTestWatch();
+        });
         useClanWarFoundationStore
           .getState()
           .syncNpcAiClanTerritoryFromGalaxy(useWorldStore.getState().systems, {

@@ -14,6 +14,10 @@ import {
   type GalaxyTerritoryOccupationLabel,
   type GalaxyTerritorySite,
 } from './buildGalaxyTerritoryVoronoi';
+import {
+  VORONOI_INFLUENCE_RADIUS_NN_MUL,
+  meanNearestNeighborDist,
+} from './clampGalaxyVoronoiInfluenceCell';
 import { chainAndChamferGalaxyBorders } from './chainAndChamferGalaxyBorders';
 import { resolveMapFactionSideFromClanId } from './resolveMapFactionSide';
 
@@ -76,6 +80,25 @@ function buildVoronoiSites(input: {
   return { voronoiSites, territorySites };
 }
 
+/** R은 월드 간격으로 정하고 toScreen 배율로 환산 — 줌해도 월드 모양이 안 바뀐다. */
+function resolveInfluenceRadiusPxFromWorld(
+  systems: StarSystem[],
+  toScreen: (pos: { x: number; y: number }) => { x: number; y: number },
+): number {
+  const worldPts: Array<{ x: number; y: number }> = [];
+  for (let i = 0; i < systems.length; i += 1) {
+    worldPts.push(systems[i]!.position);
+  }
+  const nn = meanNearestNeighborDist(worldPts);
+  if (!(nn > 0)) return 0;
+  const origin = toScreen({ x: 0, y: 0 });
+  const axisX = toScreen({ x: 1, y: 0 });
+  const axisY = toScreen({ x: 0, y: 1 });
+  const scale = (Math.abs(axisX.x - origin.x) + Math.abs(axisY.y - origin.y)) * 0.5;
+  if (!(scale > 0)) return 0;
+  return nn * VORONOI_INFLUENCE_RADIUS_NN_MUL * scale;
+}
+
 const EMPTY_TESSELLATION: GalaxyMapTerritoryTessellation = {
   geometry: null,
   borderSegments: [],
@@ -95,15 +118,18 @@ export function tessellateGalaxyMapTerritoryVoronoiModel(input: {
 }): GalaxyMapTerritoryTessellation {
   const { voronoiSites, territorySites } = buildVoronoiSites(input);
   if (voronoiSites.length < 2) return EMPTY_TESSELLATION;
+  const influenceRadiusPx = resolveInfluenceRadiusPxFromWorld(input.systems, input.toScreen);
 
   return {
     geometry: tessellateGalaxyTerritoryGeometry({
       sites: territorySites,
       bounds: input.mapBounds,
+      influenceRadiusPx,
     }),
     borderSegments: tessellateGalaxyBlueRedVoronoiBorderSegments({
       sites: voronoiSites,
       bounds: input.mapBounds,
+      influenceRadiusPx,
     }),
   };
 }

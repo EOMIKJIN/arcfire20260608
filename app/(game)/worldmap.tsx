@@ -172,6 +172,10 @@ import {
   selectGalaxyMapVoronoiSites,
 } from '../../src/galaxyMap/selectGalaxyMapVoronoiSites';
 import { GalaxyMapContestedZoneRingOverlay } from '../../src/galaxyMap/GalaxyMapContestedZoneRingOverlay';
+import { useUnidentifiedAnomalyStore } from '../../src/store/unidentifiedAnomalyStore';
+import { scheduleUnidentifiedAnomalyTestWatch } from '../../src/missions/unidentifiedAnomaly/unidentifiedAnomalyTestRotationWatch';
+import { flushPendingTerritorialOccupationAlert } from '../../src/arcCore/territorial/showTerritorialOccupationChangeAlert';
+import { UNIDENTIFIED_ANOMALY_RING_COLOR } from '../../src/missions/unidentifiedAnomaly/unidentifiedAnomalyTestPolicy';
 import { GalaxyMapColonizeHubPulseOverlay } from '../../src/galaxyMap/GalaxyMapColonizeHubPulseOverlay';
 import {
   GalaxyMapSystemActionMenu,
@@ -323,6 +327,7 @@ export default function WorldMapScreen() {
   const inspectedPlanetInfoIds = useWorldStore((s) => s.inspectedPlanetInfoIds);
   const unlockedSystemIds = useWorldStore((s) => s.unlockedSystemIds);
   const synthColonizationPhaseByPlanetId = useWorldStore((s) => s.synthColonizationPhaseByPlanetId);
+  const anomalyActiveSystemId = useUnidentifiedAnomalyStore((s) => s.active?.systemId ?? null);
 
   const [showPanel, setShowPanel] = useState(false);
   const [zoomStep, setZoomStep] = useState(GALAXY_MAP_ZOOM_DEFAULT_STEP);
@@ -800,6 +805,13 @@ export default function WorldMapScreen() {
     markVisited(player.currentSystemId);
   }, [player?.currentSystemId, isMoving, shipTransit, markVisited]);
 
+  useFocusEffect(
+    useCallback(() => {
+      scheduleUnidentifiedAnomalyTestWatch();
+      flushPendingTerritorialOccupationAlert();
+    }, []),
+  );
+
   // 점유클랜을 zone/위험도 2행에 인라인 합류 → 별도 clan 행 제거 (높이 축소)
   // 하단 텍스트·회색 배경 끝 여백(+6px) — 딱 붙음 방지
   const PANEL_H = 134;
@@ -963,7 +975,7 @@ export default function WorldMapScreen() {
     fogHiddenHeldRef.current = hidden;
     return { fogVisibleSystemsList: visible, fogHiddenSystemsList: hidden };
   }, [visibleSystemsList, travelFogRevealedIds]);
-  const questAcceptMarks = useGalaxyMapQuestAcceptMarks(visibleSystemsList);
+  const questAcceptMarks = useGalaxyMapQuestAcceptMarks(fogVisibleSystemsList);
   const voronoiSystemsHeldRef = useRef<typeof visibleSystemsList>([]);
   const voronoiSystemsList = useMemo(() => {
     const next = selectGalaxyMapVoronoiSites(
@@ -979,9 +991,21 @@ export default function WorldMapScreen() {
   }, [visibleSystemsList, travelFogRevealedIds, isLegacyVisibleSynth, isExpansionGatewaySynth]);
   const contestedPreviewSystemIds = useContestedZonePreviewSystemIds(true);
   const contestedVisibleSystems = useMemo(
-    () => fogVisibleSystemsList.filter((s) => contestedPreviewSystemIds.has(s.id)),
-    [fogVisibleSystemsList, contestedPreviewSystemIds],
+    () =>
+      fogVisibleSystemsList.filter(
+        (s) => contestedPreviewSystemIds.has(s.id) && s.id !== anomalyActiveSystemId,
+      ),
+    [fogVisibleSystemsList, contestedPreviewSystemIds, anomalyActiveSystemId],
   );
+  const anomalyVisibleSystems = useMemo(() => {
+    if (!anomalyActiveSystemId) return [];
+    for (let i = 0; i < fogVisibleSystemsList.length; i += 1) {
+      if (fogVisibleSystemsList[i]!.id === anomalyActiveSystemId) {
+        return [fogVisibleSystemsList[i]!];
+      }
+    }
+    return [];
+  }, [fogVisibleSystemsList, anomalyActiveSystemId]);
   const hiddenUndiscoveredSystems = useMemo(
     () => systemsList.filter((s) =>
       s.id.startsWith('synth_') &&
@@ -2412,6 +2436,15 @@ export default function WorldMapScreen() {
                   toScreen={toScreen}
                   animActive={galaxyMapStageReady && !isMoving}
                 />
+                {anomalyVisibleSystems.length > 0 ? (
+                  <GalaxyMapContestedZoneRingOverlay
+                    systems={anomalyVisibleSystems}
+                    currentSystemId={shipTransit ? '' : (mapPresentSystemId ?? player.currentSystemId)}
+                    toScreen={toScreen}
+                    animActive={galaxyMapStageReady && !isMoving}
+                    ringColor={UNIDENTIFIED_ANOMALY_RING_COLOR}
+                  />
+                ) : null}
                 <View style={[StyleSheet.absoluteFillObject, styles.routeLabelOverlay]} pointerEvents="none">
                   {routeLabelAnchors.map((label) => (
                     <Text

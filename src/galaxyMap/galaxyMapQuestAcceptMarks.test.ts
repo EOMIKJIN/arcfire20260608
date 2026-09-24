@@ -57,6 +57,19 @@ test('system not on the map list is not marked', () => {
   assert.equal(marks, EMPTY_GALAXY_MAP_QUEST_ACCEPT_MARKS);
 });
 
+test('fog-hidden offer systems stay unmarked', () => {
+  const marks = resolveGalaxyMapQuestAcceptMarks({
+    enabled: true,
+    visibleSystemIds: ['arcadia'],
+    progresses: {},
+  });
+  assert.equal(marks.arcadia?.main, true);
+  assert.equal(marks.vega_outpost, undefined);
+  assert.equal(marks.synth_052, undefined);
+  assert.equal(marks.synth_070, undefined);
+  assert.equal(marks.synth_078, undefined);
+});
+
 test('accepted/in-progress mission drops; other unaccepted on same system stay', () => {
   const active = resolveGalaxyMapQuestAcceptMarks({
     enabled: true,

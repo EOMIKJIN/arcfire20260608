@@ -154,3 +154,5 @@ npc_dialog_arc_transport_temp__revisit,아크수송선단 재회,manual,,repeat,
 npc_dialog_mireille__revisit,미레유 보스 재회,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_orin__revisit,오린 케이드 재회,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_sela__revisit,셀라 모른 재회,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_anomaly_researcher,이상현상 연구원 수락,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_anomaly_researcher_abandon,이상현상 연구원 포기,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0

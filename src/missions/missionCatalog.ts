@@ -3,6 +3,8 @@ import { MISSIONS_FROM_CSV } from '../data/generated';
 import { getArcCoreInstanceMaterializedMission, isArcCoreInstanceMissionId } from './arcCoreInstanceMissionResolver';
 import { isCaptainPersonalMissionId } from './captainPersonalMissionIds';
 import { getCaptainPersonalMaterializedMission } from './captainPersonalMissionResolver';
+import { isUnidentifiedAnomalyMissionId } from './unidentifiedAnomaly/unidentifiedAnomalyIds';
+import { getUnidentifiedAnomalyMaterializedMission } from './unidentifiedAnomaly/unidentifiedAnomalyResolver';
 
 export {
   FIRST_TUTORIAL_MISSION_ID,
@@ -12,6 +14,7 @@ export {
   isMainStoryMissionId,
   isCampaignPrimaryMissionId,
   isQuestMissionId,
+  isSubQuestMissionId,
   CHAPTER1_NAMED_SIDE_QUEST_IDS,
   isChapter1NamedSideQuestId,
   isStoryMissionId,
@@ -33,6 +36,9 @@ export function getMissionById(missionId: string): Mission | undefined {
   }
   if (isCaptainPersonalMissionId(missionId)) {
     return getCaptainPersonalMaterializedMission(missionId);
+  }
+  if (isUnidentifiedAnomalyMissionId(missionId)) {
+    return getUnidentifiedAnomalyMaterializedMission(missionId);
   }
   return MISSIONS_FROM_CSV[missionId];
 }

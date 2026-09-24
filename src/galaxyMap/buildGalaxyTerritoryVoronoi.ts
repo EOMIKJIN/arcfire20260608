@@ -1,5 +1,10 @@
 import { Delaunay } from 'd3-delaunay';
 import {
+  clampVoronoiCellToInfluenceRadius,
+  resolveVoronoiInfluenceRadiusPx,
+} from './clampGalaxyVoronoiInfluenceCell';
+import { computeGalaxyVoronoiClipBounds } from './galaxyVoronoiClipBounds';
+import {
   MAP_FACTION_CONTEST_BORDER_COLOR,
   type MapFactionSide,
   resolveMapFactionBorderColor,
@@ -77,26 +82,6 @@ function isOnClipBounds(x: number, y: number, bounds: Bounds, eps = 2): boolean 
 /** 클립 rect 외곽 — 양 끝 모두 경계일 때만 제외 */
 function isClipHullEdge(a: Point, b: Point, bounds: Bounds): boolean {
   return isOnClipBounds(a[0], a[1], bounds) && isOnClipBounds(b[0], b[1], bounds);
-}
-
-function computeClipBounds(sites: GalaxyTerritorySite[], mapBounds: Bounds, padding = 48): Bounds {
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-  for (const s of sites) {
-    minX = Math.min(minX, s.x);
-    minY = Math.min(minY, s.y);
-    maxX = Math.max(maxX, s.x);
-    maxY = Math.max(maxY, s.y);
-  }
-  if (!Number.isFinite(minX)) return mapBounds;
-  return {
-    x0: Math.max(mapBounds.x0, minX - padding),
-    y0: Math.max(mapBounds.y0, minY - padding),
-    x1: Math.min(mapBounds.x1, maxX + padding),
-    y1: Math.min(mapBounds.y1, maxY + padding),
-  };
 }
 
 function resolveBorderStyle(sideA: MapFactionSide, sideB: MapFactionSide): { glowColor: string; coreColor: string } {
@@ -315,12 +300,14 @@ function isGalaxyTerritorySiteRevealed(
 export function tessellateGalaxyTerritoryGeometry(input: {
   sites: GalaxyTerritorySite[];
   bounds: Bounds;
+  influenceRadiusPx?: number;
 }): GalaxyTerritoryGeometry | null {
   const { sites, bounds: mapBounds } = input;
   const n = sites.length;
   if (n < 2) return null;
 
-  const clipBounds = computeClipBounds(sites, mapBounds);
+  const clipBounds = computeGalaxyVoronoiClipBounds(sites, mapBounds);
+  const influenceR = input.influenceRadiusPx ?? resolveVoronoiInfluenceRadiusPx(sites);
   const delaunay = Delaunay.from(sites, (d) => d.x, (d) => d.y);
   const voronoi = delaunay.voronoi([clipBounds.x0, clipBounds.y0, clipBounds.x1, clipBounds.y1]);
 
@@ -331,8 +318,14 @@ export function tessellateGalaxyTerritoryGeometry(input: {
 
   for (let i = 0; i < n; i += 1) {
     const site = sites[i];
-    const poly = voronoi.cellPolygon(i);
-    if (!poly || poly.length < 3) continue;
+    const raw = voronoi.cellPolygon(i);
+    if (!raw || raw.length < 3) continue;
+    const asPoints: Point[] = [];
+    for (let p = 0; p < raw.length; p += 1) {
+      asPoints.push([raw[p][0], raw[p][1]]);
+    }
+    const poly = clampVoronoiCellToInfluenceRadius(asPoints, site.x, site.y, influenceR);
+    if (poly.length < 3) continue;
 
     if (site.factionSide === 'blue' || site.factionSide === 'red' || site.factionSide === 'independent') {
       const { x, y, area } = polygonAreaCentroid(poly);

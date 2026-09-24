@@ -21,6 +21,12 @@ import {
   parseCaptainPersonalMissionId,
 } from '../missions/captainPersonalMissionIds';
 import {
+  isUnidentifiedAnomalyMissionId,
+  parseUnidentifiedAnomalyMissionId,
+} from '../missions/unidentifiedAnomaly/unidentifiedAnomalyIds';
+import { rematerializeUnidentifiedAnomalyMissionsFromProgresses } from '../missions/unidentifiedAnomaly/unidentifiedAnomalyResolver';
+import { pruneSettledUnidentifiedAnomalyProgresses } from '../missions/unidentifiedAnomaly/pruneSettledUnidentifiedAnomalyProgresses';
+import {
   clearCaptainPersonalMaterializedCache,
   forgetCaptainPersonalMaterializedMission,
   rematerializeCaptainPersonalMissionsFromProgresses,
@@ -181,6 +187,20 @@ function createActiveMissionProgress(mission: Mission, startedAt = Date.now()): 
       : {}),
     ...(mission.title.trim() ? { titleSnapshot: mission.title.trim().slice(0, 80) } : {}),
   };
+}
+
+function afterAnomalyMissionSettled(
+  missionId: string,
+  kind: 'cleared' | 'expired',
+): void {
+  if (!isUnidentifiedAnomalyMissionId(missionId)) return;
+  try {
+    const { settleAnomalyEvent } =
+      require('../missions/unidentifiedAnomaly/settleAnomalyEvent') as typeof import('../missions/unidentifiedAnomaly/settleAnomalyEvent');
+    settleAnomalyEvent(kind === 'cleared' ? 'cleared' : 'expired', missionId);
+  } catch {
+    /* settle 미기동 */
+  }
 }
 
 function afterCaptainPersonalMissionSettled(
@@ -386,6 +406,7 @@ function findFallbackActiveMissionId(
       isQuestMissionId(progress.missionId)
       || isArcCoreInstanceMissionId(progress.missionId)
       || isCaptainPersonalMissionId(progress.missionId)
+      || isUnidentifiedAnomalyMissionId(progress.missionId)
     ) {
       questId = progress.missionId;
     }
@@ -545,6 +566,7 @@ interface MissionState {
   finalizeMissionCompletion: (missionId: string) => void;
   /** 목표 전부 완료인데 pending이 없을 때 클리어 대화 재등록 */
   requeueMissionClearDialogIfReady: (missionId: string) => boolean;
+  closeAnomalyMission: (missionId: string, status: 'failed' | 'expired') => void;
 }
 
 export const useMissionStore = create<MissionState>((set, get) => ({
@@ -575,9 +597,25 @@ export const useMissionStore = create<MissionState>((set, get) => ({
           'progresses' | 'activeMissionId' | 'clearedArcInstCount' | 'clearedArcInstSnapshots'
         >;
         const sanitized = sanitizeMissionProgresses(parsed.progresses ?? {});
-        const backfill = backfillAssignedClearContacts(sanitized.progresses);
+        const prunedAnomaly = pruneSettledUnidentifiedAnomalyProgresses(sanitized.progresses);
+        const backfill = backfillAssignedClearContacts(prunedAnomaly.next);
         const progresses = backfill.next;
         rematerializeCaptainPersonalMissionsFromProgresses(progresses);
+        rematerializeUnidentifiedAnomalyMissionsFromProgresses(progresses, (missionId) => {
+          const parsed = parseUnidentifiedAnomalyMissionId(missionId);
+          if (!parsed) return null;
+          try {
+            const { useUnidentifiedAnomalyStore } =
+              require('./unidentifiedAnomalyStore') as typeof import('./unidentifiedAnomalyStore');
+            const active = useUnidentifiedAnomalyStore.getState().active;
+            if (active?.instanceId === missionId) {
+              return { planetId: active.planetId, payloadKind: active.payloadKind };
+            }
+          } catch {
+            /* store 미준비 */
+          }
+          return { planetId: parsed.planetId, payloadKind: 'relic' };
+        });
         const activeMissionId = sanitizeActiveMissionId(parsed.activeMissionId, progresses);
         set({
           progresses,
@@ -585,7 +623,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
           clearedArcInstCount: sanitizeClearedArcInstCount(parsed.clearedArcInstCount),
           clearedArcInstSnapshots: sanitizeClearedArcInstSnapshots(parsed.clearedArcInstSnapshots),
         });
-        if (sanitized.changed || backfill.changed) {
+        if (sanitized.changed || backfill.changed || prunedAnomaly.changed) {
           void get().persistMissions();
         }
         reconcileTutorialCompleteFromProgress(progresses);
@@ -637,6 +675,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     const expiredSet = new Set(computed.expiredIds);
     for (let i = 0; i < computed.expiredIds.length; i += 1) {
       afterCaptainPersonalMissionSettled(computed.expiredIds[i]!, 'expired');
+      afterAnomalyMissionSettled(computed.expiredIds[i]!, 'expired');
     }
     const pendingPatch = dropExpiredPendingClears(state, expiredSet);
     set({
@@ -684,11 +723,21 @@ export const useMissionStore = create<MissionState>((set, get) => ({
         clearedArcInstCount,
         clearedArcInstSnapshots,
       } = get();
+      const prunedAnomaly = pruneSettledUnidentifiedAnomalyProgresses(progresses);
+      const nextActiveMissionId = prunedAnomaly.changed
+        ? sanitizeActiveMissionId(activeMissionId, prunedAnomaly.next)
+        : activeMissionId;
+      if (prunedAnomaly.changed) {
+        set({
+          progresses: prunedAnomaly.next,
+          activeMissionId: nextActiveMissionId,
+        });
+      }
       await AsyncStorage.setItem(
         STORAGE_KEY,
         JSON.stringify({
-          progresses,
-          activeMissionId,
+          progresses: prunedAnomaly.next,
+          activeMissionId: nextActiveMissionId,
           clearedArcInstCount,
           clearedArcInstSnapshots,
         }),
@@ -815,6 +864,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
         || isQuestMissionId(currentActive)
         || isArcCoreInstanceMissionId(currentActive)
         || isCaptainPersonalMissionId(currentActive)
+        || isUnidentifiedAnomalyMissionId(currentActive)
           ? missionId
           : currentActive;
 
@@ -856,6 +906,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
         || isQuestMissionId(currentActive)
         || isArcCoreInstanceMissionId(currentActive)
         || isCaptainPersonalMissionId(currentActive)
+        || isUnidentifiedAnomalyMissionId(currentActive)
           ? missionId
           : currentActive;
 
@@ -864,6 +915,53 @@ export const useMissionStore = create<MissionState>((set, get) => ({
         activeMissionId: nextActiveId,
       });
       arcCoreInstanceMissionBoardStore().getState().markBoardEntryAccepted(missionId);
+      void get().persistMissions();
+      noteMissionExpireWatch();
+      return 'accepted';
+    }
+
+    if (isUnidentifiedAnomalyMissionId(missionId)) {
+      if (mission.offerPlanetId && mission.offerPlanetId !== context.planetId) return 'wrong_planet';
+      if (
+        context.expectCaptainId &&
+        mission.offerCaptainId &&
+        mission.offerCaptainId !== context.expectCaptainId
+      ) {
+        return 'wrong_captain';
+      }
+
+      const anomalyState = get();
+      const existingAnomaly = anomalyState.progresses[missionId];
+      if (existingAnomaly?.status === 'active') return 'already_active';
+      if (existingAnomaly?.status === 'complete') return 'already_complete';
+
+      const anomalyLevel = mission.levelRequired ?? 1;
+      if (context.playerLevel < anomalyLevel) return 'level_locked';
+
+      const anomalyProgress = createActiveMissionProgress(mission);
+      const currentActive = anomalyState.activeMissionId;
+      const nextActiveId =
+        !currentActive
+        || isQuestMissionId(currentActive)
+        || isArcCoreInstanceMissionId(currentActive)
+        || isCaptainPersonalMissionId(currentActive)
+        || isUnidentifiedAnomalyMissionId(currentActive)
+          ? missionId
+          : currentActive;
+
+      set({
+        progresses: { ...anomalyState.progresses, [missionId]: anomalyProgress },
+        activeMissionId: nextActiveId,
+      });
+      try {
+        const { useUnidentifiedAnomalyStore } =
+          require('./unidentifiedAnomalyStore') as typeof import('./unidentifiedAnomalyStore');
+        const exp = anomalyProgress.expiresAtMs ?? Date.now();
+        useUnidentifiedAnomalyStore.getState().markAccepted(missionId, exp);
+        void useUnidentifiedAnomalyStore.getState().persistLocal();
+      } catch {
+        /* store 미준비 */
+      }
       void get().persistMissions();
       noteMissionExpireWatch();
       return 'accepted';
@@ -1028,6 +1126,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
       arcCoreInstanceMissionBoardStore().getState().markBoardEntryCleared(missionId);
     }
     afterCaptainPersonalMissionSettled(missionId, 'cleared');
+    afterAnomalyMissionSettled(missionId, 'cleared');
     void (async () => {
       await get().persistMissionsImmediate();
       const latest = get().progresses[missionId];
@@ -1096,6 +1195,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
       arcCoreInstanceMissionBoardStore().getState().markBoardEntryCleared(missionId);
     }
     afterCaptainPersonalMissionSettled(missionId, 'cleared');
+    afterAnomalyMissionSettled(missionId, 'cleared');
     void (async () => {
       await get().persistMissionsImmediate();
       const latest = get().progresses[missionId];
@@ -1122,5 +1222,23 @@ export const useMissionStore = create<MissionState>((set, get) => ({
         chain.activeMissionId,
       ),
     });
+  },
+
+  closeAnomalyMission: (missionId, _status) => {
+    if (!isUnidentifiedAnomalyMissionId(missionId)) return;
+    const state = get();
+    if (!state.progresses[missionId]) return;
+    const nextProgresses: Record<string, MissionProgress> = { ...state.progresses };
+    delete nextProgresses[missionId];
+    const nextActiveId =
+      state.activeMissionId === missionId
+        ? findFallbackActiveMissionId(nextProgresses, missionId)
+        : state.activeMissionId;
+    set({
+      progresses: nextProgresses,
+      activeMissionId: nextActiveId,
+    });
+    void get().persistMissions();
+    noteMissionExpireWatch();
   },
 }));

@@ -8,7 +8,11 @@ import type { Mission, MissionProgress } from '../../types';
 import { getNpcCaptain } from '../../npc/npcFleetRegistry';
 import { useMissionStore } from '../../store/missionStore';
 import { usePlayerStore } from '../../store/playerStore';
-import { isCampaignPrimaryMissionId } from '../../missions/missionTrack';
+import {
+  isCampaignPrimaryMissionId,
+  isSubQuestMissionId,
+  listQuestMissions,
+} from '../../missions/missionTrack';
 import { listActiveMissionBundles } from '../../missions/missionActiveBundles';
 import { parseTalkNpcTarget } from '../../missions/talkNpcTarget';
 import {
@@ -160,6 +164,31 @@ export function collectMainQuestRelatedCaptainIds(planetId: string): string[] {
   return out;
 }
 
+/**
+ * 서브퀘스트(`sandbox_*` 전부)에 묶인 함장 — INFO S.
+ * 바 수락 의뢰 `sandbox_001`–`033`과 챕터1 정식 `034`–`038`을 같이 본다.
+ */
+export function collectSubQuestRelatedCaptainIds(_planetId: string): string[] {
+  const progresses = useMissionStore.getState().progresses;
+  const ids = new Set<string>();
+  const bundles = listActiveMissionBundles(progresses);
+  for (let i = 0; i < bundles.length; i += 1) {
+    const { mission, progress } = bundles[i]!;
+    if (!isSubQuestMissionId(mission.id)) continue;
+    addMissionRelatedCaptainIds(ids, mission, progress);
+  }
+  const quests = listQuestMissions();
+  for (let i = 0; i < quests.length; i += 1) {
+    const mission = quests[i]!;
+    const status = progresses[mission.id]?.status;
+    if (status === 'active' || status === 'complete' || status === 'failed') continue;
+    addCaptainId(ids, mission.offerCaptainId);
+  }
+  const out: string[] = [];
+  for (const id of ids) out.push(id);
+  return out;
+}
+
 export function stampNearbyInfoMainQuestFlags(
   rows: NearbyInfoDetailRow[],
   planetId: string,
@@ -169,6 +198,7 @@ export function stampNearbyInfoMainQuestFlags(
   return applyQuestInfoMarkFlagsToRows(rows, {
     assignedQuestIds: new Set(collectAssignedQuestCaptainIds(pid)),
     mainQuestIds: new Set(collectMainQuestRelatedCaptainIds(pid)),
+    subQuestIds: new Set(collectSubQuestRelatedCaptainIds(pid)),
     configuredQuestIds: getConfiguredQuestCaptainIdSet(),
   });
 }

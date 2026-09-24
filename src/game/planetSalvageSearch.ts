@@ -68,7 +68,9 @@ export function pickSalvageLootItemId(
 export type SalvageSearchOutcome =
   | { kind: 'relic'; itemId: string }
   | { kind: 'cash'; itemId: string; credits: number }
-  | { kind: 'item'; itemId: string };
+  | { kind: 'item'; itemId: string }
+  | { kind: 'anomaly_relic'; itemId: string; instanceId: string }
+  | { kind: 'anomaly_threat'; instanceId: string };
 
 /** 광물 시세 CR — 유물은 null. 카탈로그 앵커, 없으면 item_defs.basePrice. */
 export function resolveSalvageMineralCashCredits(itemId: string): number | null {
@@ -98,6 +100,49 @@ export function rollSalvageMineralCashHit(
   return hash32(`cash:${salvageAttemptSeedKey(planetId, wreckId, attemptIndex, dayKey)}`) % 100 < chancePct;
 }
 
+function tryAnomalySalvageReveal(
+  planetId: string,
+  wreckId: string,
+  attemptIndex: number,
+  dayKey: string,
+): SalvageSearchOutcome | null {
+  try {
+    const { useUnidentifiedAnomalyStore } =
+      require('../store/unidentifiedAnomalyStore') as typeof import('../store/unidentifiedAnomalyStore');
+    const { shouldRevealAnomalyPayload } =
+      require('../missions/unidentifiedAnomaly/shouldRevealAnomalyPayload') as typeof import('../missions/unidentifiedAnomaly/shouldRevealAnomalyPayload');
+    const { resolveUnidentifiedAnomalyPolicy } =
+      require('../missions/unidentifiedAnomaly/unidentifiedAnomalyPolicy') as typeof import('../missions/unidentifiedAnomaly/unidentifiedAnomalyPolicy');
+    const { ANOMALY_RELIC_ITEM_ID } =
+      require('../missions/unidentifiedAnomaly/unidentifiedAnomalyIds') as typeof import('../missions/unidentifiedAnomaly/unidentifiedAnomalyIds');
+    const active = useUnidentifiedAnomalyStore.getState().active;
+    if (!active || active.planetId !== planetId) return null;
+    if (active.status === 'listed') return null;
+    if (
+      !shouldRevealAnomalyPayload({
+        planetId,
+        wreckId,
+        attemptIndex,
+        dayKey,
+        instanceId: active.instanceId,
+        accepted: active.status === 'accepted' || active.status === 'revealed',
+        alreadyRevealed: active.payloadRevealed,
+        chancePct: resolveUnidentifiedAnomalyPolicy().questRelicSalvagePct,
+      })
+    ) {
+      return null;
+    }
+    useUnidentifiedAnomalyStore.getState().markRevealed(active.instanceId);
+    void useUnidentifiedAnomalyStore.getState().persistLocal();
+    if (active.payloadKind === 'threat') {
+      return { kind: 'anomaly_threat', instanceId: active.instanceId };
+    }
+    return { kind: 'anomaly_relic', itemId: ANOMALY_RELIC_ITEM_ID, instanceId: active.instanceId };
+  } catch {
+    return null;
+  }
+}
+
 /** 수색 1회 결과 — 유물 유지, 광물은 정책 확률로 시세 CR. */
 export function resolvePlanetSalvageSearchOutcome(
   planetId: string,
@@ -105,6 +150,8 @@ export function resolvePlanetSalvageSearchOutcome(
   attemptIndex: number,
   dayKey = '',
 ): SalvageSearchOutcome {
+  const anomaly = tryAnomalySalvageReveal(planetId, wreckId, attemptIndex, dayKey);
+  if (anomaly) return anomaly;
   const itemId = pickSalvageLootItemId(planetId, wreckId, attemptIndex, dayKey);
   if (getArcCorePantheonRelicByItemId(itemId)) {
     return { kind: 'relic', itemId };

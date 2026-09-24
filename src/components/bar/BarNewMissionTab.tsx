@@ -27,6 +27,8 @@ import {
   type QuestMissionOfferRow,
 } from '../../missions/barMissionBoard';
 import { useArcCoreInstanceMissionBoardStore } from '../../store/arcCoreInstanceMissionBoardStore';
+import { useUnidentifiedAnomalyStore } from '../../store/unidentifiedAnomalyStore';
+import { presentAnomalyResearcherDialog } from '../../missions/unidentifiedAnomaly/presentAnomalyResearcherDialog';
 import {
   PlanetFacilityCardTitleBlock,
   PlanetFacilitySectionHeader,
@@ -151,6 +153,38 @@ function InstanceMissionCard({
   );
 }
 
+function AnomalyResearcherCard({ planetId }: { planetId: string }) {
+  const t = useT();
+  const active = useUnidentifiedAnomalyStore((s) => s.active);
+  if (!active || active.planetId !== planetId) return null;
+  const stateLabel =
+    active.status === 'revealed'
+      ? t('anomaly.researcher.revealed')
+      : active.status === 'accepted'
+        ? t('anomaly.researcher.accepted')
+        : t('anomaly.researcher.listed');
+  return (
+    <View>
+      <PlanetFacilitySectionHeader first title={t('anomaly.researcher.sectionTitle')} />
+      <View style={fs.stackCard}>
+        <View style={fs.cardTopRow}>
+          <Text style={fs.cardBadge}>{stateLabel}</Text>
+        </View>
+        <PlanetFacilityCardTitleBlock title={t('anomaly.researcher.sectionTitle')} titleNumberOfLines={2} />
+        <Text style={[fs.cardBody, styles.cardBodyGap]}>{t('anomaly.researcher.body')}</Text>
+        <ArcButton
+          label={t('anomaly.researcher.talk')}
+          variant="tacticalPrimary"
+          onPress={() => {
+            presentAnomalyResearcherDialog(planetId);
+          }}
+          style={styles.acceptBtn}
+        />
+      </View>
+    </View>
+  );
+}
+
 export function BarNewMissionTab({ planetId, playerLevel }: BarNewMissionTabProps) {
   const t = useT();
   const progresses = useMissionStore((s) => s.progresses);
@@ -196,6 +230,7 @@ export function BarNewMissionTab({ planetId, playerLevel }: BarNewMissionTabProp
 
   return (
     <View>
+      <AnomalyResearcherCard planetId={planetId} />
       <PlanetFacilitySectionHeader first title={t('bar.newMissions.sectionTitle')} meta={meta} />
       {offers.length === 0 ? (
         <Text style={fs.sectionEmpty}>{t('bar.newMissions.empty')}</Text>

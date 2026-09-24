@@ -14,6 +14,7 @@ import {
 } from './missionTrack';
 import { isArcCoreInstanceMissionId } from './arcCoreInstanceMissionResolver';
 import { isCaptainPersonalMissionId } from './captainPersonalMissionIds';
+import { isUnidentifiedAnomalyMissionId } from './unidentifiedAnomaly/unidentifiedAnomalyIds';
 
 export type MissionHudBundle = {
   mission: Mission;
@@ -57,6 +58,7 @@ function isQuestLikeMissionId(missionId: string): boolean {
     || isArcCoreInstanceMissionId(missionId)
     || isArcCoreAutoInstanceMissionId(missionId)
     || isCaptainPersonalMissionId(missionId)
+    || isUnidentifiedAnomalyMissionId(missionId)
   );
 }
 

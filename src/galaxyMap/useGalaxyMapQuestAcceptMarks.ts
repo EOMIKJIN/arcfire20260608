@@ -10,7 +10,7 @@ import {
 } from './galaxyMapQuestAcceptMarks';
 
 /**
- * 지도에 올라온 성계 + 미수락 퀘스트 리비전에서만 마크를 다시 짠다.
+ * 안개 해소 성계 + 미수락 퀘스트 리비전에서만 마크를 다시 짠다.
  * 틱·목표 토글(관계없는 sandbox)로는 재계산하지 않는다.
  */
 export function useGalaxyMapQuestAcceptMarks(

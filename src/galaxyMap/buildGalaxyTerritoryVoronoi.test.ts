@@ -9,6 +9,7 @@ import {
   tessellateGalaxyTerritoryGeometry,
   type GalaxyTerritorySite,
 } from './buildGalaxyTerritoryVoronoi';
+import { computeGalaxyVoronoiClipBounds } from './galaxyVoronoiClipBounds';
 
 function test(name: string, fn: () => void): void {
   try {
@@ -108,6 +109,15 @@ test('tessellate 1회 + paint(안개)는 buildLayers와 동일 채움 키', () =
   );
   assert.equal(painted.occupationLabels.length, layers.occupationLabels.length);
   assert.ok(geometry.fills.length > painted.fills.length);
+});
+
+test('채움 Voronoi 클립은 공통 computeGalaxyVoronoiClipBounds와 같다(원인 B)', () => {
+  const sites = buildMixedGalaxy();
+  const bounds = { x0: -2000, y0: -2000, x1: 8000, y1: 8000 };
+  const geometry = tessellateGalaxyTerritoryGeometry({ sites, bounds });
+  assert.ok(geometry);
+  assert.deepEqual(geometry.clipBounds, computeGalaxyVoronoiClipBounds(sites, bounds));
+  assert.ok(geometry.clipBounds.x1 < 2000, '사이트 bbox+48이어야 하며 mapBounds 원본이 아님');
 });
 
 test('independent 성계가 없으면 independent 라벨도 없음(항상-표시가 아니라 존재 시에만)', () => {

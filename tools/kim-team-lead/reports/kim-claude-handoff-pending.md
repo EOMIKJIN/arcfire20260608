@@ -5,6 +5,315 @@
 
 ---
 
+## 🟠 PENDING — 피드백 반영 최종 전수 검증 (잔여 3건) · 2026-09-24
+
+```text
+status=PENDING (잔여 3건 · 전부 P3·문서)
+task_id=final-feedback-verification-20260924
+kind=VERIFICATION (김클로드 코드 변경 0)
+verdict=PASS (반영 14 · 의도적 보류 1 · 미반영 3)
+리포트=tools/kim-team-lead/reports/kim-claude-final-feedback-verification-20260924.md
+```
+
+**대표님 지시**: 김팀장 모든 피드백 작업 완료 — 최종 전수 검사하고 이전 보고가 잘 반영됐는지 확인.
+**방법**: 주장이 아닌 **실제 코드·CSV 대조**. 관련 테스트 **8종 전부 PASS** · `tsc` **EXIT=0**.
+
+**✅ 반영 완료 14건**
+
+- **F-13 progress 영구 누적** → `pruneSettledUnidentifiedAnomalyProgresses.ts` **신규 모듈 + 전용 테스트** + `missionStore.ts:600`(로드)·`:726`(런타임) **2곳 배선**
+- **F-14 status 인자 무시** → **근본 해결.** `failed` 표시가 아니라 **`delete nextProgresses[missionId]`로 행 삭제**, 파라미터는 `_status`로 명시적 미사용 표기. **F-7이 덤으로 자연 소멸**
+- **F-6 유물 효과 해제** → `onQuestRelicLost` 신설 + `settleAnomalyEvent.ts:39` **실제 배선**
+- **F-2·F-3·F-15** → CSV `notesKo` 전건 「(미적용 · 본선 스폰 승격 시 사용)」 + 주석 정정. `history_cap`은 「코드 상수와 동기」로 별도 정확 기술
+- **F-4** description 하드코딩 제거 · **F-8** 콜백을 `if (presented)` 안으로 이동
+- **F-9·F-10·F-11 연구원 대사** → 「이상현상 조사반이다.」 / 「이 건은 즉시 닫힌다」 / 「조사를 맡기겠다」
+- **S-1 공격 레벨 정책** → 헤더에 **「기반작업 · inert」 + 「아직 어떤 런타임 경로도 본 모듈을 호출하지 않는다」**
+- **Voronoi 국경선** → **완전 반영.** `edgeKey` 좌표 짝짓기 **0건** · `:114 delaunay.neighbors(i)` 성계쌍 · `clipGalaxyVoronoiBisectorToInfluenceDisks.ts` 신규 + 전용 테스트. **대표님 지적(「성계가 확실히 있는 쪽은 그려야」)이 구조적으로 해결**
+
+**🟡 의도적 보류 1건 — F-1 (판단이 더 맞다)**
+
+내 권고는 「한 줄 빼면 50:50이 산다」였으나 김팀장은 **「스폰 계층 승격 때 함께」**로 판단하고 `unidentifiedAnomalyTestPolicy.ts:4`에 명시했다. **이쪽이 옳다** — payloadKind만 먼저 풀면 TTL·일 2회·쿨다운이 빠진 채 threat가 나와 반쪽이 된다. F-2·F-3와 한 덩어리로 묶은 처리가 일관적이다.
+
+**❌ 미반영 3건 — 전부 P3·문서, 차단 아님**
+
+| # | 내용 | 판단 |
+|---|---|---|
+| F-5 | `isAnomalyResearcherVisibleOnPlanet` 호출처 0 | 쓰거나 지울 것 |
+| F-12 | 연구원 캐릭터 목소리 축 | **성별 로스터 확정 후가 맞다** — 지금 보류 타당 |
+| **가이드 진입점** | `CLAUDE.md`에 `docs/QUEST_DIALOGUE_AUTHORING_GUIDE.md` 한 줄 | **가이드가 진입점에서 안 보이면 지켜지지 않는다 — 재요청** |
+
+**신규 관찰 1건(P3)**: `closeAnomalyMission`의 타입 시그니처에 `status`가 남아 있고 호출측(`settleAnomalyEvent.ts:51`)이 **계산해서 버린다.** 다음 정리 때 시그니처와 함께 제거 권장.
+
+**총평**: 품질이 높다. ①F-13을 상한이 아니라 **행 삭제 구조**로 풀어 F-14까지 해결 ②F-1·F-2·F-3을 **하나의 결정**으로 묶어 CSV·주석·코드가 같은 이야기를 함 ③Voronoi를 패치가 아니라 **구조 교체**로 처리.
+
+**self-check**: 리포트 1개 신설 + 이 handoff. 코드·CSV·생성물 변경 0 · 커밋 0.
+
+---
+
+## ✅ REVIEWED — 최근 작업 전반 유사 리스크 총괄 전수 검수 · 2026-09-24
+
+```text
+status=PENDING (김팀장 수정 요청 1건)
+task_id=recent-work-risk-sweep-20260924
+kind=CODE_REVIEW (김클로드 코드 변경 0)
+verdict=PASS (신규 P1 1건 · 확산 없음)
+리포트=tools/kim-team-lead/reports/kim-claude-recent-work-risk-sweep-20260924.md
+범위=최근 3일 수정 실소스 352개 (생성물 175 제외)
+```
+
+**대표님 지시**: 이상현상 검수에서 나온 리스크가 최근 작업 전반에 유사하게 있는지 전수 정밀 검수.
+
+**결론 — 같은 계열 신규 P1은 1건, 가장 위험했던 누적 문제는 확산되지 않았다.**
+
+**🔴 S-1 (P1) — `arcCorePlanetAttackLevelPolicy` 전체 미배선** (이상현상 F-2와 동형)
+
+CSV는 공격 레벨 1~5의 난이도 배수 9종을 정의한다(`wave_count ×1.6` · `drone_hp ×1.35` · `general_combat_level ×1.7` · `transit_encounter ×1.75` 등). 그런데 export 6개 중 **5개가 배럴 재수출뿐 실소비 0**이고, 유일 소비처가
+
+```ts
+ArcCoreAttackSubCore.ts:21   void getArcCorePlanetAttackLevelPolicy(ARC_ATTACK_LEVEL_BASELINE);
+```
+
+**`void`로 결과를 버린다.** 배수 9종은 정책 파일 밖에 **단 한 번도 등장하지 않는다**(구조분해 포함 전체 이름 검색 확인). **공격 레벨 2~5를 올려도 아무 일도 일어나지 않는다.**
+→ 배선하거나, CSV `notesKo`·파일 헤더에 **「미배선·향후 확장」**을 명시하고 `void` 터치에 사유 주석을 남길 것. 지금은 왜 버리는지 알 수 없다.
+
+**✅ F-13(영구 누적)은 이상현상 단독 — 확산 없음**
+
+| 미션군 | 키 공간 | 정리 |
+|---|---|---|
+| `arc_inst_*` | — | ✅ `pruneOrphanArcInstProgresses` + `CLEARED_ARC_INST_SNAPSHOT_LIMIT=32` |
+| `arc_cpt_*` | `_{nn}` 2자리 **유한** | ✅ 덮어쓰기됨 |
+| `arc_anom_*` | `_{startedAtMs}` **무한** | ❌ 정리 없음 |
+
+**수정 템플릿이 이미 저장소에 있다** — `arcCoreInstanceProgressCleanup.ts`를 `arc_anom_*`에 그대로 적용하면 된다. 새로 설계할 것 없음.
+
+**✅ 나머지 패턴 전부 정상**
+- **F-1**: `?? resolve|roll|pick` 30곳 전수 확인 — 실제로 폴백을 죽이는 건 이상현상 1건뿐
+- **F-5**: clear/dispose 계열 export 중 미호출 **2건뿐이고 둘 다 `*ForTest`** — 수명 관리 규율 양호
+- **persist 증가**: 최근 수정 스토어 15개 전부 상한 정상. 신규 `stellaQuestTalkMemory`는 스칼라 1개·persist 없음·clear 존재 ✅
+- **정책 3종**(sovereignLoan·inboundDrone·colonize) export 전부 실소비 — 1차 필드 스캔의 「미소비」는 **래퍼 내부 소비 구조에 의한 오탐**이라 래퍼 레벨로 재확인해 정상 판정
+
+**✅ Voronoi 역회귀 확인 — 설계안대로 반영됨**
+클립 사각형 **양쪽 통일**(원인 B 해소) · 반경 **1회 계산 후 두 빌더에 동일 전달** · **`resolveInfluenceRadiusPxFromWorld`로 월드 좌표 기반**(내가 §3-3에서 「반드시 결정할 항목」으로 남긴 줌 불변성이 올바른 쪽으로 처리됨).
+
+**착수 권고**: ①이상현상 F-13(템플릿 재사용) → ②S-1 배선 또는 명시 → ③이상현상 F-1·F-2. **차단 사유 없음.**
+
+**self-check**: 리포트 1개 신설 + 이 handoff. 코드·CSV·생성물 변경 0 · 커밋 0.
+
+---
+
+## ✅ REVIEWED — 이상현상 수색·연구원·유물 본선 정밀 코드 검수 · 2026-09-24
+
+```text
+status=REVIEWED
+task_id=unidentified-anomaly-mainline-review-20260924
+kind=CODE_REVIEW (김클로드 코드 변경 0 · 김팀장 반영)
+verdict=APPLIED (F-13 P0 persist 누적 차단 · F-2/3/4/6/8/9/10/11 · F-1 보류)
+리포트=tools/kim-team-lead/reports/kim-claude-unidentified-anomaly-mainline-code-review-20260924.md
+```
+
+**검증**: `unidentifiedAnomalyMainline.test.ts` PASS · `unidentifiedAnomalyTestRotation.test.ts` PASS · `tsc --noEmit -p tsconfig.client.json` **EXIT=0**.
+
+**배선 확인 — 본선 4경로 전부 연결됨**: 연구원 대화(`BarNewMissionTab.tsx:179`) · 유물 지급(`planet.tsx:1554`) · 수색 공개(`planetSalvageSearch.ts:112-135`) · 미션 materialize(`missionStore.ts:602`). **`collect_item` DSL도 구현 완료**(`applyBuyGoodsMissionObjectives.ts:21` + 타입 유니온 + 무결성 테스트 정합) — 이전에 「제안만 되고 코드에 없다」던 항목이 해소됐다.
+
+**잘 된 점**: `settleAnomalyEvent` 3중 idempotent 가드 · watch 전역 timeout 1개 + `ticking` 재진입 가드 + `MAX_TIMER_DELAY_MS` 클램프 + 빈 풀 0ms 재스케줄 금지 · `useEffect(..., [])` 마운트 1회(타이머 thrash 없음) · 정책 캐시/무효화 쌍 · persist 스키마 버전.
+
+**🔴 P1 2건**
+
+| # | 내용 |
+|---|---|
+| **F-1** | **threat 페이로드가 실기에서 절대 안 나온다.** watch`:104`이 `payloadKind: 'relic'`을 명시 전달 → store`:231` `input.payloadKind ?? rollAnomalyPayloadKind(...)`의 `??`가 넘어가지 않는다. `payload_threat_weight_pct=50` 무효 · resolver threat 분기(`defeat_enemy`) 사문화 · `planetSalvageSearch.ts:137` 도달 불가 · `threatTclAdd`·`ANOMALY_THREAT_TARGET_ID` 미사용. **watch에서 `payloadKind`를 넘기지 않으면 50:50이 그대로 산다 — 한 줄.** |
+| **F-2** | **정책 CSV 스폰 계열 전부 미적용.** 실소비는 `questRelicSalvagePct` 1개뿐(+`payloadRelicWeightPct`는 F-1로 무효). 미적용: `dailySpawn`·`unacceptedTtlHours`·`concurrent`·`cooldownDays`·`historyCap`·`threatTclAdd`·band 4종·`baseSpawnChancePct`. 스폰 계층이 `unidentifiedAnomalyTestPolicy.ts`(30분/10분)라서다. store`:238` `unacceptedExpiresAtMs = expiresAtMs`라 **TTL도 12h가 아니라 10분**. 의도된 단계면 기능 문제는 없으나 **CSV에 값이 있는데 안 먹는 상태**는 「바꿨는데 왜 안 바뀌지」 사고를 부른다 → 정책 승격 또는 `notesKo`에 「(미적용)」 명시. |
+
+**🟡 P2 4건**: F-3 `unidentifiedAnomalyTestPolicy.ts:2-3` **「본선 미착수」 주석이 실제와 어긋남**(연구원·수색·유물은 완료 — 「스폰 주기만 테스트 단계」로 정정) · F-4 `unidentifiedAnomalyResolver.ts:31-32` **목표 설명문 한/영 하드코딩**(Table-First 위반, threat 분기만 비대칭) · **F-9 연구원 첫 대사에 화자 소개 없음** · **F-10 「슬롯」은 개발 용어**.
+
+**🟢 P3 6건**: F-5 `isAnomalyResearcherVisibleOnPlanet` 호출처 0 · **F-6 유물 효과 해제 경로 없음**(현재 registry가 v1 no-op이라 무해하나 `quest_relic_effects.csv`를 채우는 순간 desync — `onQuestRelicLost` 자리 선점 권고) · F-7 abandon이 'expired'로 기록 · F-8 콜백이 present 실패 시에도 잔존 · F-11 「조사권」 초출 미설명 · F-12 캐릭터 목소리 축 부재.
+
+**연구원 대사는 규격 통과**(3줄·21자) — 다만 신규 `docs/QUEST_DIALOGUE_AUTHORING_GUIDE.md` 기준 §0-4 기술1(첫 줄에 화자) 위반과 개발 용어 노출 2건. 권고 문구는 리포트 §4에 있다.
+
+**착수 순서 권고**: ①F-1(1줄) → ②F-3 주석 + F-2 notes → ③F-9·F-10 대사 2줄 → ④F-4·F-6 → ⑤나머지. **차단 사유 없음.**
+
+**self-check**: 리포트 1개 신설 + 이 handoff. 코드·CSV·생성물 변경 0 · 커밋 0. 빌드/테스트는 검증 목적 실행.
+
+---
+
+## 🟠 PENDING — 퀘스트 대사 집필 가이드 정본 수립 · 2026-09-24
+
+```text
+status=PENDING (문서 수립 완료 · 김팀장 반영 요청 1건)
+task_id=quest-dialogue-authoring-guide-20260924
+kind=STANDARD_DOC (코드·CSV 변경 0)
+문서=docs/QUEST_DIALOGUE_AUTHORING_GUIDE.md (신설)
+```
+
+**대표님 지시**: 침묵형 주인공·선택지 기반 시스템(BG3/Skyrim/P5 레퍼런스)을 참고해 **적용 방안**과 **향후 퀘스트 생성 시 대사 생성 기준**을 세우고 문서화. **추가 퀘스트 생성 시 가이드로 사용하도록 명시.**
+
+**핵심 진단 — 우리는 이미 침묵형 주인공이다**
+
+참조 규격을 현재 구현과 전수 대조한 결과 **핵심 3원칙은 이미 충족**, 갭은 선택지 확장 하나뿐이다.
+
+| 참조 규격 | 우리 상태 | 근거 |
+|---|---|---|
+| 플레이어 대사 배제 | ✅ 충족 | 대사 101p 전수 확인 — **플레이어 대사 0건** |
+| NPC 주도 서사 | ✅ 충족 | 정보·감정·지시 전부 NPC 발화 |
+| 선택 → 상태값 변환 | ✅ 충족 | `IngameDialogCompletionAction`(accept_quest_mission · record_orbit_comm{outcome}) |
+| 2지 선택(수락/거절) | ✅ 충족 | `ingameDialogTypes.ts:78-85` · `'[ 수락 ]'`/`'[ 의뢰 수락 ]'` · `onCancel` |
+| **2~4개 선택지 배열** | ❌ 미구현 | 자료구조·CSV 칸 없음 |
+| **선택별 NPC 분기** | ❌ 미구현 | `pageIndex` 선형 진행만 |
+| 런타임 LLM 대사 생성 | ⛔ **HOLD** | **ZERO_BILL 위반.** 참조 규격 §3은 **런타임이 아니라 집필 기준**으로 전환 적용 |
+
+**문서 구성** — §4 집필 체크리스트 + §5 템플릿이 실사용 부분
+
+- **§2 원칙**: 화자 격리(플레이어 대사 절대 금지) · **NPC는 선택지를 복창하지 않는다**(의도에 반응) · 2게이트 준수
+- **§3 표시 규격**: 3줄 × **21자 상한**(320dp), 집필 목표 20자
+- **§4-1 절대 금지 6가지**: 실제로 96p를 고치게 만든 결함(뜻 깨진 용어 · 받는 말 없는 은유 · 주어 생략 · 허공 지시대명사 · **고유명사 충돌** · 번역투) + **자가 점검 3문**
+- **§4-2 용어 표준 12건** · **§4-3 캐릭터 목소리 4축**(성별을 어미로 가르지 않는다 — 계급이 우선) · **§4-4 대명사 회피**
+- **§4-5 서사 연결**: 복선은 호명 · 전환에는 계기 · 반전 미리 소진 금지 · **메타 용어 금지**
+- **§5 템플릿**: 수락 씬 / 진행 씬 / 목표문 / 미션 설명문
+- **§6 선택지 확장 단계안**: **1단계(2지를 이야기에 적극 활용)는 코드 변경 0으로 지금 가능.** 2~4단계는 대표님 지시 시. 분기 폭발(N^D) 경고 포함
+- **§7 사용 규칙**: 새 퀘스트 작성 전 필독 · 개별 설계안과 충돌 시 **이 문서 우선**
+
+**🔴 김팀장 반영 요청 1건**
+
+가이드가 실제로 지켜지려면 **진입점에서 보여야 한다.** `CLAUDE.md` §「어디를 보면 되는지」 표에 한 줄 추가를 제안한다(CLAUDE.md는 프로젝트 헌법이라 김클로드가 직접 수정하지 않음).
+
+```
+| 퀘스트 대사 집필 | `docs/QUEST_DIALOGUE_AUTHORING_GUIDE.md` |
+```
+
+**self-check**: 문서 1개 신설 + 이 handoff. 코드·CSV·생성물 변경 0 · 커밋 0. 구현 상태는 `ingameDialogTypes.ts`·`CONVERSATION_TWO_GATE_DESIGN.md`·CSV 헤더 **실측 대조**로 확인했다.
+
+---
+
+## ✅ REVIEWED — Voronoi 국경선: 이웃 있는 쪽이 안 그려지는 버그 · 2026-09-24
+
+```text
+status=REVIEWED
+verdict=AGREE (§8 원인·규칙) · 김팀장 구현
+task_id=galaxy-voronoi-border-edge-pairing-fix-20260924
+문서=docs/GALAXY_VORONOI_FRONTIER_TERRITORY_FIX_DESIGN.md §8
+```
+
+**김팀장**: 클램프 후 `edgeKey` 짝짓기 → 한쪽만 잘리면 `owners.length===1`로 양쪽 버림 **AGREE**. 채움·R(1.35) 유지. 국경은 Delaunay 성계 쌍 + 클램프 전 이등분선 ∩ 원(i)∩원(j). 빈 우주·거리 2R 초과는 선 없음. 게이트: pairing·territory·clamp 테스트 PASS · tsc PASS.
+
+---
+
+## 🗂 ARCHIVE — Voronoi 국경 짝짓기 설계 원문 · 2026-09-24
+
+```text
+status=ARCHIVED
+task_id=galaxy-voronoi-border-edge-pairing-fix-20260924
+kind=BUGFIX (김클로드 코드 변경 0)
+문서=docs/GALAXY_VORONOI_FRONTIER_TERRITORY_FIX_DESIGN.md §8
+선행=2단계(원 클램프) 적용 완료 상태 기준
+```
+
+**대표님 지시**: 「잘린 쪽은 안 그리는 게 맞는데, **성계가 확실히 있는 쪽은 그려야** 일관성 있지 않은가」 → **맞다. 지금 안 그려지는 것은 의도가 아니라 버그.**
+
+**현상**
+
+| 항목 | 현재 | 판정 |
+|---|---|---|
+| 요새 베이스 채움 (반경 절단) | 정상 | ✅ |
+| 서쪽(빈 우주) 외곽선 미표시 | 정상 | ✅ |
+| **이웃 성계가 있는 쪽 국경선** | **안 그려짐** | ❌ **버그** |
+
+**원인 — 좌표로 변을 짝짓는데 클램프가 한쪽만 자른다**
+
+- `buildGalaxyBlueRedVoronoiBorders.ts:105` 변을 **좌표 문자열**(`toFixed(2)`)로 키 생성 → `:122` 짝 못 찾으면 버림
+- `clampGalaxyVoronoiInfluenceCell.ts:140` **셀이 원 안이면 원본 그대로 반환**
+
+```text
+요새 베이스 셀 → 잘림     → 변 끝점 «이동»
+이웃 셀        → 원본 반환 → 변 끝점 «그대로»
+```
+
+**같은 이등분선인데 좌표가 어긋나** 각각 `owners.length === 1`이 되어 **둘 다 버려진다.** `buildGalaxyTerritoryVoronoi.ts:353`도 동일 패턴.
+
+**확정 규칙 — 두 줄, 예외 없음**
+
+```text
+1. 변이 이등분선이고 «양쪽 원 안»  →  실선 (진영 색)
+2. 그 외 모든 변                   →  페이드
+```
+
+「이웃인데 멀어서 사이에 빈 공간이 끼는」 경우는 **별도 규칙이 아니라 2번의 자동 귀결**이다. 근거: 기존 국경선 색(노랑=blue↔red · 파랑=blue↔neutral · 빨강=red↔neutral · 녹색=independent)이 전부 **「양쪽에 누가 있는가」**를 인코딩한다 — 반대편이 빈 우주면 **칠할 색이 정의되지 않는다.**
+
+**수정 방향 — 좌표 대신 「성계 쌍」으로 짝짓기**
+
+```text
+Delaunay 이웃 (i, j)에 대해:
+  공유 이등분선 구간을 «클램프 이전» 셀에서 구한다   ← 양쪽이 반드시 동일
+  그 구간을 «원(i) ∩ 원(j)» 로 자른다                ← 대칭
+  남으면 → 국경선(owners={i,j}) · 비면 → 없음(2번 규칙)
+```
+
+대칭 연산이라 **비대칭 절단이 원천적으로 불가능**하고 좌표 비교가 사라진다.
+
+**하지 말 것**
+- **채움(fill)은 손대지 말 것** — 클램프 폴리곤 그대로. 이미 정상이다.
+- **R을 키우지 말 것** — `VORONOI_INFLUENCE_RADIUS_NN_MUL = 1.35`는 **평균 최근접 간격의 2.7배 미만이면 맞닿게** 하는 값이라, 「떨어짐」은 요새 베이스 서쪽처럼 진짜 이웃이 없는 곳에서만 생긴다. 국경선을 그리려고 R을 키우면 **원인 A의 분할 모델로 회귀**하고 폭주가 형태만 바꿔 재발한다.
+
+**검증 (§8-5)**: ①이웃 쪽 segment 생성 ②빈 우주 쪽 미생성 ③i→j와 j→i 좌표 동일(대칭) ④거리 2R 초과 쌍은 미생성 ⑤기존 `blue/red 대륙 라벨 회귀 없음` 계속 통과.
+
+**self-check**: 설계안 §8 신설 + 이 handoff. 코드·CSV 변경 0 · 커밋 0. Voronoi 파일은 읽기만 했다.
+
+---
+
+## ✅ REVIEWED — 은하 지도 Voronoi 변경 영역 폭주 · 1단계만 적용 · 2026-09-24
+
+```text
+status=REVIEWED PARTIAL
+verdict=AGREE (원인 A·B·C)
+task_id=galaxy-voronoi-frontier-territory-fix-20260924
+적용=§5 1단계(원인 B 클립 통일)만 · 2단계 원클램프는 실기 후
+```
+
+**김팀장**: 원인 A(무한 셀)·B(채움=`computeClipBounds` / 국경=`mapBounds`)·C(bbox 클립 이동) **코드 재검수 AGREE**. 4파일은 이미 `ddf2fa5`와 동일 → 0단계 불필요. **1단계**: `computeGalaxyVoronoiClipBounds` 공용, 두 빌더 동일 사각형. 원 ∩ 셀·외곽 페이드는 §7대로 **실기 확인 후** 2단계.
+
+---
+
+## 🗂 ARCHIVE — 설계 승인 원문 · 2026-09-24
+
+```text
+status=ARCHIVED
+task_id=galaxy-voronoi-frontier-territory-fix-20260924
+kind=DESIGN_APPROVED
+문서=docs/GALAXY_VORONOI_FRONTIER_TERRITORY_FIX_DESIGN.md
+```
+
+**증상**: 개척선이 사령부를 세워 블루로 편입된 **요새 베이스(synth_078)**가 서쪽으로 비정상적으로 넓은 국경 영역을 표시. 수정 시도 중 기존 국경선까지 망가지고 코드가 엉킴. 가상 성계 추가·영역 잘라내기 모두 실패.
+
+**원인 3건 — 코드로 특정**
+
+| # | 원인 | 위치 |
+|---|---|---|
+| **A** 근본 | **Voronoi에 「영향 반경」 개념이 없다.** 셀은 이웃이 나타날 때까지 무한히 뻗는다. 서쪽에 가까운 성계가 없어 먼 사이트(서쪽 팔 관문 등)와의 이등분선까지 밀려남. **기하학적으로는 정상, 의미상으로만 틀림** | `buildGalaxyTerritoryVoronoi.ts:323-334` |
+| **B** 치명·**별개 버그** | **채움과 국경선이 서로 다른 Voronoi로 그려진다.** 채움=`computeClipBounds`(사이트 bbox+48) · 국경선=`mapBounds` 원본. 호출부는 같은 값을 넘기는데 **한쪽만 내부에서 축소**. 내부 셀은 동일하나 **변경 셀 모양이 달라** 채움/국경선이 어긋남 → **「고치느라 국경선이 망가진」 직접 원인.** 요새 베이스와 무관하게 원래 있던 결함 | `buildGalaxyTerritoryVoronoi.ts:323` vs `buildGalaxyBlueRedVoronoiBorders.ts:77` |
+| **C** 불안정 | 클립 사각형이 **사이트 bbox** 기반이라 성계 해금·점령 때마다 전역으로 움직임 → **가상 성계 추가가 무효였던 이유**(bbox가 같이 넓어짐) | `buildGalaxyTerritoryVoronoi.ts:82-100` |
+
+**해결 — 영역 = Voronoi 셀 ∩ 원(중심=성계, 반지름 R)**
+
+셀을 **깎는** 연산이라 **이등분선이 움직이지 않는다.** 내부 성계는 셀이 R보다 작아 `셀 ∩ 원 = 셀` — **결과가 1픽셀도 안 바뀐다.** 「다른 성계까지 엉키는」 일이 구조적으로 불가능. 원을 24~32각형으로 근사하면 볼록∩볼록=볼록이라 `polygonAreaCentroid`·`polyToPointsAttr`·라벨 앵커가 **수정 없이 동작**한다.
+
+**대표님 확정 3건 (§7)**
+1. **R = v1 전 성계 공통 상수** (성계 간 평균 간격 × 1.2~1.5). 개척 단계 연동은 v1 안정화 후 별건.
+2. **외곽 경계 = 페이드 아웃.** 미개척 방향에는 **실선 국경 금지** — 국경선은 「반대편에 누군가 있다」는 뜻이라 빈 우주에는 그으면 안 된다.
+3. **적용 순서 §5 그대로** — **1단계(원인 B) 단독 완료 + 실기 확인 후** 2단계 착수. **합치지 말 것.**
+
+**적용 순서**
+- **0** 되돌리기 — Voronoi 4파일을 마지막 정상 상태로. `ddf2fa5`(01:49 커밋·푸시 완료)라 안전
+- **1** **원인 B만** 수정(두 빌더 클립 사각형 통일) → **실기 확인**
+- **2** 반경 클램프 — `cellPolygon(i)` 직후 **한 곳**에서 적용(삽입 지점 단일 = 회귀 범위 좁음)
+- **3** 외곽 변 분류·페이드 연출 분리
+- **4** 클립 사각형은 안전망으로만 → 원인 C 해소
+
+**착수 전 기술 결정 1건 (김팀장 판단)**: **R의 좌표계.** `buildVoronoiSites`가 `toScreen`을 먼저 적용해 사이트가 이미 화면 좌표다. R을 화면 픽셀로 잡으면 **줌할 때 영토 모양이 변한다.** 배율 인자를 넘길지 월드 좌표를 같이 실을지 택일 후 **줌 불변성 테스트**로 검증.
+
+**검증**: 기존 `buildGalaxyTerritoryVoronoi.test.ts`의 **「blue/red 대륙 라벨 회귀 없음」**이 2단계 후 통과해야 한다 — 「내부 셀은 안 바뀐다」의 직접 검증. 추가 권장 4종은 문서 §6.
+
+**self-check**: 문서 1개 신설 + 이 handoff. 코드·CSV 변경 0 · 커밋 0. Voronoi 파일은 **읽기만** 했다.
+
+---
+
 ## ✅ REVIEWED — 데일리 커밋 46일 실패 수정 · 2026-09-24
 
 ```text

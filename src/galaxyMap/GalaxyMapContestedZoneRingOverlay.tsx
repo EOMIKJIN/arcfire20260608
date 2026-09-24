@@ -38,6 +38,8 @@ type GalaxyMapContestedZoneRingOverlayProps = {
   toScreen: ToScreenFn;
   /** false면 회전 애니메이션 정지(화면 이탈) */
   animActive: boolean;
+  /** 기본=분쟁 빨강. 이상현상은 보라. */
+  ringColor?: string;
 };
 
 type RingAnchor = {
@@ -60,9 +62,11 @@ function startContestedRingSpin(rotation: SharedValue<number>): void {
 const ContestedZoneRingMark = memo(function ContestedZoneRingMark({
   anchor,
   rotation,
+  ringColor,
 }: {
   anchor: RingAnchor;
   rotation: SharedValue<number>;
+  ringColor: string;
 }) {
   const ringSize = (anchor.nodeR + RING_PAD) * 2;
   const half = ringSize / 2;
@@ -91,7 +95,7 @@ const ContestedZoneRingMark = memo(function ContestedZoneRingMark({
             width: ringSize,
             height: ringSize,
             borderRadius: half,
-            borderColor: RING_COLOR,
+            borderColor: ringColor,
           },
           ringStyle,
         ]}
@@ -105,6 +109,7 @@ export const GalaxyMapContestedZoneRingOverlay = memo(function GalaxyMapConteste
   currentSystemId,
   toScreen,
   animActive,
+  ringColor = RING_COLOR,
 }: GalaxyMapContestedZoneRingOverlayProps) {
   const rotation = useSharedValue(0);
   /** 백그라운드에서는 링 View 트리 자체를 내려 Views/애니 잔류를 막는다(overnight soak). */
@@ -160,7 +165,12 @@ export const GalaxyMapContestedZoneRingOverlay = memo(function GalaxyMapConteste
   return (
     <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
       {anchors.map((anchor) => (
-        <ContestedZoneRingMark key={`contested-ring-${anchor.systemId}`} anchor={anchor} rotation={rotation} />
+        <ContestedZoneRingMark
+          key={`contested-ring-${anchor.systemId}`}
+          anchor={anchor}
+          rotation={rotation}
+          ringColor={ringColor}
+        />
       ))}
     </View>
   );

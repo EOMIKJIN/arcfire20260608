@@ -54,6 +54,13 @@ function checkSettingsPush() {
   }
 }
 
+function checkReleaseInvokesMain() {
+  const release = fs.readFileSync(path.join(__dirname, 'run-daily-release.cjs'), 'utf8');
+  if (!/\.main\s*\(/.test(release)) {
+    failures.push('run-daily-release.cjs must call run-daily-commit.main() (require-only is a no-op)');
+  }
+}
+
 function checkWrapperExitCode() {
   const ps1 = fs.readFileSync(path.join(__dirname, 'daily-commit.ps1'), 'utf8');
   if (!/cmd \/c/.test(ps1) && !/\$exitCode/.test(ps1)) {
@@ -86,6 +93,7 @@ function checkScheduledTask() {
 function main() {
   checkGitAddDryRun();
   checkSettingsPush();
+  checkReleaseInvokesMain();
   checkWrapperExitCode();
   checkScheduledTask();
 

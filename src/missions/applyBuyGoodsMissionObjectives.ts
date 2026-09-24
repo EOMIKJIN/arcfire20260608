@@ -18,7 +18,7 @@ export function applyBuyGoodsMissionObjectives(): void {
     const objs = active.mission.objectives;
     for (let i = 0; i < objs.length; i += 1) {
       const obj = objs[i]!;
-      if (obj.type !== 'buy_goods') continue;
+      if (obj.type !== 'buy_goods' && obj.type !== 'collect_item') continue;
       if (active.progress.objectives[obj.id]) continue;
       const required = obj.quantity ?? 1;
       if (countGoodInInventory(slots, obj.targetId) >= required) {

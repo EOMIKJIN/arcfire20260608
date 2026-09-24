@@ -49,6 +49,7 @@ export function applyQuestInfoMarkFlagsToRows<
     captainId?: string;
     pinKind?: string;
     hasMainQuest?: boolean;
+    hasSubQuest?: boolean;
     showQuestMarks?: boolean;
   },
 >(
@@ -56,6 +57,7 @@ export function applyQuestInfoMarkFlagsToRows<
   opts: {
     assignedQuestIds: ReadonlySet<string>;
     mainQuestIds: ReadonlySet<string>;
+    subQuestIds: ReadonlySet<string>;
     configuredQuestIds: ReadonlySet<string>;
   },
 ): T[] {
@@ -65,17 +67,24 @@ export function applyQuestInfoMarkFlagsToRows<
   for (let i = 0; i < rows.length; i += 1) {
     const row = rows[i]!;
     const captainId = String(row.captainId ?? '').trim();
+    const hasMainQuest = !!captainId && opts.mainQuestIds.has(captainId);
+    const hasSubQuest = !!captainId && opts.subQuestIds.has(captainId);
     const showQuestMarks =
-      row.pinKind === 'quest'
+      hasMainQuest
+      || hasSubQuest
+      || row.pinKind === 'quest'
       || (!!captainId
         && (opts.assignedQuestIds.has(captainId) || opts.configuredQuestIds.has(captainId)));
-    const hasMainQuest = !!captainId && opts.mainQuestIds.has(captainId);
-    if (row.hasMainQuest === hasMainQuest && row.showQuestMarks === showQuestMarks) {
+    if (
+      row.hasMainQuest === hasMainQuest
+      && row.hasSubQuest === hasSubQuest
+      && row.showQuestMarks === showQuestMarks
+    ) {
       next[i] = row;
       continue;
     }
     changed = true;
-    next[i] = { ...row, hasMainQuest, showQuestMarks };
+    next[i] = { ...row, hasMainQuest, hasSubQuest, showQuestMarks };
   }
   return changed ? next : rows;
 }
@@ -88,6 +97,7 @@ export function applyMainQuestFlagsToRows<T extends { captainId?: string; hasMai
   return applyQuestInfoMarkFlagsToRows(rows, {
     assignedQuestIds: mainQuestCaptainIds,
     mainQuestIds: mainQuestCaptainIds,
+    subQuestIds: new Set<string>(),
     configuredQuestIds: mainQuestCaptainIds,
   });
 }

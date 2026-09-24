@@ -128,3 +128,5 @@ tq_oth_03,obj_tq_o03_a,정비 부품 2개 구매,buy_goods,tech,2,Buy 2 maintena
 tq_oth_04,obj_tq_o04_a,탐사 좌표 행성 진입,reach_planet,__discovery_planet__,,Enter survey planet
 tq_oth_05,obj_tq_o05_a,선주 접선 지점 착륙,reach_planet,__discovery_planet__,,Land at rendezvous outpost
 tq_oth_06,obj_tq_o06_a,항로 점검 성계 도착,reach_system,__neighbor_system__,,Arrive at route inspection system
+tq_anom_01,obj_tq_anom_01_a,잔해 수색으로 이상현상의 정체를 확인,collect_item,relic_quest_anomaly_01,1,Confirm the anomaly by salvaging wreckage
+tq_anom_01,obj_tq_anom_01_t,미확인 물체를 격파하라,defeat_enemy,unidentified_object,1,Destroy the unidentified object

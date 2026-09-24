@@ -99,7 +99,7 @@ export function formatMissionTimeLimitRemaining(expiresAtMs: number, nowMs: numb
 }
 
 function isCargoObjective(type: MissionObjective['type']): boolean {
-  return type === 'buy_goods' || type === 'deliver_cargo';
+  return type === 'buy_goods' || type === 'deliver_cargo' || type === 'collect_item';
 }
 
 /** 해당 미션 화물만 — 같은 goodId는 수량 최댓값 1건. 전역 quest 태그 삭제는 하지 않는다. */

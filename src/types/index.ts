@@ -875,7 +875,7 @@ export interface MissionObjective {
   id: string;
   description: string;
   descriptionEn?: string;
-  type: 'reach_system' | 'reach_planet' | 'defeat_enemy' | 'deliver_cargo' | 'buy_goods' | 'talk_npc';
+  type: 'reach_system' | 'reach_planet' | 'defeat_enemy' | 'deliver_cargo' | 'buy_goods' | 'collect_item' | 'talk_npc';
   targetId: string;
   quantity?: number;
   complete: boolean;

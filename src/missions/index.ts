@@ -30,3 +30,8 @@ export {
   MAIN_STORY_MISSION_PREFIX,
 } from './missionTrack';
 export { resolveMissionHudSlots, type MissionHudBundle } from './missionHudSlots';
+export {
+  isUnidentifiedAnomalyMissionId,
+  UNIDENTIFIED_ANOMALY_MISSION_PREFIX,
+  UNIDENTIFIED_ANOMALY_TEMPLATE_ID,
+} from './unidentifiedAnomaly/unidentifiedAnomalyIds';

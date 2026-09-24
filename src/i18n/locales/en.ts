@@ -823,6 +823,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'nearbyPresence.action.commRequest': 'Comm Request',
   'nearbyPresence.action.commLink': 'Link Comms',
   'nearbyPresence.tag.mainQuest': 'Main Quest',
+  'nearbyPresence.tag.subQuest': 'Side Quest',
   'nearbyPresence.tag.questMarks': 'Quest types',
   'nearbyPresence.role.governorName': 'Commander · {name}',
   'nearbyPresence.action.mission': 'Mission',
@@ -1820,6 +1821,22 @@ export const EN_DICTIONARY: I18nDictionary = {
     '{attacker} attacked {planet}.\n{defender} stood in defense.\nResult: {outcome}',
   'territorial.alert.maintained.independentBody':
     '{attacker} attacked {planet}.\n{defender} stood in defense.\nResult: {outcome}',
+  'anomaly.alert.title': 'Unidentified Anomaly',
+  'anomaly.alert.body':
+    'An unidentified anomaly was observed in the {system} system. Land and find the anomaly researcher at the bar.',
+  'anomaly.researcher.sectionTitle': 'Unidentified Anomaly',
+  'anomaly.researcher.talk': 'Talk to researcher',
+  'anomaly.researcher.listed': 'Awaiting accept',
+  'anomaly.researcher.accepted': 'Surveying',
+  'anomaly.researcher.revealed': 'Revealed',
+  'anomaly.researcher.body':
+    'Confirm the anomaly by salvaging wrecks on this planet. It may be a relic or a threat.',
+  'anomaly.hud.identify': 'Confirm the anomaly by salvaging wreckage',
+  'anomaly.salvage.relicTitle': 'Unidentified Relic',
+  'anomaly.salvage.relicBody': 'Recovered {item} from the wreck.',
+  'anomaly.salvage.threatTitle': 'Unidentified Threat',
+  'anomaly.salvage.threatBody':
+    'An unidentified object reacts in the wreck. Abort the survey with the researcher at the bar.',
   'territorial.alert.statusQuoTitle': 'Contested Zone — Front Quiet',
   'territorial.alert.statusQuoBody':
     '{planet} — No fighting this period. {side} control is maintained.',

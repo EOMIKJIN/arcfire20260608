@@ -92,7 +92,10 @@ export const NearbyPresenceInfoOverlayContent = memo(function NearbyPresenceInfo
                 <View style={styles.cardActionCol}>
                   <NearbyPresenceQuestMarkRail
                     visible={row.showQuestMarks === true}
-                    marks={{ M: row.hasMainQuest === true }}
+                    marks={{
+                      M: row.hasMainQuest === true,
+                      S: row.hasSubQuest === true,
+                    }}
                   />
                   <NearbyPresenceRowActionButton
                     action={action}

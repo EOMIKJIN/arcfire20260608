@@ -47,6 +47,12 @@
  * - **완료 조건**: `applyBuyGoodsMissionObjectives` — 무역 구매·수락·착륙 시 인벤 수량 검증.
  * - **targetId**: `TradeGood.id` 등 상품 키.
  *
+ * ### `collect_item`
+ * - **의미**: 지정 아이템을 `quantity`만큼 보유(수색·지급. 무역소 진열 아님).
+ * - **완료 조건**: `applyBuyGoodsMissionObjectives`가 `collect_item`도 인벤 수량으로 완료.
+ * - **targetId**: `item_defs.id` (예: `relic_quest_anomaly_01`).
+ * - **만료 회수**: `isCargoObjective`에 포함.
+ *
  * ### `talk_npc`
  * - **의미**: 지정 함장과 1차 인게임 대화를 마친다 (허브 [대화] 또는 바).
  * - **완료 조건**: `applyTalkNpcMissionObjectives` — 대화 dismiss.

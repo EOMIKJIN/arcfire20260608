@@ -45,6 +45,8 @@ export type NearbyInfoDetailRow = {
   commGuaranteed?: boolean;
   /** 메인/캠페인 퀘스트 연관 — INFO 육각 M */
   hasMainQuest?: boolean;
+  /** 서브퀘스트(sandbox_*) 연관 — INFO 육각 S */
+  hasSubQuest?: boolean;
   /** 퀘스트 NPC·할당됨 — 육각 레일 표시(비어 있어도) */
   showQuestMarks?: boolean;
 };
@@ -56,6 +58,7 @@ export type NearbyInfoDetailRowIds = {
   pinKind?: NearbyInfoPinKind;
   commGuaranteed?: boolean;
   hasMainQuest?: boolean;
+  hasSubQuest?: boolean;
   showQuestMarks?: boolean;
 };
 
@@ -105,6 +108,7 @@ export function buildNearbyInfoDetailRow(
     pinKind: ids?.pinKind,
     commGuaranteed: ids?.commGuaranteed === true,
     hasMainQuest: ids?.hasMainQuest === true,
+    hasSubQuest: ids?.hasSubQuest === true,
     showQuestMarks: ids?.showQuestMarks === true,
   };
 }
@@ -161,6 +165,7 @@ export function localizeNearbyInfoDetailRow(
     pinKind: row.pinKind,
     commGuaranteed: row.commGuaranteed === true,
     hasMainQuest: row.hasMainQuest === true,
+    hasSubQuest: row.hasSubQuest === true,
     showQuestMarks: row.showQuestMarks === true,
   };
 }
@@ -183,6 +188,7 @@ export function normalizeNearbyInfoDetailRow(
     pinKind: row.pinKind,
     commGuaranteed: row.commGuaranteed,
     hasMainQuest: row.hasMainQuest,
+    hasSubQuest: row.hasSubQuest,
     showQuestMarks: row.showQuestMarks,
   });
 }

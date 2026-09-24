@@ -13,6 +13,7 @@ import {
 } from './missionCatalog';
 import { isMissionAvailable } from '../engine/MissionEngine';
 import { isArcCoreInstanceMissionId } from './arcCoreInstanceMissionResolver';
+import { isUnidentifiedAnomalyMissionId } from './unidentifiedAnomaly/unidentifiedAnomalyIds';
 import { useArcCoreInstanceMissionBoardStore } from '../store/arcCoreInstanceMissionBoardStore';
 import { useMainStoryProgressStore } from '../store/mainStoryProgressStore';
 import { resolveCurrentMainStoryOfferMissionId } from './mainStory/resolveMainStoryProgression';
@@ -99,7 +100,10 @@ export function listActiveQuestStatusRows(
   activeMissionId: string | null,
 ): MissionStatusRow[] {
   return listActiveMissionStatusRows(progresses, activeMissionId).filter(
-    (row) => isQuestMissionId(row.mission.id) || isArcCoreInstanceMissionId(row.mission.id),
+    (row) =>
+      isQuestMissionId(row.mission.id)
+      || isArcCoreInstanceMissionId(row.mission.id)
+      || isUnidentifiedAnomalyMissionId(row.mission.id),
   );
 }
 
@@ -124,7 +128,10 @@ export function listCompletedQuestStatusRows(
   snapshots?: readonly ClearedArcInstSnapshot[],
 ): MissionStatusRow[] {
   const rows = listCompletedMissionStatusRows(progresses).filter(
-    (row) => isQuestMissionId(row.mission.id) || isArcCoreInstanceMissionId(row.mission.id),
+    (row) =>
+      isQuestMissionId(row.mission.id)
+      || isArcCoreInstanceMissionId(row.mission.id)
+      || isUnidentifiedAnomalyMissionId(row.mission.id),
   );
   mergeClearedArcInstHistoryRows(rows, snapshots, buildClearedArcInstHistoryRow);
   rows.sort((a, b) => (b.progress.completedAt ?? 0) - (a.progress.completedAt ?? 0));

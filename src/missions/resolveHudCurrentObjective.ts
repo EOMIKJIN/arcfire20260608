@@ -57,5 +57,25 @@ export function resolveHudCurrentObjective(
   }
 
   const incomplete = mission.objectives.find((obj) => !progress.objectives[obj.id]);
+  if (incomplete && mission.id.startsWith('arc_anom_')) {
+    try {
+      const { useUnidentifiedAnomalyStore } =
+        require('../store/unidentifiedAnomalyStore') as typeof import('../store/unidentifiedAnomalyStore');
+      const { t } = require('../i18n') as typeof import('../i18n');
+      const active = useUnidentifiedAnomalyStore.getState().active;
+      if (active?.instanceId === mission.id && !active.payloadRevealed) {
+        return {
+          objective: {
+            ...incomplete,
+            description: t('anomaly.hud.identify'),
+            descriptionEn: t('anomaly.hud.identify'),
+          },
+          cargoShort: false,
+        };
+      }
+    } catch {
+      /* HUD 폴백 */
+    }
+  }
   return { objective: incomplete, cargoShort: false };
 }

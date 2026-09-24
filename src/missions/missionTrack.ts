@@ -5,7 +5,7 @@
  * |---|---|---|---|
  * | tutorial | mission_* | initTutorialStory (온보딩·인트로) | 초기 튜토리얼 스토리 체인 |
  * | main_story | story_* | acceptMainStoryMission + mainStory 챕터 그래프 | 본편 메인 스토리 — 튜토리얼과 분리 |
- * | quest | sandbox_* · arc_cpt_* | acceptQuestMission (바·NPC·INFO 개인) | 수락형 의뢰·진행 |
+ * | quest | sandbox_* · arc_cpt_* | acceptQuestMission (바·NPC·INFO 개인) | 서브퀘스트(sandbox_*)·개인 진행 |
  * | inst_tpl | tq_* | (ArcCore clone 전용) | 바 인스턴스 의뢰 템플릿 |
  * | cpt_tpl | cp_* | (함장 개인 clone 전용) | INFO 통신 개인미션 템플릿 |
  *
@@ -14,6 +14,7 @@
 import type { Mission } from '../types';
 import { MISSIONS_FROM_CSV } from '../data/generated';
 import { isCaptainPersonalMissionId } from './captainPersonalMissionIds';
+import { isUnidentifiedAnomalyMissionId } from './unidentifiedAnomaly/unidentifiedAnomalyIds';
 
 export type MissionTrack = 'tutorial' | 'main_story' | 'quest';
 
@@ -32,7 +33,13 @@ export const FIRST_MISSION_ID = FIRST_TUTORIAL_MISSION_ID;
 export function resolveMissionTrack(missionId: string): MissionTrack | null {
   if (isTutorialMissionId(missionId)) return 'tutorial';
   if (isMainStoryMissionId(missionId)) return 'main_story';
-  if (isQuestMissionId(missionId) || isCaptainPersonalMissionId(missionId)) return 'quest';
+  if (
+    isQuestMissionId(missionId)
+    || isCaptainPersonalMissionId(missionId)
+    || isUnidentifiedAnomalyMissionId(missionId)
+  ) {
+    return 'quest';
+  }
   return null;
 }
 
@@ -49,8 +56,16 @@ export function isQuestMissionId(missionId: string): boolean {
 }
 
 /**
- * 챕터1 정식 서브퀘스트 부모 5종 — 바 의뢰 `sandbox_001`–`033`과 구분.
- * 지도 수락 마크·제품명 「서브퀘스트」는 이 집합만.
+ * 서브퀘스트 — `sandbox_*` 전부.
+ * 바 수락 의뢰 `sandbox_001`–`033`과 챕터1 정식 `sandbox_034`–`038`을 같은 트랙으로 본다.
+ */
+export function isSubQuestMissionId(missionId: string): boolean {
+  return isQuestMissionId(missionId);
+}
+
+/**
+ * 챕터1 정식 서브퀘스트 부모 5종 — 은하 지도 수락 마크용.
+ * INFO S·서브퀘스트 분류는 `isSubQuestMissionId` (`sandbox_*` 전부).
  */
 export const CHAPTER1_NAMED_SIDE_QUEST_IDS = [
   'sandbox_034',

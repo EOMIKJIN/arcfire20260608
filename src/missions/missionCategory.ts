@@ -42,7 +42,10 @@ export function deriveMissionPlayCategory(mission: Pick<Mission, 'objectives'>):
   const reachPlanet = hasObjectiveType(objectives, 'reach_planet');
   const deliver = hasObjectiveType(objectives, 'deliver_cargo');
   const talk = hasObjectiveType(objectives, 'talk_npc');
-  const eventLike = talk || hasObjectiveType(objectives, 'deliver_cargo');
+  const eventLike =
+    talk
+    || hasObjectiveType(objectives, 'deliver_cargo')
+    || hasObjectiveType(objectives, 'collect_item');
 
   if (defeat && !buy && !reachSystem && !reachPlanet && !deliver) return 'combat';
   if (buy && reachSystem) return 'delivery';

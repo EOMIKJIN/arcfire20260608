@@ -70,3 +70,4 @@ tq_oth_03,함선 정비 부품,바 게시판 — 정비용 기술 부품을 현�
 tq_oth_04,좌표 탐사,바 게시판 — 전달받은 좌표의 행성을 확인하라.,explore,,,2,980,250,,0,,,8,,,,Coordinate Survey,Bar board — verify the planet at the given coordinates.,48
 tq_oth_05,선주 접선,바 게시판 — 인근 거점에서 선주와 접선하라.,travel,,,2,900,230,,0,,,8,,,1,Client Rendezvous,Bar board — meet the client captain at a nearby outpost.,48
 tq_oth_06,항로 보수 점검,바 게시판 — 연결 항로의 보수 상태를 점검하라.,explore,,,3,1050,280,,0,,,9,,,,Route Maintenance Check,Bar board — inspect maintenance status on a linked route.,48
+tq_anom_01,미확인 이상현상,잔해 수색으로 이상현상의 정체를 확인하라.,explore,npc_cpt_anomaly_researcher,,1,1800,450,,0,,,8,,,,Unidentified Anomaly,Confirm the anomaly by salvaging wreckage.,48

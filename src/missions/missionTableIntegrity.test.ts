@@ -21,6 +21,7 @@ const OBJECTIVE_TYPES = new Set([
   'defeat_enemy',
   'deliver_cargo',
   'buy_goods',
+  'collect_item',
   'talk_npc',
 ]);
 
@@ -94,12 +95,12 @@ test('missions.csv generated — 키·목표·배치·전투 연동', () => {
         errors.push(`reach_system 성계 없음 ${mission.id}:${obj.targetId}`);
       }
       if (
-        obj.type === 'buy_goods'
+        (obj.type === 'buy_goods' || obj.type === 'collect_item')
         && obj.targetId
         && !placeholder
         && !ITEM_DEFS_FROM_CSV[obj.targetId]
       ) {
-        errors.push(`buy_goods 품목 없음 ${mission.id}:${obj.targetId}`);
+        errors.push(`${obj.type} 품목 없음 ${mission.id}:${obj.targetId}`);
       }
     }
     for (let j = 0; j < mission.prerequisiteIds.length; j += 1) {

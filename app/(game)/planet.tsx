@@ -24,6 +24,7 @@ import { showArcAlert } from '../../src/utils/showArcAlert';
 import type { StarSystem } from '../../src/types';
 import { usePlayerStore } from '../../src/store/playerStore';
 import { useWorldStore } from '../../src/store/worldStore';
+import { scheduleUnidentifiedAnomalyTestWatch } from '../../src/missions/unidentifiedAnomaly/unidentifiedAnomalyTestRotationWatch';
 import { useMissionStore } from '../../src/store/missionStore';
 import { useItemLedgerStore } from '../../src/store/itemLedgerStore';
 import { useAccountProfileStore } from '../../src/store/accountProfileStore';
@@ -68,7 +69,10 @@ import { teardownPlanetHubCombatForGalaxyDeparture } from '../../src/game/teardo
 import { resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 import { resolvePlayerPlanetStayBlock } from '../../src/clanWar/planetTerritoryPlayerAccess';
 import { clearPlanetAssaultIntent } from '../../src/game/waveDefense/planetAssaultIntent';
-import { showTerritorialOccupationChangeAlert } from '../../src/arcCore/territorial/showTerritorialOccupationChangeAlert';
+import {
+  flushPendingTerritorialOccupationAlert,
+  showTerritorialOccupationChangeAlert,
+} from '../../src/arcCore/territorial/showTerritorialOccupationChangeAlert';
 import { getPlanetOccupationSeedRow } from '../../src/arcCore/balance/balanceTableRegistry';
 import { usePlanetStageSession } from '../../src/game/usePlanetStageSession';
 import { useStageTransitionStuckWatchdog } from '../../src/navigation/stageTransitionStuckWatchdog';
@@ -406,6 +410,8 @@ export default function PlanetScreen() {
     useCallback(() => {
       setIsPlanetRouteFocused(true);
       markPlanetHubWorldOpsNotifyUnlocked();
+      scheduleUnidentifiedAnomalyTestWatch();
+      flushPendingTerritorialOccupationAlert();
       resetPlanetHubNavigationThrottle();
       /**
        * 메인 스테이지 진입 직전 세션 등록 — `1.arcfire_flowchart.md` §2-2
@@ -1545,6 +1551,21 @@ export default function PlanetScreen() {
       attempt,
       dayKey,
     );
+    if (outcome.kind === 'anomaly_relic') {
+      const { applyAnomalyRelicSalvageGrant } =
+        require('../../src/missions/unidentifiedAnomaly/applyAnomalyRelicSalvageGrant') as typeof import('../../src/missions/unidentifiedAnomaly/applyAnomalyRelicSalvageGrant');
+      applyAnomalyRelicSalvageGrant(outcome.itemId);
+      setMenuBadge('trade', true);
+      showArcAlert(
+        t('anomaly.salvage.relicTitle'),
+        t('anomaly.salvage.relicBody', { item: formatSalvageLootLabel(outcome.itemId) }),
+      );
+      return;
+    }
+    if (outcome.kind === 'anomaly_threat') {
+      showArcAlert(t('anomaly.salvage.threatTitle'), t('anomaly.salvage.threatBody'));
+      return;
+    }
     if (outcome.kind === 'relic') {
       addInventoryItem(outcome.itemId, 1);
       setMenuBadge('trade', true);
