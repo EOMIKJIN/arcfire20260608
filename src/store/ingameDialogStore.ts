@@ -26,6 +26,11 @@ import {
   resolveIngameDialogSegmentCount,
 } from '../game/ingameDialog/ingameDialogViewModel';
 import { getActiveNarrativeDialogSplitOptions } from '../ui/overlay/splitNarrativeDialogSegments';
+import { isOfferDeclineActionType } from '../game/ingameDialog/resolveIngameDialogFinalLabel';
+import {
+  INGAME_DIALOG_READY_TIMEOUT_MS,
+  type IngameDialogSessionPack,
+} from '../game/ingameDialog/ingameDialogSessionPack';
 import type {
   AdHocIngameDialogPayload,
   IngameDialogCompletionAction,
@@ -53,13 +58,36 @@ type IngameDialogState = {
   pressNext: () => void;
   /**
    * [취소] — completion(수락) 없이 종료.
-   * CSV 메인 스토리: onDismiss(배지 ack). adhoc 수락형 통신: onCancel만(메신저 금지).
+   * CSV 메인/의뢰: onDismiss(배지 ack, 수락 없음). adhoc 수락형 통신: onCancel만(메신저 금지).
    */
   pressCancel: () => void;
   markPageComplete: () => void;
+  attachSessionPack: (pack: IngameDialogSessionPack) => void;
+  markPackReady: () => void;
   isActive: () => boolean;
   resetPlanetLandedDedupe: () => void;
 };
+
+let readyTimer: ReturnType<typeof setTimeout> | null = null;
+let readyGen = 0;
+
+function clearReadyWatch(): void {
+  if (readyTimer) {
+    clearTimeout(readyTimer);
+    readyTimer = null;
+  }
+}
+
+function beginReadyWatch(): void {
+  clearReadyWatch();
+  readyGen += 1;
+  const gen = readyGen;
+  readyTimer = setTimeout(() => {
+    readyTimer = null;
+    if (readyGen !== gen) return;
+    useIngameDialogStore.getState().markPackReady();
+  }, INGAME_DIALOG_READY_TIMEOUT_MS);
+}
 
 function isSceneSeen(sceneId: string): boolean {
   const player = usePlayerStore.getState().player;
@@ -120,7 +148,10 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
         sceneId,
         pageIndex: 0,
         segmentIndex: 0,
+        stepIndex: 0,
         pageComplete: false,
+        ready: false,
+        pack: null,
         completionActions: buildCompletionActionsForScene(sceneId, options),
         onDismiss: options?.onDismiss,
         context: options?.context ?? {},
@@ -128,6 +159,7 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
         autoDismissMode: options?.autoDismissMode,
       },
     });
+    beginReadyWatch();
     return true;
     }, options?.bypassScreenShell);
   },
@@ -141,10 +173,14 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
         kind: 'adhoc',
         adhocId: `adhoc_${adhocSeq}`,
         segmentIndex: 0,
+        stepIndex: 0,
         pageComplete: false,
+        ready: false,
+        pack: null,
         payload,
       },
     });
+    beginReadyWatch();
     return true;
     }, payload.bypassScreenShell);
   },
@@ -165,9 +201,28 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
     }, options?.bypassScreenShell);
   },
 
+  attachSessionPack: (pack) => {
+    const session = get().session;
+    if (!session) return;
+    if (session.pack) return;
+    set({ session: { ...session, pack } });
+    if (pack.uniquePortraitSources.length === 0) {
+      get().markPackReady();
+    }
+  },
+
+  markPackReady: () => {
+    clearReadyWatch();
+    const session = get().session;
+    if (!session || session.ready) return;
+    set({ session: { ...session, ready: true } });
+  },
+
   dismiss: () => {
     const session = get().session;
     if (!session) return;
+    clearReadyWatch();
+    readyGen += 1;
     set({ session: null });
     void finishSession(session);
   },
@@ -175,6 +230,8 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
   dismissCancelRemaining: () => {
     const session = get().session;
     if (!session) return;
+    clearReadyWatch();
+    readyGen += 1;
     set({ session: null });
     cancelIngameDialogFeatureLinkDelay();
     clearUiForegroundSequence();
@@ -195,6 +252,8 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
     const session = get().session;
     if (!session || session.kind !== 'adhoc') return;
     if (session.payload.abortOnStageLeave !== true) return;
+    clearReadyWatch();
+    readyGen += 1;
     set({ session: null });
     session.payload.onCancel?.();
   },
@@ -204,16 +263,18 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
     if (!session) return;
     if (session.kind === 'csv_scene') {
       if (!session.pageComplete) return;
-      const hasMainStoryAccept = session.completionActions.some(
-        (a) => a.type === 'accept_main_story_mission',
-      );
-      if (!hasMainStoryAccept) return;
+      const canDeclineOffer = session.completionActions.some((a) => isOfferDeclineActionType(a.type));
+      if (!canDeclineOffer) return;
+      clearReadyWatch();
+      readyGen += 1;
       set({ session: null });
       session.onDismiss?.();
       drainIngameDialogIdleCallbacks();
       return;
     }
     if (!session.pageComplete) return;
+    clearReadyWatch();
+    readyGen += 1;
     set({ session: null });
     session.payload.onCancel?.();
     drainIngameDialogIdleCallbacks();
@@ -235,16 +296,20 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
 
     if (session.kind === 'adhoc') {
       if (!session.pageComplete) return;
-      const segmentCount = resolveAdHocIngameDialogSegmentCount(
-        session.payload.text,
-        getActiveNarrativeDialogSplitOptions(),
-      );
+      const segmentCount = session.pack
+        ? session.pack.steps.length
+        : resolveAdHocIngameDialogSegmentCount(
+          session.payload.text,
+          getActiveNarrativeDialogSplitOptions(),
+        );
       const result = advanceIngameDialogSession(session, null, segmentCount);
       if (result.type === 'blocked') return;
       if (result.type === 'advanced') {
         set({ session: result.session });
         return;
       }
+      clearReadyWatch();
+      readyGen += 1;
       set({ session: null });
       void finishSession(result.session);
       return;
@@ -252,6 +317,8 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
 
     const scene = getIngameDialogSceneById(session.sceneId);
     if (!scene) {
+      clearReadyWatch();
+      readyGen += 1;
       set({ session: null });
       drainIngameDialogIdleCallbacks();
       return;
@@ -259,13 +326,15 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
 
     const locale = useAppSettingsStore.getState().locale;
     const nickname = usePlayerStore.getState().player?.nickname;
-    const segmentCount = resolveIngameDialogSegmentCount(
-      session,
-      scene,
-      locale,
-      nickname,
-      getActiveNarrativeDialogSplitOptions(),
-    );
+    const segmentCount = session.pack
+      ? 1
+      : resolveIngameDialogSegmentCount(
+        session,
+        scene,
+        locale,
+        nickname,
+        getActiveNarrativeDialogSplitOptions(),
+      );
     const result = advanceIngameDialogSession(session, scene, segmentCount);
     if (result.type === 'blocked') return;
     if (result.type === 'advanced') {
@@ -273,6 +342,8 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
       return;
     }
     const completedSession = result.session;
+    clearReadyWatch();
+    readyGen += 1;
     set({ session: null });
     void finishSession(completedSession);
   },

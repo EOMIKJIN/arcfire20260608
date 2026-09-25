@@ -1,6 +1,6 @@
 # 미확인 이상현상 — 인스턴스 퀘스트 설계 (v1.1)
 
-> **상태**: 설계 정본 · **코드 미착수** (대표님 승인 후 구현)  
+> **상태**: 설계 정본 · **본선 스폰 적용** (테스트 로테이션 종료 · 위협 STAGE 3 전투는 미배선)  
 > **날짜**: 2026-09-22 · **개정**: v1.1 (김클로드 유지조건 검수 반영 + 50:50 유물/위협)  
 > **축**: 기존 퀘스트 고도화 — 메인스토리 비연결 · Table-First · 착륙 게이트 없는 월드 이벤트  
 > **교차**: `MISSION_SYSTEM_HANDOFF.md` · `missionTrack.ts` · `missionObjectiveDsl.ts` · `planetSalvageSearch.ts` · `GalaxyMapContestedZoneRingOverlay.tsx` · `questCombatLock.ts` · `app/(game)/combat.tsx`  

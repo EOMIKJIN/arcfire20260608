@@ -40,6 +40,7 @@ export const NarrativeOverlayContent = memo(function NarrativeOverlayContent({
       text={entry.text}
       typewriterKey={entry.typewriterKey}
       typewriterSpeedMs={entry.typewriterSpeedMs}
+      typewriterActive={entry.typewriterActive !== false}
       onTextComplete={entry.onTextComplete}
       imageSource={entry.imageSource}
       portraitScale={entry.portraitScale}

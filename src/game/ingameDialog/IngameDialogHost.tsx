@@ -2,9 +2,10 @@
 // IngameDialogHost — 루트 단일 narrative 오버레이 (ArcOverlayHost 연동)
 // ============================================================
 
-import React, { memo, useEffect, useMemo } from 'react';
+import React, { memo, useEffect, useLayoutEffect, useMemo } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { prefetchImageSources } from '../../assetPipeline/prefetchImageSources';
 import { useArcNarrativeOverlay } from '../../ui/overlay/useArcNarrativeOverlay';
 import type { ArcNarrativeOverlayConfig } from '../../ui/overlay/useArcNarrativeOverlay';
 import { resolveOverlayEdgeInsets } from '../../ui/overlay/overlayInsets';
@@ -19,6 +20,11 @@ import { useIngameDialogStore } from '../../store/ingameDialogStore';
 import { getIngameDialogSceneById } from './ingameDialogSceneIndex';
 import { buildIngameDialogViewModel } from './ingameDialogViewModel';
 import { INGAME_DIALOG_OVERLAY_ID } from './ingameDialogTypes';
+import {
+  buildAdhocIngameDialogSessionPack,
+  buildCsvIngameDialogSessionPack,
+} from './ingameDialogSessionPack';
+import { IngameDialogPortraitWarmer } from './IngameDialogPortraitWarmer';
 import {
   resolveSessionAutoDismissKey,
   resolveSessionAutoDismissMode,
@@ -36,6 +42,8 @@ export const IngameDialogHost = memo(function IngameDialogHost() {
   const dismiss = useIngameDialogStore((s) => s.dismiss);
   const dismissCancelRemaining = useIngameDialogStore((s) => s.dismissCancelRemaining);
   const markPageComplete = useIngameDialogStore((s) => s.markPageComplete);
+  const attachSessionPack = useIngameDialogStore((s) => s.attachSessionPack);
+  const markPackReady = useIngameDialogStore((s) => s.markPackReady);
   const locale = useAppSettingsStore((s) => s.locale);
   const nickname = usePlayerStore((s) => s.player?.nickname);
 
@@ -59,10 +67,49 @@ export const IngameDialogHost = memo(function IngameDialogHost() {
 
   const scene = session?.kind === 'csv_scene' ? getIngameDialogSceneById(session.sceneId) : null;
 
+  useLayoutEffect(() => {
+    if (!session || session.pack) return;
+    if (session.kind === 'csv_scene') {
+      if (!scene) return;
+      attachSessionPack(buildCsvIngameDialogSessionPack({
+        scene,
+        locale,
+        nickname,
+        context: session.context,
+        splitOptions,
+        completionActionTypes: session.completionActions.map((a) => a.type),
+      }));
+      return;
+    }
+    const payload = session.payload;
+    attachSessionPack(buildAdhocIngameDialogSessionPack({
+      adhocId: session.adhocId,
+      label: payload.label,
+      text: payload.text,
+      typewriterSpeedMs: payload.typewriterSpeedMs,
+      imageSource: payload.imageSource,
+      portraitScale: payload.portraitScale,
+      buttonText: payload.buttonText,
+      secondaryButtonText: payload.secondaryButtonText,
+      showAcceptCancelChoice: payload.showAcceptCancelChoice,
+      completionActionTypes: payload.completionActions?.map((a) => a.type),
+      locale,
+      splitOptions,
+    }));
+  }, [session, scene, locale, nickname, splitOptions, attachSessionPack]);
+
+  useEffect(() => {
+    const sources = session?.pack?.uniquePortraitSources;
+    if (!sources || sources.length === 0) return;
+    void prefetchImageSources(sources);
+  }, [session?.pack]);
+
+  const overlayVisible = session?.ready === true;
+
   const viewModel = useMemo(() => {
-    if (!session) return null;
+    if (!session || !overlayVisible) return null;
     return buildIngameDialogViewModel({ session, scene, locale, nickname, splitOptions });
-  }, [session, scene, locale, nickname, splitOptions]);
+  }, [session, overlayVisible, scene, locale, nickname, splitOptions]);
 
   const config = useMemo((): ArcNarrativeOverlayConfig | null => {
     if (!session || !viewModel) return null;
@@ -72,6 +119,7 @@ export const IngameDialogHost = memo(function IngameDialogHost() {
       text: viewModel.text,
       typewriterKey: viewModel.typewriterKey,
       typewriterSpeedMs: viewModel.typewriterSpeedMs,
+      typewriterActive: true,
       onTextComplete: markPageComplete,
       imageSource: viewModel.imageSource,
       portraitScale: viewModel.portraitScale,
@@ -85,11 +133,15 @@ export const IngameDialogHost = memo(function IngameDialogHost() {
     };
   }, [session, viewModel, markPageComplete, pressNext, pressCancel]);
 
-  useArcNarrativeOverlay(INGAME_DIALOG_OVERLAY_ID, Boolean(session), config);
+  useArcNarrativeOverlay(
+    INGAME_DIALOG_OVERLAY_ID,
+    overlayVisible && Boolean(viewModel),
+    config,
+  );
 
   const autoDismissKey = resolveSessionAutoDismissKey(session);
   const autoDismissMs = resolveSessionAutoDismissMs(session);
-  const autoDismissArmed = shouldArmSessionAutoDismiss(
+  const autoDismissArmed = overlayVisible && shouldArmSessionAutoDismiss(
     session,
     Boolean(viewModel?.isFinalStep),
   );
@@ -108,5 +160,20 @@ export const IngameDialogHost = memo(function IngameDialogHost() {
     return () => clearTimeout(timer);
   }, [autoDismissArmed, autoDismissKey, autoDismissMs, dismiss, dismissCancelRemaining]);
 
-  return null;
+  const warmerSources = session?.pack?.uniquePortraitSources;
+  const warmerKey = session
+    ? (session.kind === 'csv_scene' ? session.sceneId : session.adhocId)
+    : 'idle';
+
+  if (!session || !warmerSources || warmerSources.length === 0) {
+    return null;
+  }
+
+  return (
+    <IngameDialogPortraitWarmer
+      key={warmerKey}
+      sources={warmerSources}
+      onWarmed={markPackReady}
+    />
+  );
 });

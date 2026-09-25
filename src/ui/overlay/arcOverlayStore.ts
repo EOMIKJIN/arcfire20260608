@@ -101,6 +101,8 @@ export type ArcOverlayNarrativeEntry = ArcOverlayBase & {
   nextDisabled?: boolean;
   onTextComplete?: () => void;
   typewriterSpeedMs?: number;
+  /** false — 세션 팩 ready 전 타이프라이터 rAF 정지 */
+  typewriterActive?: boolean;
   imageSource?: ImageSourcePropType;
   /** 얼굴 레이어 안 추가 스케일(기본 1). intro CSV·adhoc 등 */
   portraitScale?: number;

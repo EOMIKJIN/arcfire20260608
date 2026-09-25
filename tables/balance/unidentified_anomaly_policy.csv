@@ -1,15 +1,15 @@
 key,value,notesKo
-concurrent,1,은하 동시 활성 1건 (미적용 · 본선 스폰 승격 시 사용)
-daily_spawn,2,KST 일일 스폰 횟수(발동) (미적용 · 본선 스폰 승격 시 사용)
-unaccepted_ttl_hours,12,미수락 TTL 고정 시간(자정 컷 없음) (미적용 · 테스트 활성창 10분)
+concurrent,1,은하 동시 활성 1건
+daily_spawn,2,KST 일일 스폰 횟수(발동)
+unaccepted_ttl_hours,12,미수락 TTL 고정 시간(자정 컷 없음)
 quest_relic_salvage_pct,30,수락 후 수색 페이로드 공개 확률
-payload_relic_weight_pct,50,스폰 시 유물 가중 (본선 roll 용 · 테스트 스폰은 relic 고정)
-payload_threat_weight_pct,50,스폰 시 위협 가중 (본선 roll 용 · 테스트 스폰은 relic 고정)
-threat_tcl_add,15,위협 TCL 가산(기존 행성 TCL 행 불변) (미적용 · 위협 전투 미배선)
-cooldown_days,3,해소 행성 재당첨 배제 일수 (미적용 · 본선 스폰 승격 시 사용)
-history_cap,8,recentResolved 상한 (코드 상수와 동기 · CSV 직접 소비 아님)
-band_weight_early,0,early 밴드 스폰 가중(제외) (미적용 · 본선 스폰 승격 시 사용)
-band_weight_mid_early,1,mid_early 밴드 스폰 가중 (미적용 · 본선 스폰 승격 시 사용)
-band_weight_mid,3,mid 밴드 스폰 가중 (미적용 · 본선 스폰 승격 시 사용)
-band_weight_late,8,late 밴드 스폰 가중 (미적용 · 본선 스폰 승격 시 사용)
-base_spawn_chance_pct,100,식별/일일 주사위 기본 확률 (미적용 · 본선 스폰 승격 시 사용)
+payload_relic_weight_pct,50,스폰 시 유물 가중
+payload_threat_weight_pct,50,스폰 시 위협 가중
+threat_tcl_add,15,위협 TCL 가산(기존 행성 TCL 행 불변) (위협 전투 STAGE 3 미배선)
+cooldown_days,3,해소 행성 재당첨 배제 일수
+history_cap,8,recentResolved 상한
+band_weight_early,0,early 밴드 스폰 가중(제외)
+band_weight_mid_early,1,mid_early 밴드 스폰 가중
+band_weight_mid,3,mid 밴드 스폰 가중
+band_weight_late,8,late 밴드 스폰 가중
+base_spawn_chance_pct,100,식별/일일 주사위 기본 확률

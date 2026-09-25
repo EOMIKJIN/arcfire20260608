@@ -94,6 +94,8 @@ export const NARRATIVE_DIALOG_LAYOUT = {
   typewriterSpeedMsMin: 10,
   typewriterSpeedMsMax: 44,
   nextButtonRevealDelayMs: 320,
+  /** 초상·화자명·카드가 열린 뒤 타이핑 rAF 시작까지 */
+  typewriterStartDelayMs: 500,
 } as const;
 
 export type NarrativeDialogWidthInsets = {

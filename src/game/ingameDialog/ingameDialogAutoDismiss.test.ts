@@ -82,6 +82,23 @@ test('combat-end final_page arms only after last page is complete', () => {
   assert.equal(shouldArmSessionAutoDismiss(session, true), true);
 });
 
+test('ready=false does not arm auto-dismiss before the window opens', () => {
+  const session = {
+    kind: 'csv_scene' as const,
+    sceneId: 'arc_core_spy_intel_alert',
+    pageIndex: 0,
+    segmentIndex: 0,
+    pageComplete: false,
+    ready: false,
+    completionActions: [],
+    context: {},
+    autoDismissMs: COMBAT_END_OPERATOR_AUTO_DISMISS_MS,
+    autoDismissMode: 'first_idle' as const,
+  };
+  assert.equal(shouldArmSessionAutoDismiss(session, false), false);
+  assert.equal(shouldArmSessionAutoDismiss({ ...session, ready: true }, false), true);
+});
+
 test('spy first_idle arms on first window without waiting for typewriter', () => {
   const session = {
     kind: 'csv_scene' as const,

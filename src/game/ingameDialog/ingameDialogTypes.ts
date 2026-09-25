@@ -4,6 +4,7 @@
 
 import type { ImageSourcePropType } from 'react-native';
 import type { StorySceneTriggerKey } from '../../types';
+import type { IngameDialogSessionPack } from './ingameDialogSessionPack';
 
 /** ArcOverlayHost narrative 파이프라인 단일 overlay id */
 export const INGAME_DIALOG_OVERLAY_ID = 'ingame-dialog';
@@ -98,7 +99,10 @@ export type IngameDialogSession =
       sceneId: string;
       pageIndex: number;
       segmentIndex: number;
+      stepIndex?: number;
       pageComplete: boolean;
+      ready?: boolean;
+      pack?: IngameDialogSessionPack | null;
       completionActions: IngameDialogCompletionAction[];
       onDismiss?: () => void;
       context: IngameDialogTextContext;
@@ -109,7 +113,10 @@ export type IngameDialogSession =
       kind: 'adhoc';
       adhocId: string;
       segmentIndex: number;
+      stepIndex?: number;
       pageComplete: boolean;
+      ready?: boolean;
+      pack?: IngameDialogSessionPack | null;
       payload: AdHocIngameDialogPayload;
     };
 

@@ -5,6 +5,9 @@
 import type { StorySceneDef } from '../../types';
 import { filterIngameDialogPages } from './ingameDialogSceneIndex';
 import type { IngameDialogSession } from './ingameDialogTypes';
+import { advanceIngameDialogSessionByPack } from './ingameDialogSessionAdvancePack';
+
+export { advanceIngameDialogSessionByPack } from './ingameDialogSessionAdvancePack';
 
 export type IngameDialogStepFlags = {
   isLastPage: boolean;
@@ -42,6 +45,9 @@ export function advanceIngameDialogSession(
   scene: StorySceneDef | null,
   segmentCount: number,
 ): AdvanceIngameDialogResult {
+  if (session.pack && session.pack.steps.length > 0) {
+    return advanceIngameDialogSessionByPack(session);
+  }
   if (session.kind === 'adhoc') {
     if (!session.pageComplete) return { type: 'blocked' };
     if (session.segmentIndex < Math.max(0, segmentCount - 1)) {

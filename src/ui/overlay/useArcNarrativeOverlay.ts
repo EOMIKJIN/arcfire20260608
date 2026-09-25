@@ -69,6 +69,7 @@ export function useArcNarrativeOverlay(
     config?.label,
     config?.anchor,
     config?.typewriterSpeedMs,
+    config?.typewriterActive,
     config?.imageSource,
     config?.portraitScale,
   ]);

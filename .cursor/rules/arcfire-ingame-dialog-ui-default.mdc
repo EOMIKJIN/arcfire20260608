@@ -28,7 +28,7 @@ alwaysApply: false
 - **대사**: 중단 — 화자명 `[ 이름 ]` + 본문(2~3줄) · 화자명·본문 왼쪽 1em 동일(`dialogueIndentPx`=12) · 레이어 좌우 `hudHorizontalPadPx`(8px) · 좌측 정렬 · split 너비에서 indent 차감
 - **텍스트**: mono md · `lineHeight` 26 · 최대 3줄 · **좌측 정렬** · 빈 줄 없음
 - **팝업 위치**: 화면 **좌우·세로 중앙 핀** (`NARRATIVE_DIALOG_LAYOUT.popupAnchor`)
-- **오픈 순서**: 화면 셸(메뉴 UI·HeavyUi 데이터·첫 프레임) 완료 후에만 present. `useUiScreenShell` + `runWhenUiScreenReady`. 대화 오픈 전환 연출은 보류(삭제).
+- **오픈 순서**: 화면 셸(메뉴 UI·HeavyUi 데이터·첫 프레임) 완료 후에만 present. `useUiScreenShell` + `runWhenUiScreenReady`. 카드·초상·화자명은 즉시 열고, 본문 타이핑은 `typewriterStartDelayMs`(500) 후 시작. 대화 오픈 전환 연출은 보류(삭제).
 - **페이지**: `patch`만 (창 재생성 금지).
 - **버튼**: 하단 레이어 우측 `[ 다음 ]` / `[ 확인 ]` — 본문 완료 후 활성
 

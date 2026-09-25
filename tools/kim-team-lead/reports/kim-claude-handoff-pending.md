@@ -5,6 +5,167 @@
 
 ---
 
+## 🟠 PENDING — 제로로딩 P0+P1 구현 검수 결과 (실기 1 · P3 2) · 2026-09-25
+
+```text
+status=PENDING (실기 확인 1건 · P3 2건)
+task_id=zero-load-implementation-review-20260925
+kind=CODE_REVIEW (김클로드 코드 변경 0)
+verdict=PASS (차단 0)
+리포트=tools/kim-team-lead/reports/kim-claude-zero-load-implementation-review-20260925.md
+```
+
+**게이트 전부 통과**: 테스트 **17/17 PASS** · `tsc` **EXIT=0** · `audit:hot-path` **PASS(hits=0)**.
+
+**R-1~R-4 전부 반영 확인**
+- **R-1** → 신규 `IngameDialogPortraitWarmer`(오프스크린 240 `<Image>`). `prefetchImageSources`는 **best-effort로 병행**(`Host:103`) — 둘 중 하나를 버리지 않은 계층 분리가 정확
+- **R-2** → `INGAME_DIALOG_READY_TIMEOUT_MS=400` + **`readyGen` 세대 가드**(store:80-89)로 stale 타이머 무시
+- **R-3** → 회전 수용을 문서 비범위에 명시
+- **R-4** → intro 완전 포함(자체 타임아웃 `:105` · 워머 `:259` · `typewriterActive` `:301` · **ready 전 버튼 disabled** `:318,:328`)
+
+**계약 충족 코드 확인**
+- `overlayVisible = session?.ready === true`(`Host:106`) → **ViewModel 빌드 자체가 ready 이후**(`:109`) → ready 전 split/resolve **0**. `typewriterActive: true` 하드코딩(`:121`)도 config가 ready 이후에만 만들어져 정확
+- `pressNext`는 **인덱스 증가·경계검사뿐**(`ingameDialogSessionAdvancePack.ts:17-18`), `resolveIngameDialogSegmentCount` 호출 없음 → **P1 충족**
+- ViewModel은 팩 있으면 **조기 반환**(`:158-160`), 레거시 split/resolve는 **degrade 폴백 전용**
+- 상한 STEP 64 · PORTRAIT 12 · **`clearReadyWatch()` 11곳** 배선(누수 없음) · `pack: null` 해제 · **신규 Skia 0 · setInterval 0**
+- 워머가 `onLoad`·`onError`를 **둘 다** 카운트 → 깨진 에셋에서 영원히 안 끝나는 상황 방지
+
+**🟡 실기 확인 1건 — R-1 핵심 가정은 정적으로 증명 불가**
+
+**「`opacity: 0` 오프스크린 `<Image>`가 릴리즈 Android에서 실제로 디코드를 끝내는가」는 기기에서만 확인된다.** 플랫폼이 완전 투명 뷰의 디코드를 지연시키면 `onLoad`가 와도 본 카드에서 비용이 다시 난다. **R-1 해결 전체가 이 한 점에 걸려 있다.**
+→ 화자 10회 교체 긴 씬을 **릴리즈 빌드 실기**로 확인. 남으면 `opacity: 0.01` 또는 `left: -9999` 배치로 전환. **PSS도 같이 측정** 권고(워머가 세션 동안 상주 — unique 12장 ≈ 2.7MB, 의도된 트레이드오프이나 CLAUDE.md 메모리 우선 기준상 1회 실측 권장).
+
+**🟢 P3 2건**
+- **O-1** `IngameDialogPortraitWarmer.tsx:20` — `onWarmedRef.current = onWarmed;`가 **렌더 본문 실행**. 현 렌더러에서 동작하나 effect로 옮기면 안전
+- **O-2** 워머 effect deps가 `[total]` — **길이 같고 내용만 다른** sources 교체 시 `firedRef` 미리셋. `key` + 세션 null 언마운트로 막혀 실질 위험 낮으나 deps에 sources 신원 포함이 구조적
+
+**총평**: 설계 검토 → 구현 → 문서 v0.2 갱신 고리가 완결됐다. 특히 ①R-1을 계층으로 푼 것 ②degrade에 세대 가드를 넣은 것 ③intro에서 **버튼까지** ready로 잠근 것(설계에 없던 디테일 — 안 잠그면 ready 전 `pressNext`로 상태가 꼬인다)이 좋았다.
+
+**self-check**: 리포트 1개 신설 + 이 handoff. 코드·CSV·생성물 변경 0 · 커밋 0.
+
+---
+
+## ✅ REVIEWED — 인게임 대사 제로로딩 P0+P1 구현 · 2026-09-25
+
+```text
+status=REVIEWED
+task_id=ingame-dialog-zero-load-design-review-20260925
+kind=IMPLEMENTATION (김팀장 · 김클로드 검수 R-1~R-4 반영)
+verdict=IMPLEMENTED
+대상=docs/INGAME_DIALOG_ZERO_LOAD_DESIGN.md (v0.2)
+리포트=tools/kim-team-lead/reports/kim-claude-ingame-dialog-zero-load-design-review-20260925.md
+```
+
+**R-1** 오프스크린 `IngameDialogPortraitWarmer`를 P0 신뢰 경로로 채택. `Image.prefetch`는 Metro best-effort만(ready 게이트 아님).  
+**R-2** `INGAME_DIALOG_READY_TIMEOUT_MS=400` 후 degrade present.  
+**R-3** 진행 중 회전 재분할 금지 — 설계 §9 명시, Host/intro 팩 1회 잠금.  
+**R-4** intro `ingame_dialog` 동일 팩·워머·`typewriterActive`. cinematic은 즉시.
+
+---
+
+## ⚪ ARCHIVED — 인게임 대사 제로로딩 설계 v0.1 검토 · 2026-09-25
+
+```text
+status=REVIEWED (설계 수정 1건 · 보완 3건 → 김팀장 구현 반영)
+task_id=ingame-dialog-zero-load-design-review-20260925
+kind=DESIGN_REVIEW (김클로드 코드 변경 0)
+verdict=AGREE (방향·진단 타당) · 착수 전 R-1 결론 필요
+대상=docs/INGAME_DIALOG_ZERO_LOAD_DESIGN.md
+리포트=tools/kim-team-lead/reports/kim-claude-ingame-dialog-zero-load-design-review-20260925.md
+```
+
+**진단 전수 검증 통과** — 문서 §1의 사실 주장을 코드로 전부 확인했다. `TypewriterText` rAF+slice(`:79-105`) · **`typewriterActive` 두 렌더러 어디서도 미전달**(전역 검색) · `splitNarrativeDialogSegments` 뷰모델 빌드마다(`ingameDialogViewModel.ts:135,173`) · 초상 resolve 페이지마다(`:166`) · `resolveIngameDialogSegmentCount` 매 클릭(`ingameDialogStore.ts:262`). **「글이 늦은 게 아니라 초상 디코드·계산·타이핑이 한 순간에 만난다」는 원인 규정이 정확하다.**
+
+**🔴 R-1 (설계 수정 필요) — `Image.prefetch`가 릴리즈에서 no-op일 수 있다**
+
+설계 게이트는 「prefetch 완료 await 후 `ready=true`」인데, 재사용 대상 `prefetchImageSources.ts:12-18`은
+
+```ts
+const resolved = Image.resolveAssetSource(src);
+if (resolved?.uri) { await Image.prefetch(resolved.uri); } catch { /* 무시 */ }
+```
+
+- **dev(Metro)**: uri가 `http://localhost:8081/...` → 동작
+- **release(번들 드로어블)**: uri가 리소스명·스킴 없음 → **실패를 catch가 삼킴** → await 즉시 resolve → `ready` 켜진 뒤 **첫 `<Image>`에서 디코드** → 없애려던 A·B 지점이 살아남는다
+- 파일 주석 자체가 「플랫폼에 따라 **도움이 될 수 있음**(실패는 무시)」로 best-effort 인정
+
+**가장 나쁜 실패 형태** — dev에서는 고쳐진 것처럼 보이고 **스토어 빌드에서만 재발**한다.
+
+또한 §6-3의 대안(오프스크린 `<Image>` 마운트)은 **「재사용」이 아니다.** `src/assetPipeline/` 6파일 전수 확인 결과 **오프스크린 디코드 수단 0건** → 신규 구현이며 **P0 공수 재산정 필요**.
+
+> **권고**: ①릴리즈 빌드에서 prefetch 실효성 **먼저 실측** → ②안 들으면 오프스크린 워머를 P0에 포함. 측정 없이 워머부터 만들면 불필요한 기계를 얹게 된다.
+
+**🟡 보완 3건**
+- **R-2** `ready` 대기에 **상한·폴백 없음**. 「스피너 금지」 + 「present 자체를 미룸」이라 느리면 **무반응 구간**이 생긴다 → 300~500ms 상한 초과 시 **현행 동작으로 degrade**. 「끊기는 자막」보다 「안 열리는 창」이 나쁘다
+- **R-3** 대사 중 회전 시 **이전 폭 기준 3줄 분할이 그대로 보인다**(§4 진행 중 재분할 금지). 타당한 트레이드오프이나 **§9 비범위에 명시**할 것
+- **R-4** `intro.tsx`는 **자체 경로**(`:98` 초상 resolve 직접 · `:226` Row 직접 렌더)인데 §10 단계표에 없다 → **P0에 「intro 포함」 명시**
+
+**✅ 설계가 놓친 유리한 사실 — P0가 생각보다 싸다**
+
+`active` 배선이 **이미 end-to-end로 존재**한다(`TypewriterText.active` ← `NarrativeDialogRow.typewriterActive` 선언·기본값·전달). **「ready 전 타이핑 금지」는 신규 기계가 아니라 배선 한 줄**이다. 또 `NarrativeDialogRow`가 `memo`라 **글자당 setState가 Row·Image까지 번지지 않는다** — 정상 상태 비용이 이미 낮다는 뜻이고, 「문제는 열기 전 로딩」이라는 진단이 구조적으로도 맞다.
+
+**착수 순서 권고**: ①`typewriterActive={session.ready}` 배선(**팩 없이 단독으로도 의미 있음** — 창 뜨자마자 타이핑과 첫 디코드가 같은 틱에서 만나는 것만 떼어내도 첫 페이지 체감이 바뀐다) → ②R-1 결론 → ③세션 팩 P0·P1 → ④문서 보완.
+
+**self-check**: 리포트 1개 신설 + 이 handoff. 코드·CSV·생성물 변경 0 · 커밋 0.
+
+---
+
+## 🟠 PENDING — 데일리 빌드 절전·전원 내성 보강 (김클로드 직접 수정) · 2026-09-25
+
+```text
+status=PENDING (김팀장 검수 · 코드 3파일 수정됨)
+task_id=daily-build-power-resilience-20260925
+kind=INFRA_FIX
+권한=대표님 「데일리빌드 커밋및 푸시 완료성공프로세스는 직접 수정해도 된다」
+```
+
+**대표님 지시**: 어제 데일리 빌드가 최종 푸시까지 실패. 김팀장 수정으로 오늘부터 정상 동작해야 하는데 **PC 잠자기 모드 등 상태 영향이 없는지** 확인하고, 문제가 있으면 직접 수정.
+
+### 오늘(09-25 00:00) 실패 원인 — 김팀장이 이미 해결
+
+`run-daily-release.cjs`가 `require('./run-daily-commit.cjs')`만 하고 **`main()`을 호출하지 않았다.** 어제 `f069d63`에서 `if (require.main === module)` 가드가 신규 도입되면서, release 경로는 `require.main !== module`이 되어 **main()이 아예 안 돌았다** → 아무 일도 안 하고 `exit 0`.
+
+- 증상: 로그 **87바이트**(npm 배너만) · 커밋 없음 · 스케줄러 `LastResult=0`
+- **김팀장이 `ccdfbf9`(01:41)에서 `require('./run-daily-commit.cjs').main();`으로 수정 완료.** 독립 재검수로 동일 진단 확인.
+- 검증: `export main = function` · `release가 main() 호출 = true`
+
+### 절전·전원 — 오늘 원인은 아니나 **잠재 위험은 실재했다**
+
+전원 이벤트 조회(09-24 21:00~09-25 04:00) 결과 **절전/복귀 0건** — 오늘은 PC가 깨어 있었다. 그러나 설정은 위험했다.
+
+| 항목 | 수정 전 | 수정 후 |
+|---|---|---|
+| **StartWhenAvailable** | **False** — 자정 놓치면 **따라잡기 없음** | **True** ← 가장 중요 |
+| **WakeToRun** | False — 절전 중 안 깨움 | True |
+| DisallowStartIfOnBatteries | True | False |
+| StopIfGoingOnBatteries | True | False |
+| ExecutionTimeLimit | PT72H | PT2H |
+
+부수 확인: 시간대 **KST 정합** ✅ · `STANDBYIDLE=0`(자동 절전 안 함)이라 데스크톱이 스스로 잠들진 않음 ✅
+
+### 수정한 파일 3개
+
+1. **스케줄러 라이브 설정** — 위 표대로 적용 완료(`Set-ScheduledTask`)
+2. **`register-windows-task.ps1`** — `schtasks /Create` 기본값이 위 위험 설정이라, **재등록해도 유지되도록** `Set-ScheduledTask` 블록 추가
+3. **`daily-commit.ps1`** — **완료 검증 3단 신설.** 종료코드만 믿지 않는다
+   - (1) 파이프라인 자체 로그가 **0줄이면 no-op 실패** ← **오늘 실패를 정확히 잡는다**(시뮬레이션 확인)
+   - (2) 오늘 스냅샷 커밋이 없고 정당한 skip 사유(`no working tree changes`/`already exists`/`nothing staged`)도 없으면 실패
+   - (3) `@{u}..HEAD` 미푸시 커밋이 남으면 실패
+   - 실패 시 `exit 2` → 김팀장이 만든 `write-daily-commit-failure-pending.cjs` 통보 경로로 연결
+
+> **이번 실패의 본질은 「exit 0인데 아무 일도 안 함」**이었다. 김팀장의 실패 통보는 `exit != 0`에서만 동작하므로 오늘 같은 무동작은 못 잡는다. (3단 검증이 그 구멍을 메운다.)
+
+### 🟡 대표님 판단 필요 1건 — 깨우기 타이머
+
+전원 구성표가 **「절전」**이고 **깨우기 타이머(RTCWAKE)가 「사용 안 함」**(AC/DC 모두 `0x00000000`)이다. 따라서 **`WakeToRun=True`를 켜도 실제로는 PC를 깨우지 못한다.**
+
+- 다만 **`StartWhenAvailable=True`만으로 커밋 누락은 막힌다** — 자정에 꺼져/잠들어 있었으면 **다음에 켜질 때 실행**된다.
+- 「매일 자정 정각」을 원하시면 `powercfg`로 깨우기 타이머를 켜야 하는데, **PC가 매일 밤 스스로 깨어나는 동작**이라 대표님 판단 사항으로 남긴다. 김클로드가 임의로 바꾸지 않았다.
+
+**self-check**: `register-windows-task.ps1`·`daily-commit.ps1` 수정 + 스케줄러 설정 + 이 handoff. ps1 **구문 검사 통과** · 검증 로직을 **오늘 실패 로그로 시뮬레이션해 FAIL 판정 확인**. **커밋 없음** — 변경분은 오늘 밤 데일리 빌드가 담는다.
+
+---
+
 ## 🟠 PENDING — 피드백 반영 최종 전수 검증 (잔여 3건) · 2026-09-24
 
 ```text

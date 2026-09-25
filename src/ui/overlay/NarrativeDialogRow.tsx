@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 import {
   Image,
   Platform,
@@ -97,6 +97,23 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
     typewriterKey,
     onTextComplete,
   );
+  const [typingLive, setTypingLive] = useState(false);
+  useEffect(() => {
+    if (!typewriterActive) {
+      setTypingLive(false);
+      return;
+    }
+    if (skipAnimation) {
+      setTypingLive(true);
+      return;
+    }
+    setTypingLive(false);
+    const timer = setTimeout(
+      () => setTypingLive(true),
+      NARRATIVE_DIALOG_LAYOUT.typewriterStartDelayMs,
+    );
+    return () => clearTimeout(timer);
+  }, [typewriterKey, typewriterActive, skipAnimation]);
   const showDualActions = Boolean(secondaryButtonText && onPressSecondary);
 
   const card = (
@@ -153,7 +170,8 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
             onComplete={showActionButton ? onTypingComplete : onTextComplete}
             style={{ ...styles.text, color: isTactical ? ink.valueInk : COLORS.ink_dark }}
             skipAnimation={skipAnimation}
-            active={typewriterActive}
+            cursor={typingLive}
+            active={typingLive}
           />
         </View>
       </View>

@@ -24,6 +24,7 @@ test('narrative dialog is a vertical 3-layer portrait popup', () => {
   assert.equal(L.hudHeight, L.dialogueLayerHeight + L.actionLayerHeight);
   assert.equal(L.hostHorizontalPadPx, 0);
   assert.equal(L.maxLinesDefault, 3);
+  assert.equal(L.typewriterStartDelayMs, 500);
 });
 
 test('without hatch measure, keep card height and shift the block down 20px', () => {

@@ -5,6 +5,22 @@ import type { AppLocale } from '../../i18n/types';
 import { resolveStoryPageActionLabel } from '../../i18n/storyText';
 import type { StoryScenePageDef } from '../../types';
 
+export function isQuestAcceptActionType(type: string): boolean {
+  return type === 'accept_quest_mission' || type === 'accept_instance_mission';
+}
+
+export function isOfferDeclineActionType(type: string): boolean {
+  return type === 'accept_main_story_mission' || isQuestAcceptActionType(type);
+}
+
+export function resolveIngameDialogDeclineLabel(input: {
+  isQuestAccept: boolean;
+  laterLabel: string;
+  cancelLabel: string;
+}): string {
+  return input.isQuestAccept ? input.laterLabel : input.cancelLabel;
+}
+
 export function resolveIngameDialogFinalLabel(input: {
   locale: AppLocale;
   showAcceptCancelChoice: boolean;
@@ -14,8 +30,8 @@ export function resolveIngameDialogFinalLabel(input: {
   acceptLabel: string;
   questAcceptLabel: string;
 }): string {
-  if (input.showAcceptCancelChoice) return input.acceptLabel;
   if (input.isQuestAccept) return input.questAcceptLabel;
+  if (input.showAcceptCancelChoice) return input.acceptLabel;
   const pageAction = input.page ? resolveStoryPageActionLabel(input.page, input.locale) : '';
   return pageAction || input.okLabel;
 }

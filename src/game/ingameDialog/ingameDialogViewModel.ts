@@ -6,7 +6,12 @@ import type { ImageSourcePropType } from 'react-native';
 import type { AppLocale } from '../../i18n/types';
 import { isKoUi, translate } from '../../i18n';
 import { resolveStoryPageLabel, resolveStoryPageText } from '../../i18n/storyText';
-import { resolveIngameDialogFinalLabel } from './resolveIngameDialogFinalLabel';
+import {
+  isOfferDeclineActionType,
+  isQuestAcceptActionType,
+  resolveIngameDialogDeclineLabel,
+  resolveIngameDialogFinalLabel,
+} from './resolveIngameDialogFinalLabel';
 import { resolveIngameDialogPortraitSource } from './resolveIngameDialogPortraitSource';
 import {
   NARRATIVE_DIALOG_LAYOUT,
@@ -21,6 +26,7 @@ import {
 import type { StorySceneDef } from '../../types';
 import { filterIngameDialogPages } from './ingameDialogSceneIndex';
 import type { IngameDialogSession, IngameDialogTextContext } from './ingameDialogTypes';
+import type { IngameDialogPackStep } from './ingameDialogSessionPack';
 
 export type IngameDialogViewModel = {
   label: string;
@@ -96,6 +102,28 @@ export function resolveAdHocIngameDialogSegmentCount(
   );
 }
 
+export function viewModelFromPackStep(
+  step: IngameDialogPackStep,
+  pageComplete: boolean,
+  maxLines: number = resolveIngameDialogLineBudget(),
+): IngameDialogViewModel {
+  return {
+    label: step.label,
+    text: step.text,
+    typewriterKey: step.typewriterKey,
+    typewriterSpeedMs: step.typewriterSpeedMs,
+    imageSource: step.imageSource,
+    portraitScale: step.portraitScale,
+    maxLines,
+    buttonText: step.buttonText,
+    secondaryButtonText: step.secondaryButtonText,
+    nextDisabled: !pageComplete,
+    isFinalStep: step.isFinalStep,
+    hasMoreDialogue: step.hasMoreDialogue,
+    showAcceptCancelChoice: step.showAcceptCancelChoice,
+  };
+}
+
 export function resolveIngameDialogSegmentCount(
   session: Extract<IngameDialogSession, { kind: 'csv_scene' }>,
   scene: StorySceneDef,
@@ -103,6 +131,14 @@ export function resolveIngameDialogSegmentCount(
   nickname?: string | null,
   splitOptions?: NarrativeDialogSplitOptions,
 ): number {
+  if (session.pack && session.pack.steps.length > 0) {
+    const pageIndex = session.pageIndex;
+    let count = 0;
+    for (let i = 0; i < session.pack.steps.length; i += 1) {
+      if (session.pack.steps[i]!.pageIndex === pageIndex) count += 1;
+    }
+    return Math.max(1, count);
+  }
   const pages = filterIngameDialogPages(scene);
   const page = pages[session.pageIndex];
   if (!page) return 1;
@@ -123,6 +159,10 @@ export function buildIngameDialogViewModel(input: {
   splitOptions?: NarrativeDialogSplitOptions;
 }): IngameDialogViewModel | null {
   const { session, scene, locale, nickname, splitOptions } = input;
+  const packed = session.pack?.steps[session.stepIndex ?? 0];
+  if (packed) {
+    return viewModelFromPackStep(packed, session.pageComplete);
+  }
   const commFallback = translate(locale, 'dialog.comm');
   const nextLabel = translate(locale, 'dialog.next');
   const okLabel = translate(locale, 'dialog.ok');
@@ -135,7 +175,9 @@ export function buildIngameDialogViewModel(input: {
     const chunks = splitNarrativeDialogSegments(textRaw, maxLines, splitOpts);
     const segmentText = chunks[session.segmentIndex] ?? chunks[chunks.length - 1] ?? '';
     const isLastSegment = session.segmentIndex >= chunks.length - 1;
-    const showAcceptCancelChoice = isLastSegment && p.showAcceptCancelChoice === true;
+    const isQuestAccept = (p.completionActions ?? []).some((a) => isQuestAcceptActionType(a.type));
+    const showAcceptCancelChoice =
+      isLastSegment && (p.showAcceptCancelChoice === true || isQuestAccept);
     return {
       label: p.label,
       text: segmentText,
@@ -146,10 +188,16 @@ export function buildIngameDialogViewModel(input: {
       maxLines,
       buttonText: isLastSegment
         ? (p.buttonText
-          ?? (showAcceptCancelChoice ? translate(locale, 'dialog.accept') : okLabel))
+          ?? (isQuestAccept
+            ? translate(locale, 'mission.accept.quest')
+            : showAcceptCancelChoice ? translate(locale, 'dialog.accept') : okLabel))
         : nextLabel,
       secondaryButtonText: showAcceptCancelChoice
-        ? (p.secondaryButtonText ?? translate(locale, 'dialog.cancel'))
+        ? (p.secondaryButtonText ?? resolveIngameDialogDeclineLabel({
+          isQuestAccept,
+          laterLabel: translate(locale, 'dialog.later'),
+          cancelLabel: translate(locale, 'dialog.cancel'),
+        }))
         : undefined,
       nextDisabled: !session.pageComplete,
       isFinalStep: isLastSegment,
@@ -178,17 +226,19 @@ export function buildIngameDialogViewModel(input: {
   const hasMoreDialogue = !isFinalStep;
 
   const actions = session.completionActions ?? [];
+  const isQuestAccept = actions.some((a) => isQuestAcceptActionType(a.type));
   const showAcceptCancelChoice =
-    isFinalStep && actions.some((a) => a.type === 'accept_main_story_mission');
+    isFinalStep && actions.some((a) => isOfferDeclineActionType(a.type));
 
-  const isQuestAccept = actions.some(
-    (a) => a.type === 'accept_quest_mission' || a.type === 'accept_instance_mission',
-  );
   let finalLabel = okLabel;
   let secondaryButtonText: string | undefined;
   if (isFinalStep) {
     if (showAcceptCancelChoice) {
-      secondaryButtonText = translate(locale, 'dialog.cancel');
+      secondaryButtonText = resolveIngameDialogDeclineLabel({
+        isQuestAccept,
+        laterLabel: translate(locale, 'dialog.later'),
+        cancelLabel: translate(locale, 'dialog.cancel'),
+      });
     }
     finalLabel = resolveIngameDialogFinalLabel({
       locale,

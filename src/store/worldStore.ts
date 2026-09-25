@@ -537,6 +537,19 @@ export const useWorldStore = create<WorldState>((set, get) => ({
     } catch {
       /* 개척 패스 미기동·순환 방지 */
     }
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { tryUnidentifiedAnomalyIdentifySpawn } =
+        require('../missions/unidentifiedAnomaly/tryUnidentifiedAnomalySpawn') as typeof import('../missions/unidentifiedAnomaly/tryUnidentifiedAnomalySpawn');
+      if (tryUnidentifiedAnomalyIdentifySpawn(id)) {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { scheduleUnidentifiedAnomalySpawnWatch } =
+          require('../missions/unidentifiedAnomaly/unidentifiedAnomalyTestRotationWatch') as typeof import('../missions/unidentifiedAnomaly/unidentifiedAnomalyTestRotationWatch');
+        scheduleUnidentifiedAnomalySpawnWatch();
+      }
+    } catch {
+      /* 이상현상 워치 미기동·순환 방지 */
+    }
   },
 
   isSystemUnlocked: (id) => get().unlockedSystemIds.includes(id),

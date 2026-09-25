@@ -43,6 +43,7 @@ export function shouldArmSessionAutoDismiss(
   isFinalStep: boolean,
 ): boolean {
   if (!session || resolveSessionAutoDismissMs(session) <= 0) return false;
+  if (session.ready === false) return false;
   if (resolveSessionAutoDismissMode(session) === 'first_idle') {
     return isFirstIngameDialogWindow(session);
   }

@@ -1,4 +1,4 @@
-# Daily audit — 2026-09-23T15:00:09.646Z
+# Daily audit — 2026-09-25T15:00:06.508Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -18,7 +18,7 @@
 [rebalance-weapon-ttk] updated 0 weapons in weapon_list.csv
 weapon_trade_listing_policy: shop=83 excluded_npc_clone=20
 tradePortListed sync: canonical=83 TRUE=83 demoted=0
-patched D:\arcfire20260607\tables\content\item_defs.csv (289 data rows)
+patched D:\arcfire20260607\tables\content\item_defs.csv (290 data rows)
 patched missions.csv + mission_objectives.csv
 patched 0 npc ship name_en rows
 patched planets.csv
@@ -35,30 +35,33 @@ build-arc-core-chat-tables: wrote persona/operator-persona/speakers/topics/knowl
   [info] obj_s020_a: titan_ruins — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
 === audit:mission-quest-placements ===
 buy_goods objectives: 27
-defeat_enemy objectives: 32
+defeat_enemy objectives: 33
 placements: 18 · combat_ops: 32
-tq_* bar templates: 22 · bar planets: 18
+tq_* bar templates: 23 · bar planets: 18
 
-PASS — buy_goods/defeat_enemy 배치·tq_* materialize·보상 item 정적 검증 OK
+[FAIL]
+  - defeat_enemy objective obj_tq_anom_01_t (tq_anom_01): mission_quest_combat_ops.csv 행 없음
+  - tq tq_anom_01 / obj_tq_anom_01_a: unsupported objective type collect_item
+  - tq tq_anom_01 / obj_tq_anom_01_t: mission_quest_combat_ops.csv 행 없음
 ```
 
-**exit:** 0
+**exit:** 1
 
 ## Largest TS/TSX under `src/` + `app/` (bytes)
 
 - 660,019 — `src/data/generated/galaxySystems100.generated.ts`
 - 482,349 — `src/data/generated/csvNpcCapitalShips.ts`
-- 382,433 — `src/data/generated/csvItemDefs.ts`
-- 342,866 — `src/data/generated/csvNpcCaptains.ts`
-- 227,680 — `src/data/generated/csvStoryScenes.ts`
+- 383,335 — `src/data/generated/csvItemDefs.ts`
+- 344,210 — `src/data/generated/csvNpcCaptains.ts`
+- 231,512 — `src/data/generated/csvStoryScenes.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
 - 170,253 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
-- 116,270 — `src/i18n/locales/ko.ts`
+- 117,343 — `src/i18n/locales/ko.ts`
 - 113,834 — `src/data/generated/csvMainStorySpine.ts`
-- 105,936 — `src/i18n/locales/en.ts`
-- 103,014 — `app/(game)/worldmap.tsx`
-- 92,913 — `app/(game)/planet.tsx`
-- 90,649 — `src/data/generated/csvMissions.ts`
+- 106,929 — `src/i18n/locales/en.ts`
+- 104,642 — `app/(game)/worldmap.tsx`
+- 93,874 — `app/(game)/planet.tsx`
+- 91,948 — `src/data/generated/csvMissions.ts`
 - 85,737 — `src/data/generated/csvBarPatronage.ts`
 - 71,316 — `src/data/balance/generated/csvSynthSystemColonization.ts`
 - 71,070 — `src/data/generated/csvWeapons.ts`
@@ -100,6 +103,7 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·보상 item 정적 검
 - `src/galaxyMap/GalaxyMapColonizeHubPulseOverlay.tsx`
 - `src/galaxyMap/GalaxyMapContestedZoneRingOverlay.tsx`
 - `src/game/nativeReclaim/nativeReclaimBootstrap.ts`
+- `src/missions/unidentifiedAnomaly/unidentifiedAnomalyTestRotationWatch.ts`
 - `src/ui/overlay/ArcCoreAgentSurfaceHost.tsx`
 - `app/(game)/planet.tsx`
 - `app/(game)/worldmap.tsx`

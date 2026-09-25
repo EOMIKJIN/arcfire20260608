@@ -1,4 +1,5 @@
 import { UnidentifiedAnomalyPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
+import { planetAttackKstDayKey } from '../../arcCore/planetAttack/planetAttackKstDayKey';
 
 export type UnidentifiedAnomalyPayloadKind = 'relic' | 'threat';
 
@@ -83,4 +84,103 @@ export function rollAnomalyPayloadKind(
 ): UnidentifiedAnomalyPayloadKind {
   const weight = Math.max(0, Math.min(100, Math.floor(relicWeightPct)));
   return hash32(`spawn:${instanceId}`) % 100 < weight ? 'relic' : 'threat';
+}
+
+export function anomalyKstDayKey(nowMs = Date.now()): string {
+  return planetAttackKstDayKey(nowMs);
+}
+
+export function nextAnomalyKstMidnightMs(nowMs: number): number {
+  const today = anomalyKstDayKey(nowMs);
+  let lo = nowMs + 1;
+  let hi = nowMs + 36 * 60 * 60 * 1000;
+  if (anomalyKstDayKey(hi) === today) hi += 12 * 60 * 60 * 1000;
+  while (hi - lo > 250) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (anomalyKstDayKey(mid) === today) lo = mid + 1;
+    else hi = mid;
+  }
+  return hi;
+}
+
+export function addAnomalyDayKeyDays(dayKey: string, days: number): string {
+  const parts = dayKey.trim().split('-');
+  const y = Number(parts[0]);
+  const m = Number(parts[1]);
+  const d = Number(parts[2]);
+  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return dayKey.trim();
+  const utc = Date.UTC(y, m - 1, d + Math.floor(days));
+  const dt = new Date(utc);
+  const yy = dt.getUTCFullYear();
+  const mm = String(dt.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(dt.getUTCDate()).padStart(2, '0');
+  return `${yy}-${mm}-${dd}`;
+}
+
+export function resolveAnomalyBandWeight(
+  sectorBand: string,
+  policy = resolveUnidentifiedAnomalyPolicy(),
+): number {
+  switch (String(sectorBand ?? '').trim()) {
+    case 'early':
+      return policy.bandWeightEarly;
+    case 'mid_early':
+      return policy.bandWeightMidEarly;
+    case 'mid':
+      return policy.bandWeightMid;
+    case 'late':
+      return policy.bandWeightLate;
+    default:
+      return 0;
+  }
+}
+
+export function resolveAnomalyBandWeightSum(
+  policy = resolveUnidentifiedAnomalyPolicy(),
+): number {
+  return (
+    policy.bandWeightEarly
+    + policy.bandWeightMidEarly
+    + policy.bandWeightMid
+    + policy.bandWeightLate
+  );
+}
+
+/** 정본 주사위: baseSpawnChancePct × 밴드 가중 / 가중합 */
+export function resolveAnomalyIdentifyChancePct(
+  sectorBand: string,
+  policy = resolveUnidentifiedAnomalyPolicy(),
+): number {
+  const sum = resolveAnomalyBandWeightSum(policy);
+  const weight = resolveAnomalyBandWeight(sectorBand, policy);
+  if (sum <= 0 || weight <= 0) return 0;
+  return Math.floor((policy.baseSpawnChancePct * weight) / sum);
+}
+
+export function rollAnomalyIdentifySuccess(
+  planetId: string,
+  sectorBand: string,
+  dayKey: string,
+  policy = resolveUnidentifiedAnomalyPolicy(),
+): boolean {
+  const chance = resolveAnomalyIdentifyChancePct(sectorBand, policy);
+  if (chance <= 0) return false;
+  return hash32(`identify:${planetId}:${dayKey}`) % 100 < chance;
+}
+
+export function resolveAnomalyUnacceptedTtlMs(
+  policy = resolveUnidentifiedAnomalyPolicy(),
+): number {
+  return Math.max(1, policy.unacceptedTtlHours) * 60 * 60 * 1000;
+}
+
+export function isAnomalyPlanetOnCooldown(
+  resolvedAtMs: number,
+  nowMs: number,
+  cooldownDays = resolveUnidentifiedAnomalyPolicy().cooldownDays,
+): boolean {
+  if (cooldownDays <= 0) return false;
+  if (!Number.isFinite(resolvedAtMs) || !Number.isFinite(nowMs)) return false;
+  const until = addAnomalyDayKeyDays(anomalyKstDayKey(resolvedAtMs), cooldownDays);
+  return anomalyKstDayKey(nowMs) < until;
 }

@@ -3,7 +3,7 @@
 // cinematic(프롤로그) · ingame_dialog(범용 대사) 분기
 // ============================================================
 
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -19,6 +19,14 @@ import { splitNarrativeDialogSegments } from '../../src/ui/overlay/splitNarrativ
 import { NARRATIVE_DIALOG_LAYOUT } from '../../src/ui/overlay/narrativeDialogLayout';
 import { useNarrativeDialogNextReveal } from '../../src/ui/overlay/useNarrativeDialogNextReveal';
 import { resolveIngameDialogPortraitSource } from '../../src/game/ingameDialog/resolveIngameDialogPortraitSource';
+import {
+  INGAME_DIALOG_READY_TIMEOUT_MS,
+  buildIntroIngameDialogSessionPack,
+  findIntroPackStep,
+  type IngameDialogSessionPack,
+} from '../../src/game/ingameDialog/ingameDialogSessionPack';
+import { IngameDialogPortraitWarmer } from '../../src/game/ingameDialog/IngameDialogPortraitWarmer';
+import { prefetchImageSources } from '../../src/assetPipeline/prefetchImageSources';
 import { useT } from '../../src/i18n';
 import { CinematicPrologueScene } from '../../src/ui/onboarding/CinematicPrologueScene';
 import { CinematicPrologueFooter } from '../../src/ui/onboarding/CinematicPrologueFooter';
@@ -50,6 +58,9 @@ export default function IntroScreen() {
   /** 스킵으로 도달한 페이지 — 타이핑 애니메이션 없이 텍스트를 즉시 전체 표시한다. */
   const [skipRevealPage, setSkipRevealPage] = useState<number | null>(null);
   const introNavScheduledRef = useRef(false);
+  const introPackRef = useRef<IngameDialogSessionPack | null>(null);
+  const [introPack, setIntroPack] = useState<IngameDialogSessionPack | null>(null);
+  const [introDialogReady, setIntroDialogReady] = useState(false);
   const appLocale = useAppSettingsStore(s => s.locale);
   const player = usePlayerStore(s => s.player);
 
@@ -74,12 +85,46 @@ export default function IntroScreen() {
     }),
     [width, insets.left, insets.right],
   );
+  useLayoutEffect(() => {
+    if (!scene) return;
+    const existing = introPackRef.current;
+    if (existing && existing.sceneId === scene.id) return;
+    const pack = buildIntroIngameDialogSessionPack({
+      scene,
+      locale: appLocale,
+      nickname: player?.nickname,
+      splitOptions: ingameSplitOptions,
+    });
+    introPackRef.current = pack;
+    setIntroPack(pack);
+    setIntroDialogReady(pack.uniquePortraitSources.length === 0);
+  }, [scene, appLocale, player?.nickname, ingameSplitOptions]);
+
+  useEffect(() => {
+    if (introDialogReady) return;
+    const timer = setTimeout(() => setIntroDialogReady(true), INGAME_DIALOG_READY_TIMEOUT_MS);
+    return () => clearTimeout(timer);
+  }, [introDialogReady]);
+
+  useEffect(() => {
+    const sources = introPack?.uniquePortraitSources;
+    if (!sources || sources.length === 0) return;
+    void prefetchImageSources(sources);
+  }, [introPack]);
+
+  const introPackStep = introPack && currentViewMode === 'ingame_dialog'
+    ? findIntroPackStep(introPack, page, segmentIndex)
+    : null;
+
   const ingameTextSegments = useMemo(() => {
+    if (introPackStep) return [introPackStep.text];
     if (currentViewMode !== 'ingame_dialog') return [renderedText];
     return splitNarrativeDialogSegments(renderedText, ingameMaxLines, ingameSplitOptions);
-  }, [currentViewMode, renderedText, ingameMaxLines, ingameSplitOptions]);
-  const ingameSegmentText = ingameTextSegments[segmentIndex] ?? '';
-  const isLastIngameSegment = segmentIndex >= Math.max(0, ingameTextSegments.length - 1);
+  }, [introPackStep, currentViewMode, renderedText, ingameMaxLines, ingameSplitOptions]);
+  const ingameSegmentText = introPackStep?.text ?? ingameTextSegments[segmentIndex] ?? '';
+  const isLastIngameSegment = introPackStep
+    ? !introPackStep.hasMoreDialogue
+    : segmentIndex >= Math.max(0, ingameTextSegments.length - 1);
   // 스킵으로 이 페이지에 도달했고, 아직 세그먼트 0(스킵 직후 첫 표시)일 때만 즉시 전체 표시.
   const skipRevealActive = skipRevealPage === page && segmentIndex === 0;
 
@@ -94,9 +139,10 @@ export default function IntroScreen() {
     setPageComplete(false);
   }, [page]);
 
-  const currentDialogImageSource = current
-    ? resolveIngameDialogPortraitSource(current)
-    : undefined;
+  const currentDialogImageSource = introPackStep?.imageSource
+    ?? (current && currentViewMode === 'ingame_dialog' && !introPack
+      ? resolveIngameDialogPortraitSource(current)
+      : undefined);
 
   const scheduleIntroNavigate = useCallback((href: Href) => {
     if (introNavScheduledRef.current) return;
@@ -118,7 +164,20 @@ export default function IntroScreen() {
       return;
     }
 
-    if (currentViewMode === 'ingame_dialog' && !isLastIngameSegment) {
+    if (currentViewMode === 'ingame_dialog' && introPack) {
+      const step = findIntroPackStep(introPack, page, segmentIndex);
+      if (step && !step.isFinalStep) {
+        const next = introPack.steps[step.stepIndex + 1];
+        if (next) {
+          if (next.pageIndex !== page) {
+            setPage(next.pageIndex);
+          }
+          setSegmentIndex(next.segmentIndex);
+          setPageComplete(false);
+          return;
+        }
+      }
+    } else if (currentViewMode === 'ingame_dialog' && !isLastIngameSegment) {
       setSegmentIndex((i) => i + 1);
       setPageComplete(false);
       return;
@@ -156,6 +215,9 @@ export default function IntroScreen() {
     isLast,
     isLastIngameSegment,
     currentViewMode,
+    introPack,
+    page,
+    segmentIndex,
     isPreNicknameFlow,
     player,
     scene,
@@ -194,6 +256,13 @@ export default function IntroScreen() {
           isCinematicPage && styles.containerCinematic,
         ]}
       >
+        {introPack && introPack.uniquePortraitSources.length > 0 ? (
+          <IngameDialogPortraitWarmer
+            key={introPack.sceneId ?? sceneId}
+            sources={introPack.uniquePortraitSources}
+            onWarmed={() => setIntroDialogReady(true)}
+          />
+        ) : null}
         {isCinematicPage ? (
           <>
             <CinematicPrologueScene
@@ -223,18 +292,21 @@ export default function IntroScreen() {
           <>
             <View style={styles.storyArea}>
               <View style={styles.ingameDialogSlot}>
-                <NarrativeDialogRow
-                  label={renderedLabel || t('intro.commLabel')}
-                  text={ingameSegmentText}
-                  typewriterKey={`intro-dialog-${page}-${segmentIndex}`}
-                  typewriterSpeedMs={scene?.typewriterSpeedMs ?? 40}
-                  onTextComplete={onTypingComplete}
-                  imageSource={currentDialogImageSource}
-                  portraitScale={popupImageScale}
-                  maxLines={ingameMaxLines}
-                  showActionButton={false}
-                  skipAnimation={skipRevealActive}
-                />
+                {introDialogReady ? (
+                  <NarrativeDialogRow
+                    label={introPackStep?.label || renderedLabel || t('intro.commLabel')}
+                    text={ingameSegmentText}
+                    typewriterKey={introPackStep?.typewriterKey ?? `intro-dialog-${page}-${segmentIndex}`}
+                    typewriterSpeedMs={introPackStep?.typewriterSpeedMs ?? scene?.typewriterSpeedMs ?? 40}
+                    typewriterActive={introDialogReady}
+                    onTextComplete={onTypingComplete}
+                    imageSource={currentDialogImageSource ?? introPackStep?.imageSource}
+                    portraitScale={introPackStep?.portraitScale ?? popupImageScale}
+                    maxLines={ingameMaxLines}
+                    showActionButton={false}
+                    skipAnimation={skipRevealActive}
+                  />
+                ) : null}
               </View>
             </View>
 
@@ -243,7 +315,7 @@ export default function IntroScreen() {
                 <ArcButton
                   label={t('intro.btn.skipScene')}
                   variant="secondary"
-                  disabled={isTransitioning}
+                  disabled={isTransitioning || !introDialogReady}
                   onPress={handleSkipScene}
                   style={styles.skipBtn}
                 />
@@ -253,7 +325,7 @@ export default function IntroScreen() {
               <ArcButton
                 label={nextLabel}
                 variant="panel"
-                disabled={awaitingReveal}
+                disabled={awaitingReveal || !introDialogReady}
                 busy={isTransitioning}
                 onPress={handleNext}
                 style={styles.nextBtn}

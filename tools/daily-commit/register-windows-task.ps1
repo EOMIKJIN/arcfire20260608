@@ -60,6 +60,25 @@ if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 
+# schtasks /Create 기본값은 절전·미실행 대응이 없다. 반드시 덮어쓴다.
+#  - StartWhenAvailable : 자정에 PC가 꺼져/잠들어 있었으면 «다음에 켜질 때» 실행 (핵심)
+#  - WakeToRun          : 절전 중이면 깨워서 실행 (전원 구성표 «깨우기 타이머»가 사용 상태여야 실제 동작)
+#  - Batteries          : 데스크톱 기준 무의미하나, 노트북 전환 시 중단되지 않도록 해제
+# 2026-09-25: 기본값(StartWhenAvailable=False·WakeToRun=False)이라 자정 미실행 시 «따라잡기»가 없었다.
+$taskSettings = New-ScheduledTaskSettingsSet `
+  -StartWhenAvailable `
+  -WakeToRun `
+  -ExecutionTimeLimit (New-TimeSpan -Hours 2) `
+  -MultipleInstances IgnoreNew
+$taskSettings.DisallowStartIfOnBatteries = $false
+$taskSettings.StopIfGoingOnBatteries = $false
+try {
+  Set-ScheduledTask -TaskName $TaskName -Settings $taskSettings -ErrorAction Stop | Out-Null
+  Write-Host 'OK — settings: StartWhenAvailable=True WakeToRun=True Batteries=allow limit=2h'
+} catch {
+  Write-Warning "설정 덮어쓰기 실패 — 관리자 PowerShell에서 재실행 필요: $($_.Exception.Message)"
+}
+
 Write-Host "OK — task '$TaskName' daily at $TimeLocal (PC local time), first run on $StartDate."
 Write-Host "Pipeline: audit=$doAudit push=$doPush"
 Write-Host "TR: $tr"

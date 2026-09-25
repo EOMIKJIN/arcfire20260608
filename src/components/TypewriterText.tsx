@@ -113,7 +113,7 @@ export function TypewriterText({
   return (
     <Text style={[defaultStyle, style]} numberOfLines={numberOfLines}>
       {displayed}
-      {cursor && !done ? (
+      {cursor && active && !done ? (
         <Text style={{ color: cursorColor ?? COLORS.ink_mid }}>▌</Text>
       ) : null}
     </Text>

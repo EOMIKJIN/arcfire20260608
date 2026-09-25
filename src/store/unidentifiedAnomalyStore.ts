@@ -3,13 +3,14 @@
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { UNIDENTIFIED_ANOMALY_TEST_HISTORY_CAP } from '../missions/unidentifiedAnomaly/unidentifiedAnomalyTestPolicy';
 import {
   buildUnidentifiedAnomalyMissionId,
   isUnidentifiedAnomalyMissionId,
   parseUnidentifiedAnomalyMissionId,
 } from '../missions/unidentifiedAnomaly/unidentifiedAnomalyIds';
 import {
+  anomalyKstDayKey,
+  resolveUnidentifiedAnomalyPolicy,
   rollAnomalyPayloadKind,
   type UnidentifiedAnomalyPayloadKind,
 } from '../missions/unidentifiedAnomaly/unidentifiedAnomalyPolicy';
@@ -51,6 +52,8 @@ type PersistedV1 = {
   rotationHistory: string[];
   alertedInstanceId: string | null;
   recentResolved: UnidentifiedAnomalyResolved[];
+  spawnCountToday: number;
+  spawnDayKeyKst: string;
 };
 
 type UnidentifiedAnomalyState = {
@@ -60,9 +63,12 @@ type UnidentifiedAnomalyState = {
   rotationHistory: string[];
   alertedInstanceId: string | null;
   recentResolved: UnidentifiedAnomalyResolved[];
+  spawnCountToday: number;
+  spawnDayKeyKst: string;
   loaded: boolean;
   loadLocal: () => Promise<void>;
   persistLocal: () => Promise<void>;
+  syncDailySpawnDay: (nowMs?: number) => boolean;
   applySpawn: (input: {
     systemId: string;
     planetId: string;
@@ -80,6 +86,10 @@ type UnidentifiedAnomalyState = {
   resetLocal: () => Promise<void>;
 };
 
+function historyCap(): number {
+  return resolveUnidentifiedAnomalyPolicy().historyCap;
+}
+
 function emptyState(): Omit<PersistedV1, 'v'> {
   return {
     active: null,
@@ -88,6 +98,8 @@ function emptyState(): Omit<PersistedV1, 'v'> {
     rotationHistory: [],
     alertedInstanceId: null,
     recentResolved: [],
+    spawnCountToday: 0,
+    spawnDayKeyKst: '',
   };
 }
 
@@ -122,7 +134,7 @@ function parseResolved(raw: unknown): UnidentifiedAnomalyResolved[] {
     }
     out.push({ planetId, resolvedAtMs, reason });
   }
-  return out.slice(-UNIDENTIFIED_ANOMALY_TEST_HISTORY_CAP);
+  return out.slice(-historyCap());
 }
 
 function parseActive(raw: unknown): UnidentifiedAnomalyActive | null {
@@ -166,12 +178,17 @@ function parsePersisted(raw: string): Omit<PersistedV1, 'v'> {
     active: parseActive(o.active),
     lastSystemId: typeof o.lastSystemId === 'string' && o.lastSystemId.trim() ? o.lastSystemId : null,
     nextSpawnAtMs: Number.isFinite(Number(o.nextSpawnAtMs)) ? Number(o.nextSpawnAtMs) : 0,
-    rotationHistory: history.slice(-UNIDENTIFIED_ANOMALY_TEST_HISTORY_CAP),
+    rotationHistory: history.slice(-historyCap()),
     alertedInstanceId:
       typeof o.alertedInstanceId === 'string' && o.alertedInstanceId.trim()
         ? o.alertedInstanceId
         : null,
     recentResolved: parseResolved(o.recentResolved),
+    spawnCountToday: Math.max(0, Math.floor(Number(o.spawnCountToday) || 0)),
+    spawnDayKeyKst:
+      typeof o.spawnDayKeyKst === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(o.spawnDayKeyKst)
+        ? o.spawnDayKeyKst
+        : '',
   };
 }
 
@@ -219,14 +236,28 @@ export const useUnidentifiedAnomalyStore = create<UnidentifiedAnomalyState>((set
       rotationHistory: s.rotationHistory,
       alertedInstanceId: s.alertedInstanceId,
       recentResolved: s.recentResolved,
+      spawnCountToday: s.spawnCountToday,
+      spawnDayKeyKst: s.spawnDayKeyKst,
     };
     await AsyncStorage.setItem(UNIDENTIFIED_ANOMALY_STORAGE_KEY, JSON.stringify(payload));
+  },
+
+  syncDailySpawnDay: (nowMs = Date.now()) => {
+    const key = anomalyKstDayKey(nowMs);
+    if (get().spawnDayKeyKst === key) return false;
+    set({ spawnDayKeyKst: key, spawnCountToday: 0 });
+    return true;
   },
 
   applySpawn: (input) => {
     const systemId = String(input.systemId ?? '').trim();
     const planetId = String(input.planetId ?? '').trim();
     if (!systemId || !planetId) return null;
+    const nowMs = Number.isFinite(input.startedAtMs) ? input.startedAtMs : Date.now();
+    get().syncDailySpawnDay(nowMs);
+    const policy = resolveUnidentifiedAnomalyPolicy();
+    if (get().active) return null;
+    if (get().spawnCountToday >= policy.dailySpawn) return null;
     const instanceId = buildUnidentifiedAnomalyMissionId(planetId, input.startedAtMs);
     const payloadKind = input.payloadKind ?? rollAnomalyPayloadKind(instanceId);
     rematerializeActive({
@@ -242,9 +273,7 @@ export const useUnidentifiedAnomalyStore = create<UnidentifiedAnomalyState>((set
       payloadRevealed: false,
     });
     const prev = get().rotationHistory;
-    const history = [...prev.filter((id) => id !== systemId), systemId].slice(
-      -UNIDENTIFIED_ANOMALY_TEST_HISTORY_CAP,
-    );
+    const history = [...prev.filter((id) => id !== systemId), systemId].slice(-historyCap());
     set({
       active: {
         instanceId,
@@ -262,6 +291,8 @@ export const useUnidentifiedAnomalyStore = create<UnidentifiedAnomalyState>((set
       nextSpawnAtMs: input.nextSpawnAtMs,
       rotationHistory: history,
       alertedInstanceId: null,
+      spawnCountToday: get().spawnCountToday + 1,
+      spawnDayKeyKst: anomalyKstDayKey(nowMs),
     });
     return instanceId;
   },
@@ -317,7 +348,7 @@ export const useUnidentifiedAnomalyStore = create<UnidentifiedAnomalyState>((set
     if (!planetId) return;
     const prev = get().recentResolved.filter((item) => item.planetId !== planetId);
     set({
-      recentResolved: [...prev, row].slice(-UNIDENTIFIED_ANOMALY_TEST_HISTORY_CAP),
+      recentResolved: [...prev, row].slice(-historyCap()),
     });
   },
 
