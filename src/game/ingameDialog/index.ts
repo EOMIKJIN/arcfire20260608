@@ -1,5 +1,6 @@
 export { IngameDialogHost } from './IngameDialogHost';
 export {
+  abortAllIngameDialogOnLeave,
   abortIngameDialogLeavingStage,
   dismissIngameDialog,
   getIngameDialogSceneById,

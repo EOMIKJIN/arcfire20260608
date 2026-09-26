@@ -59,6 +59,20 @@ npc_dialog_bar_ret_01,한로 크레인 임시 대화,manual,,repeat,4,none,/(gam
 npc_dialog_bar_ret_02,미아 벨로 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_bar_ret_03,타드 레인 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_bar_ret_04,세라 미온 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_05,칼 드레이 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_06,노엘 칸 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_07,벡스 오름 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_08,루크 펠 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_09,아이라 셴 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_10,렐 본 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_11,린 오사 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_12,드락 베일 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_13,노바 퀼 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_14,에바 모르 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_15,닐 벡스 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_16,코린 델 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_17,시아 렌 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_18,아론 윤 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 mission_clear_default,미션 완료(범용),manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 mission_clear_npc_delivery,미션 완료(담당자·배달),manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 mission_clear_npc_arrival,미션 완료(담당자·도착),manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0

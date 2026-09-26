@@ -1,3 +1,9 @@
+## [관측] 2026-09-26 — mem-post-dev-recheck (함장 정본 포트레이트 261장 입고)
+
+- 김팀장 코드 반영: `npc_ai_captains.csv` 262행 고유 `portraitImageAssetKey` · `npcCaptainPortraitAssets.ts` unique=261 + legacy=10 · 부트 prefetch 금지 유지
+- 관측만: Metro `r` 후 허브 대화/바 초상 1회 오픈 시 PSS·Views 계단이 아닌지. 전수 디코드·`listCriticalSessionImageSources` 편입 없음
+- 코드 수정 금지
+
 ## [관측 요청] 2026-09-24 — mem-post-dev-recheck (이상현상 arc_anom_ persist 누적)
 
 - 김팀장 코드 반영: 종료된 `arc_anom_*` mission progress를 failed로 남기지 않고 삭제. hydrate·persist 직전 prune. 이력은 `recentResolved` cap 8
@@ -11975,6 +11981,48 @@
 - **incidents (actionable tail)**: 2
   - [2026-09-25 08:00:00] DAILY_8AM_REPORT 2026-09-25 08:00:00 KST
   - [2026-09-25 08:00:00] DAILY_8AM_REPORT 2026-09-25 08:00:00 KST
+- **권장(김팀장 1안)**: daily 08:00 soak OK — review report
+
+> status: monitor-ok · **08:00 보고체 유지**
+
+## [관측] 2026-09-26 08:00:00 KST — **데일리 08:00 상시 자동보고** (OK)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **29900** · auto-fix=ON
+- **adb**: OK (192.168.45.67:44363)
+- **앱**: RUNNING
+- **mem-monitor**: **OK** (PSS 199.6MB · GL 8.5MB · Views 95 · pid=12305)
+- **mem-budget-ledger**: ledger p50=638.5MB native=248.8MB
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260926-0800.md
+- **verdict**: **OK**
+- **incidents (actionable tail)**: 6
+  - [2026-09-25 08:00:00] DAILY_8AM_REPORT 2026-09-25 08:00:00 KST
+  - [2026-09-25 08:00:00] DAILY_8AM_REPORT 2026-09-25 08:00:00 KST
+  - [2026-09-25 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260925-0800.md verdict=OK
+  - [2026-09-25 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260925-0800.md verdict=OK
+  - [2026-09-26 08:00:00] DAILY_8AM_REPORT 2026-09-26 08:00:00 KST
+  - [2026-09-26 08:00:00] DAILY_8AM_REPORT 2026-09-26 08:00:00 KST
+- **권장(김팀장 1안)**: daily 08:00 soak OK — review report
+
+> status: monitor-ok · **08:00 보고체 유지**
+
+## [관측] 2026-09-26 08:00:00 KST — **데일리 08:00 상시 자동보고** (OK)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **29900** · auto-fix=ON
+- **adb**: OK (192.168.45.67:44363)
+- **앱**: RUNNING
+- **mem-monitor**: **OK** (PSS 199.6MB · GL 8.5MB · Views 95 · pid=12305)
+- **mem-budget-ledger**: ledger p50=638.5MB native=248.8MB
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260926-0800.md
+- **verdict**: **OK**
+- **incidents (actionable tail)**: 6
+  - [2026-09-25 08:00:00] DAILY_8AM_REPORT 2026-09-25 08:00:00 KST
+  - [2026-09-25 08:00:00] DAILY_8AM_REPORT 2026-09-25 08:00:00 KST
+  - [2026-09-25 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260925-0800.md verdict=OK
+  - [2026-09-25 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260925-0800.md verdict=OK
+  - [2026-09-26 08:00:00] DAILY_8AM_REPORT 2026-09-26 08:00:00 KST
+  - [2026-09-26 08:00:00] DAILY_8AM_REPORT 2026-09-26 08:00:00 KST
 - **권장(김팀장 1안)**: daily 08:00 soak OK — review report
 
 > status: monitor-ok · **08:00 보고체 유지**

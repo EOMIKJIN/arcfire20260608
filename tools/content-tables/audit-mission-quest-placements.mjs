@@ -103,6 +103,10 @@ function warn(msg) {
   warnings.push(msg);
 }
 
+function isWorldEventAnomalyTemplate(missionId) {
+  return String(missionId).startsWith('tq_anom_');
+}
+
 const buyObjectives = objectives.filter((o) => o.type === 'buy_goods');
 const defeatObjectives = objectives.filter((o) => o.type === 'defeat_enemy');
 
@@ -140,6 +144,10 @@ for (const obj of buyObjectives) {
 for (const obj of defeatObjectives) {
   const missionId = obj.missionId.trim();
   const oid = obj.id.trim();
+  if (isWorldEventAnomalyTemplate(missionId)) {
+    console.log(`  [info] ${oid}: tq_anom 위협 — combat_ops 미강제 (STAGE 3 HOLD · 바 tq 비침범)`);
+    continue;
+  }
   const op = combatOpByObjective.get(oid);
   if (!op) {
     err(`defeat_enemy objective ${oid} (${obj.missionId}): mission_quest_combat_ops.csv 행 없음`);
@@ -197,7 +205,11 @@ for (const c of combatOps) {
 // --- tq_* 바 인스턴스 의뢰 — materialize·보상·완료 트리거 정적 검증 ---
 const NEIGHBOR_PLACEHOLDER = '__neighbor_system__';
 const DISCOVERY_PLACEHOLDER = '__discovery_planet__';
-const tqMissions = missions.filter((m) => m.id.trim().startsWith('tq_'));
+const tqMissions = missions.filter((m) => {
+  const mid = m.id.trim();
+  return mid.startsWith('tq_') && !isWorldEventAnomalyTemplate(mid);
+});
+const anomTemplates = missions.filter((m) => isWorldEventAnomalyTemplate(m.id.trim()));
 const objectivesByMission = new Map();
 for (const obj of objectives) {
   const mid = obj.missionId.trim();
@@ -301,6 +313,41 @@ for (const mission of tqMissions) {
   }
 }
 
+const ANOM_OBJECTIVE_TYPES = new Set(['collect_item', 'defeat_enemy', 'talk_npc']);
+for (const mission of anomTemplates) {
+  const mid = mission.id.trim();
+  const objs = objectivesByMission.get(mid) ?? [];
+  if (objs.length === 0) {
+    err(`world-event ${mid}: mission_objectives.csv 행 없음`);
+  }
+  const rewardPipe = String(mission.rewardItemsPipe ?? '').trim();
+  if (rewardPipe) {
+    for (const itemId of rewardPipe.split('|').map((s) => s.trim()).filter(Boolean)) {
+      if (!itemDefs.some((d) => d.id.trim() === itemId)) {
+        err(`world-event ${mid}: reward item ${itemId} — item_defs 없음`);
+      }
+    }
+  }
+  for (const obj of objs) {
+    const type = obj.type.trim();
+    if (!ANOM_OBJECTIVE_TYPES.has(type)) {
+      err(`world-event ${mid} / ${obj.id}: unsupported objective type ${type}`);
+    }
+    if (type === 'collect_item') {
+      const itemId = obj.targetId.trim();
+      if (!itemDefs.some((d) => d.id.trim() === itemId)) {
+        err(`world-event ${mid} / ${obj.id}: collect_item ${itemId} — item_defs 없음`);
+      }
+    }
+    if (type === 'defeat_enemy') {
+      const enemyId = obj.targetId.trim();
+      if (!enemyId) {
+        err(`world-event ${mid} / ${obj.id}: defeat_enemy targetId 없음`);
+      }
+    }
+  }
+}
+
 for (const planetId of barPlanets) {
   for (const mission of tqMissions) {
     const mid = mission.id.trim();
@@ -322,7 +369,7 @@ console.log('=== audit:mission-quest-placements ===');
 console.log(`buy_goods objectives: ${buyObjectives.length}`);
 console.log(`defeat_enemy objectives: ${defeatObjectives.length}`);
 console.log(`placements: ${placements.length} · combat_ops: ${combatOps.length}`);
-console.log(`tq_* bar templates: ${tqMissions.length} · bar planets: ${barPlanets.length}`);
+console.log(`tq_* bar templates: ${tqMissions.length} · tq_anom world-event: ${anomTemplates.length} · bar planets: ${barPlanets.length}`);
 
 if (warnings.length > 0) {
   console.log('\n[WARN]');
@@ -335,4 +382,4 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log('\nPASS — buy_goods/defeat_enemy 배치·tq_* materialize·보상 item 정적 검증 OK');
+console.log('\nPASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤트·보상 item 정적 검증 OK');

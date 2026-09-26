@@ -1,4 +1,5 @@
 export const UNIDENTIFIED_ANOMALY_MISSION_PREFIX = 'arc_anom_';
+export const UNIDENTIFIED_ANOMALY_TEMPLATE_PREFIX = 'tq_anom_';
 export const UNIDENTIFIED_ANOMALY_TEMPLATE_ID = 'tq_anom_01';
 export const ANOMALY_RESEARCHER_CAPTAIN_ID = 'npc_cpt_anomaly_researcher';
 export const ANOMALY_RELIC_ITEM_ID = 'relic_quest_anomaly_01';
@@ -8,6 +9,11 @@ export const ANOMALY_RESEARCHER_ABANDON_SCENE_ID = 'npc_dialog_anomaly_researche
 
 export function isUnidentifiedAnomalyMissionId(missionId: string): boolean {
   return missionId.startsWith(UNIDENTIFIED_ANOMALY_MISSION_PREFIX);
+}
+
+/** CSV 템플릿(`tq_anom_*`) — 바 `tq_*` 보드와 분리. 런타임 클론은 `arc_anom_`. */
+export function isUnidentifiedAnomalyTemplateMissionId(missionId: string): boolean {
+  return missionId.startsWith(UNIDENTIFIED_ANOMALY_TEMPLATE_PREFIX);
 }
 
 export function parseUnidentifiedAnomalyMissionId(

@@ -27,9 +27,10 @@
 |------|------|
 | 폴더 | `assets/images/npc/` |
 | CSV / 맵 키 | `assets/images/npc/<file>.png` (저장소 루트 상대) |
-| 풀 공유 예 | `noname_char003.png` … `noname_char010.png` |
-| 고유 예 | `stella_aris_char001.png`, `mia_bello_char002.png` |
-| 바 샘플 | `bar_att_char006.png` … `bar_att_char015.png` |
+| 풀 공유 예 | `noname_char003.png` … `noname_char010.png` — **샘플·플레이어 3·군복 레퍼런스만**. 신규 함장 키로 쓰지 않음 |
+| 고유 정본 | `assets/images/npc/<captainId>.png` (예: `npc_cpt_mireille.png`) |
+| 고정 정본 | `stella_aris_char001.png`(오퍼레이터) · 플레이어 3(`007`/`008`/`010`) · 바걸 `bar_att_char006`–`016` |
+| 구 임시 | `mia_bello_char002.png` — `sample/` 사본. 신규 고유와 분리 |
 
 ## 2. 추가 3단계 (필수 · 순서)
 

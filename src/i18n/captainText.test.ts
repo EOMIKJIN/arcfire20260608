@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { resolveNpcCaptainRank } from './captainText';
+import { resolveNpcCaptainProfileKo, resolveNpcCaptainRank } from './captainText';
 import { resolveGovernorTitle } from './governorText';
 
 test('New Contracts client rank uses English titles', () => {
@@ -18,6 +18,12 @@ test('rankEn field overrides lexicon', () => {
     resolveNpcCaptainRank({ rank: '관문순찰대장', rankEn: 'Gate Watch Captain' }, 'en'),
     'Gate Watch Captain',
   );
+});
+
+test('profileKo helper trims empty', () => {
+  assert.equal(resolveNpcCaptainProfileKo({ profileKo: '  배경  ' }), '배경');
+  assert.equal(resolveNpcCaptainProfileKo({ profileKo: '' }), '');
+  assert.equal(resolveNpcCaptainProfileKo(null), '');
 });
 
 test('planet info governor title uses English', () => {

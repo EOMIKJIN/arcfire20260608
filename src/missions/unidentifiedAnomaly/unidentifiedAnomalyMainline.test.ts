@@ -5,8 +5,10 @@ import assert from 'node:assert/strict';
 import {
   buildUnidentifiedAnomalyMissionId,
   isUnidentifiedAnomalyMissionId,
+  isUnidentifiedAnomalyTemplateMissionId,
   parseUnidentifiedAnomalyMissionId,
 } from './unidentifiedAnomalyIds';
+import { isBarInstanceTemplateMissionId } from '../missionTrack';
 import { pickAnomalyPlanetInSystem } from './pickAnomalyPlanetInSystem';
 import { rollAnomalyPayloadKind } from './unidentifiedAnomalyPolicy';
 import { shouldRevealAnomalyPayload } from './shouldRevealAnomalyPayload';
@@ -24,6 +26,12 @@ function test(name: string, fn: () => void): void {
     throw err;
   }
 }
+
+test('tq_anom_ 템플릿은 바 보드 tq 가 아니다', () => {
+  assert.equal(isUnidentifiedAnomalyTemplateMissionId('tq_anom_01'), true);
+  assert.equal(isBarInstanceTemplateMissionId('tq_anom_01'), false);
+  assert.equal(isBarInstanceTemplateMissionId('tq_cbt_01'), true);
+});
 
 test('arc_anom_ 접두와 planetId 파싱', () => {
   const id = buildUnidentifiedAnomalyMissionId('synth_078_p', 1727000000);

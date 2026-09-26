@@ -13,6 +13,7 @@ import {
   resolveNarrativeDialogReservedBottomPx,
   resolveNarrativeDialogStageFill,
   resolveNarrativeDialogTextWidthPx,
+  resolveNarrativeTypewriterStartDelayMs,
 } from './narrativeDialogLayout';
 
 test('narrative dialog is a vertical 3-layer portrait popup', () => {
@@ -25,6 +26,11 @@ test('narrative dialog is a vertical 3-layer portrait popup', () => {
   assert.equal(L.hostHorizontalPadPx, 0);
   assert.equal(L.maxLinesDefault, 3);
   assert.equal(L.typewriterStartDelayMs, 500);
+});
+
+test('typewriter start delay is first open only — next page is 0', () => {
+  assert.equal(resolveNarrativeTypewriterStartDelayMs(true), 500);
+  assert.equal(resolveNarrativeTypewriterStartDelayMs(false), 0);
 });
 
 test('without hatch measure, keep card height and shift the block down 20px', () => {

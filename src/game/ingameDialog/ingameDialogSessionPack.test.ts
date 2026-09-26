@@ -115,6 +115,29 @@ test('Host waits for ready, attaches a session pack, and mounts the portrait war
   assert.doesNotMatch(host, /listCriticalSessionImageSources/);
 });
 
+test('bar next keeps the adhoc overlay instead of dismiss-then-present', () => {
+  const store = readFileSync(resolve(__dirname, '../../store/ingameDialogStore.ts'), 'utf8');
+  const barDialog = readFileSync(
+    resolve(__dirname, '../bar/patronage/barPatronageDialog.ts'),
+    'utf8',
+  );
+  assert.match(store, /replaceActiveAdhoc/);
+  assert.match(store, /current\.adhocId/);
+  assert.match(barDialog, /replaceActiveAdhoc:\s*true/);
+  assert.match(barDialog, /onDismiss:\s*\(\)\s*=>\s*showNext\(\)/);
+});
+
+test('facility leave aborts every dialog process without completion', () => {
+  const store = readFileSync(resolve(__dirname, '../../store/ingameDialogStore.ts'), 'utf8');
+  const api = readFileSync(resolve(__dirname, './ingameDialogApi.ts'), 'utf8');
+  const back = readFileSync(resolve(__dirname, '../../navigation/useSafeRouterBack.ts'), 'utf8');
+  const bar = readFileSync(resolve(__dirname, '../../../app/(game)/bar.tsx'), 'utf8');
+  assert.match(store, /abortAllOnLeave/);
+  assert.match(api, /abortAllIngameDialogOnLeave/);
+  assert.match(back, /abortAllIngameDialogOnLeave/);
+  assert.match(bar, /abortAllIngameDialogOnLeave/);
+});
+
 test('store gates present on ready and skips live split when a pack exists', () => {
   const store = readFileSync(resolve(__dirname, '../../store/ingameDialogStore.ts'), 'utf8');
   assert.match(store, /ready:\s*false/);

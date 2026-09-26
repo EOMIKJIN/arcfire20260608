@@ -13,7 +13,8 @@ import {
   STAR_SYSTEMS_FROM_CSV,
 } from '../data/generated';
 import { CAPTAIN_PERSONAL_MISSION_TEMPLATES_FROM_CSV } from '../data/generated/csvCaptainPersonalMissions';
-import { BAR_INSTANCE_TEMPLATE_PREFIX } from './missionTrack';
+import { isBarInstanceTemplateMissionId } from './missionTrack';
+import { isUnidentifiedAnomalyTemplateMissionId } from './unidentifiedAnomaly/unidentifiedAnomalyIds';
 
 const OBJECTIVE_TYPES = new Set([
   'reach_system',
@@ -66,7 +67,7 @@ test('missions.csv generated — 키·목표·배치·전투 연동', () => {
     if (!mission.objectives.length) {
       errors.push(`목표 없음 ${mission.id}`);
     }
-    if (mission.id.startsWith(BAR_INSTANCE_TEMPLATE_PREFIX)) tqCount += 1;
+    if (isBarInstanceTemplateMissionId(mission.id)) tqCount += 1;
     const seenObj = new Set<string>();
     for (let j = 0; j < mission.objectives.length; j += 1) {
       const obj = mission.objectives[j]!;
@@ -136,7 +137,8 @@ test('missions.csv generated — 키·목표·배치·전투 연동', () => {
   }
 
   for (const [objId, missionId] of objectiveOwner) {
-    if (missionId.startsWith(BAR_INSTANCE_TEMPLATE_PREFIX)) continue;
+    if (isBarInstanceTemplateMissionId(missionId)) continue;
+    if (isUnidentifiedAnomalyTemplateMissionId(missionId)) continue;
     const mission = MISSIONS_FROM_CSV[missionId];
     const obj = mission?.objectives.find((o) => o.id === objId);
     if (obj?.type === 'buy_goods') {
@@ -223,6 +225,15 @@ test('missions.csv generated — 키·목표·배치·전투 연동', () => {
           errors.push(`프론티어 탐문 행성 위반 ${id}:${obj.id}=${obj.targetId}`);
         }
       }
+    }
+  }
+
+  if (MISSIONS_FROM_CSV.tq_anom_01) {
+    if (isBarInstanceTemplateMissionId('tq_anom_01')) {
+      errors.push('tq_anom_01 은 바 tq 템플릿이 아님');
+    }
+    if (!isUnidentifiedAnomalyTemplateMissionId('tq_anom_01')) {
+      errors.push('tq_anom_01 은 월드이벤트 템플릿이어야 함');
     }
   }
 

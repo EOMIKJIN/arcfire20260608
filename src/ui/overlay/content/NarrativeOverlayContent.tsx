@@ -35,6 +35,7 @@ export const NarrativeOverlayContent = memo(function NarrativeOverlayContent({
   );
   return (
     <NarrativeDialogRow
+      key={entry.id}
       stageFill={stageFill}
       label={entry.label}
       text={entry.text}

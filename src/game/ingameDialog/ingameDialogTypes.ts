@@ -81,7 +81,12 @@ export type AdHocIngameDialogPayload = {
   /** true면 최종 단계 [수락]/[취소]. 취소는 onCancel만(메신저 열지 않음) */
   showAcceptCancelChoice?: boolean;
   completionActions?: IngameDialogCompletionAction[];
-  onDismiss?: () => void;
+  onDismiss?: () => void | Promise<void>;
+  /**
+   * true — 진행 중 adhoc을 닫지 않고 같은 overlay에서 교체.
+   * 바 턴 체인처럼 [다음] 직후 초상이 다시 뜨는 깜박임을 막는다.
+   */
+  replaceActiveAdhoc?: boolean;
   /** 수락형 통신 [취소] — completion·onDismiss 없이 종료 */
   onCancel?: () => void;
   /** STAGE 이탈 시 수락(메신저) 없이 닫기 — NL 통신 기본 */

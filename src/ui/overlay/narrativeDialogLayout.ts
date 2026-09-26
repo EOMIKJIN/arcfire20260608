@@ -164,6 +164,11 @@ export function resolveNarrativeDialogCharsPerLine(
   return Math.max(10, physicalMax - L.splitSafetyChars);
 }
 
+/** 오픈 직후만 `typewriterStartDelayMs`. [ 다음 ] 페이지는 0 — 빈 본문 500ms가 창 깜박임으로 보임 */
+export function resolveNarrativeTypewriterStartDelayMs(isFirstActivate: boolean): number {
+  return isFirstActivate ? NARRATIVE_DIALOG_LAYOUT.typewriterStartDelayMs : 0;
+}
+
 export function resolveNarrativeTypewriterSpeedMs(raw?: number | null): number {
   const L = NARRATIVE_DIALOG_LAYOUT;
   const base = raw ?? L.typewriterSpeedMsDefault;

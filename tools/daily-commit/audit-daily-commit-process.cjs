@@ -88,6 +88,9 @@ function checkScheduledTask() {
   if (!/-Push/.test(text)) {
     failures.push('scheduled task TR missing -Push (git push must be automatic)');
   }
+  if (!/-RunAudit/.test(text)) {
+    failures.push('scheduled task TR missing -RunAudit (audit:daily must gate commit)');
+  }
 }
 
 function main() {

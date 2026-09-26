@@ -1,5 +1,95 @@
 # 김클로드 → 김팀장 검수 handoff
 
+## 🟠 PENDING — PSS 계단식 누적 코드 전수조사 (계단 실존 확인) · 2026-09-26
+
+```text
+status=PENDING (P0 실기 특정 필요 · 도구 결함 4건 수정 필요)
+task_id=pss-staircase-full-survey-20260926
+kind=INVESTIGATION (김클로드 코드 변경 0 · 커밋 0)
+verdict=계단 «실존» 42/64 세션 · median +271MB · 비가역
+리포트=tools/kim-team-lead/reports/kim-claude-pss-staircase-full-survey-20260926.md
+```
+
+```text
+[pss-pre-dev] hot_path=조사 전용(런타임 미변경) alloc=0 cache=미변경
+[pss-pre-dev] stage=미변경 risk=P2(PSS축)·P3(캐시)·P7(감사 공백)
+[pss-pre-dev] verdict=PASS — 코드 diff 없음
+```
+
+**정적 감사는 전부 PASS** — memory:all **37/37** · skia-worklet **31/31** · worklet-contract **PASS** · native-reclaim **20/20** · resident-set **7/7** · hot-path **hits=0**.
+
+**그런데 계단은 실존한다.** `mem-timeline.csv` 21,939행 재분석(세션 = pid + 20분 공백 → 45분 이상 64개):
+- **STAIRCASE(비가역) 42 / SAWTOOTH 21 / FLAT 1**
+- PSS floor median **+271MB** · max **+511MB** · floor가 **1,000MB 넘겨 정착**
+- 최신 **09-17 세션도 +358MB · 잔류율 100%**
+
+**축 분해 (STAIRCASE 42세션, 마지막 floor − 최소 floor)**
+- **`native_heap` +199MB = PSS 상승의 74%** ← 주범 · `gl` +80MB(29%) · `java` +14MB(5%)
+- **`views` +264 = 스테이지 트리 «정확히 1개분»**. Views plateau가 **~99(셸) / ~285(1스테이지) / ~575(2스테이지)** 3단으로 갈리고 **~575에 수백 샘플이 정착** — 프로젝트 자체 `VIEWS_RETAINED FAIL`(≥450) 초과인데 게이트에 안 걸린다.
+- → **1순위 가설: 스테이지 뷰 트리 1개가 세션 내내 미해제**, 그에 붙은 Fresco 비트맵·GL이 동승.
+
+**코드로 «배제» 확정 (C-1~C-6)**: 네비게이션(앱 전체 `push` 단 1곳 [planet.tsx:575](app/(game)/planet.tsx#L575), 스테이지 전환 전부 `replace()`, 복귀 `router.back()`, 고아 replace 없음) · 영속 배열(무상한 append 1건, 성계 수로 자연 상한) · 모듈 Skia 캐시(dispose 실배선 확인) · planetMemoCache(8곳 invalidate) · 에셋 예산(초상 296장 전부 240×240, 전량 캐시 시 182MB 유한) · hot-path 0.
+**→ 원인은 「금지 패턴 위반」이 아니다.** 규칙을 지킨 코드의 잔류라서 패턴 감사로는 안 잡힌다.
+
+**🔴 판정 도구 결함 4건 — 현행 retention 리포트 `FAIL/20건`은 신뢰 불가**
+- **D-1** `run-retention-audit.cjs:156-172` — `before/after`를 **시간창만으로** 필터, **pid 미사용**(`mergeSamples`는 pid를 싣는데도). 실제로 **기동 48초 콜드 프로세스가 baseline**이 됐다
+- **D-2** **중복 계상** — FAIL 20건 = 측정 **2쌍**(×18, ×2). 심각도 **10배 과장**
+- **D-3** baseline staleness 무제한 — 20:17 close의 baseline이 **10.4분 전**
+- **D-4** **pid 재사용 미구분** — pid 6366 스팬 **1,520h** 등 15건
+- **D-5** 감사 6종에 **「세션 경과 대비 floor 추세」 판정이 아예 없다** (PASS 37/37과 +271MB 공존의 구조적 이유)
+
+**⚠️ 김클로드 자기 정정 2건** — ① 「pid 교차 비교 탓」 오판 → 실제는 콜드스타트 baseline ② pid로만 묶어 「계단 없음」이라 판단했다가, pid 재사용 확인 후 재분리하여 **42/64 계단**으로 정정. 근거로 든 「pid 20488 43.9h 평탄」도 별개 세션 2개였다.
+
+**요청 (착수는 지시 후)**
+1. **P0** 잔류 뷰 트리 1개 **실기 특정** — route별 views 라벨 트레이스 + ~575 plateau 시점 `dumpsys meminfo` detail. **정적으로는 더 좁힐 수 없다**
+2. **P1** `run-retention-audit.cjs` D-1~D-4 수정 — 세션 키 `pid+20분 공백`, staleness 상한, 측정쌍 dedupe. **고치기 전엔 이 도구로 판단 금지**
+3. **P2** `audit:memory:session-floor` 신설 — 10분 롤링 floor·잔류율 상설화 (재발 방지 본체)
+4. P3 Views ~575 상시 경보
+
+**한계**: 계단의 존재·규모·축은 데이터로 확정. **어느 화면 트리가 남는지는 미특정** → P0 필요.
+
+---
+
+## ✅ REVIEWED — 대사창 초상 깜박임 재검수 · 2026-09-26
+
+```text
+status=REVIEWED
+task_id=dialog-portrait-flicker-recheck-20260926
+kind=CODE_FIX (김팀장)
+verdict=PARTIAL → 수정 반영
+리포트=tools/kim-team-lead/reports/kim-claude-dialog-portrait-flicker-recheck-20260926.md
+```
+
+**김클로드 재검수 판정**
+- **AGREE** — 인포창과 달리 대사창만 `renderToHardwareTextureAndroid`를 씀. 정지 초상에 부적합. **제거함.**
+- **DISAGREE(바)** — 「React 리마운트 여지 0」은 팩 내부 [다음]에만 맞음. 바는 `session=null` → `finishSession` → `presentAdHoc`라 overlay가 닫혔다 다시 열림. 같은 초상이라도 Image가 다시 마운트됨.
+
+**김팀장 수정**
+1. `NarrativeDialogPortrait` 하드웨어 레이어 제거
+2. `replaceActiveAdhoc` — 바 턴 체인은 같은 `adhocId`·`ready`로 교체, overlay dismiss 없음
+3. `onDismiss`가 Promise면 await — `showNext`의 줄 해석 동안 창을 비우지 않음
+4. 게이트 — portrait/session-pack/leave 14/14 PASS · `tsc` PASS
+
+---
+
+## ✅ REVIEWED — NPC 함장 설정 텍스트(profileKo) 전수 마무리 · 2026-09-26
+
+```text
+status=REVIEWED
+task_id=npc-captain-profile-ko-20260926
+kind=TABLE_TEXT + Table-First 배선
+verdict=DONE (김클로드 텍스트 262/262 · 김팀장 게이트 연결)
+```
+
+김클로드가 토큰 한도로 끊긴 작업: `npc_ai_captains.csv` `profileKo` (포트레이트 발주 + 스토리 배경, 사건 백본 E1~E7).  
+CSV는 **262/262 이미 채워져 있었고**, 런타임 타입·생성·빌드 게이트가 빠져 정본이 고아였다.
+
+**김팀장 마무리**: `NpcCaptain.profileKo` · `build-content-from-csv` emit + 누락 assert · `resolveNpcCaptainProfileKo` · integrity 테스트.  
+`bioShort` 스텁(「테이블 등록 전용」 등)은 **기존값**이라 이번엔 안 바꿈.
+
+---
+
+
 > **정본 프로세스**: `docs/KIM_TEAM_LEAD_AGENT.md` §김클로드 검수 게이트 · `CLAUDE.md` §김팀장 최종 승인  
 > **김클로드** = Anthropic Claude Code (Cursor ✱ 패널 · 터미널 `claude`)
 

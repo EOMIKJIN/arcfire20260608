@@ -408,10 +408,23 @@ ${body}
 `;
 }
 
+function assertNpcCaptainProfiles(rows) {
+  const missing = [];
+  for (const r of rows) {
+    if (!String(r.profileKo ?? '').trim()) missing.push(String(r.id ?? '').trim() || '(no-id)');
+  }
+  if (missing.length > 0) {
+    throw new Error(
+      `npc_ai_captains.profileKo 누락 ${missing.length}건: ${missing.slice(0, 8).join(', ')}`,
+    );
+  }
+}
+
 function buildNpcCaptains() {
   const rows = loadCsv('npc_ai_captains.csv');
   assertUniqueNpcCaptainDisplayNames(rows);
   assertUniqueNpcCaptainAssignedShipIds(rows);
+  assertNpcCaptainProfiles(rows);
   const body = rows
     .map(r => `  {
     id: ${q(r.id)},
@@ -423,6 +436,7 @@ function buildNpcCaptains() {
     aiAggression: ${q(r.aiAggression)},
     aiRole: ${q(r.aiRole)},
     bioShort: ${q(r.bioShort)},
+    profileKo: ${q(String(r.profileKo ?? '').trim())},
     operationalState: ${q(r.operationalState || 'general')},
     combatTeam: ${q(r.combatTeam || 'none')},
     friendlyFactionIds: ${JSON.stringify(splitPipe(r.friendlyFactionIdsPipe))},

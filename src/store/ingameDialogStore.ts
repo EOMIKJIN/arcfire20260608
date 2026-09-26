@@ -16,6 +16,7 @@ import {
   drainIngameDialogIdleCallbacks,
 } from '../game/ingameDialog/ingameDialogIdle';
 import { cancelIngameDialogFeatureLinkDelay } from '../game/ingameDialog/ingameDialogFeatureLink';
+import { bumpIngameDialogLeaveAbortGen } from '../game/ingameDialog/ingameDialogLeaveAbort';
 import {
   bindUiSequenceDialogBusy,
   clearUiForegroundSequence,
@@ -42,6 +43,11 @@ import { usePlayerStore } from './playerStore';
 import { useAppSettingsStore } from './appSettingsStore';
 
 let adhocSeq = 0;
+let adhocFinishGen = 0;
+
+function isThenable(value: unknown): value is Promise<void> {
+  return Boolean(value) && typeof (value as { then?: unknown }).then === 'function';
+}
 
 type IngameDialogState = {
   session: IngameDialogSession | null;
@@ -55,6 +61,8 @@ type IngameDialogState = {
   dismissCancelRemaining: () => void;
   /** 허브 이탈·purge — NL 통신만 수락 없이 닫음. idle drain 없음(combat_end 체인 보호) */
   abortLeavingStage: () => void;
+  /** 시설 나가기 — CSV·adhoc 전부 종료. completion·다음 턴 체인 없음 */
+  abortAllOnLeave: () => void;
   pressNext: () => void;
   /**
    * [취소] — completion(수락) 없이 종료.
@@ -166,7 +174,23 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
 
   presentAdHoc: (payload) => {
     return runWhenUiScreenReady(() => {
-    if (get().session) return false;
+    const current = get().session;
+    if (current?.kind === 'adhoc' && payload.replaceActiveAdhoc === true) {
+      set({
+        session: {
+          kind: 'adhoc',
+          adhocId: current.adhocId,
+          segmentIndex: 0,
+          stepIndex: 0,
+          pageComplete: false,
+          ready: current.ready === true,
+          pack: null,
+          payload,
+        },
+      });
+      return true;
+    }
+    if (current) return false;
     adhocSeq += 1;
     set({
       session: {
@@ -221,6 +245,7 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
   dismiss: () => {
     const session = get().session;
     if (!session) return;
+    adhocFinishGen += 1;
     clearReadyWatch();
     readyGen += 1;
     set({ session: null });
@@ -230,6 +255,7 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
   dismissCancelRemaining: () => {
     const session = get().session;
     if (!session) return;
+    adhocFinishGen += 1;
     clearReadyWatch();
     readyGen += 1;
     set({ session: null });
@@ -247,6 +273,7 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
   },
 
   abortLeavingStage: () => {
+    adhocFinishGen += 1;
     clearUiForegroundSequence();
     cancelIngameDialogFeatureLinkDelay();
     const session = get().session;
@@ -256,6 +283,18 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
     readyGen += 1;
     set({ session: null });
     session.payload.onCancel?.();
+  },
+
+  abortAllOnLeave: () => {
+    bumpIngameDialogLeaveAbortGen();
+    adhocFinishGen += 1;
+    clearReadyWatch();
+    readyGen += 1;
+    clearUiForegroundSequence();
+    cancelIngameDialogFeatureLinkDelay();
+    cancelIngameDialogIdlePresentsAndNotify();
+    if (!get().session) return;
+    set({ session: null });
   },
 
   pressCancel: () => {
@@ -308,10 +347,28 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
         set({ session: result.session });
         return;
       }
-      clearReadyWatch();
-      readyGen += 1;
-      set({ session: null });
-      void finishSession(result.session);
+      const finishing = result.session;
+      if (finishing.kind !== 'adhoc') return;
+      const finishGen = adhocFinishGen + 1;
+      adhocFinishGen = finishGen;
+      void (async () => {
+        for (const action of finishing.payload.completionActions ?? []) {
+          await runIngameDialogCompletionBatch('none', [action]);
+        }
+        if (adhocFinishGen !== finishGen) return;
+        const ret = finishing.payload.onDismiss?.();
+        if (isThenable(ret)) await ret;
+        if (adhocFinishGen !== finishGen) return;
+        const cur = get().session;
+        if (cur && cur !== finishing && cur.kind === 'adhoc') {
+          drainIngameDialogIdleCallbacks();
+          return;
+        }
+        clearReadyWatch();
+        readyGen += 1;
+        set({ session: null });
+        drainIngameDialogIdleCallbacks();
+      })();
       return;
     }
 

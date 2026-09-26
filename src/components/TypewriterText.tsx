@@ -2,9 +2,10 @@
 // 아크파이어 온라인 - 타이핑 효과 텍스트
 // ============================================================
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Platform, Text, TextStyle } from 'react-native';
 import { COLORS, FONTS } from '../utils/theme';
+import { resolveTypewriterResetState, typewriterEpoch } from './typewriterResetState';
 
 interface TypewriterTextProps {
   text: string;
@@ -19,6 +20,8 @@ interface TypewriterTextProps {
   skipAnimation?: boolean;
   /** false면 rAF를 시작하지 않음 — 오버레이 오픈 시퀀스 동안 */
   active?: boolean;
+  /** 같은 문장이어도 페이지가 바뀌면 타이핑만 리셋. React key remount 금지(초상 Image 깜박임) */
+  resetToken?: string;
 }
 
 export function TypewriterText({
@@ -31,14 +34,26 @@ export function TypewriterText({
   numberOfLines,
   skipAnimation = false,
   active = true,
+  resetToken,
 }: TypewriterTextProps) {
-  const [displayed, setDisplayed] = useState('');
-  const [done, setDone] = useState(false);
-  const indexRef = useRef(0);
+  const epoch = typewriterEpoch({ resetToken, text, active, skipAnimation });
+  const [epochSeen, setEpochSeen] = useState(epoch);
+  const initial = resolveTypewriterResetState({ text, active, skipAnimation });
+  const [displayed, setDisplayed] = useState(initial.displayed);
+  const [done, setDone] = useState(initial.done);
+  const indexRef = useRef(initial.index);
   const carryMsRef = useRef(0);
   const rafRef = useRef<number | null>(null);
   const mountedRef = useRef(true);
   const onCompleteRef = useRef(onComplete);
+
+  if (epochSeen !== epoch) {
+    setEpochSeen(epoch);
+    const next = resolveTypewriterResetState({ text, active, skipAnimation });
+    setDisplayed(next.displayed);
+    setDone(next.done);
+    indexRef.current = next.index;
+  }
 
   useEffect(() => {
     onCompleteRef.current = onComplete;
@@ -51,27 +66,21 @@ export function TypewriterText({
     };
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     carryMsRef.current = 0;
+    if (rafRef.current != null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
 
     if (!active) {
-      setDisplayed('');
-      setDone(false);
-      indexRef.current = 0;
       return;
     }
 
-    if (skipAnimation) {
-      indexRef.current = text.length;
-      setDisplayed(text);
-      setDone(true);
+    if (skipAnimation || indexRef.current >= text.length) {
       onCompleteRef.current?.();
       return;
     }
-
-    setDisplayed('');
-    setDone(false);
-    indexRef.current = 0;
 
     const perCharMs = Math.max(1, speed);
     let lastTs = 0;
@@ -108,7 +117,7 @@ export function TypewriterText({
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     };
-  }, [active, text, speed, skipAnimation]);
+  }, [epoch, active, text, speed, skipAnimation]);
 
   return (
     <Text style={[defaultStyle, style]} numberOfLines={numberOfLines}>

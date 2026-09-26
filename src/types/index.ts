@@ -491,6 +491,11 @@ export interface NpcCaptain {
   aiRole: NpcAiRole;
   /** 한 줄 소개 (로그/UI) */
   bioShort: string;
+  /**
+   * 함장 배경 프로필 — 포트레이트 발주·스토리 배경 정본.
+   * `npc_ai_captains.csv` `profileKo`. 인물을 사건(E1~E7)으로 엮은 장문.
+   */
+  profileKo?: string;
   /** 월드 운용 상태 */
   operationalState: NpcCaptainOperationalState;
   /** 전투 상태일 때 팀 소속 */

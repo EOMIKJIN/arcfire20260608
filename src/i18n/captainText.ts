@@ -44,3 +44,10 @@ export function resolveNpcCaptainRankNow(
 ): string {
   return resolveNpcCaptainRank(captain, useAppSettingsStore.getState().locale);
 }
+
+/** 함장 배경 프로필 — 포트레이트·스토리 정본. 비어 있으면 빈 문자열. */
+export function resolveNpcCaptainProfileKo(
+  captain: Pick<NpcCaptain, 'profileKo'> | null | undefined,
+): string {
+  return String(captain?.profileKo ?? '').trim();
+}

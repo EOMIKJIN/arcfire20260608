@@ -6,6 +6,7 @@ import type { ImageSourcePropType } from 'react-native';
 import type { BarDialogTurnCsvRow } from '../../../data/generated/csvBarPatronage';
 import { translate } from '../../../i18n';
 import { presentAdHocIngameDialog } from '../../ingameDialog/ingameDialogApi';
+import { getIngameDialogLeaveAbortGen } from '../../ingameDialog/ingameDialogLeaveAbort';
 import { listHostDialogTurns, resolveBarAttendantHelloOverlay } from './barPatronageTables';
 import {
   resolveBarAttendantPortraitById,
@@ -104,7 +105,9 @@ export async function presentBarDialogTurns(params: {
   }
 
   let i = 0;
+  const leaveGen = getIngameDialogLeaveAbortGen();
   const showNext = async () => {
+    if (getIngameDialogLeaveAbortGen() !== leaveGen) return;
     if (i >= turns.length) {
       params.onDismiss?.();
       return;
@@ -117,6 +120,7 @@ export async function presentBarDialogTurns(params: {
       attendantId: params.attendantId,
       hostCaptainId: params.hostCaptainId,
     });
+    if (getIngameDialogLeaveAbortGen() !== leaveGen) return;
     const isLast = i >= turns.length;
     const imageSource = resolveTurnPortrait(turn, params.attendantId, params.hostCaptainId);
     const presented = presentAdHocIngameDialog({
@@ -125,9 +129,9 @@ export async function presentBarDialogTurns(params: {
       buttonText: isLast ? translate(locale, 'dialog.ok') : translate(locale, 'dialog.next'),
       imageSource,
       autoDismissMs: 0,
-      onDismiss: () => {
-        void showNext();
-      },
+      replaceActiveAdhoc: true,
+      bypassScreenShell: true,
+      onDismiss: () => showNext(),
     });
     if (!presented) {
       if (__DEV__) {

@@ -32,6 +32,8 @@ export {
 export { resolveMissionHudSlots, type MissionHudBundle } from './missionHudSlots';
 export {
   isUnidentifiedAnomalyMissionId,
+  isUnidentifiedAnomalyTemplateMissionId,
   UNIDENTIFIED_ANOMALY_MISSION_PREFIX,
   UNIDENTIFIED_ANOMALY_TEMPLATE_ID,
+  UNIDENTIFIED_ANOMALY_TEMPLATE_PREFIX,
 } from './unidentifiedAnomaly/unidentifiedAnomalyIds';

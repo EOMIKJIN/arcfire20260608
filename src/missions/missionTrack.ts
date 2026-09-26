@@ -6,7 +6,7 @@
  * | tutorial | mission_* | initTutorialStory (온보딩·인트로) | 초기 튜토리얼 스토리 체인 |
  * | main_story | story_* | acceptMainStoryMission + mainStory 챕터 그래프 | 본편 메인 스토리 — 튜토리얼과 분리 |
  * | quest | sandbox_* · arc_cpt_* | acceptQuestMission (바·NPC·INFO 개인) | 서브퀘스트(sandbox_*)·개인 진행 |
- * | inst_tpl | tq_* | (ArcCore clone 전용) | 바 인스턴스 의뢰 템플릿 |
+ * | inst_tpl | tq_* (tq_anom_* 제외) | (ArcCore clone 전용) | 바 인스턴스 의뢰 템플릿 |
  * | cpt_tpl | cp_* | (함장 개인 clone 전용) | INFO 통신 개인미션 템플릿 |
  *
  * HUD/주 표시 우선순위: tutorial > main_story > quest
@@ -14,7 +14,10 @@
 import type { Mission } from '../types';
 import { MISSIONS_FROM_CSV } from '../data/generated';
 import { isCaptainPersonalMissionId } from './captainPersonalMissionIds';
-import { isUnidentifiedAnomalyMissionId } from './unidentifiedAnomaly/unidentifiedAnomalyIds';
+import {
+  isUnidentifiedAnomalyMissionId,
+  isUnidentifiedAnomalyTemplateMissionId,
+} from './unidentifiedAnomaly/unidentifiedAnomalyIds';
 
 export type MissionTrack = 'tutorial' | 'main_story' | 'quest';
 
@@ -97,6 +100,8 @@ export function missionTrackHudPriority(track: MissionTrack | null): number {
 }
 
 export function isBarInstanceTemplateMissionId(missionId: string): boolean {
+  // tq_anom_* 는 월드이벤트 템플릿 — 바 보드 10~16칸에 넣지 않는다.
+  if (isUnidentifiedAnomalyTemplateMissionId(missionId)) return false;
   return missionId.startsWith(BAR_INSTANCE_TEMPLATE_PREFIX);
 }
 

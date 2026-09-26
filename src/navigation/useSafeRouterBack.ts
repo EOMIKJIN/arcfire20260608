@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { router, type Href } from 'expo-router';
+import { abortAllIngameDialogOnLeave } from '../game/ingameDialog/ingameDialogApi';
 import { runThrottledPlanetHubNavigation } from './safePlanetHubNavigate';
 
 export type SafeRouterBackOptions = {
@@ -19,6 +20,7 @@ export function useSafeRouterBack(options?: SafeRouterBackOptions): () => void {
   return useCallback(() => {
     runThrottledPlanetHubNavigation(() => {
       try {
+        abortAllIngameDialogOnLeave();
         if (router.canGoBack()) {
           router.back();
           return;

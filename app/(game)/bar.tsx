@@ -30,7 +30,6 @@ import {
 } from '../../src/store/barPatronageStore';
 import { useMenuNotificationStore } from '../../src/store/menuNotificationStore';
 import { usePlayerStore } from '../../src/store/playerStore';
-import { listNpcCaptains } from '../../src/npc/npcFleetRegistry';
 import { resolveBarHostCaptainAtPlanet } from '../../src/arcCore/captainPresence';
 import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacilityTabBar';
 import {
@@ -62,7 +61,11 @@ import {
   presentBarDialogTurns,
 } from '../../src/game/bar/patronage/barPatronageDialog';
 import { resolveBarHostPortraitByCaptainId } from '../../src/game/bar/patronage/barPatronagePortrait';
-import { isIngameDialogActive, presentIngameDialogScene } from '../../src/game/ingameDialog/ingameDialogApi';
+import {
+  abortAllIngameDialogOnLeave,
+  isIngameDialogActive,
+  presentIngameDialogScene,
+} from '../../src/game/ingameDialog/ingameDialogApi';
 import { useUiScreenShell } from '../../src/ui/process/useUiScreenShell';
 import { isTalkNpcBarConversation } from '../../src/missions/talkNpcObjective';
 import { showArcAlert } from '../../src/utils/showArcAlert';
@@ -129,19 +132,8 @@ export default function BarScreen() {
   }, [currentPlanetId, barLevel]);
 
   const barHostCaptain = useMemo(() => {
-    if (currentPlanetId) {
-      const fromPresence = resolveBarHostCaptainAtPlanet(currentPlanetId);
-      if (fromPresence) return fromPresence;
-    }
-    const retiredPool = listNpcCaptains().filter((captain) => captain.barPlanetIds.length > 0);
-    if (retiredPool.length === 0) return null;
-    if (currentPlanetId) {
-      const direct = retiredPool.find((captain) => captain.barPlanetIds.includes(currentPlanetId));
-      if (direct) return direct;
-      const hash = Array.from(currentPlanetId).reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-      return retiredPool[hash % retiredPool.length] ?? retiredPool[0] ?? null;
-    }
-    return retiredPool[0] ?? null;
+    if (!currentPlanetId) return null;
+    return resolveBarHostCaptainAtPlanet(currentPlanetId) ?? null;
   }, [currentPlanetId]);
 
   const hostDisplayName = useMemo(
@@ -475,6 +467,7 @@ export default function BarScreen() {
                   if (activeSession) buyDrinkFor(activeSession.attendantId);
                 }}
                 onLeave={() => {
+                  abortAllIngameDialogOnLeave();
                   void stopBarVoice();
                   useBarPatronageStore.getState().endSession();
                   setActiveTab('lounge');

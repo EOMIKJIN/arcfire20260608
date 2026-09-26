@@ -1,6 +1,5 @@
-import React, { memo, useEffect, useMemo, useState } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Image,
   Platform,
   StyleSheet,
   Text,
@@ -21,8 +20,10 @@ import {
   narrativeDialogTextBlockHeight,
   resolveNarrativeDialogPortraitBleedPx,
   resolveNarrativeTypewriterSpeedMs,
+  resolveNarrativeTypewriterStartDelayMs,
   type NarrativeDialogStageFillMetrics,
 } from './narrativeDialogLayout';
+import { NarrativeDialogPortrait } from './NarrativeDialogPortrait';
 import { useNarrativeDialogNextReveal } from './useNarrativeDialogNextReveal';
 import { useT } from '../../i18n';
 
@@ -89,8 +90,6 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
   const ink = useMemo(() => resolveOverlayVisualTokens(visualTheme), [visualTheme]);
   const isTactical = visualTheme === 'tactical';
   const resolvedPortraitScale = Number.isFinite(portraitScale) && portraitScale > 0 ? portraitScale : 1;
-  const portraitTransform =
-    resolvedPortraitScale !== 1 ? [{ scale: resolvedPortraitScale }] : undefined;
   const textBlockHeight = narrativeDialogTextBlockHeight(maxLines);
   const resolvedSpeedMs = resolveNarrativeTypewriterSpeedMs(typewriterSpeedMs);
   const { revealReady, onTypingComplete } = useNarrativeDialogNextReveal(
@@ -98,26 +97,36 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
     onTextComplete,
   );
   const [typingLive, setTypingLive] = useState(false);
+  const firstActivateRef = useRef(true);
   useEffect(() => {
     if (!typewriterActive) {
+      firstActivateRef.current = true;
       setTypingLive(false);
       return;
     }
     if (skipAnimation) {
+      firstActivateRef.current = false;
+      setTypingLive(true);
+      return;
+    }
+    const delayMs = resolveNarrativeTypewriterStartDelayMs(firstActivateRef.current);
+    if (delayMs <= 0) {
+      firstActivateRef.current = false;
       setTypingLive(true);
       return;
     }
     setTypingLive(false);
-    const timer = setTimeout(
-      () => setTypingLive(true),
-      NARRATIVE_DIALOG_LAYOUT.typewriterStartDelayMs,
-    );
+    const timer = setTimeout(() => {
+      firstActivateRef.current = false;
+      setTypingLive(true);
+    }, delayMs);
     return () => clearTimeout(timer);
   }, [typewriterKey, typewriterActive, skipAnimation]);
   const showDualActions = Boolean(secondaryButtonText && onPressSecondary);
 
   const card = (
     <View
+      collapsable={false}
       style={[
         styles.card,
         {
@@ -139,17 +148,9 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
           { height: portraitBleedPx },
           isTactical ? { backgroundColor: TACTICAL_OVERLAY.insetBg } : null,
         ]}
+        collapsable={false}
       >
-        {imageSource ? (
-          <Image
-            source={imageSource}
-            style={[styles.portraitImage, portraitTransform ? { transform: portraitTransform } : null]}
-            resizeMode="contain"
-            resizeMethod="resize"
-          />
-        ) : (
-          <View style={styles.portraitPlaceholder} />
-        )}
+        <NarrativeDialogPortrait source={imageSource} scale={resolvedPortraitScale} />
       </View>
 
       {/* 2. 대사 레이어 */}
@@ -158,14 +159,15 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
           styles.dialogueLayer,
           isTactical ? { backgroundColor: TACTICAL_OVERLAY.cardBg } : null,
         ]}
+        collapsable={false}
       >
         <Text style={[styles.label, { color: ink.accentInk }]} numberOfLines={1}>
           {speakerLabel}
         </Text>
-        <View style={[styles.textSlot, { height: textBlockHeight }]}>
+        <View style={[styles.textSlot, { height: textBlockHeight }]} collapsable={false}>
           <TypewriterText
-            key={typewriterKey}
             text={text}
+            resetToken={typewriterKey}
             speed={resolvedSpeedMs}
             onComplete={showActionButton ? onTypingComplete : onTextComplete}
             style={{ ...styles.text, color: isTactical ? ink.valueInk : COLORS.ink_dark }}
@@ -182,14 +184,23 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
           styles.actionLayer,
           isTactical ? { backgroundColor: TACTICAL_OVERLAY.cardBg } : null,
         ]}
+        collapsable={false}
       >
-        {showActionButton && revealReady ? (
-          <View style={[styles.footer, showDualActions ? styles.footerDual : null]}>
+        {showActionButton ? (
+          <View
+            style={[
+              styles.footer,
+              showDualActions ? styles.footerDual : null,
+              revealReady ? null : styles.footerHidden,
+            ]}
+            pointerEvents={revealReady ? 'auto' : 'none'}
+            collapsable={false}
+          >
             <ArcButton
               label={buttonText}
               visualTheme={visualTheme}
               intent="primary"
-              disabled={nextDisabled}
+              disabled={nextDisabled || !revealReady}
               onPress={onPressNext}
               style={styles.nextBtn}
             />
@@ -198,7 +209,7 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
                 label={secondaryButtonText!}
                 visualTheme={visualTheme}
                 intent="secondary"
-                disabled={nextDisabled}
+                disabled={nextDisabled || !revealReady}
                 onPress={onPressSecondary}
                 style={styles.nextBtn}
               />
@@ -269,7 +280,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     borderWidth: 0,
     borderRadius: 0,
-    overflow: 'hidden',
+    overflow: 'visible',
     backgroundColor: OVERLAY_TOKENS.phosphorCardBg,
   },
   portraitLayer: {
@@ -280,15 +291,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#05070d',
     overflow: 'hidden',
-  },
-  portraitImage: {
-    width: '100%',
-    height: '100%',
-  },
-  portraitPlaceholder: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#05070d',
   },
   dialogueLayer: {
     width: '100%',
@@ -349,6 +351,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     gap: SPACING.sm,
+  },
+  footerHidden: {
+    opacity: 0,
   },
   footerSpacer: {
     flexShrink: 0,

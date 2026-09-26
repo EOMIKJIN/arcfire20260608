@@ -33,6 +33,16 @@ export function abortIngameDialogLeavingStage(): void {
   useIngameDialogStore.getState().abortLeavingStage();
 }
 
+/** 나가기 — 진행 중 인앱대사·대기 체인·narrative/alert 창을 모두 닫는다. completion 없음. */
+export function abortAllIngameDialogOnLeave(): void {
+  useIngameDialogStore.getState().abortAllOnLeave();
+  const { useArcOverlayStore } =
+    require('../../ui/overlay/arcOverlayStore') as typeof import('../../ui/overlay/arcOverlayStore');
+  useArcOverlayStore.getState().dismissWhere((e) => (
+    e.kind === 'narrative' || e.kind === 'alert'
+  ));
+}
+
 export function tryFireIngameDialogTrigger(
   triggerKey: StorySceneTriggerKey,
   targetId: string | null,

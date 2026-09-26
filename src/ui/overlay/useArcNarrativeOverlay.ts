@@ -1,6 +1,10 @@
 import { useEffect } from 'react';
 import { useArcOverlayStore, type ArcOverlayNarrativeEntry } from './arcOverlayStore';
 import {
+  narrativeDialogPortraitSourceKey,
+  reuseNarrativeDialogPortraitSource,
+} from './narrativeDialogPortraitSourceKey';
+import {
   isNarrativeOverlayContentChanged,
   resolveNarrativeOverlayWrite,
 } from './narrativeOverlaySync';
@@ -38,7 +42,9 @@ export function useArcNarrativeOverlay(
           nextText: config.text,
           nextLabel: config.label,
           nextPortraitScale: config.portraitScale,
-          imageChanged: existing.imageSource !== config.imageSource,
+          imageChanged:
+            narrativeDialogPortraitSourceKey(existing.imageSource)
+            !== narrativeDialogPortraitSourceKey(config.imageSource),
         }),
       ),
     );
@@ -53,6 +59,10 @@ export function useArcNarrativeOverlay(
       dismissOnBackdrop: false,
       showActionButton: true,
       ...config,
+      imageSource:
+        existing?.kind === 'narrative'
+          ? reuseNarrativeDialogPortraitSource(existing.imageSource, config.imageSource)
+          : config.imageSource,
     };
     if (write === 'present') {
       state.present(entry);

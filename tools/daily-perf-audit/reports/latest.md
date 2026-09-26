@@ -1,4 +1,4 @@
-# Daily audit — 2026-09-25T15:00:06.508Z
+# Daily audit — 2026-09-26T15:00:18.623Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -33,27 +33,25 @@ build-arc-core-chat-tables: wrote persona/operator-persona/speakers/topics/knowl
 [audit:npc-fleet] PASS
   [info] obj_s008_a: vega_base — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
   [info] obj_s020_a: titan_ruins — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
+  [info] obj_tq_anom_01_t: tq_anom 위협 — combat_ops 미강제 (STAGE 3 HOLD · 바 tq 비침범)
 === audit:mission-quest-placements ===
 buy_goods objectives: 27
 defeat_enemy objectives: 33
 placements: 18 · combat_ops: 32
-tq_* bar templates: 23 · bar planets: 18
+tq_* bar templates: 22 · tq_anom world-event: 1 · bar planets: 18
 
-[FAIL]
-  - defeat_enemy objective obj_tq_anom_01_t (tq_anom_01): mission_quest_combat_ops.csv 행 없음
-  - tq tq_anom_01 / obj_tq_anom_01_a: unsupported objective type collect_item
-  - tq tq_anom_01 / obj_tq_anom_01_t: mission_quest_combat_ops.csv 행 없음
+PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤트·보상 item 정적 검증 OK
 ```
 
-**exit:** 1
+**exit:** 0
 
 ## Largest TS/TSX under `src/` + `app/` (bytes)
 
 - 660,019 — `src/data/generated/galaxySystems100.generated.ts`
 - 482,349 — `src/data/generated/csvNpcCapitalShips.ts`
+- 458,963 — `src/data/generated/csvNpcCaptains.ts`
 - 383,335 — `src/data/generated/csvItemDefs.ts`
-- 344,210 — `src/data/generated/csvNpcCaptains.ts`
-- 231,512 — `src/data/generated/csvStoryScenes.ts`
+- 246,369 — `src/data/generated/csvStoryScenes.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
 - 170,253 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 117,343 — `src/i18n/locales/ko.ts`
@@ -61,7 +59,7 @@ tq_* bar templates: 23 · bar planets: 18
 - 106,929 — `src/i18n/locales/en.ts`
 - 104,642 — `app/(game)/worldmap.tsx`
 - 93,874 — `app/(game)/planet.tsx`
-- 91,948 — `src/data/generated/csvMissions.ts`
+- 91,882 — `src/data/generated/csvMissions.ts`
 - 85,737 — `src/data/generated/csvBarPatronage.ts`
 - 71,316 — `src/data/balance/generated/csvSynthSystemColonization.ts`
 - 71,070 — `src/data/generated/csvWeapons.ts`

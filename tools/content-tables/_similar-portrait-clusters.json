@@ -1,0 +1,830 @@
+{
+  "compared": 282,
+  "pairThreshold": 14,
+  "clusterLink": 12,
+  "pairCount": 910,
+  "topPairs": [
+    {
+      "a": "bar_att_char016.png",
+      "b": "npc_cpt_arc_pf_09.png",
+      "d": 3,
+      "hueDelta": 20,
+      "aKeep": true,
+      "bKeep": false
+    },
+    {
+      "a": "noname_char010.png",
+      "b": "npc_cpt_gov_reserve_blue_16.png",
+      "d": 4,
+      "hueDelta": 7,
+      "aKeep": true,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_16.png",
+      "b": "npc_cpt_story_ian_koval.png",
+      "d": 5,
+      "hueDelta": 2,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_draco_escort_01.png",
+      "b": "npc_cpt_gov_reserve_blue_08.png",
+      "d": 5,
+      "hueDelta": 6,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_faction_w_03.png",
+      "b": "npc_cpt_orin.png",
+      "d": 5,
+      "hueDelta": 8,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_arc_seed_arcadia.png",
+      "b": "npc_cpt_draco_escort_01.png",
+      "d": 5,
+      "hueDelta": 15,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_enemy_blood_01.png",
+      "b": "npc_cpt_vega_red_09.png",
+      "d": 5,
+      "hueDelta": 19,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_draco_escort_01.png",
+      "b": "npc_cpt_vega_watch_01.png",
+      "d": 5,
+      "hueDelta": 27,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_bar_ret_02.png",
+      "b": "npc_cpt_gov_reserve_neutral_01.png",
+      "d": 5,
+      "hueDelta": 42,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_arc_pf_03.png",
+      "b": "npc_cpt_faction_e_03.png",
+      "d": 6,
+      "hueDelta": 1,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_eden_10.png",
+      "b": "npc_cpt_enemy_iron_02.png",
+      "d": 6,
+      "hueDelta": 5,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_10.png",
+      "b": "npc_cpt_orin.png",
+      "d": 6,
+      "hueDelta": 5,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_arc_pf_09.png",
+      "b": "npc_cpt_vega_red_07.png",
+      "d": 6,
+      "hueDelta": 8,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_enemy_perseus_03.png",
+      "b": "npc_cpt_mock_pvp_01.png",
+      "d": 6,
+      "hueDelta": 11,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_draco_escort_01.png",
+      "b": "npc_cpt_faction_w_06.png",
+      "d": 6,
+      "hueDelta": 17,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_ai_robot_default.png",
+      "b": "npc_cpt_enemy_abyss_02.png",
+      "d": 6,
+      "hueDelta": 20,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "noname_char004.png",
+      "b": "noname_char006.png",
+      "d": 6,
+      "hueDelta": 25,
+      "aKeep": true,
+      "bKeep": true
+    },
+    {
+      "a": "npc_cpt_arc_pf_09.png",
+      "b": "npc_cpt_gov_reserve_neutral_04.png",
+      "d": 6,
+      "hueDelta": 30,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_enemy_draco_03.png",
+      "b": "npc_cpt_enemy_perseus_01.png",
+      "d": 6,
+      "hueDelta": 34,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_01.png",
+      "b": "npc_cpt_story_ian_koval.png",
+      "d": 7,
+      "hueDelta": 1,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_eden_10.png",
+      "b": "npc_cpt_mock_pvp_01.png",
+      "d": 7,
+      "hueDelta": 8,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_orin.png",
+      "b": "npc_cpt_vega_watch_01.png",
+      "d": 7,
+      "hueDelta": 8,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_faction_w_06.png",
+      "b": "npc_cpt_vega_watch_01.png",
+      "d": 7,
+      "hueDelta": 10,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_eden_10.png",
+      "b": "npc_cpt_enemy_perseus_01.png",
+      "d": 7,
+      "hueDelta": 11,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_faction_w_03.png",
+      "b": "npc_cpt_gov_reserve_blue_10.png",
+      "d": 7,
+      "hueDelta": 12,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_07.png",
+      "b": "npc_cpt_gov_reserve_blue_08.png",
+      "d": 7,
+      "hueDelta": 19,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_red_08.png",
+      "b": "npc_cpt_mock_pvp_01.png",
+      "d": 7,
+      "hueDelta": 20,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_enemy_nightfall_02.png",
+      "b": "npc_cpt_gov_reserve_neutral_04.png",
+      "d": 7,
+      "hueDelta": 22,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_faction_w_10.png",
+      "b": "npc_cpt_gov_reserve_blue_06.png",
+      "d": 7,
+      "hueDelta": 23,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_enemy_sirius_02.png",
+      "b": "npc_cpt_vega_watch_02.png",
+      "d": 7,
+      "hueDelta": 24,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_faction_e_08.png",
+      "b": "npc_cpt_gov_reserve_blue_16.png",
+      "d": 7,
+      "hueDelta": 37,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "bar_att_char016.png",
+      "b": "npc_cpt_gov_reserve_neutral_04.png",
+      "d": 7,
+      "hueDelta": 49,
+      "aKeep": true,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_eden_08.png",
+      "b": "npc_cpt_faction_s_03.png",
+      "d": 7,
+      "hueDelta": 50,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_01.png",
+      "b": "npc_cpt_gov_reserve_blue_16.png",
+      "d": 8,
+      "hueDelta": 2,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_20.png",
+      "b": "npc_cpt_mireille.png",
+      "d": 8,
+      "hueDelta": 3,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_draco_obs_01.png",
+      "b": "npc_cpt_enemy_blood_03.png",
+      "d": 8,
+      "hueDelta": 4,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_07.png",
+      "b": "npc_cpt_orin.png",
+      "d": 8,
+      "hueDelta": 6,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_arc_seed_abyss.png",
+      "b": "npc_cpt_enemy_omega_03.png",
+      "d": 8,
+      "hueDelta": 7,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_arcadia_lane_01.png",
+      "b": "npc_cpt_faction_w_10.png",
+      "d": 8,
+      "hueDelta": 12,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_arc_seed_arcadia.png",
+      "b": "npc_cpt_vega_watch_01.png",
+      "d": 8,
+      "hueDelta": 12,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_arc_pf_06.png",
+      "b": "npc_cpt_gov_reserve_blue_19.png",
+      "d": 8,
+      "hueDelta": 13,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_06.png",
+      "b": "npc_cpt_solar_guard_01.png",
+      "d": 8,
+      "hueDelta": 13,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_faction_w_03.png",
+      "b": "npc_cpt_vega_watch_01.png",
+      "d": 8,
+      "hueDelta": 15,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_enemy_dark_01.png",
+      "b": "npc_cpt_faction_n_05.png",
+      "d": 8,
+      "hueDelta": 17,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_red_12.png",
+      "b": "npc_cpt_story_ian_koval.png",
+      "d": 8,
+      "hueDelta": 17,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_draco_escort_01.png",
+      "b": "npc_cpt_orin.png",
+      "d": 8,
+      "hueDelta": 19,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_08.png",
+      "b": "npc_cpt_vega_blue_08.png",
+      "d": 8,
+      "hueDelta": 19,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_arc_seed_arcadia.png",
+      "b": "npc_cpt_gov_reserve_blue_08.png",
+      "d": 8,
+      "hueDelta": 20,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_draco_escort_01.png",
+      "b": "npc_cpt_gov_reserve_blue_10.png",
+      "d": 8,
+      "hueDelta": 24,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_eden_10.png",
+      "b": "npc_cpt_vega_watch_02.png",
+      "d": 8,
+      "hueDelta": 25,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_faction_w_02.png",
+      "b": "npc_cpt_faction_w_05.png",
+      "d": 8,
+      "hueDelta": 27,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_08.png",
+      "b": "npc_cpt_vega_watch_01.png",
+      "d": 8,
+      "hueDelta": 32,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_eden_10.png",
+      "b": "npc_cpt_enemy_crimson_03.png",
+      "d": 8,
+      "hueDelta": 36,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_neutral_04.png",
+      "b": "npc_cpt_vega_red_07.png",
+      "d": 8,
+      "hueDelta": 38,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_arc_pf_06.png",
+      "b": "npc_cpt_enemy_arcadia_02.png",
+      "d": 8,
+      "hueDelta": 48,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_arc_seed_arcadia.png",
+      "b": "npc_cpt_faction_w_06.png",
+      "d": 9,
+      "hueDelta": 2,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_faction_w_03.png",
+      "b": "npc_cpt_gov_reserve_blue_07.png",
+      "d": 9,
+      "hueDelta": 2,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_enemy_nightfall_02.png",
+      "b": "npc_cpt_enemy_omega_03.png",
+      "d": 9,
+      "hueDelta": 4,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_faction_w_11.png",
+      "b": "npc_cpt_gov_reserve_blue_10.png",
+      "d": 9,
+      "hueDelta": 4,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "noname_char010.png",
+      "b": "npc_cpt_story_ian_koval.png",
+      "d": 9,
+      "hueDelta": 5,
+      "aKeep": true,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_enemy_draco_03.png",
+      "b": "npc_cpt_faction_n_05.png",
+      "d": 9,
+      "hueDelta": 6,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_red_09.png",
+      "b": "npc_cpt_sq_ivy_kenn.png",
+      "d": 9,
+      "hueDelta": 6,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_mock_pvp_02.png",
+      "b": "Player_pilot.png",
+      "d": 9,
+      "hueDelta": 6,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_arc_pf_09.png",
+      "b": "npc_cpt_enemy_nightfall_02.png",
+      "d": 9,
+      "hueDelta": 7,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_arc_pf_09.png",
+      "b": "npc_cpt_enemy_nightfall_03.png",
+      "d": 9,
+      "hueDelta": 7,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_07.png",
+      "b": "npc_cpt_gov_reserve_blue_09.png",
+      "d": 9,
+      "hueDelta": 8,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_faction_n_05.png",
+      "b": "npc_cpt_mock_pvp_01.png",
+      "d": 9,
+      "hueDelta": 9,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_draco_escort_01.png",
+      "b": "npc_cpt_faction_w_03.png",
+      "d": 9,
+      "hueDelta": 11,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "bar_att_char016.png",
+      "b": "npc_cpt_vega_red_07.png",
+      "d": 9,
+      "hueDelta": 12,
+      "aKeep": true,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_enemy_helios_02.png",
+      "b": "npc_cpt_enemy_perseus_02.png",
+      "d": 9,
+      "hueDelta": 12,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_arc_seed_abyss.png",
+      "b": "npc_cpt_enemy_draco_02.png",
+      "d": 9,
+      "hueDelta": 13,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_enemy_iron_02.png",
+      "b": "npc_cpt_mock_pvp_01.png",
+      "d": 9,
+      "hueDelta": 13,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_07.png",
+      "b": "npc_cpt_vega_watch_01.png",
+      "d": 9,
+      "hueDelta": 13,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_enemy_crimson_03.png",
+      "b": "npc_cpt_enemy_draco_03.png",
+      "d": 9,
+      "hueDelta": 14,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_faction_w_11.png",
+      "b": "npc_cpt_gov_reserve_blue_17.png",
+      "d": 9,
+      "hueDelta": 15,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_16.png",
+      "b": "npc_cpt_gov_reserve_red_12.png",
+      "d": 9,
+      "hueDelta": 15,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_enemy_nightfall_02.png",
+      "b": "npc_cpt_vega_red_07.png",
+      "d": 9,
+      "hueDelta": 16,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_01.png",
+      "b": "npc_cpt_gov_reserve_red_12.png",
+      "d": 9,
+      "hueDelta": 16,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_enemy_nightfall_03.png",
+      "b": "npc_cpt_enemy_omega_03.png",
+      "d": 9,
+      "hueDelta": 19,
+      "aKeep": false,
+      "bKeep": false
+    },
+    {
+      "a": "npc_cpt_gov_reserve_blue_07.png",
+      "b": "npc_cpt_solar_guard_01.png",
+      "d": 9,
+      "hueDelta": 19,
+      "aKeep": false,
+      "bKeep": false
+    }
+  ],
+  "clusters": [
+    [
+      "Player_pilot.png",
+      "bar_att_char010.png",
+      "bar_att_char012.png",
+      "bar_att_char016.png",
+      "mia_bello_char002.png",
+      "noname_char004.png",
+      "noname_char005.png",
+      "noname_char006.png",
+      "noname_char010.png",
+      "npc_cpt_ai_clan_neutral_01.png",
+      "npc_cpt_ai_clan_pvp_01.png",
+      "npc_cpt_ai_clan_safe_01.png",
+      "npc_cpt_ai_robot_default.png",
+      "npc_cpt_anomaly_researcher.png",
+      "npc_cpt_arc_pf_01.png",
+      "npc_cpt_arc_pf_02.png",
+      "npc_cpt_arc_pf_03.png",
+      "npc_cpt_arc_pf_06.png",
+      "npc_cpt_arc_pf_09.png",
+      "npc_cpt_arc_seed_abyss.png",
+      "npc_cpt_arc_seed_arcadia.png",
+      "npc_cpt_arc_seed_blood_field.png",
+      "npc_cpt_arc_seed_crimson_zone.png",
+      "npc_cpt_arc_seed_eternity.png",
+      "npc_cpt_arc_seed_genesis.png",
+      "npc_cpt_arc_seed_new_eden.png",
+      "npc_cpt_arc_seed_nightfall.png",
+      "npc_cpt_arc_seed_sirius.png",
+      "npc_cpt_arc_seed_vega_outpost.png",
+      "npc_cpt_arcadia_lane_01.png",
+      "npc_cpt_bar_ret_02.png",
+      "npc_cpt_bar_ret_03.png",
+      "npc_cpt_bar_ret_04.png",
+      "npc_cpt_draco_escort_01.png",
+      "npc_cpt_draco_obs_01.png",
+      "npc_cpt_eden_08.png",
+      "npc_cpt_eden_10.png",
+      "npc_cpt_enemy_abyss_01.png",
+      "npc_cpt_enemy_abyss_02.png",
+      "npc_cpt_enemy_abyss_03.png",
+      "npc_cpt_enemy_arcadia_02.png",
+      "npc_cpt_enemy_arcadia_03.png",
+      "npc_cpt_enemy_blood_01.png",
+      "npc_cpt_enemy_blood_03.png",
+      "npc_cpt_enemy_core_03.png",
+      "npc_cpt_enemy_crimson_02.png",
+      "npc_cpt_enemy_crimson_03.png",
+      "npc_cpt_enemy_dark_01.png",
+      "npc_cpt_enemy_dark_02.png",
+      "npc_cpt_enemy_dark_03.png",
+      "npc_cpt_enemy_draco_01.png",
+      "npc_cpt_enemy_draco_02.png",
+      "npc_cpt_enemy_draco_03.png",
+      "npc_cpt_enemy_helios_02.png",
+      "npc_cpt_enemy_iron_02.png",
+      "npc_cpt_enemy_iron_03.png",
+      "npc_cpt_enemy_nightfall_01.png",
+      "npc_cpt_enemy_nightfall_02.png",
+      "npc_cpt_enemy_nightfall_03.png",
+      "npc_cpt_enemy_omega_02.png",
+      "npc_cpt_enemy_omega_03.png",
+      "npc_cpt_enemy_perseus_01.png",
+      "npc_cpt_enemy_perseus_02.png",
+      "npc_cpt_enemy_perseus_03.png",
+      "npc_cpt_enemy_shadow_01.png",
+      "npc_cpt_enemy_shadow_02.png",
+      "npc_cpt_enemy_shadow_03.png",
+      "npc_cpt_enemy_sirius_02.png",
+      "npc_cpt_enemy_titan_01.png",
+      "npc_cpt_enemy_vega_01.png",
+      "npc_cpt_faction_e_03.png",
+      "npc_cpt_faction_e_06.png",
+      "npc_cpt_faction_e_07.png",
+      "npc_cpt_faction_e_08.png",
+      "npc_cpt_faction_e_09.png",
+      "npc_cpt_faction_n_01.png",
+      "npc_cpt_faction_n_02.png",
+      "npc_cpt_faction_n_03.png",
+      "npc_cpt_faction_n_04.png",
+      "npc_cpt_faction_n_05.png",
+      "npc_cpt_faction_n_08.png",
+      "npc_cpt_faction_s_02.png",
+      "npc_cpt_faction_s_03.png",
+      "npc_cpt_faction_s_05.png",
+      "npc_cpt_faction_s_08.png",
+      "npc_cpt_faction_s_10.png",
+      "npc_cpt_faction_s_11.png",
+      "npc_cpt_faction_w_01.png",
+      "npc_cpt_faction_w_02.png",
+      "npc_cpt_faction_w_03.png",
+      "npc_cpt_faction_w_04.png",
+      "npc_cpt_faction_w_05.png",
+      "npc_cpt_faction_w_06.png",
+      "npc_cpt_faction_w_08.png",
+      "npc_cpt_faction_w_10.png",
+      "npc_cpt_faction_w_11.png",
+      "npc_cpt_faction_w_12.png",
+      "npc_cpt_gov_genesis.png",
+      "npc_cpt_gov_reserve_blue_01.png",
+      "npc_cpt_gov_reserve_blue_02.png",
+      "npc_cpt_gov_reserve_blue_03.png",
+      "npc_cpt_gov_reserve_blue_06.png",
+      "npc_cpt_gov_reserve_blue_07.png",
+      "npc_cpt_gov_reserve_blue_08.png",
+      "npc_cpt_gov_reserve_blue_09.png",
+      "npc_cpt_gov_reserve_blue_10.png",
+      "npc_cpt_gov_reserve_blue_11.png",
+      "npc_cpt_gov_reserve_blue_12.png",
+      "npc_cpt_gov_reserve_blue_15.png",
+      "npc_cpt_gov_reserve_blue_16.png",
+      "npc_cpt_gov_reserve_blue_17.png",
+      "npc_cpt_gov_reserve_blue_18.png",
+      "npc_cpt_gov_reserve_blue_19.png",
+      "npc_cpt_gov_reserve_blue_20.png",
+      "npc_cpt_gov_reserve_neutral_01.png",
+      "npc_cpt_gov_reserve_neutral_02.png",
+      "npc_cpt_gov_reserve_neutral_04.png",
+      "npc_cpt_gov_reserve_neutral_05.png",
+      "npc_cpt_gov_reserve_red_02.png",
+      "npc_cpt_gov_reserve_red_05.png",
+      "npc_cpt_gov_reserve_red_08.png",
+      "npc_cpt_gov_reserve_red_09.png",
+      "npc_cpt_gov_reserve_red_11.png",
+      "npc_cpt_gov_reserve_red_12.png",
+      "npc_cpt_gov_reserve_red_13.png",
+      "npc_cpt_gov_reserve_red_15.png",
+      "npc_cpt_gov_reserve_red_17.png",
+      "npc_cpt_gov_reserve_red_18.png",
+      "npc_cpt_gov_reserve_red_19.png",
+      "npc_cpt_mireille.png",
+      "npc_cpt_mock_pvp_01.png",
+      "npc_cpt_mock_pvp_02.png",
+      "npc_cpt_mock_pvp_03.png",
+      "npc_cpt_mock_pvp_05.png",
+      "npc_cpt_mock_pvp_08.png",
+      "npc_cpt_mock_pvp_11.png",
+      "npc_cpt_mock_pvp_15.png",
+      "npc_cpt_neweden_blue_07.png",
+      "npc_cpt_orin.png",
+      "npc_cpt_sela.png",
+      "npc_cpt_solar_guard_01.png",
+      "npc_cpt_sq_ivy_kenn.png",
+      "npc_cpt_sq_kade_rim.png",
+      "npc_cpt_story_ian_koval.png",
+      "npc_cpt_story_noah_frick.png",
+      "npc_cpt_vega_blue_08.png",
+      "npc_cpt_vega_blue_09.png",
+      "npc_cpt_vega_blue_10.png",
+      "npc_cpt_vega_red_06.png",
+      "npc_cpt_vega_red_07.png",
+      "npc_cpt_vega_red_09.png",
+      "npc_cpt_vega_red_10.png",
+      "npc_cpt_vega_test_a.png",
+      "npc_cpt_vega_test_b.png",
+      "npc_cpt_vega_watch_01.png",
+      "npc_cpt_vega_watch_02.png"
+    ],
+    [
+      "npc_cpt_gov_reserve_red_03.png",
+      "npc_cpt_mock_pvp_17.png",
+      "npc_cpt_sq_tolin_grave.png"
+    ],
+    [
+      "npc_cpt_enemy_blood_02.png",
+      "npc_cpt_mock_pvp_07.png",
+      "npc_cpt_sq_orren_bask.png"
+    ],
+    [
+      "npc_cpt_arc_seed_titan_gate.png",
+      "npc_cpt_faction_s_01.png"
+    ],
+    [
+      "npc_cpt_gov_reserve_red_04.png",
+      "npc_cpt_mock_pvp_09.png"
+    ],
+    [
+      "npc_cpt_arc_seed_shadow_nexus.png",
+      "npc_cpt_mock_pvp_19.png"
+    ]
+  ]
+}

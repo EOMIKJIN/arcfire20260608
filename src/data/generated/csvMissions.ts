@@ -965,8 +965,8 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     id: "sandbox_012",
     title: "고철 길드 계약",
     titleEn: "Scrap Guild Contract",
-    description: "세라 미온이 아이언 크로스 레므난트의 회수품 명세를 오메가 스테이션 허브로 옮겨 달라고 했다.",
-    descriptionEn: "Sera Mion asked you to move salvage manifests to Omega Station Hub.",
+    description: "루크 펠이 아이언 크로스 레므난트의 회수품 명세를 오메가 스테이션 허브로 옮겨 달라고 했다.",
+    descriptionEn: "Luc Pell asked you to move salvage manifests to Omega Station Hub.",
     type: "delivery",
     objectives: [
       {
@@ -997,7 +997,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     prerequisiteIds: [],
     nextMissionId: null,
     dc: 12,
-    offerCaptainId: "npc_cpt_bar_ret_04",
+    offerCaptainId: "npc_cpt_bar_ret_08",
     offerPlanetId: "iron_remnant",
     levelRequired: 6,
     clearDialogSceneId: undefined,
@@ -1281,8 +1281,8 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     id: "sandbox_020",
     title: "타이탄 기록 봉인",
     titleEn: "Titan Record Seal",
-    description: "타드 레인이 타이탄 게이트 유적 기록판을 페르세우스 메모리얼로 옮겨 달라고 했다.",
-    descriptionEn: "Tad Rain asked you to move Titan Gate Ruins plates to Perseus Memorial.",
+    description: "렐 본이 타이탄 게이트 유적 기록판을 페르세우스 메모리얼로 옮겨 달라고 했다.",
+    descriptionEn: "Rell Vorn asked you to move Titan Gate Ruins plates to Perseus Memorial.",
     type: "delivery",
     objectives: [
       {
@@ -1313,7 +1313,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     prerequisiteIds: [],
     nextMissionId: null,
     dc: 14,
-    offerCaptainId: "npc_cpt_bar_ret_03",
+    offerCaptainId: "npc_cpt_bar_ret_10",
     offerPlanetId: "titan_ruins",
     levelRequired: 10,
     clearDialogSceneId: undefined,
@@ -1325,8 +1325,8 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     id: "sandbox_021",
     title: "페르세우스 추모 경계",
     titleEn: "Perseus Memorial Guard",
-    description: "세라 미온이 추모 항로를 위협하는 현상금 사냥꾼을 처리해 달라고 했다.",
-    descriptionEn: "Sera Mion asked you to stop a bounty hunter threatening the memorial route.",
+    description: "린 오사가 추모 항로를 위협하는 현상금 사냥꾼을 처리해 달라고 했다.",
+    descriptionEn: "Rin Ossa asked you to stop a bounty hunter threatening the memorial route.",
     type: "combat",
     objectives: [
       {
@@ -1348,7 +1348,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     prerequisiteIds: [],
     nextMissionId: null,
     dc: 17,
-    offerCaptainId: "npc_cpt_bar_ret_04",
+    offerCaptainId: "npc_cpt_bar_ret_11",
     offerPlanetId: "perseus_memorial",
     levelRequired: 21,
     clearDialogSceneId: undefined,
@@ -1518,8 +1518,8 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     id: "sandbox_026",
     title: "혈장 보급선",
     titleEn: "Bloodfield Med Supply",
-    description: "세라 미온이 블러드 필드 스테이션으로 의료 보급품을 우회 배송해 달라고 했다.",
-    descriptionEn: "Sera Mion asked you to reroute medical supplies to Blood Field Station.",
+    description: "에바 모르가 블러드 필드 스테이션으로 의료 보급품을 우회 배송해 달라고 했다.",
+    descriptionEn: "Eva Mohr asked you to reroute medical supplies to Blood Field Station.",
     type: "delivery",
     objectives: [
       {
@@ -1550,7 +1550,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     prerequisiteIds: [],
     nextMissionId: null,
     dc: 15,
-    offerCaptainId: "npc_cpt_bar_ret_04",
+    offerCaptainId: "npc_cpt_bar_ret_14",
     offerPlanetId: "blood_station",
     levelRequired: 13,
     clearDialogSceneId: undefined,
@@ -1799,8 +1799,8 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     id: "sandbox_033",
     title: "회항단 중계 물자",
     titleEn: "Convoy Relay Supply",
-    description: "타드 레인(오메가 중립 회항단)이 교차항로 예비 식량을 오메가 허브로 운반해 달라고 했다.",
-    descriptionEn: "Tad Rain (Omega Neutral Circuit) asked you to haul reserve food to Omega Hub.",
+    description: "벡스 오름이 교차항로 예비 식량을 오메가 허브로 운반해 달라고 했다.",
+    descriptionEn: "Vex Orum asked you to haul reserve food to Omega Hub.",
     type: "delivery",
     objectives: [
       {
@@ -1831,7 +1831,7 @@ export const MISSIONS_FROM_CSV: Record<string, Mission> = {
     prerequisiteIds: [],
     nextMissionId: null,
     dc: 12,
-    offerCaptainId: "npc_cpt_bar_ret_03",
+    offerCaptainId: "npc_cpt_bar_ret_07",
     offerPlanetId: "omega_hub",
     levelRequired: 7,
     clearDialogSceneId: undefined,

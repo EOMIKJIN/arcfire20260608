@@ -291,7 +291,7 @@ export default function IntroScreen() {
         ) : (
           <>
             <View style={styles.storyArea}>
-              <View style={styles.ingameDialogSlot}>
+              <View style={styles.ingameDialogSlot} collapsable={false}>
                 {introDialogReady ? (
                   <NarrativeDialogRow
                     label={introPackStep?.label || renderedLabel || t('intro.commLabel')}
