@@ -3,7 +3,7 @@
  * 인게임대화 → 전투결과(승리) → 레vel업(조건부) → 미션완료대화 → 장비파손 알림
  */
 
-import { InteractionManager } from 'react-native';
+import { InteractionManager, type ImageSourcePropType } from 'react-native';
 import { create } from 'zustand';
 import {
   presentAdHocIngameDialog,
@@ -11,16 +11,23 @@ import {
   presentIngameDialogScene,
 } from '../ingameDialog/ingameDialogApi';
 import { COMBAT_END_OPERATOR_AUTO_DISMISS_MS } from '../ingameDialog/ingameDialogAutoDismiss';
+import { resolveNpcCaptainPortraitSource } from '../npcCaptainPortraitAssets';
+import { getNpcCaptain } from '../../npc/npcFleetRegistry';
+import { resolveNpcCaptainDisplayName } from '../../i18n/captainText';
+import { useAppSettingsStore } from '../../store/appSettingsStore';
 import { useMissionStore } from '../../store/missionStore';
 import { usePlayerStore } from '../../store/playerStore';
 import { useArcOverlayStore } from '../../ui/overlay/arcOverlayStore';
 import { showArcOverlayReward } from '../../ui/overlay/showArcOverlay';
 import { showArcAlert } from '../../utils/showArcAlert';
 import { t } from '../../i18n';
+import { resolveTransitCombatEndDialogCopy } from './resolveTransitCombatEndDialog';
 
 export type TransitCombatPostFlowPayload = {
   kind: 'victory' | 'flee';
   enemyName?: string;
+  /** 전투에 나온 적 함장(`npc_cpt_enemy_*` 등). 있으면 패배 대사+초상. */
+  captainId?: string | null;
   creditGain?: number;
   expGain?: number;
   destroyedLabels?: string[];
@@ -108,7 +115,11 @@ function presentVictoryResultOverlay(payload: TransitCombatPostFlowPayload): Pro
   });
 }
 
-async function presentAdHocTransitDialog(label: string, text: string): Promise<void> {
+async function presentAdHocTransitDialog(
+  label: string,
+  text: string,
+  imageSource?: ImageSourcePropType,
+): Promise<void> {
   dismissAlertOverlays();
   await waitForArcOverlayKindsIdle(['alert']);
   await waitForIngameDialogIdle();
@@ -120,6 +131,7 @@ async function presentAdHocTransitDialog(label: string, text: string): Promise<v
       const ok = presentAdHocIngameDialog({
         label,
         text,
+        imageSource,
         autoDismissMs: COMBAT_END_OPERATOR_AUTO_DISMISS_MS,
         onDismiss: () => resolve(true),
       });
@@ -214,19 +226,42 @@ export async function runTransitCombatPostFlow(payload: TransitCombatPostFlowPay
   try {
     await settleUiAfterCombatPause();
 
-    const dialogText =
+    const locale = useAppSettingsStore.getState().locale;
+    const captainId = payload.captainId?.trim() ?? '';
+    const captain = captainId ? getNpcCaptain(captainId) : undefined;
+    const fallbackText =
       payload.kind === 'victory'
         ? t('combat.transitEndVictoryBody', {
             credits: payload.creditGain ?? 0,
             exp: payload.expGain ?? 0,
           })
         : t('combat.transitEndFleeBody');
+    const copy = resolveTransitCombatEndDialogCopy({
+      kind: payload.kind === 'victory' ? 'defeat' : 'flee',
+      captain: captain
+        ? {
+            id: captain.id,
+            displayName: captain.displayName,
+            displayNameEn: captain.displayNameEn,
+            factionId: captain.factionId,
+            portraitImageAssetKey: captain.portraitImageAssetKey,
+          }
+        : null,
+      locale,
+      fallbackLabel: t('combat.transitEndOperator'),
+      fallbackText,
+    });
+    const imageSource = resolveNpcCaptainPortraitSource(copy.portraitAssetKey) ?? undefined;
+    const overlayEnemyName =
+      payload.enemyName?.trim()
+      || (captain ? resolveNpcCaptainDisplayName(captain, locale) : '')
+      || t('combat.headerTitle');
 
-    await presentAdHocTransitDialog(t('combat.transitEndOperator'), dialogText);
+    await presentAdHocTransitDialog(copy.label, copy.text, imageSource);
     await waitForIngameDialogIdle();
 
     if (payload.kind === 'victory') {
-      await presentVictoryResultOverlay(payload);
+      await presentVictoryResultOverlay({ ...payload, enemyName: overlayEnemyName });
       await waitForArcOverlayKindsIdle(['reward']);
     }
 

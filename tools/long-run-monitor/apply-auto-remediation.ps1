@@ -1,4 +1,4 @@
-# GL/PSS 이상 감지 시 런타임 자동 복구 + 정적 Skia 감사 + 사후 점검
+﻿# GL/PSS 이상 감지 시 런타임 자동 복구 + 정적 Skia 감사 + 사후 점검
 param(
   [string]$Package = 'com.arcfire.online',
   [string]$LogDir = (Join-Path $PSScriptRoot 'logs'),

@@ -73,6 +73,7 @@ npc_dialog_bar_ret_15,닐 벡스 임시 대화,manual,,repeat,4,none,/(game)/pla
 npc_dialog_bar_ret_16,코린 델 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_bar_ret_17,시아 렌 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_bar_ret_18,아론 윤 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+npc_dialog_bar_ret_synth,아크바 키오스크 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 mission_clear_default,미션 완료(범용),manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 mission_clear_npc_delivery,미션 완료(담당자·배달),manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 mission_clear_npc_arrival,미션 완료(담당자·도착),manual,,repeat,6,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0

@@ -7,6 +7,7 @@ import {
   resolvePlanetSalvageSearchOutcome,
   resolveSalvageMineralCashCredits,
   rollSalvageMineralCashHit,
+  rollSalvageRelicHit,
 } from './planetSalvageSearch';
 import {
   nextSalvageSearchDailyUsage,
@@ -22,12 +23,23 @@ const KST_2026_09_21_BEFORE_MIDNIGHT = Date.parse('2026-09-21T14:59:59.000Z');
 const KST_2026_09_22_MIDNIGHT = Date.parse('2026-09-21T15:00:00.000Z');
 const KST_2026_09_22_NOON = Date.parse('2026-09-22T03:00:00.000Z');
 
-test('수색 정책 — 현금 50% · 일 100회 · 시세 배율 1', () => {
+test('수색 정책 — 현금 50% · 일 100회 · 시세 배율 1 · 유물 0.5%', () => {
   const policy = resolvePlanetSalvageSearchPolicy();
   assert.equal(policy.enabled, true);
   assert.equal(policy.mineralCashChancePct, 50);
   assert.equal(policy.dailySearchCap, 100);
   assert.equal(policy.cashPriceMul, 1);
+  assert.equal(policy.relicDropPct, 0.5);
+});
+
+test('유물 롤 — 0% 없음 · 100% 항상 · 0.5% 는 0과 100 사이', () => {
+  assert.equal(rollSalvageRelicHit('p', 'w', 0, 0, '2026-09-27'), false);
+  assert.equal(rollSalvageRelicHit('p', 'w', 0, 100, '2026-09-27'), true);
+  let hits = 0;
+  for (let i = 0; i < 4000; i += 1) {
+    if (rollSalvageRelicHit('p', 'w', i, 0.5, '2026-09-27')) hits += 1;
+  }
+  assert.ok(hits > 0 && hits < 80, `0.5% hits=${hits}`);
 });
 
 test('광물 시세 CR — 카탈로그 앵커 · ore_mineral_1 는 10', () => {

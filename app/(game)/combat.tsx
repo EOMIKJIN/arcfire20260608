@@ -259,14 +259,18 @@ export default function CombatScreen() {
       deliverFailTitle: t('worldmap.deliverFailTitle'),
       deliverFailBody: t('worldmap.deliverFailBody'),
     });
+    const captainName = combatSetup.captain
+      ? resolveNpcCaptainDisplayName(combatSetup.captain, locale)
+      : '';
     await finishTransitCombatAndNavigate({
       kind: 'victory',
-      enemyName: enemyTemplate.name,
+      enemyName: captainName || enemyTemplate.name,
+      captainId: combatSetup.captain?.id ?? null,
       creditGain,
       expGain,
       destroyedLabels,
     });
-  }, [addCredits, addExp, combatSetup.missionEnemyTemplateId, enemyTemplate.creditReward, enemyTemplate.expReward, enemyTemplate.id, enemyTemplate.name, finishTransitCombatAndNavigate, persist, t]);
+  }, [addCredits, addExp, combatSetup.captain, combatSetup.missionEnemyTemplateId, enemyTemplate.creditReward, enemyTemplate.expReward, enemyTemplate.id, enemyTemplate.name, finishTransitCombatAndNavigate, locale, persist, t]);
 
   const handleDefeat = useCallback(async () => {
     if (resolvedRef.current || !player) return;
@@ -311,13 +315,19 @@ export default function CombatScreen() {
                 deliverFailBody: t('worldmap.deliverFailBody'),
               });
               await persist();
-              await finishTransitCombatAndNavigate({ kind: 'flee' });
+              await finishTransitCombatAndNavigate({
+                kind: 'flee',
+                captainId: combatSetup.captain?.id ?? null,
+                enemyName: combatSetup.captain
+                  ? resolveNpcCaptainDisplayName(combatSetup.captain, locale)
+                  : undefined,
+              });
             })();
           },
         },
       ],
     );
-  }, [finishTransitCombatAndNavigate, persist, resolving, t]);
+  }, [combatSetup.captain, finishTransitCombatAndNavigate, locale, persist, resolving, t]);
 
   if (!player) return null;
   const exitPending = resolving || exitNavGate.pending;

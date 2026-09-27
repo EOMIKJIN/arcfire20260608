@@ -16,8 +16,8 @@ const SALVAGE_LOOT_ITEM_IDS = [
   'ore_nickel',
 ] as const;
 
-/** 판테온 유물 저확률 드롭 — CSV 가산점 여지는 있으나 MVP는 상수(≤5%) */
-const RELIC_DROP_PCT = 5;
+/** 0.5% = 5 / 1000. `% 100` 정수 롤은 0.5를 표현하지 못함. */
+const RELIC_ROLL_SCALE = 1000;
 
 function hash32(text: string): number {
   let h = 2166136261;
@@ -46,6 +46,26 @@ function pickUndiscoveredRelicItemId(seed: number): string | null {
   return available[seed % available.length]!.relicItemId;
 }
 
+function relicDropThreshold(pct: number): number {
+  if (pct <= 0) return 0;
+  if (pct >= 100) return RELIC_ROLL_SCALE;
+  return Math.max(0, Math.min(RELIC_ROLL_SCALE, Math.round(pct * 10)));
+}
+
+/** 판테온 유물 적중 — 정책 `%` · 천분율 해시. */
+export function rollSalvageRelicHit(
+  planetId: string,
+  wreckId: string,
+  attemptIndex: number,
+  chancePct: number,
+  dayKey = '',
+): boolean {
+  const need = relicDropThreshold(chancePct);
+  if (need <= 0) return false;
+  if (need >= RELIC_ROLL_SCALE) return true;
+  return hash32(`relic:${salvageAttemptSeedKey(planetId, wreckId, attemptIndex, dayKey)}`) % RELIC_ROLL_SCALE < need;
+}
+
 /** salvage 버튼 실행 시 1회 호출 — 저확률로 판테온 유물, 그 외엔 기존 광물 풀 */
 export function pickSalvageLootItemId(
   planetId: string,
@@ -55,8 +75,7 @@ export function pickSalvageLootItemId(
 ): string {
   const attemptKey = salvageAttemptSeedKey(planetId, wreckId, attemptIndex, dayKey);
   const seed = hash32(attemptKey);
-  const relicRoll = hash32(`relic:${attemptKey}`) % 100;
-  if (relicRoll < RELIC_DROP_PCT) {
+  if (rollSalvageRelicHit(planetId, wreckId, attemptIndex, resolvePlanetSalvageSearchPolicy().relicDropPct, dayKey)) {
     const relicItemId = pickUndiscoveredRelicItemId(seed);
     if (relicItemId) return relicItemId;
   }

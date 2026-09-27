@@ -1,4 +1,4 @@
-# 1시간 반복 플레이 구간 — 5분 간격 면밀 감시 (PSS/GL/PID/크래시)
+﻿# 1시간 반복 플레이 구간 — 5분 간격 면밀 감시 (PSS/GL/PID/크래시)
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$DurationMin = 60,

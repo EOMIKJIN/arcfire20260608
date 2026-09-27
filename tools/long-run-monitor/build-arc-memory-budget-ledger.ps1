@@ -1,4 +1,4 @@
-# Arcfire memory budget ledger — mem-timeline KPI 요약
+﻿# Arcfire memory budget ledger — mem-timeline KPI 요약
 param(
   [string]$LogDir = (Join-Path $PSScriptRoot 'logs'),
   [int]$TailRows = 500

@@ -1,4 +1,4 @@
-# Get-TimelineHeartbeatMetrics — stale fallback / last-valid-row (08:03 측정 실패 회귀)
+﻿# Get-TimelineHeartbeatMetrics — stale fallback / last-valid-row (08:03 측정 실패 회귀)
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'monitor-host-budget.ps1')
 

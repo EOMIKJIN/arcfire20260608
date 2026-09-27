@@ -1,4 +1,4 @@
-# Daily audit — 2026-09-26T15:00:18.623Z
+# Daily audit — 2026-09-27T15:00:09.984Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -28,7 +28,7 @@ patched rows=0 path=D:\arcfire20260607\tables\content\item_defs.csv
 [sync-star-connections] wrote 64 directed edges -> D:\arcfire20260607\tables\content\star_system_connections.csv
 Generated CSV-driven content TS files at src/data/generated
 build-arc-core-chat-tables: wrote persona/operator-persona/speakers/topics/knowledge/purposes/modes/gm-beats/stella-life/stella-quest-notes
-[bar-patronage] attendants=103 songs=5 drinks=3 planetDrinkPrices=54 planetRoster=99 turns=44 hellos=20 clips=2
+[bar-patronage] attendants=103 songs=5 drinks=3 planetDrinkPrices=54 planetRoster=99 turns=47 hellos=20 clips=2
 [bar-voice] clips=2 -> D:\arcfire20260607\src\data\generated\csvBarVoiceClips.ts
 [audit:npc-fleet] PASS
   [info] obj_s008_a: vega_base — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
@@ -49,18 +49,18 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 
 - 660,019 — `src/data/generated/galaxySystems100.generated.ts`
 - 482,349 — `src/data/generated/csvNpcCapitalShips.ts`
-- 458,963 — `src/data/generated/csvNpcCaptains.ts`
+- 467,301 — `src/data/generated/csvNpcCaptains.ts`
 - 383,335 — `src/data/generated/csvItemDefs.ts`
-- 246,369 — `src/data/generated/csvStoryScenes.ts`
+- 247,488 — `src/data/generated/csvStoryScenes.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
 - 170,253 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
-- 117,343 — `src/i18n/locales/ko.ts`
+- 117,490 — `src/i18n/locales/ko.ts`
 - 113,834 — `src/data/generated/csvMainStorySpine.ts`
-- 106,929 — `src/i18n/locales/en.ts`
+- 107,055 — `src/i18n/locales/en.ts`
 - 104,642 — `app/(game)/worldmap.tsx`
 - 93,874 — `app/(game)/planet.tsx`
 - 91,882 — `src/data/generated/csvMissions.ts`
-- 85,737 — `src/data/generated/csvBarPatronage.ts`
+- 86,859 — `src/data/generated/csvBarPatronage.ts`
 - 71,316 — `src/data/balance/generated/csvSynthSystemColonization.ts`
 - 71,070 — `src/data/generated/csvWeapons.ts`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`

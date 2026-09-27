@@ -332,8 +332,9 @@ export function listDialogTurnsForAttendant(params: {
   return [...own, ...shared].sort((a, b) => a.bundleTier - b.bundleTier || a.sortOrder - b.sortOrder);
 }
 
-export function listHostDialogTurns(): BarDialogTurnCsvRow[] {
-  return BAR_DIALOG_TURNS_FROM_CSV.filter((t) => t.dialogSetId === 'dset_host').sort(
+export function listHostDialogTurns(dialogSetId = 'dset_host'): BarDialogTurnCsvRow[] {
+  const setId = dialogSetId === 'dset_host_kiosk' ? 'dset_host_kiosk' : 'dset_host';
+  return BAR_DIALOG_TURNS_FROM_CSV.filter((t) => t.dialogSetId === setId).sort(
     (a, b) => a.sortOrder - b.sortOrder,
   );
 }

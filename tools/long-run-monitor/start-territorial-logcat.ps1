@@ -1,4 +1,4 @@
-# 접전/행성점유 ReactNativeJS 로그 캡처 (3h 감시 보조)
+﻿# 접전/행성점유 ReactNativeJS 로그 캡처 (3h 감시 보조)
 param(
   [string]$Package = 'com.arcfire.online'
 )

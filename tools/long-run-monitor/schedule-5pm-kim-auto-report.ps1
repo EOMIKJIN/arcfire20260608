@@ -1,4 +1,4 @@
-# 17:00 KST 자동 상태 보고 — mem-timeline · incidents · kim-economy-handoff
+﻿# 17:00 KST 자동 상태 보고 — mem-timeline · incidents · kim-economy-handoff
 param(
   [string]$Package = 'com.arcfire.online',
   [string]$TargetTime = '17:00',

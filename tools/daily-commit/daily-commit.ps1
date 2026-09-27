@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
   데일리 커밋 — Windows 작업 스케줄러 / 수동 실행용 래퍼.
 #>

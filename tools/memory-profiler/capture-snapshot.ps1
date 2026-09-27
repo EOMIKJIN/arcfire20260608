@@ -1,4 +1,4 @@
-# Heap-style snapshot — dumpsys meminfo + optional stage/event tag → JSON + profile-timeline.csv
+﻿# Heap-style snapshot — dumpsys meminfo + optional stage/event tag → JSON + profile-timeline.csv
 param(
   [string]$Package = 'com.arcfire.online',
   [string]$Stage = 'unknown',

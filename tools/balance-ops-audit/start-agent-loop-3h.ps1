@@ -1,4 +1,4 @@
-# Cursor 에이전트 3h wake — balance-ops 감사 요약 보고
+﻿# Cursor 에이전트 3h wake — balance-ops 감사 요약 보고
 param(
   [int]$IntervalHours = 3
 )

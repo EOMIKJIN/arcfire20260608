@@ -1,14 +1,102 @@
 # 김클로드 → 김팀장 검수 handoff
 
-## 🟠 PENDING — PSS 계단식 누적 코드 전수조사 (계단 실존 확인) · 2026-09-26
+## 🟠 PENDING — PowerShell 한글 깨짐 전수 수정 (BOM) · 2026-09-27
 
 ```text
-status=PENDING (P0 실기 특정 필요 · 도구 결함 4건 수정 필요)
-task_id=pss-staircase-full-survey-20260926
-kind=INVESTIGATION (김클로드 코드 변경 0 · 커밋 0)
-verdict=계단 «실존» 42/64 세션 · median +271MB · 비가역
-리포트=tools/kim-team-lead/reports/kim-claude-pss-staircase-full-survey-20260926.md
+status=PENDING (김팀장 커밋만 — 검증 완료)
+task_id=daily-commit-log-hangul-encoding-fix-20260927
+kind=TOOLING_FIX (런타임 코드 무관 · 커밋 금지 준수)
+verdict=DONE (원인 확정 · 수정 · 검증 완료)
+변경=tools/daily-commit/{daily-commit.ps1,register-windows-task.ps1,settings.ps1} — BOM 3바이트씩만
 ```
+
+**대표님 지시**: 「데일리빌드 한글깨짐 해결하라」 (대표님 사전 승인 범위 = 데일리빌드 커밋·푸시 프로세스 직접 수정)
+
+**증상**: `logs/2026-09-27.log` 에 `VERIFY OK ??而ㅻ컠쨌?몄떆 ?꾨즺 ?뺤씤.` (원문 `VERIFY OK — 커밋·푸시 완료 확인.`)
+
+**원인 확정 — 기록 시점이 아니라 «소스 파싱» 시점 손상**
+로그 바이트를 **UTF-8로도 CP949로도** 디코드해 봤으나 **양쪽 모두 깨짐** → 파일에 쓰기 전에 이미 손상됐다는 뜻.
+**PS 5.1은 BOM 없는 `.ps1` 을 ANSI 코드페이지(CP949)로 읽는다.** 세 스크립트가 UTF-8 **NO-BOM** 이라 한글 리터럴이 파싱 단계에서 망가지고, `Add-Content -Encoding utf8`([daily-commit.ps1:42](tools/daily-commit/daily-commit.ps1#L42))이 그 망가진 문자를 충실히 UTF-8로 기록했다.
+→ `-Encoding utf8` 은 **이미 옳았다.** 인코딩 지정 문제가 아니었다.
+
+**조치**: 3개 `.ps1` 에 **UTF-8 BOM만** 추가. 본문 **1바이트도 변경 없음**.
+
+**검증 (스크립트 미실행 — 실수 커밋 방지)**
+- 파일별 **정확히 +3 bytes**, BOM 제거 후 원본과 **바이트 단위 동일** 확인
+- 3파일 **파서 오류 0**
+- AST 리터럴 추출 → `VERIFY OK — 커밋·푸시 완료 확인.` / `파이프라인 자체 로그가 없다 — main() 미실행(no-op) 의심` **정상 복구**
+- 보간 문자열도 정상: `미푸시 커밋 $ahead 건이 남아 있다` · `오늘($kstDay) 스냅샷 커밋이 없고 …`
+- `Write-DailyLog` 를 AST로 떼어내 임시 로그에 **기록→UTF-8 재독** 실전 검증 **PASS**
+
+**영향**: 실패 시 `VERIFY FAIL — <사유>` 진단문을 읽을 수 있게 된다. 성공 경로에는 기능 영향 없음.
+
+---
+
+### 2차 (대표님 「한글깨짐은 바로 수정하라」) — 저장소 전수 확대
+
+```text
+추가 변경 = BOM 추가 54개 (.ps1) — 전부 BOM 3바이트만 · 본문 무변경
+```
+
+**범위 확정 (같은 결함 클래스 전수 점검)**
+
+| 대상 | 전체 | 한글 포함 | BOM 없음 → 수정 |
+|---|---|---|---|
+| `*.ps1` | 83 | 62 | **54** ✅ |
+| `*.psm1` | 0 | 0 | 0 |
+| `*.psd1` | 0 | 0 | 0 |
+| `*.bat` / `*.cmd` | 19 | **0** | — 한글 0건이라 `chcp` 이슈 **없음** |
+
+이미 BOM이던 8개는 스킵. `node_modules`·`.git` 제외.
+1차 3개(daily-commit)도 이 54개에 포함된 최종 수치다.
+
+**수정 분포**: `long-run-monitor/` 43 · `memory-profiler/` 5 · `daily-commit/` 3 · `balance-ops-audit/` 2 · `arc-core-chat/` 1 · `kim-team-lead/` 1 · `.cursor/work-layout/` 1 — 전부 **사람이 읽는 한글 리포트·알림을 출력**하는 도구 스크립트.
+
+**검증 (54개 전수)**
+- **내용 변경 0** — 백업 원본과 BOM 3바이트 제외 **바이트 단위 전부 일치**
+- **파서 오류 0** (아래 선재 결함 1건 제외)
+- AST 리터럴 복구 표본:
+  - `run-evening-6pm-comprehensive-report.ps1` → `**PID_CHANGE** during soak → baseline 비교 왜곡; timeline marker 필수.`
+  - `schedule-5pm-kim-auto-report.ps1` → `## [관측] … KST — 오후 감시 · 17:00 자동보고`
+  - `deploy-groq-free-tier.ps1` → `Then: app reload → hub [대화] → ArcCore NL`
+
+> 참고: `run-evening-6pm-comprehensive-report.ps1` 의 복구된 문구가 **PSS 조사의 D-4(PID_CHANGE baseline 왜곡)와 같은 지적**이다. 김경제가 이미 경고를 출력하고 있었으나 **깨진 글자라 아무도 읽지 못했다.**
+
+**⚠️ 선재 결함 1건 — 김클로드 미조치 (한글 문제 아님)**
+`tools/long-run-monitor/analyze-playtest-session.ps1:82` 이 **파서 오류로 실행 자체가 불가능**하다.
+
+```powershell
+$lines += "- **$k:** $($classify[$k])"   # $k: 를 PS가 스코프 수식어($env: 등)로 해석
+```
+
+`Variable reference is not valid. ':' was not followed by a valid variable name character.`
+**BOM 추가 전 백업 원본에서도 동일 오류 1건** — 내가 만든 것이 아니다. `${k}` 로 감싸면 되지만 **인코딩 과업 범위 밖이라 손대지 않았다.** 지시 주시면 처리.
+
+**백업**: 원본 전량 스크래치패드 `bom-backup/`(경로 구조 보존) · 1차 3파일 `ps1-backup/`.
+
+---
+
+## ✅ REVIEWED — PSS 계단식 누적 재판정 · 2026-09-26
+
+```text
+status=REVIEWED
+task_id=pss-staircase-full-survey-20260926
+kind=REJUDGE (김팀장 · 코드 0)
+verdict=계단 실존 AGREE · 트리 잔류 주범 DISAGREE · 도구 D-1~D-4 AGREE
+정본=tools/kim-team-lead/reports/kim-team-lead-pss-staircase-rejudge-20260926.md
+원본=tools/kim-team-lead/reports/kim-claude-pss-staircase-full-survey-20260926.md
+```
+
+김클로드 조사는 **현상·도구 결함은 맞고**, **1순위 원인(스테이지 트리 미해제)은 과대**다.
+
+**도구 적용 (2026-09-27 · 김팀장)**: D-1~D-4 `retentionAuditCore.cjs` · `npm run audit:memory:session-floor` 상설. 런타임·시설 `replace`·이중 trim **안 함**. 다음 실기 = 허브→시설→back views.
+
+- retention 재실행: 구 FAIL 20 → **NO_DATA** (skip 203 = window 177 / stale 24 / cold 2). 콜드 463.6 오판 제거.
+- session-floor: long 191 · STAIRCASE 116 · **최근 7일 6건 FAIL**. 최신 pid 14287(09-26) span +252.8 · late views 391 (575 아님).
+
+---
+
+## 🟠 PENDING (archived) — PSS 계단식 누적 코드 전수조사 · 김클로드 원문
 
 ```text
 [pss-pre-dev] hot_path=조사 전용(런타임 미변경) alloc=0 cache=미변경

@@ -1,4 +1,4 @@
-# Arcfire long-run watch — meminfo + crash + incident log (앱 재실행/Metro reload: 사용자 수동)
+﻿# Arcfire long-run watch — meminfo + crash + incident log (앱 재실행/Metro reload: 사용자 수동)
 $logDir = Join-Path $PSScriptRoot 'logs'
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 $ts = Get-Date -Format 'yyyyMMdd-HHmmss'

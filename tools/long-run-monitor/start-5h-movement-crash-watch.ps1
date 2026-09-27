@@ -1,4 +1,4 @@
-# 5h 감시체제 — playtest record-only + 5h 상태보고 스케줄 (이동 크래시 테스트 전 soak)
+﻿# 5h 감시체제 — playtest record-only + 5h 상태보고 스케줄 (이동 크래시 테스트 전 soak)
 param(
   [string]$Package = 'com.arcfire.online',
   [switch]$RestartExisting

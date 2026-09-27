@@ -1,4 +1,4 @@
-# Arcfire 상시 감시 스택 — 멱등
+﻿# Arcfire 상시 감시 스택 — 멱등
 #   1) watch (mem-timeline + crash + check-and-remediate → 김팀장 handoff)
 #   2) profiler extras — retention audit
 #   3) report-watch 15m — heartbeat·크래시 tail (dumpsys 금지·timeline 재사용)

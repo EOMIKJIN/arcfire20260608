@@ -30,7 +30,7 @@ import {
 } from '../../src/store/barPatronageStore';
 import { useMenuNotificationStore } from '../../src/store/menuNotificationStore';
 import { usePlayerStore } from '../../src/store/playerStore';
-import { resolveBarHostCaptainAtPlanet } from '../../src/arcCore/captainPresence';
+import { isSynthBarKioskHost, resolveBarHostCaptainAtPlanet } from '../../src/arcCore/captainPresence';
 import { PlanetFacilityTabBar } from '../../src/ui/planetFacility/PlanetFacilityTabBar';
 import {
   PlanetFacilityListingTextBlock,
@@ -147,15 +147,18 @@ export default function BarScreen() {
     [barHostCaptain?.id],
   );
 
+  const hostDialogSetId = isSynthBarKioskHost(barHostCaptain) ? 'dset_host_kiosk' : 'dset_host';
+  const hostMetaKey = isSynthBarKioskHost(barHostCaptain) ? 'bar.hostMetaKiosk' : 'bar.hostMeta';
+
   const headerSubtitle = useMemo(() => {
     if (barHostCaptain) {
-      return t('bar.hostMeta', {
+      return t(hostMetaKey, {
         name: hostDisplayName,
         rank: barHostCaptain.rank,
       });
     }
     return boardMeta;
-  }, [barHostCaptain, boardMeta, t, hostDisplayName]);
+  }, [barHostCaptain, boardMeta, t, hostDisplayName, hostMetaKey]);
 
   const presentHostOffer = useCallback((opts?: { replay?: boolean }) => {
     if (!currentPlanetId) return;
@@ -181,7 +184,7 @@ export default function BarScreen() {
     }
 
     hostOfferShownRef.current = true;
-    const turns = pickHostOfferTurns();
+    const turns = pickHostOfferTurns(hostDialogSetId);
     const loc = locale === 'en' ? 'en' : 'ko';
     const hostName = barHostCaptain
       ? resolveNpcCaptainDisplayName(barHostCaptain, locale)
@@ -194,7 +197,9 @@ export default function BarScreen() {
       if (skipAcceptAfterTalk) return;
       showArcAlert(
         t('bar.patronage.hostOfferTitle', { name: hostName }),
-        t('bar.patronage.hostOfferFallback'),
+        t(isSynthBarKioskHost(barHostCaptain)
+          ? 'bar.patronage.hostOfferFallbackKiosk'
+          : 'bar.patronage.hostOfferFallback'),
         [
           {
             text: t('bar.patronage.accept'),
@@ -209,7 +214,7 @@ export default function BarScreen() {
             style: 'cancel',
             onPress: () => {
               setGateAccepted(false);
-              const declineTurns = listHostDialogTurns().filter(
+              const declineTurns = listHostDialogTurns(hostDialogSetId).filter(
                 (x) => x.speechAct === 'host_decline_ack',
               );
               void presentBarDialogTurns({
@@ -238,7 +243,7 @@ export default function BarScreen() {
       return;
     }
     presentAcceptDecline();
-  }, [currentPlanetId, locale, t, barHostCaptain, gateAccepted]);
+  }, [currentPlanetId, locale, t, barHostCaptain, gateAccepted, hostDialogSetId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -481,7 +486,7 @@ export default function BarScreen() {
                   <View style={fs.stackCard}>
                     <PlanetFacilitySectionHeader inCard first title={t('bar.hostCardTitle')} />
                     <Text style={styles.hostMeta}>
-                      {t('bar.hostMeta', {
+                      {t(hostMetaKey, {
                         name: resolveNpcCaptainDisplayName(barHostCaptain, locale),
                         rank: barHostCaptain.rank,
                       })}

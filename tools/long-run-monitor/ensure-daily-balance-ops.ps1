@@ -1,4 +1,4 @@
-# 일 1회 balance-ops — perpetual watchdog 멱등 (앱 무관)
+﻿# 일 1회 balance-ops — perpetual watchdog 멱등 (앱 무관)
 param()
 
 $ErrorActionPreference = 'Continue'

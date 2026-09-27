@@ -1,4 +1,4 @@
-# Detached: long-run watch 유지 후 지정 시각(KST)에 monitor 종료
+﻿# Detached: long-run watch 유지 후 지정 시각(KST)에 monitor 종료
 param(
   [Parameter(Mandatory = $true)]
   [string]$UntilLocal,  # 'yyyy-MM-dd HH:mm:ss' 로컬(KST) 시각

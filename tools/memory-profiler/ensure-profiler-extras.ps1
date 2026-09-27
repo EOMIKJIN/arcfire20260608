@@ -1,4 +1,4 @@
-# retention audit loop only — 별도 adb logcat 금지(앱 부하·중복 방지). MEM_PROFILE은 watch crash logcat 통합.
+﻿# retention audit loop only — 별도 adb logcat 금지(앱 부하·중복 방지). MEM_PROFILE은 watch crash logcat 통합.
 param(
   [int]$RetentionAuditEveryMin = 60
 )

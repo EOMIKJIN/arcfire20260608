@@ -1,4 +1,4 @@
-# Arcfire report-watch — visible 콘솔 (김경제 모니터와 동일 경로)
+﻿# Arcfire report-watch — visible 콘솔 (김경제 모니터와 동일 경로)
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$IntervalMin = 10,

@@ -1,4 +1,4 @@
-# 영구 워치독 멱등 기동 — Cursor 세션·Windows 로그온·5분 백업 스케줄 공통
+﻿# 영구 워치독 멱등 기동 — Cursor 세션·Windows 로그온·5분 백업 스케줄 공통
 param(
   [switch]$ForceRestart
 )

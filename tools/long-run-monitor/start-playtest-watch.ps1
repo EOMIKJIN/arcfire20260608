@@ -1,4 +1,4 @@
-# Release 빌드 후 장기 플레이테스트 감시 — 정밀 logcat + 10분 mem + 실시간 알림
+﻿# Release 빌드 후 장기 플레이테스트 감시 — 정밀 logcat + 10분 mem + 실시간 알림
 # 자동 앱 재시작은 기본 OFF (monitor-paused.flag) — 수동 플레이 중단 방지
 param(
   [string]$Package = 'com.arcfire.online',

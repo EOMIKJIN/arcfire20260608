@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
   기존작업환경 복구 — 김클로드를 가운데 탭으로 다시 연다.
   정본: .cursor/work-layout/WORK_LAYOUT.json

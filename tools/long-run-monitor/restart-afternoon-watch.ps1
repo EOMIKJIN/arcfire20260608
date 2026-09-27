@@ -1,4 +1,4 @@
-# 오후 감시 재가동 — watch-30m + report-watch (김경제 · record-only 기본)
+﻿# 오후 감시 재가동 — watch-30m + report-watch (김경제 · record-only 기본)
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$WatchIntervalMin = 30,

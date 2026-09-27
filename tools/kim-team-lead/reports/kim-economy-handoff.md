@@ -12027,6 +12027,31 @@
 
 > status: monitor-ok · **08:00 보고체 유지**
 
+## [관측] 2026-09-27 08:00:00 KST — **데일리 08:00 상시 자동보고** (OK)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **29900** · auto-fix=ON
+- **adb**: OK (192.168.45.67:44363)
+- **앱**: RUNNING
+- **mem-monitor**: **OK** (PSS 807.6MB · GL 142.3MB · Views 185 · pid=27152)
+- **mem-budget-ledger**: ledger p50=638.5MB native=248.8MB
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260927-0800.md
+- **verdict**: **OK**
+- **incidents (actionable tail)**: 10
+  - [2026-09-25 08:00:00] DAILY_8AM_REPORT 2026-09-25 08:00:00 KST
+  - [2026-09-25 08:00:00] DAILY_8AM_REPORT 2026-09-25 08:00:00 KST
+  - [2026-09-25 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260925-0800.md verdict=OK
+  - [2026-09-25 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260925-0800.md verdict=OK
+  - [2026-09-26 08:00:00] DAILY_8AM_REPORT 2026-09-26 08:00:00 KST
+  - [2026-09-26 08:00:00] DAILY_8AM_REPORT 2026-09-26 08:00:00 KST
+  - [2026-09-26 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260926-0800.md verdict=OK
+  - [2026-09-26 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260926-0800.md verdict=OK
+  - [2026-09-27 08:00:00] DAILY_8AM_REPORT 2026-09-27 08:00:00 KST
+  - [2026-09-27 08:00:00] DAILY_8AM_REPORT 2026-09-27 08:00:00 KST
+- **권장(김팀장 1안)**: daily 08:00 soak OK — review report
+
+> status: monitor-ok · **08:00 보고체 유지**
+
 ## 작업 요약
 
 - **일자 (KST)**: 2026-06-18
@@ -12336,3 +12361,11 @@ _(김팀장 검수 코멘트·반려 사유는 아래에 기록)_
 - **next**: soak·floor 실측은 김경제 주기 감시
 
 > status: mem-post-dev-recheck **OK**
+
+## [관측] 2026-09-27 08:00:00 KST — PSS 창 안정화 판정 (**UNSTABLE**)
+
+- window 2026-09-27 01:50:43 → 2026-09-27 08:00:00 · samples=24 · pids=27152
+- primary pid=27152 PARTIAL Δfloor=85.2
+- flags: PSS_FLOOR_UP
+- 리포트: `tools/long-run-monitor/logs/pss-stability-window-20260927-0800.md`
+- 코드 수정 금지

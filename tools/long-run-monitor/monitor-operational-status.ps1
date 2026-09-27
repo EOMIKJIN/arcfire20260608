@@ -1,4 +1,4 @@
-# 실시간 운영체제 상태 — PID · timeline · handoff (앱 adb 호출 없음)
+﻿# 실시간 운영체제 상태 — PID · timeline · handoff (앱 adb 호출 없음)
 param(
   [switch]$JsonOnly,
   [switch]$WriteJson

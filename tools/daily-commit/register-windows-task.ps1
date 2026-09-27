@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
   Windows 작업 스케줄러 — 매일 자정 00:00(KST) 안정화·커밋·푸시.
 

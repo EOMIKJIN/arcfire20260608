@@ -1,4 +1,4 @@
-# 플레이테스트 마일스톤 — mem-timeline + incidents 에 시나리오 구간 기록
+﻿# 플레이테스트 마일스톤 — mem-timeline + incidents 에 시나리오 구간 기록
 param(
   [Parameter(Mandatory = $true)]
   [string]$Label,

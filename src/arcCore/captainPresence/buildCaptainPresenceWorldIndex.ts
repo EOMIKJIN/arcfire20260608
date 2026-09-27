@@ -171,7 +171,7 @@ export function getCaptainPresenceWorldIndex(
   for (const captain of NPC_CAPTAINS_FROM_CSV) {
     for (const planetId of captain.barPlanetIds) {
       const pid = String(planetId ?? '').trim();
-      if (!pid) continue;
+      if (!pid || pid === 'synth_all') continue;
       commitPresence(byCaptainId, {
         captainId: captain.id,
         activity: 'bar_host',

@@ -1,4 +1,4 @@
-# Arcfire long-run monitor — meminfo + GL/PSS trend (hub Skia leak vs activation)
+﻿# Arcfire long-run monitor — meminfo + GL/PSS trend (hub Skia leak vs activation)
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$IntervalMin = 10

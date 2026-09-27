@@ -1,4 +1,4 @@
-# 5-hour state watch — baseline + incident poll + scheduled markdown report (KST)
+﻿# 5-hour state watch — baseline + incident poll + scheduled markdown report (KST)
 # Phase 1: record-only soak · Phase 2 (after report): user movement/worldmap crash playtest
 param(
   [string]$Package = 'com.arcfire.online',

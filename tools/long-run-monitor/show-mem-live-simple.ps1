@@ -1,4 +1,4 @@
-# 김경제 감시 — mem-timeline 요약 실시간 뷰 (읽기 전용 · 앱 무영향)
+﻿# 김경제 감시 — mem-timeline 요약 실시간 뷰 (읽기 전용 · 앱 무영향)
 # 출력: mem pss=.. gl=.. views=.. @ iso_time  (15분 주기 샘플)
 param([int]$Tail = 16)
 

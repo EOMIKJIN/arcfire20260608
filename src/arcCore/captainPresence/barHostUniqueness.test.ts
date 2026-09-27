@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
 import { NPC_CAPTAINS_FROM_CSV } from '../../data/generated/csvNpcCaptains';
+import { pickBarHostCaptainFromList } from './pickBarHostCaptain';
 
 function parsePlanets() {
   const raw = readFileSync(resolve(__dirname, '../../../tables/content/planets.csv'), 'utf8')
@@ -37,6 +38,16 @@ test('each core hasBar planet has exactly one unique bar host', () => {
   }
   assert.equal(planetToHost.get('solar_station'), 'npc_cpt_bar_ret_01');
   assert.equal(planetToHost.get('arcadia_prime'), 'npc_cpt_bar_ret_05');
+});
+
+test('synth planets share one kiosk bar host without stealing core hosts', () => {
+  const kiosks = NPC_CAPTAINS_FROM_CSV.filter((c) => c.barHostScope === 'synth');
+  assert.equal(kiosks.length, 1, 'exactly one synth-scope bar host');
+  assert.equal(kiosks[0]!.id, 'npc_cpt_bar_ret_synth');
+  assert.equal(kiosks[0]!.barPlanetIds.length, 0);
+  assert.equal(pickBarHostCaptainFromList(NPC_CAPTAINS_FROM_CSV, 'synth_052_p')?.id, 'npc_cpt_bar_ret_synth');
+  assert.equal(pickBarHostCaptainFromList(NPC_CAPTAINS_FROM_CSV, 'synth_001_p')?.id, 'npc_cpt_bar_ret_synth');
+  assert.equal(pickBarHostCaptainFromList(NPC_CAPTAINS_FROM_CSV, 'solar_station')?.id, 'npc_cpt_bar_ret_01');
 });
 
 test('bar screen does not hash-reuse a host on another planet', () => {

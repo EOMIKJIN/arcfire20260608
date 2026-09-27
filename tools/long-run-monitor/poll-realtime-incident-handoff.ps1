@@ -1,4 +1,4 @@
-# 5분 주기 — 신규 actionable incident·신선 크래시 → 김팀장 handoff + CHAT_REPORT_PENDING
+﻿# 5분 주기 — 신규 actionable incident·신선 크래시 → 김팀장 handoff + CHAT_REPORT_PENDING
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$InvestigationThrottleMin = 8

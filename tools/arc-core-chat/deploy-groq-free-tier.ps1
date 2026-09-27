@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Build + guided SAM deploy for ArcCore chat Groq Free Lambda (ZERO_BILL).
 .NOTES

@@ -456,6 +456,21 @@ function runDailyReport() {
     log(`REUSE existing report ${reportFile}`);
   }
 
+  try {
+    const markerPath = path.join(logDir, 'pss-stability-window-latest.json');
+    const marker = JSON.parse(fs.readFileSync(markerPath, 'utf8'));
+    if (marker.status === 'WATCHING') {
+      execFileSync(process.execPath, [path.join(__dirname, 'run-pss-stability-window-judge.cjs')], {
+        cwd: ROOT,
+        timeout: 45_000,
+        stdio: 'pipe',
+      });
+      log('PSS_WINDOW_JUDGE ok');
+    }
+  } catch (e) {
+    log(`PSS_WINDOW_JUDGE skip — ${e.message || e}`);
+  }
+
   const timelineRows = countTimelineSinceMarker();
   if (adbOk && timelineRows < 2 && !reportOk) {
     failReasons.push(`TIMELINE_STALE — mem-timeline 신규 샘플 부족 (rows~${timelineRows})`);

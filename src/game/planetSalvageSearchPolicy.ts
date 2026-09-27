@@ -1,5 +1,5 @@
 // ============================================================
-// 잔해 수색 — 광물 시세 CR·일일 한도 (Table-First)
+// 잔해 수색 — 광물 시세 CR·일일 한도·판테온 유물% (Table-First)
 // ============================================================
 
 import { PlanetSalvageSearchPolicy_FROM_BALANCE_CSV } from '../data/balance/generated';
@@ -9,6 +9,8 @@ export type PlanetSalvageSearchPolicy = {
   mineralCashChancePct: number;
   dailySearchCap: number;
   cashPriceMul: number;
+  /** 판테온 유물 수색 확률(%). 0.5 = 0.5%. */
+  relicDropPct: number;
 };
 
 let policyKv: Map<string, string> | null = null;
@@ -42,6 +44,7 @@ export function resolvePlanetSalvageSearchPolicy(): PlanetSalvageSearchPolicy {
     mineralCashChancePct: Math.max(0, Math.min(100, Math.floor(num(kv.get('mineral_cash_chance_pct'), 50)))),
     dailySearchCap: Math.max(1, Math.floor(num(kv.get('daily_search_cap'), 100))),
     cashPriceMul: Math.max(0, num(kv.get('cash_price_mul'), 1)),
+    relicDropPct: Math.max(0, Math.min(100, num(kv.get('relic_drop_pct'), 0.5))),
   };
   return policyTestOverride ? { ...resolved, ...policyTestOverride } : resolved;
 }

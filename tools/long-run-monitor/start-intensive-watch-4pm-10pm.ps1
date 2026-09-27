@@ -1,4 +1,4 @@
-# PM 16:00–22:00 KST 집중 감시 — 경제·행성개발·메모리 · 22:00 자동보고 · 심각 이상 즉시 auto-fix
+﻿# PM 16:00–22:00 KST 집중 감시 — 경제·행성개발·메모리 · 22:00 자동보고 · 심각 이상 즉시 auto-fix
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$WatchIntervalMin = 15,

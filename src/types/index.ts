@@ -541,6 +541,8 @@ export interface NpcCaptain {
   mainStageEventTriggerId: string | null;
   /** 바 운영(퇴역 함장) 담당 행성 목록. 비어 있으면 바 운영자 아님 */
   barPlanetIds: readonly string[];
+  /** `synth` = 신스 행성 범용 키오스크 주인. CSV `barPlanetIdsPipe=synth_all` */
+  barHostScope?: 'synth' | null;
   /** 인게임 대화창에 사용할 NPC 초상화 이미지 키(`assets/images/npc/*.png`) */
   portraitImageAssetKey: string | null;
   /**

@@ -145,8 +145,8 @@ export async function presentBarDialogTurns(params: {
 }
 
 /** 호스트 맞이 2턴(인사+술요청) 텍스트 — 선택지는 UI에서 처리 */
-export function pickHostOfferTurns(): BarDialogTurnCsvRow[] {
-  return listHostDialogTurns().filter(
+export function pickHostOfferTurns(dialogSetId = 'dset_host'): BarDialogTurnCsvRow[] {
+  return listHostDialogTurns(dialogSetId).filter(
     (t) => t.speechAct === 'host_greet' || t.speechAct === 'host_ask_drink',
   );
 }

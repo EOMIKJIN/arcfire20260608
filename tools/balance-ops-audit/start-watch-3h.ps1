@@ -1,4 +1,4 @@
-# ArcCore 경제·밸런스 3시간 주기 감사 루프
+﻿# ArcCore 경제·밸런스 3시간 주기 감사 루프
 param(
   [int]$IntervalHours = 3
 )

@@ -1,4 +1,4 @@
-# precision-playtest / crash 로그 실시간 패턴 스캔 → playtest-alerts.log
+﻿# precision-playtest / crash 로그 실시간 패턴 스캔 → playtest-alerts.log
 # v2 — Get-ArcfireCrashLogEvents 신선도만 (구 SIGSEGV 오탐 차단)
 param(
   [string]$LogDir = (Join-Path $PSScriptRoot 'logs'),

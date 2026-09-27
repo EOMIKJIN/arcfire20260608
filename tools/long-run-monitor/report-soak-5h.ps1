@@ -1,4 +1,4 @@
-# 5h hub soak — 종료 시 mem-timeline + correlation 분석 리포트
+﻿# 5h hub soak — 종료 시 mem-timeline + correlation 분석 리포트
 param(
   [string]$SessionJson = '',
   [string]$LogDir = ''

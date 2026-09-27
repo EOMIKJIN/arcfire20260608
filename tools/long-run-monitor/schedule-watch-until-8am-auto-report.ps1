@@ -1,4 +1,4 @@
-# Keep watch alive until KST deadline, then auto final report + handoff.
+﻿# Keep watch alive until KST deadline, then auto final report + handoff.
 # LEGACY one-shot: 신규 상시 08:00 보고는 schedule-8am-kim-daily-auto-report.cjs + ensure-daily-8am-report.ps1 사용.
 # 정책: tools/long-run-monitor/logs/DAILY_8AM_REPORT_POLICY.md
 param(

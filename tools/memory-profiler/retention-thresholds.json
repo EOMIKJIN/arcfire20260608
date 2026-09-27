@@ -6,5 +6,7 @@
   "nativeRetainedWarnMb": 25,
   "viewsClosedHubMax": 380,
   "viewsDuplicateTreeMin": 450,
-  "hermesRetainedWarnMb": 8
+  "hermesRetainedWarnMb": 8,
+  "baselineStaleMaxMin": 3,
+  "coldViewsMax": 50
 }

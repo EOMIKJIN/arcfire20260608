@@ -1,4 +1,4 @@
-# STAGE 전환 구간 mem-timeline 분석 — planet↔worldmap floor drift
+﻿# STAGE 전환 구간 mem-timeline 분석 — planet↔worldmap floor drift
 param(
   [string]$LogDir = (Join-Path $PSScriptRoot 'logs'),
   [int]$ViewSpikeThreshold = 400

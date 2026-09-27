@@ -79,6 +79,7 @@ const NPC_CAPTAIN_PORTRAIT_BY_ASSET_KEY: Record<string, ImageSourcePropType> = {
   'assets/images/npc/npc_cpt_bar_ret_16.png': require('../../assets/images/npc/npc_cpt_bar_ret_16.png'),
   'assets/images/npc/npc_cpt_bar_ret_17.png': require('../../assets/images/npc/npc_cpt_bar_ret_17.png'),
   'assets/images/npc/npc_cpt_bar_ret_18.png': require('../../assets/images/npc/npc_cpt_bar_ret_18.png'),
+  'assets/images/npc/npc_cpt_bar_ret_synth.png': require('../../assets/images/npc/npc_cpt_bar_ret_synth.png'),
   'assets/images/npc/npc_cpt_draco_escort_01.png': require('../../assets/images/npc/npc_cpt_draco_escort_01.png'),
   'assets/images/npc/npc_cpt_draco_obs_01.png': require('../../assets/images/npc/npc_cpt_draco_obs_01.png'),
   'assets/images/npc/npc_cpt_eden_08.png': require('../../assets/images/npc/npc_cpt_eden_08.png'),

@@ -1,4 +1,4 @@
-# 플레이테스트 감시 종료 + 세션 종료 시각 기록
+﻿# 플레이테스트 감시 종료 + 세션 종료 시각 기록
 param(
   [string]$LogDir = (Join-Path $PSScriptRoot 'logs')
 )

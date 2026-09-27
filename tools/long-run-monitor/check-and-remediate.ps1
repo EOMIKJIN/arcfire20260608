@@ -1,4 +1,4 @@
-# Post-snapshot: incident detect + GL baseline stair-step (active hub only)
+﻿# Post-snapshot: incident detect + GL baseline stair-step (active hub only)
 param(
   [string]$LogDir = (Join-Path $PSScriptRoot 'logs'),
   [string]$TimelineCsv = '',

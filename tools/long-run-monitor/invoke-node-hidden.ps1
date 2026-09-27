@@ -1,4 +1,4 @@
-# Node — 콘솔 창 없이 실행 (워치독 5분 주기 깜빡임 방지)
+﻿# Node — 콘솔 창 없이 실행 (워치독 5분 주기 깜빡임 방지)
 function Format-NodeArgumentList {
   param([string[]]$ArgumentValues)
   ($ArgumentValues | ForEach-Object {

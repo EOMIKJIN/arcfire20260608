@@ -1,4 +1,4 @@
-# logcat tail → [MEM_PROFILE] 마커 추출 (Hermes heap proxy)
+﻿# logcat tail → [MEM_PROFILE] 마커 추출 (Hermes heap proxy)
 param(
   [string]$LogDir = (Join-Path (Split-Path $PSScriptRoot -Parent) 'long-run-monitor\logs'),
   [string]$OutFile = (Join-Path $PSScriptRoot 'reports\mem-profile-logcat.txt'),

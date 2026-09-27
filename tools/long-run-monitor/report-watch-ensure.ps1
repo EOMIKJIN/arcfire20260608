@@ -1,4 +1,4 @@
-# report-watch 단일 인스턴스 — visible(김경제 콘솔) vs hidden 상호 배타
+﻿# report-watch 단일 인스턴스 — visible(김경제 콘솔) vs hidden 상호 배타
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$IntervalMin = 10,

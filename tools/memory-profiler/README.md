@@ -25,13 +25,19 @@ npm run profile:mem:snapshot -- -Stage galaxy_map -Event manual
 
 # 4) retention 리포트 (수동·CI)
 npm run audit:memory:retention
+
+# 5) 세션 PSS floor (관측 전 기간 · FAIL은 최근 7일 STAIRCASE만)
+npm run audit:memory:session-floor
 ```
 
 산출:
 
 - `tools/memory-profiler/reports/profile-timeline.csv` — tagged snapshots
-- `tools/memory-profiler/reports/latest-retention-audit.md` — **닫힌 화면 survivor** 판정
+- `tools/memory-profiler/reports/latest-retention-audit.md` — **닫힌 화면 survivor** 판정 (같은 pid · 3분 신선도 · views≥50 베이스라인 · 측정쌍 1회)
+- `tools/memory-profiler/reports/latest-session-floor-audit.md` — 세션 rolling floor (pid+20분 공백)
 - `tools/memory-profiler/reports/snapshots/*.json` — heap-style JSON (meminfo 전체)
+
+`audit:memory:all`에는 session-floor를 넣지 않는다. 패턴 감사와 장기 soak 관측을 섞지 않기 위함이다.
 
 ## `[MEM_PROFILE]` 마커 (__DEV__)
 
@@ -49,7 +55,9 @@ npm run audit:memory:retention
 - `PSS_FLOOR_UP` — 닫힌 STAGE 후 PSS floor +35MB+
 - `VIEWS_RETAINED` — planet_hub 닫힘 후 Views ≥450 (RN 트리 중복)
 
-임계값: `retention-thresholds.json`
+임계값: `retention-thresholds.json` (`baselineStaleMaxMin` · `coldViewsMax`는 도구 계약 추가분)
+
+단위 테스트: `npm run test:memory-retention-audit`
 
 ## Cursor / 김경제 handoff → 김팀장 개발 반영
 

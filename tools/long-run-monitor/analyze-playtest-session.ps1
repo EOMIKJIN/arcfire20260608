@@ -1,4 +1,4 @@
-# 플레이테스트 세션 사후 분석 — 크래시 분류·GL floor·마일스톤 상관
+﻿# 플레이테스트 세션 사후 분석 — 크래시 분류·GL floor·마일스톤 상관
 param(
   [string]$SessionFile = '',
   [string]$LogDir = (Join-Path $PSScriptRoot 'logs'),
@@ -79,7 +79,7 @@ foreach ($ev in $crashEvents) {
 }
 $lines += "## Crash classification"
 foreach ($k in $classify.Keys) {
-  $lines += "- **$k:** $($classify[$k])"
+  $lines += "- **${k}:** $($classify[$k])"
 }
 $lines += ""
 

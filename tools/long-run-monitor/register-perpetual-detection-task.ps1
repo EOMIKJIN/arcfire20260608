@@ -1,4 +1,4 @@
-# Windows 작업 스케줄러 — PC 로그온 시 워치독 1회 부트 (5분 주기는 워치독 내부 루프가 담당)
+﻿# Windows 작업 스케줄러 — PC 로그온 시 워치독 1회 부트 (5분 주기는 워치독 내부 루프가 담당)
 # 콘솔 깜빡임 방지: wscript + run-node-hidden.vbs
 param(
   [switch]$Unregister

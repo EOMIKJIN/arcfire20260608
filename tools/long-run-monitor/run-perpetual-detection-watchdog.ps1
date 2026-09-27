@@ -1,4 +1,4 @@
-# 영구 실시간 탐지 워치독 — PC/게임/Cursor 재시작과 무관하게 스택 유지 + 김팀장 handoff
+﻿# 영구 실시간 탐지 워치독 — PC/게임/Cursor 재시작과 무관하게 스택 유지 + 김팀장 handoff
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$EnsureEveryMin = 5,

@@ -89,7 +89,7 @@ handoff `PENDING` 시 김팀장 sessionStart 훅이 검수 리마인드.
 - **협업 워크플로**: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
 - **김팀장 일일 검수**: `npm run audit:team-lead:daily` → `tools/kim-team-lead/reports/daily-review-latest.md`
 - **김경제 handoff**: `tools/kim-team-lead/reports/kim-economy-handoff.md` — **`## [관측]`** · retention FAIL → **김팀장 본 세션 코드 반영**
-- **프로파일러**: `tools/memory-profiler/` · `npm run audit:memory:retention`
+- **프로파일러**: `tools/memory-profiler/` · `npm run audit:memory:retention` · `npm run audit:memory:session-floor` (최근 7일 STAIRCASE만 FAIL · `audit:memory:all` 미포함)
 - **김팀장 규칙**: `.cursor/rules/arcfire-main-lead-agent.mdc` · `docs/KIM_TEAM_LEAD_AGENT.md`
 - **김경제 규칙**: `.cursor/rules/arcfire-economy-specialist-agent.mdc` · `docs/KIM_ECONOMY_AGENT.md`
 

@@ -23,7 +23,12 @@ export {
   resolveMissionCaptainPrimaryBlockReason,
 } from './resolveMissionCaptainPresence';
 
-export { resolveBarHostCaptainAtPlanet } from './resolveBarHostCaptainAtPlanet';
+export {
+  isSynthBarKioskHost,
+  resolveBarHostCaptainAtPlanet,
+  SYNTH_BAR_HOST_CAPTAIN_ID,
+  SYNTH_BAR_HOST_SCOPE,
+} from './resolveBarHostCaptainAtPlanet';
 
 export {
   getCaptainPresenceWorldIndex,

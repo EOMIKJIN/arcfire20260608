@@ -1,4 +1,4 @@
-# 22:00 KST intensive watch report scheduler (16:00–22:00 window)
+﻿# 22:00 KST intensive watch report scheduler (16:00–22:00 window)
 param(
   [string]$Package = 'com.arcfire.online',
   [string]$TargetTime = '22:00',

@@ -1,4 +1,4 @@
-# 10분 간격 meminfo — PSS creep 상관 (Unknown/GL/Native 분해)
+﻿# 10분 간격 meminfo — PSS creep 상관 (Unknown/GL/Native 분해)
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$IntervalMin = 10,

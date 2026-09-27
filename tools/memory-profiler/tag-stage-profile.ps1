@@ -1,4 +1,4 @@
-# STAGE 전환 시점 스냅샷 + mem-timeline 연동 (플레이테스트·수동)
+﻿# STAGE 전환 시점 스냅샷 + mem-timeline 연동 (플레이테스트·수동)
 param(
   [Parameter(Mandatory = $true)]
   [ValidateSet('planet_hub', 'galaxy_map', 'combat_transit', 'sub_stage', 'unknown')]

@@ -1,4 +1,4 @@
-# 22:00 KST 집중 감시 종합 보고 — 경제·행성개발 자동화·메모리 이상·비정상 점유
+﻿# 22:00 KST 집중 감시 종합 보고 — 경제·행성개발 자동화·메모리 이상·비정상 점유
 param(
   [string]$Package = 'com.arcfire.online',
   [string]$ReportPath = '',

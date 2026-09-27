@@ -1,4 +1,4 @@
-# One-shot mem snapshot (resume / manual check)
+﻿# One-shot mem snapshot (resume / manual check)
 #   기본은 "기록 전용" — 수동 스냅샷이 자동 재시작을 유발하지 않는다(검증·수동 테스트 안전).
 #   추세/하드실링 판정·자동조치까지 원하면 -Remediate 를 명시한다.
 param(

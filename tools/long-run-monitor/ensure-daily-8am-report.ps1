@@ -1,4 +1,4 @@
-# 데일리 08:00 KST 상시 보고 스케줄러 — 멱등 가동 (Cursor 세션·김경제 공통)
+﻿# 데일리 08:00 KST 상시 보고 스케줄러 — 멱등 가동 (Cursor 세션·김경제 공통)
 param(
   [switch]$ForceRestart
 )

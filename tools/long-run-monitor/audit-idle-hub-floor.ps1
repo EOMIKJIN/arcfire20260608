@@ -1,4 +1,4 @@
-# idle 허브 soak — native/PSS floor drift 감사 (코드 누수 vs GC 톱니 분리)
+﻿# idle 허브 soak — native/PSS floor drift 감사 (코드 누수 vs GC 톱니 분리)
 param(
   [string]$LogDir = (Join-Path $PSScriptRoot 'logs'),
   [string]$SessionFile = (Join-Path $PSScriptRoot 'logs/playtest-session-active.json'),

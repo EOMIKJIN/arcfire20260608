@@ -2,6 +2,9 @@ turnId,dialogSetId,bundleTier,sortOrder,speechAct,nlTopicId,delivery,speakerRole
 host_greet_01,dset_host,0,10,host_greet,bar.host.greet,scripted,host,어서 오게. 먼 항로를 달려왔군.,Welcome. You've come a long way through the lanes.
 host_ask_01,dset_host,0,20,host_ask_drink,bar.host.ask_drink,nl_preferred,host,한잔 사 주시겠나? 우리 아이들도 손님을 기다리고 있어.,Buy a round? Our attendants are waiting for a guest.
 host_decline_01,dset_host,0,30,host_decline_ack,bar.host.decline,scripted,host,알겠네. 공지판이랑 의뢰는 언제든 보게.,Understood. The board and jobs are always here.
+host_kiosk_greet_01,dset_host_kiosk,0,10,host_greet,bar.host.greet,scripted,host,개척 바 서비스입니다. 식별을 확인했습니다.,Frontier bar service. Identity confirmed.
+host_kiosk_ask_01,dset_host_kiosk,0,20,host_ask_drink,bar.host.ask_drink,scripted,host,잔을 고르면 됩니다. 종업원 슬롯이 대기 중입니다.,Choose a glass. Attendant slots are standing by.
+host_kiosk_decline_01,dset_host_kiosk,0,30,host_decline_ack,bar.host.decline,scripted,host,거절을 기록했습니다. 공지판은 열려 있습니다.,Decline logged. The board stays open.
 cheerful_t1_01,dset_cheerful,1,10,attendant_hello,bar.attendant.hello,nl_preferred,attendant,안녕하세요. 오늘 밤은 천천히 가볼까요?,Hi. Shall we take tonight slow?
 cheerful_t1_02,dset_cheerful,1,20,attendant_thanks_drink,bar.attendant.thanks_drink,nl_preferred,attendant,고마워요. 이 한잔으로 잠시 별을 잊게 해드릴게요.,Thank you. This drink will help you forget the stars for a bit.
 cheerful_t1_03,dset_cheerful,1,30,attendant_banter,bar.attendant.banter,nl_preferred,attendant,항로 이야기는 나중에… 지금은 음악만 들어요.,Lane stories later — for now just the music.

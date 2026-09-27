@@ -1,4 +1,4 @@
-# 정밀 크래시·worklet·Reanimated logcat (플레이테스트 전용)
+﻿# 정밀 크래시·worklet·Reanimated logcat (플레이테스트 전용)
 # 표준 crash-*.log 보다 넓은 ReactNativeJS:W + DEBUG backtrace 포함
 param(
   [string]$Package = 'com.arcfire.online',

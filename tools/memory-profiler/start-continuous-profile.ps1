@@ -1,4 +1,4 @@
-# 상시 메모리 프로파일링 — ensure-always-on-watch-stack 멱등 위임 (watch 중복 기동 방지)
+﻿# 상시 메모리 프로파일링 — ensure-always-on-watch-stack 멱등 위임 (watch 중복 기동 방지)
 param(
   [string]$Package = 'com.arcfire.online',
   [int]$MonitorIntervalMin = 30,
