@@ -24,7 +24,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'intro.btn.skipScene': '[ 건너뛰기 ]',
   'intro.btn.next': '[ 다음 ▶ ]',
   'intro.btn.startGame': '[ 게임 시작 ]',
-  'intro.btn.registerPilot': '[ 파일럿 등록 ]',
+  'intro.btn.registerPilot': '[ 함장 등록 ]',
   'intro.commLabel': '[ 통신 ]',
 
   'hud.credits': '크레딧',
@@ -417,9 +417,9 @@ export const KO_DICTIONARY: I18nDictionary = {
   'nickname.genericErrTitle': '오류',
   'nickname.authErr': '인증 정보를 찾을 수 없습니다. 다시 시작해주세요.',
   'nickname.retry': '다시 시도해주세요.',
-  'nickname.title': '파일럿 등록',
+  'nickname.title': '함장 등록',
   'nickname.subtitle': '은하계에 기록될 당신의 이름을\n입력하십시오.',
-  'nickname.label': '파일럿 식별명',
+  'nickname.label': '함장 식별명',
   'nickname.placeholder': '2~12자 (한글/영문/숫자)',
   'nickname.available': '✓ 사용 가능',
   'nickname.confirm': '[ 등록 확정 ]',
@@ -643,15 +643,22 @@ export const KO_DICTIONARY: I18nDictionary = {
   'combat.transitEndOperator': '함선 AI',
   'combat.transitEndVictoryBody': '교전 종료. 적 함대 격파.\n크레딧 +{credits} · 경험치 +{exp}\n목적지 성계로 항로를 재개합니다.',
   'combat.transitEndFleeBody': '교전을 이탈했습니다.\n손실을 최소화하며 목적지 성계로 항로를 재개합니다.',
+  'combat.enemyDefeatFallback': '함선이 먼저 꺾였다. 살아서 빠진다. 이건 끝이 아니다.',
 
   // ── 웨이브 결과창 (waveResult) ──
   'waveResult.win': '✦ 승  리 ✦',
   'waveResult.lose': '✕ 패  배 ✕',
   'waveResult.subtitle': '웨이브 디펜스 — 최종 결과',
+  'waveResult.subtitleHubOrbit': '궤도 교전 — 전투 결과',
+  'waveResult.subtitleTransit': '항로 교전 — 전투 결과',
   'waveResult.clearedWaves': '클리어 웨이브',
+  'waveResult.enemy': '상대',
   'waveResult.rewards': '— 보상 획득 —',
   'waveResult.exp': '경험치 +{exp}',
+  'waveResult.credits': '크레딧 +{credits}',
+  'waveResult.destroyed': '파손 장비',
   'waveResult.otherItems': '기타 아이템 — 추후 제공 예정',
+  'waveResult.noReward': '이번 전투에서 획득한 보상이 없습니다',
   'waveResult.confirm': '[ 확인 ]',
 
   // ── 행성 허브 (planet) ──
@@ -876,7 +883,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'arcCoreChat.operator.welcome': '연결됐어. 편하게 말해.',
   'arcCoreChat.operator.welcomeBack': '다시 왔네. 이어서 하자.',
   'arcCoreChat.operator.intro':
-    '나야, 스텔라. 잘 왔어.\n메인 퀘스트를 가진 함장과는 허브 INFO 창을 눌러 대화할 수 있어. 한번 열어 봐.',
+    '나야, 스텔라. 잘 왔어.\n메인 퀘스트를 가진 함장과는 허브 INFO 창을 눌러 대화할 수 있어. 한번 열어 봐.\n엘렌 드 코르가 널 찾고 있어,\n그녀와 대화해봐.',
   'arcCoreChat.operator.reply.greet': '응, 여기 있어. 편하게 말해.',
   'arcCoreChat.operator.reply.greetAgain': '듣고 있어.',
   'arcCoreChat.operator.reply.safety': '방어 지표는 관측되어 있어. 다른 축이 필요하면 물어봐.',
@@ -1259,19 +1266,19 @@ export const KO_DICTIONARY: I18nDictionary = {
   'scanRow.searching': '수색 중',
   'scanRow.search': '수색',
 
-  // ── 파일럿 정보 패널 (pilotPanel) ──
-  'pilotPanel.detailA11y': '파일럿 정보 상세',
+  // ── 함장 정보 패널 (pilotPanel) ──
+  'pilotPanel.detailA11y': '함장 정보 상세',
   'pilotPanel.passportTitle': '함장 신분증',
   'pilotPanel.photoSlotLabel': '사진',
-  'pilotPanel.portraitA11y': '파일럿 초상',
+  'pilotPanel.portraitA11y': '함장 초상',
   'pilotPanel.nickname': '닉네임',
   'pilotPanel.level': '레벨',
   'pilotPanel.credits': '크레딧',
   'pilotPanel.ship': '함선',
   'pilotPanel.skillPoints': '스킬 포인트',
   'pilotPanel.clan': '클랜',
-  'pilotPanel.a11y': '파일럿 정보',
-  'pilotPanel.header': '— 파일럿 정보 —',
+  'pilotPanel.a11y': '함장 정보',
+  'pilotPanel.header': '— 함장 정보 —',
 
   // ── 레벨업 상세 (levelUp) ──
   'levelUp.heading': '— 레벨 업 —',
@@ -1673,20 +1680,21 @@ export const KO_DICTIONARY: I18nDictionary = {
   'charSelect.errorTitle': '오류',
   'charSelect.notFound': '선택한 캐릭터 데이터를 찾을 수 없습니다.',
   'charSelect.title': '캐릭터 선택',
+  'charSelect.subtitle': '-스텔리움 연합 소속 함장-',
   'charSelect.emptyHint': '캐릭터 목록을 불러올 수 없습니다. 앱을 재시작해 주세요.',
-  'charSelect.register': '[ 파일럿 등록 ]',
+  'charSelect.register': '[ 함장 등록 ]',
   'charSelect.female': '여성',
   'charSelect.male': '남성',
   'charSelect.gender': '성별',
   'charSelect.age': '나이',
   'charSelect.personality': '성격',
 
-  // ── 파일럿 등록 오류 (pilotReg) ──
+  // ── 함장 등록 오류 (pilotReg) ──
   'pilotReg.profession_not_found': '선택한 캐릭터 정보를 불러올 수 없습니다. 다시 선택해 주세요.',
   'pilotReg.no_auth': '인증 정보가 없습니다.',
   'pilotReg.nickname_required': '닉네임을 입력하세요.',
   'pilotReg.account_mismatch': '다른 계정 데이터가 남아 있습니다. 앱을 재시작해 주세요.',
-  'pilotReg.already_registered': '이미 등록된 파일럿입니다.',
+  'pilotReg.already_registered': '이미 등록된 함장입니다.',
   'pilotReg.nickname_taken': '이미 사용 중인 닉네임입니다.',
   'pilotReg.create_failed': '캐릭터 생성에 실패했습니다.',
   'pilotReg.save_failed': '캐릭터 저장에 실패했습니다.',

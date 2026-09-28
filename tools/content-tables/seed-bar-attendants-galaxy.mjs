@@ -5,7 +5,9 @@
  * 계약 (2026-09-16 · 1등급 고유 초상):
  * - 바당 1~2명만 (번영 허브 2 · 그 외·프론티어 1)
  * - 1등급 11명 = 고유 이름 1:1 고유 초상. 돌려쓰기 금지
- * - 나머지 행 portraitImageAssetKey 공란 (2·3등급 예정)
+ * - 외곽·프론티어 예비 9명 = 이름당 고유 초상(char017–025). 같은 이름은 같은 키
+ * - 엔드게임 외곽 2행성(core_prime·genesis_origin) = 행 생성 후 고유 이름+초상(char026–027)으로 덮음.
+ *   예비 커서는 그대로 증가(신스 9명 순환 유지)
  * - planetId='*' 없음 · id(ta_att_NNN) 글로벌 유일
  * - 1등급 이름은 은하 전체 1회만
  */
@@ -70,16 +72,36 @@ const CORE_ROSTER_SPEC = [
 ];
 
 const RESERVE_CAST = [
-  { ko: '세이블', en: 'Sable', tagKo: '불꽃 같은 응원 박수', tagEn: 'Cheers like sparks', dialog: 'dset_ember' },
-  { ko: '신더', en: 'Cinder', tagKo: '보석처럼 반짝이는 눈인사', tagEn: 'Greeting that sparkles like gems', dialog: 'dset_echo' },
-  { ko: '오팔', en: 'Opal', tagKo: '메아리처럼 이어지는 화음', tagEn: 'Harmony that echoes on', dialog: 'dset_calm' },
-  { ko: '에코', en: 'Echo', tagKo: '새벽 항로를 여는 목소리', tagEn: 'Voice that opens the dawn lane', dialog: 'dset_cheerful' },
-  { ko: '니온', en: 'Neon', tagKo: '네온 잔에 기대는 파트너', tagEn: 'Partner leaning on a neon glass', dialog: 'dset_jazz' },
-  { ko: '제이드', en: 'Jade', tagKo: '수도 살롱의 상급 안내', tagEn: 'Senior host of the capital salon', dialog: 'dset_star' },
-  { ko: '루미', en: 'Lumi', tagKo: '번영 허브의 리드 퍼포머', tagEn: 'Lead performer of a prosperous hub', dialog: 'dset_ballroom' },
-  { ko: '카일라', en: 'Kayla', tagKo: '항로 교차점의 마스터 호스트', tagEn: 'Master host at the crossroads', dialog: 'dset_whisper' },
-  { ko: '세레', en: 'Sere', tagKo: '코어 살롱의 시그니처 파트너', tagEn: 'Signature partner of the core lounge', dialog: 'dset_echo' },
+  { ko: '세이블', en: 'Sable', tagKo: '불꽃 같은 응원 박수', tagEn: 'Cheers like sparks', portrait: 'assets/images/npc/bar_att_char017.png', dialog: 'dset_ember' },
+  { ko: '신더', en: 'Cinder', tagKo: '보석처럼 반짝이는 눈인사', tagEn: 'Greeting that sparkles like gems', portrait: 'assets/images/npc/bar_att_char018.png', dialog: 'dset_echo' },
+  { ko: '오팔', en: 'Opal', tagKo: '메아리처럼 이어지는 화음', tagEn: 'Harmony that echoes on', portrait: 'assets/images/npc/bar_att_char019.png', dialog: 'dset_calm' },
+  { ko: '에코', en: 'Echo', tagKo: '새벽 항로를 여는 목소리', tagEn: 'Voice that opens the dawn lane', portrait: 'assets/images/npc/bar_att_char020.png', dialog: 'dset_cheerful' },
+  { ko: '니온', en: 'Neon', tagKo: '네온 잔에 기대는 파트너', tagEn: 'Partner leaning on a neon glass', portrait: 'assets/images/npc/bar_att_char021.png', dialog: 'dset_jazz' },
+  { ko: '제이드', en: 'Jade', tagKo: '수도 살롱의 상급 안내', tagEn: 'Senior host of the capital salon', portrait: 'assets/images/npc/bar_att_char022.png', dialog: 'dset_star' },
+  { ko: '루미', en: 'Lumi', tagKo: '번영 허브의 리드 퍼포머', tagEn: 'Lead performer of a prosperous hub', portrait: 'assets/images/npc/bar_att_char023.png', dialog: 'dset_ballroom' },
+  { ko: '카일라', en: 'Kayla', tagKo: '항로 교차점의 마스터 호스트', tagEn: 'Master host at the crossroads', portrait: 'assets/images/npc/bar_att_char024.png', dialog: 'dset_whisper' },
+  { ko: '세레', en: 'Sere', tagKo: '코어 살롱의 시그니처 파트너', tagEn: 'Signature partner of the core lounge', portrait: 'assets/images/npc/bar_att_char025.png', dialog: 'dset_echo' },
 ];
+
+/** 엔드게임 외곽 2행성 — 예비 9 돌려쓰기 대신 고유 얼굴. 시드 커서는 그대로 소비(신스 순환 유지) */
+const OUTER_UNIQUE_OVERRIDE = {
+  core_prime: {
+    ko: '타샤',
+    en: 'Tasha',
+    tagKo: '코어 네온에 기대는 상석 파트너',
+    tagEn: 'Head-table partner leaning on core neon',
+    portrait: 'assets/images/npc/bar_att_char026.png',
+    dialog: 'dset_ember',
+  },
+  genesis_origin: {
+    ko: '조이',
+    en: 'Zoe',
+    tagKo: '기원 라운지의 플래티넘 안내',
+    tagEn: 'Platinum guide of the origin lounge',
+    portrait: 'assets/images/npc/bar_att_char027.png',
+    dialog: 'dset_whisper',
+  },
+};
 
 function parseCsv(text) {
   const rows = [];
@@ -180,7 +202,7 @@ function listFrontierBarEntries() {
       const label = String(r.systemNameKo ?? '').trim() || systemId;
       return {
         planetId: synthPlanetId(systemId),
-        note: `${label}·2등급 예정`,
+        note: `${label}·예비초상`,
       };
     });
 }
@@ -336,7 +358,7 @@ function main() {
         displayNameEn = reserve.en;
         taglineKo = reserve.tagKo;
         taglineEn = reserve.tagEn;
-        portraitImageAssetKey = '';
+        portraitImageAssetKey = reserve.portrait;
         dialogSetId = reserve.dialog;
       }
 
@@ -362,6 +384,17 @@ function main() {
         enabled: 1,
       });
     }
+  }
+
+  for (const row of rows) {
+    const ov = OUTER_UNIQUE_OVERRIDE[row.planetId];
+    if (!ov) continue;
+    row.displayNameKo = ov.ko;
+    row.displayNameEn = ov.en;
+    row.taglineKo = ov.tagKo;
+    row.taglineEn = ov.tagEn;
+    row.portraitImageAssetKey = ov.portrait;
+    row.dialogSetId = ov.dialog;
   }
 
   if (seenGrade1.size !== GRADE1_CAST.length) {

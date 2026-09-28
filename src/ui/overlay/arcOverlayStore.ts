@@ -4,6 +4,7 @@ import type { LevelUpSummary, MissionReward } from '../../types';
 import type { TradeProfitTip } from '../../game/tradeProfitTips';
 import type { ImageSourcePropType } from 'react-native';
 import { t } from '../../i18n';
+import { setCombatEndOutcomeHold } from '../../game/combat/combatEndOutcomeHold';
 import { resolveArcAlertAutoDismissMs } from './overlayAlertContract';
 import { preflightPlanetHubSession } from '../heavyUiDataSession/preflightPlanetHub';
 import type { NearbyInfoDetailRow } from '../../game/planetHub/nearbyPresenceDisplay';
@@ -152,14 +153,18 @@ export type ArcOverlayPlanetDevelopmentEntry = ArcOverlayBase & {
   initialView?: PlanetDevelopmentInitialView;
 };
 
-/** 웨이브 디펜스 전투 결과창(승리/패배 + 경험치 + 기타 보상) */
+/** 전투 결과창(웨이브 · 허브 궤도 · 이동중) — venue가 행 가림을 결정 */
 export type ArcOverlayWaveResultEntry = ArcOverlayBase & {
   kind: 'waveResult';
   outcome: 'win' | 'lose';
+  /** wave 외 venue는 0 + UI 숨김 */
   wavesCleared: number;
   totalWaves: number;
   expEarned: number;
-  /** 추후 설정: 기타 아이템 획득 목록(현재 비어 있음) */
+  venue?: 'wave' | 'hub_orbit' | 'transit';
+  enemyName?: string;
+  creditsEarned?: number;
+  destroyedLabels?: string[];
   itemRewards?: { icon: string; label: string }[];
   onClose: () => void;
 };
@@ -386,6 +391,7 @@ export function dismissArcOverlay(): void {
 }
 
 export function dismissAllArcOverlays(): void {
+  setCombatEndOutcomeHold(false);
   useArcOverlayStore.getState().dismissAll();
 }
 
@@ -408,6 +414,7 @@ export function resolvePendingArcOverlaysForStageExit(): void {
     }
   }
   useArcOverlayStore.getState().dismissAll();
+  setCombatEndOutcomeHold(false);
 }
 
 const PLANET_ECONOMY_INFO_OVERLAY_ID = 'planet-economy-info';
@@ -505,6 +512,34 @@ export function presentWaveResultOverlay(
     ...payload,
     autoDismissMs: resolveArcAlertAutoDismissMs(payload.autoDismissMs),
   });
+}
+
+function closeOverlayKindThenCallback(kind: 'waveResult' | 'levelUp'): void {
+  const stack = useArcOverlayStore.getState().stack;
+  let onClose: (() => void) | undefined;
+  for (let i = stack.length - 1; i >= 0; i -= 1) {
+    const entry = stack[i];
+    if (entry?.kind !== kind) continue;
+    if (entry.kind === 'waveResult' || entry.kind === 'levelUp') {
+      onClose = entry.onClose;
+    }
+    break;
+  }
+  useArcOverlayStore.getState().dismissWhere((e) => e.kind === kind);
+  onClose?.();
+}
+
+/**
+ * 결과창을 먼저 스택에서 제거한 뒤 onClose 를 부른다.
+ * onClose 가 미션·레벨업을 present 한 다음 dismiss() 하면 새 창이 닫히고 결과창이 남는다.
+ */
+export function closeWaveResultOverlay(): void {
+  closeOverlayKindThenCallback('waveResult');
+}
+
+/** 레벨업도 동일 — onClose 가 알림을 올린 뒤 dismiss() 하면 알림이 사라지고 레벨업이 남음 */
+export function closeLevelUpOverlay(): void {
+  closeOverlayKindThenCallback('levelUp');
 }
 
 const BM_SHOP_OVERLAY_ID = 'bm-shop';

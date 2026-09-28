@@ -1,19 +1,18 @@
 # Session PSS floor audit
 
-- generated: 2026-09-26T15:24:32.943Z
+- generated: 2026-09-27T17:24:23.270Z
 - verdict: **FAIL** (FAIL = last 7d STAIRCASE only)
-- sessions_long: 191 · SHORT excluded
-- class: STAIRCASE 116 / SAWTOOTH 45 / PARTIAL 21 / FLAT 9 / SHORT 629
-- recent_staircase: 6
+- sessions_long: 192 · SHORT excluded
+- class: STAIRCASE 116 / SAWTOOTH 46 / PARTIAL 21 / FLAT 9 / SHORT 632
+- recent_staircase: 5
 - median_stair_span_mb: 230.1
-- late_views≥450: 96/191 · views_stable: 39/191
+- late_views≥450: 96/192 · views_stable: 39/192
 - contract: pid + 20min gap · drop first 25% · 10min rolling min · stair span≥40 & retain≥0.7
 
 ## Recent STAIRCASE (FAIL window)
 
 | start | end | pid | span | retain | last_floor | late_views | views_stable |
 |---|---|---|---|---|---|---|---|
-| 2026-09-19T15:17:38.000Z | 2026-09-19T23:23:30.000Z | 20668 | 73.8 | 1.00 | 688.1 | 390 | N |
 | 2026-09-21T13:55:42.000Z | 2026-09-21T17:05:30.000Z | 9234 | 102.0 | 0.90 | 801.8 | 354 | N |
 | 2026-09-21T18:40:29.000Z | 2026-09-22T03:05:23.000Z | 23320 | 442.4 | 1.00 | 981.4 | 375 | N |
 | 2026-09-23T01:07:14.000Z | 2026-09-23T07:41:11.000Z | 3817 | 227.1 | 0.87 | 849.3 | 300 | N |
@@ -24,6 +23,7 @@
 
 | start | pid | class | span | retain | n | late_views |
 |---|---|---|---|---|---|---|
+| 2026-09-26T16:24:07.000Z | 27152 | SAWTOOTH | 184.1 | 0.22 | 89 | 385 |
 | 2026-09-26T11:21:49.000Z | 14287 | STAIRCASE | 252.8 | 1.00 | 13 | 391 |
 | 2026-09-26T03:10:33.000Z | 24792 | SAWTOOTH | 65.5 | 0.07 | 23 | 95 |
 | 2026-09-25T23:00:01.000Z | 12305 | FLAT | 12.2 | 0.21 | 18 | 95 |
@@ -53,6 +53,5 @@
 | 2026-09-15T10:55:39.000Z | 11123 | STAIRCASE | 152.1 | 1.00 | 13 | 185 |
 | 2026-09-14T13:57:31.000Z | 2870 | SAWTOOTH | 76.4 | 0.10 | 38 | 420 |
 | 2026-09-14T07:24:28.000Z | 16455 | STAIRCASE | 173.2 | 0.76 | 25 | 405 |
-| 2026-09-13T23:49:39.000Z | 25405 | SAWTOOTH | 137.5 | 0.26 | 26 | 246 |
 
 김팀장: 최근 STAIRCASE면 런타임 추측 패치 전에 실기 시설 팝 views·reclaim 실측. 과거 계단만으로는 완료 FAIL 아님.

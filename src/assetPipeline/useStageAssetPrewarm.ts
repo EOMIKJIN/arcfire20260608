@@ -3,8 +3,8 @@
 // ============================================================
 
 import { useCallback, useRef } from 'react';
-import { InteractionManager } from 'react-native';
 import { useFocusEffect } from 'expo-router';
+import { runStageUiAfterIdle } from '../navigation/stageNavGate';
 import type { StageRouteName } from '../stages/types';
 import { STAGE_ASSET_PREWARM_REGISTRY } from './mainStagePrewarmRegistry';
 
@@ -29,7 +29,7 @@ export function useStageAssetPrewarm(routeName: StageRouteName): void {
       const fn = STAGE_ASSET_PREWARM_REGISTRY[routeName];
       if (!fn) return undefined;
 
-      const handle = InteractionManager.runAfterInteractions(() => {
+      const handle = runStageUiAfterIdle(() => {
         if (generationRef.current !== gen) return;
         void fn({ routeName }).catch(() => {
           /* 분산 로드 실패 시 해당 화면 최초 접근 시 로드 */
@@ -38,9 +38,7 @@ export function useStageAssetPrewarm(routeName: StageRouteName): void {
 
       return () => {
         generationRef.current += 1;
-        if (typeof (handle as { cancel?: () => void }).cancel === 'function') {
-          (handle as { cancel: () => void }).cancel();
-        }
+        handle.cancel();
       };
     }, [routeName]),
   );

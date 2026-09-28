@@ -1,4 +1,4 @@
-Daily audit — 2026-09-27T15:00:09.984Z
+Daily audit — 2026-09-28T15:00:06.607Z
 
 TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -28,7 +28,7 @@ patched rows=0 path=D:\arcfire20260607\tables\content\item_defs.csv
 [sync-star-connections] wrote 64 directed edges -> D:\arcfire20260607\tables\content\star_system_connections.csv
 Generated CSV-driven content TS files at src/data/generated
 build-arc-core-chat-tables: wrote persona/operator-persona/speakers/topics/knowledge/purposes/modes/gm-beats/stella-life/stella-quest-notes
-[bar-patronage] attendants=103 songs=5 drinks=3 planetDrinkPrices=54 planetRoster=99 turns=47 hellos=20 clips=2
+[bar-patronage] attendants=103 songs=5 drinks=3 planetDrinkPrices=54 planetRoster=99 turns=47 hellos=22 clips=2
 [bar-voice] clips=2 -> D:\arcfire20260607\src\data\generated\csvBarVoiceClips.ts
 [audit:npc-fleet] PASS
   [info] obj_s008_a: vega_base — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
@@ -53,14 +53,14 @@ Largest TS/TSX under `src/` + `app/` (bytes)
 - 383,335 — `src/data/generated/csvItemDefs.ts`
 - 247,488 — `src/data/generated/csvStoryScenes.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
-- 170,253 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
-- 117,490 — `src/i18n/locales/ko.ts`
+- 174,374 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 118,035 — `src/i18n/locales/ko.ts`
 - 113,834 — `src/data/generated/csvMainStorySpine.ts`
-- 107,055 — `src/i18n/locales/en.ts`
-- 104,642 — `app/(game)/worldmap.tsx`
-- 93,874 — `app/(game)/planet.tsx`
+- 107,575 — `src/i18n/locales/en.ts`
+- 104,469 — `app/(game)/worldmap.tsx`
+- 94,894 — `app/(game)/planet.tsx`
 - 91,882 — `src/data/generated/csvMissions.ts`
-- 86,859 — `src/data/generated/csvBarPatronage.ts`
+- 90,835 — `src/data/generated/csvBarPatronage.ts`
 - 71,316 — `src/data/balance/generated/csvSynthSystemColonization.ts`
 - 71,070 — `src/data/generated/csvWeapons.ts`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`

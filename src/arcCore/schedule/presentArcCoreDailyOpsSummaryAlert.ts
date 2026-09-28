@@ -2,8 +2,8 @@
  * 일일 배치 요약 알림 — 배치 완료 시 1회 · 40초 자동 닫힘.
  * 스토리·파일럿 등록·차원항로·허브 미도착에서는 표시하지 않음.
  */
-import { InteractionManager } from 'react-native';
 import { t } from '../../i18n';
+import { runStageUiAfterIdle } from '../../navigation/stageNavGate';
 import { shouldSkipWorldOpsNotificationAlert } from '../territorial/territorialAlertGate';
 import { ARC_DAILY_OPS_SUMMARY_ALERT_ID } from '../../ui/overlay/overlayAlertContract';
 import { showArcNotificationAlert } from '../../utils/showArcAlert';
@@ -28,7 +28,7 @@ export function presentArcCoreDailyOpsSummaryAlert(
     ingest: summary.simOverlayIngest ? t('dailyOpsSummary.on') : t('dailyOpsSummary.off'),
   });
   if (shouldSkipWorldOpsNotificationAlert()) return;
-  InteractionManager.runAfterInteractions(() => {
+  runStageUiAfterIdle(() => {
     if (shouldSkipWorldOpsNotificationAlert()) return;
     try {
       showArcNotificationAlert(t('dailyOpsSummary.title'), body, {

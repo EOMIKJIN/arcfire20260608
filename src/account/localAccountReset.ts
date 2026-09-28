@@ -1,4 +1,3 @@
-import { InteractionManager } from 'react-native';
 import { clearCombatResumeSnapshot } from '../combat/combatResumeStore';
 import { deleteUserCloudSave } from '../firebase/firestore';
 import { getCurrentUser, markFreshStartAfterReset } from '../firebase/auth';
@@ -335,7 +334,7 @@ export async function finalizeLocalAccountResetNavigation(
 }
 
 function scheduleAccountResetFailedTip(): void {
-  InteractionManager.runAfterInteractions(() => {
+  runStageUiAfterIdle(() => {
     setTimeout(() => {
       try {
         showArcAlert(t('settings.reset.error.title'), t('settings.reset.error.body'));

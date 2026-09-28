@@ -3,8 +3,13 @@
 // ============================================================
 
 import { usePathname } from 'expo-router';
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useSyncExternalStore } from 'react';
+import {
+  isCombatEndOutcomeHold,
+  subscribeCombatEndOutcomeHold,
+} from '../../game/combat/combatEndOutcomeHold';
 import { useTransitCombatPostFlowRunning } from '../../game/transitCombat/transitCombatPostFlow';
+import { useIngameDialogStore } from '../../store/ingameDialogStore';
 import { usePlayerStore } from '../../store/playerStore';
 import { useOrbitCapitalCombatUiStore } from '../../store/orbitCapitalCombatUiStore';
 import { useArcOverlayStore } from './arcOverlayStore';
@@ -20,13 +25,25 @@ export const LevelUpOverlayBridge = memo(function LevelUpOverlayBridge() {
   const clearLevelUp = usePlayerStore((s) => s.clearLevelUp);
   const orbitCombatActive = useOrbitCapitalCombatUiStore((s) => s.active);
   const transitPostFlowRunning = useTransitCombatPostFlowRunning();
+  const combatResultOpen = useArcOverlayStore((s) => s.stack.some((e) => e.kind === 'waveResult'));
+  const narrativeOpen = useArcOverlayStore((s) => s.stack.some((e) => e.kind === 'narrative'));
+  const ingameDialogActive = useIngameDialogStore((s) => s.isActive());
+  const combatEndHold = useSyncExternalStore(
+    subscribeCombatEndOutcomeHold,
+    isCombatEndOutcomeHold,
+    isCombatEndOutcomeHold,
+  );
   const present = useArcOverlayStore((s) => s.present);
   const dismissWhere = useArcOverlayStore((s) => s.dismissWhere);
 
   const hideDuringCombat =
     (pathname?.includes('combat') ?? false)
     || orbitCombatActive
-    || transitPostFlowRunning;
+    || transitPostFlowRunning
+    || combatResultOpen
+    || narrativeOpen
+    || ingameDialogActive
+    || combatEndHold;
   const shouldShow = Boolean(
     levelUpPending && levelUpSummary && player && !hideDuringCombat,
   );
@@ -35,7 +52,7 @@ export const LevelUpOverlayBridge = memo(function LevelUpOverlayBridge() {
     if (shouldShow && levelUpSummary) {
       const exists = useArcOverlayStore
         .getState()
-        .stack.some((e) => e.kind === 'levelUp' && e.id === LEVEL_UP_OVERLAY_ID);
+        .stack.some((e) => e.kind === 'levelUp');
       if (!exists) {
         present({
           id: LEVEL_UP_OVERLAY_ID,

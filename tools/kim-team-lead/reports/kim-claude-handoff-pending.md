@@ -1,5 +1,385 @@
 # 김클로드 → 김팀장 검수 handoff
 
+## ✅ REVIEWED — 전투 종료 출력 단일 파이프라인 «구현» · 2026-09-28
+
+```text
+status=REVIEWED
+task_id=combat-end-outcome-pipeline-20260928
+kind=IMPLEMENTATION (김클로드 초안 · 김팀장 보완 2건 · 커밋 0)
+verdict=PASS (부분 보완 후) — 승리 3경로 단일화 성립 · U-3/U-4는 의도 보류로 유지
+대표님 지시=「김클로드의 전투결과창 단일화 파이프라인 작업을 확인하고 검수하라」
+```
+
+```text
+[pss-pre-dev] hot_path=전투 종료 1회성 체인(틱/프레임 아님) alloc=흐름당 클로저 ~5개 + 취소가능 1 timer cache=없음
+[pss-pre-dev] stage=STAGE3→허브/월드맵 전환 · dispose·reclaim 계약 미변경 risk=P1 무관
+[pss-pre-dev] verdict=PASS
+```
+
+**김팀장 재실행 게이트**: `tsc --noEmit -p tsconfig.client.json` **EXIT=0** · 전투 계약 테스트 **29/29 PASS** (`combatEndOutcomePlan` 7 · `presentCombatResultOverlay` 5 · `resolveCombatEnemyLeader` 4 · `transitCombatPostFlow` 7 · `hubCombatEndPresentContract` 6)
+
+**AGREE**
+- 순서 정본 `planCombatEndOutcomeSteps` + 실행기 `runCombatEndOutcomeFlow` (`onClose` 체인, `while`/`setInterval` 없음)
+- 이관 3경로: 허브 웨이브 `planet.tsx` · 허브 궤도 `PlanetEdenRaidTestLayer` · 이동중 **승리** `transitCombatPostFlow`
+- E-1: 승리 경로에서 `waitForArcOverlayKindsIdle` / `presentMissionClearWhenReady` 8초 폴링 제거
+- U-1 부분: 호출부가 `presentPendingCombatLevelUpThen` 직접 호출하지 않음
+- U-2: 승리 경로는 정본 `tryPresentPendingMissionClearDialog`
+- U-3/U-4를 켜지 않고 `onBackchannel: null` · flee 폴링 유지 — **의도 확인 전 확대 금지와 일치**
+
+**PARTIAL (버그 아님 · 문서화)**
+- 실행기는 플래너 배열을 런타임 순회하지 않음 — 핫패스 할당 회피. 순서는 콜백 체인으로 동일 구현.
+- 이동중 **패배** `combat.tsx` `handleDefeat` 는 아직 `presentCombatResultOverlay` 직접 호출(결과→격침 알림→행성 복귀). 승리가 아닌 패배 경로라 이번 이관 범위 밖. 흡수하려면 `notice`+`onFinished` 한 호출이면 됨 — **대표님 지시 전 미실시**.
+- 결과창 present 실패 시 `onClose`가 안 뜨면 이동중만 150s 캡으로 풀림. 허브는 기존과 동일(카드가 떠야 체인 진행).
+
+**김팀장 보완 (검수 중 반영 · 커밋 대기)**
+1. 이동중 승리 `Promise.race(delay(150s))` — 레이스 승리 후에도 타이머가 150초 남음 → `delayCancellable` + `finally cancel`
+2. `runMissionClear` — 이미 인앱대사가 열려 있으면 `tryPresent`를 부르지 않고 idle 후 재시도 (idle에 notice와 present가 겹치면 순서 역전)
+
+**남긴 것 (대표님 의도 확인 전 금지)**
+- **U-3** 백채널 `combat_end` — 웨이브만. 허브 궤도·이동중은 `null`
+- **U-4** flee — 결과창 계약 밖 · 폴링 유지
+- 이동중 패배 파이프라인 흡수 · R-D `?? 0` 스토어 필드 · R-C `kind:'reward'` 삭제
+
+**실기 (정적으로 완료 선언 불가)**
+1. 이동중 승리 → 결과창 → 레벨업 → 미션대사 → worldmap
+2. 허브 웨이브/궤도 동일
+3. 결과창 미터치(자동닫힘) 후에도 체인 이어짐
+
+**커밋**: 대표님 지시 전 금지.
+
+## 🟠 PENDING — 전투 종료 출력 단일 파이프라인 «구현» · 2026-09-28 (원문 보존)
+
+```text
+status=SUPERSEDED → REVIEWED 상단
+task_id=combat-end-outcome-pipeline-20260928
+kind=IMPLEMENTATION (김클로드 초안 · 커밋 0)
+대표님 지시=「단일 파이프라인 구축이 가능하면 효율화를 위해서 작업을 하는 것이 좋다」
+```
+
+```text
+[pss-pre-dev] hot_path=전투 종료 1회성 체인(틱/프레임 아님) alloc=흐름당 클로저 ~5개 cache=없음
+[pss-pre-dev] stage=STAGE3→허브/월드맵 전환 · dispose·reclaim 계약 미변경 risk=P1 무관·P7 주의
+[pss-pre-dev] verdict=PASS — 폴링 제거는 할당을 «줄이는» 방향
+```
+
+**게이트 전량**: `tsc` **EXIT=0** · 전투 테스트 **30/30 PASS** · `audit:no-bare-interaction-manager` **PASS** · `audit:ui-overlay` **PASS** · `audit:memory:all` **PASS**(worklet · native-reclaim 20/20 · resident-set 7/7 · hot-path hits=0)
+
+**신규**
+- `src/game/combat/combatEndOutcomePlan.ts` — **순서 정본**(순수 함수, RN/store 무의존). `result → levelUp → missionClear → notice → backchannel`
+- `src/game/combat/runCombatEndOutcomeFlow.ts` — 단일 파이프라인. 전 단계 **`onClose` 콜백 체인**, 폴링 0
+- `src/game/combat/combatEndOutcomePlan.test.ts` — **7종**. 조합별 «순서 불변» 검증 + 「flow 모듈에 `while`/`setInterval` 없음」 강제
+
+**이관 3경로**
+| 경로 | 조치 |
+|---|---|
+| 허브 웨이브 `planet.tsx` | `runCombatEndOutcomeFlow` · RED 퇴거는 `shouldStopAfterLevelUp` 훅으로 |
+| 허브 궤도 `PlanetEdenRaidTestLayer.tsx` | 〃 · 격침 알림은 `notice` 로 |
+| 이동중 **승리** `transitCombatPostFlow.ts` | 〃 + **단일 데드라인**(`TRANSIT_POST_FLOW_TOTAL_DEADLINE_MS=150s`)이 기존 **3중 상한**(자동닫힘40s+awaitOverlayClose42s+waitFor8~20s) 대체 |
+
+**효율 (E-1 해소)** — 승리 경로에서 결과창 이후 폴링이 **전부 제거**됐다: `waitForArcOverlayKindsIdle`×2 · `waitForIngameDialogIdle`×2 · `presentMissionClearWhenReady` **8초 루프** → **0**. 전부 `onClose` 콜백.
+**U-1 부분 해소** — 호출부에서 `presentPendingCombatLevelUpThen` 직접 호출 제거(테스트로 강제). 파이프라인만 레벨업을 소유.
+**U-2 해소** — 이동중도 정본 `tryPresentPendingMissionClearDialog` 사용(승리 경로).
+**부수**: 죽은 `presentVictoryResultOverlay` + 미사용 import 제거.
+**중요 디테일 보존**: 미션 대사가 열리면 `runAfterIngameDialogIdle`(구독 기반, 폴링 아님)로 알림·백채널을 그 뒤로 미룬다 — 기존 웨이브 동작 유지.
+
+**⚠️ 계약 테스트 2건을 «갱신»했다 (마스킹 아님)**
+`hubCombatEndPresentContract` · `transitCombatPostFlow` 가 소스 문자열 `presentCombatResultOverlay` 를 검사해 **구조 변경만으로 깨졌다** — 내가 지적했던 문자열 매칭의 취약성이 그대로 드러난 것이다. 새 구조 기준으로 고치고 **더 강한 단언을 추가**했다(호출부에 `presentPendingCombatLevelUpThen` 없음 · 승리 분기에 폴링 대기 없음).
+
+**❌ 남긴 것 — 판단 대기라 손대지 않았다**
+- **U-3 백채널 차등**: 여전히 웨이브에만. 두 호출부에 `onBackchannel: null` + 사유 주석. **의도 확인 후 한 줄로 켜진다.**
+- **U-4 이탈(flee)**: `outcome` 에 `'flee'` 가 없어 결과창 계약 밖. **flee 경로는 폴링 그대로 유지**(승리만 이관). `'flee'` 승인 시 같은 파이프라인으로 흡수 — 그때 `presentLevelUpIfPending`·`presentMissionClearWhenReady` 도 함께 제거되어 U-1/U-2 가 완전 해소된다.
+
+**🔴 실기 검증 필수 (정적으로는 확인 불가)**
+승리 경로가 이제 **`onClose` 발화에 의존**한다. 오버레이가 외부에서 강제 제거되면 150s 데드라인까지 대기한다(과거 42s). 아래 확인 요청:
+1. 이동중 전투 승리 → 결과창 → 레벨업 → 미션대사 → worldmap 이동까지 **끊김 없이 진행되는가**
+2. 허브 웨이브/궤도 승리 동일
+3. 결과창을 안 누르고 방치(자동닫힘 40s) 했을 때도 체인이 이어지는가
+
+## ✅ REVIEWED — 전투 종료 출력 일원화·효율화 검수 · 2026-09-28
+
+```text
+status=REVIEWED (SUPERSEDED)
+task_id=combat-output-unification-audit-20260928
+kind=CODE_AUDIT (김클로드 코드 변경 0 · 커밋 0)
+리포트=tools/kim-team-lead/reports/kim-claude-combat-output-unification-audit-20260928.md
+verdict=구현 `combat-end-outcome-pipeline-20260928` 이 U-1/U-2/E-1 승리 경로를 흡수. U-3/U-4는 의도 보류.
+```
+
+**게이트**: `tsc` **EXIT=0** · 테스트 **22/22 PASS** · `audit:no-bare-interaction-manager` **PASS** · `audit:ui-overlay` **PASS**
+**R-A 수정 확인** — `LevelUpOverlayBridge.tsx:40` `stack.some((e) => e.kind === 'levelUp')` **id 무관**. 레벨업 2장 위험 해소 ✅
+
+**핵심**: 대표님이 짚으신 「최종 출력」은 카드 한 장이 아니라 **«결과창 → 레벨업 → 미션대사 → 알림 → 백채널» 체인 전체**다. **카드는 통합됐고 체인은 갈라져 있다.**
+
+**🔴 U-1 (P1) 레벨업 구현이 3개** — `presentPendingCombatLevelUpThen`(허브 2경로, id `combat-result-level-up`) · **`transitCombatPostFlow.ts:237 presentLevelUpIfPending`**(이동중, id `transit-post-combat-level-up`, **통합 함수 미사용**) · `LevelUpOverlayBridge.tsx:44`(범용, `auto-level-up`). R-A 로 동시 표시는 막았으나 **코드 일원화는 안 됨**.
+
+**🔴 U-2 (P1) 미션클리어가 2가지 메커니즘** — 허브는 `tryPresentPendingMissionClearDialog()` **동기 1회**(저장소 9곳에서 쓰는 사실상 정본), 이동중만 `presentMissionClearWhenReady()` **8초 폴링 루프 자체 구현**.
+
+**🔴 U-3 (P1) 전투종료 백채널이 «웨이브에만»** — `reason:'combat_end'` 호출처 전수 = `planet.tsx:1294` **1곳뿐**. 허브 궤도·이동중 전투 후엔 **안 뜬다**. 「모든 전투 동일」 기준 가장 큰 불일치. **의도 차등인지 확인 필요.**
+
+**🟠 U-4 (P2) 이탈(flee) 결과창 여전히 없음** — `outcome:'win'|'lose'` 에 `flee` 미추가 · `transitCombatPostFlow.ts:152` 조기 return. (앞선 R-B 미반영)
+
+**⚡ E-1 (P1 · 대표님 지시한 효율화의 실체)** — 허브는 **`onClose` 콜백 체인**(이벤트 구동·지연 0), **이동중만 `await waitFor…` 11회 + `delay(32)` 폴링 루프 3개**. 같은 결과를 얻는 싼 패턴이 **이미 저장소 안에 있다**. 이동중을 콜백으로 전환하면 폴링이 전부 사라진다.
+**E-2 (P2)** 같은 단계에 자동닫힘(40s)·`awaitOverlayClose`(42s)·`waitForArcOverlayKindsIdle`(8~20s) **3중 상한**이 겹쳐 무엇이 먼저 끊는지 불명확. 콜백 전환 시 대부분 불필요.
+
+**제안 — 단일 파이프라인 `runCombatEndOutcomeFlow`**
+고정 순서 ① 결과 카드 → ② 레벨업(U-1 수렴) → ③ 미션대사(U-2 수렴) → ④ 격침/파손 → ⑤ 백채널(U-3 수렴, 차등이면 venue 플래그). 전부 `onClose` 콜백 연결(E-1 해소).
+**허브 2경로는 이미 이 모양이라 호출 교체만으로 끝난다.**
+
+**착수 순서**: ① U-3 의도 확인(판단만) → ② 파이프라인 신설 + **허브 2경로 이관**(위험 낮음) → ③ **이동중 이관**(중 — 현재 동작 중, 단계 분할) → ④~⑤ U-1·U-2 흡수 → ⑥ U-4 `flee`.
+
+**검증 요구**: venue 3종 × outcome 3종에서 **①~④가 같은 순서로 나오는가**를 동작 검증으로. 현행 계약 테스트는 경로별로 따로 있어 **«순서 일치»를 검사하지 않는다.**
+
+**한계**: U-3 이 **의도된 차등**(웨이브만 서사 비중)일 가능성 배제 못 함. ③은 현재 정상 동작 경로 교체라 D-3 과 같은 회귀 위험.
+
+## 🟠 PENDING — 범용 전투 결과 UI 구현 전수 검증 · 2026-09-28
+
+```text
+status=PENDING (잔여 리스크 5건 — P1 1 · P2 3 · P3 1)
+task_id=universal-combat-result-verify-20260928
+kind=VERIFY (김클로드 코드 변경 0 · 커밋 0)
+리포트=tools/kim-team-lead/reports/kim-claude-universal-combat-result-verify-20260928.md
+verdict=구현 «양호» — D-1~D-3 전부 반영 · 게이트 통과
+```
+
+**게이트**: `tsc` **EXIT=0** · 테스트 **15/15 PASS**(presentCombatResultOverlay 5 · hubCombatEndPresentContract 5 · transitCombatPostFlow 5)
+
+**✅ 반영 확인** — `venue` optional 기본 `'wave'`(기존 호출부 무수정) · **D-1** `showNoReward` + **허브 exp 실제 집계**(`PlanetEdenRaidTestLayer.tsx:2126`, 명세보다 한 발 더) · **D-2** `HUB_ORBIT_..._AUTO_DISMISS_MS=10_000` venue 분기 · **D-3** `reward` kind 존치 · 4경로 전부 배선.
+**잘한 점**: 순수 view-model 분리(`combatResultOverlayView.ts`)로 테스트가 **문자열 매칭이 아닌 동작 검증** · 허브 `presented` dedupe + `queueMicrotask` · 브리지에 `combatResultOpen` 억제 추가.
+**내 기우 정정**: 파손 알림 중복을 의심했으나 `transitCombatPostFlow.ts:380·389` 에 `if (payload.kind !== 'victory')` 로 **이미 막혀 있었다**(팝업 2개 → 1개).
+
+**🟠 R-A (P1) — 레벨업 카드가 2장 뜰 수 있다**
+브리지 중복 검사가 **자기 id 로 한정**돼 있다 — `LevelUpOverlayBridge.tsx:38-40` `e.id === 'auto-level-up'`. 그런데 결과창 체인은 **다른 id**(`combat-result-level-up`)를 쓴다.
+시나리오: 결과창 닫힘 → `presentPendingCombatLevelUpThen` present → 같은 순간 `combatResultOpen=false` 인데 `levelUpPending` 은 아직 true → 브리지가 **자기 카드를 추가 present**.
+이동중은 `transitPostFlowRunning` 이 true라 **안전**. **허브 경로 한정**이고 `orbitCombatActive` 해제 시점에 좌우되므로 **PLAUSIBLE(조건부)**.
+**수정 1줄**: `stack.some((e) => e.kind === 'levelUp')` — id 무관으로.
+
+**🟠 R-B (P2) — 「이탈(flee)」에는 결과창이 없다**
+`transitCombatPostFlow.ts:151` `if (payload.kind !== 'victory') return` → 이탈은 대사+파손 alert 만. 게다가 `outcome` 이 **`'win'|'lose'`** 뿐이라 표현 수단이 없다. 대표님 지시는 「**모든** 전투」다.
+→ ① 제외(현행) ② `'lose'` 로 표시 ③ **`'flee'` 추가**(김클로드 권고 — 이탈은 패배가 아니다).
+
+**🟠 R-C (P2) — `reward` 오버레이 경로 전체가 죽었다**
+`showArcOverlayReward` **호출 0건**. `kind:'reward'` 는 타입 정의와 그 함수 내부에만 남음. D-3 「제거 금지」는 **다른 소비자 우려** 때문이었는데 실측 결과 **소비자 없음**. 대표님 「쓰레기 코드」 기준(호출처 0 → 즉시 삭제)에 해당. 다만 미션 보상 UI 로 되살릴 계획이면 존치. **의도 확인 요청**(`RewardOverlayContent` 포함).
+
+**🟠 R-E (P2 · 실기)** 허브 10초가 적정한지는 실기로만 판단된다. 자동닫힘으로 닫혀도 `onClose` 체인(레벨업→미션대사→격침알림)은 정상 실행되므로 **구조는 맞다**. 값만 확인.
+
+**🟡 R-D (P3)** `presentCombatResultOverlay.ts:43-44` 가 `wavesCleared/totalWaves` 를 `?? 0` 으로 채워 저장 → 화면은 view-model 이 가려 정상이나, 스토어 덤프·분석에서 「0웨이브 클리어」로 오독 가능. optional 그대로 전달 권고.
+
+**착수 순서**: ① R-A 1줄 → ② R-B flee 결정 → ③ R-C 삭제/존치 결정 → ④ R-E 실기 10초 → ⑤ R-D.
+
+**한계**: R-A 는 `orbitCombatActive` 해제 타이밍에 좌우되므로 **레벨업이 걸린 허브 전투 승리**로 실기 확정 필요. 퀘스트 전용 전투(`resolveQuestCombatLock`) 별도 연출 요구는 이번에도 미확인.
+
+## 🟠 PENDING — 범용 전투 결과 UI 통합 설계 · 2026-09-28
+
+```text
+status=PENDING (D-1~D-3 결정 후 구현)
+task_id=universal-combat-result-ui-20260928
+kind=DESIGN_SPEC (김클로드 코드 변경 0 · 커밋 0)
+명세=tools/kim-team-lead/reports/kim-claude-ready-universal-combat-result-ui-20260928.md
+대표님 지시=「모든 전투는 동일한 범용 결과 UI 표시가 진행되어야 한다 (기준은 웨이브전투결과)」
+```
+
+**현황 — 5개 종료 경로가 4가지 다른 동작**
+① 허브 웨이브 `planet.tsx:1268` `presentWaveResultOverlay` **← 기준** · ② 이동중 승리 `transitCombatPostFlow.ts:162` `showArcOverlayReward`(**다른 UI**) · ③ 이동중 패배 `combat.tsx:287` 단순 alert · ④ **허브 비-웨이브 승리 `PlanetEdenRaidTestLayer.tsx:3275` — 표시 없음**(드라코 증상) · ⑤ 허브 비-웨이브 패배 `:3204` alert.
+※ 이동중 승리는 장비 파손 alert까지 더해 **팝업 2개** 연속.
+
+**제안 계약** — `kind:'waveResult'` **유지**(마이그레이션 0), 필드만 확장:
+`venue:'wave'|'hub_orbit'|'transit'`(optional·기본 `'wave'` → **기존 호출부 무수정**) · `enemyName?` · `creditsEarned?` · `destroyedLabels?` · `wavesCleared/totalWaves` **optional화**(비-웨이브는 행 숨김).
+렌더 분기·신규 i18n 키 6종은 명세 §4.
+
+**🔴 구현 전 결정 필요 3건 — 명세만으로 진행하면 잘못 만든다**
+- **D-1** 비-웨이브 허브 교전엔 **보상이 없다**(`:3252-3296` 에 `addExp`/`addCredits` 없음). 그대로 붙이면 「경험치 +0」 카드. → **a) 보상 없이 전과만 표시**(권고) / b) 보상 신설(밸런스·CSV 선행) / c) 현행 유지(지시와 배치)
+- **D-2** 비-웨이브는 **리스폰형 상시 교전** — 격파마다 40초 결과창이면 허브 체류 불가. → 자동닫힘 venue별 분리(웨이브·이동중 40s 유지 / 허브 비-웨이브 **8~10초**) 권고
+- **D-3** 이동중 전투는 **현재 정상 동작하는 UI 교체** = 회귀 위험. `kind:'reward'` 는 미션 보상 등에도 쓰이므로 **제거 금지**. → 후순위 배치
+
+**적용 순서(회귀 최소)**: ① 계약 확장(호출부 변경 0) → ② **④ 허브 비-웨이브 승리 연결 — 여기서 대표님 증상 해소** → ③ ⑤ 패배 → ④ ③ 이동중 패배 → ⑤ ② 이동중 승리 → ⑥ 파손 alert 흡수.
+
+**검증**: venue 4종 × outcome 2종에서 **결과창이 반드시 present 되는가**를 **동작 검증**으로(문자열 매칭 금지 — 기존 `hubCombatEndPresentContract.test.ts` 의 한계). 릴리즈 실기로 드라코 일반 교전 승리 확인.
+
+## 🟠 PENDING — 드라코 성운 전투 결과창 미표시 · 2026-09-28
+
+```text
+status=PENDING
+task_id=draco-wave-result-missing-20260928
+kind=CODE_AUDIT (김클로드 코드 변경 0 · 커밋 0)
+리포트=tools/kim-team-lead/reports/kim-claude-draco-wave-result-missing-20260928.md
+증상(대표님)=드라코 성운 일반 전투 · 적 전멸 직후 바로 종료 · 결과창 안 나옴
+verdict=**원인 확정** — 허브 «비-웨이브» 교전에는 결과창 경로가 «처음부터 없다» (버그 아님 · 기능 부재)
+```
+
+> **🔁 갱신 (대표님 추가 정보 「그냥 적함 파괴순간 행성허브에 있음」 반영)** — 화면 전환이 없었다는 것이 결정적이었다. 전환이 없었다 = **아무 종료 연출도 시도되지 않았다**. 아래 A·B·C 는 **이번 원인이 아니다**(웨이브 경로 결함 · 별건 유지).
+>
+> **확정 원인**: 드라코 = `mainStageCombatEnabled` 행성 → 허브 **비-웨이브 교전**(`PlanetEdenRaidTestLayer`). `useWaveDefenseController.ts:10-11` 주석이 이 경로를 웨이브와 분리해 명시한다. 결과창은 `useWaveDefenseController.ts:186-194` `phase==='ended'` 에만 붙어 있어 **웨이브 런이 없으면 한 줄도 실행되지 않는다.**
+>
+> **비-웨이브 유일 승리 핸들러** `PlanetEdenRaidTestLayer.tsx:3252-3296` 전문에 있는 것 = 내구 소모 · `recordMatchSummary` · `markWaveCombatVictoryCooldown` · `applyDefeatEnemyMissionObjectives` · (미션 클리어 **대기 중일 때만**) `tryPresentPendingMissionClearDialog` · 섀도우 공개.
+> **없는 것** = ❌ `presentWaveResultOverlay`(결과창) ❌ 종료 대사 ❌ 보상 카드.
+> → 일반 교전에서 **승리해도 화면 변화가 없다.** 증상과 정확히 일치.
+> 반증 근거도 확인: `presentWaveResultOverlay` 호출처는 `planet.tsx:1268` **웨이브 경로 1곳뿐**이다.
+>
+> **⚠️ 대표님 결정 필요 — 설계 판단이라 김클로드가 정할 수 없다.** 비-웨이브 허브 교전은 리스폰형 상시 교전이라 매 격파마다 40초 결과창이 뜨면 방해가 된다. 의도된 설계일 수 있다.
+> **A) 경량 피드백**(토스트 1~2초 「교전 종료 · 승리」) ← **김클로드 권고** · **B)** 웨이브와 동일한 결과창 연결 · **C)** 현행 유지 + 의도 문서화.
+> 선택 후 조치는 `PlanetEdenRaidTestLayer.tsx:3275` 블록 1줄 — 승패·행성 id 가 이미 그 자리에 있다.
+
+**⚠️ 경로부터 바로잡는다.** 「드라코 성운 전투」는 `combat.tsx`(이동중 전투)가 **아니다.**
+`dracoCombatTestVenue.ts:1-7` — 테스트 베뉴는 **비활성**(`DRACO_COMBAT_TEST_VENUE_ENABLED=false`)이고, 주석 정본이 「전투는 play_scenario CSV(**`mainStageCombatEnabled`**·`draco_boss`)」다. `draco_haven`/`draco_nebula` = **허브 메인스테이지 웨이브 전투** = `planet.tsx` 경로.
+→ **어제 김팀장이 손댄 `presentWaveEndResult` 경로**이고, 내가 「결과는 transit 단일 경로」라고 틀렸던 그 경로다.
+
+**🔴 확정 A — 결과창이 «취소 가능한 1.5초 타이머» 뒤에 있다**
+`planet.tsx:1267` 이 결과창을 `runAfterIngameDialogFeatureLinkDelay()` 로 감싼다. `ingameDialogFeatureLink.ts:50-75` 의 `registerPlanetSessionResource.dispose` 는 **타이머만 끄고 `pendingRuns` 를 실행하지 않는다.** → 1.5초 창 안에 행성 세션이 해제되면(`planet.tsx:446` route_blur · `:489` planet_change) **결과창이 조용히 사라진다.** 실패 로그도 없다. 덧붙여 `:1267` 은 `bindPlanetId` 를 안 넘겨 `planetId=null` 로 등록된다.
+
+**🔴 확정 B — `pendingRuns` 누수 → 묵은 결과창이 나중에 튀어나온다**
+`dispose` 가 `pendingRuns` 를 비우지도 않는다(비우는 건 `cancelIngameDialogFeatureLinkDelay` 뿐). → `hasIngameDialogFeatureLinkPending()` 영구 true · 다음 feature-link 가 `armTimer` 하면 **이전 전투 결과창이 1.5초 뒤 표시**. 「안 나왔다」와 「난데없이 떴다」가 같은 원인일 수 있다.
+
+**🔴 확정 C — abort 경로는 `onDismiss` 를 부르지 않는다**
+`planet.tsx:1317` 1번 분기(`openedWaveEnd && isActive`)는 결과창을 **전적으로 `onDismiss` 에 의존**하고 **폴백이 없다.** 그런데 `ingameDialogStore.ts:288-298` `abortAllOnLeave` 는 `set({ session: null })` 만 하고 **`onDismiss` 를 호출하지 않는다**(`useSafeRouterBack` 시설 나가기에서 발화). → 대사가 abort 로 닫히면 결과창 영구 미표시.
+**어제 신설한 `hubCombatEndPresentContract.test.ts` 는 이걸 못 잡는다** — 폴백 «문자열»이 소스에 있는지만 검사하므로, 1번 분기에 폴백이 없다는 사실은 검증 대상 밖이다.
+
+**⚠️ 단정 불가 (정직하게)** — 이번 건이 A·B·C 중 무엇인지 **확정하지 못했다.** 릴리즈라 `adb logcat` 에 `ReactNativeJS` **0건**, 전투/후처리 마커 **0건**이고, **웨이브 종료 경로에 진단 로그가 하나도 없다.** 다만 「대사 → **1.5초 공백** → 결과창」 구조상 A·C 모두 그 공백에서 터지며, 대표님 눈에는 「그냥 끝났다」로 보인다.
+
+**조치 제안**: ① `dispose` 가 대기 콜백을 **버리지 말고 flush** → ② 같은 자리에서 `pendingRuns` 비우기 → ③ **전투 결과창은 지연 없이 즉시**(1.5초는 «대사↔기능 연결»용이지 결과창용이 아니다) → ④ 1번 분기 폴백 → ⑤ 계약 테스트를 **문자열 매칭 → 동작 검증**으로 → ⑥ 웨이브 종료 경로 진단 로그 1줄.
+
+**대표님 확인 요청 1건**: 「바로 종료」가 **화면 전환까지** 포함인지 — 허브에 남았는데 결과만 없었는지, 은하 지도로 나갔는지에 따라 C(이탈 abort) 가능성이 갈린다.
+
+---
+
+## ✅ REVIEWED — 릴리즈 수정분 전수 검증 · 2026-09-28
+
+```text
+status=REVIEWED
+task_id=release-fix-verify-20260928
+kind=VERIFY (김클로드 코드 변경 0 · 커밋 0)
+리포트=tools/kim-team-lead/reports/kim-claude-release-fix-verify-20260928.md
+김팀장=FACT 대체로 AGREE · 잔여 전부 HOLD
+대표님=2026-09-28 「급한 작업 아니면 보류」
+```
+
+**잔여 HOLD (코드 금지).** 감사 체인 배선 · allowlist 줄 단위화 · planetCore 주석 · 20000 상수화 · R-7 QA 문서 — 전부 급하지 않음. 대표님 재지시 전 착수 금지.
+
+**김팀장 근거 재검수 (코드 대조 · 미반영).** 사실 관계는 대체로 맞다. 「이전과 동일」「P0」「재발 경로 그대로」는 과장. `audit:memory:all` 배선은 축이 달라 비권고.
+
+---
+
+### 🔁 김클로드 재확인 (2026-09-28 · 김팀장 반론 검증)
+
+김팀장 반론을 **코드로 재검수**했다. **4건은 김팀장이 옳고 내가 틀렸다. 1건만 유효하되 심각도를 내린다.**
+
+| 김팀장 반론 | 내 재검증 | 결론 |
+|---|---|---|
+| R-4 `true=queued` 유지 — 재시도 루프 이중 present 방지 | `transitCombatPostFlow` 재시도 루프가 `!presented` 마다 재호출. 큐잉 시 `false` 반환이면 **매 회차마다 `pending` 에 누적** → 이중·삼중 present | ✅ **김팀장 옳다. 내 권고가 버그를 만들 뻔했다** |
+| R-6 떠 있는 40s 오버레이는 안 끊음 | `shouldAbortBlankTransitPostFlow:123` = `!seen.value && elapsed >= 10000` — **한 번도 표시 안 된 경우만** 중단 | ✅ **김팀장 옳다. 내 「총 25s 상한」은 읽는 중인 오버레이를 끊었을 것** |
+| 지적 2-1 `planetCoreRuntimeStore` 는 부트/persist | 호출처 3곳 중 **`:658` 은 IM 밖 직접 호출**(hydrate 경로). IM 두 곳이 안 돌아도 워치는 재구축된다. 게다가 워치 주석 = 「착륙/목록 UI와 무관하게 벽시계 완료」 | ✅ **김팀장 옳다. 내 「진행성 기능」 판단이 틀렸다** |
+| 「이전과 동일」「P0」「재발 경로 그대로」는 과장 | 감사 **21→13건** 축소 · **신규 파일**은 감사가 잡음 · 사용자 대면 버그는 이미 수정됨. 「그대로」는 사실이 아니고 「P0」도 아니다 | ✅ **인정. 내 수사가 과했다** |
+
+**여전히 유효한 것 1건 (심각도 P0 → P2 로 정정)**
+
+감사가 **어디에도 배선되지 않았다**. 재확인 결과:
+
+```text
+package.json 참조          = audit:no-bare-interaction-manager (자기 자신뿐)
+audit-dev-process-gate.cjs = NO
+.cursor/rules/*.mdc        = NO
+AGENTS.md                  = NO
+```
+
+`audit:memory:all` 비권고는 **동의한다**(메모리 축 ≠ UI 흐름 축). 다만 내 요청은 「`audit:memory:all` **또는** `audit:dev-process-gate` **또는** 최소한 rules 문서 명기」였고, **나머지 두 대안은 답이 없다.**
+
+→ **축소 요청**: 셋 중 **하나만** — `.cursor/rules/arcfire-memory-leak-audit-first.mdc` §2 완료 게이트 표에 한 줄 추가로 충분하다. 자동 실행이 부담이면 문서 등재만이라도.
+
+**allowlist 파일 단위**는 지적을 유지하되 **위험도를 내린다** — 두 파일의 성격이 확인됐으므로(부트 배경 + hydrate 직접 호출 존재) 급하지 않다. 다음 감사 손볼 때 같이.
+
+전부 **실행 기반 검증**(감사 실행·테스트 실행·줄 단위 재집계). 주장 받아쓰기 없음.
+
+**게이트**: `audit:no-bare-interaction-manager` **PASS** · 테스트 **4/4 PASS**(transitCombatPostFlow · hubCombatEndPresentContract · uiForegroundSequence · governorQuestDestination)
+
+| 항목 | 판정 |
+|---|---|
+| **R-1** 바 대화창 | ✅ `bar.tsx` bare IM **0**, `runStageUiAfterIdle` 적용 |
+| **R-2** UI 차단 7곳 | ✅ 5곳 수정 + localAccountReset · 대상 6파일 **잔여 bare 0** · 저장소 **21→13건** |
+| **R-3** 재발 방지 감사 | ⚠️ **미완** — 만들었으나 **아무도 호출 안 함** |
+| **R-4** 큐잉/true | ✅ 호출측 완료(`!ok \|\| !isIngameDialogActive()`) · 코어는 주석만 |
+| **R-5** flush 1건 shift | ✅ 루프 + 재진입 가드 |
+| **R-6** 후처리 상한 | ✅ 12,000→**5,000** · 20,000→**8,000**×2 · `BLANK_ABORT 10,000` 신설 |
+
+**🔴 남은 지적 1 (P0) — 감사가 자동 실행되지 않는다**
+`audit:memory:all` 체인에 없음 · `audit:daily`(run-daily-audit.cjs) 내부 호출 없음 · `audit:dev-process-gate` 없음 · `.cursor/rules/*.mdc` 등록 없음 · package.json 내 자기 자신 외 참조 **0**.
+**R-3 의 목적은 「사람이 기억하지 않아도 막히는 것」이었다.** 지금은 직접 타이핑해야만 돈다 = 이전과 동일 상태. → **체인 배선 요청.**
+
+**🟠 남은 지적 2 (P1) — allowlist 가 «파일 단위»**
+`run-no-bare-interaction-manager.cjs:65` 이 파일 전체를 skip. `app/_layout.tsx`·`planetCoreRuntimeStore.ts` 는 **크고 자주 고치는 파일**이라, 앞으로 그 파일에 UI 차단 bare IM 을 **새로 넣어도 조용히 통과**한다 — 이번 사고의 재발 경로 그대로. → 줄 단위/건수 pin 또는 `// audit-allow:` 마커 요구.
+
+**🟠 지적 2-1** `planetCoreRuntimeStore.ts:557` 은 `rebuildPlanetDevJobWatch()` — 「PSS·히치」사유로 allowlist 됐으나 **행성 개발 잡 실시간 워치 재구축 = 진행성 기능**이다. `:119`(legacy 마이그레이션)도 동일. **배경이 맞는지 명시 판단 + 주석** 요청.
+
+**🟡 지적 3 (P2)** `transitCombatPostFlow.ts:136` `waitForArcOverlayKindsIdle(maxMs = 20000)` 만 하드코딩 잔존(형제는 전부 8,000 명명 상수).
+
+**✅ 김팀장이 내 보고를 넘어선 부분 + 내 오류 정정**
+내 보고 §8 「전투 결과는 `runTransitCombatPostFlow` **단일 경로**」는 **틀렸다.** `app/(game)/planet.tsx:1264-1324` 에 **허브 웨이브 전투 종료** 경로가 따로 있고, 김팀장이 같은 결함 클래스로 고친 뒤 계약 테스트까지 신설했다 — `hubCombatEndPresentContract.test.ts` 가 「**오퍼레이터 대사가 안 열려도 전투 결과는 반드시 표시**」를 강제한다. 대표님 증상이 허브 웨이브 전투였다면 내 보고만으로는 못 고쳤다. **경로 전수를 덜 한 내 잘못이다.**
+
+**요청 순서**: ~~①~⑤~~ **전부 HOLD** (대표님 2026-09-28 보류).
+
+**실기 확인은 여전히 필요** — 위는 전부 정적·게이트 검증이다. 앱 데이터 삭제 → 릴리즈 첫 실행 → 바 공연 중 대화 · 퀘스트 전투 승리까지가 최종 판정.
+
+---
+
+## ✅ REVIEWED — 릴리즈 빌드 UI 진행 정지 전수 검사 · 2026-09-28
+
+```text
+status=REVIEWED
+task_id=release-build-ui-flow-audit-20260928
+kind=CODE_AUDIT → 김팀장 반영
+리포트=tools/kim-team-lead/reports/kim-claude-release-build-ui-flow-audit-20260928.md
+김팀장=PARTIAL APPLY
+```
+
+**김팀장 판정 (2026-09-28 반영).** 실패 클래스(데드라인 없는 IM)에는 AGREE. 다만 R-2 7곳 전부에 2.5초 강제는 PSS·타이틀 히치를 키우므로 **플레이어 대면 UI만** 교체하고 부트/persist/reclaim/서브코어는 allowlist.
+
+| ID | 판정 | 조치 |
+|---|---|---|
+| R-1 | AGREE | `bar.tsx` → `runStageUiAfterIdle` |
+| R-2 | PARTIAL | 적용: 일일알림·세이브복구·초상프리웜·채팅제안·초기화실패알림. **제외**: `_layout`·`planetCoreRuntimeStore`(부트/persist) |
+| R-3 | AGREE | `npm run audit:no-bare-interaction-manager` + 배경 allowlist |
+| R-4 | PARTIAL | 전역 `true=queued` 유지(재시도 루프 이중 present 방지). 클리어 대사는 `isActive()` 재확인 |
+| R-5 | AGREE | flush를 대화 busy까지 루프 + 재진입 가드 |
+| R-6 | PARTIAL | 실패 대기 단축(5s/8s) + **한 번도 안 뜬 경우만** 10s abort. 떠 있는 40s 오버레이는 끊지 않음 |
+| R-7 | DISAGREE | 릴리즈에 전투 로그 UI 켜지 않음. 문서만 — 이번 패치 제외 |
+
+---
+
+## ✅ REVIEWED — 열린 문제 재정리 보고 (훅 자동화 P0) · 2026-09-28
+
+```text
+status=REVIEWED
+task_id=open-issues-brief-20260928
+kind=BRIEF (김클로드 코드 변경 0 · 커밋 0)
+리포트=tools/kim-team-lead/reports/kim-claude-open-issues-brief-20260928.md
+김팀장=AGREE · 훅 A-1~A-4 수정 · B-2 views 380–399 · C ack(아카이브)
+```
+
+아래 A/B/C 불릿은 김클로드 원문(검수 전). **훅 수정·ack는 적용됨.**
+
+**시급도 1위는 메모리가 아니라 훅 자동화다.**
+
+**A. 훅 (P0 · 신규)**
+- **A-1** `on-before-submit-prompt-incident-auto-fix.cjs` 가 **09-23 이후 모든 프롬프트**에 「사용자 지시 없이 즉시 코드 수정」 P0 주입 중. ack(`incident-handoff-acked-at.txt` = **08-13**)이 handoff(09-23)보다 **41일 과거** + `.cursor/trigger-incident-auto-fix.json` 존재 → **독립 충분조건 2개**. → 김팀장 작업이 대표님 지시 없이 시작된 실제 원인.
+- **A-2** `on-session-start-incident-triage.cjs:37` 은 **ack 검사가 없다** — 창 열기만 해도 발동. A-1만 닫으면 남는다. **두 경로 동시 차단 필요.**
+- **A-3 🔴** 김클로드 handoff **자동검수 훅 2개가 무효**. `kimClaudeHandoffCore.cjs:27` 정규식이 **표 형식만** 인식 → 실제 반환 `REVIEWED`/`transit-combat-skia-backdrop-fix-20260916`(**09-16 옛 항목**). 진짜 최상단은 `PENDING`. `.kim-claude-auto-review-followup.json` **미존재** = **한 번도 발동 안 함**. 대표님 07-26 지시가 미작동 상태. → 수정: 표+코드블록 둘 다 인식하고 **최소 오프셋** 선택(«첫 매치»가 아님).
+- **A-4** `on-stop-…-auto-review.cjs:90` `main();` 뒤 ` 신` 오타 → ReferenceError 종료. line 7 `무동작ㅎ`.
+
+**B. PSS 계단 — 김팀장 판정 수용 · 김클로드 주장 1건 철회**
+- **B-1** 「views +264 = 트리 잔류 1순위」 **철회한다.** 김팀장 DISAGREE가 맞다. 추가 근거 ① `audit:memory:session-floor` 최근 STAIRCASE **5건 전부 `views_stable=N` · late_views 300~391(450 미달)** 인데 last_floor **801~981MB**. ② 실기(pid 27152, 허브 idle 8.5분): **views 380 평탄**(404 스파이크 후 복귀) · PSS 700→736 — 김팀장이 지목한 «views 평탄 + native 상승» 본축이 실기에서 관측됨.
+- **B-2 ⚠️ 재판정 §수정방향 3번 기대값 정정 요청** — 「허브 단독 views ~285」로 적혀 있으나 **실기 허브 단독은 380~399**(시설 push 없음·Activities=1). **285를 복귀 기준으로 쓰면 정상을 실패로 오판한다.**
+- **B-3** 계단 현재진행: `verdict=FAIL long=192 stair=116 recent_stair=5` · median span 230.1MB. 과거 데이터로 치울 수 없음.
+- **B-4** 실기 현재값: PSS **722MB** · native 356 · **GL 37**(정상, GL축 아님 재확인) · Views **399**(idle 기준 ≤380 소폭 초과, FAIL 450 미달). 허브는 완전 idle 아님 — inbound drone 사이클, 33분간 `hubSkiaNativeReclaim epoch=56`, 회수는 매번 동작.
+
+**C.** 09-23 `GL_HARD_CEILING gl=52.4 pss=979.3 views=454` 가 미해결이라 A-1/A-2의 근원. **단독 ack 금지** — B 판정과 묶어 처리 권고.
+
+**D. 완료분 (조치 불필요)** — PowerShell 한글 BOM 54파일 + `analyze-playtest-session.ps1:82` `${k}` 파서 수정. **09-28 스케줄러 로그에서 `VERIFY OK — 커밋·푸시 완료 확인.` 실증.** HEAD 반영 확인, 데일리 커밋 09-27·09-28 연속 성공.
+
+**착수 순서**: ① A-3 정규식(게이트 자체가 죽어 있음·저위험) → ② A-1+A-2 동시 차단 → ③ A-4 → ④ B-2 baseline 실측 고정 후 B 진행 → ⑤ C ack.
+
+**김클로드는 A·C를 임의 실행하지 않았다** — handoff 삭제·ack는 비가역이라 김팀장 판단 사항.
+※ 참고: A-3가 고쳐지기 전에는 **이 PENDING도 자동검수에 걸리지 않는다.**
+
+---
+
 ## 🟠 PENDING — PowerShell 한글 깨짐 전수 수정 (BOM) · 2026-09-27
 
 ```text

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { InteractionManager } from 'react-native';
 import { getCurrentUserEnsured } from '../auth';
+import { runStageUiAfterIdle } from '../../navigation/stageNavGate';
 import { useAppBootStore } from '../../store/appBootStore';
 
 const TRANSIENT_RESTORE_ERRORS = new Set(['consume_failed', 'user_read_timeout', 'restore_failed']);
@@ -41,7 +41,7 @@ export function GameSaveRestorePendingConsumer() {
       attemptedUidRef.current = uid;
     };
 
-    const handle = InteractionManager.runAfterInteractions(() => {
+    const handle = runStageUiAfterIdle(() => {
       void (async () => {
         try {
           const authUser = await getCurrentUserEnsured();

@@ -7,6 +7,11 @@
 // - 제목↔부제 8px · 헤더 블록↔본문 16px
 // ============================================================
 
+import { OVERLAY_TOKENS } from '../../utils/theme';
+
+/** 별/암배경 온보딩 제목 — 시설 카드용 어두운 titleInk 대신 포스포르 액센트 */
+export const ONBOARDING_TITLE_INK = OVERLAY_TOKENS.phosphorAccent;
+
 /** SafeArea 하단 경계 직후 제목까지 간격 */
 export const ONBOARDING_COMPACT_HEADER_TOP_PX = 12;
 
@@ -17,8 +22,8 @@ export const ONBOARDING_TITLE_SUBTITLE_GAP_PX = 8;
 export const ONBOARDING_HEADER_BODY_GAP_PX = 16;
 
 /**
- * 캐릭터 선택 — 부제(2줄 설명) 제거 시 제목 위치 보정
- * = compact top + title↔부제 gap + 2×lineHeight(20) + header↔본문 gap
+ * 캐릭터 선택 — 부제 없을 때 제목 위치 보정(레거시).
+ * 부제를 다시 쓰는 화면은 compact top + 제목 + 부제를 쓴다.
  */
 export const ONBOARDING_CHARACTER_SELECT_HEADER_TOP_PX =
   ONBOARDING_COMPACT_HEADER_TOP_PX +

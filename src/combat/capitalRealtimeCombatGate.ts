@@ -8,6 +8,7 @@ import { resolvePlanetGovernorHostileCombatCaptainId } from '../game/planetGover
 import { captainMatchesPlanetOrbitTable } from '../npc/captainOrbitTableMatch';
 import { getCaptainPrimaryPresence } from '../arcCore/captainPresence/buildCaptainPresenceWorldIndex';
 import { getNpcCaptain } from '../npc/npcFleetRegistry';
+import { markFirstHostileFleetLeader } from '../game/combat/resolveCombatEnemyLeader';
 
 export const CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID = '__transit__';
 
@@ -17,6 +18,8 @@ export type CombatFleetSeedSlot = {
   captainId: string | null;
   /** 전투 인스턴스 구분(웨이브 등) — CSV 함장 id 중복 spawn 시 world presence 제외 */
   combatInstanceKey?: string | null;
+  /** 적 함대 리더 — 2기 이상이면 1기만 true. 없으면 첫 적 슬롯 */
+  isLeader?: boolean;
 };
 
 function resolveCombatTeamFromCaptain(
@@ -80,14 +83,15 @@ export function resolveCombatFleetSlotsFromCaptains(
   }
   const withGovernor = appendGovernorHostileCombatSlot(planetId, rows);
   const cap = resolvePlanetHostileShipCount(planetId);
-  if (cap == null) return withGovernor;
+  if (cap == null) return markFirstHostileFleetLeader(withGovernor);
   let redCount = 0;
-  return withGovernor.filter((slot) => {
+  const capped = withGovernor.filter((slot) => {
     if (slot.team !== 'red') return true;
     if (redCount >= cap) return false;
     redCount += 1;
     return true;
   });
+  return markFirstHostileFleetLeader(capped);
 }
 
 export function hasCapitalRealtimeCombatSlotsForPlanet(

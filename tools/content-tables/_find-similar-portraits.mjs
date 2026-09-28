@@ -32,6 +32,17 @@ const KEEP = new Set([
   'bar_att_char014.png',
   'bar_att_char015.png',
   'bar_att_char016.png',
+  'bar_att_char017.png',
+  'bar_att_char018.png',
+  'bar_att_char019.png',
+  'bar_att_char020.png',
+  'bar_att_char021.png',
+  'bar_att_char022.png',
+  'bar_att_char023.png',
+  'bar_att_char024.png',
+  'bar_att_char025.png',
+  'bar_att_char026.png',
+  'bar_att_char027.png',
 ]);
 
 const HASH_W = 9;

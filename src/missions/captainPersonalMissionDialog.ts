@@ -129,7 +129,11 @@ function presentOfferPages(input: {
   const captain = getNpcCaptain(input.captainId);
   const imageSource = resolveNpcCaptainPortraitSource(captain?.portraitImageAssetKey ?? null) ?? undefined;
   const memory = getCaptainPresenceMemory(input.captainId);
-  const destPlanetId = resolveCaptainPersonalDestPlanetId(templateId, input.planetId);
+  const destPlanetId = resolveCaptainPersonalDestPlanetId(
+    templateId,
+    input.planetId,
+    input.captainId,
+  );
   const destName = resolvePlanetDisplayName(destPlanetId, locale)
     || (locale === 'en' ? 'the next hub' : '다음 거점');
   const lastPlanet = resolvePlanetDisplayName(memory?.lastPlanetId ?? '', locale)

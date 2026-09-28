@@ -174,7 +174,6 @@ import {
 import { GalaxyMapContestedZoneRingOverlay } from '../../src/galaxyMap/GalaxyMapContestedZoneRingOverlay';
 import { useUnidentifiedAnomalyStore } from '../../src/store/unidentifiedAnomalyStore';
 import { scheduleUnidentifiedAnomalyTestWatch } from '../../src/missions/unidentifiedAnomaly/unidentifiedAnomalyTestRotationWatch';
-import { flushPendingTerritorialOccupationAlert } from '../../src/arcCore/territorial/showTerritorialOccupationChangeAlert';
 import { UNIDENTIFIED_ANOMALY_RING_COLOR } from '../../src/missions/unidentifiedAnomaly/unidentifiedAnomalyTestPolicy';
 import { GalaxyMapColonizeHubPulseOverlay } from '../../src/galaxyMap/GalaxyMapColonizeHubPulseOverlay';
 import {
@@ -808,7 +807,6 @@ export default function WorldMapScreen() {
   useFocusEffect(
     useCallback(() => {
       scheduleUnidentifiedAnomalyTestWatch();
-      flushPendingTerritorialOccupationAlert();
     }, []),
   );
 

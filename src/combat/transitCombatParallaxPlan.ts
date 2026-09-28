@@ -30,6 +30,12 @@ export const TRANSIT_SPACE_DRIFT_PX_PER_SEC = 1.15;
 export const TRANSIT_SPACE_PHASE_SEC = 1.6;
 /** 구름은 1.15~1.7px/s. 80ms는 Picture+setState가 전투 프레임과 겹쳐 끊김. */
 export const TRANSIT_PARALLAX_TICK_MS = 120;
+/**
+ * Picture+setState 최소 간격. 틱(120ms)마다 finishRecordingAsPicture 하면
+ * 궤도 전투 Picture(60Hz)와 겹쳐 Hermes/Finalizer가 3~5초 주기로 걷는다.
+ * 구름 1.7px/s 기준 320ms ≈ 0.5px — 레이아웃·첫 프레임은 force commit.
+ */
+export const TRANSIT_PARALLAX_MIN_COMMIT_MS = 320;
 /** 화면 좌표: +x 오른쪽, +y 아래 = 좌상→우하 */
 export const TRANSIT_DIAGONAL_SX = 1;
 export const TRANSIT_DIAGONAL_SY = 0.68;

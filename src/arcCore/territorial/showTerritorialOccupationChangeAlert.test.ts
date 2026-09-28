@@ -123,13 +123,21 @@ test('6) 배선 — 전투결과(maintained)·변경 팝업이 공통 게이트�
   const src = readFileSync(resolve(__dirname, 'showTerritorialOccupationChangeAlert.ts'), 'utf8');
   assert.match(src, /shouldSkipTerritorialOccupationAlert/);
   assert.match(src, /function presentTerritorialAlertNow/);
-  assert.match(src, /flushPendingTerritorialOccupationAlert/);
+  assert.doesNotMatch(src, /pendingTerritorialAlertShow/);
+  assert.doesNotMatch(src, /flushPendingTerritorialOccupationAlert/);
   assert.match(src, /messageSection/);
   assert.match(src, /territorial\.alert\.resultLabel/);
   const maintainedIdx = src.indexOf('export function showTerritorialOccupationMaintainedAlert');
   assert.ok(maintainedIdx > 0);
   assert.match(src.slice(maintainedIdx), /presentTerritorialAlertNow/);
   assert.match(src.slice(maintainedIdx), /messageSection/);
+});
+
+test('7) 허브·지도 진입에서 밀린 접전 팝업을 flush 하지 않는다', () => {
+  const planet = readFileSync(resolve(__dirname, '../../../app/(game)/planet.tsx'), 'utf8');
+  const worldmap = readFileSync(resolve(__dirname, '../../../app/(game)/worldmap.tsx'), 'utf8');
+  assert.doesNotMatch(planet, /flushPendingTerritorialOccupationAlert/);
+  assert.doesNotMatch(worldmap, /flushPendingTerritorialOccupationAlert/);
 });
 
 console.log('[territorialOccupationAlert] all tests passed');

@@ -69,10 +69,7 @@ import { teardownPlanetHubCombatForGalaxyDeparture } from '../../src/game/teardo
 import { resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 import { resolvePlayerPlanetStayBlock } from '../../src/clanWar/planetTerritoryPlayerAccess';
 import { clearPlanetAssaultIntent } from '../../src/game/waveDefense/planetAssaultIntent';
-import {
-  flushPendingTerritorialOccupationAlert,
-  showTerritorialOccupationChangeAlert,
-} from '../../src/arcCore/territorial/showTerritorialOccupationChangeAlert';
+import { showTerritorialOccupationChangeAlert } from '../../src/arcCore/territorial/showTerritorialOccupationChangeAlert';
 import { getPlanetOccupationSeedRow } from '../../src/arcCore/balance/balanceTableRegistry';
 import { usePlanetStageSession } from '../../src/game/usePlanetStageSession';
 import { useStageTransitionStuckWatchdog } from '../../src/navigation/stageTransitionStuckWatchdog';
@@ -112,7 +109,6 @@ import {
   isIngameDialogActive,
   presentIngameDialogScene,
   resetIngameDialogPlanetLandedDedupe,
-  runAfterIngameDialogFeatureLinkDelay,
   tryPresentScanToMainQuestDialog,
 } from '../../src/game/ingameDialog';
 import { hasAnyActiveMissionBundle } from '../../src/missions/missionActiveBundles';
@@ -289,7 +285,10 @@ import { CombatEndHoldVeil } from '../../src/components/combat/CombatEndHoldVeil
 import { useWaveDefenseStore } from '../../src/game/waveDefense/waveDefenseStore';
 import { useWaveDefenseController } from '../../src/game/waveDefense/useWaveDefenseController';
 import { WAVE_DEFENSE_MAX_WAVES } from '../../src/game/waveDefense/waveDefenseFleet';
-import { presentWaveResultOverlay, presentSettingsOverlay, presentBmShopOverlay, presentPlanetOwnershipRosterOverlay } from '../../src/ui/overlay/showArcOverlay';
+import { presentSettingsOverlay, presentBmShopOverlay, presentPlanetOwnershipRosterOverlay } from '../../src/ui/overlay/showArcOverlay';
+import { runCombatEndOutcomeFlow } from '../../src/game/combat/runCombatEndOutcomeFlow';
+import { presentCombatEndLeaderDialog } from '../../src/game/combat/presentCombatEndLeaderDialog';
+import { useOrbitCapitalCombatUiStore } from '../../src/store/orbitCapitalCombatUiStore';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { useT } from '../../src/i18n';
 import { usePlanetHubInfoDistanceSort } from '../../src/game/planetHub/usePlanetHubInfoDistanceSort';
@@ -411,7 +410,6 @@ export default function PlanetScreen() {
       setIsPlanetRouteFocused(true);
       markPlanetHubWorldOpsNotifyUnlocked();
       scheduleUnidentifiedAnomalyTestWatch();
-      flushPendingTerritorialOccupationAlert();
       resetPlanetHubNavigationThrottle();
       /**
        * 메인 스테이지 진입 직전 세션 등록 — `1.arcfire_flowchart.md` §2-2
@@ -684,6 +682,7 @@ export default function PlanetScreen() {
   /** 웨이브 간(cleared) reclaim 훅·주기 reclaim skip 정밀화용 — 이 행성 활성 아니면 무관 */
   const waveDefensePhase = useWaveDefenseStore((s) => s.phase);
   const waveDefenseEndHoldActive = useWaveDefenseStore((s) => s.endHoldActive);
+  const hubCombatEndHold = useOrbitCapitalCombatUiStore((s) => s.endHoldActive);
   const [midWaveEndHold, setMidWaveEndHold] = useState(false);
   useEffect(() => {
     if (
@@ -699,7 +698,8 @@ export default function PlanetScreen() {
     return () => clearTimeout(midHoldTimer);
   }, [waveDefenseActiveHere, waveDefensePhase, waveDefenseWaveIndex]);
   const waveCombatEndVeilVisible =
-    waveDefenseEndHoldActive
+    hubCombatEndHold
+    || waveDefenseEndHoldActive
     || midWaveEndHold
     || (waveDefenseActiveHere && waveDefensePhase === 'cleared' && waveDefenseWaveIndex >= WAVE_DEFENSE_MAX_WAVES)
     || (waveDefenseSessionHere && waveDefensePhase === 'ended');
@@ -1261,55 +1261,80 @@ export default function PlanetScreen() {
         });
       });
     }
-    waveEndDialogShownRef.current = true;
-    presentIngameDialogScene('ingame_dialog_wave_defense_end', {
-      autoDismissMs: COMBAT_END_OPERATOR_AUTO_DISMISS_MS,
-      onDismiss: () => {
-        if (!waveEndDialogShownRef.current) return;
-        waveEndDialogShownRef.current = false;
-        const s = useWaveDefenseStore.getState();
-        const expEarned = s.expEarned;
-        runAfterIngameDialogFeatureLinkDelay(() => {
-          presentWaveResultOverlay({
+    const presentWaveEndResult = () => {
+      const s = useWaveDefenseStore.getState();
+      const expEarned = s.expEarned;
+      runCombatEndOutcomeFlow({
+        result: {
+          venue: 'wave',
           outcome: s.outcome ?? 'win',
           wavesCleared: s.wavesCleared,
           totalWaves: WAVE_DEFENSE_MAX_WAVES,
           expEarned,
-          onClose: () => {
-            if (expEarned > 0) usePlayerStore.getState().addExp(expEarned);
-            useWaveDefenseStore.getState().reset();
-            // 패배 — 행성이 여전히 RED 점유면 체류 불가, 은하 지도로 퇴거
-            const pid = usePlayerStore.getState().player?.currentPlanetId?.trim() ?? '';
-            if (pid && resolvePlayerPlanetStayBlock(pid)) {
-              clearPlanetAssaultIntent();
-              showArcAlert(t('worldmap.redTerritoryTitle'), t('worldmap.redTerritoryBody'));
-              beginPlanetHubSuspendingNavigation(() => router.replace('/(game)/worldmap'), {
-                preserveCombatSnapshot: false,
-              });
-              return;
-            }
-            const presentCombatEndChannel = () => {
-              if (isArcCoreTutorialForceActive()) return;
-              queueMicrotask(() => {
-                void presentArcCoreBackchannel({
-                  reason: 'combat_end',
-                  triggerId: `wave:${endedPlanetId || pid}`,
-                  openerText: t('arcCoreChat.opener.combat_end'),
-                  speakerId: 'arc_core',
-                });
-              });
-            };
-            tryPresentPendingMissionClearDialog();
-            if (isIngameDialogActive()) {
-              runAfterIngameDialogIdle(presentCombatEndChannel);
-              return;
-            }
-            presentCombatEndChannel();
-          },
-        });
-        });
+        },
+        onResultClosed: () => {
+          if (expEarned > 0) usePlayerStore.getState().addExp(expEarned);
+          useWaveDefenseStore.getState().reset();
+        },
+        // RED 퇴거 — 미션 대사는 건너뛰고 레벨업(4순위) 뒤에 월드맵으로
+        shouldSkipMissionClear: () => {
+          const pid = usePlayerStore.getState().player?.currentPlanetId?.trim() ?? '';
+          return Boolean(pid && resolvePlayerPlanetStayBlock(pid));
+        },
+        shouldStopAfterLevelUp: () => {
+          const pid = usePlayerStore.getState().player?.currentPlanetId?.trim() ?? '';
+          if (!pid || !resolvePlayerPlanetStayBlock(pid)) return false;
+          clearPlanetAssaultIntent();
+          showArcAlert(t('worldmap.redTerritoryTitle'), t('worldmap.redTerritoryBody'));
+          beginPlanetHubSuspendingNavigation(() => router.replace('/(game)/worldmap'), {
+            preserveCombatSnapshot: false,
+          });
+          return true;
+        },
+        onBackchannel: () => {
+          if (isArcCoreTutorialForceActive()) return;
+          const pid = usePlayerStore.getState().player?.currentPlanetId?.trim() ?? '';
+          queueMicrotask(() => {
+            void presentArcCoreBackchannel({
+              reason: 'combat_end',
+              triggerId: `wave:${endedPlanetId || pid}`,
+              openerText: t('arcCoreChat.opener.combat_end'),
+              speakerId: 'arc_core',
+            });
+          });
+        },
+      });
+    };
+    waveEndDialogShownRef.current = true;
+    if (endedOutcome === 'win') {
+      void presentCombatEndLeaderDialog({
+        kind: 'defeat',
+        captainId: ended.leaderCaptainId,
+      }).then(() => {
+        if (!waveEndDialogShownRef.current) return;
+        waveEndDialogShownRef.current = false;
+        presentWaveEndResult();
+      });
+      return;
+    }
+    const openedWaveEnd = presentIngameDialogScene('ingame_dialog_wave_defense_end', {
+      autoDismissMs: COMBAT_END_OPERATOR_AUTO_DISMISS_MS,
+      bypassScreenShell: true,
+      onDismiss: () => {
+        if (!waveEndDialogShownRef.current) return;
+        waveEndDialogShownRef.current = false;
+        presentWaveEndResult();
       },
     });
+    if (openedWaveEnd && isIngameDialogActive()) {
+      /* 종료 대사 onDismiss → 결과창 */
+    } else if (isIngameDialogActive()) {
+      waveEndDialogShownRef.current = false;
+      runAfterIngameDialogIdle(presentWaveEndResult);
+    } else {
+      waveEndDialogShownRef.current = false;
+      presentWaveEndResult();
+    }
   }, [planet?.name, beginPlanetHubSuspendingNavigation, t]);
   useEffect(() => {
     const id = (planet?.id ?? '').trim();

@@ -1196,23 +1196,21 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     }
     afterCaptainPersonalMissionSettled(missionId, 'cleared');
     afterAnomalyMissionSettled(missionId, 'cleared');
-    void (async () => {
-      await get().persistMissionsImmediate();
-      const latest = get().progresses[missionId];
-      if (!latest?.rewardedAt) {
-        applyMissionCompletionRewards(missionId);
-        const paid = get().progresses[missionId];
-        if (paid && !paid.rewardedAt) {
-          set({
-            progresses: {
-              ...get().progresses,
-              [missionId]: { ...paid, rewardedAt: Date.now() },
-            },
-          });
-          void get().persistMissions();
-        }
+    // 보상(경험치)을 persist 뒤로 미루면 전투종료 레벨업이 pending 없이 끝나고,
+    // 나중에 브리지가 따로 뜬다. 지급은 동기 · 디스크만 비동기.
+    if (!get().progresses[missionId]?.rewardedAt) {
+      applyMissionCompletionRewards(missionId);
+      const paid = get().progresses[missionId];
+      if (paid && !paid.rewardedAt) {
+        set({
+          progresses: {
+            ...get().progresses,
+            [missionId]: { ...paid, rewardedAt: Date.now() },
+          },
+        });
       }
-    })();
+    }
+    void get().persistMissionsImmediate();
     presentMissionChainUpdateAlert({
       completedMissionId: missionId,
       nextMissionId: resolveNewlyActivatedMissionId(

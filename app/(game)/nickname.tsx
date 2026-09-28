@@ -14,6 +14,7 @@ import { runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
 import { usePreHubWorldOpsAlertSuppress } from '../../src/navigation/usePreHubWorldOpsAlertSuppress';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
 import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
+import { ONBOARDING_TITLE_INK } from '../../src/ui/onboarding/onboardingScreenLayout';
 import { useT } from '../../src/i18n';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { getCurrentUser } from '../../src/firebase/auth';
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xxl,
     fontWeight: FONTS.weight.bold,
-    color: TF.titleInk,
+    color: ONBOARDING_TITLE_INK,
     letterSpacing: 4,
     marginBottom: SPACING.md,
   },

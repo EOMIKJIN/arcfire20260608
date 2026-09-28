@@ -39,8 +39,9 @@ function dismissChatThen(run: () => void): void {
   const { useArcCoreAgentSurfaceStore } =
     require('./arcCoreAgentSurfaceStore') as typeof import('./arcCoreAgentSurfaceStore');
   useArcCoreAgentSurfaceStore.getState().activateGame();
-  const { InteractionManager } = require('react-native') as typeof import('react-native');
-  InteractionManager.runAfterInteractions(() => {
+  const { runStageUiAfterIdle } =
+    require('../../navigation/stageNavGate') as typeof import('../../navigation/stageNavGate');
+  runStageUiAfterIdle(() => {
     requestAnimationFrame(run);
   });
 }

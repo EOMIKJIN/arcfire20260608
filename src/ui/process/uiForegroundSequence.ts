@@ -59,6 +59,10 @@ export function enqueueAfterUiScreenReady(task: () => void): void {
   pending.push(task);
 }
 
+/**
+ * @returns `run()` 결과. 셸 미준비·대화 점유 시 **큐잉 후 true**(이미 표시됨이 아님).
+ * 용량 초과만 false. 호출측은 즉시 표시 확인에 `isIngameDialogActive()` 를 써야 한다.
+ */
 export function runWhenUiScreenReady(run: () => boolean, bypass = false): boolean {
   if (bypass || (isUiScreenShellReady() && !isDialogBusy())) {
     return run();
@@ -70,12 +74,22 @@ export function runWhenUiScreenReady(run: () => boolean, bypass = false): boolea
   return true;
 }
 
+let flushingUiScreenReady = false;
+
 export function flushUiScreenReadyTasks(): void {
+  if (flushingUiScreenReady) return;
   if (!isUiScreenShellReady()) return;
-  if (isDialogBusy()) return;
-  const next = pending.shift();
-  if (!next) return;
-  next();
+  flushingUiScreenReady = true;
+  try {
+    while (pending.length > 0) {
+      if (isDialogBusy()) return;
+      const next = pending.shift();
+      if (!next) return;
+      next();
+    }
+  } finally {
+    flushingUiScreenReady = false;
+  }
 }
 
 subscribeIngameDialogBecameIdle(() => {

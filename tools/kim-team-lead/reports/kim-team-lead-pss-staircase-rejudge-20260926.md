@@ -33,7 +33,7 @@ verdict=계단 «실존» AGREE · 원인=잔류 스테이지 트리 «주범» 
 
 1. **P1 도구** — `run-retention-audit.cjs`: before/after를 **같은 pid**만. baseline 신선도(예 3분). 동일 (pid, baseline, afterMin) **1회**. 콜드 views&lt;50은 baseline 제외.
 2. **P2 상설** — `audit:memory:session-floor`: pid+공백 세션 · 10분 롤링 floor · 잔류율. 김클로드 임시 스크립트를 저장소에 고정.
-3. **P0 실기 (좁힘)** — 허브 단독 views ~285 → 시설 push ~575 → **back 후 285 복귀**. 복귀 실패만 트리 잔류. 장시간 허브 idle에서 views 평탄·native만 오르면 Fresco/allocator 축.
+3. **P0 실기 (좁힘)** — 허브 단독 views **~380–399**(09-27 실측, Activities=1). 시설 push 후 ~575 → **back 후 380대 복귀**. 복귀 실패만 트리 잔류. **285를 복귀 기준으로 쓰면 정상을 실패로 오판한다.** 장시간 허브 idle에서 views 평탄·native만 오르면 Fresco/allocator 축.
 4. **런타임 (3번 근거 후)** — 트리 잔류면 pop/release 계약만. native-only면 **기존** `trimNativeBitmapCachesAsync`·soft reclaim이 **실제로 도는지** 계측. 신규 이중 trim·시설을 replace로 바꾸기 **금지**(이미 톱니·크래시 교훈).
 
 **지금 하지 말 것**: 허브 트리 전면 언마운트, 시설 `replace`, 감사 PASS를 이유로 계단 무시, 깨진 retention FAIL 20건을 심각도로 쓰기.

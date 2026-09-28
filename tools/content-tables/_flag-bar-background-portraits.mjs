@@ -12,7 +12,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const dir = path.join(root, 'assets/images/npc');
 
 const KEEP_BAR = new Set(
-  Array.from({ length: 11 }, (_, i) => `bar_att_char${String(i + 6).padStart(3, '0')}.png`),
+  Array.from({ length: 22 }, (_, i) => `bar_att_char${String(i + 6).padStart(3, '0')}.png`),
 );
 /** 바 주인 — 행성 고유 라운지 허용 (2026-09-26 · 대표님) */
 const ALLOW_BAR_OWNER = new Set(

@@ -7,7 +7,7 @@ import React, { memo, useCallback, useEffect } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SPACING, OVERLAY_TOKENS } from '../../utils/theme';
-import { useArcOverlayStore } from './arcOverlayStore';
+import { closeLevelUpOverlay, closeWaveResultOverlay, useArcOverlayStore } from './arcOverlayStore';
 import { getOverlayChrome } from './overlayChrome';
 import { resolveOverlayBottomAnchorPad, resolveOverlayEdgeInsets } from './overlayInsets';
 import { OVERLAY_CENTER_VERTICAL_BIAS_PX, OVERLAY_PANEL_TOP_ANCHOR_PX } from './overlayPanelLayout';
@@ -54,8 +54,9 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
     return () => clearTimeout(t);
   }, [entry?.id]);
 
+  const stackHasNarrative = useArcOverlayStore((s) => s.stack.some((e) => e.kind === 'narrative'));
   const compactAutoDismissKey =
-    top && isCompactAutoDismissOverlayKind(top.kind)
+    top && isCompactAutoDismissOverlayKind(top.kind) && !stackHasNarrative
       ? `${top.kind}|${top.id}|${top.autoDismissMs ?? 0}`
       : null;
 
@@ -63,6 +64,8 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
     if (!compactAutoDismissKey) return;
     const top = useArcOverlayStore.getState().top();
     if (!top || !isCompactAutoDismissOverlayKind(top.kind)) return;
+    // 인앱대사와 겹치면 자동닫힘 정지 — 플레이어가 위 창부터 순차 확인
+    if (useArcOverlayStore.getState().stack.some((e) => e.kind === 'narrative')) return;
     const action = resolveCompactOverlayAutoDismissAction(top);
     if (!action) return;
     const autoMs = top.autoDismissMs;
@@ -112,9 +115,8 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
   );
 
   const handleLevelUpClose = useCallback(() => {
-    if (top?.kind === 'levelUp') top.onClose();
-    dismiss();
-  }, [dismiss, top]);
+    closeLevelUpOverlay();
+  }, []);
 
   const handleRewardClose = useCallback(() => {
     if (top?.kind === 'reward') top.onClose();
@@ -122,9 +124,8 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
   }, [dismiss, top]);
 
   const handleWaveResultClose = useCallback(() => {
-    if (top?.kind === 'waveResult') top.onClose();
-    dismiss();
-  }, [dismiss, top]);
+    closeWaveResultOverlay();
+  }, []);
 
   const handleSettingsReset = useCallback(() => {
     if (top?.kind !== 'settings') return;

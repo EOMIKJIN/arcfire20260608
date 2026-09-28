@@ -14,6 +14,20 @@ export function runAfterIngameDialogIdle(fn: () => void): void {
   idleCallbacks.push(fn);
 }
 
+/**
+ * 전투 종료 체인 전용 — drain 즉시 실행. feature-link 1.5s·행성 세션 dispose 취소에 묶지 않는다.
+ * 호출측에서 대사가 열려 있을 때 등록. session 이 이미 null 이어도 finishSession drain 이 구독을 깨운다.
+ */
+export function runAfterIngameDialogIdleNow(fn: () => void): void {
+  let done = false;
+  const unsub = subscribeIngameDialogBecameIdle(() => {
+    if (done) return;
+    done = true;
+    unsub();
+    fn();
+  });
+}
+
 /** presentPending 등 — 대사 모듈이 mission을 직접 import하지 않도록 구독만. */
 export function subscribeIngameDialogBecameIdle(fn: () => void): () => void {
   becameIdleListeners.push(fn);

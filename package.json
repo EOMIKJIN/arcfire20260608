@@ -80,6 +80,7 @@
     "test:faction-power": "npx tsx src/arcCore/learning/evaluateFactionPowerSnapshot.test.ts && npx tsx src/arcCore/learning/verifyTerritorialFinalJudgment.test.ts",
     "report:faction-power": "npx tsx tools/debug/report-faction-power-eval.ts",
     "test:bar-instance-difficulty": "npx tsx src/missions/barInstanceMissionDifficulty.test.ts",
+    "audit:no-bare-interaction-manager": "node tools/ui-interaction-idle-audit/run-no-bare-interaction-manager.cjs",
     "audit:ui-overlay": "node tools/ui-overlay-audit/run-ui-overlay-audit.cjs",
     "audit:ui-overlay:tactical-readiness": "node tools/ui-overlay-audit/run-tactical-ui-rollout-readiness.cjs",
     "audit:transit-combat-flow": "node tools/transit-combat-flow/run-transit-combat-flow-contract.mjs",

@@ -3,13 +3,14 @@
 // ============================================================
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { InteractionManager, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { FONTS, SPACING } from '../../src/utils/theme';
 import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
 import { useT, t as tStatic } from '../../src/i18n';
 import { resolveNpcCaptainDisplayName } from '../../src/i18n/captainText';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
+import { runStageUiAfterIdle } from '../../src/navigation/stageNavGate';
 import { useSafeRouterBack } from '../../src/navigation/useSafeRouterBack';
 import {
   createBarScreenSession,
@@ -402,7 +403,7 @@ export default function BarScreen() {
               startBarPerformanceSong(attendantId, startedAtMs);
             },
           };
-          InteractionManager.runAfterInteractions(() => {
+          runStageUiAfterIdle(() => {
             requestAnimationFrame(() => {
               void presentBarDialogTurns(dialogPayload);
             });

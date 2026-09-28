@@ -12,6 +12,7 @@ import { useAppSettingsStore } from '../store/appSettingsStore';
 import { useAppBootStore } from '../store/appBootStore';
 import { isAccountResetInProgress } from '../account/accountResetPresence';
 import { isTitleStartScreenActive } from '../navigation/titleStartScreenPresence';
+import { isCombatEndOutcomeHold } from '../game/combat/combatEndOutcomeHold';
 import { showArcAlert } from '../utils/showArcAlert';
 import { getMissionById } from './missionCatalog';
 import {
@@ -32,6 +33,8 @@ export function shouldSkipMissionProgressAlert(): boolean {
   if (isTitleStartScreenActive()) return true;
   if (isAccountResetInProgress()) return true;
   if (!useAppBootStore.getState().bootReady) return true;
+  // 전투 종료 체인(미션대사→레벨업) 위에 체인 알림이 끼면 순서·가시성이 끊긴다.
+  if (isCombatEndOutcomeHold()) return true;
   return false;
 }
 

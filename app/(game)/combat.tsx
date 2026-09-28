@@ -18,6 +18,7 @@ import { resolveNpcCaptainDisplayName } from '../../src/i18n/captainText';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { resolveNpcCapitalShipDisplayName } from '../../src/i18n/shipText';
 import { showArcAlert } from '../../src/utils/showArcAlert';
+import { runCombatEndOutcomeFlow } from '../../src/game/combat/runCombatEndOutcomeFlow';
 import { CombatEndHoldVeil } from '../../src/components/combat/CombatEndHoldVeil';
 import { waitCombatEndHold } from '../../src/game/combatEndHold';
 import { runTransitCombatPostFlow } from '../../src/game/transitCombat/transitCombatPostFlow';
@@ -245,6 +246,7 @@ export default function CombatScreen() {
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     await waitCombatEndHold();
     if (!isMountedRef.current) return;
+    setEndHoldVisible(false);
     const destroyedLabels = await usePlayerStore.getState().applyPostCombatDurabilityWear(Date.now());
     const expGain = enemyTemplate.expReward;
     const creditGain = enemyTemplate.creditReward;
@@ -279,19 +281,31 @@ export default function CombatScreen() {
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     await waitCombatEndHold();
     if (!isMountedRef.current) return;
+    setEndHoldVisible(false);
     await usePlayerStore.getState().applyPostCombatDurabilityWear(Date.now());
     useTransitCombatSessionStore.getState().clear();
     await usePlayerStore.getState().applyCapitalShipDestruction();
     if (!isMountedRef.current) return;
-    showArcAlert(
-      t('combat.shipDestroyedTitle'),
-      t('combat.shipDestroyedBody'),
-      [{ text: t('combat.confirm'), onPress: () => {
+    const captainName = combatSetup.captain
+      ? resolveNpcCaptainDisplayName(combatSetup.captain, locale)
+      : '';
+    runCombatEndOutcomeFlow({
+      result: {
+        venue: 'transit',
+        outcome: 'lose',
+        enemyName: captainName || enemyTemplate.name,
+      },
+      missionClearEnabled: false,
+      notice: {
+        title: t('combat.shipDestroyedTitle'),
+        body: t('combat.shipDestroyedBody'),
+      },
+      onFinished: () => {
         markPlanetHubIngressReclaim({ invalidateMemoCaches: true });
         scheduleCombatExitNavigate(() => router.replace('/(game)/planet'));
-      } }],
-    );
-  }, [player, scheduleCombatExitNavigate, t]);
+      },
+    });
+  }, [combatSetup.captain, enemyTemplate.name, locale, player, scheduleCombatExitNavigate, t]);
 
   const handleFlee = useCallback(async () => {
     if (resolving || resolvedRef.current) return;
@@ -310,6 +324,7 @@ export default function CombatScreen() {
               setEndHoldVisible(true);
               await waitCombatEndHold();
               if (!isMountedRef.current) return;
+              setEndHoldVisible(false);
               useTransitCombatSessionStore.getState().commitArrival({
                 deliverFailTitle: t('worldmap.deliverFailTitle'),
                 deliverFailBody: t('worldmap.deliverFailBody'),

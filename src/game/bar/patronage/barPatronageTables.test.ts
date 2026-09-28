@@ -46,6 +46,20 @@ const GRADE1_NAMES = [
   '플룸',
 ];
 const GRADE1_PORTRAIT_RE = /^assets\/images\/npc\/bar_att_char0(0[6-9]|1[0-6])\.png$/;
+const RESERVE_PORTRAIT_RE = /^assets\/images\/npc\/bar_att_char0(1[7-9]|2[0-5])\.png$/;
+const OUTER_UNIQUE_PORTRAIT_RE = /^assets\/images\/npc\/bar_att_char02[67]\.png$/;
+const OUTER_UNIQUE_NAMES = ['타샤', '조이'];
+const RESERVE_NAMES = [
+  '세이블',
+  '신더',
+  '오팔',
+  '에코',
+  '니온',
+  '제이드',
+  '루미',
+  '카일라',
+  '세레',
+];
 
 test('resolvePatronageDrinkMaxQty is UI cap 1000 (no session drink cap)', () => {
   assert.equal(resolvePatronageDrinkMaxQty(), 1000);
@@ -89,7 +103,7 @@ test('planet roster policy is 1–2 per bar', () => {
   assert.equal(getBarPlanetRosterPolicy('synth_002_p')?.poolSize, 1);
 });
 
-test('attendants match pool policy; grade1 portraits unique; empties reserved', () => {
+test('attendants match pool policy; grade1 unique; reserve shared by name', () => {
   const ids = new Set<string>();
   const portraits = new Set<string>();
   const byPlanet = new Map<string, number>();
@@ -98,6 +112,7 @@ test('attendants match pool policy; grade1 portraits unique; empties reserved', 
     BAR_PLANET_ROSTER_POLICY_FROM_CSV.map((r) => [r.planetId, r.poolSize] as const),
   );
   const grade1Seen = new Set<string>();
+  const reserveKeyByName = new Map<string, string>();
 
   let expectedTotal = 0;
   for (const n of expectedPool.values()) expectedTotal += n;
@@ -107,13 +122,24 @@ test('attendants match pool policy; grade1 portraits unique; empties reserved', 
     assert.notEqual(row.planetId, '*');
     assert.equal(ids.has(row.attendantId), false, `dup attendantId ${row.attendantId}`);
     const key = String(row.portraitImageAssetKey ?? '').trim();
-    if (key) {
+    assert.ok(key, `empty portrait ${row.attendantId}`);
+    if (GRADE1_NAMES.includes(row.displayNameKo)) {
       assert.match(key, GRADE1_PORTRAIT_RE, row.attendantId);
-      assert.equal(portraits.has(key), false, `dup portrait ${key}`);
+      assert.equal(portraits.has(key), false, `dup grade1 portrait ${key}`);
       portraits.add(key);
-      assert.ok(GRADE1_NAMES.includes(row.displayNameKo), `filled portrait on ${row.displayNameKo}`);
       assert.equal(grade1Seen.has(row.displayNameKo), false, `grade1 name reused ${row.displayNameKo}`);
       grade1Seen.add(row.displayNameKo);
+    } else if (OUTER_UNIQUE_NAMES.includes(row.displayNameKo)) {
+      assert.match(key, OUTER_UNIQUE_PORTRAIT_RE, row.attendantId);
+      assert.equal(portraits.has(key), false, `dup outer-unique portrait ${key}`);
+      portraits.add(key);
+    } else {
+      assert.ok(RESERVE_NAMES.includes(row.displayNameKo), `unknown attendant ${row.displayNameKo}`);
+      assert.match(key, RESERVE_PORTRAIT_RE, row.attendantId);
+      const prior = reserveKeyByName.get(row.displayNameKo);
+      if (prior) assert.equal(key, prior, `reserve portrait mismatch ${row.displayNameKo}`);
+      else reserveKeyByName.set(row.displayNameKo, key);
+      portraits.add(key);
     }
     const planetNamesKo = namesKoByPlanet.get(row.planetId) ?? new Set<string>();
     assert.equal(
@@ -129,8 +155,9 @@ test('attendants match pool policy; grade1 portraits unique; empties reserved', 
   }
 
   assert.equal(ids.size, expectedTotal);
-  assert.equal(portraits.size, 11);
+  assert.equal(portraits.size, 22);
   assert.equal(grade1Seen.size, 11);
+  assert.equal(reserveKeyByName.size, 9);
   assert.equal(byPlanet.size, BAR_PLANET_ROSTER_POLICY_FROM_CSV.length);
   for (const [planetId, n] of byPlanet) {
     assert.equal(n, expectedPool.get(planetId), `${planetId} count ${n}`);
@@ -154,7 +181,7 @@ test('songs are 5 shared placeholders', () => {
 });
 
 test('name-keyed hello lines stay unique and overlay attendant_hello', () => {
-  assert.equal(BAR_ATTENDANT_HELLO_FROM_CSV.length, 20);
+  assert.equal(BAR_ATTENDANT_HELLO_FROM_CSV.length, 22);
   const names = new Set<string>();
   const textsKo = new Set<string>();
   const textsEn = new Set<string>();
@@ -173,6 +200,9 @@ test('name-keyed hello lines stay unique and overlay attendant_hello', () => {
 
   for (const name of GRADE1_NAMES) {
     assert.ok(names.has(name), `hello missing grade1 ${name}`);
+  }
+  for (const name of OUTER_UNIQUE_NAMES) {
+    assert.ok(names.has(name), `hello missing outer-unique ${name}`);
   }
   for (const row of BAR_ATTENDANTS_FROM_CSV) {
     assert.ok(
@@ -253,10 +283,28 @@ test('roster is 1–2 and capital shows two grade1 attendants', () => {
     dayKey: '2026-09-06',
   });
   assert.equal(rim.length, 1);
-  assert.equal(String(rim[0]?.portraitImageAssetKey ?? '').trim(), '');
+  assert.match(String(rim[0]?.portraitImageAssetKey ?? '').trim(), RESERVE_PORTRAIT_RE);
+
+  const corePrime = buildBarPatronageRoster({
+    planetId: 'core_prime',
+    barLevel: 1,
+    dayKey: '2026-09-28',
+  });
+  assert.equal(corePrime.length, 1);
+  assert.equal(corePrime[0]?.displayNameKo, '타샤');
+  assert.match(String(corePrime[0]?.portraitImageAssetKey ?? '').trim(), OUTER_UNIQUE_PORTRAIT_RE);
+
+  const genesis = buildBarPatronageRoster({
+    planetId: 'genesis_origin',
+    barLevel: 1,
+    dayKey: '2026-09-28',
+  });
+  assert.equal(genesis.length, 1);
+  assert.equal(genesis[0]?.displayNameKo, '조이');
+  assert.match(String(genesis[0]?.portraitImageAssetKey ?? '').trim(), OUTER_UNIQUE_PORTRAIT_RE);
 });
 
-test('frontier aurora bar lists 1 reserved empty-portrait attendant', () => {
+test('frontier aurora bar lists 1 reserved attendant with portrait', () => {
   const aurora = buildBarPatronageRoster({
     planetId: 'synth_002_p',
     barLevel: 1,
@@ -264,5 +312,5 @@ test('frontier aurora bar lists 1 reserved empty-portrait attendant', () => {
   });
   assert.equal(aurora.length, 1);
   assert.ok(aurora.every((r) => r.planetId === 'synth_002_p'));
-  assert.equal(String(aurora[0]?.portraitImageAssetKey ?? '').trim(), '');
+  assert.match(String(aurora[0]?.portraitImageAssetKey ?? '').trim(), RESERVE_PORTRAIT_RE);
 });

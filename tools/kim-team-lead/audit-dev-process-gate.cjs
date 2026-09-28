@@ -22,6 +22,8 @@ const REQUIRED_HOOKS = [
   '.cursor/hooks/on-stop-kim-claude-handoff-auto-review.cjs',
   '.cursor/hooks/on-before-submit-prompt-agent-routing.cjs',
   '.cursor/hooks/on-before-submit-prompt-incident-auto-fix.cjs',
+  '.cursor/hooks/incidentHandoffGate.cjs',
+  '.cursor/hooks/on-session-start-incident-triage.cjs',
 ];
 
 const REQUIRED_RULES = [
@@ -60,6 +62,12 @@ function main() {
     }
     if (!session.some((c) => String(c).includes('kim-claude-handoff-review'))) {
       failures.push('hooks.json: sessionStart missing kim-claude-handoff-review');
+    }
+    if (!session.some((c) => String(c).includes('incident-triage'))) {
+      failures.push('hooks.json: sessionStart missing incident-triage');
+    }
+    if (!before.some((c) => String(c).includes('incident-auto-fix'))) {
+      failures.push('hooks.json: beforeSubmitPrompt missing incident-auto-fix');
     }
     if (!before.some((c) => String(c).includes('paid-model-gate'))) {
       failures.push('hooks.json: beforeSubmitPrompt missing paid-model-gate');

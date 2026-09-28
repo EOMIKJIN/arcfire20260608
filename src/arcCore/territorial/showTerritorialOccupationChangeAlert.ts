@@ -41,34 +41,13 @@ function planetLabelAtShow(input: TerritorialAlertLabelInput): string {
   });
 }
 
-/** 타이틀·항로에서 스킵된 최신 1건 — persist 없음. 허브·지도 진입 시 flush. */
-let pendingTerritorialAlertShow: (() => void) | null = null;
-
-function queueOrPresentTerritorialAlert(show: () => void): void {
-  if (shouldSkipTerritorialOccupationAlert()) {
-    pendingTerritorialAlertShow = show;
-    return;
-  }
-  pendingTerritorialAlertShow = null;
+/** 타이틀·항로·부트에서 스킵되면 폐기. 허브 진입 flush 없음 — 판정 시점에만 표시. */
+function presentTerritorialAlertNow(show: () => void): void {
+  if (shouldSkipTerritorialOccupationAlert()) return;
   setTimeout(() => {
-    if (shouldSkipTerritorialOccupationAlert()) {
-      pendingTerritorialAlertShow = show;
-      return;
-    }
+    if (shouldSkipTerritorialOccupationAlert()) return;
     show();
   }, 0);
-}
-
-/** 전투·전환 InteractionManager 대기는 팝업을 착륙 뒤로 미룬다. 범용 알림은 즉시. */
-function presentTerritorialAlertNow(show: () => void): void {
-  queueOrPresentTerritorialAlert(show);
-}
-
-export function flushPendingTerritorialOccupationAlert(): void {
-  const show = pendingTerritorialAlertShow;
-  if (!show) return;
-  pendingTerritorialAlertShow = null;
-  queueOrPresentTerritorialAlert(show);
 }
 
 export function showTerritorialOccupationChangeAlert(input: {

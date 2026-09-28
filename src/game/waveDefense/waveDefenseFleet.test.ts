@@ -70,6 +70,8 @@ test('시드 슬롯 수·인스턴스 키 · 행성 함장', () => {
   assert.ok(fleet.every((s) => String(s.npcShipId).startsWith('npc_enemy_draco_')));
   assert.ok(fleet.every((s) => String(s.captainId).startsWith('npc_cpt_enemy_draco_')));
   assert.equal(fleet[0]?.combatInstanceKey, 'wave_defense_w1_s0');
+  assert.equal(fleet[0]?.isLeader, true);
+  assert.equal(fleet[1]?.isLeader, false);
 });
 
 test('행성 적함 없으면 인베이더 폴백(레벨 맵)', () => {

@@ -202,6 +202,10 @@ import { WAVE_DEFENSE_MAX_WAVES } from '../../game/waveDefense/waveDefenseFleet'
 import { markWaveCombatVictoryCooldown } from '../../game/waveDefense/waveCombatCooldownStore';
 import { applyDefeatEnemyMissionObjectives } from '../../missions/applyDefeatEnemyMissionObjectives';
 import { tryPresentPendingMissionClearDialog } from '../../missions/missionPlanetHubSync';
+import { runCombatEndOutcomeFlow } from '../../game/combat/runCombatEndOutcomeFlow';
+import { presentCombatEndLeaderDialog } from '../../game/combat/presentCombatEndLeaderDialog';
+import { resolveCombatEnemyLeader } from '../../game/combat/resolveCombatEnemyLeader';
+import { waitCombatEndHold } from '../../game/combatEndHold';
 
 type StageFleetSeedSlot = {
   team: 'red' | 'blue' | 'orange';
@@ -2082,6 +2086,45 @@ function resolvePlayerStanceMissileSalvoDelta(ag: Agent): number {
   return 0;
 }
 
+const hubOrbitCombatResultSession = {
+  expEarned: 0,
+  presented: false,
+  pendingDestroyAlert: false,
+};
+
+function resetHubOrbitCombatResultSession(): void {
+  hubOrbitCombatResultSession.expEarned = 0;
+  hubOrbitCombatResultSession.presented = false;
+  hubOrbitCombatResultSession.pendingDestroyAlert = false;
+}
+
+function isHubOrbitCombatResultVenue(combatPlanetId: string | null | undefined): boolean {
+  const id = combatPlanetId?.trim() ?? '';
+  return id.length > 0 && id !== CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID;
+}
+
+function resolveHubOrbitEnemyName(agents: Agent[]): string | undefined {
+  for (let i = 0; i < agents.length; i += 1) {
+    const a = agents[i]!;
+    if (a.team === 'blue') continue;
+    const name = (a.captainLabel || a.displayName || '').trim();
+    if (name) return name;
+  }
+  return undefined;
+}
+
+function resolveHubOrbitLeaderCaptainId(agents: Agent[]): string | null {
+  const candidates: { captainId: string; isLeader?: boolean }[] = [];
+  for (let i = 0; i < agents.length; i += 1) {
+    const a = agents[i]!;
+    if (a.team === 'blue' || isPlayerCombatAgent(a)) continue;
+    const id = a.captainId?.trim() ?? '';
+    if (!id) continue;
+    candidates.push({ captainId: id });
+  }
+  return resolveCombatEnemyLeader(candidates)?.captainId ?? null;
+}
+
 function finalizeShipDestroyed(victim: Agent, owner: Agent | undefined, elapsedMs: number): void {
   if (!victim.alive) return;
   victim.alive = false;
@@ -2090,7 +2133,9 @@ function finalizeShipDestroyed(victim: Agent, owner: Agent | undefined, elapsedM
     // 웨이브 디펜스 중엔 per-kill 플레이어 exp 미지급 — exp는 전투 종료 후 결과창(인게임 대화 뒤)에서
     // 1회만 지급한다. (전투 종료 즉시 + 결과창 후 레벨업창이 두 번 뜨던 현상 방지)
     if (!useWaveDefenseStore.getState().active) {
-      usePlayerStore.getState().addExp(victim.expRewardStat);
+      const amount = victim.expRewardStat;
+      usePlayerStore.getState().addExp(amount);
+      if (amount > 0) hubOrbitCombatResultSession.expEarned += amount;
     }
   }
   if (owner?.captainId) {
@@ -2967,6 +3012,10 @@ export function usePlanetEdenRaidSim(
     waveOutcomeAwardedRef.current = resumeSnap ? resumeSnap.waveOutcomeAwarded : false;
     battleEngageStartMsRef.current = null;
     playerCapitalDestroyedRef.current = false;
+    resetHubOrbitCombatResultSession();
+    if (resumeSnap?.waveOutcomeAwarded) {
+      hubOrbitCombatResultSession.presented = true;
+    }
     const captainIds = agentsRef.current.map(a => a.captainId).filter((id): id is string => Boolean(id));
     if (captainIds.length > 0) {
       const s = useNpcCaptainProgressStore.getState();
@@ -2992,6 +3041,7 @@ export function usePlanetEdenRaidSim(
     waveOutcomeAwardedRef.current = false;
     battleEngageStartMsRef.current = null;
     playerCapitalDestroyedRef.current = false;
+    resetHubOrbitCombatResultSession();
     sessionCombatKeyRef.current = null;
     elapsedCarryRef.current = 0;
   }, [active]);
@@ -3206,6 +3256,13 @@ export function usePlanetEdenRaidSim(
               );
             };
             if (!delayWaveLoseAlert) {
+              if (isHubOrbitCombatResultVenue(combatPlanetId)) {
+                hubOrbitCombatResultSession.pendingDestroyAlert = true;
+                return;
+              }
+              if (combatPlanetId === CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID) {
+                return;
+              }
               presentDestroyAlert();
               return;
             }
@@ -3235,6 +3292,7 @@ export function usePlanetEdenRaidSim(
         playerDurabilityWearAppliedRef.current = false;
         if (battleEngageStartMsRef.current === null) {
           battleEngageStartMsRef.current = elapsed;
+          resetHubOrbitCombatResultSession();
         }
       } else if (!waveOutcomeAwardedRef.current && (aliveRed || aliveBlue || aliveOrange)) {
         const participants = agents
@@ -3245,11 +3303,11 @@ export function usePlanetEdenRaidSim(
           .filter(a => a.team === winnerTeam)
           .map(a => a.captainId)
           .filter((id): id is string => Boolean(id));
+        const hadPlayerCombat = agents.some((a) => isPlayerCombatAgent(a));
         if (participants.length > 0) {
           const s = useNpcCaptainProgressStore.getState();
           s.grantBattleWaveResult(participants, winners);
           void s.persistNpcCaptainProgress();
-          const hadPlayerCombat = agents.some((a) => isPlayerCombatAgent(a));
           if (hadPlayerCombat && !playerDurabilityWearAppliedRef.current) {
             playerDurabilityWearAppliedRef.current = true;
             void usePlayerStore.getState().applyPostCombatDurabilityWear(elapsed);
@@ -3283,7 +3341,7 @@ export function usePlanetEdenRaidSim(
                 planetId: combatPlanetId,
                 enemyTemplateId: hubLock?.venue === 'hub_orbit' ? hubLock.templateId : null,
               });
-              if (!wdForReveal.active) {
+              if (!wdForReveal.active && !isHubOrbitCombatResultVenue(combatPlanetId)) {
                 tryPresentPendingMissionClearDialog();
               }
             }
@@ -3306,6 +3364,47 @@ export function usePlanetEdenRaidSim(
           } else {
             wdOutcome.requestEndRun('lose');
           }
+        } else if (
+          hadPlayerCombat
+          && isHubOrbitCombatResultVenue(combatPlanetId)
+          && !hubOrbitCombatResultSession.presented
+        ) {
+          hubOrbitCombatResultSession.presented = true;
+          const outcome = winnerTeam === 'blue' ? 'win' : 'lose';
+          const expEarned = hubOrbitCombatResultSession.expEarned;
+          const enemyName = resolveHubOrbitEnemyName(agents);
+          const pendingDestroy = hubOrbitCombatResultSession.pendingDestroyAlert;
+          const leaderCaptainId = resolveHubOrbitLeaderCaptainId(agents);
+          queueMicrotask(() => {
+            void (async () => {
+              useOrbitCapitalCombatUiStore.getState().setEndHoldActive(true);
+              await waitCombatEndHold();
+              useOrbitCapitalCombatUiStore.getState().setEndHoldActive(false);
+              if (outcome === 'win') {
+                await presentCombatEndLeaderDialog({
+                  kind: 'defeat',
+                  captainId: leaderCaptainId,
+                });
+              }
+              runCombatEndOutcomeFlow({
+                result: {
+                  venue: 'hub_orbit',
+                  outcome,
+                  expEarned,
+                  enemyName,
+                },
+                missionClearEnabled: outcome === 'win',
+                notice: pendingDestroy
+                  ? {
+                    title: t('combat.shipDestroyedTitle'),
+                    body: t('combat.shipDestroyedBody'),
+                  }
+                  : null,
+                // 백채널은 현재 웨이브 종료에만 있다(U-3). 차등 확정 전까지 현행 유지.
+                onBackchannel: null,
+              });
+            })();
+          });
         }
       }
       for (const ag of agents) {

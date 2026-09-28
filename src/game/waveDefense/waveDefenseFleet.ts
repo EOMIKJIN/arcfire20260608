@@ -90,6 +90,7 @@ export function buildWaveDefenseEnemyFleet(
         npcShipId: pick.shipId,
         captainId: pick.captainId,
         combatInstanceKey: `wave_defense_w${wave}_s${i}`,
+        isLeader: i === 0,
       });
       continue;
     }
@@ -98,6 +99,7 @@ export function buildWaveDefenseEnemyFleet(
       npcShipId: fallbackShipId,
       captainId: WAVE_ENEMY_CAPTAIN_ID,
       combatInstanceKey: `wave_defense_w${wave}_s${i}`,
+      isLeader: i === 0,
     });
   }
   return slots;

@@ -9,7 +9,6 @@ import { router } from 'expo-router';
 import type { Href } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, FONTS, SPACING } from '../../src/utils/theme';
-import { TACTICAL_FACILITY as TF } from '../../src/ui/tactical/tacticalFacilityScreenTokens';
 import { StageShell } from '../../src/stages/StageShell';
 import { ArcButton } from '../../src/ui/overlay/ArcButton';
 import { CharacterSelectOptionRow } from '../../src/ui/onboarding/CharacterSelectOptionRow';
@@ -22,8 +21,10 @@ import { showArcAlert } from '../../src/utils/showArcAlert';
 import { useT } from '../../src/i18n';
 import type { PlayerProfessionCsvRow } from '../../src/data/generated';
 import {
-  ONBOARDING_CHARACTER_SELECT_HEADER_TOP_PX,
+  ONBOARDING_COMPACT_HEADER_TOP_PX,
   ONBOARDING_HEADER_BODY_GAP_PX,
+  ONBOARDING_TITLE_INK,
+  ONBOARDING_TITLE_SUBTITLE_GAP_PX,
 } from '../../src/ui/onboarding/onboardingScreenLayout';
 
 export default function CharacterSelectScreen() {
@@ -71,6 +72,7 @@ export default function CharacterSelectScreen() {
     <StageShell routeName="character_select" background="stars" topInset={false}>
       <View style={styles.container}>
         <Text style={styles.title}>{t('charSelect.title')}</Text>
+        <Text style={styles.subtitle}>{t('charSelect.subtitle')}</Text>
 
         {professions.length === 0 ? (
           <Text style={styles.emptyHint}>{t('charSelect.emptyHint')}</Text>
@@ -107,22 +109,30 @@ export default function CharacterSelectScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: ONBOARDING_CHARACTER_SELECT_HEADER_TOP_PX,
+    paddingTop: ONBOARDING_COMPACT_HEADER_TOP_PX,
     paddingHorizontal: SPACING.lg,
   },
   title: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.xxl,
     fontWeight: FONTS.weight.bold,
-    color: TF.titleInk,
+    color: ONBOARDING_TITLE_INK,
     letterSpacing: 3,
+    textAlign: 'center',
+    marginBottom: ONBOARDING_TITLE_SUBTITLE_GAP_PX,
+  },
+  subtitle: {
+    fontFamily: FONTS.mono,
+    fontSize: FONTS.size.md,
+    color: COLORS.ink_mid,
+    letterSpacing: 1,
     textAlign: 'center',
     marginBottom: ONBOARDING_HEADER_BODY_GAP_PX,
   },
   emptyHint: {
     fontFamily: FONTS.mono,
     fontSize: FONTS.size.sm,
-    color: TF.midInk,
+    color: COLORS.ink_mid,
     textAlign: 'center',
     marginBottom: SPACING.md,
   },

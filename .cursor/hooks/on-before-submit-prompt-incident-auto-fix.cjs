@@ -2,68 +2,35 @@
 /**
  * beforeSubmitPrompt — incident handoff 대기 시 김팀장 P0 자동수정 컨텍스트 주입
  */
-const fs = require('fs');
 const path = require('path');
+const {
+  resolveIncidentPaths,
+  readTriggerMeta,
+  shouldInjectIncidentP0,
+  readHandoffExcerpt,
+} = require('./incidentHandoffGate.cjs');
 
 const ROOT = process.cwd();
-const HANDOFF = path.join(ROOT, 'tools/long-run-monitor/outbox/cursor-incident-handoff.md');
-const TRIGGER = path.join(ROOT, '.cursor/trigger-incident-auto-fix.json');
-const ACK = path.join(ROOT, 'tools/long-run-monitor/outbox/incident-handoff-acked-at.txt');
 
 function readStdinJson() {
   try {
+    const fs = require('fs');
     return JSON.parse(fs.readFileSync(0, 'utf8'));
   } catch {
     return {};
   }
 }
 
-function isAckedAfter(fileMtimeMs) {
-  try {
-    const ack = fs.readFileSync(ACK, 'utf8').trim();
-    const ackMs = Date.parse(ack);
-    return Number.isFinite(ackMs) && ackMs >= fileMtimeMs;
-  } catch {
-    return false;
-  }
-}
-
 function main() {
   readStdinJson();
 
-  let triggerMeta = null;
-  try {
-    if (fs.existsSync(TRIGGER)) {
-      triggerMeta = JSON.parse(fs.readFileSync(TRIGGER, 'utf8'));
-    }
-  } catch {
-    /* ignore */
-  }
-
-  const handoffExists = fs.existsSync(HANDOFF);
-  if (!handoffExists && !triggerMeta) {
+  if (!shouldInjectIncidentP0(ROOT)) {
     process.stdout.write(JSON.stringify({}));
     return;
   }
 
-  let handoffMtime = 0;
-  if (handoffExists) {
-    handoffMtime = fs.statSync(HANDOFF).mtimeMs;
-    if (isAckedAfter(handoffMtime)) {
-      process.stdout.write(JSON.stringify({}));
-      return;
-    }
-  }
-
-  let body = '';
-  if (handoffExists) {
-    try {
-      body = fs.readFileSync(HANDOFF, 'utf8');
-    } catch {
-      body = '';
-    }
-  }
-
+  const p = resolveIncidentPaths(ROOT);
+  const triggerMeta = readTriggerMeta(p.trigger);
   const reason = triggerMeta?.reason || 'incident_handoff_pending';
   const ctx = [
     '[Arcfire 장기 감시 — 이상 감지 P0 · 즉시 정밀 원인 추적 + 코드 자동 수정]',
@@ -82,7 +49,7 @@ function main() {
     'handoff: tools/long-run-monitor/outbox/cursor-incident-handoff.md',
     '',
     '--- handoff excerpt ---',
-    body.slice(0, 4000),
+    readHandoffExcerpt(ROOT, 4000),
   ]
     .filter(Boolean)
     .join('\n');

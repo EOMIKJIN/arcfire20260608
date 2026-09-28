@@ -19,6 +19,13 @@ export const BAR_INSTANCE_DISCOVERY_PLANET_PLACEHOLDER = '__discovery_planet__';
 
 const MAX_DELIVERY_HOPS = 3;
 
+export type BarInstancePlanetContextOptions = {
+  instanceId?: string;
+  /** 이 홉 미만 성계는 후보에서 제외. 기본 1(기존 바 인스턴스). */
+  minHops?: number;
+  excludeSystemIds?: readonly string[];
+};
+
 export type BarInstancePlanetContext = {
   planetId: string;
   systemId: string | null;
@@ -65,20 +72,33 @@ function resolveFirstPlanetInSystem(systemId: string, excludePlanetId: string): 
 function pickDeliveryTargetSystemId(
   originSystemId: string,
   planetId: string,
-  instanceId?: string,
+  options?: BarInstancePlanetContextOptions,
 ): { systemId: string | null; hops: number } {
   const origin = originSystemId.trim();
   if (!origin) return { systemId: null, hops: 0 };
 
+  const minHops = Math.max(1, Math.floor(options?.minHops ?? 1));
+  const exclude = new Set(
+    (options?.excludeSystemIds ?? []).map((id) => id.trim()).filter(Boolean),
+  );
   const byHop = listGalaxySystemIdsByHopDistance(origin, MAX_DELIVERY_HOPS);
+  for (const [hops, ids] of byHop) {
+    byHop.set(hops, ids.filter((id) => !exclude.has(id)));
+  }
+
   const hopWeights: Array<{ hops: number; weight: number }> = [
     { hops: 1, weight: 35 },
     { hops: 2, weight: 40 },
     { hops: 3, weight: 25 },
   ];
-  const available = hopWeights.filter((row) => (byHop.get(row.hops)?.length ?? 0) > 0);
+  const available = hopWeights.filter(
+    (row) => row.hops >= minHops && (byHop.get(row.hops)?.length ?? 0) > 0,
+  );
+  const noOneHopFallback = minHops >= 2;
   if (available.length === 0) {
+    if (noOneHopFallback) return { systemId: null, hops: 0 };
     const fallback = resolveFirstGalaxyNeighborSystemId(origin);
+    if (fallback && exclude.has(fallback)) return { systemId: null, hops: 0 };
     return {
       systemId: fallback,
       hops: fallback ? resolveGalaxySystemHopDistance(origin, fallback) : 0,
@@ -86,7 +106,7 @@ function pickDeliveryTargetSystemId(
   }
 
   const totalWeight = available.reduce((sum, row) => sum + row.weight, 0);
-  const seed = hashInstanceSeed([planetId, instanceId ?? planetId, origin]);
+  const seed = hashInstanceSeed([planetId, options?.instanceId ?? planetId, origin]);
   let pick = seed % totalWeight;
   let chosenHop = available[0]!.hops;
   for (const row of available) {
@@ -99,34 +119,39 @@ function pickDeliveryTargetSystemId(
 
   const candidates = byHop.get(chosenHop) ?? [];
   if (candidates.length === 0) {
+    if (noOneHopFallback) return { systemId: null, hops: 0 };
     const fallback = resolveFirstGalaxyNeighborSystemId(origin);
+    if (fallback && exclude.has(fallback)) return { systemId: null, hops: 0 };
     return {
       systemId: fallback,
       hops: fallback ? resolveGalaxySystemHopDistance(origin, fallback) : 0,
     };
   }
   const systemId = candidates[seed % candidates.length] ?? candidates[0] ?? null;
-  return {
-    systemId,
-    hops: systemId ? resolveGalaxySystemHopDistance(origin, systemId) : 0,
-  };
+  const hops = systemId ? resolveGalaxySystemHopDistance(origin, systemId) : 0;
+  if (systemId && hops < minHops) return { systemId: null, hops: 0 };
+  return { systemId, hops };
 }
 
 export function resolveBarInstancePlanetContext(
   planetId: string,
-  options?: { instanceId?: string },
+  options?: BarInstancePlanetContextOptions,
 ): BarInstancePlanetContext {
   const pid = planetId.trim();
   const systemId = resolveSystemIdForPlanetIdFromGalaxy(pid);
   const originSystem = systemId ? readGalaxySystemRecord(systemId) : undefined;
   const originSystemZone = originSystem?.zone ?? null;
+  const minHops = Math.max(1, Math.floor(options?.minHops ?? 1));
+  const strictRemote = minHops >= 2;
 
   const deliveryPick = systemId
-    ? pickDeliveryTargetSystemId(systemId, pid, options?.instanceId)
+    ? pickDeliveryTargetSystemId(systemId, pid, options)
     : { systemId: null as string | null, hops: 0 };
 
-  const neighborSystemId = deliveryPick.systemId
-    ?? (systemId ? resolveFirstGalaxyNeighborSystemId(systemId) : null);
+  const remoteOk = Boolean(deliveryPick.systemId) && deliveryPick.hops >= minHops;
+  const neighborSystemId = remoteOk
+    ? deliveryPick.systemId
+    : (strictRemote ? null : (systemId ? resolveFirstGalaxyNeighborSystemId(systemId) : null));
 
   const targetSystem = neighborSystemId ? readGalaxySystemRecord(neighborSystemId) : undefined;
   const targetSystemZone = targetSystem?.zone ?? originSystemZone;
@@ -135,11 +160,13 @@ export function resolveBarInstancePlanetContext(
   if (neighborSystemId) {
     discoveryPlanetId = resolveFirstPlanetInSystem(neighborSystemId, pid);
   }
-  if (!discoveryPlanetId && systemId) {
-    discoveryPlanetId = resolveFirstPlanetInSystem(systemId, pid);
-  }
-  if (!discoveryPlanetId) {
-    discoveryPlanetId = pid;
+  if (!strictRemote) {
+    if (!discoveryPlanetId && systemId) {
+      discoveryPlanetId = resolveFirstPlanetInSystem(systemId, pid);
+    }
+    if (!discoveryPlanetId) {
+      discoveryPlanetId = pid;
+    }
   }
 
   return {
@@ -147,7 +174,9 @@ export function resolveBarInstancePlanetContext(
     systemId: systemId ?? null,
     neighborSystemId,
     discoveryPlanetId,
-    deliveryHopCount: deliveryPick.hops,
+    deliveryHopCount: remoteOk ? deliveryPick.hops : (neighborSystemId
+      ? resolveGalaxySystemHopDistance(systemId ?? '', neighborSystemId)
+      : 0),
     originSystemZone,
     targetSystemZone,
   };

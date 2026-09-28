@@ -28,6 +28,7 @@ import {
   TRANSIT_CLOUD_LAYER_SPEEDS_PX_PER_SEC,
   TRANSIT_CLOUD_SPEED_CAP_PX_PER_SEC,
   TRANSIT_CLOUD_SPRITE_FILL_FRAC,
+  TRANSIT_PARALLAX_MIN_COMMIT_MS,
   TRANSIT_PARALLAX_TICK_MS,
   TRANSIT_SPACE_CD_COUNT,
   TRANSIT_STAR_COUNT,
@@ -92,6 +93,11 @@ test('star draw stays on canvas and writes into the scratch slot', () => {
 
 test('parallax tick is 120ms+ so Picture+setState does not fight combat rAF', () => {
   assert.equal(TRANSIT_PARALLAX_TICK_MS >= 120, true);
+});
+
+test('parallax Picture commit is slower than the poll tick', () => {
+  assert.equal(TRANSIT_PARALLAX_MIN_COMMIT_MS > TRANSIT_PARALLAX_TICK_MS, true);
+  assert.equal(TRANSIT_PARALLAX_MIN_COMMIT_MS >= 240, true);
 });
 
 test('nebula first-frame waits for both cloud slots and baked when required', () => {

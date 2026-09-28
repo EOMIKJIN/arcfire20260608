@@ -6,6 +6,7 @@
 
 import { create } from 'zustand';
 import type { CombatFleetSeedSlot } from '../../combat/capitalRealtimeCombatGate';
+import { resolveCombatEnemyLeader } from '../combat/resolveCombatEnemyLeader';
 import { waveDefenseWaveExpReward } from './waveDefenseFleet';
 
 export type WaveDefensePhase =
@@ -39,6 +40,8 @@ type WaveDefenseState = {
   endHoldActive: boolean;
   /** requestEndRun 후 endRun 대기 결과 */
   pendingOutcome: WaveDefenseOutcome | null;
+  /** 현재(마지막) 웨이브 적 리더 — endRun 이후에도 패배 대사에 사용 */
+  leaderCaptainId: string | null;
 
   startRun: (planetId: string, systemId: string | null) => void;
   setWave: (waveIndex: number, fleet: CombatFleetSeedSlot[]) => void;
@@ -67,6 +70,7 @@ const INITIAL = {
   wavesCleared: 0,
   endHoldActive: false,
   pendingOutcome: null as WaveDefenseOutcome | null,
+  leaderCaptainId: null as string | null,
 };
 
 export const useWaveDefenseStore = create<WaveDefenseState>((set) => ({
@@ -84,9 +88,26 @@ export const useWaveDefenseStore = create<WaveDefenseState>((set) => ({
       wavesCleared: 0,
       endHoldActive: false,
       pendingOutcome: null,
+      leaderCaptainId: null,
     }),
   setWave: (waveIndex, fleet) =>
-    set((s) => ({ waveIndex, fleetSeedOverride: fleet, phase: 'combat', waveGenKey: s.waveGenKey + 1 })),
+    set((s) => {
+      const leader = resolveCombatEnemyLeader(
+        fleet
+          .filter((slot) => slot.team !== 'blue')
+          .map((slot) => ({
+            captainId: slot.captainId ?? '',
+            isLeader: slot.isLeader,
+          })),
+      );
+      return {
+        waveIndex,
+        fleetSeedOverride: fleet,
+        phase: 'combat',
+        waveGenKey: s.waveGenKey + 1,
+        leaderCaptainId: leader?.captainId ?? null,
+      };
+    }),
   setPhase: (phase) => set({ phase }),
   recordWaveCleared: (waveIndex) =>
     set((s) => ({

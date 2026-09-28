@@ -71,6 +71,26 @@ test('alert messageSection uses compact divider + sectionLabel', () => {
   assert.match(src, /body\.sectionLabel/);
 });
 
+test('wave result confirm dismisses the result card before onClose', () => {
+  const host = readFileSync(resolve(__dirname, 'ArcOverlayHost.tsx'), 'utf8');
+  const store = readFileSync(resolve(__dirname, 'arcOverlayStore.ts'), 'utf8');
+  assert.match(host, /closeWaveResultOverlay\(\)/);
+  assert.match(store, /function closeOverlayKindThenCallback/);
+  assert.match(store, /dismissWhere\(\(e\) => e\.kind === kind\)/);
+  assert.match(store, /onClose\?\.\(\)/);
+  const dismissAt = store.indexOf('dismissWhere((e) => e.kind === kind)');
+  const closeAt = store.indexOf('onClose?.()', dismissAt);
+  assert.ok(dismissAt >= 0 && closeAt > dismissAt);
+  assert.match(store, /export function closeLevelUpOverlay/);
+  assert.match(host, /closeLevelUpOverlay\(\)/);
+});
+
+test('compact autodismiss pauses while a narrative overlay is stacked', () => {
+  const host = readFileSync(resolve(__dirname, 'ArcOverlayHost.tsx'), 'utf8');
+  assert.match(host, /stackHasNarrative/);
+  assert.match(host, /kind === 'narrative'/);
+});
+
 test('manual-only overlay stays closed without action', () => {
   assert.equal(
     resolveCompactOverlayAutoDismissAction({

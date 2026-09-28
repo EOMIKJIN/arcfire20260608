@@ -1,8 +1,8 @@
 'use strict';
 /**
  * 김클로드 handoff PENDING 감지 공유 코어
- * handoff 표: `| **status** | **`PENDING`** |` — 상단(첫) status만 유효.
- * ARCHIVE 안의 옛 PENDING 을 오탐하지 않도록 첫 매치만 사용.
+ * 표 `| **status** | **`VALUE`** |` 와 코드블록 `status=VALUE` 둘 다 인식.
+ * 파일 최상단에 가까운 쪽(최소 오프셋)만 유효 — ARCHIVE·옛 표 오탐 방지.
  */
 const fs = require('fs');
 const path = require('path');
@@ -17,23 +17,47 @@ function resolveHandoffPath(root) {
   );
 }
 
+function collectStatusCandidates(text) {
+  const out = [];
+  const tableRe = /\|\s*\*\*status\*\*\s*\|\s*\*\*`([^`]+)`/g;
+  let m;
+  while ((m = tableRe.exec(text))) {
+    out.push({ status: String(m[1] || '').trim(), index: m.index, kind: 'table' });
+  }
+  const blockRe = /^status\s*=\s*([A-Za-z_]+)/gm;
+  while ((m = blockRe.exec(text))) {
+    out.push({ status: String(m[1] || '').trim(), index: m.index, kind: 'block' });
+  }
+  return out;
+}
+
+function readTaskIdNear(text, start, kind) {
+  const window = text.slice(start, start + 900);
+  if (kind === 'table') {
+    const tm = window.match(/\|\s*\*\*task_id\*\*\s*\|\s*`([^`]+)`/);
+    if (tm) return tm[1].trim();
+  }
+  const bm = window.match(/^task_id\s*=\s*(\S+)/m);
+  if (bm) return bm[1].trim();
+  const tm2 = window.match(/\|\s*\*\*task_id\*\*\s*\|\s*`([^`]+)`/);
+  return tm2 ? tm2[1].trim() : '(unknown)';
+}
+
 /** @returns {{ taskId: string, status: string, head: string, mtimeMs: number } | null} */
 function readTopHandoffStatus(root) {
   const handoff = resolveHandoffPath(root);
   try {
     if (!fs.existsSync(handoff)) return null;
     const text = fs.readFileSync(handoff, 'utf8');
-    // 표 셀: | **status** | **`VALUE`** |  (VALUE만 캡처)
-    const statusMatch = text.match(/\|\s*\*\*status\*\*\s*\|\s*\*\*`([^`]+)`/);
-    const status = statusMatch ? statusMatch[1].trim() : '';
-    if (!status) return null;
-    const taskMatch = text.match(/\|\s*\*\*task_id\*\*\s*\|\s*`([^`]+)`/);
-    const taskId = taskMatch ? taskMatch[1].trim() : '(unknown)';
-    const head = text.split('\n').slice(0, 55).join('\n');
+    const candidates = collectStatusCandidates(text);
+    if (!candidates.length) return null;
+    candidates.sort((a, b) => a.index - b.index);
+    const top = candidates[0];
+    if (!top.status) return null;
     return {
-      status,
-      taskId,
-      head,
+      status: top.status,
+      taskId: readTaskIdNear(text, top.index, top.kind),
+      head: text.split('\n').slice(0, 55).join('\n'),
       mtimeMs: fs.statSync(handoff).mtimeMs,
     };
   } catch {
@@ -66,6 +90,7 @@ function extraDutyForPending(pending) {
 
 module.exports = {
   resolveHandoffPath,
+  collectStatusCandidates,
   readTopHandoffStatus,
   readPendingHandoff,
   extraDutyForPending,

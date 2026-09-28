@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { test } from 'node:test';
 import type { MissionProgress } from '../types';
 import {
@@ -71,4 +73,10 @@ test('resolveNewlyActivatedMissionId only returns a freshly activated mission', 
     resolveNewlyActivatedMissionId('story_a', before, { ...before, story_a: completed }, 'story_a'),
     null,
   );
+});
+
+test('mission progress alert is skipped during combat-end hold', () => {
+  const src = readFileSync(resolve(__dirname, './presentMissionProgressAlert.ts'), 'utf8');
+  assert.match(src, /isCombatEndOutcomeHold/);
+  assert.match(src, /if \(isCombatEndOutcomeHold\(\)\) return true;/);
 });

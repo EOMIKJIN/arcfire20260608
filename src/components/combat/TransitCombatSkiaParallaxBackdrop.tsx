@@ -24,6 +24,7 @@ import {
   TRANSIT_BAKED_FILL_ALPHA,
   TRANSIT_BAKED_NATIVE_PX,
   TRANSIT_CLOUD_LAYER_COUNT,
+  TRANSIT_PARALLAX_MIN_COMMIT_MS,
   TRANSIT_PARALLAX_TICK_MS,
   TRANSIT_SPACE_CD_COUNT,
   TRANSIT_SPACE_CD_NATIVE_PX,
@@ -254,7 +255,8 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
     bake: { x: 0, y: 0, size: 0 },
   });
   const skipFlushTicksRef = useRef(0);
-  const flushPictureRef = useRef<() => void>(() => {});
+  const lastPictureCommitAtRef = useRef(0);
+  const flushPictureRef = useRef<(force?: boolean) => void>(() => {});
 
   const stopParallaxLoops = useCallback(() => {
     skiaLoopsActiveRef.current = false;
@@ -319,7 +321,7 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
 
   useEffect(() => {
     if (!active) return;
-    flushPictureRef.current();
+    flushPictureRef.current(true);
   }, [active, bakedImage, cloud0, cloud1, cloud2, dodgeImage]);
 
   useEffect(() => {
@@ -329,7 +331,7 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
     };
   }, []);
 
-  flushPictureRef.current = () => {
+  flushPictureRef.current = (force = false) => {
     const canvasW = gfxSizeRef.current.w;
     const canvasH = gfxSizeRef.current.h;
     if (!mountedRef.current || !skiaLoopsActiveRef.current || canvasW <= 0 || canvasH <= 0) return;
@@ -341,6 +343,14 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
       baked: bakedImageRef.current,
     });
     if (!nebulaReady) return;
+    const nowMs = Date.now();
+    if (
+      !force
+      && pictureLiveRef.current
+      && nowMs - lastPictureCommitAtRef.current < TRANSIT_PARALLAX_MIN_COMMIT_MS
+    ) {
+      return;
+    }
     if (skipFlushTicksRef.current > 0) {
       if (pictureLiveRef.current) {
         skipFlushTicksRef.current -= 1;
@@ -446,6 +456,7 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
       setPicture,
       next,
     });
+    lastPictureCommitAtRef.current = nowMs;
   };
 
   useEffect(() => {
@@ -481,7 +492,8 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
     skiaLoopsActiveRef.current = true;
     startedAtRef.current = Date.now();
     sessionViewRef.current = resolveTransitSessionViewStart(rollTransitSessionViewSeed());
-    flushPictureRef.current();
+    lastPictureCommitAtRef.current = 0;
+    flushPictureRef.current(true);
     tickIdRef.current = setInterval(() => {
       flushPictureRef.current();
     }, TRANSIT_PARALLAX_TICK_MS);
@@ -511,7 +523,7 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
     rootRef.current?.measureInWindow((x, y) => {
       selfWinRef.current = { x, y };
     });
-    flushPictureRef.current();
+    flushPictureRef.current(true);
   }, []);
 
   return (

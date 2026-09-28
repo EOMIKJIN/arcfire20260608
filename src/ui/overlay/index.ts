@@ -25,6 +25,11 @@ export {
   dismissAllArcOverlays,
   useArcOverlayStore,
 } from './showArcOverlay';
+export {
+  presentCombatResultOverlay,
+  presentPendingCombatLevelUpThen,
+} from '../../game/combat/presentCombatResultOverlay';
+export type { CombatResultVenue, PresentCombatResultInput } from '../../game/combat/presentCombatResultOverlay';
 export { ArcMenuTile } from './ArcMenuTile';
 export { ArcStageBackButton } from './ArcStageBackButton';
 export { NarrativeDialogRow } from './NarrativeDialogRow';

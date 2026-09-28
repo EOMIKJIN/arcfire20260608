@@ -19,6 +19,11 @@ import {
   pickUsableCaptainPersonalTemplateId,
   type CaptainPersonalMissionTemplateRow,
 } from './captainPersonalMissionTemplates';
+import {
+  GOVERNOR_QUEST_EXCLUDE_SYSTEM_IDS,
+  GOVERNOR_QUEST_MIN_HOPS,
+  isGovernorQuestOfferCaptain,
+} from './governorQuestDestinationPolicy';
 import { applyResolvedClearContactToMission } from './resolveMissionClearNpcContext';
 import {
   resolveBarHostCaptainIdAtPlanet,
@@ -36,16 +41,29 @@ export type CaptainPersonalMissionMeta = {
 const materializedByInstanceId = new Map<string, Mission>();
 const metaByInstanceId = new Map<string, CaptainPersonalMissionMeta>();
 
+function resolvePersonalPlanetContext(
+  offerCaptainId: string,
+  offerPlanetId: string,
+  templateId: string,
+) {
+  const governor = isGovernorQuestOfferCaptain(offerCaptainId);
+  return resolveBarInstancePlanetContext(offerPlanetId, {
+    instanceId: `${offerPlanetId}:${templateId}`,
+    ...(governor
+      ? {
+        minHops: GOVERNOR_QUEST_MIN_HOPS,
+        excludeSystemIds: GOVERNOR_QUEST_EXCLUDE_SYSTEM_IDS,
+      }
+      : {}),
+  });
+}
+
 function resolveDestDisplayPlanetId(
   template: CaptainPersonalMissionTemplateRow,
   offerPlanetId: string,
+  offerCaptainId = '',
 ): string {
-  const ctx = resolveBarInstancePlanetContext(offerPlanetId, {
-    instanceId: `${offerPlanetId}:${template.id}`,
-  });
-  if (template.objectiveType === 'reach_planet') {
-    return ctx.discoveryPlanetId ?? offerPlanetId;
-  }
+  const ctx = resolvePersonalPlanetContext(offerCaptainId, offerPlanetId, template.id);
   return ctx.discoveryPlanetId ?? offerPlanetId;
 }
 
@@ -54,11 +72,11 @@ function canUseTemplate(
   offerCaptainId: string,
   offerPlanetId: string,
 ): boolean {
-  const ctx = resolveBarInstancePlanetContext(offerPlanetId, {
-    instanceId: `${offerPlanetId}:${template.id}`,
-  });
+  const ctx = resolvePersonalPlanetContext(offerCaptainId, offerPlanetId, template.id);
+  const governor = isGovernorQuestOfferCaptain(offerCaptainId);
   if (template.objectiveType === 'talk_npc' && isDestBarHostPlaceholder(template.objectiveTarget)) {
-    const destPlanetId = ctx.discoveryPlanetId ?? offerPlanetId;
+    const destPlanetId = ctx.discoveryPlanetId;
+    if (!destPlanetId) return false;
     const destHost = resolveBarHostCaptainIdAtPlanet(destPlanetId);
     return Boolean(destHost && destHost !== offerCaptainId);
   }
@@ -66,6 +84,9 @@ function canUseTemplate(
     return Boolean(ctx.discoveryPlanetId);
   }
   if (template.objectiveType === 'reach_system') {
+    if (governor) {
+      return Boolean(ctx.neighborSystemId) && ctx.deliveryHopCount >= GOVERNOR_QUEST_MIN_HOPS;
+    }
     return true;
   }
   if (template.objectiveType === 'defeat_enemy') {
@@ -79,12 +100,18 @@ function patchPersonalObjectiveTarget(
   offerCaptainId: string,
   offerPlanetId: string,
 ): string {
-  const ctx = resolveBarInstancePlanetContext(offerPlanetId, {
-    instanceId: `${offerPlanetId}:${template.id}`,
-  });
+  const ctx = resolvePersonalPlanetContext(offerCaptainId, offerPlanetId, template.id);
   if (template.objectiveType === 'talk_npc' && isDestBarHostPlaceholder(template.objectiveTarget)) {
     const destPlanetId = ctx.discoveryPlanetId ?? offerPlanetId;
     return resolveBarHostCaptainIdAtPlanet(destPlanetId) ?? offerCaptainId;
+  }
+  if (
+    template.objectiveType === 'reach_system'
+    && template.objectiveTarget === BAR_INSTANCE_NEIGHBOR_SYSTEM_PLACEHOLDER
+    && isGovernorQuestOfferCaptain(offerCaptainId)
+    && ctx.neighborSystemId
+  ) {
+    return ctx.neighborSystemId;
   }
   return patchBarInstanceObjectiveTargetId(template.objectiveType, template.objectiveTarget, ctx);
 }
@@ -203,10 +230,11 @@ export function rematerializeCaptainPersonalMissionsFromProgresses(
 export function resolveCaptainPersonalDestPlanetId(
   templateId: string,
   offerPlanetId: string,
+  offerCaptainId = '',
 ): string {
   const template = getCaptainPersonalMissionTemplate(templateId);
   if (!template) return offerPlanetId;
-  return resolveDestDisplayPlanetId(template, offerPlanetId);
+  return resolveDestDisplayPlanetId(template, offerPlanetId, offerCaptainId);
 }
 
 export function pickAndMaterializeCaptainPersonalMission(input: {

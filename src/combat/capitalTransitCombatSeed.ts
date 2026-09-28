@@ -49,6 +49,7 @@ export type TransitCombatSeedSlot = {
   npcShipId: string | null;
   captainId: string | null;
   combatInstanceKey?: string | null;
+  isLeader?: boolean;
 };
 
 /** `resolveCurrentPlayerFlagshipNpcShipId`는 sim 모듈에 유지 — 시드만 registry 경유 */
@@ -97,6 +98,7 @@ export function buildTransitCombatSeedSlots(
       npcShipId: redShipId,
       captainId: redAvailable ? redCaptain?.id ?? null : null,
       combatInstanceKey: redInstanceKey,
+      isLeader: true,
     },
     { team: 'blue', npcShipId: blueShipId, captainId: null, combatInstanceKey: 'transit_player_flagship' },
   ];
