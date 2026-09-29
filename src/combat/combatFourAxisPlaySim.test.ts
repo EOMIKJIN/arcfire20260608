@@ -83,17 +83,26 @@ function hubOrbitLock(anchorPlanetId: string): QuestCombatLock {
   };
 }
 
-test('라이브 정책 — transit_guaranteed만 · 신규 베뉴 0행', () => {
+test('라이브 정책 — 전투퀘는 전부 hub_orbit · tq만 수락행성 빈 앵커', () => {
   const counts = { transit_guaranteed: 0, transit_toward_anchor: 0, hub_orbit: 0, wave_assault: 0 };
   for (const row of MISSION_QUEST_COMBAT_OPS_FROM_CSV) {
     const policy = String(row.encounterPolicy ?? '').trim();
     assert.ok(policy in counts, `알 수 없는 정책 ${policy}`);
     counts[policy as keyof typeof counts] += 1;
+    const anchor = String(row.anchorPlanetId ?? '').trim();
+    const oid = String(row.objectiveId ?? '');
+    if (policy === 'hub_orbit' && !oid.startsWith('obj_tq_')) {
+      assert.ok(anchor.length > 0, `${row.objectiveId} hub_orbit 앵커 필요`);
+    }
+    if (oid.startsWith('obj_tq_')) {
+      assert.equal(policy, 'hub_orbit', `${oid} tq는 수락 행성 궤도`);
+      assert.equal(anchor, '', `${oid} tq 앵커는 비움(클론 offerPlanetId)`);
+    }
   }
   assert.equal(counts.transit_toward_anchor, 0);
-  assert.equal(counts.hub_orbit, 0);
   assert.equal(counts.wave_assault, 0);
-  assert.ok(counts.transit_guaranteed >= 25, `guaranteed=${counts.transit_guaranteed}`);
+  assert.equal(counts.transit_guaranteed, 0);
+  assert.ok(counts.hub_orbit >= 28, `hub_orbit=${counts.hub_orbit}`);
   for (const row of MISSION_QUEST_COMBAT_OPS_FROM_CSV) {
     assert.ok(!ENDGAME_PLANETS.has(String(row.anchorPlanetId ?? '').trim()));
   }
@@ -201,12 +210,12 @@ test('hub_orbit 락 — 분쟁 웨이브 보류 · 허브 Ready · endgame은 �
   }
 });
 
-test('라이브 transit_guaranteed — 허브/웨이브 승으로 클리어 안 됨', () => {
+test('라이브 hub_orbit — 웨이브/항로 승으로 클리어 안 됨', () => {
   const lock = resolveQuestCombatLock(
     { mission_002: active('mission_002', { obj_002_a: false }) },
     'mission_002',
   );
-  assert.equal(lock?.encounterPolicy, 'transit_guaranteed');
+  assert.equal(lock?.encounterPolicy, 'hub_orbit');
   assert.equal(lock?.anchorPlanetId, 'arcadia_prime');
   assert.equal(
     canCompleteQuestDefeatEnemy(lock, {
@@ -214,7 +223,7 @@ test('라이브 transit_guaranteed — 허브/웨이브 승으로 클리어 안 
       enemyTemplateId: 'pirate_fighter',
       planetId: 'arcadia_prime',
     }),
-    false,
+    true,
   );
   assert.equal(
     canCompleteQuestDefeatEnemy(lock, {
@@ -226,7 +235,7 @@ test('라이브 transit_guaranteed — 허브/웨이브 승으로 클리어 안 
   );
   assert.equal(
     canCompleteQuestDefeatEnemy(lock, { venue: 'transit', enemyTemplateId: 'pirate_fighter' }),
-    true,
+    false,
   );
 });
 
@@ -240,14 +249,15 @@ test('C dest-org TCL — 21성계 min(player, destTCL) · 퀘스트 락 없이 d
   }
 });
 
-test('D 항로 락 TCL/헐 — 보장 홉만 앵커 · toward_anchor 오프로드는 dest-org', () => {
+test('D 항로 락 TCL/헐 — tq는 궤도 일반전투 · toward_anchor 오프로드는 dest-org', () => {
   const lock = resolveQuestCombatLock(
-    { mission_002: active('mission_002', { obj_002_a: false }) },
-    'mission_002',
+    { tq_cbt_01: active('tq_cbt_01', { obj_tq_c01_a: false }) },
+    'tq_cbt_01',
   );
-  assert.equal(shouldGuaranteeQuestTransitEncounter(lock, 'eternity'), true);
-  assert.equal(resolveQuestLockTransitEncounterLevel(lock, 40), 1);
-  assert.equal(resolveQuestLockTransitHullPlanetId(lock), 'arcadia_prime');
+  assert.equal(lock?.venue, 'hub_orbit');
+  assert.equal(shouldGuaranteeQuestTransitEncounter(lock, 'eternity'), false);
+  assert.equal(resolveQuestLockTransitEncounterLevel(lock, 40), null);
+  assert.equal(resolveQuestLockTransitHullPlanetId(lock), null);
 
   const toward = towardAnchorLock('arcadia_prime');
   assert.equal(shouldGuaranteeQuestTransitEncounter(toward, 'arcadia'), true);
@@ -291,14 +301,14 @@ test('선체 스케일 — 아르카디아 1.0 · 제네시스 바닥', () => {
   assert.ok(genesis.maxHp >= 480, `genesis hp=${genesis.maxHp}`);
 });
 
-test('transit 락은 허브/웨이브 TCL 경로에 안 섞임 (venue 게이트)', () => {
+test('hub_orbit 락은 항로 TCL 경로에 안 섞임 (venue 게이트)', () => {
   const lock = resolveQuestCombatLock(
     { mission_002: active('mission_002', { obj_002_a: false }) },
     'mission_002',
   );
-  assert.equal(lock?.venue, 'transit');
+  assert.equal(lock?.venue, 'hub_orbit');
   assert.equal(resolvePlanetTargetCombatLevel('draco_haven'), 9);
-  assert.equal(resolveQuestLockTransitEncounterLevel(lock, 40), 1);
+  assert.equal(resolveQuestLockTransitEncounterLevel(lock, 40), null);
   assert.equal(resolveQuestLockTransitEncounterLevel(hubOrbitLock('draco_haven'), 40), null);
 });
 

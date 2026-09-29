@@ -1,33 +1,42 @@
 id,objectiveId,encounterPolicy,anchorPlanetId,notesKo
-qco_obj_002_a,obj_002_a,transit_guaranteed,arcadia_prime,튜토리얼 — 아르카디아 주변 해적
-qco_obj_story_002_c,obj_story_002_c,transit_guaranteed,minerva_deep,본편 q02 — 미네르바 밀수조 호위
-qco_obj_story_004_a,obj_story_004_a,transit_guaranteed,vega_base,본편 q04 — 베가 국경 기습(전멸 연출 대행 1척)
-qco_obj_story_006_a,obj_story_006_a,transit_guaranteed,draco_haven,본편 q06 — 드라코 요새 호위
-qco_obj_s034_d,obj_s034_d,transit_guaranteed,synth_075_p,서브 암흑 — 캠프 출구 호위
-qco_obj_s035_d,obj_s035_d,transit_guaranteed,synth_078_p,서브 이중 — 요새 톨린 호위 순양함
-qco_obj_s036_c,obj_s036_c,transit_guaranteed,synth_070_p,서브 부의근원 — 코어 항로 장부 호위
-qco_obj_s037_c,obj_s037_c,transit_guaranteed,synth_070_p,서브 코어파편 — 코어 항로 상자 호위
-qco_obj_s001_a,obj_s001_a,transit_guaranteed,arcadia_prime,샌드박스 — 아르카디아 해적
-qco_obj_s003_a,obj_s003_a,transit_guaranteed,solar_station,샌드박스 — 솔라 밀수 호위
-qco_obj_s005_a,obj_s005_a,transit_guaranteed,minerva_deep,샌드박스 — 미네르바 광산 해적
-qco_obj_s007_a,obj_s007_a,transit_guaranteed,vega_base,샌드박스 — 베가 급습
-qco_obj_s009_a,obj_s009_a,transit_guaranteed,eden_city,샌드박스 — 뉴에덴 순양함
-qco_obj_s011_a,obj_s011_a,transit_guaranteed,eden_city,샌드박스 — 아이언 잔해 순양함
-qco_obj_s013_a,obj_s013_a,transit_guaranteed,draco_haven,샌드박스 — 드라코 관측
-qco_obj_s015_a,obj_s015_a,transit_guaranteed,omega_hub,샌드박스 — 오메가 순양함
-qco_obj_s017_a,obj_s017_a,transit_guaranteed,helios_core,샌드박스 — 헬리오스 태양권
-qco_obj_s019_a,obj_s019_a,transit_guaranteed,sirius_border,샌드박스 — 시리우스 현상금
-qco_obj_s021_a,obj_s021_a,transit_guaranteed,perseus_memorial,샌드박스 — 페르세우스 현상금
-qco_obj_s023_a,obj_s023_a,transit_guaranteed,crimson_base,샌드박스 — 크림슨 현상금
-qco_obj_s025_a,obj_s025_a,transit_guaranteed,dark_haven,샌드박스 — 다크 현상금
-qco_obj_s027_a,obj_s027_a,transit_guaranteed,shadow_market,샌드박스 — 섀도우 추적자
-qco_obj_s029_a,obj_s029_a,transit_guaranteed,nightfall_citadel,샌드박스 — 나이트폴 현상금
-qco_obj_s032_a,obj_s032_a,transit_guaranteed,minerva_deep,샌드박스 — 미네르바 호송 해적
-qco_obj_tq_c01_a,obj_tq_c01_a,transit_guaranteed,,ArcCore tq fighter
-qco_obj_tq_c02_a,obj_tq_c02_a,transit_guaranteed,,ArcCore tq fighter 2
-qco_obj_tq_c03_a,obj_tq_c03_a,transit_guaranteed,,ArcCore tq cruiser
-qco_obj_tq_c04_a,obj_tq_c04_a,transit_guaranteed,,ArcCore tq cruiser 2
-qco_obj_tq_b01_a,obj_tq_b01_a,transit_guaranteed,,ArcCore tq bounty
-qco_obj_tq_b02_a,obj_tq_b02_a,transit_guaranteed,,ArcCore tq bounty 2
-qco_obj_tq_b03_a,obj_tq_b03_a,transit_guaranteed,,ArcCore tq bounty 3
-qco_obj_tq_b04_a,obj_tq_b04_a,transit_guaranteed,,ArcCore tq bounty 4
+qco_obj_002_a,obj_002_a,hub_orbit,arcadia_prime,튜토리얼 — 아르카디아 궤도 해적(일반전투)
+qco_obj_story_002_c,obj_story_002_c,hub_orbit,minerva_deep,본편 q02 — 미네르바 궤도 밀수조 교전
+qco_obj_story_004_a,obj_story_004_a,hub_orbit,vega_base,본편 q04 — 베가 궤도 기습 1척(점유 변경 없음)
+qco_obj_story_006_a,obj_story_006_a,hub_orbit,draco_haven,본편 q06 — 드라코 궤도 교전
+qco_obj_story_011_b,obj_story_011_b,hub_orbit,vega_base,본편 q11 — 허브 궤도 1척
+qco_obj_story_012_c,obj_story_012_c,hub_orbit,arcadia_prime,본편 q12 — 허브 궤도 1척
+qco_obj_story_016_b,obj_story_016_b,hub_orbit,crimson_base,본편 q16 — 허브 궤도 1척
+qco_obj_story_021_b,obj_story_021_b,hub_orbit,shadow_market,본편 q21 — 허브 궤도 1척
+qco_obj_story_028_b,obj_story_028_b,hub_orbit,crimson_base,본편 q28 — 허브 궤도 1척
+qco_obj_s034_d,obj_s034_d,hub_orbit,synth_075_p,서브 암흑 — 캠프 출구 궤도
+qco_obj_s035_d,obj_s035_d,hub_orbit,synth_078_p,서브 이중 — 요새 톨린 궤도
+qco_obj_s036_c,obj_s036_c,hub_orbit,synth_070_p,서브 부의근원 — 코어 항로 궤도
+qco_obj_s037_c,obj_s037_c,hub_orbit,synth_070_p,서브 코어파편 — 코어 항로 궤도
+qco_obj_s001_a,obj_s001_a,hub_orbit,arcadia_prime,샌드박스 — 아르카디아 궤도 해적
+qco_obj_s003_a,obj_s003_a,hub_orbit,solar_station,샌드박스 — 솔라 궤도 밀수
+qco_obj_s005_a,obj_s005_a,hub_orbit,minerva_deep,샌드박스 — 미네르바 궤도 해적
+qco_obj_s007_a,obj_s007_a,hub_orbit,vega_base,샌드박스 — 베가 궤도 급습
+qco_obj_s009_a,obj_s009_a,hub_orbit,eden_city,샌드박스 — 뉴에덴 궤도 순양함
+qco_obj_s011_a,obj_s011_a,hub_orbit,iron_remnant,샌드박스 — 아이언 레므난트 궤도 순양함
+qco_obj_s013_a,obj_s013_a,hub_orbit,draco_haven,샌드박스 — 드라코 궤도 관측
+qco_obj_s015_a,obj_s015_a,hub_orbit,omega_hub,샌드박스 — 오메가 궤도 순양함
+qco_obj_s017_a,obj_s017_a,hub_orbit,helios_core,샌드박스 — 헬리오스 궤도
+qco_obj_s019_a,obj_s019_a,hub_orbit,sirius_border,샌드박스 — 시리우스 궤도 현상금
+qco_obj_s021_a,obj_s021_a,hub_orbit,perseus_memorial,샌드박스 — 페르세우스 궤도 현상금
+qco_obj_s023_a,obj_s023_a,hub_orbit,crimson_base,샌드박스 — 크림슨 궤도 현상금
+qco_obj_s025_a,obj_s025_a,hub_orbit,dark_haven,샌드박스 — 다크 궤도 현상금
+qco_obj_s027_a,obj_s027_a,hub_orbit,shadow_market,샌드박스 — 섀도우 궤도 추적자
+qco_obj_s029_a,obj_s029_a,hub_orbit,nightfall_citadel,샌드박스 — 나이트폴 궤도 현상금
+qco_obj_s032_a,obj_s032_a,hub_orbit,minerva_deep,샌드박스 — 미네르바 궤도 호송 해적
+qco_obj_tq_c01_a,obj_tq_c01_a,hub_orbit,,바 tq fighter — 수락 행성 궤도 일반전투
+qco_obj_tq_c02_a,obj_tq_c02_a,hub_orbit,,바 tq fighter 2 — 수락 행성 궤도 일반전투
+qco_obj_tq_c03_a,obj_tq_c03_a,hub_orbit,,바 tq cruiser — 수락 행성 궤도 일반전투
+qco_obj_tq_c04_a,obj_tq_c04_a,hub_orbit,,바 tq cruiser 2 — 수락 행성 궤도 일반전투
+qco_obj_tq_b01_a,obj_tq_b01_a,hub_orbit,,바 tq bounty — 수락 행성 궤도 일반전투
+qco_obj_tq_b02_a,obj_tq_b02_a,hub_orbit,,바 tq bounty 2 — 수락 행성 궤도 일반전투
+qco_obj_tq_b03_a,obj_tq_b03_a,hub_orbit,,바 tq bounty 3 — 수락 행성 궤도 일반전투
+qco_obj_tq_b04_a,obj_tq_b04_a,hub_orbit,,바 tq bounty 4 — 수락 행성 궤도 일반전투
+qco_obj_s056_d,obj_s056_d,hub_orbit,synth_031_p,서브 출정전야 — 펄 궤도 차단
+qco_obj_s057_d,obj_s057_d,hub_orbit,synth_057_p,서브 빈지휘 — 비콘 궤도 호위
+qco_obj_s058_d,obj_s058_d,hub_orbit,synth_016_p,서브 틀린숫자 — 카론 궤도 현상금
+qco_obj_s059_d,obj_s059_d,hub_orbit,synth_066_p,서브 훔친대역 — 마크 궤도 호위

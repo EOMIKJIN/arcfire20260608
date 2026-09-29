@@ -28,6 +28,11 @@ test('wave end still shows result if operator dialog did not open', () => {
   assert.match(planetSrc, /presentWaveEndResult\(\)/);
 });
 
+test('wave result totalWaves is per-planet policy', () => {
+  assert.match(planetSrc, /resolvePlanetWaveDefenseMaxWaves\(endedPlanetId\)/);
+  assert.match(planetSrc, /waveDefenseMaxWaves/);
+});
+
 test('wave result uses the single combat-end pipeline without feature-link delay', () => {
   assert.match(planetSrc, /runCombatEndOutcomeFlow/);
   assert.match(planetSrc, /venue:\s*'wave'/);
@@ -47,6 +52,18 @@ test('hub orbit regular combat goes through the same pipeline', () => {
   assert.match(hubSimSrc, /presentCombatEndLeaderDialog/);
   assert.match(hubSimSrc, /waitCombatEndHold/);
   assert.match(hubSimSrc, /resolveHubOrbitLeaderCaptainId/);
+  assert.match(hubSimSrc, /questOrbit/);
+  assert.match(hubSimSrc, /퀘스트 일반전투는 점유 웨이브 30분 쿨다운을 남기지 않는다/);
+});
+
+test('player sink does not present destroy alert before combat result', () => {
+  assert.match(hubSimSrc, /markCombatPlayerShipSinkPending/);
+  assert.match(hubSimSrc, /applyCapitalShipDestruction:\s*pendingDestroy/);
+  assert.match(hubSimSrc, /pendingDestroy \|\| winnerTeam !== 'blue'/);
+  assert.doesNotMatch(hubSimSrc, /combat\.shipDestroyedTitle/);
+  assert.match(planetSrc, /consumeCombatPlayerShipSinkPending/);
+  assert.match(planetSrc, /applyCapitalShipDestruction:\s*sunk/);
+  assert.match(planetSrc, /if \(sunk \|\| endedOutcome !== 'win'\) return false/);
 });
 
 test('wave win uses shared leader defeat dialog before result', () => {

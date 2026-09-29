@@ -1,10 +1,12 @@
 // ============================================================
 // 허브 메인스테이지 교전 vs 분쟁 차례 웨이브 — 동시 점유 금지 게이트.
 //
-// draco_haven 은 순차 리스트 1번이면서 mainStageCombatEnabled + 궤도 RED 함장이 있다.
-// 분쟁 차례 pending / 웨이브 세션(ended 포함) 동안 허브 보스 교전이 먼저 켜지면
-// 같은 PlanetEdenRaidTestLayer 가 Ready 직후 웨이브로 재시드되거나, 결과창 중 허브가 재점화한다.
-// 시험 베뉴는 2026-09-16 OFF — 착륙 시 허브 보스는 CSV(mainStageCombatEnabled·draco_boss) 정본.
+// 전투 3축 (같은 캔버스, 시드·승패만 갈라짐 · Skia/틱 공유):
+//   A 일반(허브) — combat 함장 또는 hub_orbit 퀘스트 1척. 승리는 점유를 안 바꿈.
+//   B 웨이브 — 분쟁/어썰트/엔드. 승리만 성계 중립화(점유 변경).
+//   C 항로 — dest-org 확률 + 앵커 없는 tq 보장. 점유 무관.
+// 퀘스트 A는 웨이브 쿨다운·분쟁 pending·허브 OFF와 별개로 Ready.
+// 웨이브 세션(진행/결과창)만 같은 레이어라 막는다.
 // ============================================================
 
 export type HubMainStageCombatGateInput = {
@@ -28,7 +30,7 @@ export function evaluateHubMainStageCombatEntered(
   if (input.dracoCombatTestVenue) return false;
   if (input.questHubOrbitActive) {
     if (input.waveDefenseSessionHere) return false;
-    return !input.cooldownActive;
+    return true;
   }
   if (input.territorialTurnPending) return false;
   if (input.waveDefenseSessionHere) return false;

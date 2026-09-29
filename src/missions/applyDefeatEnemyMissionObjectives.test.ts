@@ -10,7 +10,7 @@ function active(missionId: string, objectives: Record<string, boolean>): Mission
   return { missionId, status: 'active', objectives };
 }
 
-test('허브 승리는 transit_guaranteed 락을 끝내지 못한다', () => {
+test('허브 승리는 hub_orbit 락만 끝낸다', () => {
   const lock = resolveQuestCombatLock(
     { sandbox_013: active('sandbox_013', { obj_s013_a: false }) },
     'sandbox_013',
@@ -21,13 +21,21 @@ test('허브 승리는 transit_guaranteed 락을 끝내지 못한다', () => {
       enemyTemplateId: 'pirate_cruiser',
       planetId: 'draco_haven',
     }),
-    false,
+    true,
   );
   assert.equal(
     canCompleteQuestDefeatEnemy(lock, {
       venue: 'transit',
       enemyTemplateId: 'pirate_cruiser',
     }),
-    true,
+    false,
+  );
+  assert.equal(
+    canCompleteQuestDefeatEnemy(lock, {
+      venue: 'wave_assault',
+      enemyTemplateId: 'pirate_cruiser',
+      planetId: 'draco_haven',
+    }),
+    false,
   );
 });

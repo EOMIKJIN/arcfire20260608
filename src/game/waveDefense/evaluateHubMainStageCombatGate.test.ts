@@ -103,14 +103,14 @@ test('hub_orbit 퀘스트 — 분쟁 pending·허브 OFF여도 Ready', () => {
   );
 });
 
-test('hub_orbit 퀘스트 — 쿨다운·웨이브 세션은 그대로 차단', () => {
+test('hub_orbit 퀘스트 — 웨이브 쿨다운은 통과 · 웨이브 세션만 차단', () => {
   assert.equal(
     evaluateHubMainStageCombatEntered({
       ...hubOpen,
       questHubOrbitActive: true,
       cooldownActive: true,
     }),
-    false,
+    true,
   );
   assert.equal(
     evaluateHubMainStageCombatEntered({

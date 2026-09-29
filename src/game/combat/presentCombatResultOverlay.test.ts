@@ -50,6 +50,18 @@ test('hub orbit hides wave row and empty reward placeholder', () => {
   assert.equal(view.showNoReward, false);
 });
 
+test('quest hub orbit uses quest subtitle and still hides waves', () => {
+  const view = resolveCombatResultOverlayViewModel({
+    venue: 'hub_orbit',
+    questOrbit: true,
+    expEarned: 80,
+    enemyName: '퀘스트 적',
+  });
+  assert.equal(view.subtitleKey, 'waveResult.subtitleQuestOrbit');
+  assert.equal(view.showWaves, false);
+  assert.equal(view.showEnemy, true);
+});
+
 test('hub orbit with no rewards shows noReward, not fake items', () => {
   const view = resolveCombatResultOverlayViewModel({
     venue: 'hub_orbit',

@@ -25,7 +25,7 @@ const MISSION_EN = {
   sandbox_008: ['Civilian Reserve Food', 'Serin Koff asked you to send reserve food to Vega civilian escorts.'],
   sandbox_009: ['Black Market Tail', 'Lana Bel contracted tracking a cruiser loitering at New Eden docks.'],
   sandbox_010: ['Neutral Route Parts', 'New Eden Blue 07 asked you to deliver tech parts to neutral route defenses.'],
-  sandbox_011: ['Iron Wreck Hunt', 'Omel Kar asked you to remove a cruiser hiding in the Iron Remnant zone.'],
+  sandbox_011: ['Iron Wreck Hunt', 'Luc Pell asked you to destroy a cruiser hiding in Iron Remnant orbit.'],
   sandbox_012: ['Scrap Guild Contract', 'Sera Mion asked you to move salvage manifests to Omega.'],
   sandbox_013: ['Draco Survey Fix', 'Vector-7 asked you to destroy hostiles near an anomaly signal in Draco Nebula.'],
   sandbox_014: ['Nebula Research Sample', 'Tad Rain asked you to transport research samples to Omega Hub.'],

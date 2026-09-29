@@ -650,6 +650,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'waveResult.lose': '✕ 패  배 ✕',
   'waveResult.subtitle': '웨이브 디펜스 — 최종 결과',
   'waveResult.subtitleHubOrbit': '궤도 교전 — 전투 결과',
+  'waveResult.subtitleQuestOrbit': '퀘스트 교전 — 전투 결과',
   'waveResult.subtitleTransit': '항로 교전 — 전투 결과',
   'waveResult.clearedWaves': '클리어 웨이브',
   'waveResult.enemy': '상대',

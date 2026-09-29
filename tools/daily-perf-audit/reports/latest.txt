@@ -1,4 +1,4 @@
-Daily audit — 2026-09-28T15:00:06.607Z
+Daily audit — 2026-09-29T15:00:11.278Z
 
 TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -33,11 +33,14 @@ build-arc-core-chat-tables: wrote persona/operator-persona/speakers/topics/knowl
 [audit:npc-fleet] PASS
   [info] obj_s008_a: vega_base — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
   [info] obj_s020_a: titan_ruins — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
+  [info] obj_s060_a: synth_033_p — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
+  [info] obj_s061_a: synth_005_p — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
+  [info] obj_s062_a: synth_013_p — CSV 무역소 없음 · 퀘스트 전용 무역 SUB-STAGE 허용
   [info] obj_tq_anom_01_t: tq_anom 위협 — combat_ops 미강제 (STAGE 3 HOLD · 바 tq 비침범)
 === audit:mission-quest-placements ===
-buy_goods objectives: 27
-defeat_enemy objectives: 33
-placements: 18 · combat_ops: 32
+buy_goods objectives: 30
+defeat_enemy objectives: 42
+placements: 21 · combat_ops: 41
 tq_* bar templates: 22 · tq_anom world-event: 1 · bar planets: 18
 
 PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤트·보상 item 정적 검증 OK
@@ -48,23 +51,23 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 Largest TS/TSX under `src/` + `app/` (bytes)
 
 - 660,019 — `src/data/generated/galaxySystems100.generated.ts`
+- 516,795 — `src/data/generated/csvStoryScenes.ts`
+- 500,176 — `src/data/generated/csvNpcCaptains.ts`
 - 482,349 — `src/data/generated/csvNpcCapitalShips.ts`
-- 467,301 — `src/data/generated/csvNpcCaptains.ts`
 - 383,335 — `src/data/generated/csvItemDefs.ts`
-- 247,488 — `src/data/generated/csvStoryScenes.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
-- 174,374 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
-- 118,035 — `src/i18n/locales/ko.ts`
-- 113,834 — `src/data/generated/csvMainStorySpine.ts`
-- 107,575 — `src/i18n/locales/en.ts`
+- 173,922 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 161,946 — `src/data/generated/csvMissions.ts`
+- 121,317 — `src/data/generated/csvMainStorySpine.ts`
+- 118,108 — `src/i18n/locales/ko.ts`
+- 107,637 — `src/i18n/locales/en.ts`
 - 104,469 — `app/(game)/worldmap.tsx`
-- 94,894 — `app/(game)/planet.tsx`
-- 91,882 — `src/data/generated/csvMissions.ts`
+- 95,382 — `app/(game)/planet.tsx`
 - 90,835 — `src/data/generated/csvBarPatronage.ts`
 - 71,316 — `src/data/balance/generated/csvSynthSystemColonization.ts`
 - 71,070 — `src/data/generated/csvWeapons.ts`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
-- 55,365 — `src/data/generated/planetGlobeLookColonized.ts`
+- 65,105 — `src/data/generated/csvStellaQuestAside.ts`
 
 Planet hub eager `src/combat` import (should be absent)
 

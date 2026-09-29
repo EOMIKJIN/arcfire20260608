@@ -30,6 +30,7 @@ export const WaveResultOverlayContent = memo(function WaveResultOverlayContent({
     enemyName,
     destroyedLabels,
     itemRewards,
+    questOrbit: entry.questOrbit,
   });
 
   return (

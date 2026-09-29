@@ -173,12 +173,20 @@ test('missions.csv generated — 키·목표·배치·전투 연동', () => {
   if (cpIds.size < 1) errors.push('cp 템플릿 없음');
 
   const CORE_PLANET_RE = /^(arcadia_prime|vega_base|sirius_border|omega_hub|crimson_base|shadow_market|dark_haven|solar_station)$/;
-  const FRONTIER_SIDE_QUESTS: { id: string; objectiveCount: number }[] = [
+  const FRONTIER_SIDE_QUESTS: { id: string; objectiveCount: number; requireTravel?: boolean }[] = [
     { id: 'sandbox_034', objectiveCount: 5 },
     { id: 'sandbox_035', objectiveCount: 5 },
     { id: 'sandbox_036', objectiveCount: 4 },
     { id: 'sandbox_037', objectiveCount: 4 },
     { id: 'sandbox_038', objectiveCount: 4 },
+    { id: 'sandbox_056', objectiveCount: 5, requireTravel: true },
+    { id: 'sandbox_057', objectiveCount: 5, requireTravel: true },
+    { id: 'sandbox_058', objectiveCount: 5, requireTravel: true },
+    { id: 'sandbox_059', objectiveCount: 5, requireTravel: true },
+    { id: 'sandbox_060', objectiveCount: 5, requireTravel: true },
+    { id: 'sandbox_061', objectiveCount: 5, requireTravel: true },
+    { id: 'sandbox_062', objectiveCount: 5, requireTravel: true },
+    { id: 'sandbox_063', objectiveCount: 5, requireTravel: true },
   ];
   for (let n = 39; n <= 55; n += 1) {
     const stale = `sandbox_0${n}`;
@@ -211,12 +219,14 @@ test('missions.csv generated — 키·목표·배치·전투 연동', () => {
         errors.push(`프론티어 수락이 코어 21 ${id}=${offerPlanet}`);
       }
     }
+    let travelHit = false;
     for (let j = 0; j < mission.objectives.length; j += 1) {
       const obj = mission.objectives[j]!;
       if (obj.type === 'reach_planet') {
         if (!obj.targetId.startsWith('synth_') || !obj.targetId.endsWith('_p')) {
           errors.push(`프론티어 도착 행성 위반 ${id}:${obj.id}=${obj.targetId}`);
         }
+        if (obj.targetId && obj.targetId !== offerPlanet) travelHit = true;
       }
       if (obj.type === 'talk_npc') {
         const sep = obj.targetId.indexOf('|');
@@ -225,6 +235,9 @@ test('missions.csv generated — 키·목표·배치·전투 연동', () => {
           errors.push(`프론티어 탐문 행성 위반 ${id}:${obj.id}=${obj.targetId}`);
         }
       }
+    }
+    if (spec.requireTravel && !travelHit) {
+      errors.push(`프론티어 성계 이동 없음 ${id}`);
     }
   }
 

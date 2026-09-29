@@ -69,4 +69,9 @@ test('transit lose uses the same combat-end pipeline', () => {
   assert.match(combatSrc, /runCombatEndOutcomeFlow/);
   assert.match(combatSrc, /outcome:\s*'lose'/);
   assert.match(combatSrc, /setEndHoldVisible\(false\)/);
+  assert.match(combatSrc, /applyCapitalShipDestruction:\s*true/);
+  assert.match(combatSrc, /resolveCombatShipDestroyedNotice/);
+  const loseFlowIdx = combatSrc.indexOf("outcome: 'lose'");
+  const destroyBefore = combatSrc.slice(0, loseFlowIdx).lastIndexOf('applyCapitalShipDestruction');
+  assert.ok(destroyBefore < 0, 'destruction must not run before lose result overlay');
 });

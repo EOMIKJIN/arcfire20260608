@@ -86,6 +86,9 @@ test('accepted/in-progress mission drops; other unaccepted on same system stay',
       story_002: progress('story_002', 'complete'),
       story_003: progress('story_003', 'complete'),
       story_005: progress('story_005', 'active'),
+      story_012: progress('story_012', 'complete'),
+      story_013: progress('story_013', 'complete'),
+      story_026: progress('story_026', 'complete'),
     },
   });
   assert.equal(allArcadiaTaken, EMPTY_GALAXY_MAP_QUEST_ACCEPT_MARKS);
@@ -111,6 +114,15 @@ test('unaccepted sides mark before level gate (034 at L-agnostic)', () => {
   assert.equal(marks.synth_070?.side, true);
   assert.equal(marks.synth_078?.side, true);
   assert.equal(marks.arcadia?.main, true);
+});
+
+test('wave2 named side 056 marks synth_054', () => {
+  const marks = resolveGalaxyMapQuestAcceptMarks({
+    enabled: true,
+    visibleSystemIds: ['synth_054'],
+    progresses: {},
+  });
+  assert.deepEqual(marks.synth_054, { main: false, side: true });
 });
 
 test('accepted side is cleared', () => {

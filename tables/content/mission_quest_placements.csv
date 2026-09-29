@@ -17,3 +17,6 @@ qq_obj_s028_a,obj_s028_a,omega_hub,tech,99,420,quest,샌드박스 — 오메가 
 qq_obj_s030_a,obj_s030_a,solar_station,tech,99,420,quest,샌드박스 — 솔라 고급 기술
 qq_obj_s031_a,obj_s031_a,solar_station,weapon,99,720,quest,샌드박스 — 솔라 군수 무기
 qq_obj_s033_a,obj_s033_a,omega_hub,food,99,42,quest,샌드박스 — 오메가 예비 식량
+qq_obj_s060_a,obj_s060_a,synth_033_p,food,99,42,quest,서브 — 제피르 식량
+qq_obj_s061_a,obj_s061_a,synth_005_p,tech,99,420,quest,서브 — 아스트라 기술
+qq_obj_s062_a,obj_s062_a,synth_013_p,minerals,99,95,quest,서브 — 테라 광물

@@ -20,6 +20,8 @@ export type CombatFleetSeedSlot = {
   combatInstanceKey?: string | null;
   /** 적 함대 리더 — 2기 이상이면 1기만 true. 없으면 첫 적 슬롯 */
   isLeader?: boolean;
+  /** 웨이브 편성 소스 행성 — 헐 스케일·무기 TCL. 없으면 전투 행성 */
+  sourcePlanetId?: string | null;
 };
 
 function resolveCombatTeamFromCaptain(

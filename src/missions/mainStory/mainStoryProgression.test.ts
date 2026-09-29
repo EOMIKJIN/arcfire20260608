@@ -41,7 +41,11 @@ test('reserves 10 chapters × 30 spine + 4 branch slots with unique ids', () => 
   assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 2))?.bindMissionId, 'story_002');
   assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 6))?.contentStatus, 'ready');
   assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 6))?.bindMissionId, 'story_006');
-  assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 7))?.contentStatus, 'skeleton');
+  assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 7))?.contentStatus, 'ready');
+  assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 7))?.bindMissionId, 'story_007');
+  assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 30))?.contentStatus, 'ready');
+  assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 30))?.bindMissionId, 'story_030');
+  assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 30))?.isChapterCloser, true);
   assert.equal(listMainStorySpineQuests(formatMainStoryChapterId(1)).length, 30);
   assert.ok(getMainStoryQuest(formatMainStoryBranchQuestId(1, 1)));
 });
@@ -106,7 +110,7 @@ test('q01 complete offers q02 bind; q02 is one ready chain step', () => {
   assert.equal(listEffectiveMainStoryChainSteps('story_c01_q02').length, 1);
 });
 
-test('q06 complete stops at q07 skeleton', () => {
+test('q06 complete offers q07 bind', () => {
   const progresses: Record<string, MissionProgress> = {
     story_001: { missionId: 'story_001', status: 'complete', objectives: {} },
     story_002: { missionId: 'story_002', status: 'complete', objectives: {} },
@@ -118,6 +122,21 @@ test('q06 complete stops at q07 skeleton', () => {
   const after = resolveMainStoryAfterBindMissionComplete('story_006', progresses);
   assert.equal(after.completedQuestId, 'story_c01_q06');
   assert.equal(after.nextQuestId, 'story_c01_q07');
+  assert.equal(after.nextBindMissionId, 'story_007');
+  assert.equal(resolveCurrentMainStoryOfferMissionId(progresses), 'story_007');
+});
+
+test('q30 complete ends chapter 1 and opens chapter 2 skeleton', () => {
+  const progresses: Record<string, MissionProgress> = {};
+  for (let n = 1; n <= 30; n += 1) {
+    const id = `story_${String(n).padStart(3, '0')}`;
+    progresses[id] = { missionId: id, status: 'complete', objectives: {} };
+  }
+  const after = resolveMainStoryAfterBindMissionComplete('story_030', progresses);
+  assert.equal(after.completedQuestId, 'story_c01_q30');
+  assert.equal(after.nextQuestId, 'story_c02_q01');
   assert.equal(after.nextBindMissionId, null);
+  assert.equal(after.chapterEnded, true);
+  assert.equal(after.pendingChapterEndSceneId, 'story_chapter_end_01');
   assert.equal(resolveCurrentMainStoryOfferMissionId(progresses), null);
 });

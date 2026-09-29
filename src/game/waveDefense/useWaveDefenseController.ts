@@ -1,7 +1,7 @@
 // ============================================================
 // 웨이브 디펜스 오케스트레이터 훅 — planet.tsx(허브)에서 사용.
 // 트리거(인트로 종료 즉시 또는 체류 중 분쟁 차례 pending) → 웨이브1 → (red 전멸=cleared) → 다음 웨이브
-//   → 9웨이브 클리어/플레이어 격파(ended) → 오퍼레이터 종료 대사.
+//   → 행성별 최종 웨이브 클리어/플레이어 격파(ended) → 오퍼레이터 종료 대사.
 // sim 루프는 전멸/격파 시 store.phase 만 갱신; 실제 진행 결정은 본 컨트롤러가 담당.
 //
 // 재개 대기(waveCombatCooldownStore) 계약 요약(2026-07-27 허브 메인스테이지 교전과 범용 공유):
@@ -16,7 +16,7 @@ import { useEffect, useRef } from 'react';
 import { isPlayerShipCombatCapable } from '../playerSurvivalPod';
 import { preloadPlanetCapitalCombatStack } from '../planetCapitalCombatIntegration';
 import { usePlayerStore } from '../../store/playerStore';
-import { buildWaveDefenseEnemyFleet, WAVE_DEFENSE_MAX_WAVES } from './waveDefenseFleet';
+import { buildWaveDefenseEnemyFleet, resolvePlanetWaveDefenseMaxWaves } from './waveDefenseFleet';
 import { resolvePlanetWaveCombatTrigger } from './resolvePlanetWaveCombatTrigger';
 import { consumeChatArmedWavePending } from './chatArmedWavePending';
 import { COMBAT_END_HOLD_MS } from '../combatEndHold';
@@ -151,7 +151,7 @@ export function useWaveDefenseController(args: WaveDefenseControllerArgs): void 
       useWaveDefenseStore.getState().recordWaveCleared(waveIndex);
     }
     if (betweenWaveTimerRef.current) return;
-    if (waveIndex >= WAVE_DEFENSE_MAX_WAVES) {
+    if (waveIndex >= resolvePlanetWaveDefenseMaxWaves(planetId)) {
       useWaveDefenseStore.getState().requestEndRun('win');
       return;
     }

@@ -31,6 +31,7 @@ export type PresentCombatResultInput = {
   enemyName?: string;
   destroyedLabels?: string[];
   itemRewards?: { icon: string; label: string }[];
+  questOrbit?: boolean;
   autoDismissMs?: number;
   onClose: () => void;
 };
@@ -47,6 +48,7 @@ export function presentCombatResultOverlay(input: PresentCombatResultInput): voi
     enemyName: input.enemyName,
     destroyedLabels: input.destroyedLabels,
     itemRewards: input.itemRewards,
+    questOrbit: input.questOrbit,
     autoDismissMs: resolveCombatResultAutoDismissMs(venue, input.autoDismissMs),
     onClose: input.onClose,
   });

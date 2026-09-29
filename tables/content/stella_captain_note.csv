@@ -20,3 +20,24 @@ scn_kade,npc_cpt_sq_kade_rim,케이드|림|kade,1,케이드는 상자 기록원�
 scn_rhea,npc_cpt_sq_rhea_vin,레아|빈|rhea,1,레아는 항로 접선이야. 일련번호는 자기가 대조하고 너에겐 위치만 확인해 달래.,Rhea is the route contact. She matches the serial and asks you only to mark the slot.
 scn_cal,npc_cpt_sq_cal_ridge,칼|릿지|cal,1,칼은 국경 바 주임이야. 빈 정박 소문은 술자리 말로만 흘려.,Cal runs the border bar. Empty-berth rumors stay in the drink and do not become a file.
 scn_lira,npc_cpt_sq_lira_mon,리라|몬|lira,1,리라는 국경 서기야. 관문을 지키는 하루를 말로 접고 고향 이야기는 서로 안 물어.,Lira keeps the gate record. She closes the day in speech and no one asks about home.
+scn_ren,npc_cpt_sq_ren_coil,렌|코일|ren,1,렌은 글로우 초계야. 출정 전야에 잠긴 문만 적고 이름은 올리지 않아.,Ren is Glow watch. He logs a door locked on the eve of a sortie and files no name.
+scn_maya,npc_cpt_sq_maya_belt,마야|벨트|maya,1,마야는 펄 서기야. 잠근 기록만 보고 누가 잠갔는지는 묻지 않아.,Maya is the Pearl clerk. She reads the lock mark and does not ask who locked it.
+scn_jor,npc_cpt_sq_jor_finn,조르|핀|jor,1,조르는 포지 중개야. 빈 지휘석을 물건처럼 팔고 앉을 이름은 적지 않아.,Jor brokers at Forge. He sells an empty chair as goods and writes no sitter.
+scn_sel,npc_cpt_sq_sel_vane,셀|베인|sel,1,셀은 비콘 서기야. 매물 전표의 빈 칸만 확인하고 사람은 적지 않아.,Sel is the Beacon clerk. She confirms the blank on the listing slip and writes no person.
+scn_has,npc_cpt_sq_has_quinn,하스|퀸|has,1,하스는 마크 검수야. 합이 안 맞는 숫자만 짚고 빠진 사람을 말하지 않아.,Has inspects at Mark. He marks a sum that fails and will not name a missing person.
+scn_iva,npc_cpt_sq_iva_wren,이바|렌|iva,1,이바는 카론 서기야. 사본의 빈 합만 대조하고 원본 주인을 묻지 않아.,Iva is the Charon clerk. She matches the blank sum and does not ask who owns the original.
+scn_peck,npc_cpt_sq_peck_sorin,펙|소린|peck,1,펙은 페가수스 관측이야. 복사된 대역만 적고 누구의 목인지는 열지 않아.,Peck observes at Pegasus. He logs a copied band and will not open whose mouth it is.
+scn_dain,npc_cpt_sq_dain_rho,다인|로|dain,1,다인은 마크 서기야. 대역 전표의 빈 주인만 보고 목소리를 열지 않아.,Dain is a Mark clerk. He reads a blank owner on the band slip and will not open the voice.
+scn_mir,npc_cpt_sq_mir_kell,미르|켈|mir,1,미르는 제피르 화물이야. 출항 칸이 빈 상자만 넘기고 누가 비웠는지는 적지 않아.,Mir runs Zephyr cargo. He hands a crate with a blank departure and writes no one who emptied it.
+scn_osa,npc_cpt_sq_osa_pell,오사|펠|osa,1,오사는 글레이 인수야. 공란을 확인하고 이름을 묻지 않아.,Osa takes handoff at Gray. She confirms the blank and will not ask a name.
+scn_brin,npc_cpt_sq_brin_tack,브린|택|brin,1,브린은 아스트라 봉인이야. 열지 말라는 말만 하고 속은 적지 않아.,Brin seals at Astra. He only says do not open it and writes no inside.
+scn_nell,npc_cpt_sq_nell_kay,넬|케이|nell,1,넬은 루나 인수야. 인장만 보고 뚜껑을 열지 않아.,Nell takes handoff at Luna. She looks at the stamp and does not open the lid.
+scn_kael,npc_cpt_sq_kael_vonn,카엘|본|kael,1,카엘은 테라 전표야. 이름 없는 영수증만 내보내고 보낸 자를 채우지 않아.,Kael keeps Terra slips. He sends a nameless receipt and will not fill a sender.
+scn_sira,npc_cpt_sq_sira_mek,시라|멕|sira,1,시라는 오리온 인수야. 공란을 그대로 두고 이름을 정본으로 보지 않아.,Sira takes handoff at Orion. She leaves the blank and does not treat a name as canon.
+scn_ev,npc_cpt_sq_ev_holt,에브|홀트|ev,1,에브는 헤일로 서기야. 열지 말라는 봉투만 건네고 속은 적지 않아.,Ev is the Halo clerk. She hands an envelope you must not open and writes no inside.
+scn_toma,npc_cpt_sq_toma_kale,토마|케일|toma,1,토마는 솔 인수야. 봉인만 받고 속을 열지 않아.,Toma takes handoff at Sol. He takes the seal and will not open the inside.
+scn_story_kyle_loren,npc_cpt_story_kyle_loren,카일|로렌|kyle,1,카일은 화력이야. 말은 짧고 함선만 봐. 보고서에 이름이 없어.,Kyle is fire. Short talk. He watches ships. He is not on the report.
+scn_story_mira_schenk,npc_cpt_story_mira_schenk,미라|솅크|mira,1,미라는 장부야. 출처를 물으면 거점이 죽는다고 해.,Mira is the ledger. Ask source and she says the hold dies.
+scn_story_gaon_tela,npc_cpt_story_gaon_tela,가온|텔라|gaon,1,가온은 빈칸을 쫓아. 지워진 행성은 기록이 죽은 거야.,Gaon hunts the blank. An erased world is a dead file.
+scn_story_nyx_holm,npc_cpt_story_nyx_holm,닉스|홀름|nyx|그리하벤,1,닉스는 문지기야. 이름은 안 적어. 그리하벤은 가칭이야.,Nyx keeps the door. No names. Greehaven is a working title.
+scn_story_seren_vale,npc_cpt_story_seren_vale,세렌|베일|seren,1,세렌은 보더 연락이야. 벨트는 가칭이고 관문은 시리우스야.,Seren is border contact. The belt is an alias. The gate is Sirius.

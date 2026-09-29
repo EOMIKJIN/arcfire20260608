@@ -28,12 +28,16 @@ export function buildQuestHubOrbitSeedSlots(
   const redShipId = captain?.assignedShipId?.trim() || null;
   const blueShipId = hasNpcCapitalShipId(currentFlagshipNpcId) ? currentFlagshipNpcId : null;
 
+  const anchorPlanetId = lock!.anchorPlanetId?.trim() || planetId;
+
   return [
     {
       team: 'red',
       npcShipId: redShipId && hasNpcCapitalShipId(redShipId) ? redShipId : null,
       captainId: captain?.id ?? null,
       combatInstanceKey: `quest_hub_orbit_${lock!.missionId}_${lock!.objectiveId}`,
+      isLeader: true,
+      sourcePlanetId: anchorPlanetId,
     },
     {
       team: 'blue',

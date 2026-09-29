@@ -72,6 +72,27 @@ export const MISSION_COMBAT_CAPTAINS_FROM_CSV: MissionCombatCaptainRow[] = [
     priority: 10,
   },
   {
+    id: "mcap_pc_iron",
+    enemyTemplateId: "pirate_cruiser",
+    planetId: "iron_remnant",
+    captainId: "npc_cpt_enemy_iron_01",
+    priority: 10,
+  },
+  {
+    id: "mcap_pc_vega",
+    enemyTemplateId: "pirate_cruiser",
+    planetId: "vega_base",
+    captainId: "npc_cpt_enemy_vega_01",
+    priority: 10,
+  },
+  {
+    id: "mcap_pc_titan",
+    enemyTemplateId: "pirate_cruiser",
+    planetId: "titan_ruins",
+    captainId: "npc_cpt_enemy_titan_01",
+    priority: 10,
+  },
+  {
     id: "mcap_pc_default",
     enemyTemplateId: "pirate_cruiser",
     planetId: null,
@@ -83,6 +104,13 @@ export const MISSION_COMBAT_CAPTAINS_FROM_CSV: MissionCombatCaptainRow[] = [
     enemyTemplateId: "bounty_hunter",
     planetId: "sirius_border",
     captainId: "npc_cpt_enemy_sirius_02",
+    priority: 10,
+  },
+  {
+    id: "mcap_bh_blood",
+    enemyTemplateId: "bounty_hunter",
+    planetId: "blood_station",
+    captainId: "npc_cpt_enemy_blood_01",
     priority: 10,
   },
   {

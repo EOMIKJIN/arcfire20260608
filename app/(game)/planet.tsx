@@ -284,9 +284,13 @@ import { COMBAT_END_HOLD_MS } from '../../src/game/combatEndHold';
 import { CombatEndHoldVeil } from '../../src/components/combat/CombatEndHoldVeil';
 import { useWaveDefenseStore } from '../../src/game/waveDefense/waveDefenseStore';
 import { useWaveDefenseController } from '../../src/game/waveDefense/useWaveDefenseController';
-import { WAVE_DEFENSE_MAX_WAVES } from '../../src/game/waveDefense/waveDefenseFleet';
+import { resolvePlanetWaveDefenseMaxWaves } from '../../src/game/waveDefense/waveDefenseFleet';
 import { presentSettingsOverlay, presentBmShopOverlay, presentPlanetOwnershipRosterOverlay } from '../../src/ui/overlay/showArcOverlay';
 import { runCombatEndOutcomeFlow } from '../../src/game/combat/runCombatEndOutcomeFlow';
+import {
+  consumeCombatPlayerShipSinkPending,
+  resolveCombatShipDestroyedNotice,
+} from '../../src/game/combat/combatPlayerShipSink';
 import { presentCombatEndLeaderDialog } from '../../src/game/combat/presentCombatEndLeaderDialog';
 import { useOrbitCapitalCombatUiStore } from '../../src/store/orbitCapitalCombatUiStore';
 import { useAppSettingsStore } from '../../src/store/appSettingsStore';
@@ -679,6 +683,7 @@ export default function PlanetScreen() {
     (s) => s.planetId === (planet?.id ?? null) && (s.active || s.phase === 'ended'),
   );
   const waveDefenseWaveIndex = useWaveDefenseStore((s) => s.waveIndex);
+  const waveDefenseMaxWaves = resolvePlanetWaveDefenseMaxWaves(planet?.id);
   /** 웨이브 간(cleared) reclaim 훅·주기 reclaim skip 정밀화용 — 이 행성 활성 아니면 무관 */
   const waveDefensePhase = useWaveDefenseStore((s) => s.phase);
   const waveDefenseEndHoldActive = useWaveDefenseStore((s) => s.endHoldActive);
@@ -688,7 +693,7 @@ export default function PlanetScreen() {
     if (
       !waveDefenseActiveHere
       || waveDefensePhase !== 'cleared'
-      || waveDefenseWaveIndex >= WAVE_DEFENSE_MAX_WAVES
+      || waveDefenseWaveIndex >= waveDefenseMaxWaves
     ) {
       setMidWaveEndHold(false);
       return;
@@ -696,12 +701,12 @@ export default function PlanetScreen() {
     setMidWaveEndHold(true);
     const midHoldTimer = setTimeout(() => setMidWaveEndHold(false), COMBAT_END_HOLD_MS);
     return () => clearTimeout(midHoldTimer);
-  }, [waveDefenseActiveHere, waveDefensePhase, waveDefenseWaveIndex]);
+  }, [waveDefenseActiveHere, waveDefensePhase, waveDefenseWaveIndex, waveDefenseMaxWaves]);
   const waveCombatEndVeilVisible =
     hubCombatEndHold
     || waveDefenseEndHoldActive
     || midWaveEndHold
-    || (waveDefenseActiveHere && waveDefensePhase === 'cleared' && waveDefenseWaveIndex >= WAVE_DEFENSE_MAX_WAVES)
+    || (waveDefenseActiveHere && waveDefensePhase === 'cleared' && waveDefenseWaveIndex >= waveDefenseMaxWaves)
     || (waveDefenseSessionHere && waveDefensePhase === 'ended');
   useSyncExternalStore(
     subscribeTerritorialPlayerWavePending,
@@ -1264,24 +1269,28 @@ export default function PlanetScreen() {
     const presentWaveEndResult = () => {
       const s = useWaveDefenseStore.getState();
       const expEarned = s.expEarned;
+      const sunk = consumeCombatPlayerShipSinkPending();
       runCombatEndOutcomeFlow({
         result: {
           venue: 'wave',
           outcome: s.outcome ?? 'win',
           wavesCleared: s.wavesCleared,
-          totalWaves: WAVE_DEFENSE_MAX_WAVES,
+          totalWaves: resolvePlanetWaveDefenseMaxWaves(endedPlanetId),
           expEarned,
         },
         onResultClosed: () => {
           if (expEarned > 0) usePlayerStore.getState().addExp(expEarned);
           useWaveDefenseStore.getState().reset();
         },
+        notice: sunk ? resolveCombatShipDestroyedNotice() : null,
+        applyCapitalShipDestruction: sunk,
         // RED 퇴거 — 미션 대사는 건너뛰고 레벨업(4순위) 뒤에 월드맵으로
         shouldSkipMissionClear: () => {
           const pid = usePlayerStore.getState().player?.currentPlanetId?.trim() ?? '';
           return Boolean(pid && resolvePlayerPlanetStayBlock(pid));
         },
         shouldStopAfterLevelUp: () => {
+          if (sunk || endedOutcome !== 'win') return false;
           const pid = usePlayerStore.getState().player?.currentPlanetId?.trim() ?? '';
           if (!pid || !resolvePlayerPlanetStayBlock(pid)) return false;
           clearPlanetAssaultIntent();

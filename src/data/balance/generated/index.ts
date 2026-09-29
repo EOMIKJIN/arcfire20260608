@@ -95,6 +95,7 @@ export { PlanetResourceEcosystemPolicy_FROM_BALANCE_CSV } from './csvPlanetResou
 export { PlanetResourceGenesis_FROM_BALANCE_CSV } from './csvPlanetResourceGenesis';
 export { PlanetSalvageSearchPolicy_FROM_BALANCE_CSV } from './csvPlanetSalvageSearchPolicy';
 export { PlanetTradeRouteProfile_FROM_BALANCE_CSV } from './csvPlanetTradeRouteProfile';
+export { PlanetWaveDefensePolicy_FROM_BALANCE_CSV } from './csvPlanetWaveDefensePolicy';
 export { PlayScenarioEconomy_FROM_BALANCE_CSV } from './csvPlayScenarioEconomy';
 export { PlayScenarioZonePlanets_FROM_BALANCE_CSV } from './csvPlayScenarioZonePlanets';
 export { PopulationDomeWdiStability_FROM_BALANCE_CSV } from './csvPopulationDomeWdiStability';

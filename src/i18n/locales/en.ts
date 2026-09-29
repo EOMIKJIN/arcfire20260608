@@ -651,6 +651,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'waveResult.lose': '✕ DEFEAT ✕',
   'waveResult.subtitle': 'Wave Defense — Final Result',
   'waveResult.subtitleHubOrbit': 'Orbit Combat — Result',
+  'waveResult.subtitleQuestOrbit': 'Quest Combat — Result',
   'waveResult.subtitleTransit': 'Transit Combat — Result',
   'waveResult.clearedWaves': 'Waves Cleared',
   'waveResult.enemy': 'Opponent',

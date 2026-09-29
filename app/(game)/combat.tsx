@@ -19,6 +19,10 @@ import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { resolveNpcCapitalShipDisplayName } from '../../src/i18n/shipText';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import { runCombatEndOutcomeFlow } from '../../src/game/combat/runCombatEndOutcomeFlow';
+import {
+  consumeCombatPlayerShipSinkPending,
+  resolveCombatShipDestroyedNotice,
+} from '../../src/game/combat/combatPlayerShipSink';
 import { CombatEndHoldVeil } from '../../src/components/combat/CombatEndHoldVeil';
 import { waitCombatEndHold } from '../../src/game/combatEndHold';
 import { runTransitCombatPostFlow } from '../../src/game/transitCombat/transitCombatPostFlow';
@@ -284,7 +288,7 @@ export default function CombatScreen() {
     setEndHoldVisible(false);
     await usePlayerStore.getState().applyPostCombatDurabilityWear(Date.now());
     useTransitCombatSessionStore.getState().clear();
-    await usePlayerStore.getState().applyCapitalShipDestruction();
+    consumeCombatPlayerShipSinkPending();
     if (!isMountedRef.current) return;
     const captainName = combatSetup.captain
       ? resolveNpcCaptainDisplayName(combatSetup.captain, locale)
@@ -296,10 +300,8 @@ export default function CombatScreen() {
         enemyName: captainName || enemyTemplate.name,
       },
       missionClearEnabled: false,
-      notice: {
-        title: t('combat.shipDestroyedTitle'),
-        body: t('combat.shipDestroyedBody'),
-      },
+      notice: resolveCombatShipDestroyedNotice(),
+      applyCapitalShipDestruction: true,
       onFinished: () => {
         markPlanetHubIngressReclaim({ invalidateMemoCaches: true });
         scheduleCombatExitNavigate(() => router.replace('/(game)/planet'));

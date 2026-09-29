@@ -182,6 +182,991 @@ story_dialog_obj_story_006_c,1,[ 다렐 소사 ],이 균열은 여기서 닫히�
 npc_dialog_story_noah_frick,0,[ 노아 프릭 ],더 할 말은 없다.\n심문은 끝났잖나.\n돈은 이미 받았고.,assets/images/npc/noname_char006.png,npc_cpt_story_noah_frick,ingame_dialog,compact,100,I have nothing more.\nThe interrogation is over.\nThe pay is already mine.,[ Noah Frick ]
 npc_dialog_story_ian_koval,0,[ 이안 코발 ],집무 채널이다.\n급한 용건 아니면 끊겠다.\n가만히 서 있지만 마라.,assets/images/npc/noname_char010.png,npc_cpt_story_ian_koval,ingame_dialog,compact,100,This is the office channel.\nIf it is not the main thread, I cut it.\nDo not just wait.,[ Ian Koval ]
 npc_dialog_story_darel_sosa,0,[ 다렐 소사 ],데드코러스는 아직 움직이지 않는다.\n지금은 말로만 상대해 주지.\n코발이 준 좌표는 맞았다.,assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,Dead Chorus is not lifting yet.\nFor now, only words.\nKoval's coordinate was right.,[ Darell Sosa ]
+story_dialog_story_007,0,[ 다렐 소사 ],"빚은 내가 진 것이 아니다.
+스텔리움이 먼저 버렸다.
+이름은 라이트홀드다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"The debt is not mine.
+Stellium abandoned first.
+The name is Light Hold.",[ Darell Sosa ],,
+story_dialog_story_007,1,[ 다렐 소사 ],"베가 기습의 손과 그 버림은 한 줄이다.
+증거는 아직 내 입에만 있다.
+더 들으려면 남아라.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"The Vega raid and that abandonment are one line.
+Proof sits in my mouth only.
+Stay if you will hear more.",[ Darell Sosa ],,
+story_dialog_obj_story_007_a,0,[ 다렐 소사 ],"20년 전 라이트홀드는 미끼였다.
+47시간 만에 함락됐다.
+보고서에는 그 이름이 없다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"Twenty years past, Light Hold was bait.
+It fell in forty-seven hours.
+The report has no name.",[ Darell Sosa ],,
+story_dialog_obj_story_007_a,1,[ 다렐 소사 ],"나는 그 철수를 막지 못했다.
+코발도 막지 않았다.
+그 빚이 지금까지 남아 있다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"I did not stop the pullout.
+Neither did Koval.
+That debt is still here.",[ Darell Sosa ],,
+story_dialog_obj_story_007_b,0,[ 세레나 드릴 ],"라이트홀드 식별은 지워진 버릇과 같다.
+솔라 도킹 로그와 같은 손이다.
+주파수 골격만 남았다.",assets/images/npc/noname_char003.png,npc_cpt_draco_obs_01,ingame_dialog,compact,100,"Light Hold IDs share the wipe habit.
+Same hand as the Solar log.
+Only a band skeleton remains.",[ Serena Drill ],,
+story_dialog_obj_story_007_b,1,[ 세레나 드릴 ],"나는 이름까지는 복원하지 못한다.
+소사가 말한 식민지가 맞다면
+은폐는 사령부 쪽에서 시작했다.",assets/images/npc/noname_char003.png,npc_cpt_draco_obs_01,ingame_dialog,compact,100,"I cannot restore the names.
+If Sosa named the colony right,
+the wipe began at command.",[ Serena Drill ],,
+story_dialog_obj_story_007_c,0,[ 다렐 소사 ],"이자는 테오 혼의 죽음이다.
+지휘석을 비우면 국경이 먼저 무너진다.
+그 계산을 누가 했는지 나는 안다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"The interest is Theo Hon's death.
+Empty the chair and the border falls first.
+I know who ran that sum.",[ Darell Sosa ],,
+story_dialog_obj_story_007_c,1,[ 다렐 소사 ],"라이트홀드를 버린 손이
+국경 함장도 지웠다.
+다음 이름은 세 개다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"The hand that left Light Hold
+also erased the border captain.
+The next names are three.",[ Darell Sosa ],,
+story_dialog_obj_story_007_d,0,[ 세레나 드릴 ],"세 좌표가 소사 채널에 떠 있다.
+아이언, 오메가, 에덴.
+나는 항로만 연다.",assets/images/npc/noname_char003.png,npc_cpt_draco_obs_01,ingame_dialog,compact,100,"Three fixes sit on Sosa's channel.
+Iron, Omega, Eden.
+I only open the lanes.",[ Serena Drill ],,
+story_dialog_obj_story_007_d,1,[ 세레나 드릴 ],"누구인지는 소사 입에서 나와야 한다.
+나는 주파수만 대조했다.
+다음 증언을 받아라.",assets/images/npc/noname_char003.png,npc_cpt_draco_obs_01,ingame_dialog,compact,100,"The names must come from Sosa.
+I only matched the band.
+Take the next testimony.",[ Serena Drill ],,
+story_dialog_obj_story_007_e,0,[ 다렐 소사 ],"세 이름은 아직 여기 없다.
+라이트홀드가 남긴 자들이다.
+내일 말하겠다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"The three names are not here yet.
+They are what Light Hold left.
+I speak them tomorrow.",[ Darell Sosa ],,
+story_dialog_obj_story_007_e,1,[ 다렐 소사 ],"지금은 이 이름 하나만 기억해라.
+라이트홀드.
+은폐의 시작이다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"Remember this one name now.
+Light Hold.
+It is where concealment begins.",[ Darell Sosa ],,
+story_dialog_story_008,0,[ 다렐 소사 ],"세 이름을 부르겠다.
+카일 로렌. 미라 솅크. 가온 텔라.
+라이트홀드가 남긴 자들이다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"I will speak three names.
+Kyle Loren. Mira Schenk. Gaon Tela.
+What Light Hold left.",[ Darell Sosa ],,
+story_dialog_story_008,1,[ 다렐 소사 ],"합류는 아직이다.
+먼저 이름을 기록해라.
+항로는 세레나가 연다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"They have not joined.
+Log the names first.
+Serena opens the lanes.",[ Darell Sosa ],,
+story_dialog_obj_story_008_a,0,[ 다렐 소사 ],"카일 로렌은 화력이다.
+아이언 잔해권에 있다.
+말은 짧고 총은 길다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"Kyle Loren is firepower.
+He sits Iron remnant.
+Short words. Long guns.",[ Darell Sosa ],,
+story_dialog_obj_story_008_a,1,[ 다렐 소사 ],"미라는 장부를 본다.
+오메가 허브.
+가온은 지워진 행성을 찾는다. 에덴.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"Mira reads ledgers.
+Omega Hub.
+Gaon hunts an erased world. Eden.",[ Darell Sosa ],,
+story_dialog_obj_story_008_b,0,[ 세레나 드릴 ],"아이언·오메가·에덴 허가를 열었다.
+소사 채널 우선이다.
+크림슨 대역은 피하라.",assets/images/npc/noname_char003.png,npc_cpt_draco_obs_01,ingame_dialog,compact,100,"Iron, Omega, Eden are open.
+Sosa channel first.
+Avoid the Crimson band.",[ Serena Drill ],,
+story_dialog_obj_story_008_b,1,[ 세레나 드릴 ],"세 사람은 아직 한자리에 없다.
+이름만 기록된 상태다.
+합류는 다음 줄기야.",assets/images/npc/noname_char003.png,npc_cpt_draco_obs_01,ingame_dialog,compact,100,"The three are not in one cell.
+Only names are logged.
+Join is the next stem.",[ Serena Drill ],,
+story_dialog_obj_story_008_c,0,[ 다렐 소사 ],"순서는 화력, 장부, 지워진 행성이다.
+아이언이 먼저다.
+내가 따라가지는 않는다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"Order is fire, ledger, erased world.
+Iron first.
+I do not follow.",[ Darell Sosa ],,
+story_dialog_obj_story_008_c,1,[ 다렐 소사 ],"데드코러스는 여기 남는다.
+너희는 세 입을 모아라.
+교차점은 오메가다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"Dead Chorus stays here.
+Gather the three mouths.
+The crossing is Omega.",[ Darell Sosa ],,
+story_dialog_obj_story_008_d,0,[ 세레나 드릴 ],"아이언 잔해권 입구를 열었다.
+오렌 피스가 수호 채널을 쥔다.
+카일은 그 안에 있다.",assets/images/npc/noname_char003.png,npc_cpt_draco_obs_01,ingame_dialog,compact,100,"The Iron remnant mouth is open.
+Oren Peace holds the watch band.
+Kyle is inside.",[ Serena Drill ],,
+story_dialog_obj_story_008_d,1,[ 세레나 드릴 ],"잔해 약탈 호위가 뜬다.
+합류 전에는 교전을 늘리지 마라.
+이번 줄기는 이름이다.",assets/images/npc/noname_char003.png,npc_cpt_draco_obs_01,ingame_dialog,compact,100,"Scavenger escorts lift.
+Do not add fights before the join.
+This stem is names.",[ Serena Drill ],,
+story_dialog_obj_story_008_e,0,[ 다렐 소사 ],"가라.
+세 이름이 너희 편이 되면
+은폐는 더 이상 한 입의 말이 아니다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"Go.
+When the three names stand with you,
+concealment is no longer one mouth.",[ Darell Sosa ],,
+story_dialog_obj_story_008_e,1,[ 다렐 소사 ],"라이트홀드는 여기서 녹지 않는다.
+교차로에서 증거를 맞춰라.
+나는 남는다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"Light Hold does not thaw here.
+Match proof at the crossing.
+I stay.",[ Darell Sosa ],,
+story_dialog_story_009,0,[ 다렐 소사 ],"아이언워치는 레므난트다.
+카일부터 만나라.
+화력이 없으면 장부는 못 지킨다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"Iron Watch is the remnant.
+Meet Kyle first.
+Without fire the ledger dies.",[ Darell Sosa ],,
+story_dialog_story_009,1,[ 다렐 소사 ],"미라는 오메가, 가온은 에덴이다.
+한 번에 셋은 안 된다.
+순서대로 가라.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"Mira is Omega. Gaon is Eden.
+Not all three at once.
+Go in order.",[ Darell Sosa ],,
+story_dialog_obj_story_009_b,0,[ 카일 로렌 ],"라이트홀드에서 화력을 맡았다.
+철수가 먼저 끊겼다.
+나는 살아남았다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"I held fire at Light Hold.
+The pullout cut us first.
+I lived.",[ Kyle Loren ],,
+story_dialog_obj_story_009_b,1,[ 카일 로렌 ],"소사 이름은 안다.
+네 함선에 탄다.
+말은 여기까지다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"I know Sosa's name.
+I board your ship.
+Words end here.",[ Kyle Loren ],,
+story_dialog_obj_story_009_d,0,[ 미라 솅크 ],"장부가 라이트홀드를 죽였다.
+보급 칸이 비어 있었다.
+나는 그 세 줄을 아직 쥐고 있다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"A ledger killed Light Hold.
+The supply cell was empty.
+I still hold those three lines.",[ Mira Schenk ],,
+story_dialog_obj_story_009_d,1,[ 미라 솅크 ],"카일이 왔으면 화력은 됐다.
+가온은 에덴에 있다.
+교차는 여기서 한다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"If Kyle came, fire is enough.
+Gaon is at Eden.
+We cross here later.",[ Mira Schenk ],,
+story_dialog_obj_story_009_e,0,[ 린 켄달 ],"중립 회항단이다.
+세 이름이 한 채널에 모이면
+통행세를 받지 않겠다.",assets/images/npc/noname_char007.png,npc_cpt_ai_clan_neutral_01,ingame_dialog,compact,100,"Neutral circuit.
+When three names share one channel
+I will not take a toll.",[ Lynn Kendall ],,
+story_dialog_obj_story_009_e,1,[ 린 켄달 ],"가온은 에덴 쪽에서 올라온다.
+허브는 열어 두겠다.
+싸움은 외곽에서만 해라.",assets/images/npc/noname_char007.png,npc_cpt_ai_clan_neutral_01,ingame_dialog,compact,100,"Gaon climbs from Eden.
+I leave the hub open.
+Fight only on the rim.",[ Lynn Kendall ],,
+story_dialog_story_010,0,[ 미라 솅크 ],"가온이 에덴에서 기다린다.
+지워진 행성 기록을 갖고 있다.
+먼저 그를 태워라.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"Gaon waits at Eden.
+He holds an erased-world file.
+Bring him first.",[ Mira Schenk ],,
+story_dialog_story_010,1,[ 미라 솅크 ],"넷이 모이면 장부와 화력과 기록이 한 줄이 된다.
+교차점은 이 허브다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"When four sit, ledger, fire, and file are one line.
+The crossing is this hub.",[ Mira Schenk ],,
+story_dialog_obj_story_010_b,0,[ 가온 텔라 ],"라이트홀드는 지도에서 지워졌다.
+행성이 아니라 기록이 죽었다.
+나는 그 빈칸을 쫓는다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"Light Hold was erased from the map.
+Not the rock. The file died.
+I hunt that blank.",[ Gaon Tela ],,
+story_dialog_obj_story_010_b,1,[ 가온 텔라 ],"미라의 장부와 내 빈칸은 맞는다.
+오메가로 가자.
+하벤포드는 여기서 접는다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"Mira's ledger matches my blank.
+We go to Omega.
+Havenford folds here.",[ Gaon Tela ],,
+story_dialog_obj_story_010_d,0,[ 미라 솅크 ],"화력, 장부, 지워진 행성, 그리고 너.
+라이트홀드 은폐는 우연이 아니다.
+베가 기습과 같은 손이다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"Fire, ledger, erased world, and you.
+Light Hold concealment is not chance.
+Same hand as the Vega raid.",[ Mira Schenk ],,
+story_dialog_obj_story_010_d,1,[ 미라 솅크 ],"이면 협정이 장부 뒤에 있다.
+국경 매복과 연결된다.
+다음 줄기는 베가다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"A backside accord sits behind the ledger.
+It ties to the border ambush.
+The next stem is Vega.",[ Mira Schenk ],,
+story_dialog_obj_story_010_e,0,[ 카일 로렌 ],"말은 충분하다.
+베가에 남은 호위가 있으면 친다.
+나는 함선만 본다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Talk is enough.
+If an escort still sits Vega, we hit it.
+I only watch ships.",[ Kyle Loren ],,
+story_dialog_obj_story_010_e,1,[ 카일 로렌 ],"배신은 나중에 센다.
+지금은 협정 증거다.
+출발하자.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Count betrayal later.
+This is accord proof.
+We lift.",[ Kyle Loren ],,
+story_dialog_story_011,0,[ 하르만 돌 ],"전멸 당일 정찰이 틀린 이유가 있다.
+장부에 이면 칸이 있다.
+먼저 궤도 잔당을 걷어라.",assets/images/npc/noname_char006.png,npc_cpt_vega_watch_01,ingame_dialog,compact,100,"Recon failed that day for a reason.
+A backside cell sits in the ledger.
+Clear the orbit remnant first.",[ Harman Dol ],,
+story_dialog_story_011,1,[ 하르만 돌 ],"살아남은 네가 아니면
+이 칸은 열리지 않는다.
+보고는 그다음이다.",assets/images/npc/noname_char006.png,npc_cpt_vega_watch_01,ingame_dialog,compact,100,"Without you alive
+this cell stays shut.
+The report comes after.",[ Harman Dol ],,
+story_dialog_obj_story_011_a,0,[ 하르만 돌 ],"정찰 규모를 줄인 지시가 있었다.
+서명 칸이 비어 있다.
+라이트홀드 장부와 같은 손이다.",assets/images/npc/noname_char006.png,npc_cpt_vega_watch_01,ingame_dialog,compact,100,"An order cut the recon scale.
+The signature cell is blank.
+Same hand as the Light Hold ledger.",[ Harman Dol ],,
+story_dialog_obj_story_011_a,1,[ 하르만 돌 ],"잔당이 증거를 노린다.
+한 척이다.
+쓰러뜨리면 사본을 넘긴다.",assets/images/npc/noname_char006.png,npc_cpt_vega_watch_01,ingame_dialog,compact,100,"A remnant hunts the proof.
+One ship.
+Drop it and I pass the copy.",[ Harman Dol ],,
+story_dialog_obj_story_011_c,0,[ 하르만 돌 ],"사본이다.
+국경을 비우라는 이면 합의.
+날짜는 테오 혼 피살 전이다.",assets/images/npc/noname_char006.png,npc_cpt_vega_watch_01,ingame_dialog,compact,100,"The copy.
+A backside pact to empty the border.
+The date is before Theo Hon died.",[ Harman Dol ],,
+story_dialog_obj_story_011_c,1,[ 하르만 돌 ],"아르카디아로 올려라.
+코발이 이 칸을 볼 차례다.
+나는 현장에 남는다.",assets/images/npc/noname_char006.png,npc_cpt_vega_watch_01,ingame_dialog,compact,100,"File it to Arcadia.
+Koval reads this cell next.
+I stay in the field.",[ Harman Dol ],,
+story_dialog_obj_story_011_e,0,[ 이안 코발 ],"이 서명은 내 것이 아니다.
+그러나 철수는 내가 했다.
+라이트홀드 때도 그랬다.",assets/images/npc/noname_char010.png,npc_cpt_story_ian_koval,ingame_dialog,compact,100,"This sign is not mine.
+But I ordered the pullout.
+Same at Light Hold.",[ Ian Koval ],,
+story_dialog_obj_story_011_e,1,[ 이안 코발 ],"반역 누명이 네 이름에 붙는다.
+함대는 너를 배신자로 부를 것이다.
+준비해라.",assets/images/npc/noname_char010.png,npc_cpt_story_ian_koval,ingame_dialog,compact,100,"A traitor brand will sit on your name.
+The fleet will call you that.
+Prepare.",[ Ian Koval ],,
+story_dialog_story_012,0,[ 이안 코발 ],"사령부는 너를 반역으로 올린다.
+나는 막지 못하겠다.
+관문은 엘렌이 잠시 연다.",assets/images/npc/noname_char010.png,npc_cpt_story_ian_koval,ingame_dialog,compact,100,"Command files you as traitor.
+I cannot stop it.
+Ellen opens the gate a moment.",[ Ian Koval ],,
+story_dialog_story_012,1,[ 이안 코발 ],"살아나가라.
+넷이 한 편이 되면
+누명은 기록이 된다.",assets/images/npc/noname_char010.png,npc_cpt_story_ian_koval,ingame_dialog,compact,100,"Get out alive.
+When the four are one side,
+the brand becomes a record.",[ Ian Koval ],,
+story_dialog_obj_story_012_a,0,[ 이안 코발 ],"네 이름은 반역자 칸에 올랐다.
+이면 협정을 올린 대가이다.
+나는 그 칸을 지우지 못한다.",assets/images/npc/noname_char010.png,npc_cpt_story_ian_koval,ingame_dialog,compact,100,"Your name sits the traitor cell.
+The price of filing the accord.
+I cannot erase that cell.",[ Ian Koval ],,
+story_dialog_obj_story_012_a,1,[ 이안 코발 ],"함대 추격이 뜬다.
+한 척이다.
+뚫고 나가라.",assets/images/npc/noname_char010.png,npc_cpt_story_ian_koval,ingame_dialog,compact,100,"A fleet chase lifts.
+One ship.
+Break out.",[ Ian Koval ],,
+story_dialog_obj_story_012_b,0,[ 엘렌 드 코르 ],"관문은 60초만 연다.
+기록에는 고장으로 남긴다.
+그 이상은 못 한다.",assets/images/npc/noname_char003.png,npc_cpt_arcadia_lane_01,ingame_dialog,compact,100,"The gate opens sixty seconds.
+The log will say a fault.
+No more.",[ Ellen de Cort ],,
+story_dialog_obj_story_012_b,1,[ 엘렌 드 코르 ],"코발은 너를 버리지 않았다.
+다만 막지 못할 뿐이다.
+살아나가.",assets/images/npc/noname_char003.png,npc_cpt_arcadia_lane_01,ingame_dialog,compact,100,"Koval did not abandon you.
+He only cannot stop this.
+Get out alive.",[ Ellen de Cort ],,
+story_dialog_obj_story_012_d,0,[ 엘렌 드 코르 ],"추격 신호는 끊겼다.
+네 식별은 지워 두겠다.
+도피처는 네가 정해라.",assets/images/npc/noname_char003.png,npc_cpt_arcadia_lane_01,ingame_dialog,compact,100,"The chase band is cut.
+I will blank your ID.
+You pick the hide.",[ Ellen de Cort ],,
+story_dialog_obj_story_012_d,1,[ 엘렌 드 코르 ],"넷이 정식으로 한 편이다.
+관문 순찰대는 여기서 빠진다.
+기록은 남기지 않는다.",assets/images/npc/noname_char003.png,npc_cpt_arcadia_lane_01,ingame_dialog,compact,100,"The four are one side in form.
+Gate Patrol steps off here.
+I leave no file.",[ Ellen de Cort ],,
+story_dialog_obj_story_012_e,0,[ 이안 코발 ],"도피처는 섀도우 넥서스다.
+그리하벤이라 부르는 자들이 있다.
+나는 따라가지 않는다.",assets/images/npc/noname_char010.png,npc_cpt_story_ian_koval,ingame_dialog,compact,100,"The hide is Shadow Nexus.
+Some call it Greehaven.
+I do not follow.",[ Ian Koval ],,
+story_dialog_obj_story_012_e,1,[ 이안 코발 ],"수배 방송이 곧 뜬다.
+이름 없는 항로로 가라.
+통신은 끊는다.",assets/images/npc/noname_char010.png,npc_cpt_story_ian_koval,ingame_dialog,compact,100,"A wanted band will lift soon.
+Take a nameless lane.
+I cut this channel.",[ Ian Koval ],,
+story_dialog_story_013,0,[ 이안 코발 ],"그리하벤은 지도에 없다.
+있는 이름은 섀도우 마켓이다.
+닉스 홀름이 문을 연다.",assets/images/npc/noname_char010.png,npc_cpt_story_ian_koval,ingame_dialog,compact,100,"Greehaven is not on the map.
+The living name is Shadow Market.
+Nyx Holm opens the door.",[ Ian Koval ],,
+story_dialog_story_013,1,[ 이안 코발 ],"수배 방송보다 먼저 도착해라.
+나는 더 이상 좌표를 못 준다.",assets/images/npc/noname_char010.png,npc_cpt_story_ian_koval,ingame_dialog,compact,100,"Arrive before the wanted band.
+I cannot give another fix.",[ Ian Koval ],,
+story_dialog_obj_story_013_b,0,[ 닐 벡스 ],"출처는 안 묻는다.
+수배 얼굴은 묻는다.
+닉스가 너를 기다린다.",assets/images/npc/noname_char004.png,npc_cpt_bar_ret_15,ingame_dialog,compact,100,"I do not ask source.
+I ask wanted faces.
+Nyx is waiting.",[ Nil Vex ],,
+story_dialog_obj_story_013_b,1,[ 닐 벡스 ],"바는 중립이다.
+거점은  underground 쪽이다.
+나는 품목만 받는다.",assets/images/npc/noname_char004.png,npc_cpt_bar_ret_15,ingame_dialog,compact,100,"The bar is neutral.
+The hold is below.
+I take SKUs only.",[ Nil Vex ],,
+story_dialog_obj_story_013_c,0,[ 닉스 홀름 ],"문 앞의 이방인이 너로군.
+수배 방송은 이미 떴다.
+여기는 그리하벤이다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"The stranger at the door is you.
+The wanted band already lifted.
+This is Greehaven.",[ Nyx Holm ],,
+story_dialog_obj_story_013_c,1,[ 닉스 홀름 ],"이름은 적지 않는다.
+함선만 숨긴다.
+넷이 오면 거점을 연다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"I log no names.
+I only hide ships.
+When the four arrive I open the hold.",[ Nyx Holm ],,
+story_dialog_obj_story_013_d,0,[ 닉스 홀름 ],"스텔리움 채널 전역이다.
+크림슨도 같은 얼굴을 산다.
+두 개의 적이 한 현상금이다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"The whole Stellium band.
+Crimson buys the same face.
+Two enemies, one bounty.",[ Nyx Holm ],,
+story_dialog_obj_story_013_d,1,[ 닉스 홀름 ],"지금은 숨는 것이 승리이다.
+신뢰는 내일 산다.
+오늘은 문만 닫아라.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Hiding is the win today.
+Trust is bought tomorrow.
+Close the door tonight.",[ Nyx Holm ],,
+story_dialog_obj_story_013_e,0,[ 닐 벡스 ],"은신 칸을 열었다.
+출처 질문은 없다.
+수수료는 나중에 정한다.",assets/images/npc/noname_char004.png,npc_cpt_bar_ret_15,ingame_dialog,compact,100,"I opened a hide cell.
+No source question.
+Fee later.",[ Nil Vex ],,
+story_dialog_obj_story_013_e,1,[ 닐 벡스 ],"카일·미라·가온 얼굴은 외워 두겠다.
+바 쪽 입구는 내가 본다.
+거점은 닉스 몫이다.",assets/images/npc/noname_char004.png,npc_cpt_bar_ret_15,ingame_dialog,compact,100,"I will keep Kyle, Mira, Gaon's faces.
+I watch the bar mouth.
+The hold is Nyx's.",[ Nil Vex ],,
+story_dialog_story_014,0,[ 닉스 홀름 ],"카일과 미라와 가온이 들어왔다.
+거점을 열 수 있다.
+신뢰는 말로 안 산다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Kyle, Mira, and Gaon are in.
+We can open the hold.
+Trust is not bought with talk.",[ Nyx Holm ],,
+story_dialog_story_014,1,[ 닉스 홀름 ],"추격 그림자가 외곽에 있다.
+오늘은 문을 정하는 날이다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"A chase shadow sits the rim.
+Today we fix the door.",[ Nyx Holm ],,
+story_dialog_obj_story_014_a,0,[ 닉스 홀름 ],"지하 도크를 열었다.
+식별은 끈다.
+여기는 이제 너희 칸이다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"The under-dock is open.
+IDs stay dark.
+This cell is yours now.",[ Nyx Holm ],,
+story_dialog_obj_story_014_a,1,[ 닉스 홀름 ],"추격은 외곽에서 멈췄다.
+오늘은 문을 닫는 것이 일이다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"The chase stopped on the rim.
+Today the work is closing the door.",[ Nyx Holm ],,
+story_dialog_obj_story_014_b,0,[ 카일 로렌 ],"입구 화력은 내가 선다.
+말은 닉스가 한다.
+나는 함선만 본다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"I stand the mouth guns.
+Nyx talks.
+I watch ships.",[ Kyle Loren ],,
+story_dialog_obj_story_014_b,1,[ 카일 로렌 ],"추격이 다시 뜨면 친다.
+거점이 있으면 버틴다.
+그게 신뢰다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"If the chase lifts again I hit it.
+A hold means we last.
+That is trust.",[ Kyle Loren ],,
+story_dialog_obj_story_014_c,0,[ 미라 솅크 ],"수수료와 보급을 나눈다.
+이름 없는 돈이 들어오면 표시한다.
+출처는 닉스 원칙대로 안 묻는다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"I split fee and supply.
+Nameless coin gets a mark.
+I will not ask source — Nyx rule.",[ Mira Schenk ],,
+story_dialog_obj_story_014_c,1,[ 미라 솅크 ],"첫 거점이다.
+장부가 있으면 배신도 보인다.
+그건 나중 이야기다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"First hold.
+A ledger also shows betrayal.
+That is later talk.",[ Mira Schenk ],,
+story_dialog_obj_story_014_d,0,[ 가온 텔라 ],"그리하벤은 가칭이다.
+진짜 칸은 섀도우 마켓이다.
+지워진 행성 찾는 일은 여기서도 한다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"Greehaven is a working name.
+The real cell is Shadow Market.
+I still hunt erased worlds from here.",[ Gaon Tela ],,
+story_dialog_obj_story_014_d,1,[ 가온 텔라 ],"수배 방송이 이 항로를 훑는다.
+식별을 끄면 산다.
+지도를 닫아라.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"The wanted band sweeps this lane.
+Dark IDs live.
+Close the map.",[ Gaon Tela ],,
+story_dialog_obj_story_014_e,0,[ 닉스 홀름 ],"거점은 열렸다.
+추격은 내일의 그림자이다.
+오늘은 신뢰가 남았다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"The hold is open.
+The chase is tomorrow’s shadow.
+Today trust remains.",[ Nyx Holm ],,
+story_dialog_obj_story_014_e,1,[ 닉스 홀름 ],"다음 초대가 온다.
+세렌 쪽 채널이다.
+함정인지 기회인지는 너희가 가린다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"A second invite comes.
+Seren-side channel.
+Trap or chance — you sort it.",[ Nyx Holm ],,
+story_dialog_story_015,0,[ 닉스 홀름 ],"세렌 벨트는 지도에 없다.
+있는 관문은 시리우스 보더다.
+세렌 베일이 초대장을 쥐고 있다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Seren Belt is not on the map.
+The living gate is Sirius Border.
+Seren Vale holds the invite.",[ Nyx Holm ],,
+story_dialog_story_015,1,[ 닉스 홀름 ],"함정일 수 있다.
+가온과 미라 없이 가지 마라.
+확인만 하고 돌아와라.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"It may be a trap.
+Do not go without Gaon and Mira.
+Confirm and return.",[ Nyx Holm ],,
+story_dialog_obj_story_015_b,0,[ 세렌 베일 ],"세렌 벨트는 우리 쪽 가칭이다.
+관문은 이 보더다.
+초대는 함정이 아니다.",assets/images/npc/noname_char005.png,npc_cpt_story_seren_vale,ingame_dialog,compact,100,"Seren Belt is our working name.
+The gate is this border.
+The invite is not a trap.",[ Seren Vale ],,
+story_dialog_obj_story_015_b,1,[ 세렌 베일 ],"라이트홀드 생존자가 여기 더 있다.
+지금은 합류하지 않는다.
+채널만 연다.",assets/images/npc/noname_char005.png,npc_cpt_story_seren_vale,ingame_dialog,compact,100,"More Light Hold survivors sit here.
+They will not join now.
+I only open a channel.",[ Seren Vale ],,
+story_dialog_obj_story_015_c,0,[ 세렌 베일 ],"크림슨이 같은 초대를 위조한다.
+내 인장은 이 한 줄이다.
+다른 채널은 끊어라.",assets/images/npc/noname_char005.png,npc_cpt_story_seren_vale,ingame_dialog,compact,100,"Crimson forges the same invite.
+My seal is this one line.
+Cut the other bands.",[ Seren Vale ],,
+story_dialog_obj_story_015_c,1,[ 세렌 베일 ],"기회는 보급 항로 하나다.
+거점으로 가져가라.
+나는 보더에 남는다.",assets/images/npc/noname_char005.png,npc_cpt_story_seren_vale,ingame_dialog,compact,100,"The chance is one supply lane.
+Take it to the hold.
+I stay on the border.",[ Seren Vale ],,
+story_dialog_obj_story_015_e,0,[ 닉스 홀름 ],"시리우스 채널은 열렸다.
+세렌은 남았다.
+함정은 아닌 것으로 본다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"The Sirius channel is open.
+Seren stayed.
+I read it as not a trap.",[ Nyx Holm ],,
+story_dialog_obj_story_015_e,1,[ 닉스 홀름 ],"소문이 퍼진다.
+크림슨이 거점을 알기 시작한다.
+다음 줄기는 두 개의 적이다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Rumor spreads.
+Crimson starts to know the hold.
+Next stem is two enemies.",[ Nyx Holm ],,
+story_dialog_story_016,0,[ 닉스 홀름 ],"적이 둘이 됐다.
+스텔리움 수배와 크림슨 추적.
+그림자는 크림슨 베이스에 있다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Two enemies now.
+Stellium wanted and Crimson track.
+The shadow sits Crimson Base.",[ Nyx Holm ],,
+story_dialog_story_016,1,[ 닉스 홀름 ],"확인만 하고 와라.
+거점을 비우지 마라.
+카일은 문을 지킨다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Confirm and return.
+Do not empty the hold.
+Kyle holds the door.",[ Nyx Holm ],,
+story_dialog_obj_story_016_c,0,[ 드락 베일 ],"현상금 이야기는 받는다.
+진영 이야기는 안 받는다.
+네 얼굴은 이미 두 장이다.",assets/images/npc/noname_char006.png,npc_cpt_bar_ret_12,ingame_dialog,compact,100,"I take bounty talk.
+I do not take flag talk.
+Your face is already two bills.",[ Drak Vale ],,
+story_dialog_obj_story_016_c,1,[ 드락 베일 ],"크림슨은 거점 좌표를 산다.
+아직 정확하지 않다.
+돌아가라.",assets/images/npc/noname_char006.png,npc_cpt_bar_ret_12,ingame_dialog,compact,100,"Crimson buys hold fixes.
+Not exact yet.
+Go back.",[ Drak Vale ],,
+story_dialog_obj_story_016_e,0,[ 카일 로렌 ],"추적선은 한 척이었다.
+다음은 더 온다.
+문은 내가 선다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"The tracker was one ship.
+More will come.
+I stand the door.",[ Kyle Loren ],,
+story_dialog_obj_story_016_e,1,[ 카일 로렌 ],"자금이 없다.
+화력만으로는 못 버틴다.
+미라 칸이다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"No funds.
+Fire alone will not last.
+That is Mira’s cell.",[ Kyle Loren ],,
+story_dialog_story_017,0,[ 미라 솅크 ],"자금이 없다.
+검은 시장의 손을 빌려야 한다.
+출처는 닉스 원칙대로 안 묻는다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"No funds.
+We borrow the black market hand.
+We will not ask source — Nyx rule.",[ Mira Schenk ],,
+story_dialog_story_017,1,[ 미라 솅크 ],"닐과 나눠라.
+장부 세 줄이면 버틴다.
+그 이상은 탐욕이다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"Split with Nil.
+Three ledger lines will last.
+More is greed.",[ Mira Schenk ],,
+story_dialog_obj_story_017_a,0,[ 미라 솅크 ],"세 줄만 받는다.
+이름 없는 돈이다.
+라이트홀드 장부와는 반대다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"I take three lines only.
+Nameless coin.
+The opposite of the Light Hold ledger.",[ Mira Schenk ],,
+story_dialog_obj_story_017_a,1,[ 미라 솅크 ],"출처를 물으면 거점이 죽는다.
+표시만 한다.
+닐이 중개한다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"Ask source and the hold dies.
+Mark only.
+Nil brokers.",[ Mira Schenk ],,
+story_dialog_obj_story_017_b,0,[ 닐 벡스 ],"세 줄 중개했다.
+수수료는 한 줄.
+출처 칸은 비워 둔다.",assets/images/npc/noname_char004.png,npc_cpt_bar_ret_15,ingame_dialog,compact,100,"I brokered three lines.
+Fee is one line.
+Source cell stays blank.",[ Nil Vex ],,
+story_dialog_obj_story_017_b,1,[ 닐 벡스 ],"크림슨 돈인지는 모른다.
+알아도 말 안 한다.
+그게 이 시장의 손이다.",assets/images/npc/noname_char004.png,npc_cpt_bar_ret_15,ingame_dialog,compact,100,"I do not know if it is Crimson coin.
+I would not say if I did.
+That is this market's hand.",[ Nil Vex ],,
+story_dialog_obj_story_017_c,0,[ 닉스 홀름 ],"돈이 들어오면 문은 버틴다.
+원칙이 무너지면 거점이 무너진다.
+출처는 계속 묻지 마라.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Coin in, the door lasts.
+Break the rule and the hold breaks.
+Keep not asking source.",[ Nyx Holm ],,
+story_dialog_obj_story_017_c,1,[ 닉스 홀름 ],"다음은 뼈대다.
+화력과 방호.
+카일 칸이다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Next is bone.
+Fire and plate.
+Kyle’s cell.",[ Nyx Holm ],,
+story_dialog_obj_story_017_d,0,[ 카일 로렌 ],"탄약은 산다.
+함선은 아직이다.
+요새의 뼈대는 내일이다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Ammo we can buy.
+A hull not yet.
+Fort bone is tomorrow.",[ Kyle Loren ],,
+story_dialog_obj_story_017_d,1,[ 카일 로렌 ],"돈으로 산 화력은 짧다.
+그래도 오늘은 버틴다.
+그걸로 됐다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Bought fire is short.
+Still we last today.
+That is enough.",[ Kyle Loren ],,
+story_dialog_obj_story_017_e,0,[ 미라 솅크 ],"세 줄 마감했다.
+거점은 한 달을 버틴다.
+배신의 여지는 장부에 남긴다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"Three lines closed.
+The hold lasts a month.
+Room for betrayal stays in the book.",[ Mira Schenk ],,
+story_dialog_obj_story_017_e,1,[ 미라 솅크 ],"검은 손이다.
+그러나 거점은 산다.
+다음 줄기로 넘겨라.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"A black hand.
+But the hold lives.
+Pass the next stem.",[ Mira Schenk ],,
+story_dialog_story_018,0,[ 카일 로렌 ],"문은 화력만으로 안 선다.
+방호와 도크가 필요하다.
+뼈대를 짜자.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"A door does not stand on fire alone.
+We need plate and dock.
+We set bone.",[ Kyle Loren ],,
+story_dialog_story_018,1,[ 카일 로렌 ],"가온이 은폐 지도를 겹친다.
+나는 포문만 본다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Gaon overlays the concealment map.
+I only watch the guns.",[ Kyle Loren ],,
+story_dialog_obj_story_018_a,0,[ 카일 로렌 ],"입구 두 칸에 포를 심었다.
+함대는 아직 너희 한 척이다.
+재건은 지금부터다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"I planted guns on two mouth cells.
+The fleet is still your one ship.
+Rebuild starts now.",[ Kyle Loren ],,
+story_dialog_obj_story_018_a,1,[ 카일 로렌 ],"스텔리움 진압이 오면 버틴다.
+오늘은 뼈대만 세운다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"If Stellium suppression comes we last.
+Today we only stand bone.",[ Kyle Loren ],,
+story_dialog_obj_story_018_b,0,[ 가온 텔라 ],"식별을 끄면 포문도 숨는다.
+지도와 화력을 겹쳤다.
+거점은 이제 무덤이 아니다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"Dark IDs hide the guns too.
+Map and fire overlay.
+The hold is no longer a grave.",[ Gaon Tela ],,
+story_dialog_obj_story_018_b,1,[ 가온 텔라 ],"함대 재건은 배가 아니라 항로다.
+세렌 채널과 오메가 교차.
+그 두 줄이 뼈대다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"Fleet rebuild is lanes not hulls.
+Seren channel and Omega crossing.
+Those two lines are bone.",[ Gaon Tela ],,
+story_dialog_obj_story_018_c,0,[ 닉스 홀름 ],"뼈대가 섰다.
+이름은 아직 없다.
+그래서 산다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Bone stands.
+No name yet.
+That is why it lives.",[ Nyx Holm ],,
+story_dialog_obj_story_018_c,1,[ 닉스 홀름 ],"내부 균열이 곧 온다.
+노선이 갈라진다.
+오늘은 문을 닫아라.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"An inner crack comes soon.
+Lines will split.
+Close the door today.",[ Nyx Holm ],,
+story_dialog_obj_story_018_d,0,[ 미라 솅크 ],"탄약 칸은 채워졌다.
+식량은 한 달.
+그 이상은 장부가 거부한다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"The ammo cell is filled.
+Food is a month.
+The ledger refuses more.",[ Mira Schenk ],,
+story_dialog_obj_story_018_d,1,[ 미라 솅크 ],"요새는 배가 아니다.
+칸이 버티는 것이다.
+재건은 여기까지다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"A fort is not a ship.
+It is a cell that lasts.
+Rebuild ends here.",[ Mira Schenk ],,
+story_dialog_obj_story_018_e,0,[ 카일 로렌 ],"됐다.
+다음은 사람 싸움이다.
+나는 함선만 본다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Done.
+Next is people fighting.
+I watch ships.",[ Kyle Loren ],,
+story_dialog_obj_story_018_e,1,[ 카일 로렌 ],"균열이 오면 문을 지킨다.
+누구 편인지는 네가 정해라.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"If the crack comes I hold the door.
+You pick the side.",[ Kyle Loren ],,
+story_dialog_story_019,0,[ 닉스 홀름 ],"카일과 미라가 갈라졌다.
+한 사람은 친다, 한 사람은 숨긴다.
+오늘은 말만 듣는다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Kyle and Mira split.
+One hits. One hides.
+Today we only hear talk.",[ Nyx Holm ],,
+story_dialog_story_019,1,[ 닉스 홀름 ],"분기 스위치는 아직 없다.
+균열만 기록한다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"No branch switch yet.
+We only log the crack.",[ Nyx Holm ],,
+story_dialog_obj_story_019_a,0,[ 카일 로렌 ],"숨는 것만으로는 라이트홀드가 반복된다.
+쳐야 한다.
+나는 그 편이다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Hide-only repeats Light Hold.
+We hit.
+That is my side.",[ Kyle Loren ],,
+story_dialog_obj_story_019_a,1,[ 카일 로렌 ],"미라의 장부는 사람을 늦춘다.
+늦추면 또 버린다.
+문을 열고 나가자.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Mira's ledger slows people.
+Slow again and we abandon again.
+Open the door and lift.",[ Kyle Loren ],,
+story_dialog_obj_story_019_b,0,[ 미라 솅크 ],"치면 거점이 노출된다.
+라이트홀드도 쳐서 죽었다.
+나는 숨기는 편이다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"Hit and the hold lights up.
+Light Hold hit and died.
+I hide.",[ Mira Schenk ],,
+story_dialog_obj_story_019_b,1,[ 미라 솅크 ],"장부가 있는 한 배신은 보인다.
+화력만 믿으면 또 빈칸이 난다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"While the ledger lives, betrayal shows.
+Trust fire only and the blank returns.",[ Mira Schenk ],,
+story_dialog_obj_story_019_c,0,[ 가온 텔라 ],"둘 다 라이트홀드를 말한다.
+결론만 다르다.
+지워진 행성은 어느 편도 아니다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"Both speak Light Hold.
+Only the close differs.
+An erased world has no side.",[ Gaon Tela ],,
+story_dialog_obj_story_019_c,1,[ 가온 텔라 ],"지금은 거점을 유지하는 편이 맞다.
+분기는 나중에 열린다.
+나는 지도를 접지 않는다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"Holding the hold is right now.
+The branch opens later.
+I do not fold the map.",[ Gaon Tela ],,
+story_dialog_obj_story_019_d,0,[ 닉스 홀름 ],"오늘은 문을 닫는다.
+치는 날과 숨는 날을 나눈다.
+그게 거점이 사는 법이다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"We close the door today.
+We split hit-days and hide-days.
+That is how a hold lives.",[ Nyx Holm ],,
+story_dialog_obj_story_019_d,1,[ 닉스 홀름 ],"균열은 남겼다.
+엔딩에서 다시 열린다.
+지금은 이간계가 온다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"The crack stays.
+It opens again at the ending.
+An inter-plot comes now.",[ Nyx Holm ],,
+story_dialog_obj_story_019_e,0,[ 닉스 홀름 ],"기록했다.
+카일-미라 노선.
+스위치는 없다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Logged.
+Kyle–Mira lines.
+No switch.",[ Nyx Holm ],,
+story_dialog_obj_story_019_e,1,[ 닉스 홀름 ],"다음 소문은 배신이다.
+진실인지 이간인지는 너희가 가린다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Next rumor is betrayal.
+Truth or wedge — you sort it.",[ Nyx Holm ],,
+story_dialog_story_020,0,[ 미라 솅크 ],"배신 소문이 카일 칸에 붙었다.
+장부는 다르게 말한다.
+가려 내자.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"A betrayal rumor stuck to Kyle’s cell.
+The ledger says otherwise.
+We sort it.",[ Mira Schenk ],,
+story_dialog_story_020,1,[ 미라 솅크 ],"이간계면 문이 산다.
+진실이면 거점을 접는다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"If a wedge, the door lives.
+If truth, we fold the hold.",[ Mira Schenk ],,
+story_dialog_obj_story_020_a,0,[ 미라 솅크 ],"카일 칸의 출금은 탄약이다.
+크림슨 계좌와 안 맞는다.
+소문은 이간이다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"Kyle's outflows are ammo.
+They do not match a Crimson account.
+The rumor is a wedge.",[ Mira Schenk ],,
+story_dialog_obj_story_020_a,1,[ 미라 솅크 ],"누가 뿌렸는지는 외곽 채널이다.
+거점 안은 깨끗하다.
+가온에게 지도를 물어라.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"Who spread it is a rim channel.
+Inside is clean.
+Ask Gaon for the map.",[ Mira Schenk ],,
+story_dialog_obj_story_020_b,0,[ 카일 로렌 ],"나는 안 팔았다.
+팔 거면 문을 안 지킨다.
+장부를 믿어라.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"I did not sell.
+If I had, I would not hold the door.
+Trust the ledger.",[ Kyle Loren ],,
+story_dialog_obj_story_020_b,1,[ 카일 로렌 ],"이간을 뿌린 쪽이 다음 공세다.
+나는 함선만 본다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Whoever spread the wedge is the next push.
+I watch ships.",[ Kyle Loren ],,
+story_dialog_obj_story_020_c,0,[ 가온 텔라 ],"외곽 수배 방송이 거점 말투를 흉내 냈다.
+내부 배신이 아니다.
+지도는 닫혀 있다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"The rim wanted band copied hold talk.
+Not an inside betrayal.
+The map stays closed.",[ Gaon Tela ],,
+story_dialog_obj_story_020_c,1,[ 가온 텔라 ],"진실은 이간이다.
+거점은 유지한다.
+공세가 온다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"The truth is a wedge.
+The hold stays.
+A push comes.",[ Gaon Tela ],,
+story_dialog_obj_story_020_d,0,[ 닉스 홀름 ],"내부는 안 갈랐다.
+소문은 밖에서 왔다.
+문은 닫아 둔다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Inside did not split.
+The rumor came from outside.
+The door stays shut.",[ Nyx Holm ],,
+story_dialog_obj_story_020_d,1,[ 닉스 홀름 ],"다음은 공방전이다.
+스텔리움 진압함대가 좌표를 샀다.
+카일을 세워라.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Next is a siege.
+A Stellium suppression fleet bought the fix.
+Stand Kyle.",[ Nyx Holm ],,
+story_dialog_obj_story_020_e,0,[ 미라 솅크 ],"장부 마감.
+배신 칸은 비어 있다.
+거점은 산다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"Ledger close.
+The betrayal cell is empty.
+The hold lives.",[ Mira Schenk ],,
+story_dialog_obj_story_020_e,1,[ 미라 솅크 ],"균열은 남았다.
+그러나 오늘은 한 편이다.
+공세를 맞자.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"The crack remains.
+But today we are one side.
+Meet the push.",[ Mira Schenk ],,
+story_dialog_story_021,0,[ 카일 로렌 ],"진압함대가 외곽에 있다.
+전멸 규모는 서사다.
+조우는 한 척이다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Suppression sits the rim.
+Wipe-scale is story.
+The meeting is one ship.",[ Kyle Loren ],,
+story_dialog_story_021,1,[ 카일 로렌 ],"문을 지켜라.
+거점이 죽으면 이름 없는 동맹도 죽는다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Hold the door.
+If the hold dies the nameless alliance dies.",[ Kyle Loren ],,
+story_dialog_obj_story_021_a,0,[ 카일 로렌 ],"입구 포는 열었다.
+한 척만 뜬다.
+그걸 끊으면 진압은 서사로 물러난다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Mouth guns are hot.
+Only one ship lifts.
+Cut it and suppression withdraws in story.",[ Kyle Loren ],,
+story_dialog_obj_story_021_a,1,[ 카일 로렌 ],"나는 문을 선다.
+너는 궤도에서 쳐라.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"I stand the door.
+You hit in orbit.",[ Kyle Loren ],,
+story_dialog_obj_story_021_c,0,[ 닉스 홀름 ],"문은 남았다.
+진압은 물러났다.
+그리하벤은 산다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"The door remains.
+Suppression withdrew.
+Greehaven lives.",[ Nyx Holm ],,
+story_dialog_obj_story_021_c,1,[ 닉스 홀름 ],"승리에는 깃발이 없다.
+그래서 추적에서 한 박자 벌었다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"The win has no flag.
+That bought one beat from the hunt.",[ Nyx Holm ],,
+story_dialog_obj_story_021_d,0,[ 가온 텔라 ],"좌표는 샀지만 내부는 못 열었다.
+은폐 지도가 버텼다.
+지워진 행성과 같은 수법의 반대다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"They bought the fix but not the inside.
+The concealment map lasted.
+The inverse of an erased world.",[ Gaon Tela ],,
+story_dialog_obj_story_021_d,1,[ 가온 텔라 ],"깃발을 들지 마라.
+들면 다시 산다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"Do not raise a flag.
+Raise it and they buy again.",[ Gaon Tela ],,
+story_dialog_obj_story_021_e,0,[ 카일 로렌 ],"한 척이었다.
+함대 전멸은 아니다.
+그래도 문은 지켰다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"One ship.
+Not a fleet wipe.
+Still we held the door.",[ Kyle Loren ],,
+story_dialog_obj_story_021_e,1,[ 카일 로렌 ],"첫 깃발은 이름 없이 세운다.
+내일이다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"The first flag goes up without a name.
+Tomorrow.",[ Kyle Loren ],,
+story_dialog_story_022,0,[ 닉스 홀름 ],"깃발을 세운다.
+이름은 없다.
+그래서 산다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"We raise a flag.
+It has no name.
+That is why it lives.",[ Nyx Holm ],,
+story_dialog_story_022,1,[ 닉스 홀름 ],"넷과 거점과 라이트홀드 빚.
+이 줄기가 챕터1의 끝 본문이다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"The four, the hold, the Light Hold debt.
+This stem is the Chapter 1 body close.",[ Nyx Holm ],,
+story_dialog_obj_story_022_a,0,[ 닉스 홀름 ],"이름 없는 동맹이다.
+장부에 진영 칸은 없다.
+문만 있다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"A nameless alliance.
+No faction cell in the ledger.
+Only a door.",[ Nyx Holm ],,
+story_dialog_obj_story_022_a,1,[ 닉스 홀름 ],"라이트홀드를 다시 버리지 않는다.
+그게 깃발이다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"We will not abandon Light Hold again.
+That is the flag.",[ Nyx Holm ],,
+story_dialog_obj_story_022_b,0,[ 카일 로렌 ],"이름은 필요 없다.
+문이 있으면 지킨다.
+나는 함선만 본다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"No name needed.
+If there is a door I hold it.
+I watch ships.",[ Kyle Loren ],,
+story_dialog_obj_story_022_b,1,[ 카일 로렌 ],"치는 날은 따로 온다.
+오늘은 선다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Hit-days come later.
+Today we stand.",[ Kyle Loren ],,
+story_dialog_obj_story_022_c,0,[ 미라 솅크 ],"동맹 장부를 열었다.
+이름 칸은 비워 둔다.
+증거가 진영보다 앞선다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"I opened the alliance book.
+Name cells stay blank.
+Proof sits before flags.",[ Mira Schenk ],,
+story_dialog_obj_story_022_c,1,[ 미라 솅크 ],"균열은 장부에 남겨 둔다.
+나중에 고친다.
+오늘은 한 줄이다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"The crack stays in the book.
+We revise later.
+Today is one line.",[ Mira Schenk ],,
+story_dialog_obj_story_022_d,0,[ 가온 텔라 ],"지워진 행성은 아직 안 돌아왔다.
+깃발은 빈칸 위에 섰다.
+챕터2에서 다시 연다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"The erased world has not returned.
+The flag stands on a blank.
+It opens again in chapter two.",[ Gaon Tela ],,
+story_dialog_obj_story_022_d,1,[ 가온 텔라 ],"은폐된 진실은 끝나지 않았다.
+다만 한 편이 생겼다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"Concealed truth is not over.
+But one side now exists.",[ Gaon Tela ],,
+story_dialog_obj_story_022_e,0,[ 닉스 홀름 ],"본문은 여기서 접는다.
+남은 칸은 여파다.
+깃발은 이름 없이 남는다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"The body folds here.
+The remaining cells are aftershock.
+The flag stays nameless.",[ Nyx Holm ],,
+story_dialog_obj_story_022_e,1,[ 닉스 홀름 ],"코발과 소사는 아직 바깥에 있다.
+여파에서 만나라.
+거점은 지킨다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Koval and Sosa are still outside.
+Meet them in the aftershock.
+We keep the hold.",[ Nyx Holm ],,
+story_dialog_story_023,0,[ 가온 텔라 ],"에덴에 메아리가 갔다.
+미레유가 물을 것이다.
+깃발 이름은 말하지 마라.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"An echo reached Eden.
+Mireille will ask.
+Do not speak a flag name.",[ Gaon Tela ],,
+story_dialog_story_023,1,[ 가온 텔라 ],"확인하고 돌아와라.
+거점은 비우지 마라.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"Confirm and return.
+Do not empty the hold.",[ Gaon Tela ],,
+story_dialog_obj_story_023_b,0,[ 미레유 보스 ],"이름 없는 깃발 소문이 돌더군.
+경고 광파는 보내지 않겠다.
+아직은.",assets/images/npc/noname_char010.png,npc_cpt_mireille,ingame_dialog,compact,100,"A nameless-flag rumor turns.
+I will not send a warning pulse.
+Not yet.",[ Mireille Voss ],,
+story_dialog_obj_story_023_b,1,[ 미레유 보스 ],"연합은 너를 반역으로 본다.
+나는 호송만 본다.
+메아리는 여기까지다.",assets/images/npc/noname_char010.png,npc_cpt_mireille,ingame_dialog,compact,100,"The Alliance files you as traitor.
+I only watch escorts.
+The echo ends here.",[ Mireille Voss ],,
+story_dialog_obj_story_023_c,0,[ 가온 텔라 ],"에덴은 치지 않는다.
+아직이다.
+지도는 유지한다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"Eden will not hit.
+Not yet.
+The map stays.",[ Gaon Tela ],,
+story_dialog_story_024,0,[ 미라 솅크 ],"사본을 오메가에 맡긴다.
+린은 통행세 대신 기록을 받는다.
+원본은 거점에 남긴다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"We leave a copy at Omega.
+Lynn takes a record instead of a toll.
+The original stays at the hold.",[ Mira Schenk ],,
+story_dialog_obj_story_024_b,0,[ 린 켄달 ],"받았다.
+진영 칸은 비어 있다.
+회항단 금고에 넣겠다.",assets/images/npc/noname_char007.png,npc_cpt_ai_clan_neutral_01,ingame_dialog,compact,100,"Received.
+Faction cells are blank.
+It goes in the circuit vault.",[ Lynn Kendall ],,
+story_dialog_obj_story_024_b,1,[ 린 켄달 ],"교차로는 계속 연다.
+이름만 묻지 마라.",assets/images/npc/noname_char007.png,npc_cpt_ai_clan_neutral_01,ingame_dialog,compact,100,"The crossing stays open.
+Do not ask me for a name.",[ Lynn Kendall ],,
+story_dialog_obj_story_024_c,0,[ 미라 솅크 ],"사본은 허브에 있다.
+원본은 여기다.
+장부는 두 줄로 산다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"The copy sits the hub.
+The original is here.
+The ledger lives on two lines.",[ Mira Schenk ],,
+story_dialog_story_025,0,[ 카일 로렌 ],"오렌 피스가 유해 명부를 쥔다.
+라이트홀드 칸이 비어 있다.
+가서 확인해라.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Oren Peace holds the remains roll.
+The Light Hold cell is blank.
+Go confirm.",[ Kyle Loren ],,
+story_dialog_obj_story_025_b,0,[ 오렌 피스 ],"라이트홀드 유해 칸은 비어 있다.
+명령으로 지워졌다.
+나는 잔해만 지킨다.",assets/images/npc/noname_char010.png,npc_cpt_gov_iron,ingame_dialog,compact,100,"The Light Hold remains cell is blank.
+An order wiped it.
+I only guard remnant.",[ Oren Peace ],,
+story_dialog_obj_story_025_b,1,[ 오렌 피스 ],"카일이 살아 돌아온 줄은 안다.
+보고서에 이름은 못 올린다.
+여기는 무덤이다.",assets/images/npc/noname_char010.png,npc_cpt_gov_iron,ingame_dialog,compact,100,"I know Kyle came back alive.
+I cannot put his name on the report.
+This is a grave.",[ Oren Peace ],,
+story_dialog_obj_story_025_c,0,[ 카일 로렌 ],"빈칸은 여전하다.
+나는 보고서에 없다.
+그래서 깃발에도 이름이 없다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"The blank remains.
+I am not on the report.
+That is why the flag has no name.",[ Kyle Loren ],,
+story_dialog_story_026,0,[ 엘렌 드 코르 ],"코발이 침묵한다.
+관문은 연다.
+말은 안 한다.",assets/images/npc/noname_char003.png,npc_cpt_arcadia_lane_01,ingame_dialog,compact,100,"Koval is silent.
+The gate opens.
+He will not speak.",[ Ellen de Cort ],,
+story_dialog_obj_story_026_a,0,[ 엘렌 드 코르 ],"사령은 너를 보지 않는다.
+그러나 관문은 연다.
+기록이 없다.",assets/images/npc/noname_char003.png,npc_cpt_arcadia_lane_01,ingame_dialog,compact,100,"Command will not see you.
+But the gate opens.
+There is no file.",[ Ellen de Cort ],,
+story_dialog_obj_story_026_a,1,[ 엘렌 드 코르 ],"침묵이 도움이다.
+인정은 다음 챕터다.",assets/images/npc/noname_char003.png,npc_cpt_arcadia_lane_01,ingame_dialog,compact,100,"Silence is the help.
+Recognition is the next chapter.",[ Ellen de Cort ],,
+story_dialog_obj_story_026_b,0,[ 이안 코발 ],"동맹을 인정하지 않는다.
+라이트홀드 빚은 인정한다.
+그 이상은 말하지 않는다.",assets/images/npc/noname_char010.png,npc_cpt_story_ian_koval,ingame_dialog,compact,100,"I do not recognize the alliance.
+I recognize the Light Hold debt.
+I say no more.",[ Ian Koval ],,
+story_dialog_obj_story_026_b,1,[ 이안 코발 ],"반역 칸은 그대로다.
+살아남아라.
+통신은 끊는다.",assets/images/npc/noname_char010.png,npc_cpt_story_ian_koval,ingame_dialog,compact,100,"The traitor cell stays.
+Stay alive.
+I cut the channel.",[ Ian Koval ],,
+story_dialog_obj_story_026_c,0,[ 엘렌 드 코르 ],"창구는 닫는다.
+관문은 필요할 때 연다.
+기록은 남기지 않는다.",assets/images/npc/noname_char003.png,npc_cpt_arcadia_lane_01,ingame_dialog,compact,100,"The window closes.
+The gate opens when needed.
+I leave no file.",[ Ellen de Cort ],,
+story_dialog_story_027,0,[ 세레나 드릴 ],"소사가 조건을 말하겠다.
+데드코러스는 동맹에 타지 않는다.
+들어라.",assets/images/npc/noname_char003.png,npc_cpt_draco_obs_01,ingame_dialog,compact,100,"Sosa will speak a condition.
+Dead Chorus will not board the alliance.
+Hear it.",[ Serena Drill ],,
+story_dialog_obj_story_027_a,0,[ 세레나 드릴 ],"기함은 움직이지 않는다.
+말은 소사 몫이다.
+나는 주파수만 연다.",assets/images/npc/noname_char003.png,npc_cpt_draco_obs_01,ingame_dialog,compact,100,"The flagship does not lift.
+Words are Sosa’s.
+I only open the band.",[ Serena Drill ],,
+story_dialog_obj_story_027_b,0,[ 다렐 소사 ],"나는 타지 않는다.
+라이트홀드 증언은 이미 했다.
+깃발은 너희 것이다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"I will not board.
+I already gave Light Hold testimony.
+The flag is yours.",[ Darell Sosa ],,
+story_dialog_obj_story_027_b,1,[ 다렐 소사 ],"조건은 하나다.
+다시 버리지 마라.
+버리면 나는 적이 된다.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"One condition.
+Do not abandon again.
+If you do I become an enemy.",[ Darell Sosa ],,
+story_dialog_obj_story_027_c,0,[ 다렐 소사 ],"은폐된 진실은 아직 남았다.
+챕터2에서 연다.
+지금은 이 조건만 가져가라.",assets/images/npc/noname_char009.png,npc_cpt_story_darel_sosa,ingame_dialog,compact,100,"Concealed truth remains.
+It opens in chapter two.
+Take only this condition now.",[ Darell Sosa ],,
+story_dialog_story_028,0,[ 닉스 홀름 ],"크림슨이 좌표를 다시 샀다.
+다음 손이다.
+한 척만 끊고 와라.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Crimson bought the fix again.
+The next hand.
+Cut one ship and return.",[ Nyx Holm ],,
+story_dialog_obj_story_028_c,0,[ 드락 베일 ],"현상금은 올랐다.
+좌표는 아직 반쯤이다.
+돌아가라.",assets/images/npc/noname_char006.png,npc_cpt_bar_ret_12,ingame_dialog,compact,100,"The bounty rose.
+The fix is still half.
+Go back.",[ Drak Vale ],,
+story_dialog_story_029,0,[ 닉스 홀름 ],"선서를 다시 읽는다.
+이름은 넣지 않는다.
+버리는 일만 금지한다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"We reread the oath.
+We put in no names.
+Only abandoning is forbidden.",[ Nyx Holm ],,
+story_dialog_obj_story_029_a,0,[ 닉스 홀름 ],"다시 버리지 않는다.
+이름이 없어도 문은 지킨다.
+그게 선서다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"We will not abandon again.
+No name, we still hold the door.
+That is the oath.",[ Nyx Holm ],,
+story_dialog_obj_story_029_a,1,[ 닉스 홀름 ],"넷이 한 줄에 서명한다.
+칸은 비어 있다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"The four sign one line.
+The name cell stays blank.",[ Nyx Holm ],,
+story_dialog_obj_story_029_b,0,[ 미라 솅크 ],"서명 칸은 비어 있고 날짜만 있다.
+그래서 산다.
+원본은 거점에 남긴다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"Sign cells are blank. Only a date.
+That is why it lives.
+The original stays here.",[ Mira Schenk ],,
+story_dialog_obj_story_029_c,0,[ 카일 로렌 ],"선서는 말이다.
+문은 함선이다.
+나는 함선만 본다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"An oath is talk.
+A door is a ship.
+I watch ships.",[ Kyle Loren ],,
+story_dialog_story_030,0,[ 닉스 홀름 ],"챕터를 접는다.
+은폐된 진실은 끝나지 않았다.
+다만 한 편이 남았다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"We fold the chapter.
+Concealed truth is not over.
+One side remains.",[ Nyx Holm ],,
+story_dialog_story_030,1,[ 닉스 홀름 ],"시네마틱이 이어진다.
+거점은 유지한다.
+세부는 나중에 고친다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"A cinematic follows.
+The hold stays.
+We revise details later.",[ Nyx Holm ],,
+story_dialog_obj_story_030_a,0,[ 닉스 홀름 ],"문은 남는다.
+깃발은 이름 없다.
+라이트홀드 빚은 남는다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"The door remains.
+The flag has no name.
+The Light Hold debt remains.",[ Nyx Holm ],,
+story_dialog_obj_story_030_a,1,[ 닉스 홀름 ],"코발의 침묵과 소사의 조건.
+둘 다 바깥에 있다.
+다음 챕터의 입구다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Koval's silence and Sosa's condition.
+Both sit outside.
+They are the next chapter's mouth.",[ Nyx Holm ],,
+story_dialog_obj_story_030_b,0,[ 가온 텔라 ],"지워진 행성은 아직 없다.
+빈칸을 챕터2로 넘긴다.
+지도는 접지 않는다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"The erased world is still gone.
+I pass the blank to chapter two.
+I do not fold the map.",[ Gaon Tela ],,
+story_dialog_obj_story_030_c,0,[ 닉스 홀름 ],"은폐된 진실은 여기서 접는다.
+끝나지 않았다.
+한 편이 생겼을 뿐이다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"Concealed truth folds here.
+It is not over.
+Only one side now exists.",[ Nyx Holm ],,
+story_dialog_obj_story_030_c,1,[ 닉스 홀름 ],"거점은 지킨다.
+세부는 나중에 고친다.
+시네마틱으로 넘긴다.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"We keep the hold.
+We revise details later.
+We pass to the cinematic.",[ Nyx Holm ],,
+npc_dialog_story_kyle_loren,0,[ 카일 로렌 ],"화력은 서 있다.
+말은 짧게 해라.
+함선만 본다.",assets/images/npc/noname_char006.png,npc_cpt_story_kyle_loren,ingame_dialog,compact,100,"Fire is standing.
+Keep talk short.
+I watch ships.",[ Kyle Loren ],,
+npc_dialog_story_mira_schenk,0,[ 미라 솅크 ],"장부는 여기 있다.
+출처는 묻지 마라.
+칸만 보여 주겠다.",assets/images/npc/noname_char007.png,npc_cpt_story_mira_schenk,ingame_dialog,compact,100,"The ledger is here.
+Do not ask source.
+I will show cells only.",[ Mira Schenk ],,
+npc_dialog_story_gaon_tela,0,[ 가온 텔라 ],"빈칸은 접지 않는다.
+지도는 열려 있다.
+이름은 아직 없다.",assets/images/npc/noname_char008.png,npc_cpt_story_gaon_tela,ingame_dialog,compact,100,"I do not fold the blank.
+The map stays open.
+No name yet.",[ Gaon Tela ],,
+npc_dialog_story_nyx_holm,0,[ 닉스 홀름 ],"문은 닫혀 있다.
+이름은 적지 않는다.
+용건만 말해라.",assets/images/npc/noname_char004.png,npc_cpt_story_nyx_holm,ingame_dialog,compact,100,"The door is shut.
+I log no names.
+Speak the errand only.",[ Nyx Holm ],,
+npc_dialog_story_seren_vale,0,[ 세렌 베일 ],"인장은 이 한 줄이다.
+위조 채널은 끊어라.
+나는 보더에 남는다.",assets/images/npc/noname_char005.png,npc_cpt_story_seren_vale,ingame_dialog,compact,100,"The seal is this one line.
+Cut forged bands.
+I stay on the border.",[ Seren Vale ],,
 story_dialog_obj_s034_b,0,[ 베일 훅 ],중력 왜곡이 여기서 항로를 꺾는다.\n들어갈 길은 이 한 줄뿐이고\n들어온 배엔 식별 신호가 없었다.,assets/images/npc/noname_char003.png,npc_cpt_sq_veil_hook,ingame_dialog,compact,100,The warp folds the lane here.\nThe mouth is this one line.\nShips come in with the callsign already blank.,[ Veil Hook ]
 story_dialog_obj_s034_b,1,[ 베일 훅 ],순찰 주기는 아직 못 넘긴다.\n지금은 입구만 확인해 줘.\n출구를 건드리면 호위가 먼저 뜬다.,assets/images/npc/noname_char003.png,npc_cpt_sq_veil_hook,ingame_dialog,compact,100,I will not pass the patrol cycle yet.\nMark the mouth only.\nOpen the exit and the escort lifts first.,[ Veil Hook ]
 story_dialog_obj_s034_c,0,[ 베일 훅 ],순찰은 열두 박자로 돈다.\n그 틈에 숨은 거점이 드러난다.\n출구는 그때만 열린다.,assets/images/npc/noname_char003.png,npc_cpt_sq_veil_hook,ingame_dialog,compact,100,The cycle is twelve beats.\nThe hidden camp shows in that gap.\nThe exit opens only after that.,[ Veil Hook ]
@@ -248,3 +1233,511 @@ npc_dialog_anomaly_researcher,0,[ 이상현상 연구원 ],"이상현상 조사�
 npc_dialog_anomaly_researcher,1,[ 이상현상 연구원 ],이 행성 잔해를 수색하라.\n\n공개 전에는 더 말하지 않는다.\n수락하면 조사를 맡기겠다.,assets/images/npc/noname_char003.png,npc_cpt_anomaly_researcher,ingame_dialog,compact,100,"Search the wrecks on this planet.\n\nI will not say more before it is revealed.\nAccept and I will leave the survey with you.",[ Anomaly Researcher ],[ 수락 ],[ Accept ]
 npc_dialog_anomaly_researcher_abandon,0,[ 이상현상 연구원 ],조사는 아직 끝나지 않았다.\n\n중단하면 이 건은 즉시 닫힌다.\n이미 건진 유물은 회수한다.,assets/images/npc/noname_char003.png,npc_cpt_anomaly_researcher,ingame_dialog,compact,100,"The survey is not finished.\n\nStop it and this case closes at once.\nAny recovered relic is reclaimed.",[ Anomaly Researcher ]
 npc_dialog_anomaly_researcher_abandon,1,[ 이상현상 연구원 ],여기서 조사를 멈출 수 있다.\n\n재개 방법은 없다.\n다음 이상현상을 기다려라.,assets/images/npc/noname_char003.png,npc_cpt_anomaly_researcher,ingame_dialog,compact,100,"You can stop the survey here.\n\nThere is no resume.\nWait for the next anomaly.",[ Anomaly Researcher ],[ 조사 중단 ],[ Abort Survey ]
+story_dialog_obj_s056_a,0,[ 렌 코일 ],"출정 전야에 문이 잠겼다.
+항로는 한 줄인데 통행이 없다.
+잠근 이름은 장부에 없다.",assets/images/npc/noname_char008.png,npc_cpt_sq_ren_coil,ingame_dialog,compact,100,"The door locked on the eve of the sortie.
+One lane. No traffic.
+No name sits the lock.",[ Ren Coil ]
+story_dialog_obj_s056_a,1,[ 렌 코일 ],"펄 채굴지로 가라.
+마야 벨트가 문을 대조한다.
+나는 글로우에서 따라간다.",assets/images/npc/noname_char008.png,npc_cpt_sq_ren_coil,ingame_dialog,compact,100,"Go to Pearl.
+Maya Belt matches the door.
+I will follow from Glow.",[ Ren Coil ]
+story_dialog_obj_s056_c,0,[ 마야 벨트 ],"문은 여기 있다.
+연 기록은 없고 잠근 기록만 있다.
+누가 잠갔는지는 적혀 있지 않다.",assets/images/npc/noname_char006.png,npc_cpt_sq_maya_belt,ingame_dialog,compact,100,"The door is here.
+No open log. Only a lock mark.
+Who locked it is not written.",[ Maya Belt ]
+story_dialog_obj_s056_c,1,[ 마야 벨트 ],"궤도에 차단기가 떠 있다.
+문을 건드리면 그 배가 먼저 뜬다.
+나는 장부만 지킨다.",assets/images/npc/noname_char006.png,npc_cpt_sq_maya_belt,ingame_dialog,compact,100,"A blocker sits in orbit.
+Touch the door and that ship lifts first.
+I keep the ledger only.",[ Maya Belt ]
+story_dialog_obj_s056_e,0,[ 렌 코일 ],"문은 열렸다.
+잠근 자는 여전히 없다.
+출정 전야의 차단은 여기까지다.",assets/images/npc/noname_char008.png,npc_cpt_sq_ren_coil,ingame_dialog,compact,100,"The door is open.
+The locker is still unnamed.
+The eve-of-sortie block ends here.",[ Ren Coil ]
+story_dialog_obj_s056_e,1,[ 렌 코일 ],"정식 보고로는 올리지 않는다.
+이름은 장부에 없고.
+이 건은 펄에서 접는다.",assets/images/npc/noname_char008.png,npc_cpt_sq_ren_coil,ingame_dialog,compact,100,"I will not file it upward.
+No name is on the ledger.
+The case folds at Pearl.",[ Ren Coil ]
+story_dialog_obj_s057_a,0,[ 조르 핀 ],"지휘석이 매물이다.
+앉을 이름은 비어 있고.
+가격만 적혀 있다.",assets/images/npc/noname_char004.png,npc_cpt_sq_jor_finn,ingame_dialog,compact,100,"A command chair is listed.
+The sitter cell is blank.
+Only the price is written.",[ Jor Finn ]
+story_dialog_obj_s057_a,1,[ 조르 핀 ],"인수는 비콘이다.
+셀 베인이 전표를 본다.
+나는 의자만 판다.",assets/images/npc/noname_char004.png,npc_cpt_sq_jor_finn,ingame_dialog,compact,100,"The handoff is at Beacon.
+Sel Vane reads the slip.
+I sell the chair only.",[ Jor Finn ]
+story_dialog_obj_s057_c,0,[ 셀 베인 ],"전표의 이름 칸이 비어 있다.
+의자만 오고 사람은 오지 않았다.
+나는 그 공란만 확인한다.",assets/images/npc/noname_char003.png,npc_cpt_sq_sel_vane,ingame_dialog,compact,100,"The name cell on the slip is blank.
+The chair arrived. The person did not.
+I confirm that blank only.",[ Sel Vane ]
+story_dialog_obj_s057_c,1,[ 셀 베인 ],"호위가 매물을 지키고 있다.
+격파한 뒤에 접을 수 있다.
+지금은 전표만 보여라.",assets/images/npc/noname_char003.png,npc_cpt_sq_sel_vane,ingame_dialog,compact,100,"An escort is holding the listing.
+It can fold after you break them.
+Show the slip only for now.",[ Sel Vane ]
+story_dialog_obj_s057_e,0,[ 조르 핀 ],"의자는 팔렸다.
+앉을 이름은 끝내 없다.
+빈 지휘는 여기서 접는다.",assets/images/npc/noname_char004.png,npc_cpt_sq_jor_finn,ingame_dialog,compact,100,"The chair sold.
+No name ever sat it.
+The vacant command folds here.",[ Jor Finn ]
+story_dialog_obj_s057_e,1,[ 조르 핀 ],"누가 샀는지는 적지 않는다.
+나는 매물만 닫고.
+비콘 기록은 여기까지다.",assets/images/npc/noname_char004.png,npc_cpt_sq_jor_finn,ingame_dialog,compact,100,"I do not write who bought it.
+I close the listing only.
+The Beacon record ends here.",[ Jor Finn ]
+story_dialog_obj_s058_a,0,[ 하스 퀸 ],"장부 합이 맞지 않는다.
+빠진 숫자는 한 줄이다.
+그 줄에 사람은 없다.",assets/images/npc/noname_char005.png,npc_cpt_sq_has_quinn,ingame_dialog,compact,100,"The ledger does not add.
+One line is missing.
+That line has no person.",[ Has Quinn ]
+story_dialog_obj_s058_a,1,[ 하스 퀸 ],"사본은 카론에 있다.
+이바 렌이 대조한다.
+나는 틀린 칸만 표시한다.",assets/images/npc/noname_char005.png,npc_cpt_sq_has_quinn,ingame_dialog,compact,100,"The copy sits at Charon.
+Iva Wren will match it.
+I only mark the failed cell.",[ Has Quinn ]
+story_dialog_obj_s058_c,0,[ 이바 렌 ],"사본도 같은 칸이 비어 있다.
+합을 맞추면 사람이 아니다.
+빈 숫자는 빈 숫자다.",assets/images/npc/noname_char007.png,npc_cpt_sq_iva_wren,ingame_dialog,compact,100,"The copy has the same blank cell.
+Fix the sum and it is still not a person.
+An empty number stays a number.",[ Iva Wren ]
+story_dialog_obj_s058_c,1,[ 이바 렌 ],"현상금이 사본을 노린다.
+격파한 뒤에 접어라.
+나는 대조만 한다.",assets/images/npc/noname_char007.png,npc_cpt_sq_iva_wren,ingame_dialog,compact,100,"A bounty is hunting the copy.
+Fold it after you break them.
+I only match.",[ Iva Wren ]
+story_dialog_obj_s058_e,0,[ 하스 퀸 ],"틀린 이유는 이것이다.
+빠진 줄은 사람이 아니었다.
+장부는 여기서 접는다.",assets/images/npc/noname_char005.png,npc_cpt_sq_has_quinn,ingame_dialog,compact,100,"That is why the numbers fail.
+The missing line was not a person.
+The ledger folds here.",[ Has Quinn ]
+story_dialog_obj_s058_e,1,[ 하스 퀸 ],"이름을 올리지 않는다.
+숫자는 숫자로 남고.
+카론 기록은 여기까지다.",assets/images/npc/noname_char005.png,npc_cpt_sq_has_quinn,ingame_dialog,compact,100,"I will not file a name.
+The number stays a number.
+The Charon record ends here.",[ Has Quinn ]
+story_dialog_obj_s059_a,0,[ 펙 소린 ],"대역이 복사됐다.
+원본 주인의 입은 아니다.
+주파수 숫자만 남았다.",assets/images/npc/noname_char010.png,npc_cpt_sq_peck_sorin,ingame_dialog,compact,100,"The band was copied.
+It is not the owner's mouth.
+Only the frequency number remains.",[ Peck Sorin ]
+story_dialog_obj_s059_a,1,[ 펙 소린 ],"인수는 마크다.
+다인 로가 전표를 본다.
+나는 관측만 한다.",assets/images/npc/noname_char010.png,npc_cpt_sq_peck_sorin,ingame_dialog,compact,100,"The handoff is at Mark.
+Dain Rho reads the slip.
+I only observe.",[ Peck Sorin ]
+story_dialog_obj_s059_c,0,[ 다인 로 ],"전표의 주인 칸이 비어 있다.
+대역은 오고 목소리는 오지 않았다.
+나는 그 공란만 확인한다.",assets/images/npc/noname_char009.png,npc_cpt_sq_dain_rho,ingame_dialog,compact,100,"The owner cell on the slip is blank.
+The band arrived. The voice did not.
+I confirm that blank only.",[ Dain Rho ]
+story_dialog_obj_s059_c,1,[ 다인 로 ],"호위가 대역을 지키고 있다.
+격파한 뒤에 접을 수 있다.
+지금은 전표만 보여라.",assets/images/npc/noname_char009.png,npc_cpt_sq_dain_rho,ingame_dialog,compact,100,"An escort is holding the band.
+It can fold after you break them.
+Show the slip only for now.",[ Dain Rho ]
+story_dialog_obj_s059_e,0,[ 펙 소린 ],"복사본은 주인의 입이 아니다.
+누가 훔쳤는지는 여기 없다.
+훔친 대역은 여기서 접는다.",assets/images/npc/noname_char010.png,npc_cpt_sq_peck_sorin,ingame_dialog,compact,100,"The copy is not the owner's mouth.
+Who stole it is not here.
+The stolen band folds here.",[ Peck Sorin ]
+story_dialog_obj_s059_e,1,[ 펙 소린 ],"원본을 열지 않는다.
+주파수만 남기고.
+마크 기록은 여기까지다.",assets/images/npc/noname_char010.png,npc_cpt_sq_peck_sorin,ingame_dialog,compact,100,"I will not open the original.
+Only the frequency remains.
+The Mark record ends here.",[ Peck Sorin ]
+story_dialog_obj_s060_c,0,[ 오사 펠 ],"상자의 출항 칸이 비어 있다.
+물건은 있고 이름은 없다.
+나는 그 공란만 본다.",assets/images/npc/noname_char004.png,npc_cpt_sq_osa_pell,ingame_dialog,compact,100,"The crate's departure cell is blank.
+The goods are here. The name is not.
+I look at that blank only.",[ Osa Pell ]
+story_dialog_obj_s060_c,1,[ 오사 펠 ],"이름을 채우지 마라.
+채운 상자는 회수된다.
+공란을 그대로 보여라.",assets/images/npc/noname_char004.png,npc_cpt_sq_osa_pell,ingame_dialog,compact,100,"Do not fill a name.
+A filled crate is reclaimed.
+Show the blank as it is.",[ Osa Pell ]
+story_dialog_obj_s060_d,0,[ 오사 펠 ],"나는 이름을 묻지 않는다.
+그것이 이 항로의 인수다.
+공란은 닫힌 문이다.",assets/images/npc/noname_char004.png,npc_cpt_sq_osa_pell,ingame_dialog,compact,100,"I will not ask a name.
+That is the handoff on this lane.
+The blank is a closed door.",[ Osa Pell ]
+story_dialog_obj_s060_d,1,[ 오사 펠 ],"미르 켈이 곧 도착한다.
+상자는 여기서 접힌다.
+나는 인수만 찍는다.",assets/images/npc/noname_char004.png,npc_cpt_sq_osa_pell,ingame_dialog,compact,100,"Mir Kell will arrive shortly.
+The crate folds here.
+I stamp the handoff only.",[ Osa Pell ]
+story_dialog_obj_s060_e,0,[ 미르 켈 ],"상자는 넘어갔다.
+출항 칸은 끝내 비어 있다.
+공란이 찍힌 건은 여기서 접는다.",assets/images/npc/noname_char003.png,npc_cpt_sq_mir_kell,ingame_dialog,compact,100,"The crate passed.
+The departure cell stayed blank.
+The blank-cell case folds here.",[ Mir Kell ]
+story_dialog_obj_s060_e,1,[ 미르 켈 ],"이름을 올리지 않는다.
+식량은 남고.
+글레이 기록은 여기까지다.",assets/images/npc/noname_char003.png,npc_cpt_sq_mir_kell,ingame_dialog,compact,100,"I will not file a name.
+The food remains.
+The Gray record ends here.",[ Mir Kell ]
+story_dialog_obj_s061_c,0,[ 넬 케이 ],"봉인은 그대로다.
+열리지 않았고 내용도 없다.
+나는 인장만 본다.",assets/images/npc/noname_char008.png,npc_cpt_sq_nell_kay,ingame_dialog,compact,100,"The seal is intact.
+It did not open. There is no content line.
+I look at the stamp only.",[ Nell Kay ]
+story_dialog_obj_s061_c,1,[ 넬 케이 ],"뚜껑을 열지 마라.
+연 인수는 목록에서 지워진다.
+봉인만 보여라.",assets/images/npc/noname_char008.png,npc_cpt_sq_nell_kay,ingame_dialog,compact,100,"Do not open the lid.
+An opened handoff is erased from the list.
+Show the seal only.",[ Nell Kay ]
+story_dialog_obj_s061_d,0,[ 넬 케이 ],"열지 말라는 것이 인수다.
+속이 무엇이든 여기 적히지 않는다.
+봉인이 정본이다.",assets/images/npc/noname_char008.png,npc_cpt_sq_nell_kay,ingame_dialog,compact,100,"Do not open it. That is the handoff.
+Whatever is inside is not written here.
+The seal is the canon.",[ Nell Kay ]
+story_dialog_obj_s061_d,1,[ 넬 케이 ],"브린 택이 곧 도착한다.
+인수는 여기서 접힌다.
+나는 인장만 찍는다.",assets/images/npc/noname_char008.png,npc_cpt_sq_nell_kay,ingame_dialog,compact,100,"Brin Tack will arrive shortly.
+The handoff folds here.
+I stamp the seal only.",[ Nell Kay ]
+story_dialog_obj_s061_e,0,[ 브린 택 ],"인수는 넘어갔다.
+봉인은 열리지 않았다.
+이 건은 루나에서 접는다.",assets/images/npc/noname_char006.png,npc_cpt_sq_brin_tack,ingame_dialog,compact,100,"The handoff passed.
+The seal did not open.
+The case folds at Luna.",[ Brin Tack ]
+story_dialog_obj_s061_e,1,[ 브린 택 ],"내용물은 올리지 않는다.
+기술은 남고.
+루나 기록은 여기까지다.",assets/images/npc/noname_char006.png,npc_cpt_sq_brin_tack,ingame_dialog,compact,100,"I will not file the contents.
+The tech remains.
+The Luna record ends here.",[ Brin Tack ]
+story_dialog_obj_s062_c,0,[ 시라 멕 ],"영수증의 이름 칸이 비어 있다.
+광물은 있고 보낸 자는 없다.
+나는 그 공란만 본다.",assets/images/npc/noname_char007.png,npc_cpt_sq_sira_mek,ingame_dialog,compact,100,"The name cell on the receipt is blank.
+The ore is here. The sender is not.
+I look at that blank only.",[ Sira Mek ]
+story_dialog_obj_s062_c,1,[ 시라 멕 ],"이름을 채우지 마라.
+채운 전표는 회수된다.
+공란을 그대로 보여라.",assets/images/npc/noname_char007.png,npc_cpt_sq_sira_mek,ingame_dialog,compact,100,"Do not fill a name.
+A filled slip is reclaimed.
+Show the blank as it is.",[ Sira Mek ]
+story_dialog_obj_s062_d,0,[ 시라 멕 ],"공란은 그대로 둔다.
+그것이 이 항로의 전표다.
+이름은 정본이 아니다.",assets/images/npc/noname_char007.png,npc_cpt_sq_sira_mek,ingame_dialog,compact,100,"Leave the blank as it is.
+That is the slip on this lane.
+A name is not the canon.",[ Sira Mek ]
+story_dialog_obj_s062_d,1,[ 시라 멕 ],"카엘 본이 곧 도착한다.
+전표는 여기서 접힌다.
+나는 인수만 찍는다.",assets/images/npc/noname_char007.png,npc_cpt_sq_sira_mek,ingame_dialog,compact,100,"Kael Vonn will arrive shortly.
+The slip folds here.
+I stamp the handoff only.",[ Sira Mek ]
+story_dialog_obj_s062_e,0,[ 카엘 본 ],"전표는 넘어갔다.
+이름은 끝내 없다.
+이름 없는 영수증은 여기서 접는다.",assets/images/npc/noname_char005.png,npc_cpt_sq_kael_vonn,ingame_dialog,compact,100,"The slip passed.
+The name never appeared.
+The nameless receipt folds here.",[ Kael Vonn ]
+story_dialog_obj_s062_e,1,[ 카엘 본 ],"보낸 자를 올리지 않는다.
+광물은 남고.
+오리온 기록은 여기까지다.",assets/images/npc/noname_char005.png,npc_cpt_sq_kael_vonn,ingame_dialog,compact,100,"I will not file a sender.
+The ore remains.
+The Orion record ends here.",[ Kael Vonn ]
+story_dialog_obj_s063_a,0,[ 에브 홀트 ],"봉투는 봉인돼 있다.
+열지 마라.
+속은 여기 적히지 않는다.",assets/images/npc/noname_char009.png,npc_cpt_sq_ev_holt,ingame_dialog,compact,100,"The envelope is sealed.
+Do not open it.
+The inside is not written here.",[ Ev Holt ]
+story_dialog_obj_s063_a,1,[ 에브 홀트 ],"인수는 솔이다.
+토마 케일이 봉인을 본다.
+나는 봉투만 건넨다.",assets/images/npc/noname_char009.png,npc_cpt_sq_ev_holt,ingame_dialog,compact,100,"The handoff is at Sol.
+Toma Kale will see the seal.
+I hand the envelope only.",[ Ev Holt ]
+story_dialog_obj_s063_c,0,[ 토마 케일 ],"봉인은 그대로다.
+열리지 않았고 속도 없다.
+나는 인장만 본다.",assets/images/npc/noname_char010.png,npc_cpt_sq_toma_kale,ingame_dialog,compact,100,"The seal is intact.
+It did not open. There is no inside line.
+I look at the stamp only.",[ Toma Kale ]
+story_dialog_obj_s063_c,1,[ 토마 케일 ],"열어 달라고 하지 마라.
+연 봉투는 사라진다.
+봉인만 보여라.",assets/images/npc/noname_char010.png,npc_cpt_sq_toma_kale,ingame_dialog,compact,100,"Do not ask me to open it.
+An opened envelope disappears.
+Show the seal only.",[ Toma Kale ]
+story_dialog_obj_s063_d,0,[ 토마 케일 ],"봉투는 받았다.
+속은 열지 않았다.
+봉인이 인수의 전부다.",assets/images/npc/noname_char010.png,npc_cpt_sq_toma_kale,ingame_dialog,compact,100,"I took the envelope.
+I did not open the inside.
+The seal is the whole handoff.",[ Toma Kale ]
+story_dialog_obj_s063_d,1,[ 토마 케일 ],"에브 홀트가 곧 도착한다.
+이 건은 여기서 접힌다.
+나는 인장만 찍는다.",assets/images/npc/noname_char010.png,npc_cpt_sq_toma_kale,ingame_dialog,compact,100,"Ev Holt will arrive shortly.
+The case folds here.
+I stamp the seal only.",[ Toma Kale ]
+story_dialog_obj_s063_e,0,[ 에브 홀트 ],"봉투는 넘어갔다.
+속은 끝내 열리지 않았다.
+열지 않는 봉투는 여기서 접는다.",assets/images/npc/noname_char009.png,npc_cpt_sq_ev_holt,ingame_dialog,compact,100,"The envelope passed.
+The inside was never read.
+The unopened envelope folds here.",[ Ev Holt ]
+story_dialog_obj_s063_e,1,[ 에브 홀트 ],"내용을 올리지 않는다.
+봉인만 남고.
+솔 기록은 여기까지다.",assets/images/npc/noname_char009.png,npc_cpt_sq_ev_holt,ingame_dialog,compact,100,"I will not file the contents.
+Only the seal remains.
+The Sol record ends here.",[ Ev Holt ]
+npc_dialog_sq_ren_coil,0,[ 렌 코일 ],"글로우 국경에서 출정 전 막힌 문을 기록한다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char008.png,npc_cpt_sq_ren_coil,ingame_dialog,compact,100,"Ren Coil keeps that cell.
+I file no name.",[ Ren Coil ]
+npc_dialog_sq_ren_coil,1,[ 렌 코일 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char008.png,npc_cpt_sq_ren_coil,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Ren Coil ]
+npc_dialog_sq_ren_coil,2,[ 렌 코일 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char008.png,npc_cpt_sq_ren_coil,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Ren Coil ]
+npc_dialog_sq_maya_belt,0,[ 마야 벨트 ],"펄 채굴지에서 막힌 문의 장부를 맡는다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char006.png,npc_cpt_sq_maya_belt,ingame_dialog,compact,100,"Maya Belt keeps that cell.
+I file no name.",[ Maya Belt ]
+npc_dialog_sq_maya_belt,1,[ 마야 벨트 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char006.png,npc_cpt_sq_maya_belt,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Maya Belt ]
+npc_dialog_sq_maya_belt,2,[ 마야 벨트 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char006.png,npc_cpt_sq_maya_belt,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Maya Belt ]
+npc_dialog_sq_jor_finn,0,[ 조르 핀 ],"포지에서 빈 지휘석을 매물로 올린다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char004.png,npc_cpt_sq_jor_finn,ingame_dialog,compact,100,"Jor Finn keeps that cell.
+I file no name.",[ Jor Finn ]
+npc_dialog_sq_jor_finn,1,[ 조르 핀 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char004.png,npc_cpt_sq_jor_finn,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Jor Finn ]
+npc_dialog_sq_jor_finn,2,[ 조르 핀 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char004.png,npc_cpt_sq_jor_finn,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Jor Finn ]
+npc_dialog_sq_sel_vane,0,[ 셀 베인 ],"비콘에서 빈 지휘 매물의 인수를 기록한다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char003.png,npc_cpt_sq_sel_vane,ingame_dialog,compact,100,"Sel Vane keeps that cell.
+I file no name.",[ Sel Vane ]
+npc_dialog_sq_sel_vane,1,[ 셀 베인 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char003.png,npc_cpt_sq_sel_vane,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Sel Vane ]
+npc_dialog_sq_sel_vane,2,[ 셀 베인 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char003.png,npc_cpt_sq_sel_vane,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Sel Vane ]
+npc_dialog_sq_has_quinn,0,[ 하스 퀸 ],"마크 항로에서 맞지 않는 숫자를 대조한다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char005.png,npc_cpt_sq_has_quinn,ingame_dialog,compact,100,"Has Quinn keeps that cell.
+I file no name.",[ Has Quinn ]
+npc_dialog_sq_has_quinn,1,[ 하스 퀸 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char005.png,npc_cpt_sq_has_quinn,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Has Quinn ]
+npc_dialog_sq_has_quinn,2,[ 하스 퀸 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char005.png,npc_cpt_sq_has_quinn,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Has Quinn ]
+npc_dialog_sq_iva_wren,0,[ 이바 렌 ],"카론에서 틀린 숫자의 사본을 맡는다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char007.png,npc_cpt_sq_iva_wren,ingame_dialog,compact,100,"Iva Wren keeps that cell.
+I file no name.",[ Iva Wren ]
+npc_dialog_sq_iva_wren,1,[ 이바 렌 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char007.png,npc_cpt_sq_iva_wren,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Iva Wren ]
+npc_dialog_sq_iva_wren,2,[ 이바 렌 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char007.png,npc_cpt_sq_iva_wren,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Iva Wren ]
+npc_dialog_sq_peck_sorin,0,[ 펙 소린 ],"페가수스에서 훔친 통신 대역을 기록한다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char010.png,npc_cpt_sq_peck_sorin,ingame_dialog,compact,100,"Peck Sorin keeps that cell.
+I file no name.",[ Peck Sorin ]
+npc_dialog_sq_peck_sorin,1,[ 펙 소린 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char010.png,npc_cpt_sq_peck_sorin,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Peck Sorin ]
+npc_dialog_sq_peck_sorin,2,[ 펙 소린 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char010.png,npc_cpt_sq_peck_sorin,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Peck Sorin ]
+npc_dialog_sq_dain_rho,0,[ 다인 로 ],"마크에서 훔친 대역의 인수를 맡는다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char009.png,npc_cpt_sq_dain_rho,ingame_dialog,compact,100,"Dain Rho keeps that cell.
+I file no name.",[ Dain Rho ]
+npc_dialog_sq_dain_rho,1,[ 다인 로 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char009.png,npc_cpt_sq_dain_rho,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Dain Rho ]
+npc_dialog_sq_dain_rho,2,[ 다인 로 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char009.png,npc_cpt_sq_dain_rho,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Dain Rho ]
+npc_dialog_sq_mir_kell,0,[ 미르 켈 ],"제피르에서 공란이 찍힌 상자를 내보낸다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char003.png,npc_cpt_sq_mir_kell,ingame_dialog,compact,100,"Mir Kell keeps that cell.
+I file no name.",[ Mir Kell ]
+npc_dialog_sq_mir_kell,1,[ 미르 켈 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char003.png,npc_cpt_sq_mir_kell,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Mir Kell ]
+npc_dialog_sq_mir_kell,2,[ 미르 켈 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char003.png,npc_cpt_sq_mir_kell,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Mir Kell ]
+npc_dialog_sq_osa_pell,0,[ 오사 펠 ],"글레이에서 공란 상자를 인수한다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char004.png,npc_cpt_sq_osa_pell,ingame_dialog,compact,100,"Osa Pell keeps that cell.
+I file no name.",[ Osa Pell ]
+npc_dialog_sq_osa_pell,1,[ 오사 펠 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char004.png,npc_cpt_sq_osa_pell,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Osa Pell ]
+npc_dialog_sq_osa_pell,2,[ 오사 펠 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char004.png,npc_cpt_sq_osa_pell,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Osa Pell ]
+npc_dialog_sq_brin_tack,0,[ 브린 택 ],"아스트라에서 봉인된 기술 인수를 맡긴다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char006.png,npc_cpt_sq_brin_tack,ingame_dialog,compact,100,"Brin Tack keeps that cell.
+I file no name.",[ Brin Tack ]
+npc_dialog_sq_brin_tack,1,[ 브린 택 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char006.png,npc_cpt_sq_brin_tack,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Brin Tack ]
+npc_dialog_sq_brin_tack,2,[ 브린 택 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char006.png,npc_cpt_sq_brin_tack,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Brin Tack ]
+npc_dialog_sq_nell_kay,0,[ 넬 케이 ],"루나에서 봉인 인수를 받는다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char008.png,npc_cpt_sq_nell_kay,ingame_dialog,compact,100,"Nell Kay keeps that cell.
+I file no name.",[ Nell Kay ]
+npc_dialog_sq_nell_kay,1,[ 넬 케이 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char008.png,npc_cpt_sq_nell_kay,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Nell Kay ]
+npc_dialog_sq_nell_kay,2,[ 넬 케이 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char008.png,npc_cpt_sq_nell_kay,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Nell Kay ]
+npc_dialog_sq_kael_vonn,0,[ 카엘 본 ],"테라에서 이름 없는 영수증을 내보낸다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char005.png,npc_cpt_sq_kael_vonn,ingame_dialog,compact,100,"Kael Vonn keeps that cell.
+I file no name.",[ Kael Vonn ]
+npc_dialog_sq_kael_vonn,1,[ 카엘 본 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char005.png,npc_cpt_sq_kael_vonn,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Kael Vonn ]
+npc_dialog_sq_kael_vonn,2,[ 카엘 본 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char005.png,npc_cpt_sq_kael_vonn,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Kael Vonn ]
+npc_dialog_sq_sira_mek,0,[ 시라 멕 ],"오리온에서 이름 없는 영수증을 인수한다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char007.png,npc_cpt_sq_sira_mek,ingame_dialog,compact,100,"Sira Mek keeps that cell.
+I file no name.",[ Sira Mek ]
+npc_dialog_sq_sira_mek,1,[ 시라 멕 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char007.png,npc_cpt_sq_sira_mek,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Sira Mek ]
+npc_dialog_sq_sira_mek,2,[ 시라 멕 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char007.png,npc_cpt_sq_sira_mek,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Sira Mek ]
+npc_dialog_sq_ev_holt,0,[ 에브 홀트 ],"헤일로에서 열지 않는 봉투를 건넨다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char009.png,npc_cpt_sq_ev_holt,ingame_dialog,compact,100,"Ev Holt keeps that cell.
+I file no name.",[ Ev Holt ]
+npc_dialog_sq_ev_holt,1,[ 에브 홀트 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char009.png,npc_cpt_sq_ev_holt,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Ev Holt ]
+npc_dialog_sq_ev_holt,2,[ 에브 홀트 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char009.png,npc_cpt_sq_ev_holt,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Ev Holt ]
+npc_dialog_sq_toma_kale,0,[ 토마 케일 ],"솔 성채에서 열지 않는 봉투를 받는다.
+나는 그 칸만 지킨다.
+이름은 올리지 않는다.",assets/images/npc/noname_char010.png,npc_cpt_sq_toma_kale,ingame_dialog,compact,100,"Toma Kale keeps that cell.
+I file no name.",[ Toma Kale ]
+npc_dialog_sq_toma_kale,1,[ 토마 케일 ],"용건이 있으면 짧게 말하라.
+장부 밖 이야기는 듣지 않는다.
+항로는 그대로다.",assets/images/npc/noname_char010.png,npc_cpt_sq_toma_kale,ingame_dialog,compact,100,"If you have business, keep it short.
+I will not hear talk off the ledger.
+The lane stays as it is.",[ Toma Kale ]
+npc_dialog_sq_toma_kale,2,[ 토마 케일 ],"수락하면 이동이 시작된다.
+수행지는 다른 성계다.
+나는 여기서 문을 연다.",assets/images/npc/noname_char010.png,npc_cpt_sq_toma_kale,ingame_dialog,compact,100,"Accept and the travel starts.
+The work is in another system.
+I open the door here.",[ Toma Kale ]
+story_chapter_end_01,0,[ 은폐 ],"라이트홀드는 보고서에서 지워졌고
+베가 함대는 전멸했으며
+살아남은 자들은 이름 없는 문을 세웠다.
+
+",,,cinematic,default,100,"Light Hold was wiped from the report,
+the Vega fleet was lost,
+and those who lived raised a nameless door.
+
+",[ Concealment ],,
+story_chapter_end_01,1,[ 동맹 ],"깃발에는 진영이 없다.
+장부에는 이름이 없다.
+그러나 문은 남아 있다.
+
+",,,cinematic,default,100,"The flag has no faction.
+The ledger has no names.
+The door remains.
+
+",[ Alliance ],,
+story_chapter_end_01,2,[ 빚 ],"코발은 침묵하고 소사는 타지 않는다.
+다시 버리지 말라는 조건만 남았다.
+
+",,,cinematic,default,100,"Koval is silent. Sosa will not board.
+Only the condition remains: do not abandon again.
+
+",[ Debt ],,
+story_chapter_end_01,3,[ 다음 ],"은폐된 진실은 여기서 접힌다.
+끝나지 않았다.
+다음 항로에서 다시 열린다.
+
+",,,cinematic,default,100,"Concealed truth folds here.
+It is not over.
+It opens again on the next lane.
+
+",[ Next ],,

@@ -111,7 +111,7 @@ export const useWaveDefenseStore = create<WaveDefenseState>((set) => ({
   setPhase: (phase) => set({ phase }),
   recordWaveCleared: (waveIndex) =>
     set((s) => ({
-      expEarned: s.expEarned + waveDefenseWaveExpReward(waveIndex),
+      expEarned: s.expEarned + waveDefenseWaveExpReward(waveIndex, s.planetId),
       wavesCleared: Math.max(s.wavesCleared, Math.max(0, Math.floor(waveIndex))),
     })),
   requestEndRun: (outcome) =>

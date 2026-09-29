@@ -60,14 +60,14 @@ export function isQuestMissionId(missionId: string): boolean {
 
 /**
  * 서브퀘스트 — `sandbox_*` 전부.
- * 바 수락 의뢰 `sandbox_001`–`033`과 챕터1 정식 `sandbox_034`–`038`을 같은 트랙으로 본다.
+ * 바 수락 의뢰 `sandbox_001`–`033`과 챕터1 정식 `sandbox_034`–`038`·`056`–`063`을 같은 트랙으로 본다.
  */
 export function isSubQuestMissionId(missionId: string): boolean {
   return isQuestMissionId(missionId);
 }
 
 /**
- * 챕터1 정식 서브퀘스트 부모 5종 — 은하 지도 수락 마크용.
+ * 챕터1 정식 서브퀘스트 부모 13종 — 은하 지도 수락 마크용.
  * INFO S·서브퀘스트 분류는 `isSubQuestMissionId` (`sandbox_*` 전부).
  */
 export const CHAPTER1_NAMED_SIDE_QUEST_IDS = [
@@ -76,6 +76,14 @@ export const CHAPTER1_NAMED_SIDE_QUEST_IDS = [
   'sandbox_036',
   'sandbox_037',
   'sandbox_038',
+  'sandbox_056',
+  'sandbox_057',
+  'sandbox_058',
+  'sandbox_059',
+  'sandbox_060',
+  'sandbox_061',
+  'sandbox_062',
+  'sandbox_063',
 ] as const;
 
 const CHAPTER1_NAMED_SIDE_QUEST_ID_SET: ReadonlySet<string> = new Set(

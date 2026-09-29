@@ -46,7 +46,7 @@ test('인베이더 티어 = ceil(level/2)+wave-1 · 상한 30', () => {
   assert.equal(waveDefenseInvaderShipId(60, 1), 'npc_wave_invader_t30');
 });
 
-test('아르카디아 웨이브 — npc_enemy_arcadia 헐(HP>인베이더)', () => {
+test('아르카디아 1웨이브 — npc_enemy_arcadia 헐(HP>인베이더)', () => {
   const shipId = waveDefenseEnemyShipId(1, 'arcadia_prime');
   assert.match(shipId, /^npc_enemy_arcadia_/);
   const hull = SHIP_BY_ID.get(shipId);

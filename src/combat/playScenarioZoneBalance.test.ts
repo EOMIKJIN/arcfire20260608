@@ -109,4 +109,18 @@ test('샌드박스 전투 수락 Lv = 앵커 권장 Lv', () => {
   assert.equal(MISSIONS_FROM_CSV.sandbox_032?.levelRequired, 7);
 });
 
+test('챕터1 본편·이름서브 수락 Lv — 권장안 게이트', () => {
+  assert.equal(MISSIONS_FROM_CSV.story_001?.levelRequired, 1);
+  assert.equal(MISSIONS_FROM_CSV.story_002?.levelRequired, 7);
+  assert.equal(MISSIONS_FROM_CSV.story_009?.levelRequired, 15);
+  assert.equal(MISSIONS_FROM_CSV.story_013?.levelRequired, 25);
+  assert.equal(MISSIONS_FROM_CSV.story_016?.levelRequired, 25);
+  assert.equal(MISSIONS_FROM_CSV.story_021?.levelRequired, 44);
+  assert.equal(MISSIONS_FROM_CSV.story_028?.levelRequired, 25);
+  assert.equal(MISSIONS_FROM_CSV.story_030?.levelRequired, 44);
+  assert.equal(MISSIONS_FROM_CSV.sandbox_034?.levelRequired, 28);
+  assert.equal(MISSIONS_FROM_CSV.sandbox_063?.rewards.credits, 1500);
+  assert.equal(MISSIONS_FROM_CSV.sandbox_063?.rewards.exp, 400);
+});
+
 console.log('playScenarioZoneBalance.test.ts — all PASS');

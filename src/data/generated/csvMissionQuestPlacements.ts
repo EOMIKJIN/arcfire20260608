@@ -171,5 +171,32 @@ export const MISSION_QUEST_PLACEMENTS_FROM_CSV: MissionQuestPlacementRow[] = [
     stockQty: 99,
     unitPriceOverride: 42,
     questTag: "quest",
+  },
+  {
+    id: "qq_obj_s060_a",
+    objectiveId: "obj_s060_a",
+    planetId: "synth_033_p",
+    itemId: "food",
+    stockQty: 99,
+    unitPriceOverride: 42,
+    questTag: "quest",
+  },
+  {
+    id: "qq_obj_s061_a",
+    objectiveId: "obj_s061_a",
+    planetId: "synth_005_p",
+    itemId: "tech",
+    stockQty: 99,
+    unitPriceOverride: 420,
+    questTag: "quest",
+  },
+  {
+    id: "qq_obj_s062_a",
+    objectiveId: "obj_s062_a",
+    planetId: "synth_013_p",
+    itemId: "minerals",
+    stockQty: 99,
+    unitPriceOverride: 95,
+    questTag: "quest",
   }
 ];

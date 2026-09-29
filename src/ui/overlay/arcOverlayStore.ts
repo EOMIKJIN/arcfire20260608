@@ -162,6 +162,8 @@ export type ArcOverlayWaveResultEntry = ArcOverlayBase & {
   totalWaves: number;
   expEarned: number;
   venue?: 'wave' | 'hub_orbit' | 'transit';
+  /** hub_orbit 퀘스트 시드 — 결과 자막만 구분. 점유 변경 없음 */
+  questOrbit?: boolean;
   enemyName?: string;
   creditsEarned?: number;
   destroyedLabels?: string[];

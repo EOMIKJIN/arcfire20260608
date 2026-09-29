@@ -5,30 +5,30 @@ story_c01_q03,ms_ch_01,3,story_003,ready,spine,0,대행 출정,Stand-in Deployme
 story_c01_q04,ms_ch_01,4,story_004,ready,spine,0,예상 밖의 참사,Unforeseen Disaster,베가 전초 vega_base TCL3 · 전멸은 서사·조우 1척
 story_c01_q05,ms_ch_01,5,story_005,ready,spine,0,복수는 누가 하는 겁니까?,Who Takes Revenge?,아르카디아→드라코. 베가 경유 2홉 TCL9
 story_c01_q06,ms_ch_01,6,story_006,ready,spine,0,숨은 자와의 대면,Facing the Hidden One,드라코 성운 헤이븐 draco_haven TCL9
-story_c01_q07,ms_ch_01,7,,skeleton,spine,0,빚진 자의 증언,Testimony of the Debtor,드라코 잔류. 라이트홀드 최초 발설
-story_c01_q08,ms_ch_01,8,,skeleton,spine,0,라이트홀드가 남긴 세 이름,Three Names Light Hold Left,카일 로렌·미라 솅크·가온 텔라
-story_c01_q09,ms_ch_01,9,,skeleton,spine,0,3인 합류,Three Join,아이언워치=iron_remnant · 캘리스=omega_hub · 하벤포드=eden_city
-story_c01_q10,ms_ch_01,10,,skeleton,spine,0,교차하는 항로,Crossing Lanes,넷이 오메가 스테이션 허브에 모임
-story_c01_q11,ms_ch_01,11,,skeleton,spine,0,[골격] 챕터1-11,[Skeleton] C1-Q11,
-story_c01_q12,ms_ch_01,12,,skeleton,spine,0,[골격] 챕터1-12,[Skeleton] C1-Q12,
-story_c01_q13,ms_ch_01,13,,skeleton,spine,0,[골격] 챕터1-13,[Skeleton] C1-Q13,
-story_c01_q14,ms_ch_01,14,,skeleton,spine,0,[골격] 챕터1-14,[Skeleton] C1-Q14,
-story_c01_q15,ms_ch_01,15,,skeleton,spine,0,[골격] 챕터1-15,[Skeleton] C1-Q15,
-story_c01_q16,ms_ch_01,16,,skeleton,spine,0,[골격] 챕터1-16,[Skeleton] C1-Q16,
-story_c01_q17,ms_ch_01,17,,skeleton,spine,0,[골격] 챕터1-17,[Skeleton] C1-Q17,
-story_c01_q18,ms_ch_01,18,,skeleton,spine,0,[골격] 챕터1-18,[Skeleton] C1-Q18,
-story_c01_q19,ms_ch_01,19,,skeleton,spine,0,[골격] 챕터1-19,[Skeleton] C1-Q19,
-story_c01_q20,ms_ch_01,20,,skeleton,spine,0,[골격] 챕터1-20,[Skeleton] C1-Q20,
-story_c01_q21,ms_ch_01,21,,skeleton,spine,0,[골격] 챕터1-21,[Skeleton] C1-Q21,
-story_c01_q22,ms_ch_01,22,,skeleton,spine,0,[골격] 챕터1-22,[Skeleton] C1-Q22,
-story_c01_q23,ms_ch_01,23,,skeleton,spine,0,[골격] 챕터1-23,[Skeleton] C1-Q23,
-story_c01_q24,ms_ch_01,24,,skeleton,spine,0,[골격] 챕터1-24,[Skeleton] C1-Q24,
-story_c01_q25,ms_ch_01,25,,skeleton,spine,0,[골격] 챕터1-25,[Skeleton] C1-Q25,
-story_c01_q26,ms_ch_01,26,,skeleton,spine,0,[골격] 챕터1-26,[Skeleton] C1-Q26,
-story_c01_q27,ms_ch_01,27,,skeleton,spine,0,[골격] 챕터1-27,[Skeleton] C1-Q27,
-story_c01_q28,ms_ch_01,28,,skeleton,spine,0,[골격] 챕터1-28,[Skeleton] C1-Q28,
-story_c01_q29,ms_ch_01,29,,skeleton,spine,0,[골격] 챕터1-29,[Skeleton] C1-Q29,
-story_c01_q30,ms_ch_01,30,,skeleton,spine,1,[골격] 챕터1-30,[Skeleton] C1-Q30,챕터 엔딩 시네마틱 훅(endStoryReady=0이면 재생 없음)
+story_c01_q07,ms_ch_01,7,story_007,ready,spine,0,빚진 자의 증언,Testimony of the Debtor,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q08,ms_ch_01,8,story_008,ready,spine,0,라이트홀드가 남긴 세 이름,Three Names Light Hold Left,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q09,ms_ch_01,9,story_009,ready,spine,0,3인 합류,Three Join,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q10,ms_ch_01,10,story_010,ready,spine,0,교차하는 항로,Crossing Lanes,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q11,ms_ch_01,11,story_011,ready,spine,0,이면 협정,The Backside Accord,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q12,ms_ch_01,12,story_012,ready,spine,0,반역자의 이름,The Traitor’s Name,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q13,ms_ch_01,13,story_013,ready,spine,0,도피처를 찾아서,Finding Sanctuary,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q14,ms_ch_01,14,story_014,ready,spine,0,첫 신뢰,First Trust,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q15,ms_ch_01,15,story_015,ready,spine,0,두 번째 초대,The Second Invite,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q16,ms_ch_01,16,story_016,ready,spine,0,두 개의 적,Two Enemies,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q17,ms_ch_01,17,story_017,ready,spine,0,검은 시장의 손,The Black Market Hand,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q18,ms_ch_01,18,story_018,ready,spine,0,요새의 뼈대,Bones of the Fort,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q19,ms_ch_01,19,story_019,ready,spine,0,내부의 균열,The Inner Crack,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q20,ms_ch_01,20,story_020,ready,spine,0,진실 혹은 이간계,Truth or Wedge,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q21,ms_ch_01,21,story_021,ready,spine,0,그리하벤 공방전,The Greehaven Siege,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q22,ms_ch_01,22,story_022,ready,spine,0,첫 깃발,The First Flag,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q23,ms_ch_01,23,story_023,ready,spine,0,깃발의 메아리,Echo of the Flag,챕터1 여파 실기. 세부 이후 수정
+story_c01_q24,ms_ch_01,24,story_024,ready,spine,0,기록의 사본,A Copy of the Record,챕터1 여파 실기. 세부 이후 수정
+story_c01_q25,ms_ch_01,25,story_025,ready,spine,0,버려진 보고서,The Abandoned Report,챕터1 여파 실기. 세부 이후 수정
+story_c01_q26,ms_ch_01,26,story_026,ready,spine,0,코발의 침묵,Koval’s Silence,챕터1 여파 실기. 세부 이후 수정
+story_c01_q27,ms_ch_01,27,story_027,ready,spine,0,소사의 조건,Sosa’s Condition,챕터1 여파 실기. 세부 이후 수정
+story_c01_q28,ms_ch_01,28,story_028,ready,spine,0,크림슨의 다음 손,Crimson’s Next Hand,챕터1 여파 실기. 세부 이후 수정
+story_c01_q29,ms_ch_01,29,story_029,ready,spine,0,이름 없는 선서,The Nameless Oath,챕터1 여파 실기. 세부 이후 수정
+story_c01_q30,ms_ch_01,30,story_030,ready,spine,1,은폐된 진실의 끝,End of Concealed Truth,챕터1 여파 실기. 세부 이후 수정
 story_c01_b01,ms_ch_01,101,,skeleton,branch,0,[분기 골격] 챕터1-B01,[Branch] C1-B01,본선 30과 별도. 분기 CSV enabled=1일 때만 진입
 story_c01_b02,ms_ch_01,102,,skeleton,branch,0,[분기 골격] 챕터1-B02,[Branch] C1-B02,본선 30과 별도. 분기 CSV enabled=1일 때만 진입
 story_c01_b03,ms_ch_01,103,,skeleton,branch,0,[분기 골격] 챕터1-B03,[Branch] C1-B03,본선 30과 별도. 분기 CSV enabled=1일 때만 진입

@@ -96,6 +96,8 @@ test('flow module has no polling loop — chain is callback driven', () => {
   assert.doesNotMatch(src, /runAfterIngameDialogIdle\(/);
   assert.match(src, /runAfterIngameDialogIdleNow\(runMissionClear\)/);
   assert.match(src, /setCombatEndOutcomeHold\(true\)/);
+  assert.match(src, /applyCapitalShipDestruction/);
+  assert.match(src, /applyCombatCapitalShipDestructionIfNeeded/);
   assert.match(src, /if \(resultClosed\) return/);
   assert.match(
     src,

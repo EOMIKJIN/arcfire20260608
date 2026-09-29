@@ -13,6 +13,7 @@ import { isIngameDialogActive } from '../ingameDialog/ingameDialogApi';
 import { runAfterIngameDialogIdleNow } from '../ingameDialog/ingameDialogIdle';
 import { tryPresentPendingMissionClearDialog } from '../../missions/presentPendingMissionClearDialog';
 import { showArcAlert } from '../../utils/showArcAlert';
+import { applyCombatCapitalShipDestructionIfNeeded } from './combatPlayerShipSink';
 import { setCombatEndOutcomeHold } from './combatEndOutcomeHold';
 import {
   presentCombatResultOverlay,
@@ -50,6 +51,8 @@ export type RunCombatEndOutcomeFlowInput = {
   missionClearEnabled?: boolean;
   /** 격침·파손 등 알림. null 이면 건너뜀 */
   notice?: CombatEndNotice | null;
+  /** 격침 안내 직전에 생존포드·거점 귀환. 결과창보다 먼저 적용하면 결과창이 사라진다 */
+  applyCapitalShipDestruction?: boolean;
   /** 아크코어 전투종료 백채널. null 이면 건너뜀 */
   onBackchannel?: (() => void) | null;
   /** 전 단계 종료 후 1회 */
@@ -76,10 +79,17 @@ export function runCombatEndOutcomeFlow(input: RunCombatEndOutcomeFlowInput): vo
       runBackchannel();
       return;
     }
-    // 버튼 1개 + onPress 면 40초 자동 닫힘도 `dismiss_then_press` 로 같은 콜백을 태운다
-    showArcAlert(notice.title, notice.body, [
-      { text: t('combat.confirm'), onPress: runNoticeClosed },
-    ]);
+    const presentNotice = () => {
+      // 버튼 1개 + onPress 면 40초 자동 닫힘도 `dismiss_then_press` 로 같은 콜백을 태운다
+      showArcAlert(notice.title, notice.body, [
+        { text: t('combat.confirm'), onPress: runNoticeClosed },
+      ]);
+    };
+    if (input.applyCapitalShipDestruction === true) {
+      void applyCombatCapitalShipDestructionIfNeeded().then(presentNotice);
+      return;
+    }
+    presentNotice();
   };
 
   function runNoticeClosed(): void {

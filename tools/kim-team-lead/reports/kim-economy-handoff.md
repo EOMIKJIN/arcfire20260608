@@ -12100,6 +12100,28 @@
 
 > status: monitor-ok · **08:00 보고체 유지**
 
+## [관측] 2026-09-29 09:56:03 KST — **데일리 08:00 상시 자동보고** (FAIL)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **23268** · auto-fix=ON
+- **adb**: OK (192.168.45.197:33639)
+- **앱**: NOT_RUNNING (보고는 정상 산출)
+- **mem-monitor**: **FAIL** (APP_NOT_RUNNING)
+- **mem-budget-ledger**: ledger p50=727.5MB native=359.6MB
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260929-0800.md
+- **verdict**: **FAIL** — MEMINFO_ERROR — Command failed: adb shell pidof com.arcfire.online
+- **incidents (actionable tail)**: 7
+  - [2026-09-27 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260927-0800.md verdict=OK
+  - [2026-09-27 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260927-0800.md verdict=OK
+  - [2026-09-28 08:00:00] DAILY_8AM_REPORT 2026-09-28 08:00:00 KST
+  - [2026-09-28 08:00:00] DAILY_8AM_REPORT 2026-09-28 08:00:00 KST
+  - [2026-09-28 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260928-0800.md verdict=OK
+  - [2026-09-28 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260928-0800.md verdict=OK
+  - [2026-09-29 09:56:03] DAILY_8AM_REPORT 2026-09-29 09:56:03 KST
+- **권장(김팀장 1안)**: 08:00 보고 FAIL — adb/타임라인 확인 · ensure-daily-8am-report 재가동
+
+> status: **ready-for-team-lead-action** · **08:00 보고체 유지**
+
 ## 작업 요약
 
 - **일자 (KST)**: 2026-06-18

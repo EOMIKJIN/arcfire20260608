@@ -76,5 +76,229 @@ export const STELLA_QUEST_DOSSIER_FROM_CSV = [
     "sort": "1",
     "textKo": "오늘은 출정도 수사도 없는 날이야. 아우라 관문에서 하루를 접는 자리니까 줄기를 억지로 밀지 마.",
     "textEn": "No sortie and no case today. This is a day to close at the Aura gate. Do not force the stem."
+  },
+  {
+    "id": "sqd_sandbox_056",
+    "missionId": "sandbox_056",
+    "sort": "1",
+    "textKo": "글로우 렌이 출정 전야에 잠긴 항로를 잡았어. 문은 펄에 있고 잠근 이름은 장부에 없어.",
+    "textEn": "Ren at Glow caught a lane locked on the eve of a sortie. The door is at Pearl. No locker name is on the ledger."
+  },
+  {
+    "id": "sqd_sandbox_057",
+    "missionId": "sandbox_057",
+    "sort": "1",
+    "textKo": "포지 조르가 빈 지휘석을 매물로 올렸어. 인수는 비콘이고 앉을 이름은 없어.",
+    "textEn": "Jor at Forge listed an empty command chair. The handoff is Beacon. No name sits it."
+  },
+  {
+    "id": "sqd_sandbox_058",
+    "missionId": "sandbox_058",
+    "sort": "1",
+    "textKo": "마크 하스의 장부는 합이 안 맞아. 사본은 카론이고 빠진 줄은 사람이 아니야.",
+    "textEn": "Has at Mark holds a ledger that does not add. The copy is at Charon. The missing line is not a person."
+  },
+  {
+    "id": "sqd_sandbox_059",
+    "missionId": "sandbox_059",
+    "sort": "1",
+    "textKo": "페가수스 펙이 복사된 대역을 잡았어. 인수는 마크고 그 목소리는 주인의 입이 아니야.",
+    "textEn": "Peck at Pegasus caught a copied band. The handoff is Mark. The voice is not the owner."
+  },
+  {
+    "id": "sqd_sandbox_060",
+    "missionId": "sandbox_060",
+    "sort": "1",
+    "textKo": "제피르 상자는 출항 칸이 비어 있어. 식량을 사서 글레이로 가면 이름을 묻지 않아.",
+    "textEn": "The Zephyr crate has a blank departure cell. Buy food and go to Gray. They will not ask a name."
+  },
+  {
+    "id": "sqd_sandbox_061",
+    "missionId": "sandbox_061",
+    "sort": "1",
+    "textKo": "아스트라 인수는 봉인돼 있어. 기술을 사서 루나로 가면 뚜껑은 열리지 않아.",
+    "textEn": "The Astra handoff is sealed. Buy tech and go to Luna. The lid stays shut."
+  },
+  {
+    "id": "sqd_sandbox_062",
+    "missionId": "sandbox_062",
+    "sort": "1",
+    "textKo": "테라 영수증은 이름이 없어. 광물을 사서 오리온으로 가면 공란이 그대로 닫혀.",
+    "textEn": "The Terra receipt has no name. Buy minerals and go to Orion. The blank closes as it is."
+  },
+  {
+    "id": "sqd_sandbox_063",
+    "missionId": "sandbox_063",
+    "sort": "1",
+    "textKo": "헤일로 봉투는 열지 마. 솔에서 넘기면 속은 접힌 채로 남아.",
+    "textEn": "Do not open the Halo envelope. Hand it at Sol and the inside stays folded."
+  },
+  {
+    "id": "sqd_story_007",
+    "missionId": "story_007",
+    "sort": "1",
+    "textKo": "빚진 자의 증언. 다렐 소사가 라이트홀드라는 이름을 처음으로 꺼낸다. 스텔리움이 버린 식민지의 빚이 베가 전멸과 이어진다.",
+    "textEn": "Testimony of the Debtor. Darell Sosa first speaks the name Light Hold. A debt from a colony Stellium abandoned ties to the Vega wipe."
+  },
+  {
+    "id": "sqd_story_008",
+    "missionId": "story_008",
+    "sort": "1",
+    "textKo": "라이트홀드가 남긴 세 이름. 소사가 카일 로렌, 미라 솅크, 가온 텔라를 정식으로 부른다. 세 사람은 아직 합류하지 않았다.",
+    "textEn": "Three Names Light Hold Left. Sosa formally names Kyle Loren, Mira Schenk, and Gaon Tela. They have not joined yet."
+  },
+  {
+    "id": "sqd_story_009",
+    "missionId": "story_009",
+    "sort": "1",
+    "textKo": "3인 합류. 아이언워치에서 카일, 캘리스에서 미라를 차례로 만난다. 가온은 하벤포드에서 기다린다.",
+    "textEn": "Three Join. Meet Kyle at Iron Watch, then Mira at Callis. Gaon waits at Havenford."
+  },
+  {
+    "id": "sqd_story_010",
+    "missionId": "story_010",
+    "sort": "1",
+    "textKo": "교차하는 항로. 하벤포드에서 가온 텔라를 태운 뒤 오메가 허브에서 넷의 증거를 대조한다.",
+    "textEn": "Crossing Lanes. Pick up Gaon Tela at Havenford, then match proof with the four at Omega Hub."
+  },
+  {
+    "id": "sqd_story_011",
+    "missionId": "story_011",
+    "sort": "1",
+    "textKo": "이면 협정. 베가 전멸과 이어지는 이면 협정 증거를 확보한다. 궤도 잔당 1척을 걷어낸다.",
+    "textEn": "The Backside Accord. Secure proof of the backside accord that ties to the Vega wipe. Clear one remnant escort."
+  },
+  {
+    "id": "sqd_story_012",
+    "missionId": "story_012",
+    "sort": "1",
+    "textKo": "반역자의 이름. 이면 협정 폭로 뒤 반역 누명이 씌워진다. 아르카디아 궤도에서 돌파한 뒤 넷이 정식으로 한 편이 된다.",
+    "textEn": "The Traitor’s Name. After the accord leak, a traitor brand lands. Break Arcadia orbit, then the four join in form."
+  },
+  {
+    "id": "sqd_story_013",
+    "missionId": "story_013",
+    "sort": "1",
+    "textKo": "도피처를 찾아서. 수배 방송을 피해 섀도우 넥서스 마켓(그리하벤)으로 숨는다. 문 앞의 이방인이 거점을 연다.",
+    "textEn": "Finding Sanctuary. Hide from the wanted band at Shadow Nexus Market (Greehaven). A stranger at the door opens the hold."
+  },
+  {
+    "id": "sqd_story_014",
+    "missionId": "story_014",
+    "sort": "1",
+    "textKo": "첫 신뢰. 그리하벤에서 넷이 거점을 연다. 첫 신뢰와 추격의 그림자가 동시에 붙는다.",
+    "textEn": "First Trust. The four open a hold in Greehaven. First trust and a chase shadow arrive together."
+  },
+  {
+    "id": "sqd_story_015",
+    "missionId": "story_015",
+    "sort": "1",
+    "textKo": "두 번째 초대. 세렌 벨트 가칭은 시리우스 보더 관문으로 붙인다. 초대가 함정인지 가린다.",
+    "textEn": "The Second Invite. The Seren Belt alias maps to Sirius Border. Decide if the invite is a trap."
+  },
+  {
+    "id": "sqd_story_016",
+    "missionId": "story_016",
+    "sort": "1",
+    "textKo": "두 개의 적. 크림슨 레기온이 거점을 추적한다. 크림슨 구역에서 그림자 1척을 확인하고 돌아온다.",
+    "textEn": "Two Enemies. The Crimson Legion tracks the hold. Confirm one shadow at Crimson Zone and return."
+  },
+  {
+    "id": "sqd_story_017",
+    "missionId": "story_017",
+    "sort": "1",
+    "textKo": "검은 시장의 손. 거점 유지를 위한 자금을 섀도우 마켓 장부로 마련한다. 출처는 묻지 않는다.",
+    "textEn": "The Black Market Hand. Raise hold funds on the Shadow Market ledger. Do not ask source."
+  },
+  {
+    "id": "sqd_story_018",
+    "missionId": "story_018",
+    "sort": "1",
+    "textKo": "요새의 뼈대. 그리하벤 방호와 함대 뼈대를 카일과 가온이 나눈다. 이름 없는 동맹의 골격이 선다.",
+    "textEn": "Bones of the Fort. Kyle and Gaon split Greehaven plate and fleet bone. The nameless alliance skeleton stands."
+  },
+  {
+    "id": "sqd_story_019",
+    "missionId": "story_019",
+    "sort": "1",
+    "textKo": "내부의 균열. 화력과 장부 노선이 갈라진다. 엔딩 분기의 첫 떡밥만 남기고 거점은 유지한다.",
+    "textEn": "The Inner Crack. Fire and ledger lines split. Leave only the first ending-branch crumb. The hold stands."
+  },
+  {
+    "id": "sqd_story_020",
+    "missionId": "story_020",
+    "sort": "1",
+    "textKo": "진실 혹은 이간계. 내부 배신 소문이 돈다. 장부로 가려 내고 거점을 유지한다.",
+    "textEn": "Truth or Wedge. A betrayal rumor runs inside. Sort it with the ledger and keep the hold."
+  },
+  {
+    "id": "sqd_story_021",
+    "missionId": "story_021",
+    "sort": "1",
+    "textKo": "그리하벤 공방전. 스텔리움 진압함대 조우를 1척으로 대행한다. 거점을 지켜 낸다.",
+    "textEn": "The Greehaven Siege. The Stellium suppression fleet is stood in as one ship. Hold the hide."
+  },
+  {
+    "id": "sqd_story_022",
+    "missionId": "story_022",
+    "sort": "1",
+    "textKo": "첫 깃발. 이름 없는 동맹이 결성된다. 챕터1 본문의 結. 세부는 이후 수정한다.",
+    "textEn": "The First Flag. The nameless alliance forms. Close of Chapter 1 body. Details can be revised later."
+  },
+  {
+    "id": "sqd_story_023",
+    "missionId": "story_023",
+    "sort": "1",
+    "textKo": "깃발의 메아리. 하벤포드에 이름 없는 동맹의 메아리가 닿는다. 세부는 이후 수정한다.",
+    "textEn": "Echo of the Flag. An echo of the nameless alliance reaches Havenford. Details can be revised later."
+  },
+  {
+    "id": "sqd_story_024",
+    "missionId": "story_024",
+    "sort": "1",
+    "textKo": "기록의 사본. 오메가 허브에 동맹 장부 사본을 맡긴다.",
+    "textEn": "A Copy of the Record. Leave a copy of the alliance ledger at Omega Hub."
+  },
+  {
+    "id": "sqd_story_025",
+    "missionId": "story_025",
+    "sort": "1",
+    "textKo": "버려진 보고서. 아이언 잔해권에서 라이트홀드 유해 보고서의 빈칸을 확인한다.",
+    "textEn": "The Abandoned Report. Confirm the blank in a Light Hold remains report at Iron remnant."
+  },
+  {
+    "id": "sqd_story_026",
+    "missionId": "story_026",
+    "sort": "1",
+    "textKo": "코발의 침묵. 아르카디아에서 코발이 동맹을 공식 인정하지 않는다. 침묵이 남는다.",
+    "textEn": "Koval’s Silence. On Arcadia, Koval will not officially recognize the alliance. Silence remains."
+  },
+  {
+    "id": "sqd_story_027",
+    "missionId": "story_027",
+    "sort": "1",
+    "textKo": "소사의 조건. 드라코에서 소사가 동맹에 타지 않는 조건을 남긴다.",
+    "textEn": "Sosa’s Condition. At Draco, Sosa leaves the condition that he will not board the alliance."
+  },
+  {
+    "id": "sqd_story_028",
+    "missionId": "story_028",
+    "sort": "1",
+    "textKo": "크림슨의 다음 손. 크림슨이 거점을 다시 산다. 추적선 1척을 끊고 돌아온다.",
+    "textEn": "Crimson’s Next Hand. Crimson buys the hold again. Cut one tracker and return."
+  },
+  {
+    "id": "sqd_story_029",
+    "missionId": "story_029",
+    "sort": "1",
+    "textKo": "이름 없는 선서. 거점에서 이름 없는 선서를 다시 확인한다. 세부는 이후 수정한다.",
+    "textEn": "The Nameless Oath. Reconfirm the nameless oath at the hold. Details can be revised later."
+  },
+  {
+    "id": "sqd_story_030",
+    "missionId": "story_030",
+    "sort": "1",
+    "textKo": "은폐된 진실의 끝. 챕터1 클로저. 은폐된 진실은 동맹 위에서 잠시 접힌다. 챕터2에서 다시 열린다.",
+    "textEn": "End of Concealed Truth. Chapter 1 closer. Concealed truth folds for a beat on the alliance. It opens again in chapter two."
   }
 ] as const;

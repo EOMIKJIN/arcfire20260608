@@ -7,7 +7,11 @@ export type CombatResultVenue = 'wave' | 'hub_orbit' | 'transit';
 export const HUB_ORBIT_COMBAT_RESULT_AUTO_DISMISS_MS = 10_000;
 
 export type CombatResultOverlayViewModel = {
-  subtitleKey: 'waveResult.subtitle' | 'waveResult.subtitleHubOrbit' | 'waveResult.subtitleTransit';
+  subtitleKey:
+    | 'waveResult.subtitle'
+    | 'waveResult.subtitleHubOrbit'
+    | 'waveResult.subtitleQuestOrbit'
+    | 'waveResult.subtitleTransit';
   showWaves: boolean;
   showEnemy: boolean;
   showExp: boolean;
@@ -37,6 +41,8 @@ export function resolveCombatResultOverlayViewModel(input: {
   enemyName?: string;
   destroyedLabels?: string[];
   itemRewards?: { icon: string; label: string }[];
+  /** hub_orbit 중 퀘스트 시드 — 점유 변경 없는 일반전투 */
+  questOrbit?: boolean;
 }): CombatResultOverlayViewModel {
   const venue = input.venue ?? 'wave';
   const totalWaves = input.totalWaves ?? 0;
@@ -56,11 +62,13 @@ export function resolveCombatResultOverlayViewModel(input: {
   const showNoReward = venue !== 'wave' && !hasRewardRows;
   return {
     subtitleKey:
-      venue === 'hub_orbit'
-        ? 'waveResult.subtitleHubOrbit'
-        : venue === 'transit'
-          ? 'waveResult.subtitleTransit'
-          : 'waveResult.subtitle',
+      venue === 'hub_orbit' && input.questOrbit
+        ? 'waveResult.subtitleQuestOrbit'
+        : venue === 'hub_orbit'
+          ? 'waveResult.subtitleHubOrbit'
+          : venue === 'transit'
+            ? 'waveResult.subtitleTransit'
+            : 'waveResult.subtitle',
     showWaves,
     showEnemy,
     showExp,

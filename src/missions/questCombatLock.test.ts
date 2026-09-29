@@ -24,8 +24,8 @@ test('핀 전투 미션이 락을 잡는다', () => {
     'sandbox_013',
   );
   assert.equal(lock?.missionId, 'sandbox_013');
-  assert.equal(lock?.venue, 'transit');
-  assert.equal(lock?.encounterPolicy, 'transit_guaranteed');
+  assert.equal(lock?.venue, 'hub_orbit');
+  assert.equal(lock?.encounterPolicy, 'hub_orbit');
   assert.equal(lock?.templateId, 'pirate_cruiser');
   assert.equal(lock?.anchorPlanetId, 'draco_haven');
 });
@@ -51,13 +51,26 @@ test('완료된 목표는 락을 만들지 않는다', () => {
   assert.equal(lock, null);
 });
 
-test('transit_guaranteed 는 목적지와 무관하게 보장', () => {
+test('앵커 허브 퀘스트는 항로 보장을 켜지 않는다', () => {
   const lock = resolveQuestCombatLock(
     { mission_002: active('mission_002', { obj_002_a: false }) },
     'mission_002',
   );
-  assert.equal(shouldGuaranteeQuestTransitEncounter(lock, 'nightfall'), true);
-  assert.equal(shouldGuaranteeQuestTransitEncounter(lock, 'arcadia'), true);
+  assert.equal(lock?.venue, 'hub_orbit');
+  assert.equal(shouldGuaranteeQuestTransitEncounter(lock, 'nightfall'), false);
+  assert.equal(shouldGuaranteeQuestTransitEncounter(lock, 'arcadia'), false);
+});
+
+test('앵커 없는 tq 템플릿은 궤도 일반전투 · 항로 보장 없음', () => {
+  const lock = resolveQuestCombatLock(
+    { tq_cbt_01: active('tq_cbt_01', { obj_tq_c01_a: false }) },
+    'tq_cbt_01',
+  );
+  assert.equal(lock?.venue, 'hub_orbit');
+  assert.equal(lock?.encounterPolicy, 'hub_orbit');
+  assert.equal(lock?.anchorPlanetId, null);
+  assert.equal(shouldGuaranteeQuestTransitEncounter(lock, 'nightfall'), false);
+  assert.equal(shouldGuaranteeQuestTransitEncounter(lock, 'arcadia'), false);
 });
 
 test('클리어는 베뉴+템플릿이 맞을 때만', () => {
@@ -67,7 +80,7 @@ test('클리어는 베뉴+템플릿이 맞을 때만', () => {
   );
   assert.equal(
     canCompleteQuestDefeatEnemy(lock, { venue: 'transit', enemyTemplateId: 'pirate_fighter' }),
-    true,
+    false,
   );
   assert.equal(
     canCompleteQuestDefeatEnemy(lock, {
@@ -75,7 +88,7 @@ test('클리어는 베뉴+템플릿이 맞을 때만', () => {
       enemyTemplateId: 'pirate_fighter',
       planetId: 'arcadia_prime',
     }),
-    false,
+    true,
   );
   assert.equal(
     canCompleteQuestDefeatEnemy(lock, {
@@ -86,7 +99,11 @@ test('클리어는 베뉴+템플릿이 맞을 때만', () => {
     false,
   );
   assert.equal(
-    canCompleteQuestDefeatEnemy(lock, { venue: 'transit', enemyTemplateId: 'pirate_cruiser' }),
+    canCompleteQuestDefeatEnemy(lock, {
+      venue: 'hub_orbit',
+      enemyTemplateId: 'pirate_cruiser',
+      planetId: 'arcadia_prime',
+    }),
     false,
   );
 });
@@ -105,7 +122,18 @@ test('transit_toward_anchor 는 앵커 성계 홉만 보장', () => {
   assert.equal(shouldGuaranteeQuestTransitEncounter(lock, null), false);
 });
 
-test('행성 id 만으로는 항로 퀘스트를 끝내지 못한다', () => {
+test('아이언 잔해 사냥은 레므난트 궤도에만 잠긴다', () => {
+  const lock = resolveQuestCombatLock(
+    { sandbox_011: active('sandbox_011', { obj_s011_a: false }) },
+    'sandbox_011',
+  );
+  assert.equal(lock?.venue, 'hub_orbit');
+  assert.equal(lock?.anchorPlanetId, 'iron_remnant');
+  assert.equal(isQuestHubOrbitLockAtPlanet(lock, 'iron_remnant'), true);
+  assert.equal(isQuestHubOrbitLockAtPlanet(lock, 'eden_city'), false);
+});
+
+test('행성 id 만으로는 퀘스트를 끝내지 못한다', () => {
   const lock = resolveQuestCombatLock(
     { sandbox_013: active('sandbox_013', { obj_s013_a: false }) },
     'sandbox_013',
@@ -114,5 +142,6 @@ test('행성 id 만으로는 항로 퀘스트를 끝내지 못한다', () => {
     canCompleteQuestDefeatEnemy(lock, { venue: 'hub_orbit', planetId: 'draco_haven' }),
     false,
   );
-  assert.equal(isQuestHubOrbitLockAtPlanet(lock, 'draco_haven'), false);
+  assert.equal(isQuestHubOrbitLockAtPlanet(lock, 'draco_haven'), true);
+  assert.equal(isQuestHubOrbitLockAtPlanet(lock, 'arcadia_prime'), false);
 });

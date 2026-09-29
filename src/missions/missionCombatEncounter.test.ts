@@ -7,11 +7,19 @@ function active(missionId: string, objectives: Record<string, boolean>): Mission
   return { missionId, status: 'active', objectives };
 }
 
-test('transit_guaranteed 락은 dest와 무관하게 1.0', () => {
+test('앵커 없는 tq 락은 항로 존 확률을 가로채지 않는다', () => {
+  const progresses = { tq_cbt_01: active('tq_cbt_01', { obj_tq_c01_a: false }) };
+  assert.equal(
+    resolveTransitEncounterChance('safe', false, progresses, 'tq_cbt_01', 'nightfall'),
+    0.1,
+  );
+});
+
+test('hub_orbit 퀘스트는 항로 존 확률을 가로채지 않는다', () => {
   const progresses = { mission_002: active('mission_002', { obj_002_a: false }) };
   assert.equal(
     resolveTransitEncounterChance('safe', false, progresses, 'mission_002', 'nightfall'),
-    1,
+    0.1,
   );
 });
 

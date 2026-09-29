@@ -78,6 +78,7 @@ import {
   resolvePlanetEnemyAffinityKind,
   resolvePlanetMainStageCombatVariant,
   resolveCombatEncounterTargetLevel,
+  resolvePlanetTargetCombatLevel,
   resolvePlayScenarioPrimaryPlanetId,
   resolveTransitCombatEncounterTargetLevel,
 } from '../../arcCore/balance/balanceTableRegistry';
@@ -88,6 +89,7 @@ import { applyPlanetHostileHullScale } from '../../combat/planetHostileHullScale
 import { buildQuestHubOrbitSeedSlots } from '../../combat/questHubOrbitCombatSeed';
 import { useMissionStore } from '../../store/missionStore';
 import {
+  isQuestHubOrbitLockAtPlanet,
   resolveQuestCombatLock,
   resolveQuestLockTransitEncounterLevel,
   resolveQuestLockTransitHullPlanetId,
@@ -151,7 +153,6 @@ import { maybeTriggerArcCoreShadowRevealOnCombatVictory } from '../../arcCore/sh
 import { resolveArcCoreShadowBossOverride } from '../../arcCore/shadow/arcCoreShadowBossClone';
 import { isSurvivalPodNpcShipId } from '../../game/playerSurvivalPod';
 import { t } from '../../i18n';
-import { showArcAlert } from '../../utils/showArcAlert';
 import { useOrbitCapitalCombatUiStore } from '../../store/orbitCapitalCombatUiStore';
 import { useBattleStanceStore, type BattleStanceId } from '../../store/battleStanceStore';
 import { resolveShipFinalStatResult } from '../../ship/shipStatPipeline';
@@ -196,13 +197,17 @@ export {
   hasCapitalRealtimeCombatSlotsForPlanet,
   isCapitalRealtimeCombatOrbitPlanet,
 } from '../../combat/capitalRealtimeCombatGate';
-import { COMBAT_END_HOLD_MS } from '../../game/combatEndHold';
 import { getWaveFleetSeedOverride, useWaveDefenseStore } from '../../game/waveDefense/waveDefenseStore';
-import { WAVE_DEFENSE_MAX_WAVES } from '../../game/waveDefense/waveDefenseFleet';
+import { resolvePlanetWaveDefenseMaxWaves } from '../../game/waveDefense/waveDefenseFleet';
 import { markWaveCombatVictoryCooldown } from '../../game/waveDefense/waveCombatCooldownStore';
 import { applyDefeatEnemyMissionObjectives } from '../../missions/applyDefeatEnemyMissionObjectives';
 import { tryPresentPendingMissionClearDialog } from '../../missions/missionPlanetHubSync';
 import { runCombatEndOutcomeFlow } from '../../game/combat/runCombatEndOutcomeFlow';
+import {
+  consumeCombatPlayerShipSinkPending,
+  markCombatPlayerShipSinkPending,
+  resolveCombatShipDestroyedNotice,
+} from '../../game/combat/combatPlayerShipSink';
 import { presentCombatEndLeaderDialog } from '../../game/combat/presentCombatEndLeaderDialog';
 import { resolveCombatEnemyLeader } from '../../game/combat/resolveCombatEnemyLeader';
 import { waitCombatEndHold } from '../../game/combatEndHold';
@@ -212,6 +217,8 @@ type StageFleetSeedSlot = {
   npcShipId: string | null;
   captainId: string | null;
   combatInstanceKey?: string | null;
+  isLeader?: boolean;
+  sourcePlanetId?: string | null;
 };
 
 function lookupSlotCaptainDisplayName(captainId: string | null): string | undefined {
@@ -2090,12 +2097,14 @@ const hubOrbitCombatResultSession = {
   expEarned: 0,
   presented: false,
   pendingDestroyAlert: false,
+  questOrbit: false,
 };
 
 function resetHubOrbitCombatResultSession(): void {
   hubOrbitCombatResultSession.expEarned = 0;
   hubOrbitCombatResultSession.presented = false;
   hubOrbitCombatResultSession.pendingDestroyAlert = false;
+  hubOrbitCombatResultSession.questOrbit = false;
 }
 
 function isHubOrbitCombatResultVenue(combatPlanetId: string | null | undefined): boolean {
@@ -2636,7 +2645,11 @@ function initAgents(
       appliedName = shadowBoss.shipDisplayName;
       appliedCaptainLabel = shadowBoss.nameplateLabel;
     } else if (!isPlayerSlot) {
-      const hostileLoadout = resolveHostileEnemyWeaponLoadout(r, transitEncounterLevel);
+      const slotSourcePlanetId = slot.sourcePlanetId?.trim() || '';
+      const loadoutLevel = slotSourcePlanetId
+        ? resolvePlanetTargetCombatLevel(slotSourcePlanetId)
+        : transitEncounterLevel;
+      const hostileLoadout = resolveHostileEnemyWeaponLoadout(r, loadoutLevel);
       appliedRuntimeConfig = {
         ...(appliedRuntimeConfig ?? {}),
         laserWeaponId: hostileLoadout.laserWeaponId,
@@ -2644,6 +2657,7 @@ function initAgents(
       } as typeof appliedRuntimeConfig;
       if (appliedCombatStats) {
         const hullPlanetId = questTransitHullPlanetId
+          ?? (slotSourcePlanetId || null)
           ?? (combatPlanetId === CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID
             ? resolveTransitHostileHullScalePlanetId(combatSystemId, captainId)
             : combatPlanetId);
@@ -2949,17 +2963,6 @@ export function usePlanetEdenRaidSim(
   /** 웨이브 전환 재시드 트리거 — 값이 바뀌면 같은 활성 세션에서 함대만 재초기화(Canvas 리마운트 없음) */
   const waveGenKey = useWaveDefenseStore((s) => s.waveGenKey);
   const lastWaveGenKeyRef = useRef(0);
-  const waveLoseAlertHoldTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (waveLoseAlertHoldTimerRef.current) {
-        clearTimeout(waveLoseAlertHoldTimerRef.current);
-        waveLoseAlertHoldTimerRef.current = null;
-      }
-    };
-  }, []);
-
   useEffect(() => {
     if (!active || !combatPlanetId) return;
     const sessionKey = `${combatPlanetId}:${combatSystemId ?? ''}`;
@@ -3245,41 +3248,11 @@ export function usePlanetEdenRaidSim(
         if (useWaveDefenseStore.getState().active) {
           useWaveDefenseStore.getState().requestEndRun('lose');
         }
-        const delayWaveLoseAlert = useWaveDefenseStore.getState().active
-          || useWaveDefenseStore.getState().endHoldActive;
-        const applyDestruction = () => {
-          void usePlayerStore.getState().applyCapitalShipDestruction().then(() => {
-            const presentDestroyAlert = () => {
-              showArcAlert(
-                t('combat.shipDestroyedTitle'),
-                t('combat.shipDestroyedBody'),
-              );
-            };
-            if (!delayWaveLoseAlert) {
-              if (isHubOrbitCombatResultVenue(combatPlanetId)) {
-                hubOrbitCombatResultSession.pendingDestroyAlert = true;
-                return;
-              }
-              if (combatPlanetId === CAPITAL_REALTIME_TRANSIT_COMBAT_PLANET_ID) {
-                return;
-              }
-              presentDestroyAlert();
-              return;
-            }
-            if (waveLoseAlertHoldTimerRef.current) {
-              clearTimeout(waveLoseAlertHoldTimerRef.current);
-            }
-            waveLoseAlertHoldTimerRef.current = setTimeout(() => {
-              waveLoseAlertHoldTimerRef.current = null;
-              presentDestroyAlert();
-            }, COMBAT_END_HOLD_MS);
-          });
-        };
+        markCombatPlayerShipSinkPending();
+        hubOrbitCombatResultSession.pendingDestroyAlert = true;
         if (!playerDurabilityWearAppliedRef.current) {
           playerDurabilityWearAppliedRef.current = true;
-          void usePlayerStore.getState().applyPostCombatDurabilityWear(elapsed).then(applyDestruction);
-        } else {
-          applyDestruction();
+          void usePlayerStore.getState().applyPostCombatDurabilityWear(elapsed);
         }
       }
       // 자동 리스폰 재교전 삭제(2026-07-27) — 전멸 후 재개는 쿨다운(waveCombatCooldownStore) 경유
@@ -3293,6 +3266,13 @@ export function usePlanetEdenRaidSim(
         if (battleEngageStartMsRef.current === null) {
           battleEngageStartMsRef.current = elapsed;
           resetHubOrbitCombatResultSession();
+          hubOrbitCombatResultSession.questOrbit = isQuestHubOrbitLockAtPlanet(
+            resolveQuestCombatLock(
+              useMissionStore.getState().progresses,
+              useMissionStore.getState().activeMissionId,
+            ),
+            combatPlanetId,
+          );
         }
       } else if (!waveOutcomeAwardedRef.current && (aliveRed || aliveBlue || aliveOrange)) {
         const participants = agents
@@ -3326,12 +3306,15 @@ export function usePlanetEdenRaidSim(
             const isFinalWaveOrNonWave =
               !wdForReveal.active
               || wdForReveal.planetId !== combatPlanetId
-              || wdForReveal.waveIndex >= WAVE_DEFENSE_MAX_WAVES;
+              || wdForReveal.waveIndex >= resolvePlanetWaveDefenseMaxWaves(combatPlanetId);
             // 범용 재개 대기(2026-07-27) — 플레이어 참전 블루 승만.
             // 웨이브 중간 클리어(1~8)에서 mark하면 이후 패배해도 30분이 남는 회귀 → 허브·최종웨이브만.
             // 웨이브 전체 승리는 planet.tsx handleWaveDefenseRunEnded도 mark(중복 무해).
             if (winnerTeam === 'blue' && hadPlayerCombat && isFinalWaveOrNonWave) {
-              markWaveCombatVictoryCooldown(combatPlanetId);
+              // 퀘스트 일반전투는 점유 웨이브 30분 쿨다운을 남기지 않는다.
+              if (!hubOrbitCombatResultSession.questOrbit) {
+                markWaveCombatVictoryCooldown(combatPlanetId);
+              }
               const hubLock = resolveQuestCombatLock(
                 useMissionStore.getState().progresses,
                 useMissionStore.getState().activeMissionId,
@@ -3370,16 +3353,17 @@ export function usePlanetEdenRaidSim(
           && !hubOrbitCombatResultSession.presented
         ) {
           hubOrbitCombatResultSession.presented = true;
-          const outcome = winnerTeam === 'blue' ? 'win' : 'lose';
           const expEarned = hubOrbitCombatResultSession.expEarned;
           const enemyName = resolveHubOrbitEnemyName(agents);
           const pendingDestroy = hubOrbitCombatResultSession.pendingDestroyAlert;
+          const outcome = pendingDestroy || winnerTeam !== 'blue' ? 'lose' : 'win';
           const leaderCaptainId = resolveHubOrbitLeaderCaptainId(agents);
           queueMicrotask(() => {
             void (async () => {
               useOrbitCapitalCombatUiStore.getState().setEndHoldActive(true);
               await waitCombatEndHold();
               useOrbitCapitalCombatUiStore.getState().setEndHoldActive(false);
+              if (pendingDestroy) consumeCombatPlayerShipSinkPending();
               if (outcome === 'win') {
                 await presentCombatEndLeaderDialog({
                   kind: 'defeat',
@@ -3392,14 +3376,11 @@ export function usePlanetEdenRaidSim(
                   outcome,
                   expEarned,
                   enemyName,
+                  questOrbit: hubOrbitCombatResultSession.questOrbit,
                 },
                 missionClearEnabled: outcome === 'win',
-                notice: pendingDestroy
-                  ? {
-                    title: t('combat.shipDestroyedTitle'),
-                    body: t('combat.shipDestroyedBody'),
-                  }
-                  : null,
+                notice: pendingDestroy ? resolveCombatShipDestroyedNotice() : null,
+                applyCapitalShipDestruction: pendingDestroy,
                 // 백채널은 현재 웨이브 종료에만 있다(U-3). 차등 확정 전까지 현행 유지.
                 onBackchannel: null,
               });

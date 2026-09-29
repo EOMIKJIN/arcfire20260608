@@ -167,5 +167,173 @@ export const STELLA_CAPTAIN_NOTE_FROM_CSV = [
     "sort": "1",
     "textKo": "리라는 국경 서기야. 관문을 지키는 하루를 말로 접고 고향 이야기는 서로 안 물어.",
     "textEn": "Lira keeps the gate record. She closes the day in speech and no one asks about home."
+  },
+  {
+    "id": "scn_ren",
+    "captainId": "npc_cpt_sq_ren_coil",
+    "nameHints": "렌|코일|ren",
+    "sort": "1",
+    "textKo": "렌은 글로우 초계야. 출정 전야에 잠긴 문만 적고 이름은 올리지 않아.",
+    "textEn": "Ren is Glow watch. He logs a door locked on the eve of a sortie and files no name."
+  },
+  {
+    "id": "scn_maya",
+    "captainId": "npc_cpt_sq_maya_belt",
+    "nameHints": "마야|벨트|maya",
+    "sort": "1",
+    "textKo": "마야는 펄 서기야. 잠근 기록만 보고 누가 잠갔는지는 묻지 않아.",
+    "textEn": "Maya is the Pearl clerk. She reads the lock mark and does not ask who locked it."
+  },
+  {
+    "id": "scn_jor",
+    "captainId": "npc_cpt_sq_jor_finn",
+    "nameHints": "조르|핀|jor",
+    "sort": "1",
+    "textKo": "조르는 포지 중개야. 빈 지휘석을 물건처럼 팔고 앉을 이름은 적지 않아.",
+    "textEn": "Jor brokers at Forge. He sells an empty chair as goods and writes no sitter."
+  },
+  {
+    "id": "scn_sel",
+    "captainId": "npc_cpt_sq_sel_vane",
+    "nameHints": "셀|베인|sel",
+    "sort": "1",
+    "textKo": "셀은 비콘 서기야. 매물 전표의 빈 칸만 확인하고 사람은 적지 않아.",
+    "textEn": "Sel is the Beacon clerk. She confirms the blank on the listing slip and writes no person."
+  },
+  {
+    "id": "scn_has",
+    "captainId": "npc_cpt_sq_has_quinn",
+    "nameHints": "하스|퀸|has",
+    "sort": "1",
+    "textKo": "하스는 마크 검수야. 합이 안 맞는 숫자만 짚고 빠진 사람을 말하지 않아.",
+    "textEn": "Has inspects at Mark. He marks a sum that fails and will not name a missing person."
+  },
+  {
+    "id": "scn_iva",
+    "captainId": "npc_cpt_sq_iva_wren",
+    "nameHints": "이바|렌|iva",
+    "sort": "1",
+    "textKo": "이바는 카론 서기야. 사본의 빈 합만 대조하고 원본 주인을 묻지 않아.",
+    "textEn": "Iva is the Charon clerk. She matches the blank sum and does not ask who owns the original."
+  },
+  {
+    "id": "scn_peck",
+    "captainId": "npc_cpt_sq_peck_sorin",
+    "nameHints": "펙|소린|peck",
+    "sort": "1",
+    "textKo": "펙은 페가수스 관측이야. 복사된 대역만 적고 누구의 목인지는 열지 않아.",
+    "textEn": "Peck observes at Pegasus. He logs a copied band and will not open whose mouth it is."
+  },
+  {
+    "id": "scn_dain",
+    "captainId": "npc_cpt_sq_dain_rho",
+    "nameHints": "다인|로|dain",
+    "sort": "1",
+    "textKo": "다인은 마크 서기야. 대역 전표의 빈 주인만 보고 목소리를 열지 않아.",
+    "textEn": "Dain is a Mark clerk. He reads a blank owner on the band slip and will not open the voice."
+  },
+  {
+    "id": "scn_mir",
+    "captainId": "npc_cpt_sq_mir_kell",
+    "nameHints": "미르|켈|mir",
+    "sort": "1",
+    "textKo": "미르는 제피르 화물이야. 출항 칸이 빈 상자만 넘기고 누가 비웠는지는 적지 않아.",
+    "textEn": "Mir runs Zephyr cargo. He hands a crate with a blank departure and writes no one who emptied it."
+  },
+  {
+    "id": "scn_osa",
+    "captainId": "npc_cpt_sq_osa_pell",
+    "nameHints": "오사|펠|osa",
+    "sort": "1",
+    "textKo": "오사는 글레이 인수야. 공란을 확인하고 이름을 묻지 않아.",
+    "textEn": "Osa takes handoff at Gray. She confirms the blank and will not ask a name."
+  },
+  {
+    "id": "scn_brin",
+    "captainId": "npc_cpt_sq_brin_tack",
+    "nameHints": "브린|택|brin",
+    "sort": "1",
+    "textKo": "브린은 아스트라 봉인이야. 열지 말라는 말만 하고 속은 적지 않아.",
+    "textEn": "Brin seals at Astra. He only says do not open it and writes no inside."
+  },
+  {
+    "id": "scn_nell",
+    "captainId": "npc_cpt_sq_nell_kay",
+    "nameHints": "넬|케이|nell",
+    "sort": "1",
+    "textKo": "넬은 루나 인수야. 인장만 보고 뚜껑을 열지 않아.",
+    "textEn": "Nell takes handoff at Luna. She looks at the stamp and does not open the lid."
+  },
+  {
+    "id": "scn_kael",
+    "captainId": "npc_cpt_sq_kael_vonn",
+    "nameHints": "카엘|본|kael",
+    "sort": "1",
+    "textKo": "카엘은 테라 전표야. 이름 없는 영수증만 내보내고 보낸 자를 채우지 않아.",
+    "textEn": "Kael keeps Terra slips. He sends a nameless receipt and will not fill a sender."
+  },
+  {
+    "id": "scn_sira",
+    "captainId": "npc_cpt_sq_sira_mek",
+    "nameHints": "시라|멕|sira",
+    "sort": "1",
+    "textKo": "시라는 오리온 인수야. 공란을 그대로 두고 이름을 정본으로 보지 않아.",
+    "textEn": "Sira takes handoff at Orion. She leaves the blank and does not treat a name as canon."
+  },
+  {
+    "id": "scn_ev",
+    "captainId": "npc_cpt_sq_ev_holt",
+    "nameHints": "에브|홀트|ev",
+    "sort": "1",
+    "textKo": "에브는 헤일로 서기야. 열지 말라는 봉투만 건네고 속은 적지 않아.",
+    "textEn": "Ev is the Halo clerk. She hands an envelope you must not open and writes no inside."
+  },
+  {
+    "id": "scn_toma",
+    "captainId": "npc_cpt_sq_toma_kale",
+    "nameHints": "토마|케일|toma",
+    "sort": "1",
+    "textKo": "토마는 솔 인수야. 봉인만 받고 속을 열지 않아.",
+    "textEn": "Toma takes handoff at Sol. He takes the seal and will not open the inside."
+  },
+  {
+    "id": "scn_story_kyle_loren",
+    "captainId": "npc_cpt_story_kyle_loren",
+    "nameHints": "카일|로렌|kyle",
+    "sort": "1",
+    "textKo": "카일은 화력이야. 말은 짧고 함선만 봐. 보고서에 이름이 없어.",
+    "textEn": "Kyle is fire. Short talk. He watches ships. He is not on the report."
+  },
+  {
+    "id": "scn_story_mira_schenk",
+    "captainId": "npc_cpt_story_mira_schenk",
+    "nameHints": "미라|솅크|mira",
+    "sort": "1",
+    "textKo": "미라는 장부야. 출처를 물으면 거점이 죽는다고 해.",
+    "textEn": "Mira is the ledger. Ask source and she says the hold dies."
+  },
+  {
+    "id": "scn_story_gaon_tela",
+    "captainId": "npc_cpt_story_gaon_tela",
+    "nameHints": "가온|텔라|gaon",
+    "sort": "1",
+    "textKo": "가온은 빈칸을 쫓아. 지워진 행성은 기록이 죽은 거야.",
+    "textEn": "Gaon hunts the blank. An erased world is a dead file."
+  },
+  {
+    "id": "scn_story_nyx_holm",
+    "captainId": "npc_cpt_story_nyx_holm",
+    "nameHints": "닉스|홀름|nyx|그리하벤",
+    "sort": "1",
+    "textKo": "닉스는 문지기야. 이름은 안 적어. 그리하벤은 가칭이야.",
+    "textEn": "Nyx keeps the door. No names. Greehaven is a working title."
+  },
+  {
+    "id": "scn_story_seren_vale",
+    "captainId": "npc_cpt_story_seren_vale",
+    "nameHints": "세렌|베일|seren",
+    "sort": "1",
+    "textKo": "세렌은 보더 연락이야. 벨트는 가칭이고 관문은 시리우스야.",
+    "textEn": "Seren is border contact. The belt is an alias. The gate is Sirius."
   }
 ] as const;
