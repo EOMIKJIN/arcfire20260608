@@ -22,6 +22,11 @@ import {
   isPlanetPopulationDomeInstalled,
   readPlanetPopulationDomeDetail,
 } from './planetPopulationDomeListing';
+import {
+  PLANET_DEV_MODULE_MILITARY_COMMAND,
+  isPlanetMilitaryCommandInstalled,
+  readPlanetMilitaryCommandDetail,
+} from './planetMilitaryCommandListing';
 import { readFacilityModuleDetail } from './planetFacilityModuleRuntime';
 import { resolveEffectiveFacilityDevView } from './planetCsvWorldFacilityBaseline';
 
@@ -67,6 +72,14 @@ const MODULE_FACILITY_PAIRS: Array<{
     facilityType: 'bar',
     isInstalled: isPlanetPopulationDomeInstalled,
     readLevel: (planetId) => (isPlanetPopulationDomeInstalled(planetId) ? readPlanetPopulationDomeDetail(planetId).level : 0),
+  },
+  {
+    moduleId: PLANET_DEV_MODULE_MILITARY_COMMAND,
+    facilityType: 'military_command',
+    isInstalled: isPlanetMilitaryCommandInstalled,
+    readLevel: (planetId) => (
+      isPlanetMilitaryCommandInstalled(planetId) ? readPlanetMilitaryCommandDetail(planetId).level : 0
+    ),
   },
 ];
 

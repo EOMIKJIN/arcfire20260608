@@ -863,6 +863,69 @@ export const planetHubBgStyles = StyleSheet.create({
   worldObjectMiningGaugeSegPaused: {
     opacity: 0.45,
   },
+  militaryCommandSetWrap: {
+    width: 108,
+    height: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'visible',
+  },
+  militaryCommandColonyHex: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 8,
+  },
+  militaryCommandColonyBody: {
+    width: 11,
+    height: 8,
+    backgroundColor: '#B8BEC6',
+  },
+  militaryCommandColonyBodyCombat: {
+    backgroundColor: '#8A8E94',
+  },
+  militaryCommandColonyCapLeft: {
+    width: 0,
+    height: 0,
+    borderTopWidth: 4,
+    borderBottomWidth: 4,
+    borderRightWidth: 4,
+    borderTopColor: 'transparent',
+    borderBottomColor: 'transparent',
+    borderRightColor: '#B8BEC6',
+  },
+  militaryCommandColonyCapRight: {
+    width: 0,
+    height: 0,
+    borderTopWidth: 4,
+    borderBottomWidth: 4,
+    borderLeftWidth: 4,
+    borderTopColor: 'transparent',
+    borderBottomColor: 'transparent',
+    borderLeftColor: '#B8BEC6',
+  },
+  militaryCommandColonyCapLeftCombat: {
+    borderRightColor: '#8A8E94',
+  },
+  militaryCommandColonyCapRightCombat: {
+    borderLeftColor: '#8A8E94',
+  },
+  militaryCommandCaptionOverlay: {
+    position: 'absolute',
+    left: -(96 - WORLD_OBJECT_ANCHOR_PX * 2) / 2,
+    top: WORLD_OBJECT_ANCHOR_PX * 2 + 14,
+  },
+  militaryCommandPatrolDot: {
+    position: 'absolute',
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#4DB8FF',
+    opacity: 0.92,
+  },
+  militaryCommandPatrolDotCombat: {
+    backgroundColor: '#3A8FCB',
+    opacity: 0.7,
+  },
   worldObjectCaption: {
     fontFamily: FONTS.mono,
     fontSize: 9,

@@ -15,3 +15,6 @@ Lv10 연구 50% 단축·전 티어
 dev_population_dome,인구 거주 돔,"바 신규 의뢰
 Lv15 의뢰 16·평판 +45%
 현상금 비중·보상 가산",true,dev_population_dome,800,v3.2 §8 바 L1~15 · 실의뢰 연동
+dev_military_command,군사령부,"침공 방어 교리·궤도 요새
+레벨이 높을수록 영토 수비 강화
+군수 유지비 절감·D/T 가산 R/P/E 패널티",true,dev_military_command,2200,v1 · 6번째 메뉴 · 위성 CSV 미변경

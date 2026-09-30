@@ -20,6 +20,7 @@ export const PLANET_DEV_MODULE_TO_FACILITY_TYPE: Record<string, string> = {
   defense_satellite: 'defense_satellite',
   dev_research_lab: 'laboratory',
   dev_population_dome: 'bar',
+  dev_military_command: 'military_command',
   /** legacy saves */
   dev_laboratory: 'laboratory',
   dev_bar: 'bar',

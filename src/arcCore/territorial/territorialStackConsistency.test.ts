@@ -78,6 +78,12 @@ test('5) listTerritorialCombatPolicies() 연속 2회 호출 — revision 캐시�
   assert.equal(a, b, '동적 분쟁지역 상태가 안 바뀐 동안엔 같은 배열 참조를 반환해야 함(캐시 hit)');
 });
 
+test('5f) 플레이어 중립화 보호창 — NPC 점유 보류', () => {
+  const src = readFileSync(resolve(__dirname, 'runTerritorialCombatPass.ts'), 'utf8');
+  assert.match(src, /shouldHoldNpcOccupyAfterPlayerNeutralize/);
+  assert.match(src, /protectNeutralizedMs/);
+});
+
 test('5c) 체류 중 분쟁 차례는 플레이어 웨이브 이관(패스 미완료·NPC 블루 차단)', () => {
   const src = readFileSync(resolve(__dirname, 'runTerritorialCombatPass.ts'), 'utf8');
   assert.match(src, /requestTerritorialPlayerWavePending/);

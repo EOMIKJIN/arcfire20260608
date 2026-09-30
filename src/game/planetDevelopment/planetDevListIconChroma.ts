@@ -17,6 +17,7 @@ const PLANET_DEV_LIST_ICON_CHROMA: Record<string, string> = {
   dev_trade_port: '#1F8A54',
   dev_research_lab: '#1A8FB8',
   dev_population_dome: '#B84A78',
+  dev_military_command: '#8E959E',
 };
 
 const DEFAULT_CHROMA = '#2F6F9A';

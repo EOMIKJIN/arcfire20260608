@@ -4,6 +4,7 @@ import { buildOrbitShipyardDevSnapshot } from '../../../game/planetDevelopment/p
 import { buildTradePortDevSnapshot } from '../../../game/planetDevelopment/planetTradePortDevelopment';
 import { buildLaboratoryDevSnapshot } from '../../../game/planetDevelopment/planetLaboratoryDevelopment';
 import { buildBarFacilityDevSnapshot } from '../../../game/planetDevelopment/planetBarFacilityDevelopment';
+import { buildMilitaryCommandDevSnapshot } from '../../../game/planetDevelopment/planetMilitaryCommandDevelopment';
 import { buildDefenseSatelliteDevSnapshot } from '../../../systems/planetaryDefense/planetDefenseSatelliteDevelopment';
 import { createPlanetDevelopmentHydrateSteps } from '../hydrateRecipes';
 import { preflightPlanetHubSession } from '../preflightPlanetHub';
@@ -40,6 +41,7 @@ export function buildPlanetDevelopmentListSessionData(
   const tradePortSnapshot = buildTradePortDevSnapshot(planetId);
   const laboratorySnapshot = buildLaboratoryDevSnapshot(planetId);
   const barSnapshot = buildBarFacilityDevSnapshot(planetId);
+  const militaryCommandSnapshot = buildMilitaryCommandDevSnapshot(planetId);
 
   const snapshotByCatalogId: Record<string, PlanetDevFacilitySnapshotSlice | null> = {
     defense_satellite: toSnapshotSlice(defenseSnapshot),
@@ -47,6 +49,7 @@ export function buildPlanetDevelopmentListSessionData(
     dev_trade_port: toSnapshotSlice(tradePortSnapshot),
     dev_research_lab: toSnapshotSlice(laboratorySnapshot),
     dev_population_dome: toSnapshotSlice(barSnapshot),
+    dev_military_command: toSnapshotSlice(militaryCommandSnapshot),
   };
 
   const activeSnapshots = Object.values(snapshotByCatalogId).filter(

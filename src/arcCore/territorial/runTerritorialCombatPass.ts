@@ -63,6 +63,8 @@ import {
   applyDefenseSatelliteRollWeights,
 } from './applyDefenseSatelliteTerritorialAdjustments';
 import { resolveDefenseSatelliteTerritorialBonus } from './resolveDefenseSatelliteTerritorialBonus';
+import { applyMilitaryCommandCombatAdvantage } from './applyMilitaryCommandTerritorialAdjustments';
+import { resolveMilitaryCommandTerritorialBonus } from './resolveMilitaryCommandTerritorialBonus';
 import { resolveTheaterGarrisonCombatMul } from './applyTheaterGarrisonAdjustments';
 import { applyTheaterNpcPassSideEffects } from './applyTheaterNpcPassSideEffects';
 import { isPlanetInActiveTerritorialRotation } from './resolveWarTheaterState';
@@ -88,6 +90,8 @@ import {
   requestTerritorialPlayerWavePending,
 } from './territorialPlayerWavePending';
 import { publishTerritorialPassLearning } from '../learning/publishTerritorialPassLearning';
+import { shouldHoldNpcOccupyAfterPlayerNeutralize } from '../annex/stelliumAnnexEligibility';
+import { resolveStelliumAnnexPolicy } from '../annex/stelliumAnnexPolicy';
 import { peekLatestFactionPowerKpi } from '../learning/arcCoreLearningStore';
 import {
   resolveTerritorialLocalBlowoutWinner,
@@ -455,6 +459,7 @@ async function runIndependentHoldInvasionJudgment(input: {
 
   // 3. 판정 롤 — battle 외에는 현상 유지(독립국에 중립선포 없음). aggressive 시 battleWeightPct 소폭 가산.
   const satelliteBonus = resolveDefenseSatelliteTerritorialBonus(planetId, 'INDEPENDENT');
+  const militaryCommandBonus = resolveMilitaryCommandTerritorialBonus(planetId, 'INDEPENDENT');
   const capitalRoll = applyCapitalDefenseRollWeights({
     ctx: capitalDefense,
     weights: {
@@ -500,9 +505,12 @@ async function runIndependentHoldInvasionJudgment(input: {
   const combat = resolveTerritorialQuickCombat({
     attackerShipIds,
     defenderShipIds,
-    defenderAdvantagePct: applyDefenseSatelliteCombatAdvantage(
-      capitalCombatPolicy.defenderAdvantagePct,
-      satelliteBonus,
+    defenderAdvantagePct: applyMilitaryCommandCombatAdvantage(
+      applyDefenseSatelliteCombatAdvantage(
+        capitalCombatPolicy.defenderAdvantagePct,
+        satelliteBonus,
+      ),
+      militaryCommandBonus,
     ),
     combatNoisePct: policy.combatNoisePct,
     attackerSupplyMul: supply.attacker.powerMul,
@@ -645,6 +653,34 @@ export async function runTerritorialCombatPassForPlanet(
   // 체류를 떠난 due — 잔여 pending 해제 후 기존 NPC 자동전
   clearTerritorialPlayerWavePending(planetId);
 
+  // 플레이어 웨이브 중립화 보호 — 위성·편입 전에 NPC가 RED/BLUE로 다시 칠하지 않음
+  if (
+    shouldHoldNpcOccupyAfterPlayerNeutralize({
+      hold,
+      nowMs,
+      protectMs: resolveStelliumAnnexPolicy().protectNeutralizedMs,
+    })
+  ) {
+    if (__DEV__) {
+      console.log(
+        `[territorial] ${planetId} 플레이어 중립화 보호창 — NPC 점유 보류(status_quo)`,
+      );
+    }
+    await markTerritorialCombatPassCompleted(
+      planetId,
+      nowMs,
+      campaignMeta ? { group: campaignMeta.group, orderIndex: campaignMeta.orderIndex } : undefined,
+      policy.passIntervalSec,
+    );
+    return {
+      planetId,
+      decision: 'status_quo',
+      holdChanged: false,
+      previousSide: landedPreviousSide,
+      newSide: landedPreviousSide,
+    };
+  }
+
   // 독립국 점유 — CSV combatMode(blue_red 등)와 무관한 침공 분기. 그래프 검증·경고 생략.
   if (holdSide === 'INDEPENDENT') {
     return runIndependentHoldInvasionJudgment({ planetId, policy, warStore, nowMs, campaignMeta });
@@ -752,6 +788,7 @@ export async function runTerritorialCombatPassForPlanet(
     weights: envelopeAdjustedWeights,
   });
   const satelliteBonus = resolveDefenseSatelliteTerritorialBonus(planetId, holdSide);
+  const militaryCommandBonus = resolveMilitaryCommandTerritorialBonus(planetId, holdSide);
   const satelliteAdjustedWeights = applyDefenseSatelliteRollWeights({
     weights: capitalAdjustedWeights,
     bonus: satelliteBonus,
@@ -939,9 +976,12 @@ export async function runTerritorialCombatPassForPlanet(
     const combat = resolveTerritorialQuickCombat({
       attackerShipIds,
       defenderShipIds,
-      defenderAdvantagePct: applyDefenseSatelliteCombatAdvantage(
-        applyCapitalDefenseCombatPolicy(policy, capitalDefense).defenderAdvantagePct,
-        satelliteBonus,
+      defenderAdvantagePct: applyMilitaryCommandCombatAdvantage(
+        applyDefenseSatelliteCombatAdvantage(
+          applyCapitalDefenseCombatPolicy(policy, capitalDefense).defenderAdvantagePct,
+          satelliteBonus,
+        ),
+        militaryCommandBonus,
       ),
       combatNoisePct: policy.combatNoisePct,
       attackerSupplyMul: supply.attacker.powerMul,

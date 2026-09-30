@@ -1,0 +1,15 @@
+key,value,notesKo
+policy_version,1,군사령부 v1 — 방위위성 CSV·요격·inbound 미변경
+doctrine_advantage_l1,0.4,영토 교리 L1 (위성 defenderAdvantage와 별축)
+doctrine_advantage_l15,6,영토 교리 L15
+doctrine_advantage_cap,6,사령부 단독 캡
+logistics_upkeep_discount_cap_pct,12,사령부 유지비만 · 위성 dailyUpkeep 미적용
+hq_upkeep_joint_cap_pct,22,전역 유지비+군수 합산 상한(사령부 라인)
+stat_offset_d_l15,2,배치 후 D 오프셋 L15
+stat_offset_t_l15,1.5,배치 후 T 오프셋 L15
+stat_offset_r_l15,-1,배치 후 R 오프셋 L15
+stat_offset_p_l15,-1,배치 후 P 오프셋 L15
+stat_offset_e_l15,-1.2,배치 후 E 오프셋 L15
+stat_offset_floor,8,제네시스와 max
+patrol_dot_count,6,허브 순찰 도트 고정
+patrol_cycle_ms,16000,순찰 8자 1주기(ms) · 엽당 귀환 2회

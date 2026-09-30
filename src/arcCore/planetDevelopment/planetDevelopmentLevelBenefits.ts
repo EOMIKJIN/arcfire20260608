@@ -43,10 +43,11 @@ function clampGauge(g: PlanetCoreGaugeView): PlanetCoreGaugeView {
   };
 }
 
-/** 설치 시설 레벨 합(집계 개발 점수) */
+/** 설치 시설 레벨 합(집계 개발 점수) — 사령부는 15%/25%·감쇠 집계에서 제외 */
 export function resolvePlanetDevelopmentAggregateLevelSum(planetId: string): number {
   let sum = 0;
   for (const f of listInstalledFacilityLevels(planetId)) {
+    if (f.facilityType === 'military_command') continue;
     if (f.installed && f.level > 0) sum += f.level;
   }
   return sum;

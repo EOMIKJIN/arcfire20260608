@@ -5,7 +5,12 @@
 
 import { FacilityDailyUpkeepPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated';
 
-export type FacilityDailyUpkeepType = 'shipyard' | 'laboratory' | 'trade_port' | 'population_dome';
+export type FacilityDailyUpkeepType =
+  | 'shipyard'
+  | 'laboratory'
+  | 'trade_port'
+  | 'population_dome'
+  | 'military_command';
 
 const index = new Map<string, number>();
 

@@ -15,6 +15,8 @@ import { readPlanetOrbitShipyardDetail } from '../../game/planetDevelopment/plan
 import { readPlanetResearchLabDetail } from '../../game/planetDevelopment/planetResearchLabListing';
 import { readPlanetTradePortDetail } from '../../game/planetDevelopment/planetTradePortListing';
 import { readPlanetPopulationDomeDetail } from '../../game/planetDevelopment/planetPopulationDomeListing';
+import { readPlanetMilitaryCommandDetail } from '../../game/planetDevelopment/planetMilitaryCommandListing';
+import { applyMilitaryCommandUpkeepLineCredits } from '../planetDevelopment/militaryCommandLogistics';
 
 export type PlanetDevelopmentUpkeepLine = {
   entityId: string;
@@ -75,6 +77,14 @@ export function computePlanetDevelopmentUpkeepBreakdown(
     const dailyUpkeepCredits = resolveFacilityDailyUpkeepCredits('population_dome', dome.level);
     if (dailyUpkeepCredits > 0) {
       lines.push({ entityId: 'dev_population_dome', level: dome.level, dailyUpkeepCredits });
+    }
+  }
+  const hq = readPlanetMilitaryCommandDetail(planetId);
+  if (hq.installed) {
+    const raw = resolveFacilityDailyUpkeepCredits('military_command', hq.level);
+    const dailyUpkeepCredits = applyMilitaryCommandUpkeepLineCredits(planetId, hq.level, raw);
+    if (dailyUpkeepCredits > 0) {
+      lines.push({ entityId: 'dev_military_command', level: hq.level, dailyUpkeepCredits });
     }
   }
 

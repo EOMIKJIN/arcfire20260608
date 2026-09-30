@@ -1,4 +1,4 @@
-# Daily audit — 2026-09-29T15:00:11.278Z
+# Daily audit — 2026-09-30T15:00:11.405Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -58,9 +58,9 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
 - 173,922 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 161,946 — `src/data/generated/csvMissions.ts`
+- 123,741 — `src/i18n/locales/ko.ts`
 - 121,317 — `src/data/generated/csvMainStorySpine.ts`
-- 118,108 — `src/i18n/locales/ko.ts`
-- 107,637 — `src/i18n/locales/en.ts`
+- 112,718 — `src/i18n/locales/en.ts`
 - 104,469 — `app/(game)/worldmap.tsx`
 - 95,382 — `app/(game)/planet.tsx`
 - 90,835 — `src/data/generated/csvBarPatronage.ts`

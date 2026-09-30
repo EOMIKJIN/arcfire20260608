@@ -1,3 +1,10 @@
+## [관측 요청] 2026-09-30 — mem-post-dev-recheck (행성개발 군사령부 v1)
+
+- 김팀장 코드 반영: 6번째 개발 메뉴 `dev_military_command` · 영토 교리(위성 함수 미경유) · 사령부 유지비 군수 할인(위성 dailyUpkeep 미적용) · 5스탯은 87% maxW 밖 일일 오프셋 · 허브 RN 은회색 콜로니+도트 6(신규 Skia Canvas 없음, L1+에서만 worklet 마운트)
+- 신규 persist/금고 없음. `ARC_CORE_PLANET_DEV_MODULE_IDS` 5개 유지(RED 자동설치 없음). `build:balance-tables` 미실행(위성 upkeep 곡선 보호)
+- 관측만: 허브 체류 30m+ — 미설치 행성에서 HQ worklet 0 · 설치 후 Views/PSS 계단이 아닌지. 일일 배치 후 위성 `dailyUpkeep` 수치 불변
+- 코드 수정 금지
+
 ## [관측] 2026-09-26 — mem-post-dev-recheck (함장 정본 포트레이트 261장 입고)
 
 - 김팀장 코드 반영: `npc_ai_captains.csv` 262행 고유 `portraitImageAssetKey` · `npcCaptainPortraitAssets.ts` unique=261 + legacy=10 · 부트 prefetch 금지 유지
@@ -12121,6 +12128,22 @@
 - **권장(김팀장 1안)**: 08:00 보고 FAIL — adb/타임라인 확인 · ensure-daily-8am-report 재가동
 
 > status: **ready-for-team-lead-action** · **08:00 보고체 유지**
+
+## [관측] 2026-09-30 08:00:00 KST — **데일리 08:00 상시 자동보고** (OK)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **23268** · auto-fix=ON
+- **adb**: OK (192.168.45.197:33639)
+- **앱**: RUNNING
+- **mem-monitor**: **OK** (PSS 803.3MB · GL 38.6MB · Views 380 · pid=13104)
+- **mem-budget-ledger**: ledger p50=727.5MB native=359.6MB
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20260930-0800.md
+- **verdict**: **OK**
+- **incidents (actionable tail)**: 1
+  - [2026-09-30 08:00:00] DAILY_8AM_REPORT 2026-09-30 08:00:00 KST
+- **권장(김팀장 1안)**: daily 08:00 soak OK — review report
+
+> status: monitor-ok · **08:00 보고체 유지**
 
 ## 작업 요약
 

@@ -9,6 +9,7 @@ import { t } from '../../i18n';
 import { tryCompleteLaboratoryUpgrade } from './planetLaboratoryDevelopment';
 import { tryCompleteOrbitShipyardUpgrade } from './planetOrbitShipyardDevelopment';
 import { tryCompleteBarFacilityUpgrade } from './planetBarFacilityDevelopment';
+import { tryCompleteMilitaryCommandUpgrade } from './planetMilitaryCommandDevelopment';
 import { tryCompleteTradePortUpgrade } from './planetTradePortDevelopment';
 import { tryCompleteDefenseSatelliteUpgrade } from '../../systems/planetaryDefense/planetDefenseSatelliteDevelopment';
 import { tryCompletePlanetCoreStatRd } from './planetCoreStatRdRuntime';
@@ -104,6 +105,8 @@ function resolveCompleteStatus(
       return snap.isCsvWorldBaseline
         ? t('planetDev.worldBuiltInstalled', planetDevLevelI18nParams(snap.level, t))
         : t('planetDev.populationDomeInstalled', planetDevLevelI18nParams(snap.level, t));
+    case 'dev_military_command':
+      return t('planetDev.militaryCommandInstalled', planetDevLevelI18nParams(snap.level, t));
     default:
       return t('planetDev.listStatusCompleteGeneric', planetDevLevelI18nParams(snap.level, t));
   }
@@ -189,6 +192,7 @@ export function tryCompleteAllPlanetDevJobs(planetId: string): void {
   tryCompleteTradePortUpgrade(planetId);
   tryCompleteLaboratoryUpgrade(planetId);
   tryCompleteBarFacilityUpgrade(planetId);
+  tryCompleteMilitaryCommandUpgrade(planetId);
   tryCompletePlanetCoreStatRd(planetId);
 }
 

@@ -9,7 +9,9 @@ import { useClanWarFoundationStore } from '../../../store/clanWarFoundationStore
 import { usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore';
 import { usePlanetTradeFeeLedgerStore } from '../../../store/planetTradeFeeLedgerStore';
 import { readPlanetInfoPanelPresentationRevision } from '../../../game/planetHub/resolvePlanetInfoPanelStage';
+import { readDefenseSatelliteDetailFromCoreDetail } from '../../../game/planetDevelopment/planetDefenseSatelliteRuntime';
 import { useAppSettingsStore } from '../../../store/appSettingsStore';
+import { usePlayerStore } from '../../../store/playerStore';
 import { createPlanetEconomyInfoHydrateSteps } from '../hydrateRecipes';
 import { preflightPlanetHubSession } from '../preflightPlanetHub';
 import type { HeavyUiSessionConfig } from '../types';
@@ -35,6 +37,8 @@ export function readPlanetEconomyInfoRevision(planetId: string): string {
   const arcVault = useArcCoreVaultStore.getState().balanceCredits;
   const blueVault = useBlueTeamSharedVaultStore.getState().balanceCredits;
   const trend = core?.detail?.statOpsTrend;
+  const sat = readDefenseSatelliteDetailFromCoreDetail(core?.detail);
+  const landedId = usePlayerStore.getState().player?.currentPlanetId ?? '';
   return [
     useAppSettingsStore.getState().locale,
     readPlanetInfoPanelPresentationRevision(planetId),
@@ -52,6 +56,10 @@ export function readPlanetEconomyInfoRevision(planetId: string): string {
     bucket.arcFeeCredits,
     bucket.playerWalletPending,
     hold?.occupierClanId ?? '',
+    hold?.kind ?? '',
+    hold?.neutralizedAt ?? '',
+    sat.installed ? `1:${sat.level}` : '0',
+    landedId,
     fleet,
     arcVault,
     blueVault,

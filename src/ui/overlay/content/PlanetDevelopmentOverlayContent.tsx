@@ -11,6 +11,7 @@ import { PLANET_DEV_MODULE_ORBIT_SHIPYARD } from '../../../game/planetDevelopmen
 import { PLANET_DEV_MODULE_TRADE_PORT } from '../../../game/planetDevelopment/planetTradePortListing';
 import { PLANET_DEV_MODULE_RESEARCH_LAB } from '../../../game/planetDevelopment/planetResearchLabListing';
 import { PLANET_DEV_MODULE_POPULATION_DOME } from '../../../game/planetDevelopment/planetPopulationDomeListing';
+import { PLANET_DEV_MODULE_MILITARY_COMMAND } from '../../../game/planetDevelopment/planetMilitaryCommandListing';
 import { registerPlanetSessionResource } from '../../../game/planetSessionRegistry';
 import { usePlayerStore } from '../../../store/playerStore';
 import {
@@ -27,6 +28,7 @@ import { PlanetOrbitShipyardDevContent } from './PlanetOrbitShipyardDevContent';
 import { PlanetTradePortDevContent } from './PlanetTradePortDevContent';
 import { PlanetLaboratoryDevContent } from './PlanetLaboratoryDevContent';
 import { PlanetBarFacilityDevContent } from './PlanetBarFacilityDevContent';
+import { PlanetMilitaryCommandDevContent } from './PlanetMilitaryCommandDevContent';
 
 type DevView = 'list' | string;
 
@@ -127,6 +129,11 @@ function ensurePlanetDevelopmentModulesRegistered(): void {
     id: PLANET_DEV_MODULE_POPULATION_DOME,
     enabled: true,
     DetailView: PlanetBarFacilityDevContent,
+  });
+  registerPlanetDevelopmentModule({
+    id: PLANET_DEV_MODULE_MILITARY_COMMAND,
+    enabled: true,
+    DetailView: PlanetMilitaryCommandDevContent,
   });
   /** legacy save deep-link */
   registerPlanetDevelopmentModule({

@@ -1,6 +1,7 @@
-facility_type,requiredFacilityType,requiredFacilityLevel,requiredCombatWins,installDurationSec,notesKo
-trade_port,,0,0,900,v3.1 Lv1 15분 · 시간 정본=facility_upgrade_duration_facility_mod.csv
-shipyard,,0,0,1080,v3.1 Lv1 18분
-defense_satellite,,0,0,1500,v3.1 Lv1 25분
-laboratory,,0,0,1800,v3.1 Lv1 30분
-bar,,0,0,1200,v3.1 Lv1 20분
+facility_type,requiredFacilityType,requiredFacilityLevel,requiredCombatWins,installDurationSec,notesKo
+trade_port,,0,0,900,v3.1 Lv1 15분 · 시간 정본=facility_upgrade_duration_facility_mod.csv
+shipyard,,0,0,1080,v3.1 Lv1 18분
+defense_satellite,,0,0,1500,v3.1 Lv1 25분
+laboratory,,0,0,1800,v3.1 Lv1 30분
+bar,,0,0,1200,v3.1 Lv1 20분
+military_command,,0,0,1650,v1 사령부 Lv1 27.5분 · 위성 선행 없음

@@ -7,6 +7,11 @@ import { getFacilityShipyardLevelRow, resolveShipyardUpgradeCostCredits, resolve
 import { getFacilityBarLevelRow, resolveBarUpgradeCostCredits, resolveBarUpgradeDurationSec } from '../../arcCore/balance/facilityBarLevelPolicy';
 import { getFacilityTradePortLevelRow, resolveTradePortUpgradeCostCredits, resolveTradePortUpgradeDurationSec } from '../../arcCore/balance/facilityTradePortLevelPolicy';
 import {
+  getFacilityMilitaryCommandLevelRow,
+  resolveMilitaryCommandUpgradeCostCredits,
+  resolveMilitaryCommandUpgradeDurationSec,
+} from '../../arcCore/balance/facilityMilitaryCommandLevelPolicy';
+import {
   getPlanetDefenseSatelliteLevelRow,
   resolveDefenseSatelliteInstallCostCredits,
   resolveDefenseSatelliteUpgradeCostCredits,
@@ -58,6 +63,13 @@ const FACILITY_RESOLVERS: Record<string, FacilityInstantResolver> = {
     resolveLegacyInstantCredits: (lv) => getFacilityBarLevelRow(lv + 1)?.instantUpgradeCostCredits ?? null,
     resolveInstallCostCredits: () => getPlanetDevelopmentCatalogRow('dev_population_dome')?.installCostCredits ?? 0,
     resolveLegacyInstallInstantCredits: () => getFacilityBarLevelRow(1)?.instantUpgradeCostCredits ?? 0,
+  },
+  military_command: {
+    resolveUpgradeCostCredits: resolveMilitaryCommandUpgradeCostCredits,
+    resolveUpgradeDurationSec: resolveMilitaryCommandUpgradeDurationSec,
+    resolveLegacyInstantCredits: (lv) => getFacilityMilitaryCommandLevelRow(lv + 1)?.instantUpgradeCostCredits ?? null,
+    resolveInstallCostCredits: () => getPlanetDevelopmentCatalogRow('dev_military_command')?.installCostCredits ?? 0,
+    resolveLegacyInstallInstantCredits: () => getFacilityMilitaryCommandLevelRow(1)?.instantUpgradeCostCredits ?? 0,
   },
   defense_satellite: {
     resolveUpgradeCostCredits: resolveDefenseSatelliteUpgradeCostCredits,

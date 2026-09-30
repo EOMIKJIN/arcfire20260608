@@ -60,6 +60,7 @@ import type { CapitalRealtimeCombatSim } from '../../../combat/capitalRealtimeTy
 import type { WorldObject } from '../../../worldObjects';
 import { isStelliumColonizeWorldObject } from '../../../worldObjects/providers/stelliumColonizeWorldObjectProvider';
 import { STELLIUM_COLONIZE_ORANGE, StelliumColonizeOrbitTrafficMark } from './StelliumColonizeOrbitMark';
+import { MilitaryCommandOrbitSet } from './MilitaryCommandOrbitMark';
 import { isStelliumColonizeRimPhase } from '../../../arcCore/colonize/stelliumColonizeTypes';
 import { useStelliumColonizeStore } from '../../../store/stelliumColonizeStore';
 import {
@@ -800,11 +801,11 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                   coreGauges={planetCoreGauges}
                 />
               </View>
-              {worldObjects.length > 0 ? (
-                <View
-                  style={bgStyles.orbitLayerWorldObjects}
-                  pointerEvents="box-none"
-                >
+              <View
+                style={bgStyles.orbitLayerWorldObjects}
+                pointerEvents="box-none"
+              >
+                {worldObjects.length > 0 ? (
                   <PlanetWorldObjectOrbitMarks
                     orbitClockMs={orbitClockMs}
                     worldObjects={worldObjects}
@@ -812,8 +813,13 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                     miningProgressPct={Math.max(0, Math.min(100, Math.round(miningProgressPct ?? 0)))}
                     combatGray={hubCapitalCombatMute}
                   />
-                </View>
-              ) : null}
+                ) : null}
+                <MilitaryCommandOrbitSet
+                  planetId={planetId}
+                  orbitClockMs={orbitClockMs}
+                  combatGray={hubCapitalCombatMute}
+                />
+              </View>
               {hubStageSkiaActive && (tableOrbitSlotCount > 0 || arcNpcShipsAtPlanet.length > 0 || arcInboundDronesAtPlanet.length > 0) ? (
                 <View
                   style={bgStyles.orbitLayerShips}

@@ -50,6 +50,7 @@ export { FacilityBarLevelPolicy_FROM_BALANCE_CSV } from './csvFacilityBarLevelPo
 export { FacilityDailyUpkeepPolicy_FROM_BALANCE_CSV } from './csvFacilityDailyUpkeepPolicy';
 export { FacilityInstallPrerequisites_FROM_BALANCE_CSV } from './csvFacilityInstallPrerequisites';
 export { FacilityLaboratoryLevelPolicy_FROM_BALANCE_CSV } from './csvFacilityLaboratoryLevelPolicy';
+export { FacilityMilitaryCommandLevelPolicy_FROM_BALANCE_CSV } from './csvFacilityMilitaryCommandLevelPolicy';
 export { FacilityShipyardLevelPolicy_FROM_BALANCE_CSV } from './csvFacilityShipyardLevelPolicy';
 export { FacilityTradePortLevelPolicy_FROM_BALANCE_CSV } from './csvFacilityTradePortLevelPolicy';
 export { FacilityUpgradeDurationFacilityMod_FROM_BALANCE_CSV } from './csvFacilityUpgradeDurationFacilityMod';
@@ -87,6 +88,7 @@ export { PlanetHostileRedProgression_FROM_BALANCE_CSV } from './csvPlanetHostile
 export { PlanetInfoPanelStage_FROM_BALANCE_CSV } from './csvPlanetInfoPanelStage';
 export { PlanetLevelingProgression_FROM_BALANCE_CSV } from './csvPlanetLevelingProgression';
 export { PlanetMasterBalanceEarlyZonePolicy_FROM_BALANCE_CSV } from './csvPlanetMasterBalanceEarlyZonePolicy';
+export { PlanetMilitaryCommandPolicy_FROM_BALANCE_CSV } from './csvPlanetMilitaryCommandPolicy';
 export { PlanetMineralLedgerPolicy_FROM_BALANCE_CSV } from './csvPlanetMineralLedgerPolicy';
 export { PlanetOccupationSeeds_FROM_BALANCE_CSV } from './csvPlanetOccupationSeeds';
 export { PlanetOwnershipDeedPolicy_FROM_BALANCE_CSV } from './csvPlanetOwnershipDeedPolicy';
@@ -101,6 +103,7 @@ export { PlayScenarioZonePlanets_FROM_BALANCE_CSV } from './csvPlayScenarioZoneP
 export { PopulationDomeWdiStability_FROM_BALANCE_CSV } from './csvPopulationDomeWdiStability';
 export { RewardTierBruPolicy_FROM_BALANCE_CSV } from './csvRewardTierBruPolicy';
 export { SkillAutoCombatPolicy_FROM_BALANCE_CSV } from './csvSkillAutoCombatPolicy';
+export { StelliumAnnexPolicy_FROM_BALANCE_CSV } from './csvStelliumAnnexPolicy';
 export { StelliumColonizePolicy_FROM_BALANCE_CSV } from './csvStelliumColonizePolicy';
 export { SynthColonizationPhasePolicy_FROM_BALANCE_CSV } from './csvSynthColonizationPhasePolicy';
 export { SynthSystemColonization_FROM_BALANCE_CSV } from './csvSynthSystemColonization';

@@ -1,6 +1,12 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { ArcOverlayPlanetEconomyInfoEntry } from '../arcOverlayStore';
+import {
+  applyStelliumAnnex,
+  resolveStelliumAnnexOffer,
+} from '../../../arcCore/annex/applyStelliumAnnex';
+import { usePlayerStore } from '../../../store/playerStore';
+import { showArcAlert } from '../../../utils/showArcAlert';
 import { resolveMegaFactionCapitalHubSubtitle } from '../../../world/megaFactionCapitalDisplay';
 import { formatPlanetPgpBmu } from '../../../world/planetPgpModel';
 import { useArcCoreTransportFleetBankStore } from '../../../store/factionVault/arcCoreTransportFleetBankStore';
@@ -123,6 +129,8 @@ const RevealedPlanetEconomyInfoOverlayContent = memo(function RevealedPlanetEcon
   const arcVaultBalance = useArcCoreVaultStore((s) => s.balanceCredits);
   const blueVaultBalance = useBlueTeamSharedVaultStore((s) => s.balanceCredits);
   const planetHold = useClanWarFoundationStore((s) => s.planetHolds[planetId]);
+  const planetHolds = useClanWarFoundationStore((s) => s.planetHolds);
+  const playerPlanetId = usePlayerStore((s) => s.player?.currentPlanetId ?? '');
 
   const sessionConfig = useMemo(
     () => createPlanetEconomyInfoSession(planetId, planetName),
@@ -130,8 +138,43 @@ const RevealedPlanetEconomyInfoOverlayContent = memo(function RevealedPlanetEcon
   );
   const revision = useMemo(
     () => readPlanetEconomyInfoRevision(planetId),
-    [planetId, locale, coreSlice, tradeBucket, planetHold, fleetBalance, arcVaultBalance, blueVaultBalance],
+    [planetId, locale, coreSlice, tradeBucket, planetHold, planetHolds, playerPlanetId, fleetBalance, arcVaultBalance, blueVaultBalance],
   );
+
+  const annexOffer = useMemo(
+    () => resolveStelliumAnnexOffer(planetId),
+    [planetId, planetHold, planetHolds, playerPlanetId, blueVaultBalance, coreSlice],
+  );
+
+  const annexReasonLabel = !annexOffer.gate.ok
+    ? t(`stelliumAnnex.reason.${annexOffer.gate.reason}`)
+    : '';
+
+  const handleAnnexPress = useCallback(() => {
+    const offer = resolveStelliumAnnexOffer(planetId);
+    if (!offer.gate.ok) {
+      showArcAlert(t('stelliumAnnex.failTitle'), t(`stelliumAnnex.reason.${offer.gate.reason}`));
+      return;
+    }
+    showArcAlert(
+      t('stelliumAnnex.confirmTitle'),
+      t('stelliumAnnex.confirmBody', { cost: formatCredits(offer.costCredits, { suffix: true }) }),
+      [
+        { text: t('defenseSat.cancel'), style: 'cancel' },
+        {
+          text: t('stelliumAnnex.confirmAction'),
+          onPress: () => {
+            const result = applyStelliumAnnex(planetId);
+            if (!result.ok) {
+              showArcAlert(t('stelliumAnnex.failTitle'), t(`stelliumAnnex.reason.${result.reason}`));
+              return;
+            }
+            showArcAlert(t('stelliumAnnex.successTitle'), t('stelliumAnnex.successBody'));
+          },
+        },
+      ],
+    );
+  }, [planetId, t]);
 
   const session = useHeavyUiDataSession(sessionConfig, revision);
   const PH = OVERLAY_TOKENS.phosphorAccent;
@@ -182,7 +225,18 @@ const RevealedPlanetEconomyInfoOverlayContent = memo(function RevealedPlanetEcon
       visualTheme={visualTheme}
       footer={
         session.phase === 'ready' ? (
-          <ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} visualTheme={visualTheme} />
+          annexOffer.showAction ? (
+            <ArcOverlayFooterActions
+              onCancel={onClose}
+              onConfirm={handleAnnexPress}
+              cancelLabel={t('econInfo.close')}
+              confirmLabel={t('stelliumAnnex.btn')}
+              confirmDisabled={!annexOffer.gate.ok}
+              visualTheme={visualTheme}
+            />
+          ) : (
+            <ArcOverlayFooterActions onCancel={onClose} onConfirm={onClose} visualTheme={visualTheme} />
+          )
         ) : undefined
       }
     >
@@ -254,6 +308,15 @@ const RevealedPlanetEconomyInfoOverlayContent = memo(function RevealedPlanetEcon
           {section(t('econInfo.tradeOccupy'))}
           {infoRow('econ-convoy-monopoly', t('econInfo.convoyMonopoly'), snapshot.convoyMonopolyLabel)}
           {infoRow('econ-occupier', t('econInfo.occupierFaction'), snapshot.occupierFactionLabel)}
+          {annexOffer.showAction ? (
+            <Text style={[themeStyles.section, !isTactical ? { color: PH } : null, styles.annexHint]}>
+              {annexOffer.gate.ok
+                ? t('stelliumAnnex.hint.ready')
+                : annexOffer.gate.reason === 'sat_required'
+                  ? t('stelliumAnnex.hint.satRequired', { level: annexOffer.requireDefenseSatLevel })
+                  : t('stelliumAnnex.hint.blocked', { reason: annexReasonLabel })}
+            </Text>
+          ) : null}
           {snapshot.factionVaultLabel != null ? (
             infoRow(
               'econ-faction-vault',
@@ -322,6 +385,11 @@ const styles = StyleSheet.create({
     fontSize: FONTS.size.sm,
     fontWeight: FONTS.weight.bold,
     letterSpacing: 0.5,
+  },
+  annexHint: {
+    marginTop: SPACING.xs,
+    marginBottom: SPACING.xs,
+    letterSpacing: 0.2,
   },
   pgpValue: {
     fontFamily: FONTS.mono,

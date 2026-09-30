@@ -31,6 +31,7 @@ const DEV_MODULE_IDS_TO_CLAMP = [
   'dev_orbit_shipyard',
   'dev_research_lab',
   'dev_population_dome',
+  'dev_military_command',
   'defense_satellite',
 ] as const;
 

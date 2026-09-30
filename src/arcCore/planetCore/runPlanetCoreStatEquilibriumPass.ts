@@ -15,6 +15,7 @@ import { listCoreOpenGameplayPlanetIds, resolveCoreOpenGameplayPlanetRef } from 
 import type { Planet } from '../../types';
 import { usePlayerStore } from '../../store/playerStore';
 import { resolvePlanetCoreStatEquilibriumPolicy } from '../balance/planetCoreStatEquilibriumPolicy';
+import { resolvePlanetMilitaryCommandLevel } from '../../game/planetDevelopment/planetMilitaryCommandListing';
 import {
   computePlanetDevelopmentStatTargets,
   resolvePlanetDevelopmentStatWeights,
@@ -217,6 +218,7 @@ export function runPlanetCoreStatEquilibriumPass(): PlanetCoreStatEquilibriumPas
       resolvePlanetDevelopmentStatWeights(planetId),
     );
     const target = computePlanetDevelopmentStatTargets(planetId, baseline);
+    const hqLevel = resolvePlanetMilitaryCommandLevel(planetId);
     const hold = holds[planetId];
     const playerOwned = hold ? isPlayerOwnedHold(hold, playerUid) : false;
     const authority = resolvePlanetCoreStatAuthority(
@@ -226,7 +228,7 @@ export function runPlanetCoreStatEquilibriumPass(): PlanetCoreStatEquilibriumPas
     const before = { ...gauge };
     let devEnd = before;
 
-    if (authority.equilibriumDev && devWeightTotal > 0) {
+    if (authority.equilibriumDev && (devWeightTotal > 0 || hqLevel > 0)) {
       devEnd = applyDriftTowardTarget(
         gauge,
         target,

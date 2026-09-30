@@ -11,6 +11,7 @@ import {
   resolvePlanetGenesisResourcePct,
   resolvePlanetResourceEcosystemPolicy,
 } from '../planetResource/planetResourceEcosystemPolicy';
+import { applyMilitaryCommandStatOffsetsToTargets } from '../planetDevelopment/militaryCommandStatOffsets';
 
 const STAT_KEYS = ['resource', 'population', 'defense', 'technology', 'environment'] as const;
 const MAX_DEV_LEVEL = 15;
@@ -61,6 +62,7 @@ export function resolvePlanetDevelopmentStatWeights(planetId: string): PlanetDev
   let acc = emptyGauge();
   for (const f of listInstalledFacilityLevels(planetId)) {
     if (!f.installed || f.level <= 0) continue;
+    if (f.facilityType === 'military_command') continue;
     const n = resolveFacilityStatNudgesForLevel(f.facilityType, f.level);
     acc = addGauge(acc, n);
   }
@@ -101,7 +103,7 @@ export function computePlanetDevelopmentStatTargets(
   const weights = resolvePlanetDevelopmentStatWeights(planetId);
   const maxW = resolveMaxPlanetDevelopmentStatWeights();
 
-  return {
+  const baseTargets: PlanetCoreGaugeView = {
     resource: Math.round(
       Math.min(resourceTargetMax, genesisResource + resourceSpan * ratio(weights.resource, maxW.resource)),
     ),
@@ -110,6 +112,14 @@ export function computePlanetDevelopmentStatTargets(
     technology: Math.round(b.technology + span * ratio(weights.technology, maxW.technology)),
     environment: Math.round(b.environment + span * ratio(weights.environment, maxW.environment)),
   };
+
+  return applyMilitaryCommandStatOffsetsToTargets(planetId, baseTargets, {
+    resource: genesisResource,
+    population: b.population,
+    defense: b.defense,
+    technology: b.technology,
+    environment: b.environment,
+  });
 }
 
 export function sumPlanetDevelopmentStatWeightTotal(weights: PlanetDevStatWeightGauge): number {

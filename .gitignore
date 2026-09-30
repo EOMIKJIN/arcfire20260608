@@ -67,6 +67,10 @@ project_structure.txt
 # 장기 모니터 로그·대시보드 런타임 (PC adb 전용 · 앱 무영향)
 tools/long-run-monitor/logs/
 tools/long-run-monitor/logs/**
+tools/play-bot-console/logs/
+tools/play-bot-console/logs/**
+tools/play-bot-console/runs/
+tools/play-bot-console/runs/**
 tools/daily-commit/logs/
 
 # 감사·SIM 날짜별 아카이브 (루트 latest.md / learning-state 등은 유지)

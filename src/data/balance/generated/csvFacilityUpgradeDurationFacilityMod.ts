@@ -5,5 +5,6 @@ export const FacilityUpgradeDurationFacilityMod_FROM_BALANCE_CSV = [
   { "facility_type": "defense_satellite", "install_duration_sec": "1500", "upgrade_duration_mul": "1.05", "instant_complete_mul": "1.05", "notesKo": "v3.1 방위위성" },
   { "facility_type": "laboratory", "install_duration_sec": "1800", "upgrade_duration_mul": "1.10", "instant_complete_mul": "1.10", "notesKo": "v3.1 연구소" },
   { "facility_type": "bar", "install_duration_sec": "1200", "upgrade_duration_mul": "0.98", "instant_complete_mul": "0.98", "notesKo": "v3.1 바" },
+  { "facility_type": "military_command", "install_duration_sec": "1650", "upgrade_duration_mul": "1.05", "instant_complete_mul": "1.05", "notesKo": "v1 사령부 · 위성 행 미변경" },
 ] as const;
 export type FacilityUpgradeDurationFacilityModRow = (typeof FacilityUpgradeDurationFacilityMod_FROM_BALANCE_CSV)[number];

@@ -74,3 +74,18 @@ bar,12,성간 용병 허브,0,3.0,0,0,0,level*3,v3.2
 bar,13,은하 전설 주점,0,3.25,0,0,0,level*3,v3.2
 bar,14,아크파이어 주점,0,3.5,0,0,0,level*3,v3.2
 bar,15,은하 최종 주점,0,3.75,0,0,0,level*3,v3.2
+military_command,1,궤도 전초 사령,0,0,0,0,0,level*3,v1 스탯은 배치 오프셋 · maxW 미참여
+military_command,2,소형 사령부,0,0,0,0,0,level*3,v1
+military_command,3,군사령부,0,0,0,0,0,level*3,v1
+military_command,4,확장 사령부,0,0,0,0,0,level*3,v1
+military_command,5,요새 사령부,0,0,0,0,0,level*3,v1
+military_command,6,정예 사령부,0,0,0,0,0,level*3,v1
+military_command,7,성계 사령부,0,0,0,0,0,level*3,v1
+military_command,8,광역 사령부,0,0,0,0,0,level*3,v1
+military_command,9,전략 사령부,0,0,0,0,0,level*3,v1
+military_command,10,은하 사령부,0,0,0,0,0,level*3,v1
+military_command,11,초월 사령부,0,0,0,0,0,level*3,v1
+military_command,12,성간 요새 사령,0,0,0,0,0,level*3,v1
+military_command,13,은하 사령 초월,0,0,0,0,0,level*3,v1
+military_command,14,아크파이어 사령,0,0,0,0,0,level*3,v1
+military_command,15,은하 최종 사령,0,0,0,0,0,level*3,v1

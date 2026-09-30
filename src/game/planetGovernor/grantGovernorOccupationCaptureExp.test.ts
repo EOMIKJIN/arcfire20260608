@@ -84,4 +84,12 @@ test('시드·반란 등 다른 source — 미지급', () => {
     }),
     false,
   );
+  assert.equal(
+    shouldGrantGovernorOccupationCaptureExp({
+      changed: true,
+      factionSide: 'BLUE',
+      source: 'player_stellium_annex',
+    }),
+    false,
+  );
 });
