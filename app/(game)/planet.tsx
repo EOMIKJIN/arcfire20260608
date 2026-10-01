@@ -718,7 +718,7 @@ export default function PlanetScreen() {
     resolveQuestCombatLock(missionProgresses, activeMissionId),
     planet?.id,
   );
-  /** 적팀(red/orange) 진입 + balance CSV `mainStageCombatEnabled` 게이트, 또는 웨이브 디펜스 활성 */
+  /** 퀘스트 hub_orbit · 웨이브 세션. 상주 함장 착륙 즉시 허브 교전은 폐기(RESIDENT_HUB_MAIN_STAGE_AUTO_COMBAT). */
   const enemyFleetEntered = Boolean(
     player
     && planet

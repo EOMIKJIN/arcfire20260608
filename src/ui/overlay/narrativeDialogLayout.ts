@@ -14,8 +14,8 @@ import { OVERLAY_CENTER_VERTICAL_BIAS_PX } from './overlayPanelLayout';
  * - **대사**: 중단 — 화자명 `[ 이름 ]` + 본문(최대 3줄) · 화자명·본문 왼쪽 1em 동일 · 좌측 정렬
  * - **버튼**: 하단 우측 `[ 다음 ]` / `[ 확인 ]` — 본문 완료 후 활성
  * - **허브·시설**: 고정 높이 3단 카드 · **중앙 핀 단일 규격**(시설 hatch 실측과 무관 · 하단 흰색 bleed 동일)
- * - **분할**: `resolveNarrativeDialogCharsPerLine` + 시각 줄 예산.
- *   작성 `\n` 존중. 한 줄이 폭을 넘으면 엔진이 페이지를 나누고 시각 `\n`을 고정한다.
+ * - **분할**: 박스 가로폭 ÷ CJK em(`fontSizeMd`) − 안전 칸. **CSV 줄바꿈 규칙 없음.**
+ *   인게임 경로는 작성 `\n`을 지우고 엔진만 soft-wrap. 3행 초과는 `[ 다음 ]` 페이지.
  * - **팝업 위치**: 화면 **좌우·세로 중앙 핀** (`anchor: 'center'`) · dim 없음
  * - **오픈/클로징**: 전환 연출 보류. 화면 셸(메뉴·데이터) 완료 후 대화 present (`useUiScreenShell`)
  *
@@ -67,8 +67,11 @@ export const NARRATIVE_DIALOG_LAYOUT = {
   /** 문서흐름 슬롯 너비 토큰(300). 실제 초상 정사각은 `resolveNarrativeDialogPortraitBleedPx` */
   portraitWidth: PORTRAIT_LAYER_HEIGHT,
   fontSizeMd: FONTS.size.md,
-  /** soft-wrap 페이지 추정. RN보다 한 글자 보수적으로 접어 박스 초과를 막는다 */
-  charWidthPx: 12.7,
+  /**
+   * CJK 1칸 = 본문 폰트 크기(14). 예전 12.7은 한글을 과대추정해 RN이 4행으로 접었다.
+   * ASCII는 분할 엔진에서 0.62칸으로 환산한다.
+   */
+  charWidthPx: FONTS.size.md,
   /** 초상 좌우 여백 없음. safe area만 Host가 더함 */
   hostHorizontalPadPx: 0,
   /** 대사·버튼 레이어 내부 좌우 */
@@ -88,7 +91,8 @@ export const NARRATIVE_DIALOG_LAYOUT = {
   textAlign: 'left' as const,
   /** IngameDialogHost · ArcOverlayHost narrative 앵커 */
   popupAnchor: 'center' as const,
-  splitSafetyChars: 1,
+  /** RN 서브픽셀 + 타이핑 커서 1칸. CSV 수동 맞춤 대신 산술로만 접는다 */
+  splitSafetyChars: 2,
   typewriterSpeedMsDefault: 22,
   typewriterSpeedScale: 0.52,
   typewriterSpeedMsMin: 10,

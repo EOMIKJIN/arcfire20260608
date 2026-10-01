@@ -1,4 +1,4 @@
-id,captainId,nameHints,sort,textKo,textEn
+﻿id,captainId,nameHints,sort,textKo,textEn
 scn_ellen,npc_cpt_arcadia_lane_01,엘렌|드 코르|ellen,1,엘렌은 관문 순찰대장이야. 현장은 짧게 끊고 빈칸이 있으면 기록을 밀어.,Ellen is Gate Patrol. She cuts the scene short and pushes the log when a cell is blank.
 scn_hanro,npc_cpt_bar_ret_01,한로|크레인|haro,1,한로는 퇴역 제독이야. 술자리에서 본 얼굴이 목격의 전부고 말은 하게체로 남아.,Haro is a retired admiral. The face at the bar is all he saw. He still talks like an old officer.
 scn_bent,npc_cpt_solar_guard_01,벤트|이사|isa|bent,1,벤트는 항만사령이야. 기록만 넘기고 사건은 여기서 접는 사람이지.,Isa Bent is Harbor Command. She hands the copy and closes the case at the desk.
@@ -39,5 +39,5 @@ scn_toma,npc_cpt_sq_toma_kale,토마|케일|toma,1,토마는 솔 인수야. 봉�
 scn_story_kyle_loren,npc_cpt_story_kyle_loren,카일|로렌|kyle,1,카일은 화력이야. 말은 짧고 함선만 봐. 보고서에 이름이 없어.,Kyle is fire. Short talk. He watches ships. He is not on the report.
 scn_story_mira_schenk,npc_cpt_story_mira_schenk,미라|솅크|mira,1,미라는 장부야. 출처를 물으면 거점이 죽는다고 해.,Mira is the ledger. Ask source and she says the hold dies.
 scn_story_gaon_tela,npc_cpt_story_gaon_tela,가온|텔라|gaon,1,가온은 빈칸을 쫓아. 지워진 행성은 기록이 죽은 거야.,Gaon hunts the blank. An erased world is a dead file.
-scn_story_nyx_holm,npc_cpt_story_nyx_holm,닉스|홀름|nyx|그리하벤,1,닉스는 문지기야. 이름은 안 적어. 그리하벤은 가칭이야.,Nyx keeps the door. No names. Greehaven is a working title.
+scn_story_nyx_holm,npc_cpt_story_nyx_holm,닉스|홀름|nyx|섀도우,1,닉스는 문지기야. 이름은 안 적어. 거점은 섀도우 넥서스야.,Nyx keeps the door. No names. The hold is Shadow Nexus.
 scn_story_seren_vale,npc_cpt_story_seren_vale,세렌|베일|seren,1,세렌은 보더 연락이야. 벨트는 가칭이고 관문은 시리우스야.,Seren is border contact. The belt is an alias. The gate is Sirius.

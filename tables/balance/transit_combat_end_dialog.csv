@@ -1,56 +1,56 @@
 id,kind,factionId,captainId,lineKo,lineEn,notesKo
-default_defeat_01,defeat,*,,"함선이 먼저 꺾였다. 살아서 빠진다. 이건 끝이 아니다.","The hull gave first. I pull out alive. This is not over.",범용 패배 1
-default_defeat_02,defeat,*,,"계산이 틀렸다. 산 쪽이 다음 판을 연다.","The count was wrong. The one who lives opens the next round.",범용 패배 2
-default_defeat_03,defeat,*,,"오늘은 네가 맞았다. 항로는 넓다. 다음에 다시 본다.","You had it today. The lanes are wide. We meet again.",범용 패배 3
-default_flee_01,flee,*,,"그래 등을 보여라. 다음 교차로에서 세운다.","Show me your back. I stop you at the next crossing.",범용 도주 1
-default_flee_02,flee,*,,"도망은 자유다. 연료가 바닥나면 그때 끝낸다.","Running is free. When your fuel dies I finish it.",범용 도주 2
-pirates_defeat_01,defeat,pirates,,"선체가 먼저 죽었다. 나는 산다. 다음 습격에서 갚는다.","The hull died first. I live. I pay this back on the next raid.",해적 패배 1
-pirates_defeat_02,defeat,pirates,,"화물도 명예도 오늘은 네 거다. 살아서 빠지는 게 우리 규칙이다.","Cargo and pride are yours today. Living to leave is our rule.",해적 패배 2
-pirates_defeat_03,defeat,pirates,,"관문 공백을 잘못 짚었다. 기록은 남긴다. 다음엔 더 짧게 친다.","I misread the gate gap. I keep the record. Next time I hit shorter.",해적 패배 3
-pirates_flee_01,flee,pirates,,"등을 보였군. 교차로에서 다시 세운다. 보급은 네가 끊긴다.","You showed your back. I stop you at the crossing. Your supply dies first.",해적 도주 1
-pirates_flee_02,flee,pirates,,"도망은 계산이다. 연료가 마르면 그때 끝내자.","Running is a count. When fuel dries we end it.",해적 도주 2
-scavengers_defeat_01,defeat,scavengers,,"잔해는 남는다. 나는 남는다. 네 배도 곧 잔해가 된다.","Wreckage stays. I stay. Your ship becomes wreckage soon.",잔해 패배 1
-scavengers_defeat_02,defeat,scavengers,,"오늘은 세를 못 받았다. 산 자가 장부를 고친다.","No toll today. The living rewrites the ledger.",잔해 패배 2
-scavengers_defeat_03,defeat,scavengers,,"함선은 버렸다. 규칙은 안 버린다. 다음에 다시 막는다.","I dumped the hull. Not the rule. I block you again.",잔해 패배 3
-scavengers_flee_01,flee,scavengers,,"달아나라. 잔해권은 내 장부다. 통행은 나중에 받는다.","Run. The wreck field is my book. Toll comes later.",잔해 도주 1
-scavengers_flee_02,flee,scavengers,,"등을 보인 함선은 다음에 값으로 적는다.","A ship that shows its back goes on the next bill.",잔해 도주 2
-void_walkers_defeat_01,defeat,void_walkers,,"시야가 깨졌다. 나는 그늘로 빠진다. 신호는 다음에 끊는다.","Sight broke. I slip into shade. Next time I cut the signal.",성운 패배 1
-void_walkers_defeat_02,defeat,void_walkers,,"추격이 끊겼다. 산다. 항로는 다시 흐려진다.","The chase broke. I live. The lane goes dark again.",성운 패배 2
-void_walkers_defeat_03,defeat,void_walkers,,"오늘은 네가 관통했다. 성운은 남는다. 나도 남는다.","You punched through today. The nebula stays. So do I.",성운 패배 3
-void_walkers_flee_01,flee,void_walkers,,"등을 숨겼군. 신호를 끊고 기다린다.","You hid your back. I cut signal and wait.",성운 도주 1
-void_walkers_flee_02,flee,void_walkers,,"도망은 고립이다. 그늘에서 다시 붙는다.","Flight is isolation. I latch on again from the shade.",성운 도주 2
-energy_corp_defeat_01,defeat,energy_corp,,"코일이 먼저 죽었다. 나는 회수한다. 다음 교전에서 값을 받는다.","The coil died first. I recover. I collect on the next fight.",에너지 패배 1
-energy_corp_defeat_02,defeat,energy_corp,,"출력 계산이 틀렸다. 산 쪽이 장부를 고친다.","The output count was wrong. The living fixes the book.",에너지 패배 2
-energy_corp_defeat_03,defeat,energy_corp,,"오늘은 네가 맞았다. 광압은 다시 모은다.","You had it today. I gather the pressure again.",에너지 패배 3
-energy_corp_flee_01,flee,energy_corp,,"등을 보였군. 전력선이 마르면 그때 세운다.","You showed your back. When the line dries I stop you.",에너지 도주 1
-energy_corp_flee_02,flee,energy_corp,,"도망은 손실이다. 다음 교차에서 회수한다.","Flight is loss. I recover at the next crossing.",에너지 도주 2
-archaeologists_defeat_01,defeat,archaeologists,,"유물은 못 가졌다. 목숨은 가졌다. 게이트는 다음에 연다.","No relic today. I kept my life. I open the gate next time.",유적 패배 1
-archaeologists_defeat_02,defeat,archaeologists,,"고대품보다 먼저 함선이 깨졌다. 기록은 남긴다.","The hull broke before the relic. I keep the record.",유적 패배 2
-archaeologists_defeat_03,defeat,archaeologists,,"오늘은 네가 맞았다. 유적은 기다린다. 나도 기다린다.","You had it today. The ruin waits. So do I.",유적 패배 3
-archaeologists_flee_01,flee,archaeologists,,"등을 보였군. 게이트 앞에서 다시 세운다.","You showed your back. I stop you at the gate.",유적 도주 1
-archaeologists_flee_02,flee,archaeologists,,"도망은 약탈을 미룰 뿐이다. 좌표는 남겼다.","Flight only delays the take. I kept the coordinates.",유적 도주 2
-trade_coalition_defeat_01,defeat,trade_coalition,,"이 판은 네가 가져갔다. 장부는 남는다. 다음 정산에서 받는다.","You took this round. The ledger stays. I collect at the next settle.",무역 패배 1
-trade_coalition_defeat_02,defeat,trade_coalition,,"함선은 잃었다. 권리는 안 잃었다. 항로세는 나중에 받는다.","I lost the hull. Not the claim. Lane tax comes later.",무역 패배 2
-trade_coalition_defeat_03,defeat,trade_coalition,,"오늘은 적자다. 산 쪽이 다음 계약을 연다.","Today is red. The living opens the next contract.",무역 패배 3
-trade_coalition_flee_01,flee,trade_coalition,,"등을 보였군. 도주는 위약이다. 다음에 값으로 적는다.","You showed your back. Flight is breach. It goes on the next bill.",무역 도주 1
-trade_coalition_flee_02,flee,trade_coalition,,"도망쳐라. 보급이 끊기면 그때 정산한다.","Run. When supply dies we settle.",무역 도주 2
-black_market_defeat_01,defeat,black_market,,"거래는 깨졌다. 나는 그림자만 남긴다. 다음 밀수에서 갚는다.","The deal broke. I leave only shade. I pay this back on the next run.",암시장 패배 1
-black_market_defeat_02,defeat,black_market,,"함선은 버렸다. 이름은 안 버린다. 시장은 다시 열린다.","I dumped the hull. Not the name. The market opens again.",암시장 패배 2
-black_market_defeat_03,defeat,black_market,,"오늘은 네가 맞았다. 은폐는 다시 깐다.","You had it today. I lay the cloak again.",암시장 패배 3
-black_market_flee_01,flee,black_market,,"등을 숨겼군. 항로는 내가 지운다. 다음에 다시 붙는다.","You hid your back. I erase the lane. I latch on again.",암시장 도주 1
-black_market_flee_02,flee,black_market,,"도망은 값이다. 그림자에서 다시 세운다.","Flight has a price. I stop you from the shade.",암시장 도주 2
-unknown_defeat_01,defeat,unknown,,"관문이 먼저 닫혔다. 나는 남는다. 심연은 기다린다.","The gate shut first. I remain. The abyss waits.",미지 패배 1
-unknown_defeat_02,defeat,unknown,,"오늘은 네가 관통했다. 좌표는 지워지지 않는다.","You punched through today. The coordinates do not erase.",미지 패배 2
-unknown_defeat_03,defeat,unknown,,"함선은 잃었다. 문은 안 잃었다. 다음에 다시 연다.","I lost the hull. Not the door. I open it again.",미지 패배 3
-unknown_flee_01,flee,unknown,,"등을 보였군. 심연은 뒤를 기억한다.","You showed your back. The abyss remembers the rear.",미지 도주 1
-unknown_flee_02,flee,unknown,,"도망은 잠깐이다. 관문 앞에서 다시 세운다.","Flight is brief. I stop you at the gate.",미지 도주 2
-dark_lords_defeat_01,defeat,dark_lords,,"성채가 먼저 흔들렸다. 나는 남는다. 밤은 다시 깔린다.","The keep shook first. I remain. Night falls again.",나이트폴 패배 1
-dark_lords_defeat_02,defeat,dark_lords,,"오늘은 네가 맞았다. 흑야는 기다린다. 나도 기다린다.","You had it today. The black night waits. So do I.",나이트폴 패배 2
-dark_lords_defeat_03,defeat,dark_lords,,"함선은 잃었다. 군주는 안 잃었다. 다음에 포위한다.","I lost the hull. Not the throne. I encircle you next.",나이트폴 패배 3
-dark_lords_flee_01,flee,dark_lords,,"등을 보였군. 밤은 길다. 성채 앞에서 다시 세운다.","You showed your back. Night is long. I stop you at the keep.",나이트폴 도주 1
-dark_lords_flee_02,flee,dark_lords,,"도망은 유예다. 다음에 끝낸다.","Flight is a stay. I end it next.",나이트폴 도주 2
-ancients_defeat_01,defeat,ancients,,"코어가 먼저 식을 줄은 몰랐다. 감시는 계속된다. 왕좌는 남는다.","I did not think the core would cool first. Watch continues. The throne remains.",고대 패배 1
-ancients_defeat_02,defeat,ancients,,"오늘은 네가 맞았다. 영원은 한 판이 아니다.","You had it today. Eternity is not one round.",고대 패배 2
-ancients_defeat_03,defeat,ancients,,"함선은 잃었다. 문은 안 잃었다. 다음에 다시 닫는다.","I lost the hull. Not the door. I shut it again.",고대 패배 3
-ancients_flee_01,flee,ancients,,"등을 보였군. 왕좌는 기다린다. 항로는 다시 멈춘다.","You showed your back. The throne waits. The lane stops again.",고대 도주 1
-ancients_flee_02,flee,ancients,,"도망은 잠깐이다. 코어 앞에서 다시 세운다.","Flight is brief. I stop you at the core.",고대 도주 2
+default_defeat_01,defeat,*,,"배가 먼저 버티질 못했군. 오늘은 물러나지만, 이게 끝이라고 생각하진 마라.","My ship gave out before I did. I'm pulling back, but don't think this is over.",범용 패배 1
+default_defeat_02,defeat,*,,"내가 너를 얕봤던 모양이군. 살아남았으니, 다음은 내 차례다.","Seems I underestimated you. I'm still breathing, so the next move is mine.",범용 패배 2
+default_defeat_03,defeat,*,,"오늘은 네가 이겼다. 우주는 넓어도 항로는 몇 갈래 없지. 또 보게 될 거다.","You win this one. Space is big, but the lanes aren't. We'll run into each other again.",범용 패배 3
+default_flee_01,flee,*,,"그래, 도망쳐 봐라. 다음 항로 교차점에서 기다리고 있을 테니.","Go on, run. I'll be waiting at the next junction.",범용 도주 1
+default_flee_02,flee,*,,"어디까지 달아날 수 있나 보자. 연료가 떨어지는 순간 끝이다.","Let's see how far you get. The moment your fuel runs dry, it's over.",범용 도주 2
+pirates_defeat_01,defeat,pirates,,"젠장, 배가 먼저 나가떨어졌군. 목숨은 붙어 있으니, 이 빚은 꼭 갚아 주마.","Damn it, the ship went down before I did. I'm still alive, and I'll pay you back for this.",해적 패배 1
+pirates_defeat_02,defeat,pirates,,"화물이든 체면이든 오늘은 네가 다 가져가라. 살아서 도망치는 게 우리 방식이거든.","Take the cargo, take the bragging rights. Living to run another day is our way.",해적 패배 2
+pirates_defeat_03,defeat,pirates,,"관문 경비의 빈틈을 잘못 봤어. 네 얼굴은 똑똑히 기억해 두지. 다음엔 금방 끝낸다.","I misjudged the gap in the gate patrol. But I've got your face memorized. Next time, it'll be quick.",해적 패배 3
+pirates_flee_01,flee,pirates,,"꽁무니 빼는 거냐? 보급이 끊기면 네가 먼저 굶을 거다. 교차점에서 보자고.","Turning tail? Your supplies will run dry before mine. See you at the junction.",해적 도주 1
+pirates_flee_02,flee,pirates,,"머리 좀 굴렸군. 좋아, 연료가 바닥날 때까지 쫓아가 주마.","Smart move. Fine, I'll chase you till your tanks run dry.",해적 도주 2
+scavengers_defeat_01,defeat,scavengers,,"고철은 어디에나 굴러다니지. 나도 아직 살아 있고. 네 배도 곧 고철이 될 거다.","There's always scrap floating around. I'm still here too. Your ship will be scrap soon enough.",잔해 패배 1
+scavengers_defeat_02,defeat,scavengers,,"오늘은 통행료를 못 걷었군. 괜찮아, 다음에 이자까지 쳐서 받으면 되니까.","Didn't get my toll today. That's fine. I'll collect it next time, with interest.",잔해 패배 2
+scavengers_defeat_03,defeat,scavengers,,"배는 버려도 이 구역 규칙은 못 버리지. 다음에도 여기서 길을 막을 거다.","I can ditch a ship, but not the rules of this field. I'll be blocking your way again.",잔해 패배 3
+scavengers_flee_01,flee,scavengers,,"달아나 봐야 이 잔해 지대는 내 구역이야. 통행료는 나중에 받으러 가지.","Run all you like, this wreck field is my turf. I'll come for the toll later.",잔해 도주 1
+scavengers_flee_02,flee,scavengers,,"도망친 배는 전부 기억해 둔다. 다음엔 몸값을 두 배로 불러 주지.","I remember every ship that runs. Next time, the price doubles.",잔해 도주 2
+void_walkers_defeat_01,defeat,void_walkers,,"시야가 무너졌군. 난 성운 그늘로 물러나겠다. 다음엔 네 통신부터 끊어 주지.","My sight's gone. I'll fade back into the nebula's shadow. Next time, your comms go dark first.",성운 패배 1
+void_walkers_defeat_02,defeat,void_walkers,,"놓쳤군. 그래도 살아는 있다. 항로는 곧 다시 안개에 잠길 거야.","Lost you. But I'm alive. The lanes will sink back into the haze soon enough.",성운 패배 2
+void_walkers_defeat_03,defeat,void_walkers,,"이번엔 네가 성운을 뚫고 나갔군. 하지만 성운은 사라지지 않아. 나도 마찬가지고.","You broke through the nebula this time. But the nebula isn't going anywhere. Neither am I.",성운 패배 3
+void_walkers_flee_01,flee,void_walkers,,"몸을 숨겼나. 좋아, 신호를 끄고 조용히 기다리지.","Gone to ground, have you? Fine. I'll go silent and wait.",성운 도주 1
+void_walkers_flee_02,flee,void_walkers,,"혼자 달아나면 고립될 뿐이야. 그늘 속에서 다시 따라붙겠다.","Run off alone and you're just isolated. I'll pick up your trail again from the shadows.",성운 도주 2
+energy_corp_defeat_01,defeat,energy_corp,,"출력 코일이 먼저 나갔군요. 일단 철수합니다. 이번 손실은 다음 교전에서 청구하겠습니다.","Our output coils failed first. We are withdrawing. This loss will be billed to you next engagement.",에너지 패배 1
+energy_corp_defeat_02,defeat,energy_corp,,"출력 산정에 착오가 있었군요. 보고서를 고쳐 쓰고 나면, 결과도 달라질 겁니다.","There was an error in our output estimates. Once the report is revised, so will the outcome be.",에너지 패배 2
+energy_corp_defeat_03,defeat,energy_corp,,"이번 분기는 귀하의 승리로 기록하죠. 광압 충전이야 다시 하면 그만입니다.","We'll log this quarter as your win. Recharging the photon arrays is simply a matter of time.",에너지 패배 3
+energy_corp_flee_01,flee,energy_corp,,"철수하시는군요. 전력 공급이 끊기는 시점에 다시 찾아뵙겠습니다.","Withdrawing, I see. We'll call on you again the moment your power supply fails.",에너지 도주 1
+energy_corp_flee_02,flee,energy_corp,,"도주하신다면 손실만 커질 뿐입니다. 다음 교차 지점에서 정산하죠.","Running only increases your losses. We'll settle accounts at the next junction.",에너지 도주 2
+archaeologists_defeat_01,defeat,archaeologists,,"유물은 놓쳤지만 목숨은 건졌군. 그 관문은 언젠가 반드시 내 손으로 연다.","I lost the relic but kept my life. That gate, I will open it myself, someday.",유적 패배 1
+archaeologists_defeat_02,defeat,archaeologists,,"유물보다 내 배가 먼저 부서지다니. 그래도 발굴 기록은 전부 챙겨 간다.","My ship shattered before the artifact did. Still, I'm taking every excavation record with me.",유적 패배 2
+archaeologists_defeat_03,defeat,archaeologists,,"오늘은 물러서지. 유적은 수천 년을 기다렸어. 나도 좀 더 기다릴 수 있지.","I'll step back today. These ruins have waited thousands of years. I can wait a little longer.",유적 패배 3
+archaeologists_flee_01,flee,archaeologists,,"도망치는 건가. 관문 앞에서 다시 만나게 될 거다.","Running, are you? We'll meet again at the gate.",유적 도주 1
+archaeologists_flee_02,flee,archaeologists,,"달아나 봐야 발굴이 조금 늦어질 뿐이야. 좌표는 이미 기록해 뒀다.","Running only delays the dig. I've already logged the coordinates.",유적 도주 2
+trade_coalition_defeat_01,defeat,trade_coalition,,"이번 거래는 당신이 이겼소. 하지만 장부는 남으니, 다음 정산 때 받아 가겠소.","You won this deal. But the ledger stays open. I'll collect at the next settlement.",무역 패배 1
+trade_coalition_defeat_02,defeat,trade_coalition,,"배는 잃었어도 이 항로의 권리까지 잃은 건 아니오. 통행세는 나중에 받겠소.","I may have lost my ship, but not my rights to this lane. The toll will be paid later.",무역 패배 2
+trade_coalition_defeat_03,defeat,trade_coalition,,"오늘 장사는 적자로군. 뭐, 살아 있으면 다음 계약은 또 맺으면 되오.","Today's a loss on the books. Well, if I'm alive, there's always the next contract.",무역 패배 3
+trade_coalition_flee_01,flee,trade_coalition,,"도주는 계약 위반이오. 위약금은 다음에 똑똑히 청구하겠소.","Fleeing is a breach of contract. You'll be billed the penalty in full.",무역 도주 1
+trade_coalition_flee_02,flee,trade_coalition,,"가 보시오. 보급이 끊기는 날, 그때 정산하도록 하지.","Go on, then. The day your supplies run out, we'll settle up.",무역 도주 2
+black_market_defeat_01,defeat,black_market,,"거래는 틀어졌군. 난 흔적 없이 사라지지. 이 빚은 다음 밀수 때 갚아 주마.","Deal's off. I'll vanish without a trace. I'll square this debt on the next run.",암시장 패배 1
+black_market_defeat_02,defeat,black_market,,"배야 또 구하면 그만이지만, 내 이름값은 못 버려. 시장은 다시 열릴 거다.","Ships can be replaced. My reputation can't. The market will open again.",암시장 패배 2
+black_market_defeat_03,defeat,black_market,,"이번엔 네가 한 수 위였군. 위장막은 다시 치면 그만이야.","You were a step ahead this time. I'll just put the cloak back up.",암시장 패배 3
+black_market_flee_01,flee,black_market,,"숨어 봤자야. 항로 기록은 내가 지워 버릴 테니, 다시 따라붙지.","Hiding won't help. I'll wipe the lane logs myself and pick you up again.",암시장 도주 1
+black_market_flee_02,flee,black_market,,"도망에도 대가는 따르는 법이지. 그림자 속에서 다시 길을 막아 주마.","Running has its price. I'll cut you off again from the shadows.",암시장 도주 2
+unknown_defeat_01,defeat,unknown,,"관문이 먼저 닫혀 버렸다… 그래도 나는 사라지지 않는다. 심연은 언제까지고 기다린다.","The gate closed first... but I do not vanish. The abyss waits. It always waits.",미지 패배 1
+unknown_defeat_02,defeat,unknown,,"이번엔 네가 꿰뚫고 지나갔군. 하지만 그 좌표는 결코 지워지지 않는다.","You pierced through this time. But those coordinates can never be erased.",미지 패배 2
+unknown_defeat_03,defeat,unknown,,"껍데기는 잃었다. 하지만 문은 아직 내 곁에 있다. 다음에 다시 열리리라.","I have lost the shell. But the door remains with me. It will open again.",미지 패배 3
+unknown_flee_01,flee,unknown,,"돌아서는구나. 심연은 네 뒷모습을 기억할 것이다.","You turn away. The abyss will remember the sight of your back.",미지 도주 1
+unknown_flee_02,flee,unknown,,"달아나 봐야 잠시뿐. 관문 앞에서 다시 만나게 되리라.","Your flight is only for a moment. We will meet again before the gate.",미지 도주 2
+dark_lords_defeat_01,defeat,dark_lords,,"성채가 먼저 흔들리다니, 치욕이로군. 허나 나는 무너지지 않소. 밤은 다시 내린다.","My citadel faltered first, a disgrace. But I do not fall. Night will descend again.",나이트폴 패배 1
+dark_lords_defeat_02,defeat,dark_lords,,"오늘은 그대에게 양보하지. 흑야는 서두르지 않소. 나 또한 그러하고.","I yield to you today. The long night is in no hurry. Nor am I.",나이트폴 패배 2
+dark_lords_defeat_03,defeat,dark_lords,,"함선 한 척쯤이야. 군주의 자리는 그대로요. 다음엔 사방에서 에워싸 주지.","One ship is nothing. The throne remains mine. Next time, I will surround you on all sides.",나이트폴 패배 3
+dark_lords_flee_01,flee,dark_lords,,"등을 보이는가. 밤은 길다오. 성채 앞에서 다시 발을 묶어 주겠소.","You turn your back? The night is long. I will hold you fast before my citadel.",나이트폴 도주 1
+dark_lords_flee_02,flee,dark_lords,,"달아나 봐야 결말이 잠시 미뤄질 뿐이오. 끝은 다음에 짓지.","Fleeing merely postpones the end. We will finish this another time.",나이트폴 도주 2
+ancients_defeat_01,defeat,ancients,,"코어가 먼저 식을 줄은 몰랐구나. 그래도 감시는 멈추지 않는다. 왕좌는 여전히 남는다.","I did not foresee the core cooling first. Yet the watch does not end. The throne endures.",고대 패배 1
+ancients_defeat_02,defeat,ancients,,"오늘은 너의 승리다. 허나 영원은 한 번의 싸움으로 끝나지 않는다.","Today is yours. But eternity is not decided by a single battle.",고대 패배 2
+ancients_defeat_03,defeat,ancients,,"그릇은 잃었어도 문은 여전히 우리 것이다. 때가 되면 다시 닫으리라.","The vessel is lost, but the door is still ours. When the time comes, it will close again.",고대 패배 3
+ancients_flee_01,flee,ancients,,"물러가는가. 왕좌는 기다릴 것이고, 항로는 다시 고요해지리라.","You withdraw. The throne will wait, and the lanes will fall silent once more.",고대 도주 1
+ancients_flee_02,flee,ancients,,"피할 수 있는 건 잠시뿐이다. 코어 앞에서 다시 마주하게 되리라.","You can evade us only for a while. We will face each other again before the core.",고대 도주 2

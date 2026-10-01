@@ -105,6 +105,21 @@ test('인접 블루 또는 독립국이면 접선', () => {
   assert.equal(hasStelliumAnnexFriendlyAdjacency('sirius', {}), false);
 });
 
+test('인접 player_home이면 접선 — 아르카디아 부트스트랩', () => {
+  const holds: Record<string, PlanetClanHold> = {
+    arcadia_prime: {
+      planetId: 'arcadia_prime',
+      systemId: 'arcadia',
+      occupierClanId: 'balance_seed_faction_blue',
+      kind: 'player_home',
+      capturedAt: 1,
+    } as PlanetClanHold,
+  };
+  assert.equal(hasStelliumAnnexFriendlyAdjacency('solar_port', holds), true);
+  assert.equal(hasStelliumAnnexFriendlyAdjacency('vega_outpost', holds), true);
+  assert.equal(hasStelliumAnnexFriendlyAdjacency('sirius', holds), false);
+});
+
 test('웨이브 중립화 보호창 — 만료 전 NPC 점유 보류', () => {
   const hold = {
     planetId: 'p',

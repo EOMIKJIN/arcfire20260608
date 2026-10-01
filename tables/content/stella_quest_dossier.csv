@@ -22,18 +22,18 @@ sqd_story_007,story_007,1,빚진 자의 증언. 다렐 소사가 라이트홀드
 sqd_story_008,story_008,1,"라이트홀드가 남긴 세 이름. 소사가 카일 로렌, 미라 솅크, 가온 텔라를 정식으로 부른다. 세 사람은 아직 합류하지 않았다.","Three Names Light Hold Left. Sosa formally names Kyle Loren, Mira Schenk, and Gaon Tela. They have not joined yet."
 sqd_story_009,story_009,1,"3인 합류. 아이언워치에서 카일, 캘리스에서 미라를 차례로 만난다. 가온은 하벤포드에서 기다린다.","Three Join. Meet Kyle at Iron Watch, then Mira at Callis. Gaon waits at Havenford."
 sqd_story_010,story_010,1,교차하는 항로. 하벤포드에서 가온 텔라를 태운 뒤 오메가 허브에서 넷의 증거를 대조한다.,"Crossing Lanes. Pick up Gaon Tela at Havenford, then match proof with the four at Omega Hub."
-sqd_story_011,story_011,1,이면 협정. 베가 전멸과 이어지는 이면 협정 증거를 확보한다. 궤도 잔당 1척을 걷어낸다.,The Backside Accord. Secure proof of the backside accord that ties to the Vega wipe. Clear one remnant escort.
-sqd_story_012,story_012,1,반역자의 이름. 이면 협정 폭로 뒤 반역 누명이 씌워진다. 아르카디아 궤도에서 돌파한 뒤 넷이 정식으로 한 편이 된다.,"The Traitor’s Name. After the accord leak, a traitor brand lands. Break Arcadia orbit, then the four join in form."
-sqd_story_013,story_013,1,도피처를 찾아서. 수배 방송을 피해 섀도우 넥서스 마켓(그리하벤)으로 숨는다. 문 앞의 이방인이 거점을 연다.,Finding Sanctuary. Hide from the wanted band at Shadow Nexus Market (Greehaven). A stranger at the door opens the hold.
-sqd_story_014,story_014,1,첫 신뢰. 그리하벤에서 넷이 거점을 연다. 첫 신뢰와 추격의 그림자가 동시에 붙는다.,First Trust. The four open a hold in Greehaven. First trust and a chase shadow arrive together.
-sqd_story_015,story_015,1,두 번째 초대. 세렌 벨트 가칭은 시리우스 보더 관문으로 붙인다. 초대가 함정인지 가린다.,The Second Invite. The Seren Belt alias maps to Sirius Border. Decide if the invite is a trap.
-sqd_story_016,story_016,1,두 개의 적. 크림슨 레기온이 거점을 추적한다. 크림슨 구역에서 그림자 1척을 확인하고 돌아온다.,Two Enemies. The Crimson Legion tracks the hold. Confirm one shadow at Crimson Zone and return.
+sqd_story_011,story_011,1,이면 협정. 캘리스에서 소개 명령서를 열고 체포령 초안을 확인한다. 전투는 없다.,The Backside Accord. At Callis, open the introduction order and confirm the draft warrant. No combat.
+sqd_story_012,story_012,1,반역자의 이름. 이면 협정 폭로 뒤 반역 누명이 씌워진다. 시리우스 보더에서 추격 1척을 끊고 섀도우로 향한다.,"The Traitor’s Name. After the accord leak, a traitor brand lands. Cut 1 pursuit ship at Sirius Border, then run for Shadow."
+sqd_story_013,story_013,1,도피처를 찾아서. 수배 방송을 피해 섀도우 넥서스에 닿는다. 문은 거부하고 증명을 요구한다.,Finding Sanctuary. Hide from the wanted band at Shadow Nexus. The door refuses landing and asks for proof.
+sqd_story_014,story_014,1,첫 신뢰. 크림슨 궤도 약탈선 1척을 격파한 뒤에야 섀도우 넥서스 거점이 열린다.,First Trust. The Shadow Nexus hold opens only after one raid ship falls in Crimson orbit.
+sqd_story_015,story_015,1,함정인가 기회인가. 세렌 벨트 별칭은 시리우스 보더 관문이다. 초대가 함정인지 가린다.,Trap or Chance. The Seren Belt alias maps to Sirius Border. Decide if the invite is a trap.
+sqd_story_016,story_016,1,외곽의 잔해. 시리우스 보더 외곽 잔해가 크림슨 표식을 남긴다. 본대 침공은 아니다.,Rim Wreckage. Wreckage on the Sirius rim carries a Crimson mark. Not a main-force invasion.
 sqd_story_017,story_017,1,검은 시장의 손. 거점 유지를 위한 자금을 섀도우 마켓 장부로 마련한다. 출처는 묻지 않는다.,The Black Market Hand. Raise hold funds on the Shadow Market ledger. Do not ask source.
-sqd_story_018,story_018,1,요새의 뼈대. 그리하벤 방호와 함대 뼈대를 카일과 가온이 나눈다. 이름 없는 동맹의 골격이 선다.,Bones of the Fort. Kyle and Gaon split Greehaven plate and fleet bone. The nameless alliance skeleton stands.
+sqd_story_018,story_018,1,"요새의 뼈대. 가온이 방호를, 카일이 함대 뼈대를 나눈다. 오메가 교차 항로를 확인하면 골격이 선다.","Bones of the Fort. Gaon takes plate, Kyle takes fleet bone. Confirm the Omega crossing and the skeleton stands."
 sqd_story_019,story_019,1,내부의 균열. 화력과 장부 노선이 갈라진다. 엔딩 분기의 첫 떡밥만 남기고 거점은 유지한다.,The Inner Crack. Fire and ledger lines split. Leave only the first ending-branch crumb. The hold stands.
 sqd_story_020,story_020,1,진실 혹은 이간계. 내부 배신 소문이 돈다. 장부로 가려 내고 거점을 유지한다.,Truth or Wedge. A betrayal rumor runs inside. Sort it with the ledger and keep the hold.
-sqd_story_021,story_021,1,그리하벤 공방전. 스텔리움 진압함대 조우를 1척으로 대행한다. 거점을 지켜 낸다.,The Greehaven Siege. The Stellium suppression fleet is stood in as one ship. Hold the hide.
-sqd_story_022,story_022,1,첫 깃발. 이름 없는 동맹이 결성된다. 챕터1 본문의 結. 세부는 이후 수정한다.,The First Flag. The nameless alliance forms. Close of Chapter 1 body. Details can be revised later.
+sqd_story_021,story_021,1,섀도우 넥서스 공방전. 블러드 필드에서 진압선 1척을 격파하고 주민이 이름을 묻는다.,The Shadow Nexus Siege. Stand down one suppression ship at Blood Field. A resident asks what we are called.
+sqd_story_022,story_022,1,깃발 없는 승리. 이름 없는 동맹이 선다. 국가명은 없다. 챕터1은 여기서 접힌다.,A Victory Without Flags. A nameless alliance stands. No nation name. Chapter 1 folds here.
 sqd_story_023,story_023,1,깃발의 메아리. 하벤포드에 이름 없는 동맹의 메아리가 닿는다. 세부는 이후 수정한다.,Echo of the Flag. An echo of the nameless alliance reaches Havenford. Details can be revised later.
 sqd_story_024,story_024,1,기록의 사본. 오메가 허브에 동맹 장부 사본을 맡긴다.,A Copy of the Record. Leave a copy of the alliance ledger at Omega Hub.
 sqd_story_025,story_025,1,버려진 보고서. 아이언 잔해권에서 라이트홀드 유해 보고서의 빈칸을 확인한다.,The Abandoned Report. Confirm the blank in a Light Hold remains report at Iron remnant.
@@ -41,4 +41,4 @@ sqd_story_026,story_026,1,코발의 침묵. 아르카디아에서 코발이 동�
 sqd_story_027,story_027,1,소사의 조건. 드라코에서 소사가 동맹에 타지 않는 조건을 남긴다.,"Sosa’s Condition. At Draco, Sosa leaves the condition that he will not board the alliance."
 sqd_story_028,story_028,1,크림슨의 다음 손. 크림슨이 거점을 다시 산다. 추적선 1척을 끊고 돌아온다.,Crimson’s Next Hand. Crimson buys the hold again. Cut one tracker and return.
 sqd_story_029,story_029,1,이름 없는 선서. 거점에서 이름 없는 선서를 다시 확인한다. 세부는 이후 수정한다.,The Nameless Oath. Reconfirm the nameless oath at the hold. Details can be revised later.
-sqd_story_030,story_030,1,은폐된 진실의 끝. 챕터1 클로저. 은폐된 진실은 동맹 위에서 잠시 접힌다. 챕터2에서 다시 열린다.,End of Concealed Truth. Chapter 1 closer. Concealed truth folds for a beat on the alliance. It opens again in chapter two.
+sqd_story_030,story_030,1,은폐된 진실의 끝. 챕터1 예비 칸. 본선 클로저는 q22다.,End of Concealed Truth. Chapter 1 reserve cell. The spine closer is q22.

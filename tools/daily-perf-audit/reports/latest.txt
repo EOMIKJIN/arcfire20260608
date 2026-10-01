@@ -1,4 +1,4 @@
-Daily audit — 2026-09-30T15:00:11.405Z
+Daily audit — 2026-10-01T15:00:09.479Z
 
 TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -39,9 +39,10 @@ build-arc-core-chat-tables: wrote persona/operator-persona/speakers/topics/knowl
   [info] obj_tq_anom_01_t: tq_anom 위협 — combat_ops 미강제 (STAGE 3 HOLD · 바 tq 비침범)
 === audit:mission-quest-placements ===
 buy_goods objectives: 30
-defeat_enemy objectives: 42
-placements: 21 · combat_ops: 41
+defeat_enemy objectives: 41
+placements: 21 · combat_ops: 40
 tq_* bar templates: 22 · tq_anom world-event: 1 · bar planets: 18
+catalog combat pairs checked: 32 · delivery: 21
 
 PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤트·보상 item 정적 검증 OK
 
@@ -51,23 +52,23 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 Largest TS/TSX under `src/` + `app/` (bytes)
 
 - 660,019 — `src/data/generated/galaxySystems100.generated.ts`
-- 516,795 — `src/data/generated/csvStoryScenes.ts`
-- 500,176 — `src/data/generated/csvNpcCaptains.ts`
-- 482,349 — `src/data/generated/csvNpcCapitalShips.ts`
+- 500,299 — `src/data/generated/csvNpcCaptains.ts`
+- 496,492 — `src/data/generated/csvStoryScenes.ts`
+- 482,337 — `src/data/generated/csvNpcCapitalShips.ts`
 - 383,335 — `src/data/generated/csvItemDefs.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
-- 173,922 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
-- 161,946 — `src/data/generated/csvMissions.ts`
+- 173,939 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 161,657 — `src/data/generated/csvMissions.ts`
 - 123,741 — `src/i18n/locales/ko.ts`
-- 121,317 — `src/data/generated/csvMainStorySpine.ts`
+- 121,265 — `src/data/generated/csvMainStorySpine.ts`
 - 112,718 — `src/i18n/locales/en.ts`
-- 104,469 — `app/(game)/worldmap.tsx`
-- 95,382 — `app/(game)/planet.tsx`
+- 104,540 — `app/(game)/worldmap.tsx`
+- 95,403 — `app/(game)/planet.tsx`
 - 90,835 — `src/data/generated/csvBarPatronage.ts`
 - 71,316 — `src/data/balance/generated/csvSynthSystemColonization.ts`
 - 71,070 — `src/data/generated/csvWeapons.ts`
 - 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
-- 65,105 — `src/data/generated/csvStellaQuestAside.ts`
+- 63,013 — `src/data/generated/csvStellaQuestAside.ts`
 
 Planet hub eager `src/combat` import (should be absent)
 

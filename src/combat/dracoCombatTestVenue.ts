@@ -2,8 +2,8 @@
  * 드라코 성운 — 임시 전투 테스트 베뉴 (2026-09-11)
  *
  * 2026-09-16 시험 종료. `DRACO_COMBAT_TEST_VENUE_ENABLED=false` —
- * 착륙 강제 9웨이브·시험 동료 4척 없음. 전투는 play_scenario CSV
- * (`targetCombatLevel=9` · `mainStageCombatEnabled` · `draco_boss`) 정본.
+ * 착륙 강제 9웨이브·시험 동료 4척 없음. 상주 허브 자동교전(`draco_boss`)은 폐기.
+ * 분쟁/어썰트 웨이브와 퀘스트 hub_orbit만 유지.
  * 재시험 시에만 아래 스위치를 true.
  *
  * 에셋 import 없음 — 트리거·시드 테스트에서 tsx 직접 실행 가능.

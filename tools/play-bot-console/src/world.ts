@@ -72,6 +72,7 @@ export function seedWorld(input: { runId: string; persona: PersonaId }): WorldSt
       tcl: lookupTcl(seed.planetId),
     };
   }
+  seedArcadiaAsPlayerHome(planets);
 
   return {
     runId: input.runId,
@@ -133,7 +134,20 @@ export function seedWorld(input: { runId: string; persona: PersonaId }): WorldSt
     questBuyCount: 0,
     focusStats: seedFocusStats(FOCUS_PLANET_ID),
     devJob: null,
+    earlyFeelSec: 0,
+    earlyFeelClosed: false,
+    earlyFeelOpeningApplied: false,
+    earlyFeelReported: false,
+    earlyFeelBeats: [],
   };
+}
+
+function seedArcadiaAsPlayerHome(planets: Record<string, PlanetSlot>): void {
+  const home = planets.arcadia_prime;
+  if (!home) return;
+  home.kind = 'player_home';
+  home.occupierClanId = BLUE_CLAN;
+  home.neutralizedAt = null;
 }
 
 export function markMissionDone(world: WorldState, id: string): void {
@@ -170,6 +184,7 @@ export function toHolds(world: WorldState): Record<string, PlanetClanHold> {
 
 export function paintOf(slot: PlanetSlot): FactionPaint {
   if (slot.kind === 'player_independent') return 'INDEPENDENT';
+  if (slot.kind === 'player_home') return 'BLUE';
   const side = resolveHoldFactionSide(slot.occupierClanId);
   if (side === 'BLUE') return 'BLUE';
   if (side === 'RED') return 'RED';

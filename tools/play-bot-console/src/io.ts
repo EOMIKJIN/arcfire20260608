@@ -66,6 +66,16 @@ export function beginRecording(): void {
   fs.writeFileSync(recordingFlag(), `on\nstartedAt=${new Date().toISOString()}\n`, 'utf8');
 }
 
+export function writeCurrentRun(runId: string): void {
+  safeWriteFile(path.join(logsDir(), 'PLAYBOT_CURRENT_RUN.txt'), `${runId}\n`);
+}
+
+/** 가시 콘솔용 스냅샷. 저널 append와 파일을 분리해 창이 잠기지 않게 한다. */
+export function writeLiveView(paths: RunPaths, world: WorldState, mudTail: readonly string[]): void {
+  if (!recording) return;
+  safeWriteFile(paths.mudLatest, `${formatHud(world)}\n\n${mudTail.join('\n')}\n`);
+}
+
 export function endRecording(reason = 'stop'): void {
   flushJournalWrites();
   if (!recording) return;

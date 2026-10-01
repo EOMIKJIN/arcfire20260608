@@ -6,6 +6,7 @@ import type { Rng } from './rng';
 import type { JournalEntry, WorldState } from './types';
 import { BLUE_CLAN, NEUTRAL_CLAN, RED_CLAN } from './types';
 import { paintOf, toHolds } from './world';
+import { resolvePlaybotNeutralizeProtectMs } from './endFront';
 
 function adjacentHas(world: WorldState, systemId: string, side: 'BLUE' | 'RED'): boolean {
   const adj = listAdjacentSystemIds(systemId);
@@ -39,7 +40,7 @@ export function runTerritorialDay(world: WorldState, rng: Rng): JournalEntry[] {
       shouldHoldNpcOccupyAfterPlayerNeutralize({
         hold,
         nowMs: world.nowMs,
-        protectMs: policy.protectNeutralizedMs,
+        protectMs: resolvePlaybotNeutralizeProtectMs(policy.protectNeutralizedMs),
       })
     ) {
       out.push(event(world, 'TERRITORIAL', `${slot.labelKo} 중립 보호창 — NPC 점령 보류`));
@@ -55,7 +56,7 @@ export function runTerritorialDay(world: WorldState, rng: Rng): JournalEntry[] {
 
     if (paint === 'NEUTRAL') {
       const redChance = (redAdj ? 0.12 : 0.04) + contestedBonus;
-      const blueChance = blueAdj ? 0.08 : 0.02;
+      const blueChance = blueAdj ? 0.16 : 0.02;
       const roll = rng();
       if (roll < redChance) {
         slot.occupierClanId = RED_CLAN;

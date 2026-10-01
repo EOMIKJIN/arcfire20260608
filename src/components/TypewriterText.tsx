@@ -3,8 +3,9 @@
 // ============================================================
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Platform, Text, TextStyle } from 'react-native';
+import { Platform, Text, TextStyle, View } from 'react-native';
 import { COLORS, FONTS } from '../utils/theme';
+import { mapTypewriterDisplayToLineSlots } from './typewriterLineSlots';
 import { resolveTypewriterResetState, typewriterEpoch } from './typewriterResetState';
 
 interface TypewriterTextProps {
@@ -16,6 +17,11 @@ interface TypewriterTextProps {
   /** 영화 프롤로그 등 어두운 배경용 커서 색 */
   cursorColor?: string;
   numberOfLines?: number;
+  /**
+   * 인게임 대사창 — 고정 N행. 행마다 numberOfLines=1.
+   * 엔진이 이미 폭에 맞게 접었으므로 RN이 다시 접지 않는다. cinematic은 생략.
+   */
+  lineSlots?: number;
   /** true면 애니메이션 없이 즉시 전체 텍스트를 표시(스킵 후 마지막 페이지 등) */
   skipAnimation?: boolean;
   /** false면 rAF를 시작하지 않음 — 오버레이 오픈 시퀀스 동안 */
@@ -32,6 +38,7 @@ export function TypewriterText({
   cursor = true,
   cursorColor,
   numberOfLines,
+  lineSlots,
   skipAnimation = false,
   active = true,
   resetToken,
@@ -119,12 +126,39 @@ export function TypewriterText({
     };
   }, [epoch, active, text, speed, skipAnimation]);
 
+  const cursorEl =
+    cursor && active && !done ? (
+      <Text style={{ color: cursorColor ?? COLORS.ink_mid }}>▌</Text>
+    ) : null;
+  const slotCount = lineSlots != null && lineSlots > 0 ? lineSlots | 0 : 0;
+  if (slotCount > 0) {
+    const slots = mapTypewriterDisplayToLineSlots(displayed, slotCount);
+    const typingSlot = Math.min(
+      Math.max(0, displayed.split('\n').length - 1),
+      slotCount - 1,
+    );
+    const lineHeight = typeof style?.lineHeight === 'number' ? style.lineHeight : 26;
+    return (
+      <View style={{ alignSelf: 'stretch', width: '100%' }}>
+        {slots.map((line, i) => (
+          <Text
+            key={i}
+            style={[defaultStyle, style, { height: lineHeight }]}
+            numberOfLines={1}
+            ellipsizeMode="clip"
+          >
+            {line}
+            {i === typingSlot ? cursorEl : null}
+          </Text>
+        ))}
+      </View>
+    );
+  }
+
   return (
     <Text style={[defaultStyle, style]} numberOfLines={numberOfLines}>
       {displayed}
-      {cursor && active && !done ? (
-        <Text style={{ color: cursorColor ?? COLORS.ink_mid }}>▌</Text>
-      ) : null}
+      {cursorEl}
     </Text>
   );
 }

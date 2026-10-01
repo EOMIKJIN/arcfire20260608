@@ -149,7 +149,7 @@ const PAGE_NEW = {
   'story_dialog_story_003\t1': P(['네 이름이 사건 기록에 올라 있다.', '오늘부로 함장 대행이다.', '베가 전초기지로 가라.']),
   'story_dialog_obj_story_003_a\t0': P(['인수인계할 시간은 없다.', '함대는 이미 베가에 가 있다.', '늦으면 국경이 먼저 무너진다.']),
   'story_dialog_obj_story_003_a\t1': P(['관문 통과는 엘렌이 열어 준다.', '정찰 보고는 믿지 마라.', '살아 돌아오는 것이 명령이다.']),
-  'story_dialog_obj_story_003_b\t0': P(['대행 출정 허가가 떨어졌다.', '관문은 열어 두겠다.', '베가 전초기지가 곧 국경이다.']),
+  'story_dialog_obj_story_003_b\t0': P(['위임된 지휘권 허가가 떨어졌다.', '관문은 열어 두겠다.', '베가 전초기지가 곧 국경이다.']),
   'story_dialog_obj_story_003_b\t1': P(['정찰이 보고한 규모를 믿지 마라.', '도착하는 순간 전열이 바뀐다.', '통신은 짧게 끊어라.']),
 
   'story_dialog_obj_story_004_b\t1': P(['아르카디아로 귀환해라.', '사령부가 기다리고 있다.', '전사자 수는 나중에 센다.']),
@@ -266,7 +266,7 @@ const MISSION_DESC = {
     '오늘은 출격도 임무도 없다. 아우라 국경의 술집에서 칼 릿지와 리라 몬 곁에 잠시 앉는다. 솔라의 빈 정박 자리 소문은 술자리 이야기로 흘려보내고, 하루는 여기서 접는다.',
 };
 
-const MISSION_TITLE = { story_003: '대행 출정' };
+const MISSION_TITLE = { story_003: '위임된 지휘권' };
 
 const OBJ_DESC = {
   obj_001_a: '베가 전초기지에 진입하라',
@@ -281,7 +281,7 @@ const OBJ_DESC = {
   obj_story_002_b: '미네르바 술집에서 밀수조 단서를 확보하라',
   obj_story_002_c: '미네르바 외곽의 호위 해적 1척을 격파하라',
   obj_story_002_e: '광산 총감독 니카 스톤에게 지휘 공백을 확인하라',
-  obj_story_003_b: '엘렌에게 대행 출정 지시를 확인하라',
+  obj_story_003_b: '엘렌에게 위임된 지휘권을 확인하라',
   obj_story_004_a: '베가 국경을 덮친 기습 함대를 격파하라',
   obj_story_004_b: '베가 순찰지휘관 하르만 돌에게 생존을 보고하라',
   obj_story_006_a: '드라코 요새의 호위 1척을 격파하라',
@@ -392,7 +392,7 @@ const iStitle = colIndex(sH, 'titlePlaceholderKo');
 let spineChanged = 0;
 for (let r = 1; r < spine.rows.length; r += 1) {
   if (spine.rows[r][iSbind] === 'story_003' && spine.rows[r][iStitle] === '대타 출정') {
-    spine.rows[r][iStitle] = '대행 출정';
+    spine.rows[r][iStitle] = '위임된 지휘권';
     spineChanged += 1;
   }
 }
@@ -404,7 +404,7 @@ const iStBind = colIndex(stH, 'bindMissionId');
 const iStTitle = colIndex(stH, 'titlePlaceholderKo');
 for (let r = 1; r < steps.rows.length; r += 1) {
   if (steps.rows[r][iStBind] === 'story_003' && steps.rows[r][iStTitle] === '대타 출정') {
-    steps.rows[r][iStTitle] = '대행 출정';
+    steps.rows[r][iStTitle] = '위임된 지휘권';
     spineChanged += 1;
   }
 }
@@ -415,7 +415,7 @@ const scH = scenes.rows[0];
 const iScId = colIndex(scH, 'id');
 const iScTitle = colIndex(scH, 'displayName');
 const SCENE_TITLE = {
-  story_dialog_story_003: '메인스토리·대행 출정',
+  story_dialog_story_003: '메인스토리·위임된 지휘권',
   story_dialog_obj_s034_e: '서브·지워진 식별 신호',
   story_dialog_obj_s035_a: '서브·식별 신호 대조',
 };

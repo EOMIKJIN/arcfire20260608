@@ -44,6 +44,7 @@ function isEligibleTransitHostileCaptain(
   hasShip: (shipId: string) => boolean,
   allowedInCombat: (captainId: string) => boolean,
 ): boolean {
+  if (captain.questOnly) return false;
   if (captain.operationalState !== 'combat' && captain.operationalState !== 'general') return false;
   const faction = (captain.factionId ?? '').trim();
   if (!faction || !TRANSIT_HOSTILE_FACTION_IDS.has(faction)) return false;

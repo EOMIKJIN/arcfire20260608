@@ -12,7 +12,9 @@ import {
   endRecording,
   ensureRunPaths,
   isRecording,
+  writeCurrentRun,
   writeFinalKpi,
+  writeLiveView,
   writeStatus,
 } from './src/io';
 import { recordDailyLearning, recordLearning } from './src/learn';
@@ -21,7 +23,7 @@ import { resetRawPlayData } from './src/housekeep';
 import { compareKpi, formatCompare } from './src/compare';
 import { runSimulation } from './src/simulate';
 import type { AnalyzeReport, JournalEntry, PersonaId, WorldState } from './src/types';
-import { resolveUntilWallMs } from './src/untilWall';
+import { continuePastWall, resolveUntilWallMs } from './src/untilWall';
 
 function arg(flag: string, fallback: string): string {
   const i = process.argv.indexOf(flag);
@@ -43,6 +45,7 @@ function emit(
   const line = formatMudLine(world, entry);
   pushMudTail(mudTail, line, 80);
   appendJournal(paths, entry, line);
+  writeLiveView(paths, world, mudTail);
   if (!has('--quiet')) console.log(line);
 }
 
@@ -69,7 +72,8 @@ async function main(): Promise<void> {
   const learn = !has('--no-learn');
   const comparePath = arg('--compare', '');
   const strong = stage >= 3;
-  const untilWall = resolveUntilWallMs(arg('--until-wall', ''));
+  let untilWall = resolveUntilWallMs(arg('--until-wall', ''));
+  let wallRolled = false;
   const allowed = stage >= 2 ? STAGE2_PERSONAS : STAGE1_PERSONAS;
   if (!allowed.includes(personaId)) {
     throw new Error(`persona ${personaId} not in stage ${stage} allowlist`);
@@ -79,6 +83,7 @@ async function main(): Promise<void> {
   const mudTail: string[] = [];
   const reports: AnalyzeReport[] = [];
   beginRecording();
+  writeCurrentRun(runId);
   const stop = (): void => {
     endRecording(has('--console-session') ? 'console_close' : 'signal');
   };
@@ -91,17 +96,16 @@ async function main(): Promise<void> {
     process.exit(0);
   });
   process.once('SIGHUP', () => {
-    stop();
-    process.exit(0);
+    /* 창 분리와 기록 중지를 묶지 않음 */
   });
 
   if (!has('--quiet')) {
     console.log('=== Arcfire 플레이봇콘솔 ===');
     console.log(`persona=${personaId} (${PERSONAS[personaId].titleKo})  stage=${stage}  ${untilClose ? 'until-close' : `days=${days}`}  seed=${seed}`);
     console.log(`run=${runId}`);
-    console.log('창을 닫을 때까지 지속 · 파괴 시 재탑승 · 주기 분석 후 정책 자체 개선');
+    console.log('명시 종료 전까지 지속 · 창을 닫아도 기록 유지 · 파괴 시 재탑승 · 주기 분석 후 정책 자체 개선');
     if (untilWall > 0) {
-      console.log(`벽시계 마감 ${new Date(untilWall).toISOString()} 이후 정지 · 학습결과는 logs/learned`);
+      console.log(`벽시계 ${new Date(untilWall).toISOString()} 는 학습 체크만 · 기록은 다음 08:00으로 넘김`);
     }
     console.log('앱 빌드 미포함 · 대표님 세이브 미기록');
     console.log('');
@@ -116,14 +120,25 @@ async function main(): Promise<void> {
     stronger: strong,
     shouldContinue: () => {
       if (!isRecording()) return false;
-      if (untilWall > 0 && Date.now() >= untilWall) {
-        endRecording('wall_deadline_0800_kst');
-        return false;
+      const rolled = continuePastWall(untilWall, Date.now());
+      if (rolled.rolled) {
+        untilWall = rolled.untilWallMs;
+        wallRolled = true;
       }
       return true;
     },
     hooks: {
       onEntry: (world, entry) => {
+        if (wallRolled) {
+          wallRolled = false;
+          emit(world, paths, mudTail, {
+            t: Date.now(),
+            day: world.day,
+            tick: world.tick,
+            kind: 'LEARN',
+            line: `벽시계 08:00 경과 · 기록 유지 · 다음 ${new Date(untilWall).toISOString()}`,
+          });
+        }
         emit(world, paths, mudTail, entry);
         if (world.tick % 4 === 0) appendTimeline(paths, world, entry.kind);
         if (live) {
@@ -208,7 +223,7 @@ async function main(): Promise<void> {
     console.log(formatHud(world));
     console.log(`ANALYZE ${paths.analyze}`);
     console.log(`journal ${paths.journal}`);
-    console.log(untilClose ? '플레이봇콘솔 기록 종료(창 닫힘)' : '플레이봇콘솔 지정 일수 종료');
+    console.log(untilClose ? '플레이봇콘솔 기록 종료(명시 중지)' : '플레이봇콘솔 지정 일수 종료');
   }
   endRecording('complete');
 }

@@ -365,11 +365,121 @@ for (const planetId of barPlanets) {
   }
 }
 
+function missionLane(missionId) {
+  if (missionId.startsWith('story_')) return 'story';
+  if (missionId.startsWith('mission_')) return 'tutorial';
+  if (missionId.startsWith('sandbox_')) return 'sandbox';
+  if (missionId.startsWith('tq_')) return 'tq';
+  return 'other';
+}
+
+function parsePrereqIds(mission) {
+  return String(mission?.prerequisiteIdsPipe ?? '')
+    .split('|')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+const nextById = new Map();
+for (const mission of missions) {
+  const nextId = String(mission.nextMissionId ?? '').trim();
+  if (nextId) nextById.set(mission.id.trim(), nextId);
+}
+
+function reachesByChain(fromId, toId) {
+  const seen = new Set();
+  let cursor = fromId;
+  while (cursor && !seen.has(cursor)) {
+    seen.add(cursor);
+    if (cursor === toId) return true;
+    cursor = nextById.get(cursor);
+  }
+  return false;
+}
+
+function isSequentialPair(aId, bId) {
+  if (aId === bId) return true;
+  if (reachesByChain(aId, bId) || reachesByChain(bId, aId)) return true;
+  const a = missionById.get(aId);
+  const b = missionById.get(bId);
+  return parsePrereqIds(a).includes(bId) || parsePrereqIds(b).includes(aId);
+}
+
+const catalogCombat = [];
+for (const obj of defeatObjectives) {
+  const missionId = obj.missionId.trim();
+  if (missionId.startsWith('tq_')) continue;
+  const op = combatOpByObjective.get(obj.id.trim());
+  if (!op) continue;
+  const mission = missionById.get(missionId);
+  const anchor = (op.anchorPlanetId?.trim() || mission?.offerPlanetId?.trim() || '').trim();
+  if (!anchor) continue;
+  catalogCombat.push({
+    missionId,
+    objectiveId: obj.id.trim(),
+    type: String(mission?.type ?? '').trim() || 'combat',
+    offerPlanetId: String(mission?.offerPlanetId ?? '').trim(),
+    anchor,
+    templateId: obj.targetId.trim(),
+    lane: missionLane(missionId),
+  });
+}
+
+const catalogDelivery = [];
+for (const obj of buyObjectives) {
+  const missionId = obj.missionId.trim();
+  if (missionId.startsWith('tq_')) continue;
+  const placement = placementByObjective.get(obj.id.trim());
+  if (!placement) continue;
+  const mission = missionById.get(missionId);
+  catalogDelivery.push({
+    missionId,
+    objectiveId: obj.id.trim(),
+    offerPlanetId: String(mission?.offerPlanetId ?? '').trim(),
+    buyPlanetId: placement.planetId.trim(),
+    itemId: placement.itemId.trim(),
+    lane: missionLane(missionId),
+  });
+}
+
+for (let i = 0; i < catalogCombat.length; i += 1) {
+  for (let j = i + 1; j < catalogCombat.length; j += 1) {
+    const a = catalogCombat[i];
+    const b = catalogCombat[j];
+    if (a.anchor !== b.anchor || a.templateId !== b.templateId) continue;
+    if (isSequentialPair(a.missionId, b.missionId)) continue;
+    // 튜토리얼 체인은 본편 개방 전에 끝난다 — 동시 수락 없음
+    if (
+      (a.lane === 'tutorial' && b.lane === 'story')
+      || (a.lane === 'story' && b.lane === 'tutorial')
+    ) {
+      continue;
+    }
+    err(
+      `combat overlap ${a.anchor}+${a.templateId}: ${a.missionId}/${a.objectiveId} ↔ ${b.missionId}/${b.objectiveId}`,
+    );
+  }
+}
+
+for (let i = 0; i < catalogDelivery.length; i += 1) {
+  for (let j = i + 1; j < catalogDelivery.length; j += 1) {
+    const a = catalogDelivery[i];
+    const b = catalogDelivery[j];
+    if (a.buyPlanetId !== b.buyPlanetId || a.itemId !== b.itemId) continue;
+    if (a.lane !== b.lane) continue;
+    if (isSequentialPair(a.missionId, b.missionId)) continue;
+    err(
+      `delivery overlap ${a.buyPlanetId}+${a.itemId}: ${a.missionId}/${a.objectiveId} ↔ ${b.missionId}/${b.objectiveId}`,
+    );
+  }
+}
+
 console.log('=== audit:mission-quest-placements ===');
 console.log(`buy_goods objectives: ${buyObjectives.length}`);
 console.log(`defeat_enemy objectives: ${defeatObjectives.length}`);
 console.log(`placements: ${placements.length} · combat_ops: ${combatOps.length}`);
 console.log(`tq_* bar templates: ${tqMissions.length} · tq_anom world-event: ${anomTemplates.length} · bar planets: ${barPlanets.length}`);
+console.log(`catalog combat pairs checked: ${catalogCombat.length} · delivery: ${catalogDelivery.length}`);
 
 if (warnings.length > 0) {
   console.log('\n[WARN]');

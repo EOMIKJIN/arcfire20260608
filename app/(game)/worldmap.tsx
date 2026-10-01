@@ -2152,7 +2152,8 @@ export default function WorldMapScreen() {
   /**
    * [전투] — RED 점유 성계 공격 진입. 이동중 인스턴스 전투(/combat)가 아니라
    * 착륙과 동일한 순서로 행성 허브에 진입한 뒤, 웨이브 전투(카운트다운 →
-   * 9웨이브 · vega_base 룰)로 이어진다. 승리 시 중립화. (대표님 지시 2026-07-20)
+   * 9웨이브 · vega_base 룰)로 이어진다. 승리 시 중립화.
+   * 30분 자동 재교전 쿨다운은 이 버튼을 끄지 않는다(플레이어 행동 우선).
    */
   const handleCombat = useCallback(async (): Promise<void> => {
     if (!selectedSystem || !player) return;

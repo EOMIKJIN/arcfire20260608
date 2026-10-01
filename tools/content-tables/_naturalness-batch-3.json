@@ -1,0 +1,1540 @@
+{
+  "batch": 3,
+  "count": 47,
+  "items": [
+    {
+      "key": "story_dialog_obj_story_030_c#1",
+      "sceneId": "story_dialog_obj_story_030_c",
+      "pageIndex": 1,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "거점은 지킨다.\n모자란 건 차차 채워 가면 돼.",
+      "text_en": "We keep the hold.\nWe revise details later.\nWe pass to the cinematic.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_030",
+        "objectiveId": "obj_story_030_c",
+        "missionTitle": "은폐된 진실의 끝",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "은폐된 진실은 잠시 덮어 둔다.\n끝난 건 아니고\n한편이 생겼을 뿐이지.",
+          "text_en": "Concealed truth folds here.\nIt is not over.\nOnly one side now exists."
+        },
+        {
+          "pageIndex": 1,
+          "text": "거점은 지킨다.\n모자란 건 차차 채워 가면 돼.",
+          "text_en": "We keep the hold.\nWe revise details later.\nWe pass to the cinematic."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s034_c#0",
+      "sceneId": "story_dialog_obj_s034_c",
+      "pageIndex": 0,
+      "label": "[ 베일 훅 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_veil_hook",
+      "text": "순찰은 열두 박자로 돈다.\\n그 틈에 숨은 거점이 드러난다.\\n출구는 그때만 열린다.",
+      "text_en": "The cycle is twelve beats.\\nThe hidden camp shows in that gap.\\nThe exit opens only after that.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_034",
+        "objectiveId": "obj_s034_c",
+        "missionTitle": "암흑으로 진입",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_orren_bask",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "순찰은 열두 박자로 돈다.\\n그 틈에 숨은 거점이 드러난다.\\n출구는 그때만 열린다.",
+          "text_en": "The cycle is twelve beats.\\nThe hidden camp shows in that gap.\\nThe exit opens only after that."
+        },
+        {
+          "pageIndex": 1,
+          "text": "출구는 현상금 사냥꾼이 지키더군.\\n좌표는 넘겨줬고.\\n나는 주기만 기록할 뿐이다.",
+          "text_en": "A bounty holds the exit.\\nI already passed the mark.\\nI only keep the cycle."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s034_e#0",
+      "sceneId": "story_dialog_obj_s034_e",
+      "pageIndex": 0,
+      "label": "[ 오렌 바스크 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_orren_bask",
+      "text": "신호를 지운 수법이 같다.\\n아르카디아 살인범과 동일인이다.\\n이름은 여전히 어디에도 없다.",
+      "text_en": "The wipe matches.\\nThe Solar berth log and the blank departure share the habit.\\nNo name sits here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_034",
+        "objectiveId": "obj_s034_e",
+        "missionTitle": "암흑으로 진입",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_orren_bask",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "신호를 지운 수법이 같다.\\n아르카디아 살인범과 동일인이다.\\n이름은 여전히 어디에도 없다.",
+          "text_en": "The wipe matches.\\nThe Solar berth log and the blank departure share the habit.\\nNo name sits here."
+        },
+        {
+          "pageIndex": 1,
+          "text": "정식 수사로는 올리지 않는다.\\n같은 은폐 수법이 캠프까지 왔다.\\n지워진 신호 건은 여기서 접는다.",
+          "text_en": "I will not open their case file.\\nThe same concealment reached Camp.\\nThe blank callsign folds here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s034_e#1",
+      "sceneId": "story_dialog_obj_s034_e",
+      "pageIndex": 1,
+      "label": "[ 오렌 바스크 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_orren_bask",
+      "text": "정식 수사로는 올리지 않는다.\\n같은 은폐 수법이 캠프까지 왔다.\\n지워진 신호 건은 여기서 접는다.",
+      "text_en": "I will not open their case file.\\nThe same concealment reached Camp.\\nThe blank callsign folds here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_034",
+        "objectiveId": "obj_s034_e",
+        "missionTitle": "암흑으로 진입",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_orren_bask",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "신호를 지운 수법이 같다.\\n아르카디아 살인범과 동일인이다.\\n이름은 여전히 어디에도 없다.",
+          "text_en": "The wipe matches.\\nThe Solar berth log and the blank departure share the habit.\\nNo name sits here."
+        },
+        {
+          "pageIndex": 1,
+          "text": "정식 수사로는 올리지 않는다.\\n같은 은폐 수법이 캠프까지 왔다.\\n지워진 신호 건은 여기서 접는다.",
+          "text_en": "I will not open their case file.\\nThe same concealment reached Camp.\\nThe blank callsign folds here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s035_a#1",
+      "sceneId": "story_dialog_obj_s035_a",
+      "pageIndex": 1,
+      "label": "[ 켓 미온 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_kett_mion",
+      "text": "장부에 찍힌 이름은 톨린 그레이브다.\\n줄곧 아군 순찰대라고 말해 왔다.\\n나는 장부만 대조했을 뿐이다.",
+      "text_en": "The stamped name is Tolin Grave.\\nHe has spoken as friendly patrol.\\nI only matched the cell.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_035",
+        "objectiveId": "obj_s035_a",
+        "missionTitle": "이중인격자",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_nila_shol",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "같은 식별 신호가 장부에 있다.\\n보급이 비어 나간 날과 날짜가 같다.\\n흔적은 요새 필드로 이어진다.",
+          "text_en": "The same callsign is in the ledger.\\nIt matches the day a supply cell went empty.\\nThe tail runs to Fortress Field."
+        },
+        {
+          "pageIndex": 1,
+          "text": "장부에 찍힌 이름은 톨린 그레이브다.\\n줄곧 아군 순찰대라고 말해 왔다.\\n나는 장부만 대조했을 뿐이다.",
+          "text_en": "The stamped name is Tolin Grave.\\nHe has spoken as friendly patrol.\\nI only matched the cell."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s035_c#1",
+      "sceneId": "story_dialog_obj_s035_c",
+      "pageIndex": 1,
+      "label": "[ 톨린 그레이브 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_tolin_grave",
+      "text": "내 호위가 곧 뜬다.\\n말은 여기까지다.\\n통신은 끊겠다.",
+      "text_en": "The escort is lifting.\\nWords end here.\\nI cut the line.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_035",
+        "objectiveId": "obj_s035_c",
+        "missionTitle": "이중인격자",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_nila_shol",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "켓의 대조 결과를 들이댈 줄은 몰랐군.\\n아군 주파수는 닫았다.\\n이쪽이 내 진짜 채널이다.",
+          "text_en": "I changed the channel.\\nI closed the friendly band.\\nThis is the real patrol."
+        },
+        {
+          "pageIndex": 1,
+          "text": "내 호위가 곧 뜬다.\\n말은 여기까지다.\\n통신은 끊겠다.",
+          "text_en": "The escort is lifting.\\nWords end here.\\nI cut the line."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s036_d#1",
+      "sceneId": "story_dialog_obj_s036_d",
+      "pageIndex": 1,
+      "label": "[ 놀 패스 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_noll_pass",
+      "text": "출처까지가 내가 아는 전부다.\\n누가 받았는지는 여기 없다.\\n장부는 여기서 끝이다.",
+      "text_en": "For now I fold the source only.\\nWho took it is not here.\\nThe ledger ends here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_036",
+        "objectiveId": "obj_s036_d",
+        "missionTitle": "부의근원",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_noll_pass",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "세 줄 다 소속 없는 계좌로 흘렀다.\\n주인을 밝힐 수 없는 돈이다.\\n전표엔 캠프 쪽이라고만 적혀 있다.",
+          "text_en": "The three lines flowed to a flagless side.\\nMoney like a mouth with no source.\\nThe slip only says toward Camp."
+        },
+        {
+          "pageIndex": 1,
+          "text": "출처까지가 내가 아는 전부다.\\n누가 받았는지는 여기 없다.\\n장부는 여기서 끝이다.",
+          "text_en": "For now I fold the source only.\\nWho took it is not here.\\nThe ledger ends here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s056_a#0",
+      "sceneId": "story_dialog_obj_s056_a",
+      "pageIndex": 0,
+      "label": "[ 렌 코일 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_ren_coil",
+      "text": "출정 전야에 문이 잠겼다.\n항로는 한 줄인데 통행이 없다.\n잠근 이름은 장부에 없다.",
+      "text_en": "The door locked on the eve of the sortie.\nOne lane. No traffic.\nNo name sits the lock.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_056",
+        "objectiveId": "obj_s056_a",
+        "missionTitle": "출정 전야의 차단",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_ren_coil",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "출정 전야에 문이 잠겼다.\n항로는 한 줄인데 통행이 없다.\n잠근 이름은 장부에 없다.",
+          "text_en": "The door locked on the eve of the sortie.\nOne lane. No traffic.\nNo name sits the lock."
+        },
+        {
+          "pageIndex": 1,
+          "text": "펄 채굴지로 가라.\n마야 벨트가 문을 대조한다.\n나는 글로우에서 따라간다.",
+          "text_en": "Go to Pearl.\nMaya Belt matches the door.\nI will follow from Glow."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s056_c#0",
+      "sceneId": "story_dialog_obj_s056_c",
+      "pageIndex": 0,
+      "label": "[ 마야 벨트 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_maya_belt",
+      "text": "문은 여기 있다.\n연 기록은 없고 잠근 기록만 있다.\n누가 잠갔는지는 적혀 있지 않다.",
+      "text_en": "The door is here.\nNo open log. Only a lock mark.\nWho locked it is not written.",
+      "staccato": true,
+      "staccatoEn": true,
+      "hint": {
+        "missionId": "sandbox_056",
+        "objectiveId": "obj_s056_c",
+        "missionTitle": "출정 전야의 차단",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_ren_coil",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "문은 여기 있다.\n연 기록은 없고 잠근 기록만 있다.\n누가 잠갔는지는 적혀 있지 않다.",
+          "text_en": "The door is here.\nNo open log. Only a lock mark.\nWho locked it is not written."
+        },
+        {
+          "pageIndex": 1,
+          "text": "궤도에 차단기가 떠 있다.\n문을 건드리면 그 배가 먼저 뜬다.\n나는 장부만 지킨다.",
+          "text_en": "A blocker sits in orbit.\nTouch the door and that ship lifts first.\nI keep the ledger only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s056_c#1",
+      "sceneId": "story_dialog_obj_s056_c",
+      "pageIndex": 1,
+      "label": "[ 마야 벨트 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_maya_belt",
+      "text": "궤도에 차단기가 떠 있다.\n문을 건드리면 그 배가 먼저 뜬다.\n나는 장부만 지킨다.",
+      "text_en": "A blocker sits in orbit.\nTouch the door and that ship lifts first.\nI keep the ledger only.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_056",
+        "objectiveId": "obj_s056_c",
+        "missionTitle": "출정 전야의 차단",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_ren_coil",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "문은 여기 있다.\n연 기록은 없고 잠근 기록만 있다.\n누가 잠갔는지는 적혀 있지 않다.",
+          "text_en": "The door is here.\nNo open log. Only a lock mark.\nWho locked it is not written."
+        },
+        {
+          "pageIndex": 1,
+          "text": "궤도에 차단기가 떠 있다.\n문을 건드리면 그 배가 먼저 뜬다.\n나는 장부만 지킨다.",
+          "text_en": "A blocker sits in orbit.\nTouch the door and that ship lifts first.\nI keep the ledger only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s056_e#0",
+      "sceneId": "story_dialog_obj_s056_e",
+      "pageIndex": 0,
+      "label": "[ 렌 코일 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_ren_coil",
+      "text": "문은 열렸다.\n잠근 자는 여전히 없다.\n출정 전야의 차단은 여기까지다.",
+      "text_en": "The door is open.\nThe locker is still unnamed.\nThe eve-of-sortie block ends here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_056",
+        "objectiveId": "obj_s056_e",
+        "missionTitle": "출정 전야의 차단",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_ren_coil",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "문은 열렸다.\n잠근 자는 여전히 없다.\n출정 전야의 차단은 여기까지다.",
+          "text_en": "The door is open.\nThe locker is still unnamed.\nThe eve-of-sortie block ends here."
+        },
+        {
+          "pageIndex": 1,
+          "text": "정식 보고로는 올리지 않는다.\n이름은 장부에 없고.\n이 건은 펄에서 접는다.",
+          "text_en": "I will not file it upward.\nNo name is on the ledger.\nThe case folds at Pearl."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s057_a#1",
+      "sceneId": "story_dialog_obj_s057_a",
+      "pageIndex": 1,
+      "label": "[ 조르 핀 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_jor_finn",
+      "text": "인수는 비콘이다.\n셀 베인이 전표를 본다.\n나는 의자만 판다.",
+      "text_en": "The handoff is at Beacon.\nSel Vane reads the slip.\nI sell the chair only.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_057",
+        "objectiveId": "obj_s057_a",
+        "missionTitle": "빈 지휘의 매물",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_jor_finn",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "지휘석이 매물이다.\n앉을 이름은 비어 있고.\n가격만 적혀 있다.",
+          "text_en": "A command chair is listed.\nThe sitter cell is blank.\nOnly the price is written."
+        },
+        {
+          "pageIndex": 1,
+          "text": "인수는 비콘이다.\n셀 베인이 전표를 본다.\n나는 의자만 판다.",
+          "text_en": "The handoff is at Beacon.\nSel Vane reads the slip.\nI sell the chair only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s057_c#0",
+      "sceneId": "story_dialog_obj_s057_c",
+      "pageIndex": 0,
+      "label": "[ 셀 베인 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_sel_vane",
+      "text": "전표의 이름 칸이 비어 있다.\n의자만 오고 사람은 오지 않았다.\n나는 그 공란만 확인한다.",
+      "text_en": "The name cell on the slip is blank.\nThe chair arrived. The person did not.\nI confirm that blank only.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_057",
+        "objectiveId": "obj_s057_c",
+        "missionTitle": "빈 지휘의 매물",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_jor_finn",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "전표의 이름 칸이 비어 있다.\n의자만 오고 사람은 오지 않았다.\n나는 그 공란만 확인한다.",
+          "text_en": "The name cell on the slip is blank.\nThe chair arrived. The person did not.\nI confirm that blank only."
+        },
+        {
+          "pageIndex": 1,
+          "text": "호위가 매물을 지키고 있다.\n격파한 뒤에 접을 수 있다.\n지금은 전표만 보여라.",
+          "text_en": "An escort is holding the listing.\nIt can fold after you break them.\nShow the slip only for now."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s057_e#0",
+      "sceneId": "story_dialog_obj_s057_e",
+      "pageIndex": 0,
+      "label": "[ 조르 핀 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_jor_finn",
+      "text": "의자는 팔렸다.\n앉을 이름은 끝내 없다.\n빈 지휘는 여기서 접는다.",
+      "text_en": "The chair sold.\nNo name ever sat it.\nThe vacant command folds here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_057",
+        "objectiveId": "obj_s057_e",
+        "missionTitle": "빈 지휘의 매물",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_jor_finn",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "의자는 팔렸다.\n앉을 이름은 끝내 없다.\n빈 지휘는 여기서 접는다.",
+          "text_en": "The chair sold.\nNo name ever sat it.\nThe vacant command folds here."
+        },
+        {
+          "pageIndex": 1,
+          "text": "누가 샀는지는 적지 않는다.\n나는 매물만 닫고.\n비콘 기록은 여기까지다.",
+          "text_en": "I do not write who bought it.\nI close the listing only.\nThe Beacon record ends here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s058_a#0",
+      "sceneId": "story_dialog_obj_s058_a",
+      "pageIndex": 0,
+      "label": "[ 하스 퀸 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_has_quinn",
+      "text": "장부 합이 맞지 않는다.\n빠진 숫자는 한 줄이다.\n그 줄에 사람은 없다.",
+      "text_en": "The ledger does not add.\nOne line is missing.\nThat line has no person.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_058",
+        "objectiveId": "obj_s058_a",
+        "missionTitle": "숫자가 틀린 이유",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_has_quinn",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "장부 합이 맞지 않는다.\n빠진 숫자는 한 줄이다.\n그 줄에 사람은 없다.",
+          "text_en": "The ledger does not add.\nOne line is missing.\nThat line has no person."
+        },
+        {
+          "pageIndex": 1,
+          "text": "사본은 카론에 있다.\n이바 렌이 대조한다.\n나는 틀린 칸만 표시한다.",
+          "text_en": "The copy sits at Charon.\nIva Wren will match it.\nI only mark the failed cell."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s058_a#1",
+      "sceneId": "story_dialog_obj_s058_a",
+      "pageIndex": 1,
+      "label": "[ 하스 퀸 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_has_quinn",
+      "text": "사본은 카론에 있다.\n이바 렌이 대조한다.\n나는 틀린 칸만 표시한다.",
+      "text_en": "The copy sits at Charon.\nIva Wren will match it.\nI only mark the failed cell.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_058",
+        "objectiveId": "obj_s058_a",
+        "missionTitle": "숫자가 틀린 이유",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_has_quinn",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "장부 합이 맞지 않는다.\n빠진 숫자는 한 줄이다.\n그 줄에 사람은 없다.",
+          "text_en": "The ledger does not add.\nOne line is missing.\nThat line has no person."
+        },
+        {
+          "pageIndex": 1,
+          "text": "사본은 카론에 있다.\n이바 렌이 대조한다.\n나는 틀린 칸만 표시한다.",
+          "text_en": "The copy sits at Charon.\nIva Wren will match it.\nI only mark the failed cell."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s058_c#0",
+      "sceneId": "story_dialog_obj_s058_c",
+      "pageIndex": 0,
+      "label": "[ 이바 렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_iva_wren",
+      "text": "사본도 같은 칸이 비어 있다.\n합을 맞추면 사람이 아니다.\n빈 숫자는 빈 숫자다.",
+      "text_en": "The copy has the same blank cell.\nFix the sum and it is still not a person.\nAn empty number stays a number.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_058",
+        "objectiveId": "obj_s058_c",
+        "missionTitle": "숫자가 틀린 이유",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_has_quinn",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "사본도 같은 칸이 비어 있다.\n합을 맞추면 사람이 아니다.\n빈 숫자는 빈 숫자다.",
+          "text_en": "The copy has the same blank cell.\nFix the sum and it is still not a person.\nAn empty number stays a number."
+        },
+        {
+          "pageIndex": 1,
+          "text": "현상금이 사본을 노린다.\n격파한 뒤에 접어라.\n나는 대조만 한다.",
+          "text_en": "A bounty is hunting the copy.\nFold it after you break them.\nI only match."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s058_e#0",
+      "sceneId": "story_dialog_obj_s058_e",
+      "pageIndex": 0,
+      "label": "[ 하스 퀸 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_has_quinn",
+      "text": "틀린 이유는 이것이다.\n빠진 줄은 사람이 아니었다.\n장부는 여기서 접는다.",
+      "text_en": "That is why the numbers fail.\nThe missing line was not a person.\nThe ledger folds here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_058",
+        "objectiveId": "obj_s058_e",
+        "missionTitle": "숫자가 틀린 이유",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_has_quinn",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "틀린 이유는 이것이다.\n빠진 줄은 사람이 아니었다.\n장부는 여기서 접는다.",
+          "text_en": "That is why the numbers fail.\nThe missing line was not a person.\nThe ledger folds here."
+        },
+        {
+          "pageIndex": 1,
+          "text": "이름을 올리지 않는다.\n숫자는 숫자로 남고.\n카론 기록은 여기까지다.",
+          "text_en": "I will not file a name.\nThe number stays a number.\nThe Charon record ends here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s059_a#0",
+      "sceneId": "story_dialog_obj_s059_a",
+      "pageIndex": 0,
+      "label": "[ 펙 소린 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_peck_sorin",
+      "text": "대역이 복사됐다.\n원본 주인의 입은 아니다.\n주파수 숫자만 남았다.",
+      "text_en": "The band was copied.\nIt is not the owner's mouth.\nOnly the frequency number remains.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_059",
+        "objectiveId": "obj_s059_a",
+        "missionTitle": "훔친 대역",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_peck_sorin",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "대역이 복사됐다.\n원본 주인의 입은 아니다.\n주파수 숫자만 남았다.",
+          "text_en": "The band was copied.\nIt is not the owner's mouth.\nOnly the frequency number remains."
+        },
+        {
+          "pageIndex": 1,
+          "text": "인수는 마크다.\n다인 로가 전표를 본다.\n나는 관측만 한다.",
+          "text_en": "The handoff is at Mark.\nDain Rho reads the slip.\nI only observe."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s059_a#1",
+      "sceneId": "story_dialog_obj_s059_a",
+      "pageIndex": 1,
+      "label": "[ 펙 소린 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_peck_sorin",
+      "text": "인수는 마크다.\n다인 로가 전표를 본다.\n나는 관측만 한다.",
+      "text_en": "The handoff is at Mark.\nDain Rho reads the slip.\nI only observe.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_059",
+        "objectiveId": "obj_s059_a",
+        "missionTitle": "훔친 대역",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_peck_sorin",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "대역이 복사됐다.\n원본 주인의 입은 아니다.\n주파수 숫자만 남았다.",
+          "text_en": "The band was copied.\nIt is not the owner's mouth.\nOnly the frequency number remains."
+        },
+        {
+          "pageIndex": 1,
+          "text": "인수는 마크다.\n다인 로가 전표를 본다.\n나는 관측만 한다.",
+          "text_en": "The handoff is at Mark.\nDain Rho reads the slip.\nI only observe."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s059_c#0",
+      "sceneId": "story_dialog_obj_s059_c",
+      "pageIndex": 0,
+      "label": "[ 다인 로 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_dain_rho",
+      "text": "전표의 주인 칸이 비어 있다.\n대역은 오고 목소리는 오지 않았다.\n나는 그 공란만 확인한다.",
+      "text_en": "The owner cell on the slip is blank.\nThe band arrived. The voice did not.\nI confirm that blank only.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_059",
+        "objectiveId": "obj_s059_c",
+        "missionTitle": "훔친 대역",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_peck_sorin",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "전표의 주인 칸이 비어 있다.\n대역은 오고 목소리는 오지 않았다.\n나는 그 공란만 확인한다.",
+          "text_en": "The owner cell on the slip is blank.\nThe band arrived. The voice did not.\nI confirm that blank only."
+        },
+        {
+          "pageIndex": 1,
+          "text": "호위가 대역을 지키고 있다.\n격파한 뒤에 접을 수 있다.\n지금은 전표만 보여라.",
+          "text_en": "An escort is holding the band.\nIt can fold after you break them.\nShow the slip only for now."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s059_e#0",
+      "sceneId": "story_dialog_obj_s059_e",
+      "pageIndex": 0,
+      "label": "[ 펙 소린 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_peck_sorin",
+      "text": "복사본은 주인의 입이 아니다.\n누가 훔쳤는지는 여기 없다.\n훔친 대역은 여기서 접는다.",
+      "text_en": "The copy is not the owner's mouth.\nWho stole it is not here.\nThe stolen band folds here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_059",
+        "objectiveId": "obj_s059_e",
+        "missionTitle": "훔친 대역",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_peck_sorin",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "복사본은 주인의 입이 아니다.\n누가 훔쳤는지는 여기 없다.\n훔친 대역은 여기서 접는다.",
+          "text_en": "The copy is not the owner's mouth.\nWho stole it is not here.\nThe stolen band folds here."
+        },
+        {
+          "pageIndex": 1,
+          "text": "원본을 열지 않는다.\n주파수만 남기고.\n마크 기록은 여기까지다.",
+          "text_en": "I will not open the original.\nOnly the frequency remains.\nThe Mark record ends here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s060_c#0",
+      "sceneId": "story_dialog_obj_s060_c",
+      "pageIndex": 0,
+      "label": "[ 오사 펠 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_osa_pell",
+      "text": "상자의 출항 칸이 비어 있다.\n물건은 있고 이름은 없다.\n나는 그 공란만 본다.",
+      "text_en": "The crate's departure cell is blank.\nThe goods are here. The name is not.\nI look at that blank only.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_060",
+        "objectiveId": "obj_s060_c",
+        "missionTitle": "공란이 찍힌 상자",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_mir_kell",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "상자의 출항 칸이 비어 있다.\n물건은 있고 이름은 없다.\n나는 그 공란만 본다.",
+          "text_en": "The crate's departure cell is blank.\nThe goods are here. The name is not.\nI look at that blank only."
+        },
+        {
+          "pageIndex": 1,
+          "text": "이름을 채우지 마라.\n채운 상자는 회수된다.\n공란을 그대로 보여라.",
+          "text_en": "Do not fill a name.\nA filled crate is reclaimed.\nShow the blank as it is."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s060_d#0",
+      "sceneId": "story_dialog_obj_s060_d",
+      "pageIndex": 0,
+      "label": "[ 오사 펠 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_osa_pell",
+      "text": "나는 이름을 묻지 않는다.\n그것이 이 항로의 인수다.\n공란은 닫힌 문이다.",
+      "text_en": "I will not ask a name.\nThat is the handoff on this lane.\nThe blank is a closed door.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_060",
+        "objectiveId": "obj_s060_d",
+        "missionTitle": "공란이 찍힌 상자",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_mir_kell",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "나는 이름을 묻지 않는다.\n그것이 이 항로의 인수다.\n공란은 닫힌 문이다.",
+          "text_en": "I will not ask a name.\nThat is the handoff on this lane.\nThe blank is a closed door."
+        },
+        {
+          "pageIndex": 1,
+          "text": "미르 켈이 곧 도착한다.\n상자는 여기서 접힌다.\n나는 인수만 찍는다.",
+          "text_en": "Mir Kell will arrive shortly.\nThe crate folds here.\nI stamp the handoff only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s060_d#1",
+      "sceneId": "story_dialog_obj_s060_d",
+      "pageIndex": 1,
+      "label": "[ 오사 펠 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_osa_pell",
+      "text": "미르 켈이 곧 도착한다.\n상자는 여기서 접힌다.\n나는 인수만 찍는다.",
+      "text_en": "Mir Kell will arrive shortly.\nThe crate folds here.\nI stamp the handoff only.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_060",
+        "objectiveId": "obj_s060_d",
+        "missionTitle": "공란이 찍힌 상자",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_mir_kell",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "나는 이름을 묻지 않는다.\n그것이 이 항로의 인수다.\n공란은 닫힌 문이다.",
+          "text_en": "I will not ask a name.\nThat is the handoff on this lane.\nThe blank is a closed door."
+        },
+        {
+          "pageIndex": 1,
+          "text": "미르 켈이 곧 도착한다.\n상자는 여기서 접힌다.\n나는 인수만 찍는다.",
+          "text_en": "Mir Kell will arrive shortly.\nThe crate folds here.\nI stamp the handoff only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s060_e#0",
+      "sceneId": "story_dialog_obj_s060_e",
+      "pageIndex": 0,
+      "label": "[ 미르 켈 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_mir_kell",
+      "text": "상자는 넘어갔다.\n출항 칸은 끝내 비어 있다.\n공란이 찍힌 건은 여기서 접는다.",
+      "text_en": "The crate passed.\nThe departure cell stayed blank.\nThe blank-cell case folds here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_060",
+        "objectiveId": "obj_s060_e",
+        "missionTitle": "공란이 찍힌 상자",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_mir_kell",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "상자는 넘어갔다.\n출항 칸은 끝내 비어 있다.\n공란이 찍힌 건은 여기서 접는다.",
+          "text_en": "The crate passed.\nThe departure cell stayed blank.\nThe blank-cell case folds here."
+        },
+        {
+          "pageIndex": 1,
+          "text": "이름을 올리지 않는다.\n식량은 남고.\n글레이 기록은 여기까지다.",
+          "text_en": "I will not file a name.\nThe food remains.\nThe Gray record ends here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s061_c#0",
+      "sceneId": "story_dialog_obj_s061_c",
+      "pageIndex": 0,
+      "label": "[ 넬 케이 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_nell_kay",
+      "text": "봉인은 그대로다.\n열리지 않았고 내용도 없다.\n나는 인장만 본다.",
+      "text_en": "The seal is intact.\nIt did not open. There is no content line.\nI look at the stamp only.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_061",
+        "objectiveId": "obj_s061_c",
+        "missionTitle": "봉인된 인수",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_brin_tack",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "봉인은 그대로다.\n열리지 않았고 내용도 없다.\n나는 인장만 본다.",
+          "text_en": "The seal is intact.\nIt did not open. There is no content line.\nI look at the stamp only."
+        },
+        {
+          "pageIndex": 1,
+          "text": "뚜껑을 열지 마라.\n연 인수는 목록에서 지워진다.\n봉인만 보여라.",
+          "text_en": "Do not open the lid.\nAn opened handoff is erased from the list.\nShow the seal only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s061_d#0",
+      "sceneId": "story_dialog_obj_s061_d",
+      "pageIndex": 0,
+      "label": "[ 넬 케이 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_nell_kay",
+      "text": "열지 말라는 것이 인수다.\n속이 무엇이든 여기 적히지 않는다.\n봉인이 정본이다.",
+      "text_en": "Do not open it. That is the handoff.\nWhatever is inside is not written here.\nThe seal is the canon.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_061",
+        "objectiveId": "obj_s061_d",
+        "missionTitle": "봉인된 인수",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_brin_tack",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "열지 말라는 것이 인수다.\n속이 무엇이든 여기 적히지 않는다.\n봉인이 정본이다.",
+          "text_en": "Do not open it. That is the handoff.\nWhatever is inside is not written here.\nThe seal is the canon."
+        },
+        {
+          "pageIndex": 1,
+          "text": "브린 택이 곧 도착한다.\n인수는 여기서 접힌다.\n나는 인장만 찍는다.",
+          "text_en": "Brin Tack will arrive shortly.\nThe handoff folds here.\nI stamp the seal only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s061_d#1",
+      "sceneId": "story_dialog_obj_s061_d",
+      "pageIndex": 1,
+      "label": "[ 넬 케이 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_nell_kay",
+      "text": "브린 택이 곧 도착한다.\n인수는 여기서 접힌다.\n나는 인장만 찍는다.",
+      "text_en": "Brin Tack will arrive shortly.\nThe handoff folds here.\nI stamp the seal only.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_061",
+        "objectiveId": "obj_s061_d",
+        "missionTitle": "봉인된 인수",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_brin_tack",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "열지 말라는 것이 인수다.\n속이 무엇이든 여기 적히지 않는다.\n봉인이 정본이다.",
+          "text_en": "Do not open it. That is the handoff.\nWhatever is inside is not written here.\nThe seal is the canon."
+        },
+        {
+          "pageIndex": 1,
+          "text": "브린 택이 곧 도착한다.\n인수는 여기서 접힌다.\n나는 인장만 찍는다.",
+          "text_en": "Brin Tack will arrive shortly.\nThe handoff folds here.\nI stamp the seal only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s061_e#0",
+      "sceneId": "story_dialog_obj_s061_e",
+      "pageIndex": 0,
+      "label": "[ 브린 택 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_brin_tack",
+      "text": "인수는 넘어갔다.\n봉인은 열리지 않았다.\n이 건은 루나에서 접는다.",
+      "text_en": "The handoff passed.\nThe seal did not open.\nThe case folds at Luna.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_061",
+        "objectiveId": "obj_s061_e",
+        "missionTitle": "봉인된 인수",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_brin_tack",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "인수는 넘어갔다.\n봉인은 열리지 않았다.\n이 건은 루나에서 접는다.",
+          "text_en": "The handoff passed.\nThe seal did not open.\nThe case folds at Luna."
+        },
+        {
+          "pageIndex": 1,
+          "text": "내용물은 올리지 않는다.\n기술은 남고.\n루나 기록은 여기까지다.",
+          "text_en": "I will not file the contents.\nThe tech remains.\nThe Luna record ends here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s062_c#0",
+      "sceneId": "story_dialog_obj_s062_c",
+      "pageIndex": 0,
+      "label": "[ 시라 멕 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_sira_mek",
+      "text": "영수증의 이름 칸이 비어 있다.\n광물은 있고 보낸 자는 없다.\n나는 그 공란만 본다.",
+      "text_en": "The name cell on the receipt is blank.\nThe ore is here. The sender is not.\nI look at that blank only.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_062",
+        "objectiveId": "obj_s062_c",
+        "missionTitle": "이름 없는 영수증",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_kael_vonn",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "영수증의 이름 칸이 비어 있다.\n광물은 있고 보낸 자는 없다.\n나는 그 공란만 본다.",
+          "text_en": "The name cell on the receipt is blank.\nThe ore is here. The sender is not.\nI look at that blank only."
+        },
+        {
+          "pageIndex": 1,
+          "text": "이름을 채우지 마라.\n채운 전표는 회수된다.\n공란을 그대로 보여라.",
+          "text_en": "Do not fill a name.\nA filled slip is reclaimed.\nShow the blank as it is."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s062_d#0",
+      "sceneId": "story_dialog_obj_s062_d",
+      "pageIndex": 0,
+      "label": "[ 시라 멕 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_sira_mek",
+      "text": "공란은 그대로 둔다.\n그것이 이 항로의 전표다.\n이름은 정본이 아니다.",
+      "text_en": "Leave the blank as it is.\nThat is the slip on this lane.\nA name is not the canon.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_062",
+        "objectiveId": "obj_s062_d",
+        "missionTitle": "이름 없는 영수증",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_kael_vonn",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "공란은 그대로 둔다.\n그것이 이 항로의 전표다.\n이름은 정본이 아니다.",
+          "text_en": "Leave the blank as it is.\nThat is the slip on this lane.\nA name is not the canon."
+        },
+        {
+          "pageIndex": 1,
+          "text": "카엘 본이 곧 도착한다.\n전표는 여기서 접힌다.\n나는 인수만 찍는다.",
+          "text_en": "Kael Vonn will arrive shortly.\nThe slip folds here.\nI stamp the handoff only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s062_d#1",
+      "sceneId": "story_dialog_obj_s062_d",
+      "pageIndex": 1,
+      "label": "[ 시라 멕 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_sira_mek",
+      "text": "카엘 본이 곧 도착한다.\n전표는 여기서 접힌다.\n나는 인수만 찍는다.",
+      "text_en": "Kael Vonn will arrive shortly.\nThe slip folds here.\nI stamp the handoff only.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_062",
+        "objectiveId": "obj_s062_d",
+        "missionTitle": "이름 없는 영수증",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_kael_vonn",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "공란은 그대로 둔다.\n그것이 이 항로의 전표다.\n이름은 정본이 아니다.",
+          "text_en": "Leave the blank as it is.\nThat is the slip on this lane.\nA name is not the canon."
+        },
+        {
+          "pageIndex": 1,
+          "text": "카엘 본이 곧 도착한다.\n전표는 여기서 접힌다.\n나는 인수만 찍는다.",
+          "text_en": "Kael Vonn will arrive shortly.\nThe slip folds here.\nI stamp the handoff only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s062_e#0",
+      "sceneId": "story_dialog_obj_s062_e",
+      "pageIndex": 0,
+      "label": "[ 카엘 본 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_kael_vonn",
+      "text": "전표는 넘어갔다.\n이름은 끝내 없다.\n이름 없는 영수증은 여기서 접는다.",
+      "text_en": "The slip passed.\nThe name never appeared.\nThe nameless receipt folds here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_062",
+        "objectiveId": "obj_s062_e",
+        "missionTitle": "이름 없는 영수증",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_kael_vonn",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "전표는 넘어갔다.\n이름은 끝내 없다.\n이름 없는 영수증은 여기서 접는다.",
+          "text_en": "The slip passed.\nThe name never appeared.\nThe nameless receipt folds here."
+        },
+        {
+          "pageIndex": 1,
+          "text": "보낸 자를 올리지 않는다.\n광물은 남고.\n오리온 기록은 여기까지다.",
+          "text_en": "I will not file a sender.\nThe ore remains.\nThe Orion record ends here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s063_a#1",
+      "sceneId": "story_dialog_obj_s063_a",
+      "pageIndex": 1,
+      "label": "[ 에브 홀트 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_ev_holt",
+      "text": "인수는 솔이다.\n토마 케일이 봉인을 본다.\n나는 봉투만 건넨다.",
+      "text_en": "The handoff is at Sol.\nToma Kale will see the seal.\nI hand the envelope only.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_063",
+        "objectiveId": "obj_s063_a",
+        "missionTitle": "열지 않는 봉투",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_ev_holt",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "봉투는 봉인돼 있다.\n열지 마라.\n속은 여기 적히지 않는다.",
+          "text_en": "The envelope is sealed.\nDo not open it.\nThe inside is not written here."
+        },
+        {
+          "pageIndex": 1,
+          "text": "인수는 솔이다.\n토마 케일이 봉인을 본다.\n나는 봉투만 건넨다.",
+          "text_en": "The handoff is at Sol.\nToma Kale will see the seal.\nI hand the envelope only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s063_c#0",
+      "sceneId": "story_dialog_obj_s063_c",
+      "pageIndex": 0,
+      "label": "[ 토마 케일 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_toma_kale",
+      "text": "봉인은 그대로다.\n열리지 않았고 속도 없다.\n나는 인장만 본다.",
+      "text_en": "The seal is intact.\nIt did not open. There is no inside line.\nI look at the stamp only.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_063",
+        "objectiveId": "obj_s063_c",
+        "missionTitle": "열지 않는 봉투",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_ev_holt",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "봉인은 그대로다.\n열리지 않았고 속도 없다.\n나는 인장만 본다.",
+          "text_en": "The seal is intact.\nIt did not open. There is no inside line.\nI look at the stamp only."
+        },
+        {
+          "pageIndex": 1,
+          "text": "열어 달라고 하지 마라.\n연 봉투는 사라진다.\n봉인만 보여라.",
+          "text_en": "Do not ask me to open it.\nAn opened envelope disappears.\nShow the seal only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s063_d#0",
+      "sceneId": "story_dialog_obj_s063_d",
+      "pageIndex": 0,
+      "label": "[ 토마 케일 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_toma_kale",
+      "text": "봉투는 받았다.\n속은 열지 않았다.\n봉인이 인수의 전부다.",
+      "text_en": "I took the envelope.\nI did not open the inside.\nThe seal is the whole handoff.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_063",
+        "objectiveId": "obj_s063_d",
+        "missionTitle": "열지 않는 봉투",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_ev_holt",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "봉투는 받았다.\n속은 열지 않았다.\n봉인이 인수의 전부다.",
+          "text_en": "I took the envelope.\nI did not open the inside.\nThe seal is the whole handoff."
+        },
+        {
+          "pageIndex": 1,
+          "text": "에브 홀트가 곧 도착한다.\n이 건은 여기서 접힌다.\n나는 인장만 찍는다.",
+          "text_en": "Ev Holt will arrive shortly.\nThe case folds here.\nI stamp the seal only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s063_d#1",
+      "sceneId": "story_dialog_obj_s063_d",
+      "pageIndex": 1,
+      "label": "[ 토마 케일 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_toma_kale",
+      "text": "에브 홀트가 곧 도착한다.\n이 건은 여기서 접힌다.\n나는 인장만 찍는다.",
+      "text_en": "Ev Holt will arrive shortly.\nThe case folds here.\nI stamp the seal only.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_063",
+        "objectiveId": "obj_s063_d",
+        "missionTitle": "열지 않는 봉투",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_ev_holt",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "봉투는 받았다.\n속은 열지 않았다.\n봉인이 인수의 전부다.",
+          "text_en": "I took the envelope.\nI did not open the inside.\nThe seal is the whole handoff."
+        },
+        {
+          "pageIndex": 1,
+          "text": "에브 홀트가 곧 도착한다.\n이 건은 여기서 접힌다.\n나는 인장만 찍는다.",
+          "text_en": "Ev Holt will arrive shortly.\nThe case folds here.\nI stamp the seal only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_s063_e#0",
+      "sceneId": "story_dialog_obj_s063_e",
+      "pageIndex": 0,
+      "label": "[ 에브 홀트 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_ev_holt",
+      "text": "봉투는 넘어갔다.\n속은 끝내 열리지 않았다.\n열지 않는 봉투는 여기서 접는다.",
+      "text_en": "The envelope passed.\nThe inside was never read.\nThe unopened envelope folds here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "sandbox_063",
+        "objectiveId": "obj_s063_e",
+        "missionTitle": "열지 않는 봉투",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_sq_ev_holt",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "봉투는 넘어갔다.\n속은 끝내 열리지 않았다.\n열지 않는 봉투는 여기서 접는다.",
+          "text_en": "The envelope passed.\nThe inside was never read.\nThe unopened envelope folds here."
+        },
+        {
+          "pageIndex": 1,
+          "text": "내용을 올리지 않는다.\n봉인만 남고.\n솔 기록은 여기까지다.",
+          "text_en": "I will not file the contents.\nOnly the seal remains.\nThe Sol record ends here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_kett_mion#0",
+      "sceneId": "npc_dialog_sq_kett_mion",
+      "pageIndex": 0,
+      "label": "[ 켓 미온 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_kett_mion",
+      "text": "아우라 국경 장부를 맡고 있다.\\n나는 식별 신호만 대조한다.\\n장부에 없는 얘기면 여기까지다.",
+      "text_en": "This is the Aura ledger.\\nI only match callsigns.\\nIf it is not a cell",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "kett_mion"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "아우라 국경 장부를 맡고 있다.\\n나는 식별 신호만 대조한다.\\n장부에 없는 얘기면 여기까지다.",
+          "text_en": "This is the Aura ledger.\\nI only match callsigns.\\nIf it is not a cell"
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_ren_coil#0",
+      "sceneId": "npc_dialog_sq_ren_coil",
+      "pageIndex": 0,
+      "label": "[ 렌 코일 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_ren_coil",
+      "text": "글로우 국경에서 출정 전 막힌 문을 기록한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Ren Coil keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "ren_coil"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "글로우 국경에서 출정 전 막힌 문을 기록한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Ren Coil keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_ren_coil#2",
+      "sceneId": "npc_dialog_sq_ren_coil",
+      "pageIndex": 2,
+      "label": "[ 렌 코일 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_ren_coil",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "ren_coil"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "글로우 국경에서 출정 전 막힌 문을 기록한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Ren Coil keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_maya_belt#0",
+      "sceneId": "npc_dialog_sq_maya_belt",
+      "pageIndex": 0,
+      "label": "[ 마야 벨트 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_maya_belt",
+      "text": "펄 채굴지에서 막힌 문의 장부를 맡는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Maya Belt keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "maya_belt"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "펄 채굴지에서 막힌 문의 장부를 맡는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Maya Belt keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_maya_belt#2",
+      "sceneId": "npc_dialog_sq_maya_belt",
+      "pageIndex": 2,
+      "label": "[ 마야 벨트 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_maya_belt",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "maya_belt"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "펄 채굴지에서 막힌 문의 장부를 맡는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Maya Belt keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_jor_finn#0",
+      "sceneId": "npc_dialog_sq_jor_finn",
+      "pageIndex": 0,
+      "label": "[ 조르 핀 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_jor_finn",
+      "text": "포지에서 빈 지휘석을 매물로 올린다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Jor Finn keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "jor_finn"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "포지에서 빈 지휘석을 매물로 올린다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Jor Finn keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_jor_finn#2",
+      "sceneId": "npc_dialog_sq_jor_finn",
+      "pageIndex": 2,
+      "label": "[ 조르 핀 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_jor_finn",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "jor_finn"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "포지에서 빈 지휘석을 매물로 올린다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Jor Finn keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_sel_vane#0",
+      "sceneId": "npc_dialog_sq_sel_vane",
+      "pageIndex": 0,
+      "label": "[ 셀 베인 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_sel_vane",
+      "text": "비콘에서 빈 지휘 매물의 인수를 기록한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Sel Vane keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "sel_vane"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "비콘에서 빈 지휘 매물의 인수를 기록한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Sel Vane keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    }
+  ]
+}

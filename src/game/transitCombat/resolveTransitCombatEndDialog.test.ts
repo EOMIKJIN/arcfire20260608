@@ -70,7 +70,11 @@ test('해적 승리 — 함장 이름·초상키·해적 패배 대사', () => {
   assert.equal(copy.label, '카일 드레이');
   assert.equal(copy.portraitAssetKey, kyle.portraitImageAssetKey);
   assert.notEqual(copy.text, '교전 종료.');
-  assert.match(copy.text, /선체|화물|관문|습격|산다|규칙|기록/);
+  // 문구가 아니라 «해적 패배 행 중 하나인가»로 검사 — 대사 교정에 깨지지 않는다
+  const pirateDefeatKo: readonly string[] = TransitCombatEndDialog_FROM_BALANCE_CSV
+    .filter((r) => r.kind === 'defeat' && r.factionId === 'pirates')
+    .map((r) => r.lineKo);
+  assert.ok(pirateDefeatKo.includes(copy.text), `해적 패배 행이 아님: ${copy.text}`);
 });
 
 test('같은 함장은 같은 대사(결정적)', () => {
@@ -149,7 +153,10 @@ test('도주 — 적 화자 + 도주 대사', () => {
   assert.equal(copy.usedCaptain, true);
   assert.equal(copy.label, '카일 드레이');
   assert.notEqual(copy.text, '교전을 이탈했습니다.');
-  assert.match(copy.text, /등|도망|교차|연료/);
+  const pirateFleeKo: readonly string[] = TransitCombatEndDialog_FROM_BALANCE_CSV
+    .filter((r) => r.kind === 'flee' && r.factionId === 'pirates')
+    .map((r) => r.lineKo);
+  assert.ok(pirateFleeKo.includes(copy.text), `해적 도주 행이 아님: ${copy.text}`);
 });
 
 console.log('ok resolveTransitCombatEndDialog');

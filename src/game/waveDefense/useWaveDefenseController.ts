@@ -6,9 +6,10 @@
 //
 // 재개 대기(waveCombatCooldownStore) 계약 요약(2026-07-27 허브 메인스테이지 교전과 범용 공유):
 //   - 이 컨트롤러는 웨이브 승리 시 handleWaveDefenseRunEnded(planet.tsx)가 markWaveCombatVictoryCooldown 호출.
-//   - resolvePlanetWaveCombatTrigger가 다음 웨이브 트리거 전에 isWaveCombatCooldownActive를 선행 검사.
-//   - 허브 비-웨이브 교전(PlanetEdenRaidTestLayer, mainStageCombatEnabled 행성)은 자동 리스폰 재교전 없이
-//     동일 쿨다운 스토어를 공유 — planet.tsx의 enemyFleetEntered가 진입 시점에 동일하게 게이트한다.
+//   - resolvePlanetWaveCombatTrigger가 자동 경로 트리거 전에 isWaveCombatCooldownActive를 검사.
+//     월드맵 [전투] 어썰트는 쿨다운을 통과한다(플레이어 행동 우선).
+//   - 상주 함장 허브 자동교전은 폐기. 남은 비-웨이브는 퀘스트 hub_orbit뿐이며
+//     동일 쿨다운 스토어를 공유 — planet.tsx의 enemyFleetEntered가 진입 시점에 게이트한다.
 //   - 이 훅 자체의 9웨이브·전환 로직·30분 상수는 이번 변경으로 손대지 않음(범용화는 스토어·게이트 레이어에서만).
 // ============================================================
 

@@ -1,8 +1,9 @@
 // ============================================================
 // 행성 웨이브 전투 발생조건 — 단일 정본 resolver.
 //
-// 규칙(대표님 지시 2026-08-16·2026-08-18 · 2026-09-05):
-// - 월드맵 [전투](planet_assault)는 RED stay block + 쿨다운 아님 + occupationCombatEnabled.
+// 규칙(대표님 지시 2026-08-16·2026-08-18 · 2026-09-05 · 2026-10-01):
+// - 월드맵 [전투](planet_assault)는 RED stay block + occupationCombatEnabled.
+//   플레이어 행동 우선 — 30분 승리 쿨다운을 통과(자동 허브 재교전 쿨다운과 별축).
 //   ActivePool(순차 분쟁 리스트) 선행 조건 아님 — 전투 후 동적 편입.
 // - 리스트 착륙 자동 웨이브는 폐지. 체류 중 **분쟁 순차 차례(due)** 가 오면
 //   territorial 패스가 pending 을 세우고, 이 resolver가 territorial_turn 으로 발화한다.
@@ -34,13 +35,13 @@ export type { PlanetWaveCombatTrigger, PlanetWaveCombatTriggerRule };
 export { evaluatePlanetWaveCombatTrigger } from './evaluatePlanetWaveCombatTrigger';
 
 /**
- * 월드맵 [전투] 노출·진입 — RED 점유 + occupationCombatEnabled + 승리 쿨다운 아님.
+ * 월드맵 [전투] 노출·진입 — RED 점유 + occupationCombatEnabled.
+ * 승리 쿨다운은 버튼·어썰트를 끄지 않는다(플레이어 행동 우선 · 2026-10-01).
  * ActivePool 선행 조건 아님(2026-09-05 대표님). assault intent는 아직 없으므로 resolver.enabled와 같지 않다.
  */
 export function isPlanetWaveAssaultAvailable(planetId: string | null | undefined): boolean {
   const id = planetId?.trim();
   if (!id) return false;
-  if (isWaveCombatCooldownActive(id)) return false;
   if (!resolvePlayerPlanetStayBlock(id)) return false;
   return isPlanetOccupationCombatEnabled(id);
 }

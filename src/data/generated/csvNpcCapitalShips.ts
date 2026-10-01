@@ -1570,13 +1570,13 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   },
   {
     id: "npc_enemy_arcadia_02",
-    name: "아르카디아 차단함 02",
-    nameEn: "Arcadia Interdictor 02",
+    name: "베가 접근로 차단함 02",
+    nameEn: "Vega Lane Interdictor 02",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
     captainId: "npc_cpt_ai_robot_default",
-    homeSystemId: "arcadia",
+    homeSystemId: "vega_outpost",
     combat: {
       maxHp: 314,
       maxShield: 95,
@@ -1599,13 +1599,13 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
   },
   {
     id: "npc_enemy_arcadia_03",
-    name: "아르카디아 추격함 03",
-    nameEn: "Arcadia Pursuer 03",
+    name: "관문 추격함 03",
+    nameEn: "Gate Pursuer 03",
     hullTypeId: "hull_cap_patrol_01",
     // captainId는 전함 미배정 fallback 식별자만 유지한다.
     // 정본 매핑은 npc_ai_captains.csv 의 assignedShipId를 사용한다.
     captainId: "npc_cpt_ai_robot_default",
-    homeSystemId: "arcadia",
+    homeSystemId: "solar_port",
     combat: {
       maxHp: 314,
       maxShield: 95,
@@ -1618,7 +1618,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
       sizeClass: 8,
       capitalShipArchetype: "neutral",
     },
-    infoLineSuffix: "E-ARCADIA_03",
+    infoLineSuffix: "E-GATE_03",
     arcTrafficDwellRadPerSec: 0.46,
     arcTrafficPhaseDurationMul: 2,
     arcTrafficPlanetDwellSecMin: 60,
@@ -9715,7 +9715,7 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
   },
   "npc_enemy_arcadia_02": {
     id: "npc_enemy_arcadia_02",
-    displayName: "아르카디아 차단함 02",
+    displayName: "베가 접근로 차단함 02",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.02,
     accelPxPerMs2: 0.000032,
@@ -9737,7 +9737,7 @@ export const NPC_CAPITAL_SHIP_COMBAT_RUNTIME_CONFIG_FROM_CSV: Record<string, Npc
   },
   "npc_enemy_arcadia_03": {
     id: "npc_enemy_arcadia_03",
-    displayName: "아르카디아 추격함 03",
+    displayName: "관문 추격함 03",
     npcMode: "combat",
     maxMoveSpeedPxPerMs: 0.02,
     accelPxPerMs2: 0.000032,

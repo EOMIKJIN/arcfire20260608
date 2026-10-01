@@ -16,7 +16,7 @@ story_002,obj_story_002_c,미네르바 궤도 호위 해적 1척을 격파하라
 story_002,obj_story_002_d,하수인 노아 프릭을 심문하라,talk_npc,npc_cpt_story_noah_frick|minerva_deep,,Interrogate hired hand Noah Frick
 story_002,obj_story_002_e,광산 총감독 니카 스톤에게 지휘 공백을 확인하라,talk_npc,npc_cpt_gov_minerva|minerva_deep,,Confirm the command vacancy with the mine overseer
 story_003,obj_story_003_a,아르카디아에서 이안 코발과 대화하라,talk_npc,npc_cpt_story_ian_koval|arcadia_prime,,Talk with Ian Koval on Arcadia
-story_003,obj_story_003_b,엘렌에게 대행 출정 지시를 확인하라,talk_npc,npc_cpt_arcadia_lane_01|arcadia_prime,,Confirm the stand-in order with Ellen
+story_003,obj_story_003_b,엘렌에게 위임된 지휘권을 확인하라,talk_npc,npc_cpt_arcadia_lane_01|arcadia_prime,,Confirm the delegated command with Ellen
 story_003,obj_story_003_c,베가 전초기지에 도착하라,reach_planet,vega_base,,Arrive at Vega Outpost
 story_004,obj_story_004_a,베가 궤도 기습함 1척을 격파하라,defeat_enemy,pirate_cruiser,1,Destroy 1 raid ship in Vega orbit
 story_004,obj_story_004_b,베가 순찰지휘관 하르만 돌에게 생존을 보고하라,talk_npc,npc_cpt_vega_watch_01|vega_base,,Report survival to the Vega watch commander
@@ -27,85 +27,80 @@ story_006,obj_story_006_a,드라코 궤도 호위 1척을 격파하라,defeat_en
 story_006,obj_story_006_b,성운 관측장 세레나 드릴에게 신호를 확인하라,talk_npc,npc_cpt_draco_obs_01|draco_haven,,Confirm the unique signal with the nebula observer
 story_006,obj_story_006_c,기함의 다렐 소사와 대면하라,talk_npc,npc_cpt_story_darel_sosa|draco_haven,,Face Darell Sosa at the flagship signal
 story_007,obj_story_007_a,다렐 소사에게 라이트홀드를 물어라,talk_npc,npc_cpt_story_darel_sosa|draco_haven,,Ask Darell Sosa about Light Hold
-story_007,obj_story_007_b,세레나에게 은폐 주파수를 대조하라,talk_npc,npc_cpt_draco_obs_01|draco_haven,,Match the concealment band with Serena
-story_007,obj_story_007_c,소사에게 빚의 이자를 확인하라,talk_npc,npc_cpt_story_darel_sosa|draco_haven,,Confirm the interest on the debt with Sosa
-story_007,obj_story_007_d,세레나에게 세 이름의 항로를 열어라,talk_npc,npc_cpt_draco_obs_01|draco_haven,,Have Serena open the three-name lanes
-story_007,obj_story_007_e,소사에게 다음 증언을 받아라,talk_npc,npc_cpt_story_darel_sosa|draco_haven,,Take Sosa’s next testimony
-story_008,obj_story_008_a,소사에게 세 이름을 정식으로 받아라,talk_npc,npc_cpt_story_darel_sosa|draco_haven,,Receive the three names from Sosa
-story_008,obj_story_008_b,세레나에게 세 항로 허가를 받아라,talk_npc,npc_cpt_draco_obs_01|draco_haven,,Get three-lane clearance from Serena
-story_008,obj_story_008_c,소사에게 합류 순서를 확인하라,talk_npc,npc_cpt_story_darel_sosa|draco_haven,,Confirm the join order with Sosa
-story_008,obj_story_008_d,세레나에게 아이언 입구를 열어라,talk_npc,npc_cpt_draco_obs_01|draco_haven,,Have Serena open the Iron mouth
-story_008,obj_story_008_e,소사에게 출발 증언을 받아라,talk_npc,npc_cpt_story_darel_sosa|draco_haven,,Take Sosa’s departure testimony
+story_007,obj_story_007_b,소사에게 47시간과 자장가를 확인하라,talk_npc,npc_cpt_story_darel_sosa|draco_haven,,Confirm the 47 hours and the lullaby with Sosa
+story_007,obj_story_007_c,베가 전초기지에 도착해 빈자리를 확인하라,reach_planet,vega_base,,Arrive at Vega Outpost and confirm the empty chair
+story_008,obj_story_008_a,드라코 성운 헤이븐으로 귀환하라,reach_planet,draco_haven,,Return to Draco Nebula Haven
+story_008,obj_story_008_b,소사에게 합류 순서를 확인하라,talk_npc,npc_cpt_story_darel_sosa|draco_haven,,Confirm the join order with Sosa
 story_009,obj_story_009_a,아이언 크로스 레므난트에 도착하라,reach_planet,iron_remnant,,Arrive at Iron Cross Remnant
 story_009,obj_story_009_b,카일 로렌과 합류하라,talk_npc,npc_cpt_story_kyle_loren|iron_remnant,,Join Kyle Loren
 story_009,obj_story_009_c,오메가 스테이션 허브에 도착하라,reach_planet,omega_hub,,Arrive at Omega Station Hub
 story_009,obj_story_009_d,미라 솅크와 합류하라,talk_npc,npc_cpt_story_mira_schenk|omega_hub,,Join Mira Schenk
-story_009,obj_story_009_e,린 켄달에게 교차 허가를 받아라,talk_npc,npc_cpt_ai_clan_neutral_01|omega_hub,,Get crossing clearance from Lynn Kendall
+story_009,obj_story_009_e,린 켄달에게 가온은 다음이라고 확인하라,talk_npc,npc_cpt_ai_clan_neutral_01|omega_hub,,Confirm with Lynn that Gaon joins next
 story_010,obj_story_010_a,뉴에덴 프라임에 도착하라,reach_planet,eden_city,,Arrive at New Eden Prime
 story_010,obj_story_010_b,가온 텔라와 합류하라,talk_npc,npc_cpt_story_gaon_tela|eden_city,,Join Gaon Tela
 story_010,obj_story_010_c,오메가 허브로 귀환하라,reach_planet,omega_hub,,Return to Omega Hub
 story_010,obj_story_010_d,넷의 증거를 대조하라,talk_npc,npc_cpt_story_mira_schenk|omega_hub,,Match the four proofs
-story_010,obj_story_010_e,카일에게 다음 화력을 확인하라,talk_npc,npc_cpt_story_kyle_loren|omega_hub,,Confirm the next fire with Kyle
-story_011,obj_story_011_a,하르만에게 이면 칸을 확인하라,talk_npc,npc_cpt_vega_watch_01|vega_base,,Confirm the backside cell with Harman
-story_011,obj_story_011_b,베가 궤도 잔당 1척을 격파하라,defeat_enemy,pirate_cruiser,1,Destroy 1 remnant in Vega orbit
-story_011,obj_story_011_c,하르만에게 협정 사본을 받아라,talk_npc,npc_cpt_vega_watch_01|vega_base,,Take the accord copy from Harman
-story_011,obj_story_011_d,아르카디아로 귀환하라,reach_planet,arcadia_prime,,Return to Arcadia
-story_011,obj_story_011_e,코발에게 이면 협정을 보고하라,talk_npc,npc_cpt_story_ian_koval|arcadia_prime,,Report the backside accord to Koval
-story_012,obj_story_012_a,코발에게 누명 통보를 받아라,talk_npc,npc_cpt_story_ian_koval|arcadia_prime,,Take the brand notice from Koval
-story_012,obj_story_012_b,엘렌에게 관문 허가를 받아라,talk_npc,npc_cpt_arcadia_lane_01|arcadia_prime,,Get gate clearance from Ellen
-story_012,obj_story_012_c,아르카디아 궤도 추격 1척을 격파하라,defeat_enemy,pirate_fighter,1,Destroy 1 chase ship in Arcadia orbit
-story_012,obj_story_012_d,엘렌에게 이탈을 확인하라,talk_npc,npc_cpt_arcadia_lane_01|arcadia_prime,,Confirm the exit with Ellen
-story_012,obj_story_012_e,코발에게 마지막 좌표를 받아라,talk_npc,npc_cpt_story_ian_koval|arcadia_prime,,Take the last fix from Koval
+story_010,obj_story_010_e,가온에게 같은 명령 체계를 확인하라,talk_npc,npc_cpt_story_gaon_tela|omega_hub,,Confirm one command line with Gaon
+story_011,obj_story_011_a,가온에게 소개 명령서를 열어라,talk_npc,npc_cpt_story_gaon_tela|omega_hub,,Have Gaon open the introduction order
+story_011,obj_story_011_b,미라와 결재를 역추적하라,talk_npc,npc_cpt_story_mira_schenk|omega_hub,,Reverse-trace the approval with Mira
+story_011,obj_story_011_c,가온에게 체포령 초안을 확인하라,talk_npc,npc_cpt_story_gaon_tela|omega_hub,,Confirm the draft arrest warrant with Gaon
+story_011,obj_story_011_d,미라에게 이면 합의 날짜를 대조하라,talk_npc,npc_cpt_story_mira_schenk|omega_hub,,Match the backside-pact date with Mira
+story_011,obj_story_011_e,가온에게 누명 위험을 확인하라,talk_npc,npc_cpt_story_gaon_tela|omega_hub,,Confirm the brand risk with Gaon
+story_012,obj_story_012_a,미라에게 포위 통보를 받아라,talk_npc,npc_cpt_story_mira_schenk|omega_hub,,Take the cordon notice from Mira
+story_012,obj_story_012_b,가온에게 돌파 경로를 받아라,talk_npc,npc_cpt_story_gaon_tela|omega_hub,,Take the breakout lane from Gaon
+story_012,obj_story_012_c,시리우스 보더에 도착하라,reach_planet,sirius_border,,Arrive at Sirius Border
+story_012,obj_story_012_d,시리우스 궤도 추격선 1척을 격파하라,defeat_enemy,pirate_fighter,1,Destroy 1 pursuit ship in Sirius orbit
+story_012,obj_story_012_e,가온에게 섀도우 넥서스 좌표를 받아라,talk_npc,npc_cpt_story_gaon_tela|sirius_border,,Take the Shadow Nexus fix from Gaon
 story_013,obj_story_013_a,섀도우 넥서스 마켓에 도착하라,reach_planet,shadow_market,,Arrive at Shadow Nexus Market
 story_013,obj_story_013_b,닐 벡스에게 문 앞을 물어라,talk_npc,npc_cpt_bar_ret_15|shadow_market,,Ask Nil Vex at the door
-story_013,obj_story_013_c,닉스 홀름과 대화하라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Talk with Nyx Holm
-story_013,obj_story_013_d,닉스에게 수배 범위를 확인하라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Confirm the wanted range with Nyx
-story_013,obj_story_013_e,닐에게 은신 칸을 받아라,talk_npc,npc_cpt_bar_ret_15|shadow_market,,Take a hide cell from Nil
-story_014,obj_story_014_a,닉스에게 거점 개설을 확인하라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Confirm hold opening with Nyx
-story_014,obj_story_014_b,카일에게 방어 화력을 맡겨라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Leave hold fire to Kyle
-story_014,obj_story_014_c,미라에게 거점 장부를 맡겨라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Leave the hold ledger to Mira
-story_014,obj_story_014_d,가온에게 은폐 지도를 맡겨라,talk_npc,npc_cpt_story_gaon_tela|shadow_market,,Leave the concealment map to Gaon
-story_014,obj_story_014_e,닉스에게 첫 거점 결정을 받아라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Take the first-hold decision from Nyx
+story_013,obj_story_013_c,닉스에게 착륙 거부를 확인하라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Confirm the landing refusal with Nyx
+story_013,obj_story_013_d,닉스에게 증명 조건을 받아라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Take the proof condition from Nyx
+story_013,obj_story_013_e,닐에게 대기 칸을 받아라,talk_npc,npc_cpt_bar_ret_15|shadow_market,,Take a waiting cell from Nil
+story_014,obj_story_014_a,카일에게 약탈 경보를 받아라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Take the raid alarm from Kyle
+story_014,obj_story_014_b,크림슨 구역 베이스에 도착하라,reach_planet,crimson_base,,Arrive at Crimson Base
+story_014,obj_story_014_c,크림슨 궤도 약탈선 1척을 격파하라,defeat_enemy,pirate_cruiser,1,Destroy 1 raid ship in Crimson orbit
+story_014,obj_story_014_d,닉스에게 거점 공개를 받아라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Have Nyx open the hold after proof
+story_014,obj_story_014_e,미라에게 첫 거점 장부를 열어라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Open the first-hold ledger with Mira
 story_015,obj_story_015_a,시리우스 보더에 도착하라,reach_planet,sirius_border,,Arrive at Sirius Border
 story_015,obj_story_015_b,세렌 베일의 초대를 확인하라,talk_npc,npc_cpt_story_seren_vale|sirius_border,,Confirm Seren Vale’s invite
 story_015,obj_story_015_c,세렌에게 함정 여부를 가려라,talk_npc,npc_cpt_story_seren_vale|sirius_border,,Have Seren sort trap from chance
-story_015,obj_story_015_d,그리하벤으로 귀환하라,reach_planet,shadow_market,,Return to Greehaven
+story_015,obj_story_015_d,섀도우 넥서스로 귀환하라,reach_planet,shadow_market,,Return to Shadow Nexus
 story_015,obj_story_015_e,닉스에게 초대 결과를 보고하라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Report the invite to Nyx
-story_016,obj_story_016_a,크림슨 구역 베이스에 도착하라,reach_planet,crimson_base,,Arrive at Crimson Zone Base
-story_016,obj_story_016_b,크림슨 궤도 추적선 1척을 격파하라,defeat_enemy,pirate_cruiser,1,Destroy 1 tracker in Crimson orbit
-story_016,obj_story_016_c,드락 베일에게 추적 소문을 들어라,talk_npc,npc_cpt_bar_ret_12|crimson_base,,Hear the track rumor from Drak Vale
-story_016,obj_story_016_d,그리하벤으로 귀환하라,reach_planet,shadow_market,,Return to Greehaven
+story_016,obj_story_016_a,시리우스 보더에 도착하라,reach_planet,sirius_border,,Arrive at Sirius Border
+story_016,obj_story_016_b,세렌에게 크림슨 표식을 확인하라,talk_npc,npc_cpt_story_seren_vale|sirius_border,,Confirm the Crimson mark with Seren
+story_016,obj_story_016_c,세렌에게 본대 아님을 확인하라,talk_npc,npc_cpt_story_seren_vale|sirius_border,,Confirm this is not a main-force invasion
+story_016,obj_story_016_d,섀도우 넥서스로 귀환하라,reach_planet,shadow_market,,Return to Shadow Nexus
 story_016,obj_story_016_e,카일에게 두 적을 보고하라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Report two enemies to Kyle
-story_017,obj_story_017_a,미라에게 자금 칸을 열어라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Open the fund cell with Mira
-story_017,obj_story_017_b,닐에게 중개를 맡겨라,talk_npc,npc_cpt_bar_ret_15|shadow_market,,Leave brokerage to Nil
-story_017,obj_story_017_c,닉스에게 자금 원칙을 확인하라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Confirm fund rules with Nyx
+story_017,obj_story_017_a,미라에게 계좌 동결을 열어라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Open the account freeze with Mira
+story_017,obj_story_017_b,닐에게 거래를 맡겨라,talk_npc,npc_cpt_bar_ret_15|shadow_market,,Leave the trade to Nil
+story_017,obj_story_017_c,뉴에덴 프라임에 동결 증서를 맡겨라,reach_planet,eden_city,,Leave the freeze writ at New Eden Prime
 story_017,obj_story_017_d,카일에게 보급 화력을 확인하라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Confirm supply fire with Kyle
-story_017,obj_story_017_e,미라에게 자금 마감을 받아라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Close the fund book with Mira
-story_018,obj_story_018_a,카일에게 방호 배치를 맡겨라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Leave plate layout to Kyle
-story_018,obj_story_018_b,가온에게 은폐 방호를 겹쳐라,talk_npc,npc_cpt_story_gaon_tela|shadow_market,,Overlay concealment plate with Gaon
-story_018,obj_story_018_c,닉스에게 요새 개설을 확인하라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Confirm the fort opening with Nyx
-story_018,obj_story_018_d,미라에게 보급 뼈대를 확인하라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Confirm supply bone with Mira
+story_017,obj_story_017_e,미라에게 동결 마감을 받아라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Close the freeze book with Mira
+story_018,obj_story_018_a,카일에게 함대 뼈대를 맡겨라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Leave fleet bone to Kyle
+story_018,obj_story_018_b,가온에게 방호를 겹쳐라,talk_npc,npc_cpt_story_gaon_tela|shadow_market,,Overlay plate with Gaon
+story_018,obj_story_018_c,오메가 교차 항로를 확인하라,reach_planet,omega_hub,,Confirm the Omega crossing lane
+story_018,obj_story_018_d,가온에게 은폐 방호를 닫아라,talk_npc,npc_cpt_story_gaon_tela|shadow_market,,Close concealment plate with Gaon
 story_018,obj_story_018_e,카일에게 뼈대 마감을 받아라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Close the bone book with Kyle
-story_019,obj_story_019_a,카일의 노선을 들어라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Hear Kyle’s line
-story_019,obj_story_019_b,미라의 노선을 들어라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Hear Mira’s line
-story_019,obj_story_019_c,가온에게 균열을 물어라,talk_npc,npc_cpt_story_gaon_tela|shadow_market,,Ask Gaon about the crack
-story_019,obj_story_019_d,닉스에게 중재를 맡겨라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Leave mediation to Nyx
-story_019,obj_story_019_e,닉스에게 균열 기록을 받아라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Take the crack record from Nyx
-story_020,obj_story_020_a,미라에게 배신 장부를 대조하라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Match the betrayal ledger with Mira
+story_019,obj_story_019_a,카일의 화력 노선을 들어라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Hear Kyle’s fire line
+story_019,obj_story_019_b,미라의 장부 노선을 들어라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Hear Mira’s ledger line
+story_019,obj_story_019_c,가온의 은폐 노선을 들어라,talk_npc,npc_cpt_story_gaon_tela|shadow_market,,Hear Gaon’s concealment line
+story_019,obj_story_019_d,아이언 잔해권에서 화력 노선을 확인해라,reach_planet,iron_remnant,,Confirm the fire line at Iron remnant
+story_019,obj_story_019_e,미라에게 균열 씨앗만 남겨라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Leave only the crack seed with Mira
+story_020,obj_story_020_a,미라에게 배신 소문을 대조하라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Match the betrayal rumor with Mira
 story_020,obj_story_020_b,카일에게 소문을 확인하라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Confirm the rumor with Kyle
-story_020,obj_story_020_c,가온에게 이간 채널을 물어라,talk_npc,npc_cpt_story_gaon_tela|shadow_market,,Ask Gaon for the wedge channel
-story_020,obj_story_020_d,닉스에게 이간 판정을 받아라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Take the wedge ruling from Nyx
-story_020,obj_story_020_e,미라에게 이간 마감을 받아라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Close the wedge book with Mira
-story_021,obj_story_021_a,카일에게 공세 배치를 받아라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Take siege layout from Kyle
-story_021,obj_story_021_b,섀도우 궤도 진압선 1척을 격파하라,defeat_enemy,pirate_cruiser,1,Destroy 1 suppression ship in Shadow orbit
-story_021,obj_story_021_c,닉스에게 거점 생존을 확인하라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Confirm hold survival with Nyx
-story_021,obj_story_021_d,가온에게 공세 지도를 접어라,talk_npc,npc_cpt_story_gaon_tela|shadow_market,,Fold the siege map with Gaon
-story_021,obj_story_021_e,카일에게 공방전 마감을 받아라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Close the siege with Kyle
-story_022,obj_story_022_a,닉스에게 깃발 선포를 들어라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Hear the flag declaration from Nyx
-story_022,obj_story_022_b,카일에게 깃발 화력을 확인하라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Confirm flag fire with Kyle
-story_022,obj_story_022_c,미라에게 깃발 장부를 열어라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Open the flag ledger with Mira
-story_022,obj_story_022_d,가온에게 깃발 지도를 맡겨라,talk_npc,npc_cpt_story_gaon_tela|shadow_market,,Leave the flag map to Gaon
-story_022,obj_story_022_e,닉스에게 본문 결을 받아라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Take the body close from Nyx
+story_020,obj_story_020_c,오메가 허브에서 조작 통신을 추적하라,reach_planet,omega_hub,,Trace the forged comm at Omega Hub
+story_020,obj_story_020_d,가온에게 스텔리움 정보국을 확인하라,talk_npc,npc_cpt_story_gaon_tela|omega_hub,,Confirm Stellium intelligence as the source
+story_020,obj_story_020_e,미라에게 넷의 결속을 받아라,talk_npc,npc_cpt_story_mira_schenk|omega_hub,,Take the four’s bond from Mira
+story_021,obj_story_021_a,카일에게 경보 배치를 받아라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Take the alarm layout from Kyle
+story_021,obj_story_021_b,블러드 필드 스테이션에 도착하라,reach_planet,blood_station,,Arrive at Blood Field Station
+story_021,obj_story_021_c,블러드 궤도 진압선 1척을 격파하라,defeat_enemy,pirate_cruiser,1,Destroy 1 suppression ship in Blood Field orbit
+story_021,obj_story_021_d,닐에게 우리를 뭐라고 부르는지 들어라,talk_npc,npc_cpt_bar_ret_15|shadow_market,,Hear Nil ask what we are called
+story_021,obj_story_021_e,카일에게 퇴각을 확인하라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Confirm the retreat with Kyle
+story_022,obj_story_022_a,미라에게 이름 없는 동맹을 확인하라,talk_npc,npc_cpt_story_mira_schenk|shadow_market,,Confirm the nameless alliance with Mira
+story_022,obj_story_022_b,카일에게 동맹 화력을 확인하라,talk_npc,npc_cpt_story_kyle_loren|shadow_market,,Confirm alliance fire with Kyle
+story_022,obj_story_022_c,시리우스 보더에 도착하라,reach_planet,sirius_border,,Arrive at Sirius Border
+story_022,obj_story_022_d,세렌에게 대표 채널을 열어라,talk_npc,npc_cpt_story_seren_vale|sirius_border,,Open the representative channel with Seren
+story_022,obj_story_022_e,닉스에게 문은 열렸으나 국가명은 없음을 확인하라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Confirm with Nyx the door is open and no nation is named
 story_023,obj_story_023_a,뉴에덴 프라임에 도착하라,reach_planet,eden_city,,Arrive at New Eden Prime
 story_023,obj_story_023_b,미레유에게 메아리를 확인하라,talk_npc,npc_cpt_mireille|eden_city,,Confirm the echo with Mireille
 story_023,obj_story_023_c,가온에게 메아리를 보고하라,talk_npc,npc_cpt_story_gaon_tela|shadow_market,,Report the echo to Gaon
@@ -130,16 +125,16 @@ story_029,obj_story_029_c,카일에게 선서 화력을 맡겨라,talk_npc,npc_c
 story_030,obj_story_030_a,닉스에게 챕터 접기를 확인하라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Confirm the chapter fold with Nyx
 story_030,obj_story_030_b,가온에게 빈칸을 남겨라,talk_npc,npc_cpt_story_gaon_tela|shadow_market,,Leave the blank with Gaon
 story_030,obj_story_030_c,닉스에게 클로저를 받아라,talk_npc,npc_cpt_story_nyx_holm|shadow_market,,Take the closer from Nyx
-sandbox_001,obj_s001_a,아르카디아 궤도 해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter in Arcadia orbit
+sandbox_001,obj_s001_a,솔라 항구 궤도 관문 정찰기 격파,defeat_enemy,gate_scout,1,Destroy the gate scout in Solar Port orbit
 sandbox_002,obj_s002_a,식량 팩 3개 구매,buy_goods,food,3,Buy 3 food packs
 sandbox_002,obj_s002_b,베가 전초기지로 이동,reach_system,vega_outpost,,Travel to Vega Outpost
 sandbox_003,obj_s003_a,솔라 궤도 해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter in Sola orbit
 sandbox_004,obj_s004_a,기술 부품 2개 구매,buy_goods,tech,2,Buy 2 tech components
 sandbox_004,obj_s004_b,미네르바로 이동,reach_system,minerva,,Travel to Minerva
-sandbox_005,obj_s005_a,미네르바 궤도 해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter in Minerva orbit
+sandbox_005,obj_s005_a,아이언 레므난트 궤도 해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter in Iron Remnant orbit
 sandbox_006,obj_s006_a,원자재 광물 3개 구매,buy_goods,minerals,3,Buy 3 raw minerals
 sandbox_006,obj_s006_b,뉴 에덴으로 이동,reach_system,new_eden,,Travel to New Eden
-sandbox_007,obj_s007_a,베가 궤도 해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter in Vega orbit
+sandbox_007,obj_s007_a,뉴에덴 궤도 해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter in New Eden orbit
 sandbox_008,obj_s008_a,식량 팩 4개 구매,buy_goods,food,4,Buy 4 food packs
 sandbox_008,obj_s008_b,솔라 항구로 이동,reach_system,solar_port,,Travel to Sola Port
 sandbox_009,obj_s009_a,뉴에덴 궤도 해적 순양함 격파,defeat_enemy,pirate_cruiser,1,Destroy pirate cruiser in New Eden orbit
@@ -148,14 +143,14 @@ sandbox_010,obj_s010_b,아이언 크로스로 이동,reach_system,iron_cross,,Tr
 sandbox_011,obj_s011_a,아이언 레므난트 궤도 해적 순양함 격파,defeat_enemy,pirate_cruiser,1,Destroy pirate cruiser in Iron Remnant orbit
 sandbox_012,obj_s012_a,원자재 광물 4개 구매,buy_goods,minerals,4,Buy 4 raw minerals
 sandbox_012,obj_s012_b,오메가 스테이션으로 이동,reach_system,omega_station,,Travel to Omega Station
-sandbox_013,obj_s013_a,드라코 궤도 해적 순양함 격파,defeat_enemy,pirate_cruiser,1,Destroy pirate cruiser in Draco orbit
+sandbox_013,obj_s013_a,타이탄 게이트 궤도 해적 순양함 격파,defeat_enemy,pirate_cruiser,1,Destroy pirate cruiser in Titan Gate orbit
 sandbox_014,obj_s014_a,사치품 2개 구매,buy_goods,luxury,2,Buy 2 luxury goods
 sandbox_014,obj_s014_b,오메가 스테이션으로 이동,reach_system,omega_station,,Travel to Omega Station
 sandbox_015,obj_s015_a,오메가 궤도 해적 순양함 격파,defeat_enemy,pirate_cruiser,1,Destroy pirate cruiser in Omega orbit
 sandbox_016,obj_s016_a,식량 팩 5개 구매,buy_goods,food,5,Buy 5 food packs
 sandbox_016,obj_s016_b,헬리오스로 이동,reach_system,helios,,Travel to Helios
 sandbox_017,obj_s017_a,헬리오스 궤도 해적 순양함 격파,defeat_enemy,pirate_cruiser,1,Destroy pirate cruiser in Helios orbit
-sandbox_018,obj_s018_a,기술 부품 4개 구매,buy_goods,tech,4,Buy 4 tech components
+sandbox_018,obj_s018_a,헬리오스에서 기술 부품 4개 구매,buy_goods,tech,4,Buy 4 tech components at Helios
 sandbox_018,obj_s018_b,시리우스로 이동,reach_system,sirius,,Travel to Sirius
 sandbox_019,obj_s019_a,시리우스 궤도 현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter in Sirius orbit
 sandbox_020,obj_s020_a,사치품 3개 구매,buy_goods,luxury,3,Buy 3 luxury goods
@@ -169,16 +164,16 @@ sandbox_024,obj_s024_b,섀도우 넥서스로 이동,reach_system,shadow_nexus,,
 sandbox_025,obj_s025_a,다크 리프트 궤도 현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter in Dark Lift orbit
 sandbox_026,obj_s026_a,식량 팩 6개 구매,buy_goods,food,6,Buy 6 food packs
 sandbox_026,obj_s026_b,블러드 필드로 이동,reach_system,blood_field,,Travel to Blood Field
-sandbox_027,obj_s027_a,섀도우 궤도 현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter in Shadow orbit
-sandbox_028,obj_s028_a,기술 부품 5개 구매,buy_goods,tech,5,Buy 5 tech components
+sandbox_027,obj_s027_a,블러드 필드 궤도 현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter in Blood Field orbit
+sandbox_028,obj_s028_a,아이언 잔해권에서 기술 부품 5개 구매,buy_goods,tech,5,Buy 5 tech components at Iron Remnant
 sandbox_028,obj_s028_b,어비스로 이동,reach_system,abyss,,Travel to Abyss
 sandbox_029,obj_s029_a,나이트폴 궤도 현상금 사냥꾼 격파,defeat_enemy,bounty_hunter,1,Destroy bounty hunter in Nightfall orbit
-sandbox_030,obj_s030_a,기술 부품 6개 구매,buy_goods,tech,6,Buy 6 tech components
+sandbox_030,obj_s030_a,오메가에서 기술 부품 6개 구매,buy_goods,tech,6,Buy 6 tech components at Omega Hub
 sandbox_030,obj_s030_b,아크파이어 코어로 이동,reach_system,arcfire_core,,Travel to Arcfire Core
 sandbox_031,obj_s031_a,무기류 2개 구매,buy_goods,weapon,2,Buy 2 weapons
 sandbox_031,obj_s031_b,솔라 항구로 배달,reach_system,solar_port,,Deliver to Sola Port
-sandbox_032,obj_s032_a,미네르바 궤도 해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter in Minerva orbit
-sandbox_033,obj_s033_a,식량 팩 4개 구매,buy_goods,food,4,Buy 4 food packs
+sandbox_032,obj_s032_a,헬리오스 궤도 해적 전투기 격파,defeat_enemy,pirate_fighter,1,Destroy pirate fighter in Helios orbit
+sandbox_033,obj_s033_a,뉴에덴에서 식량 팩 4개 구매,buy_goods,food,4,Buy 4 food packs at New Eden
 sandbox_033,obj_s033_b,오메가 스테이션으로 배달,reach_system,omega_station,,Deliver to Omega Station
 sandbox_034,obj_s034_a,캠프 게이트에 도착하라,reach_planet,synth_075_p,,Arrive at Camp Gate
 sandbox_034,obj_s034_b,베일 훅에게 캠프 입구 위치를 확인하라,talk_npc,npc_cpt_sq_veil_hook|synth_075_p,,Confirm the camp mouth with Veil Hook
@@ -196,7 +191,7 @@ sandbox_036,obj_s036_c,장부를 노리는 궤도 전투기를 격파하라,defe
 sandbox_036,obj_s036_d,놀 패스에게 출처 없는 자금의 행방을 확인하라,talk_npc,npc_cpt_sq_noll_pass|synth_070_p,,Confirm the sourceless money with Noll
 sandbox_037,obj_s037_a,케이드 림에게 항로 상자 위치를 확인하라,talk_npc,npc_cpt_sq_kade_rim|synth_070_p,,Confirm the route crate with Kade Rim
 sandbox_037,obj_s037_b,레아 빈과 상자 일련번호를 대조하라,talk_npc,npc_cpt_sq_rhea_vin|synth_070_p,,Match the crate serial with Rhea
-sandbox_037,obj_s037_c,상자를 호위하는 궤도 전투기를 격파하라,defeat_enemy,pirate_fighter,1,Destroy the crate-escort fighter in orbit
+sandbox_037,obj_s037_c,캠프 출구 궤도 상자 호위 전투기를 격파하라,defeat_enemy,pirate_fighter,1,Destroy the crate-escort fighter in Camp Gate orbit
 sandbox_037,obj_s037_d,레아 빈에게서 파편 사본을 받아라,talk_npc,npc_cpt_sq_rhea_vin|synth_070_p,,Take the fragment copy from Rhea
 sandbox_038,obj_s038_a,술집에서 칼 릿지와 한잔 나눠라,talk_npc,npc_cpt_sq_cal_ridge|synth_052_p,,Sit with Cal Ridge at the bar
 sandbox_038,obj_s038_b,리라 몬에게 국경의 사정을 들어라,talk_npc,npc_cpt_sq_lira_mon|synth_052_p,,Talk with Lira in the language of the border

@@ -10,8 +10,8 @@ sqa_002_c,obj_story_002_c,combat,호위|해적|격파,1,밀수조 앞 호위는 
 sqa_002_d,obj_story_002_d,npc_cpt_story_noah_frick,노아|하수인|함장 내정,1,노아가 뱉은 말 기억해. 피해자는 국경 방어 함대 함장 내정자였어. 원한이나 빚이 아닌 자리야.,Keep what Noah said. The dead man was the border-defense captain-designate. Not a grudge. A post.
 sqa_002_e,obj_story_002_e,npc_cpt_gov_minerva,니카|빈자리|출정,1,니카가 말한 빈 함장 자리. 출정은 그 빈자리에서 시작되고 너는 그 칸에 이름이 올라 있어.,The vacant chair Nica named. The sortie starts from that gap and your name is already on the cell.
 sqa_003_a,obj_story_003_a,npc_cpt_story_ian_koval,코발|대행|출정,1,코발이 너를 대행으로 지명한 거야. 사건 기록에 이름이 있어서 베가 칸이 열린 거지.,Koval named you acting captain. Your name on the case file opened the Vega cell.
-sqa_003_b,obj_story_003_b,npc_cpt_arcadia_lane_01,엘렌|대행 출정|지시,1,엘렌의 출정 지시는 명령이야. 여기서는 부탁이 아니라 관문 순찰대장 창구야.,Ellen's sortie order is a command. This window is Gate Patrol not a favor.
-sqa_003_c,obj_story_003_c,travel,베가|전초|도착,1,베가 전초가 다음 칸이야. 대행 출정의 몸이 거기 서 있어.,Vega Outpost is the next cell. The body of the stand-in sortie stands there.
+sqa_003_b,obj_story_003_b,npc_cpt_arcadia_lane_01,엘렌|위임된 지휘권|지시,1,엘렌의 출정 지시는 명령이야. 여기서는 부탁이 아니라 관문 순찰대장 창구야.,Ellen's sortie order is a command. This window is Gate Patrol not a favor.
+sqa_003_c,obj_story_003_c,travel,베가|전초|도착,1,베가 전초가 다음 칸이야. 위임된 지휘권이 거기 서 있어.,Vega Outpost is the next cell. The delegated command stands there.
 sqa_004_a,obj_story_004_a,combat,기습|전멸|함대,1,정찰보다 큰 기습이야. 살아남는 게 이 칸의 전부고 보고는 그다음이야.,The raid is larger than the scout. Survival is this cell. The report comes after.
 sqa_004_b,obj_story_004_b,npc_cpt_vega_watch_01,하르만|생존|보고,1,하르만은 전멸 현장에서 긴 말을 안 해. 생존 보고만 올리고 아르카디아로 돌아가.,Harman will not add a long line on a wipe site. File survival and go back to Arcadia.
 sqa_004_c,obj_story_004_c,travel,아르카디아|귀환,1,귀환은 도망이 아니야. 코발이 다음 이름을 꺼내려고 너를 기다리는 칸이야.,Return is not flight. Koval is waiting to speak the next name.
@@ -36,7 +36,7 @@ sqa_036_c,obj_s036_c,combat,장부|전투기|호위,1,장부를 노리는 전투
 sqa_036_d,obj_s036_d,npc_cpt_sq_noll_pass,놀|계좌|캠프,1,출처 없는 자금의 끝은 캠프 쪽 계좌야. 놀은 이름 없이 그 방향만 남겨.,The sourceless money ends on a camp account. Noll leaves the direction and no name.
 sqa_037_a,obj_s037_a,npc_cpt_sq_kade_rim,케이드|상자|위치,1,케이드가 준 건 상자 위치야. 뚜껑은 열지 말고 레아한테 일련번호만 넘겨.,Kade gave the crate slot. Do not open the lid. Pass the serial to Rhea.
 sqa_037_b,obj_s037_b,npc_cpt_sq_rhea_vin,레아|일련번호|주파수,1,레아가 맞춘 일련번호는 아크코어 주파수 조각이야. 요새 호위대 주파수는 아니야.,The serial Rhea matched is an ArcCore-band shard. Not a fortress-escort band.
-sqa_037_c,obj_s037_c,combat,상자|호위|전투기,1,상자를 지키는 호위가 사본 칸을 잠그고 있어. 격파한 뒤에 레아가 넘겨.,The crate escort locks the copy cell. After it falls Rhea hands it over.
+sqa_037_c,obj_s037_c,combat,상자|호위|캠프,1,상자를 지키는 호위가 캠프 출구에 있어. 격파한 뒤에 레아가 사본을 넘겨.,The crate escort waits at the Camp mouth. After it falls Rhea hands the copy.
 sqa_037_d,obj_s037_d,npc_cpt_sq_rhea_vin,레아|사본|캠프,1,레아 사본의 경로는 캠프까지 이어져. 맞은 건 주파수뿐 심장까지는 아니야.,Rhea's copy path continues to Camp. The match is the band not a heart.
 sqa_038_a,obj_s038_a,npc_cpt_sq_cal_ridge,칼|릿지|술집|정박,1,칼 릿지 옆자리가 비어 있어. 빈 정박 소문은 술자리 말로만 두고 세지 마.,The seat beside Cal is empty. Let the empty-berth rumor stay in the drink. Do not count it.
 sqa_038_b,obj_s038_b,npc_cpt_sq_lira_mon,리라|관문|고향,1,리라는 관문 기록을 맡고 있어. 고향 얘기는 서로 묻지 않는 자리야.,Lira keeps the gate record. Home is the thing no one asks here.
@@ -83,85 +83,80 @@ sqa_063_c,obj_s063_c,npc_cpt_sq_toma_kale,토마|케일|봉투,1,토마는 봉�
 sqa_063_d,obj_s063_d,npc_cpt_sq_toma_kale,토마|인도|봉인,1,토마가 받은 건 봉인이야. 속이 인수가 아니야.,What Toma took is the seal. The inside is not the handoff.
 sqa_063_e,obj_s063_e,npc_cpt_sq_ev_holt,에브|봉투|접,1,에브는 속이 열리지 않았다고만 접어.,Ev folds only that the inside was never read.
 sqa_007_a,obj_story_007_a,npc_cpt_story_darel_sosa,다렐|소사에게|라이트홀드를|물어라,1,다렐 소사에게 라이트홀드를 물어라. 줄기는 이 칸이야.,Ask Darell Sosa about Light Hold. This cell is the stem.
-sqa_007_b,obj_story_007_b,npc_cpt_draco_obs_01,세레나에게|은폐|주파수를|대조하라,1,세레나에게 은폐 주파수를 대조하라. 줄기는 이 칸이야.,Match the concealment band with Serena. This cell is the stem.
-sqa_007_c,obj_story_007_c,npc_cpt_story_darel_sosa,소사에게|빚의|이자를|확인하라,1,소사에게 빚의 이자를 확인하라. 줄기는 이 칸이야.,Confirm the interest on the debt with Sosa. This cell is the stem.
-sqa_007_d,obj_story_007_d,npc_cpt_draco_obs_01,세레나에게|세|이름의|항로를|열어라,1,세레나에게 세 이름의 항로를 열어라. 줄기는 이 칸이야.,Have Serena open the three-name lanes. This cell is the stem.
-sqa_007_e,obj_story_007_e,npc_cpt_story_darel_sosa,소사에게|다음|증언을|받아라,1,소사에게 다음 증언을 받아라. 줄기는 이 칸이야.,Take Sosa’s next testimony. This cell is the stem.
-sqa_008_a,obj_story_008_a,npc_cpt_story_darel_sosa,소사에게|세|이름을|정식으로|받아라,1,소사에게 세 이름을 정식으로 받아라. 줄기는 이 칸이야.,Receive the three names from Sosa. This cell is the stem.
-sqa_008_b,obj_story_008_b,npc_cpt_draco_obs_01,세레나에게|세|항로|허가를|받아라,1,세레나에게 세 항로 허가를 받아라. 줄기는 이 칸이야.,Get three-lane clearance from Serena. This cell is the stem.
-sqa_008_c,obj_story_008_c,npc_cpt_story_darel_sosa,소사에게|합류|순서를|확인하라,1,소사에게 합류 순서를 확인하라. 줄기는 이 칸이야.,Confirm the join order with Sosa. This cell is the stem.
-sqa_008_d,obj_story_008_d,npc_cpt_draco_obs_01,세레나에게|아이언|입구를|열어라,1,세레나에게 아이언 입구를 열어라. 줄기는 이 칸이야.,Have Serena open the Iron mouth. This cell is the stem.
-sqa_008_e,obj_story_008_e,npc_cpt_story_darel_sosa,소사에게|출발|증언을|받아라,1,소사에게 출발 증언을 받아라. 줄기는 이 칸이야.,Take Sosa’s departure testimony. This cell is the stem.
+sqa_007_b,obj_story_007_b,npc_cpt_story_darel_sosa,소사에게|47시간|자장가,1,소사에게 47시간과 자장가를 확인하라. 줄기는 이 칸이야.,Confirm the 47 hours and the lullaby with Sosa. This cell is the stem.
+sqa_007_c,obj_story_007_c,travel,베가|전초기지|빈자리,1,베가 전초기지에 도착해 빈자리를 확인하라. 줄기는 이 칸이야.,Arrive at Vega Outpost and confirm the empty chair. This cell is the stem.
+sqa_008_a,obj_story_008_a,travel,드라코|헤이븐|귀환,1,드라코 성운 헤이븐으로 귀환하라. 줄기는 이 칸이야.,Return to Draco Nebula Haven. This cell is the stem.
+sqa_008_b,obj_story_008_b,npc_cpt_story_darel_sosa,소사에게|합류|순서를|확인하라,1,소사에게 합류 순서를 확인하라. 줄기는 이 칸이야.,Confirm the join order with Sosa. This cell is the stem.
 sqa_009_a,obj_story_009_a,travel,아이언|크로스|레므난트에|도착하라,1,아이언 크로스 레므난트에 도착하라. 줄기는 이 칸이야.,Arrive at Iron Cross Remnant. This cell is the stem.
 sqa_009_b,obj_story_009_b,npc_cpt_story_kyle_loren,카일|로렌과|합류하라,1,카일 로렌과 합류하라. 줄기는 이 칸이야.,Join Kyle Loren. This cell is the stem.
 sqa_009_c,obj_story_009_c,travel,오메가|스테이션|허브에|도착하라,1,오메가 스테이션 허브에 도착하라. 줄기는 이 칸이야.,Arrive at Omega Station Hub. This cell is the stem.
 sqa_009_d,obj_story_009_d,npc_cpt_story_mira_schenk,미라|솅크와|합류하라,1,미라 솅크와 합류하라. 줄기는 이 칸이야.,Join Mira Schenk. This cell is the stem.
-sqa_009_e,obj_story_009_e,npc_cpt_ai_clan_neutral_01,린|켄달에게|교차|허가를|받아라,1,린 켄달에게 교차 허가를 받아라. 줄기는 이 칸이야.,Get crossing clearance from Lynn Kendall. This cell is the stem.
+sqa_009_e,obj_story_009_e,npc_cpt_ai_clan_neutral_01,린|가온은|다음,1,린에게 가온은 다음이라고 확인하라. 줄기는 이 칸이야.,Confirm with Lynn that Gaon joins next. This cell is the stem.
 sqa_010_a,obj_story_010_a,travel,뉴에덴|프라임에|도착하라,1,뉴에덴 프라임에 도착하라. 줄기는 이 칸이야.,Arrive at New Eden Prime. This cell is the stem.
 sqa_010_b,obj_story_010_b,npc_cpt_story_gaon_tela,가온|텔라와|합류하라,1,가온 텔라와 합류하라. 줄기는 이 칸이야.,Join Gaon Tela. This cell is the stem.
 sqa_010_c,obj_story_010_c,travel,오메가|허브로|귀환하라,1,오메가 허브로 귀환하라. 줄기는 이 칸이야.,Return to Omega Hub. This cell is the stem.
 sqa_010_d,obj_story_010_d,npc_cpt_story_mira_schenk,넷의|증거를|대조하라,1,넷의 증거를 대조하라. 줄기는 이 칸이야.,Match the four proofs. This cell is the stem.
-sqa_010_e,obj_story_010_e,npc_cpt_story_kyle_loren,카일에게|다음|화력을|확인하라,1,카일에게 다음 화력을 확인하라. 줄기는 이 칸이야.,Confirm the next fire with Kyle. This cell is the stem.
-sqa_011_a,obj_story_011_a,npc_cpt_vega_watch_01,하르만에게|이면|칸을|확인하라,1,하르만에게 이면 칸을 확인하라. 줄기는 이 칸이야.,Confirm the backside cell with Harman. This cell is the stem.
-sqa_011_b,obj_story_011_b,combat,베가|궤도|잔당|1척을|격파하라,1,베가 궤도 잔당 1척을 격파하라. 줄기는 이 칸이야.,Destroy 1 remnant in Vega orbit. This cell is the stem.
-sqa_011_c,obj_story_011_c,npc_cpt_vega_watch_01,하르만에게|협정|사본을|받아라,1,하르만에게 협정 사본을 받아라. 줄기는 이 칸이야.,Take the accord copy from Harman. This cell is the stem.
-sqa_011_d,obj_story_011_d,travel,아르카디아로|귀환하라,1,아르카디아로 귀환하라. 줄기는 이 칸이야.,Return to Arcadia. This cell is the stem.
-sqa_011_e,obj_story_011_e,npc_cpt_story_ian_koval,코발에게|이면|협정을|보고하라,1,코발에게 이면 협정을 보고하라. 줄기는 이 칸이야.,Report the backside accord to Koval. This cell is the stem.
-sqa_012_a,obj_story_012_a,npc_cpt_story_ian_koval,코발에게|누명|통보를|받아라,1,코발에게 누명 통보를 받아라. 줄기는 이 칸이야.,Take the brand notice from Koval. This cell is the stem.
-sqa_012_b,obj_story_012_b,npc_cpt_arcadia_lane_01,엘렌에게|관문|허가를|받아라,1,엘렌에게 관문 허가를 받아라. 줄기는 이 칸이야.,Get gate clearance from Ellen. This cell is the stem.
-sqa_012_c,obj_story_012_c,combat,아르카디아|궤도|추격|1척을|격파하라,1,아르카디아 궤도 추격 1척을 격파하라. 줄기는 이 칸이야.,Destroy 1 chase ship in Arcadia orbit. This cell is the stem.
-sqa_012_d,obj_story_012_d,npc_cpt_arcadia_lane_01,엘렌에게|이탈을|확인하라,1,엘렌에게 이탈을 확인하라. 줄기는 이 칸이야.,Confirm the exit with Ellen. This cell is the stem.
-sqa_012_e,obj_story_012_e,npc_cpt_story_ian_koval,코발에게|마지막|좌표를|받아라,1,코발에게 마지막 좌표를 받아라. 줄기는 이 칸이야.,Take the last fix from Koval. This cell is the stem.
+sqa_010_e,obj_story_010_e,npc_cpt_story_gaon_tela,가온에게|같은|명령|체계,1,가온에게 같은 명령 체계를 확인하라. 줄기는 이 칸이야.,Confirm one command line with Gaon. This cell is the stem.
+sqa_011_a,obj_story_011_a,npc_cpt_story_gaon_tela,가온에게|소개|명령서,1,가온에게 소개 명령서를 열어라. 줄기는 이 칸이야.,Have Gaon open the introduction order. This cell is the stem.
+sqa_011_b,obj_story_011_b,npc_cpt_story_mira_schenk,미라와|결재|역추적,1,미라와 결재를 역추적하라. 줄기는 이 칸이야.,Reverse-trace the approval with Mira. This cell is the stem.
+sqa_011_c,obj_story_011_c,npc_cpt_story_gaon_tela,가온에게|체포령|초안,1,가온에게 체포령 초안을 확인하라. 줄기는 이 칸이야.,Confirm the draft arrest warrant with Gaon. This cell is the stem.
+sqa_011_d,obj_story_011_d,npc_cpt_story_mira_schenk,미라에게|이면|합의|날짜,1,미라에게 이면 합의 날짜를 대조하라. 줄기는 이 칸이야.,Match the backside-pact date with Mira. This cell is the stem.
+sqa_011_e,obj_story_011_e,npc_cpt_story_gaon_tela,가온에게|누명|위험,1,가온에게 누명 위험을 확인하라. 줄기는 이 칸이야.,Confirm the brand risk with Gaon. This cell is the stem.
+sqa_012_a,obj_story_012_a,npc_cpt_story_mira_schenk,미라에게|포위|통보,1,미라에게 포위 통보를 받아라. 줄기는 이 칸이야.,Take the cordon notice from Mira. This cell is the stem.
+sqa_012_b,obj_story_012_b,npc_cpt_story_gaon_tela,가온에게|돌파|경로,1,가온에게 돌파 경로를 받아라. 줄기는 이 칸이야.,Take the breakout lane from Gaon. This cell is the stem.
+sqa_012_c,obj_story_012_c,travel,시리우스|보더|도착,1,시리우스 보더에 도착하라. 줄기는 이 칸이야.,Arrive at Sirius Border. This cell is the stem.
+sqa_012_d,obj_story_012_d,combat,시리우스|궤도|추격선|1척,1,시리우스 궤도 추격선 1척을 격파하라. 줄기는 이 칸이야.,Destroy 1 pursuit ship in Sirius orbit. This cell is the stem.
+sqa_012_e,obj_story_012_e,npc_cpt_story_gaon_tela,가온에게|섀도우|넥서스|좌표,1,가온에게 섀도우 넥서스 좌표를 받아라. 줄기는 이 칸이야.,Take the Shadow Nexus fix from Gaon. This cell is the stem.
 sqa_013_a,obj_story_013_a,travel,섀도우|넥서스|마켓에|도착하라,1,섀도우 넥서스 마켓에 도착하라. 줄기는 이 칸이야.,Arrive at Shadow Nexus Market. This cell is the stem.
 sqa_013_b,obj_story_013_b,npc_cpt_bar_ret_15,닐|벡스에게|문|앞을|물어라,1,닐 벡스에게 문 앞을 물어라. 줄기는 이 칸이야.,Ask Nil Vex at the door. This cell is the stem.
-sqa_013_c,obj_story_013_c,npc_cpt_story_nyx_holm,닉스|홀름과|대화하라,1,닉스 홀름과 대화하라. 줄기는 이 칸이야.,Talk with Nyx Holm. This cell is the stem.
-sqa_013_d,obj_story_013_d,npc_cpt_story_nyx_holm,닉스에게|수배|범위를|확인하라,1,닉스에게 수배 범위를 확인하라. 줄기는 이 칸이야.,Confirm the wanted range with Nyx. This cell is the stem.
-sqa_013_e,obj_story_013_e,npc_cpt_bar_ret_15,닐에게|은신|칸을|받아라,1,닐에게 은신 칸을 받아라. 줄기는 이 칸이야.,Take a hide cell from Nil. This cell is the stem.
-sqa_014_a,obj_story_014_a,npc_cpt_story_nyx_holm,닉스에게|거점|개설을|확인하라,1,닉스에게 거점 개설을 확인하라. 줄기는 이 칸이야.,Confirm hold opening with Nyx. This cell is the stem.
-sqa_014_b,obj_story_014_b,npc_cpt_story_kyle_loren,카일에게|방어|화력을|맡겨라,1,카일에게 방어 화력을 맡겨라. 줄기는 이 칸이야.,Leave hold fire to Kyle. This cell is the stem.
-sqa_014_c,obj_story_014_c,npc_cpt_story_mira_schenk,미라에게|거점|장부를|맡겨라,1,미라에게 거점 장부를 맡겨라. 줄기는 이 칸이야.,Leave the hold ledger to Mira. This cell is the stem.
-sqa_014_d,obj_story_014_d,npc_cpt_story_gaon_tela,가온에게|은폐|지도를|맡겨라,1,가온에게 은폐 지도를 맡겨라. 줄기는 이 칸이야.,Leave the concealment map to Gaon. This cell is the stem.
-sqa_014_e,obj_story_014_e,npc_cpt_story_nyx_holm,닉스에게|첫|거점|결정을|받아라,1,닉스에게 첫 거점 결정을 받아라. 줄기는 이 칸이야.,Take the first-hold decision from Nyx. This cell is the stem.
+sqa_013_c,obj_story_013_c,npc_cpt_story_nyx_holm,닉스에게|착륙|거부,1,닉스에게 착륙 거부를 확인하라. 줄기는 이 칸이야.,Confirm the landing refusal with Nyx. This cell is the stem.
+sqa_013_d,obj_story_013_d,npc_cpt_story_nyx_holm,닉스에게|증명|조건,1,닉스에게 증명 조건을 받아라. 줄기는 이 칸이야.,Take the proof condition from Nyx. This cell is the stem.
+sqa_013_e,obj_story_013_e,npc_cpt_bar_ret_15,닐에게|대기|칸,1,닐에게 대기 칸을 받아라. 줄기는 이 칸이야.,Take a waiting cell from Nil. This cell is the stem.
+sqa_014_a,obj_story_014_a,npc_cpt_story_kyle_loren,카일에게|약탈|경보,1,카일에게 약탈 경보를 받아라. 줄기는 이 칸이야.,Take the raid alarm from Kyle. This cell is the stem.
+sqa_014_b,obj_story_014_b,travel,크림슨|베이스|도착,1,크림슨 구역 베이스에 도착하라. 줄기는 이 칸이야.,Arrive at Crimson Base. This cell is the stem.
+sqa_014_c,obj_story_014_c,combat,크림슨|궤도|약탈선|1척,1,크림슨 궤도 약탈선 1척을 격파하라. 줄기는 이 칸이야.,Destroy 1 raid ship in Crimson orbit. This cell is the stem.
+sqa_014_d,obj_story_014_d,npc_cpt_story_nyx_holm,닉스에게|거점|공개,1,닉스에게 거점 공개를 받아라. 줄기는 이 칸이야.,Have Nyx open the hold after proof. This cell is the stem.
+sqa_014_e,obj_story_014_e,npc_cpt_story_mira_schenk,미라에게|첫|거점|장부,1,미라에게 첫 거점 장부를 열어라. 줄기는 이 칸이야.,Open the first-hold ledger with Mira. This cell is the stem.
 sqa_015_a,obj_story_015_a,travel,시리우스|보더에|도착하라,1,시리우스 보더에 도착하라. 줄기는 이 칸이야.,Arrive at Sirius Border. This cell is the stem.
 sqa_015_b,obj_story_015_b,npc_cpt_story_seren_vale,세렌|베일의|초대를|확인하라,1,세렌 베일의 초대를 확인하라. 줄기는 이 칸이야.,Confirm Seren Vale’s invite. This cell is the stem.
 sqa_015_c,obj_story_015_c,npc_cpt_story_seren_vale,세렌에게|함정|여부를|가려라,1,세렌에게 함정 여부를 가려라. 줄기는 이 칸이야.,Have Seren sort trap from chance. This cell is the stem.
-sqa_015_d,obj_story_015_d,travel,그리하벤으로|귀환하라,1,그리하벤으로 귀환하라. 줄기는 이 칸이야.,Return to Greehaven. This cell is the stem.
+sqa_015_d,obj_story_015_d,travel,섀도우|넥서스로|귀환하라,1,섀도우 넥서스로 귀환하라. 줄기는 이 칸이야.,Return to Shadow Nexus. This cell is the stem.
 sqa_015_e,obj_story_015_e,npc_cpt_story_nyx_holm,닉스에게|초대|결과를|보고하라,1,닉스에게 초대 결과를 보고하라. 줄기는 이 칸이야.,Report the invite to Nyx. This cell is the stem.
-sqa_016_a,obj_story_016_a,travel,크림슨|구역|베이스에|도착하라,1,크림슨 구역 베이스에 도착하라. 줄기는 이 칸이야.,Arrive at Crimson Zone Base. This cell is the stem.
-sqa_016_b,obj_story_016_b,combat,크림슨|궤도|추적선|1척을|격파하라,1,크림슨 궤도 추적선 1척을 격파하라. 줄기는 이 칸이야.,Destroy 1 tracker in Crimson orbit. This cell is the stem.
-sqa_016_c,obj_story_016_c,npc_cpt_bar_ret_12,드락|베일에게|추적|소문을|들어라,1,드락 베일에게 추적 소문을 들어라. 줄기는 이 칸이야.,Hear the track rumor from Drak Vale. This cell is the stem.
-sqa_016_d,obj_story_016_d,travel,그리하벤으로|귀환하라,1,그리하벤으로 귀환하라. 줄기는 이 칸이야.,Return to Greehaven. This cell is the stem.
+sqa_016_a,obj_story_016_a,travel,시리우스|보더|도착,1,시리우스 보더에 도착하라. 줄기는 이 칸이야.,Arrive at Sirius Border. This cell is the stem.
+sqa_016_b,obj_story_016_b,npc_cpt_story_seren_vale,세렌에게|크림슨|표식,1,세렌에게 크림슨 표식을 확인하라. 줄기는 이 칸이야.,Confirm the Crimson mark with Seren. This cell is the stem.
+sqa_016_c,obj_story_016_c,npc_cpt_story_seren_vale,세렌에게|본대|아님,1,세렌에게 본대 아님을 확인하라. 줄기는 이 칸이야.,Confirm this is not a main-force invasion. This cell is the stem.
+sqa_016_d,obj_story_016_d,travel,섀도우|넥서스로|귀환하라,1,섀도우 넥서스로 귀환하라. 줄기는 이 칸이야.,Return to Shadow Nexus. This cell is the stem.
 sqa_016_e,obj_story_016_e,npc_cpt_story_kyle_loren,카일에게|두|적을|보고하라,1,카일에게 두 적을 보고하라. 줄기는 이 칸이야.,Report two enemies to Kyle. This cell is the stem.
-sqa_017_a,obj_story_017_a,npc_cpt_story_mira_schenk,미라에게|자금|칸을|열어라,1,미라에게 자금 칸을 열어라. 줄기는 이 칸이야.,Open the fund cell with Mira. This cell is the stem.
+sqa_017_a,obj_story_017_a,npc_cpt_story_mira_schenk,미라에게|계좌|동결,1,미라에게 계좌 동결을 열어라. 줄기는 이 칸이야.,Open the account freeze with Mira. This cell is the stem.
 sqa_017_b,obj_story_017_b,npc_cpt_bar_ret_15,닐에게|중개를|맡겨라,1,닐에게 중개를 맡겨라. 줄기는 이 칸이야.,Leave brokerage to Nil. This cell is the stem.
-sqa_017_c,obj_story_017_c,npc_cpt_story_nyx_holm,닉스에게|자금|원칙을|확인하라,1,닉스에게 자금 원칙을 확인하라. 줄기는 이 칸이야.,Confirm fund rules with Nyx. This cell is the stem.
+sqa_017_c,obj_story_017_c,travel,뉴에덴|동결|증서,1,뉴에덴 프라임에 동결 증서를 맡겨라. 줄기는 이 칸이야.,Leave the freeze writ at New Eden Prime. This cell is the stem.
 sqa_017_d,obj_story_017_d,npc_cpt_story_kyle_loren,카일에게|보급|화력을|확인하라,1,카일에게 보급 화력을 확인하라. 줄기는 이 칸이야.,Confirm supply fire with Kyle. This cell is the stem.
-sqa_017_e,obj_story_017_e,npc_cpt_story_mira_schenk,미라에게|자금|마감을|받아라,1,미라에게 자금 마감을 받아라. 줄기는 이 칸이야.,Close the fund book with Mira. This cell is the stem.
-sqa_018_a,obj_story_018_a,npc_cpt_story_kyle_loren,카일에게|방호|배치를|맡겨라,1,카일에게 방호 배치를 맡겨라. 줄기는 이 칸이야.,Leave plate layout to Kyle. This cell is the stem.
+sqa_017_e,obj_story_017_e,npc_cpt_story_mira_schenk,미라에게|동결|마감,1,미라에게 동결 마감을 받아라. 줄기는 이 칸이야.,Close the freeze book with Mira. This cell is the stem.
+sqa_018_a,obj_story_018_a,npc_cpt_story_kyle_loren,카일에게|함대|뼈대,1,카일에게 함대 뼈대를 맡겨라. 줄기는 이 칸이야.,Leave fleet bone to Kyle. This cell is the stem.
 sqa_018_b,obj_story_018_b,npc_cpt_story_gaon_tela,가온에게|은폐|방호를|겹쳐라,1,가온에게 은폐 방호를 겹쳐라. 줄기는 이 칸이야.,Overlay concealment plate with Gaon. This cell is the stem.
-sqa_018_c,obj_story_018_c,npc_cpt_story_nyx_holm,닉스에게|요새|개설을|확인하라,1,닉스에게 요새 개설을 확인하라. 줄기는 이 칸이야.,Confirm the fort opening with Nyx. This cell is the stem.
-sqa_018_d,obj_story_018_d,npc_cpt_story_mira_schenk,미라에게|보급|뼈대를|확인하라,1,미라에게 보급 뼈대를 확인하라. 줄기는 이 칸이야.,Confirm supply bone with Mira. This cell is the stem.
+sqa_018_c,obj_story_018_c,travel,오메가|교차|항로,1,뼈대의 한 줄은 오메가 교차야. 항로만 확인하고 거점으로 돌아와.,One bone line is the Omega crossing. Confirm the lane and return to the hold.
+sqa_018_d,obj_story_018_d,npc_cpt_story_gaon_tela,가온에게|은폐|방호,1,가온에게 은폐 방호를 닫아라. 줄기는 이 칸이야.,Close concealment plate with Gaon. This cell is the stem.
 sqa_018_e,obj_story_018_e,npc_cpt_story_kyle_loren,카일에게|뼈대|마감을|받아라,1,카일에게 뼈대 마감을 받아라. 줄기는 이 칸이야.,Close the bone book with Kyle. This cell is the stem.
-sqa_019_a,obj_story_019_a,npc_cpt_story_kyle_loren,카일의|노선을|들어라,1,카일의 노선을 들어라. 줄기는 이 칸이야.,Hear Kyle’s line. This cell is the stem.
-sqa_019_b,obj_story_019_b,npc_cpt_story_mira_schenk,미라의|노선을|들어라,1,미라의 노선을 들어라. 줄기는 이 칸이야.,Hear Mira’s line. This cell is the stem.
-sqa_019_c,obj_story_019_c,npc_cpt_story_gaon_tela,가온에게|균열을|물어라,1,가온에게 균열을 물어라. 줄기는 이 칸이야.,Ask Gaon about the crack. This cell is the stem.
-sqa_019_d,obj_story_019_d,npc_cpt_story_nyx_holm,닉스에게|중재를|맡겨라,1,닉스에게 중재를 맡겨라. 줄기는 이 칸이야.,Leave mediation to Nyx. This cell is the stem.
-sqa_019_e,obj_story_019_e,npc_cpt_story_nyx_holm,닉스에게|균열|기록을|받아라,1,닉스에게 균열 기록을 받아라. 줄기는 이 칸이야.,Take the crack record from Nyx. This cell is the stem.
-sqa_020_a,obj_story_020_a,npc_cpt_story_mira_schenk,미라에게|배신|장부를|대조하라,1,미라에게 배신 장부를 대조하라. 줄기는 이 칸이야.,Match the betrayal ledger with Mira. This cell is the stem.
+sqa_019_a,obj_story_019_a,npc_cpt_story_kyle_loren,카일의|화력|노선,1,카일의 화력 노선을 들어라. 줄기는 이 칸이야.,Hear Kyle’s fire line. This cell is the stem.
+sqa_019_b,obj_story_019_b,npc_cpt_story_mira_schenk,미라의|장부|노선,1,미라의 장부 노선을 들어라. 줄기는 이 칸이야.,Hear Mira’s ledger line. This cell is the stem.
+sqa_019_c,obj_story_019_c,npc_cpt_story_gaon_tela,가온의|은폐|노선,1,가온의 은폐 노선을 들어라. 줄기는 이 칸이야.,Hear Gaon’s concealment line. This cell is the stem.
+sqa_019_d,obj_story_019_d,travel,아이언|화력|노선,1,아이언 잔해권에서 화력 노선을 확인해라. 줄기는 이 칸이야.,Confirm the fire line at Iron remnant. This cell is the stem.
+sqa_019_e,obj_story_019_e,npc_cpt_story_mira_schenk,미라에게|균열|씨앗,1,미라에게 균열 씨앗만 남겨라. 줄기는 이 칸이야.,Leave only the crack seed with Mira. This cell is the stem.
+sqa_020_a,obj_story_020_a,npc_cpt_story_mira_schenk,미라에게|배신|소문,1,미라에게 배신 소문을 대조하라. 줄기는 이 칸이야.,Match the betrayal rumor with Mira. This cell is the stem.
 sqa_020_b,obj_story_020_b,npc_cpt_story_kyle_loren,카일에게|소문을|확인하라,1,카일에게 소문을 확인하라. 줄기는 이 칸이야.,Confirm the rumor with Kyle. This cell is the stem.
-sqa_020_c,obj_story_020_c,npc_cpt_story_gaon_tela,가온에게|이간|채널을|물어라,1,가온에게 이간 채널을 물어라. 줄기는 이 칸이야.,Ask Gaon for the wedge channel. This cell is the stem.
-sqa_020_d,obj_story_020_d,npc_cpt_story_nyx_holm,닉스에게|이간|판정을|받아라,1,닉스에게 이간 판정을 받아라. 줄기는 이 칸이야.,Take the wedge ruling from Nyx. This cell is the stem.
-sqa_020_e,obj_story_020_e,npc_cpt_story_mira_schenk,미라에게|이간|마감을|받아라,1,미라에게 이간 마감을 받아라. 줄기는 이 칸이야.,Close the wedge book with Mira. This cell is the stem.
-sqa_021_a,obj_story_021_a,npc_cpt_story_kyle_loren,카일에게|공세|배치를|받아라,1,카일에게 공세 배치를 받아라. 줄기는 이 칸이야.,Take siege layout from Kyle. This cell is the stem.
-sqa_021_b,obj_story_021_b,combat,섀도우|궤도|진압선|1척을|격파하라,1,섀도우 궤도 진압선 1척을 격파하라. 줄기는 이 칸이야.,Destroy 1 suppression ship in Shadow orbit. This cell is the stem.
-sqa_021_c,obj_story_021_c,npc_cpt_story_nyx_holm,닉스에게|거점|생존을|확인하라,1,닉스에게 거점 생존을 확인하라. 줄기는 이 칸이야.,Confirm hold survival with Nyx. This cell is the stem.
-sqa_021_d,obj_story_021_d,npc_cpt_story_gaon_tela,가온에게|공세|지도를|접어라,1,가온에게 공세 지도를 접어라. 줄기는 이 칸이야.,Fold the siege map with Gaon. This cell is the stem.
-sqa_021_e,obj_story_021_e,npc_cpt_story_kyle_loren,카일에게|공방전|마감을|받아라,1,카일에게 공방전 마감을 받아라. 줄기는 이 칸이야.,Close the siege with Kyle. This cell is the stem.
-sqa_022_a,obj_story_022_a,npc_cpt_story_nyx_holm,닉스에게|깃발|선포를|들어라,1,닉스에게 깃발 선포를 들어라. 줄기는 이 칸이야.,Hear the flag declaration from Nyx. This cell is the stem.
-sqa_022_b,obj_story_022_b,npc_cpt_story_kyle_loren,카일에게|깃발|화력을|확인하라,1,카일에게 깃발 화력을 확인하라. 줄기는 이 칸이야.,Confirm flag fire with Kyle. This cell is the stem.
-sqa_022_c,obj_story_022_c,npc_cpt_story_mira_schenk,미라에게|깃발|장부를|열어라,1,미라에게 깃발 장부를 열어라. 줄기는 이 칸이야.,Open the flag ledger with Mira. This cell is the stem.
-sqa_022_d,obj_story_022_d,npc_cpt_story_gaon_tela,가온에게|깃발|지도를|맡겨라,1,가온에게 깃발 지도를 맡겨라. 줄기는 이 칸이야.,Leave the flag map to Gaon. This cell is the stem.
-sqa_022_e,obj_story_022_e,npc_cpt_story_nyx_holm,닉스에게|본문|결을|받아라,1,닉스에게 본문 결을 받아라. 줄기는 이 칸이야.,Take the body close from Nyx. This cell is the stem.
+sqa_020_c,obj_story_020_c,travel,오메가|조작|통신,1,오메가 허브에서 조작 통신을 추적하라. 줄기는 이 칸이야.,Trace the forged comm at Omega Hub. This cell is the stem.
+sqa_020_d,obj_story_020_d,npc_cpt_story_gaon_tela,가온에게|스텔리움|정보국,1,가온에게 스텔리움 정보국을 확인하라. 줄기는 이 칸이야.,Confirm Stellium intelligence as the source. This cell is the stem.
+sqa_020_e,obj_story_020_e,npc_cpt_story_mira_schenk,미라에게|넷의|결속,1,미라에게 넷의 결속을 받아라. 줄기는 이 칸이야.,Take the four’s bond from Mira. This cell is the stem.
+sqa_021_a,obj_story_021_a,npc_cpt_story_kyle_loren,카일에게|경보|배치,1,카일에게 경보 배치를 받아라. 줄기는 이 칸이야.,Take the alarm layout from Kyle. This cell is the stem.
+sqa_021_b,obj_story_021_b,travel,블러드|필드|도착,1,블러드 필드 스테이션에 도착하라. 줄기는 이 칸이야.,Arrive at Blood Field Station. This cell is the stem.
+sqa_021_c,obj_story_021_c,combat,블러드|궤도|진압선|1척,1,블러드 궤도 진압선 1척을 격파하라. 줄기는 이 칸이야.,Destroy 1 suppression ship in Blood Field orbit. This cell is the stem.
+sqa_021_d,obj_story_021_d,npc_cpt_bar_ret_15,닐에게|뭐라고|부르나,1,닐에게 우리를 뭐라고 부르는지 들어라. 줄기는 이 칸이야.,Hear Nil ask what we are called. This cell is the stem.
+sqa_021_e,obj_story_021_e,npc_cpt_story_kyle_loren,카일에게|퇴각을|확인하라,1,카일에게 퇴각을 확인하라. 줄기는 이 칸이야.,Confirm the retreat with Kyle. This cell is the stem.
+sqa_022_a,obj_story_022_a,npc_cpt_story_mira_schenk,미라에게|이름|없는|동맹,1,미라에게 이름 없는 동맹을 확인하라. 줄기는 이 칸이야.,Confirm the nameless alliance with Mira. This cell is the stem.
+sqa_022_b,obj_story_022_b,npc_cpt_story_kyle_loren,카일에게|동맹|화력,1,카일에게 동맹 화력을 확인하라. 줄기는 이 칸이야.,Confirm alliance fire with Kyle. This cell is the stem.
+sqa_022_c,obj_story_022_c,travel,시리우스|보더|도착,1,시리우스 보더에 도착하라. 줄기는 이 칸이야.,Arrive at Sirius Border. This cell is the stem.
+sqa_022_d,obj_story_022_d,npc_cpt_story_seren_vale,세렌에게|대표|채널,1,세렌에게 대표 채널을 열어라. 줄기는 이 칸이야.,Open the representative channel with Seren. This cell is the stem.
+sqa_022_e,obj_story_022_e,npc_cpt_story_nyx_holm,닉스에게|국가명은|없다,1,닉스에게 문은 열렸으나 국가명은 없음을 확인하라. 줄기는 이 칸이야.,Confirm with Nyx the door is open and no nation is named. This cell is the stem.
 sqa_023_a,obj_story_023_a,travel,뉴에덴|프라임에|도착하라,1,뉴에덴 프라임에 도착하라. 줄기는 이 칸이야.,Arrive at New Eden Prime. This cell is the stem.
 sqa_023_b,obj_story_023_b,npc_cpt_mireille,미레유에게|메아리를|확인하라,1,미레유에게 메아리를 확인하라. 줄기는 이 칸이야.,Confirm the echo with Mireille. This cell is the stem.
 sqa_023_c,obj_story_023_c,npc_cpt_story_gaon_tela,가온에게|메아리를|보고하라,1,가온에게 메아리를 보고하라. 줄기는 이 칸이야.,Report the echo to Gaon. This cell is the stem.

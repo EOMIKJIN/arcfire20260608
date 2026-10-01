@@ -103,7 +103,7 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
     "id": "sqa_003_b",
     "objectiveId": "obj_story_003_b",
     "mentionId": "npc_cpt_arcadia_lane_01",
-    "mentionHints": "엘렌|대행 출정|지시",
+    "mentionHints": "엘렌|위임된 지휘권|지시",
     "sort": "1",
     "textKo": "엘렌의 출정 지시는 명령이야. 여기서는 부탁이 아니라 관문 순찰대장 창구야.",
     "textEn": "Ellen's sortie order is a command. This window is Gate Patrol not a favor."
@@ -114,8 +114,8 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
     "mentionId": "travel",
     "mentionHints": "베가|전초|도착",
     "sort": "1",
-    "textKo": "베가 전초가 다음 칸이야. 대행 출정의 몸이 거기 서 있어.",
-    "textEn": "Vega Outpost is the next cell. The body of the stand-in sortie stands there."
+    "textKo": "베가 전초가 다음 칸이야. 위임된 지휘권이 거기 서 있어.",
+    "textEn": "Vega Outpost is the next cell. The delegated command stands there."
   },
   {
     "id": "sqa_004_a",
@@ -337,10 +337,10 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
     "id": "sqa_037_c",
     "objectiveId": "obj_s037_c",
     "mentionId": "combat",
-    "mentionHints": "상자|호위|전투기",
+    "mentionHints": "상자|호위|캠프",
     "sort": "1",
-    "textKo": "상자를 지키는 호위가 사본 칸을 잠그고 있어. 격파한 뒤에 레아가 넘겨.",
-    "textEn": "The crate escort locks the copy cell. After it falls Rhea hands it over."
+    "textKo": "상자를 지키는 호위가 캠프 출구에 있어. 격파한 뒤에 레아가 사본을 넘겨.",
+    "textEn": "The crate escort waits at the Camp mouth. After it falls Rhea hands the copy."
   },
   {
     "id": "sqa_037_d",
@@ -759,83 +759,38 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
   {
     "id": "sqa_007_b",
     "objectiveId": "obj_story_007_b",
-    "mentionId": "npc_cpt_draco_obs_01",
-    "mentionHints": "세레나에게|은폐|주파수를|대조하라",
+    "mentionId": "npc_cpt_story_darel_sosa",
+    "mentionHints": "소사에게|47시간|자장가",
     "sort": "1",
-    "textKo": "세레나에게 은폐 주파수를 대조하라. 줄기는 이 칸이야.",
-    "textEn": "Match the concealment band with Serena. This cell is the stem."
+    "textKo": "소사에게 47시간과 자장가를 확인하라. 줄기는 이 칸이야.",
+    "textEn": "Confirm the 47 hours and the lullaby with Sosa. This cell is the stem."
   },
   {
     "id": "sqa_007_c",
     "objectiveId": "obj_story_007_c",
-    "mentionId": "npc_cpt_story_darel_sosa",
-    "mentionHints": "소사에게|빚의|이자를|확인하라",
+    "mentionId": "travel",
+    "mentionHints": "베가|전초기지|빈자리",
     "sort": "1",
-    "textKo": "소사에게 빚의 이자를 확인하라. 줄기는 이 칸이야.",
-    "textEn": "Confirm the interest on the debt with Sosa. This cell is the stem."
-  },
-  {
-    "id": "sqa_007_d",
-    "objectiveId": "obj_story_007_d",
-    "mentionId": "npc_cpt_draco_obs_01",
-    "mentionHints": "세레나에게|세|이름의|항로를|열어라",
-    "sort": "1",
-    "textKo": "세레나에게 세 이름의 항로를 열어라. 줄기는 이 칸이야.",
-    "textEn": "Have Serena open the three-name lanes. This cell is the stem."
-  },
-  {
-    "id": "sqa_007_e",
-    "objectiveId": "obj_story_007_e",
-    "mentionId": "npc_cpt_story_darel_sosa",
-    "mentionHints": "소사에게|다음|증언을|받아라",
-    "sort": "1",
-    "textKo": "소사에게 다음 증언을 받아라. 줄기는 이 칸이야.",
-    "textEn": "Take Sosa’s next testimony. This cell is the stem."
+    "textKo": "베가 전초기지에 도착해 빈자리를 확인하라. 줄기는 이 칸이야.",
+    "textEn": "Arrive at Vega Outpost and confirm the empty chair. This cell is the stem."
   },
   {
     "id": "sqa_008_a",
     "objectiveId": "obj_story_008_a",
-    "mentionId": "npc_cpt_story_darel_sosa",
-    "mentionHints": "소사에게|세|이름을|정식으로|받아라",
+    "mentionId": "travel",
+    "mentionHints": "드라코|헤이븐|귀환",
     "sort": "1",
-    "textKo": "소사에게 세 이름을 정식으로 받아라. 줄기는 이 칸이야.",
-    "textEn": "Receive the three names from Sosa. This cell is the stem."
+    "textKo": "드라코 성운 헤이븐으로 귀환하라. 줄기는 이 칸이야.",
+    "textEn": "Return to Draco Nebula Haven. This cell is the stem."
   },
   {
     "id": "sqa_008_b",
     "objectiveId": "obj_story_008_b",
-    "mentionId": "npc_cpt_draco_obs_01",
-    "mentionHints": "세레나에게|세|항로|허가를|받아라",
-    "sort": "1",
-    "textKo": "세레나에게 세 항로 허가를 받아라. 줄기는 이 칸이야.",
-    "textEn": "Get three-lane clearance from Serena. This cell is the stem."
-  },
-  {
-    "id": "sqa_008_c",
-    "objectiveId": "obj_story_008_c",
     "mentionId": "npc_cpt_story_darel_sosa",
     "mentionHints": "소사에게|합류|순서를|확인하라",
     "sort": "1",
     "textKo": "소사에게 합류 순서를 확인하라. 줄기는 이 칸이야.",
     "textEn": "Confirm the join order with Sosa. This cell is the stem."
-  },
-  {
-    "id": "sqa_008_d",
-    "objectiveId": "obj_story_008_d",
-    "mentionId": "npc_cpt_draco_obs_01",
-    "mentionHints": "세레나에게|아이언|입구를|열어라",
-    "sort": "1",
-    "textKo": "세레나에게 아이언 입구를 열어라. 줄기는 이 칸이야.",
-    "textEn": "Have Serena open the Iron mouth. This cell is the stem."
-  },
-  {
-    "id": "sqa_008_e",
-    "objectiveId": "obj_story_008_e",
-    "mentionId": "npc_cpt_story_darel_sosa",
-    "mentionHints": "소사에게|출발|증언을|받아라",
-    "sort": "1",
-    "textKo": "소사에게 출발 증언을 받아라. 줄기는 이 칸이야.",
-    "textEn": "Take Sosa’s departure testimony. This cell is the stem."
   },
   {
     "id": "sqa_009_a",
@@ -877,10 +832,10 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
     "id": "sqa_009_e",
     "objectiveId": "obj_story_009_e",
     "mentionId": "npc_cpt_ai_clan_neutral_01",
-    "mentionHints": "린|켄달에게|교차|허가를|받아라",
+    "mentionHints": "린|가온은|다음",
     "sort": "1",
-    "textKo": "린 켄달에게 교차 허가를 받아라. 줄기는 이 칸이야.",
-    "textEn": "Get crossing clearance from Lynn Kendall. This cell is the stem."
+    "textKo": "린에게 가온은 다음이라고 확인하라. 줄기는 이 칸이야.",
+    "textEn": "Confirm with Lynn that Gaon joins next. This cell is the stem."
   },
   {
     "id": "sqa_010_a",
@@ -921,101 +876,101 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
   {
     "id": "sqa_010_e",
     "objectiveId": "obj_story_010_e",
-    "mentionId": "npc_cpt_story_kyle_loren",
-    "mentionHints": "카일에게|다음|화력을|확인하라",
+    "mentionId": "npc_cpt_story_gaon_tela",
+    "mentionHints": "가온에게|같은|명령|체계",
     "sort": "1",
-    "textKo": "카일에게 다음 화력을 확인하라. 줄기는 이 칸이야.",
-    "textEn": "Confirm the next fire with Kyle. This cell is the stem."
+    "textKo": "가온에게 같은 명령 체계를 확인하라. 줄기는 이 칸이야.",
+    "textEn": "Confirm one command line with Gaon. This cell is the stem."
   },
   {
     "id": "sqa_011_a",
     "objectiveId": "obj_story_011_a",
-    "mentionId": "npc_cpt_vega_watch_01",
-    "mentionHints": "하르만에게|이면|칸을|확인하라",
+    "mentionId": "npc_cpt_story_gaon_tela",
+    "mentionHints": "가온에게|소개|명령서",
     "sort": "1",
-    "textKo": "하르만에게 이면 칸을 확인하라. 줄기는 이 칸이야.",
-    "textEn": "Confirm the backside cell with Harman. This cell is the stem."
+    "textKo": "가온에게 소개 명령서를 열어라. 줄기는 이 칸이야.",
+    "textEn": "Have Gaon open the introduction order. This cell is the stem."
   },
   {
     "id": "sqa_011_b",
     "objectiveId": "obj_story_011_b",
-    "mentionId": "combat",
-    "mentionHints": "베가|궤도|잔당|1척을|격파하라",
+    "mentionId": "npc_cpt_story_mira_schenk",
+    "mentionHints": "미라와|결재|역추적",
     "sort": "1",
-    "textKo": "베가 궤도 잔당 1척을 격파하라. 줄기는 이 칸이야.",
-    "textEn": "Destroy 1 remnant in Vega orbit. This cell is the stem."
+    "textKo": "미라와 결재를 역추적하라. 줄기는 이 칸이야.",
+    "textEn": "Reverse-trace the approval with Mira. This cell is the stem."
   },
   {
     "id": "sqa_011_c",
     "objectiveId": "obj_story_011_c",
-    "mentionId": "npc_cpt_vega_watch_01",
-    "mentionHints": "하르만에게|협정|사본을|받아라",
+    "mentionId": "npc_cpt_story_gaon_tela",
+    "mentionHints": "가온에게|체포령|초안",
     "sort": "1",
-    "textKo": "하르만에게 협정 사본을 받아라. 줄기는 이 칸이야.",
-    "textEn": "Take the accord copy from Harman. This cell is the stem."
+    "textKo": "가온에게 체포령 초안을 확인하라. 줄기는 이 칸이야.",
+    "textEn": "Confirm the draft arrest warrant with Gaon. This cell is the stem."
   },
   {
     "id": "sqa_011_d",
     "objectiveId": "obj_story_011_d",
-    "mentionId": "travel",
-    "mentionHints": "아르카디아로|귀환하라",
+    "mentionId": "npc_cpt_story_mira_schenk",
+    "mentionHints": "미라에게|이면|합의|날짜",
     "sort": "1",
-    "textKo": "아르카디아로 귀환하라. 줄기는 이 칸이야.",
-    "textEn": "Return to Arcadia. This cell is the stem."
+    "textKo": "미라에게 이면 합의 날짜를 대조하라. 줄기는 이 칸이야.",
+    "textEn": "Match the backside-pact date with Mira. This cell is the stem."
   },
   {
     "id": "sqa_011_e",
     "objectiveId": "obj_story_011_e",
-    "mentionId": "npc_cpt_story_ian_koval",
-    "mentionHints": "코발에게|이면|협정을|보고하라",
+    "mentionId": "npc_cpt_story_gaon_tela",
+    "mentionHints": "가온에게|누명|위험",
     "sort": "1",
-    "textKo": "코발에게 이면 협정을 보고하라. 줄기는 이 칸이야.",
-    "textEn": "Report the backside accord to Koval. This cell is the stem."
+    "textKo": "가온에게 누명 위험을 확인하라. 줄기는 이 칸이야.",
+    "textEn": "Confirm the brand risk with Gaon. This cell is the stem."
   },
   {
     "id": "sqa_012_a",
     "objectiveId": "obj_story_012_a",
-    "mentionId": "npc_cpt_story_ian_koval",
-    "mentionHints": "코발에게|누명|통보를|받아라",
+    "mentionId": "npc_cpt_story_mira_schenk",
+    "mentionHints": "미라에게|포위|통보",
     "sort": "1",
-    "textKo": "코발에게 누명 통보를 받아라. 줄기는 이 칸이야.",
-    "textEn": "Take the brand notice from Koval. This cell is the stem."
+    "textKo": "미라에게 포위 통보를 받아라. 줄기는 이 칸이야.",
+    "textEn": "Take the cordon notice from Mira. This cell is the stem."
   },
   {
     "id": "sqa_012_b",
     "objectiveId": "obj_story_012_b",
-    "mentionId": "npc_cpt_arcadia_lane_01",
-    "mentionHints": "엘렌에게|관문|허가를|받아라",
+    "mentionId": "npc_cpt_story_gaon_tela",
+    "mentionHints": "가온에게|돌파|경로",
     "sort": "1",
-    "textKo": "엘렌에게 관문 허가를 받아라. 줄기는 이 칸이야.",
-    "textEn": "Get gate clearance from Ellen. This cell is the stem."
+    "textKo": "가온에게 돌파 경로를 받아라. 줄기는 이 칸이야.",
+    "textEn": "Take the breakout lane from Gaon. This cell is the stem."
   },
   {
     "id": "sqa_012_c",
     "objectiveId": "obj_story_012_c",
-    "mentionId": "combat",
-    "mentionHints": "아르카디아|궤도|추격|1척을|격파하라",
+    "mentionId": "travel",
+    "mentionHints": "시리우스|보더|도착",
     "sort": "1",
-    "textKo": "아르카디아 궤도 추격 1척을 격파하라. 줄기는 이 칸이야.",
-    "textEn": "Destroy 1 chase ship in Arcadia orbit. This cell is the stem."
+    "textKo": "시리우스 보더에 도착하라. 줄기는 이 칸이야.",
+    "textEn": "Arrive at Sirius Border. This cell is the stem."
   },
   {
     "id": "sqa_012_d",
     "objectiveId": "obj_story_012_d",
-    "mentionId": "npc_cpt_arcadia_lane_01",
-    "mentionHints": "엘렌에게|이탈을|확인하라",
+    "mentionId": "combat",
+    "mentionHints": "시리우스|궤도|추격선|1척",
     "sort": "1",
-    "textKo": "엘렌에게 이탈을 확인하라. 줄기는 이 칸이야.",
-    "textEn": "Confirm the exit with Ellen. This cell is the stem."
+    "textKo": "시리우스 궤도 추격선 1척을 격파하라. 줄기는 이 칸이야.",
+    "textEn": "Destroy 1 pursuit ship in Sirius orbit. This cell is the stem."
   },
   {
     "id": "sqa_012_e",
     "objectiveId": "obj_story_012_e",
-    "mentionId": "npc_cpt_story_ian_koval",
-    "mentionHints": "코발에게|마지막|좌표를|받아라",
+    "mentionId": "npc_cpt_story_gaon_tela",
+    "mentionHints": "가온에게|섀도우|넥서스|좌표",
     "sort": "1",
-    "textKo": "코발에게 마지막 좌표를 받아라. 줄기는 이 칸이야.",
-    "textEn": "Take the last fix from Koval. This cell is the stem."
+    "textKo": "가온에게 섀도우 넥서스 좌표를 받아라. 줄기는 이 칸이야.",
+    "textEn": "Take the Shadow Nexus fix from Gaon. This cell is the stem."
   },
   {
     "id": "sqa_013_a",
@@ -1039,73 +994,73 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
     "id": "sqa_013_c",
     "objectiveId": "obj_story_013_c",
     "mentionId": "npc_cpt_story_nyx_holm",
-    "mentionHints": "닉스|홀름과|대화하라",
+    "mentionHints": "닉스에게|착륙|거부",
     "sort": "1",
-    "textKo": "닉스 홀름과 대화하라. 줄기는 이 칸이야.",
-    "textEn": "Talk with Nyx Holm. This cell is the stem."
+    "textKo": "닉스에게 착륙 거부를 확인하라. 줄기는 이 칸이야.",
+    "textEn": "Confirm the landing refusal with Nyx. This cell is the stem."
   },
   {
     "id": "sqa_013_d",
     "objectiveId": "obj_story_013_d",
     "mentionId": "npc_cpt_story_nyx_holm",
-    "mentionHints": "닉스에게|수배|범위를|확인하라",
+    "mentionHints": "닉스에게|증명|조건",
     "sort": "1",
-    "textKo": "닉스에게 수배 범위를 확인하라. 줄기는 이 칸이야.",
-    "textEn": "Confirm the wanted range with Nyx. This cell is the stem."
+    "textKo": "닉스에게 증명 조건을 받아라. 줄기는 이 칸이야.",
+    "textEn": "Take the proof condition from Nyx. This cell is the stem."
   },
   {
     "id": "sqa_013_e",
     "objectiveId": "obj_story_013_e",
     "mentionId": "npc_cpt_bar_ret_15",
-    "mentionHints": "닐에게|은신|칸을|받아라",
+    "mentionHints": "닐에게|대기|칸",
     "sort": "1",
-    "textKo": "닐에게 은신 칸을 받아라. 줄기는 이 칸이야.",
-    "textEn": "Take a hide cell from Nil. This cell is the stem."
+    "textKo": "닐에게 대기 칸을 받아라. 줄기는 이 칸이야.",
+    "textEn": "Take a waiting cell from Nil. This cell is the stem."
   },
   {
     "id": "sqa_014_a",
     "objectiveId": "obj_story_014_a",
-    "mentionId": "npc_cpt_story_nyx_holm",
-    "mentionHints": "닉스에게|거점|개설을|확인하라",
+    "mentionId": "npc_cpt_story_kyle_loren",
+    "mentionHints": "카일에게|약탈|경보",
     "sort": "1",
-    "textKo": "닉스에게 거점 개설을 확인하라. 줄기는 이 칸이야.",
-    "textEn": "Confirm hold opening with Nyx. This cell is the stem."
+    "textKo": "카일에게 약탈 경보를 받아라. 줄기는 이 칸이야.",
+    "textEn": "Take the raid alarm from Kyle. This cell is the stem."
   },
   {
     "id": "sqa_014_b",
     "objectiveId": "obj_story_014_b",
-    "mentionId": "npc_cpt_story_kyle_loren",
-    "mentionHints": "카일에게|방어|화력을|맡겨라",
+    "mentionId": "travel",
+    "mentionHints": "크림슨|베이스|도착",
     "sort": "1",
-    "textKo": "카일에게 방어 화력을 맡겨라. 줄기는 이 칸이야.",
-    "textEn": "Leave hold fire to Kyle. This cell is the stem."
+    "textKo": "크림슨 구역 베이스에 도착하라. 줄기는 이 칸이야.",
+    "textEn": "Arrive at Crimson Base. This cell is the stem."
   },
   {
     "id": "sqa_014_c",
     "objectiveId": "obj_story_014_c",
-    "mentionId": "npc_cpt_story_mira_schenk",
-    "mentionHints": "미라에게|거점|장부를|맡겨라",
+    "mentionId": "combat",
+    "mentionHints": "크림슨|궤도|약탈선|1척",
     "sort": "1",
-    "textKo": "미라에게 거점 장부를 맡겨라. 줄기는 이 칸이야.",
-    "textEn": "Leave the hold ledger to Mira. This cell is the stem."
+    "textKo": "크림슨 궤도 약탈선 1척을 격파하라. 줄기는 이 칸이야.",
+    "textEn": "Destroy 1 raid ship in Crimson orbit. This cell is the stem."
   },
   {
     "id": "sqa_014_d",
     "objectiveId": "obj_story_014_d",
-    "mentionId": "npc_cpt_story_gaon_tela",
-    "mentionHints": "가온에게|은폐|지도를|맡겨라",
+    "mentionId": "npc_cpt_story_nyx_holm",
+    "mentionHints": "닉스에게|거점|공개",
     "sort": "1",
-    "textKo": "가온에게 은폐 지도를 맡겨라. 줄기는 이 칸이야.",
-    "textEn": "Leave the concealment map to Gaon. This cell is the stem."
+    "textKo": "닉스에게 거점 공개를 받아라. 줄기는 이 칸이야.",
+    "textEn": "Have Nyx open the hold after proof. This cell is the stem."
   },
   {
     "id": "sqa_014_e",
     "objectiveId": "obj_story_014_e",
-    "mentionId": "npc_cpt_story_nyx_holm",
-    "mentionHints": "닉스에게|첫|거점|결정을|받아라",
+    "mentionId": "npc_cpt_story_mira_schenk",
+    "mentionHints": "미라에게|첫|거점|장부",
     "sort": "1",
-    "textKo": "닉스에게 첫 거점 결정을 받아라. 줄기는 이 칸이야.",
-    "textEn": "Take the first-hold decision from Nyx. This cell is the stem."
+    "textKo": "미라에게 첫 거점 장부를 열어라. 줄기는 이 칸이야.",
+    "textEn": "Open the first-hold ledger with Mira. This cell is the stem."
   },
   {
     "id": "sqa_015_a",
@@ -1138,10 +1093,10 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
     "id": "sqa_015_d",
     "objectiveId": "obj_story_015_d",
     "mentionId": "travel",
-    "mentionHints": "그리하벤으로|귀환하라",
+    "mentionHints": "섀도우|넥서스로|귀환하라",
     "sort": "1",
-    "textKo": "그리하벤으로 귀환하라. 줄기는 이 칸이야.",
-    "textEn": "Return to Greehaven. This cell is the stem."
+    "textKo": "섀도우 넥서스로 귀환하라. 줄기는 이 칸이야.",
+    "textEn": "Return to Shadow Nexus. This cell is the stem."
   },
   {
     "id": "sqa_015_e",
@@ -1156,37 +1111,37 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
     "id": "sqa_016_a",
     "objectiveId": "obj_story_016_a",
     "mentionId": "travel",
-    "mentionHints": "크림슨|구역|베이스에|도착하라",
+    "mentionHints": "시리우스|보더|도착",
     "sort": "1",
-    "textKo": "크림슨 구역 베이스에 도착하라. 줄기는 이 칸이야.",
-    "textEn": "Arrive at Crimson Zone Base. This cell is the stem."
+    "textKo": "시리우스 보더에 도착하라. 줄기는 이 칸이야.",
+    "textEn": "Arrive at Sirius Border. This cell is the stem."
   },
   {
     "id": "sqa_016_b",
     "objectiveId": "obj_story_016_b",
-    "mentionId": "combat",
-    "mentionHints": "크림슨|궤도|추적선|1척을|격파하라",
+    "mentionId": "npc_cpt_story_seren_vale",
+    "mentionHints": "세렌에게|크림슨|표식",
     "sort": "1",
-    "textKo": "크림슨 궤도 추적선 1척을 격파하라. 줄기는 이 칸이야.",
-    "textEn": "Destroy 1 tracker in Crimson orbit. This cell is the stem."
+    "textKo": "세렌에게 크림슨 표식을 확인하라. 줄기는 이 칸이야.",
+    "textEn": "Confirm the Crimson mark with Seren. This cell is the stem."
   },
   {
     "id": "sqa_016_c",
     "objectiveId": "obj_story_016_c",
-    "mentionId": "npc_cpt_bar_ret_12",
-    "mentionHints": "드락|베일에게|추적|소문을|들어라",
+    "mentionId": "npc_cpt_story_seren_vale",
+    "mentionHints": "세렌에게|본대|아님",
     "sort": "1",
-    "textKo": "드락 베일에게 추적 소문을 들어라. 줄기는 이 칸이야.",
-    "textEn": "Hear the track rumor from Drak Vale. This cell is the stem."
+    "textKo": "세렌에게 본대 아님을 확인하라. 줄기는 이 칸이야.",
+    "textEn": "Confirm this is not a main-force invasion. This cell is the stem."
   },
   {
     "id": "sqa_016_d",
     "objectiveId": "obj_story_016_d",
     "mentionId": "travel",
-    "mentionHints": "그리하벤으로|귀환하라",
+    "mentionHints": "섀도우|넥서스로|귀환하라",
     "sort": "1",
-    "textKo": "그리하벤으로 귀환하라. 줄기는 이 칸이야.",
-    "textEn": "Return to Greehaven. This cell is the stem."
+    "textKo": "섀도우 넥서스로 귀환하라. 줄기는 이 칸이야.",
+    "textEn": "Return to Shadow Nexus. This cell is the stem."
   },
   {
     "id": "sqa_016_e",
@@ -1201,10 +1156,10 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
     "id": "sqa_017_a",
     "objectiveId": "obj_story_017_a",
     "mentionId": "npc_cpt_story_mira_schenk",
-    "mentionHints": "미라에게|자금|칸을|열어라",
+    "mentionHints": "미라에게|계좌|동결",
     "sort": "1",
-    "textKo": "미라에게 자금 칸을 열어라. 줄기는 이 칸이야.",
-    "textEn": "Open the fund cell with Mira. This cell is the stem."
+    "textKo": "미라에게 계좌 동결을 열어라. 줄기는 이 칸이야.",
+    "textEn": "Open the account freeze with Mira. This cell is the stem."
   },
   {
     "id": "sqa_017_b",
@@ -1218,11 +1173,11 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
   {
     "id": "sqa_017_c",
     "objectiveId": "obj_story_017_c",
-    "mentionId": "npc_cpt_story_nyx_holm",
-    "mentionHints": "닉스에게|자금|원칙을|확인하라",
+    "mentionId": "travel",
+    "mentionHints": "뉴에덴|동결|증서",
     "sort": "1",
-    "textKo": "닉스에게 자금 원칙을 확인하라. 줄기는 이 칸이야.",
-    "textEn": "Confirm fund rules with Nyx. This cell is the stem."
+    "textKo": "뉴에덴 프라임에 동결 증서를 맡겨라. 줄기는 이 칸이야.",
+    "textEn": "Leave the freeze writ at New Eden Prime. This cell is the stem."
   },
   {
     "id": "sqa_017_d",
@@ -1237,19 +1192,19 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
     "id": "sqa_017_e",
     "objectiveId": "obj_story_017_e",
     "mentionId": "npc_cpt_story_mira_schenk",
-    "mentionHints": "미라에게|자금|마감을|받아라",
+    "mentionHints": "미라에게|동결|마감",
     "sort": "1",
-    "textKo": "미라에게 자금 마감을 받아라. 줄기는 이 칸이야.",
-    "textEn": "Close the fund book with Mira. This cell is the stem."
+    "textKo": "미라에게 동결 마감을 받아라. 줄기는 이 칸이야.",
+    "textEn": "Close the freeze book with Mira. This cell is the stem."
   },
   {
     "id": "sqa_018_a",
     "objectiveId": "obj_story_018_a",
     "mentionId": "npc_cpt_story_kyle_loren",
-    "mentionHints": "카일에게|방호|배치를|맡겨라",
+    "mentionHints": "카일에게|함대|뼈대",
     "sort": "1",
-    "textKo": "카일에게 방호 배치를 맡겨라. 줄기는 이 칸이야.",
-    "textEn": "Leave plate layout to Kyle. This cell is the stem."
+    "textKo": "카일에게 함대 뼈대를 맡겨라. 줄기는 이 칸이야.",
+    "textEn": "Leave fleet bone to Kyle. This cell is the stem."
   },
   {
     "id": "sqa_018_b",
@@ -1263,20 +1218,20 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
   {
     "id": "sqa_018_c",
     "objectiveId": "obj_story_018_c",
-    "mentionId": "npc_cpt_story_nyx_holm",
-    "mentionHints": "닉스에게|요새|개설을|확인하라",
+    "mentionId": "travel",
+    "mentionHints": "오메가|교차|항로",
     "sort": "1",
-    "textKo": "닉스에게 요새 개설을 확인하라. 줄기는 이 칸이야.",
-    "textEn": "Confirm the fort opening with Nyx. This cell is the stem."
+    "textKo": "뼈대의 한 줄은 오메가 교차야. 항로만 확인하고 거점으로 돌아와.",
+    "textEn": "One bone line is the Omega crossing. Confirm the lane and return to the hold."
   },
   {
     "id": "sqa_018_d",
     "objectiveId": "obj_story_018_d",
-    "mentionId": "npc_cpt_story_mira_schenk",
-    "mentionHints": "미라에게|보급|뼈대를|확인하라",
+    "mentionId": "npc_cpt_story_gaon_tela",
+    "mentionHints": "가온에게|은폐|방호",
     "sort": "1",
-    "textKo": "미라에게 보급 뼈대를 확인하라. 줄기는 이 칸이야.",
-    "textEn": "Confirm supply bone with Mira. This cell is the stem."
+    "textKo": "가온에게 은폐 방호를 닫아라. 줄기는 이 칸이야.",
+    "textEn": "Close concealment plate with Gaon. This cell is the stem."
   },
   {
     "id": "sqa_018_e",
@@ -1291,55 +1246,55 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
     "id": "sqa_019_a",
     "objectiveId": "obj_story_019_a",
     "mentionId": "npc_cpt_story_kyle_loren",
-    "mentionHints": "카일의|노선을|들어라",
+    "mentionHints": "카일의|화력|노선",
     "sort": "1",
-    "textKo": "카일의 노선을 들어라. 줄기는 이 칸이야.",
-    "textEn": "Hear Kyle’s line. This cell is the stem."
+    "textKo": "카일의 화력 노선을 들어라. 줄기는 이 칸이야.",
+    "textEn": "Hear Kyle’s fire line. This cell is the stem."
   },
   {
     "id": "sqa_019_b",
     "objectiveId": "obj_story_019_b",
     "mentionId": "npc_cpt_story_mira_schenk",
-    "mentionHints": "미라의|노선을|들어라",
+    "mentionHints": "미라의|장부|노선",
     "sort": "1",
-    "textKo": "미라의 노선을 들어라. 줄기는 이 칸이야.",
-    "textEn": "Hear Mira’s line. This cell is the stem."
+    "textKo": "미라의 장부 노선을 들어라. 줄기는 이 칸이야.",
+    "textEn": "Hear Mira’s ledger line. This cell is the stem."
   },
   {
     "id": "sqa_019_c",
     "objectiveId": "obj_story_019_c",
     "mentionId": "npc_cpt_story_gaon_tela",
-    "mentionHints": "가온에게|균열을|물어라",
+    "mentionHints": "가온의|은폐|노선",
     "sort": "1",
-    "textKo": "가온에게 균열을 물어라. 줄기는 이 칸이야.",
-    "textEn": "Ask Gaon about the crack. This cell is the stem."
+    "textKo": "가온의 은폐 노선을 들어라. 줄기는 이 칸이야.",
+    "textEn": "Hear Gaon’s concealment line. This cell is the stem."
   },
   {
     "id": "sqa_019_d",
     "objectiveId": "obj_story_019_d",
-    "mentionId": "npc_cpt_story_nyx_holm",
-    "mentionHints": "닉스에게|중재를|맡겨라",
+    "mentionId": "travel",
+    "mentionHints": "아이언|화력|노선",
     "sort": "1",
-    "textKo": "닉스에게 중재를 맡겨라. 줄기는 이 칸이야.",
-    "textEn": "Leave mediation to Nyx. This cell is the stem."
+    "textKo": "아이언 잔해권에서 화력 노선을 확인해라. 줄기는 이 칸이야.",
+    "textEn": "Confirm the fire line at Iron remnant. This cell is the stem."
   },
   {
     "id": "sqa_019_e",
     "objectiveId": "obj_story_019_e",
-    "mentionId": "npc_cpt_story_nyx_holm",
-    "mentionHints": "닉스에게|균열|기록을|받아라",
+    "mentionId": "npc_cpt_story_mira_schenk",
+    "mentionHints": "미라에게|균열|씨앗",
     "sort": "1",
-    "textKo": "닉스에게 균열 기록을 받아라. 줄기는 이 칸이야.",
-    "textEn": "Take the crack record from Nyx. This cell is the stem."
+    "textKo": "미라에게 균열 씨앗만 남겨라. 줄기는 이 칸이야.",
+    "textEn": "Leave only the crack seed with Mira. This cell is the stem."
   },
   {
     "id": "sqa_020_a",
     "objectiveId": "obj_story_020_a",
     "mentionId": "npc_cpt_story_mira_schenk",
-    "mentionHints": "미라에게|배신|장부를|대조하라",
+    "mentionHints": "미라에게|배신|소문",
     "sort": "1",
-    "textKo": "미라에게 배신 장부를 대조하라. 줄기는 이 칸이야.",
-    "textEn": "Match the betrayal ledger with Mira. This cell is the stem."
+    "textKo": "미라에게 배신 소문을 대조하라. 줄기는 이 칸이야.",
+    "textEn": "Match the betrayal rumor with Mira. This cell is the stem."
   },
   {
     "id": "sqa_020_b",
@@ -1353,119 +1308,119 @@ export const STELLA_QUEST_ASIDE_FROM_CSV = [
   {
     "id": "sqa_020_c",
     "objectiveId": "obj_story_020_c",
-    "mentionId": "npc_cpt_story_gaon_tela",
-    "mentionHints": "가온에게|이간|채널을|물어라",
+    "mentionId": "travel",
+    "mentionHints": "오메가|조작|통신",
     "sort": "1",
-    "textKo": "가온에게 이간 채널을 물어라. 줄기는 이 칸이야.",
-    "textEn": "Ask Gaon for the wedge channel. This cell is the stem."
+    "textKo": "오메가 허브에서 조작 통신을 추적하라. 줄기는 이 칸이야.",
+    "textEn": "Trace the forged comm at Omega Hub. This cell is the stem."
   },
   {
     "id": "sqa_020_d",
     "objectiveId": "obj_story_020_d",
-    "mentionId": "npc_cpt_story_nyx_holm",
-    "mentionHints": "닉스에게|이간|판정을|받아라",
+    "mentionId": "npc_cpt_story_gaon_tela",
+    "mentionHints": "가온에게|스텔리움|정보국",
     "sort": "1",
-    "textKo": "닉스에게 이간 판정을 받아라. 줄기는 이 칸이야.",
-    "textEn": "Take the wedge ruling from Nyx. This cell is the stem."
+    "textKo": "가온에게 스텔리움 정보국을 확인하라. 줄기는 이 칸이야.",
+    "textEn": "Confirm Stellium intelligence as the source. This cell is the stem."
   },
   {
     "id": "sqa_020_e",
     "objectiveId": "obj_story_020_e",
     "mentionId": "npc_cpt_story_mira_schenk",
-    "mentionHints": "미라에게|이간|마감을|받아라",
+    "mentionHints": "미라에게|넷의|결속",
     "sort": "1",
-    "textKo": "미라에게 이간 마감을 받아라. 줄기는 이 칸이야.",
-    "textEn": "Close the wedge book with Mira. This cell is the stem."
+    "textKo": "미라에게 넷의 결속을 받아라. 줄기는 이 칸이야.",
+    "textEn": "Take the four’s bond from Mira. This cell is the stem."
   },
   {
     "id": "sqa_021_a",
     "objectiveId": "obj_story_021_a",
     "mentionId": "npc_cpt_story_kyle_loren",
-    "mentionHints": "카일에게|공세|배치를|받아라",
+    "mentionHints": "카일에게|경보|배치",
     "sort": "1",
-    "textKo": "카일에게 공세 배치를 받아라. 줄기는 이 칸이야.",
-    "textEn": "Take siege layout from Kyle. This cell is the stem."
+    "textKo": "카일에게 경보 배치를 받아라. 줄기는 이 칸이야.",
+    "textEn": "Take the alarm layout from Kyle. This cell is the stem."
   },
   {
     "id": "sqa_021_b",
     "objectiveId": "obj_story_021_b",
-    "mentionId": "combat",
-    "mentionHints": "섀도우|궤도|진압선|1척을|격파하라",
+    "mentionId": "travel",
+    "mentionHints": "블러드|필드|도착",
     "sort": "1",
-    "textKo": "섀도우 궤도 진압선 1척을 격파하라. 줄기는 이 칸이야.",
-    "textEn": "Destroy 1 suppression ship in Shadow orbit. This cell is the stem."
+    "textKo": "블러드 필드 스테이션에 도착하라. 줄기는 이 칸이야.",
+    "textEn": "Arrive at Blood Field Station. This cell is the stem."
   },
   {
     "id": "sqa_021_c",
     "objectiveId": "obj_story_021_c",
-    "mentionId": "npc_cpt_story_nyx_holm",
-    "mentionHints": "닉스에게|거점|생존을|확인하라",
+    "mentionId": "combat",
+    "mentionHints": "블러드|궤도|진압선|1척",
     "sort": "1",
-    "textKo": "닉스에게 거점 생존을 확인하라. 줄기는 이 칸이야.",
-    "textEn": "Confirm hold survival with Nyx. This cell is the stem."
+    "textKo": "블러드 궤도 진압선 1척을 격파하라. 줄기는 이 칸이야.",
+    "textEn": "Destroy 1 suppression ship in Blood Field orbit. This cell is the stem."
   },
   {
     "id": "sqa_021_d",
     "objectiveId": "obj_story_021_d",
-    "mentionId": "npc_cpt_story_gaon_tela",
-    "mentionHints": "가온에게|공세|지도를|접어라",
+    "mentionId": "npc_cpt_bar_ret_15",
+    "mentionHints": "닐에게|뭐라고|부르나",
     "sort": "1",
-    "textKo": "가온에게 공세 지도를 접어라. 줄기는 이 칸이야.",
-    "textEn": "Fold the siege map with Gaon. This cell is the stem."
+    "textKo": "닐에게 우리를 뭐라고 부르는지 들어라. 줄기는 이 칸이야.",
+    "textEn": "Hear Nil ask what we are called. This cell is the stem."
   },
   {
     "id": "sqa_021_e",
     "objectiveId": "obj_story_021_e",
     "mentionId": "npc_cpt_story_kyle_loren",
-    "mentionHints": "카일에게|공방전|마감을|받아라",
+    "mentionHints": "카일에게|퇴각을|확인하라",
     "sort": "1",
-    "textKo": "카일에게 공방전 마감을 받아라. 줄기는 이 칸이야.",
-    "textEn": "Close the siege with Kyle. This cell is the stem."
+    "textKo": "카일에게 퇴각을 확인하라. 줄기는 이 칸이야.",
+    "textEn": "Confirm the retreat with Kyle. This cell is the stem."
   },
   {
     "id": "sqa_022_a",
     "objectiveId": "obj_story_022_a",
-    "mentionId": "npc_cpt_story_nyx_holm",
-    "mentionHints": "닉스에게|깃발|선포를|들어라",
+    "mentionId": "npc_cpt_story_mira_schenk",
+    "mentionHints": "미라에게|이름|없는|동맹",
     "sort": "1",
-    "textKo": "닉스에게 깃발 선포를 들어라. 줄기는 이 칸이야.",
-    "textEn": "Hear the flag declaration from Nyx. This cell is the stem."
+    "textKo": "미라에게 이름 없는 동맹을 확인하라. 줄기는 이 칸이야.",
+    "textEn": "Confirm the nameless alliance with Mira. This cell is the stem."
   },
   {
     "id": "sqa_022_b",
     "objectiveId": "obj_story_022_b",
     "mentionId": "npc_cpt_story_kyle_loren",
-    "mentionHints": "카일에게|깃발|화력을|확인하라",
+    "mentionHints": "카일에게|동맹|화력",
     "sort": "1",
-    "textKo": "카일에게 깃발 화력을 확인하라. 줄기는 이 칸이야.",
-    "textEn": "Confirm flag fire with Kyle. This cell is the stem."
+    "textKo": "카일에게 동맹 화력을 확인하라. 줄기는 이 칸이야.",
+    "textEn": "Confirm alliance fire with Kyle. This cell is the stem."
   },
   {
     "id": "sqa_022_c",
     "objectiveId": "obj_story_022_c",
-    "mentionId": "npc_cpt_story_mira_schenk",
-    "mentionHints": "미라에게|깃발|장부를|열어라",
+    "mentionId": "travel",
+    "mentionHints": "시리우스|보더|도착",
     "sort": "1",
-    "textKo": "미라에게 깃발 장부를 열어라. 줄기는 이 칸이야.",
-    "textEn": "Open the flag ledger with Mira. This cell is the stem."
+    "textKo": "시리우스 보더에 도착하라. 줄기는 이 칸이야.",
+    "textEn": "Arrive at Sirius Border. This cell is the stem."
   },
   {
     "id": "sqa_022_d",
     "objectiveId": "obj_story_022_d",
-    "mentionId": "npc_cpt_story_gaon_tela",
-    "mentionHints": "가온에게|깃발|지도를|맡겨라",
+    "mentionId": "npc_cpt_story_seren_vale",
+    "mentionHints": "세렌에게|대표|채널",
     "sort": "1",
-    "textKo": "가온에게 깃발 지도를 맡겨라. 줄기는 이 칸이야.",
-    "textEn": "Leave the flag map to Gaon. This cell is the stem."
+    "textKo": "세렌에게 대표 채널을 열어라. 줄기는 이 칸이야.",
+    "textEn": "Open the representative channel with Seren. This cell is the stem."
   },
   {
     "id": "sqa_022_e",
     "objectiveId": "obj_story_022_e",
     "mentionId": "npc_cpt_story_nyx_holm",
-    "mentionHints": "닉스에게|본문|결을|받아라",
+    "mentionHints": "닉스에게|국가명은|없다",
     "sort": "1",
-    "textKo": "닉스에게 본문 결을 받아라. 줄기는 이 칸이야.",
-    "textEn": "Take the body close from Nyx. This cell is the stem."
+    "textKo": "닉스에게 문은 열렸으나 국가명은 없음을 확인하라. 줄기는 이 칸이야.",
+    "textEn": "Confirm with Nyx the door is open and no nation is named. This cell is the stem."
   },
   {
     "id": "sqa_023_a",

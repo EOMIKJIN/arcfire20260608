@@ -3,6 +3,7 @@ import path from 'node:path';
 import type { AnalyzeReport, JournalEntry, KpiSnapshot, PersonaId, WorldState } from './types';
 import { safeWriteFile, toolRoot } from './io';
 import { learnedDir } from './policy';
+import { summarizeEarlyFeel, type EarlyFeelSample } from './earlyFeel';
 
 export type GrowthSample = {
   day: number;
@@ -50,12 +51,14 @@ export type LearningState = {
   codeCounts: Record<string, number>;
   growth: GrowthSample[];
   patterns: PatternSample[];
+  earlyFeels: EarlyFeelSample[];
   /** 사람 체감 플레이 + 그 이상. 정체·반복은 현재 adapt로 해소하며 지능을 쌓는다. */
   goal: 'player_growth_and_play_pattern';
 };
 
 const CAP_RUNS = 20;
 const CAP_SERIES = 90;
+const CAP_EARLY = 16;
 
 export function learningPath(): string {
   return path.join(learnedDir(), 'playbot-learning-state.json');
@@ -78,6 +81,7 @@ export function loadLearning(): LearningState {
     codeCounts: {},
     growth: [],
     patterns: [],
+    earlyFeels: [],
     goal: 'player_growth_and_play_pattern',
   };
   migrateLegacyLearning();
@@ -93,6 +97,7 @@ export function loadLearning(): LearningState {
       codeCounts: raw.codeCounts ?? {},
       growth: Array.isArray(raw.growth) ? raw.growth : [],
       patterns: Array.isArray(raw.patterns) ? raw.patterns : [],
+      earlyFeels: Array.isArray(raw.earlyFeels) ? raw.earlyFeels : [],
       goal: 'player_growth_and_play_pattern',
     };
   } catch {
@@ -168,6 +173,12 @@ export function recordDailyLearning(
     lastHoldReason: world.lastHoldReason,
     dominantAction: dominant(journalKinds),
   });
+  if (world.earlyFeelClosed && !state.earlyFeels.some((e) => e.runId === world.runId)) {
+    state.earlyFeels.push(summarizeEarlyFeel(world));
+    if (state.earlyFeels.length > CAP_EARLY) {
+      state.earlyFeels.splice(0, state.earlyFeels.length - CAP_EARLY);
+    }
+  }
   if (state.growth.length > CAP_SERIES) state.growth.splice(0, state.growth.length - CAP_SERIES);
   if (state.patterns.length > CAP_SERIES) state.patterns.splice(0, state.patterns.length - CAP_SERIES);
   for (const f of report.findings) {

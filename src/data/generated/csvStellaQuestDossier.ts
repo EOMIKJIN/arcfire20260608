@@ -165,43 +165,43 @@ export const STELLA_QUEST_DOSSIER_FROM_CSV = [
     "id": "sqd_story_011",
     "missionId": "story_011",
     "sort": "1",
-    "textKo": "이면 협정. 베가 전멸과 이어지는 이면 협정 증거를 확보한다. 궤도 잔당 1척을 걷어낸다.",
-    "textEn": "The Backside Accord. Secure proof of the backside accord that ties to the Vega wipe. Clear one remnant escort."
+    "textKo": "이면 협정. 캘리스에서 소개 명령서를 열고 체포령 초안을 확인한다. 전투는 없다.",
+    "textEn": "The Backside Accord. At Callis"
   },
   {
     "id": "sqd_story_012",
     "missionId": "story_012",
     "sort": "1",
-    "textKo": "반역자의 이름. 이면 협정 폭로 뒤 반역 누명이 씌워진다. 아르카디아 궤도에서 돌파한 뒤 넷이 정식으로 한 편이 된다.",
-    "textEn": "The Traitor’s Name. After the accord leak, a traitor brand lands. Break Arcadia orbit, then the four join in form."
+    "textKo": "반역자의 이름. 이면 협정 폭로 뒤 반역 누명이 씌워진다. 시리우스 보더에서 추격 1척을 끊고 섀도우로 향한다.",
+    "textEn": "The Traitor’s Name. After the accord leak, a traitor brand lands. Cut 1 pursuit ship at Sirius Border, then run for Shadow."
   },
   {
     "id": "sqd_story_013",
     "missionId": "story_013",
     "sort": "1",
-    "textKo": "도피처를 찾아서. 수배 방송을 피해 섀도우 넥서스 마켓(그리하벤)으로 숨는다. 문 앞의 이방인이 거점을 연다.",
-    "textEn": "Finding Sanctuary. Hide from the wanted band at Shadow Nexus Market (Greehaven). A stranger at the door opens the hold."
+    "textKo": "도피처를 찾아서. 수배 방송을 피해 섀도우 넥서스에 닿는다. 문은 거부하고 증명을 요구한다.",
+    "textEn": "Finding Sanctuary. Hide from the wanted band at Shadow Nexus. The door refuses landing and asks for proof."
   },
   {
     "id": "sqd_story_014",
     "missionId": "story_014",
     "sort": "1",
-    "textKo": "첫 신뢰. 그리하벤에서 넷이 거점을 연다. 첫 신뢰와 추격의 그림자가 동시에 붙는다.",
-    "textEn": "First Trust. The four open a hold in Greehaven. First trust and a chase shadow arrive together."
+    "textKo": "첫 신뢰. 크림슨 궤도 약탈선 1척을 격파한 뒤에야 섀도우 넥서스 거점이 열린다.",
+    "textEn": "First Trust. The Shadow Nexus hold opens only after one raid ship falls in Crimson orbit."
   },
   {
     "id": "sqd_story_015",
     "missionId": "story_015",
     "sort": "1",
-    "textKo": "두 번째 초대. 세렌 벨트 가칭은 시리우스 보더 관문으로 붙인다. 초대가 함정인지 가린다.",
-    "textEn": "The Second Invite. The Seren Belt alias maps to Sirius Border. Decide if the invite is a trap."
+    "textKo": "함정인가 기회인가. 세렌 벨트 별칭은 시리우스 보더 관문이다. 초대가 함정인지 가린다.",
+    "textEn": "Trap or Chance. The Seren Belt alias maps to Sirius Border. Decide if the invite is a trap."
   },
   {
     "id": "sqd_story_016",
     "missionId": "story_016",
     "sort": "1",
-    "textKo": "두 개의 적. 크림슨 레기온이 거점을 추적한다. 크림슨 구역에서 그림자 1척을 확인하고 돌아온다.",
-    "textEn": "Two Enemies. The Crimson Legion tracks the hold. Confirm one shadow at Crimson Zone and return."
+    "textKo": "외곽의 잔해. 시리우스 보더 외곽 잔해가 크림슨 표식을 남긴다. 본대 침공은 아니다.",
+    "textEn": "Rim Wreckage. Wreckage on the Sirius rim carries a Crimson mark. Not a main-force invasion."
   },
   {
     "id": "sqd_story_017",
@@ -214,8 +214,8 @@ export const STELLA_QUEST_DOSSIER_FROM_CSV = [
     "id": "sqd_story_018",
     "missionId": "story_018",
     "sort": "1",
-    "textKo": "요새의 뼈대. 그리하벤 방호와 함대 뼈대를 카일과 가온이 나눈다. 이름 없는 동맹의 골격이 선다.",
-    "textEn": "Bones of the Fort. Kyle and Gaon split Greehaven plate and fleet bone. The nameless alliance skeleton stands."
+    "textKo": "요새의 뼈대. 가온이 방호를, 카일이 함대 뼈대를 나눈다. 오메가 교차 항로를 확인하면 골격이 선다.",
+    "textEn": "Bones of the Fort. Gaon takes plate, Kyle takes fleet bone. Confirm the Omega crossing and the skeleton stands."
   },
   {
     "id": "sqd_story_019",
@@ -235,15 +235,15 @@ export const STELLA_QUEST_DOSSIER_FROM_CSV = [
     "id": "sqd_story_021",
     "missionId": "story_021",
     "sort": "1",
-    "textKo": "그리하벤 공방전. 스텔리움 진압함대 조우를 1척으로 대행한다. 거점을 지켜 낸다.",
-    "textEn": "The Greehaven Siege. The Stellium suppression fleet is stood in as one ship. Hold the hide."
+    "textKo": "섀도우 넥서스 공방전. 블러드 필드에서 진압선 1척을 격파하고 주민이 이름을 묻는다.",
+    "textEn": "The Shadow Nexus Siege. Stand down one suppression ship at Blood Field. A resident asks what we are called."
   },
   {
     "id": "sqd_story_022",
     "missionId": "story_022",
     "sort": "1",
-    "textKo": "첫 깃발. 이름 없는 동맹이 결성된다. 챕터1 본문의 結. 세부는 이후 수정한다.",
-    "textEn": "The First Flag. The nameless alliance forms. Close of Chapter 1 body. Details can be revised later."
+    "textKo": "깃발 없는 승리. 이름 없는 동맹이 선다. 국가명은 없다. 챕터1은 여기서 접힌다.",
+    "textEn": "A Victory Without Flags. A nameless alliance stands. No nation name. Chapter 1 folds here."
   },
   {
     "id": "sqd_story_023",
@@ -298,7 +298,7 @@ export const STELLA_QUEST_DOSSIER_FROM_CSV = [
     "id": "sqd_story_030",
     "missionId": "story_030",
     "sort": "1",
-    "textKo": "은폐된 진실의 끝. 챕터1 클로저. 은폐된 진실은 동맹 위에서 잠시 접힌다. 챕터2에서 다시 열린다.",
-    "textEn": "End of Concealed Truth. Chapter 1 closer. Concealed truth folds for a beat on the alliance. It opens again in chapter two."
+    "textKo": "은폐된 진실의 끝. 챕터1 예비 칸. 본선 클로저는 q22다.",
+    "textEn": "End of Concealed Truth. Chapter 1 reserve cell. The spine closer is q22."
   }
 ] as const;

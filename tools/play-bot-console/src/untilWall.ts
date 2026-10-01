@@ -23,3 +23,14 @@ export function resolveUntilWallMs(raw: string, nowMs = Date.now()): number {
   if (Number.isFinite(parsed) && parsed > nowMs) return parsed;
   return Date.parse(nextUntilWallIsoKst(nowMs));
 }
+
+/** 08:00 경과 시 다음 마감으로만 넘긴다. 기록은 멈추지 않는다. */
+export function continuePastWall(
+  untilWallMs: number,
+  nowMs = Date.now(),
+): { untilWallMs: number; rolled: boolean } {
+  if (untilWallMs > 0 && nowMs >= untilWallMs) {
+    return { untilWallMs: Date.parse(nextUntilWallIsoKst(nowMs)), rolled: true };
+  }
+  return { untilWallMs, rolled: false };
+}

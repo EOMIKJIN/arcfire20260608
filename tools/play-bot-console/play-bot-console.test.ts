@@ -20,6 +20,9 @@ import {
   CRIMSON_CAPITAL_PLANET_ID,
   FOCUS_PLANET_ID,
   getMission,
+  discoveryHopPlanet,
+  DISCOVERY_PLANET_PLACEHOLDER,
+  listUnresolvedMissionPlaceholders,
   nearestTradePlanet,
   itemBasePrice,
   lookupHasTrade,
@@ -28,7 +31,7 @@ import {
 import { questFightPlanet, nextPlayableMissionId, canLearnAny, isCapitalAssaultReady, approachCapitalPlanet } from './src/progress';
 import { nextDevCost, durationTicks } from './src/facilityTwin';
 import { buildDailyLearningReport } from './src/dailyLearningReport';
-import { decideIntentKind } from './src/intent';
+import { decideIntentKind, pickStepKind } from './src/intent';
 import { seedWorld, snapshotKpi, toHolds, addExp, countPaints } from './src/world';
 import { BLUE_CLAN, NEUTRAL_CLAN, RED_CLAN } from './src/types';
 import { STAGE1_PERSONAS, STAGE2_PERSONAS, resolvePersona } from './src/personas';
@@ -38,12 +41,21 @@ import { createRng } from './src/rng';
 import { analyzeDay, analyzeStronger } from './src/analyze';
 import { compareKpi } from './src/compare';
 import { runSimulation } from './src/simulate';
-import { TICKS_PER_DAY } from './src/clock';
+import { TICKS_PER_DAY, TICK_GAME_MS } from './src/clock';
+import { pickFrontPlanetId, PLAYBOT_FRONT_LEVY_CREDITS, resolvePlaybotNeutralizeProtectMs } from './src/endFront';
+import {
+  absorbEarlyFeel,
+  analyzeEarlyFeel,
+  applyOpeningFeelIfNeeded,
+  estimateEntryFeel,
+  listOpeningFeelBeats,
+  USER_FEEL_WINDOW_SEC,
+} from './src/earlyFeel';
 import { recordLearning, loadLearning } from './src/learn';
 import { adaptPolicy, decideAdaptPeriodDays, getLiveWeights, resetPolicyForTest, setLearnedRootForTest } from './src/policy';
 import { measureRawBytes, resetRawPlayData } from './src/housekeep';
 import { appendJournal, appendTimeline, beginRecording, endRecording, ensureRunPaths, isRecording, setPlaybotIoLogsForTest, writeStatus } from './src/io';
-import { nextUntilWallIsoKst, resolveUntilWallMs } from './src/untilWall';
+import { continuePastWall, nextUntilWallIsoKst, resolveUntilWallMs } from './src/untilWall';
 
 const TEST_ISO = fs.mkdtempSync(path.join(os.tmpdir(), 'pb-iso-'));
 setPlaybotIoLogsForTest(TEST_ISO);
@@ -64,6 +76,7 @@ test('코어 시드 21 · 개척용 synth_011만 추가', () => {
   assert.equal(Object.keys(w.planets).filter((id) => !id.startsWith('synth_')).length, 21);
   assert.ok(w.planets.synth_011_p);
   assert.equal(w.planets.arcadia_prime?.occupierClanId, BLUE_CLAN);
+  assert.equal(w.planets.arcadia_prime?.kind, 'player_home');
   assert.equal(w.planets.sirius_border?.occupierClanId, RED_CLAN);
   const p = countPaints(w);
   assert.ok(p.blue >= 1 && p.red >= 1);
@@ -303,6 +316,7 @@ test('학습 주기 — 정체·HOLD는 2일, 고효율은 6일', () => {
       { day: 2, level: 1, totalExp: 20, credits: 1, combatWins: 0, combatLosses: 0, shipDestroys: 0, reboards: 0, hangarShips: 3, questCleared: 0, annexOk: 0, trades: 0, dLevel: 0, dExp: 10 },
     ],
     patterns: [{ day: 2, persona: 'mixed_ref', actions: {}, journalKinds: {}, lastHoldReason: 'level_gate', dominantAction: 'HOLD' }],
+    earlyFeels: [],
   });
   assert.equal(hold, 2);
   const rich = decideAdaptPeriodDays({
@@ -316,6 +330,7 @@ test('학습 주기 — 정체·HOLD는 2일, 고효율은 6일', () => {
       { day: 2, level: 3, totalExp: 1300, credits: 1, combatWins: 4, combatLosses: 1, shipDestroys: 0, reboards: 0, hangarShips: 3, questCleared: 2, annexOk: 0, trades: 2, dLevel: 1, dExp: 700 },
     ],
     patterns: [{ day: 2, persona: 'mixed_ref', actions: {}, journalKinds: {}, lastHoldReason: '', dominantAction: 'QUEST' }],
+    earlyFeels: [],
   });
   assert.equal(rich, 6);
 });
@@ -357,10 +372,12 @@ test('combat_off 점령전투는 HOLD가 아니라 전선 이동', () => {
   assert.ok(left || w.lastHoldReason !== 'combat_off');
 });
 
-test('수행 가능 퀘스트는 story+sandbox+tq — 039~055 없음', () => {
+test('수행 가능 퀘스트는 story+sandbox+tq — 039~055·skeleton 본선 없음', () => {
   const ids = listPlayableMissionIds();
   assert.ok(ids.includes('story_001'));
-  assert.ok(ids.includes('story_030'));
+  assert.ok(ids.includes('story_022'));
+  assert.equal(ids.includes('story_023'), false);
+  assert.equal(ids.includes('story_030'), false);
   assert.ok(ids.includes('sandbox_001'));
   assert.ok(ids.includes('sandbox_063'));
   assert.ok(ids.includes('tq_cbt_01'));
@@ -493,6 +510,7 @@ test('18:00 1일 학습 리포트는 벽시계 델타를 쓴다', () => {
         { day: 20, level: 8, totalExp: 9000, credits: 2000, combatWins: 4, combatLosses: 2, shipDestroys: 0, reboards: 0, hangarShips: 3, questCleared: 12, annexOk: 1, trades: 3, dLevel: 1, dExp: 2000, skills: 3, gearScore: 400, devSum: 5, capitalDestroyed: 0 },
       ],
       patterns: [],
+      earlyFeels: [],
       goal: 'player_growth_and_play_pattern',
     },
     policy: { version: 2, updatedAt: '', generation: 3, preferSell: false, adaptEveryDays: 4, personas: {}, lastNotes: ['유지'] },
@@ -562,7 +580,7 @@ test('이미착륙은 1회 본문 · 2회 .... · 이후 silent', () => {
 test('본편 021 게이트는 28 · 030은 44', () => {
   assert.equal(getMission('story_021')?.levelRequired, 28);
   assert.equal(getMission('story_023')?.levelRequired, 32);
-  assert.equal(getMission('story_028')?.levelRequired, 25);
+  assert.equal(getMission('story_028')?.levelRequired, 40);
   assert.equal(getMission('story_030')?.levelRequired, 44);
 });
 
@@ -572,6 +590,52 @@ test('격납고 0이면 수련 대신 보충', () => {
   const e = fightHere(w, createRng(1), '수련');
   assert.notEqual(e.kind, 'DESTROY');
   assert.ok(e.kind === 'LAND' || e.kind === 'TRAVEL');
+});
+
+test('탐사 거점은 수락 성계 1~3홉 실행성', () => {
+  const hop = discoveryHopPlanet('solar_port', 'solar_station');
+  assert.ok(hop);
+  assert.notEqual(hop, DISCOVERY_PLANET_PLACEHOLDER);
+  assert.ok(lookupSystemId(hop!));
+  assert.notEqual(lookupSystemId(hop!), 'solar_port');
+  assert.equal(listUnresolvedMissionPlaceholders().length, 0);
+});
+
+test('미확인 거점 방문은 성계를 모름 HOLD가 아님', () => {
+  const w = seedWorld({ runId: 'disc', persona: 'mixed_ref' });
+  w.level = 4;
+  w.hangarShips = 3;
+  w.currentPlanetId = 'minerva_deep';
+  w.currentSystemId = 'minerva';
+  w.questOriginSystemId = 'solar_port';
+  w.activeQuest = { missionId: 'tq_oth_02', title: '미확인 거점 방문', objIndex: 0, acceptedDay: 1 };
+  let ok = false;
+  for (let i = 0; i < 24; i += 1) {
+    const e = stepAction(w, createRng(3 + i * 11), 'mixed_ref', { allowSides: true });
+    assert.equal(e.line.includes('성계를 모름'), false);
+    if (e.line.includes('탐사거점') || (w.activeQuest && w.activeQuest.objIndex > 0) || !w.activeQuest) {
+      ok = true;
+      break;
+    }
+  }
+  assert.equal(ok, true);
+});
+
+test('시급 선별 — 토큰 HOLD는 escalate 없이 자체 1안', () => {
+  const t = buildDailyTriage({
+    verdict: 'WARN',
+    botAlive: true,
+    recording: true,
+    findings: [
+      { severity: 'risk', code: 'PLACEHOLDER_HOLD', detail: 'no_dest_system' },
+      { severity: 'risk', code: 'QUEST_STUCK', detail: 'tq_oth_02 97일 미클리어' },
+    ],
+    questCleared: 99,
+    level: 48,
+    credits: 8000,
+  });
+  assert.equal(t.escalate, false);
+  assert.ok(t.autoNotes.some((n) => n.includes('플레이스홀더') || n.includes('토큰')));
 });
 
 test('인접성계 배달은 출발지가 아니면 완료', () => {
@@ -624,4 +688,154 @@ test('대시보드 경로가 잠겨도 writeStatus가 죽지 않음', () => {
   endRecording('test');
 });
 
-test('마감은 08:00 이전이면 당일 ·
+test('마감은 08:00 이전이면 당일 · 지났으면 익일 · 과거 인자는 롤', () => {
+  const before = Date.parse('2026-10-01T07:59:00+09:00');
+  assert.equal(nextUntilWallIsoKst(before), '2026-10-01T08:00:00+09:00');
+  const atEight = Date.parse('2026-10-01T08:00:00+09:00');
+  assert.equal(nextUntilWallIsoKst(atEight), '2026-10-02T08:00:00+09:00');
+  const now = Date.parse('2026-10-01T12:00:00+09:00');
+  assert.equal(resolveUntilWallMs('2026-09-01T08:00:00+09:00', now), Date.parse('2026-10-02T08:00:00+09:00'));
+  assert.equal(resolveUntilWallMs('2026-12-01T08:00:00+09:00', now), Date.parse('2026-12-01T08:00:00+09:00'));
+});
+
+test('08:00 벽시계는 기록을 끄지 않고 다음 마감으로만 넘긴다', () => {
+  const hit = Date.parse('2026-10-01T08:00:00+09:00');
+  const keep = Date.parse('2026-10-01T07:59:00+09:00');
+  const wall = Date.parse('2026-10-01T08:00:00+09:00');
+  const idle = continuePastWall(wall, keep);
+  assert.equal(idle.rolled, false);
+  assert.equal(idle.untilWallMs, wall);
+  const rolled = continuePastWall(wall, hit);
+  assert.equal(rolled.rolled, true);
+  assert.equal(rolled.untilWallMs, Date.parse('2026-10-02T08:00:00+09:00'));
+});
+
+test('타임라인이 잠겨도 appendTimeline이 죽지 않음', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pb-tl-'));
+  const tl = path.join(dir, 'timeline.csv');
+  fs.mkdirSync(tl);
+  beginRecording();
+  const paths = ensureRunPaths('pb-tl-lock');
+  paths.timeline = tl;
+  const w = seedWorld({ runId: 'pb-tl-lock', persona: 'mixed_ref' });
+  appendTimeline(paths, w, 'QUEST');
+  assert.equal(fs.statSync(tl).isDirectory(), true);
+  endRecording('test');
+});
+
+test('아르카디아 player_home이면 솔라·베가 편입 접선', () => {
+  const w = seedWorld({ runId: 'home-adj', persona: 'mixed_ref' });
+  const holds = toHolds(w);
+  assert.equal(hasStelliumAnnexFriendlyAdjacency('solar_port', holds), true);
+  assert.equal(hasStelliumAnnexFriendlyAdjacency('vega_outpost', holds), true);
+});
+
+test('전선 후보는 내륙 고정이 아니라 인접 중립 우선', () => {
+  const w = seedWorld({ runId: 'front', persona: 'front_annex' });
+  const dest = pickFrontPlanetId(w);
+  assert.ok(dest);
+  assert.notEqual(dest, 'eternal_throne');
+  assert.notEqual(dest, 'genesis_origin');
+  const slot = w.planets[dest];
+  assert.ok(slot?.combatEnabled);
+  const paint = slot.kind === 'player_home' ? 'BLUE' : slot.occupierClanId;
+  assert.notEqual(dest, 'sirius_border');
+  assert.ok(paint === RED_CLAN || paint === NEUTRAL_CLAN || slot.kind === 'neutral');
+});
+
+test('중립 보호창은 가상 1일 이상', () => {
+  const dayMs = TICK_GAME_MS * TICKS_PER_DAY;
+  assert.equal(resolvePlaybotNeutralizeProtectMs(1_800_000), dayMs);
+  assert.ok(resolvePlaybotNeutralizeProtectMs(0) >= dayMs);
+});
+
+test('전선 승리는 블루 금고 징수', () => {
+  const w = seedWorld({ runId: 'levy', persona: 'front_annex' });
+  w.currentPlanetId = 'sirius_border';
+  w.currentSystemId = 'sirius';
+  const before = w.blueVault;
+  const row = fightHere(w, () => 0, '전선');
+  assert.equal(w.planets.sirius_border.kind, 'neutral');
+  assert.equal(w.blueVault, before + PLAYBOT_FRONT_LEVY_CREDITS);
+  assert.match(row.line, /금고\+2000/);
+});
+
+test('퀘 소진 후 의도는 전선 편입', () => {
+  const w = seedWorld({ runId: 'post-q', persona: 'mixed_ref' });
+  w.earlyFeelClosed = true;
+  const ids = listPlayableMissionIds();
+  for (let i = 0; i < ids.length; i += 1) {
+    w.completedLookup[ids[i]] = true;
+    w.completedMissionIds.push(ids[i]);
+  }
+  w.questCleared = ids.length;
+  w.capitalDestroyed = true;
+  w.credits = 800;
+  w.skillPoints = 0;
+  assert.equal(decideIntentKind(w, () => 0.99, 'mixed_ref'), 'annex_path');
+});
+
+test('초반 3분 오프닝은 스텔라 A0·스캔·A1까지 · A2–D2는 창 밖', () => {
+  const open = listOpeningFeelBeats();
+  const sum = open.reduce((n, b) => n + b.feelSec, 0);
+  assert.ok(sum >= 50 && sum <= 90, `opening=${sum}`);
+  assert.ok(open.some((b) => b.line.includes('A0')));
+  assert.ok(open.some((b) => b.kind === 'SCAN'));
+  assert.equal(open.some((b) => b.line.includes('A2')), false);
+});
+
+test('초반 3분 창 — 오프닝 후 본편만 · 장비/수련은 스파인 밖', () => {
+  const w = seedWorld({ runId: 'early', persona: 'mixed_ref' });
+  applyOpeningFeelIfNeeded(w);
+  assert.ok(w.earlyFeelSec >= 50);
+  absorbEarlyFeel(w, {
+    t: 1, day: 1, tick: 0, kind: 'QUEST', line: '수락 story_001 「동기가 확인되지 않는 살인사건」',
+  });
+  absorbEarlyFeel(w, {
+    t: 2, day: 1, tick: 1, kind: 'LAND', line: 'solar_station 착륙',
+  });
+  absorbEarlyFeel(w, {
+    t: 3, day: 1, tick: 3, kind: 'GEAR', line: '장착 레이저_웨이브',
+  });
+  absorbEarlyFeel(w, {
+    t: 4, day: 1, tick: 14, kind: 'DESTROY', line: '솔라 항구 수련 전함 파괴',
+  });
+  const accept = estimateEntryFeel({
+    t: 1, day: 1, tick: 0, kind: 'QUEST', line: '수락 story_001 「동기가 확인되지 않는 살인사건」',
+  });
+  assert.ok(accept.spine && accept.feelSec >= 12);
+  const findings = analyzeEarlyFeel(w);
+  assert.ok(findings.some((f) => f.code === 'EARLY_OFF_SPINE'));
+  assert.ok(findings.some((f) => f.code === 'EARLY_HANGAR_WIPE'));
+  assert.ok(findings.some((f) => f.code === 'EARLY_L0_GUIDE_GAP'));
+});
+
+test('초반 3분 창이 열리면 의도는 퀘스트 고정 · 가중 흔들림 없음', () => {
+  const w = seedWorld({ runId: 'lock', persona: 'mixed_ref' });
+  w.credits = 9000;
+  w.skillPoints = 4;
+  assert.equal(w.earlyFeelClosed, false);
+  assert.equal(decideIntentKind(w, () => 0.01, 'mixed_ref'), 'quest');
+  assert.equal(pickStepKind(w, () => 0.01, 'mixed_ref'), 'quest');
+  w.earlyFeelClosed = true;
+  w.earlyFeelSec = USER_FEEL_WINDOW_SEC;
+  assert.ok(decideIntentKind(w, () => 0.99, 'mixed_ref') !== 'idle');
+});
+
+test('시뮬 1일이 초반 3분 창을 닫고 본편 수락을 남긴다', () => {
+  const sim = runSimulation({
+    persona: 'mixed_ref',
+    days: 1,
+    seed: 11,
+    runId: 'early-sim',
+    allowSides: false,
+    stronger: false,
+  });
+  assert.equal(sim.world.earlyFeelClosed, true);
+  assert.ok(sim.world.earlyFeelSec >= USER_FEEL_WINDOW_SEC);
+  assert.ok(sim.world.questAccepted >= 1);
+  const day1 = sim.reports[0];
+  assert.ok(day1.findings.some((f) => String(f.code).startsWith('EARLY_')));
+});
+
+console.log('play-bot-console tests done');

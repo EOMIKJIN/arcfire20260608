@@ -25,8 +25,8 @@ import {
 } from '../../ui/overlay/splitNarrativeDialogSegments';
 import type { StorySceneDef } from '../../types';
 import { filterIngameDialogPages } from './ingameDialogSceneIndex';
+import { normalizeStoryBody, type IngameDialogPackStep } from './ingameDialogSessionPack';
 import type { IngameDialogSession, IngameDialogTextContext } from './ingameDialogTypes';
-import type { IngameDialogPackStep } from './ingameDialogSessionPack';
 
 export type IngameDialogViewModel = {
   label: string;
@@ -46,10 +46,6 @@ export type IngameDialogViewModel = {
   /** 최종 단계에서 [수락]/[취소] 선택 UI */
   showAcceptCancelChoice: boolean;
 };
-
-function normalizeStoryBody(raw: string): string {
-  return raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n{2,}/g, '\n').trim();
-}
 
 function applyTextContext(
   text: string,

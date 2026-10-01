@@ -21,6 +21,19 @@ test('hub_orbit 퀘스트는 항로 존 확률을 가로채지 않는다', () =>
     resolveTransitEncounterChance('safe', false, progresses, 'mission_002', 'nightfall'),
     0.1,
   );
+  assert.equal(
+    resolveTransitEncounterChance('safe', true, progresses, 'mission_002', 'vega_outpost'),
+    0.1,
+  );
+});
+
+test('아르카디아 도착 일반 항로 조우는 끈다(착륙 해적소탕과 분리)', () => {
+  const progresses = { mission_002: active('mission_002', { obj_002_a: false }) };
+  assert.equal(
+    resolveTransitEncounterChance('safe', true, progresses, 'mission_002', 'arcadia'),
+    0,
+  );
+  assert.equal(resolveTransitEncounterChance('safe', false, undefined, null, 'arcadia'), 0);
 });
 
 test('락이 없으면 존 확률만', () => {

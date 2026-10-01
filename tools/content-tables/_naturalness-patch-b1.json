@@ -1,0 +1,237 @@
+[
+  {
+    "key": "story_dialog_obj_story_002_d#1",
+    "text": "이름은 이미 알고 있겠지.\n테오 혼, 함장 내정자였고\n국경 방어 함대 자리였다.",
+    "text_en": "You already know the name.\nTeo Hon, captain-designate,\nslated for the border defense fleet."
+  },
+  {
+    "key": "story_dialog_obj_story_003_a#0",
+    "text": "인수인계할 시간은 없다.\n함대는 이미 베가에 가 있고\n늦으면 국경이 먼저 무너진다.",
+    "text_en": "No time for a handover.\nThe fleet is already at Vega,\nand if we are late, the border falls first."
+  },
+  {
+    "key": "story_dialog_obj_story_003_b#0",
+    "text": "대행 출정 허가가 떨어졌으니\n관문은 열어 두겠다.\n이제 베가 전초기지가 국경이다.",
+    "text_en": "Your stand-in sortie is cleared,\nso I will keep the gate open.\nVega Outpost is the border now."
+  },
+  {
+    "key": "story_dialog_obj_story_004_b#0",
+    "text": "아군 신호가 전부 꺼졌다.\n남은 건 네 함선뿐이고\n함대는 전멸이다.",
+    "text_en": "Every allied signal has gone dark.\nYours is the only ship left.\nThe fleet is gone."
+  },
+  {
+    "key": "story_dialog_obj_story_006_c#0",
+    "text": "나는 이번 기습의 주모자가 아니다.\n코발이 버린 사람이고\n데드코러스는 내 배다.",
+    "text_en": "I am not behind this ambush.\nI am the man Koval left behind,\nand Dead Chorus is my ship."
+  },
+  {
+    "key": "story_dialog_obj_story_007_a#0",
+    "text": "20년 전 라이트홀드는 미끼였다.\n47시간 만에 함락됐는데\n보고서엔 그 이름조차 없지.",
+    "text_en": "Twenty years ago, Light Hold was bait.\nIt fell in forty-seven hours,\nyet the report never names it."
+  },
+  {
+    "key": "story_dialog_obj_story_007_a#1",
+    "text": "라이트홀드 철수를 막지 못했고\n코발도 막지 않았다.\n빚은 지금도 남아 있다.",
+    "text_en": "I failed to stop the Light Hold pullout,\nand Koval never tried to.\nThat debt is still unpaid."
+  },
+  {
+    "key": "story_dialog_obj_story_007_b#0",
+    "text": "라이트홀드 식별 신호도 지워졌더군.\n솔라 도킹 기록을 지운 수법과 같고\n남은 건 주파수 골격뿐이야.",
+    "text_en": "The Light Hold IDs were wiped too,\nthe same way as the Solar docking records.\nOnly a frequency skeleton is left."
+  },
+  {
+    "key": "story_dialog_obj_story_007_e#0",
+    "text": "라이트홀드에서 살아남은 셋은\n아직 여기 없고\n이름은 내일 말하겠다.",
+    "text_en": "The three who survived Light Hold\nare not here yet.\nI will give you their names tomorrow."
+  },
+  {
+    "key": "story_dialog_obj_story_008_a#0",
+    "text": "카일 로렌은 우리 쪽 화력이었고\n지금은 아이언 잔해권에 있다.\n말은 짧고 총은 긴 놈이지.",
+    "text_en": "Kyle Loren was our firepower,\nand he sits in the Iron remnant field now.\nShort on words, long on guns."
+  },
+  {
+    "key": "story_dialog_obj_story_008_c#0",
+    "text": "순서는 카일, 미라, 가온이니\n아이언부터 가라.\n나는 따라가지 않을 거다.",
+    "text_en": "The order is Kyle, Mira, then Gaon,\nso start at Iron.\nI will not be coming with you."
+  },
+  {
+    "key": "story_dialog_obj_story_008_d#0",
+    "text": "아이언 잔해권 입구를 열어 두었다.\n수호 채널은 오렌 피스가 쥐고 있고\n카일은 잔해권 안쪽에 있어.",
+    "text_en": "I have opened the mouth of the Iron remnant field.\nOren Peace holds the guard channel,\nand Kyle is somewhere inside."
+  },
+  {
+    "key": "story_dialog_obj_story_009_b#0",
+    "text": "라이트홀드에선 내가 포를 맡았다.\n철수 명령이 먼저 끊겼고\n나만 살아남았지.",
+    "text_en": "I ran the guns at Light Hold.\nThe pullout order was cut off first,\nand I was the only one who lived."
+  },
+  {
+    "key": "story_dialog_obj_story_009_b#1",
+    "text": "소사가 보냈다면 됐고\n네 배에 타겠다.\n말은 여기까지다.",
+    "text_en": "If Sosa sent you, that is enough.\nI am boarding your ship.\nThat is all the talking I do."
+  },
+  {
+    "key": "story_dialog_obj_story_009_d#0",
+    "text": "라이트홀드를 죽인 건 장부였다.\n보급란 세 줄이 비어 있었고\n빈 장부는 아직 내가 갖고 있어.",
+    "text_en": "A ledger is what killed Light Hold.\nThree supply entries were left blank,\nand I still have that empty ledger."
+  },
+  {
+    "key": "story_dialog_obj_story_009_d#1",
+    "text": "카일이 왔으니 화력은 됐고\n가온은 아직 에덴에 있다.\n다시 모이는 곳은 여기야.",
+    "text_en": "Kyle is here, so firepower is covered,\nbut Gaon is still out at Eden.\nThis is where we regroup."
+  },
+  {
+    "key": "story_dialog_obj_story_010_b#0",
+    "text": "라이트홀드는 지도에서 지워졌지만\n죽은 건 행성이 아니라 기록이다.\n나는 지워진 빈칸을 쫓고 있지.",
+    "text_en": "Light Hold was erased from the map,\nbut it was the record that died, not the planet.\nI have been chasing that blank ever since."
+  },
+  {
+    "key": "story_dialog_obj_story_010_d#1",
+    "text": "장부 뒤에 이면 협정이 숨어 있고\n그 협정이 국경 매복으로 이어져.\n다음 목적지는 베가야.",
+    "text_en": "A secret accord is hiding behind the ledger,\nand that accord leads to the border ambush.\nOur next stop is Vega."
+  },
+  {
+    "key": "story_dialog_obj_story_010_e#0",
+    "text": "말은 이만하면 충분하고\n베가에 호위가 남아 있으면\n그냥 친다.",
+    "text_en": "That is enough talk.\nIf any escort is still sitting at Vega,\nwe hit it."
+  },
+  {
+    "key": "story_dialog_obj_story_011_a#0",
+    "text": "정찰 규모를 줄이라는 지시가 있었고\n서명란은 비어 있었다.\n라이트홀드 장부와 같은 수법이지.",
+    "text_en": "There was an order to cut the recon down,\nand the signature line was blank.\nSame method as the Light Hold ledger."
+  },
+  {
+    "key": "story_dialog_obj_story_011_a#1",
+    "text": "잔당 한 척이 증거를 노리고 있다.\n잔당을 쓰러뜨리면\n사본을 넘겨주겠다.",
+    "text_en": "One remnant ship is after the evidence.\nTake it down,\nand I will hand you the copy."
+  },
+  {
+    "key": "story_dialog_obj_story_011_e#0",
+    "text": "협정의 서명은 내 것이 아니지만\n철수 명령은 내가 내렸다.\n라이트홀드 때도 그랬다.",
+    "text_en": "The signature on the accord is not mine,\nbut the pullout order was.\nIt was the same at Light Hold."
+  },
+  {
+    "key": "story_dialog_obj_story_012_a#0",
+    "text": "네 이름이 반역자 명단에 올랐다.\n이면 협정을 보고한 대가인데\n나로서도 지워 줄 수가 없다.",
+    "text_en": "Your name is on the traitor list now,\nthe price of reporting the secret accord,\nand I cannot take it off."
+  },
+  {
+    "key": "story_dialog_obj_story_012_b#0",
+    "text": "관문은 60초만 열겠다.\n기록엔 고장으로 남기고\n내가 해 줄 수 있는 건 거기까지다.",
+    "text_en": "The gate opens for sixty seconds only.\nThe record will call it a malfunction,\nand that is as far as I can go."
+  },
+  {
+    "key": "story_dialog_obj_story_012_d#1",
+    "text": "이제 너희 넷은 정식으로 한편이다.\n관문 순찰대는 여기서 빠지고\n오늘 일은 기록에 남기지 않겠다.",
+    "text_en": "The four of you are one crew now, officially.\nGate Patrol steps back here,\nand none of today goes on record."
+  },
+  {
+    "key": "story_dialog_obj_story_012_e#0",
+    "text": "도피처는 섀도우 넥서스다.\n그리하벤이라고도 부르는 곳인데\n나는 따라가지 않는다.",
+    "text_en": "Your refuge is Shadow Nexus.\nSome call the place Greehaven.\nI will not be following you there."
+  },
+  {
+    "key": "story_dialog_obj_story_013_b#0",
+    "text": "물건 출처는 묻지 않지만\n수배된 얼굴이면 얘기가 다르지.\n그래도 닉스가 기다리고 있다.",
+    "text_en": "I never ask where goods come from,\nthough a wanted face is another matter.\nStill, Nyx is waiting for you."
+  },
+  {
+    "key": "story_dialog_obj_story_013_c#1",
+    "text": "여기선 이름을 적지 않고\n숨겨 주는 것도 배뿐이다.\n넷이 다 모이면 거점을 열겠다.",
+    "text_en": "We write down no names here,\nand all we hide is ships.\nOnce all four of you are in, I open the hold."
+  },
+  {
+    "key": "story_dialog_obj_story_013_d#0",
+    "text": "스텔리움 전 채널에 수배가 떴고\n크림슨도 네 얼굴에 현상금을 걸었다.\n적은 둘인데 노리는 건 하나지.",
+    "text_en": "Every Stellium channel is carrying your warrant,\nand Crimson has put a bounty on your face too.\nTwo enemies, one target."
+  },
+  {
+    "key": "story_dialog_obj_story_013_e#0",
+    "text": "숨을 자리는 마련해 뒀고\n출처는 묻지 않을 테니\n수수료는 나중에 정하지.",
+    "text_en": "I have set up a place for you to hide,\nand I will not ask where you came from,\nso we settle the fee later."
+  },
+  {
+    "key": "story_dialog_obj_story_013_e#1",
+    "text": "카일·미라·가온 얼굴은 외워 두고\n술집 쪽 입구는 내가 맡는다.\n거점은 닉스 몫이지.",
+    "text_en": "I will learn the faces of Kyle, Mira and Gaon.\nThe tavern-side entrance is mine to watch,\nand the hold is Nyx's job."
+  },
+  {
+    "key": "story_dialog_obj_story_014_a#0",
+    "text": "지하 도크를 열었으니\n식별 신호는 꺼 두어라.\n이제 여긴 너희 자리다.",
+    "text_en": "The under-dock is open,\nso keep your ID signals dark.\nThis place is yours now."
+  },
+  {
+    "key": "story_dialog_obj_story_014_b#0",
+    "text": "입구 화력은 내가 맡는다.\n말은 닉스가 할 테고\n나는 함선만 보면 된다.",
+    "text_en": "I will hold the guns at the entrance.\nNyx does the talking,\nand I just watch the ships."
+  },
+  {
+    "key": "story_dialog_obj_story_014_b#1",
+    "text": "추격이 다시 뜨면 친다.\n거점만 있으면 버틸 수 있고\n신뢰란 건 그런 거다.",
+    "text_en": "If the chase lifts again, I hit it.\nAs long as we have a hold, we can last,\nand that is what trust is."
+  },
+  {
+    "key": "story_dialog_obj_story_014_c#0",
+    "text": "수수료와 보급은 나눠서 관리하고\n출처 모를 돈은 표시만 해 두고\n출처 자체는 묻지 않을 거야.",
+    "text_en": "I will keep fees and supplies separate,\nmark any money of unknown origin,\nand never ask where it came from."
+  },
+  {
+    "key": "story_dialog_obj_story_014_c#1",
+    "text": "우리의 첫 거점이다.\n장부가 있으면 배신도 보이는 법인데\n배신 얘기는 나중에 하자.",
+    "text_en": "This is our first hold.\nA ledger also shows you betrayal when it comes,\nbut that talk can wait."
+  },
+  {
+    "key": "story_dialog_obj_story_014_e#0",
+    "text": "거점은 열렸으니\n추격은 내일 걱정하고\n오늘은 서로를 믿은 걸로 충분해.",
+    "text_en": "The hold is open,\nso the chase can wait until tomorrow.\nToday, trusting each other is enough."
+  },
+  {
+    "key": "story_dialog_obj_story_014_e#1",
+    "text": "세렌 쪽 채널로 초대가 더 올 텐데\n함정인지 기회인지는\n너희가 판단해라.",
+    "text_en": "Another invitation will come through Seren's channel.\nWhether it is a trap or a chance\nis for you to judge."
+  },
+  {
+    "key": "story_dialog_obj_story_015_b#0",
+    "text": "세렌 벨트는 우리끼리 쓰는 이름이고\n실제 관문은 바로 여기 보더고\n초대는 함정이 아니다.",
+    "text_en": "Seren Belt is just the name we use among ourselves.\nThe real gate is this border, right here,\nand the invitation is no trap."
+  },
+  {
+    "key": "story_dialog_obj_story_015_b#1",
+    "text": "라이트홀드 생존자가 여기 더 있다.\n당장 합류하진 않겠지만\n채널은 열어 두겠다.",
+    "text_en": "There are more Light Hold survivors here.\nThey will not join you right away,\nbut I will keep the channel open."
+  },
+  {
+    "key": "story_dialog_obj_story_015_e#0",
+    "text": "시리우스 채널이 열렸고\n세렌이 남아 준 걸 보면\n함정은 아닌 것 같다.",
+    "text_en": "The Sirius channel is open,\nand since Seren chose to stay,\nI do not read this as a trap."
+  },
+  {
+    "key": "story_dialog_obj_story_015_e#1",
+    "text": "소문이 퍼지고 있고\n크림슨이 거점 냄새를 맡기 시작했다.\n이제 적은 둘이다.",
+    "text_en": "Word is getting around,\nand Crimson has started to sniff out the hold.\nWe have two enemies now."
+  },
+  {
+    "key": "story_dialog_obj_story_016_c#0",
+    "text": "현상금 얘기라면 듣겠지만\n진영 얘기는 사절이다.\n네 수배지는 벌써 두 장이군.",
+    "text_en": "I will hear you out on bounties,\nbut faction talk is off the table.\nYour face is already on two bills."
+  },
+  {
+    "key": "story_dialog_obj_story_016_e#0",
+    "text": "추적선은 한 척이었지만\n다음엔 더 올 거다.\n문은 내가 지킨다.",
+    "text_en": "The tracker was a single ship,\nbut more will come next time.\nI will hold the door."
+  },
+  {
+    "key": "story_dialog_obj_story_016_e#1",
+    "text": "돈은 없고\n화력만으론 못 버티니\n돈 문제는 미라가 맡을 일이다.",
+    "text_en": "We have no money,\nand firepower alone will not keep us alive,\nso the money side is Mira's job."
+  },
+  {
+    "key": "story_dialog_obj_story_017_a#0",
+    "text": "딱 세 건만 받을 거야.\n출처 모를 돈이긴 하지만\n라이트홀드 장부와는 쓰임이 달라.",
+    "text_en": "I will take exactly three jobs, no more.\nIt is money of unknown origin,\nbut it serves nothing like the Light Hold ledger did."
+  },
+  {
+    "key": "story_dialog_obj_story_017_a#1",
+    "text": "출처를 캐물으면 거점이 무너지니\n표시만 해 두고\n중개는 닐에게 맡기자.",
+    "text_en": "Dig into the source and the hold collapses,\nso we only mark it\nand let Nil handle the brokering."
+  }
+]

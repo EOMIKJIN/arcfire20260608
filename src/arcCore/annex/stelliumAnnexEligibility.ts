@@ -72,7 +72,7 @@ export function shouldShowStelliumAnnexAction(
   );
 }
 
-/** 1홉에 BLUE 클랜 홀드 또는 플레이어 독립국이 있으면 편입 접선. */
+/** 1홉에 본거지·독립국·BLUE 클랜 홀드가 있으면 편입 접선. */
 export function hasStelliumAnnexFriendlyAdjacency(
   systemId: string,
   holds: Readonly<Record<string, PlanetClanHold>>,
@@ -86,7 +86,7 @@ export function hasStelliumAnnexFriendlyAdjacency(
     for (let j = 0; j < keys.length; j += 1) {
       const hold = holds[keys[j]];
       if (!hold || hold.systemId !== adj) continue;
-      if (hold.kind === 'player_independent') return true;
+      if (hold.kind === 'player_home' || hold.kind === 'player_independent') return true;
       if (resolveHoldFactionSide(hold.occupierClanId) === 'BLUE') return true;
     }
   }

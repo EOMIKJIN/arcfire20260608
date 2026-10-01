@@ -1,34 +1,34 @@
 questId,chapterId,questIndex,bindMissionId,contentStatus,questKind,isChapterCloser,titlePlaceholderKo,titlePlaceholderEn,notes
 story_c01_q01,ms_ch_01,1,story_001,ready,spine,0,동기가 확인되지 않는 살인사건,Unmotivated Murder Case,기존 missions.csv story_001. 제목·보상 변경 금지
 story_c01_q02,ms_ch_01,2,story_002,ready,spine,0,동기 없는 진실,The Motive-less Truth,미네르바 minerva_deep TCL7. 솔라 경유 2홉
-story_c01_q03,ms_ch_01,3,story_003,ready,spine,0,대행 출정,Stand-in Deployment,아르카디아→베가 전초(국경). 1홉
+story_c01_q03,ms_ch_01,3,story_003,ready,spine,0,위임된 지휘권,Delegated Command,아르카디아→베가 전초(국경). 1홉
 story_c01_q04,ms_ch_01,4,story_004,ready,spine,0,예상 밖의 참사,Unforeseen Disaster,베가 전초 vega_base TCL3 · 전멸은 서사·조우 1척
 story_c01_q05,ms_ch_01,5,story_005,ready,spine,0,복수는 누가 하는 겁니까?,Who Takes Revenge?,아르카디아→드라코. 베가 경유 2홉 TCL9
 story_c01_q06,ms_ch_01,6,story_006,ready,spine,0,숨은 자와의 대면,Facing the Hidden One,드라코 성운 헤이븐 draco_haven TCL9
-story_c01_q07,ms_ch_01,7,story_007,ready,spine,0,빚진 자의 증언,Testimony of the Debtor,챕터1 본문 실기. 세부 대사 이후 수정
-story_c01_q08,ms_ch_01,8,story_008,ready,spine,0,라이트홀드가 남긴 세 이름,Three Names Light Hold Left,챕터1 본문 실기. 세부 대사 이후 수정
-story_c01_q09,ms_ch_01,9,story_009,ready,spine,0,3인 합류,Three Join,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q07,ms_ch_01,7,story_007,ready,spine,0,빚진 자의 증언,Testimony of the Debtor,라이트홀드·47시간·자장가. 소사 3스텝
+story_c01_q08,ms_ch_01,8,story_008,ready,spine,0,라이트홀드가 남긴 세 이름,Three Names Light Hold Left,세 이름 한 번만
+story_c01_q09,ms_ch_01,9,story_009,ready,spine,0,3인 합류,Three Join,카일·미라. 가온은 q10
 story_c01_q10,ms_ch_01,10,story_010,ready,spine,0,교차하는 항로,Crossing Lanes,챕터1 본문 실기. 세부 대사 이후 수정
-story_c01_q11,ms_ch_01,11,story_011,ready,spine,0,이면 협정,The Backside Accord,챕터1 본문 실기. 세부 대사 이후 수정
-story_c01_q12,ms_ch_01,12,story_012,ready,spine,0,반역자의 이름,The Traitor’s Name,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q11,ms_ch_01,11,story_011,ready,spine,0,이면 협정,The Backside Accord,캘리스 omega_hub. 베가/하르만 삭제
+story_c01_q12,ms_ch_01,12,story_012,ready,spine,0,반역자의 이름,The Traitor’s Name,캘리스 대화 유지. 전투는 시리우스 TCL18
 story_c01_q13,ms_ch_01,13,story_013,ready,spine,0,도피처를 찾아서,Finding Sanctuary,챕터1 본문 실기. 세부 대사 이후 수정
-story_c01_q14,ms_ch_01,14,story_014,ready,spine,0,첫 신뢰,First Trust,챕터1 본문 실기. 세부 대사 이후 수정
-story_c01_q15,ms_ch_01,15,story_015,ready,spine,0,두 번째 초대,The Second Invite,챕터1 본문 실기. 세부 대사 이후 수정
-story_c01_q16,ms_ch_01,16,story_016,ready,spine,0,두 개의 적,Two Enemies,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q14,ms_ch_01,14,story_014,ready,spine,0,첫 신뢰,First Trust,섀도우 대화 유지. 전투는 크림슨 TCL25
+story_c01_q15,ms_ch_01,15,story_015,ready,spine,0,함정인가 기회인가,Trap or Chance,시리우스 보더(세렌 벨트 별칭). 함정/기회
+story_c01_q16,ms_ch_01,16,story_016,ready,spine,0,외곽의 잔해,Rim Wreckage,선두 reach 시리우스. 잔해/표식
 story_c01_q17,ms_ch_01,17,story_017,ready,spine,0,검은 시장의 손,The Black Market Hand,챕터1 본문 실기. 세부 대사 이후 수정
-story_c01_q18,ms_ch_01,18,story_018,ready,spine,0,요새의 뼈대,Bones of the Fort,챕터1 본문 실기. 세부 대사 이후 수정
+story_c01_q18,ms_ch_01,18,story_018,ready,spine,0,요새의 뼈대,Bones of the Fort,오메가 교차 항로 1칸. 대화 정체 절단
 story_c01_q19,ms_ch_01,19,story_019,ready,spine,0,내부의 균열,The Inner Crack,챕터1 본문 실기. 세부 대사 이후 수정
 story_c01_q20,ms_ch_01,20,story_020,ready,spine,0,진실 혹은 이간계,Truth or Wedge,챕터1 본문 실기. 세부 대사 이후 수정
-story_c01_q21,ms_ch_01,21,story_021,ready,spine,0,그리하벤 공방전,The Greehaven Siege,챕터1 본문 실기. 세부 대사 이후 수정
-story_c01_q22,ms_ch_01,22,story_022,ready,spine,0,첫 깃발,The First Flag,챕터1 본문 실기. 세부 대사 이후 수정
-story_c01_q23,ms_ch_01,23,story_023,ready,spine,0,깃발의 메아리,Echo of the Flag,챕터1 여파 실기. 세부 이후 수정
-story_c01_q24,ms_ch_01,24,story_024,ready,spine,0,기록의 사본,A Copy of the Record,챕터1 여파 실기. 세부 이후 수정
-story_c01_q25,ms_ch_01,25,story_025,ready,spine,0,버려진 보고서,The Abandoned Report,챕터1 여파 실기. 세부 이후 수정
-story_c01_q26,ms_ch_01,26,story_026,ready,spine,0,코발의 침묵,Koval’s Silence,챕터1 여파 실기. 세부 이후 수정
-story_c01_q27,ms_ch_01,27,story_027,ready,spine,0,소사의 조건,Sosa’s Condition,챕터1 여파 실기. 세부 이후 수정
-story_c01_q28,ms_ch_01,28,story_028,ready,spine,0,크림슨의 다음 손,Crimson’s Next Hand,챕터1 여파 실기. 세부 이후 수정
-story_c01_q29,ms_ch_01,29,story_029,ready,spine,0,이름 없는 선서,The Nameless Oath,챕터1 여파 실기. 세부 이후 수정
-story_c01_q30,ms_ch_01,30,story_030,ready,spine,1,은폐된 진실의 끝,End of Concealed Truth,챕터1 여파 실기. 세부 이후 수정
+story_c01_q21,ms_ch_01,21,story_021,ready,spine,0,섀도우 넥서스 공방전,The Shadow Nexus Siege,전투는 블러드 TCL28. 주민 질문은 섀도우
+story_c01_q22,ms_ch_01,22,story_022,ready,spine,1,깃발 없는 승리,A Victory Without Flags,챕터1 클로저. 국가명 금지
+story_c01_q23,ms_ch_01,23,story_023,skeleton,spine,0,깃발의 메아리,Echo of the Flag,챕터1 예비. 본선 분리
+story_c01_q24,ms_ch_01,24,story_024,skeleton,spine,0,기록의 사본,A Copy of the Record,챕터1 예비. 본선 분리
+story_c01_q25,ms_ch_01,25,story_025,skeleton,spine,0,버려진 보고서,The Abandoned Report,챕터1 예비. 본선 분리
+story_c01_q26,ms_ch_01,26,story_026,skeleton,spine,0,코발의 침묵,Koval’s Silence,챕터1 예비. 본선 분리
+story_c01_q27,ms_ch_01,27,story_027,skeleton,spine,0,소사의 조건,Sosa’s Condition,챕터1 예비. 본선 분리
+story_c01_q28,ms_ch_01,28,story_028,skeleton,spine,0,크림슨의 다음 손,Crimson’s Next Hand,챕터1 예비. 본선 분리
+story_c01_q29,ms_ch_01,29,story_029,skeleton,spine,0,이름 없는 선서,The Nameless Oath,챕터1 예비. 본선 분리
+story_c01_q30,ms_ch_01,30,story_030,skeleton,spine,0,은폐된 진실의 끝,End of Concealed Truth,챕터1 예비. 클로저 아님
 story_c01_b01,ms_ch_01,101,,skeleton,branch,0,[분기 골격] 챕터1-B01,[Branch] C1-B01,본선 30과 별도. 분기 CSV enabled=1일 때만 진입
 story_c01_b02,ms_ch_01,102,,skeleton,branch,0,[분기 골격] 챕터1-B02,[Branch] C1-B02,본선 30과 별도. 분기 CSV enabled=1일 때만 진입
 story_c01_b03,ms_ch_01,103,,skeleton,branch,0,[분기 골격] 챕터1-B03,[Branch] C1-B03,본선 30과 별도. 분기 CSV enabled=1일 때만 진입

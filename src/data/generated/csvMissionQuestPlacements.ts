@@ -94,7 +94,7 @@ export const MISSION_QUEST_PLACEMENTS_FROM_CSV: MissionQuestPlacementRow[] = [
   {
     id: "qq_obj_s018_a",
     objectiveId: "obj_s018_a",
-    planetId: "solar_station",
+    planetId: "helios_core",
     itemId: "tech",
     stockQty: 99,
     unitPriceOverride: 420,
@@ -139,7 +139,7 @@ export const MISSION_QUEST_PLACEMENTS_FROM_CSV: MissionQuestPlacementRow[] = [
   {
     id: "qq_obj_s028_a",
     objectiveId: "obj_s028_a",
-    planetId: "omega_hub",
+    planetId: "iron_remnant",
     itemId: "tech",
     stockQty: 99,
     unitPriceOverride: 420,
@@ -148,7 +148,7 @@ export const MISSION_QUEST_PLACEMENTS_FROM_CSV: MissionQuestPlacementRow[] = [
   {
     id: "qq_obj_s030_a",
     objectiveId: "obj_s030_a",
-    planetId: "solar_station",
+    planetId: "omega_hub",
     itemId: "tech",
     stockQty: 99,
     unitPriceOverride: 420,
@@ -166,7 +166,7 @@ export const MISSION_QUEST_PLACEMENTS_FROM_CSV: MissionQuestPlacementRow[] = [
   {
     id: "qq_obj_s033_a",
     objectiveId: "obj_s033_a",
-    planetId: "omega_hub",
+    planetId: "eden_city",
     itemId: "food",
     stockQty: 99,
     unitPriceOverride: 42,

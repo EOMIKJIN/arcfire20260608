@@ -1,6 +1,12 @@
 import type { AnalyzeFinding, AnalyzeReport, JournalEntry, WorldState } from './types';
-import { CRIMSON_CAPITAL_SYSTEM_ID, hopsBetween, listSkills } from './catalog';
+import {
+  CRIMSON_CAPITAL_SYSTEM_ID,
+  hopsBetween,
+  listSkills,
+  listUnresolvedMissionPlaceholders,
+} from './catalog';
 import { snapshotKpi, sumDevLevels } from './world';
+import { analyzeEarlyFeel } from './earlyFeel';
 
 export function analyzeDay(
   world: WorldState,
@@ -28,6 +34,26 @@ export function analyzeDay(
       severity: 'risk',
       code: 'REPEATED_HOLD',
       detail: `연속 HOLD ${world.lastHoldStreak} · ${world.lastHoldReason}`,
+    });
+  }
+  if (
+    world.lastHoldReason === 'no_dest_system'
+    || world.lastHoldReason === 'unresolved_placeholder'
+    || world.lastHoldReason === 'no_discovery'
+  ) {
+    findings.push({
+      severity: 'risk',
+      code: 'PLACEHOLDER_HOLD',
+      detail: world.lastHoldReason,
+    });
+  }
+  const unresolvedTokens = listUnresolvedMissionPlaceholders();
+  if (unresolvedTokens.length > 0) {
+    const shown = unresolvedTokens.slice(0, 4).map((u) => `${u.missionId}:${u.token}`);
+    findings.push({
+      severity: 'warn',
+      code: 'PLACEHOLDER_UNRESOLVED',
+      detail: `${unresolvedTokens.length}개 미해석 토큰 · ${shown.join(', ')}`,
     });
   }
   if (kpi.red >= 12) {
@@ -110,6 +136,12 @@ export function analyzeDay(
       code: 'GEAR_STALE',
       detail: `장비점수 ${kpi.gearScore} · 크레딧 ${kpi.credits}`,
     });
+  }
+
+  if (world.earlyFeelClosed && !world.earlyFeelReported) {
+    const early = analyzeEarlyFeel(world);
+    for (let i = 0; i < early.length; i += 1) findings.push(early[i]);
+    world.earlyFeelReported = true;
   }
 
   if (findings.length === 0) {

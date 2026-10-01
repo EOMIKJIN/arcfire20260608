@@ -2,7 +2,7 @@
  * 18:00 리포트 후 시급 선별.
  * 보고이슈(승인·FAIL·봇 정지)만 escalate. 그 외는 자체 1안 메모.
  */
-import { getMission } from './catalog';
+import { getMission, listUnresolvedMissionPlaceholders } from './catalog';
 import type { DailyLearningVerdict } from './dailyLearningReport';
 import type { AnalyzeFinding } from './types';
 
@@ -40,10 +40,21 @@ export function buildDailyTriage(input: {
   if (story021 === 28 && story023 === 32 && story030 === 44) {
     autoNotes.push('G-1 본편 게이트 28/32/36/40/44 유지');
   }
-  autoNotes.push('트윈: 인접성계 배달·격납고 0이면 보충 (다음 하니스 로드부터)');
+  autoNotes.push('트윈: 인접성계 배달·탐사거점·격납고 0이면 보충 (다음 하니스 로드부터)');
   autoNotes.push('학습 목표 유지: 사람 체감 + 정체/반복 해소로 지능 향상. 정책 adapt 유지.');
+  autoNotes.push('플레이스홀더 HOLD는 자체 1안: 해석기 등록분 이동 · 미해석 토큰 퀘 스킵. 인게임 CSV 불변.');
 
   const codes = input.findings.map((f) => f.code);
+  if (codes.includes('PLACEHOLDER_HOLD') || codes.includes('PLACEHOLDER_UNRESOLVED')) {
+    const unresolved = listUnresolvedMissionPlaceholders();
+    const tokenNote = unresolved.length
+      ? unresolved.slice(0, 3).map((u) => `${u.missionId}:${u.token}`).join(', ')
+      : '등록 토큰 해석됨';
+    autoNotes.push(`퀘 토큰 HOLD — 자체 1안 적용 (${tokenNote})`);
+  }
+  if (codes.includes('QUEST_STUCK') && codes.includes('PLACEHOLDER_HOLD')) {
+    autoNotes.push('QUEST_STUCK+토큰 — 미해석 퀘 스킵 후 다음 의뢰. 보고이슈 아님');
+  }
   if (codes.includes('QUEST_PLATEAU') && input.questCleared > 0 && input.level + 4 < (getMission('story_021')?.levelRequired ?? 28)) {
     autoNotes.push(`퀘 정체 ${input.questCleared} · L${input.level} — 수련·게이트는 정책 바닥`);
   }

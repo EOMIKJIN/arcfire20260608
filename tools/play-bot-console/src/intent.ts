@@ -24,6 +24,7 @@ function interleaveGrowth(world: WorldState, rng: Rng): ActionKind | null {
 
 export function decideIntentKind(world: WorldState, rng: Rng, persona: PersonaId): ActionKind {
   if (world.hangarShips <= 0) return 'travel';
+  if (!world.earlyFeelClosed) return 'quest';
   if (!world.activeQuest && world.questCleared === 0 && nextPlayableMissionId(world)) {
     return 'quest';
   }
@@ -50,13 +51,13 @@ export function decideIntentKind(world: WorldState, rng: Rng, persona: PersonaId
     return 'combat';
   }
   if (persona === 'colonize_edge') return 'colonize';
-  if (persona === 'front_annex') return 'annex_path';
-  return 'combat';
+  return 'annex_path';
 }
 
 export function pickStepKind(world: WorldState, rng: Rng, persona: PersonaId): ActionKind {
   if (world.hangarShips <= 0) return 'travel';
   const intent = decideIntentKind(world, rng, persona);
+  if (!world.earlyFeelClosed) return intent;
   if (rng() < 0.12) {
     const w = pickWeighted(rng, getLiveWeights(persona));
     if (w === 'combat' && world.hangarShips <= 1) return intent;

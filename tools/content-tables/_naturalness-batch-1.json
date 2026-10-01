@@ -1,0 +1,1510 @@
+{
+  "batch": 1,
+  "count": 47,
+  "items": [
+    {
+      "key": "story_dialog_obj_story_002_d#1",
+      "sceneId": "story_dialog_obj_story_002_d",
+      "pageIndex": 1,
+      "label": "[ 노아 프릭 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_noah_frick",
+      "text": "이름은 이미 알 거다.\\n테오 혼 — 함장 내정자다.\\n국경 방어 함대 자리였다.",
+      "text_en": "The dead man is Darell Hon.\\nHe was to command the border fleet.\\nThat's all.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_002",
+        "objectiveId": "obj_story_002_d",
+        "missionTitle": "동기 없는 진실",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_arcadia_lane_01",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "나는 손에 피 묻힌 쪽이 아니다.\\n돈만 받고 길만 열어 줬다.\\n내 이름은 묻지 마라.",
+          "text_en": "I am not the blade.\\nI took the pay.\\nDon't ask my name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "이름은 이미 알 거다.\\n테오 혼 — 함장 내정자다.\\n국경 방어 함대 자리였다.",
+          "text_en": "The dead man is Darell Hon.\\nHe was to command the border fleet.\\nThat's all."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_003_a#0",
+      "sceneId": "story_dialog_obj_story_003_a",
+      "pageIndex": 0,
+      "label": "[ 이안 코발 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_ian_koval",
+      "text": "인수인계할 시간은 없다.\\n함대는 이미 베가에 가 있다.\\n늦으면 국경이 먼저 무너진다.",
+      "text_en": "There is no handover.\\nThe fleet is already at Vega.\\nDelay, and the border falls first.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_003",
+        "objectiveId": "obj_story_003_a",
+        "missionTitle": "대행 출정",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_ian_koval",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "인수인계할 시간은 없다.\\n함대는 이미 베가에 가 있다.\\n늦으면 국경이 먼저 무너진다.",
+          "text_en": "There is no handover.\\nThe fleet is already at Vega.\\nDelay, and the border falls first."
+        },
+        {
+          "pageIndex": 1,
+          "text": "관문 통과는 엘렌이 열어 준다.\\n정찰 보고는 믿지 마라.\\n살아 돌아오는 것이 명령이다.",
+          "text_en": "Ellen opens the gate.\\nDo not trust the recon.\\nComing back alive is the order."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_003_b#0",
+      "sceneId": "story_dialog_obj_story_003_b",
+      "pageIndex": 0,
+      "label": "[ 엘렌 드 코르 ]",
+      "speakerNpcCaptainId": "npc_cpt_arcadia_lane_01",
+      "text": "대행 출정 허가가 떨어졌다.\\n관문은 열어 두겠다.\\n베가 전초기지가 곧 국경이다.",
+      "text_en": "Stand-in sortie is cleared.\\nThe gate opens.\\nVega Outpost is the border.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_003",
+        "objectiveId": "obj_story_003_b",
+        "missionTitle": "대행 출정",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_ian_koval",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "대행 출정 허가가 떨어졌다.\\n관문은 열어 두겠다.\\n베가 전초기지가 곧 국경이다.",
+          "text_en": "Stand-in sortie is cleared.\\nThe gate opens.\\nVega Outpost is the border."
+        },
+        {
+          "pageIndex": 1,
+          "text": "정찰이 보고한 규모를 믿지 마라.\\n도착하는 순간 전열이 바뀐다.\\n통신은 짧게 끊어라.",
+          "text_en": "Do not trust recon numbers.\\nThe line changes on arrival.\\nKeep comms short."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_004_b#0",
+      "sceneId": "story_dialog_obj_story_004_b",
+      "pageIndex": 0,
+      "label": "[ 하르만 돌 ]",
+      "speakerNpcCaptainId": "npc_cpt_vega_watch_01",
+      "text": "아군 신호가 전부 꺼졌다.\\n남은 건 네 함선뿐이다.\\n전멸이다.",
+      "text_en": "Every allied signal is gone.\\nOnly your ship remains.\\nThe fleet is wiped.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_004",
+        "objectiveId": "obj_story_004_b",
+        "missionTitle": "예상 밖의 참사",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_vega_watch_01",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "아군 신호가 전부 꺼졌다.\\n남은 건 네 함선뿐이다.\\n전멸이다.",
+          "text_en": "Every allied signal is gone.\\nOnly your ship remains.\\nThe fleet is wiped."
+        },
+        {
+          "pageIndex": 1,
+          "text": "아르카디아로 귀환해라.\\n사령부가 기다리고 있다.\\n전사자 수는 나중에 센다.",
+          "text_en": "Return to Arcadia.\\nCommand is waiting.\\nCount the dead later."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_006_c#0",
+      "sceneId": "story_dialog_obj_story_006_c",
+      "pageIndex": 0,
+      "label": "[ 다렐 소사 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_darel_sosa",
+      "text": "나는 이번 기습의 주모자가 아니다.\\n코발이 버린 사람이다.\\n데드코러스는 내 배다.",
+      "text_en": "I am not the attacker.\\nI am the one Koval abandoned.\\nDead Chorus is my ship.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_006",
+        "objectiveId": "obj_story_006_c",
+        "missionTitle": "숨은 자와의 대면",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_draco_obs_01",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "나는 이번 기습의 주모자가 아니다.\\n코발이 버린 사람이다.\\n데드코러스는 내 배다.",
+          "text_en": "I am not the attacker.\\nI am the one Koval abandoned.\\nDead Chorus is my ship."
+        },
+        {
+          "pageIndex": 1,
+          "text": "이 균열은 여기서 닫히지 않는다.\\n라이트홀드라는 이름은 아직 이르다.\\n우리는 다시 만나게 된다.",
+          "text_en": "This fracture does not close here.\\nLight Hold comes later.\\nIt opens again in chapter two."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_007_a#0",
+      "sceneId": "story_dialog_obj_story_007_a",
+      "pageIndex": 0,
+      "label": "[ 다렐 소사 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_darel_sosa",
+      "text": "20년 전 라이트홀드는 미끼였다.\n47시간 만에 함락됐는데\n보고서엔 그 이름조차 없지.",
+      "text_en": "Twenty years past, Light Hold was bait.\nIt fell in forty-seven hours.\nThe report has no name.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_007",
+        "objectiveId": "obj_story_007_a",
+        "missionTitle": "빚진 자의 증언",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_darel_sosa",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "20년 전 라이트홀드는 미끼였다.\n47시간 만에 함락됐는데\n보고서엔 그 이름조차 없지.",
+          "text_en": "Twenty years past, Light Hold was bait.\nIt fell in forty-seven hours.\nThe report has no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "나는 그 철수를 막지 못했다.\n코발도 막지 않았다.\n그 빚이 지금까지 남아 있다.",
+          "text_en": "I did not stop the pullout.\nNeither did Koval.\nThat debt is still here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_007_a#1",
+      "sceneId": "story_dialog_obj_story_007_a",
+      "pageIndex": 1,
+      "label": "[ 다렐 소사 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_darel_sosa",
+      "text": "나는 그 철수를 막지 못했다.\n코발도 막지 않았다.\n그 빚이 지금까지 남아 있다.",
+      "text_en": "I did not stop the pullout.\nNeither did Koval.\nThat debt is still here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_007",
+        "objectiveId": "obj_story_007_a",
+        "missionTitle": "빚진 자의 증언",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_darel_sosa",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "20년 전 라이트홀드는 미끼였다.\n47시간 만에 함락됐는데\n보고서엔 그 이름조차 없지.",
+          "text_en": "Twenty years past, Light Hold was bait.\nIt fell in forty-seven hours.\nThe report has no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "나는 그 철수를 막지 못했다.\n코발도 막지 않았다.\n그 빚이 지금까지 남아 있다.",
+          "text_en": "I did not stop the pullout.\nNeither did Koval.\nThat debt is still here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_007_b#0",
+      "sceneId": "story_dialog_obj_story_007_b",
+      "pageIndex": 0,
+      "label": "[ 세레나 드릴 ]",
+      "speakerNpcCaptainId": "npc_cpt_draco_obs_01",
+      "text": "라이트홀드 식별 신호도 지워져 있더군.\n솔라 도킹 기록을 지운 수법과 같고\n남은 건 주파수 골격뿐이야.",
+      "text_en": "Light Hold IDs share the wipe habit.\nSame hand as the Solar log.\nOnly a band skeleton remains.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_007",
+        "objectiveId": "obj_story_007_b",
+        "missionTitle": "빚진 자의 증언",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_darel_sosa",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "라이트홀드 식별 신호도 지워져 있더군.\n솔라 도킹 기록을 지운 수법과 같고\n남은 건 주파수 골격뿐이야.",
+          "text_en": "Light Hold IDs share the wipe habit.\nSame hand as the Solar log.\nOnly a band skeleton remains."
+        },
+        {
+          "pageIndex": 1,
+          "text": "나는 이름까지는 복원하지 못한다.\n소사가 말한 식민지가 맞다면\n은폐는 사령부 쪽에서 시작했다.",
+          "text_en": "I cannot restore the names.\nIf Sosa named the colony right,\nthe wipe began at command."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_007_e#0",
+      "sceneId": "story_dialog_obj_story_007_e",
+      "pageIndex": 0,
+      "label": "[ 다렐 소사 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_darel_sosa",
+      "text": "그 셋은 아직 여기 없다.\n라이트홀드에서 살아남은 자들이지.\n이름은 내일 말하겠다.",
+      "text_en": "The three names are not here yet.\nThey are what Light Hold left.\nI speak them tomorrow.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_007",
+        "objectiveId": "obj_story_007_e",
+        "missionTitle": "빚진 자의 증언",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_darel_sosa",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "그 셋은 아직 여기 없다.\n라이트홀드에서 살아남은 자들이지.\n이름은 내일 말하겠다.",
+          "text_en": "The three names are not here yet.\nThey are what Light Hold left.\nI speak them tomorrow."
+        },
+        {
+          "pageIndex": 1,
+          "text": "지금은 이 이름 하나만 기억해라.\n라이트홀드.\n은폐의 시작이다.",
+          "text_en": "Remember this one name now.\nLight Hold.\nIt is where concealment begins."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_008_a#0",
+      "sceneId": "story_dialog_obj_story_008_a",
+      "pageIndex": 0,
+      "label": "[ 다렐 소사 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_darel_sosa",
+      "text": "카일 로렌은 우리 쪽 화력이었다.\n지금은 아이언 잔해권에 있지.\n말은 짧고 총은 긴 놈이다.",
+      "text_en": "Kyle Loren is firepower.\nHe sits Iron remnant.\nShort words. Long guns.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_008",
+        "objectiveId": "obj_story_008_a",
+        "missionTitle": "라이트홀드가 남긴 세 이름",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_darel_sosa",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "카일 로렌은 우리 쪽 화력이었다.\n지금은 아이언 잔해권에 있지.\n말은 짧고 총은 긴 놈이다.",
+          "text_en": "Kyle Loren is firepower.\nHe sits Iron remnant.\nShort words. Long guns."
+        },
+        {
+          "pageIndex": 1,
+          "text": "장부는 미라가 맡았다. 오메가 허브에 있고\n가온은 지워진 행성을 쫓아\n에덴에 가 있다.",
+          "text_en": "Mira reads ledgers.\nOmega Hub.\nGaon hunts an erased world. Eden."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_008_c#0",
+      "sceneId": "story_dialog_obj_story_008_c",
+      "pageIndex": 0,
+      "label": "[ 다렐 소사 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_darel_sosa",
+      "text": "순서는 카일, 미라, 가온이다.\n아이언부터 가라.\n나는 따라가지 않을 거고.",
+      "text_en": "Order is fire, ledger, erased world.\nIron first.\nI do not follow.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_008",
+        "objectiveId": "obj_story_008_c",
+        "missionTitle": "라이트홀드가 남긴 세 이름",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_darel_sosa",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "순서는 카일, 미라, 가온이다.\n아이언부터 가라.\n나는 따라가지 않을 거고.",
+          "text_en": "Order is fire, ledger, erased world.\nIron first.\nI do not follow."
+        },
+        {
+          "pageIndex": 1,
+          "text": "데드코러스는 여기 남는다.\n너희는 세 사람의 증언을 모으고\n오메가에서 만나라.",
+          "text_en": "Dead Chorus stays here.\nGather the three mouths.\nThe crossing is Omega."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_008_d#0",
+      "sceneId": "story_dialog_obj_story_008_d",
+      "pageIndex": 0,
+      "label": "[ 세레나 드릴 ]",
+      "speakerNpcCaptainId": "npc_cpt_draco_obs_01",
+      "text": "아이언 잔해권 입구를 열어 두었다.\n수호 채널은 오렌 피스가 쥐고 있고\n카일은 그 안쪽에 있어.",
+      "text_en": "The Iron remnant mouth is open.\nOren Peace holds the watch band.\nKyle is inside.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_008",
+        "objectiveId": "obj_story_008_d",
+        "missionTitle": "라이트홀드가 남긴 세 이름",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_darel_sosa",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "아이언 잔해권 입구를 열어 두었다.\n수호 채널은 오렌 피스가 쥐고 있고\n카일은 그 안쪽에 있어.",
+          "text_en": "The Iron remnant mouth is open.\nOren Peace holds the watch band.\nKyle is inside."
+        },
+        {
+          "pageIndex": 1,
+          "text": "잔해를 노리는 약탈선이 뜬다.\n합류하기 전엔 싸움을 키우지 말고\n지금은 이름을 모으는 게 먼저야.",
+          "text_en": "Scavenger escorts lift.\nDo not add fights before the join.\nThis stem is names."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_009_b#0",
+      "sceneId": "story_dialog_obj_story_009_b",
+      "pageIndex": 0,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "라이트홀드에선 내가 포를 맡았다.\n철수 명령이 먼저 끊겼고\n나만 살아남았지.",
+      "text_en": "I held fire at Light Hold.\nThe pullout cut us first.\nI lived.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_009",
+        "objectiveId": "obj_story_009_b",
+        "missionTitle": "3인 합류",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_darel_sosa",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "라이트홀드에선 내가 포를 맡았다.\n철수 명령이 먼저 끊겼고\n나만 살아남았지.",
+          "text_en": "I held fire at Light Hold.\nThe pullout cut us first.\nI lived."
+        },
+        {
+          "pageIndex": 1,
+          "text": "소사라면 안다.\n네 배에 타지. 말은 여기까지고.",
+          "text_en": "I know Sosa's name.\nI board your ship.\nWords end here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_009_b#1",
+      "sceneId": "story_dialog_obj_story_009_b",
+      "pageIndex": 1,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "소사라면 안다.\n네 배에 타지. 말은 여기까지고.",
+      "text_en": "I know Sosa's name.\nI board your ship.\nWords end here.",
+      "staccato": true,
+      "staccatoEn": true,
+      "hint": {
+        "missionId": "story_009",
+        "objectiveId": "obj_story_009_b",
+        "missionTitle": "3인 합류",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_darel_sosa",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "라이트홀드에선 내가 포를 맡았다.\n철수 명령이 먼저 끊겼고\n나만 살아남았지.",
+          "text_en": "I held fire at Light Hold.\nThe pullout cut us first.\nI lived."
+        },
+        {
+          "pageIndex": 1,
+          "text": "소사라면 안다.\n네 배에 타지. 말은 여기까지고.",
+          "text_en": "I know Sosa's name.\nI board your ship.\nWords end here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_009_d#0",
+      "sceneId": "story_dialog_obj_story_009_d",
+      "pageIndex": 0,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "라이트홀드를 죽인 건 장부였다.\n보급란이 비어 있었고\n그 빈 세 줄을 나는 아직 갖고 있어.",
+      "text_en": "A ledger killed Light Hold.\nThe supply cell was empty.\nI still hold those three lines.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_009",
+        "objectiveId": "obj_story_009_d",
+        "missionTitle": "3인 합류",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_darel_sosa",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "라이트홀드를 죽인 건 장부였다.\n보급란이 비어 있었고\n그 빈 세 줄을 나는 아직 갖고 있어.",
+          "text_en": "A ledger killed Light Hold.\nThe supply cell was empty.\nI still hold those three lines."
+        },
+        {
+          "pageIndex": 1,
+          "text": "카일이 왔으니 화력은 됐고\n가온은 에덴에 있다.\n모이는 곳은 여기야.",
+          "text_en": "If Kyle came, fire is enough.\nGaon is at Eden.\nWe cross here later."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_009_d#1",
+      "sceneId": "story_dialog_obj_story_009_d",
+      "pageIndex": 1,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "카일이 왔으니 화력은 됐고\n가온은 에덴에 있다.\n모이는 곳은 여기야.",
+      "text_en": "If Kyle came, fire is enough.\nGaon is at Eden.\nWe cross here later.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_009",
+        "objectiveId": "obj_story_009_d",
+        "missionTitle": "3인 합류",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_darel_sosa",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "라이트홀드를 죽인 건 장부였다.\n보급란이 비어 있었고\n그 빈 세 줄을 나는 아직 갖고 있어.",
+          "text_en": "A ledger killed Light Hold.\nThe supply cell was empty.\nI still hold those three lines."
+        },
+        {
+          "pageIndex": 1,
+          "text": "카일이 왔으니 화력은 됐고\n가온은 에덴에 있다.\n모이는 곳은 여기야.",
+          "text_en": "If Kyle came, fire is enough.\nGaon is at Eden.\nWe cross here later."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_010_b#0",
+      "sceneId": "story_dialog_obj_story_010_b",
+      "pageIndex": 0,
+      "label": "[ 가온 텔라 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_gaon_tela",
+      "text": "라이트홀드는 지도에서 지워졌다.\n죽은 건 행성이 아니라 기록이지.\n나는 그 빈칸을 쫓고 있다.",
+      "text_en": "Light Hold was erased from the map.\nNot the rock. The file died.\nI hunt that blank.",
+      "staccato": true,
+      "staccatoEn": true,
+      "hint": {
+        "missionId": "story_010",
+        "objectiveId": "obj_story_010_b",
+        "missionTitle": "교차하는 항로",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "라이트홀드는 지도에서 지워졌다.\n죽은 건 행성이 아니라 기록이지.\n나는 그 빈칸을 쫓고 있다.",
+          "text_en": "Light Hold was erased from the map.\nNot the rock. The file died.\nI hunt that blank."
+        },
+        {
+          "pageIndex": 1,
+          "text": "미라의 장부와 내 빈칸이 들어맞는군.\n오메가로 가자.\n하벤포드 조사는 여기서 끝낸다.",
+          "text_en": "Mira's ledger matches my blank.\nWe go to Omega.\nHavenford folds here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_010_d#1",
+      "sceneId": "story_dialog_obj_story_010_d",
+      "pageIndex": 1,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "장부 뒤에 이면 협정이 숨어 있고\n그게 국경 매복으로 이어진다.\n다음은 베가야.",
+      "text_en": "A backside accord sits behind the ledger.\nIt ties to the border ambush.\nThe next stem is Vega.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_010",
+        "objectiveId": "obj_story_010_d",
+        "missionTitle": "교차하는 항로",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "화력, 장부, 지워진 행성, 그리고 너.\n라이트홀드 은폐는 우연이 아니다.\n베가 기습과 같은 손이다.",
+          "text_en": "Fire, ledger, erased world, and you.\nLight Hold concealment is not chance.\nSame hand as the Vega raid."
+        },
+        {
+          "pageIndex": 1,
+          "text": "장부 뒤에 이면 협정이 숨어 있고\n그게 국경 매복으로 이어진다.\n다음은 베가야.",
+          "text_en": "A backside accord sits behind the ledger.\nIt ties to the border ambush.\nThe next stem is Vega."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_010_e#0",
+      "sceneId": "story_dialog_obj_story_010_e",
+      "pageIndex": 0,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "말은 충분하다.\n베가에 호위가 남아 있으면 친다.",
+      "text_en": "Talk is enough.\nIf an escort still sits Vega, we hit it.\nI only watch ships.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_010",
+        "objectiveId": "obj_story_010_e",
+        "missionTitle": "교차하는 항로",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "말은 충분하다.\n베가에 호위가 남아 있으면 친다.",
+          "text_en": "Talk is enough.\nIf an escort still sits Vega, we hit it.\nI only watch ships."
+        },
+        {
+          "pageIndex": 1,
+          "text": "배신은 나중에 따지자.\n지금은 협정의 증거가 먼저고.\n출발하지.",
+          "text_en": "Count betrayal later.\nThis is accord proof.\nWe lift."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_011_a#0",
+      "sceneId": "story_dialog_obj_story_011_a",
+      "pageIndex": 0,
+      "label": "[ 하르만 돌 ]",
+      "speakerNpcCaptainId": "npc_cpt_vega_watch_01",
+      "text": "정찰 규모를 줄이라는 지시가 있었다.\n서명란은 비었고\n라이트홀드 장부와 같은 수법이다.",
+      "text_en": "An order cut the recon scale.\nThe signature cell is blank.\nSame hand as the Light Hold ledger.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_011",
+        "objectiveId": "obj_story_011_a",
+        "missionTitle": "이면 협정",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_vega_watch_01",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "정찰 규모를 줄이라는 지시가 있었다.\n서명란은 비었고\n라이트홀드 장부와 같은 수법이다.",
+          "text_en": "An order cut the recon scale.\nThe signature cell is blank.\nSame hand as the Light Hold ledger."
+        },
+        {
+          "pageIndex": 1,
+          "text": "잔당 한 척이 증거를 노린다.\n쓰러뜨리면 사본을 넘기지.",
+          "text_en": "A remnant hunts the proof.\nOne ship.\nDrop it and I pass the copy."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_011_a#1",
+      "sceneId": "story_dialog_obj_story_011_a",
+      "pageIndex": 1,
+      "label": "[ 하르만 돌 ]",
+      "speakerNpcCaptainId": "npc_cpt_vega_watch_01",
+      "text": "잔당 한 척이 증거를 노린다.\n쓰러뜨리면 사본을 넘기지.",
+      "text_en": "A remnant hunts the proof.\nOne ship.\nDrop it and I pass the copy.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_011",
+        "objectiveId": "obj_story_011_a",
+        "missionTitle": "이면 협정",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_vega_watch_01",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "정찰 규모를 줄이라는 지시가 있었다.\n서명란은 비었고\n라이트홀드 장부와 같은 수법이다.",
+          "text_en": "An order cut the recon scale.\nThe signature cell is blank.\nSame hand as the Light Hold ledger."
+        },
+        {
+          "pageIndex": 1,
+          "text": "잔당 한 척이 증거를 노린다.\n쓰러뜨리면 사본을 넘기지.",
+          "text_en": "A remnant hunts the proof.\nOne ship.\nDrop it and I pass the copy."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_011_e#0",
+      "sceneId": "story_dialog_obj_story_011_e",
+      "pageIndex": 0,
+      "label": "[ 이안 코발 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_ian_koval",
+      "text": "이 서명은 내 것이 아니다.\n그러나 철수는 내가 했다.\n라이트홀드 때도 그랬다.",
+      "text_en": "This sign is not mine.\nBut I ordered the pullout.\nSame at Light Hold.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_011",
+        "objectiveId": "obj_story_011_e",
+        "missionTitle": "이면 협정",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_vega_watch_01",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "이 서명은 내 것이 아니다.\n그러나 철수는 내가 했다.\n라이트홀드 때도 그랬다.",
+          "text_en": "This sign is not mine.\nBut I ordered the pullout.\nSame at Light Hold."
+        },
+        {
+          "pageIndex": 1,
+          "text": "반역 누명이 네 이름에 붙는다.\n함대는 너를 배신자로 부를 것이다.\n준비해라.",
+          "text_en": "A traitor brand will sit on your name.\nThe fleet will call you that.\nPrepare."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_012_a#0",
+      "sceneId": "story_dialog_obj_story_012_a",
+      "pageIndex": 0,
+      "label": "[ 이안 코발 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_ian_koval",
+      "text": "네 이름이 반역자 명단에 올랐다.\n이면 협정을 올린 대가지.\n나는 그걸 지워 줄 수 없다.",
+      "text_en": "Your name sits the traitor cell.\nThe price of filing the accord.\nI cannot erase that cell.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_012",
+        "objectiveId": "obj_story_012_a",
+        "missionTitle": "반역자의 이름",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_ian_koval",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "네 이름이 반역자 명단에 올랐다.\n이면 협정을 올린 대가지.\n나는 그걸 지워 줄 수 없다.",
+          "text_en": "Your name sits the traitor cell.\nThe price of filing the accord.\nI cannot erase that cell."
+        },
+        {
+          "pageIndex": 1,
+          "text": "추격함이 뜬다. 한 척이니\n뚫고 나가라.",
+          "text_en": "A fleet chase lifts.\nOne ship.\nBreak out."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_012_b#0",
+      "sceneId": "story_dialog_obj_story_012_b",
+      "pageIndex": 0,
+      "label": "[ 엘렌 드 코르 ]",
+      "speakerNpcCaptainId": "npc_cpt_arcadia_lane_01",
+      "text": "관문은 60초만 열겠다.\n기록엔 고장으로 남기고\n내가 해 줄 수 있는 건 거기까지야.",
+      "text_en": "The gate opens sixty seconds.\nThe log will say a fault.\nNo more.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_012",
+        "objectiveId": "obj_story_012_b",
+        "missionTitle": "반역자의 이름",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_ian_koval",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "관문은 60초만 열겠다.\n기록엔 고장으로 남기고\n내가 해 줄 수 있는 건 거기까지야.",
+          "text_en": "The gate opens sixty seconds.\nThe log will say a fault.\nNo more."
+        },
+        {
+          "pageIndex": 1,
+          "text": "코발은 너를 버리지 않았다.\n다만 막아 줄 수 없었을 뿐이지.\n살아서 나가라.",
+          "text_en": "Koval did not abandon you.\nHe only cannot stop this.\nGet out alive."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_012_d#1",
+      "sceneId": "story_dialog_obj_story_012_d",
+      "pageIndex": 1,
+      "label": "[ 엘렌 드 코르 ]",
+      "speakerNpcCaptainId": "npc_cpt_arcadia_lane_01",
+      "text": "이제 넷은 정식으로 한편이다.\n관문 순찰대는 여기서 빠지고\n이 일은 기록에 남기지 않을 거야.",
+      "text_en": "The four are one side in form.\nGate Patrol steps off here.\nI leave no file.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_012",
+        "objectiveId": "obj_story_012_d",
+        "missionTitle": "반역자의 이름",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_ian_koval",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "추격 신호는 끊겼다.\n네 식별은 지워 두겠다.\n도피처는 네가 정해라.",
+          "text_en": "The chase band is cut.\nI will blank your ID.\nYou pick the hide."
+        },
+        {
+          "pageIndex": 1,
+          "text": "이제 넷은 정식으로 한편이다.\n관문 순찰대는 여기서 빠지고\n이 일은 기록에 남기지 않을 거야.",
+          "text_en": "The four are one side in form.\nGate Patrol steps off here.\nI leave no file."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_012_e#0",
+      "sceneId": "story_dialog_obj_story_012_e",
+      "pageIndex": 0,
+      "label": "[ 이안 코발 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_ian_koval",
+      "text": "도피처는 섀도우 넥서스다.\n그곳을 그리하벤이라 부르는 자들이 있지.\n나는 따라가지 않는다.",
+      "text_en": "The hide is Shadow Nexus.\nSome call it Greehaven.\nI do not follow.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_012",
+        "objectiveId": "obj_story_012_e",
+        "missionTitle": "반역자의 이름",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_ian_koval",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "도피처는 섀도우 넥서스다.\n그곳을 그리하벤이라 부르는 자들이 있지.\n나는 따라가지 않는다.",
+          "text_en": "The hide is Shadow Nexus.\nSome call it Greehaven.\nI do not follow."
+        },
+        {
+          "pageIndex": 1,
+          "text": "수배 방송이 곧 뜬다.\n이름 없는 항로로 가라.\n통신은 끊는다.",
+          "text_en": "A wanted band will lift soon.\nTake a nameless lane.\nI cut this channel."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_013_b#0",
+      "sceneId": "story_dialog_obj_story_013_b",
+      "pageIndex": 0,
+      "label": "[ 닐 벡스 ]",
+      "speakerNpcCaptainId": "npc_cpt_bar_ret_15",
+      "text": "물건 출처는 안 묻는다.\n수배된 얼굴이면 얘기가 다르지만.\n닉스가 기다리고 있다.",
+      "text_en": "I do not ask source.\nI ask wanted faces.\nNyx is waiting.",
+      "staccato": true,
+      "staccatoEn": true,
+      "hint": {
+        "missionId": "story_013",
+        "objectiveId": "obj_story_013_b",
+        "missionTitle": "도피처를 찾아서",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_ian_koval",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "물건 출처는 안 묻는다.\n수배된 얼굴이면 얘기가 다르지만.\n닉스가 기다리고 있다.",
+          "text_en": "I do not ask source.\nI ask wanted faces.\nNyx is waiting."
+        },
+        {
+          "pageIndex": 1,
+          "text": "바는 중립이다.\n거점은 지하 쪽에 있고\n나는 물건만 받지.",
+          "text_en": "The bar is neutral.\nThe hold is below.\nI take SKUs only."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_013_c#1",
+      "sceneId": "story_dialog_obj_story_013_c",
+      "pageIndex": 1,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "여긴 이름을 적지 않는다.\n숨겨 주는 건 배뿐이고\n넷이 다 모이면 거점을 열겠다.",
+      "text_en": "I log no names.\nI only hide ships.\nWhen the four arrive I open the hold.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_013",
+        "objectiveId": "obj_story_013_c",
+        "missionTitle": "도피처를 찾아서",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_ian_koval",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "문 앞의 이방인이 너로군.\n수배 방송은 이미 떴다.\n여기는 그리하벤이다.",
+          "text_en": "The stranger at the door is you.\nThe wanted band already lifted.\nThis is Greehaven."
+        },
+        {
+          "pageIndex": 1,
+          "text": "여긴 이름을 적지 않는다.\n숨겨 주는 건 배뿐이고\n넷이 다 모이면 거점을 열겠다.",
+          "text_en": "I log no names.\nI only hide ships.\nWhen the four arrive I open the hold."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_013_d#0",
+      "sceneId": "story_dialog_obj_story_013_d",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "스텔리움 전 채널에 수배가 떴다.\n크림슨도 네 얼굴에 현상금을 걸었고.\n적은 둘인데 노리는 건 하나지.",
+      "text_en": "The whole Stellium band.\nCrimson buys the same face.\nTwo enemies, one bounty.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_013",
+        "objectiveId": "obj_story_013_d",
+        "missionTitle": "도피처를 찾아서",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_ian_koval",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "스텔리움 전 채널에 수배가 떴다.\n크림슨도 네 얼굴에 현상금을 걸었고.\n적은 둘인데 노리는 건 하나지.",
+          "text_en": "The whole Stellium band.\nCrimson buys the same face.\nTwo enemies, one bounty."
+        },
+        {
+          "pageIndex": 1,
+          "text": "지금은 숨는 것이 승리이다.\n신뢰는 내일 산다.\n오늘은 문만 닫아라.",
+          "text_en": "Hiding is the win today.\nTrust is bought tomorrow.\nClose the door tonight."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_013_e#0",
+      "sceneId": "story_dialog_obj_story_013_e",
+      "pageIndex": 0,
+      "label": "[ 닐 벡스 ]",
+      "speakerNpcCaptainId": "npc_cpt_bar_ret_15",
+      "text": "숨을 자리를 마련해 뒀다.\n출처는 묻지 않을 테니\n수수료는 나중에 정하자.",
+      "text_en": "I opened a hide cell.\nNo source question.\nFee later.",
+      "staccato": true,
+      "staccatoEn": true,
+      "hint": {
+        "missionId": "story_013",
+        "objectiveId": "obj_story_013_e",
+        "missionTitle": "도피처를 찾아서",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_ian_koval",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "숨을 자리를 마련해 뒀다.\n출처는 묻지 않을 테니\n수수료는 나중에 정하자.",
+          "text_en": "I opened a hide cell.\nNo source question.\nFee later."
+        },
+        {
+          "pageIndex": 1,
+          "text": "카일, 미라, 가온 얼굴은 외워 두지.\n바 쪽 입구는 내가 맡고\n거점은 닉스 몫이다.",
+          "text_en": "I will keep Kyle, Mira, Gaon's faces.\nI watch the bar mouth.\nThe hold is Nyx's."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_013_e#1",
+      "sceneId": "story_dialog_obj_story_013_e",
+      "pageIndex": 1,
+      "label": "[ 닐 벡스 ]",
+      "speakerNpcCaptainId": "npc_cpt_bar_ret_15",
+      "text": "카일, 미라, 가온 얼굴은 외워 두지.\n바 쪽 입구는 내가 맡고\n거점은 닉스 몫이다.",
+      "text_en": "I will keep Kyle, Mira, Gaon's faces.\nI watch the bar mouth.\nThe hold is Nyx's.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_013",
+        "objectiveId": "obj_story_013_e",
+        "missionTitle": "도피처를 찾아서",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_ian_koval",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "숨을 자리를 마련해 뒀다.\n출처는 묻지 않을 테니\n수수료는 나중에 정하자.",
+          "text_en": "I opened a hide cell.\nNo source question.\nFee later."
+        },
+        {
+          "pageIndex": 1,
+          "text": "카일, 미라, 가온 얼굴은 외워 두지.\n바 쪽 입구는 내가 맡고\n거점은 닉스 몫이다.",
+          "text_en": "I will keep Kyle, Mira, Gaon's faces.\nI watch the bar mouth.\nThe hold is Nyx's."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_014_a#0",
+      "sceneId": "story_dialog_obj_story_014_a",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "지하 도크를 열었다.\n식별 신호는 꺼 두고.\n이제 여긴 너희 자리다.",
+      "text_en": "The under-dock is open.\nIDs stay dark.\nThis cell is yours now.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_014",
+        "objectiveId": "obj_story_014_a",
+        "missionTitle": "첫 신뢰",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "지하 도크를 열었다.\n식별 신호는 꺼 두고.\n이제 여긴 너희 자리다.",
+          "text_en": "The under-dock is open.\nIDs stay dark.\nThis cell is yours now."
+        },
+        {
+          "pageIndex": 1,
+          "text": "추격은 외곽에서 멈췄다.\n오늘은 문을 닫는 것이 일이다.",
+          "text_en": "The chase stopped on the rim.\nToday the work is closing the door."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_014_b#0",
+      "sceneId": "story_dialog_obj_story_014_b",
+      "pageIndex": 0,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "입구 화력은 내가 맡는다.\n말은 닉스가 하고\n나는 함선만 본다.",
+      "text_en": "I stand the mouth guns.\nNyx talks.\nI watch ships.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_014",
+        "objectiveId": "obj_story_014_b",
+        "missionTitle": "첫 신뢰",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "입구 화력은 내가 맡는다.\n말은 닉스가 하고\n나는 함선만 본다.",
+          "text_en": "I stand the mouth guns.\nNyx talks.\nI watch ships."
+        },
+        {
+          "pageIndex": 1,
+          "text": "추격이 다시 뜨면 친다.\n거점만 있으면 버틸 수 있고.\n신뢰란 게 그런 거다.",
+          "text_en": "If the chase lifts again I hit it.\nA hold means we last.\nThat is trust."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_014_b#1",
+      "sceneId": "story_dialog_obj_story_014_b",
+      "pageIndex": 1,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "추격이 다시 뜨면 친다.\n거점만 있으면 버틸 수 있고.\n신뢰란 게 그런 거다.",
+      "text_en": "If the chase lifts again I hit it.\nA hold means we last.\nThat is trust.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_014",
+        "objectiveId": "obj_story_014_b",
+        "missionTitle": "첫 신뢰",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "입구 화력은 내가 맡는다.\n말은 닉스가 하고\n나는 함선만 본다.",
+          "text_en": "I stand the mouth guns.\nNyx talks.\nI watch ships."
+        },
+        {
+          "pageIndex": 1,
+          "text": "추격이 다시 뜨면 친다.\n거점만 있으면 버틸 수 있고.\n신뢰란 게 그런 거다.",
+          "text_en": "If the chase lifts again I hit it.\nA hold means we last.\nThat is trust."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_014_c#0",
+      "sceneId": "story_dialog_obj_story_014_c",
+      "pageIndex": 0,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "수수료와 보급은 나눠서 관리할 거야.\n출처 모를 돈은 표시만 해 두고\n출처 자체는 묻지 않는다.",
+      "text_en": "I split fee and supply.\nNameless coin gets a mark.\nI will not ask source — Nyx rule.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_014",
+        "objectiveId": "obj_story_014_c",
+        "missionTitle": "첫 신뢰",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "수수료와 보급은 나눠서 관리할 거야.\n출처 모를 돈은 표시만 해 두고\n출처 자체는 묻지 않는다.",
+          "text_en": "I split fee and supply.\nNameless coin gets a mark.\nI will not ask source — Nyx rule."
+        },
+        {
+          "pageIndex": 1,
+          "text": "우리의 첫 거점이다.\n장부가 있으면 배신도 보이는 법이지.\n그건 나중 얘기지만.",
+          "text_en": "First hold.\nA ledger also shows betrayal.\nThat is later talk."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_014_c#1",
+      "sceneId": "story_dialog_obj_story_014_c",
+      "pageIndex": 1,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "우리의 첫 거점이다.\n장부가 있으면 배신도 보이는 법이지.\n그건 나중 얘기지만.",
+      "text_en": "First hold.\nA ledger also shows betrayal.\nThat is later talk.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_014",
+        "objectiveId": "obj_story_014_c",
+        "missionTitle": "첫 신뢰",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "수수료와 보급은 나눠서 관리할 거야.\n출처 모를 돈은 표시만 해 두고\n출처 자체는 묻지 않는다.",
+          "text_en": "I split fee and supply.\nNameless coin gets a mark.\nI will not ask source — Nyx rule."
+        },
+        {
+          "pageIndex": 1,
+          "text": "우리의 첫 거점이다.\n장부가 있으면 배신도 보이는 법이지.\n그건 나중 얘기지만.",
+          "text_en": "First hold.\nA ledger also shows betrayal.\nThat is later talk."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_014_e#0",
+      "sceneId": "story_dialog_obj_story_014_e",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "거점은 열렸다.\n추격은 내일 걱정하자.\n오늘은 서로를 믿을 수 있으면 됐어.",
+      "text_en": "The hold is open.\nThe chase is tomorrow’s shadow.\nToday trust remains.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_014",
+        "objectiveId": "obj_story_014_e",
+        "missionTitle": "첫 신뢰",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "거점은 열렸다.\n추격은 내일 걱정하자.\n오늘은 서로를 믿을 수 있으면 됐어.",
+          "text_en": "The hold is open.\nThe chase is tomorrow’s shadow.\nToday trust remains."
+        },
+        {
+          "pageIndex": 1,
+          "text": "세렌 쪽 채널로 또 초대가 올 거다.\n함정인지 기회인지는\n너희가 판단해라.",
+          "text_en": "A second invite comes.\nSeren-side channel.\nTrap or chance — you sort it."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_014_e#1",
+      "sceneId": "story_dialog_obj_story_014_e",
+      "pageIndex": 1,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "세렌 쪽 채널로 또 초대가 올 거다.\n함정인지 기회인지는\n너희가 판단해라.",
+      "text_en": "A second invite comes.\nSeren-side channel.\nTrap or chance — you sort it.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_014",
+        "objectiveId": "obj_story_014_e",
+        "missionTitle": "첫 신뢰",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "거점은 열렸다.\n추격은 내일 걱정하자.\n오늘은 서로를 믿을 수 있으면 됐어.",
+          "text_en": "The hold is open.\nThe chase is tomorrow’s shadow.\nToday trust remains."
+        },
+        {
+          "pageIndex": 1,
+          "text": "세렌 쪽 채널로 또 초대가 올 거다.\n함정인지 기회인지는\n너희가 판단해라.",
+          "text_en": "A second invite comes.\nSeren-side channel.\nTrap or chance — you sort it."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_015_b#0",
+      "sceneId": "story_dialog_obj_story_015_b",
+      "pageIndex": 0,
+      "label": "[ 세렌 베일 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_seren_vale",
+      "text": "세렌 벨트는 우리끼리 부르는 이름이다.\n실제 관문은 이 보더고\n초대는 함정이 아니야.",
+      "text_en": "Seren Belt is our working name.\nThe gate is this border.\nThe invite is not a trap.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_015",
+        "objectiveId": "obj_story_015_b",
+        "missionTitle": "두 번째 초대",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "세렌 벨트는 우리끼리 부르는 이름이다.\n실제 관문은 이 보더고\n초대는 함정이 아니야.",
+          "text_en": "Seren Belt is our working name.\nThe gate is this border.\nThe invite is not a trap."
+        },
+        {
+          "pageIndex": 1,
+          "text": "라이트홀드 생존자가 여기 더 있다.\n당장 합류하진 않겠지만\n채널은 열어 두겠다.",
+          "text_en": "More Light Hold survivors sit here.\nThey will not join now.\nI only open a channel."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_015_b#1",
+      "sceneId": "story_dialog_obj_story_015_b",
+      "pageIndex": 1,
+      "label": "[ 세렌 베일 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_seren_vale",
+      "text": "라이트홀드 생존자가 여기 더 있다.\n당장 합류하진 않겠지만\n채널은 열어 두겠다.",
+      "text_en": "More Light Hold survivors sit here.\nThey will not join now.\nI only open a channel.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_015",
+        "objectiveId": "obj_story_015_b",
+        "missionTitle": "두 번째 초대",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "세렌 벨트는 우리끼리 부르는 이름이다.\n실제 관문은 이 보더고\n초대는 함정이 아니야.",
+          "text_en": "Seren Belt is our working name.\nThe gate is this border.\nThe invite is not a trap."
+        },
+        {
+          "pageIndex": 1,
+          "text": "라이트홀드 생존자가 여기 더 있다.\n당장 합류하진 않겠지만\n채널은 열어 두겠다.",
+          "text_en": "More Light Hold survivors sit here.\nThey will not join now.\nI only open a channel."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_015_e#0",
+      "sceneId": "story_dialog_obj_story_015_e",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "시리우스 채널이 열렸다.\n세렌이 남아 준 걸 보면\n함정은 아닌 것 같군.",
+      "text_en": "The Sirius channel is open.\nSeren stayed.\nI read it as not a trap.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_015",
+        "objectiveId": "obj_story_015_e",
+        "missionTitle": "두 번째 초대",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "시리우스 채널이 열렸다.\n세렌이 남아 준 걸 보면\n함정은 아닌 것 같군.",
+          "text_en": "The Sirius channel is open.\nSeren stayed.\nI read it as not a trap."
+        },
+        {
+          "pageIndex": 1,
+          "text": "소문이 퍼지고 있다.\n크림슨이 거점 냄새를 맡기 시작했어.\n이제 적이 둘이다.",
+          "text_en": "Rumor spreads.\nCrimson starts to know the hold.\nNext stem is two enemies."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_015_e#1",
+      "sceneId": "story_dialog_obj_story_015_e",
+      "pageIndex": 1,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "소문이 퍼지고 있다.\n크림슨이 거점 냄새를 맡기 시작했어.\n이제 적이 둘이다.",
+      "text_en": "Rumor spreads.\nCrimson starts to know the hold.\nNext stem is two enemies.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_015",
+        "objectiveId": "obj_story_015_e",
+        "missionTitle": "두 번째 초대",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "시리우스 채널이 열렸다.\n세렌이 남아 준 걸 보면\n함정은 아닌 것 같군.",
+          "text_en": "The Sirius channel is open.\nSeren stayed.\nI read it as not a trap."
+        },
+        {
+          "pageIndex": 1,
+          "text": "소문이 퍼지고 있다.\n크림슨이 거점 냄새를 맡기 시작했어.\n이제 적이 둘이다.",
+          "text_en": "Rumor spreads.\nCrimson starts to know the hold.\nNext stem is two enemies."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_016_c#0",
+      "sceneId": "story_dialog_obj_story_016_c",
+      "pageIndex": 0,
+      "label": "[ 드락 베일 ]",
+      "speakerNpcCaptainId": "npc_cpt_bar_ret_12",
+      "text": "현상금 얘기라면 듣지.\n진영 얘기는 사절이고.\n네 수배지는 벌써 두 장이다.",
+      "text_en": "I take bounty talk.\nI do not take flag talk.\nYour face is already two bills.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_016",
+        "objectiveId": "obj_story_016_c",
+        "missionTitle": "두 개의 적",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "현상금 얘기라면 듣지.\n진영 얘기는 사절이고.\n네 수배지는 벌써 두 장이다.",
+          "text_en": "I take bounty talk.\nI do not take flag talk.\nYour face is already two bills."
+        },
+        {
+          "pageIndex": 1,
+          "text": "크림슨은 거점 좌표를 산다.\n아직 정확하지 않다.\n돌아가라.",
+          "text_en": "Crimson buys hold fixes.\nNot exact yet.\nGo back."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_016_e#0",
+      "sceneId": "story_dialog_obj_story_016_e",
+      "pageIndex": 0,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "추적선은 한 척이었지만\n다음엔 더 올 거다.\n문은 내가 지킨다.",
+      "text_en": "The tracker was one ship.\nMore will come.\nI stand the door.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_016",
+        "objectiveId": "obj_story_016_e",
+        "missionTitle": "두 개의 적",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "추적선은 한 척이었지만\n다음엔 더 올 거다.\n문은 내가 지킨다.",
+          "text_en": "The tracker was one ship.\nMore will come.\nI stand the door."
+        },
+        {
+          "pageIndex": 1,
+          "text": "돈이 없다.\n화력만으론 못 버티니\n그건 미라가 맡을 일이다.",
+          "text_en": "No funds.\nFire alone will not last.\nThat is Mira’s cell."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_016_e#1",
+      "sceneId": "story_dialog_obj_story_016_e",
+      "pageIndex": 1,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "돈이 없다.\n화력만으론 못 버티니\n그건 미라가 맡을 일이다.",
+      "text_en": "No funds.\nFire alone will not last.\nThat is Mira’s cell.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_016",
+        "objectiveId": "obj_story_016_e",
+        "missionTitle": "두 개의 적",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "추적선은 한 척이었지만\n다음엔 더 올 거다.\n문은 내가 지킨다.",
+          "text_en": "The tracker was one ship.\nMore will come.\nI stand the door."
+        },
+        {
+          "pageIndex": 1,
+          "text": "돈이 없다.\n화력만으론 못 버티니\n그건 미라가 맡을 일이다.",
+          "text_en": "No funds.\nFire alone will not last.\nThat is Mira’s cell."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_017_a#0",
+      "sceneId": "story_dialog_obj_story_017_a",
+      "pageIndex": 0,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "딱 세 건만 받겠다.\n출처 모를 돈이지만\n라이트홀드 장부와는 쓰임이 달라.",
+      "text_en": "I take three lines only.\nNameless coin.\nThe opposite of the Light Hold ledger.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_017",
+        "objectiveId": "obj_story_017_a",
+        "missionTitle": "검은 시장의 손",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "딱 세 건만 받겠다.\n출처 모를 돈이지만\n라이트홀드 장부와는 쓰임이 달라.",
+          "text_en": "I take three lines only.\nNameless coin.\nThe opposite of the Light Hold ledger."
+        },
+        {
+          "pageIndex": 1,
+          "text": "출처를 캐물으면 거점이 무너진다.\n표시만 해 두고\n중개는 닐에게 맡기자.",
+          "text_en": "Ask source and the hold dies.\nMark only.\nNil brokers."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_017_a#1",
+      "sceneId": "story_dialog_obj_story_017_a",
+      "pageIndex": 1,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "출처를 캐물으면 거점이 무너진다.\n표시만 해 두고\n중개는 닐에게 맡기자.",
+      "text_en": "Ask source and the hold dies.\nMark only.\nNil brokers.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_017",
+        "objectiveId": "obj_story_017_a",
+        "missionTitle": "검은 시장의 손",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "딱 세 건만 받겠다.\n출처 모를 돈이지만\n라이트홀드 장부와는 쓰임이 달라.",
+          "text_en": "I take three lines only.\nNameless coin.\nThe opposite of the Light Hold ledger."
+        },
+        {
+          "pageIndex": 1,
+          "text": "출처를 캐물으면 거점이 무너진다.\n표시만 해 두고\n중개는 닐에게 맡기자.",
+          "text_en": "Ask source and the hold dies.\nMark only.\nNil brokers."
+        }
+      ]
+    }
+  ]
+}

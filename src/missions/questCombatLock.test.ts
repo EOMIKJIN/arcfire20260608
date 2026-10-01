@@ -27,7 +27,7 @@ test('핀 전투 미션이 락을 잡는다', () => {
   assert.equal(lock?.venue, 'hub_orbit');
   assert.equal(lock?.encounterPolicy, 'hub_orbit');
   assert.equal(lock?.templateId, 'pirate_cruiser');
-  assert.equal(lock?.anchorPlanetId, 'draco_haven');
+  assert.equal(lock?.anchorPlanetId, 'titan_ruins');
 });
 
 test('핀이 없으면 tutorial 이 sandbox 보다 앞선다', () => {
@@ -41,6 +41,39 @@ test('핀이 없으면 tutorial 이 sandbox 보다 앞선다', () => {
   assert.equal(lock?.missionId, 'mission_002');
   assert.equal(lock?.templateId, 'pirate_fighter');
   assert.equal(lock?.anchorPlanetId, 'arcadia_prime');
+});
+
+test('관문흔적추적과 해적소탕은 앵커·템플릿이 갈린다', () => {
+  const trail = resolveQuestCombatLock(
+    { sandbox_001: active('sandbox_001', { obj_s001_a: false }) },
+    'sandbox_001',
+  );
+  const sweep = resolveQuestCombatLock(
+    { mission_002: active('mission_002', { obj_002_a: false }) },
+    'mission_002',
+  );
+  assert.equal(trail?.venue, 'hub_orbit');
+  assert.equal(trail?.anchorPlanetId, 'solar_station');
+  assert.equal(trail?.templateId, 'gate_scout');
+  assert.equal(sweep?.venue, 'hub_orbit');
+  assert.equal(sweep?.anchorPlanetId, 'arcadia_prime');
+  assert.equal(sweep?.templateId, 'pirate_fighter');
+  assert.notEqual(trail?.anchorPlanetId, sweep?.anchorPlanetId);
+  assert.notEqual(trail?.templateId, sweep?.templateId);
+  assert.equal(
+    canCompleteQuestDefeatEnemy(trail, {
+      venue: 'transit',
+      enemyTemplateId: 'gate_scout',
+    }),
+    false,
+  );
+  assert.equal(
+    canCompleteQuestDefeatEnemy(sweep, {
+      venue: 'transit',
+      enemyTemplateId: 'pirate_fighter',
+    }),
+    false,
+  );
 });
 
 test('완료된 목표는 락을 만들지 않는다', () => {
@@ -139,9 +172,55 @@ test('행성 id 만으로는 퀘스트를 끝내지 못한다', () => {
     'sandbox_013',
   );
   assert.equal(
-    canCompleteQuestDefeatEnemy(lock, { venue: 'hub_orbit', planetId: 'draco_haven' }),
+    canCompleteQuestDefeatEnemy(lock, { venue: 'hub_orbit', planetId: 'titan_ruins' }),
     false,
   );
-  assert.equal(isQuestHubOrbitLockAtPlanet(lock, 'draco_haven'), true);
+  assert.equal(isQuestHubOrbitLockAtPlanet(lock, 'titan_ruins'), true);
+  assert.equal(isQuestHubOrbitLockAtPlanet(lock, 'draco_haven'), false);
   assert.equal(isQuestHubOrbitLockAtPlanet(lock, 'arcadia_prime'), false);
+});
+
+test('미네르바 샌드박스 전투는 본편 밀수조와 앵커가 갈린다', () => {
+  const story = resolveQuestCombatLock(
+    { story_002: active('story_002', { obj_story_002_c: false }) },
+    'story_002',
+  );
+  const mine = resolveQuestCombatLock(
+    { sandbox_005: active('sandbox_005', { obj_s005_a: false }) },
+    'sandbox_005',
+  );
+  const convoy = resolveQuestCombatLock(
+    { sandbox_032: active('sandbox_032', { obj_s032_a: false }) },
+    'sandbox_032',
+  );
+  assert.equal(story?.anchorPlanetId, 'minerva_deep');
+  assert.equal(story?.templateId, 'pirate_fighter');
+  assert.equal(mine?.anchorPlanetId, 'iron_remnant');
+  assert.equal(convoy?.anchorPlanetId, 'helios_core');
+  assert.notEqual(mine?.anchorPlanetId, story?.anchorPlanetId);
+  assert.notEqual(convoy?.anchorPlanetId, story?.anchorPlanetId);
+  assert.notEqual(mine?.anchorPlanetId, convoy?.anchorPlanetId);
+});
+
+test('베가·드라코 샌드박스 전투는 본편 앵커와 갈린다', () => {
+  const vegaStory = resolveQuestCombatLock(
+    { story_004: active('story_004', { obj_story_004_a: false }) },
+    'story_004',
+  );
+  const vegaSandbox = resolveQuestCombatLock(
+    { sandbox_007: active('sandbox_007', { obj_s007_a: false }) },
+    'sandbox_007',
+  );
+  const dracoStory = resolveQuestCombatLock(
+    { story_006: active('story_006', { obj_story_006_a: false }) },
+    'story_006',
+  );
+  const dracoSandbox = resolveQuestCombatLock(
+    { sandbox_013: active('sandbox_013', { obj_s013_a: false }) },
+    'sandbox_013',
+  );
+  assert.equal(vegaStory?.anchorPlanetId, 'vega_base');
+  assert.equal(vegaSandbox?.anchorPlanetId, 'eden_city');
+  assert.equal(dracoStory?.anchorPlanetId, 'draco_haven');
+  assert.equal(dracoSandbox?.anchorPlanetId, 'titan_ruins');
 });

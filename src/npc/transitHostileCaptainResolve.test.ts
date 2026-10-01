@@ -47,14 +47,15 @@ function pick(systemId: string | null): NpcCaptain | undefined {
   });
 }
 
-test('아르카디아 — 전용적 카일, 허브/예비 해적 아님', () => {
+test('아르카디아 — 카일(착륙 전용)은 항로 전용적이 아님', () => {
   const c = pick('arcadia');
-  assert.equal(c?.id, 'npc_cpt_enemy_arcadia_01');
+  assert.notEqual(c?.id, 'npc_cpt_enemy_arcadia_01');
 });
 
-test('베가 — enemy_vega_01, raid_scar 아님', () => {
+test('베가 — 아르카디아에서 옮긴 일반 항로 해적 니나', () => {
   const c = pick('vega_outpost');
-  assert.equal(c?.id, 'npc_cpt_enemy_vega_01');
+  assert.equal(c?.id, 'npc_cpt_enemy_arcadia_02');
+  assert.equal(c?.displayNameEn, 'Nina Forr');
 });
 
 test('드라코 — void_walkers 전용적', () => {

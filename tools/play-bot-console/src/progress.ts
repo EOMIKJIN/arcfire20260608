@@ -13,6 +13,7 @@ import {
   listPlayableMissionIds,
   listSkills,
   lookupPrimaryPlanet,
+  missionHasUnresolvedPlaceholder,
   lookupTcl,
   objectivePlanetId,
 } from './catalog';
@@ -68,6 +69,7 @@ export function nextPlayableMissionId(world: WorldState): string | null {
   for (let i = 0; i < ids.length; i += 1) {
     const id = ids[i];
     if (world.completedLookup[id]) continue;
+    if (missionHasUnresolvedPlaceholder(id)) continue;
     const m = getMission(id);
     if (!m) continue;
     const prereq = m.prerequisiteIds ?? [];

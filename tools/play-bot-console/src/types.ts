@@ -62,7 +62,7 @@ export type PlanetSlot = {
   planetId: string;
   systemId: string;
   occupierClanId: string;
-  kind: 'neutral' | 'clan_hold' | 'player_independent';
+  kind: 'neutral' | 'clan_hold' | 'player_home' | 'player_independent';
   capturedAt: number;
   neutralizedAt: number | null;
   satLevel: number;
@@ -148,7 +148,7 @@ export type WorldState = {
   devLevels: Record<string, number>;
   capitalDestroyed: boolean;
   lastQuestPlanetId: string;
-  /** 배달 `__neighbor_system__` — 수락 성계. 출발지 제외 착륙이면 완료. */
+  /** `__neighbor_system__` / `__discovery_planet__` — 수락 성계. */
   questOriginSystemId: string;
   skillLearned: number;
   gearBuys: number;
@@ -156,6 +156,18 @@ export type WorldState = {
   questBuyCount: number;
   focusStats: FocusStats;
   devJob: DevJob | null;
+  /** 유저 체감 초. 가상 틱과 별개. persist 금지. */
+  earlyFeelSec: number;
+  earlyFeelClosed: boolean;
+  earlyFeelOpeningApplied: boolean;
+  earlyFeelReported: boolean;
+  earlyFeelBeats: Array<{
+    tSec: number;
+    kind: string;
+    line: string;
+    feelSec: number;
+    spine: boolean;
+  }>;
 };
 
 export type KpiSnapshot = {

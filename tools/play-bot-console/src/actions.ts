@@ -22,6 +22,11 @@ import {
   lookupPrimaryPlanet,
   lookupSystemId,
   nearestTradePlanet,
+  discoveryHopPlanet,
+  DISCOVERY_PLANET_PLACEHOLDER,
+  isQuestPlaceholderToken,
+  isResolvedQuestPlaceholder,
+  missionHasUnresolvedPlaceholder,
   neighborHopPlanet,
   NEIGHBOR_SYSTEM_PLACEHOLDER,
   objectivePlanetId,
@@ -40,19 +45,13 @@ import {
   tryLearnSkill,
 } from './progress';
 import { addExp, addFlag, markMissionDone, moveTo, paintOf, toHolds } from './world';
+import { levyBlueVaultOnFrontWin, pickFrontPlanetId, PLAYBOT_FRONT_LEVY_CREDITS } from './endFront';
+import { nudgeFocusStat } from './facilityTwin';
 
 const SAT_COST = 1500;
 const TRADE_BUY = 420;
 const TRADE_SELL = 310;
 const COLONIZE_VAULT = 4000;
-const FRONT_TARGETS = [
-  'sirius_border',
-  'perseus_memorial',
-  'omega_hub',
-  'helios_core',
-  'titan_ruins',
-  'draco_haven',
-] as const;
 
 function ev(
   world: WorldState,
@@ -105,6 +104,9 @@ function clearHoldStreak(world: WorldState): void {
 }
 
 function travelOneHop(world: WorldState, destPlanetId: string): JournalEntry {
+  if (isQuestPlaceholderToken(destPlanetId)) {
+    return markHold(world, 'unresolved_placeholder', `${destPlanetId} 미해석 토큰`);
+  }
   const destSys = lookupSystemId(destPlanetId);
   if (!destSys) return markHold(world, 'no_dest_system', `${destPlanetId} 성계를 모름`);
   if (world.currentPlanetId === destPlanetId) {
@@ -186,17 +188,21 @@ export function fightHere(world: WorldState, rng: Rng, reason: string): JournalE
   if (win) {
     world.combatWins += 1;
     world.credits += cr;
-    if (p === 'RED' || p === 'BLUE') {
+    let levy = 0;
+    if ((p === 'RED' || p === 'BLUE') && slot.kind !== 'player_home') {
       slot.occupierClanId = NEUTRAL_CLAN;
       slot.kind = 'neutral';
       slot.neutralizedAt = world.nowMs;
+      levy = levyBlueVaultOnFrontWin(world);
     }
     clearHoldStreak(world);
     void leveled;
     return ev(
       world,
       'COMBAT',
-      `${slot.labelKo} ${reason} 승 tcl${slot.tcl} ${(chance * 100) | 0}% +${exp}exp +${cr}cr → 중립`,
+      levy > 0
+        ? `${slot.labelKo} ${reason} 승 tcl${slot.tcl} ${(chance * 100) | 0}% +${exp}exp +${cr}cr → 중립 · 금고+${PLAYBOT_FRONT_LEVY_CREDITS}`
+        : `${slot.labelKo} ${reason} 승 tcl${slot.tcl} ${(chance * 100) | 0}% +${exp}exp +${cr}cr`,
     );
   }
   world.combatLosses += 1;
@@ -257,6 +263,7 @@ function tryAnnex(world: WorldState): JournalEntry {
   slot.capturedAt = world.nowMs;
   slot.neutralizedAt = null;
   world.annexOk += 1;
+  nudgeFocusStat(world, 'defense_satellite');
   clearHoldStreak(world);
   return ev(
     world,
@@ -265,19 +272,8 @@ function tryAnnex(world: WorldState): JournalEntry {
   );
 }
 
-function pickFrontTarget(world: WorldState): string {
-  for (let i = 0; i < FRONT_TARGETS.length; i += 1) {
-    const id = FRONT_TARGETS[i];
-    const slot = world.planets[id];
-    if (!slot) continue;
-    const p = paintOf(slot);
-    if (p === 'RED' || p === 'NEUTRAL') return id;
-  }
-  return 'sirius_border';
-}
-
 function doAnnexPath(world: WorldState, rng: Rng): JournalEntry {
-  const dest = pickFrontTarget(world);
+  const dest = pickFrontPlanetId(world);
   if (world.currentPlanetId !== dest) return travelOneHop(world, dest);
   const slot = world.planets[dest];
   if (!slot) return markHold(world, 'no_slot', '전선 슬롯 없음');
@@ -295,6 +291,7 @@ function acceptLowerLevelAlt(world: WorldState, exceptId: string): JournalEntry 
   for (let i = 0; i < ids.length; i += 1) {
     const id = ids[i];
     if (id === exceptId || world.completedLookup[id]) continue;
+    if (missionHasUnresolvedPlaceholder(id)) continue;
     const sm = getMission(id);
     if (!sm || world.level < (sm.levelRequired ?? 1)) continue;
     const pre = sm.prerequisiteIds ?? [];
@@ -345,8 +342,12 @@ function doQuest(world: WorldState, rng: Rng, _preferStory: boolean, allowAlt: b
   if (!world.activeQuest) {
     const next = nextPlayableMissionId(world);
     if (!next) return ev(world, 'QUEST', '수행 가능 퀘스트 소진 · 수도·개발로');
+    if (!world.earlyFeelClosed && world.questCleared >= 1) {
+      return ev(world, 'QUEST', '초반 3분 서사 유지 · 다음 본편은 레벨 이후');
+    }
     const accepted = acceptMission(world, next, allowAlt);
     if (accepted.kind === 'QUEST' && accepted.line.includes('레벨게이트')) {
+      if (!world.earlyFeelClosed) return accepted;
       return fightHere(world, rng, '수련');
     }
     return accepted;
@@ -371,6 +372,13 @@ function doQuest(world: WorldState, rng: Rng, _preferStory: boolean, allowAlt: b
     ? questFightPlanet(world, m, obj)
     : objectivePlanetId(obj.type, obj.targetId) ?? m.offerPlanetId ?? world.currentPlanetId;
   if (obj.type === 'reach_planet' || obj.type === 'reach_system') {
+    if (isQuestPlaceholderToken(obj.targetId) && !isResolvedQuestPlaceholder(obj.targetId)) {
+      markMissionDone(world, m.id);
+      world.activeQuest = null;
+      clearHoldStreak(world);
+      addFlag(world, `skip_placeholder:${obj.targetId}`);
+      return ev(world, 'QUEST', `스킵 ${m.id} · 미해석 ${obj.targetId}`);
+    }
     if (obj.type === 'reach_system' && obj.targetId === NEIGHBOR_SYSTEM_PLACEHOLDER) {
       const origin = world.questOriginSystemId || world.currentSystemId;
       if (!world.questOriginSystemId) world.questOriginSystemId = origin;
@@ -383,6 +391,18 @@ function doQuest(world: WorldState, rng: Rng, _preferStory: boolean, allowAlt: b
       markQuestPlanet(world, world.currentPlanetId);
       clearHoldStreak(world);
       return ev(world, 'QUEST', `세부 ${obj.id} 인접성계 도착`);
+    }
+    if (obj.type === 'reach_planet' && obj.targetId === DISCOVERY_PLANET_PLACEHOLDER) {
+      const origin = world.questOriginSystemId || world.currentSystemId;
+      if (!world.questOriginSystemId) world.questOriginSystemId = origin;
+      const originPlanet = lookupPrimaryPlanet(origin);
+      const hop = discoveryHopPlanet(origin, originPlanet ?? undefined);
+      if (!hop) return markHold(world, 'no_discovery', '탐사 행성 없음');
+      if (world.currentPlanetId !== hop) return travelOneHop(world, hop);
+      world.activeQuest.objIndex += 1;
+      markQuestPlanet(world, hop);
+      clearHoldStreak(world);
+      return ev(world, 'QUEST', `세부 ${obj.id} 탐사거점 도착`);
     }
     if (obj.type === 'reach_planet' && world.currentPlanetId !== dest) return travelOneHop(world, dest);
     if (obj.type === 'reach_system' && world.currentSystemId !== obj.targetId) return travelOneHop(world, dest);
@@ -470,7 +490,7 @@ function doTrade(
 }
 
 function doColonize(world: WorldState, rng: Rng): JournalEntry {
-  const dest = world.planets.synth_011_p ? 'synth_011_p' : pickFrontTarget(world);
+  const dest = world.planets.synth_011_p ? 'synth_011_p' : pickFrontPlanetId(world);
   if (world.currentPlanetId !== dest) return travelOneHop(world, dest);
   const slot = world.planets[dest];
   if (!slot) return markHold(world, 'no_slot', '개척 자리 없음');
@@ -495,7 +515,7 @@ function doColonize(world: WorldState, rng: Rng): JournalEntry {
 function doTravel(world: WorldState): JournalEntry {
   if (world.hangarShips <= 0) return restockInsteadOfFight(world);
   if (!world.capitalDestroyed) return travelOneHop(world, approachCapitalPlanet(world));
-  return travelOneHop(world, world.focusPlanetId || FOCUS_PLANET_ID);
+  return travelOneHop(world, pickFrontPlanetId(world));
 }
 
 function doCapital(world: WorldState, rng: Rng): JournalEntry {

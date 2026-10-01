@@ -43,9 +43,13 @@ test('reserves 10 chapters × 30 spine + 4 branch slots with unique ids', () => 
   assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 6))?.bindMissionId, 'story_006');
   assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 7))?.contentStatus, 'ready');
   assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 7))?.bindMissionId, 'story_007');
-  assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 30))?.contentStatus, 'ready');
+  assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 22))?.contentStatus, 'ready');
+  assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 22))?.bindMissionId, 'story_022');
+  assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 22))?.isChapterCloser, true);
+  assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 23))?.contentStatus, 'skeleton');
+  assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 30))?.contentStatus, 'skeleton');
   assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 30))?.bindMissionId, 'story_030');
-  assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 30))?.isChapterCloser, true);
+  assert.equal(getMainStoryQuest(formatMainStoryQuestId(1, 30))?.isChapterCloser, false);
   assert.equal(listMainStorySpineQuests(formatMainStoryChapterId(1)).length, 30);
   assert.ok(getMainStoryQuest(formatMainStoryBranchQuestId(1, 1)));
 });
@@ -54,7 +58,7 @@ test('default next walks spine and chapter closer goes to next chapter q01', () 
   const q01 = resolveMainStoryNextQuest('story_c01_q01');
   assert.equal(q01.nextQuestId, 'story_c01_q02');
   assert.equal(q01.reason, 'default');
-  const close = resolveMainStoryNextQuest('story_c01_q30');
+  const close = resolveMainStoryNextQuest('story_c01_q22');
   assert.equal(close.nextQuestId, 'story_c02_q01');
   assert.equal(close.reason, 'chapter_end');
   assert.equal(close.chapterEnded, true);
@@ -126,14 +130,14 @@ test('q06 complete offers q07 bind', () => {
   assert.equal(resolveCurrentMainStoryOfferMissionId(progresses), 'story_007');
 });
 
-test('q30 complete ends chapter 1 and opens chapter 2 skeleton', () => {
+test('q22 complete ends chapter 1 and opens chapter 2 skeleton', () => {
   const progresses: Record<string, MissionProgress> = {};
-  for (let n = 1; n <= 30; n += 1) {
+  for (let n = 1; n <= 22; n += 1) {
     const id = `story_${String(n).padStart(3, '0')}`;
     progresses[id] = { missionId: id, status: 'complete', objectives: {} };
   }
-  const after = resolveMainStoryAfterBindMissionComplete('story_030', progresses);
-  assert.equal(after.completedQuestId, 'story_c01_q30');
+  const after = resolveMainStoryAfterBindMissionComplete('story_022', progresses);
+  assert.equal(after.completedQuestId, 'story_c01_q22');
   assert.equal(after.nextQuestId, 'story_c02_q01');
   assert.equal(after.nextBindMissionId, null);
   assert.equal(after.chapterEnded, true);

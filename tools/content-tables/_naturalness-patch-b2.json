@@ -1,0 +1,237 @@
+[
+  {
+    "key": "story_dialog_obj_story_017_b#1",
+    "text": "크림슨 돈인지는 나도 모르고\n안다 해도 입은 안 연다.\n여기 시장은 원래 그렇게 돌아가.",
+    "text_en": "Whether it is Crimson coin, I do not know,\nand I would not say if I did.\nThat is just how this market turns."
+  },
+  {
+    "key": "story_dialog_obj_story_017_d#0",
+    "text": "탄약은 살 수 있지만\n배까지는 아직 무리고\n요새 뼈대는 내일 세운다.",
+    "text_en": "Ammo we can buy,\nbut a hull is still out of reach.\nThe fort frame goes up tomorrow."
+  },
+  {
+    "key": "story_dialog_obj_story_017_d#1",
+    "text": "돈으로 산 화력은 오래 못 가.\n그래도 오늘 하루는 버틸 수 있고\n지금은 그거면 충분하다.",
+    "text_en": "Firepower bought with coin never lasts,\nbut it will get us through today,\nand right now that is enough."
+  },
+  {
+    "key": "story_dialog_obj_story_017_e#0",
+    "text": "거점 자금 세 건 정산을 끝냈어.\n이걸로 한 달은 버틸 수 있고\n배신할 여지는 장부에 적어 뒀어.",
+    "text_en": "Three hold-fund settlements are closed.\nThat keeps the hold alive for a month,\nand any room for betrayal is noted in my ledger."
+  },
+  {
+    "key": "story_dialog_obj_story_018_a#0",
+    "text": "입구 두 곳에 포를 심어 뒀다.\n함대라곤 아직 네 배 한 척이지만\n재건은 지금부터 시작이다.",
+    "text_en": "I planted guns at both entrances.\nThe fleet is still just your one ship,\nbut the rebuild starts now."
+  },
+  {
+    "key": "story_dialog_obj_story_018_b#0",
+    "text": "식별 신호를 끄면 포문도 숨는다.\n은폐 지도 위에 화력을 겹쳐 놨으니\n거점은 이제 무덤이 아니다.",
+    "text_en": "Kill the ID signal and the guns vanish with it.\nI laid our firepower over the concealment map,\nso the hold is no longer a grave."
+  },
+  {
+    "key": "story_dialog_obj_story_018_c#0",
+    "text": "요새 뼈대는 섰다.\n아직 이름은 없지만\n그래서 오히려 살아남는 거다.",
+    "text_en": "The fort frame is standing.\nIt has no name yet,\nand that is exactly why it will survive."
+  },
+  {
+    "key": "story_dialog_obj_story_018_d#1",
+    "text": "요새는 배로 버티는 게 아니라\n장부가 버텨 주는 거야.\n재건은 여기까지로 하지.",
+    "text_en": "A fort does not stand on its ships.\nIt stands on a ledger that holds,\nand the rebuild stops here."
+  },
+  {
+    "key": "story_dialog_obj_story_018_e#0",
+    "text": "할 일은 끝났다.\n다음은 사람끼리의 싸움이고\n나는 함선만 보면 된다.",
+    "text_en": "That is done.\nWhat comes next is people fighting people,\nand I only need to watch the ships."
+  },
+  {
+    "key": "story_dialog_obj_story_019_a#0",
+    "text": "숨기만 하면 라이트홀드가 되풀이돼.\n그러니 먼저 쳐야 하고\n나는 치는 쪽에 선다.",
+    "text_en": "If we only hide, Light Hold happens again.\nSo we strike first,\nand I stand on the side that strikes."
+  },
+  {
+    "key": "story_dialog_obj_story_019_b#0",
+    "text": "치는 순간 거점이 드러나고\n라이트홀드도 먼저 치다가 죽었어.\n그래서 나는 숨기는 쪽이야.",
+    "text_en": "The moment we strike, the hold is exposed,\nand Light Hold died striking first.\nThat is why I am on the side that hides."
+  },
+  {
+    "key": "story_dialog_obj_story_019_c#0",
+    "text": "둘 다 라이트홀드를 말하면서\n결론만 반대로 가는군.\n지워진 행성은 어느 편도 아니다.",
+    "text_en": "Both of them talk about Light Hold,\nyet land on opposite conclusions.\nAn erased planet takes no side."
+  },
+  {
+    "key": "story_dialog_obj_story_019_c#1",
+    "text": "지금은 거점을 지키는 게 맞고\n갈림길은 나중에 올 거다.\n그때까지 지도는 접지 않겠다.",
+    "text_en": "For now, holding the hold is the right call,\nand the fork in the road comes later.\nUntil then, I am not folding the map."
+  },
+  {
+    "key": "story_dialog_obj_story_019_d#0",
+    "text": "오늘은 문을 닫아 둔다.\n치는 날과 숨는 날은 따로 있고\n거점은 그렇게 살아남는 거다.",
+    "text_en": "Today we keep the door shut.\nThere are days to strike and days to hide,\nand that is how a hold survives."
+  },
+  {
+    "key": "story_dialog_obj_story_019_d#1",
+    "text": "균열은 그대로 남겨 둔다.\n언젠가 다시 벌어질 테지만\n지금은 이간질부터 막아야 한다.",
+    "text_en": "The crack stays where it is.\nIt will open again someday,\nbut right now we stop the wedge first."
+  },
+  {
+    "key": "story_dialog_obj_story_020_a#0",
+    "text": "카일 쪽에서 나간 돈은 탄약값이고\n크림슨 계좌하고는 맞지도 않아.\n소문은 이간질일 뿐이야.",
+    "text_en": "The money leaving Kyle's side is ammo payments,\nand it does not match any Crimson account.\nThat rumor is nothing but a wedge."
+  },
+  {
+    "key": "story_dialog_obj_story_020_c#0",
+    "text": "외곽 수배 방송이 거점 말투를 베꼈다.\n내부 배신은 없었고\n은폐 지도도 뚫리지 않았다.",
+    "text_en": "The rim wanted broadcast copied how the hold talks.\nThere was no betrayal inside,\nand the concealment map was never breached."
+  },
+  {
+    "key": "story_dialog_obj_story_020_c#1",
+    "text": "배신 소문 자체가 이간책이다.\n거점은 그대로 지키되\n곧 닥칠 공세에 대비해야 한다.",
+    "text_en": "The betrayal rumor itself is the wedge.\nWe keep holding the hold,\nbut we brace for the offensive that is coming."
+  },
+  {
+    "key": "story_dialog_obj_story_020_d#0",
+    "text": "우리 안은 갈라지지 않았고\n소문은 밖에서 흘러든 거다.\n문은 계속 닫아 두자.",
+    "text_en": "Nothing split on the inside.\nThe rumor drifted in from outside,\nso we keep the door shut."
+  },
+  {
+    "key": "story_dialog_obj_story_021_a#0",
+    "text": "입구 포문은 열어 뒀다.\n뜨는 건 어차피 한 척뿐이니\n그 한 척만 끊으면 진압군은 물러난다.",
+    "text_en": "The entrance guns are live.\nOnly one ship is going to lift,\nand once that ship is cut, the suppression force pulls back."
+  },
+  {
+    "key": "story_dialog_obj_story_021_c#0",
+    "text": "문은 지켜 냈고 진압군은 물러갔다.\n그리하벤은 살아남은 거다.",
+    "text_en": "We held the door and the suppression force pulled back.\nGreehaven is still standing."
+  },
+  {
+    "key": "story_dialog_obj_story_021_d#0",
+    "text": "좌표는 샀어도 안엔 못 들어왔다.\n은폐 지도가 버텨 준 덕인데\n지워진 행성의 수법을 뒤집은 거다.",
+    "text_en": "They bought the coordinates, but never got inside.\nThe concealment map held for us,\nand we turned the erased planet's own trick around."
+  },
+  {
+    "key": "story_dialog_obj_story_021_e#0",
+    "text": "배는 한 척뿐이었어도\n함대를 잃은 건 아니고\n무엇보다 문은 지켜 냈다.",
+    "text_en": "We only had the one ship,\nbut we did not lose a fleet either,\nand above all, the door held."
+  },
+  {
+    "key": "story_dialog_obj_story_022_a#0",
+    "text": "우리 동맹엔 이름이 없다.\n장부에 적을 진영도 없고\n있는 건 지킬 문 하나뿐이다.",
+    "text_en": "This alliance of ours has no name.\nThere is no faction to write in the ledger,\nonly a door we have to hold."
+  },
+  {
+    "key": "story_dialog_obj_story_022_b#0",
+    "text": "이름 같은 건 필요 없다.\n문이 있으면 지키면 되고\n내 눈은 함선에만 둔다.",
+    "text_en": "I do not need a name.\nIf there is a door, I hold it,\nand I keep my eyes on the ships."
+  },
+  {
+    "key": "story_dialog_obj_story_022_c#0",
+    "text": "동맹 장부를 새로 열었어.\n이름 칸은 비워 두고\n진영보다 증거를 먼저 적을 거야.",
+    "text_en": "I opened a fresh ledger for the alliance.\nThe name column stays blank,\nand proof gets written before any faction."
+  },
+  {
+    "key": "story_dialog_obj_story_022_c#1",
+    "text": "균열은 장부에 적어 두고\n바로잡는 건 나중에 하자.\n오늘만큼은 한편이니까.",
+    "text_en": "The cracks go in the ledger for now,\nand we set them right later.\nToday, at least, we are on the same side."
+  },
+  {
+    "key": "story_dialog_obj_story_022_d#0",
+    "text": "지워진 행성은 아직 돌아오지 않았다.\n깃발은 그 빈칸 위에 섰고\n빈칸은 언젠가 다시 열어야 한다.",
+    "text_en": "The erased planet has not come back yet.\nOur flag stands on that blank,\nand someday that blank has to be opened again."
+  },
+  {
+    "key": "story_dialog_obj_story_022_e#0",
+    "text": "큰 고비는 일단 넘겼다.\n남은 건 뒷수습이고\n깃발은 이름 없이 그대로 둔다.",
+    "text_en": "The worst of it is behind us.\nWhat is left is the cleanup,\nand the flag stays without a name."
+  },
+  {
+    "key": "story_dialog_obj_story_023_b#1",
+    "text": "연합은 너를 반역자로 적어 뒀지만\n나는 호송만 신경 쓴다.\n소문은 여기서 끊어 두지.",
+    "text_en": "The Alliance has you filed as a traitor,\nbut all I care about is my escorts.\nThe rumor stops here with me."
+  },
+  {
+    "key": "story_dialog_obj_story_023_c#0",
+    "text": "에덴은 아직 치지 않는다.\n지금은 은폐 지도를 지키는 일이\n무엇보다 먼저니까.",
+    "text_en": "We are not striking Eden yet.\nRight now, keeping the concealment map safe\ncomes before anything else."
+  },
+  {
+    "key": "story_dialog_obj_story_024_b#0",
+    "text": "잘 받았다.\n어느 진영 건지 적혀 있진 않지만\n회항단 금고에 넣어 두지.",
+    "text_en": "Received.\nIt does not say which faction it belongs to,\nbut it goes into the circuit vault all the same."
+  },
+  {
+    "key": "story_dialog_obj_story_024_c#0",
+    "text": "사본은 허브에 맡겼고\n원본은 여기 내가 갖고 있어.\n장부는 두 벌이라야 안전하니까.",
+    "text_en": "The copy is with the hub,\nand the original stays here with me.\nA ledger is only safe in two sets."
+  },
+  {
+    "key": "story_dialog_obj_story_025_b#0",
+    "text": "라이트홀드 유해 명부는 비어 있다.\n명령으로 지워진 거고\n나는 잔해를 지킬 뿐이다.",
+    "text_en": "The Light Hold casualty roster is blank.\nAn order wiped it clean,\nand all I do is guard the wreckage."
+  },
+  {
+    "key": "story_dialog_obj_story_025_b#1",
+    "text": "카일이 살아 돌아온 건 나도 안다.\n그래도 보고서엔 올릴 수 없어.\n여기는 무덤이니까.",
+    "text_en": "I know Kyle came back alive.\nI still cannot put that in the report,\nbecause this place is a grave."
+  },
+  {
+    "key": "story_dialog_obj_story_025_c#0",
+    "text": "명부는 여전히 비어 있고\n나는 보고서에 없는 사람이다.\n그러니 깃발에도 이름이 없는 거다.",
+    "text_en": "The roster is still blank,\nand I am a man who is not in the report.\nThat is why the flag carries no name either."
+  },
+  {
+    "key": "story_dialog_obj_story_026_a#0",
+    "text": "사령부는 널 모르는 척할 거다.\n그래도 관문은 열어 줄 테고\n기록은 남기지 않겠다.",
+    "text_en": "Command will act as if you do not exist.\nThe gate still opens for you,\nand I will leave no record of it."
+  },
+  {
+    "key": "story_dialog_obj_story_026_b#0",
+    "text": "동맹은 인정하지 않는다.\n라이트홀드의 빚만 인정할 뿐이고\n그 이상은 말하지 않겠다.",
+    "text_en": "I do not recognize the alliance.\nI recognize only the debt from Light Hold,\nand I will say nothing beyond that."
+  },
+  {
+    "key": "story_dialog_obj_story_026_c#0",
+    "text": "공식 창구는 닫겠다.\n관문은 필요할 때만 열어 주고\n기록은 남기지 않을 거다.",
+    "text_en": "The official channel closes here.\nThe gate opens only when it has to,\nand nothing goes on record."
+  },
+  {
+    "key": "story_dialog_obj_story_027_a#0",
+    "text": "기함은 움직이지 않는다.\n말은 소사가 할 테니\n나는 주파수만 열어 두겠다.",
+    "text_en": "The flagship is not moving.\nSosa will do the talking,\nand I will just keep the frequency open."
+  },
+  {
+    "key": "story_dialog_obj_story_027_b#0",
+    "text": "나는 배에 타지 않는다.\n라이트홀드 증언은 이미 끝냈고\n깃발은 너희 몫이다.",
+    "text_en": "I am not boarding.\nI already gave my testimony on Light Hold,\nand the flag belongs to you."
+  },
+  {
+    "key": "story_dialog_obj_story_029_a#0",
+    "text": "다시는 버리지 않는다.\n이름이 없어도 문은 지키고\n그게 우리가 세우는 선서다.",
+    "text_en": "We never abandon anyone again.\nName or no name, we hold the door,\nand that is the oath we swear."
+  },
+  {
+    "key": "story_dialog_obj_story_029_b#0",
+    "text": "서명란은 비워 두고 날짜만 적었어.\n그래야 선서문이 살아남거든.\n원본은 거점에 남겨 둘게.",
+    "text_en": "I left the signature lines blank and wrote only the date.\nThat is how the oath survives,\nand the original stays at the hold."
+  },
+  {
+    "key": "story_dialog_obj_story_029_c#0",
+    "text": "선서는 결국 말이고\n문을 지키는 건 함선이다.\n그러니 나는 함선을 지킨다.",
+    "text_en": "An oath is just words in the end.\nWhat actually holds the door is ships,\nso I keep the ships."
+  },
+  {
+    "key": "story_dialog_obj_story_030_a#0",
+    "text": "문은 남았다.\n깃발엔 여전히 이름이 없고\n라이트홀드의 빚도 그대로다.",
+    "text_en": "The door is still standing.\nThe flag still has no name,\nand the debt from Light Hold is still owed."
+  },
+  {
+    "key": "story_dialog_obj_story_030_b#0",
+    "text": "지워진 행성은 아직 찾지 못했다.\n그 빈칸은 다음으로 미뤄 두지만\n지도를 접을 생각은 없다.",
+    "text_en": "We still have not found the erased planet.\nThat blank waits for the next step,\nbut I have no intention of folding the map."
+  },
+  {
+    "key": "story_dialog_obj_story_030_c#0",
+    "text": "은폐된 진실은 잠시 덮어 둔다.\n끝난 게 아니라\n같은 편이 하나 생겼을 뿐이다.",
+    "text_en": "The concealed truth gets set aside for now.\nIt is not over,\nwe simply have a side of our own at last."
+  }
+]

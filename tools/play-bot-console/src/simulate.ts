@@ -5,6 +5,7 @@ import { stepAction } from './actions';
 import { runTerritorialDay } from './territorial';
 import { analyzeDay, analyzeStronger } from './analyze';
 import { dayOfTick, gameNowMs, isDayBoundary, TICKS_PER_DAY } from './clock';
+import { absorbEarlyFeel, applyOpeningFeelIfNeeded } from './earlyFeel';
 
 export type SimHooks = {
   onEntry?: (world: WorldState, entry: JournalEntry) => void;
@@ -22,6 +23,7 @@ export function runSimulation(input: {
   hooks?: SimHooks;
 }): { world: WorldState; reports: AnalyzeReport[] } {
   const world = seedWorld({ runId: input.runId, persona: input.persona });
+  applyOpeningFeelIfNeeded(world);
   const rng = createRng(input.seed);
   const reports: AnalyzeReport[] = [];
   const REPORT_KEEP = 21;
@@ -36,6 +38,7 @@ export function runSimulation(input: {
     world.nowMs = gameNowMs(i);
     const entry = stepAction(world, rng, input.persona, { allowSides: input.allowSides });
     if (!entry.silent) {
+      absorbEarlyFeel(world, entry);
       dayBuf.push(entry);
       input.hooks?.onEntry?.(world, entry);
     }

@@ -1,0 +1,237 @@
+[
+  {
+    "key": "story_dialog_obj_story_030_c#1",
+    "text": "거점은 지킨다.\n모자란 건 차차 채워 가면 돼.",
+    "text_en": "We hold the base.\nWhatever is missing, we fill in over time."
+  },
+  {
+    "key": "story_dialog_obj_s034_c#0",
+    "text": "순찰은 열두 박자마다 한 번 돈다.\n그 틈에 숨은 거점이 드러나고\n출구도 그때만 열린다.",
+    "text_en": "The patrol turns every twelve beats.\nIn that gap the hidden camp shows,\nand the exit opens only then."
+  },
+  {
+    "key": "story_dialog_obj_s034_e#0",
+    "text": "신호를 지운 수법이 똑같다.\n아르카디아 살인범과 같은 자인데\n이름은 여전히 어디에도 없다.",
+    "text_en": "The signal was wiped the same way.\nSame hand as the Arcadia killer,\nand still no name anywhere."
+  },
+  {
+    "key": "story_dialog_obj_s034_e#1",
+    "text": "정식 수사로 올리진 않겠다.\n같은 은폐 수법이 캠프까지 왔지만\n지워진 신호 건은 여기서 접는다.",
+    "text_en": "I will not file this as a formal case.\nThe same cover-up reached Camp,\nbut the wiped signal ends here."
+  },
+  {
+    "key": "story_dialog_obj_s035_a#1",
+    "text": "장부에 찍힌 이름은 톨린 그레이브.\n줄곧 아군 순찰대라고 말해 온 자다.\n나는 장부만 대조했을 뿐이다.",
+    "text_en": "The stamped name is Tolin Grave,\nthe man who always called himself friendly patrol.\nI only matched the ledger."
+  },
+  {
+    "key": "story_dialog_obj_s035_c#1",
+    "text": "내 호위가 곧 뜬다.\n말은 여기까지고\n통신은 이쪽에서 끊겠다.",
+    "text_en": "My escort lifts off soon.\nThat is all I have to say,\nand I am cutting this line."
+  },
+  {
+    "key": "story_dialog_obj_s036_d#1",
+    "text": "내가 아는 건 출처까지다.\n누가 받았는지는 여기 없으니\n장부는 이 줄에서 끝난다.",
+    "text_en": "The source is as far as I know.\nWho took it is not written here,\nso the ledger ends on this line."
+  },
+  {
+    "key": "story_dialog_obj_s056_a#0",
+    "text": "출정 전야에 문이 잠겼다.\n항로는 한 줄뿐인데 통행이 없고\n잠근 자의 이름은 장부에 없다.",
+    "text_en": "The door locked on the eve of the sortie.\nOne lane, and nothing moves on it,\nand no name for who locked it."
+  },
+  {
+    "key": "story_dialog_obj_s056_c#0",
+    "text": "문은 여기 있다.\n연 기록은 없고 잠근 기록만 있는데\n누가 잠갔는지는 적혀 있지 않다.",
+    "text_en": "The door is here.\nThere is a lock record but no open record,\nand who locked it is not written."
+  },
+  {
+    "key": "story_dialog_obj_s056_c#1",
+    "text": "궤도에 차단용 배가 떠 있다.\n문을 건드리면 그 배가 먼저 뜰 테니\n나는 장부만 지키겠다.",
+    "text_en": "A blockade ship sits in orbit.\nTouch the door and it lifts off first,\nso I keep to the ledger."
+  },
+  {
+    "key": "story_dialog_obj_s056_e#0",
+    "text": "문은 열렸다.\n잠근 자는 끝내 이름이 없고\n출정 전야의 차단은 여기까지다.",
+    "text_en": "The door is open.\nWhoever locked it still has no name,\nand the eve-of-sortie block ends here."
+  },
+  {
+    "key": "story_dialog_obj_s057_a#1",
+    "text": "인수는 비콘에서 한다.\n전표는 셀 베인이 볼 거고\n나는 의자만 판다.",
+    "text_en": "The handoff is at Beacon.\nSel Vane will read the slip.\nI only sell the chair."
+  },
+  {
+    "key": "story_dialog_obj_s057_c#0",
+    "text": "전표의 이름 칸이 비어 있다.\n의자만 왔고 사람은 오지 않았으니\n나는 그 공란만 확인한다.",
+    "text_en": "The name cell on the slip is blank.\nThe chair came, the person did not,\nso I confirm only that blank."
+  },
+  {
+    "key": "story_dialog_obj_s057_e#0",
+    "text": "의자는 팔렸다.\n앉을 이름은 끝내 나오지 않았고\n빈 지휘석 건은 여기서 접는다.",
+    "text_en": "The chair sold.\nNo name ever came to sit in it,\nand the vacant command ends here."
+  },
+  {
+    "key": "story_dialog_obj_s058_a#0",
+    "text": "장부 합이 맞지 않는다.\n빠진 건 숫자 한 줄인데\n그 줄에 적힌 사람이 없다.",
+    "text_en": "The ledger does not add up.\nOne line of numbers is missing,\nand no person is written on it."
+  },
+  {
+    "key": "story_dialog_obj_s058_a#1",
+    "text": "사본은 카론에 있다.\n이바 렌이 대조해 줄 거고\n나는 틀린 칸만 표시한다.",
+    "text_en": "The copy is at Charon.\nIva Wren will match it,\nand I only mark the wrong cell."
+  },
+  {
+    "key": "story_dialog_obj_s058_c#0",
+    "text": "사본도 같은 칸이 비어 있다.\n합을 맞춰 봐도 사람은 나오지 않고\n빈 숫자는 빈 숫자로 남는다.",
+    "text_en": "The copy has the same blank cell.\nBalance the sum and still no person appears.\nAn empty number stays an empty number."
+  },
+  {
+    "key": "story_dialog_obj_s058_e#0",
+    "text": "숫자가 틀린 이유는 이거다.\n빠진 줄은 사람이 아니었으니\n장부는 여기서 접는다.",
+    "text_en": "So that is why the numbers were wrong.\nThe missing line was never a person,\nand the ledger closes here."
+  },
+  {
+    "key": "story_dialog_obj_s059_a#0",
+    "text": "통신 주파수가 복사됐다.\n주인의 목소리는 아니고\n남은 건 주파수 숫자뿐이다.",
+    "text_en": "A comm frequency was copied.\nIt is not the owner's voice,\nonly the frequency number remains."
+  },
+  {
+    "key": "story_dialog_obj_s059_a#1",
+    "text": "인수는 마크에서 한다.\n전표는 다인 로가 볼 거고\n나는 관측만 한다.",
+    "text_en": "The handoff is at Mark.\nDain Rho will read the slip.\nI only observe."
+  },
+  {
+    "key": "story_dialog_obj_s059_c#0",
+    "text": "전표의 주인 칸이 비어 있다.\n주파수만 왔고 목소리는 오지 않았으니\n나는 그 공란만 확인한다.",
+    "text_en": "The owner cell on the slip is blank.\nThe frequency came, the voice did not,\nso I confirm only that blank."
+  },
+  {
+    "key": "story_dialog_obj_s059_e#0",
+    "text": "복사본은 주인의 목소리가 아니다.\n누가 훔쳤는지는 여기 없으니\n훔친 주파수 건은 여기서 접는다.",
+    "text_en": "The copy is not the owner's voice.\nWho stole it is not written here,\nso the stolen frequency case ends here."
+  },
+  {
+    "key": "story_dialog_obj_s060_c#0",
+    "text": "상자의 출항 칸이 비어 있다.\n물건은 있는데 이름은 없으니\n나는 그 공란만 본다.",
+    "text_en": "The departure cell on the crate is blank.\nThe goods are here but the name is not,\nso I look only at that blank."
+  },
+  {
+    "key": "story_dialog_obj_s060_d#0",
+    "text": "나는 이름을 묻지 않는다.\n이 항로의 인수는 그렇게 하는 거고\n공란은 닫힌 문이다.",
+    "text_en": "I do not ask for a name.\nThat is how a handoff works on this lane,\nand a blank is a closed door."
+  },
+  {
+    "key": "story_dialog_obj_s060_d#1",
+    "text": "미르 켈이 곧 도착한다.\n상자는 여기서 넘어가고\n나는 인수 도장만 찍는다.",
+    "text_en": "Mir Kell arrives shortly.\nThe crate passes hands here,\nand I only stamp the handoff."
+  },
+  {
+    "key": "story_dialog_obj_s060_e#0",
+    "text": "상자는 넘어갔다.\n출항 칸은 끝내 비어 있었고\n공란이 찍힌 건은 여기서 접는다.",
+    "text_en": "The crate has passed.\nThe departure cell stayed blank to the end,\nand the blank-cell case closes here."
+  },
+  {
+    "key": "story_dialog_obj_s061_c#0",
+    "text": "봉인은 그대로다.\n열린 적 없고 내용 기록도 없으니\n나는 인장만 본다.",
+    "text_en": "The seal is intact.\nIt was never opened and no contents are listed,\nso I look only at the stamp."
+  },
+  {
+    "key": "story_dialog_obj_s061_d#0",
+    "text": "열지 않는 것이 이 인수다.\n속이 무엇이든 여기엔 적히지 않고\n봉인 자체가 정본이다.",
+    "text_en": "Not opening it is the handoff.\nWhatever is inside is not written here.\nThe seal itself is the record."
+  },
+  {
+    "key": "story_dialog_obj_s061_d#1",
+    "text": "브린 택이 곧 도착한다.\n인수는 여기서 넘어가고\n나는 인장만 찍는다.",
+    "text_en": "Brin Tack arrives shortly.\nThe handoff passes here,\nand I only stamp the seal."
+  },
+  {
+    "key": "story_dialog_obj_s061_e#0",
+    "text": "인수는 넘어갔다.\n봉인은 끝까지 열리지 않았으니\n이 건은 루나에서 접는다.",
+    "text_en": "The handoff has passed.\nThe seal was never opened,\nso this case closes at Luna."
+  },
+  {
+    "key": "story_dialog_obj_s062_c#0",
+    "text": "영수증의 이름 칸이 비어 있다.\n광물은 있는데 보낸 자는 없으니\n나는 그 공란만 본다.",
+    "text_en": "The name cell on the receipt is blank.\nThe ore is here but no sender is,\nso I look only at that blank."
+  },
+  {
+    "key": "story_dialog_obj_s062_d#0",
+    "text": "공란은 그대로 둔다.\n이 항로의 전표는 원래 그런 거고\n이름은 정본이 아니다.",
+    "text_en": "The blank stays as it is.\nThat is how slips are on this lane,\nand a name is not the record."
+  },
+  {
+    "key": "story_dialog_obj_s062_d#1",
+    "text": "카엘 본이 곧 도착한다.\n전표는 여기서 넘어가고\n나는 인수 도장만 찍는다.",
+    "text_en": "Kael Vonn arrives shortly.\nThe slip passes hands here,\nand I only stamp the handoff."
+  },
+  {
+    "key": "story_dialog_obj_s062_e#0",
+    "text": "전표는 넘어갔다.\n이름은 끝내 나오지 않았으니\n이름 없는 영수증은 여기서 접는다.",
+    "text_en": "The slip has passed.\nNo name ever surfaced,\nso the nameless receipt closes here."
+  },
+  {
+    "key": "story_dialog_obj_s063_a#1",
+    "text": "인수는 솔에서 한다.\n봉인은 토마 케일이 볼 거고\n나는 봉투만 건넨다.",
+    "text_en": "The handoff is at Sol.\nToma Kale will check the seal.\nI only hand over the envelope."
+  },
+  {
+    "key": "story_dialog_obj_s063_c#0",
+    "text": "봉인은 그대로다.\n열린 적 없고 속도 적혀 있지 않으니\n나는 인장만 본다.",
+    "text_en": "The seal is intact.\nNever opened, and nothing inside is listed,\nso I look only at the stamp."
+  },
+  {
+    "key": "story_dialog_obj_s063_d#0",
+    "text": "봉투는 받았다.\n속은 열지 않았고\n이 인수는 봉인이 전부다.",
+    "text_en": "I have the envelope.\nI did not open it,\nand the seal is the whole handoff."
+  },
+  {
+    "key": "story_dialog_obj_s063_d#1",
+    "text": "에브 홀트가 곧 도착한다.\n이 건은 여기서 넘어가고\n나는 인장만 찍는다.",
+    "text_en": "Ev Holt arrives shortly.\nThis case passes hands here,\nand I only stamp the seal."
+  },
+  {
+    "key": "story_dialog_obj_s063_e#0",
+    "text": "봉투는 넘어갔다.\n속은 끝내 열리지 않았으니\n열지 않는 봉투 건은 여기서 접는다.",
+    "text_en": "The envelope has passed.\nIts inside was never opened,\nso the unopened envelope closes here."
+  },
+  {
+    "key": "npc_dialog_sq_kett_mion#0",
+    "text": "아우라 국경 장부를 맡고 있다.\n내 일은 식별 신호 대조뿐이니\n장부에 없는 얘기면 여기까지다.",
+    "text_en": "I keep the Aura border ledger.\nMy job is matching ID signals, nothing more,\nso if it is not in the ledger, we are done."
+  },
+  {
+    "key": "npc_dialog_sq_ren_coil#0",
+    "text": "글로우 국경에서 장부를 맡는다.\n출정 전 막힌 문을 적는 칸만 지키고\n이름은 올리지 않는다.",
+    "text_en": "I keep the ledger at the Glow border.\nMy only cell is doors blocked before a sortie,\nand I file no name."
+  },
+  {
+    "key": "npc_dialog_sq_ren_coil#2",
+    "text": "수락하면 바로 이동이 시작된다.\n수행지는 다른 성계이고\n나는 여기서 문을 열어 주겠다.",
+    "text_en": "Accept, and the travel begins at once.\nThe work is in another system,\nand I will open the door from here."
+  },
+  {
+    "key": "npc_dialog_sq_maya_belt#0",
+    "text": "펄 채굴지에서 장부를 맡는다.\n막힌 문을 적는 칸만 지키고\n이름은 올리지 않는다.",
+    "text_en": "I keep the ledger at the Pearl mining site.\nMy only cell is the blocked door,\nand I file no name."
+  },
+  {
+    "key": "npc_dialog_sq_maya_belt#2",
+    "text": "수락하면 바로 이동이 시작된다.\n수행지는 다른 성계이고\n나는 여기서 문을 열어 주겠다.",
+    "text_en": "Accept, and the travel begins at once.\nThe work is in another system,\nand I will open the door from here."
+  },
+  {
+    "key": "npc_dialog_sq_jor_finn#0",
+    "text": "포지에서 빈 지휘석을 매물로 올린다.\n나는 그 매물 칸만 지키고\n이름은 올리지 않는다.",
+    "text_en": "At Forge I list an empty command chair.\nI keep only that listing cell,\nand I file no name."
+  },
+  {
+    "key": "npc_dialog_sq_jor_finn#2",
+    "text": "수락하면 바로 이동이 시작된다.\n수행지는 다른 성계이고\n나는 여기서 문을 열어 주겠다.",
+    "text_en": "Accept, and the travel begins at once.\nThe work is in another system,\nand I will open the door from here."
+  },
+  {
+    "key": "npc_dialog_sq_sel_vane#0",
+    "text": "비콘에서 인수 장부를 맡는다.\n빈 지휘석 매물 칸만 지키고\n이름은 올리지 않는다.",
+    "text_en": "I keep the handoff ledger at Beacon.\nMy only cell is the empty command listing,\nand I file no name."
+  }
+]

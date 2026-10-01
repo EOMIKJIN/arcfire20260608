@@ -1,0 +1,232 @@
+[
+  {
+    "key": "npc_dialog_sq_sel_vane#2",
+    "text": "수락하면 바로 출발이다.\n일할 곳은 다른 성계지만\n문은 내가 여기서 열어 주겠다.",
+    "text_en": "Accept and you leave at once.\nThe job is in another system,\nbut I open the door from here."
+  },
+  {
+    "key": "npc_dialog_sq_has_quinn#0",
+    "text": "마크 항로 장부에서 어긋난\n숫자를 대조하는 게 내 일이다.\n그 칸만 지키고 이름은 안 올린다.",
+    "text_en": "On the Mark lane I check\nthe ledger numbers that do not add up.\nI keep that cell only and file no name."
+  },
+  {
+    "key": "npc_dialog_sq_has_quinn#2",
+    "text": "받겠다면 이동은 바로 시작된다.\n수행지는 다른 성계고\n여기 문은 내가 열어 두지.",
+    "text_en": "Take it and the trip begins now.\nThe work lies in another system,\nand I keep this door open for you."
+  },
+  {
+    "key": "npc_dialog_sq_iva_wren#0",
+    "text": "카론에서 틀린 숫자의 사본을\n맡아 두는 게 내 일이다.\n내 몫은 그 칸뿐, 이름은 안 올려.",
+    "text_en": "At Charon I hold the copy\nof the numbers that came out wrong.\nThat cell is all I keep; I file no name."
+  },
+  {
+    "key": "npc_dialog_sq_iva_wren#2",
+    "text": "수락하면 곧바로 이동이다.\n가야 할 곳은 다른 성계지만\n문은 여기서 내가 열어 준다.",
+    "text_en": "Accept and we move right away.\nWhere you must go is another system,\nbut the door opens here, by my hand."
+  },
+  {
+    "key": "npc_dialog_sq_peck_sorin#0",
+    "text": "페가수스에서 도난당한\n통신 주파수를 기록해 두고 있다.\n그 칸만 지키고 이름은 적지 않아.",
+    "text_en": "At Pegasus I log\nthe stolen comm frequency.\nI keep that cell only and write no name."
+  },
+  {
+    "key": "npc_dialog_sq_peck_sorin#2",
+    "text": "수락하면 바로 출발이다.\n일할 곳은 다른 성계지만\n문은 내가 여기서 열어 주겠다.",
+    "text_en": "Accept and you leave at once.\nThe job is in another system,\nbut I open the door from here."
+  },
+  {
+    "key": "npc_dialog_sq_dain_rho#0",
+    "text": "마크에서 도난당한 주파수의\n인수를 맡아 처리한다.\n그 칸만 지키고 이름은 안 올린다.",
+    "text_en": "At Mark I handle the handoff\nof the stolen frequency.\nI keep that cell only and file no name."
+  },
+  {
+    "key": "npc_dialog_sq_dain_rho#2",
+    "text": "받겠다면 이동은 바로 시작된다.\n수행지는 다른 성계고\n여기 문은 내가 열어 두지.",
+    "text_en": "Take it and the trip begins now.\nThe work lies in another system,\nand I keep this door open for you."
+  },
+  {
+    "key": "npc_dialog_sq_mir_kell#0",
+    "text": "제피르에서 공란이 찍힌\n상자를 내보내는 게 내 일이다.\n내 몫은 그 칸뿐, 이름은 안 올려.",
+    "text_en": "At Zephyr I send out\nthe crates stamped with a blank.\nThat cell is all I keep; I file no name."
+  },
+  {
+    "key": "npc_dialog_sq_mir_kell#2",
+    "text": "수락하면 곧바로 이동이다.\n가야 할 곳은 다른 성계지만\n문은 여기서 내가 열어 준다.",
+    "text_en": "Accept and we move right away.\nWhere you must go is another system,\nbut the door opens here, by my hand."
+  },
+  {
+    "key": "npc_dialog_sq_osa_pell#0",
+    "text": "글레이에서 공란 상자를\n인수하는 게 내 일이다.\n그 칸만 지키고 이름은 적지 않아.",
+    "text_en": "At Gray I take in\nthe blank-stamped crates.\nI keep that cell only and write no name."
+  },
+  {
+    "key": "npc_dialog_sq_osa_pell#2",
+    "text": "수락하면 바로 출발이다.\n일할 곳은 다른 성계지만\n문은 내가 여기서 열어 주겠다.",
+    "text_en": "Accept and you leave at once.\nThe job is in another system,\nbut I open the door from here."
+  },
+  {
+    "key": "npc_dialog_sq_brin_tack#0",
+    "text": "아스트라에서 봉인된 기술의\n인수를 맡기고 있다.\n그 칸만 지키고 이름은 안 올린다.",
+    "text_en": "At Astra I entrust the handoff\nof the sealed technology.\nI keep that cell only and file no name."
+  },
+  {
+    "key": "npc_dialog_sq_brin_tack#2",
+    "text": "받겠다면 이동은 바로 시작된다.\n수행지는 다른 성계고\n여기 문은 내가 열어 두지.",
+    "text_en": "Take it and the trip begins now.\nThe work lies in another system,\nand I keep this door open for you."
+  },
+  {
+    "key": "npc_dialog_sq_nell_kay#0",
+    "text": "루나에서 봉인 인수를\n받아 두는 게 내 일이다.\n내 몫은 그 칸뿐, 이름은 안 올려.",
+    "text_en": "At Luna I receive\nthe sealed handoff.\nThat cell is all I keep; I file no name."
+  },
+  {
+    "key": "npc_dialog_sq_nell_kay#2",
+    "text": "수락하면 곧바로 이동이다.\n가야 할 곳은 다른 성계지만\n문은 여기서 내가 열어 준다.",
+    "text_en": "Accept and we move right away.\nWhere you must go is another system,\nbut the door opens here, by my hand."
+  },
+  {
+    "key": "npc_dialog_sq_kael_vonn#0",
+    "text": "테라에서 이름 없는 영수증을\n내보내는 게 내 일이다.\n그 칸만 지키고 누군지는 안 적는다.",
+    "text_en": "At Terra I send out\nreceipts with no name on them.\nI keep that cell only and never write who."
+  },
+  {
+    "key": "npc_dialog_sq_kael_vonn#2",
+    "text": "수락하면 바로 출발이다.\n일할 곳은 다른 성계지만\n문은 내가 여기서 열어 주겠다.",
+    "text_en": "Accept and you leave at once.\nThe job is in another system,\nbut I open the door from here."
+  },
+  {
+    "key": "npc_dialog_sq_sira_mek#0",
+    "text": "오리온에서 이름 없는 영수증을\n인수하는 게 내 몫이다.\n그 칸만 지키고 누군지는 안 적어.",
+    "text_en": "At Orion I take in\nreceipts with no name on them.\nI keep that cell only and never write who."
+  },
+  {
+    "key": "npc_dialog_sq_sira_mek#2",
+    "text": "받겠다면 이동은 바로 시작된다.\n수행지는 다른 성계고\n여기 문은 내가 열어 두지.",
+    "text_en": "Take it and the trip begins now.\nThe work lies in another system,\nand I keep this door open for you."
+  },
+  {
+    "key": "npc_dialog_sq_ev_holt#0",
+    "text": "헤일로에서 열지 않는 봉투를\n건네는 게 내 일이다.\n그 칸만 지키고 이름은 적지 않아.",
+    "text_en": "At Halo I hand over\nenvelopes that stay sealed.\nI keep that cell only and write no name."
+  },
+  {
+    "key": "npc_dialog_sq_ev_holt#2",
+    "text": "수락하면 곧바로 이동이다.\n가야 할 곳은 다른 성계지만\n문은 여기서 내가 열어 준다.",
+    "text_en": "Accept and we move right away.\nWhere you must go is another system,\nbut the door opens here, by my hand."
+  },
+  {
+    "key": "npc_dialog_sq_toma_kale#0",
+    "text": "솔 성채에서 열지 않는 봉투를\n받아 두는 게 내 일이다.\n그 칸만 지키고 이름은 안 올린다.",
+    "text_en": "At Sol Citadel I receive\nenvelopes that stay sealed.\nI keep that cell only and file no name."
+  },
+  {
+    "key": "npc_dialog_sq_toma_kale#2",
+    "text": "수락하면 바로 출발이다.\n일할 곳은 다른 성계지만\n문은 내가 여기서 열어 주겠다.",
+    "text_en": "Accept and you leave at once.\nThe job is in another system,\nbut I open the door from here."
+  },
+  {
+    "key": "story_dialog_story_003#0",
+    "text": "테오 혼의 자리가 비었는데\n출정은 내일이다.\n함대는 기다려 주지 않는다.",
+    "text_en": "Teo Hon's seat is empty,\nand the sortie is tomorrow.\nThe fleet will not wait."
+  },
+  {
+    "key": "story_dialog_story_004#0",
+    "text": "정찰이 틀렸다!\n규모가 보고와 전혀 다르다.\n이건 기습이다.",
+    "text_en": "The recon was wrong!\nThe scale is nothing like the report.\nThis is a raid."
+  },
+  {
+    "key": "story_dialog_story_007#0",
+    "text": "이 빚은 내가 진 게 아니다.\n스텔리움이 먼저 우릴 버렸고\n그 자리 이름이 라이트홀드다.",
+    "text_en": "This debt was never mine.\nStellium abandoned us first,\nat a place called Light Hold."
+  },
+  {
+    "key": "story_dialog_story_012#0",
+    "text": "사령부가 너를 반역자로 올린다.\n나는 막을 수 없지만\n관문은 엘렌이 잠시 열어 줄 거다.",
+    "text_en": "Command is filing you as a traitor.\nI cannot stop it,\nbut Ellen will hold the gate open a moment."
+  },
+  {
+    "key": "story_dialog_story_013#0",
+    "text": "그리하벤은 지도에 없다.\n섀도우 마켓이란 이름으로 찍혀 있고\n문은 닉스 홀름이 열어 줄 거다.",
+    "text_en": "Greehaven is not on any map.\nIt is marked as Shadow Market,\nand Nyx Holm will open the door."
+  },
+  {
+    "key": "story_dialog_story_014#0",
+    "text": "카일과 미라, 가온이 들어왔으니\n이제 거점을 열 수 있다.\n다만 신뢰는 말로 사는 게 아니지.",
+    "text_en": "Kyle, Mira, and Gaon are with us,\nso we can open the hold now.\nBut trust is not bought with words."
+  },
+  {
+    "key": "story_dialog_story_015#0",
+    "text": "세렌 벨트는 지도에 없다.\n진짜 관문은 시리우스 보더이고\n초대장은 세렌 베일이 쥐고 있다.",
+    "text_en": "Seren Belt is on no map.\nThe real gate is Sirius Border,\nand Seren Vale holds the invitation."
+  },
+  {
+    "key": "story_dialog_story_017#0",
+    "text": "돈이 없으니\n암시장의 손을 빌릴 수밖에 없어.\n출처는 묻지 않아, 닉스의 원칙이야.",
+    "text_en": "No money left,\nso we borrow the black market's hand.\nNo asking the source. Nyx's rule."
+  },
+  {
+    "key": "story_dialog_story_019#0",
+    "text": "카일과 미라가 갈라섰다.\n한쪽은 치자 하고 한쪽은 숨자 하니\n오늘은 말만 들어 두자.",
+    "text_en": "Kyle and Mira have split.\nOne wants to strike, one wants to hide,\nso today we only listen."
+  },
+  {
+    "key": "story_dialog_story_021#0",
+    "text": "진압 함대가 외곽까지 와 있다.\n전부 몰려오진 않을 테니\n부딪칠 건 한 척이다.",
+    "text_en": "The suppression fleet is at the rim.\nThey will not all come at once,\nso we face one ship."
+  },
+  {
+    "key": "story_dialog_story_022#0",
+    "text": "깃발을 세운다.\n이름은 없지만\n그래서 살아남는 거다.",
+    "text_en": "We raise the flag.\nIt bears no name,\nand that is why it survives."
+  },
+  {
+    "key": "story_dialog_story_024#0",
+    "text": "사본은 오메가에 맡겨.\n린이 통행세 대신 기록을 받기로 했고\n원본은 거점에 둘 거야.",
+    "text_en": "We leave the copy at Omega.\nLynn takes the record instead of a toll,\nand the original stays at the hold."
+  },
+  {
+    "key": "story_dialog_story_026#0",
+    "text": "코발은 입을 닫았다.\n관문은 열어 주겠지만\n말은 한마디도 않겠다는 거지.",
+    "text_en": "Koval has gone silent.\nHe will open the gate,\nbut he will not say a word."
+  },
+  {
+    "key": "story_dialog_story_029#0",
+    "text": "선서를 다시 읽겠다.\n이름은 넣지 않고\n다시 버리는 것만 금한다.",
+    "text_en": "We read the oath again.\nNo names go in it.\nOnly one thing is forbidden: abandoning again."
+  },
+  {
+    "key": "story_dialog_story_030#0",
+    "text": "오늘은 여기까지다.\n은폐된 진실은 끝나지 않았지만\n우리에겐 아직 한편이 남아 있다.",
+    "text_en": "That is all for today.\nThe concealed truth is not over,\nbut we still have our own side."
+  },
+  {
+    "key": "story_dialog_story_030#1",
+    "text": "거점은 계속 지킨다.\n남은 일은 하나씩 풀어 가자.",
+    "text_en": "We keep the hold.\nWhat remains, we untangle one by one."
+  },
+  {
+    "key": "mission_clear_mission_002#0",
+    "text": "「해적 소탕」 임무 완료 보고입니다.\n교전 결과를 기록했고\n보상이 지급되었습니다.",
+    "text_en": "Mission report: Pirate Sweep is complete.\nEngagement results are logged,\nand your rewards have been issued."
+  },
+  {
+    "key": "story_chapter_end_01#1",
+    "text": "깃발에는 진영이 없고\n장부에는 이름이 없다.\n그러나 문은 남아 있다.",
+    "text_en": "The flag bears no faction\nand the ledger holds no names.\nYet the door remains."
+  },
+  {
+    "key": "story_chapter_end_01#3",
+    "text": "은폐된 진실은 여기서 접히지만\n끝난 것은 아니다.\n다음 항로에서 다시 열린다.",
+    "text_en": "The concealed truth folds here,\nbut it is not over.\nIt opens again on the next lane."
+  },
+  {
+    "key": "npc_dialog_vega_blue_10#0",
+    "text": "정찰 지원 왔다.\n위치가 오래 드러나면 곤란하니\n잠깐 있다가 빠지겠다.",
+    "text_en": "Recon support, reporting in.\nI cannot stay exposed for long,\nso I will pull out shortly."
+  },
+  {
+    "key": "npc_dialog_story_gaon_tela#0",
+    "text": "빈칸은 포기하지 않는다.\n지도는 아직 열려 있고\n이름을 찾지 못했을 뿐이다.",
+    "text_en": "I will not give up on the blank.\nThe map is still open;\nwe just have not found the name yet."
+  }
+]

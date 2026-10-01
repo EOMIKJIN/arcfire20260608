@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   countNarrativeDialogVisualLines,
+  isLatinNarrativeDialogScript,
   isNarrativeDialogContextBreak,
   narrativeDialogPagesFitLineBudget,
   splitNarrativeDialogSegmentsCore,
@@ -155,4 +156,58 @@ test('isNarrativeDialogContextBreak recognizes Korean endings', () => {
   assert.equal(isNarrativeDialogContextBreak('찾아낸다.'), true);
   assert.equal(isNarrativeDialogContextBreak('크림슨 레기온은'), false);
   assert.equal(isNarrativeDialogContextBreak('어둠의 구역안에'), false);
+});
+
+test('Latin script detector keeps Korean pack and flags English', () => {
+  assert.equal(
+    isLatinNarrativeDialogScript([
+      '은하계 동부를 손에 넣은 크림슨 레기온은',
+      '끈질기고 은밀한 움직임 끝에',
+    ]),
+    false,
+  );
+  assert.equal(
+    isLatinNarrativeDialogScript([
+      'Welcome, Commander.',
+      'You have arrived at Arcadia.',
+    ]),
+    true,
+  );
+});
+
+test('English leftover 4 fills 3+1 instead of paging 2+2', () => {
+  const chunks = splitNarrativeDialogSegmentsCore(
+    'Welcome, Commander.\nYou have arrived at Arcadia.\nPress Scan at the bottom first.\nThen open Talk when it unlocks.',
+    3,
+    WIDE,
+  );
+  assert.deepEqual(chunks, [
+    'Welcome, Commander.\nYou have arrived at Arcadia.\nPress Scan at the bottom first.',
+    'Then open Talk when it unlocks.',
+  ]);
+  assertPagesFit(chunks, 3, WIDE);
+});
+
+test('English sentence end at line 2 still fills the 3-line box', () => {
+  const chunks = splitNarrativeDialogSegmentsCore(
+    'Scan complete.\nTalk is now open.\nThe Crimson Legion seized the eastern rim\nand found the sleeping Arc Core.',
+    3,
+    WIDE,
+  );
+  assert.equal(
+    chunks[0],
+    'Scan complete.\nTalk is now open.\nThe Crimson Legion seized the eastern rim',
+  );
+  assert.equal(chunks[1], 'and found the sleeping Arc Core.');
+  assertPagesFit(chunks, 3, WIDE);
+});
+
+test('English phone-width wrap first page uses 3 visual lines', () => {
+  const text =
+    'Welcome, Commander. You have arrived at Arcadia. Press Scan at the bottom first. Then open Talk when it unlocks.';
+  const chunks = splitNarrativeDialogSegmentsCore(text, 3, 21);
+  assert.equal(chunks[0]?.split('\n').length, 3);
+  assert.ok((chunks[1]?.split('\n').length ?? 0) <= 3);
+  assert.notEqual(chunks[0]?.split('\n').length, 2);
+  assertPagesFit(chunks, 3, 21);
 });

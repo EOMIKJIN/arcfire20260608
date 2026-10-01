@@ -19,7 +19,7 @@ test('허브 승리는 hub_orbit 락만 끝낸다', () => {
     canCompleteQuestDefeatEnemy(lock, {
       venue: 'hub_orbit',
       enemyTemplateId: 'pirate_cruiser',
-      planetId: 'draco_haven',
+      planetId: 'titan_ruins',
     }),
     true,
   );
@@ -34,7 +34,7 @@ test('허브 승리는 hub_orbit 락만 끝낸다', () => {
     canCompleteQuestDefeatEnemy(lock, {
       venue: 'wave_assault',
       enemyTemplateId: 'pirate_cruiser',
-      planetId: 'draco_haven',
+      planetId: 'titan_ruins',
     }),
     false,
   );

@@ -111,7 +111,7 @@ story_dialog_story_002,메인스토리·동기 없는 진실,manual,,repeat,4,no
 story_dialog_obj_story_002_b,메인스토리·미네르바 바 밀수조,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_002_d,메인스토리·노아 프릭 심문,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_002_e,메인스토리·지휘 공백 통보,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_story_003,메인스토리·대행 출정,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_story_003,메인스토리·위임된 지휘권,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_003_a,메인스토리·코발 출정 하달,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_003_b,메인스토리·엘렌 관문 허가,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_story_004,메인스토리·예상 밖의 참사,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
@@ -126,16 +126,9 @@ npc_dialog_story_ian_koval,이안 코발 대기 대화,manual,,repeat,4,none,/(g
 npc_dialog_story_darel_sosa,다렐 소사 대기 대화,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_story_007,메인스토리·빚진 자의 증언,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_007_a,메인스토리·다렐 소사에게 라이트홀드를 물어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_007_b,메인스토리·세레나에게 은폐 주파수를 대조하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_007_c,메인스토리·소사에게 빚의 이자를 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_007_d,메인스토리·세레나에게 세 이름의 항로를 열어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_007_e,메인스토리·소사에게 다음 증언을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_007_b,메인스토리·소사에게 47시간과 자장가를 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_story_008,메인스토리·라이트홀드가 남긴 세 이름,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_008_a,메인스토리·소사에게 세 이름을 정식으로 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_008_b,메인스토리·세레나에게 세 항로 허가를 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_008_c,메인스토리·소사에게 합류 순서를 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_008_d,메인스토리·세레나에게 아이언 입구를 열어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_008_e,메인스토리·소사에게 출발 증언을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_008_b,메인스토리·소사에게 합류 순서를 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_story_009,메인스토리·3인 합류,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_009_b,메인스토리·카일 로렌과 합류하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_009_d,메인스토리·미라 솅크와 합류하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
@@ -145,67 +138,58 @@ story_dialog_obj_story_010_b,메인스토리·가온 텔라와 합류하라,manu
 story_dialog_obj_story_010_d,메인스토리·넷의 증거를 대조하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_010_e,메인스토리·카일에게 다음 화력을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_story_011,메인스토리·이면 협정,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_011_a,메인스토리·하르만에게 이면 칸을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_011_c,메인스토리·하르만에게 협정 사본을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_011_e,메인스토리·코발에게 이면 협정을 보고하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_011_a,메인스토리·가온에게 소개 명령서를 열어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_011_c,메인스토리·가온에게 체포령 초안을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_011_e,메인스토리·가온에게 누명 위험을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_story_012,메인스토리·반역자의 이름,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_012_a,메인스토리·코발에게 누명 통보를 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_012_b,메인스토리·엘렌에게 관문 허가를 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_012_d,메인스토리·엘렌에게 이탈을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_012_e,메인스토리·코발에게 마지막 좌표를 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_012_a,메인스토리·미라에게 포위 통보를 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_012_b,메인스토리·가온에게 돌파 경로를 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_012_e,메인스토리·가온에게 섀도우 넥서스 좌표를 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_story_013,메인스토리·도피처를 찾아서,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_013_b,메인스토리·닐 벡스에게 문 앞을 물어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_013_c,메인스토리·닉스 홀름과 대화하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_013_d,메인스토리·닉스에게 수배 범위를 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_013_e,메인스토리·닐에게 은신 칸을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_013_c,메인스토리·닉스에게 착륙 거부를 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_013_d,메인스토리·닉스에게 증명 조건을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_013_e,메인스토리·닐에게 대기 칸을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_story_014,메인스토리·첫 신뢰,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_014_a,메인스토리·닉스에게 거점 개설을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_014_b,메인스토리·카일에게 방어 화력을 맡겨라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_014_c,메인스토리·미라에게 거점 장부를 맡겨라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_014_d,메인스토리·가온에게 은폐 지도를 맡겨라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_014_e,메인스토리·닉스에게 첫 거점 결정을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_story_015,메인스토리·두 번째 초대,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_014_a,메인스토리·카일에게 약탈 경보를 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_014_d,메인스토리·닉스에게 거점 공개를 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_014_e,메인스토리·미라에게 첫 거점 장부를 열어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_story_015,메인스토리·함정인가 기회인가,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_015_b,메인스토리·세렌 베일의 초대를 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_015_c,메인스토리·세렌에게 함정 여부를 가려라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_015_e,메인스토리·닉스에게 초대 결과를 보고하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_story_016,메인스토리·두 개의 적,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_016_c,메인스토리·드락 베일에게 추적 소문을 들어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_story_016,메인스토리·외곽의 잔해,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_016_c,메인스토리·세렌에게 본대 아님을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_016_e,메인스토리·카일에게 두 적을 보고하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_story_017,메인스토리·검은 시장의 손,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_017_a,메인스토리·미라에게 자금 칸을 열어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_017_b,메인스토리·닐에게 중개를 맡겨라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_017_c,메인스토리·닉스에게 자금 원칙을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_017_d,메인스토리·카일에게 보급 화력을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_017_e,메인스토리·미라에게 자금 마감을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_story_018,메인스토리·요새의 뼈대,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_018_a,메인스토리·카일에게 방호 배치를 맡겨라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_018_b,메인스토리·가온에게 은폐 방호를 겹쳐라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_018_c,메인스토리·닉스에게 요새 개설을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_018_d,메인스토리·미라에게 보급 뼈대를 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_018_d,메인스토리·가온에게 은폐 방호를 닫아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_018_e,메인스토리·카일에게 뼈대 마감을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_story_019,메인스토리·내부의 균열,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_019_a,메인스토리·카일의 노선을 들어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_019_b,메인스토리·미라의 노선을 들어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_019_c,메인스토리·가온에게 균열을 물어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_019_d,메인스토리·닉스에게 중재를 맡겨라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_019_e,메인스토리·닉스에게 균열 기록을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_story_020,메인스토리·진실 혹은 이간계,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_020_a,메인스토리·미라에게 배신 장부를 대조하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_020_b,메인스토리·카일에게 소문을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_020_c,메인스토리·가온에게 이간 채널을 물어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_020_d,메인스토리·닉스에게 이간 판정을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_020_e,메인스토리·미라에게 이간 마감을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_story_021,메인스토리·그리하벤 공방전,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_020_d,메인스토리·가온에게 스텔리움 정보국을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_020_e,메인스토리·미라에게 넷의 결속을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_story_021,메인스토리·섀도우 넥서스 공방전,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_021_a,메인스토리·카일에게 공세 배치를 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_021_c,메인스토리·닉스에게 거점 생존을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_021_d,메인스토리·가온에게 공세 지도를 접어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_021_e,메인스토리·카일에게 공방전 마감을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_story_022,메인스토리·첫 깃발,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_022_a,메인스토리·닉스에게 깃발 선포를 들어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_021_d,메인스토리·닐에게 우리를 뭐라고 부르는지 들어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_021_e,메인스토리·카일에게 퇴각을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_story_022,메인스토리·깃발 없는 승리,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_022_a,메인스토리·미라에게 이름 없는 동맹을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_022_b,메인스토리·카일에게 깃발 화력을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_022_c,메인스토리·미라에게 깃발 장부를 열어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_022_d,메인스토리·가온에게 깃발 지도를 맡겨라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-story_dialog_obj_story_022_e,메인스토리·닉스에게 본문 결을 받아라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_022_d,메인스토리·세렌에게 대표 채널을 열어라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_022_e,메인스토리·닉스에게 문은 열렸으나 국가명은 없음을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_story_023,메인스토리·깃발의 메아리,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_023_b,메인스토리·미레유에게 메아리를 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_023_c,메인스토리·가온에게 메아리를 보고하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
@@ -326,3 +310,6 @@ npc_dialog_orin__revisit,오린 케이드 재회,manual,,repeat,4,none,/(game)/p
 npc_dialog_sela__revisit,셀라 모른 재회,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_anomaly_researcher,이상현상 연구원 수락,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_anomaly_researcher_abandon,이상현상 연구원 포기,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_011_b,메인스토리·미라와 결재를 역추적하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_011_d,메인스토리·미라에게 이면 합의 날짜를 대조하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+story_dialog_obj_story_016_b,메인스토리·세렌에게 크림슨 표식을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0

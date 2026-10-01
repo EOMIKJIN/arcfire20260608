@@ -323,10 +323,10 @@ export const STELLA_CAPTAIN_NOTE_FROM_CSV = [
   {
     "id": "scn_story_nyx_holm",
     "captainId": "npc_cpt_story_nyx_holm",
-    "nameHints": "닉스|홀름|nyx|그리하벤",
+    "nameHints": "닉스|홀름|nyx|섀도우",
     "sort": "1",
-    "textKo": "닉스는 문지기야. 이름은 안 적어. 그리하벤은 가칭이야.",
-    "textEn": "Nyx keeps the door. No names. Greehaven is a working title."
+    "textKo": "닉스는 문지기야. 이름은 안 적어. 거점은 섀도우 넥서스야.",
+    "textEn": "Nyx keeps the door. No names. The hold is Shadow Nexus."
   },
   {
     "id": "scn_story_seren_vale",

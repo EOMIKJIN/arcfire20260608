@@ -38,7 +38,8 @@ const WAVE_TRIGGER_VARIANTS: readonly string[] = ['draco_wave', 'endgame_boss'];
 const ENDGAME_BOSS_VARIANT = 'endgame_boss';
 
 /**
- * 우선순위: 분쟁 차례 체류 > 쿨다운 > RED [전투] 공격 진입(ActivePool 무관) > endgame_boss.
+ * 우선순위: 분쟁 차례 체류 > RED [전투] 어썰트(플레이어 행동 우선·쿨다운 통과)
+ * > 자동 경로 승리 쿨다운 > chat_armed > endgame_boss.
  * 순차 리스트 착륙 자동 웨이브(csv_variant)는 폐지 — 차례가 오면 territorial_turn 만 발화.
  */
 export function evaluatePlanetWaveCombatTrigger(
@@ -68,14 +69,14 @@ export function evaluatePlanetWaveCombatTrigger(
     return { enabled: true, rule: 'territorial_turn', variant: waveVariant };
   }
 
-  if (cooldownActive) {
-    return { enabled: false, rule: 'victory_cooldown', variant };
-  }
-
+  // 월드맵 [전투] — 플레이어 행동 우선. 자동 재교전 쿨다운과 별축.
   if (assaultActive && stayBlocked) {
-    // RED [전투] 진입은 ActivePool(순차 리스트) 선행 조건 아님 · 전투 후 동적 편입
     const waveVariant = WAVE_TRIGGER_VARIANTS.includes(variant) ? variant : 'draco_wave';
     return { enabled: true, rule: 'planet_assault', variant: waveVariant };
+  }
+
+  if (cooldownActive) {
+    return { enabled: false, rule: 'victory_cooldown', variant };
   }
 
   if (chatArmedPending) {

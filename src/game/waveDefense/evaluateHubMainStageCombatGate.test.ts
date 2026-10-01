@@ -3,7 +3,10 @@
  * npx tsx src/game/waveDefense/evaluateHubMainStageCombatGate.test.ts
  */
 import assert from 'node:assert/strict';
-import { evaluateHubMainStageCombatEntered } from './evaluateHubMainStageCombatGate';
+import {
+  evaluateHubMainStageCombatEntered,
+  RESIDENT_HUB_MAIN_STAGE_AUTO_COMBAT,
+} from './evaluateHubMainStageCombatGate';
 
 function test(name: string, fn: () => void): void {
   try {
@@ -24,8 +27,9 @@ const hubOpen = {
   waveDefenseSessionHere: false,
 };
 
-test('허브 전용 행성 — 메인스테이지 교전 허용', () => {
-  assert.equal(evaluateHubMainStageCombatEntered(hubOpen), true);
+test('상주 허브 자동교전 축 OFF — CSV·적함 있어도 유휴 착륙 교전 없음', () => {
+  assert.equal(RESIDENT_HUB_MAIN_STAGE_AUTO_COMBAT, false);
+  assert.equal(evaluateHubMainStageCombatEntered(hubOpen), false);
 });
 
 test('분쟁 차례 pending — 허브 교전 억제(웨이브 대기)', () => {
@@ -77,10 +81,10 @@ test('드라코 시험 베뉴 — 웨이브 시작 전 허브 보스 억제', ()
   );
 });
 
-test('드라코 베뉴 OFF — CSV 허브 보스 교전 허용', () => {
+test('드라코 베뉴 OFF — 상주 허브 자동교전 축도 OFF', () => {
   assert.equal(
     evaluateHubMainStageCombatEntered({ ...hubOpen, dracoCombatTestVenue: false }),
-    true,
+    false,
   );
 });
 

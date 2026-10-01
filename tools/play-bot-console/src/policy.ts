@@ -143,6 +143,13 @@ function bump(w: Record<ActionKind, number>, key: ActionKind, delta: number): vo
  * 효율 높으면 주기를 늘려 정책을 덜 흔들고, 정체·HOLD면 2일로 당긴다.
  */
 export function decideAdaptPeriodDays(state: LearningState): number {
+  const early = state.earlyFeels[state.earlyFeels.length - 1];
+  if (
+    early
+    && early.codes.some((c) => c === 'EARLY_OFF_SPINE' || c === 'EARLY_HANGAR_WIPE' || c === 'EARLY_DEAD_AIR' || c === 'EARLY_QUEST_GAP')
+  ) {
+    return 2;
+  }
   const g = state.growth.slice(-6);
   if (g.length < 2) return 2;
   let dExpSum = 0;
@@ -208,8 +215,38 @@ export function adaptPolicy(
     notes.push('국경악화→편입 경로↑');
   }
 
+  if (codes.has('EARLY_OFF_SPINE') || codes.has('EARLY_DENSITY_THIN')) {
+    bump(w, 'quest', 0.08);
+    bump(w, 'gear', -0.04);
+    bump(w, 'develop', -0.04);
+    bump(w, 'skill', -0.03);
+    bump(w, 'capital', -0.06);
+    bump(w, 'annex_path', -0.04);
+    bump(w, 'combat', -0.03);
+    notes.push('초반3분 스파인밖→퀘스트 밀도↑ 성장끼어들기↓');
+  }
+  if (codes.has('EARLY_HANGAR_WIPE')) {
+    bump(w, 'combat', -0.06);
+    bump(w, 'travel', 0.03);
+    notes.push('초반3분 격납고 파괴→수련전투↓');
+  }
+  if (codes.has('EARLY_DEAD_AIR') || codes.has('EARLY_QUEST_GAP')) {
+    bump(w, 'quest', 0.06);
+    notes.push('초반3분 공백→본편 비트 유지');
+  }
+
+  if (codes.has('PLACEHOLDER_HOLD') || codes.has('PLACEHOLDER_UNRESOLVED')) {
+    notes.push('플레이스홀더 HOLD→해석기·미해석 퀘 스킵 (가중으로 안 품)');
+  }
+
   if (codes.has('REPEATED_HOLD') || codes.has('HOLD_PATTERN') || codes.has('DAY_HOLD_SPIKE')) {
-    if (kpi.lastHoldReason === 'combat_off') {
+    if (
+      kpi.lastHoldReason === 'no_dest_system'
+      || kpi.lastHoldReason === 'unresolved_placeholder'
+      || kpi.lastHoldReason === 'no_discovery'
+    ) {
+      notes.push('HOLD 토큰→해석/스킵 (이동가중 금지)');
+    } else if (kpi.lastHoldReason === 'combat_off') {
       bump(w, 'travel', 0.05);
       bump(w, 'capital', 0.04);
       notes.push('HOLD combat_off→수도 항로');

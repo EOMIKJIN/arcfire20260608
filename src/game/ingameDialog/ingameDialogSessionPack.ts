@@ -54,8 +54,15 @@ export type IngameDialogSessionPack = {
   uniquePortraitSources: ImageSourcePropType[];
 };
 
+/** 인게임 대사 — 작성 사전 줄바꿈을 지우고 엔진 soft-wrap만 쓴다. cinematic 경로는 호출하지 않는다. */
 export function normalizeStoryBody(raw: string): string {
-  return raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n{2,}/g, '\n').trim();
+  return String(raw ?? '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/\\n/g, '\n')
+    .replace(/\n+/g, ' ')
+    .replace(/ {2,}/g, ' ')
+    .trim();
 }
 
 export function applyTextContext(

@@ -32,28 +32,22 @@ export const MISSION_QUEST_COMBAT_OPS_FROM_CSV: MissionQuestCombatOpRow[] = [
     anchorPlanetId: "draco_haven",
   },
   {
-    id: "qco_obj_story_011_b",
-    objectiveId: "obj_story_011_b",
-    encounterPolicy: "hub_orbit",
-    anchorPlanetId: "vega_base",
-  },
-  {
-    id: "qco_obj_story_012_c",
-    objectiveId: "obj_story_012_c",
-    encounterPolicy: "hub_orbit",
-    anchorPlanetId: "arcadia_prime",
-  },
-  {
-    id: "qco_obj_story_016_b",
-    objectiveId: "obj_story_016_b",
+    id: "qco_obj_story_014_c",
+    objectiveId: "obj_story_014_c",
     encounterPolicy: "hub_orbit",
     anchorPlanetId: "crimson_base",
   },
   {
-    id: "qco_obj_story_021_b",
-    objectiveId: "obj_story_021_b",
+    id: "qco_obj_story_012_d",
+    objectiveId: "obj_story_012_d",
     encounterPolicy: "hub_orbit",
-    anchorPlanetId: "shadow_market",
+    anchorPlanetId: "sirius_border",
+  },
+  {
+    id: "qco_obj_story_021_c",
+    objectiveId: "obj_story_021_c",
+    encounterPolicy: "hub_orbit",
+    anchorPlanetId: "blood_station",
   },
   {
     id: "qco_obj_story_028_b",
@@ -83,13 +77,13 @@ export const MISSION_QUEST_COMBAT_OPS_FROM_CSV: MissionQuestCombatOpRow[] = [
     id: "qco_obj_s037_c",
     objectiveId: "obj_s037_c",
     encounterPolicy: "hub_orbit",
-    anchorPlanetId: "synth_070_p",
+    anchorPlanetId: "synth_075_p",
   },
   {
     id: "qco_obj_s001_a",
     objectiveId: "obj_s001_a",
     encounterPolicy: "hub_orbit",
-    anchorPlanetId: "arcadia_prime",
+    anchorPlanetId: "solar_station",
   },
   {
     id: "qco_obj_s003_a",
@@ -101,13 +95,13 @@ export const MISSION_QUEST_COMBAT_OPS_FROM_CSV: MissionQuestCombatOpRow[] = [
     id: "qco_obj_s005_a",
     objectiveId: "obj_s005_a",
     encounterPolicy: "hub_orbit",
-    anchorPlanetId: "minerva_deep",
+    anchorPlanetId: "iron_remnant",
   },
   {
     id: "qco_obj_s007_a",
     objectiveId: "obj_s007_a",
     encounterPolicy: "hub_orbit",
-    anchorPlanetId: "vega_base",
+    anchorPlanetId: "eden_city",
   },
   {
     id: "qco_obj_s009_a",
@@ -125,7 +119,7 @@ export const MISSION_QUEST_COMBAT_OPS_FROM_CSV: MissionQuestCombatOpRow[] = [
     id: "qco_obj_s013_a",
     objectiveId: "obj_s013_a",
     encounterPolicy: "hub_orbit",
-    anchorPlanetId: "draco_haven",
+    anchorPlanetId: "titan_ruins",
   },
   {
     id: "qco_obj_s015_a",
@@ -167,7 +161,7 @@ export const MISSION_QUEST_COMBAT_OPS_FROM_CSV: MissionQuestCombatOpRow[] = [
     id: "qco_obj_s027_a",
     objectiveId: "obj_s027_a",
     encounterPolicy: "hub_orbit",
-    anchorPlanetId: "shadow_market",
+    anchorPlanetId: "blood_station",
   },
   {
     id: "qco_obj_s029_a",
@@ -179,7 +173,7 @@ export const MISSION_QUEST_COMBAT_OPS_FROM_CSV: MissionQuestCombatOpRow[] = [
     id: "qco_obj_s032_a",
     objectiveId: "obj_s032_a",
     encounterPolicy: "hub_orbit",
-    anchorPlanetId: "minerva_deep",
+    anchorPlanetId: "helios_core",
   },
   {
     id: "qco_obj_tq_c01_a",

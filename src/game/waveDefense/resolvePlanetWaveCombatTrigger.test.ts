@@ -94,6 +94,19 @@ test('순차 리스트 RED [전투] — planet_assault', () => {
   assert.equal(r.rule, 'planet_assault');
 });
 
+test('RED [전투] 어썰트는 승리 쿨다운보다 선행', () => {
+  const r = evaluatePlanetWaveCombatTrigger({
+    variant: 'draco_wave',
+    onSequentialList: true,
+    stayBlocked: true,
+    assaultActive: true,
+    cooldownActive: true,
+    territorialTurnPending: false,
+  });
+  assert.equal(r.enabled, true);
+  assert.equal(r.rule, 'planet_assault');
+});
+
 test('분쟁외 RED [전투] — 허용·planet_assault', () => {
   const r = evaluatePlanetWaveCombatTrigger({
     variant: 'draco_wave',

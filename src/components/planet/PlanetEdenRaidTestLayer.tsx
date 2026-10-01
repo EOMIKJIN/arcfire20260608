@@ -289,7 +289,7 @@ function resolveStageFleetSeedSlotsForPlanet(
     }
     return withDracoTestAllies(fromCaptains);
   }
-  // 레드팀 폴백 슬롯 없음 — 적함은 CSV `combat`+`red` 함장(베가·드라코 테스트)만 사용.
+  // 레드팀 폴백 슬롯 없음 — 상주 허브 자동교전은 폐기. 적함은 퀘스트 hub_orbit 또는 웨이브 시드.
   const rows: StageFleetSeedSlot[] = [];
   for (let i = 0; i < DUEL_TEAM_BLUE_COUNT_FALLBACK; i++) rows.push({ team: 'blue', npcShipId: null, captainId: null });
   return withDracoTestAllies(rows);

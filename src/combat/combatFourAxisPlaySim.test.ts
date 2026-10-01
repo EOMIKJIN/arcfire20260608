@@ -13,6 +13,7 @@ import {
 } from '../arcCore/balance/balanceTableRegistry';
 import { PlayScenarioZonePlanets_FROM_BALANCE_CSV } from '../data/balance/generated';
 import { MISSION_QUEST_COMBAT_OPS_FROM_CSV } from '../data/generated/csvMissionQuestCombatOps';
+import { NPC_CAPTAINS_FROM_CSV } from '../data/generated';
 import { evaluateHubMainStageCombatEntered } from '../game/waveDefense/evaluateHubMainStageCombatGate';
 import { evaluatePlanetWaveCombatTrigger } from '../game/waveDefense/evaluatePlanetWaveCombatTrigger';
 import {
@@ -137,14 +138,12 @@ test('코어 21행성 — 유휴 착륙에서 허브·웨이브 이중 발화 �
       cooldownActive: false,
       territorialTurnPending: false,
     });
+    assert.equal(hub, false, `${planetId} 유휴 상주 허브 교전 OFF`);
     if (variant === 'endgame_boss') {
       assert.equal(wave.enabled, true, `${planetId} endgame 웨이브`);
       assert.equal(wave.rule, 'csv_variant');
     } else {
       assert.equal(wave.enabled, false, `${planetId} 유휴 웨이브 OFF`);
-    }
-    if (hub && wave.enabled) {
-      assert.equal(variant, 'endgame_boss', `${planetId} 허브+웨이브 동시 — 세션 전 endgame만`);
     }
   }
 });
@@ -299,6 +298,18 @@ test('선체 스케일 — 아르카디아 1.0 · 제네시스 바닥', () => {
     armor: 8,
   });
   assert.ok(genesis.maxHp >= 480, `genesis hp=${genesis.maxHp}`);
+});
+
+test('드라코 — 상주 허브 자동교전 폐기 · 웨이브 슬롯은 유지', () => {
+  assert.equal(resolveMainStageCombatEnabled('draco_haven'), false);
+  const residentCombatRed = NPC_CAPTAINS_FROM_CSV.some(
+    (c) =>
+      c.basePlanetId === 'draco_haven'
+      && c.operationalState === 'combat'
+      && (c.combatTeam === 'red' || c.combatTeam === 'orange'),
+  );
+  assert.equal(residentCombatRed, false);
+  assert.ok(listPlanetWaveEnemySlots('draco_haven').length > 0);
 });
 
 test('hub_orbit 락은 항로 TCL 경로에 안 섞임 (venue 게이트)', () => {

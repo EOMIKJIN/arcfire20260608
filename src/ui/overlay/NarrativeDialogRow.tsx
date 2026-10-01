@@ -174,6 +174,7 @@ export const NarrativeDialogRow = memo(function NarrativeDialogRow({
             skipAnimation={skipAnimation}
             cursor={typingLive}
             active={typingLive}
+            lineSlots={maxLines}
           />
         </View>
       </View>

@@ -119,7 +119,7 @@ test('챕터1 본편·이름서브 수락 Lv — 권장안 게이트', () => {
   assert.equal(MISSIONS_FROM_CSV.story_023?.levelRequired, 32);
   assert.equal(MISSIONS_FROM_CSV.story_025?.levelRequired, 36);
   assert.equal(MISSIONS_FROM_CSV.story_027?.levelRequired, 40);
-  assert.equal(MISSIONS_FROM_CSV.story_028?.levelRequired, 25);
+  assert.equal(MISSIONS_FROM_CSV.story_028?.levelRequired, 40);
   assert.equal(MISSIONS_FROM_CSV.story_029?.levelRequired, 40);
   assert.equal(MISSIONS_FROM_CSV.story_030?.levelRequired, 44);
   assert.equal(MISSIONS_FROM_CSV.sandbox_034?.levelRequired, 28);

@@ -1,0 +1,1593 @@
+{
+  "batch": 4,
+  "count": 46,
+  "items": [
+    {
+      "key": "npc_dialog_sq_sel_vane#2",
+      "sceneId": "npc_dialog_sq_sel_vane",
+      "pageIndex": 2,
+      "label": "[ 셀 베인 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_sel_vane",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "sel_vane"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "비콘에서 빈 지휘 매물의 인수를 기록한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Sel Vane keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_has_quinn#0",
+      "sceneId": "npc_dialog_sq_has_quinn",
+      "pageIndex": 0,
+      "label": "[ 하스 퀸 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_has_quinn",
+      "text": "마크 항로에서 맞지 않는 숫자를 대조한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Has Quinn keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "has_quinn"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "마크 항로에서 맞지 않는 숫자를 대조한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Has Quinn keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_has_quinn#2",
+      "sceneId": "npc_dialog_sq_has_quinn",
+      "pageIndex": 2,
+      "label": "[ 하스 퀸 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_has_quinn",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "has_quinn"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "마크 항로에서 맞지 않는 숫자를 대조한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Has Quinn keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_iva_wren#0",
+      "sceneId": "npc_dialog_sq_iva_wren",
+      "pageIndex": 0,
+      "label": "[ 이바 렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_iva_wren",
+      "text": "카론에서 틀린 숫자의 사본을 맡는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Iva Wren keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "iva_wren"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "카론에서 틀린 숫자의 사본을 맡는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Iva Wren keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_iva_wren#2",
+      "sceneId": "npc_dialog_sq_iva_wren",
+      "pageIndex": 2,
+      "label": "[ 이바 렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_iva_wren",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "iva_wren"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "카론에서 틀린 숫자의 사본을 맡는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Iva Wren keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_peck_sorin#0",
+      "sceneId": "npc_dialog_sq_peck_sorin",
+      "pageIndex": 0,
+      "label": "[ 펙 소린 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_peck_sorin",
+      "text": "페가수스에서 훔친 통신 대역을 기록한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Peck Sorin keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "peck_sorin"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "페가수스에서 훔친 통신 대역을 기록한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Peck Sorin keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_peck_sorin#2",
+      "sceneId": "npc_dialog_sq_peck_sorin",
+      "pageIndex": 2,
+      "label": "[ 펙 소린 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_peck_sorin",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "peck_sorin"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "페가수스에서 훔친 통신 대역을 기록한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Peck Sorin keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_dain_rho#0",
+      "sceneId": "npc_dialog_sq_dain_rho",
+      "pageIndex": 0,
+      "label": "[ 다인 로 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_dain_rho",
+      "text": "마크에서 훔친 대역의 인수를 맡는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Dain Rho keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "dain_rho"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "마크에서 훔친 대역의 인수를 맡는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Dain Rho keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_dain_rho#2",
+      "sceneId": "npc_dialog_sq_dain_rho",
+      "pageIndex": 2,
+      "label": "[ 다인 로 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_dain_rho",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "dain_rho"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "마크에서 훔친 대역의 인수를 맡는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Dain Rho keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_mir_kell#0",
+      "sceneId": "npc_dialog_sq_mir_kell",
+      "pageIndex": 0,
+      "label": "[ 미르 켈 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_mir_kell",
+      "text": "제피르에서 공란이 찍힌 상자를 내보낸다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Mir Kell keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "mir_kell"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "제피르에서 공란이 찍힌 상자를 내보낸다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Mir Kell keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_mir_kell#2",
+      "sceneId": "npc_dialog_sq_mir_kell",
+      "pageIndex": 2,
+      "label": "[ 미르 켈 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_mir_kell",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "mir_kell"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "제피르에서 공란이 찍힌 상자를 내보낸다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Mir Kell keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_osa_pell#0",
+      "sceneId": "npc_dialog_sq_osa_pell",
+      "pageIndex": 0,
+      "label": "[ 오사 펠 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_osa_pell",
+      "text": "글레이에서 공란 상자를 인수한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Osa Pell keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "osa_pell"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "글레이에서 공란 상자를 인수한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Osa Pell keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_osa_pell#2",
+      "sceneId": "npc_dialog_sq_osa_pell",
+      "pageIndex": 2,
+      "label": "[ 오사 펠 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_osa_pell",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "osa_pell"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "글레이에서 공란 상자를 인수한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Osa Pell keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_brin_tack#0",
+      "sceneId": "npc_dialog_sq_brin_tack",
+      "pageIndex": 0,
+      "label": "[ 브린 택 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_brin_tack",
+      "text": "아스트라에서 봉인된 기술 인수를 맡긴다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Brin Tack keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "brin_tack"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "아스트라에서 봉인된 기술 인수를 맡긴다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Brin Tack keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_brin_tack#2",
+      "sceneId": "npc_dialog_sq_brin_tack",
+      "pageIndex": 2,
+      "label": "[ 브린 택 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_brin_tack",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "brin_tack"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "아스트라에서 봉인된 기술 인수를 맡긴다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Brin Tack keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_nell_kay#0",
+      "sceneId": "npc_dialog_sq_nell_kay",
+      "pageIndex": 0,
+      "label": "[ 넬 케이 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_nell_kay",
+      "text": "루나에서 봉인 인수를 받는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Nell Kay keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "nell_kay"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "루나에서 봉인 인수를 받는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Nell Kay keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_nell_kay#2",
+      "sceneId": "npc_dialog_sq_nell_kay",
+      "pageIndex": 2,
+      "label": "[ 넬 케이 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_nell_kay",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "nell_kay"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "루나에서 봉인 인수를 받는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Nell Kay keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_kael_vonn#0",
+      "sceneId": "npc_dialog_sq_kael_vonn",
+      "pageIndex": 0,
+      "label": "[ 카엘 본 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_kael_vonn",
+      "text": "테라에서 이름 없는 영수증을 내보낸다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Kael Vonn keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "kael_vonn"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "테라에서 이름 없는 영수증을 내보낸다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Kael Vonn keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_kael_vonn#2",
+      "sceneId": "npc_dialog_sq_kael_vonn",
+      "pageIndex": 2,
+      "label": "[ 카엘 본 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_kael_vonn",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "kael_vonn"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "테라에서 이름 없는 영수증을 내보낸다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Kael Vonn keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_sira_mek#0",
+      "sceneId": "npc_dialog_sq_sira_mek",
+      "pageIndex": 0,
+      "label": "[ 시라 멕 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_sira_mek",
+      "text": "오리온에서 이름 없는 영수증을 인수한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Sira Mek keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "sira_mek"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "오리온에서 이름 없는 영수증을 인수한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Sira Mek keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_sira_mek#2",
+      "sceneId": "npc_dialog_sq_sira_mek",
+      "pageIndex": 2,
+      "label": "[ 시라 멕 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_sira_mek",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "sira_mek"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "오리온에서 이름 없는 영수증을 인수한다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Sira Mek keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_ev_holt#0",
+      "sceneId": "npc_dialog_sq_ev_holt",
+      "pageIndex": 0,
+      "label": "[ 에브 홀트 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_ev_holt",
+      "text": "헤일로에서 열지 않는 봉투를 건넨다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Ev Holt keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "ev_holt"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "헤일로에서 열지 않는 봉투를 건넨다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Ev Holt keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_ev_holt#2",
+      "sceneId": "npc_dialog_sq_ev_holt",
+      "pageIndex": 2,
+      "label": "[ 에브 홀트 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_ev_holt",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "ev_holt"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "헤일로에서 열지 않는 봉투를 건넨다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Ev Holt keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_toma_kale#0",
+      "sceneId": "npc_dialog_sq_toma_kale",
+      "pageIndex": 0,
+      "label": "[ 토마 케일 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_toma_kale",
+      "text": "솔 성채에서 열지 않는 봉투를 받는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+      "text_en": "Toma Kale keeps that cell.\nI file no name.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "toma_kale"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "솔 성채에서 열지 않는 봉투를 받는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Toma Kale keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_sq_toma_kale#2",
+      "sceneId": "npc_dialog_sq_toma_kale",
+      "pageIndex": 2,
+      "label": "[ 토마 케일 ]",
+      "speakerNpcCaptainId": "npc_cpt_sq_toma_kale",
+      "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+      "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": "toma_kale"
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "솔 성채에서 열지 않는 봉투를 받는다.\n나는 그 칸만 지킨다.\n이름은 올리지 않는다.",
+          "text_en": "Toma Kale keeps that cell.\nI file no name."
+        },
+        {
+          "pageIndex": 1,
+          "text": "용건이 있으면 짧게 말하라.\n장부 밖 이야기는 듣지 않는다.\n항로는 그대로다.",
+          "text_en": "If you have business, keep it short.\nI will not hear talk off the ledger.\nThe lane stays as it is."
+        },
+        {
+          "pageIndex": 2,
+          "text": "수락하면 이동이 시작된다.\n수행지는 다른 성계다.\n나는 여기서 문을 연다.",
+          "text_en": "Accept and the travel starts.\nThe work is in another system.\nI open the door here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_003#0",
+      "sceneId": "story_dialog_story_003",
+      "pageIndex": 0,
+      "label": "[ 이안 코발 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_ian_koval",
+      "text": "테오 혼의 자리가 비었다.\\n출정은 내일이다.\\n함대는 기다려 주지 않는다.",
+      "text_en": "Darell Hon's seat is empty.\\nThe sortie is tomorrow.\\nThe fleet will not wait.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_003",
+        "objectiveId": "",
+        "missionTitle": "대행 출정",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_ian_koval",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "테오 혼의 자리가 비었다.\\n출정은 내일이다.\\n함대는 기다려 주지 않는다.",
+          "text_en": "Darell Hon's seat is empty.\\nThe sortie is tomorrow.\\nThe fleet will not wait."
+        },
+        {
+          "pageIndex": 1,
+          "text": "네 이름이 사건 기록에 올라 있다.\\n오늘부로 함장 대행이다.\\n베가 전초기지로 가라.",
+          "text_en": "Your name is in the case file.\\nYou are acting captain.\\nGo to Vega Outpost."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_004#0",
+      "sceneId": "story_dialog_story_004",
+      "pageIndex": 0,
+      "label": "[ 하르만 돌 ]",
+      "speakerNpcCaptainId": "npc_cpt_vega_watch_01",
+      "text": "정찰이 틀렸다.\\n규모가 다르다.\\n기습이다.",
+      "text_en": "The recon was wrong.\\nThe scale is different.\\nThis is a raid.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_004",
+        "objectiveId": "",
+        "missionTitle": "예상 밖의 참사",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_vega_watch_01",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "정찰이 틀렸다.\\n규모가 다르다.\\n기습이다.",
+          "text_en": "The recon was wrong.\\nThe scale is different.\\nThis is a raid."
+        },
+        {
+          "pageIndex": 1,
+          "text": "함대를 지켜라.\\n아니 — 살아남아라.\\n신호가 하나씩 꺼진다.",
+          "text_en": "Hold the fleet.\\nNo—stay alive.\\nSignals are going dark."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_007#0",
+      "sceneId": "story_dialog_story_007",
+      "pageIndex": 0,
+      "label": "[ 다렐 소사 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_darel_sosa",
+      "text": "이 빚은 내가 진 게 아니다.\n스텔리움이 먼저 우릴 버렸지.\n그곳의 이름은 라이트홀드다.",
+      "text_en": "The debt is not mine.\nStellium abandoned first.\nThe name is Light Hold.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_007",
+        "objectiveId": "",
+        "missionTitle": "빚진 자의 증언",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_darel_sosa",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "이 빚은 내가 진 게 아니다.\n스텔리움이 먼저 우릴 버렸지.\n그곳의 이름은 라이트홀드다.",
+          "text_en": "The debt is not mine.\nStellium abandoned first.\nThe name is Light Hold."
+        },
+        {
+          "pageIndex": 1,
+          "text": "베가 기습도, 그때 우릴 버린 것도\n같은 자의 짓이다.\n증거는 아직 내 입에만 있으니 남아라.",
+          "text_en": "The Vega raid and that abandonment are one line.\nProof sits in my mouth only.\nStay if you will hear more."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_012#0",
+      "sceneId": "story_dialog_story_012",
+      "pageIndex": 0,
+      "label": "[ 이안 코발 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_ian_koval",
+      "text": "사령부가 너를 반역자로 올린다.\n나는 막지 못하고\n관문은 엘렌이 잠시 열어 줄 거다.",
+      "text_en": "Command files you as traitor.\nI cannot stop it.\nEllen opens the gate a moment.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_012",
+        "objectiveId": "",
+        "missionTitle": "반역자의 이름",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_ian_koval",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "사령부가 너를 반역자로 올린다.\n나는 막지 못하고\n관문은 엘렌이 잠시 열어 줄 거다.",
+          "text_en": "Command files you as traitor.\nI cannot stop it.\nEllen opens the gate a moment."
+        },
+        {
+          "pageIndex": 1,
+          "text": "살아서 나가라.\n넷이 한편이 되면\n누명을 벗길 증거도 모이겠지.",
+          "text_en": "Get out alive.\nWhen the four are one side,\nthe brand becomes a record."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_013#0",
+      "sceneId": "story_dialog_story_013",
+      "pageIndex": 0,
+      "label": "[ 이안 코발 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_ian_koval",
+      "text": "그리하벤은 지도에 없다.\n지도엔 섀도우 마켓으로 나와 있지.\n문은 닉스 홀름이 열어 줄 거다.",
+      "text_en": "Greehaven is not on the map.\nThe living name is Shadow Market.\nNyx Holm opens the door.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_013",
+        "objectiveId": "",
+        "missionTitle": "도피처를 찾아서",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_ian_koval",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "그리하벤은 지도에 없다.\n지도엔 섀도우 마켓으로 나와 있지.\n문은 닉스 홀름이 열어 줄 거다.",
+          "text_en": "Greehaven is not on the map.\nThe living name is Shadow Market.\nNyx Holm opens the door."
+        },
+        {
+          "pageIndex": 1,
+          "text": "수배 방송보다 먼저 도착해라.\n나는 더 이상 좌표를 못 준다.",
+          "text_en": "Arrive before the wanted band.\nI cannot give another fix."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_014#0",
+      "sceneId": "story_dialog_story_014",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "카일과 미라, 가온이 들어왔다.\n이제 거점을 열 수 있지.\n다만 신뢰는 말로 사는 게 아니다.",
+      "text_en": "Kyle, Mira, and Gaon are in.\nWe can open the hold.\nTrust is not bought with talk.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_014",
+        "objectiveId": "",
+        "missionTitle": "첫 신뢰",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "카일과 미라, 가온이 들어왔다.\n이제 거점을 열 수 있지.\n다만 신뢰는 말로 사는 게 아니다.",
+          "text_en": "Kyle, Mira, and Gaon are in.\nWe can open the hold.\nTrust is not bought with talk."
+        },
+        {
+          "pageIndex": 1,
+          "text": "추격 그림자가 외곽에 있다.\n오늘은 문을 정하는 날이다.",
+          "text_en": "A chase shadow sits the rim.\nToday we fix the door."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_015#0",
+      "sceneId": "story_dialog_story_015",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "세렌 벨트는 지도에 없다.\n실제 관문은 시리우스 보더고\n초대장은 세렌 베일이 쥐고 있지.",
+      "text_en": "Seren Belt is not on the map.\nThe living gate is Sirius Border.\nSeren Vale holds the invite.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_015",
+        "objectiveId": "",
+        "missionTitle": "두 번째 초대",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "세렌 벨트는 지도에 없다.\n실제 관문은 시리우스 보더고\n초대장은 세렌 베일이 쥐고 있지.",
+          "text_en": "Seren Belt is not on the map.\nThe living gate is Sirius Border.\nSeren Vale holds the invite."
+        },
+        {
+          "pageIndex": 1,
+          "text": "함정일 수 있다.\n가온과 미라 없이 가지 마라.\n확인만 하고 돌아와라.",
+          "text_en": "It may be a trap.\nDo not go without Gaon and Mira.\nConfirm and return."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_017#0",
+      "sceneId": "story_dialog_story_017",
+      "pageIndex": 0,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "돈이 없다.\n암시장의 손을 빌릴 수밖에 없고\n출처는 닉스 원칙대로 묻지 않아.",
+      "text_en": "No funds.\nWe borrow the black market hand.\nWe will not ask source — Nyx rule.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_017",
+        "objectiveId": "",
+        "missionTitle": "검은 시장의 손",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "돈이 없다.\n암시장의 손을 빌릴 수밖에 없고\n출처는 닉스 원칙대로 묻지 않아.",
+          "text_en": "No funds.\nWe borrow the black market hand.\nWe will not ask source — Nyx rule."
+        },
+        {
+          "pageIndex": 1,
+          "text": "닐과 나눠.\n세 건이면 버틸 수 있고\n그 이상은 욕심이다.",
+          "text_en": "Split with Nil.\nThree ledger lines will last.\nMore is greed."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_019#0",
+      "sceneId": "story_dialog_story_019",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "카일과 미라가 갈라섰다.\n하나는 치자 하고, 하나는 숨자 하지.\n오늘은 말만 들어 두자.",
+      "text_en": "Kyle and Mira split.\nOne hits. One hides.\nToday we only hear talk.",
+      "staccato": true,
+      "staccatoEn": true,
+      "hint": {
+        "missionId": "story_019",
+        "objectiveId": "",
+        "missionTitle": "내부의 균열",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "카일과 미라가 갈라섰다.\n하나는 치자 하고, 하나는 숨자 하지.\n오늘은 말만 들어 두자.",
+          "text_en": "Kyle and Mira split.\nOne hits. One hides.\nToday we only hear talk."
+        },
+        {
+          "pageIndex": 1,
+          "text": "아직 어느 쪽도 택할 때가 아니다.\n균열만 기록해 두지.",
+          "text_en": "No branch switch yet.\nWe only log the crack."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_021#0",
+      "sceneId": "story_dialog_story_021",
+      "pageIndex": 0,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "진압함대가 외곽에 와 있다.\n전부 몰려오진 않을 테니\n부딪칠 건 한 척이다.",
+      "text_en": "Suppression sits the rim.\nWipe-scale is story.\nThe meeting is one ship.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_021",
+        "objectiveId": "",
+        "missionTitle": "그리하벤 공방전",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_kyle_loren",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "진압함대가 외곽에 와 있다.\n전부 몰려오진 않을 테니\n부딪칠 건 한 척이다.",
+          "text_en": "Suppression sits the rim.\nWipe-scale is story.\nThe meeting is one ship."
+        },
+        {
+          "pageIndex": 1,
+          "text": "문을 지켜라.\n거점이 죽으면 이름 없는 동맹도 죽는다.",
+          "text_en": "Hold the door.\nIf the hold dies the nameless alliance dies."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_022#0",
+      "sceneId": "story_dialog_story_022",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "깃발을 세운다.\n이름은 없지. 그래서 살아남는다.",
+      "text_en": "We raise a flag.\nIt has no name.\nThat is why it lives.",
+      "staccato": true,
+      "staccatoEn": true,
+      "hint": {
+        "missionId": "story_022",
+        "objectiveId": "",
+        "missionTitle": "첫 깃발",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "깃발을 세운다.\n이름은 없지. 그래서 살아남는다.",
+          "text_en": "We raise a flag.\nIt has no name.\nThat is why it lives."
+        },
+        {
+          "pageIndex": 1,
+          "text": "넷과 거점, 그리고 라이트홀드의 빚.\n여기까지 왔군.",
+          "text_en": "The four, the hold, the Light Hold debt.\nThis stem is the Chapter 1 body close."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_024#0",
+      "sceneId": "story_dialog_story_024",
+      "pageIndex": 0,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "사본은 오메가에 맡긴다.\n린은 통행세 대신 기록을 받기로 했고\n원본은 거점에 둘 거야.",
+      "text_en": "We leave a copy at Omega.\nLynn takes a record instead of a toll.\nThe original stays at the hold.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_024",
+        "objectiveId": "",
+        "missionTitle": "기록의 사본",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "사본은 오메가에 맡긴다.\n린은 통행세 대신 기록을 받기로 했고\n원본은 거점에 둘 거야.",
+          "text_en": "We leave a copy at Omega.\nLynn takes a record instead of a toll.\nThe original stays at the hold."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_026#0",
+      "sceneId": "story_dialog_story_026",
+      "pageIndex": 0,
+      "label": "[ 엘렌 드 코르 ]",
+      "speakerNpcCaptainId": "npc_cpt_arcadia_lane_01",
+      "text": "코발은 입을 닫았다.\n관문은 열어 주되\n말은 하지 않겠다는 거지.",
+      "text_en": "Koval is silent.\nThe gate opens.\nHe will not speak.",
+      "staccato": true,
+      "staccatoEn": true,
+      "hint": {
+        "missionId": "story_026",
+        "objectiveId": "",
+        "missionTitle": "코발의 침묵",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_arcadia_lane_01",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "코발은 입을 닫았다.\n관문은 열어 주되\n말은 하지 않겠다는 거지.",
+          "text_en": "Koval is silent.\nThe gate opens.\nHe will not speak."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_029#0",
+      "sceneId": "story_dialog_story_029",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "선서를 다시 읽겠다.\n이름은 넣지 않고\n금하는 건 단 하나, 다시 버리는 일이다.",
+      "text_en": "We reread the oath.\nWe put in no names.\nOnly abandoning is forbidden.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_029",
+        "objectiveId": "",
+        "missionTitle": "이름 없는 선서",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "선서를 다시 읽겠다.\n이름은 넣지 않고\n금하는 건 단 하나, 다시 버리는 일이다.",
+          "text_en": "We reread the oath.\nWe put in no names.\nOnly abandoning is forbidden."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_030#0",
+      "sceneId": "story_dialog_story_030",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "오늘은 여기까지다.\n은폐된 진실은 끝나지 않았지만\n우리에겐 한편이 남았다.",
+      "text_en": "We fold the chapter.\nConcealed truth is not over.\nOne side remains.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_030",
+        "objectiveId": "",
+        "missionTitle": "은폐된 진실의 끝",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "오늘은 여기까지다.\n은폐된 진실은 끝나지 않았지만\n우리에겐 한편이 남았다.",
+          "text_en": "We fold the chapter.\nConcealed truth is not over.\nOne side remains."
+        },
+        {
+          "pageIndex": 1,
+          "text": "거점은 계속 지킨다.\n남은 일은 하나씩 풀어 가자.",
+          "text_en": "A cinematic follows.\nThe hold stays.\nWe revise details later."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_story_030#1",
+      "sceneId": "story_dialog_story_030",
+      "pageIndex": 1,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "거점은 계속 지킨다.\n남은 일은 하나씩 풀어 가자.",
+      "text_en": "A cinematic follows.\nThe hold stays.\nWe revise details later.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_030",
+        "objectiveId": "",
+        "missionTitle": "은폐된 진실의 끝",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "오늘은 여기까지다.\n은폐된 진실은 끝나지 않았지만\n우리에겐 한편이 남았다.",
+          "text_en": "We fold the chapter.\nConcealed truth is not over.\nOne side remains."
+        },
+        {
+          "pageIndex": 1,
+          "text": "거점은 계속 지킨다.\n남은 일은 하나씩 풀어 가자.",
+          "text_en": "A cinematic follows.\nThe hold stays.\nWe revise details later."
+        }
+      ]
+    },
+    {
+      "key": "mission_clear_mission_002#0",
+      "sceneId": "mission_clear_mission_002",
+      "pageIndex": 0,
+      "label": "[ AI 오퍼레이터 ]",
+      "speakerNpcCaptainId": "npc_cpt_ai_robot_default",
+      "text": "임무 완료 보고입니다.\\n\\n「해적 소탕」 임무가 완료되었습니다.\\n교전 결과를 기록했습니다.\\n\\n보상이 지급되었습니다.",
+      "text_en": "Mission complete report.\\n\\nThe \"Pirate Sweep\" mission is complete.\\nThe engagement results are logged.\\n\\nRewards have been issued.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "임무 완료 보고입니다.\\n\\n「해적 소탕」 임무가 완료되었습니다.\\n교전 결과를 기록했습니다.\\n\\n보상이 지급되었습니다.",
+          "text_en": "Mission complete report.\\n\\nThe \"Pirate Sweep\" mission is complete.\\nThe engagement results are logged.\\n\\nRewards have been issued."
+        }
+      ]
+    },
+    {
+      "key": "story_chapter_end_01#1",
+      "sceneId": "story_chapter_end_01",
+      "pageIndex": 1,
+      "label": "[ 동맹 ]",
+      "speakerNpcCaptainId": "",
+      "text": "깃발에는 진영이 없다.\n장부에는 이름이 없다.\n그러나 문은 남아 있다.\n\n",
+      "text_en": "The flag has no faction.\nThe ledger has no names.\nThe door remains.\n\n",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "라이트홀드는 보고서에서 지워졌고\n베가 함대는 전멸했으며\n살아남은 자들은 이름 없는 문을 세웠다.\n\n",
+          "text_en": "Light Hold was wiped from the report,\nthe Vega fleet was lost,\nand those who lived raised a nameless door.\n\n"
+        },
+        {
+          "pageIndex": 1,
+          "text": "깃발에는 진영이 없다.\n장부에는 이름이 없다.\n그러나 문은 남아 있다.\n\n",
+          "text_en": "The flag has no faction.\nThe ledger has no names.\nThe door remains.\n\n"
+        },
+        {
+          "pageIndex": 2,
+          "text": "코발은 침묵하고 소사는 타지 않는다.\n다시 버리지 말라는 조건만 남았다.\n\n",
+          "text_en": "Koval is silent. Sosa will not board.\nOnly the condition remains: do not abandon again.\n\n"
+        },
+        {
+          "pageIndex": 3,
+          "text": "은폐된 진실은 여기서 접힌다.\n끝나지 않았다.\n다음 항로에서 다시 열린다.\n\n",
+          "text_en": "Concealed truth folds here.\nIt is not over.\nIt opens again on the next lane.\n\n"
+        }
+      ]
+    },
+    {
+      "key": "story_chapter_end_01#3",
+      "sceneId": "story_chapter_end_01",
+      "pageIndex": 3,
+      "label": "[ 다음 ]",
+      "speakerNpcCaptainId": "",
+      "text": "은폐된 진실은 여기서 접힌다.\n끝나지 않았다.\n다음 항로에서 다시 열린다.\n\n",
+      "text_en": "Concealed truth folds here.\nIt is not over.\nIt opens again on the next lane.\n\n",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "라이트홀드는 보고서에서 지워졌고\n베가 함대는 전멸했으며\n살아남은 자들은 이름 없는 문을 세웠다.\n\n",
+          "text_en": "Light Hold was wiped from the report,\nthe Vega fleet was lost,\nand those who lived raised a nameless door.\n\n"
+        },
+        {
+          "pageIndex": 1,
+          "text": "깃발에는 진영이 없다.\n장부에는 이름이 없다.\n그러나 문은 남아 있다.\n\n",
+          "text_en": "The flag has no faction.\nThe ledger has no names.\nThe door remains.\n\n"
+        },
+        {
+          "pageIndex": 2,
+          "text": "코발은 침묵하고 소사는 타지 않는다.\n다시 버리지 말라는 조건만 남았다.\n\n",
+          "text_en": "Koval is silent. Sosa will not board.\nOnly the condition remains: do not abandon again.\n\n"
+        },
+        {
+          "pageIndex": 3,
+          "text": "은폐된 진실은 여기서 접힌다.\n끝나지 않았다.\n다음 항로에서 다시 열린다.\n\n",
+          "text_en": "Concealed truth folds here.\nIt is not over.\nIt opens again on the next lane.\n\n"
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_vega_blue_10#0",
+      "sceneId": "npc_dialog_vega_blue_10",
+      "pageIndex": 0,
+      "label": "[ 베가 블루 10 ]",
+      "speakerNpcCaptainId": "npc_cpt_vega_blue_10",
+      "text": "정찰 지원 왔다.\\n위치가 오래 드러나면 곤란하니\\n잠깐 있다가 빠지겠다.",
+      "text_en": "Recon reinforcement.\\nI won't broadcast my position long.\\nI'll be gone in a moment.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "정찰 지원 왔다.\\n위치가 오래 드러나면 곤란하니\\n잠깐 있다가 빠지겠다.",
+          "text_en": "Recon reinforcement.\\nI won't broadcast my position long.\\nI'll be gone in a moment."
+        }
+      ]
+    },
+    {
+      "key": "npc_dialog_story_gaon_tela#0",
+      "sceneId": "npc_dialog_story_gaon_tela",
+      "pageIndex": 0,
+      "label": "[ 가온 텔라 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_gaon_tela",
+      "text": "빈칸은 포기하지 않는다.\n지도는 아직 열려 있고\n이름만 아직 찾지 못했을 뿐이다.",
+      "text_en": "I do not fold the blank.\nThe map stays open.\nNo name yet.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "",
+        "objectiveId": "",
+        "missionTitle": "",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "빈칸은 포기하지 않는다.\n지도는 아직 열려 있고\n이름만 아직 찾지 못했을 뿐이다.",
+          "text_en": "I do not fold the blank.\nThe map stays open.\nNo name yet."
+        }
+      ]
+    }
+  ]
+}

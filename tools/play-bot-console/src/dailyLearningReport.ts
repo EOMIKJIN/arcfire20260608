@@ -215,6 +215,14 @@ export function buildDailyLearningReport(input: {
     '',
     vDay,
     '',
+    '## 초반 3분 유저체감',
+    '',
+    (() => {
+      const e = input.learning.earlyFeels[input.learning.earlyFeels.length - 1];
+      if (!e) return '초반 3분 샘플 없음 — 신규 런 첫 창 닫힘 후 기록';
+      return `런 ${e.runId} · ${e.feelSec}초 · 스파인 ${e.spineBeats}/${e.beatCount} · 이탈비트 ${e.offSpineBeats} · 파괴 ${e.destroyBeats} · 대사 ${e.dialogBeats} · ${e.codes.join(', ')}`;
+    })(),
+    '',
     '## ANALYZE',
     '',
     ...(codes.length ? codes.map((c) => `- ${c}`) : ['- (없음)']),

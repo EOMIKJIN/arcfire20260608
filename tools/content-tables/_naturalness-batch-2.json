@@ -1,0 +1,1470 @@
+{
+  "batch": 2,
+  "count": 47,
+  "items": [
+    {
+      "key": "story_dialog_obj_story_017_b#1",
+      "sceneId": "story_dialog_obj_story_017_b",
+      "pageIndex": 1,
+      "label": "[ 닐 벡스 ]",
+      "speakerNpcCaptainId": "npc_cpt_bar_ret_15",
+      "text": "크림슨 돈인지는 모른다.\n알아도 말 안 하고.\n그게 이 시장의 방식이다.",
+      "text_en": "I do not know if it is Crimson coin.\nI would not say if I did.\nThat is this market's hand.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_017",
+        "objectiveId": "obj_story_017_b",
+        "missionTitle": "검은 시장의 손",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "세 건 중개했다.\n수수료는 한 건 몫이고\n출처는 비워 두지.",
+          "text_en": "I brokered three lines.\nFee is one line.\nSource cell stays blank."
+        },
+        {
+          "pageIndex": 1,
+          "text": "크림슨 돈인지는 모른다.\n알아도 말 안 하고.\n그게 이 시장의 방식이다.",
+          "text_en": "I do not know if it is Crimson coin.\nI would not say if I did.\nThat is this market's hand."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_017_d#0",
+      "sceneId": "story_dialog_obj_story_017_d",
+      "pageIndex": 0,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "탄약은 산다.\n배는 아직 무리고\n요새 뼈대는 내일 세운다.",
+      "text_en": "Ammo we can buy.\nA hull not yet.\nFort bone is tomorrow.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_017",
+        "objectiveId": "obj_story_017_d",
+        "missionTitle": "검은 시장의 손",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "탄약은 산다.\n배는 아직 무리고\n요새 뼈대는 내일 세운다.",
+          "text_en": "Ammo we can buy.\nA hull not yet.\nFort bone is tomorrow."
+        },
+        {
+          "pageIndex": 1,
+          "text": "돈으로 산 화력은 오래 못 간다.\n그래도 오늘은 버틸 수 있으니\n그걸로 됐다.",
+          "text_en": "Bought fire is short.\nStill we last today.\nThat is enough."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_017_d#1",
+      "sceneId": "story_dialog_obj_story_017_d",
+      "pageIndex": 1,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "돈으로 산 화력은 오래 못 간다.\n그래도 오늘은 버틸 수 있으니\n그걸로 됐다.",
+      "text_en": "Bought fire is short.\nStill we last today.\nThat is enough.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_017",
+        "objectiveId": "obj_story_017_d",
+        "missionTitle": "검은 시장의 손",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "탄약은 산다.\n배는 아직 무리고\n요새 뼈대는 내일 세운다.",
+          "text_en": "Ammo we can buy.\nA hull not yet.\nFort bone is tomorrow."
+        },
+        {
+          "pageIndex": 1,
+          "text": "돈으로 산 화력은 오래 못 간다.\n그래도 오늘은 버틸 수 있으니\n그걸로 됐다.",
+          "text_en": "Bought fire is short.\nStill we last today.\nThat is enough."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_017_e#0",
+      "sceneId": "story_dialog_obj_story_017_e",
+      "pageIndex": 0,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "세 건 정산을 마쳤다.\n거점은 한 달은 버틸 거고\n배신할 여지는 장부에 적어 둘게.",
+      "text_en": "Three lines closed.\nThe hold lasts a month.\nRoom for betrayal stays in the book.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_017",
+        "objectiveId": "obj_story_017_e",
+        "missionTitle": "검은 시장의 손",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "세 건 정산을 마쳤다.\n거점은 한 달은 버틸 거고\n배신할 여지는 장부에 적어 둘게.",
+          "text_en": "Three lines closed.\nThe hold lasts a month.\nRoom for betrayal stays in the book."
+        },
+        {
+          "pageIndex": 1,
+          "text": "더러운 돈이긴 하다.\n그래도 거점은 살아남지.",
+          "text_en": "A black hand.\nBut the hold lives.\nPass the next stem."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_018_a#0",
+      "sceneId": "story_dialog_obj_story_018_a",
+      "pageIndex": 0,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "입구 두 곳에 포를 심었다.\n함대라 해 봐야 아직 네 배 한 척이고\n재건은 지금부터다.",
+      "text_en": "I planted guns on two mouth cells.\nThe fleet is still your one ship.\nRebuild starts now.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_018",
+        "objectiveId": "obj_story_018_a",
+        "missionTitle": "요새의 뼈대",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_kyle_loren",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "입구 두 곳에 포를 심었다.\n함대라 해 봐야 아직 네 배 한 척이고\n재건은 지금부터다.",
+          "text_en": "I planted guns on two mouth cells.\nThe fleet is still your one ship.\nRebuild starts now."
+        },
+        {
+          "pageIndex": 1,
+          "text": "스텔리움 진압이 오면 버틴다.\n오늘은 뼈대만 세운다.",
+          "text_en": "If Stellium suppression comes we last.\nToday we only stand bone."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_018_b#0",
+      "sceneId": "story_dialog_obj_story_018_b",
+      "pageIndex": 0,
+      "label": "[ 가온 텔라 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_gaon_tela",
+      "text": "식별 신호를 끄면 포문도 숨는다.\n은폐 지도와 화력을 겹쳐 놨으니\n거점은 이제 무덤이 아니다.",
+      "text_en": "Dark IDs hide the guns too.\nMap and fire overlay.\nThe hold is no longer a grave.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_018",
+        "objectiveId": "obj_story_018_b",
+        "missionTitle": "요새의 뼈대",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_kyle_loren",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "식별 신호를 끄면 포문도 숨는다.\n은폐 지도와 화력을 겹쳐 놨으니\n거점은 이제 무덤이 아니다.",
+          "text_en": "Dark IDs hide the guns too.\nMap and fire overlay.\nThe hold is no longer a grave."
+        },
+        {
+          "pageIndex": 1,
+          "text": "함대 재건은 배가 아니라 항로다.\n세렌 채널과 오메가 교차.\n그 두 줄이 뼈대다.",
+          "text_en": "Fleet rebuild is lanes not hulls.\nSeren channel and Omega crossing.\nThose two lines are bone."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_018_c#0",
+      "sceneId": "story_dialog_obj_story_018_c",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "뼈대가 섰다.\n아직 이름은 없지.\n그래서 살아남을 수 있다.",
+      "text_en": "Bone stands.\nNo name yet.\nThat is why it lives.",
+      "staccato": true,
+      "staccatoEn": true,
+      "hint": {
+        "missionId": "story_018",
+        "objectiveId": "obj_story_018_c",
+        "missionTitle": "요새의 뼈대",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_kyle_loren",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "뼈대가 섰다.\n아직 이름은 없지.\n그래서 살아남을 수 있다.",
+          "text_en": "Bone stands.\nNo name yet.\nThat is why it lives."
+        },
+        {
+          "pageIndex": 1,
+          "text": "내부 균열이 곧 온다.\n노선이 갈라진다.\n오늘은 문을 닫아라.",
+          "text_en": "An inner crack comes soon.\nLines will split.\nClose the door today."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_018_d#1",
+      "sceneId": "story_dialog_obj_story_018_d",
+      "pageIndex": 1,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "요새는 배로 버티는 게 아니다.\n장부가 버티는 거지.\n재건은 여기까지야.",
+      "text_en": "A fort is not a ship.\nIt is a cell that lasts.\nRebuild ends here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_018",
+        "objectiveId": "obj_story_018_d",
+        "missionTitle": "요새의 뼈대",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_kyle_loren",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "탄약 칸은 채워졌다.\n식량은 한 달.\n그 이상은 장부가 거부한다.",
+          "text_en": "The ammo cell is filled.\nFood is a month.\nThe ledger refuses more."
+        },
+        {
+          "pageIndex": 1,
+          "text": "요새는 배로 버티는 게 아니다.\n장부가 버티는 거지.\n재건은 여기까지야.",
+          "text_en": "A fort is not a ship.\nIt is a cell that lasts.\nRebuild ends here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_018_e#0",
+      "sceneId": "story_dialog_obj_story_018_e",
+      "pageIndex": 0,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "됐다.\n다음은 사람끼리의 싸움이고\n그쪽은 내 영역이 아니다.",
+      "text_en": "Done.\nNext is people fighting.\nI watch ships.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_018",
+        "objectiveId": "obj_story_018_e",
+        "missionTitle": "요새의 뼈대",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_kyle_loren",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "됐다.\n다음은 사람끼리의 싸움이고\n그쪽은 내 영역이 아니다.",
+          "text_en": "Done.\nNext is people fighting.\nI watch ships."
+        },
+        {
+          "pageIndex": 1,
+          "text": "균열이 오면 문을 지킨다.\n누구 편인지는 네가 정해라.",
+          "text_en": "If the crack comes I hold the door.\nYou pick the side."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_019_a#0",
+      "sceneId": "story_dialog_obj_story_019_a",
+      "pageIndex": 0,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "숨기만 해선 라이트홀드가 되풀이된다.\n먼저 쳐야 해.\n나는 그쪽이다.",
+      "text_en": "Hide-only repeats Light Hold.\nWe hit.\nThat is my side.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_019",
+        "objectiveId": "obj_story_019_a",
+        "missionTitle": "내부의 균열",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "숨기만 해선 라이트홀드가 되풀이된다.\n먼저 쳐야 해.\n나는 그쪽이다.",
+          "text_en": "Hide-only repeats Light Hold.\nWe hit.\nThat is my side."
+        },
+        {
+          "pageIndex": 1,
+          "text": "미라의 장부는 사람을 늦춘다.\n늦추면 또 버린다.\n문을 열고 나가자.",
+          "text_en": "Mira's ledger slows people.\nSlow again and we abandon again.\nOpen the door and lift."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_019_b#0",
+      "sceneId": "story_dialog_obj_story_019_b",
+      "pageIndex": 0,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "치면 거점이 드러난다.\n라이트홀드도 먼저 치다가 죽었고.\n나는 숨기는 쪽이야.",
+      "text_en": "Hit and the hold lights up.\nLight Hold hit and died.\nI hide.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_019",
+        "objectiveId": "obj_story_019_b",
+        "missionTitle": "내부의 균열",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "치면 거점이 드러난다.\n라이트홀드도 먼저 치다가 죽었고.\n나는 숨기는 쪽이야.",
+          "text_en": "Hit and the hold lights up.\nLight Hold hit and died.\nI hide."
+        },
+        {
+          "pageIndex": 1,
+          "text": "장부가 있는 한 배신은 보인다.\n화력만 믿으면 또 빈칸이 난다.",
+          "text_en": "While the ledger lives, betrayal shows.\nTrust fire only and the blank returns."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_019_c#0",
+      "sceneId": "story_dialog_obj_story_019_c",
+      "pageIndex": 0,
+      "label": "[ 가온 텔라 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_gaon_tela",
+      "text": "둘 다 라이트홀드를 말하는데\n결론만 다르군.\n지워진 행성은 어느 편도 아니다.",
+      "text_en": "Both speak Light Hold.\nOnly the close differs.\nAn erased world has no side.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_019",
+        "objectiveId": "obj_story_019_c",
+        "missionTitle": "내부의 균열",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "둘 다 라이트홀드를 말하는데\n결론만 다르군.\n지워진 행성은 어느 편도 아니다.",
+          "text_en": "Both speak Light Hold.\nOnly the close differs.\nAn erased world has no side."
+        },
+        {
+          "pageIndex": 1,
+          "text": "지금은 거점을 지키는 게 맞다.\n갈림길은 나중에 오겠지.\n나는 지도를 접지 않겠다.",
+          "text_en": "Holding the hold is right now.\nThe branch opens later.\nI do not fold the map."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_019_c#1",
+      "sceneId": "story_dialog_obj_story_019_c",
+      "pageIndex": 1,
+      "label": "[ 가온 텔라 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_gaon_tela",
+      "text": "지금은 거점을 지키는 게 맞다.\n갈림길은 나중에 오겠지.\n나는 지도를 접지 않겠다.",
+      "text_en": "Holding the hold is right now.\nThe branch opens later.\nI do not fold the map.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_019",
+        "objectiveId": "obj_story_019_c",
+        "missionTitle": "내부의 균열",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "둘 다 라이트홀드를 말하는데\n결론만 다르군.\n지워진 행성은 어느 편도 아니다.",
+          "text_en": "Both speak Light Hold.\nOnly the close differs.\nAn erased world has no side."
+        },
+        {
+          "pageIndex": 1,
+          "text": "지금은 거점을 지키는 게 맞다.\n갈림길은 나중에 오겠지.\n나는 지도를 접지 않겠다.",
+          "text_en": "Holding the hold is right now.\nThe branch opens later.\nI do not fold the map."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_019_d#0",
+      "sceneId": "story_dialog_obj_story_019_d",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "오늘은 문을 닫는다.\n칠 날과 숨을 날은 따로 있고\n그게 거점이 살아남는 법이다.",
+      "text_en": "We close the door today.\nWe split hit-days and hide-days.\nThat is how a hold lives.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_019",
+        "objectiveId": "obj_story_019_d",
+        "missionTitle": "내부의 균열",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "오늘은 문을 닫는다.\n칠 날과 숨을 날은 따로 있고\n그게 거점이 살아남는 법이다.",
+          "text_en": "We close the door today.\nWe split hit-days and hide-days.\nThat is how a hold lives."
+        },
+        {
+          "pageIndex": 1,
+          "text": "균열은 그대로 남겨 두지.\n언젠가는 다시 벌어질 테니까.\n지금은 이간질부터 막아야 한다.",
+          "text_en": "The crack stays.\nIt opens again at the ending.\nAn inter-plot comes now."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_019_d#1",
+      "sceneId": "story_dialog_obj_story_019_d",
+      "pageIndex": 1,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "균열은 그대로 남겨 두지.\n언젠가는 다시 벌어질 테니까.\n지금은 이간질부터 막아야 한다.",
+      "text_en": "The crack stays.\nIt opens again at the ending.\nAn inter-plot comes now.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_019",
+        "objectiveId": "obj_story_019_d",
+        "missionTitle": "내부의 균열",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "오늘은 문을 닫는다.\n칠 날과 숨을 날은 따로 있고\n그게 거점이 살아남는 법이다.",
+          "text_en": "We close the door today.\nWe split hit-days and hide-days.\nThat is how a hold lives."
+        },
+        {
+          "pageIndex": 1,
+          "text": "균열은 그대로 남겨 두지.\n언젠가는 다시 벌어질 테니까.\n지금은 이간질부터 막아야 한다.",
+          "text_en": "The crack stays.\nIt opens again at the ending.\nAn inter-plot comes now."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_020_a#0",
+      "sceneId": "story_dialog_obj_story_020_a",
+      "pageIndex": 0,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "카일 쪽에서 나간 돈은 탄약값이다.\n크림슨 계좌와는 맞지 않아.\n그 소문은 이간질이야.",
+      "text_en": "Kyle's outflows are ammo.\nThey do not match a Crimson account.\nThe rumor is a wedge.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_020",
+        "objectiveId": "obj_story_020_a",
+        "missionTitle": "진실 혹은 이간계",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "카일 쪽에서 나간 돈은 탄약값이다.\n크림슨 계좌와는 맞지 않아.\n그 소문은 이간질이야.",
+          "text_en": "Kyle's outflows are ammo.\nThey do not match a Crimson account.\nThe rumor is a wedge."
+        },
+        {
+          "pageIndex": 1,
+          "text": "누가 뿌렸는지는 외곽 채널이다.\n거점 안은 깨끗하다.\n가온에게 지도를 물어라.",
+          "text_en": "Who spread it is a rim channel.\nInside is clean.\nAsk Gaon for the map."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_020_c#0",
+      "sceneId": "story_dialog_obj_story_020_c",
+      "pageIndex": 0,
+      "label": "[ 가온 텔라 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_gaon_tela",
+      "text": "외곽 수배 방송이 거점 말투를 흉내 냈다.\n내부 배신이 아니고\n은폐 지도도 뚫리지 않았다.",
+      "text_en": "The rim wanted band copied hold talk.\nNot an inside betrayal.\nThe map stays closed.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_020",
+        "objectiveId": "obj_story_020_c",
+        "missionTitle": "진실 혹은 이간계",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "외곽 수배 방송이 거점 말투를 흉내 냈다.\n내부 배신이 아니고\n은폐 지도도 뚫리지 않았다.",
+          "text_en": "The rim wanted band copied hold talk.\nNot an inside betrayal.\nThe map stays closed."
+        },
+        {
+          "pageIndex": 1,
+          "text": "배신이라는 그 소문이 이간책이다.\n거점은 지키고\n곧 닥칠 공세에 대비해야 해.",
+          "text_en": "The truth is a wedge.\nThe hold stays.\nA push comes."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_020_c#1",
+      "sceneId": "story_dialog_obj_story_020_c",
+      "pageIndex": 1,
+      "label": "[ 가온 텔라 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_gaon_tela",
+      "text": "배신이라는 그 소문이 이간책이다.\n거점은 지키고\n곧 닥칠 공세에 대비해야 해.",
+      "text_en": "The truth is a wedge.\nThe hold stays.\nA push comes.",
+      "staccato": false,
+      "staccatoEn": true,
+      "hint": {
+        "missionId": "story_020",
+        "objectiveId": "obj_story_020_c",
+        "missionTitle": "진실 혹은 이간계",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "외곽 수배 방송이 거점 말투를 흉내 냈다.\n내부 배신이 아니고\n은폐 지도도 뚫리지 않았다.",
+          "text_en": "The rim wanted band copied hold talk.\nNot an inside betrayal.\nThe map stays closed."
+        },
+        {
+          "pageIndex": 1,
+          "text": "배신이라는 그 소문이 이간책이다.\n거점은 지키고\n곧 닥칠 공세에 대비해야 해.",
+          "text_en": "The truth is a wedge.\nThe hold stays.\nA push comes."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_020_d#0",
+      "sceneId": "story_dialog_obj_story_020_d",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "우리 안은 갈라지지 않았다.\n소문은 밖에서 들어왔고.\n문은 닫아 두자.",
+      "text_en": "Inside did not split.\nThe rumor came from outside.\nThe door stays shut.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_020",
+        "objectiveId": "obj_story_020_d",
+        "missionTitle": "진실 혹은 이간계",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "우리 안은 갈라지지 않았다.\n소문은 밖에서 들어왔고.\n문은 닫아 두자.",
+          "text_en": "Inside did not split.\nThe rumor came from outside.\nThe door stays shut."
+        },
+        {
+          "pageIndex": 1,
+          "text": "다음은 공방전이다.\n스텔리움 진압함대가 좌표를 샀다.\n카일을 세워라.",
+          "text_en": "Next is a siege.\nA Stellium suppression fleet bought the fix.\nStand Kyle."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_021_a#0",
+      "sceneId": "story_dialog_obj_story_021_a",
+      "pageIndex": 0,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "입구 포문은 열어 뒀다.\n뜨는 건 한 척뿐이니\n그걸 끊으면 진압군도 물러난다.",
+      "text_en": "Mouth guns are hot.\nOnly one ship lifts.\nCut it and suppression withdraws in story.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_021",
+        "objectiveId": "obj_story_021_a",
+        "missionTitle": "그리하벤 공방전",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_kyle_loren",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "입구 포문은 열어 뒀다.\n뜨는 건 한 척뿐이니\n그걸 끊으면 진압군도 물러난다.",
+          "text_en": "Mouth guns are hot.\nOnly one ship lifts.\nCut it and suppression withdraws in story."
+        },
+        {
+          "pageIndex": 1,
+          "text": "나는 문을 선다.\n너는 궤도에서 쳐라.",
+          "text_en": "I stand the door.\nYou hit in orbit."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_021_c#0",
+      "sceneId": "story_dialog_obj_story_021_c",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "문은 지켰다.\n진압군은 물러갔고\n그리하벤은 살아남았다.",
+      "text_en": "The door remains.\nSuppression withdrew.\nGreehaven lives.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_021",
+        "objectiveId": "obj_story_021_c",
+        "missionTitle": "그리하벤 공방전",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_kyle_loren",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "문은 지켰다.\n진압군은 물러갔고\n그리하벤은 살아남았다.",
+          "text_en": "The door remains.\nSuppression withdrew.\nGreehaven lives."
+        },
+        {
+          "pageIndex": 1,
+          "text": "승리에는 깃발이 없다.\n그래서 추적에서 한 박자 벌었다.",
+          "text_en": "The win has no flag.\nThat bought one beat from the hunt."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_021_d#0",
+      "sceneId": "story_dialog_obj_story_021_d",
+      "pageIndex": 0,
+      "label": "[ 가온 텔라 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_gaon_tela",
+      "text": "놈들이 좌표는 샀어도 안에는 못 들어왔다.\n은폐 지도가 버텨 줬지.\n지워진 행성의 수법을 거꾸로 쓴 셈이다.",
+      "text_en": "They bought the fix but not the inside.\nThe concealment map lasted.\nThe inverse of an erased world.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_021",
+        "objectiveId": "obj_story_021_d",
+        "missionTitle": "그리하벤 공방전",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_kyle_loren",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "놈들이 좌표는 샀어도 안에는 못 들어왔다.\n은폐 지도가 버텨 줬지.\n지워진 행성의 수법을 거꾸로 쓴 셈이다.",
+          "text_en": "They bought the fix but not the inside.\nThe concealment map lasted.\nThe inverse of an erased world."
+        },
+        {
+          "pageIndex": 1,
+          "text": "깃발을 들지 마라.\n들면 다시 산다.",
+          "text_en": "Do not raise a flag.\nRaise it and they buy again."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_021_e#0",
+      "sceneId": "story_dialog_obj_story_021_e",
+      "pageIndex": 0,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "한 척뿐이었다.\n함대를 잃은 것도 아니고\n무엇보다 문은 지켰다.",
+      "text_en": "One ship.\nNot a fleet wipe.\nStill we held the door.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_021",
+        "objectiveId": "obj_story_021_e",
+        "missionTitle": "그리하벤 공방전",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_kyle_loren",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "한 척뿐이었다.\n함대를 잃은 것도 아니고\n무엇보다 문은 지켰다.",
+          "text_en": "One ship.\nNot a fleet wipe.\nStill we held the door."
+        },
+        {
+          "pageIndex": 1,
+          "text": "첫 깃발은 이름 없이 세운다.\n내일이다.",
+          "text_en": "The first flag goes up without a name.\nTomorrow."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_022_a#0",
+      "sceneId": "story_dialog_obj_story_022_a",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "이건 이름 없는 동맹이다.\n장부엔 어느 진영이라 적을 곳도 없고\n지킬 문만 있을 뿐이다.",
+      "text_en": "A nameless alliance.\nNo faction cell in the ledger.\nOnly a door.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_022",
+        "objectiveId": "obj_story_022_a",
+        "missionTitle": "첫 깃발",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "이건 이름 없는 동맹이다.\n장부엔 어느 진영이라 적을 곳도 없고\n지킬 문만 있을 뿐이다.",
+          "text_en": "A nameless alliance.\nNo faction cell in the ledger.\nOnly a door."
+        },
+        {
+          "pageIndex": 1,
+          "text": "라이트홀드를 다시 버리지 않는다.\n그게 깃발이다.",
+          "text_en": "We will not abandon Light Hold again.\nThat is the flag."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_022_b#0",
+      "sceneId": "story_dialog_obj_story_022_b",
+      "pageIndex": 0,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "이름은 필요 없다.\n문이 있으면 지킨다.\n나는 함선만 본다.",
+      "text_en": "No name needed.\nIf there is a door I hold it.\nI watch ships.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_022",
+        "objectiveId": "obj_story_022_b",
+        "missionTitle": "첫 깃발",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "이름은 필요 없다.\n문이 있으면 지킨다.\n나는 함선만 본다.",
+          "text_en": "No name needed.\nIf there is a door I hold it.\nI watch ships."
+        },
+        {
+          "pageIndex": 1,
+          "text": "치는 날은 따로 온다.\n오늘은 선다.",
+          "text_en": "Hit-days come later.\nToday we stand."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_022_c#0",
+      "sceneId": "story_dialog_obj_story_022_c",
+      "pageIndex": 0,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "동맹 장부를 새로 열었다.\n이름은 비워 두고\n진영보다 증거를 앞세울 거야.",
+      "text_en": "I opened the alliance book.\nName cells stay blank.\nProof sits before flags.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_022",
+        "objectiveId": "obj_story_022_c",
+        "missionTitle": "첫 깃발",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "동맹 장부를 새로 열었다.\n이름은 비워 두고\n진영보다 증거를 앞세울 거야.",
+          "text_en": "I opened the alliance book.\nName cells stay blank.\nProof sits before flags."
+        },
+        {
+          "pageIndex": 1,
+          "text": "균열은 장부에 적어 두고\n나중에 바로잡자.\n오늘은 한편이니까.",
+          "text_en": "The crack stays in the book.\nWe revise later.\nToday is one line."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_022_c#1",
+      "sceneId": "story_dialog_obj_story_022_c",
+      "pageIndex": 1,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "균열은 장부에 적어 두고\n나중에 바로잡자.\n오늘은 한편이니까.",
+      "text_en": "The crack stays in the book.\nWe revise later.\nToday is one line.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_022",
+        "objectiveId": "obj_story_022_c",
+        "missionTitle": "첫 깃발",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "동맹 장부를 새로 열었다.\n이름은 비워 두고\n진영보다 증거를 앞세울 거야.",
+          "text_en": "I opened the alliance book.\nName cells stay blank.\nProof sits before flags."
+        },
+        {
+          "pageIndex": 1,
+          "text": "균열은 장부에 적어 두고\n나중에 바로잡자.\n오늘은 한편이니까.",
+          "text_en": "The crack stays in the book.\nWe revise later.\nToday is one line."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_022_d#0",
+      "sceneId": "story_dialog_obj_story_022_d",
+      "pageIndex": 0,
+      "label": "[ 가온 텔라 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_gaon_tela",
+      "text": "지워진 행성은 아직 돌아오지 않았다.\n깃발은 빈칸 위에 섰지.\n그 빈칸은 언젠가 다시 연다.",
+      "text_en": "The erased world has not returned.\nThe flag stands on a blank.\nIt opens again in chapter two.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_022",
+        "objectiveId": "obj_story_022_d",
+        "missionTitle": "첫 깃발",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "지워진 행성은 아직 돌아오지 않았다.\n깃발은 빈칸 위에 섰지.\n그 빈칸은 언젠가 다시 연다.",
+          "text_en": "The erased world has not returned.\nThe flag stands on a blank.\nIt opens again in chapter two."
+        },
+        {
+          "pageIndex": 1,
+          "text": "은폐된 진실은 끝나지 않았다.\n다만 한 편이 생겼다.",
+          "text_en": "Concealed truth is not over.\nBut one side now exists."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_022_e#0",
+      "sceneId": "story_dialog_obj_story_022_e",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "큰일은 일단 끝났다.\n남은 건 뒷수습이고\n깃발은 이름 없이 남는다.",
+      "text_en": "The body folds here.\nThe remaining cells are aftershock.\nThe flag stays nameless.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_022",
+        "objectiveId": "obj_story_022_e",
+        "missionTitle": "첫 깃발",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "큰일은 일단 끝났다.\n남은 건 뒷수습이고\n깃발은 이름 없이 남는다.",
+          "text_en": "The body folds here.\nThe remaining cells are aftershock.\nThe flag stays nameless."
+        },
+        {
+          "pageIndex": 1,
+          "text": "코발과 소사는 아직 바깥에 있다.\n뒷수습하면서 만나 봐라.\n거점은 내가 지킨다.",
+          "text_en": "Koval and Sosa are still outside.\nMeet them in the aftershock.\nWe keep the hold."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_023_b#1",
+      "sceneId": "story_dialog_obj_story_023_b",
+      "pageIndex": 1,
+      "label": "[ 미레유 보스 ]",
+      "speakerNpcCaptainId": "npc_cpt_mireille",
+      "text": "연합은 너를 반역자로 본다.\n나는 호송만 신경 쓰고.\n소문은 여기서 그치게 하지.",
+      "text_en": "The Alliance files you as traitor.\nI only watch escorts.\nThe echo ends here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_023",
+        "objectiveId": "obj_story_023_b",
+        "missionTitle": "깃발의 메아리",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_gaon_tela",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "이름 없는 깃발 소문이 돌더군.\n경고 광파는 보내지 않겠다.\n아직은.",
+          "text_en": "A nameless-flag rumor turns.\nI will not send a warning pulse.\nNot yet."
+        },
+        {
+          "pageIndex": 1,
+          "text": "연합은 너를 반역자로 본다.\n나는 호송만 신경 쓰고.\n소문은 여기서 그치게 하지.",
+          "text_en": "The Alliance files you as traitor.\nI only watch escorts.\nThe echo ends here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_023_c#0",
+      "sceneId": "story_dialog_obj_story_023_c",
+      "pageIndex": 0,
+      "label": "[ 가온 텔라 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_gaon_tela",
+      "text": "에덴은 아직 치지 않는다.\n지금은 은폐 지도를\n지키는 게 먼저다.",
+      "text_en": "Eden will not hit.\nNot yet.\nThe map stays.",
+      "staccato": true,
+      "staccatoEn": true,
+      "hint": {
+        "missionId": "story_023",
+        "objectiveId": "obj_story_023_c",
+        "missionTitle": "깃발의 메아리",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_gaon_tela",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "에덴은 아직 치지 않는다.\n지금은 은폐 지도를\n지키는 게 먼저다.",
+          "text_en": "Eden will not hit.\nNot yet.\nThe map stays."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_024_b#0",
+      "sceneId": "story_dialog_obj_story_024_b",
+      "pageIndex": 0,
+      "label": "[ 린 켄달 ]",
+      "speakerNpcCaptainId": "npc_cpt_ai_clan_neutral_01",
+      "text": "받았다.\n어느 진영인지는 적혀 있지 않군.\n회항단 금고에 넣어 두지.",
+      "text_en": "Received.\nFaction cells are blank.\nIt goes in the circuit vault.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_024",
+        "objectiveId": "obj_story_024_b",
+        "missionTitle": "기록의 사본",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "받았다.\n어느 진영인지는 적혀 있지 않군.\n회항단 금고에 넣어 두지.",
+          "text_en": "Received.\nFaction cells are blank.\nIt goes in the circuit vault."
+        },
+        {
+          "pageIndex": 1,
+          "text": "교차로는 계속 연다.\n이름만 묻지 마라.",
+          "text_en": "The crossing stays open.\nDo not ask me for a name."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_024_c#0",
+      "sceneId": "story_dialog_obj_story_024_c",
+      "pageIndex": 0,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "사본은 허브에 맡겼고\n원본은 여기 있다.\n장부는 두 벌이라야 안전하지.",
+      "text_en": "The copy sits the hub.\nThe original is here.\nThe ledger lives on two lines.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_024",
+        "objectiveId": "obj_story_024_c",
+        "missionTitle": "기록의 사본",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_mira_schenk",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "사본은 허브에 맡겼고\n원본은 여기 있다.\n장부는 두 벌이라야 안전하지.",
+          "text_en": "The copy sits the hub.\nThe original is here.\nThe ledger lives on two lines."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_025_b#0",
+      "sceneId": "story_dialog_obj_story_025_b",
+      "pageIndex": 0,
+      "label": "[ 오렌 피스 ]",
+      "speakerNpcCaptainId": "npc_cpt_gov_iron",
+      "text": "라이트홀드 유해 명부는 비어 있다.\n명령으로 지워졌지.\n나는 잔해만 지킬 뿐이다.",
+      "text_en": "The Light Hold remains cell is blank.\nAn order wiped it.\nI only guard remnant.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_025",
+        "objectiveId": "obj_story_025_b",
+        "missionTitle": "버려진 보고서",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_kyle_loren",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "라이트홀드 유해 명부는 비어 있다.\n명령으로 지워졌지.\n나는 잔해만 지킬 뿐이다.",
+          "text_en": "The Light Hold remains cell is blank.\nAn order wiped it.\nI only guard remnant."
+        },
+        {
+          "pageIndex": 1,
+          "text": "카일이 살아 돌아온 건 안다.\n하지만 보고서엔 올릴 수 없어.\n여긴 무덤이니까.",
+          "text_en": "I know Kyle came back alive.\nI cannot put his name on the report.\nThis is a grave."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_025_b#1",
+      "sceneId": "story_dialog_obj_story_025_b",
+      "pageIndex": 1,
+      "label": "[ 오렌 피스 ]",
+      "speakerNpcCaptainId": "npc_cpt_gov_iron",
+      "text": "카일이 살아 돌아온 건 안다.\n하지만 보고서엔 올릴 수 없어.\n여긴 무덤이니까.",
+      "text_en": "I know Kyle came back alive.\nI cannot put his name on the report.\nThis is a grave.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_025",
+        "objectiveId": "obj_story_025_b",
+        "missionTitle": "버려진 보고서",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_kyle_loren",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "라이트홀드 유해 명부는 비어 있다.\n명령으로 지워졌지.\n나는 잔해만 지킬 뿐이다.",
+          "text_en": "The Light Hold remains cell is blank.\nAn order wiped it.\nI only guard remnant."
+        },
+        {
+          "pageIndex": 1,
+          "text": "카일이 살아 돌아온 건 안다.\n하지만 보고서엔 올릴 수 없어.\n여긴 무덤이니까.",
+          "text_en": "I know Kyle came back alive.\nI cannot put his name on the report.\nThis is a grave."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_025_c#0",
+      "sceneId": "story_dialog_obj_story_025_c",
+      "pageIndex": 0,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "명부는 여전히 비어 있고\n나는 보고서에 없는 사람이다.\n그래서 깃발에도 이름이 없는 거지.",
+      "text_en": "The blank remains.\nI am not on the report.\nThat is why the flag has no name.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_025",
+        "objectiveId": "obj_story_025_c",
+        "missionTitle": "버려진 보고서",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_kyle_loren",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "명부는 여전히 비어 있고\n나는 보고서에 없는 사람이다.\n그래서 깃발에도 이름이 없는 거지.",
+          "text_en": "The blank remains.\nI am not on the report.\nThat is why the flag has no name."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_026_a#0",
+      "sceneId": "story_dialog_obj_story_026_a",
+      "pageIndex": 0,
+      "label": "[ 엘렌 드 코르 ]",
+      "speakerNpcCaptainId": "npc_cpt_arcadia_lane_01",
+      "text": "사령부는 널 모르는 척할 거다.\n그래도 관문은 열어 주고\n기록도 남기지 않겠어.",
+      "text_en": "Command will not see you.\nBut the gate opens.\nThere is no file.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_026",
+        "objectiveId": "obj_story_026_a",
+        "missionTitle": "코발의 침묵",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_arcadia_lane_01",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "사령부는 널 모르는 척할 거다.\n그래도 관문은 열어 주고\n기록도 남기지 않겠어.",
+          "text_en": "Command will not see you.\nBut the gate opens.\nThere is no file."
+        },
+        {
+          "pageIndex": 1,
+          "text": "지금은 침묵이 도움이다.\n인정받는 건 그다음 일이고.",
+          "text_en": "Silence is the help.\nRecognition is the next chapter."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_026_b#0",
+      "sceneId": "story_dialog_obj_story_026_b",
+      "pageIndex": 0,
+      "label": "[ 이안 코발 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_ian_koval",
+      "text": "동맹을 인정하지 않는다.\n라이트홀드 빚은 인정한다.\n그 이상은 말하지 않는다.",
+      "text_en": "I do not recognize the alliance.\nI recognize the Light Hold debt.\nI say no more.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_026",
+        "objectiveId": "obj_story_026_b",
+        "missionTitle": "코발의 침묵",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_arcadia_lane_01",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "동맹을 인정하지 않는다.\n라이트홀드 빚은 인정한다.\n그 이상은 말하지 않는다.",
+          "text_en": "I do not recognize the alliance.\nI recognize the Light Hold debt.\nI say no more."
+        },
+        {
+          "pageIndex": 1,
+          "text": "반역 칸은 그대로다.\n살아남아라.\n통신은 끊는다.",
+          "text_en": "The traitor cell stays.\nStay alive.\nI cut the channel."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_026_c#0",
+      "sceneId": "story_dialog_obj_story_026_c",
+      "pageIndex": 0,
+      "label": "[ 엘렌 드 코르 ]",
+      "speakerNpcCaptainId": "npc_cpt_arcadia_lane_01",
+      "text": "공식 창구는 닫겠다.\n관문은 필요할 때만 열고\n기록은 남기지 않을 거야.",
+      "text_en": "The window closes.\nThe gate opens when needed.\nI leave no file.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_026",
+        "objectiveId": "obj_story_026_c",
+        "missionTitle": "코발의 침묵",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_arcadia_lane_01",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "공식 창구는 닫겠다.\n관문은 필요할 때만 열고\n기록은 남기지 않을 거야.",
+          "text_en": "The window closes.\nThe gate opens when needed.\nI leave no file."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_027_a#0",
+      "sceneId": "story_dialog_obj_story_027_a",
+      "pageIndex": 0,
+      "label": "[ 세레나 드릴 ]",
+      "speakerNpcCaptainId": "npc_cpt_draco_obs_01",
+      "text": "기함은 움직이지 않는다.\n말은 소사가 할 거고\n나는 주파수만 열어 두겠어.",
+      "text_en": "The flagship does not lift.\nWords are Sosa’s.\nI only open the band.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_027",
+        "objectiveId": "obj_story_027_a",
+        "missionTitle": "소사의 조건",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_draco_obs_01",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "기함은 움직이지 않는다.\n말은 소사가 할 거고\n나는 주파수만 열어 두겠어.",
+          "text_en": "The flagship does not lift.\nWords are Sosa’s.\nI only open the band."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_027_b#0",
+      "sceneId": "story_dialog_obj_story_027_b",
+      "pageIndex": 0,
+      "label": "[ 다렐 소사 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_darel_sosa",
+      "text": "나는 타지 않는다.\n라이트홀드 증언은 이미 했고\n깃발은 너희 것이다.",
+      "text_en": "I will not board.\nI already gave Light Hold testimony.\nThe flag is yours.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_027",
+        "objectiveId": "obj_story_027_b",
+        "missionTitle": "소사의 조건",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_draco_obs_01",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "나는 타지 않는다.\n라이트홀드 증언은 이미 했고\n깃발은 너희 것이다.",
+          "text_en": "I will not board.\nI already gave Light Hold testimony.\nThe flag is yours."
+        },
+        {
+          "pageIndex": 1,
+          "text": "조건은 하나다.\n다시 버리지 마라.\n버리면 나는 적이 된다.",
+          "text_en": "One condition.\nDo not abandon again.\nIf you do I become an enemy."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_029_a#0",
+      "sceneId": "story_dialog_obj_story_029_a",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "다시는 버리지 않는다.\n이름이 없어도 문은 지키고.\n그게 우리의 선서다.",
+      "text_en": "We will not abandon again.\nNo name, we still hold the door.\nThat is the oath.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_029",
+        "objectiveId": "obj_story_029_a",
+        "missionTitle": "이름 없는 선서",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "다시는 버리지 않는다.\n이름이 없어도 문은 지키고.\n그게 우리의 선서다.",
+          "text_en": "We will not abandon again.\nNo name, we still hold the door.\nThat is the oath."
+        },
+        {
+          "pageIndex": 1,
+          "text": "넷이 한 줄에 서명한다.\n칸은 비어 있다.",
+          "text_en": "The four sign one line.\nThe name cell stays blank."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_029_b#0",
+      "sceneId": "story_dialog_obj_story_029_b",
+      "pageIndex": 0,
+      "label": "[ 미라 솅크 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_mira_schenk",
+      "text": "서명란은 비었고 날짜만 적혀 있다.\n그래서 살아남는 거야.\n원본은 거점에 남겨 두지.",
+      "text_en": "Sign cells are blank. Only a date.\nThat is why it lives.\nThe original stays here.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_029",
+        "objectiveId": "obj_story_029_b",
+        "missionTitle": "이름 없는 선서",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "서명란은 비었고 날짜만 적혀 있다.\n그래서 살아남는 거야.\n원본은 거점에 남겨 두지.",
+          "text_en": "Sign cells are blank. Only a date.\nThat is why it lives.\nThe original stays here."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_029_c#0",
+      "sceneId": "story_dialog_obj_story_029_c",
+      "pageIndex": 0,
+      "label": "[ 카일 로렌 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_kyle_loren",
+      "text": "선서는 말이다.\n문을 지키는 건 함선이고.\n그러니 나는 함선을 지킨다.",
+      "text_en": "An oath is talk.\nA door is a ship.\nI watch ships.",
+      "staccato": true,
+      "staccatoEn": true,
+      "hint": {
+        "missionId": "story_029",
+        "objectiveId": "obj_story_029_c",
+        "missionTitle": "이름 없는 선서",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "선서는 말이다.\n문을 지키는 건 함선이고.\n그러니 나는 함선을 지킨다.",
+          "text_en": "An oath is talk.\nA door is a ship.\nI watch ships."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_030_a#0",
+      "sceneId": "story_dialog_obj_story_030_a",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "문은 남았다.\n깃발엔 이름이 없고\n라이트홀드의 빚도 그대로다.",
+      "text_en": "The door remains.\nThe flag has no name.\nThe Light Hold debt remains.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_030",
+        "objectiveId": "obj_story_030_a",
+        "missionTitle": "은폐된 진실의 끝",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "문은 남았다.\n깃발엔 이름이 없고\n라이트홀드의 빚도 그대로다.",
+          "text_en": "The door remains.\nThe flag has no name.\nThe Light Hold debt remains."
+        },
+        {
+          "pageIndex": 1,
+          "text": "코발의 침묵과 소사의 조건.\n둘 다 아직 바깥에 있지.\n다음 걸음은 거기서 시작된다.",
+          "text_en": "Koval's silence and Sosa's condition.\nBoth sit outside.\nThey are the next chapter's mouth."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_030_b#0",
+      "sceneId": "story_dialog_obj_story_030_b",
+      "pageIndex": 0,
+      "label": "[ 가온 텔라 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_gaon_tela",
+      "text": "지워진 행성은 아직 찾지 못했다.\n그 빈칸은 다음으로 미루지.\n지도는 접지 않는다.",
+      "text_en": "The erased world is still gone.\nI pass the blank to chapter two.\nI do not fold the map.",
+      "staccato": true,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_030",
+        "objectiveId": "obj_story_030_b",
+        "missionTitle": "은폐된 진실의 끝",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "지워진 행성은 아직 찾지 못했다.\n그 빈칸은 다음으로 미루지.\n지도는 접지 않는다.",
+          "text_en": "The erased world is still gone.\nI pass the blank to chapter two.\nI do not fold the map."
+        }
+      ]
+    },
+    {
+      "key": "story_dialog_obj_story_030_c#0",
+      "sceneId": "story_dialog_obj_story_030_c",
+      "pageIndex": 0,
+      "label": "[ 닉스 홀름 ]",
+      "speakerNpcCaptainId": "npc_cpt_story_nyx_holm",
+      "text": "은폐된 진실은 잠시 덮어 둔다.\n끝난 건 아니고\n한편이 생겼을 뿐이지.",
+      "text_en": "Concealed truth folds here.\nIt is not over.\nOnly one side now exists.",
+      "staccato": false,
+      "staccatoEn": false,
+      "hint": {
+        "missionId": "story_030",
+        "objectiveId": "obj_story_030_c",
+        "missionTitle": "은폐된 진실의 끝",
+        "missionSummary": "",
+        "objectiveText": "",
+        "offerCaptain": "npc_cpt_story_nyx_holm",
+        "sqHint": ""
+      },
+      "sceneTexts": [
+        {
+          "pageIndex": 0,
+          "text": "은폐된 진실은 잠시 덮어 둔다.\n끝난 건 아니고\n한편이 생겼을 뿐이지.",
+          "text_en": "Concealed truth folds here.\nIt is not over.\nOnly one side now exists."
+        },
+        {
+          "pageIndex": 1,
+          "text": "거점은 지킨다.\n모자란 건 차차 채워 가면 돼.",
+          "text_en": "We keep the hold.\nWe revise details later.\nWe pass to the cinematic."
+        }
+      ]
+    }
+  ]
+}

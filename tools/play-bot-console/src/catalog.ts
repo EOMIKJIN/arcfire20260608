@@ -3,6 +3,7 @@ import { PlayScenarioZonePlanets_FROM_BALANCE_CSV } from '../../../src/data/bala
 import { PlanetDevelopmentCatalog_FROM_BALANCE_CSV } from '../../../src/data/balance/generated/csvPlanetDevelopmentCatalog';
 import { STAR_SYSTEMS_FROM_CSV } from '../../../src/data/generated/csvSystems';
 import { MISSIONS_FROM_CSV } from '../../../src/data/generated/csvMissions';
+import { MAIN_STORY_QUESTS_FROM_CSV } from '../../../src/data/generated/csvMainStorySpine';
 import { PLAYER_LEVEL_EXP_FROM_CSV } from '../../../src/data/generated/csvPlayerLevelExp';
 import { SKILLS_FROM_CSV } from '../../../src/data/generated/csvSkills';
 import { ITEM_DEFS_FROM_CSV } from '../../../src/data/generated/csvItemDefs';
@@ -89,11 +90,81 @@ export function lookupHasShipyard(planetId: string): boolean {
 
 /** 실기 `missionNeighborReach` 와 동일 토큰. */
 export const NEIGHBOR_SYSTEM_PLACEHOLDER = '__neighbor_system__';
+/** 실기 `patchBarInstanceObjectiveTargetId` 탐사 행성 토큰. */
+export const DISCOVERY_PLANET_PLACEHOLDER = '__discovery_planet__';
+
+export const RESOLVED_QUEST_PLACEHOLDERS: readonly string[] = [
+  NEIGHBOR_SYSTEM_PLACEHOLDER,
+  DISCOVERY_PLANET_PLACEHOLDER,
+];
+
+export function isQuestPlaceholderToken(id: string | null | undefined): boolean {
+  const s = (id ?? '').trim();
+  return s.length >= 4 && s.startsWith('__') && s.endsWith('__');
+}
+
+export function isResolvedQuestPlaceholder(id: string): boolean {
+  return RESOLVED_QUEST_PLACEHOLDERS.includes(id);
+}
 
 export function neighborHopPlanet(fromSystemId: string): string | null {
   const adj = listAdjacentSystemIds(fromSystemId);
   if (!adj.length) return null;
   return lookupPrimaryPlanet(adj[0]);
+}
+
+/** 수락 성계에서 1~3홉 첫 행성. 실기 discoveryPlanetId 축약. */
+export function discoveryHopPlanet(fromSystemId: string, excludePlanetId?: string): string | null {
+  const origin = fromSystemId.trim();
+  if (!origin) return null;
+  const exclude = excludePlanetId?.trim() ?? '';
+  const seen = new Set<string>([origin]);
+  let frontier = [origin];
+  for (let hop = 1; hop <= 3; hop += 1) {
+    const next: string[] = [];
+    for (let i = 0; i < frontier.length; i += 1) {
+      const adj = listAdjacentSystemIds(frontier[i]!);
+      for (let j = 0; j < adj.length; j += 1) {
+        const n = adj[j]!;
+        if (seen.has(n)) continue;
+        seen.add(n);
+        next.push(n);
+        const p = lookupPrimaryPlanet(n);
+        if (p && p !== exclude) return p;
+      }
+    }
+    frontier = next;
+    if (!frontier.length) break;
+  }
+  return null;
+}
+
+export function listUnresolvedMissionPlaceholders(): Array<{ missionId: string; token: string }> {
+  const out: Array<{ missionId: string; token: string }> = [];
+  const ids = Object.keys(MISSIONS_FROM_CSV);
+  for (let i = 0; i < ids.length; i += 1) {
+    const m = MISSIONS_FROM_CSV[ids[i]!];
+    if (!m) continue;
+    const objs = m.objectives ?? [];
+    for (let j = 0; j < objs.length; j += 1) {
+      const token = objs[j]?.targetId ?? '';
+      if (isQuestPlaceholderToken(token) && !isResolvedQuestPlaceholder(token)) {
+        out.push({ missionId: m.id, token });
+      }
+    }
+  }
+  return out;
+}
+
+export function missionHasUnresolvedPlaceholder(missionId: string): boolean {
+  const m = MISSIONS_FROM_CSV[missionId];
+  if (!m) return false;
+  const objs = m.objectives ?? [];
+  for (let i = 0; i < objs.length; i += 1) {
+    const token = objs[i]?.targetId ?? '';
+    if (isQuestPlaceholderToken(token) && !isResolvedQuestPlaceholder(token)) return true;
+  }
+  return false;
 }
 
 export function getMission(id: string): Mission | null {
@@ -186,7 +257,10 @@ export function hopsBetween(fromSystem: string, toSystem: string): number {
 }
 
 export function objectivePlanetId(type: string, targetId: string): string | null {
-  if (type === 'reach_planet') return targetId || null;
+  if (type === 'reach_planet') {
+    if (isQuestPlaceholderToken(targetId)) return null;
+    return targetId || null;
+  }
   if (type === 'reach_system') {
     if (targetId === NEIGHBOR_SYSTEM_PLACEHOLDER) return null;
     return lookupPrimaryPlanet(targetId);
@@ -211,6 +285,16 @@ function isForbiddenGapSandbox(id: string): boolean {
   return n >= 39 && n <= 55;
 }
 
+const skeletonBindMissionIds = new Set(
+  MAIN_STORY_QUESTS_FROM_CSV
+    .filter((row) => row.contentStatus === 'skeleton' && Boolean(row.bindMissionId))
+    .map((row) => row.bindMissionId as string),
+);
+
+function isSkeletonMainStoryMission(id: string): boolean {
+  return skeletonBindMissionIds.has(id);
+}
+
 function missionRank(id: string): number {
   if (id.startsWith('story_')) return 0;
   if (id.startsWith('sandbox_')) return 1;
@@ -221,11 +305,11 @@ function missionRank(id: string): number {
 
 let playableMissionIds: string[] | null = null;
 
-/** CSV에 있는 수행 가능 퀘스트 전부. 039–055 공백은 만들지 않음. */
+/** CSV에 있는 수행 가능 퀘스트. 039–055 공백·본선 skeleton bind는 제외. */
 export function listPlayableMissionIds(): string[] {
   if (playableMissionIds) return playableMissionIds;
   playableMissionIds = Object.keys(MISSIONS_FROM_CSV)
-    .filter((id) => !isForbiddenGapSandbox(id))
+    .filter((id) => !isForbiddenGapSandbox(id) && !isSkeletonMainStoryMission(id))
     .sort((a, b) => missionRank(a) - missionRank(b) || a.localeCompare(b));
   return playableMissionIds;
 }

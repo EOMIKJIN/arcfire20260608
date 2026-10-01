@@ -39,6 +39,7 @@ export const BAR_INSTANCE_DIFFICULTY_REWARD_MUL: Record<
 
 const ENEMY_TEMPLATE_RISK: Record<string, number> = {
   pirate_fighter: 12,
+  gate_scout: 12,
   pirate_cruiser: 24,
   bounty_hunter: 32,
 };

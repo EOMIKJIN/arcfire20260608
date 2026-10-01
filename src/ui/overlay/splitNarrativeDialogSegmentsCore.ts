@@ -2,9 +2,8 @@
  * 인게임 대사 페이지 분할 순수 로직 (RN 없음).
  * 공개 API는 `splitNarrativeDialogSegments.ts`.
  *
- * 작성 `\n`은 그대로 존중한다.
- * 한 작성 줄이 폭을 넘기면 시각 줄 비용으로 페이지를 나누고, 넘친 줄은 엔진 `\n`으로 고정한다.
- * 3줄 박스를 넘는 페이지는 만들지 않는다(CSV 수동 줄바꿈 없이 자동 대응).
+ * 인게임은 작성 `\n`을 미리 지운 한 덩어리로 들어온다.
+ * 폭을 넘는 줄은 시각 행으로 접고, 3행을 넘는 페이지는 만들지 않는다.
  */
 
 const MIN_LINES_PER_PAGE = 2;
@@ -108,6 +107,21 @@ export function isNarrativeDialogContextBreak(line: string): boolean {
   return false;
 }
 
+/** 라틴 대사는 3칸을 채운다. 한글 2+2·문장경계 조기넘김은 유지. */
+export function isLatinNarrativeDialogScript(visualLines: string[]): boolean {
+  let wide = 0;
+  let latin = 0;
+  for (let i = 0; i < visualLines.length; i += 1) {
+    const line = visualLines[i] ?? '';
+    for (const ch of line) {
+      const code = ch.codePointAt(0) ?? 0;
+      if (isWideDialogChar(code)) wide += 1;
+      else if ((code >= 65 && code <= 90) || (code >= 97 && code <= 122)) latin += 1;
+    }
+  }
+  return latin > 0 && latin >= wide * 2;
+}
+
 export function countNarrativeDialogVisualLines(chunk: string, charsPerLine: number): number {
   if (!chunk) return 0;
   let total = 0;
@@ -121,6 +135,7 @@ export function countNarrativeDialogVisualLines(chunk: string, charsPerLine: num
 function packVisualLines(visualLines: string[], maxLines: number, joinWith: string): string[] {
   if (visualLines.length === 0) return [''];
   const safeMax = Math.max(1, maxLines | 0);
+  const fillToMax = isLatinNarrativeDialogScript(visualLines);
   const chunks: string[] = [];
   let i = 0;
   while (i < visualLines.length) {
@@ -131,7 +146,7 @@ function packVisualLines(visualLines: string[], maxLines: number, joinWith: stri
     }
 
     let take = safeMax;
-    if (safeMax >= MIN_LINES_PER_PAGE) {
+    if (!fillToMax && safeMax >= MIN_LINES_PER_PAGE) {
       const endAtMin = isNarrativeDialogContextBreak(visualLines[i + MIN_LINES_PER_PAGE - 1] ?? '');
       const endAtMax = isNarrativeDialogContextBreak(visualLines[i + safeMax - 1] ?? '');
       if (remaining === safeMax + 1 && !endAtMax) {

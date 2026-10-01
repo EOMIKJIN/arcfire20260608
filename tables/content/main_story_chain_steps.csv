@@ -1,7 +1,7 @@
-parentQuestId,stepIndex,stepId,bindMissionId,contentStatus,stepKind,titlePlaceholderKo,titlePlaceholderEn
+﻿parentQuestId,stepIndex,stepId,bindMissionId,contentStatus,stepKind,titlePlaceholderKo,titlePlaceholderEn
 story_c01_q01,1,story_c01_q01_s01,story_001,ready,mission,동기가 확인되지 않는 살인사건,Unmotivated Murder Case
 story_c01_q02,1,story_c01_q02_s01,story_002,ready,mission,동기 없는 진실,The Motive-less Truth
-story_c01_q03,1,story_c01_q03_s01,story_003,ready,mission,대행 출정,Stand-in Deployment
+story_c01_q03,1,story_c01_q03_s01,story_003,ready,mission,위임된 지휘권,Delegated Command
 story_c01_q04,1,story_c01_q04_s01,story_004,ready,mission,예상 밖의 참사,Unforeseen Disaster
 story_c01_q05,1,story_c01_q05_s01,story_005,ready,mission,복수는 누가 하는 겁니까?,Who Takes Revenge?
 story_c01_q06,1,story_c01_q06_s01,story_006,ready,mission,숨은 자와의 대면,Facing the Hidden One
@@ -13,19 +13,19 @@ story_c01_q11,1,story_c01_q11_s01,story_011,ready,mission,이면 협정,The Back
 story_c01_q12,1,story_c01_q12_s01,story_012,ready,mission,반역자의 이름,The Traitor’s Name
 story_c01_q13,1,story_c01_q13_s01,story_013,ready,mission,도피처를 찾아서,Finding Sanctuary
 story_c01_q14,1,story_c01_q14_s01,story_014,ready,mission,첫 신뢰,First Trust
-story_c01_q15,1,story_c01_q15_s01,story_015,ready,mission,두 번째 초대,The Second Invite
-story_c01_q16,1,story_c01_q16_s01,story_016,ready,mission,두 개의 적,Two Enemies
+story_c01_q15,1,story_c01_q15_s01,story_015,ready,mission,함정인가 기회인가,Trap or Chance
+story_c01_q16,1,story_c01_q16_s01,story_016,ready,mission,외곽의 잔해,Rim Wreckage
 story_c01_q17,1,story_c01_q17_s01,story_017,ready,mission,검은 시장의 손,The Black Market Hand
 story_c01_q18,1,story_c01_q18_s01,story_018,ready,mission,요새의 뼈대,Bones of the Fort
 story_c01_q19,1,story_c01_q19_s01,story_019,ready,mission,내부의 균열,The Inner Crack
 story_c01_q20,1,story_c01_q20_s01,story_020,ready,mission,진실 혹은 이간계,Truth or Wedge
-story_c01_q21,1,story_c01_q21_s01,story_021,ready,mission,그리하벤 공방전,The Greehaven Siege
-story_c01_q22,1,story_c01_q22_s01,story_022,ready,mission,첫 깃발,The First Flag
-story_c01_q23,1,story_c01_q23_s01,story_023,ready,mission,깃발의 메아리,Echo of the Flag
-story_c01_q24,1,story_c01_q24_s01,story_024,ready,mission,기록의 사본,A Copy of the Record
-story_c01_q25,1,story_c01_q25_s01,story_025,ready,mission,버려진 보고서,The Abandoned Report
-story_c01_q26,1,story_c01_q26_s01,story_026,ready,mission,코발의 침묵,Koval’s Silence
-story_c01_q27,1,story_c01_q27_s01,story_027,ready,mission,소사의 조건,Sosa’s Condition
-story_c01_q28,1,story_c01_q28_s01,story_028,ready,mission,크림슨의 다음 손,Crimson’s Next Hand
-story_c01_q29,1,story_c01_q29_s01,story_029,ready,mission,이름 없는 선서,The Nameless Oath
-story_c01_q30,1,story_c01_q30_s01,story_030,ready,mission,은폐된 진실의 끝,End of Concealed Truth
+story_c01_q21,1,story_c01_q21_s01,story_021,ready,mission,섀도우 넥서스 공방전,The Shadow Nexus Siege
+story_c01_q22,1,story_c01_q22_s01,story_022,ready,mission,깃발 없는 승리,A Victory Without Flags
+story_c01_q23,1,story_c01_q23_s01,story_023,skeleton,mission,깃발의 메아리,Echo of the Flag
+story_c01_q24,1,story_c01_q24_s01,story_024,skeleton,mission,기록의 사본,A Copy of the Record
+story_c01_q25,1,story_c01_q25_s01,story_025,skeleton,mission,버려진 보고서,The Abandoned Report
+story_c01_q26,1,story_c01_q26_s01,story_026,skeleton,mission,코발의 침묵,Koval’s Silence
+story_c01_q27,1,story_c01_q27_s01,story_027,skeleton,mission,소사의 조건,Sosa’s Condition
+story_c01_q28,1,story_c01_q28_s01,story_028,skeleton,mission,크림슨의 다음 손,Crimson’s Next Hand
+story_c01_q29,1,story_c01_q29_s01,story_029,skeleton,mission,이름 없는 선서,The Nameless Oath
+story_c01_q30,1,story_c01_q30_s01,story_030,skeleton,mission,은폐된 진실의 끝,End of Concealed Truth
