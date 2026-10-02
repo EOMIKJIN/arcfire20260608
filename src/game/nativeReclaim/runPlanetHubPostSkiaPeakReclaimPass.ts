@@ -7,7 +7,7 @@ import { compactPlanetMemoRegistryShells } from '../planetMemoCache';
 import { emitMemProfileMarker } from '../devMemoryProfileBridge';
 import { prunePlanetNebulaProfilesExceptPlanetIds } from '../../store/planetNebulaStore';
 import { scheduleDeferredNativeReclaimPass } from './deferredNativeReclaimScheduler';
-import { scheduleHubBackdropNativeRemountAfterTrim } from './runDeepNativeReclaimPass';
+import { shouldSkipHubPeakBackdropRemount } from './hubPeakBackdropRemountPolicy';
 import { signalHubSkiaNativeReclaim } from './hubSkiaNativeReclaimSignal';
 import { resolveSinglePlanetSessionKeepIds } from './singlePlanetSessionKeep';
 import {
@@ -41,14 +41,16 @@ export function runPlanetHubPostSkiaPeakReclaimPass(planetId: string, reason: st
   void trimNativeBitmapCachesAsync();
 
   /**
-   * inbound peak — RN 성운 remount는 Image 재로딩 깜빡임만 키우고,
-   * 회수 본체(signalHubSkia + Picture invalidate + Fresco)는 이미 위에서 수행.
-   * 전투 orbit 종료 등 non-inbound만 remount(30m cooldown).
+   * peak 직후 remount 금지 — 회수 본체는 위(signalHubSkia·Picture·Fresco trim).
+   * 전투 종료 remount는 native 계단과 동시에 관측됨. 15분 deep remount는 유지.
    */
-  const skipInboundBackdropRemount =
-    reason.includes('hub_inbound') || reason.includes('inbound_settle');
-  if (!skipInboundBackdropRemount) {
-    scheduleHubBackdropNativeRemountAfterTrim(`${reason}:post_skia_peak`);
+  if (
+    typeof __DEV__ !== 'undefined'
+    && __DEV__
+    && shouldSkipHubPeakBackdropRemount(reason)
+  ) {
+    // eslint-disable-next-line no-console
+    console.log(`[MEM] backdropRemount peak skip reason=${reason}`);
   }
 
   emitMemProfileMarker({

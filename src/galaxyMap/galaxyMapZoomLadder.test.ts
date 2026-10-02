@@ -7,7 +7,9 @@ import {
   GALAXY_MAP_ZOOM_IN_MAX_MUL,
   GALAXY_MAP_ZOOM_STEP_MAX,
   GALAXY_MAP_ZOOM_STEP_MIN,
+  GALAXY_MAP_SVG_RASTER_SCALE,
   clampGalaxyMapContentDim,
+  resolveGalaxyMapSvgRasterSize,
   resolveGalaxyMapNodeHitRadius,
   resolveGalaxyMapZoomScaleAtStep,
   resolveGalaxyMapZoomScaleMax,
@@ -153,4 +155,22 @@ test('content dim clamp matches 1..8192', () => {
   assert.equal(clampGalaxyMapContentDim(0), 1);
   assert.equal(clampGalaxyMapContentDim(9000), 8192);
   assert.equal(clampGalaxyMapContentDim(1200), 1200);
+});
+
+test('SVG raster A안 — 픽셀 절반·viewBox는 1x·시각 scale 2', () => {
+  assert.equal(GALAXY_MAP_SVG_RASTER_SCALE, 0.5);
+  const r = resolveGalaxyMapSvgRasterSize(1125, 1571);
+  assert.equal(r.rasterW, 563);
+  assert.equal(r.rasterH, 786);
+  assert.equal(r.viewBox, '0 0 1125 1571');
+  assert.ok(r.rasterW * r.rasterH < 1125 * 1571 * 0.26);
+  const scale = r.style.transform.find((t): t is { scale: number } => 'scale' in t);
+  assert.ok(scale && Math.abs(scale.scale - 1125 / 563) < 1e-9);
+});
+
+test('SVG raster — 줌 단이 바뀌어도 같은 cw/ch면 동일(리마운트 없음)', () => {
+  const a = resolveGalaxyMapSvgRasterSize(800, 900);
+  const b = resolveGalaxyMapSvgRasterSize(800, 900);
+  assert.equal(a.rasterW, b.rasterW);
+  assert.equal(a.viewBox, b.viewBox);
 });

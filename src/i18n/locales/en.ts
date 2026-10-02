@@ -871,7 +871,8 @@ export const EN_DICTIONARY: I18nDictionary = {
   'hubTalk.talk': 'Talk',
   'hubTalk.close': 'Close',
   'conversation.gate1.arcCore.hubBody': 'A comm has arrived from the enemy mouth.',
-  'conversation.gate1.operator.hubBody': 'A comm has arrived from companion Stella.',
+  'conversation.gate1.operator.hubBody':
+    'Ah, I forgot to introduce myself. I am Stella Aris. If you wish, you can reach me anytime through [Talk].',
   'conversation.gate1.operator.inboundGreet': "It's me, Stella.",
   'conversation.operatorName': 'Stella Aris',
   'hubTalk.operatorSubtitle': 'Companion mouth',
@@ -1291,6 +1292,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'scanRow.dialog': 'Talk',
   'scanRow.searching': 'Searching',
   'scanRow.search': 'Search',
+  'hubSystem.miningActive': 'Mining in progress...',
 
   // ── Pilot Info Panel (pilotPanel) ──
   'pilotPanel.detailA11y': 'Captain info detail',
@@ -1341,6 +1343,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'title.continue': ' Continue ',
   'title.start': ' New Game ',
   'title.localBuild': 'v{version} · Local build',
+  'title.settingsA11y': 'Settings',
 
   // ── Update Gate (updateGate) ──
   'updateGate.requiredMsg': 'This version is no longer supported.\nPlease update to the latest version {version}.',

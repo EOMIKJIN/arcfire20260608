@@ -7,7 +7,6 @@ import type { PlanetClanHold } from '../../types';
 import {
   evaluateStelliumAnnexEligibility,
   hasStelliumAnnexFriendlyAdjacency,
-  shouldHoldNpcOccupyAfterPlayerNeutralize,
   shouldShowStelliumAnnexAction,
 } from './stelliumAnnexEligibility';
 
@@ -37,6 +36,12 @@ const BASE = {
 
 test('코어 중립 + 위성 L1 + 접선 + 금고 — 허용', () => {
   assert.deepEqual(evaluateStelliumAnnexEligibility(BASE), { ok: true });
+});
+
+test('정책 OFF — 버튼 숨김', () => {
+  const gate = evaluateStelliumAnnexEligibility({ ...BASE, policyEnabled: false });
+  assert.deepEqual(gate, { ok: false, reason: 'policy_off' });
+  assert.equal(shouldShowStelliumAnnexAction(gate), false);
 });
 
 test('위성 미달 — sat_required · 버튼은 보임', () => {
@@ -103,44 +108,6 @@ test('인접 블루 또는 독립국이면 접선', () => {
   };
   assert.equal(hasStelliumAnnexFriendlyAdjacency('sirius', holds), true);
   assert.equal(hasStelliumAnnexFriendlyAdjacency('sirius', {}), false);
-});
-
-test('인접 player_home이면 접선 — 아르카디아 부트스트랩', () => {
-  const holds: Record<string, PlanetClanHold> = {
-    arcadia_prime: {
-      planetId: 'arcadia_prime',
-      systemId: 'arcadia',
-      occupierClanId: 'balance_seed_faction_blue',
-      kind: 'player_home',
-      capturedAt: 1,
-    } as PlanetClanHold,
-  };
-  assert.equal(hasStelliumAnnexFriendlyAdjacency('solar_port', holds), true);
-  assert.equal(hasStelliumAnnexFriendlyAdjacency('vega_outpost', holds), true);
-  assert.equal(hasStelliumAnnexFriendlyAdjacency('sirius', holds), false);
-});
-
-test('웨이브 중립화 보호창 — 만료 전 NPC 점유 보류', () => {
-  const hold = {
-    planetId: 'p',
-    systemId: 's',
-    occupierClanId: 'neutral',
-    kind: 'neutral',
-    capturedAt: 1,
-    neutralizedAt: 1_000,
-  } as PlanetClanHold;
-  assert.equal(
-    shouldHoldNpcOccupyAfterPlayerNeutralize({ hold, nowMs: 1_000 + 1_799_999, protectMs: 1_800_000 }),
-    true,
-  );
-  assert.equal(
-    shouldHoldNpcOccupyAfterPlayerNeutralize({ hold, nowMs: 1_000 + 1_800_000, protectMs: 1_800_000 }),
-    false,
-  );
-  assert.equal(
-    shouldHoldNpcOccupyAfterPlayerNeutralize({ hold: { ...hold, occupierClanId: 'balance_seed_faction_red' }, nowMs: 2_000, protectMs: 1_800_000 }),
-    false,
-  );
 });
 
 console.log('stelliumAnnexEligibility.test.ts — all PASS');

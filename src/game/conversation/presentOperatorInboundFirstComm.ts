@@ -30,3 +30,23 @@ export function presentOperatorInboundFirstComm(input: {
     onCancel: input.onCancel,
   });
 }
+
+/** 허브 [대화] 본기능 — 1차 통신 후 수락=메신저 · 취소=클로징. */
+export function presentOperatorHubManualFirstComm(input: {
+  onAccept: () => void | Promise<void>;
+  onCancel?: () => void;
+}): boolean {
+  const operatorPortrait = resolveNpcCaptainPortraitSource(
+    getArcCoreChatSpeakerRow('operator')?.portraitAssetKey ?? null,
+  );
+  return presentNlMouthComm({
+    requireAccept: true,
+    label: t('dialog.comm'),
+    text: t('conversation.gate1.operator.hubBody'),
+    imageSource: operatorPortrait ?? undefined,
+    buttonText: t('dialog.accept'),
+    secondaryButtonText: t('dialog.cancel'),
+    onAccept: input.onAccept,
+    onCancel: input.onCancel,
+  });
+}

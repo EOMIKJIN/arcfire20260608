@@ -70,3 +70,9 @@ try {
     & powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File $ensure18 | Out-Null
   }
 } catch {}
+try {
+  $ensureOwner = Join-Path $ScriptRoot 'ensure-owner-playlog-auto.ps1'
+  if (Test-Path $ensureOwner) {
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File $ensureOwner | Out-Null
+  }
+} catch {}

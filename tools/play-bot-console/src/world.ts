@@ -72,8 +72,6 @@ export function seedWorld(input: { runId: string; persona: PersonaId }): WorldSt
       tcl: lookupTcl(seed.planetId),
     };
   }
-  seedArcadiaAsPlayerHome(planets);
-
   return {
     runId: input.runId,
     persona: input.persona,
@@ -140,14 +138,6 @@ export function seedWorld(input: { runId: string; persona: PersonaId }): WorldSt
     earlyFeelReported: false,
     earlyFeelBeats: [],
   };
-}
-
-function seedArcadiaAsPlayerHome(planets: Record<string, PlanetSlot>): void {
-  const home = planets.arcadia_prime;
-  if (!home) return;
-  home.kind = 'player_home';
-  home.occupierClanId = BLUE_CLAN;
-  home.neutralizedAt = null;
 }
 
 export function markMissionDone(world: WorldState, id: string): void {

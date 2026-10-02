@@ -7,13 +7,7 @@
 //   C 항로 — dest-org 확률 + 앵커 없는 tq 보장. 점유 무관.
 // 퀘스트 A는 웨이브 쿨다운·분쟁 pending·허브 OFF와 별개로 Ready.
 // 웨이브 세션(진행/결과창)만 같은 레이어라 막는다.
-//
-// 상주 함장 착륙 즉시 허브 교전(점유·분쟁 링 무관)은 2026-10-01 축 폐기.
-// 블루 점유지 착륙 전투는 일반 규칙과 안 맞음. 나중에 별도 규칙으로만 재개.
 // ============================================================
-
-/** 상주 combat/red 함장 + CSV 플래그로 착륙 즉시 허브 교전. 폐기 · 퀘스트/웨이브는 유지. */
-export const RESIDENT_HUB_MAIN_STAGE_AUTO_COMBAT = false;
 
 export type HubMainStageCombatGateInput = {
   hubOrbitHostileEntered: boolean;
@@ -40,6 +34,5 @@ export function evaluateHubMainStageCombatEntered(
   }
   if (input.territorialTurnPending) return false;
   if (input.waveDefenseSessionHere) return false;
-  if (!RESIDENT_HUB_MAIN_STAGE_AUTO_COMBAT) return false;
   return input.hubOrbitHostileEntered && input.mainStageCombatEnabled && !input.cooldownActive;
 }

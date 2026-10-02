@@ -18,11 +18,11 @@ export type StelliumAnnexPolicy = {
 
 const FALLBACK: StelliumAnnexPolicy = {
   policyId: 'stellium_core_v1',
-  enabled: true,
+  enabled: false,
   costCredits: 8000,
   requireDefenseSatLevel: 1,
   chargeVaultKey: 'blue_team',
-  protectNeutralizedMs: 1_800_000,
+  protectNeutralizedMs: 0,
   excludePlanetIds: new Set(['eternal_throne', 'genesis_origin']),
 };
 
@@ -59,7 +59,7 @@ export function resolveStelliumAnnexPolicy(): StelliumAnnexPolicy {
   }
   cached = {
     policyId: String(row.policyId ?? FALLBACK.policyId).trim() || FALLBACK.policyId,
-    enabled: parseBool(row.enabled, true),
+    enabled: parseBool(row.enabled, false),
     costCredits: Math.max(0, Math.floor(parseNum(row.costCredits, FALLBACK.costCredits))),
     requireDefenseSatLevel: Math.max(0, Math.floor(parseNum(row.requireDefenseSatLevel, 1))),
     chargeVaultKey: 'blue_team',

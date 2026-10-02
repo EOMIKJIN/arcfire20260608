@@ -45,8 +45,16 @@ import {
   tryLearnSkill,
 } from './progress';
 import { addExp, addFlag, markMissionDone, moveTo, paintOf, toHolds } from './world';
-import { levyBlueVaultOnFrontWin, pickFrontPlanetId, PLAYBOT_FRONT_LEVY_CREDITS } from './endFront';
 import { nudgeFocusStat } from './facilityTwin';
+
+const FRONT_TARGETS = [
+  'sirius_border',
+  'perseus_memorial',
+  'omega_hub',
+  'helios_core',
+  'titan_ruins',
+  'draco_haven',
+] as const;
 
 const SAT_COST = 1500;
 const TRADE_BUY = 420;
@@ -101,6 +109,7 @@ function markHold(world: WorldState, reason: string, line: string): JournalEntry
 function clearHoldStreak(world: WorldState): void {
   world.lastHoldStreak = 0;
   world.stuckTicks = 0;
+  world.lastHoldReason = '';
 }
 
 function travelOneHop(world: WorldState, destPlanetId: string): JournalEntry {
@@ -188,21 +197,17 @@ export function fightHere(world: WorldState, rng: Rng, reason: string): JournalE
   if (win) {
     world.combatWins += 1;
     world.credits += cr;
-    let levy = 0;
-    if ((p === 'RED' || p === 'BLUE') && slot.kind !== 'player_home') {
+    if (p === 'RED' || p === 'BLUE') {
       slot.occupierClanId = NEUTRAL_CLAN;
       slot.kind = 'neutral';
       slot.neutralizedAt = world.nowMs;
-      levy = levyBlueVaultOnFrontWin(world);
     }
     clearHoldStreak(world);
     void leveled;
     return ev(
       world,
       'COMBAT',
-      levy > 0
-        ? `${slot.labelKo} ${reason} 승 tcl${slot.tcl} ${(chance * 100) | 0}% +${exp}exp +${cr}cr → 중립 · 금고+${PLAYBOT_FRONT_LEVY_CREDITS}`
-        : `${slot.labelKo} ${reason} 승 tcl${slot.tcl} ${(chance * 100) | 0}% +${exp}exp +${cr}cr`,
+      `${slot.labelKo} ${reason} 승 tcl${slot.tcl} ${(chance * 100) | 0}% +${exp}exp +${cr}cr → 중립`,
     );
   }
   world.combatLosses += 1;
@@ -272,8 +277,24 @@ function tryAnnex(world: WorldState): JournalEntry {
   );
 }
 
+function pickFrontTarget(world: WorldState): string {
+  for (let i = 0; i < FRONT_TARGETS.length; i += 1) {
+    const id = FRONT_TARGETS[i];
+    const slot = world.planets[id];
+    if (!slot) continue;
+    const p = paintOf(slot);
+    if (p === 'RED' || p === 'NEUTRAL') return id;
+  }
+  return 'sirius_border';
+}
+
 function doAnnexPath(world: WorldState, rng: Rng): JournalEntry {
-  const dest = pickFrontPlanetId(world);
+  if (!resolveStelliumAnnexPolicy().enabled) {
+    const dest = pickFrontTarget(world);
+    if (world.currentPlanetId !== dest) return travelOneHop(world, dest);
+    return fightHere(world, rng, '전선');
+  }
+  const dest = pickFrontTarget(world);
   if (world.currentPlanetId !== dest) return travelOneHop(world, dest);
   const slot = world.planets[dest];
   if (!slot) return markHold(world, 'no_slot', '전선 슬롯 없음');
@@ -490,7 +511,7 @@ function doTrade(
 }
 
 function doColonize(world: WorldState, rng: Rng): JournalEntry {
-  const dest = world.planets.synth_011_p ? 'synth_011_p' : pickFrontPlanetId(world);
+  const dest = world.planets.synth_011_p ? 'synth_011_p' : pickFrontTarget(world);
   if (world.currentPlanetId !== dest) return travelOneHop(world, dest);
   const slot = world.planets[dest];
   if (!slot) return markHold(world, 'no_slot', '개척 자리 없음');
@@ -515,7 +536,7 @@ function doColonize(world: WorldState, rng: Rng): JournalEntry {
 function doTravel(world: WorldState): JournalEntry {
   if (world.hangarShips <= 0) return restockInsteadOfFight(world);
   if (!world.capitalDestroyed) return travelOneHop(world, approachCapitalPlanet(world));
-  return travelOneHop(world, pickFrontPlanetId(world));
+  return travelOneHop(world, world.focusPlanetId || FOCUS_PLANET_ID);
 }
 
 function doCapital(world: WorldState, rng: Rng): JournalEntry {

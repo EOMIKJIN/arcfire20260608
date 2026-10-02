@@ -1604,6 +1604,10 @@ function writeOut(fileName, content) {
 
 function main() {
   mkdirSync(OUT_DIR, { recursive: true });
+  if (process.argv.includes('--story-scenes-only')) {
+    writeOut('csvStoryScenes.ts', buildStoryScenes());
+    return;
+  }
   writeOut('csvShipTemplates.ts', buildShips());
   writeOut('csvAiClanRegistry.ts', buildAiClanRegistry());
   writeOut('csvArcCoreWorldNodes.ts', buildArcCoreWorldNodes());

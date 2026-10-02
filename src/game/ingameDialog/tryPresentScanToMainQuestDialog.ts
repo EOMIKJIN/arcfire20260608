@@ -1,7 +1,8 @@
 /**
- * 스캔 완료 1회 — 오퍼레이터 1차만. 메인퀘·메신저 자동 오픈 없음.
+ * 스캔 완료 1회 — 스텔라 인게임 A1만. 메신저 자동 오픈 없음.
  * persist는 once 씬 seen. 틱 없음. 허브 1.5초 뒤 present.
  */
+import { notifyStellaHubTutorial } from '../hubTutorial/stellaHubTutorialGuide';
 import { tryFireIngameDialogTrigger } from './ingameDialogApi';
 import { runAfterIngameDialogFeatureLinkDelay } from './ingameDialogFeatureLink';
 
@@ -11,7 +12,14 @@ function firePendingScanDialog(): void {
   const pid = pendingScanPlanetId;
   pendingScanPlanetId = null;
   if (!pid) return;
-  tryFireIngameDialogTrigger('planet_scan_complete', pid);
+  const fired = tryFireIngameDialogTrigger('planet_scan_complete', pid, {
+    onDismiss: () => {
+      notifyStellaHubTutorial('a1_dismissed', pid);
+    },
+  });
+  if (!fired) {
+    notifyStellaHubTutorial('a1_dismissed', pid);
+  }
 }
 
 function schedulePendingScanDialog(): void {

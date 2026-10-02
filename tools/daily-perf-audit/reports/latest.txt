@@ -1,4 +1,4 @@
-Daily audit — 2026-10-01T15:00:09.479Z
+Daily audit — 2026-10-02T15:00:11.023Z
 
 TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -52,18 +52,18 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 Largest TS/TSX under `src/` + `app/` (bytes)
 
 - 660,019 — `src/data/generated/galaxySystems100.generated.ts`
+- 505,914 — `src/data/generated/csvStoryScenes.ts`
 - 500,299 — `src/data/generated/csvNpcCaptains.ts`
-- 496,492 — `src/data/generated/csvStoryScenes.ts`
 - 482,337 — `src/data/generated/csvNpcCapitalShips.ts`
 - 383,335 — `src/data/generated/csvItemDefs.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
 - 173,939 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 161,657 — `src/data/generated/csvMissions.ts`
-- 123,741 — `src/i18n/locales/ko.ts`
+- 123,943 — `src/i18n/locales/ko.ts`
 - 121,265 — `src/data/generated/csvMainStorySpine.ts`
-- 112,718 — `src/i18n/locales/en.ts`
-- 104,540 — `app/(game)/worldmap.tsx`
-- 95,403 — `app/(game)/planet.tsx`
+- 112,875 — `src/i18n/locales/en.ts`
+- 105,225 — `app/(game)/worldmap.tsx`
+- 96,164 — `app/(game)/planet.tsx`
 - 90,835 — `src/data/generated/csvBarPatronage.ts`
 - 71,316 — `src/data/balance/generated/csvSynthSystemColonization.ts`
 - 71,070 — `src/data/generated/csvWeapons.ts`
@@ -97,6 +97,7 @@ Planet hub eager `src/combat` import (should be absent)
 
 **subscribe**
 - `src/arcCore/ArcCoreHub.ts`
+- `src/game/hubTutorial/stellaHubTutorialGuide.ts`
 - `app/(game)/planet.tsx`
 
 **addEventListener**

@@ -1,7 +1,7 @@
 import type { Rng } from './rng';
 import type { ActionKind, PersonaId, WorldState } from './types';
 import { pickWeighted } from './rng';
-import { getLiveWeights } from './policy';
+import { getLearnExploreRate, getLiveWeights } from './policy';
 import {
   canBuyBetterGear,
   canDevelop,
@@ -51,14 +51,15 @@ export function decideIntentKind(world: WorldState, rng: Rng, persona: PersonaId
     return 'combat';
   }
   if (persona === 'colonize_edge') return 'colonize';
-  return 'annex_path';
+  if (persona === 'front_annex') return 'annex_path';
+  return 'combat';
 }
 
 export function pickStepKind(world: WorldState, rng: Rng, persona: PersonaId): ActionKind {
   if (world.hangarShips <= 0) return 'travel';
   const intent = decideIntentKind(world, rng, persona);
   if (!world.earlyFeelClosed) return intent;
-  if (rng() < 0.12) {
+  if (rng() < getLearnExploreRate()) {
     const w = pickWeighted(rng, getLiveWeights(persona));
     if (w === 'combat' && world.hangarShips <= 1) return intent;
     return w;

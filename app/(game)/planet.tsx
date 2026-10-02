@@ -111,6 +111,7 @@ import {
   resetIngameDialogPlanetLandedDedupe,
   tryPresentScanToMainQuestDialog,
 } from '../../src/game/ingameDialog';
+import { notifyStellaHubTutorial } from '../../src/game/hubTutorial/stellaHubTutorialGuide';
 import { hasAnyActiveMissionBundle } from '../../src/missions/missionActiveBundles';
 import { applyDefeatEnemyMissionObjectives } from '../../src/missions/applyDefeatEnemyMissionObjectives';
 import {
@@ -420,6 +421,7 @@ export default function PlanetScreen() {
        */
       const pid = usePlayerStore.getState().player?.currentPlanetId ?? null;
       flushPendingScanIngameDialog(pid);
+      notifyStellaHubTutorial('hub_focused', pid);
       registerPlanetSessionResource({
         ownerId: 'planet_main_stage_hub',
         planetId: pid,
@@ -574,9 +576,14 @@ export default function PlanetScreen() {
   const onFacilityNavigate = useCallback(
     (href: Href) => {
       hubSubStageNavRef.current = true;
+      const path = String(href);
+      const pid = usePlayerStore.getState().player?.currentPlanetId ?? resolvedPlanetId ?? null;
+      if (path.includes('/trade')) notifyStellaHubTutorial('trade_opened', pid);
+      else if (path.includes('/shipyard')) notifyStellaHubTutorial('shipyard_opened', pid);
+      else if (path.includes('/bar')) notifyStellaHubTutorial('bar_opened', pid);
       beginPlanetHubSuspendingNavigation(() => router.push(href));
     },
-    [beginPlanetHubSuspendingNavigation],
+    [beginPlanetHubSuspendingNavigation, resolvedPlanetId],
   );
 
   useEffect(() => {
@@ -718,7 +725,7 @@ export default function PlanetScreen() {
     resolveQuestCombatLock(missionProgresses, activeMissionId),
     planet?.id,
   );
-  /** 퀘스트 hub_orbit · 웨이브 세션. 상주 함장 착륙 즉시 허브 교전은 폐기(RESIDENT_HUB_MAIN_STAGE_AUTO_COMBAT). */
+  /** 퀘스트 hub_orbit · 웨이브 세션 · 상주 함장 허브 교전 게이트. */
   const enemyFleetEntered = Boolean(
     player
     && planet
@@ -1153,12 +1160,17 @@ export default function PlanetScreen() {
         miningSessionRef.current.planetId
         ?? usePlayerStore.getState().player?.currentPlanetId
         ?? null;
+      let grantedAny = false;
       for (const g of grants) {
         if (g.quantity <= 0) continue;
+        grantedAny = true;
         addInventoryItem(g.goodId, g.quantity);
         if (planetId && (isArcCorePricedMineral(g.goodId) || g.goodId === 'ore_mineral_1')) {
           recordOrbitalMiningDelivery(planetId, g.goodId, g.quantity);
         }
+      }
+      if (grantedAny) {
+        notifyStellaHubTutorial('mine_granted', planetId);
       }
       setMenuBadge('trade', true);
       scheduleMiningPlayerPersist();
@@ -1190,6 +1202,8 @@ export default function PlanetScreen() {
     const endedPlanetId = (ended.planetId ?? '').trim();
     const endedSystemId = (ended.systemId ?? '').trim();
     const endedOutcome = ended.outcome ?? 'win';
+    // 1-shot [전투] intent — 승패·systemId 무관하게 종료 즉시 해제(결과창 중 재발화 방지)
+    clearPlanetAssaultIntent();
     // 승리 → 30분 재개 대기 마킹 (결과창 중 즉시 재트리거 차단 · 대표님 지시 2026-07-22)
     if (endedOutcome === 'win' && endedPlanetId) {
       markWaveCombatVictoryCooldown(endedPlanetId);
@@ -1225,7 +1239,6 @@ export default function PlanetScreen() {
         operationMeta: { source: 'player_wave_defense_win' },
         neutralizedByPlayer: true,
       });
-      clearPlanetAssaultIntent();
       waveHoldChanged = result.changed;
       wavePreviousSide = result.previousSide;
       waveNewSide = result.newSide;

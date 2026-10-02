@@ -36,7 +36,7 @@ export { evaluatePlanetWaveCombatTrigger } from './evaluatePlanetWaveCombatTrigg
 
 /**
  * 월드맵 [전투] 노출·진입 — RED 점유 + occupationCombatEnabled.
- * 승리 쿨다운은 버튼·어썰트를 끄지 않는다(플레이어 행동 우선 · 2026-10-01).
+ * 승리 쿨다운은 버튼을 끄지 않는다(플레이어 행동 우선).
  * ActivePool 선행 조건 아님(2026-09-05 대표님). assault intent는 아직 없으므로 resolver.enabled와 같지 않다.
  */
 export function isPlanetWaveAssaultAvailable(planetId: string | null | undefined): boolean {

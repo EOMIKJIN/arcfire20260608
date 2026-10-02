@@ -23,7 +23,7 @@ const WIDE = 80;
 
 test('blank lines from \\n\\n are not shown', () => {
   const chunks = splitNarrativeDialogSegmentsCore(
-    '환영합니다. [닉네임]님.\n\n아르카디아에 도착하셨습니다.\n먼저 하단의 스캔을 누르십시오.',
+    '환영합니다. [닉네임]님.\n\n아르카디아에 도착하셨습니다.\n먼저 행성허브 하단의 [스캔] 버튼을 누르십시오.',
     3,
     WIDE,
   );
@@ -32,7 +32,7 @@ test('blank lines from \\n\\n are not shown', () => {
   assert.deepEqual(chunks[0]?.split('\n'), [
     '환영합니다. [닉네임]님.',
     '아르카디아에 도착하셨습니다.',
-    '먼저 하단의 스캔을 누르십시오.',
+    '먼저 행성허브 하단의 [스캔] 버튼을 누르십시오.',
   ]);
 });
 
@@ -131,7 +131,7 @@ test('a long unbreakable paragraph paginates without leftover 1-char rows', () =
 });
 
 test('same width budget always yields the same wrap', () => {
-  const text = '아르카디아에 도착하셨습니다. 먼저 하단의 스캔을 누르십시오.';
+  const text = '아르카디아에 도착하셨습니다. 먼저 행성허브 하단의 [스캔] 버튼을 누르십시오.';
   const a = splitNarrativeDialogSegmentsCore(text, 3, 22);
   const b = splitNarrativeDialogSegmentsCore(text, 3, 22);
   assert.deepEqual(a, b);

@@ -41,8 +41,7 @@ import { createRng } from './src/rng';
 import { analyzeDay, analyzeStronger } from './src/analyze';
 import { compareKpi } from './src/compare';
 import { runSimulation } from './src/simulate';
-import { TICKS_PER_DAY, TICK_GAME_MS } from './src/clock';
-import { pickFrontPlanetId, PLAYBOT_FRONT_LEVY_CREDITS, resolvePlaybotNeutralizeProtectMs } from './src/endFront';
+import { TICKS_PER_DAY } from './src/clock';
 import {
   absorbEarlyFeel,
   analyzeEarlyFeel,
@@ -51,8 +50,25 @@ import {
   listOpeningFeelBeats,
   USER_FEEL_WINDOW_SEC,
 } from './src/earlyFeel';
-import { recordLearning, loadLearning } from './src/learn';
-import { adaptPolicy, decideAdaptPeriodDays, getLiveWeights, resetPolicyForTest, setLearnedRootForTest } from './src/policy';
+import { recordLearning, loadLearning, resetLearningCacheForTest } from './src/learn';
+import { adaptPolicy, decideAdaptPeriodDays, getLearnExploreRate, getLiveWeights, getPolicyHealth, loadPolicy, resetPolicyForTest, savePolicy, setLearnedRootForTest } from './src/policy';
+import { campaignDaysForHarness, LEARN_HORIZON_DAYS, isAdaptExcludedCode, isNewRunForScore, isTwinLearnCode, nextCampaignSeed, shouldRollbackScore, windowHangarDelta } from './src/learnGate';
+import {
+  ADB_DATE_ARGS,
+  AUTO_IDLE_MS,
+  AUTO_MAX_SPAN_MS,
+  AUTO_MIN_USER_ACTIONS,
+  classifyAutoSession,
+  countUserActionMarkers,
+  parseDeviceSince,
+  shouldImportAutoSession,
+  shouldRotateAutoSession,
+} from './src/ownerPlaylogAuto';
+import { HUMAN_SEED_SESSION_CAP, mergeHumanSeed, reloadHumanSeedIfChanged } from './src/humanSeed';
+import { atomicWriteFile, loadJsonDurable, resetLearnedIoForTest, setLearnedImmediateForTest, shouldForceLearnFlush } from './src/learnedIo';
+import { blendPersonaWeights, formatHumanSeedLine, resetHumanSeedForTest, writeHumanSeed } from './src/humanSeed';
+import { classifySessionKind, memProfileToTraces } from './src/memProfileToSessionTrace';
+import { pickMemProfileInput, readOwnerSessionKind } from './src/refreshHumanSeed';
 import { measureRawBytes, resetRawPlayData } from './src/housekeep';
 import { appendJournal, appendTimeline, beginRecording, endRecording, ensureRunPaths, isRecording, setPlaybotIoLogsForTest, writeStatus } from './src/io';
 import { continuePastWall, nextUntilWallIsoKst, resolveUntilWallMs } from './src/untilWall';
@@ -76,7 +92,7 @@ test('코어 시드 21 · 개척용 synth_011만 추가', () => {
   assert.equal(Object.keys(w.planets).filter((id) => !id.startsWith('synth_')).length, 21);
   assert.ok(w.planets.synth_011_p);
   assert.equal(w.planets.arcadia_prime?.occupierClanId, BLUE_CLAN);
-  assert.equal(w.planets.arcadia_prime?.kind, 'player_home');
+  assert.equal(w.planets.arcadia_prime?.kind, 'clan_hold');
   assert.equal(w.planets.sirius_border?.occupierClanId, RED_CLAN);
   const p = countPaints(w);
   assert.ok(p.blue >= 1 && p.red >= 1);
@@ -555,12 +571,15 @@ test('1GB 원본 리셋 · learned 유지', () => {
   fs.mkdirSync(path.join(dir, 'logs', 'learned'), { recursive: true });
   const keep = path.join(dir, 'logs', 'learned', 'playbot-policy.json');
   fs.writeFileSync(keep, '{"keep":true}', 'utf8');
+  const pid = path.join(dir, 'logs', 'playbot-console.pid');
+  fs.writeFileSync(pid, '28648\n', 'utf8');
   const bytes = measureRawBytes(dir);
   assert.ok(bytes >= 400);
   const r = resetRawPlayData({ root: dir, capBytes: 100 });
   assert.equal(r.reset, true);
   assert.equal(fs.existsSync(path.join(dir, 'runs', 'x', 'journal.ndjson')), false);
   assert.equal(fs.readFileSync(keep, 'utf8'), '{"keep":true}');
+  assert.equal(fs.readFileSync(pid, 'utf8'), '28648\n');
 });
 
 test('이미착륙은 1회 본문 · 2회 .... · 이후 silent', () => {
@@ -723,44 +742,7 @@ test('타임라인이 잠겨도 appendTimeline이 죽지 않음', () => {
   endRecording('test');
 });
 
-test('아르카디아 player_home이면 솔라·베가 편입 접선', () => {
-  const w = seedWorld({ runId: 'home-adj', persona: 'mixed_ref' });
-  const holds = toHolds(w);
-  assert.equal(hasStelliumAnnexFriendlyAdjacency('solar_port', holds), true);
-  assert.equal(hasStelliumAnnexFriendlyAdjacency('vega_outpost', holds), true);
-});
-
-test('전선 후보는 내륙 고정이 아니라 인접 중립 우선', () => {
-  const w = seedWorld({ runId: 'front', persona: 'front_annex' });
-  const dest = pickFrontPlanetId(w);
-  assert.ok(dest);
-  assert.notEqual(dest, 'eternal_throne');
-  assert.notEqual(dest, 'genesis_origin');
-  const slot = w.planets[dest];
-  assert.ok(slot?.combatEnabled);
-  const paint = slot.kind === 'player_home' ? 'BLUE' : slot.occupierClanId;
-  assert.notEqual(dest, 'sirius_border');
-  assert.ok(paint === RED_CLAN || paint === NEUTRAL_CLAN || slot.kind === 'neutral');
-});
-
-test('중립 보호창은 가상 1일 이상', () => {
-  const dayMs = TICK_GAME_MS * TICKS_PER_DAY;
-  assert.equal(resolvePlaybotNeutralizeProtectMs(1_800_000), dayMs);
-  assert.ok(resolvePlaybotNeutralizeProtectMs(0) >= dayMs);
-});
-
-test('전선 승리는 블루 금고 징수', () => {
-  const w = seedWorld({ runId: 'levy', persona: 'front_annex' });
-  w.currentPlanetId = 'sirius_border';
-  w.currentSystemId = 'sirius';
-  const before = w.blueVault;
-  const row = fightHere(w, () => 0, '전선');
-  assert.equal(w.planets.sirius_border.kind, 'neutral');
-  assert.equal(w.blueVault, before + PLAYBOT_FRONT_LEVY_CREDITS);
-  assert.match(row.line, /금고\+2000/);
-});
-
-test('퀘 소진 후 의도는 전선 편입', () => {
+test('퀘 소진 후 기본 의도는 전투', () => {
   const w = seedWorld({ runId: 'post-q', persona: 'mixed_ref' });
   w.earlyFeelClosed = true;
   const ids = listPlayableMissionIds();
@@ -772,16 +754,19 @@ test('퀘 소진 후 의도는 전선 편입', () => {
   w.capitalDestroyed = true;
   w.credits = 800;
   w.skillPoints = 0;
-  assert.equal(decideIntentKind(w, () => 0.99, 'mixed_ref'), 'annex_path');
+  assert.equal(decideIntentKind(w, () => 0.99, 'mixed_ref'), 'combat');
 });
 
-test('초반 3분 오프닝은 스텔라 A0·스캔·A1까지 · A2–D2는 창 밖', () => {
+test('초반 3분 오프닝은 스텔라 A0–D2 · C는 2게이트', () => {
   const open = listOpeningFeelBeats();
   const sum = open.reduce((n, b) => n + b.feelSec, 0);
-  assert.ok(sum >= 50 && sum <= 90, `opening=${sum}`);
+  assert.ok(sum >= 100 && sum <= 180, `opening=${sum}`);
   assert.ok(open.some((b) => b.line.includes('A0')));
   assert.ok(open.some((b) => b.kind === 'SCAN'));
-  assert.equal(open.some((b) => b.line.includes('A2')), false);
+  assert.ok(open.some((b) => b.line.includes('A2')));
+  assert.ok(open.some((b) => b.line.includes('D2')));
+  assert.ok(open.some((b) => b.kind === 'TALK'));
+  assert.ok(open.some((b) => b.line.includes('광물 1')));
 });
 
 test('초반 3분 창 — 오프닝 후 본편만 · 장비/수련은 스파인 밖', () => {
@@ -805,9 +790,17 @@ test('초반 3분 창 — 오프닝 후 본편만 · 장비/수련은 스파인 
   });
   assert.ok(accept.spine && accept.feelSec >= 12);
   const findings = analyzeEarlyFeel(w);
-  assert.ok(findings.some((f) => f.code === 'EARLY_OFF_SPINE'));
-  assert.ok(findings.some((f) => f.code === 'EARLY_HANGAR_WIPE'));
-  assert.ok(findings.some((f) => f.code === 'EARLY_L0_GUIDE_GAP'));
+  const gearBeat = w.earlyFeelBeats.find((b) => b.kind === 'GEAR');
+  const destroyBeat = w.earlyFeelBeats.find((b) => b.kind === 'DESTROY');
+  if (gearBeat) assert.equal(gearBeat.spine, false);
+  if (destroyBeat) assert.equal(destroyBeat.spine, false);
+  if (gearBeat && destroyBeat) {
+    assert.ok(findings.some((f) => f.code === 'EARLY_OFF_SPINE'));
+    assert.ok(findings.some((f) => f.code === 'EARLY_HANGAR_WIPE'));
+  } else {
+    assert.ok(w.earlyFeelClosed, '채굴 1사이클이 초반 창을 채우면 장비/수련은 창 밖');
+  }
+  assert.ok(findings.some((f) => f.code === 'EARLY_L0_GUIDE_OK'));
 });
 
 test('초반 3분 창이 열리면 의도는 퀘스트 고정 · 가중 흔들림 없음', () => {
@@ -836,6 +829,386 @@ test('시뮬 1일이 초반 3분 창을 닫고 본편 수락을 남긴다', () =
   assert.ok(sim.world.questAccepted >= 1);
   const day1 = sim.reports[0];
   assert.ok(day1.findings.some((f) => String(f.code).startsWith('EARLY_')));
+});
+
+test('학습파일 손상 시 bak 복구 · 무경고 초기화 없음', () => {
+  resetLearningCacheForTest();
+  resetLearnedIoForTest();
+  setLearnedImmediateForTest(true);
+  const dir = path.join(TEST_ISO, 'learned');
+  const p = path.join(dir, 'playbot-learning-state.json');
+  const ok = { version: 2, updatedAt: 't', runs: [{ runId: 'bak', persona: 'mixed_ref', endedAt: 't', kpi: snapshotKpi(seedWorld({ runId: 'bak', persona: 'mixed_ref' })), codes: ['STABLE'] }], codeCounts: { STABLE: 1 }, growth: [], patterns: [], earlyFeels: [], goal: 'player_growth_and_play_pattern' };
+  atomicWriteFile(p, JSON.stringify(ok));
+  atomicWriteFile(p, JSON.stringify(ok));
+  fs.writeFileSync(p, '{broken', 'utf8');
+  resetLearningCacheForTest();
+  const loaded = loadJsonDurable(p, { version: 2, runs: [] }, (raw): raw is { version: 2; runs: unknown[] } => !!raw && typeof raw === 'object' && Array.isArray((raw as { runs?: unknown }).runs));
+  assert.equal(loaded.recovered, true);
+  assert.equal(loaded.corrupt, true);
+  assert.ok(Array.isArray(loaded.value.runs) && loaded.value.runs.length >= 1);
+});
+
+test('바닥값은 정규화 후에도 유지', () => {
+  resetPolicyForTest();
+  const w = getLiveWeights('mixed_ref');
+  assert.ok(w.idle >= 0.02 - 1e-9);
+  assert.ok(w.quest >= 0.18 - 1e-9);
+  assert.ok(w.combat >= 0.10 - 1e-9);
+  assert.ok(w.trade >= 0.05 - 1e-9);
+});
+
+test('EARLY·BORDER 코드는 campaign 가중을 범프하지 않음', () => {
+  resetPolicyForTest();
+  resetLearningCacheForTest();
+  const w0 = { ...getLiveWeights('mixed_ref') };
+  const world = seedWorld({ runId: 'no-early', persona: 'mixed_ref' });
+  world.day = 5;
+  const report = {
+    day: 5,
+    findings: [
+      { severity: 'warn' as const, code: 'EARLY_OFF_SPINE', detail: 'x' },
+      { severity: 'warn' as const, code: 'BORDER_RED_SLOPE', detail: '트윈전용' },
+    ],
+    kpi: snapshotKpi(world),
+  };
+  const ad = adaptPolicy('mixed_ref', report, loadLearning());
+  assert.equal(isAdaptExcludedCode('EARLY_OFF_SPINE'), true);
+  assert.equal(isTwinLearnCode('BORDER_RED_SLOPE'), true);
+  const w1 = getLiveWeights('mixed_ref');
+  assert.ok(Math.abs(w1.quest - w0.quest) < 0.04);
+  assert.ok(Math.abs(w1.annex_path - w0.annex_path) < 0.04);
+  assert.ok(ad.notes.every((n) => !n.includes('초반3분') && !n.includes('국경악화')));
+});
+
+test('같은 메모·같은 가중은 generation을 올리지 않음', () => {
+  resetPolicyForTest();
+  resetLearningCacheForTest();
+  const world = seedWorld({ runId: 'skip-gen', persona: 'mixed_ref' });
+  const report = { day: 1, findings: [{ severity: 'info' as const, code: 'STABLE', detail: 'ok' }], kpi: snapshotKpi(world) };
+  const a = adaptPolicy('mixed_ref', report, loadLearning());
+  const gen1 = loadPolicy().generation;
+  const b = adaptPolicy('mixed_ref', report, loadLearning());
+  const gen2 = loadPolicy().generation;
+  assert.equal(b.skipped, true);
+  assert.equal(gen2, gen1);
+  assert.ok(a.notes.includes('유지') || a.notes.includes('고착해제→기준가중'));
+});
+
+test('성공 행동 후 lastHoldReason 해제', () => {
+  const w = seedWorld({ runId: 'hold-clear', persona: 'mixed_ref' });
+  w.lastHoldReason = 'level_gate';
+  w.lastHoldStreak = 4;
+  w.currentPlanetId = 'arcadia_prime';
+  w.currentSystemId = 'arcadia';
+  let cleared = false;
+  for (let i = 0; i < 16; i += 1) {
+    stepAction(w, createRng(9 + i * 3), 'mixed_ref', { allowSides: true });
+    if (w.lastHoldReason === '') {
+      cleared = true;
+      break;
+    }
+  }
+  assert.equal(cleared, true);
+});
+
+test('SKILL_BACKLOG는 습득 가능 스킬이 있을 때만', () => {
+  const w = seedWorld({ runId: 'skill-cap', persona: 'mixed_ref' });
+  w.skillPoints = 14;
+  const skills = listSkills();
+  for (let i = 0; i < skills.length; i += 1) {
+    w.learnedLookup[skills[i].id] = true;
+    w.learnedSkills.push(skills[i].id);
+  }
+  const r = analyzeDay(w, []);
+  assert.equal(r.findings.some((f) => f.code === 'SKILL_BACKLOG'), false);
+  assert.equal(LEARN_HORIZON_DAYS, 120);
+});
+
+test('고착 가중은 기준값으로 풀고 탐색률은 건강할 때 0.28', () => {
+  resetPolicyForTest();
+  const collapsed = {
+    quest: 0.16145,
+    combat: 0.16145,
+    trade: 0.042,
+    annex_path: 0.042,
+    colonize: 0,
+    travel: 0.16145,
+    idle: 0.017,
+    skill: 0.08,
+    gear: 0.08,
+    develop: 0.16145,
+    capital: 0.16145,
+  };
+  const p = loadPolicy();
+  p.personas.mixed_ref = collapsed;
+  savePolicy(p, true);
+  const world = seedWorld({ runId: 'unstick', persona: 'mixed_ref' });
+  const report = { day: 3, findings: [{ severity: 'info' as const, code: 'STABLE', detail: 'ok' }], kpi: snapshotKpi(world) };
+  const ad = adaptPolicy('mixed_ref', report, loadLearning());
+  assert.ok(ad.notes.some((n) => n.includes('고착해제')));
+  const live = getLiveWeights('mixed_ref');
+  assert.ok(Math.abs(live.combat - live.travel) > 0.01 || Math.abs(live.quest - live.combat) > 0.01);
+  assert.equal(getLearnExploreRate() >= 0.08, true);
+  assert.ok(getPolicyHealth().equalWeights === false || getPolicyHealth().unstuckAt);
+});
+
+test('격납고 고갈은 창 파괴만 — 런 누적 파괴는 무시', () => {
+  resetPolicyForTest();
+  resetLearningCacheForTest();
+  const world = seedWorld({ runId: 'hangar-win', persona: 'mixed_ref' });
+  world.shipDestroys = 40;
+  world.hangarShips = 1;
+  const growth = [
+    { day: 1, level: 8, totalExp: 1000, credits: 2000, combatWins: 4, combatLosses: 1, shipDestroys: 38, reboards: 2, hangarShips: 2, questCleared: 2, annexOk: 0, trades: 1, dLevel: 0, dExp: 100 },
+    { day: 2, level: 8, totalExp: 1100, credits: 2000, combatWins: 5, combatLosses: 1, shipDestroys: 38, reboards: 2, hangarShips: 1, questCleared: 2, annexOk: 0, trades: 1, dLevel: 0, dExp: 100 },
+  ];
+  const learned = { ...loadLearning(), growth, patterns: [] };
+  const hang = windowHangarDelta(learned);
+  assert.equal(hang.dDestroys, 0);
+  const report = { day: 2, findings: [{ severity: 'info' as const, code: 'STABLE', detail: 'ok' }], kpi: snapshotKpi(world) };
+  const ad = adaptPolicy('mixed_ref', report, learned);
+  assert.equal(ad.notes.some((n) => n.includes('격납고')), false);
+});
+
+test('롤백 문턱은 비율 10% — 절대 −150 아님', () => {
+  assert.equal(shouldRollbackScore(10000, 9900), false);
+  assert.equal(shouldRollbackScore(10000, 8999), true);
+  assert.equal(shouldRollbackScore(100, 10), false);
+});
+
+test('학습 강제 기록은 1일차만 — 16가상일 강제 없음', () => {
+  setLearnedImmediateForTest(false);
+  assert.equal(shouldForceLearnFlush(1), true);
+  assert.equal(shouldForceLearnFlush(16), false);
+  assert.equal(shouldForceLearnFlush(32), false);
+  setLearnedImmediateForTest(true);
+});
+
+const BASE_W = {
+  quest: 0.26, combat: 0.12, trade: 0.08, annex_path: 0.08, colonize: 0,
+  travel: 0.04, idle: 0.02, skill: 0.08, gear: 0.10, develop: 0.10, capital: 0.12,
+};
+
+test('MEM_PROFILE logcat → SessionTrace v0 · 관측 kind만 재분배', () => {
+  resetHumanSeedForTest();
+  const sample = [
+    '09-29 13:40:06.694 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=32 detail=arcadia_prime',
+    '09-29 13:41:08.967 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=manual hermes_mb=60 detail=departure_preflight_arcadia_prime',
+    '09-29 13:41:13.000 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=transit_hop_start hermes_mb=60 detail=vega_outpost→arcadia',
+    '09-29 13:42:00.000 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=68 detail=solar_station',
+  ].join('\n');
+  const traces = memProfileToTraces(sample, 't');
+  assert.ok(traces.length >= 1);
+  assert.ok(traces[0].beats.some((b) => b.verb === 'land'));
+  assert.ok(traces[0].beats.some((b) => b.verb === 'depart'));
+  const seed = {
+    version: 1 as const,
+    player: 'owner' as const,
+    updatedAt: 't',
+    source: 'mem_profile' as const,
+    traces,
+  };
+  writeHumanSeed(path.join(TEST_ISO, 'learned'), seed);
+  resetHumanSeedForTest();
+  const mixed = blendPersonaWeights(BASE_W, seed);
+  assert.equal(mixed.quest, 0.26);
+  assert.equal(mixed.travel, 0.04);
+});
+
+test('S1 관측 combat+travel만 기준합을 나눔 · 퀘는 유지', () => {
+  const seed = {
+    version: 1 as const,
+    player: 'owner' as const,
+    updatedAt: 't',
+    source: 'mem_profile' as const,
+    traces: [{
+      sessionId: 'h1',
+      source: 'mem_profile' as const,
+      sessionKind: 'human' as const,
+      beats: [
+        { tSec: 0, verb: 'land' },
+        { tSec: 1, verb: 'land' },
+        { tSec: 2, verb: 'land' },
+        { tSec: 3, verb: 'combat' },
+        { tSec: 4, verb: 'depart' },
+        { tSec: 5, verb: 'depart' },
+      ],
+    }],
+  };
+  const mixed = blendPersonaWeights(BASE_W, seed);
+  assert.equal(mixed.quest, 0.26);
+  assert.ok(Math.abs((mixed.travel + mixed.combat) - 0.16) < 1e-9);
+  assert.ok(mixed.travel > mixed.combat);
+});
+
+test('S2 ingress_after_hub_combat는 depart 앞 combat', () => {
+  const sample = [
+    '09-29 13:40:00.000 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=32 detail=arcadia_prime',
+    '09-29 13:41:02.000 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=manual hermes_mb=60 detail=departure_preflight_arcadia_prime',
+    '09-29 13:41:03.000 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=ingress_reclaim hermes_mb=60 detail=ingress_after_hub_combat',
+  ].join('\n');
+  const traces = memProfileToTraces(sample, 't');
+  const verbs = traces[0].beats.map((b) => b.verb);
+  const combatAt = verbs.indexOf('combat');
+  const departAt = verbs.indexOf('depart');
+  assert.ok(combatAt >= 0 && departAt >= 0);
+  assert.ok(combatAt < departAt);
+  assert.equal(verbs.filter((v) => v === 'combat').length, 1);
+});
+
+test('S3 3시간+ 세션은 profiler · blend 제외 · forceKind는 human 유지', () => {
+  const longBeats = [
+    { tSec: 0, verb: 'land' },
+    { tSec: 3 * 3600 + 10, verb: 'depart' },
+  ];
+  assert.equal(classifySessionKind(longBeats), 'profiler');
+  const profilerSeed = {
+    version: 1 as const,
+    player: 'owner' as const,
+    updatedAt: '2026-10-02T00:00:00.000Z',
+    source: 'mem_profile' as const,
+    capturedAt: '2026-10-02T00:00:00.000Z',
+    traces: [{
+      sessionId: 'p1',
+      source: 'mem_profile' as const,
+      sessionKind: 'profiler' as const,
+      beats: longBeats,
+    }],
+  };
+  const mixed = blendPersonaWeights(BASE_W, profilerSeed);
+  assert.equal(mixed.quest, 0.26);
+  assert.equal(mixed.travel, 0.04);
+  const forced = memProfileToTraces([
+    '09-29 13:40:00.000 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=32 detail=arcadia_prime',
+    '09-29 13:41:00.000 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=manual hermes_mb=60 detail=departure_preflight_arcadia_prime',
+  ].join('\n'), 'owner-play', { forceKind: 'human' });
+  assert.ok(forced.length >= 1 && forced.every((t) => t.sessionKind === 'human'));
+  assert.ok(formatHumanSeedLine(profilerSeed).includes('2026-10-02'));
+});
+
+test('S5 until-close 캠페인은 120일 · 시드가 캠페인마다 달라짐', () => {
+  assert.equal(campaignDaysForHarness(true, 0), LEARN_HORIZON_DAYS);
+  assert.equal(campaignDaysForHarness(false, 7), 7);
+  assert.notEqual(nextCampaignSeed(1, 1), 1);
+});
+
+test('실기 자동 수집은 유휴·날짜·앱재시작·3시간에만 회전', () => {
+  assert.equal(shouldRotateAutoSession({
+    idleMs: 0, spanMs: 1000, deviceGone: false, appPidChanged: false, dayChanged: false,
+  }).rotate, false);
+  assert.equal(shouldRotateAutoSession({
+    idleMs: AUTO_IDLE_MS, spanMs: 1000, deviceGone: false, appPidChanged: false, dayChanged: false,
+  }).reason, 'idle');
+  assert.equal(shouldRotateAutoSession({
+    idleMs: 0, spanMs: AUTO_MAX_SPAN_MS, deviceGone: false, appPidChanged: false, dayChanged: false,
+  }).reason, 'max_span');
+  assert.equal(shouldRotateAutoSession({
+    idleMs: 0, spanMs: 1000, deviceGone: true, appPidChanged: false, dayChanged: false,
+  }).reason, 'device_gone');
+});
+
+test('T1 새 런/캠페인(가상일 되감김)이면 이전 기준점수와 비교하지 않음', () => {
+  assert.equal(isNewRunForScore(118, 12), true);
+  assert.equal(isNewRunForScore(40, 60), false);
+  assert.equal(isNewRunForScore(null, 5), false);
+});
+
+test('T4 시드는 sessionId 병합 · 같은 id 교체 · 최근 32세션 캡', () => {
+  const mk = (id: string, at: string) => ({
+    sessionId: id,
+    source: 'mem_profile' as const,
+    sessionKind: 'human' as const,
+    capturedAt: at,
+    beats: [{ tSec: 0, verb: 'land' }, { tSec: 5, verb: 'depart' }],
+  });
+  const seedOf = (traces: ReturnType<typeof mk>[]) => ({
+    version: 1 as const, player: 'owner' as const, updatedAt: 't', source: 'mem_profile' as const, traces,
+  });
+  const a = mergeHumanSeed(null, seedOf([mk('s1', '2026-10-01'), mk('s2', '2026-10-02')]));
+  const b = mergeHumanSeed(a, seedOf([mk('s2', '2026-10-03'), mk('s3', '2026-10-04')]));
+  assert.deepEqual(b.traces.map((t) => t.sessionId), ['s1', 's2', 's3']);
+  assert.equal(b.traces.find((t) => t.sessionId === 's2')?.capturedAt, '2026-10-03');
+  const many = Array.from({ length: HUMAN_SEED_SESSION_CAP + 5 }, (_, i) => mk(`m${i}`, `2026-11-${String(i).padStart(2, '0')}`));
+  const c = mergeHumanSeed(b, seedOf(many));
+  assert.equal(c.traces.length, HUMAN_SEED_SESSION_CAP);
+});
+
+test('T4/T5 writeHumanSeed는 누적 · 다른 프로세스 갱신 시 재로드', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pb-seed-'));
+  const one = {
+    version: 1 as const, player: 'owner' as const, updatedAt: 't', source: 'mem_profile' as const,
+    traces: [{ sessionId: 'x1', source: 'mem_profile' as const, sessionKind: 'human' as const, beats: [{ tSec: 0, verb: 'land' }, { tSec: 1, verb: 'depart' }] }],
+  };
+  writeHumanSeed(dir, one);
+  writeHumanSeed(dir, { ...one, traces: [{ ...one.traces[0], sessionId: 'x2' }] });
+  const saved = JSON.parse(fs.readFileSync(path.join(dir, 'human-seed-v0.json'), 'utf8')) as { traces: unknown[] };
+  assert.equal(saved.traces.length, 2);
+  resetHumanSeedForTest();
+  assert.equal(reloadHumanSeedIfChanged(dir), true);
+  assert.equal(reloadHumanSeedIfChanged(dir), false);
+  fs.rmSync(dir, { recursive: true, force: true });
+  resetHumanSeedForTest();
+});
+
+test('D1 adb date는 한 문자열 인자 · 형식 아니면 빈값(세션 시작 보류)', () => {
+  assert.equal(ADB_DATE_ARGS.length, 2);
+  assert.ok(ADB_DATE_ARGS[1].includes("'+%m-%d %H:%M:%S'"));
+  assert.equal(parseDeviceSince('10-02 19:48:03\r\n'), '10-02 19:48:03.000');
+  assert.equal(parseDeviceSince(''), '');
+  assert.equal(parseDeviceSince('date: Max 1 argument'), '');
+});
+
+test('D2 사용자 조작 마커만 센다 · 미만이면 profiler(시드 제외)', () => {
+  const log = [
+    'I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=32 detail=arcadia_prime',
+    'I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=transit_hop_start hermes_mb=40 detail=a→b',
+    'I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=40 detail=galaxy_map_periodic_deep',
+    'I ReactNativeJS: [MEM] runSoftNativeReclaimPass reason=galaxy_map_periodic nebulaBefore=0',
+    'I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=manual hermes_mb=56 detail=hub_inbound_drone_end',
+  ].join('\n');
+  assert.equal(countUserActionMarkers(log), 2);
+  assert.equal(classifyAutoSession(AUTO_MIN_USER_ACTIONS - 1), 'profiler');
+  assert.equal(classifyAutoSession(AUTO_MIN_USER_ACTIONS), 'human');
+  assert.equal(shouldImportAutoSession({
+    userActions: AUTO_MIN_USER_ACTIONS, memProfileMarkers: 4, deviceSince: '10-02 19:46:17.000',
+  }), true);
+  assert.equal(shouldImportAutoSession({
+    userActions: AUTO_MIN_USER_ACTIONS, memProfileMarkers: 4, deviceSince: '',
+  }), false);
+  assert.equal(shouldImportAutoSession({
+    userActions: 1, memProfileMarkers: 8, deviceSince: '10-02 19:46:17.000',
+  }), false);
+});
+
+test('T2 owner-playlog는 pull보다 항상 우선 · pending은 human 아님', () => {
+  const picked = pickMemProfileInput([
+    { file: 'pull.txt', owner: false, hasMem: true },
+    { file: 'owner-session.log', owner: true, hasMem: true },
+  ]);
+  assert.equal(picked?.file, 'owner-session.log');
+  assert.equal(picked?.owner, true);
+  assert.equal(pickMemProfileInput([{ file: 'pull.txt', owner: false, hasMem: true }])?.owner, false);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pb-kind-'));
+  const log = path.join(dir, 'session.log');
+  fs.writeFileSync(log, '', 'utf8');
+  fs.writeFileSync(path.join(dir, 'manifest.json'), JSON.stringify({ sessionKind: 'pending' }), 'utf8');
+  assert.equal(readOwnerSessionKind(log), 'profiler');
+  fs.writeFileSync(path.join(dir, 'manifest.json'), JSON.stringify({ sessionKind: 'human' }), 'utf8');
+  assert.equal(readOwnerSessionKind(log), 'human');
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('T3 비실기 기본은 profiler · forceKind 없이 덮지 않음', () => {
+  const close = [
+    '09-29 13:40:00.000 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=32 detail=arcadia_prime',
+    '09-29 13:41:00.000 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=manual hermes_mb=60 detail=departure_preflight_arcadia_prime',
+  ].join('\n');
+  const asProfiler = memProfileToTraces(close, 'owner-mem', { defaultKind: 'profiler' });
+  assert.ok(asProfiler.length >= 1);
+  assert.ok(asProfiler.every((t) => t.sessionKind === 'profiler'));
+  const asHuman = memProfileToTraces(close, 'owner-play', { defaultKind: 'human' });
+  assert.ok(asHuman.length >= 1);
+  assert.ok(asHuman.every((t) => t.sessionKind === 'human'));
 });
 
 console.log('play-bot-console tests done');

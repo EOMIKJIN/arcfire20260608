@@ -69,7 +69,7 @@ export function evaluatePlanetWaveCombatTrigger(
     return { enabled: true, rule: 'territorial_turn', variant: waveVariant };
   }
 
-  // 월드맵 [전투] — 플레이어 행동 우선. 자동 재교전 쿨다운과 별축.
+  // 월드맵 [전투] — 플레이어가 직접 누른 공격. 자동 재교전 쿨다운과 별축.
   if (assaultActive && stayBlocked) {
     const waveVariant = WAVE_TRIGGER_VARIANTS.includes(variant) ? variant : 'draco_wave';
     return { enabled: true, rule: 'planet_assault', variant: waveVariant };

@@ -17,6 +17,7 @@ export {
   runPlanetHubPostSkiaPeakReclaimPass,
   schedulePlanetHubPostSkiaPeakReclaim,
 } from './runPlanetHubPostSkiaPeakReclaimPass';
+export { shouldSkipHubPeakBackdropRemount } from './hubPeakBackdropRemountPolicy';
 export {
   markHubSoftReclaimPending,
   consumeHubSoftReclaimPending,

@@ -15,6 +15,32 @@ const RAW_NAMES = new Set([
   'compare.csv',
 ]);
 
+/** pid·플래그·18:00 원장은 1GB 리셋에서도 유지. */
+const PROTECT_LOG = new Set([
+  'learned',
+  'PLAYBOT_RECORDING.flag',
+  'PLAYBOT_RECORDING_STOPPED.txt',
+  'PLAYBOT_CURRENT_RUN.txt',
+  'PLAYBOT_STATUS_LATEST.json',
+  'PLAYBOT_DASHBOARD_LATEST.html',
+  'PLAYBOT_MUD_LATEST.txt',
+  'PLAYBOT_CHAT_REPORT_PENDING.md',
+  'PLAYBOT_DAILY_TRIAGE_LATEST.md',
+  'DAILY_18_PLAYBOT_LEARNING_LATEST.md',
+  'playbot-learning-daily-ledger.csv',
+  'playbot-console.pid',
+  'playbot-harness.pid',
+  'schedule-6pm-playbot.log',
+]);
+
+function isProtectedLogName(name: string): boolean {
+  if (PROTECT_LOG.has(name)) return true;
+  if (name.endsWith('.pid')) return true;
+  if (name.startsWith('playbot-learning-daily-')) return true;
+  if (name.startsWith('DAILY_')) return true;
+  return false;
+}
+
 function addSize(file: string): number {
   try {
     return fs.statSync(file).size;
@@ -62,6 +88,14 @@ function rmrf(target: string): void {
   fs.rmSync(target, { recursive: true, force: true });
 }
 
+function runMtime(dir: string): number {
+  try {
+    return fs.statSync(dir).mtimeMs;
+  } catch {
+    return 0;
+  }
+}
+
 export function resetRawPlayData(input?: { capBytes?: number; root?: string }): {
   reset: boolean;
   bytes: number;
@@ -71,22 +105,35 @@ export function resetRawPlayData(input?: { capBytes?: number; root?: string }): 
   const cap = input?.capBytes ?? RAW_CAP_BYTES;
   const bytes = measureRawBytes(root);
   if (bytes < cap) return { reset: false, bytes, cap };
-  rmrf(path.join(root, 'runs'));
+
+  const runs = path.join(root, 'runs');
+  if (fs.existsSync(runs)) {
+    const dirs = fs.readdirSync(runs, { withFileTypes: true })
+      .filter((e) => e.isDirectory())
+      .map((e) => path.join(runs, e.name))
+      .sort((a, b) => runMtime(a) - runMtime(b));
+    for (let i = 0; i < dirs.length; i += 1) {
+      if (measureRawBytes(root) < cap * 0.7) break;
+      rmrf(dirs[i]);
+    }
+  }
+
   const logs = path.join(root, 'logs');
-  if (fs.existsSync(logs)) {
+  if (fs.existsSync(logs) && measureRawBytes(root) >= cap * 0.7) {
     const ents = fs.readdirSync(logs, { withFileTypes: true });
     for (let i = 0; i < ents.length; i += 1) {
-      if (ents[i].name === 'learned') continue;
+      if (isProtectedLogName(ents[i].name)) continue;
       rmrf(path.join(logs, ents[i].name));
     }
   }
+
   fs.mkdirSync(path.join(root, 'runs'), { recursive: true });
   fs.mkdirSync(learnedDir(), { recursive: true });
   fs.mkdirSync(logs, { recursive: true });
   const stamp = path.join(learnedDir(), 'raw-reset-ledger.ndjson');
   fs.appendFileSync(
     stamp,
-    `${JSON.stringify({ at: new Date().toISOString(), bytes, cap, kept: 'learned/' })}\n`,
+    `${JSON.stringify({ at: new Date().toISOString(), bytes, cap, kept: 'learned/+ops' })}\n`,
     'utf8',
   );
   return { reset: true, bytes, cap };

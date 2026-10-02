@@ -72,7 +72,7 @@ export function shouldShowStelliumAnnexAction(
   );
 }
 
-/** 1홉에 본거지·독립국·BLUE 클랜 홀드가 있으면 편입 접선. */
+/** 1홉에 독립국·BLUE 클랜 홀드가 있으면 편입 접선. */
 export function hasStelliumAnnexFriendlyAdjacency(
   systemId: string,
   holds: Readonly<Record<string, PlanetClanHold>>,
@@ -86,26 +86,9 @@ export function hasStelliumAnnexFriendlyAdjacency(
     for (let j = 0; j < keys.length; j += 1) {
       const hold = holds[keys[j]];
       if (!hold || hold.systemId !== adj) continue;
-      if (hold.kind === 'player_home' || hold.kind === 'player_independent') return true;
+      if (hold.kind === 'player_independent') return true;
       if (resolveHoldFactionSide(hold.occupierClanId) === 'BLUE') return true;
     }
   }
   return false;
-}
-
-/**
- * 플레이어 웨이브 중립화 후 NPC가 BLUE/RED로 칠하지 못하게 하는 보호창.
- * protectMs=0 이면 neutralizedAt 이 있는 동안 계속 보류(편입·증서가 마커를 지움).
- */
-export function shouldHoldNpcOccupyAfterPlayerNeutralize(input: {
-  hold: PlanetClanHold | undefined;
-  nowMs: number;
-  protectMs: number;
-}): boolean {
-  const at = input.hold?.neutralizedAt;
-  if (typeof at !== 'number' || !Number.isFinite(at) || at <= 0) return false;
-  if (resolveHoldFactionSide(input.hold?.occupierClanId) !== 'NEUTRAL') return false;
-  const windowMs = Math.max(0, Math.floor(input.protectMs));
-  if (windowMs <= 0) return true;
-  return input.nowMs < at + windowMs;
 }

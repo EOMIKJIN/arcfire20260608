@@ -1,7 +1,16 @@
 id,displayName,triggerKey,triggerTargetId,triggerRepeat,maxLinesPerPage,completionPolicy,nextRoute,skippable,typewriterSpeedMs,fadeInEnabled,fadeInDurationMs,fadeOutEnabled,fadeOutDurationMs
 intro01,튜토리얼 인트로,nickname_created,,once,4,mark_intro_seen_and_start_first_mission,/(game)/planet,TRUE,72,TRUE,700,TRUE,600
 ingame_dialog_01,아르카디아 환영 대사,planet_landed,arcadia_prime,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
-ingame_dialog_scan_main_quest,스캔 후 메신저 안내,planet_scan_complete,arcadia_prime,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+ingame_dialog_scan_main_quest,스캔 후 허브 안내,planet_scan_complete,arcadia_prime,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+hub_tut_a2_mine,스텔라 채굴 안내,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+hub_tut_a3_mine_ok,스텔라 채굴 확인,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+hub_tut_a4_trade,스텔라 무역소 안내,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+hub_tut_a5_sell,스텔라 판매 확인,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+hub_tut_b1_shipyard,스텔라 조선소 안내,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+hub_tut_c1_talk,스텔라 대화 안내,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+hub_tut_c2_bar,스텔라 바 안내,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+hub_tut_d1_wrap,스텔라 허브 정리,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+hub_tut_d2_depart,스텔라 출발 안내,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 ingame_dialog_wave_defense_end,웨이브 디펜스 종료,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_default,함장 인사 폴백,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 npc_dialog_arc_transport_temp,아크수송선단 임시 대화,manual,,repeat,4,none,/(game)/planet,TRUE,70,FALSE,0,FALSE,0

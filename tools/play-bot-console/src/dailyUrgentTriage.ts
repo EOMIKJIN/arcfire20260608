@@ -22,6 +22,12 @@ export function buildDailyTriage(input: {
   questCleared: number;
   level: number;
   credits: number;
+  policyStuck?: boolean;
+  equalWeights?: boolean;
+  sameNotes?: string;
+  saturated?: boolean;
+  twinBorder?: boolean;
+  persistRecovered?: boolean;
 }): DailyTriage {
   const reasons: string[] = [];
   const autoNotes: string[] = [];
@@ -33,6 +39,10 @@ export function buildDailyTriage(input: {
   if (input.verdict === 'FAIL') reasons.push('18:00 판정 FAIL');
   if (!input.botAlive) reasons.push('플레이봇 프로세스 정지');
   if (!input.recording) reasons.push('녹화 OFF');
+  if (input.policyStuck || input.equalWeights) {
+    reasons.push(`정책 고착 — ${input.sameNotes || '같은 메모·동일 가중'}`);
+  }
+  if (input.persistRecovered) reasons.push('학습파일 손상 → bak 복구됨');
   if (story021 >= 44) {
     urgentGame.push('본편 021 게이트가 다시 Lv44 — 기존값 재확인 필요');
     reasons.push('G-1 본편 절벽 재발');
@@ -40,8 +50,8 @@ export function buildDailyTriage(input: {
   if (story021 === 28 && story023 === 32 && story030 === 44) {
     autoNotes.push('G-1 본편 게이트 28/32/36/40/44 유지');
   }
-  autoNotes.push('트윈: 인접성계 배달·탐사거점·격납고 0이면 보충 (다음 하니스 로드부터)');
-  autoNotes.push('학습 목표 유지: 사람 체감 + 정체/반복 해소로 지능 향상. 정책 adapt 유지.');
+  if (input.saturated) autoNotes.push('포화 구간(L캡·퀘 소진·120일 창 밖) — 학습 범프 제외 · 감시만');
+  if (input.twinBorder) autoNotes.push('국경 BORDER_* 는 트윈 전용. adapt 입력에서 제외');
   autoNotes.push('플레이스홀더 HOLD는 자체 1안: 해석기 등록분 이동 · 미해석 토큰 퀘 스킵. 인게임 CSV 불변.');
 
   const codes = input.findings.map((f) => f.code);

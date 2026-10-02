@@ -23,6 +23,7 @@ import { getArcCoreWorldNodeByGodId } from '../../src/arcCore/pantheon/arcCoreWo
 import { listTradeResellProfitTips } from '../../src/game/tradeProfitTips';
 import { formatCredits } from '../../src/utils/formatCredits';
 import { usePlayerStore } from '../../src/store/playerStore';
+import { notifyStellaHubTutorial } from '../../src/game/hubTutorial/stellaHubTutorialGuide';
 import { useWorldStore } from '../../src/store/worldStore';
 import { useMissionStore } from '../../src/store/missionStore';
 import { reconcileActiveMissionProgressAfterEvent } from '../../src/missions/reconcileActiveMissionProgress';
@@ -814,6 +815,7 @@ export default function TradeScreen() {
       sellQty,
       sellGross,
     );
+    notifyStellaHubTutorial('sold', player.currentPlanetId ?? planet.id);
     await persist();
   };
 

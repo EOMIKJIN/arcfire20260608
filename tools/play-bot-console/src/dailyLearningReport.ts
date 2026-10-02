@@ -108,9 +108,11 @@ function decideVerdict(input: {
   dQuest: number;
   dLevel: number;
   staleHours: number;
+  policyStuck?: boolean;
 }): DailyLearningVerdict {
   if (!input.hasLearning && !input.botAlive) return 'FAIL';
   if (input.staleHours >= 8 && !input.botAlive) return 'FAIL';
+  if (input.policyStuck) return 'WARN';
   const risk = input.findings.some((f) => f.severity === 'risk');
   const plateau = input.findings.some((f) => f.code === 'QUEST_PLATEAU' || f.code === 'QUEST_STUCK');
   if (risk || (plateau && input.dQuest <= 0 && input.dLevel <= 0)) return 'WARN';
@@ -127,6 +129,7 @@ export function buildDailyLearningReport(input: {
   botAlive: boolean;
   nowIso: string;
   dateKey: string;
+  humanSeedLine?: string;
 }): DailyLearningReport {
   const kpi = kpiFromStatus(input.status, input.learning);
   const prevK = input.prev?.kpi;
@@ -142,6 +145,7 @@ export function buildDailyLearningReport(input: {
   const window = lastGrowthWindow(input.learning, 16);
   const first = window[0];
   const last = window[window.length - 1];
+  const policyStuck = input.policy?.health?.stuck === true || input.policy?.health?.equalWeights === true;
   const verdict = decideVerdict({
     hasLearning: input.learning.growth.length > 0 || input.learning.runs.length > 0,
     botAlive: input.botAlive,
@@ -149,6 +153,7 @@ export function buildDailyLearningReport(input: {
     dQuest: prevK ? dQuest : (last && first ? last.questCleared - first.questCleared : 0),
     dLevel: prevK ? dLevel : (last && first ? last.level - first.level : 0),
     staleHours,
+    policyStuck,
   });
 
   const snapshot: DailySnapshot = {
@@ -203,7 +208,8 @@ export function buildDailyLearningReport(input: {
     `- **판정**: **${verdict}**`,
     `- 런 ${input.status?.runId ?? '-'} · 페르소나 ${input.status?.persona ?? '-'} · 녹화 ${input.status?.recording ? 'ON' : 'OFF'} · 봇 ${input.botAlive ? '가동' : '정지'}`,
     `- 행성 ${input.status?.planet ?? '-'} · 퀘스트 ${quest?.missionId ?? '-'}#${(quest?.objIndex ?? 0) + 1} · HOLD ${input.status?.lastHold || '-'}`,
-    `- 정책 generation ${input.policy?.generation ?? 0} · 적응주기 ${input.policy?.adaptEveryDays ?? '-'}일`,
+    `- 정책 generation ${input.policy?.generation ?? 0} · 적응주기 ${input.policy?.adaptEveryDays ?? '-'}일 · 고착 ${policyStuck ? 'YES' : 'NO'}`,
+    `- ${input.humanSeedLine ?? '대표님 시드 없음'}`,
     '',
     '## 벽시계 1일 델타 (직전 18:00 스냅샷 대비)',
     '',
@@ -231,7 +237,7 @@ export function buildDailyLearningReport(input: {
     '',
     ...(policyNotes.length ? policyNotes.map((n) => `- ${n}`) : ['- (없음)']),
     '',
-    '## 누적 학습 코드',
+    '## 창 학습 코드 (최근 90가상일)',
     '',
     top.length ? top.join(' · ') : '(없음)',
     '',

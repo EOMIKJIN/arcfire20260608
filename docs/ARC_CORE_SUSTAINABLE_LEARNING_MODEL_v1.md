@@ -2,7 +2,8 @@
 
 > **문서 버전**: v1.0  
 > **작성**: 2026-06-26  
-> **상태**: **설계 완료 · 구현 대기**  
+> **상태**: **설계 완료 · 부분 구현(C-1 KPI tail) · ScenarioRunner HOLD**  
+> **2026-10-02 해석**: §9 AI봇 루프는 [`PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md`](./PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md) **v1.1** — 산출은 인간형 코퍼스, 아크코어는 무대. World/Learning/Player · 버스 DORMANT · 12좌는 유지.  
 > **목표**: 빌드·계정 초기화와 **분리된** 아크코어 월드·학습 축 → 서브코어·AI봇 → 경제·전투·전술 **자율 반복 학습**  
 > **헌법**: v4.0 §10·§14 · `Local-AI-First` · Firestore **단발 `.get()`/`.set()`** · `onSnapshot` 금지 · 일 1회 배치
 

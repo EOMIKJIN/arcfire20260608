@@ -60,8 +60,6 @@ import { reassignPlanetGovernorForOccupationSync } from '../game/planetGovernor/
 import { hydratePlanetGovernorAssignmentStore } from '../game/planetGovernor/planetGovernorAssignmentStore';
 import { grantGovernorOccupationCaptureExp } from '../game/planetGovernor/grantGovernorOccupationCaptureExp';
 import { shouldGrantGovernorOccupationCaptureExp } from '../game/planetGovernor/governorOccupationCaptureExpGate';
-import { grantPlayerNeutralizeFrontLevy } from '../arcCore/annex/grantPlayerNeutralizeFrontLevy';
-
 interface ClanWarFoundationState {
   hydrated: boolean;
   clans: Record<string, ClanBasicsRecord>;
@@ -710,9 +708,6 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
       })
     ) {
       grantGovernorOccupationCaptureExp(assignment.captainId);
-    }
-    if (markPlayerNeutralized) {
-      grantPlayerNeutralizeFrontLevy(planetId);
     }
     // FrontPressure — 이 성계 + 인접 성계의 posture/battlesPerInterval이 이 hold 변경으로 달라질 수 있음
     invalidateFrontPressure([systemId, ...listAdjacentSystemIds(systemId)]);

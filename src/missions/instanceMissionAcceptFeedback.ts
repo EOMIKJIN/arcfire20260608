@@ -65,6 +65,11 @@ export function tryAcceptQuestMissionWithFeedback(
   context: QuestMissionAcceptContext,
   t: AcceptFeedbackT,
 ): AcceptQuestMissionResult {
+  const hubTut = require('../game/hubTutorial/stellaHubTutorialGuide') as typeof import('../game/hubTutorial/stellaHubTutorialGuide');
+  if (hubTut.shouldHoldBarAcceptForStellaHubTutorial(missionId, context.planetId)) {
+    hubTut.notifyStellaHubTutorial('bar_accept_blocked', context.planetId);
+    return 'prereq_missing';
+  }
   const result = useMissionStore.getState().acceptQuestMission(missionId, context);
   const mission = getMissionById(missionId);
   const locale = useAppSettingsStore.getState().locale;

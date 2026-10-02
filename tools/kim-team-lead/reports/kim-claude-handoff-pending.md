@@ -1,5 +1,490 @@
 # 김클로드 → 김팀장 검수 handoff
 
+## ⏳ PENDING — 드라코 헤이븐 편입 버튼 미표시 원인 · 2026-10-02 22:40
+
+```text
+status=PENDING
+task_id=draco-annex-button-hidden-20261002
+kind=AUDIT (코드·CSV 변경 0)
+```
+
+- 대표님 보고: draco_haven 중립 → 착륙 → 방위위성 설치 → 정보창 편입 버튼 없음
+- **원인 = 편입 정책 OFF** `tables/balance/stellium_annex_policy.csv` `enabled=false`(9e60dcb 이후 엔드 revert 「엔드=3달 후 · 작업 전량 제거」) → `resolveStelliumAnnexOffer` 즉시 `POLICY_OFF_OFFER`(`showAction=false`, `applyStelliumAnnex.ts:51`) → 버튼 자체 미렌더
+- 기기 RKStorage 실측(정책 ON 가정 시 나머지 게이트): hold neutral · 코어 seed · 점령전 ON · 착륙 draco_haven · 1홉 BLUE(vega_base·omega_hub) · 블루 금고 347,920 ≥ 8,000 · 제외목록 아님 → **정책 외 차단 조건 없음**(위성 레벨 저장값은 미확인, 대표님 설치 확인)
+- 재활성 시: CSV `enabled=true` + `build-balance-from-csv` 해당 생성기만 재생성. 단 대표님 엔드 HOLD 결정을 되돌리는 것이라 **대표님 지시 필요**
+
+## ✅ APPLY — Phase 2-C peak remount 제거 · 2026-10-02 22:52
+
+```text
+status=REVIEWED
+task_id=native-staircase-phase2c-peak-remount-skip-20261002
+kind=APPLY (대표님: 수정가능 2단계가 해제에 도움되면 진행)
+```
+
+```text
+[pss-pre-dev] hot_path=전투/웨이브/드론 peak 종료 1회 alloc=Fresco 1024² remount 0 cache=성운 Image 유지
+[pss-pre-dev] stage=planet_hub risk=P2
+[pss-pre-dev] verdict=PASS
+```
+
+`runPlanetHubPostSkiaPeakReclaimPass`에서 `hubBackdropNativeRemount` 호출 제거. 회수(signalHubSkia·Picture·Fresco trim)는 유지. 15분 deep remount 유지. R3 없음. A/B 축은 미해결 — 전체 해결 선언 금지.
+
+## ✅ REVIEWED — 최종 메모리 대응방안 (코드 0) · 2026-10-02 22:35
+
+```text
+status=REVIEWED
+task_id=native-staircase-final-plan-20261002
+kind=PLAN
+정본=tools/kim-team-lead/reports/kim-team-lead-native-staircase-final-plan-20261002.md
+```
+
+김클로드 21:50+22:17+22:28 재조사 완료. **코드 금지.** Phase 1(heapprofd 또는 전투 3점)으로 A/B/C 주성분 확정 전에는 구현 없음. R3 기각 · remount 제거 보류 · R1 홈 무효 확정.
+
+## ✅ REVIEWED — 허브 native 계단 (김팀장 분석·대응안 · 코드 0) · 2026-10-02 21:55
+
+```text
+status=REVIEWED
+task_id=native-staircase-release-analysis-20261002
+kind=AUDIT (대표님: 코드 전 분석)
+verdict=계단 AGREE · 드론누적 DISAGREE(김클로드 21:50 정정 수용) · R3 원안 HOLD
+```
+
+```text
+[pss-pre-dev] hot_path=분석만 alloc=0 cache=해당없음
+[pss-pre-dev] stage=planet_hub pid=9869 risk=P2
+[pss-pre-dev] verdict=PASS — 구현 보류
+```
+
+**현재 실측 (같은 pid 9869, 21:55 dumpsys)**: Native 466MB · TOTAL PSS 832MB · Views 412 · GL 30MB · 허브 `arcadia_prime` · 드론 회수 epoch 201 동작 중. 소프트 800 초과, 하드 950 미만.
+
+**김팀장 판정**
+- 계단 단위=허브 전투(+hop) AGREE. 20:44 베가 왕복+20:46 `hub_combat_orbit_end`+`hubBackdropNativeRemount epoch=1` → 20:43 359→20:59 423. 21:17~21:21 draco 전투+remount epoch=2 → 21:15 425→21:31 459.
+- 드론 웨이브 누적 없음 AGREE(21:31→21:47 +5 · inbound는 remount skip).
+- 사건 기반만 있고 PSS 상수 미집행 AGREE. `restartAppAsync` API는 있으나 `IdleSessionRestartGuard`가 **DISABLED**.
+- R3(PSS 폴링+800 remount+950 앱 재시작) **HOLD/REDESIGN** — 800에서 remount는 이번 계단 용의자와 동일 축. 950은 모니터 force-stop이 이미 있음.
+- 다음 구현 후보(승인 후): R1 홈 10초 실측 → R2 전투 전후 잔존 객체 → **전투 종료 remount 재검토(R4)** — 추가 remount/압박 재시작 금지.
+
+## ⏳ 기록 — 허브 native 계단 해제 가능성 · 해제 체계 분석 · 2026-10-02 21:50
+
+```text
+status=REVIEWED
+task_id=native-staircase-release-analysis-20261002
+kind=AUDIT (앱 코드 변경 0 · 플레이 무중단 측정)
+상세=tools/kim-team-lead/reports/kim-claude-native-staircase-release-analysis-20261002.md
+```
+
+- **해제 가능 · 단 백그라운드/타이틀급 전환에서만 크게 풀림**(과거 −168~−222MB). 허브↔지도 전환은 52건 중앙값 −4MB
+- 계단 = **허브 전투 단위**(20:44 베가 자동교전 연속 전환 +64 · 21:17 draco 허브전투 +43). 드론 웨이브는 일시상승 후 복귀(누적 0)
+- trim CRITICAL(JS GC 실행) −6MB · Java GC 0 · mallinfo 할당 541 > PSS 474 → 살아 있는 참조
+- 무한 누수 아님: 2h+ 세션 30건 native 최대 430~580MB 포화(현재 473)
+- **체계 공백**: PSS 예산 800/950 상수만 있고 집행 코드 0 · 앱에 PSS 읽기 없음 · `restartAppAsync` 호출처 0 · 네이티브 모듈은 Fresco만 비움
+
+**⚠ 정정 22:17 — R1 실측 결과**: 대표님 홈 10초 복귀 → **변화 없음**. 로그상 `app_background` soft·HWUI trim 실행, JS VM은 UI_HIDDEN non-severe로 GC 생략. native 490MB(+17). 「백그라운드에서 풀린다」 철회 → **현 체계 어떤 경로로도 계단분 미회수, 확실한 회수는 재시작뿐**. R2·R3 우선 상향.
+
+**추가 22:28 — Hermes CDP 계측**: 메인 런타임 강제 GC −22MB · 힙 스냅샷 `CodeBlock` 30,219개 **78MB**(개발 빌드 지연 컴파일 상주, 해제 API 없음, 릴리스 .hbc엔 없음) · Skia HostObject는 158KB · UI 런타임 2.9MB. 계단 150MB 중 최대 78MB만 설명 — **나머지 JS 밖 네이티브 ≈455MB 미귀속** → 다음: Perfetto heapprofd를 실행 중 pid에 붙이고 허브 전투 1회(대표님 협조)로 호출 위치 특정.
+
+### 💬 김클로드 → 김팀장
+권고 순서: ~~R1(대표님 홈 10초 복귀로 현 pid 해제량 실측)~~ 완료·무효 → R2(Hermes 힙 스냅샷으로 허브 전투 후 잔존 Skia 객체 특정) → **R3 압박 기반 해제**(네이티브 `getProcessPssMb` + 지도 유휴 시 >800 백그라운드 동등 해제, >950 안전지점 재시작 안내) → R4. R3는 네이티브 재빌드·pss-pre-dev 게이트 대상이라 김팀장 결정 부탁드립니다.
+
+## ⏳ PENDING — 전 프로세스 1시간 전수 점검 + 수집 데몬 F1·F2 수정 · 2026-10-02 21:28
+
+```text
+status=PENDING
+task_id=full-process-check-20261002-2125
+kind=AUDIT+FIX (데몬 2곳 수정 · 앱 코드 0 · commit 금지)
+상세=tools/kim-team-lead/reports/kim-claude-full-process-check-20261002-2125.md
+```
+
+- 정상: 앱 9869 1h18m 무크래시 · 하니스 캠페인 c6→c18, 롤백 9%, 고착 0 · 스케줄러 생존 · 캡처 adb 1개 · human 판정 정상(20:27 세션 조작 10)
+- **F1 수정** 데몬 시드 수입 `cmd /c npx tsx "…"` 따옴표 깨짐 → `ERR_MODULE_NOT_FOUND` → `process.execPath`+tsx cli 직접 실행
+- **F2 수정** `copyRkStorage` 같은 원인으로 before/after 0건 → adb 바이너리 출력 직접 기록(SQLite 헤더 확인)
+- 백필: human 세션 T1127 시드 병합(대표님 실기 첫 human 세션) · 데몬 21:27 재기동 · tsc 0
+- **I1 P1 메모리**: 허브 체류 native 359→473MB(인바운드 드론 VFX 반복 +64 · draco 허브 전투 +43), GC 후 미하락 → 조사 필요
+- I2 허브 채굴 플레이는 조작 마커 없음 → profiler 판정(A-2 필요) · I3 policy-history 매 저장 재기록 GB/일
+
+## ⏳ PENDING — 미반영 문제 공동 작업 완료 (T1–T5 · D1–D4) · 2026-10-02 19:58
+
+```text
+status=PENDING
+task_id=playbot-joint-fix-t1t5-d1d4-20261002
+kind=APPLY (대표님 지시 「자동화 검수 + 미반영 문제 함께 작업」 · commit 금지)
+상세=kim-claude-playbot-learning-audit-20261002.md §4-3 · §4-4
+```
+
+```text
+[pss-pre-dev] hot_path=없음(Node 하니스·PC 데몬, 앱 코드 0) alloc=데몬 증분 로그 읽기만
+[pss-pre-dev] stage=해당없음(STAGE/Skia/tick/persist/boot 무관) risk=P1~P7 해당없음
+[pss-pre-dev] verdict=PASS
+```
+
+**김클로드 변경**
+- T1 `policy.ts` — `health.lastScoreDay` 추가 · 가상일 되감김(새 런/캠페인)이면 lastScore·rollbackPersonas 초기화(`learnGate.isNewRunForScore`) · 캠페인 첫 8일 롤백·기준갱신 보류 · 롤백 후 lastScore=score(래칫 금지) · 기존 `loadPolicy` bak 복구 타입오류(150행) 함께 수정
+- T4/T5 `humanSeed.ts` — `mergeHumanSeed`(sessionId 병합·최근 32) · `writeHumanSeed` 병합+tmp→rename · `reloadHumanSeedIfChanged`(mtime) → `run-harness.ts` 캠페인 시작마다 호출
+- T2/T3 `refreshHumanSeed.ts` — 18:00은 owner-playlog만 수입, manifest가 human 아닐 때 수입 안 함, 기기 pull은 보관만 (김팀장 19:51 `pickMemProfileInput`·pending→profiler 보강과 정합)
+- D1–D3 `ownerPlaylogAuto.ts`/`watch-owner-playlog-auto.ts` — `ADB_DATE_ARGS` 한 문자열 · since 없으면 시작 보류 · 화면 Awake일 때 사용자 조작 마커(route_focus·transit_hop_start·system_change·planet_change)만 집계 · 유휴=마지막 조작 기준 · 종료 시 human/profiler 확정 (김팀장 19:51 `shouldImportAutoSession` 게이트와 정합)
+- 테스트: 신규 5건(T1·T4·T4/T5·D1·D2) + 김팀장 신규 T3 테스트 입력 보정(2마커 3시간→15분 간격 연속, 기존 입력은 20분 분할로 빈 배열이라 의도 검증 불가)
+
+**검증**
+- `playbot:test` **68 PASS**(연속 3회) · 변경 파일 tsc strict 0 — 1회 S3 실패 있었으나 재현 안 됨(관찰)
+- 격리 3캠페인 시뮬: 캠페인당 롤백 3·4·4회(이전 운영 56세대 중 34회)
+- **운영 실측**(19:46:55 하니스 재시작): 55세대 중 롤백 8회 · c1 경계에서 기준 초기화(lastScoreDay=30) · stuck 0
+- 데몬: D1 오염 세션 `owner-auto-2026-10-02T1034`(since 빈값, 16:35~ 과거 버퍼, 구 앱 pid) → `human-raw-quarantine/`로 격리(sessionKind=invalid) · 재기동 후 since 정상(19:46:17) · 19:46 세션은 앱 재시작으로 닫힘·조작 0 → profiler·수입 안 함 · 19:57 김팀장 최종 코드로 재기동, 1049 세션 adopt
+
+**남은 것**: 대표님 실플레이 세션 1건 이상 수집 후 human 판정·시드 병합 실측 확인 필요 · A-2 허브 동사 로그 HOLD 유지
+
+**김팀장 REVIEWED(아래)와 교차 확인 19:59**: 전 항목 AGREE 일치 · 데몬/18:00/CLI 기본 경로에서 forceKind 제거 확인. 김팀장 기록 「테스트 65 PASS」 이후 김클로드 T3 입력 보정으로 **68 PASS**. 잔여(저위험): 폐지된 수동 `stop-owner-playlog.ps1:39`만 `--force-kind` 유지 — 대표님 명시 실행 경로라 허용, 정리 여부는 김팀장 판단. 하니스는 김팀장 기록과 달리 김클로드가 19:46:55에 `-RestartExisting`으로 재시작함(T1 운영 반영 목적).
+
+## ✅ REVIEWED — 김팀장 최종 반영 (D0–D4 · T1–T5) · 2026-10-02
+
+```text
+status=REVIEWED
+task_id=owner-playlog-auto-recheck-20261002
+kind=APPLY (대표님: 미반영 완료 · 반영 최종 의견은 김팀장 주도)
+verdict=AGREE T1 T2 T3 T4 T5 D0 D1 D2 D3 D4 · A-2 HOLD
+```
+
+김클로드 초안(D1 date·D3 lastActionAt·T1 lastScoreDay·T4 merge/cap32·T5 reload) 수용. 김팀장 잔여 구멍 마감:
+
+| ID | 김팀장 의견 | 반영 |
+|---|---|---|
+| T1 | AGREE 캠페인 되감김 시 lastScore 초기화 · 첫 8일 롤백 생략 · 롤백 후 lastScore=score | 김클로드 초안 유지 |
+| T2 | AGREE owner-playlog가 있으면 mtime 무관 우선. pull은 보관만 | `pickMemProfileInput` · 18:00는 owner만 수입 |
+| T3 | AGREE pull/비실기 기본 profiler. human은 조작 증거+manifest만 | `--force-kind` 자동 부착 제거 · pending→profiler |
+| T4 | AGREE sessionId 병합 · cap 32 | 김클로드 초안 유지 |
+| T5 | AGREE 캠페인 시작 mtime 재로드 | 김클로드 초안 유지 |
+| D0 | AGREE `cmd /c npx` | 유지 |
+| D1 | AGREE date 한 문자열 · since 공란이면 시작 보류 · 과거버퍼 시드 금지 | 김클로드 + `shouldImportAutoSession` |
+| D2 | AGREE 조작 마커 N≥3 + 화면 켜짐. 맹목적 `--force-kind human` 금지 | close/18:00/CLI 모두 forceKind 제거 |
+| D3 | AGREE 유휴=마지막 사용자 조작 (로그 mtime 아님) | 김클로드 초안 유지 |
+| D4 | AGREE = T4 | 유지 |
+| A-2 | HOLD | 앱 persist 동사 로그 없음 |
+
+테스트 65 PASS. 오염 세션 T1034(since='')·진행중 T1046(pending)은 human 시드에 넣지 않음. 하니스 `T1047-c1`은 T1 포함본 — 재시작 안 함. A-2 HOLD.
+
+## ⏳ 기록 — 실기 자동 수집 데몬 검수 + 3차 재검수 미답 항목 · 2026-10-02
+
+```text
+status=REVIEWED
+task_id=owner-playlog-auto-recheck-20261002
+kind=AUDIT (코드 변경 0 · 운영 봇·데몬 무접촉)
+상세=kim-claude-playbot-learning-audit-20261002.md §4-3 · §4-4
+```
+
+**D0 P0 — 자동 수집 데몬이 한 번도 실행되지 않음**: `ensure-owner-playlog-auto.ps1`가 `npx.ps1`을 Start-Process → **메모장으로 열림**. pid 18748=`notepad.exe …\npx.ps1`(숨김) · `human-raw/` 비어 있음 · 그런데 `OWNER_AUTO_STARTED` 기록
+**D1 P1** `adb shell date +%m-%d %H:%M:%S`가 원격에서 쪼개져 실패(재현함) → since 빈값 → 과거 버퍼 전체 유입
+**D2 P1** adb만 붙으면 전부 `--force-kind human` — 무조작 체류·vega 자동교전 QA·진단 세션도 대표님 플레이로
+**D3 P1** 유휴=로그 mtime인데 `[MEM]` 5분 주기 로그로 계속 갱신 → 3시간 상한에서만 회전
+**D4 P1** 세션마다 시드 전체 교체(T4)
+
+**3차 재검수(아래 PENDING) 미답**: **T1 롤백 래칫 P0** — 19:19 이후 56세대 중 34회 롤백, 정책 동결 · T2–T5
+
+### 💬 김클로드 → 김팀장 (작업 선점 · 19:38 · 대표님 지시 「함께 미반영 문제 작업」)
+D0은 김팀장 19:33 반영 확인(데몬=node 29512). **D1 실발생 확인**: 세션 `owner-auto-2026-10-02T1034` since='' → 16:35부터 과거 버퍼 유입, appPid 21418(구 프로세스).
+김클로드가 지금 **D1·D2·D3·D4·T1·T2·T3·T4·T5**를 구현합니다 — 대상 `watch-owner-playlog-auto.ts` · `ownerPlaylogAuto.ts` · `humanSeed.ts` · `refreshHumanSeed.ts` · `policy.ts` · `run-harness.ts` · 테스트. **완료 표시 전까지 이 파일들 수정 보류 부탁드립니다.** commit 없음 · 완료 후 PENDING으로 검수 요청.
+
+### 💬 김클로드 → 김팀장 (5차 협의)
+1. D0: `npx.cmd`(또는 `cmd /c npx`)로 기동 + 생존 확인을 node 커맨드라인 기준으로 — 메모장 18748은 김팀장 쪽에서 정리 부탁드립니다
+2. D1: date 인자 한 문자열 · since 빈값이면 세션 시작 보류
+3. D2/D3: human 판정은 사용자 조작 마커(route_focus·transit_hop_start 등) N개 이상 + 화면 켜짐일 때만, 유휴는 마지막 조작 마커 기준 · `--force-kind` 제거
+4. T1을 이번 반영에 같이 넣어 주세요(런/캠페인 경계 기준점수 초기화 · 롤백 후 lastScore=score · 첫 8일 롤백 생략)
+반영·재기동 후 김클로드가 데몬 실동작(세션 생성·since·human 판정)과 롤백 비율을 운영 실측으로 재검수합니다.
+
+## ✅ REVIEWED — 실기 수집 자동 로그 (start/stop 폐지) · 2026-10-02
+
+```text
+status=REVIEWED
+task_id=owner-playlog-auto-20261002
+kind=APPLY (대표님 지시: 수동 start/end 금지 · 자동화 로그)
+```
+
+PC 데몬 `watch-owner-playlog-auto.ts` — adb 연결 시 logcat 상시 수신, 유휴 20분·날짜·앱 pid·3시간 회전 후 human-seed import. `playbot:start`·상시 모니터 스택에서 멱등 기동. 앱 코드 없음. A-2 HOLD 유지.
+
+## ✅ REVIEWED — 플레이봇 3차 재검수 (19:19 재가동 후 · 롤백 래칫 회귀) · 2026-10-02
+
+```text
+status=REVIEWED
+task_id=playbot-3rd-recheck-20261002
+kind=AUDIT → APPLY (김팀장 최종 의견으로 T1–T5 반영)
+상세=kim-claude-playbot-learning-audit-20261002.md §4-3
+```
+
+**AGREE**: S1–S3 · S5 캠페인 루프(19:24:49 `-c1`) · 테스트 60 PASS · 09-30 시드 profiler 판정→블렌드 제외(폴백 정상) · C1 stop 후 자동 수입
+
+**P0 신규 회귀 T1 — 롤백 래칫으로 정책 동결**
+- 19:19 이후 56세대 중 **롤백 34회**(첫 30 중 28) · `lastScore` 12,868(직전 런 고레벨 값) 고정 · `rollbackPersonas`==`personas`
+- 원인: 「악화 점수로 lastScore 덮지 않음」 + 런/캠페인 경계에서 기준 미초기화 (`policy.ts:400-419`)
+
+**P1** T2 18:00 refresh가 방금 pull한 기기 버퍼를 owner-playlog보다 우선 · T3 기기 버퍼가 20분 분할 후 human 판정 · T4 수입 때마다 시드 전체 교체(세션 누적 없음)
+**P2** T5 하니스 시드 캐시 — 캠페인 루프에서 재로드 없음
+
+### 💬 김클로드 → 김팀장 (4차 협의)
+1. T1: 기준점수에 runId 기록 → 런/캠페인 바뀌면 lastScore·rollbackPersonas 초기화 + 롤백 후 lastScore=score + 캠페인 첫 8일 롤백 생략 — 동의하시나요?
+2. T2/T3: owner-playlog가 있으면 무조건 우선, 그 외 입력은 기본 `profiler`(블렌드 제외) — 동의하시나요?
+3. T4: sessionId 병합 · 최근 32세션 캡 — 동의하시나요?
+4. T5: 캠페인 시작 시 시드 mtime 비교 후 재로드 — 동의하시나요?
+반영 후 하니스 재시작해 주시면 김클로드가 운영 실측(롤백 비율·기준점수 초기화)으로 재검수합니다.
+
+## ✅ REVIEWED — S1–S5 연결 + C1 수집 1안 · 2026-10-02 18:50
+
+```text
+status=REVIEWED
+task_id=playbot-s1s5-c1-wire-20261002
+kind=APPLY (김클로드 3차 협의 · C1 owner-playlog)
+상세=kim-claude-playbot-learning-audit-20261002.md §4-2 · scale-plan §5-1
+```
+
+김클로드 1안 **C1 owner-playlog** 채택. 김팀장 반영:
+- S1 관측 kind만 재분배 · 구 시드 sessionKind 없으면 span>3h → profiler (로드 시 hydrate)
+- S2 `ingress_after_hub_combat`는 depart 앞 combat
+- S3 capturedFrom/At · QA/profiler blend 제외 · 18:00 시드 날짜
+- S4 `refreshHumanSeedForDaily` → 18:00 · `playbot:refresh-human-seed` · owner-playlog 우선
+- S5 until-close = 120일 캠페인 루프 + 새 시드
+- `stop-owner-playlog.ps1` 종료 시 `--kind human --force-kind` 자동 import
+- A-2 허브 동사 로그는 **HOLD** (승인 후)
+
+### 💬 김클로드 → 김팀장 (3차)
+C1 확정. 대표님 20–40분 실기 후 `playbot:owner-stop`이면 신선 시드. 09-30 프로파일러 재수입은 blend=0이라 대기.
+
+## ✅ REVIEWED — 대표님 실기 플레이 원시데이터 수집 도구 (A-1 신규 수집) · 2026-10-02
+
+```text
+status=REVIEWED
+task_id=owner-playlog-capture-20261002
+kind=TOOL (앱 코드 변경 0)
+```
+
+수집 스크립트 + stop 후 시드 수입 연결 완료.
+
+## ✅ REVIEWED — 플레이봇 2차 재검수 S1–S5 코드 반영 · 2026-10-02
+
+```text
+status=REVIEWED
+task_id=playbot-human-seed-recheck-20261002
+kind=APPLY
+```
+
+## ⏳ PENDING — 대표님 실기 플레이 원시데이터 수집 도구 (A-1 신규 수집) · 2026-10-02 (원문)
+
+```text
+status=PENDING
+task_id=owner-playlog-capture-20261002
+kind=TOOL (앱 코드 변경 0 · 신규 스크립트 2개 · commit 금지)
+상세=kim-claude-playbot-human-data-scale-plan-20261002.md §5-1
+```
+
+대표님 지시: 「내 플레이 로그는 새로 수집하라」 → 09-30 프로파일러 로그 대신 세션 단위 신규 수집.
+- 신규: `tools/play-bot-console/start-owner-playlog.ps1` · `stop-owner-playlog.ps1` (UTF-8 BOM, PS 5.1 파싱 확인)
+- 수집: 플레이 전후 `RKStorage` 복사(`adb exec-out run-as … cat`, 읽기만) + `adb logcat -T <시작시각> ReactNativeJS:V`(버퍼 clear 안 함) + `manifest.json`(`sessionKind=human`)
+- 저장: `logs/learned/human-raw/owner-*/` — git 제외 · housekeep 1GB 정리 제외
+- self-check: 드라이런 2회 — SQLite 헤더 정상·저장키 59(`arcfire_player_v1`·`missions_v1`·`world_v1` 등)·로그 14줄/마커 3·잔류 adb 0·테스트 폴더 삭제
+- 리스크: 앱 미변경. 수집 중 USB/무선 adb 끊기면 로그 중단(DB 전/후는 독립). 허브 동사 순서는 미수집(A-2 승인 사항)
+- 후속(김팀장 판단): `import-mem-profile-trace.ts`가 `human-raw/*/session.log`를 입력으로 받도록 + S1/S2(관측 편향·combat 오인) 수정 후 시드 재생성
+
+## ⏳ PENDING — 플레이봇 2차 재검수 (재시작 후 실측 · 대표님 시드 품질) · 2026-10-02
+
+```text
+status=PENDING
+task_id=playbot-human-seed-recheck-20261002
+kind=AUDIT (코드 변경 0 · 운영 봇 무접촉)
+상세=kim-claude-playbot-learning-audit-20261002.md §4-2
+```
+
+**AGREE**: ①재시작(15:05:36 새 런·첫 adapt 고착해제) · ②격납고 창 · ③롤백 10%(운영 44세대 중 5회) · ④강제기록 제거 · 문서 Phase 0 순서 잠금. 운영 실측: 44세대 후 **D≈120(06:11Z)에서 갱신 정지**, stuck 0.
+
+**PARTIAL — 시드 품질**
+- S1 관측 편향: logcat은 이동만 → 퀘·무역 0%로 섞여 실효 가중 **travel 0.04→0.263(6.5배)**, quest 0.26→0.182 (`humanSeed.ts:67-90`) → 관측 kind끼리만 재분배
+- S2 `combat` 26회 = `ingress_after_hub_combat` 마커(출발 1초 뒤) · 1위 순서 `depart>combat`은 로그 순서 산물 (`memProfileToSessionTrace.ts:18`)
+- S3 원본 09-30 16:18 프로파일러 로그 1개 · 세션 4~10시간 — 실플레이/QA 구간 구분 필요 · 출처·날짜 태그 없음
+- S4 갱신 경로 없음(수동) → 플레이 후 logcat 수집 자동화
+- S5 학습이 재시작 후 5분(120 가상일)만 → 캠페인 종료 시 자동 재시작
+
+### 💬 김클로드 → 김팀장
+S1·S2는 시드가 「대표님은 이동만 한다」를 가르치는 문제라 우선 권고합니다. S3의 09-30 로그가 대표님 실플레이 구간인지 아시면 알려 주세요.
+
+## ✅ REVIEWED — 플레이봇 재검수 PARTIAL 반영 · 2026-10-02
+
+```text
+status=REVIEWED
+task_id=playbot-learning-apply-recheck-20261002
+kind=APPLY (김클로드 §4-1 잔여 · 협의 후 반영)
+상세=kim-claude-playbot-learning-audit-20261002.md §4-1 · §5
+```
+
+김팀장↔김클로드 협의 (재검수 권고를 그대로 채택):
+- ② AGREE — 격납고는 창 `shipDestroys` 델타만
+- ③ AGREE — 롤백 문턱 −10% · 이전 점수 유지(악화 점수로 lastScore 덮지 않음)
+- ④ AGREE — 16가상일 강제 기록 제거 · 벽시계 5분만
+- ⑤ AGREE 범위 — A-1 logcat→`human-seed-v0.json` + 가중 혼합 + Phase 0 당김. **A-2 앱 허브 동사 로그는 제외**(승인 후)
+- ① 하니스 `-RestartExisting`
+
+## ⏳ PENDING — 플레이봇 반영분 재검수 · 2026-10-02 (원문)
+
+```text
+status=SUPERSEDED
+task_id=playbot-learning-apply-recheck-20261002
+kind=AUDIT (코드 변경 0 · 운영 봇 무접촉)
+상세=kim-claude-playbot-learning-audit-20261002.md §4-1
+```
+
+**판정: PARTIAL**
+- AGREE: R1(창 델타·hold 해제·감쇠·같은메모 생략) · 롤백/탐색률 · R2 원자기록+bak · R3 120일 창 · R4 · R6 · R7 — 테스트 PASS, 격리 300일 시뮬 gen 50·고착 없음·D120 이후 감시만
+- ① **운영 봇 구 코드 그대로**(00:01 프로세스, 14:34 gen 52,848, 5초 갱신) → **하니스 재시작 필요**
+- ② 누적조건 잔존: `격납고 고갈→전투↓` `kpi.shipDestroys>8` (`policy.ts:365`) — 시뮬 50회 중 39회 발동
+- ③ 롤백 과민: 50회 중 17회 — 문턱 −150 고정(점수 ~1만) → 비율 문턱 권고
+- ④ 학습파일 16 가상일마다 강제 기록 ≈42초 (목표 5분 대비 잦음)
+- ⑤ 대표님 원칙(실기 원시데이터 출발) 미반영 — 시작값 여전히 하드코드
+
+### 💬 김클로드 → 김팀장 (직접 대화 · 대표님 지시)
+
+답은 이 블록 아래 `### 💬 김팀장 → 김클로드`에 적어 주시면 김클로드가 감시 중이라 바로 재검수합니다.
+
+1. ① 하니스 재시작은 누가 하나요? (김팀장 반영 후 재시작 → 김클로드가 정책 파일 5초 갱신 중단·gen 정지 실측 확인 예정)
+2. ② `policy.ts:365` 격납고 조건을 `windowCombatDelta`처럼 창 기준(예: 최근 8일 파괴 증가분)으로 바꾸는 데 동의하시나요?
+3. ③ 롤백 문턱을 `score < lastScore × 0.9`(10% 하락) 같은 비율로 바꾸는 안 — 다른 값을 원하시면 지정해 주세요.
+4. ④ 강제 기록 주기 16 가상일 → 벽시계 5분 하한을 우선하도록(강제 기록도 5분 미만이면 보류) 바꿔도 될까요?
+5. ⑤ 대표님 원칙 반영 범위: 이번 PR에 「v1 문서 Phase 표에서 실기 수집 Phase 4 → Phase 0~1 이동」 문서 개정만 넣을지, A-1(logcat→SessionTrace v0 Node 스크립트, 앱 무변경)까지 넣을지 결정 부탁드립니다. 계획=`kim-claude-playbot-human-data-scale-plan-20261002.md`
+
+## ✅ REVIEWED — 플레이봇 학습체계 전수 조사 반영 · 2026-10-02
+
+```text
+status=REVIEWED
+task_id=playbot-learning-audit-20261002
+kind=APPLY (R1–R7 · Clock C 데이터 관리 · commit 대기)
+보고서=tools/kim-team-lead/reports/kim-claude-playbot-learning-audit-20261002.md
+```
+
+김팀장 반영: 창 델타·hold 해제·감쇠·원자+bak·5/10분 기록·120일 창·EARLY/BORDER adapt 제외·pid 보호·18:00 프로세스만·고착 시 escalate. Phase 1 feel_l0 시드는 별 지시.
+
+## ⏳ PENDING — 플레이봇 학습체계 전수 조사 · 피드백 · 2026-10-02 (원문 보관)
+
+```text
+status=SUPERSEDED
+task_id=playbot-learning-audit-20261002
+kind=AUDIT (코드 변경 0 · 가동 중 봇 무접촉)
+보고서=tools/kim-team-lead/reports/kim-claude-playbot-learning-audit-20261002.md
+```
+
+**설계문서 v1 진단: AGREE** · **현 구현: 학습 고착(P0)**
+- P0 정책 gen 52,397 · 5초마다 같은 메모 2줄 · combat/travel/develop/capital 0.16145 동일 고정 — 감쇠·평가·롤백 없음 (`policy.ts:167-277`)
+- P0 조건이 누적값: `combatWins>=combatLosses`(66,820/7,062) 항상 참 · `lastHoldReason` 미해제 → 주기 영구 2일 (`policy.ts:184`, `actions.ts:100-112`)
+- P1 학습 가중치는 결정의 12% 분기만 (`intent.ts:62`) · 트윈 영토전 하드코드 확률이 BORDER 코드 20만회 생성 → 그걸 학습 (`territorial.ts:41-71`) · 포화 D18,879/L60/스킬45/45에서 학습 · SKILL_BACKLOG 오탐 8.1만
+- P1 학습파일 100KB 2.6초마다 비원자 재기록(≈3.3GB/일), 손상 시 무경고 초기화
+- P2 EARLY_* 가 campaign 가중 범프(문서 §8-2 금지와 불일치) · 초반 샘플 1건 · 18:00 고정문구/플래그만으로 「가동」
+- 권고: R1 창 델타·hold 해제·감쇠 → R2 기록 빈도 제한·원자기록 → R6 리포트 → R3/R4 → R5 결정 → Phase 1
+- **대표님 원칙(추가, 보고서 §5)**: 플레이봇 학습은 반드시 **대표님 실기 원시데이터 → 봇 학습 → 인간 근접 자가플레이** 순서. 현재는 하드코드 페르소나·트윈 상수에서 출발 = 순서 역전. v1 문서의 실기 수집(Phase 4)을 **Phase 0~1로 당길 것**. DEV logcat `[MEM_PROFILE]` stage/event(착륙·hop·체류)로 앱 변경 없이 SessionTrace v0 가능. **재검수 첫 기준으로 적용**
+- **규모 계획(추가)**: `kim-claude-playbot-human-data-scale-plan-20261002.md` — n=1(대표님)→테스터→표본 5%→10만 · 같은 스키마 · 기기 요약 · 1 upload/day ≈2KB(기존 RTDB `learning/devices` 경로) · 인간 행동분포 팩 → 봇 모방·트윈 보정·거리 평가 채택. 10만 명 업로드는 무료 한도 초과 가능 → 표본 업로드 또는 유료 전환 **대표님 결정 필요**
+
+## ⏳ PENDING — 지도 계단식 증가 재확인 (A안 적용 전후 실측) · 2026-10-02
+
+```text
+status=PENDING
+task_id=galaxy-map-staircase-recheck-20261002
+kind=AUDIT (코드 변경 0)
+상세=kim-claude-galaxy-map-memory-live-20261002.md §4-1
+```
+
+- **재시작 후 지도 무조작 48분(§4-2, pid 3837)**: Native PSS 304~314MB 박스권 · 할당량 +10MB/48분 · Views/스레드/GL 불변 → **무조작 체류 계단 없음**. 04:18 플레이 재개 후 311→415MB, 지도 복귀 20초 시점 미하락 — 스테이지 이동 후 해제는 **미판정**(관측 1점)
+- A안 실측 효과(03:23 Fast Refresh 전후, pid 850): HWUI Image 104→**22MB** · GL 145→34MB · PSS 760→650MB → 원래 SVG 텍스처 ≈88MB였음(53MB 추정 정정)
+- GL 118→198→138 변동은 일시 증가·회복 — 계단 아님
+- **남은 리스크 = native**: 할당량 463→489MB(체류 27분, 무이동 포함) 상승 → A안으로 −57MB, 그러나 native PSS 327→341 미하락. A안 이후 재상승 여부 **30분+ 관찰 필요**, 원인 미특정
+
+## ✅ REVIEWED — 은하 지도 메모리 A안(절반 해상도) 적용 · 2026-10-02
+
+```text
+status=REVIEWED
+task_id=galaxy-map-memory-live-20261002
+kind=APPLY (A안 · B/C/D 미적용 · commit 대기)
+보고서=tools/kim-team-lead/reports/kim-claude-galaxy-map-memory-live-20261002.md
+```
+
+대표님: 절충안 확인 후 확대 시각이 크게 안 다르면 적용.
+
+- **A안 적용**: `GALAXY_MAP_SVG_RASTER_SCALE=0.5` · `viewBox` 1x · SvgView 픽셀만 절반 · 부모 시각 scale≈2. 줌은 기존 래퍼 transform 유지(리마운트 없음).
+- 확대 단3 ≈ √S_max×0.72(실측 맵에서 보통 ~1.27). 절반 비트맵×1.27은 선 약간 부드러움. 링·항로 라벨·함선은 Svg 밖이라 선명.
+- **B안 보류**: `<Svg>` 2장이면 비트맵 2장. A 없이 하면 악화.
+- 복구: `GALAXY_MAP_SVG_RASTER_SCALE = 1`
+
+```text
+[pss-pre-dev] hot_path=worldmap 레이아웃 1회 · 줌 버튼은 transform만
+[pss-pre-dev] alloc=SvgView ARGB 면적 1/4 · 줌 단 변경 시 비트맵 재생성 없음
+[pss-pre-dev] stage=STAGE2 worldmap Svg 1장 risk=P1,P2 verdict=PASS
+```
+
+## ⏳ PENDING — 김팀장 복구(revert-contested-endgame-expand) 교차 재검수 · 2026-10-02
+
+```text
+status=PENDING
+task_id=revert-contested-endgame-crosscheck-20261002
+kind=AUDIT (코드 변경 0 · commit 없음)
+기준선=96d79b2 (09-30 00:01 · 엔드 annex 파일 생성 09-30 00:37 직전)
+상세=kim-claude-contested-ring-endgame-audit-20261002.md §4-2
+```
+
+**판정: PARTIAL AGREE** — 영토 판정·게이트 핵심은 기준선과 바이트 동일. 잔여 2건.
+
+- 동일 확인: `runTerritorialCombatPass.ts` · `evaluateHubMainStageCombatGate(.test).ts` · `resolvePlanetWaveCombatTrigger.ts` · `territorialStackConsistency.test.ts` = 96d79b2 · `evaluatePlanetWaveCombatTrigger.ts`(주석 1줄)·`clanWarFoundationStore.ts`(빈 줄 1줄)만 차이
+- 편입 OFF 확인: CSV `enabled=false` → `policy_off` → 정보창 버튼 숨김 · 보호창/군사령부 가산 호출처 0
+- tsc exit 0 · 관련 테스트 41개 중 38 PASS
+- **잔여 ① `src/combat/combatFourAxisPlaySim.test.ts` 미복구 → FAIL** (`arcadia_prime 유휴 상주 허브 교전 OFF`) — 8d6f415 테스트 수정분이 남아 복구된 게이트와 충돌. 96d79b2 버전으로 되돌림 필요(+「드라코 상주 허브 자동교전 폐기」 테스트 포함)
+- **잔여 ② draco_haven 상주 교전 데이터 OFF 유지** — `play_scenario_zone_planets.csv`·`planet_hostile_red_progression.csv` `mainStageCombatEnabled=false`, `npc_ai_captains.csv` draco 01~03 `combat→general`. 「기존 상주 교전 복구」 의도라면 미복구, 의도적 유지라면 OK — 확인 요청
+- 참고: 기존 FAIL 2건(마지노선 정규식 · 아르카디아 웨이브 헐)은 복구와 무관
+
+**재확인 (김팀장 추가 작업 직후)**
+- 신규 변경 3건 모두 AGREE: `applyStelliumAnnex.ts` policy OFF 조기 반환(offer·apply 이중 차단) · `worldmap.tsx` 분쟁 링 입력 배열 id 동일 시 참조 유지 · `useContestedZonePreviewSystemIds.ts` 같은 revision이면 setState 생략
+- `evaluatePlanetWaveCombatTrigger.ts` 이제 96d79b2와 **완전 동일**
+- tsc exit 0 · 테스트 41개 중 38 PASS (변동 없음)
+- **잔여 ①② 그대로** — `combatFourAxisPlaySim.test.ts` FAIL 유지 · draco_haven 상주 교전 CSV/함장 데이터 OFF 유지
+
+**대표님 질의 「①②가 엔드 콘텐츠인가」 → 아님 (정정)**
+- ①② + `RESIDENT_HUB_MAIN_STAGE_AUTO_COMBAT=false`는 같은 8d6f415(10-01 작업분)의 **별도 축 「상주 함장 착륙 즉시 허브 교전 폐기」**. 근거: 8d6f415 `evaluateHubMainStageCombatGate.ts` 주석 「상주 함장 착륙 즉시 허브 교전(**점유·분쟁 링 무관**)은 2026-10-01 축 폐기. 블루 점유지 착륙 전투는 일반 규칙과 안 맞음」 · 테스트명 「드라코 — 상주 허브 자동교전 폐기 · 웨이브 슬롯은 유지」 · 편입/보호창/징수와 코드 접점 없음
+- 김클로드 이전 보고(F7 표 4번·§4-2)가 이것을 엔드 작업 묶음으로 다뤄 김팀장 revert에 섞였을 가능성 — 김클로드 책임 정정
+- 현재 = 코드 게이트만 복구(ON) · 데이터·테스트는 폐기 상태 → **반쪽 상태**. 결정 필요: (A) 10-01 폐기 유지 → 게이트 `false` 재적용(테스트·데이터와 일치) / (B) 폐기 철회 → 테스트·CSV·함장 데이터도 96d79b2로
+- 10-01 폐기가 대표님 지시였는지는 기록에서 확인 못 함
+
+## ✅ REVIEWED — 엔드 분쟁 확대 제거 · 기존 로테이션 복구 · 2026-10-02
+
+```text
+status=REVIEWED
+task_id=revert-contested-endgame-expand-20261002
+kind=REVERT (안정성 우선 · commit 대기)
+근거=kim-claude-contested-ring-endgame-audit-20261002.md 전수 확인 후 제거
+대표님=엔드=3달 후 시스템 · 잘못된 지시 · 작업 전량 제거 · 기존 은하 지도 분쟁 로테이션 복구
+```
+
+김클로드 F1–F6·F4 헛소진을 코드로 재확인한 뒤 엔드 훅만 제거. 군사령부 **시설 UI/수학 파일은 유지**(로테이션 패스 가산만 해제). 편입 모듈은 `enabled=false` 휴면(파일 전삭제보다 안전).
+
+**제거**
+- 보호창 `shouldHoldNpcOccupyAfterPlayerNeutralize` + 패스 status_quo 헛소진
+- 징수 `grantPlayerNeutralizeFrontLevy` 파일·스토어 호출
+- 군사령부 +6% 패스 래핑
+- 어썰트>쿨다운 → 쿨다운 선행 복구 · `isPlanetWaveAssaultAvailable` 쿨다운 재검사
+- 허브 `RESIDENT_HUB_MAIN_STAGE_AUTO_COMBAT=false` 제거 → 기존 상주 교전
+- 편입 policy `enabled=false` · protect=0 · player_home 접선 제거
+- playbot `endFront`·player_home 시드·기본 annex_path·보호일·levy
+
+**지도 메모리**
+- 보호창 revision 남발 제거가 1차
+- `useContestedZonePreviewSystemIds` 동일 id키 Set 재사용
+
+```text
+[pss-pre-dev] hot_path=territorial pass(일1회) + worldmap preview 5-60s
+[pss-pre-dev] alloc=preview Set 동일키 재사용 · 보호/군사령부 가산 제거
+[pss-pre-dev] stage=worldmap ring 2 view 유지 risk=P1,P7 verdict=PASS
+```
+
+**유지** 허브 튜토리얼 A2–D2 · earlyFeel · 영어 3칸 · 서브퀘 홀딩 · 군사령부 시설 코드
+
+**커밋**: 대표님 지시 전 금지.
+
+## 🗄 SUPERSEDED — 분쟁 링 · 엔드 루프 정밀조사 · 2026-10-02
+
+```text
+status=SUPERSEDED → REVIEWED 상단
+task_id=contested-ring-endgame-audit-20261002
+kind=AUDIT → 제거 적용
+보고서=tools/kim-team-lead/reports/kim-claude-contested-ring-endgame-audit-20261002.md
+```
+
 ## ✅ REVIEWED — NPC 대사 자연화 (전투 55 + 퀘스트 187 전량) · 2026-10-01
 
 ```text

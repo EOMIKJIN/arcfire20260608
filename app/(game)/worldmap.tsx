@@ -144,6 +144,7 @@ import {
   GALAXY_MAP_ZOOM_STEP_MIN,
   clampGalaxyMapContentDim,
   mapViewportTapToContent,
+  resolveGalaxyMapSvgRasterSize,
   resolveGalaxyMapNodeHitRadius,
   resolveGalaxyMapZoomLetterbox,
   resolveGalaxyMapZoomMaxScroll,
@@ -988,13 +989,17 @@ export default function WorldMapScreen() {
     return held;
   }, [visibleSystemsList, travelFogRevealedIds, isLegacyVisibleSynth, isExpansionGatewaySynth]);
   const contestedPreviewSystemIds = useContestedZonePreviewSystemIds(true);
-  const contestedVisibleSystems = useMemo(
-    () =>
-      fogVisibleSystemsList.filter(
-        (s) => contestedPreviewSystemIds.has(s.id) && s.id !== anomalyActiveSystemId,
-      ),
-    [fogVisibleSystemsList, contestedPreviewSystemIds, anomalyActiveSystemId],
-  );
+  const contestedVisibleHeldRef = useRef<typeof fogVisibleSystemsList>([]);
+  const contestedVisibleSystems = useMemo(() => {
+    const next = fogVisibleSystemsList.filter(
+      (s) => contestedPreviewSystemIds.has(s.id) && s.id !== anomalyActiveSystemId,
+    );
+    const held = sameGalaxyMapSystemIdSeq(contestedVisibleHeldRef.current, next)
+      ? contestedVisibleHeldRef.current
+      : next;
+    contestedVisibleHeldRef.current = held;
+    return held;
+  }, [fogVisibleSystemsList, contestedPreviewSystemIds, anomalyActiveSystemId]);
   const anomalyVisibleSystems = useMemo(() => {
     if (!anomalyActiveSystemId) return [];
     for (let i = 0; i < fogVisibleSystemsList.length; i += 1) {
@@ -1232,6 +1237,11 @@ export default function WorldMapScreen() {
       ch: clampGalaxyMapContentDim(spanY * mapLayout.h + MAP_PAD_PX * 2),
     };
   }, [galaxyBounds, mapLayout.w, mapLayout.h]);
+  /** SvgView 비트맵만 절반. 논리 좌표·줌 카메라는 1x mapContentSize. */
+  const galaxyMapSvgRaster = useMemo(
+    () => resolveGalaxyMapSvgRasterSize(mapContentSize.cw, mapContentSize.ch),
+    [mapContentSize.cw, mapContentSize.ch],
+  );
 
   const mapMetricsReady = useMemo(() => mapLayout.w > 0 && mapLayout.h > 1, [mapLayout.h, mapLayout.w]);
   const galaxyMapStageReady =
@@ -2383,9 +2393,11 @@ export default function WorldMapScreen() {
                   style={zoomCameraStyle}
                 >
                 <Svg
-                  width={mapContentSize.cw}
-                  height={mapContentSize.ch}
+                  width={galaxyMapSvgRaster.rasterW}
+                  height={galaxyMapSvgRaster.rasterH}
+                  viewBox={galaxyMapSvgRaster.viewBox}
                   pointerEvents="none"
+                  style={galaxyMapSvgRaster.style}
                 >
                   <GalaxyMapTerritoryVoronoiSvg
                     fills={territoryVoronoiModel.fills}

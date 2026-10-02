@@ -2,6 +2,11 @@ import { t } from '../i18n';
 import { resolveNpcCaptainDisplayNameNow } from '../i18n/captainText';
 import { getNpcCaptain } from '../npc/npcFleetRegistry';
 import { presentIngameDialogScene } from './ingameDialog/ingameDialogApi';
+import {
+  notifyStellaHubTutorial,
+  scheduleStellaHubTutorialTalkDoneOnAgentClose,
+  shouldPresentStellaHubTutorialTalkTwoGate,
+} from './hubTutorial/stellaHubTutorialGuide';
 import { resolveNpcCaptainDialogSceneId } from './ingameDialog/resolveNpcCaptainDialogSceneId';
 import { getMissionById } from '../missions/missionCatalog';
 import { tryPresentPendingMissionClearDialog } from '../missions/presentPendingMissionClearDialog';
@@ -45,7 +50,10 @@ import {
 } from '../arcCore/chat/resumeArcCoreAgentAfterIngameDialog';
 import { useArcCoreChatStore } from '../store/arcCoreChatStore';
 import { isIngameDialogActive } from './ingameDialog/ingameDialogApi';
-import { presentOperatorInboundFirstComm } from './conversation/presentOperatorInboundFirstComm';
+import {
+  presentOperatorHubManualFirstComm,
+  presentOperatorInboundFirstComm,
+} from './conversation/presentOperatorInboundFirstComm';
 import { presentStellaLifeAskComm } from '../arcCore/chat/presentStellaLifeAskComm';
 import {
   getArcCoreChatSpeakerRow,
@@ -315,17 +323,82 @@ export function openPlanetHubTalkByCaptainId(planetId: string, captainId: string
             coPresenceHints: lastRosterSession?.hints ?? [],
           }),
         );
+        notifyStellaHubTutorial('talk_done', pid);
       },
     });
   }
+  if (presented && source === 'spy_intel') {
+    notifyStellaHubTutorial('talk_done', pid);
+  }
   if (parked) scheduleResumeArcCoreAgentAfterIngameDialog(presented);
   return presented;
+}
+
+function resolveHubTalkPlanetId(): string {
+  const remembered = lastRosterSession?.planetId?.trim() ?? '';
+  if (remembered) return remembered;
+  const { usePlayerStore } = require('../store/playerStore') as typeof import('../store/playerStore');
+  return usePlayerStore.getState().player?.currentPlanetId?.trim() ?? '';
+}
+
+function presentStellaHubTutorialTalkTwoGate(): boolean {
+  if (isIngameDialogActive()) return false;
+  const pid = resolveHubTalkPlanetId();
+  notifyStellaHubTutorial('talk_started', pid);
+  if (isArcCoreAgentSurfaceOpen()) {
+    useArcCoreChatStore.getState().setActiveSpeakerId('operator');
+    scheduleStellaHubTutorialTalkDoneOnAgentClose(pid);
+    return true;
+  }
+
+  const openMessengerThenWaitClose = (): void => {
+    void presentArcCoreBackchannel({
+      reason: 'manual',
+      speakerId: 'operator',
+    }).then((ok) => {
+      if (ok) scheduleStellaHubTutorialTalkDoneOnAgentClose(pid);
+      else notifyStellaHubTutorial('talk_done', pid);
+    });
+  };
+
+  const parked = peekInboundTalkPending();
+  if (parked) {
+    return presentOperatorInboundFirstComm({
+      askText: parked.text,
+      onAccept: () => {
+        consumeInboundTalkPending();
+        void presentArcCoreBackchannel({
+          reason: 'inbound_request',
+          forceFreshSession: true,
+          openerText: parked.text,
+          speakerId: 'operator',
+        }).then((ok) => {
+          if (ok) scheduleStellaHubTutorialTalkDoneOnAgentClose(pid);
+          else notifyStellaHubTutorial('talk_done', pid);
+        });
+      },
+      onCancel: () => {
+        consumeInboundTalkPending();
+        notifyStellaHubTutorial('talk_done', pid);
+      },
+    });
+  }
+
+  return presentOperatorHubManualFirstComm({
+    onAccept: openMessengerThenWaitClose,
+    onCancel: () => {
+      notifyStellaHubTutorial('talk_done', pid);
+    },
+  });
 }
 
 /** 허브 [대화] — 선연락 pending이면 인사·용건 1차 후 메신저. 없으면 메신저만. */
 export function presentHubNlMouthThenMessenger(
   kind: 'operator' | 'arc_core' = 'operator',
 ): boolean {
+  if (kind === 'operator' && shouldPresentStellaHubTutorialTalkTwoGate()) {
+    return presentStellaHubTutorialTalkTwoGate();
+  }
   if (isIngameDialogActive()) return false;
   if (isArcCoreAgentSurfaceOpen()) {
     useArcCoreChatStore.getState().setActiveSpeakerId(
@@ -383,8 +456,10 @@ export function openPlanetHubTalkRosterRow(row: ArcOverlayHubTalkRosterRow): voi
   let presented = false;
   if (row.source === 'spy_intel') {
     presented = presentPlanetHubSpyIntelDialog(planetId);
+    if (presented) notifyStellaHubTutorial('talk_done', planetId);
   } else if (row.captainId && tryPresentBarNeighborMissionClear(planetId, row.captainId)) {
     presented = true;
+    notifyStellaHubTutorial('talk_done', planetId);
   } else {
     const hints = session?.hints ?? [];
     const completionActions = resolvePlanetHubNpcTalkCompletionActions(row.captainId, planetId);
@@ -399,6 +474,7 @@ export function openPlanetHubTalkRosterRow(row: ArcOverlayHubTalkRosterRow): voi
             coPresenceHints: hints,
           }),
         );
+        notifyStellaHubTutorial('talk_done', planetId);
       },
     });
   }

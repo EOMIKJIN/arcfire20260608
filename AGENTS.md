@@ -161,6 +161,7 @@ Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4
 - **아크코어 문장 LLM (ZERO_BILL · 2026-09-08)**: 본선 후보 = **Groq Free + Lambda 중계** (`VENDOR=free_tier`). Bedrock 종량 LIVE 금지. 배포·URL·`LIVE=true` 전엔 로컬 G3. 운영: `ARC_CORE_CHAT_GROQ_FREE_LAMBDA_OPS.md`. 클라에 SDK/키 금지.
 - **경제·무역 생태계 참고**: `docs/ECONOMY_TRADE_ECOSYSTEM_REFERENCE.md` — 무역소 카탈로그·tg_* 교역·zone 진열·17/21 허브·갭 목록(2026-06-12 스냅샷).
 - **Macro economy SIM**: `npm run sim:economy` → `docs/ECONOMY_SIM_DAILY_OPS.md` — delta ingest → 일일 배치 overlay.
+- **인간형 플레이 학습**: 정본 `docs/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md` v1.1 — 최종 산출은 PlaySession 코퍼스. 가상일 KPI는 감시. 코드는 대표님 지시 후.
 - **경제·밸런스 운영 감사**: `npm run audit:balance-ops` (3h 로컬·CI) · `tools/balance-ops-audit/README.md` · 학습 상태 `reports/learning-state.json`.
 - **경제 시스템 종합 평가 히스토리**: `docs/economy-evaluation/README.md` (타이틀 비교·효율성 스냅샷).
 - **테이블 우선**: 환경 부트스트랩·NPC 함장·전함은 **`tables/content` CSV → `npm run build:content-tables`** 가 정본이다. 아크코어가 스스로 환경을 깔 때도 **코드에 임의 엔티티·이름 풀을 두지 말고** CSV·레지스트리(`npcFleetRegistry`, `arcNpcTrafficTableRegistry`, `nearbyOrbitPresenceSystem`) 패턴을 따른다. 헌법: `.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc` §1·§6.

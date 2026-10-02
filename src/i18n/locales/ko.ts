@@ -870,7 +870,8 @@ export const KO_DICTIONARY: I18nDictionary = {
   'hubTalk.talk': '대화',
   'hubTalk.close': '닫기',
   'conversation.gate1.arcCore.hubBody': '적의 입에서 통신이 도착했습니다.',
-  'conversation.gate1.operator.hubBody': '동료 스텔라에게서 연락이 왔습니다.',
+  'conversation.gate1.operator.hubBody':
+    '아, 제 소개를 잊었군요. 저는 스텔라 아리스입니다. 원하시면 저와 [대화]를 통해 언제든지 연락할 수 있습니다.',
   'conversation.gate1.operator.inboundGreet': '나야, 스텔라.',
   'conversation.operatorName': '스텔라 아리스',
   'hubTalk.operatorSubtitle': '동료 입',
@@ -1290,6 +1291,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'scanRow.dialog': '대화',
   'scanRow.searching': '수색 중',
   'scanRow.search': '수색',
+  'hubSystem.miningActive': '채굴이 진행 중입니다...',
 
   // ── 함장 정보 패널 (pilotPanel) ──
   'pilotPanel.detailA11y': '함장 정보 상세',
@@ -1340,6 +1342,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'title.continue': ' 이어하기 ',
   'title.start': ' 게임 시작 ',
   'title.localBuild': 'v{version} · 로컬 빌드',
+  'title.settingsA11y': '설정',
 
   // ── 업데이트 게이트 (updateGate) ──
   'updateGate.requiredMsg': '이 버전은 더 이상 지원되지 않습니다.\n최신 버전 {version}으로 업데이트해 주세요.',

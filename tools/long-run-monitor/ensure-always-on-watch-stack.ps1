@@ -56,5 +56,10 @@ if (-not $SkipDaily8am -and (Test-Path $ensure8am)) {
   & $ensure8am | ForEach-Object { Write-Output $_ }
 }
 
+$ensureOwner = Join-Path (Split-Path $ScriptRoot -Parent) 'play-bot-console\ensure-owner-playlog-auto.ps1'
+if (Test-Path $ensureOwner) {
+  & powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File $ensureOwner | ForEach-Object { Write-Output $_ }
+}
+
 $paused = Test-Path (Join-Path $logDir 'monitor-paused.flag')
 Write-Output "code_auto_fix=handoff+retention+incident-triage (app_relaunch=$(if ($paused) { 'OFF(monitor-paused)' } else { 'ON(throttled)' }))"

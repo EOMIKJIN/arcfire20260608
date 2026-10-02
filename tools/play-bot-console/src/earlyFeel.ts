@@ -45,7 +45,7 @@ function pageFeelSec(chars: number, pages: number, tapSec: number): number {
   return Math.round(per * pages * 10) / 10;
 }
 
-/** 실기 L0 — intro01 3장 + 항로 + 착륙 + A0 + 스캔 + A1. A2–D2는 미구현이라 창에 넣지 않음. */
+/** 실기 L0 — intro01 3장 + 항로 + 착륙 + A0 + 스캔 + 스텔라 A1–D2. C만 본기능 2게이트. */
 export function listOpeningFeelBeats(): EarlyFeelBeat[] {
   const rows: Array<{ kind: string; line: string; feelSec: number }> = [
     { kind: 'INTRO', line: 'intro01 크림슨·스텔리움·아크코어 3장', feelSec: 24 },
@@ -53,7 +53,19 @@ export function listOpeningFeelBeats(): EarlyFeelBeat[] {
     { kind: 'LAND', line: '아르카디아 첫 착륙', feelSec: 5 },
     { kind: 'DIALOG', line: 'ingame_dialog_01 A0 스텔라 스캔 지시', feelSec: 7 },
     { kind: 'SCAN', line: '첫 스캔 탭·대기', feelSec: 12 },
-    { kind: 'DIALOG', line: 'ingame_dialog_scan_main_quest A1 메신저', feelSec: 7 },
+    { kind: 'DIALOG', line: 'ingame_dialog_scan_main_quest A1 허브 안내', feelSec: 7 },
+    { kind: 'DIALOG', line: 'hub_tut_a2 A2 채굴', feelSec: 5 },
+    { kind: 'MINE', line: '궤도 채굴 1사이클·광물 1', feelSec: 30 },
+    { kind: 'DIALOG', line: 'hub_tut_a3 A3 광물·무역', feelSec: 5 },
+    { kind: 'DIALOG', line: 'hub_tut_a4 A4 무역소 판매', feelSec: 5 },
+    { kind: 'TRADE', line: '광물 판매 1회', feelSec: 5 },
+    { kind: 'DIALOG', line: 'hub_tut_a5 A5 판매 확인', feelSec: 5 },
+    { kind: 'DIALOG', line: 'hub_tut_b1 B1 조선소', feelSec: 5 },
+    { kind: 'DIALOG', line: 'hub_tut_c1 C1 대화 안내', feelSec: 5 },
+    { kind: 'TALK', line: '대화 2게이트 통신·메신저 또는 클로징', feelSec: 12 },
+    { kind: 'DIALOG', line: 'hub_tut_c2 C2 바 열람', feelSec: 5 },
+    { kind: 'DIALOG', line: 'hub_tut_d1 D1 정리', feelSec: 5 },
+    { kind: 'DIALOG', line: 'hub_tut_d2 D2 출발', feelSec: 5 },
   ];
   let t = 0;
   const out: EarlyFeelBeat[] = [];
@@ -108,8 +120,11 @@ export function estimateEntryFeel(entry: JournalEntry): { feelSec: number; spine
     || entry.kind === 'SKILL'
     || entry.kind === 'DEVELOP'
     || entry.kind === 'SAT'
-    || entry.kind === 'TRADE'
   ) {
+    return { feelSec: 8, spine: false };
+  }
+  if (entry.kind === 'TRADE') {
+    if (line.includes('광물') || line.includes('판매')) return { feelSec: 8, spine: true };
     return { feelSec: 8, spine: false };
   }
   if (entry.kind === 'ANNEX' || entry.kind === 'COLONIZE' || entry.kind === 'CAPITAL') {
@@ -220,12 +235,21 @@ export function analyzeEarlyFeel(world: WorldState): AnalyzeFinding[] {
       detail: '초반 3분에 본편 수락이 없음',
     });
   }
-  out.push({
-    severity: 'info',
-    code: 'EARLY_L0_GUIDE_GAP',
-    detail: 'A2–D2 강제 가이드는 코드 미착수. 실기는 A0·스캔·A1 후 메뉴가 열린다',
-  });
-  if (out.length === 1) {
+  const hasGuide = world.earlyFeelBeats.some((b) => b.line.includes('hub_tut_') || b.line.includes('A2'));
+  if (hasGuide) {
+    out.push({
+      severity: 'info',
+      code: 'EARLY_L0_GUIDE_OK',
+      detail: '스텔라 A2–D2 가이드가 초반 창에 포함됨. C는 본기능 2게이트',
+    });
+  } else {
+    out.push({
+      severity: 'risk',
+      code: 'EARLY_L0_GUIDE_GAP',
+      detail: 'A2–D2 스텔라 인게임 가이드가 초반 창에 없음',
+    });
+  }
+  if (!out.some((f) => f.severity === 'risk' || f.severity === 'warn')) {
     out.unshift({
       severity: 'info',
       code: 'EARLY_SPINE_OK',

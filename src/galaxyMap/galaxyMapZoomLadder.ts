@@ -34,6 +34,51 @@ export function clampGalaxyMapContentDim(v: number): number {
   );
 }
 
+/**
+ * 김클로드 A안(2026-10-02) — Android SvgView 비트맵 = width×height ARGB.
+ * 논리 좌표는 viewBox 1x, 픽셀만 절반 → 면적 1/4. 줌은 기존 래퍼 transform만.
+ * 복구: 1 로 두면 지금과 동일 해상도.
+ */
+export const GALAXY_MAP_SVG_RASTER_SCALE = 0.5;
+
+export type GalaxyMapSvgRaster = {
+  rasterW: number;
+  rasterH: number;
+  viewBox: string;
+  style: {
+    width: number;
+    height: number;
+    transform: Array<{ translateX: number } | { translateY: number } | { scale: number }>;
+  };
+};
+
+/** mapContentSize → SvgView 픽셀 크기 + 시각 복원 scale. 줌 단과 무관(리마운트 금지). */
+export function resolveGalaxyMapSvgRasterSize(cw: number, ch: number): GalaxyMapSvgRaster {
+  const contentW = clampGalaxyMapContentDim(cw);
+  const contentH = clampGalaxyMapContentDim(ch);
+  const rasterW = clampGalaxyMapContentDim(
+    Math.max(1, Math.round(contentW * GALAXY_MAP_SVG_RASTER_SCALE)),
+  );
+  const rasterH = clampGalaxyMapContentDim(
+    Math.max(1, Math.round(contentH * GALAXY_MAP_SVG_RASTER_SCALE)),
+  );
+  const scale = rasterW > 0 ? contentW / rasterW : 1;
+  return {
+    rasterW,
+    rasterH,
+    viewBox: `0 0 ${contentW} ${contentH}`,
+    style: {
+      width: rasterW,
+      height: rasterH,
+      transform: [
+        { translateX: (rasterW / 2) * (scale - 1) },
+        { translateY: (rasterH / 2) * (scale - 1) },
+        { scale },
+      ],
+    },
+  };
+}
+
 export function stepGalaxyMapZoom(step: number, delta: number): number {
   const next = step + delta;
   if (next < GALAXY_MAP_ZOOM_STEP_MIN) return GALAXY_MAP_ZOOM_STEP_MIN;

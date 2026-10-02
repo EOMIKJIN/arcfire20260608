@@ -7,6 +7,8 @@ import {
 } from './catalog';
 import { snapshotKpi, sumDevLevels } from './world';
 import { analyzeEarlyFeel } from './earlyFeel';
+import { canLearnAny } from './progress';
+import { inCampaignLearnWindow, LEARN_HORIZON_DAYS } from './learnGate';
 
 export function analyzeDay(
   world: WorldState,
@@ -60,14 +62,14 @@ export function analyzeDay(
     findings.push({
       severity: 'warn',
       code: 'BORDER_RED_SLOPE',
-      detail: `코어 RED ${kpi.red}/21 — 크림슨 전선 우세`,
+      detail: `트윈전용 · 코어 RED ${kpi.red}/21 — 크림슨 전선 우세 · adapt 제외`,
     });
   }
   if (kpi.blue <= 5 && world.day >= 3) {
     findings.push({
       severity: 'warn',
       code: 'BORDER_BLUE_THIN',
-      detail: `코어 BLUE ${kpi.blue}/21 — 스텔리움 후방 얇음`,
+      detail: `트윈전용 · 코어 BLUE ${kpi.blue}/21 — 스텔리움 후방 얇음 · adapt 제외`,
     });
   }
   if (world.activeQuest && world.day - world.activeQuest.acceptedDay >= 3 && world.stuckTicks >= 6) {
@@ -77,7 +79,8 @@ export function analyzeDay(
       detail: `${world.activeQuest.missionId} ${world.day - world.activeQuest.acceptedDay}일 미클리어`,
     });
   }
-  if (world.combatLosses > world.combatWins + 4 && world.combatWins + world.combatLosses >= 6) {
+  const fights = world.combatWins + world.combatLosses;
+  if (fights >= 6 && fights <= 48 && world.combatLosses > world.combatWins + 4) {
     findings.push({
       severity: 'warn',
       code: 'COMBAT_UNDERLEVEL',
@@ -101,7 +104,7 @@ export function analyzeDay(
     });
   }
 
-  if (world.skillPoints >= 2) {
+  if (world.skillPoints >= 2 && canLearnAny(world)) {
     findings.push({
       severity: 'warn',
       code: 'SKILL_BACKLOG',
@@ -142,6 +145,13 @@ export function analyzeDay(
     const early = analyzeEarlyFeel(world);
     for (let i = 0; i < early.length; i += 1) findings.push(early[i]);
     world.earlyFeelReported = true;
+  }
+  if (!inCampaignLearnWindow(world.day) && world.day % 16 === 0) {
+    findings.push({
+      severity: 'info',
+      code: 'LEARN_HORIZON',
+      detail: `가상 D${world.day} > ${LEARN_HORIZON_DAYS} — Clock C 학습창 밖 · 감시만`,
+    });
   }
 
   if (findings.length === 0) {
@@ -191,7 +201,7 @@ export function analyzeStronger(
       extra.push({
         severity: 'risk',
         code: 'BORDER_RED_ACCEL',
-        detail: `3일간 RED ${a.red}→${b.red}`,
+        detail: `트윈전용 · 3일간 RED ${a.red}→${b.red} · adapt 제외`,
       });
     }
     if (b.credits < a.credits - 2500) {

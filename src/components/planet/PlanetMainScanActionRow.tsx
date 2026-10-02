@@ -17,7 +17,12 @@ import { PlanetHubScanActionRevealSlot } from './PlanetHubScanActionRevealSlot';
 import { PlanetHubActionGaugeSlot } from './PlanetHubActionGaugeSlot';
 import { PLANET_MAIN_SCAN_MENU_GAP_PX } from '../../stages/planetMainStageLayout';
 import { PLANET_MAIN_SCAN_ROW_PLANET_INFO_TILE_ENABLED } from '../../game/planetHub/planetHubConstants';
-import { useT } from '../../i18n';
+import {
+  PLANET_HUB_SYSTEM_MESSAGE_ID,
+  clearPlanetHubSystemMessage,
+  presentPlanetHubSystemMessage,
+} from '../../game/planetHub/planetHubSystemMessage';
+import { useT, t as tNow } from '../../i18n';
 import { SPACING } from '../../utils/theme';
 import { applySensorArrayToDurationMs } from '../../game/playerOwnedSkillNavAdjust';
 import { SKILL_PROC_LABEL, presentSkillProcBanner } from '../../game/skillProcBanner';
@@ -27,7 +32,7 @@ const SCAN_DURATION_MAX_MS = 10000;
 const SEARCH_DURATION_MIN_MS = 5000;
 const SEARCH_DURATION_MAX_MS = 9000;
 
-/** 게이지 슬롯에 표시되는 진행 종류 — 추후 채굴·대화 등 확장 */
+/** 게이지 슬롯 디지털 바 — 스캔·수색. 채굴 등 짧은 안내는 `presentPlanetHubSystemMessage`. */
 export type PlanetHubGaugeActivityKind = 'scan' | 'search';
 
 function randomDurationMs(minMs: number, maxMs: number): number {
@@ -112,6 +117,7 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
     setGaugeKind(null);
     setProgressPct(0);
     clearGaugeTimers();
+    clearPlanetHubSystemMessage();
   }, [planetId, clearGaugeTimers]);
 
   useEffect(() => {
@@ -119,10 +125,28 @@ export const PlanetMainScanActionRow = memo(function PlanetMainScanActionRow({
     const token = registerPlanetSessionResource({
       ownerId: 'planet_main_scan_action_row',
       planetId,
-      dispose: clearGaugeTimers,
+      dispose: () => {
+        clearGaugeTimers();
+        clearPlanetHubSystemMessage();
+      },
     });
     return () => token.release();
   }, [planetId, clearGaugeTimers]);
+
+  useEffect(() => {
+    if (!miningPrimary) {
+      clearPlanetHubSystemMessage(PLANET_HUB_SYSTEM_MESSAGE_ID.mining);
+      return;
+    }
+    presentPlanetHubSystemMessage({
+      id: PLANET_HUB_SYSTEM_MESSAGE_ID.mining,
+      text: tNow('hubSystem.miningActive'),
+      tone: 'progress',
+    });
+    return () => {
+      clearPlanetHubSystemMessage(PLANET_HUB_SYSTEM_MESSAGE_ID.mining);
+    };
+  }, [miningPrimary]);
 
   const startGaugeActivity = useCallback((
     kind: PlanetHubGaugeActivityKind,

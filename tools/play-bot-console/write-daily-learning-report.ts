@@ -6,8 +6,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { buildDailyLearningReport, type DailySnapshot, type PlaybotStatusLite } from './src/dailyLearningReport';
 import { buildDailyTriage } from './src/dailyUrgentTriage';
+import { formatHumanSeedLine, loadHumanSeed } from './src/humanSeed';
 import { loadLearning } from './src/learn';
-import { loadPolicy } from './src/policy';
+import { learnedDir, loadPolicy } from './src/policy';
+import { refreshHumanSeedForDaily } from './src/refreshHumanSeed';
 import { toolRoot } from './src/io';
 
 function kstNow(): Date {
@@ -66,13 +68,19 @@ export function writeDailyLearningReportFiles(root = toolRoot()): {
   fs.mkdirSync(logs, { recursive: true });
   fs.mkdirSync(learned, { recursive: true });
 
+  try {
+    refreshHumanSeedForDaily();
+  } catch {
+    /* adb 없어도 리포트는 기록 */
+  }
+
   const status = readJson<PlaybotStatusLite>(path.join(logs, 'PLAYBOT_STATUS_LATEST.json'));
   const prev = readJson<DailySnapshot>(path.join(learned, 'playbot-daily-snapshot.json'));
   const learning = loadLearning();
   const policy = loadPolicy();
+  const humanSeedLine = formatHumanSeedLine(loadHumanSeed(learnedDir()));
   const botAlive = procAlive(readPid(logs, 'playbot-console.pid'))
-    || procAlive(readPid(logs, 'playbot-harness.pid'))
-    || fs.existsSync(path.join(logs, 'PLAYBOT_RECORDING.flag'));
+    || procAlive(readPid(logs, 'playbot-harness.pid'));
 
   const now = kstNow();
   const dateKey = kstDateKey(now);
@@ -84,16 +92,25 @@ export function writeDailyLearningReportFiles(root = toolRoot()): {
     botAlive,
     nowIso: new Date().toISOString(),
     dateKey,
+    humanSeedLine,
   });
 
+  const findings = status?.lastAnalyze?.findings ?? [];
   const triage = buildDailyTriage({
     verdict: built.verdict,
     botAlive,
     recording: status?.recording === true,
-    findings: status?.lastAnalyze?.findings ?? [],
+    findings,
     questCleared: built.snapshot.kpi.questCleared,
     level: built.snapshot.kpi.level,
     credits: built.snapshot.kpi.credits,
+    policyStuck: policy.health?.stuck === true,
+    equalWeights: policy.health?.equalWeights === true,
+    sameNotes: (policy.lastNotes ?? []).join(' / '),
+    saturated: findings.some((f) => f.code === 'LEARN_SATURATED' || f.code === 'LEARN_HORIZON')
+      || built.snapshot.kpi.level >= 60,
+    twinBorder: findings.some((f) => f.code.startsWith('BORDER_')),
+    persistRecovered: learning.persistHealth?.recoveredFromBak === true,
   });
   const withTriage = `${built.markdown}\n---\n\n${triage.markdown}`;
   const dateTag = dateKey.replace(/-/g, '');

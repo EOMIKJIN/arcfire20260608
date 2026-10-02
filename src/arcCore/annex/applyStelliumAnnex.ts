@@ -34,6 +34,13 @@ export type StelliumAnnexApplyResult =
   | { ok: true; previousSide: string; newSide: string }
   | { ok: false; reason: StelliumAnnexIneligibleReason | 'apply_failed' };
 
+const POLICY_OFF_OFFER: StelliumAnnexOffer = {
+  showAction: false,
+  costCredits: 0,
+  requireDefenseSatLevel: 0,
+  gate: { ok: false, reason: 'policy_off' },
+};
+
 function isCoreAnnexPlanet(planetId: string): boolean {
   if (isSynthFrontierPlanetId(planetId)) return false;
   return Boolean(getPlanetOccupationSeedRow(planetId));
@@ -41,6 +48,7 @@ function isCoreAnnexPlanet(planetId: string): boolean {
 
 export function resolveStelliumAnnexOffer(planetId: string): StelliumAnnexOffer {
   const policy = resolveStelliumAnnexPolicy();
+  if (!policy.enabled) return POLICY_OFF_OFFER;
   const id = planetId.trim();
   const player = usePlayerStore.getState().player;
   const war = useClanWarFoundationStore.getState();
@@ -71,6 +79,7 @@ export function resolveStelliumAnnexOffer(planetId: string): StelliumAnnexOffer 
 }
 
 export function applyStelliumAnnex(planetId: string): StelliumAnnexApplyResult {
+  if (!resolveStelliumAnnexPolicy().enabled) return { ok: false, reason: 'policy_off' };
   const id = planetId.trim();
   if (!id) return { ok: false, reason: 'not_core' };
   const offer = resolveStelliumAnnexOffer(id);

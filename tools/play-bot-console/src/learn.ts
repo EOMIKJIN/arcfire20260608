@@ -1,12 +1,25 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { AnalyzeReport, JournalEntry, KpiSnapshot, PersonaId, WorldState } from './types';
-import { safeWriteFile, toolRoot } from './io';
+import { toolRoot } from './io';
 import { learnedDir } from './policy';
 import { summarizeEarlyFeel, type EarlyFeelSample } from './earlyFeel';
+import {
+  flushLearnedWrites,
+  loadJsonDurable,
+  scheduleLearnedWrite,
+  shouldForceLearnFlush,
+} from './learnedIo';
+import {
+  CODE_WINDOW_CAP,
+  inCampaignLearnWindow,
+  isSaturatedGrowth,
+  rebuildCodeCounts,
+} from './learnGate';
 
 export type GrowthSample = {
   day: number;
+  runId?: string;
   level: number;
   totalExp: number;
   credits: number;
@@ -25,6 +38,7 @@ export type GrowthSample = {
   gearScore?: number;
   devSum?: number;
   capitalDestroyed?: number;
+  saturated?: boolean;
 };
 
 export type PatternSample = {
@@ -44,15 +58,30 @@ export type LearningRun = {
   codes: string[];
 };
 
+export type CodeWindowRow = {
+  day: number;
+  runId?: string;
+  codes: string[];
+};
+
+export type PersistHealth = {
+  lastWriteAt?: string;
+  recoveredFromBak: boolean;
+  corruptSeen: number;
+};
+
 export type LearningState = {
   version: 2;
   updatedAt: string;
   runs: LearningRun[];
   codeCounts: Record<string, number>;
+  codeWindow?: CodeWindowRow[];
   growth: GrowthSample[];
   patterns: PatternSample[];
   earlyFeels: EarlyFeelSample[];
-  /** 사람 체감 플레이 + 그 이상. 정체·반복은 현재 adapt로 해소하며 지능을 쌓는다. */
+  lastRunId?: string;
+  persistHealth?: PersistHealth;
+  /** 사람 체감 플레이 + 그 이상. Clock C는 창·게이트 통과분만. */
   goal: 'player_growth_and_play_pattern';
 };
 
@@ -60,8 +89,32 @@ const CAP_RUNS = 20;
 const CAP_SERIES = 90;
 const CAP_EARLY = 16;
 
+let cached: LearningState | null = null;
+
 export function learningPath(): string {
   return path.join(learnedDir(), 'playbot-learning-state.json');
+}
+
+function emptyLearning(): LearningState {
+  return {
+    version: 2,
+    updatedAt: new Date().toISOString(),
+    runs: [],
+    codeCounts: {},
+    codeWindow: [],
+    growth: [],
+    patterns: [],
+    earlyFeels: [],
+    lastRunId: '',
+    persistHealth: { recoveredFromBak: false, corruptSeen: 0 },
+    goal: 'player_growth_and_play_pattern',
+  };
+}
+
+function isLearningState(raw: unknown): raw is LearningState {
+  if (!raw || typeof raw !== 'object') return false;
+  const o = raw as LearningState;
+  return Array.isArray(o.runs);
 }
 
 function migrateLegacyLearning(): void {
@@ -73,43 +126,51 @@ function migrateLegacyLearning(): void {
   fs.copyFileSync(legacy, next);
 }
 
-export function loadLearning(): LearningState {
-  const empty: LearningState = {
-    version: 2,
-    updatedAt: new Date().toISOString(),
-    runs: [],
-    codeCounts: {},
-    growth: [],
-    patterns: [],
-    earlyFeels: [],
-    goal: 'player_growth_and_play_pattern',
-  };
-  migrateLegacyLearning();
-  const p = learningPath();
-  if (!fs.existsSync(p)) return empty;
-  try {
-    const raw = JSON.parse(fs.readFileSync(p, 'utf8')) as Partial<LearningState> & { version?: number };
-    if (!raw || !Array.isArray(raw.runs)) return empty;
-    return {
-      version: 2,
-      updatedAt: raw.updatedAt ?? empty.updatedAt,
-      runs: raw.runs,
-      codeCounts: raw.codeCounts ?? {},
-      growth: Array.isArray(raw.growth) ? raw.growth : [],
-      patterns: Array.isArray(raw.patterns) ? raw.patterns : [],
-      earlyFeels: Array.isArray(raw.earlyFeels) ? raw.earlyFeels : [],
-      goal: 'player_growth_and_play_pattern',
-    };
-  } catch {
-    return empty;
-  }
+export function resetLearningCacheForTest(): void {
+  cached = null;
 }
 
-function saveLearning(state: LearningState): LearningState {
+export function loadLearning(): LearningState {
+  if (cached) return cached;
+  migrateLegacyLearning();
+  const empty = emptyLearning();
+  const loaded = loadJsonDurable(learningPath(), empty, isLearningState);
+  if (!fs.existsSync(learningPath()) && !loaded.corrupt) {
+    cached = empty;
+    return cached;
+  }
+  const raw = loaded.value;
+  const window = Array.isArray(raw.codeWindow) ? raw.codeWindow : [];
+  cached = {
+    version: 2,
+    updatedAt: raw.updatedAt ?? empty.updatedAt,
+    runs: raw.runs ?? [],
+    codeWindow: window,
+    codeCounts: window.length ? rebuildCodeCounts(window) : (raw.codeCounts ?? {}),
+    growth: Array.isArray(raw.growth) ? raw.growth : [],
+    patterns: Array.isArray(raw.patterns) ? raw.patterns : [],
+    earlyFeels: Array.isArray(raw.earlyFeels) ? raw.earlyFeels : [],
+    lastRunId: raw.lastRunId ?? '',
+    persistHealth: {
+      recoveredFromBak: loaded.recovered,
+      corruptSeen: (raw.persistHealth?.corruptSeen ?? 0) + (loaded.corrupt ? 1 : 0),
+      lastWriteAt: raw.persistHealth?.lastWriteAt,
+    },
+    goal: 'player_growth_and_play_pattern',
+  };
+  return cached;
+}
+
+function saveLearning(state: LearningState, force = false): LearningState {
   state.updatedAt = new Date().toISOString();
-  const p = learningPath();
-  fs.mkdirSync(path.dirname(p), { recursive: true });
-  safeWriteFile(p, JSON.stringify(state, null, 2));
+  state.codeCounts = rebuildCodeCounts(state.codeWindow ?? []);
+  state.persistHealth = {
+    ...(state.persistHealth ?? { recoveredFromBak: false, corruptSeen: 0 }),
+    lastWriteAt: state.updatedAt,
+  };
+  cached = state;
+  const ok = scheduleLearnedWrite('learning', learningPath(), JSON.stringify(state, null, 2), force);
+  if (ok) flushLearnedWrites();
   return state;
 }
 
@@ -142,10 +203,13 @@ export function recordDailyLearning(
   dayJournal: readonly JournalEntry[],
 ): LearningState {
   const state = loadLearning();
-  const prev = state.growth[state.growth.length - 1];
+  const runChanged = Boolean(state.lastRunId && state.lastRunId !== world.runId);
+  const prev = runChanged ? undefined : state.growth[state.growth.length - 1];
   const kpi = report.kpi;
+  const saturated = isSaturatedGrowth(state.growth) || !inCampaignLearnWindow(kpi.day);
   state.growth.push({
     day: kpi.day,
+    runId: world.runId,
     level: kpi.level,
     totalExp: kpi.totalExp,
     credits: kpi.credits,
@@ -157,20 +221,22 @@ export function recordDailyLearning(
     questCleared: kpi.questCleared,
     annexOk: kpi.annexOk,
     trades: kpi.trades,
-    dLevel: prev ? kpi.level - prev.level : kpi.level - 1,
-    dExp: prev ? kpi.totalExp - prev.totalExp : kpi.totalExp,
+    dLevel: prev ? kpi.level - prev.level : 0,
+    dExp: prev ? Math.max(0, kpi.totalExp - prev.totalExp) : 0,
     skills: kpi.skills,
     gearScore: kpi.gearScore,
     devSum: kpi.devSum,
     capitalDestroyed: kpi.capitalDestroyed,
+    saturated,
   });
   const journalKinds = countKinds(dayJournal);
+  const holdActive = world.lastHoldStreak > 0 && world.lastHoldReason.length > 0;
   state.patterns.push({
     day: kpi.day,
     persona: world.persona,
     actions: { ...world.actionCounts },
     journalKinds,
-    lastHoldReason: world.lastHoldReason,
+    lastHoldReason: holdActive ? world.lastHoldReason : '',
     dominantAction: dominant(journalKinds),
   });
   if (world.earlyFeelClosed && !state.earlyFeels.some((e) => e.runId === world.runId)) {
@@ -181,10 +247,16 @@ export function recordDailyLearning(
   }
   if (state.growth.length > CAP_SERIES) state.growth.splice(0, state.growth.length - CAP_SERIES);
   if (state.patterns.length > CAP_SERIES) state.patterns.splice(0, state.patterns.length - CAP_SERIES);
-  for (const f of report.findings) {
-    state.codeCounts[f.code] = (state.codeCounts[f.code] ?? 0) + 1;
+
+  const dayCodes = report.findings.map((f) => f.code);
+  if (inCampaignLearnWindow(kpi.day) && !saturated) {
+    const window = state.codeWindow ?? [];
+    window.push({ day: kpi.day, runId: world.runId, codes: dayCodes });
+    if (window.length > CODE_WINDOW_CAP) window.splice(0, window.length - CODE_WINDOW_CAP);
+    state.codeWindow = window;
   }
-  return saveLearning(state);
+  state.lastRunId = world.runId;
+  return saveLearning(state, shouldForceLearnFlush(kpi.day));
 }
 
 export function recordLearning(
@@ -195,12 +267,19 @@ export function recordLearning(
 ): LearningState {
   const state = loadLearning();
   const codes: string[] = [];
+  const window = state.codeWindow ?? [];
   for (const r of reports) {
+    const dayCodes: string[] = [];
     for (const f of r.findings) {
       if (!codes.includes(f.code)) codes.push(f.code);
-      state.codeCounts[f.code] = (state.codeCounts[f.code] ?? 0) + 1;
+      dayCodes.push(f.code);
+    }
+    if (inCampaignLearnWindow(r.day)) {
+      window.push({ day: r.day, runId, codes: dayCodes });
     }
   }
+  if (window.length > CODE_WINDOW_CAP) window.splice(0, window.length - CODE_WINDOW_CAP);
+  state.codeWindow = window;
   state.runs.push({
     runId,
     persona,
@@ -209,5 +288,11 @@ export function recordLearning(
     codes,
   });
   if (state.runs.length > CAP_RUNS) state.runs.splice(0, state.runs.length - CAP_RUNS);
-  return saveLearning(state);
+  state.lastRunId = runId;
+  return saveLearning(state, true);
+}
+
+export function persistLearningNow(): void {
+  if (cached) saveLearning(cached, true);
+  flushLearnedWrites();
 }

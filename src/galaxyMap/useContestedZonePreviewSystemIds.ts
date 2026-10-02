@@ -12,6 +12,17 @@ import { TERRITORIAL_CAMPAIGN_PASS_INTERVAL_SEC } from '../arcCore/territorial/t
 
 const PREVIEW_REFRESH_FALLBACK_MS = 60_000;
 
+let cachedPreviewKey = '';
+let cachedPreviewSet: ReadonlySet<string> = new Set();
+
+function reusePreviewSet(ids: readonly string[]): ReadonlySet<string> {
+  const key = ids.join('\0');
+  if (key === cachedPreviewKey) return cachedPreviewSet;
+  cachedPreviewKey = key;
+  cachedPreviewSet = new Set(ids);
+  return cachedPreviewSet;
+}
+
 function msUntilNextPreviewRefresh(nowMs: number): number {
   const intervalMs = TERRITORIAL_CAMPAIGN_PASS_INTERVAL_SEC * 1000;
   const policies = listTerritorialCombatPolicies();
@@ -35,7 +46,8 @@ export function useContestedZonePreviewSystemIds(active: boolean): ReadonlySet<s
     if (!active) return;
     void ensureTerritorialCampaignPreviewSchedules()
       .then(() => {
-        setTick(getTerritorialPreviewScheduleRevision());
+        const next = getTerritorialPreviewScheduleRevision();
+        setTick((prev) => (prev === next ? prev : next));
       })
       .catch(() => {
         /* hydrate 실패 — 링 예고만 다음 구독/타이머에서 재시도 */
@@ -45,7 +57,8 @@ export function useContestedZonePreviewSystemIds(active: boolean): ReadonlySet<s
   useEffect(() => {
     if (!active) return;
     return subscribeTerritorialPreviewSchedule(() => {
-      setTick(getTerritorialPreviewScheduleRevision());
+      const next = getTerritorialPreviewScheduleRevision();
+      setTick((prev) => (prev === next ? prev : next));
     });
   }, [active]);
 
@@ -59,7 +72,8 @@ export function useContestedZonePreviewSystemIds(active: boolean): ReadonlySet<s
       const delay = msUntilNextPreviewRefresh(Date.now());
       timer = setTimeout(() => {
         if (cancelled) return;
-        setTick(getTerritorialPreviewScheduleRevision());
+        const next = getTerritorialPreviewScheduleRevision();
+        setTick((prev) => (prev === next ? prev : next));
         schedule();
       }, delay);
     };
@@ -73,6 +87,6 @@ export function useContestedZonePreviewSystemIds(active: boolean): ReadonlySet<s
 
   return useMemo(() => {
     void tick;
-    return new Set(resolveContestedZonePreviewSystemIds(Date.now()));
+    return reusePreviewSet(resolveContestedZonePreviewSystemIds(Date.now()));
   }, [tick]);
 }

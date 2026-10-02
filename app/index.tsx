@@ -2,7 +2,7 @@
 // 아크파이어 온라인 - 타이틀 화면 (로컬 전용)
 // ============================================================
 
-import React, { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import React, { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   useWindowDimensions,
 } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Application from 'expo-application';
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
@@ -38,6 +39,9 @@ import {
 import { resumePlayerToLastHubPlanet } from '../src/game/galaxyMapSessionResume';
 import { runStageNavAfterTeardown } from '../src/navigation/stageNavGate';
 import { playUiSfx } from '../src/audio';
+import { requestLocalAccountResetFromPlanetHub } from '../src/account/localAccountReset';
+import { presentSettingsOverlay } from '../src/ui/overlay/showArcOverlay';
+import { showArcAlert } from '../src/utils/showArcAlert';
 import {
   claimArcCoreBootChatFirstPresent,
   getArcCoreBootChatFirstSnapshot,
@@ -76,6 +80,8 @@ const TITLE_SLOT_HERO_HEIGHT_PX = 112;
 const TITLE_SLOT_PRIMARY_BUTTON_TOP_PX = 558;
 /** 푸터를 화면 하단에 더 붙임 */
 const TITLE_SLOT_FOOTER_BOTTOM_PX = SPACING.xs;
+/** 설정 아이콘 버튼 — 회색 시작 버튼과 동일 높이·크롬. 푸터와 같은 bottom */
+const TITLE_SETTINGS_BTN_SIZE_PX = 47;
 
 /** 신규 계정: [ 게임 시작 ] 탭 후 인트로(스토리) → 닉네임 — 타이틀에서 자동 이동하지 않음 */
 const NEW_ACCOUNT_INTRO_ROUTE = '/(game)/intro?sceneId=intro01&flow=preNickname' as const;
@@ -288,6 +294,36 @@ export default function TitleScreen() {
     }
   };
 
+  const handleResetAllData = useCallback(() => {
+    showArcAlert(
+      t('planet.resetTitle'),
+      t('planet.resetBody'),
+      [
+        { text: t('planet.cancel'), style: 'cancel' },
+        {
+          text: t('planet.reset'),
+          style: 'destructive',
+          onPress: () => {
+            const playerSnapshot = usePlayerStore.getState().player;
+            requestLocalAccountResetFromPlanetHub(
+              (navigate) => navigate(),
+              () => router.replace('/?forceTitle=1'),
+              {
+                uid: playerSnapshot?.uid ?? getCurrentUser().uid ?? null,
+                currentClanId: playerSnapshot?.political.clanId ?? null,
+              },
+            );
+          },
+        },
+      ],
+    );
+  }, [t]);
+
+  const handleOpenSettings = useCallback(() => {
+    if (navPending) return;
+    presentSettingsOverlay({ onResetAccount: handleResetAllData });
+  }, [handleResetAllData, navPending]);
+
   if (continueFlowActive) {
     return (
       <StageShell routeName="title" background="none" safeAreaBackgroundColor={TITLE_SCREEN_BG}>
@@ -386,6 +422,25 @@ export default function TitleScreen() {
             <Text style={styles.version}>{t('title.localBuild', { version: appVersion })}</Text>
             <Text style={styles.copyright}>© 2026 NFLOYD INC</Text>
           </View>
+
+          <TouchableOpacity
+            style={[styles.btnStart, styles.absSettingsBtn]}
+            onPressIn={() => {
+              if (navPending) return;
+              playUiSfx('ui_confirm');
+            }}
+            onPress={handleOpenSettings}
+            activeOpacity={0.82}
+            disabled={navPending}
+            accessibilityRole="button"
+            accessibilityLabel={t('title.settingsA11y')}
+          >
+            <Ionicons
+              name="settings-outline"
+              size={22}
+              color="rgba(115, 119, 128, 0.88)"
+            />
+          </TouchableOpacity>
             </>
           )}
         </View>
@@ -440,6 +495,14 @@ const styles = StyleSheet.create({
     left: TITLE_UI_H_INSET,
     right: TITLE_UI_H_INSET,
     alignItems: 'center',
+  },
+  absSettingsBtn: {
+    position: 'absolute',
+    right: TITLE_UI_H_INSET,
+    bottom: TITLE_SLOT_FOOTER_BOTTOM_PX,
+    width: TITLE_SETTINGS_BTN_SIZE_PX,
+    minWidth: TITLE_SETTINGS_BTN_SIZE_PX,
+    paddingHorizontal: 0,
   },
   logoImage: {
     width: '100%',

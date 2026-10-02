@@ -44,18 +44,20 @@ export const CharacterSelectOptionRow = memo(function CharacterSelectOptionRow({
       accessibilityState={{ selected }}
       style={[styles.row, selected && styles.rowSelected]}
     >
-      {portraitSource ? (
-        <View style={styles.portraitCard}>
-          <Image
-          source={portraitSource}
-          style={styles.portrait}
-          resizeMode="contain"
-          resizeMethod="resize"
-        />
-        </View>
-      ) : (
-        <View style={styles.portraitPlaceholder} />
-      )}
+      <View style={styles.portraitCol}>
+        {portraitSource ? (
+          <View style={styles.portraitCard}>
+            <Image
+              source={portraitSource}
+              style={styles.portrait}
+              resizeMode="contain"
+              resizeMethod="resize"
+            />
+          </View>
+        ) : (
+          <View style={styles.portraitPlaceholder} />
+        )}
+      </View>
       <View style={styles.hud}>
         <Text style={styles.name}>{resolveProfessionName(profession, locale)}</Text>
         <Text style={styles.demographics}>
@@ -88,6 +90,12 @@ const styles = StyleSheet.create({
     borderColor: OVERLAY_TOKENS.phosphorAccent,
     borderWidth: 2,
     backgroundColor: 'rgba(20, 28, 48, 0.92)',
+  },
+  portraitCol: {
+    width: CHARACTER_SELECT_PORTRAIT_PX,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+    backgroundColor: '#05070d',
   },
   portraitCard: {
     width: CHARACTER_SELECT_PORTRAIT_PX,

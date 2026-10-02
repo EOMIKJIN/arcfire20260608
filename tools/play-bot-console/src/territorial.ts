@@ -1,12 +1,9 @@
-import { resolveStelliumAnnexPolicy } from '../../../src/arcCore/annex/stelliumAnnexPolicy';
-import { shouldHoldNpcOccupyAfterPlayerNeutralize } from '../../../src/arcCore/annex/stelliumAnnexEligibility';
 import { listAdjacentSystemIds } from '../../../src/arcCore/territorial/territorialSupplyLine';
 import { resolveHoldFactionSide } from '../../../src/arcCore/territorial/territorialFactionSide';
 import type { Rng } from './rng';
 import type { JournalEntry, WorldState } from './types';
 import { BLUE_CLAN, NEUTRAL_CLAN, RED_CLAN } from './types';
-import { paintOf, toHolds } from './world';
-import { resolvePlaybotNeutralizeProtectMs } from './endFront';
+import { paintOf } from './world';
 
 function adjacentHas(world: WorldState, systemId: string, side: 'BLUE' | 'RED'): boolean {
   const adj = listAdjacentSystemIds(systemId);
@@ -21,11 +18,9 @@ function adjacentHas(world: WorldState, systemId: string, side: 'BLUE' | 'RED'):
   return false;
 }
 
-/** 일 1회 NPC 영토 롤 — 체류 중이면 해당 행성 스킵. 보호창은 eligibility 순수함수. */
+/** 일 1회 NPC 영토 롤 — 체류 중이면 해당 행성 스킵. */
 export function runTerritorialDay(world: WorldState, rng: Rng): JournalEntry[] {
   const out: JournalEntry[] = [];
-  const policy = resolveStelliumAnnexPolicy();
-  const holds = toHolds(world);
   const ids = Object.keys(world.planets);
 
   for (let i = 0; i < ids.length; i += 1) {
@@ -33,17 +28,6 @@ export function runTerritorialDay(world: WorldState, rng: Rng): JournalEntry[] {
     if (!slot.combatEnabled) continue;
     if (world.currentPlanetId === slot.planetId) {
       out.push(event(world, 'TERRITORIAL', `${slot.labelKo} 체류 중 — NPC 점령 보류`));
-      continue;
-    }
-    const hold = holds[slot.planetId];
-    if (
-      shouldHoldNpcOccupyAfterPlayerNeutralize({
-        hold,
-        nowMs: world.nowMs,
-        protectMs: resolvePlaybotNeutralizeProtectMs(policy.protectNeutralizedMs),
-      })
-    ) {
-      out.push(event(world, 'TERRITORIAL', `${slot.labelKo} 중립 보호창 — NPC 점령 보류`));
       continue;
     }
 
@@ -56,7 +40,7 @@ export function runTerritorialDay(world: WorldState, rng: Rng): JournalEntry[] {
 
     if (paint === 'NEUTRAL') {
       const redChance = (redAdj ? 0.12 : 0.04) + contestedBonus;
-      const blueChance = blueAdj ? 0.16 : 0.02;
+      const blueChance = blueAdj ? 0.08 : 0.02;
       const roll = rng();
       if (roll < redChance) {
         slot.occupierClanId = RED_CLAN;
