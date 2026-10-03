@@ -13,7 +13,9 @@ k_cap,150,함장양성 — 총사령관(talkEnabled)+궤도 함장
 k_rd,400,전함 R&D — 설치 연구소 레벨합 · RED만
 residual_surplus_pct,15,시드초과 잔여 소각% (빈 함대 소각 대체)
 skip_empty_central_bank_burn_when_live,true,라이브 시 함대·개방 빈 소각 생략(개발 33% 유지)
-fleet_opex_of_surplus_pct,2,선단 시드초과 잔액의 일 운용% (배당 0)
+fleet_opex_of_surplus_pct,2,선단 시드초과 잔액의 일 운용% 하한 (배당 0)
+fleet_opex_scale_start_multiple,10,시드 배수 이 값부터 운용비 % 가산
+fleet_opex_scale_step_pct,1,시드배수 start마다 +1%p · 캡 20
 red_dividend_pct,0,선단→RED 배당 · 승인 전 0 고정
 dev_budget_pre_spend,true,개발 33% 금고 선지출 후 예산 풀 일치
 coeff_hint_enabled,true,학습 시드배수 → k_mil/k_ship ±캡

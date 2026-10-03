@@ -17,6 +17,7 @@
 //
 // PlanetEdenRaidTestLayer = 본선 시뮬(허브·웨이브·STAGE3). 드라코는 같은 경로의 시험 베뉴.
 // drone/carrier 스폰·틱은 본선 발사 큐(pushCapitalProjectileMissile → trySpawnCapitalCraftVolley).
+// 드론: 순차 사출(queued는 비표시) → 함재기와 같은 즉시 접근 → 접근 측 선회 → 돌입. 함 앞 대기 표시 없음.
 // 재장전 < 선회수명이면 항창 회수(가장 오래된 동패밀리 기체). weapon_list 곡선은 읽지 않음.
 // ============================================================
 
@@ -67,6 +68,7 @@ export {
   createCapitalCraftImpactScratch,
   createCapitalCraftPool,
   resetCapitalCraftPool,
+  isCapitalCraftVisible,
   tickCapitalCrafts,
   trySpawnCapitalCraft,
   trySpawnCapitalCraftVolley,

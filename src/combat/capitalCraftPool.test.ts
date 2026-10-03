@@ -6,6 +6,7 @@ import {
   CRAFT_TRAIL_SAMPLES,
   CRAFT_VOLLEY_LAUNCH_STAGGER_MS,
   countAliveCapitalCrafts,
+  isCapitalCraftVisible,
   createCapitalCraftImpactScratch,
   createCapitalCraftPool,
   resetCapitalCraftPool,
@@ -442,9 +443,15 @@ test('일제 3기 — 출발·궤도 위상·타격 시점이 갈라진다', () 
   );
   const alive = pool.filter((c) => c.alive).sort((a, b) => a.volleyIndex - b.volleyIndex);
   assert.equal(alive.length, 3);
+  assert.equal(alive[0]!.phase, 'approach');
+  assert.equal(alive[1]!.phase, 'queued');
+  assert.equal(alive[2]!.phase, 'queued');
   assert.equal(alive[0]!.launchDelayMs, 0);
   assert.equal(alive[1]!.launchDelayMs, CRAFT_VOLLEY_LAUNCH_STAGGER_MS);
   assert.equal(alive[2]!.launchDelayMs, CRAFT_VOLLEY_LAUNCH_STAGGER_MS * 2);
+  assert.equal(isCapitalCraftVisible(alive[0]!), true);
+  assert.equal(isCapitalCraftVisible(alive[1]!), false);
+  assert.equal(isCapitalCraftVisible(alive[2]!), false);
   assert.ok(Math.abs(alive[1]!.orbitPhaseOffset - (Math.PI * 2) / 3) < 1e-9);
   assert.ok(Math.abs(alive[2]!.orbitPhaseOffset - (Math.PI * 4) / 3) < 1e-9);
 
@@ -475,19 +482,22 @@ test('일제 3기 — 출발·궤도 위상·타격 시점이 갈라진다', () 
     policy,
   }, 0, 1, 9);
   const spaced = pool.filter((c) => c.alive).sort((a, b) => a.volleyIndex - b.volleyIndex);
+  const x0 = spaced[0]!.x;
+  tickCapitalCrafts(pool, 16, agents, scratch);
+  assert.equal(spaced[0]!.phase, 'approach');
+  assert.ok(spaced[0]!.x > x0, '1기 즉시 접근');
+  assert.equal(spaced[1]!.phase, 'queued');
+  assert.equal(spaced[2]!.phase, 'queued');
+  assert.equal(isCapitalCraftVisible(spaced[1]!), false);
+  const releasedAt = [-1, -1];
   for (let i = 0; i < 80; i++) {
     tickCapitalCrafts(pool, 16, agents, scratch);
-    if (spaced.every((c) => c.phase === 'orbit' || c.phase === 'strike' || !c.alive)) break;
+    if (releasedAt[0] < 0 && spaced[1]!.phase !== 'queued') releasedAt[0] = i;
+    if (releasedAt[1] < 0 && spaced[2]!.phase !== 'queued') releasedAt[1] = i;
+    if (releasedAt[0] >= 0 && releasedAt[1] >= 0) break;
   }
-  const inOrbit = spaced.filter((c) => c.phase === 'orbit');
-  if (inOrbit.length >= 2) {
-    const a0 = inOrbit[0]!.orbitAngle;
-    for (let i = 1; i < inOrbit.length; i++) {
-      let d = Math.abs(inOrbit[i]!.orbitAngle - a0) % (Math.PI * 2);
-      if (d > Math.PI) d = Math.PI * 2 - d;
-      assert.ok(d > 0.7, `궤도 간격 ${d}`);
-    }
-  }
+  assert.ok(releasedAt[0] >= 0 && releasedAt[1] >= 0, `사출 ${releasedAt.join(',')}`);
+  assert.ok(releasedAt[0] < releasedAt[1], `2기 ${releasedAt[0]} < 3기 ${releasedAt[1]}`);
 });
 
 test('드론·함재기 짧은 꼬리 — 고정 링버퍼, 이동 후 샘플, 사망 시 리셋', () => {
@@ -537,6 +547,82 @@ test('드론·함재기 짧은 꼬리 — 고정 링버퍼, 이동 후 샘플, �
   assert.ok(carrier);
   assert.ok(carrier.trailLen >= 2);
   assert.ok(carrier.trailLen <= CRAFT_TRAIL_SAMPLES);
+});
+
+test('드론 — 함재기와 같이 즉시 표적 접근 후 선회·충돌', () => {
+  const pool = createCapitalCraftPool();
+  resetCapitalCraftPool(pool);
+  const scratch = createCapitalCraftImpactScratch(8);
+  const agents = poses();
+  trySpawnCapitalCraft(pool, {
+    family: 'drone',
+    ownerAgentId: 1,
+    targetAgentId: 2,
+    weaponId: 'w_missile_arc_003',
+    x: 0,
+    y: 100,
+    headingRad: 0,
+    speedPxPerMs: 0.4,
+    policy: FAST_DRONE,
+    ownerX: 0,
+    ownerY: 100,
+    targetX: 100,
+    targetY: 100,
+  });
+  assert.equal(pool[0]!.phase, 'approach');
+  const xSpawn = pool[0]!.x;
+  tickCapitalCrafts(pool, 16, agents, scratch);
+  assert.equal(pool[0]!.phase, 'approach');
+  assert.ok(pool[0]!.x > xSpawn);
+  let sawOrbit = false;
+  let strikeHits = 0;
+  for (let i = 0; i < 80; i++) {
+    tickCapitalCrafts(pool, 16, agents, scratch);
+    if (pool[0]!.phase === 'orbit') sawOrbit = true;
+    if (!pool[0]!.alive) {
+      strikeHits = scratch.count;
+      break;
+    }
+  }
+  assert.equal(sawOrbit, true);
+  assert.equal(strikeHits, 1);
+  assert.equal(scratch.events[0]?.kind, 'drone_strike');
+});
+
+test('드론 선회 — orbitMsMax가 짧아도 1바퀴 후 돌입·타격 이벤트', () => {
+  const pool = createCapitalCraftPool();
+  const scratch = createCapitalCraftImpactScratch(8);
+  const agents = poses();
+  trySpawnCapitalCraft(pool, {
+    family: 'drone',
+    ownerAgentId: 1,
+    targetAgentId: 2,
+    weaponId: 'w_missile_arc_003',
+    x: 70,
+    y: 100,
+    headingRad: 0,
+    speedPxPerMs: 0.4,
+    policy: { ...FAST_DRONE, orbitMsMax: 80, orbitLaps: 1 },
+    ownerX: 0,
+    ownerY: 100,
+    targetX: 100,
+    targetY: 100,
+  });
+  let maxAccum = 0;
+  let strikeHits = 0;
+  for (let i = 0; i < 80; i++) {
+    tickCapitalCrafts(pool, 16, agents, scratch);
+    if (pool[0]!.phase === 'orbit') {
+      if (pool[0]!.orbitAccumRad > maxAccum) maxAccum = pool[0]!.orbitAccumRad;
+    }
+    if (!pool[0]!.alive) {
+      strikeHits = scratch.count;
+      break;
+    }
+  }
+  assert.ok(maxAccum >= Math.PI * 2 * 0.95, `선회각 ${maxAccum}`);
+  assert.equal(strikeHits, 1);
+  assert.equal(scratch.events[0]?.kind, 'drone_strike');
 });
 
 console.log('capitalCraftPool.test.ts — ALL PASS');

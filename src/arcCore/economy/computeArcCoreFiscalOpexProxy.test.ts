@@ -8,6 +8,7 @@ import {
   computeArcCoreFiscalOpexRequested,
   computePgpUnit,
   computeResidualForSurplus,
+  resolveFleetOpexOfSurplusPct,
   spendableAboveSeed,
 } from './computeArcCoreFiscalOpexProxy';
 
@@ -71,5 +72,15 @@ describe('computeArcCoreFiscalOpexProxy', () => {
     assert.equal(policy.fleetOpexOfSurplusPct, 2);
     assert.equal(policy.redDividendPct, 0);
     assert.equal(shouldSkipCentralBankEmptyAccountingBurn(), true);
+    assert.equal(policy.fleetOpexScaleStartMultiple, 10);
+    assert.equal(policy.fleetOpexScaleStepPct, 1);
+  });
+
+  it('scales fleet opex pct with seed multiple', () => {
+    assert.equal(resolveFleetOpexOfSurplusPct(2, 9.9, 10, 1), 2);
+    assert.equal(resolveFleetOpexOfSurplusPct(2, 10, 10, 1), 2);
+    assert.equal(resolveFleetOpexOfSurplusPct(2, 20, 10, 1), 3);
+    assert.equal(resolveFleetOpexOfSurplusPct(2, 51, 10, 1), 6);
+    assert.equal(resolveFleetOpexOfSurplusPct(2, 200, 10, 1), 20);
   });
 });

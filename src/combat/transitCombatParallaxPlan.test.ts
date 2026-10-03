@@ -6,6 +6,9 @@ import {
   hashTransitDestKey,
   pickTransitSpaceCdIndex,
   areTransitNebulaLayersReady,
+  resolveHeldTransitLayerImage,
+  shouldPreserveTransitNebulaOnExternalReclaim,
+  shouldSkipTransitParallaxResizeTick,
   resolveTransitCloudImageSlots,
   intersectRects,
   mapDestCropToSrc,
@@ -344,6 +347,47 @@ test('session view seed keeps layer rules but changes start origin', () => {
   );
   const visible = countTransitCloudsOverlappingViewport(dests, canvasW, canvasH);
   assert.equal(visible >= 1 && visible <= 2, true);
+});
+
+test('held layer keeps last image when useImage briefly returns null', () => {
+  const held = { id: 'baked' };
+  assert.equal(resolveHeldTransitLayerImage(null, held), held);
+  assert.equal(resolveHeldTransitLayerImage(undefined, held), held);
+  assert.equal(resolveHeldTransitLayerImage(null, null), null);
+  const next = { id: 'next' };
+  assert.equal(resolveHeldTransitLayerImage(next, held), next);
+});
+
+test('live transit nebula survives external STAGE reclaim', () => {
+  assert.equal(shouldPreserveTransitNebulaOnExternalReclaim({
+    mounted: true,
+    active: true,
+  }), true);
+  assert.equal(shouldPreserveTransitNebulaOnExternalReclaim({
+    mounted: true,
+    active: false,
+  }), false);
+  assert.equal(shouldPreserveTransitNebulaOnExternalReclaim({
+    mounted: false,
+    active: true,
+  }), false);
+});
+
+test('resize skip does not block force flush of a live picture', () => {
+  const blocked = shouldSkipTransitParallaxResizeTick({
+    force: false,
+    skipTicks: 2,
+    hasLivePicture: true,
+  });
+  assert.equal(blocked.skip, true);
+  assert.equal(blocked.nextSkipTicks, 1);
+  const forced = shouldSkipTransitParallaxResizeTick({
+    force: true,
+    skipTicks: 2,
+    hasLivePicture: true,
+  });
+  assert.equal(forced.skip, false);
+  assert.equal(forced.nextSkipTicks, 0);
 });
 
 test('later ticks keep one or two clouds in view, never a tile grid', () => {

@@ -35,11 +35,11 @@ export function clampGalaxyMapContentDim(v: number): number {
 }
 
 /**
- * 김클로드 A안(2026-10-02) — Android SvgView 비트맵 = width×height ARGB.
- * 논리 좌표는 viewBox 1x, 픽셀만 절반 → 면적 1/4. 줌은 기존 래퍼 transform만.
- * 복구: 1 로 두면 지금과 동일 해상도.
+ * Android SvgView 비트맵 = width×height ARGB. 논리 좌표는 viewBox 1x.
+ * 0.5(2026-10-02 A안)는 픽셀 절반 후 scale 2 — 성계명 fontSize 8 한글이 깨짐.
+ * 대표님: 시각 불변. 2026-10-03 복구 1. 재도입은 라벨 분리 후에만.
  */
-export const GALAXY_MAP_SVG_RASTER_SCALE = 0.5;
+export const GALAXY_MAP_SVG_RASTER_SCALE = 1;
 
 export type GalaxyMapSvgRaster = {
   rasterW: number;

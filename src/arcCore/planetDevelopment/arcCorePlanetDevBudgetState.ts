@@ -3,6 +3,9 @@
 // ============================================================
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { resolvePlanetDevBudgetRefundCredits } from './planetDevBudgetRefund';
+
+export { resolvePlanetDevBudgetRefundCredits } from './planetDevBudgetRefund';
 
 const BUDGET_KEY = 'arcfire_arc_core_planet_dev_budget_v1';
 
@@ -81,6 +84,16 @@ export async function creditArcCorePlanetDevDailyBudget(
   const cur = await hydrateArcCorePlanetDevBudgetState();
   if (cur.kstDayKey === kstDayKey && (cur.prepaidFromVault || cur.budgetAllocatedCr > 0)) {
     return cur;
+  }
+  const refundCredits = resolvePlanetDevBudgetRefundCredits(cur, kstDayKey);
+  if (refundCredits > 0) {
+    const { useArcCoreVaultStore } = await import('../../store/factionVault/arcCoreVaultStore');
+    const vault = useArcCoreVaultStore.getState();
+    if (!vault.hydrated) await vault.hydrate();
+    vault.appendInflow(refundCredits, {
+      kind: 'fiscal_opex_dev_refund',
+      note: `planet_dev_budget_refund from=${cur.kstDayKey} to=${kstDayKey} amt=${refundCredits}`,
+    });
   }
   let credits = Math.max(0, Math.floor(amount));
   let prepaidFromVault = false;

@@ -16,6 +16,10 @@ import {
 } from '../../navigation/worldOpsNotifyPresence';
 import { useAppBootStore } from '../../store/appBootStore';
 import {
+  resetEarlyWarImmersionGateForTest,
+  syncEarlyWarImmersionTutorialComplete,
+} from '../../navigation/earlyWarImmersionGate';
+import {
   formatTerritorialBattleAlertCopy,
   koJosa,
 } from './territorialBattleAlertCopy';
@@ -37,6 +41,7 @@ function test(name: string, fn: () => void): void {
     setAccountResetInProgress(false);
     useAppBootStore.getState().setBootReady(true);
     resetWorldOpsNotifyPresenceForTest();
+    resetEarlyWarImmersionGateForTest();
   }
 }
 
@@ -66,6 +71,25 @@ test('1c) 스토리·파일럿 등록 화면 → 스킵', () => {
   beginPreHubWorldOpsAlertSuppress();
   assert.equal(shouldSkipTerritorialOccupationAlert(), true);
   endPreHubWorldOpsAlertSuppress();
+  assert.equal(shouldSkipTerritorialOccupationAlert(), false);
+});
+
+test('1d) 튜토리얼 미완료 계정 → 점유 overlay만 스킵 · 이상현상은 유지', () => {
+  useAppBootStore.getState().setBootReady(true);
+  setTitleStartScreenActive(false);
+  setAccountResetInProgress(false);
+  markPlanetHubWorldOpsNotifyUnlocked();
+  syncEarlyWarImmersionTutorialComplete(false);
+  assert.equal(shouldSkipTerritorialOccupationAlert(), true);
+  assert.equal(shouldSkipUnidentifiedAnomalyAlert(), false);
+});
+
+test('1e) 튜토리얼 완료 → 점유 overlay 허용', () => {
+  useAppBootStore.getState().setBootReady(true);
+  setTitleStartScreenActive(false);
+  setAccountResetInProgress(false);
+  markPlanetHubWorldOpsNotifyUnlocked();
+  syncEarlyWarImmersionTutorialComplete(true);
   assert.equal(shouldSkipTerritorialOccupationAlert(), false);
 });
 
@@ -127,6 +151,8 @@ test('6) 배선 — 전투결과(maintained)·변경 팝업이 공통 게이트�
   assert.doesNotMatch(src, /flushPendingTerritorialOccupationAlert/);
   assert.match(src, /messageSection/);
   assert.match(src, /territorial\.alert\.resultLabel/);
+  assert.match(src, /territorial\.alert\.seizeTitle/);
+  assert.match(src, /resolveTerritorialPresentKind/);
   const maintainedIdx = src.indexOf('export function showTerritorialOccupationMaintainedAlert');
   assert.ok(maintainedIdx > 0);
   assert.match(src.slice(maintainedIdx), /presentTerritorialAlertNow/);

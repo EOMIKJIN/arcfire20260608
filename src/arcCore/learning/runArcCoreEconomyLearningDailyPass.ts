@@ -86,6 +86,7 @@ export async function runArcCoreEconomyLearningDailyPass(
       planetsReconciled: batchResult.economyFabric ? fabricTotals.planetsReconciled : fabricTotals.planetsReconciled,
       windowTradeGross: fabricTotals.windowTradeGross,
       windowConvoyTrips: fabricTotals.windowConvoyTrips,
+      windowConvoyProfit: fabricTotals.windowConvoyProfit,
     },
     combat: {
       globalEngageHpMul,
@@ -95,7 +96,7 @@ export async function runArcCoreEconomyLearningDailyPass(
 
   if (__DEV__) {
     console.log(
-      `[ArcCore/Learning] economy daily pass day=${kpiDayKey} planets=${fabricTotals.planetsReconciled} tradeGross=${fabricTotals.windowTradeGross} convoyProfit=${fabricTotals.windowConvoyProfit}`,
+      `[ArcCore/Learning] economy daily pass day=${kpiDayKey} planets=${fabricTotals.planetsReconciled} playerTradeGross=${fabricTotals.windowTradeGross} convoyProfit=${fabricTotals.windowConvoyProfit}`,
     );
   }
 

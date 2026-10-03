@@ -46,6 +46,8 @@ export type ArcCoreFiscalOpexPolicy = {
   residualSurplusPct: number;
   skipEmptyCentralBankBurnWhenLive: boolean;
   fleetOpexOfSurplusPct: number;
+  fleetOpexScaleStartMultiple: number;
+  fleetOpexScaleStepPct: number;
   redDividendPct: number;
   devBudgetPreSpend: boolean;
   coeffHintEnabled: boolean;
@@ -77,6 +79,8 @@ export function resolveArcCoreFiscalOpexPolicy(): ArcCoreFiscalOpexPolicy {
       getPolicyKv().get('skip_empty_central_bank_burn_when_live') ?? 'true',
     ),
     fleetOpexOfSurplusPct: Math.max(0, Math.min(20, policyNum('fleet_opex_of_surplus_pct', 2))),
+    fleetOpexScaleStartMultiple: Math.max(1, policyNum('fleet_opex_scale_start_multiple', 10)),
+    fleetOpexScaleStepPct: Math.max(0, Math.min(10, policyNum('fleet_opex_scale_step_pct', 1))),
     redDividendPct: 0,
     devBudgetPreSpend: parseBool(getPolicyKv().get('dev_budget_pre_spend') ?? 'true'),
     coeffHintEnabled: parseBool(getPolicyKv().get('coeff_hint_enabled') ?? 'true'),

@@ -14,6 +14,7 @@
 | **[WAR_ECONOMY_THEATER_AUDIT_AND_UPGRADE_DESIGN.md](./WAR_ECONOMY_THEATER_AUDIT_AND_UPGRADE_DESIGN.md)** | **v0.2.1 · Phase 0–1.5 착수** | 분쟁 삼중 정의 · 전선 주둔 군비·점령 승리금 · 여파/WDI theater 합류 |
 | **[엔드콘텐츠_개발계획.md](../엔드콘텐츠_개발계획.md)** | **HOLD · v0.2 상세안 · 승인 전** | 캠페인 소진+L52+독립국≥1 후 인스턴스·주간전선. 21/21 블루·`draco_front` 재삽입 금지 |
 | **[ROUTE_CAPITAL_DEFENSE_ADVANTAGE_DESIGN.md](./ROUTE_CAPITAL_DEFENSE_ADVANTAGE_DESIGN.md)** | **자동 프로세스 반영 · 웨이브 현행** | 4대 항로 수도 방위 우세 · 포위문 · 점유/반란/분쟁 배율 |
+| **[MOBILE_WAR_IMMERSION_v1.md](../MOBILE_WAR_IMMERSION_v1.md)** | **v1.0 P0+P1 반영** | 모바일 전쟁 몰입. 국호 문장 · 블루/레드는 색 · 접수/선언/전투 · 편입 여운 · 일 1줄 뉴스. 초반 overlay 잠금 |
 | **[ARC_CORE_TACTICAL_AUTOMATION_AND_GALAXY_STRATEGY.md](./ARC_CORE_TACTICAL_AUTOMATION_AND_GALAXY_STRATEGY.md)** | **분석 완료 · 구현 대기** | 성계 그래프 1홉 공격 규칙 · 접전 자동전투 갭 · 목표 아키텍처 · Phase 0~5 로드맵 |
 | **[ARC_CORE_RECON_LURK_SCAN_DESIGN.md](./ARC_CORE_RECON_LURK_SCAN_DESIGN.md)** | **설계 완료 · 구현 대기** | 스캔으로 정찰매복 전함 발견·격파·도주 · 스파이와 별 축 · Phase 0~5 |
 | **[ARCFIRE_ACTIVE_ECOSYSTEM_ADOPTION_v1.md](../ecosystem/ARCFIRE_ACTIVE_ECOSYSTEM_ADOPTION_v1.md)** | **검토 완료 · P1 backlog** | Active Ecosystem v1.0 **적용 가능 항목만** · 중복 제거 · 메모리 1차 감사 |
@@ -34,6 +35,7 @@
 - 「수도 방위」「수도 어드밴티지」「포위문」「4대 항로 수도」
 - 「전술 자동화」「그래프 공격」「1홉 공격」「전선 확장」
 - 「아크코어 자동전투」「접전지역」「draco_front」
+- 「몰입」「블루팀」「편입 여운」「접수·선언」「전쟁 뉴스」→ **`docs/MOBILE_WAR_IMMERSION_v1.md`**
 - 「시리우스→드라코」「노드·라인 규칙」
 - 「아크코어 학습」「Observation Bus」「Policy Pack」「World Memory」
 - 「플레이봇 학습」「초반 3분」「인간패턴」「연동학습」→ **`docs/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md`**

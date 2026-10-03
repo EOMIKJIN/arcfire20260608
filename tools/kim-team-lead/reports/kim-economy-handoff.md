@@ -12179,6 +12179,24 @@
 
 > status: monitor-ok · **08:00 보고체 유지**
 
+## [관측] 2026-10-03 08:00:00 KST — **데일리 08:00 상시 자동보고** (OK)
+
+- **정책**: 상시 무조건 보고 · 중단은 `schedule-8am-report-DISABLED.flag` 명시 시에만
+- **김경제 감시**: watch-30m PID **23268** · auto-fix=ON
+- **adb**: OK (192.168.45.197:33639)
+- **앱**: RUNNING
+- **mem-monitor**: **OK** (PSS 759.6MB · GL 38.7MB · Views 436 · pid=9154)
+- **mem-budget-ledger**: ledger p50=812.7MB native=460.3MB
+- **report**: D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20261003-0800.md
+- **verdict**: **OK**
+- **incidents (actionable tail)**: 3
+  - [2026-10-02 08:00:00] DAILY_8AM_REPORT 2026-10-02 08:00:00 KST
+  - [2026-10-02 08:00:00] DAILY_8AM_REPORT_READY D:\arcfire20260607\tools\long-run-monitor\logs\overnight-final-report-20261002-0800.md verdict=OK
+  - [2026-10-03 08:00:00] DAILY_8AM_REPORT 2026-10-03 08:00:00 KST
+- **권장(김팀장 1안)**: daily 08:00 soak OK — review report
+
+> status: monitor-ok · **08:00 보고체 유지**
+
 ## 작업 요약
 
 - **일자 (KST)**: 2026-06-18

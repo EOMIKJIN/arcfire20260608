@@ -63,9 +63,15 @@ import {
 } from '../../src/game/nativeReclaim';
 import { recordHubDeparturePlanet } from '../../src/game/galaxyMapSessionResume';
 import { markGalaxyMapIngressFromPlanetHub } from '../../src/game/nativeReclaim/galaxyMapIngressReclaim';
-import { consumePlanetHubIngressReclaim } from '../../src/game/nativeReclaim/planetHubIngressReclaim';
+import {
+  consumePlanetHubIngressReclaim,
+  peekPlanetHubIngressReclaimPending,
+} from '../../src/game/nativeReclaim/planetHubIngressReclaim';
 import { emitMemProfileMarker } from '../../src/game/devMemoryProfileBridge';
-import { teardownPlanetHubCombatForGalaxyDeparture } from '../../src/game/teardownPlanetHubCombatForGalaxyDeparture';
+import {
+  shouldTeardownPlanetHubCombatForGalaxyDeparture,
+  teardownPlanetHubCombatForGalaxyDeparture,
+} from '../../src/game/teardownPlanetHubCombatForGalaxyDeparture';
 import { resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 import { resolvePlayerPlanetStayBlock } from '../../src/clanWar/planetTerritoryPlayerAccess';
 import { clearPlanetAssaultIntent } from '../../src/game/waveDefense/planetAssaultIntent';
@@ -409,9 +415,18 @@ export default function PlanetScreen() {
   const planetStageSkiaActive = isPlanetRouteFocused && stageSession.isActive && appStateActive;
   /** 출발 시점에 전투 sim 스냅샷을 동기 캡처하기 위한 *바인더 내부* sim 참조 — `<CombatSimRefBridge/>`가 채운다. */
   const combatSimRef = useRef<CapitalRealtimeCombatSim | null>(null);
+  const hubHadCombatThisVisitRef = useRef(false);
+  const hubCombatTeardownGateRef = useRef({
+    battleReadyVisible: false,
+    capitalCombatOrbitActive: false,
+    waveDefenseActive: false,
+  });
 
   useFocusEffect(
     useCallback(() => {
+      if (peekPlanetHubIngressReclaimPending()) {
+        hubHadCombatThisVisitRef.current = false;
+      }
       setIsPlanetRouteFocused(true);
       markPlanetHubWorldOpsNotifyUnlocked();
       scheduleUnidentifiedAnomalyTestWatch();
@@ -524,10 +539,17 @@ export default function PlanetScreen() {
     const preserveCombat = opts?.preserveCombatSnapshot !== false;
     if (preserveCombat) {
       if (sim) sim.captureSuspendSnapshot(now);
-    } else {
+    } else if (
+      shouldTeardownPlanetHubCombatForGalaxyDeparture({
+        ...hubCombatTeardownGateRef.current,
+        hadCombatThisVisit: hubHadCombatThisVisitRef.current,
+      })
+    ) {
       teardownPlanetHubCombatForGalaxyDeparture(sim, {
         previousPlanetId: usePlayerStore.getState().player?.currentPlanetId ?? null,
       });
+    } else if (sim) {
+      sim.haltForGalaxyDeparture?.();
     }
 
     stageSession.beginDeparture(navigate);
@@ -764,6 +786,14 @@ export default function PlanetScreen() {
     capitalCombatOrbitActive,
     waveDefenseActive: waveDefenseActiveHere,
   });
+  hubCombatTeardownGateRef.current = {
+    battleReadyVisible,
+    capitalCombatOrbitActive,
+    waveDefenseActive: waveDefenseActiveHere,
+  };
+  if (hubCombatMenuLocked) {
+    hubHadCombatThisVisitRef.current = true;
+  }
   useEffect(() => {
     if (!hubCombatMenuLocked) return;
     hideArcCoreAgentSurfaceForCombat();

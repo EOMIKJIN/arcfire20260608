@@ -4,6 +4,7 @@
  */
 
 import { subscribeIngameDialogBecameIdle } from '../../game/ingameDialog/ingameDialogIdle';
+import { resetUiTransitionGuard } from './uiTransitionGuard';
 
 const PENDING_CAP = 4;
 
@@ -40,6 +41,7 @@ export function endUiScreenShell(id: string): void {
   if (!shell || shell.id !== id) return;
   pending.length = 0;
   shell = null;
+  resetUiTransitionGuard();
 }
 
 export function isUiScreenShellReady(): boolean {

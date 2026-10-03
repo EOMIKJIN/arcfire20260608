@@ -22,8 +22,11 @@ export type ArcCoreLearningKpiTimelineEntry = {
     f2pWhaleRatio?: number;
     bandDrift?: number;
     planetsReconciled?: number;
+    /** 플레이어 무역소 총액 — convoy 제외 */
     windowTradeGross?: number;
     windowConvoyTrips?: number;
+    /** 수송선단 창 순익 — windowTradeGross와 분리 */
+    windowConvoyProfit?: number;
     simKpiStatus?: string;
     deltaId?: string | null;
     fiscalMaxFeeUpkeepRatio?: number;

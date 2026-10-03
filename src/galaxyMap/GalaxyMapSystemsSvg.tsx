@@ -115,7 +115,7 @@ export type GalaxyMapSystemsSvgProps = {
   clanOwnerColorBySystemId: Record<string, string | undefined>;
   toScreen: (pos: { x: number; y: number }) => { x: number; y: number };
   locale: AppLocale;
-  /** 수락 전 퀘스트 위치. 끄면 EMPTY */
+  /** 수락한 메인·정식 서브 목적지. 끄면 EMPTY */
   questAcceptMarks?: GalaxyMapQuestAcceptMarks;
 };
 

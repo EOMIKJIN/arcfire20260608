@@ -113,6 +113,7 @@ import {
 import { consumeGalaxyMapIngressReclaim } from '../../src/game/nativeReclaim/galaxyMapIngressReclaim';
 import { markGalaxyMapResidentActive } from '../../src/arcCore/memory';
 import { markPlanetHubIngressReclaim } from '../../src/game/nativeReclaim/planetHubIngressReclaim';
+import { shouldInvalidatePlanetMemoOnHubLand } from '../../src/game/nativeReclaim/planetHubIngressMemoPolicy';
 import { emitMemProfileMarker } from '../../src/game/devMemoryProfileBridge';
 import { ackDevMetroReloadMount, isDevMetroReloadPrepareInFlight, registerDevHotModuleDisposeGuard } from '../../src/game/devMetroReloadGuard';
 import {
@@ -319,6 +320,16 @@ export default function WorldMapScreen() {
   const landOnPlanet = usePlayerStore((s) => s.landOnPlanet);
   const persist = usePlayerStore((s) => s.persist);
   const spendCredits = usePlayerStore((s) => s.spendCredits);
+  /**
+   * landOnPlanet이 lastHubPlanetId를 착륙 행성으로 덮기 전 값.
+   * 같은 허브 지도 peek만 memo 전량 폐기를 건너뛴다.
+   */
+  const mapVisitOriginHubIdRef = useRef((() => {
+    const originPlayer = usePlayerStore.getState().player;
+    return String(
+      originPlayer?.lastHubPlanetId ?? originPlayer?.currentPlanetId ?? '',
+    ).trim();
+  })());
   const systems = useWorldStore((s) => s.systems);
   const selectedSystemId = useWorldStore((s) => s.selectedSystemId);
   const selectSystem = useWorldStore((s) => s.selectSystem);
@@ -475,7 +486,12 @@ export default function WorldMapScreen() {
     worldmapInternalNavRef.current = true;
     if (!hubNavGate.isLocked()) hubNavGate.tryBegin();
 
-    markPlanetHubIngressReclaim({ invalidateMemoCaches: true });
+    markPlanetHubIngressReclaim({
+      invalidateMemoCaches: shouldInvalidatePlanetMemoOnHubLand({
+        landingPlanetId: anchorPlanetId,
+        originHubPlanetId: mapVisitOriginHubIdRef.current,
+      }),
+    });
     stopGalaxyMapInteractionLoops();
     if (transitAnimRef.current) {
       transitAnimRef.current.stop();
@@ -974,7 +990,7 @@ export default function WorldMapScreen() {
     fogHiddenHeldRef.current = hidden;
     return { fogVisibleSystemsList: visible, fogHiddenSystemsList: hidden };
   }, [visibleSystemsList, travelFogRevealedIds]);
-  const questAcceptMarks = useGalaxyMapQuestAcceptMarks(fogVisibleSystemsList);
+  const questAcceptMarks = useGalaxyMapQuestAcceptMarks();
   const voronoiSystemsHeldRef = useRef<typeof visibleSystemsList>([]);
   const voronoiSystemsList = useMemo(() => {
     const next = selectGalaxyMapVoronoiSites(
@@ -1237,7 +1253,7 @@ export default function WorldMapScreen() {
       ch: clampGalaxyMapContentDim(spanY * mapLayout.h + MAP_PAD_PX * 2),
     };
   }, [galaxyBounds, mapLayout.w, mapLayout.h]);
-  /** SvgView 비트맵만 절반. 논리 좌표·줌 카메라는 1x mapContentSize. */
+  /** SvgView 픽셀=논리 1x. 0.5 절반은 성계명 깨짐으로 철회. */
   const galaxyMapSvgRaster = useMemo(
     () => resolveGalaxyMapSvgRasterSize(mapContentSize.cw, mapContentSize.ch),
     [mapContentSize.cw, mapContentSize.ch],

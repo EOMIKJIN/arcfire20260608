@@ -1,12 +1,12 @@
-# Daily audit — 2026-10-02T15:00:11.023Z
+# Daily audit — 2026-10-03T15:00:10.545Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
 ```
-(no output)
+src/combat/capitalCraftPool.test.ts(581,9): error TS2367: This comparison appears to be unintentional because the types '"approach"' and '"orbit"' have no overlap.
 ```
 
-**exit:** 0
+**exit:** 2
 
 ## Content tables (`npm run build:content-tables`)
 
@@ -57,13 +57,13 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 - 482,337 — `src/data/generated/csvNpcCapitalShips.ts`
 - 383,335 — `src/data/generated/csvItemDefs.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
-- 173,939 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 174,274 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 161,657 — `src/data/generated/csvMissions.ts`
-- 123,943 — `src/i18n/locales/ko.ts`
+- 125,050 — `src/i18n/locales/ko.ts`
 - 121,265 — `src/data/generated/csvMainStorySpine.ts`
-- 112,875 — `src/i18n/locales/en.ts`
-- 105,225 — `app/(game)/worldmap.tsx`
-- 96,164 — `app/(game)/planet.tsx`
+- 113,920 — `src/i18n/locales/en.ts`
+- 105,843 — `app/(game)/worldmap.tsx`
+- 97,030 — `app/(game)/planet.tsx`
 - 90,835 — `src/data/generated/csvBarPatronage.ts`
 - 71,316 — `src/data/balance/generated/csvSynthSystemColonization.ts`
 - 71,070 — `src/data/generated/csvWeapons.ts`
@@ -98,6 +98,7 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 **subscribe**
 - `src/arcCore/ArcCoreHub.ts`
 - `src/game/hubTutorial/stellaHubTutorialGuide.ts`
+- `src/store/playerStore.ts`
 - `app/(game)/planet.tsx`
 
 **addEventListener**

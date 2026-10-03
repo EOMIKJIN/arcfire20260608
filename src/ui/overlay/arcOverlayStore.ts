@@ -8,6 +8,7 @@ import { setCombatEndOutcomeHold } from '../../game/combat/combatEndOutcomeHold'
 import { resolveArcAlertAutoDismissMs } from './overlayAlertContract';
 import { preflightPlanetHubSession } from '../heavyUiDataSession/preflightPlanetHub';
 import type { NearbyInfoDetailRow } from '../../game/planetHub/nearbyPresenceDisplay';
+import { noteUiLayerChange } from '../process/uiTransitionGuard';
 
 let overlaySeq = 0;
 function nextOverlayId(prefix: string): string {
@@ -313,6 +314,7 @@ export const useArcOverlayStore = create<ArcOverlayState>((set, get) => ({
   present: (entry) => {
     const next = withId(entry);
     set((s) => ({ stack: [...s.stack, next] }));
+    noteUiLayerChange('open');
   },
   replaceTop: (entry) => {
     const next = withId(entry);
@@ -320,13 +322,25 @@ export const useArcOverlayStore = create<ArcOverlayState>((set, get) => ({
       if (s.stack.length === 0) return { stack: [next] };
       return { stack: [...s.stack.slice(0, -1), next] };
     });
+    noteUiLayerChange('open');
   },
   dismiss: () => {
-    set((s) => ({ stack: s.stack.slice(0, -1) }));
+    const { stack } = get();
+    if (stack.length === 0) return;
+    set({ stack: stack.slice(0, -1) });
+    noteUiLayerChange('close');
   },
-  dismissAll: () => set({ stack: [] }),
+  dismissAll: () => {
+    if (get().stack.length === 0) return;
+    set({ stack: [] });
+    noteUiLayerChange('close');
+  },
   dismissWhere: (pred) => {
-    set((s) => ({ stack: s.stack.filter((e) => !pred(e)) }));
+    const prev = get().stack;
+    const next = prev.filter((e) => !pred(e));
+    if (next.length === prev.length) return;
+    set({ stack: next });
+    noteUiLayerChange(next.length < prev.length ? 'close' : 'open');
   },
   patchOverlay: (id, patch) => {
     set((s) => ({
@@ -378,6 +392,7 @@ export function presentArcOverlayAlert(
       const filtered = s.stack.filter((e) => e.id !== alertId);
       return { stack: [...filtered, next] };
     });
+    noteUiLayerChange('open');
     return;
   }
   const top = store.top();

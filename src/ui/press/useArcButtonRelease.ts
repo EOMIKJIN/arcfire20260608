@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { bindUiSfxPressIn, type UiSfxCue } from '../../audio';
+import {
+  bumpUiTransitionSettle,
+  tryArmUiTransition,
+} from '../process/uiTransitionGuard';
 
 /**
  * 범용 버튼 클릭 계약
@@ -36,6 +40,7 @@ export function useArcButtonReleaseHandlers(opts: Opts): {
       if (pendingRef.current) {
         pendingRef.current = false;
         actionRef.current?.();
+        bumpUiTransitionSettle('press');
       }
     };
   }, []);
@@ -55,11 +60,13 @@ export function useArcButtonReleaseHandlers(opts: Opts): {
 
   const onPress = useCallback(() => {
     if (disabled || pendingRef.current || !actionRef.current) return;
+    if (!tryArmUiTransition()) return;
     pendingRef.current = true;
     timerRef.current = setTimeout(() => {
       timerRef.current = null;
       pendingRef.current = false;
       actionRef.current?.();
+      bumpUiTransitionSettle('press');
     }, ARC_BUTTON_RELEASE_COMMIT_MS);
   }, [disabled]);
 

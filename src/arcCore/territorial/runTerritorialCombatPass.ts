@@ -32,6 +32,7 @@ import {
   showTerritorialStatusQuoAlert,
 } from './showTerritorialOccupationChangeAlert';
 import { publishTerritorialHoldChangeNotice } from './publishTerritorialHoldChangeNotice';
+import type { TerritorialPresentCombatMode } from './resolveTerritorialPresentKind';
 import {
   resolveGovernorTacticsReversal,
   type TacticsReversalOutcome,
@@ -199,6 +200,7 @@ function notifyHoldChange(input: {
   previousSide: MapFactionSide;
   newSide: MapFactionSide;
   decision: TerritorialHoldNotifyDecision;
+  combatMode?: TerritorialPresentCombatMode;
   attackerWon?: boolean;
   attackerSide?: MapFactionSide;
   defenderSide?: MapFactionSide;
@@ -210,6 +212,7 @@ function notifyHoldChange(input: {
     previousSide: input.previousSide,
     newSide: input.newSide,
     decision: input.decision,
+    combatMode: input.combatMode,
     attackerWon: input.attackerWon,
     attackerSide: input.attackerSide,
     defenderSide: input.defenderSide,
@@ -221,6 +224,7 @@ function notifyHoldChange(input: {
     previousSide: input.previousSide,
     newSide: input.newSide,
     decision: input.decision,
+    combatMode: input.combatMode,
   });
 }
 
@@ -237,6 +241,7 @@ function notifyTerritorialPassOutcome(input: {
   newSide: MapFactionSide;
   decision: TerritorialHoldNotifyDecision;
   holdChanged: boolean;
+  combatMode?: TerritorialPresentCombatMode;
   attackerWon?: boolean;
   attackerSide?: MapFactionSide;
   defenderSide?: MapFactionSide;
@@ -267,6 +272,7 @@ function notifyTerritorialPassOutcome(input: {
     planetLabelEn: input.planetLabelEn,
     side: input.newSide,
     decision: input.decision,
+    combatMode: input.combatMode,
     attackerWon: input.attackerWon,
     attackerSide: input.attackerSide,
     defenderSide: input.defenderSide,
@@ -518,6 +524,7 @@ async function runIndependentHoldInvasionJudgment(input: {
       planetLabelEn: policy.alertLabelEn,
       side: previousSide,
       decision: 'battle',
+      combatMode: 'independent_invasion',
       attackerWon: false,
       attackerSide: sideToMapFaction(attacker),
       defenderSide: 'independent',
@@ -572,6 +579,7 @@ async function runIndependentHoldInvasionJudgment(input: {
     previousSide,
     newSide: applied.newSide,
     decision: 'battle',
+    combatMode: 'independent_invasion',
     attackerWon: true,
     attackerSide: sideToMapFaction(attacker),
     defenderSide: 'independent',
@@ -926,6 +934,7 @@ export async function runTerritorialCombatPassForPlanet(
       newSide: previousSide,
       decision,
       holdChanged: false,
+      combatMode: effectiveCombatMode,
       attackerWon: false,
       attackerSide: sideToMapFaction(attacker),
       defenderSide: sideToMapFaction(defender),
@@ -1041,6 +1050,7 @@ export async function runTerritorialCombatPassForPlanet(
       newSide,
       decision,
       holdChanged,
+      combatMode: effectiveCombatMode,
       attackerWon,
       attackerSide: sideToMapFaction(attacker),
       defenderSide: sideToMapFaction(defender),
@@ -1151,6 +1161,7 @@ export async function runTerritorialCombatPassForPlanet(
     newSide,
     decision,
     holdChanged,
+    combatMode: effectiveCombatMode,
     attackerWon: newSide !== previousSide,
     attackerSide: sideToMapFaction(attacker),
     defenderSide: sideToMapFaction(defender),

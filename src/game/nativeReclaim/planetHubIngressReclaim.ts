@@ -7,15 +7,19 @@ import {
 } from './runPlanetHubIngressReclaimPass';
 import { emitMemProfileMarker } from '../devMemoryProfileBridge';
 
+export { shouldInvalidatePlanetMemoOnHubLand } from './planetHubIngressMemoPolicy';
+
 let pendingIngress = false;
 let pendingInvalidateMemo = false;
+
+export function peekPlanetHubIngressReclaimPending(): boolean {
+  return pendingIngress;
+}
 
 /** worldmap · transit combat → planet replace 직전 */
 export function markPlanetHubIngressReclaim(opts?: { invalidateMemoCaches?: boolean }): void {
   pendingIngress = true;
-  if (opts?.invalidateMemoCaches) {
-    pendingInvalidateMemo = true;
-  }
+  pendingInvalidateMemo = opts?.invalidateMemoCaches === true;
 }
 
 /** planet focus 1회 — pending 시 Tier B cold reload */

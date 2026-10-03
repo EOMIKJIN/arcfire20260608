@@ -32,6 +32,7 @@ import {
 } from '../../combat/capitalWeaponPipeline';
 import {
   CRAFT_TRAIL_SAMPLES,
+  isCapitalCraftVisible,
   type CapitalCraft,
 } from '../../combat/capitalCraftPool';
 import { registerCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
@@ -165,7 +166,7 @@ function writeCraftTrailBatch(
   let any = false;
   for (let i = 0; i < crafts.length; i++) {
     const c = crafts[i]!;
-    if (!c.alive || c.family !== family || c.trailLen < 2) continue;
+    if (!isCapitalCraftVisible(c) || c.family !== family || c.trailLen < 2) continue;
     const xs = c.trailXs;
     const ys = c.trailYs;
     const oldest = (c.trailWrite - c.trailLen + CRAFT_TRAIL_SAMPLES) % CRAFT_TRAIL_SAMPLES;
@@ -765,7 +766,7 @@ function recordCombatOrbitPicture(
 
   let craftAlive = 0;
   for (let ci = 0; ci < crafts.length; ci++) {
-    if (crafts[ci]!.alive) craftAlive += 1;
+    if (isCapitalCraftVisible(crafts[ci]!)) craftAlive += 1;
   }
   const vfx = resolveCombatOrbitVfxBudget(
     agents.length,
@@ -993,7 +994,7 @@ function recordCombatOrbitPicture(
   }
   for (let ci = 0; ci < crafts.length; ci++) {
     const craft = crafts[ci]!;
-    if (!craft.alive) continue;
+    if (!isCapitalCraftVisible(craft)) continue;
     if (!finiteNum(craft.x) || !finiteNum(craft.y)) continue;
     if (craft.family === 'drone') {
       draw.circle(
@@ -1017,6 +1018,23 @@ function recordCombatOrbitPicture(
       CRAFT_CARRIER_MINOR_RADIUS,
     );
     canvas.drawPath(craftOval, fillPaint(CRAFT_CARRIER_HEAD_COLOR, 0.98));
+  }
+
+  const hitFxList = sim.missileHitFxRef.current;
+  for (let fi = 0; fi < hitFxList.length; fi++) {
+    const fx = hitFxList[fi]!;
+    if (fx.effectKind !== 'drone_burst' && fx.effectKind !== 'carrier_bomb') continue;
+    const age = tMs - fx.startMs;
+    if (age > PLANET_FLAME_BURST_FADE_MS || age < -48) continue;
+    drawPlanetFlameBurstOnSkCanvas(
+      canvas,
+      fx.x,
+      fx.y,
+      age,
+      fx.effectKind === 'carrier_bomb' ? 0.62 : 0.52,
+      PLANET_FLAME_BURST_BASE,
+      flameImage,
+    );
   }
 
   if (renderMissileDodgeFx && dodgeImage) {

@@ -1,18 +1,31 @@
-import { getLocale, isKoUi, t } from '../../i18n';
+import { getLocale, isKoUi, resolveDictionaryLocale, t } from '../../i18n';
 import { showArcNotificationAlert } from '../../utils/showArcAlert';
 import { TERRITORIAL_OCCUPATION_ALERT_ID } from '../../ui/overlay/overlayAlertContract';
 import type { MapFactionSide } from '../../galaxyMap/resolveMapFactionSide';
+import { resolveNationDisplayNameForMapSide } from '../../world/megaFactionNationPolicy';
 import { shouldSkipTerritorialOccupationAlert } from './territorialAlertGate';
-import { formatTerritorialBattleAlertCopy } from './territorialBattleAlertCopy';
+import { formatTerritorialBattleAlertCopy, koJosa } from './territorialBattleAlertCopy';
+import {
+  resolveTerritorialPresentKind,
+  type TerritorialPresentCombatMode,
+} from './resolveTerritorialPresentKind';
 
 export { shouldSkipTerritorialOccupationAlert };
 export { formatTerritorialBattleAlertCopy, koJosa } from './territorialBattleAlertCopy';
 
-function sideLabelKo(side: MapFactionSide): string {
+function sideLabel(side: MapFactionSide): string {
+  const locale = resolveDictionaryLocale(getLocale()) === 'en' ? 'en' : 'ko';
+  const nation = resolveNationDisplayNameForMapSide(side, locale);
+  if (nation) return nation;
   if (side === 'blue') return t('territorial.side.blue');
   if (side === 'red') return t('territorial.side.red');
   if (side === 'independent') return t('territorial.side.independent');
   return t('territorial.side.neutral');
+}
+
+function withIga(word: string): string {
+  if (!isKoUi(getLocale())) return word;
+  return `${word}${koJosa(word, '이', '가')}`;
 }
 
 /** 로케일별 점령 알림 성계명 — EN UI면 alertLabelEn, 없으면 Ko/fallback */
@@ -56,20 +69,25 @@ export function showTerritorialOccupationChangeAlert(input: {
   previousSide: MapFactionSide;
   newSide: MapFactionSide;
   decision: 'battle' | 'neutral_declare' | 'status_quo';
+  combatMode?: TerritorialPresentCombatMode;
   attackerWon?: boolean;
   attackerSide?: MapFactionSide;
   defenderSide?: MapFactionSide;
 }): void {
   if (input.previousSide === input.newSide) return;
 
-  const prev = sideLabelKo(input.previousSide);
-  const next = sideLabelKo(input.newSide);
+  const prev = sideLabel(input.previousSide);
+  const next = sideLabel(input.newSide);
+  const presentKind = resolveTerritorialPresentKind({
+    decision: input.decision,
+    combatMode: input.combatMode,
+  });
 
   presentTerritorialAlertNow(() => {
     const alertOpts = { id: TERRITORIAL_OCCUPATION_ALERT_ID };
     const planet = planetLabelAtShow(input);
 
-    if (input.decision === 'neutral_declare') {
+    if (presentKind === 'declare') {
       showArcNotificationAlert(
         t('territorial.alert.neutralTitle'),
         t('territorial.alert.neutralBody', { planet, prev, next }),
@@ -78,7 +96,16 @@ export function showTerritorialOccupationChangeAlert(input: {
       return;
     }
 
-    if (input.decision === 'battle') {
+    if (presentKind === 'seize') {
+      showArcNotificationAlert(
+        t('territorial.alert.seizeTitle'),
+        t('territorial.alert.seizeBody', { planet, prev, next, nextJosa: withIga(next) }),
+        alertOpts,
+      );
+      return;
+    }
+
+    if (presentKind === 'battle') {
       const copy = formatTerritorialBattleAlertCopy({
         planet,
         previousSide: input.previousSide,
@@ -111,14 +138,14 @@ export function showTerritorialStatusQuoAlert(input: {
   planetLabelEn?: string;
   side: MapFactionSide;
 }): void {
-  const sideLabel = sideLabelKo(input.side);
+  const held = sideLabel(input.side);
 
   presentTerritorialAlertNow(() => {
     showArcNotificationAlert(
       t('territorial.alert.statusQuoTitle'),
       t('territorial.alert.statusQuoBody', {
         planet: planetLabelAtShow(input),
-        side: sideLabel,
+        side: held,
       }),
       { id: TERRITORIAL_OCCUPATION_ALERT_ID },
     );
@@ -131,6 +158,7 @@ export function showTerritorialOccupationMaintainedAlert(input: {
   planetLabelEn?: string;
   side: MapFactionSide;
   decision: 'battle' | 'neutral_declare';
+  combatMode?: TerritorialPresentCombatMode;
   attackerWon?: boolean;
   attackerSide?: MapFactionSide;
   defenderSide?: MapFactionSide;
@@ -140,13 +168,26 @@ export function showTerritorialOccupationMaintainedAlert(input: {
     : input.side === 'red' ? 'red'
     : input.side === 'independent' ? 'independent'
     : 'neutral';
-  const sideLabel = sideLabelKo(input.side);
+  const held = sideLabel(input.side);
+  const presentKind = resolveTerritorialPresentKind({
+    decision: input.decision,
+    combatMode: input.combatMode,
+  });
 
   presentTerritorialAlertNow(() => {
     const alertOpts = { id: TERRITORIAL_OCCUPATION_ALERT_ID };
     const planet = planetLabelAtShow(input);
 
-    if (input.decision === 'battle') {
+    if (presentKind === 'seize') {
+      showArcNotificationAlert(
+        t('territorial.alert.seizeMaintainedTitle'),
+        t('territorial.alert.seizeMaintainedBody', { planet, side: held }),
+        alertOpts,
+      );
+      return;
+    }
+
+    if (presentKind === 'battle') {
       const copy = formatTerritorialBattleAlertCopy({
         planet,
         previousSide: input.side,
@@ -172,7 +213,7 @@ export function showTerritorialOccupationMaintainedAlert(input: {
         : 'territorial.alert.maintained.diplomaticBody';
     showArcNotificationAlert(
       t('territorial.alert.maintainedNeutralDeclareTitle'),
-      t(diplomaticBodyKey, { planet, side: sideLabel }),
+      t(diplomaticBodyKey, { planet, side: held }),
       alertOpts,
     );
   });

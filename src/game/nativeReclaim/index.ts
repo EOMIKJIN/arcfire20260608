@@ -30,7 +30,9 @@ export {
 export {
   markPlanetHubIngressReclaim,
   consumePlanetHubIngressReclaim,
+  peekPlanetHubIngressReclaimPending,
 } from './planetHubIngressReclaim';
+export { shouldInvalidatePlanetMemoOnHubLand } from './planetHubIngressMemoPolicy';
 export { runPlanetHubIngressReclaimPass } from './runPlanetHubIngressReclaimPass';
 export {
   markGalaxyMapIngressFromPlanetHub,

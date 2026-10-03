@@ -52,6 +52,20 @@ export function shouldRotateAutoSession(input: {
   return { rotate: false, reason: 'hold' };
 }
 
+/** Metro 개발 서버 포트 — 기기 localhost:8081 → PC 8081 (무선 adb 재연결 시 reverse 목록이 비워짐). */
+export const METRO_REVERSE_SPEC = 'tcp:8081';
+
+/** `adb reverse --list` 출력에 Metro 포트 연결이 없으면 true. */
+export function needsMetroReverse(reverseListStdout: string | null | undefined): boolean {
+  const lines = String(reverseListStdout ?? '').split(/\r?\n/);
+  for (let i = 0; i < lines.length; i += 1) {
+    const parts = lines[i].trim().split(/\s+/);
+    // 형식: "<serial-or-host> tcp:8081 tcp:8081"
+    if (parts.length >= 3 && parts[1] === METRO_REVERSE_SPEC && parts[2] === METRO_REVERSE_SPEC) return false;
+  }
+  return true;
+}
+
 /** `adb shell` 인자는 원격 셸에서 다시 쪼개지므로 date 포맷은 한 문자열로 넘긴다(D1). */
 export const ADB_DATE_ARGS: readonly string[] = ['shell', "date '+%m-%d %H:%M:%S'"];
 

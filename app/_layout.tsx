@@ -50,6 +50,7 @@ import {
   ArcCoreDualAppShell,
 } from '../src/ui/overlay/ArcCoreAgentSurfaceHost';
 import { IngameDialogHost } from '../src/game/ingameDialog/IngameDialogHost';
+import { UiTransitionShield } from '../src/ui/process/UiTransitionShield';
 import { LevelUpOverlayBridge } from '../src/ui/overlay/LevelUpOverlayBridge';
 import { useArcOverlayStore } from '../src/ui/overlay/arcOverlayStore';
 import { initializeFirebase, logAppOpen } from '../src/utils/logger';
@@ -499,6 +500,7 @@ export default function RootLayout() {
         <ArcCoreAgentSurfaceHost />
         <ArcOverlayHost />
         <IngameDialogHost />
+        <UiTransitionShield />
         <LevelUpOverlayBridge />
       </IdleSessionRestartGuard>
     </GestureHandlerRootView>

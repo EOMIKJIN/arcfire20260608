@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
+import { syncEarlyWarImmersionTutorialComplete } from '../navigation/earlyWarImmersionGate';
 import {
   Player,
   PlayerHangarShip,
@@ -1064,6 +1065,14 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
   clearLevelUp: () => set({ levelUpPending: false, levelUpSummary: null }),
 }));
+
+let lastEarlyWarTutorialMirror: boolean | null | undefined = undefined;
+usePlayerStore.subscribe((state) => {
+  const next = state.player ? state.player.flags.tutorialComplete === true : null;
+  if (next === lastEarlyWarTutorialMirror) return;
+  lastEarlyWarTutorialMirror = next;
+  syncEarlyWarImmersionTutorialComplete(next);
+});
 
 export { createPlayerCombatProficiency, normalizePlayerCombatProficiency };
 

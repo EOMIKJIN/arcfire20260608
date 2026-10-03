@@ -50,6 +50,7 @@ type BarBoardState = {
   pushOrRefreshNotice: (
     notice: Omit<BarNotice, 'id' | 'postedAtMs'> & { postedAtMs?: number },
     dedupeKey: string,
+    opts?: { silentBadge?: boolean },
   ) => void;
 };
 
@@ -323,7 +324,7 @@ export const useBarBoardStore = create<BarBoardState>((set, get) => ({
     }
   },
 
-  pushOrRefreshNotice: (notice, dedupeKey) => {
+  pushOrRefreshNotice: (notice, dedupeKey, opts) => {
     if (isLegacyArcCoreMissileNotice(notice)) return;
     const nextPostedAtMs = notice.postedAtMs ?? Date.now();
     set((state) => {
@@ -341,7 +342,9 @@ export const useBarBoardStore = create<BarBoardState>((set, get) => ({
       const split = splitVisibleAndHistory([next, ...stripped.notices], stripped.history);
       return { notices: split.notices, history: split.history };
     });
-    useMenuNotificationStore.getState().setBadge('bar', true);
+    if (!opts?.silentBadge) {
+      useMenuNotificationStore.getState().setBadge('bar', true);
+    }
     void get().persistBoard();
   },
 }));

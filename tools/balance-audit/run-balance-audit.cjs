@@ -158,9 +158,10 @@ for (const band of levelBands) {
   let observeMethod = 'fallback_no_weapons';
   if (prices.length > 0 && targetCph > 0 && targetMin > 0) {
     const med = median(prices);
-    const affordableInBandWindow = targetCph * (targetMin / 60);
+    const bandLevelSpan = Math.max(1, maxL - minL + 1);
+    const affordableInBandWindow = targetCph * (targetMin / 60) * bandLevelSpan;
     observedAffordableGap = affordableInBandWindow > 0 ? med / affordableInBandWindow : 1;
-    observeMethod = 'weapon_median_vs_band_cph_window';
+    observeMethod = 'weapon_median_vs_band_span_income';
   }
   const gapRatio = observedAffordableGap > 0 ? observedAffordableGap - 1 : 0;
   const observed = Math.round((targetMin * observedAffordableGap) * 100) / 100;

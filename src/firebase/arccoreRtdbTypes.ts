@@ -66,6 +66,7 @@ export type ArcCoreRtdbDeviceDailyKpi = {
     planetsReconciled?: number;
     windowTradeGross?: number;
     windowConvoyTrips?: number;
+    windowConvoyProfit?: number;
     deltaId?: string | null;
     simKpiStatus?: string;
   };

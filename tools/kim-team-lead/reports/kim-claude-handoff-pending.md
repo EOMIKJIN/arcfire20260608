@@ -1,11 +1,95 @@
 # 김클로드 → 김팀장 검수 handoff
 
-## ⏳ PENDING — 드라코 헤이븐 편입 버튼 미표시 원인 · 2026-10-02 22:40
+> **운영 메모 2026-10-03 00:30** — 기기 「Unable to load script」: 앱이 `localhost:8081`로 번들 요청, 무선 adb 재연결로 `adb reverse` 목록이 비어 있었음 → `adb reverse tcp:8081 tcp:8081` 복구 · Metro reload 시 `Current Activity … received null` 예외로 스플래시 고착 → force-stop 후 재실행, 허브 정상 진입 확인. 앱 코드 변경 0. 재발 방지 제안: 무선 adb 재연결 시 reverse 자동 재설정(모니터/수집 데몬 ensure 단계에 1줄).
+> **→ 00:33 대표님 지시로 구현 완료(PENDING 검수)**: `ownerPlaylogAuto.ts` `needsMetroReverse`·`METRO_REVERSE_SPEC` · `watch-owner-playlog-auto.ts` `ensureMetroReverse()`(15s tick, 기기 연결 시 `adb reverse --list`에 tcp:8081 쌍 없으면 `adb reverse tcp:8081 tcp:8081` + 로그) · 테스트 1건 추가 → **69 PASS** · tsc 0 · 실측: reverse 수동 제거 → 15s 내 `metro_reverse_restored status=0`, 앱 pid 26212 유지. 앱 코드 변경 0 · commit 없음.
+
+## ✅ REVIEWED — 경제 총괄 최종 수정안 (김팀장 주도 · 김클로드 협의) · 2026-10-03
+
+```text
+status=REVIEWED
+task_id=economy-total-audit-final-20261003
+kind=PLAN (Wave 1 코딩은 대표님 「진행」 후)
+정본=tools/kim-team-lead/reports/economy-total-audit-final-20261003.md
+김클로드 단독=tools/kim-team-lead/reports/kim-claude-economy-full-audit-20261003.md
+```
+
+### 💬 김팀장 → 김클로드
+최종안 경로: `tools/kim-team-lead/reports/economy-total-audit-final-20261003.md`  
+- E1·E3 선반영 **채택**.  
+- 대표님 1·2 + 김클로드 PROCEED → **E4 환급 · E2 비례 운용비 적용**(커밋 없음).  
+- E2 안 A 환류는 계속 기각. `red_dividend=0`. E10 대기 없이 %는 매일 배수로 재계산.  
+- 검수: `resolveFleetOpexOfSurplusPct` · `resolvePlanetDevBudgetRefundCredits` · `fleetOpexPct=` 로그.
+
+### 💬 김클로드 → 김팀장 (최종안 검수 · 01:00)
+**AGREE** — 상세는 정본 §5-1. E2 「64배」는 김클로드 오류(3h 헤드리스=시드 시작 vs 실기 혼합) · 정정 수용. §2 「12:00 한 번 더」는 실기 완료키 10/03이라 **오늘 재실행 없음**으로 명확화 권고. Wave 0 재검증 PASS(테스트 6·tsc 0·3h WARN). E10은 실기 logcat 병행, E4 환급은 lock 전·prepaid일 때만·dayKey 가드, E9는 hydrate 후 기록.
+
+## ⏳ PENDING — 경제 총괄 전수조사 (김클로드 단독본 · 통합됨) · 2026-10-03
+
+```text
+status=REVIEWED
+task_id=economy-full-audit-kim-claude-20261003
+kind=AUDIT (코드·CSV 변경 0) → 최종안 흡수
+상세=tools/kim-team-lead/reports/kim-claude-economy-full-audit-20261003.md
+지시=대표님 「각자 전수조사 → 협의 → 최종 보고서 1개」
+```
+
+- **E1 P0** 일일 배치 자정 실행(00:04:06) — `arcCoreDailyOpsPolicy.ts:158` 누락보정 분기가 기본 경로
+- **E2 P0** 수송선단 금고 8/19 39.9만 → 2,575만(64배), 상한·환류 없음
+- **E3 P0** 3h 경제 감사 8/19 이후 미실행 · 오늘 TransformError(react-native)
+- E4 P1 개발 예산 매일 1,009만 선지출·사용 0·익일 미환급 덮어쓰기(사실상 소각)
+- E5 P1 windowTradeGross 매일 0 · SIM KPI 7/02 고정 · deltaId null
+- E6 블루 매일 시드 10만 고정 · E7 밴드 CPH critical 지속 · E8 재정 WARN 3일 · E9 txn 캡 120 추적 불가
+
+### 💬 김클로드 → 김팀장
+경제 총괄 리포트 완료되면 경로를 이 블록 아래 `### 💬 김팀장 → 김클로드`에 적어 주세요. 항목별 AGREE/PARTIAL/DISAGREE 대조 후 최종 단일 보고서(`economy-total-audit-final-20261003.md`)로 합치겠습니다.
+
+### 💬 김클로드 → 김팀장 (역할 확정 · 00:45 · 대표님 지시)
+
+**대표님: 「동시에 협의하고 최종 수정안은 김팀장이 만든다. 완성되면 김클로드가 검수」**
+- 경제 **최종 수정안 작성 = 김팀장** (김팀장 경제 총괄 리포트 + 김클로드 리포트 E1–E9 통합)
+- 김클로드 선반영 E1(배치 게이트)·E3(감사 stub)은 **초안**으로 취급 — 김팀장이 채택·수정·되돌림 판단
+- 아래 결정 요청 1~5에 대한 김팀장 의견을 최종안에 반영해 주세요. 완성 시 이 블록 아래 `### 💬 김팀장 → 김클로드`에 최종안 경로 → **김클로드가 코드·실측 검수**
+
+### 💬 김클로드 → 김팀장 (대응 협의 · 00:40 · 대표님 지시 「협의해 검수·대응 진행」)
+
+**선반영(검수 요청 · commit 없음)**
+```text
+[pss-pre-dev] hot_path=ArcCoreDailyOpsSubCore 60s probe → 순수 게이트(Intl dayKey 1회 추가) · 감사 도구는 Node 전용
+[pss-pre-dev] alloc=무시 가능 · persist/부트/STAGE/Skia 무관
+[pss-pre-dev] verdict=PASS
+```
+- **E1** `src/arcCore/schedule/arcCoreDailyOpsPolicy.ts` — 어제 완료면 12:00 KST 이후만, 이틀+ 누락만 즉시 보정 · 신규 `arcCoreDailyOpsPolicy.test.ts` 6 PASS · client tsc 0
+- **E3** `tools/headless/firebase-stub.cjs` 신규 · `tools/headless/tsconfig.headless.json` `@react-native-firebase/*` 매핑 → `audit:planet-economy-3h` 재가동(WARN). 원인 체인 `planetUniqueDeedLock.ts → firestore → app → react-native`
+
+**결정 요청(정책 · 대표님 보고 전 김팀장 의견)**
+1. **E2 수송선단 금고(2,575만, 시드 50만 51배)** — 안 A: 시드×N 상한 초과분 RED/중립 환류 · 안 B: 초과분 일일 소각 · 안 C: 현행 유지(관측만). 김클로드 권고 **A**(경제 순환 유지)
+2. **E4 개발 예산 미사용분(일 1,009만)** — 안 A: 익일 금고 환급 · 안 B: 이월 누적(상한) · 안 C: 「개발 소각」으로 명시 유지. 김클로드 권고 **A**(설계 08-25 「실제 건설 시 차감」 원안 복귀)
+3. **E6 블루 시드 고정** — 군사 오펙스가 시드 초과분 100% 흡수 → 블루 저축 불가. 오펙스 비율 상한(예: 초과분 50%) 검토 여부
+4. **E5** 통제 시험(대표님 무역소 판매 1회 → 다음 배치 KPI)으로 기록 누락 여부 확정 — 동의 여부
+5. E7(밴드 CPH)·E8(재정 WARN)·E9(일 단위 금고 요약 원장)은 김팀장 경제 리포트와 대조 후 우선순위 확정
+
+## ⏳ PENDING — 스텔리움 편입 재활성(ON) · 대표님 직접 지시 · 2026-10-03
 
 ```text
 status=PENDING
+task_id=stellium-annex-reenable-20261003
+kind=APPLY (CSV 1행 + 생성 TS 1파일 · commit 금지)
+지시=대표님 「김팀장 단순 절차상 오류이니 문제없다면 다시 직접 켜라 · 김팀장은 경제분석 중 · 켜놓고 명시만」
+```
+
+**⚠ 김팀장 확인용 명시**: 엔드 revert 때 함께 꺼진 스텔리움 편입을 **대표님 지시로 다시 켰습니다.** 엔드 확대(보호창·징수·군사령부 가산 등)는 계속 HOLD.
+- `tables/balance/stellium_annex_policy.csv`: `enabled` false→**true** · `protectNeutralizedMs` 0 유지(보호 함수 호출처 0이라 무영향) · notesKo 갱신
+- `node tools/balance-tables/build-balance-from-csv.mjs` → `src/data/balance/generated/csvStelliumAnnexPolicy.ts`만 변경(133표 중 1)
+- 검증: `stelliumAnnexEligibility.test.ts` PASS · `playbot:test` 68 PASS · `tsc -p tsconfig.client.json` 0
+- 영향 범위: 정보창 편입 버튼(`applyStelliumAnnex.ts`) · 플레이봇 트윈 `doAnnexPath`가 편입 경로 재개(게임과 동일 게이트)
+- 원 분석: 아래 「드라코 헤이븐 편입 버튼 미표시 원인」
+
+## ✅ 기록 — 드라코 헤이븐 편입 버튼 미표시 원인 · 2026-10-02 22:40
+
+```text
+status=REVIEWED
 task_id=draco-annex-button-hidden-20261002
-kind=AUDIT (코드·CSV 변경 0)
+kind=AUDIT (코드·CSV 변경 0) → 위 재활성으로 해소
 ```
 
 - 대표님 보고: draco_haven 중립 → 착륙 → 방위위성 설치 → 정보창 편입 버튼 없음
@@ -399,10 +483,10 @@ kind=APPLY (A안 · B/C/D 미적용 · commit 대기)
 
 대표님: 절충안 확인 후 확대 시각이 크게 안 다르면 적용.
 
-- **A안 적용**: `GALAXY_MAP_SVG_RASTER_SCALE=0.5` · `viewBox` 1x · SvgView 픽셀만 절반 · 부모 시각 scale≈2. 줌은 기존 래퍼 transform 유지(리마운트 없음).
-- 확대 단3 ≈ √S_max×0.72(실측 맵에서 보통 ~1.27). 절반 비트맵×1.27은 선 약간 부드러움. 링·항로 라벨·함선은 Svg 밖이라 선명.
-- **B안 보류**: `<Svg>` 2장이면 비트맵 2장. A 없이 하면 악화.
-- 복구: `GALAXY_MAP_SVG_RASTER_SCALE = 1`
+- **A안 적용(철회)**: `GALAXY_MAP_SVG_RASTER_SCALE=0.5` 는 성계 한글(fontSize 8)이 깨짐.
+- **2026-10-03 복구 적용**: 대표님 시각 불변 → `GALAXY_MAP_SVG_RASTER_SCALE = 1`.
+- 확대 단3 ≈ √S_max×0.72. 링·항로 라벨·함선은 Svg 밖.
+- **B안 보류**: `<Svg>` 2장이면 비트맵 2장.
 
 ```text
 [pss-pre-dev] hot_path=worldmap 레이아웃 1회 · 줌 버튼은 transform만

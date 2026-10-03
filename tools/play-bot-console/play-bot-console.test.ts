@@ -60,6 +60,7 @@ import {
   AUTO_MIN_USER_ACTIONS,
   classifyAutoSession,
   countUserActionMarkers,
+  needsMetroReverse,
   parseDeviceSince,
   shouldImportAutoSession,
   shouldRotateAutoSession,
@@ -1209,6 +1210,14 @@ test('T3 비실기 기본은 profiler · forceKind 없이 덮지 않음', () => 
   const asHuman = memProfileToTraces(close, 'owner-play', { defaultKind: 'human' });
   assert.ok(asHuman.length >= 1);
   assert.ok(asHuman.every((t) => t.sessionKind === 'human'));
+});
+
+test('Metro reverse — 목록에 tcp:8081 쌍이 없을 때만 재설정', () => {
+  assert.equal(needsMetroReverse(''), true);
+  assert.equal(needsMetroReverse('\r\n'), true);
+  assert.equal(needsMetroReverse('host-22 tcp:8081 tcp:8081\r\n'), false);
+  assert.equal(needsMetroReverse('192.168.45.197:33639 tcp:8081 tcp:8081'), false);
+  assert.equal(needsMetroReverse('host-22 tcp:9090 tcp:9090'), true);
 });
 
 console.log('play-bot-console tests done');

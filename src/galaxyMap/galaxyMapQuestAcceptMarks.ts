@@ -1,24 +1,22 @@
 /**
- * 은하 지도 — 수락 전 퀘스트 위치 다이아.
+ * 은하 지도 — 수락한 메인·정식 서브의 현재 세부미션 목적지 다이아.
  *
  * 복구: GALAXY_MAP_QUEST_ACCEPT_MARKS_ENABLED = false
  *       → 계산 스킵 · Path 미표시 · 지금 지도와 동일
  *
- * 수락·진행·완료 전이면 offer 성계에 표시. 레벨·선행 미달은 숨기지 않음.
- * visibleSystemIds = 여행 안개가 풀린 성계만. 안개 밖은 찍지 않음.
+ * 미수락·바 sandbox_001–033 · 튜토리얼 mission_* 는 찍지 않음.
+ * 여행 안개로 노드가 꺼진 성계에도 찍음(좌표만 있으면).
  * 메인 = ready story_* · 서브 = 챕터1 정식 13종(sandbox_034–038 · 056–063).
- * 바 의뢰 sandbox_001–033 · 목적지 행성은 찍지 않음.
  */
-import type { Mission, MissionProgress } from '../types';
+import type { Mission, MissionObjective, MissionProgress } from '../types';
 import { MISSIONS_FROM_CSV } from '../data/generated/csvMissions';
 import {
   MAIN_STORY_CHAIN_STEPS_FROM_CSV,
   MAIN_STORY_QUESTS_FROM_CSV,
 } from '../data/generated/csvMainStorySpine';
 import { STAR_SYSTEMS } from '../data/systems';
-import {
-  CHAPTER1_NAMED_SIDE_QUEST_IDS,
-} from '../missions/missionTrack';
+import { CHAPTER1_NAMED_SIDE_QUEST_IDS } from '../missions/missionTrack';
+import { getCurrentSequentialObjective } from '../missions/missionObjectiveSequence';
 
 let planetToSystemId: Map<string, string> | null = null;
 
@@ -27,7 +25,7 @@ function getCsvMission(missionId: string): Mission | undefined {
 }
 
 /** 코어 21 + `synth_*_p` → `synth_*`. galaxy100/RN 초상 경로를 타지 않는다. */
-function resolveOfferSystemId(planetId: string): string | null {
+function resolvePlanetToSystemId(planetId: string): string | null {
   const id = planetId.trim();
   if (!id) return null;
   if (!planetToSystemId) {
@@ -48,6 +46,54 @@ function resolveOfferSystemId(planetId: string): string | null {
     return id.slice(0, -2);
   }
   return null;
+}
+
+function extractPlanetIdFromTarget(targetId: string): string | null {
+  const raw = targetId.trim();
+  if (!raw) return null;
+  const pipe = raw.indexOf('|');
+  if (pipe >= 0) {
+    const planetId = raw.slice(pipe + 1).trim();
+    return planetId || null;
+  }
+  return raw;
+}
+
+/** 현재 세부미션 성계. 행성/성계를 못 읽으면 null — offer 폴백 없음. */
+export function resolveObjectiveDestSystemId(obj: MissionObjective): string | null {
+  const raw = (obj.targetId ?? '').trim();
+  if (!raw) return null;
+
+  if (obj.type === 'reach_system') {
+    if (STAR_SYSTEMS[raw]) return raw;
+    return resolvePlanetToSystemId(raw);
+  }
+
+  if (
+    obj.type === 'reach_planet' ||
+    obj.type === 'talk_npc' ||
+    obj.type === 'deliver_cargo'
+  ) {
+    const planetId = extractPlanetIdFromTarget(raw);
+    return planetId ? resolvePlanetToSystemId(planetId) : null;
+  }
+
+  const pipe = raw.indexOf('|');
+  if (pipe >= 0) {
+    const planetId = raw.slice(pipe + 1).trim();
+    return planetId ? resolvePlanetToSystemId(planetId) : null;
+  }
+  return null;
+}
+
+function resolveActiveDestSystemId(
+  mission: Mission,
+  progress: MissionProgress | undefined,
+): string | null {
+  if (progress?.status !== 'active') return null;
+  const obj = getCurrentSequentialObjective(mission, progress);
+  if (!obj) return null;
+  return resolveObjectiveDestSystemId(obj);
 }
 
 /** 문제 시 false. persist 없음. */
@@ -84,7 +130,6 @@ export const EMPTY_GALAXY_MAP_QUEST_ACCEPT_MARKS: GalaxyMapQuestAcceptMarks =
 
 export type ResolveGalaxyMapQuestAcceptMarksInput = {
   enabled: boolean;
-  visibleSystemIds: readonly string[];
   progresses: Record<string, MissionProgress>;
 };
 
@@ -112,17 +157,6 @@ function listReadyMainStoryBindIds(): readonly string[] {
   }
   readyMainBindIds = ids;
   return ids;
-}
-
-/** 수락 전(미수락)만. 레벨·선행은 보지 않음. */
-function isUnacceptedOffer(
-  mission: Mission,
-  progress: MissionProgress | undefined,
-): boolean {
-  if (mission.objectives.length === 0) return false;
-  if (!mission.offerPlanetId) return false;
-  if (progress?.status === 'complete' || progress?.status === 'active') return false;
-  return true;
 }
 
 function markSystem(
@@ -168,7 +202,7 @@ export function diamondPathD(cx: number, cy: number, half = GALAXY_MAP_QUEST_MAR
   return `M${x} ${t}L${r} ${y}L${x} ${b}L${l} ${y}Z`;
 }
 
-/** 구독 축소 — ready 본편 + 정식 서브 5종 수락/완료 상태만. */
+/** 구독 축소 — 활성 본편/정식 서브의 현재 세부미션 id만. */
 export function readGalaxyMapQuestAcceptMarkRevision(
   progresses: Record<string, MissionProgress>,
 ): string {
@@ -176,14 +210,20 @@ export function readGalaxyMapQuestAcceptMarkRevision(
   let main = '';
   for (let i = 0; i < mains.length; i += 1) {
     const id = mains[i]!;
-    const st = progresses[id]?.status;
-    main += st ? st.charAt(0) : '-';
+    const progress = progresses[id];
+    if (progress?.status !== 'active') continue;
+    const mission = getCsvMission(id);
+    const obj = mission ? getCurrentSequentialObjective(mission, progress) : undefined;
+    main += `${id}:${obj?.id ?? '.'};`;
   }
   let side = '';
   for (let i = 0; i < CHAPTER1_NAMED_SIDE_QUEST_IDS.length; i += 1) {
     const id = CHAPTER1_NAMED_SIDE_QUEST_IDS[i]!;
-    const st = progresses[id]?.status;
-    side += st ? st.charAt(0) : '-';
+    const progress = progresses[id];
+    if (progress?.status !== 'active') continue;
+    const mission = getCsvMission(id);
+    const obj = mission ? getCurrentSequentialObjective(mission, progress) : undefined;
+    side += `${id}:${obj?.id ?? '.'};`;
   }
   return `${main}|${side}`;
 }
@@ -193,29 +233,22 @@ export function resolveGalaxyMapQuestAcceptMarks(
 ): GalaxyMapQuestAcceptMarks {
   if (!input.enabled) return EMPTY_GALAXY_MAP_QUEST_ACCEPT_MARKS;
 
-  const visible = new Set<string>();
-  for (let i = 0; i < input.visibleSystemIds.length; i += 1) {
-    const id = input.visibleSystemIds[i];
-    if (id) visible.add(id);
-  }
-  if (visible.size === 0) return EMPTY_GALAXY_MAP_QUEST_ACCEPT_MARKS;
-
   const out: Record<string, { main: boolean; side: boolean }> = {};
   const { progresses } = input;
 
   const mains = listReadyMainStoryBindIds();
   for (let i = 0; i < mains.length; i += 1) {
     const mission = getCsvMission(mains[i]!);
-    if (!mission || !isUnacceptedOffer(mission, progresses[mission.id])) continue;
-    const systemId = resolveOfferSystemId(mission.offerPlanetId!);
-    if (systemId && visible.has(systemId)) markSystem(out, systemId, 'main');
+    if (!mission) continue;
+    const systemId = resolveActiveDestSystemId(mission, progresses[mission.id]);
+    if (systemId) markSystem(out, systemId, 'main');
   }
 
   for (let i = 0; i < CHAPTER1_NAMED_SIDE_QUEST_IDS.length; i += 1) {
     const mission = getCsvMission(CHAPTER1_NAMED_SIDE_QUEST_IDS[i]!);
-    if (!mission || !isUnacceptedOffer(mission, progresses[mission.id])) continue;
-    const systemId = resolveOfferSystemId(mission.offerPlanetId!);
-    if (systemId && visible.has(systemId)) markSystem(out, systemId, 'side');
+    if (!mission) continue;
+    const systemId = resolveActiveDestSystemId(mission, progresses[mission.id]);
+    if (systemId) markSystem(out, systemId, 'side');
   }
 
   return Object.keys(out).length === 0 ? EMPTY_GALAXY_MAP_QUEST_ACCEPT_MARKS : out;

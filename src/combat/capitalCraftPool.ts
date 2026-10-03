@@ -9,6 +9,7 @@ export type CapitalCraftFamily = WeaponCraftFamilyKind;
 
 export type CapitalCraftPhase =
   | 'dead'
+  | 'queued'
   | 'approach'
   | 'orbit'
   | 'strike'
@@ -32,6 +33,8 @@ export type CapitalCraft = {
   lastTargetY: number;
   lastOwnerX: number;
   lastOwnerY: number;
+  lastOwnerHeadingRad: number;
+  orbitRadiusNow: number;
   approachSpeedPxPerMs: number;
   orbitRadiusPx: number;
   orbitEnterPx: number;
@@ -66,6 +69,8 @@ export type CapitalCraft = {
   orbitPhaseOffset: number;
   orbitExtraRad: number;
   launchDelayMs: number;
+  launchOffX: number;
+  launchOffY: number;
   /** 짧은 꼬리 — 풀 생성 시 고정 배열. 틱에서 신규 할당 금지 */
   trailXs: number[];
   trailYs: number[];
@@ -77,6 +82,7 @@ export type CapitalCraftAgentPose = {
   x: number;
   y: number;
   alive: boolean;
+  headingRad?: number;
 };
 
 export type CapitalCraftImpactKind = 'drone_strike' | 'carrier_attack' | 'orbit_strafe';
@@ -112,12 +118,20 @@ export type CapitalCraftSpawnInput = {
   policy: WeaponCraftLoiterPolicy;
   volleyIndex?: number;
   volleyCount?: number;
+  ownerX?: number;
+  ownerY?: number;
+  targetX?: number;
+  targetY?: number;
 };
 
 /** 드론 8 + 함재기 8. 패밀리별 poolHardCap 과 맞춤 */
 export const CAPITAL_CRAFT_POOL_SIZE = 16;
-/** 일제 2기째부터 출발 간격. 틱 할당 없음 */
-export const CRAFT_VOLLEY_LAUNCH_STAGGER_MS = 140;
+/** 드론 순차 사출 간격. queued는 그리지 않음(함 앞 대기 표시 없음) */
+export const CRAFT_VOLLEY_LAUNCH_STAGGER_MS = 240;
+
+export function isCapitalCraftVisible(c: CapitalCraft): boolean {
+  return c.alive && c.phase !== 'queued' && c.phase !== 'dead';
+}
 /** 짧은 꼬리 샘플. 4px 간격이면 약 20px 잔상 */
 export const CRAFT_TRAIL_SAMPLES = 6;
 const CRAFT_TRAIL_MIN_SPACING_SQ = 16;
@@ -142,6 +156,8 @@ function createEmptyCraft(slot: number): CapitalCraft {
     lastTargetY: 0,
     lastOwnerX: 0,
     lastOwnerY: 0,
+    lastOwnerHeadingRad: 0,
+    orbitRadiusNow: 0,
     approachSpeedPxPerMs: 0,
     orbitRadiusPx: 0,
     orbitEnterPx: 0,
@@ -175,6 +191,8 @@ function createEmptyCraft(slot: number): CapitalCraft {
     orbitPhaseOffset: 0,
     orbitExtraRad: 0,
     launchDelayMs: 0,
+    launchOffX: 0,
+    launchOffY: 0,
     trailXs: new Array<number>(CRAFT_TRAIL_SAMPLES).fill(0),
     trailYs: new Array<number>(CRAFT_TRAIL_SAMPLES).fill(0),
     trailLen: 0,
@@ -359,6 +377,10 @@ function killCraft(c: CapitalCraft): void {
   resetCraftTrail(c);
 }
 
+function finiteOr(v: number | undefined, fallback: number): number {
+  return v !== undefined && Number.isFinite(v) ? v : fallback;
+}
+
 function moveToward(c: CapitalCraft, tx: number, ty: number, dtMs: number): number {
   const dx = tx - c.x;
   const dy = ty - c.y;
@@ -396,6 +418,9 @@ function refreshAnchors(
   if (owner?.alive) {
     c.lastOwnerX = owner.x;
     c.lastOwnerY = owner.y;
+    if (typeof owner.headingRad === 'number' && Number.isFinite(owner.headingRad)) {
+      c.lastOwnerHeadingRad = owner.headingRad;
+    }
     ownerAlive = true;
   }
   return { targetAlive, ownerAlive };
@@ -403,13 +428,13 @@ function refreshAnchors(
 
 function enterOrbit(c: CapitalCraft): void {
   c.phase = 'orbit';
+  // 함재기 enterFigure8과 동일: 접근 측에서 선회. 반대편·반경 순간이동 금지.
   c.orbitAngle = Math.atan2(c.y - c.lastTargetY, c.x - c.lastTargetX);
+  const dist = Math.hypot(c.x - c.lastTargetX, c.y - c.lastTargetY);
+  c.orbitRadiusNow = Math.max(4, dist);
   c.orbitAccumRad = 0;
   c.orbitElapsedMs = 0;
   c.attackCooldownMs = 0;
-  const r = Math.max(4, c.orbitRadiusPx);
-  c.x = c.lastTargetX + Math.cos(c.orbitAngle) * r;
-  c.y = c.lastTargetY + Math.sin(c.orbitAngle) * r;
 }
 
 function enterFigure8(c: CapitalCraft): void {
@@ -461,39 +486,53 @@ function tickPierce(c: CapitalCraft, dtMs: number): void {
   }
 }
 
+function releaseQueuedCraft(c: CapitalCraft): void {
+  const h = Number.isFinite(c.lastOwnerHeadingRad) ? c.lastOwnerHeadingRad : c.launchHeadingRad;
+  const fwd = Math.hypot(c.launchOffX, c.launchOffY);
+  c.x = c.lastOwnerX + Math.cos(h) * fwd;
+  c.y = c.lastOwnerY + Math.sin(h) * fwd;
+  c.headingRad = h;
+  c.launchHeadingRad = h;
+  c.phase = 'approach';
+  resetCraftTrail(c);
+}
+
+function tickQueuedLaunch(c: CapitalCraft, dtMs: number): void {
+  c.launchDelayMs -= dtMs;
+  if (c.launchDelayMs > 0) return;
+  c.launchDelayMs = 0;
+  releaseQueuedCraft(c);
+}
+
 function tickDrone(
   c: CapitalCraft,
   dtMs: number,
   targetAlive: boolean,
   scratch: CapitalCraftImpactScratch,
 ): void {
+  if (c.phase === 'queued') {
+    tickQueuedLaunch(c, dtMs);
+    return;
+  }
   if (c.phase === 'approach') {
-    if (c.launchDelayMs > 0) {
-      c.launchDelayMs -= dtMs;
-      return;
-    }
-    let destX = c.lastTargetX;
-    let destY = c.lastTargetY;
-    if (c.orbitLaps > 0) {
-      const enterR = Math.max(4, c.orbitEnterPx);
-      const entryAngle = c.launchHeadingRad + Math.PI + c.orbitPhaseOffset;
-      destX = c.lastTargetX + Math.cos(entryAngle) * enterR;
-      destY = c.lastTargetY + Math.sin(entryAngle) * enterR;
-    }
-    const remain = moveToward(c, destX, destY, dtMs);
-    if (c.orbitLaps <= 0) {
-      if (remain <= Math.max(c.orbitEnterPx, c.strikeHitPx + 4)) {
+    const remain = moveToward(c, c.lastTargetX, c.lastTargetY, dtMs);
+    const gate = c.orbitLaps > 0
+      ? Math.max(4, c.orbitEnterPx)
+      : Math.max(c.orbitEnterPx, c.strikeHitPx + 4);
+    if (remain <= gate || !targetAlive) {
+      if (c.orbitLaps <= 0) {
         c.phase = 'strike';
+        return;
       }
-      return;
-    }
-    if (remain <= 2) {
       enterOrbit(c);
     }
     return;
   }
   if (c.phase === 'orbit') {
-    const r = Math.max(4, c.orbitRadiusPx);
+    const targetR = Math.max(4, c.orbitRadiusPx);
+    const blend = Math.min(1, dtMs / 80);
+    c.orbitRadiusNow += (targetR - c.orbitRadiusNow) * blend;
+    const r = Math.max(4, c.orbitRadiusNow);
     const omega = Math.max(1e-5, c.approachSpeedPxPerMs) / r;
     const dAngle = omega * dtMs;
     c.orbitAngle += dAngle;
@@ -503,9 +542,12 @@ function tickDrone(
     c.y = c.lastTargetY + Math.sin(c.orbitAngle) * r;
     c.headingRad = c.orbitAngle + Math.PI * 0.5;
     tickOrbitAttack(c, dtMs, targetAlive, scratch);
-    const lapsDone = c.orbitAccumRad >= c.orbitLaps * Math.PI * 2 + c.orbitExtraRad;
+    const needRad = c.orbitLaps * Math.PI * 2 + c.orbitExtraRad;
+    const lapsDone = needRad <= 0 || c.orbitAccumRad >= needRad;
+    const oneLap = c.orbitAccumRad >= Math.PI * 2;
     const timeUp = c.orbitMsMax > 0 && c.orbitElapsedMs >= c.orbitMsMax;
-    if (lapsDone || timeUp || !targetAlive) {
+    // 정책: 원궤도 후 돌입. orbitMsMax는 1바퀴 전에 끊지 않음.
+    if (!targetAlive || lapsDone || (timeUp && (c.orbitLaps <= 0 || oneLap))) {
       c.phase = 'strike';
     }
     return;
@@ -599,7 +641,6 @@ export function trySpawnCapitalCraft(pool: CapitalCraft[], input: CapitalCraftSp
   if (!slot) return false;
   slot.alive = true;
   slot.family = family;
-  slot.phase = 'approach';
   slot.ownerAgentId = input.ownerAgentId;
   slot.targetAgentId = input.targetAgentId;
   slot.weaponId = input.weaponId;
@@ -607,10 +648,12 @@ export function trySpawnCapitalCraft(pool: CapitalCraft[], input: CapitalCraftSp
   slot.y = input.y;
   slot.headingRad = input.headingRad;
   slot.hp = policy.craftHp;
-  slot.lastTargetX = input.x;
-  slot.lastTargetY = input.y;
-  slot.lastOwnerX = input.x;
-  slot.lastOwnerY = input.y;
+  slot.lastTargetX = finiteOr(input.targetX, input.x);
+  slot.lastTargetY = finiteOr(input.targetY, input.y);
+  slot.lastOwnerX = finiteOr(input.ownerX, input.x);
+  slot.lastOwnerY = finiteOr(input.ownerY, input.y);
+  slot.lastOwnerHeadingRad = input.headingRad;
+  slot.orbitRadiusNow = 0;
   slot.approachSpeedPxPerMs = Math.max(1e-5, input.speedPxPerMs);
   slot.orbitRadiusPx = policy.orbitRadiusPx;
   slot.orbitEnterPx = policy.orbitEnterPx;
@@ -643,15 +686,22 @@ export function trySpawnCapitalCraft(pool: CapitalCraft[], input: CapitalCraftSp
   const volleyIndex = Math.max(0, Math.floor(input.volleyIndex ?? 0));
   slot.volleyIndex = volleyIndex;
   slot.launchHeadingRad = input.headingRad;
+  slot.launchOffX = input.x - slot.lastOwnerX;
+  slot.launchOffY = input.y - slot.lastOwnerY;
   slot.orbitPhaseOffset = volleyCount > 1 ? (Math.PI * 2 * volleyIndex) / volleyCount : 0;
   slot.orbitExtraRad = volleyCount > 1 ? (Math.PI * 2 * volleyIndex) / volleyCount : 0;
-  slot.launchDelayMs = volleyCount > 1 ? volleyIndex * CRAFT_VOLLEY_LAUNCH_STAGGER_MS : 0;
-  slot.orbitMsMax = policy.orbitMsMax + slot.launchDelayMs;
+  const stagger = family === 'drone' && volleyCount > 1
+    ? volleyIndex * CRAFT_VOLLEY_LAUNCH_STAGGER_MS
+    : 0;
+  slot.launchDelayMs = stagger;
+  slot.phase = stagger > 0 ? 'queued' : 'approach';
+  resetCraftTrail(slot);
+  if (slot.phase === 'approach') {
+    recordCraftTrail(slot);
+  }
   if (policy.orbitAttack && policy.attackPeriodMs > 0 && volleyCount > 1) {
     slot.attackCooldownMs = (volleyIndex * policy.attackPeriodMs) / volleyCount;
   }
-  resetCraftTrail(slot);
-  recordCraftTrail(slot);
   return true;
 }
 
@@ -674,7 +724,9 @@ export function trySpawnCapitalCraftVolley(
     if (!canAcceptCapitalCraftSpawn(pool, input)) {
       recycleForSpawn(pool, input);
     }
-    const lat = (ci - (wanted - 1) * 0.5) * lateralStepPx;
+    const lat = input.family === 'drone'
+      ? 0
+      : (ci - (wanted - 1) * 0.5) * lateralStepPx;
     input.x = ox + lateralNx * lat;
     input.y = oy + lateralNy * lat;
     input.volleyIndex = ci;
@@ -704,6 +756,6 @@ export function tickCapitalCrafts(
     } else {
       tickCarrier(c, step, targetAlive, scratch);
     }
-    if (c.alive) recordCraftTrail(c);
+    if (isCapitalCraftVisible(c)) recordCraftTrail(c);
   }
 }

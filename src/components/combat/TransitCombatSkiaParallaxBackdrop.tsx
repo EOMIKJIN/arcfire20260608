@@ -10,6 +10,9 @@ import type { SkCanvas, SkImage, SkPaint, SkPicture } from '@shopify/react-nativ
 import { TRANSIT_SPACE_CD_SOURCES } from '../../combat/transitCombatParallaxAssets';
 import {
   areTransitNebulaLayersReady,
+  resolveHeldTransitLayerImage,
+  shouldPreserveTransitNebulaOnExternalReclaim,
+  shouldSkipTransitParallaxResizeTick,
   intersectRects,
   pickTransitSpaceCdIndex,
   resolveTransitBakedFillBox,
@@ -48,6 +51,8 @@ import { drawNebulaColorDodgeFxTransformedOnSkCanvas } from '../planet/planetSki
 const FILL_COLOR = Skia.Color('#05070e');
 
 let _parallaxRecorder: ReturnType<typeof Skia.PictureRecorder> | null = null;
+let _parallaxRecorderAlt: ReturnType<typeof Skia.PictureRecorder> | null = null;
+let _parallaxRecorderUseAlt = false;
 let _fillPaint: SkPaint | null = null;
 let _spacePaint: SkPaint | null = null;
 let _cloudPaints: SkPaint[] | null = null;
@@ -62,8 +67,14 @@ let _starDimPaint: SkPaint | null = null;
 let _starBrightPaint: SkPaint | null = null;
 
 function getParallaxRecorder() {
-  if (!_parallaxRecorder) _parallaxRecorder = Skia.PictureRecorder();
-  return _parallaxRecorder;
+  // 같은 recorder에 beginRecording 하면 화면에 붙은 직전 Picture가 즉시 무효화된다.
+  _parallaxRecorderUseAlt = !_parallaxRecorderUseAlt;
+  if (!_parallaxRecorderUseAlt) {
+    if (!_parallaxRecorder) _parallaxRecorder = Skia.PictureRecorder();
+    return _parallaxRecorder;
+  }
+  if (!_parallaxRecorderAlt) _parallaxRecorderAlt = Skia.PictureRecorder();
+  return _parallaxRecorderAlt;
 }
 
 function getFillPaint(): SkPaint {
@@ -241,8 +252,10 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
   const sessionViewRef = useRef(resolveTransitSessionViewStart(rollTransitSessionViewSeed()));
   const selfWinRef = useRef({ x: 0, y: 0 });
   const [picture, setPicture] = useState<SkPicture | null>(null);
-  const [gfxSize, setGfxSize] = useState({ w: 0, h: 0 });
+  const [canvasReady, setCanvasReady] = useState(false);
   const gfxSizeRef = useRef({ w: 0, h: 0 });
+  const activeRef = useRef(active);
+  activeRef.current = active;
   const dodgeRef = useRef({ size: 0, x: 0, y: 0 });
   dodgeRef.current = {
     size: dodgeOrbitSize,
@@ -307,15 +320,15 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
   const dodgeImageRef = useRef<SkImage | null>(null);
 
   useEffect(() => {
-    bakedImageRef.current = bakedImage ?? null;
+    bakedImageRef.current = bakedImage ?? bakedImageRef.current;
   }, [bakedImage]);
   useEffect(() => {
-    cloudRefs.current[0] = cloud0 ?? null;
-    cloudRefs.current[1] = cloud1 ?? null;
-    cloudRefs.current[2] = cloud2 ?? null;
+    cloudRefs.current[0] = resolveHeldTransitLayerImage(cloud0, cloudRefs.current[0]);
+    cloudRefs.current[1] = resolveHeldTransitLayerImage(cloud1, cloudRefs.current[1]);
+    cloudRefs.current[2] = resolveHeldTransitLayerImage(cloud2, cloudRefs.current[2]);
   }, [cloud0, cloud1, cloud2]);
   useEffect(() => {
-    dodgeImageRef.current = dodgeImage ?? null;
+    dodgeImageRef.current = dodgeImage ?? dodgeImageRef.current;
   }, [dodgeImage]);
   // SkImage(useImage 반환) 수동 dispose 금지 — 훅이 수명을 자체 관리한다.
 
@@ -351,13 +364,13 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
     ) {
       return;
     }
-    if (skipFlushTicksRef.current > 0) {
-      if (pictureLiveRef.current) {
-        skipFlushTicksRef.current -= 1;
-        return;
-      }
-      skipFlushTicksRef.current = 0;
-    }
+    const resizeTick = shouldSkipTransitParallaxResizeTick({
+      force,
+      skipTicks: skipFlushTicksRef.current,
+      hasLivePicture: Boolean(pictureLiveRef.current),
+    });
+    skipFlushTicksRef.current = resizeTick.nextSkipTicks;
+    if (resizeTick.skip) return;
 
     const view = sessionViewRef.current;
     const elapsedSec = (Date.now() - startedAtRef.current) / 1000;
@@ -459,19 +472,24 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
     lastPictureCommitAtRef.current = nowMs;
   };
 
-  useEffect(() => {
-    return registerSkPictureFrameInvalidate(() => {
-      stopParallaxLoops();
-      dropSkPictureReactFrame({ liveRef: pictureLiveRef, setPicture });
-    });
+  const dropIfInactive = useCallback(() => {
+    if (shouldPreserveTransitNebulaOnExternalReclaim({
+      mounted: mountedRef.current,
+      active: activeRef.current,
+    })) {
+      return;
+    }
+    stopParallaxLoops();
+    dropSkPictureReactFrame({ liveRef: pictureLiveRef, setPicture });
   }, [stopParallaxLoops]);
 
   useEffect(() => {
-    return registerCombatSkiaPresentationReclaim(() => {
-      stopParallaxLoops();
-      dropSkPictureReactFrame({ liveRef: pictureLiveRef, setPicture });
-    });
-  }, [stopParallaxLoops]);
+    return registerSkPictureFrameInvalidate(dropIfInactive);
+  }, [dropIfInactive]);
+
+  useEffect(() => {
+    return registerCombatSkiaPresentationReclaim(dropIfInactive);
+  }, [dropIfInactive]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -509,17 +527,18 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
   const handleGfxLayout = useCallback((event: { nativeEvent: { layout: { width: number; height: number } } }) => {
     const nextW = Math.max(0, Math.floor(event.nativeEvent.layout.width));
     const nextH = Math.max(0, Math.floor(event.nativeEvent.layout.height));
+    const prevW = gfxSizeRef.current.w;
+    const prevH = gfxSizeRef.current.h;
     gfxSizeRef.current = { w: nextW, h: nextH };
     layoutRef.current = {
       sprite: resolveTransitCloudSpriteSize(nextW, nextH),
       chrome: resolveTransitChromeCoverBands(nextH),
       bake: resolveTransitBakedFillBox(nextW, nextH),
     };
-    setGfxSize((prev) => {
-      if (prev.w === nextW && prev.h === nextH) return prev;
-      if (prev.w > 0 && prev.h > 0) skipFlushTicksRef.current = 2;
-      return { w: nextW, h: nextH };
-    });
+    if (prevW > 0 && prevH > 0 && (prevW !== nextW || prevH !== nextH)) {
+      skipFlushTicksRef.current = 2;
+    }
+    setCanvasReady((prev) => prev || (nextW > 0 && nextH > 0));
     rootRef.current?.measureInWindow((x, y) => {
       selfWinRef.current = { x, y };
     });
@@ -528,8 +547,8 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
 
   return (
     <View ref={rootRef} style={styles.root} pointerEvents="none" onLayout={handleGfxLayout}>
-      {gfxSize.w > 0 && gfxSize.h > 0 ? (
-        <Canvas style={{ width: gfxSize.w, height: gfxSize.h }}>
+      {canvasReady ? (
+        <Canvas style={styles.canvas}>
           {picture ? <Picture picture={picture} /> : null}
         </Canvas>
       ) : null}
@@ -539,6 +558,9 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
 
 const styles = StyleSheet.create({
   root: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  canvas: {
     ...StyleSheet.absoluteFillObject,
   },
 });

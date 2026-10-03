@@ -122,6 +122,25 @@ export function computeResidualForSurplus(
   return Math.max(0, Math.floor((remainingSurplus * residualPct) / 100));
 }
 
+/**
+ * 선단 시드배수에 비례한 일 운용%.
+ * base + floor(max(0, multiple − start) / start) × step · 캡 maxPct.
+ * 예: base=2 start=10 → 10배 이하 2% · 20배 3% · 51배 6%.
+ */
+export function resolveFleetOpexOfSurplusPct(
+  basePct: number,
+  fleetMultiple: number,
+  startMultiple = 10,
+  stepPct = 1,
+  maxPct = 20,
+): number {
+  const base = Math.max(0, Math.min(maxPct, basePct));
+  const start = Math.max(1, startMultiple);
+  const step = Math.max(0, stepPct);
+  const extra = Math.floor(Math.max(0, fleetMultiple - start) / start) * step;
+  return Math.max(0, Math.min(maxPct, base + extra));
+}
+
 /** 시드 위만 쓸 수 있는 한도 */
 export function spendableAboveSeed(balance: number, seed: number): number {
   return Math.max(0, Math.floor(balance) - Math.max(0, Math.floor(seed)));

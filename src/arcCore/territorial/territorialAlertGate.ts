@@ -5,6 +5,7 @@ import {
   isPreHubWorldOpsAlertSuppressed,
 } from '../../navigation/worldOpsNotifyPresence';
 import { useAppBootStore } from '../../store/appBootStore';
+import { isEarlyWarImmersionOverlayLocked } from '../../navigation/earlyWarImmersionGate';
 
 /**
  * 시작화면·스토리·파일럿 등록·차원항로·허브 미도착·부트 미완료·계정 초기화
@@ -32,4 +33,11 @@ export function shouldSkipUnidentifiedAnomalyAlert(): boolean {
   return false;
 }
 
-export const shouldSkipTerritorialOccupationAlert = shouldSkipUnidentifiedAnomalyAlert;
+/**
+ * 점유 overlay — 타이틀·스토리·항로·부트·초기화 + 튜토리얼 미완료(초반 3분).
+ * 이상현상 팝업은 튜토리얼 잠금을 쓰지 않는다.
+ */
+export function shouldSkipTerritorialOccupationAlert(): boolean {
+  if (shouldSkipUnidentifiedAnomalyAlert()) return true;
+  return isEarlyWarImmersionOverlayLocked();
+}

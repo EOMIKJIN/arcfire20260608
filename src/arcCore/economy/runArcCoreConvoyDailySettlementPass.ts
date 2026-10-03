@@ -21,6 +21,7 @@ import {
 } from './tradeRouteRegistry';
 import { resolveTradeRouteAssignedSupplyPlanetId } from './tradeRoutePlanetAssignmentRegistry';
 import { isPlanetConvoyTradeEnabled } from './synthFrontierConvoyTradeBridge';
+import { diagnoseArcConvoyRouteMiss, formatArcConvoyMissLog } from './diagnoseArcConvoyRouteMiss';
 
 export type ArcCoreConvoyDailySettlementResult = {
   ran: boolean;
@@ -76,6 +77,9 @@ export async function runArcCoreConvoyDailySettlementPass(): Promise<ArcCoreConv
     } else {
       supplyRoundTripsFailed += 1;
       failedPlanetIds.push(supplyPlanetId);
+      const diag = diagnoseArcConvoyRouteMiss(supplyPlanetId, { minQty });
+      // eslint-disable-next-line no-console
+      console.warn(formatArcConvoyMissLog(diag, trip.reason));
     }
   }
 
@@ -95,11 +99,17 @@ export async function runArcCoreConvoyDailySettlementPass(): Promise<ArcCoreConv
     const tgId = imports[0];
     if (!tgId) {
       failedPlanetIds.push(demandPlanetId);
+      // eslint-disable-next-line no-console
+      console.warn(`[ArcCore/Convoy] miss planet=${demandPlanetId} reason=no_import trip=demand_backfill`);
       continue;
     }
     const supplyPlanetId = resolveTradeRouteAssignedSupplyPlanetId(tgId);
     if (!supplyPlanetId || !isPlanetConvoyTradeEnabled(supplyPlanetId)) {
       failedPlanetIds.push(demandPlanetId);
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[ArcCore/Convoy] miss planet=${demandPlanetId} reason=${supplyPlanetId ? 'supply_disabled' : 'no_assigned_supply'} trip=demand_backfill`,
+      );
       continue;
     }
     const shipId = `arc_daily_convoy_backfill_${kstDayKey}_${demandPlanetId}`;
@@ -113,6 +123,12 @@ export async function runArcCoreConvoyDailySettlementPass(): Promise<ArcCoreConv
     } else {
       supplyRoundTripsFailed += 1;
       failedPlanetIds.push(demandPlanetId);
+      const diag = diagnoseArcConvoyRouteMiss(supplyPlanetId, {
+        minQty,
+        forceDestPlanetId: demandPlanetId,
+      });
+      // eslint-disable-next-line no-console
+      console.warn(formatArcConvoyMissLog(diag, trip.reason));
     }
   }
 

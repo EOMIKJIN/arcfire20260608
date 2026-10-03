@@ -62,6 +62,7 @@ import {
   isRocketFamilyWeapon,
   resetCapitalCraftPool,
   resolveCapitalLaserBeamPresentation,
+  resolveCapitalWeaponHitFxKind,
   resolveCapitalWeaponImpact,
   applySpecialWeaponStatusOnAgent,
   applySpecialWeaponAoeAroundPoint,
@@ -966,6 +967,7 @@ function compactMissilesInPlace(arr: Missile[], elapsed: number): void {
 function hitFxRetainMs(fx: MissileHitFx): number {
   if (fx.effectKind === 'rocket_spread') return 140;
   if (fx.effectKind === 'laser_dodge') return 140;
+  if (fx.effectKind === 'drone_burst' || fx.effectKind === 'carrier_bomb') return 700;
   return MISSILE_HIT_FX_DURATION_MS;
 }
 
@@ -3081,6 +3083,10 @@ export function usePlanetEdenRaidSim(
             headingRad: owner.headingRad,
             speedPxPerMs: flightSpeedPxPerMs * policy.approachSpeedMul,
             policy,
+            ownerX: owner.x,
+            ownerY: owner.y,
+            targetX: target.x,
+            targetY: target.y,
           },
           nx,
           ny,
@@ -3816,7 +3822,7 @@ export function usePlanetEdenRaidSim(
       tickCapitalCrafts(craftsNow, dt, idBuf, craftScratch);
       for (let ci = 0; ci < craftsNow.length; ci++) {
         const craft = craftsNow[ci]!;
-        if (!craft.alive || !craft.interceptMissiles) continue;
+        if (!craft.alive || craft.phase === 'queued' || !craft.interceptMissiles) continue;
         for (let mi = 0; mi < missilesRef.current.length; mi++) {
           const incoming = missilesRef.current[mi]!;
           if (incoming.hitApplied || incoming.missPassThrough) continue;
@@ -3863,7 +3869,9 @@ export function usePlanetEdenRaidSim(
           color: victim?.stroke ?? '#94A3B8',
           missileWeaponId: ev.weaponId,
           ownerTeam: owner?.team,
-          effectKind: ev.family === 'drone' ? 'drone_burst' : 'carrier_bomb',
+          effectKind: ev.kind === 'orbit_strafe'
+            ? 'rocket_spread'
+            : resolveCapitalWeaponHitFxKind(ev.weaponId),
         });
       }
       }

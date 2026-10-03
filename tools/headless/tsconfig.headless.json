@@ -4,7 +4,8 @@
     "baseUrl": "../..",
     "paths": {
       "react-native": ["tools/headless/react-native-stub.ts"],
-      "@react-native-async-storage/async-storage": ["tools/headless/async-storage-stub.ts"]
+      "@react-native-async-storage/async-storage": ["tools/headless/async-storage-stub.ts"],
+      "@react-native-firebase/*": ["tools/headless/firebase-stub.cjs"]
     }
   },
   "include": ["../../src/**/*.ts", "../../src/**/*.tsx", "../**/*.ts"]

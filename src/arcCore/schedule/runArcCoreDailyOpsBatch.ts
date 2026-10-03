@@ -34,6 +34,9 @@ import {
 } from '../learning/runArcCoreEconomyLearningDailyPass';
 import { runPlanetFiscalBalanceClosedLoopPass } from '../economy/runPlanetFiscalBalanceClosedLoopPass';
 import { runArcCoreFiscalOpexPass } from '../economy/runArcCoreFiscalOpexPass';
+import { recordFactionVaultDailySummary, type FactionVaultDailyRow } from '../economy/factionVaultDailySummary';
+import { publishWarPulseNotice } from '../economy/publishWarPulseNotice';
+import { planetAttackKstDayKey } from '../planetAttack/planetAttackKstDayKey';
 import { runPlanetMineralLedgerDailyPass } from '../planetResource/runPlanetMineralLedgerDailyPass';
 import { integrateUnlockedSynthFrontierStatEconomyAsync } from '../planetCore/integrateUnlockedSynthFrontierStatEconomy';
 import { resolveArcCoreDailyOpsPolicy } from './arcCoreDailyOpsPolicy';
@@ -444,6 +447,25 @@ export async function runArcCoreDailyOpsBatch(): Promise<ArcCoreDailyOpsBatchRes
     reportDailyOpsStepFailure('fiscalOpex', err);
   }
   await yieldJsThread();
+
+  let vaultDaily: FactionVaultDailyRow | null = null;
+  try {
+    noteDailyOpsBatchStep('factionVaultDailySummary');
+    vaultDaily = await recordFactionVaultDailySummary(planetAttackKstDayKey());
+  } catch (err) {
+    reportDailyOpsStepFailure('factionVaultDailySummary', err);
+  }
+
+  try {
+    noteDailyOpsBatchStep('warPulseNotice');
+    publishWarPulseNotice({
+      kstDayKey: planetAttackKstDayKey(),
+      windowConvoyTrips: result.learningKpi?.windowConvoyTrips,
+      vaultDaily,
+    });
+  } catch (err) {
+    reportDailyOpsStepFailure('warPulseNotice', err);
+  }
 
   try {
     noteDailyOpsBatchStep('commitPlanetCoreStatOpsTrendAfterBatch');

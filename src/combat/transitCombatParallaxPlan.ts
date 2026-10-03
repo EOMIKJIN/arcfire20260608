@@ -90,6 +90,45 @@ export function areTransitNebulaLayersReady(input: {
   return true;
 }
 
+/**
+ * 레이아웃 재측정 직후 일반 틱은 건너뛰되, force(첫 프레임·확정 리사이즈)는 그린다.
+ * force까지 막으면 Canvas/Picture가 빈 채로 남는다.
+ */
+export function shouldSkipTransitParallaxResizeTick(input: {
+  force: boolean;
+  skipTicks: number;
+  hasLivePicture: boolean;
+}): { skip: boolean; nextSkipTicks: number } {
+  if (input.force || input.skipTicks <= 0) {
+    return { skip: false, nextSkipTicks: input.force ? 0 : input.skipTicks };
+  }
+  if (input.hasLivePicture) {
+    return { skip: true, nextSkipTicks: input.skipTicks - 1 };
+  }
+  return { skip: false, nextSkipTicks: 0 };
+}
+
+/**
+ * 은하 지도 이탈 reclaim이 이미 켜진 이동전투 성운을 지우지 않는다.
+ */
+export function shouldPreserveTransitNebulaOnExternalReclaim(input: {
+  mounted: boolean;
+  active: boolean;
+}): boolean {
+  return input.mounted === true && input.active === true;
+}
+
+/**
+ * useImage가 소스 교체 직후 잠깐 null이어도 직전 레이어를 유지한다.
+ * null로 덮으면 성운이 생겼다가 사라진다.
+ */
+export function resolveHeldTransitLayerImage<T>(
+  incoming: T | null | undefined,
+  held: T | null | undefined,
+): T | null {
+  return incoming ?? held ?? null;
+}
+
 /** 별 드리프트 시점을 한 바퀴 안에서 고르기 위한 가상 경과 상한(초). */
 export const TRANSIT_SESSION_STAR_BIAS_SPAN_SEC = 240;
 

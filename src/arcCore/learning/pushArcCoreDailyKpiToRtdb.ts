@@ -64,6 +64,7 @@ export async function pushArcCoreDailyKpiToRtdbIfDue(input: {
         planetsReconciled: input.learningResult.planetsReconciled,
         windowTradeGross: input.learningResult.windowTradeGross,
         windowConvoyTrips: input.learningResult.windowConvoyTrips,
+        windowConvoyProfit: input.learningResult.windowConvoyProfit,
         deltaId: EconomySimOverlayDelta_FROM_SIM.deltaId,
         simKpiStatus: EconomySimOverlayDelta_FROM_SIM.kpi?.status,
       },

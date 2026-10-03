@@ -26,6 +26,7 @@ import {
 import {
   computeArcCoreFiscalOpexRequested,
   computeResidualForSurplus,
+  resolveFleetOpexOfSurplusPct,
   spendableAboveSeed,
 } from './computeArcCoreFiscalOpexProxy';
 import { gatherArcCoreFiscalOpexInputs } from './gatherArcCoreFiscalOpexInputs';
@@ -145,9 +146,16 @@ export async function runArcCoreFiscalOpexPass(): Promise<ArcCoreFiscalOpexPassR
   const gathered = gatherArcCoreFiscalOpexInputs();
   const requested = computeArcCoreFiscalOpexRequested(gathered, scaled);
   const f7 = summarizeConvoyRamCargo();
+  const fleetMultiple = fleetSeed > 0 ? fleetBal / fleetSeed : 0;
+  const fleetOpexPct = resolveFleetOpexOfSurplusPct(
+    policy.fleetOpexOfSurplusPct,
+    fleetMultiple,
+    policy.fleetOpexScaleStartMultiple,
+    policy.fleetOpexScaleStepPct,
+  );
   const fleetOpex = computeResidualForSurplus(
     spendableAboveSeed(fleetBal, fleetSeed),
-    policy.fleetOpexOfSurplusPct,
+    fleetOpexPct,
   );
 
   const keys: ArcCoreFiscalOpexVaultKey[] = ['red', 'blue', 'neutral', 'independent', 'fleet'];
@@ -202,7 +210,7 @@ export async function runArcCoreFiscalOpexPass(): Promise<ArcCoreFiscalOpexPassR
 
   if (__DEV__) {
     console.log(
-      `[ArcCore/FiscalOpex] day=${kstDayKey} shadow=${policy.shadowMode} req=${requestedSum} spent=${spentSum} residualReq=${residualRequested} fleetOpex=${fleetOpex} f7lots=${f7.lots} f7buy=${f7.buyCredits} orbit=${requested.orbitUsed} capn=${requested.captainCount}`,
+      `[ArcCore/FiscalOpex] day=${kstDayKey} shadow=${policy.shadowMode} req=${requestedSum} spent=${spentSum} residualReq=${residualRequested} fleetOpex=${fleetOpex} fleetOpexPct=${fleetOpexPct} fleetMul=${fleetMultiple.toFixed(2)} f7lots=${f7.lots} f7buy=${f7.buyCredits} orbit=${requested.orbitUsed} capn=${requested.captainCount}`,
     );
   }
 

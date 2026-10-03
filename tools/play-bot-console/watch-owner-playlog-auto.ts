@@ -11,6 +11,8 @@ import {
   AUTO_POLL_MS,
   classifyAutoSession,
   countUserActionMarkers,
+  METRO_REVERSE_SPEC,
+  needsMetroReverse,
   parseDeviceSince,
   shouldImportAutoSession,
   shouldRotateAutoSession,
@@ -77,6 +79,21 @@ function deviceSince(): string {
     windowsHide: true,
   });
   return parseDeviceSince(r.stdout);
+}
+
+/**
+ * 무선 adb가 다시 붙으면 `adb reverse` 목록이 비워져 앱이 localhost:8081(Metro)에 못 붙고
+ * 「Unable to load script」가 난다(2026-10-03 00:25 실측). 기기 연결 확인 때마다 빠져 있으면 복구.
+ */
+function ensureMetroReverse(): void {
+  const list = spawnSync('adb', ['reverse', '--list'], { encoding: 'utf8', timeout: 8000, windowsHide: true });
+  if (list.status !== 0 || !needsMetroReverse(list.stdout)) return;
+  const r = spawnSync('adb', ['reverse', METRO_REVERSE_SPEC, METRO_REVERSE_SPEC], {
+    encoding: 'utf8',
+    timeout: 8000,
+    windowsHide: true,
+  });
+  log(`metro_reverse_restored status=${r.status} ${(r.stderr ?? '').trim()}`.trim());
 }
 
 /** 화면 켜짐(Awake)일 때만 조작을 사람 플레이로 센다. */
@@ -293,6 +310,7 @@ function tick(active: Active | null): Active | null {
     return null;
   }
   const device = hasDevice();
+  if (device) ensureMetroReverse();
   if (!active) {
     if (!device) return null;
     return startSession();

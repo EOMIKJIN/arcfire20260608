@@ -154,8 +154,13 @@ export function shouldRunArcCoreDailyBatch(nowMs: number, input: ArcCoreDailyBat
     if (lastBatchCompletedDayKey === null && signupDayKey < todayKey) return true;
   }
 
-  // [보완 #1] 이전 날짜 완료 후 앱 꺼짐 → 다음 실행 시 즉시 보정
-  if (lastBatchCompletedDayKey !== null && lastBatchCompletedDayKey < todayKey) return true;
+  if (lastBatchCompletedDayKey !== null && lastBatchCompletedDayKey < todayKey) {
+    // 하루 이상 통째로 누락(어제 배치도 없음) → 다음 실행 시 즉시 보정
+    const yesterdayKey = formatArcCoreOpsDayKey(nowMs - 24 * 60 * 60 * 1000, policy.timeZone);
+    if (lastBatchCompletedDayKey < yesterdayKey) return true;
+    // 어제는 완료 — 오늘 몫은 정책 시각(12:00 KST) 이후. 예전엔 여기서 즉시 true라 매일 자정 직후 실행됨(2026-10-03 00:04 실측).
+    return nowMinute >= batchMinuteOfDay;
+  }
 
   // [보완 #1] 완료 기록 자체가 없음(첫 실행 또는 과거 전부 미완료) — 정책 시각(12:00 KST) 이후
   if (lastBatchCompletedDayKey === null) return nowMinute >= batchMinuteOfDay;

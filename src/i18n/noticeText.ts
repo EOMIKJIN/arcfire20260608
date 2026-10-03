@@ -2,6 +2,21 @@ import type { BarNotice } from '../store/barBoardStore';
 import type { AppLocale, I18nParams } from './types';
 import { getLocale, resolveDictionaryLocale } from './index';
 import { resolveLocalizedSystemNameById } from './systemText';
+import { resolveNationDisplayNameForMapSide } from '../world/megaFactionNationPolicy';
+import type { MapFactionSide } from '../galaxyMap/mapFactionSideCore';
+
+function resolveHoldSideLabel(
+  side: string,
+  locale: AppLocale,
+  t: (key: string, params?: I18nParams) => string,
+): string {
+  const nationLocale = resolveDictionaryLocale(locale) === 'en' ? 'en' : 'ko';
+  if (side === 'blue' || side === 'red' || side === 'independent') {
+    const nation = resolveNationDisplayNameForMapSide(side as MapFactionSide, nationLocale);
+    if (nation) return nation;
+  }
+  return t(`territorial.side.${side}`);
+}
 
 function buildParams(
   notice: Pick<BarNotice, 'i18nKey' | 'i18nParams'>,
@@ -48,9 +63,13 @@ function buildParams(
     const prevSide = String(raw.prevSide ?? 'neutral');
     const nextSide = String(raw.nextSide ?? 'neutral');
     const decision = String(raw.decision ?? 'status_quo');
-    const prevLabel = t(`territorial.side.${prevSide}`);
-    const nextLabel = t(`territorial.side.${nextSide}`);
-    const decisionLabel = t(`news.territorialHold.decision.${decision}`);
+    const presentKind = String(raw.presentKind ?? '');
+    const prevLabel = resolveHoldSideLabel(prevSide, locale, t);
+    const nextLabel = resolveHoldSideLabel(nextSide, locale, t);
+    const presentKey = presentKind
+      ? `news.territorialHold.present.${presentKind}`
+      : `news.territorialHold.decision.${decision}`;
+    const decisionLabel = t(presentKey);
     return { ...raw, prevLabel, nextLabel, decisionLabel };
   }
 

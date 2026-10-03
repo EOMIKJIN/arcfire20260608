@@ -35,6 +35,11 @@ import {
   isCompactAutoDismissOverlayKind,
   resolveCompactOverlayAutoDismissAction,
 } from './overlayAlertContract';
+import { useArcButtonReleaseHandlers } from '../press/useArcButtonRelease';
+import {
+  bumpUiTransitionSettle,
+  tryArmUiTransition,
+} from '../process/uiTransitionGuard';
 export const ArcOverlayHost = memo(function ArcOverlayHost() {
   const insets = useSafeAreaInsets();
   const edges = resolveOverlayEdgeInsets(insets);
@@ -76,9 +81,11 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
       if (!current || current.id !== expectedId) return;
       const next = resolveCompactOverlayAutoDismissAction(current);
       if (!next) return;
+      if (!tryArmUiTransition()) return;
       dismiss();
       if (next.type === 'dismiss_then_press') {
         void Promise.resolve(next.onPress()).catch(() => {});
+        bumpUiTransitionSettle('close');
         return;
       }
       if (next.type === 'dismiss_then_close') {
@@ -88,6 +95,7 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
           /* idempotent */
         }
       }
+      bumpUiTransitionSettle('close');
     }, autoMs);
     return () => clearTimeout(timer);
   }, [dismiss, compactAutoDismissKey]);
@@ -105,6 +113,11 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
     }
     dismiss();
   }, [dismiss, top]);
+  const backdropRelease = useArcButtonReleaseHandlers({
+    onPress: handleBackdrop,
+    sfxCue: null,
+    disabled: !top || top.dismissOnBackdrop === false || top.kind === 'blocking',
+  });
 
   const handleAlertButton = useCallback(
     (onPress?: () => void | Promise<void>) => {
@@ -263,7 +276,9 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
       {!isPassthroughNarrative ? (
         <Pressable
           style={[styles.backdropFill, { backgroundColor: chrome.backdrop }]}
-          onPress={isBlocking ? undefined : handleBackdrop}
+          onPressIn={isBlocking ? undefined : backdropRelease.onPressIn}
+          onPressOut={isBlocking ? undefined : backdropRelease.onPressOut}
+          onPress={isBlocking ? undefined : backdropRelease.onPress}
         />
       ) : null}
       <View

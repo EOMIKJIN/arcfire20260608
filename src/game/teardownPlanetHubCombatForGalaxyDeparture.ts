@@ -3,6 +3,11 @@ import type { CapitalRealtimeCombatSim } from '../combat/capitalRealtimeTypes';
 import { markPostHubCombatWorldmapIngressReclaim } from './nativeReclaim/runPostHubCombatWorldmapIngressReclaim';
 import { runStageNativeReclaimPass } from './nativeReclaim/runStageNativeReclaimPass';
 
+export {
+  shouldTeardownPlanetHubCombatForGalaxyDeparture,
+  type TeardownPlanetHubCombatGateInput,
+} from './teardownPlanetHubCombatGate';
+
 export type TeardownPlanetHubCombatForGalaxyDepartureOpts = {
   previousPlanetId?: string | null;
 };
