@@ -36,6 +36,7 @@ import { useAppSettingsStore } from '../../src/store/appSettingsStore';
 import { useLocaleRenderKey } from '../../src/hooks/useLocaleRenderKey';
 import { COLORS, FONTS, SPACING, ZONE_COLORS } from '../../src/utils/theme';
 import { TACTICAL_HUB as TH } from '../../src/ui/tactical/tacticalHubTokens';
+import { abortAllIngameDialogOnLeave } from '../../src/game/ingameDialog/ingameDialogApi';
 import { showArcAlert } from '../../src/utils/showArcAlert';
 import {
   isPlayerShipCombatCapable,
@@ -443,6 +444,7 @@ export default function WorldMapScreen() {
           text: t('planet.exit'),
           style: 'destructive',
           onPress: () => {
+            abortAllIngameDialogOnLeave();
             if (!hubNavGate.tryBegin()) return;
             stopGalaxyMapInteractionLoops();
             runStageNavAfterTeardown({

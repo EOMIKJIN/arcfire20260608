@@ -1,5 +1,5 @@
 # 플레이봇 프로세스 트리 · 기록 플래그.
-# 창 종료 ≠ 기록 종료. 명시적 stop-playbot-console 만 기록을 끊는다.
+# 창을 닫거나 playbot:stop 하면 콘솔·워치·하니스·기록을 같이 끊는다.
 
 function Get-PlaybotNextUntilWall {
   $kst = [DateTime]::UtcNow.AddHours(9)
@@ -304,6 +304,30 @@ function Start-PlaybotHarnessDetached {
   return $p.Id
 }
 
+function Start-PlaybotFqaReviewDetached {
+  $alive = Read-PlaybotPid 'playbot-fqa-review.pid'
+  if (Test-PlaybotProcAlive $alive) { return $alive }
+  $review = Join-Path $script:PlaybotToolRoot 'review-fqa-cycle.ts'
+  $cmdLine = "chcp 65001>nul & npx tsx `"$review`" --loop"
+  $full = 'cmd.exe /d /c ' + $cmdLine
+  try {
+    $startup = New-CimInstance -CimClass (Get-CimClass Win32_ProcessStartup) -ClientOnly -Property @{ ShowWindow = [uint16]0 }
+    $created = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{
+      CommandLine = $full
+      CurrentDirectory = $script:PlaybotRepoRoot
+      ProcessStartupInformation = $startup
+    }
+    if ($created -and [int]$created.ReturnValue -eq 0 -and [int]$created.ProcessId -gt 0) {
+      Write-PlaybotPid 'playbot-fqa-review.pid' ([int]$created.ProcessId)
+      return [int]$created.ProcessId
+    }
+  } catch {}
+  $p = Start-Process -FilePath 'cmd.exe' -WorkingDirectory $script:PlaybotRepoRoot -WindowStyle Hidden -PassThru -ArgumentList @('/d', '/c', $cmdLine)
+  if (-not $p -or -not $p.Id) { return 0 }
+  Write-PlaybotPid 'playbot-fqa-review.pid' $p.Id
+  return $p.Id
+}
+
 function Resume-PlaybotHarnessFromSavedArgs {
   $a = Read-PlaybotHarnessArgs
   $fast = [bool]($a.fast)
@@ -367,9 +391,13 @@ function Stop-PlaybotAll {
   Set-PlaybotExplicitStop
   $consoleId = Read-PlaybotPid 'playbot-console.pid'
   $watchId = Read-PlaybotPid 'playbot-watch.pid'
+  $reviewId = Read-PlaybotPid 'playbot-fqa-review.pid'
+  $self = [int]$PID
   Stop-PlaybotRecordingSession
-  Stop-PlaybotPidTree $watchId
-  Stop-PlaybotPidTree $consoleId
+  if ($reviewId -gt 0 -and $reviewId -ne $self) { Stop-PlaybotPidTree $reviewId }
+  if ($watchId -gt 0 -and $watchId -ne $self) { Stop-PlaybotPidTree $watchId }
+  if ($consoleId -gt 0 -and $consoleId -ne $self) { Stop-PlaybotPidTree $consoleId }
+  Remove-Item (Join-Path (Get-PlaybotLogDir) 'playbot-fqa-review.pid') -Force -ErrorAction SilentlyContinue
   Remove-Item (Join-Path (Get-PlaybotLogDir) 'playbot-watch.pid') -Force -ErrorAction SilentlyContinue
   Remove-Item (Join-Path (Get-PlaybotLogDir) 'playbot-console.pid') -Force -ErrorAction SilentlyContinue
 }

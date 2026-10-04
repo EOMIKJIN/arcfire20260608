@@ -50,7 +50,7 @@ export function buildDailyTriage(input: {
   if (story021 === 28 && story023 === 32 && story030 === 44) {
     autoNotes.push('G-1 본편 게이트 28/32/36/40/44 유지');
   }
-  if (input.saturated) autoNotes.push('포화 구간(L캡·퀘 소진·120일 창 밖) — 학습 범프 제외 · 감시만');
+  if (input.saturated) autoNotes.push('포화 구간(L캡·퀘스트 정체) — 학습 범프 제외 · 같은 세계는 유지');
   if (input.twinBorder) autoNotes.push('국경 BORDER_* 는 트윈 전용. adapt 입력에서 제외');
   autoNotes.push('플레이스홀더 HOLD는 자체 1안: 해석기 등록분 이동 · 미해석 토큰 퀘 스킵. 인게임 CSV 불변.');
 

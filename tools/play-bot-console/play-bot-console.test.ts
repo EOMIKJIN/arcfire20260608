@@ -32,10 +32,43 @@ import { questFightPlanet, nextPlayableMissionId, canLearnAny, isCapitalAssaultR
 import { nextDevCost, durationTicks } from './src/facilityTwin';
 import { buildDailyLearningReport } from './src/dailyLearningReport';
 import { decideIntentKind, pickStepKind } from './src/intent';
-import { seedWorld, snapshotKpi, toHolds, addExp, countPaints } from './src/world';
+import { seedWorld, snapshotKpi, toHolds, addExp, countPaints, paintOf } from './src/world';
+import { assessLearnCycle, nextLearnCycleWrite, LEARN_CYCLE_FLUSH_MIN_MS } from './src/learnCycle';
+import {
+  commitGameIssues,
+  GAME_ISSUE_FLUSH_MIN_MS,
+  gameIssuesPath,
+  issuesFromObservation,
+  resetGameIssuesForTest,
+  type GameIssueObservation,
+} from './src/gameIssues';
+import {
+  observeStall,
+  reanalysisText,
+  resetStallForTest,
+  stallReplayPath,
+  stallRestartCount,
+  stepStall,
+  emptyStallMemory,
+  type StallSnap,
+} from './src/stallReplay';
+import {
+  applyCellLap,
+  cellWriteDue,
+  CELL_FLUSH_MIN_MS,
+  combatRedirectPlace,
+  emptyCellState,
+  flushCellLap,
+  observeBotCombat,
+  resetCellLoopForTest,
+} from './src/cellLoop';
 import { BLUE_CLAN, NEUTRAL_CLAN, RED_CLAN } from './src/types';
 import { STAGE1_PERSONAS, STAGE2_PERSONAS, resolvePersona } from './src/personas';
-import { alreadyLanded, stepAction, fightHere } from './src/actions';
+import { planFqaReview, reviewNeeded, emptyFqaReviewState } from './src/fqaReview';
+import { clampPlayIntelligence, defaultPlayIntelligence } from './src/playIntelligence';
+import type { GameIssue } from './src/gameIssues';
+import { pickCreditExchange, starterGemBalance, takeCreditExchange, gemExchangeCap } from './src/bmWallet';
+import { alreadyLanded, stepAction, fightHere, earnCredits, trainOrRelocate } from './src/actions';
 import { buildDailyTriage } from './src/dailyUrgentTriage';
 import { createRng } from './src/rng';
 import { analyzeDay, analyzeStronger } from './src/analyze';
@@ -52,7 +85,7 @@ import {
 } from './src/earlyFeel';
 import { recordLearning, loadLearning, resetLearningCacheForTest } from './src/learn';
 import { adaptPolicy, decideAdaptPeriodDays, getLearnExploreRate, getLiveWeights, getPolicyHealth, loadPolicy, resetPolicyForTest, savePolicy, setLearnedRootForTest } from './src/policy';
-import { campaignDaysForHarness, LEARN_HORIZON_DAYS, isAdaptExcludedCode, isNewRunForScore, isTwinLearnCode, nextCampaignSeed, shouldRollbackScore, windowHangarDelta } from './src/learnGate';
+import { campaignDaysForHarness, inCampaignLearnWindow, isAdaptExcludedCode, isNewRunForScore, isTwinLearnCode, nextCampaignSeed, shouldLoopNextCampaign, shouldRollbackScore, windowHangarDelta } from './src/learnGate';
 import {
   ADB_DATE_ARGS,
   AUTO_IDLE_MS,
@@ -69,7 +102,9 @@ import { HUMAN_SEED_SESSION_CAP, mergeHumanSeed, reloadHumanSeedIfChanged } from
 import { atomicWriteFile, loadJsonDurable, resetLearnedIoForTest, setLearnedImmediateForTest, shouldForceLearnFlush } from './src/learnedIo';
 import { blendPersonaWeights, formatHumanSeedLine, resetHumanSeedForTest, writeHumanSeed } from './src/humanSeed';
 import { classifySessionKind, memProfileToTraces } from './src/memProfileToSessionTrace';
-import { pickMemProfileInput, readOwnerSessionKind } from './src/refreshHumanSeed';
+import { importHumanSeedFromMemProfile, pickMemProfileInput, readOwnerSessionKind } from './src/refreshHumanSeed';
+import { mergeHumanDelta, planHumanDelta, readHumanDelta, writeHumanDelta } from './src/humanDelta';
+import type { SessionTraceV0 } from './src/humanSeed';
 import { measureRawBytes, resetRawPlayData } from './src/housekeep';
 import { appendJournal, appendTimeline, beginRecording, endRecording, ensureRunPaths, isRecording, setPlaybotIoLogsForTest, writeStatus } from './src/io';
 import { continuePastWall, nextUntilWallIsoKst, resolveUntilWallMs } from './src/untilWall';
@@ -890,9 +925,10 @@ test('같은 메모·같은 가중은 generation을 올리지 않음', () => {
   const gen1 = loadPolicy().generation;
   const b = adaptPolicy('mixed_ref', report, loadLearning());
   const gen2 = loadPolicy().generation;
+  assert.equal(a.skipped, true);
   assert.equal(b.skipped, true);
   assert.equal(gen2, gen1);
-  assert.ok(a.notes.includes('유지') || a.notes.includes('고착해제→기준가중'));
+  assert.ok(a.notes.some((n) => n.includes('새 실기 없음')));
 });
 
 test('성공 행동 후 lastHoldReason 해제', () => {
@@ -922,7 +958,8 @@ test('SKILL_BACKLOG는 습득 가능 스킬이 있을 때만', () => {
   }
   const r = analyzeDay(w, []);
   assert.equal(r.findings.some((f) => f.code === 'SKILL_BACKLOG'), false);
-  assert.equal(LEARN_HORIZON_DAYS, 120);
+  assert.equal(inCampaignLearnWindow(120), true);
+  assert.equal(inCampaignLearnWindow(400), true);
 });
 
 test('고착 가중은 기준값으로 풀고 탐색률은 건강할 때 0.28', () => {
@@ -1087,9 +1124,11 @@ test('S3 3시간+ 세션은 profiler · blend 제외 · forceKind는 human 유�
   assert.ok(formatHumanSeedLine(profilerSeed).includes('2026-10-02'));
 });
 
-test('S5 until-close 캠페인은 120일 · 시드가 캠페인마다 달라짐', () => {
-  assert.equal(campaignDaysForHarness(true, 0), LEARN_HORIZON_DAYS);
+test('until-close는 120일로 끊지 않고 한 세계를 유지', () => {
+  assert.equal(campaignDaysForHarness(true, 0), 0);
   assert.equal(campaignDaysForHarness(false, 7), 7);
+  assert.equal(shouldLoopNextCampaign(true, true), false);
+  assert.equal(inCampaignLearnWindow(400), true);
   assert.notEqual(nextCampaignSeed(1, 1), 1);
 });
 
@@ -1218,6 +1257,652 @@ test('Metro reverse — 목록에 tcp:8081 쌍이 없을 때만 재설정', () =
   assert.equal(needsMetroReverse('host-22 tcp:8081 tcp:8081\r\n'), false);
   assert.equal(needsMetroReverse('192.168.45.197:33639 tcp:8081 tcp:8081'), false);
   assert.equal(needsMetroReverse('host-22 tcp:9090 tcp:9090'), true);
+});
+
+function deltaTrace(id: string, verbs: string[], detail?: string): SessionTraceV0 {
+  return {
+    sessionId: id,
+    source: 'mem_profile',
+    sessionKind: 'human',
+    capturedAt: '2026-10-04T00:00:00.000Z',
+    beats: verbs.map((verb, i) => ({ tSec: i * 10, verb, detail: detail && i === verbs.length - 1 ? detail : undefined })),
+  };
+}
+
+test('실기 델타 — 새 세션만 미소비, 동일 재수입은 열지 않음', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pb-delta-'));
+  const first = planHumanDelta(dir, [deltaTrace('s1', ['land', 'depart', 'wave'])]);
+  assert.ok(first);
+  assert.equal(first!.consumed, false);
+  assert.deepEqual(first!.newPairs, ['land>depart', 'depart>wave']);
+  assert.ok(first!.coveredKinds.includes('travel'));
+  assert.ok(first!.missingVerbs.includes('wave'));
+  assert.equal(first!.combatMethod, 'absent');
+  writeHumanSeed(dir, {
+    version: 1, player: 'owner', updatedAt: 't', source: 'mem_profile', traces: [deltaTrace('s1', ['land', 'depart', 'wave'])],
+  });
+  assert.equal(planHumanDelta(dir, [deltaTrace('s1', ['land', 'depart', 'wave'])]), null);
+  const method = planHumanDelta(dir, [deltaTrace('s2', ['land', 'combat'], 'range=mid;weapon=laser;approach=bow')]);
+  assert.equal(method?.combatMethod, 'present');
+  assert.ok(method?.newPairs.includes('land>combat'));
+  resetHumanSeedForTest();
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('학습은 미소비 델타에서만 열리고 기준점수를 비운다', () => {
+  resetPolicyForTest();
+  resetLearningCacheForTest();
+  resetHumanSeedForTest();
+  const dir = path.join(TEST_ISO, 'learned');
+  const world = seedWorld({ runId: 'delta-adapt', persona: 'mixed_ref' });
+  world.day = 4;
+  world.level = 3;
+  const report = {
+    day: 4,
+    findings: [{ severity: 'info' as const, code: 'STABLE', detail: 'ok' }],
+    kpi: snapshotKpi(world),
+  };
+  const idle = adaptPolicy('mixed_ref', report, loadLearning());
+  assert.equal(idle.skipped, true);
+  const p = loadPolicy();
+  p.health = { ...(p.health ?? { stuck: false, equalWeights: false, sameNotesStreak: 0, lastScore: null }), lastScore: 9000, lastScoreDay: 100, lastScoreLevel: 5 };
+  p.rollbackPersonas = { mixed_ref: { ...getLiveWeights('mixed_ref') } };
+  savePolicy(p, true);
+  writeHumanDelta(dir, {
+    version: 1,
+    sessionId: 'owner-new',
+    capturedAt: '2026-10-04T00:00:00.000Z',
+    newPairs: ['land>depart'],
+    coveredKinds: ['travel'],
+    missingVerbs: [],
+    combatMethod: 'absent',
+    consumed: false,
+  });
+  const ad = adaptPolicy('mixed_ref', report, loadLearning());
+  assert.equal(ad.skipped, false);
+  assert.ok(ad.notes.some((n) => n.includes('실기델타 owner-new')));
+  assert.ok(ad.notes.some((n) => n.includes('전투방식 없음')));
+  assert.ok(ad.notes.some((n) => n.includes('기준점수 초기화')));
+  assert.equal(ad.notes.some((n) => n.includes('창전투')), false);
+  const after = loadPolicy();
+  assert.equal(after.health?.lastScore, null);
+  assert.equal(after.rollbackPersonas?.mixed_ref, undefined);
+  assert.equal(readHumanDelta(dir)?.consumed, true);
+  const again = adaptPolicy('mixed_ref', report, loadLearning());
+  assert.equal(again.skipped, true);
+  resetHumanSeedForTest();
+});
+
+test('import는 시드보다 먼저 델타를 계획한다', () => {
+  resetHumanSeedForTest();
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pb-import-delta-'));
+  const log = path.join(dir, 'session.log');
+  fs.writeFileSync(log, [
+    '09-29 13:40:06.694 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=32 detail=arcadia_prime',
+    '09-29 13:41:13.000 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=transit_hop_start hermes_mb=60 detail=vega_outpost→arcadia',
+  ].join('\n'), 'utf8');
+  const out = importHumanSeedFromMemProfile(log, { outDir: dir, runId: 'owner-auto-test', forceKind: 'human' });
+  assert.ok(out);
+  const delta = readHumanDelta(dir);
+  assert.equal(delta?.consumed, false);
+  assert.ok((delta?.newPairs.length ?? 0) > 0);
+  const again = importHumanSeedFromMemProfile(log, { outDir: dir, runId: 'owner-auto-test', forceKind: 'human' });
+  assert.ok(again);
+  assert.equal(readHumanDelta(dir)?.sessionId, delta?.sessionId);
+  resetHumanSeedForTest();
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('소비 전 두 세션 import는 신규 동사쌍을 한 델타에 합친다', () => {
+  resetHumanSeedForTest();
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pb-delta-merge-'));
+  const logA = path.join(dir, 'a.log');
+  const logB = path.join(dir, 'b.log');
+  fs.writeFileSync(logA, [
+    '09-29 13:40:06.694 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=32 detail=arcadia_prime',
+    '09-29 13:41:13.000 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=transit_hop_start hermes_mb=60 detail=vega_outpost→arcadia',
+  ].join('\n'), 'utf8');
+  fs.writeFileSync(logB, [
+    '09-29 14:00:06.694 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=32 detail=vega_outpost',
+    '09-29 14:01:13.000 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=transit_combat_nav hermes_mb=60 detail=vega_outpost',
+  ].join('\n'), 'utf8');
+  assert.ok(importHumanSeedFromMemProfile(logA, { outDir: dir, runId: 'owner-a', forceKind: 'human' }));
+  assert.ok(importHumanSeedFromMemProfile(logB, { outDir: dir, runId: 'owner-b', forceKind: 'human' }));
+  const delta = readHumanDelta(dir);
+  assert.equal(delta?.consumed, false);
+  assert.ok(delta?.newPairs.includes('land>depart'));
+  assert.ok(delta?.newPairs.includes('land>combat'));
+  assert.equal(mergeHumanDelta(
+    { version: 1, sessionId: 'a', capturedAt: '2026-10-04T00:00:00.000Z', newPairs: ['land>depart'], coveredKinds: ['travel'], missingVerbs: [], combatMethod: 'absent', consumed: false },
+    { version: 1, sessionId: 'b', capturedAt: '2026-10-04T01:00:00.000Z', newPairs: ['land>combat'], coveredKinds: ['travel', 'combat'], missingVerbs: ['wave'], combatMethod: 'present', consumed: false },
+  ).combatMethod, 'present');
+  resetHumanSeedForTest();
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('학습주기 — 레벨 60·퀘 96은 완료가 아니다', () => {
+  const row = assessLearnCycle({
+    day: 9747,
+    level: 60,
+    questCleared: 96,
+    annexOk: 0,
+    colonizeOk: 0,
+    blue: 0,
+    red: 18,
+    independent: 0,
+    capitalDestroyed: 1,
+    credits: 602639,
+    combatWins: 29479,
+    combatLosses: 5732,
+    planetId: 'abyss_gate',
+    combatMethod: 'absent',
+  });
+  assert.equal(row.declareComplete, false);
+  assert.equal(row.phase, 'P5');
+  const codes = row.gaps.map((g) => g.code);
+  assert.ok(codes.includes('DESIGN_BLANK'));
+  assert.ok(codes.includes('QUEST_COUNT_NOT_CLOSE'));
+  assert.ok(codes.includes('INDEPENDENT_ZERO'));
+  assert.ok(codes.includes('COMBAT_METHOD_ABSENT'));
+  assert.ok(codes.includes('CAPITAL_DICE'));
+  assert.equal(row.gaps.find((g) => g.code === 'READ_OFFSET_BEFORE_AWAKE')?.class, 'twin_hold');
+  assert.equal(row.gaps.some((g) => g.class === 'game_function' && g.code === 'READ_OFFSET_BEFORE_AWAKE'), false);
+});
+
+test('학습주기 기록은 같은 서명이면 10분 전엔 쓰지 않는다', () => {
+  const sig = 'P5|A';
+  const first = nextLearnCycleWrite(null, sig, 1_000);
+  assert.equal(first.write, true);
+  const held = nextLearnCycleWrite(first.next, sig, 1_000 + LEARN_CYCLE_FLUSH_MIN_MS - 1);
+  assert.equal(held.write, false);
+  const later = nextLearnCycleWrite(first.next, sig, 1_000 + LEARN_CYCLE_FLUSH_MIN_MS);
+  assert.equal(later.write, true);
+  const changed = nextLearnCycleWrite(first.next, 'P4|B', 1_500);
+  assert.equal(changed.write, true);
+});
+
+test('블루 승리 는 영토를 유지하고 레드 승리만 중립이 된다', () => {
+  const w = seedWorld({ runId: 'paint', persona: 'mixed_ref' });
+  w.level = 40;
+  w.hangarShips = 3;
+  w.currentPlanetId = 'arcadia_prime';
+  w.currentSystemId = lookupSystemId('arcadia_prime') ?? w.currentSystemId;
+  const blueBefore = w.planets.arcadia_prime?.occupierClanId;
+  const blueWin = fightHere(w, () => 0, '수련');
+  assert.equal(blueWin.kind, 'COMBAT');
+  assert.equal(w.planets.arcadia_prime?.occupierClanId, blueBefore);
+  assert.equal(w.planets.arcadia_prime?.kind, 'clan_hold');
+  assert.equal(blueWin.line.includes('중립'), false);
+  let redId = '';
+  const ids = Object.keys(w.planets);
+  for (let i = 0; i < ids.length; i += 1) {
+    const slot = w.planets[ids[i]];
+    if (slot && paintOf(slot) === 'RED' && slot.tcl <= w.level + 8) {
+      redId = ids[i];
+      break;
+    }
+  }
+  assert.ok(redId);
+  w.currentPlanetId = redId;
+  w.currentSystemId = lookupSystemId(redId) ?? w.currentSystemId;
+  const redWin = fightHere(w, () => 0, '수련');
+  assert.equal(redWin.kind, 'COMBAT');
+  assert.equal(w.planets[redId]?.occupierClanId, NEUTRAL_CLAN);
+  assert.equal(w.planets[redId]?.kind, 'neutral');
+});
+
+test('세포 반복은 가족 안 승률로 고르고 사람 partial 은 선택을 지우지 않는다', () => {
+  const human = '10-04 13:41:00.000 1 1 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus detail=arcadia_prime\n';
+  let state = emptyCellState();
+  state = applyCellLap(state, {
+    combats: [
+      { place: 'low_tcl', win: true },
+      { place: 'high_tcl', win: false },
+    ],
+    humanText: '',
+    now: 1_000,
+  });
+  assert.equal(state.declareComplete, false);
+  assert.equal(state.lap, 1);
+  assert.equal(state.selected.combat, 'combat|low_tcl||winrate');
+  state = applyCellLap(state, { combats: [], humanText: human, now: 2_000 });
+  assert.equal(state.selected.combat, 'combat|low_tcl||winrate');
+  assert.equal(state.declareComplete, false);
+  assert.ok(state.cells.some((c) => c.source === 'human' && c.score == null));
+  const kept = applyCellLap(state, { combats: [], humanText: '', now: 3_000 });
+  assert.equal(kept.selected.combat, 'combat|low_tcl||winrate');
+  assert.equal(kept.lap, 3);
+  const stamped = { ...state, lastSig: 'written', lastWriteMs: 2_000 };
+  const changed = applyCellLap(stamped, {
+    combats: [{ place: 'low_tcl', win: true }],
+    humanText: '',
+    now: 2_000 + 1_000,
+  });
+  assert.equal(cellWriteDue(stamped, changed, 2_000 + 1_000), false);
+  assert.equal(cellWriteDue(stamped, changed, 2_000 + CELL_FLUSH_MIN_MS), true);
+});
+
+test('전투 선택 장소가 합법이면 그쪽으로 이동하고 아니면 기존 경로다', () => {
+  resetCellLoopForTest();
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cell-loop-'));
+  const w = seedWorld({ runId: 'cell', persona: 'mixed_ref' });
+  w.level = 40;
+  w.hangarShips = 3;
+  let low = '';
+  let high = '';
+  const ids = Object.keys(w.planets);
+  for (let i = 0; i < ids.length; i += 1) {
+    const slot = w.planets[ids[i]];
+    if (!slot?.combatEnabled || paintOf(slot) !== 'RED' || slot.tcl > w.level + 8) continue;
+    if (!low || slot.tcl < (w.planets[low]?.tcl ?? 99)) low = ids[i];
+  }
+  for (let i = 0; i < ids.length; i += 1) {
+    const slot = w.planets[ids[i]];
+    if (!slot?.combatEnabled || paintOf(slot) !== 'RED' || ids[i] === low) continue;
+    if (slot.tcl <= w.level + 8) high = ids[i];
+  }
+  assert.ok(low && high);
+  observeBotCombat(low, true);
+  observeBotCombat(high, false);
+  const flushed = flushCellLap(dir, 10_000);
+  assert.equal(flushed.combatPlace, low);
+  w.currentPlanetId = high;
+  w.currentSystemId = lookupSystemId(high) ?? w.currentSystemId;
+  assert.equal(combatRedirectPlace(w), low);
+  w.planets[low].tcl = w.level + 9;
+  assert.equal(combatRedirectPlace(w), null);
+});
+
+function stallSnap(overrides: Partial<StallSnap> = {}): StallSnap {
+  return {
+    day: 1,
+    level: 4,
+    totalExp: 100,
+    questCleared: 1,
+    annexOk: 0,
+    colonizeOk: 0,
+    independent: 0,
+    devSum: 0,
+    combatWins: 0,
+    credits: 1000,
+    ...overrides,
+  };
+}
+
+test('성장이 21일 멈추면 처음부터 다시 플레이한다', () => {
+  let mem = emptyStallMemory();
+  let last = stepStall(mem, stallSnap({ day: 1 }));
+  for (let day = 2; day <= 20; day += 1) {
+    last = stepStall(last.mem, stallSnap({ day }));
+    assert.equal(last.restart, false);
+  }
+  last = stepStall(last.mem, stallSnap({ day: 21 }));
+  assert.equal(last.restart, true);
+  assert.equal(last.reason, 'hard');
+});
+
+test('경험치가 오르면 성장 정체가 끊긴다', () => {
+  let mem = emptyStallMemory();
+  let last = stepStall(mem, stallSnap({ day: 1, totalExp: 1 }));
+  for (let day = 2; day <= 30; day += 1) {
+    last = stepStall(last.mem, stallSnap({ day, totalExp: day }));
+  }
+  assert.equal(last.restart, false);
+  assert.equal(last.hardStreak, 1);
+});
+
+test('퀘스트가 40일 멈추고 전투가 있으면 구간 정체다', () => {
+  let mem = emptyStallMemory();
+  let last = stepStall(mem, stallSnap({ day: 1, totalExp: 1, combatWins: 1, questCleared: 96, level: 49 }));
+  for (let day = 2; day <= 40; day += 1) {
+    last = stepStall(last.mem, stallSnap({
+      day,
+      totalExp: day,
+      combatWins: day,
+      questCleared: 96,
+      level: 49,
+    }));
+  }
+  assert.equal(last.restart, true);
+  assert.equal(last.reason, 'section');
+  let quiet = emptyStallMemory();
+  let quietLast = stepStall(quiet, stallSnap({ day: 1, totalExp: 1, combatWins: 3, questCleared: 96 }));
+  for (let day = 2; day <= 40; day += 1) {
+    quietLast = stepStall(quietLast.mem, stallSnap({
+      day,
+      totalExp: day,
+      combatWins: 3,
+      questCleared: 96,
+    }));
+  }
+  assert.equal(quietLast.restart, false);
+});
+
+test('정체 재분석은 같은 축이 반복되면 재발이라고 적는다', () => {
+  const first = reanalysisText(null, {
+    reason: 'section', day: 40, level: 49, questCleared: 96, independent: 0,
+  });
+  assert.ok(first.includes('처음부터'));
+  const again = reanalysisText(
+    { reason: 'section', day: 40, level: 49, questCleared: 96 },
+    { reason: 'section', day: 42, level: 49, questCleared: 96, independent: 0 },
+  );
+  assert.ok(again.includes('같은'));
+  const moved = reanalysisText(
+    { reason: 'section', day: 40, level: 49, questCleared: 96 },
+    { reason: 'section', day: 50, level: 52, questCleared: 96, independent: 0 },
+  );
+  assert.ok(moved.includes('직전'));
+  resetStallForTest();
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pb-stall-'));
+  let observed = observeStall(dir, stallSnap({ day: 1 }), 'run-a', 1_000);
+  for (let day = 2; day <= 21; day += 1) {
+    observed = observeStall(dir, stallSnap({ day }), 'run-a', 1_000 + day);
+  }
+  assert.equal(observed.restart, true);
+  assert.equal(stallRestartCount(), 1);
+  const saved = JSON.parse(fs.readFileSync(stallReplayPath(dir), 'utf8')) as { restarts: number };
+  assert.equal(saved.restarts, 1);
+  fs.rmSync(dir, { recursive: true, force: true });
+  resetStallForTest();
+});
+
+function issueObs(overrides: Partial<GameIssueObservation> = {}): GameIssueObservation {
+  return {
+    runId: 'run-a',
+    day: 1,
+    level: 49,
+    questCleared: 10,
+    independent: 0,
+    annexOk: 0,
+    colonizeOk: 0,
+    combatWins: 1,
+    combatLosses: 0,
+    questFlatDays: 1,
+    insolventDays: 0,
+    drainHits: 0,
+    lastHoldReason: '',
+    credits: 5000,
+    hangarShips: 5,
+    findings: [],
+    ...overrides,
+  };
+}
+
+test('게임 문제 목록은 플레이로 확인된 밸런싱·구간·시스템만 담는다', () => {
+  const noise = issuesFromObservation([], issueObs({
+    findings: [
+      { code: 'BORDER_RED_SLOPE', detail: '트윈전용' },
+      { code: 'EARLY_OFF_SPINE', detail: '스파인 밖' },
+      { code: 'PLACEHOLDER_UNRESOLVED', detail: 'story_x:__tok__' },
+    ],
+  }));
+  assert.deepEqual(noise.addedIds, ['section:placeholder-unresolved']);
+  const sameDay = issuesFromObservation(noise.issues, issueObs({
+    findings: [{ code: 'PLACEHOLDER_UNRESOLVED', detail: 'story_x:__tok__' }],
+  }));
+  assert.equal(sameDay.addedIds.length, 0);
+  assert.equal(sameDay.issues[0].evidence, 1);
+  const nextDay = issuesFromObservation(noise.issues, issueObs({
+    day: 2,
+    findings: [{ code: 'PLACEHOLDER_UNRESOLVED', detail: 'story_x:__tok__' }],
+  }));
+  assert.equal(nextDay.issues[0].evidence, 2);
+
+  const early = issuesFromObservation([], issueObs({
+    questFlatDays: 8,
+    questCleared: 10,
+  }));
+  assert.equal(early.issues.some((row) => row.id === 'section:quest-end-before-endgame'), false);
+  const ended = issuesFromObservation([], issueObs({
+    questFlatDays: 8,
+    questCleared: 96,
+    level: 49,
+  }));
+  assert.equal(ended.issues[0]?.category, 'section');
+  assert.ok(ended.issues[0]?.detail.includes('독립국'));
+
+  const poor = issuesFromObservation([], issueObs({ insolventDays: 2, credits: 10 } as Partial<GameIssueObservation>));
+  assert.equal(poor.issues[0]?.category, 'balance');
+  const combat = issuesFromObservation([], issueObs({ combatWins: 1, combatLosses: 8, level: 3 }));
+  assert.equal(combat.issues[0]?.id, 'balance:early-combat');
+  const held = issuesFromObservation([], issueObs({ lastHoldReason: 'unresolved_placeholder' }));
+  assert.equal(held.issues[0]?.category, 'system');
+
+  resetGameIssuesForTest();
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pb-issues-'));
+  const base = {
+    runId: 'run-a',
+    level: 2,
+    questCleared: 0,
+    independent: 0,
+    annexOk: 0,
+    colonizeOk: 0,
+    combatWins: 0,
+    combatLosses: 0,
+    questFlatDays: 1,
+    lastHoldReason: '',
+    credits: 5000,
+    hangarShips: 5,
+    findings: [{ code: 'PLACEHOLDER_UNRESOLVED', detail: 'tok' }],
+  };
+  const wrote = commitGameIssues(dir, { ...base, day: 1 }, 1_000);
+  assert.equal(wrote.wrote, true);
+  const heldWrite = commitGameIssues(dir, { ...base, day: 2 }, 2_000);
+  assert.equal(heldWrite.wrote, false);
+  const disk = JSON.parse(fs.readFileSync(gameIssuesPath(dir), 'utf8')) as { issues: { evidence: number }[] };
+  assert.equal(disk.issues[0].evidence, 1);
+  const later = commitGameIssues(dir, { ...base, day: 3 }, 2_000 + GAME_ISSUE_FLUSH_MIN_MS);
+  assert.equal(later.wrote, true);
+  const diskLater = JSON.parse(fs.readFileSync(gameIssuesPath(dir), 'utf8')) as { issues: { evidence: number }[] };
+  assert.equal(diskLater.issues[0].evidence, 3);
+  const md = fs.readFileSync(path.join(dir, 'FQA.md'), 'utf8');
+  assert.ok(md.includes('FQA'));
+  assert.ok(md.includes('대응'));
+  assert.ok(md.includes('구간콘텐츠'));
+  assert.equal(md.includes('BORDER_RED_SLOPE'), false);
+  fs.rmSync(dir, { recursive: true, force: true });
+  resetGameIssuesForTest();
+});
+
+test('FQA 대응은 증거 갱신 때 유지되고 초반 3일 문제를 올린다', () => {
+  const opened = issuesFromObservation([], issueObs({
+    day: 3,
+    level: 3,
+    combatWins: 8,
+    combatLosses: 9,
+    hangarShips: 0,
+    credits: 120,
+  }));
+  assert.ok(opened.addedIds.includes('balance:early-hangar-wipe'));
+  assert.ok(opened.addedIds.includes('balance:opening-insolvency'));
+  const marked = opened.issues.map((row) => (
+    row.id === 'balance:early-hangar-wipe'
+      ? { ...row, response: { at: '2026-10-04T00:00:00.000Z', by: 'kim-team-lead+kim-claude' as const, text: '대응유지' } }
+      : row
+  ));
+  const again = issuesFromObservation(marked, issueObs({
+    day: 3,
+    runId: 'run-b',
+    level: 3,
+    combatWins: 8,
+    combatLosses: 9,
+    hangarShips: 0,
+    credits: 120,
+  }));
+  const kept = again.issues.find((row) => row.id === 'balance:early-hangar-wipe');
+  assert.equal(kept?.response?.text, '대응유지');
+  assert.equal(kept?.evidence, 2);
+});
+
+test('돈이 바닥이면 퀘스트로 벌고 퀘스트가 없으면 채굴한다', () => {
+  const poor = seedWorld({ runId: 'earn-quest', persona: 'mixed_ref' });
+  poor.earlyFeelClosed = true;
+  poor.credits = 120;
+  const quest = earnCredits(poor, () => 0.1);
+  assert.equal(quest.kind, 'QUEST');
+  assert.equal(poor.credits, 120);
+
+  const mined = seedWorld({ runId: 'earn-mine', persona: 'mixed_ref' });
+  mined.earlyFeelClosed = true;
+  mined.credits = 120;
+  const ids = listPlayableMissionIds();
+  for (let i = 0; i < ids.length; i += 1) {
+    mined.completedLookup[ids[i]] = true;
+    mined.completedMissionIds.push(ids[i]);
+  }
+  mined.questCleared = ids.length;
+  const mine = earnCredits(mined, () => 0.1);
+  assert.equal(mine.kind, 'MINE');
+  assert.equal(mined.mineralCargo, 1);
+  mined.mineralCargo = 8;
+  const hub = nearestTradePlanet(mined.currentPlanetId);
+  assert.ok(hub);
+  mined.currentPlanetId = hub;
+  const hubSystem = lookupSystemId(hub);
+  assert.ok(hubSystem);
+  mined.currentSystemId = hubSystem;
+  const sold = earnCredits(mined, () => 0.1);
+  assert.equal(sold.kind, 'TRADE');
+  assert.equal(mined.credits, 120 + 310);
+  assert.equal(mined.mineralCargo, 7);
+});
+
+test('승률이 낮은 수련은 전함을 깨지 않는다', () => {
+  const w = seedWorld({ runId: 'fair-train', persona: 'mixed_ref' });
+  w.earlyFeelClosed = true;
+  w.level = 2;
+  const ids = Object.keys(w.planets);
+  let hard = '';
+  for (let i = 0; i < ids.length; i += 1) {
+    const slot = w.planets[ids[i]];
+    if (slot?.combatEnabled && slot.tcl >= 5) {
+      hard = slot.planetId;
+      break;
+    }
+  }
+  assert.ok(hard);
+  w.currentPlanetId = hard;
+  const hardSystem = lookupSystemId(hard);
+  assert.ok(hardSystem);
+  w.currentSystemId = hardSystem;
+  const row = trainOrRelocate(w, () => 0, '수련');
+  assert.notEqual(row.kind, 'DESTROY');
+  assert.notEqual(row.kind, 'COMBAT');
+});
+
+test('개발이 바닥을 깨면 지출하지 않고 번다', () => {
+  const w = seedWorld({ runId: 'earn-dev', persona: 'mixed_ref' });
+  w.earlyFeelClosed = true;
+  const ids = listPlayableMissionIds();
+  for (let i = 0; i < ids.length; i += 1) {
+    w.completedLookup[ids[i]] = true;
+    w.completedMissionIds.push(ids[i]);
+  }
+  w.questCleared = ids.length;
+  const mods = listDevModules();
+  let cost = 0;
+  for (let i = 0; i < mods.length; i += 1) {
+    const c = nextDevCost(mods[i].id, 0);
+    if (c > 0 && (cost === 0 || c < cost)) cost = c;
+  }
+  assert.ok(cost > 0);
+  w.credits = cost + 100;
+  const before = w.credits;
+  const row = stepAction(w, () => 0.99, 'mixed_ref', { allowSides: false });
+  assert.notEqual(row.kind, 'DEVELOP');
+  assert.ok(w.credits >= before);
+});
+
+function fqaIssue(id: string, evidence: number): GameIssue {
+  const category = id.startsWith('balance:') ? 'balance' : (id.startsWith('system:') ? 'system' : 'section');
+  return {
+    id,
+    category,
+    title: id,
+    detail: '',
+    evidence,
+    firstDay: 1,
+    lastDay: 3,
+    runId: 'review',
+    response: null,
+  };
+}
+
+test('FQA 정기 검토는 첫 증거에서 카드를 올리지 않고 늘어난 뒤에만 한 단계 올린다', () => {
+  const card = defaultPlayIntelligence();
+  const first = planFqaReview([
+    fqaIssue('balance:insolvency', 4),
+    fqaIssue('balance:credit-drain', 10),
+    fqaIssue('balance:early-combat', 2),
+  ], card, {});
+  assert.equal(first.cardChanged, false);
+  assert.equal(first.card.mineCap, 8);
+  assert.equal(first.card.fairFightMin, 0.5);
+  assert.equal(first.card.cashFloor, 400);
+  const again = planFqaReview([
+    fqaIssue('balance:insolvency', 5),
+    fqaIssue('balance:credit-drain', 11),
+    fqaIssue('balance:early-combat', 3),
+  ], first.card, first.seenEvidence);
+  assert.equal(again.card.mineCap, 12);
+  assert.equal(again.card.fairFightMin, 0.55);
+  assert.equal(again.card.cashFloor, 400);
+  const held = emptyFqaReviewState();
+  held.lastSig = again.signature;
+  held.seenEvidence = again.seenEvidence;
+  assert.equal(reviewNeeded(held, [
+    fqaIssue('balance:insolvency', 5),
+    fqaIssue('balance:credit-drain', 11),
+    fqaIssue('balance:early-combat', 3),
+  ]), false);
+  const outside = planFqaReview([fqaIssue('system:quest-buy', 2)], card, { 'system:quest-buy': 1 });
+  assert.equal(outside.cardChanged, false);
+  assert.equal(outside.outside[0], 'system:quest-buy');
+  const capped = clampPlayIntelligence({ cashFloor: 50, mineCap: 99, fairFightMin: 0.99 });
+  assert.equal(capped.cashFloor, 400);
+  assert.equal(capped.mineCap, 16);
+  assert.equal(capped.fairFightMin, 0.65);
+});
+
+test('보석 지갑은 부족분이 채굴로 안 될 때만 크레딧으로 바꾼다', () => {
+  const seeded = seedWorld({ runId: 'bm-seed', persona: 'mixed_ref' });
+  assert.equal(seeded.gems, starterGemBalance());
+  assert.equal(seeded.gems, 250);
+  const cap = gemExchangeCap();
+  assert.equal(cap.daily, 64);
+  assert.equal(cap.weekly, 400);
+  const small = pickCreditExchange(15000, 250, 0, 0);
+  assert.equal(small?.productId, 'ex_gems_50');
+  assert.equal(small?.creditGrant, 20000);
+  const mid = pickCreditExchange(30000, 250, 0, 0);
+  assert.equal(mid?.productId, 'ex_gems_50');
+  assert.equal(pickCreditExchange(20000, 250, 480, 480), null);
+
+  const poor = seedWorld({ runId: 'bm-mine', persona: 'mixed_ref' });
+  poor.earlyFeelClosed = true;
+  poor.credits = 100;
+  const ids = listPlayableMissionIds();
+  for (let i = 0; i < ids.length; i += 1) {
+    poor.completedLookup[ids[i]] = true;
+    poor.completedMissionIds.push(ids[i]);
+  }
+  poor.questCleared = ids.length;
+  const mined = earnCredits(poor, () => 0.1);
+  assert.equal(mined.kind, 'MINE');
+  assert.equal(poor.gems, 250);
+
+  const blocked = seedWorld({ runId: 'bm-exchange', persona: 'mixed_ref' });
+  blocked.earlyFeelClosed = true;
+  blocked.credits = 100;
+  blocked.gems = 250;
+  const bought = takeCreditExchange(blocked, 30000);
+  assert.equal(bought?.productId, 'ex_gems_50');
+  assert.equal(blocked.gems, 200);
+  assert.equal(blocked.credits, 20100);
+  blocked.gemsSpentDay = 460;
+  assert.equal(takeCreditExchange(blocked, 30000), null);
+  assert.equal(blocked.gems, 200);
 });
 
 console.log('play-bot-console tests done');

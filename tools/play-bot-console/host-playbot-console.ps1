@@ -1,4 +1,4 @@
-﻿# 가시 콘솔 뷰어 — 하니스는 숨김 분리. 창을 닫아도 기록은 유지된다.
+﻿# 가시 콘솔 뷰어 — 하니스는 숨김 분리. 창을 닫으면 기록도 중지한다.
 # mud.log 를 Get-Content 로 읽으면 Windows 잠금에 창이 멈춘다. 공유 읽기만 쓴다.
 param(
   [string]$Persona = 'mixed_ref',
@@ -22,7 +22,7 @@ function Show-PlaybotLiveFrame {
   $hid = Read-PlaybotPid 'playbot-harness.pid'
   Clear-Host
   Write-Host "=== Arcfire 플레이봇콘솔 LIVE $stamp ===" -ForegroundColor Cyan
-  Write-Host "창 닫아도 기록 유지 · 중지= npm run playbot:stop · harness=$hid" -ForegroundColor DarkGray
+  Write-Host "창 닫으면 기록 중지 · 중지= npm run playbot:stop · harness=$hid" -ForegroundColor DarkGray
   Write-Host "persona=$Persona  $(if ($Days -le 0) { 'until-stop' } else { "days=$Days" })  stage=$Stage  (앱 미포함 · 세이브 미기록)" -ForegroundColor DarkGray
   Write-Host ''
   if ($Body) {
@@ -58,7 +58,7 @@ function Read-PlaybotLiveBody {
 }
 
 Write-Host '=== Arcfire 플레이봇콘솔 ===' -ForegroundColor Cyan
-Write-Host '창은 보기 전용 · 닫아도 기록 유지 · 중지= npm run playbot:stop' -ForegroundColor DarkGray
+Write-Host '창을 닫으면 모니터링·기록 중지 · 중지= npm run playbot:stop' -ForegroundColor DarkGray
 Write-Host ''
 
 if (-not $UntilWall) { $UntilWall = Get-PlaybotNextUntilWall }
@@ -86,6 +86,9 @@ try {
     Start-Sleep -Milliseconds 400
   }
 } finally {
+  if (-not (Test-PlaybotExplicitStop)) {
+    Stop-PlaybotAll
+  }
   Write-Host ''
-  Write-Host '창만 닫힘 · 기록은 계속됩니다. 중지는 npm run playbot:stop' -ForegroundColor DarkGray
+  Write-Host '플레이봇콘솔 종료 · 기록 중지' -ForegroundColor DarkGray
 }

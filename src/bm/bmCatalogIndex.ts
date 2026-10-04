@@ -39,10 +39,6 @@ export function getGemExchangeBaseCrPerGem(): number {
   return getBmPolicyNumber('gem_exchange_base_cr_per_gem', 400);
 }
 
-export function getGemExchangeDailyCapGems(): number {
-  return getBmPolicyNumber('gem_exchange_daily_cap_gems', 500);
-}
-
 export function getGemDirectPurchasePremiumMul(): number {
   return getBmPolicyNumber('gem_direct_purchase_premium_mul', 1.35);
 }

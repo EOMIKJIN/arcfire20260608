@@ -1,12 +1,10 @@
 // ============================================================
-// BM 보석→크레딧 교환 일·주 상한 ledger (계정 귀속)
+// 예전 교환 상한 기록. 교환을 막지 않는다. 계정 초기화 때 지운다.
 // ============================================================
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { planetAttackKstDayKey } from '../arcCore/planetAttack/planetAttackKstDayKey';
-import { getBmPolicyNumber } from '../bm/bmCatalogIndex';
-import { buildExchangeCapSnapshot, type GemExchangeCapSnapshot } from '../bm/gemExchangeModel';
 
 const STORAGE_KEY = 'arcfire_bm_exchange_ledger_v1';
 
@@ -20,7 +18,6 @@ type LedgerState = {
   persist: () => Promise<void>;
   resetLocal: () => Promise<void>;
   ensurePeriod: (nowMs?: number) => void;
-  getCapSnapshot: () => GemExchangeCapSnapshot;
   recordExchange: (gemCost: number, nowMs?: number) => void;
 };
 
@@ -32,10 +29,6 @@ export function bmKstWeekKey(nowMs = Date.now()): string {
   }
   const weekIndex = Math.floor((d - 1) / 7);
   return `${y}-${String(m).padStart(2, '0')}-W${weekIndex + 1}`;
-}
-
-function getWeeklyCapGems(): number {
-  return getBmPolicyNumber('gem_exchange_weekly_cap_gems', 2000);
 }
 
 export const useBmExchangeLedgerStore = create<LedgerState>((set, get) => ({
@@ -125,16 +118,6 @@ export const useBmExchangeLedgerStore = create<LedgerState>((set, get) => ({
       weeklyGemsExchanged,
     });
     void get().persist();
-  },
-
-  getCapSnapshot: () => {
-    get().ensurePeriod();
-    const s = get();
-    return buildExchangeCapSnapshot(
-      s.dailyGemsExchanged,
-      s.weeklyGemsExchanged,
-      getWeeklyCapGems(),
-    );
   },
 
   recordExchange: (gemCost, nowMs = Date.now()) => {

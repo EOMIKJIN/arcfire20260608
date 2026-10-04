@@ -58,7 +58,6 @@ import {
   resolveMissionContactPlanetIdForSystem,
   resolveBarHostCaptainIdAtPlanet,
 } from '../missions/missionClearContactLookups';
-import { getNpcCaptain } from '../npc/npcFleetRegistry';
 import {
   computeExpiredMissionSweep,
   stampMissionExpiresAtMs,
@@ -335,8 +334,8 @@ function buildPendingClearDialog(
   );
   const sceneKind = resolveMissionClearNpcSceneKind(mission.objectives);
   const clearSceneId = resolveMissionClearDialogSceneId(mission.id, assignedCaptainId, sceneKind);
+  // 담당 id는 배달/도착 문구를 고르는 데만 쓴다. 화자·초상은 씬의 스텔라 아리스.
   if (!clearSceneId) return null;
-  const npcCaptain = assignedCaptainId ? getNpcCaptain(assignedCaptainId) : null;
   return {
     missionId: mission.id,
     sceneId: clearSceneId,
@@ -344,9 +343,6 @@ function buildPendingClearDialog(
       context: {
         missionTitle: mission.title,
         missionTitleEn: mission.titleEn,
-        npcCaptainId: assignedCaptainId ?? undefined,
-        npcName: npcCaptain?.displayName,
-        npcNameEn: npcCaptain?.displayNameEn,
       },
       completionActions: [{ type: 'grant_mission_rewards', missionId: mission.id }],
     },

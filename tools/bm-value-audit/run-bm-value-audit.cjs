@@ -36,7 +36,6 @@ function pct(part, whole) {
 const bmPolicy = readGeneratedTs('csvBmEconomyPolicy.ts', 'BmEconomyPolicy_FROM_BALANCE_CSV');
 const policy = Object.fromEntries(bmPolicy.map((r) => [r.key, num(r.value)]));
 const baseRate = policy.gem_exchange_base_cr_per_gem || 400;
-const dailyCapGems = policy.gem_exchange_daily_cap_gems || 500;
 const f2pDaily = policy.f2p_optimal_daily_credit_income || 50_000;
 const creditPerHour = policy.play_scenario_credit_per_hour_anchor || 10_000;
 
@@ -73,14 +72,10 @@ const maxExchangeTier = gemExchange.reduce((best, row) => {
   return rate > best.rate ? { id: row.productId, gems, credits, rate } : best;
 }, { id: '', gems: 0, credits: 0, rate: 0 });
 
-const dailyCapMaxCr = dailyCapGems * maxExchangeTier.rate;
-
 const kpiXlargeOk = xlargeCrEquiv <= zone18.requiredCredits;
 const kpiPlayAnchorOk = milestones.every(
   (m) => m.creditPerHour === 0 || Math.abs(m.creditPerHour - creditPerHour) < 1,
 );
-const kpiDailyCapOk = dailyCapMaxCr <= f2pDaily * 6;
-
 const lines = [];
 lines.push('# BM 재화 가치 감사 리포트');
 lines.push('');
@@ -94,7 +89,7 @@ lines.push('|------|-----|');
 lines.push(`| 최적 크레딧 수입 | **${fmt(creditPerHour)} Cr/h** |`);
 lines.push(`| F2P 일일 상한(5h) | **${fmt(f2pDaily)} Cr** |`);
 lines.push(`| 보석→크레딧 기본환율 | **${baseRate} Cr/💎** (= ${(60 / (creditPerHour / baseRate)).toFixed(1)}분 최적플레이) |`);
-lines.push(`| 교환 일일 상한 | **${dailyCapGems} 💎** (= ${fmt(dailyCapGems * baseRate)}~${fmt(dailyCapMaxCr)} Cr) |`);
+lines.push('| 교환 일·주 상한 | 없음 (보유 보석만큼 교환) |');
 lines.push('');
 lines.push('## 2. play_scenario 마일스톤 vs 보석 스킵');
 lines.push('');
@@ -141,14 +136,13 @@ lines.push('| 검사 | 결과 |');
 lines.push('|------|------|');
 lines.push(`| 특대팩 전량교환 ≤ zone18 (${fmt(zone18.requiredCredits)}) | ${kpiXlargeOk ? '✅ PASS' : `❌ FAIL (${fmt(xlargeCrEquiv)})`} |`);
 lines.push(`| play_scenario Cr/h ≈ ${fmt(creditPerHour)} | ${kpiPlayAnchorOk ? '✅ PASS' : '❌ FAIL'} |`);
-lines.push(`| 일일 교환 cap ≤ F2P×6 (${fmt(f2pDaily * 6)}) | ${kpiDailyCapOk ? '✅ PASS' : `⚠️ WARN (${fmt(dailyCapMaxCr)})`} |`);
-lines.push(`| 코드 BM_DUMMY 폐기(Table-First) | ✅ bmCatalogIndex.getGemExchangeBaseCrPerGem |`);
+lines.push('| 코드 BM_DUMMY 폐기(Table-First) | ✅ bmCatalogIndex.getGemExchangeBaseCrPerGem |');
 lines.push('');
 lines.push('## 7. 설계 요약 (v2.1)');
 lines.push('');
 lines.push('- **크레딧**: 플레이·무역·채굴 — 인플레 허용, 현금 직구 불가');
 lines.push('- **보석**: IAP·VIP·이벤트 — 핵심 자산·편의·교환 전용');
-lines.push('- **교환**: 400~500 Cr/💎 단계 보너스, 일 500💎 cap');
+lines.push('- **교환**: 400~500 Cr/💎 단계 보너스, 일·주 상한 없음');
 lines.push('- **특대팩**: zone18(1.5M) **69% 이하** — 엔드game 전량 스킵 차단');
 lines.push('');
 

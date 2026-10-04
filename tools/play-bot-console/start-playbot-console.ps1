@@ -1,4 +1,4 @@
-﻿# 플레이봇콘솔 — 하니스는 숨김 분리. 창을 닫아도 기록은 유지. 중지는 stop-playbot-console.
+﻿# 플레이봇콘솔 — 하니스는 숨김 분리. 창을 닫거나 stop-playbot-console 하면 기록도 중지.
 param(
   [string]$Persona = 'mixed_ref',
   [int]$Days = 0,
@@ -63,7 +63,7 @@ if (-not (Test-PlaybotProcAlive $watchAlive)) {
 }
 
 $span = if ($Days -le 0) { 'until-stop' } else { "days=$Days" }
-Write-Output "playbot_console=started pid=$consoleId harness=$hid persona=$Persona $span stage=$Stage until_wall=$UntilWall auto_start=1 stop_on_close=0"
+Write-Output "playbot_console=started pid=$consoleId harness=$hid persona=$Persona $span stage=$Stage until_wall=$UntilWall auto_start=1 stop_on_close=1"
 try {
   $ensure18 = Join-Path $ScriptRoot 'ensure-daily-6pm-playbot-report.ps1'
   if (Test-Path $ensure18) {

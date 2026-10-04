@@ -146,7 +146,25 @@ export function canStartDev(world: WorldState, moduleId: string): boolean {
   const gate = nextDevStatGate(moduleId, lv);
   if (gate.type && gate.value > 0 && statValue(world, gate.type) < gate.value) return false;
   const cost = nextDevCost(moduleId, lv);
-  return cost > 0 && world.credits >= cost;
+    return cost > 0 && world.credits >= cost;
+}
+
+/** 레벨·스탯은 통과했지만 크레딧이 부족할 수 있는 다음 개발비. 없으면 0. */
+export function cheapestOpenDevCost(world: WorldState): number {
+  const mods = listDevModules();
+  let cost = 0;
+  for (let i = 0; i < mods.length; i += 1) {
+    const id = mods[i].id;
+    const lv = world.devLevels[id] ?? 0;
+    if (lv >= DEV_MAX_LEVEL) continue;
+    if (world.level < nextDevPilotMin(id, lv)) continue;
+    const gate = nextDevStatGate(id, lv);
+    if (gate.type && gate.value > 0 && statValue(world, gate.type) < gate.value) continue;
+    const next = nextDevCost(id, lv);
+    if (next <= 0) continue;
+    if (cost === 0 || next < cost) cost = next;
+  }
+  return cost;
 }
 
 /** 카탈로그 메뉴 중 가장 낮은 레벨(가능·구매 가능) — 한 줄만 올리지 않음. */

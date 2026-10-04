@@ -641,7 +641,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'combat.missingDataBody': 'Could not find the pirate ship table reference for transit combat.',
   'combat.headerTitle': '⚔ Transit Combat',
   'combat.battleResultTitle': '✦ Battle Result ✦',
-  'combat.transitEndOperator': 'Ship AI',
+  'combat.transitEndOperator': 'Stella Aris',
   'combat.transitEndVictoryBody': 'Engagement complete. Hostile fleet destroyed.\nCredits +{credits} · EXP +{exp}\nResuming course to destination system.',
   'combat.transitEndFleeBody': 'Disengaged from combat.\nMinimizing losses — resuming course to destination system.',
   'combat.enemyDefeatFallback': 'The hull gave first. I pull out alive. This is not over.',
@@ -714,7 +714,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'bmShop.premium.subtitle': 'Gem packs, Starter Pack, Season Pass, VIP — cash (IAP)',
   'bmShop.exchange.title': 'Credit Exchange',
   'bmShop.exchange.subtitle': 'Exchange gems for credits. Credits cannot be bought with cash directly.',
-  'bmShop.exchange.noticeOneWay': '※ Gems→Credits one-way · 500💎/day exchange cap · No Credits→Gems',
+  'bmShop.exchange.noticeOneWay': '※ Gems→Credits one-way · No Credits→Gems',
   'bmShop.noticeDummy': '※ Dummy UI · In-app purchase integration coming later',
   'bmShop.overlap.familyHint': '※ Higher-tier products in the same line include every perk of the lower tiers. Buying both stacks no extra features.',
   'bmShop.overlap.includesAll': 'Includes every perk from {packs}. You do not need to buy the lower pack as well.',
@@ -745,11 +745,8 @@ export const EN_DICTIONARY: I18nDictionary = {
   'bmShop.exchange.successTitle': 'Exchange Complete',
   'bmShop.exchange.successBody': '💎 {gems} → {credits}',
   'bmShop.exchange.failInsufficientGems': 'Not enough gems.',
-  'bmShop.exchange.failDailyCap': 'Daily exchange cap (500💎) reached.',
-  'bmShop.exchange.failWeeklyCap': 'Weekly exchange cap (2,000💎) reached.',
   'bmShop.exchange.failNoPlayer': 'Could not load player data.',
   'bmShop.exchange.failUnknown': 'This product cannot be exchanged.',
-  'bmShop.hud.exchangeCapDaily': 'Today {used} / {cap} 💎 exchanged',
   'bmShop.badge.popular': 'Popular',
   'bmShop.badge.bestValue': 'Best Value',
   'bmShop.badge.limited': 'Limited',
@@ -810,7 +807,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'bmShop.product.ex_gems_300.title': '💎 300 → 144,000 Cr',
   'bmShop.product.ex_gems_300.desc': '300 gems → 144,000 credits (480 Cr/gem)',
   'bmShop.product.ex_gems_500.title': '💎 500 → 250,000 Cr',
-  'bmShop.product.ex_gems_500.desc': '500 gems → 250,000 credits (500 Cr/gem · daily cap)',
+  'bmShop.product.ex_gems_500.desc': '500 gems → 250,000 credits (500 Cr/gem)',
 
   'planet.miningStop': 'Stop Mining',
   'planet.mining': 'Mining',
@@ -1827,19 +1824,19 @@ export const EN_DICTIONARY: I18nDictionary = {
   'news.rebellionSimmering.body': '{planet} — overthrow attempt failed · simmering',
 
   // ── Operator — wealth disparity & rebellion ingame dialog ──
-  'operatorRebellion.wdiUnrest.label': '[ Guide Operator ]',
+  'operatorRebellion.wdiUnrest.label': '[ Stella Aris ]',
   'operatorRebellion.wdiUnrest.text':
     '[Pilot], ArcCore economy watch channel.\n\n{planet} WDI has entered unrest band ({wdi}).\nReview population, fiscal, and security metrics; consider stabilization facilities such as the Population Dome.',
-  'operatorRebellion.wdiDanger.label': '[ Guide Operator ]',
+  'operatorRebellion.wdiDanger.label': '[ Stella Aris ]',
   'operatorRebellion.wdiDanger.text':
     '[Pilot], urgent notice.\n\n{planet} WDI reached danger band ({wdi}).\nGovernment overthrow may be imminent — verify stability, occupation, and deed status immediately.',
-  'operatorRebellion.simmering.label': '[ Guide Operator ]',
+  'operatorRebellion.simmering.label': '[ Stella Aris ]',
   'operatorRebellion.simmering.text':
     '[Pilot], an overthrow attempt on {planet} intensified but has not succeeded yet.\nCivil war (simmering) — WDI {wdi}.\nEconomic and population penalties are accumulating; stabilization is advised.',
-  'operatorRebellion.overthrow.label': '[ Guide Operator ]',
+  'operatorRebellion.overthrow.label': '[ Stella Aris ]',
   'operatorRebellion.overthrow.text':
     '[Pilot], government overthrow occurred on {planet}.\nThe {prevSide} regime collapsed and was neutralized; ownership deeds were voided.\nWDI {wdi} — you may need to repurchase deeds at the trade port.',
-  'operatorRebellion.fallback.label': '[ Guide Operator ]',
+  'operatorRebellion.fallback.label': '[ Stella Aris ]',
   'operatorRebellion.fallback.text': '[Pilot], please review the stability report for {planet} (WDI {wdi}).',
   'news.scope.allTradePorts': 'All trade ports',
   'news.scope.planetTradePorts': '{count} planet trade ports',

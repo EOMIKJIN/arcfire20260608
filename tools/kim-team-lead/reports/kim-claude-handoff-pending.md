@@ -1,5 +1,77 @@
 # 김클로드 → 김팀장 검수 handoff
 
+## ⏳ PENDING — 김클로드 검수: 퀘스트 협동·보호 설계 v1 · 2026-10-04 02:40
+
+```text
+status=PENDING
+task_id=review-quest-ally-coop-protect-design-20261004
+kind=REVIEW (코드 변경 0)
+상세=tools/kim-team-lead/reports/kim-claude-quest-ally-coop-protect-design-review-20261004.md
+판정=PARTIAL
+```
+
+- AGREE: 현황 진단 10항목 코드·CSV 일치(시드 1v1 · 완료 게이트 · failed 미사용 · 블루 상한 3 · 4목표 hub_orbit · 셀라/벡터 스텔리움 소속 · sandbox_064 비어 있음).
+- **P0-1** 협동에서 플레이어 격침 후 동료가 이기면 목표 완료 + 결과창은 패배·기함 파괴 (`PlanetEdenRaidTestLayer.tsx:3233-3236,3292,3319-3332,3365`). 보완: 플레이어 격침 시 퀘스트 동료도 퇴장(윙맨과 동일).
+- **P0-2** 보호 실패 즉시 종료 경로 없음. 블루 강제 사망으로 끝내면 기함 침몰·파괴 벌칙이 붙음(`:3243-3262`). 보완: 전용 종료 플래그 + 파괴 없는 패배 결과창.
+- P1: 플레이어 생존 기본값 문서 내 불일치 · 동료 함선=플레이어 기함 중복 가능. P2: 재도전 진입 명시 · 98행 문장 깨짐 · 1차 범위(12개 중 4개) 대표님 확인.
+- **대표님 결정(02:45) → 김팀장 설계 v2 반영 요청** (리포트 §2-1):
+  - **R0 최우선 룰**: 플레이어 기함 격침 = 전투 실패 + 퀘스트 실패. 모든 정책보다 먼저, CSV로 끌 수 없음. 동료가 살아 있어도 즉시 종료(P0-1 해소). 정책표의 player_* 옵션은 R0에 흡수·삭제.
+  - 실패 후: 서브 `fail_mission` · 본편 `retry_objective`(표시는 「퀘스트 실패」) — 김팀장 확정 필요.
+  - **혼합 원칙**: 일괄 전환 금지. 전투 목표별 단독/협동/보호 섞어 배치(`combatMode` 열 · 편중 감사 권장).
+
+## ⏳ PENDING — 김클로드 재검수: 「채팅창 텍스트 안 보임」 김팀장 수정분 (Cursor 오류 중단 후) · 2026-10-04 01:20
+
+```text
+status=PENDING
+task_id=review-arccore-chat-text-fix-20261004
+kind=REVIEW (코드 변경 0)
+대상=src/ui/overlay/content/ArcCoreChatOverlayContent.tsx (김팀장 미커밋 · 앱 코드 변경은 이 파일 1개뿐 · 재시동 01:05 이후 추가 변경 없음)
+요청=대표님 00:15 「채팅창, 텍스트가 안보인다.」 → 김팀장이 아크코어 채팅창(arcCoreChat)으로 해석. narrative 대사창 파일은 미변경
+```
+
+| 변경 | 판정 | 근거 |
+|------|------|------|
+| 인사 화면(welcome)에서 입력칸 자동 포커스 중단 | **AGREE · 단 동작 변경** | 얼굴 192×269px(`16*3*4`) + 280ms 자동 키보드 → 본문 가시 높이 축소로 인사 문구가 밀려남. 실제 원인으로 유력. **부작용**: 인사(`session_welcome*`)는 채팅을 열 때마다 붙으므로 사실상 **매 오픈 키보드 자동 상승 제거** — 입력칸 탭 필요. 대표님 확인 필요 |
+| 인사 `numberOfLines=1`·`adjustsFontSizeToFit` 제거 + `width:100%` | AGREE | Android 폭 미확정(alignItems:center) 상태 자동축소 시 글자 소실 알려진 패턴. 긴 인사는 이제 줄바꿈. 56행 주석 「한 줄에 맞춤」은 낡음(정리 요) |
+| `fillShell` `justifyContent:'flex-end'` 제거 | **PARTIAL** — 무해·무효 | 자식 카드 `flex:1`이라 원래 영향 없음. 「스크롤 높이 0」 진단은 근거 부족 |
+| `welcomeFaceWrap`(flexShrink·min/maxHeight)·`welcomeFace` maxHeight '100%' | PARTIAL — 무해·대부분 무효 | ScrollView 콘텐츠는 높이 무제한이라 축소 미발생, % 기준 높이 없음 |
+| `includeFontPadding:false` 6곳(대화·시스템·빈칸·입력) | **DISAGREE(범위 초과)** | 「안 보임」과 무관한 전 텍스트 세로 metrics 변경. Hangul 상단 잘림 소지(특히 TextInput). 원복 권고 |
+| 입력칸 `backgroundColor:'#FFFFFF'`·`underlineColorAndroid` | 무해·중복 | composer가 이미 #FFFFFF, valueInk=#1A2332(어두움). 대비 문제 아니었음 |
+| `chatBody minHeight:0` | 무해 | — |
+
+- self-check: client tsc **0**. 실기 확인 **미실시**(무선 adb 끊김).
+- 결론: **이상 상태를 만드는 변경은 없음.** 핵심 수정 2개(자동 포커스·한 줄 축소 제거)는 타당. 불필요 범위 = `includeFontPadding` 6곳(원복 권고) · 무효 스타일 몇 줄. **대표님 의도가 narrative 대사창이었다면 그쪽은 손대지 않은 상태.**
+
+## ⏳ PENDING — PC·Cursor 성능 점검 + 설정 수정 · 데일리 커밋 실패 원인 수정 · 2026-10-04
+
+```text
+status=PENDING
+task_id=pc-cursor-perf-fix-20261004
+kind=APPLY (설정·훅·테스트 1줄 · 앱 런타임 코드 0 · commit 금지)
+상세=tools/kim-team-lead/reports/kim-claude-pc-cursor-perf-audit-20261004.md §4
+```
+
+- **데일리 자동 커밋 실패(10/04 00:01)**: `audit:daily` client tsc — `src/combat/capitalCraftPool.test.ts:581` TS2367(9421bfc 반영분). 테스트 비교 `as string` 1줄 → 테스트 PASS · client tsc 0. (오늘 스냅샷은 수동 9421bfc로 push 완료)
+- 훅: `on-before-submit-prompt-agent-routing.cjs` 모델 게이트 중복 제거(게이트 훅 단독 출력) · 플레이봇·데일리커밋 보고 ack
+- 설정: `.vscode/settings.json` watcherExclude/search.exclude · `.cursorignore` 신규(로그·runs·android build)
+- 운영: Metro 재기동(8081) · TEMP 잔여 177개 삭제
+- 보류: Gradle 캐시 — 대표님 다음 단계
+
+### 추가 (01:00) — 상주 프로세스 자동 리플래시 탑재 (대표님 지시 「5번 자동재시작 규칙 적용 · 유사 문제 모두 자동 리플래시」)
+
+- 신규 `tools/long-run-monitor/monitor-process-refresh.ps1` — 워치독 루프 매 회 호출. 대상: watch-30m(run-monitor) · retention-audit · 8am/6pm 스케줄러 · owner-playlog(메모리만) · 워치독 자신(WMI 교체).
+  - 조건: 전용 메모리 상한(비상) · 20h↑는 04~05시만 · **크래시 logcat 사망 시 즉시**.
+  - Metro 8081 꺼짐 + DEBUGGABLE 기기 연결 → 자동 기동.
+- `run-perpetual-detection-watchdog.ps1`: refresh 호출 + SELF_REFRESH 블록.
+- **실발견**: 크래시 logcat이 **09-30 16:18부터 죽어 있었음**(crash-20260929 로그 마지막 기록) → 3.5일 크래시 수집 공백. 새 워치독 첫 회차에 `REFRESH watch-30m reason=crash-logcat-dead` → crash-20261004-005259.log 재가동 확인.
+- 워치독 교체 실행: 19908(5일) → **26448**. 첫 루프 정상(stack/report/poll/status/dash/econ 전부 OK).
+- `.vscode/settings.json` `typescript.tsserver.maxTsServerMemory: 2048`(기본 3072) — 초과 시 Cursor가 tsserver 자동 재기동.
+- 규칙 신규 `.cursor/rules/arcfire-long-running-process-refresh.mdc` (김팀장 규칙 폴더 — 검수 요청).
+- **추가 수정(02:22)** `start-watch-30m.ps1`: 기기 미연결 시 `adb logcat -c`가 무한 대기 → 재부팅 후 워치독 루프가 01:03~02:21 정지(감시 공백 78분). `adb get-state`=device일 때만 실행하도록 가드. 걸린 adb 종료 후 루프 재개 확인.
+- **추가 수정(02:40)** Metro 자동 기동이 `expo run:android` 컴파일 중 8081을 선점 → 「Port 8081 became busy」 설치 실패. `Invoke-MetroEnsure`에 빌드 진행 감지(run:android·gradlew·GradleWrapperMain) 시 skip 추가. 재빌드 02:44 설치 성공 확인 후 임시 비활성 플래그 제거.
+- **Cursor globalStorage 이동 완료(02:18)**: `C:\...\Cursor\User\globalStorage` → junction → `D:\커서채팅기록\globalStorage` · C 여유 34→74GB · 상세 perf-audit §6.
+- self-check: 두 ps1 파서 오류 0 · BOM 유지 · 모의 판정(현재 시각=조용한 시간 가정 시 워치독 `uptime=111h` 판정) 확인. 04시 실제 교체는 내일 새벽 로그로 확인 필요.
+
 > **운영 메모 2026-10-03 00:30** — 기기 「Unable to load script」: 앱이 `localhost:8081`로 번들 요청, 무선 adb 재연결로 `adb reverse` 목록이 비어 있었음 → `adb reverse tcp:8081 tcp:8081` 복구 · Metro reload 시 `Current Activity … received null` 예외로 스플래시 고착 → force-stop 후 재실행, 허브 정상 진입 확인. 앱 코드 변경 0. 재발 방지 제안: 무선 adb 재연결 시 reverse 자동 재설정(모니터/수집 데몬 ensure 단계에 1줄).
 > **→ 00:33 대표님 지시로 구현 완료(PENDING 검수)**: `ownerPlaylogAuto.ts` `needsMetroReverse`·`METRO_REVERSE_SPEC` · `watch-owner-playlog-auto.ts` `ensureMetroReverse()`(15s tick, 기기 연결 시 `adb reverse --list`에 tcp:8081 쌍 없으면 `adb reverse tcp:8081 tcp:8081` + 로그) · 테스트 1건 추가 → **69 PASS** · tsc 0 · 실측: reverse 수동 제거 → 15s 내 `metro_reverse_restored status=0`, 앱 pid 26212 유지. 앱 코드 변경 0 · commit 없음.
 

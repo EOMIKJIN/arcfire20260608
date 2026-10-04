@@ -24,15 +24,18 @@ export type LearningLite = {
   patterns: readonly PatternLite[];
 };
 
-/** Clock C 학습창. 이 이후 가상일은 감시만 — 정책 범프 금지. */
+/**
+ * 예전 120일 컷. 학습 상한으로 쓰지 않는다.
+ * 창을 닫기 전까지 한 세계를 이어 가고, 범프를 멈추는 조건은 포화(L60·퀘스트 정체)뿐이다.
+ */
 export const LEARN_HORIZON_DAYS = 120;
 export const LEARN_WINDOW_DAYS = 8;
 const CAMPAIGN_SEED_STRIDE = 100_003;
 const CAMPAIGN_SEED_MOD = 1_000_000_007;
 
-/** until-close는 120일 캠페인을 새 시드로 반복. 지정 --days 는 1회. */
+/** until-close는 일수 상한 없이 한 세계. 지정 --days 는 그 일수만 1회. */
 export function campaignDaysForHarness(untilClose: boolean, requestedDays: number): number {
-  if (untilClose) return LEARN_HORIZON_DAYS;
+  if (untilClose) return 0;
   return Math.max(1, Math.min(3650, requestedDays));
 }
 
@@ -46,8 +49,9 @@ export function nextCampaignRunId(baseRunId: string, campaignIndex: number): str
   return `${baseRunId}-c${campaignIndex}`;
 }
 
-export function shouldLoopNextCampaign(untilClose: boolean, recording: boolean): boolean {
-  return untilClose && recording;
+/** 120일·until-close 루프로 레벨 1에 되돌리지 않는다. 정체 재플레이는 stallReplay 가 하니스에서 따로 끊는다. */
+export function shouldLoopNextCampaign(_untilClose: boolean, _recording: boolean): boolean {
+  return false;
 }
 
 export const CODE_WINDOW_CAP = 90;
@@ -70,8 +74,9 @@ const EARLY_CODES = new Set([
   'EARLY_SPINE_OK',
 ]);
 
+/** 가상일이 있는 동안 학습한다. 120일에서 끊지 않는다. */
 export function inCampaignLearnWindow(day: number): boolean {
-  return day > 0 && day <= LEARN_HORIZON_DAYS;
+  return day > 0;
 }
 
 export function isTwinLearnCode(code: string): boolean {

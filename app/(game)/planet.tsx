@@ -129,6 +129,7 @@ import {
   tryPresentPendingMissionClearDialog,
 } from '../../src/missions/missionPlanetHubSync';
 import { runAfterIngameDialogIdle } from '../../src/game/ingameDialog/ingameDialogIdle';
+import { abortAllIngameDialogOnLeave } from '../../src/game/ingameDialog/ingameDialogApi';
 import { useIngameDialogStore } from '../../src/store/ingameDialogStore';
 import { StageShell } from '../../src/stages/StageShell';
 import {
@@ -525,15 +526,13 @@ export default function PlanetScreen() {
     applyMiningTeardownRef.current('hub_navigation');
 
     /**
-     * STAGE 이탈 시 오버레이/다이얼로그 잔존 방지 — 대사창을 오래 방치하다 닫고 바로
-     * 출발하면(웨이브 종료 대화·결과창 등) 루트 레벨 ArcOverlayHost/IngameDialogHost가
-     * 다음 STAGE 위에 그대로 남아 화면이 안 보일 수 있음(7/6 은하지도 검은화면).
-     * 오버레이는 onClose 부수효과(보상 지급 등)를 먼저 실행한 뒤 비움 — 보상 유실 방지.
+     * STAGE 이탈 시 오버레이/다이얼로그 잔존 방지.
+     * 대사 호스트는 루트라 타이틀 위에도 남는다. dismiss()는 완료 후 다음 씬을 다시 연다.
+     * 이탈은 완료 없이 세션·대기 체인만 끊는다.
+     * 보상 오버레이의 onClose는 그 앞에서 실행한다.
      */
     resolvePendingArcOverlaysForStageExit();
-    if (useIngameDialogStore.getState().session != null) {
-      useIngameDialogStore.getState().dismiss();
-    }
+    abortAllIngameDialogOnLeave();
 
     const sim = combatSimRef.current;
     const preserveCombat = opts?.preserveCombatSnapshot !== false;

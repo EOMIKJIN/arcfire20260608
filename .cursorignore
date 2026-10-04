@@ -1,0 +1,13 @@
+# Cursor 색인·AI 컨텍스트 제외 — 계속 쓰이는 로그/기록·빌드 산출물 (2026-10-04 PC 성능 점검)
+# 코드·문서·리포트(tools/kim-team-lead/reports)는 제외하지 않는다.
+android/app/build/
+android/build/
+android/.gradle/
+.expo/
+tools/play-bot-console/runs/
+tools/play-bot-console/logs/
+tools/long-run-monitor/logs/
+tools/memory-profiler/reports/*.json
+tools/balance-ops-audit/reports/
+tools/planet-economy-3h-audit/reports/
+tools/daily-commit/logs/

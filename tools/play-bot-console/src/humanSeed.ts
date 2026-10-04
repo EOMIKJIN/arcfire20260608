@@ -38,6 +38,10 @@ const VERB_TO_KIND: Record<string, ActionKind> = {
   talk: 'quest',
 };
 
+export function verbToActionKind(verb: string): ActionKind | undefined {
+  return VERB_TO_KIND[verb];
+}
+
 let cached: HumanSeedV0 | null | undefined;
 
 export function resetHumanSeedForTest(): void {
@@ -178,6 +182,10 @@ export function mergeHumanSeed(prev: HumanSeedV0 | null, next: HumanSeedV0): Hum
   const all = Array.from(byId.values()).sort((a, b) => traceTime(a).localeCompare(traceTime(b)));
   const traces = all.length > HUMAN_SEED_SESSION_CAP ? all.slice(all.length - HUMAN_SEED_SESSION_CAP) : all;
   return { ...next, traces, orderTop: orderTopOf(traces) };
+}
+
+export function readHumanSeedFile(dir: string): HumanSeedV0 | null {
+  return readSeedFile(humanSeedPath(dir));
 }
 
 function readSeedFile(dest: string): HumanSeedV0 | null {

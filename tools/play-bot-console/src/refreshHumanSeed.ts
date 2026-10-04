@@ -5,6 +5,7 @@
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { mergeHumanDelta, planHumanDelta, readUnconsumedHumanDelta, writeHumanDelta } from './humanDelta';
 import { writeHumanSeed, type HumanSeedV0, type SessionKind } from './humanSeed';
 import { memProfileToTraces, orderTopFromTraces } from './memProfileToSessionTrace';
 import { learnedDir } from './policy';
@@ -183,7 +184,12 @@ export function importHumanSeedFromMemProfile(
     traces,
     orderTop: orderTopFromTraces(traces),
   };
+  const delta = planHumanDelta(outDir, traces);
   const dest = writeHumanSeed(outDir, seed);
+  if (delta) {
+    const pending = readUnconsumedHumanDelta(outDir);
+    writeHumanDelta(outDir, pending ? mergeHumanDelta(pending, delta) : delta);
+  }
   return {
     dest,
     sessions: traces.length,

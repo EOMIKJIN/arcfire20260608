@@ -1,9 +1,15 @@
-# Daily audit — 2026-10-03T15:00:10.545Z
+# Daily audit — 2026-10-04T15:00:07.782Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
 ```
-src/combat/capitalCraftPool.test.ts(581,9): error TS2367: This comparison appears to be unintentional because the types '"approach"' and '"orbit"' have no overlap.
+tools/play-bot-console/play-bot-console.test.ts(1587,64): error TS2353: Object literal may only specify known properties, and 'restartIndex' does not exist in type 'Pick<StallMark, "reason" | "level" | "day" | "questCleared">'.
+tools/play-bot-console/play-bot-console.test.ts(1592,64): error TS2353: Object literal may only specify known properties, and 'restartIndex' does not exist in type 'Pick<StallMark, "reason" | "level" | "day" | "questCleared">'.
+tools/play-bot-console/play-bot-console.test.ts(1762,3): error TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+tools/play-bot-console/play-bot-console.test.ts(1784,3): error TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+tools/play-bot-console/src/cellLoop.ts(160,30): error TS18047: 'best.score' is possibly 'null'.
 ```
 
 **exit:** 2
@@ -52,18 +58,18 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 ## Largest TS/TSX under `src/` + `app/` (bytes)
 
 - 660,019 — `src/data/generated/galaxySystems100.generated.ts`
-- 505,914 — `src/data/generated/csvStoryScenes.ts`
+- 506,785 — `src/data/generated/csvStoryScenes.ts`
 - 500,299 — `src/data/generated/csvNpcCaptains.ts`
 - 482,337 — `src/data/generated/csvNpcCapitalShips.ts`
 - 383,335 — `src/data/generated/csvItemDefs.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
 - 174,274 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 161,657 — `src/data/generated/csvMissions.ts`
-- 125,050 — `src/i18n/locales/ko.ts`
+- 126,690 — `src/i18n/locales/ko.ts`
 - 121,265 — `src/data/generated/csvMainStorySpine.ts`
-- 113,920 — `src/i18n/locales/en.ts`
-- 105,843 — `app/(game)/worldmap.tsx`
-- 97,030 — `app/(game)/planet.tsx`
+- 115,590 — `src/i18n/locales/en.ts`
+- 105,977 — `app/(game)/worldmap.tsx`
+- 96,912 — `app/(game)/planet.tsx`
 - 90,835 — `src/data/generated/csvBarPatronage.ts`
 - 71,316 — `src/data/balance/generated/csvSynthSystemColonization.ts`
 - 71,070 — `src/data/generated/csvWeapons.ts`

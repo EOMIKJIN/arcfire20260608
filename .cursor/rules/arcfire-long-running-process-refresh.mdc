@@ -1,0 +1,22 @@
+---
+description: PC 상주 감시·스케줄러·데몬 프로세스 자동 리플래시 규칙 (2026-10-04 대표님 지시)
+globs: tools/long-run-monitor/**,tools/play-bot-console/**,tools/memory-profiler/**
+alwaysApply: false
+---
+
+# 장기 상주 프로세스 자동 리플래시
+
+정본 코드: `tools/long-run-monitor/monitor-process-refresh.ps1` (워치독 5분 루프가 매 회 호출)
+
+## 규칙
+
+1. **새 상주 프로세스(PowerShell 루프·node 스케줄러·데몬)를 만들면 `REFRESH_TARGETS`에 등록 필수** — pid 파일 + 멱등 `ensure-*.ps1` 한 쌍이 전제.
+2. 재기동 조건
+   - 전용 메모리 상한 초과 → 즉시
+   - 기동 20h↑ → **04~05시 KST에만** (08:00·18:00 보고 · 00:00 커밋 · 12:00 배치 회피)
+   - 부속 사망(크래시 logcat) + 기기 연결 → 즉시
+3. **실기 세션 수집기(owner-playlog-auto)는 메모리 상한만** — 시간 재기동 금지(세션 로그 유실).
+4. **Metro는 재기동 대상 아님**(앱 연결 끊김) — 꺼져 있고 개발 빌드(DEBUGGABLE)가 연결돼 있을 때 자동 기동만.
+5. 워치독 자신도 같은 조건으로 WMI 교체 기동 후 종료(Cursor 훅 Job 종속 회피).
+6. 끄기: `logs/process-refresh-DISABLED.flag` · Metro만 `logs/metro-autostart-DISABLED.flag`.
+7. 재기동 기록은 `tools/long-run-monitor/logs/perpetual-watchdog.log`의 `refresh REFRESH …` / `SELF_REFRESH` 줄.

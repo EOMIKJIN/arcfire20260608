@@ -276,6 +276,7 @@ const NPC_CAPTAIN_PORTRAIT_BY_ASSET_KEY: Record<string, ImageSourcePropType> = {
   'assets/images/npc/npc_cpt_sq_veil_hook.png': require('../../assets/images/npc/npc_cpt_sq_veil_hook.png'),
   'assets/images/npc/npc_cpt_story_darel_sosa.png': require('../../assets/images/npc/npc_cpt_story_darel_sosa.png'),
   'assets/images/npc/npc_cpt_story_ian_koval.png': require('../../assets/images/npc/npc_cpt_story_ian_koval.png'),
+  'assets/images/npc/npc_cpt_story_maren_cole.png': require('../../assets/images/npc/npc_cpt_story_maren_cole.png'),
   'assets/images/npc/npc_cpt_story_noah_frick.png': require('../../assets/images/npc/npc_cpt_story_noah_frick.png'),
   'assets/images/npc/npc_cpt_vector.png': require('../../assets/images/npc/npc_cpt_vector.png'),
   'assets/images/npc/npc_cpt_vega_blue_07.png': require('../../assets/images/npc/npc_cpt_vega_blue_07.png'),

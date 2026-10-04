@@ -23,6 +23,7 @@ import {
   lookupTcl,
 } from './catalog';
 import { EPOCH_MS, TICKS_PER_DAY } from './clock';
+import { starterGemBalance } from './bmWallet';
 
 function clanOfOwner(owner: string): { clan: string; kind: PlanetSlot['kind'] } {
   if (owner === 'BLUE') return { clan: BLUE_CLAN, kind: 'clan_hold' };
@@ -88,6 +89,12 @@ export function seedWorld(input: { runId: string; persona: PersonaId }): WorldSt
     combatWins: 0,
     combatLosses: 0,
     trades: 0,
+    mineralCargo: 0,
+    gems: starterGemBalance(),
+    gemExchangeDay: 1,
+    gemExchangeWeek: 0,
+    gemsSpentDay: 0,
+    gemsSpentWeek: 0,
     annexOk: 0,
     annexFail: 0,
     satInstalls: 0,

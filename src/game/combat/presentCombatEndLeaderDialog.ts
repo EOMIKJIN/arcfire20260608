@@ -15,6 +15,13 @@ import { t } from '../../i18n';
 import { resolveTransitCombatEndDialogCopy } from '../transitCombat/resolveTransitCombatEndDialog';
 
 const COMBAT_END_DIALOG_RETRY_MS = 5000;
+const STELLA_OPERATOR_CAPTAIN_ID = 'npc_cpt_operator_stella';
+
+/** 적 함장이 없을 때 기능 알림 초상. 문장은 호출측 fallback 그대로. */
+export function resolveStellaOperatorPortrait(): ImageSourcePropType | undefined {
+  const key = getNpcCaptain(STELLA_OPERATOR_CAPTAIN_ID)?.portraitImageAssetKey ?? null;
+  return resolveNpcCaptainPortraitSource(key) ?? undefined;
+}
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -106,7 +113,9 @@ export async function presentCombatEndLeaderDialog(input: {
     fallbackLabel,
     fallbackText,
   });
-  const imageSource = resolveNpcCaptainPortraitSource(copy.portraitAssetKey) ?? undefined;
+  const imageSource = copy.usedCaptain
+    ? resolveNpcCaptainPortraitSource(copy.portraitAssetKey) ?? undefined
+    : resolveStellaOperatorPortrait();
   return presentAdHocCombatEndDialog({
     label: copy.label,
     text: copy.text,

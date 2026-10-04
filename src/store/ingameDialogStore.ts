@@ -16,7 +16,10 @@ import {
   drainIngameDialogIdleCallbacks,
 } from '../game/ingameDialog/ingameDialogIdle';
 import { cancelIngameDialogFeatureLinkDelay } from '../game/ingameDialog/ingameDialogFeatureLink';
-import { bumpIngameDialogLeaveAbortGen } from '../game/ingameDialog/ingameDialogLeaveAbort';
+import {
+  bumpIngameDialogLeaveAbortGen,
+  getIngameDialogLeaveAbortGen,
+} from '../game/ingameDialog/ingameDialogLeaveAbort';
 import {
   bindUiSequenceDialogBusy,
   clearUiForegroundSequence,
@@ -115,6 +118,7 @@ function buildCompletionActionsForScene(
 }
 
 async function finishSession(session: IngameDialogSession): Promise<void> {
+  const leaveGen = getIngameDialogLeaveAbortGen();
   const onDismiss = session.kind === 'csv_scene' ? session.onDismiss : session.payload.onDismiss;
   if (session.kind === 'csv_scene') {
     const scene = getIngameDialogSceneById(session.sceneId);
@@ -126,7 +130,9 @@ async function finishSession(session: IngameDialogSession): Promise<void> {
       await runIngameDialogCompletionBatch('none', [action]);
     }
   }
+  if (getIngameDialogLeaveAbortGen() !== leaveGen) return;
   onDismiss?.();
+  if (getIngameDialogLeaveAbortGen() !== leaveGen) return;
   drainIngameDialogIdleCallbacks();
 }
 
@@ -291,8 +297,8 @@ export const useIngameDialogStore = create<IngameDialogState>((set, get) => ({
     clearReadyWatch();
     readyGen += 1;
     clearUiForegroundSequence();
-    cancelIngameDialogFeatureLinkDelay();
     cancelIngameDialogIdlePresentsAndNotify();
+    cancelIngameDialogFeatureLinkDelay();
     if (!get().session) return;
     set({ session: null });
   },

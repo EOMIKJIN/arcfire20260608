@@ -31,7 +31,7 @@ function isHubCombatMarker(event: string, detail: string): boolean {
   return HUB_COMBAT_MARK.test(detail) && event !== 'transit_combat_nav';
 }
 
-function verbOf(stage: string, event: string, detail: string): string | null {
+export function verbOf(stage: string, event: string, detail: string): string | null {
   if (SKIP_DETAIL.test(detail)) return null;
   if (isHubCombatMarker(event, detail)) return null;
   if (event === 'transit_hop_start' || detail.includes('departure_preflight')) return 'depart';

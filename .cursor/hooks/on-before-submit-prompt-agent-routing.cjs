@@ -9,7 +9,8 @@ const {
   buildAgentContext,
   buildUserAlert,
 } = require('./agentRoutingCore.cjs');
-const { buildPaidModelGateContext, buildPaidModelUserAlert } = require('./paidModelGateCore.cjs');
+// 모델 게이트 문구는 on-before-submit-prompt-paid-model-gate.cjs 가 단독 출력.
+// 여기서도 붙이면 매 프롬프트 문맥·사용자 메시지가 2회 중복(2026-10-04 PC 성능 점검).
 
 function main() {
   const input = readStdinJson();
@@ -20,8 +21,8 @@ function main() {
 
   process.stdout.write(
     JSON.stringify({
-      additional_context: `${buildPaidModelGateContext()}\n\n${buildAgentContext(active)}`,
-      user_message: `${buildPaidModelUserAlert()} ${userAlert}`,
+      additional_context: buildAgentContext(active),
+      user_message: userAlert,
     }),
   );
 }

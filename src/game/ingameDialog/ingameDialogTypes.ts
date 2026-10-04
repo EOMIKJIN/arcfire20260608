@@ -58,7 +58,7 @@ export type PresentIngameDialogOptions = {
 export type IngameDialogTextContext = {
   missionTitle?: string;
   missionTitleEn?: string;
-  /** 퀘스트 완료 담당 NPC — [담당자] 토큰 + 초상 오버라이드(speakerNpcCaptainId보다 우선) */
+  /** 동적 화자. 퀘스트 완료 알림은 넘기지 않는다(스텔라 고정). 넘기면 초상이 이 함장으로 바뀐다. */
   npcCaptainId?: string;
   npcName?: string;
   npcNameEn?: string;

@@ -43,9 +43,11 @@ $statusScript = Join-Path $ScriptRoot 'monitor-operational-status.ps1'
 $dashboardScript = Join-Path $ScriptRoot 'generate-monitor-dashboard.cjs'
 $dailyBalanceOps = Join-Path $ScriptRoot 'ensure-daily-balance-ops.ps1'
 $invokeNodeHidden = Join-Path $ScriptRoot 'invoke-node-hidden.ps1'
+$processRefresh = Join-Path $ScriptRoot 'monitor-process-refresh.ps1'
 
 while ($true) {
   . $invokeNodeHidden
+  . $processRefresh
   if (Test-Path $disableFlag) {
     Log 'DISABLED flag detected — stop'
     break
@@ -55,6 +57,8 @@ while ($true) {
     break
   }
   try {
+    # 비대·장기·부속 사망 프로세스 종료 → 바로 아래 ensure 가 재기동
+    Invoke-MonitorProcessRefresh | ForEach-Object { Log "refresh $_" }
     & $ensureStack -Package $Package -IntervalMin $MemIntervalMin -RetentionAuditEveryMin $RetentionAuditEveryMin |
       ForEach-Object { Log "stack $_" }
     & $ensureReport -Package $Package -IntervalMin $ReportWatchMin |
@@ -66,6 +70,19 @@ while ($true) {
     & $dailyBalanceOps 2>&1 | ForEach-Object { Log "econ $_" }
   } catch {
     Log "ERROR $($_.Exception.Message)"
+  }
+  try {
+    $selfReason = Test-WatchdogSelfRefresh
+    if ($selfReason) {
+      $r = Start-WatchdogReplacement -runnerPath $PSCommandPath
+      if ($r.ReturnValue -eq 0) {
+        Log "SELF_REFRESH reason=$selfReason replacement_pid=$($r.ProcessId) — exit"
+        break
+      }
+      Log "SELF_REFRESH_FAIL reason=$selfReason wmi=$($r.ReturnValue) — keep running"
+    }
+  } catch {
+    Log "SELF_REFRESH_ERROR $($_.Exception.Message)"
   }
   Start-Sleep -Seconds ($EnsureEveryMin * 60)
 }

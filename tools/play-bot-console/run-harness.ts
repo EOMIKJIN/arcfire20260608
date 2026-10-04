@@ -18,7 +18,12 @@ import {
   writeStatus,
 } from './src/io';
 import { persistLearningNow, recordDailyLearning, recordLearning } from './src/learn';
-import { adaptPolicy, decideAdaptPeriodDays, learnedDir, loadPolicy } from './src/policy';
+import { adaptPolicy, learnedDir, loadPolicy } from './src/policy';
+import { commitLearnCycle, readCombatMethod } from './src/learnCycle';
+import { flushCellLap, loadCellLoop } from './src/cellLoop';
+import { commitGameIssues, loadGameIssues, resetGameIssueRunMemory } from './src/gameIssues';
+import { reloadPlayIntelligence } from './src/playIntelligence';
+import { loadStallReplay, observeStall, resetStallStreak, stallRestartCount } from './src/stallReplay';
 import { reloadHumanSeedIfChanged } from './src/humanSeed';
 import { flushLearnedWrites } from './src/learnedIo';
 import { resetRawPlayData } from './src/housekeep';
@@ -108,9 +113,9 @@ async function main(): Promise<void> {
 
   if (!has('--quiet')) {
     console.log('=== Arcfire 플레이봇콘솔 ===');
-    console.log(`persona=${personaId} (${PERSONAS[personaId].titleKo})  stage=${stage}  ${untilClose ? `until-close · 캠페인 ${campaignDays}일` : `days=${campaignDays}`}  seed=${seed}`);
+    console.log(`persona=${personaId} (${PERSONAS[personaId].titleKo})  stage=${stage}  ${untilClose ? 'until-close · 한 세계 연속 · 학습 유지' : `days=${campaignDays}`}  seed=${seed}`);
     console.log(`run=${baseRunId}`);
-    console.log('명시 종료 전까지 지속 · 창을 닫아도 기록 유지 · 파괴 시 재탑승 · 주기 분석 후 정책 자체 개선');
+    console.log('명시 종료 또는 콘솔 창 종료까지 지속 · 파괴 시 재탑승 · 주기 분석 후 정책 자체 개선');
     if (untilWall > 0) {
       console.log(`벽시계 ${new Date(untilWall).toISOString()} 는 학습 체크만 · 기록은 다음 08:00으로 넘김`);
     }
@@ -122,12 +127,19 @@ async function main(): Promise<void> {
   let lastWorld: WorldState | null = null;
   let lastPaths: ReturnType<typeof ensureRunPaths> | null = null;
   let lastAnalyze = '';
+  let stallRestart = false;
+  loadStallReplay(learnedDir());
+  loadGameIssues(learnedDir());
 
   while (isRecording()) {
+    stallRestart = false;
+    resetStallStreak();
+    resetGameIssueRunMemory();
     // 수집 데몬이 대표님 세션을 넣었으면 이번 캠페인부터 반영(T5)
     if (reloadHumanSeedIfChanged(learnedDir()) && campaign > 0 && !has('--quiet')) {
       console.log('대표님 시드 갱신 감지 → 이번 캠페인부터 반영');
     }
+    loadCellLoop(learnedDir());
     const campaignRunId = nextCampaignRunId(baseRunId, campaign);
     const campaignSeed = nextCampaignSeed(seed, campaign);
     const paths = ensureRunPaths(campaignRunId);
@@ -147,6 +159,7 @@ async function main(): Promise<void> {
       stronger: strong,
       shouldContinue: () => {
         if (!isRecording()) return false;
+        if (stallRestart) return false;
         const rolled = continuePastWall(untilWall, Date.now());
         if (rolled.rolled) {
           untilWall = rolled.untilWallMs;
@@ -173,27 +186,124 @@ async function main(): Promise<void> {
           }
         },
         onDay: (world, report, dayJournal) => {
+          const intel = reloadPlayIntelligence(learnedDir());
+          if (intel.changed) {
+            emit(world, paths, mudTail, {
+              t: Date.now(),
+              day: world.day,
+              tick: world.tick,
+              kind: 'LEARN',
+              line: `플레이지능 갱신 · 채굴상한 ${intel.card.mineCap} · 수련선 ${intel.card.fairFightMin}`,
+            });
+          }
+          if (reloadHumanSeedIfChanged(learnedDir()) && !has('--quiet')) {
+            emit(world, paths, mudTail, {
+              t: Date.now(),
+              day: world.day,
+              tick: world.tick,
+              kind: 'LEARN',
+              line: '대표님 시드 갱신 · 진행 세계는 유지',
+            });
+          }
           if (reports.length >= 21) reports.shift();
           reports.push(report);
           if (learn) {
             const learned = recordDailyLearning(world, report, dayJournal);
-            const every = Math.max(2, loadPolicy().adaptEveryDays || decideAdaptPeriodDays(learned));
-            if (world.day === 2 || world.day % every === 0) {
-              const ad = adaptPolicy(personaId, report, learned);
+            const ad = adaptPolicy(personaId, report, learned);
+            emit(world, paths, mudTail, {
+              t: Date.now(),
+              day: world.day,
+              tick: world.tick,
+              kind: 'LEARN',
+              line: ad.skipped
+                ? `성장 L${report.kpi.level} exp=${report.kpi.totalExp} · ${ad.notes.join(' / ')}`
+                : `정책#${loadPolicy().generation} · ${ad.notes.join(' / ')}`,
+            });
+            const kpi = report.kpi;
+            const cycle = commitLearnCycle(learnedDir(), {
+              runId: world.runId,
+              day: world.day,
+              level: kpi.level,
+              questCleared: kpi.questCleared,
+              annexOk: kpi.annexOk,
+              colonizeOk: kpi.colonizeOk,
+              blue: kpi.blue,
+              red: kpi.red,
+              independent: kpi.independent,
+              capitalDestroyed: kpi.capitalDestroyed,
+              credits: kpi.credits,
+              combatWins: kpi.combatWins,
+              combatLosses: kpi.combatLosses,
+              planetId: world.currentPlanetId,
+              combatMethod: readCombatMethod(learnedDir()),
+              botPatchLoaded: true,
+            }, Date.now());
+            if (cycle.wrote) {
               emit(world, paths, mudTail, {
                 t: Date.now(),
                 day: world.day,
                 tick: world.tick,
                 kind: 'LEARN',
-                line: `${ad.skipped ? '정책유지' : '정책#'} 주기${ad.everyDays}일 · ${ad.notes.join(' / ')}`,
+                line: `학습주기 ${cycle.assessment.phase} · 완료선언 없음 · 차이 ${cycle.assessment.gaps.length}`,
               });
-            } else {
+            }
+            const cell = flushCellLap(learnedDir(), Date.now());
+            emit(world, paths, mudTail, {
+              t: Date.now(),
+              day: world.day,
+              tick: world.tick,
+              kind: 'LEARN',
+              line: `세포반복 ${cell.lap} · 완료선언 없음 · 전투 ${cell.combatPlace || '기존경로'} · 사람순위밖 · 교역보류`,
+            });
+            const stall = observeStall(learnedDir(), {
+              day: world.day,
+              level: kpi.level,
+              totalExp: kpi.totalExp,
+              questCleared: kpi.questCleared,
+              annexOk: kpi.annexOk,
+              colonizeOk: kpi.colonizeOk,
+              independent: kpi.independent,
+              devSum: kpi.devSum,
+              combatWins: kpi.combatWins,
+              credits: kpi.credits,
+            }, world.runId, Date.now());
+            const issues = commitGameIssues(learnedDir(), {
+              runId: world.runId,
+              day: world.day,
+              level: kpi.level,
+              questCleared: kpi.questCleared,
+              independent: kpi.independent,
+              annexOk: kpi.annexOk,
+              colonizeOk: kpi.colonizeOk,
+              combatWins: kpi.combatWins,
+              combatLosses: kpi.combatLosses,
+              questFlatDays: stall.sectionStreak,
+              lastHoldReason: world.lastHoldReason,
+              credits: kpi.credits,
+              hangarShips: kpi.hangarShips,
+              findings: report.findings,
+            }, Date.now(), stall.restart ? {
+              force: true,
+              reanalysis: stall.reanalysis,
+              stallRestarts: stallRestartCount(),
+            } : undefined);
+            if (issues.addedIds.length > 0) {
               emit(world, paths, mudTail, {
                 t: Date.now(),
                 day: world.day,
                 tick: world.tick,
                 kind: 'LEARN',
-                line: `성장 L${report.kpi.level} exp=${report.kpi.totalExp} 다음정책 D${every}`,
+                line: `게임문제 ${issues.addedIds.join(' ')}`,
+              });
+            }
+            if (stall.restart) {
+              stallRestart = true;
+              emit(world, paths, mudTail, {
+                t: Date.now(),
+                day: world.day,
+                tick: world.tick,
+                kind: 'LEARN',
+                line: `정체판단 ${stall.reason === 'section' ? '구간' : '성장'} · 처음부터 재플레이 · ${stall.reanalysis}`,
               });
             }
           }
@@ -250,6 +360,10 @@ async function main(): Promise<void> {
       }
     }
 
+    if (stallRestart && isRecording()) {
+      campaign += 1;
+      continue;
+    }
     if (!shouldLoopNextCampaign(untilClose, isRecording())) break;
     campaign += 1;
   }

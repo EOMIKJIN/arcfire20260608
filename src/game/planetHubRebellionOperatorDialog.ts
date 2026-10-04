@@ -18,7 +18,7 @@ import { isIngameDialogActive, presentAdHocIngameDialog } from './ingameDialog/i
 import { usePlayerStore } from '../store/playerStore';
 import { markHubDialogBadgeAcknowledged } from './planetHubNpcDialog';
 
-const OPERATOR_LABEL_FALLBACK_KO = '[ 안내 오퍼레이터 ]';
+const OPERATOR_LABEL_FALLBACK_KO = '[ 스텔라 아리스 ]';
 
 function isRebellionOperatorAlertAcknowledged(ackKey: string): boolean {
   const keys = usePlayerStore.getState().player?.flags.acknowledgedHubDialogKeys ?? [];

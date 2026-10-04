@@ -578,7 +578,8 @@ test('드론 — 함재기와 같이 즉시 표적 접근 후 선회·충돌', (
   let strikeHits = 0;
   for (let i = 0; i < 80; i++) {
     tickCapitalCrafts(pool, 16, agents, scratch);
-    if (pool[0]!.phase === 'orbit') sawOrbit = true;
+    // assert.equal(…, 'approach')가 phase를 리터럴로 좁혀 둠 — tick이 값을 바꾸므로 비교 시 넓힌다(TS2367)
+    if ((pool[0]!.phase as string) === 'orbit') sawOrbit = true;
     if (!pool[0]!.alive) {
       strikeHits = scratch.count;
       break;

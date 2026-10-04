@@ -10,7 +10,9 @@ $ts = Get-Date -Format 'yyyyMMdd-HHmmss'
 $crashLog = Join-Path $logDir "crash-$ts.log"
 $pidFile = Join-Path $logDir 'watch-30m.pid'
 
-adb logcat -c 2>$null | Out-Null
+# 기기 없을 때 `adb logcat -c`는 기기 대기로 무한 정지 → 워치독 루프 전체가 멈춤(2026-10-04 재부팅 후 실측)
+$adbState = ((& adb get-state 2>$null) -join '').Trim()
+if ($adbState -eq 'device') { adb logcat -c 2>$null | Out-Null }
 
 # 단일 logcat (앱 부하 최소): crash + MEM_PROFILE(I) 통합 — 2중 adb logcat 금지
 Start-Process -WindowStyle Hidden -FilePath 'adb' -ArgumentList @(

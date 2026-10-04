@@ -8,7 +8,6 @@ import {
 import { snapshotKpi, sumDevLevels } from './world';
 import { analyzeEarlyFeel } from './earlyFeel';
 import { canLearnAny } from './progress';
-import { inCampaignLearnWindow, LEARN_HORIZON_DAYS } from './learnGate';
 
 export function analyzeDay(
   world: WorldState,
@@ -146,14 +145,6 @@ export function analyzeDay(
     for (let i = 0; i < early.length; i += 1) findings.push(early[i]);
     world.earlyFeelReported = true;
   }
-  if (!inCampaignLearnWindow(world.day) && world.day % 16 === 0) {
-    findings.push({
-      severity: 'info',
-      code: 'LEARN_HORIZON',
-      detail: `가상 D${world.day} > ${LEARN_HORIZON_DAYS} — Clock C 학습창 밖 · 감시만`,
-    });
-  }
-
   if (findings.length === 0) {
     findings.push({
       severity: 'info',

@@ -25,6 +25,7 @@ import { resolveTransitCombatEndDialogCopy } from './resolveTransitCombatEndDial
 import {
   presentAdHocCombatEndDialog,
   presentCombatEndLeaderDialog,
+  resolveStellaOperatorPortrait,
 } from '../combat/presentCombatEndLeaderDialog';
 
 export type TransitCombatPostFlowPayload = {
@@ -307,7 +308,9 @@ export async function runTransitCombatPostFlow(payload: TransitCombatPostFlowPay
         fallbackLabel: t('combat.transitEndOperator'),
         fallbackText,
       });
-      const imageSource = resolveNpcCaptainPortraitSource(copy.portraitAssetKey) ?? undefined;
+      const imageSource = copy.usedCaptain
+        ? resolveNpcCaptainPortraitSource(copy.portraitAssetKey) ?? undefined
+        : resolveStellaOperatorPortrait();
       await presentAdHocCombatEndDialog({
         label: copy.label,
         text: copy.text,

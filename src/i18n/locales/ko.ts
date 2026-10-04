@@ -640,7 +640,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'combat.missingDataBody': '이동중 전투용 해적 전함 테이블 참조를 찾지 못했습니다.',
   'combat.headerTitle': '⚔ 이동중 전투',
   'combat.battleResultTitle': '✦ 전투 결과 ✦',
-  'combat.transitEndOperator': '함선 AI',
+  'combat.transitEndOperator': '스텔라 아리스',
   'combat.transitEndVictoryBody': '교전 종료. 적 함대 격파.\n크레딧 +{credits} · 경험치 +{exp}\n목적지 성계로 항로를 재개합니다.',
   'combat.transitEndFleeBody': '교전을 이탈했습니다.\n손실을 최소화하며 목적지 성계로 항로를 재개합니다.',
   'combat.enemyDefeatFallback': '함선이 먼저 꺾였다. 살아서 빠진다. 이건 끝이 아니다.',
@@ -713,7 +713,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'bmShop.premium.subtitle': '보석팩·스타터팩·시즌패스·VIP — 현금(IAP) 결제',
   'bmShop.exchange.title': '크레딧 교환',
   'bmShop.exchange.subtitle': '보석을 크레딧으로 교환합니다. 크레딧은 현금으로 직접 구매할 수 없습니다.',
-  'bmShop.exchange.noticeOneWay': '※ 보석→크레딧 단방향 · 일 500💎 교환 상한 · 크레딧→보석 불가',
+  'bmShop.exchange.noticeOneWay': '※ 보석→크레딧 단방향 · 크레딧→보석 불가',
   'bmShop.noticeDummy': '※ 더미 UI · 인앱 결제 연동은 추후 구현',
   'bmShop.overlap.familyHint': '※ 같은 계열 상위 상품은 하위 상품의 혜택을 모두 포함합니다. 같이 구매하면 기능이 중복됩니다.',
   'bmShop.overlap.includesAll': '{packs}의 모든 혜택이 이 상품에 포함됩니다. 하위 상품을 같이 구매할 필요는 없습니다.',
@@ -744,11 +744,8 @@ export const KO_DICTIONARY: I18nDictionary = {
   'bmShop.exchange.successTitle': '교환 완료',
   'bmShop.exchange.successBody': '💎 {gems} → {credits}',
   'bmShop.exchange.failInsufficientGems': '보석이 부족합니다.',
-  'bmShop.exchange.failDailyCap': '오늘 교환 한도(500💎)를 초과했습니다.',
-  'bmShop.exchange.failWeeklyCap': '이번 주 교환 한도(2,000💎)를 초과했습니다.',
   'bmShop.exchange.failNoPlayer': '플레이어 데이터를 불러올 수 없습니다.',
   'bmShop.exchange.failUnknown': '교환할 수 없는 상품입니다.',
-  'bmShop.hud.exchangeCapDaily': '오늘 교환 {used} / {cap} 💎',
   'bmShop.badge.popular': '인기',
   'bmShop.badge.bestValue': '최고 가성비',
   'bmShop.badge.limited': '한정',
@@ -809,7 +806,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'bmShop.product.ex_gems_300.title': '💎 300 → 144,000 Cr',
   'bmShop.product.ex_gems_300.desc': '보석 300개 → 크레딧 144,000 (480 Cr/💎)',
   'bmShop.product.ex_gems_500.title': '💎 500 → 250,000 Cr',
-  'bmShop.product.ex_gems_500.desc': '보석 500개 → 크레딧 250,000 (500 Cr/💎 · 일일 cap)',
+  'bmShop.product.ex_gems_500.desc': '보석 500개 → 크레딧 250,000 (500 Cr/💎)',
 
   'planet.miningStop': '채굴 중단',
   'planet.mining': '채굴',
@@ -1829,19 +1826,19 @@ export const KO_DICTIONARY: I18nDictionary = {
   'news.rebellionSimmering.body': '{planet} — 전복 시도 실패 · 내전(simmering)',
 
   // ── 오퍼레이터 — 빈부격차·반란 인게임 대화 (operatorRebellion) ──
-  'operatorRebellion.wdiUnrest.label': '[ 안내 오퍼레이터 ]',
+  'operatorRebellion.wdiUnrest.label': '[ 스텔라 아리스 ]',
   'operatorRebellion.wdiUnrest.text':
     '[닉네임]님, 아크코어 경제 감시 채널입니다.\n\n{planet} 행성의 빈부격차 지수(WDI)가 불안 구간({wdi})에 진입했습니다.\n인구·재정·치안 지표를 점검하고, 인구 거주 돔 등 안정화 시설을 검토해 주세요.',
-  'operatorRebellion.wdiDanger.label': '[ 안내 오퍼레이터 ]',
+  'operatorRebellion.wdiDanger.label': '[ 스텔라 아리스 ]',
   'operatorRebellion.wdiDanger.text':
     '[닉네임]님, 긴급 통보입니다.\n\n{planet} WDI가 위험 구간({wdi})에 도달했습니다.\n정부 전복 시도가 임박할 수 있으니 행성 안정도·점유·증서 상태를 즉시 확인하십시오.',
-  'operatorRebellion.simmering.label': '[ 안내 오퍼레이터 ]',
+  'operatorRebellion.simmering.label': '[ 스텔라 아리스 ]',
   'operatorRebellion.simmering.text':
     '[닉네임]님, {planet}에서 전복 시도가 격화됐으나 아직 성공하지 못했습니다.\n내전(simmering) 상태 — WDI {wdi}.\n경제·인구 패널티가 누적 중이니 안정화 조치를 권고합니다.',
-  'operatorRebellion.overthrow.label': '[ 안내 오퍼레이터 ]',
+  'operatorRebellion.overthrow.label': '[ 스텔라 아리스 ]',
   'operatorRebellion.overthrow.text':
     '[닉네임]님, {planet}에서 정부 전복이 발생했습니다.\n{prevSide} 정권이 붕괴·중립화되었고, 소유권 증서는 무효화되었습니다.\nWDI {wdi} — 무역소에서 증서 재구매가 필요할 수 있습니다.',
-  'operatorRebellion.fallback.label': '[ 안내 오퍼레이터 ]',
+  'operatorRebellion.fallback.label': '[ 스텔라 아리스 ]',
   'operatorRebellion.fallback.text': '[닉네임]님, {planet} 행성 안정도 이상 보고(WDI {wdi})를 확인해 주세요.',
   'news.scope.allTradePorts': '전체 무역소',
   'news.scope.planetTradePorts': '{count}개 행성 무역소',

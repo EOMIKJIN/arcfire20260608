@@ -20,12 +20,9 @@ import {
   resolveBmProductOverlapNotes,
 } from '../../../bm/bmProductOfferCopy';
 import {
-  ensureBmExchangeLedgerReady,
   executeGemToCreditExchange,
   mapGemExchangeErrorKey,
 } from '../../../bm/gemExchangeService';
-import { buildExchangeCapSnapshot } from '../../../bm/gemExchangeModel';
-import { getBmPolicyNumber } from '../../../bm/bmCatalogIndex';
 import { formatGemBalance, resolvePlayerGemBalance } from '../../../bm/bmWalletDisplay';
 import { isPlanetDeedIapProductId } from '../../../bm/planetDeedCashGrantPolicy';
 import {
@@ -37,7 +34,6 @@ import {
   readPlanetDeedGrantStatus,
   type PlanetDeedPickerRow,
 } from '../../../bm/planetDeedCashGrantService';
-import { useBmExchangeLedgerStore } from '../../../store/bmExchangeLedgerStore';
 import { usePlanetDeedCashGrantStore } from '../../../store/planetDeedCashGrantStore';
 import { useT } from '../../../i18n';
 import { usePlayerStore } from '../../../store/playerStore';
@@ -159,24 +155,12 @@ export const BmShopOverlayContent = memo(function BmShopOverlayContent({
   const gemBalance = resolvePlayerGemBalance(player);
   const creditBalance = player?.credits ?? 0;
   const actionLabel = t(resolveBmShopActionKey(entry.shopKind));
-  const dailyUsedGems = useBmExchangeLedgerStore((s) => s.dailyGemsExchanged);
-  const weeklyUsedGems = useBmExchangeLedgerStore((s) => s.weeklyGemsExchanged);
   const deedClaimedPlanetId = usePlanetDeedCashGrantStore((s) => s.claimedPlanetId);
   const deedPendingGrant = usePlanetDeedCashGrantStore((s) => s.pendingGrant);
-  const exchangeCap = buildExchangeCapSnapshot(
-    dailyUsedGems,
-    weeklyUsedGems,
-    getBmPolicyNumber('gem_exchange_weekly_cap_gems', 2000),
-  );
   const [deedPickerOpen, setDeedPickerOpen] = useState(false);
   const [pickerRows, setPickerRows] = useState<PlanetDeedPickerRow[]>([]);
   const [selectedPlanetId, setSelectedPlanetId] = useState<string | null>(null);
   const [deedClaiming, setDeedClaiming] = useState(false);
-
-  useEffect(() => {
-    if (entry.shopKind !== 'exchange') return;
-    void ensureBmExchangeLedgerReady();
-  }, [entry.shopKind]);
 
   useEffect(() => {
     if (entry.shopKind !== 'premium') return;
@@ -311,14 +295,6 @@ export const BmShopOverlayContent = memo(function BmShopOverlayContent({
           {t('bmShop.hud.credits', { amount: formatCredits(creditBalance, { suffix: false }) })}
         </Text>
       </View>
-      {entry.shopKind === 'exchange' ? (
-        <Text style={styles.capHint}>
-          {t('bmShop.hud.exchangeCapDaily', {
-            used: exchangeCap.dailyUsedGems,
-            cap: exchangeCap.dailyCapGems,
-          })}
-        </Text>
-      ) : null}
       <Text style={styles.notice}>{t(resolveBmShopNoticeKey(entry.shopKind))}</Text>
       {entry.shopKind === 'premium' ? (
         <Text style={styles.overlapHint}>{t('bmShop.overlap.familyHint')}</Text>

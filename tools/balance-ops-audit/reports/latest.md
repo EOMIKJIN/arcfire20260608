@@ -1,6 +1,6 @@
 # ArcCore Balance Ops Audit
 
-Generated: 2026-10-03T15:02:43.746Z
+Generated: 2026-10-04T15:02:43.774Z
 
 **Overall:** WARN
 
@@ -35,34 +35,33 @@ exit: 0
 
 ## 학습 인사이트 (자동)
 
-- [ok] Level-band drift max gap improved -20115.3% → **none**
-- [warn] Planet fiscal WARN — max fee/upkeep 3.02× gini=0.258 → **monitor_fiscal_closed_loop**
+- [warn] Planet fiscal WARN — max fee/upkeep 3.07× gini=0.307 → **monitor_fiscal_closed_loop**
 
 ## 권장 다음 조치 (우선순위)
 
-1. monitor_fiscal_closed_loop — Planet fiscal WARN — max fee/upkeep 3.02× gini=0.258
+1. monitor_fiscal_closed_loop — Planet fiscal WARN — max fee/upkeep 3.07× gini=0.307
 
 ---
 
 # 행성 경제 3h 전수 검사
 
-Generated: 2026-10-03T15:02:39.622Z
-KST day: 2026-10-04
+Generated: 2026-10-04T15:02:41.537Z
+KST day: 2026-10-05
 **Overall:** WARN
 
 ## 시스템 동작 (헤드리스 convoy + CSV 유지비 예측)
 
-- Convoy 일일: ran=true ok=15 fail=4 demandCovered=18
-- 수송선단 금고: 533,730 cr
-- RED 금고 Δ(수수료·헤드리스): 128,639 cr
-- Convoy 실패: crimson_base, blood_station, nightfall_citadel, core_prime
+- Convoy 일일: ran=true ok=17 fail=2 demandCovered=18
+- 수송선단 금고: 545,582 cr
+- RED 금고 Δ(수수료·헤드리스): 128,162 cr
+- Convoy 실패: nightfall_citadel, core_prime
 - 유지비 예측(점유 시드): RED 일합 8000 cr · BLUE 일합 5600 cr · 점유 22행성
 - 교역 행성 수익 발생: 19/19
 
 ## 행성 재정 KPI
 
 - **Overall (fiscal):** WARN
-- max fee/upkeep: **3.02×** · min: 0.45× · Gini: 0.258
+- max fee/upkeep: **3.07×** · min: 0.08× · Gini: 0.307
 - WARN 0 · FAIL 0 · deficit 5
 - policy: warn≥20× fail≥50×
 
@@ -71,29 +70,29 @@ KST day: 2026-10-04
 | 행성 | 점유시드 | 유지비(일) | 팩션수수료 | fee/upkeep | 상태 |
 |------|---------|-----------|----------|-----------|------|
 | arcadia_prime | BLUE | 901 | 566 | 0.63× | deficit |
-| solar_station | BLUE | 950 | 835 | 0.88× | deficit |
+| solar_station | BLUE | 1004 | 1136 | 1.13× | OK |
 | minerva_deep | BLUE | 1460 | 3672 | 2.52× | OK |
-| eden_city | BLUE | 1077 | 1539 | 1.43× | OK |
-| iron_remnant | BLUE | 1605 | 4473 | 2.79× | OK |
+| eden_city | BLUE | 942 | 793 | 0.84× | deficit |
+| iron_remnant | BLUE | 1583 | 4353 | 2.75× | OK |
 | draco_haven | BLUE | 931 | 733 | 0.79× | deficit |
-| omega_hub | RED | 1370 | 3172 | 2.32× | OK |
-| helios_core | NEUTRAL | 1601 | 4452 | 2.78× | OK |
-| sirius_border | RED | 963 | 911 | 0.95× | deficit |
-| perseus_memorial | RED | 1225 | 2363 | 1.93× | OK |
-| crimson_base | RED | 1542 | 4124 | 2.67× | OK |
-| dark_haven | RED | 1057 | 1429 | 1.35× | OK |
-| blood_station | RED | 1509 | 3941 | 2.61× | OK |
-| shadow_market | NEUTRAL | 1750 | 5279 | 3.02× | OK |
+| omega_hub | RED | 1332 | 2956 | 2.22× | OK |
+| helios_core | NEUTRAL | 1570 | 4278 | 2.72× | OK |
+| sirius_border | RED | 1023 | 1243 | 1.22× | OK |
+| perseus_memorial | RED | 1152 | 1958 | 1.7× | OK |
+| crimson_base | RED | 1556 | 4202 | 2.7× | OK |
+| dark_haven | RED | 1129 | 1829 | 1.62× | OK |
+| blood_station | RED | 811 | 63 | 0.08× | deficit |
+| shadow_market | NEUTRAL | 1787 | 5486 | 3.07× | OK |
 | nightfall_citadel | RED | 1078 | 1545 | 1.43× | OK |
-| core_prime | RED | 1075 | 1532 | 1.43× | OK |
+| core_prime | RED | 1491 | 3840 | 2.58× | OK |
 | genesis_origin | NEUTRAL | 1115 | 1752 | 1.57× | OK |
-| synth_002_p | — | 870 | 394 | 0.45× | deficit |
+| synth_002_p | — | 818 | 105 | 0.13× | deficit |
 | synth_003_p | — | 1474 | 3746 | 2.54× | OK |
 
 ## 3h 델타
 
-- 이전: 2026-10-02T15:58:55.578Z
-- 팩션 수수료 합계 Δ: 2106 cr
+- 이전: 2026-10-03T15:02:39.622Z
+- 팩션 수수료 합계 Δ: -2202 cr
 
 ## 실기기 행성정보 팝업
 

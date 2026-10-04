@@ -3,6 +3,10 @@
   "hooks": {
     "sessionStart": [
       {
+        "command": ".cursor/hooks/on-session-start-session-burden.cjs",
+        "timeout": 3
+      },
+      {
         "command": ".cursor/hooks/on-session-start-paid-model-gate.cjs",
         "timeout": 5
       },
@@ -36,6 +40,10 @@
     ],
     "beforeSubmitPrompt": [
       {
+        "command": ".cursor/hooks/on-before-submit-prompt-session-burden.cjs",
+        "timeout": 3
+      },
+      {
         "command": ".cursor/hooks/on-before-submit-prompt-paid-model-gate.cjs",
         "timeout": 5
       },
@@ -58,6 +66,12 @@
       {
         "command": ".cursor/hooks/on-before-submit-prompt-incident-auto-fix.cjs",
         "timeout": 8
+      }
+    ],
+    "preCompact": [
+      {
+        "command": ".cursor/hooks/on-pre-compact-session-burden.cjs",
+        "timeout": 3
       }
     ],
     "stop": [

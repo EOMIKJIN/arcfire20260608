@@ -13,20 +13,11 @@ import {
   setLearnedImmediateForTest,
 } from './learnedIo';
 import {
-  inCampaignLearnWindow,
-  isAdaptExcludedCode,
   isCollapsedWeights,
-  isSaturatedGrowth,
-  LEARN_WINDOW_DAYS,
   isNewRunForScore,
-  notesEqual,
-  weightsNear,
-  shouldRollbackScore,
-  windowCombatDelta,
-  windowHangarDelta,
-  windowScore,
 } from './learnGate';
-import { blendPersonaWeights, loadHumanSeed } from './humanSeed';
+import { blendPersonaWeights, loadHumanSeed, verbToActionKind } from './humanSeed';
+import { consumeHumanDelta, readUnconsumedHumanDelta } from './humanDelta';
 
 export type PolicyHealth = {
   stuck: boolean;
@@ -35,6 +26,8 @@ export type PolicyHealth = {
   lastScore: number | null;
   /** lastScore를 잰 가상일 — 런/캠페인이 바뀌어 day가 되돌아가면 기준 초기화(T1 래칫 방지). */
   lastScoreDay?: number | null;
+  /** lastScore를 잰 레벨 밴드(10레벨). 밴드가 바뀌면 기준 초기화. */
+  lastScoreLevel?: number | null;
   unstuckAt?: string;
 };
 
@@ -240,21 +233,6 @@ function decayTowardBase(w: Record<ActionKind, number>, persona: PersonaId): voi
   }
 }
 
-function adaptCodes(report: AnalyzeReport): Set<string> {
-  const out = new Set<string>();
-  for (let i = 0; i < report.findings.length; i += 1) {
-    const c = report.findings[i].code;
-    if (!isAdaptExcludedCode(c)) out.add(c);
-  }
-  return out;
-}
-
-function holdActive(state: LearningState, kpiHold: string): string {
-  const last = state.patterns[state.patterns.length - 1];
-  if (last && last.dominantAction === 'HOLD' && last.lastHoldReason) return last.lastHoldReason;
-  return '';
-}
-
 /**
  * 데이터 생성 주기=가상 1일. 창 델타·현재 HOLD만.
  */
@@ -281,12 +259,7 @@ export function adaptPolicy(
   const policy = loadPolicy();
   const w = { ...(policy.personas[persona] ?? cloneWeights(persona)) };
   const notes: string[] = [];
-  const codes = adaptCodes(report);
   const kpi = report.kpi;
-  const horizon = inCampaignLearnWindow(kpi.day);
-  const saturated = isSaturatedGrowth(state.growth);
-  const combat = windowCombatDelta(state);
-  const holdWhy = holdActive(state, kpi.lastHoldReason);
 
   if (isCollapsedWeights(w)) {
     const base = cloneWeights(persona);
@@ -302,9 +275,10 @@ export function adaptPolicy(
     };
   }
 
-  if (!horizon || saturated) {
-    const everyDays = saturated ? 6 : decideAdaptPeriodDays(state);
-    if (notes.length > 0) {
+  const delta = readUnconsumedHumanDelta(learnedDir());
+  if (!delta) {
+    if (notes.includes('고착해제→기준가중')) {
+      const everyDays = decideAdaptPeriodDays(state);
       policy.personas[persona] = applyFloors(w);
       policy.adaptEveryDays = everyDays;
       policy.generation += 1;
@@ -312,132 +286,39 @@ export function adaptPolicy(
       savePolicy(policy, true);
       return { notes, everyDays, skipped: false };
     }
-    notes.push(!horizon ? '학습창밖·감시만' : '포화·학습제외');
-    return { notes, everyDays, skipped: true };
+    notes.push('새 실기 없음·학습대기');
+    return { notes, everyDays: policy.adaptEveryDays || decideAdaptPeriodDays(state), skipped: true };
+  }
+
+  const health = policy.health ?? emptyHealth();
+  const band = Math.floor(kpi.level / 10);
+  const bandChanged = health.lastScoreLevel != null && health.lastScoreLevel !== band;
+  if (health.lastScore != null || isNewRunForScore(health.lastScoreDay, kpi.day) || bandChanged) {
+    health.lastScore = null;
+    health.lastScoreDay = null;
+    health.lastScoreLevel = null;
+    if (policy.rollbackPersonas) delete policy.rollbackPersonas[persona];
+    notes.push('기준점수 초기화');
   }
 
   decayTowardBase(w, persona);
-
-  if (codes.has('COMBAT_UNDERLEVEL') || (combat.fights >= 3 && combat.dLoss > combat.dWins + 2)) {
-    bump(w, 'combat', -0.03);
-    bump(w, 'gear', 0.04);
-    bump(w, 'skill', 0.03);
-    bump(w, 'quest', 0.02);
-    notes.push('창전투열세→장비·스킬↑ 전투는 바닥 유지');
-  } else if (combat.fights >= 2 && combat.dWins >= combat.dLoss && combat.dWins >= 2) {
-    bump(w, 'combat', 0.03);
-    bump(w, 'capital', 0.03);
-    notes.push('창전투우세→수도 접근↑');
-  }
-
-  if (codes.has('INSOLVENCY') || codes.has('CREDIT_DRAIN') || kpi.credits < 800) {
-    bump(w, 'trade', 0.08);
-    bump(w, 'annex_path', -0.04);
-    policy.preferSell = true;
-    notes.push('자금↓→매도 편중');
-  } else if (kpi.credits > 6000) {
-    policy.preferSell = false;
-  }
-
-  if (codes.has('QUEST_SLOW') || codes.has('QUEST_PLATEAU')) {
-    if (holdWhy === 'combat_off') {
-      bump(w, 'travel', 0.04);
-      bump(w, 'capital', 0.03);
-      notes.push('퀘정체+combat_off→전선 이동(가중 과적응 금지)');
-    } else {
-      bump(w, 'quest', 0.05);
-      bump(w, 'gear', 0.02);
-      notes.push('퀘정체→퀘스트 유지·장비↑');
+  const nudged = new Set<ActionKind>();
+  for (let i = 0; i < delta.newPairs.length; i += 1) {
+    const parts = delta.newPairs[i].split('>');
+    for (let j = 0; j < parts.length; j += 1) {
+      const kind = verbToActionKind(parts[j] ?? '');
+      if (!kind || nudged.has(kind)) continue;
+      nudged.add(kind);
+      bump(w, kind, 0.02);
     }
   }
+  const pairNote = delta.newPairs.length > 0 ? delta.newPairs.slice(0, 3).join(',') : '신규순서 없음';
+  const combatNote = delta.combatMethod === 'present' ? '전투방식 기록' : '전투방식 없음';
+  notes.push(`실기델타 ${delta.sessionId} · ${pairNote} · ${combatNote}`);
 
-  if (codes.has('PLACEHOLDER_HOLD') || codes.has('PLACEHOLDER_UNRESOLVED')) {
-    notes.push('플레이스홀더 HOLD→해석기·미해석 퀘 스킵 (가중으로 안 품)');
-  }
-
-  if (codes.has('REPEATED_HOLD') || codes.has('HOLD_PATTERN') || codes.has('DAY_HOLD_SPIKE')) {
-    if (
-      holdWhy === 'no_dest_system'
-      || holdWhy === 'unresolved_placeholder'
-      || holdWhy === 'no_discovery'
-    ) {
-      notes.push('HOLD 토큰→해석/스킵 (이동가중 금지)');
-    } else if (holdWhy === 'combat_off') {
-      bump(w, 'travel', 0.05);
-      bump(w, 'capital', 0.04);
-      notes.push('HOLD combat_off→수도 항로');
-    } else if (holdWhy) {
-      bump(w, 'travel', 0.03);
-      bump(w, 'develop', 0.03);
-      notes.push('HOLD→이동·개발');
-    }
-  }
-
-  const hangar = windowHangarDelta(state);
-  if (hangar.dDestroys >= 2 && hangar.lastHangar <= 1) {
-    bump(w, 'combat', -0.05);
-    bump(w, 'trade', 0.03);
-    notes.push('창격납고 고갈→전투↓');
-  }
-
-  if (notes.length === 0) notes.push('유지');
-
-  const nextW = applyFloors(w);
-  const prevW = applyFloors(policy.personas[persona] ?? cloneWeights(persona));
-  const sameMemo = notesEqual(notes, policy.lastNotes ?? []);
-  const sameW = weightsNear(prevW, nextW);
-  const health = policy.health ?? emptyHealth();
-  health.sameNotesStreak = sameMemo ? health.sameNotesStreak + 1 : 0;
-  health.equalWeights = isCollapsedWeights(nextW);
-  health.stuck = health.sameNotesStreak >= 8 || health.equalWeights;
-
-  if (sameMemo && sameW && !notes.includes('고착해제→기준가중')) {
-    policy.health = health;
-    cached = policy;
-    return { notes, everyDays: policy.adaptEveryDays, skipped: true };
-  }
-
-  const score = windowScore(state);
-  const experimental = notes[0] !== '유지' && !notes[0].startsWith('고착해제');
-  // 새 런/캠페인(가상일 되감김) — 이전 런 고레벨 점수와 비교하지 않는다.
-  if (isNewRunForScore(health.lastScoreDay, kpi.day)) {
-    health.lastScore = null;
-    health.lastScoreDay = null;
-    if (policy.rollbackPersonas) delete policy.rollbackPersonas[persona];
-  }
-  // 캠페인 첫 창(LEARN_WINDOW_DAYS)은 점수 창이 안 차서 비교 불가 — 롤백·기준 갱신 모두 보류.
-  const scoreReady = kpi.day > LEARN_WINDOW_DAYS;
-  if (
-    experimental
-    && scoreReady
-    && health.lastScore != null
-    && shouldRollbackScore(health.lastScore, score)
-    && policy.rollbackPersonas?.[persona]
-  ) {
-    policy.personas[persona] = applyFloors(policy.rollbackPersonas[persona]!);
-    notes.unshift('평가악화→롤백');
-    // 롤백 후 기준을 현재 점수로 — 악화 기준이 영구 고정되면 매번 롤백(래칫)된다.
-    health.lastScore = score;
-    health.lastScoreDay = kpi.day;
-    policy.health = health;
-    policy.adaptEveryDays = decideAdaptPeriodDays(state);
-    policy.generation += 1;
-    policy.lastNotes = notes;
-    savePolicy(policy, true);
-    return { notes, everyDays: policy.adaptEveryDays, skipped: false };
-  }
-
-  if (experimental && scoreReady) {
-    policy.rollbackPersonas = {
-      ...(policy.rollbackPersonas ?? {}),
-      [persona]: { ...prevW },
-    };
-    health.lastScore = score;
-    health.lastScoreDay = kpi.day;
-  }
-
+  consumeHumanDelta(learnedDir());
   const everyDays = decideAdaptPeriodDays(state);
-  policy.personas[persona] = nextW;
+  policy.personas[persona] = applyFloors(w);
   policy.adaptEveryDays = everyDays;
   policy.generation += 1;
   policy.lastNotes = notes;

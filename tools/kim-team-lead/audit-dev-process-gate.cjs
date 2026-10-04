@@ -22,6 +22,10 @@ const REQUIRED_HOOKS = [
   '.cursor/hooks/on-stop-kim-claude-handoff-auto-review.cjs',
   '.cursor/hooks/on-before-submit-prompt-agent-routing.cjs',
   '.cursor/hooks/on-before-submit-prompt-incident-auto-fix.cjs',
+  '.cursor/hooks/sessionBurdenCore.cjs',
+  '.cursor/hooks/on-before-submit-prompt-session-burden.cjs',
+  '.cursor/hooks/on-pre-compact-session-burden.cjs',
+  '.cursor/hooks/on-session-start-session-burden.cjs',
   '.cursor/hooks/incidentHandoffGate.cjs',
   '.cursor/hooks/on-session-start-incident-triage.cjs',
 ];
@@ -30,6 +34,7 @@ const REQUIRED_RULES = [
   '.cursor/rules/arcfire-memory-leak-audit-first.mdc',
   '.cursor/rules/arcfire-main-lead-agent.mdc',
   '.cursor/rules/arcfire-paid-model-exclusion-gate.mdc',
+  '.cursor/rules/arcfire-session-burden-handoff.mdc',
 ];
 
 function main() {
@@ -54,6 +59,7 @@ function main() {
     const session = (hooks.hooks?.sessionStart ?? []).map((h) => h.command);
     const before = (hooks.hooks?.beforeSubmitPrompt ?? []).map((h) => h.command);
     const stop = (hooks.hooks?.stop ?? []).map((h) => h.command);
+    const preCompact = (hooks.hooks?.preCompact ?? []).map((h) => h.command);
     if (!session.some((c) => String(c).includes('pss-pre-dev-brief'))) {
       failures.push('hooks.json: sessionStart missing pss-pre-dev-brief');
     }
@@ -83,6 +89,15 @@ function main() {
     }
     if (!stop.some((c) => String(c).includes('kim-claude-handoff-auto-review'))) {
       failures.push('hooks.json: stop missing kim-claude-handoff-auto-review');
+    }
+    if (!before.some((c) => String(c).includes('session-burden'))) {
+      failures.push('hooks.json: beforeSubmitPrompt missing session-burden');
+    }
+    if (!session.some((c) => String(c).includes('session-burden'))) {
+      failures.push('hooks.json: sessionStart missing session-burden');
+    }
+    if (!preCompact.some((c) => String(c).includes('session-burden'))) {
+      failures.push('hooks.json: preCompact missing session-burden');
     }
   }
 

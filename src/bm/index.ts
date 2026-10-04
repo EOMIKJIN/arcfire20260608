@@ -1,7 +1,6 @@
 export {
   getBmPolicyNumber,
   getGemExchangeBaseCrPerGem,
-  getGemExchangeDailyCapGems,
   listGemExchangeCatalog,
   listGemPackCatalog,
   listGemSpendCatalog,
@@ -10,13 +9,11 @@ export {
   resolveGemPackGrant,
 } from './bmCatalogIndex';
 export {
-  buildExchangeCapSnapshot,
   preflightGemExchange,
   resolveGemExchangeQuote,
   type GemExchangePreflightCode,
 } from './gemExchangeModel';
 export {
-  ensureBmExchangeLedgerReady,
   executeGemToCreditExchange,
   mapGemExchangeErrorKey,
   type GemExchangeResult,

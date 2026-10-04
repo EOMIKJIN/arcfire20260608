@@ -44,7 +44,9 @@ export type JournalKind =
   | 'SKILL'
   | 'GEAR'
   | 'DEVELOP'
-  | 'CAPITAL';
+  | 'CAPITAL'
+  | 'MINE'
+  | 'EXCHANGE';
 
 export type JournalEntry = {
   t: number;
@@ -111,6 +113,12 @@ export type WorldState = {
   combatWins: number;
   combatLosses: number;
   trades: number;
+  mineralCargo: number;
+  gems: number;
+  gemExchangeDay: number;
+  gemExchangeWeek: number;
+  gemsSpentDay: number;
+  gemsSpentWeek: number;
   annexOk: number;
   annexFail: number;
   satInstalls: number;

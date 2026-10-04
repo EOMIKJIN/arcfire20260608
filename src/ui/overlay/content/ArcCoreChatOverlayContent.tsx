@@ -272,14 +272,14 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
   }, [surfaceActive, stopBreath]);
 
   useEffect(() => {
-    if (!surfaceActive || busy) return;
+    if (!surfaceActive || busy || showWelcomeHero) return;
     const focusId = setTimeout(() => {
       inputRef.current?.focus();
     }, 280);
     return () => {
       clearTimeout(focusId);
     };
-  }, [busy, surfaceActive]);
+  }, [busy, showWelcomeHero, surfaceActive]);
 
   useEffect(() => {
     if (!typing || typing.shown >= typing.full.length) return;
@@ -416,6 +416,7 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
                 : t('arcCoreChat.placeholder')
             }
             placeholderTextColor={TACTICAL_OVERLAY.labelInk}
+            underlineColorAndroid="transparent"
             showSoftInputOnFocus={surfaceActive}
             caretHidden={false}
             editable={surfaceActive}
@@ -519,25 +520,22 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
     >
       {showWelcomeHero ? (
         <View style={styles.welcomeHero}>
-          {speakerChrome.useLens || !speakerChrome.portrait ? (
-            <ArcCoreLensIcon
-              size={CHAT_WELCOME_LENS_PX}
-              accessibilityLabel={speakerChrome.title}
-            />
-          ) : (
-            <Image
-              source={speakerChrome.portrait}
-              style={styles.welcomeFace}
-              resizeMode="contain"
-              accessibilityLabel={speakerChrome.title}
-            />
-          )}
-          <Text
-            style={styles.welcomeText}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.7}
-          >
+          <View style={styles.welcomeFaceWrap}>
+            {speakerChrome.useLens || !speakerChrome.portrait ? (
+              <ArcCoreLensIcon
+                size={CHAT_WELCOME_LENS_PX}
+                accessibilityLabel={speakerChrome.title}
+              />
+            ) : (
+              <Image
+                source={speakerChrome.portrait}
+                style={styles.welcomeFace}
+                resizeMode="contain"
+                accessibilityLabel={speakerChrome.title}
+              />
+            )}
+          </View>
+          <Text style={styles.welcomeText}>
             {welcome.text}
           </Text>
         </View>
@@ -601,13 +599,14 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
   );
 });
 
+const androidChatText = Platform.OS === 'android' ? { includeFontPadding: false as const } : null;
+
 const styles = StyleSheet.create({
   fillShell: {
     flex: 1,
     width: '100%',
     alignSelf: 'stretch',
     minHeight: 0,
-    justifyContent: 'flex-end',
   },
   fillCard: {
     flex: 1,
@@ -617,23 +616,37 @@ const styles = StyleSheet.create({
   },
   chatBody: {
     backgroundColor: TACTICAL_OVERLAY.insetBg,
+    minHeight: 0,
   },
   empty: {
     fontFamily: FONTS.mono,
     fontSize: 13,
     color: TACTICAL_OVERLAY.labelInk,
     paddingVertical: SPACING.md,
+    ...androidChatText,
   },
   headerPortrait: {
     width: ARC_CORE_LENS_HEADER_PX,
     height: ARC_CORE_LENS_HEADER_PX,
   },
+  welcomeFaceWrap: {
+    flexShrink: 1,
+    minHeight: 64,
+    maxHeight: CHAT_WELCOME_FACE_PX * 1.4,
+    width: CHAT_WELCOME_FACE_PX,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   welcomeFace: {
     width: CHAT_WELCOME_FACE_PX,
     height: CHAT_WELCOME_FACE_PX * 1.4,
+    maxWidth: '100%',
+    maxHeight: '100%',
   },
   welcomeHero: {
     flexGrow: 1,
+    flexShrink: 1,
+    minHeight: 0,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: SPACING.md,
@@ -641,11 +654,15 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     marginTop: SPACING.md,
+    alignSelf: 'stretch',
+    width: '100%',
+    flexShrink: 0,
     fontFamily: FONTS.mono,
     fontSize: CHAT_WELCOME_FONT_PX,
     lineHeight: CHAT_WELCOME_LINE_PX,
     textAlign: 'center',
     color: TACTICAL_OVERLAY.valueInk,
+    ...androidChatText,
   },
   rowUser: {
     width: '100%',
@@ -666,6 +683,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 20,
     color: TACTICAL_OVERLAY.valueInk,
+    ...androidChatText,
   },
   rowArc: {
     width: '100%',
@@ -679,6 +697,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 20,
     color: TACTICAL_OVERLAY.valueInk,
+    ...androidChatText,
   },
   lensSlot: {
     width: CHAT_TURN_LENS_PX,
@@ -696,6 +715,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 18,
     color: TACTICAL_OVERLAY.labelInk,
+    ...androidChatText,
   },
   composer: {
     width: '100%',
@@ -725,8 +745,10 @@ const styles = StyleSheet.create({
     minHeight: 36,
     paddingHorizontal: 4,
     color: TACTICAL_OVERLAY.valueInk,
+    backgroundColor: '#FFFFFF',
     fontFamily: FONTS.mono,
     fontSize: 13,
+    ...androidChatText,
   },
   toolRow: {
     flexDirection: 'row',

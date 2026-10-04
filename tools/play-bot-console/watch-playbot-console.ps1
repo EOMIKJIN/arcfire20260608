@@ -1,4 +1,5 @@
-# 숨김 감독 — 하니스·가시창이 죽으면 다시 띄운다. 창이 죽어도 기록은 끊지 않는다.
+# 숨김 감독 — 콘솔이 살아 있을 때만 하니스 크래시를 복구한다.
+# 창을 닫으면(pid 소멸) 사용자 중지로 보고 콘솔·워치·하니스·기록을 끊는다. 창을 다시 띄우지 않는다.
 param(
   [int]$ConsolePid = 0,
   [int]$PollMs = 1500
@@ -8,29 +9,28 @@ $ErrorActionPreference = 'Continue'
 . (Join-Path $PSScriptRoot 'playbot-process.ps1')
 
 $lastHarnessSpawn = 0
-$lastConsoleSpawn = 0
 
 while (-not (Test-PlaybotExplicitStop)) {
   $now = [Environment]::TickCount
-  $hid = Read-PlaybotPid 'playbot-harness.pid'
-  if (-not (Test-PlaybotProcAlive $hid)) {
-    if (($now - $lastHarnessSpawn) -gt 4000 -or $lastHarnessSpawn -eq 0) {
-      [void](Resume-PlaybotHarnessFromSavedArgs)
-      $lastHarnessSpawn = $now
-    }
-  }
   $cid = Read-PlaybotPid 'playbot-console.pid'
   if ($ConsolePid -gt 0 -and (Test-PlaybotProcAlive $ConsolePid)) {
     $cid = $ConsolePid
     Write-PlaybotPid 'playbot-console.pid' $cid
   }
-  if (-not (Test-PlaybotProcAlive $cid) -and -not (Test-Path (Get-PlaybotConsoleRestartLockPath))) {
-    if (($now - $lastConsoleSpawn) -gt 6000 -or $lastConsoleSpawn -eq 0) {
-      $a = Read-PlaybotHarnessArgs
-      $fast = [bool]($a.fast)
-      [void](Start-PlaybotConsoleWindow -Persona ([string]$a.persona) -Days ([int]$a.days) -Stage ([int]$a.stage) -LiveMs ([int]$a.liveMs) -Seed ([int]$a.seed) -UntilWall ([string]$a.untilWall) -Fast:$fast)
-      $lastConsoleSpawn = $now
+  $consoleAlive = Test-PlaybotProcAlive $cid
+  if ($cid -gt 0 -and -not $consoleAlive -and -not (Test-Path (Get-PlaybotConsoleRestartLockPath))) {
+    Stop-PlaybotAll
+    break
+  }
+  $hid = Read-PlaybotPid 'playbot-harness.pid'
+  if ($consoleAlive -and -not (Test-PlaybotProcAlive $hid)) {
+    if (($now - $lastHarnessSpawn) -gt 4000 -or $lastHarnessSpawn -eq 0) {
+      [void](Resume-PlaybotHarnessFromSavedArgs)
+      $lastHarnessSpawn = $now
     }
+  }
+  if ($consoleAlive -and -not (Test-PlaybotExplicitStop)) {
+    [void](Start-PlaybotFqaReviewDetached)
   }
   Start-Sleep -Milliseconds ([Math]::Max(800, $PollMs))
 }
